@@ -1,0 +1,9 @@
+How to convert from VS2008 back to VS2005:
+
+1.  Make sure the ZIP file is unblocked otherwise there will he security issues with the C# components.
+2.  Change the version in the SLN file back to 9.00.  For example:
+	Microsoft Visual Studio Solution File, Format Version 9.00
+	# Visual Studio 2005
+3.  Change the version in the vcproj files back to 8.00.
+4.  Remove the MinFrameworkVersion entries from the Assembly References in the vcproj files.
+5.  Change the ToolsVersion to 2.0 in the csproj files.

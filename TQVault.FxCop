@@ -1,0 +1,486 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FxCopProject Version="10.0" Name="My FxCop Project">
+ <ProjectOptions>
+  <SharedProject>True</SharedProject>
+  <Stylesheet Apply="False">$(ProjectDir)/../../../../../../program files (x86)/microsoft fxcop 1.36/Xml/FxCopReport.xsl</Stylesheet>
+  <SaveMessages>
+   <Project Status="Active, Excluded" NewOnly="False" />
+   <Report Status="Active" NewOnly="False" />
+  </SaveMessages>
+  <ProjectFile Compress="True" DefaultTargetCheck="True" DefaultRuleCheck="True" SaveByRuleGroup="" Deterministic="True" />
+  <EnableMultithreadedLoad>True</EnableMultithreadedLoad>
+  <EnableMultithreadedAnalysis>True</EnableMultithreadedAnalysis>
+  <SourceLookup>True</SourceLookup>
+  <AnalysisExceptionsThreshold>10</AnalysisExceptionsThreshold>
+  <RuleExceptionsThreshold>1</RuleExceptionsThreshold>
+  <Spelling Locale="en-US" />
+  <OverrideRuleVisibilities>False</OverrideRuleVisibilities>
+  <CustomDictionaries SearchFxCopDir="True" SearchUserProfile="True" SearchProjectDir="True" />
+  <SearchGlobalAssemblyCache>False</SearchGlobalAssemblyCache>
+  <DeadlockDetectionTimeout>120</DeadlockDetectionTimeout>
+  <IgnoreGeneratedCode>False</IgnoreGeneratedCode>
+ </ProjectOptions>
+ <Targets>
+  <AssemblyReferenceDirectories>
+   <Directory>$(ProjectDir)/ExpEval/bin/Debug/</Directory>
+   <Directory>$(ProjectDir)/TQVaultMon/obj/Debug/</Directory>
+   <Directory>$(ProjectDir)/TQVaultTTLib/bin/x86/Debug/</Directory>
+  </AssemblyReferenceDirectories>
+  <Target Name="$(ProjectDir)/debug/ARZExplorer.exe" Analyze="False" AnalyzeAllChildren="False" />
+  <Target Name="$(ProjectDir)/debug/TQVaultMon.exe" Analyze="True" AnalyzeAllChildren="True" />
+  <Target Name="$(ProjectDir)/TQVault/bin/Debug/ExpressionEvaluator.dll" Analyze="True" AnalyzeAllChildren="True" />
+  <Target Name="$(ProjectDir)/TQVault/bin/Debug/TQVault.exe" Analyze="True" AnalyzeAllChildren="True" />
+  <Target Name="$(ProjectDir)/TQVault/bin/Debug/TQVaultData.dll" Analyze="True" AnalyzeAllChildren="True" />
+  <Target Name="$(ProjectDir)/TQVault/bin/Debug/TQVaultTTLib.dll" Analyze="True" AnalyzeAllChildren="True" />
+ </Targets>
+ <Rules>
+  <RuleFiles>
+   <RuleFile Name="$(FxCopDir)\Rules\DesignRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\GlobalizationRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\InteroperabilityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\MobilityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\NamingRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\PerformanceRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\PortabilityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\SecurityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\UsageRules.dll" Enabled="True" AllRulesEnabled="True" />
+  </RuleFiles>
+  <Groups />
+  <Settings />
+ </Rules>
+ <FxCopReport Version="10.0">
+  <Targets>
+   <Target Name="$(ProjectDir)/debug/TQVaultMon.exe">
+    <Modules>
+     <Module Name="tqvaultmon.exe">
+      <Messages>
+       <Message TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210" Created="2012-01-03 00:15:18Z">
+        <Issue Name="NoStrongName">
+         <Item>'TQVaultMon.exe'</Item>
+        </Issue>
+       </Message>
+      </Messages>
+     </Module>
+    </Modules>
+   </Target>
+   <Target Name="$(ProjectDir)/TQVault/bin/Debug/ExpressionEvaluator.dll">
+    <Modules>
+     <Module Name="expressionevaluator.dll">
+      <Messages>
+       <Message TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210" Created="2012-01-03 00:15:43Z">
+        <Issue Name="NoStrongName">
+         <Item>'ExpressionEvaluator.dll'</Item>
+        </Issue>
+       </Message>
+      </Messages>
+      <Namespaces>
+       <Namespace Name="ExpressionEvaluator">
+        <Types>
+         <Type Name="Expression">
+          <Members>
+           <Member Name="#EXPRESSIONFALSE">
+            <Messages>
+             <Message Id="EXPRESSIONFALSE" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2012-01-03 00:15:43Z">
+              <Issue Name="Member">
+               <Item>EXPRESSIONFALSE</Item>
+               <Item>'Expression.EXPRESSIONFALSE'</Item>
+               <Item>Expressionfalse</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#EXPRESSIONTRUE">
+            <Messages>
+             <Message Id="EXPRESSIONTRUE" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2012-01-03 00:15:43Z">
+              <Issue Name="Member">
+               <Item>EXPRESSIONTRUE</Item>
+               <Item>'Expression.EXPRESSIONTRUE'</Item>
+               <Item>Expressiontrue</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+        </Types>
+       </Namespace>
+      </Namespaces>
+     </Module>
+    </Modules>
+   </Target>
+   <Target Name="$(ProjectDir)/TQVault/bin/Debug/TQVault.exe">
+    <Modules>
+     <Module Name="tqvault.exe">
+      <Messages>
+       <Message TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210" Created="2010-07-10 15:46:37Z">
+        <Issue Name="NoStrongName">
+         <Item>'TQVault.exe'</Item>
+        </Issue>
+       </Message>
+      </Messages>
+      <Namespaces>
+       <Namespace Name="TQVault">
+        <Types>
+         <Type Name="ActionButton">
+          <Members>
+           <Member Name="#InitializeTimer()">
+            <Messages>
+             <Message TypeName="DoNotUseTimersThatPreventPowerStateChanges" Category="Microsoft.Mobility" CheckId="CA1601" Status="Excluded" Created="2010-05-23 05:34:34Z">
+              <Issue>
+               <Item>'Timer.Interval.set(double)'</Item>
+               <Item>'ActionButton.InitializeTimer()'</Item>
+              </Issue>
+              <Notes>
+               <User Name="Jesse">
+                <Note Id="0" />
+               </User>
+              </Notes>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="EquipmentPanel">
+          <Members>
+           <Member Name="#WeaponBottomLeft(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <Messages>
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-04 17:48:58Z">
+              <Issue>
+               <Item>'EquipmentPanel.WeaponBottomLeft(int, int, int, int)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="MainForm">
+          <Members>
+           <Member Name="#InitializeComponent()">
+            <Messages>
+             <Message TypeName="DoNotUseTimersThatPreventPowerStateChanges" Category="Microsoft.Mobility" CheckId="CA1601" Created="2012-01-25 03:44:32Z">
+              <Issue>
+               <Item>'Timer.Interval.set(int)'</Item>
+               <Item>'MainForm.InitializeComponent()'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="Program">
+          <Members>
+           <Member Name="#MainForm_UIThreadException(System.Object,System.Threading.ThreadExceptionEventArgs)">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2012-01-25 03:44:32Z">
+              <Issue>
+               <Item>'Program.MainForm_UIThreadException(object, ThreadExceptionEventArgs)'</Item>
+               <Item>'object'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="SackPanel">
+          <Members>
+           <Member Name="#GetRepaintDragRect()">
+            <Messages>
+             <Message TypeName="UsePropertiesWhereAppropriate" Category="Microsoft.Design" CheckId="CA1024" Created="2011-12-04 17:48:58Z">
+              <Issue Certainty="50">
+               <Item>'SackPanel.GetRepaintDragRect()'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="SplashScreenForm">
+          <Members>
+           <Member Name="#InitializeComponent()">
+            <Messages>
+             <Message TypeName="DoNotUseTimersThatPreventPowerStateChanges" Category="Microsoft.Mobility" CheckId="CA1601" Created="2012-01-25 03:44:32Z">
+              <Issue>
+               <Item>'Timer.Interval.set(double)'</Item>
+               <Item>'SplashScreenForm.InitializeComponent()'</Item>
+              </Issue>
+              <Issue>
+               <Item>'Timer.Interval.set(int)'</Item>
+               <Item>'SplashScreenForm.InitializeComponent()'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+        </Types>
+       </Namespace>
+      </Namespaces>
+      <Resources>
+       <Resource Name="TQVault.Properties.Resources.resources">
+        <Messages>
+         <Message Id="DevIl" TypeName="ResourceStringCompoundWordsShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1701" Created="2011-08-21 17:48:17Z">
+          <Issue Name="StringResourceShouldBeDiscreteTerm">
+           <Item>'TQVault.Properties.Resources.resx'</Item>
+           <Item>AboutDescription</Item>
+           <Item>DevIl</Item>
+           <Item>TQVault by bman654 (wickedsoul_@yahoo.com) &#xD;&#xA;Help on Item Stats by SadYc (sadyc1@gmail.com)&#xD;&#xA;Additional features by &#xD;&#xA;VillageIdiot (villij-idjit@sbcglobal.net)&#xD;&#xA;&#xD;&#xA;New User Interface by AvunaOs&#xD;&#xA;German translation by FOE.&#xD;&#xA;French translation by Jean and Vifarc.&#xD;&#xA;Polish translation by Cygi.&#xD;&#xA;Russian t...</Item>
+           <Item>Devil</Item>
+          </Issue>
+         </Message>
+         <Message Id="Avuna" TypeName="ResourceStringsShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1703" Created="2012-01-07 18:08:39Z">
+          <Issue Name="StringResource">
+           <Item>'TQVault.Properties.Resources.resx'</Item>
+           <Item>AboutDescription</Item>
+           <Item>Avuna</Item>
+           <Item>TQVault by bman654 (wickedsoul_@yahoo.com) &#xD;&#xA;Help on Item Stats by SadYc (sadyc1@gmail.com)&#xD;&#xA;Additional features by &#xD;&#xA;VillageIdiot (villij-idjit@sbcglobal.net)&#xD;&#xA;&#xD;&#xA;New User Interface by AvunaOs&#xD;&#xA;German translation by FOE.&#xD;&#xA;French translation by Jean and Vifarc.&#xD;&#xA;Polish translation by Cygi.&#xD;&#xA;Russian t...</Item>
+          </Issue>
+         </Message>
+         <Message Id="Cygi" TypeName="ResourceStringsShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1703" Created="2010-08-14 16:20:15Z">
+          <Issue Name="StringResource">
+           <Item>'TQVault.Properties.Resources.resx'</Item>
+           <Item>AboutDescription</Item>
+           <Item>Cygi</Item>
+           <Item>TQVault by bman654 (wickedsoul_@yahoo.com) &#xD;&#xA;Help on Item Stats by SadYc (sadyc1@gmail.com)&#xD;&#xA;Additional features by &#xD;&#xA;VillageIdiot (villij-idjit@sbcglobal.net)&#xD;&#xA;&#xD;&#xA;New User Interface by AvunaOs&#xD;&#xA;German translation by FOE.&#xD;&#xA;French translation by Jean and Vifarc.&#xD;&#xA;Polish translation by Cygi.&#xD;&#xA;Russian t...</Item>
+          </Issue>
+         </Message>
+         <Message Id="Kurrus" TypeName="ResourceStringsShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1703" Created="2010-08-14 16:20:15Z">
+          <Issue Name="StringResource">
+           <Item>'TQVault.Properties.Resources.resx'</Item>
+           <Item>AboutDescription</Item>
+           <Item>Kurrus</Item>
+           <Item>TQVault by bman654 (wickedsoul_@yahoo.com) &#xD;&#xA;Help on Item Stats by SadYc (sadyc1@gmail.com)&#xD;&#xA;Additional features by &#xD;&#xA;VillageIdiot (villij-idjit@sbcglobal.net)&#xD;&#xA;&#xD;&#xA;New User Interface by AvunaOs&#xD;&#xA;German translation by FOE.&#xD;&#xA;French translation by Jean and Vifarc.&#xD;&#xA;Polish translation by Cygi.&#xD;&#xA;Russian t...</Item>
+          </Issue>
+         </Message>
+         <Message Id="Vifarc" TypeName="ResourceStringsShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1703" Created="2010-07-10 15:46:37Z">
+          <Issue Name="StringResource">
+           <Item>'TQVault.Properties.Resources.resx'</Item>
+           <Item>AboutDescription</Item>
+           <Item>Vifarc</Item>
+           <Item>TQVault by bman654 (wickedsoul_@yahoo.com) &#xD;&#xA;Help on Item Stats by SadYc (sadyc1@gmail.com)&#xD;&#xA;Additional features by &#xD;&#xA;VillageIdiot (villij-idjit@sbcglobal.net)&#xD;&#xA;&#xD;&#xA;New User Interface by AvunaOs&#xD;&#xA;German translation by FOE.&#xD;&#xA;French translation by Jean and Vifarc.&#xD;&#xA;Polish translation by Cygi.&#xD;&#xA;Russian t...</Item>
+          </Issue>
+         </Message>
+         <Message Id="Xelat" TypeName="ResourceStringsShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1703" Created="2010-07-10 15:46:37Z">
+          <Issue Name="StringResource">
+           <Item>'TQVault.Properties.Resources.resx'</Item>
+           <Item>AboutDescription</Item>
+           <Item>Xelat</Item>
+           <Item>TQVault by bman654 (wickedsoul_@yahoo.com) &#xD;&#xA;Help on Item Stats by SadYc (sadyc1@gmail.com)&#xD;&#xA;Additional features by &#xD;&#xA;VillageIdiot (villij-idjit@sbcglobal.net)&#xD;&#xA;&#xD;&#xA;New User Interface by AvunaOs&#xD;&#xA;German translation by FOE.&#xD;&#xA;French translation by Jean and Vifarc.&#xD;&#xA;Polish translation by Cygi.&#xD;&#xA;Russian t...</Item>
+          </Issue>
+         </Message>
+         <Message Id="Yc" TypeName="ResourceStringsShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1703" Created="2010-07-10 15:46:37Z">
+          <Issue Name="StringResource">
+           <Item>'TQVault.Properties.Resources.resx'</Item>
+           <Item>AboutDescription</Item>
+           <Item>Yc</Item>
+           <Item>TQVault by bman654 (wickedsoul_@yahoo.com) &#xD;&#xA;Help on Item Stats by SadYc (sadyc1@gmail.com)&#xD;&#xA;Additional features by &#xD;&#xA;VillageIdiot (villij-idjit@sbcglobal.net)&#xD;&#xA;&#xD;&#xA;New User Interface by AvunaOs&#xD;&#xA;German translation by FOE.&#xD;&#xA;French translation by Jean and Vifarc.&#xD;&#xA;Polish translation by Cygi.&#xD;&#xA;Russian t...</Item>
+          </Issue>
+         </Message>
+         <Message Id="bman" TypeName="ResourceStringsShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1703" Created="2010-07-10 15:46:37Z">
+          <Issue Name="StringResource">
+           <Item>'TQVault.Properties.Resources.resx'</Item>
+           <Item>AboutDescription</Item>
+           <Item>bman</Item>
+           <Item>TQVault by bman654 (wickedsoul_@yahoo.com) &#xD;&#xA;Help on Item Stats by SadYc (sadyc1@gmail.com)&#xD;&#xA;Additional features by &#xD;&#xA;VillageIdiot (villij-idjit@sbcglobal.net)&#xD;&#xA;&#xD;&#xA;New User Interface by AvunaOs&#xD;&#xA;German translation by FOE.&#xD;&#xA;French translation by Jean and Vifarc.&#xD;&#xA;Polish translation by Cygi.&#xD;&#xA;Russian t...</Item>
+          </Issue>
+         </Message>
+         <Message Id="sadyc" TypeName="ResourceStringsShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1703" Created="2010-07-10 15:46:37Z">
+          <Issue Name="StringResource">
+           <Item>'TQVault.Properties.Resources.resx'</Item>
+           <Item>AboutDescription</Item>
+           <Item>sadyc</Item>
+           <Item>TQVault by bman654 (wickedsoul_@yahoo.com) &#xD;&#xA;Help on Item Stats by SadYc (sadyc1@gmail.com)&#xD;&#xA;Additional features by &#xD;&#xA;VillageIdiot (villij-idjit@sbcglobal.net)&#xD;&#xA;&#xD;&#xA;New User Interface by AvunaOs&#xD;&#xA;German translation by FOE.&#xD;&#xA;French translation by Jean and Vifarc.&#xD;&#xA;Polish translation by Cygi.&#xD;&#xA;Russian t...</Item>
+          </Issue>
+         </Message>
+         <Message Id="sbcglobal" TypeName="ResourceStringsShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1703" Created="2010-07-10 15:46:37Z">
+          <Issue Name="StringResource">
+           <Item>'TQVault.Properties.Resources.resx'</Item>
+           <Item>AboutDescription</Item>
+           <Item>sbcglobal</Item>
+           <Item>TQVault by bman654 (wickedsoul_@yahoo.com) &#xD;&#xA;Help on Item Stats by SadYc (sadyc1@gmail.com)&#xD;&#xA;Additional features by &#xD;&#xA;VillageIdiot (villij-idjit@sbcglobal.net)&#xD;&#xA;&#xD;&#xA;New User Interface by AvunaOs&#xD;&#xA;German translation by FOE.&#xD;&#xA;French translation by Jean and Vifarc.&#xD;&#xA;Polish translation by Cygi.&#xD;&#xA;Russian t...</Item>
+          </Issue>
+         </Message>
+         <Message Id="swordrare" TypeName="ResourceStringsShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1703" Created="2011-12-04 17:48:58Z">
+          <Issue Name="StringResource">
+           <Item>'TQVault.Properties.Resources.resx'</Item>
+           <Item>SearchDialogText</Item>
+           <Item>swordrare</Item>
+           <Item>Search for an item name or type within the loaded files.&#xD;&#xA;Includes all loaded player character inventories, vaults, player stashes and the transfer stash.&#xD;&#xA;&#xD;&#xA;Use '@' to specify an item type instead of name.  This must be the first character of the search string.&#xD;&#xA;For example, to search for only swor...</Item>
+          </Issue>
+         </Message>
+         <Message Id="villij-idjit" TypeName="ResourceStringsShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1703" Created="2010-07-10 15:46:37Z">
+          <Issue Name="StringResource">
+           <Item>'TQVault.Properties.Resources.resx'</Item>
+           <Item>AboutDescription</Item>
+           <Item>villij-idjit</Item>
+           <Item>TQVault by bman654 (wickedsoul_@yahoo.com) &#xD;&#xA;Help on Item Stats by SadYc (sadyc1@gmail.com)&#xD;&#xA;Additional features by &#xD;&#xA;VillageIdiot (villij-idjit@sbcglobal.net)&#xD;&#xA;&#xD;&#xA;New User Interface by AvunaOs&#xD;&#xA;German translation by FOE.&#xD;&#xA;French translation by Jean and Vifarc.&#xD;&#xA;Polish translation by Cygi.&#xD;&#xA;Russian t...</Item>
+          </Issue>
+         </Message>
+         <Message Id="wickedsoul" TypeName="ResourceStringsShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1703" Created="2010-07-10 15:46:37Z">
+          <Issue Name="StringResource">
+           <Item>'TQVault.Properties.Resources.resx'</Item>
+           <Item>AboutDescription</Item>
+           <Item>wickedsoul</Item>
+           <Item>TQVault by bman654 (wickedsoul_@yahoo.com) &#xD;&#xA;Help on Item Stats by SadYc (sadyc1@gmail.com)&#xD;&#xA;Additional features by &#xD;&#xA;VillageIdiot (villij-idjit@sbcglobal.net)&#xD;&#xA;&#xD;&#xA;New User Interface by AvunaOs&#xD;&#xA;German translation by FOE.&#xD;&#xA;French translation by Jean and Vifarc.&#xD;&#xA;Polish translation by Cygi.&#xD;&#xA;Russian t...</Item>
+          </Issue>
+         </Message>
+        </Messages>
+       </Resource>
+       <Resource Name="TQVault.SearchDialog.resources">
+        <Messages>
+         <Message Id="swordrare" TypeName="ResourceStringsShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1703" Created="2011-12-04 17:48:58Z">
+          <Issue Name="StringResource">
+           <Item>'TQVault.SearchDialog.resx'</Item>
+           <Item>searchLabel.Text</Item>
+           <Item>swordrare</Item>
+           <Item>Search for an item name or type within the loaded files.&#xD;&#xA;Includes all loaded player character inventories, vaults, player stashes and the transfer stash.&#xD;&#xA;&#xD;&#xA;Use @ to specify an item type instead of name.  This must be the first character of the search string.&#xD;&#xA;For example, to search for only swords...</Item>
+          </Issue>
+         </Message>
+        </Messages>
+       </Resource>
+      </Resources>
+     </Module>
+    </Modules>
+   </Target>
+   <Target Name="$(ProjectDir)/TQVault/bin/Debug/TQVaultData.dll">
+    <Modules>
+     <Module Name="tqvaultdata.dll">
+      <Messages>
+       <Message TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210" Created="2012-01-03 00:14:55Z">
+        <Issue Name="NoStrongName">
+         <Item>'TQVaultData.dll'</Item>
+        </Issue>
+       </Message>
+      </Messages>
+      <Namespaces>
+       <Namespace Name="TQVaultData">
+        <Types>
+         <Type Name="Database">
+          <Members>
+           <Member Name="#GetItemAttributeFriendlyText(System.String,System.Boolean)">
+            <Messages>
+             <Message TypeName="DefaultParametersShouldNotBeUsed" Category="Microsoft.Design" CheckId="CA1026" Created="2012-01-03 00:14:55Z">
+              <Issue>
+               <Item>'Database.GetItemAttributeFriendlyText(string, bool)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="DBRecordCollection">
+          <Members>
+           <Member Name="#Write(System.String,System.String)">
+            <Messages>
+             <Message TypeName="DefaultParametersShouldNotBeUsed" Category="Microsoft.Design" CheckId="CA1026" Created="2012-01-03 00:14:55Z">
+              <Issue>
+               <Item>'DBRecordCollection.Write(string, string)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="Item">
+          <Members>
+           <Member Name="#GetItemSetString()">
+            <Messages>
+             <Message TypeName="UsePropertiesWhereAppropriate" Category="Microsoft.Design" CheckId="CA1024" Created="2012-01-03 00:14:55Z">
+              <Issue Certainty="50">
+               <Item>'Item.GetItemSetString()'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#GetRequirements()">
+            <Messages>
+             <Message TypeName="UsePropertiesWhereAppropriate" Category="Microsoft.Design" CheckId="CA1024" Created="2012-01-03 00:14:55Z">
+              <Issue>
+               <Item>'Item.GetRequirements()'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToString(System.Boolean,System.Boolean)">
+            <Messages>
+             <Message TypeName="DefaultParametersShouldNotBeUsed" Category="Microsoft.Design" CheckId="CA1026" Created="2012-01-03 00:14:55Z">
+              <Issue>
+               <Item>'Item.ToString(bool, bool)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="TQColor">
+          <Members>
+           <Member Name="#Fuschia">
+            <Messages>
+             <Message Id="Fuschia" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2012-01-03 00:14:55Z">
+              <Issue Name="Member">
+               <Item>Fuschia</Item>
+               <Item>'TQColor.Fuschia'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+        </Types>
+       </Namespace>
+      </Namespaces>
+     </Module>
+    </Modules>
+   </Target>
+   <Target Name="$(ProjectDir)/TQVault/bin/Debug/TQVaultTTLib.dll">
+    <Modules>
+     <Module Name="tqvaultttlib.dll">
+      <Messages>
+       <Message TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210" Created="2012-01-03 00:15:43Z">
+        <Issue Name="NoStrongName">
+         <Item>'TQVaultTTLib.dll'</Item>
+        </Issue>
+       </Message>
+      </Messages>
+     </Module>
+    </Modules>
+   </Target>
+  </Targets>
+  <Notes>
+   <User Name="Jesse">
+    <Note Id="0" Modified="2010-05-23 05:43:32Z">Used for animation</Note>
+   </User>
+  </Notes>
+  <Rules>
+   <Rule TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210">
+    <Resolution Name="NoStrongName">Sign {0} with a strong name key.</Resolution>
+   </Rule>
+   <Rule TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811">
+    <Resolution Name="Default">{0} appears to have no upstream public or protected callers.</Resolution>
+   </Rule>
+   <Rule TypeName="DefaultParametersShouldNotBeUsed" Category="Microsoft.Design" CheckId="CA1026">
+    <Resolution Name="Default">Replace method {0} with an overload that supplies all default arguments.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031">
+    <Resolution Name="Default">Modify {0} to catch a more specific exception than {1} or rethrow the exception.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotUseTimersThatPreventPowerStateChanges" Category="Microsoft.Mobility" CheckId="CA1601">
+    <Resolution Name="Default">Modify the call to {0} in method {1} to set the timer interval to a value that's greater than or equal to one second.</Resolution>
+   </Rule>
+   <Rule TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709">
+    <Resolution Name="Member">Correct the casing of '{0}' in member name {1} by changing it to '{2}'.</Resolution>
+   </Rule>
+   <Rule TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704">
+    <Resolution Name="Member">Correct the spelling of '{0}' in member name {1} or remove it entirely if it represents any sort of Hungarian notation.</Resolution>
+   </Rule>
+   <Rule TypeName="ResourceStringCompoundWordsShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1701">
+    <Resolution Name="StringResourceShouldBeDiscreteTerm">In resource {0}, referenced by name '{1}', the compound word '{2}' in string value '{3}' exists as a discrete term. If your usage is intended to be single word, case it as '{4}'.</Resolution>
+   </Rule>
+   <Rule TypeName="ResourceStringsShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1703">
+    <Resolution Name="StringResource">In resource {0}, referenced by name '{1}', correct the spelling of '{2}' in string value '{3}'.</Resolution>
+   </Rule>
+   <Rule TypeName="UsePropertiesWhereAppropriate" Category="Microsoft.Design" CheckId="CA1024">
+    <Resolution Name="Default">Change {0} to a property if appropriate.</Resolution>
+   </Rule>
+  </Rules>
+ </FxCopReport>
+</FxCopProject>

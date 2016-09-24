@@ -1,0 +1,487 @@
+Name	Value	Comment	Value (Orig)
+AboutDescription	"TQVault von bman654 (wickedsoul_@yahoo.com) 
+Hilfe bei Item-Stats von SadYc (sadyc1@gmail.com)
+Zusätzliche Features von
+VillageIdiot (villij-idjit@sbcglobal.net)
+
+Die folgenden zusätzlichen Bibliotheken werden in TQVault benutzt:
+FreeImage - Bild-Bibliothek zum Benutzten von DDS-Formatierten Bilddaten
+zlib_100 - eine .NET Version der zlib-Bibliothek
+CQuickFill & QuickFill.NET - Dieser Quickfill-Algorithmus wurde für die Verwendung in meinem eigenen Algorithmus stark modifiziert, um die Transparenz der Titan Quest Bilder zu gewährleisten .""
+"		"TQVault by bman654 (wickedsoul_@yahoo.com) 
+Help on Item Stats by SadYc (sadyc1@gmail.com)
+Additional features by 
+VillageIdiot (villij-idjit@sbcglobal.net)
+
+The following 3rd party libraries are used in TQVault:
+FreeImage - image library used to read DDS formatted image data
+zlib_100 - a .NET version of the zlib library
+CQuickFill & QuickFill.NET - This quickfill algorithm was heavily modified for use in my own algorithm to reconstruct the transparency data in the Titan Quest images."
+AboutText	Über {0}		About {0}
+AboutVersion	Version {0}		Version {0}
+ARZExtractBtnExtract	Extrahieren 		Extract
+ARZExtractCreateFolder	{0} existiert nicht.  Soll es jetzt Erzeugt werden?		{0} does not exist.  Would you like to create it now?
+ARZExtractCreateFolder2	Ordner erstellen?		Create folder?
+ARZExtractCreateFolderIT	{0} existiert nicht für die IT Database. Soll es jetzt Erzeugt werden?		{0} does not exist for IT database.  Would you like to create it now?
+ARZExtractDestination	Wählen Sie den Zielordner für die extrahierten Datenbankeinträge		Select the destination folder for the extracted database records
+ARZExtractFileDest	"Sie müssen einen Ordner angeben, keine Datei!"		"You must specify a folder, not a file!"
+ARZExtractLabel1	"Gegenwärtig ist es nicht möglich, alle Datenbankeinträge des Spieles zu extrahieren.  Außerdem gibt existiert gegenwärtig einen Fehler im Toolset, der die Felderwerte zerstört, wenn die Einträge einzeln extrahiert werden.  Das Werkzeug kann benutzt werden, zum Extrahieren aller Einträge, welche dann korrekt extrahiert werden."		"Currently there is no way to extract all of the game database records at once.  Also there currently exists a bug in the Toolset that destroys array values when you extract records one by one.  Using this tool, you can now extract all records at once and all the records will be extracted correctly."
+ARZExtractLabel2	"Nachdem Sie die Einträge extrahiert haben, kopieren Sie nur die Gewünschten in ihren Mod-Ordner. "		"After you have extracted the records, just copy the ones you want to use in your mod over to your mod folder."
+ARZExtractLabel3	Bitte einen Ziel-Ordner wählen:		Choose a destination folder:
+ARZExtractLabel4	Bitte einen Ziel-Ordner für die IT Database-Dateien wählen:		Choose a destination folder for IT Database Files:
+ARZExtractLabel5	"Wenn kein Ziel-Ordner für die TQ- und IT-Datenbank angegeben wird, wird der selbe Ordner verwendet. Die IT-Daten überschreiben dann die TQ-Daten bei Konflikte gibt, Sie können aber auch verschiedene Ordner angeben um dies zu vermeiden."		If not populated the destination folders for the TQ database and the IT database will default to the same folder.  The IT files will overwrite the TQ files when there are conflicts though you can select different folders to avoid overwriting files.
+ARZExtractText	Extrahiere die Database.arz		Extract database.arz
+ARZExtractValidDest	Sie müssen einen gültigen Ziel-Ordner wählen.		You must enter a valid destination folder.
+ARZProgressCancelledText	Extrahierung abgebrochen.		Extraction cancelled.
+ARZProgressCompleteText	Extrahierung abgeschlossen.		Extraction complete.
+ARZProgressFailedText	Extrahierung ist fehlgeschlagen.		Extraction Failed.
+ARZProgressLabel	Extrahiere {0} ...		Extracting {0} ...
+ARZProgressLabel1	Extrahiere		Extracting
+ARZProgressText	Extrahiere Database.arz...		Extracting database.arz...
+CmdlineUsage	"Fehler beim Analysieren der Befehlszeilenargumente: {0}
+
+Ausführung: TQVault [playername] [/ mod: < mod Name >]"		"Error parsing command-line arguments: {0}
+
+Usage: TQVault [playername] [/mod:<mod name>]"
+DataDefaultPath	Standard Vault-Pfad		Default Vault Path
+DataDefaultPathMsg	"Der Vault-Pfad ist nicht gesetzt.
+
+Es wird der Standard-Pfad verwendet.
+Bitte überprüfen Sie den Vault-Pfad in der Konfiguration."		"The Vault Path was not set.
+
+Using the default setting.
+Please verify the Vault Path with the configuration dialog."
+DataLink	Bitte den Vault-Pfad updaten		Please Update Vault Path
+DataLinkMsg	Bitten den Vault-Pfad in der Konfiguration aktualisieren.		"Please update the vault path in the
+configuration to reflect the link."
+Form1BadLanguage	"
+
+Ursache kann eine falsche Sprache oder eine falsche Pfadangabe für das Spiel sein.
+Soll TQVault neu gestartet werden?"		"
+
+This may be caused by a bad language or game path setting.
+Would you like to restart TQVault?"
+Would you like to restart TQVault?	Soll TQVault neu gestartet werden?		
+Form1bNext	Öffne den Tresor		Enter The Vault
+Form1ErrorLoadingResources	Fehler beim Laden der Ressourcen		Error Loading Resources
+Form1Label1	"Sei gegrüßt, edler Krieger! Willkommen im …"		Hail Noble Warrior!  Welcome to...
+Form1Label2	"Titan Quest
+Tresor der Götter"		"The Titan Quest
+Vault Of The Gods"
+Form1Label3	"Ein magischer Ort, wo Du all deine Artefakte der Macht lagern kannst, die Du brauchst um die Welt vor den Titanen zu schützen."		A magical place where you can store your artifacts of power that you will need to save the world from the Titans.
+Form1LblPleaseWait	Die Spiel-Ressourcen werden geladen ... Bitte warten		Loading Game Resources... Please Wait
+Form1Text	Titan Quest Item Vault (Tresor für Gegenstände)		Titan Quest Item Vault
+GlobalAbout	Über		About
+GlobalBrowse	Blättern...		Browse...
+GlobalCancel	Abbruch		Cancel
+GlobalError	Fehler		Error
+GlobalExit	Exit		Exit
+GlobalMenuBag	Tasche #{0}	This entry must have the GlobalMenuBagDelimiter or it will break the item and bag move code.	Bag #{0}
+GlobalMenuBagDelimiter	#	Used with GlobalMenuBag to signify bag number in menus.	#
+GlobalOK	OK		OK
+GlobalTransferStash	Übergabebereich		Transfer Stash
+GlobalTrash	Mülleimer		Trash
+ItemIT	Immortal Throne Gegenstand		Immortal Throne Item
+ItemPropertiesCheckBox1Label	Extra-Infos filtern		Filter Extra Info
+ItemPropertiesLabel1	Präfix Eigenschaften		Prefix Properties
+ItemPropertiesLabel2	Basisdaten des Gegenstandes		Base Item Properties
+ItemPropertiesLabel3	Suffix Eigenschaften		Suffix Properties
+ItemPropertiesText	Eigenschaften des Gegenstandes		Item Properties
+ItemQuest	(Questgegenstand)		(Quest Item)
+ItemRelicBonus	(Vervollständigungsbonus: {0})		(Completion Bonus: {0})
+ItemRelicCompleted	(Vervollständigt)		(Completed)
+ItemSeed	Item-Seed: {0} (0x{0:X8}) ({1:p3})		itemSeed: {0} (0x{0:X8}) ({1:p3})
+ItemStyleArtifact	Artekaft		Artifact
+ItemStyleBroken	Kaputter		Broken
+ItemStyleCommon	Gewöhnlicher		Common
+ItemStyleEpic	Epischer		Epic
+ItemStyleFormulae	Formel		Formulae
+ItemStyleLegendary	Legendärer		Legendary
+ItemStyleMundane	Alltäglicher		Mundane
+ItemStyleParchment	Pergament		Parchment
+ItemStylePotion	Trank		Potion
+ItemStyleQuest	Aufgabe		Quest
+ItemStyleRare	Seltener		Rare
+ItemStyleRelic	Relikt		Relic
+ItemStyleScroll	Schriftrolle		Scroll
+ItemWith	mit		with
+MainForm2ndVault	Zweiter Tresor:		2nd Vault:
+MainFormBtnConfigure	Konfigurieren		Configure
+MainFormBtnExtract	Extrahiere Database.arz …		Extract database.arz ...
+MainFormBtnPanelSelect	Zeige Tresor		Show Vault
+MainFormBtnShowPlayer	Zeige Spieler		Show Player
+MainFormCustomMapLabel	{0} Modifikation		{0} Custom Map
+MainFormDatabaseError	Fehler beim Datenbank extrahieren		Error extracting database
+MainFormHoldingItem	"Sie benutzen gegenwärtig einen Gegenstand.
+Bitte legen Sie den Gegenstand irgendwo ab, vor dem Beenden."		"You are currently holding an item.
+Please place the item down somewhere before quitting."
+MainFormHoldingItem2	Bitten den Gegenstand ablegen.		Please set item down.
+MainFormLabel1	Charakter:		Character:
+MainFormLabel2	Tresor:		Vault:
+MainFormLabel4	Suche:		Find:
+MainFormLanguageChanged	Sprache des Spieles geändert		Game Language Changed
+MainFormLanguageChangedMsg	"Die Sprache des Spieles wurde geändert.
+
+TQVault muss neu gestartet werden für eine Aktualisierung.
+Soll TQVault jetzt neu gestartet werden?"		"The Game Language Setting has been changed.
+
+You will need to restart TQVault for it take effect.
+Would you like to restart TQVault now?"
+MainFormMaintainVault	Verwalten der Tresor-Daten...		Maintain Vault Files...
+MainFormMapsChanged	Einstellung der Modifikation geändert		Custom Maps Setting Changed
+MainFormMapsChangedMsg	"Die Einstellung der Modifikation wurden geändert.
+
+TQVault muss neu gestartet werden für eine Aktualisierung.
+Soll TQVault jetzt neu gestartet werden?"		"The Custom Maps setting has been changed.
+
+You will need to restart TQVault for it take effect.
+Would you like to restart TQVault now?"
+MainFormNoCharacters	Keine TQ-Charaktere gefunden		No TQ characters detected
+MainFormNoCustomChars	Keine Modifikationen-Charaktere gefunden		No Custom Map characters detected
+MainFormNoItemQualityFound	"Kein Gegenstand  der Type '{0}'
+und Qualität '{1}' gefunden."		"No items found of type '{0}'
+and quality '{1}'."
+MainFormNoItemsFound	Kein Gegenstand mit '{0}' gefunden.		No items found with '{0}'.
+MainFormNoItemsFound2	Kein Gegenstand gefunden		No Items Found
+MainFormNoItemTypesFound	Kein Gegenstand der Type '{0}' gefunden.		No items found of type '{0}'.
+MainFormPathsChanged	Pfade des Spieles geändert		Game Paths Changed
+MainFormPathsChangedMsg	"Die Pfade des Spieles wurden geändert.
+
+TQVault muss neu gestartet werden für eine Aktualisierung.
+Soll TQVault jetzt neu gestartet werden?"		"The Game Paths have been changed.
+
+You will need to restart TQVault for it take effect.
+Would you like to restart TQVault now?"
+MainFormPlayerReadError	Fehler beim Lesen der Spielerdateien		Error reading player file
+MainFormQuit	"Sind Sie sicher, dass Sie das Programm schließen wollen?"		Are you sure you wish to quit?
+MainFormReadError	"Lesefehler {0}
+Sind Sie es sicher, dass dies eine gültige Datei ist?
+
+{1}"		"Error reading {0}
+Are you sure it is a valid file?
+
+{1}"
+MainFormSaveError	Fehler '{0}' beim Speichern der Dateien		Error saving data for '{0}'
+MainFormSelectCharacter	Wähle einen Charakter		Select a character
+MainFormSelectVault	Wähle einen Tresor		Select a vault
+MainFormSettingsChanged	Einstellungen geändert		Game Settings Changed
+MainFormSettingsChangedMsg	"Die Einstellung wurden geändert.
+
+TQVault muss neu gestartet werden für eine Aktualisierung.
+Soll TQVault jetzt neu gestartet werden?"		"The Game Settings have been changed.
+
+You will need to restart TQVault for it take effect.
+Would you like to restart TQVault now?"
+MainFormStartVaultMon	Soll der TQVaultMon gestartet werden?		Would you like to start TQVaultMon?
+MainFormStartVaultMonMsg	"Es wurde das Inventar von einigen der Charaktere geändert.
+Titan Quest erkennt dies und haltet den Charakter für fehlerhaft
+und der Charakter ist nicht mehr spielbar.
+
+Das Programm TQVaultMon lässt nun Titanen Quest glauben,
+dass der Charakter okay ist und somit auch spielbar.
+Sobald der Charakter einmal erfolgreich geladen wurde, wird der TQVaultMon anschließend nicht mehr benötigt,
+außer man Ändert wiederum etwas.
+
+Es ist Ratsam, jetzt Titan Quest über den TQVaultMon zu starten
+und auch einmal alle Charaktere zu laden, die modifiziert wurden.
+
+Soll der TQVaultMon jetzt gestartet werden?"		"You have just modified the inventory of some of your characters.
+Titan Quest will detect this and think that your character is corrupt
+and will not let you load your character.
+
+TQVaultMon is a program that, when running, will make Titan Quest
+think that your character is okay and will let you load it successfully.
+Once you have successfully loaded your character you will not need to
+use TQVaultMon again unless you make further edits.
+
+It is suggested that you start TQVaultMon now and then run Titan
+Quest and briefly load all of the characters you have just modified.
+
+Would you like to start TQVaultMon now?"
+MainFormStashReadError	Fehler beim Laden des Übergabebereichs		Error reading stash file
+MainFormTrashItems	"Es gibt gegenwärtig {0} Gegenstände im Mülleimer.
+Beim Beenden gehen diese VERLOREN.
+
+Sind Sie sicher, dass diese Gegenstände verloren gehen?"		"There are currently {0} items in the trash.
+If you quit these items will be LOST FOREVER.
+
+Are you sure you wish to throw away these items?"
+MainFormUnableToStartVaultMon	Der TQVaultMon lässt sich nicht starten		Unable to start TQVaultMon
+MainFormVaultMonError	Fehler beim Starten vom TQVaultMon		Error trying to start TQVaultMon
+MainFormVaultMonMsg	"Es war nicht möglich, fest zu stellen, ob der TQVaultMon funktioniert hat.
+Möglicherweise funktioniert der TQVaultMon nicht korrekt.
+Weil aber einige der Charaktere modifiziert wurden, wird TQ diese nun als Fehlerhaft ansehen.
+Um Sie nun trotzdem wieder spielen zu können, wird der TQ Defiler benötigt, den man extra downloaden muss
+und dort die 'Patch' oder 'Fix Me' Option benutzen, um die Charakter wieder als Spielbar zu korrigieren.
+Bei Schwierigkeiten oder Problemen, verständigen Sie mich bitte, mit einer Fehlerbeschreibung,
+vielleicht habe ich eine Lösung für den Fehler, der Sie vor Ärger bewahrt.
+
+Fehlermitteilung folgt
+"		"I was unable to see if TQVaultMon was running.
+Most likely TQVaultMon will not work either.
+Because you have modified some of your characters, TQ will think your characters are corrupt.
+In order to successfully load the game and play, you will need to download TQ Defiler
+and use its 'Patch' or 'Fix Me' options to let the game validate your character.
+If you do not mind, please contact me and let me know about this problem
+because I may have a solution to the error that will save you some hassles.
+
+Error message follows
+"
+MaintenanceBadChars	Sie benutzen einen ungültigen Charakter.		You used invalid characters.
+MaintenanceBadName	Sie müssen einen Namen für den neuen Tresor eingeben		You must enter a name for the new vault
+MaintenanceCopy	"Wählen Sie bitte die Datei aus der Dropdown-Liste zum Kopieren aus
+und geben einen Namen dafür im Ziel-Dialog ein."		"Please select the source to copy from the source drop down list
+and then type the destination name in the target box below."
+MaintenanceDelete	"Wählen Sie bitte die Datei aus der Dropdown-Liste, die Gelöscht werden soll."		Please select the vault to delete from the source drop down list.
+MaintenanceDuplicate	Doppelter Tresor-Name		Duplicate Vault Name
+MaintenanceExists	Ein Tresor mit dem Namen {0} gibt es bereits.		A vault named {0} already exists.
+MaintenanceGroup	Funktion wählen		Select Function
+MaintenanceInstructions	Anweisungen		Instructions
+MaintenanceInvalidName	Ungültiger Tresor-Name		Invalid Vault Name
+MaintenanceInvalidSourceName	Ungültiger Quell-Tresor-Name		Invalid Source Vault Name
+MaintenanceNew	"Bitte geben Sie unter Ziel einen neuen Namen für den Tresor ein.
+
+Folgende Zeichen können nicht verwendet werden:
+"		"Please type a name for your new vault in the target box below.
+
+You may not use the following characters:
+"
+MaintenanceNoCopyTarget	Geben Sie einen neuen Namen für den kopierten Tresor ein.		You must enter a new name for your copied vault
+MaintenanceRbCopy	Tresor kopieren		Copy a Vault
+MaintenanceRbDelete	Tresor löschen		Delete a Vault
+MaintenanceRbNew	Neuen Tresor erstellen		Create a New Vault
+MaintenanceRbRename	Tresor umbenennen		Rename a Vault
+MaintenanceRename	"Zum Umbenennen wählen Sie bitte eine Datei aus der Dropdown-Liste 
+und geben einen Namen dafür im Ziel-Dialog ein."		"Please select the vault to rename from the source drop down list
+and then type the new name in the target box below."
+MaintenanceSource	Quelle		Source
+MaintenanceSourceNoExist	Quell-Tresor existiert nicht.		Source Vault does not exist.
+MaintenanceTarget	Ziel		Target
+MaintenanceText	Tresor-Wartung		Vault Maintenance
+PlayerOverwriteSack	Sack überschreiben		Overwrite Sack
+PlayerOverwriteSackMsg	"Das Ziel ist nicht leer.
+Soll es Überschrieben werden?"		"The destination is not empty.
+Are you sure you want to overwrite?"
+PlayerPanelEmpty	Leere Tasche?		Empty Bag?
+PlayerPanelEmptyMsg	Sollen wirklich alle Gegenstände in der Tasche gelöscht werden?		Are you sure you wish to delete all of the items in the bag?
+PlayerPanelMenuCopy	Tasche kopieren		Copy Bag
+PlayerPanelMenuEmpty	Tasche löschen		Empty Bag
+PlayerPanelMenuMerge	Tasche verbinden		Merge Bag
+PlayerPanelMenuMove	Tasche verschieben		Move Bag
+PlayerPanelNoPlayer	(Kein Charakter gewählt)		(No character selected)
+PlayerPanelNoVault	(Kein Tresor gewählt)		(No vault selected)
+ResultsContainer	Behälter		Container
+ResultsContainerEquip	Ausrüstung		Equipment
+ResultsContainerPlayer	Spieler		Player
+ResultsContainerStash	Lager		Stash
+ResultsContainerType	Behältertype		ContainerType
+ResultsContainerVault	Tresor		Vault
+ResultsItem	Gegenstand		Item
+ResultsQuality	Qualität		Quality
+ResultsSack	Sack		Sack
+ResultsText	{0} Gegenstände mit '{1}' gefunden		{0} Items Found with '{1}'
+SackPanelAutoSort	Gegenstand bitte ablegen.		Please set item down.
+SackPanelAutoSortError	Fehler beim Autosort.		Autosort Error.
+SackPanelAutoSortErrorMsg	"Beim Sortieren trat ein Fehler auf.
+Es sind nicht alle Gegenstände sortiert worden."		"There was an error during sorting.
+Not all items have been placed."
+SackPanelAutoSortMsg	"Es wird gegenwärtig ein Gegenstand benutzt.
+Zum Sortieren, bitte den Gegenstand ablegen."		"You are currently holding an item.
+Please place the item down somewhere before sorting."
+SackPanelDelete	Gegenstand löschen		Delete Item
+SackPanelDeleteMsg	"Der Gegenstand wird ENDGÜLTIG gelöscht!
+Soll der Gegenstand wirklich gelöscht werden?"		"This item will be PERMANENTLY DELETED!
+Are you sure you want to delete this item?"
+SackPanelDeleteMulti	Mehrere Gegenstände löschen		Delete Multiple Items
+SackPanelDeleteMultiMsg	Sollen die gewählten Gegenstände wirklich ENDGÜLTIG gelöscht werden?		Are you sure you want to PERMANENTLY DELETE the selected items?
+SackPanelMenuBonus	Vervollständigungsbonus ändern		Change Completion Bonus
+SackPanelMenuCharm	Talisman vervollständigen		Complete Charm
+SackPanelMenuClear	Auswahl rücksetzen		Clear Selection
+SackPanelMenuCopy	Gegenstand kopieren		Copy Item
+SackPanelMenuDelete	Löschen		Delete
+SackPanelMenuDuplicate	Gegenstand duplizieren		Duplicate Item
+SackPanelMenuMoveTo	Gegenstand verschieben nach		Move Item To
+SackPanelMenuPlayer	Spieler-Bereich		Player Panel
+SackPanelMenuProperties	Eigenschaften		Properties
+SackPanelMenuRelic	Relikt vervollständigen		Complete Relic
+SackPanelMenuRemoveRelic	Relikt entfernen		Remove Relic
+SackPanelMenuSeed	Item-Seed ändern...		Change Item Seed...
+SackPanelMenuSet	Set-Gegenstand erzeugen		Create Set Items
+SackPanelMenuSplit	Teilen		Split
+SackPanelMenuStash	Lager-Bereich		Stash Panel
+SackPanelMenuTrash	Mülleimer-Bereich		Trash Panel
+SackPanelMenuVault	Tresor-Bereich		Vault Panel
+SackPanelMenuVault2	Zweiter Tresor		Secondary Vault
+SackPanelRemoveRelicMsg	Soll das Relikt wirklich vom Gegenstand getrennt werden?		Are you sure you want to remove the relic from this item?
+SeedBtnRandom	Zufällig		Random
+SeedLabel1	"Titan Quest steuert über die Item-Seed die Vergabe der Werte der Gegenstände,
+damit fast keine 2 Gegenstände gleich aussehen.
+Es ist genau bekannt, wie die Item-Seed den Gegenstand beeinflusst.
+Das Ändern der Item-Seed verursacht eine leichte Änderung der Werte
+des Gegenstandes, welche dann beim nächsten Spielstart ersichtlich werden.
+
+Wählen Sie eine Zahl zwischen 1 und 32767 aus"		"Titan Quest uses the Item Seed to randomize the stats
+of your items so that no two items look exactly alike.
+It is unknown exactly how the seed affects your item
+stats.  Changing the seed will cause some slight change
+in the stats of your item the next time you play the game.
+
+Pick a number between 1 and 32767"
+SeedRange	"Die Item-Seed muss eine gültige, ganze Zahl zwischen 1 und 32767 sein"		Item Seed must be a valid integer between 1 and 32767
+SeedText	Item-Seed ändern		Change Item Seed
+SettingsAllowCopy	Das Kopieren von Gegenständen erlauben		Allow Item Copying
+SettingsAllowCopyTT	Ermöglicht das Kopien über das Kontestmenü.		Enables copy selection in the context menu.
+SettingsAllowEdit	Die Editier-Möglichkeiten von Gegenständen erlauben		Allow Item Editing Features
+SettingsAllowEditTT	"Aktiviert die Editiermöglichkeiten im Kontextmenü.
+Dies Beinhaltet die Erzeugung und Manipulation von Gegenständen."		"Turns on the editing features in the context menu.
+These include item creation and modification."
+SettingsAutoUpdate	Automatische Überprüfung auf Updates		Automatically Check For Updates
+SettingsAutoUpdateTT	"Wenn diese Funktion aktiviert ist,
+wird im Web nach einer neuen Versionen von TQVault gesucht,
+beim Programmstart. Dies kann einen verzögerten Start verursachen,
+wenn eine langsame Netzwerkverbindung besteht."		"Selecting this item will automatically check
+for new versions of TQVault on the web when
+the program starts up.  May cause startup to
+take longer if the network connection is slow."
+SettingsBrowseIT	"Wählen Sie bitte den Pfad aus, wo sich die Immortal Throne Spieldaten befinden."		Please select the path for the Immortal Throne game files.
+SettingsBrowseTQ	"Wählen Sie bitte den Pfad aus, wo sich die Titan Quest Spieldaten befinden."		Please select the path for the Titan Quest game files.
+SettingsBrowseVault	"Wählen Sie bitte den Pfad aus, wo sich die TQVault Tresor-Datenbefinden."		Please select the path for TQVault Vault files.
+SettingsDetectGamePath	Autodetect Spiel-Pfade		Autodetect Game Paths
+SettingsDetectLanguage	Autodetect Sprache		Autodetect Language
+SettingsEnableMod	Aktiviere Modifikationen		Enable Custom Maps
+SettingsEnableModTT	"Diese Einstellung schaltet
+das Dropdown-Menü für
+die Modifikationen frei."		"Selecting this item will 
+enable the dropdown
+to select custom maps."
+SettingsFilterGroup	Spielerauswahl filtern		Filter Player List
+SettingsFilterIT	IT-Charaktere filtern		Filter IT Characters
+SettingsFilterITTT	"Nur originale TQ-Charaktere werden in der Charakterauswahl
+angezeigt. Ein Ändern der Einstellung 
+bewirkt ein Neuladen der Charakterauswahl."		"Only original TQ Characters are shown on the
+character list.  Changing these items causes 
+the character list to be reloaded."
+SettingsFilterNone	Kein Filter		No Filter
+SettingsFilterNoneTT	"Keine Filtrierung der Charakterauswahl.
+Ein Ändern der Einstellung bewirkt
+ein Neuladen der Charakterauswahl."		"No filtration of the character list.
+Changing these items causes the character list
+to be reloaded."
+SettingsFilterTQ	TQ-Charaktere filtern		Filter TQ Characters
+SettingsFilterTQTT	"Nur TI-Charaktere werden in der Charakterauswahl
+angezeigt. Ein Ändern der Einstellung 
+bewirkt ein Neuladen der Charakterauswahl."		"Only IT Characters are shown on the character list.
+Changing these items causes the character list
+to be reloaded."
+SettingsForceCheck	Jetzt Überprüfen		Check Now
+SettingsForceCheckTT	"Manuelle Überprüfung, ob ein Update 
+verfügbar wäre."		"Manually checks if there are any updates
+available."
+SettingsLabel1	Tresor-Pfad		Vault Path
+SettingsLabel2	Spiel-Sprache		Game Language
+SettingsLabel3	TQ Spiel-Pfad		TQ Game Path
+SettingsLabel4	IT Spiel-Pfad		IT Game Path
+SettingsLabel5	Modifikation		Custom Map
+SettingsLoadChar	Den zuletzt verwendeten Charakter automatisch laden		Automatically Load the last opened Character
+SettingsLoadCharTT	"Diese Option lädt automatischen den zuletzt verwendeten
+Charakter, der beim Beenden von TQVault aktiv war."		"Selecting this option will automatically load
+the last open character when TQVault was closed."
+SettingsLoadVault	Die zuletzt verwendete Tresordatei automatisch laden		Automatically Load the last opened Vault
+SettingsLoadVaultTT	"Diese Option lädt automatisch die zuletzt 
+verwendete Tresordatei, die Offen war.
+Wenn keine Tresordatei offen war,
+dann wird die 'Main Vault' geladen."		"Selecting this item will automatically load the
+last opened vault when TQVault was closed.
+TQVault will automatically open Main Vault
+if nothing is chosen."
+SettingsNoWarning	Bestätigungsmeldungen übergehen		Bypass Confirmation Messages
+SettingsNoWarningTT	"Diese Option deaktiviert sämtliche Rückfragen,
+wie z.B. beim Entfernen der Relikte oder
+falls sich im Mülleiner noch Gegenstände befinden,
+beim Beenden von TQVault."		"When enabled, confirmation messages will no
+longer be shown for item deletion and
+relic removal or if there are items in the trash
+when TQVault is closed."
+SettingsPreLoad	Alle Tresor- und Charakter-Dateien vorab laden		Pre-Load All Vault And Character Files
+SettingsPreLoadTT	"Diese Option lädt automatisch alle
+verfügbaren Charakter-, Lager- und Tresor-Dateien
+beim Starten. Dies beschleunigt die Suchfunktion, aber
+verlängert den Startvorgang."		"Selecting this item will automatically load all
+of the available character, stash and vault files
+on startup.  This aids the search function, but
+increases startup time."
+SettingsReset	Reset		Reset
+SettingsResetTT	"Ein Reset durchführen, um die
+aktuellen Einstellungen zu übernehmen."		"Causes the configuration to Reset to the
+last saved configuration."
+SettingsSkipTitle	Den Titel-Screen automatisch überspringen		Automatically Bypass Title Screen
+SettingsSkipTitleTT	"Diese Option übergibt automatisch ein Enter
+um den Titel-Screen zu Schließen."		"Ticking this box will automatically hit
+the Enter key on the title screen."
+StashNotFound	Kann keine Lager-Datei finden.		Cannot find Stash file.
+StashNotFoundMsg	"Die Lager-Datei kann nicht gefunden werden.
+Besuchen Sie bitten den Karawanentreiber im Spiel, um eine Lager-Datei zu erstellen.
+Der Lagerbereich wird für diesen Charakter nicht verfügbar sein."		"The Stash file cannot be found.
+Please visit the Caravan Trader in game to create the file.
+The Storage Area tab will be unavailable for this character."
+StashPanelBtn1	Ausrüstung		Equipment
+StashPanelBtn2	Übergabebereich		Transfer Area
+StashPanelBtn3	Lagerbereich		Storage Area
+StashPanelText	Karawane		Caravan
+UpdateCompletion	{0}    {1} % beendet.		{0}    {1} % complete.
+UpdateCompletion2	{0}    0 % beendet.		{0}    0 % complete.
+UpdateCurrentVer	Aktuelle Version: {0}		Current Version: {0}
+UpdateError	Das Setup kann nicht gestartet werden		Cannot Start Setup
+UpdateErrorMsg	"Es besteht ein Problem mit der Datei oder beim Extrahieren.
+Laden Sie bitte die Datei neu und installieren sie es neuerlich.
+Klicken sie auf OK zum Beenden."		"There was a problem with the download or the extraction.
+Please download the latest full setup install package and run it manually.
+Click OK to exit."
+UpdateFullInstall	"Eine neuere Version von TQVault ist verfügbar, welche aber eine Neu-Installation verlangt."		A newer version of TQVault has been found which requires a full installation.
+UpdateLatestVer	Aktuelle Version: {0}		Latest Version: {0}
+UpdateMinVer	Kleinste Version: {0}		Minimum Version: {0}
+UpdateNewTQVault	Eine neuere Version von TQVault ist vorhanden.		A newer version of TQVault has been found.
+UpdateNewUpdater	Eine neuere Version des TQVault-Updateprogrammes ist vorhanden.		A newer version of the TQVault update program has been found.
+UpdateNoUpdate	Ihre Version ist auf am neusten Stand.		Your version is up to date.
+UpdatePerform	"Klicken Sie auf OK, um das Update aufzuführen."		Click OK to perform an update.
+UpdatePerformBoth	"Klicken Sie auf OK, um beide Updates aufzuführen."		Click OK to perform both updates.
+UpdateRunInstall	"Klicken Sie auf OK, um die Installation zu laden und zu starten."		Click OK to download and run the installer.
+UpdateStreamError	"Es ist beim Verbinden zum Updateserver eine Fehler aufgetreten.
+Das Update kann nicht aufgeführt werden."		"There was an error connecting to the update server.
+An update cannot be performed."
+UpdateText	TQVault Update		TQVault Updates
+UpdateUpdaterNotFound	"Das TQVault-Updateprogramm konnte nicht gefunden werden, oder der Name hat sich geändert."		The TQVault update program was either not found or the name has changed.
+VaultProgressText	Player- und Tresor-Daten werden geladen …		Loading Player and Vault Files...
+UpdateStreamError	"Beim Verbinden mit den Update-Server ist ein Fehler aufgetreten.
+Ein Update wurde nicht durchgeführt."		"There was an error connecting to the update server.
+An update cannot be performed."
+			
+			
+VaultGroupBoxEmpty	<Leer>		<EMPTY>
+MainFormDisableLoadAllFiles	"There was an error attempting to load all files in the last run.
+Would you like to disable loading all files?"		"There was an error attempting to load all files in the last run.
+Would you like to disable loading all files?"
+MainFormDisableLoadAllFilesCaption	Disable loading all files?		Disable loading all files?
+MainFormSearchButtonText	Suche	Same as MainFormLabel4	Search
+SearchDialogCaption	Search for an Item		Search for an Item
+SearchDialogText	"Search for an item name or type within the loaded files.
+Includes all loaded player character inventories, vaults, player stashes and the transfer stash.
+
+Use @ to specify an item type instead of name.  This must be the first character of the search string.
+For example, to search for only swords use @sword
+
+Use & after the name or type to filter by item rarity.
+For example, to filter only rare items append &rare to your search string.
+The terms can also be combined @sword&rare would only search for rare swords."		"Search for an item name or type within the loaded files.
+Includes all loaded player character inventories, vaults, player stashes and the transfer stash.
+
+Use @ to specify an item type instead of name.  This must be the first character of the search string.
+For example, to search for only swords use @sword
+
+Use & after the name or type to filter by item rarity.
+For example, to filter only rare items append &rare to your search string.
+The terms can also be combined @sword&rare would only search for rare swords."
+SettingsEnableNewUI	Enable New User Interface		Enable New User Interface
+SettingsEnableNewUITT	"Selecting this item will enable the new
+Titan Quest themed user interface."		"Selecting this item will enable the new
+Titan Quest themed user interface."

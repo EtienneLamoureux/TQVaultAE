@@ -1,0 +1,16 @@
+ARZExtract:
+v1.0.0.0
+Initial Release.
+Take the C# converted TQVault code and create a skeleton application.
+
+ARZExplorer:
+v1.0.0.0
+Add Vorbis' fix for extended characters in the database.
+Remove the dialog based UI and create a menu based UI.
+Changed to mirror ARCExplorer and renamed to ARZExplorer.
+
+v1.0.1.0
+Added support for ARC files. 
+	Will display txt files in the text pane.
+Added width resizing of panes.
+Added ability to drop files onto the main form.

@@ -1,0 +1,279 @@
+namespace TQVault
+{
+    partial class MainForm
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            this.bExit = new System.Windows.Forms.Button();
+            this.bCharacter1 = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.itemTextPanel = new System.Windows.Forms.Panel();
+            this.itemText = new System.Windows.Forms.Label();
+            this.cbVaultList = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.btnExtract = new System.Windows.Forms.Button();
+            this.configure_btn = new System.Windows.Forms.Button();
+            this.customMapText = new System.Windows.Forms.Label();
+            this.btnPanelSelect = new System.Windows.Forms.Button();
+            this.tbSearch = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.cbSecondaryVaultList = new System.Windows.Forms.ComboBox();
+            this.btnAbout = new System.Windows.Forms.Button();
+            this.itemTextPanel.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // bExit
+            // 
+            this.bExit.BackColor = System.Drawing.Color.Gold;
+            this.bExit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.bExit.Location = new System.Drawing.Point(919, 585);
+            this.bExit.Margin = new System.Windows.Forms.Padding(4);
+            this.bExit.Name = "bExit";
+            this.bExit.Size = new System.Drawing.Size(80, 25);
+            this.bExit.TabIndex = 0;
+            this.bExit.Text = "Exit";
+            this.bExit.UseVisualStyleBackColor = false;
+            this.bExit.Click += new System.EventHandler(this.bExit_Click);
+            // 
+            // bCharacter1
+            // 
+            this.bCharacter1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.bCharacter1.Location = new System.Drawing.Point(88, 40);
+            this.bCharacter1.Margin = new System.Windows.Forms.Padding(4);
+            this.bCharacter1.MaxDropDownItems = 10;
+            this.bCharacter1.Name = "bCharacter1";
+            this.bCharacter1.Size = new System.Drawing.Size(250, 21);
+            this.bCharacter1.TabIndex = 1;
+            this.bCharacter1.SelectedIndexChanged += new System.EventHandler(this.bCharacter1_SelectedIndexChanged);
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Location = new System.Drawing.Point(8, 33);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(76, 32);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Character:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // itemTextPanel
+            // 
+            this.itemTextPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
+            this.itemTextPanel.Controls.Add(this.itemText);
+            this.itemTextPanel.Location = new System.Drawing.Point(68, 333);
+            this.itemTextPanel.Margin = new System.Windows.Forms.Padding(4);
+            this.itemTextPanel.Name = "itemTextPanel";
+            this.itemTextPanel.Size = new System.Drawing.Size(789, 20);
+            this.itemTextPanel.TabIndex = 4;
+            // 
+            // itemText
+            // 
+            this.itemText.AutoSize = true;
+            this.itemText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+            this.itemText.Font = new System.Drawing.Font("Arial Black", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.itemText.Location = new System.Drawing.Point(3, 2);
+            this.itemText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.itemText.Name = "itemText";
+            this.itemText.Size = new System.Drawing.Size(0, 15);
+            this.itemText.TabIndex = 0;
+            // 
+            // cbVaultList
+            // 
+            this.cbVaultList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbVaultList.Location = new System.Drawing.Point(410, 42);
+            this.cbVaultList.Margin = new System.Windows.Forms.Padding(4);
+            this.cbVaultList.Name = "cbVaultList";
+            this.cbVaultList.Size = new System.Drawing.Size(282, 21);
+            this.cbVaultList.TabIndex = 5;
+            this.cbVaultList.SelectedIndexChanged += new System.EventHandler(this.cbVaultList_SelectedIndexChanged);
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Location = new System.Drawing.Point(346, 36);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(58, 30);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Vault:";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // btnExtract
+            // 
+            this.btnExtract.BackColor = System.Drawing.Color.Gold;
+            this.btnExtract.Location = new System.Drawing.Point(859, 6);
+            this.btnExtract.Margin = new System.Windows.Forms.Padding(4);
+            this.btnExtract.Name = "btnExtract";
+            this.btnExtract.Size = new System.Drawing.Size(140, 24);
+            this.btnExtract.TabIndex = 8;
+            this.btnExtract.Text = "Extract database.arz ...";
+            this.btnExtract.UseVisualStyleBackColor = false;
+            this.btnExtract.Click += new System.EventHandler(this.btnExtract_Click);
+            // 
+            // configure_btn
+            // 
+            this.configure_btn.BackColor = System.Drawing.Color.Gold;
+            this.configure_btn.Location = new System.Drawing.Point(27, 585);
+            this.configure_btn.Margin = new System.Windows.Forms.Padding(4);
+            this.configure_btn.Name = "configure_btn";
+            this.configure_btn.Size = new System.Drawing.Size(80, 25);
+            this.configure_btn.TabIndex = 9;
+            this.configure_btn.Text = "Configure";
+            this.configure_btn.UseVisualStyleBackColor = false;
+            this.configure_btn.Click += new System.EventHandler(this.configure_btn_Click);
+            // 
+            // customMapText
+            // 
+            this.customMapText.BackColor = System.Drawing.Color.Gold;
+            this.customMapText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.customMapText.Font = new System.Drawing.Font("Albertus MT", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.customMapText.ForeColor = System.Drawing.Color.Black;
+            this.customMapText.Location = new System.Drawing.Point(264, 581);
+            this.customMapText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.customMapText.Name = "customMapText";
+            this.customMapText.Size = new System.Drawing.Size(468, 29);
+            this.customMapText.TabIndex = 11;
+            this.customMapText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btnPanelSelect
+            // 
+            this.btnPanelSelect.BackColor = System.Drawing.Color.Gold;
+            this.btnPanelSelect.Location = new System.Drawing.Point(54, 75);
+            this.btnPanelSelect.Margin = new System.Windows.Forms.Padding(4);
+            this.btnPanelSelect.Name = "btnPanelSelect";
+            this.btnPanelSelect.Size = new System.Drawing.Size(115, 24);
+            this.btnPanelSelect.TabIndex = 12;
+            this.btnPanelSelect.Text = "Show Vault";
+            this.btnPanelSelect.UseVisualStyleBackColor = false;
+            this.btnPanelSelect.Click += new System.EventHandler(this.btnPanelSelect_Click);
+            // 
+            // tbSearch
+            // 
+            this.tbSearch.Location = new System.Drawing.Point(288, 78);
+            this.tbSearch.Margin = new System.Windows.Forms.Padding(4);
+            this.tbSearch.Name = "tbSearch";
+            this.tbSearch.Size = new System.Drawing.Size(404, 20);
+            this.tbSearch.TabIndex = 13;
+            this.tbSearch.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbSearch_KeyPress);
+            // 
+            // label4
+            // 
+            this.label4.BackColor = System.Drawing.Color.Transparent;
+            this.label4.Location = new System.Drawing.Point(177, 77);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Name = "label4";
+            this.label4.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label4.Size = new System.Drawing.Size(97, 21);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Find:";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // cbSecondaryVaultList
+            // 
+            this.cbSecondaryVaultList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbSecondaryVaultList.Location = new System.Drawing.Point(88, 50);
+            this.cbSecondaryVaultList.Margin = new System.Windows.Forms.Padding(4);
+            this.cbSecondaryVaultList.MaxDropDownItems = 10;
+            this.cbSecondaryVaultList.Name = "cbSecondaryVaultList";
+            this.cbSecondaryVaultList.Size = new System.Drawing.Size(250, 21);
+            this.cbSecondaryVaultList.TabIndex = 15;
+            this.cbSecondaryVaultList.SelectedIndexChanged += new System.EventHandler(this.cbSecondaryVaultList_SelectedIndexChanged);
+            // 
+            // btnAbout
+            // 
+            this.btnAbout.BackColor = System.Drawing.Color.Gold;
+            this.btnAbout.Location = new System.Drawing.Point(11, 6);
+            this.btnAbout.Margin = new System.Windows.Forms.Padding(4);
+            this.btnAbout.Name = "btnAbout";
+            this.btnAbout.Size = new System.Drawing.Size(70, 24);
+            this.btnAbout.TabIndex = 16;
+            this.btnAbout.Text = "About";
+            this.btnAbout.UseVisualStyleBackColor = false;
+            this.btnAbout.Click += new System.EventHandler(this.btnAbout_Click);
+            // 
+            // MainForm
+            // 
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.BackgroundImage = global::TQVault.Properties.Resources.MainForm_Background;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.CancelButton = this.bExit;
+            this.ClientSize = new System.Drawing.Size(1009, 618);
+            this.Controls.Add(this.btnAbout);
+            this.Controls.Add(this.cbSecondaryVaultList);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.tbSearch);
+            this.Controls.Add(this.btnPanelSelect);
+            this.Controls.Add(this.customMapText);
+            this.Controls.Add(this.configure_btn);
+            this.Controls.Add(this.btnExtract);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.cbVaultList);
+            this.Controls.Add(this.itemTextPanel);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.bCharacter1);
+            this.Controls.Add(this.bExit);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4);
+            this.MaximizeBox = false;
+            this.Name = "MainForm";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Titan Quest Item Vault";
+            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
+            this.Closing += new System.ComponentModel.CancelEventHandler(this.MainForm_Closing);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
+            this.itemTextPanel.ResumeLayout(false);
+            this.itemTextPanel.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Button bExit;
+       	private System.Windows.Forms.ComboBox bCharacter1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Panel itemTextPanel;
+        private System.Windows.Forms.Label itemText;
+       	private System.Windows.Forms.ComboBox  cbVaultList;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnExtract;
+        private System.Windows.Forms.Button configure_btn;
+        private System.Windows.Forms.Label customMapText;
+        private System.Windows.Forms.Button btnPanelSelect;
+        private System.Windows.Forms.TextBox tbSearch;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox cbSecondaryVaultList;
+        private System.Windows.Forms.Button btnAbout;
+    }
+}

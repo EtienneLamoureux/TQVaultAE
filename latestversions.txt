@@ -1,0 +1,87 @@
+; TQVault autoupdate version file
+; 4/17/2010
+
+; This is the latest version available for updating.
+; This should be the version of the files on the FTP server.
+LatestVersion=2.3.0.4
+
+; The minimum allowed version for updating to the latest version.
+; Less than the full version will trigger a full install.
+MinimumVersion=2.2.2.2
+
+; The name of the setup file which will get downloaded
+; Only arc format from TQ is supported.  ZIP is not supported.
+; Will get decompressed into the base application directory.
+SetupArchive=FullInstall.arc
+
+; After the setup package is decompressed this will get executed.
+SetupName=setup.exe
+
+; Version of the Update program.
+; If this version is changed a new version of the update program
+; will be downloaded and installed prior to patching.
+UpdaterVersion=1.0.0.0
+
+; The name of the udpate program
+; Any existing program of this name will get renamed
+; and this will take its place.
+; Also used to kick off an update along with the params.
+UpdaterName=TQVUpdate.exe
+
+; Parameters for launching the update program
+; The <AppPath> tag will get replaced by the current path of the program
+; which should be your TQVault base directory.
+; The <TQVault> tag will get replaced by the full path of your TQVault.exe
+UpdaterParams="http://www.soulseekkor.com/apps/tqvault/NoInstall.arc"
+
+; Use the exclaimation point for to list the changes
+; Will display in the update dialog in the sequence that they show here.
+
+!Changes in 2.3.0.4:
+!- Port the source to C#:
+!-- Clean up the code a little bit getting rid of some unused items.
+!-- QuickFill is now a separate DLL (and project which is included with the source).
+!-- Moved the image resources out of zlib and into the main project resources.
+!-- Settings are also now part of the resources and are stored in the user's application data area.
+!-- Strings are also part of the resources to support localization.
+!
+!- Rewrote Search code:
+!-- Fixes issue with exception on new characters that have not entered the game.
+!-- Added item quality to search results.
+!-- Added ability to filter by quality when searching by type.  Use the ampersand (&).
+!--- For example to search for rare swords use: @sword&rare
+!-- Added ability to search by item type.  Prefix the string with at (@) to search by type.
+!--- For example: @sword will search for all swords.
+!- Added some UI Enhancements:
+!-- The UI will now translate to French, Spanish, German and Russian.
+!--- Thanks to Jean, Vifarc, FOE and Xelat for providing translations.
+!--- Spanish was done by Google to test localization.  Probably very bad and needs to be redone.
+!-- UI Language will use the game language setting if not autodetecting.
+!--- If autodetecting the OS language is used.
+!--- The UILanguage key in the config file will override both values and set the UI language.
+!-- Game Language dropdown should now display in the native language of the installed .NET framework.
+!-- Moved contact information to an About box.
+!-- Added support for scaling.
+!--- Now shows correctly with 120 DPI or 144 DPI fonts.
+!-- Changed button text to dynamically resize if it is too large to fit in the button bounding box.
+!-- Changed icon.
+!--- The old icon looked corrupted on most displays.
+!--- Now uses the in in game model of the Majestic Chest.
+!- Added warning for the empty bag function.
+!- Added that turning off copying also supresses bag copying in the vault.
+!- Improve Vault Maintenance a little:
+!-- Can now use maintenance functions on the Main Vault.
+!-- Selecting from the source dropdown now automatically highlights and sets focus to the destination.
+!
+!- Fix AutoUpdate:
+!-- Fixed issue where update would trigger if update server could not be contacted.
+!-- Force updater always pull version info from the server.  Previously it would pull from the cache.
+!-- Fixed issue with Update dialog closing during full setup download.
+!-- Added support for subdirectories in ARC files.  Done for full setup updates.
+!- Fix strange requirement values.
+!-- Changed numeric conversions to now use the Invariant culture since internally everything is in US English format.
+!- Fixed issue where stash CRC would overflow when attempting to inject the calculated CRC back into the save stream.
+!- Fixed a bug where the search grid would crash if the header was double clicked.
+!- Fix issue that IT was sometimes not detected
+!-- Add searching for any file that matches TQIT*.exe to determine if IT is installed.
+!- Fix decoding of extended characters in the database. (Thanks Vorbis)
