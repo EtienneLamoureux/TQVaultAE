@@ -161,9 +161,9 @@ namespace TQVaultData
         /// <returns>Returns byte array of the data corresponding to the string ID.</returns>
         public byte[] GetData(string dataId)
         {
-            if (TQDebug.ArcFileDebugLevel > 0) 
+            if (TQDebug.ArcFileDebugLevel > 0)
             {
-                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "ARCFile.GetData({0})", dataId)); 
+                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "ARCFile.GetData({0})", dataId));
             }
 
             if (!this.fileHasBeenRead)
@@ -184,11 +184,11 @@ namespace TQVaultData
 
             // First normalize the filename
             dataId = TQData.NormalizeRecordPath(dataId);
-            if (TQDebug.ArcFileDebugLevel > 1) 
-            { 
-                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Normalized dataID = {0}", dataId)); 
+            if (TQDebug.ArcFileDebugLevel > 1)
+            {
+                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Normalized dataID = {0}", dataId));
             }
-            
+
             // Find our file in the toc.
             // First strip off the leading folder since it is just the ARC name
             int firstPathDelim = dataId.IndexOf('\\');
@@ -211,7 +211,7 @@ namespace TQVaultData
                     TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error - {0} not found.", dataId));
                 }
 
-                return null; 
+                return null;
             }
 
             // Now open the ARC file and read in the record.
@@ -229,9 +229,9 @@ namespace TQVaultData
                     if (TQDebug.ArcFileDebugLevel > 1)
                     {
                         TQDebug.DebugWriteLine(string.Format(
-                            CultureInfo.InvariantCulture, 
+                            CultureInfo.InvariantCulture,
                             "Offset={0}  Size={1}",
-                            directoryEntry.FileOffset, 
+                            directoryEntry.FileOffset,
                             directoryEntry.RealSize));
                     }
 
@@ -241,7 +241,7 @@ namespace TQVaultData
                 else
                 {
                     // The data was compressed so we attempt to decompress it.
-                    foreach (ARCPartEntry partEntry in directoryEntry.Parts)                         
+                    foreach (ARCPartEntry partEntry in directoryEntry.Parts)
                     {
                         // seek to the part we want
                         arcFile.Seek(partEntry.FileOffset, SeekOrigin.Begin);
@@ -272,9 +272,9 @@ namespace TQVaultData
                     }
                 }
 
-                if (TQDebug.ArcFileDebugLevel > 0) 
-                { 
-                    TQDebug.DebugWriteLine("Exiting ARCFile.GetData()"); 
+                if (TQDebug.ArcFileDebugLevel > 0)
+                {
+                    TQDebug.DebugWriteLine("Exiting ARCFile.GetData()");
                 }
 
                 return data;
@@ -290,9 +290,9 @@ namespace TQVaultData
         {
             try
             {
-                if (TQDebug.ArcFileDebugLevel > 0) 
+                if (TQDebug.ArcFileDebugLevel > 0)
                 {
-                    TQDebug.DebugWriteLine("ARCFile.ReadARCFile()"); 
+                    TQDebug.DebugWriteLine("ARCFile.ReadARCFile()");
                 }
 
                 if (!this.fileHasBeenRead)
@@ -304,10 +304,10 @@ namespace TQVaultData
                 {
                     string dataID = string.Concat(Path.GetFileNameWithoutExtension(this.FileName), "\\", dirEntry.FileName);
 
-                    if (TQDebug.ArcFileDebugLevel > 1) 
+                    if (TQDebug.ArcFileDebugLevel > 1)
                     {
-                        TQDebug.DebugWriteLine(string.Concat("Directory Filename = ", dirEntry.FileName)); 
-                        TQDebug.DebugWriteLine(string.Concat("dataID = ", dataID)); 
+                        TQDebug.DebugWriteLine(string.Concat("Directory Filename = ", dirEntry.FileName));
+                        TQDebug.DebugWriteLine(string.Concat("dataID = ", dataID));
                     }
 
                     byte[] data = this.GetData(dataID);
@@ -328,7 +328,7 @@ namespace TQVaultData
 
                     if (TQDebug.ArcFileDebugLevel > 1)
                     {
-                        TQDebug.DebugWriteLine(string.Concat("Creating File - ", filename)); 
+                        TQDebug.DebugWriteLine(string.Concat("Creating File - ", filename));
                     }
 
                     using (FileStream outStream = new FileStream(filename, FileMode.Create, FileAccess.Write))
@@ -339,7 +339,7 @@ namespace TQVaultData
 
                 if (TQDebug.ArcFileDebugLevel > 0)
                 {
-                    TQDebug.DebugWriteLine("Exiting ARCFile.ReadARCFile()"); 
+                    TQDebug.DebugWriteLine("Exiting ARCFile.ReadARCFile()");
                 }
 
                 return true;
@@ -359,7 +359,7 @@ namespace TQVaultData
             }
         }
 
-        #endregion
+        #endregion ArcFile Public Methods
 
         #region ArcFile Private Methods
 
@@ -416,9 +416,9 @@ namespace TQVaultData
             // 4-byte int = offset in directory structure for filename
             this.fileHasBeenRead = true;
 
-            if (TQDebug.ArcFileDebugLevel > 0) 
+            if (TQDebug.ArcFileDebugLevel > 0)
             {
-                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "ARCFile.ReadARCToC({0})", this.FileName)); 
+                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "ARCFile.ReadARCToC({0})", this.FileName));
             }
 
             try
@@ -734,7 +734,7 @@ namespace TQVaultData
             }
         }
 
-        #endregion
+        #endregion ArcFile Private Methods
 
         #region ARCPartEntry
 
@@ -759,7 +759,7 @@ namespace TQVaultData
             public int RealSize { get; set; }
         }
 
-        #endregion
+        #endregion ARCPartEntry
 
         #region ARCDirEntry
 
@@ -818,6 +818,6 @@ namespace TQVaultData
             }
         }
 
-        #endregion
+        #endregion ARCDirEntry
     }
 }

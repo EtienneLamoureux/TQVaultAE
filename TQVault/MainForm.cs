@@ -8,7 +8,6 @@ namespace TQVault
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Data;
     using System.Diagnostics;
     using System.Drawing;
     using System.Globalization;
@@ -16,7 +15,6 @@ namespace TQVault
     using System.Linq;
     using System.Reflection;
     using System.Security.Permissions;
-    using System.Text;
     using System.Threading;
     using System.Windows.Forms;
     using TQVault.Properties;
@@ -666,28 +664,40 @@ namespace TQVault
             {
                 case ItemStyle.Broken:
                     return Resources.ItemStyleBroken;
+
                 case ItemStyle.Artifact:
                     return Resources.ItemStyleArtifact;
+
                 case ItemStyle.Formulae:
                     return Resources.ItemStyleFormulae;
+
                 case ItemStyle.Scroll:
                     return Resources.ItemStyleScroll;
+
                 case ItemStyle.Parchment:
                     return Resources.ItemStyleParchment;
+
                 case ItemStyle.Relic:
                     return Resources.ItemStyleRelic;
+
                 case ItemStyle.Potion:
                     return Resources.ItemStylePotion;
+
                 case ItemStyle.Quest:
                     return Resources.ItemStyleQuest;
+
                 case ItemStyle.Epic:
                     return Resources.ItemStyleEpic;
+
                 case ItemStyle.Legendary:
                     return Resources.ItemStyleLegendary;
+
                 case ItemStyle.Rare:
                     return Resources.ItemStyleRare;
+
                 case ItemStyle.Common:
                     return Resources.ItemStyleCommon;
+
                 default:
                     return Resources.ItemStyleMundane;
             }

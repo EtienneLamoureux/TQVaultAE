@@ -6,8 +6,6 @@
 namespace TQVault
 {
     using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Drawing;
     using System.Globalization;
     using System.Reflection;
@@ -61,7 +59,7 @@ namespace TQVault
             {
                 // Get all Title attributes on this assembly
                 object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-                
+
                 // If there is at least one Title attribute
                 if (attributes.Length > 0)
                 {
@@ -174,7 +172,8 @@ namespace TQVault
                 return ((AssemblyCompanyAttribute)attributes[0]).Company;
             }
         }
-        #endregion
+
+        #endregion Assembly Attribute Accessors
 
         /// <summary>
         /// Override of ScaleControl which supports picturebox image scaling.

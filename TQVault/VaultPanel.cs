@@ -6,12 +6,10 @@
 namespace TQVault
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Drawing;
     using System.Globalization;
-    using System.Linq;
     using System.Text;
     using System.Windows.Forms;
     using TQVault.Properties;
@@ -104,7 +102,7 @@ namespace TQVault
             else
             {
                 this.autoSortButtons = new Collection<AutoSortButton>();
-                
+
                 for (int i = 0; i < numberOfAutosortButtons; ++i)
                 {
                     this.autoSortButtons.Insert(i, this.CreateAutoSortButton(i));
@@ -145,7 +143,7 @@ namespace TQVault
         {
             get
             {
-                // Set options for Right to Left reading.                
+                // Set options for Right to Left reading.
                 if (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)
                 {
                     return MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading;
@@ -166,8 +164,8 @@ namespace TQVault
                     return Convert.ToInt32(2.0F * Database.DB.Scale);
                 }
             }
-        }        
-    
+        }
+
         /// <summary>
         /// Gets the bagbuttons array
         /// </summary>
@@ -254,7 +252,7 @@ namespace TQVault
         /// Gets or sets a value indicating whether this form is rendered as a groupbox or panel.
         /// </summary>
         public bool DrawAsGroupBox { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the player instance
         /// </summary>
@@ -310,7 +308,7 @@ namespace TQVault
             }
         }
 
-        #endregion
+        #endregion VaultPanel Properties
 
         #region VaultPanel Public Methods
 
@@ -379,7 +377,7 @@ namespace TQVault
             return null;
         }
 
-        #endregion
+        #endregion VaultPanel Public Methods
 
         #region VaultPanel Protected Methods
 
@@ -660,12 +658,12 @@ namespace TQVault
             return ((float)this.BagSackPanel.Width / maxWidth) / (float)numberOfBags;
         }
 
-        #endregion
+        #endregion VaultPanel Protected Methods
 
         #region VaultPanel Private Methods
 
         /// <summary>
-        /// Gets the index from the menu string using the delimiter in the resources since the strings are now regionalized.  
+        /// Gets the index from the menu string using the delimiter in the resources since the strings are now regionalized.
         /// Helper for the context menu.
         /// </summary>
         /// <param name="selectedItem">string of the item selected in the menu</param>
@@ -944,7 +942,7 @@ namespace TQVault
             return toolTipStringBuilder.ToString();
         }
 
-        #endregion
+        #endregion VaultPanel Private Methods
 
         /// <summary>
         /// Class for rendering the context menu.

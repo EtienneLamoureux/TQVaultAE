@@ -14,7 +14,7 @@ namespace TQVaultData
     /// <summary>
     /// Enumeration of the Attribute Effect Types
     /// </summary>
-    public enum ItemAttributesEffectType    
+    public enum ItemAttributesEffectType
     {
         /// <summary>
         /// Shield Effects
@@ -543,13 +543,13 @@ namespace TQVaultData
         /// <summary>
         /// Reagents for formulae
         /// </summary>
-        private static string[] reagents = 
+        private static string[] reagents =
             {
                 "reagent1BaseName",
                 "reagent2BaseName",
                 "reagent3BaseName"
             };
-        
+
         /// <summary>
         /// For skill parameters (duration, radius, angle, etc.)
         /// </summary>
@@ -596,7 +596,7 @@ namespace TQVaultData
         /// </summary>
         private static Dictionary<string, ItemAttributesData> attributeDictionary = InitializeAttributeDictionary();
 
-        #endregion
+        #endregion ItemAttributes Fields
 
         #region ItemAttribute Public Methods
 
@@ -718,32 +718,46 @@ namespace TQVaultData
             {
                 case ItemAttributesEffectType.ShieldEffect:
                     return GetShieldEffectTextTag(data.Effect);
+
                 case ItemAttributesEffectType.Character:
                     return GetCharacterEffectTextTag(data.Effect);
+
                 case ItemAttributesEffectType.Defense:
                     return GetDefenseEffectTextTag(data.Effect);
+
                 case ItemAttributesEffectType.Offense:
                     return GetOffensiveEffectTextTag(data.Effect);
+
                 case ItemAttributesEffectType.OffenseModifier:
                     return GetOffensiveModifierEffectTextTag(data.Effect);
+
                 case ItemAttributesEffectType.OffenseSlow:
                     return GetOffensiveSlowEffectTextTag(data.Effect);
+
                 case ItemAttributesEffectType.OffenseSlowModifier:
                     return GetOffensiveSlowModifierEffectTextTag(data.Effect);
+
                 case ItemAttributesEffectType.Other:
                     return data.Effect;
+
                 case ItemAttributesEffectType.Retaliation:
                     return GetRetaliationEffectTextTag(data.Effect);
+
                 case ItemAttributesEffectType.RetaliationModifier:
                     return GetRetaliationModifierEffectTextTag(data.Effect);
+
                 case ItemAttributesEffectType.RetaliationSlow:
                     return GetRetaliationSlowEffectTextTag(data.Effect);
+
                 case ItemAttributesEffectType.RetaliationSlowModifier:
                     return GetRetaliationSlowModifierEffectTextTag(data.Effect);
+
                 case ItemAttributesEffectType.Reagent:
                     return data.Effect;
+
                 case ItemAttributesEffectType.SkillEffect:
                     return GetSkillEffectTextTag(data.Effect);
+
                 default:
                     return data.FullAttribute;
             }
@@ -864,7 +878,7 @@ namespace TQVaultData
             return false;
         }
 
-        #endregion
+        #endregion ItemAttribute Public Methods
 
         #region ItemAttributes Private Methods
 
@@ -917,12 +931,16 @@ namespace TQVaultData
             {
                 case "DEFENSIVEPROTECTION":
                     return "DefenseAbsorptionProtection";
+
                 case "DEFENSIVESLEEP":
                     return string.Concat("xtagDefense", effect.Substring(9));
+
                 case "DEFENSIVETOTALSPEEDRESISTANCE":
                     return "xtagTotalSpeedResistance";
+
                 case "DAMAGEABSORPTION":
                     return "SkillDamageAbsorption";
+
                 case "DAMAGEABSORPTIONPERCENT":
                     return "SkillDamageAbsorptionPercent";
             }
@@ -956,14 +974,19 @@ namespace TQVaultData
                 case "OFFENSIVEPHYSICAL":
                 case "OFFENSIVEBASEPHYSICAL":
                     return "DamageBasePhysical";
+
                 case "OFFENSIVEPIERCERATIO":
                     return "DamageBasePierceRatio";
+
                 case "OFFENSIVEMANABURN":
                     return "DamageManaDrain";
+
                 case "OFFENSIVESLEEP":
                     return "xtagDamageSleep";
+
                 case "OFFENSIVEFUMBLE":
                     return "DamageDurationFumble";
+
                 case "OFFENSIVEPROJECTILEFUMBLE":
                     return "DamageDurationProjectileFumble";
             }
@@ -990,10 +1013,13 @@ namespace TQVaultData
             {
                 case "OFFENSIVEMANABURNRATIOADDER":
                     return "DamageModifierManaBurn";
+
                 case "OFFENSIVESLEEPMODIFIER":
                     return "xtagDamageModifierSleep";
+
                 case "OFFENSIVETOTALDAMAGEMODIFIER":
                     return "xtagDamageModifierTotalDamage";
+
                 case "SPARKMAXNUMBER":
                     return "xtagSparkMaxNumber";
             }
@@ -1131,16 +1157,16 @@ namespace TQVaultData
                     if (TQDebug.ItemAttributesDebugLevel > 0)
                     {
                         TQDebug.DebugWriteLine("Error - No special characters found.");
-                        TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertFormatStringBrackets()"); 
+                        TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertFormatStringBrackets()");
                     }
 
                     return formatString.Length;
                 }
                 else
                 {
-                    if (TQDebug.ItemAttributesDebugLevel > 2) 
+                    if (TQDebug.ItemAttributesDebugLevel > 2)
                     {
-                        TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Found special char({0}) at {1} (searchstart={2})", formatString.Substring(i, 1), i, startPosition)); 
+                        TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Found special char({0}) at {1} (searchstart={2})", formatString.Substring(i, 1), i, startPosition));
                     }
 
                     // We found a special char.  First copy all the crap before the char
@@ -1157,7 +1183,7 @@ namespace TQVaultData
                             {
                                 if (TQDebug.ItemAttributesDebugLevel > 0)
                                 {
-                                    TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertFormatStringBrackets()"); 
+                                    TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertFormatStringBrackets()");
                                 }
 
                                 return startPosition; // end of the format section.
@@ -1184,7 +1210,7 @@ namespace TQVaultData
                                     if (TQDebug.ItemAttributesDebugLevel > 0)
                                     {
                                         TQDebug.DebugWriteLine("Error - Ran out of string to parse.");
-                                        TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertFormatStringBrackets()"); 
+                                        TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertFormatStringBrackets()");
                                     }
 
                                     return formatString.Length;
@@ -1199,7 +1225,7 @@ namespace TQVaultData
                                 {
                                     TQDebug.DebugWrite(string.Format(CultureInfo.InvariantCulture, "<{0}> split into", formatString.Substring(precisionStart - 1, startPosition + 1 - precisionStart + 2)));
                                     TQDebug.DebugWrite(string.Format(CultureInfo.InvariantCulture, "<{0}><{1}><{2}>", precision, formatAlpha, formatNum));
-                                    TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "New ipos={0}", startPosition + 2)); 
+                                    TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "New ipos={0}", startPosition + 2));
                                 }
 
                                 answer.Append(newFormatSpec);
@@ -1221,7 +1247,7 @@ namespace TQVaultData
 
             if (TQDebug.ItemAttributesDebugLevel > 0)
             {
-                TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertFormatStringBrackets()"); 
+                TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertFormatStringBrackets()");
             }
 
             return startPosition;
@@ -1241,8 +1267,8 @@ namespace TQVaultData
                 TQDebug.DebugWriteLine(string.Format(
                     CultureInfo.InvariantCulture,
                     "ItemAttributes.ConvertScanfFormatSpec (precision=<{0}>, alpha=<{1}>, formatNum=<{2}>)",
-                    precision, 
-                    alpha, 
+                    precision,
+                    alpha,
                     formatNumber));
             }
 
@@ -1251,12 +1277,12 @@ namespace TQVaultData
                 // string format.  Ignore precision
                 if (TQDebug.ItemAttributesDebugLevel > 1)
                 {
-                    TQDebug.DebugWriteLine("String Format Spec"); 
+                    TQDebug.DebugWriteLine("String Format Spec");
                 }
 
-                if (TQDebug.ItemAttributesDebugLevel > 0) 
+                if (TQDebug.ItemAttributesDebugLevel > 0)
                 {
-                    TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertScanfFormatSpec ()"); 
+                    TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
                 }
 
                 return string.Format(CultureInfo.CurrentCulture, "{{{0}}}", formatNumber);
@@ -1270,19 +1296,19 @@ namespace TQVaultData
                     // simple
                     if (TQDebug.ItemAttributesDebugLevel > 1)
                     {
-                        TQDebug.DebugWriteLine("Simple Numeric Format Spec"); 
+                        TQDebug.DebugWriteLine("Simple Numeric Format Spec");
                     }
 
-                    if (TQDebug.ItemAttributesDebugLevel > 0) 
+                    if (TQDebug.ItemAttributesDebugLevel > 0)
                     {
-                        TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertScanfFormatSpec ()"); 
+                        TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
                     }
 
                     return string.Format(CultureInfo.CurrentCulture, "{{{0}}}", formatNumber);
                 }
 
                 int ipos = 0;
-                
+
                 // See if they want the plus sign.
                 bool showPlus = precision[ipos] == '+';
                 if (showPlus)
@@ -1297,9 +1323,9 @@ namespace TQVaultData
                 if (hasDecimal)
                 {
                     ++ipos;
-                    if (TQDebug.ItemAttributesDebugLevel > 1) 
+                    if (TQDebug.ItemAttributesDebugLevel > 1)
                     {
-                        TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Parsing Decimals ipos={0}, string=<{1}>", ipos, precision.Substring(ipos, 1))); 
+                        TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Parsing Decimals ipos={0}, string=<{1}>", ipos, precision.Substring(ipos, 1)));
                     }
 
                     // Changed by VillageIdiot
@@ -1310,9 +1336,9 @@ namespace TQVaultData
                         numDecimals = 0;
                     }
 
-                    if (TQDebug.ItemAttributesDebugLevel > 1) 
+                    if (TQDebug.ItemAttributesDebugLevel > 1)
                     {
-                        TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "numDecimals={0}", numDecimals)); 
+                        TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "numDecimals={0}", numDecimals));
                     }
 
                     if (numDecimals > 0)
@@ -1325,14 +1351,14 @@ namespace TQVaultData
                 if (showPlus)
                 {
                     // Gotta get fancy
-                    if (TQDebug.ItemAttributesDebugLevel > 1) 
+                    if (TQDebug.ItemAttributesDebugLevel > 1)
                     {
-                        TQDebug.DebugWriteLine("Decimal with plus Format Spec"); 
+                        TQDebug.DebugWriteLine("Decimal with plus Format Spec");
                     }
 
-                    if (TQDebug.ItemAttributesDebugLevel > 0) 
+                    if (TQDebug.ItemAttributesDebugLevel > 0)
                     {
-                        TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertScanfFormatSpec ()"); 
+                        TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
                     }
 
                     return string.Format(CultureInfo.CurrentCulture, "{{{0}:+#0{1};-#0{1}}}", formatNumber, decimalSpec);
@@ -1341,12 +1367,12 @@ namespace TQVaultData
                 {
                     if (TQDebug.ItemAttributesDebugLevel > 1)
                     {
-                        TQDebug.DebugWriteLine("Decimal Format Spec"); 
+                        TQDebug.DebugWriteLine("Decimal Format Spec");
                     }
 
                     if (TQDebug.ItemAttributesDebugLevel > 0)
                     {
-                        TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertScanfFormatSpec ()"); 
+                        TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
                     }
 
                     return string.Format(CultureInfo.CurrentCulture, "{{{0}:#0{1}}}", formatNumber, decimalSpec);
@@ -1355,14 +1381,14 @@ namespace TQVaultData
             else
             {
                 // unknown
-                if (TQDebug.ItemAttributesDebugLevel > 1) 
+                if (TQDebug.ItemAttributesDebugLevel > 1)
                 {
-                    TQDebug.DebugWriteLine("Error - Unknown Format Spec using default"); 
+                    TQDebug.DebugWriteLine("Error - Unknown Format Spec using default");
                 }
 
-                if (TQDebug.ItemAttributesDebugLevel > 0) 
+                if (TQDebug.ItemAttributesDebugLevel > 0)
                 {
-                    TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertScanfFormatSpec ()"); 
+                    TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
                 }
 
                 return string.Format(CultureInfo.CurrentCulture, "{{{0}}}", formatNumber);
@@ -1528,7 +1554,7 @@ namespace TQVaultData
             foreach (string damageQualifierEffect in damageQualifierEffects)
             {
                 attributeDictionary.Add(
-                    damageQualifierEffect.ToUpperInvariant(), 
+                    damageQualifierEffect.ToUpperInvariant(),
                     new ItemAttributesData(ItemAttributesEffectType.DamageQualifierEffect, damageQualifierEffect, damageQualifierEffect, string.Empty, subOrder));
                 ++subOrder;
             }
@@ -1552,6 +1578,6 @@ namespace TQVaultData
             return attributeDictionary;
         }
 
-        #endregion
+        #endregion ItemAttributes Private Methods
     }
 }

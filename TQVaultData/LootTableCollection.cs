@@ -9,8 +9,7 @@ namespace TQVaultData
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    
+
     /// <summary>
     /// Builds a loot table from a particular loot table ID.
     /// </summary>
@@ -78,7 +77,7 @@ namespace TQVaultData
             // Iterate and return the weighted values in the table.
             foreach (KeyValuePair<string, float> kvp in this.data)
             {
-                yield return new KeyValuePair<string, float>(kvp.Key, kvp.Value / divisor); 
+                yield return new KeyValuePair<string, float>(kvp.Key, kvp.Value / divisor);
             }
         }
 
@@ -151,8 +150,8 @@ namespace TQVaultData
             }
 
             // Now do an INNER JOIN on the 2 dictionaries to find valid pairs.
-            IEnumerable<KeyValuePair<string, float>> buildTableQuery = from weight in weights                        
-                                                                       join name in names on weight.Key equals name.Key                        
+            IEnumerable<KeyValuePair<string, float>> buildTableQuery = from weight in weights
+                                                                       join name in names on weight.Key equals name.Key
                                                                        select new KeyValuePair<string, float>(name.Value, weight.Value);
 
             // Iterate the query to build the new unweighted table.

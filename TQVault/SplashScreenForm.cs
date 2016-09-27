@@ -6,12 +6,8 @@
 namespace TQVault
 {
     using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Drawing;
     using System.Drawing.Drawing2D;
-    using System.Globalization;
-    using System.Reflection;
     using System.Timers;
     using System.Windows.Forms;
     using TQVault.Properties;
@@ -118,7 +114,7 @@ namespace TQVault
         /// <summary>
         /// Gets or sets a value indicating whether the form will be drawn with the outer edges clipped to a rounded rectangle.
         /// </summary>
-        public bool UseRoundedRectangle 
+        public bool UseRoundedRectangle
         {
             get
             {
@@ -192,8 +188,8 @@ namespace TQVault
             {
                 this.newProgressBar.Increment(1);
             }
-        }      
-        
+        }
+
         /// <summary>
         /// Close the form and start the fade out.
         /// </summary>
@@ -209,8 +205,8 @@ namespace TQVault
         /// <param name="e">PaintEventArgs data</param>
         protected override void OnPaint(PaintEventArgs e)
         {
-            base.OnPaint(e); 
-            
+            base.OnPaint(e);
+
             // Paint a black border around the form.
             if (this.UseRoundedRectangle && this.graphicsPath != null)
             {
@@ -277,7 +273,7 @@ namespace TQVault
             GraphicsPath path = new GraphicsPath();
             path.StartFigure();
 
-            // Top Left Corner 
+            // Top Left Corner
             path.AddArc(0, 0, doubleRadius, doubleRadius, 180.0F, 90.0F);
 
             // Top Edge
@@ -304,7 +300,7 @@ namespace TQVault
             path.CloseFigure();
             return path;
         }
- 
+
         /// <summary>
         /// Handles the exit button
         /// </summary>

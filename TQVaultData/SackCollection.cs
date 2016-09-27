@@ -10,7 +10,6 @@ namespace TQVaultData
     using System.Collections.Generic;
     using System.Drawing;
     using System.IO;
-    using System.Text;
 
     /// <summary>
     /// Sack panel types
@@ -62,54 +61,54 @@ namespace TQVaultData
         /// Cell offsets for the slots in the equipment panel.
         /// Indicates the upper left cell of the slot.
         /// </summary>
-        private static Point[] equipmentLocationOffsets = 
-        {                                                              
-            new Point(4, 0),  // Head                                                              
-            new Point(4, 3),  // Neck            
-            new Point(4, 5),  // Body            
-            new Point(4, 9),  // Legs            
-            new Point(7, 6),  // Arms            
-            new Point(4, 12), // Ring1            
+        private static Point[] equipmentLocationOffsets =
+        {
+            new Point(4, 0),  // Head
+            new Point(4, 3),  // Neck
+            new Point(4, 5),  // Body
+            new Point(4, 9),  // Legs
+            new Point(7, 6),  // Arms
+            new Point(4, 12), // Ring1
             new Point(5, 12), // Ring2
-            
-            // Use x = -3 to flag as a weapon            
-            // Use y value as index into weaponLocationOffsets            
-            new Point(Item.WeaponSlotIndicator, 0), // Weapon1            
-            new Point(Item.WeaponSlotIndicator, 1), // Shield1            
-            new Point(Item.WeaponSlotIndicator, 2), // Weapon2            
-            new Point(Item.WeaponSlotIndicator, 3), // Shield2            
-            new Point(1, 6), // Artifact            
+
+            // Use x = -3 to flag as a weapon
+            // Use y value as index into weaponLocationOffsets
+            new Point(Item.WeaponSlotIndicator, 0), // Weapon1
+            new Point(Item.WeaponSlotIndicator, 1), // Shield1
+            new Point(Item.WeaponSlotIndicator, 2), // Weapon2
+            new Point(Item.WeaponSlotIndicator, 3), // Shield2
+            new Point(1, 6), // Artifact
         };
 
         /// <summary>
         /// Sizes of the slots in the equipment panel
         /// </summary>
         private static Size[] equipmentLocationSizes =
-        {                        
-            new Size(2, 2), // Head            
-            new Size(1, 1), // Neck            
-            new Size(2, 3), // Body            
-            new Size(2, 2), // Legs            
-            new Size(2, 2), // Arms            
-            new Size(1, 1), // Ring1            
-            new Size(1, 1), // Ring2            
-            new Size(2, 5), // Weapon1            
-            new Size(2, 5), // Shield1            
-            new Size(2, 5), // Weapon2            
-            new Size(2, 5), // Shield2            
-            new Size(2, 2), // Artifact            
+        {
+            new Size(2, 2), // Head
+            new Size(1, 1), // Neck
+            new Size(2, 3), // Body
+            new Size(2, 2), // Legs
+            new Size(2, 2), // Arms
+            new Size(1, 1), // Ring1
+            new Size(1, 1), // Ring2
+            new Size(2, 5), // Weapon1
+            new Size(2, 5), // Shield1
+            new Size(2, 5), // Weapon2
+            new Size(2, 5), // Shield2
+            new Size(2, 2), // Artifact
         };
 
         /// <summary>
         /// Used to properly draw the weapon the weapon box on the equipment panel
         /// These values are the upper left corner of the weapon box
         /// </summary>
-        private static Point[] weaponLocationOffsets = 
-        {        
-            new Point(1, 0), // Weapon1            
-            new Point(7, 0), // Shield1            
-            new Point(1, 9), // Weapon2            
-            new Point(7, 9), // Shield2            
+        private static Point[] weaponLocationOffsets =
+        {
+            new Point(1, 0), // Weapon1
+            new Point(7, 0), // Shield1
+            new Point(1, 9), // Weapon2
+            new Point(7, 9), // Shield2
         };
 
         /// <summary>
@@ -131,7 +130,7 @@ namespace TQVaultData
         /// TempBool entry in the file.
         /// </summary>
         private int tempBool;
-        
+
         /// <summary>
         /// Number of items in the sack according to TQ.
         /// </summary>
@@ -655,7 +654,7 @@ namespace TQVaultData
                 // The ValidateNextString Method can throw an ArgumentException.
                 // We just pass it along at this point.
                 throw;
-            }            
+            }
         }
     }
 }

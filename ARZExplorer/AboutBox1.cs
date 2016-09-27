@@ -6,9 +6,6 @@
 namespace ArzExplorer
 {
     using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Drawing;
     using System.Reflection;
     using System.Windows.Forms;
 
@@ -53,7 +50,7 @@ namespace ArzExplorer
                 {
                     // Select the first one
                     AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
-                    
+
                     // If it is not an empty string, return it
                     if (!string.IsNullOrEmpty(titleAttribute.Title))
                     {
@@ -65,7 +62,7 @@ namespace ArzExplorer
                 return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
             }
         }
-        
+
         /// <summary>
         /// Gets the assembly version
         /// </summary>
@@ -155,11 +152,12 @@ namespace ArzExplorer
                 {
                     return string.Empty;
                 }
-                 
+
                 // If there is a Company attribute, return its value
                 return ((AssemblyCompanyAttribute)attributes[0]).Company;
             }
         }
-        #endregion
+
+        #endregion Assembly Attribute Accessors
     }
 }

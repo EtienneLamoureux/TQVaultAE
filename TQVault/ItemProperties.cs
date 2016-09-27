@@ -6,12 +6,8 @@
 namespace TQVault
 {
     using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data;
     using System.Drawing;
     using System.Globalization;
-    using System.Text;
     using System.Windows.Forms;
     using TQVault.Properties;
     using TQVaultData;

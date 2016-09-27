@@ -6,12 +6,8 @@
 namespace TQVault
 {
     using System;
-    using System.Collections.Generic;
     using System.Drawing;
-    using System.Linq;
-    using System.Text;
     using System.Windows.Forms;
-    using TQVault.Properties;
     using TQVaultData;
 
     /// <summary>
@@ -90,7 +86,7 @@ namespace TQVault
         /// Gets or sets the background bitmap when this is the bag button under the mouse.
         /// </summary>
         public Bitmap OverBitmap { get; set; }
-           
+
         /// <summary>
         /// Gets or sets a value indicating whether the mouse is hovering over this button.
         /// </summary>
@@ -116,7 +112,7 @@ namespace TQVault
             }
         }
 
-        #endregion
+        #endregion BagButton Properties
 
         /// <summary>
         /// Tooltip callback that is used to display a tooltip with the bag's contents.
@@ -223,8 +219,8 @@ namespace TQVault
                     if (this.IsOver)
                     {
                         font = new Font(font, FontStyle.Bold);
-                    } 
-                    
+                    }
+
                     StringFormat textFormat = new StringFormat(StringFormatFlags.NoClip);
                     textFormat.LineAlignment = StringAlignment.Center;
                     textFormat.Alignment = StringAlignment.Center;
@@ -338,7 +334,7 @@ namespace TQVault
                 if (left != -1)
                 {
                     // Skip over the space
-                    testLeft = this.ButtonText.Substring(left + 1);                       
+                    testLeft = this.ButtonText.Substring(left + 1);
 
                     // Make sure we have the longer of the two strings.
                     if (left > this.ButtonText.Length - left)
@@ -376,6 +372,6 @@ namespace TQVault
             return teststring;
         }
 
-        #endregion
+        #endregion BagButton Private Methods
     }
 }

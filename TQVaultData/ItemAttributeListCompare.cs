@@ -5,11 +5,8 @@
 //-----------------------------------------------------------------------
 namespace TQVaultData
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Text;
 
     /// <summary>
     /// Used to sort AttributeEffect groups so that effects that belong together stay together

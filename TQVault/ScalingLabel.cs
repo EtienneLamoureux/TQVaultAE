@@ -5,18 +5,14 @@
 //-----------------------------------------------------------------------
 namespace TQVault
 {
-    using System;
-    using System.Collections.Generic;
     using System.Drawing;
-    using System.Linq;
-    using System.Text;
     using System.Windows.Forms;
 
     /// <summary>
     /// Label class to support scaling of the fonts.
     /// </summary>
     public class ScalingLabel : Label
-    {      
+    {
         /// <summary>
         /// Reverts the basic settings of a control back to the original settings.
         /// </summary>

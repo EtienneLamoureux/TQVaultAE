@@ -5,14 +5,13 @@
 //-----------------------------------------------------------------------
 namespace TQVaultData
 {
+    using ExpressionEvaluator;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Drawing;
     using System.Globalization;
     using System.IO;
-    using System.Text;
-    using ExpressionEvaluator;
 
     /// <summary>
     /// Item Style types
@@ -274,7 +273,7 @@ namespace TQVaultData
         /// </summary>
         private float itemScalePercent;
 
-        #endregion
+        #endregion Item Fields
 
         /// <summary>
         /// Initializes a new instance of the Item class.
@@ -408,7 +407,7 @@ namespace TQVaultData
         /// Gets the item's bitmap
         /// </summary>
         public Bitmap ItemBitmap { get; private set; }
-        
+
         /// <summary>
         /// Gets the item's width in cells
         /// </summary>
@@ -917,7 +916,7 @@ namespace TQVaultData
         {
             get
             {
-                return this.DoesStack || (this.IsRelic && !this.IsRelicComplete); 
+                return this.DoesStack || (this.IsRelic && !this.IsRelicComplete);
             }
         }
 
@@ -966,11 +965,11 @@ namespace TQVaultData
         /// <summary>
         /// Gets a value indicating whether the item has an embedded relic.
         /// </summary>
-        public bool HasRelic 
+        public bool HasRelic
         {
             get
             {
-                return !this.IsRelic && this.relicID.Length > 0; 
+                return !this.IsRelic && this.relicID.Length > 0;
             }
         }
 
@@ -1131,7 +1130,7 @@ namespace TQVaultData
         }
 
         /// <summary>
-        /// Gets the item group.  
+        /// Gets the item group.
         /// Used for grouping during autosort.
         /// </summary>
         public int ItemGroup
@@ -1233,7 +1232,7 @@ namespace TQVaultData
             }
         }
 
-        #endregion
+        #endregion Item Properties
 
         #region Item Public Methods
 
@@ -1250,30 +1249,43 @@ namespace TQVaultData
             {
                 case ItemStyle.Broken:
                     return GetColor(TQColor.DarkGray);
+
                 case ItemStyle.Common:
                     return GetColor(TQColor.Yellow);
+
                 case ItemStyle.Epic:
                     return GetColor(TQColor.Blue);
+
                 case ItemStyle.Legendary:
                     return GetColor(TQColor.Purple);
+
                 case ItemStyle.Mundane:
                     return GetColor(TQColor.White);
+
                 case ItemStyle.Potion:
                     return GetColor(TQColor.Red);
+
                 case ItemStyle.Quest:
                     return GetColor(TQColor.Purple);
+
                 case ItemStyle.Rare:
                     return GetColor(TQColor.Green);
+
                 case ItemStyle.Relic:
                     return GetColor(TQColor.Orange);
+
                 case ItemStyle.Parchment:
                     return GetColor(TQColor.Blue);
+
                 case ItemStyle.Scroll:
                     return GetColor(TQColor.YellowGreen);
+
                 case ItemStyle.Formulae:
                     return GetColor(TQColor.Turquoise);
+
                 case ItemStyle.Artifact:
                     return GetColor(TQColor.Turquoise);
+
                 default:
                     return Color.White;
             }
@@ -1290,38 +1302,55 @@ namespace TQVaultData
             {
                 case TQColor.Aqua:
                     return Color.FromArgb(0, 255, 255);
+
                 case TQColor.Blue:
                     return Color.FromArgb(0, 163, 255);
+
                 case TQColor.DarkGray:
                     return Color.FromArgb(153, 153, 153);
+
                 case TQColor.Fuschia:
                     return Color.FromArgb(255, 0, 255);
+
                 case TQColor.Green:
                     return Color.FromArgb(64, 255, 64);
+
                 case TQColor.Indigo:
                     return Color.FromArgb(75, 0, 130);
+
                 case TQColor.Khaki:
                     return Color.FromArgb(195, 176, 145);
+
                 case TQColor.LightCyan:
                     return Color.FromArgb(224, 255, 255);
+
                 case TQColor.Maroon:
                     return Color.FromArgb(128, 0, 0);
+
                 case TQColor.Orange:
                     return Color.FromArgb(255, 173, 0);
+
                 case TQColor.Purple:
                     return Color.FromArgb(217, 5, 255);
+
                 case TQColor.Red:
                     return Color.FromArgb(255, 0, 0);
+
                 case TQColor.Silver:
                     return Color.FromArgb(224, 224, 224);
+
                 case TQColor.Turquoise:
                     return Color.FromArgb(0, 255, 209);
+
                 case TQColor.White:
                     return Color.FromArgb(255, 255, 255);
+
                 case TQColor.Yellow:
                     return Color.FromArgb(255, 245, 43);
+
                 case TQColor.YellowGreen:
                     return Color.FromArgb(145, 203, 0);
+
                 default:
                     return Color.White;
             }
@@ -1363,7 +1392,7 @@ namespace TQVaultData
             return text;
         }
 
-        #endregion
+        #endregion Item Public Static Methods
 
         /// <summary>
         /// Gets the item's color
@@ -1384,7 +1413,7 @@ namespace TQVaultData
             newItem.beginBlockCrap1 = this.beginBlockCrap1;
             newItem.endBlockCrap1 = this.endBlockCrap1;
             newItem.beginBlockCrap2 = this.beginBlockCrap2;
-            newItem.endBlockCrap2 = this.endBlockCrap2; 
+            newItem.endBlockCrap2 = this.endBlockCrap2;
             newItem.BaseItemId = string.Empty;
             newItem.prefixID = string.Empty;
             newItem.suffixID = string.Empty;
@@ -1542,7 +1571,7 @@ namespace TQVaultData
             // Look for a formatting tag in the beginning of the string
             string colorCode = null;
             if (text.StartsWith("^", StringComparison.OrdinalIgnoreCase))
-            {  
+            {
                 // If there are not braces assume a 2 character code.
                 colorCode = text.Substring(1, 1).ToUpperInvariant();
             }
@@ -1554,7 +1583,7 @@ namespace TQVaultData
                     colorCode = null;
                 }
                 else
-                {  
+                {
                     colorCode = text.Substring(i + 1, 1).ToUpperInvariant();
                 }
             }
@@ -1570,38 +1599,55 @@ namespace TQVaultData
             {
                 case "A":
                     return GetColor(TQColor.Aqua);
+
                 case "B":
                     return GetColor(TQColor.Blue);
+
                 case "C":
                     return GetColor(TQColor.LightCyan);
+
                 case "D":
                     return GetColor(TQColor.DarkGray);
+
                 case "F":
                     return GetColor(TQColor.Fuschia);
+
                 case "G":
                     return GetColor(TQColor.Green);
+
                 case "I":
                     return GetColor(TQColor.Indigo);
+
                 case "K":
                     return GetColor(TQColor.Khaki);
+
                 case "L":
                     return GetColor(TQColor.YellowGreen);
+
                 case "M":
                     return GetColor(TQColor.Maroon);
+
                 case "O":
                     return GetColor(TQColor.Orange);
+
                 case "P":
                     return GetColor(TQColor.Purple);
+
                 case "R":
                     return GetColor(TQColor.Red);
+
                 case "S":
                     return GetColor(TQColor.Silver);
+
                 case "T":
                     return GetColor(TQColor.Turquoise);
+
                 case "W":
                     return GetColor(TQColor.White);
+
                 case "Y":
                     return GetColor(TQColor.Yellow);
+
                 default:
                     return GetColor(this.ItemStyle);
             }
@@ -2164,13 +2210,13 @@ namespace TQVaultData
                     string colorTag = string.Format(CultureInfo.CurrentCulture, "<hr color={0}>", Database.HtmlColor(Item.GetColor(ItemStyle.Broken)));
 
                     string relicName = Database.MakeSafeForHtml(this.ToString(false, true));
-                    
+
                     // display the relic name
                     results.Add(string.Format(
                         CultureInfo.CurrentUICulture,
                         "{2}<font size=+1 color={0}><b>{1}</b></font>",
-                        Database.HtmlColor(Item.GetColor(ItemStyle.Relic)), 
-                        relicName, 
+                        Database.HtmlColor(Item.GetColor(ItemStyle.Relic)),
+                        relicName,
                         colorTag));
 
                     // display the relic subtitle
@@ -2400,15 +2446,15 @@ namespace TQVaultData
                 }
 
                 results.Add(string.Format(
-                    CultureInfo.CurrentCulture, 
+                    CultureInfo.CurrentCulture,
                     "<font color={0}>{1}</font>",
                     Database.HtmlColor(Item.GetColor(ItemStyle.Rare)),
                     string.Concat(style, quality, Database.DB.GetFriendlyName(this.baseItemInfo.DescriptionTag))));
 
                 results.Add(string.Format(
-                    CultureInfo.CurrentCulture, 
+                    CultureInfo.CurrentCulture,
                     "<font color={0}>{1}</font>",
-                    Database.HtmlColor(Item.GetColor(ItemStyle.Relic)), 
+                    Database.HtmlColor(Item.GetColor(ItemStyle.Relic)),
                     this.BaseItemId));
 
                 this.GetAttributesFromRecord(Database.DB.GetRecordFromFile(this.BaseItemId), filtering, this.BaseItemId, results, false);
@@ -2429,15 +2475,15 @@ namespace TQVaultData
             if (this.prefixInfo != null)
             {
                 results.Add(string.Format(
-                    CultureInfo.CurrentCulture, 
+                    CultureInfo.CurrentCulture,
                     "<font color={0}>{1}</font>",
                     Database.HtmlColor(Item.GetColor(ItemStyle.Rare)),
                     Database.DB.GetFriendlyName(this.prefixInfo.DescriptionTag)));
 
                 results.Add(string.Format(
-                    CultureInfo.CurrentCulture, 
+                    CultureInfo.CurrentCulture,
                     "<font color={0}>{1}</font>",
-                    Database.HtmlColor(Item.GetColor(ItemStyle.Relic)), 
+                    Database.HtmlColor(Item.GetColor(ItemStyle.Relic)),
                     this.prefixID));
 
                 this.GetAttributesFromRecord(Database.DB.GetRecordFromFile(this.prefixID), filtering, this.prefixID, results, false);
@@ -2464,9 +2510,9 @@ namespace TQVaultData
                     Database.DB.GetFriendlyName(this.suffixInfo.DescriptionTag)));
 
                 results.Add(string.Format(
-                    CultureInfo.CurrentCulture, 
+                    CultureInfo.CurrentCulture,
                     "<font color={0}>{1}</font>",
-                    Database.HtmlColor(Item.GetColor(ItemStyle.Relic)), 
+                    Database.HtmlColor(Item.GetColor(ItemStyle.Relic)),
                     this.suffixID));
 
                 this.GetAttributesFromRecord(Database.DB.GetRecordFromFile(this.suffixID), filtering, this.suffixID, results, false);
@@ -2488,7 +2534,7 @@ namespace TQVaultData
         }
 
         /// <summary>
-        /// Gets the itemID's of all the items in the set.  
+        /// Gets the itemID's of all the items in the set.
         /// </summary>
         /// <param name="includeName">Flag to include the set name in the returned array</param>
         /// <returns>Returns a string array containing the remaining set items or null if the item is not part of a set.</returns>
@@ -2529,7 +2575,7 @@ namespace TQVaultData
             else
             {
                 return ans;
-            }            
+            }
         }
 
         /// <summary>
@@ -2634,7 +2680,7 @@ namespace TQVaultData
                 }
             }
             else
-            { 
+            {
                 // This is a sack
                 // enter a while() loop so we can print out each potion in the stack if it is a potion stack
                 while (true)
@@ -2803,12 +2849,12 @@ namespace TQVaultData
             this.baseItemInfo = Database.DB.GetInfo(this.BaseItemId);
 
             this.prefixID = CheckExtension(this.prefixID);
-            this.suffixID = CheckExtension(this.suffixID); 
-            
+            this.suffixID = CheckExtension(this.suffixID);
+
             if (TQDebug.ItemDebugLevel > 1)
             {
-                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "prefixID = {0}", this.prefixID)); 
-                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "suffixID = {0}", this.suffixID)); 
+                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "prefixID = {0}", this.prefixID));
+                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "suffixID = {0}", this.suffixID));
             }
 
             this.prefixInfo = Database.DB.GetInfo(this.prefixID);
@@ -2816,18 +2862,18 @@ namespace TQVaultData
             this.relicID = CheckExtension(this.relicID);
             this.RelicBonusId = CheckExtension(this.RelicBonusId);
 
-            if (TQDebug.ItemDebugLevel > 1) 
+            if (TQDebug.ItemDebugLevel > 1)
             {
-                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "relicID = {0}", this.relicID)); 
-                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "relicBonusID = {0}", this.RelicBonusId)); 
+                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "relicID = {0}", this.relicID));
+                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "relicBonusID = {0}", this.RelicBonusId));
             }
 
             this.RelicInfo = Database.DB.GetInfo(this.relicID);
             this.RelicBonusInfo = Database.DB.GetInfo(this.RelicBonusId);
 
-            if (TQDebug.ItemDebugLevel > 1) 
+            if (TQDebug.ItemDebugLevel > 1)
             {
-                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "'{0}' baseItemInfo is {1} null", this.ToString(), (this.baseItemInfo == null) ? string.Empty : "NOT")); 
+                TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "'{0}' baseItemInfo is {1} null", this.ToString(), (this.baseItemInfo == null) ? string.Empty : "NOT"));
             }
 
             // Get the bitmaps we need
@@ -2836,17 +2882,17 @@ namespace TQVaultData
                 if (this.IsRelic && !this.IsRelicComplete)
                 {
                     this.ItemBitmap = Database.DB.LoadBitmap(this.baseItemInfo.ShardBitmap);
-                    if (TQDebug.ItemDebugLevel > 1) 
+                    if (TQDebug.ItemDebugLevel > 1)
                     {
-                        TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Loaded shardbitmap ({0})", this.baseItemInfo.ShardBitmap)); 
+                        TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Loaded shardbitmap ({0})", this.baseItemInfo.ShardBitmap));
                     }
                 }
                 else
                 {
                     this.ItemBitmap = Database.DB.LoadBitmap(this.baseItemInfo.Bitmap);
-                    if (TQDebug.ItemDebugLevel > 1) 
+                    if (TQDebug.ItemDebugLevel > 1)
                     {
-                        TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Loaded regular bitmap ({0})", this.baseItemInfo.Bitmap)); 
+                        TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Loaded regular bitmap ({0})", this.baseItemInfo.Bitmap));
                     }
                 }
             }
@@ -2855,9 +2901,9 @@ namespace TQVaultData
                 // Added by VillageIdiot
                 // Try showing something so unknown items are not invisible.
                 this.ItemBitmap = Database.DB.LoadBitmap("DefaultBitmap");
-                if (TQDebug.ItemDebugLevel > 1) 
+                if (TQDebug.ItemDebugLevel > 1)
                 {
-                    TQDebug.DebugWriteLine("Try loading (DefaultBitmap)"); 
+                    TQDebug.DebugWriteLine("Try loading (DefaultBitmap)");
                 }
             }
 
@@ -2868,7 +2914,7 @@ namespace TQVaultData
                 if (TQDebug.ItemDebugLevel > 1)
                 {
                     TQDebug.DebugWriteLine(string.Format(
-                        CultureInfo.InvariantCulture, 
+                        CultureInfo.InvariantCulture,
                         "size = {0}x{1} (unitsize={2})",
                         this.ItemBitmap.Width,
                         this.ItemBitmap.Height,
@@ -2880,22 +2926,22 @@ namespace TQVaultData
             }
             else
             {
-                if (TQDebug.ItemDebugLevel > 1) 
+                if (TQDebug.ItemDebugLevel > 1)
                 {
-                    TQDebug.DebugWriteLine("bitmap is null"); 
+                    TQDebug.DebugWriteLine("bitmap is null");
                 }
 
                 this.Width = 1;
                 this.Height = 1;
             }
 
-            if (TQDebug.ItemDebugLevel > 0) 
+            if (TQDebug.ItemDebugLevel > 0)
             {
-                TQDebug.DebugWriteLine("Exiting Item.GetDBData ()"); 
+                TQDebug.DebugWriteLine("Exiting Item.GetDBData ()");
             }
         }
 
-        #endregion
+        #endregion Item Public Methods
 
         #region Item Private Methods
 
@@ -2955,11 +3001,11 @@ namespace TQVaultData
         private static bool FilterKey(string key)
         {
             string keyUpper = key.ToUpperInvariant();
-            string[] notWanted = 
-            {                               
+            string[] notWanted =
+            {
                 "MAXTRANSPARENCY",
                 "SCALE",
-                "CASTSSHADOWS",                
+                "CASTSSHADOWS",
                 "MARKETADJUSTMENTPERCENT",
                 "LOOTRANDOMIZERCOST",
                 "LOOTRANDOMIZERJITTER",
@@ -3058,9 +3104,9 @@ namespace TQVaultData
         /// <returns>true if key is present in this list</returns>
         private static bool FilterRequirements(string key)
         {
-            string[] notWanted = 
-            {                                
-                "LEVELREQUIREMENT",                                
+            string[] notWanted =
+            {
+                "LEVELREQUIREMENT",
                 "INTELLIGENCEREQUIREMENT",
                 "DEXTERITYREQUIREMENT",
                 "STRENGTHREQUIREMENT",
@@ -3085,32 +3131,46 @@ namespace TQVaultData
             {
                 case "ARMORPROTECTIVE_HEAD":
                     return "head";
+
                 case "ARMORPROTECTIVE_FOREARM":
                     return "forearm";
+
                 case "ARMORPROTECTIVE_LOWERBODY":
                     return "lowerBody";
+
                 case "ARMORPROTECTIVE_UPPERBODY":
                     return "upperBody";
+
                 case "ARMORJEWELRY_BRACELET":
                     return "bracelet";
+
                 case "ARMORJEWELRY_RING":
                     return "ring";
+
                 case "ARMORJEWELRY_AMULET":
                     return "amulet";
+
                 case "WEAPONHUNTING_BOW":
                     return "bow";
+
                 case "WEAPONHUNTING_SPEAR":
                     return "spear";
+
                 case "WEAPONMELEE_AXE":
                     return "axe";
+
                 case "WEAPONMELEE_SWORD":
                     return "sword";
+
                 case "WEAPONMELEE_MACE":
                     return "mace";
+
                 case "WEAPONMAGICAL_STAFF":
                     return "staff";
+
                 case "WEAPONARMOR_SHIELD":
                     return "shield";
+
                 default:
                     return "none";
             }
@@ -3135,6 +3195,7 @@ namespace TQVaultData
                         }
 
                         break;
+
                     case VariableDataType.Float:
                         if (variable.GetSingle(i) != 0.0)
                         {
@@ -3142,6 +3203,7 @@ namespace TQVaultData
                         }
 
                         break;
+
                     case VariableDataType.StringVar:
                         if ((allowStrings || variable.Name.ToUpperInvariant().Equals("CHARACTERBASEATTACKSPEEDTAG") ||
                             variable.Name.ToUpperInvariant().Equals("ITEMSKILLNAME") || // Added by VillageIdiot for Granted skills
@@ -3154,6 +3216,7 @@ namespace TQVaultData
                         }
 
                         break;
+
                     case VariableDataType.Boolean:
                         if (variable.GetInt32(i) != 0)
                         {
@@ -3447,7 +3510,7 @@ namespace TQVaultData
         private static string GetRacialBonus(DBRecordCollection record, List<string> results, int varNum, bool isGlobal, string globalIndent, Variable v, ItemAttributesData d, string line, ref string font)
         {
             // Added by VillageIdiot
-            // Updated to accept multiple racial bonuses in record             
+            // Updated to accept multiple racial bonuses in record
             string[] races = record.GetAllStrings("racialBonusRace");
             if (races != null)
             {
@@ -4316,7 +4379,7 @@ namespace TQVaultData
             return line;
         }
 
-        #endregion
+        #endregion Item Private Static Methods
 
         /// <summary>
         /// Gets the dynamic requirements from a database record.
@@ -4843,13 +4906,13 @@ namespace TQVaultData
 
             // Figure out the label string
             string labelTag = null;
-            string labelColor = null;          
+            string labelColor = null;
             string label = this.GetLabelAndColorFromTag(data, recordId, ref labelTag, ref labelColor);
 
             if (TQDebug.ItemDebugLevel > 1)
             {
                 TQDebug.DebugWriteLine(string.Empty);
-                TQDebug.DebugWriteLine("Full attribute = " + data.FullAttribute); 
+                TQDebug.DebugWriteLine("Full attribute = " + data.FullAttribute);
                 TQDebug.DebugWriteLine("Item.label = " + label);
             }
 
@@ -5322,7 +5385,7 @@ namespace TQVaultData
                                     {
                                         results.Add(string.Format(
                                             CultureInfo.CurrentCulture,
-                                            "<font color={0}>&nbsp;&nbsp;&nbsp;&nbsp;{1}</font>", 
+                                            "<font color={0}>&nbsp;&nbsp;&nbsp;&nbsp;{1}</font>",
                                             Database.HtmlColor(Item.GetColor(ItemStyle.Mundane)),
                                             skillDescriptionFromList));
                                     }
@@ -5332,16 +5395,16 @@ namespace TQVaultData
                                     {
                                         string formatSpec = Database.DB.GetFriendlyName("MenuLevel");
                                         if (string.IsNullOrEmpty(formatSpec))
-                                        {                                        
+                                        {
                                             formatSpec = "Level:   {0}";
                                         }
-                                        else 
-                                        {                                        
+                                        else
+                                        {
                                             formatSpec = ItemAttributes.ConvertFormat(formatSpec);
                                         }
 
                                         int skillLevel = record.GetInt32("itemSkillLevel", 0);
-                                        if (skillLevel > 0) 
+                                        if (skillLevel > 0)
                                         {
                                             line = Item.Format(formatSpec, skillLevel);
                                             line = Database.MakeSafeForHtml(line);
@@ -5366,7 +5429,7 @@ namespace TQVaultData
                                     foreach (string skillDescriptionFromList in skillDescriptionList)
                                     {
                                         results.Add(string.Format(
-                                            CultureInfo.CurrentCulture, 
+                                            CultureInfo.CurrentCulture,
                                             "<font color={0}>&nbsp;&nbsp;&nbsp;&nbsp;{1}</font>",
                                             Database.HtmlColor(Item.GetColor(ItemStyle.Mundane)),
                                             skillDescriptionFromList));
@@ -5376,17 +5439,17 @@ namespace TQVaultData
                                     if (Item.ShowSkillLevel)
                                     {
                                         string formatSpec = Database.DB.GetFriendlyName("MenuLevel");
-                                        if (string.IsNullOrEmpty(formatSpec)) 
+                                        if (string.IsNullOrEmpty(formatSpec))
                                         {
                                             formatSpec = "Level:   {0}";
                                         }
-                                        else 
+                                        else
                                         {
                                             formatSpec = ItemAttributes.ConvertFormat(formatSpec);
                                         }
 
                                         int skillLevel = record.GetInt32("itemSkillLevel", 0);
-                                        if (skillLevel > 0) 
+                                        if (skillLevel > 0)
                                         {
                                             line = Item.Format(formatSpec, skillLevel);
                                             line = Database.MakeSafeForHtml(line);
@@ -5612,7 +5675,7 @@ namespace TQVaultData
             {
                 if (!this.IsArmor || recordId != this.BaseItemId)
                 {
-                    labelTag = "DefenseAbsorptionProtectionBonus";                
+                    labelTag = "DefenseAbsorptionProtectionBonus";
                     labelColor = Database.HtmlColor(Item.GetColor(ItemStyle.Epic));
                 }
                 else
@@ -5981,6 +6044,6 @@ namespace TQVaultData
             return;
         }
 
-        #endregion
+        #endregion Item Private Methods
     }
 }

@@ -6,12 +6,8 @@
 namespace TQVault
 {
     using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data;
     using System.Drawing;
     using System.Globalization;
-    using System.Text;
     using System.Timers;
     using System.Windows.Forms;
     using TQVault.Properties;
@@ -537,7 +533,7 @@ namespace TQVault
 
                 // Draw the stack
                 this.DrawItem(g, item.ItemBitmap, x, (Height / 2.0F) - offset, scale, item.Number - 1, false);
-               
+
                 // Draw the single
                 this.DrawItem(g, item.ItemBitmap, x, (Height / 2.0F) + offset, scale, 1, false);
                 return;

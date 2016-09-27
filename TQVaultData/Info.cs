@@ -6,8 +6,6 @@
 namespace TQVaultData
 {
     using System;
-    using System.Collections.Generic;
-    using System.Text;
 
     /// <summary>
     /// Holds information on magical prefixes and suffixes
@@ -189,15 +187,15 @@ namespace TQVaultData
         /// <summary>
         /// Gets the item scale percentage
         /// </summary>
-        public float ItemScalePercent 
+        public float ItemScalePercent
         {
             get
-            { 
-                return 1.0F + (this.GetSingle(this.itemScalePercent) / 100); 
+            {
+                return 1.0F + (this.GetSingle(this.itemScalePercent) / 100);
             }
         }
 
-        #endregion
+        #endregion Info Properties
 
         #region Info Public Methods
 
@@ -227,11 +225,11 @@ namespace TQVaultData
         /// <param name="variable">variable which we are getting the float from</param>
         /// <returns>float value from the variable</returns>
         public float GetSingle(string variable)
-        {        
+        {
             return this.record.GetSingle(variable, 0);
         }
 
-        #endregion
+        #endregion Info Public Methods
 
         #region Info Private Methods
 
@@ -337,6 +335,6 @@ namespace TQVaultData
             this.itemScalePercent = "itemScalePercent";
         }
 
-        #endregion
+        #endregion Info Private Methods
     }
 }

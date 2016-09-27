@@ -7,11 +7,8 @@ namespace TQVault
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data;
     using System.Drawing;
     using System.Globalization;
-    using System.Text;
     using System.Windows.Forms;
     using TQVault.Properties;
     using TQVaultData;
@@ -52,7 +49,7 @@ namespace TQVault
         private bool loadLastVault;
 
         /// <summary>
-        /// Indicates whether Immortal Throne characters are filtered from the player list 
+        /// Indicates whether Immortal Throne characters are filtered from the player list
         /// </summary>
         private bool filterITChars;
 
@@ -211,7 +208,7 @@ namespace TQVault
             }
             else
             {
-                this.Revert(new Size(713, 399));                
+                this.Revert(new Size(713, 399));
             }
 
             this.mapListComboBox.Items.Clear();
@@ -435,7 +432,7 @@ namespace TQVault
             this.titanQuestPathBrowseButton.Revert(new Point(677, 26), new Size(26, 23));
             this.immortalThronePathBrowseButton.Revert(new Point(677, 67), new Size(26, 23));
         }
-             
+
         /// <summary>
         /// Override of ScaleControl which supports font scaling.
         /// </summary>
@@ -544,7 +541,7 @@ namespace TQVault
             this.filterTQChars = Settings.Default.FilterTQChars;
             this.detectLanguage = Settings.Default.AutoDetectLanguage;
             this.enableNewUI = Settings.Default.EnableNewUI;
-            
+
             // Force English since there was some issue with getting the proper language setting.
             if (Database.DB.GameLanguage == null)
             {

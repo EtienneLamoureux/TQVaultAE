@@ -5,16 +5,11 @@
 //-----------------------------------------------------------------------
 namespace ArzExplorer
 {
+    using ArzExplorer.Properties;
     using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data;
-    using System.Drawing;
     using System.Globalization;
-    using System.Text;
     using System.Threading;
     using System.Windows.Forms;
-    using ArzExplorer.Properties;
     using TQVaultData;
 
     /// <summary>
@@ -200,11 +195,11 @@ namespace ArzExplorer
             this.DialogResult = DialogResult.Abort;
 
             MessageBox.Show(
-                this.exception.ToString(), 
-                Resources.ARZProgressFailedText, 
-                MessageBoxButtons.OK, 
+                this.exception.ToString(),
+                Resources.ARZProgressFailedText,
+                MessageBoxButtons.OK,
                 MessageBoxIcon.Error,
-                MessageBoxDefaultButton.Button1, 
+                MessageBoxDefaultButton.Button1,
                 rightToLeftOptions);
 
             this.Close();
@@ -219,10 +214,10 @@ namespace ArzExplorer
             {
                 MessageBox.Show(
                     Resources.ARZProgressCancelledText,
-                    string.Empty, 
-                    MessageBoxButtons.OK, 
-                    MessageBoxIcon.None, 
-                    MessageBoxDefaultButton.Button1, 
+                    string.Empty,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.None,
+                    MessageBoxDefaultButton.Button1,
                     rightToLeftOptions);
 
                 this.DialogResult = DialogResult.Cancel;
@@ -231,10 +226,10 @@ namespace ArzExplorer
             {
                 MessageBox.Show(
                     Resources.ARZProgressCompleteText,
-                    string.Empty, 
-                    MessageBoxButtons.OK, 
-                    MessageBoxIcon.None, 
-                    MessageBoxDefaultButton.Button1, 
+                    string.Empty,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.None,
+                    MessageBoxDefaultButton.Button1,
                     rightToLeftOptions);
 
                 this.DialogResult = DialogResult.OK;

@@ -7,15 +7,12 @@ namespace TQVault
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data;
     using System.Drawing;
     using System.Globalization;
-    using System.Text;
     using System.Windows.Forms;
     using TQVault.Properties;
     using TQVaultData;
-    
+
     /// <summary>
     /// Results dialog form class
     /// </summary>
@@ -71,10 +68,10 @@ namespace TQVault
             }
 
             this.FormDesignRatio = 0.0F; //// (float)this.Height / (float)this.Width;
-            ////this.FormMaximumSize = new Size(this.Width * 2, this.Height * 2);
-            ////this.FormMinimumSize = new Size(
-                ////Convert.ToInt32((float)this.Width * 0.4F),
-                ////Convert.ToInt32((float)this.Height * 0.4F));
+                                         ////this.FormMaximumSize = new Size(this.Width * 2, this.Height * 2);
+                                         ////this.FormMinimumSize = new Size(
+                                         ////Convert.ToInt32((float)this.Width * 0.4F),
+                                         ////Convert.ToInt32((float)this.Height * 0.4F));
             this.OriginalFormSize = this.Size;
             this.OriginalFormScale = 1.0F;
             this.LastFormSize = this.Size;
@@ -87,7 +84,7 @@ namespace TQVault
         /// <param name="sender">sender object</param>
         /// <param name="e">ResultChangedEventArgs data</param>
         public delegate void EventHandler<ResultChangedEventArgs>(object sender, ResultChangedEventArgs e);
-        
+
         /// <summary>
         /// Event for changing to a different highlighted result.
         /// </summary>
@@ -141,14 +138,19 @@ namespace TQVault
             {
                 case SackType.Vault:
                     return Resources.ResultsContainerVault;
+
                 case SackType.Player:
                     return Resources.ResultsContainerPlayer;
+
                 case SackType.Equipment:
                     return Resources.ResultsContainerEquip;
+
                 case SackType.Stash:
                     return Resources.ResultsContainerStash;
+
                 case SackType.TransferStash:
                     return Resources.GlobalTransferStash;
+
                 default:
                     return "Unknown";
             }
@@ -185,10 +187,10 @@ namespace TQVault
                 totalWidth += SystemInformation.VerticalScrollBarWidth;
             }
 
-            this.Width = Math.Min(Screen.PrimaryScreen.WorkingArea.Width, totalWidth + this.Padding.Horizontal);            
+            this.Width = Math.Min(Screen.PrimaryScreen.WorkingArea.Width, totalWidth + this.Padding.Horizontal);
             this.Height = Math.Max(this.Height, Math.Min(Screen.PrimaryScreen.WorkingArea.Height - SystemInformation.HorizontalScrollBarHeight, totalHeight - SystemInformation.HorizontalScrollBarHeight));
             this.Location = new Point(this.Location.X, (Screen.PrimaryScreen.WorkingArea.Height - this.Height) / 2);
-                            
+
             this.selectedResult = null;
 
             // the tooltip must be initialized after the main form is shown and active.
@@ -203,10 +205,10 @@ namespace TQVault
         /// <returns>tooltip string</returns>
         private string ToolTipCallback(int windowHandle)
         {
-            // see if this is us            
+            // see if this is us
             if (this.resultsDataGridView.Handle.ToInt32() == windowHandle)
             {
-                // yep.            
+                // yep.
                 return this.GetToolTip(this.selectedResult);
             }
 
@@ -367,7 +369,7 @@ namespace TQVault
 
             ////if (!string.IsNullOrEmpty(this.tooltipText))
             ////{
-                ////this.tooltip.ChangeText(this.GetToolTip());
+            ////this.tooltip.ChangeText(this.GetToolTip());
             ////}
         }
 
@@ -383,7 +385,7 @@ namespace TQVault
         }
 
         /// <summary>
-        /// Handler for entering a cell in the DataGridView. 
+        /// Handler for entering a cell in the DataGridView.
         /// Used to highlight the row under the mouse and updating the tool tip text.
         /// </summary>
         /// <param name="sender">sender object</param>

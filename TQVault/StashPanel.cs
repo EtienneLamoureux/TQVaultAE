@@ -6,14 +6,13 @@
 namespace TQVault
 {
     using System;
-    using System.Collections.Generic;
     using System.Drawing;
     using System.Globalization;
     using System.Text;
     using System.Windows.Forms;
     using TQVault.Properties;
     using TQVaultData;
-    
+
     /// <summary>
     /// Class for handling the stash panel ui functions
     /// </summary>
@@ -71,7 +70,7 @@ namespace TQVault
         /// </summary>
         private Bitmap stashBackground;
 
-        #endregion
+        #endregion StashPanel Fields
 
         /// <summary>
         /// Initializes a new instance of the StashPanel class.  Hard coded to 3 stash buttons and no autosort buttons.
@@ -91,7 +90,7 @@ namespace TQVault
             this.equipmentPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
             this.equipmentPanel.OnResizeForm += new EventHandler<ResizeEventArgs>(this.ResizeFormCallback);
 
-            this.Text = Resources.StashPanelText;            
+            this.Text = Resources.StashPanelText;
             this.NoPlayerString = Resources.StashPanelText;
             this.Size = new Size(
                 (panelSize.Width * Database.DB.ItemUnitSize) + Convert.ToInt32(10.0F * Database.DB.Scale) + BorderPad,
@@ -131,14 +130,14 @@ namespace TQVault
             }
 
             this.equipmentPanel.SetLocation(new Point(
-                BorderPad + offsetX, 
+                BorderPad + offsetX,
                 this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height + offsetY));
 
             this.maxPanelSize = panelSize;
-            
+
             // Create the background for redrawing now that everything is set.
             this.equipmentPanel.CursorBackgroundImage = this.CreateCursorBackground(this.equipmentPanel);
-            
+
             this.BagSackPanel.Visible = false;
             this.BagSackPanel.Enabled = false;
         }
@@ -200,7 +199,7 @@ namespace TQVault
         /// <summary>
         /// Gets or sets the background image for the equipment panel scaled by the panel size
         /// </summary>
-        public Bitmap EquipmentBackground 
+        public Bitmap EquipmentBackground
         {
             get
             {
@@ -302,7 +301,7 @@ namespace TQVault
                     else if (this.currentBag == 1)
                     {
                         // Transfer Stash
-                        this.background = this.StashBackground; 
+                        this.background = this.StashBackground;
                         this.BagSackPanel.Sack = this.transferStash.Sack;
                         this.BagSackPanel.SackType = SackType.Stash;
                         this.BagSackPanel.ResizeSackPanel(this.transferStash.Width, this.transferStash.Height);
@@ -341,7 +340,7 @@ namespace TQVault
             }
         }
 
-        #endregion
+        #endregion StashPanel Properties
 
         /// <summary>
         /// Sets the equipment panel background image and cursor background image.
@@ -399,7 +398,7 @@ namespace TQVault
 
             return button;
         }
-            
+
         /// <summary>
         /// Creates all of the stash buttons.
         /// </summary>
@@ -556,7 +555,7 @@ namespace TQVault
             base.PaintCallback(sender, e);
         }
 
-        #endregion
+        #endregion StashPanel Protected Methods
 
         #region StashPanel Private Methods
 
@@ -672,6 +671,6 @@ namespace TQVault
                 this.Height - (this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height + BorderPad));
         }
 
-        #endregion
+        #endregion StashPanel Private Methods
     }
 }

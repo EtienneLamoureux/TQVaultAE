@@ -8,7 +8,6 @@ namespace TQVault
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Data;
     using System.Diagnostics;
     using System.Drawing;
     using System.Globalization;
@@ -18,7 +17,6 @@ namespace TQVault
     using System.Reflection;
     using System.Security;
     using System.Security.Permissions;
-    using System.Text;
     using System.Windows.Forms;
     using TQVault.Properties;
     using TQVaultData;
@@ -27,7 +25,7 @@ namespace TQVault
     /// Class for the UpdateDialog dialog box
     /// </summary>
     internal partial class UpdateDialog : VaultForm
-    {        
+    {
         /// <summary>
         /// MessageBoxOptions for right to left reading.
         /// </summary>
@@ -420,7 +418,7 @@ namespace TQVault
                 // Take the number following the decimal and weight it by 100^position
                 total += Convert.ToInt32(tempVersion.Substring(location + 1), CultureInfo.InvariantCulture) *
                     Convert.ToInt32(Math.Pow(100.0, Convert.ToDouble(i, CultureInfo.InvariantCulture)), CultureInfo.InvariantCulture);
-                
+
                 // Remove the converted digit along with the decimal point.
                 tempVersion = tempVersion.Substring(0, location);
             }
@@ -468,10 +466,10 @@ namespace TQVault
             if (ConvertVersionToInt(this.latestVersion) > ConvertVersionToInt(this.currentVersion))
             {
                 if (this.updateType != UpdateType.FullInstall)
-                { 
+                {
                     // Skip this update if we are doing a full installation.
                     if (this.updateType == UpdateType.Updater)
-                    { 
+                    {
                         // We need to update both the Update Program and TQVault
                         this.updateType = UpdateType.UpdaterAndPatch;
                         if (this.updaterVersionException)
@@ -502,7 +500,7 @@ namespace TQVault
                         output.Add(string.Empty);
                     }
                     else
-                    { 
+                    {
                         // Just a TQVault update.
                         this.updateType = UpdateType.Patch;
                         output.Add(Resources.UpdateNewTQVault);

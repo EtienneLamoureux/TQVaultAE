@@ -12,7 +12,6 @@ namespace TQVault
     using System.Globalization;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Windows.Forms;
     using TQVault.Properties;
     using TQVaultData;
@@ -101,7 +100,7 @@ namespace TQVault
         /// </summary>
         private Point originalLocation;
 
-        #endregion
+        #endregion SackPanel Fields
 
         /// <summary>
         /// Initializes a new instance of the SackPanel class.
@@ -414,7 +413,7 @@ namespace TQVault
         /// </summary>
         /// <remarks>
         /// Used to redraw the areas underneath the drag item as the item moves with the mouse.
-        /// </remarks>        
+        /// </remarks>
         protected Collection<Item> ItemsUnderOldDragLocation
         {
             get
@@ -428,7 +427,7 @@ namespace TQVault
         /// </summary>
         protected Point LastCellWithFocus { get; set; }
 
-        #endregion
+        #endregion SackPanel Properties
 
         #region SackPanel Public Methods
 
@@ -439,13 +438,13 @@ namespace TQVault
         /// <returns>Tooltip string</returns>
         public string ToolTipCallback(int windowHandle)
         {
-            // see if this is us            
+            // see if this is us
             if (this.Handle.ToInt32() == windowHandle)
             {
-                // yep.            
-                /*if (this.m_getToolTip != null) 
-                {            
-                    return this.m_getToolTip(this);            
+                // yep.
+                /*if (this.m_getToolTip != null)
+                {
+                    return this.m_getToolTip(this);
                 }*/
             }
 
@@ -478,7 +477,7 @@ namespace TQVault
 
             // Set the unscaled origin.
             this.originalLocation = new Point(
-                Convert.ToInt32((float)location.X / Database.DB.Scale), 
+                Convert.ToInt32((float)location.X / Database.DB.Scale),
                 Convert.ToInt32((float)location.Y / Database.DB.Scale));
         }
 
@@ -491,11 +490,11 @@ namespace TQVault
             if (this.DragInfo.IsActive)
             {
                 MessageBox.Show(
-                    Resources.SackPanelAutoSortMsg, 
-                    Resources.SackPanelAutoSort, 
-                    MessageBoxButtons.OK, 
+                    Resources.SackPanelAutoSortMsg,
+                    Resources.SackPanelAutoSort,
+                    MessageBoxButtons.OK,
                     MessageBoxIcon.None,
-                    MessageBoxDefaultButton.Button1, 
+                    MessageBoxDefaultButton.Button1,
                     RightToLeftOptions);
 
                 return;
@@ -519,7 +518,7 @@ namespace TQVault
 
             // Toggle sorting direction.
             this.sortVertical = !this.sortVertical;
-            
+
             this.Sack.EmptySack();
 
             int param1 = this.SackSize.Height;
@@ -555,7 +554,7 @@ namespace TQVault
                             {
                                 // The slot is free so try to place the item.
                                 if (k + tempItem.Height <= this.SackSize.Height)
-                                { 
+                                {
                                     // Make sure we do not extend beyond the sack borders.
                                     tempItem.PositionX = j;
                                     tempItem.PositionY = k;
@@ -578,7 +577,7 @@ namespace TQVault
                             {
                                 // The slot is free so try to place the item.
                                 if (k + tempItem.Width <= this.SackSize.Width)
-                                {  
+                                {
                                     // Make sure we do not extend beyond the sack borders.
                                     tempItem.PositionX = k;
                                     tempItem.PositionY = j;
@@ -647,7 +646,7 @@ namespace TQVault
                 }
             }
 
-            // We could not find a place for the item. 
+            // We could not find a place for the item.
             return new Point(-1, -1);
         }
 
@@ -773,17 +772,17 @@ namespace TQVault
                 catch (NullReferenceException exception)
                 {
                     MessageBox.Show(
-                        exception.ToString(), 
-                        Resources.GlobalError, 
-                        MessageBoxButtons.OK, 
-                        MessageBoxIcon.Warning, 
-                        MessageBoxDefaultButton.Button1, 
+                        exception.ToString(),
+                        Resources.GlobalError,
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning,
+                        MessageBoxDefaultButton.Button1,
                         RightToLeftOptions);
                 }
             }
         }
 
-        #endregion
+        #endregion SackPanel Public Methods
 
         #region SackPanel Protected Methods
 
@@ -868,7 +867,7 @@ namespace TQVault
                     continue;
                 }
 
-                // store the x and y values                
+                // store the x and y values
                 int x = item.PositionX;
                 int y = item.PositionY;
 
@@ -915,7 +914,7 @@ namespace TQVault
                         {
                             items.Add(item);
                         }
-                    
+
                         y = this.CellBottom(item);
                     }
                 }
@@ -995,12 +994,12 @@ namespace TQVault
                 return false;
             }
 
-            // Iterate through the list of selected items            
+            // Iterate through the list of selected items
             foreach (Item selectedItem in this.selectedItems)
             {
                 if (item == selectedItem)
                 {
-                    // We have a match 
+                    // We have a match
                     return true;
                 }
             }
@@ -1016,7 +1015,7 @@ namespace TQVault
         protected virtual void PickupItem(object sender, MouseEventArgs e)
         {
             // process the mouse moving to this location...just in case
-            this.MouseMoveCallback(sender, e); 
+            this.MouseMoveCallback(sender, e);
 
             Item focusedItem = this.FindItem(this.LastCellWithFocus);
             if (focusedItem != null)
@@ -1040,7 +1039,7 @@ namespace TQVault
                 this.DragInfo.Set(this, this.Sack, focusedItem, this.GetMouseOffset(e.Location, focusedItem));
 
                 // process mouse move again to apply the graphical effects of dragging an item.
-                this.MouseMoveCallback(sender, e); 
+                this.MouseMoveCallback(sender, e);
             }
         }
 
@@ -1106,7 +1105,7 @@ namespace TQVault
             }
 
             if (this.IsItemSelected(item))
-            { 
+            {
                 // Check to see if the item is already selected
                 // If the item is in the list then remove it.
                 this.selectedItems.Remove(item);
@@ -1736,7 +1735,7 @@ namespace TQVault
             {
                 graphics.DrawImage(this.CursorBackgroundImage, dragRectangle, dragRectangle, GraphicsUnit.Pixel);
             }
-            else 
+            else
             {
                 // we know we need to wipe out the area under the old drag point
                 this.ClearArea(graphics, dragRectangle);
@@ -1910,7 +1909,7 @@ namespace TQVault
         /// <param name="e">PaintEventArgs data</param>
         protected virtual void PaintItems(PaintEventArgs e)
         {
-            // Now draw all the sack items                   
+            // Now draw all the sack items
             foreach (Item item in this.Sack)
             {
                 // Skip over empty and dragged items.
@@ -2164,7 +2163,7 @@ namespace TQVault
             this.DrawItem(graphics, item, itemScreenLocation);
         }
 
-        #endregion
+        #endregion SackPanel Protected Methods
 
         #region SackPanel Private Methods
 
@@ -2254,7 +2253,7 @@ namespace TQVault
         /// <param name="sender">sender object</param>
         /// <param name="e">EventArgs data</param>
         private void MouseEnterCallback(object sender, EventArgs e)
-        {   
+        {
             ////this.Focus();
             this.Select();
         }
@@ -2498,9 +2497,9 @@ namespace TQVault
                     if (this.selectedItems != null)
                     {
                         if (Settings.Default.SuppressWarnings || MessageBox.Show(
-                            Resources.SackPanelDeleteMultiMsg, 
+                            Resources.SackPanelDeleteMultiMsg,
                             Resources.SackPanelDeleteMulti,
-                            MessageBoxButtons.YesNo, 
+                            MessageBoxButtons.YesNo,
                             MessageBoxIcon.Warning,
                             MessageBoxDefaultButton.Button1,
                             RightToLeftOptions) == DialogResult.Yes)
@@ -2521,9 +2520,9 @@ namespace TQVault
                 else if (selectedItem == Resources.SackPanelMenuRemoveRelic)
                 {
                     if (Settings.Default.SuppressWarnings || MessageBox.Show(
-                        Resources.SackPanelRemoveRelicMsg, 
+                        Resources.SackPanelRemoveRelicMsg,
                         Resources.SackPanelMenuRemoveRelic,
-                        MessageBoxButtons.YesNo, 
+                        MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question,
                         MessageBoxDefaultButton.Button1,
                         RightToLeftOptions) == DialogResult.Yes)
@@ -2694,7 +2693,7 @@ namespace TQVault
                 {
                     this.ItemsUnderDragItem.Add(item);
                 }
-                
+
                 // First wipe out the old
                 this.RepaintLastDragLocation(graphics);
 
@@ -2876,7 +2875,7 @@ namespace TQVault
             }
         }
 
-        #endregion
+        #endregion SackPanel Private Methods
 
         /// <summary>
         /// Class for rendering the context menu strip.

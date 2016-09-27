@@ -5,8 +5,6 @@
 //-----------------------------------------------------------------------
 namespace TQVault
 {
-    using System;
-
     /// <summary>
     /// Class encapsulating the User messages.
     /// </summary>

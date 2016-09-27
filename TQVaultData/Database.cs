@@ -11,7 +11,6 @@ namespace TQVaultData
     using System.Drawing;
     using System.Globalization;
     using System.IO;
-    using System.Reflection;
     using System.Text;
 
     /// <summary>
@@ -82,7 +81,7 @@ namespace TQVaultData
         /// </summary>
         private float scale = 1.00F;
 
-        #endregion
+        #endregion Database Fields
 
         /// <summary>
         /// Initializes a new instance of the Database class.
@@ -307,7 +306,7 @@ namespace TQVaultData
             }
         }
 
-        #endregion
+        #endregion Database Properties
 
         #region Database Public Methods
 
@@ -449,7 +448,7 @@ namespace TQVaultData
             return result;
         }
 
-        #endregion
+        #endregion Database Public Static Methods
 
         /// <summary>
         /// Gets the Infor for a specific item id.
@@ -881,7 +880,7 @@ namespace TQVaultData
             return relicOverlayBitmap;
         }
 
-        #endregion
+        #endregion Database Public Methods
 
         #region Database Private Methods
 
@@ -1464,6 +1463,6 @@ namespace TQVaultData
             }
         }
 
-        #endregion
+        #endregion Database Private Methods
     }
 }

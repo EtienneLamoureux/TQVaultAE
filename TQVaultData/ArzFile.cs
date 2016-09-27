@@ -10,7 +10,6 @@ namespace TQVaultData
     using System.Globalization;
     using System.IO;
     using System.IO.Compression;
-    using System.Text;
 
     /// <summary>
     /// Class for decoding Titan Quest ARZ files.
@@ -29,9 +28,9 @@ namespace TQVaultData
 
         /// <summary>
         /// RecordInfo keyed by their ID
-        /// </summary>       
-        private Dictionary<string, RecordInfo> recordInfo; 
-        
+        /// </summary>
+        private Dictionary<string, RecordInfo> recordInfo;
+
         /// <summary>
         /// DBRecords cached as they get requested
         /// </summary>
@@ -41,7 +40,7 @@ namespace TQVaultData
         /// Holds the keys for the recordInfo Dictionary
         /// </summary>
         private string[] keys;
-        
+
         /// <summary>
         /// Initializes a new instance of the ArzFile class.
         /// </summary>
@@ -220,7 +219,7 @@ namespace TQVaultData
         public DBRecordCollection GetRecordNotCached(string recordId)
         {
             recordId = TQData.NormalizeRecordPath(recordId);
-            
+
             try
             {
                 // If it is already in the cache no need not to use it
@@ -299,9 +298,9 @@ namespace TQVaultData
             {
                 this.strings[i] = TQData.ReadCString(reader);
 
-                if (outStream != null) 
-                { 
-                    outStream.WriteLine("{0},{1}", i, this.strings[i]); 
+                if (outStream != null)
+                {
+                    outStream.WriteLine("{0},{1}", i, this.strings[i]);
                 }
             }
         }
@@ -458,7 +457,7 @@ namespace TQVaultData
                         string variableName = arzFile.Getstring(variableID);
 
                         if (variableName == null)
-                        {                            
+                        {
                             // Turn on debugging so we can log the exception.
                             if (!TQDebug.DebugEnabled)
                             {
@@ -497,7 +496,7 @@ namespace TQVaultData
                             TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable {1}, bad valCount {2}", this.ID, variableName, valCount));
                             throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable {1}, bad valCount {2}", this.ID, variableName, valCount));
                         }
- 
+
                         // increment our dword count
                         i += 2 + valCount;
 
@@ -598,6 +597,6 @@ namespace TQVaultData
             }
         }
 
-        #endregion
+        #endregion RecordInfo
     }
 }

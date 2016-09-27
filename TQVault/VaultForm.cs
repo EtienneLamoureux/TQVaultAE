@@ -6,14 +6,9 @@
 namespace TQVault
 {
     using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data;
     using System.Drawing;
     using System.Globalization;
-    using System.Linq;
     using System.Security.Permissions;
-    using System.Text;
     using System.Windows.Forms;
     using TQVault.Properties;
     using TQVaultData;
@@ -117,7 +112,7 @@ namespace TQVault
         /// Indicates whether resizing is allowed when custom borders are enabled.
         /// </summary>
         private bool resizeCustomAllowed;
-        
+
         /// <summary>
         /// Initializes a new instance of the VaultForm class.
         /// </summary>

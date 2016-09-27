@@ -5,14 +5,9 @@
 //-----------------------------------------------------------------------
 namespace TQVault
 {
-    using System;
-    using System.Collections;
-    using System.ComponentModel;
-    using System.Data;
-    using System.Drawing;
     using System.Windows.Forms;
     using VXPLibrary;
-    
+
     /// <summary>
     /// ToolTip Activate Delegate
     /// </summary>
@@ -52,7 +47,7 @@ namespace TQVault
 
             set
             {
-                this.onActivate = value; 
+                this.onActivate = value;
             }
         }
 
@@ -63,7 +58,7 @@ namespace TQVault
         public void Initialize(Control mainForm)
         {
             this.toolTipManager.OnActivateCustomTooltip += new _IVXPTooltipManagerEvents_OnActivateCustomTooltipEventHandler(this.OnActivateCustomTooltip);
- 
+
             // Changed by Th to 200.
             this.toolTipManager.ShowDelay = 200;
             this.toolTipManager.tool.ShowWhenEmpty = false;

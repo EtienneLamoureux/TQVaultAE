@@ -9,10 +9,6 @@ namespace TQVault
     using System;
     using System.Collections.Generic;
     using System.Drawing;
-    using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using System.Text;
     using System.Windows.Forms;
     using TQVault.Properties;
     using TQVaultData;
@@ -22,10 +18,6 @@ namespace TQVault
     /// </summary>
     public class EquipmentPanel : SackPanel
     {
-        #region EquipmentPanel Fields
-
-        #endregion
-
         /// <summary>
         /// Initializes a new instance of the EquipmentPanel class.
         /// </summary>
@@ -46,8 +38,7 @@ namespace TQVault
             this.HighlightUnselectedItemBrush = new SolidBrush(Color.FromArgb(23, 149, 15));
         }
 
-        #region EquipmentPanel Properties
-        #endregion
+
 
         #region EquipmentPanel Public Methods
 
@@ -74,7 +65,7 @@ namespace TQVault
                     else if (this.IsItemSelected(dragInfo.Item))
                     {
                         backgroundBrush = this.HighlightSelectedItemBrush;
-                    }                    
+                    }
 
                     Item new2HItem = this.GetItemFromShadowSlot(dragInfo.Item.PositionY);
 
@@ -90,7 +81,7 @@ namespace TQVault
             }
         }
 
-        #endregion
+        #endregion EquipmentPanel Public Methods
 
         #region EquipmentPanel Protected Methods
 
@@ -127,15 +118,15 @@ namespace TQVault
                     continue;
                 }
 
-                // store the x and y values                
+                // store the x and y values
                 int x = item.PositionX;
                 int y = item.PositionY;
 
                 if (item.IsInWeaponSlot)
-                {  
+                {
                     // Check if it's an item in the weapon box
                     if (IsInsideWeaponBox(cellLocation, y))
-                    {  
+                    {
                         // Verify that we are over the weapon box
                         // If we are over an empty weapon box we need to check if there is a 2 Handed weapon
                         // in the corresponding weapon box and if there is we return that instead.
@@ -319,8 +310,8 @@ namespace TQVault
                 {
                     return;
                 }
-                    
-                if (this.DragInfo.Sack != null)                
+
+                if (this.DragInfo.Sack != null)
                 {
                     oldSlot = FindEquipmentSlot(this.DragInfo.Sack, dragItem);
                 }
@@ -382,7 +373,7 @@ namespace TQVault
                         float randPercent = (float)Item.GenerateSeed() / 0x7fff;
                         LootTableCollection table = itemUnderUs.BonusTable;
 
-                        if (table != null  && table.Length > 0)
+                        if (table != null && table.Length > 0)
                         {
                             int i = table.Length;
                             foreach (KeyValuePair<string, float> e1 in table)
@@ -541,7 +532,7 @@ namespace TQVault
 
                 // clear the "last drag" variables
                 this.LastDragLocation = InvalidDragLocation;
-                this.CellsUnderDragItem = InvalidDragRectangle; 
+                this.CellsUnderDragItem = InvalidDragRectangle;
                 this.ItemsUnderOldDragLocation.Clear();
                 this.ItemsUnderDragItem.Clear();
 
@@ -615,7 +606,7 @@ namespace TQVault
                         else
                         {
                             backgroundBrush = this.CellHasItemBrush;
-                        }                        
+                        }
 
                         Item last2HItem = this.GetItemFromShadowSlot(lastItem.PositionY);
                         if (last2HItem.BaseItemId.Length == 0)
@@ -685,12 +676,12 @@ namespace TQVault
         /// </summary>
         /// <returns>Rectangle of the redraw area.</returns>
         protected override Rectangle GetRepaintDragRect()
-        {              
+        {
             // Figure out the rectangle that needs to be redrawn
             int x = this.LastDragLocation.X;
             int y = this.LastDragLocation.Y;
             int width = Convert.ToInt32(this.DragInfo.Item.ItemBitmap.Width * Database.DB.Scale);
-            int height = Convert.ToInt32(this.DragInfo.Item.ItemBitmap.Height * Database.DB.Scale);         
+            int height = Convert.ToInt32(this.DragInfo.Item.ItemBitmap.Height * Database.DB.Scale);
 
             // We also know we need to wipe out any cells under the old drag point
             // This is used to restore the background after highlighting the cells underneath
@@ -984,7 +975,7 @@ namespace TQVault
         /// <param name="e">PaintEventArgs data</param>
         protected override void PaintItems(PaintEventArgs e)
         {
-            // Now draw all the sack items                   
+            // Now draw all the sack items
             foreach (Item item in this.Sack)
             {
                 if (item != this.DragInfo.Item)
@@ -1074,7 +1065,7 @@ namespace TQVault
                 {
                     // Adjust for weapon slots
                     screenLocation = WeaponTopLeft(
-                        SackCollection.GetWeaponLocationOffset(item.PositionY).X, 
+                        SackCollection.GetWeaponLocationOffset(item.PositionY).X,
                         SackCollection.GetWeaponLocationOffset(item.PositionY).Y,
                         item.Width,
                         item.Height);
@@ -1088,7 +1079,7 @@ namespace TQVault
             }
         }
 
-        #endregion
+        #endregion EquipmentPanel Protected Methods
 
         #region EquipmentPanel Private Methods
 
@@ -1288,7 +1279,7 @@ namespace TQVault
                 offset--;
             }
 
-           return this.Sack.GetItem(offset);
+            return this.Sack.GetItem(offset);
         }
 
         /// <summary>
@@ -1384,9 +1375,9 @@ namespace TQVault
                 if (item.IsInWeaponSlot)
                 {
                     screenLocation = WeaponTopLeft(
-                        SackCollection.GetWeaponLocationOffset(item.PositionY).X, 
+                        SackCollection.GetWeaponLocationOffset(item.PositionY).X,
                         SackCollection.GetWeaponLocationOffset(item.PositionY).Y,
-                        item2H.Width, 
+                        item2H.Width,
                         item2H.Height);
                 }
                 else
@@ -1574,17 +1565,23 @@ namespace TQVault
             {
                 case 0: // Head
                     return item.IsHelm;
+
                 case 1: // Neck
                     return item.IsAmulet;
+
                 case 2: // Body
                     return item.IsTorsoArmor;
+
                 case 3: // Legs
                     return item.IsGreave;
+
                 case 4: // Arms
                     return item.IsBracer;
+
                 case 5: // Ring1
                 case 6: // Ring2
                     return item.IsRing;
+
                 case 7: // Weapon1
                 case 8: // Shield1
                 case 9: // Weapon2
@@ -1613,8 +1610,10 @@ namespace TQVault
                     }
 
                     break;
+
                 case 11: // Artifact
                     return item.IsArtifact;
+
                 default:
                     return false;
             }
@@ -1622,6 +1621,6 @@ namespace TQVault
             return false;
         }
 
-        #endregion
+        #endregion EquipmentPanel Private Methods
     }
 }

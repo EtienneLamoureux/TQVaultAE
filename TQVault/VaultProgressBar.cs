@@ -6,14 +6,10 @@
 namespace TQVault
 {
     using System;
-    using System.Collections.Generic;
     using System.Drawing;
-    using System.Drawing.Imaging;
-    using System.Linq;
-    using System.Text;
     using System.Windows.Forms;
-    using TQVault.Properties;   
-    
+    using TQVault.Properties;
+
     /// <summary>
     /// Class which encapsulates the cusom TQ Vault progress bar.
     /// </summary>
@@ -23,7 +19,7 @@ namespace TQVault
         /// Holds the main image for the progress bar.
         /// </summary>
         private Bitmap backgroundImage;
-        
+
         /// <summary>
         /// Holds the filler image for the progress bar.
         /// </summary>

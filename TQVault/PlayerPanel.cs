@@ -6,10 +6,7 @@
 namespace TQVault
 {
     using System;
-    using System.Collections.Generic;
     using System.Drawing;
-    using System.Globalization;
-    using System.Text;
     using System.Windows.Forms;
     using TQVault.Properties;
     using TQVaultData;
@@ -35,7 +32,7 @@ namespace TQVault
         public PlayerPanel(ItemDragInfo dragInfo, int numberOfBags, Size panel1Size, Size panel2Size, TTLib tooltip)
             : base(dragInfo, numberOfBags, panel2Size, tooltip, 2, AutoMoveLocation.Player)
         {
-            this.Text = Resources.PlayerPanelNoPlayer;                
+            this.Text = Resources.PlayerPanelNoPlayer;
             this.NoPlayerString = Resources.PlayerPanelNoPlayer;
 
             this.Size = new Size(
@@ -92,7 +89,7 @@ namespace TQVault
             AutoSortButtons[1].Location = new Point(
                 this.BagSackPanel.Location.X + this.BagSackPanel.Width - AutoSortButtons[1].Width,
                 this.BagSackPanel.Location.Y - AutoSortButtons[1].Height);
-    
+
             this.BagSackPanel.SackType = SackType.Sack;
         }
 

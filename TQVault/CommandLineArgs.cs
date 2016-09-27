@@ -6,9 +6,7 @@
 namespace TQVault
 {
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
-    using System.Text;
 
     /// <summary>
     /// Class for parsing command line arguments

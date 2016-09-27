@@ -6,9 +6,6 @@
 namespace TQVault
 {
     using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data;
     using System.Drawing;
     using System.Globalization;
     using System.IO;
@@ -21,7 +18,7 @@ namespace TQVault
     /// Class for VaultMaintenanceDialog form
     /// </summary>
     internal partial class VaultMaintenanceDialog : VaultForm
-    {       
+    {
         /// <summary>
         /// MessageBoxOptions for right to left reading.
         /// </summary>
@@ -161,7 +158,7 @@ namespace TQVault
         {
             this.ClientSize = originalSize;
             this.DrawCustomBorder = false;
-            
+
             Font labelFont = new Font("Albertus MT", 9.0F);
 
             this.targetTextBox.Font = labelFont;
@@ -191,7 +188,7 @@ namespace TQVault
             this.deleteRadioButton.Font = labelFont;
             this.deleteRadioButton.Location = new Point(6, 44);
             this.deleteRadioButton.Size = new Size(92, 17);
-            
+
             this.copyRadioButton.Font = labelFont;
             this.copyRadioButton.Location = new Point(6, 68);
             this.copyRadioButton.Size = new Size(85, 17);
@@ -203,7 +200,7 @@ namespace TQVault
             this.targetLabel.Font = labelFont;
             this.targetLabel.Location = new Point(12, 273);
             this.targetLabel.Size = new Size(41, 14);
-            
+
             this.okayButton.Revert(new Point(100, 316), new Size(75, 23));
             this.cancelButton.Revert(new Point(220, 316), new Size(75, 23));
         }
@@ -284,7 +281,7 @@ namespace TQVault
                 foreach (string vault in vaults)
                 {
                     if (!vault.Equals("Main Vault"))
-                    { 
+                    {
                         // now add everything EXCEPT for main vault
                         this.vaultListComboBox.Items.Add(vault);
                     }
@@ -427,7 +424,7 @@ namespace TQVault
             {
                 if (this.vaultListComboBox.SelectedItem == null)
                 {
-                    return; 
+                    return;
                 }
 
                 // validate the text.

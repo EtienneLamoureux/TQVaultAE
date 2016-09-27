@@ -5,10 +5,7 @@
 //-----------------------------------------------------------------------
 namespace TQVaultData
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
 
     /// <summary>
     /// Used for autosorting of items within a group

@@ -8,14 +8,12 @@ namespace TQVaultMon
     using System;
     using System.Collections;
     using System.ComponentModel;
-    using System.Data;
     using System.Diagnostics;
     using System.Drawing;
     using System.Globalization;
     using System.IO;
     using System.Reflection;
     using System.Runtime.InteropServices;
-    using System.Text;
     using System.Windows.Forms;
 
     /// <summary>
@@ -79,7 +77,7 @@ namespace TQVaultMon
             this.header = tmpHeader;
 
             // I had the rest of this stuff in the header but I decided it would be better for it to scroll off.
-            string[] openingMsg = 
+            string[] openingMsg =
             {
                 "This program will prevent Titan Quest from detecting that your character's inventory has been modified outside of the game.",
                 "As long as this program is running, whenever it sees Titan Quest starting on your computer, it will patch it to allow modified characters.",
@@ -191,7 +189,7 @@ namespace TQVaultMon
         }
 
         /// <summary>
-        /// Changes the color to blue to indicate things are good. 
+        /// Changes the color to blue to indicate things are good.
         /// </summary>
         private void MarkHappy()
         {
@@ -679,7 +677,7 @@ namespace TQVaultMon
             /// Data that will be written into the address.
             /// </summary>
             public byte[] NewData;
-            
+
             /// <summary>
             /// Initializes a new instance of the PatchItem struct.
             /// </summary>

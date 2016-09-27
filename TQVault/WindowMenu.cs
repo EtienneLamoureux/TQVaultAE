@@ -7,7 +7,6 @@ namespace TQVault
 {
     using System;
     using System.Drawing;
-    using System.Globalization;
     using System.Windows.Forms;
     using TQVault.Properties;
 
@@ -113,6 +112,7 @@ namespace TQVault
                     this.menuMove.Enabled = true;
                     this.menuSize.Enabled = this.SizeEnabled;
                     break;
+
                 case FormWindowState.Minimized:
                     this.menuRestore.Enabled = true;
                     this.menuMax.Enabled = this.MaximizeEnabled;
@@ -120,6 +120,7 @@ namespace TQVault
                     this.menuMove.Enabled = false;
                     this.menuSize.Enabled = false;
                     break;
+
                 case FormWindowState.Maximized:
                     this.menuRestore.Enabled = true;
                     this.menuMax.Enabled = false;
@@ -144,18 +145,23 @@ namespace TQVault
                 case 0:
                     this.SendSysCommand(User32.SystemMenuCommand.Restore);
                     break;
+
                 case 1:
                     this.SendSysCommand(User32.SystemMenuCommand.Move);
                     break;
+
                 case 2:
                     this.SendSysCommand(User32.SystemMenuCommand.Size);
                     break;
+
                 case 3:
                     this.SendSysCommand(User32.SystemMenuCommand.Minimize);
                     break;
+
                 case 4:
                     this.SendSysCommand(User32.SystemMenuCommand.Maximize);
                     break;
+
                 case 6:
                     this.SendSysCommand(User32.SystemMenuCommand.Close);
                     break;

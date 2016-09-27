@@ -15,7 +15,6 @@ namespace TQVaultData
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.IO;
-    using System.Runtime.InteropServices;
     using System.Security.Permissions;
     using Tao.DevIl;
 
@@ -271,7 +270,7 @@ namespace TQVaultData
         /// </remarks>
         /// <param name="ddsData">Byte array containing DDS image data</param>
         /// <returns>A Bitmap object that can be displayed</returns>
-        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]   
+        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         private static Bitmap DDSDataToBMP(byte[] ddsData)
         {
             // Create a DevIL image "name" (which is actually a number)
@@ -296,7 +295,7 @@ namespace TQVaultData
 
             // Copy the pixel byte array from the DevIL image to the Bitmap
             int result = Il.ilCopyPixels(0, 0, 0, Il.ilGetInteger(Il.IL_IMAGE_WIDTH), Il.ilGetInteger(Il.IL_IMAGE_HEIGHT), 1, Il.IL_BGRA, Il.IL_UNSIGNED_BYTE, bitmapData.Scan0);
-            
+
             if (result == Il.IL_INVALID_CONVERSION || result == Il.IL_ILLEGAL_OPERATION)
             {
                 throw new InvalidDataException("Cannot Convert Bitmap.");

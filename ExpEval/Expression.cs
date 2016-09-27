@@ -5,11 +5,6 @@
 //-----------------------------------------------------------------------
 namespace ExpressionEvaluator
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
     /// <summary>
     /// Parent class for the expression tree
     /// </summary>

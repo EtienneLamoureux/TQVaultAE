@@ -5,14 +5,10 @@
 //-----------------------------------------------------------------------
 namespace TQVaultData
 {
-    using System;
-    using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
-    using System.Text;
 
     /// <summary>
-    /// Class used for runtime debugging with the configuration file. 
+    /// Class used for runtime debugging with the configuration file.
     /// </summary>
     public static class TQDebug
     {
@@ -61,7 +57,7 @@ namespace TQVaultData
                 {
                     // Delete any existing debug log.
                     File.Delete("tqdebug.txt");
-                }                
+                }
             }
         }
 

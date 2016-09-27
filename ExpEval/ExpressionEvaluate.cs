@@ -1,15 +1,13 @@
 //-----------------------------------------------------------------------
 // <copyright file="ExpressionEvaluate.cs" company="BlueLaser505">
 //     Copyright (c) BlueLaser505. All rights reserved.
-// </copyright>    
+// </copyright>
 // Taken from http://sourceforge.net/projects/expression-eval/
 // Ported to C# by VillageIdiot
 //-----------------------------------------------------------------------
 namespace ExpressionEvaluator
 {
     using System;
-    using System.Collections.Generic;
-    using System.Text;
 
     /// <summary>
     /// Class which evaluates a string expression into a value.

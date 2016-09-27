@@ -6,12 +6,8 @@
 namespace TQVault
 {
     using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data;
     using System.Drawing;
     using System.Globalization;
-    using System.Text;
     using System.Windows.Forms;
     using TQVault.Properties;
     using TQVaultData;
@@ -23,7 +19,7 @@ namespace TQVault
     {
         /// <summary>
         /// MessageBoxOptions for right to left reading.
-        /// </summary>        
+        /// </summary>
         private static MessageBoxOptions rightToLeftOptions = (MessageBoxOptions)0;
 
         /// <summary>
@@ -46,7 +42,7 @@ namespace TQVault
             {
                 this.Revert(new System.Drawing.Size(341, 251));
             }
-                            
+
             this.Text = Resources.SeedText;
             this.label1.Text = Resources.SeedLabel1;
             this.cancel.Text = Resources.GlobalCancel;

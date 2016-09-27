@@ -6,10 +6,7 @@
 namespace TQVault
 {
     using System;
-    using System.Collections.Generic;
     using System.Drawing;
-    using System.Linq;
-    using System.Text;
     using System.Windows.Forms;
     using TQVault.Properties;
 
@@ -57,7 +54,7 @@ namespace TQVault
         /// <summary>
         /// Gets or sets a value indicating whether the custom button graphic is shown.
         /// </summary>
-        public bool UseCustomGraphic 
+        public bool UseCustomGraphic
         {
             get
             {
@@ -74,7 +71,7 @@ namespace TQVault
                     this.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, (int)((byte)51), (int)((byte)44), (int)((byte)28));
                     this.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, (int)((byte)51), (int)((byte)44), (int)((byte)28));
                     if (this.UpBitmap != null)
-                    {                        
+                    {
                         this.Image = this.UpBitmap;
                     }
                 }
@@ -85,7 +82,7 @@ namespace TQVault
                     this.FlatAppearance.BorderSize = 1;
                     this.FlatAppearance.MouseOverBackColor = SystemColors.ButtonHighlight;
                     this.FlatAppearance.MouseDownBackColor = SystemColors.ButtonShadow;
-                    this.Image = null;                  
+                    this.Image = null;
                 }
 
                 this.useCustomGraphic = value;
@@ -138,7 +135,7 @@ namespace TQVault
             this.Font = new Font("Microsoft Sans Serif", 8.25F);
             this.Location = location;
             this.Size = size;
-            this.ForeColor = SystemColors.ControlText; 
+            this.ForeColor = SystemColors.ControlText;
             this.UseCustomGraphic = false;
         }
 
@@ -166,9 +163,9 @@ namespace TQVault
 
                     // Now grab the right border from the source image and paint it onto the new image.
                     graphics.DrawImage(
-                        this.Image, 
-                        new Rectangle(this.Width - width, 0, width, this.Height), 
-                        new Rectangle(this.Image.Width - width, 0, width, this.Image.Height), 
+                        this.Image,
+                        new Rectangle(this.Width - width, 0, width, this.Height),
+                        new Rectangle(this.Image.Width - width, 0, width, this.Image.Height),
                         GraphicsUnit.Pixel);
 
                     this.Image = newImage;
@@ -178,8 +175,8 @@ namespace TQVault
                     // Just scale the image normally.
                     this.Image = new Bitmap(this.Image, this.Size);
                 }
-            }      
-            
+            }
+
             base.OnPaint(pevent);
         }
 
@@ -201,7 +198,7 @@ namespace TQVault
             {
                 this.baseFont = this.Font;
             }
-            
+
             this.baseFont = new Font(this.baseFont.Name, this.baseFont.SizeInPoints * factor.Height, this.baseFont.Style);
             this.Font = this.GetScaledButtonTextFont(this.baseFont, Convert.ToInt32((float)this.Width * factor.Width));
 
@@ -313,16 +310,16 @@ namespace TQVault
             {
                 if (this.DownBitmap != null)
                 {
-                    this.Image = this.DownBitmap;                                        
+                    this.Image = this.DownBitmap;
                 }
                 else
                 {
-                    this.FlatAppearance.MouseDownBackColor = SystemColors.ButtonShadow;      
+                    this.FlatAppearance.MouseDownBackColor = SystemColors.ButtonShadow;
                     this.Image = this.UpBitmap;
                 }
             }
         }
-                        
+
         /// <summary>
         /// Handler for when the mouse button is pressed.
         /// </summary>

@@ -5,14 +5,7 @@
 //-----------------------------------------------------------------------
 namespace TQVault
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Linq;
-    using System.Text;
-    using System.Windows.Forms;
     using TQVault.Properties;
-    using TQVaultData;
 
     /// <summary>
     /// Used to create sack bag buttons.

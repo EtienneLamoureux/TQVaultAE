@@ -7,7 +7,6 @@ namespace TQVaultData
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.Specialized;
     using System.Globalization;
     using System.IO;
     using System.Text;
@@ -103,7 +102,7 @@ namespace TQVaultData
                         //further looking for Steam library
                         //read libraryfolders.vdf
                         string[] libFile = File.ReadAllLines(SteamPath + "\\SteamApps\\libraryfolders.vdf");
-                        for (int i=0; i < libFile.Length; i++)
+                        for (int i = 0; i < libFile.Length; i++)
                         {
                             //System.Windows.Forms.MessageBox.Show(line);
                             int numLibrary = 1;

@@ -7,8 +7,6 @@ namespace ArzExplorer
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data;
     using System.Drawing;
     using System.IO;
     using System.Reflection;
@@ -70,7 +68,7 @@ namespace ArzExplorer
         /// Gutter size for sizing the form.
         /// </summary>
         private int gutter;
-        
+
         /// <summary>
         /// Initializes a new instance of the Form1 class.
         /// </summary>
@@ -325,7 +323,7 @@ namespace ArzExplorer
                             lastNode = lastNodes[count];
                         }
                     }
-                    else  
+                    else
                     {
                         // This is the last thing so we just add it.
                         aggSubPath += subPath;
@@ -501,7 +499,7 @@ namespace ArzExplorer
             {
                 this.destFile = this.treeView1.SelectedNode.FullPath;
                 try
-                {                   
+                {
                     List<string> recordText = new List<string>();
                     if (fileType == CompressedFileType.ArzFile)
                     {
@@ -619,7 +617,7 @@ namespace ArzExplorer
             // Handle FileDrop data.
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                // Assign the file names to a string array, in 
+                // Assign the file names to a string array, in
                 // case the user has selected multiple files.
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 try

@@ -6,9 +6,6 @@
 namespace TQVault
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Windows.Forms;
     using TQVault.Properties;
     using TQVaultData;
@@ -18,7 +15,7 @@ namespace TQVault
     /// </summary>
     public class AutoSortButton : BagButtonBase
     {
-         /// <summary>
+        /// <summary>
         /// Initializes a new instance of the AutoSortButton class.
         /// </summary>
         /// <param name="buttonNumber">Number for this button</param>

@@ -10,7 +10,6 @@ namespace TQVaultData
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
-    using System.Text;
 
     /// <summary>
     /// Loads, decodes, encodes and saves a Titan Quest player file.
@@ -263,9 +262,9 @@ namespace TQVaultData
             Array.Copy(this.rawData, this.itemBlockEnd, ans, this.itemBlockStart + rawItemData.Length, this.equipmentBlockStart - this.itemBlockEnd);
             Array.Copy(rawEquipmentData, 0, ans, this.itemBlockStart + rawItemData.Length + this.equipmentBlockStart - this.itemBlockEnd, rawEquipmentData.Length);
             Array.Copy(
-                this.rawData, 
-                this.equipmentBlockEnd, 
-                ans, 
+                this.rawData,
+                this.equipmentBlockEnd,
+                ans,
                 this.itemBlockStart + rawItemData.Length + this.equipmentBlockStart - this.itemBlockEnd + rawEquipmentData.Length,
                 this.rawData.Length - this.equipmentBlockEnd);
 
@@ -508,8 +507,8 @@ namespace TQVaultData
                             }
 
                             TQDebug.DebugWriteLine(string.Format(
-                                CultureInfo.InvariantCulture, 
-                                "Error writing Export file - '{0}'", 
+                                CultureInfo.InvariantCulture,
+                                "Error writing Export file - '{0}'",
                                 string.Concat(Path.Combine(TQData.TQVaultSaveFolder, this.PlayerName), " Export.txt")));
                             TQDebug.DebugWriteLine(exception.ToString());
                         }
@@ -566,9 +565,9 @@ namespace TQVaultData
                                 TQDebug.DebugEnabled = true;
                             }
 
-                            TQDebug.DebugWriteLine(string.Format(    
-                                CultureInfo.InvariantCulture,    
-                                "Error writing Export file - '{0}'",    
+                            TQDebug.DebugWriteLine(string.Format(
+                                CultureInfo.InvariantCulture,
+                                "Error writing Export file - '{0}'",
                                 string.Concat(Path.Combine(TQData.TQVaultSaveFolder, this.PlayerName), " Equipment Export.txt")));
 
                             TQDebug.DebugWriteLine(exception.ToString());
