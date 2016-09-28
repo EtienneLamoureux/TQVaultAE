@@ -1255,7 +1255,7 @@ namespace TQVault
 		private void CreateStashPanel()
 		{
 			// size params are width, height
-			Size panelSize = new Size(11, 16);
+			Size panelSize = new Size(17, 16);
 
 			if (!Settings.Default.EnableNewUI)
 			{
@@ -2414,32 +2414,32 @@ namespace TQVault
 		/// <param name="sender">sender object</param>
 		/// <param name="e">ResizeEventArgs data</param>
 		/*private void ResizeFormCallback(object sender, ResizeEventArgs e)
-        {
-            if (e.ResizeDelta == 0.0F)
-            {
-                // Nothing to do so we return.
-                return;
-            }
+		{
+			if (e.ResizeDelta == 0.0F)
+			{
+				// Nothing to do so we return.
+				return;
+			}
 
-            float scale;
-            if (e.ResizeDelta == 1.0F)
-            {
-                scale = e.ResizeDelta;
-            }
-            else
-            {
-                scale = Database.DB.Scale + e.ResizeDelta;
-            }
+			float scale;
+			if (e.ResizeDelta == 1.0F)
+			{
+				scale = e.ResizeDelta;
+			}
+			else
+			{
+				scale = Database.DB.Scale + e.ResizeDelta;
+			}
 
-            if (scale < 0.39F || scale > 2.01F)
-            {
-                return;
-            }
+			if (scale < 0.39F || scale > 2.01F)
+			{
+				return;
+			}
 
-            this.ScaleForm(scale, false);
+			this.ScaleForm(scale, false);
 
-            this.lastFormSize = this.Size;
-        }*/
+			this.lastFormSize = this.Size;
+		}*/
 
 		/// <summary>
 		/// Used for sending items between sacks or panels.
