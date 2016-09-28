@@ -213,18 +213,6 @@ namespace TQVault
 			SetupGamePaths();
 			SetupMapName();
 
-			// Check if an updated version is available.
-			//if (Settings.Default.CheckForNewVersions)
-			//{
-			//    UpdateDialog updateDialog = new UpdateDialog();
-			//    updateDialog.ShowUpToDateMessage = false;
-			//    updateDialog.CheckForUpdates();
-			//    if (updateDialog.DialogResult == DialogResult.OK || updateDialog.DialogResult == DialogResult.Cancel)
-			//    {
-			//        updateDialog.Close();
-			//    }
-			//}
-
 			// Setup localized strings.
 			this.characterLabel.Text = Resources.MainFormLabel1;
 			this.vaultLabel.Text = Resources.MainFormLabel2;
@@ -343,73 +331,6 @@ namespace TQVault
 		protected override void ScaleForm(float scaleFactor, bool useRelativeScaling)
 		{
 			base.ScaleForm(scaleFactor, useRelativeScaling);
-
-			/*float thisScale;
-
-            // Check if we are resetting the size.
-            if (scaleFactor == 1.0F)
-            {
-                if (Database.DB.Scale == 1.0F)
-                {
-                    return;
-                }
-
-                thisScale = this.OriginalFormScale;
-
-                // Reset the border graphics to the originals.
-                this.topBorder = Resources.BorderTop;
-                this.bottomBorder = Resources.BorderBottom;
-                this.sideBorder = Resources.BorderSide;
-                this.bottomRightCorner = Resources.BorderBottomRightCorner;
-                this.bottomLeftCorner = Resources.BorderBottomLeftCorner;
-
-                isFromResize = false;
-            }
-            else
-            {
-                thisScale = scaleFactor;
-            }
-
-            // Support relative resizing of the DB value.
-            if (isFromResize)
-            {
-                float newDBScale = Database.DB.Scale * scaleFactor;
-                if (newDBScale > 2.0F || newDBScale < 0.40F)
-                {
-                    return;
-                }
-
-                Database.DB.Scale = newDBScale;
-                this.Scale(new SizeF(scaleFactor, scaleFactor));
-            }
-            else if (scaleFactor == 1.0F)
-            {
-                Database.DB.Scale = thisScale;
-
-                // Use the width since it is usually more drastic of a change.
-                // especially when coming from a small size.
-                this.Scale(new SizeF(
-                    (float)this.OriginalFormSize.Width / (float)this.Width,
-                    (float)this.OriginalFormSize.Width / (float)this.Width));
-
-                Settings.Default.Scale = 1.0F;
-                Settings.Default.Save();
-            }
-            else
-            {
-                float scalingWidth = (float)this.OriginalFormSize.Width / (float)this.Width * thisScale;
-                float scalingHeight = (float)this.OriginalFormSize.Height / (float)this.Height * thisScale;
-                float scaling = scalingWidth;
-
-                // Use the scaling factor closest to one.
-                if ((scalingHeight < scalingWidth && scalingHeight > 1.0F) || (scalingHeight > scalingWidth && scalingHeight < 1.0F))
-                {
-                    scaling = scalingHeight;
-                }
-
-                Database.DB.Scale = thisScale;
-                this.Scale(new SizeF(scaling, scaling));
-            }*/
 
 			this.itemText.Text = string.Empty;
 
@@ -1334,7 +1255,7 @@ namespace TQVault
 		private void CreateStashPanel()
 		{
 			// size params are width, height
-			Size panelSize = new Size(11, 16);
+			Size panelSize = new Size(17, 16);
 
 			if (!Settings.Default.EnableNewUI)
 			{
@@ -2493,32 +2414,32 @@ namespace TQVault
 		/// <param name="sender">sender object</param>
 		/// <param name="e">ResizeEventArgs data</param>
 		/*private void ResizeFormCallback(object sender, ResizeEventArgs e)
-        {
-            if (e.ResizeDelta == 0.0F)
-            {
-                // Nothing to do so we return.
-                return;
-            }
+		{
+			if (e.ResizeDelta == 0.0F)
+			{
+				// Nothing to do so we return.
+				return;
+			}
 
-            float scale;
-            if (e.ResizeDelta == 1.0F)
-            {
-                scale = e.ResizeDelta;
-            }
-            else
-            {
-                scale = Database.DB.Scale + e.ResizeDelta;
-            }
+			float scale;
+			if (e.ResizeDelta == 1.0F)
+			{
+				scale = e.ResizeDelta;
+			}
+			else
+			{
+				scale = Database.DB.Scale + e.ResizeDelta;
+			}
 
-            if (scale < 0.39F || scale > 2.01F)
-            {
-                return;
-            }
+			if (scale < 0.39F || scale > 2.01F)
+			{
+				return;
+			}
 
-            this.ScaleForm(scale, false);
+			this.ScaleForm(scale, false);
 
-            this.lastFormSize = this.Size;
-        }*/
+			this.lastFormSize = this.Size;
+		}*/
 
 		/// <summary>
 		/// Used for sending items between sacks or panels.
