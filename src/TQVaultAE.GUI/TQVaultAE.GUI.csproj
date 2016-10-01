@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TQVaultAE.GUI</RootNamespace>
-    <AssemblyName>TQVaultAE.GUI</AssemblyName>
+    <AssemblyName>TQVaultAE</AssemblyName>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -370,7 +370,10 @@
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(SolutionDir)libs" "$(TargetDir)"</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(SolutionDir)libs" "$(TargetDir)" /y
+xcopy "$(ProjectDir)bin\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /y /s /i
+cd "$(SolutionDir)bin\$(ConfigurationName)"
+del *.pdb</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
