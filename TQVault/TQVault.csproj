@@ -223,6 +223,7 @@
     <None Include="app.config" />
     <EmbeddedResource Include="app.ico">
     </EmbeddedResource>
+    <None Include="resources\img\EquipmentPanel.psd" />
     <None Include="TQVaultClassDiagram.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -287,52 +288,54 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Graphics\MainButtonDown.jpg" />
-    <None Include="Graphics\MainButtonOver.jpg" />
-    <None Include="Graphics\MainButtonUp.jpg" />
-    <None Include="Graphics\caravan_bg.jpg" />
-    <Content Include="Graphics\BorderBottom.png" />
-    <Content Include="Graphics\BorderBottomLeftCorner.png" />
-    <Content Include="Graphics\BorderBottomRightCorner.png" />
-    <Content Include="Graphics\BorderSide.png" />
-    <Content Include="Graphics\BorderTop.png" />
-    <Content Include="Graphics\ButtonCloseDown.png" />
-    <Content Include="Graphics\ButtonCloseOver.png" />
-    <Content Include="Graphics\ButtonCloseUp.png" />
-    <Content Include="Graphics\ButtonMaximizeDown.png" />
-    <Content Include="Graphics\ButtonMaximizeOver.png" />
-    <Content Include="Graphics\ButtonMaximizeUp.png" />
-    <Content Include="Graphics\ButtonMinimizeDown.png" />
-    <Content Include="Graphics\ButtonMinimizeOver.png" />
-    <Content Include="Graphics\ButtonMinimizeUp.png" />
-    <Content Include="Graphics\Equipment_bg_new.png" />
-    <Content Include="Graphics\NewSplashScreen.png" />
-    <Content Include="Graphics\MainForm_NewBackground.jpg" />
+    <Content Include="resources\img\AboutGraphic.png" />
+    <Content Include="resources\img\autosortdown01.png" />
+    <Content Include="resources\img\autosortover01.png" />
+    <Content Include="resources\img\autosortup01.png" />
+    <Content Include="resources\img\BorderBottom.png" />
+    <Content Include="resources\img\BorderBottomLeftCorner.png" />
+    <Content Include="resources\img\BorderBottomRightCorner.png" />
+    <Content Include="resources\img\BorderSide.png" />
+    <Content Include="resources\img\BorderTop.png" />
+    <Content Include="resources\img\ButtonCloseDown.png" />
+    <Content Include="resources\img\ButtonCloseOver.png" />
+    <Content Include="resources\img\ButtonCloseUp.png" />
+    <Content Include="resources\img\ButtonMaximizeDown.png" />
+    <Content Include="resources\img\ButtonMaximizeOver.png" />
+    <Content Include="resources\img\ButtonMaximizeUp.png" />
+    <Content Include="resources\img\ButtonMinimizeDown.png" />
+    <Content Include="resources\img\ButtonMinimizeOver.png" />
+    <Content Include="resources\img\ButtonMinimizeUp.png" />
+    <Content Include="resources\img\caravan_bg.jpg" />
+    <Content Include="resources\img\EquipmentPanel.png" />
+    <Content Include="resources\img\EquipmentPanel_New.jpg" />
+    <Content Include="resources\img\EquipmentPanel_New.png" />
+    <Content Include="resources\img\Equipment_bg_new.png" />
+    <Content Include="resources\img\inventorybagdown01.png" />
+    <Content Include="resources\img\inventorybagover01.png" />
+    <Content Include="resources\img\inventorybagup01.png" />
+    <Content Include="resources\img\MainButtonDown.jpg" />
+    <Content Include="resources\img\MainButtonOver.jpg" />
+    <Content Include="resources\img\MainButtonUp.jpg" />
+    <Content Include="resources\img\MainForm Background.PNG" />
+    <Content Include="resources\img\MainForm_NewBackground.jpg" />
+    <Content Include="resources\img\Majestic Chest.png" />
+    <Content Include="resources\img\Majestic Chest_small.png" />
+    <Content Include="resources\img\NewAboutGraphic.jpg" />
+    <Content Include="resources\img\NewSplashScreen.png" />
+    <Content Include="resources\img\ProgressBar.png" />
+    <Content Include="resources\img\ProgressBarFill.png" />
+    <Content Include="resources\img\rotatedautosortdown01.png" />
+    <Content Include="resources\img\rotatedautosortover01.png" />
+    <Content Include="resources\img\rotatedautosortup01.png" />
+    <Content Include="resources\img\SplashScreen.png" />
+    <Content Include="resources\img\StashPanel.png" />
+    <Content Include="resources\img\StashTabDown.png" />
+    <Content Include="resources\img\StashTabOver.png" />
+    <Content Include="resources\img\StashTabUp.png" />
+    <Content Include="resources\img\tqmedallion.JPG" />
+    <Content Include="resources\img\tqmedalliondoor.jpg" />
     <None Include="changelog.txt" />
-    <None Include="Graphics\AboutGraphic.png" />
-    <None Include="Graphics\autosortdown01.png" />
-    <None Include="Graphics\autosortover01.png" />
-    <None Include="Graphics\autosortup01.png" />
-    <None Include="Graphics\EquipmentPanel.png" />
-    <None Include="Graphics\inventorybagdown01.png" />
-    <None Include="Graphics\inventorybagover01.png" />
-    <None Include="Graphics\inventorybagup01.png" />
-    <None Include="Graphics\MainForm Background.PNG" />
-    <None Include="Graphics\rotatedautosortdown01.png" />
-    <None Include="Graphics\rotatedautosortover01.png" />
-    <None Include="Graphics\rotatedautosortup01.png" />
-    <None Include="Graphics\StashPanel.png" />
-    <None Include="Graphics\StashTabDown.png" />
-    <None Include="Graphics\StashTabOver.png" />
-    <None Include="Graphics\StashTabUp.png" />
-    <None Include="Graphics\tqmedallion.JPG" />
-    <None Include="Graphics\tqmedalliondoor.jpg" />
-    <Content Include="Graphics\Majestic Chest.png" />
-    <Content Include="Graphics\Majestic Chest_small.png" />
-    <Content Include="Graphics\NewAboutGraphic.jpg" />
-    <Content Include="Graphics\ProgressBar.png" />
-    <Content Include="Graphics\ProgressBarFill.png" />
-    <Content Include="Graphics\SplashScreen.png" />
     <Content Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -365,14 +368,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)*" "$(SolutionDir)$(ConfigurationName)\"
-copy "$(SolutionDir)\FreeImage\Dist\FreeImage.dll" "$(SolutionDir)$(ConfigurationName)\"
-copy "$(SolutionDir)\FreeImage\Dist\FreeImage.dll" "$(TargetDir)\"
-copy "$(SolutionDir)\FreeImage\Wrapper\FreeImage.NET\cs\Bin\FreeImageNET.dll" "$(SolutionDir)$(ConfigurationName)\"
-copy "$(SolutionDir)\FreeImage\Wrapper\FreeImage.NET\cs\Bin\FreeImageNET.dll" "$(TargetDir)\"
-copy "$(SolutionDir)\VXPLIbrary.dll" "$(SolutionDir)$(ConfigurationName)\"
-copy "$(SolutionDir)\VXPLIbrary.dll" "$(TargetDir)\"
-</PostBuildEvent>
+    <PostBuildEvent>copy "$(SolutionDir)libs" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
