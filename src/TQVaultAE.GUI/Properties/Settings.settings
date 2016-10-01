@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TQVault.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TQVaultAE.GUI.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="SkipTitle" Type="System.Boolean" Scope="User">
@@ -42,13 +42,13 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="CheckForNewVersions" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="AllowItemCopy" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="AllowItemEdit" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="TQITPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -99,7 +99,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="EnableNewUI" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="FadeInInterval" Type="System.Double" Scope="Application">
       <Value Profile="(Default)">0.1</Value>
