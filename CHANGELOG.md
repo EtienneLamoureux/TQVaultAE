@@ -1,4 +1,38 @@
 # Changelog
+## 2.3.1.4
+- Enable new UI.
+  - Defaults to Off in this release.
+  - Added new key for enabling and disabling the new UI.
+  - Change ScalingButton so that it can have a graphic in addition to the standard Windows styles.
+  - Absract New UI into VaultForm.  Adds custom border, system menu, custom title bar, etc.
+  - Update existing forms to use the new UI.
+- Change startup logic so that MainForm does all of the loading.
+  - Move the progress bar into Splash Screen (Form1).
+  - Splash screen now fades out and Main Form fades in when new UI is enabled.  Can be disabled by manually changing the fade settings.
+  - Combine loading of all character files and resources.
+- Change the results dialog.
+  - Now shows a tooltip for the highlighed item.
+  - Does not close when an item is selected so that multiple items can now be reviewed.
+  - The item text now matches the item quality.
+- Fixed border of the text panel.  Bottom was cut off.
+- Fixed Move To -> Player panel.  
+  - Was using the size for secondary bags to find the space on automove so it would fail if the free space was outside of the size of the player secondary bags.
+- Increased font size for bag labels.
+
+## 2.3.1.3
+- Fixed issue with double entries in the loot table for certain items (Lupine Claw, Turtle Shell, etc.).
+- Fixed relic bonus not being carried into removed relics.
+- Fixed issue where completed relics and charms without a bonus did not show 'Change Completion Bonus' context menu item.
+
+## 2.3.1.2
+- Fixed skewing of equipment background when no player is loaded.
+- Added more error handling and logging in the file parsing routines.
+- Added message with option to turn off loading all files if it did not complete on the last run.
+
+## 2.3.1.1
+- Exception when dragging an item outside of the parent sack.
+- Only 1 of the additional player bags shows up.
+
 ## 2.3.1.0
 - Refactor Code:
   - Ported to VS2010.
@@ -136,8 +170,8 @@
 - Cleaned up UI a little bit and harmonized dialogs.
 - Cleaned up context menu code a little bit.  Now uses an arraylist instead of static arrays with a bunch of conditions.
 
-# Before versionning shift
-## v2.20:
+## Before versionning shift
+### v2.20:
 - Enabled picking up and dropping of items on the equipment panel.
 - Added my e-mail address to the main dialog.
 - Now reads in most of the text DB from the IT files and uses the newer entries if available.
@@ -176,7 +210,7 @@
 - Fixed issue with saving character after dropping item from inventory to vault.
 - Fix version checking of config file.
 
-## v2.18:
+### v2.18:
 - Added Player Stash and Transfer Stash
 - Added Equipment panel (Read Only)
 - Added Custom Map support. Will require a restart of TQVault every time the custom map settings are changed.
@@ -211,8 +245,7 @@ TQVault.exe /mod:Lilith
 - Fixed issue where extended characters in the character name would get converted to ? in the stash file.
 - Fixed issue where combined stacks did not update number in tooltip display.
 
-
-Changes in v2.16:
+### v2.16:
 - Fixed some context menu display issues
 - Fixed a bug where the tooltip shows constantly if you right click while dragging on another panel.
 - Fixed error handling in loading resources routine.
@@ -227,7 +260,6 @@ Changes in v2.16:
 - Fixed issues with ordering of racial bonuses and granted skills.
 - Rewrote language detection loop. Hopefully this fixes the detection issues once and for all.
 - Fixed error message when no characters are present in the dropdown list.
-
 - Added background to Properties screen
 - Added confirmation box for relic removal
 - Changed text on item delete box
@@ -235,19 +267,16 @@ Changes in v2.16:
 - Added a rough icon.
 - Added ability to combine Charms and Relics in the vault.
 - Added context menu item to complete a Charm or Relic shard.
-
 - Added Set Name to set items.
 - Added Artifact stats to formulae.
 - Added Level Requirement text for Artifact formula.
 - Added effects for activated skills, scrolls, and artifacts
 - Added stats for summoned pets from scrolls and artifacts
-
 - Added versioning to config file.
 - Added some error handling so that missing entries will not cause a crash.
 - Added ability to create a default configuration so the .default file is no longer needed.
 
-
-Changes in v2.14:
+### v2.14:
 - Comes with an installer. In theory this will make sure all the VC stuff gets installed.
 - Changed some UI behavior:
   - Add mouse click to enter vault
@@ -262,7 +291,6 @@ Changes in v2.14:
 - Added Right-click on an artifact/charm/relic or item with a charm/relic and you can see all possible completion bonuses for that item and their chance of occuring in the game. You can also change the completion bonus by just selecting a different bonus.
 - Added Right-click and item and you have the option to make a copy of the item.
 - Added Right-click a set item and you have the option to create the rest of the items in the set.
-
 - Fixed decoding for:
   - When .dbr extension is not written into item
   - Skill Descriptions for buff skills
@@ -289,7 +317,6 @@ Changes in v2.14:
   - Petrify
   - Artifact creation gold cost
   - Racial bonuses for multiple races
-
 - Fix issue with creating new vaults
 - Fixed static level decoding issue with string comparisons
 - Fixed bug in database extraction tool for non-US versions of Windows.
