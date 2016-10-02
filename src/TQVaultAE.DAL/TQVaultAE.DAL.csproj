@@ -50,7 +50,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="Tao.DevIl, Version=1.6.8.3, Culture=neutral, PublicKeyToken=7ec4053013524957, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\libs\Tao.DevIl.dll</HintPath>
+      <HintPath>..\..\libs\Tao.DevIl.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
