@@ -1836,7 +1836,7 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				this.RedrawDragItem(new Point(e.X - this.DragInfo.MouseOffset.X, e.Y - this.DragInfo.MouseOffset.Y));
+				this.Invalidate();
 			}
 		}
 
@@ -1878,6 +1878,12 @@ namespace TQVaultAE.GUI
 
 					// Draw the items.
 					this.PaintItems(e);
+
+					Point cursorPosition = this.PointToClient(Cursor.Position);
+					if (this.DragInfo.IsActive && this.ClientRectangle.Contains(cursorPosition))
+					{
+						this.RedrawDragItem(e.Graphics, new Point(cursorPosition.X - this.DragInfo.MouseOffset.X, cursorPosition.Y - this.DragInfo.MouseOffset.Y));
+					}
 				}
 			}
 			finally
@@ -2277,14 +2283,13 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				Graphics graphics = this.CreateGraphics();
 				try
 				{
 					this.CellsUnderDragItem = InvalidDragRectangle;
 					this.ItemsUnderDragItem.Clear();
-					this.RepaintLastDragLocation(graphics);
 					this.LastDragLocation = InvalidDragLocation;
 					this.ItemsUnderOldDragLocation.Clear();
+					this.Invalidate();
 				}
 				catch (NullReferenceException exception)
 				{
@@ -2658,10 +2663,10 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Redraws the drag item.
 		/// </summary>
+		/// <param name="graphics">graphics instance</param>
 		/// <param name="location">screen coordinates where we will be drawing</param>
-		private void RedrawDragItem(Point location)
+		private void RedrawDragItem(Graphics graphics, Point location)
 		{
-			Graphics graphics = this.CreateGraphics();
 			try
 			{
 				// Identify all the cells and items under the drag item.  We want the actual cells that we will
@@ -2694,10 +2699,6 @@ namespace TQVaultAE.GUI
 					this.ItemsUnderDragItem.Add(item);
 				}
 
-				// First wipe out the old
-				this.RepaintLastDragLocation(graphics);
-
-				// now redraw it.
 				this.LastDragLocation = location;
 				this.ItemsUnderOldDragLocation.Clear();
 				foreach (Item item in this.ItemsUnderDragItem)
