@@ -174,45 +174,31 @@ namespace TQVaultData
 				// Detection logic for a Steam install of the anniversary edition ~Malgardian
 				if (string.IsNullOrEmpty(immortalThroneGamePath))
 				{
-					string[] path = new string[4];
-					path[0] = "Software";
-					path[1] = "Valve";
-					path[2] = "Steam";
-					path[3] = "SteamPath";
-					string SteamPath = ReadRegistryKey(Microsoft.Win32.Registry.CurrentUser, path).Replace("/", "\\");
-					//System.Windows.Forms.MessageBox.Show(SteamPath);
-					string TQExecutable = SteamPath + "\\SteamApps\\common\\Titan Quest Anniversary Edition\\TQ.exe";
-					if (!File.Exists(TQExecutable))
+					string steamTQPath = "\\SteamApps\\common\\Titan Quest Anniversary Edition";
+
+					string[] registryPath = new string[] { "Software", "Valve", "Steam", "SteamPath" };
+					string steamPath = ReadRegistryKey(Microsoft.Win32.Registry.CurrentUser, registryPath).Replace("/", "\\");
+
+					if (Directory.Exists(steamPath + steamTQPath))
 					{
-						//further looking for Steam library
-						//read libraryfolders.vdf
-						string[] libFile = File.ReadAllLines(SteamPath + "\\SteamApps\\libraryfolders.vdf");
-						for (int i = 0; i < libFile.Length; i++)
-						{
-							//System.Windows.Forms.MessageBox.Show(line);
-							int numLibrary = 1;
-							if (libFile[i].Contains("\"" + numLibrary + "\""))
-							{
-								string[] lineParts = libFile[i].Split('\t');
-								//foreach (string part in lineParts)
-								//    System.Windows.Forms.MessageBox.Show(part);
-								if (Directory.Exists(lineParts[3].Trim('"') + "\\SteamApps\\common\\Titan Quest Anniversary Edition"))
-								{
-									immortalThroneGamePath = lineParts[3].Trim('"') + "\\SteamApps\\common\\Titan Quest Anniversary Edition";
-									//System.Windows.Forms.MessageBox.Show(titanQuestGamePath);
-									break;
-								}
-								else
-								{
-									numLibrary++;
-								}
-							}
-						}
+						immortalThroneGamePath = steamPath + steamTQPath;
 					}
 					else
 					{
-						immortalThroneGamePath = SteamPath + "\\SteamApps\\common\\Titan Quest Anniversary Edition";
-						//System.Windows.Forms.MessageBox.Show(titanQuestGamePath);
+						//further looking for Steam library
+						//read libraryfolders.vdf
+						Regex vdfPathRegex = new Regex("\"\\d+\"\t+\"([^\"]+)\"");  // "2"		"D:\\games\\Steam"
+						string[] libFile = File.ReadAllLines(steamPath + "\\SteamApps\\libraryfolders.vdf");
+
+						foreach (var line in libFile)
+						{
+							Match match = vdfPathRegex.Match(line.Trim());
+							if (match.Success && Directory.Exists(match.Groups[1] + steamTQPath))
+							{
+								immortalThroneGamePath = match.Groups[1] + steamTQPath;
+								break;
+							}
+						}
 					}
 				}
 
