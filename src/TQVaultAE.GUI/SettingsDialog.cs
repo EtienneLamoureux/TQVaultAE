@@ -99,11 +99,6 @@ namespace TQVaultAE.GUI
 		private bool loadAllFiles;
 
 		/// <summary>
-		/// Indicates whether the new User Interface is enabled.
-		/// </summary>
-		private bool enableNewUI;
-
-		/// <summary>
 		/// Indicates whether new versions are checked for on startup
 		/// </summary>
 		private bool checkForNewVersions;
@@ -196,8 +191,6 @@ namespace TQVaultAE.GUI
 			this.toolTip.SetToolTip(this.resetButton, Resources.SettingsResetTT);
 			this.checkNowButton.Text = Resources.SettingsForceCheck;
 			this.toolTip.SetToolTip(this.checkNowButton, Resources.SettingsForceCheckTT);
-			this.enableNewUICheckBox.Text = Resources.SettingsEnableNewUI;
-			this.toolTip.SetToolTip(this.enableNewUICheckBox, Resources.SettingsEnableNewUITT);
 			this.cancelButton.Text = Resources.GlobalCancel;
 			this.okayButton.Text = Resources.GlobalOK;
 			this.Text = Resources.SettingsTitle;
@@ -376,10 +369,6 @@ namespace TQVaultAE.GUI
 			this.suppressWarningsCheckBox.Location = new Point(12, 317);
 			this.suppressWarningsCheckBox.Size = new Size(182, 18);
 
-			this.enableNewUICheckBox.Font = orignalFont;
-			this.enableNewUICheckBox.Location = new Point(371, 269);
-			this.enableNewUICheckBox.Size = new Size(159, 18);
-
 			this.languageComboBox.Font = orignalFont;
 			this.languageComboBox.Location = new Point(12, 67);
 			this.languageComboBox.Size = new Size(300, 22);
@@ -540,7 +529,6 @@ namespace TQVaultAE.GUI
 			this.filterITChars = Settings.Default.FilterITChars;
 			this.filterTQChars = Settings.Default.FilterTQChars;
 			this.detectLanguage = Settings.Default.AutoDetectLanguage;
-			this.enableNewUI = Settings.Default.EnableNewUI;
 
 			// Force English since there was some issue with getting the proper language setting.
 			if (Database.DB.GameLanguage == null)
@@ -629,7 +617,6 @@ namespace TQVaultAE.GUI
 			this.loadAllFilesCheckBox.Checked = this.loadAllFiles;
 			this.checkForUpdatesCheckBox.Checked = this.checkForNewVersions;
 			this.suppressWarningsCheckBox.Checked = this.suppressWarnings;
-			this.enableNewUICheckBox.Checked = this.enableNewUI;
 
 			this.enableCustomMapsCheckBox.Checked = this.enableMods;
 			int ind = this.mapListComboBox.FindStringExact(this.customMap);
@@ -689,7 +676,6 @@ namespace TQVaultAE.GUI
 				Settings.Default.LoadAllFiles = this.loadAllFiles;
 				Settings.Default.SuppressWarnings = this.suppressWarnings;
 				Settings.Default.CheckForNewVersions = this.checkForNewVersions;
-				Settings.Default.EnableNewUI = this.enableNewUI;
 			}
 		}
 
@@ -1172,33 +1158,6 @@ namespace TQVaultAE.GUI
 
 			// Now that the pop up is gone we can show this window again.
 			this.Show();
-		}
-
-		/// <summary>
-		/// Handler for checking the Enable New UI checkbox
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void EnableNewUICheckBoxCheckedChanged(object sender, EventArgs e)
-		{
-			if (this.enableNewUICheckBox.Checked)
-			{
-				if (this.enableNewUI == false)
-				{
-					this.enableNewUI = true;
-					this.configurationChanged = true;
-					this.uiSettingChanged = true;
-				}
-			}
-			else
-			{
-				if (this.enableNewUI == true)
-				{
-					this.enableNewUI = false;
-					this.configurationChanged = true;
-					this.uiSettingChanged = true;
-				}
-			}
 		}
 	}
 }

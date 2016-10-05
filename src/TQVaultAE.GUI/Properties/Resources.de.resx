@@ -996,12 +996,6 @@ Mit '&amp;' nach dem Suchbegriff, kann nach der 'Seltenheit' noch gefiltert werd
 Um zum Beispiel nach seltene Gegenständen zu filtern, benutzt man zusätzlich '&amp;selten' zum Suchbegriff.
 Die Filter können natürlich auch kombiniert werden, ein '@sword&amp;selten' listet alle seltenen Schwerter auf.</value>
   </data>
-  <data name="SettingsEnableNewUI" xml:space="preserve">
-    <value>Die neue Benutzeroberfläche aktivieren</value>
-  </data>
-  <data name="SettingsEnableNewUITT" xml:space="preserve">
-    <value>Damit wird die an TQ angepasste Benutzeroberfläche aktiviert.</value>
-  </data>
   <data name="GlobalClose" xml:space="preserve">
     <value>Ausfahrt</value>
   </data>
