@@ -391,9 +391,6 @@ Por favor, suelta el objeto en algún lugar antes de salir.</value>
   <data name="MainFormLabel2" xml:space="preserve">
     <value>Colección:</value>
   </data>
-  <data name="MainFormLabel4" xml:space="preserve">
-    <value>Encontrar:</value>
-  </data>
   <data name="MainFormLanguageChanged" xml:space="preserve">
     <value>Idioma del juego cambiado</value>
   </data>
@@ -974,7 +971,6 @@ Would you like to disable loading all files?</value>
   </data>
   <data name="MainFormSearchButtonText" xml:space="preserve">
     <value>Encontrar</value>
-    <comment>Same as MainFormLabel4</comment>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
     <value>Search for an Item</value>

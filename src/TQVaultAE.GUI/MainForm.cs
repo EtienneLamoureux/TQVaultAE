@@ -217,7 +217,6 @@ namespace TQVaultAE.GUI
 			// Setup localized strings.
 			this.characterLabel.Text = Resources.MainFormLabel1;
 			this.vaultLabel.Text = Resources.MainFormLabel2;
-			this.findLabel.Text = Resources.MainFormLabel4;
 			this.configureButton.Text = Resources.MainFormBtnConfigure;
 			this.exitButton.Text = Resources.GlobalExit;
 			this.panelSelectButton.Text = Resources.MainFormBtnPanelSelect;
@@ -355,11 +354,6 @@ namespace TQVaultAE.GUI
 
 			// Change back to the original background image.
 			this.BackgroundImage = Resources.MainForm_Background;
-
-			// Move the search box and label back to where it was.
-			// New UI does not display these, but they are moved "out of the way" in the designer.
-			this.searchTextBox.Location = new Point(276, 78);
-			this.findLabel.Location = new Point(203, 81);
 
 			// Change the combolist drop downs back to the way they were.
 			this.characterLabel.Revert(new Point(3, 31), new Size(79, 37));
@@ -849,9 +843,6 @@ namespace TQVaultAE.GUI
 		{
 			this.DrawCustomBorder = true;
 			this.ResizeCustomAllowed = true;
-			this.findLabel.Visible = false;
-			this.searchTextBox.Enabled = false;
-			this.searchTextBox.Visible = false;
 			this.loadedCharacterLabel.Text = Resources.PlayerPanelNoPlayer;
 			this.loadedVaultLabel.Text = Resources.PlayerPanelNoVault;
 			this.fadeInterval = Settings.Default.FadeInInterval;
@@ -3250,21 +3241,6 @@ namespace TQVaultAE.GUI
 
 		/// <summary>
 		/// Handler for keypresses within the search text box.
-		/// Activates the search on Enter.
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">KeyPressEventArgs data</param>
-		private void SearchTextBoxKeyPress(object sender, KeyPressEventArgs e)
-		{
-			if (e.KeyChar == (char)13)
-			{
-				this.Search();
-				e.Handled = true;
-			}
-		}
-
-		/// <summary>
-		/// Handler for keypresses within the search text box.
 		/// Used to handle the resizing hot keys.
 		/// </summary>
 		/// <param name="sender">sender object</param>
@@ -3285,15 +3261,6 @@ namespace TQVaultAE.GUI
 			{
 				this.ResizeFormCallback(this, new ResizeEventArgs(1.0F));
 			}
-		}
-
-		/// <summary>
-		/// Search for whatever text is in the search text box.
-		/// </summary>
-		private void Search()
-		{
-			// The Search() method will normalize the string so we just pass it along.
-			this.Search(this.searchTextBox.Text);
 		}
 
 		/// <summary>
