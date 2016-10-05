@@ -991,13 +991,6 @@ Use &amp; after the name or type to filter by item rarity.
 For example, to filter only rare items append &amp;rare to your search string.
 The terms can also be combined @sword&amp;rare would only search for rare swords.</value>
   </data>
-  <data name="SettingsEnableNewUI" xml:space="preserve">
-    <value>Enable New User Interface</value>
-  </data>
-  <data name="SettingsEnableNewUITT" xml:space="preserve">
-    <value>Selecting this item will enable the new
-Titan Quest themed user interface.</value>
-  </data>
   <data name="GlobalClose" xml:space="preserve">
     <value>Sortir</value>
   </data>
