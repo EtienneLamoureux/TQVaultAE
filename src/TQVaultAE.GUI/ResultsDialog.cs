@@ -107,21 +107,6 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Reverts the form back to the original size and UI style.
-		/// </summary>
-		/// <param name="originalSize">Original size of the form.</param>
-		protected override void Revert(Size originalSize)
-		{
-			this.DrawCustomBorder = false;
-			this.ClientSize = originalSize;
-			this.Padding = new Padding(0);
-			this.FormBorderStyle = FormBorderStyle.Sizable;
-
-			this.resultsDataGridView.Location = new Point(0, 0);
-			this.resultsDataGridView.Size = new Size(821, 459);
-		}
-
-		/// <summary>
 		/// Gets the string name for the corresponding SackType
 		/// </summary>
 		/// <param name="containterType">SackType which we are looking up</param>

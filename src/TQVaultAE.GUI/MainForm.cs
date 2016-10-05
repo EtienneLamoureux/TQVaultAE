@@ -342,52 +342,6 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Changes UI back to the original UI.  Removes skinning, changes font, moves controls back, etc.
-		/// </summary>
-		/// <param name="originalSize">Original size of the form</param>
-		protected override void Revert(Size originalSize)
-		{
-			// Restore the borders and set the form back to the original size.
-			this.DrawCustomBorder = false;
-			this.FormBorderStyle = FormBorderStyle.Sizable;
-			this.ClientSize = originalSize;
-
-			// Change back to the original background image.
-			this.BackgroundImage = Resources.MainForm_Background;
-
-			// Change the combolist drop downs back to the way they were.
-			this.characterLabel.Revert(new Point(3, 31), new Size(79, 37));
-			this.characterComboBox.Revert(new Point(88, 40), new Size(248, 21));
-			this.secondaryVaultListComboBox.Revert(new Point(88, 49), new Size(248, 21));
-			this.vaultLabel.Revert(new Point(342, 37), new Size(54, 24));
-			this.vaultListComboBox.Revert(new Point(404, 40), new Size(285, 21));
-
-			// Revert the buttons back to the unskinned versions and move them to the original positions.
-			this.exitButton.Revert(new Point(983, 587), new Size(75, 23));
-			this.configureButton.Revert(new Point(16, 587), new Size(75, 23));
-			this.panelSelectButton.Revert(new Point(51, 76), new Size(113, 23));
-			this.aboutButton.Revert(new Point(21, 9), new Size(76, 23));
-			this.aboutButton.Text = Resources.GlobalAbout;
-
-			// Revert the custom map label.
-			this.customMapText.BackColor = System.Drawing.Color.Gold;
-			this.customMapText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.customMapText.Font = new System.Drawing.Font("Albertus MT", 11.25F, FontStyle.Bold);
-			this.customMapText.ForeColor = System.Drawing.Color.Black;
-			this.customMapText.Location = new System.Drawing.Point(334, 579);
-			this.customMapText.Size = new System.Drawing.Size(439, 30);
-
-			// Disable controls which are only present on the new UI.
-			this.titleLabel.Visible = false;
-			this.searchButton.Enabled = false;
-			this.searchButton.Visible = false;
-			this.loadedCharacterLabel.Visible = false;
-			this.loadedCharacterLabel.Enabled = false;
-			this.loadedVaultLabel.Visible = false;
-			this.loadedVaultLabel.Enabled = false;
-		}
-
-		/// <summary>
 		/// Reads the paths from the config files and sets them.
 		/// </summary>
 		private static void SetupGamePaths()
@@ -1143,7 +1097,6 @@ namespace TQVaultAE.GUI
 			this.secondaryVaultPanel.DrawAsGroupBox = false;
 
 			// Place it with the same Y value as the character panel and X value of the vault panel.
-			// Should be independent of using the new UI or the old one.
 			this.secondaryVaultPanel.Location = new Point(Convert.ToInt32(16.0F * Database.DB.Scale), this.playerPanel.Location.Y);
 			this.secondaryVaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 			this.secondaryVaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);

@@ -53,7 +53,7 @@ namespace TQVaultAE.GUI
 		private System.Windows.Forms.ProgressBar progressBar;
 
 		/// <summary>
-		/// Custom Progress Bar control to show the progress of the files loading when the new UI is enabled.
+		/// Custom Progress Bar control to show the progress of the files loading.
 		/// </summary>
 		private VaultProgressBar newProgressBar;
 

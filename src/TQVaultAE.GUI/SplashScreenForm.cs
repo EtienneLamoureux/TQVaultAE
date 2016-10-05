@@ -207,52 +207,6 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Reverts the form back to the original size and UI style.
-		/// </summary>
-		/// <param name="originalSize">Original size of the form.</param>
-		protected override void Revert(Size originalSize)
-		{
-			this.DrawCustomBorder = false;
-			this.ClientSize = originalSize;
-			this.BackgroundImage = Resources.SplashScreen;
-			this.FormBorderStyle = FormBorderStyle.FixedSingle;
-			this.UseRoundedRectangle = false;
-
-			this.label1.Visible = true;
-			this.label1.Font = new Font("Microsoft Sans Serif", 10.0F, FontStyle.Bold, GraphicsUnit.Point, (byte)0);
-			this.label1.ForeColor = Color.FromArgb((int)((byte)255), (int)((byte)128), (int)((byte)128));
-			this.label1.Location = new Point(16, 16);
-			this.label1.Size = new Size(467, 24);
-
-			this.label2.Visible = true;
-			this.label2.Font = new Font("Microsoft Sans Serif", 30.0F, (FontStyle)(FontStyle.Bold | FontStyle.Italic), GraphicsUnit.Point, (byte)0);
-			this.label2.ForeColor = Color.FromArgb((int)((byte)255), (int)((byte)128), (int)((byte)128));
-			this.label2.Location = new Point(196, 118);
-			this.label2.Size = new Size(392, 112);
-
-			this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.0F, FontStyle.Bold, GraphicsUnit.Point, (byte)0);
-			this.label3.ForeColor = System.Drawing.Color.FromArgb((int)((byte)255), (int)((byte)128), (int)((byte)128));
-			this.label3.Location = new System.Drawing.Point(162, 247);
-			this.label3.Size = new System.Drawing.Size(461, 64);
-
-			this.labelPleaseWait.Font = new Font("Microsoft Sans Serif", 12.0F, FontStyle.Bold, GraphicsUnit.Point, (byte)0);
-			this.labelPleaseWait.ForeColor = Color.FromArgb((int)((byte)255), (int)((byte)128), (int)((byte)128));
-			this.labelPleaseWait.Location = new Point(161, 357);
-			this.labelPleaseWait.Size = new Size(457, 32);
-
-			this.nextButton.Revert(new Point(344, 416), new Size(96, 44));
-			this.exitButton.Revert(new Point(664, 504), new Size(75, 23));
-
-			this.progressBar.Enabled = true;
-			this.progressBar.Visible = true;
-			this.progressBar.Location = new System.Drawing.Point(144, 428);
-			this.progressBar.Size = new System.Drawing.Size(498, 23);
-
-			this.newProgressBar.Visible = false;
-			this.newProgressBar.Enabled = false;
-		}
-
-		/// <summary>
 		/// Creates a rounded rectangle GraphicsPath around the edges of the Form.
 		/// </summary>
 		/// <param name="cornerRadius">Radius of the rounded corner</param>
