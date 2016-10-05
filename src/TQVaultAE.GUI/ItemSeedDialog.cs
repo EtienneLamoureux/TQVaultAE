@@ -34,14 +34,7 @@ namespace TQVaultAE.GUI
 		{
 			this.InitializeComponent();
 
-			if (Settings.Default.EnableNewUI)
-			{
-				this.DrawCustomBorder = true;
-			}
-			else
-			{
-				this.Revert(new System.Drawing.Size(341, 251));
-			}
+			this.DrawCustomBorder = true;
 
 			this.Text = Resources.SeedText;
 			this.label1.Text = Resources.SeedLabel1;

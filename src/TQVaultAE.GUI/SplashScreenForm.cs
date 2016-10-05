@@ -75,23 +75,14 @@ namespace TQVaultAE.GUI
 			this.ShowMainForm = false;
 			this.Opacity = 0.0F;
 
-			if (Settings.Default.EnableNewUI)
-			{
-				this.FormBorderStyle = FormBorderStyle.None;
-				this.label1.Visible = false;
-				this.label2.Visible = false;
-				this.progressBar.Visible = false;
-				this.progressBar.Enabled = false;
-				this.fadeInInterval = Settings.Default.FadeInInterval;
-				this.fadeOutInterval = Settings.Default.FadeOutInterval;
-				this.DrawCustomBorder = true;
-			}
-			else
-			{
-				this.Revert(new Size(780, 550));
-				this.fadeInInterval = 1.0F;
-				this.fadeOutInterval = 1.0F;
-			}
+			this.FormBorderStyle = FormBorderStyle.None;
+			this.label1.Visible = false;
+			this.label2.Visible = false;
+			this.progressBar.Visible = false;
+			this.progressBar.Enabled = false;
+			this.fadeInInterval = Settings.Default.FadeInInterval;
+			this.fadeOutInterval = Settings.Default.FadeOutInterval;
+			this.DrawCustomBorder = true;
 
 			if (this.UseRoundedRectangle)
 			{

@@ -36,16 +36,7 @@ namespace TQVaultAE.GUI
 			////this.labelCompanyName.Text = AssemblyCompany;
 			this.textBoxDescription.Text = Resources.AboutDescription; // AssemblyDescription;
 
-			// Check to see if we want to display the old UI.
-			// There are other checks below as well when creating the panels.
-			if (Settings.Default.EnableNewUI)
-			{
-				this.DrawCustomBorder = true;
-			}
-			else
-			{
-				this.Revert(new Size(435, 283));
-			}
+			this.DrawCustomBorder = true;
 		}
 
 		#region Assembly Attribute Accessors

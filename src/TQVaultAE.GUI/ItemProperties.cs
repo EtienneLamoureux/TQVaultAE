@@ -41,14 +41,7 @@ namespace TQVaultAE.GUI
 			this.label3.Text = Resources.ItemPropertiesLabel3;
 			this.checkBox1.Text = Resources.ItemPropertiesCheckBox1Label;
 
-			if (Settings.Default.EnableNewUI)
-			{
-				this.DrawCustomBorder = true;
-			}
-			else
-			{
-				this.Revert(new Size(950, 489));
-			}
+			this.DrawCustomBorder = true;
 		}
 
 		/// <summary>
@@ -115,10 +108,6 @@ namespace TQVaultAE.GUI
 		{
 			string itemName = Database.MakeSafeForHtml(item.ToString(true, false));
 			string bgcolor = "#2e1f15";
-			if (!Settings.Default.EnableNewUI)
-			{
-				bgcolor = "null";
-			}
 
 			Color color = item.GetColorTag(itemName);
 			itemName = Item.ClipColorTag(itemName);
@@ -146,11 +135,6 @@ namespace TQVaultAE.GUI
 			string[] bareAttr;
 			bareAttr = this.item.GetBareAttributes(this.filterExtra);
 			string bgcolor = "#2e1f15";
-
-			if (!Settings.Default.EnableNewUI)
-			{
-				bgcolor = "#2e291f";
-			}
 
 			// Base Item Attributes
 			if (bareAttr[0].Length == 0)

@@ -122,14 +122,7 @@ namespace TQVaultAE.GUI
 			this.cancelButton.Text = Resources.GlobalCancel;
 			this.okayButton.Text = Resources.GlobalOK;
 
-			if (Settings.Default.EnableNewUI)
-			{
-				this.DrawCustomBorder = true;
-			}
-			else
-			{
-				this.Revert(new Size(349, 350));
-			}
+			this.DrawCustomBorder = true;
 
 			// Triggers a message box if the files are up to date.
 			// Used when user forces an upate check to inform that there are none available.

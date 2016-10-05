@@ -195,14 +195,7 @@ namespace TQVaultAE.GUI
 			this.okayButton.Text = Resources.GlobalOK;
 			this.Text = Resources.SettingsTitle;
 
-			if (Settings.Default.EnableNewUI)
-			{
-				this.DrawCustomBorder = true;
-			}
-			else
-			{
-				this.Revert(new Size(713, 399));
-			}
+			this.DrawCustomBorder = true;
 
 			this.mapListComboBox.Items.Clear();
 			this.mapListComboBox.Items.Add(string.Empty);
