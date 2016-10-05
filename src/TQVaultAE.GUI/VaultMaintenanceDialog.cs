@@ -144,61 +144,6 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Reverts the form and controls to their original font, size and location.
-		/// </summary>
-		/// <param name="originalSize">Size of the original form.</param>
-		protected override void Revert(Size originalSize)
-		{
-			this.ClientSize = originalSize;
-			this.DrawCustomBorder = false;
-
-			Font labelFont = new Font("Albertus MT", 9.0F);
-
-			this.targetTextBox.Font = labelFont;
-			this.targetTextBox.Location = new Point(71, 270);
-			this.targetTextBox.Size = new Size(304, 21);
-
-			this.instructionsLabel.Font = labelFont;
-			this.instructionsLabel.Location = new Point(12, 152);
-			this.instructionsLabel.Size = new Size(363, 74);
-
-			this.vaultListComboBox.Font = labelFont;
-			this.vaultListComboBox.Location = new Point(71, 229);
-			this.vaultListComboBox.Size = new Size(285, 22);
-
-			this.selectFunctionGroupBox.Font = labelFont;
-			this.selectFunctionGroupBox.Location = new Point(84, 12);
-			this.selectFunctionGroupBox.Size = new Size(225, 126);
-
-			this.newRadioButton.Font = labelFont;
-			this.newRadioButton.Location = new Point(6, 20);
-			this.newRadioButton.Size = new Size(117, 17);
-
-			this.renameRadioButton.Font = labelFont;
-			this.renameRadioButton.Location = new Point(6, 92);
-			this.renameRadioButton.Size = new Size(101, 17);
-
-			this.deleteRadioButton.Font = labelFont;
-			this.deleteRadioButton.Location = new Point(6, 44);
-			this.deleteRadioButton.Size = new Size(92, 17);
-
-			this.copyRadioButton.Font = labelFont;
-			this.copyRadioButton.Location = new Point(6, 68);
-			this.copyRadioButton.Size = new Size(85, 17);
-
-			this.sourceLabel.Font = labelFont;
-			this.sourceLabel.Location = new Point(12, 232);
-			this.sourceLabel.Size = new Size(41, 14);
-
-			this.targetLabel.Font = labelFont;
-			this.targetLabel.Location = new Point(12, 273);
-			this.targetLabel.Size = new Size(41, 14);
-
-			this.okayButton.Revert(new Point(100, 316), new Size(75, 23));
-			this.cancelButton.Revert(new Point(220, 316), new Size(75, 23));
-		}
-
-		/// <summary>
 		/// Override of ScaleControl which supports groupbox scaling.
 		/// </summary>
 		/// <param name="factor">SizeF for the scale factor</param>

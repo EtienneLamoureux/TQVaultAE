@@ -66,30 +66,6 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Reverts the form back to the original size and UI style.
-		/// </summary>
-		/// <param name="originalSize">Original size of the form.</param>
-		protected override void Revert(Size originalSize)
-		{
-			this.DrawCustomBorder = false;
-			this.ClientSize = originalSize;
-			Font originalFont = new Font("Albertus MT", 9.0F);
-			this.Font = originalFont;
-
-			this.itemSeedBox.Font = originalFont;
-			this.itemSeedBox.Location = new Point(81, 153);
-			this.itemSeedBox.Size = new Size(71, 21);
-
-			this.label1.Font = originalFont;
-			this.label1.Location = new Point(20, 9);
-			this.label1.Size = new Size(300, 98);
-
-			this.randomButton.Revert(new Point(184, 152), new Size(75, 23));
-			this.ok.Revert(new Point(53, 211), new Size(75, 23));
-			this.cancel.Revert(new Point(213, 211), new Size(75, 23));
-		}
-
-		/// <summary>
 		/// Handler for the random button
 		/// </summary>
 		/// <param name="sender">sender object</param>

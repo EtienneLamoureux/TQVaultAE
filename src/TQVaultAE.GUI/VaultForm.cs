@@ -383,15 +383,6 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Reverts the form back to the original skin.
-		/// </summary>
-		/// <param name="originalSize">original size of the form before skinning.</param>
-		protected virtual void Revert(Size originalSize)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
 		/// Scales the form.
 		/// </summary>
 		/// <param name="factor">factor which the form will be scaled.</param>

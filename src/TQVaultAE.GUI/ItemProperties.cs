@@ -56,50 +56,6 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Reverts the form back to the original size and UI style.
-		/// </summary>
-		/// <param name="originalSize">Original size of the form.</param>
-		protected override void Revert(Size originalSize)
-		{
-			this.DrawCustomBorder = false;
-			this.ClientSize = originalSize;
-			this.BackgroundImage = Resources.SplashScreen;
-			this.BackgroundImageLayout = ImageLayout.Stretch;
-
-			Font originalFont = new Font("Albertus MT", 9.0F, FontStyle.Regular, GraphicsUnit.Point, (byte)0);
-
-			this.webBrowser1.Location = new Point(12, 123);
-			this.webBrowser1.Size = new Size(292, 269);
-
-			this.itemName.Location = new Point(15, 30);
-			this.itemName.Size = new Size(730, 39);
-
-			this.webBrowser2.Location = new Point(327, 123);
-			this.webBrowser2.Size = new Size(292, 269);
-
-			this.label1.Font = originalFont;
-			this.label1.Location = new Point(324, 101);
-			this.label1.Size = new Size(90, 14);
-
-			this.label2.Font = originalFont;
-			this.label2.Location = new Point(12, 101);
-			this.label2.Size = new Size(107, 14);
-
-			this.checkBox1.Font = originalFont;
-			this.checkBox1.Location = new Point(763, 42);
-			this.checkBox1.Size = new Size(106, 18);
-
-			this.webBrowser3.Location = new Point(655, 123);
-			this.webBrowser3.Size = new Size(262, 269);
-
-			this.label3.Font = originalFont;
-			this.label3.Location = new Point(655, 101);
-			this.label3.Size = new Size(90, 14);
-
-			this.ok.Revert(new Point(818, 424), new Size(87, 25));
-		}
-
-		/// <summary>
 		/// Gets the name of the item
 		/// </summary>
 		/// <param name="item">item being displayed</param>
