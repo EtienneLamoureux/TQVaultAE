@@ -78,8 +78,6 @@ namespace TQVaultAE.GUI
 			this.FormBorderStyle = FormBorderStyle.None;
 			this.label1.Visible = false;
 			this.label2.Visible = false;
-			this.progressBar.Visible = false;
-			this.progressBar.Enabled = false;
 			this.fadeInInterval = Settings.Default.FadeInInterval;
 			this.fadeOutInterval = Settings.Default.FadeOutInterval;
 			this.DrawCustomBorder = true;
@@ -130,26 +128,12 @@ namespace TQVaultAE.GUI
 		{
 			get
 			{
-				if (this.progressBar.Enabled)
-				{
-					return this.progressBar.Maximum;
-				}
-				else
-				{
-					return this.newProgressBar.Maximum;
-				}
+				return this.progressBar.Maximum;
 			}
 
 			set
 			{
-				if (this.progressBar.Enabled)
-				{
-					this.progressBar.Maximum = value;
-				}
-				else
-				{
-					this.newProgressBar.Maximum = value;
-				}
+				this.progressBar.Maximum = value;
 			}
 		}
 
@@ -159,7 +143,6 @@ namespace TQVaultAE.GUI
 		public void UpdateText()
 		{
 			this.progressBar.Visible = false;
-			this.newProgressBar.Visible = false;
 			this.labelPleaseWait.Visible = false;
 			this.nextButton.Visible = true;
 			this.waitTimer.Enabled = false;
@@ -171,14 +154,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		public void IncrementValue()
 		{
-			if (this.progressBar.Enabled)
-			{
-				this.progressBar.Increment(1);
-			}
-			else
-			{
-				this.newProgressBar.Increment(1);
-			}
+			this.progressBar.Increment(1);
 		}
 
 		/// <summary>

@@ -48,14 +48,9 @@ namespace TQVaultAE.GUI
 		private System.Timers.Timer waitTimer;
 
 		/// <summary>
-		/// ProgressBar control to show the progress of the files loading when the old UI is enabled.
-		/// </summary>
-		private System.Windows.Forms.ProgressBar progressBar;
-
-		/// <summary>
 		/// Custom Progress Bar control to show the progress of the files loading.
 		/// </summary>
-		private VaultProgressBar newProgressBar;
+		private VaultProgressBar progressBar;
 
 		/// <summary>
 		/// Timer for fading in and out of the form.
@@ -91,16 +86,15 @@ namespace TQVaultAE.GUI
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SplashScreenForm));
-			this.label1 = new ScalingLabel();
-			this.label2 = new ScalingLabel();
-			this.label3 = new ScalingLabel();
-			this.nextButton = new ScalingButton();
-			this.exitButton = new ScalingButton();
-			this.labelPleaseWait = new ScalingLabel();
+			this.label1 = new TQVaultAE.GUI.ScalingLabel();
+			this.label2 = new TQVaultAE.GUI.ScalingLabel();
+			this.label3 = new TQVaultAE.GUI.ScalingLabel();
+			this.nextButton = new TQVaultAE.GUI.ScalingButton();
+			this.exitButton = new TQVaultAE.GUI.ScalingButton();
+			this.labelPleaseWait = new TQVaultAE.GUI.ScalingLabel();
 			this.waitTimer = new System.Timers.Timer();
-			this.progressBar = new System.Windows.Forms.ProgressBar();
 			this.fadeTimer = new System.Windows.Forms.Timer(this.components);
-			this.newProgressBar = new VaultProgressBar();
+			this.progressBar = new TQVaultAE.GUI.VaultProgressBar();
 			((System.ComponentModel.ISupportInitialize)(this.waitTimer)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -145,22 +139,22 @@ namespace TQVaultAE.GUI
 			// nextButton
 			// 
 			this.nextButton.BackColor = System.Drawing.Color.Transparent;
-			this.nextButton.DownBitmap = Resources.MainButtonDown;
+			this.nextButton.DownBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonDown;
 			this.nextButton.FlatAppearance.BorderSize = 0;
 			this.nextButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.nextButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.nextButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.nextButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
 			this.nextButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-			this.nextButton.Image = Resources.MainButtonUp;
+			this.nextButton.Image = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
 			this.nextButton.Location = new System.Drawing.Point(286, 365);
 			this.nextButton.Name = "nextButton";
-			this.nextButton.OverBitmap = Resources.MainButtonOver;
+			this.nextButton.OverBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonOver;
 			this.nextButton.Size = new System.Drawing.Size(137, 30);
 			this.nextButton.SizeToGraphic = false;
 			this.nextButton.TabIndex = 3;
 			this.nextButton.Text = "Enter The Vault";
-			this.nextButton.UpBitmap = Resources.MainButtonUp;
+			this.nextButton.UpBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
 			this.nextButton.UseCustomGraphic = true;
 			this.nextButton.UseVisualStyleBackColor = false;
 			this.nextButton.Visible = false;
@@ -170,22 +164,22 @@ namespace TQVaultAE.GUI
 			// 
 			this.exitButton.BackColor = System.Drawing.Color.Transparent;
 			this.exitButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.exitButton.DownBitmap = Resources.MainButtonDown;
+			this.exitButton.DownBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonDown;
 			this.exitButton.FlatAppearance.BorderSize = 0;
 			this.exitButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.exitButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.exitButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
 			this.exitButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-			this.exitButton.Image = Resources.MainButtonUp;
+			this.exitButton.Image = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
 			this.exitButton.Location = new System.Drawing.Point(555, 420);
 			this.exitButton.Name = "exitButton";
-			this.exitButton.OverBitmap = Resources.MainButtonOver;
+			this.exitButton.OverBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonOver;
 			this.exitButton.Size = new System.Drawing.Size(137, 30);
 			this.exitButton.SizeToGraphic = false;
 			this.exitButton.TabIndex = 4;
 			this.exitButton.Text = "Exit";
-			this.exitButton.UpBitmap = Resources.MainButtonUp;
+			this.exitButton.UpBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
 			this.exitButton.UseCustomGraphic = true;
 			this.exitButton.UseVisualStyleBackColor = false;
 			this.exitButton.Click += new System.EventHandler(this.ExitButtonClick);
@@ -209,36 +203,29 @@ namespace TQVaultAE.GUI
 			this.waitTimer.SynchronizingObject = this;
 			this.waitTimer.Elapsed += new System.Timers.ElapsedEventHandler(this.WaitTimerElapsed);
 			// 
-			// progressBar
-			// 
-			this.progressBar.Location = new System.Drawing.Point(89, 366);
-			this.progressBar.Name = "progressBar";
-			this.progressBar.Size = new System.Drawing.Size(542, 29);
-			this.progressBar.TabIndex = 6;
-			// 
 			// fadeTimer
 			// 
 			this.fadeTimer.Interval = 50;
 			this.fadeTimer.Tick += new System.EventHandler(this.FadeTimerTick);
 			// 
-			// newProgressBar
+			// progressBar
 			// 
-			this.newProgressBar.BackColor = System.Drawing.Color.Transparent;
-			this.newProgressBar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-			this.newProgressBar.Location = new System.Drawing.Point(55, 353);
-			this.newProgressBar.Maximum = 0;
-			this.newProgressBar.Minimum = 0;
-			this.newProgressBar.Name = "newProgressBar";
-			this.newProgressBar.Size = new System.Drawing.Size(602, 58);
-			this.newProgressBar.TabIndex = 7;
-			this.newProgressBar.Value = 0;
+			this.progressBar.BackColor = System.Drawing.Color.Transparent;
+			this.progressBar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+			this.progressBar.Location = new System.Drawing.Point(55, 353);
+			this.progressBar.Maximum = 0;
+			this.progressBar.Minimum = 0;
+			this.progressBar.Name = "progressBar";
+			this.progressBar.Size = new System.Drawing.Size(602, 58);
+			this.progressBar.TabIndex = 7;
+			this.progressBar.Value = 0;
 			// 
 			// SplashScreenForm
 			// 
 			this.AcceptButton = this.nextButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-			this.BackgroundImage = Resources.NewSplashScreen;
+			this.BackgroundImage = global::TQVaultAE.GUI.Properties.Resources.NewSplashScreen;
 			this.CancelButton = this.exitButton;
 			this.ClientSize = new System.Drawing.Size(716, 463);
 			this.Controls.Add(this.labelPleaseWait);
@@ -248,7 +235,6 @@ namespace TQVaultAE.GUI
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.progressBar);
-			this.Controls.Add(this.newProgressBar);
 			this.DrawCustomBorder = true;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -258,7 +244,6 @@ namespace TQVaultAE.GUI
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Titan Quest Item Vault";
 			this.Click += new System.EventHandler(this.SplashScreen_Click);
-			this.Controls.SetChildIndex(this.newProgressBar, 0);
 			this.Controls.SetChildIndex(this.progressBar, 0);
 			this.Controls.SetChildIndex(this.label1, 0);
 			this.Controls.SetChildIndex(this.label2, 0);
