@@ -379,9 +379,6 @@ configuration to reflect the link.</value>
   <data name="MainFormLabel2" xml:space="preserve">
     <value>Сундук:</value>
   </data>
-  <data name="MainFormLabel4" xml:space="preserve">
-    <value>Поиск:</value>
-  </data>
   <data name="MainFormLanguageChanged" xml:space="preserve">
     <value>Язык игры изменён</value>
   </data>
@@ -983,7 +980,6 @@ Would you like to disable loading all files?</value>
   </data>
   <data name="MainFormSearchButtonText" xml:space="preserve">
     <value>Поиск</value>
-    <comment>Same as MainFormLabel4</comment>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
     <value>Search for an Item</value>

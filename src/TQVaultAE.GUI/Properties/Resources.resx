@@ -384,9 +384,6 @@ Please place the item down somewhere before quitting.</value>
   <data name="MainFormLabel2" xml:space="preserve">
     <value>Vault:</value>
   </data>
-  <data name="MainFormLabel4" xml:space="preserve">
-    <value>Find:</value>
-  </data>
   <data name="MainFormLanguageChanged" xml:space="preserve">
     <value>Game Language Changed</value>
   </data>
@@ -1073,7 +1070,6 @@ Would you like to disable loading all files?</value>
   </data>
   <data name="MainFormSearchButtonText" xml:space="preserve">
     <value>Search</value>
-    <comment>Same as MainFormLabel4</comment>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
     <value>Search for an item</value>
