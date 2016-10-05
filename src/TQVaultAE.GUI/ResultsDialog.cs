@@ -59,14 +59,7 @@ namespace TQVaultAE.GUI
 			this.sack.HeaderText = Resources.ResultsSack;
 			this.quality.HeaderText = Resources.ResultsQuality;
 
-			if (Settings.Default.EnableNewUI)
-			{
-				this.DrawCustomBorder = true;
-			}
-			else
-			{
-				this.Revert(new Size(821, 459));
-			}
+			this.DrawCustomBorder = true;
 
 			this.FormDesignRatio = 0.0F; //// (float)this.Height / (float)this.Width;
 										 ////this.FormMaximumSize = new Size(this.Width * 2, this.Height * 2);

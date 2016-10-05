@@ -71,14 +71,7 @@ namespace TQVaultAE.GUI
 				rightToLeftOptions = MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading;
 			}
 
-			if (Settings.Default.EnableNewUI)
-			{
-				this.DrawCustomBorder = true;
-			}
-			else
-			{
-				this.Revert(new Size(398, 351));
-			}
+			this.DrawCustomBorder = true;
 
 			// Load the invalid characters
 			this.invalidChars = Path.GetInvalidFileNameChars();
