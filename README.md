@@ -11,8 +11,6 @@ An external tool for Titan Quest Anniversary Edition that allows you to trade it
     + [Troubleshooting and F.A.Q.](#troubleshooting-and-faq)
   * [Contributors](#contributors)
     + [Translation team](#translation-team)
-  * [And a table of contents](#and-a-table-of-contents)
-  * [On the right](#on-the-right)
 
 ## Features
 - View Item Stats!
