@@ -10,11 +10,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TQVaultData")]
-[assembly: AssemblyDescription("Helper for TQVault")]
+[assembly: AssemblyTitle("TQVaultAE.DAL")]
+[assembly: AssemblyDescription("Data access layer for TQVaultAE")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TQVaultData")]
+[assembly: AssemblyCompany("titanquest.net community")]
+[assembly: AssemblyProduct("TQVaultAE.DAL")]
 [assembly: AssemblyCopyright("Copyright ©  2006-2011 by Brandon Wallace")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
