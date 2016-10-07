@@ -48,7 +48,7 @@ The "Configure" button opens up the configuration menu. That's where you can cha
 
 ### Troubleshooting and F.A.Q.
 **Q. Can TQVaultAE use my old vault files?**
-:  *A. Yes, TQVaultAE is compatible with the legacy TQault vault files.*
+:  *A. Yes, TQVaultAE is compatible with the legacy TQvault vault files.*
 
 **Q. Does TQVaultAE modify my items? The stats I see are not the same as the ones ingame.**
 :  *A. No, unless you specifically use the cheating options, TQVaultAE doesn't alter items in any way. The difference you see is simply due to the way stats are generated in Titan Quest: each item has base stats and a unique seed that modifies those stats. TQVaultAE only displays the base stats (and not the modifications due to the RNG).*
