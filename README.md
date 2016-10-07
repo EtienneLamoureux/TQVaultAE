@@ -1,7 +1,7 @@
 # TQVaultAE
 An external tool for Titan Quest Anniversary Edition that allows you to trade items between your characters or even store them offline in private vaults.
 
-![TitanQuestAE screenshot](https://github.com/EtienneLamoureux/TQVaultAE/tree/master/documentation/screenshot.PNG "Hey, I can see my inventory from here!")
+![TitanQuestAE screenshot](https://raw.githubusercontent.com/EtienneLamoureux/TQVaultAE/master/documentation/screenshot.PNG "Hey, I can see my inventory from here!")
 
 ## Table of contents
 - [TQVaultAE](#tqvaultae)
