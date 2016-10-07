@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("ARZExplorer")]
 [assembly: AssemblyDescription("Tool for extracting Titan Quest's ARZ and ARC files.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("titanquest.net community")]
 [assembly: AssemblyProduct("ARZExplorer")]
 [assembly: AssemblyCopyright("Copyright ©  2009-2010 by VillageIdiot")]
 [assembly: AssemblyTrademark("")]

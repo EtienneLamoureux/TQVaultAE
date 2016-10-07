@@ -11,11 +11,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TQVault")]
-[assembly: AssemblyDescription("Titan Quest Shared Item Vault - share items between your characters and store them offline in your private vault.")]
+[assembly: AssemblyTitle("TQVaultAE")]
+[assembly: AssemblyDescription("External item storage for Titan Quest Anniversary Edition")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TQVault")]
+[assembly: AssemblyCompany("titanquest.net community")]
+[assembly: AssemblyProduct("TQVaultAE")]
 [assembly: AssemblyCopyright("Copyright ©  2006-2012 by Brandon Wallace")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -34,8 +34,8 @@ using System.Runtime.InteropServices;
 //      Minor Version
 //      Build Number
 //      Revision
-[assembly: AssemblyVersion("2.3.1.4")]
-[assembly: AssemblyFileVersion("2.3.1.4")]
+[assembly: AssemblyVersion("2.4.0.0")]
+[assembly: AssemblyFileVersion("2.4.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]
 
 // CLS compliant attribute
