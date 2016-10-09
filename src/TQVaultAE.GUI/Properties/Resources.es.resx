@@ -782,33 +782,6 @@ esta opción podría ralentizar el inicio de TQVault.</value>
 desplegable elegir
 mundos propios.</value>
   </data>
-  <data name="SettingsFilterGroup" xml:space="preserve">
-    <value>Filtrar lista de jugadores</value>
-  </data>
-  <data name="SettingsFilterIT" xml:space="preserve">
-    <value>Filtrar personajes de IT</value>
-  </data>
-  <data name="SettingsFilterITTT" xml:space="preserve">
-    <value>Sólo aparecerán personajes de TQ en la
-lista.  Cambiar estas opciones obliga 
-a cargar la lista de personajes de nuevo.</value>
-  </data>
-  <data name="SettingsFilterNone" xml:space="preserve">
-    <value>Ningún filtro</value>
-  </data>
-  <data name="SettingsFilterNoneTT" xml:space="preserve">
-    <value>Desactiva el filtro en la lista de personajes.
-Cambiar estas opciones obliga a cargar
-la lista de personajes de nuevo.</value>
-  </data>
-  <data name="SettingsFilterTQ" xml:space="preserve">
-    <value>Filtrar personajes de TQ</value>
-  </data>
-  <data name="SettingsFilterTQTT" xml:space="preserve">
-    <value>Sólo aparecerán personajes de IT en la
-lista. Cambiar estas opciones obliga a
-cargar la lista de personajes de nuevo.</value>
-  </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Comprobar actual.</value>
   </data>

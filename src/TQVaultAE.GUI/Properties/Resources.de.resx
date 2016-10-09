@@ -778,33 +778,6 @@ langsame Netzwerkverbindung besteht.</value>
 das Dropdown-Menü für
 die Modifikationen frei.</value>
   </data>
-  <data name="SettingsFilterGroup" xml:space="preserve">
-    <value>Spielerauswahl filtern</value>
-  </data>
-  <data name="SettingsFilterIT" xml:space="preserve">
-    <value>IT-Charaktere filtern</value>
-  </data>
-  <data name="SettingsFilterITTT" xml:space="preserve">
-    <value>Nur originale TQ-Charaktere werden in der Charakterauswahl
-angezeigt. Ein Ändern der Einstellung 
-bewirkt ein Neuladen der Charakterauswahl.</value>
-  </data>
-  <data name="SettingsFilterNone" xml:space="preserve">
-    <value>Kein Filter</value>
-  </data>
-  <data name="SettingsFilterNoneTT" xml:space="preserve">
-    <value>Keine Filtrierung der Charakterauswahl.
-Ein Ändern der Einstellung bewirkt
-ein Neuladen der Charakterauswahl.</value>
-  </data>
-  <data name="SettingsFilterTQ" xml:space="preserve">
-    <value>TQ-Charaktere filtern</value>
-  </data>
-  <data name="SettingsFilterTQTT" xml:space="preserve">
-    <value>Nur TI-Charaktere werden in der Charakterauswahl
-angezeigt. Ein Ändern der Einstellung 
-bewirkt ein Neuladen der Charakterauswahl.</value>
-  </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Jetzt Überprüfen</value>
   </data>
