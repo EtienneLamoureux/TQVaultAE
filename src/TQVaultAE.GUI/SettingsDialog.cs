@@ -49,16 +49,6 @@ namespace TQVaultAE.GUI
 		private bool loadLastVault;
 
 		/// <summary>
-		/// Indicates whether Immortal Throne characters are filtered from the player list
-		/// </summary>
-		private bool filterITChars;
-
-		/// <summary>
-		/// Indicates whether vanilla Titan Quest characters are filtered from the player list
-		/// </summary>
-		private bool filterTQChars;
-
-		/// <summary>
 		/// Indicates whether the language will be auto detected
 		/// </summary>
 		private bool detectLanguage;
@@ -505,8 +495,6 @@ namespace TQVaultAE.GUI
 			this.allowItemEdit = Settings.Default.AllowItemEdit;
 			this.loadLastCharacter = Settings.Default.LoadLastCharacter;
 			this.loadLastVault = Settings.Default.LoadLastVault;
-			this.filterITChars = Settings.Default.FilterITChars;
-			this.filterTQChars = Settings.Default.FilterTQChars;
 			this.detectLanguage = Settings.Default.AutoDetectLanguage;
 			this.enableNewUI = Settings.Default.EnableNewUI;
 
@@ -626,8 +614,6 @@ namespace TQVaultAE.GUI
 		{
 			if (this.configurationChanged)
 			{
-				Settings.Default.FilterITChars = this.filterITChars;
-				Settings.Default.FilterTQChars = this.filterTQChars;
 				Settings.Default.SkipTitle = this.skipTitle;
 				Settings.Default.VaultPath = this.vaultPath;
 				Settings.Default.AllowItemCopy = this.allowItemCopy;

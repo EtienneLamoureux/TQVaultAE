@@ -37,30 +37,6 @@ namespace TQVaultAE.GUI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool FilterITChars {
-            get {
-                return ((bool)(this["FilterITChars"]));
-            }
-            set {
-                this["FilterITChars"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool FilterTQChars {
-            get {
-                return ((bool)(this["FilterTQChars"]));
-            }
-            set {
-                this["FilterTQChars"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool LoadLastVault {
             get {
