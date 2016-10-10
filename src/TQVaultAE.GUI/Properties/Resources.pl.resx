@@ -774,33 +774,6 @@ może nastąpić dłuższy start programu.</value>
 włączy upuszczanie w
 wybranych własnych mapach.</value>
   </data>
-  <data name="SettingsFilterGroup" xml:space="preserve">
-    <value>Filtruj Listę Gracza</value>
-  </data>
-  <data name="SettingsFilterIT" xml:space="preserve">
-    <value>Filtruj Postacie z IT</value>
-  </data>
-  <data name="SettingsFilterITTT" xml:space="preserve">
-    <value>Tylko pierwotne postacie z TQ są ukazane
-na liście postaci.  Zmiana tych przedmiotów 
-spowoduje ponowne załadowanie listy postaci.</value>
-  </data>
-  <data name="SettingsFilterNone" xml:space="preserve">
-    <value>Brak Filtra</value>
-  </data>
-  <data name="SettingsFilterNoneTT" xml:space="preserve">
-    <value>Brak filtracji listy postaci.
-Zmiana tych przedmiotów spowoduje
-ponowne załadowanie listy postaci.</value>
-  </data>
-  <data name="SettingsFilterTQ" xml:space="preserve">
-    <value>Filtruj postacie z TQ</value>
-  </data>
-  <data name="SettingsFilterTQTT" xml:space="preserve">
-    <value>Tylko postacie z IT są ukazane na liście postaci.
-Zmiana tych przedmiotów spowoduje ponowne
-załadowanie listy postaci.</value>
-  </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Sprawdź Teraz</value>
   </data>

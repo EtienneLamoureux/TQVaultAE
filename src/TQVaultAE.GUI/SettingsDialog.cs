@@ -49,16 +49,6 @@ namespace TQVaultAE.GUI
 		private bool loadLastVault;
 
 		/// <summary>
-		/// Indicates whether Immortal Throne characters are filtered from the player list
-		/// </summary>
-		private bool filterITChars;
-
-		/// <summary>
-		/// Indicates whether vanilla Titan Quest characters are filtered from the player list
-		/// </summary>
-		private bool filterTQChars;
-
-		/// <summary>
 		/// Indicates whether the language will be auto detected
 		/// </summary>
 		private bool detectLanguage;
@@ -166,14 +156,6 @@ namespace TQVaultAE.GUI
 			this.customMapLabel.Text = Resources.SettingsLabel5;
 			this.detectGamePathsCheckBox.Text = Resources.SettingsDetectGamePath;
 			this.detectLanguageCheckBox.Text = Resources.SettingsDetectLanguage;
-			this.playerListGroupBox.Text = Resources.SettingsFilterGroup;
-			this.playerListGroupBox.ForeColor = Color.White;
-			this.noFilterRadioButton.Text = Resources.SettingsFilterNone;
-			this.toolTip.SetToolTip(this.noFilterRadioButton, Resources.SettingsFilterNoneTT);
-			this.filterITCharsRadioButton.Text = Resources.SettingsFilterIT;
-			this.toolTip.SetToolTip(this.filterITCharsRadioButton, Resources.SettingsFilterITTT);
-			this.filterTQCharsRadioButton.Text = Resources.SettingsFilterTQ;
-			this.toolTip.SetToolTip(this.filterTQCharsRadioButton, Resources.SettingsFilterTQTT);
 			this.enableCustomMapsCheckBox.Text = Resources.SettingsEnableMod;
 			this.toolTip.SetToolTip(this.enableCustomMapsCheckBox, Resources.SettingsEnableModTT);
 			this.skipTitleCheckBox.Text = Resources.SettingsSkipTitle;
@@ -340,18 +322,6 @@ namespace TQVaultAE.GUI
 			this.loadLastVaultCheckBox.Location = new Point(12, 293);
 			this.loadLastVaultCheckBox.Size = new Size(242, 18);
 
-			this.noFilterRadioButton.Font = orignalFont;
-			this.noFilterRadioButton.Location = new Point(6, 20);
-			this.noFilterRadioButton.Size = new Size(71, 18);
-
-			this.filterITCharsRadioButton.Font = orignalFont;
-			this.filterITCharsRadioButton.Location = new Point(6, 68);
-			this.filterITCharsRadioButton.Size = new Size(123, 18);
-
-			this.filterTQCharsRadioButton.Font = orignalFont;
-			this.filterTQCharsRadioButton.Location = new Point(6, 44);
-			this.filterTQCharsRadioButton.Size = new Size(131, 18);
-
 			this.vaultPathTextBox.Font = orignalFont;
 			this.vaultPathTextBox.Location = new Point(12, 26);
 			this.vaultPathTextBox.Size = new Size(300, 21);
@@ -420,10 +390,6 @@ namespace TQVaultAE.GUI
 			this.mapListComboBox.Location = new Point(12, 133);
 			this.mapListComboBox.Size = new Size(300, 22);
 
-			this.playerListGroupBox.Font = orignalFont;
-			this.playerListGroupBox.Location = new Point(371, 129);
-			this.playerListGroupBox.Size = new Size(213, 100);
-
 			this.cancelButton.Revert(new Point(371, 364), new Size(75, 23));
 			this.okayButton.Revert(new Point(269, 364), new Size(75, 23));
 			this.resetButton.Revert(new Point(628, 364), new Size(75, 23));
@@ -441,14 +407,6 @@ namespace TQVaultAE.GUI
 		protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 		{
 			this.Font = new Font(this.Font.Name, this.Font.SizeInPoints * factor.Height, this.Font.Style);
-			if (this.playerListGroupBox != null && this.playerListGroupBox.Font != null)
-			{
-				this.playerListGroupBox.Font = new Font(
-					this.playerListGroupBox.Font.Name,
-					this.playerListGroupBox.Font.SizeInPoints * factor.Height,
-					this.playerListGroupBox.Font.Style);
-			}
-
 			base.ScaleControl(factor, specified);
 		}
 
@@ -537,8 +495,6 @@ namespace TQVaultAE.GUI
 			this.allowItemEdit = Settings.Default.AllowItemEdit;
 			this.loadLastCharacter = Settings.Default.LoadLastCharacter;
 			this.loadLastVault = Settings.Default.LoadLastVault;
-			this.filterITChars = Settings.Default.FilterITChars;
-			this.filterTQChars = Settings.Default.FilterTQChars;
 			this.detectLanguage = Settings.Default.AutoDetectLanguage;
 			this.enableNewUI = Settings.Default.EnableNewUI;
 
@@ -647,19 +603,6 @@ namespace TQVaultAE.GUI
 			}
 
 			this.languageComboBox.Enabled = !this.detectLanguage;
-
-			if (!this.filterITChars && !this.filterTQChars)
-			{
-				this.noFilterRadioButton.Checked = true;
-			}
-			else if (!this.filterITChars && this.filterTQChars)
-			{
-				this.filterTQCharsRadioButton.Checked = true;
-			}
-			else if (this.filterITChars && !this.filterTQChars)
-			{
-				this.filterITCharsRadioButton.Checked = true;
-			}
 		}
 
 		/// <summary>
@@ -671,8 +614,6 @@ namespace TQVaultAE.GUI
 		{
 			if (this.configurationChanged)
 			{
-				Settings.Default.FilterITChars = this.filterITChars;
-				Settings.Default.FilterTQChars = this.filterTQChars;
 				Settings.Default.SkipTitle = this.skipTitle;
 				Settings.Default.VaultPath = this.vaultPath;
 				Settings.Default.AllowItemCopy = this.allowItemCopy;
@@ -789,63 +730,6 @@ namespace TQVaultAE.GUI
 				{
 					this.loadLastVault = false;
 					this.configurationChanged = true;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Handler for clicking the no player filter radio button
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void NoFilterRadioButtonCheckedChanged(object sender, EventArgs e)
-		{
-			if (this.noFilterRadioButton.Checked)
-			{
-				if (this.filterITChars || this.filterTQChars)
-				{
-					this.filterITChars = false;
-					this.filterTQChars = false;
-					this.configurationChanged = true;
-					this.playerFilterChanged = true;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Handler for clicking the filter Titan Quest characters radio button
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void FilterTQCharsRadioButtonCheckedChanged(object sender, EventArgs e)
-		{
-			if (this.filterTQCharsRadioButton.Checked)
-			{
-				if (this.filterITChars || !this.filterTQChars)
-				{
-					this.filterITChars = false;
-					this.filterTQChars = true;
-					this.configurationChanged = true;
-					this.playerFilterChanged = true;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Handler for clicking the filter Immortal Throne characters radio button
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void FilterITCharsRadioButtonCheckedChanged(object sender, EventArgs e)
-		{
-			if (this.filterITCharsRadioButton.Checked)
-			{
-				if (!this.filterITChars || this.filterTQChars)
-				{
-					this.filterITChars = true;
-					this.filterTQChars = false;
-					this.configurationChanged = true;
-					this.playerFilterChanged = true;
 				}
 			}
 		}

@@ -777,32 +777,6 @@ le démarrage si la connection internet est lente.</value>
 pourrez sélectionner des quêtes
 personnalisées avec le menu déroulant.</value>
   </data>
-  <data name="SettingsFilterGroup" xml:space="preserve">
-    <value>Filtrer les personnages</value>
-  </data>
-  <data name="SettingsFilterIT" xml:space="preserve">
-    <value>Filtrer les personnages IT</value>
-  </data>
-  <data name="SettingsFilterITTT" xml:space="preserve">
-    <value>Seuls les personnages de TQ original sont affichésdans la liste des personnages.  Un changement de 
-filtre fera recharger la liste des personnages.</value>
-  </data>
-  <data name="SettingsFilterNone" xml:space="preserve">
-    <value>Aucun filtre</value>
-  </data>
-  <data name="SettingsFilterNoneTT" xml:space="preserve">
-    <value>Aucun filtrage de la liste des personnages.
-Un changement de filtre fera 
-recharger la liste des personnages.</value>
-  </data>
-  <data name="SettingsFilterTQ" xml:space="preserve">
-    <value>Filtrer les personnages TQ</value>
-  </data>
-  <data name="SettingsFilterTQTT" xml:space="preserve">
-    <value>Seuls les personnages IT sont affichés dans 
-la liste des personnages.  Un changement de 
-filtre fera recharger la liste des personnages.</value>
-  </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Vérifier maintenant</value>
   </data>
