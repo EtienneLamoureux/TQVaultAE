@@ -391,9 +391,6 @@ Por favor, suelta el objeto en algún lugar antes de salir.</value>
   <data name="MainFormLabel2" xml:space="preserve">
     <value>Colección:</value>
   </data>
-  <data name="MainFormLabel4" xml:space="preserve">
-    <value>Encontrar:</value>
-  </data>
   <data name="MainFormLanguageChanged" xml:space="preserve">
     <value>Idioma del juego cambiado</value>
   </data>
@@ -974,7 +971,6 @@ Would you like to disable loading all files?</value>
   </data>
   <data name="MainFormSearchButtonText" xml:space="preserve">
     <value>Encontrar</value>
-    <comment>Same as MainFormLabel4</comment>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
     <value>Search for an Item</value>
@@ -989,13 +985,6 @@ For example, to search for only swords use @sword
 Use &amp; after the name or type to filter by item rarity.
 For example, to filter only rare items append &amp;rare to your search string.
 The terms can also be combined @sword&amp;rare would only search for rare swords.</value>
-  </data>
-  <data name="SettingsEnableNewUI" xml:space="preserve">
-    <value>Enable New User Interface</value>
-  </data>
-  <data name="SettingsEnableNewUITT" xml:space="preserve">
-    <value>Selecting this item will enable the new
-Titan Quest themed user interface.</value>
   </data>
   <data name="GlobalClose" xml:space="preserve">
     <value>Salida</value>

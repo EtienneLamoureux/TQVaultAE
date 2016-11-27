@@ -122,14 +122,7 @@ namespace TQVaultAE.GUI
 			this.cancelButton.Text = Resources.GlobalCancel;
 			this.okayButton.Text = Resources.GlobalOK;
 
-			if (Settings.Default.EnableNewUI)
-			{
-				this.DrawCustomBorder = true;
-			}
-			else
-			{
-				this.Revert(new Size(349, 350));
-			}
+			this.DrawCustomBorder = true;
 
 			// Triggers a message box if the files are up to date.
 			// Used when user forces an upate check to inform that there are none available.
@@ -367,23 +360,6 @@ namespace TQVaultAE.GUI
 			}
 
 			this.ProcessUpdates();
-		}
-
-		/// <summary>
-		/// Reverts the form back to the original size and UI style.
-		/// </summary>
-		/// <param name="originalSize">Original size of the form.</param>
-		protected override void Revert(Size originalSize)
-		{
-			this.DrawCustomBorder = false;
-			this.ClientSize = originalSize;
-
-			this.messageTextBox.Font = new Font("Albertus MT", 9.0F, FontStyle.Regular, GraphicsUnit.Point, (byte)0);
-			this.messageTextBox.Location = new Point(12, 12);
-			this.messageTextBox.Size = new Size(325, 266);
-
-			this.okayButton.Revert(new Point(82, 315), new Size(75, 23));
-			this.cancelButton.Revert(new Point(200, 315), new Size(75, 23));
 		}
 
 		/// <summary>

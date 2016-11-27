@@ -380,9 +380,6 @@ Bitte legen Sie den Gegenstand irgendwo ab, vor dem Beenden.</value>
   <data name="MainFormLabel2" xml:space="preserve">
     <value>Tresor:</value>
   </data>
-  <data name="MainFormLabel4" xml:space="preserve">
-    <value>Suche:</value>
-  </data>
   <data name="MainFormLanguageChanged" xml:space="preserve">
     <value>Sprache des Spieles geändert</value>
   </data>
@@ -980,7 +977,6 @@ Soll die Funktion "Alle Dateien vorab laden" deaktiviert werden?</value>
   </data>
   <data name="MainFormSearchButtonText" xml:space="preserve">
     <value>Suche</value>
-    <comment>Same as MainFormLabel4</comment>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
     <value>Suche nach einen Gegenstand</value>
@@ -995,12 +991,6 @@ Zum Beispiel, um nur nach Schwertern zu suchen: @sword
 Mit '&amp;' nach dem Suchbegriff, kann nach der 'Seltenheit' noch gefiltert werden.
 Um zum Beispiel nach seltene Gegenständen zu filtern, benutzt man zusätzlich '&amp;selten' zum Suchbegriff.
 Die Filter können natürlich auch kombiniert werden, ein '@sword&amp;selten' listet alle seltenen Schwerter auf.</value>
-  </data>
-  <data name="SettingsEnableNewUI" xml:space="preserve">
-    <value>Die neue Benutzeroberfläche aktivieren</value>
-  </data>
-  <data name="SettingsEnableNewUITT" xml:space="preserve">
-    <value>Damit wird die an TQ angepasste Benutzeroberfläche aktiviert.</value>
   </data>
   <data name="GlobalClose" xml:space="preserve">
     <value>Ausfahrt</value>
