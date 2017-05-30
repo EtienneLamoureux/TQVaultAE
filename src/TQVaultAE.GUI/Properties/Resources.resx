@@ -910,7 +910,7 @@ The Storage Area tab will be unavailable for this character.</value>
   <data name="StashPanelText" xml:space="preserve">
     <value>Caravan</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="TQVIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\app.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -1173,5 +1173,11 @@ Titan Quest themed user interface.</value>
   </data>
   <data name="ProgressBarFill" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\img\progressbarfill.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SettingsPlayerReadonly" xml:space="preserve">
+    <value>Player Equipment ReadOnly</value>
+  </data>
+  <data name="SettingsPlayerReadonlyTT" xml:space="preserve">
+    <value>Avoid save game corruption that occurs randomly. When enabled, player equipment will be read-only,  you won't be able to select or move any item.</value>
   </data>
 </root>
