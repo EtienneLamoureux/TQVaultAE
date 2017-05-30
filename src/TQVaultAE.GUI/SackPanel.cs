@@ -1328,7 +1328,7 @@ namespace TQVaultAE.GUI
 		/// <param name="e">MouseEventArgs data</param>
 		protected virtual void MouseDownCallback(object sender, MouseEventArgs e)
 		{
-			if (this.Sack == null)
+			if (this.Sack == null || (Settings.Default.PlayerReadonly == true && this.SackType == SackType.Equipment))
 			{
 				return;
 			}

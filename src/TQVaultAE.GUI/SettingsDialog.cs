@@ -114,6 +114,11 @@ namespace TQVaultAE.GUI
 		private bool suppressWarnings;
 
 		/// <summary>
+		/// Indicates whether player items will be readonly.
+		/// </summary>
+		private bool playerReadonly;
+
+		/// <summary>
 		/// Indicates whether the vault path has been changed
 		/// </summary>
 		private bool vaultPathChanged;
@@ -190,6 +195,8 @@ namespace TQVaultAE.GUI
 			this.toolTip.SetToolTip(this.loadAllFilesCheckBox, Resources.SettingsPreLoadTT);
 			this.suppressWarningsCheckBox.Text = Resources.SettingsNoWarning;
 			this.toolTip.SetToolTip(this.suppressWarningsCheckBox, Resources.SettingsNoWarningTT);
+			this.playerReadonlyCheckbox.Text = Resources.SettingsPlayerReadonly;
+			this.toolTip.SetToolTip(this.playerReadonlyCheckbox, Resources.SettingsPlayerReadonlyTT);
 			this.checkForUpdatesCheckBox.Text = Resources.SettingsAutoUpdate;
 			this.toolTip.SetToolTip(this.checkForUpdatesCheckBox, Resources.SettingsAutoUpdateTT);
 			this.resetButton.Text = Resources.SettingsReset;
@@ -560,6 +567,7 @@ namespace TQVaultAE.GUI
 			this.loadAllFiles = Settings.Default.LoadAllFiles;
 			this.checkForNewVersions = Settings.Default.CheckForNewVersions;
 			this.suppressWarnings = Settings.Default.SuppressWarnings;
+			this.playerReadonly = Settings.Default.PlayerReadonly;
 
 			this.settingsLoaded = true;
 			this.configurationChanged = false;
@@ -629,6 +637,7 @@ namespace TQVaultAE.GUI
 			this.loadAllFilesCheckBox.Checked = this.loadAllFiles;
 			this.checkForUpdatesCheckBox.Checked = this.checkForNewVersions;
 			this.suppressWarningsCheckBox.Checked = this.suppressWarnings;
+			this.playerReadonlyCheckbox.Checked = this.playerReadonly;
 			this.enableNewUICheckBox.Checked = this.enableNewUI;
 
 			this.enableCustomMapsCheckBox.Checked = this.enableMods;
@@ -690,6 +699,7 @@ namespace TQVaultAE.GUI
 				Settings.Default.SuppressWarnings = this.suppressWarnings;
 				Settings.Default.CheckForNewVersions = this.checkForNewVersions;
 				Settings.Default.EnableNewUI = this.enableNewUI;
+				Settings.Default.PlayerReadonly = this.playerReadonly;
 			}
 		}
 
@@ -1199,6 +1209,27 @@ namespace TQVaultAE.GUI
 					this.uiSettingChanged = true;
 				}
 			}
+		}
+
+		private void PlayerReadonlyCheckboxCheckedChanged(object sender, EventArgs e)
+		{
+			if (this.playerReadonlyCheckbox.Checked)
+			{
+				if (this.playerReadonly == false)
+				{
+					this.playerReadonly = true;
+					this.configurationChanged = true;
+				}
+			}
+			else
+			{
+				if (this.playerReadonly == true)
+				{
+					this.playerReadonly = false;
+					this.configurationChanged = true;
+				}
+			}
+
 		}
 	}
 }
