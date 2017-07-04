@@ -109,7 +109,6 @@ namespace TQVaultData
 				// Use 96 DPI which is "normal" for Windows.
 				return 96.0F;
 			}
-		}
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the game language is being auto detected.
@@ -508,7 +507,7 @@ namespace TQVaultData
 		/// The tag is normalized to upper case internally.
 		/// </summary>
 		/// <param name="tagId">Tag to be looked up in the text database normalized to upper case.</param>
-		/// <returns>Returns localized string or NULL if it cannot find a string</returns>
+		/// <returns>Returns localized string, tagId if it cannot find a string or "?ErrorName?" in case of uncaught exception.</returns>
 		public string GetFriendlyName(string tagId)
 		{
 			try
@@ -517,7 +516,11 @@ namespace TQVaultData
 			}
 			catch (KeyNotFoundException)
 			{
-				return null;
+				return tagId;
+			}
+			catch (Exception)
+			{
+				return "?ErrorName?";
 			}
 		}
 
