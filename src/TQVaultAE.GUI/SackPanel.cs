@@ -503,7 +503,8 @@ namespace TQVaultAE.GUI
 			// Sort the items and put them in a temporary sack.
 			SackCollection tempSack = new SackCollection();
 			var autoSortQuery = from Item item in this.Sack
-								orderby (((item.Height * 3) + item.Width) * 100) + item.ItemGroup descending
+								orderby (((item.Height * 3) + item.Width) * 100) + item.ItemGroup descending, item.BaseItemId, item.IsRelicComplete descending
+
 								select item;
 
 			foreach (Item item in autoSortQuery)
