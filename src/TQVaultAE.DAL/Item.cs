@@ -2179,7 +2179,16 @@ namespace TQVaultData
 
 					foreach (string flavorTextRow in flavorTextArray)
 					{
-						results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(Item.GetColor(ItemStyle.Mundane)), flavorTextRow));
+						int nextColor = flavorTextRow.IndexOf("{^y}", StringComparison.OrdinalIgnoreCase);
+						if (nextColor > -1)
+						{
+							string choppedString = flavorTextRow.Substring(4);
+							results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(Item.GetColor(TQColor.Yellow)), choppedString));
+						}
+						else
+						{
+							results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(Item.GetColor(ItemStyle.Mundane)), flavorTextRow));
+						}
 					}
 
 					results.Add(string.Empty);
