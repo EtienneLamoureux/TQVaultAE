@@ -327,7 +327,7 @@ namespace TQVaultData
 
 			// Added by VillageIdiot
 			// Account for {^N} tag in text descriptions
-			int nextLF = text.IndexOf("{^N}", StringComparison.Ordinal);
+			int nextLF = text.IndexOf("{^N}", StringComparison.OrdinalIgnoreCase);
 
 			while (((text.Length - chopped) > columns) && nextSpace >= 0)
 			{
@@ -344,16 +344,24 @@ namespace TQVaultData
 						string choppedPart = text.Substring(chopped, nextLF - chopped);
 						chopped = nextLF + 4;
 						choppedLines.Add(choppedPart);
-						nextLF = text.IndexOf("{^N}", chopped, StringComparison.Ordinal);
+						nextLF = text.IndexOf("{^N}", chopped, StringComparison.OrdinalIgnoreCase);
 					}
 				}
 
 				if (nextSpace >= 0 && (nextSpace < nextLF || nextLF < 0))
 				{
-					// Added checks for LF tags
 					// we need to split here.
 					string choppedPart = text.Substring(chopped, nextSpace - chopped);
-					chopped = nextSpace + 1;
+					// Added checks for LF tags
+					if (nextLF == nextSpace + 1)
+					{
+						chopped = nextSpace + 5;
+						nextLF = text.IndexOf("{^N}", chopped, StringComparison.OrdinalIgnoreCase);
+					}
+					else
+					{
+						chopped = nextSpace + 1;
+					}
 					choppedLines.Add(choppedPart);
 				}
 				else if (nextLF >= 0)
@@ -362,7 +370,7 @@ namespace TQVaultData
 					string choppedPart = text.Substring(chopped, nextLF - chopped);
 					chopped = nextLF + 4;
 					choppedLines.Add(choppedPart);
-					nextLF = text.IndexOf("{^N}", chopped, StringComparison.Ordinal);
+					nextLF = text.IndexOf("{^N}", chopped, StringComparison.OrdinalIgnoreCase);
 				}
 			}
 
@@ -372,7 +380,7 @@ namespace TQVaultData
 				string choppedPart = text.Substring(chopped, nextLF - chopped);
 				chopped = nextLF + 4;
 				choppedLines.Add(choppedPart);
-				nextLF = text.IndexOf("{^N}", chopped, StringComparison.Ordinal);
+				nextLF = text.IndexOf("{^N}", chopped, StringComparison.OrdinalIgnoreCase);
 			}
 
 			choppedLines.Add(text.Substring(chopped));
