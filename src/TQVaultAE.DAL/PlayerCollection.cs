@@ -278,7 +278,11 @@ namespace TQVaultData
 		/// <returns>Sack instace for the corresponding sack number</returns>
 		public SackCollection GetSack(int sackNumber)
 		{
-			return this.sacks[sackNumber];
+			if (sackNumber < this.sacks.Length){
+				return this.sacks[sackNumber];
+			}else{
+				return null;
+			}
 		}
 
 		/// <summary>
