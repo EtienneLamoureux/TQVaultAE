@@ -3844,7 +3844,7 @@ namespace TQVaultData
 		{
 			string duration = null;
 			string color = null;
-			string formatSpec = Database.DB.GetFriendlyName("DamageFixedSingleFormatTime");
+			string formatSpec = Database.DB.GetFriendlyName("DamageSingleFormatTime");
 			if (string.IsNullOrEmpty(formatSpec))
 			{
 				formatSpec = "{0}";
@@ -3890,10 +3890,10 @@ namespace TQVaultData
 		{
 			string duration = null;
 			string color = null;
-			string formatSpec = Database.DB.GetFriendlyName("DamageFixedRangeFormatTime");
+			string formatSpec = Database.DB.GetFriendlyName("DamageRangeFormatTime");
 			if (string.IsNullOrEmpty(formatSpec))
 			{
-				formatSpec = "over {0}..{1} seconds";
+				formatSpec = "for {0}..{1} seconds";
 				color = Database.HtmlColor(Item.GetColor(ItemStyle.Legendary));
 			}
 			else
@@ -4932,16 +4932,41 @@ namespace TQVaultData
 			if (minData != null && maxData != null &&
 				minVar.GetSingle(Math.Min(minVar.NumberOfValues - 1, variableNumber)) != maxVar.GetSingle(Math.Min(maxVar.NumberOfValues - 1, variableNumber)))
 			{
-				amount = this.GetAmountRange(data, variableNumber, minVar, maxVar, ref label, labelColor);
+				if (minDurVar != null)
+				{
+					amount = this.GetAmountRange(data, variableNumber, minVar, maxVar, ref label, labelColor, minDurVar);
+				}
+				else
+				{
+					amount = this.GetAmountRange(data, variableNumber, minVar, maxVar, ref label, labelColor);
+				}
 			}
 			else
 			{
-				amount = this.GetAmountSingle(data, variableNumber, minVar, maxVar, ref label, labelColor);
+				if (minDurVar != null)
+				{
+					amount = this.GetAmountSingle(data, variableNumber, minVar, maxVar, ref label, labelColor, minDurVar);
+				}
+				else
+				{
+					amount = this.GetAmountSingle(data, variableNumber, minVar, maxVar, ref label, labelColor);
+				}
 			}
 
 			// Figure out the duration string
 			string duration = null;
-			if (minDurData != null && maxDurData != null)
+			//If we have both minDurData and maxDurData we also need to check if the actual Values of minDurVar and maxDurVar are actually different
+			float minDurVarValue = -1;
+			float maxDurVarValue = -1;
+			if (minDurData != null)
+			{
+				minDurVarValue = (float)minDurVar[minDurVar.NumberOfValues - 1];
+			}
+			if (maxDurData != null)
+			{
+				maxDurVarValue = (float)maxDurVar[maxDurVar.NumberOfValues - 1];
+			}
+			if (minDurData != null && maxDurData != null && minDurVarValue != maxDurVarValue)
 			{
 				duration = GetDurationRange(variableNumber, minDurVar, maxDurVar);
 			}
@@ -5518,8 +5543,9 @@ namespace TQVaultData
 		/// <param name="maxVar">maxVar variable</param>
 		/// <param name="label">label string</param>
 		/// <param name="labelColor">label color</param>
+		/// <param name="minDurVar">Duration of Damage</param>
 		/// <returns>formatted single amount string</returns>
-		private string GetAmountSingle(ItemAttributesData data, int varNum, Variable minVar, Variable maxVar, ref string label, string labelColor)
+		private string GetAmountSingle(ItemAttributesData data, int varNum, Variable minVar, Variable maxVar, ref string label, string labelColor, Variable minDurVar = null)
 		{
 			string color = null;
 			string amount = null;
@@ -5573,7 +5599,14 @@ namespace TQVaultData
 				// only for floats
 				if (currentVariable.DataType == VariableDataType.Float)
 				{
-					currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] = (float)currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] * this.itemScalePercent;
+					if (minDurVar != null)
+					{
+						currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] = (float)currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues -1] * this.itemScalePercent;
+					}
+					else
+					{
+						currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] = (float)currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] * this.itemScalePercent;
+					}
 				}
 
 				amount = Item.Format(formatSpec, currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)]);
@@ -5597,7 +5630,7 @@ namespace TQVaultData
 		/// <param name="label">label string</param>
 		/// <param name="labelColor">label color</param>
 		/// <returns>formatted range string</returns>
-		private string GetAmountRange(ItemAttributesData data, int varNum, Variable minVar, Variable maxVar, ref string label, string labelColor)
+		private string GetAmountRange(ItemAttributesData data, int varNum, Variable minVar, Variable maxVar, ref string label, string labelColor, Variable minDurVar = null)
 		{
 			// Added by VillageIdiot : check to see if min and max are the same
 			string color = null;
@@ -5647,8 +5680,16 @@ namespace TQVaultData
 
 			// Added by VillageIdiot
 			// Adjust for itemScalePercent
-			minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] = (float)minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] * this.itemScalePercent;
-			maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] = (float)maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] * this.itemScalePercent;
+			if (minDurVar != null)
+			{
+				minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] = (float)minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues - 1] * this.itemScalePercent;
+				maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] = (float)maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues - 1] * this.itemScalePercent;
+			}
+			else
+			{
+				minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] = (float)minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] * this.itemScalePercent;
+				maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] = (float)maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] * this.itemScalePercent;
+			}
 
 			amount = Item.Format(formatSpec, minVar[Math.Min(minVar.NumberOfValues - 1, varNum)], maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)]);
 			amount = Database.MakeSafeForHtml(amount);
