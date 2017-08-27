@@ -1373,20 +1373,19 @@ namespace TQVaultData
 		/// <returns>text with color tag removed</returns>
 		public static string ClipColorTag(string text)
 		{
-			if (text.StartsWith("^", StringComparison.OrdinalIgnoreCase))
+			if (text.Contains("{^"))
 			{
-				// If there are not braces assume a 2 character code.
-				text = text.Substring(2);
-			}
-			else if (text.StartsWith("{^", StringComparison.OrdinalIgnoreCase))
-			{
-				int i = text.IndexOf('^');
+				int i = text.IndexOf("{^");
 				if (i != -1)
 				{
 					// Make sure there is a control code in there.
-					i = text.IndexOf('}', i + 1);
-					text = text.Substring(i + 1);
+					text = text.Remove(i,4);
 				}
+			}
+			else if (text.StartsWith("^", StringComparison.OrdinalIgnoreCase))
+			{
+				// If there are not braces assume a 2 character code.
+				text = text.Substring(2);
 			}
 
 			return text;
@@ -1570,23 +1569,23 @@ namespace TQVaultData
 
 			// Look for a formatting tag in the beginning of the string
 			string colorCode = null;
-			if (text.StartsWith("^", StringComparison.OrdinalIgnoreCase))
+			if (text.Contains("{^"))
 			{
-				// If there are not braces assume a 2 character code.
-				colorCode = text.Substring(1, 1).ToUpperInvariant();
-			}
-			else if (text.StartsWith("{^", StringComparison.OrdinalIgnoreCase))
-			{
-				int i = text.IndexOf('^');
+				int i = text.IndexOf("{^");
 				if (i == -1)
 				{
 					colorCode = null;
 				}
 				else
 				{
-					colorCode = text.Substring(i + 1, 1).ToUpperInvariant();
+					colorCode = text.Substring(i + 2, 1).ToUpperInvariant();
 				}
+			} else if (text.StartsWith("^"))
+			{
+				// If there are not braces assume a 2 character code.
+				colorCode = text.Substring(1, 1).ToUpperInvariant();
 			}
+
 
 			// We didn't find a code so use the standard color code for the item
 			if (string.IsNullOrEmpty(colorCode))
