@@ -406,5 +406,17 @@ namespace TQVaultAE.GUI.Properties {
                 return ((double)(this["FadeOutInterval"]));
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool PlayerReadonly {
+            get {
+                return ((bool)(this["PlayerReadonly"]));
+            }
+            set {
+                this["PlayerReadonly"] = value;
+            }
+        }
     }
 }
