@@ -618,16 +618,14 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Queries the passed sack for items which contain the search string.
 		/// </summary>
-		/// <param name="searchString">string that we are searching for.</param>
-		/// <param name="quality">Item quality that we are filtering by</param>
-		/// <param name="searchByType">Indicates whether we are searching by item name or item type.</param>
+		/// <param name="predicate">Predicate that the items should match</param>
 		/// <param name="sack">Sack that we are searching</param>
 		/// <returns>List of items which contain the search string.</returns>
-		private static List<Item> QuerySack(string searchString, string quality, bool searchByType, SackCollection sack)
+		private static List<Item> QuerySack(IItemPredicate predicate, SackCollection sack)
 		{
 			// Query the sack for the items containing the search string.
 			var vaultQuery = from Item item in sack
-							 where QueryFilter(searchString, quality, searchByType, item)
+							 where predicate.Apply(item)
 							 select item;
 
 			List<Item> tmpList = new List<Item>();
@@ -640,35 +638,148 @@ namespace TQVaultAE.GUI
 			return tmpList;
 		}
 
-		/// <summary>
-		/// Helper for QuerySack.  Performs the filtering of the search results.
-		/// </summary>
-		/// <param name="searchString">string that we are searching for.</param>
-		/// <param name="quality">Item quality that we are filtering by</param>
-		/// <param name="searchByType">Indicates whether we are searching by item name or item type.</param>
-		/// <param name="item">Item that we are checking</param>
-		/// <returns>true if Item contains searchString</returns>
-		private static bool QueryFilter(string searchString, string quality, bool searchByType, Item item)
+		private interface IItemPredicate
 		{
-			bool foundItem = false;
-
-			if (searchByType)
-			{
-				foundItem = item.ItemClass.ToUpperInvariant().Contains(searchString);
-
-				// We are filtering by quality but we only check if this item contains the searchString.
-				if (foundItem && !string.IsNullOrEmpty(quality))
-				{
-					foundItem = GetItemStyleString(item.ItemStyle).ToUpperInvariant().Contains(quality.ToUpperInvariant());
-				}
-			}
-			else
-			{
-				foundItem = item.ToString().ToUpperInvariant().Contains(searchString);
-			}
-
-			return foundItem;
+			bool Apply(Item item);
 		}
+
+		private class ItemTruePredicate : IItemPredicate
+		{
+			public bool Apply(Item item)
+			{
+				return true;
+			}
+
+			public override string ToString()
+			{
+				return "true";
+			}
+		}
+
+		private class ItemFalsePredicate : IItemPredicate
+		{
+			public bool Apply(Item item)
+			{
+				return false;
+			}
+
+			public override string ToString()
+			{
+				return "false";
+			}
+		}
+
+		private class ItemAndPredicate : IItemPredicate
+		{
+			private readonly List<IItemPredicate> predicates;
+
+			public ItemAndPredicate(params IItemPredicate[] predicates)
+			{
+				this.predicates = predicates.ToList();
+			}
+
+			public ItemAndPredicate(IList<IItemPredicate> predicates)
+			{
+				this.predicates = predicates.ToList();
+			}
+
+			public bool Apply(Item item)
+			{
+				return predicates.TrueForAll(predicate => predicate.Apply(item));
+			}
+
+			public override string ToString()
+			{
+				return "(" + String.Join(" && ", predicates.ConvertAll(p => p.ToString()).ToArray()) + ")";
+			}
+		}
+
+
+		private class ItemOrPredicate : IItemPredicate
+		{
+			private readonly List<IItemPredicate> predicates;
+
+			public ItemOrPredicate(params IItemPredicate[] predicates)
+			{
+				this.predicates = predicates.ToList();
+			}
+
+			public ItemOrPredicate(IList<IItemPredicate> predicates)
+			{
+				this.predicates = predicates.ToList();
+			}
+
+			public bool Apply(Item item)
+			{
+				return predicates.Exists(predicate => predicate.Apply(item));
+			}
+
+			public override string ToString()
+			{
+				return "(" + String.Join(" || ", predicates.ConvertAll(p => p.ToString()).ToArray()) + ")";
+			}
+		}
+
+		private class ItemNamePredicate : IItemPredicate
+		{
+			private readonly string name;
+
+			public ItemNamePredicate(string type)
+			{
+				this.name = type;
+			}
+
+			public bool Apply(Item item)
+			{
+				return item.ToString().ToUpperInvariant().Contains(name.ToUpperInvariant());
+			}
+
+			public override string ToString()
+			{
+				return $"Name({name})";
+			}
+		}
+
+		private class ItemTypePredicate : IItemPredicate
+		{
+			private readonly string type;
+
+			public ItemTypePredicate(string type)
+			{
+				this.type = type;
+			}
+
+			public bool Apply(Item item)
+			{
+				return item.ItemClass.ToUpperInvariant().Contains(type.ToUpperInvariant());
+			}
+
+			public override string ToString()
+			{
+				return $"Type({type})";
+			}
+		}
+
+		private class ItemQualityPredicate : IItemPredicate
+		{
+			private readonly string quality;
+
+			public ItemQualityPredicate(string quality)
+			{
+				this.quality = quality;
+			}
+
+			public bool Apply(Item item)
+			{
+				return GetItemStyleString(item.ItemStyle).ToUpperInvariant().Contains(quality.ToUpperInvariant());
+			}
+
+			public override string ToString()
+			{
+				return $"Quality({quality})";
+			}
+		}
+
 
 		/// <summary>
 		/// Counts the number of files which LoadAllFiles will load.  Used to set the max value of the progress bar.
@@ -3207,7 +3318,7 @@ namespace TQVaultAE.GUI
 			}
 
 			// Normalize the search string.
-			searchString = searchString.ToUpperInvariant().Trim();
+			searchString = searchString.Trim().ToUpperInvariant();
 
 			// Return if the search string was only white space.
 			if (string.IsNullOrEmpty(searchString))
@@ -3215,79 +3326,53 @@ namespace TQVaultAE.GUI
 				return;
 			}
 
-			string quality = null;
-			bool searchByType = false;
+			var predicates = new List<IItemPredicate>();
 
-			// See if we are searching by type
-			if (searchString.StartsWith("@", StringComparison.Ordinal))
+			var TOKENS = "@&".ToCharArray();
+			var fromIndex = 0;
+			var toIndex = -1;
+			do
 			{
-				// Add temp string array.
-				searchString = searchString.Substring(1);
-				if (string.IsNullOrEmpty(searchString))
+				string term;
+
+				toIndex = searchString.IndexOfAny(TOKENS, fromIndex + 1);
+				if (toIndex < 0)
 				{
-					return;
+					term = searchString.Substring(fromIndex);
+				} else
+				{
+					term = searchString.Substring(fromIndex, toIndex - fromIndex);
+					fromIndex = toIndex;
 				}
 
-				searchByType = true;
-
-				// Check for Quality
-				if (searchString.Contains("&"))
+				switch (term[0])
 				{
-					// split the string at the ampersand
-					string[] split = searchString.Split('&');
-
-					// Make sure we have only 2 arguments and they are at least
-					// 2 characters long.
-					if (split.Length != 2 || split[0].Length < 2 || split[1].Length < 2)
-					{
-						return;
-					}
-
-					searchString = split[0];
-					quality = split[1];
+					case '@':
+						predicates.Add(new ItemTypePredicate(term.Substring(1)));
+						break;
+					case '&':
+						predicates.Add(new ItemQualityPredicate(term.Substring(1)));
+						break;
+					default:
+						predicates.Add(new ItemNamePredicate(term));
+						break;
 				}
-			}
+			} while (toIndex >= 0);
 
-			// Otherwise we just default to searching by name.
 			List<Result> results = new List<Result>();
 
-			this.SearchFiles(searchString, quality, searchByType, results);
+			ItemAndPredicate predicate = new ItemAndPredicate(predicates);
+			this.SearchFiles(predicate, results);
 
 			if (results.Count < 1)
 			{
-				if (searchByType)
-				{
-					if (quality != null)
-					{
-						MessageBox.Show(
-							string.Format(CultureInfo.CurrentCulture, Resources.MainFormNoItemQualityFound, searchString, quality),
-							Resources.MainFormNoItemsFound2,
-							MessageBoxButtons.OK,
-							MessageBoxIcon.Information,
-							MessageBoxDefaultButton.Button1,
-							RightToLeftOptions);
-					}
-					else
-					{
-						MessageBox.Show(
-							string.Format(CultureInfo.CurrentCulture, Resources.MainFormNoItemTypesFound, searchString),
-							Resources.MainFormNoItemsFound2,
-							MessageBoxButtons.OK,
-							MessageBoxIcon.Information,
-							MessageBoxDefaultButton.Button1,
-							RightToLeftOptions);
-					}
-				}
-				else
-				{
-					MessageBox.Show(
-						string.Format(CultureInfo.CurrentCulture, Resources.MainFormNoItemsFound, searchString),
-						Resources.MainFormNoItemsFound2,
-						MessageBoxButtons.OK,
-						MessageBoxIcon.Information,
-						MessageBoxDefaultButton.Button1,
-						RightToLeftOptions);
-				}
+				MessageBox.Show(
+					string.Format(CultureInfo.CurrentCulture, Resources.MainFormNoItemsFound, searchString),
+					Resources.MainFormNoItemsFound2,
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information,
+					MessageBoxDefaultButton.Button1,
+					RightToLeftOptions);
 
 				return;
 			}
@@ -3400,17 +3485,12 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Searches all loaded vault files
 		/// </summary>
-		/// <param name="searchString">String which we are searching for.</param>
+		/// <param name="predicate">Predicate that the items should match</param>
 		/// <param name="quality">Quality filter</param>
 		/// <param name="searchByType">flag for whether we are searching by type or name</param>
 		/// <param name="results">List holding the search results.</param>
-		private void SearchVaults(string searchString, string quality, bool searchByType, List<Result> results)
+		private void SearchVaults(IItemPredicate predicate, List<Result> results)
 		{
-			if (string.IsNullOrEmpty(searchString))
-			{
-				return;
-			}
-
 			if (this.vaults == null || this.vaults.Count == 0)
 			{
 				return;
@@ -3439,7 +3519,7 @@ namespace TQVaultAE.GUI
 					}
 
 					// Query the sack for the items containing the search string.
-					foreach (Item item in QuerySack(searchString, quality, searchByType, sack))
+					foreach (Item item in QuerySack(predicate, sack))
 					{
 						results.Add(new Result
 						{
@@ -3460,17 +3540,12 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Searches all loaded player files
 		/// </summary>
-		/// <param name="searchString">String which we are searching for.</param>
+		/// <param name="predicate">Predicate that the items should match</param>
 		/// <param name="quality">Quality filter</param>
 		/// <param name="searchByType">flag for whether we are searching by type or name</param>
 		/// <param name="results">List holding the search results.</param>
-		private void SearchPlayers(string searchString, string quality, bool searchByType, List<Result> results)
+		private void SearchPlayers(IItemPredicate predicate, List<Result> results)
 		{
-			if (string.IsNullOrEmpty(searchString))
-			{
-				return;
-			}
-
 			if (this.players == null || this.players.Count == 0)
 			{
 				return;
@@ -3507,7 +3582,7 @@ namespace TQVaultAE.GUI
 					}
 
 					// Query the sack for the items containing the search string.
-					foreach (Item item in QuerySack(searchString, quality, searchByType, sack))
+					foreach (Item item in QuerySack(predicate, sack))
 					{
 						results.Add(new Result
 						{
@@ -3531,7 +3606,7 @@ namespace TQVaultAE.GUI
 					continue;
 				}
 
-				foreach (Item item in QuerySack(searchString, quality, searchByType, equipmentSack))
+				foreach (Item item in QuerySack(predicate, equipmentSack))
 				{
 					results.Add(new Result
 					{
@@ -3551,17 +3626,10 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Searches all loaded stashes including transfer stash.
 		/// </summary>
-		/// <param name="searchString">String which we are searching for.</param>
-		/// <param name="quality">Quality filter</param>
-		/// <param name="searchByType">flag for whether we are searching by type or name</param>
+		/// <param name="predicate">Predicate that the items should match</param>
 		/// <param name="results">List holding the search results.</param>
-		private void SearchStashes(string searchString, string quality, bool searchByType, List<Result> results)
+		private void SearchStashes(IItemPredicate predicate, List<Result> results)
 		{
-			if (string.IsNullOrEmpty(searchString))
-			{
-				return;
-			}
-
 			if (this.stashes == null || this.stashes.Count == 0)
 			{
 				return;
@@ -3601,7 +3669,7 @@ namespace TQVaultAE.GUI
 					sackType = SackType.TransferStash;
 				}
 
-				foreach (Item item in QuerySack(searchString, quality, searchByType, sack))
+				foreach (Item item in QuerySack(predicate, sack))
 				{
 					results.Add(new Result
 					{
@@ -3621,23 +3689,16 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Searches all loaded files
 		/// </summary>
-		/// <param name="searchString">String which we are searching for.</param>
-		/// <param name="quality">Quality filter</param>
-		/// <param name="searchByType">flag for whether we are searching by type or name</param>
+		/// <param name="predicate">Predicate that the items should match</param>
 		/// <param name="results">List holding the search results.</param>
-		private void SearchFiles(string searchString, string quality, bool searchByType, List<Result> results)
+		private void SearchFiles(IItemPredicate predicate, List<Result> results)
 		{
-			if (string.IsNullOrEmpty(searchString))
-			{
-				return;
-			}
-
-			this.SearchVaults(searchString, quality, searchByType, results);
-			this.SearchPlayers(searchString, quality, searchByType, results);
+			this.SearchVaults(predicate, results);
+			this.SearchPlayers(predicate, results);
 
 			if (TQData.IsITInstalled)
 			{
-				this.SearchStashes(searchString, quality, searchByType, results);
+				this.SearchStashes(predicate, results);
 			}
 		}
 
