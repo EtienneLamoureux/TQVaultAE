@@ -730,23 +730,17 @@ namespace TQVaultAE.GUI
 		{
 			string[] list;
 			int numTQ = 0;
-			if (!Settings.Default.FilterTQChars)
+			list = TQData.GetCharacterList(false);
+			if (list != null)
 			{
-				list = TQData.GetCharacterList(false);
-				if (list != null)
-				{
-					numTQ = list.Length;
-				}
+				numTQ = list.Length;
 			}
 
 			int numIT = 0;
-			if (!Settings.Default.FilterITChars)
+			list = TQData.GetCharacterList(true);
+			if (list != null)
 			{
-				list = TQData.GetCharacterList(true);
-				if (list != null)
-				{
-					numIT = list.Length;
-				}
+				numIT = list.Length;
 			}
 
 			int numVaults = 0;
@@ -1354,18 +1348,10 @@ namespace TQVaultAE.GUI
 		{
 			// Initialize the character combo-box
 			this.characterComboBox.Items.Clear();
-			string[] charactersTQ = null;
-			string[] charactersIT = null;
 
-			if (!Settings.Default.FilterTQChars)
-			{
-				charactersTQ = TQData.GetCharacterList(false);
-			}
+			string[] charactersTQ = TQData.GetCharacterList(false);
 
-			if (!Settings.Default.FilterITChars)
-			{
-				charactersIT = TQData.GetCharacterList(true);
-			}
+			string[] charactersIT = TQData.GetCharacterList(true);
 
 			int numTQ = 0;
 			if (charactersTQ != null)
@@ -2012,19 +1998,11 @@ namespace TQVaultAE.GUI
 				}
 			}
 
-			string[] charactersTQ = null;
-			string[] charactersIT = null;
 			string[] vaults = TQData.GetVaultList();
 
-			if (!Settings.Default.FilterTQChars)
-			{
-				charactersTQ = TQData.GetCharacterList(false);
-			}
+			string[] charactersTQ = TQData.GetCharacterList(false);
 
-			if (!Settings.Default.FilterITChars)
-			{
-				charactersIT = TQData.GetCharacterList(true);
-			}
+			string[] charactersIT = TQData.GetCharacterList(true);
 
 			int numTQ = 0;
 			if (charactersTQ != null)
