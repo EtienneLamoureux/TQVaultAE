@@ -2431,76 +2431,7 @@ namespace TQVaultAE.GUI.Properties {
                 return ResourceManager.GetString("SettingsEnableNewUITT", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Filter Player List.
-        /// </summary>
-        internal static string SettingsFilterGroup {
-            get {
-                return ResourceManager.GetString("SettingsFilterGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Filter IT Characters.
-        /// </summary>
-        internal static string SettingsFilterIT {
-            get {
-                return ResourceManager.GetString("SettingsFilterIT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Only original TQ Characters are shown on the
-        ///character list.  Changing these items causes 
-        ///the character list to be reloaded..
-        /// </summary>
-        internal static string SettingsFilterITTT {
-            get {
-                return ResourceManager.GetString("SettingsFilterITTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No Filter.
-        /// </summary>
-        internal static string SettingsFilterNone {
-            get {
-                return ResourceManager.GetString("SettingsFilterNone", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No filtration of the character list.
-        ///Changing these items causes the character list
-        ///to be reloaded..
-        /// </summary>
-        internal static string SettingsFilterNoneTT {
-            get {
-                return ResourceManager.GetString("SettingsFilterNoneTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Filter TQ Characters.
-        /// </summary>
-        internal static string SettingsFilterTQ {
-            get {
-                return ResourceManager.GetString("SettingsFilterTQ", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Only IT Characters are shown on the character list.
-        ///Changing these items causes the character list
-        ///to be reloaded..
-        /// </summary>
-        internal static string SettingsFilterTQTT {
-            get {
-                return ResourceManager.GetString("SettingsFilterTQTT", resourceCulture);
-            }
-        }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Check Now.
         /// </summary>

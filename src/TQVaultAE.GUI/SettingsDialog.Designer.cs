@@ -38,21 +38,6 @@ namespace TQVaultAE.GUI
 		private ScalingCheckBox loadLastVaultCheckBox;
 
 		/// <summary>
-		/// Radio button for no player list filtering
-		/// </summary>
-		private ScalingRadioButton noFilterRadioButton;
-
-		/// <summary>
-		/// Radio button for filtering Immortal Throne characters
-		/// </summary>
-		private ScalingRadioButton filterITCharsRadioButton;
-
-		/// <summary>
-		/// Radio button for filtering vanilla Titan Quest characters
-		/// </summary>
-		private ScalingRadioButton filterTQCharsRadioButton;
-
-		/// <summary>
 		/// Text box for entering the vault save path
 		/// </summary>
 		private ScalingTextBox vaultPathTextBox;
@@ -61,11 +46,6 @@ namespace TQVaultAE.GUI
 		/// Label for the vault path text box
 		/// </summary>
 		private ScalingLabel vaultPathLabel;
-
-		/// <summary>
-		/// Group box for the player list filters
-		/// </summary>
-		private System.Windows.Forms.GroupBox playerListGroupBox;
 
 		/// <summary>
 		/// Cancel button control
@@ -221,12 +201,8 @@ namespace TQVaultAE.GUI
 			this.skipTitleCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
 			this.loadLastCharacterCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
 			this.loadLastVaultCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-			this.noFilterRadioButton = new TQVaultAE.GUI.ScalingRadioButton();
-			this.filterITCharsRadioButton = new TQVaultAE.GUI.ScalingRadioButton();
-			this.filterTQCharsRadioButton = new TQVaultAE.GUI.ScalingRadioButton();
 			this.vaultPathTextBox = new TQVaultAE.GUI.ScalingTextBox();
 			this.vaultPathLabel = new TQVaultAE.GUI.ScalingLabel();
-			this.playerListGroupBox = new System.Windows.Forms.GroupBox();
 			this.cancelButton = new TQVaultAE.GUI.ScalingButton();
 			this.okayButton = new TQVaultAE.GUI.ScalingButton();
 			this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
@@ -252,7 +228,6 @@ namespace TQVaultAE.GUI
 			this.immortalThronePathBrowseButton = new TQVaultAE.GUI.ScalingButton();
 			this.customMapLabel = new TQVaultAE.GUI.ScalingLabel();
 			this.mapListComboBox = new TQVaultAE.GUI.ScalingComboBox();
-			this.playerListGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// allowItemEditCheckBox
@@ -325,51 +300,6 @@ namespace TQVaultAE.GUI
 			this.loadLastVaultCheckBox.UseVisualStyleBackColor = true;
 			this.loadLastVaultCheckBox.CheckedChanged += new System.EventHandler(this.LoadLastVaultCheckBoxCheckedChanged);
 			// 
-			// noFilterRadioButton
-			// 
-			this.noFilterRadioButton.AutoSize = true;
-			this.noFilterRadioButton.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-			this.noFilterRadioButton.Location = new System.Drawing.Point(6, 20);
-			this.noFilterRadioButton.Name = "noFilterRadioButton";
-			this.noFilterRadioButton.Size = new System.Drawing.Size(82, 22);
-			this.noFilterRadioButton.TabIndex = 8;
-			this.noFilterRadioButton.TabStop = true;
-			this.noFilterRadioButton.Text = "No Filter";
-			this.toolTip.SetToolTip(this.noFilterRadioButton, "No filtration of the character list.\r\nChanging these items causes the character l" +
-		"ist\r\nto be reloaded.");
-			this.noFilterRadioButton.UseVisualStyleBackColor = true;
-			this.noFilterRadioButton.CheckedChanged += new System.EventHandler(this.NoFilterRadioButtonCheckedChanged);
-			// 
-			// filterITCharsRadioButton
-			// 
-			this.filterITCharsRadioButton.AutoSize = true;
-			this.filterITCharsRadioButton.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-			this.filterITCharsRadioButton.Location = new System.Drawing.Point(6, 68);
-			this.filterITCharsRadioButton.Name = "filterITCharsRadioButton";
-			this.filterITCharsRadioButton.Size = new System.Drawing.Size(151, 22);
-			this.filterITCharsRadioButton.TabIndex = 10;
-			this.filterITCharsRadioButton.TabStop = true;
-			this.filterITCharsRadioButton.Text = "Filter IT Characters";
-			this.toolTip.SetToolTip(this.filterITCharsRadioButton, "Only original TQ Characters are shown on the\r\ncharacter list.  Changing these ite" +
-		"ms causes \r\nthe character list to be reloaded.");
-			this.filterITCharsRadioButton.UseVisualStyleBackColor = true;
-			this.filterITCharsRadioButton.CheckedChanged += new System.EventHandler(this.FilterITCharsRadioButtonCheckedChanged);
-			// 
-			// filterTQCharsRadioButton
-			// 
-			this.filterTQCharsRadioButton.AutoSize = true;
-			this.filterTQCharsRadioButton.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-			this.filterTQCharsRadioButton.Location = new System.Drawing.Point(6, 44);
-			this.filterTQCharsRadioButton.Name = "filterTQCharsRadioButton";
-			this.filterTQCharsRadioButton.Size = new System.Drawing.Size(160, 22);
-			this.filterTQCharsRadioButton.TabIndex = 9;
-			this.filterTQCharsRadioButton.TabStop = true;
-			this.filterTQCharsRadioButton.Text = "Filter TQ Characters";
-			this.toolTip.SetToolTip(this.filterTQCharsRadioButton, "Only IT Characters are shown on the character list.\r\nChanging these items causes " +
-		"the character list\r\nto be reloaded.");
-			this.filterTQCharsRadioButton.UseVisualStyleBackColor = true;
-			this.filterTQCharsRadioButton.CheckedChanged += new System.EventHandler(this.FilterTQCharsRadioButtonCheckedChanged);
-			// 
 			// vaultPathTextBox
 			// 
 			this.vaultPathTextBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
@@ -389,19 +319,6 @@ namespace TQVaultAE.GUI
 			this.vaultPathLabel.Size = new System.Drawing.Size(74, 18);
 			this.vaultPathLabel.TabIndex = 14;
 			this.vaultPathLabel.Text = "Vault Path";
-			// 
-			// playerListGroupBox
-			// 
-			this.playerListGroupBox.Controls.Add(this.noFilterRadioButton);
-			this.playerListGroupBox.Controls.Add(this.filterTQCharsRadioButton);
-			this.playerListGroupBox.Controls.Add(this.filterITCharsRadioButton);
-			this.playerListGroupBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.playerListGroupBox.Location = new System.Drawing.Point(481, 172);
-			this.playerListGroupBox.Name = "playerListGroupBox";
-			this.playerListGroupBox.Size = new System.Drawing.Size(213, 100);
-			this.playerListGroupBox.TabIndex = 7;
-			this.playerListGroupBox.TabStop = false;
-			this.playerListGroupBox.Text = "Filter Player List";
 			// 
 			// cancelButton
 			// 
@@ -518,7 +435,7 @@ namespace TQVaultAE.GUI
 			// 
 			this.loadAllFilesCheckBox.AutoSize = true;
 			this.loadAllFilesCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-			this.loadAllFilesCheckBox.Location = new System.Drawing.Point(481, 288);
+			this.loadAllFilesCheckBox.Location = new System.Drawing.Point(484, 240);
 			this.loadAllFilesCheckBox.Name = "loadAllFilesCheckBox";
 			this.loadAllFilesCheckBox.Size = new System.Drawing.Size(276, 22);
 			this.loadAllFilesCheckBox.TabIndex = 28;
@@ -533,7 +450,7 @@ namespace TQVaultAE.GUI
 			// 
 			this.checkForUpdatesCheckBox.AutoSize = true;
 			this.checkForUpdatesCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-			this.checkForUpdatesCheckBox.Location = new System.Drawing.Point(481, 336);
+			this.checkForUpdatesCheckBox.Location = new System.Drawing.Point(484, 288);
 			this.checkForUpdatesCheckBox.Name = "checkForUpdatesCheckBox";
 			this.checkForUpdatesCheckBox.Size = new System.Drawing.Size(247, 22);
 			this.checkForUpdatesCheckBox.TabIndex = 29;
@@ -569,7 +486,7 @@ namespace TQVaultAE.GUI
 			this.checkNowButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
 			this.checkNowButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.checkNowButton.Image = ((System.Drawing.Image)(resources.GetObject("checkNowButton.Image")));
-			this.checkNowButton.Location = new System.Drawing.Point(763, 330);
+			this.checkNowButton.Location = new System.Drawing.Point(766, 282);
 			this.checkNowButton.Name = "checkNowButton";
 			this.checkNowButton.OverBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonOver;
 			this.checkNowButton.Size = new System.Drawing.Size(137, 60);
@@ -586,7 +503,7 @@ namespace TQVaultAE.GUI
 			// 
 			this.enableNewUICheckBox.AutoSize = true;
 			this.enableNewUICheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-			this.enableNewUICheckBox.Location = new System.Drawing.Point(481, 312);
+			this.enableNewUICheckBox.Location = new System.Drawing.Point(484, 264);
 			this.enableNewUICheckBox.Name = "enableNewUICheckBox";
 			this.enableNewUICheckBox.Size = new System.Drawing.Size(202, 22);
 			this.enableNewUICheckBox.TabIndex = 32;
@@ -794,7 +711,6 @@ namespace TQVaultAE.GUI
 			this.Controls.Add(this.loadLastVaultCheckBox);
 			this.Controls.Add(this.resetButton);
 			this.Controls.Add(this.loadLastCharacterCheckBox);
-			this.Controls.Add(this.playerListGroupBox);
 			this.DrawCustomBorder = true;
 			this.Font = new System.Drawing.Font("Albertus MT Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ForeColor = System.Drawing.Color.White;
@@ -809,7 +725,6 @@ namespace TQVaultAE.GUI
 			this.Text = "Configure Settings";
 			this.TopMost = true;
 			this.Load += new System.EventHandler(this.SettingsDialogLoad);
-			this.Controls.SetChildIndex(this.playerListGroupBox, 0);
 			this.Controls.SetChildIndex(this.loadLastCharacterCheckBox, 0);
 			this.Controls.SetChildIndex(this.resetButton, 0);
 			this.Controls.SetChildIndex(this.loadLastVaultCheckBox, 0);
@@ -840,8 +755,6 @@ namespace TQVaultAE.GUI
 			this.Controls.SetChildIndex(this.titanQuestPathLabel, 0);
 			this.Controls.SetChildIndex(this.titanQuestPathTextBox, 0);
 			this.Controls.SetChildIndex(this.playerReadonlyCheckbox, 0);
-			this.playerListGroupBox.ResumeLayout(false);
-			this.playerListGroupBox.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

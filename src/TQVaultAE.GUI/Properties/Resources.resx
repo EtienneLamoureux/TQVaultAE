@@ -790,33 +790,6 @@ take longer if the network connection is slow.</value>
 enable the drop down
 to select custom maps.</value>
   </data>
-  <data name="SettingsFilterGroup" xml:space="preserve">
-    <value>Filter Player List</value>
-  </data>
-  <data name="SettingsFilterIT" xml:space="preserve">
-    <value>Filter IT Characters</value>
-  </data>
-  <data name="SettingsFilterITTT" xml:space="preserve">
-    <value>Only original TQ Characters are shown on the
-character list.  Changing these items causes 
-the character list to be reloaded.</value>
-  </data>
-  <data name="SettingsFilterNone" xml:space="preserve">
-    <value>No Filter</value>
-  </data>
-  <data name="SettingsFilterNoneTT" xml:space="preserve">
-    <value>No filtration of the character list.
-Changing these items causes the character list
-to be reloaded.</value>
-  </data>
-  <data name="SettingsFilterTQ" xml:space="preserve">
-    <value>Filter TQ Characters</value>
-  </data>
-  <data name="SettingsFilterTQTT" xml:space="preserve">
-    <value>Only IT Characters are shown on the character list.
-Changing these items causes the character list
-to be reloaded.</value>
-  </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Check Now</value>
   </data>
