@@ -326,6 +326,38 @@ namespace TQVaultAE.GUI
             }*/
 		}
 
+
+		delegate IComparable GetComparableProperty(Result result);
+		private void ResultsDataGridViewSorted(object sender, EventArgs e)
+		{
+			var sortOrder = this.resultsDataGridView.SortOrder == SortOrder.Ascending ? 1 : -1;
+			var sortColumnIndex = this.resultsDataGridView.SortedColumn.Index;
+
+			GetComparableProperty getSortProperty = result =>
+			{
+				switch (sortColumnIndex)
+				{
+					case 0:
+						return result.Item.ToString();
+					case 1:
+						return result.ItemStyle;
+					case 2:
+						return result.ContainerName;
+					case 3:
+						return result.Sack;
+					case 4:
+						return GetContainerTypeString(result.ContainerType);
+					default:
+						return 0;
+				}
+			};
+
+			this.resultsList.Sort(delegate (Result a, Result b)
+			{
+				return sortOrder * getSortProperty(a).CompareTo(getSortProperty(b));
+			});
+		}
+
 		/// <summary>
 		/// Handler for the focus changing to a different row.
 		/// </summary>

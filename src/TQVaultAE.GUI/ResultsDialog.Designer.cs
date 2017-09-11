@@ -125,6 +125,7 @@ namespace TQVaultAE.GUI
 			this.resultsDataGridView.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.ResultsDataGridViewRowLeave);
 			this.resultsDataGridView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ResultsDataGridViewKeyPress);
 			this.resultsDataGridView.MouseLeave += new System.EventHandler(this.ResultsDataGridViewMouseLeave);
+			this.resultsDataGridView.Sorted += new System.EventHandler(this.ResultsDataGridViewSorted);
 			// 
 			// item
 			// 
