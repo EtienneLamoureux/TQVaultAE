@@ -148,19 +148,9 @@ namespace TQVaultAE.GUI
 		private ScalingCheckBox loadAllFilesCheckBox;
 
 		/// <summary>
-		/// Check box to look for updates on the web
-		/// </summary>
-		private ScalingCheckBox checkForUpdatesCheckBox;
-
-		/// <summary>
 		/// Check box to suppress warning messages
 		/// </summary>
 		private ScalingCheckBox suppressWarningsCheckBox;
-
-		/// <summary>
-		/// Button to immediately check for an update
-		/// </summary>
-		private ScalingButton checkNowButton;
 
 		/// <summary>
 		/// Required designer variable.
@@ -206,9 +196,7 @@ namespace TQVaultAE.GUI
 			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.enableCustomMapsCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
 			this.loadAllFilesCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-			this.checkForUpdatesCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
 			this.suppressWarningsCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-			this.checkNowButton = new TQVaultAE.GUI.ScalingButton();
 			this.playerReadonlyCheckbox = new TQVaultAE.GUI.ScalingCheckBox();
 			this.languageComboBox = new TQVaultAE.GUI.ScalingComboBox();
 			this.languageLabel = new TQVaultAE.GUI.ScalingLabel();
@@ -440,21 +428,6 @@ namespace TQVaultAE.GUI
 			this.loadAllFilesCheckBox.UseVisualStyleBackColor = true;
 			this.loadAllFilesCheckBox.CheckedChanged += new System.EventHandler(this.LoadAllFilesCheckBoxCheckedChanged);
 			// 
-			// checkForUpdatesCheckBox
-			// 
-			this.checkForUpdatesCheckBox.AutoSize = true;
-			this.checkForUpdatesCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-			this.checkForUpdatesCheckBox.Location = new System.Drawing.Point(498, 354);
-			this.checkForUpdatesCheckBox.Name = "checkForUpdatesCheckBox";
-			this.checkForUpdatesCheckBox.Size = new System.Drawing.Size(247, 22);
-			this.checkForUpdatesCheckBox.TabIndex = 29;
-			this.checkForUpdatesCheckBox.Text = "Automatically Check For Updates";
-			this.toolTip.SetToolTip(this.checkForUpdatesCheckBox, "Selecting this item will automatically check\r\nfor new versions of TQVault on the " +
-		"web when\r\nthe program starts up.  May cause startup to\r\ntake longer if the netwo" +
-		"rk connection is slow.");
-			this.checkForUpdatesCheckBox.UseVisualStyleBackColor = true;
-			this.checkForUpdatesCheckBox.CheckedChanged += new System.EventHandler(this.CheckForUpdatesCheckBoxCheckedChanged);
-			// 
 			// suppressWarningsCheckBox
 			// 
 			this.suppressWarningsCheckBox.AutoSize = true;
@@ -468,30 +441,6 @@ namespace TQVaultAE.GUI
 		"d\r\nrelic removal or if there are items in the trash\r\nwhen TQVault is closed.");
 			this.suppressWarningsCheckBox.UseVisualStyleBackColor = true;
 			this.suppressWarningsCheckBox.CheckedChanged += new System.EventHandler(this.SuppressWarningsCheckBoxCheckedChanged);
-			// 
-			// checkNowButton
-			// 
-			this.checkNowButton.BackColor = System.Drawing.Color.Transparent;
-			this.checkNowButton.DownBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonDown;
-			this.checkNowButton.FlatAppearance.BorderSize = 0;
-			this.checkNowButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-			this.checkNowButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-			this.checkNowButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.checkNowButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
-			this.checkNowButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-			this.checkNowButton.Image = ((System.Drawing.Image)(resources.GetObject("checkNowButton.Image")));
-			this.checkNowButton.Location = new System.Drawing.Point(751, 350);
-			this.checkNowButton.Name = "checkNowButton";
-			this.checkNowButton.OverBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonOver;
-			this.checkNowButton.Size = new System.Drawing.Size(137, 28);
-			this.checkNowButton.SizeToGraphic = false;
-			this.checkNowButton.TabIndex = 31;
-			this.checkNowButton.Text = "Check Now";
-			this.toolTip.SetToolTip(this.checkNowButton, "Manually checks if there are any updates\r\navailable.");
-			this.checkNowButton.UpBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
-			this.checkNowButton.UseCustomGraphic = true;
-			this.checkNowButton.UseVisualStyleBackColor = false;
-			this.checkNowButton.Click += new System.EventHandler(this.CheckNowButtonClick);
 			// 
 			// playerReadonlyCheckbox
 			// 
@@ -670,8 +619,6 @@ namespace TQVaultAE.GUI
 			this.Controls.Add(this.titanQuestPathBrowseButton);
 			this.Controls.Add(this.customMapLabel);
 			this.Controls.Add(this.mapListComboBox);
-			this.Controls.Add(this.checkNowButton);
-			this.Controls.Add(this.checkForUpdatesCheckBox);
 			this.Controls.Add(this.enableCustomMapsCheckBox);
 			this.Controls.Add(this.detectLanguageCheckBox);
 			this.Controls.Add(this.loadAllFilesCheckBox);
@@ -724,8 +671,6 @@ namespace TQVaultAE.GUI
 			this.Controls.SetChildIndex(this.loadAllFilesCheckBox, 0);
 			this.Controls.SetChildIndex(this.detectLanguageCheckBox, 0);
 			this.Controls.SetChildIndex(this.enableCustomMapsCheckBox, 0);
-			this.Controls.SetChildIndex(this.checkForUpdatesCheckBox, 0);
-			this.Controls.SetChildIndex(this.checkNowButton, 0);
 			this.Controls.SetChildIndex(this.mapListComboBox, 0);
 			this.Controls.SetChildIndex(this.customMapLabel, 0);
 			this.Controls.SetChildIndex(this.titanQuestPathBrowseButton, 0);

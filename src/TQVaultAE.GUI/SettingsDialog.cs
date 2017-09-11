@@ -89,11 +89,6 @@ namespace TQVaultAE.GUI
 		private bool loadAllFiles;
 
 		/// <summary>
-		/// Indicates whether new versions are checked for on startup
-		/// </summary>
-		private bool checkForNewVersions;
-
-		/// <summary>
 		/// Indicates whether warning messages are suppressed
 		/// </summary>
 		private bool suppressWarnings;
@@ -174,12 +169,8 @@ namespace TQVaultAE.GUI
 			this.toolTip.SetToolTip(this.suppressWarningsCheckBox, Resources.SettingsNoWarningTT);
 			this.playerReadonlyCheckbox.Text = Resources.SettingsPlayerReadonly;
 			this.toolTip.SetToolTip(this.playerReadonlyCheckbox, Resources.SettingsPlayerReadonlyTT);
-			this.checkForUpdatesCheckBox.Text = Resources.SettingsAutoUpdate;
-			this.toolTip.SetToolTip(this.checkForUpdatesCheckBox, Resources.SettingsAutoUpdateTT);
 			this.resetButton.Text = Resources.SettingsReset;
 			this.toolTip.SetToolTip(this.resetButton, Resources.SettingsResetTT);
-			this.checkNowButton.Text = Resources.SettingsForceCheck;
-			this.toolTip.SetToolTip(this.checkNowButton, Resources.SettingsForceCheckTT);
 			this.cancelButton.Text = Resources.GlobalCancel;
 			this.okayButton.Text = Resources.GlobalOK;
 			this.Text = Resources.SettingsTitle;
@@ -399,7 +390,6 @@ namespace TQVaultAE.GUI
 			this.enableMods = Settings.Default.ModEnabled;
 			this.customMap = Settings.Default.CustomMap;
 			this.loadAllFiles = Settings.Default.LoadAllFiles;
-			this.checkForNewVersions = Settings.Default.CheckForNewVersions;
 			this.suppressWarnings = Settings.Default.SuppressWarnings;
 			this.playerReadonly = Settings.Default.PlayerReadonly;
 
@@ -469,7 +459,6 @@ namespace TQVaultAE.GUI
 			this.titanQuestPathTextBox.Enabled = !this.detectGamePath;
 			this.titanQuestPathBrowseButton.Enabled = !this.detectGamePath;
 			this.loadAllFilesCheckBox.Checked = this.loadAllFiles;
-			this.checkForUpdatesCheckBox.Checked = this.checkForNewVersions;
 			this.suppressWarningsCheckBox.Checked = this.suppressWarnings;
 			this.playerReadonlyCheckbox.Checked = this.playerReadonly;
 
@@ -515,7 +504,6 @@ namespace TQVaultAE.GUI
 				Settings.Default.CustomMap = this.customMap;
 				Settings.Default.LoadAllFiles = this.loadAllFiles;
 				Settings.Default.SuppressWarnings = this.suppressWarnings;
-				Settings.Default.CheckForNewVersions = this.checkForNewVersions;
 				Settings.Default.PlayerReadonly = this.playerReadonly;
 			}
 		}
@@ -873,31 +861,6 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Handler for clicking the check for updates check box
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void CheckForUpdatesCheckBoxCheckedChanged(object sender, EventArgs e)
-		{
-			if (this.checkForUpdatesCheckBox.Checked)
-			{
-				if (this.checkForNewVersions == false)
-				{
-					this.checkForNewVersions = true;
-					this.configurationChanged = true;
-				}
-			}
-			else
-			{
-				if (this.checkForNewVersions == true)
-				{
-					this.checkForNewVersions = false;
-					this.configurationChanged = true;
-				}
-			}
-		}
-
-		/// <summary>
 		/// Handler for clicking the suppress warnings check box
 		/// </summary>
 		/// <param name="sender">sender object</param>
@@ -920,28 +883,6 @@ namespace TQVaultAE.GUI
 					this.configurationChanged = true;
 				}
 			}
-		}
-
-		/// <summary>
-		/// Hanlder for clicking the Check Now button
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void CheckNowButtonClick(object sender, EventArgs e)
-		{
-			// Need to hide this form since the pop up window shows up behind it.
-			this.Hide();
-
-			// Check for updates
-			UpdateDialog dlg = new UpdateDialog();
-
-			// Show a message even if there are no updates right now.
-			dlg.ShowUpToDateMessage = true;
-			dlg.CheckForUpdates();
-			dlg.Close();
-
-			// Now that the pop up is gone we can show this window again.
-			this.Show();
 		}
 
 		private void PlayerReadonlyCheckboxCheckedChanged(object sender, EventArgs e)

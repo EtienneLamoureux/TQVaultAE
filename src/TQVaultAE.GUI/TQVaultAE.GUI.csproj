@@ -213,10 +213,6 @@
     <EmbeddedResource Include="SplashScreenForm.resx">
       <DependentUpon>SplashScreenForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UpdateDialog.resx">
-      <DependentUpon>UpdateDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="VaultForm.resx">
       <DependentUpon>VaultForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -284,12 +280,6 @@
     </Compile>
     <Compile Include="StashPanel.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UpdateDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UpdateDialog.Designer.cs">
-      <DependentUpon>UpdateDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="VaultMaintenanceDialog.cs">
       <SubType>Form</SubType>
