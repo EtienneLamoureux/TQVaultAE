@@ -217,7 +217,6 @@ namespace TQVaultAE.GUI
 			// Setup localized strings.
 			this.characterLabel.Text = Resources.MainFormLabel1;
 			this.vaultLabel.Text = Resources.MainFormLabel2;
-			this.findLabel.Text = Resources.MainFormLabel4;
 			this.configureButton.Text = Resources.MainFormBtnConfigure;
 			this.exitButton.Text = Resources.GlobalExit;
 			this.panelSelectButton.Text = Resources.MainFormBtnPanelSelect;
@@ -340,57 +339,6 @@ namespace TQVaultAE.GUI
 			this.tooltip.ChangeText(this.tooltipText);
 
 			this.Invalidate();
-		}
-
-		/// <summary>
-		/// Changes UI back to the original UI.  Removes skinning, changes font, moves controls back, etc.
-		/// </summary>
-		/// <param name="originalSize">Original size of the form</param>
-		protected override void Revert(Size originalSize)
-		{
-			// Restore the borders and set the form back to the original size.
-			this.DrawCustomBorder = false;
-			this.FormBorderStyle = FormBorderStyle.Sizable;
-			this.ClientSize = originalSize;
-
-			// Change back to the original background image.
-			this.BackgroundImage = Resources.MainForm_Background;
-
-			// Move the search box and label back to where it was.
-			// New UI does not display these, but they are moved "out of the way" in the designer.
-			this.searchTextBox.Location = new Point(276, 78);
-			this.findLabel.Location = new Point(203, 81);
-
-			// Change the combolist drop downs back to the way they were.
-			this.characterLabel.Revert(new Point(3, 31), new Size(79, 37));
-			this.characterComboBox.Revert(new Point(88, 40), new Size(248, 21));
-			this.secondaryVaultListComboBox.Revert(new Point(88, 49), new Size(248, 21));
-			this.vaultLabel.Revert(new Point(342, 37), new Size(54, 24));
-			this.vaultListComboBox.Revert(new Point(404, 40), new Size(285, 21));
-
-			// Revert the buttons back to the unskinned versions and move them to the original positions.
-			this.exitButton.Revert(new Point(983, 587), new Size(75, 23));
-			this.configureButton.Revert(new Point(16, 587), new Size(75, 23));
-			this.panelSelectButton.Revert(new Point(51, 76), new Size(113, 23));
-			this.aboutButton.Revert(new Point(21, 9), new Size(76, 23));
-			this.aboutButton.Text = Resources.GlobalAbout;
-
-			// Revert the custom map label.
-			this.customMapText.BackColor = System.Drawing.Color.Gold;
-			this.customMapText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.customMapText.Font = new System.Drawing.Font("Albertus MT", 11.25F, FontStyle.Bold);
-			this.customMapText.ForeColor = System.Drawing.Color.Black;
-			this.customMapText.Location = new System.Drawing.Point(334, 579);
-			this.customMapText.Size = new System.Drawing.Size(439, 30);
-
-			// Disable controls which are only present on the new UI.
-			this.titleLabel.Visible = false;
-			this.searchButton.Enabled = false;
-			this.searchButton.Visible = false;
-			this.loadedCharacterLabel.Visible = false;
-			this.loadedCharacterLabel.Enabled = false;
-			this.loadedVaultLabel.Visible = false;
-			this.loadedVaultLabel.Enabled = false;
 		}
 
 		/// <summary>
@@ -798,10 +746,7 @@ namespace TQVaultAE.GUI
 		{
 			this.CreatePlayerPanel();
 			int textPanelOffset = 0;
-			if (Settings.Default.EnableNewUI)
-			{
-				textPanelOffset = Convert.ToInt32(2.0F * Database.DB.Scale);
-			}
+			textPanelOffset = Convert.ToInt32(2.0F * Database.DB.Scale);
 
 			this.itemTextPanel.Location = new Point(this.playerPanel.Location.X, this.playerPanel.Location.Y + this.playerPanel.Height + textPanelOffset);
 			this.itemTextPanel.Size = new Size(this.playerPanel.Width, Convert.ToInt32(22.0F * Database.DB.Scale));
@@ -834,15 +779,6 @@ namespace TQVaultAE.GUI
 
 			this.GetVaultList(false);
 
-			// New UI does not use the action button or trash panels.
-			if (!Settings.Default.EnableNewUI)
-			{
-				this.CreateTrash(5); // # of bags in trash
-				this.CreateTrashPanel(5); // # of bags in trash
-				this.trashPanel.Player = this.trash;
-				this.CreateActionButton();
-			}
-
 			// Now we always create the stash panel since everyone can have equipment
 			this.CreateStashPanel();
 			this.stashPanel.CurrentBag = 0; // set to default to the equipment panel
@@ -853,26 +789,11 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void SetupFormSize()
 		{
-			// Check to see if we want to display the old UI.
-			// There are other checks below as well when creating the panels.
-			if (Settings.Default.EnableNewUI)
-			{
-				this.DrawCustomBorder = true;
-				this.ResizeCustomAllowed = true;
-				this.findLabel.Visible = false;
-				this.searchTextBox.Enabled = false;
-				this.searchTextBox.Visible = false;
-				this.loadedCharacterLabel.Text = Resources.PlayerPanelNoPlayer;
-				this.loadedVaultLabel.Text = Resources.PlayerPanelNoVault;
-				this.fadeInterval = Settings.Default.FadeInInterval;
-			}
-			else
-			{
-				Size oldSize = new Size(1072, 618);
-				this.FormDesignRatio = oldSize.Height / oldSize.Width;
-				this.Revert(oldSize);
-				this.fadeInterval = 1.0F;
-			}
+			this.DrawCustomBorder = true;
+			this.ResizeCustomAllowed = true;
+			this.loadedCharacterLabel.Text = Resources.PlayerPanelNoPlayer;
+			this.loadedVaultLabel.Text = Resources.PlayerPanelNoVault;
+			this.fadeInterval = Settings.Default.FadeInInterval;
 
 			// Save the height / width ratio for resizing.
 			this.FormDesignRatio = (float)this.Height / (float)this.Width;
@@ -1149,14 +1070,6 @@ namespace TQVaultAE.GUI
 			// Move to the top just below the dropdowns.  Swap the vault and the player panel locations.
 			int locationY = Convert.ToInt32(138.0F * Database.DB.Scale);
 			this.vaultPanel.DrawAsGroupBox = false;
-			if (!Settings.Default.EnableNewUI)
-			{
-				// Back to the bottom 10 pixels below the textPanel.
-				locationY = this.itemTextPanel.Bottom + Convert.ToInt32(10.0F * Database.DB.Scale);
-
-				// Draw as a standard group box
-				this.vaultPanel.DrawAsGroupBox = true;
-			}
 
 			this.vaultPanel.Location = new Point(Convert.ToInt32(16.0F * Database.DB.Scale), locationY);
 			this.vaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
@@ -1176,13 +1089,8 @@ namespace TQVaultAE.GUI
 		{
 			this.secondaryVaultPanel = new VaultPanel(this.dragInfo, numBags, new Size(12, 5), this.tooltip, 1, AutoMoveLocation.SecondaryVault);
 			this.secondaryVaultPanel.DrawAsGroupBox = false;
-			if (!Settings.Default.EnableNewUI)
-			{
-				this.secondaryVaultPanel.DrawAsGroupBox = true;
-			}
 
 			// Place it with the same Y value as the character panel and X value of the vault panel.
-			// Should be independent of using the new UI or the old one.
 			this.secondaryVaultPanel.Location = new Point(Convert.ToInt32(16.0F * Database.DB.Scale), this.playerPanel.Location.Y);
 			this.secondaryVaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 			this.secondaryVaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
@@ -1224,15 +1132,6 @@ namespace TQVaultAE.GUI
 			int locationY = this.ClientSize.Height - (this.playerPanel.Height + Convert.ToInt32(30.0F * Database.DB.Scale));
 			int locationX = Convert.ToInt32(16.0F * Database.DB.Scale);
 			this.playerPanel.DrawAsGroupBox = false;
-			if (!Settings.Default.EnableNewUI)
-			{
-				// Revert back to original location which is below the drop down boxes
-				locationY = Convert.ToInt32(110.0F * Database.DB.Scale);
-				locationX = Convert.ToInt32(43.0F * Database.DB.Scale);
-
-				// Draw as a standard group box.
-				this.playerPanel.DrawAsGroupBox = true;
-			}
 
 			this.playerPanel.Location = new Point(locationX, locationY);
 			this.playerPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
@@ -1252,11 +1151,6 @@ namespace TQVaultAE.GUI
 			// size params are width, height
 			Size panelSize = new Size(17, 16);
 
-			if (!Settings.Default.EnableNewUI)
-			{
-				panelSize = new Size(10, 15);
-			}
-
 			this.stashPanel = new StashPanel(this.dragInfo, panelSize, this.tooltip);
 
 			// New location in bottom right of the Main Form.
@@ -1264,17 +1158,6 @@ namespace TQVaultAE.GUI
 				this.ClientSize.Width - (this.stashPanel.Width + Convert.ToInt32(10.0F * Database.DB.Scale)),
 				this.ClientSize.Height - (this.stashPanel.Height + Convert.ToInt32(5.0F * Database.DB.Scale)));
 			this.stashPanel.DrawAsGroupBox = false;
-
-			if (!Settings.Default.EnableNewUI)
-			{
-				// Original location based on trash panel location.
-				this.stashPanel.Location = new Point(this.trashPanel.Right + Convert.ToInt32(10.0F * Database.DB.Scale), this.trashPanel.Bottom - this.stashPanel.Height);
-				this.stashPanel.StashBackground = Resources.StashPanel;
-				this.stashPanel.SetEquipmentBackground(Resources.EquipmentPanel);
-
-				// Draw as a standard windows group box.
-				this.stashPanel.DrawAsGroupBox = true;
-			}
 
 			this.stashPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 			this.stashPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
@@ -2376,15 +2259,7 @@ namespace TQVaultAE.GUI
 		/// <param name="e">SackPanelEventArgs data</param>
 		private void ActivateSearchCallback(object sender, SackPanelEventArgs e)
 		{
-			if (!Settings.Default.EnableNewUI)
-			{
-				this.searchTextBox.Focus();
-				this.searchTextBox.SelectAll();
-			}
-			else
-			{
-				this.OpenSearchDialog();
-			}
+			this.OpenSearchDialog();
 		}
 
 		/// <summary>
@@ -3297,21 +3172,6 @@ namespace TQVaultAE.GUI
 
 		/// <summary>
 		/// Handler for keypresses within the search text box.
-		/// Activates the search on Enter.
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">KeyPressEventArgs data</param>
-		private void SearchTextBoxKeyPress(object sender, KeyPressEventArgs e)
-		{
-			if (e.KeyChar == (char)13)
-			{
-				this.Search();
-				e.Handled = true;
-			}
-		}
-
-		/// <summary>
-		/// Handler for keypresses within the search text box.
 		/// Used to handle the resizing hot keys.
 		/// </summary>
 		/// <param name="sender">sender object</param>
@@ -3332,15 +3192,6 @@ namespace TQVaultAE.GUI
 			{
 				this.ResizeFormCallback(this, new ResizeEventArgs(1.0F));
 			}
-		}
-
-		/// <summary>
-		/// Search for whatever text is in the search text box.
-		/// </summary>
-		private void Search()
-		{
-			// The Search() method will normalize the string so we just pass it along.
-			this.Search(this.searchTextBox.Text);
 		}
 
 		/// <summary>
@@ -3798,14 +3649,7 @@ namespace TQVaultAE.GUI
 		/// <param name="e">EventArgs data</param>
 		private void MainFormShown(object sender, EventArgs e)
 		{
-			if (Settings.Default.EnableNewUI)
-			{
-				this.vaultPanel.SackPanel.Focus();
-			}
-			else
-			{
-				this.searchTextBox.Focus();
-			}
+			this.vaultPanel.SackPanel.Focus();
 		}
 
 		/// <summary>

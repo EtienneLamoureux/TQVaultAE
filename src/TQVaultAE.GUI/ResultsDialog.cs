@@ -59,14 +59,7 @@ namespace TQVaultAE.GUI
 			this.sack.HeaderText = Resources.ResultsSack;
 			this.quality.HeaderText = Resources.ResultsQuality;
 
-			if (Settings.Default.EnableNewUI)
-			{
-				this.DrawCustomBorder = true;
-			}
-			else
-			{
-				this.Revert(new Size(821, 459));
-			}
+			this.DrawCustomBorder = true;
 
 			this.FormDesignRatio = 0.0F; //// (float)this.Height / (float)this.Width;
 										 ////this.FormMaximumSize = new Size(this.Width * 2, this.Height * 2);
@@ -111,21 +104,6 @@ namespace TQVaultAE.GUI
 			{
 				this.searchString = value;
 			}
-		}
-
-		/// <summary>
-		/// Reverts the form back to the original size and UI style.
-		/// </summary>
-		/// <param name="originalSize">Original size of the form.</param>
-		protected override void Revert(Size originalSize)
-		{
-			this.DrawCustomBorder = false;
-			this.ClientSize = originalSize;
-			this.Padding = new Padding(0);
-			this.FormBorderStyle = FormBorderStyle.Sizable;
-
-			this.resultsDataGridView.Location = new Point(0, 0);
-			this.resultsDataGridView.Size = new Size(821, 459);
 		}
 
 		/// <summary>

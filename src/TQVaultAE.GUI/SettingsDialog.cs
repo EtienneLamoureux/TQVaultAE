@@ -89,11 +89,6 @@ namespace TQVaultAE.GUI
 		private bool loadAllFiles;
 
 		/// <summary>
-		/// Indicates whether the new User Interface is enabled.
-		/// </summary>
-		private bool enableNewUI;
-
-		/// <summary>
 		/// Indicates whether new versions are checked for on startup
 		/// </summary>
 		private bool checkForNewVersions;
@@ -185,20 +180,11 @@ namespace TQVaultAE.GUI
 			this.toolTip.SetToolTip(this.resetButton, Resources.SettingsResetTT);
 			this.checkNowButton.Text = Resources.SettingsForceCheck;
 			this.toolTip.SetToolTip(this.checkNowButton, Resources.SettingsForceCheckTT);
-			this.enableNewUICheckBox.Text = Resources.SettingsEnableNewUI;
-			this.toolTip.SetToolTip(this.enableNewUICheckBox, Resources.SettingsEnableNewUITT);
 			this.cancelButton.Text = Resources.GlobalCancel;
 			this.okayButton.Text = Resources.GlobalOK;
 			this.Text = Resources.SettingsTitle;
 
-			if (Settings.Default.EnableNewUI)
-			{
-				this.DrawCustomBorder = true;
-			}
-			else
-			{
-				this.Revert(new Size(713, 399));
-			}
+			this.DrawCustomBorder = true;
 
 			this.mapListComboBox.Items.Clear();
 			this.mapListComboBox.Items.Add(string.Empty);
@@ -300,113 +286,6 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Reverts the form and controls to their original size, location and font.
-		/// </summary>
-		/// <param name="originalSize">Size of the orinal form.</param>
-		protected override void Revert(Size originalSize)
-		{
-			this.DrawCustomBorder = false;
-			this.ClientSize = originalSize;
-
-			Font orignalFont = new System.Drawing.Font("Albertus MT", 9.0F);
-			this.allowItemEditCheckBox.Font = orignalFont;
-			this.allowItemEditCheckBox.Location = new Point(12, 221);
-			this.allowItemEditCheckBox.Size = new Size(166, 18);
-
-			this.allowItemCopyCheckBox.Font = orignalFont;
-			this.allowItemCopyCheckBox.Location = new Point(12, 245);
-			this.allowItemCopyCheckBox.Size = new Size(130, 18);
-
-			this.skipTitleCheckBox.Font = orignalFont;
-			this.skipTitleCheckBox.Location = new Point(12, 197);
-			this.skipTitleCheckBox.Size = new Size(199, 18);
-
-			this.loadLastCharacterCheckBox.Font = orignalFont;
-			this.loadLastCharacterCheckBox.Location = new Point(12, 269);
-			this.loadLastCharacterCheckBox.Size = new Size(264, 18);
-
-			this.loadLastVaultCheckBox.Font = orignalFont;
-			this.loadLastVaultCheckBox.Location = new Point(12, 293);
-			this.loadLastVaultCheckBox.Size = new Size(242, 18);
-
-			this.vaultPathTextBox.Font = orignalFont;
-			this.vaultPathTextBox.Location = new Point(12, 26);
-			this.vaultPathTextBox.Size = new Size(300, 21);
-
-			this.vaultPathLabel.Font = orignalFont;
-			this.vaultPathLabel.Location = new Point(12, 9);
-			this.vaultPathLabel.Size = new Size(62, 14);
-
-			this.enableCustomMapsCheckBox.Font = orignalFont;
-			this.enableCustomMapsCheckBox.Location = new Point(12, 161);
-			this.enableCustomMapsCheckBox.Size = new Size(134, 18);
-
-			this.loadAllFilesCheckBox.Font = orignalFont;
-			this.loadAllFilesCheckBox.Location = new Point(371, 245);
-			this.loadAllFilesCheckBox.Size = new Size(227, 18);
-
-			this.checkForUpdatesCheckBox.Font = orignalFont;
-			this.checkForUpdatesCheckBox.Location = new Point(371, 293);
-			this.checkForUpdatesCheckBox.Size = new Size(201, 18);
-
-			this.suppressWarningsCheckBox.Font = orignalFont;
-			this.suppressWarningsCheckBox.Location = new Point(12, 317);
-			this.suppressWarningsCheckBox.Size = new Size(182, 18);
-
-			this.enableNewUICheckBox.Font = orignalFont;
-			this.enableNewUICheckBox.Location = new Point(371, 269);
-			this.enableNewUICheckBox.Size = new Size(159, 18);
-
-			this.languageComboBox.Font = orignalFont;
-			this.languageComboBox.Location = new Point(12, 67);
-			this.languageComboBox.Size = new Size(300, 22);
-
-			this.languageLabel.Font = orignalFont;
-			this.languageLabel.Location = new Point(12, 50);
-			this.languageLabel.Size = new Size(89, 14);
-
-			this.detectLanguageCheckBox.Font = orignalFont;
-			this.detectLanguageCheckBox.Location = new Point(12, 95);
-			this.detectLanguageCheckBox.Size = new Size(136, 18);
-
-			this.titanQuestPathTextBox.Font = orignalFont;
-			this.titanQuestPathTextBox.Location = new Point(371, 26);
-			this.titanQuestPathTextBox.Size = new Size(300, 21);
-
-			this.titanQuestPathLabel.Font = orignalFont;
-			this.titanQuestPathLabel.Location = new Point(371, 9);
-			this.titanQuestPathLabel.Size = new Size(85, 14);
-
-			this.immortalThronePathLabel.Font = orignalFont;
-			this.immortalThronePathLabel.Location = new Point(371, 50);
-			this.immortalThronePathLabel.Size = new Size(77, 14);
-
-			this.immortalThronePathTextBox.Font = orignalFont;
-			this.immortalThronePathTextBox.Location = new Point(371, 67);
-			this.immortalThronePathTextBox.Size = new Size(300, 21);
-
-			this.detectGamePathsCheckBox.Font = orignalFont;
-			this.detectGamePathsCheckBox.Location = new Point(371, 95);
-			this.detectGamePathsCheckBox.Size = new Size(147, 18);
-
-			this.customMapLabel.Font = orignalFont;
-			this.customMapLabel.Location = new Point(12, 116);
-			this.customMapLabel.Size = new Size(74, 14);
-
-			this.mapListComboBox.Font = orignalFont;
-			this.mapListComboBox.Location = new Point(12, 133);
-			this.mapListComboBox.Size = new Size(300, 22);
-
-			this.cancelButton.Revert(new Point(371, 364), new Size(75, 23));
-			this.okayButton.Revert(new Point(269, 364), new Size(75, 23));
-			this.resetButton.Revert(new Point(628, 364), new Size(75, 23));
-			this.vaultPathBrowseButton.Revert(new Point(318, 26), new Size(26, 23));
-			this.checkNowButton.Revert(new Point(613, 293), new Size(90, 42));
-			this.titanQuestPathBrowseButton.Revert(new Point(677, 26), new Size(26, 23));
-			this.immortalThronePathBrowseButton.Revert(new Point(677, 67), new Size(26, 23));
-		}
-
-		/// <summary>
 		/// Override of ScaleControl which supports font scaling.
 		/// </summary>
 		/// <param name="factor">SizeF for the scale factor</param>
@@ -503,7 +382,6 @@ namespace TQVaultAE.GUI
 			this.loadLastCharacter = Settings.Default.LoadLastCharacter;
 			this.loadLastVault = Settings.Default.LoadLastVault;
 			this.detectLanguage = Settings.Default.AutoDetectLanguage;
-			this.enableNewUI = Settings.Default.EnableNewUI;
 
 			// Force English since there was some issue with getting the proper language setting.
 			if (Database.DB.GameLanguage == null)
@@ -594,7 +472,6 @@ namespace TQVaultAE.GUI
 			this.checkForUpdatesCheckBox.Checked = this.checkForNewVersions;
 			this.suppressWarningsCheckBox.Checked = this.suppressWarnings;
 			this.playerReadonlyCheckbox.Checked = this.playerReadonly;
-			this.enableNewUICheckBox.Checked = this.enableNewUI;
 
 			this.enableCustomMapsCheckBox.Checked = this.enableMods;
 			int ind = this.mapListComboBox.FindStringExact(this.customMap);
@@ -639,7 +516,6 @@ namespace TQVaultAE.GUI
 				Settings.Default.LoadAllFiles = this.loadAllFiles;
 				Settings.Default.SuppressWarnings = this.suppressWarnings;
 				Settings.Default.CheckForNewVersions = this.checkForNewVersions;
-				Settings.Default.EnableNewUI = this.enableNewUI;
 				Settings.Default.PlayerReadonly = this.playerReadonly;
 			}
 		}
@@ -1066,33 +942,6 @@ namespace TQVaultAE.GUI
 
 			// Now that the pop up is gone we can show this window again.
 			this.Show();
-		}
-
-		/// <summary>
-		/// Handler for checking the Enable New UI checkbox
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void EnableNewUICheckBoxCheckedChanged(object sender, EventArgs e)
-		{
-			if (this.enableNewUICheckBox.Checked)
-			{
-				if (this.enableNewUI == false)
-				{
-					this.enableNewUI = true;
-					this.configurationChanged = true;
-					this.uiSettingChanged = true;
-				}
-			}
-			else
-			{
-				if (this.enableNewUI == true)
-				{
-					this.enableNewUI = false;
-					this.configurationChanged = true;
-					this.uiSettingChanged = true;
-				}
-			}
 		}
 
 		private void PlayerReadonlyCheckboxCheckedChanged(object sender, EventArgs e)

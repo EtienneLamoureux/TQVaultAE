@@ -163,11 +163,6 @@ namespace TQVaultAE.GUI
 		private ScalingButton checkNowButton;
 
 		/// <summary>
-		/// Button which enables the new user interface
-		/// </summary>
-		private ScalingCheckBox enableNewUICheckBox;
-
-		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
@@ -214,7 +209,6 @@ namespace TQVaultAE.GUI
 			this.checkForUpdatesCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
 			this.suppressWarningsCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
 			this.checkNowButton = new TQVaultAE.GUI.ScalingButton();
-			this.enableNewUICheckBox = new TQVaultAE.GUI.ScalingCheckBox();
 			this.playerReadonlyCheckbox = new TQVaultAE.GUI.ScalingCheckBox();
 			this.languageComboBox = new TQVaultAE.GUI.ScalingComboBox();
 			this.languageLabel = new TQVaultAE.GUI.ScalingLabel();
@@ -499,19 +493,6 @@ namespace TQVaultAE.GUI
 			this.checkNowButton.UseVisualStyleBackColor = false;
 			this.checkNowButton.Click += new System.EventHandler(this.CheckNowButtonClick);
 			// 
-			// enableNewUICheckBox
-			// 
-			this.enableNewUICheckBox.AutoSize = true;
-			this.enableNewUICheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-			this.enableNewUICheckBox.Location = new System.Drawing.Point(484, 264);
-			this.enableNewUICheckBox.Name = "enableNewUICheckBox";
-			this.enableNewUICheckBox.Size = new System.Drawing.Size(202, 22);
-			this.enableNewUICheckBox.TabIndex = 32;
-			this.enableNewUICheckBox.Text = "Enable New User Interface";
-			this.toolTip.SetToolTip(this.enableNewUICheckBox, "Selecting this item will enable the new\r\nTitan Quest themed user interface.");
-			this.enableNewUICheckBox.UseVisualStyleBackColor = true;
-			this.enableNewUICheckBox.CheckedChanged += new System.EventHandler(this.EnableNewUICheckBoxCheckedChanged);
-			// 
 			// playerReadonlyCheckbox
 			// 
 			this.playerReadonlyCheckbox.AutoSize = true;
@@ -690,7 +671,6 @@ namespace TQVaultAE.GUI
 			this.Controls.Add(this.customMapLabel);
 			this.Controls.Add(this.mapListComboBox);
 			this.Controls.Add(this.checkNowButton);
-			this.Controls.Add(this.enableNewUICheckBox);
 			this.Controls.Add(this.checkForUpdatesCheckBox);
 			this.Controls.Add(this.enableCustomMapsCheckBox);
 			this.Controls.Add(this.detectLanguageCheckBox);
@@ -745,7 +725,6 @@ namespace TQVaultAE.GUI
 			this.Controls.SetChildIndex(this.detectLanguageCheckBox, 0);
 			this.Controls.SetChildIndex(this.enableCustomMapsCheckBox, 0);
 			this.Controls.SetChildIndex(this.checkForUpdatesCheckBox, 0);
-			this.Controls.SetChildIndex(this.enableNewUICheckBox, 0);
 			this.Controls.SetChildIndex(this.checkNowButton, 0);
 			this.Controls.SetChildIndex(this.mapListComboBox, 0);
 			this.Controls.SetChildIndex(this.customMapLabel, 0);

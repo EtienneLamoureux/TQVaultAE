@@ -1196,15 +1196,6 @@ namespace TQVaultAE.GUI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Find:.
-        /// </summary>
-        internal static string MainFormLabel4 {
-            get {
-                return ResourceManager.GetString("MainFormLabel4", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Game Language Changed.
         /// </summary>
         internal static string MainFormLanguageChanged {
