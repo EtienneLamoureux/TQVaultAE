@@ -4451,17 +4451,23 @@ namespace TQVaultData
 				key = key.Replace("Equation", string.Empty);
 				key = key.Replace(key[0], char.ToUpperInvariant(key[0]));
 
-				// Level needs to be LevelRequirement bah
-				if (key.Equals("Level"))
-				{
-					key = "LevelRequirement";
-				}
-
 				// We need to ignore the cost equations.
 				// Shields have costs so they will cause an overflow.
 				if (key.Equals("Cost"))
 				{
 					continue;
+				}
+
+				var variableKey = key.ToLowerInvariant();
+				if (variableKey == "level" || variableKey == "strength" || variableKey == "dexterity" || variableKey == "intelligence")
+				{
+					variableKey += "Requirement";
+				}
+
+				// Level needs to be LevelRequirement bah
+				if (key.Equals("Level"))
+				{
+					key = "LevelRequirement";
 				}
 
 				string value = variable.ToStringValue().Replace(itemLevelTag, itemLevel);
@@ -4473,7 +4479,7 @@ namespace TQVaultData
 				Expression expression = ExpressionEvaluate.CreateExpression(value);
 
 				// Changed by Bman to fix random overflow crashes
-				Variable ans = new Variable(string.Empty, VariableDataType.Integer, 1);
+				Variable ans = new Variable(variableKey, VariableDataType.Integer, 1);
 
 				// Changed by VillageIdiot to fix random overflow crashes.
 				double tempVal = Math.Ceiling(Convert.ToDouble(expression.Evaluate(), CultureInfo.InvariantCulture));
