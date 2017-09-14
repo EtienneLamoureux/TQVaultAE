@@ -678,7 +678,7 @@ namespace TQVaultAE.GUI
 				this.predicates = predicates.ToList();
 			}
 
-			public ItemAndPredicate(IList<IItemPredicate> predicates)
+			public ItemAndPredicate(IEnumerable<IItemPredicate> predicates)
 			{
 				this.predicates = predicates.ToList();
 			}
@@ -704,7 +704,7 @@ namespace TQVaultAE.GUI
 				this.predicates = predicates.ToList();
 			}
 
-			public ItemOrPredicate(IList<IItemPredicate> predicates)
+			public ItemOrPredicate(IEnumerable<IItemPredicate> predicates)
 			{
 				this.predicates = predicates.ToList();
 			}
@@ -3311,58 +3311,14 @@ namespace TQVaultAE.GUI
 		/// <param name="searchString">string that we are searching for</param>
 		private void Search(string searchString)
 		{
-			// Make sure we have something to search for.
-			if (string.IsNullOrEmpty(searchString))
+			if (searchString == null || searchString.Trim().Count() == 0)
 			{
 				return;
 			}
 
-			// Normalize the search string.
-			searchString = searchString.Trim().ToUpperInvariant();
-
-			// Return if the search string was only white space.
-			if (string.IsNullOrEmpty(searchString))
-			{
-				return;
-			}
-
-			var predicates = new List<IItemPredicate>();
-
-			var TOKENS = "@&".ToCharArray();
-			var fromIndex = 0;
-			var toIndex = -1;
-			do
-			{
-				string term;
-
-				toIndex = searchString.IndexOfAny(TOKENS, fromIndex + 1);
-				if (toIndex < 0)
-				{
-					term = searchString.Substring(fromIndex);
-				} else
-				{
-					term = searchString.Substring(fromIndex, toIndex - fromIndex);
-					fromIndex = toIndex;
-				}
-
-				switch (term[0])
-				{
-					case '@':
-						predicates.Add(new ItemTypePredicate(term.Substring(1)));
-						break;
-					case '&':
-						predicates.Add(new ItemQualityPredicate(term.Substring(1)));
-						break;
-					default:
-						predicates.Add(new ItemNamePredicate(term));
-						break;
-				}
-			} while (toIndex >= 0);
-
-			List<Result> results = new List<Result>();
-
-			ItemAndPredicate predicate = new ItemAndPredicate(predicates);
-			this.SearchFiles(predicate, results);
+			var filter = GetFilterFrom(searchString);
+			var results = new List<Result>();
+			this.SearchFiles(filter, results);
 
 			if (results.Count < 1)
 			{
@@ -3385,6 +3341,67 @@ namespace TQVaultAE.GUI
 			dlg.SearchString = searchString;
 			////dlg.ShowDialog();
 			dlg.Show();
+		}
+
+		private static IItemPredicate GetFilterFrom(string searchString)
+		{
+			var predicates = new List<IItemPredicate>();
+			searchString = searchString.Trim();
+
+			var TOKENS = "@$".ToCharArray();
+			int fromIndex = 0;
+			int toIndex;
+			do
+			{
+				string term;
+
+				toIndex = searchString.IndexOfAny(TOKENS, fromIndex + 1);
+				if (toIndex < 0)
+				{
+					term = searchString.Substring(fromIndex);
+				}
+				else
+				{
+					term = searchString.Substring(fromIndex, toIndex - fromIndex);
+					fromIndex = toIndex;
+				}
+
+				switch (term[0])
+				{
+					case '@':
+						predicates.Add(GetPredicateFrom(term.Substring(1), it => new ItemTypePredicate(it)));
+						break;
+					case '$':
+						predicates.Add(GetPredicateFrom(term.Substring(1), it => new ItemQualityPredicate(it)));
+						break;
+					default:
+						foreach (var name in term.Split('&'))
+						{
+							predicates.Add(GetPredicateFrom(name, it => new ItemNamePredicate(it)));
+						}
+						break;
+				}
+			} while (toIndex >= 0);
+
+			return new ItemAndPredicate(predicates);
+		}
+
+		private static IItemPredicate GetPredicateFrom(string term, Func<string, IItemPredicate> newPredicate)
+		{
+			var predicates = term.Split('|')
+				.Select(it => it.Trim())
+				.Where(it => it.Count() > 0)
+				.Select(it => newPredicate(it));
+
+			switch (predicates.Count())
+			{
+				case 0:
+					return new ItemTruePredicate();
+				case 1:
+					return predicates.First();
+				default:
+					return new ItemOrPredicate(predicates);
+			}
 		}
 
 		/// <summary>
