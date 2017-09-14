@@ -630,6 +630,9 @@ origen y escribe el nuevo nombre en el campo de destino abajo.</value>
   <data name="ResultsSack" xml:space="preserve">
     <value>Bolsa</value>
   </data>
+  <data name="ResultsLevel" xml:space="preserve">
+    <value>Level</value>
+  </data>
   <data name="ResultsText" xml:space="preserve">
     <value>{0} objetos encontrados con '{1}'</value>
   </data>

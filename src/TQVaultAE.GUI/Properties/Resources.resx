@@ -637,6 +637,9 @@ Are you sure you want to overwrite?</value>
   <data name="ResultsSack" xml:space="preserve">
     <value>Sack</value>
   </data>
+  <data name="ResultsLevel" xml:space="preserve">
+    <value>Level</value>
+  </data>
   <data name="ResultsText" xml:space="preserve">
     <value>{0} Items Found with '{1}'</value>
   </data>

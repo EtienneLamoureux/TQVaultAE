@@ -1922,9 +1922,20 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Sack.
         /// </summary>
-        internal static string ResultsSack {
-            get {
+        internal static string ResultsSack
+        {
+            get
+            {
                 return ResourceManager.GetString("ResultsSack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Level.
+        /// </summary>
+        internal static string ResultsLevel {
+            get {
+                return ResourceManager.GetString("ResultsLevel", resourceCulture);
             }
         }
         

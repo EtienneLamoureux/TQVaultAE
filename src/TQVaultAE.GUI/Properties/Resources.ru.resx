@@ -631,6 +631,9 @@ Are you sure you want to overwrite?</value>
   <data name="ResultsSack" xml:space="preserve">
     <value>Сумка</value>
   </data>
+  <data name="ResultsLevel" xml:space="preserve">
+    <value>уровень</value>
+  </data>
   <data name="ResultsText" xml:space="preserve">
     <value>{0} предметов найдено по запросу '{1}'</value>
   </data>
