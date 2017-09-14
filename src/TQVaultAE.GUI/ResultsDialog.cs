@@ -44,6 +44,8 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private string tooltipText;
 
+		private Boolean gridLoading = false;
+
 		/// <summary>
 		/// Initializes a new instance of the ResultsDialog class.
 		/// </summary>
@@ -255,8 +257,10 @@ namespace TQVaultAE.GUI
 			// Update the dialog text.
 			this.Text = string.Format(CultureInfo.CurrentCulture, Resources.ResultsText, this.resultsList.Count, this.searchString);
 
-			foreach (Result result in this.resultsList)
+			this.gridLoading = true;
+			for (int i = 0; i < this.resultsList.Count; i++)
 			{
+				Result result = this.resultsList[i];
 				// Add the result to the DataGridView
 				int currentRow = this.resultsDataGridView.Rows.Add(
 					result.ItemName,
@@ -272,8 +276,10 @@ namespace TQVaultAE.GUI
 					this.resultsDataGridView.Rows[currentRow].Cells[0].Style.ForeColor = result.Color;
 					this.resultsDataGridView.Rows[currentRow].Cells[1].Style.ForeColor = result.Color;
 					this.resultsDataGridView.Rows[currentRow].Cells[4].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+					this.resultsDataGridView.Rows[currentRow].Tag = i;
 				}
 			}
+			this.gridLoading = false;
 		}
 
 		/// <summary>
@@ -328,38 +334,6 @@ namespace TQVaultAE.GUI
             }*/
 		}
 
-
-		delegate IComparable GetComparableProperty(Result result);
-		private void ResultsDataGridViewSorted(object sender, EventArgs e)
-		{
-			var sortOrder = this.resultsDataGridView.SortOrder == SortOrder.Ascending ? 1 : -1;
-			var sortColumnIndex = this.resultsDataGridView.SortedColumn.Index;
-
-			GetComparableProperty getSortProperty = result =>
-			{
-				switch (sortColumnIndex)
-				{
-					case 0:
-						return result.Item.ToString();
-					case 1:
-						return result.ItemStyle;
-					case 2:
-						return result.ContainerName;
-					case 3:
-						return GetContainerTypeString(result.SackType);
-					case 4:
-						return result.RequiredLevel;
-					default:
-						return 0;
-				}
-			};
-
-			this.resultsList.Sort(delegate (Result a, Result b)
-			{
-				return sortOrder * getSortProperty(a).CompareTo(getSortProperty(b));
-			});
-		}
-
 		/// <summary>
 		/// Handler for the focus changing to a different row.
 		/// </summary>
@@ -368,12 +342,13 @@ namespace TQVaultAE.GUI
 		private void ResultsDataGridViewRowEnter(object sender, DataGridViewCellEventArgs e)
 		{
 			// Ignore click on the header.
-			if (e.RowIndex < 0)
+			if (e.RowIndex < 0 || this.gridLoading)
 			{
 				return;
 			}
 
-			this.selectedResult = (Result)this.resultsList[e.RowIndex];
+			var currentRow = this.resultsDataGridView.Rows[e.RowIndex];
+			this.selectedResult = this.resultsList[(int)currentRow.Tag];
 
 			if (this.selectedResult.Item != null && this.ResultChanged != null)
 			{
@@ -411,8 +386,10 @@ namespace TQVaultAE.GUI
 				return;
 			}
 
-			this.resultsDataGridView.CurrentCell = this.resultsDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
-			this.selectedResult = (Result)this.resultsList[e.RowIndex];
+			var currentRow = this.resultsDataGridView.Rows[e.RowIndex];
+			this.selectedResult = this.resultsList[(int)currentRow.Tag];
+
+			this.resultsDataGridView.CurrentCell = currentRow.Cells[e.ColumnIndex];
 			this.tooltip.ChangeText(this.GetToolTip(this.selectedResult));
 		}
 
