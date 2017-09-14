@@ -780,6 +780,26 @@ namespace TQVaultAE.GUI
 			}
 		}
 
+		private class ItemAttributePredicate : IItemPredicate
+		{
+			private readonly string attribute;
+
+			public ItemAttributePredicate(string attribute)
+			{
+				this.attribute = attribute;
+			}
+
+			public bool Apply(Item item)
+			{
+				return item.GetAttributes(true).ToUpperInvariant().Contains(attribute.ToUpperInvariant());
+			}
+
+			public override string ToString()
+			{
+				return $"Attribute({attribute})";
+			}
+		}
+
 
 		/// <summary>
 		/// Counts the number of files which LoadAllFiles will load.  Used to set the max value of the progress bar.
@@ -3348,7 +3368,7 @@ namespace TQVaultAE.GUI
 			var predicates = new List<IItemPredicate>();
 			searchString = searchString.Trim();
 
-			var TOKENS = "@$".ToCharArray();
+			var TOKENS = "@#$".ToCharArray();
 			int fromIndex = 0;
 			int toIndex;
 			do
@@ -3370,6 +3390,9 @@ namespace TQVaultAE.GUI
 				{
 					case '@':
 						predicates.Add(GetPredicateFrom(term.Substring(1), it => new ItemTypePredicate(it)));
+						break;
+					case '#':
+						predicates.Add(GetPredicateFrom(term.Substring(1), it => new ItemAttributePredicate(it)));
 						break;
 					case '$':
 						predicates.Add(GetPredicateFrom(term.Substring(1), it => new ItemQualityPredicate(it)));
