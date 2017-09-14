@@ -44,8 +44,6 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private string tooltipText;
 
-		private Boolean gridLoading = false;
-
 		/// <summary>
 		/// Initializes a new instance of the ResultsDialog class.
 		/// </summary>
@@ -257,7 +255,6 @@ namespace TQVaultAE.GUI
 			// Update the dialog text.
 			this.Text = string.Format(CultureInfo.CurrentCulture, Resources.ResultsText, this.resultsList.Count, this.searchString);
 
-			this.gridLoading = true;
 			for (int i = 0; i < this.resultsList.Count; i++)
 			{
 				Result result = this.resultsList[i];
@@ -279,7 +276,6 @@ namespace TQVaultAE.GUI
 					this.resultsDataGridView.Rows[currentRow].Tag = i;
 				}
 			}
-			this.gridLoading = false;
 		}
 
 		/// <summary>
@@ -342,14 +338,18 @@ namespace TQVaultAE.GUI
 		private void ResultsDataGridViewRowEnter(object sender, DataGridViewCellEventArgs e)
 		{
 			// Ignore click on the header.
-			if (e.RowIndex < 0 || this.gridLoading)
+			if (e.RowIndex < 0)
 			{
 				return;
 			}
 
 			var currentRow = this.resultsDataGridView.Rows[e.RowIndex];
-			this.selectedResult = this.resultsList[(int)currentRow.Tag];
+			if (currentRow.Tag == null)
+			{
+				return;
+			}
 
+			this.selectedResult = this.resultsList[(int)currentRow.Tag];
 			if (this.selectedResult.Item != null && this.ResultChanged != null)
 			{
 				this.ResultChanged(this, new ResultChangedEventArgs(this.selectedResult));
@@ -387,6 +387,11 @@ namespace TQVaultAE.GUI
 			}
 
 			var currentRow = this.resultsDataGridView.Rows[e.RowIndex];
+			if (currentRow.Tag == null)
+			{
+				return;
+			}
+
 			this.selectedResult = this.resultsList[(int)currentRow.Tag];
 
 			this.resultsDataGridView.CurrentCell = currentRow.Cells[e.ColumnIndex];
