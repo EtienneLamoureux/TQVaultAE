@@ -528,7 +528,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="itemStyle">ItemStyle enumeration</param>
 		/// <returns>Localized string of the item style</returns>
-		private static string GetItemStyleString(ItemStyle itemStyle)
+		public static string GetItemStyleString(ItemStyle itemStyle)
 		{
 			switch (itemStyle)
 			{
@@ -3402,14 +3402,14 @@ namespace TQVaultAE.GUI
 
 			this.ClearAllItemsSelectedCallback(this, new SackPanelEventArgs(null, null));
 
-			if (selectedResult.ContainerType == SackType.Vault)
+			if (selectedResult.SackType == SackType.Vault)
 			{
 				// Switch to the selected vault
 				this.vaultListComboBox.SelectedItem = selectedResult.ContainerName;
-				this.vaultPanel.CurrentBag = selectedResult.Sack;
+				this.vaultPanel.CurrentBag = selectedResult.SackNumber;
 				this.vaultPanel.SackPanel.SelectItem(selectedResult.Item.Location);
 			}
-			else if (selectedResult.ContainerType == SackType.Player || selectedResult.ContainerType == SackType.Equipment)
+			else if (selectedResult.SackType == SackType.Player || selectedResult.SackType == SackType.Equipment)
 			{
 				// Switch to the selected player
 				if (this.showSecondaryVault)
@@ -3432,15 +3432,15 @@ namespace TQVaultAE.GUI
 
 				// Update the selection list and load the character.
 				this.characterComboBox.SelectedItem = myName;
-				if (selectedResult.Sack > 0)
+				if (selectedResult.SackNumber > 0)
 				{
-					this.playerPanel.CurrentBag = selectedResult.Sack - 1;
+					this.playerPanel.CurrentBag = selectedResult.SackNumber - 1;
 				}
 
-				if (selectedResult.ContainerType != SackType.Equipment)
+				if (selectedResult.SackType != SackType.Equipment)
 				{
 					// Highlight the item if it's in the player inventory.
-					if (selectedResult.Sack == 0)
+					if (selectedResult.SackNumber == 0)
 					{
 						this.playerPanel.SackPanel.SelectItem(selectedResult.Item.Location);
 					}
@@ -3450,7 +3450,7 @@ namespace TQVaultAE.GUI
 					}
 				}
 			}
-			else if (selectedResult.ContainerType == SackType.Stash)
+			else if (selectedResult.SackType == SackType.Stash)
 			{
 				// Switch to the selected player
 				if (this.showSecondaryVault)
@@ -3471,13 +3471,13 @@ namespace TQVaultAE.GUI
 				this.characterComboBox.SelectedItem = myName;
 
 				// Switch to the Stash bag
-				this.stashPanel.CurrentBag = selectedResult.Sack;
+				this.stashPanel.CurrentBag = selectedResult.SackNumber;
 				this.stashPanel.SackPanel.SelectItem(selectedResult.Item.Location);
 			}
-			else if (selectedResult.ContainerType == SackType.TransferStash)
+			else if (selectedResult.SackType == SackType.TransferStash)
 			{
 				// Switch to the Stash bag
-				this.stashPanel.CurrentBag = selectedResult.Sack;
+				this.stashPanel.CurrentBag = selectedResult.SackNumber;
 				this.stashPanel.SackPanel.SelectItem(selectedResult.Item.Location);
 			}
 		}
@@ -3521,17 +3521,13 @@ namespace TQVaultAE.GUI
 					// Query the sack for the items containing the search string.
 					foreach (Item item in QuerySack(predicate, sack))
 					{
-						results.Add(new Result
-						{
-							////ItemName = item.ToString(),
-							Container = vaultFile,
-							ContainerName = Path.GetFileNameWithoutExtension(vaultFile),
-							Sack = vaultNumber,
-							ContainerType = SackType.Vault,
-							////Location = item.Location,
-							ItemStyle = GetItemStyleString(item.ItemStyle),
-							Item = item
-						});
+						results.Add(new Result(
+							vaultFile,
+							Path.GetFileNameWithoutExtension(vaultFile),
+							vaultNumber,
+							SackType.Vault,
+							item
+						));
 					}
 				}
 			}
@@ -3584,17 +3580,13 @@ namespace TQVaultAE.GUI
 					// Query the sack for the items containing the search string.
 					foreach (Item item in QuerySack(predicate, sack))
 					{
-						results.Add(new Result
-						{
-							////ItemName = item.ToString(),
-							Container = playerFile,
-							ContainerName = playerName,
-							Sack = sackNumber,
-							ContainerType = SackType.Player,
-							////Location = new Point(item.PositionX, item.PositionY),
-							ItemStyle = GetItemStyleString(item.ItemStyle),
-							Item = item
-						});
+						results.Add(new Result(
+							playerFile,
+							playerName,
+							sackNumber,
+							SackType.Player,
+							item
+						));
 					}
 				}
 
@@ -3608,17 +3600,13 @@ namespace TQVaultAE.GUI
 
 				foreach (Item item in QuerySack(predicate, equipmentSack))
 				{
-					results.Add(new Result
-					{
-						////ItemName = item.ToString(),
-						Container = playerFile,
-						ContainerName = playerName,
-						Sack = 0,
-						ContainerType = SackType.Equipment,
-						////Location = new Point(item.PositionX, item.PositionY),
-						ItemStyle = GetItemStyleString(item.ItemStyle),
-						Item = item
-					});
+					results.Add(new Result(
+						playerFile,
+						playerName,
+						0,
+						SackType.Equipment,
+						item
+					));
 				}
 			}
 		}
@@ -3671,17 +3659,13 @@ namespace TQVaultAE.GUI
 
 				foreach (Item item in QuerySack(predicate, sack))
 				{
-					results.Add(new Result
-					{
-						////ItemName = item.ToString(),
-						Container = stashFile,
-						ContainerName = stashName,
-						Sack = sackNumber,
-						ContainerType = sackType,
-						////Location = new Point(item.PositionX, item.PositionY),
-						ItemStyle = GetItemStyleString(item.ItemStyle),
-						Item = item
-					});
+					results.Add(new Result(
+						stashFile,
+						stashName,
+						sackNumber,
+						sackType,
+						item
+					));
 				}
 			}
 		}

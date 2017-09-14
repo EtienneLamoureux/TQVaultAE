@@ -5,6 +5,10 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
+	using System;
+	using System.Collections.Generic;
+	using System.Drawing;
+	using System.Linq;
 	using TQVaultData;
 
 	/// <summary>
@@ -12,44 +16,61 @@ namespace TQVaultAE.GUI
 	/// </summary>
 	public class Result
 	{
-		/// <summary>
-		/// Gets or sets the item string
-		/// </summary>
-		////public string ItemName { get; set; }
+		private readonly string container;
+		private readonly string containerName;
+		private readonly int sackNumber;
+		private readonly SackType sackType;
+		private readonly Item item;
 
-		/// <summary>
-		/// Gets or sets the container string
-		/// </summary>
-		public string Container { get; set; }
+		private readonly string itemName;
+		private readonly string itemStyle;
+		private readonly Color color;
 
-		/// <summary>
-		/// Gets or sets the container name string
-		/// </summary>
-		public string ContainerName { get; set; }
+		private readonly int requiredLevel;
 
-		/// <summary>
-		/// Gets or sets the sack number
-		/// </summary>
-		public int Sack { get; set; }
+		public Result(string container, string containerName, int sackNumber, SackType sackType, Item item)
+		{
+			this.container = container ?? throw new ArgumentNullException(nameof(container));
+			this.containerName = containerName ?? throw new ArgumentNullException(nameof(containerName));
+			this.sackNumber = sackNumber;
+			this.sackType = sackType;
+			this.item = item ?? throw new ArgumentNullException(nameof(item));
 
-		/// <summary>
-		/// Gets or sets the container type
-		/// </summary>
-		public SackType ContainerType { get; set; }
+			this.itemName = Item.ClipColorTag(item.ToString());
 
-		/// <summary>
-		/// Gets or sets the item location
-		/// </summary>
-		////public Point Location { get; set; }
+			ItemStyle computedItemStyle = item.ItemStyle;
+			this.itemStyle = MainForm.GetItemStyleString(computedItemStyle);
+			this.color = Item.GetColor(computedItemStyle);
 
-		/// <summary>
-		/// Gets or sets the item style (quality)
-		/// </summary>
-		public string ItemStyle { get; set; }
+			var requirementVariables = item.GetRequirementVariables().Values;
+			this.requiredLevel = GetRequirement(requirementVariables, "levelRequirement");
+		}
 
-		/// <summary>
-		/// Gets or sets the Item instance for this result.
-		/// </summary>
-		public Item Item { get; set; }
+		private int GetRequirement(IList<Variable> variables, string key)
+		{
+			return variables
+				.Where(v => string.Equals(v.Name, key, StringComparison.InvariantCultureIgnoreCase) && v.DataType == VariableDataType.Integer && v.NumberOfValues > 0)
+				.Select(v => v.GetInt32(0))
+				.DefaultIfEmpty(0)
+				.Max();
+		}
+
+		public string Container => container;
+
+		public string ContainerName => containerName;
+
+		public SackType SackType => sackType;
+
+		public int SackNumber => sackNumber;
+
+		public Item Item => item;
+
+		public string ItemStyle => itemStyle;
+
+		public Color Color => color;
+
+		public string ItemName => itemName;
+
+		public int RequiredLevel => requiredLevel;
 	}
 }

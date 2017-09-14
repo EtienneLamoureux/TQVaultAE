@@ -257,19 +257,21 @@ namespace TQVaultAE.GUI
 
 			foreach (Result result in this.resultsList)
 			{
-				string text = result.Item.ToString();
-				Color color = result.Item.GetColorTag(text);
-				text = Item.ClipColorTag(text);
-
 				// Add the result to the DataGridView
-				this.resultsDataGridView.Rows.Add(text, result.ItemStyle, result.ContainerName, result.Sack + 1, GetContainerTypeString(result.ContainerType));
+				int currentRow = this.resultsDataGridView.Rows.Add(
+					result.ItemName,
+					result.ItemStyle,
+					result.ContainerName,
+					GetContainerTypeString(result.SackType),
+					result.RequiredLevel
+				);
 
 				// Change the text color of the item string and style to match the style color.
-				int currentRow = this.resultsDataGridView.Rows.Count - 1;
 				if (currentRow > -1)
 				{
-					this.resultsDataGridView.Rows[currentRow].Cells[0].Style.ForeColor = color;
-					this.resultsDataGridView.Rows[currentRow].Cells[1].Style.ForeColor = color;
+					this.resultsDataGridView.Rows[currentRow].Cells[0].Style.ForeColor = result.Color;
+					this.resultsDataGridView.Rows[currentRow].Cells[1].Style.ForeColor = result.Color;
+					this.resultsDataGridView.Rows[currentRow].Cells[4].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
 				}
 			}
 		}
@@ -344,9 +346,9 @@ namespace TQVaultAE.GUI
 					case 2:
 						return result.ContainerName;
 					case 3:
-						return result.Sack;
+						return GetContainerTypeString(result.SackType);
 					case 4:
-						return GetContainerTypeString(result.ContainerType);
+						return result.RequiredLevel;
 					default:
 						return 0;
 				}

@@ -1919,35 +1919,7 @@ namespace TQVaultData
 			{
 				return this.requirementsString;
 			}
-
-			SortedList<string, Variable> requirementsList = new SortedList<string, Variable>();
-			if (this.baseItemInfo != null)
-			{
-				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.BaseItemId));
-				this.GetDynamicRequirementsFromRecord(requirementsList, this.baseItemInfo);
-			}
-
-			if (this.prefixInfo != null)
-			{
-				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.prefixID));
-			}
-
-			if (this.suffixInfo != null)
-			{
-				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.suffixID));
-			}
-
-			if (this.RelicInfo != null)
-			{
-				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.relicID));
-			}
-
-			// Add Artifact level requirement to formula
-			if (this.IsFormulae && this.baseItemInfo != null)
-			{
-				string artifactID = this.baseItemInfo.GetString("artifactName");
-				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(artifactID));
-			}
+			SortedList<string, Variable> requirementsList = GetRequirementVariables();
 
 			// Get the format string to use to list a requirement
 			string requirementFormat = Database.DB.GetFriendlyName("MeetsRequirement");
@@ -2010,6 +1982,46 @@ namespace TQVaultData
 			}
 
 			return this.requirementsString;
+		}
+
+		private SortedList<string, Variable> requirementsList;
+		public SortedList<string, Variable> GetRequirementVariables()
+		{
+			if (this.requirementsList != null)
+			{
+				return this.requirementsList;
+			}
+
+			requirementsList = new SortedList<string, Variable>();
+			if (this.baseItemInfo != null)
+			{
+				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.BaseItemId));
+				this.GetDynamicRequirementsFromRecord(requirementsList, this.baseItemInfo);
+			}
+
+			if (this.prefixInfo != null)
+			{
+				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.prefixID));
+			}
+
+			if (this.suffixInfo != null)
+			{
+				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.suffixID));
+			}
+
+			if (this.RelicInfo != null)
+			{
+				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.relicID));
+			}
+
+			// Add Artifact level requirement to formula
+			if (this.IsFormulae && this.baseItemInfo != null)
+			{
+				string artifactID = this.baseItemInfo.GetString("artifactName");
+				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(artifactID));
+			}
+
+			return requirementsList;
 		}
 
 		/// <summary>
