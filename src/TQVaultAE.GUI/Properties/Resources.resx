@@ -1051,15 +1051,16 @@ Would you like to disable loading all files?</value>
     <value>Search for an item</value>
   </data>
   <data name="SearchDialogText" xml:space="preserve">
-    <value>Search for an item name or type within the loaded files.
-Includes all loaded player character inventories, vaults, player stashes and the transfer stash.
+    <value>Search for items within the loaded files: vaults, stashes, inventories.
 
-Use '@' to specify an item type instead of name.  This must be the first character of the search string.
-For example, to search for only swords use '@sword'
+You can combine the following search options(all are optional):
+* Name: It must be the first search term. Here is an example: 'arctic &amp; of frost'
+* Type: by using @ at the beginning of the search term for example '@sword'
+* Attributes: by using # at the beginning of the search term for example '#elemental resistance'
+* Rarity: by using $ at the beginning of the search term for example '$rare'
+You can use | in a term as an OR condition. '$common | rare' returns all common and all rare items.
 
-Use '&amp;' after the name or type to filter by item rarity.
-For example, to filter only rare items append '&amp;rare' to your search string.
-The terms can also be combined '@sword&amp;rare' would only search for rare swords.</value>
+Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   </data>
   <data name="BorderBottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\img\borderbottom.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

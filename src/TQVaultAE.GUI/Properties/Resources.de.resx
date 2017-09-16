@@ -958,15 +958,16 @@ Soll die Funktion "Alle Dateien vorab laden" deaktiviert werden?</value>
     <value>Suche nach einen Gegenstand</value>
   </data>
   <data name="SearchDialogText" xml:space="preserve">
-    <value>Suche nach einen Begriff (Name oder Typ) in allen geladenen Daten.
-Es wird in den geladenen Charakterdaten, Tresoren und den Karawanendaten gesucht.
+    <value>Suche nach Elementen innerhalb der geladenen Dateien: Charakteren, Tresoren und den Karawanenen.
 
-Mit '@' als erstes Zeichen des Begriffes wird nach einem Typ gesucht, nicht nach einer Bezeichung/Namen.
-Zum Beispiel, um nur nach Schwertern zu suchen: @sword
+Sie können die folgenden Suchoptionen kombinieren(alle sind optional):
+* Name: Es muss der erste Suchbegriff sein. Hier ist ein Beispiel: 'arctic &amp; frost'
+* Typ: mit @ am anfang des Suchbegriffs zB '@schwert'
+* Eigenschaft: mit # am Anfang des Suchbegriffs zB '#resistenz'
+* Seltenheit: mit $ am Anfang des Suchbegriffs zB '$episch'
+Sie können | in einem Begriff als ODER-Bedingung benutzen zB '$episch | selten'
 
-Mit '&amp;' nach dem Suchbegriff, kann nach der 'Seltenheit' noch gefiltert werden.
-Um zum Beispiel nach seltene Gegenständen zu filtern, benutzt man zusätzlich '&amp;selten' zum Suchbegriff.
-Die Filter können natürlich auch kombiniert werden, ein '@sword&amp;selten' listet alle seltenen Schwerter auf.</value>
+Hier ist ein komplexes Beispiel: 'arctic &amp; frost @schwert $ episch | selten'</value>
   </data>
   <data name="GlobalClose" xml:space="preserve">
     <value>Ausfahrt</value>

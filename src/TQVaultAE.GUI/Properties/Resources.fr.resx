@@ -951,18 +951,19 @@ Would you like to disable loading all files?</value>
     <value>Chercher</value>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
-    <value>Search for an Item</value>
+    <value>Rechercher un article</value>
   </data>
   <data name="SearchDialogText" xml:space="preserve">
-    <value>Search for an item name or type within the loaded files.
-Includes all loaded player character inventories, vaults, player stashes and the transfer stash.
+    <value>Recherchez des éléments dans les fichiers chargés: coffres-forts, stash, inventaires.
 
-Use @ to specify an item type instead of name.  This must be the first character of the search string.
-For example, to search for only swords use @sword
+Vous pouvez combiner les options de recherche suivantes (toutes sont optionnelles):
+* Nom: Ce doit être le premier terme de recherche. Voici un exemple: 'arctique &amp; gel '
+* Catégorie: en utilisant @ au début du terme de recherche par exemple '@sabre'
+* Attributs: en utilisant # au début du terme de recherche par exemple '#résistance'
+* Rareté: en utilisant $ au début du terme de recherche par exemple '$épique'
+Vous pouvez utiliser | dans un terme comme condition OU. '$épique | rare' renvoie tous les objets épiques et rares.
 
-Use &amp; after the name or type to filter by item rarity.
-For example, to filter only rare items append &amp;rare to your search string.
-The terms can also be combined @sword&amp;rare would only search for rare swords.</value>
+Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
   </data>
   <data name="GlobalClose" xml:space="preserve">
     <value>Sortir</value>
