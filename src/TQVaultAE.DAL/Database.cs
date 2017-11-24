@@ -725,7 +725,22 @@ namespace TQVaultData
 					arcFileBase = resourceId.Substring(previousBackslash + 1, backslashLocation - previousBackslash - 1);
 					resourceId = resourceId.Substring(previousBackslash + 1);
 				}
-				else
+                else if (arcFileBase.ToUpperInvariant().Equals("XPACK2"))
+                {
+                    // Comes from Ragnarok DLC
+                    rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack2");
+                    
+                    int previousBackslash = backslashLocation;
+                    backslashLocation = resourceId.IndexOf('\\', backslashLocation + 1);
+                    if (backslashLocation <= 0)
+                    {
+                        return null;
+                    }
+
+                    arcFileBase = resourceId.Substring(previousBackslash + 1, backslashLocation - previousBackslash - 1);
+                    resourceId = resourceId.Substring(previousBackslash + 1);
+                }
+                else
 				{
 					// Changed by VillageIdiot to search the IT resources folder for updated resources
 					// if IT is installed otherwise just the TQ folder.
@@ -749,7 +764,7 @@ namespace TQVaultData
 				rootFolder = TQData.ImmortalThronePath;
 
 				// Strip off the xpack portion of the record
-				if (arcFileBase.ToUpperInvariant().Equals("XPACK"))
+				if (arcFileBase.ToUpperInvariant().Equals("XPACK") || arcFileBase.ToUpperInvariant().Equals("XPACK2"))
 				{
 					rootFolder = Path.Combine(rootFolder, "Resources");
 					int j = backslashLocation;
@@ -763,7 +778,7 @@ namespace TQVaultData
 					arcFileBase = resourceId.Substring(j + 1, backslashLocation - j - 1);
 					resourceId = resourceId.Substring(j + 1);
 				}
-				else
+                else
 				{
 					// Try finding the resource in the XPack folder
 					rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack");
@@ -773,7 +788,21 @@ namespace TQVaultData
 				arcFileData = this.ReadARCFile(arcFile, resourceId);
 			}
 
-			if (arcFileData == null)
+            // Now, let's check if the item is in Ragnarok DLC
+            if (arcFileData == null && TQData.IsRagnarokInstalled)
+            {
+                if (TQDebug.DatabaseDebugLevel > 1)
+                {
+                    TQDebug.DebugWriteLine("Checking Ragnarok Resources.");
+                }
+                
+                rootFolder = Path.Combine(Path.Combine(TQData.ImmortalThronePath, "Resources"), "XPack2");
+
+                arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
+                arcFileData = this.ReadARCFile(arcFile, resourceId);
+            }
+
+            if (arcFileData == null)
 			{
 				// We are either vanilla TQ or have not found our resource yet.
 				// from the original TQ folder

@@ -148,10 +148,15 @@ namespace TQVaultData
 		/// </summary>
 		public static bool IsITInstalled { get; private set; }
 
-		/// <summary>
-		/// Gets or sets the Immortal Throne game path.
+        /// <summary>
+		/// Gets a value indicating whether Ragnarok DLC has been installed.
 		/// </summary>
-		public static string ImmortalThronePath
+		public static bool IsRagnarokInstalled { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the Immortal Throne game path.
+        /// </summary>
+        public static string ImmortalThronePath
 		{
 			get
 			{
@@ -213,37 +218,24 @@ namespace TQVaultData
 					immortalThroneGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
 				}
 
-				// Added by VillageIdiot
-				// Since the user can now specify the path we will actually look for the game file
-				// to determine if IT is installed
-				if (!string.IsNullOrEmpty(immortalThroneGamePath))
-				{
-					// Check for any exe file starting with TQIT.
-					// Additional check (quick and dirty hack) for anniversary version added by Malgardian
-					string[] files = Directory.GetFiles(immortalThroneGamePath, "TQIT*.exe");
+                // Added by VillageIdiot
+                // Since the user can now specify the path we will actually look for the game file
+                // to determine if IT is installed
 
-					if (files == null || files.Length < 1)
-					{
-						if (!Directory.Exists(immortalThroneGamePath + "\\Resources\\XPack"))
-						{
-							IsITInstalled = false;
-						}
-						else
-						{
-							IsITInstalled = true;
-						}
-					}
-					else
-					{
-						IsITInstalled = true;
-					}
-				}
-				else
-				{
-					IsITInstalled = false;
-				}
+                // ImmortalThrone is always installed in AE
+                IsITInstalled = true;
 
-				return immortalThroneGamePath;
+                // Will now check existence of Ragnarok DLC
+                if (!Directory.Exists(immortalThroneGamePath + "\\Resources\\XPack2"))
+                {
+                    IsRagnarokInstalled = false;
+                }
+                else
+                {
+                    IsRagnarokInstalled = true;
+                }
+
+                return immortalThroneGamePath;
 			}
 
 			set
