@@ -335,10 +335,15 @@ namespace TQVaultData
 		/// </summary>
 		public static string ItemIT { get; set; }
 
-		/// <summary>
-		/// Gets or sets a value indicating whether the skill level is shown on granted skills.
+        /// <summary>
+		/// Gets or sets the string which indicates an Immortal Throne item.
 		/// </summary>
-		public static bool ShowSkillLevel { get; set; }
+		public static string ItemRagnarok { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the skill level is shown on granted skills.
+        /// </summary>
+        public static bool ShowSkillLevel { get; set; }
 
 		/// <summary>
 		/// Gets the base item id
@@ -468,7 +473,7 @@ namespace TQVaultData
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether or not the item comes from the expansion pack.
+		/// Gets a value indicating whether or not the item comes from Immortal Throne expansion pack.
 		/// </summary>
 		public bool IsImmortalThrone
 		{
@@ -493,10 +498,36 @@ namespace TQVaultData
 			}
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether the item is a scroll.
+        /// <summary>
+		/// Gets a value indicating whether or not the item comes from Ragnarok DLC.
 		/// </summary>
-		public bool IsScroll
+		public bool IsRagnarok
+        {
+            get
+            {
+                if (this.BaseItemId.ToUpperInvariant().IndexOf("XPACK2\\", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+
+                if (this.prefixID != null && this.prefixID.ToUpperInvariant().IndexOf("XPACK2\\", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+
+                if (this.suffixID != null && this.suffixID.ToUpperInvariant().IndexOf("XPACK2\\", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the item is a scroll.
+        /// </summary>
+        public bool IsScroll
 		{
 			get
 			{
@@ -504,7 +535,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ONESHOT_SCROLL");
 				}
-				else if (this.IsImmortalThrone)
+				else if (this.IsImmortalThrone || this.IsRagnarok)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("\\SCROLLS\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -523,7 +554,7 @@ namespace TQVaultData
 		{
 			get
 			{
-				if (this.IsImmortalThrone)
+				if (this.IsImmortalThrone || this.IsRagnarok)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("\\PARCHMENTS\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -546,7 +577,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMARTIFACTFORMULA");
 				}
-				else if (this.IsImmortalThrone)
+				else if (this.IsImmortalThrone || this.IsRagnarok)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("\\ARCANEFORMULAE\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -569,7 +600,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMARTIFACT");
 				}
-				else if (this.IsImmortalThrone)
+				else if (this.IsImmortalThrone || this.IsRagnarok)
 				{
 					if (!this.IsFormulae && this.BaseItemId.ToUpperInvariant().IndexOf("\\ARTIFACTS\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -778,7 +809,7 @@ namespace TQVaultData
 						return true;
 					}
 				}
-				else if (!this.IsImmortalThrone)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("QUEST", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -1003,7 +1034,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMCHARM");
 				}
-				else if (!this.IsImmortalThrone)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok)
 				{
 					return this.BaseItemId.ToUpperInvariant().IndexOf("ANIMALRELICS", StringComparison.OrdinalIgnoreCase) != -1;
 				}
@@ -1031,7 +1062,7 @@ namespace TQVaultData
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMRELIC")
 						|| this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMCHARM");
 				}
-				else if (!this.IsImmortalThrone)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok)
 				{
 					return this.BaseItemId.ToUpperInvariant().IndexOf("RELICS", StringComparison.OrdinalIgnoreCase) != -1;
 				}
@@ -1900,13 +1931,20 @@ namespace TQVaultData
 				parameters[parameterCount++] = Item.ItemQuest;
 			}
 
-			if (!basicInfoOnly && !relicInfoOnly && this.IsImmortalThrone)
+			if (!basicInfoOnly && !relicInfoOnly)
 			{
-				parameters[parameterCount++] = "(IT)";
-			}
+                if (this.IsImmortalThrone)
+                {
+                    parameters[parameterCount++] = "(IT)";
+                }
+                else if (this.IsRagnarok)
+                {
+                    parameters[parameterCount++] = "(RAG)";
+                }
+            }
 
-			// Now combine it all with spaces between
-			return string.Join(" ", parameters, 0, parameterCount);
+            // Now combine it all with spaces between
+            return string.Join(" ", parameters, 0, parameterCount);
 		}
 
 		/// <summary>
@@ -2418,7 +2456,14 @@ namespace TQVaultData
 				results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(Item.GetColor(ItemStyle.Rare)), immortalThrone));
 			}
 
-			string[] ary = new string[results.Count];
+            // Add the Ragnarok clause
+            if (this.IsRagnarok)
+            {
+                string ragnarok = Database.MakeSafeForHtml(Item.ItemRagnarok);
+                results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(Item.GetColor(ItemStyle.Rare)), ragnarok));
+            }
+
+            string[] ary = new string[results.Count];
 			results.CopyTo(ary);
 			this.attributesString = string.Join("<br>", ary);
 
@@ -2987,7 +3032,12 @@ namespace TQVaultData
 				Item.ItemIT = "Immortal Throne Item";
 			}
 
-			if (string.IsNullOrEmpty(Item.ItemWith))
+            if (string.IsNullOrEmpty(Item.ItemRagnarok))
+            {
+                Item.ItemRagnarok = "Ragnarok Item";
+            }
+
+            if (string.IsNullOrEmpty(Item.ItemWith))
 			{
 				Item.ItemWith = "with";
 			}
@@ -3049,6 +3099,7 @@ namespace TQVaultData
 				"STAFF",
 				"MACE",
 				"SWORD",
+                "RANGEDONEHAND",
 				"AXE",
 				"SHIELD",
 				"BRACELET",

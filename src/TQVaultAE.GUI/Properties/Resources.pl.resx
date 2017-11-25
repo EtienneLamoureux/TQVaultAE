@@ -983,4 +983,7 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   <data name="GlobalSize" xml:space="preserve">
     <value>Rozmiar</value>
   </data>
+  <data name="ItemRagnarok" xml:space="preserve">
+    <value>Przedmiot z Ragnarök</value>
+  </data>
 </root>

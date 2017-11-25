@@ -81,12 +81,12 @@ namespace TQVaultData
 		/// </summary>
 		private float scale = 1.00F;
 
-		#endregion Database Fields
+        #endregion Database Fields
 
-		/// <summary>
-		/// Initializes a new instance of the Database class.
-		/// </summary>
-		public Database()
+        /// <summary>
+        /// Initializes a new instance of the Database class.
+        /// </summary>
+        public Database()
 		{
 			this.arcFiles = new Dictionary<string, ArcFile>();
 			this.bitmaps = new Dictionary<string, Bitmap>();
@@ -155,10 +155,10 @@ namespace TQVaultData
 		[CLSCompliantAttribute(false)]
 		public ArzFile ArzFileIT { get; private set; }
 
-		/// <summary>
-		/// Gets the instance of a custom map Database ArzFile.
-		/// </summary>
-		[CLSCompliantAttribute(false)]
+        /// <summary>
+        /// Gets the instance of a custom map Database ArzFile.
+        /// </summary>
+        [CLSCompliantAttribute(false)]
 		public ArzFile ArzFileMod { get; private set; }
 
 		/// <summary>
@@ -622,7 +622,7 @@ namespace TQVaultData
 				}
 			}
 
-			if (this.ArzFileIT != null)
+            if (this.ArzFileIT != null)
 			{
 				// see if it's in IT ARZ file
 				DBRecordCollection recordIT = this.ArzFileIT.GetItem(itemId);
@@ -699,33 +699,46 @@ namespace TQVaultData
 			}
 
 			// We either didn't load the resource or didn't find what we were looking for so check the normal game resources.
-			if (arcFileData == null && TQData.IsITInstalled)
+			if (arcFileData == null)
 			{
-				// See if this guy is from the expansion pack.
+				// See if this guy is from Immortal Throne expansion pack.
 				if (TQDebug.DatabaseDebugLevel > 1)
 				{
 					TQDebug.DebugWriteLine("Checking IT Resources.");
 				}
 
 				rootFolder = TQData.ImmortalThronePath;
-				if (arcFileBase.ToUpperInvariant().Equals("XPACK"))
-				{
-					// yep
-					rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack");
 
-					// throw away that value and use the next field.
-					int previousBackslash = backslashLocation;
-					backslashLocation = resourceId.IndexOf('\\', backslashLocation + 1);
-					if (backslashLocation <= 0)
-					{
-						// not a proper resourceID
-						return null;
-					}
+                bool xpack = false;
 
-					arcFileBase = resourceId.Substring(previousBackslash + 1, backslashLocation - previousBackslash - 1);
-					resourceId = resourceId.Substring(previousBackslash + 1);
-				}
-				else
+                if (arcFileBase.ToUpperInvariant().Equals("XPACK"))
+                {
+                    // Comes from Immortal Throne
+                    xpack = true;
+                    rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack");
+                }
+                else if (arcFileBase.ToUpperInvariant().Equals("XPACK2"))
+                {
+                    // Comes from Ragnarok
+                    xpack = true;
+                    rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack2");
+                }
+
+                if (xpack == true)
+                {
+                    // throw away that value and use the next field.
+                    int previousBackslash = backslashLocation;
+                    backslashLocation = resourceId.IndexOf('\\', backslashLocation + 1);
+                    if (backslashLocation <= 0)
+                    {
+                        // not a proper resourceID
+                        return null;
+                    }
+
+                    arcFileBase = resourceId.Substring(previousBackslash + 1, backslashLocation - previousBackslash - 1);
+                    resourceId = resourceId.Substring(previousBackslash + 1);
+                }
+                else
 				{
 					// Changed by VillageIdiot to search the IT resources folder for updated resources
 					// if IT is installed otherwise just the TQ folder.
@@ -739,41 +752,22 @@ namespace TQVaultData
 			// Added by VillageIdiot
 			// Maybe the arc file is in the XPack folder even though the record does not state it.
 			// Also could be that it says xpack in the record but the file is in the root.
-			if (arcFileData == null && TQData.IsITInstalled)
+			if (arcFileData == null)
 			{
-				if (TQDebug.DatabaseDebugLevel > 1)
-				{
-					TQDebug.DebugWriteLine("Checking alternate IT Resources.");
-				}
-
-				rootFolder = TQData.ImmortalThronePath;
-
-				// Strip off the xpack portion of the record
-				if (arcFileBase.ToUpperInvariant().Equals("XPACK"))
-				{
-					rootFolder = Path.Combine(rootFolder, "Resources");
-					int j = backslashLocation;
-					backslashLocation = resourceId.IndexOf('\\', backslashLocation + 1);
-					if (backslashLocation <= 0)
-					{
-						// not a proper resourceID
-						return null;
-					}
-
-					arcFileBase = resourceId.Substring(j + 1, backslashLocation - j - 1);
-					resourceId = resourceId.Substring(j + 1);
-				}
-				else
-				{
-					// Try finding the resource in the XPack folder
-					rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack");
-				}
-
+			    rootFolder = Path.Combine(Path.Combine(TQData.ImmortalThronePath, "Resources"), "XPack");
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
 				arcFileData = this.ReadARCFile(arcFile, resourceId);
 			}
 
-			if (arcFileData == null)
+            // Now, let's check if the item is in Ragnarok DLC
+            if (arcFileData == null && TQData.IsRagnarokInstalled)
+            {
+                rootFolder = Path.Combine(Path.Combine(TQData.ImmortalThronePath, "Resources"), "XPack2");
+                arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
+                arcFileData = this.ReadARCFile(arcFile, resourceId);
+            }
+
+            if (arcFileData == null)
 			{
 				// We are either vanilla TQ or have not found our resource yet.
 				// from the original TQ folder
@@ -1228,44 +1222,32 @@ namespace TQVaultData
 				this.ParseTextDB(databaseFile, "text\\skills.txt");
 				this.ParseTextDB(databaseFile, "text\\monsters.txt"); // Added by VillageIdiot
 				this.ParseTextDB(databaseFile, "text\\menu.txt"); // Added by VillageIdiot
-			}
 
-			// now the expansion file
-			// Added check to see if IT is actually installed before loading.
-			if (TQData.ImmortalThronePath != null)
-			{
-				databaseFile = this.FigureDBFileToUse(true);
-				if (TQDebug.DatabaseDebugLevel > 1)
-				{
-					TQDebug.DebugWriteLine("Find Immortal Throne text file");
-					TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "dbFile = {0}", databaseFile));
-				}
+                // Immortal Throne data
+                this.ParseTextDB(databaseFile, "text\\xcommonequipment.txt");
+                this.ParseTextDB(databaseFile, "text\\xuniqueequipment.txt");
+                this.ParseTextDB(databaseFile, "text\\xquest.txt");
+                this.ParseTextDB(databaseFile, "text\\xui.txt");
+                this.ParseTextDB(databaseFile, "text\\xskills.txt");
+                this.ParseTextDB(databaseFile, "text\\xmonsters.txt"); // Added by VillageIdiot
+                this.ParseTextDB(databaseFile, "text\\xmenu.txt"); // Added by VillageIdiot
+                this.ParseTextDB(databaseFile, "text\\xnpc.txt"); // Added by VillageIdiot
+                this.ParseTextDB(databaseFile, "text\\modstrings.txt"); // Added by VillageIdiot
 
-				if (databaseFile != null)
-				{
-					// Try to suck what we want into memory and then parse it.
-					// Added non TQ files since there may be updated or additional entries in those text db files.
-					this.ParseTextDB(databaseFile, "text\\commonequipment.txt");
-					this.ParseTextDB(databaseFile, "text\\uniqueequipment.txt");
-					this.ParseTextDB(databaseFile, "text\\quest.txt");
-					this.ParseTextDB(databaseFile, "text\\ui.txt");
-					this.ParseTextDB(databaseFile, "text\\skills.txt");
-					this.ParseTextDB(databaseFile, "text\\monsters.txt"); // Added by VillageIdiot
-					this.ParseTextDB(databaseFile, "text\\menu.txt"); // Added by VillageIdiot
-					this.ParseTextDB(databaseFile, "text\\xcommonequipment.txt");
-					this.ParseTextDB(databaseFile, "text\\xuniqueequipment.txt");
-					this.ParseTextDB(databaseFile, "text\\xquest.txt");
-					this.ParseTextDB(databaseFile, "text\\xui.txt");
-					this.ParseTextDB(databaseFile, "text\\xskills.txt");
-					this.ParseTextDB(databaseFile, "text\\xmonsters.txt"); // Added by VillageIdiot
-					this.ParseTextDB(databaseFile, "text\\xmenu.txt"); // Added by VillageIdiot
-					this.ParseTextDB(databaseFile, "text\\xnpc.txt"); // Added by VillageIdiot
-					this.ParseTextDB(databaseFile, "text\\modstrings.txt"); // Added by VillageIdiot
-				}
-			}
+                if (TQData.IsRagnarokInstalled) {
+                    this.ParseTextDB(databaseFile, "text\\x2commonequipment.txt");
+                    this.ParseTextDB(databaseFile, "text\\x2uniqueequipment.txt");
+                    this.ParseTextDB(databaseFile, "text\\x2quest.txt");
+                    this.ParseTextDB(databaseFile, "text\\x2ui.txt");
+                    this.ParseTextDB(databaseFile, "text\\x2skills.txt");
+                    this.ParseTextDB(databaseFile, "text\\x2monsters.txt"); // Added by VillageIdiot
+                    this.ParseTextDB(databaseFile, "text\\x2menu.txt"); // Added by VillageIdiot
+                    this.ParseTextDB(databaseFile, "text\\x2npc.txt"); // Added by VillageIdiot
+                }
+            }
 
-			// For loading custom map text database.
-			if (TQData.IsCustom)
+            // For loading custom map text database.
+            if (TQData.IsCustom)
 			{
 				string baseFolder = Path.Combine(TQData.ImmortalThroneSaveFolder, "CustomMaps");
 
@@ -1421,9 +1403,9 @@ namespace TQVaultData
 			this.ArzFile = new ArzFile(file);
 			this.ArzFile.Read();
 
-			// now the expansion pack
-			this.ArzFileIT = null;
-			if (TQData.IsITInstalled)
+			// now Immortal Throne expansion pack
+			this.ArzFileIT = this.ArzFile;
+			/* if (TQData.IsITInstalled)
 			{
 				file = Path.Combine(Path.Combine(TQData.ImmortalThronePath, "Database"), "database.arz");
 
@@ -1438,10 +1420,10 @@ namespace TQVaultData
 					this.ArzFileIT = new ArzFile(file);
 					this.ArzFileIT.Read();
 				}
-			}
+			} */
 
-			// Added to load a custom map database file.
-			if (TQData.IsCustom)
+            // Added to load a custom map database file.
+            if (TQData.IsCustom)
 			{
 				string baseFolder = Path.Combine(TQData.ImmortalThroneSaveFolder, "CustomMaps");
 

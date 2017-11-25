@@ -1146,4 +1146,7 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   <data name="SettingsPlayerReadonlyTT" xml:space="preserve">
     <value>Avoid save game corruption that occurs randomly. When enabled, player equipment will be read-only,  you won't be able to select or move any item.</value>
   </data>
+  <data name="ItemRagnarok" xml:space="preserve">
+    <value>Ragnarök Item</value>
+  </data>
 </root>

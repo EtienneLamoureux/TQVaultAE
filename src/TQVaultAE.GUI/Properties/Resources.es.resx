@@ -981,4 +981,7 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
   <data name="GlobalSize" xml:space="preserve">
     <value>Tamaño</value>
   </data>
+  <data name="ItemRagnarok" xml:space="preserve">
+    <value>Objeto de Ragnarök</value>
+  </data>
 </root>
