@@ -3099,6 +3099,7 @@ namespace TQVaultData
 				"STAFF",
 				"MACE",
 				"SWORD",
+                "RANGEDONEHAND",
 				"AXE",
 				"SHIELD",
 				"BRACELET",
