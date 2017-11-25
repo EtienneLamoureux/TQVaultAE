@@ -151,7 +151,11 @@ namespace TQVaultData
         /// <summary>
 		/// Gets a value indicating whether Ragnarok DLC has been installed.
 		/// </summary>
-		public static bool IsRagnarokInstalled { get; private set; }
+		public static bool IsRagnarokInstalled {
+            get {
+                return Directory.Exists(ImmortalThronePath + "\\Resources\\XPack2");
+            }
+        }
 
         /// <summary>
         /// Gets or sets the Immortal Throne game path.
@@ -218,22 +222,8 @@ namespace TQVaultData
 					immortalThroneGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
 				}
 
-                // Added by VillageIdiot
-                // Since the user can now specify the path we will actually look for the game file
-                // to determine if IT is installed
-
                 // ImmortalThrone is always installed in AE
                 IsITInstalled = true;
-
-                // Will now check existence of Ragnarok DLC
-                if (!Directory.Exists(immortalThroneGamePath + "\\Resources\\XPack2"))
-                {
-                    IsRagnarokInstalled = false;
-                }
-                else
-                {
-                    IsRagnarokInstalled = true;
-                }
 
                 return immortalThroneGamePath;
 			}
