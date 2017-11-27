@@ -37,30 +37,6 @@ namespace TQVaultAE.GUI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool FilterITChars {
-            get {
-                return ((bool)(this["FilterITChars"]));
-            }
-            set {
-                this["FilterITChars"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool FilterTQChars {
-            get {
-                return ((bool)(this["FilterTQChars"]));
-            }
-            set {
-                this["FilterTQChars"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool LoadLastVault {
             get {
@@ -335,15 +311,6 @@ namespace TQVaultAE.GUI.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://www.soulseekkor.com/apps/tqvault/")]
-        public string UpdateURL {
-            get {
-                return ((string)(this["UpdateURL"]));
-            }
-        }
-        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
@@ -377,18 +344,6 @@ namespace TQVaultAE.GUI.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool EnableNewUI {
-            get {
-                return ((bool)(this["EnableNewUI"]));
-            }
-            set {
-                this["EnableNewUI"] = value;
-            }
-        }
-        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0.1")]
@@ -404,6 +359,18 @@ namespace TQVaultAE.GUI.Properties {
         public double FadeOutInterval {
             get {
                 return ((double)(this["FadeOutInterval"]));
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool PlayerReadonly {
+            get {
+                return ((bool)(this["PlayerReadonly"]));
+            }
+            set {
+                this["PlayerReadonly"] = value;
             }
         }
     }

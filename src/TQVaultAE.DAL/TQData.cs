@@ -148,10 +148,19 @@ namespace TQVaultData
 		/// </summary>
 		public static bool IsITInstalled { get; private set; }
 
-		/// <summary>
-		/// Gets or sets the Immortal Throne game path.
+        /// <summary>
+		/// Gets a value indicating whether Ragnarok DLC has been installed.
 		/// </summary>
-		public static string ImmortalThronePath
+		public static bool IsRagnarokInstalled {
+            get {
+                return Directory.Exists(ImmortalThronePath + "\\Resources\\XPack2");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the Immortal Throne game path.
+        /// </summary>
+        public static string ImmortalThronePath
 		{
 			get
 			{
@@ -213,37 +222,10 @@ namespace TQVaultData
 					immortalThroneGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
 				}
 
-				// Added by VillageIdiot
-				// Since the user can now specify the path we will actually look for the game file
-				// to determine if IT is installed
-				if (!string.IsNullOrEmpty(immortalThroneGamePath))
-				{
-					// Check for any exe file starting with TQIT.
-					// Additional check (quick and dirty hack) for anniversary version added by Malgardian
-					string[] files = Directory.GetFiles(immortalThroneGamePath, "TQIT*.exe");
+                // ImmortalThrone is always installed in AE
+                IsITInstalled = true;
 
-					if (files == null || files.Length < 1)
-					{
-						if (!Directory.Exists(immortalThroneGamePath + "\\Resources\\XPack"))
-						{
-							IsITInstalled = false;
-						}
-						else
-						{
-							IsITInstalled = true;
-						}
-					}
-					else
-					{
-						IsITInstalled = true;
-					}
-				}
-				else
-				{
-					IsITInstalled = false;
-				}
-
-				return immortalThroneGamePath;
+                return immortalThroneGamePath;
 			}
 
 			set

@@ -391,9 +391,6 @@ Por favor, suelta el objeto en algún lugar antes de salir.</value>
   <data name="MainFormLabel2" xml:space="preserve">
     <value>Colección:</value>
   </data>
-  <data name="MainFormLabel4" xml:space="preserve">
-    <value>Encontrar:</value>
-  </data>
   <data name="MainFormLanguageChanged" xml:space="preserve">
     <value>Idioma del juego cambiado</value>
   </data>
@@ -633,6 +630,9 @@ origen y escribe el nuevo nombre en el campo de destino abajo.</value>
   <data name="ResultsSack" xml:space="preserve">
     <value>Bolsa</value>
   </data>
+  <data name="ResultsLevel" xml:space="preserve">
+    <value>Level</value>
+  </data>
   <data name="ResultsText" xml:space="preserve">
     <value>{0} objetos encontrados con '{1}'</value>
   </data>
@@ -781,33 +781,6 @@ esta opción podría ralentizar el inicio de TQVault.</value>
     <value>Esto permitirá al menú
 desplegable elegir
 mundos propios.</value>
-  </data>
-  <data name="SettingsFilterGroup" xml:space="preserve">
-    <value>Filtrar lista de jugadores</value>
-  </data>
-  <data name="SettingsFilterIT" xml:space="preserve">
-    <value>Filtrar personajes de IT</value>
-  </data>
-  <data name="SettingsFilterITTT" xml:space="preserve">
-    <value>Sólo aparecerán personajes de TQ en la
-lista.  Cambiar estas opciones obliga 
-a cargar la lista de personajes de nuevo.</value>
-  </data>
-  <data name="SettingsFilterNone" xml:space="preserve">
-    <value>Ningún filtro</value>
-  </data>
-  <data name="SettingsFilterNoneTT" xml:space="preserve">
-    <value>Desactiva el filtro en la lista de personajes.
-Cambiar estas opciones obliga a cargar
-la lista de personajes de nuevo.</value>
-  </data>
-  <data name="SettingsFilterTQ" xml:space="preserve">
-    <value>Filtrar personajes de TQ</value>
-  </data>
-  <data name="SettingsFilterTQTT" xml:space="preserve">
-    <value>Sólo aparecerán personajes de IT en la
-lista. Cambiar estas opciones obliga a
-cargar la lista de personajes de nuevo.</value>
   </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Comprobar actual.</value>
@@ -974,28 +947,21 @@ Would you like to disable loading all files?</value>
   </data>
   <data name="MainFormSearchButtonText" xml:space="preserve">
     <value>Encontrar</value>
-    <comment>Same as MainFormLabel4</comment>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
     <value>Search for an Item</value>
   </data>
   <data name="SearchDialogText" xml:space="preserve">
-    <value>Search for an item name or type within the loaded files.
-Includes all loaded player character inventories, vaults, player stashes and the transfer stash.
+    <value>Buscar elementos dentro de los archivos loadedFiles: bóvedas, stashes, inventarios.
 
-Use @ to specify an item type instead of name.  This must be the first character of the search string.
-For example, to search for only swords use @sword
+Puede combinar las siguientes opciones de búsqueda (todas son opcionales):
+* Nombre: Debe ser el primer término de búsqueda. Aquí hay un ejemplo: 'glacial &amp; hielo'
+* Tipo: usando @ al principio del término de búsqueda por ejemplo '@espada'
+* Atributos: usando # al principio del término de búsqueda por ejemplo '#resistencia'
+* Raridad: usando $ al principio del término de búsqueda por ejemplo '$épico'
 
-Use &amp; after the name or type to filter by item rarity.
-For example, to filter only rare items append &amp;rare to your search string.
-The terms can also be combined @sword&amp;rare would only search for rare swords.</value>
-  </data>
-  <data name="SettingsEnableNewUI" xml:space="preserve">
-    <value>Enable New User Interface</value>
-  </data>
-  <data name="SettingsEnableNewUITT" xml:space="preserve">
-    <value>Selecting this item will enable the new
-Titan Quest themed user interface.</value>
+Usted puede utilizar | en un término como condición o por ejemplo '$épico | raro'
+He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
   </data>
   <data name="GlobalClose" xml:space="preserve">
     <value>Salida</value>
@@ -1014,5 +980,8 @@ Titan Quest themed user interface.</value>
   </data>
   <data name="GlobalSize" xml:space="preserve">
     <value>Tamaño</value>
+  </data>
+  <data name="ItemRagnarok" xml:space="preserve">
+    <value>Objeto de Ragnarök</value>
   </data>
 </root>
