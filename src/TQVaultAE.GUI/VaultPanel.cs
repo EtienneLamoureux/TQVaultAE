@@ -408,7 +408,9 @@ namespace TQVaultAE.GUI
 					this.CurrentBag = 0;
 				}
 
-				if (this.CurrentBag >= (this.Player.NumberOfSacks - this.BagPanelOffset))
+				int numberOfBags = this.Player.NumberOfSacks - this.BagPanelOffset;
+
+				if ((numberOfBags > 0) && (this.CurrentBag >= numberOfBags))
 				{
 					this.CurrentBag = this.Player.NumberOfSacks - 1;
 				}
@@ -417,12 +419,12 @@ namespace TQVaultAE.GUI
 				int index = 0;
 				foreach (BagButtonBase button in this.BagButtons)
 				{
-					button.Visible = index < (this.Player.NumberOfSacks - this.BagPanelOffset);
+					button.Visible = index < numberOfBags;
 					button.IsOn = index == this.CurrentBag;
 					++index;
 				}
 
-				if (this.Player.NumberOfSacks > this.BagPanelOffset)
+				if (numberOfBags > 0)
 				{
 					this.BagSackPanel.Sack = this.Player.GetSack(this.CurrentBag + this.BagPanelOffset);
 				}
