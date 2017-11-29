@@ -56,17 +56,10 @@ namespace TQVaultAE.GUI
 			this.item.HeaderText = Resources.ResultsItem;
 			this.containerName.HeaderText = Resources.ResultsContainer;
 			this.containerType.HeaderText = Resources.ResultsContainerType;
-			this.sack.HeaderText = Resources.ResultsSack;
 			this.quality.HeaderText = Resources.ResultsQuality;
+			this.level.HeaderText = Resources.ResultsLevel;
 
-			if (Settings.Default.EnableNewUI)
-			{
-				this.DrawCustomBorder = true;
-			}
-			else
-			{
-				this.Revert(new Size(821, 459));
-			}
+			this.DrawCustomBorder = true;
 
 			this.FormDesignRatio = 0.0F; //// (float)this.Height / (float)this.Width;
 										 ////this.FormMaximumSize = new Size(this.Width * 2, this.Height * 2);
@@ -111,21 +104,6 @@ namespace TQVaultAE.GUI
 			{
 				this.searchString = value;
 			}
-		}
-
-		/// <summary>
-		/// Reverts the form back to the original size and UI style.
-		/// </summary>
-		/// <param name="originalSize">Original size of the form.</param>
-		protected override void Revert(Size originalSize)
-		{
-			this.DrawCustomBorder = false;
-			this.ClientSize = originalSize;
-			this.Padding = new Padding(0);
-			this.FormBorderStyle = FormBorderStyle.Sizable;
-
-			this.resultsDataGridView.Location = new Point(0, 0);
-			this.resultsDataGridView.Size = new Size(821, 459);
 		}
 
 		/// <summary>
@@ -277,21 +255,25 @@ namespace TQVaultAE.GUI
 			// Update the dialog text.
 			this.Text = string.Format(CultureInfo.CurrentCulture, Resources.ResultsText, this.resultsList.Count, this.searchString);
 
-			foreach (Result result in this.resultsList)
+			for (int i = 0; i < this.resultsList.Count; i++)
 			{
-				string text = result.Item.ToString();
-				Color color = result.Item.GetColorTag(text);
-				text = Item.ClipColorTag(text);
-
+				Result result = this.resultsList[i];
 				// Add the result to the DataGridView
-				this.resultsDataGridView.Rows.Add(text, result.ItemStyle, result.ContainerName, result.Sack + 1, GetContainerTypeString(result.ContainerType));
+				int currentRow = this.resultsDataGridView.Rows.Add(
+					result.ItemName,
+					result.ItemStyle,
+					result.ContainerName,
+					GetContainerTypeString(result.SackType),
+					result.RequiredLevel
+				);
 
 				// Change the text color of the item string and style to match the style color.
-				int currentRow = this.resultsDataGridView.Rows.Count - 1;
 				if (currentRow > -1)
 				{
-					this.resultsDataGridView.Rows[currentRow].Cells[0].Style.ForeColor = color;
-					this.resultsDataGridView.Rows[currentRow].Cells[1].Style.ForeColor = color;
+					this.resultsDataGridView.Rows[currentRow].Cells[0].Style.ForeColor = result.Color;
+					this.resultsDataGridView.Rows[currentRow].Cells[1].Style.ForeColor = result.Color;
+					this.resultsDataGridView.Rows[currentRow].Cells[4].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+					this.resultsDataGridView.Rows[currentRow].Tag = i;
 				}
 			}
 		}
@@ -361,8 +343,13 @@ namespace TQVaultAE.GUI
 				return;
 			}
 
-			this.selectedResult = (Result)this.resultsList[e.RowIndex];
+			var currentRow = this.resultsDataGridView.Rows[e.RowIndex];
+			if (currentRow.Tag == null)
+			{
+				return;
+			}
 
+			this.selectedResult = this.resultsList[(int)currentRow.Tag];
 			if (this.selectedResult.Item != null && this.ResultChanged != null)
 			{
 				this.ResultChanged(this, new ResultChangedEventArgs(this.selectedResult));
@@ -399,8 +386,15 @@ namespace TQVaultAE.GUI
 				return;
 			}
 
-			this.resultsDataGridView.CurrentCell = this.resultsDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
-			this.selectedResult = (Result)this.resultsList[e.RowIndex];
+			var currentRow = this.resultsDataGridView.Rows[e.RowIndex];
+			if (currentRow.Tag == null)
+			{
+				return;
+			}
+
+			this.selectedResult = this.resultsList[(int)currentRow.Tag];
+
+			this.resultsDataGridView.CurrentCell = currentRow.Cells[e.ColumnIndex];
 			this.tooltip.ChangeText(this.GetToolTip(this.selectedResult));
 		}
 

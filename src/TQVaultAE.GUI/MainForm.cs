@@ -217,7 +217,6 @@ namespace TQVaultAE.GUI
 			// Setup localized strings.
 			this.characterLabel.Text = Resources.MainFormLabel1;
 			this.vaultLabel.Text = Resources.MainFormLabel2;
-			this.findLabel.Text = Resources.MainFormLabel4;
 			this.configureButton.Text = Resources.MainFormBtnConfigure;
 			this.exitButton.Text = Resources.GlobalExit;
 			this.panelSelectButton.Text = Resources.MainFormBtnPanelSelect;
@@ -231,7 +230,8 @@ namespace TQVaultAE.GUI
 			Item.ItemQuest = Resources.ItemQuest;
 			Item.ItemSeed = Resources.ItemSeed;
 			Item.ItemIT = Resources.ItemIT;
-			Item.ShowSkillLevel = Settings.Default.ShowSkillLevel;
+            Item.ItemRagnarok = Resources.ItemRagnarok;
+            Item.ShowSkillLevel = Settings.Default.ShowSkillLevel;
 
 			if (Settings.Default.NoToolTipDelay)
 			{
@@ -340,57 +340,6 @@ namespace TQVaultAE.GUI
 			this.tooltip.ChangeText(this.tooltipText);
 
 			this.Invalidate();
-		}
-
-		/// <summary>
-		/// Changes UI back to the original UI.  Removes skinning, changes font, moves controls back, etc.
-		/// </summary>
-		/// <param name="originalSize">Original size of the form</param>
-		protected override void Revert(Size originalSize)
-		{
-			// Restore the borders and set the form back to the original size.
-			this.DrawCustomBorder = false;
-			this.FormBorderStyle = FormBorderStyle.Sizable;
-			this.ClientSize = originalSize;
-
-			// Change back to the original background image.
-			this.BackgroundImage = Resources.MainForm_Background;
-
-			// Move the search box and label back to where it was.
-			// New UI does not display these, but they are moved "out of the way" in the designer.
-			this.searchTextBox.Location = new Point(276, 78);
-			this.findLabel.Location = new Point(203, 81);
-
-			// Change the combolist drop downs back to the way they were.
-			this.characterLabel.Revert(new Point(3, 31), new Size(79, 37));
-			this.characterComboBox.Revert(new Point(88, 40), new Size(248, 21));
-			this.secondaryVaultListComboBox.Revert(new Point(88, 49), new Size(248, 21));
-			this.vaultLabel.Revert(new Point(342, 37), new Size(54, 24));
-			this.vaultListComboBox.Revert(new Point(404, 40), new Size(285, 21));
-
-			// Revert the buttons back to the unskinned versions and move them to the original positions.
-			this.exitButton.Revert(new Point(983, 587), new Size(75, 23));
-			this.configureButton.Revert(new Point(16, 587), new Size(75, 23));
-			this.panelSelectButton.Revert(new Point(51, 76), new Size(113, 23));
-			this.aboutButton.Revert(new Point(21, 9), new Size(76, 23));
-			this.aboutButton.Text = Resources.GlobalAbout;
-
-			// Revert the custom map label.
-			this.customMapText.BackColor = System.Drawing.Color.Gold;
-			this.customMapText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.customMapText.Font = new System.Drawing.Font("Albertus MT", 11.25F, FontStyle.Bold);
-			this.customMapText.ForeColor = System.Drawing.Color.Black;
-			this.customMapText.Location = new System.Drawing.Point(334, 579);
-			this.customMapText.Size = new System.Drawing.Size(439, 30);
-
-			// Disable controls which are only present on the new UI.
-			this.titleLabel.Visible = false;
-			this.searchButton.Enabled = false;
-			this.searchButton.Visible = false;
-			this.loadedCharacterLabel.Visible = false;
-			this.loadedCharacterLabel.Enabled = false;
-			this.loadedVaultLabel.Visible = false;
-			this.loadedVaultLabel.Enabled = false;
 		}
 
 		/// <summary>
@@ -580,7 +529,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="itemStyle">ItemStyle enumeration</param>
 		/// <returns>Localized string of the item style</returns>
-		private static string GetItemStyleString(ItemStyle itemStyle)
+		public static string GetItemStyleString(ItemStyle itemStyle)
 		{
 			switch (itemStyle)
 			{
@@ -670,16 +619,14 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Queries the passed sack for items which contain the search string.
 		/// </summary>
-		/// <param name="searchString">string that we are searching for.</param>
-		/// <param name="quality">Item quality that we are filtering by</param>
-		/// <param name="searchByType">Indicates whether we are searching by item name or item type.</param>
+		/// <param name="predicate">Predicate that the items should match</param>
 		/// <param name="sack">Sack that we are searching</param>
 		/// <returns>List of items which contain the search string.</returns>
-		private static List<Item> QuerySack(string searchString, string quality, bool searchByType, SackCollection sack)
+		private static List<Item> QuerySack(IItemPredicate predicate, SackCollection sack)
 		{
 			// Query the sack for the items containing the search string.
 			var vaultQuery = from Item item in sack
-							 where QueryFilter(searchString, quality, searchByType, item)
+							 where predicate.Apply(item)
 							 select item;
 
 			List<Item> tmpList = new List<Item>();
@@ -692,35 +639,168 @@ namespace TQVaultAE.GUI
 			return tmpList;
 		}
 
-		/// <summary>
-		/// Helper for QuerySack.  Performs the filtering of the search results.
-		/// </summary>
-		/// <param name="searchString">string that we are searching for.</param>
-		/// <param name="quality">Item quality that we are filtering by</param>
-		/// <param name="searchByType">Indicates whether we are searching by item name or item type.</param>
-		/// <param name="item">Item that we are checking</param>
-		/// <returns>true if Item contains searchString</returns>
-		private static bool QueryFilter(string searchString, string quality, bool searchByType, Item item)
+		private interface IItemPredicate
 		{
-			bool foundItem = false;
-
-			if (searchByType)
-			{
-				foundItem = item.ItemClass.ToUpperInvariant().Contains(searchString);
-
-				// We are filtering by quality but we only check if this item contains the searchString.
-				if (foundItem && !string.IsNullOrEmpty(quality))
-				{
-					foundItem = GetItemStyleString(item.ItemStyle).ToUpperInvariant().Contains(quality.ToUpperInvariant());
-				}
-			}
-			else
-			{
-				foundItem = item.ToString().ToUpperInvariant().Contains(searchString);
-			}
-
-			return foundItem;
+			bool Apply(Item item);
 		}
+
+		private class ItemTruePredicate : IItemPredicate
+		{
+			public bool Apply(Item item)
+			{
+				return true;
+			}
+
+			public override string ToString()
+			{
+				return "true";
+			}
+		}
+
+		private class ItemFalsePredicate : IItemPredicate
+		{
+			public bool Apply(Item item)
+			{
+				return false;
+			}
+
+			public override string ToString()
+			{
+				return "false";
+			}
+		}
+
+		private class ItemAndPredicate : IItemPredicate
+		{
+			private readonly List<IItemPredicate> predicates;
+
+			public ItemAndPredicate(params IItemPredicate[] predicates)
+			{
+				this.predicates = predicates.ToList();
+			}
+
+			public ItemAndPredicate(IEnumerable<IItemPredicate> predicates)
+			{
+				this.predicates = predicates.ToList();
+			}
+
+			public bool Apply(Item item)
+			{
+				return predicates.TrueForAll(predicate => predicate.Apply(item));
+			}
+
+			public override string ToString()
+			{
+				return "(" + String.Join(" && ", predicates.ConvertAll(p => p.ToString()).ToArray()) + ")";
+			}
+		}
+
+
+		private class ItemOrPredicate : IItemPredicate
+		{
+			private readonly List<IItemPredicate> predicates;
+
+			public ItemOrPredicate(params IItemPredicate[] predicates)
+			{
+				this.predicates = predicates.ToList();
+			}
+
+			public ItemOrPredicate(IEnumerable<IItemPredicate> predicates)
+			{
+				this.predicates = predicates.ToList();
+			}
+
+			public bool Apply(Item item)
+			{
+				return predicates.Exists(predicate => predicate.Apply(item));
+			}
+
+			public override string ToString()
+			{
+				return "(" + String.Join(" || ", predicates.ConvertAll(p => p.ToString()).ToArray()) + ")";
+			}
+		}
+
+		private class ItemNamePredicate : IItemPredicate
+		{
+			private readonly string name;
+
+			public ItemNamePredicate(string type)
+			{
+				this.name = type;
+			}
+
+			public bool Apply(Item item)
+			{
+				return item.ToString().ToUpperInvariant().Contains(name.ToUpperInvariant());
+			}
+
+			public override string ToString()
+			{
+				return $"Name({name})";
+			}
+		}
+
+		private class ItemTypePredicate : IItemPredicate
+		{
+			private readonly string type;
+
+			public ItemTypePredicate(string type)
+			{
+				this.type = type;
+			}
+
+			public bool Apply(Item item)
+			{
+				return item.ItemClass.ToUpperInvariant().Contains(type.ToUpperInvariant());
+			}
+
+			public override string ToString()
+			{
+				return $"Type({type})";
+			}
+		}
+
+		private class ItemQualityPredicate : IItemPredicate
+		{
+			private readonly string quality;
+
+			public ItemQualityPredicate(string quality)
+			{
+				this.quality = quality;
+			}
+
+			public bool Apply(Item item)
+			{
+				return GetItemStyleString(item.ItemStyle).ToUpperInvariant().Contains(quality.ToUpperInvariant());
+			}
+
+			public override string ToString()
+			{
+				return $"Quality({quality})";
+			}
+		}
+
+		private class ItemAttributePredicate : IItemPredicate
+		{
+			private readonly string attribute;
+
+			public ItemAttributePredicate(string attribute)
+			{
+				this.attribute = attribute;
+			}
+
+			public bool Apply(Item item)
+			{
+				return item.GetAttributes(true).ToUpperInvariant().Contains(attribute.ToUpperInvariant());
+			}
+
+			public override string ToString()
+			{
+				return $"Attribute({attribute})";
+			}
+		}
+
 
 		/// <summary>
 		/// Counts the number of files which LoadAllFiles will load.  Used to set the max value of the progress bar.
@@ -730,23 +810,17 @@ namespace TQVaultAE.GUI
 		{
 			string[] list;
 			int numTQ = 0;
-			if (!Settings.Default.FilterTQChars)
+			list = TQData.GetCharacterList(false);
+			if (list != null)
 			{
-				list = TQData.GetCharacterList(false);
-				if (list != null)
-				{
-					numTQ = list.Length;
-				}
+				numTQ = list.Length;
 			}
 
 			int numIT = 0;
-			if (!Settings.Default.FilterITChars)
+			list = TQData.GetCharacterList(true);
+			if (list != null)
 			{
-				list = TQData.GetCharacterList(true);
-				if (list != null)
-				{
-					numIT = list.Length;
-				}
+				numIT = list.Length;
 			}
 
 			int numVaults = 0;
@@ -804,10 +878,7 @@ namespace TQVaultAE.GUI
 		{
 			this.CreatePlayerPanel();
 			int textPanelOffset = 0;
-			if (Settings.Default.EnableNewUI)
-			{
-				textPanelOffset = Convert.ToInt32(2.0F * Database.DB.Scale);
-			}
+			textPanelOffset = Convert.ToInt32(2.0F * Database.DB.Scale);
 
 			this.itemTextPanel.Location = new Point(this.playerPanel.Location.X, this.playerPanel.Location.Y + this.playerPanel.Height + textPanelOffset);
 			this.itemTextPanel.Size = new Size(this.playerPanel.Width, Convert.ToInt32(22.0F * Database.DB.Scale));
@@ -840,15 +911,6 @@ namespace TQVaultAE.GUI
 
 			this.GetVaultList(false);
 
-			// New UI does not use the action button or trash panels.
-			if (!Settings.Default.EnableNewUI)
-			{
-				this.CreateTrash(5); // # of bags in trash
-				this.CreateTrashPanel(5); // # of bags in trash
-				this.trashPanel.Player = this.trash;
-				this.CreateActionButton();
-			}
-
 			// Now we always create the stash panel since everyone can have equipment
 			this.CreateStashPanel();
 			this.stashPanel.CurrentBag = 0; // set to default to the equipment panel
@@ -859,26 +921,11 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void SetupFormSize()
 		{
-			// Check to see if we want to display the old UI.
-			// There are other checks below as well when creating the panels.
-			if (Settings.Default.EnableNewUI)
-			{
-				this.DrawCustomBorder = true;
-				this.ResizeCustomAllowed = true;
-				this.findLabel.Visible = false;
-				this.searchTextBox.Enabled = false;
-				this.searchTextBox.Visible = false;
-				this.loadedCharacterLabel.Text = Resources.PlayerPanelNoPlayer;
-				this.loadedVaultLabel.Text = Resources.PlayerPanelNoVault;
-				this.fadeInterval = Settings.Default.FadeInInterval;
-			}
-			else
-			{
-				Size oldSize = new Size(1072, 618);
-				this.FormDesignRatio = oldSize.Height / oldSize.Width;
-				this.Revert(oldSize);
-				this.fadeInterval = 1.0F;
-			}
+			this.DrawCustomBorder = true;
+			this.ResizeCustomAllowed = true;
+			this.loadedCharacterLabel.Text = Resources.PlayerPanelNoPlayer;
+			this.loadedVaultLabel.Text = Resources.PlayerPanelNoVault;
+			this.fadeInterval = Settings.Default.FadeInInterval;
 
 			// Save the height / width ratio for resizing.
 			this.FormDesignRatio = (float)this.Height / (float)this.Width;
@@ -1155,14 +1202,6 @@ namespace TQVaultAE.GUI
 			// Move to the top just below the dropdowns.  Swap the vault and the player panel locations.
 			int locationY = Convert.ToInt32(138.0F * Database.DB.Scale);
 			this.vaultPanel.DrawAsGroupBox = false;
-			if (!Settings.Default.EnableNewUI)
-			{
-				// Back to the bottom 10 pixels below the textPanel.
-				locationY = this.itemTextPanel.Bottom + Convert.ToInt32(10.0F * Database.DB.Scale);
-
-				// Draw as a standard group box
-				this.vaultPanel.DrawAsGroupBox = true;
-			}
 
 			this.vaultPanel.Location = new Point(Convert.ToInt32(16.0F * Database.DB.Scale), locationY);
 			this.vaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
@@ -1182,13 +1221,8 @@ namespace TQVaultAE.GUI
 		{
 			this.secondaryVaultPanel = new VaultPanel(this.dragInfo, numBags, new Size(12, 5), this.tooltip, 1, AutoMoveLocation.SecondaryVault);
 			this.secondaryVaultPanel.DrawAsGroupBox = false;
-			if (!Settings.Default.EnableNewUI)
-			{
-				this.secondaryVaultPanel.DrawAsGroupBox = true;
-			}
 
 			// Place it with the same Y value as the character panel and X value of the vault panel.
-			// Should be independent of using the new UI or the old one.
 			this.secondaryVaultPanel.Location = new Point(Convert.ToInt32(16.0F * Database.DB.Scale), this.playerPanel.Location.Y);
 			this.secondaryVaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 			this.secondaryVaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
@@ -1230,15 +1264,6 @@ namespace TQVaultAE.GUI
 			int locationY = this.ClientSize.Height - (this.playerPanel.Height + Convert.ToInt32(30.0F * Database.DB.Scale));
 			int locationX = Convert.ToInt32(16.0F * Database.DB.Scale);
 			this.playerPanel.DrawAsGroupBox = false;
-			if (!Settings.Default.EnableNewUI)
-			{
-				// Revert back to original location which is below the drop down boxes
-				locationY = Convert.ToInt32(110.0F * Database.DB.Scale);
-				locationX = Convert.ToInt32(43.0F * Database.DB.Scale);
-
-				// Draw as a standard group box.
-				this.playerPanel.DrawAsGroupBox = true;
-			}
 
 			this.playerPanel.Location = new Point(locationX, locationY);
 			this.playerPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
@@ -1258,11 +1283,6 @@ namespace TQVaultAE.GUI
 			// size params are width, height
 			Size panelSize = new Size(17, 16);
 
-			if (!Settings.Default.EnableNewUI)
-			{
-				panelSize = new Size(10, 15);
-			}
-
 			this.stashPanel = new StashPanel(this.dragInfo, panelSize, this.tooltip);
 
 			// New location in bottom right of the Main Form.
@@ -1270,17 +1290,6 @@ namespace TQVaultAE.GUI
 				this.ClientSize.Width - (this.stashPanel.Width + Convert.ToInt32(10.0F * Database.DB.Scale)),
 				this.ClientSize.Height - (this.stashPanel.Height + Convert.ToInt32(5.0F * Database.DB.Scale)));
 			this.stashPanel.DrawAsGroupBox = false;
-
-			if (!Settings.Default.EnableNewUI)
-			{
-				// Original location based on trash panel location.
-				this.stashPanel.Location = new Point(this.trashPanel.Right + Convert.ToInt32(10.0F * Database.DB.Scale), this.trashPanel.Bottom - this.stashPanel.Height);
-				this.stashPanel.StashBackground = Resources.StashPanel;
-				this.stashPanel.SetEquipmentBackground(Resources.EquipmentPanel);
-
-				// Draw as a standard windows group box.
-				this.stashPanel.DrawAsGroupBox = true;
-			}
 
 			this.stashPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 			this.stashPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
@@ -1354,18 +1363,10 @@ namespace TQVaultAE.GUI
 		{
 			// Initialize the character combo-box
 			this.characterComboBox.Items.Clear();
-			string[] charactersTQ = null;
-			string[] charactersIT = null;
 
-			if (!Settings.Default.FilterTQChars)
-			{
-				charactersTQ = TQData.GetCharacterList(false);
-			}
+			string[] charactersTQ = TQData.GetCharacterList(false);
 
-			if (!Settings.Default.FilterITChars)
-			{
-				charactersIT = TQData.GetCharacterList(true);
-			}
+			string[] charactersIT = TQData.GetCharacterList(true);
 
 			int numTQ = 0;
 			if (charactersTQ != null)
@@ -2012,19 +2013,11 @@ namespace TQVaultAE.GUI
 				}
 			}
 
-			string[] charactersTQ = null;
-			string[] charactersIT = null;
 			string[] vaults = TQData.GetVaultList();
 
-			if (!Settings.Default.FilterTQChars)
-			{
-				charactersTQ = TQData.GetCharacterList(false);
-			}
+			string[] charactersTQ = TQData.GetCharacterList(false);
 
-			if (!Settings.Default.FilterITChars)
-			{
-				charactersIT = TQData.GetCharacterList(true);
-			}
+			string[] charactersIT = TQData.GetCharacterList(true);
 
 			int numTQ = 0;
 			if (charactersTQ != null)
@@ -2398,15 +2391,7 @@ namespace TQVaultAE.GUI
 		/// <param name="e">SackPanelEventArgs data</param>
 		private void ActivateSearchCallback(object sender, SackPanelEventArgs e)
 		{
-			if (!Settings.Default.EnableNewUI)
-			{
-				this.searchTextBox.Focus();
-				this.searchTextBox.SelectAll();
-			}
-			else
-			{
-				this.OpenSearchDialog();
-			}
+			this.OpenSearchDialog();
 		}
 
 		/// <summary>
@@ -3319,21 +3304,6 @@ namespace TQVaultAE.GUI
 
 		/// <summary>
 		/// Handler for keypresses within the search text box.
-		/// Activates the search on Enter.
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">KeyPressEventArgs data</param>
-		private void SearchTextBoxKeyPress(object sender, KeyPressEventArgs e)
-		{
-			if (e.KeyChar == (char)13)
-			{
-				this.Search();
-				e.Handled = true;
-			}
-		}
-
-		/// <summary>
-		/// Handler for keypresses within the search text box.
 		/// Used to handle the resizing hot keys.
 		/// </summary>
 		/// <param name="sender">sender object</param>
@@ -3357,108 +3327,29 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Search for whatever text is in the search text box.
-		/// </summary>
-		private void Search()
-		{
-			// The Search() method will normalize the string so we just pass it along.
-			this.Search(this.searchTextBox.Text);
-		}
-
-		/// <summary>
 		/// Searches loaded files based on the specified search string.  Internally normalized to UpperInvariant
 		/// </summary>
 		/// <param name="searchString">string that we are searching for</param>
 		private void Search(string searchString)
 		{
-			// Make sure we have something to search for.
-			if (string.IsNullOrEmpty(searchString))
+			if (searchString == null || searchString.Trim().Count() == 0)
 			{
 				return;
 			}
 
-			// Normalize the search string.
-			searchString = searchString.ToUpperInvariant().Trim();
-
-			// Return if the search string was only white space.
-			if (string.IsNullOrEmpty(searchString))
-			{
-				return;
-			}
-
-			string quality = null;
-			bool searchByType = false;
-
-			// See if we are searching by type
-			if (searchString.StartsWith("@", StringComparison.Ordinal))
-			{
-				// Add temp string array.
-				searchString = searchString.Substring(1);
-				if (string.IsNullOrEmpty(searchString))
-				{
-					return;
-				}
-
-				searchByType = true;
-
-				// Check for Quality
-				if (searchString.Contains("&"))
-				{
-					// split the string at the ampersand
-					string[] split = searchString.Split('&');
-
-					// Make sure we have only 2 arguments and they are at least
-					// 2 characters long.
-					if (split.Length != 2 || split[0].Length < 2 || split[1].Length < 2)
-					{
-						return;
-					}
-
-					searchString = split[0];
-					quality = split[1];
-				}
-			}
-
-			// Otherwise we just default to searching by name.
-			List<Result> results = new List<Result>();
-
-			this.SearchFiles(searchString, quality, searchByType, results);
+			var filter = GetFilterFrom(searchString);
+			var results = new List<Result>();
+			this.SearchFiles(filter, results);
 
 			if (results.Count < 1)
 			{
-				if (searchByType)
-				{
-					if (quality != null)
-					{
-						MessageBox.Show(
-							string.Format(CultureInfo.CurrentCulture, Resources.MainFormNoItemQualityFound, searchString, quality),
-							Resources.MainFormNoItemsFound2,
-							MessageBoxButtons.OK,
-							MessageBoxIcon.Information,
-							MessageBoxDefaultButton.Button1,
-							RightToLeftOptions);
-					}
-					else
-					{
-						MessageBox.Show(
-							string.Format(CultureInfo.CurrentCulture, Resources.MainFormNoItemTypesFound, searchString),
-							Resources.MainFormNoItemsFound2,
-							MessageBoxButtons.OK,
-							MessageBoxIcon.Information,
-							MessageBoxDefaultButton.Button1,
-							RightToLeftOptions);
-					}
-				}
-				else
-				{
-					MessageBox.Show(
-						string.Format(CultureInfo.CurrentCulture, Resources.MainFormNoItemsFound, searchString),
-						Resources.MainFormNoItemsFound2,
-						MessageBoxButtons.OK,
-						MessageBoxIcon.Information,
-						MessageBoxDefaultButton.Button1,
-						RightToLeftOptions);
-				}
+				MessageBox.Show(
+					string.Format(CultureInfo.CurrentCulture, Resources.MainFormNoItemsFound, searchString),
+					Resources.MainFormNoItemsFound2,
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information,
+					MessageBoxDefaultButton.Button1,
+					RightToLeftOptions);
 
 				return;
 			}
@@ -3471,6 +3362,70 @@ namespace TQVaultAE.GUI
 			dlg.SearchString = searchString;
 			////dlg.ShowDialog();
 			dlg.Show();
+		}
+
+		private static IItemPredicate GetFilterFrom(string searchString)
+		{
+			var predicates = new List<IItemPredicate>();
+			searchString = searchString.Trim();
+
+			var TOKENS = "@#$".ToCharArray();
+			int fromIndex = 0;
+			int toIndex;
+			do
+			{
+				string term;
+
+				toIndex = searchString.IndexOfAny(TOKENS, fromIndex + 1);
+				if (toIndex < 0)
+				{
+					term = searchString.Substring(fromIndex);
+				}
+				else
+				{
+					term = searchString.Substring(fromIndex, toIndex - fromIndex);
+					fromIndex = toIndex;
+				}
+
+				switch (term[0])
+				{
+					case '@':
+						predicates.Add(GetPredicateFrom(term.Substring(1), it => new ItemTypePredicate(it)));
+						break;
+					case '#':
+						predicates.Add(GetPredicateFrom(term.Substring(1), it => new ItemAttributePredicate(it)));
+						break;
+					case '$':
+						predicates.Add(GetPredicateFrom(term.Substring(1), it => new ItemQualityPredicate(it)));
+						break;
+					default:
+						foreach (var name in term.Split('&'))
+						{
+							predicates.Add(GetPredicateFrom(name, it => new ItemNamePredicate(it)));
+						}
+						break;
+				}
+			} while (toIndex >= 0);
+
+			return new ItemAndPredicate(predicates);
+		}
+
+		private static IItemPredicate GetPredicateFrom(string term, Func<string, IItemPredicate> newPredicate)
+		{
+			var predicates = term.Split('|')
+				.Select(it => it.Trim())
+				.Where(it => it.Count() > 0)
+				.Select(it => newPredicate(it));
+
+			switch (predicates.Count())
+			{
+				case 0:
+					return new ItemTruePredicate();
+				case 1:
+					return predicates.First();
+				default:
+					return new ItemOrPredicate(predicates);
+			}
 		}
 
 		/// <summary>
@@ -3488,14 +3443,14 @@ namespace TQVaultAE.GUI
 
 			this.ClearAllItemsSelectedCallback(this, new SackPanelEventArgs(null, null));
 
-			if (selectedResult.ContainerType == SackType.Vault)
+			if (selectedResult.SackType == SackType.Vault)
 			{
 				// Switch to the selected vault
 				this.vaultListComboBox.SelectedItem = selectedResult.ContainerName;
-				this.vaultPanel.CurrentBag = selectedResult.Sack;
+				this.vaultPanel.CurrentBag = selectedResult.SackNumber;
 				this.vaultPanel.SackPanel.SelectItem(selectedResult.Item.Location);
 			}
-			else if (selectedResult.ContainerType == SackType.Player || selectedResult.ContainerType == SackType.Equipment)
+			else if (selectedResult.SackType == SackType.Player || selectedResult.SackType == SackType.Equipment)
 			{
 				// Switch to the selected player
 				if (this.showSecondaryVault)
@@ -3518,15 +3473,15 @@ namespace TQVaultAE.GUI
 
 				// Update the selection list and load the character.
 				this.characterComboBox.SelectedItem = myName;
-				if (selectedResult.Sack > 0)
+				if (selectedResult.SackNumber > 0)
 				{
-					this.playerPanel.CurrentBag = selectedResult.Sack - 1;
+					this.playerPanel.CurrentBag = selectedResult.SackNumber - 1;
 				}
 
-				if (selectedResult.ContainerType != SackType.Equipment)
+				if (selectedResult.SackType != SackType.Equipment)
 				{
 					// Highlight the item if it's in the player inventory.
-					if (selectedResult.Sack == 0)
+					if (selectedResult.SackNumber == 0)
 					{
 						this.playerPanel.SackPanel.SelectItem(selectedResult.Item.Location);
 					}
@@ -3536,7 +3491,7 @@ namespace TQVaultAE.GUI
 					}
 				}
 			}
-			else if (selectedResult.ContainerType == SackType.Stash)
+			else if (selectedResult.SackType == SackType.Stash)
 			{
 				// Switch to the selected player
 				if (this.showSecondaryVault)
@@ -3557,13 +3512,13 @@ namespace TQVaultAE.GUI
 				this.characterComboBox.SelectedItem = myName;
 
 				// Switch to the Stash bag
-				this.stashPanel.CurrentBag = selectedResult.Sack;
+				this.stashPanel.CurrentBag = selectedResult.SackNumber;
 				this.stashPanel.SackPanel.SelectItem(selectedResult.Item.Location);
 			}
-			else if (selectedResult.ContainerType == SackType.TransferStash)
+			else if (selectedResult.SackType == SackType.TransferStash)
 			{
 				// Switch to the Stash bag
-				this.stashPanel.CurrentBag = selectedResult.Sack;
+				this.stashPanel.CurrentBag = selectedResult.SackNumber;
 				this.stashPanel.SackPanel.SelectItem(selectedResult.Item.Location);
 			}
 		}
@@ -3571,17 +3526,12 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Searches all loaded vault files
 		/// </summary>
-		/// <param name="searchString">String which we are searching for.</param>
+		/// <param name="predicate">Predicate that the items should match</param>
 		/// <param name="quality">Quality filter</param>
 		/// <param name="searchByType">flag for whether we are searching by type or name</param>
 		/// <param name="results">List holding the search results.</param>
-		private void SearchVaults(string searchString, string quality, bool searchByType, List<Result> results)
+		private void SearchVaults(IItemPredicate predicate, List<Result> results)
 		{
-			if (string.IsNullOrEmpty(searchString))
-			{
-				return;
-			}
-
 			if (this.vaults == null || this.vaults.Count == 0)
 			{
 				return;
@@ -3610,19 +3560,15 @@ namespace TQVaultAE.GUI
 					}
 
 					// Query the sack for the items containing the search string.
-					foreach (Item item in QuerySack(searchString, quality, searchByType, sack))
+					foreach (Item item in QuerySack(predicate, sack))
 					{
-						results.Add(new Result
-						{
-							////ItemName = item.ToString(),
-							Container = vaultFile,
-							ContainerName = Path.GetFileNameWithoutExtension(vaultFile),
-							Sack = vaultNumber,
-							ContainerType = SackType.Vault,
-							////Location = item.Location,
-							ItemStyle = GetItemStyleString(item.ItemStyle),
-							Item = item
-						});
+						results.Add(new Result(
+							vaultFile,
+							Path.GetFileNameWithoutExtension(vaultFile),
+							vaultNumber,
+							SackType.Vault,
+							item
+						));
 					}
 				}
 			}
@@ -3631,17 +3577,12 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Searches all loaded player files
 		/// </summary>
-		/// <param name="searchString">String which we are searching for.</param>
+		/// <param name="predicate">Predicate that the items should match</param>
 		/// <param name="quality">Quality filter</param>
 		/// <param name="searchByType">flag for whether we are searching by type or name</param>
 		/// <param name="results">List holding the search results.</param>
-		private void SearchPlayers(string searchString, string quality, bool searchByType, List<Result> results)
+		private void SearchPlayers(IItemPredicate predicate, List<Result> results)
 		{
-			if (string.IsNullOrEmpty(searchString))
-			{
-				return;
-			}
-
 			if (this.players == null || this.players.Count == 0)
 			{
 				return;
@@ -3678,19 +3619,15 @@ namespace TQVaultAE.GUI
 					}
 
 					// Query the sack for the items containing the search string.
-					foreach (Item item in QuerySack(searchString, quality, searchByType, sack))
+					foreach (Item item in QuerySack(predicate, sack))
 					{
-						results.Add(new Result
-						{
-							////ItemName = item.ToString(),
-							Container = playerFile,
-							ContainerName = playerName,
-							Sack = sackNumber,
-							ContainerType = SackType.Player,
-							////Location = new Point(item.PositionX, item.PositionY),
-							ItemStyle = GetItemStyleString(item.ItemStyle),
-							Item = item
-						});
+						results.Add(new Result(
+							playerFile,
+							playerName,
+							sackNumber,
+							SackType.Player,
+							item
+						));
 					}
 				}
 
@@ -3702,19 +3639,15 @@ namespace TQVaultAE.GUI
 					continue;
 				}
 
-				foreach (Item item in QuerySack(searchString, quality, searchByType, equipmentSack))
+				foreach (Item item in QuerySack(predicate, equipmentSack))
 				{
-					results.Add(new Result
-					{
-						////ItemName = item.ToString(),
-						Container = playerFile,
-						ContainerName = playerName,
-						Sack = 0,
-						ContainerType = SackType.Equipment,
-						////Location = new Point(item.PositionX, item.PositionY),
-						ItemStyle = GetItemStyleString(item.ItemStyle),
-						Item = item
-					});
+					results.Add(new Result(
+						playerFile,
+						playerName,
+						0,
+						SackType.Equipment,
+						item
+					));
 				}
 			}
 		}
@@ -3722,17 +3655,10 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Searches all loaded stashes including transfer stash.
 		/// </summary>
-		/// <param name="searchString">String which we are searching for.</param>
-		/// <param name="quality">Quality filter</param>
-		/// <param name="searchByType">flag for whether we are searching by type or name</param>
+		/// <param name="predicate">Predicate that the items should match</param>
 		/// <param name="results">List holding the search results.</param>
-		private void SearchStashes(string searchString, string quality, bool searchByType, List<Result> results)
+		private void SearchStashes(IItemPredicate predicate, List<Result> results)
 		{
-			if (string.IsNullOrEmpty(searchString))
-			{
-				return;
-			}
-
 			if (this.stashes == null || this.stashes.Count == 0)
 			{
 				return;
@@ -3772,19 +3698,15 @@ namespace TQVaultAE.GUI
 					sackType = SackType.TransferStash;
 				}
 
-				foreach (Item item in QuerySack(searchString, quality, searchByType, sack))
+				foreach (Item item in QuerySack(predicate, sack))
 				{
-					results.Add(new Result
-					{
-						////ItemName = item.ToString(),
-						Container = stashFile,
-						ContainerName = stashName,
-						Sack = sackNumber,
-						ContainerType = sackType,
-						////Location = new Point(item.PositionX, item.PositionY),
-						ItemStyle = GetItemStyleString(item.ItemStyle),
-						Item = item
-					});
+					results.Add(new Result(
+						stashFile,
+						stashName,
+						sackNumber,
+						sackType,
+						item
+					));
 				}
 			}
 		}
@@ -3792,23 +3714,16 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Searches all loaded files
 		/// </summary>
-		/// <param name="searchString">String which we are searching for.</param>
-		/// <param name="quality">Quality filter</param>
-		/// <param name="searchByType">flag for whether we are searching by type or name</param>
+		/// <param name="predicate">Predicate that the items should match</param>
 		/// <param name="results">List holding the search results.</param>
-		private void SearchFiles(string searchString, string quality, bool searchByType, List<Result> results)
+		private void SearchFiles(IItemPredicate predicate, List<Result> results)
 		{
-			if (string.IsNullOrEmpty(searchString))
-			{
-				return;
-			}
-
-			this.SearchVaults(searchString, quality, searchByType, results);
-			this.SearchPlayers(searchString, quality, searchByType, results);
+			this.SearchVaults(predicate, results);
+			this.SearchPlayers(predicate, results);
 
 			if (TQData.IsITInstalled)
 			{
-				this.SearchStashes(searchString, quality, searchByType, results);
+				this.SearchStashes(predicate, results);
 			}
 		}
 
@@ -3820,14 +3735,7 @@ namespace TQVaultAE.GUI
 		/// <param name="e">EventArgs data</param>
 		private void MainFormShown(object sender, EventArgs e)
 		{
-			if (Settings.Default.EnableNewUI)
-			{
-				this.vaultPanel.SackPanel.Focus();
-			}
-			else
-			{
-				this.searchTextBox.Focus();
-			}
+			this.vaultPanel.SackPanel.Focus();
 		}
 
 		/// <summary>

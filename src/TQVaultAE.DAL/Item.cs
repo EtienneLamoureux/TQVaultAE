@@ -335,10 +335,15 @@ namespace TQVaultData
 		/// </summary>
 		public static string ItemIT { get; set; }
 
-		/// <summary>
-		/// Gets or sets a value indicating whether the skill level is shown on granted skills.
+        /// <summary>
+		/// Gets or sets the string which indicates an Immortal Throne item.
 		/// </summary>
-		public static bool ShowSkillLevel { get; set; }
+		public static string ItemRagnarok { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the skill level is shown on granted skills.
+        /// </summary>
+        public static bool ShowSkillLevel { get; set; }
 
 		/// <summary>
 		/// Gets the base item id
@@ -468,7 +473,7 @@ namespace TQVaultData
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether or not the item comes from the expansion pack.
+		/// Gets a value indicating whether or not the item comes from Immortal Throne expansion pack.
 		/// </summary>
 		public bool IsImmortalThrone
 		{
@@ -493,10 +498,36 @@ namespace TQVaultData
 			}
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether the item is a scroll.
+        /// <summary>
+		/// Gets a value indicating whether or not the item comes from Ragnarok DLC.
 		/// </summary>
-		public bool IsScroll
+		public bool IsRagnarok
+        {
+            get
+            {
+                if (this.BaseItemId.ToUpperInvariant().IndexOf("XPACK2\\", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+
+                if (this.prefixID != null && this.prefixID.ToUpperInvariant().IndexOf("XPACK2\\", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+
+                if (this.suffixID != null && this.suffixID.ToUpperInvariant().IndexOf("XPACK2\\", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the item is a scroll.
+        /// </summary>
+        public bool IsScroll
 		{
 			get
 			{
@@ -504,7 +535,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ONESHOT_SCROLL");
 				}
-				else if (this.IsImmortalThrone)
+				else if (this.IsImmortalThrone || this.IsRagnarok)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("\\SCROLLS\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -523,7 +554,7 @@ namespace TQVaultData
 		{
 			get
 			{
-				if (this.IsImmortalThrone)
+				if (this.IsImmortalThrone || this.IsRagnarok)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("\\PARCHMENTS\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -546,7 +577,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMARTIFACTFORMULA");
 				}
-				else if (this.IsImmortalThrone)
+				else if (this.IsImmortalThrone || this.IsRagnarok)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("\\ARCANEFORMULAE\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -569,7 +600,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMARTIFACT");
 				}
-				else if (this.IsImmortalThrone)
+				else if (this.IsImmortalThrone || this.IsRagnarok)
 				{
 					if (!this.IsFormulae && this.BaseItemId.ToUpperInvariant().IndexOf("\\ARTIFACTS\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -778,7 +809,7 @@ namespace TQVaultData
 						return true;
 					}
 				}
-				else if (!this.IsImmortalThrone)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("QUEST", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -1003,7 +1034,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMCHARM");
 				}
-				else if (!this.IsImmortalThrone)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok)
 				{
 					return this.BaseItemId.ToUpperInvariant().IndexOf("ANIMALRELICS", StringComparison.OrdinalIgnoreCase) != -1;
 				}
@@ -1031,7 +1062,7 @@ namespace TQVaultData
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMRELIC")
 						|| this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMCHARM");
 				}
-				else if (!this.IsImmortalThrone)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok)
 				{
 					return this.BaseItemId.ToUpperInvariant().IndexOf("RELICS", StringComparison.OrdinalIgnoreCase) != -1;
 				}
@@ -1373,20 +1404,19 @@ namespace TQVaultData
 		/// <returns>text with color tag removed</returns>
 		public static string ClipColorTag(string text)
 		{
-			if (text.StartsWith("^", StringComparison.OrdinalIgnoreCase))
+			if (text.Contains("{^"))
 			{
-				// If there are not braces assume a 2 character code.
-				text = text.Substring(2);
-			}
-			else if (text.StartsWith("{^", StringComparison.OrdinalIgnoreCase))
-			{
-				int i = text.IndexOf('^');
+				int i = text.IndexOf("{^");
 				if (i != -1)
 				{
 					// Make sure there is a control code in there.
-					i = text.IndexOf('}', i + 1);
-					text = text.Substring(i + 1);
+					text = text.Remove(i,4);
 				}
+			}
+			else if (text.StartsWith("^", StringComparison.OrdinalIgnoreCase))
+			{
+				// If there are not braces assume a 2 character code.
+				text = text.Substring(2);
 			}
 
 			return text;
@@ -1570,23 +1600,23 @@ namespace TQVaultData
 
 			// Look for a formatting tag in the beginning of the string
 			string colorCode = null;
-			if (text.StartsWith("^", StringComparison.OrdinalIgnoreCase))
+			if (text.Contains("{^"))
 			{
-				// If there are not braces assume a 2 character code.
-				colorCode = text.Substring(1, 1).ToUpperInvariant();
-			}
-			else if (text.StartsWith("{^", StringComparison.OrdinalIgnoreCase))
-			{
-				int i = text.IndexOf('^');
+				int i = text.IndexOf("{^");
 				if (i == -1)
 				{
 					colorCode = null;
 				}
 				else
 				{
-					colorCode = text.Substring(i + 1, 1).ToUpperInvariant();
+					colorCode = text.Substring(i + 2, 1).ToUpperInvariant();
 				}
+			} else if (text.StartsWith("^"))
+			{
+				// If there are not braces assume a 2 character code.
+				colorCode = text.Substring(1, 1).ToUpperInvariant();
 			}
+
 
 			// We didn't find a code so use the standard color code for the item
 			if (string.IsNullOrEmpty(colorCode))
@@ -1901,13 +1931,20 @@ namespace TQVaultData
 				parameters[parameterCount++] = Item.ItemQuest;
 			}
 
-			if (!basicInfoOnly && !relicInfoOnly && this.IsImmortalThrone)
+			if (!basicInfoOnly && !relicInfoOnly)
 			{
-				parameters[parameterCount++] = "(IT)";
-			}
+                if (this.IsImmortalThrone)
+                {
+                    parameters[parameterCount++] = "(IT)";
+                }
+                else if (this.IsRagnarok)
+                {
+                    parameters[parameterCount++] = "(RAG)";
+                }
+            }
 
-			// Now combine it all with spaces between
-			return string.Join(" ", parameters, 0, parameterCount);
+            // Now combine it all with spaces between
+            return string.Join(" ", parameters, 0, parameterCount);
 		}
 
 		/// <summary>
@@ -1920,35 +1957,7 @@ namespace TQVaultData
 			{
 				return this.requirementsString;
 			}
-
-			SortedList<string, Variable> requirementsList = new SortedList<string, Variable>();
-			if (this.baseItemInfo != null)
-			{
-				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.BaseItemId));
-				this.GetDynamicRequirementsFromRecord(requirementsList, this.baseItemInfo);
-			}
-
-			if (this.prefixInfo != null)
-			{
-				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.prefixID));
-			}
-
-			if (this.suffixInfo != null)
-			{
-				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.suffixID));
-			}
-
-			if (this.RelicInfo != null)
-			{
-				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.relicID));
-			}
-
-			// Add Artifact level requirement to formula
-			if (this.IsFormulae && this.baseItemInfo != null)
-			{
-				string artifactID = this.baseItemInfo.GetString("artifactName");
-				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(artifactID));
-			}
+			SortedList<string, Variable> requirementsList = GetRequirementVariables();
 
 			// Get the format string to use to list a requirement
 			string requirementFormat = Database.DB.GetFriendlyName("MeetsRequirement");
@@ -2011,6 +2020,46 @@ namespace TQVaultData
 			}
 
 			return this.requirementsString;
+		}
+
+		private SortedList<string, Variable> requirementsList;
+		public SortedList<string, Variable> GetRequirementVariables()
+		{
+			if (this.requirementsList != null)
+			{
+				return this.requirementsList;
+			}
+
+			requirementsList = new SortedList<string, Variable>();
+			if (this.baseItemInfo != null)
+			{
+				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.BaseItemId));
+				this.GetDynamicRequirementsFromRecord(requirementsList, this.baseItemInfo);
+			}
+
+			if (this.prefixInfo != null)
+			{
+				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.prefixID));
+			}
+
+			if (this.suffixInfo != null)
+			{
+				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.suffixID));
+			}
+
+			if (this.RelicInfo != null)
+			{
+				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(this.relicID));
+			}
+
+			// Add Artifact level requirement to formula
+			if (this.IsFormulae && this.baseItemInfo != null)
+			{
+				string artifactID = this.baseItemInfo.GetString("artifactName");
+				GetRequirementsFromRecord(requirementsList, Database.DB.GetRecordFromFile(artifactID));
+			}
+
+			return requirementsList;
 		}
 
 		/// <summary>
@@ -2179,7 +2228,16 @@ namespace TQVaultData
 
 					foreach (string flavorTextRow in flavorTextArray)
 					{
-						results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(Item.GetColor(ItemStyle.Mundane)), flavorTextRow));
+						int nextColor = flavorTextRow.IndexOf("{^y}", StringComparison.OrdinalIgnoreCase);
+						if (nextColor > -1)
+						{
+							string choppedString = flavorTextRow.Substring(4);
+							results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(Item.GetColor(TQColor.Yellow)), choppedString));
+						}
+						else
+						{
+							results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(Item.GetColor(ItemStyle.Mundane)), flavorTextRow));
+						}
 					}
 
 					results.Add(string.Empty);
@@ -2398,7 +2456,14 @@ namespace TQVaultData
 				results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(Item.GetColor(ItemStyle.Rare)), immortalThrone));
 			}
 
-			string[] ary = new string[results.Count];
+            // Add the Ragnarok clause
+            if (this.IsRagnarok)
+            {
+                string ragnarok = Database.MakeSafeForHtml(Item.ItemRagnarok);
+                results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(Item.GetColor(ItemStyle.Rare)), ragnarok));
+            }
+
+            string[] ary = new string[results.Count];
 			results.CopyTo(ary);
 			this.attributesString = string.Join("<br>", ary);
 
@@ -2967,7 +3032,12 @@ namespace TQVaultData
 				Item.ItemIT = "Immortal Throne Item";
 			}
 
-			if (string.IsNullOrEmpty(Item.ItemWith))
+            if (string.IsNullOrEmpty(Item.ItemRagnarok))
+            {
+                Item.ItemRagnarok = "Ragnarok Item";
+            }
+
+            if (string.IsNullOrEmpty(Item.ItemWith))
 			{
 				Item.ItemWith = "with";
 			}
@@ -3029,6 +3099,7 @@ namespace TQVaultData
 				"STAFF",
 				"MACE",
 				"SWORD",
+                "RANGEDONEHAND",
 				"AXE",
 				"SHIELD",
 				"BRACELET",
@@ -3036,48 +3107,48 @@ namespace TQVaultData
 				"RING",
 				"BLOCKABSORPTION",
 				"ITEMCOSTSCALEPERCENT", // Added by VillageIdiot
-                "ITEMSKILLLEVEL", // Added by VillageIdiot
-                "USEDELAYTIME", // Added by VillageIdiot
-                "CAMERASHAKEAMPLITUDE", // Added by VillageIdiot
-                "SKILLMAXLEVEL", // Added by VillageIdiot
-                "SKILLCOOLDOWNTIME", // Added by VillageIdiot
-                "EXPANSIONTIME", // Added by VillageIdiot
-                "SKILLTIER", // Added by VillageIdiot
-                "CAMERASHAKEDURATIONSECS", // Added by VillageIdiot
-                "SKILLULTIMATELEVEL", // Added by VillageIdiot
-                "SKILLCONNECTIONSPACING", // Added by VillageIdiot
-                "PETBURSTSPAWN", // Added by VillageIdiot
-                "PETLIMIT", // Added by VillageIdiot
-                "ISPETDISPLAYABLE", // Added by VillageIdiot
-                "SPAWNOBJECTSTIMETOLIVE", // Added by VillageIdiot
-                "SKILLPROJECTILENUMBER", // Added by VillageIdiot
-                "SKILLMASTERYLEVELREQUIRED", // Added by VillageIdiot
-                "EXCLUDERACIALDAMAGE", // Added by VillageIdiot
-                "SKILLWEAPONTINTRED", // Added by VillageIdiot
-                "SKILLWEAPONTINTGREEN", // Added by VillageIdiot
-                "SKILLWEAPONTINTBLUE", // Added by VillageIdiot
-                "DEBUFSKILL", // Added by VillageIdiot
-                "HIDEFROMUI", // Added by VillageIdiot
-                "INSTANTCAST", // Added by VillageIdiot
-                "WAVEENDWIDTH", // Added by VillageIdiot
-                "WAVEDISTANCE",  // Added by VillageIdiot
-                "WAVEDEPTH", // Added by VillageIdiot
-                "WAVESTARTWIDTH", // Added by VillageIdiot
-                "RAGDOLLAMPLIFICATION", // Added by VillageIdiot
-                "WAVETIME", // Added by VillageIdiot
-                "SPARKGAP", // Added by VillageIdiot
-                "SPARKCHANCE", // Added by VillageIdiot
-                "PROJECTILEUSESALLDAMAGE", // Added by VillageIdiot
-                "DROPOFFSET", // Added by VillageIdiot
-                "DROPHEIGHT", // Added by VillageIdiot
-                "NUMPROJECTILES", // Added by VillageIdiot
-                "SWORD", // Added by VillageIdiot
-                "AXE", // Added by VillageIdiot
-                "SPEAR", // Added by VillageIdiot
-                "MACE", // Added by VillageIdiot
-                "QUEST", // Added by VillageIdiot
-                "CANNOTPICKUPMULTIPLE" // Added by VillageIdiot
-            };
+				"ITEMSKILLLEVEL", // Added by VillageIdiot
+				"USEDELAYTIME", // Added by VillageIdiot
+				"CAMERASHAKEAMPLITUDE", // Added by VillageIdiot
+				"SKILLMAXLEVEL", // Added by VillageIdiot
+				"SKILLCOOLDOWNTIME", // Added by VillageIdiot
+				"EXPANSIONTIME", // Added by VillageIdiot
+				"SKILLTIER", // Added by VillageIdiot
+				"CAMERASHAKEDURATIONSECS", // Added by VillageIdiot
+				"SKILLULTIMATELEVEL", // Added by VillageIdiot
+				"SKILLCONNECTIONSPACING", // Added by VillageIdiot
+				"PETBURSTSPAWN", // Added by VillageIdiot
+				"PETLIMIT", // Added by VillageIdiot
+				"ISPETDISPLAYABLE", // Added by VillageIdiot
+				"SPAWNOBJECTSTIMETOLIVE", // Added by VillageIdiot
+				"SKILLPROJECTILENUMBER", // Added by VillageIdiot
+				"SKILLMASTERYLEVELREQUIRED", // Added by VillageIdiot
+				"EXCLUDERACIALDAMAGE", // Added by VillageIdiot
+				"SKILLWEAPONTINTRED", // Added by VillageIdiot
+				"SKILLWEAPONTINTGREEN", // Added by VillageIdiot
+				"SKILLWEAPONTINTBLUE", // Added by VillageIdiot
+				"DEBUFSKILL", // Added by VillageIdiot
+				"HIDEFROMUI", // Added by VillageIdiot
+				"INSTANTCAST", // Added by VillageIdiot
+				"WAVEENDWIDTH", // Added by VillageIdiot
+				"WAVEDISTANCE",  // Added by VillageIdiot
+				"WAVEDEPTH", // Added by VillageIdiot
+				"WAVESTARTWIDTH", // Added by VillageIdiot
+				"RAGDOLLAMPLIFICATION", // Added by VillageIdiot
+				"WAVETIME", // Added by VillageIdiot
+				"SPARKGAP", // Added by VillageIdiot
+				"SPARKCHANCE", // Added by VillageIdiot
+				"PROJECTILEUSESALLDAMAGE", // Added by VillageIdiot
+				"DROPOFFSET", // Added by VillageIdiot
+				"DROPHEIGHT", // Added by VillageIdiot
+				"NUMPROJECTILES", // Added by VillageIdiot
+				"SWORD", // Added by VillageIdiot
+				"AXE", // Added by VillageIdiot
+				"SPEAR", // Added by VillageIdiot
+				"MACE", // Added by VillageIdiot
+				"QUEST", // Added by VillageIdiot
+				"CANNOTPICKUPMULTIPLE" // Added by VillageIdiot
+			};
 
 			if (Array.IndexOf(notWanted, keyUpper) != -1)
 			{
@@ -3835,7 +3906,7 @@ namespace TQVaultData
 		{
 			string duration = null;
 			string color = null;
-			string formatSpec = Database.DB.GetFriendlyName("DamageFixedSingleFormatTime");
+			string formatSpec = Database.DB.GetFriendlyName("DamageSingleFormatTime");
 			if (string.IsNullOrEmpty(formatSpec))
 			{
 				formatSpec = "{0}";
@@ -3881,10 +3952,10 @@ namespace TQVaultData
 		{
 			string duration = null;
 			string color = null;
-			string formatSpec = Database.DB.GetFriendlyName("DamageFixedRangeFormatTime");
+			string formatSpec = Database.DB.GetFriendlyName("DamageRangeFormatTime");
 			if (string.IsNullOrEmpty(formatSpec))
 			{
-				formatSpec = "over {0}..{1} seconds";
+				formatSpec = "for {0}..{1} seconds";
 				color = Database.HtmlColor(Item.GetColor(ItemStyle.Legendary));
 			}
 			else
@@ -4443,17 +4514,23 @@ namespace TQVaultData
 				key = key.Replace("Equation", string.Empty);
 				key = key.Replace(key[0], char.ToUpperInvariant(key[0]));
 
-				// Level needs to be LevelRequirement bah
-				if (key.Equals("Level"))
-				{
-					key = "LevelRequirement";
-				}
-
 				// We need to ignore the cost equations.
 				// Shields have costs so they will cause an overflow.
 				if (key.Equals("Cost"))
 				{
 					continue;
+				}
+
+				var variableKey = key.ToLowerInvariant();
+				if (variableKey == "level" || variableKey == "strength" || variableKey == "dexterity" || variableKey == "intelligence")
+				{
+					variableKey += "Requirement";
+				}
+
+				// Level needs to be LevelRequirement bah
+				if (key.Equals("Level"))
+				{
+					key = "LevelRequirement";
 				}
 
 				string value = variable.ToStringValue().Replace(itemLevelTag, itemLevel);
@@ -4465,7 +4542,7 @@ namespace TQVaultData
 				Expression expression = ExpressionEvaluate.CreateExpression(value);
 
 				// Changed by Bman to fix random overflow crashes
-				Variable ans = new Variable(string.Empty, VariableDataType.Integer, 1);
+				Variable ans = new Variable(variableKey, VariableDataType.Integer, 1);
 
 				// Changed by VillageIdiot to fix random overflow crashes.
 				double tempVal = Math.Ceiling(Convert.ToDouble(expression.Evaluate(), CultureInfo.InvariantCulture));
@@ -4923,16 +5000,41 @@ namespace TQVaultData
 			if (minData != null && maxData != null &&
 				minVar.GetSingle(Math.Min(minVar.NumberOfValues - 1, variableNumber)) != maxVar.GetSingle(Math.Min(maxVar.NumberOfValues - 1, variableNumber)))
 			{
-				amount = this.GetAmountRange(data, variableNumber, minVar, maxVar, ref label, labelColor);
+				if (minDurVar != null)
+				{
+					amount = this.GetAmountRange(data, variableNumber, minVar, maxVar, ref label, labelColor, minDurVar);
+				}
+				else
+				{
+					amount = this.GetAmountRange(data, variableNumber, minVar, maxVar, ref label, labelColor);
+				}
 			}
 			else
 			{
-				amount = this.GetAmountSingle(data, variableNumber, minVar, maxVar, ref label, labelColor);
+				if (minDurVar != null)
+				{
+					amount = this.GetAmountSingle(data, variableNumber, minVar, maxVar, ref label, labelColor, minDurVar);
+				}
+				else
+				{
+					amount = this.GetAmountSingle(data, variableNumber, minVar, maxVar, ref label, labelColor);
+				}
 			}
 
 			// Figure out the duration string
 			string duration = null;
-			if (minDurData != null && maxDurData != null)
+			//If we have both minDurData and maxDurData we also need to check if the actual Values of minDurVar and maxDurVar are actually different
+			float minDurVarValue = -1;
+			float maxDurVarValue = -1;
+			if (minDurData != null)
+			{
+				minDurVarValue = (float)minDurVar[minDurVar.NumberOfValues - 1];
+			}
+			if (maxDurData != null)
+			{
+				maxDurVarValue = (float)maxDurVar[maxDurVar.NumberOfValues - 1];
+			}
+			if (minDurData != null && maxDurData != null && minDurVarValue != maxDurVarValue)
 			{
 				duration = GetDurationRange(variableNumber, minDurVar, maxDurVar);
 			}
@@ -5509,8 +5611,9 @@ namespace TQVaultData
 		/// <param name="maxVar">maxVar variable</param>
 		/// <param name="label">label string</param>
 		/// <param name="labelColor">label color</param>
+		/// <param name="minDurVar">Duration of Damage</param>
 		/// <returns>formatted single amount string</returns>
-		private string GetAmountSingle(ItemAttributesData data, int varNum, Variable minVar, Variable maxVar, ref string label, string labelColor)
+		private string GetAmountSingle(ItemAttributesData data, int varNum, Variable minVar, Variable maxVar, ref string label, string labelColor, Variable minDurVar = null)
 		{
 			string color = null;
 			string amount = null;
@@ -5564,7 +5667,14 @@ namespace TQVaultData
 				// only for floats
 				if (currentVariable.DataType == VariableDataType.Float)
 				{
-					currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] = (float)currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] * this.itemScalePercent;
+					if (minDurVar != null)
+					{
+						currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] = (float)currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues -1] * this.itemScalePercent;
+					}
+					else
+					{
+						currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] = (float)currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] * this.itemScalePercent;
+					}
 				}
 
 				amount = Item.Format(formatSpec, currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)]);
@@ -5588,7 +5698,7 @@ namespace TQVaultData
 		/// <param name="label">label string</param>
 		/// <param name="labelColor">label color</param>
 		/// <returns>formatted range string</returns>
-		private string GetAmountRange(ItemAttributesData data, int varNum, Variable minVar, Variable maxVar, ref string label, string labelColor)
+		private string GetAmountRange(ItemAttributesData data, int varNum, Variable minVar, Variable maxVar, ref string label, string labelColor, Variable minDurVar = null)
 		{
 			// Added by VillageIdiot : check to see if min and max are the same
 			string color = null;
@@ -5638,8 +5748,16 @@ namespace TQVaultData
 
 			// Added by VillageIdiot
 			// Adjust for itemScalePercent
-			minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] = (float)minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] * this.itemScalePercent;
-			maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] = (float)maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] * this.itemScalePercent;
+			if (minDurVar != null)
+			{
+				minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] = (float)minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues - 1] * this.itemScalePercent;
+				maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] = (float)maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues - 1] * this.itemScalePercent;
+			}
+			else
+			{
+				minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] = (float)minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] * this.itemScalePercent;
+				maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] = (float)maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] * this.itemScalePercent;
+			}
 
 			amount = Item.Format(formatSpec, minVar[Math.Min(minVar.NumberOfValues - 1, varNum)], maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)]);
 			amount = Database.MakeSafeForHtml(amount);
@@ -5945,6 +6063,11 @@ namespace TQVaultData
 
 				for (int i = 0; i < numSkills; i++)
 				{
+					if (skills[i] != null && !skills[i].ToLower().StartsWith("records"))
+					{
+						continue;
+					}
+
 					DBRecordCollection skillRecord1 = Database.DB.GetRecordFromFile(skills[i]);
 					DBRecordCollection record = null;
 					string skillClass = skillRecord1.GetString("Class", 0);

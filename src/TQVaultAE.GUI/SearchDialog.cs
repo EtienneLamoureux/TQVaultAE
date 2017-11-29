@@ -43,16 +43,6 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Reverts the form back to the original size.
-		/// </summary>
-		/// <param name="originalSize">Size containing the original form size.</param>
-		protected override void Revert(Size originalSize)
-		{
-			// We should not need this since it does not exist in the old UI.
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
 		/// Handler for clicking the search button on the form.
 		/// </summary>
 		/// <param name="sender">sender object</param>

@@ -380,9 +380,6 @@ Bitte legen Sie den Gegenstand irgendwo ab, vor dem Beenden.</value>
   <data name="MainFormLabel2" xml:space="preserve">
     <value>Tresor:</value>
   </data>
-  <data name="MainFormLabel4" xml:space="preserve">
-    <value>Suche:</value>
-  </data>
   <data name="MainFormLanguageChanged" xml:space="preserve">
     <value>Sprache des Spieles geändert</value>
   </data>
@@ -625,6 +622,9 @@ Soll es Überschrieben werden?</value>
   <data name="ResultsSack" xml:space="preserve">
     <value>Sack</value>
   </data>
+  <data name="ResultsLevel" xml:space="preserve">
+    <value>Level</value>
+  </data>
   <data name="ResultsText" xml:space="preserve">
     <value>{0} Gegenstände mit '{1}' gefunden</value>
   </data>
@@ -777,33 +777,6 @@ langsame Netzwerkverbindung besteht.</value>
     <value>Diese Einstellung schaltet
 das Dropdown-Menü für
 die Modifikationen frei.</value>
-  </data>
-  <data name="SettingsFilterGroup" xml:space="preserve">
-    <value>Spielerauswahl filtern</value>
-  </data>
-  <data name="SettingsFilterIT" xml:space="preserve">
-    <value>IT-Charaktere filtern</value>
-  </data>
-  <data name="SettingsFilterITTT" xml:space="preserve">
-    <value>Nur originale TQ-Charaktere werden in der Charakterauswahl
-angezeigt. Ein Ändern der Einstellung 
-bewirkt ein Neuladen der Charakterauswahl.</value>
-  </data>
-  <data name="SettingsFilterNone" xml:space="preserve">
-    <value>Kein Filter</value>
-  </data>
-  <data name="SettingsFilterNoneTT" xml:space="preserve">
-    <value>Keine Filtrierung der Charakterauswahl.
-Ein Ändern der Einstellung bewirkt
-ein Neuladen der Charakterauswahl.</value>
-  </data>
-  <data name="SettingsFilterTQ" xml:space="preserve">
-    <value>TQ-Charaktere filtern</value>
-  </data>
-  <data name="SettingsFilterTQTT" xml:space="preserve">
-    <value>Nur TI-Charaktere werden in der Charakterauswahl
-angezeigt. Ein Ändern der Einstellung 
-bewirkt ein Neuladen der Charakterauswahl.</value>
   </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Jetzt Überprüfen</value>
@@ -980,27 +953,21 @@ Soll die Funktion "Alle Dateien vorab laden" deaktiviert werden?</value>
   </data>
   <data name="MainFormSearchButtonText" xml:space="preserve">
     <value>Suche</value>
-    <comment>Same as MainFormLabel4</comment>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
     <value>Suche nach einen Gegenstand</value>
   </data>
   <data name="SearchDialogText" xml:space="preserve">
-    <value>Suche nach einen Begriff (Name oder Typ) in allen geladenen Daten.
-Es wird in den geladenen Charakterdaten, Tresoren und den Karawanendaten gesucht.
+    <value>Suche nach Elementen innerhalb der geladenen Dateien: Charakteren, Tresoren und den Karawanenen.
 
-Mit '@' als erstes Zeichen des Begriffes wird nach einem Typ gesucht, nicht nach einer Bezeichung/Namen.
-Zum Beispiel, um nur nach Schwertern zu suchen: @sword
+Sie können die folgenden Suchoptionen kombinieren(alle sind optional):
+* Name: Es muss der erste Suchbegriff sein. Hier ist ein Beispiel: 'arctic &amp; frost'
+* Typ: mit @ am anfang des Suchbegriffs zB '@schwert'
+* Eigenschaft: mit # am Anfang des Suchbegriffs zB '#resistenz'
+* Seltenheit: mit $ am Anfang des Suchbegriffs zB '$episch'
+Sie können | in einem Begriff als ODER-Bedingung benutzen zB '$episch | selten'
 
-Mit '&amp;' nach dem Suchbegriff, kann nach der 'Seltenheit' noch gefiltert werden.
-Um zum Beispiel nach seltene Gegenständen zu filtern, benutzt man zusätzlich '&amp;selten' zum Suchbegriff.
-Die Filter können natürlich auch kombiniert werden, ein '@sword&amp;selten' listet alle seltenen Schwerter auf.</value>
-  </data>
-  <data name="SettingsEnableNewUI" xml:space="preserve">
-    <value>Die neue Benutzeroberfläche aktivieren</value>
-  </data>
-  <data name="SettingsEnableNewUITT" xml:space="preserve">
-    <value>Damit wird die an TQ angepasste Benutzeroberfläche aktiviert.</value>
+Hier ist ein komplexes Beispiel: 'arctic &amp; frost @schwert $ episch | selten'</value>
   </data>
   <data name="GlobalClose" xml:space="preserve">
     <value>Ausfahrt</value>
@@ -1019,5 +986,8 @@ Die Filter können natürlich auch kombiniert werden, ein '@sword&amp;selten' li
   </data>
   <data name="GlobalSize" xml:space="preserve">
     <value>Größe ändern</value>
+  </data>
+  <data name="ItemRagnarok" xml:space="preserve">
+    <value>Ragnarök Gegenstand</value>
   </data>
 </root>

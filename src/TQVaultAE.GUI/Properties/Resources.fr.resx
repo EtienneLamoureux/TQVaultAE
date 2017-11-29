@@ -382,9 +382,6 @@ Veuillez déposer l'objet avant de quitter.</value>
   <data name="MainFormLabel2" xml:space="preserve">
     <value>Coffre :</value>
   </data>
-  <data name="MainFormLabel4" xml:space="preserve">
-    <value>Chercher :</value>
-  </data>
   <data name="MainFormLanguageChanged" xml:space="preserve">
     <value>Langue du jeu modifiée</value>
   </data>
@@ -627,6 +624,9 @@ Etes-vous sûr de vouloir écraser son contenu ?</value>
   <data name="ResultsSack" xml:space="preserve">
     <value>Sac</value>
   </data>
+  <data name="ResultsLevel" xml:space="preserve">
+    <value>Level</value>
+  </data>
   <data name="ResultsText" xml:space="preserve">
     <value>{0} objets trouvés avec '{1}'</value>
   </data>
@@ -776,32 +776,6 @@ le démarrage si la connection internet est lente.</value>
     <value>En cochant cette fonction, vous
 pourrez sélectionner des quêtes
 personnalisées avec le menu déroulant.</value>
-  </data>
-  <data name="SettingsFilterGroup" xml:space="preserve">
-    <value>Filtrer les personnages</value>
-  </data>
-  <data name="SettingsFilterIT" xml:space="preserve">
-    <value>Filtrer les personnages IT</value>
-  </data>
-  <data name="SettingsFilterITTT" xml:space="preserve">
-    <value>Seuls les personnages de TQ original sont affichésdans la liste des personnages.  Un changement de 
-filtre fera recharger la liste des personnages.</value>
-  </data>
-  <data name="SettingsFilterNone" xml:space="preserve">
-    <value>Aucun filtre</value>
-  </data>
-  <data name="SettingsFilterNoneTT" xml:space="preserve">
-    <value>Aucun filtrage de la liste des personnages.
-Un changement de filtre fera 
-recharger la liste des personnages.</value>
-  </data>
-  <data name="SettingsFilterTQ" xml:space="preserve">
-    <value>Filtrer les personnages TQ</value>
-  </data>
-  <data name="SettingsFilterTQTT" xml:space="preserve">
-    <value>Seuls les personnages IT sont affichés dans 
-la liste des personnages.  Un changement de 
-filtre fera recharger la liste des personnages.</value>
   </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Vérifier maintenant</value>
@@ -975,28 +949,21 @@ Would you like to disable loading all files?</value>
   </data>
   <data name="MainFormSearchButtonText" xml:space="preserve">
     <value>Chercher</value>
-    <comment>Same as MainFormLabel4</comment>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
-    <value>Search for an Item</value>
+    <value>Rechercher un article</value>
   </data>
   <data name="SearchDialogText" xml:space="preserve">
-    <value>Search for an item name or type within the loaded files.
-Includes all loaded player character inventories, vaults, player stashes and the transfer stash.
+    <value>Recherchez des éléments dans les fichiers chargés: coffres-forts, stash, inventaires.
 
-Use @ to specify an item type instead of name.  This must be the first character of the search string.
-For example, to search for only swords use @sword
+Vous pouvez combiner les options de recherche suivantes (toutes sont optionnelles):
+* Nom: Ce doit être le premier terme de recherche. Voici un exemple: 'arctique &amp; gel '
+* Catégorie: en utilisant @ au début du terme de recherche par exemple '@sabre'
+* Attributs: en utilisant # au début du terme de recherche par exemple '#résistance'
+* Rareté: en utilisant $ au début du terme de recherche par exemple '$épique'
+Vous pouvez utiliser | dans un terme comme condition OU. '$épique | rare' renvoie tous les objets épiques et rares.
 
-Use &amp; after the name or type to filter by item rarity.
-For example, to filter only rare items append &amp;rare to your search string.
-The terms can also be combined @sword&amp;rare would only search for rare swords.</value>
-  </data>
-  <data name="SettingsEnableNewUI" xml:space="preserve">
-    <value>Enable New User Interface</value>
-  </data>
-  <data name="SettingsEnableNewUITT" xml:space="preserve">
-    <value>Selecting this item will enable the new
-Titan Quest themed user interface.</value>
+Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
   </data>
   <data name="GlobalClose" xml:space="preserve">
     <value>Sortir</value>
@@ -1015,5 +982,8 @@ Titan Quest themed user interface.</value>
   </data>
   <data name="GlobalSize" xml:space="preserve">
     <value>Taille</value>
+  </data>
+  <data name="ItemRagnarok" xml:space="preserve">
+    <value>Objet Ragnarök</value>
   </data>
 </root>

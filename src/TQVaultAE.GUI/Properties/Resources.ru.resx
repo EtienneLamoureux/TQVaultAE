@@ -379,9 +379,6 @@ configuration to reflect the link.</value>
   <data name="MainFormLabel2" xml:space="preserve">
     <value>Сундук:</value>
   </data>
-  <data name="MainFormLabel4" xml:space="preserve">
-    <value>Поиск:</value>
-  </data>
   <data name="MainFormLanguageChanged" xml:space="preserve">
     <value>Язык игры изменён</value>
   </data>
@@ -634,6 +631,9 @@ Are you sure you want to overwrite?</value>
   <data name="ResultsSack" xml:space="preserve">
     <value>Сумка</value>
   </data>
+  <data name="ResultsLevel" xml:space="preserve">
+    <value>уровень</value>
+  </data>
   <data name="ResultsText" xml:space="preserve">
     <value>{0} предметов найдено по запросу '{1}'</value>
   </data>
@@ -783,33 +783,6 @@ take longer if the network connection is slow.</value>
     <value>Selecting this item will 
 enable the dropdown
 to select custom maps.</value>
-  </data>
-  <data name="SettingsFilterGroup" xml:space="preserve">
-    <value>Filter Player List</value>
-  </data>
-  <data name="SettingsFilterIT" xml:space="preserve">
-    <value>Filter IT Characters</value>
-  </data>
-  <data name="SettingsFilterITTT" xml:space="preserve">
-    <value>Only original TQ Characters are shown on the
-character list.  Changing these items causes 
-the character list to be reloaded.</value>
-  </data>
-  <data name="SettingsFilterNone" xml:space="preserve">
-    <value>No Filter</value>
-  </data>
-  <data name="SettingsFilterNoneTT" xml:space="preserve">
-    <value>No filtration of the character list.
-Changing these items causes the character list
-to be reloaded.</value>
-  </data>
-  <data name="SettingsFilterTQ" xml:space="preserve">
-    <value>Filter TQ Characters</value>
-  </data>
-  <data name="SettingsFilterTQTT" xml:space="preserve">
-    <value>Only IT Characters are shown on the character list.
-Changing these items causes the character list
-to be reloaded.</value>
   </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Check Now</value>
@@ -983,28 +956,21 @@ Would you like to disable loading all files?</value>
   </data>
   <data name="MainFormSearchButtonText" xml:space="preserve">
     <value>Поиск</value>
-    <comment>Same as MainFormLabel4</comment>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
     <value>Search for an Item</value>
   </data>
   <data name="SearchDialogText" xml:space="preserve">
-    <value>Search for an item name or type within the loaded files.
-Includes all loaded player character inventories, vaults, player stashes and the transfer stash.
+    <value>Поиск элементов в загруженных файлах: хранилищах, записях, запасах.
 
-Use @ to specify an item type instead of name.  This must be the first character of the search string.
-For example, to search for only swords use @sword
+Вы можете комбинировать следующие параметры поиска:
+* имя: Это должен быть первый поисковый запрос. Вот пример: 'полярный &amp; иней'
+* Тип: используя @ в начале поискового запроса, например '@меч'
+* Атрибуты: используя # в начале поискового запроса, например '#сопротивление'
+* раритет: используя $ в начале поискового запроса, например '$редкий'
+Вы можете использовать | в терминах как условие ИЛИ. '$редкий | эпический' все распространенные и все редкие
 
-Use &amp; after the name or type to filter by item rarity.
-For example, to filter only rare items append &amp;rare to your search string.
-The terms can also be combined @sword&amp;rare would only search for rare swords.</value>
-  </data>
-  <data name="SettingsEnableNewUI" xml:space="preserve">
-    <value>Enable New User Interface</value>
-  </data>
-  <data name="SettingsEnableNewUITT" xml:space="preserve">
-    <value>Selecting this item will enable the new
-Titan Quest themed user interface.</value>
+Вот сложный пример: 'полярный &amp; иней @меч $редкий | эпический'</value>
   </data>
   <data name="GlobalClose" xml:space="preserve">
     <value>выход</value>
@@ -1023,5 +989,8 @@ Titan Quest themed user interface.</value>
   </data>
   <data name="GlobalSize" xml:space="preserve">
     <value>размер</value>
+  </data>
+  <data name="ItemRagnarok" xml:space="preserve">
+    <value>Предмет Ragnarök</value>
   </data>
 </root>

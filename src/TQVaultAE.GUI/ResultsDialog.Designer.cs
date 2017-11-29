@@ -31,14 +31,14 @@ namespace TQVaultAE.GUI
 		private System.Windows.Forms.DataGridViewTextBoxColumn containerName;
 
 		/// <summary>
-		/// Data Grid View sack column
-		/// </summary>
-		private System.Windows.Forms.DataGridViewTextBoxColumn sack;
-
-		/// <summary>
 		/// Data Grid View container type column
 		/// </summary>
 		private System.Windows.Forms.DataGridViewTextBoxColumn containerType;
+
+		/// <summary>
+		/// Data Grid View level column
+		/// </summary>
+		private System.Windows.Forms.DataGridViewTextBoxColumn level;
 
 		/// <summary>
 		/// Required designer variable.
@@ -77,7 +77,7 @@ namespace TQVaultAE.GUI
 			this.item = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.quality = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.containerName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.sack = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.level = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.containerType = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			((System.ComponentModel.ISupportInitialize)(this.resultsDataGridView)).BeginInit();
 			this.SuspendLayout();
@@ -105,8 +105,8 @@ namespace TQVaultAE.GUI
 			this.item,
 			this.quality,
 			this.containerName,
-			this.sack,
-			this.containerType});
+			this.containerType,
+			this.level});
 			this.resultsDataGridView.GridColor = System.Drawing.Color.Khaki;
 			this.resultsDataGridView.Location = new System.Drawing.Point(8, 28);
 			this.resultsDataGridView.MultiSelect = false;
@@ -168,33 +168,33 @@ namespace TQVaultAE.GUI
 			this.containerName.ReadOnly = true;
 			this.containerName.Width = 84;
 			// 
-			// sack
+			// containerType
 			// 
-			this.sack.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.containerType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
 			dataGridViewCellStyle5.Font = new System.Drawing.Font("Albertus MT", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle5.ForeColor = System.Drawing.Color.White;
 			dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.Gold;
 			dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.Black;
-			this.sack.DefaultCellStyle = dataGridViewCellStyle5;
-			this.sack.HeaderText = "Sack";
-			this.sack.Name = "sack";
-			this.sack.ReadOnly = true;
-			this.sack.Width = 54;
+			this.containerType.DefaultCellStyle = dataGridViewCellStyle5;
+			this.containerType.HeaderText = "ContainerType";
+			this.containerType.Name = "containerType";
+			this.containerType.ReadOnly = true;
+			this.containerType.Width = 111;
 			// 
-			// containerType
+			// level
 			// 
-			this.containerType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.level.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			dataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
 			dataGridViewCellStyle6.Font = new System.Drawing.Font("Albertus MT", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle6.ForeColor = System.Drawing.Color.White;
 			dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.Gold;
 			dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.Black;
-			this.containerType.DefaultCellStyle = dataGridViewCellStyle6;
-			this.containerType.HeaderText = "ContainerType";
-			this.containerType.Name = "containerType";
-			this.containerType.ReadOnly = true;
-			this.containerType.Width = 111;
+			this.level.DefaultCellStyle = dataGridViewCellStyle6;
+			this.level.HeaderText = "Level";
+			this.level.Name = "level";
+			this.level.ReadOnly = true;
+			this.level.Width = 45;
 			// 
 			// ResultsDialog
 			// 

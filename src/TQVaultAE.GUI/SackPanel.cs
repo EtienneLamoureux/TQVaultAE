@@ -443,9 +443,9 @@ namespace TQVaultAE.GUI
 			{
 				// yep.
 				/*if (this.m_getToolTip != null)
-                {
-                    return this.m_getToolTip(this);
-                }*/
+				{
+					return this.m_getToolTip(this);
+				}*/
 			}
 
 			return null;
@@ -503,7 +503,8 @@ namespace TQVaultAE.GUI
 			// Sort the items and put them in a temporary sack.
 			SackCollection tempSack = new SackCollection();
 			var autoSortQuery = from Item item in this.Sack
-								orderby (((item.Height * 3) + item.Width) * 100) + item.ItemGroup descending
+								orderby (((item.Height * 3) + item.Width) * 100)  descending, item.ItemGroup descending, item.BaseItemId, item.IsRelicComplete descending
+
 								select item;
 
 			foreach (Item item in autoSortQuery)
@@ -516,10 +517,11 @@ namespace TQVaultAE.GUI
 				return;
 			}
 
-			// Toggle sorting direction.
-			this.sortVertical = !this.sortVertical;
+			SackCollection backUpSack = this.Sack.Duplicate();
 
 			this.Sack.EmptySack();
+			// Toggle sorting direction.
+			this.sortVertical = !this.sortVertical;
 
 			int param1 = this.SackSize.Height;
 			int param2 = this.SackSize.Width;
@@ -607,8 +609,14 @@ namespace TQVaultAE.GUI
 				// so we have a problem since they all should fit.
 				if (!itemPlaced)
 				{
-					MessageBox.Show(Resources.SackPanelAutoSortErrorMsg, Resources.SackPanelAutoSortError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-					throw new NotImplementedException("Error Autosorting");
+					this.sortVertical = !this.sortVertical;
+					this.Sack.EmptySack();
+					foreach (Item item in backUpSack)
+					{
+						this.Sack.AddItem(item.Clone());
+					}
+					this.Sack.IsModified = false;
+					return;
 				}
 			}
 
@@ -1328,7 +1336,7 @@ namespace TQVaultAE.GUI
 		/// <param name="e">MouseEventArgs data</param>
 		protected virtual void MouseDownCallback(object sender, MouseEventArgs e)
 		{
-			if (this.Sack == null)
+			if (this.Sack == null || (Settings.Default.PlayerReadonly == true && this.SackType == SackType.Equipment))
 			{
 				return;
 			}

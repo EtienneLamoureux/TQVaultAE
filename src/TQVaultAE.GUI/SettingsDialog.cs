@@ -49,16 +49,6 @@ namespace TQVaultAE.GUI
 		private bool loadLastVault;
 
 		/// <summary>
-		/// Indicates whether Immortal Throne characters are filtered from the player list
-		/// </summary>
-		private bool filterITChars;
-
-		/// <summary>
-		/// Indicates whether vanilla Titan Quest characters are filtered from the player list
-		/// </summary>
-		private bool filterTQChars;
-
-		/// <summary>
 		/// Indicates whether the language will be auto detected
 		/// </summary>
 		private bool detectLanguage;
@@ -99,19 +89,14 @@ namespace TQVaultAE.GUI
 		private bool loadAllFiles;
 
 		/// <summary>
-		/// Indicates whether the new User Interface is enabled.
-		/// </summary>
-		private bool enableNewUI;
-
-		/// <summary>
-		/// Indicates whether new versions are checked for on startup
-		/// </summary>
-		private bool checkForNewVersions;
-
-		/// <summary>
 		/// Indicates whether warning messages are suppressed
 		/// </summary>
 		private bool suppressWarnings;
+
+		/// <summary>
+		/// Indicates whether player items will be readonly.
+		/// </summary>
+		private bool playerReadonly;
 
 		/// <summary>
 		/// Indicates whether the vault path has been changed
@@ -166,14 +151,6 @@ namespace TQVaultAE.GUI
 			this.customMapLabel.Text = Resources.SettingsLabel5;
 			this.detectGamePathsCheckBox.Text = Resources.SettingsDetectGamePath;
 			this.detectLanguageCheckBox.Text = Resources.SettingsDetectLanguage;
-			this.playerListGroupBox.Text = Resources.SettingsFilterGroup;
-			this.playerListGroupBox.ForeColor = Color.White;
-			this.noFilterRadioButton.Text = Resources.SettingsFilterNone;
-			this.toolTip.SetToolTip(this.noFilterRadioButton, Resources.SettingsFilterNoneTT);
-			this.filterITCharsRadioButton.Text = Resources.SettingsFilterIT;
-			this.toolTip.SetToolTip(this.filterITCharsRadioButton, Resources.SettingsFilterITTT);
-			this.filterTQCharsRadioButton.Text = Resources.SettingsFilterTQ;
-			this.toolTip.SetToolTip(this.filterTQCharsRadioButton, Resources.SettingsFilterTQTT);
 			this.enableCustomMapsCheckBox.Text = Resources.SettingsEnableMod;
 			this.toolTip.SetToolTip(this.enableCustomMapsCheckBox, Resources.SettingsEnableModTT);
 			this.skipTitleCheckBox.Text = Resources.SettingsSkipTitle;
@@ -190,26 +167,15 @@ namespace TQVaultAE.GUI
 			this.toolTip.SetToolTip(this.loadAllFilesCheckBox, Resources.SettingsPreLoadTT);
 			this.suppressWarningsCheckBox.Text = Resources.SettingsNoWarning;
 			this.toolTip.SetToolTip(this.suppressWarningsCheckBox, Resources.SettingsNoWarningTT);
-			this.checkForUpdatesCheckBox.Text = Resources.SettingsAutoUpdate;
-			this.toolTip.SetToolTip(this.checkForUpdatesCheckBox, Resources.SettingsAutoUpdateTT);
+			this.playerReadonlyCheckbox.Text = Resources.SettingsPlayerReadonly;
+			this.toolTip.SetToolTip(this.playerReadonlyCheckbox, Resources.SettingsPlayerReadonlyTT);
 			this.resetButton.Text = Resources.SettingsReset;
 			this.toolTip.SetToolTip(this.resetButton, Resources.SettingsResetTT);
-			this.checkNowButton.Text = Resources.SettingsForceCheck;
-			this.toolTip.SetToolTip(this.checkNowButton, Resources.SettingsForceCheckTT);
-			this.enableNewUICheckBox.Text = Resources.SettingsEnableNewUI;
-			this.toolTip.SetToolTip(this.enableNewUICheckBox, Resources.SettingsEnableNewUITT);
 			this.cancelButton.Text = Resources.GlobalCancel;
 			this.okayButton.Text = Resources.GlobalOK;
 			this.Text = Resources.SettingsTitle;
 
-			if (Settings.Default.EnableNewUI)
-			{
-				this.DrawCustomBorder = true;
-			}
-			else
-			{
-				this.Revert(new Size(713, 399));
-			}
+			this.DrawCustomBorder = true;
 
 			this.mapListComboBox.Items.Clear();
 			this.mapListComboBox.Items.Add(string.Empty);
@@ -311,129 +277,6 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Reverts the form and controls to their original size, location and font.
-		/// </summary>
-		/// <param name="originalSize">Size of the orinal form.</param>
-		protected override void Revert(Size originalSize)
-		{
-			this.DrawCustomBorder = false;
-			this.ClientSize = originalSize;
-
-			Font orignalFont = new System.Drawing.Font("Albertus MT", 9.0F);
-			this.allowItemEditCheckBox.Font = orignalFont;
-			this.allowItemEditCheckBox.Location = new Point(12, 221);
-			this.allowItemEditCheckBox.Size = new Size(166, 18);
-
-			this.allowItemCopyCheckBox.Font = orignalFont;
-			this.allowItemCopyCheckBox.Location = new Point(12, 245);
-			this.allowItemCopyCheckBox.Size = new Size(130, 18);
-
-			this.skipTitleCheckBox.Font = orignalFont;
-			this.skipTitleCheckBox.Location = new Point(12, 197);
-			this.skipTitleCheckBox.Size = new Size(199, 18);
-
-			this.loadLastCharacterCheckBox.Font = orignalFont;
-			this.loadLastCharacterCheckBox.Location = new Point(12, 269);
-			this.loadLastCharacterCheckBox.Size = new Size(264, 18);
-
-			this.loadLastVaultCheckBox.Font = orignalFont;
-			this.loadLastVaultCheckBox.Location = new Point(12, 293);
-			this.loadLastVaultCheckBox.Size = new Size(242, 18);
-
-			this.noFilterRadioButton.Font = orignalFont;
-			this.noFilterRadioButton.Location = new Point(6, 20);
-			this.noFilterRadioButton.Size = new Size(71, 18);
-
-			this.filterITCharsRadioButton.Font = orignalFont;
-			this.filterITCharsRadioButton.Location = new Point(6, 68);
-			this.filterITCharsRadioButton.Size = new Size(123, 18);
-
-			this.filterTQCharsRadioButton.Font = orignalFont;
-			this.filterTQCharsRadioButton.Location = new Point(6, 44);
-			this.filterTQCharsRadioButton.Size = new Size(131, 18);
-
-			this.vaultPathTextBox.Font = orignalFont;
-			this.vaultPathTextBox.Location = new Point(12, 26);
-			this.vaultPathTextBox.Size = new Size(300, 21);
-
-			this.vaultPathLabel.Font = orignalFont;
-			this.vaultPathLabel.Location = new Point(12, 9);
-			this.vaultPathLabel.Size = new Size(62, 14);
-
-			this.enableCustomMapsCheckBox.Font = orignalFont;
-			this.enableCustomMapsCheckBox.Location = new Point(12, 161);
-			this.enableCustomMapsCheckBox.Size = new Size(134, 18);
-
-			this.loadAllFilesCheckBox.Font = orignalFont;
-			this.loadAllFilesCheckBox.Location = new Point(371, 245);
-			this.loadAllFilesCheckBox.Size = new Size(227, 18);
-
-			this.checkForUpdatesCheckBox.Font = orignalFont;
-			this.checkForUpdatesCheckBox.Location = new Point(371, 293);
-			this.checkForUpdatesCheckBox.Size = new Size(201, 18);
-
-			this.suppressWarningsCheckBox.Font = orignalFont;
-			this.suppressWarningsCheckBox.Location = new Point(12, 317);
-			this.suppressWarningsCheckBox.Size = new Size(182, 18);
-
-			this.enableNewUICheckBox.Font = orignalFont;
-			this.enableNewUICheckBox.Location = new Point(371, 269);
-			this.enableNewUICheckBox.Size = new Size(159, 18);
-
-			this.languageComboBox.Font = orignalFont;
-			this.languageComboBox.Location = new Point(12, 67);
-			this.languageComboBox.Size = new Size(300, 22);
-
-			this.languageLabel.Font = orignalFont;
-			this.languageLabel.Location = new Point(12, 50);
-			this.languageLabel.Size = new Size(89, 14);
-
-			this.detectLanguageCheckBox.Font = orignalFont;
-			this.detectLanguageCheckBox.Location = new Point(12, 95);
-			this.detectLanguageCheckBox.Size = new Size(136, 18);
-
-			this.titanQuestPathTextBox.Font = orignalFont;
-			this.titanQuestPathTextBox.Location = new Point(371, 26);
-			this.titanQuestPathTextBox.Size = new Size(300, 21);
-
-			this.titanQuestPathLabel.Font = orignalFont;
-			this.titanQuestPathLabel.Location = new Point(371, 9);
-			this.titanQuestPathLabel.Size = new Size(85, 14);
-
-			this.immortalThronePathLabel.Font = orignalFont;
-			this.immortalThronePathLabel.Location = new Point(371, 50);
-			this.immortalThronePathLabel.Size = new Size(77, 14);
-
-			this.immortalThronePathTextBox.Font = orignalFont;
-			this.immortalThronePathTextBox.Location = new Point(371, 67);
-			this.immortalThronePathTextBox.Size = new Size(300, 21);
-
-			this.detectGamePathsCheckBox.Font = orignalFont;
-			this.detectGamePathsCheckBox.Location = new Point(371, 95);
-			this.detectGamePathsCheckBox.Size = new Size(147, 18);
-
-			this.customMapLabel.Font = orignalFont;
-			this.customMapLabel.Location = new Point(12, 116);
-			this.customMapLabel.Size = new Size(74, 14);
-
-			this.mapListComboBox.Font = orignalFont;
-			this.mapListComboBox.Location = new Point(12, 133);
-			this.mapListComboBox.Size = new Size(300, 22);
-
-			this.playerListGroupBox.Font = orignalFont;
-			this.playerListGroupBox.Location = new Point(371, 129);
-			this.playerListGroupBox.Size = new Size(213, 100);
-
-			this.cancelButton.Revert(new Point(371, 364), new Size(75, 23));
-			this.okayButton.Revert(new Point(269, 364), new Size(75, 23));
-			this.resetButton.Revert(new Point(628, 364), new Size(75, 23));
-			this.vaultPathBrowseButton.Revert(new Point(318, 26), new Size(26, 23));
-			this.checkNowButton.Revert(new Point(613, 293), new Size(90, 42));
-			this.titanQuestPathBrowseButton.Revert(new Point(677, 26), new Size(26, 23));
-			this.immortalThronePathBrowseButton.Revert(new Point(677, 67), new Size(26, 23));
-		}
-
-		/// <summary>
 		/// Override of ScaleControl which supports font scaling.
 		/// </summary>
 		/// <param name="factor">SizeF for the scale factor</param>
@@ -441,14 +284,6 @@ namespace TQVaultAE.GUI
 		protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 		{
 			this.Font = new Font(this.Font.Name, this.Font.SizeInPoints * factor.Height, this.Font.Style);
-			if (this.playerListGroupBox != null && this.playerListGroupBox.Font != null)
-			{
-				this.playerListGroupBox.Font = new Font(
-					this.playerListGroupBox.Font.Name,
-					this.playerListGroupBox.Font.SizeInPoints * factor.Height,
-					this.playerListGroupBox.Font.Style);
-			}
-
 			base.ScaleControl(factor, specified);
 		}
 
@@ -537,10 +372,7 @@ namespace TQVaultAE.GUI
 			this.allowItemEdit = Settings.Default.AllowItemEdit;
 			this.loadLastCharacter = Settings.Default.LoadLastCharacter;
 			this.loadLastVault = Settings.Default.LoadLastVault;
-			this.filterITChars = Settings.Default.FilterITChars;
-			this.filterTQChars = Settings.Default.FilterTQChars;
 			this.detectLanguage = Settings.Default.AutoDetectLanguage;
-			this.enableNewUI = Settings.Default.EnableNewUI;
 
 			// Force English since there was some issue with getting the proper language setting.
 			if (Database.DB.GameLanguage == null)
@@ -558,8 +390,8 @@ namespace TQVaultAE.GUI
 			this.enableMods = Settings.Default.ModEnabled;
 			this.customMap = Settings.Default.CustomMap;
 			this.loadAllFiles = Settings.Default.LoadAllFiles;
-			this.checkForNewVersions = Settings.Default.CheckForNewVersions;
 			this.suppressWarnings = Settings.Default.SuppressWarnings;
+			this.playerReadonly = Settings.Default.PlayerReadonly;
 
 			this.settingsLoaded = true;
 			this.configurationChanged = false;
@@ -627,9 +459,8 @@ namespace TQVaultAE.GUI
 			this.titanQuestPathTextBox.Enabled = !this.detectGamePath;
 			this.titanQuestPathBrowseButton.Enabled = !this.detectGamePath;
 			this.loadAllFilesCheckBox.Checked = this.loadAllFiles;
-			this.checkForUpdatesCheckBox.Checked = this.checkForNewVersions;
 			this.suppressWarningsCheckBox.Checked = this.suppressWarnings;
-			this.enableNewUICheckBox.Checked = this.enableNewUI;
+			this.playerReadonlyCheckbox.Checked = this.playerReadonly;
 
 			this.enableCustomMapsCheckBox.Checked = this.enableMods;
 			int ind = this.mapListComboBox.FindStringExact(this.customMap);
@@ -647,19 +478,6 @@ namespace TQVaultAE.GUI
 			}
 
 			this.languageComboBox.Enabled = !this.detectLanguage;
-
-			if (!this.filterITChars && !this.filterTQChars)
-			{
-				this.noFilterRadioButton.Checked = true;
-			}
-			else if (!this.filterITChars && this.filterTQChars)
-			{
-				this.filterTQCharsRadioButton.Checked = true;
-			}
-			else if (this.filterITChars && !this.filterTQChars)
-			{
-				this.filterITCharsRadioButton.Checked = true;
-			}
 		}
 
 		/// <summary>
@@ -671,8 +489,6 @@ namespace TQVaultAE.GUI
 		{
 			if (this.configurationChanged)
 			{
-				Settings.Default.FilterITChars = this.filterITChars;
-				Settings.Default.FilterTQChars = this.filterTQChars;
 				Settings.Default.SkipTitle = this.skipTitle;
 				Settings.Default.VaultPath = this.vaultPath;
 				Settings.Default.AllowItemCopy = this.allowItemCopy;
@@ -688,8 +504,7 @@ namespace TQVaultAE.GUI
 				Settings.Default.CustomMap = this.customMap;
 				Settings.Default.LoadAllFiles = this.loadAllFiles;
 				Settings.Default.SuppressWarnings = this.suppressWarnings;
-				Settings.Default.CheckForNewVersions = this.checkForNewVersions;
-				Settings.Default.EnableNewUI = this.enableNewUI;
+				Settings.Default.PlayerReadonly = this.playerReadonly;
 			}
 		}
 
@@ -789,63 +604,6 @@ namespace TQVaultAE.GUI
 				{
 					this.loadLastVault = false;
 					this.configurationChanged = true;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Handler for clicking the no player filter radio button
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void NoFilterRadioButtonCheckedChanged(object sender, EventArgs e)
-		{
-			if (this.noFilterRadioButton.Checked)
-			{
-				if (this.filterITChars || this.filterTQChars)
-				{
-					this.filterITChars = false;
-					this.filterTQChars = false;
-					this.configurationChanged = true;
-					this.playerFilterChanged = true;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Handler for clicking the filter Titan Quest characters radio button
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void FilterTQCharsRadioButtonCheckedChanged(object sender, EventArgs e)
-		{
-			if (this.filterTQCharsRadioButton.Checked)
-			{
-				if (this.filterITChars || !this.filterTQChars)
-				{
-					this.filterITChars = false;
-					this.filterTQChars = true;
-					this.configurationChanged = true;
-					this.playerFilterChanged = true;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Handler for clicking the filter Immortal Throne characters radio button
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void FilterITCharsRadioButtonCheckedChanged(object sender, EventArgs e)
-		{
-			if (this.filterITCharsRadioButton.Checked)
-			{
-				if (!this.filterITChars || this.filterTQChars)
-				{
-					this.filterITChars = true;
-					this.filterTQChars = false;
-					this.configurationChanged = true;
-					this.playerFilterChanged = true;
 				}
 			}
 		}
@@ -1103,31 +861,6 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Handler for clicking the check for updates check box
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void CheckForUpdatesCheckBoxCheckedChanged(object sender, EventArgs e)
-		{
-			if (this.checkForUpdatesCheckBox.Checked)
-			{
-				if (this.checkForNewVersions == false)
-				{
-					this.checkForNewVersions = true;
-					this.configurationChanged = true;
-				}
-			}
-			else
-			{
-				if (this.checkForNewVersions == true)
-				{
-					this.checkForNewVersions = false;
-					this.configurationChanged = true;
-				}
-			}
-		}
-
-		/// <summary>
 		/// Handler for clicking the suppress warnings check box
 		/// </summary>
 		/// <param name="sender">sender object</param>
@@ -1152,53 +885,25 @@ namespace TQVaultAE.GUI
 			}
 		}
 
-		/// <summary>
-		/// Hanlder for clicking the Check Now button
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void CheckNowButtonClick(object sender, EventArgs e)
+		private void PlayerReadonlyCheckboxCheckedChanged(object sender, EventArgs e)
 		{
-			// Need to hide this form since the pop up window shows up behind it.
-			this.Hide();
-
-			// Check for updates
-			UpdateDialog dlg = new UpdateDialog();
-
-			// Show a message even if there are no updates right now.
-			dlg.ShowUpToDateMessage = true;
-			dlg.CheckForUpdates();
-			dlg.Close();
-
-			// Now that the pop up is gone we can show this window again.
-			this.Show();
-		}
-
-		/// <summary>
-		/// Handler for checking the Enable New UI checkbox
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void EnableNewUICheckBoxCheckedChanged(object sender, EventArgs e)
-		{
-			if (this.enableNewUICheckBox.Checked)
+			if (this.playerReadonlyCheckbox.Checked)
 			{
-				if (this.enableNewUI == false)
+				if (this.playerReadonly == false)
 				{
-					this.enableNewUI = true;
+					this.playerReadonly = true;
 					this.configurationChanged = true;
-					this.uiSettingChanged = true;
 				}
 			}
 			else
 			{
-				if (this.enableNewUI == true)
+				if (this.playerReadonly == true)
 				{
-					this.enableNewUI = false;
+					this.playerReadonly = false;
 					this.configurationChanged = true;
-					this.uiSettingChanged = true;
 				}
 			}
+
 		}
 	}
 }

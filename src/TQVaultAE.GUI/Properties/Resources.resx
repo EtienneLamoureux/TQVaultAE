@@ -384,9 +384,6 @@ Please place the item down somewhere before quitting.</value>
   <data name="MainFormLabel2" xml:space="preserve">
     <value>Vault:</value>
   </data>
-  <data name="MainFormLabel4" xml:space="preserve">
-    <value>Find:</value>
-  </data>
   <data name="MainFormLanguageChanged" xml:space="preserve">
     <value>Game Language Changed</value>
   </data>
@@ -640,6 +637,9 @@ Are you sure you want to overwrite?</value>
   <data name="ResultsSack" xml:space="preserve">
     <value>Sack</value>
   </data>
+  <data name="ResultsLevel" xml:space="preserve">
+    <value>Level</value>
+  </data>
   <data name="ResultsText" xml:space="preserve">
     <value>{0} Items Found with '{1}'</value>
   </data>
@@ -790,33 +790,6 @@ take longer if the network connection is slow.</value>
 enable the drop down
 to select custom maps.</value>
   </data>
-  <data name="SettingsFilterGroup" xml:space="preserve">
-    <value>Filter Player List</value>
-  </data>
-  <data name="SettingsFilterIT" xml:space="preserve">
-    <value>Filter IT Characters</value>
-  </data>
-  <data name="SettingsFilterITTT" xml:space="preserve">
-    <value>Only original TQ Characters are shown on the
-character list.  Changing these items causes 
-the character list to be reloaded.</value>
-  </data>
-  <data name="SettingsFilterNone" xml:space="preserve">
-    <value>No Filter</value>
-  </data>
-  <data name="SettingsFilterNoneTT" xml:space="preserve">
-    <value>No filtration of the character list.
-Changing these items causes the character list
-to be reloaded.</value>
-  </data>
-  <data name="SettingsFilterTQ" xml:space="preserve">
-    <value>Filter TQ Characters</value>
-  </data>
-  <data name="SettingsFilterTQTT" xml:space="preserve">
-    <value>Only IT Characters are shown on the character list.
-Changing these items causes the character list
-to be reloaded.</value>
-  </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Check Now</value>
   </data>
@@ -910,7 +883,7 @@ The Storage Area tab will be unavailable for this character.</value>
   <data name="StashPanelText" xml:space="preserve">
     <value>Caravan</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="TQVIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\app.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -1073,28 +1046,21 @@ Would you like to disable loading all files?</value>
   </data>
   <data name="MainFormSearchButtonText" xml:space="preserve">
     <value>Search</value>
-    <comment>Same as MainFormLabel4</comment>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
     <value>Search for an item</value>
   </data>
   <data name="SearchDialogText" xml:space="preserve">
-    <value>Search for an item name or type within the loaded files.
-Includes all loaded player character inventories, vaults, player stashes and the transfer stash.
+    <value>Search for items within the loaded files: vaults, stashes, inventories.
 
-Use '@' to specify an item type instead of name.  This must be the first character of the search string.
-For example, to search for only swords use '@sword'
+You can combine the following search options(all are optional):
+* Name: It must be the first search term. Here is an example: 'arctic &amp; of frost'
+* Type: by using @ at the beginning of the search term for example '@sword'
+* Attributes: by using # at the beginning of the search term for example '#elemental resistance'
+* Rarity: by using $ at the beginning of the search term for example '$rare'
+You can use | in a term as an OR condition. '$common | rare' returns all common and all rare items.
 
-Use '&amp;' after the name or type to filter by item rarity.
-For example, to filter only rare items append '&amp;rare' to your search string.
-The terms can also be combined '@sword&amp;rare' would only search for rare swords.</value>
-  </data>
-  <data name="SettingsEnableNewUI" xml:space="preserve">
-    <value>Enable New User Interface</value>
-  </data>
-  <data name="SettingsEnableNewUITT" xml:space="preserve">
-    <value>Selecting this item will enable the new
-Titan Quest themed user interface.</value>
+Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   </data>
   <data name="BorderBottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\img\borderbottom.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -1173,5 +1139,14 @@ Titan Quest themed user interface.</value>
   </data>
   <data name="ProgressBarFill" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\img\progressbarfill.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SettingsPlayerReadonly" xml:space="preserve">
+    <value>Player Equipment ReadOnly</value>
+  </data>
+  <data name="SettingsPlayerReadonlyTT" xml:space="preserve">
+    <value>Avoid save game corruption that occurs randomly. When enabled, player equipment will be read-only,  you won't be able to select or move any item.</value>
+  </data>
+  <data name="ItemRagnarok" xml:space="preserve">
+    <value>Ragnarök Item</value>
   </data>
 </root>

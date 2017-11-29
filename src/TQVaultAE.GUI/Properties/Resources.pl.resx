@@ -383,9 +383,6 @@ Proszę gdzieś umieścić przedmiot przed wyjściem.</value>
   <data name="MainFormLabel2" xml:space="preserve">
     <value>Skarbiec:</value>
   </data>
-  <data name="MainFormLabel4" xml:space="preserve">
-    <value>Znajdź:</value>
-  </data>
   <data name="MainFormLanguageChanged" xml:space="preserve">
     <value>Język Gry Zmieniony</value>
   </data>
@@ -625,6 +622,9 @@ Na pewno chcesz go zastąpić?</value>
   <data name="ResultsSack" xml:space="preserve">
     <value>Worek</value>
   </data>
+  <data name="ResultsLevel" xml:space="preserve">
+    <value>Level</value>
+  </data>
   <data name="ResultsText" xml:space="preserve">
     <value>{0} Znaleziono Przedmioty z '{1}'</value>
   </data>
@@ -773,33 +773,6 @@ może nastąpić dłuższy start programu.</value>
     <value>Wybranie tego przedmiotu 
 włączy upuszczanie w
 wybranych własnych mapach.</value>
-  </data>
-  <data name="SettingsFilterGroup" xml:space="preserve">
-    <value>Filtruj Listę Gracza</value>
-  </data>
-  <data name="SettingsFilterIT" xml:space="preserve">
-    <value>Filtruj Postacie z IT</value>
-  </data>
-  <data name="SettingsFilterITTT" xml:space="preserve">
-    <value>Tylko pierwotne postacie z TQ są ukazane
-na liście postaci.  Zmiana tych przedmiotów 
-spowoduje ponowne załadowanie listy postaci.</value>
-  </data>
-  <data name="SettingsFilterNone" xml:space="preserve">
-    <value>Brak Filtra</value>
-  </data>
-  <data name="SettingsFilterNoneTT" xml:space="preserve">
-    <value>Brak filtracji listy postaci.
-Zmiana tych przedmiotów spowoduje
-ponowne załadowanie listy postaci.</value>
-  </data>
-  <data name="SettingsFilterTQ" xml:space="preserve">
-    <value>Filtruj postacie z TQ</value>
-  </data>
-  <data name="SettingsFilterTQTT" xml:space="preserve">
-    <value>Tylko postacie z IT są ukazane na liście postaci.
-Zmiana tych przedmiotów spowoduje ponowne
-załadowanie listy postaci.</value>
   </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Sprawdź Teraz</value>
@@ -976,28 +949,21 @@ Would you like to disable loading all files?</value>
   </data>
   <data name="MainFormSearchButtonText" xml:space="preserve">
     <value>Znajdź</value>
-    <comment>Same as MainFormLabel4</comment>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
     <value>Search for an Item</value>
   </data>
   <data name="SearchDialogText" xml:space="preserve">
-    <value>Search for an item name or type within the loaded files.
-Includes all loaded player character inventories, vaults, player stashes and the transfer stash.
+    <value>Wyszukiwanie elementów w wczytywanych plikach: skarbcach, stajniach, zapasach.
 
-Use @ to specify an item type instead of name.  This must be the first character of the search string.
-For example, to search for only swords use @sword
+Możesz połączyć następujące opcje wyszukiwania (wszystkie są opcjonalne):
+* Nazwa: musi to być pierwszy wyszukiwany termin. Oto przykład: 'arktyczny &amp; mróz'
+* Rodzaj: używając @ na początku wyszukiwanego hasła '@miecz'
+* Atrybuty: używając # na początku wyszukiwanego hasła '#odporność'
+* Rzadkość: używając $ na początku wyszukiwanego hasła '$epicki'
+Możesz użyć | w określeniu jako warunek LUB. '$pospolity | epicki' zwraca wszystkie wspólne i epickie elementy.
 
-Use &amp; after the name or type to filter by item rarity.
-For example, to filter only rare items append &amp;rare to your search string.
-The terms can also be combined @sword&amp;rare would only search for rare swords.</value>
-  </data>
-  <data name="SettingsEnableNewUI" xml:space="preserve">
-    <value>Enable New User Interface</value>
-  </data>
-  <data name="SettingsEnableNewUITT" xml:space="preserve">
-    <value>Selecting this item will enable the new
-Titan Quest themed user interface.</value>
+Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</value>
   </data>
   <data name="GlobalClose" xml:space="preserve">
     <value>Wyjście</value>
@@ -1016,5 +982,8 @@ Titan Quest themed user interface.</value>
   </data>
   <data name="GlobalSize" xml:space="preserve">
     <value>Rozmiar</value>
+  </data>
+  <data name="ItemRagnarok" xml:space="preserve">
+    <value>Przedmiot z Ragnarök</value>
   </data>
 </root>

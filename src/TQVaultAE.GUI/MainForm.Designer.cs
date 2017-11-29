@@ -63,16 +63,6 @@ namespace TQVaultAE.GUI
 		private ScalingButton panelSelectButton;
 
 		/// <summary>
-		/// Windows Form Search Text Box
-		/// </summary>
-		private ScalingTextBox searchTextBox;
-
-		/// <summary>
-		/// Windows Form Find Label
-		/// </summary>
-		private ScalingLabel findLabel;
-
-		/// <summary>
 		/// Windows Form Secondary Vault List Dropdown
 		/// </summary>
 		private ScalingComboBox secondaryVaultListComboBox;
@@ -141,24 +131,22 @@ namespace TQVaultAE.GUI
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-			this.exitButton = new ScalingButton();
-			this.characterComboBox = new ScalingComboBox();
-			this.characterLabel = new ScalingLabel();
+			this.exitButton = new TQVaultAE.GUI.ScalingButton();
+			this.characterComboBox = new TQVaultAE.GUI.ScalingComboBox();
+			this.characterLabel = new TQVaultAE.GUI.ScalingLabel();
 			this.itemTextPanel = new System.Windows.Forms.Panel();
-			this.itemText = new ScalingLabel();
-			this.vaultListComboBox = new ScalingComboBox();
-			this.vaultLabel = new ScalingLabel();
-			this.configureButton = new ScalingButton();
-			this.customMapText = new ScalingLabel();
-			this.panelSelectButton = new ScalingButton();
-			this.searchTextBox = new ScalingTextBox();
-			this.findLabel = new ScalingLabel();
-			this.secondaryVaultListComboBox = new ScalingComboBox();
-			this.aboutButton = new ScalingButton();
-			this.titleLabel = new ScalingLabel();
-			this.searchButton = new ScalingButton();
-			this.loadedCharacterLabel = new ScalingLabel();
-			this.loadedVaultLabel = new ScalingLabel();
+			this.itemText = new TQVaultAE.GUI.ScalingLabel();
+			this.vaultListComboBox = new TQVaultAE.GUI.ScalingComboBox();
+			this.vaultLabel = new TQVaultAE.GUI.ScalingLabel();
+			this.configureButton = new TQVaultAE.GUI.ScalingButton();
+			this.customMapText = new TQVaultAE.GUI.ScalingLabel();
+			this.panelSelectButton = new TQVaultAE.GUI.ScalingButton();
+			this.secondaryVaultListComboBox = new TQVaultAE.GUI.ScalingComboBox();
+			this.aboutButton = new TQVaultAE.GUI.ScalingButton();
+			this.titleLabel = new TQVaultAE.GUI.ScalingLabel();
+			this.searchButton = new TQVaultAE.GUI.ScalingButton();
+			this.loadedCharacterLabel = new TQVaultAE.GUI.ScalingLabel();
+			this.loadedVaultLabel = new TQVaultAE.GUI.ScalingLabel();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.fadeInTimer = new System.Windows.Forms.Timer(this.components);
 			this.itemTextPanel.SuspendLayout();
@@ -308,28 +296,7 @@ namespace TQVaultAE.GUI
 			this.panelSelectButton.UseCustomGraphic = true;
 			this.panelSelectButton.UseVisualStyleBackColor = false;
 			this.panelSelectButton.Click += new System.EventHandler(this.PanelSelectButtonClick);
-			//
-			// searchTextBox
-			//
-			this.searchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-			this.searchTextBox.Location = new System.Drawing.Point(252, 263);
-			this.searchTextBox.Name = "searchTextBox";
-			this.searchTextBox.Size = new System.Drawing.Size(413, 20);
-			this.searchTextBox.TabIndex = 13;
-			this.searchTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchTextBoxKeyDown);
-			this.searchTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SearchTextBoxKeyPress);
-			//
-			// findLabel
-			//
-			this.findLabel.BackColor = System.Drawing.Color.Transparent;
-			this.findLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-			this.findLabel.Location = new System.Drawing.Point(179, 266);
-			this.findLabel.Name = "findLabel";
-			this.findLabel.Size = new System.Drawing.Size(62, 13);
-			this.findLabel.TabIndex = 14;
-			this.findLabel.Text = "Find:";
-			this.findLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			//
+			// 
 			// secondaryVaultListComboBox
 			//
 			this.secondaryVaultListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -436,7 +403,7 @@ namespace TQVaultAE.GUI
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-			this.BackgroundImage = Resources.MainForm_NewBackground;
+			this.BackgroundImage = global::TQVaultAE.GUI.Properties.Resources.MainForm_NewBackground;
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 			this.CancelButton = this.exitButton;
 			this.ClientSize = new System.Drawing.Size(1269, 637);
@@ -446,8 +413,6 @@ namespace TQVaultAE.GUI
 			this.Controls.Add(this.searchButton);
 			this.Controls.Add(this.aboutButton);
 			this.Controls.Add(this.secondaryVaultListComboBox);
-			this.Controls.Add(this.findLabel);
-			this.Controls.Add(this.searchTextBox);
 			this.Controls.Add(this.panelSelectButton);
 			this.Controls.Add(this.customMapText);
 			this.Controls.Add(this.configureButton);
@@ -485,8 +450,6 @@ namespace TQVaultAE.GUI
 			this.Controls.SetChildIndex(this.configureButton, 0);
 			this.Controls.SetChildIndex(this.customMapText, 0);
 			this.Controls.SetChildIndex(this.panelSelectButton, 0);
-			this.Controls.SetChildIndex(this.searchTextBox, 0);
-			this.Controls.SetChildIndex(this.findLabel, 0);
 			this.Controls.SetChildIndex(this.secondaryVaultListComboBox, 0);
 			this.Controls.SetChildIndex(this.aboutButton, 0);
 			this.Controls.SetChildIndex(this.searchButton, 0);

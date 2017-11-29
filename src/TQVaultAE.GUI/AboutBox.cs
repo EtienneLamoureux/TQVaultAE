@@ -36,16 +36,7 @@ namespace TQVaultAE.GUI
 			////this.labelCompanyName.Text = AssemblyCompany;
 			this.textBoxDescription.Text = Resources.AboutDescription; // AssemblyDescription;
 
-			// Check to see if we want to display the old UI.
-			// There are other checks below as well when creating the panels.
-			if (Settings.Default.EnableNewUI)
-			{
-				this.DrawCustomBorder = true;
-			}
-			else
-			{
-				this.Revert(new Size(435, 283));
-			}
+			this.DrawCustomBorder = true;
 		}
 
 		#region Assembly Attribute Accessors
@@ -192,49 +183,6 @@ namespace TQVaultAE.GUI
 			}
 
 			base.ScaleControl(factor, specified);
-		}
-
-		/// <summary>
-		/// Reverts the form back to the original skin.
-		/// </summary>
-		/// <param name="originalSize">original size of the form before skinning.</param>
-		protected override void Revert(Size originalSize)
-		{
-			// Restore the borders and set the form back to the original size.
-			this.DrawCustomBorder = false;
-			this.ClientSize = originalSize;
-
-			this.labelProductName.Location = new Point(143, 0);
-			this.labelProductName.Size = new Size(271, 17);
-			this.labelProductName.Font = new Font("Albertus MT", 9.0F, FontStyle.Regular, GraphicsUnit.Point, (byte)0);
-
-			this.labelVersion.Location = new Point(143, 26);
-			this.labelVersion.Size = new Size(271, 17);
-			this.labelVersion.Font = new Font("Albertus MT", 9.0F, FontStyle.Regular, GraphicsUnit.Point, (byte)0);
-
-			this.labelCopyright.Location = new Point(143, 52);
-			this.labelCopyright.Size = new Size(271, 17);
-			this.labelCopyright.Font = new Font("Albertus MT", 9.0F, FontStyle.Regular, GraphicsUnit.Point, (byte)0);
-
-			this.tableLayoutPanel.Location = new Point(9, 9);
-			this.tableLayoutPanel.Size = new Size(417, 265);
-			this.tableLayoutPanel.RowStyles[0].Height = 10.0F;
-			this.tableLayoutPanel.RowStyles[1].Height = 10.0F;
-			this.tableLayoutPanel.RowStyles[2].Height = 16.60377F;
-			this.tableLayoutPanel.RowStyles[3].Height = 3.018868F;
-			this.tableLayoutPanel.RowStyles[4].Height = 50.0F;
-			this.tableLayoutPanel.RowStyles[5].Height = 10.0F;
-
-			this.textBoxDescription.Location = new Point(193, 142);
-			this.textBoxDescription.Size = new Size(372, 173);
-			this.textBoxDescription.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, (byte)0);
-
-			this.buttonOK.Revert(new Point(342, 240), new Size(75, 22));
-
-			this.logoPictureBox.Size = new Size(131, 259);
-			this.logoPictureBox.Image = new Bitmap(
-				Resources.AboutGraphic,
-				new Size(Convert.ToInt32((float)this.logoPictureBox.Size.Width * Database.DB.Scale), Convert.ToInt32((float)this.logoPictureBox.Size.Height * Database.DB.Scale)));
 		}
 	}
 }
