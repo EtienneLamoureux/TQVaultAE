@@ -4483,7 +4483,11 @@ namespace TQVaultData
 			record = Database.DB.GetRecordFromFile(itemCostID);
 			if (record == null)
 			{
-				return;
+				record = Database.DB.GetRecordFromFile("records/game/itemcost.dbr");
+				if (record == null)
+				{
+					return;
+				}
 			}
 
 			if (TQDebug.ItemDebugLevel > 1)
