@@ -29,7 +29,7 @@ An external tool for Titan Quest Anniversary Edition that allows you to trade it
 - Ability to correctly extract database.arz file (TQ Toolset currently does not extract array records correctly and does not let you extract entire database)
 
 ## Installation
-1. Navigate to the [release page](https://github.com/EtienneLamoureux/TQVaultAE/releases)
+1. Navigate to the [release page](https://github.com/NorthFury/TQVaultAE/releases)
 2. Download the latest release
    - If you want an "installer", choose the `.exe` file.
    - To extract the artefacts yourself, choose the `.zip` file.
