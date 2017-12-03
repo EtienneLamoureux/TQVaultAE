@@ -1,4 +1,31 @@
 # Changelog
+## 2.5.0
+### Features
+- Added support for Ragnarök items
+  - #29 Make TQVault recognize Ragnarök items
+- #22 Improved search and search results display
+  - Added "required level" column
+  - Removed "stack number" column
+  - Fixed some tooltips
+- #25 Added an option to make equipped items read-only
+  - Items equipped to a character cannot be interacted with by default
+### Bugs
+- Fixed automatic path detection when using Steam
+- #7 Fixed interface flickering when dragging an item across
+### Other
+- Changed the font back to Albertus MT
+- #8 Disabled the old UI entierly
+- #11 Removed player filters
+  - All characters are "Immortal Throne" characters in the Aniversary Edition
+
+## 2.4.0
+### Features
+- Added support for the Anniversary Edition (steam version)
+  - #1 Make the whole stash accessible from the UI
+### Other
+- Make the new UI the default
+- Remove TQVaultMon
+
 ## 2.3.1.4
 - Enable new UI.
   - Defaults to Off in this release.
