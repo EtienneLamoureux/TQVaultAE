@@ -478,8 +478,8 @@ namespace TQVaultData
 							}
 
 							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error in ARZFile - {0}", arzFile.fileName));
-							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable {2}, bad dataType {3}", this.ID, variableName, dataType));
-							throw new ArgumentOutOfRangeException(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable {2}, bad dataType {3}", this.ID, variableName, dataType));
+							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable {1}, bad dataType {2}", this.ID, variableName, dataType));
+							throw new ArgumentOutOfRangeException(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable {1}, bad dataType {2}", this.ID, variableName, dataType));
 						}
 
 						Variable v = new Variable(variableName, (VariableDataType)dataType, valCount);
