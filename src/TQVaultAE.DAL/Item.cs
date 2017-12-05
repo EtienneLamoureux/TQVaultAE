@@ -1418,6 +1418,11 @@ namespace TQVaultData
 				// If there are not braces assume a 2 character code.
 				text = text.Substring(2);
 			}
+			else if (text.StartsWith("^", StringComparison.OrdinalIgnoreCase))
+			{
+				// If there are not braces assume a 2 character code.
+				text = text.Substring(2);
+			}
 
 			return text;
 		}
@@ -4483,7 +4488,11 @@ namespace TQVaultData
 			record = Database.DB.GetRecordFromFile(itemCostID);
 			if (record == null)
 			{
-				return;
+				record = Database.DB.GetRecordFromFile("records/game/itemcost.dbr");
+				if (record == null)
+				{
+					return;
+				}
 			}
 
 			if (TQDebug.ItemDebugLevel > 1)
