@@ -237,13 +237,6 @@ Esto podría estar causado por un idioma o ruta del juego mal configurada.
   <data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>¡Error cargando recursos!</value>
   </data>
-  <data name="Form1Label1" xml:space="preserve">
-    <value>¡Salve, noble guerrero! Bienvenido a…</value>
-  </data>
-  <data name="Form1Label2" xml:space="preserve">
-    <value>La Colección de los Dioses
-de Titan Quest</value>
-  </data>
   <data name="Form1Label3" xml:space="preserve">
     <value>Un lugar mágico donde almacenar tus poderosos objetos que te ayudarán a proteger el mundo del peligro  de los Titanes.</value>
   </data>

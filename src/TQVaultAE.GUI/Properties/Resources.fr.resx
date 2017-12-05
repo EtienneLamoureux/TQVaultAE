@@ -228,13 +228,6 @@ Voulez-vous redémarrer TQVault ?</value>
   <data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>Erreur en chargeant les ressources</value>
   </data>
-  <data name="Form1Label1" xml:space="preserve">
-    <value>Salut à toi, Noble Guerrier ! Bienvenue dans ...</value>
-  </data>
-  <data name="Form1Label2" xml:space="preserve">
-    <value>Le Coffre des Dieux
-de Titan Quest</value>
-  </data>
   <data name="Form1Label3" xml:space="preserve">
     <value>Un lieu magique où vous pouvez entreposer les puissants artefacts dont vous aurez besoin pour sauver le monde contre les Titans.</value>
   </data>

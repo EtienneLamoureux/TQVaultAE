@@ -336,8 +336,6 @@
     <Content Include="resources\img\StashTabUp.png" />
     <Content Include="resources\img\tqmedallion.JPG" />
     <Content Include="resources\img\tqmedalliondoor.jpg" />
-    <None Include="changelog.txt" />
-    <Content Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TQVaultAE.DAL\TQVaultAE.DAL.csproj">

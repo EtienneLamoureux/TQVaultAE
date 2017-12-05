@@ -12,11 +12,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TQVaultAE")]
-[assembly: AssemblyDescription("External item storage for Titan Quest Anniversary Edition")]
+[assembly: AssemblyDescription("Extra bank space for Titan Quest Anniversary Edition")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("titanquest.net community")]
 [assembly: AssemblyProduct("TQVaultAE")]
-[assembly: AssemblyCopyright("Copyright ©  2006-2012 by Brandon Wallace")]
+[assembly: AssemblyCopyright("Copyright © 2006-2012 by Brandon Wallace")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -34,8 +34,8 @@ using System.Runtime.InteropServices;
 //      Minor Version
 //      Build Number
 //      Revision
-[assembly: AssemblyVersion("2.5.0")]
-[assembly: AssemblyFileVersion("2.5.0")]
+[assembly: AssemblyVersion("2.5.1")]
+[assembly: AssemblyFileVersion("2.5.1")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]
 
 // CLS compliant attribute

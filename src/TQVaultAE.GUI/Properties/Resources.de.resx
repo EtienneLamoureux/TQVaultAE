@@ -226,13 +226,6 @@ Soll TQVault neu gestartet werden?</value>
   <data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>Fehler beim Laden der Ressourcen</value>
   </data>
-  <data name="Form1Label1" xml:space="preserve">
-    <value>Sei gegrüßt, edler Krieger! Willkommen im …</value>
-  </data>
-  <data name="Form1Label2" xml:space="preserve">
-    <value>Titan Quest
-Tresor der Götter</value>
-  </data>
   <data name="Form1Label3" xml:space="preserve">
     <value>Ein magischer Ort, wo Du all deine Artefakte der Macht lagern kannst, die Du brauchst um die Welt vor den Titanen zu schützen.</value>
   </data>

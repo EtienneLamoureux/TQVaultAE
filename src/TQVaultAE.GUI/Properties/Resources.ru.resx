@@ -225,13 +225,6 @@ configuration to reflect the link.</value>
   <data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>Ошибка загрузки ресурсов</value>
   </data>
-  <data name="Form1Label1" xml:space="preserve">
-    <value>Приветствую Великого Воина!  Добро пожаловать...</value>
-  </data>
-  <data name="Form1Label2" xml:space="preserve">
-    <value>The Titan Quest
-Хранилище Богов</value>
-  </data>
   <data name="Form1Label3" xml:space="preserve">
     <value>Волшебное место, где вы можете хранить ваши мощные артефакты, для того чтобы спасти мир от Титанов.</value>
   </data>
