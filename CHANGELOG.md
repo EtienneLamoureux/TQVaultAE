@@ -1,7 +1,9 @@
 # Changelog
 ## 2.5.1
 ### Bugs
-- Various
+- Fixed various items description issues
+### Other
+- Optimized images file size
 
 ## 2.5.0
 ### Features
