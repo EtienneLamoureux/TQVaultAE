@@ -1,4 +1,8 @@
 # Changelog
+## 2.5.1
+### Bugs
+- Various
+
 ## 2.5.0
 ### Features
 - Added support for Ragnarök items

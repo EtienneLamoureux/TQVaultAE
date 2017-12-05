@@ -33,6 +33,7 @@ An external tool that provides extra bank space for Titan Quest Anniversary Edit
 
 ## Installation
 ### Installer
+1. Navigate to the [release page](https://github.com/EtienneLamoureux/TQVaultAE/releases)
 2. Download the latest release's `.exe` file.
    - **Please note:** If you opt for a pre-release, be aware that they are alpha builds.
 3. Double-click the `.exe`.
