@@ -229,13 +229,6 @@ Chcesz zrestartować TQVault?</value>
   <data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>Błąd Przy Ładowaniu Zasobów</value>
   </data>
-  <data name="Form1Label1" xml:space="preserve">
-    <value>Pozdrawiam Cię Szlachetny Wojowniku!  Witaj w...</value>
-  </data>
-  <data name="Form1Label2" xml:space="preserve">
-    <value>Boskim Skarbcu
-gry Titan Quest</value>
-  </data>
   <data name="Form1Label3" xml:space="preserve">
     <value>Magiczne miejsce, gdzie możesz przechować swoje artefakty mocy, które będziesz potrzebował by uratować świat przed Tytanami.</value>
   </data>

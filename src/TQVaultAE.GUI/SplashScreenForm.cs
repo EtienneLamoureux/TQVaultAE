@@ -65,8 +65,6 @@ namespace TQVaultAE.GUI
 			this.InitializeComponent();
 
 			this.Text = Resources.Form1Text;
-			this.label1.Text = Resources.Form1Label1;
-			this.label2.Text = Resources.Form1Label2;
 			this.label3.Text = Resources.Form1Label3;
 			this.exitButton.Text = Resources.GlobalExit;
 			this.nextButton.Text = Resources.Form1bNext;
@@ -76,8 +74,6 @@ namespace TQVaultAE.GUI
 			this.Opacity = 0.0F;
 
 			this.FormBorderStyle = FormBorderStyle.None;
-			this.label1.Visible = false;
-			this.label2.Visible = false;
 			this.fadeInInterval = Settings.Default.FadeInInterval;
 			this.fadeOutInterval = Settings.Default.FadeOutInterval;
 			this.DrawCustomBorder = true;

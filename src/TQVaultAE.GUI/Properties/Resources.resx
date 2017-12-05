@@ -230,13 +230,6 @@ Would you like to restart TQVault?</value>
   <data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>Error Loading Resources</value>
   </data>
-  <data name="Form1Label1" xml:space="preserve">
-    <value>Hail Noble Warrior!  Welcome to...</value>
-  </data>
-  <data name="Form1Label2" xml:space="preserve">
-    <value>The Titan Quest
-Vault Of The Gods</value>
-  </data>
   <data name="Form1Label3" xml:space="preserve">
     <value>A magical place where you can store your artifacts of power that you will need to save the world from the Titans.</value>
   </data>

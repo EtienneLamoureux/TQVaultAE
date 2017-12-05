@@ -591,25 +591,6 @@ namespace TQVaultAE.GUI.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Hail Noble Warrior!  Welcome to....
-        /// </summary>
-        internal static string Form1Label1 {
-            get {
-                return ResourceManager.GetString("Form1Label1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à The Titan Quest
-        ///Vault Of The Gods.
-        /// </summary>
-        internal static string Form1Label2 {
-            get {
-                return ResourceManager.GetString("Form1Label2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à A magical place where you can store your artifacts of power that you will need to save the world from the Titans..
         /// </summary>
         internal static string Form1Label3 {
