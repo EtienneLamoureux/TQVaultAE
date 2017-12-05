@@ -12,6 +12,7 @@
 ### Bugs
 - Fixed automatic path detection when using Steam
 - #7 Fixed interface flickering when dragging an item across
+- #30 Fixed an issue where switching between characters with different number of bags caused an error
 ### Other
 - Changed the font back to Albertus MT
 - #8 Disabled the old UI entierly
