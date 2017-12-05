@@ -109,7 +109,6 @@ namespace TQVaultData
 				// Use 96 DPI which is "normal" for Windows.
 				return 96.0F;
 			}
-		}
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the game language is being auto detected.
