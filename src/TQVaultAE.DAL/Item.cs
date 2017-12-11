@@ -3232,6 +3232,9 @@ namespace TQVaultData
 				case "WEAPONHUNTING_SPEAR":
 					return "spear";
 
+ 				case "WEAPONHUNTING_RANGEDONEHAND":
+ 					return "bow";
+
 				case "WEAPONMELEE_AXE":
 					return "axe";
 
