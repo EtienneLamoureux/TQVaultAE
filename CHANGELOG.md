@@ -1,4 +1,11 @@
 # Changelog
+## 2.5.2
+### Features
+- Added support for throwing weapons
+- Vault size increased to 18x20
+- Reworked UI
+- RemoveRelic disabled when editing is off
+
 ## 2.5.1
 ### Bugs
 - Fixed various items description issues
