@@ -116,9 +116,18 @@
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(SolutionDir)libs" "$(TargetDir)" /y
 
+
 xcopy "$(ProjectDir)bin\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /y /s /i
 cd "$(SolutionDir)bin\$(ConfigurationName)"
-del *.pdb</PostBuildEvent>
+
+if /I NOT "$(ConfigurationName)" == "Debug" (
+del "$(ProjectDir)bin\$(ConfigurationName)\*.pdb" 2&gt; NUL
+del "$(ProjectDir)bin\$(ConfigurationName)\tqdebug.txt" 2&gt; NUL
+del "$(ProjectDir)bin\$(ConfigurationName)\*.vshost.exe" 2&gt; NUL
+del "$(ProjectDir)bin\$(ConfigurationName)\*.vshost.exe.manifest" 2&gt; NUL
+del "$(ProjectDir)bin\$(ConfigurationName)\*.vshost.exe.config" 2&gt; NUL
+)
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
