@@ -131,7 +131,7 @@ namespace TQVaultAE.GUI
 			}
 
 			this.equipmentPanel.SetLocation(new Point(
-				BorderPad + offsetX,
+				offsetX,
 				this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height + offsetY));
 
 			this.maxPanelSize = panelSize;
