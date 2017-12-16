@@ -335,7 +335,7 @@ namespace TQVaultAE.GUI
 			this.titleLabel.BackColor = System.Drawing.Color.Transparent;
 			this.titleLabel.Font = new System.Drawing.Font("Albertus MT Light", 24F);
 			this.titleLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(195)))), ((int)(((byte)(112)))));
-			this.titleLabel.Location = new System.Drawing.Point(1101, 18);
+			this.titleLabel.Location = new System.Drawing.Point(1180, 18);
 			this.titleLabel.Name = "titleLabel";
 			this.titleLabel.Size = new System.Drawing.Size(136, 37);
 			this.titleLabel.TabIndex = 17;
@@ -369,7 +369,7 @@ namespace TQVaultAE.GUI
 			this.loadedCharacterLabel.AutoSize = true;
 			this.loadedCharacterLabel.BackColor = System.Drawing.Color.Transparent;
 			this.loadedCharacterLabel.Font = new System.Drawing.Font("Albertus MT Light", 16F);
-			this.loadedCharacterLabel.Location = new System.Drawing.Point(12, 376);
+			this.loadedCharacterLabel.Location = new System.Drawing.Point(683, 62);
 			this.loadedCharacterLabel.Name = "loadedCharacterLabel";
 			this.loadedCharacterLabel.Size = new System.Drawing.Size(172, 26);
 			this.loadedCharacterLabel.TabIndex = 19;
@@ -380,7 +380,7 @@ namespace TQVaultAE.GUI
 			this.loadedVaultLabel.AutoSize = true;
 			this.loadedVaultLabel.BackColor = System.Drawing.Color.Transparent;
 			this.loadedVaultLabel.Font = new System.Drawing.Font("Albertus MT Light", 16F);
-			this.loadedVaultLabel.Location = new System.Drawing.Point(6, 130);
+			this.loadedVaultLabel.Location = new System.Drawing.Point(52, 130);
 			this.loadedVaultLabel.Name = "loadedVaultLabel";
 			this.loadedVaultLabel.Size = new System.Drawing.Size(127, 26);
 			this.loadedVaultLabel.TabIndex = 20;
@@ -406,7 +406,7 @@ namespace TQVaultAE.GUI
 			this.BackgroundImage = global::TQVaultAE.GUI.Properties.Resources.MainForm_NewBackground;
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 			this.CancelButton = this.exitButton;
-			this.ClientSize = new System.Drawing.Size(1269, 637);
+			this.ClientSize = new System.Drawing.Size(1350, 910);
 			this.ConstrainToDesignRatio = true;
 			this.Controls.Add(this.loadedVaultLabel);
 			this.Controls.Add(this.loadedCharacterLabel);

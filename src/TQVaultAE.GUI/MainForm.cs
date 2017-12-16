@@ -877,12 +877,6 @@ namespace TQVaultAE.GUI
 		private void CreatePanels()
 		{
 			this.CreatePlayerPanel();
-			int textPanelOffset = 0;
-			textPanelOffset = Convert.ToInt32(2.0F * Database.DB.Scale);
-
-			this.itemTextPanel.Location = new Point(this.playerPanel.Location.X, this.playerPanel.Location.Y + this.playerPanel.Height + textPanelOffset);
-			this.itemTextPanel.Size = new Size(this.playerPanel.Width, Convert.ToInt32(22.0F * Database.DB.Scale));
-			this.itemText.Width = this.itemTextPanel.Width - Convert.ToInt32(4.0F * Database.DB.Scale);
 
 			// Put the secondary vault list on top of the player list drop down
 			// since only one can be shown at a time.
@@ -909,6 +903,11 @@ namespace TQVaultAE.GUI
 			this.secondaryVaultPanel.Visible = false;
 			this.lastBag = -1;
 
+			int textPanelOffset = 0;
+			textPanelOffset = Convert.ToInt32(18.0F * Database.DB.Scale);
+			this.itemTextPanel.Size = new Size(this.vaultPanel.Width, Convert.ToInt32(22.0F * Database.DB.Scale));
+			this.itemTextPanel.Location = new Point(this.vaultPanel.Location.X, this.ClientSize.Height - (this.itemTextPanel.Size.Height + textPanelOffset));
+			this.itemText.Width = this.itemTextPanel.Width - Convert.ToInt32(4.0F * Database.DB.Scale);
 			this.GetVaultList(false);
 
 			// Now we always create the stash panel since everyone can have equipment
@@ -1197,13 +1196,12 @@ namespace TQVaultAE.GUI
 		/// <param name="numBags">Number of bags in the vault panel.</param>
 		private void CreateVaultPanel(int numBags)
 		{
-			this.vaultPanel = new VaultPanel(this.dragInfo, numBags, new Size(12, 5), this.tooltip, 1, AutoMoveLocation.Vault);
+			this.vaultPanel = new VaultPanel(this.dragInfo, numBags, new Size(18, 20), this.tooltip, 1, AutoMoveLocation.Vault);
 
-			// Move to the top just below the dropdowns.  Swap the vault and the player panel locations.
-			int locationY = Convert.ToInt32(138.0F * Database.DB.Scale);
+			int locationY = Convert.ToInt32(148.0F * Database.DB.Scale);
 			this.vaultPanel.DrawAsGroupBox = false;
 
-			this.vaultPanel.Location = new Point(Convert.ToInt32(16.0F * Database.DB.Scale), locationY);
+			this.vaultPanel.Location = new Point(Convert.ToInt32(22.0F * Database.DB.Scale), locationY);
 			this.vaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 			this.vaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
 			this.vaultPanel.OnActivateSearch += new EventHandler<SackPanelEventArgs>(this.ActivateSearchCallback);
@@ -1219,11 +1217,14 @@ namespace TQVaultAE.GUI
 		/// <param name="numBags">Number of bags in the secondary vault panel.</param>
 		private void CreateSecondaryVaultPanel(int numBags)
 		{
-			this.secondaryVaultPanel = new VaultPanel(this.dragInfo, numBags, new Size(12, 5), this.tooltip, 1, AutoMoveLocation.SecondaryVault);
+			this.secondaryVaultPanel = new VaultPanel(this.dragInfo, numBags, new Size(18, 20), this.tooltip, 1, AutoMoveLocation.SecondaryVault);
 			this.secondaryVaultPanel.DrawAsGroupBox = false;
 
 			// Place it with the same Y value as the character panel and X value of the vault panel.
-			this.secondaryVaultPanel.Location = new Point(Convert.ToInt32(16.0F * Database.DB.Scale), this.playerPanel.Location.Y);
+			this.secondaryVaultPanel.Location = new Point(
+				this.playerPanel.Location.X,
+				this.vaultPanel.Location.Y);
+
 			this.secondaryVaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 			this.secondaryVaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
 			this.secondaryVaultPanel.OnActivateSearch += new EventHandler<SackPanelEventArgs>(this.ActivateSearchCallback);
@@ -1260,12 +1261,12 @@ namespace TQVaultAE.GUI
 		{
 			this.playerPanel = new PlayerPanel(this.dragInfo, 3, new Size(12, 5), new Size(8, 5), this.tooltip);
 
-			// Move to bottom.  Add scaled 30 pixels (20 for textPanel + 10 for padding).
-			int locationY = this.ClientSize.Height - (this.playerPanel.Height + Convert.ToInt32(30.0F * Database.DB.Scale));
-			int locationX = Convert.ToInt32(16.0F * Database.DB.Scale);
+			this.playerPanel.Location = new Point(
+				this.ClientSize.Width - (this.playerPanel.Width + Convert.ToInt32(22.0F * Database.DB.Scale)),
+				this.vaultListComboBox.Location.Y + Convert.ToInt32(22.0F * Database.DB.Scale));
+
 			this.playerPanel.DrawAsGroupBox = false;
 
-			this.playerPanel.Location = new Point(locationX, locationY);
 			this.playerPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 			this.playerPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
 			this.playerPanel.OnActivateSearch += new EventHandler<SackPanelEventArgs>(this.ActivateSearchCallback);
@@ -1286,9 +1287,10 @@ namespace TQVaultAE.GUI
 			this.stashPanel = new StashPanel(this.dragInfo, panelSize, this.tooltip);
 
 			// New location in bottom right of the Main Form.
+			//Align to playerPanel
 			this.stashPanel.Location = new Point(
-				this.ClientSize.Width - (this.stashPanel.Width + Convert.ToInt32(10.0F * Database.DB.Scale)),
-				this.ClientSize.Height - (this.stashPanel.Height + Convert.ToInt32(5.0F * Database.DB.Scale)));
+				this.playerPanel.Location.X,
+				this.ClientSize.Height - (this.stashPanel.Height + Convert.ToInt32(16.0F * Database.DB.Scale)));
 			this.stashPanel.DrawAsGroupBox = false;
 
 			this.stashPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
@@ -1642,6 +1644,8 @@ namespace TQVaultAE.GUI
 				this.playerPanel.Visible = false;
 				this.playerPanel.SackPanel.ClearSelectedItems();
 				this.playerPanel.BagSackPanel.ClearSelectedItems();
+				this.stashPanel.Visible = false;
+				this.stashPanel.Enabled = false;
 				this.secondaryVaultPanel.Enabled = true;
 				this.secondaryVaultPanel.Visible = true;
 				this.panelSelectButton.Text = Resources.MainFormBtnShowPlayer;
@@ -1683,6 +1687,8 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
+				this.stashPanel.Visible = true;
+				this.stashPanel.Enabled = true;
 				this.secondaryVaultPanel.Enabled = false;
 				this.secondaryVaultPanel.Visible = false;
 				this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
