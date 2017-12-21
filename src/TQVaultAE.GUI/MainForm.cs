@@ -922,8 +922,6 @@ namespace TQVaultAE.GUI
 		{
 			this.DrawCustomBorder = true;
 			this.ResizeCustomAllowed = true;
-			this.loadedCharacterLabel.Text = Resources.PlayerPanelNoPlayer;
-			this.loadedVaultLabel.Text = Resources.PlayerPanelNoVault;
 			this.fadeInterval = Settings.Default.FadeInInterval;
 
 			// Save the height / width ratio for resizing.
@@ -1612,24 +1610,10 @@ namespace TQVaultAE.GUI
 			if (secondaryVault)
 			{
 				this.secondaryVaultPanel.Player = vault;
-				if (this.loadedCharacterLabel.Enabled)
-				{
-					string name = Resources.PlayerPanelNoVault;
-					if (vault != null)
-					{
-						name = vault.PlayerName;
-					}
-
-					this.loadedCharacterLabel.Text = name;
-				}
 			}
 			else
 			{
 				this.vaultPanel.Player = vault;
-				if (this.loadedVaultLabel.Enabled)
-				{
-					this.loadedVaultLabel.Text = vault.PlayerName;
-				}
 			}
 		}
 
@@ -1673,17 +1657,6 @@ namespace TQVaultAE.GUI
 
 				this.secondaryVaultPanel.SackPanel.IsSecondaryVault = true;
 				this.GetSecondaryVaultList();
-
-				if (this.loadedCharacterLabel.Enabled)
-				{
-					string name = Resources.PlayerPanelNoVault;
-					if (this.secondaryVaultPanel.Player != null)
-					{
-						name = this.secondaryVaultPanel.Player.PlayerName;
-					}
-
-					this.loadedCharacterLabel.Text = name;
-				}
 			}
 			else
 			{
@@ -1709,17 +1682,6 @@ namespace TQVaultAE.GUI
 						this.stashPanel.CurrentBag = this.lastBag;
 						this.stashPanel.SackPanel.ClearSelectedItems();
 					}
-				}
-
-				if (this.loadedCharacterLabel.Enabled)
-				{
-					string name = Resources.PlayerPanelNoPlayer;
-					if (this.playerPanel.Player != null)
-					{
-						name = this.playerPanel.Player.PlayerName;
-					}
-
-					this.loadedCharacterLabel.Text = name;
 				}
 
 				this.vaultPanel.SackPanel.SecondaryVaultShown = false;
@@ -1846,11 +1808,6 @@ namespace TQVaultAE.GUI
 				{
 					this.stashPanel.Stash = null;
 				}
-
-				if (this.loadedCharacterLabel.Enabled)
-				{
-					this.loadedCharacterLabel.Text = Resources.PlayerPanelNoPlayer;
-				}
 			}
 		}
 
@@ -1915,11 +1872,6 @@ namespace TQVaultAE.GUI
 				}
 
 				this.playerPanel.Player = player;
-				if (this.loadedCharacterLabel.Enabled)
-				{
-					this.loadedCharacterLabel.Text = player.PlayerName;
-				}
-
 				this.stashPanel.Player = player;
 				this.stashPanel.CurrentBag = 0;
 			}
@@ -3284,7 +3236,6 @@ namespace TQVaultAE.GUI
 					if (this.secondaryVaultPanel.Player != null)
 					{
 						this.secondaryVaultPanel.Player = null;
-						this.loadedCharacterLabel.Text = Resources.PlayerPanelNoVault;
 					}
 				}
 				else
