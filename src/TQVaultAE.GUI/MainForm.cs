@@ -1196,7 +1196,7 @@ namespace TQVaultAE.GUI
 		{
 			this.vaultPanel = new VaultPanel(this.dragInfo, numBags, new Size(18, 20), this.tooltip, 1, AutoMoveLocation.Vault);
 
-			int locationY = Convert.ToInt32(148.0F * Database.DB.Scale);
+			int locationY = this.vaultListComboBox.Location.Y + Convert.ToInt32(28.0F * Database.DB.Scale);
 			this.vaultPanel.DrawAsGroupBox = false;
 
 			this.vaultPanel.Location = new Point(Convert.ToInt32(22.0F * Database.DB.Scale), locationY);
@@ -1220,7 +1220,7 @@ namespace TQVaultAE.GUI
 
 			// Place it with the same Y value as the character panel and X value of the vault panel.
 			this.secondaryVaultPanel.Location = new Point(
-				this.playerPanel.Location.X,
+				this.ClientSize.Width - (this.secondaryVaultPanel.Width + Convert.ToInt32(49.0F * Database.DB.Scale)),
 				this.vaultPanel.Location.Y);
 
 			this.secondaryVaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
@@ -1261,7 +1261,7 @@ namespace TQVaultAE.GUI
 
 			this.playerPanel.Location = new Point(
 				this.ClientSize.Width - (this.playerPanel.Width + Convert.ToInt32(22.0F * Database.DB.Scale)),
-				this.vaultListComboBox.Location.Y + Convert.ToInt32(22.0F * Database.DB.Scale));
+				this.characterComboBox.Location.Y + Convert.ToInt32(28.0F * Database.DB.Scale));
 
 			this.playerPanel.DrawAsGroupBox = false;
 

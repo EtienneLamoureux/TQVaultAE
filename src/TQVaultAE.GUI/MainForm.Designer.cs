@@ -168,7 +168,7 @@ namespace TQVaultAE.GUI
 			//
 			this.characterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.characterComboBox.Font = new System.Drawing.Font("Albertus MT Light", 11F);
-			this.characterComboBox.Location = new System.Drawing.Point(148, 92);
+			this.characterComboBox.Location = new System.Drawing.Point(777, 72);
 			this.characterComboBox.MaxDropDownItems = 10;
 			this.characterComboBox.Name = "characterComboBox";
 			this.characterComboBox.Size = new System.Drawing.Size(481, 26);
@@ -180,9 +180,9 @@ namespace TQVaultAE.GUI
 			this.characterLabel.BackColor = System.Drawing.Color.Transparent;
 			this.characterLabel.Font = new System.Drawing.Font("Albertus MT Light", 11F);
 			this.characterLabel.ForeColor = System.Drawing.Color.White;
-			this.characterLabel.Location = new System.Drawing.Point(3, 85);
+			this.characterLabel.Location = new System.Drawing.Point(681, 72);
 			this.characterLabel.Name = "characterLabel";
-			this.characterLabel.Size = new System.Drawing.Size(139, 37);
+			this.characterLabel.Size = new System.Drawing.Size(90, 24);
 			this.characterLabel.TabIndex = 2;
 			this.characterLabel.Text = "Character:";
 			this.characterLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -209,7 +209,7 @@ namespace TQVaultAE.GUI
 			//
 			this.vaultListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.vaultListComboBox.Font = new System.Drawing.Font("Albertus MT Light", 11F);
-			this.vaultListComboBox.Location = new System.Drawing.Point(148, 62);
+			this.vaultListComboBox.Location = new System.Drawing.Point(108, 72);
 			this.vaultListComboBox.Name = "vaultListComboBox";
 			this.vaultListComboBox.Size = new System.Drawing.Size(481, 26);
 			this.vaultListComboBox.TabIndex = 5;
@@ -220,9 +220,9 @@ namespace TQVaultAE.GUI
 			this.vaultLabel.BackColor = System.Drawing.Color.Transparent;
 			this.vaultLabel.Font = new System.Drawing.Font("Albertus MT Light", 11F);
 			this.vaultLabel.ForeColor = System.Drawing.Color.White;
-			this.vaultLabel.Location = new System.Drawing.Point(27, 63);
+			this.vaultLabel.Location = new System.Drawing.Point(12, 72);
 			this.vaultLabel.Name = "vaultLabel";
-			this.vaultLabel.Size = new System.Drawing.Size(116, 24);
+			this.vaultLabel.Size = new System.Drawing.Size(90, 24);
 			this.vaultLabel.TabIndex = 6;
 			this.vaultLabel.Text = "Vault:";
 			this.vaultLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -289,7 +289,7 @@ namespace TQVaultAE.GUI
 			//
 			this.secondaryVaultListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.secondaryVaultListComboBox.Font = new System.Drawing.Font("Albertus MT Light", 11F);
-			this.secondaryVaultListComboBox.Location = new System.Drawing.Point(148, 106);
+			this.secondaryVaultListComboBox.Location = new System.Drawing.Point(777, 72);
 			this.secondaryVaultListComboBox.MaxDropDownItems = 10;
 			this.secondaryVaultListComboBox.Name = "secondaryVaultListComboBox";
 			this.secondaryVaultListComboBox.Size = new System.Drawing.Size(481, 26);
