@@ -306,7 +306,7 @@ namespace TQVaultAE.GUI
 			this.aboutButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.aboutButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.aboutButton.Image = ((System.Drawing.Image)(resources.GetObject("aboutButton.Image")));
-			this.aboutButton.Location = new System.Drawing.Point(1047, 18);
+			this.aboutButton.Location = new System.Drawing.Point(1130, 18);
 			this.aboutButton.Name = "aboutButton";
 			this.aboutButton.OverBitmap = null;
 			this.aboutButton.Size = new System.Drawing.Size(48, 38);
