@@ -83,16 +83,6 @@ namespace TQVaultAE.GUI
 		private ScalingButton searchButton;
 
 		/// <summary>
-		/// Windows Form Label for the currently loaded character
-		/// </summary>
-		private ScalingLabel loadedCharacterLabel;
-
-		/// <summary>
-		/// Windows Form Label for the currently loaded vault
-		/// </summary>
-		private ScalingLabel loadedVaultLabel;
-
-		/// <summary>
 		/// Background worker to load resources.
 		/// </summary>
 		private System.ComponentModel.BackgroundWorker backgroundWorker1;
@@ -145,8 +135,6 @@ namespace TQVaultAE.GUI
 			this.aboutButton = new TQVaultAE.GUI.ScalingButton();
 			this.titleLabel = new TQVaultAE.GUI.ScalingLabel();
 			this.searchButton = new TQVaultAE.GUI.ScalingButton();
-			this.loadedCharacterLabel = new TQVaultAE.GUI.ScalingLabel();
-			this.loadedVaultLabel = new TQVaultAE.GUI.ScalingLabel();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.fadeInTimer = new System.Windows.Forms.Timer(this.components);
 			this.itemTextPanel.SuspendLayout();
@@ -364,28 +352,6 @@ namespace TQVaultAE.GUI
 			this.searchButton.UseVisualStyleBackColor = false;
 			this.searchButton.Click += new System.EventHandler(this.SearchButtonClick);
 			//
-			// loadedCharacterLabel
-			//
-			this.loadedCharacterLabel.AutoSize = true;
-			this.loadedCharacterLabel.BackColor = System.Drawing.Color.Transparent;
-			this.loadedCharacterLabel.Font = new System.Drawing.Font("Albertus MT Light", 16F);
-			this.loadedCharacterLabel.Location = new System.Drawing.Point(683, 62);
-			this.loadedCharacterLabel.Name = "loadedCharacterLabel";
-			this.loadedCharacterLabel.Size = new System.Drawing.Size(172, 26);
-			this.loadedCharacterLabel.TabIndex = 19;
-			this.loadedCharacterLabel.Text = "Character Name";
-			//
-			// loadedVaultLabel
-			//
-			this.loadedVaultLabel.AutoSize = true;
-			this.loadedVaultLabel.BackColor = System.Drawing.Color.Transparent;
-			this.loadedVaultLabel.Font = new System.Drawing.Font("Albertus MT Light", 16F);
-			this.loadedVaultLabel.Location = new System.Drawing.Point(52, 130);
-			this.loadedVaultLabel.Name = "loadedVaultLabel";
-			this.loadedVaultLabel.Size = new System.Drawing.Size(127, 26);
-			this.loadedVaultLabel.TabIndex = 20;
-			this.loadedVaultLabel.Text = "Vault Name";
-			//
 			// backgroundWorker1
 			//
 			this.backgroundWorker1.WorkerReportsProgress = true;
@@ -408,8 +374,6 @@ namespace TQVaultAE.GUI
 			this.CancelButton = this.exitButton;
 			this.ClientSize = new System.Drawing.Size(1350, 910);
 			this.ConstrainToDesignRatio = true;
-			this.Controls.Add(this.loadedVaultLabel);
-			this.Controls.Add(this.loadedCharacterLabel);
 			this.Controls.Add(this.searchButton);
 			this.Controls.Add(this.aboutButton);
 			this.Controls.Add(this.secondaryVaultListComboBox);
@@ -453,8 +417,6 @@ namespace TQVaultAE.GUI
 			this.Controls.SetChildIndex(this.secondaryVaultListComboBox, 0);
 			this.Controls.SetChildIndex(this.aboutButton, 0);
 			this.Controls.SetChildIndex(this.searchButton, 0);
-			this.Controls.SetChildIndex(this.loadedCharacterLabel, 0);
-			this.Controls.SetChildIndex(this.loadedVaultLabel, 0);
 			this.itemTextPanel.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
