@@ -949,7 +949,7 @@ namespace TQVaultAE.GUI
 				else if (Screen.PrimaryScreen.Bounds.Height < this.Height)
 				{
 					// We really should not need this unless the screen resolution is REALLY low on a wide screen monitor.
-					this.ScaleForm(Convert.ToSingle(Screen.PrimaryScreen.Bounds.Height) / Convert.ToSingle(this.Height), false);
+					this.ScaleForm(Convert.ToSingle(Screen.PrimaryScreen.WorkingArea.Height) / Convert.ToSingle(this.Height), false);
 				}
 				else if (CurrentAutoScaleDimensions.Width != Database.DesignDpi)
 				{
