@@ -1394,7 +1394,7 @@ namespace TQVaultAE.GUI
 
 					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
 					{
-						if (focusedItem.HasRelic)
+						if (focusedItem.HasRelic && Settings.Default.AllowItemEdit)
 						{
 							this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
 						}
