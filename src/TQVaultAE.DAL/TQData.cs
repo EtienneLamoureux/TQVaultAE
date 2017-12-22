@@ -77,14 +77,8 @@ namespace TQVaultData
 				// Detection logic for a GOG install of the anniversary edition ~Malgardian
 				if (string.IsNullOrEmpty(titanQuestGamePath))
 				{
-					string[] path = new string[5];
-					path[0] = "SOFTWARE";
-					path[1] = "GOG.com";
-					path[2] = "Games";
-					path[3] = "1196955511";
-					path[4] = "PATH";
+					string[] path = { "SOFTWARE", "GOG.com", "Games", "1196955511", "PATH" };
 					titanQuestGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
-					//MessageBox.Show(titanQuestGamePath);
 				}
 
 				// Detection logic for a Steam install of the anniversary edition ~Malgardian
@@ -92,7 +86,7 @@ namespace TQVaultData
 				{
 					string steamTQPath = "\\SteamApps\\common\\Titan Quest Anniversary Edition";
 
-					string[] registryPath = new string[] { "Software", "Valve", "Steam", "SteamPath" };
+					string[] registryPath = { "Software", "Valve", "Steam", "SteamPath" };
 					string steamPath = ReadRegistryKey(Microsoft.Win32.Registry.CurrentUser, registryPath).Replace("/", "\\");
 
 					if (Directory.Exists(steamPath + steamTQPath))
@@ -121,17 +115,34 @@ namespace TQVaultData
 				//Disc version detection logic -old
 				if (string.IsNullOrEmpty(titanQuestGamePath))
 				{
-					string[] path = new string[4];
-					path[0] = "SOFTWARE";
-					path[1] = "Iron Lore";
-					path[2] = "Titan Quest";
-					path[3] = "Install Location";
+					string[] path = { "SOFTWARE", "Iron Lore", "Titan Quest", "Install Location" };
 					titanQuestGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
+				}
+
+				//Read path from GamePath.txt
+				string GAME_PATH_FILE_NAME = "GamePath.txt";
+				if (string.IsNullOrEmpty(titanQuestGamePath) && File.Exists(GAME_PATH_FILE_NAME))
+				{
+					string[] gamePathLines = File.ReadAllLines(GAME_PATH_FILE_NAME);
+					foreach (var line in gamePathLines)
+					{
+						string path = line.Trim();
+						if (!path.StartsWith("#") && Directory.Exists(path))
+						{
+							titanQuestGamePath = path;
+							break;
+						}
+					}
 				}
 
 				if (string.IsNullOrEmpty(titanQuestGamePath))
 				{
-					throw new InvalidOperationException("Unable to locate Titan Quest installation directory.");
+					string[] lines = {
+						"# The line bellow should contain the path where you have Titan Quest installed.",
+						"C:\\Games\\Titan Quest - Anniversary Edition"
+					};
+					File.WriteAllLines(@GAME_PATH_FILE_NAME, lines);
+					throw new InvalidOperationException("Unable to locate Titan Quest installation directory. Please edit GamePath.txt to contain a valid path.");
 				}
 
 				return titanQuestGamePath;
