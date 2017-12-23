@@ -59,6 +59,8 @@
     <Compile Include="BitmapCode.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="DBRecordCollection.cs" />
+    <Compile Include="IniFile.cs" />
+    <Compile Include="IniProperties.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ItemAttributeListCompare.cs" />
     <Compile Include="ItemAttributeSubListCompare.cs" />

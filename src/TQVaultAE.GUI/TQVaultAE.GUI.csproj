@@ -100,9 +100,7 @@
     <Compile Include="BagButtonBase.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="IniProperties.cs" />
     <Compile Include="CommandLineArgs.cs" />
-    <Compile Include="IniFile.cs" />
     <Compile Include="ItemDragInfo.cs" />
     <Compile Include="ResizeEventArgs.cs" />
     <Compile Include="Result.cs" />
