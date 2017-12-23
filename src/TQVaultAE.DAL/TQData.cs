@@ -119,30 +119,14 @@ namespace TQVaultData
 					titanQuestGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
 				}
 
-				//Read path from GamePath.txt
-				string GAME_PATH_FILE_NAME = "GamePath.txt";
-				if (string.IsNullOrEmpty(titanQuestGamePath) && File.Exists(GAME_PATH_FILE_NAME))
+				if (string.IsNullOrEmpty(titanQuestGamePath) && !string.IsNullOrEmpty(IniProperties.GamePath))
 				{
-					string[] gamePathLines = File.ReadAllLines(GAME_PATH_FILE_NAME);
-					foreach (var line in gamePathLines)
-					{
-						string path = line.Trim();
-						if (!path.StartsWith("#") && Directory.Exists(path))
-						{
-							titanQuestGamePath = path;
-							break;
-						}
-					}
+					titanQuestGamePath = IniProperties.GamePath;
 				}
 
 				if (string.IsNullOrEmpty(titanQuestGamePath))
 				{
-					string[] lines = {
-						"# The line bellow should contain the path where you have Titan Quest installed.",
-						"C:\\Games\\Titan Quest - Anniversary Edition"
-					};
-					File.WriteAllLines(@GAME_PATH_FILE_NAME, lines);
-					throw new InvalidOperationException("Unable to locate Titan Quest installation directory. Please edit GamePath.txt to contain a valid path.");
+					throw new InvalidOperationException("Unable to locate Titan Quest installation directory. Please edit TQVaultAE.ini to contain a valid path in the option 'ForceGamePath'.");
 				}
 
 				return titanQuestGamePath;
@@ -233,8 +217,19 @@ namespace TQVaultData
 					immortalThroneGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
 				}
 
-                // ImmortalThrone is always installed in AE
-                IsITInstalled = true;
+				if (string.IsNullOrEmpty(immortalThroneGamePath) && !string.IsNullOrEmpty(IniProperties.GamePath))
+				{
+					immortalThroneGamePath = IniProperties.GamePath;
+				}
+
+				if (string.IsNullOrEmpty(immortalThroneGamePath))
+				{
+					throw new InvalidOperationException("Unable to locate Titan Quest installation directory. Please edit TQVaultAE.ini to contain a valid path in the option 'ForceGamePath'.");
+				}
+
+
+				// ImmortalThrone is always installed in AE
+				IsITInstalled = true;
 
                 return immortalThroneGamePath;
 			}
