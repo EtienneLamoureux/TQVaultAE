@@ -186,6 +186,11 @@ namespace TQVaultAE.GUI
 			{
 				this.mapListComboBox.Items.AddRange(maps);
 			}
+			if (!IniProperties.ShowEditingCopyFeatures)
+			{
+				this.allowItemEditCheckBox.Visible = false;
+				this.allowItemCopyCheckBox.Visible = false;
+			}
 		}
 
 		/// <summary>
