@@ -1006,6 +1006,18 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
+				//read map name from ini file, main section
+				if(!String.IsNullOrEmpty(IniProperties.Mod))
+				{
+					TQData.MapName = IniProperties.Mod;
+				}
+
+				if(!IniProperties.ShowEditingCopyFeatures)
+				{
+					Settings.Default.AllowItemCopy = false;
+					Settings.Default.AllowItemEdit = false;
+				}
+
 				CommandLineArgs args = new CommandLineArgs();
 
 				// Check to see if we loaded something from the command line.
