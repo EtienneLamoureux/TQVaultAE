@@ -367,7 +367,8 @@
 
 xcopy "$(ProjectDir)bin\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /y /s /i
 cd "$(SolutionDir)bin\$(ConfigurationName)"
-del *.pdb</PostBuildEvent>
+del *.pdb
+del TQVaultAE.ini</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
