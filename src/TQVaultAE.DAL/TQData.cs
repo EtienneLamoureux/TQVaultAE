@@ -483,8 +483,18 @@ namespace TQVaultData
 				string newFolder = Path.Combine(playerFolder, "Backup-moved by TQVault");
 				if (Directory.Exists(newFolder))
 				{
-					// It already exists--we need to remove it
-					Directory.Delete(newFolder, true);
+					try {
+						// It already exists--we need to remove it
+						Directory.Delete(newFolder, true);
+					} catch (Exception e)
+					{
+						int fn = 1;
+						while(Directory.Exists(String.Format("{0}({1})",newFolder,fn)))
+						{
+							fn++;
+						}
+						newFolder = String.Format("{0}({1})", newFolder, fn);
+					}
 				}
 
 				Directory.Move(backupFolder, newFolder);
