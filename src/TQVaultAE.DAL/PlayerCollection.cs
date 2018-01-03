@@ -188,6 +188,10 @@ namespace TQVaultData
 		/// <returns>Each Sack in the sack array.</returns>
 		public IEnumerator<SackCollection> GetEnumerator()
 		{
+			if (this.sacks == null)
+			{
+				yield break;
+			}
 			foreach (SackCollection sack in this.sacks)
 			{
 				yield return sack;
@@ -278,11 +282,12 @@ namespace TQVaultData
 		/// <returns>Sack instace for the corresponding sack number</returns>
 		public SackCollection GetSack(int sackNumber)
 		{
-			if (sackNumber < this.sacks.Length){
-				return this.sacks[sackNumber];
-			}else{
+			if (this.sacks == null || this.sacks.Length <= sackNumber)
+			{
 				return null;
 			}
+
+			return this.sacks[sackNumber];
 		}
 
 		/// <summary>
@@ -294,7 +299,9 @@ namespace TQVaultData
 		public bool MoveSack(int source, int destination)
 		{
 			// Do a little bit of error handling
-			if (destination < 0 || destination > this.sacks.Length || source < 0 || source > this.sacks.Length || source == destination)
+			if (this.sacks == null ||
+					destination < 0 || destination > this.sacks.Length ||
+					source < 0 || source > this.sacks.Length || source == destination)
 			{
 				return false;
 			}
@@ -327,7 +334,9 @@ namespace TQVaultData
 		public bool CopySack(int source, int destination)
 		{
 			// Do a little bit of error handling
-			if (destination < 0 || destination > this.sacks.Length || source < 0 || source > this.sacks.Length || source == destination)
+			if (this.sacks == null ||
+					destination < 0 || destination > this.sacks.Length ||
+					source < 0 || source > this.sacks.Length || source == destination)
 			{
 				return false;
 			}
@@ -475,31 +484,34 @@ namespace TQVaultData
 								outStream.WriteLine("Number of Sacks = {0}", this.numberOfSacks);
 
 								int sackNumber = 0;
-								foreach (SackCollection sack in this.sacks)
+								if (this.sacks != null)
 								{
-									if (!sack.IsEmpty)
+									foreach (SackCollection sack in this.sacks)
 									{
-										outStream.WriteLine();
-										outStream.WriteLine("SACK {0}", sackNumber);
-
-										int itemNumber = 0;
-										foreach (Item item in sack)
+										if (!sack.IsEmpty)
 										{
-											object[] params1 = new object[20];
+											outStream.WriteLine();
+											outStream.WriteLine("SACK {0}", sackNumber);
 
-											params1[0] = itemNumber;
-											params1[1] = item.ToString();
-											params1[2] = item.PositionX;
-											params1[3] = item.PositionY;
-											params1[4] = item.Seed;
-											////params1[5] =
+											int itemNumber = 0;
+											foreach (Item item in sack)
+											{
+												object[] params1 = new object[20];
 
-											outStream.WriteLine("  {0,5:n0} {1}", params1);
-											itemNumber++;
+												params1[0] = itemNumber;
+												params1[1] = item.ToString();
+												params1[2] = item.PositionX;
+												params1[3] = item.PositionY;
+												params1[4] = item.Seed;
+												////params1[5] =
+
+												outStream.WriteLine("  {0,5:n0} {1}", params1);
+												itemNumber++;
+											}
 										}
-									}
 
-									sackNumber++;
+										sackNumber++;
+									}
 								}
 							}
 						}
