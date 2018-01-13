@@ -1,4 +1,12 @@
 # Changelog
+## 2.5.3
+### Features
+- Added ini file support for gamepath, mod and disable editing/copy features (replaces command line arguments)
+
+### Bugs
+- Fixed issue where one couldn't search if a character didn't have an extra inventory space tab
+- Fixed crash while saving when the backup directory delete fails
+
 ## 2.5.2
 ### Features
 - Added support for throwing weapons
