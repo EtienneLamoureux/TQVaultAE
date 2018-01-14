@@ -66,7 +66,7 @@ The "Configure" button opens up the configuration menu. That's where you can cha
 This project could not go on without the continued contributions of the Titan Quest community.
 
 ### TQVaultAE
-- Spectre, *Anniversary Edition port*
+- Malgardian (a.k.a. Spectre), *Anniversary Edition port*
 - [Open source contributors](https://github.com/EtienneLamoureux/TQVaultAE/graphs/contributors)
 
 ### TQVault
