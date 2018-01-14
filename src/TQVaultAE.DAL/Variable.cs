@@ -73,6 +73,13 @@ namespace TQVaultData
 		/// </summary>
 		public string Name { get; private set; }
 
+		public Variable clone()
+		{
+			Variable newVariable = (Variable) this.MemberwiseClone();
+			newVariable.values = (object []) this.values.Clone();
+			return newVariable;
+		}
+
 		/// <summary>
 		/// Gets the Datatype of the variable.
 		/// </summary>

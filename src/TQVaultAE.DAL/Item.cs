@@ -5667,10 +5667,15 @@ namespace TQVaultData
 				color = labelColor;
 			}
 
-			Variable currentVariable = minVar;
-			if (currentVariable == null)
+			Variable currentVariable = null;
+
+			if (minVar != null)
 			{
-				currentVariable = maxVar;
+				currentVariable = minVar.clone();
+			}
+			else if(maxVar!=null)
+			{
+				currentVariable = maxVar.clone();
 			}
 
 			if (currentVariable != null)
@@ -5715,6 +5720,17 @@ namespace TQVaultData
 			// Added by VillageIdiot : check to see if min and max are the same
 			string color = null;
 			string amount = null;
+
+			Variable min = null;
+			Variable max = null;
+			if(minVar!=null)
+			{
+				min = minVar.clone();
+			}
+			if (maxVar != null)
+			{
+				max = maxVar.clone();
+			}
 
 			// sweet we have a range
 			string tag = "DamageRangeFormat";
@@ -5762,16 +5778,16 @@ namespace TQVaultData
 			// Adjust for itemScalePercent
 			if (minDurVar != null)
 			{
-				minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] = (float)minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues - 1] * this.itemScalePercent;
-				maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] = (float)maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues - 1] * this.itemScalePercent;
+				min[Math.Min(min.NumberOfValues - 1, varNum)] = (float)min[Math.Min(min.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues - 1] * this.itemScalePercent;
+				max[Math.Min(max.NumberOfValues - 1, varNum)] = (float)max[Math.Min(max.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues - 1] * this.itemScalePercent;
 			}
 			else
 			{
-				minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] = (float)minVar[Math.Min(minVar.NumberOfValues - 1, varNum)] * this.itemScalePercent;
-				maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] = (float)maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)] * this.itemScalePercent;
+				min[Math.Min(min.NumberOfValues - 1, varNum)] = (float)min[Math.Min(min.NumberOfValues - 1, varNum)] * this.itemScalePercent;
+				max[Math.Min(max.NumberOfValues - 1, varNum)] = (float)max[Math.Min(max.NumberOfValues - 1, varNum)] * this.itemScalePercent;
 			}
 
-			amount = Item.Format(formatSpec, minVar[Math.Min(minVar.NumberOfValues - 1, varNum)], maxVar[Math.Min(maxVar.NumberOfValues - 1, varNum)]);
+			amount = Item.Format(formatSpec, min[Math.Min(min.NumberOfValues - 1, varNum)], max[Math.Min(max.NumberOfValues - 1, varNum)]);
 			amount = Database.MakeSafeForHtml(amount);
 			if (!string.IsNullOrEmpty(color))
 			{
