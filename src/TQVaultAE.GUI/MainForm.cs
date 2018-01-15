@@ -931,6 +931,8 @@ namespace TQVaultAE.GUI
 				Convert.ToInt32((float)this.Width * 0.4F),
 				Convert.ToInt32((float)this.Height * 0.4F));
 
+			Rectangle workingArea = Screen.FromControl(this).WorkingArea;
+
 			// Scaling for the main form and custom controls.
 			if (Settings.Default.Scale != 1.0F)
 			{
@@ -940,14 +942,10 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				if (Screen.PrimaryScreen.Bounds.Width < this.Width)
+				if (workingArea.Width < this.Width || workingArea.Height < this.Height)
 				{
-					this.ScaleForm(Convert.ToSingle(Screen.PrimaryScreen.Bounds.Width) / Convert.ToSingle(this.Width), false);
-				}
-				else if (Screen.PrimaryScreen.Bounds.Height < this.Height)
-				{
-					// We really should not need this unless the screen resolution is REALLY low on a wide screen monitor.
-					this.ScaleForm(Convert.ToSingle(Screen.PrimaryScreen.WorkingArea.Height) / Convert.ToSingle(this.Height), false);
+					this.ScaleForm(Math.Min(Convert.ToSingle(workingArea.Height) / Convert.ToSingle(this.Height),
+									Convert.ToSingle(workingArea.Width) / Convert.ToSingle(this.Width)), false);
 				}
 				else if (CurrentAutoScaleDimensions.Width != Database.DesignDpi)
 				{
@@ -964,21 +962,21 @@ namespace TQVaultAE.GUI
 			this.LastFormSize = this.Size;
 
 			// Set the maximized size but keep the aspect ratio.
-			if (Convert.ToInt32((float)Screen.PrimaryScreen.WorkingArea.Width * this.FormDesignRatio) < Screen.PrimaryScreen.WorkingArea.Height)
+			if (Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio) < workingArea.Height)
 			{
 				this.MaximizedBounds = new Rectangle(
 					0,
-					(Screen.PrimaryScreen.WorkingArea.Height - Convert.ToInt32((float)Screen.PrimaryScreen.WorkingArea.Width * this.FormDesignRatio)) / 2,
-					Screen.PrimaryScreen.WorkingArea.Width,
-					Convert.ToInt32((float)Screen.PrimaryScreen.WorkingArea.Width * this.FormDesignRatio));
+					(workingArea.Height - Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio)) / 2,
+					workingArea.Width,
+					Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio));
 			}
 			else
 			{
 				this.MaximizedBounds = new Rectangle(
-					(Screen.PrimaryScreen.WorkingArea.Width - Convert.ToInt32((float)Screen.PrimaryScreen.WorkingArea.Height / this.FormDesignRatio)) / 2,
+					(workingArea.Width - Convert.ToInt32((float)workingArea.Height / this.FormDesignRatio)) / 2,
 					0,
-					Convert.ToInt32((float)Screen.PrimaryScreen.WorkingArea.Height / this.FormDesignRatio),
-					Screen.PrimaryScreen.WorkingArea.Height);
+					Convert.ToInt32((float)workingArea.Height / this.FormDesignRatio),
+					workingArea.Height);
 			}
 		}
 
