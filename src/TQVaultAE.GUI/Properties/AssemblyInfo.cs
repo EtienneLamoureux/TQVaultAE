@@ -34,8 +34,8 @@ using System.Runtime.InteropServices;
 //      Minor Version
 //      Build Number
 //      Revision
-[assembly: AssemblyVersion("2.5.3")]
-[assembly: AssemblyFileVersion("2.5.3")]
+[assembly: AssemblyVersion("2.5.4")]
+[assembly: AssemblyFileVersion("2.5.4")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]
 
 // CLS compliant attribute
