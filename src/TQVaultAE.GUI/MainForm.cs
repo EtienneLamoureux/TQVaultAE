@@ -167,6 +167,11 @@ namespace TQVaultAE.GUI
 			this.Hide();
 			SetUILanguage();
 
+			Database.DB = new Database();
+			Database.DB.AutoDetectLanguage = Settings.Default.AutoDetectLanguage;
+			Database.DB.TQLanguage = Settings.Default.TQLanguage;
+
+			this.SetupFormSize();
 			this.InitializeComponent();
 			try
 			{
@@ -207,10 +212,6 @@ namespace TQVaultAE.GUI
 				TQDebug.DebugWriteLine(string.Empty);
 			}
 
-			Database.DB = new Database();
-			Database.DB.AutoDetectLanguage = Settings.Default.AutoDetectLanguage;
-			Database.DB.TQLanguage = Settings.Default.TQLanguage;
-
 			SetupGamePaths();
 			SetupMapName();
 
@@ -245,7 +246,6 @@ namespace TQVaultAE.GUI
 			this.vaults = new Dictionary<string, PlayerCollection>();
 			this.stashes = new Dictionary<string, Stash>();
 
-			this.SetupFormSize();
 			this.CreatePanels();
 
 			// Process the mouse scroll wheel to cycle through the vaults.
@@ -924,6 +924,30 @@ namespace TQVaultAE.GUI
 			this.ResizeCustomAllowed = true;
 			this.fadeInterval = Settings.Default.FadeInInterval;
 
+			Rectangle workingArea = Screen.FromControl(this).WorkingArea;
+
+			int formWidth = 1350;
+			int formHeight = 910;
+			float initialScale = 1.0F;
+			if (workingArea.Width < formWidth || workingArea.Height < formHeight)
+			{
+
+				initialScale = Math.Min(Convert.ToSingle(workingArea.Width) / Convert.ToSingle(formWidth), Convert.ToSingle(workingArea.Height) / Convert.ToSingle(formHeight));
+
+
+				if (Settings.Default.Scale > initialScale)
+				{
+					Settings.Default.Scale = initialScale;
+					Settings.Default.Save();
+				}
+				this.ClientSize = new System.Drawing.Size((int)System.Math.Round(formWidth * Settings.Default.Scale), (int)System.Math.Round(formHeight * Settings.Default.Scale));
+			}
+			else
+			{
+				this.ClientSize = new System.Drawing.Size(formWidth,formHeight);
+			}
+			TQVaultData.Database.DB.Scale = Settings.Default.Scale;
+
 			// Save the height / width ratio for resizing.
 			this.FormDesignRatio = (float)this.Height / (float)this.Width;
 			this.FormMaximumSize = new Size(this.Width * 2, this.Height * 2);
@@ -931,23 +955,16 @@ namespace TQVaultAE.GUI
 				Convert.ToInt32((float)this.Width * 0.4F),
 				Convert.ToInt32((float)this.Height * 0.4F));
 
-			Rectangle workingArea = Screen.FromControl(this).WorkingArea;
 
 			// Scaling for the main form and custom controls.
-			if (Settings.Default.Scale != 1.0F)
+			if (Settings.Default.Scale != 1.0F && !(workingArea.Width < formWidth || workingArea.Height < formHeight))
 			{
 				this.OriginalFormSize = this.Size;
 				this.OriginalFormScale = 1.0F;
-				this.ScaleForm(Settings.Default.Scale, false);
 			}
 			else
 			{
-				if (workingArea.Width < this.Width || workingArea.Height < this.Height)
-				{
-					this.ScaleForm(Math.Min(Convert.ToSingle(workingArea.Height) / Convert.ToSingle(this.Height),
-									Convert.ToSingle(workingArea.Width) / Convert.ToSingle(this.Width)), false);
-				}
-				else if (CurrentAutoScaleDimensions.Width != Database.DesignDpi)
+				if (CurrentAutoScaleDimensions.Width != Database.DesignDpi)
 				{
 					// We do not need to scale the main form controls since autoscaling will handle it.
 					// Scale internally to 96 dpi for the drawing functions.
