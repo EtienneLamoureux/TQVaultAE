@@ -1,4 +1,9 @@
 # Changelog
+## 2.5.4
+### Bugs
+## Fix attribute inconsistency when viewing similar items
+## Fix UI corruption on low resolution displays
+
 ## 2.5.3
 ### Features
 - Added ini file support for gamepath, mod and disable editing/copy features (replaces command line arguments)
