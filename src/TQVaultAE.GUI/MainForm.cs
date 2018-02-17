@@ -929,6 +929,7 @@ namespace TQVaultAE.GUI
 			int formWidth = 1350;
 			int formHeight = 910;
 			float initialScale = 1.0F;
+			Settings.Default.Scale = initialScale;
 			if (workingArea.Width < formWidth || workingArea.Height < formHeight)
 			{
 
@@ -938,7 +939,6 @@ namespace TQVaultAE.GUI
 				if (Settings.Default.Scale > initialScale)
 				{
 					Settings.Default.Scale = initialScale;
-					Settings.Default.Save();
 				}
 				this.ClientSize = new System.Drawing.Size((int)System.Math.Round(formWidth * Settings.Default.Scale), (int)System.Math.Round(formHeight * Settings.Default.Scale));
 			}
@@ -947,6 +947,7 @@ namespace TQVaultAE.GUI
 				this.ClientSize = new System.Drawing.Size(formWidth,formHeight);
 			}
 			TQVaultData.Database.DB.Scale = Settings.Default.Scale;
+			Settings.Default.Save();
 
 			// Save the height / width ratio for resizing.
 			this.FormDesignRatio = (float)this.Height / (float)this.Width;
@@ -956,24 +957,16 @@ namespace TQVaultAE.GUI
 				Convert.ToInt32((float)this.Height * 0.4F));
 
 
-			// Scaling for the main form and custom controls.
-			if (Settings.Default.Scale != 1.0F && !(workingArea.Width < formWidth || workingArea.Height < formHeight))
+			this.OriginalFormSize = this.Size;
+			this.OriginalFormScale = Settings.Default.Scale;
+
+
+			if (CurrentAutoScaleDimensions.Width != Database.DesignDpi)
 			{
-				this.OriginalFormSize = this.Size;
-				this.OriginalFormScale = 1.0F;
-			}
-			else
-			{
-				if (CurrentAutoScaleDimensions.Width != Database.DesignDpi)
-				{
 					// We do not need to scale the main form controls since autoscaling will handle it.
 					// Scale internally to 96 dpi for the drawing functions.
 					Database.DB.Scale = this.CurrentAutoScaleDimensions.Width / Database.DesignDpi;
-				}
-
-				// Save the original size so we can reset it.
-				this.OriginalFormScale = Database.DB.Scale;
-				this.OriginalFormSize = this.Size;
+					this.OriginalFormScale = Database.DB.Scale;
 			}
 
 			this.LastFormSize = this.Size;
