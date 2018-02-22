@@ -988,6 +988,7 @@ namespace TQVaultAE.GUI
 					Convert.ToInt32((float)workingArea.Height / this.FormDesignRatio),
 					workingArea.Height);
 			}
+			this.Location = new Point(workingArea.Left + Convert.ToInt16((workingArea.Width - this.ClientSize.Width) / 2), workingArea.Top + Convert.ToInt16((workingArea.Height - this.ClientSize.Height) / 2));
 		}
 
 		/// <summary>
