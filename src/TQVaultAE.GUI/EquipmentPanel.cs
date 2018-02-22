@@ -56,11 +56,7 @@ namespace TQVaultAE.GUI
 				{
 					Brush backgroundBrush = this.CellHasItemBrush;
 
-					if (this.CursorBackgroundImage != null)
-					{
-						backgroundBrush = null;
-					}
-					else if (this.IsItemSelected(dragInfo.Item))
+					if (this.IsItemSelected(dragInfo.Item))
 					{
 						backgroundBrush = this.HighlightSelectedItemBrush;
 					}
@@ -587,13 +583,7 @@ namespace TQVaultAE.GUI
 					Brush backgroundBrush;
 					if (lastItem != null && lastItem.Is2HWeapon)
 					{
-						// We need to restore the highlighted item's background
-						if (this.CursorBackgroundImage != null)
-						{
-							// null redraws the background image
-							backgroundBrush = null;
-						}
-						else if (this.IsItemSelected(lastItem))
+						if (this.IsItemSelected(lastItem))
 						{
 							backgroundBrush = this.HighlightSelectedItemBrush;
 						}
@@ -825,22 +815,14 @@ namespace TQVaultAE.GUI
 					// Figure out the background brush to use.
 					Brush backgroundBrush = null;
 
-					if (this.CursorBackgroundImage != null)
+					// Check if the item is selected and use a different background
+					if (this.IsItemSelected(item))
 					{
-						// null signals to restore background image
-						backgroundBrush = null;
+						backgroundBrush = this.HighlightSelectedItemBrush;
 					}
 					else
 					{
-						// Check if the item is selected and use a different background
-						if (this.IsItemSelected(item))
-						{
-							backgroundBrush = this.HighlightSelectedItemBrush;
-						}
-						else
-						{
-							backgroundBrush = this.CellHasItemBrush;
-						}
+						backgroundBrush = this.CellHasItemBrush;
 					}
 
 					if (this.DragInfo.IsActive)
@@ -875,16 +857,7 @@ namespace TQVaultAE.GUI
 						}
 						else
 						{
-							// not under the drag item
-							if (this.CursorBackgroundImage != null)
-							{
-								// We do not need to draw a background
-								backgroundBrush = null;
-							}
-							else
-							{
-								backgroundBrush = this.CellHasItemBrush;
-							}
+							backgroundBrush = this.CellHasItemBrush;
 						}
 					}
 					else if (item == lastItem)

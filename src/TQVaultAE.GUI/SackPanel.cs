@@ -268,11 +268,6 @@ namespace TQVaultAE.GUI
 		public bool DisableMultipleSelection { get; set; }
 
 		/// <summary>
-		/// Gets or sets the cursor background image used for redrawing bitmap backgrounds.
-		/// </summary>
-		public Bitmap CursorBackgroundImage { get; set; }
-
-		/// <summary>
 		/// Gets or sets the background Brush for cells which contain an item.
 		/// </summary>
 		public Brush CellHasItemBrush { get; protected set; }
@@ -766,11 +761,7 @@ namespace TQVaultAE.GUI
 				{
 					Brush backgroundBrush = this.CellHasItemBrush;
 
-					if (this.CursorBackgroundImage != null)
-					{
-						backgroundBrush = null;
-					}
-					else if (this.IsItemSelected(dragInfo.Item))
+					if (this.IsItemSelected(dragInfo.Item))
 					{
 						backgroundBrush = this.HighlightSelectedItemBrush;
 					}
@@ -1639,12 +1630,7 @@ namespace TQVaultAE.GUI
 					if (lastItem != null)
 					{
 						// We need to restore the highlighted item's background
-						if (this.CursorBackgroundImage != null)
-						{
-							// null redraws the background image
-							backgroundBrush = null;
-						}
-						else if (this.IsItemSelected(lastItem))
+						if (this.IsItemSelected(lastItem))
 						{
 							backgroundBrush = this.HighlightSelectedItemBrush;
 						}
@@ -1738,16 +1724,8 @@ namespace TQVaultAE.GUI
 
 			Rectangle dragRectangle = this.GetRepaintDragRect();
 
-			// We need to copy the overwritten part of the background image back to the screen
-			if (this.CursorBackgroundImage != null)
-			{
-				graphics.DrawImage(this.CursorBackgroundImage, dragRectangle, dragRectangle, GraphicsUnit.Pixel);
-			}
-			else
-			{
-				// we know we need to wipe out the area under the old drag point
-				this.ClearArea(graphics, dragRectangle);
-			}
+			// we know we need to wipe out the area under the old drag point
+			this.ClearArea(graphics, dragRectangle);
 
 			// Now just call the Paint method to redraw the grids and items.
 			this.PaintCallback(this, new PaintEventArgs(graphics, dragRectangle));
@@ -1863,12 +1841,8 @@ namespace TQVaultAE.GUI
 			{
 				if (this.Sack == null)
 				{
-					// Just show the background image.
-					if (this.CursorBackgroundImage == null)
-					{
-						// Otherwise draw the medallion
-						e.Graphics.DrawImage(Resources.tqmedallion, 0, 0, this.Width, this.Height);
-					}
+					// Otherwise draw the medallion
+					e.Graphics.DrawImage(Resources.tqmedallion, 0, 0, this.Width, this.Height);
 				}
 				else
 				{
@@ -1954,11 +1928,6 @@ namespace TQVaultAE.GUI
 					{
 						backgroundBrush = this.HighlightSelectedItemBrush;
 					}
-					else if (this.CursorBackgroundImage != null)
-					{
-						// null signals to restore background image
-						backgroundBrush = null;
-					}
 
 					if (this.DragInfo.IsActive)
 					{
@@ -1977,16 +1946,7 @@ namespace TQVaultAE.GUI
 						}
 						else
 						{
-							// not under the drag item
-							if (this.CursorBackgroundImage != null)
-							{
-								// We do not need to draw a background
-								backgroundBrush = null;
-							}
-							else
-							{
-								backgroundBrush = this.CellHasItemBrush;
-							}
+							backgroundBrush = this.CellHasItemBrush;
 						}
 					}
 					else if (item == lastItem)
@@ -2145,11 +2105,6 @@ namespace TQVaultAE.GUI
 			{
 				graphics.FillRectangle(backgroundBrush, backgroundRectangle);
 				this.RedrawGrid(graphics, backgroundRectangle);
-			}
-			else if (this.CursorBackgroundImage != null)
-			{
-				// Since we are not shading the item, then we need to redraw the background
-				graphics.DrawImage(this.CursorBackgroundImage, backgroundRectangle, backgroundRectangle, GraphicsUnit.Pixel);
 			}
 		}
 

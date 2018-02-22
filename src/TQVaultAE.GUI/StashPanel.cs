@@ -136,9 +136,6 @@ namespace TQVaultAE.GUI
 
 			this.maxPanelSize = panelSize;
 
-			// Create the background for redrawing now that everything is set.
-			this.equipmentPanel.CursorBackgroundImage = this.CreateCursorBackground(this.equipmentPanel);
-
 			this.BagSackPanel.Visible = false;
 			this.BagSackPanel.Enabled = false;
 		}
@@ -351,7 +348,6 @@ namespace TQVaultAE.GUI
 		{
 			this.EquipmentBackground = background;
 			this.background = background;
-			this.equipmentPanel.CursorBackgroundImage = this.CreateCursorBackground(this.equipmentPanel);
 		}
 
 		#region StashPanel Protected Methods
@@ -366,7 +362,6 @@ namespace TQVaultAE.GUI
 			base.ScaleControl(factor, specified);
 
 			// This should really only be set for the equipment panel.
-			this.equipmentPanel.CursorBackgroundImage = this.CreateCursorBackground(this.equipmentPanel);
 		}
 
 		/// <summary>
@@ -559,30 +554,6 @@ namespace TQVaultAE.GUI
 		#endregion StashPanel Protected Methods
 
 		#region StashPanel Private Methods
-
-		/// <summary>
-		/// Creates a sub image of the background which is used for redrawing under the mouse pointer.
-		/// </summary>
-		/// <param name="panel">SackPanel instance for the background image.</param>
-		/// <returns>Bitmap to be used as the cursor background.</returns>
-		private Bitmap CreateCursorBackground(SackPanel panel)
-		{
-			Rectangle backgroundRect = this.GetBackgroundRect();
-			Point topCorner = new Point(panel.Location.X - backgroundRect.X, panel.Location.Y - backgroundRect.Y);
-			Bitmap bmp = new Bitmap(panel.Size.Width, panel.Size.Height);
-			Graphics g = Graphics.FromImage(bmp);
-
-			g.DrawImage(
-				new Bitmap(this.background, backgroundRect.Width, backgroundRect.Height),
-				0,
-				0,
-				new Rectangle(topCorner, panel.Size),
-				GraphicsUnit.Pixel);
-
-			g.Dispose();
-
-			return bmp;
-		}
 
 		/// <summary>
 		/// Gets the tooltip for a sack.  Summarizes the items within the sack
