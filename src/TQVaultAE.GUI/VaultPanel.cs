@@ -76,7 +76,7 @@ namespace TQVaultAE.GUI
 				(panelSize.Width * Database.DB.ItemUnitSize) + Convert.ToInt32(10.0F * Database.DB.Scale) + autosortOffset + BorderPad,
 				(panelSize.Height * Database.DB.ItemUnitSize) + Convert.ToInt32(56.0F * Database.DB.Scale) + BorderPad);
 			this.TabStop = false;
-			this.Font = new Font(this.Font.Name, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
+			this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
 
 			this.BagPanelOffset = 0; // bag panel starts with bag #0
 			this.BagSackPanel = new SackPanel(panelSize.Width, panelSize.Height, this.DragInfo, autoMoveLocation);
@@ -116,7 +116,7 @@ namespace TQVaultAE.GUI
 			this.contextMenu = new ContextMenuStrip();
 			this.contextMenu.BackColor = Color.FromArgb(46, 41, 31);
 			this.contextMenu.DropShadowEnabled = true;
-			this.contextMenu.Font = new Font("Albertus MT", 9.0F * Database.DB.Scale);
+			this.contextMenu.Font = Program.GetFontAlbertusMT(9.0F * Database.DB.Scale);
 			this.contextMenu.ForeColor = Color.FromArgb(200, 200, 200);
 			this.contextMenu.Opacity = 0.80;
 			this.contextMenu.ShowImageMargin = false;
@@ -539,7 +539,7 @@ namespace TQVaultAE.GUI
 		/// <param name="specified">BoundsSpecified value.</param>
 		protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 		{
-			this.contextMenu.Font = new Font(this.contextMenu.Font.Name, 9.0F * Database.DB.Scale);
+			this.contextMenu.Font = new Font(this.contextMenu.Font.FontFamily, 9.0F * Database.DB.Scale);
 			this.Font = new Font(this.Font.Name, this.Font.SizeInPoints * factor.Height, this.Font.Style);
 
 			base.ScaleControl(factor, specified);
