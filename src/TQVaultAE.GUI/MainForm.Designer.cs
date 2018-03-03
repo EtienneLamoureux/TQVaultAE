@@ -151,7 +151,7 @@ namespace TQVaultAE.GUI
 			this.exitButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.exitButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.exitButton.Font = new System.Drawing.Font("Albertus MT Light", 12F * TQVaultData.Database.DB.Scale);
+			this.exitButton.Font = Program.GetFontAlbertusMTLight(12F * TQVaultData.Database.DB.Scale);
 			this.exitButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.exitButton.Image = ((System.Drawing.Image)(resources.GetObject("exitButton.Image")));
 			this.exitButton.Location = this.scalePoint(new System.Drawing.Point(434, 24));
@@ -169,7 +169,7 @@ namespace TQVaultAE.GUI
 			// characterComboBox
 			//
 			this.characterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.characterComboBox.Font = new System.Drawing.Font("Albertus MT Light", 11F * TQVaultData.Database.DB.Scale);
+			this.characterComboBox.Font = Program.GetFontAlbertusMTLight( 11F * TQVaultData.Database.DB.Scale);
 			this.characterComboBox.Location = this.scalePoint(new System.Drawing.Point(777 , 72));
 			this.characterComboBox.MaxDropDownItems = 10;
 			this.characterComboBox.Name = "characterComboBox";
@@ -180,7 +180,7 @@ namespace TQVaultAE.GUI
 			// characterLabel
 			//
 			this.characterLabel.BackColor = System.Drawing.Color.Transparent;
-			this.characterLabel.Font = new System.Drawing.Font("Albertus MT Light", 11F * TQVaultData.Database.DB.Scale);
+			this.characterLabel.Font = Program.GetFontAlbertusMTLight( 11F * TQVaultData.Database.DB.Scale);
 			this.characterLabel.ForeColor = System.Drawing.Color.White;
 			this.characterLabel.Location = this.scalePoint(new System.Drawing.Point(681, 72));
 			this.characterLabel.Name = "characterLabel";
@@ -210,7 +210,7 @@ namespace TQVaultAE.GUI
 			// vaultListComboBox
 			//
 			this.vaultListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.vaultListComboBox.Font = new System.Drawing.Font("Albertus MT Light", 11F * TQVaultData.Database.DB.Scale);
+			this.vaultListComboBox.Font = Program.GetFontAlbertusMTLight( 11F * TQVaultData.Database.DB.Scale);
 			this.vaultListComboBox.Location = this.scalePoint(new System.Drawing.Point(108, 72));
 			this.vaultListComboBox.Name = "vaultListComboBox";
 			this.vaultListComboBox.Size = this.scaleSize(new System.Drawing.Size(481, 26));
@@ -220,7 +220,7 @@ namespace TQVaultAE.GUI
 			// vaultLabel
 			//
 			this.vaultLabel.BackColor = System.Drawing.Color.Transparent;
-			this.vaultLabel.Font = new System.Drawing.Font("Albertus MT Light", 11F * TQVaultData.Database.DB.Scale);
+			this.vaultLabel.Font = Program.GetFontAlbertusMTLight( 11F * TQVaultData.Database.DB.Scale);
 			this.vaultLabel.ForeColor = System.Drawing.Color.White;
 			this.vaultLabel.Location = this.scalePoint(new System.Drawing.Point(12, 72));
 			this.vaultLabel.Name = "vaultLabel";
@@ -237,7 +237,7 @@ namespace TQVaultAE.GUI
 			this.configureButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.configureButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.configureButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.configureButton.Font = new System.Drawing.Font("Albertus MT Light", 12F * TQVaultData.Database.DB.Scale);
+			this.configureButton.Font = Program.GetFontAlbertusMTLight( 12F * TQVaultData.Database.DB.Scale);
 			this.configureButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.configureButton.Image = ((System.Drawing.Image)(resources.GetObject("configureButton.Image")));
 			this.configureButton.Location = this.scalePoint(new System.Drawing.Point(6, 24));
@@ -256,7 +256,7 @@ namespace TQVaultAE.GUI
 			//
 			this.customMapText.BackColor = System.Drawing.Color.Gold;
 			this.customMapText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.customMapText.Font = new System.Drawing.Font("Albertus MT", 11.25F * TQVaultData.Database.DB.Scale, System.Drawing.FontStyle.Bold);
+			this.customMapText.Font = Program.GetFontAlbertusMT( 11.25F * TQVaultData.Database.DB.Scale);
 			this.customMapText.ForeColor = System.Drawing.Color.Black;
 			this.customMapText.Location = this.scalePoint(new System.Drawing.Point(446, 330));
 			this.customMapText.Name = "customMapText";
@@ -272,7 +272,7 @@ namespace TQVaultAE.GUI
 			this.panelSelectButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.panelSelectButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.panelSelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.panelSelectButton.Font = new System.Drawing.Font("Albertus MT Light", 12F * TQVaultData.Database.DB.Scale);
+			this.panelSelectButton.Font = Program.GetFontAlbertusMTLight( 12F * TQVaultData.Database.DB.Scale);
 			this.panelSelectButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.panelSelectButton.Image = ((System.Drawing.Image)(resources.GetObject("panelSelectButton.Image")));
 			this.panelSelectButton.Location = this.scalePoint(new System.Drawing.Point(148, 24));
@@ -290,7 +290,7 @@ namespace TQVaultAE.GUI
 			// secondaryVaultListComboBox
 			//
 			this.secondaryVaultListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.secondaryVaultListComboBox.Font = new System.Drawing.Font("Albertus MT Light", 11F * TQVaultData.Database.DB.Scale);
+			this.secondaryVaultListComboBox.Font = Program.GetFontAlbertusMTLight( 11F * TQVaultData.Database.DB.Scale);
 			this.secondaryVaultListComboBox.Location = this.scalePoint(new System.Drawing.Point(777, 72));
 			this.secondaryVaultListComboBox.MaxDropDownItems = 10;
 			this.secondaryVaultListComboBox.Name = "secondaryVaultListComboBox";
@@ -323,7 +323,7 @@ namespace TQVaultAE.GUI
 			//
 			this.titleLabel.AutoSize = true;
 			this.titleLabel.BackColor = System.Drawing.Color.Transparent;
-			this.titleLabel.Font = new System.Drawing.Font("Albertus MT Light", 24F * TQVaultData.Database.DB.Scale);
+			this.titleLabel.Font = Program.GetFontAlbertusMTLight( 24F * TQVaultData.Database.DB.Scale);
 			this.titleLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(195)))), ((int)(((byte)(112)))));
 			this.titleLabel.Location = this.scalePoint(new System.Drawing.Point(1180, 18));
 			this.titleLabel.Name = "titleLabel";
@@ -339,7 +339,7 @@ namespace TQVaultAE.GUI
 			this.searchButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.searchButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.searchButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.searchButton.Font = new System.Drawing.Font("Albertus MT Light", 12F * TQVaultData.Database.DB.Scale);
+			this.searchButton.Font = Program.GetFontAlbertusMTLight( 12F * TQVaultData.Database.DB.Scale);
 			this.searchButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.searchButton.Image = ((System.Drawing.Image)(resources.GetObject("searchButton.Image")));
 			this.searchButton.Location = this.scalePoint(new System.Drawing.Point(291, 24));

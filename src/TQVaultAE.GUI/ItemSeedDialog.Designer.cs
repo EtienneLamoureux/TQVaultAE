@@ -72,7 +72,7 @@ namespace TQVaultAE.GUI
 			// 
 			// itemSeedBox
 			// 
-			this.itemSeedBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+			this.itemSeedBox.Font = Program.GetFontAlbertusMTLight( 11.25F);
 			this.itemSeedBox.Location = new System.Drawing.Point(79, 225);
 			this.itemSeedBox.MaxLength = 5;
 			this.itemSeedBox.Name = "itemSeedBox";
@@ -88,7 +88,7 @@ namespace TQVaultAE.GUI
 			this.randomButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.randomButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.randomButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.randomButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
+			this.randomButton.Font = Program.GetFontAlbertusMTLight( 12F);
 			this.randomButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.randomButton.Image = ((System.Drawing.Image)(resources.GetObject("randomButton.Image")));
 			this.randomButton.Location = new System.Drawing.Point(196, 224);
@@ -111,7 +111,7 @@ namespace TQVaultAE.GUI
 			this.ok.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.ok.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.ok.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.ok.Font = new System.Drawing.Font("Albertus MT Light", 12F);
+			this.ok.Font = Program.GetFontAlbertusMTLight( 12F);
 			this.ok.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.ok.Image = ((System.Drawing.Image)(resources.GetObject("ok.Image")));
 			this.ok.Location = new System.Drawing.Point(54, 285);
@@ -135,7 +135,7 @@ namespace TQVaultAE.GUI
 			this.cancel.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.cancel.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.cancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.cancel.Font = new System.Drawing.Font("Albertus MT Light", 12F);
+			this.cancel.Font = Program.GetFontAlbertusMTLight( 12F);
 			this.cancel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.cancel.Image = ((System.Drawing.Image)(resources.GetObject("cancel.Image")));
 			this.cancel.Location = new System.Drawing.Point(214, 285);
@@ -153,7 +153,7 @@ namespace TQVaultAE.GUI
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+			this.label1.Font = Program.GetFontAlbertusMTLight( 11.25F);
 			this.label1.Location = new System.Drawing.Point(12, 29);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(376, 119);
@@ -172,7 +172,7 @@ namespace TQVaultAE.GUI
 			this.Controls.Add(this.randomButton);
 			this.Controls.Add(this.itemSeedBox);
 			this.DrawCustomBorder = true;
-			this.Font = new System.Drawing.Font("Albertus MT Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Font = Program.GetFontAlbertusMTLight( 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ForeColor = System.Drawing.Color.White;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.MaximizeBox = false;

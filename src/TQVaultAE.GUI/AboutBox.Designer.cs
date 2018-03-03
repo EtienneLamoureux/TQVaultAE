@@ -124,7 +124,7 @@ namespace TQVaultAE.GUI
 			// labelProductName
 			// 
 			this.labelProductName.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.labelProductName.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+			this.labelProductName.Font = Program.GetFontAlbertusMTLight( 11.25F);
 			this.labelProductName.ForeColor = System.Drawing.Color.White;
 			this.labelProductName.Location = new System.Drawing.Point(193, 0);
 			this.labelProductName.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
@@ -138,7 +138,7 @@ namespace TQVaultAE.GUI
 			// labelVersion
 			// 
 			this.labelVersion.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.labelVersion.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+			this.labelVersion.Font = Program.GetFontAlbertusMTLight( 11.25F);
 			this.labelVersion.ForeColor = System.Drawing.Color.White;
 			this.labelVersion.Location = new System.Drawing.Point(193, 41);
 			this.labelVersion.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
@@ -152,7 +152,7 @@ namespace TQVaultAE.GUI
 			// labelCopyright
 			// 
 			this.labelCopyright.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.labelCopyright.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+			this.labelCopyright.Font = Program.GetFontAlbertusMTLight( 11.25F);
 			this.labelCopyright.ForeColor = System.Drawing.Color.White;
 			this.labelCopyright.Location = new System.Drawing.Point(193, 82);
 			this.labelCopyright.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
@@ -167,7 +167,7 @@ namespace TQVaultAE.GUI
 			// 
 			this.textBoxDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
 			this.textBoxDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.textBoxDescription.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+			this.textBoxDescription.Font = Program.GetFontAlbertusMTLight( 9.75F);
 			this.textBoxDescription.ForeColor = System.Drawing.Color.White;
 			this.textBoxDescription.Location = new System.Drawing.Point(193, 121);
 			this.textBoxDescription.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
@@ -190,7 +190,7 @@ namespace TQVaultAE.GUI
 			this.buttonOK.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.buttonOK.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.buttonOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonOK.Font = new System.Drawing.Font("Albertus MT Light", 12F);
+			this.buttonOK.Font = Program.GetFontAlbertusMTLight( 12F);
 			this.buttonOK.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.buttonOK.Image = ((System.Drawing.Image)(resources.GetObject("buttonOK.Image")));
 			this.buttonOK.Location = new System.Drawing.Point(428, 383);

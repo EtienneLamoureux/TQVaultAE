@@ -40,7 +40,7 @@ namespace TQVaultAE.GUI
 				((panel1Size.Width + panel2Size.Width) * Database.DB.ItemUnitSize) + Convert.ToInt32(24.0F * Database.DB.Scale),
 				(Math.Max(panel1Size.Height, panel2Size.Height) * Database.DB.ItemUnitSize) + Convert.ToInt32(58.0F * Database.DB.Scale));
 			this.TabStop = false;
-			this.Font = new Font(this.Font.Name, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
+			this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
 
 			int borderPad = Convert.ToInt32(2.0F * Database.DB.Scale);
 

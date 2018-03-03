@@ -67,7 +67,7 @@ namespace TQVaultAE.GUI
 			// searchLabel
 			// 
 			this.searchLabel.AutoSize = true;
-			this.searchLabel.Font = new System.Drawing.Font("Albertus MT", 9F);
+			this.searchLabel.Font = Program.GetFontAlbertusMT( 9F);
 			this.searchLabel.Location = new System.Drawing.Point(15, 28);
 			this.searchLabel.Name = "searchLabel";
 			this.searchLabel.Size = new System.Drawing.Size(513, 126);
@@ -77,7 +77,7 @@ namespace TQVaultAE.GUI
 			// 
 			// searchTextBox
 			// 
-			this.searchTextBox.Font = new System.Drawing.Font("Albertus MT", 9F);
+			this.searchTextBox.Font = Program.GetFontAlbertusMT( 9F);
 			this.searchTextBox.Location = new System.Drawing.Point(18, 180);
 			this.searchTextBox.Name = "searchTextBox";
 			this.searchTextBox.Size = new System.Drawing.Size(565, 21);
@@ -91,7 +91,7 @@ namespace TQVaultAE.GUI
 			this.findButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.findButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.findButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.findButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
+			this.findButton.Font = Program.GetFontAlbertusMTLight( 12F);
 			this.findButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.findButton.Image = ((System.Drawing.Image)(resources.GetObject("findButton.Image")));
 			this.findButton.Location = new System.Drawing.Point(164, 214);
@@ -115,7 +115,7 @@ namespace TQVaultAE.GUI
 			this.cancelButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.cancelButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.cancelButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
+			this.cancelButton.Font = Program.GetFontAlbertusMTLight( 12F);
 			this.cancelButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.cancelButton.Image = ((System.Drawing.Image)(resources.GetObject("cancelButton.Image")));
 			this.cancelButton.Location = new System.Drawing.Point(306, 214);
@@ -143,7 +143,7 @@ namespace TQVaultAE.GUI
 			this.Controls.Add(this.searchTextBox);
 			this.Controls.Add(this.searchLabel);
 			this.DrawCustomBorder = true;
-			this.Font = new System.Drawing.Font("Albertus MT", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Font = Program.GetFontAlbertusMT( 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ForeColor = System.Drawing.Color.White;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.MaximizeBox = false;

@@ -104,7 +104,7 @@ namespace TQVaultAE.GUI
 			this.ok.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.ok.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.ok.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.ok.Font = new System.Drawing.Font("Albertus MT Light", 12F);
+			this.ok.Font = Program.GetFontAlbertusMTLight(12F);
 			this.ok.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 			this.ok.Image = ((System.Drawing.Image)(resources.GetObject("ok.Image")));
 			this.ok.Location = new System.Drawing.Point(781, 419);
@@ -161,7 +161,7 @@ namespace TQVaultAE.GUI
 			// 
 			this.label1.AutoSize = true;
 			this.label1.BackColor = System.Drawing.Color.Transparent;
-			this.label1.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+			this.label1.Font = Program.GetFontAlbertusMTLight(11.25F);
 			this.label1.Location = new System.Drawing.Point(324, 101);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(111, 17);
@@ -172,7 +172,7 @@ namespace TQVaultAE.GUI
 			// 
 			this.label2.AutoSize = true;
 			this.label2.BackColor = System.Drawing.Color.Transparent;
-			this.label2.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+			this.label2.Font = Program.GetFontAlbertusMTLight(11.25F);
 			this.label2.Location = new System.Drawing.Point(12, 101);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(136, 17);
@@ -183,7 +183,7 @@ namespace TQVaultAE.GUI
 			// 
 			this.checkBox1.AutoSize = true;
 			this.checkBox1.BackColor = System.Drawing.Color.Transparent;
-			this.checkBox1.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+			this.checkBox1.Font = Program.GetFontAlbertusMTLight(11.25F);
 			this.checkBox1.Location = new System.Drawing.Point(763, 42);
 			this.checkBox1.Name = "checkBox1";
 			this.checkBox1.Size = new System.Drawing.Size(126, 21);
@@ -208,7 +208,7 @@ namespace TQVaultAE.GUI
 			// 
 			this.label3.AutoSize = true;
 			this.label3.BackColor = System.Drawing.Color.Transparent;
-			this.label3.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+			this.label3.Font = Program.GetFontAlbertusMTLight( 11.25F);
 			this.label3.Location = new System.Drawing.Point(655, 101);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(111, 17);
@@ -232,7 +232,7 @@ namespace TQVaultAE.GUI
 			this.Controls.Add(this.webBrowser1);
 			this.Controls.Add(this.ok);
 			this.DrawCustomBorder = true;
-			this.Font = new System.Drawing.Font("Albertus MT", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ForeColor = System.Drawing.Color.White;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.MaximizeBox = false;

@@ -108,7 +108,7 @@ namespace TQVaultAE.GUI
 			// Set up the inital font size
 			if (Database.DB.Scale != 1.0F)
 			{
-				this.Font = new Font(this.Font.Name, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
+				this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
 			}
 
 			this.background = Resources.Equipment_bg_new;

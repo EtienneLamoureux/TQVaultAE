@@ -194,12 +194,12 @@ namespace TQVaultAE.GUI
 			}
 
 			// We changed the font so reset the base font.
-			if (this.baseFont.Name != this.Font.Name)
+			if (this.baseFont.FontFamily != this.Font.FontFamily)
 			{
 				this.baseFont = this.Font;
 			}
 
-			this.baseFont = new Font(this.baseFont.Name, this.baseFont.SizeInPoints * factor.Height, this.baseFont.Style);
+			this.baseFont = new Font(this.baseFont.FontFamily, this.baseFont.SizeInPoints * factor.Height, this.baseFont.Style);
 			this.Font = this.GetScaledButtonTextFont(this.baseFont, Convert.ToInt32((float)this.Width * factor.Width));
 
 			// Reset the image to the original size.  Assume that we are resizing and that this button is not under the mouse.
@@ -334,7 +334,7 @@ namespace TQVaultAE.GUI
 			}
 
 			// We changed the font so reset the base font.
-			if (this.baseFont.Name != this.Font.Name)
+			if (this.baseFont.FontFamily != this.Font.FontFamily)
 			{
 				this.baseFont = this.Font;
 			}

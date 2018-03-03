@@ -157,7 +157,7 @@ namespace TQVaultAE.GUI
 			this.contextMenu = new ContextMenuStrip();
 			this.contextMenu.BackColor = Color.FromArgb(46, 41, 31);
 			this.contextMenu.DropShadowEnabled = true;
-			this.contextMenu.Font = new Font("Albertus MT", 9.0F * Database.DB.Scale);
+			this.contextMenu.Font = Program.GetFontAlbertusMT(9.0F * Database.DB.Scale);
 			this.contextMenu.ForeColor = Color.FromArgb(200, 200, 200);
 			this.contextMenu.Opacity = 0.80;
 			this.contextMenu.ShowImageMargin = false;

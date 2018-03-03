@@ -124,7 +124,7 @@ namespace TQVaultAE.GUI
 			this.bottomRightCorner = Resources.BorderBottomRightCorner;
 			this.bottomLeftCorner = Resources.BorderBottomLeftCorner;
 			this.ShowResizeBorders = false;
-			this.titleFont = new Font("Albertus MT Light", 9.5F);
+			this.titleFont = Program.GetFontAlbertusMTLight(9.5F);
 			this.TitleTextColor = SystemColors.ControlText;
 
 			this.InitializeComponent();

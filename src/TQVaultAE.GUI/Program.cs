@@ -6,6 +6,8 @@
 namespace TQVaultAE.GUI
 {
 	using System;
+	using System.Drawing;
+	using System.Drawing.Text;
 	using System.Globalization;
 	using System.Security.Permissions;
 	using System.Threading;
@@ -21,6 +23,12 @@ namespace TQVaultAE.GUI
 		/// Right to left reading options for message boxes
 		/// </summary>
 		private static MessageBoxOptions rightToLeft;
+
+
+		private static PrivateFontCollection privateFontCollection = new PrivateFontCollection();
+
+		[System.Runtime.InteropServices.DllImport("gdi32.dll")]
+		private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [System.Runtime.InteropServices.In] ref uint pcFonts);
 
 		/// <summary>
 		/// The main entry point for the application.
@@ -47,6 +55,8 @@ namespace TQVaultAE.GUI
 
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
+			initCustomFont(Properties.Resources.AlbertusMT);
+			initCustomFont(Properties.Resources.AlbertusMTLight);
 			Application.Run(new MainForm());
 		}
 
@@ -108,6 +118,49 @@ namespace TQVaultAE.GUI
 			{
 				Application.Exit();
 			}
+		}
+
+		private static void initCustomFont(byte[] fontData)
+		{
+			int fontLength = fontData.Length;
+			uint r = 0;
+
+			System.IntPtr fontPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(fontLength);
+			System.Runtime.InteropServices.Marshal.Copy(fontData, 0, fontPtr, fontLength);
+			AddFontMemResourceEx(fontPtr, (uint)fontLength, IntPtr.Zero, ref r);
+			privateFontCollection.AddMemoryFont(fontPtr, fontLength);
+			System.Runtime.InteropServices.Marshal.FreeCoTaskMem(fontPtr);
+			fontPtr = IntPtr.Zero;
+		}
+
+		public static Font GetFontAlbertusMT(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)
+		{
+			return new Font(privateFontCollection.Families[0], fontSize, fontStyle, unit, b);
+		}
+
+		public static Font GetFontAlbertusMT(float fontSize, GraphicsUnit unit)
+		{
+			return new Font(privateFontCollection.Families[0], fontSize, unit);
+		}
+
+		public static Font GetFontAlbertusMT(float fontSize)
+		{
+			return new Font(privateFontCollection.Families[0], fontSize);
+		}
+
+		public static Font GetFontAlbertusMTLight(float fontSize, GraphicsUnit unit)
+		{
+			return new Font(privateFontCollection.Families[0], fontSize, unit);
+		}
+
+		public static Font GetFontAlbertusMTLight(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)
+		{
+			return new Font(privateFontCollection.Families[1], fontSize, fontStyle, unit, b);
+		}
+
+		public static Font GetFontAlbertusMTLight(float fontSize)
+		{
+			return new Font(privateFontCollection.Families[1], fontSize);
 		}
 	}
 }
