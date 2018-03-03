@@ -143,11 +143,13 @@ namespace TQVaultAE.GUI
 
 		public Size scaleSize(Size size)
 		{
+			if (TQVaultData.Database.DB == null) return size;
 			return new Size((int)System.Math.Round(size.Width * TQVaultData.Database.DB.Scale), (int)System.Math.Round(size.Height * TQVaultData.Database.DB.Scale));
 		}
 
 		public Point scalePoint(Point point)
 		{
+			if (TQVaultData.Database.DB == null) return point;
 			return new Point((int)System.Math.Round(point.X * TQVaultData.Database.DB.Scale), (int)System.Math.Round(point.Y * TQVaultData.Database.DB.Scale));
 		}
 
