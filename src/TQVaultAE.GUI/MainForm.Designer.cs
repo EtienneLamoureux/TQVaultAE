@@ -115,16 +115,6 @@ namespace TQVaultAE.GUI
 
 		#region Windows Form Designer generated code
 
-		private Size scaleSize(Size size)
-		{
-			return new Size((int)System.Math.Round(size.Width * TQVaultData.Database.DB.Scale), (int)System.Math.Round(size.Height * TQVaultData.Database.DB.Scale));
-		}
-
-		private Point scalePoint(Point point)
-		{
-			return new Point((int)System.Math.Round(point.X * TQVaultData.Database.DB.Scale), (int)System.Math.Round(point.Y * TQVaultData.Database.DB.Scale));
-		}
-
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.

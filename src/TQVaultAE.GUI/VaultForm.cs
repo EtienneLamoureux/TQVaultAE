@@ -141,6 +141,17 @@ namespace TQVaultAE.GUI
 			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
 		}
 
+		public Size scaleSize(Size size)
+		{
+			return new Size((int)System.Math.Round(size.Width * TQVaultData.Database.DB.Scale), (int)System.Math.Round(size.Height * TQVaultData.Database.DB.Scale));
+		}
+
+		public Point scalePoint(Point point)
+		{
+			return new Point((int)System.Math.Round(point.X * TQVaultData.Database.DB.Scale), (int)System.Math.Round(point.Y * TQVaultData.Database.DB.Scale));
+		}
+
+
 		/// <summary>
 		/// Gets the MessageBoxOptions for right to left reading.
 		/// </summary>
