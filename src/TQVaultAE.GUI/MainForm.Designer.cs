@@ -258,9 +258,9 @@ namespace TQVaultAE.GUI
 			this.customMapText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.customMapText.Font = new System.Drawing.Font("Albertus MT", 11.25F * TQVaultData.Database.DB.Scale, System.Drawing.FontStyle.Bold);
 			this.customMapText.ForeColor = System.Drawing.Color.Black;
-			this.customMapText.Location = this.scalePoint(new System.Drawing.Point(446, 330));
+			this.customMapText.Location = this.scalePoint(new System.Drawing.Point(312, 811));
 			this.customMapText.Name = "customMapText";
-			this.customMapText.Size = this.scaleSize(new System.Drawing.Size(253, 46));
+			this.customMapText.Size = this.scaleSize(new System.Drawing.Size(323, 46));
 			this.customMapText.TabIndex = 11;
 			this.customMapText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			//
