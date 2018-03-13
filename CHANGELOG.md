@@ -1,8 +1,28 @@
 # Changelog
+## 2.5.7
+### Bugs
+- Fix custom map label
+
+### Features
+- Load embedded font
+- Add style to combobox
+
+## 2.5.6
+### Bugs
+- Fix corruption during equipment background image scaling
+
+### Features
+- Always center window on startup
+- Improve title bar scaling
+
+## 2.5.5
+### Bugs
+- Fix ui scale bug introduced in 2.5.4
+
 ## 2.5.4
 ### Bugs
-## Fix attribute inconsistency when viewing similar items
-## Fix UI corruption on low resolution displays
+- Fix attribute inconsistency when viewing similar items
+- Fix UI corruption on low resolution displays
 
 ## 2.5.3
 ### Features
