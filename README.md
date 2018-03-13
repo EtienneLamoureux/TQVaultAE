@@ -67,6 +67,8 @@ This project could not go on without the continued contributions of the Titan Qu
 
 ### TQVaultAE
 - Malgardian (a.k.a. Spectre), *Anniversary Edition port*
+- EPinter, *bug fixes, UI rework, new big vault, general improvements*
+- NorthFury, *bug fixes, search features, general improvements*
 - [Open source contributors](https://github.com/EtienneLamoureux/TQVaultAE/graphs/contributors)
 
 ### TQVault
