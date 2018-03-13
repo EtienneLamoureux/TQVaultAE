@@ -61,21 +61,36 @@ namespace TQVaultAE.GUI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TQVault by bman654 (wickedsoul_@yahoo.com) 
-        ///Help on Item Stats by SadYc (sadyc1@gmail.com)
-        ///Additional features by 
+        ///   Looks up a localized string similar to TQVault by bman654 (wickedsoul_@yahoo.com)
+        ///
+        ///Contributors:
+        ///
+        ///- EPinter: bug fixes, UI rework, new big vault, improvements
+        ///
+        ///- NorthFury: bug fixes, search features, improvements
+        ///
+        ///- Malgardian: Anniversary Edition port
+        ///
+        ///- Help on Item Stats by SadYc (sadyc1@gmail.com)
+        ///
+        ///
+        ///- Additional features by 
         ///VillageIdiot (villij-idjit@sbcglobal.net)
         ///
-        ///New User Interface by AvunaOs
-        ///German translation by FOE.
-        ///French translation by Jean and Vifarc.
-        ///Polish translation by Cygi.
-        ///Russian translation by Xelat.
-        ///Spanish translation by Kurrus.
         ///
-        ///The following 3rd party libraries are used in TQVault:
-        ///VXPLib - A tooltip library with HTML rendering.
-        ///DevIl &amp; Tao.Devil - image library used to read DDS formatted imag [rest of string was truncated]&quot;;.
+        ///
+        ///- New User Interface by AvunaOs
+        ///
+        ///- German translation by FOE.
+        ///
+        ///
+        ///- French translation by Jean and Vifarc.
+        ///
+        ///
+        ///- Polish translation by Cygi.
+        ///
+        ///
+        ///- Russian translation by [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string AboutDescription {
             get {
