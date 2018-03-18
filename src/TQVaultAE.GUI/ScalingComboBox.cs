@@ -20,7 +20,7 @@ namespace TQVaultAE.GUI
 		/// <param name="size">New Size of the control</param>
 		public void Revert(Point location, Size size)
 		{
-			this.Font = new Font("Microsoft Sans Serif", 8.25F);
+			this.Font = Program.GetFontAlbertusMTLight(8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Location = location;
 			this.Size = size;
 			this.BackColor = SystemColors.Window;
@@ -34,7 +34,7 @@ namespace TQVaultAE.GUI
 		/// <param name="specified">BoundsSpecified value.</param>
 		protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 		{
-			this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * factor.Height, this.Font.Style);
+			this.Font = Program.GetFontAlbertusMTLight(8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
 			base.ScaleControl(factor, specified);
 		}
