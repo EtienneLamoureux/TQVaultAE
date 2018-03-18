@@ -169,7 +169,7 @@ namespace TQVaultAE.GUI
 			// characterComboBox
 			//
 			this.characterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.characterComboBox.Font = Program.GetFontAlbertusMTLight( 11F * TQVaultData.Database.DB.Scale);
+			this.characterComboBox.Font = Program.GetFontAlbertusMTLight( 13F * TQVaultData.Database.DB.Scale);
 			this.characterComboBox.Location = this.scalePoint(new System.Drawing.Point(777 , 72));
 			this.characterComboBox.MaxDropDownItems = 10;
 			this.characterComboBox.Name = "characterComboBox";
@@ -210,7 +210,7 @@ namespace TQVaultAE.GUI
 			// vaultListComboBox
 			//
 			this.vaultListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.vaultListComboBox.Font = Program.GetFontAlbertusMTLight( 11F * TQVaultData.Database.DB.Scale);
+			this.vaultListComboBox.Font = Program.GetFontAlbertusMTLight( 13F * TQVaultData.Database.DB.Scale);
 			this.vaultListComboBox.Location = this.scalePoint(new System.Drawing.Point(108, 72));
 			this.vaultListComboBox.Name = "vaultListComboBox";
 			this.vaultListComboBox.Size = this.scaleSize(new System.Drawing.Size(481, 26));
