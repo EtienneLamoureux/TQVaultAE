@@ -1,19 +1,19 @@
 # Changelog
 ## 2.5.7
-### Bugs
-- Fix custom map label
-
 ### Features
 - Load embedded font
 - Add style to combobox
 
-## 2.5.6
 ### Bugs
-- Fix corruption during equipment background image scaling
+- Fix custom map label
 
+## 2.5.6
 ### Features
 - Always center window on startup
 - Improve title bar scaling
+
+### Bugs
+- Fix corruption during equipment background image scaling
 
 ## 2.5.5
 ### Bugs
