@@ -23,11 +23,13 @@ An external tool that provides extra bank space for Titan Quest Anniversary Edit
 - Item edition
   - Extract relic/charm from items at no cost, keeping both
   - Modify the relic/charm completion bonus
+  - Complete relec/charm from a single piece
   - Create missing set pieces
+  - Duplicate any item
 - Item management
-  - Move items in bulk by CTRL-clicking them, then using the bulk-move options in the right-click menu.
-  - Combine potion stacks, relics and charms by dropping them onto each other.
-  - Split potion stacks apart.
+  - Move items in bulk by CTRL-clicking them, then using the bulk-move options in the right-click menu
+  - Combine potion stacks, relics and charms by dropping them onto each other
+  - Split potion stacks apart
 - Character backups
   - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
 
@@ -57,18 +59,30 @@ The "Configure" button opens up the configuration menu. That's where you can cha
 
 ### Troubleshooting and F.A.Q.
 **Q. Can TQVaultAE use my old vault files?**
-:  *A. Yes, TQVaultAE is compatible with the legacy TQvault vault files.*
+
+*A. Yes, TQVaultAE is compatible with the legacy TQvault vault files.*
 
 **Q. Does TQVaultAE modify my items? The stats I see are not the same as the ones ingame.**
-:  *A. No, unless you specifically use the "item edition" options, TQVaultAE doesn't alter items in any way. The difference you see is simply due to the way stats are generated in Titan Quest: each item has base stats and a unique seed that modifies those stats. TQVaultAE only displays the base stats (and not the modifications due to the RNG).*
+
+*A. No, unless you specifically use the "item edition" options, TQVaultAE doesn't alter items in any way. 
+The difference you see is simply due to the way stats are generated in Titan Quest: each item has base stats and a unique seed that modifies those stats. 
+TQVaultAE only displays the base stats (and not the modifications due to the RNG).*
+
+**Q. I have a problem not listed here. What can I do?**
+
+*A. There are several things you can do:*
+- *Close TQVaultAE and open it up again. It may fix your problem.*
+- *Look up if your problem is featured in [TQVault's documentation](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/documentation/TQVault%20common%20issues.pdf)*
+- *Create an issue in [our issue tracking board](https://github.com/EtienneLamoureux/TQVaultAE/issues)*
 
 ## Contributors
 This project could not go on without the continued contributions of the Titan Quest community.
 
 ### TQVaultAE
 - Malgardian (a.k.a. Spectre), *Anniversary Edition port*
-- EPinter, *bug fixes, UI rework, new big vault, general improvements*
-- NorthFury, *bug fixes, search features, general improvements*
+- EPinter, *UI rework, new big vault, bug fixes, general improvements*
+- NorthFury, *search improvement, bug fixes, general improvements*
+- EtienneLamoureux, *misc*
 - [Open source contributors](https://github.com/EtienneLamoureux/TQVaultAE/graphs/contributors)
 
 ### TQVault
