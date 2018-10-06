@@ -13,20 +13,20 @@
 - Improve title bar scaling
 
 ### Bugs
-- Fix corruption during equipment background image scaling
+- #75 Fix corruption during equipment background image scaling
 
 ## 2.5.5
 ### Bugs
-- Fix ui scale bug introduced in 2.5.4
+- #62 Fix ui scale bug introduced in 2.5.4
 
 ## 2.5.4
 ### Bugs
 - Fix attribute inconsistency when viewing similar items
-- Fix UI corruption on low resolution displays
+- #21 Fix UI corruption on low resolution displays
 
 ## 2.5.3
 ### Features
-- Added ini file support for gamepath, mod and disable editing/copy features (replaces command line arguments)
+- #48 Added ini file support for gamepath, mod and disable editing/copy features (replaces command line arguments)
 
 ### Bugs
 - Fixed issue where one couldn't search if a character didn't have an extra inventory space tab
