@@ -11,7 +11,7 @@ An external tool that provides extra bank space for Titan Quest Anniversary Edit
     + [Installer](#installer)
     + [DIY Archive](#diy-archive)
     + [Configuration](#configuration)
-    + [Troubleshooting and F.A.Q.](#troubleshooting-and-faq)
+  * [Troubleshooting and F.A.Q.](#troubleshooting-and-faq)
   * [Contributors](#contributors)
     + [TQVaultAE](#tqvaultae-1)
     + [TQVault](#tqvault)
@@ -57,7 +57,7 @@ The "Configure" button opens up the configuration menu. That's where you can cha
 - The paths where the game files are located
 - The "item edition" options
 
-### Troubleshooting and F.A.Q.
+## Troubleshooting and F.A.Q.
 **Q. Can TQVaultAE use my old vault files?**
 
 *A. Yes, TQVaultAE is compatible with the legacy TQvault vault files.*
