@@ -368,7 +368,7 @@ namespace TQVaultData
 		{
 			get
 			{
-				if (this.IsRelic && this.var1 == 0)
+				if (IsRelic && var1 == 0)
 				{
 					// The "Power of Nerthus" relic is a special quest-reward relic with only 1 shard (it is always complete). 
 					// Since its database var1 value is 0, we hard-set it to 1.
@@ -380,7 +380,7 @@ namespace TQVaultData
 
 			private set
 			{
-				this.var1 = Var1;
+				var1 = value;
 			}
 		}
 
