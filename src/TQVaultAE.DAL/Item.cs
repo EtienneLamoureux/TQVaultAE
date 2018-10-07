@@ -363,7 +363,26 @@ namespace TQVaultData
 		/// <summary>
 		/// Gets the number of relics
 		/// </summary>
-		public int Var1 { get; private set; }
+		private int var1;
+		public int Var1
+		{
+			get
+			{
+				if (this.IsRelic && this.var1 == 0)
+				{
+					// The "Power of Nerthus" relic is a special quest-reward relic with only 1 shard (it is always complete). 
+					// Since its database var1 value is 0, we hard-set it to 1.
+					return 1;
+				}
+
+				return var1;
+			}
+
+			private set
+			{
+				this.var1 = Var1;
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the stack size.
