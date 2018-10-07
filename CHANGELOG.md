@@ -6,6 +6,7 @@
 
 ### Bugs
 - Fix custom map label
+- #83 Display the icon for the "Power of Nerthus" relics
 
 ## 2.5.6
 ### Features
