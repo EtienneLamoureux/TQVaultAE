@@ -73,7 +73,7 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 The difference you see is simply due to the way stats are generated in Titan Quest: each item has base stats and a unique seed that modifies those stats. 
 TQVaultAE only displays the base stats (and not the modifications due to the RNG).*
 
-**Q. Error: Could not find a part of the path 'some path' This may be caused by a bad language or game path setting.**
+**Q. Error Loading Resources. This may be caused by a bad language or game path setting.**
 
 *A. Follow these steps:*
 1. *Navigate the the installation folder of TQVaultAE*
@@ -112,7 +112,7 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 
 **Q. I have this game as a stand-alone (i.e. not through Steam or GOG). How can I make TQVaultAE work?**
 
-*A. See the answer to "**Error: Could not find a part of the path 'some path' This may be caused by a bad language or game path setting.**" above*
+*A. See the answer to "**Error Loading Resources. This may be caused by a bad language or game path setting.**" above*
 
 **Q. Does TQVaultAE work with the Immortal Throne expansion?**
 
