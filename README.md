@@ -60,7 +60,7 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 - The language used by the application
 - The paths where the vault files are located
 - The paths where the game files are located
-- The "item edition" options (i.e. cheats)
+- The cheats (listed under the "item edition" options)
 
 ## Troubleshooting and F.A.Q.
 **Q. Can TQVaultAE use my old vault files?**
@@ -69,7 +69,7 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 
 **Q. Does TQVaultAE modify my items? The stats I see are not the same as the ones ingame.**
 
-*A. No, unless you specifically use the "item edition" options, TQVaultAE doesn't alter items in any way. 
+*A. No, unless you specifically use the cheats, TQVaultAE doesn't alter items in any way. 
 The difference you see is simply due to the way stats are generated in Titan Quest: each item has base stats and a unique seed that modifies those stats. 
 TQVaultAE only displays the base stats (and not the modifications due to the RNG).*
 
