@@ -1,5 +1,6 @@
 # TQVaultAE
-An external tool that provides extra bank space for Titan Quest Anniversary Edition. Also contains some item edition features.
+TQVaultAE is an external tool for [Titan Quest Anniversary Edition](https://www.thqnordic.com/games/titan-quest) that allows you to store and search your items outside the game.
+Works with all expansions!
 
 ![TitanQuestAE screenshot](https://raw.githubusercontent.com/EtienneLamoureux/TQVaultAE/master/documentation/screenshot.PNG "Hey, I can see my inventory from here!")
 
@@ -19,16 +20,16 @@ An external tool that provides extra bank space for Titan Quest Anniversary Edit
 
 ## Features
 - **Infinite bank space**
-- Search across every vault, character and bag you have
-- Item edition
+- Powerful search
+- Cheats
   - Extract relic/charm from items at no cost, keeping both
   - Modify the relic/charm completion bonus
-  - Complete relec/charm from a single piece
+  - Complete relic/charm from a single piece
   - Create missing set pieces
   - Duplicate any item
-- Item management
-  - Move items in bulk by CTRL-clicking them, then using the bulk-move options in the right-click menu
-  - Combine potion stacks, relics and charms by dropping them onto each other
+- QOL
+  - Bulk item transfer (CTRL-click, right-click)
+  - Combine stacks (potions, relics and charms) by dropping them onto each other
   - Split potion stacks apart
 - Character backups
   - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
@@ -51,11 +52,11 @@ An external tool that provides extra bank space for Titan Quest Anniversary Edit
 5. Enjoy!
 
 ### Configuration
-The "Configure" button opens up the configuration menu. That's where you can change:
+The "Configure" button (top-left) opens up the configuration menu. That's where you can change:
 - The language used by the application
 - The paths where the vault files are located
 - The paths where the game files are located
-- The "item edition" options
+- The "item edition" options (i.e. cheats)
 
 ## Troubleshooting and F.A.Q.
 **Q. Can TQVaultAE use my old vault files?**
@@ -68,10 +69,27 @@ The "Configure" button opens up the configuration menu. That's where you can cha
 The difference you see is simply due to the way stats are generated in Titan Quest: each item has base stats and a unique seed that modifies those stats. 
 TQVaultAE only displays the base stats (and not the modifications due to the RNG).*
 
+**Q. I have this game as a stand-alone (i.e. not through Steam or GOG). How can I make TQVaultAE work?**
+
+*A. Navigate the the installation folder of TQVaultAE. Open `TQVaultAE.exe.config` in a text editor. Search for `AutoDetectGamePath`. Set its value to `False`. 
+Open TQVaultAE. Click the configure button (top-left). Manually set your game path.*
+
+**Q. Does TQVaultAE work with the Immortal Throne expansion?**
+
+*A. Yes*
+
+**Q. Does TQVaultAE work with the Ragnarok expansion?**
+
+*A. Yes*
+
+**Q. Can I still earn achievements while using TQVaultAE?**
+
+*A. Yes*
+
 **Q. I have a problem not listed here. What can I do?**
 
 *A. There are several things you can do:*
-- *Close TQVaultAE and open it up again. It may fix your problem.*
+- *Close TQVaultAE and open it up again. It may fix your problem*
 - *Look up if your problem is featured in [TQVault's documentation](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/documentation/TQVault%20common%20issues.pdf)*
 - *Create an issue in [our issue tracking board](https://github.com/EtienneLamoureux/TQVaultAE/issues)*
 
@@ -80,10 +98,10 @@ This project could not go on without the continued contributions of the Titan Qu
 
 ### TQVaultAE
 - Malgardian (a.k.a. Spectre), *Anniversary Edition port*
-- EPinter, *UI rework, new big vault, bug fixes, general improvements*
-- NorthFury, *search improvement, bug fixes, general improvements*
-- EtienneLamoureux, *misc*
-- [Open source contributors](https://github.com/EtienneLamoureux/TQVaultAE/graphs/contributors)
+- EPinter, *XL vault, bug fixes, general improvements*
+- NorthFury, *search improvements, bug fixes, general improvements*
+- EtienneLamoureux, *maintenance, bug fixes, general improvements*
+- [Open-source contributors](https://github.com/EtienneLamoureux/TQVaultAE/graphs/contributors)
 
 ### TQVault
 - Brandon "bman654" Wallace, *original author*
