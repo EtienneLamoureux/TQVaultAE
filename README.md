@@ -73,12 +73,12 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 The difference you see is simply due to the way stats are generated in Titan Quest: each item has base stats and a unique seed that modifies those stats. 
 TQVaultAE only displays the base stats (and not the modifications due to the RNG).*
 
-**Q. Error: Could not find a part of the path '<some path>' This may be caused by a bad language or game path setting.**
+**Q. Error: Could not find a part of the path 'some path' This may be caused by a bad language or game path setting.**
 
 *A. Follow these steps:*
 1. *Navigate the the installation folder of TQVaultAE*
 2. *Open `TQVaultAE.exe.config` in a text editor (i.e. notepad, **not Microsoft Word**)*
-3. *Replace the following section:*
+3. *Replace the following sections:*
 ```xml
 <setting name="AutoDetectGamePath" serializeAs="String">
     <value>True</value>
@@ -105,14 +105,14 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 </setting>
 ```
 4. *Open TQVaultAE*
-   4.1. *You might be greeted with a warning dialog about the vault path not being set. Click OK.*
+   - *You might be greeted with a warning dialog about the vault path not being set. Click OK.*
 5. *Open the configuration menu by clicking the top-left button*
 6. *Validate the vault path and the game paths shown*
 7. *Click OK to close the configuration menu*
 
 **Q. I have this game as a stand-alone (i.e. not through Steam or GOG). How can I make TQVaultAE work?**
 
-*A. See the answer to "**Q. Error: Could not find a part of the path '<some path>' This may be caused by a bad language or game path setting.**" above*
+*A. See the answer to "**Error: Could not find a part of the path 'some path' This may be caused by a bad language or game path setting.**" above*
 
 **Q. Does TQVaultAE work with the Immortal Throne expansion?**
 
