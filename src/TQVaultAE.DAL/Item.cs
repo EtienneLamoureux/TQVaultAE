@@ -1143,7 +1143,7 @@ namespace TQVaultData
 						lootTableID = this.RelicInfo.GetString("bonusTableName");
 					}
 				}
-				else if (this.IsArtifact && this.RelicBonusInfo != null)
+				else if (this.IsArtifact)
 				{
 					// for artifacts we need to find the formulae that was used to create the artifact.  sucks to be us
 					// The formulas seem to always be in the arcaneformulae subfolder with a _formula on the end
@@ -1579,6 +1579,25 @@ namespace TQVaultData
 			Item newItem = (Item)this.MemberwiseClone();
 			newItem.MarkModified();
 			return newItem;
+		}
+
+		/// <summary>
+		/// Create an artifact from its formulae
+		/// </summary>
+		/// <returns>A new artifact</returns>
+		public Item CraftArtifact()
+		{
+			if (this.IsFormulae && this.baseItemInfo != null)
+			{
+				string artifactID = this.baseItemInfo.GetString("artifactName");
+				Item newArtifact = this.MakeEmptyCopy(artifactID);
+				newArtifact.GetDBData();
+
+				this.MarkModified();
+
+				return newArtifact;
+			}
+			return null;
 		}
 
 		/// <summary>

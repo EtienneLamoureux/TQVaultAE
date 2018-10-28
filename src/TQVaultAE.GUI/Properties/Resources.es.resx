@@ -662,6 +662,9 @@ Por favor, suelta el objeto antes de usar la organización automática.</value>
   <data name="SackPanelMenuCharm" xml:space="preserve">
     <value>Completar dije</value>
   </data>
+  <data name="SackPanelMenuFormulae" xml:space="preserve">
+    <value>Hacer el artefacto</value>
+  </data>
   <data name="SackPanelMenuClear" xml:space="preserve">
     <value>Deseleccionar todo</value>
   </data>

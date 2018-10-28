@@ -663,6 +663,9 @@ Are you sure you want to overwrite?</value>
   <data name="SackPanelMenuCharm" xml:space="preserve">
     <value>Собранный талисман</value>
   </data>
+  <data name="SackPanelMenuFormulae" xml:space="preserve">
+    <value>Артефакт ремесла</value>
+  </data>
   <data name="SackPanelMenuClear" xml:space="preserve">
     <value>Очистить выделение</value>
   </data>
