@@ -460,7 +460,8 @@ TQVaultMon est un programme qui, si il est lancé, fera croire à Titan Quest
 que votre personnage est OK et vous permettra de le charger sans souci.
 Une fois que vous avez chargé votre personnage avec succès, vous n'aurez plus 
 besoin de réutiliser TQVaultMon à moins de faire de nouveaux changements.
-Il est conseillé de démarrer TQVaultMon maintenant, puis de lancer Titan Quest
+Il est conseillé de démarrer TQVaultMon maintenant, puis de lancer Titan
+ Quest
 et de charger rapidement tous les personnages que vous venez de modifier.
 Voulez-vous démarrer TQVaultMon maintenant?</value>
   </data>
@@ -655,6 +656,9 @@ Voulez-vous vraiment supprimer cet objet ?</value>
   </data>
   <data name="SackPanelMenuCharm" xml:space="preserve">
     <value>Compléter le charme</value>
+  </data>
+  <data name="SackPanelMenuFormulae" xml:space="preserve">
+    <value>Fabriquer l'artéfact</value>
   </data>
   <data name="SackPanelMenuClear" xml:space="preserve">
     <value>Annuler la sélection</value>

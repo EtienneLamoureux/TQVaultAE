@@ -29,6 +29,7 @@ Works with all expansions!
   - Extract relic/charm from items at no cost, keeping both
   - Modify the relic/charm completion bonus
   - Complete relic/charm from a single piece
+  - Craft an artifact from its recipe
   - Create missing set pieces
   - Duplicate any item
 - QOL

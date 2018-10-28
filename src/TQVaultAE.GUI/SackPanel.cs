@@ -1498,11 +1498,17 @@ namespace TQVaultAE.GUI
 								}
 							}
 
+							// Add option to craft an artifact from formulae.
+							if (focusedItem.IsFormulae)
+							{
+								this.contextMenu.Items.Add(Resources.SackPanelMenuFormulae);
+							}
+
 							// If the item is a completed relic/charm/artifact or contains such then
 							// add a menu of possible completion bonuses to choose from.
 							if ((focusedItem.HasRelic && focusedItem.RelicBonusInfo != null) ||
 								(focusedItem.IsRelic && focusedItem.IsRelicComplete) ||
-								(focusedItem.IsArtifact && focusedItem.RelicBonusInfo != null))
+								(focusedItem.IsArtifact))
 							{
 								LootTableCollection table = focusedItem.BonusTable;
 								if (table != null && table.Length > 0)
@@ -2578,6 +2584,42 @@ namespace TQVaultAE.GUI
 					focusedItem.GetDBData();
 					focusedItem.MarkModified();
 					this.Sack.IsModified = true;
+					Refresh();
+				}
+				else if (selectedItem == Resources.SackPanelMenuFormulae)
+				{
+					// Set DragInfo to focused item.
+					this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
+
+					// create artifact
+					Item artifact = focusedItem.CraftArtifact();
+
+					// generate bonus
+					float randPercent = (float)Item.GenerateSeed() / 0x7fff;
+					LootTableCollection table = artifact.BonusTable;
+
+					if (table != null && table.Length > 0)
+					{
+						int i = table.Length;
+						foreach (KeyValuePair<string, float> e1 in table)
+						{
+							i--;
+							if (randPercent <= e1.Value || i == 0)
+							{
+								artifact.RelicBonusId = TQData.NormalizeRecordPath(e1.Key);
+								artifact.RelicBonusInfo = Database.DB.GetInfo(e1.Key);
+								artifact.MarkModified();
+								break;
+							}
+							else
+							{
+								randPercent -= e1.Value;
+							}
+						}
+					}
+
+					// Put artifact in DragInfo
+					this.DragInfo.MarkModified(artifact);
 					Refresh();
 				}
 				else if (selectedItem == Resources.SackPanelMenuSplit)

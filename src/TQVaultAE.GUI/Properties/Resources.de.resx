@@ -654,6 +654,9 @@ Soll der Gegenstand wirklich gelöscht werden?</value>
   <data name="SackPanelMenuCharm" xml:space="preserve">
     <value>Talisman vervollständigen</value>
   </data>
+  <data name="SackPanelMenuFormulae" xml:space="preserve">
+    <value>Konstruiere das Artefakt</value>
+  </data>
   <data name="SackPanelMenuClear" xml:space="preserve">
     <value>Auswahl rücksetzen</value>
   </data>

@@ -654,6 +654,9 @@ Na pewno chcesz usunąć ten przedmiot?</value>
   <data name="SackPanelMenuCharm" xml:space="preserve">
     <value>Skompletuj Amulet</value>
   </data>
+  <data name="SackPanelMenuFormulae" xml:space="preserve">
+    <value>Artefakt rzemiosła</value>
+  </data>
   <data name="SackPanelMenuClear" xml:space="preserve">
     <value>Wyczyść Zaznaczenie</value>
   </data>

@@ -699,6 +699,9 @@ Are you sure you want to delete this item?</value>
   <data name="SackPanelMenuCharm" xml:space="preserve">
     <value>Complete Charm</value>
   </data>
+  <data name="SackPanelMenuFormulae" xml:space="preserve">
+    <value>Craft Artifact</value>
+  </data>
   <data name="SackPanelMenuClear" xml:space="preserve">
     <value>Clear Selection</value>
   </data>
