@@ -160,11 +160,12 @@ namespace TQVaultData
 		public string GetString(string variableName, int index)
 		{
 			Variable variable;
-			try
+
+			if (variables.ContainsKey(variableName.ToUpperInvariant()))
 			{
 				variable = this.variables[variableName.ToUpperInvariant()];
 			}
-			catch (KeyNotFoundException)
+			else
 			{
 				return string.Empty;
 			}

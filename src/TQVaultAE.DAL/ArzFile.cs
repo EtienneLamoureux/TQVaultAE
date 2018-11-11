@@ -181,18 +181,18 @@ namespace TQVaultData
 			recordId = TQData.NormalizeRecordPath(recordId);
 			DBRecordCollection databaseRecord;
 
-			try
+			if (cache.ContainsKey(recordId))
 			{
 				databaseRecord = this.cache[recordId];
 			}
-			catch (KeyNotFoundException)
+			else
 			{
 				RecordInfo rawRecord;
-				try
+				if (recordInfo.ContainsKey(recordId))
 				{
 					rawRecord = this.recordInfo[recordId];
 				}
-				catch (KeyNotFoundException)
+				else
 				{
 					// record not found
 					return null;
@@ -201,7 +201,7 @@ namespace TQVaultData
 				databaseRecord = rawRecord.Decompress(this);
 				this.cache.Add(recordId, databaseRecord);
 			}
-
+			
 			return databaseRecord;
 		}
 

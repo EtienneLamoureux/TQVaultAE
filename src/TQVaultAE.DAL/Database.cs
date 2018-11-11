@@ -473,11 +473,12 @@ namespace TQVaultData
 
 			itemId = TQData.NormalizeRecordPath(itemId);
 			Info info;
-			try
+
+			if (infoDB.ContainsKey(itemId))
 			{
 				info = this.infoDB[itemId];
 			}
-			catch (KeyNotFoundException)
+			else
 			{
 				DBRecordCollection record = null;
 
@@ -507,7 +508,7 @@ namespace TQVaultData
 				info = new Info(record);
 				this.infoDB.Add(itemId, info);
 			}
-
+			
 			return info;
 		}
 
@@ -812,12 +813,11 @@ namespace TQVaultData
 			resourceId = TQData.NormalizeRecordPath(resourceId);
 			Bitmap bitmap;
 
-			try
+			if (bitmaps.ContainsKey(resourceId))
 			{
-				// see if we have this bitmap already
 				bitmap = this.bitmaps[resourceId];
 			}
-			catch (KeyNotFoundException)
+			else
 			{
 				// Load the resource
 				byte[] data = this.LoadResource(resourceId);
@@ -951,11 +951,12 @@ namespace TQVaultData
 				}
 
 				ArcFile arcFile;
-				try
+
+				if (arcFiles.ContainsKey(arcFileName))
 				{
 					arcFile = this.arcFiles[arcFileName];
 				}
-				catch (KeyNotFoundException)
+				else
 				{
 					arcFile = new ArcFile(arcFileName);
 					this.arcFiles.Add(arcFileName, arcFile);
