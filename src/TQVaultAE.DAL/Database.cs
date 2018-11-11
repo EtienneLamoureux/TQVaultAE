@@ -683,16 +683,8 @@ namespace TQVaultData
 				{
 					TQDebug.DebugWriteLine("Checking Custom Resources.");
 				}
-
-				if (TQData.IsITInstalled)
-				{
-					rootFolder = Path.Combine(TQData.ImmortalThroneSaveFolder, "CustomMaps");
-				}
-				else
-				{
-					rootFolder = Path.Combine(TQData.TQSaveFolder, "CustomMaps");
-				}
-
+				
+				rootFolder = Path.Combine(TQData.ImmortalThroneSaveFolder, "CustomMaps");
 				rootFolder = Path.Combine(Path.Combine(rootFolder, TQData.MapName), "resources");
 
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
@@ -1252,11 +1244,6 @@ namespace TQVaultData
 			{
 				string baseFolder = Path.Combine(TQData.ImmortalThroneSaveFolder, "CustomMaps");
 
-				if (!TQData.IsITInstalled)
-				{
-					baseFolder = Path.Combine(TQData.TQSaveFolder, "CustomMaps");
-				}
-
 				databaseFile = Path.Combine(Path.Combine(Path.Combine(baseFolder, TQData.MapName), "resources"), "text.arc");
 
 				if (TQDebug.DatabaseDebugLevel > 1)
@@ -1427,11 +1414,6 @@ namespace TQVaultData
             if (TQData.IsCustom)
 			{
 				string baseFolder = Path.Combine(TQData.ImmortalThroneSaveFolder, "CustomMaps");
-
-				if (!TQData.IsITInstalled)
-				{
-					baseFolder = Path.Combine(TQData.TQSaveFolder, "CustomMaps");
-				}
 
 				file = Path.Combine(Path.Combine(Path.Combine(baseFolder, TQData.MapName), "database"), string.Concat(TQData.MapName, ".arz"));
 
