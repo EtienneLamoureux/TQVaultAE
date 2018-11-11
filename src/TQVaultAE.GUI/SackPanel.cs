@@ -2284,7 +2284,7 @@ namespace TQVaultAE.GUI
 				return Resources.SackPanelMenuPlayer;
 			}
 
-			if (autoMoveLocation == AutoMoveLocation.Stash && TQData.IsITInstalled)
+			if (autoMoveLocation == AutoMoveLocation.Stash)
 			{
 				return Resources.SackPanelMenuStash;
 			}
