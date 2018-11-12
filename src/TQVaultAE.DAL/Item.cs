@@ -3209,6 +3209,11 @@ namespace TQVaultData
 				return true;
 			}
 
+			if (keyUpper.StartsWith("BODYMASK", StringComparison.OrdinalIgnoreCase))
+			{
+				return true;
+			}
+
 			return false;
 		}
 
