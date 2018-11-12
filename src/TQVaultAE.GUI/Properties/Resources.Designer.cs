@@ -1435,86 +1435,11 @@ namespace TQVaultAE.GUI.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Would you like to start TQVaultMon?.
-        /// </summary>
-        internal static string MainFormStartVaultMon {
-            get {
-                return ResourceManager.GetString("MainFormStartVaultMon", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à You have just modified the inventory of some of your characters.
-        ///Titan Quest will detect this and think that your character is corrupt
-        ///and will not let you load your character.
-        ///
-        ///TQVaultMon is a program that, when running, will make Titan Quest
-        ///think that your character is okay and will let you load it successfully.
-        ///Once you have successfully loaded your character you will not need to
-        ///use TQVaultMon again unless you make further edits.
-        ///
-        ///It is suggested that you start TQVaultMon now and then run Titan
-        ///Quest a [le reste de la chaîne a été tronqué]&quot;;.
-        /// </summary>
-        internal static string MainFormStartVaultMonMsg {
-            get {
-                return ResourceManager.GetString("MainFormStartVaultMonMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Error reading stash file.
         /// </summary>
         internal static string MainFormStashReadError {
             get {
                 return ResourceManager.GetString("MainFormStashReadError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à There are currently {0} items in the trash.
-        ///If you quit these items will be LOST FOREVER.
-        ///
-        ///Are you sure you wish to throw away these items?.
-        /// </summary>
-        internal static string MainFormTrashItems {
-            get {
-                return ResourceManager.GetString("MainFormTrashItems", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Unable to start TQVaultMon.
-        /// </summary>
-        internal static string MainFormUnableToStartVaultMon {
-            get {
-                return ResourceManager.GetString("MainFormUnableToStartVaultMon", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Error trying to start TQVaultMon.
-        /// </summary>
-        internal static string MainFormVaultMonError {
-            get {
-                return ResourceManager.GetString("MainFormVaultMonError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à I was unable to see if TQVaultMon was running.
-        ///Most likely TQVaultMon will not work either.
-        ///Because you have modified some of your characters, TQ will think your characters are corrupt.
-        ///In order to successfully load the game and play, you will need to download TQ Defiler
-        ///and use its &apos;Patch&apos; or &apos;Fix Me&apos; options to let the game validate your character.
-        ///If you do not mind, please contact me and let me know about this problem
-        ///because I may have a solution to the error that will save you some hassles.
-        ///
-        ///Error mes [le reste de la chaîne a été tronqué]&quot;;.
-        /// </summary>
-        internal static string MainFormVaultMonMsg {
-            get {
-                return ResourceManager.GetString("MainFormVaultMonMsg", resourceCulture);
             }
         }
         

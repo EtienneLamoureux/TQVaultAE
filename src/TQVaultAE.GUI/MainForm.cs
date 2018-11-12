@@ -80,11 +80,6 @@ namespace TQVaultAE.GUI
 		private Dictionary<string, Stash> stashes;
 
 		/// <summary>
-		/// Instance of the trash panel
-		/// </summary>
-		private PlayerCollection trash;
-
-		/// <summary>
 		/// Instance of the vault panel control
 		/// </summary>
 		private VaultPanel vaultPanel;
@@ -109,11 +104,6 @@ namespace TQVaultAE.GUI
 		/// Bag number of the last bag with focus
 		/// </summary>
 		private int lastBag;
-
-		/// <summary>
-		/// Instance of the trash panel control
-		/// </summary>
-		private VaultPanel trashPanel;
 
 		/// <summary>
 		/// Instance of the Action Button
@@ -471,29 +461,6 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Parses filename to try to determine whether it is from TQ, IT.
-		/// Used for appending the IT designator
-		/// </summary>
-		/// <param name="filename">filename of the player file</param>
-		/// <returns>true if the player file is from the immortal throne player save path.</returns>
-		private static bool IsImmortalThroneFile(string filename)
-		{
-			string baseTQFolder = TQData.GetBaseCharacterFolder(false);
-			if (filename.StartsWith(baseTQFolder, StringComparison.Ordinal))
-			{
-				return false;
-			}
-
-			string baseITFolder = TQData.GetBaseCharacterFolder(true);
-			if (filename.StartsWith(baseITFolder, StringComparison.Ordinal))
-			{
-				return true;
-			}
-
-			return false;
-		}
-
-		/// <summary>
 		/// Parses filename to try to determine the base character name.
 		/// </summary>
 		/// <param name="filename">filename of the character file</param>
@@ -572,48 +539,6 @@ namespace TQVaultAE.GUI
 
 				default:
 					return Resources.ItemStyleMundane;
-			}
-		}
-
-		/// <summary>
-		/// Attempts to start TQVaultMon
-		/// Needed only for vanilla TQ since it checks whether the files have been modified.
-		/// </summary>
-		private static void PossiblyStartTQVaultMon()
-		{
-			if (TQData.IsITInstalled)
-			{
-				return; // IT does not need to run TQVaultMon
-			}
-
-			// See if TQVaultMon is already running.
-			Process[] processes = Process.GetProcessesByName("TQVaultMon");
-			if (processes.Length < 1)
-			{
-				// It is not running.  Ask the user if they want to start it.
-				if (MessageBox.Show(
-					Resources.MainFormStartVaultMonMsg,
-					Resources.MainFormStartVaultMon,
-					MessageBoxButtons.YesNo,
-					MessageBoxIcon.Question,
-					MessageBoxDefaultButton.Button1,
-					RightToLeftOptions) == DialogResult.Yes)
-				{
-					try
-					{
-						Process.Start(string.Concat(Path.GetDirectoryName(Application.ExecutablePath), "\\TQVaultMon.exe"));
-					}
-					catch (IOException exception)
-					{
-						MessageBox.Show(
-							exception.ToString(),
-							Resources.MainFormUnableToStartVaultMon,
-							MessageBoxButtons.OK,
-							MessageBoxIcon.Error,
-							MessageBoxDefaultButton.Button1,
-							RightToLeftOptions);
-					}
-				}
 			}
 		}
 
@@ -810,15 +735,9 @@ namespace TQVaultAE.GUI
 		private static int LoadAllFilesTotal()
 		{
 			string[] list;
-			int numTQ = 0;
-			list = TQData.GetCharacterList(false);
-			if (list != null)
-			{
-				numTQ = list.Length;
-			}
 
 			int numIT = 0;
-			list = TQData.GetCharacterList(true);
+			list = TQData.GetCharacterList();
 			if (list != null)
 			{
 				numIT = list.Length;
@@ -831,7 +750,7 @@ namespace TQVaultAE.GUI
 				numVaults = list.Length;
 			}
 
-			return Math.Max(0, numIT + numIT + numTQ + numVaults - 1);
+			return Math.Max(0, numIT + numIT + numVaults - 1);
 		}
 
 		/// <summary>
@@ -1100,11 +1019,7 @@ namespace TQVaultAE.GUI
 			{
 				this.loadingComplete = true;
 				this.Enabled = true;
-
-				if (TQData.IsITInstalled)
-				{
-					this.LoadTransferStash();
-				}
+				this.LoadTransferStash();
 
 				// Load last character here if selected
 				if (Settings.Default.LoadLastCharacter)
@@ -1179,33 +1094,12 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Gets the number of items in the trash panel.
-		/// Used during main form closing to signal that the trash is not empty.
-		/// </summary>
-		/// <returns>number of items in the trash panel</returns>
-		private int CountTrashItems()
-		{
-			if (this.trash == null)
-			{
-				return 0;
-			}
-
-			int count = 0;
-			foreach (SackCollection sack in this.trash)
-			{
-				count += sack.Count;
-			}
-
-			return count;
-		}
-
-		/// <summary>
 		/// Creates the action button.
 		/// This is the animated area which pops relics and stacks.
 		/// </summary>
 		private void CreateActionButton()
 		{
-			this.actionButton = new ActionButton(this.trashPanel.Left - this.vaultPanel.Right - 6, this.vaultPanel.Height - 30, this.dragInfo);
+			this.actionButton = new ActionButton(0 - this.vaultPanel.Right - 6, this.vaultPanel.Height - 30, this.dragInfo);
 			this.actionButton.Location = new Point(this.vaultPanel.Right + 3, this.vaultPanel.Top + 20);
 			Controls.Add(this.actionButton);
 		}
@@ -1252,26 +1146,6 @@ namespace TQVaultAE.GUI
 			this.secondaryVaultPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
 			this.secondaryVaultPanel.OnResizeForm += new EventHandler<ResizeEventArgs>(this.ResizeFormCallback);
 			Controls.Add(this.secondaryVaultPanel);
-		}
-
-		/// <summary>
-		/// Creates the trash panel
-		/// </summary>
-		/// <param name="numBags">Number of bags in the trash panel.</param>
-		private void CreateTrashPanel(int numBags)
-		{
-			this.trashPanel = new VaultPanel(this.dragInfo, numBags, new Size(5, 5), this.tooltip, 0, AutoMoveLocation.Trash);
-			this.trashPanel.DrawAsGroupBox = true;
-			this.trashPanel.Location = new Point(
-				this.itemTextPanel.Right - this.trashPanel.Width + Convert.ToInt32(8F * Database.DB.Scale),
-				this.itemTextPanel.Bottom + Convert.ToInt32(10.0F * Database.DB.Scale));
-			this.trashPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
-			this.trashPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
-			this.trashPanel.OnActivateSearch += new EventHandler<SackPanelEventArgs>(this.ActivateSearchCallback);
-			this.trashPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
-			this.trashPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
-			this.trashPanel.OnResizeForm += new EventHandler<ResizeEventArgs>(this.ResizeFormCallback);
-			Controls.Add(this.trashPanel);
 		}
 
 		/// <summary>
@@ -1386,15 +1260,7 @@ namespace TQVaultAE.GUI
 			// Initialize the character combo-box
 			this.characterComboBox.Items.Clear();
 
-			string[] charactersTQ = TQData.GetCharacterList(false);
-
-			string[] charactersIT = TQData.GetCharacterList(true);
-
-			int numTQ = 0;
-			if (charactersTQ != null)
-			{
-				numTQ = charactersTQ.Length;
-			}
+			string[] charactersIT = TQData.GetCharacterList();
 
 			int numIT = 0;
 			if (charactersIT != null)
@@ -1402,7 +1268,7 @@ namespace TQVaultAE.GUI
 				numIT = charactersIT.Length;
 			}
 
-			if ((numIT + numTQ) < 1)
+			if (numIT < 1)
 			{
 				this.characterComboBox.Items.Add(Resources.MainFormNoCharacters);
 				this.characterComboBox.SelectedIndex = 0;
@@ -1412,31 +1278,24 @@ namespace TQVaultAE.GUI
 				this.characterComboBox.Items.Add(Resources.MainFormSelectCharacter);
 				this.characterComboBox.SelectedIndex = 0;
 
-				string immortalThroneDesignator = "<Immortal Throne>";
-				string titanQuestDesignator = string.Empty;
+				string characterDesignator = string.Empty;
 
 				// Modified by VillageIdiot
 				// Added to support custom Maps
 				if (TQData.IsCustom)
 				{
-					immortalThroneDesignator = string.Concat(immortalThroneDesignator, "<Custom Map>");
-					titanQuestDesignator = string.Concat(titanQuestDesignator, "<Custom Map>");
+					characterDesignator = string.Concat(characterDesignator, "<Custom Map>");
 				}
 
 				// Combine the 2 arrays into 1 then add them
-				string[] characters = new string[numIT + numTQ];
+				string[] characters = new string[numIT];
 				int i;
 				int j = 0;
 
 				// Put the IT chars first since that is most likely what people want to use.
 				for (i = 0; i < numIT; ++i)
 				{
-					characters[j++] = string.Concat(charactersIT[i], immortalThroneDesignator);
-				}
-
-				for (i = 0; i < numTQ; ++i)
-				{
-					characters[j++] = string.Concat(charactersTQ[i], titanQuestDesignator);
+					characters[j++] = string.Concat(charactersIT[i], characterDesignator);
 				}
 
 				this.characterComboBox.Items.AddRange(characters);
@@ -1664,7 +1523,7 @@ namespace TQVaultAE.GUI
 				this.lastBag = this.stashPanel.CurrentBag;
 				this.stashPanel.Player = null;
 				this.stashPanel.Stash = null;
-				if (this.stashPanel.CurrentBag != 1 && TQData.IsITInstalled)
+				if (this.stashPanel.CurrentBag != 1)
 				{
 					this.stashPanel.SackPanel.ClearSelectedItems();
 					this.stashPanel.CurrentBag = 1;
@@ -1672,10 +1531,6 @@ namespace TQVaultAE.GUI
 
 				this.vaultPanel.SackPanel.SecondaryVaultShown = true;
 				this.stashPanel.SackPanel.SecondaryVaultShown = true;
-				if (this.trashPanel != null)
-				{
-					this.trashPanel.SackPanel.SecondaryVaultShown = true;
-				}
 
 				this.secondaryVaultPanel.SackPanel.IsSecondaryVault = true;
 				this.GetSecondaryVaultList();
@@ -1708,10 +1563,6 @@ namespace TQVaultAE.GUI
 
 				this.vaultPanel.SackPanel.SecondaryVaultShown = false;
 				this.stashPanel.SackPanel.SecondaryVaultShown = false;
-				if (this.trashPanel != null)
-				{
-					this.trashPanel.SackPanel.SecondaryVaultShown = false;
-				}
 			}
 		}
 
@@ -1728,7 +1579,7 @@ namespace TQVaultAE.GUI
 
 		/// <summary>
 		/// Shows things that you may want to know before a close.
-		/// Like holding an item, items in the trash, needing TQVaultMon
+		/// Like holding an item
 		/// </summary>
 		/// <returns>TRUE if none of the conditions exist or the user selected to ignore the message</returns>
 		private bool DoCloseStuff()
@@ -1744,24 +1595,6 @@ namespace TQVaultAE.GUI
 					return false;
 				}
 
-				if (this.trash != null)
-				{
-					int numTrash = this.CountTrashItems();
-					if (numTrash > 0)
-					{
-						if (!Settings.Default.SuppressWarnings && MessageBox.Show(
-							string.Format(CultureInfo.InvariantCulture, Resources.MainFormTrashItems, numTrash),
-							Resources.MainFormQuit,
-							MessageBoxButtons.YesNo,
-							MessageBoxIcon.Question,
-							MessageBoxDefaultButton.Button1,
-							RightToLeftOptions) != DialogResult.Yes)
-						{
-							return false;
-						}
-					}
-				}
-
 				modifiedFiles = this.SaveAllModifiedFiles();
 
 				// Added by VillageIdiot
@@ -1772,20 +1605,6 @@ namespace TQVaultAE.GUI
 			catch (IOException exception)
 			{
 				MessageBox.Show(exception.ToString(), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-			}
-
-			if (ok && modifiedFiles)
-			{
-				try
-				{
-					PossiblyStartTQVaultMon();
-				}
-				catch (System.Security.SecurityException exception)
-				{
-					string title = Resources.MainFormVaultMonError;
-					string msg = string.Concat(Resources.MainFormVaultMonMsg, exception.ToString());
-					MessageBox.Show(msg, title, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-				}
 			}
 
 			return ok;
@@ -1841,8 +1660,6 @@ namespace TQVaultAE.GUI
 		/// <param name="selectedText">Player string from the drop down list.</param>
 		private void LoadPlayer(string selectedText)
 		{
-			// See if it is an Immortal Throne character
-			string immortalThroneDesignator = "<Immortal Throne>";
 			string customDesignator = "<Custom Map>";
 
 			bool isCustom = selectedText.EndsWith(customDesignator, StringComparison.Ordinal);
@@ -1852,14 +1669,7 @@ namespace TQVaultAE.GUI
 				selectedText = selectedText.Remove(selectedText.IndexOf(customDesignator, StringComparison.Ordinal), customDesignator.Length);
 			}
 
-			bool isImmortalThrone = selectedText.EndsWith(immortalThroneDesignator, StringComparison.Ordinal);
-			if (isImmortalThrone)
-			{
-				// strip off the end from the player name.
-				selectedText = selectedText.Remove(selectedText.IndexOf(immortalThroneDesignator, StringComparison.Ordinal), immortalThroneDesignator.Length);
-			}
-
-			string playerFile = TQData.GetPlayerFile(selectedText, isImmortalThrone);
+			string playerFile = TQData.GetPlayerFile(selectedText);
 
 			// Get the player
 			try
@@ -1873,7 +1683,6 @@ namespace TQVaultAE.GUI
 				{
 					bool playerLoaded = false;
 					player = new PlayerCollection(selectedText, playerFile);
-					player.IsImmortalThrone = isImmortalThrone;
 					try
 					{
 						player.LoadFile();
@@ -1905,66 +1714,56 @@ namespace TQVaultAE.GUI
 				this.playerPanel.Player = null;
 				this.characterComboBox.SelectedIndex = 0;
 			}
+			
+			string stashFile = TQData.GetPlayerStashFile(selectedText);
 
-			if (isImmortalThrone)
+			// Get the player's stash
+			try
 			{
-				string stashFile = TQData.GetPlayerStashFile(selectedText, isImmortalThrone);
-
-				// Get the player's stash
+				Stash stash;
 				try
 				{
-					Stash stash;
+					stash = this.stashes[stashFile];
+				}
+				catch (KeyNotFoundException)
+				{
+					bool stashLoaded = false;
+					stash = new Stash(selectedText, stashFile);
 					try
 					{
-						stash = this.stashes[stashFile];
+						bool stashPresent = stash.LoadFile();
+
+						// Throw a message if the stash is not present.
+						if (!stashPresent)
+						{
+							MessageBox.Show(Resources.StashNotFoundMsg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+						}
+
+						stashLoaded = stashPresent;
 					}
-					catch (KeyNotFoundException)
+					catch (ArgumentException argumentException)
 					{
-						bool stashLoaded = false;
-						stash = new Stash(selectedText, stashFile);
-						stash.IsImmortalThrone = isImmortalThrone;
-						try
-						{
-							bool stashPresent = stash.LoadFile();
-
-							// Throw a message if the stash is not present.
-							if (!stashPresent)
-							{
-								MessageBox.Show(Resources.StashNotFoundMsg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-							}
-
-							stashLoaded = stashPresent;
-						}
-						catch (ArgumentException argumentException)
-						{
-							string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, stashFile, argumentException.Message);
-							MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-							stashLoaded = false;
-						}
-
-						if (stashLoaded)
-						{
-							this.stashes.Add(stashFile, stash);
-						}
+						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, stashFile, argumentException.Message);
+						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+						stashLoaded = false;
 					}
 
-					this.stashPanel.Stash = stash;
+					if (stashLoaded)
+					{
+						this.stashes.Add(stashFile, stash);
+					}
 				}
-				catch (IOException exception)
-				{
-					string msg = string.Concat(Resources.MainFormReadError, stashFile, exception.ToString());
-					MessageBox.Show(msg, Resources.MainFormStashReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 
-					this.stashPanel.Stash = null;
-				}
+				this.stashPanel.Stash = stash;
 			}
-			else
+			catch (IOException exception)
 			{
-				if (this.stashPanel != null)
-				{
-					this.stashPanel.Stash = null;
-				}
+				string msg = string.Concat(Resources.MainFormReadError, stashFile, exception.ToString());
+				MessageBox.Show(msg, Resources.MainFormStashReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+
+				this.stashPanel.Stash = null;
 			}
+			
 		}
 
 		/// <summary>
@@ -1995,15 +1794,7 @@ namespace TQVaultAE.GUI
 
 			string[] vaults = TQData.GetVaultList();
 
-			string[] charactersTQ = TQData.GetCharacterList(false);
-
-			string[] charactersIT = TQData.GetCharacterList(true);
-
-			int numTQ = 0;
-			if (charactersTQ != null)
-			{
-				numTQ = charactersTQ.Length;
-			}
+			string[] charactersIT = TQData.GetCharacterList();
 
 			int numIT = 0;
 			if (charactersIT != null)
@@ -2018,7 +1809,7 @@ namespace TQVaultAE.GUI
 			}
 
 			// Since this takes a while, show a progress dialog box.
-			int total = numIT + numIT + numTQ + numVaults - 1;
+			int total = numIT + numIT + numVaults - 1;
 
 			if (total > 0)
 			{
@@ -2034,17 +1825,18 @@ namespace TQVaultAE.GUI
 			// Load all of the Immortal Throne player files and stashes.
 			for (int i = 0; i < numIT; ++i)
 			{
-				string playerFile = TQData.GetPlayerFile(charactersIT[i], true);
+				string playerFile = TQData.GetPlayerFile(charactersIT[i]);
 
 				// Get the player
 				try
 				{
 					PlayerCollection player;
-					try
+
+					if (players.ContainsKey(playerFile))
 					{
 						player = this.players[playerFile];
 					}
-					catch (KeyNotFoundException)
+					else
 					{
 						bool playerLoaded = false;
 						player = new PlayerCollection(charactersIT[i], playerFile);
@@ -2074,17 +1866,17 @@ namespace TQVaultAE.GUI
 
 				this.backgroundWorker1.ReportProgress(1);
 
-				string stashFile = TQData.GetPlayerStashFile(charactersIT[i], true);
+				string stashFile = TQData.GetPlayerStashFile(charactersIT[i]);
 
 				// Get the player's stash
 				try
 				{
 					Stash stash;
-					try
+					if (stashes.ContainsKey(stashFile))
 					{
 						stash = this.stashes[stashFile];
 					}
-					catch (KeyNotFoundException)
+					else
 					{
 						bool stashLoaded = false;
 						stash = new Stash(charactersIT[i], stashFile);
@@ -2106,50 +1898,6 @@ namespace TQVaultAE.GUI
 						if (stashLoaded)
 						{
 							this.stashes.Add(stashFile, stash);
-						}
-					}
-				}
-				catch (IOException exception)
-				{
-					MessageBox.Show(exception.ToString(), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-				}
-
-				this.backgroundWorker1.ReportProgress(1);
-			}
-
-			// Load all of the original TQ character files.
-			for (int i = 0; i < numTQ; ++i)
-			{
-				string playerFile = TQData.GetPlayerFile(charactersTQ[i], false);
-
-				try
-				{
-					// Get the player
-					PlayerCollection player;
-					try
-					{
-						player = this.players[playerFile];
-					}
-					catch (KeyNotFoundException)
-					{
-						bool playerLoaded = false;
-						player = new PlayerCollection(charactersTQ[i], playerFile);
-						player.IsImmortalThrone = false;
-						try
-						{
-							player.LoadFile();
-							playerLoaded = true;
-						}
-						catch (ArgumentException argumentException)
-						{
-							string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, playerFile, argumentException.Message);
-							MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-							playerLoaded = false;
-						}
-
-						if (playerLoaded)
-						{
-							this.players.Add(playerFile, player);
 						}
 					}
 				}
@@ -2287,10 +2035,6 @@ namespace TQVaultAE.GUI
 				this.vaultPanel.SackPanel.ClearSelectedItems();
 				this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
 				this.stashPanel.SackPanel.ClearSelectedItems();
-				if (this.trashPanel != null)
-				{
-					this.trashPanel.SackPanel.ClearSelectedItems();
-				}
 			}
 			else if (this.playerPanel.BagSackPanel == sackPanel)
 			{
@@ -2298,10 +2042,6 @@ namespace TQVaultAE.GUI
 				this.vaultPanel.SackPanel.ClearSelectedItems();
 				this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
 				this.stashPanel.SackPanel.ClearSelectedItems();
-				if (this.trashPanel != null)
-				{
-					this.trashPanel.SackPanel.ClearSelectedItems();
-				}
 			}
 			else if (this.vaultPanel.SackPanel == sackPanel)
 			{
@@ -2309,10 +2049,6 @@ namespace TQVaultAE.GUI
 				this.playerPanel.BagSackPanel.ClearSelectedItems();
 				this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
 				this.stashPanel.SackPanel.ClearSelectedItems();
-				if (this.trashPanel != null)
-				{
-					this.trashPanel.SackPanel.ClearSelectedItems();
-				}
 			}
 			else if (this.secondaryVaultPanel.SackPanel == sackPanel)
 			{
@@ -2320,10 +2056,6 @@ namespace TQVaultAE.GUI
 				this.playerPanel.BagSackPanel.ClearSelectedItems();
 				this.vaultPanel.SackPanel.ClearSelectedItems();
 				this.stashPanel.SackPanel.ClearSelectedItems();
-				if (this.trashPanel != null)
-				{
-					this.trashPanel.SackPanel.ClearSelectedItems();
-				}
 			}
 			else if (this.stashPanel.SackPanel == sackPanel)
 			{
@@ -2331,17 +2063,6 @@ namespace TQVaultAE.GUI
 				this.playerPanel.BagSackPanel.ClearSelectedItems();
 				this.vaultPanel.SackPanel.ClearSelectedItems();
 				this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
-				if (this.trashPanel != null)
-				{
-					this.trashPanel.SackPanel.ClearSelectedItems();
-				}
-			}
-			else if (this.trashPanel != null && this.trashPanel.SackPanel == sackPanel)
-			{
-				this.playerPanel.SackPanel.ClearSelectedItems();
-				this.vaultPanel.SackPanel.ClearSelectedItems();
-				this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
-				this.stashPanel.SackPanel.ClearSelectedItems();
 			}
 		}
 
@@ -2357,10 +2078,6 @@ namespace TQVaultAE.GUI
 			this.vaultPanel.SackPanel.ClearSelectedItems();
 			this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
 			this.stashPanel.SackPanel.ClearSelectedItems();
-			if (this.trashPanel != null)
-			{
-				this.trashPanel.SackPanel.ClearSelectedItems();
-			}
 		}
 
 		/// <summary>
@@ -2373,39 +2090,6 @@ namespace TQVaultAE.GUI
 		{
 			this.OpenSearchDialog();
 		}
-
-		/// <summary>
-		/// Callback for resizing of the main form.
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">ResizeEventArgs data</param>
-		/*private void ResizeFormCallback(object sender, ResizeEventArgs e)
-		{
-			if (e.ResizeDelta == 0.0F)
-			{
-				// Nothing to do so we return.
-				return;
-			}
-
-			float scale;
-			if (e.ResizeDelta == 1.0F)
-			{
-				scale = e.ResizeDelta;
-			}
-			else
-			{
-				scale = Database.DB.Scale + e.ResizeDelta;
-			}
-
-			if (scale < 0.39F || scale > 2.01F)
-			{
-				return;
-			}
-
-			this.ScaleForm(scale, false);
-
-			this.lastFormSize = this.Size;
-		}*/
 
 		/// <summary>
 		/// Used for sending items between sacks or panels.
@@ -2444,16 +2128,6 @@ namespace TQVaultAE.GUI
 								break;
 							}
 
-						case SackType.Trash:
-							{
-								if (this.trashPanel != null)
-								{
-									destinationPlayerPanel = this.trashPanel;
-								}
-
-								break;
-							}
-
 						default:
 							{
 								destinationPlayerPanel = this.playerPanel;
@@ -2478,20 +2152,6 @@ namespace TQVaultAE.GUI
 
 					// Main Player panel
 					sackNumber = 0;
-				}
-				else if (this.dragInfo.AutoMove == AutoMoveLocation.Trash)
-				{
-					// Trash
-					if (this.trashPanel == null)
-					{
-						// We have nowhere to send the item so cancel the move.
-						this.dragInfo.Cancel();
-						return;
-					}
-
-					destinationPlayerPanel = this.trashPanel;
-					destinationSackPanel = destinationPlayerPanel.SackPanel;
-					sackNumber = destinationPlayerPanel.CurrentBag;
 				}
 				else if (this.dragInfo.AutoMove == AutoMoveLocation.SecondaryVault)
 				{
@@ -2604,17 +2264,6 @@ namespace TQVaultAE.GUI
 					}
 				}
 			}
-		}
-
-		/// <summary>
-		/// Creates the trash instance
-		/// </summary>
-		/// <param name="numBags">Number of bags which the trash contains</param>
-		private void CreateTrash(int numBags)
-		{
-			this.trash = new PlayerCollection(Resources.GlobalTrash, string.Empty);
-			this.trash.IsVault = true;
-			this.trash.CreateEmptySacks(numBags);
 		}
 
 		/// <summary>
@@ -2951,8 +2600,6 @@ namespace TQVaultAE.GUI
 			bool playersModified = this.SaveAllModifiedPlayers();
 			this.SaveAllModifiedVaults();
 			this.SaveAllModifiedStashes();
-
-			// Used to trigger TQVaultMon message.
 			return playersModified;
 		}
 
@@ -3035,15 +2682,6 @@ namespace TQVaultAE.GUI
 			if (answer != null)
 			{
 				return answer;
-			}
-
-			if (this.trashPanel != null)
-			{
-				answer = this.trashPanel.ToolTipCallback(windowHandle);
-				if (answer != null)
-				{
-					return answer;
-				}
 			}
 
 			answer = this.playerPanel.ToolTipCallback(windowHandle);
@@ -3440,11 +3078,6 @@ namespace TQVaultAE.GUI
 
 				string myName = selectedResult.ContainerName;
 
-				if (IsImmortalThroneFile(selectedResult.Container))
-				{
-					myName = string.Concat(myName, "<Immortal Throne>");
-				}
-
 				if (TQData.IsCustom)
 				{
 					myName = string.Concat(myName, "<Custom Map>");
@@ -3699,11 +3332,7 @@ namespace TQVaultAE.GUI
 		{
 			this.SearchVaults(predicate, results);
 			this.SearchPlayers(predicate, results);
-
-			if (TQData.IsITInstalled)
-			{
-				this.SearchStashes(predicate, results);
-			}
+			this.SearchStashes(predicate, results);
 		}
 
 		/// <summary>

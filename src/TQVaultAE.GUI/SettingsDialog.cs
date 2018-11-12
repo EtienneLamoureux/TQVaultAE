@@ -180,7 +180,7 @@ namespace TQVaultAE.GUI
 			this.mapListComboBox.Items.Clear();
 			this.mapListComboBox.Items.Add(string.Empty);
 
-			string[] maps = TQData.GetCustomMapList(TQData.IsITInstalled);
+			string[] maps = TQData.GetCustomMapList();
 
 			if (maps != null && maps.Length > 0)
 			{

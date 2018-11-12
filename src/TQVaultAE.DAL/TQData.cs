@@ -138,11 +138,6 @@ namespace TQVaultData
 			}
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether Immortal Throne has been installed.
-		/// </summary>
-		public static bool IsITInstalled { get; private set; }
-
         /// <summary>
 		/// Gets a value indicating whether Ragnarok DLC has been installed.
 		/// </summary>
@@ -226,10 +221,6 @@ namespace TQVaultData
 				{
 					throw new InvalidOperationException("Unable to locate Titan Quest installation directory. Please edit TQVaultAE.ini to contain a valid path in the option 'ForceGamePath'.");
 				}
-
-
-				// ImmortalThrone is always installed in AE
-				IsITInstalled = true;
 
                 return immortalThroneGamePath;
 			}
@@ -505,9 +496,8 @@ namespace TQVaultData
 		/// Gets the base character save folder.
 		/// Changed to support custom quest characters
 		/// </summary>
-		/// <param name="isImmortalThrone">Indicates whether the character is from Immortal Throne.</param>
 		/// <returns>path of the save folder</returns>
-		public static string GetBaseCharacterFolder(bool isImmortalThrone)
+		public static string GetBaseCharacterFolder()
 		{
 			string mapSaveFolder = "Main";
 
@@ -516,48 +506,40 @@ namespace TQVaultData
 				mapSaveFolder = "User";
 			}
 
-			if (isImmortalThrone)
-			{
-				return Path.Combine(Path.Combine(ImmortalThroneSaveFolder, "SaveData"), mapSaveFolder);
-			}
-
-			return Path.Combine(Path.Combine(TQSaveFolder, "SaveData"), mapSaveFolder);
+			return Path.Combine(Path.Combine(ImmortalThroneSaveFolder, "SaveData"), mapSaveFolder);
 		}
 
 		/// <summary>
 		/// Gets the full path to the player character file.
 		/// </summary>
 		/// <param name="characterName">name of the character</param>
-		/// <param name="isImmortalThrone">Indicates whether the character is from Immortal Throne.</param>
 		/// <returns>full path to the character file.</returns>
-		public static string GetPlayerFile(string characterName, bool isImmortalThrone)
+		public static string GetPlayerFile(string characterName)
 		{
-			return Path.Combine(Path.Combine(GetBaseCharacterFolder(isImmortalThrone), string.Concat("_", characterName)), "Player.chr");
+			return Path.Combine(Path.Combine(GetBaseCharacterFolder(), string.Concat("_", characterName)), "Player.chr");
 		}
 
 		/// <summary>
 		/// Gets the full path to the player's stash file.
 		/// </summary>
 		/// <param name="characterName">name of the character</param>
-		/// <param name="isImmortalThrone">Indicates whether the character is from Immortal Throne.</param>
 		/// <returns>full path to the player stash file</returns>
-		public static string GetPlayerStashFile(string characterName, bool isImmortalThrone)
+		public static string GetPlayerStashFile(string characterName)
 		{
-			return Path.Combine(Path.Combine(GetBaseCharacterFolder(isImmortalThrone), string.Concat("_", characterName)), "winsys.dxb");
+			return Path.Combine(Path.Combine(GetBaseCharacterFolder(), string.Concat("_", characterName)), "winsys.dxb");
 		}
 
 		/// <summary>
 		/// Gets a list of all of the character files in the save folder.
 		/// Added support for loading custom quest characters
 		/// </summary>
-		/// <param name="isImmortalThrone">Indicates whether or not Immortal Throne is installed.</param>
 		/// <returns>List of character files in a string array</returns>
-		public static string[] GetCharacterList(bool isImmortalThrone)
+		public static string[] GetCharacterList()
 		{
 			try
 			{
 				// Get all folders that start with a '_'.
-				string[] folders = Directory.GetDirectories(GetBaseCharacterFolder(isImmortalThrone), "_*");
+				string[] folders = Directory.GetDirectories(GetBaseCharacterFolder(), "_*");
 
 				if (folders == null || folders.Length < 1)
 				{
@@ -585,23 +567,15 @@ namespace TQVaultData
 		/// <summary>
 		/// Gets a list of all of the custom maps.
 		/// </summary>
-		/// <param name="isImmortalThrone">Indicates whether or not Immortal Throne is installed.</param>
 		/// <returns>List of custom maps in a string array</returns>
-		public static string[] GetCustomMapList(bool isImmortalThrone)
+		public static string[] GetCustomMapList()
 		{
 			try
 			{
 				// Get all folders in the CustomMaps directory.
 				string saveFolder;
 
-				if (isImmortalThrone)
-				{
-					saveFolder = ImmortalThroneSaveFolder;
-				}
-				else
-				{
-					saveFolder = TQSaveFolder;
-				}
+				saveFolder = ImmortalThroneSaveFolder;
 
 				string[] mapFolders = Directory.GetDirectories(Path.Combine(saveFolder, "CustomMaps"), "*");
 

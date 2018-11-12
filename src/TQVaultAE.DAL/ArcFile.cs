@@ -199,18 +199,18 @@ namespace TQVaultData
 
 			// Now see if this file is in the toc.
 			ARCDirEntry directoryEntry;
-			try
+
+			if (directoryEntries.ContainsKey(dataId))
 			{
 				directoryEntry = this.directoryEntries[dataId];
 			}
-			catch (KeyNotFoundException)
+			else
 			{
 				// record not found
 				if (TQDebug.ArcFileDebugLevel > 1)
 				{
 					TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error - {0} not found.", dataId));
 				}
-
 				return null;
 			}
 
