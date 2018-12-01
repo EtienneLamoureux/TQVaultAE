@@ -1,12 +1,14 @@
 # Changelog
-## 2.5.7
+## 2.6.0
 ### Features
+- Create an artifact from its recipe
 - Load embedded font
 - Add style to combobox
 
 ### Bugs
 - Fix custom map label
 - #83 Display the icon for the "Power of Nerthus" relics
+- #82 Correctly show status of "Brennus' Striped Pants"
 
 ## 2.5.6
 ### Features
