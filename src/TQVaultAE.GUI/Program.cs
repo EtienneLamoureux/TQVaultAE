@@ -9,6 +9,8 @@ namespace TQVaultAE.GUI
 	using System.Drawing;
 	using System.Drawing.Text;
 	using System.Globalization;
+	using System.Reflection;
+	using System.Resources;
 	using System.Security.Permissions;
 	using System.Threading;
 	using System.Windows.Forms;
@@ -37,12 +39,7 @@ namespace TQVaultAE.GUI
 		[SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
 		public static void Main()
 		{
-			// Set options for Right to Left reading.
-			rightToLeft = (MessageBoxOptions)0;
-			if (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)
-			{
-				rightToLeft = MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading;
-			}
+			manageCulture();
 
 			// Add the event handler for handling UI thread exceptions to the event.
 			Application.ThreadException += new ThreadExceptionEventHandler(MainForm_UIThreadException);
@@ -58,6 +55,25 @@ namespace TQVaultAE.GUI
 			initCustomFont(Properties.Resources.AlbertusMT);
 			initCustomFont(Properties.Resources.AlbertusMTLight);
 			Application.Run(new MainForm());
+		}
+
+		private static void manageCulture()
+		{
+			if (CultureInfo.CurrentCulture.IsNeutralCulture)
+			{
+				// Neutral cultures are not supported. Fallback to application's default.
+				String assemblyCultureName = ((NeutralResourcesLanguageAttribute)Attribute.GetCustomAttribute(
+					Assembly.GetExecutingAssembly(), typeof(NeutralResourcesLanguageAttribute), false))
+				   .CultureName;
+				Thread.CurrentThread.CurrentCulture = new CultureInfo(assemblyCultureName, true);
+			}
+
+			// Set options for Right to Left reading.
+			rightToLeft = (MessageBoxOptions)0;
+			if (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)
+			{
+				rightToLeft = MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading;
+			}
 		}
 
 		/// <summary>
