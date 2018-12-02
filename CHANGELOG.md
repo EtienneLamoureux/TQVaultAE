@@ -9,6 +9,7 @@
 - Fix custom map label
 - #83 Display the icon for the "Power of Nerthus" relics
 - #82 Correctly show status of "Brennus' Striped Pants"
+- #99 Correctly handle neutral cultures
 
 ## 2.5.6
 ### Features
