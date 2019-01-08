@@ -74,6 +74,15 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 The difference you see is simply due to the way stats are generated in Titan Quest: each item has base stats and a unique seed that modifies those stats. 
 TQVaultAE only displays the base stats (and not the modifications due to the RNG).*
 
+**Q. After updating from an older version of TQVault (2.18 or older), the new program won't start.**
+
+*A. Follow these steps (See [this comment](https://github.com/EtienneLamoureux/TQVaultAE/issues/85#issuecomment-447326792) for the original solution): *
+1. *Press the `Windows` key*
+2. *Type `cmd`*
+3. *Right-click the first option and run as administrator*
+4. *Type `regsvr32 /u VXPLib.dll`*
+5. *Hit enter*
+
 **Q. Error Loading Resources. This may be caused by a bad language or game path setting.**
 
 *A. Follow these steps:*
