@@ -415,7 +415,7 @@ namespace TQVaultAE.GUI
 				string myCulture = null;
 				foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
 				{
-					if (ci.EnglishName.ToUpperInvariant().Equals(settingsCulture.ToUpperInvariant()))
+					if (ci.EnglishName.Equals(settingsCulture, StringComparison.InvariantCultureIgnoreCase))
 					{
 						myCulture = ci.TextInfo.CultureName;
 						break;
@@ -853,8 +853,7 @@ namespace TQVaultAE.GUI
 			this.secondaryVaultPanel.Visible = false;
 			this.lastBag = -1;
 
-			int textPanelOffset = 0;
-			textPanelOffset = Convert.ToInt32(18.0F * Database.DB.Scale);
+			int textPanelOffset = Convert.ToInt32(18.0F * Database.DB.Scale);
 			this.itemTextPanel.Size = new Size(this.vaultPanel.Width, Convert.ToInt32(22.0F * Database.DB.Scale));
 			this.itemTextPanel.Location = new Point(this.vaultPanel.Location.X, this.ClientSize.Height - (this.itemTextPanel.Size.Height + textPanelOffset));
 			this.itemText.Width = this.itemTextPanel.Width - Convert.ToInt32(4.0F * Database.DB.Scale);
@@ -896,7 +895,9 @@ namespace TQVaultAE.GUI
 			{
 				this.ClientSize = new System.Drawing.Size(formWidth, formHeight);
 			}
+
 			TQVaultData.Database.DB.Scale = Settings.Default.Scale;
+
 			Settings.Default.Save();
 
 			// Save the height / width ratio for resizing.
@@ -906,10 +907,8 @@ namespace TQVaultAE.GUI
 				Convert.ToInt32((float)this.Width * 0.4F),
 				Convert.ToInt32((float)this.Height * 0.4F));
 
-
 			this.OriginalFormSize = this.Size;
 			this.OriginalFormScale = Settings.Default.Scale;
-
 
 			if (CurrentAutoScaleDimensions.Width != Database.DesignDpi)
 			{
