@@ -13,8 +13,10 @@ namespace TQVaultAE.GUI
 	using System.Resources;
 	using System.Security.Permissions;
 	using System.Threading;
+	using System.Linq;
 	using System.Windows.Forms;
 	using TQVaultData;
+	using TQVaultAE.GUI.Properties;
 
 	/// <summary>
 	/// Main Program class
@@ -26,11 +28,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private static MessageBoxOptions rightToLeft;
 
-
 		private static PrivateFontCollection privateFontCollection = new PrivateFontCollection();
-
-		[System.Runtime.InteropServices.DllImport("gdi32.dll")]
-		private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [System.Runtime.InteropServices.In] ref uint pcFonts);
 
 		/// <summary>
 		/// The main entry point for the application.
@@ -52,8 +50,6 @@ namespace TQVaultAE.GUI
 
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			initCustomFont(Properties.Resources.AlbertusMT);
-			initCustomFont(Properties.Resources.AlbertusMTLight);
 			Application.Run(new MainForm());
 		}
 
@@ -136,47 +132,98 @@ namespace TQVaultAE.GUI
 			}
 		}
 
-		private static void initCustomFont(byte[] fontData)
-		{
-			int fontLength = fontData.Length;
-			uint r = 0;
+		#region Font Stuff
 
-			System.IntPtr fontPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(fontLength);
-			System.Runtime.InteropServices.Marshal.Copy(fontData, 0, fontPtr, fontLength);
-			AddFontMemResourceEx(fontPtr, (uint)fontLength, IntPtr.Zero, ref r);
-			privateFontCollection.AddMemoryFont(fontPtr, fontLength);
-			System.Runtime.InteropServices.Marshal.FreeCoTaskMem(fontPtr);
-			fontPtr = IntPtr.Zero;
+		private static FontFamily initCustomFont(byte[] fontData)
+		{
+			unsafe
+			{
+				fixed (byte* pinptr = fontData)
+				{
+					IntPtr ptr = (IntPtr)pinptr;
+					privateFontCollection.AddMemoryFont(ptr, fontData.Length);
+				}
+			}
+			return privateFontCollection.Families.Last();
+		}
+
+		private static FontFamily _FONT_ALBERTUSMT = null;
+		internal static FontFamily FONT_ALBERTUSMT
+		{
+			get
+			{
+				if (_FONT_ALBERTUSMT is null) _FONT_ALBERTUSMT = initCustomFont(Properties.Resources.AlbertusMT);
+				return _FONT_ALBERTUSMT;
+			}
+		}
+
+		private static FontFamily _FONT_ALBERTUSMTLIGHT = null;
+		internal static FontFamily FONT_ALBERTUSMTLIGHT
+		{
+			get
+			{
+				if (_FONT_ALBERTUSMTLIGHT is null) _FONT_ALBERTUSMTLIGHT = initCustomFont(Properties.Resources.AlbertusMTLight);
+				return _FONT_ALBERTUSMTLIGHT;
+			}
+		}
+
+		public static Font GetFontMicrosoftSansSerif(float fontSize, float? scale = null)
+		{
+			scale = scale ?? 1F;
+			return new Font("Microsoft Sans Serif", 8.25F * scale.Value);
 		}
 
 		public static Font GetFontAlbertusMT(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)
 		{
-			return new Font(privateFontCollection.Families[0], fontSize, fontStyle, unit, b);
+			return new Font(Program.FONT_ALBERTUSMT, fontSize, fontStyle, unit, b);
 		}
 
 		public static Font GetFontAlbertusMT(float fontSize, GraphicsUnit unit)
 		{
-			return new Font(privateFontCollection.Families[0], fontSize, unit);
+			return new Font(Program.FONT_ALBERTUSMT, fontSize, unit);
 		}
 
-		public static Font GetFontAlbertusMT(float fontSize)
+		public static Font GetFontAlbertusMT(float fontSize, float? scale = null)
 		{
-			return new Font(privateFontCollection.Families[0], fontSize);
+			scale = scale ?? 1F;
+			return new Font(Program.FONT_ALBERTUSMT, fontSize * scale.Value);
 		}
 
 		public static Font GetFontAlbertusMTLight(float fontSize, GraphicsUnit unit)
 		{
-			return new Font(privateFontCollection.Families[0], fontSize, unit);
+			return new Font(Program.FONT_ALBERTUSMT, fontSize, unit);
 		}
 
 		public static Font GetFontAlbertusMTLight(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)
 		{
-			return new Font(privateFontCollection.Families[1], fontSize, fontStyle, unit, b);
+			return new Font(Program.FONT_ALBERTUSMTLIGHT, fontSize, fontStyle, unit, b);
 		}
 
 		public static Font GetFontAlbertusMTLight(float fontSize)
 		{
-			return new Font(privateFontCollection.Families[1], fontSize);
+			return new Font(Program.FONT_ALBERTUSMTLIGHT, fontSize);
 		}
+
+		public static Font GetFontAlbertusMTLight(float fontSize, float? scale = null)
+		{
+			scale = scale ?? 1F;
+			return new Font(Program.FONT_ALBERTUSMTLIGHT, fontSize * scale.Value);
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Load DB if needed
+		/// </summary>
+		internal static void LoadDB()
+		{
+			if (Database.DB is null)
+			{
+				Database.DB = new Database();
+				Database.DB.AutoDetectLanguage = Settings.Default.AutoDetectLanguage;
+				Database.DB.TQLanguage = Settings.Default.TQLanguage;
+			}
+		}
+
 	}
 }

@@ -34,6 +34,17 @@ namespace TQVaultAE.GUI
 		{
 			this.InitializeComponent();
 
+			#region Apply custom font
+
+			this.itemSeedBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.randomButton.Font = Program.GetFontAlbertusMTLight(12F);
+			this.ok.Font = Program.GetFontAlbertusMTLight(12F);
+			this.cancel.Font = Program.GetFontAlbertusMTLight(12F);
+			this.label1.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.Font = Program.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+
+			#endregion
+
 			this.DrawCustomBorder = true;
 
 			this.Text = Resources.SeedText;

@@ -51,6 +51,24 @@ namespace TQVaultAE.GUI
 		{
 			this.InitializeComponent();
 
+			#region Apply custom font
+
+			this.targetTextBox.Font = Program.GetFontAlbertusMTLight(11F);
+			this.instructionsLabel.Font = Program.GetFontAlbertusMTLight(11F);
+			this.okayButton.Font = Program.GetFontAlbertusMTLight(12F);
+			this.cancelButton.Font = Program.GetFontAlbertusMTLight(12F);
+			this.vaultListComboBox.Font = Program.GetFontAlbertusMTLight(11F);
+			this.newRadioButton.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.selectFunctionGroupBox.Font = Program.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.renameRadioButton.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.copyRadioButton.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.deleteRadioButton.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.sourceLabel.Font = Program.GetFontAlbertusMTLight(11F);
+			this.targetLabel.Font = Program.GetFontAlbertusMTLight(11F);
+			this.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+
+			#endregion
+
 			// Load the localized resources
 			this.Text = Resources.MaintenanceText;
 			this.copyRadioButton.Text = Resources.MaintenanceRbCopy;

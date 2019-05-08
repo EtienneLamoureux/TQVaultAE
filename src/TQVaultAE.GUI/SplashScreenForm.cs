@@ -64,6 +64,15 @@ namespace TQVaultAE.GUI
 		{
 			this.InitializeComponent();
 
+			#region Apply custom font
+
+			this.label3.Font = Program.GetFontAlbertusMTLight(12F);
+			this.nextButton.Font = Program.GetFontAlbertusMTLight(12F);
+			this.exitButton.Font = Program.GetFontAlbertusMTLight(12F);
+			this.labelPleaseWait.Font = Program.GetFontAlbertusMTLight(14.25F);
+
+			#endregion
+
 			this.Text = Resources.Form1Text;
 			this.label3.Text = Resources.Form1Label3;
 			this.exitButton.Text = Resources.GlobalExit;

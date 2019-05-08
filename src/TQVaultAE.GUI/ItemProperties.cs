@@ -34,6 +34,17 @@ namespace TQVaultAE.GUI
 		{
 			this.InitializeComponent();
 
+			#region Apply custom font
+
+			this.ok.Font = Program.GetFontAlbertusMTLight(12F);
+			this.label1.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.label2.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.checkBox1.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.label3.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+
+			#endregion
+
 			this.Text = Resources.ItemPropertiesText;
 			this.ok.Text = Resources.GlobalOK;
 			this.label1.Text = Resources.ItemPropertiesLabel1;

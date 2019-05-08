@@ -22,6 +22,16 @@ namespace TQVaultAE.GUI
 		{
 			this.InitializeComponent();
 
+			#region Apply custom font
+
+			this.searchLabel.Font = Program.GetFontAlbertusMT(9F);
+			this.searchTextBox.Font = Program.GetFontAlbertusMT(9F);
+			this.findButton.Font = Program.GetFontAlbertusMTLight(12F);
+			this.cancelButton.Font = Program.GetFontAlbertusMTLight(12F);
+			this.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
+
+			#endregion
+
 			// Load localized strings
 			this.Text = Resources.SearchDialogCaption;
 			this.searchLabel.Text = Resources.SearchDialogText;

@@ -50,6 +50,19 @@ namespace TQVaultAE.GUI
 		public ResultsDialog()
 		{
 			this.InitializeComponent();
+
+			#region Apply custom font
+
+			this.resultsDataGridView.ColumnHeadersDefaultCellStyle.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.item.DefaultCellStyle.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.quality.DefaultCellStyle.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.containerName.DefaultCellStyle.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.containerType.DefaultCellStyle.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.level.DefaultCellStyle.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+
+			#endregion
+
 			this.tooltip = new TTLib();
 			this.resultsList = new List<Result>();
 			////this.selectedResult = new Result();
