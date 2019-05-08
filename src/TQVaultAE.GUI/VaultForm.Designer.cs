@@ -59,9 +59,9 @@ namespace TQVaultAE.GUI
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VaultForm));
-			this.buttonMaximize = new ScalingButton();
-			this.buttonMinimize = new ScalingButton();
-			this.buttonClose = new ScalingButton();
+			this.buttonMaximize = new TQVaultAE.GUI.ScalingButton();
+			this.buttonMinimize = new TQVaultAE.GUI.ScalingButton();
+			this.buttonClose = new TQVaultAE.GUI.ScalingButton();
 			this.SuspendLayout();
 			// 
 			// buttonMaximize
@@ -74,10 +74,10 @@ namespace TQVaultAE.GUI
 			this.buttonMaximize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.buttonMaximize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.buttonMaximize.Image = ((System.Drawing.Image)(resources.GetObject("buttonMaximize.Image")));
-			this.buttonMaximize.Location = this.scalePoint(new System.Drawing.Point(197, 24));
+			this.buttonMaximize.Location = new System.Drawing.Point(197, 24);
 			this.buttonMaximize.Name = "buttonMaximize";
 			this.buttonMaximize.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonMaximize.OverBitmap")));
-			this.buttonMaximize.Size = this.scaleSize(new System.Drawing.Size(15, 15));
+			this.buttonMaximize.Size = new System.Drawing.Size(15, 15);
 			this.buttonMaximize.SizeToGraphic = false;
 			this.buttonMaximize.TabIndex = 2;
 			this.buttonMaximize.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonMaximize.UpBitmap")));
@@ -95,10 +95,10 @@ namespace TQVaultAE.GUI
 			this.buttonMinimize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.buttonMinimize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.buttonMinimize.Image = ((System.Drawing.Image)(resources.GetObject("buttonMinimize.Image")));
-			this.buttonMinimize.Location = this.scalePoint(new System.Drawing.Point(130, 24));
+			this.buttonMinimize.Location = new System.Drawing.Point(130, 24);
 			this.buttonMinimize.Name = "buttonMinimize";
 			this.buttonMinimize.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonMinimize.OverBitmap")));
-			this.buttonMinimize.Size = this.scaleSize(new System.Drawing.Size(15, 15));
+			this.buttonMinimize.Size = new System.Drawing.Size(15, 15);
 			this.buttonMinimize.SizeToGraphic = false;
 			this.buttonMinimize.TabIndex = 1;
 			this.buttonMinimize.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonMinimize.UpBitmap")));
@@ -116,10 +116,10 @@ namespace TQVaultAE.GUI
 			this.buttonClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.buttonClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.buttonClose.Image = ((System.Drawing.Image)(resources.GetObject("buttonClose.Image")));
-			this.buttonClose.Location = this.scalePoint(new System.Drawing.Point(254, 12));
+			this.buttonClose.Location = new System.Drawing.Point(254, 12);
 			this.buttonClose.Name = "buttonClose";
 			this.buttonClose.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonClose.OverBitmap")));
-			this.buttonClose.Size = this.scaleSize(new System.Drawing.Size(26, 26));
+			this.buttonClose.Size = new System.Drawing.Size(26, 26);
 			this.buttonClose.SizeToGraphic = false;
 			this.buttonClose.TabIndex = 0;
 			this.buttonClose.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonClose.UpBitmap")));
@@ -142,6 +142,7 @@ namespace TQVaultAE.GUI
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
 			this.Resize += new System.EventHandler(this.ResizeCallback);
 			this.ResumeLayout(false);
+
 		}
 
 		#endregion

@@ -25,6 +25,16 @@ namespace TQVaultAE.GUI
 		{
 			this.InitializeComponent();
 
+			#region Apply custom font
+
+			this.labelProductName.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.labelVersion.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.labelCopyright.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.textBoxDescription.Font = Program.GetFontAlbertusMTLight(9.75F);
+			this.buttonOK.Font = Program.GetFontAlbertusMTLight(12F);
+
+			#endregion
+
 			// Initialize the AboutBox to display the product information from the assembly information.
 			// Change assembly information settings for your application through either:
 			// - Project->Properties->Application->Assembly Information

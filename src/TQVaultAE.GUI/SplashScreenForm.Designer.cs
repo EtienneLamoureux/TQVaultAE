@@ -90,7 +90,7 @@ namespace TQVaultAE.GUI
             // label3
             // 
             this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.Font = Program.GetFontAlbertusMTLight(12F);
+            this.label3.Font = new System.Drawing.Font("Albertus MT Light", 12F);
             this.label3.ForeColor = System.Drawing.Color.White;
             this.label3.Location = new System.Drawing.Point(55, 255);
             this.label3.Name = "label3";
@@ -108,7 +108,7 @@ namespace TQVaultAE.GUI
             this.nextButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.nextButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.nextButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.nextButton.Font = Program.GetFontAlbertusMTLight(12F);
+            this.nextButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
             this.nextButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.nextButton.Image = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
             this.nextButton.Location = new System.Drawing.Point(286, 365);
@@ -133,7 +133,7 @@ namespace TQVaultAE.GUI
             this.exitButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.exitButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.exitButton.Font = Program.GetFontAlbertusMTLight(12F);
+            this.exitButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
             this.exitButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.exitButton.Image = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
             this.exitButton.Location = new System.Drawing.Point(555, 420);
@@ -151,7 +151,7 @@ namespace TQVaultAE.GUI
             // labelPleaseWait
             // 
             this.labelPleaseWait.BackColor = System.Drawing.Color.Transparent;
-            this.labelPleaseWait.Font = Program.GetFontAlbertusMTLight(14.25F);
+            this.labelPleaseWait.Font = new System.Drawing.Font("Albertus MT Light", 14.25F);
             this.labelPleaseWait.ForeColor = System.Drawing.Color.Gold;
             this.labelPleaseWait.Location = new System.Drawing.Point(131, 318);
             this.labelPleaseWait.Name = "labelPleaseWait";

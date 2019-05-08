@@ -144,6 +144,40 @@ namespace TQVaultAE.GUI
 		public SettingsDialog()
 		{
 			this.InitializeComponent();
+
+			#region Apply custom font
+
+			this.allowItemEditCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.allowItemCopyCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.skipTitleCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.loadLastCharacterCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.loadLastVaultCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.vaultPathTextBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.vaultPathLabel.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.cancelButton.Font = Program.GetFontAlbertusMTLight(12F);
+			this.okayButton.Font = Program.GetFontAlbertusMTLight(12F);
+			this.resetButton.Font = Program.GetFontAlbertusMTLight(12F);
+			this.vaultPathBrowseButton.Font = Program.GetFontAlbertusMTLight(12F);
+			this.enableCustomMapsCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.loadAllFilesCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.suppressWarningsCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.playerReadonlyCheckbox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.languageComboBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.languageLabel.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.detectLanguageCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.titanQuestPathTextBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.titanQuestPathLabel.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.immortalThronePathLabel.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.immortalThronePathTextBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.detectGamePathsCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.titanQuestPathBrowseButton.Font = Program.GetFontAlbertusMTLight(12F);
+			this.immortalThronePathBrowseButton.Font = Program.GetFontAlbertusMTLight(12F);
+			this.customMapLabel.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.mapListComboBox.Font = Program.GetFontAlbertusMTLight(11.25F);
+			this.Font = Program.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
+
+			#endregion
+
 			this.vaultPathLabel.Text = Resources.SettingsLabel1;
 			this.languageLabel.Text = Resources.SettingsLabel2;
 			this.titanQuestPathLabel.Text = Resources.SettingsLabel3;

@@ -130,7 +130,16 @@ namespace TQVaultAE.GUI
 			this.InitializeComponent();
 
 			this.PlaceButtons();
+
 			this.CreateBorderRects();
+
+			#region Apply custom font & scaling
+
+			ScaleControl(this.buttonMaximize);
+			ScaleControl(this.buttonMinimize);
+			ScaleControl(this.buttonClose);
+
+			#endregion
 
 			this.systemMenu = new WindowMenu(this);
 			this.systemMenu.SystemEvent += new EventHandler<WindowMenuEventArgs>(this.SystemMenuSystemEvent);
@@ -141,13 +150,19 @@ namespace TQVaultAE.GUI
 			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
 		}
 
-		public Size scaleSize(Size size)
+		protected void ScaleControl(System.Windows.Forms.Control ctrl)
+		{
+			ctrl.Location = this.ScalePoint(ctrl.Location);
+			ctrl.Size = this.ScaleSize(ctrl.Size);
+		}
+
+		protected Size ScaleSize(Size size)
 		{
 			if (TQVaultData.Database.DB == null) return size;
 			return new Size((int)System.Math.Round(size.Width * TQVaultData.Database.DB.Scale), (int)System.Math.Round(size.Height * TQVaultData.Database.DB.Scale));
 		}
 
-		public Point scalePoint(Point point)
+		protected Point ScalePoint(Point point)
 		{
 			if (TQVaultData.Database.DB == null) return point;
 			return new Point((int)System.Math.Round(point.X * TQVaultData.Database.DB.Scale), (int)System.Math.Round(point.Y * TQVaultData.Database.DB.Scale));

@@ -156,14 +156,44 @@ namespace TQVaultAE.GUI
 			this.ShowInTaskbar = false;
 			this.Opacity = 0;
 			this.Hide();
+
 			SetUILanguage();
 
-			Database.DB = new Database();
-			Database.DB.AutoDetectLanguage = Settings.Default.AutoDetectLanguage;
-			Database.DB.TQLanguage = Settings.Default.TQLanguage;
+			Program.LoadDB();
 
 			this.SetupFormSize();
+
 			this.InitializeComponent();
+
+			#region Apply custom font & scaling
+
+			this.exitButton.Font = Program.GetFontAlbertusMTLight(12F, TQVaultData.Database.DB.Scale);
+			ScaleControl(this.exitButton);
+			this.characterComboBox.Font = Program.GetFontAlbertusMTLight(13F, TQVaultData.Database.DB.Scale);
+			ScaleControl(this.characterComboBox);
+			ScaleControl(this.itemTextPanel);
+			ScaleControl(this.itemText);
+			this.vaultListComboBox.Font = Program.GetFontAlbertusMTLight(13F, TQVaultData.Database.DB.Scale);
+			ScaleControl(this.vaultListComboBox);
+			this.vaultLabel.Font = Program.GetFontAlbertusMTLight(11F, TQVaultData.Database.DB.Scale);
+			ScaleControl(this.vaultLabel);
+			this.configureButton.Font = Program.GetFontAlbertusMTLight(12F, TQVaultData.Database.DB.Scale);
+			ScaleControl(this.configureButton);
+			this.customMapText.Font = Program.GetFontAlbertusMT(11.25F, TQVaultData.Database.DB.Scale);
+			ScaleControl(this.customMapText);
+			this.panelSelectButton.Font = Program.GetFontAlbertusMTLight(12F, TQVaultData.Database.DB.Scale);
+			ScaleControl(this.panelSelectButton);
+			this.secondaryVaultListComboBox.Font = Program.GetFontAlbertusMTLight(11F, TQVaultData.Database.DB.Scale);
+			ScaleControl(this.secondaryVaultListComboBox);
+			this.aboutButton.Font = Program.GetFontMicrosoftSansSerif(8.25F, TQVaultData.Database.DB.Scale);
+			ScaleControl(this.aboutButton);
+			this.titleLabel.Font = Program.GetFontAlbertusMTLight(24F, TQVaultData.Database.DB.Scale);
+			ScaleControl(this.titleLabel);
+			this.searchButton.Font = Program.GetFontAlbertusMTLight(12F, TQVaultData.Database.DB.Scale);
+			ScaleControl(this.searchButton);
+
+			#endregion
+
 			try
 			{
 				this.tooltip = new TTLib();
@@ -222,8 +252,8 @@ namespace TQVaultAE.GUI
 			Item.ItemQuest = Resources.ItemQuest;
 			Item.ItemSeed = Resources.ItemSeed;
 			Item.ItemIT = Resources.ItemIT;
-            Item.ItemRagnarok = Resources.ItemRagnarok;
-            Item.ShowSkillLevel = Settings.Default.ShowSkillLevel;
+			Item.ItemRagnarok = Resources.ItemRagnarok;
+			Item.ShowSkillLevel = Settings.Default.ShowSkillLevel;
 
 			if (Settings.Default.NoToolTipDelay)
 			{
@@ -864,7 +894,7 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				this.ClientSize = new System.Drawing.Size(formWidth,formHeight);
+				this.ClientSize = new System.Drawing.Size(formWidth, formHeight);
 			}
 			TQVaultData.Database.DB.Scale = Settings.Default.Scale;
 			Settings.Default.Save();
@@ -883,10 +913,10 @@ namespace TQVaultAE.GUI
 
 			if (CurrentAutoScaleDimensions.Width != Database.DesignDpi)
 			{
-					// We do not need to scale the main form controls since autoscaling will handle it.
-					// Scale internally to 96 dpi for the drawing functions.
-					Database.DB.Scale = this.CurrentAutoScaleDimensions.Width / Database.DesignDpi;
-					this.OriginalFormScale = Database.DB.Scale;
+				// We do not need to scale the main form controls since autoscaling will handle it.
+				// Scale internally to 96 dpi for the drawing functions.
+				Database.DB.Scale = this.CurrentAutoScaleDimensions.Width / Database.DesignDpi;
+				this.OriginalFormScale = Database.DB.Scale;
 			}
 
 			this.LastFormSize = this.Size;
@@ -936,12 +966,12 @@ namespace TQVaultAE.GUI
 			else
 			{
 				//read map name from ini file, main section
-				if(!String.IsNullOrEmpty(IniProperties.Mod))
+				if (!String.IsNullOrEmpty(IniProperties.Mod))
 				{
 					TQData.MapName = IniProperties.Mod;
 				}
 
-				if(!IniProperties.ShowEditingCopyFeatures)
+				if (!IniProperties.ShowEditingCopyFeatures)
 				{
 					Settings.Default.AllowItemCopy = false;
 					Settings.Default.AllowItemEdit = false;
@@ -1714,7 +1744,7 @@ namespace TQVaultAE.GUI
 				this.playerPanel.Player = null;
 				this.characterComboBox.SelectedIndex = 0;
 			}
-			
+
 			string stashFile = TQData.GetPlayerStashFile(selectedText);
 
 			// Get the player's stash
@@ -1763,7 +1793,7 @@ namespace TQVaultAE.GUI
 
 				this.stashPanel.Stash = null;
 			}
-			
+
 		}
 
 		/// <summary>

@@ -77,8 +77,8 @@ namespace TQVaultAE.GUI
 			this.item = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.quality = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.containerName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.level = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.containerType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.level = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			((System.ComponentModel.ISupportInitialize)(this.resultsDataGridView)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -93,7 +93,7 @@ namespace TQVaultAE.GUI
 			this.resultsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
 			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			dataGridViewCellStyle1.BackColor = System.Drawing.Color.Black;
-			dataGridViewCellStyle1.Font = Program.GetFontAlbertusMT( 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Albertus MT Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
 			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.Gold;
 			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.White;
@@ -130,7 +130,7 @@ namespace TQVaultAE.GUI
 			// 
 			this.item.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-			dataGridViewCellStyle2.Font = Program.GetFontAlbertusMT( 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle2.Font = new System.Drawing.Font("Albertus MT Light", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
 			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Gold;
 			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
@@ -144,7 +144,7 @@ namespace TQVaultAE.GUI
 			// 
 			this.quality.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-			dataGridViewCellStyle3.Font = Program.GetFontAlbertusMT( 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle3.Font = new System.Drawing.Font("Albertus MT Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle3.ForeColor = System.Drawing.Color.White;
 			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.Gold;
 			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Black;
@@ -158,7 +158,7 @@ namespace TQVaultAE.GUI
 			// 
 			this.containerName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-			dataGridViewCellStyle4.Font = Program.GetFontAlbertusMT( 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle4.Font = new System.Drawing.Font("Albertus MT Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle4.ForeColor = System.Drawing.Color.White;
 			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.Gold;
 			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.Black;
@@ -172,7 +172,7 @@ namespace TQVaultAE.GUI
 			// 
 			this.containerType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-			dataGridViewCellStyle5.Font = Program.GetFontAlbertusMT( 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle5.Font = new System.Drawing.Font("Albertus MT Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle5.ForeColor = System.Drawing.Color.White;
 			dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.Gold;
 			dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.Black;
@@ -186,7 +186,7 @@ namespace TQVaultAE.GUI
 			// 
 			this.level.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			dataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-			dataGridViewCellStyle6.Font = Program.GetFontAlbertusMT( 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle6.Font = new System.Drawing.Font("Albertus MT Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle6.ForeColor = System.Drawing.Color.White;
 			dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.Gold;
 			dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.Black;
@@ -204,7 +204,7 @@ namespace TQVaultAE.GUI
 			this.ClientSize = new System.Drawing.Size(837, 497);
 			this.Controls.Add(this.resultsDataGridView);
 			this.DrawCustomBorder = true;
-			this.Font = Program.GetFontAlbertusMT( 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Font = new System.Drawing.Font("Albertus MT Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ForeColor = System.Drawing.Color.White;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.Margin = new System.Windows.Forms.Padding(4);
