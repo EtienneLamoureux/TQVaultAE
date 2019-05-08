@@ -162,7 +162,7 @@ namespace TQVaultData
 		public ArzFile ArzFileMod { get; private set; }
 
 		/// <summary>
-		/// Gets the game language setting.
+		/// Gets the game language setting as a an English DisplayName.
 		/// </summary>
 		/// <remarks>Changed to property by VillageIdiot to support changing of Language in UI</remarks>
 		public string GameLanguage
