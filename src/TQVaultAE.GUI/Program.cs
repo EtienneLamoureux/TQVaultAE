@@ -170,7 +170,7 @@ namespace TQVaultAE.GUI
 		public static Font GetFontMicrosoftSansSerif(float fontSize, float? scale = null)
 		{
 			scale = scale ?? 1F;
-			return new Font("Microsoft Sans Serif", 8.25F * scale.Value);
+			return new Font("Microsoft Sans Serif", fontSize * scale.Value);
 		}
 
 		public static Font GetFontAlbertusMT(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)

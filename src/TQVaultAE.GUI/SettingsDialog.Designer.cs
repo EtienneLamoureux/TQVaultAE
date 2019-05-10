@@ -199,7 +199,6 @@ namespace TQVaultAE.GUI
             this.loadAllFilesCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.suppressWarningsCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.playerReadonlyCheckbox = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.enableSharedStashHotReloadCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.languageComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.languageLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.detectLanguageCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
