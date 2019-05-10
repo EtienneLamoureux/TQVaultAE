@@ -3,7 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.GUI.Properties
+namespace TQVaultAE.GUI.Models.Properties
 {
 	using System.ComponentModel;
 	using System.Configuration;

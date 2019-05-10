@@ -11,6 +11,8 @@ namespace TQVaultAE.GUI
 	using System.Globalization;
 	using System.Security.Permissions;
 	using System.Windows.Forms;
+	using TQVaultAE.GUI.Components;
+	using TQVaultAE.GUI.Models;
 	using TQVaultData;
 
 	/// <summary>

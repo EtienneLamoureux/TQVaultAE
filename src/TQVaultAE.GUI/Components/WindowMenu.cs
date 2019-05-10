@@ -3,12 +3,13 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.GUI
+namespace TQVaultAE.GUI.Components
 {
 	using Properties;
 	using System;
 	using System.Drawing;
 	using System.Windows.Forms;
+	using TQVaultAE.GUI.Models;
 
 	/// <summary>
 	/// Class for creating a Window Menu on the form.

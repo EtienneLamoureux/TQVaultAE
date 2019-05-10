@@ -12,6 +12,7 @@ namespace TQVaultAE.GUI
 	using System.Globalization;
 	using System.Windows.Forms;
 	using Tooltip;
+	using TQVaultAE.GUI.Models;
 	using TQVaultData;
 
 	/// <summary>

@@ -12,6 +12,7 @@ namespace TQVaultAE.GUI
 	using System.Globalization;
 	using System.Linq;
 	using System.Windows.Forms;
+	using TQVaultAE.GUI.Models;
 	using TQVaultData;
 
 	/// <summary>
@@ -470,7 +471,7 @@ namespace TQVaultAE.GUI
 			if (!languages.Any()) languages = new ComboBoxItem[] { new ComboBoxItem() { Value = "English", DisplayName = "English" } };
 
 			this.languageComboBox.Items.AddRange(languages);
-
+			
 			this.vaultPathTextBox.Text = this.vaultPath;
 			this.skipTitleCheckBox.Checked = this.skipTitle;
 			this.allowItemEditCheckBox.Checked = this.allowItemEdit;

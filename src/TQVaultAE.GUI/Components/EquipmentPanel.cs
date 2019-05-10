@@ -4,13 +4,14 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace TQVaultAE.GUI
+namespace TQVaultAE.GUI.Components
 {
 	using Properties;
 	using System;
 	using System.Collections.Generic;
 	using System.Drawing;
 	using System.Windows.Forms;
+	using TQVaultAE.GUI.Models;
 	using TQVaultData;
 
 	/// <summary>

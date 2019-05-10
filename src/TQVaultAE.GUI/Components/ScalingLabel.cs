@@ -1,18 +1,32 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ScalingComboBox.cs" company="None">
+// <copyright file="ScalingLabel.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.GUI
+namespace TQVaultAE.GUI.Components
 {
 	using System.Drawing;
 	using System.Windows.Forms;
 
 	/// <summary>
-	/// ComboBox class to support scaling of the fonts.
+	/// Label class to support scaling of the fonts.
 	/// </summary>
-	public class ScalingComboBox : ComboBox
+	public class ScalingLabel : Label
 	{
+		/// <summary>
+		/// Reverts the basic settings of a control back to the original settings.
+		/// </summary>
+		/// <param name="location">New Location of the control</param>
+		/// <param name="size">New Size of the control</param>
+		/// <param name="textColor">Color for the label</param>
+		public void Revert(Point location, Size size, Color textColor)
+		{
+			this.Font = new Font("Microsoft Sans Serif", 8.25F);
+			this.Location = location;
+			this.Size = size;
+			this.ForeColor = textColor;
+		}
+
 		/// <summary>
 		/// Reverts the basic settings of a control back to the original settings.
 		/// </summary>
@@ -20,11 +34,7 @@ namespace TQVaultAE.GUI
 		/// <param name="size">New Size of the control</param>
 		public void Revert(Point location, Size size)
 		{
-			this.Font = Program.GetFontAlbertusMTLight(8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.Location = location;
-			this.Size = size;
-			this.BackColor = SystemColors.Window;
-			this.ForeColor = SystemColors.WindowText;
+			this.Revert(location, size, SystemColors.ControlText);
 		}
 
 		/// <summary>

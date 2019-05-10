@@ -1,17 +1,17 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ScalingTextBox.cs" company="None">
+// <copyright file="ScalingRadioButton.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.GUI
+namespace TQVaultAE.GUI.Components
 {
 	using System.Drawing;
 	using System.Windows.Forms;
 
 	/// <summary>
-	/// TextBox class to support scaling of the fonts.
+	/// RadioButton class to support scaling of the fonts.
 	/// </summary>
-	public class ScalingTextBox : TextBox
+	public class ScalingRadioButton : RadioButton
 	{
 		/// <summary>
 		/// Override of ScaleControl which supports font scaling.

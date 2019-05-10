@@ -3,7 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.GUI
+namespace TQVaultAE.GUI.Components
 {
 	using Properties;
 	using System;
@@ -11,6 +11,7 @@ namespace TQVaultAE.GUI
 	using System.Globalization;
 	using System.Timers;
 	using System.Windows.Forms;
+	using TQVaultAE.GUI.Models;
 	using TQVaultData;
 
 	/// <summary>

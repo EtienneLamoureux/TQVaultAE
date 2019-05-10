@@ -6,7 +6,7 @@
 using TQVaultAE.GUI.Properties;
 using TQVaultAE.GUI.Tooltip;
 
-namespace TQVaultAE.GUI
+namespace TQVaultAE.GUI.Components
 {
 	/// <summary>
 	/// Extends the BagButton functionality to the stash panel.

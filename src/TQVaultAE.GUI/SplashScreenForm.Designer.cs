@@ -3,6 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Properties;
 
 namespace TQVaultAE.GUI
@@ -77,10 +78,10 @@ namespace TQVaultAE.GUI
 		{
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SplashScreenForm));
-            this.label3 = new TQVaultAE.GUI.ScalingLabel();
-            this.nextButton = new TQVaultAE.GUI.ScalingButton();
-            this.exitButton = new TQVaultAE.GUI.ScalingButton();
-            this.labelPleaseWait = new TQVaultAE.GUI.ScalingLabel();
+            this.label3 = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.nextButton = new TQVaultAE.GUI.Components.ScalingButton();
+            this.exitButton = new TQVaultAE.GUI.Components.ScalingButton();
+            this.labelPleaseWait = new TQVaultAE.GUI.Components.ScalingLabel();
             this.waitTimer = new System.Timers.Timer();
             this.fadeTimer = new System.Windows.Forms.Timer(this.components);
             this.progressBar = new TQVaultAE.GUI.VaultProgressBar();

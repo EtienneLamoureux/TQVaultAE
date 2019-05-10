@@ -20,6 +20,8 @@ namespace TQVaultAE.GUI
 	using System.Threading;
 	using System.Windows.Forms;
 	using Tooltip;
+	using TQVaultAE.GUI.Components;
+	using TQVaultAE.GUI.Models;
 	using TQVaultData;
 
 	/// <summary>

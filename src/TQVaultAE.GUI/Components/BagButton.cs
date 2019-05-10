@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace TQVaultAE.GUI
+namespace TQVaultAE.GUI.Components
 {
 	using Properties;
 	using Tooltip;

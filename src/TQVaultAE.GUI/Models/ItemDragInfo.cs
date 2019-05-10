@@ -3,11 +3,12 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.GUI
+namespace TQVaultAE.GUI.Models
 {
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.Drawing;
+	using TQVaultAE.GUI.Components;
 	using TQVaultData;
 
 	/// <summary>
