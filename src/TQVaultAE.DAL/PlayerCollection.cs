@@ -10,12 +10,15 @@ namespace TQVaultAE.DAL
 	using System.Collections.Generic;
 	using System.Globalization;
 	using System.IO;
+	using TQVaultAE.Logging;
 
 	/// <summary>
 	/// Loads, decodes, encodes and saves a Titan Quest player file.
 	/// </summary>
 	public class PlayerCollection : IEnumerable<SackCollection>
 	{
+		private readonly log4net.ILog Log = null;
+
 		/// <summary>
 		/// Static array holding the byte pattern for the beginning of a block in the player file.
 		/// </summary>
@@ -88,6 +91,8 @@ namespace TQVaultAE.DAL
 		/// <param name="playerFile">filename of the player file</param>
 		public PlayerCollection(string playerName, string playerFile)
 		{
+			this.Log = Logger.Get(this);
+
 			this.PlayerFile = playerFile;
 			this.PlayerName = playerName;
 		}
@@ -371,8 +376,9 @@ namespace TQVaultAE.DAL
 				// Now Parse the file
 				this.ParseRawData();
 			}
-			catch (ArgumentException)
+			catch (ArgumentException ex)
 			{
+				Log.Error("ParseRawData() Failed !", ex);
 				throw;
 			}
 		}
@@ -466,14 +472,10 @@ namespace TQVaultAE.DAL
 						}
 						catch (ArgumentException exception)
 						{
-							if (!TQDebug.DebugEnabled)
-							{
-								TQDebug.DebugEnabled = true;
-							}
-
-							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error parsing player file Item Block - '{0}'", this.PlayerName));
-							TQDebug.DebugWriteLine(exception.ToString());
-							throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player file Item Block- '{0}'", this.PlayerName), exception);
+							var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player file Item Block- '{0}'", this.PlayerName), exception);
+							Log.ErrorFormat(CultureInfo.InvariantCulture, "Error parsing player file Item Block - '{0}'", this.PlayerName);
+							Log.ErrorException(exception);
+							throw ex;
 						}
 
 						try
@@ -517,16 +519,9 @@ namespace TQVaultAE.DAL
 						}
 						catch (IOException exception)
 						{
-							if (!TQDebug.DebugEnabled)
-							{
-								TQDebug.DebugEnabled = true;
-							}
-
-							TQDebug.DebugWriteLine(string.Format(
-								CultureInfo.InvariantCulture,
-								"Error writing Export file - '{0}'",
-								string.Concat(Path.Combine(TQData.TQVaultSaveFolder, this.PlayerName), " Export.txt")));
-							TQDebug.DebugWriteLine(exception.ToString());
+							Log.ErrorFormat(exception, "Error writing Export file - '{0}'"
+								, string.Concat(Path.Combine(TQData.TQVaultSaveFolder, this.PlayerName), " Export.txt")
+							);
 						}
 					}
 
@@ -539,14 +534,9 @@ namespace TQVaultAE.DAL
 						}
 						catch (ArgumentException exception)
 						{
-							if (!TQDebug.DebugEnabled)
-							{
-								TQDebug.DebugEnabled = true;
-							}
-
-							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error parsing player file Equipment Block - '{0}'", this.PlayerName));
-							TQDebug.DebugWriteLine(exception.ToString());
-							throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player file Equipment Block - '{0}'", this.PlayerName), exception);
+							var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player file Equipment Block - '{0}'", this.PlayerName), exception);
+							Log.ErrorFormat(ex, "Error parsing player file Equipment Block - '{0}'", this.PlayerName);
+							throw ex;
 						}
 
 						try
@@ -576,17 +566,9 @@ namespace TQVaultAE.DAL
 						}
 						catch (IOException exception)
 						{
-							if (!TQDebug.DebugEnabled)
-							{
-								TQDebug.DebugEnabled = true;
-							}
-
-							TQDebug.DebugWriteLine(string.Format(
-								CultureInfo.InvariantCulture,
-								"Error writing Export file - '{0}'",
-								string.Concat(Path.Combine(TQData.TQVaultSaveFolder, this.PlayerName), " Equipment Export.txt")));
-
-							TQDebug.DebugWriteLine(exception.ToString());
+							Log.ErrorFormat(exception, "Error writing Export file - '{0}'"
+								, string.Concat(Path.Combine(TQData.TQVaultSaveFolder, this.PlayerName), " Equipment Export.txt")
+							);
 						}
 					}
 				}
@@ -675,10 +657,11 @@ namespace TQVaultAE.DAL
 
 				this.itemBlockEnd = (int)reader.BaseStream.Position;
 			}
-			catch (ArgumentException)
+			catch (ArgumentException ex)
 			{
 				// The ValidateNextString Method can throw an ArgumentException.
 				// We just pass it along at this point.
+				Log.Debug("ValidateNextString fail !", ex);
 				throw;
 			}
 		}
@@ -750,8 +733,9 @@ namespace TQVaultAE.DAL
 
 				this.equipmentBlockEnd = (int)reader.BaseStream.Position;
 			}
-			catch (ArgumentException)
+			catch (ArgumentException ex)
 			{
+				Log.Error($"ParseEquipmentBlock fail ! offset={offset}", ex);
 				throw;
 			}
 		}

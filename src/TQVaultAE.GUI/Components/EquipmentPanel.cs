@@ -13,12 +13,15 @@ namespace TQVaultAE.GUI.Components
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.DAL;
+	using TQVaultAE.Logging;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel in the stash panel.
 	/// </summary>
 	public class EquipmentPanel : SackPanel
 	{
+		private readonly log4net.ILog Log = null;
+
 		/// <summary>
 		/// Initializes a new instance of the EquipmentPanel class.
 		/// </summary>
@@ -29,6 +32,8 @@ namespace TQVaultAE.GUI.Components
 		public EquipmentPanel(int sackWidth, int sackHeight, ItemDragInfo dragInfo, AutoMoveLocation autoMoveLocation)
 			: base(sackWidth, sackHeight, dragInfo, autoMoveLocation)
 		{
+			this.Log = Logger.Get(this);
+
 			this.SackType = SackType.Equipment;
 			this.BackColor = Color.Transparent;
 			this.DisableGrid = true;
@@ -71,7 +76,8 @@ namespace TQVaultAE.GUI.Components
 				}
 				catch (NullReferenceException exception)
 				{
-					MessageBox.Show(exception.ToString(), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+					Log.ErrorException(exception);
+					MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 			}
 		}

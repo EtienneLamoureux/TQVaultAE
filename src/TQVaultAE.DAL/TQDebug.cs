@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.DAL
 {
+	using log4net.Core;
 	using System.IO;
 	using TQVaultAE.Logging;
 
@@ -13,7 +14,7 @@ namespace TQVaultAE.DAL
 	/// </summary>
 	public static class TQDebug
 	{
-		private static log4net.ILog Log = Logger.Get(typeof(TQDebug));
+		private static readonly log4net.ILog Log = Logger.Get(typeof(TQDebug));
 
 		/// <summary>
 		/// Indicates whether debugging is globally enabled.
@@ -49,18 +50,11 @@ namespace TQVaultAE.DAL
 			{
 				return debugEnabled;
 			}
-
 			set
 			{
 				bool lastValue = debugEnabled;
 				debugEnabled = value;
-
-				// Only delete the file the first time we turn it on.
-				if (debugEnabled && (lastValue != debugEnabled) && File.Exists("tqdebug.txt"))
-				{
-					// Delete any existing debug log.
-					File.Delete("tqdebug.txt");
-				}
+				Logger.ChangeRootLogLevel(value ? Level.Debug : Level.Info);
 			}
 		}
 
@@ -156,34 +150,5 @@ namespace TQVaultAE.DAL
 			}
 		}
 
-		/// <summary>
-		/// Writes an entry into the debug log without trailing Carriage Return.
-		/// Will only write if global debugging is enabled.
-		/// </summary>
-		/// <param name="message">Message to be written to the file.</param>
-		public static void DebugWrite(string message)
-		{
-			if (DebugEnabled)
-			{
-				StreamWriter outStream = new StreamWriter("tqdebug.txt", true);
-				outStream.Write(message);
-				outStream.Close();
-			}
-		}
-
-		/// <summary>
-		/// Writes an entry into the debug log with a trailing Carriage Return.
-		/// Will only write if global debugging is enabled.
-		/// </summary>
-		/// <param name="message">Message to be written to the file.</param>
-		public static void DebugWriteLine(string message)
-		{
-			if (DebugEnabled)
-			{
-				StreamWriter outStream = new StreamWriter("tqdebug.txt", true);
-				outStream.WriteLine(message);
-				outStream.Close();
-			}
-		}
 	}
 }

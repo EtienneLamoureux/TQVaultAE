@@ -1,4 +1,6 @@
-﻿using System;
+﻿using log4net;
+using log4net.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -54,6 +56,20 @@ namespace TQVaultAE.Logging
 			var type = (typeInstance is Type) ? (Type)typeInstance : typeInstance.GetType();
 			var _log = log4net.LogManager.GetLogger(type);
 			return _log;
+		}
+
+		/// <summary>
+		/// Change log4net root loglevel at runtime
+		/// </summary>
+		/// <param name="newLevel"></param>
+		/// <returns>true if change occured, false if <paramref name="newLevel"/> was in place already</returns>
+		public static bool ChangeRootLogLevel(Level newLevel)
+		{
+			var repo = (log4net.Repository.Hierarchy.Hierarchy)LogManager.GetRepository();
+			if (repo.Root.Level == newLevel) return false;
+			repo.Root.Level = newLevel;
+			repo.RaiseConfigurationChanged(EventArgs.Empty);
+			return true;
 		}
 
 		/// <summary>

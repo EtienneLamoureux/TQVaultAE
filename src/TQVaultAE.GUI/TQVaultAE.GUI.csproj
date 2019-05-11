@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkProfile />
-    <PublishUrl>publish\</PublishUrl>
+    <PublishUrl>D:\TQVaultAE_Release\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -29,9 +29,10 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -42,7 +43,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -69,6 +70,35 @@
   <PropertyGroup>
     <StartupObject>TQVaultAE.GUI.Program</StartupObject>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>77656BB5D4086EA6CBB0DFE35BCABE145B78A40A</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>TQVaultAE.GUI_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net35-full\log4net.dll</HintPath>
@@ -87,6 +117,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\ReleaseVersionInfo.cs">
+      <Link>ReleaseVersionInfo.cs</Link>
+    </Compile>
     <Compile Include="AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -162,7 +195,7 @@
     <Compile Include="Components\VaultPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="VaultProgressBar.cs">
+    <Compile Include="Components\VaultProgressBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Components\WindowMenu.cs">
@@ -293,8 +326,17 @@
     <Compile Include="VaultMaintenanceDialog.Designer.cs">
       <DependentUpon>VaultMaintenanceDialog.cs</DependentUpon>
     </Compile>
+    <None Include="TQVaultClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\libs\DevIL.dll">
+      <Link>resources\libs\DevIL.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\libs\VXPLib.dll">
+      <Link>resources\libs\VXPLib.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="resources\img\AboutGraphic.png" />
     <Content Include="resources\img\autosortdown01.png" />
     <Content Include="resources\img\autosortover01.png" />
@@ -344,13 +386,13 @@
     <Content Include="resources\img\tqmedalliondoor.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\TQVaultAE.Logging\TQVaultAE.Logging.csproj">
-      <Project>{74bdd814-3436-4d38-9789-f980309b8a6f}</Project>
-      <Name>TQVaultAE.Logging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TQVaultAE.DAL\TQVaultAE.DAL.csproj">
       <Project>{35474E71-4ED2-4C3C-8BDB-C33D2B260496}</Project>
       <Name>TQVaultAE.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TQVaultAE.Logging\TQVaultAE.Logging.csproj">
+      <Project>{74bdd814-3436-4d38-9789-f980309b8a6f}</Project>
+      <Name>TQVaultAE.Logging</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -373,13 +415,16 @@
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(SolutionDir)libs" "$(TargetDir)" /y
+    <PostBuildEvent>REM Copy Build
+xcopy "$(ProjectDir)bin\$(Platform)\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /y /s /i
 
-xcopy "$(ProjectDir)bin\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /y /s /i
+REM Clean output of unnecessary files
 cd "$(SolutionDir)bin\$(ConfigurationName)"
 del *.pdb
-del TQVaultAE.ini</PostBuildEvent>
+rmdir resources /S /Q
+rmdir Logging /S /Q</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\MsBuildAL1073WarningWorkaround.config" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

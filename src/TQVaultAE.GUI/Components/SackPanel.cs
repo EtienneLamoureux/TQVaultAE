@@ -16,12 +16,15 @@ namespace TQVaultAE.GUI.Components
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.DAL;
+	using TQVaultAE.Logging;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel.
 	/// </summary>
 	public class SackPanel : Panel
 	{
+		private readonly log4net.ILog Log = null;
+
 		#region SackPanel Fields
 
 		/// <summary>
@@ -112,6 +115,8 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="autoMoveLocation">AutoMoveLocation for this sack</param>
 		public SackPanel(int sackWidth, int sackHeight, ItemDragInfo dragInfo, AutoMoveLocation autoMoveLocation)
 		{
+			this.Log = Logger.Get(this);
+
 			this.DragInfo = dragInfo;
 			this.AutoMoveLocation = autoMoveLocation;
 			this.DragInfo.AddAutoMoveLocationToList(autoMoveLocation);
@@ -499,7 +504,7 @@ namespace TQVaultAE.GUI.Components
 			// Sort the items and put them in a temporary sack.
 			SackCollection tempSack = new SackCollection();
 			var autoSortQuery = from Item item in this.Sack
-								orderby (((item.Height * 3) + item.Width) * 100)  descending, item.ItemGroup descending, item.BaseItemId, item.IsRelicComplete descending
+								orderby (((item.Height * 3) + item.Width) * 100) descending, item.ItemGroup descending, item.BaseItemId, item.IsRelicComplete descending
 
 								select item;
 
@@ -771,8 +776,9 @@ namespace TQVaultAE.GUI.Components
 				}
 				catch (NullReferenceException exception)
 				{
+					Log.ErrorException(exception);
 					MessageBox.Show(
-						exception.ToString(),
+						Log.FormatException(exception),
 						Resources.GlobalError,
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Warning,
@@ -2263,7 +2269,8 @@ namespace TQVaultAE.GUI.Components
 				}
 				catch (NullReferenceException exception)
 				{
-					MessageBox.Show(exception.ToString(), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+					Log.ErrorException(exception);
+					MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 			}
 		}
@@ -2716,7 +2723,8 @@ namespace TQVaultAE.GUI.Components
 			}
 			catch (NullReferenceException exception)
 			{
-				MessageBox.Show(exception.ToString(), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+				Log.ErrorException(exception);
+				MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 			}
 		}
 

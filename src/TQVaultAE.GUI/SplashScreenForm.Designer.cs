@@ -84,7 +84,7 @@ namespace TQVaultAE.GUI
             this.labelPleaseWait = new TQVaultAE.GUI.Components.ScalingLabel();
             this.waitTimer = new System.Timers.Timer();
             this.fadeTimer = new System.Windows.Forms.Timer(this.components);
-            this.progressBar = new TQVaultAE.GUI.VaultProgressBar();
+            this.progressBar = new TQVaultAE.GUI.Components.VaultProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.waitTimer)).BeginInit();
             this.SuspendLayout();
             // 

@@ -24,7 +24,7 @@ namespace TQVaultAE.GUI
 	/// </summary>
 	public static class Program
 	{
-		private static log4net.ILog Log = Logger.Get(typeof(Program));
+		private static readonly log4net.ILog Log = Logger.Get(typeof(Program));
 
 		/// <summary>
 		/// Right to left reading options for message boxes
@@ -40,22 +40,28 @@ namespace TQVaultAE.GUI
 		[SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
 		public static void Main()
 		{
-			manageCulture();
+			try
+			{
+				manageCulture();
 
-			Log.Info("depuis UI");
+				// Add the event handler for handling UI thread exceptions to the event.
+				Application.ThreadException += new ThreadExceptionEventHandler(MainForm_UIThreadException);
 
-			// Add the event handler for handling UI thread exceptions to the event.
-			Application.ThreadException += new ThreadExceptionEventHandler(MainForm_UIThreadException);
+				// Set the unhandled exception mode to force all Windows Forms errors to go through our handler.
+				Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 
-			// Set the unhandled exception mode to force all Windows Forms errors to go through our handler.
-			Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+				// Add the event handler for handling non-UI thread exceptions to the event.
+				AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
-			// Add the event handler for handling non-UI thread exceptions to the event.
-			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new MainForm());
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
+				Application.Run(new MainForm());
+			}
+			catch (Exception ex)
+			{
+				Log.ErrorException(ex);
+				throw;
+			}
 		}
 
 		private static void manageCulture()
@@ -87,7 +93,6 @@ namespace TQVaultAE.GUI
 			DialogResult result = DialogResult.Cancel;
 			try
 			{
-				TQDebug.DebugEnabled = true;
 				Log.Error("UI Thread Exception", t.Exception);
 				result = MessageBox.Show(Log.FormatException(t.Exception), "Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
 			}
@@ -95,9 +100,8 @@ namespace TQVaultAE.GUI
 			{
 				try
 				{
-					TQDebug.DebugEnabled = true;
 					Log.Fatal("Fatal Windows Forms Error", t.Exception);
-					MessageBox.Show("Fatal Windows Forms Error", "Fatal Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
+					MessageBox.Show(Log.FormatException(t.Exception), "Fatal Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
 				}
 				finally
 				{
@@ -123,7 +127,6 @@ namespace TQVaultAE.GUI
 			try
 			{
 				Exception ex = (Exception)e.ExceptionObject;
-				TQDebug.DebugEnabled = true;
 				Log.Error("An application error occurred.", ex);
 			}
 			finally
