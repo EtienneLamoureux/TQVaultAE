@@ -3,7 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultData
+namespace TQVaultAE.DAL
 {
 	using System;
 	using System.Collections.Generic;
@@ -263,7 +263,7 @@ namespace TQVaultData
 			{
 				if (string.IsNullOrEmpty(vaultFolder))
 				{
-					string folderPath = Path.Combine(TQSaveFolder, "TQVaultData");
+					string folderPath = Path.Combine(TQSaveFolder, "TQVaultAE.DAL");
 
 					// Lets see if our path exists and create it if it does not
 					if (!Directory.Exists(folderPath))

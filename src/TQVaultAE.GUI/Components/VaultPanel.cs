@@ -15,7 +15,7 @@ namespace TQVaultAE.GUI.Components
 	using System.Windows.Forms;
 	using Tooltip;
 	using TQVaultAE.GUI.Models;
-	using TQVaultData;
+	using TQVaultAE.DAL;
 
 	/// <summary>
 	/// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.

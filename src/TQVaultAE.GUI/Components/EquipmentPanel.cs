@@ -12,7 +12,7 @@ namespace TQVaultAE.GUI.Components
 	using System.Drawing;
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
-	using TQVaultData;
+	using TQVaultAE.DAL;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel in the stash panel.

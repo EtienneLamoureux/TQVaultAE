@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -44,6 +44,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -53,6 +54,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
@@ -68,6 +70,9 @@
     <StartupObject>TQVaultAE.GUI.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\log4net.2.0.8\lib\net35-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -232,8 +237,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="resources\fonts\albertus mt light.ttf" />
     <EmbeddedResource Include="resources\fonts\albertus mt.ttf" />
+    <None Include="packages.config" />
     <None Include="resources\img\EquipmentPanel.psd" />
-    <None Include="TQVaultClassDiagram.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -270,7 +275,6 @@
     <Compile Include="Components\ScalingTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Models\Settings.cs" />
     <Compile Include="SettingsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -340,6 +344,10 @@
     <Content Include="resources\img\tqmedalliondoor.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\TQVaultAE.Logging\TQVaultAE.Logging.csproj">
+      <Project>{74bdd814-3436-4d38-9789-f980309b8a6f}</Project>
+      <Name>TQVaultAE.Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TQVaultAE.DAL\TQVaultAE.DAL.csproj">
       <Project>{35474E71-4ED2-4C3C-8BDB-C33D2B260496}</Project>
       <Name>TQVaultAE.DAL</Name>

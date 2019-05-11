@@ -13,7 +13,7 @@ namespace TQVaultAE.GUI.Components
 	using System.Windows.Forms;
 	using Tooltip;
 	using TQVaultAE.GUI.Models;
-	using TQVaultData;
+	using TQVaultAE.DAL;
 
 	/// <summary>
 	/// Class for handling the stash panel ui functions

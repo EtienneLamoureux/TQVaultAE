@@ -12,7 +12,7 @@ namespace TQVaultAE.GUI.Components
 	using System.Timers;
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
-	using TQVaultData;
+	using TQVaultAE.DAL;
 
 	/// <summary>
 	/// Class for displaying the action panel which has the animation of

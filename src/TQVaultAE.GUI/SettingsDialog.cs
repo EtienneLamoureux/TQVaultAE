@@ -13,7 +13,7 @@ namespace TQVaultAE.GUI
 	using System.Linq;
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
-	using TQVaultData;
+	using TQVaultAE.DAL;
 
 	/// <summary>
 	/// Class for the Settings/Configuration Dialog

@@ -9,7 +9,7 @@ namespace TQVaultAE.GUI.Models
 	using System.Collections.Generic;
 	using System.Drawing;
 	using System.Linq;
-	using TQVaultData;
+	using TQVaultAE.DAL;
 
 	/// <summary>
 	/// Class for an individual result in the results list.

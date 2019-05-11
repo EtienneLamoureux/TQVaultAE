@@ -10,6 +10,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQVaultAE.DAL", "src\TQVaul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQVaultAE.GUI", "src\TQVaultAE.GUI\TQVaultAE.GUI.csproj", "{5A472C5B-BC7E-46EE-905E-93CCD53E8EAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{90632F29-7A4C-498F-B9FE-EAEEDCB61C8C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{6572EC1D-9010-4EA7-9A3F-FC1F93C9F293}"
+	ProjectSection(SolutionItems) = preProject
+		libs\DevIL.dll = libs\DevIL.dll
+		libs\Tao.DevIl.dll = libs\Tao.DevIl.dll
+		libs\VXPLib.dll = libs\VXPLib.dll
+		libs\VXPLibrary.dll = libs\VXPLibrary.dll
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQVaultAE.Logging", "TQVaultAE.Logging\TQVaultAE.Logging.csproj", "{74BDD814-3436-4D38-9789-F980309B8A6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +62,22 @@ Global
 		{5A472C5B-BC7E-46EE-905E-93CCD53E8EAA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5A472C5B-BC7E-46EE-905E-93CCD53E8EAA}.Release|x86.ActiveCfg = Release|Any CPU
 		{5A472C5B-BC7E-46EE-905E-93CCD53E8EAA}.Release|x86.Build.0 = Release|Any CPU
+		{90632F29-7A4C-498F-B9FE-EAEEDCB61C8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90632F29-7A4C-498F-B9FE-EAEEDCB61C8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90632F29-7A4C-498F-B9FE-EAEEDCB61C8C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{90632F29-7A4C-498F-B9FE-EAEEDCB61C8C}.Debug|x86.Build.0 = Debug|Any CPU
+		{90632F29-7A4C-498F-B9FE-EAEEDCB61C8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90632F29-7A4C-498F-B9FE-EAEEDCB61C8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90632F29-7A4C-498F-B9FE-EAEEDCB61C8C}.Release|x86.ActiveCfg = Release|Any CPU
+		{90632F29-7A4C-498F-B9FE-EAEEDCB61C8C}.Release|x86.Build.0 = Release|Any CPU
+		{74BDD814-3436-4D38-9789-F980309B8A6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74BDD814-3436-4D38-9789-F980309B8A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74BDD814-3436-4D38-9789-F980309B8A6F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{74BDD814-3436-4D38-9789-F980309B8A6F}.Debug|x86.Build.0 = Debug|Any CPU
+		{74BDD814-3436-4D38-9789-F980309B8A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74BDD814-3436-4D38-9789-F980309B8A6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74BDD814-3436-4D38-9789-F980309B8A6F}.Release|x86.ActiveCfg = Release|Any CPU
+		{74BDD814-3436-4D38-9789-F980309B8A6F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

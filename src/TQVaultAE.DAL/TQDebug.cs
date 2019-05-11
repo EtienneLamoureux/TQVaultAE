@@ -3,15 +3,18 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultData
+namespace TQVaultAE.DAL
 {
 	using System.IO;
+	using TQVaultAE.Logging;
 
 	/// <summary>
 	/// Class used for runtime debugging with the configuration file.
 	/// </summary>
 	public static class TQDebug
 	{
+		private static log4net.ILog Log = Logger.Get(typeof(TQDebug));
+
 		/// <summary>
 		/// Indicates whether debugging is globally enabled.
 		/// </summary>

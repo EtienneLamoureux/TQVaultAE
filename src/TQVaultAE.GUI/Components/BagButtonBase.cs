@@ -9,7 +9,7 @@ namespace TQVaultAE.GUI.Components
 	using System.Drawing;
 	using System.Windows.Forms;
 	using Tooltip;
-	using TQVaultData;
+	using TQVaultAE.DAL;
 
 	/// <summary>
 	/// Delegate for displaying a tooltip with the bag's contents.

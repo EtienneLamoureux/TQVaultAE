@@ -22,7 +22,7 @@ namespace TQVaultAE.GUI
 	using Tooltip;
 	using TQVaultAE.GUI.Components;
 	using TQVaultAE.GUI.Models;
-	using TQVaultData;
+	using TQVaultAE.DAL;
 
 	/// <summary>
 	/// Main Dialog class
@@ -169,29 +169,29 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font & scaling
 
-			this.exitButton.Font = Program.GetFontAlbertusMTLight(12F, TQVaultData.Database.DB.Scale);
+			this.exitButton.Font = Program.GetFontAlbertusMTLight(12F, Database.DB.Scale);
 			ScaleControl(this.exitButton);
-			this.characterComboBox.Font = Program.GetFontAlbertusMTLight(13F, TQVaultData.Database.DB.Scale);
+			this.characterComboBox.Font = Program.GetFontAlbertusMTLight(13F, Database.DB.Scale);
 			ScaleControl(this.characterComboBox);
 			ScaleControl(this.itemTextPanel);
 			ScaleControl(this.itemText);
-			this.vaultListComboBox.Font = Program.GetFontAlbertusMTLight(13F, TQVaultData.Database.DB.Scale);
+			this.vaultListComboBox.Font = Program.GetFontAlbertusMTLight(13F, Database.DB.Scale);
 			ScaleControl(this.vaultListComboBox);
-			this.vaultLabel.Font = Program.GetFontAlbertusMTLight(11F, TQVaultData.Database.DB.Scale);
+			this.vaultLabel.Font = Program.GetFontAlbertusMTLight(11F, Database.DB.Scale);
 			ScaleControl(this.vaultLabel);
-			this.configureButton.Font = Program.GetFontAlbertusMTLight(12F, TQVaultData.Database.DB.Scale);
+			this.configureButton.Font = Program.GetFontAlbertusMTLight(12F, Database.DB.Scale);
 			ScaleControl(this.configureButton);
-			this.customMapText.Font = Program.GetFontAlbertusMT(11.25F, TQVaultData.Database.DB.Scale);
+			this.customMapText.Font = Program.GetFontAlbertusMT(11.25F, Database.DB.Scale);
 			ScaleControl(this.customMapText);
-			this.panelSelectButton.Font = Program.GetFontAlbertusMTLight(12F, TQVaultData.Database.DB.Scale);
+			this.panelSelectButton.Font = Program.GetFontAlbertusMTLight(12F, Database.DB.Scale);
 			ScaleControl(this.panelSelectButton);
-			this.secondaryVaultListComboBox.Font = Program.GetFontAlbertusMTLight(11F, TQVaultData.Database.DB.Scale);
+			this.secondaryVaultListComboBox.Font = Program.GetFontAlbertusMTLight(11F, Database.DB.Scale);
 			ScaleControl(this.secondaryVaultListComboBox);
-			this.aboutButton.Font = Program.GetFontMicrosoftSansSerif(8.25F, TQVaultData.Database.DB.Scale);
+			this.aboutButton.Font = Program.GetFontMicrosoftSansSerif(8.25F, Database.DB.Scale);
 			ScaleControl(this.aboutButton);
-			this.titleLabel.Font = Program.GetFontAlbertusMTLight(24F, TQVaultData.Database.DB.Scale);
+			this.titleLabel.Font = Program.GetFontAlbertusMTLight(24F, Database.DB.Scale);
 			ScaleControl(this.titleLabel);
-			this.searchButton.Font = Program.GetFontAlbertusMTLight(12F, TQVaultData.Database.DB.Scale);
+			this.searchButton.Font = Program.GetFontAlbertusMTLight(12F, Database.DB.Scale);
 			ScaleControl(this.searchButton);
 
 			#endregion
@@ -379,7 +379,7 @@ namespace TQVaultAE.GUI
 			// Show a message that the default path is going to be used.
 			if (string.IsNullOrEmpty(Settings.Default.VaultPath))
 			{
-				string folderPath = Path.Combine(TQData.TQSaveFolder, "TQVaultData");
+				string folderPath = Path.Combine(TQData.TQSaveFolder, "TQVaultAE.DAL");
 
 				// Check to see if we are still using a shortcut to specify the vault path and display a message
 				// to use the configuration UI if we are.
@@ -898,7 +898,7 @@ namespace TQVaultAE.GUI
 				this.ClientSize = new System.Drawing.Size(formWidth, formHeight);
 			}
 
-			TQVaultData.Database.DB.Scale = Settings.Default.Scale;
+			Database.DB.Scale = Settings.Default.Scale;
 
 			Settings.Default.Save();
 
@@ -3315,21 +3315,21 @@ namespace TQVaultAE.GUI
 				// Make sure we have a valid name and stash.
 				if (stash == null)
 				{
-					TQVaultData.TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "stashFile={0} returned null stash.", stashFile));
+					TQVaultAE.DAL.TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "stashFile={0} returned null stash.", stashFile));
 					continue;
 				}
 
 				string stashName = GetNameFromFile(stashFile);
 				if (stashName == null)
 				{
-					TQVaultData.TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "stashFile={0} returned null stashName.", stashFile));
+					TQVaultAE.DAL.TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "stashFile={0} returned null stashName.", stashFile));
 					continue;
 				}
 
 				SackCollection sack = stash.Sack;
 				if (sack == null)
 				{
-					TQVaultData.TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "stashFile={0} returned null sack.", stashFile));
+					TQVaultAE.DAL.TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "stashFile={0} returned null sack.", stashFile));
 					continue;
 				}
 

@@ -10,7 +10,7 @@ namespace TQVaultAE.GUI
 	using System.Drawing;
 	using System.Globalization;
 	using System.Windows.Forms;
-	using TQVaultData;
+	using TQVaultAE.DAL;
 
 	/// <summary>
 	/// Form for the item properties display

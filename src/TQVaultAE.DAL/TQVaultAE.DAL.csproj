@@ -41,6 +41,9 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\log4net.2.0.8\lib\net35-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -77,9 +80,14 @@
     <Compile Include="Variable.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="TQVaultDataClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\TQVaultAE.Logging\TQVaultAE.Logging.csproj">
+      <Project>{74bdd814-3436-4d38-9789-f980309b8a6f}</Project>
+      <Name>TQVaultAE.Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ExpEval\ExpressionEvaluator.csproj">
       <Project>{E0665CA0-EA9D-452D-BAFC-1F369815423D}</Project>
       <Name>ExpressionEvaluator</Name>

@@ -15,14 +15,17 @@ namespace TQVaultAE.GUI
 	using System.Threading;
 	using System.Linq;
 	using System.Windows.Forms;
-	using TQVaultData;
 	using TQVaultAE.GUI.Properties;
+	using TQVaultAE.Logging;
+	using TQVaultAE.DAL;
 
 	/// <summary>
 	/// Main Program class
 	/// </summary>
 	public static class Program
 	{
+		private static log4net.ILog Log = Logger.Get(typeof(Program));
+
 		/// <summary>
 		/// Right to left reading options for message boxes
 		/// </summary>
@@ -38,6 +41,8 @@ namespace TQVaultAE.GUI
 		public static void Main()
 		{
 			manageCulture();
+
+			Log.Info("depuis UI");
 
 			// Add the event handler for handling UI thread exceptions to the event.
 			Application.ThreadException += new ThreadExceptionEventHandler(MainForm_UIThreadException);
@@ -82,19 +87,16 @@ namespace TQVaultAE.GUI
 			DialogResult result = DialogResult.Cancel;
 			try
 			{
-				string errorMsg = string.Format(CultureInfo.InvariantCulture, "Message : {0}\n\nStack Trace:\n{1}", t.Exception.Message, t.Exception.StackTrace);
 				TQDebug.DebugEnabled = true;
-				TQDebug.DebugWriteLine("UI Thread Exception");
-				TQDebug.DebugWriteLine(errorMsg);
-				result = MessageBox.Show(errorMsg, "Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
+				Log.Error("UI Thread Exception", t.Exception);
+				result = MessageBox.Show(Log.FormatException(t.Exception), "Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
 			}
 			catch
 			{
 				try
 				{
 					TQDebug.DebugEnabled = true;
-					TQDebug.DebugWriteLine("Fatal Windows Forms Error");
-					TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Message : {0}\n\nStack Trace:\n{1}", t.Exception.Message, t.Exception.StackTrace));
+					Log.Fatal("Fatal Windows Forms Error", t.Exception);
 					MessageBox.Show("Fatal Windows Forms Error", "Fatal Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
 				}
 				finally
@@ -121,10 +123,8 @@ namespace TQVaultAE.GUI
 			try
 			{
 				Exception ex = (Exception)e.ExceptionObject;
-
 				TQDebug.DebugEnabled = true;
-				TQDebug.DebugWriteLine("An application error occurred.");
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Message : {0}\n\nStack Trace:\n{1}", ex.Message, ex.StackTrace));
+				Log.Error("An application error occurred.", ex);
 			}
 			finally
 			{

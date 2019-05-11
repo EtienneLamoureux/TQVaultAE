@@ -11,7 +11,7 @@ namespace TQVaultAE.GUI.Components
 	using System.Windows.Forms;
 	using Tooltip;
 	using TQVaultAE.GUI.Models;
-	using TQVaultData;
+	using TQVaultAE.DAL;
 
 	/// <summary>
 	/// Class for holding the UI functions on the player panel.

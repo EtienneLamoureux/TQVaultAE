@@ -4,7 +4,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.IO;
 
-namespace TQVaultData
+namespace TQVaultAE.DAL
 {
 	static class IniFile
 	{
