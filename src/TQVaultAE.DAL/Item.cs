@@ -207,6 +207,7 @@ namespace TQVaultData
 		/// </summary>
 		private int endBlockCrap2;
 
+		private bool atlantis = false;
 		/// <summary>
 		/// Prefix database record ID
 		/// </summary>
@@ -221,6 +222,11 @@ namespace TQVaultData
 		/// Relic database record ID
 		/// </summary>
 		private string relicID;
+
+		/// <summary>
+		/// Relic database record ID
+		/// </summary>
+		private string relic2ID;
 
 		/// <summary>
 		/// Info structure for the base item
@@ -341,6 +347,11 @@ namespace TQVaultData
 		public static string ItemRagnarok { get; set; }
 
 		/// <summary>
+		/// Gets or sets the string which indicates an Atlantis item.
+		/// </summary>
+		public static string ItemAtlantis { get; set; }
+
+		/// <summary>
 		/// Gets or sets a value indicating whether the skill level is shown on granted skills.
 		/// </summary>
 		public static bool ShowSkillLevel { get; set; }
@@ -354,6 +365,11 @@ namespace TQVaultData
 		/// Gets or sets the relic bonus id
 		/// </summary>
 		public string RelicBonusId { get; set; }
+
+		/// <summary>
+		/// Gets or sets the relic bonus2 id
+		/// </summary>
+		public string RelicBonus2Id { get; set; }
 
 		/// <summary>
 		/// Gets or sets the item seed
@@ -381,6 +397,23 @@ namespace TQVaultData
 			private set
 			{
 				var1 = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets the number of relics
+		/// </summary>
+		private int var2;
+		public int Var2
+		{
+			get
+			{
+				return var2;
+			}
+
+			private set
+			{
+				var2 = value;
 			}
 		}
 
@@ -544,6 +577,32 @@ namespace TQVaultData
 		}
 
 		/// <summary>
+		/// Gets a value indicating whether or not the item comes from Atlantis DLC.
+		/// </summary>
+		public bool IsAtlantis
+		{
+			get
+			{
+				if (this.BaseItemId.ToUpperInvariant().IndexOf("XPACK3\\", StringComparison.OrdinalIgnoreCase) >= 0)
+				{
+					return true;
+				}
+
+				if (this.prefixID != null && this.prefixID.ToUpperInvariant().IndexOf("XPACK3\\", StringComparison.OrdinalIgnoreCase) >= 0)
+				{
+					return true;
+				}
+
+				if (this.suffixID != null && this.suffixID.ToUpperInvariant().IndexOf("XPACK3\\", StringComparison.OrdinalIgnoreCase) >= 0)
+				{
+					return true;
+				}
+
+				return false;
+			}
+		}
+
+		/// <summary>
 		/// Gets a value indicating whether the item is a scroll.
 		/// </summary>
 		public bool IsScroll
@@ -554,7 +613,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ONESHOT_SCROLL");
 				}
-				else if (this.IsImmortalThrone || this.IsRagnarok)
+				else if (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("\\SCROLLS\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -573,7 +632,7 @@ namespace TQVaultData
 		{
 			get
 			{
-				if (this.IsImmortalThrone || this.IsRagnarok)
+				if (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("\\PARCHMENTS\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -596,7 +655,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMARTIFACTFORMULA");
 				}
-				else if (this.IsImmortalThrone || this.IsRagnarok)
+				else if (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("\\ARCANEFORMULAE\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -619,7 +678,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMARTIFACT");
 				}
-				else if (this.IsImmortalThrone || this.IsRagnarok)
+				else if (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis)
 				{
 					if (!this.IsFormulae && this.BaseItemId.ToUpperInvariant().IndexOf("\\ARTIFACTS\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -828,7 +887,7 @@ namespace TQVaultData
 						return true;
 					}
 				}
-				else if (!this.IsImmortalThrone && !this.IsRagnarok)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("QUEST", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -1053,7 +1112,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMCHARM");
 				}
-				else if (!this.IsImmortalThrone && !this.IsRagnarok)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis)
 				{
 					return this.BaseItemId.ToUpperInvariant().IndexOf("ANIMALRELICS", StringComparison.OrdinalIgnoreCase) != -1;
 				}
@@ -1081,7 +1140,7 @@ namespace TQVaultData
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMRELIC")
 						|| this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMCHARM");
 				}
-				else if (!this.IsImmortalThrone && !this.IsRagnarok)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis)
 				{
 					return this.BaseItemId.ToUpperInvariant().IndexOf("RELICS", StringComparison.OrdinalIgnoreCase) != -1;
 				}
@@ -1985,6 +2044,10 @@ namespace TQVaultData
 				{
 					parameters[parameterCount++] = "(RAG)";
 				}
+				else if (this.IsAtlantis)
+				{
+					parameters[parameterCount++] = "(ATL)";
+				}
 			}
 
 			// Now combine it all with spaces between
@@ -2507,6 +2570,13 @@ namespace TQVaultData
 				results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(Item.GetColor(ItemStyle.Rare)), ragnarok));
 			}
 
+			// Add the Atlantis clause
+			if (this.IsAtlantis)
+			{
+				string atlantis = Database.MakeSafeForHtml(Item.ItemAtlantis);
+				results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(Item.GetColor(ItemStyle.Rare)), atlantis));
+			}
+
 			string[] ary = new string[results.Count];
 			results.CopyTo(ary);
 			this.attributesString = string.Join("<br>", ary);
@@ -2776,6 +2846,17 @@ namespace TQVaultData
 				TQData.WriteCString(writer, "var1");
 				writer.Write(this.Var1);
 
+				if (atlantis)
+				{
+					TQData.WriteCString(writer, "relicName2");
+					TQData.WriteCString(writer, this.relic2ID);
+
+					TQData.WriteCString(writer, "relicBonus2");
+					TQData.WriteCString(writer, this.RelicBonus2Id);
+
+					TQData.WriteCString(writer, "var2");
+					writer.Write(this.Var2);
+				}
 				TQData.WriteCString(writer, "end_block");
 				writer.Write(this.endBlockCrap2);
 
@@ -2821,6 +2902,17 @@ namespace TQVaultData
 					TQData.WriteCString(writer, "var1");
 					writer.Write(this.Var1);
 
+					if (atlantis)
+					{
+						TQData.WriteCString(writer, "relicName2");
+						TQData.WriteCString(writer, this.relic2ID);
+
+						TQData.WriteCString(writer, "relicBonus2");
+						TQData.WriteCString(writer, this.RelicBonus2Id);
+
+						TQData.WriteCString(writer, "var2");
+						writer.Write(this.Var2);
+					}
 					TQData.WriteCString(writer, "end_block");
 					writer.Write(this.endBlockCrap2);
 
@@ -2894,6 +2986,22 @@ namespace TQVaultData
 
 				TQData.ValidateNextString("var1", reader);
 				this.Var1 = reader.ReadInt32();
+
+				if(TQData.MatchNextString("relicName2", reader))
+				{
+					string label = "relicName2";
+					TQData.ValidateNextString("relicName2", reader);
+					this.relic2ID = TQData.ReadCString(reader);
+					atlantis = true;
+				}
+
+				if(atlantis) {
+					TQData.ValidateNextString("relicBonus2", reader);
+					this.RelicBonus2Id = TQData.ReadCString(reader);
+
+					TQData.ValidateNextString("var2", reader);
+					this.Var2 = reader.ReadInt32();
+				}
 
 				TQData.ValidateNextString("end_block", reader);
 				this.endBlockCrap2 = reader.ReadInt32();
@@ -3079,6 +3187,11 @@ namespace TQVaultData
 			if (string.IsNullOrEmpty(Item.ItemRagnarok))
 			{
 				Item.ItemRagnarok = "Ragnarok Item";
+			}
+
+			if (string.IsNullOrEmpty(Item.ItemAtlantis))
+			{
+				Item.ItemAtlantis = "Atlantis Item";
 			}
 
 			if (string.IsNullOrEmpty(Item.ItemWith))
