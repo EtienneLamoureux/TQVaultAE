@@ -147,10 +147,22 @@ namespace TQVaultData
             }
         }
 
-        /// <summary>
-        /// Gets or sets the Immortal Throne game path.
-        /// </summary>
-        public static string ImmortalThronePath
+		/// <summary>
+		/// Gets a value indicating whether Atlantis DLC has been installed.
+		/// </summary>
+		public static bool IsAtlantisInstalled
+		{
+			get
+			{
+				return Directory.Exists(ImmortalThronePath + "\\Resources\\XPack3");
+			}
+		}
+
+
+		/// <summary>
+		/// Gets or sets the Immortal Throne game path.
+		/// </summary>
+		public static string ImmortalThronePath
 		{
 			get
 			{
@@ -370,6 +382,21 @@ namespace TQVaultData
 					label,
 					reader.BaseStream.Position - label.Length - 4));
 			}
+		}
+
+		public static bool MatchNextString(string value, BinaryReader reader)
+		{
+			long readerPosition = reader.BaseStream.Position;
+
+			string label = ReadCString(reader);
+			reader.BaseStream.Position = readerPosition;
+
+			if (!label.ToUpperInvariant().Equals(value.ToUpperInvariant()))
+			{
+				return false;
+			}
+
+			return true;
 		}
 
 		/// <summary>
