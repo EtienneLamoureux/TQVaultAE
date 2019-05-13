@@ -384,6 +384,21 @@ namespace TQVaultData
 			}
 		}
 
+		public static bool MatchNextString(string value, BinaryReader reader)
+		{
+			long readerPosition = reader.BaseStream.Position;
+
+			string label = ReadCString(reader);
+			reader.BaseStream.Position = readerPosition;
+
+			if (!label.ToUpperInvariant().Equals(value.ToUpperInvariant()))
+			{
+				return false;
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		/// Writes a string along with its length to the file.
 		/// </summary>

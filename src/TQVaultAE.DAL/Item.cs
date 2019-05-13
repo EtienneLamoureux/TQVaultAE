@@ -2987,17 +2987,12 @@ namespace TQVaultData
 				TQData.ValidateNextString("var1", reader);
 				this.Var1 = reader.ReadInt32();
 
-				long readerPosition = reader.BaseStream.Position;
-				try
+				if(TQData.MatchNextString("relicName2", reader))
 				{
 					string label = "relicName2";
 					TQData.ValidateNextString("relicName2", reader);
 					this.relic2ID = TQData.ReadCString(reader);
 					atlantis = true;
-				}
-				catch (ArgumentException)
-				{
-					reader.BaseStream.Position = readerPosition;
 				}
 
 				if(atlantis) {
