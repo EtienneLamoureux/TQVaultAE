@@ -1254,7 +1254,9 @@ namespace TQVaultData
 
 				if (TQData.IsAtlantisInstalled)
 				{
+					this.ParseTextDB(databaseFile, "text\\x3basegame_nonvoiced.txt");
 					this.ParseTextDB(databaseFile, "text\\x3items_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x3mainquest_nonvoiced.txt");
 					this.ParseTextDB(databaseFile, "text\\x3misctags_nonvoiced.txt");
 				}
 			}
