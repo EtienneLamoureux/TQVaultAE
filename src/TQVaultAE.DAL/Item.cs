@@ -3106,12 +3106,19 @@ namespace TQVaultData
 					atlantis = true;
 				}
 
-				if(atlantis) {
+				if (atlantis)
+				{
 					TQData.ValidateNextString("relicBonus2", reader);
 					this.RelicBonus2Id = TQData.ReadCString(reader);
 
 					TQData.ValidateNextString("var2", reader);
 					this.Var2 = reader.ReadInt32();
+				}
+				else
+				{
+					this.relic2ID = string.Empty;
+					this.RelicBonus2Id = string.Empty;
+					this.Var2 = var2Default;
 				}
 
 				TQData.ValidateNextString("end_block", reader);
