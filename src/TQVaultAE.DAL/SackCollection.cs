@@ -49,7 +49,12 @@ namespace TQVaultData
 		/// <summary>
 		/// Transfer stash
 		/// </summary>
-		TransferStash
+		TransferStash,
+
+		/// <summary>
+		/// Relic Vault stash
+		/// </summary>
+		RelicVaultStash
 	}
 
 	/// <summary>
@@ -223,6 +228,11 @@ namespace TQVaultData
 				this.sackType = value;
 			}
 		}
+
+		/// <summary>
+		/// Identifies the stash type.
+		/// </summary>
+		public SackType StashType {	get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this is from Immortal Throne

@@ -506,8 +506,20 @@ namespace TQVaultAE.GUI
 
 			if (charName.ToUpperInvariant() == "SYS")
 			{
-				// Check for the transfer stash.
-				charName = Resources.GlobalTransferStash;
+				string fileAndExtension = Path.GetFileName(filename);
+				if (fileAndExtension.ToUpperInvariant().Contains("MISC"))
+				{
+					// Check for the relic vault stash.
+					charName = Resources.GlobalRelicVaultStash;
+				}
+				else if (fileAndExtension.ToUpperInvariant().Contains("WIN"))
+				{
+					// Check for the transfer stash.
+					charName = Resources.GlobalTransferStash;
+				}
+				else {
+					charName = null;
+				}
 			}
 			else if (charName.StartsWith("_", StringComparison.Ordinal))
 			{
@@ -1050,6 +1062,7 @@ namespace TQVaultAE.GUI
 				this.loadingComplete = true;
 				this.Enabled = true;
 				this.LoadTransferStash();
+				this.LoadRelicVaultStash();
 
 				// Load last character here if selected
 				if (Settings.Default.LoadLastCharacter)
@@ -1183,7 +1196,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void CreatePlayerPanel()
 		{
-			this.playerPanel = new PlayerPanel(this.dragInfo, 3, new Size(12, 5), new Size(8, 5), this.tooltip);
+			this.playerPanel = new PlayerPanel(this.dragInfo, 4, new Size(12, 5), new Size(8, 5), this.tooltip);
 
 			this.playerPanel.Location = new Point(
 				this.ClientSize.Width - (this.playerPanel.Width + Convert.ToInt32(22.0F * Database.DB.Scale)),
@@ -1279,6 +1292,64 @@ namespace TQVaultAE.GUI
 				MessageBox.Show(msg, Resources.MainFormStashReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 
 				this.stashPanel.TransferStash = null;
+			}
+		}
+
+
+		/// <summary>
+		/// Loads the relic vault stash
+		/// </summary>
+		private void LoadRelicVaultStash()
+		{
+			string relicVaultStashFile = TQData.RelicVaultStashFile;
+
+			// Get the relic vault stash
+			try
+			{
+				Stash stash;
+				try
+				{
+					stash = this.stashes[relicVaultStashFile];
+				}
+				catch (KeyNotFoundException)
+				{
+					bool stashLoaded = false;
+					stash = new Stash(Resources.GlobalRelicVaultStash, relicVaultStashFile);
+					stash.IsImmortalThrone = true;
+
+					try
+					{
+						// Throw a message if the stash does not exist.
+						bool stashPresent = stash.LoadFile();
+						if (!stashPresent)
+						{
+							MessageBox.Show(Resources.StashNotFoundMsg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+						}
+
+						stashLoaded = stashPresent;
+					}
+					catch (ArgumentException argumentException)
+					{
+						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, relicVaultStashFile, argumentException.Message);
+						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+						stashLoaded = false;
+					}
+
+					if (stashLoaded)
+					{
+						stash.Sack.StashType = SackType.RelicVaultStash;
+						this.stashes.Add(relicVaultStashFile, stash);
+					}
+				}
+
+				this.stashPanel.RelicVaultStash = stash;
+			}
+			catch (IOException exception)
+			{
+				string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, relicVaultStashFile, exception.ToString());
+				MessageBox.Show(msg, Resources.MainFormStashReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+
+				this.stashPanel.RelicVaultStash = null;
 			}
 		}
 
@@ -2217,6 +2288,14 @@ namespace TQVaultAE.GUI
 						return;
 					}
 
+					// Check the relic vault stash
+					if (this.stashPanel.RelicVaultStash == null && this.stashPanel.CurrentBag == 3)
+					{
+						// We have nowhere to send the item so cancel the move.
+						this.dragInfo.Cancel();
+						return;
+					}
+
 					// See if we have an open space to put the item.
 					Point location = this.stashPanel.SackPanel.FindOpenCells(this.dragInfo.Item.Width, this.dragInfo.Item.Height);
 
@@ -2228,6 +2307,12 @@ namespace TQVaultAE.GUI
 					else
 					{
 						Item dragItem = this.dragInfo.Item;
+
+						if (!this.stashPanel.SackPanel.IsItemValidForPlacement(dragItem))
+						{
+							this.dragInfo.Cancel();
+							return;
+						}
 
 						// Use the same method as if we used to mouse to pickup and place the item.
 						this.dragInfo.MarkPlaced(-1);
@@ -3157,7 +3242,7 @@ namespace TQVaultAE.GUI
 				this.stashPanel.CurrentBag = selectedResult.SackNumber;
 				this.stashPanel.SackPanel.SelectItem(selectedResult.Item.Location);
 			}
-			else if (selectedResult.SackType == SackType.TransferStash)
+			else if ((selectedResult.SackType == SackType.TransferStash) || (selectedResult.SackType == SackType.RelicVaultStash))
 			{
 				// Switch to the Stash bag
 				this.stashPanel.CurrentBag = selectedResult.SackNumber;
@@ -3338,6 +3423,11 @@ namespace TQVaultAE.GUI
 				{
 					sackNumber = 1;
 					sackType = SackType.TransferStash;
+				}
+				else if (stashName == Resources.GlobalRelicVaultStash)
+				{
+					sackNumber = 3;
+					sackType = SackType.RelicVaultStash;
 				}
 
 				foreach (Item item in QuerySack(predicate, sack))
