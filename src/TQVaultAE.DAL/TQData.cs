@@ -336,7 +336,7 @@ namespace TQVaultData
 		}
 
 		/// <summary>
-		/// Gets the filename for the character's transfer stash.
+		/// Gets the filename for the game's transfer stash.
 		/// Stash files for Mods all have their own subdirectory which is the same as the mod's custom map folder
 		/// </summary>
 		public static string TransferStashFile
@@ -349,6 +349,23 @@ namespace TQVaultData
 				}
 
 				return Path.Combine(Path.Combine(Path.Combine(ImmortalThroneSaveFolder, "SaveData"), "Sys"), "winsys.dxb");
+			}
+		}
+
+		/// <summary>
+		/// Gets the filename for the game's relic vault stash.
+		/// Stash files for Mods all have their own subdirectory which is the same as the mod's custom map folder
+		/// </summary>
+		public static string RelicVaultStashFile
+		{
+			get
+			{
+				if (IsCustom)
+				{
+					return Path.Combine(Path.Combine(Path.Combine(Path.Combine(ImmortalThroneSaveFolder, "SaveData"), "Sys"), MapName), "miscsys.dxb");
+				}
+
+				return Path.Combine(Path.Combine(Path.Combine(ImmortalThroneSaveFolder, "SaveData"), "Sys"), "miscsys.dxb");
 			}
 		}
 

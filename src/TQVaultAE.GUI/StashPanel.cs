@@ -28,7 +28,8 @@ namespace TQVaultAE.GUI
 		{
 			Resources.StashPanelBtn1,
 			Resources.StashPanelBtn2,
-			Resources.StashPanelBtn3
+			Resources.StashPanelBtn3,
+			Resources.GlobalRelicVaultStash
 		};
 
 		/// <summary>
@@ -40,6 +41,11 @@ namespace TQVaultAE.GUI
 		/// Transfer stash file instance
 		/// </summary>
 		private Stash transferStash;
+
+		/// <summary>
+		/// Relic Vault stash file instance
+		/// </summary>
+		private Stash relicVaultStash;
 
 		/// <summary>
 		/// background bitmap
@@ -74,12 +80,12 @@ namespace TQVaultAE.GUI
 		#endregion StashPanel Fields
 
 		/// <summary>
-		/// Initializes a new instance of the StashPanel class.  Hard coded to 3 stash buttons and no autosort buttons.
+		/// Initializes a new instance of the StashPanel class.  Hard coded to 4 stash buttons and no autosort buttons.
 		/// </summary>
 		/// <param name="dragInfo">ItemDragInfo instance</param>
 		/// <param name="panelSize">Size of the panel in cells</param>
 		/// <param name="tooltip">ToolTip instance</param>
-		public StashPanel(ItemDragInfo dragInfo, Size panelSize, TTLib tooltip) : base(dragInfo, 3, panelSize, tooltip, 0, AutoMoveLocation.Stash)
+		public StashPanel(ItemDragInfo dragInfo, Size panelSize, TTLib tooltip) : base(dragInfo, 4, panelSize, tooltip, 0, AutoMoveLocation.Stash)
 		{
 			this.equipmentPanel = new EquipmentPanel(10, 14, dragInfo, AutoMoveLocation.Stash);
 
@@ -179,6 +185,24 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
+		/// Gets or sets the relic vault stash instance
+		/// </summary>
+		public Stash RelicVaultStash
+		{
+			get
+			{
+				return this.relicVaultStash;
+			}
+
+			set
+			{
+				this.relicVaultStash = value;
+				this.Text = Resources.StashPanelText;
+				this.AssignSacks();
+			}
+		}
+
+		/// <summary>
 		/// Gets the SackPanel instance
 		/// </summary>
 		public new SackPanel SackPanel
@@ -264,9 +288,9 @@ namespace TQVaultAE.GUI
 					bagID = 0;
 				}
 
-				if (bagID >= 3)
+				if (bagID >= 4)
 				{
-					bagID = 2;
+					bagID = 3;
 				}
 
 				if (bagID != this.currentBag)
@@ -325,6 +349,24 @@ namespace TQVaultAE.GUI
 						// Adjust location based on size so it will be centered.
 						int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.stash.Width) * Database.DB.HalfUnitSize);
 						int offsetY = Math.Max(0, (this.maxPanelSize.Height - Math.Max(15, this.stash.Height)) * Database.DB.HalfUnitSize);
+
+						this.BagSackPanel.Location = new Point(BorderPad + offsetX, buttonOffsetY + offsetY);
+						this.equipmentPanel.Visible = false;
+						this.equipmentPanel.Enabled = false;
+						this.BagSackPanel.Visible = true;
+						this.BagSackPanel.Enabled = true;
+					}
+					else if (this.currentBag == 3)
+					{
+						// Relic Vault Stash
+						this.background = this.StashBackground;
+						this.BagSackPanel.Sack = this.relicVaultStash.Sack;
+						this.BagSackPanel.SackType = SackType.Stash;
+						this.BagSackPanel.ResizeSackPanel(this.relicVaultStash.Width, this.relicVaultStash.Height);
+
+						// Adjust location based on size.
+						int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.relicVaultStash.Width) * Database.DB.HalfUnitSize);
+						int offsetY = Math.Max(0, (this.maxPanelSize.Height - this.relicVaultStash.Height) * Database.DB.HalfUnitSize);
 
 						this.BagSackPanel.Location = new Point(BorderPad + offsetX, buttonOffsetY + offsetY);
 						this.equipmentPanel.Visible = false;
@@ -432,18 +474,23 @@ namespace TQVaultAE.GUI
 				this.currentBag = 0;
 			}
 
-			if (this.currentBag >= 3)
+			if (this.currentBag >= 4)
 			{
-				this.currentBag = 2;
+				this.currentBag = 3;
 			}
 
 			// hide/show bag buttons and assign initial bitmaps
 			int buttonOffset = 0;
 			foreach (StashButton button in this.BagButtons)
 			{
-				button.Visible = buttonOffset < 3;
+				button.Visible = buttonOffset < 4;
 				button.IsOn = buttonOffset == this.currentBag;
 				++buttonOffset;
+			}
+
+			if ((this.relicVaultStash == null) || (this.relicVaultStash.NumberOfSacks < 1))
+			{
+				this.BagButtons[3].Visible = false;
 			}
 
 			if ((this.stash == null) || (this.stash.NumberOfSacks < 1))
@@ -504,6 +551,25 @@ namespace TQVaultAE.GUI
 					}
 				}
 			}
+			else if (this.currentBag == 3)
+			{
+				// Assign the relic vault stash
+				if ((this.relicVaultStash == null) || (this.relicVaultStash.NumberOfSacks < 1))
+				{
+					this.SackPanel.Sack = null;
+				}
+				else
+				{
+					if (this.relicVaultStash.NumberOfSacks > 0)
+					{
+						this.SackPanel.Sack = this.relicVaultStash.Sack;
+					}
+					else
+					{
+						this.SackPanel.Sack = null;
+					}
+				}
+			}
 		}
 
 		/// <summary>
@@ -523,9 +589,9 @@ namespace TQVaultAE.GUI
 				bagID = 0;
 			}
 
-			if (bagID >= 3)
+			if (bagID >= 4)
 			{
-				bagID = 2;
+				bagID = 3;
 			}
 
 			if (bagID != this.currentBag)
@@ -581,9 +647,13 @@ namespace TQVaultAE.GUI
 			{
 				sack = this.transferStash.Sack;
 			}
-			else
+			else if (bagID == 2)
 			{
 				sack = this.stash.Sack;
+			}
+			else
+			{
+				sack = this.relicVaultStash.Sack;
 			}
 
 			if (sack == null || sack.IsEmpty)

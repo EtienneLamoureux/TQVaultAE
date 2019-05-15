@@ -747,6 +747,16 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
+		/// Checks if item is eligible for placement in this stack
+		/// </summary>
+		/// <param name="itemToCheck">Item the method is going to validate</param>
+		/// <returns></returns>
+		public bool IsItemValidForPlacement(Item itemToCheck)
+		{
+			return this.sack.StashType != SackType.RelicVaultStash || itemToCheck.IsArtifact || itemToCheck.IsRelic || itemToCheck.IsFormulae || itemToCheck.IsCharm;
+		}
+
+		/// <summary>
 		/// Cancels an item drag
 		/// </summary>
 		/// <param name="dragInfo">ItemDragInfo instance</param>
@@ -1164,6 +1174,11 @@ namespace TQVaultAE.GUI
 			if (!this.CellsUnderDragItem.Size.IsEmpty && (this.ItemsUnderDragItem == null || this.ItemsUnderDragItem.Count <= 1))
 			{
 				Item dragItem = this.DragInfo.Item;
+
+				if (!this.IsItemValidForPlacement(dragItem))
+				{
+					return;
+				}
 
 				// Yes we can drop it here!
 				// First take the item that is under us
@@ -1889,11 +1904,13 @@ namespace TQVaultAE.GUI
 			if (this.DragInfo.IsActive && !this.CellsUnderDragItem.Size.IsEmpty && (this.ItemsUnderDragItem == null ||
 				this.ItemsUnderDragItem.Count <= 1))
 			{
+				Brush highlightBrush = this.IsItemValidForPlacement(this.DragInfo.Item) ? this.HighlightValidItemBrush : this.HighlightInvalidItemBrush;
+
 				Point topLeft = this.CellTopLeft(this.CellsUnderDragItem.Location);
 				Point bottomRight = this.CellBottomRight(new Point(this.CellsUnderDragItem.Right - 1, this.CellsUnderDragItem.Bottom - 1));
 
 				// Draw the area
-				e.Graphics.FillRectangle(this.HighlightValidItemBrush, topLeft.X, topLeft.Y, bottomRight.X - topLeft.X + 1, bottomRight.Y - topLeft.Y + 1);
+				e.Graphics.FillRectangle(highlightBrush, topLeft.X, topLeft.Y, bottomRight.X - topLeft.X + 1, bottomRight.Y - topLeft.Y + 1);
 			}
 		}
 
