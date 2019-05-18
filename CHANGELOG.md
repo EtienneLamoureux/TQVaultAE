@@ -1,4 +1,11 @@
 # Changelog
+## 3.0.0
+### Features
+- #107 Support the new [Atlantis](https://titanquestgame.com/titan-quest-atlantis-release/) expansion
+
+### Bugs
+- Fix some localization issues
+
 ## 2.6.0
 ### Features
 - Create an artifact from its recipe

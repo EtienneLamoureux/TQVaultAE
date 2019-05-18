@@ -899,6 +899,15 @@ namespace TQVaultAE.GUI.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Atlantis Item.
+        /// </summary>
+        internal static string ItemAtlantis {
+            get {
+                return ResourceManager.GetString("ItemAtlantis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à (Completion Bonus: {0}).
         /// </summary>
         internal static string ItemRelicBonus {
