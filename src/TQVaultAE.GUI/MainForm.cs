@@ -161,9 +161,9 @@ namespace TQVaultAE.GUI
 
 			Program.LoadDB();
 
-			this.SetupFormSize();
-
 			this.InitializeComponent();
+
+			this.SetupFormSize();
 
 			#region Apply custom font & scaling
 
@@ -171,6 +171,7 @@ namespace TQVaultAE.GUI
 			ScaleControl(this.exitButton);
 			this.characterComboBox.Font = Program.GetFontAlbertusMTLight(13F, TQVaultData.Database.DB.Scale);
 			ScaleControl(this.characterComboBox);
+			ScaleControl(this.characterLabel);
 			ScaleControl(this.itemTextPanel);
 			ScaleControl(this.itemText);
 			this.vaultListComboBox.Font = Program.GetFontAlbertusMTLight(13F, TQVaultData.Database.DB.Scale);
@@ -892,6 +893,9 @@ namespace TQVaultAE.GUI
 			int formHeight = 910;
 			float initialScale = 1.0F;
 			Settings.Default.Scale = initialScale;
+			
+			// Ninakoru: trick to force close/min/max buttons to reposition...
+			this.ScaleOnResize = false;
 			if (workingArea.Width < formWidth || workingArea.Height < formHeight)
 			{
 
@@ -908,6 +912,8 @@ namespace TQVaultAE.GUI
 			{
 				this.ClientSize = new System.Drawing.Size(formWidth, formHeight);
 			}
+			this.ScaleOnResize = true;
+
 
 			TQVaultData.Database.DB.Scale = Settings.Default.Scale;
 
