@@ -716,8 +716,15 @@ namespace TQVaultData
                     xpack = true;
                     rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack2");
                 }
+				else if (arcFileBase.ToUpperInvariant().Equals("XPACK3"))
+				{
+					// Comes from Atlantis
+					xpack = true;
+					rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack3");
+				}
 
-                if (xpack == true)
+
+				if (xpack == true)
                 {
                     // throw away that value and use the next field.
                     int previousBackslash = backslashLocation;
@@ -760,7 +767,14 @@ namespace TQVaultData
                 arcFileData = this.ReadARCFile(arcFile, resourceId);
             }
 
-            if (arcFileData == null)
+			if (arcFileData == null && TQData.IsAtlantisInstalled)
+			{
+				rootFolder = Path.Combine(Path.Combine(TQData.ImmortalThronePath, "Resources"), "XPack3");
+				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
+				arcFileData = this.ReadARCFile(arcFile, resourceId);
+			}
+
+			if (arcFileData == null)
 			{
 				// We are either vanilla TQ or have not found our resource yet.
 				// from the original TQ folder
@@ -1237,10 +1251,18 @@ namespace TQVaultData
                     this.ParseTextDB(databaseFile, "text\\x2menu.txt"); // Added by VillageIdiot
                     this.ParseTextDB(databaseFile, "text\\x2npc.txt"); // Added by VillageIdiot
                 }
-            }
 
-            // For loading custom map text database.
-            if (TQData.IsCustom)
+				if (TQData.IsAtlantisInstalled)
+				{
+					this.ParseTextDB(databaseFile, "text\\x3basegame_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x3items_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x3mainquest_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x3misctags_nonvoiced.txt");
+				}
+			}
+
+			// For loading custom map text database.
+			if (TQData.IsCustom)
 			{
 				string baseFolder = Path.Combine(TQData.ImmortalThroneSaveFolder, "CustomMaps");
 

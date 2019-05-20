@@ -132,6 +132,10 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 
 *A. Yes*
 
+**Q. Does TQVaultAE work with the Atlantis expansion?**
+
+*A. Yes*
+
 **Q. Can I still earn achievements while using TQVaultAE?**
 
 *A. Yes*

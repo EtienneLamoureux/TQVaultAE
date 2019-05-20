@@ -183,6 +183,11 @@ namespace TQVaultData
 		#region Item Fields
 
 		/// <summary>
+		/// Default value for empty var2.
+		/// </summary>
+		private const int var2Default = 2035248;
+
+		/// <summary>
 		/// Random number used as a seed for new items
 		/// </summary>
 		private static Random random = InitializeRandom();
@@ -207,6 +212,7 @@ namespace TQVaultData
 		/// </summary>
 		private int endBlockCrap2;
 
+		private bool atlantis = false;
 		/// <summary>
 		/// Prefix database record ID
 		/// </summary>
@@ -221,6 +227,11 @@ namespace TQVaultData
 		/// Relic database record ID
 		/// </summary>
 		private string relicID;
+
+		/// <summary>
+		/// Relic database record ID
+		/// </summary>
+		private string relic2ID;
 
 		/// <summary>
 		/// Info structure for the base item
@@ -341,6 +352,11 @@ namespace TQVaultData
 		public static string ItemRagnarok { get; set; }
 
 		/// <summary>
+		/// Gets or sets the string which indicates an Atlantis item.
+		/// </summary>
+		public static string ItemAtlantis { get; set; }
+
+		/// <summary>
 		/// Gets or sets a value indicating whether the skill level is shown on granted skills.
 		/// </summary>
 		public static bool ShowSkillLevel { get; set; }
@@ -354,6 +370,11 @@ namespace TQVaultData
 		/// Gets or sets the relic bonus id
 		/// </summary>
 		public string RelicBonusId { get; set; }
+
+		/// <summary>
+		/// Gets or sets the relic bonus2 id
+		/// </summary>
+		public string RelicBonus2Id { get; set; }
 
 		/// <summary>
 		/// Gets or sets the item seed
@@ -383,6 +404,11 @@ namespace TQVaultData
 				var1 = value;
 			}
 		}
+
+		/// <summary>
+		/// Gets the number of relics for the second relic slot
+		/// </summary>
+		public int Var2 { get; set; }
 
 		/// <summary>
 		/// Gets or sets the stack size.
@@ -426,6 +452,16 @@ namespace TQVaultData
 		/// Gets or sets the relic bonus info
 		/// </summary>
 		public Info RelicBonusInfo { get; set; }
+
+		/// <summary>
+		/// Gets the second relic info
+		/// </summary>
+		public Info Relic2Info { get; private set; }
+
+		/// <summary>
+		/// Gets or sets the second relic bonus info
+		/// </summary>
+		public Info RelicBonus2Info { get; set; }
 
 		/// <summary>
 		/// Gets the item's bitmap
@@ -544,6 +580,32 @@ namespace TQVaultData
 		}
 
 		/// <summary>
+		/// Gets a value indicating whether or not the item comes from Atlantis DLC.
+		/// </summary>
+		public bool IsAtlantis
+		{
+			get
+			{
+				if (this.BaseItemId.ToUpperInvariant().IndexOf("XPACK3\\", StringComparison.OrdinalIgnoreCase) >= 0)
+				{
+					return true;
+				}
+
+				if (this.prefixID != null && this.prefixID.ToUpperInvariant().IndexOf("XPACK3\\", StringComparison.OrdinalIgnoreCase) >= 0)
+				{
+					return true;
+				}
+
+				if (this.suffixID != null && this.suffixID.ToUpperInvariant().IndexOf("XPACK3\\", StringComparison.OrdinalIgnoreCase) >= 0)
+				{
+					return true;
+				}
+
+				return false;
+			}
+		}
+
+		/// <summary>
 		/// Gets a value indicating whether the item is a scroll.
 		/// </summary>
 		public bool IsScroll
@@ -554,7 +616,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ONESHOT_SCROLL");
 				}
-				else if (this.IsImmortalThrone || this.IsRagnarok)
+				else if (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("\\SCROLLS\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -573,7 +635,7 @@ namespace TQVaultData
 		{
 			get
 			{
-				if (this.IsImmortalThrone || this.IsRagnarok)
+				if (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("\\PARCHMENTS\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -596,7 +658,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMARTIFACTFORMULA");
 				}
-				else if (this.IsImmortalThrone || this.IsRagnarok)
+				else if (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("\\ARCANEFORMULAE\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -619,7 +681,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMARTIFACT");
 				}
-				else if (this.IsImmortalThrone || this.IsRagnarok)
+				else if (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis)
 				{
 					if (!this.IsFormulae && this.BaseItemId.ToUpperInvariant().IndexOf("\\ARTIFACTS\\", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -828,7 +890,7 @@ namespace TQVaultData
 						return true;
 					}
 				}
-				else if (!this.IsImmortalThrone && !this.IsRagnarok)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf("QUEST", StringComparison.OrdinalIgnoreCase) >= 0)
 					{
@@ -1024,6 +1086,17 @@ namespace TQVaultData
 		}
 
 		/// <summary>
+		/// Gets a value indicating whether the item has a second embedded relic.
+		/// </summary>
+		public bool HasSecondRelic
+		{
+			get
+			{
+				return !this.IsRelic && this.relic2ID.Length > 0;
+			}
+		}
+
+		/// <summary>
 		/// Gets a value indicating whether the item is a potion.
 		/// </summary>
 		public bool IsPotion
@@ -1053,7 +1126,7 @@ namespace TQVaultData
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMCHARM");
 				}
-				else if (!this.IsImmortalThrone && !this.IsRagnarok)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis)
 				{
 					return this.BaseItemId.ToUpperInvariant().IndexOf("ANIMALRELICS", StringComparison.OrdinalIgnoreCase) != -1;
 				}
@@ -1081,7 +1154,7 @@ namespace TQVaultData
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMRELIC")
 						|| this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMCHARM");
 				}
-				else if (!this.IsImmortalThrone && !this.IsRagnarok)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis)
 				{
 					return this.BaseItemId.ToUpperInvariant().IndexOf("RELICS", StringComparison.OrdinalIgnoreCase) != -1;
 				}
@@ -1472,9 +1545,12 @@ namespace TQVaultData
 			newItem.prefixID = string.Empty;
 			newItem.suffixID = string.Empty;
 			newItem.relicID = string.Empty;
+			newItem.relic2ID = string.Empty;
 			newItem.RelicBonusId = string.Empty;
+			newItem.RelicBonus2Id = string.Empty;
 			newItem.Seed = GenerateSeed();
-			newItem.Var1 = this.Var1;
+			newItem.Var1 = this.var1;
+			newItem.Var2 = var2Default;
 			newItem.PositionX = -1;
 			newItem.PositionY = -1;
 
@@ -1493,20 +1569,8 @@ namespace TQVaultData
 				throw new ArgumentNullException(baseItemId, "The base item ID cannot be NULL or Empty.");
 			}
 
-			Item newItem = new Item();
-			newItem.beginBlockCrap1 = this.beginBlockCrap1;
-			newItem.endBlockCrap1 = this.endBlockCrap1;
-			newItem.beginBlockCrap2 = this.beginBlockCrap2;
-			newItem.endBlockCrap2 = this.endBlockCrap2;
+			Item newItem = MakeEmptyItem();
 			newItem.BaseItemId = baseItemId;
-			newItem.prefixID = string.Empty;
-			newItem.suffixID = string.Empty;
-			newItem.relicID = string.Empty;
-			newItem.RelicBonusId = string.Empty;
-			newItem.Seed = GenerateSeed();
-			newItem.Var1 = this.Var1;
-			newItem.PositionX = -1;
-			newItem.PositionY = -1;
 
 			return newItem;
 		}
@@ -1514,7 +1578,8 @@ namespace TQVaultData
 		/// <summary>
 		/// Removes the relic from this item
 		/// </summary>
-		/// <returns>Returns the removed relic as a new Item</returns>
+		/// <returns>Returns the removed relic as a new Item, if the item has two relics, 
+		/// only the first one is returned and the second one is also removed</returns>
 		public Item RemoveRelic()
 		{
 			if (!this.HasRelic)
@@ -1529,10 +1594,15 @@ namespace TQVaultData
 
 			// Now clear out our relic data
 			this.relicID = string.Empty;
+			this.relic2ID = string.Empty;
 			this.RelicBonusId = string.Empty;
+			this.RelicBonus2Id = string.Empty;
 			this.Var1 = 0;
+			this.Var2 = var2Default;
 			this.RelicInfo = null;
 			this.RelicBonusInfo = null;
+			this.Relic2Info = null;
+			this.RelicBonus2Info = null;
 
 			this.MarkModified();
 
@@ -1732,11 +1802,15 @@ namespace TQVaultData
 		/// </summary>
 		/// <param name="basicInfoOnly">Flag indicating whether or not to return only basic info</param>
 		/// <param name="relicInfoOnly">Flag indicating whether or not to return only relic info</param>
+		/// /// <param name="secondRelic">Flag indicating whether or not to return second relic info</param>
 		/// <returns>A string containing the item name and attributes</returns>
-		public string ToString(bool basicInfoOnly = false, bool relicInfoOnly = false)
+		public string ToString(bool basicInfoOnly = false, bool relicInfoOnly = false, bool secondRelic = false)
 		{
 			string[] parameters = new string[16];
 			int parameterCount = 0;
+			Info relicInfoTarget = secondRelic ? this.Relic2Info : this.RelicInfo;
+			string relicIdTarget = secondRelic ? this.relic2ID : this.relicID;
+			string relicBonusTarget = secondRelic ? this.RelicBonus2Id : this.RelicBonusId;
 
 			if (!relicInfoOnly)
 			{
@@ -1803,9 +1877,9 @@ namespace TQVaultData
 						// Add the number of charms in the set acquired.
 						if (this.IsRelicComplete)
 						{
-							if (!string.IsNullOrEmpty(this.RelicBonusId))
+							if (!string.IsNullOrEmpty(relicBonusTarget))
 							{
-								string bonus = Path.GetFileNameWithoutExtension(TQData.NormalizeRecordPath(this.RelicBonusId));
+								string bonus = Path.GetFileNameWithoutExtension(TQData.NormalizeRecordPath(relicBonusTarget));
 								string tag = "tagRelicBonus";
 								if (this.IsCharm)
 								{
@@ -1924,17 +1998,17 @@ namespace TQVaultData
 					parameters[parameterCount++] = Item.ItemWith;
 				}
 
-				if (this.RelicInfo != null)
+				if (relicInfoTarget != null)
 				{
-					parameters[parameterCount] = Database.DB.GetFriendlyName(this.RelicInfo.DescriptionTag);
+					parameters[parameterCount] = Database.DB.GetFriendlyName(relicInfoTarget.DescriptionTag);
 					if (string.IsNullOrEmpty(parameters[parameterCount]))
 					{
-						parameters[parameterCount] = this.relicID;
+						parameters[parameterCount] = relicIdTarget;
 					}
 				}
 				else
 				{
-					parameters[parameterCount] = this.relicID;
+					parameters[parameterCount] = relicIdTarget;
 				}
 
 				++parameterCount;
@@ -1942,13 +2016,13 @@ namespace TQVaultData
 				// Add the number of charms in the set acquired.
 				if (!relicInfoOnly)
 				{
-					if (this.RelicInfo != null)
+					if (relicInfoTarget != null)
 					{
-						if (this.Var1 >= this.RelicInfo.CompletedRelicLevel)
+						if (this.Var1 >= relicInfoTarget.CompletedRelicLevel)
 						{
-							if (!relicInfoOnly && !string.IsNullOrEmpty(this.RelicBonusId))
+							if (!relicInfoOnly && !string.IsNullOrEmpty(relicBonusTarget))
 							{
-								string bonus = Path.GetFileNameWithoutExtension(TQData.NormalizeRecordPath(this.RelicBonusId));
+								string bonus = Path.GetFileNameWithoutExtension(TQData.NormalizeRecordPath(relicBonusTarget));
 								parameters[parameterCount] = string.Format(CultureInfo.CurrentCulture, Item.ItemRelicBonus, bonus);
 							}
 							else
@@ -1958,7 +2032,7 @@ namespace TQVaultData
 						}
 						else
 						{
-							parameters[parameterCount] = string.Format(CultureInfo.CurrentCulture, "({0:n0}/{1:n0})", Math.Max(1, this.Var1), this.RelicInfo.CompletedRelicLevel);
+							parameters[parameterCount] = string.Format(CultureInfo.CurrentCulture, "({0:n0}/{1:n0})", Math.Max(1, this.Var1), relicInfoTarget.CompletedRelicLevel);
 						}
 					}
 					else
@@ -1984,6 +2058,10 @@ namespace TQVaultData
 				else if (this.IsRagnarok)
 				{
 					parameters[parameterCount++] = "(RAG)";
+				}
+				else if (this.IsAtlantis)
+				{
+					parameters[parameterCount++] = "(ATL)";
 				}
 			}
 
@@ -2422,6 +2500,102 @@ namespace TQVaultData
 				}
 			}
 
+			if (this.Relic2Info != null)
+			{
+				List<string> r = new List<string>();
+				this.GetAttributesFromRecord(Database.DB.GetRecordFromFile(this.relic2ID), filtering, this.relic2ID, r);
+				if (r.Count > 0)
+				{
+					string colorTag = string.Format(CultureInfo.CurrentCulture, "<hr color={0}>", Database.HtmlColor(Item.GetColor(ItemStyle.Broken)));
+
+					string relicName = Database.MakeSafeForHtml(this.ToString(false, true, true));
+
+					// display the relic name
+					results.Add(string.Format(
+						CultureInfo.CurrentUICulture,
+						"{2}<font size=+1 color={0}><b>{1}</b></font>",
+						Database.HtmlColor(Item.GetColor(ItemStyle.Relic)),
+						relicName,
+						colorTag));
+
+					// display the relic subtitle
+					string str;
+					if (this.Var2 < this.Relic2Info.CompletedRelicLevel)
+					{
+						string tag1 = "tagRelicShard";
+						string tag2 = "tagRelicRatio";
+						if (this.Relic2Info.ItemClass.ToUpperInvariant().Equals("ITEMCHARM"))
+						{
+							tag1 = "tagAnimalPart";
+							tag2 = "tagAnimalPartRatio";
+						}
+
+						string type = Database.DB.GetFriendlyName(tag1);
+						if (type == null)
+						{
+							type = "?Relic?";
+						}
+
+						string formatSpec = Database.DB.GetFriendlyName(tag2);
+						if (formatSpec == null)
+						{
+							formatSpec = "?{0} - {1} / {2}?";
+						}
+						else
+						{
+							formatSpec = ItemAttributes.ConvertFormat(formatSpec);
+						}
+
+						str = Item.Format(formatSpec, type, Math.Max(1, this.Var2), this.Relic2Info.CompletedRelicLevel);
+					}
+					else
+					{
+						string tag = "tagRelicComplete";
+						if (this.Relic2Info.ItemClass.ToUpperInvariant().Equals("ITEMCHARM"))
+						{
+							tag = "tagAnimalPartComplete";
+						}
+
+						str = Database.DB.GetFriendlyName(tag);
+						if (str == null)
+						{
+							str = "?Completed Relic/Charm?";
+						}
+					}
+
+					str = Database.MakeSafeForHtml(str);
+					results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(GetColor(ItemStyle.Relic)), str));
+
+					// display the relic bonuses
+					results.AddRange(r);
+				}
+
+				if (this.HasSecondRelic && (this.RelicBonus2Info != null))
+				{
+					r = new List<string>();
+					this.GetAttributesFromRecord(Database.DB.GetRecordFromFile(this.RelicBonus2Id), filtering, this.RelicBonus2Id, r);
+					if (r.Count > 0)
+					{
+						string tag = "tagRelicBonus";
+						if (this.IsCharm || (this.HasRelic && this.Relic2Info.ItemClass.ToUpperInvariant().Equals("ITEMCHARM")))
+						{
+							tag = "tagAnimalPartcompleteBonus";
+						}
+
+						string bonusTitle = Database.DB.GetFriendlyName(tag);
+						if (bonusTitle == null)
+						{
+							bonusTitle = "?Completed Relic/Charm Bonus:?";
+						}
+
+						string title = Database.MakeSafeForHtml(bonusTitle);
+
+						results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(Item.GetColor(ItemStyle.Relic)), title));
+						results.AddRange(r);
+					}
+				}
+			}
+
 			// Added by VillageIdiot
 			// Shows Artifact stats for the formula
 			if (this.IsFormulae && this.baseItemInfo != null)
@@ -2505,6 +2679,13 @@ namespace TQVaultData
 			{
 				string ragnarok = Database.MakeSafeForHtml(Item.ItemRagnarok);
 				results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(Item.GetColor(ItemStyle.Rare)), ragnarok));
+			}
+
+			// Add the Atlantis clause
+			if (this.IsAtlantis)
+			{
+				string atlantis = Database.MakeSafeForHtml(Item.ItemAtlantis);
+				results.Add(string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", Database.HtmlColor(Item.GetColor(ItemStyle.Rare)), atlantis));
 			}
 
 			string[] ary = new string[results.Count];
@@ -2776,6 +2957,17 @@ namespace TQVaultData
 				TQData.WriteCString(writer, "var1");
 				writer.Write(this.Var1);
 
+				if (atlantis)
+				{
+					TQData.WriteCString(writer, "relicName2");
+					TQData.WriteCString(writer, this.relic2ID);
+
+					TQData.WriteCString(writer, "relicBonus2");
+					TQData.WriteCString(writer, this.RelicBonus2Id);
+
+					TQData.WriteCString(writer, "var2");
+					writer.Write(this.Var2);
+				}
 				TQData.WriteCString(writer, "end_block");
 				writer.Write(this.endBlockCrap2);
 
@@ -2821,6 +3013,17 @@ namespace TQVaultData
 					TQData.WriteCString(writer, "var1");
 					writer.Write(this.Var1);
 
+					if (atlantis)
+					{
+						TQData.WriteCString(writer, "relicName2");
+						TQData.WriteCString(writer, this.relic2ID);
+
+						TQData.WriteCString(writer, "relicBonus2");
+						TQData.WriteCString(writer, this.RelicBonus2Id);
+
+						TQData.WriteCString(writer, "var2");
+						writer.Write(this.Var2);
+					}
 					TQData.WriteCString(writer, "end_block");
 					writer.Write(this.endBlockCrap2);
 
@@ -2894,6 +3097,29 @@ namespace TQVaultData
 
 				TQData.ValidateNextString("var1", reader);
 				this.Var1 = reader.ReadInt32();
+
+				if(TQData.MatchNextString("relicName2", reader))
+				{
+					string label = "relicName2";
+					TQData.ValidateNextString("relicName2", reader);
+					this.relic2ID = TQData.ReadCString(reader);
+					atlantis = true;
+				}
+
+				if (atlantis)
+				{
+					TQData.ValidateNextString("relicBonus2", reader);
+					this.RelicBonus2Id = TQData.ReadCString(reader);
+
+					TQData.ValidateNextString("var2", reader);
+					this.Var2 = reader.ReadInt32();
+				}
+				else
+				{
+					this.relic2ID = string.Empty;
+					this.RelicBonus2Id = string.Empty;
+					this.Var2 = var2Default;
+				}
 
 				TQData.ValidateNextString("end_block", reader);
 				this.endBlockCrap2 = reader.ReadInt32();
@@ -2979,6 +3205,9 @@ namespace TQVaultData
 
 			this.RelicInfo = Database.DB.GetInfo(this.relicID);
 			this.RelicBonusInfo = Database.DB.GetInfo(this.RelicBonusId);
+
+			this.Relic2Info = Database.DB.GetInfo(this.relic2ID);
+			this.RelicBonus2Info = Database.DB.GetInfo(this.RelicBonus2Id);
 
 			if (TQDebug.ItemDebugLevel > 1)
 			{
@@ -3079,6 +3308,11 @@ namespace TQVaultData
 			if (string.IsNullOrEmpty(Item.ItemRagnarok))
 			{
 				Item.ItemRagnarok = "Ragnarok Item";
+			}
+
+			if (string.IsNullOrEmpty(Item.ItemAtlantis))
+			{
+				Item.ItemAtlantis = "Atlantis Item";
 			}
 
 			if (string.IsNullOrEmpty(Item.ItemWith))
@@ -4753,7 +4987,7 @@ namespace TQVaultData
 				// Added by VillageIdiot
 				// Set number of attributes parameter for level calculation
 				// Filter relics and relic bonuses
-				if (recordId != this.relicID && recordId != this.RelicBonusId && !this.isAttributeCounted)
+				if (recordId != this.relic2ID && recordId != this.RelicBonus2Id && recordId != this.relicID && recordId != this.RelicBonusId && !this.isAttributeCounted)
 				{
 					// Added test to see if this has already been done
 					if (!countedGroups.Contains(effectGroup))
@@ -4896,6 +5130,10 @@ namespace TQVaultData
 			else if (this.HasRelic && recordId == this.relicID)
 			{
 				variableNumber = Math.Max(this.Var1, 1) - 1;
+			}
+			else if (this.HasSecondRelic && recordId == this.relic2ID)
+			{
+				variableNumber = Math.Max(this.Var2, 1) - 1;
 			}
 
 			// Pet skills can also have multiple values so we attempt to decode it here

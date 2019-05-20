@@ -253,6 +253,7 @@ namespace TQVaultAE.GUI
 			Item.ItemSeed = Resources.ItemSeed;
 			Item.ItemIT = Resources.ItemIT;
 			Item.ItemRagnarok = Resources.ItemRagnarok;
+			Item.ItemAtlantis = Resources.ItemAtlantis;
 			Item.ShowSkillLevel = Settings.Default.ShowSkillLevel;
 
 			if (Settings.Default.NoToolTipDelay)
