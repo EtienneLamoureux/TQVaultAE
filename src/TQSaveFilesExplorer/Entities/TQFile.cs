@@ -106,8 +106,7 @@ namespace TQ.SaveFilesExplorer.Entities
 			get
 			{
 				// Define version by analysing records
-				if (!_Version.HasValue)
-					FindFileVersion();
+				FindFileVersion();
 
 				return _Version.Value;
 			}
@@ -162,6 +161,7 @@ namespace TQ.SaveFilesExplorer.Entities
 
 		private void FindFileVersion()
 		{
+			if (_Version.HasValue) return;
 			// Determine version
 			switch (this.Ext)
 			{
@@ -308,7 +308,7 @@ namespace TQ.SaveFilesExplorer.Entities
 
 			this.Records = records.ToArray();
 
-			this.Childs = MakeTreeRecords(this.Records.ToList()).nodes.ToArray();
+			this.Childs = MakeTreeRecords().nodes.ToArray();
 		}
 
 		private static void MakeUnknownSegment(List<TQFileRecord> records, List<byte> orphans, List<KeyValuePair<int, TQFileRecord>> orphansRecords, int ii)
@@ -334,16 +334,16 @@ namespace TQ.SaveFilesExplorer.Entities
 		}
 
 
-		private (List<TQFileRecord> nodes, int newidx) MakeTreeRecords(List<TQFileRecord> keymap, TQFileRecord parent = null, int idx = 0)
+		private (List<TQFileRecord> nodes, int newidx) MakeTreeRecords(TQFileRecord parent = null, int idx = 0)
 		{
 			List<TQFileRecord> currentLvl = new List<TQFileRecord>();
-			for (; idx < keymap.Count(); idx++)
+			for (; idx < this.Records.Count(); idx++)
 			{
-				var k = keymap[idx];
+				var k = this.Records[idx];
 				k.Parent = parent;
 				if (k.IsSubStructureOpening)
 				{
-					var nextLvl = MakeTreeRecords(keymap, k, idx + 1);
+					var nextLvl = MakeTreeRecords(k, idx + 1);
 					idx = nextLvl.newidx;
 					k.Childs.AddRange(nextLvl.nodes.ToArray());
 				}

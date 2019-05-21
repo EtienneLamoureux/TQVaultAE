@@ -169,14 +169,14 @@ namespace TQ.SaveFilesExplorer.Components
 
 			Display_labelOffset(k);
 
-			#region Data
+			#endregion
+
+			#region DataInfos
 
 			this.labelDataType.Text = string.Format(this.labelDataType.Tag.ToString(), k.DataType);
 			this.labelDataLength.Text = string.Format(this.labelDataLength.Tag.ToString(), k.ValueEnd - k.ValueStart + 1);
 
 			Display_textData(k);
-
-			#endregion
 
 			#endregion
 
