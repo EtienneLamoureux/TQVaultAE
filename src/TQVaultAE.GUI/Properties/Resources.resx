@@ -1184,4 +1184,7 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   <data name="ItemAtlantis" xml:space="preserve">
     <value>Atlantis Item</value>
   </data>
+  <data name="GlobalRelicVaultStash" xml:space="preserve">
+    <value>Relic Vault</value>
+  </data>
 </root>

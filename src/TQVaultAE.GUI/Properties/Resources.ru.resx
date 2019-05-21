@@ -992,4 +992,7 @@ Would you like to disable loading all files?</value>
   <data name="ItemAtlantis" xml:space="preserve">
     <value>Предмет Atlantis</value>
   </data>
+  <data name="GlobalRelicVaultStash" xml:space="preserve">
+    <value>реликвия Свод</value>
+  </data>
 </root>

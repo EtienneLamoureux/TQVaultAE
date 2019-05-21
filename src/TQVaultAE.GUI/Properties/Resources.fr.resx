@@ -986,4 +986,7 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
   <data name="ItemAtlantis" xml:space="preserve">
     <value>Objet Atlantis</value>
   </data>
+  <data name="GlobalRelicVaultStash" xml:space="preserve">
+    <value>Chambre des reliques</value>
+  </data>
 </root>
