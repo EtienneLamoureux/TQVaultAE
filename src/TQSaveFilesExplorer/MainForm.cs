@@ -121,8 +121,18 @@ namespace TQ.SaveFilesExplorer
 					itm.Click += new System.EventHandler(this.toolStripMenuItem_DetectedPlayers_Click);
 					return itm;
 				}
-			).ToArray();
-			toolStripMenuItem_DetectedPlayers.DropDownItems.AddRange(items);
+			).ToList();
+
+			// Add transfer stash
+			var ts = TQFile.SaveDirectoryTQITTransferStash;
+			if (ts != null)
+			{
+				var itm = new ToolStripMenuItem("TQIT : Transfer Stash") { Tag = ts, };
+				itm.Click += new System.EventHandler(this.toolStripMenuItem_DetectedPlayers_Click);
+				items.Add(itm);
+			}
+
+			toolStripMenuItem_DetectedPlayers.DropDownItems.AddRange(items.ToArray());
 		}
 
 		private void AddFilePage(string path)

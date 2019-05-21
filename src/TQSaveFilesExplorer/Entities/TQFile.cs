@@ -15,17 +15,28 @@ namespace TQ.SaveFilesExplorer.Entities
 	{
 		public const string Ext_Player = ".chr";
 		/// <summary>
-		/// the character's transfer stash.
+		/// the character's private stash.
 		/// </summary>
 		public const string Ext_SharedStash = ".dxb";
 		/// <summary>
-		/// the character's transfer stash backup.
+		/// the character's private stash backup.
 		/// </summary>
 		public const string Ext_SharedStashBackup = ".dxg";
 		/// <summary>
 		/// List of TQ save file extensions
 		/// </summary>
 		public static string[] Ext_All { get => new string[] { Ext_Player, Ext_SharedStashBackup, Ext_SharedStash }; }
+
+
+
+		public static string SaveDirectoryTQITTransferStash
+		{
+			get
+			{
+				var p = $@"{PersonalFolderTQIT}\SaveData\Sys";
+				return Directory.Exists(p) ? p : null;
+			}
+		}
 
 		public static string DefaultSaveDirectory
 		{
@@ -97,7 +108,7 @@ namespace TQ.SaveFilesExplorer.Entities
 				// Define version by analysing records
 				if (!_Version.HasValue)
 					FindFileVersion();
-				
+
 				return _Version.Value;
 			}
 		}
