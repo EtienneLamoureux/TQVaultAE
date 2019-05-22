@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C74E317C-9516-401B-88B5-29B2AE551013}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>SaveFilesExplorer</RootNamespace>
-    <AssemblyName>SaveFilesExplorer</AssemblyName>
+    <RootNamespace>TQ.SaveFilesExplorer</RootNamespace>
+    <AssemblyName>TQ.SaveFilesExplorer</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -90,6 +90,7 @@
     <Compile Include="Components\ComboBoxItem.cs" />
     <Compile Include="Entities\DataTypeAttribute.cs" />
     <Compile Include="Entities\TQFile.cs" />
+    <Compile Include="Helpers\TQPath.cs" />
     <Compile Include="Entities\TQVersion.cs" />
     <Compile Include="Entities\Players\PlayerRecordKeyDescriptor.cs" />
     <Compile Include="Entities\TQFileDataType.cs" />

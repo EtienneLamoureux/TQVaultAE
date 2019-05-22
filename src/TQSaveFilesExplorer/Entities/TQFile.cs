@@ -28,68 +28,6 @@ namespace TQ.SaveFilesExplorer.Entities
 		public static string[] Ext_All { get => new string[] { Ext_Player, Ext_SharedStashBackup, Ext_SharedStash }; }
 
 
-
-		public static string SaveDirectoryTQITTransferStash
-		{
-			get
-			{
-				var p = $@"{PersonalFolderTQIT}\SaveData\Sys";
-				return Directory.Exists(p) ? p : null;
-			}
-		}
-
-		public static string DefaultSaveDirectory
-		{
-			get
-			{
-				string path = SaveDirectoryTQIT;
-				if (path != null)
-					return path;
-				return SaveDirectoryTQ;
-			}
-		}
-
-		public static string SaveDirectoryTQ
-		{
-			get
-			{
-				var p = $@"{PersonalFolderTQ}\SaveData\Main";
-				return Directory.Exists(p) ? p : null;
-			}
-		}
-
-		public static string SaveDirectoryTQIT
-		{
-			get
-			{
-				var p = $@"{PersonalFolderTQIT}\SaveData\Main";
-				return Directory.Exists(p) ? p : null;
-			}
-		}
-
-
-		/// <summary>
-		/// Gets the Immortal Throne personal folder
-		/// </summary>
-		public static string PersonalFolderTQIT
-		{
-			get
-			{
-				return System.IO.Path.Combine(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games"), "Titan Quest - Immortal Throne");
-			}
-		}
-
-		/// <summary>
-		/// Gets the Titan Quest Character personnal folder.
-		/// </summary>
-		public static string PersonalFolderTQ
-		{
-			get
-			{
-				return System.IO.Path.Combine(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games"), "Titan Quest");
-			}
-		}
-
 		public byte[] Content { get; private set; }
 		public string Path { get; private set; }
 		public string Ext { get; private set; }
@@ -285,6 +223,9 @@ namespace TQ.SaveFilesExplorer.Entities
 				orphans.Add(this.Content[cursor]);
 			skip:;
 			}
+
+			MakeUnknownSegment(records, orphans, orphansRecords, records.Count);// In cas there there is unknonwn trailing bytes
+
 			for (var i = orphansRecords.Count - 1; i >= 0; i--)
 			{
 				records.Insert(orphansRecords[i].Key, orphansRecords[i].Value);
