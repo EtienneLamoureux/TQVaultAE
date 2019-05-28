@@ -66,6 +66,8 @@
     <Compile Include="ItemAttributeSubListCompare.cs" />
     <Compile Include="LootTableCollection.cs" />
     <Compile Include="PlayerCollection.cs" />
+    <Compile Include="PlayerInfo.cs" />
+    <Compile Include="PlayerInfoParser.cs" />
     <Compile Include="SackCollection.cs" />
     <Compile Include="Stash.cs" />
     <Compile Include="TQDebug.cs" />

@@ -108,6 +108,11 @@ namespace TQVaultData
 		public SackCollection EquipmentSack { get; private set; }
 
 		/// <summary>
+		/// Holds playerInfo
+		/// </summary>
+		public PlayerInfo PlayerInfo { get; private set; }
+
+		/// <summary>
 		/// Gets the player file name
 		/// </summary>
 		public string PlayerFile { get; private set; }
@@ -392,6 +397,7 @@ namespace TQVaultData
 					int currentOffset = 0;
 					int itemOffset = 0;
 					int equipmentOffset = 0;
+					var playerParser = new PlayerInfoParser();
 
 					// vaults start at the item data with no crap
 					bool foundItems = this.IsVault;
@@ -439,6 +445,10 @@ namespace TQVaultData
 								currentOffset += 4;
 								equipmentOffset = currentOffset; // skip value for useAlternate
 								foundEquipment = true;
+							}
+							else if (!this.IsVault && playerParser.Match(blockName))
+							{
+								playerParser.Record(blockName,currentOffset);
 							}
 
 							// Print the string with a nesting level indicator
@@ -589,6 +599,27 @@ namespace TQVaultData
 							TQDebug.DebugWriteLine(exception.ToString());
 						}
 					}
+
+					if(playerParser.FoundPlayerInfo && !this.IsVault)
+					{
+						try
+						{
+							playerParser.Parse(reader);
+							this.PlayerInfo = playerParser.GetPlayerInfo();
+
+						}
+						catch (ArgumentException exception)
+						{
+							if (!TQDebug.DebugEnabled)
+							{
+								TQDebug.DebugEnabled = true;
+							}
+
+							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error parsing player file player info Block - '{0}'", this.PlayerName));
+							TQDebug.DebugWriteLine(exception.ToString());
+							throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player player info Block - '{0}'", this.PlayerName), exception);
+						}
+					}
 				}
 			}
 		}
@@ -723,6 +754,7 @@ namespace TQVaultData
 			Array.Copy(data, realData, dataLength);
 			return realData;
 		}
+
 
 		/// <summary>
 		/// Parses the binary equipment block data

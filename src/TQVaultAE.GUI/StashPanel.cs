@@ -77,6 +77,12 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private Bitmap stashBackground;
 
+		/// <summary>
+		/// Displays character information
+		/// </summary>
+		private PlayerInfoDisplay playerInfoDisplay;
+
+
 		#endregion StashPanel Fields
 
 		/// <summary>
@@ -87,7 +93,7 @@ namespace TQVaultAE.GUI
 		/// <param name="tooltip">ToolTip instance</param>
 		public StashPanel(ItemDragInfo dragInfo, Size panelSize, TTLib tooltip) : base(dragInfo, 4, panelSize, tooltip, 0, AutoMoveLocation.Stash)
 		{
-			this.equipmentPanel = new EquipmentPanel(10, 14, dragInfo, AutoMoveLocation.Stash);
+			this.equipmentPanel = new EquipmentPanel(16, 14, dragInfo, AutoMoveLocation.Stash);
 
 			this.Controls.Add(this.equipmentPanel);
 			this.equipmentPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
@@ -108,7 +114,8 @@ namespace TQVaultAE.GUI
 			this.BagSackPanel.MaxSacks = 1;
 			this.BagSackPanel.Anchor = AnchorStyles.None;
 
-			this.EquipmentBackground = Resources.Equipment_bg_new;
+			//this.EquipmentBackground = Resources.Equipment_bg_new;
+			this.background = this.EquipmentBackground = Resources.equipment_bg_and_char;
 			this.StashBackground = Resources.caravan_bg;
 
 			// Set up the inital font size
@@ -117,7 +124,7 @@ namespace TQVaultAE.GUI
 				this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
 			}
 
-			this.background = Resources.Equipment_bg_new;
+			playerInfoDisplay = new PlayerInfoDisplay(this.Font,.83,.15);
 
 			// Now that the buttons are set we can move the panel
 			this.BagSackPanel.SetLocation(new Point(
@@ -613,13 +620,34 @@ namespace TQVaultAE.GUI
 		/// <param name="e">PaintEventArgs data</param>
 		protected new void PaintCallback(object sender, PaintEventArgs e)
 		{
-			e.Graphics.DrawImage(this.background, this.GetBackgroundRect());
+			var rect = this.GetBackgroundRect();
+			e.Graphics.DrawImage(this.background, rect);
+			DisplayPlayerInfo(e, rect);
 			base.PaintCallback(sender, e);
 		}
 
 		#endregion StashPanel Protected Methods
 
 		#region StashPanel Private Methods
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="e"></param>
+		/// <param name="rect"></param>
+		private void DisplayPlayerInfo(PaintEventArgs e, Rectangle rect)
+		{
+			if (this.Player == null) return;
+			if (playerInfoDisplay == null) return;
+
+			//update font if window size has been changed.
+			playerInfoDisplay.UpdateFont(this.Font);
+
+			//displays the character information
+			playerInfoDisplay.DisplayPlayerInfo(e, rect, this.Player.PlayerInfo);
+
+		}
 
 		/// <summary>
 		/// Gets the tooltip for a sack.  Summarizes the items within the sack

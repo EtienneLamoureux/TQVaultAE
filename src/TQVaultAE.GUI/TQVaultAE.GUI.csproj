@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -41,7 +41,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>2</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
@@ -104,6 +104,7 @@
     <Compile Include="ComboBoxItem.cs" />
     <Compile Include="CommandLineArgs.cs" />
     <Compile Include="ItemDragInfo.cs" />
+    <Compile Include="PlayerInfoDisplay.cs" />
     <Compile Include="ResizeEventArgs.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="ResultChangedEventArgs.cs" />
@@ -313,6 +314,7 @@
     <Content Include="resources\img\EquipmentPanel.png" />
     <Content Include="resources\img\EquipmentPanel_New.jpg" />
     <Content Include="resources\img\EquipmentPanel_New.png" />
+    <None Include="resources\img\equipment_bg_and_char.png" />
     <Content Include="resources\img\Equipment_bg_new.png" />
     <Content Include="resources\img\inventorybagdown01.png" />
     <Content Include="resources\img\inventorybagover01.png" />
