@@ -66,6 +66,35 @@ namespace TQVaultData
 		}
 
 
+		private int FindDifficultyUnlocked(BinaryReader reader)
+		{
+			var tempKey = new byte[] { 0x00, 0x00, 0x00, 0x74, 0x65, 0x6D, 0x70 };
+			var offset = 0;
+			reader.BaseStream.Seek(offset, SeekOrigin.Begin);
+			try
+			{
+				while (reader.BaseStream.Position < reader.BaseStream.Length)
+				{
+					var b = reader.ReadByte();
+					if (b == 0x04)
+					{
+						var scan = reader.ReadBytes(tempKey.Length);
+						if (scan.SequenceEqual(tempKey))
+						{
+							return (reader.ReadInt32());
+						}
+					}
+				}
+			}
+			catch
+			{
+				//ignore any eof errors, or any other error
+			}
+			return (0);
+
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -73,7 +102,28 @@ namespace TQVaultData
 		private void ParseInternal(BinaryReader reader)
 		{
 
-			var offset = _playerKeys["CURRENTSTATS.CHARLEVEL"];
+			var offset = 0;
+			reader.BaseStream.Seek(offset, SeekOrigin.Begin);
+			TQData.ValidateNextString("headerVersion", reader);
+			reader.ReadInt32();
+
+			TQData.ValidateNextString("playerCharacterClass", reader);
+			TQData.ReadCString(reader);
+
+			TQData.ValidateNextString("uniqueId", reader);
+			reader.ReadBytes(16);
+
+			TQData.ValidateNextString("streamData", reader);
+			var len = reader.ReadInt32();
+			reader.ReadBytes(len);
+
+			TQData.ValidateNextString("playerClassTag", reader);
+			var tag = TQData.ReadCString(reader);
+			_playInfo.Class = PlayerClass.GetClassDisplayName(tag);
+
+			_playInfo.DifficultyUnlocked =  FindDifficultyUnlocked(reader);
+
+			offset = _playerKeys["CURRENTSTATS.CHARLEVEL"];
 			reader.BaseStream.Seek(offset, SeekOrigin.Begin);
 			_playInfo.CurrentLevel = reader.ReadInt32();
 

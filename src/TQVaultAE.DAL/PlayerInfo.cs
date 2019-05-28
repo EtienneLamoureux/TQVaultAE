@@ -120,5 +120,15 @@ namespace TQVaultData
 		/// </summary>
 		public int CriticalHitsReceived { get; set; }
 
+		/// <summary>
+		/// Character Class
+		/// </summary>
+		public string Class { get; set; }
+
+		/// <summary>
+		/// Character difficulty unlocked
+		/// </summary>
+		public int DifficultyUnlocked { get; set; }
+
 	}
 }
