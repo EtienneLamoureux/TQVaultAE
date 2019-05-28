@@ -76,6 +76,7 @@ namespace TQVaultData
 				while (reader.BaseStream.Position < reader.BaseStream.Length)
 				{
 					var b = reader.ReadByte();
+					var backOf = reader.BaseStream.Position;
 					if (b == 0x04)
 					{
 						var scan = reader.ReadBytes(tempKey.Length);
@@ -83,6 +84,7 @@ namespace TQVaultData
 						{
 							return (reader.ReadInt32());
 						}
+						reader.BaseStream.Seek(backOf, SeekOrigin.Begin);
 					}
 				}
 			}
