@@ -17,6 +17,7 @@ namespace TQ.SaveFilesExplorer.Entities
 		public const string unknown_segment = "Unknown segment";
 
 		internal static readonly Encoding Encoding1252 = Encoding.GetEncoding(1252);
+		internal static readonly Encoding EncodingUTF16 = Encoding.Unicode;
 
 		public Match RegExMatch { get; set; }
 
@@ -86,32 +87,28 @@ namespace TQ.SaveFilesExplorer.Entities
 		{
 			int len = 0;
 			this.ValueEnd = 0;
-			byte[] val;
 			switch (this.DataType)
 			{
 				case TQFileDataType.Int:
-					val = new ArraySegment<byte>(file, ValueStart, sizeof(int)).ToArray();
-					DataAsInt = BitConverter.ToInt32(val, 0);
 					ValueEnd = ValueStart + sizeof(int) - 1; // -1 because ValueStart is first relevant byte
-					DataAsByteArray = val;
+					DataAsByteArray = new ArraySegment<byte>(file, ValueStart, sizeof(int)).ToArray();
+					DataAsInt = BitConverter.ToInt32(DataAsByteArray, 0);
 					break;
 				case TQFileDataType.String1252:
 					// Read StrLen
 					len = BitConverter.ToInt32(new ArraySegment<byte>(file, ValueStart, sizeof(int)).ToArray(), 0);
 					// Read Str
-					val = new ArraySegment<byte>(file, ValueStart + sizeof(int), len).ToArray();
-					this.DataAsStr = Encoding1252.GetString(val);
 					ValueEnd = ValueStart + sizeof(int) - 1 + len;
-					DataAsByteArray = new ArraySegment<byte>(file, ValueStart, ValueEnd - ValueStart + 1).ToArray();
+					DataAsByteArray = new ArraySegment<byte>(file, ValueStart + sizeof(int), len).ToArray();
+					DataAsStr = Encoding1252.GetString(DataAsByteArray);
 					break;
 				case TQFileDataType.StringUTF16:
 					// Read StrLen
 					len = BitConverter.ToInt32(new ArraySegment<byte>(file, ValueStart, sizeof(int)).ToArray(), 0);
 					// Read Str
-					val = new ArraySegment<byte>(file, ValueStart + sizeof(int), len * 2).ToArray();// * 2 because UTF16 has 2 byte encoding
-					this.DataAsStr = ReadUTF16String(val);
 					ValueEnd = ValueStart + sizeof(int) - 1 + (len * 2);
-					DataAsByteArray = new ArraySegment<byte>(file, ValueStart, ValueEnd - ValueStart + 1).ToArray();
+					DataAsByteArray = new ArraySegment<byte>(file, ValueStart + sizeof(int), len * 2).ToArray();// * 2 because UTF16 has 2 byte encoding
+					DataAsStr = EncodingUTF16.GetString(DataAsByteArray); //ReadUTF16String();
 					break;
 				case TQFileDataType.ByteArrayVar:
 					// Read Len

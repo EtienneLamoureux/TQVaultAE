@@ -145,7 +145,11 @@ namespace TQ.SaveFilesExplorer.Components
 		private void TreeViewKeys_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
 		{
 			var k = e.Node.Tag as TQFileRecord;
+			DisplayNodeInfos(k);
+		}
 
+		private void DisplayNodeInfos(TQFileRecord k)
+		{
 			#region flowLayoutPanelKeyInfos
 
 			if (_flowLayoutPanelKeyInfos_FirstTime)
@@ -179,7 +183,6 @@ namespace TQ.SaveFilesExplorer.Components
 			Display_textData(k);
 
 			#endregion
-
 		}
 
 		private void Display_textData(TQFileRecord k)
@@ -298,6 +301,12 @@ namespace TQ.SaveFilesExplorer.Components
 			}
 			System.Windows.Forms.Clipboard.SetText(keylist);
 			MainForm.SetStatusMessage("The data is copied in your clipboard !");
+		}
+
+		private void TreeViewKeys_AfterSelect(object sender, TreeViewEventArgs e)
+		{
+			var k = e.Node.Tag as TQFileRecord;
+			DisplayNodeInfos(k);
 		}
 	}
 }

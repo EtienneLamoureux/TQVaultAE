@@ -47,6 +47,8 @@
             this.labelDataLength = new System.Windows.Forms.Label();
             this.labelDataType = new System.Windows.Forms.Label();
             this.groupBoxKeyInfos = new System.Windows.Forms.GroupBox();
+            this.labelKeyName = new System.Windows.Forms.Label();
+            this.textBoxKeyName = new System.Windows.Forms.TextBox();
             this.flowLayoutPanelKeyInfos = new System.Windows.Forms.FlowLayoutPanel();
             this.labelKeyOffset = new System.Windows.Forms.Label();
             this.labelKeyLength = new System.Windows.Forms.Label();
@@ -54,7 +56,7 @@
             this.labelKeyIsStructureClosing = new System.Windows.Forms.Label();
             this.labelKeyIsUnknownSegment = new System.Windows.Forms.Label();
             this.labelKeyIsDataTypeError = new System.Windows.Forms.Label();
-            this.labelKeyName = new System.Windows.Forms.Label();
+            this.labelIsKeyValue = new System.Windows.Forms.Label();
             this.groupBoxFileInfos = new System.Windows.Forms.GroupBox();
             this.flowLayoutPanelFileInfos = new System.Windows.Forms.FlowLayoutPanel();
             this.labelFileSize = new System.Windows.Forms.Label();
@@ -66,8 +68,6 @@
             this.labelFileUnknownSegments = new System.Windows.Forms.Label();
             this.linkLabelFilePath = new System.Windows.Forms.LinkLabel();
             this.toolTipCopy = new System.Windows.Forms.ToolTip(this.components);
-            this.textBoxKeyName = new System.Windows.Forms.TextBox();
-            this.labelIsKeyValue = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -167,6 +167,7 @@
             this.treeViewKeys.Name = "treeViewKeys";
             this.treeViewKeys.Size = new System.Drawing.Size(284, 483);
             this.treeViewKeys.TabIndex = 2;
+            this.treeViewKeys.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeViewKeys_AfterSelect);
             this.treeViewKeys.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeViewKeys_NodeMouseClick);
             // 
             // groupBoxKeyData
@@ -327,6 +328,31 @@
             this.groupBoxKeyInfos.TabStop = false;
             this.groupBoxKeyInfos.Text = "Key Infos";
             // 
+            // labelKeyName
+            // 
+            this.labelKeyName.AutoSize = true;
+            this.labelKeyName.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelKeyName.Location = new System.Drawing.Point(6, 17);
+            this.labelKeyName.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
+            this.labelKeyName.Name = "labelKeyName";
+            this.labelKeyName.Padding = new System.Windows.Forms.Padding(11, 0, 0, 0);
+            this.labelKeyName.Size = new System.Drawing.Size(75, 17);
+            this.labelKeyName.TabIndex = 6;
+            this.labelKeyName.Tag = "";
+            this.labelKeyName.Text = "Name : ";
+            this.labelKeyName.Visible = false;
+            // 
+            // textBoxKeyName
+            // 
+            this.textBoxKeyName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxKeyName.Location = new System.Drawing.Point(87, 15);
+            this.textBoxKeyName.Name = "textBoxKeyName";
+            this.textBoxKeyName.ReadOnly = true;
+            this.textBoxKeyName.Size = new System.Drawing.Size(506, 22);
+            this.textBoxKeyName.TabIndex = 8;
+            this.textBoxKeyName.Visible = false;
+            // 
             // flowLayoutPanelKeyInfos
             // 
             this.flowLayoutPanelKeyInfos.Controls.Add(this.labelKeyOffset);
@@ -417,19 +443,17 @@
             this.labelKeyIsDataTypeError.Text = "IsDataTypeError : {0}";
             this.labelKeyIsDataTypeError.Visible = false;
             // 
-            // labelKeyName
+            // labelIsKeyValue
             // 
-            this.labelKeyName.AutoSize = true;
-            this.labelKeyName.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelKeyName.Location = new System.Drawing.Point(6, 17);
-            this.labelKeyName.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
-            this.labelKeyName.Name = "labelKeyName";
-            this.labelKeyName.Padding = new System.Windows.Forms.Padding(11, 0, 0, 0);
-            this.labelKeyName.Size = new System.Drawing.Size(75, 17);
-            this.labelKeyName.TabIndex = 6;
-            this.labelKeyName.Tag = "";
-            this.labelKeyName.Text = "Name : ";
-            this.labelKeyName.Visible = false;
+            this.labelIsKeyValue.AutoSize = true;
+            this.labelIsKeyValue.Location = new System.Drawing.Point(343, 22);
+            this.labelIsKeyValue.Margin = new System.Windows.Forms.Padding(11, 0, 3, 0);
+            this.labelIsKeyValue.Name = "labelIsKeyValue";
+            this.labelIsKeyValue.Size = new System.Drawing.Size(108, 17);
+            this.labelIsKeyValue.TabIndex = 8;
+            this.labelIsKeyValue.Tag = "IsKeyValue : {0}";
+            this.labelIsKeyValue.Text = "IsKeyValue : {0}";
+            this.labelIsKeyValue.Visible = false;
             // 
             // groupBoxFileInfos
             // 
@@ -544,29 +568,6 @@
             this.linkLabelFilePath.TabStop = true;
             this.linkLabelFilePath.Text = "linkLabelFilePath";
             this.linkLabelFilePath.Click += new System.EventHandler(this.LinkLabelFilePath_Click);
-            // 
-            // textBoxKeyName
-            // 
-            this.textBoxKeyName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxKeyName.Location = new System.Drawing.Point(87, 15);
-            this.textBoxKeyName.Name = "textBoxKeyName";
-            this.textBoxKeyName.ReadOnly = true;
-            this.textBoxKeyName.Size = new System.Drawing.Size(506, 22);
-            this.textBoxKeyName.TabIndex = 8;
-            this.textBoxKeyName.Visible = false;
-            // 
-            // labelIsKeyValue
-            // 
-            this.labelIsKeyValue.AutoSize = true;
-            this.labelIsKeyValue.Location = new System.Drawing.Point(343, 22);
-            this.labelIsKeyValue.Margin = new System.Windows.Forms.Padding(11, 0, 3, 0);
-            this.labelIsKeyValue.Name = "labelIsKeyValue";
-            this.labelIsKeyValue.Size = new System.Drawing.Size(108, 17);
-            this.labelIsKeyValue.TabIndex = 8;
-            this.labelIsKeyValue.Tag = "IsKeyValue : {0}";
-            this.labelIsKeyValue.Text = "IsKeyValue : {0}";
-            this.labelIsKeyValue.Visible = false;
             // 
             // TabPageFileContent
             // 
