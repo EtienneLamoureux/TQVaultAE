@@ -65,6 +65,7 @@
     <Compile Include="ItemAttributeListCompare.cs" />
     <Compile Include="ItemAttributeSubListCompare.cs" />
     <Compile Include="LootTableCollection.cs" />
+    <Compile Include="PlayerClass.cs" />
     <Compile Include="PlayerCollection.cs" />
     <Compile Include="PlayerInfo.cs" />
     <Compile Include="PlayerInfoParser.cs" />

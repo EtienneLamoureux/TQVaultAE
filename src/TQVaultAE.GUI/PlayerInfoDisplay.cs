@@ -42,6 +42,27 @@ namespace TQVaultAE.GUI
 			_font = f;
 		}
 
+		/// <summary>
+		/// Display name for character unlocked difficulty
+		/// </summary>
+		/// <param name="d">Difficulty number</param>
+		/// <returns>Display name</returns>
+		private string GetDifficultyDisplayName(int d)
+		{
+
+			switch (d)
+			{
+				case 0:
+					return ("Normal");
+				case 1:
+					return ("Epic");
+				case 2:
+					return ("Legendary");
+				default:
+					return ("unknown");
+			}
+		}
+
 
 		/// <summary>
 		/// draws character information to rect area
@@ -60,6 +81,12 @@ namespace TQVaultAE.GUI
 
 			startTextY = startTextY + _font.Height;//start new line
 			printData(e, "XP:", string.Format("{0}", playerInfo.CurrentXP), startTextX, startTextY);
+
+			startTextY = startTextY + _font.Height;
+			printData(e, "Class:", string.Format("{0}", playerInfo.Class), startTextX, startTextY);
+
+			startTextY = startTextY + _font.Height;
+			printData(e, "Difficulty:", string.Format("{0}", GetDifficultyDisplayName(playerInfo.DifficultyUnlocked)), startTextX, startTextY);
 
 			startTextY = startTextY + _font.Height;
 			printData(e, "Skill Points:", string.Format("{0}", playerInfo.SkillPoints), startTextX, startTextY);
