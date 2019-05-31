@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -22,15 +23,30 @@ namespace TQVaultAE.GUI
 		private SolidBrush _whiteBrush = new SolidBrush(Color.White);
 		private SolidBrush _yellowGreenBrush = new SolidBrush(Color.YellowGreen);
 
+		private RectangleF _editButton = new RectangleF(10, 100, 30, 20);
+		private static Brush _editNoHighlight = new SolidBrush(Color.FromArgb(0x52, 0x38, 0x12));
+		private Brush _editBckgrnd = _editNoHighlight;
+
+		private Pen _blackBorderPen = new Pen(Color.FromArgb(0xb8,0x8e,0x4b), 1);
+		private StringFormat _editTextAlignment;
+		private int Xx;
+		private int Yy;
 
 		public PlayerInfoDisplay(Font f, double x, double y)
 		{
 			_font = f;
+			_blackBorderPen.Alignment = PenAlignment.Inset; //<-
+			_blackBorderPen.StartCap = _blackBorderPen.EndCap = LineCap.Round;
 			_startX = x;
 			_startY = y;
 			_playerInfoAlignment = new StringFormat();
 			_playerInfoAlignment.Alignment = StringAlignment.Far;//right justify
-		}
+
+			_editTextAlignment = new StringFormat();
+			_editTextAlignment.Alignment = StringAlignment.Center;
+			_editTextAlignment.LineAlignment = StringAlignment.Center;
+
+	}
 
 
 		/// <summary>
@@ -63,6 +79,70 @@ namespace TQVaultAE.GUI
 			}
 		}
 
+		public void MouseClick(Panel p, object sender, MouseEventArgs e)
+		{
+			var equipmentPanelPoint = ((Control)sender).PointToScreen(e.Location);
+			var stashPanelPoint = p.PointToClient(equipmentPanelPoint);
+
+			if (_editButton.Contains(stashPanelPoint))
+			{
+				var dlg = new CharacterEditDialog();
+				dlg.ShowDialog();
+			}
+		}
+
+		public void MouseMove(Panel p, object sender, MouseEventArgs e)
+		{
+			var equipmentPanelPoint = ((Control)sender).PointToScreen(e.Location);
+			var stashPanelPoint = p.PointToClient(equipmentPanelPoint); 
+
+			if (_editButton.Contains(stashPanelPoint))
+			{
+				if (_editBckgrnd != Brushes.Red)
+				{
+					_editBckgrnd = Brushes.Red;
+					p.Invalidate();
+				}
+				return;
+			}
+			if (_editBckgrnd != _editNoHighlight)
+			{
+				_editBckgrnd = _editNoHighlight;
+				p.Invalidate();
+			}
+		}
+
+		public static GraphicsPath RoundedRect(RectangleF bounds, int radius)
+		{
+			var diameter = Convert.ToSingle(radius * 2);
+			var size = new SizeF(diameter, diameter);
+			var arc = new RectangleF(bounds.Location, size);
+			var path = new GraphicsPath();
+
+			if (radius == 0)
+			{
+				path.AddRectangle(bounds);
+				return path;
+			}
+
+			// top left arc  
+			path.AddArc(arc, 180, 90);
+
+			// top right arc  
+			arc.X = bounds.Right - diameter;
+			path.AddArc(arc, 270, 90);
+
+			// bottom right arc  
+			arc.Y = bounds.Bottom - diameter;
+			path.AddArc(arc, 0, 90);
+
+			// bottom left arc 
+			arc.X = bounds.Left;
+			path.AddArc(arc, 90, 90);
+
+			path.CloseFigure();
+			return path;
+		}
 
 		/// <summary>
 		/// draws character information to rect area
@@ -74,8 +154,26 @@ namespace TQVaultAE.GUI
 		{
 			if (playerInfo == null) return;
 
+			//test(e, rect);
+
 			var startTextX = Convert.ToSingle(rect.Right * _startX);
 			var startTextY = Convert.ToSingle(rect.Bottom * _startY);
+
+			var editSize = e.Graphics.MeasureString("Edit", _font);
+			_editButton.X = startTextX;
+			_editButton.Y = startTextY;
+			_editButton.Height = editSize.Height + 5;
+			_editButton.Width = editSize.Width + 5;
+			//e.Graphics.FillRectangle(_yellowGreenBrush, _editButton);
+
+			using (var path = RoundedRect(_editButton, 4))
+			{
+				e.Graphics.FillPath(_editBckgrnd, path);
+				e.Graphics.DrawPath(_blackBorderPen, path);
+				e.Graphics.DrawString("Edit", _font, Brushes.White, _editButton, _editTextAlignment);
+			}
+
+			startTextY = startTextY + _editButton.Height + 3;
 
 			printData(e, "Current Level:", string.Format("{0}", playerInfo.CurrentLevel), startTextX, startTextY);
 
@@ -144,6 +242,11 @@ namespace TQVaultAE.GUI
 
 			startTextY = startTextY + _font.Height;
 			printData(e, "Crit Hits Recv:", string.Format("{0}", playerInfo.CriticalHitsReceived), startTextX, startTextY);
+
+			startTextY = startTextY + _font.Height;
+			printData(e, "Xx:", string.Format("{0}", Xx), startTextX, startTextY);
+			startTextY = startTextY + _font.Height;
+			printData(e, "Yx:", string.Format("{0}", Yy), startTextX, startTextY);
 		}
 
 		private void printData(PaintEventArgs e, string label, string data, float x, float y)

@@ -104,6 +104,12 @@
     <Compile Include="ComboBoxItem.cs" />
     <Compile Include="CommandLineArgs.cs" />
     <Compile Include="ItemDragInfo.cs" />
+    <Compile Include="CharacterEditDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CharacterEditDialog.Designer.cs">
+      <DependentUpon>CharacterEditDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="PlayerInfoDisplay.cs" />
     <Compile Include="ResizeEventArgs.cs" />
     <Compile Include="Result.cs" />
@@ -171,6 +177,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ItemProperties.resx">
       <DependentUpon>ItemProperties.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CharacterEditDialog.resx">
+      <DependentUpon>CharacterEditDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ItemSeedDialog.resx">

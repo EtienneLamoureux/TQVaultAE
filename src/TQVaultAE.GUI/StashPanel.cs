@@ -102,6 +102,10 @@ namespace TQVaultAE.GUI
 			this.equipmentPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
 			this.equipmentPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
 			this.equipmentPanel.OnResizeForm += new EventHandler<ResizeEventArgs>(this.ResizeFormCallback);
+			this.equipmentPanel.MouseMove += new MouseEventHandler(this.StashPanelMouseMove);
+			this.equipmentPanel.MouseClick += new MouseEventHandler(this.StashPanelMouseClick);
+			//this.MouseMove += new MouseEventHandler(this.StashPanelMouseMove);
+			//this.MouseHover += new MouseEventHandler(this.StashPanelMouseMove);
 
 			this.Text = Resources.StashPanelText;
 			this.NoPlayerString = Resources.StashPanelText;
@@ -124,7 +128,7 @@ namespace TQVaultAE.GUI
 				this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
 			}
 
-			playerInfoDisplay = new PlayerInfoDisplay(this.Font,.83,.15);
+			playerInfoDisplay = new PlayerInfoDisplay(this.Font,.83,.14);
 
 			// Now that the buttons are set we can move the panel
 			this.BagSackPanel.SetLocation(new Point(
@@ -388,6 +392,20 @@ namespace TQVaultAE.GUI
 		}
 
 		#endregion StashPanel Properties
+
+
+		public void StashPanelMouseClick(object sender, MouseEventArgs e)
+		{
+			if (playerInfoDisplay == null) return;
+			playerInfoDisplay.MouseMove(this, sender, e);
+			playerInfoDisplay.MouseClick(this, sender, e);
+		}
+
+		public void StashPanelMouseMove(object sender, MouseEventArgs e)
+		{
+			if (playerInfoDisplay == null) return;
+			playerInfoDisplay.MouseMove(this, sender, e);
+		}
 
 		/// <summary>
 		/// Sets the equipment panel background image and cursor background image.
