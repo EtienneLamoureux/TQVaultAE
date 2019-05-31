@@ -121,7 +121,7 @@ namespace TQVaultData
 
 			TQData.ValidateNextString("playerClassTag", reader);
 			var tag = TQData.ReadCString(reader);
-			_playInfo.Class = PlayerClass.GetClassDisplayName(tag);
+			_playInfo.Class = tag;
 
 			_playInfo.DifficultyUnlocked =  FindDifficultyUnlocked(reader);
 

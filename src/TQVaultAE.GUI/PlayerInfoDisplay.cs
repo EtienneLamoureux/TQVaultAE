@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using TQVaultAE.GUI.Properties;
 
 using TQVaultData;
 
@@ -30,6 +31,10 @@ namespace TQVaultAE.GUI
 			_startY = y;
 			_playerInfoAlignment = new StringFormat();
 			_playerInfoAlignment.Alignment = StringAlignment.Far;//right justify
+
+			// load titan quest class names, should be language specific.
+			PlayerClass.LoadClassDataFile(Resources.CharacterClass);
+
 		}
 
 
@@ -82,8 +87,10 @@ namespace TQVaultAE.GUI
 			startTextY = startTextY + _font.Height;//start new line
 			printData(e, "XP:", string.Format("{0}", playerInfo.CurrentXP), startTextX, startTextY);
 
+			
+
 			startTextY = startTextY + _font.Height;
-			printData(e, "Class:", string.Format("{0}", playerInfo.Class), startTextX, startTextY);
+			printData(e, "Class:", string.Format("{0}", PlayerClass.GetClassDisplayName(playerInfo.Class)), startTextX, startTextY);
 
 			startTextY = startTextY + _font.Height;
 			printData(e, "Difficulty:", string.Format("{0}", GetDifficultyDisplayName(playerInfo.DifficultyUnlocked)), startTextX, startTextY);
@@ -92,7 +99,7 @@ namespace TQVaultAE.GUI
 			printData(e, "Skill Points:", string.Format("{0}", playerInfo.SkillPoints), startTextX, startTextY);
 
 			startTextY = startTextY + _font.Height;
-			printData(e, "Attribute Pts:", string.Format("{0}", playerInfo.AttributesPoints), startTextX, startTextY);
+			printData(e, "Attribute Points:", string.Format("{0}", playerInfo.AttributesPoints), startTextX, startTextY);
 
 			startTextY = startTextY + _font.Height;
 			printData(e, "Base Str:", string.Format("{0}", playerInfo.BaseStrength), startTextX, startTextY);
