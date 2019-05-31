@@ -69,6 +69,7 @@
     <Compile Include="PlayerCollection.cs" />
     <Compile Include="PlayerInfo.cs" />
     <Compile Include="PlayerInfoParser.cs" />
+    <Compile Include="PlayerLevel.cs" />
     <Compile Include="SackCollection.cs" />
     <Compile Include="Stash.cs" />
     <Compile Include="TQDebug.cs" />

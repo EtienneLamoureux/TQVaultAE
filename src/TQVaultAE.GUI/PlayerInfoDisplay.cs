@@ -29,11 +29,12 @@ namespace TQVaultAE.GUI
 
 		private Pen _blackBorderPen = new Pen(Color.FromArgb(0xb8,0x8e,0x4b), 1);
 		private StringFormat _editTextAlignment;
-		private int Xx;
-		private int Yy;
 
-		public PlayerInfoDisplay(Font f, double x, double y)
+		private VaultPanel _stashPanel;
+
+		public PlayerInfoDisplay(VaultPanel p, Font f, double x, double y)
 		{
+			_stashPanel = p;
 			_font = f;
 			_blackBorderPen.Alignment = PenAlignment.Inset; //<-
 			_blackBorderPen.StartCap = _blackBorderPen.EndCap = LineCap.Round;
@@ -46,7 +47,7 @@ namespace TQVaultAE.GUI
 			_editTextAlignment.Alignment = StringAlignment.Center;
 			_editTextAlignment.LineAlignment = StringAlignment.Center;
 
-	}
+		}
 
 
 		/// <summary>
@@ -79,22 +80,26 @@ namespace TQVaultAE.GUI
 			}
 		}
 
+		private static Point ConvertMousePoint(Control sender, Panel p, Point location)
+		{
+			var equipmentPanelPoint = ((Control)sender).PointToScreen(location);
+			return(p.PointToClient(equipmentPanelPoint));
+		}
+
 		public void MouseClick(Panel p, object sender, MouseEventArgs e)
 		{
-			var equipmentPanelPoint = ((Control)sender).PointToScreen(e.Location);
-			var stashPanelPoint = p.PointToClient(equipmentPanelPoint);
+			var stashPanelPoint = ConvertMousePoint((Control)sender, p, e.Location);
 
 			if (_editButton.Contains(stashPanelPoint))
 			{
-				var dlg = new CharacterEditDialog();
+				var dlg = new CharacterEditDialog(_stashPanel.Player);
 				dlg.ShowDialog();
 			}
 		}
 
 		public void MouseMove(Panel p, object sender, MouseEventArgs e)
 		{
-			var equipmentPanelPoint = ((Control)sender).PointToScreen(e.Location);
-			var stashPanelPoint = p.PointToClient(equipmentPanelPoint); 
+			var stashPanelPoint = ConvertMousePoint((Control)sender, p, e.Location);
 
 			if (_editButton.Contains(stashPanelPoint))
 			{
@@ -243,10 +248,6 @@ namespace TQVaultAE.GUI
 			startTextY = startTextY + _font.Height;
 			printData(e, "Crit Hits Recv:", string.Format("{0}", playerInfo.CriticalHitsReceived), startTextX, startTextY);
 
-			startTextY = startTextY + _font.Height;
-			printData(e, "Xx:", string.Format("{0}", Xx), startTextX, startTextY);
-			startTextY = startTextY + _font.Height;
-			printData(e, "Yx:", string.Format("{0}", Yy), startTextX, startTextY);
 		}
 
 		private void printData(PaintEventArgs e, string label, string data, float x, float y)

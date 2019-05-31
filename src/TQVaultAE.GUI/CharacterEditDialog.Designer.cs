@@ -52,17 +52,30 @@ namespace TQVaultAE.GUI
             this.healthLabel = new TQVaultAE.GUI.ScalingLabel();
             this.manaLabel = new TQVaultAE.GUI.ScalingLabel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.strengthUpDown = new System.Windows.Forms.NumericUpDown();
-            this.dexterityUpDown = new System.Windows.Forms.NumericUpDown();
-            this.intelligenceUpDown = new System.Windows.Forms.NumericUpDown();
-            this.healthUpDown = new System.Windows.Forms.NumericUpDown();
             this.manacUpDown = new System.Windows.Forms.NumericUpDown();
+            this.healthUpDown = new System.Windows.Forms.NumericUpDown();
+            this.intelligenceUpDown = new System.Windows.Forms.NumericUpDown();
+            this.dexterityUpDown = new System.Windows.Forms.NumericUpDown();
+            this.strengthUpDown = new System.Windows.Forms.NumericUpDown();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.levelLabel1 = new TQVaultAE.GUI.ScalingLabel();
+            this.levelNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.xpLabel1 = new TQVaultAE.GUI.ScalingLabel();
+            this.xpTextBox = new System.Windows.Forms.TextBox();
+            this.attributeLabel1 = new TQVaultAE.GUI.ScalingLabel();
+            this.attributeNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.skillPointsLabel1 = new TQVaultAE.GUI.ScalingLabel();
+            this.skillPointsNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.strengthUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dexterityUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.intelligenceUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.healthUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.manacUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.healthUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.intelligenceUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dexterityUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.strengthUpDown)).BeginInit();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.levelNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.attributeNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.skillPointsNumericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // ok
@@ -76,7 +89,7 @@ namespace TQVaultAE.GUI
             this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.ok.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ok.Image = ((System.Drawing.Image)(resources.GetObject("ok.Image")));
-            this.ok.Location = new System.Drawing.Point(31, 349);
+            this.ok.Location = new System.Drawing.Point(394, 349);
             this.ok.Name = "ok";
             this.ok.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ok.OverBitmap")));
             this.ok.Size = new System.Drawing.Size(137, 30);
@@ -100,7 +113,7 @@ namespace TQVaultAE.GUI
             this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.cancel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancel.Image = ((System.Drawing.Image)(resources.GetObject("cancel.Image")));
-            this.cancel.Location = new System.Drawing.Point(174, 349);
+            this.cancel.Location = new System.Drawing.Point(537, 349);
             this.cancel.Name = "cancel";
             this.cancel.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("cancel.OverBitmap")));
             this.cancel.Size = new System.Drawing.Size(137, 30);
@@ -178,91 +191,36 @@ namespace TQVaultAE.GUI
             this.groupBox1.ForeColor = System.Drawing.Color.Gold;
             this.groupBox1.Location = new System.Drawing.Point(31, 50);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(261, 254);
+            this.groupBox1.Size = new System.Drawing.Size(273, 254);
             this.groupBox1.TabIndex = 14;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Attributes";
+            this.groupBox1.Text = "Base Attributes";
+            this.groupBox1.Enter += new System.EventHandler(this.GroupBox1_Enter);
             // 
-            // strengthUpDown
+            // manacUpDown
             // 
-            this.strengthUpDown.Increment = new decimal(new int[] {
-            4,
+            this.manacUpDown.Increment = new decimal(new int[] {
+            40,
             0,
             0,
             0});
-            this.strengthUpDown.Location = new System.Drawing.Point(124, 33);
-            this.strengthUpDown.Maximum = new decimal(new int[] {
+            this.manacUpDown.Location = new System.Drawing.Point(124, 206);
+            this.manacUpDown.Maximum = new decimal(new int[] {
             9996,
             0,
             0,
             0});
-            this.strengthUpDown.Minimum = new decimal(new int[] {
-            50,
+            this.manacUpDown.Minimum = new decimal(new int[] {
+            300,
             0,
             0,
             0});
-            this.strengthUpDown.Name = "strengthUpDown";
-            this.strengthUpDown.ReadOnly = true;
-            this.strengthUpDown.Size = new System.Drawing.Size(120, 24);
-            this.strengthUpDown.TabIndex = 1;
-            this.strengthUpDown.Value = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            // 
-            // dexterityUpDown
-            // 
-            this.dexterityUpDown.Increment = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            this.dexterityUpDown.Location = new System.Drawing.Point(124, 75);
-            this.dexterityUpDown.Maximum = new decimal(new int[] {
-            9996,
-            0,
-            0,
-            0});
-            this.dexterityUpDown.Minimum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            this.dexterityUpDown.Name = "dexterityUpDown";
-            this.dexterityUpDown.ReadOnly = true;
-            this.dexterityUpDown.Size = new System.Drawing.Size(120, 24);
-            this.dexterityUpDown.TabIndex = 2;
-            this.dexterityUpDown.Value = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            // 
-            // intelligenceUpDown
-            // 
-            this.intelligenceUpDown.Increment = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            this.intelligenceUpDown.Location = new System.Drawing.Point(124, 115);
-            this.intelligenceUpDown.Maximum = new decimal(new int[] {
-            9996,
-            0,
-            0,
-            0});
-            this.intelligenceUpDown.Minimum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            this.intelligenceUpDown.Name = "intelligenceUpDown";
-            this.intelligenceUpDown.ReadOnly = true;
-            this.intelligenceUpDown.Size = new System.Drawing.Size(120, 24);
-            this.intelligenceUpDown.TabIndex = 3;
-            this.intelligenceUpDown.Value = new decimal(new int[] {
-            50,
+            this.manacUpDown.Name = "manacUpDown";
+            this.manacUpDown.ReadOnly = true;
+            this.manacUpDown.Size = new System.Drawing.Size(65, 24);
+            this.manacUpDown.TabIndex = 5;
+            this.manacUpDown.Value = new decimal(new int[] {
+            300,
             0,
             0,
             0});
@@ -287,7 +245,7 @@ namespace TQVaultAE.GUI
             0});
             this.healthUpDown.Name = "healthUpDown";
             this.healthUpDown.ReadOnly = true;
-            this.healthUpDown.Size = new System.Drawing.Size(120, 24);
+            this.healthUpDown.Size = new System.Drawing.Size(65, 24);
             this.healthUpDown.TabIndex = 4;
             this.healthUpDown.Value = new decimal(new int[] {
             300,
@@ -295,40 +253,215 @@ namespace TQVaultAE.GUI
             0,
             0});
             // 
-            // manacUpDown
+            // intelligenceUpDown
             // 
-            this.manacUpDown.Increment = new decimal(new int[] {
-            40,
+            this.intelligenceUpDown.Increment = new decimal(new int[] {
+            4,
             0,
             0,
             0});
-            this.manacUpDown.Location = new System.Drawing.Point(124, 206);
-            this.manacUpDown.Maximum = new decimal(new int[] {
-            9996,
+            this.intelligenceUpDown.Location = new System.Drawing.Point(124, 115);
+            this.intelligenceUpDown.Maximum = new decimal(new int[] {
+            996,
             0,
             0,
             0});
-            this.manacUpDown.Minimum = new decimal(new int[] {
-            300,
+            this.intelligenceUpDown.Minimum = new decimal(new int[] {
+            50,
             0,
             0,
             0});
-            this.manacUpDown.Name = "manacUpDown";
-            this.manacUpDown.ReadOnly = true;
-            this.manacUpDown.Size = new System.Drawing.Size(120, 24);
-            this.manacUpDown.TabIndex = 5;
-            this.manacUpDown.Value = new decimal(new int[] {
-            300,
+            this.intelligenceUpDown.Name = "intelligenceUpDown";
+            this.intelligenceUpDown.ReadOnly = true;
+            this.intelligenceUpDown.Size = new System.Drawing.Size(65, 24);
+            this.intelligenceUpDown.TabIndex = 3;
+            this.intelligenceUpDown.Value = new decimal(new int[] {
+            50,
             0,
             0,
             0});
+            // 
+            // dexterityUpDown
+            // 
+            this.dexterityUpDown.Increment = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.dexterityUpDown.Location = new System.Drawing.Point(124, 75);
+            this.dexterityUpDown.Maximum = new decimal(new int[] {
+            996,
+            0,
+            0,
+            0});
+            this.dexterityUpDown.Minimum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.dexterityUpDown.Name = "dexterityUpDown";
+            this.dexterityUpDown.ReadOnly = true;
+            this.dexterityUpDown.Size = new System.Drawing.Size(65, 24);
+            this.dexterityUpDown.TabIndex = 2;
+            this.dexterityUpDown.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            // 
+            // strengthUpDown
+            // 
+            this.strengthUpDown.Increment = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.strengthUpDown.Location = new System.Drawing.Point(124, 33);
+            this.strengthUpDown.Maximum = new decimal(new int[] {
+            996,
+            0,
+            0,
+            0});
+            this.strengthUpDown.Minimum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.strengthUpDown.Name = "strengthUpDown";
+            this.strengthUpDown.ReadOnly = true;
+            this.strengthUpDown.Size = new System.Drawing.Size(65, 24);
+            this.strengthUpDown.TabIndex = 1;
+            this.strengthUpDown.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox2.Controls.Add(this.skillPointsNumericUpDown);
+            this.groupBox2.Controls.Add(this.skillPointsLabel1);
+            this.groupBox2.Controls.Add(this.attributeNumericUpDown);
+            this.groupBox2.Controls.Add(this.attributeLabel1);
+            this.groupBox2.Controls.Add(this.xpTextBox);
+            this.groupBox2.Controls.Add(this.xpLabel1);
+            this.groupBox2.Controls.Add(this.levelNumericUpDown);
+            this.groupBox2.Controls.Add(this.levelLabel1);
+            this.groupBox2.ForeColor = System.Drawing.Color.Gold;
+            this.groupBox2.Location = new System.Drawing.Point(332, 50);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(342, 254);
+            this.groupBox2.TabIndex = 15;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Leveling";
+            // 
+            // levelLabel1
+            // 
+            this.levelLabel1.AutoSize = true;
+            this.levelLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
+            this.levelLabel1.Location = new System.Drawing.Point(82, 31);
+            this.levelLabel1.Name = "levelLabel1";
+            this.levelLabel1.Size = new System.Drawing.Size(42, 18);
+            this.levelLabel1.TabIndex = 6;
+            this.levelLabel1.Text = "Level";
+            // 
+            // levelNumericUpDown
+            // 
+            this.levelNumericUpDown.Location = new System.Drawing.Point(130, 29);
+            this.levelNumericUpDown.Maximum = new decimal(new int[] {
+            84,
+            0,
+            0,
+            0});
+            this.levelNumericUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.levelNumericUpDown.Name = "levelNumericUpDown";
+            this.levelNumericUpDown.ReadOnly = true;
+            this.levelNumericUpDown.Size = new System.Drawing.Size(56, 24);
+            this.levelNumericUpDown.TabIndex = 7;
+            this.levelNumericUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // xpLabel1
+            // 
+            this.xpLabel1.AutoSize = true;
+            this.xpLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
+            this.xpLabel1.Location = new System.Drawing.Point(94, 73);
+            this.xpLabel1.Name = "xpLabel1";
+            this.xpLabel1.Size = new System.Drawing.Size(28, 18);
+            this.xpLabel1.TabIndex = 8;
+            this.xpLabel1.Text = "XP";
+            // 
+            // xpTextBox
+            // 
+            this.xpTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.xpTextBox.Location = new System.Drawing.Point(130, 71);
+            this.xpTextBox.Name = "xpTextBox";
+            this.xpTextBox.ReadOnly = true;
+            this.xpTextBox.Size = new System.Drawing.Size(160, 24);
+            this.xpTextBox.TabIndex = 9;
+            this.xpTextBox.WordWrap = false;
+            // 
+            // attributeLabel1
+            // 
+            this.attributeLabel1.AutoSize = true;
+            this.attributeLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
+            this.attributeLabel1.Location = new System.Drawing.Point(17, 113);
+            this.attributeLabel1.Name = "attributeLabel1";
+            this.attributeLabel1.Size = new System.Drawing.Size(107, 18);
+            this.attributeLabel1.TabIndex = 10;
+            this.attributeLabel1.Text = "Attribute Points";
+            // 
+            // attributeNumericUpDown
+            // 
+            this.attributeNumericUpDown.Location = new System.Drawing.Point(130, 111);
+            this.attributeNumericUpDown.Maximum = new decimal(new int[] {
+            186,
+            0,
+            0,
+            0});
+            this.attributeNumericUpDown.Name = "attributeNumericUpDown";
+            this.attributeNumericUpDown.ReadOnly = true;
+            this.attributeNumericUpDown.Size = new System.Drawing.Size(160, 24);
+            this.attributeNumericUpDown.TabIndex = 11;
+            // 
+            // skillPointsLabel1
+            // 
+            this.skillPointsLabel1.AutoSize = true;
+            this.skillPointsLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
+            this.skillPointsLabel1.Location = new System.Drawing.Point(43, 158);
+            this.skillPointsLabel1.Name = "skillPointsLabel1";
+            this.skillPointsLabel1.Size = new System.Drawing.Size(81, 18);
+            this.skillPointsLabel1.TabIndex = 12;
+            this.skillPointsLabel1.Text = "Skill Points";
+            // 
+            // skillPointsNumericUpDown
+            // 
+            this.skillPointsNumericUpDown.Location = new System.Drawing.Point(130, 156);
+            this.skillPointsNumericUpDown.Maximum = new decimal(new int[] {
+            286,
+            0,
+            0,
+            0});
+            this.skillPointsNumericUpDown.Name = "skillPointsNumericUpDown";
+            this.skillPointsNumericUpDown.ReadOnly = true;
+            this.skillPointsNumericUpDown.Size = new System.Drawing.Size(160, 24);
+            this.skillPointsNumericUpDown.TabIndex = 13;
             // 
             // CharacterEditDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-            this.ClientSize = new System.Drawing.Size(348, 391);
+            this.ClientSize = new System.Drawing.Size(717, 391);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.cancel);
             this.Controls.Add(this.ok);
@@ -344,17 +477,23 @@ namespace TQVaultAE.GUI
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Character Editor";
             this.TopMost = true;
-            this.Load += new System.EventHandler(this.ItemSeedDlg_Load);
+            this.Load += new System.EventHandler(this.CharacterEditDlg_Load);
             this.Controls.SetChildIndex(this.ok, 0);
             this.Controls.SetChildIndex(this.cancel, 0);
             this.Controls.SetChildIndex(this.groupBox1, 0);
+            this.Controls.SetChildIndex(this.groupBox2, 0);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.strengthUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dexterityUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.intelligenceUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.healthUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.manacUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.healthUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.intelligenceUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dexterityUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.strengthUpDown)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.levelNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.attributeNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.skillPointsNumericUpDown)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -372,5 +511,14 @@ namespace TQVaultAE.GUI
 		private System.Windows.Forms.NumericUpDown intelligenceUpDown;
 		private System.Windows.Forms.NumericUpDown dexterityUpDown;
 		private System.Windows.Forms.NumericUpDown strengthUpDown;
+		private System.Windows.Forms.GroupBox groupBox2;
+		private System.Windows.Forms.TextBox xpTextBox;
+		private ScalingLabel xpLabel1;
+		private System.Windows.Forms.NumericUpDown levelNumericUpDown;
+		private ScalingLabel levelLabel1;
+		private System.Windows.Forms.NumericUpDown attributeNumericUpDown;
+		private ScalingLabel attributeLabel1;
+		private System.Windows.Forms.NumericUpDown skillPointsNumericUpDown;
+		private ScalingLabel skillPointsLabel1;
 	}
 }

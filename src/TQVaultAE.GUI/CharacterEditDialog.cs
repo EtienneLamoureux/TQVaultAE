@@ -22,12 +22,16 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private Item selectedItem;
 
+		private PlayerCollection _playerCollection;
+
 		/// <summary>
 		/// Initializes a new instance of the ItemSeedDialog class.
 		/// </summary>
-		public CharacterEditDialog()
+		public CharacterEditDialog(PlayerCollection playerCollection)
 		{
 			this.InitializeComponent();
+
+			_playerCollection = playerCollection;
 
 			#region Apply custom font
 
@@ -91,8 +95,24 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
-		private void ItemSeedDlg_Load(object sender, EventArgs e)
+		private void CharacterEditDlg_Load(object sender, EventArgs e)
 		{
+			strengthUpDown.Value = _playerCollection.PlayerInfo.BaseStrength;
+			dexterityUpDown.Value = _playerCollection.PlayerInfo.BaseDexterity;
+			intelligenceUpDown.Value = _playerCollection.PlayerInfo.BaseIntelligence;
+			healthUpDown.Value = _playerCollection.PlayerInfo.BaseHealth;
+			manacUpDown.Value = _playerCollection.PlayerInfo.BaseMana;
+
+			levelNumericUpDown.Value = _playerCollection.PlayerInfo.CurrentLevel;
+			xpTextBox.Text = string.Format("{0}", _playerCollection.PlayerInfo.CurrentXP);
+			attributeNumericUpDown.Value = _playerCollection.PlayerInfo.AttributesPoints;
+			skillPointsNumericUpDown.Value = _playerCollection.PlayerInfo.SkillPoints;
+
+		}
+
+		private void GroupBox1_Enter(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

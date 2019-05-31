@@ -128,7 +128,7 @@ namespace TQVaultAE.GUI
 				this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
 			}
 
-			playerInfoDisplay = new PlayerInfoDisplay(this.Font,.83,.14);
+			playerInfoDisplay = new PlayerInfoDisplay(this, this.Font,.83,.14);
 
 			// Now that the buttons are set we can move the panel
 			this.BagSackPanel.SetLocation(new Point(
