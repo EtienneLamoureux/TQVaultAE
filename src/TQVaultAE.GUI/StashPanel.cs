@@ -640,6 +640,7 @@ namespace TQVaultAE.GUI
 		{
 			if (this.Player == null) return;
 			if (playerInfoDisplay == null) return;
+			if (!this.equipmentPanel.Visible) return;
 
 			//update font if window size has been changed.
 			playerInfoDisplay.UpdateFont(this.Font);
