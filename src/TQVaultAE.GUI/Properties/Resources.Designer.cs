@@ -525,6 +525,66 @@ namespace TQVaultAE.GUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to tagCClass01=Theurgist
+        ///tagCClass02=Wanderer
+        ///tagCClass03=Rogue
+        ///tagCClass04=Hunter
+        ///tagCClass05=Stormcaller
+        ///tagCClass06=Pyromancer
+        ///tagCClass07=Defender
+        ///tagCClass08=Warrior
+        ///tagCClass09=Spellbreaker
+        ///tagCClass10=Champion
+        ///tagCClass11=Assassin
+        ///tagCClass12=Slayer
+        ///tagCClass13=Thane
+        ///tagCClass14=Battlemage
+        ///tagCClass15=Conqueror
+        ///tagCClass16=Spellbinder
+        ///tagCClass17=Guardian
+        ///tagCClass18=Corsair
+        ///tagCClass19=Warden
+        ///tagCClass20=Paladin
+        ///tagCClass21=Juggernaut
+        ///tagCClass22=Conjurer
+        ///tagCClass23=Summoner
+        ///tag [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CharacterClass {
+            get {
+                return ResourceManager.GetString("CharacterClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CurrentLevel=Level
+        ///Class=Class
+        ///CurrentXP=XP
+        ///DifficultyUnlocked=Difficulty
+        ///SkillPoints=Skill Points
+        ///AttributesPoints=Attribute Points
+        ///BaseStrength=Base Str
+        ///BaseDexterity=Base Dex
+        ///BaseIntelligence=Base Int
+        ///BaseHealth=Base Health
+        ///BaseMana=Base Mana
+        ///PlayTimeInSeconds=Time Played
+        ///NumberOfDeaths=Deaths
+        ///NumberOfKills=Kills
+        ///ExperienceFromKills=XP From Kills
+        ///HealthPotionsUsed=Health Pots Used
+        ///ManaPotionsUsed=Mana Pots Used
+        ///MaxLevel=Max Level
+        ///NumHitsReceived=Hits Recv
+        ///NumHitsInflicted=Hits Inflicte [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CharacterInfoDisplay {
+            get {
+                return ResourceManager.GetString("CharacterInfoDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error parsing command-line arguments: {0}
         ///
         ///Usage: TQVault [player name] [/mod:&lt;mod name&gt;].

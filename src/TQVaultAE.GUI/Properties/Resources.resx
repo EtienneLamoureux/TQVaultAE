@@ -1190,4 +1190,10 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   <data name="equipment_bg_and_char" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\img\equipment_bg_and_char.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="CharacterClass" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\txt\CharacterClass.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="CharacterInfoDisplay" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\txt\CharacterInfoDisplay.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>

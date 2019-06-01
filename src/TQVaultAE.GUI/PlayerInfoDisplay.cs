@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using TQVaultAE.GUI.Properties;
 
 using TQVaultData;
 
@@ -16,6 +19,12 @@ namespace TQVaultAE.GUI
 	public class PlayerInfoDisplay
 	{
 
+		private struct LabelData
+		{
+			public string Text;
+			public int Handler;
+		}
+
 		private double _startX = 0;
 		private double _startY = 0;
 		private Font _font;
@@ -23,6 +32,9 @@ namespace TQVaultAE.GUI
 		private SolidBrush _whiteBrush = new SolidBrush(Color.White);
 		private SolidBrush _yellowGreenBrush = new SolidBrush(Color.YellowGreen);
 
+		static Dictionary<string, LabelData> _labelKey = new Dictionary<string, LabelData>
+		{
+		};
 		private RectangleF _editButton = new RectangleF(10, 100, 30, 20);
 		private static Brush _editNoHighlight = new SolidBrush(Color.FromArgb(0x52, 0x38, 0x12));
 		private Brush _editBckgrnd = _editNoHighlight;
@@ -47,6 +59,57 @@ namespace TQVaultAE.GUI
 			_editTextAlignment.Alignment = StringAlignment.Center;
 			_editTextAlignment.LineAlignment = StringAlignment.Center;
 
+
+			// load titan quest class names, should be language specific.
+			PlayerClass.LoadClassDataFile(Resources.CharacterClass);
+			// load labels used to display character information, should be language specific
+			LoadCharacterLabelFile(Resources.CharacterInfoDisplay);
+
+		}
+
+
+		private static void LoadCharacterLabelFile(string fileContents)
+		{
+			using (var sr = new StringReader(fileContents))
+			{
+				var data = sr.ReadLine();
+				while (data != null)
+				{
+					var content = data.Split('=');
+					if (content != null && content.Length > 1)
+					{
+						if (!_labelKey.ContainsKey(content[0]))
+						{
+							switch (content[0].ToUpper()) {
+								case "GREATESTDAMAGEINFLICTED":
+								case "GREATESTMONSTER":
+								case "MAXLEVEL":
+									//ignore for now
+									break;
+								case "CLASS":
+									_labelKey.Add(
+										content[0],
+										new LabelData() { Text = content[1], Handler = 2 }
+									); ;
+									break;
+								case "DIFFICULTYUNLOCKED":
+									_labelKey.Add(
+										content[0],
+										new LabelData() { Text = content[1], Handler = 1 }
+									); ;
+									break;
+								default:
+									_labelKey.Add(
+										content[0],
+										new LabelData() { Text = content[1], Handler=0 }
+									); ;
+									break;
+						    }
+						}
+					}
+					data = sr.ReadLine();
+				}
+			}
 		}
 
 
@@ -180,74 +243,32 @@ namespace TQVaultAE.GUI
 
 			startTextY = startTextY + _editButton.Height + 3;
 
-			printData(e, "Current Level:", string.Format("{0}", playerInfo.CurrentLevel), startTextX, startTextY);
+			var playerXml = playerInfo.ToXElement<PlayerInfo>();
 
-			startTextY = startTextY + _font.Height;//start new line
-			printData(e, "XP:", string.Format("{0}", playerInfo.CurrentXP), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Class:", string.Format("{0}", playerInfo.Class), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Difficulty:", string.Format("{0}", GetDifficultyDisplayName(playerInfo.DifficultyUnlocked)), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Skill Points:", string.Format("{0}", playerInfo.SkillPoints), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Attribute Pts:", string.Format("{0}", playerInfo.AttributesPoints), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Base Str:", string.Format("{0}", playerInfo.BaseStrength), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Base Dex:", string.Format("{0}", playerInfo.BaseDexterity), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Base Int:", string.Format("{0}", playerInfo.BaseIntelligence), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Base Health:", string.Format("{0}", playerInfo.BaseHealth), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Base Mana:", string.Format("{0}", playerInfo.BaseMana), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Play Time:", string.Format("{0}", playerInfo.PlayTimeInSeconds), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Deaths:", string.Format("{0}", playerInfo.NumberOfDeaths), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Kills:", string.Format("{0}", playerInfo.NumberOfKills), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "XP From Kills:", string.Format("{0}", playerInfo.ExperienceFromKills), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Health Pots Used:", string.Format("{0}", playerInfo.HealthPotionsUsed), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Energy Pots Used:", string.Format("{0}", playerInfo.ManaPotionsUsed), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Hits Recv:", string.Format("{0}", playerInfo.NumHitsReceived), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Hits Inflicted:", string.Format("{0}", playerInfo.NumHitsInflicted), startTextX, startTextY);
-
-			//startTextY = startTextY + _font.Height;
-			//printData(e, "Greatest Dmg:", string.Format("{0}", playerInfo.GreatestDamageInflicted), startTextX, startTextY);
-
-			//startTextY = startTextY + _font.Height;
-			//printData(e, "Monster:", string.Format("{0}", playerInfo.GreatestMonster), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Crit Hits:", string.Format("{0}", playerInfo.CriticalHitsInflicted), startTextX, startTextY);
-
-			startTextY = startTextY + _font.Height;
-			printData(e, "Crit Hits Recv:", string.Format("{0}", playerInfo.CriticalHitsReceived), startTextX, startTextY);
-
+			foreach (var labelKey in _labelKey.Keys)
+			{
+				var elm = playerXml.Element(labelKey);
+				if (elm != null)
+				{
+					var label = _labelKey[labelKey];
+					var value = "";
+					switch (label.Handler)
+					{
+						case 1:
+							value = string.Format("{0}", GetDifficultyDisplayName(int.Parse(elm.Value)));
+							break;
+						case 2:
+							value = string.Format("{0}", PlayerClass.GetClassDisplayName(elm.Value));
+							break;
+						default:
+							value = string.Format("{0}", elm.Value);
+							break;
+					}
+					//label.Text should be language specific
+					printData(e, string.Format("{0}:", label.Text), value, startTextX, startTextY);
+					startTextY = startTextY + _font.Height;
+				}
+			}
 		}
 
 		private void printData(PaintEventArgs e, string label, string data, float x, float y)

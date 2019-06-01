@@ -58,6 +58,7 @@
     <Compile Include="ArzFile.cs" />
     <Compile Include="BitmapCode.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="DataSerializerExtension.cs" />
     <Compile Include="DBRecordCollection.cs" />
     <Compile Include="IniFile.cs" />
     <Compile Include="IniProperties.cs" />
