@@ -557,6 +557,34 @@ namespace TQVaultAE.GUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CurrentLevel=Level
+        ///Class=Class
+        ///CurrentXP=XP
+        ///DifficultyUnlocked=Difficulty
+        ///SkillPoints=Skill Points
+        ///AttributesPoints=Attribute Points
+        ///BaseStrength=Base Str
+        ///BaseDexterity=Base Dex
+        ///BaseIntelligence=Base Int
+        ///BaseHealth=Base Health
+        ///BaseMana=Base Mana
+        ///PlayTimeInSeconds=Time Played
+        ///NumberOfDeaths=Deaths
+        ///NumberOfKills=Kills
+        ///ExperienceFromKills=XP From Kills
+        ///HealthPotionsUsed=Health Pots Used
+        ///ManaPotionsUsed=Mana Pots Used
+        ///MaxLevel=Max Level
+        ///NumHitsReceived=Hits Recv
+        ///NumHitsInflicted=Hits Inflicte [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CharacterInfoDisplay {
+            get {
+                return ResourceManager.GetString("CharacterInfoDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error parsing command-line arguments: {0}
         ///
         ///Usage: TQVault [player name] [/mod:&lt;mod name&gt;].

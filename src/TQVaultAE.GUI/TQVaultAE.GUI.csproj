@@ -75,6 +75,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="VXPLibrary, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -292,6 +293,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="resources\txt\CharacterInfoDisplay.ru.txt" />
+    <None Include="resources\txt\CharacterInfoDisplay.pl.txt" />
+    <None Include="resources\txt\CharacterInfoDisplay.fr.txt" />
+    <None Include="resources\txt\CharacterInfoDisplay.es.txt" />
+    <None Include="resources\txt\CharacterInfoDisplay.de.txt" />
+    <None Include="resources\txt\CharacterInfoDisplay.txt" />
     <None Include="resources\txt\CharacterClass.pl.txt" />
     <None Include="resources\txt\CharacterClass.ru.txt" />
     <None Include="resources\txt\CharacterClass.es.txt" />
