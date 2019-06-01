@@ -3105,7 +3105,6 @@ namespace TQVaultAE.DAL
 
 				if(TQData.MatchNextString("relicName2", reader))
 				{
-					string label = "relicName2";
 					TQData.ValidateNextString("relicName2", reader);
 					this.relic2ID = TQData.ReadCString(reader);
 					atlantis = true;

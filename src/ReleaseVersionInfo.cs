@@ -12,6 +12,6 @@ using System.Resources;
 // by using the '*' as shown below:
 // Comment Ludo
 
-[assembly: AssemblyVersion("2.6.0")]
-[assembly: AssemblyFileVersion("2.6.0")]
+[assembly: AssemblyVersion("3.0.0")]
+[assembly: AssemblyFileVersion("3.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]
