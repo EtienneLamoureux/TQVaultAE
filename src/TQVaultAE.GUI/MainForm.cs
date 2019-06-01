@@ -389,7 +389,7 @@ namespace TQVaultAE.GUI
 			// Show a message that the default path is going to be used.
 			if (string.IsNullOrEmpty(Settings.Default.VaultPath))
 			{
-				string folderPath = Path.Combine(TQData.TQSaveFolder, "TQVaultAE.DAL");
+				string folderPath = Path.Combine(TQData.TQSaveFolder, "TQVaultData");
 
 				// Check to see if we are still using a shortcut to specify the vault path and display a message
 				// to use the configuration UI if we are.

@@ -280,7 +280,7 @@ namespace TQVaultAE.DAL
 			{
 				if (string.IsNullOrEmpty(vaultFolder))
 				{
-					string folderPath = Path.Combine(TQSaveFolder, "TQVaultAE.DAL");
+					string folderPath = Path.Combine(TQSaveFolder, "TQVaultData");
 
 					// Lets see if our path exists and create it if it does not
 					if (!Directory.Exists(folderPath))
