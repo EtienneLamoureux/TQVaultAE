@@ -986,4 +986,10 @@ Hier ist ein komplexes Beispiel: 'arctic &amp; frost @schwert $ episch | selten'
   <data name="ItemRagnarok" xml:space="preserve">
     <value>Ragnarök Gegenstand</value>
   </data>
+  <data name="ItemAtlantis" xml:space="preserve">
+    <value>Atlantis Gegenstand</value>
+  </data>
+  <data name="GlobalRelicVaultStash" xml:space="preserve">
+    <value>Reliktgewölbe</value>
+  </data>
 </root>

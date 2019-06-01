@@ -701,29 +701,36 @@ namespace TQVaultAE.DAL
 
 				bool xpack = false;
 
-				if (arcFileBase.ToUpperInvariant().Equals("XPACK"))
+                if (arcFileBase.ToUpperInvariant().Equals("XPACK"))
+                {
+                    // Comes from Immortal Throne
+                    xpack = true;
+                    rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack");
+                }
+                else if (arcFileBase.ToUpperInvariant().Equals("XPACK2"))
+                {
+                    // Comes from Ragnarok
+                    xpack = true;
+                    rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack2");
+                }
+				else if (arcFileBase.ToUpperInvariant().Equals("XPACK3"))
 				{
-					// Comes from Immortal Throne
+					// Comes from Atlantis
 					xpack = true;
-					rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack");
-				}
-				else if (arcFileBase.ToUpperInvariant().Equals("XPACK2"))
-				{
-					// Comes from Ragnarok
-					xpack = true;
-					rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack2");
+					rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack3");
 				}
 
+
 				if (xpack == true)
-				{
-					// throw away that value and use the next field.
-					int previousBackslash = backslashLocation;
-					backslashLocation = resourceId.IndexOf('\\', backslashLocation + 1);
-					if (backslashLocation <= 0)
-					{
-						// not a proper resourceID
-						return null;
-					}
+                {
+                    // throw away that value and use the next field.
+                    int previousBackslash = backslashLocation;
+                    backslashLocation = resourceId.IndexOf('\\', backslashLocation + 1);
+                    if (backslashLocation <= 0)
+                    {
+                        // not a proper resourceID
+                        return null;
+                    }
 
 					arcFileBase = resourceId.Substring(previousBackslash + 1, backslashLocation - previousBackslash - 1);
 					resourceId = resourceId.Substring(previousBackslash + 1);
@@ -753,6 +760,13 @@ namespace TQVaultAE.DAL
 			if (arcFileData == null && TQData.IsRagnarokInstalled)
 			{
 				rootFolder = Path.Combine(Path.Combine(TQData.ImmortalThronePath, "Resources"), "XPack2");
+				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
+				arcFileData = this.ReadARCFile(arcFile, resourceId);
+			}
+
+			if (arcFileData == null && TQData.IsAtlantisInstalled)
+			{
+				rootFolder = Path.Combine(Path.Combine(TQData.ImmortalThronePath, "Resources"), "XPack3");
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
 				arcFileData = this.ReadARCFile(arcFile, resourceId);
 			}
@@ -1222,16 +1236,23 @@ namespace TQVaultAE.DAL
 				this.ParseTextDB(databaseFile, "text\\xnpc.txt"); // Added by VillageIdiot
 				this.ParseTextDB(databaseFile, "text\\modstrings.txt"); // Added by VillageIdiot
 
-				if (TQData.IsRagnarokInstalled)
+                if (TQData.IsRagnarokInstalled) {
+                    this.ParseTextDB(databaseFile, "text\\x2commonequipment.txt");
+                    this.ParseTextDB(databaseFile, "text\\x2uniqueequipment.txt");
+                    this.ParseTextDB(databaseFile, "text\\x2quest.txt");
+                    this.ParseTextDB(databaseFile, "text\\x2ui.txt");
+                    this.ParseTextDB(databaseFile, "text\\x2skills.txt");
+                    this.ParseTextDB(databaseFile, "text\\x2monsters.txt"); // Added by VillageIdiot
+                    this.ParseTextDB(databaseFile, "text\\x2menu.txt"); // Added by VillageIdiot
+                    this.ParseTextDB(databaseFile, "text\\x2npc.txt"); // Added by VillageIdiot
+                }
+
+				if (TQData.IsAtlantisInstalled)
 				{
-					this.ParseTextDB(databaseFile, "text\\x2commonequipment.txt");
-					this.ParseTextDB(databaseFile, "text\\x2uniqueequipment.txt");
-					this.ParseTextDB(databaseFile, "text\\x2quest.txt");
-					this.ParseTextDB(databaseFile, "text\\x2ui.txt");
-					this.ParseTextDB(databaseFile, "text\\x2skills.txt");
-					this.ParseTextDB(databaseFile, "text\\x2monsters.txt"); // Added by VillageIdiot
-					this.ParseTextDB(databaseFile, "text\\x2menu.txt"); // Added by VillageIdiot
-					this.ParseTextDB(databaseFile, "text\\x2npc.txt"); // Added by VillageIdiot
+					this.ParseTextDB(databaseFile, "text\\x3basegame_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x3items_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x3mainquest_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x3misctags_nonvoiced.txt");
 				}
 			}
 

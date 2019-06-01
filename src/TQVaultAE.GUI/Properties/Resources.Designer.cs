@@ -761,6 +761,15 @@ namespace TQVaultAE.GUI.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Transfer Stash.
+        /// </summary>
+        internal static string GlobalRelicVaultStash {
+            get {
+                return ResourceManager.GetString("GlobalRelicVaultStash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Restore.
         /// </summary>
         internal static string GlobalRestore {
@@ -895,6 +904,15 @@ namespace TQVaultAE.GUI.Properties {
         internal static string ItemRagnarok {
             get {
                 return ResourceManager.GetString("ItemRagnarok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Atlantis Item.
+        /// </summary>
+        internal static string ItemAtlantis {
+            get {
+                return ResourceManager.GetString("ItemAtlantis", resourceCulture);
             }
         }
         

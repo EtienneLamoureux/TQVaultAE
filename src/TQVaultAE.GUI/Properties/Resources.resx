@@ -1181,4 +1181,10 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   <data name="AlbertusMT" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\fonts\albertus mt.ttf;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="ItemAtlantis" xml:space="preserve">
+    <value>Atlantis Item</value>
+  </data>
+  <data name="GlobalRelicVaultStash" xml:space="preserve">
+    <value>Relic Vault</value>
+  </data>
 </root>

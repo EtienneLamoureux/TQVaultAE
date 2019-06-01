@@ -144,6 +144,9 @@ namespace TQVaultAE.GUI
 				case SackType.TransferStash:
 					return Resources.GlobalTransferStash;
 
+				case SackType.RelicVaultStash:
+					return Resources.GlobalRelicVaultStash;
+
 				default:
 					return "Unknown";
 			}

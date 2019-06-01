@@ -982,4 +982,10 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   <data name="ItemRagnarok" xml:space="preserve">
     <value>Przedmiot z Ragnarök</value>
   </data>
+  <data name="ItemAtlantis" xml:space="preserve">
+    <value>Przedmiot z Atlantis</value>
+  </data>
+  <data name="GlobalRelicVaultStash" xml:space="preserve">
+    <value>Reliktowa krypta</value>
+  </data>
 </root>

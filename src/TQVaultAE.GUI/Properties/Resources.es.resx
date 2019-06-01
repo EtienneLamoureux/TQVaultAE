@@ -980,4 +980,10 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
   <data name="ItemRagnarok" xml:space="preserve">
     <value>Objeto de Ragnarök</value>
   </data>
+  <data name="ItemAtlantis" xml:space="preserve">
+    <value>Objeto de Atlantis</value>
+  </data>
+  <data name="GlobalRelicVaultStash" xml:space="preserve">
+    <value>Almacén de Reliquias</value>
+  </data>
 </root>
