@@ -111,13 +111,59 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="playerInfo"></param>
+		private void UpdateMoneySituation(PlayerInfo playerInfoSrc, PlayerInfo playerInfoDst)
+		{
+			if (playerInfoDst.DifficultyUnlocked != playerInfoSrc.DifficultyUnlocked)
+			{
+				if (playerInfoDst.DifficultyUnlocked == 1)
+				{
+					if (playerInfoDst.Money < 5000000)
+					{
+						playerInfoDst.Money = 5000000;
+					}
+				}
+				if (playerInfoDst.DifficultyUnlocked == 2)
+				{
+					if (playerInfoDst.Money < 7500000)
+					{
+						playerInfoDst.Money = 7500000;
+					}
+				}
+			}
+		}
+
+		/// <summary>
 		/// OK button handler
 		/// </summary>
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
 		private void OKButton_Click(object sender, EventArgs e)
 		{
-			this.Close();
+			if (_playerCollection.PlayerInfo == null) return;
+			try
+			{
+				var playerInfo = new PlayerInfo();
+				playerInfo.CurrentLevel = Convert.ToInt32(levelNumericUpDown.Value);
+				playerInfo.CurrentXP = int.Parse(xpTextBox.Text);
+				playerInfo.Money = _playerCollection.PlayerInfo.Money > 0 ? _playerCollection.PlayerInfo.Money : 0;
+				playerInfo.DifficultyUnlocked = difficultlyComboBox.SelectedIndex;
+				playerInfo.AttributesPoints = Convert.ToInt32(attributeNumericUpDown.Value);
+				playerInfo.SkillPoints = Convert.ToInt32(skillPointsNumericUpDown.Value);
+				playerInfo.BaseStrength = Convert.ToInt32(strengthUpDown.Value);
+				playerInfo.BaseDexterity = Convert.ToInt32(dexterityUpDown.Value);
+				playerInfo.BaseIntelligence = Convert.ToInt32(intelligenceUpDown.Value);
+				playerInfo.BaseHealth = Convert.ToInt32(healthUpDown.Value);
+				playerInfo.BaseMana = Convert.ToInt32(manacUpDown.Value);
+				UpdateMoneySituation(_playerCollection.PlayerInfo,playerInfo);
+				_playerCollection.CommitPlayerInfo(playerInfo);
+				this.Close();
+			}catch(Exception ex)
+			{
+				MessageBox.Show(string.Format("{0}",ex.Message));
+			}
 		}
 
 		private bool _loaded = false;

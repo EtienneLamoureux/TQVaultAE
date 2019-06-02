@@ -162,6 +162,7 @@ namespace TQVaultAE.GUI
 			{
 				var dlg = new CharacterEditDialog(_stashPanel.Player);
 				dlg.ShowDialog();
+				p.Invalidate();
 			}
 		}
 

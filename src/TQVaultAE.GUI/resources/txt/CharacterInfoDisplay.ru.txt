@@ -2,6 +2,7 @@
 Class=Учебный класс
 CurrentXP=XP
 DifficultyUnlocked=трудность
+Money=Деньги
 SkillPoints=Очки навыка
 AttributesPoints=Атрибуты
 BaseStrength=База ул

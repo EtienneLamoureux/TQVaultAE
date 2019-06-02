@@ -135,5 +135,15 @@ namespace TQVaultData
 		/// </summary>
 		public int HasBeenInGame { get; set; }
 
+		/// <summary>
+		/// set to true if player information is edited
+		/// </summary>
+		public bool Modified { get; set; }
+
+		/// <summary>
+		/// Players Money
+		/// </summary>
+		public int Money { get; set; }
+
 	}
 }

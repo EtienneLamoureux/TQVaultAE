@@ -11,7 +11,7 @@ namespace TQVaultData
 	/// <summary>
 	/// gathers character data from the player.chr file
 	/// </summary>
-	public class PlayerInfoParser
+	public class PlayerInfoParser : PlayerInfoIO
 	{
 
 		private PlayerInfo _playInfo = new PlayerInfo();
@@ -68,44 +68,13 @@ namespace TQVaultData
 		}
 
 
-		private int FindDifficultyUnlocked(BinaryReader reader)
-		{
-			var tempKey = new byte[] { 0x00, 0x00, 0x00, 0x74, 0x65, 0x6D, 0x70 };
-			var offset = 0;
-			reader.BaseStream.Seek(offset, SeekOrigin.Begin);
-			try
-			{
-				while (reader.BaseStream.Position < reader.BaseStream.Length)
-				{
-					var b = reader.ReadByte();
-					var backOf = reader.BaseStream.Position;
-					if (b == 0x04)
-					{
-						var scan = reader.ReadBytes(tempKey.Length);
-						if (scan.SequenceEqual(tempKey))
-						{
-							return (reader.ReadInt32());
-						}
-						reader.BaseStream.Seek(backOf, SeekOrigin.Begin);
-					}
-				}
-			}
-			catch
-			{
-				//ignore any eof errors, or any other error
-			}
-			return (0);
-
-		}
-
-
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="reader">Reader to player.chr file</param>
 		private void ParseInternal(BinaryReader reader)
 		{
-
+			_playInfo.Modified = false;
 			var offset = 0;
 			reader.BaseStream.Seek(offset, SeekOrigin.Begin);
 			TQData.ValidateNextString("headerVersion", reader);
@@ -125,7 +94,9 @@ namespace TQVaultData
 			var tag = TQData.ReadCString(reader);
 			_playInfo.Class = tag;
 
-			_playInfo.DifficultyUnlocked =  FindDifficultyUnlocked(reader);
+			_playInfo.Money = ReadMoneyValue(reader);
+
+			_playInfo.DifficultyUnlocked =  ReadDifficultyUnlockedValue(reader);
 			TQData.ValidateNextString("hasBeenInGame", reader);
 			_playInfo.HasBeenInGame = reader.ReadInt32();
 

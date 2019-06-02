@@ -2,6 +2,7 @@ CurrentLevel=Level
 Class=Class
 CurrentXP=XP
 DifficultyUnlocked=Difficulty
+Money=Money
 SkillPoints=Skill Points
 AttributesPoints=Attribute Points
 BaseStrength=Base Str

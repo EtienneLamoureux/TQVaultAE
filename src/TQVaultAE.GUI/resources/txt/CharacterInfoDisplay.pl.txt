@@ -2,6 +2,7 @@
 Class=Klasa
 CurrentXP=XP
 DifficultyUnlocked=Trudność
+Money=pieniądze
 SkillPoints=umiejętności
 AttributesPoints=Punkty atrybutów
 BaseStrength=Ul
