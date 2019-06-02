@@ -44,8 +44,11 @@ namespace TQVaultAE.GUI
 
 		private VaultPanel _stashPanel;
 
-		public PlayerInfoDisplay(VaultPanel p, Font f, double x, double y)
+		private Settings _settings;
+
+		internal PlayerInfoDisplay(Settings s, VaultPanel p, Font f, double x, double y)
 		{
+			_settings = s;
 			_stashPanel = p;
 			_font = f;
 			_blackBorderPen.Alignment = PenAlignment.Inset; //<-
@@ -133,11 +136,11 @@ namespace TQVaultAE.GUI
 			switch (d)
 			{
 				case 0:
-					return ("Normal");
+					return (Resources.Difficulty0);
 				case 1:
-					return ("Epic");
+					return (Resources.Difficulty1);
 				case 2:
-					return ("Legendary");
+					return (Resources.Difficulty2);
 				default:
 					return ("unknown");
 			}
@@ -151,6 +154,8 @@ namespace TQVaultAE.GUI
 
 		public void MouseClick(Panel p, object sender, MouseEventArgs e)
 		{
+			if (e.Button != MouseButtons.Left) return;
+
 			var stashPanelPoint = ConvertMousePoint((Control)sender, p, e.Location);
 
 			if (_editButton.Contains(stashPanelPoint))
@@ -162,6 +167,15 @@ namespace TQVaultAE.GUI
 
 		public void MouseMove(Panel p, object sender, MouseEventArgs e)
 		{
+			if (e == null)
+			{
+				if (_editBckgrnd != _editNoHighlight)
+				{
+					_editBckgrnd = _editNoHighlight;
+					p.Invalidate();
+				}
+				return;
+			}
 			var stashPanelPoint = ConvertMousePoint((Control)sender, p, e.Location);
 
 			if (_editButton.Contains(stashPanelPoint))
@@ -227,21 +241,24 @@ namespace TQVaultAE.GUI
 			var startTextX = Convert.ToSingle(rect.Right * _startX);
 			var startTextY = Convert.ToSingle(rect.Bottom * _startY);
 
-			var editSize = e.Graphics.MeasureString("Edit", _font);
-			_editButton.X = startTextX;
-			_editButton.Y = startTextY;
-			_editButton.Height = editSize.Height + 5;
-			_editButton.Width = editSize.Width + 5;
-			//e.Graphics.FillRectangle(_yellowGreenBrush, _editButton);
-
-			using (var path = RoundedRect(_editButton, 4))
+			if (_settings.AllowCharacterEdit)
 			{
-				e.Graphics.FillPath(_editBckgrnd, path);
-				e.Graphics.DrawPath(_blackBorderPen, path);
-				e.Graphics.DrawString("Edit", _font, Brushes.White, _editButton, _editTextAlignment);
-			}
+				var editSize = e.Graphics.MeasureString("Edit", _font);
+				_editButton.X = startTextX;
+				_editButton.Y = startTextY;
+				_editButton.Height = editSize.Height + 5;
+				_editButton.Width = editSize.Width + 5;
+				//e.Graphics.FillRectangle(_yellowGreenBrush, _editButton);
 
-			startTextY = startTextY + _editButton.Height + 3;
+				using (var path = RoundedRect(_editButton, 4))
+				{
+					e.Graphics.FillPath(_editBckgrnd, path);
+					e.Graphics.DrawPath(_blackBorderPen, path);
+					e.Graphics.DrawString("Edit", _font, Brushes.White, _editButton, _editTextAlignment);
+				}
+
+				startTextY = startTextY + _editButton.Height + 3;
+			}
 
 			var playerXml = playerInfo.ToXElement<PlayerInfo>();
 

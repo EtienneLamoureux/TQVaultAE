@@ -525,6 +525,132 @@ namespace TQVaultAE.GUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Attribute Points.
+        /// </summary>
+        internal static string CEAttributePoints {
+            get {
+                return ResourceManager.GetString("CEAttributePoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Base Attributes.
+        /// </summary>
+        internal static string CEAttributes {
+            get {
+                return ResourceManager.GetString("CEAttributes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dexterity.
+        /// </summary>
+        internal static string CEDexterity {
+            get {
+                return ResourceManager.GetString("CEDexterity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Difficulty.
+        /// </summary>
+        internal static string CEDifficulty {
+            get {
+                return ResourceManager.GetString("CEDifficulty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Leveling.
+        /// </summary>
+        internal static string CEEnableLeveling {
+            get {
+                return ResourceManager.GetString("CEEnableLeveling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Redistribute.
+        /// </summary>
+        internal static string CEEnableRedistribute {
+            get {
+                return ResourceManager.GetString("CEEnableRedistribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Health.
+        /// </summary>
+        internal static string CEHealth {
+            get {
+                return ResourceManager.GetString("CEHealth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Intelligence.
+        /// </summary>
+        internal static string CEIntelligence {
+            get {
+                return ResourceManager.GetString("CEIntelligence", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Level.
+        /// </summary>
+        internal static string CELevel {
+            get {
+                return ResourceManager.GetString("CELevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Leveling.
+        /// </summary>
+        internal static string CELeveling {
+            get {
+                return ResourceManager.GetString("CELeveling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mana.
+        /// </summary>
+        internal static string CEMana {
+            get {
+                return ResourceManager.GetString("CEMana", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skill Points.
+        /// </summary>
+        internal static string CESkillPoints {
+            get {
+                return ResourceManager.GetString("CESkillPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Strength.
+        /// </summary>
+        internal static string CEStrength {
+            get {
+                return ResourceManager.GetString("CEStrength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XP.
+        /// </summary>
+        internal static string CEXp {
+            get {
+                return ResourceManager.GetString("CEXp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to tagCClass01=Theurgist
         ///tagCClass02=Wanderer
         ///tagCClass03=Rogue
@@ -632,6 +758,33 @@ namespace TQVaultAE.GUI.Properties {
         internal static string DataLinkMsg {
             get {
                 return ResourceManager.GetString("DataLinkMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Normal.
+        /// </summary>
+        internal static string Difficulty0 {
+            get {
+                return ResourceManager.GetString("Difficulty0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Epic.
+        /// </summary>
+        internal static string Difficulty1 {
+            get {
+                return ResourceManager.GetString("Difficulty1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Legendary.
+        /// </summary>
+        internal static string Difficulty2 {
+            get {
+                return ResourceManager.GetString("Difficulty2", resourceCulture);
             }
         }
         
@@ -2435,6 +2588,15 @@ namespace TQVaultAE.GUI.Properties {
         internal static string SettingsAllowEdit {
             get {
                 return ResourceManager.GetString("SettingsAllowEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow Character Editing Features.
+        /// </summary>
+        internal static string SettingsAllowEditCE {
+            get {
+                return ResourceManager.GetString("SettingsAllowEditCE", resourceCulture);
             }
         }
         

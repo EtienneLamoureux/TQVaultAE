@@ -130,5 +130,10 @@ namespace TQVaultData
 		/// </summary>
 		public int DifficultyUnlocked { get; set; }
 
+		/// <summary>
+		/// Has used player in game one or more times
+		/// </summary>
+		public int HasBeenInGame { get; set; }
+
 	}
 }

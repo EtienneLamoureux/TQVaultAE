@@ -126,6 +126,8 @@ namespace TQVaultData
 			_playInfo.Class = tag;
 
 			_playInfo.DifficultyUnlocked =  FindDifficultyUnlocked(reader);
+			TQData.ValidateNextString("hasBeenInGame", reader);
+			_playInfo.HasBeenInGame = reader.ReadInt32();
 
 			offset = _playerKeys["CURRENTSTATS.CHARLEVEL"];
 			reader.BaseStream.Seek(offset, SeekOrigin.Begin);

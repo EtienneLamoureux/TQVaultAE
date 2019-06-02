@@ -103,6 +103,7 @@ namespace TQVaultAE.GUI
 			this.equipmentPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
 			this.equipmentPanel.OnResizeForm += new EventHandler<ResizeEventArgs>(this.ResizeFormCallback);
 			this.equipmentPanel.MouseMove += new MouseEventHandler(this.StashPanelMouseMove);
+			this.equipmentPanel.MouseLeave += new EventHandler(this.StashPanelMouseLeave);
 			this.equipmentPanel.MouseClick += new MouseEventHandler(this.StashPanelMouseClick);
 			//this.MouseMove += new MouseEventHandler(this.StashPanelMouseMove);
 			//this.MouseHover += new MouseEventHandler(this.StashPanelMouseMove);
@@ -128,7 +129,7 @@ namespace TQVaultAE.GUI
 				this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
 			}
 
-			playerInfoDisplay = new PlayerInfoDisplay(this, this.Font,.83,.14);
+			playerInfoDisplay = new PlayerInfoDisplay(Settings.Default, this, this.Font,.83,.14);
 
 			// Now that the buttons are set we can move the panel
 			this.BagSackPanel.SetLocation(new Point(
@@ -393,6 +394,12 @@ namespace TQVaultAE.GUI
 
 		#endregion StashPanel Properties
 
+
+		public void StashPanelMouseLeave(object sender, System.EventArgs e)
+		{
+			if (playerInfoDisplay == null) return;
+			playerInfoDisplay.MouseMove(this, sender, null);
+		}
 
 		public void StashPanelMouseClick(object sender, MouseEventArgs e)
 		{
