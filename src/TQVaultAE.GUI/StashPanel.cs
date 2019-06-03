@@ -129,6 +129,7 @@ namespace TQVaultAE.GUI
 				this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
 			}
 
+			//x and y coordinates passed are normalized values between 0 and 1.0.   
 			playerInfoDisplay = new PlayerInfoDisplay(Settings.Default, this, this.Font,.83,.14);
 
 			// Now that the buttons are set we can move the panel

@@ -195,6 +195,13 @@ namespace TQVaultAE.GUI
 			}
 		}
 
+
+		/// <summary>
+		/// creates a rounded edge rect
+		/// </summary>
+		/// <param name="bounds"></param>
+		/// <param name="radius"></param>
+		/// <returns></returns>
 		public static GraphicsPath RoundedRect(RectangleF bounds, int radius)
 		{
 			var diameter = Convert.ToSingle(radius * 2);
@@ -244,23 +251,25 @@ namespace TQVaultAE.GUI
 
 			if (_settings.AllowCharacterEdit)
 			{
-				var editSize = e.Graphics.MeasureString("Edit", _font);
+				//display character edit button
+				var editSize = e.Graphics.MeasureString(Resources.CharacterEditBtn, _font);
 				_editButton.X = startTextX;
 				_editButton.Y = startTextY;
 				_editButton.Height = editSize.Height + 5;
 				_editButton.Width = editSize.Width + 5;
-				//e.Graphics.FillRectangle(_yellowGreenBrush, _editButton);
 
 				using (var path = RoundedRect(_editButton, 4))
 				{
 					e.Graphics.FillPath(_editBckgrnd, path);
 					e.Graphics.DrawPath(_blackBorderPen, path);
-					e.Graphics.DrawString("Edit", _font, Brushes.White, _editButton, _editTextAlignment);
+					e.Graphics.DrawString(Resources.CharacterEditBtn, _font, Brushes.White, _editButton, _editTextAlignment);
 				}
 
 				startTextY = startTextY + _editButton.Height + 3;
 			}
 
+			//converts playerinfo to xml so it can be bound to Resource data file CharacterInfoDispaly.txt
+			//Order of data displayed is controlled by order of the CharacterInfoDispaly.txt resource file.
 			var playerXml = playerInfo.ToXElement<PlayerInfo>();
 
 			foreach (var labelKey in _labelKey.Keys)

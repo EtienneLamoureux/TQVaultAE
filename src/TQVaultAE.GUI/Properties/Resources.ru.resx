@@ -1056,4 +1056,7 @@ Would you like to disable loading all files?</value>
   <data name="CEXp" xml:space="preserve">
     <value>XP</value>
   </data>
+  <data name="CharacterEditBtn" xml:space="preserve">
+    <value>монтировать</value>
+  </data>
 </root>

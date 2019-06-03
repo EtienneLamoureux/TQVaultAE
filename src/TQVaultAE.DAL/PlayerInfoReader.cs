@@ -11,7 +11,7 @@ namespace TQVaultData
 	/// <summary>
 	/// gathers character data from the player.chr file
 	/// </summary>
-	public class PlayerInfoParser : PlayerInfoIO
+	public class PlayerInfoReader : PlayerInfoIO
 	{
 
 		private PlayerInfo _playInfo = new PlayerInfo();
@@ -25,7 +25,7 @@ namespace TQVaultData
 			{ "PLAYTIMEINSECONDS", 0},
 		};
 
-		public PlayerInfoParser()
+		public PlayerInfoReader()
 		{
 
 		}
@@ -62,9 +62,9 @@ namespace TQVaultData
 		/// Find character data in player.chr file
 		/// </summary>
 		/// <param name="reader"></param>
-		public void Parse(BinaryReader reader)
+		public void Read(BinaryReader reader)
 		{
-			ParseInternal(reader);
+			ReadInternal(reader);
 		}
 
 
@@ -72,7 +72,7 @@ namespace TQVaultData
 		/// 
 		/// </summary>
 		/// <param name="reader">Reader to player.chr file</param>
-		private void ParseInternal(BinaryReader reader)
+		private void ReadInternal(BinaryReader reader)
 		{
 			_playInfo.Modified = false;
 			var offset = 0;

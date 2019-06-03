@@ -683,10 +683,20 @@ namespace TQVaultAE.GUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        internal static string CharacterEditBtn {
+            get {
+                return ResourceManager.GetString("CharacterEditBtn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CurrentLevel=Level
         ///Class=Class
         ///CurrentXP=XP
         ///DifficultyUnlocked=Difficulty
+        ///Money=Money
         ///SkillPoints=Skill Points
         ///AttributesPoints=Attribute Points
         ///BaseStrength=Base Str
@@ -702,7 +712,7 @@ namespace TQVaultAE.GUI.Properties {
         ///ManaPotionsUsed=Mana Pots Used
         ///MaxLevel=Max Level
         ///NumHitsReceived=Hits Recv
-        ///NumHitsInflicted=Hits Inflicte [rest of string was truncated]&quot;;.
+        ///NumHitsInflicted= [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CharacterInfoDisplay {
             get {

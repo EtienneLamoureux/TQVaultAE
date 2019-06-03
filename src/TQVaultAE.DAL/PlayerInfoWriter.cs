@@ -26,6 +26,7 @@ namespace TQVaultData
 			{
 				data.Value4byte = newValue;
 				WriteKeyValue(writer, data);
+				///set modified to true to notify program the player.chr file needs to be updated
 				_modified = true;
 				return (true);
 			}
@@ -88,6 +89,8 @@ namespace TQVaultData
 					data = _list["mana"];
 					UpdateIfChanged(writer, data, playerInfo.BaseMana);
 
+
+					///if this value is set to true, the TQVaultAE program will know save the player.chr file
 					playerInfo.Modified = _modified;
 
 				}

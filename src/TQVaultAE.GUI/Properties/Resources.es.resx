@@ -1047,4 +1047,7 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
   <data name="CEXp" xml:space="preserve">
     <value>XP</value>
   </data>
+  <data name="CharacterEditBtn" xml:space="preserve">
+    <value>Editar</value>
+  </data>
 </root>

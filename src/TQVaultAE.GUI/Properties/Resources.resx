@@ -1250,4 +1250,7 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   <data name="CEXp" xml:space="preserve">
     <value>XP</value>
   </data>
+  <data name="CharacterEditBtn" xml:space="preserve">
+    <value>Edit</value>
+  </data>
 </root>

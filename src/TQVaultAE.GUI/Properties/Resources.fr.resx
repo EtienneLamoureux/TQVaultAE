@@ -1050,4 +1050,7 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
   <data name="CEXp" xml:space="preserve">
     <value>XP</value>
   </data>
+  <data name="CharacterEditBtn" xml:space="preserve">
+    <value>modifier</value>
+  </data>
 </root>

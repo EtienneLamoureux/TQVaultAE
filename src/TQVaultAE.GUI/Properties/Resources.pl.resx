@@ -1049,4 +1049,7 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   <data name="CEXp" xml:space="preserve">
     <value>XP</value>
   </data>
+  <data name="CharacterEditBtn" xml:space="preserve">
+    <value>Edytować</value>
+  </data>
 </root>

@@ -1053,4 +1053,7 @@ Hier ist ein komplexes Beispiel: 'arctic &amp; frost @schwert $ episch | selten'
   <data name="CEXp" xml:space="preserve">
     <value>XP</value>
   </data>
+  <data name="CharacterEditBtn" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
 </root>

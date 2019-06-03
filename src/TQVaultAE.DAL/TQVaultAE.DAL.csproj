@@ -71,7 +71,7 @@
     <Compile Include="PlayerInfo.cs" />
     <Compile Include="PlayerInfoIO.cs" />
     <Compile Include="PlayerInfoKeyPair.cs" />
-    <Compile Include="PlayerInfoParser.cs" />
+    <Compile Include="PlayerInfoReader.cs" />
     <Compile Include="PlayerInfoWriter.cs" />
     <Compile Include="PlayerLevel.cs" />
     <Compile Include="SackCollection.cs" />

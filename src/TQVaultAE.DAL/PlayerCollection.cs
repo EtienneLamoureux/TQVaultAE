@@ -432,7 +432,7 @@ namespace TQVaultData
 					int currentOffset = 0;
 					int itemOffset = 0;
 					int equipmentOffset = 0;
-					var playerParser = new PlayerInfoParser();
+					var playerReader = new PlayerInfoReader();
 
 					// vaults start at the item data with no crap
 					bool foundItems = this.IsVault;
@@ -481,9 +481,9 @@ namespace TQVaultData
 								equipmentOffset = currentOffset; // skip value for useAlternate
 								foundEquipment = true;
 							}
-							else if (!this.IsVault && playerParser.Match(blockName))
+							else if (!this.IsVault && playerReader.Match(blockName))
 							{
-								playerParser.Record(blockName,currentOffset);
+								playerReader.Record(blockName,currentOffset);
 							}
 
 							// Print the string with a nesting level indicator
@@ -635,12 +635,12 @@ namespace TQVaultData
 						}
 					}
 
-					if(playerParser.FoundPlayerInfo && !this.IsVault)
+					if(playerReader.FoundPlayerInfo && !this.IsVault)
 					{
 						try
 						{
-							playerParser.Parse(reader);
-							this.PlayerInfo = playerParser.GetPlayerInfo();
+							playerReader.Read(reader);
+							this.PlayerInfo = playerReader.GetPlayerInfo();
 
 						}
 						catch (ArgumentException exception)
