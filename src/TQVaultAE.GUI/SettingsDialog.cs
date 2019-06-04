@@ -232,6 +232,7 @@ namespace TQVaultAE.GUI
 			{
 				this.allowItemEditCheckBox.Visible = false;
 				this.allowItemCopyCheckBox.Visible = false;
+				this.allowItemCopyCheckBox.Visible = false;
 			}
 		}
 
