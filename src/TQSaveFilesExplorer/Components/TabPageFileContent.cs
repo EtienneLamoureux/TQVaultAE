@@ -187,8 +187,8 @@ namespace TQ.SaveFilesExplorer.Components
 
 		private void Display_textData(TQFileRecord k)
 		{
-			this.textBoxDataAsByteArray.Text = string.Join(" ", k.DataAsByteArray.Select(b => _DisplayDataDecimal ? b.ToString() : b.ToString("X")));
-			this.textBoxDataAsInt.Text = _DisplayDataDecimal ? $"{k.DataAsInt}" : $"{k.DataAsInt:X}";
+			this.textBoxDataAsByteArray.Text = string.Join(" ", k.DataAsByteArray.Select(b => _DisplayDataDecimal ? b.ToString() : b.ToString("X2")));
+			this.textBoxDataAsInt.Text = _DisplayDataDecimal ? $"{k.DataAsInt}" : $"{k.DataAsInt:X8}";
 			this.textBoxDataAsString.Text = k.DataType == TQFileDataType.Unknown ? SanitizeString(k.DataAsByteArray) : k.DataAsStr;
 		}
 
@@ -242,12 +242,12 @@ namespace TQ.SaveFilesExplorer.Components
 		{
 			var end = k.KeyName == TQFileRecord.unknown_segment ? k.ValueEnd : k.ValueStart - 1;
 			this.labelKeyOffset.Text = string.Format(this.labelKeyOffset.Tag.ToString()
-				, _DisplayDataDecimal ? $"{k.KeyIndex}" : $"0x{k.KeyIndex:X}"
-				, _DisplayDataDecimal ? $"{end}" : $"0x{end:X}"
+				, _DisplayDataDecimal ? $"{k.KeyIndex}" : $"0x{k.KeyIndex:X8}"
+				, _DisplayDataDecimal ? $"{end}" : $"0x{end:X8}"
 			);
 			this.labelDataOffset.Text = string.Format(this.labelDataOffset.Tag.ToString()
-				, _DisplayDataDecimal ? $"{k.ValueStart}" : $"0x{k.ValueStart:X}"
-				, _DisplayDataDecimal ? $"{k.ValueEnd}" : $"0x{k.ValueEnd:X}"
+				, _DisplayDataDecimal ? $"{k.ValueStart}" : $"0x{k.ValueStart:X8}"
+				, _DisplayDataDecimal ? $"{k.ValueEnd}" : $"0x{k.ValueEnd:X8}"
 			);
 		}
 
@@ -285,7 +285,7 @@ namespace TQ.SaveFilesExplorer.Components
 					keylist = string.Join(Environment.NewLine, this.File.Records.Select(r => $"{r.KeyName} : {r.DataType}").ToArray());
 					break;
 				case CopyKeysType.KeysTypeData:
-					keylist = string.Join(Environment.NewLine, this.File.Records.Select(r => $"{r.KeyName} : {r.DataType} : {r.GetDataAsString()}").ToArray());
+					keylist = string.Join(Environment.NewLine, this.File.Records.Select(r => $"{r.KeyName} : {r.DataType} : {r.GetDataAsString(_DisplayDataDecimal)}").ToArray());
 					break;
 				case CopyKeysType.DistinctKeys:
 					keylist = string.Join(Environment.NewLine, this.File.Records.Select(r => r.KeyName).Distinct().ToArray());
@@ -294,7 +294,7 @@ namespace TQ.SaveFilesExplorer.Components
 					keylist = string.Join(Environment.NewLine, this.File.Records.Select(r => $"{r.KeyName} : {r.DataType}").Distinct().ToArray());
 					break;
 				case CopyKeysType.DistinctKeysTypeData:
-					keylist = string.Join(Environment.NewLine, this.File.Records.Select(r => $"{r.KeyName} : {r.DataType} : {r.GetDataAsString()}").Distinct().ToArray());
+					keylist = string.Join(Environment.NewLine, this.File.Records.Select(r => $"{r.KeyName} : {r.DataType} : {r.GetDataAsString(_DisplayDataDecimal)}").Distinct().ToArray());
 					break;
 				default:
 					break;

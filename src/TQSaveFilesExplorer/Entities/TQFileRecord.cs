@@ -133,24 +133,13 @@ namespace TQ.SaveFilesExplorer.Entities
 			throw new NotImplementedException();
 		}
 
-		public static string ReadUTF16String(byte[] value)
-		{
-			List<char> chars = new List<char>();
-			for (int i = 0; i < value.Length; i += 2)
-			{
-				var c = BitConverter.ToChar(new ArraySegment<byte>(value, i, 2).ToArray(), 0);
-				chars.Add(c);
-			}
-			return new string(chars.ToArray());
-		}
-
-		internal string GetDataAsString()
+		internal string GetDataAsString(bool _DisplayDataDecimal)
 		{
 			string data = string.Empty;
 			switch (this.DataType)
 			{
 				case TQFileDataType.Int:
-					data = this.DataAsInt.ToString();
+					data = _DisplayDataDecimal ? this.DataAsInt.Value.ToString() : this.DataAsInt.Value.ToString("X8");
 					break;
 				case TQFileDataType.String1252:
 				case TQFileDataType.StringUTF16:
@@ -159,7 +148,7 @@ namespace TQ.SaveFilesExplorer.Entities
 				case TQFileDataType.ByteArrayVar:
 				case TQFileDataType.ByteArray16:
 				case TQFileDataType.Unknown:
-					data = string.Join(" ", this.DataAsByteArray.Select(b => b.ToString("X")));
+					data = string.Join(" ", this.DataAsByteArray.Select(b => _DisplayDataDecimal ? b.ToString() : b.ToString("X2")));
 					break;
 			}
 			return data;
