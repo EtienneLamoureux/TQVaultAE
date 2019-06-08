@@ -155,11 +155,11 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 This project could not go on without the continued contributions of the Titan Quest community.
 
 ### TQVaultAE
-- Malgardian (a.k.a. Spectre), *Anniversary Edition port*
 - EPinter, *XL vault, Atlantis support, bug fixes, general improvements*
 - NorthFury, *search improvements, bug fixes, general improvements*
 - EtienneLamoureux, *maintenance, bug fixes, general improvements*
 - [Open-source contributors](https://github.com/EtienneLamoureux/TQVaultAE/graphs/contributors)
+  - Malgardian (a.k.a. Spectre), *Anniversary Edition port*
   - KenAlin, *Ragnarok support*
   - Ninakoru, *Atlantis support*
 
