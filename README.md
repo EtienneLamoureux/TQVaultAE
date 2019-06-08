@@ -76,7 +76,7 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 
 **Q. Can I use TQVaultAE while playing the game?**
 
-*A. No, using TQVaultAE while running the game may lead to loss of progress or items.*
+*A. No, using TQVaultAE while running the game may lead to loss of progress or items. Best practice is to close the game before using TQVaultAE.*
 
 **Q. After updating from an older version of TQVault (2.18 or older), the new program won't start.**
 
