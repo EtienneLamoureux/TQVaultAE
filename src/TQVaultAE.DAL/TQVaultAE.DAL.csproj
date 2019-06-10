@@ -40,6 +40,24 @@
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -58,6 +76,7 @@
     <Compile Include="ArzFile.cs" />
     <Compile Include="BitmapCode.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="DataSerializerExtension.cs" />
     <Compile Include="DBRecordCollection.cs" />
     <Compile Include="IniFile.cs" />
     <Compile Include="IniProperties.cs" />
@@ -65,7 +84,14 @@
     <Compile Include="ItemAttributeListCompare.cs" />
     <Compile Include="ItemAttributeSubListCompare.cs" />
     <Compile Include="LootTableCollection.cs" />
+    <Compile Include="PlayerClass.cs" />
     <Compile Include="PlayerCollection.cs" />
+    <Compile Include="PlayerInfo.cs" />
+    <Compile Include="PlayerInfoIO.cs" />
+    <Compile Include="PlayerInfoKeyPair.cs" />
+    <Compile Include="PlayerInfoReader.cs" />
+    <Compile Include="PlayerInfoWriter.cs" />
+    <Compile Include="PlayerLevel.cs" />
     <Compile Include="SackCollection.cs" />
     <Compile Include="Stash.cs" />
     <Compile Include="TQDebug.cs" />

@@ -988,4 +988,68 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   <data name="GlobalRelicVaultStash" xml:space="preserve">
     <value>Reliktowa krypta</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="CharacterClass" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\txt\CharacterClass.pl.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="CharacterInfoDisplay" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\txt\CharacterInfoDisplay.pl.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="SettingsAllowEditCE" xml:space="preserve">
+    <value>Zezwalaj na funkcje edycji znaków</value>
+  </data>
+  <data name="Difficulty0" xml:space="preserve">
+    <value>Normalna</value>
+  </data>
+  <data name="Difficulty1" xml:space="preserve">
+    <value>Epicki</value>
+  </data>
+  <data name="Difficulty2" xml:space="preserve">
+    <value>Legendarny</value>
+  </data>
+  <data name="CEAttributePoints" xml:space="preserve">
+    <value>Punkty atrybutów</value>
+  </data>
+  <data name="CEAttributes" xml:space="preserve">
+    <value>Atrybuty podstawowe</value>
+  </data>
+  <data name="CEDexterity" xml:space="preserve">
+    <value>Zręczność</value>
+  </data>
+  <data name="CEDifficulty" xml:space="preserve">
+    <value>Trudność</value>
+  </data>
+  <data name="CEEnableLeveling" xml:space="preserve">
+    <value>Włącz poziomowanie</value>
+  </data>
+  <data name="CEEnableRedistribute" xml:space="preserve">
+    <value>Włącz redystrybucję</value>
+  </data>
+  <data name="CEHealth" xml:space="preserve">
+    <value>Zdrowie</value>
+  </data>
+  <data name="CEIntelligence" xml:space="preserve">
+    <value>Inteligencja</value>
+  </data>
+  <data name="CELevel" xml:space="preserve">
+    <value>Poziom</value>
+  </data>
+  <data name="CELeveling" xml:space="preserve">
+    <value>Niwelacja</value>
+  </data>
+  <data name="CEMana" xml:space="preserve">
+    <value>Mana</value>
+  </data>
+  <data name="CESkillPoints" xml:space="preserve">
+    <value>Punkty umiejętności</value>
+  </data>
+  <data name="CEStrength" xml:space="preserve">
+    <value>siła</value>
+  </data>
+  <data name="CEXp" xml:space="preserve">
+    <value>XP</value>
+  </data>
+  <data name="CharacterEditBtn" xml:space="preserve">
+    <value>Edytować</value>
+  </data>
 </root>

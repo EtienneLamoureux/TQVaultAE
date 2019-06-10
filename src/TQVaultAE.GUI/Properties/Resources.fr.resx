@@ -989,4 +989,68 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
   <data name="GlobalRelicVaultStash" xml:space="preserve">
     <value>Chambre des reliques</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="CharacterClass" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\txt\CharacterClass.fr.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="CharacterInfoDisplay" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\txt\CharacterInfoDisplay.fr.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="SettingsAllowEditCE" xml:space="preserve">
+    <value>Allow Character Editing Features</value>
+  </data>
+  <data name="Difficulty0" xml:space="preserve">
+    <value>Ordinaire</value>
+  </data>
+  <data name="Difficulty1" xml:space="preserve">
+    <value>Épique</value>
+  </data>
+  <data name="Difficulty2" xml:space="preserve">
+    <value>Légendaire</value>
+  </data>  
+  <data name="CEAttributePoints" xml:space="preserve">
+    <value>Points d'attributs</value>
+  </data>
+  <data name="CEAttributes" xml:space="preserve">
+    <value>Attributs de base</value>
+  </data>
+  <data name="CEDexterity" xml:space="preserve">
+    <value>Dextérité</value>
+  </data>
+  <data name="CEDifficulty" xml:space="preserve">
+    <value>Difficulté</value>
+  </data>
+  <data name="CEEnableLeveling" xml:space="preserve">
+    <value>Activer le nivellement</value>
+  </data>
+  <data name="CEEnableRedistribute" xml:space="preserve">
+    <value>Activer la redistribution</value>
+  </data>
+  <data name="CEHealth" xml:space="preserve">
+    <value>Santé</value>
+  </data>
+  <data name="CEIntelligence" xml:space="preserve">
+    <value>Intelligence</value>
+  </data>
+  <data name="CELevel" xml:space="preserve">
+    <value>Niveau</value>
+  </data>
+  <data name="CELeveling" xml:space="preserve">
+    <value>Nivellement</value>
+  </data>
+  <data name="CEMana" xml:space="preserve">
+    <value>Mana</value>
+  </data>
+  <data name="CESkillPoints" xml:space="preserve">
+    <value>Points de compétences</value>
+  </data>
+  <data name="CEStrength" xml:space="preserve">
+    <value>Force</value>
+  </data>
+  <data name="CEXp" xml:space="preserve">
+    <value>XP</value>
+  </data>
+  <data name="CharacterEditBtn" xml:space="preserve">
+    <value>modifier</value>
+  </data>
 </root>

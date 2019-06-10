@@ -1,6 +1,6 @@
 # TQVaultAE
 [![Steam](https://img.shields.io/badge/steam-link-lightgrey.svg)](https://steamcommunity.com/sharedfiles/filedetails/?id=1136716167)
-[![Release](https://img.shields.io/badge/stable-2.6.0-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
+[![Release](https://img.shields.io/badge/stable-3.0.0-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/LICENSE)
 
 TQVaultAE is an external tool for [Titan Quest Anniversary Edition](https://www.thqnordic.com/games/titan-quest) that allows you to store and search your items outside the game.
@@ -73,6 +73,10 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 *A. No, unless you specifically use the cheats, TQVaultAE doesn't alter items in any way. 
 The difference you see is simply due to the way stats are generated in Titan Quest: each item has base stats and a unique seed that modifies those stats. 
 TQVaultAE only displays the base stats (and not the modifications due to the RNG).*
+
+**Q. Can I use TQVaultAE while playing the game?**
+
+*A. No, using TQVaultAE while running the game may lead to loss of progress or items. Best practice is to close the game before using TQVaultAE.*
 
 **Q. After updating from an older version of TQVault (2.18 or older), the new program won't start.**
 
@@ -151,11 +155,13 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 This project could not go on without the continued contributions of the Titan Quest community.
 
 ### TQVaultAE
-- Malgardian (a.k.a. Spectre), *Anniversary Edition port*
-- EPinter, *XL vault, bug fixes, general improvements*
+- EPinter, *XL vault, Atlantis support, bug fixes, general improvements*
 - NorthFury, *search improvements, bug fixes, general improvements*
 - EtienneLamoureux, *maintenance, bug fixes, general improvements*
 - [Open-source contributors](https://github.com/EtienneLamoureux/TQVaultAE/graphs/contributors)
+  - Malgardian (a.k.a. Spectre), *Anniversary Edition port*
+  - KenAlin, *Ragnarok support*
+  - Ninakoru, *Atlantis support*
 
 ### TQVault
 - Brandon "bman654" Wallace, *original author*
