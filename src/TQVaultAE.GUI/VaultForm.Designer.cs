@@ -3,6 +3,8 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using TQVaultAE.GUI.Components;
+
 namespace TQVaultAE.GUI
 {
 	/// <summary>
@@ -59,9 +61,9 @@ namespace TQVaultAE.GUI
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VaultForm));
-			this.buttonMaximize = new TQVaultAE.GUI.ScalingButton();
-			this.buttonMinimize = new TQVaultAE.GUI.ScalingButton();
-			this.buttonClose = new TQVaultAE.GUI.ScalingButton();
+			this.buttonMaximize = new TQVaultAE.GUI.Components.ScalingButton();
+			this.buttonMinimize = new TQVaultAE.GUI.Components.ScalingButton();
+			this.buttonClose = new TQVaultAE.GUI.Components.ScalingButton();
 			this.SuspendLayout();
 			// 
 			// buttonMaximize

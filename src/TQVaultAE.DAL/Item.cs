@@ -3,7 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultData
+namespace TQVaultAE.DAL
 {
 	using ExpressionEvaluator;
 	using System;
@@ -12,6 +12,7 @@ namespace TQVaultData
 	using System.Drawing;
 	using System.Globalization;
 	using System.IO;
+	using TQVaultAE.Logging;
 
 	/// <summary>
 	/// Item Style types
@@ -180,6 +181,8 @@ namespace TQVaultData
 	/// </summary>
 	public class Item
 	{
+		private readonly log4net.ILog Log = null;
+
 		#region Item Fields
 
 		/// <summary>
@@ -291,6 +294,8 @@ namespace TQVaultData
 		/// </summary>
 		public Item()
 		{
+			this.Log = Logger.Get(this);
+
 			// Added by VillageIdiot
 			// Used for bare item attributes in properties display in this order:
 			// baseinfo, artifactCompletionBonus, prefixinfo, suffixinfo, relicinfo, relicCompletionBonus
@@ -2099,7 +2104,7 @@ namespace TQVaultData
 			{
 				if (TQDebug.ItemDebugLevel > 1)
 				{
-					TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Retrieving requirement {0}={1} (type={2})", kvp.Key, kvp.Value, kvp.Value.GetType().ToString()));
+					Log.DebugFormat(CultureInfo.InvariantCulture, "Retrieving requirement {0}={1} (type={2})", kvp.Key, kvp.Value, kvp.Value.GetType().ToString());
 				}
 
 				Variable variable = kvp.Value;
@@ -3100,7 +3105,6 @@ namespace TQVaultData
 
 				if(TQData.MatchNextString("relicName2", reader))
 				{
-					string label = "relicName2";
 					TQData.ValidateNextString("relicName2", reader);
 					this.relic2ID = TQData.ReadCString(reader);
 					atlantis = true;
@@ -3161,10 +3165,11 @@ namespace TQVaultData
 					this.StackSize = 1;
 				}
 			}
-			catch (ArgumentException)
+			catch (ArgumentException ex)
 			{
 				// The ValidateNextString Method can throw an ArgumentException.
 				// We just pass it along at this point.
+				Log.Debug("ValidateNextString() fail !", ex);
 				throw;
 			}
 		}
@@ -3176,8 +3181,7 @@ namespace TQVaultData
 		{
 			if (TQDebug.ItemDebugLevel > 0)
 			{
-				TQDebug.DebugWrite(string.Format(CultureInfo.InvariantCulture, "Item.GetDBData ()"));
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "   baseItemID = {0}", this.BaseItemId));
+				Log.DebugFormat(CultureInfo.InvariantCulture, "Item.GetDBData ()   baseItemID = {0}", this.BaseItemId);
 			}
 
 			this.BaseItemId = CheckExtension(this.BaseItemId);
@@ -3188,8 +3192,8 @@ namespace TQVaultData
 
 			if (TQDebug.ItemDebugLevel > 1)
 			{
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "prefixID = {0}", this.prefixID));
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "suffixID = {0}", this.suffixID));
+				Log.DebugFormat(CultureInfo.InvariantCulture, "prefixID = {0}", this.prefixID);
+				Log.DebugFormat(CultureInfo.InvariantCulture, "suffixID = {0}", this.suffixID);
 			}
 
 			this.prefixInfo = Database.DB.GetInfo(this.prefixID);
@@ -3199,8 +3203,8 @@ namespace TQVaultData
 
 			if (TQDebug.ItemDebugLevel > 1)
 			{
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "relicID = {0}", this.relicID));
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "relicBonusID = {0}", this.RelicBonusId));
+				Log.DebugFormat(CultureInfo.InvariantCulture, "relicID = {0}", this.relicID);
+				Log.DebugFormat(CultureInfo.InvariantCulture, "relicBonusID = {0}", this.RelicBonusId);
 			}
 
 			this.RelicInfo = Database.DB.GetInfo(this.relicID);
@@ -3211,7 +3215,7 @@ namespace TQVaultData
 
 			if (TQDebug.ItemDebugLevel > 1)
 			{
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "'{0}' baseItemInfo is {1} null", this.ToString(), (this.baseItemInfo == null) ? string.Empty : "NOT"));
+				Log.DebugFormat(CultureInfo.InvariantCulture, "'{0}' baseItemInfo is {1} null", this.ToString(), (this.baseItemInfo == null) ? string.Empty : "NOT");
 			}
 
 			// Get the bitmaps we need
@@ -3222,7 +3226,7 @@ namespace TQVaultData
 					this.ItemBitmap = Database.DB.LoadBitmap(this.baseItemInfo.ShardBitmap);
 					if (TQDebug.ItemDebugLevel > 1)
 					{
-						TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Loaded shardbitmap ({0})", this.baseItemInfo.ShardBitmap));
+						Log.DebugFormat(CultureInfo.InvariantCulture, "Loaded shardbitmap ({0})", this.baseItemInfo.ShardBitmap);
 					}
 				}
 				else
@@ -3230,7 +3234,7 @@ namespace TQVaultData
 					this.ItemBitmap = Database.DB.LoadBitmap(this.baseItemInfo.Bitmap);
 					if (TQDebug.ItemDebugLevel > 1)
 					{
-						TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Loaded regular bitmap ({0})", this.baseItemInfo.Bitmap));
+						Log.DebugFormat(CultureInfo.InvariantCulture, "Loaded regular bitmap ({0})", this.baseItemInfo.Bitmap);
 					}
 				}
 			}
@@ -3241,7 +3245,7 @@ namespace TQVaultData
 				this.ItemBitmap = Database.DB.LoadBitmap("DefaultBitmap");
 				if (TQDebug.ItemDebugLevel > 1)
 				{
-					TQDebug.DebugWriteLine("Try loading (DefaultBitmap)");
+					Log.Debug("Try loading (DefaultBitmap)");
 				}
 			}
 
@@ -3251,12 +3255,12 @@ namespace TQVaultData
 			{
 				if (TQDebug.ItemDebugLevel > 1)
 				{
-					TQDebug.DebugWriteLine(string.Format(
-						CultureInfo.InvariantCulture,
-						"size = {0}x{1} (unitsize={2})",
-						this.ItemBitmap.Width,
-						this.ItemBitmap.Height,
-						Database.DB.ItemUnitSize));
+					Log.DebugFormat(CultureInfo.InvariantCulture
+						, "size = {0}x{1} (unitsize={2})"
+						, this.ItemBitmap.Width
+						, this.ItemBitmap.Height
+						, Database.DB.ItemUnitSize
+					);
 				}
 
 				this.Width = Convert.ToInt32((float)this.ItemBitmap.Width * Database.DB.Scale / (float)Database.DB.ItemUnitSize);
@@ -3266,7 +3270,7 @@ namespace TQVaultData
 			{
 				if (TQDebug.ItemDebugLevel > 1)
 				{
-					TQDebug.DebugWriteLine("bitmap is null");
+					Log.Debug("bitmap is null");
 				}
 
 				this.Width = 1;
@@ -3275,7 +3279,7 @@ namespace TQVaultData
 
 			if (TQDebug.ItemDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine("Exiting Item.GetDBData ()");
+				Log.Debug("Exiting Item.GetDBData ()");
 			}
 		}
 
@@ -3656,6 +3660,8 @@ namespace TQVaultData
 
 				string error = string.Concat("FormatErr(\"", formatSpec, parameters);
 
+				Logger.Log.Debug(error);
+
 				return error;
 			}
 		}
@@ -3665,18 +3671,18 @@ namespace TQVaultData
 		/// </summary>
 		/// <param name="requirements">SortedList of requirements</param>
 		/// <param name="record">database record</param>
-		private static void GetRequirementsFromRecord(SortedList<string, Variable> requirements, DBRecordCollection record)
+		private void GetRequirementsFromRecord(SortedList<string, Variable> requirements, DBRecordCollection record)
 		{
 			if (TQDebug.ItemDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Item.GetDynamicRequirementsFromRecord({0}, {1})", requirements, record));
+				Log.DebugFormat(CultureInfo.InvariantCulture, "Item.GetDynamicRequirementsFromRecord({0}, {1})", requirements, record);
 			}
 
 			if (record == null)
 			{
 				if (TQDebug.ItemDebugLevel > 0)
 				{
-					TQDebug.DebugWriteLine("Error - record was null.");
+					Log.Debug("Error - record was null.");
 				}
 
 				return;
@@ -3684,14 +3690,14 @@ namespace TQVaultData
 
 			if (TQDebug.ItemDebugLevel > 1)
 			{
-				TQDebug.DebugWriteLine(record.Id);
+				Log.Debug(record.Id);
 			}
 
 			foreach (Variable variable in record)
 			{
 				if (TQDebug.ItemDebugLevel > 2)
 				{
-					TQDebug.DebugWriteLine(variable.Name);
+					Log.Debug(variable.Name);
 				}
 
 				if (FilterValue(variable, false))
@@ -3747,7 +3753,7 @@ namespace TQVaultData
 
 				if (TQDebug.ItemDebugLevel > 1)
 				{
-					TQDebug.DebugWriteLine(Item.Format("Added Requirement {0}={1}", key, value));
+					Log.Debug(Item.Format("Added Requirement {0}={1}", key, value));
 				}
 
 				requirements.Add(key, variable);
@@ -3755,7 +3761,7 @@ namespace TQVaultData
 
 			if (TQDebug.ItemDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine("Exiting Item.GetDynamicRequirementsFromRecord()");
+				Log.Debug("Exiting Item.GetDynamicRequirementsFromRecord()");
 			}
 		}
 
@@ -3767,7 +3773,7 @@ namespace TQVaultData
 		/// <param name="attributeData">ItemAttributesData structure</param>
 		/// <param name="font">display font string</param>
 		/// <returns>formatted string with the + to mastery</returns>
-		private static string GetAugmentMasteryLevel(DBRecordCollection record, Variable variable, ItemAttributesData attributeData, ref string font)
+		private string GetAugmentMasteryLevel(DBRecordCollection record, Variable variable, ItemAttributesData attributeData, ref string font)
 		{
 			string augmentNumber = attributeData.FullAttribute.Substring(19, 1);
 			string skillRecordKey = string.Concat("augmentMasteryName", augmentNumber);
@@ -3808,7 +3814,7 @@ namespace TQVaultData
 			{
 				if (TQDebug.ItemDebugLevel > 2)
 				{
-					TQDebug.DebugWriteLine("Item.formatspec (augment mastery) = " + formatSpec);
+					Log.Debug("Item.formatspec (augment mastery) = " + formatSpec);
 				}
 
 				formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -3828,7 +3834,7 @@ namespace TQVaultData
 		/// <param name="variable">variable structure</param>
 		/// <param name="font">display font string</param>
 		/// <returns>formatted string for + to all skills</returns>
-		private static string GetAugmentAllLevel(int variableNumber, Variable variable, ref string font)
+		private string GetAugmentAllLevel(int variableNumber, Variable variable, ref string font)
 		{
 			string tag = "ItemAllSkillIncrement";
 			string formatSpec = Database.DB.GetFriendlyName(tag);
@@ -3841,7 +3847,7 @@ namespace TQVaultData
 			{
 				if (TQDebug.ItemDebugLevel > 2)
 				{
-					TQDebug.DebugWriteLine("Item.formatspec (augment level) = " + formatSpec);
+					Log.Debug("Item.formatspec (augment level) = " + formatSpec);
 				}
 
 				formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -3864,7 +3870,7 @@ namespace TQVaultData
 		/// <param name="line">line string</param>
 		/// <param name="font">display font string</param>
 		/// <returns>formatted string of racial bonus(es)  adds to the results if there are multiple.</returns>
-		private static string GetRacialBonus(DBRecordCollection record, List<string> results, int varNum, bool isGlobal, string globalIndent, Variable v, ItemAttributesData d, string line, ref string font)
+		private string GetRacialBonus(DBRecordCollection record, List<string> results, int varNum, bool isGlobal, string globalIndent, Variable v, ItemAttributesData d, string line, ref string font)
 		{
 			// Added by VillageIdiot
 			// Updated to accept multiple racial bonuses in record
@@ -3897,7 +3903,7 @@ namespace TQVaultData
 					{
 						if (TQDebug.ItemDebugLevel > 2)
 						{
-							TQDebug.DebugWriteLine("Item.formatspec (race bonus) = " + formatSpec);
+							Log.Debug("Item.formatspec (race bonus) = " + formatSpec);
 						}
 
 						formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -3943,7 +3949,7 @@ namespace TQVaultData
 		/// <param name="v">variable structure</param>
 		/// <param name="font">font string</param>
 		/// <returns>formatted global chance string</returns>
-		private static string GetGlobalChance(List<Variable> attributeList, int varNum, Variable v, ref string font)
+		private string GetGlobalChance(List<Variable> attributeList, int varNum, Variable v, ref string font)
 		{
 			string line;
 			string tag = "GlobalPercentChanceOfAllTag";
@@ -3971,7 +3977,7 @@ namespace TQVaultData
 				{
 					if (TQDebug.ItemDebugLevel > 2)
 					{
-						TQDebug.DebugWriteLine("Item.formatspec (chance of one) = " + formatSpec);
+						Log.Debug("Item.formatspec (chance of one) = " + formatSpec);
 					}
 
 					formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -3990,7 +3996,7 @@ namespace TQVaultData
 		/// <param name="varNum">offset number of the variable value that we are using</param>
 		/// <param name="modifierChanceVar">Chance modifier variable</param>
 		/// <returns>formatted chance modifier string</returns>
-		private static string GetChanceModifier(int varNum, Variable modifierChanceVar)
+		private string GetChanceModifier(int varNum, Variable modifierChanceVar)
 		{
 			string modifierChance = null;
 			string color = null;
@@ -4004,7 +4010,7 @@ namespace TQVaultData
 			{
 				if (TQDebug.ItemDebugLevel > 2)
 				{
-					TQDebug.DebugWriteLine("Item.formatspec (chance) = " + formatSpec);
+					Log.Debug("Item.formatspec (chance) = " + formatSpec);
 				}
 
 				formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -4026,7 +4032,7 @@ namespace TQVaultData
 		/// <param name="varNum">offset number of the variable value that we are using</param>
 		/// <param name="durationModifierVar">duration modifier variable</param>
 		/// <returns>formatted duration modifier string</returns>
-		private static string GetDurationModifier(int varNum, Variable durationModifierVar)
+		private string GetDurationModifier(int varNum, Variable durationModifierVar)
 		{
 			string durationModifier = null;
 			string color = null;
@@ -4040,7 +4046,7 @@ namespace TQVaultData
 			{
 				if (TQDebug.ItemDebugLevel > 2)
 				{
-					TQDebug.DebugWriteLine("Item.formatspec (improved time) = " + formatSpec);
+					Log.Debug("Item.formatspec (improved time) = " + formatSpec);
 				}
 
 				formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -4064,7 +4070,7 @@ namespace TQVaultData
 		/// <param name="modifierData">ItemAttributesData for the modifier</param>
 		/// <param name="modifierVar">modifier variable</param>
 		/// <returns>formatted modifier string</returns>
-		private static string GetModifier(ItemAttributesData data, int varNum, ItemAttributesData modifierData, Variable modifierVar)
+		private string GetModifier(ItemAttributesData data, int varNum, ItemAttributesData modifierData, Variable modifierVar)
 		{
 			string modifier = null;
 			string color = null;
@@ -4087,7 +4093,7 @@ namespace TQVaultData
 				{
 					if (TQDebug.ItemDebugLevel > 2)
 					{
-						TQDebug.DebugWriteLine("Item.formatspec (percent) = " + formatSpec);
+						Log.Debug("Item.formatspec (percent) = " + formatSpec);
 					}
 
 					formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -4110,7 +4116,7 @@ namespace TQVaultData
 		/// <param name="varNum">offset number of the variable value that we are using</param>
 		/// <param name="chanceVar">chance variable</param>
 		/// <returns>formatted chance string.</returns>
-		private static string GetChance(int varNum, Variable chanceVar)
+		private string GetChance(int varNum, Variable chanceVar)
 		{
 			string chance = null;
 			string color = null;
@@ -4123,7 +4129,7 @@ namespace TQVaultData
 
 			if (TQDebug.ItemDebugLevel > 2)
 			{
-				TQDebug.DebugWriteLine("Item.formatspec (chance) = " + formatSpec);
+				Log.Debug("Item.formatspec (chance) = " + formatSpec);
 			}
 
 			formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -4147,7 +4153,7 @@ namespace TQVaultData
 		/// <param name="damageRatioData">ItemAttributesData for the damage ratio</param>
 		/// <param name="damageRatioVar">Damage Ratio variable</param>
 		/// <returns>formatted damage ratio string</returns>
-		private static string GetDamageRatio(int varNum, ItemAttributesData damageRatioData, Variable damageRatioVar)
+		private string GetDamageRatio(int varNum, ItemAttributesData damageRatioData, Variable damageRatioVar)
 		{
 			string damageRatio = null;
 			string color = null;
@@ -4165,7 +4171,7 @@ namespace TQVaultData
 			{
 				if (TQDebug.ItemDebugLevel > 2)
 				{
-					TQDebug.DebugWriteLine("Item.formatspec (percent) = " + formatSpec);
+					Log.Debug("Item.formatspec (percent) = " + formatSpec);
 				}
 
 				formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -4188,7 +4194,7 @@ namespace TQVaultData
 		/// <param name="minDurVar">minimum duration variable</param>
 		/// <param name="maxDurVar">maximum duration variable</param>
 		/// <returns>formatted duration string</returns>
-		private static string GetDurationSingle(int varNum, Variable minDurVar, Variable maxDurVar)
+		private string GetDurationSingle(int varNum, Variable minDurVar, Variable maxDurVar)
 		{
 			string duration = null;
 			string color = null;
@@ -4202,7 +4208,7 @@ namespace TQVaultData
 			{
 				if (TQDebug.ItemDebugLevel > 2)
 				{
-					TQDebug.DebugWriteLine("Item.formatspec (time single) = " + formatSpec);
+					Log.Debug("Item.formatspec (time single) = " + formatSpec);
 				}
 
 				formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -4234,7 +4240,7 @@ namespace TQVaultData
 		/// <param name="minDurVar">minimum duration variable</param>
 		/// <param name="maxDurVar">maximum duration variable</param>
 		/// <returns>formatted duration string</returns>
-		private static string GetDurationRange(int varNum, Variable minDurVar, Variable maxDurVar)
+		private string GetDurationRange(int varNum, Variable minDurVar, Variable maxDurVar)
 		{
 			string duration = null;
 			string color = null;
@@ -4248,7 +4254,7 @@ namespace TQVaultData
 			{
 				if (TQDebug.ItemDebugLevel > 2)
 				{
-					TQDebug.DebugWriteLine("Item.formatspec (time range) = " + formatSpec);
+					Log.Debug("Item.formatspec (time range) = " + formatSpec);
 				}
 
 				formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -4273,7 +4279,7 @@ namespace TQVaultData
 		/// <param name="line">line of text</param>
 		/// <param name="font">display font string</param>
 		/// <returns>formatted string containing + to skill</returns>
-		private static string GetAugmentSkillLevel(DBRecordCollection record, Variable variable, ItemAttributesData attributeData, string line, ref string font)
+		private string GetAugmentSkillLevel(DBRecordCollection record, Variable variable, ItemAttributesData attributeData, string line, ref string font)
 		{
 			string augmentSkillNumber = attributeData.FullAttribute.Substring(17, 1);
 			string skillRecordKey = string.Concat("augmentSkillName", augmentSkillNumber);
@@ -4347,7 +4353,7 @@ namespace TQVaultData
 				{
 					if (TQDebug.ItemDebugLevel > 2)
 					{
-						TQDebug.DebugWriteLine("Item.formatspec (item skill) = " + formatSpec);
+						Log.Debug("Item.formatspec (item skill) = " + formatSpec);
 					}
 
 					formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -4369,7 +4375,7 @@ namespace TQVaultData
 		/// <param name="line">line of text</param>
 		/// <param name="font">display font string</param>
 		/// <returns>formatted formulae string</returns>
-		private static string GetFormulae(List<string> results, Variable variable, ItemAttributesData attributeData, string line, ref string font)
+		private string GetFormulae(List<string> results, Variable variable, ItemAttributesData attributeData, string line, ref string font)
 		{
 			// Special case for formulae reagents
 			if (attributeData.FullAttribute.StartsWith("reagent", StringComparison.OrdinalIgnoreCase))
@@ -4392,7 +4398,7 @@ namespace TQVaultData
 				string formatSpec = Database.DB.GetFriendlyName("xtagArtifactCost");
 				if (TQDebug.ItemDebugLevel > 2)
 				{
-					TQDebug.DebugWriteLine("Item.formatspec (Artifact cost) = " + formatSpec);
+					Log.Debug("Item.formatspec (Artifact cost) = " + formatSpec);
 				}
 
 				formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -4581,7 +4587,7 @@ namespace TQVaultData
 		/// </summary>
 		/// <param name="font">display font string</param>
 		/// <returns>formatted pet bonus name</returns>
-		private static string GetPetBonusName(ref string font)
+		private string GetPetBonusName(ref string font)
 		{
 			string tag = "xtagPetBonusNameAllPets";
 			string formatSpec = Database.DB.GetFriendlyName(tag);
@@ -4594,7 +4600,7 @@ namespace TQVaultData
 			{
 				if (TQDebug.ItemDebugLevel > 2)
 				{
-					TQDebug.DebugWriteLine("Item.formatspec (pet bonus) = " + formatSpec);
+					Log.Debug("Item.formatspec (pet bonus) = " + formatSpec);
 				}
 
 				formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -4614,7 +4620,7 @@ namespace TQVaultData
 		/// <param name="line">line of text</param>
 		/// <param name="font">display font string</param>
 		/// <returns>formatted skill effect string</returns>
-		private static string GetSkillEffect(ItemAttributesData baseAttributeData, int variableNumber, Variable variable, ItemAttributesData currentAttributeData, string line, ref string font)
+		private string GetSkillEffect(ItemAttributesData baseAttributeData, int variableNumber, Variable variable, ItemAttributesData currentAttributeData, string line, ref string font)
 		{
 			string labelTag = ItemAttributes.GetAttributeTextTag(baseAttributeData);
 			if (string.IsNullOrEmpty(labelTag))
@@ -4632,7 +4638,7 @@ namespace TQVaultData
 
 			if (TQDebug.ItemDebugLevel > 2)
 			{
-				TQDebug.DebugWriteLine("Item.label (scroll) = " + label);
+				Log.Debug("Item.label (scroll) = " + label);
 			}
 
 			label = ItemAttributes.ConvertFormat(label);
@@ -4666,7 +4672,7 @@ namespace TQVaultData
 				{
 					if (TQDebug.ItemDebugLevel > 2)
 					{
-						TQDebug.DebugWriteLine("Item.formatspec (2 parameter) = " + formatSpec);
+						Log.Debug("Item.formatspec (2 parameter) = " + formatSpec);
 					}
 
 					formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -4747,7 +4753,7 @@ namespace TQVaultData
 		{
 			if (TQDebug.ItemDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Item.GetDynamicRequirementsFromRecord({0}, {1})", requirements, itemInfo));
+				Log.DebugFormat(CultureInfo.InvariantCulture, "Item.GetDynamicRequirementsFromRecord({0}, {1})", requirements, itemInfo);
 			}
 
 			DBRecordCollection record = Database.DB.GetRecordFromFile(itemInfo.ItemId);
@@ -4778,7 +4784,7 @@ namespace TQVaultData
 
 			if (TQDebug.ItemDebugLevel > 1)
 			{
-				TQDebug.DebugWriteLine(record.Id);
+				Log.Debug(record.Id);
 			}
 
 			string prefix = GetRequirementEquationPrefix(itemInfo.ItemClass);
@@ -4791,7 +4797,7 @@ namespace TQVaultData
 
 				if (TQDebug.ItemDebugLevel > 2)
 				{
-					TQDebug.DebugWriteLine(variable.Name);
+					Log.Debug(variable.Name);
 				}
 
 				if (FilterValue(variable, true))
@@ -4862,7 +4868,7 @@ namespace TQVaultData
 
 				if (TQDebug.ItemDebugLevel > 2)
 				{
-					TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Added Requirement {0}={1}", key, value));
+					Log.DebugFormat(CultureInfo.InvariantCulture, "Added Requirement {0}={1}", key, value);
 				}
 
 				requirements.Add(key, ans);
@@ -4870,7 +4876,7 @@ namespace TQVaultData
 
 			if (TQDebug.ItemDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine("Exiting Item.GetDynamicRequirementsFromRecord()");
+				Log.Debug("Exiting Item.GetDynamicRequirementsFromRecord()");
 			}
 		}
 
@@ -4890,14 +4896,14 @@ namespace TQVaultData
 		{
 			if (TQDebug.ItemDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine(string.Format(
+				Log.DebugFormat(
 					CultureInfo.InvariantCulture,
 					"Item.GetAttributesFromRecord({0}, {1}, {2}, {3}, {4})",
 					record,
 					filtering,
 					recordId,
 					results,
-					convertStrings));
+					convertStrings);
 			}
 
 			// First get a list of attributes, grouped by effect.
@@ -4906,7 +4912,7 @@ namespace TQVaultData
 			{
 				if (TQDebug.ItemDebugLevel > 0)
 				{
-					TQDebug.DebugWriteLine("Error - record was null.");
+					Log.Debug("Error - record was null.");
 				}
 
 				results.Add("<unknown>");
@@ -4915,7 +4921,7 @@ namespace TQVaultData
 
 			if (TQDebug.ItemDebugLevel > 1)
 			{
-				TQDebug.DebugWriteLine(record.Id);
+				Log.Debug(record.Id);
 			}
 
 			// Added by Village Idiot
@@ -4927,7 +4933,7 @@ namespace TQVaultData
 			{
 				if (TQDebug.ItemDebugLevel > 2)
 				{
-					TQDebug.DebugWriteLine(variable.Name);
+					Log.Debug(variable.Name);
 				}
 
 				if (FilterValue(variable, !filtering))
@@ -4951,7 +4957,7 @@ namespace TQVaultData
 					// unknown attribute
 					if (TQDebug.ItemDebugLevel > 2)
 					{
-						TQDebug.DebugWriteLine("Unknown Attribute");
+						Log.Debug("Unknown Attribute");
 					}
 
 					data = new ItemAttributesData(ItemAttributesEffectType.Other, variable.Name, variable.Name, string.Empty, 0);
@@ -5094,7 +5100,7 @@ namespace TQVaultData
 
 			if (TQDebug.ItemDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine("Exiting Item.GetAttributesFromRecord()");
+				Log.Debug("Exiting Item.GetAttributesFromRecord()");
 			}
 		}
 
@@ -5110,14 +5116,14 @@ namespace TQVaultData
 		{
 			if (TQDebug.ItemDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine(string.Format(
+				Log.DebugFormat(
 					CultureInfo.InvariantCulture,
 					"Item.ConvertOffenseAttrToString({0}, {1}, {2}, {3}, {4})",
 					record,
 					attributeList,
 					data,
 					recordId,
-					results));
+					results);
 			}
 
 			// If we are a relic, then sometimes there are multiple values per variable depending on how many pieces we have.
@@ -5282,9 +5288,8 @@ namespace TQVaultData
 
 			if (TQDebug.ItemDebugLevel > 1)
 			{
-				TQDebug.DebugWriteLine(string.Empty);
-				TQDebug.DebugWriteLine("Full attribute = " + data.FullAttribute);
-				TQDebug.DebugWriteLine("Item.label = " + label);
+				Log.Debug("Full attribute = " + data.FullAttribute);
+				Log.Debug("Item.label = " + label);
 			}
 
 			label = ItemAttributes.ConvertFormat(label);
@@ -5634,7 +5639,7 @@ namespace TQVaultData
 						{
 							if (TQDebug.ItemDebugLevel > 2)
 							{
-								TQDebug.DebugWriteLine("Item.formatspec (Damage type) = " + formatSpec);
+								Log.Debug("Item.formatspec (Damage type) = " + formatSpec);
 							}
 
 							formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -5716,7 +5721,7 @@ namespace TQVaultData
 
 			if (TQDebug.ItemDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine("Exiting Item.ConvertOffenseAttrToString()");
+				Log.Debug("Exiting Item.ConvertOffenseAttrToString()");
 			}
 		}
 
@@ -5935,7 +5940,7 @@ namespace TQVaultData
 			{
 				if (TQDebug.ItemDebugLevel > 2)
 				{
-					TQDebug.DebugWriteLine("Item.formatspec (single) = " + formatSpec);
+					Log.Debug("Item.formatspec (single) = " + formatSpec);
 				}
 
 				formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -6042,7 +6047,7 @@ namespace TQVaultData
 			{
 				if (TQDebug.ItemDebugLevel > 2)
 				{
-					TQDebug.DebugWriteLine("Item.formatspec (range) = " + formatSpec);
+					Log.Debug("Item.formatspec (range) = " + formatSpec);
 				}
 
 				formatSpec = ItemAttributes.ConvertFormat(formatSpec);
@@ -6445,13 +6450,13 @@ namespace TQVaultData
 		{
 			if (TQDebug.ItemDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine(string.Format(
+				Log.DebugFormat(
 					CultureInfo.InvariantCulture,
 					"Item.ConvertAttrListToString ({0}, {1}, {2}, {3})",
 					record,
 					attributeList,
 					recordId,
-					results));
+					results);
 			}
 
 			// see what kind of effects are in this list
@@ -6462,7 +6467,7 @@ namespace TQVaultData
 				// unknown attribute
 				if (TQDebug.ItemDebugLevel > 0)
 				{
-					TQDebug.DebugWriteLine("Error - Unknown Attribute.");
+					Log.Debug("Error - Unknown Attribute.");
 				}
 
 				data = new ItemAttributesData(ItemAttributesEffectType.Other, variable.Name, variable.Name, string.Empty, 0);
@@ -6470,7 +6475,7 @@ namespace TQVaultData
 
 			if (TQDebug.ItemDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine("Exiting Item.ConvertAttrListToString ()");
+				Log.Debug("Exiting Item.ConvertAttrListToString ()");
 			}
 
 			this.ConvertOffenseAttributesToString(record, attributeList, data, recordId, results);

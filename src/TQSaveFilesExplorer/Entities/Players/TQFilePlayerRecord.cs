@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace TQ.SaveFilesExplorer.Entities.Players
 {
-	// TODO passer TQFilePlayerRecordKey & PlayerRecordKeyDescriptor en generic et remonter la logique dans TQFileRecord 
 	public class TQFilePlayerRecord : TQFileRecord
 	{
 		#region Align versions and known keys for player records
@@ -51,11 +50,10 @@ namespace TQ.SaveFilesExplorer.Entities.Players
 		/// <summary>
 		/// Try to read value from the file
 		/// </summary>
-		/// <param name="file"></param>
-		public override void ReadValue(byte[] file)
+		public override void ReadValue()
 		{
 			DefineDataType();
-			base.ReadValue(file);
+			base.ReadValue();
 		}
 
 	}

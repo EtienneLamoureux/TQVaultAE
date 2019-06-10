@@ -1,3 +1,5 @@
+using TQVaultAE.GUI.Components;
+
 namespace TQVaultAE.GUI
 {
 	/// <summary>
@@ -44,32 +46,32 @@ namespace TQVaultAE.GUI
 		private void InitializeComponent()
 		{
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CharacterEditDialog));
-            this.ok = new TQVaultAE.GUI.ScalingButton();
-            this.cancel = new TQVaultAE.GUI.ScalingButton();
-            this.strengthLabel = new TQVaultAE.GUI.ScalingLabel();
-            this.dexterityLabel = new TQVaultAE.GUI.ScalingLabel();
-            this.IntelligenceLabel = new TQVaultAE.GUI.ScalingLabel();
-            this.healthLabel = new TQVaultAE.GUI.ScalingLabel();
-            this.manaLabel = new TQVaultAE.GUI.ScalingLabel();
+            this.ok = new TQVaultAE.GUI.Components.ScalingButton();
+            this.cancel = new TQVaultAE.GUI.Components.ScalingButton();
+            this.strengthLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.dexterityLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.IntelligenceLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.healthLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.manaLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.attribGroupBox = new System.Windows.Forms.GroupBox();
-            this.redistrbuteCheckbox = new TQVaultAE.GUI.ScalingCheckBox();
+            this.redistrbuteCheckbox = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.manacUpDown = new System.Windows.Forms.NumericUpDown();
             this.healthUpDown = new System.Windows.Forms.NumericUpDown();
             this.intelligenceUpDown = new System.Windows.Forms.NumericUpDown();
             this.dexterityUpDown = new System.Windows.Forms.NumericUpDown();
             this.strengthUpDown = new System.Windows.Forms.NumericUpDown();
             this.levelingGroupBox = new System.Windows.Forms.GroupBox();
-            this.levelingCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.difficultyLabel = new TQVaultAE.GUI.ScalingLabel();
+            this.levelingCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.difficultyLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.difficultlyComboBox = new System.Windows.Forms.ComboBox();
             this.skillPointsNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.skillPointsLabel1 = new TQVaultAE.GUI.ScalingLabel();
+            this.skillPointsLabel1 = new TQVaultAE.GUI.Components.ScalingLabel();
             this.attributeNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.attributeLabel1 = new TQVaultAE.GUI.ScalingLabel();
+            this.attributeLabel1 = new TQVaultAE.GUI.Components.ScalingLabel();
             this.xpTextBox = new System.Windows.Forms.TextBox();
-            this.xpLabel1 = new TQVaultAE.GUI.ScalingLabel();
+            this.xpLabel1 = new TQVaultAE.GUI.Components.ScalingLabel();
             this.levelNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.levelLabel1 = new TQVaultAE.GUI.ScalingLabel();
+            this.levelLabel1 = new TQVaultAE.GUI.Components.ScalingLabel();
             this.attribGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.manacUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.healthUpDown)).BeginInit();

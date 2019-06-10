@@ -51,11 +51,10 @@ namespace TQ.SaveFilesExplorer.Entities.TransferStash
 		/// <summary>
 		/// Try to read value from the file
 		/// </summary>
-		/// <param name="file"></param>
-		public override void ReadValue(byte[] file)
+		public override void ReadValue()
 		{
 			DefineDataType();
-			base.ReadValue(file);
+			base.ReadValue();
 		}
 
 	}

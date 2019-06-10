@@ -3,7 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultData
+namespace TQVaultAE.DAL
 {
 	using System;
 	using System.Collections.Generic;
@@ -97,6 +97,8 @@ namespace TQVaultData
 	/// </summary>
 	public static class ItemAttributes
 	{
+		private static readonly log4net.ILog Log = Logging.Logger.Get(typeof(ItemAttributes));
+
 		#region ItemAttributes Fields
 
 		/// <summary>
@@ -643,7 +645,7 @@ namespace TQVaultData
 		{
 			if (TQDebug.ItemAttributesDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "ItemAttributes.ConvertFormatString({0})", formatValue));
+				Log.DebugFormat(CultureInfo.InvariantCulture, "ItemAttributes.ConvertFormatString({0})", formatValue);
 			}
 
 			// Takes a TQ Format string and converts it to a .NET Format string.
@@ -664,7 +666,7 @@ namespace TQVaultData
 				{
 					if (TQDebug.ItemAttributesDebugLevel > 2)
 					{
-						TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Found {{ at {0} (search start was {1})", index, startPosition));
+						Log.DebugFormat(CultureInfo.InvariantCulture, "Found {{ at {0} (search start was {1})", index, startPosition);
 					}
 
 					// Copy everything up to (but not including) the open bracket
@@ -677,7 +679,7 @@ namespace TQVaultData
 					startPosition = ConvertFormatStringBrackets(formatValue, formatStringBuilder, index + 1);
 					if (TQDebug.ItemAttributesDebugLevel > 2)
 					{
-						TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "ConvertFormatStringBrackets() returned new ipos={0}", startPosition));
+						Log.DebugFormat(CultureInfo.InvariantCulture, "ConvertFormatStringBrackets() returned new ipos={0}", startPosition);
 					}
 				}
 			}
@@ -685,12 +687,12 @@ namespace TQVaultData
 			string processedFormatString = formatStringBuilder.ToString();
 			if (TQDebug.ItemAttributesDebugLevel > 1)
 			{
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "'{0}' . '{1}'", formatValue, processedFormatString));
+				Log.DebugFormat(CultureInfo.InvariantCulture, "'{0}' . '{1}'", formatValue, processedFormatString);
 			}
 
 			if (TQDebug.ItemAttributesDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertFormatString()");
+				Log.Debug("Exiting ItemAttributes.ConvertFormatString()");
 			}
 
 			return processedFormatString;
@@ -1134,7 +1136,7 @@ namespace TQVaultData
 		{
 			if (TQDebug.ItemAttributesDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "ItemAttributes.ConvertFormatStringBrackets({0}, {1}, {2})", formatString, answer, startPosition));
+				Log.DebugFormat(CultureInfo.InvariantCulture, "ItemAttributes.ConvertFormatStringBrackets({0}, {1}, {2})", formatString, answer, startPosition);
 			}
 
 			char[] keyChars =
@@ -1156,8 +1158,8 @@ namespace TQVaultData
 					answer.Append(formatString, startPosition, formatString.Length - startPosition);
 					if (TQDebug.ItemAttributesDebugLevel > 0)
 					{
-						TQDebug.DebugWriteLine("Error - No special characters found.");
-						TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertFormatStringBrackets()");
+						Log.Debug("Error - No special characters found.");
+						Log.Debug("Exiting ItemAttributes.ConvertFormatStringBrackets()");
 					}
 
 					return formatString.Length;
@@ -1166,7 +1168,7 @@ namespace TQVaultData
 				{
 					if (TQDebug.ItemAttributesDebugLevel > 2)
 					{
-						TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Found special char({0}) at {1} (searchstart={2})", formatString.Substring(i, 1), i, startPosition));
+						Log.DebugFormat(CultureInfo.InvariantCulture, "Found special char({0}) at {1} (searchstart={2})", formatString.Substring(i, 1), i, startPosition);
 					}
 
 					// We found a special char.  First copy all the crap before the char
@@ -1183,7 +1185,7 @@ namespace TQVaultData
 							{
 								if (TQDebug.ItemAttributesDebugLevel > 0)
 								{
-									TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertFormatStringBrackets()");
+									Log.Debug("Exiting ItemAttributes.ConvertFormatStringBrackets()");
 								}
 
 								return startPosition; // end of the format section.
@@ -1209,8 +1211,8 @@ namespace TQVaultData
 
 									if (TQDebug.ItemAttributesDebugLevel > 0)
 									{
-										TQDebug.DebugWriteLine("Error - Ran out of string to parse.");
-										TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertFormatStringBrackets()");
+										Log.Debug("Error - Ran out of string to parse.");
+										Log.Debug("Exiting ItemAttributes.ConvertFormatStringBrackets()");
 									}
 
 									return formatString.Length;
@@ -1223,9 +1225,12 @@ namespace TQVaultData
 								string newFormatSpec = ConvertScanFormatSpec(precision, formatAlpha, formatNum);
 								if (TQDebug.ItemAttributesDebugLevel > 2)
 								{
-									TQDebug.DebugWrite(string.Format(CultureInfo.InvariantCulture, "<{0}> split into", formatString.Substring(precisionStart - 1, startPosition + 1 - precisionStart + 2)));
-									TQDebug.DebugWrite(string.Format(CultureInfo.InvariantCulture, "<{0}><{1}><{2}>", precision, formatAlpha, formatNum));
-									TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "New ipos={0}", startPosition + 2));
+									Log.DebugFormat(CultureInfo.InvariantCulture
+										, "<{0}> split into<{1}><{2}><{3}>New ipos={4}"
+										, formatString.Substring(precisionStart - 1, startPosition + 1 - precisionStart + 2)
+										, precision, formatAlpha, formatNum
+										, startPosition + 2
+									);
 								}
 
 								answer.Append(newFormatSpec);
@@ -1247,7 +1252,7 @@ namespace TQVaultData
 
 			if (TQDebug.ItemAttributesDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertFormatStringBrackets()");
+				Log.Debug("Exiting ItemAttributes.ConvertFormatStringBrackets()");
 			}
 
 			return startPosition;
@@ -1264,12 +1269,12 @@ namespace TQVaultData
 		{
 			if (TQDebug.ItemAttributesDebugLevel > 0)
 			{
-				TQDebug.DebugWriteLine(string.Format(
+				Log.DebugFormat(
 					CultureInfo.InvariantCulture,
 					"ItemAttributes.ConvertScanfFormatSpec (precision=<{0}>, alpha=<{1}>, formatNum=<{2}>)",
 					precision,
 					alpha,
-					formatNumber));
+					formatNumber);
 			}
 
 			if (alpha.Equals("s"))
@@ -1277,12 +1282,12 @@ namespace TQVaultData
 				// string format.  Ignore precision
 				if (TQDebug.ItemAttributesDebugLevel > 1)
 				{
-					TQDebug.DebugWriteLine("String Format Spec");
+					Log.Debug("String Format Spec");
 				}
 
 				if (TQDebug.ItemAttributesDebugLevel > 0)
 				{
-					TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
+					Log.Debug("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
 				}
 
 				return string.Format(CultureInfo.CurrentCulture, "{{{0}}}", formatNumber);
@@ -1296,12 +1301,12 @@ namespace TQVaultData
 					// simple
 					if (TQDebug.ItemAttributesDebugLevel > 1)
 					{
-						TQDebug.DebugWriteLine("Simple Numeric Format Spec");
+						Log.Debug("Simple Numeric Format Spec");
 					}
 
 					if (TQDebug.ItemAttributesDebugLevel > 0)
 					{
-						TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
+						Log.Debug("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
 					}
 
 					return string.Format(CultureInfo.CurrentCulture, "{{{0}}}", formatNumber);
@@ -1325,7 +1330,7 @@ namespace TQVaultData
 					++ipos;
 					if (TQDebug.ItemAttributesDebugLevel > 1)
 					{
-						TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Parsing Decimals ipos={0}, string=<{1}>", ipos, precision.Substring(ipos, 1)));
+						Log.DebugFormat(CultureInfo.InvariantCulture, "Parsing Decimals ipos={0}, string=<{1}>", ipos, precision.Substring(ipos, 1));
 					}
 
 					// Changed by VillageIdiot
@@ -1338,7 +1343,7 @@ namespace TQVaultData
 
 					if (TQDebug.ItemAttributesDebugLevel > 1)
 					{
-						TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "numDecimals={0}", numDecimals));
+						Log.DebugFormat(CultureInfo.InvariantCulture, "numDecimals={0}", numDecimals);
 					}
 
 					if (numDecimals > 0)
@@ -1353,12 +1358,12 @@ namespace TQVaultData
 					// Gotta get fancy
 					if (TQDebug.ItemAttributesDebugLevel > 1)
 					{
-						TQDebug.DebugWriteLine("Decimal with plus Format Spec");
+						Log.Debug("Decimal with plus Format Spec");
 					}
 
 					if (TQDebug.ItemAttributesDebugLevel > 0)
 					{
-						TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
+						Log.Debug("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
 					}
 
 					return string.Format(CultureInfo.CurrentCulture, "{{{0}:+#0{1};-#0{1}}}", formatNumber, decimalSpec);
@@ -1367,12 +1372,12 @@ namespace TQVaultData
 				{
 					if (TQDebug.ItemAttributesDebugLevel > 1)
 					{
-						TQDebug.DebugWriteLine("Decimal Format Spec");
+						Log.Debug("Decimal Format Spec");
 					}
 
 					if (TQDebug.ItemAttributesDebugLevel > 0)
 					{
-						TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
+						Log.Debug("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
 					}
 
 					return string.Format(CultureInfo.CurrentCulture, "{{{0}:#0{1}}}", formatNumber, decimalSpec);
@@ -1383,12 +1388,12 @@ namespace TQVaultData
 				// unknown
 				if (TQDebug.ItemAttributesDebugLevel > 1)
 				{
-					TQDebug.DebugWriteLine("Error - Unknown Format Spec using default");
+					Log.Debug("Error - Unknown Format Spec using default");
 				}
 
 				if (TQDebug.ItemAttributesDebugLevel > 0)
 				{
-					TQDebug.DebugWriteLine("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
+					Log.Debug("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
 				}
 
 				return string.Format(CultureInfo.CurrentCulture, "{{{0}}}", formatNumber);

@@ -82,8 +82,7 @@ namespace TQ.SaveFilesExplorer.Entities
 		/// <summary>
 		/// Read the value of this key accordingly to the datatype defined for the version of this file
 		/// </summary>
-		/// <param name="file"></param>
-		public virtual void ReadValue(byte[] file)
+		public virtual void ReadValue()
 		{
 			int len = 0;
 			this.ValueEnd = 0;
@@ -91,36 +90,36 @@ namespace TQ.SaveFilesExplorer.Entities
 			{
 				case TQFileDataType.Int:
 					ValueEnd = ValueStart + sizeof(int) - 1; // -1 because ValueStart is first relevant byte
-					DataAsByteArray = new ArraySegment<byte>(file, ValueStart, sizeof(int)).ToArray();
+					DataAsByteArray = new ArraySegment<byte>(this.File.Content, ValueStart, sizeof(int)).ToArray();
 					DataAsInt = BitConverter.ToInt32(DataAsByteArray, 0);
 					break;
 				case TQFileDataType.String1252:
 					// Read StrLen
-					len = BitConverter.ToInt32(new ArraySegment<byte>(file, ValueStart, sizeof(int)).ToArray(), 0);
+					len = BitConverter.ToInt32(new ArraySegment<byte>(this.File.Content, ValueStart, sizeof(int)).ToArray(), 0);
 					// Read Str
 					ValueEnd = ValueStart + sizeof(int) - 1 + len;
-					DataAsByteArray = new ArraySegment<byte>(file, ValueStart + sizeof(int), len).ToArray();
+					DataAsByteArray = new ArraySegment<byte>(this.File.Content, ValueStart + sizeof(int), len).ToArray();
 					DataAsStr = Encoding1252.GetString(DataAsByteArray);
 					break;
 				case TQFileDataType.StringUTF16:
 					// Read StrLen
-					len = BitConverter.ToInt32(new ArraySegment<byte>(file, ValueStart, sizeof(int)).ToArray(), 0);
+					len = BitConverter.ToInt32(new ArraySegment<byte>(this.File.Content, ValueStart, sizeof(int)).ToArray(), 0);
 					// Read Str
 					ValueEnd = ValueStart + sizeof(int) - 1 + (len * 2);
-					DataAsByteArray = new ArraySegment<byte>(file, ValueStart + sizeof(int), len * 2).ToArray();// * 2 because UTF16 has 2 byte encoding
+					DataAsByteArray = new ArraySegment<byte>(this.File.Content, ValueStart + sizeof(int), len * 2).ToArray();// * 2 because UTF16 has 2 byte encoding
 					DataAsStr = EncodingUTF16.GetString(DataAsByteArray); //ReadUTF16String();
 					break;
 				case TQFileDataType.ByteArrayVar:
 					// Read Len
-					len = BitConverter.ToInt32(new ArraySegment<byte>(file, ValueStart, sizeof(int)).ToArray(), 0);
+					len = BitConverter.ToInt32(new ArraySegment<byte>(this.File.Content, ValueStart, sizeof(int)).ToArray(), 0);
 					// Read bytes
 					ValueEnd = ValueStart + sizeof(int) - 1 + len;
-					DataAsByteArray = new ArraySegment<byte>(file, ValueStart + sizeof(int), len).ToArray();
+					DataAsByteArray = new ArraySegment<byte>(this.File.Content, ValueStart + sizeof(int), len).ToArray();
 					break;
 				case TQFileDataType.ByteArray16:
 					// Read bytes
 					ValueEnd = ValueStart + 16 - 1;
-					DataAsByteArray = new ArraySegment<byte>(file, ValueStart, 16).ToArray();
+					DataAsByteArray = new ArraySegment<byte>(this.File.Content, ValueStart, 16).ToArray();
 					break;
 			}
 		}

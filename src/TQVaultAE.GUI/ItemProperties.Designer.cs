@@ -3,6 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Properties;
 
 namespace TQVaultAE.GUI
@@ -84,15 +85,15 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void InitializeComponent()
 		{
-            this.ok = new TQVaultAE.GUI.ScalingButton();
+            this.ok = new TQVaultAE.GUI.Components.ScalingButton();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.itemName = new System.Windows.Forms.WebBrowser();
             this.webBrowser2 = new System.Windows.Forms.WebBrowser();
-            this.label1 = new TQVaultAE.GUI.ScalingLabel();
-            this.label2 = new TQVaultAE.GUI.ScalingLabel();
-            this.checkBox1 = new TQVaultAE.GUI.ScalingCheckBox();
+            this.label1 = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.label2 = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.checkBox1 = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.webBrowser3 = new System.Windows.Forms.WebBrowser();
-            this.label3 = new TQVaultAE.GUI.ScalingLabel();
+            this.label3 = new TQVaultAE.GUI.Components.ScalingLabel();
             this.SuspendLayout();
             // 
             // ok

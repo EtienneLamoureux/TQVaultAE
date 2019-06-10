@@ -3,6 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Properties;
 
 namespace TQVaultAE.GUI
@@ -76,11 +77,11 @@ namespace TQVaultAE.GUI
 		{
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.logoPictureBox = new System.Windows.Forms.PictureBox();
-            this.labelProductName = new TQVaultAE.GUI.ScalingLabel();
-            this.labelVersion = new TQVaultAE.GUI.ScalingLabel();
-            this.labelCopyright = new TQVaultAE.GUI.ScalingLabel();
-            this.textBoxDescription = new TQVaultAE.GUI.ScalingTextBox();
-            this.buttonOK = new TQVaultAE.GUI.ScalingButton();
+            this.labelProductName = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.labelVersion = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.labelCopyright = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.textBoxDescription = new TQVaultAE.GUI.Components.ScalingTextBox();
+            this.buttonOK = new TQVaultAE.GUI.Components.ScalingButton();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).BeginInit();
             this.SuspendLayout();

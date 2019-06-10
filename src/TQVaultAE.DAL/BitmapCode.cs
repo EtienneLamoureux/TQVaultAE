@@ -9,7 +9,7 @@
 // is thread-safe. The only thing which may not be thread-safe are plugins. But
 // since those probably are not being modified, it should be safe.
 
-namespace TQVaultData
+namespace TQVaultAE.DAL
 {
 	using System;
 	using System.Drawing;
