@@ -211,8 +211,8 @@ namespace TQVaultAE.GUI
             this.immortalThronePathBrowseButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.customMapLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.mapListComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
+            this.characterEditCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
 
-            this.characterEditCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
             this.SuspendLayout();
             // 
             // allowItemEditCheckBox

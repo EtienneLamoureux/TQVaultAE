@@ -6,7 +6,7 @@ using System.IO;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
-namespace TQVaultData
+namespace TQVaultAE.DAL
 {
 	/// <summary>
 	/// gathers character data from the player.chr file

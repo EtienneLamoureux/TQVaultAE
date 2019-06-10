@@ -489,7 +489,7 @@ namespace TQVaultAE.DAL
 							}
 							else if (!this.IsVault && playerReader.Match(blockName))
 							{
-								playerReader.Record(blockName,currentOffset);
+								playerReader.Record(blockName, currentOffset);
 							}
 
 							// Print the string with a nesting level indicator
@@ -617,7 +617,7 @@ namespace TQVaultAE.DAL
 						}
 					}
 
-					if(playerReader.FoundPlayerInfo && !this.IsVault)
+					if (playerReader.FoundPlayerInfo && !this.IsVault)
 					{
 						try
 						{
@@ -631,10 +631,9 @@ namespace TQVaultAE.DAL
 							{
 								TQDebug.DebugEnabled = true;
 							}
-
-							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error parsing player file player info Block - '{0}'", this.PlayerName));
-							TQDebug.DebugWriteLine(exception.ToString());
-							throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player player info Block - '{0}'", this.PlayerName), exception);
+							var rethrowex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player player info Block - '{0}'", this.PlayerName), exception);
+							this.Log.ErrorException(rethrowex);
+							throw rethrowex;
 						}
 					}
 				}

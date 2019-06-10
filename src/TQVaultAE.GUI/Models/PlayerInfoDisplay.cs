@@ -7,11 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using TQVaultAE.DAL;
+using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Properties;
 
 using TQVaultData;
 
-namespace TQVaultAE.GUI
+namespace TQVaultAE.GUI.Models
 {
 	/// <summary>
 	/// Displays character information
