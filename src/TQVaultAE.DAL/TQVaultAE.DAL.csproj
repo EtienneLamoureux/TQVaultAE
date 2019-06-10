@@ -82,6 +82,7 @@
     <Compile Include="ArzFile.cs" />
     <Compile Include="BitmapCode.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="DataSerializerExtension.cs" />
     <Compile Include="DBRecordCollection.cs" />
     <Compile Include="IniFile.cs" />
     <Compile Include="IniProperties.cs" />
@@ -89,7 +90,14 @@
     <Compile Include="ItemAttributeListCompare.cs" />
     <Compile Include="ItemAttributeSubListCompare.cs" />
     <Compile Include="LootTableCollection.cs" />
+    <Compile Include="PlayerClass.cs" />
     <Compile Include="PlayerCollection.cs" />
+    <Compile Include="PlayerInfo.cs" />
+    <Compile Include="PlayerInfoIO.cs" />
+    <Compile Include="PlayerInfoKeyPair.cs" />
+    <Compile Include="PlayerInfoReader.cs" />
+    <Compile Include="PlayerInfoWriter.cs" />
+    <Compile Include="PlayerLevel.cs" />
     <Compile Include="SackCollection.cs" />
     <Compile Include="Stash.cs" />
     <Compile Include="TQDebug.cs" />

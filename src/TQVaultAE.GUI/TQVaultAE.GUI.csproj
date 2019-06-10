@@ -90,15 +90,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>77656BB5D4086EA6CBB0DFE35BCABE145B78A40A</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>TQVaultAE.GUI_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net35-full\log4net.dll</HintPath>
@@ -110,6 +101,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="VXPLibrary, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -146,6 +138,13 @@
     <Compile Include="Models\Result.cs" />
     <Compile Include="Models\ResultChangedEventArgs.cs" />
     <Compile Include="Models\SackPanelEventArgs.cs" />
+    <Compile Include="CharacterEditDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CharacterEditDialog.Designer.cs">
+      <DependentUpon>CharacterEditDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PlayerInfoDisplay.cs" />
     <Compile Include="ItemProperties.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -208,6 +207,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ItemProperties.resx">
       <DependentUpon>ItemProperties.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CharacterEditDialog.resx">
+      <DependentUpon>CharacterEditDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ItemSeedDialog.resx">
@@ -337,6 +340,18 @@
       <Link>resources\libs\VXPLib.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="resources\txt\CharacterInfoDisplay.ru.txt" />
+    <None Include="resources\txt\CharacterInfoDisplay.pl.txt" />
+    <None Include="resources\txt\CharacterInfoDisplay.fr.txt" />
+    <None Include="resources\txt\CharacterInfoDisplay.es.txt" />
+    <None Include="resources\txt\CharacterInfoDisplay.de.txt" />
+    <None Include="resources\txt\CharacterInfoDisplay.txt" />
+    <None Include="resources\txt\CharacterClass.pl.txt" />
+    <None Include="resources\txt\CharacterClass.ru.txt" />
+    <None Include="resources\txt\CharacterClass.es.txt" />
+    <None Include="resources\txt\CharacterClass.de.txt" />
+    <None Include="resources\txt\CharacterClass.fr.txt" />
+    <None Include="resources\txt\CharacterClass.txt" />
     <Content Include="resources\img\AboutGraphic.png" />
     <Content Include="resources\img\autosortdown01.png" />
     <Content Include="resources\img\autosortover01.png" />
@@ -359,6 +374,7 @@
     <Content Include="resources\img\EquipmentPanel.png" />
     <Content Include="resources\img\EquipmentPanel_New.jpg" />
     <Content Include="resources\img\EquipmentPanel_New.png" />
+    <None Include="resources\img\equipment_bg_and_char.png" />
     <Content Include="resources\img\Equipment_bg_new.png" />
     <Content Include="resources\img\inventorybagdown01.png" />
     <Content Include="resources\img\inventorybagover01.png" />

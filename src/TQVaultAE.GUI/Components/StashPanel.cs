@@ -78,6 +78,12 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		private Bitmap stashBackground;
 
+		/// <summary>
+		/// Displays character information
+		/// </summary>
+		private PlayerInfoDisplay playerInfoDisplay;
+
+
 		#endregion StashPanel Fields
 
 		/// <summary>
@@ -88,7 +94,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="tooltip">ToolTip instance</param>
 		public StashPanel(ItemDragInfo dragInfo, Size panelSize, TTLib tooltip) : base(dragInfo, 4, panelSize, tooltip, 0, AutoMoveLocation.Stash)
 		{
-			this.equipmentPanel = new EquipmentPanel(10, 14, dragInfo, AutoMoveLocation.Stash);
+			this.equipmentPanel = new EquipmentPanel(16, 14, dragInfo, AutoMoveLocation.Stash);
 
 			this.Controls.Add(this.equipmentPanel);
 			this.equipmentPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
@@ -97,6 +103,11 @@ namespace TQVaultAE.GUI.Components
 			this.equipmentPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
 			this.equipmentPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
 			this.equipmentPanel.OnResizeForm += new EventHandler<ResizeEventArgs>(this.ResizeFormCallback);
+			this.equipmentPanel.MouseMove += new MouseEventHandler(this.StashPanelMouseMove);
+			this.equipmentPanel.MouseLeave += new EventHandler(this.StashPanelMouseLeave);
+			this.equipmentPanel.MouseClick += new MouseEventHandler(this.StashPanelMouseClick);
+			//this.MouseMove += new MouseEventHandler(this.StashPanelMouseMove);
+			//this.MouseHover += new MouseEventHandler(this.StashPanelMouseMove);
 
 			this.Text = Resources.StashPanelText;
 			this.NoPlayerString = Resources.StashPanelText;
@@ -109,7 +120,8 @@ namespace TQVaultAE.GUI.Components
 			this.BagSackPanel.MaxSacks = 1;
 			this.BagSackPanel.Anchor = AnchorStyles.None;
 
-			this.EquipmentBackground = Resources.Equipment_bg_new;
+			//this.EquipmentBackground = Resources.Equipment_bg_new;
+			this.background = this.EquipmentBackground = Resources.equipment_bg_and_char;
 			this.StashBackground = Resources.caravan_bg;
 
 			// Set up the inital font size
@@ -118,7 +130,8 @@ namespace TQVaultAE.GUI.Components
 				this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
 			}
 
-			this.background = Resources.Equipment_bg_new;
+			//x and y coordinates passed are normalized values between 0 and 1.0.   
+			playerInfoDisplay = new PlayerInfoDisplay(Settings.Default, this, this.Font,.83,.14);
 
 			// Now that the buttons are set we can move the panel
 			this.BagSackPanel.SetLocation(new Point(
@@ -383,6 +396,26 @@ namespace TQVaultAE.GUI.Components
 
 		#endregion StashPanel Properties
 
+
+		public void StashPanelMouseLeave(object sender, System.EventArgs e)
+		{
+			if (playerInfoDisplay == null) return;
+			playerInfoDisplay.MouseMove(this, sender, null);
+		}
+
+		public void StashPanelMouseClick(object sender, MouseEventArgs e)
+		{
+			if (playerInfoDisplay == null) return;
+			playerInfoDisplay.MouseMove(this, sender, e);
+			playerInfoDisplay.MouseClick(this, sender, e);
+		}
+
+		public void StashPanelMouseMove(object sender, MouseEventArgs e)
+		{
+			if (playerInfoDisplay == null) return;
+			playerInfoDisplay.MouseMove(this, sender, e);
+		}
+
 		/// <summary>
 		/// Sets the equipment panel background image and cursor background image.
 		/// </summary>
@@ -614,13 +647,35 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="e">PaintEventArgs data</param>
 		protected new void PaintCallback(object sender, PaintEventArgs e)
 		{
-			e.Graphics.DrawImage(this.background, this.GetBackgroundRect());
+			var rect = this.GetBackgroundRect();
+			e.Graphics.DrawImage(this.background, rect);
+			DisplayPlayerInfo(e, rect);
 			base.PaintCallback(sender, e);
 		}
 
 		#endregion StashPanel Protected Methods
 
 		#region StashPanel Private Methods
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="e"></param>
+		/// <param name="rect"></param>
+		private void DisplayPlayerInfo(PaintEventArgs e, Rectangle rect)
+		{
+			if (this.Player == null) return;
+			if (playerInfoDisplay == null) return;
+			if (!this.equipmentPanel.Visible) return;
+
+			//update font if window size has been changed.
+			playerInfoDisplay.UpdateFont(this.Font);
+
+			//displays the character information
+			playerInfoDisplay.DisplayPlayerInfo(e, rect, this.Player.PlayerInfo);
+
+		}
 
 		/// <summary>
 		/// Gets the tooltip for a sack.  Summarizes the items within the sack
