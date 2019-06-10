@@ -22,7 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,7 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -59,6 +59,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\log4net.2.0.8\lib\net35-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -72,6 +75,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\ReleaseVersionInfo.cs">
+      <Link>ReleaseVersionInfo.cs</Link>
+    </Compile>
     <Compile Include="ArcFile.cs" />
     <Compile Include="ArzFile.cs" />
     <Compile Include="BitmapCode.cs" />
@@ -103,12 +109,17 @@
     <Compile Include="Variable.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="TQVaultDataClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExpEval\ExpressionEvaluator.csproj">
       <Project>{E0665CA0-EA9D-452D-BAFC-1F369815423D}</Project>
       <Name>ExpressionEvaluator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TQVaultAE.Logging\TQVaultAE.Logging.csproj">
+      <Project>{74bdd814-3436-4d38-9789-f980309b8a6f}</Project>
+      <Name>TQVaultAE.Logging</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace TQVaultData
+namespace TQVaultAE.DAL
 {
 	/// <summary>
 	/// Character data is saved here after reading through player.chr file

@@ -3,19 +3,22 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultData
+namespace TQVaultAE.DAL
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Globalization;
 	using System.IO;
 	using System.IO.Compression;
+	using TQVaultAE.Logging;
 
 	/// <summary>
 	/// Class for decoding Titan Quest ARZ files.
 	/// </summary>
 	public class ArzFile
 	{
+		private readonly log4net.ILog Log = null;
+
 		/// <summary>
 		/// Name of the ARZ file.
 		/// </summary>
@@ -47,6 +50,8 @@ namespace TQVaultData
 		/// <param name="fileName">name of the ARZ file.</param>
 		public ArzFile(string fileName)
 		{
+			this.Log = Logger.Get(this);
+
 			this.fileName = fileName;
 			this.cache = new Dictionary<string, DBRecordCollection>();
 		}
@@ -134,8 +139,9 @@ namespace TQVaultData
 						}
 					}
 				}
-				catch (IOException)
+				catch (IOException ex)
 				{
+					Log.ErrorException(ex);
 					throw;
 				}
 				finally
@@ -145,13 +151,7 @@ namespace TQVaultData
 			}
 			catch (IOException exception)
 			{
-				if (!TQDebug.DebugEnabled)
-				{
-					TQDebug.DebugEnabled = true;
-				}
-
-				// Write the exception to the debug log.
-				TQDebug.DebugWriteLine(exception.ToString());
+				Log.ErrorException(exception);
 				return false;
 			}
 			finally
@@ -201,7 +201,7 @@ namespace TQVaultData
 				databaseRecord = rawRecord.Decompress(this);
 				this.cache.Add(recordId, databaseRecord);
 			}
-			
+
 			return databaseRecord;
 		}
 
@@ -225,15 +225,16 @@ namespace TQVaultData
 				// If it is already in the cache no need not to use it
 				return this.cache[recordId];
 			}
-			catch (KeyNotFoundException)
+			catch (KeyNotFoundException ex)
 			{
+				Log.Debug("record not found first attempt", ex);
 				try
 				{
 					return this.recordInfo[recordId].Decompress(this);
 				}
-				catch (KeyNotFoundException)
+				catch (KeyNotFoundException exx)
 				{
-					// record not found
+					Log.Debug("record not found second attempt", exx);
 					return null;
 				}
 			}
@@ -345,6 +346,8 @@ namespace TQVaultData
 		/// </summary>
 		private class RecordInfo
 		{
+			private readonly log4net.ILog Log = null;
+
 			/// <summary>
 			/// Offset in the file for this record.
 			/// </summary>
@@ -360,6 +363,8 @@ namespace TQVaultData
 			/// </summary>
 			public RecordInfo()
 			{
+				this.Log = Logger.Get(this);
+
 				this.idStringIndex = -1;
 				this.RecordType = string.Empty;
 			}
@@ -432,15 +437,9 @@ namespace TQVaultData
 
 				if (data.Length % 4 != 0)
 				{
-					// Turn on debugging so we can log the exception.
-					if (!TQDebug.DebugEnabled)
-					{
-						TQDebug.DebugEnabled = true;
-					}
-
-					TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error in ARZFile - {0}", arzFile.fileName));
-					TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, data Length = {1} which is not a multiple of 4", this.ID, (int)data.Length));
-					throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, data Length = {1} which is not a multiple of 4", this.ID, (int)data.Length));
+					var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, data Length = {1} which is not a multiple of 4", this.ID, (int)data.Length));
+					Log.ErrorException(ex);
+					throw ex;
 				}
 
 				DBRecordCollection record = new DBRecordCollection(this.ID, this.RecordType);
@@ -458,43 +457,28 @@ namespace TQVaultData
 
 						if (variableName == null)
 						{
-							// Turn on debugging so we can log the exception.
-							if (!TQDebug.DebugEnabled)
-							{
-								TQDebug.DebugEnabled = true;
-							}
-
-							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error in ARZFile - {0}", arzFile.fileName));
-							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable is NULL", this.ID));
-							throw new ArgumentNullException(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable is NULL", this.ID));
+							var ex = new ArgumentNullException(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable is NULL", this.ID));
+							Log.ErrorFormat(CultureInfo.InvariantCulture, "Error in ARZFile - {0}", arzFile.fileName);
+							Log.ErrorException(ex);
+							throw ex;
 						}
 
 						if (dataType < 0 || dataType > 3)
 						{
-							// Turn on debugging so we can log the exception.
-							if (!TQDebug.DebugEnabled)
-							{
-								TQDebug.DebugEnabled = true;
-							}
-
-							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error in ARZFile - {0}", arzFile.fileName));
-							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable {1}, bad dataType {2}", this.ID, variableName, dataType));
-							throw new ArgumentOutOfRangeException(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable {1}, bad dataType {2}", this.ID, variableName, dataType));
+							var ex = new ArgumentOutOfRangeException(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable {1}, bad dataType {2}", this.ID, variableName, dataType));
+							Log.ErrorFormat(CultureInfo.InvariantCulture, "Error in ARZFile - {0}", arzFile.fileName);
+							Log.ErrorException(ex);
+							throw ex;
 						}
 
 						Variable v = new Variable(variableName, (VariableDataType)dataType, valCount);
 
 						if (valCount < 1)
 						{
-							// Turn on debugging so we can log the exception.
-							if (!TQDebug.DebugEnabled)
-							{
-								TQDebug.DebugEnabled = true;
-							}
-
-							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error in ARZFile - {0}", arzFile.fileName));
-							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable {1}, bad valCount {2}", this.ID, variableName, valCount));
-							throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable {1}, bad valCount {2}", this.ID, variableName, valCount));
+							var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable {1}, bad valCount {2}", this.ID, variableName, valCount));
+							Log.ErrorFormat(CultureInfo.InvariantCulture, "Error in ARZFile - {0}", arzFile.fileName);
+							Log.ErrorException(ex);
+							throw ex;
 						}
 
 						// increment our dword count

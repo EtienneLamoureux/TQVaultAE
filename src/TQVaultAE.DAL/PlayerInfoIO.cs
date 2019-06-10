@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace TQVaultData
+namespace TQVaultAE.DAL
 {
 	public class PlayerInfoIO
 	{

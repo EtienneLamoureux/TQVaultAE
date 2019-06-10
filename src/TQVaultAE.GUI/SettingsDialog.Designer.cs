@@ -3,6 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Properties;
 
 namespace TQVaultAE.GUI
@@ -181,36 +182,37 @@ namespace TQVaultAE.GUI
 		{
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsDialog));
-            this.allowItemEditCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.allowItemCopyCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.skipTitleCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.loadLastCharacterCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.loadLastVaultCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.vaultPathTextBox = new TQVaultAE.GUI.ScalingTextBox();
-            this.vaultPathLabel = new TQVaultAE.GUI.ScalingLabel();
-            this.cancelButton = new TQVaultAE.GUI.ScalingButton();
-            this.okayButton = new TQVaultAE.GUI.ScalingButton();
+            this.allowItemEditCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.allowItemCopyCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.skipTitleCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.loadLastCharacterCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.loadLastVaultCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.vaultPathTextBox = new TQVaultAE.GUI.Components.ScalingTextBox();
+            this.vaultPathLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.cancelButton = new TQVaultAE.GUI.Components.ScalingButton();
+            this.okayButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.resetButton = new TQVaultAE.GUI.ScalingButton();
-            this.vaultPathBrowseButton = new TQVaultAE.GUI.ScalingButton();
+            this.resetButton = new TQVaultAE.GUI.Components.ScalingButton();
+            this.vaultPathBrowseButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.enableCustomMapsCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.loadAllFilesCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.suppressWarningsCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.playerReadonlyCheckbox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.characterEditCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.languageComboBox = new TQVaultAE.GUI.ScalingComboBox();
-            this.languageLabel = new TQVaultAE.GUI.ScalingLabel();
-            this.detectLanguageCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.titanQuestPathTextBox = new TQVaultAE.GUI.ScalingTextBox();
-            this.titanQuestPathLabel = new TQVaultAE.GUI.ScalingLabel();
-            this.immortalThronePathLabel = new TQVaultAE.GUI.ScalingLabel();
-            this.immortalThronePathTextBox = new TQVaultAE.GUI.ScalingTextBox();
-            this.detectGamePathsCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.titanQuestPathBrowseButton = new TQVaultAE.GUI.ScalingButton();
-            this.immortalThronePathBrowseButton = new TQVaultAE.GUI.ScalingButton();
-            this.customMapLabel = new TQVaultAE.GUI.ScalingLabel();
-            this.mapListComboBox = new TQVaultAE.GUI.ScalingComboBox();
+            this.enableCustomMapsCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.loadAllFilesCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.suppressWarningsCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.playerReadonlyCheckbox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.languageComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
+            this.languageLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.detectLanguageCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.titanQuestPathTextBox = new TQVaultAE.GUI.Components.ScalingTextBox();
+            this.titanQuestPathLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.immortalThronePathLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.immortalThronePathTextBox = new TQVaultAE.GUI.Components.ScalingTextBox();
+            this.detectGamePathsCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.titanQuestPathBrowseButton = new TQVaultAE.GUI.Components.ScalingButton();
+            this.immortalThronePathBrowseButton = new TQVaultAE.GUI.Components.ScalingButton();
+            this.customMapLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.mapListComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
+            this.characterEditCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+
             this.SuspendLayout();
             // 
             // allowItemEditCheckBox

@@ -131,11 +131,9 @@ namespace TQ.SaveFilesExplorer.Entities
 		{
 			FindFileVersion();
 
-			#region Remove noise and select record type
+			#region select record type
 
 			var records = this.Records
-			// Remove all keys that don't match keylen (false match.Success)
-			.Where(m => m.KeyLengthAsInt == m.KeyName.Length)
 			.Select(m =>
 			{
 				TQFileRecord retval = null;
@@ -147,8 +145,6 @@ namespace TQ.SaveFilesExplorer.Entities
 					case Ext_SharedStash:
 					case Ext_SharedStashBackup:
 						retval = Mapper.Map<TQFilePlayerTransferStashRecord>(m);
-						// Not Yet
-						//throw new NotImplementedException();
 						break;
 					default:
 						throw new ArgumentException("must be a file with extension chr, dxb, dxg");
@@ -158,7 +154,7 @@ namespace TQ.SaveFilesExplorer.Entities
 			.ToList();
 
 			// Try read values
-			records.ForEach(r => r.ReadValue(this.Content));
+			records.ForEach(r => r.ReadValue());
 
 			#endregion
 

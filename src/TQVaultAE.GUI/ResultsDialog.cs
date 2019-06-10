@@ -12,7 +12,8 @@ namespace TQVaultAE.GUI
 	using System.Globalization;
 	using System.Windows.Forms;
 	using Tooltip;
-	using TQVaultData;
+	using TQVaultAE.GUI.Models;
+	using TQVaultAE.DAL;
 
 	/// <summary>
 	/// Results dialog form class

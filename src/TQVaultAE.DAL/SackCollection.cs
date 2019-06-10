@@ -3,13 +3,14 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultData
+namespace TQVaultAE.DAL
 {
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Drawing;
 	using System.IO;
+	using TQVaultAE.Logging;
 
 	/// <summary>
 	/// Sack panel types
@@ -62,6 +63,8 @@ namespace TQVaultData
 	/// </summary>
 	public class SackCollection : IEnumerable<Item>
 	{
+		private readonly log4net.ILog Log = null;
+
 		/// <summary>
 		/// Cell offsets for the slots in the equipment panel.
 		/// Indicates the upper left cell of the slot.
@@ -171,6 +174,8 @@ namespace TQVaultData
 		/// </summary>
 		public SackCollection()
 		{
+			this.Log = Logger.Get(this);
+
 			this.items = new List<Item>();
 			this.sackType = SackType.Sack;
 		}
@@ -659,10 +664,11 @@ namespace TQVaultData
 				TQData.ValidateNextString("end_block", reader);
 				this.endBlockCrap = reader.ReadInt32();
 			}
-			catch (ArgumentException)
+			catch (ArgumentException ex)
 			{
 				// The ValidateNextString Method can throw an ArgumentException.
 				// We just pass it along at this point.
+				Log.Debug("ValidateNextString fail !", ex);
 				throw;
 			}
 		}
