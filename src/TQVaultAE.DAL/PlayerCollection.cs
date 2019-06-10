@@ -108,6 +108,11 @@ namespace TQVaultData
 		public SackCollection EquipmentSack { get; private set; }
 
 		/// <summary>
+		/// Holds playerInfo
+		/// </summary>
+		public PlayerInfo PlayerInfo { get; private set; }
+
+		/// <summary>
 		/// Gets the player file name
 		/// </summary>
 		public string PlayerFile { get; private set; }
@@ -136,6 +141,14 @@ namespace TQVaultData
 					if (this.EquipmentSack.IsModified)
 					{
 						return true;
+					}
+				}
+
+				if (this.PlayerInfo != null)
+				{
+					if (this.PlayerInfo.Modified)
+					{
+						return (true);
 					}
 				}
 
@@ -198,6 +211,32 @@ namespace TQVaultData
 			}
 		}
 
+
+		public void CommitPlayerInfo(PlayerInfo playerInfo)
+		{
+			if (this.PlayerInfo == null) return;
+			if (playerInfo == null) return;
+			if (rawData == null || rawData.Length < 1) return;
+
+			var writer = new PlayerInfoWriter();
+			//validate the current data against the raw file
+			//there should be no changes 
+			writer.Validate(this.PlayerInfo, this.rawData);
+			this.PlayerInfo.CurrentLevel = playerInfo.CurrentLevel;
+			this.PlayerInfo.CurrentXP = playerInfo.CurrentXP;
+			this.PlayerInfo.DifficultyUnlocked = playerInfo.DifficultyUnlocked;
+			this.PlayerInfo.AttributesPoints = playerInfo.AttributesPoints;
+			this.PlayerInfo.SkillPoints = playerInfo.SkillPoints;
+			this.PlayerInfo.BaseStrength = playerInfo.BaseStrength;
+			this.PlayerInfo.BaseDexterity = playerInfo.BaseDexterity;
+			this.PlayerInfo.BaseIntelligence = playerInfo.BaseIntelligence;
+			this.PlayerInfo.BaseHealth = playerInfo.BaseHealth;
+			this.PlayerInfo.BaseMana = playerInfo.BaseMana;
+			this.PlayerInfo.Money = playerInfo.Money;
+			//commit the player changes to the raw file
+			writer.Commit(this.PlayerInfo, this.rawData);
+		}
+
 		/// <summary>
 		/// Non Generic enumerator interface.
 		/// </summary>
@@ -222,6 +261,7 @@ namespace TQVaultData
 				this.sacks[i].IsModified = false;
 			}
 		}
+
 
 		/// <summary>
 		/// Attempts to save the file.
@@ -392,6 +432,7 @@ namespace TQVaultData
 					int currentOffset = 0;
 					int itemOffset = 0;
 					int equipmentOffset = 0;
+					var playerReader = new PlayerInfoReader();
 
 					// vaults start at the item data with no crap
 					bool foundItems = this.IsVault;
@@ -439,6 +480,10 @@ namespace TQVaultData
 								currentOffset += 4;
 								equipmentOffset = currentOffset; // skip value for useAlternate
 								foundEquipment = true;
+							}
+							else if (!this.IsVault && playerReader.Match(blockName))
+							{
+								playerReader.Record(blockName,currentOffset);
 							}
 
 							// Print the string with a nesting level indicator
@@ -589,6 +634,27 @@ namespace TQVaultData
 							TQDebug.DebugWriteLine(exception.ToString());
 						}
 					}
+
+					if(playerReader.FoundPlayerInfo && !this.IsVault)
+					{
+						try
+						{
+							playerReader.Read(reader);
+							this.PlayerInfo = playerReader.GetPlayerInfo();
+
+						}
+						catch (ArgumentException exception)
+						{
+							if (!TQDebug.DebugEnabled)
+							{
+								TQDebug.DebugEnabled = true;
+							}
+
+							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error parsing player file player info Block - '{0}'", this.PlayerName));
+							TQDebug.DebugWriteLine(exception.ToString());
+							throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player player info Block - '{0}'", this.PlayerName), exception);
+						}
+					}
 				}
 			}
 		}
@@ -723,6 +789,7 @@ namespace TQVaultData
 			Array.Copy(data, realData, dataLength);
 			return realData;
 		}
+
 
 		/// <summary>
 		/// Parses the binary equipment block data

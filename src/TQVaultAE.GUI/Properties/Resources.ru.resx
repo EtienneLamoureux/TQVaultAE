@@ -995,4 +995,68 @@ Would you like to disable loading all files?</value>
   <data name="GlobalRelicVaultStash" xml:space="preserve">
     <value>реликвия Свод</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="CharacterClass" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\txt\CharacterClass.ru.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="CharacterInfoDisplay" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\txt\CharacterInfoDisplay.ru.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="SettingsAllowEditCE" xml:space="preserve">
+    <value>Разрешить функции редактирования символов</value>
+  </data>
+  <data name="Difficulty0" xml:space="preserve">
+    <value>Нормальный</value>
+  </data>
+  <data name="Difficulty1" xml:space="preserve">
+    <value>эпический</value>
+  </data>
+  <data name="Difficulty2" xml:space="preserve">
+    <value>легендарный</value>
+  </data>
+  <data name="CEAttributePoints" xml:space="preserve">
+    <value>Атрибутивные очки</value>
+  </data>
+  <data name="CEAttributes" xml:space="preserve">
+    <value>Базовые атрибуты</value>
+  </data>
+  <data name="CEDexterity" xml:space="preserve">
+    <value>Ловкость</value>
+  </data>
+  <data name="CEDifficulty" xml:space="preserve">
+    <value>трудность</value>
+  </data>
+  <data name="CEEnableLeveling" xml:space="preserve">
+    <value>Включить выравнивание</value>
+  </data>
+  <data name="CEEnableRedistribute" xml:space="preserve">
+    <value>Включить перераспределение</value>
+  </data>
+  <data name="CEHealth" xml:space="preserve">
+    <value>Здоровье</value>
+  </data>
+  <data name="CEIntelligence" xml:space="preserve">
+    <value>интеллект</value>
+  </data>
+  <data name="CELevel" xml:space="preserve">
+    <value>уровень</value>
+  </data>
+  <data name="CELeveling" xml:space="preserve">
+    <value>нивелирование</value>
+  </data>
+  <data name="CEMana" xml:space="preserve">
+    <value>Mana</value>
+  </data>
+  <data name="CESkillPoints" xml:space="preserve">
+    <value>Очки навыка</value>
+  </data>
+  <data name="CEStrength" xml:space="preserve">
+    <value>Прочность</value>
+  </data>
+  <data name="CEXp" xml:space="preserve">
+    <value>XP</value>
+  </data>
+  <data name="CharacterEditBtn" xml:space="preserve">
+    <value>монтировать</value>
+  </data>
 </root>

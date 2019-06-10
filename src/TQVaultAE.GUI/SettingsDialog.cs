@@ -40,6 +40,11 @@ namespace TQVaultAE.GUI
 		private bool allowItemEdit;
 
 		/// <summary>
+		/// Indicates whether character editing is allowed
+		/// </summary>
+		private bool allowCharacterEdit;
+
+		/// <summary>
 		/// Indicates whether the last opened character will be loaded at startup
 		/// </summary>
 		private bool loadLastCharacter;
@@ -193,7 +198,9 @@ namespace TQVaultAE.GUI
 			this.allowItemCopyCheckBox.Text = Resources.SettingsAllowCopy;
 			this.toolTip.SetToolTip(this.allowItemCopyCheckBox, Resources.SettingsAllowCopyTT);
 			this.allowItemEditCheckBox.Text = Resources.SettingsAllowEdit;
-			this.toolTip.SetToolTip(this.allowItemEditCheckBox, Resources.SettingsAllowEditTT);
+			this.toolTip.SetToolTip(this.allowItemEditCheckBox, Resources.SettingsAllowEdit);
+			this.characterEditCheckBox.Text = Resources.SettingsAllowEditCE;
+			this.toolTip.SetToolTip(this.characterEditCheckBox, Resources.SettingsAllowEditCE);
 			this.loadLastCharacterCheckBox.Text = Resources.SettingsLoadChar;
 			this.toolTip.SetToolTip(this.loadLastCharacterCheckBox, Resources.SettingsLoadCharTT);
 			this.loadLastVaultCheckBox.Text = Resources.SettingsLoadVault;
@@ -225,6 +232,7 @@ namespace TQVaultAE.GUI
 			{
 				this.allowItemEditCheckBox.Visible = false;
 				this.allowItemCopyCheckBox.Visible = false;
+				this.characterEditCheckBox.Visible = false;
 			}
 		}
 
@@ -412,6 +420,7 @@ namespace TQVaultAE.GUI
 			this.vaultPath = Settings.Default.VaultPath;
 			this.allowItemCopy = Settings.Default.AllowItemCopy;
 			this.allowItemEdit = Settings.Default.AllowItemEdit;
+			this.allowCharacterEdit = Settings.Default.AllowCharacterEdit;
 			this.loadLastCharacter = Settings.Default.LoadLastCharacter;
 			this.loadLastVault = Settings.Default.LoadLastVault;
 			this.detectLanguage = Settings.Default.AutoDetectLanguage;
@@ -475,6 +484,7 @@ namespace TQVaultAE.GUI
 			this.skipTitleCheckBox.Checked = this.skipTitle;
 			this.allowItemEditCheckBox.Checked = this.allowItemEdit;
 			this.allowItemCopyCheckBox.Checked = this.allowItemCopy;
+			this.characterEditCheckBox.Checked = this.allowCharacterEdit;
 			this.loadLastCharacterCheckBox.Checked = this.loadLastCharacter;
 			this.loadLastVaultCheckBox.Checked = this.loadLastVault;
 			this.detectLanguageCheckBox.Checked = this.detectLanguage;
@@ -516,6 +526,7 @@ namespace TQVaultAE.GUI
 				Settings.Default.VaultPath = this.vaultPath;
 				Settings.Default.AllowItemCopy = this.allowItemCopy;
 				Settings.Default.AllowItemEdit = this.allowItemEdit;
+				Settings.Default.AllowCharacterEdit = this.allowCharacterEdit;
 				Settings.Default.LoadLastCharacter = this.loadLastCharacter;
 				Settings.Default.LoadLastVault = this.loadLastVault;
 				Settings.Default.AutoDetectLanguage = this.detectLanguage;
@@ -928,6 +939,26 @@ namespace TQVaultAE.GUI
 				}
 			}
 
+		}
+
+		private void CharacterEditCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			if (this.characterEditCheckBox.Checked)
+			{
+				if (this.allowCharacterEdit == false)
+				{
+					this.allowCharacterEdit = true;
+					this.configurationChanged = true;
+				}
+			}
+			else
+			{
+				if (this.allowCharacterEdit == true)
+				{
+					this.allowCharacterEdit = false;
+					this.configurationChanged = true;
+				}
+			}
 		}
 	}
 }

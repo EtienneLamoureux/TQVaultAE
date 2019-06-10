@@ -476,6 +476,26 @@ namespace TQVaultData
 			return ans;
 		}
 
+
+		/// <summary>
+		/// Reads a string from the binary stream.
+		/// Expects an integer length value followed by the actual string of the stated length.
+		/// </summary>
+		/// <param name="reader">BinaryReader instance</param>
+		/// <returns>string of data that was read</returns>
+		public static string ReadUTF16String(BinaryReader reader)
+		{
+			// first 4 bytes is the string length, followed by the string.
+			int len = reader.ReadInt32();
+			len *= 2;// 2 byte chars
+			var rawData = reader.ReadBytes(len);
+
+			//convert bytes string
+			return(UnicodeEncoding.Unicode.GetString(rawData));
+
+		}
+
+
 		/// <summary>
 		/// Reads a value from the registry
 		/// </summary>
