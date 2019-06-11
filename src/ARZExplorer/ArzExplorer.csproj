@@ -141,6 +141,10 @@
       <Project>{8A958C36-52A9-4EB5-A6CF-00B26FCE795C}</Project>
       <Name>TQVaultAE.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TQVaultAE.Entities\TQVaultAE.Entities.csproj">
+      <Project>{8A958C36-52A9-4EB5-A6CF-00B26FCE795C}</Project>
+      <Name>TQVaultAE.Entities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
