@@ -3,7 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.DAL
+namespace TQVaultAE.Entities
 {
 	/// <summary>
 	/// Used to hold the data for the item attributes

@@ -11,6 +11,7 @@ namespace ArzExplorer
 	using System.Threading;
 	using System.Windows.Forms;
 	using TQVaultAE.DAL;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// ARZ file extraction progress dialog

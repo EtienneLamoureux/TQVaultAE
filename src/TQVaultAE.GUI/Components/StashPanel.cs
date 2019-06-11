@@ -14,6 +14,7 @@ namespace TQVaultAE.GUI.Components
 	using Tooltip;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.DAL;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// Class for handling the stash panel ui functions

@@ -3,68 +3,21 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.DAL
+namespace TQVaultAE.Entities
 {
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Drawing;
 	using System.IO;
-	using TQVaultAE.Logging;
+	using TQVaultAE.Entities;
 
-	/// <summary>
-	/// Sack panel types
-	/// </summary>
-	public enum SackType
-	{
-		/// <summary>
-		/// Sack panel
-		/// </summary>
-		Sack = 0,
-
-		/// <summary>
-		/// Stash panel
-		/// </summary>
-		Stash,
-
-		/// <summary>
-		/// Equipment panel
-		/// </summary>
-		Equipment,
-
-		/// <summary>
-		/// Player panel
-		/// </summary>
-		Player,
-
-		/// <summary>
-		/// Vault panel
-		/// </summary>
-		Vault,
-
-		/// <summary>
-		/// Trash panel
-		/// </summary>
-		Trash,
-
-		/// <summary>
-		/// Transfer stash
-		/// </summary>
-		TransferStash,
-
-		/// <summary>
-		/// Relic Vault stash
-		/// </summary>
-		RelicVaultStash
-	}
 
 	/// <summary>
 	/// Encodes and decodes a Titan Quest item sack from a player file.
 	/// </summary>
 	public class SackCollection : IEnumerable<Item>
 	{
-		private readonly log4net.ILog Log = null;
-
 		/// <summary>
 		/// Cell offsets for the slots in the equipment panel.
 		/// Indicates the upper left cell of the slot.
@@ -127,55 +80,53 @@ namespace TQVaultAE.DAL
 		/// <summary>
 		/// Begin Block header in the file.
 		/// </summary>
-		private int beginBlockCrap;
+		public int beginBlockCrap;
 
 		/// <summary>
 		/// End Block header in the file
 		/// </summary>
-		private int endBlockCrap;
+		public int endBlockCrap;
 
 		/// <summary>
 		/// TempBool entry in the file.
 		/// </summary>
-		private int tempBool;
+		public int tempBool;
 
 		/// <summary>
 		/// Number of items in the sack according to TQ.
 		/// </summary>
-		private int size;
+		public int size;
 
 		/// <summary>
 		/// Items contained in this sack
 		/// </summary>
-		private List<Item> items;
+		public List<Item> items;
 
 		/// <summary>
 		/// Flag to indicate this sack has been modified.
 		/// </summary>
-		private bool isModified;
+		public bool isModified;
 
 		/// <summary>
 		/// Indicates the type of sack
 		/// </summary>
-		private SackType sackType;
+		public SackType sackType;
 
 		/// <summary>
 		/// Indicates whether this is Immortal Throne
 		/// </summary>
-		private bool isImmortalThrone;
+		public bool isImmortalThrone;
 
 		/// <summary>
 		/// Number of equipment slots
 		/// </summary>
-		private int slots;
+		public int slots;
 
 		/// <summary>
 		/// Initializes a new instance of the SackCollection class.
 		/// </summary>
 		public SackCollection()
 		{
-			this.Log = Logger.Get(this);
-
 			this.items = new List<Item>();
 			this.sackType = SackType.Sack;
 		}
@@ -476,201 +427,6 @@ namespace TQVaultAE.DAL
 			return ans;
 		}
 
-		/// <summary>
-		/// Encodes the sack into binary form
-		/// </summary>
-		/// <param name="writer">BinaryWriter instance</param>
-		public void Encode(BinaryWriter writer)
-		{
-			if (this.sackType == SackType.Stash)
-			{
-				// Item stacks are stored as single items in the stash
-				TQData.WriteCString(writer, "numItems");
-				writer.Write(this.Count);
-			}
-			else if (this.sackType == SackType.Equipment)
-			{
-				// Nothing special except to skip all of the other header crap
-				// since the number of items is always fixed.
-			}
-			else
-			{
-				TQData.WriteCString(writer, "begin_block");
-				writer.Write(this.beginBlockCrap);
 
-				TQData.WriteCString(writer, "tempBool");
-				writer.Write(this.tempBool);
-
-				TQData.WriteCString(writer, "size");
-				writer.Write(this.CountTQItems());
-			}
-
-			int slotNumber = -1;
-			foreach (Item item in this)
-			{
-				++slotNumber;
-				item.ContainerType = this.sackType;
-				int itemAttached = 0;
-				int alternate = 0;
-
-				// Additional logic to encode the weapon slots in the equipment section
-				if (this.sackType == SackType.Equipment && (slotNumber == 7 || slotNumber == 9))
-				{
-					TQData.WriteCString(writer, "begin_block");
-					writer.Write(this.beginBlockCrap);
-
-					TQData.WriteCString(writer, "alternate");
-					if (slotNumber == 9)
-					{
-						// Only set the flag for the second set of weapons
-						alternate = 1;
-					}
-					else
-					{
-						// Otherwise set the flag to false.
-						alternate = 0;
-					}
-
-					writer.Write(alternate);
-				}
-
-				item.Encode(writer);
-
-				if (this.sackType == SackType.Equipment)
-				{
-					TQData.WriteCString(writer, "itemAttached");
-					if (!string.IsNullOrEmpty(item.BaseItemId) && slotNumber != 9 && slotNumber != 10)
-					{
-						// If there is an item in this slot, set the flag.
-						// Unless it's in the secondary weapon slot.
-						itemAttached = 1;
-					}
-					else
-					{
-						// This is only a dummy item so we do not set the flag.
-						itemAttached = 0;
-					}
-
-					writer.Write(itemAttached);
-				}
-
-				// Additional logic to encode the weapon slots in the equipment section
-				if (this.sackType == SackType.Equipment && (slotNumber == 8 || slotNumber == 10))
-				{
-					TQData.WriteCString(writer, "end_block");
-					writer.Write(this.endBlockCrap);
-				}
-			}
-
-			TQData.WriteCString(writer, "end_block");
-			writer.Write(this.endBlockCrap);
-		}
-
-		/// <summary>
-		/// Parses the binary sack data to internal data
-		/// </summary>
-		/// <param name="reader">BinaryReader instance</param>
-		public void Parse(BinaryReader reader)
-		{
-			try
-			{
-				this.isModified = false;
-
-				if (this.sackType == SackType.Stash)
-				{
-					// IL decided to use a different format for the stash files.
-					TQData.ValidateNextString("numItems", reader);
-					this.size = reader.ReadInt32();
-				}
-				else if (this.sackType == SackType.Equipment)
-				{
-					if (this.isImmortalThrone)
-					{
-						this.size = 12;
-						this.slots = 12;
-					}
-					else
-					{
-						this.size = 11;
-						this.slots = 11;
-					}
-				}
-				else
-				{
-					// This is just a regular sack.
-					TQData.ValidateNextString("begin_block", reader); // make sure we just read a new block
-					this.beginBlockCrap = reader.ReadInt32();
-
-					TQData.ValidateNextString("tempBool", reader);
-					this.tempBool = reader.ReadInt32();
-
-					TQData.ValidateNextString("size", reader);
-					this.size = reader.ReadInt32();
-				}
-
-				this.items = new List<Item>(this.size);
-
-				Item prevItem = null;
-				for (int i = 0; i < this.size; ++i)
-				{
-					// Additional logic to decode the weapon slots in the equipment section
-					if (this.sackType == SackType.Equipment && (i == 7 || i == 9))
-					{
-						TQData.ValidateNextString("begin_block", reader);
-						this.beginBlockCrap = reader.ReadInt32();
-
-						// Eat the alternate tag and flag
-						TQData.ValidateNextString("alternate", reader);
-
-						// Skip over the alternateCrap
-						reader.ReadInt32();
-					}
-
-					Item item = new Item();
-					item.ContainerType = this.sackType;
-					item.Parse(reader);
-
-					// Stack this item with the previous item if necessary
-					if ((prevItem != null) && item.DoesStack && (item.PositionX == -1) && (item.PositionY == -1))
-					{
-						prevItem.StackSize++;
-					}
-					else
-					{
-						prevItem = item;
-						this.items.Add(item);
-						if (this.sackType == SackType.Equipment)
-						{
-							// Get the item location from the table
-							item.PositionX = GetEquipmentLocationOffset(i).X;
-							item.PositionY = GetEquipmentLocationOffset(i).Y;
-
-							// Eat the itemAttached tag and flag
-							TQData.ValidateNextString("itemAttached", reader);
-
-							// Skip over the itemAttachedCrap
-							reader.ReadInt32();
-						}
-					}
-
-					// Additional logic to decode the weapon slots in the equipment section
-					if (this.sackType == SackType.Equipment && (i == 8 || i == 10))
-					{
-						TQData.ValidateNextString("end_block", reader);
-						this.endBlockCrap = reader.ReadInt32();
-					}
-				}
-
-				TQData.ValidateNextString("end_block", reader);
-				this.endBlockCrap = reader.ReadInt32();
-			}
-			catch (ArgumentException ex)
-			{
-				// The ValidateNextString Method can throw an ArgumentException.
-				// We just pass it along at this point.
-				Log.Debug("ValidateNextString fail !", ex);
-				throw;
-			}
-		}
 	}
 }

@@ -10,94 +10,15 @@ namespace TQVaultAE.DAL
 	using System.Collections.ObjectModel;
 	using System.Globalization;
 	using System.Text;
+	using TQVaultAE.Entities;
 
-	/// <summary>
-	/// Enumeration of the Attribute Effect Types
-	/// </summary>
-	public enum ItemAttributesEffectType
-	{
-		/// <summary>
-		/// Shield Effects
-		/// </summary>
-		ShieldEffect = 0,
-
-		/// <summary>
-		/// Skill Effects
-		/// </summary>
-		SkillEffect,
-
-		/// <summary>
-		/// Offensive Effects
-		/// </summary>
-		Offense,
-
-		/// <summary>
-		/// Offensive Modifier Effects
-		/// </summary>
-		OffenseModifier,
-
-		/// <summary>
-		/// Offensive Slow Effects
-		/// </summary>
-		OffenseSlow,
-
-		/// <summary>
-		/// Offensive Slow Modifier Effects
-		/// </summary>
-		OffenseSlowModifier,
-
-		/// <summary>
-		/// Retaliation Effects
-		/// </summary>
-		Retaliation,
-
-		/// <summary>
-		/// Retaliation Modifier Effects
-		/// </summary>
-		RetaliationModifier,
-
-		/// <summary>
-		/// Retaliation Slow Effects
-		/// </summary>
-		RetaliationSlow,
-
-		/// <summary>
-		/// Retaliation Slow Modifier Effects
-		/// </summary>
-		RetaliationSlowModifier,
-
-		/// <summary>
-		/// Defensive Effects
-		/// </summary>
-		Defense,
-
-		/// <summary>
-		/// Character Effects
-		/// </summary>
-		Character,
-
-		/// <summary>
-		/// Damage Qualifier Effects
-		/// </summary>
-		DamageQualifierEffect,
-
-		/// <summary>
-		/// Other Effects
-		/// </summary>
-		Other,
-
-		/// <summary>
-		/// Artifact Reagents
-		/// </summary>
-		Reagent
-	}
 
 	/// <summary>
 	/// Used to hold the Item Attributes
 	/// </summary>
-	public static class ItemAttributes
+	public static class ItemAttributeProvider
 	{
-		private static readonly log4net.ILog Log = Logging.Logger.Get(typeof(ItemAttributes));
+		private static readonly log4net.ILog Log = Logging.Logger.Get(typeof(ItemAttributeProvider));
 
 		#region ItemAttributes Fields
 
@@ -795,7 +716,7 @@ namespace TQVaultAE.DAL
 				return false;
 			}
 
-			ItemAttributesData data = ItemAttributes.GetAttributeData(variable.Name);
+			ItemAttributesData data = ItemAttributeProvider.GetAttributeData(variable.Name);
 			if (data == null)
 			{
 				return false;
@@ -814,7 +735,7 @@ namespace TQVaultAE.DAL
 		public static bool AttributeGroupIs(Collection<Variable> attributeList, string effect)
 		{
 			Variable variable = (Variable)attributeList[0];
-			ItemAttributesData data = ItemAttributes.GetAttributeData(variable.Name);
+			ItemAttributesData data = ItemAttributeProvider.GetAttributeData(variable.Name);
 			if (data == null)
 			{
 				return false;
@@ -833,7 +754,7 @@ namespace TQVaultAE.DAL
 		public static bool AttributeGroupIs(Collection<Variable> attributeList, ItemAttributesEffectType type)
 		{
 			Variable variable = (Variable)attributeList[0];
-			ItemAttributesData data = ItemAttributes.GetAttributeData(variable.Name);
+			ItemAttributesData data = ItemAttributeProvider.GetAttributeData(variable.Name);
 			if (data == null)
 			{
 				return false;
@@ -851,7 +772,7 @@ namespace TQVaultAE.DAL
 		public static ItemAttributesEffectType AttributeGroupType(Collection<Variable> attributeList)
 		{
 			Variable variable = (Variable)attributeList[0];
-			ItemAttributesData data = ItemAttributes.GetAttributeData(variable.Name);
+			ItemAttributesData data = ItemAttributeProvider.GetAttributeData(variable.Name);
 			if (data == null)
 			{
 				return ItemAttributesEffectType.Other;

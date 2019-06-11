@@ -10,6 +10,7 @@ namespace TQVaultAE.GUI.Models
 	using System.Drawing;
 	using System.Linq;
 	using TQVaultAE.DAL;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// Class for an individual result in the results list.
@@ -42,7 +43,7 @@ namespace TQVaultAE.GUI.Models
 			this.itemStyle = MainForm.GetItemStyleString(computedItemStyle);
 			this.color = Item.GetColor(computedItemStyle);
 
-			var requirementVariables = item.GetRequirementVariables().Values;
+			var requirementVariables = ItemProvider.GetRequirementVariables(item).Values;
 			this.requiredLevel = GetRequirement(requirementVariables, "levelRequirement");
 		}
 

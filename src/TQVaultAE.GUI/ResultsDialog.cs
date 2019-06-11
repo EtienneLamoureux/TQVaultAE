@@ -14,6 +14,7 @@ namespace TQVaultAE.GUI
 	using Tooltip;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.DAL;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// Results dialog form class
@@ -226,9 +227,9 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				string attributes = selectedResult.Item.GetAttributes(true); // true means hide uninteresting attributes
-				string setitems = selectedResult.Item.GetItemSetString();
-				string reqs = selectedResult.Item.GetRequirements();
+				string attributes = ItemProvider.GetAttributes(selectedResult.Item, true); // true means hide uninteresting attributes
+				string setitems = ItemProvider.GetItemSetString(selectedResult.Item);
+				string reqs = ItemProvider.GetRequirements(selectedResult.Item);
 
 				// combine the 2
 				if (reqs.Length < 1)

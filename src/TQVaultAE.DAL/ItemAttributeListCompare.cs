@@ -7,6 +7,7 @@ namespace TQVaultAE.DAL
 {
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// Used to sort AttributeEffect groups so that effects that belong together stay together
@@ -98,7 +99,7 @@ namespace TQVaultAE.DAL
 		{
 			// Get the first item to use as a reference.
 			Variable v = attributes[0];
-			ItemAttributesData aa = ItemAttributes.GetAttributeData(v.Name);
+			ItemAttributesData aa = ItemAttributeProvider.GetAttributeData(v.Name);
 
 			// put granted skills at the end
 			if (v.Name.Equals("itemSkillName"))
@@ -118,7 +119,7 @@ namespace TQVaultAE.DAL
 			if (aa.FullAttribute.Equals("characterBaseAttackSpeedTag"))
 			{
 				// put it right after the base piercing stat
-				ItemAttributesData piercing = ItemAttributes.GetAttributeData("offensivePierceRatioMin");
+				ItemAttributesData piercing = ItemAttributeProvider.GetAttributeData("offensivePierceRatioMin");
 				order = this.CalcBaseOrder(piercing.EffectType, piercing.Suborder) + 1;
 			}
 			else if (aa.FullAttribute.Equals("retaliationGlobalChance"))
@@ -134,12 +135,12 @@ namespace TQVaultAE.DAL
 			else if (this.isArmor && aa.FullAttribute.Equals("offensivePhysicalMin"))
 			{
 				// put it right after the block recovery time stat
-				ItemAttributesData blockRecovery = ItemAttributes.GetAttributeData("blockRecoveryTime");
+				ItemAttributesData blockRecovery = ItemAttributeProvider.GetAttributeData("blockRecoveryTime");
 				order = this.CalcBaseOrder(blockRecovery.EffectType, blockRecovery.Suborder) + 1;
 			}
 
 			// Now see if the variable is global and move it to the global group if it is
-			if (ItemAttributes.AttributeGroupHas(new Collection<Variable>(attributes), "Global"))
+			if (ItemAttributeProvider.AttributeGroupHas(new Collection<Variable>(attributes), "Global"))
 			{
 				order = MakeGlobal(order);
 			}
