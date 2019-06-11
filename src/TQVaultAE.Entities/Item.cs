@@ -1577,5 +1577,6 @@ namespace TQVaultAE.Entities
 			Array.Clear(this.bareAttributes, 0, this.bareAttributes.Length);
 		}
 
+
 	}
 }

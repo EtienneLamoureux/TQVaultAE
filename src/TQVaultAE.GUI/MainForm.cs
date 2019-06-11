@@ -712,7 +712,7 @@ namespace TQVaultAE.GUI
 
 			public bool Apply(Item item)
 			{
-				return item.ToString().ToUpperInvariant().Contains(name.ToUpperInvariant());
+				return ItemProvider.ToString(item).ToUpperInvariant().Contains(name.ToUpperInvariant());
 			}
 
 			public override string ToString()
@@ -2100,7 +2100,7 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				string text = item.ToString();
+				string text = ItemProvider.ToString(item);
 				Color color = item.GetColorTag(text);
 				text = Item.ClipColorTag(text);
 				this.itemText.ForeColor = color;

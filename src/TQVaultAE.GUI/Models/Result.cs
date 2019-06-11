@@ -37,7 +37,7 @@ namespace TQVaultAE.GUI.Models
 			this.sackType = sackType;
 			this.item = item ?? throw new ArgumentNullException(nameof(item));
 
-			this.itemName = Item.ClipColorTag(item.ToString());
+			this.itemName = Item.ClipColorTag(ItemProvider.ToString(item));
 
 			ItemStyle computedItemStyle = item.ItemStyle;
 			this.itemStyle = MainForm.GetItemStyleString(computedItemStyle);

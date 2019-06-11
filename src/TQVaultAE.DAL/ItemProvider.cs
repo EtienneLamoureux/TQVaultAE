@@ -1559,7 +1559,7 @@ namespace TQVaultAE.DAL
 
 			if (TQDebug.ItemDebugLevel > 1)
 			{
-				Log.DebugFormat(CultureInfo.InvariantCulture, "'{0}' baseItemInfo is {1} null", itm.ToString(), (itm.baseItemInfo == null) ? string.Empty : "NOT");
+				Log.DebugFormat(CultureInfo.InvariantCulture, "'{0}' baseItemInfo is {1} null", ItemProvider.ToString(itm), (itm.baseItemInfo == null) ? string.Empty : "NOT");
 			}
 
 			// Get the bitmaps we need

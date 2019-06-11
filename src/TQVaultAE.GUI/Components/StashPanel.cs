@@ -741,7 +741,7 @@ namespace TQVaultAE.GUI.Components
 				}
 
 				first = false;
-				string text = Database.MakeSafeForHtml(item.ToString());
+				string text = Database.MakeSafeForHtml(ItemProvider.ToString(item));
 				Color color = item.GetColorTag(text);
 				text = Item.ClipColorTag(text);
 				string htmlcolor = Database.HtmlColor(color);
