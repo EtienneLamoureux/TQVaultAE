@@ -8,14 +8,15 @@ namespace TQVaultAE.DAL
 	using System;
 	using System.Globalization;
 	using System.IO;
+	using TQVaultAE.Entities;
 	using TQVaultAE.Logging;
 
 	/// <summary>
 	/// Class for handling the stash file
 	/// </summary>
-	public class Stash
+	public static class StashProvider
 	{
-		private readonly log4net.ILog Log = null;
+		private static readonly log4net.ILog Log = Logger.Get(typeof(StashProvider));
 
 		/// <summary>
 		/// Defines the raw data buffer size
@@ -73,164 +74,12 @@ namespace TQVaultAE.DAL
 		};
 
 		/// <summary>
-		/// Player name associated with this stash file.
-		/// </summary>
-		private string playerName;
-
-		/// <summary>
-		/// Raw file data
-		/// </summary>
-		private byte[] rawData;
-
-		/// <summary>
-		/// Binary marker for begin block
-		/// </summary>
-		private int beginBlockCrap;
-
-		/// <summary>
-		/// The number of sacks in this stash file
-		/// </summary>
-		private int numberOfSacks;
-
-		/// <summary>
-		/// Stash file version
-		/// </summary>
-		private int stashVersion;
-
-		/// <summary>
-		/// Raw data holding the name.
-		/// Changed to raw data to support extended characters
-		/// </summary>
-		private byte[] name;
-
-		/// <summary>
-		/// Sack instance for this file
-		/// </summary>
-		private SackCollection sack;
-
-		/// <summary>
-		/// Initializes a new instance of the Stash class.
-		/// </summary>
-		/// <param name="playerName">Name of the player</param>
-		/// <param name="stashFile">name of the stash file</param>
-		public Stash(string playerName, string stashFile)
-		{
-			this.Log = Logger.Get(this);
-
-			this.StashFile = stashFile;
-			this.PlayerName = playerName;
-			this.IsImmortalThrone = true;
-			this.numberOfSacks = 2;
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether this is from Immortal Throne
-		/// </summary>
-		/// <remarks>
-		/// This really should always be true since stashes are not supported without Immortal Throne.
-		/// </remarks>
-		public bool IsImmortalThrone { get; set; }
-
-		/// <summary>
-		/// Gets a value indicating whether this file has been modified
-		/// </summary>
-		public bool IsModified
-		{
-			get
-			{
-				if (this.sack != null)
-				{
-					if (this.sack.IsModified)
-					{
-						return true;
-					}
-				}
-
-				return false;
-			}
-		}
-
-		/// <summary>
-		/// Gets the height of the stash sack
-		/// </summary>
-		public int Height { get; private set; }
-
-		/// <summary>
-		/// Gets the width of the stash sack
-		/// </summary>
-		public int Width { get; private set; }
-
-		/// <summary>
-		/// Gets the player name associated with this stash
-		/// </summary>
-		public string PlayerName
-		{
-			get
-			{
-				if (this.IsImmortalThrone)
-				{
-					return string.Concat(this.playerName, " - Immortal Throne");
-				}
-				else
-				{
-					return this.playerName;
-				}
-			}
-
-			private set
-			{
-				this.playerName = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets the stash file name
-		/// </summary>
-		public string StashFile { get; private set; }
-
-		/// <summary>
-		/// Gets the number of sack contained in this stash
-		/// </summary>
-		public int NumberOfSacks
-		{
-			get
-			{
-				if (this.sack == null)
-				{
-					return 0;
-				}
-
-				return this.numberOfSacks;
-			}
-		}
-
-		/// <summary>
-		/// Gets the current sack instance
-		/// </summary>
-		public SackCollection Sack
-		{
-			get
-			{
-				return this.sack;
-			}
-		}
-
-		/// <summary>
-		/// Creates an empty sack
-		/// </summary>
-		public void CreateEmptySack()
-		{
-			this.sack = new SackCollection();
-			this.sack.IsModified = false;
-		}
-
-		/// <summary>
 		/// Saves the stash file
 		/// </summary>
 		/// <param name="fileName">file name of this stash file</param>
-		public void Save(string fileName)
+		public static void Save(Stash sta, string fileName)
 		{
-			byte[] data = this.Encode();
+			byte[] data = Encode(sta);
 
 			data = CalculateCRC(data);
 
@@ -256,36 +105,36 @@ namespace TQVaultAE.DAL
 		/// Converts the live data back into the raw binary data format
 		/// </summary>
 		/// <returns>byte array holding the raw data</returns>
-		public byte[] Encode()
+		public static byte[] Encode(Stash sta)
 		{
 			// We need to encode the item data to a memory stream
-			return this.EncodeItemData();
+			return EncodeItemData(sta);
 		}
 
 		/// <summary>
 		/// Loads a stash file
 		/// </summary>
 		/// <returns>false if the file does not exist otherwise true.</returns>
-		public bool LoadFile()
+		public static bool LoadFile(Stash sta)
 		{
-			if (!File.Exists(this.StashFile))
+			if (!File.Exists(sta.StashFile))
 			{
 				return false;
 			}
 
-			using (FileStream file = new FileStream(this.StashFile, FileMode.Open, FileAccess.Read))
+			using (FileStream file = new FileStream(sta.StashFile, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader reader = new BinaryReader(file))
 				{
 					// Just suck the entire file into memory
-					this.rawData = reader.ReadBytes((int)file.Length);
+					sta.rawData = reader.ReadBytes((int)file.Length);
 				}
 			}
 
 			try
 			{
 				// Now Parse the file
-				this.ParseRawData();
+				ParseRawData(sta);
 			}
 			catch (ArgumentException ex)
 			{
@@ -364,15 +213,15 @@ namespace TQVaultAE.DAL
 		/// <summary>
 		/// Parses the raw data and converts to internal data.
 		/// </summary>
-		private void ParseRawData()
+		private static void ParseRawData(Stash sta)
 		{
 			// First create a memory stream so we can decode the binary data as needed.
-			using (BinaryReader reader = new BinaryReader(new MemoryStream(this.rawData, false)))
+			using (BinaryReader reader = new BinaryReader(new MemoryStream(sta.rawData, false)))
 			{
 				int offset = 0;
 				try
 				{
-					this.ParseItemBlock(offset, reader);
+					ParseItemBlock(sta, offset, reader);
 				}
 				catch (ArgumentException)
 				{
@@ -381,23 +230,23 @@ namespace TQVaultAE.DAL
 
 				try
 				{
-					string outfile = string.Concat(Path.Combine(TQData.TQVaultSaveFolder, this.PlayerName), " Export.txt");
+					string outfile = string.Concat(Path.Combine(TQData.TQVaultSaveFolder, sta.PlayerName), " Export.txt");
 					using (StreamWriter outStream = new StreamWriter(outfile, false))
 					{
-						outStream.WriteLine("Number of Sacks = {0}", this.numberOfSacks);
+						outStream.WriteLine("Number of Sacks = {0}", sta.numberOfSacks);
 
-						if (!this.sack.IsEmpty)
+						if (!sta.sack.IsEmpty)
 						{
 							outStream.WriteLine();
 							outStream.WriteLine("SACK 0");
 
 							int itemNumber = 0;
-							foreach (Item item in this.sack)
+							foreach (Item item in sta.sack)
 							{
 								object[] params1 = new object[20];
 
 								params1[0] = itemNumber;
-								params1[1] = item.ToString();
+								params1[1] = ItemProvider.ToString(item);
 								params1[2] = item.PositionX;
 								params1[3] = item.PositionY;
 								params1[4] = item.Seed;
@@ -410,7 +259,7 @@ namespace TQVaultAE.DAL
 				}
 				catch (IOException exception)
 				{
-					Log.ErrorFormat(exception, "Error Exporting - '{0} Export.txt'", Path.Combine(TQData.TQVaultSaveFolder, this.PlayerName));
+					Log.ErrorFormat(exception, "Error Exporting - '{0} Export.txt'", Path.Combine(TQData.TQVaultSaveFolder, sta.PlayerName));
 				}
 			}
 		}
@@ -419,7 +268,7 @@ namespace TQVaultAE.DAL
 		/// Encodes the internal item data back into raw data
 		/// </summary>
 		/// <returns>raw data for the item data</returns>
-		private byte[] EncodeItemData()
+		private static byte[] EncodeItemData(Stash sta)
 		{
 			int dataLength;
 			byte[] data;
@@ -433,25 +282,25 @@ namespace TQVaultAE.DAL
 					writer.Write(Convert.ToInt32(0, CultureInfo.InvariantCulture));
 
 					TQData.WriteCString(writer, "begin_block");
-					writer.Write(this.beginBlockCrap);
+					writer.Write(sta.beginBlockCrap);
 
 					TQData.WriteCString(writer, "stashVersion");
-					writer.Write(this.stashVersion);
+					writer.Write(sta.stashVersion);
 
 					TQData.WriteCString(writer, "fName");
 
 					// Changed to raw data to support extended characters
-					writer.Write(this.name.Length);
-					writer.Write(this.name);
+					writer.Write(sta.name.Length);
+					writer.Write(sta.name);
 
 					TQData.WriteCString(writer, "sackWidth");
-					writer.Write(this.Width);
+					writer.Write(sta.Width);
 
 					TQData.WriteCString(writer, "sackHeight");
-					writer.Write(this.Height);
+					writer.Write(sta.Height);
 
-					// SackType should already be set at this point
-					this.sack.Encode(writer);
+					// SackType should already be set at sta point
+					SackCollectionProvider.Encode(sta.sack, writer);
 					dataLength = (int)writeStream.Length;
 				}
 
@@ -476,7 +325,7 @@ namespace TQVaultAE.DAL
 		/// </summary>
 		/// <param name="fileOffset">Offset into the file</param>
 		/// <param name="reader">BinaryReader instance</param>
-		private void ParseItemBlock(int fileOffset, BinaryReader reader)
+		private static void ParseItemBlock(Stash sta, int fileOffset, BinaryReader reader)
 		{
 			try
 			{
@@ -484,33 +333,33 @@ namespace TQVaultAE.DAL
 				reader.ReadInt32();
 
 				TQData.ValidateNextString("begin_block", reader);
-				this.beginBlockCrap = reader.ReadInt32();
+				sta.beginBlockCrap = reader.ReadInt32();
 
 				TQData.ValidateNextString("stashVersion", reader);
-				this.stashVersion = reader.ReadInt32();
+				sta.stashVersion = reader.ReadInt32();
 
 				TQData.ValidateNextString("fName", reader);
 
 				// Changed to raw data to support extended characters
 				int stringLength = reader.ReadInt32();
-				this.name = reader.ReadBytes(stringLength);
+				sta.name = reader.ReadBytes(stringLength);
 
 				TQData.ValidateNextString("sackWidth", reader);
-				this.Width = reader.ReadInt32();
+				sta.Width = reader.ReadInt32();
 
 				TQData.ValidateNextString("sackHeight", reader);
-				this.Height = reader.ReadInt32();
+				sta.Height = reader.ReadInt32();
 
-				this.numberOfSacks = 1;
-				this.sack = new SackCollection();
-				this.sack.SackType = SackType.Stash;
-				this.sack.IsImmortalThrone = true;
-				this.sack.Parse(reader);
+				sta.numberOfSacks = 1;
+				sta.sack = new SackCollection();
+				sta.sack.SackType = SackType.Stash;
+				sta.sack.IsImmortalThrone = true;
+				SackCollectionProvider.Parse(sta.sack, reader);
 			}
 			catch (ArgumentException)
 			{
 				// The ValidateNextString Method can throw an ArgumentException.
-				// We just pass it along at this point.
+				// We just pass it along at sta point.
 				throw;
 			}
 		}

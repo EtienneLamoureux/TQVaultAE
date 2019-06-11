@@ -11,6 +11,7 @@ namespace TQVaultAE.GUI
 	using System.Globalization;
 	using System.Windows.Forms;
 	using TQVaultAE.DAL;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// Form for the item properties display
@@ -73,7 +74,7 @@ namespace TQVaultAE.GUI
 		/// <returns>string with the item name</returns>
 		private static string GetName(Item item)
 		{
-			string itemName = Database.MakeSafeForHtml(item.ToString(true, false));
+			string itemName = Database.MakeSafeForHtml(ItemProvider.ToString(item, true, false));
 			string bgcolor = "#2e1f15";
 
 			Color color = item.GetColorTag(itemName);
@@ -100,7 +101,7 @@ namespace TQVaultAE.GUI
 		private void LoadProperties()
 		{
 			string[] bareAttr;
-			bareAttr = this.item.GetBareAttributes(this.filterExtra);
+			bareAttr = ItemProvider.GetBareAttributes(this.item, this.filterExtra);
 			string bgcolor = "#2e1f15";
 
 			// Base Item Attributes

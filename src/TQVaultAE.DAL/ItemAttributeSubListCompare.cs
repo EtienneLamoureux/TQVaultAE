@@ -6,6 +6,7 @@
 namespace TQVaultAE.DAL
 {
 	using System.Collections.Generic;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// Used for autosorting of items within a group
@@ -60,7 +61,7 @@ namespace TQVaultAE.DAL
 		/// <returns>order number of the variable</returns>
 		private static int CalcOrder(Variable variable)
 		{
-			ItemAttributesData aa = ItemAttributes.GetAttributeData(variable.Name);
+			ItemAttributesData aa = ItemAttributeProvider.GetAttributeData(variable.Name);
 			if (aa == null)
 			{
 				return 3000000;

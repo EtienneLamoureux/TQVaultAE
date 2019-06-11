@@ -16,6 +16,7 @@ namespace TQVaultAE.GUI.Components
 	using Tooltip;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.DAL;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.
@@ -935,7 +936,7 @@ namespace TQVaultAE.GUI.Components
 				}
 
 				first = false;
-				string itemString = Database.MakeSafeForHtml(item.ToString());
+				string itemString = Database.MakeSafeForHtml(ItemProvider.ToString(item));
 				Color color = item.GetColorTag(itemString);
 				itemString = Item.ClipColorTag(itemString);
 				string htmlcolor = Database.HtmlColor(color);

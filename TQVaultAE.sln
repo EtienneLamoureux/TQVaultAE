@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQVaultAE.Logging", "src\TQ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQ.SaveFilesExplorer", "src\TQSaveFilesExplorer\TQ.SaveFilesExplorer.csproj", "{C74E317C-9516-401B-88B5-29B2AE551013}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQVaultAE.Entities", "src\TQVaultAE.Entities\TQVaultAE.Entities.csproj", "{8A958C36-52A9-4EB5-A6CF-00B26FCE795C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,6 +86,14 @@ Global
 		{C74E317C-9516-401B-88B5-29B2AE551013}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C74E317C-9516-401B-88B5-29B2AE551013}.Release|x86.ActiveCfg = Release|x86
 		{C74E317C-9516-401B-88B5-29B2AE551013}.Release|x86.Build.0 = Release|x86
+		{8A958C36-52A9-4EB5-A6CF-00B26FCE795C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A958C36-52A9-4EB5-A6CF-00B26FCE795C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A958C36-52A9-4EB5-A6CF-00B26FCE795C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8A958C36-52A9-4EB5-A6CF-00B26FCE795C}.Debug|x86.Build.0 = Debug|Any CPU
+		{8A958C36-52A9-4EB5-A6CF-00B26FCE795C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A958C36-52A9-4EB5-A6CF-00B26FCE795C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A958C36-52A9-4EB5-A6CF-00B26FCE795C}.Release|x86.ActiveCfg = Release|Any CPU
+		{8A958C36-52A9-4EB5-A6CF-00B26FCE795C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

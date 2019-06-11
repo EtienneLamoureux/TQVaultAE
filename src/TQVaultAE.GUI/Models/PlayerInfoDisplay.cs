@@ -10,8 +10,7 @@ using System.Xml.Linq;
 using TQVaultAE.DAL;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Properties;
-
-using TQVaultData;
+using TQVaultAE.Entities;
 
 namespace TQVaultAE.GUI.Models
 {

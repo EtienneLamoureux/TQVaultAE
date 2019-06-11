@@ -17,6 +17,7 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.DAL;
 	using TQVaultAE.Logging;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel.
@@ -1241,7 +1242,7 @@ namespace TQVaultAE.GUI.Components
 					if (itemUnderUs.IsRelicComplete)
 					{
 						float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-						LootTableCollection table = itemUnderUs.BonusTable;
+						LootTableCollection table = ItemProvider.BonusTable(itemUnderUs);
 
 						if (table != null && table.Length > 0)
 						{
@@ -1261,7 +1262,7 @@ namespace TQVaultAE.GUI.Components
 							}
 						}
 
-						itemUnderUs.GetDBData();
+						ItemProvider.GetDBData(itemUnderUs);
 					}
 
 					itemUnderUs.MarkModified();
@@ -1532,7 +1533,7 @@ namespace TQVaultAE.GUI.Components
 								(focusedItem.IsRelic && focusedItem.IsRelicComplete) ||
 								(focusedItem.IsArtifact))
 							{
-								LootTableCollection table = focusedItem.BonusTable;
+								LootTableCollection table = ItemProvider.BonusTable(focusedItem);
 								if (table != null && table.Length > 0)
 								{
 									int numItems = table.Length;
@@ -1573,7 +1574,7 @@ namespace TQVaultAE.GUI.Components
 							}
 
 							// If the item is a set item, then add a menu to create the rest of the set
-							string[] setItems = focusedItem.GetSetItems(false);
+							string[] setItems = ItemProvider.GetSetItems(focusedItem, false);
 							if (setItems != null && setItems.Length > 1)
 							{
 								ToolStripItem[] choices = new ToolStripItem[setItems.Length - 1];
@@ -2437,7 +2438,7 @@ namespace TQVaultAE.GUI.Components
 				{
 					// Create the item
 					Item newItem = focusedItem.MakeEmptyCopy(item.Name);
-					newItem.GetDBData();
+					ItemProvider.GetDBData(newItem);
 
 					// Set DragInfo to focused item.
 					this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
@@ -2530,7 +2531,7 @@ namespace TQVaultAE.GUI.Components
 						this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
 
 						// pull out the relic
-						Item relic = focusedItem.RemoveRelic();
+						Item relic = ItemProvider.RemoveRelic(focusedItem);
 
 						// Put relic in DragInfo
 						this.DragInfo.MarkModified(relic);
@@ -2586,7 +2587,7 @@ namespace TQVaultAE.GUI.Components
 					focusedItem.Number = 10;
 
 					float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-					LootTableCollection table = focusedItem.BonusTable;
+					LootTableCollection table = ItemProvider.BonusTable(focusedItem);
 
 					if (table != null && table.Length > 0)
 					{
@@ -2606,7 +2607,8 @@ namespace TQVaultAE.GUI.Components
 						}
 					}
 
-					focusedItem.GetDBData();
+					ItemProvider.GetDBData(focusedItem);
+
 					focusedItem.MarkModified();
 					this.Sack.IsModified = true;
 					Refresh();
@@ -2617,11 +2619,11 @@ namespace TQVaultAE.GUI.Components
 					this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
 
 					// create artifact
-					Item artifact = focusedItem.CraftArtifact();
+					Item artifact = ItemProvider.CraftArtifact(focusedItem);
 
 					// generate bonus
 					float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-					LootTableCollection table = artifact.BonusTable;
+					LootTableCollection table = ItemProvider.BonusTable(artifact);
 
 					if (table != null && table.Length > 0)
 					{

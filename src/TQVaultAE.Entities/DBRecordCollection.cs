@@ -3,7 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.DAL
+namespace TQVaultAE.Entities
 {
 	using System.Collections;
 	using System.Collections.Generic;

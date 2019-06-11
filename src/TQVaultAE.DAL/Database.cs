@@ -12,28 +12,9 @@ namespace TQVaultAE.DAL
 	using System.Globalization;
 	using System.IO;
 	using System.Text;
+	using TQVaultAE.Entities;
 	using TQVaultAE.Logging;
 
-	/// <summary>
-	/// Enumeration of the compressed file types
-	/// </summary>
-	public enum CompressedFileType
-	{
-		/// <summary>
-		/// Unknown file type
-		/// </summary>
-		Unknown = 0,
-
-		/// <summary>
-		/// ARZ compressed file
-		/// </summary>
-		ArzFile = 1,
-
-		/// <summary>
-		/// ARC compressed file
-		/// </summary>
-		ArcFile = 2
-	}
 
 	/// <summary>
 	/// Reads a Titan Quest database file.
@@ -554,13 +535,13 @@ namespace TQVaultAE.DAL
 		/// <returns>Returns localized item attribute</returns>
 		public string GetItemAttributeFriendlyText(string itemAttribute, bool addVariable = true)
 		{
-			ItemAttributesData data = ItemAttributes.GetAttributeData(itemAttribute);
+			ItemAttributesData data = ItemAttributeProvider.GetAttributeData(itemAttribute);
 			if (data == null)
 			{
 				return string.Concat("?", itemAttribute, "?");
 			}
 
-			string attributeTextTag = ItemAttributes.GetAttributeTextTag(data);
+			string attributeTextTag = ItemAttributeProvider.GetAttributeTextTag(data);
 			if (string.IsNullOrEmpty(attributeTextTag))
 			{
 				return string.Concat("?", itemAttribute, "?");

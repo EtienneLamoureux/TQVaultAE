@@ -24,6 +24,7 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.DAL;
 	using TQVaultAE.Logging;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// Main Dialog class
@@ -526,7 +527,8 @@ namespace TQVaultAE.GUI
 					// Check for the transfer stash.
 					charName = Resources.GlobalTransferStash;
 				}
-				else {
+				else
+				{
 					charName = null;
 				}
 			}
@@ -710,7 +712,7 @@ namespace TQVaultAE.GUI
 
 			public bool Apply(Item item)
 			{
-				return item.ToString().ToUpperInvariant().Contains(name.ToUpperInvariant());
+				return ItemProvider.ToString(item).ToUpperInvariant().Contains(name.ToUpperInvariant());
 			}
 
 			public override string ToString()
@@ -770,7 +772,7 @@ namespace TQVaultAE.GUI
 
 			public bool Apply(Item item)
 			{
-				return item.GetAttributes(true).ToUpperInvariant().Contains(attribute.ToUpperInvariant());
+				return ItemProvider.GetAttributes(item, true).ToUpperInvariant().Contains(attribute.ToUpperInvariant());
 			}
 
 			public override string ToString()
@@ -901,7 +903,7 @@ namespace TQVaultAE.GUI
 			int formHeight = 910;
 			float initialScale = 1.0F;
 			Settings.Default.Scale = initialScale;
-			
+
 			// Ninakoru: trick to force close/min/max buttons to reposition...
 			this.ScaleOnResize = false;
 			if (workingArea.Width < formWidth || workingArea.Height < formHeight)
@@ -1277,7 +1279,7 @@ namespace TQVaultAE.GUI
 					try
 					{
 						// Throw a message if the stash does not exist.
-						bool stashPresent = stash.LoadFile();
+						bool stashPresent = StashProvider.LoadFile(stash);
 						if (!stashPresent)
 						{
 							MessageBox.Show(Resources.StashNotFoundMsg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
@@ -1334,7 +1336,7 @@ namespace TQVaultAE.GUI
 					try
 					{
 						// Throw a message if the stash does not exist.
-						bool stashPresent = stash.LoadFile();
+						bool stashPresent = StashProvider.LoadFile(stash);
 						if (!stashPresent)
 						{
 							MessageBox.Show(Resources.StashNotFoundMsg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
@@ -1583,7 +1585,7 @@ namespace TQVaultAE.GUI
 						vault.IsVault = true;
 						try
 						{
-							vault.LoadFile();
+							PlayerCollectionProvider.LoadFile(vault);
 							vaultLoaded = true;
 						}
 						catch (ArgumentException argumentException)
@@ -1801,7 +1803,7 @@ namespace TQVaultAE.GUI
 					player = new PlayerCollection(selectedText, playerFile);
 					try
 					{
-						player.LoadFile();
+						PlayerCollectionProvider.LoadFile(player);
 						playerLoaded = true;
 					}
 					catch (ArgumentException argumentException)
@@ -1847,7 +1849,7 @@ namespace TQVaultAE.GUI
 					stash = new Stash(selectedText, stashFile);
 					try
 					{
-						bool stashPresent = stash.LoadFile();
+						bool stashPresent = StashProvider.LoadFile(stash);
 
 						// Throw a message if the stash is not present.
 						if (!stashPresent)
@@ -1959,7 +1961,7 @@ namespace TQVaultAE.GUI
 						player.IsImmortalThrone = true;
 						try
 						{
-							player.LoadFile();
+							PlayerCollectionProvider.LoadFile(player);
 							playerLoaded = true;
 						}
 						catch (ArgumentException argumentException)
@@ -2002,7 +2004,7 @@ namespace TQVaultAE.GUI
 						try
 						{
 							// Eat any file not found messages for the stash.
-							stash.LoadFile();
+							StashProvider.LoadFile(stash);
 							stashLoaded = true;
 						}
 						catch (ArgumentException argumentException)
@@ -2047,7 +2049,7 @@ namespace TQVaultAE.GUI
 					vault.IsVault = true;
 					try
 					{
-						vault.LoadFile();
+						PlayerCollectionProvider.LoadFile(vault);
 						vaultLoaded = true;
 					}
 					catch (ArgumentException argumentException)
@@ -2098,15 +2100,15 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				string text = item.ToString();
+				string text = ItemProvider.ToString(item);
 				Color color = item.GetColorTag(text);
 				text = Item.ClipColorTag(text);
 				this.itemText.ForeColor = color;
 				this.itemText.Text = text;
 
-				string attributes = item.GetAttributes(true); // true means hide uninteresting attributes
-				string setitems = item.GetItemSetString();
-				string reqs = item.GetRequirements();
+				string attributes = ItemProvider.GetAttributes(item, true); // true means hide uninteresting attributes
+				string setitems = ItemProvider.GetItemSetString(item);
+				string reqs = ItemProvider.GetRequirements(item);
 
 				// combine the 2
 				if (reqs.Length < 1)
@@ -2571,7 +2573,7 @@ namespace TQVaultAE.GUI
 						{
 							TQData.BackupFile(player.PlayerName, playerFile);
 							TQData.BackupStupidPlayerBackupFolder(playerFile);
-							player.Save(playerFile);
+							PlayerCollectionProvider.Save(player, playerFile);
 							done = true;
 						}
 						catch (IOException exception)
@@ -2631,7 +2633,7 @@ namespace TQVaultAE.GUI
 						try
 						{
 							TQData.BackupFile(vault.PlayerName, vaultFile);
-							vault.Save(vaultFile);
+							PlayerCollectionProvider.Save(vault, vaultFile);
 							done = true;
 						}
 						catch (IOException exception)
@@ -2692,7 +2694,7 @@ namespace TQVaultAE.GUI
 						try
 						{
 							TQData.BackupFile(stash.PlayerName, stashFile);
-							stash.Save(stashFile);
+							StashProvider.Save(stash, stashFile);
 							done = true;
 						}
 						catch (IOException exception)

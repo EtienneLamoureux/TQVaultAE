@@ -14,6 +14,7 @@ namespace TQVaultAE.GUI.Components
 	using Tooltip;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.DAL;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// Class for handling the stash panel ui functions
@@ -740,7 +741,7 @@ namespace TQVaultAE.GUI.Components
 				}
 
 				first = false;
-				string text = Database.MakeSafeForHtml(item.ToString());
+				string text = Database.MakeSafeForHtml(ItemProvider.ToString(item));
 				Color color = item.GetColorTag(text);
 				text = Item.ClipColorTag(text);
 				string htmlcolor = Database.HtmlColor(color);
