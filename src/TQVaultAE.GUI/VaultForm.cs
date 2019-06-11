@@ -13,7 +13,7 @@ namespace TQVaultAE.GUI
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Components;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
 
 	/// <summary>
 	/// Abstract class used for constructing TQVault themed forms.
@@ -160,13 +160,13 @@ namespace TQVaultAE.GUI
 
 		protected Size ScaleSize(Size size)
 		{
-			if (TQVaultAE.DAL.Database.DB == null) return size;
+			if (Database.DB == null) return size;
 			return new Size((int)System.Math.Round(size.Width * Database.DB.Scale), (int)System.Math.Round(size.Height * Database.DB.Scale));
 		}
 
 		protected Point ScalePoint(Point point)
 		{
-			if (TQVaultAE.DAL.Database.DB == null) return point;
+			if (Database.DB == null) return point;
 			return new Point((int)System.Math.Round(point.X * Database.DB.Scale), (int)System.Math.Round(point.Y * Database.DB.Scale));
 		}
 

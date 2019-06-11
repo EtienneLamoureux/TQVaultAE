@@ -30,3 +30,7 @@ using System.Runtime.InteropServices;
 
 // CLS compliant attribute
 [assembly: CLSCompliant(true)]
+
+[assembly: AssemblyVersion("3.0.0")]
+[assembly: AssemblyFileVersion("3.0.0")]
+[assembly: NeutralResourcesLanguageAttribute("en-US")]

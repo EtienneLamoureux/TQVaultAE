@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using TQVaultAE.DAL;
+using TQVaultAE.Data;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Properties;
 using TQVaultAE.Entities;

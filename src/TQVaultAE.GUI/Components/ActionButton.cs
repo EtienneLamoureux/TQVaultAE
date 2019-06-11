@@ -12,7 +12,7 @@ namespace TQVaultAE.GUI.Components
 	using System.Timers;
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
 
 	/// <summary>

@@ -12,7 +12,7 @@ namespace TQVaultAE.GUI
 	using System.IO;
 	using System.Text;
 	using System.Windows.Forms;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
 
 	/// <summary>
 	/// Class for VaultMaintenanceDialog form

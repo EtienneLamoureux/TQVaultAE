@@ -68,6 +68,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Drawing.Common.4.5.1\lib\net461\System.Drawing.Common.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -114,6 +117,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -129,9 +133,9 @@
     <Content Include="Changes.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TQVaultAE.DAL\TQVaultAE.DAL.csproj">
-      <Project>{35474e71-4ed2-4c3c-8bdb-c33d2b260496}</Project>
-      <Name>TQVaultAE.DAL</Name>
+    <ProjectReference Include="..\TQVaultAE.Data\TQVaultAE.Data.csproj">
+      <Project>{f0d211fa-6fe0-4ab6-ad33-65c1f3dfa895}</Project>
+      <Name>TQVaultAE.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\TQVaultAE.Entities\TQVaultAE.Entities.csproj">
       <Project>{8A958C36-52A9-4EB5-A6CF-00B26FCE795C}</Project>

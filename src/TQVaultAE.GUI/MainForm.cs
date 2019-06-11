@@ -22,9 +22,10 @@ namespace TQVaultAE.GUI
 	using Tooltip;
 	using TQVaultAE.GUI.Components;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.DAL;
-	using TQVaultAE.Logging;
+	using TQVaultAE.Data;
+	using TQVaultAE.Logs;
 	using TQVaultAE.Entities;
+	using TQVaultAE.GUI.Services;
 
 	/// <summary>
 	/// Main Dialog class
@@ -381,6 +382,8 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private static void SetupGamePaths()
 		{
+			TQData.GamePathResolver = new GamePathResolverWin();
+
 			if (!Settings.Default.AutoDetectGamePath)
 			{
 				TQData.TQPath = Settings.Default.TQPath;

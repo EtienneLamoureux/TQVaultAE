@@ -10,7 +10,7 @@ namespace ArzExplorer
 	using System.Globalization;
 	using System.Threading;
 	using System.Windows.Forms;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
 
 	/// <summary>

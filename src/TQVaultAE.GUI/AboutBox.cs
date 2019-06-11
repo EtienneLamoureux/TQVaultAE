@@ -11,7 +11,7 @@ namespace TQVaultAE.GUI
 	using System.Reflection;
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Properties;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
 
 	/// <summary>
 	/// Class for About dialog box.

@@ -13,7 +13,7 @@ namespace TQVaultAE.GUI
 	using System.Windows.Forms;
 	using Tooltip;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
 
 	/// <summary>

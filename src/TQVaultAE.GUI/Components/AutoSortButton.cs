@@ -8,7 +8,7 @@ namespace TQVaultAE.GUI.Components
 	using Properties;
 	using System;
 	using System.Windows.Forms;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
 
 	/// <summary>
 	/// Displays and handles the auto sort button.
