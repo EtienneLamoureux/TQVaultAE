@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace TQVaultAE.Entities
+﻿namespace TQVaultAE.Entities
 {
 	/// <summary>
 	/// Character data is saved here after reading through player.chr file

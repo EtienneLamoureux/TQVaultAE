@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TQVaultAE.Entities
+﻿namespace TQVaultAE.Entities
 {
 	/// <summary>
 	/// Enumeration of the Attribute Effect Types

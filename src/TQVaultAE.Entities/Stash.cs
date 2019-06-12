@@ -5,11 +5,6 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Entities
 {
-	using System;
-	using System.Globalization;
-	using System.IO;
-	using TQVaultAE.Entities;
-
 	/// <summary>
 	/// Class for handling the stash file
 	/// </summary>

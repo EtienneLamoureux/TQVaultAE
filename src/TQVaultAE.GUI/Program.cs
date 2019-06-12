@@ -15,10 +15,8 @@ namespace TQVaultAE.GUI
 	using System.Threading;
 	using System.Linq;
 	using System.Windows.Forms;
-	using TQVaultAE.GUI.Properties;
 	using TQVaultAE.Logs;
 	using TQVaultAE.Data;
-	using log4net.Core;
 
 	/// <summary>
 	/// Main Program class
@@ -43,19 +41,6 @@ namespace TQVaultAE.GUI
 		{
 			try
 			{
-				#region Load c++ libs using resource file
-
-				//AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler((s, a) =>
-				//	{
-				//		if (a.Name.StartsWith("VXPLib"))
-				//		{
-				//			return Assembly.Load(Properties.Resources.VXPLib);
-				//		}
-				//		return null;
-				//	}
-				//);
-
-				#endregion
 
 				manageCulture();
 

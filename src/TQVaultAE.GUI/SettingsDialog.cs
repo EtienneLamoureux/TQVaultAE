@@ -7,7 +7,6 @@ namespace TQVaultAE.GUI
 {
 	using Properties;
 	using System;
-	using System.Collections.Generic;
 	using System.Drawing;
 	using System.Globalization;
 	using System.Linq;

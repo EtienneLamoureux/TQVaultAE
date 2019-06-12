@@ -5,10 +5,8 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Entities
 {
-	using System;
 	using System.Collections;
 	using System.Collections.Generic;
-	using System.Linq;
 
 	/// <summary>
 	/// Builds a loot table from a particular loot table ID.

@@ -3,9 +3,6 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
-//[assembly: CLSCompliant(true)]
-
 namespace TQVaultAE.Data
 {
 	using System;

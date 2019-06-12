@@ -6,7 +6,6 @@
 namespace TQVaultAE.Data
 {
 	using log4net.Core;
-	using System.IO;
 	using TQVaultAE.Logs;
 
 	/// <summary>

@@ -11,7 +11,6 @@ namespace TQVaultAE.GUI
 	using System.ComponentModel;
 	using System.Diagnostics;
 	using System.Drawing;
-	using System.Drawing.Text;
 	using System.Globalization;
 	using System.IO;
 	using System.Linq;
