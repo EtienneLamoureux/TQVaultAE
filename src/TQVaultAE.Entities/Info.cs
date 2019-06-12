@@ -76,7 +76,7 @@ namespace TQVaultAE.Entities
 		/// Initializes a new instance of the Info class.
 		/// </summary>
 		/// <param name="record">database record for which this info is for.</param>
-		[CLSCompliantAttribute(false)]
+		
 		public Info(DBRecordCollection record)
 		{
 			this.record = record;

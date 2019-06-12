@@ -1350,7 +1350,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="e">MouseEventArgs data</param>
 		protected virtual void MouseDownCallback(object sender, MouseEventArgs e)
 		{
-			if (this.Sack == null || (Settings.Default.PlayerReadonly == true && this.SackType == SackType.Equipment))
+			if (this.Sack == null || (Config.Settings.Default.PlayerReadonly == true && this.SackType == SackType.Equipment))
 			{
 				return;
 			}
@@ -1408,7 +1408,7 @@ namespace TQVaultAE.GUI.Components
 
 					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
 					{
-						if (focusedItem.HasRelic && Settings.Default.AllowItemEdit)
+						if (focusedItem.HasRelic && Config.Settings.Default.AllowItemEdit)
 						{
 							this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
 						}
@@ -1418,7 +1418,7 @@ namespace TQVaultAE.GUI.Components
 							this.contextMenu.Items.Add(Resources.SackPanelMenuSplit);
 						}
 
-						if (Settings.Default.AllowItemCopy)
+						if (Config.Settings.Default.AllowItemCopy)
 						{
 							this.contextMenu.Items.Add(Resources.SackPanelMenuCopy);
 							this.contextMenu.Items.Add(Resources.SackPanelMenuDuplicate);
@@ -1503,7 +1503,7 @@ namespace TQVaultAE.GUI.Components
 					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
 					{
 						// Item Editing options
-						if (Settings.Default.AllowItemEdit)
+						if (Config.Settings.Default.AllowItemEdit)
 						{
 							this.contextMenu.Items.Add(Resources.SackPanelMenuSeed);
 
@@ -2193,7 +2193,7 @@ namespace TQVaultAE.GUI.Components
 		{
 			if (focusedItem != null)
 			{
-				if (suppressMessage || Settings.Default.SuppressWarnings || MessageBox.Show(
+				if (suppressMessage || Config.Settings.Default.SuppressWarnings || MessageBox.Show(
 					Resources.SackPanelDeleteMsg,
 					Resources.SackPanelDelete,
 					MessageBoxButtons.YesNo,
@@ -2496,7 +2496,7 @@ namespace TQVaultAE.GUI.Components
 				{
 					if (this.selectedItems != null)
 					{
-						if (Settings.Default.SuppressWarnings || MessageBox.Show(
+						if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
 							Resources.SackPanelDeleteMultiMsg,
 							Resources.SackPanelDeleteMulti,
 							MessageBoxButtons.YesNo,
@@ -2519,7 +2519,7 @@ namespace TQVaultAE.GUI.Components
 				}
 				else if (selectedItem == Resources.SackPanelMenuRemoveRelic)
 				{
-					if (Settings.Default.SuppressWarnings || MessageBox.Show(
+					if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
 						Resources.SackPanelRemoveRelicMsg,
 						Resources.SackPanelMenuRemoveRelic,
 						MessageBoxButtons.YesNo,

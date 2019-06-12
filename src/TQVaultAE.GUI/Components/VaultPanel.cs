@@ -503,7 +503,7 @@ namespace TQVaultAE.GUI.Components
 					// Only show Copy, Merge and Empty if something is in the bag.
 					if (!this.BagSackPanel.Sack.IsEmpty)
 					{
-						if (Settings.Default.AllowItemCopy)
+						if (Config.Settings.Default.AllowItemCopy)
 						{
 							// Add the copy submenu
 							this.AddSubMenu(Resources.PlayerPanelMenuCopy, this.CopyBagClicked);
@@ -750,7 +750,7 @@ namespace TQVaultAE.GUI.Components
 			string selectedItem = e.ClickedItem.Text;
 			if (selectedItem == Resources.PlayerPanelMenuEmpty)
 			{
-				if (Settings.Default.SuppressWarnings || MessageBox.Show(
+				if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
 					Resources.PlayerPanelEmptyMsg,
 					Resources.PlayerPanelEmpty,
 					MessageBoxButtons.YesNo,
@@ -783,7 +783,7 @@ namespace TQVaultAE.GUI.Components
 
 				if (!this.Player.GetSack(destinationIndex + this.BagPanelOffset).IsEmpty)
 				{
-					if (Settings.Default.SuppressWarnings || MessageBox.Show(
+					if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
 						Resources.PlayerOverwriteSackMsg,
 						Resources.PlayerOverwriteSack,
 						MessageBoxButtons.YesNo,

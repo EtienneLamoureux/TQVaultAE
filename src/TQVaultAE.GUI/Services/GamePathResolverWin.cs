@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using TQVaultAE.Data;
 using TQVaultAE.Data;
 
 namespace TQVaultAE.GUI.Services
@@ -65,9 +60,9 @@ namespace TQVaultAE.GUI.Services
 				titanQuestGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
 			}
 
-			if (string.IsNullOrEmpty(titanQuestGamePath) && !string.IsNullOrEmpty(IniProperties.GamePath))
+			if (string.IsNullOrEmpty(titanQuestGamePath) && !string.IsNullOrEmpty(Config.Settings.Default.ForceGamePath))
 			{
-				titanQuestGamePath = IniProperties.GamePath;
+				titanQuestGamePath = Config.Settings.Default.ForceGamePath;
 			}
 
 			if (string.IsNullOrEmpty(titanQuestGamePath))
@@ -128,9 +123,9 @@ namespace TQVaultAE.GUI.Services
 				titanQuestGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
 			}
 
-			if (string.IsNullOrEmpty(titanQuestGamePath) && !string.IsNullOrEmpty(IniProperties.GamePath))
+			if (string.IsNullOrEmpty(titanQuestGamePath) && !string.IsNullOrEmpty(Config.Settings.Default.ForceGamePath))
 			{
-				titanQuestGamePath = IniProperties.GamePath;
+				titanQuestGamePath = Config.Settings.Default.ForceGamePath;
 			}
 
 			if (string.IsNullOrEmpty(titanQuestGamePath))

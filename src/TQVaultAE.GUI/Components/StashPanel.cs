@@ -132,7 +132,7 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			//x and y coordinates passed are normalized values between 0 and 1.0.   
-			playerInfoDisplay = new PlayerInfoDisplay(Settings.Default, this, this.Font,.83,.14);
+			playerInfoDisplay = new PlayerInfoDisplay(Config.Settings.Default, this, this.Font,.83,.14);
 
 			// Now that the buttons are set we can move the panel
 			this.BagSackPanel.SetLocation(new Point(

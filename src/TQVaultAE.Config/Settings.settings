@@ -1,7 +1,43 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TQVaultAE.GUI.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TQVaultAE.Config" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
+    <Setting Name="DebugEnabled" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ARCFileDebugLevel" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="DatabaseDebugLevel" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ItemDebugLevel" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ItemAttributesDebugLevel" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="NoToolTipDelay" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="GameLanguages" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">de,en,es,fr,it,pl,ru,cs</Value>
+    </Setting>
+    <Setting Name="UILanguage" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UpdateURL" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://github.com/EtienneLamoureux/TQVaultAE</Value>
+    </Setting>
+    <Setting Name="ShowSkillLevel" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="FadeInInterval" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">0.1</Value>
+    </Setting>
+    <Setting Name="FadeOutInterval" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">0.2</Value>
+    </Setting>
     <Setting Name="SkipTitle" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
@@ -56,53 +92,26 @@
     <Setting Name="CustomMap" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="DebugEnabled" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="ARCFileDebugLevel" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="DatabaseDebugLevel" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="ItemDebugLevel" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="ItemAttributesDebugLevel" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="NoToolTipDelay" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="GameLanguages" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">de,en,es,fr,it,pl,ru,cs</Value>
-    </Setting>
-    <Setting Name="UILanguage" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="UpdateURL" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://www.soulseekkor.com/apps/tqvault/</Value>
-    </Setting>
     <Setting Name="Scale" Type="System.Single" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="ShowSkillLevel" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="LoadAllFilesCompleted" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="FadeInInterval" Type="System.Double" Scope="Application">
-      <Value Profile="(Default)">0.1</Value>
-    </Setting>
-    <Setting Name="FadeOutInterval" Type="System.Double" Scope="Application">
-      <Value Profile="(Default)">0.2</Value>
     </Setting>
     <Setting Name="PlayerReadonly" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="AllowCharacterEdit" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ShowEditingCopyFeatures" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ForceGamePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Mod" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

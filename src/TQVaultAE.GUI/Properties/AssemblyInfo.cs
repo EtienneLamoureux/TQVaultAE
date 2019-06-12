@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 [assembly: Guid("40473eaa-06cd-4833-898d-0793c3d1b755")]
 
 // CLS compliant attribute
-[assembly: CLSCompliant(true)]
+//[assembly: CLSCompliant(true)]
 
 [assembly: AssemblyVersion("3.0.0")]
 [assembly: AssemblyFileVersion("3.0.0")]

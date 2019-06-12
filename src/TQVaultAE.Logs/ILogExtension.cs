@@ -20,6 +20,7 @@ namespace TQVaultAE.Logs
 		public static void ErrorFormat(this log4net.ILog Log, Exception ex, string format, params object[] args)
 		{
 			Log.Error(string.Format(format, args), ex);
+
 		}
 
 		/// <summary>

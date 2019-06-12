@@ -238,8 +238,8 @@ namespace TQVaultAE.GUI
 			if (Database.DB is null)
 			{
 				Database.DB = new Database();
-				Database.DB.AutoDetectLanguage = Settings.Default.AutoDetectLanguage;
-				Database.DB.TQLanguage = Settings.Default.TQLanguage;
+				Database.DB.AutoDetectLanguage = Config.Settings.Default.AutoDetectLanguage;
+				Database.DB.TQLanguage = Config.Settings.Default.TQLanguage;
 			}
 		}
 

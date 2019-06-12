@@ -11,6 +11,7 @@ using TQVaultAE.Data;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Properties;
 using TQVaultAE.Entities;
+using TQVaultAE.Config;
 
 namespace TQVaultAE.GUI.Models
 {

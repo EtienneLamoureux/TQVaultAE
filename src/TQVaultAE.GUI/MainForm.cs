@@ -224,11 +224,11 @@ namespace TQVaultAE.GUI
 			this.Text = string.Format(CultureInfo.CurrentCulture, "{0} {1}", aname.Name, this.currentVersion);
 
 			// Setup debugging.
-			TQDebug.DebugEnabled = Settings.Default.DebugEnabled;
-			TQDebug.ArcFileDebugLevel = Settings.Default.ARCFileDebugLevel;
-			TQDebug.DatabaseDebugLevel = Settings.Default.DatabaseDebugLevel;
-			TQDebug.ItemDebugLevel = Settings.Default.ItemDebugLevel;
-			TQDebug.ItemAttributesDebugLevel = Settings.Default.ItemAttributesDebugLevel;
+			TQDebug.DebugEnabled = Config.Settings.Default.DebugEnabled;
+			TQDebug.ArcFileDebugLevel = Config.Settings.Default.ARCFileDebugLevel;
+			TQDebug.DatabaseDebugLevel = Config.Settings.Default.DatabaseDebugLevel;
+			TQDebug.ItemDebugLevel = Config.Settings.Default.ItemDebugLevel;
+			TQDebug.ItemAttributesDebugLevel = Config.Settings.Default.ItemAttributesDebugLevel;
 
 			if (TQDebug.DebugEnabled)
 			{
@@ -264,9 +264,9 @@ namespace TQVaultAE.GUI
 			Item.ItemIT = Resources.ItemIT;
 			Item.ItemRagnarok = Resources.ItemRagnarok;
 			Item.ItemAtlantis = Resources.ItemAtlantis;
-			Item.ShowSkillLevel = Settings.Default.ShowSkillLevel;
+			Item.ShowSkillLevel = Config.Settings.Default.ShowSkillLevel;
 
-			if (Settings.Default.NoToolTipDelay)
+			if (Config.Settings.Default.NoToolTipDelay)
 			{
 				this.tooltip.SetNoDelay();
 			}
@@ -287,7 +287,7 @@ namespace TQVaultAE.GUI
 			this.splashScreen.MaximumValue = 1;
 			this.splashScreen.FormClosed += new FormClosedEventHandler(this.SplashScreenClosed);
 
-			if (Settings.Default.LoadAllFiles)
+			if (Config.Settings.Default.LoadAllFiles)
 			{
 				this.splashScreen.MaximumValue += LoadAllFilesTotal();
 			}
@@ -384,14 +384,14 @@ namespace TQVaultAE.GUI
 		{
 			TQData.GamePathResolver = new GamePathResolverWin();
 
-			if (!Settings.Default.AutoDetectGamePath)
+			if (!Config.Settings.Default.AutoDetectGamePath)
 			{
-				TQData.TQPath = Settings.Default.TQPath;
-				TQData.ImmortalThronePath = Settings.Default.TQITPath;
+				TQData.TQPath = Config.Settings.Default.TQPath;
+				TQData.ImmortalThronePath = Config.Settings.Default.TQITPath;
 			}
 
 			// Show a message that the default path is going to be used.
-			if (string.IsNullOrEmpty(Settings.Default.VaultPath))
+			if (string.IsNullOrEmpty(Config.Settings.Default.VaultPath))
 			{
 				string folderPath = Path.Combine(TQData.TQSaveFolder, "TQVaultData");
 
@@ -407,7 +407,7 @@ namespace TQVaultAE.GUI
 				}
 			}
 
-			TQData.TQVaultSaveFolder = Settings.Default.VaultPath;
+			TQData.TQVaultSaveFolder = Config.Settings.Default.VaultPath;
 		}
 
 		/// <summary>
@@ -417,13 +417,13 @@ namespace TQVaultAE.GUI
 		private void SetUILanguage()
 		{
 			string settingsCulture = null;
-			if (!string.IsNullOrEmpty(Settings.Default.UILanguage))
+			if (!string.IsNullOrEmpty(Config.Settings.Default.UILanguage))
 			{
-				settingsCulture = Settings.Default.UILanguage;
+				settingsCulture = Config.Settings.Default.UILanguage;
 			}
-			else if (!Settings.Default.AutoDetectLanguage)
+			else if (!Config.Settings.Default.AutoDetectLanguage)
 			{
-				settingsCulture = Settings.Default.TQLanguage;
+				settingsCulture = Config.Settings.Default.TQLanguage;
 			}
 
 			if (!string.IsNullOrEmpty(settingsCulture))
@@ -471,9 +471,9 @@ namespace TQVaultAE.GUI
 		{
 			// Set the map name.  Command line argument can override this setting in LoadResources().
 			string mapName = "main";
-			if (Settings.Default.ModEnabled)
+			if (Config.Settings.Default.ModEnabled)
 			{
-				mapName = Settings.Default.CustomMap;
+				mapName = Config.Settings.Default.CustomMap;
 			}
 
 			TQData.MapName = mapName;
@@ -486,8 +486,8 @@ namespace TQVaultAE.GUI
 		/// <param name="vaultPath">Path to the vault files</param>
 		private static void UpdateVaultPath(string vaultPath)
 		{
-			Settings.Default.VaultPath = vaultPath;
-			Settings.Default.Save();
+			Config.Settings.Default.VaultPath = vaultPath;
+			Config.Settings.Default.Save();
 		}
 
 		/// <summary>
@@ -898,14 +898,14 @@ namespace TQVaultAE.GUI
 		{
 			this.DrawCustomBorder = true;
 			this.ResizeCustomAllowed = true;
-			this.fadeInterval = Settings.Default.FadeInInterval;
+			this.fadeInterval = Config.Settings.Default.FadeInInterval;
 
 			Rectangle workingArea = Screen.FromControl(this).WorkingArea;
 
 			int formWidth = 1350;
 			int formHeight = 910;
 			float initialScale = 1.0F;
-			Settings.Default.Scale = initialScale;
+			Config.Settings.Default.Scale = initialScale;
 
 			// Ninakoru: trick to force close/min/max buttons to reposition...
 			this.ScaleOnResize = false;
@@ -915,11 +915,11 @@ namespace TQVaultAE.GUI
 				initialScale = Math.Min(Convert.ToSingle(workingArea.Width) / Convert.ToSingle(formWidth), Convert.ToSingle(workingArea.Height) / Convert.ToSingle(formHeight));
 
 
-				if (Settings.Default.Scale > initialScale)
+				if (Config.Settings.Default.Scale > initialScale)
 				{
-					Settings.Default.Scale = initialScale;
+					Config.Settings.Default.Scale = initialScale;
 				}
-				this.ClientSize = new System.Drawing.Size((int)System.Math.Round(formWidth * Settings.Default.Scale), (int)System.Math.Round(formHeight * Settings.Default.Scale));
+				this.ClientSize = new System.Drawing.Size((int)System.Math.Round(formWidth * Config.Settings.Default.Scale), (int)System.Math.Round(formHeight * Config.Settings.Default.Scale));
 			}
 			else
 			{
@@ -928,9 +928,9 @@ namespace TQVaultAE.GUI
 			this.ScaleOnResize = true;
 
 
-			Database.DB.Scale = Settings.Default.Scale;
+			Database.DB.Scale = Config.Settings.Default.Scale;
 
-			Settings.Default.Save();
+			Config.Settings.Default.Save();
 
 			// Save the height / width ratio for resizing.
 			this.FormDesignRatio = (float)this.Height / (float)this.Width;
@@ -940,7 +940,7 @@ namespace TQVaultAE.GUI
 				Convert.ToInt32((float)this.Height * 0.4F));
 
 			this.OriginalFormSize = this.Size;
-			this.OriginalFormScale = Settings.Default.Scale;
+			this.OriginalFormScale = Config.Settings.Default.Scale;
 
 			if (CurrentAutoScaleDimensions.Width != Database.DesignDpi)
 			{
@@ -997,15 +997,15 @@ namespace TQVaultAE.GUI
 			else
 			{
 				//read map name from ini file, main section
-				if (!String.IsNullOrEmpty(IniProperties.Mod))
+				if (!String.IsNullOrEmpty(Config.Settings.Default.Mod))
 				{
-					TQData.MapName = IniProperties.Mod;
+					TQData.MapName = Config.Settings.Default.Mod;
 				}
 
-				if (!IniProperties.ShowEditingCopyFeatures)
+				if (!Config.Settings.Default.ShowEditingCopyFeatures)
 				{
-					Settings.Default.AllowItemCopy = false;
-					Settings.Default.AllowItemEdit = false;
+					Config.Settings.Default.AllowItemCopy = false;
+					Config.Settings.Default.AllowItemEdit = false;
 				}
 
 				CommandLineArgs args = new CommandLineArgs();
@@ -1020,7 +1020,7 @@ namespace TQVaultAE.GUI
 				this.resourcesLoaded = true;
 				this.backgroundWorker1.ReportProgress(1);
 
-				if (Settings.Default.LoadAllFiles)
+				if (Config.Settings.Default.LoadAllFiles)
 				{
 					this.LoadAllFiles();
 				}
@@ -1084,9 +1084,9 @@ namespace TQVaultAE.GUI
 				this.LoadRelicVaultStash();
 
 				// Load last character here if selected
-				if (Settings.Default.LoadLastCharacter)
+				if (Config.Settings.Default.LoadLastCharacter)
 				{
-					int ind = this.characterComboBox.FindStringExact(Settings.Default.LastCharacterName);
+					int ind = this.characterComboBox.FindStringExact(Config.Settings.Default.LastCharacterName);
 					if (ind != -1)
 					{
 						this.characterComboBox.SelectedIndex = ind;
@@ -1096,9 +1096,9 @@ namespace TQVaultAE.GUI
 				string currentVault = "Main Vault";
 
 				// See if we should load the last loaded vault
-				if (Settings.Default.LoadLastVault)
+				if (Config.Settings.Default.LoadLastVault)
 				{
-					currentVault = Settings.Default.LastVaultName;
+					currentVault = Config.Settings.Default.LastVaultName;
 
 					// Make sure there is something in the config file to load else load the Main Vault
 					// We do not want to create new here.
@@ -1119,7 +1119,7 @@ namespace TQVaultAE.GUI
 				CommandLineArgs args = new CommandLineArgs();
 
 				// Allows skipping of title screen with setting
-				if (args.IsAutomatic || Settings.Default.SkipTitle == true)
+				if (args.IsAutomatic || Config.Settings.Default.SkipTitle == true)
 				{
 					string player = args.Player;
 					int index = this.characterComboBox.FindStringExact(player);
@@ -1480,9 +1480,9 @@ namespace TQVaultAE.GUI
 			}
 
 			// See if we should load the last loaded vault
-			if (Settings.Default.LoadLastVault)
+			if (Config.Settings.Default.LoadLastVault)
 			{
-				currentVault = Settings.Default.LastVaultName;
+				currentVault = Config.Settings.Default.LastVaultName;
 
 				// Make sure there is something in the config file to load else load the Main Vault
 				// We do not want to create new here.
@@ -1896,7 +1896,7 @@ namespace TQVaultAE.GUI
 		{
 			// Check to see if we failed the last time we tried loading all of the files.
 			// If we did fail then turn it off and skip it.
-			if (!Settings.Default.LoadAllFilesCompleted)
+			if (!Config.Settings.Default.LoadAllFilesCompleted)
 			{
 				if (MessageBox.Show(
 					Resources.MainFormDisableLoadAllFiles,
@@ -1906,9 +1906,9 @@ namespace TQVaultAE.GUI
 					MessageBoxDefaultButton.Button1,
 					RightToLeftOptions) == DialogResult.Yes)
 				{
-					Settings.Default.LoadAllFilesCompleted = true;
-					Settings.Default.LoadAllFiles = false;
-					Settings.Default.Save();
+					Config.Settings.Default.LoadAllFilesCompleted = true;
+					Config.Settings.Default.LoadAllFiles = false;
+					Config.Settings.Default.Save();
 					return;
 				}
 			}
@@ -1935,8 +1935,8 @@ namespace TQVaultAE.GUI
 			if (total > 0)
 			{
 				// We were successful last time so we reset the flag for this attempt.
-				Settings.Default.LoadAllFilesCompleted = false;
-				Settings.Default.Save();
+				Config.Settings.Default.LoadAllFilesCompleted = false;
+				Config.Settings.Default.Save();
 			}
 			else
 			{
@@ -2074,8 +2074,8 @@ namespace TQVaultAE.GUI
 			}
 
 			// We made it so set the flag to indicate we were successful.
-			Settings.Default.LoadAllFilesCompleted = true;
-			Settings.Default.Save();
+			Config.Settings.Default.LoadAllFilesCompleted = true;
+			Config.Settings.Default.Save();
 		}
 
 		/// <summary>
@@ -2864,24 +2864,24 @@ namespace TQVaultAE.GUI
 		private void SaveConfiguration()
 		{
 			// Update last loaded vault
-			if (Settings.Default.LoadLastVault)
+			if (Config.Settings.Default.LoadLastVault)
 			{
 				// Changed by VillageIdiot
 				// Now check to see if the value is changed since the Main Vault would never auto load
-				if (this.vaultListComboBox.SelectedItem != null && this.vaultListComboBox.SelectedItem.ToString().ToUpperInvariant() != Settings.Default.LastVaultName.ToUpperInvariant())
+				if (this.vaultListComboBox.SelectedItem != null && this.vaultListComboBox.SelectedItem.ToString().ToUpperInvariant() != Config.Settings.Default.LastVaultName.ToUpperInvariant())
 				{
-					Settings.Default.LastVaultName = this.vaultListComboBox.SelectedItem.ToString();
+					Config.Settings.Default.LastVaultName = this.vaultListComboBox.SelectedItem.ToString();
 					this.configChanged = true;
 				}
 			}
 
 			// Update last loaded character
-			if (Settings.Default.LoadLastCharacter)
+			if (Config.Settings.Default.LoadLastCharacter)
 			{
 				// Changed by VillageIdiot
 				// Now check the last value to see if it has changed since the logic would
 				// always load a character even if no character was selected on the last run
-				if (this.characterComboBox.SelectedItem.ToString().ToUpperInvariant() != Settings.Default.LastCharacterName.ToUpperInvariant())
+				if (this.characterComboBox.SelectedItem.ToString().ToUpperInvariant() != Config.Settings.Default.LastCharacterName.ToUpperInvariant())
 				{
 					// Clear the value if no character is selected
 					string name = this.characterComboBox.SelectedItem.ToString();
@@ -2890,39 +2890,39 @@ namespace TQVaultAE.GUI
 						name = string.Empty;
 					}
 
-					Settings.Default.LastCharacterName = name;
+					Config.Settings.Default.LastCharacterName = name;
 					this.configChanged = true;
 				}
 			}
 
 			// Update custom map settings
-			if (Settings.Default.ModEnabled)
+			if (Config.Settings.Default.ModEnabled)
 			{
 				this.configChanged = true;
 			}
 
 			// Clear out the key if we are autodetecting.
-			if (Settings.Default.AutoDetectLanguage)
+			if (Config.Settings.Default.AutoDetectLanguage)
 			{
-				Settings.Default.TQLanguage = string.Empty;
+				Config.Settings.Default.TQLanguage = string.Empty;
 			}
 
 			// Clear out the settings if auto detecting.
-			if (Settings.Default.AutoDetectGamePath)
+			if (Config.Settings.Default.AutoDetectGamePath)
 			{
-				Settings.Default.TQITPath = string.Empty;
-				Settings.Default.TQPath = string.Empty;
+				Config.Settings.Default.TQITPath = string.Empty;
+				Config.Settings.Default.TQPath = string.Empty;
 			}
 
 			if (Database.DB.Scale != 1.0F)
 			{
-				Settings.Default.Scale = Database.DB.Scale;
+				Config.Settings.Default.Scale = Database.DB.Scale;
 				this.configChanged = true;
 			}
 
 			if (this.configChanged)
 			{
-				Settings.Default.Save();
+				Config.Settings.Default.Save();
 			}
 		}
 

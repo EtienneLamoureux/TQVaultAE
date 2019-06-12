@@ -3,6 +3,9 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
+//[assembly: CLSCompliant(true)]
+
 namespace TQVaultAE.Data
 {
 	using System;
@@ -132,19 +135,19 @@ namespace TQVaultAE.Data
 		/// <summary>
 		/// Gets the instance of the Titan Quest Database ArzFile.
 		/// </summary>
-		[CLSCompliantAttribute(false)]
+		
 		public ArzFile ArzFile { get; private set; }
 
 		/// <summary>
 		/// Gets the instance of the Immortal Throne Database ArzFile.
 		/// </summary>
-		[CLSCompliantAttribute(false)]
+		
 		public ArzFile ArzFileIT { get; private set; }
 
 		/// <summary>
 		/// Gets the instance of a custom map Database ArzFile.
 		/// </summary>
-		[CLSCompliantAttribute(false)]
+		
 		public ArzFile ArzFileMod { get; private set; }
 
 		/// <summary>
@@ -517,7 +520,7 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="variable">variable for which we are making a nice string.</param>
 		/// <returns>Formatted string in the format of:  Attribute: value</returns>
-		[CLSCompliantAttribute(false)]
+		
 		public string VariableToStringNice(Variable variable)
 		{
 			StringBuilder ans = new StringBuilder(64);
@@ -586,7 +589,7 @@ namespace TQVaultAE.Data
 		/// </remarks>
 		/// <param name="itemId">Item Id which we are looking up</param>
 		/// <returns>Returns the DBRecord for the item Id</returns>
-		[CLSCompliantAttribute(false)]
+		
 		public DBRecordCollection GetRecordFromFile(string itemId)
 		{
 			itemId = TQData.NormalizeRecordPath(itemId);

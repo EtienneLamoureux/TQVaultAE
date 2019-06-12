@@ -477,8 +477,8 @@ namespace TQVaultAE.GUI
 					(float)this.OriginalFormSize.Width / (float)this.Width,
 					(float)this.OriginalFormSize.Width / (float)this.Width));
 
-				Settings.Default.Scale = 1.0F;
-				Settings.Default.Save();
+				Config.Settings.Default.Scale = 1.0F;
+				Config.Settings.Default.Save();
 			}
 			else
 			{

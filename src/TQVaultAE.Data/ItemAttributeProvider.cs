@@ -708,7 +708,7 @@ namespace TQVaultAE.Data
 		/// <param name="variable">attribute variable</param>
 		/// <param name="variableName">string for variable name</param>
 		/// <returns>true if the variable == variable name</returns>
-		[CLSCompliantAttribute(false)]
+		
 		public static bool AttributeHas(Variable variable, string variableName)
 		{
 			if (variable == null)
@@ -731,7 +731,7 @@ namespace TQVaultAE.Data
 		/// <param name="attributeList">Array of attributes</param>
 		/// <param name="effect">effect string to be tested</param>
 		/// <returns>true if attribute effect in group == effect</returns>
-		[CLSCompliantAttribute(false)]
+		
 		public static bool AttributeGroupIs(Collection<Variable> attributeList, string effect)
 		{
 			Variable variable = (Variable)attributeList[0];
@@ -750,7 +750,7 @@ namespace TQVaultAE.Data
 		/// <param name="attributeList">Array of attributes</param>
 		/// <param name="type">Effect type enumeration</param>
 		/// <returns>true if attribute effect in group == type</returns>
-		[CLSCompliantAttribute(false)]
+		
 		public static bool AttributeGroupIs(Collection<Variable> attributeList, ItemAttributesEffectType type)
 		{
 			Variable variable = (Variable)attributeList[0];
@@ -768,7 +768,7 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="attributeList">array of attributes</param>
 		/// <returns>Effect type of the attribute list</returns>
-		[CLSCompliantAttribute(false)]
+		
 		public static ItemAttributesEffectType AttributeGroupType(Collection<Variable> attributeList)
 		{
 			Variable variable = (Variable)attributeList[0];
@@ -787,7 +787,7 @@ namespace TQVaultAE.Data
 		/// <param name="attributeList">array of attributes</param>
 		/// <param name="variableName">name of variable</param>
 		/// <returns>true if variable is present in the list</returns>
-		[CLSCompliantAttribute(false)]
+		
 		public static bool AttributeGroupHas(Collection<Variable> attributeList, string variableName)
 		{
 			foreach (Variable variable in attributeList)

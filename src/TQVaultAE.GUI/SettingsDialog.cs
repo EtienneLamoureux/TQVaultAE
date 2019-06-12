@@ -229,7 +229,7 @@ namespace TQVaultAE.GUI
 			{
 				this.mapListComboBox.Items.AddRange(maps);
 			}
-			if (!IniProperties.ShowEditingCopyFeatures)
+			if (!Config.Settings.Default.ShowEditingCopyFeatures)
 			{
 				this.allowItemEditCheckBox.Visible = false;
 				this.allowItemCopyCheckBox.Visible = false;
@@ -417,14 +417,14 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void LoadSettings()
 		{
-			this.skipTitle = Settings.Default.SkipTitle;
-			this.vaultPath = Settings.Default.VaultPath;
-			this.allowItemCopy = Settings.Default.AllowItemCopy;
-			this.allowItemEdit = Settings.Default.AllowItemEdit;
-			this.allowCharacterEdit = Settings.Default.AllowCharacterEdit;
-			this.loadLastCharacter = Settings.Default.LoadLastCharacter;
-			this.loadLastVault = Settings.Default.LoadLastVault;
-			this.detectLanguage = Settings.Default.AutoDetectLanguage;
+			this.skipTitle = Config.Settings.Default.SkipTitle;
+			this.vaultPath = Config.Settings.Default.VaultPath;
+			this.allowItemCopy = Config.Settings.Default.AllowItemCopy;
+			this.allowItemEdit = Config.Settings.Default.AllowItemEdit;
+			this.allowCharacterEdit = Config.Settings.Default.AllowCharacterEdit;
+			this.loadLastCharacter = Config.Settings.Default.LoadLastCharacter;
+			this.loadLastVault = Config.Settings.Default.LoadLastVault;
+			this.detectLanguage = Config.Settings.Default.AutoDetectLanguage;
 
 			// Force English since there was some issue with getting the proper language setting.
 			var gl = Database.DB.GameLanguage;
@@ -437,14 +437,14 @@ namespace TQVaultAE.GUI
 				this.titanQuestLanguage = gl;
 			}
 
-			this.detectGamePath = Settings.Default.AutoDetectGamePath;
+			this.detectGamePath = Config.Settings.Default.AutoDetectGamePath;
 			this.titanQuestPath = TQData.TQPath;
 			this.immortalThronePath = TQData.ImmortalThronePath;
-			this.enableMods = Settings.Default.ModEnabled;
-			this.customMap = Settings.Default.CustomMap;
-			this.loadAllFiles = Settings.Default.LoadAllFiles;
-			this.suppressWarnings = Settings.Default.SuppressWarnings;
-			this.playerReadonly = Settings.Default.PlayerReadonly;
+			this.enableMods = Config.Settings.Default.ModEnabled;
+			this.customMap = Config.Settings.Default.CustomMap;
+			this.loadAllFiles = Config.Settings.Default.LoadAllFiles;
+			this.suppressWarnings = Config.Settings.Default.SuppressWarnings;
+			this.playerReadonly = Config.Settings.Default.PlayerReadonly;
 
 			this.settingsLoaded = true;
 			this.configurationChanged = false;
@@ -470,7 +470,7 @@ namespace TQVaultAE.GUI
 			this.languageComboBox.Items.Clear();
 
 			// Read the languages from the config file
-			ComboBoxItem[] languages = Settings.Default.GameLanguages.Split(',').Select(iso =>
+			ComboBoxItem[] languages = Config.Settings.Default.GameLanguages.Split(',').Select(iso =>
 			{
 				CultureInfo ci = new CultureInfo(iso.ToUpperInvariant(), true);
 				return new ComboBoxItem() { Value = ci.EnglishName, DisplayName = ci.DisplayName };// to keep EnglishName as baseline value
@@ -523,23 +523,23 @@ namespace TQVaultAE.GUI
 		{
 			if (this.configurationChanged)
 			{
-				Settings.Default.SkipTitle = this.skipTitle;
-				Settings.Default.VaultPath = this.vaultPath;
-				Settings.Default.AllowItemCopy = this.allowItemCopy;
-				Settings.Default.AllowItemEdit = this.allowItemEdit;
-				Settings.Default.AllowCharacterEdit = this.allowCharacterEdit;
-				Settings.Default.LoadLastCharacter = this.loadLastCharacter;
-				Settings.Default.LoadLastVault = this.loadLastVault;
-				Settings.Default.AutoDetectLanguage = this.detectLanguage;
-				Settings.Default.TQLanguage = this.titanQuestLanguage;
-				Settings.Default.AutoDetectGamePath = this.detectGamePath;
-				Settings.Default.TQITPath = this.immortalThronePath;
-				Settings.Default.TQPath = this.titanQuestPath;
-				Settings.Default.ModEnabled = this.enableMods;
-				Settings.Default.CustomMap = this.customMap;
-				Settings.Default.LoadAllFiles = this.loadAllFiles;
-				Settings.Default.SuppressWarnings = this.suppressWarnings;
-				Settings.Default.PlayerReadonly = this.playerReadonly;
+				Config.Settings.Default.SkipTitle = this.skipTitle;
+				Config.Settings.Default.VaultPath = this.vaultPath;
+				Config.Settings.Default.AllowItemCopy = this.allowItemCopy;
+				Config.Settings.Default.AllowItemEdit = this.allowItemEdit;
+				Config.Settings.Default.AllowCharacterEdit = this.allowCharacterEdit;
+				Config.Settings.Default.LoadLastCharacter = this.loadLastCharacter;
+				Config.Settings.Default.LoadLastVault = this.loadLastVault;
+				Config.Settings.Default.AutoDetectLanguage = this.detectLanguage;
+				Config.Settings.Default.TQLanguage = this.titanQuestLanguage;
+				Config.Settings.Default.AutoDetectGamePath = this.detectGamePath;
+				Config.Settings.Default.TQITPath = this.immortalThronePath;
+				Config.Settings.Default.TQPath = this.titanQuestPath;
+				Config.Settings.Default.ModEnabled = this.enableMods;
+				Config.Settings.Default.CustomMap = this.customMap;
+				Config.Settings.Default.LoadAllFiles = this.loadAllFiles;
+				Config.Settings.Default.SuppressWarnings = this.suppressWarnings;
+				Config.Settings.Default.PlayerReadonly = this.playerReadonly;
 			}
 		}
 
@@ -863,7 +863,7 @@ namespace TQVaultAE.GUI
 				return;
 			}
 
-			if (this.mapListComboBox.SelectedItem.ToString() != Settings.Default.CustomMap)
+			if (this.mapListComboBox.SelectedItem.ToString() != Config.Settings.Default.CustomMap)
 			{
 				this.customMap = this.mapListComboBox.SelectedItem.ToString();
 				this.configurationChanged = true;
