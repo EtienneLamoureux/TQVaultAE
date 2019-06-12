@@ -25,6 +25,8 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Logs;
 	using TQVaultAE.Entities;
 	using TQVaultAE.GUI.Services;
+	using TQVaultAE.Presentation;
+	using TQVaultAE.Presentation.Html;
 
 	/// <summary>
 	/// Main Dialog class
@@ -714,7 +716,7 @@ namespace TQVaultAE.GUI
 
 			public bool Apply(Item item)
 			{
-				return ItemProvider.ToString(item).ToUpperInvariant().Contains(name.ToUpperInvariant());
+				return  ItemProvider.ToFriendlyName(item).ToUpperInvariant().Contains(name.ToUpperInvariant());
 			}
 
 			public override string ToString()
@@ -774,7 +776,7 @@ namespace TQVaultAE.GUI
 
 			public bool Apply(Item item)
 			{
-				return ItemProvider.GetAttributes(item, true).ToUpperInvariant().Contains(attribute.ToUpperInvariant());
+				return ItemHtmlHelper.GetAttributes(item, true).ToUpperInvariant().Contains(attribute.ToUpperInvariant());
 			}
 
 			public override string ToString()
@@ -2102,15 +2104,15 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				string text = ItemProvider.ToString(item);
-				Color color = item.GetColorTag(text);
+				string text =  ItemProvider.ToFriendlyName(item);
+				Color color = ItemGfxHelper.GetColorTag(item, text);
 				text = Item.ClipColorTag(text);
 				this.itemText.ForeColor = color;
 				this.itemText.Text = text;
 
-				string attributes = ItemProvider.GetAttributes(item, true); // true means hide uninteresting attributes
-				string setitems = ItemProvider.GetItemSetString(item);
-				string reqs = ItemProvider.GetRequirements(item);
+				string attributes = ItemHtmlHelper.GetAttributes(item, true); // true means hide uninteresting attributes
+				string setitems = ItemHtmlHelper.GetItemSetString(item);
+				string reqs = ItemHtmlHelper.GetRequirements(item);
 
 				// combine the 2
 				if (reqs.Length < 1)
@@ -2119,22 +2121,22 @@ namespace TQVaultAE.GUI
 				}
 				else if (setitems.Length < 1)
 				{
-					string reqTitle = Database.MakeSafeForHtml("?Requirements?");
-					reqTitle = string.Format(CultureInfo.InvariantCulture, "<font size=+2 color={0}>{1}</font><br>", Database.HtmlColor(Item.GetColor(ItemStyle.Potion)), reqTitle);
-					string separator = string.Format(CultureInfo.InvariantCulture, "<hr color={0}><br>", Database.HtmlColor(Item.GetColor(ItemStyle.Broken)));
+					string reqTitle = HtmlHelper.MakeSafeForHtml("?Requirements?");
+					reqTitle = string.Format(CultureInfo.InvariantCulture, "<font size=+2 color={0}>{1}</font><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Potion)), reqTitle);
+					string separator = string.Format(CultureInfo.InvariantCulture, "<hr color={0}><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Broken)));
 					this.tooltipText = string.Concat(attributes, separator, reqs);
 				}
 				else
 				{
-					string reqTitle = Database.MakeSafeForHtml("?Requirements?");
-					reqTitle = string.Format(CultureInfo.InvariantCulture, "<font size=+2 color={0}>{1}</font><br>", Database.HtmlColor(Item.GetColor(ItemStyle.Potion)), reqTitle);
-					string separator1 = string.Format(CultureInfo.InvariantCulture, "<hr color={0}>", Database.HtmlColor(Item.GetColor(ItemStyle.Broken)));
-					string separator2 = string.Format(CultureInfo.InvariantCulture, "<hr color={0}><br>", Database.HtmlColor(Item.GetColor(ItemStyle.Broken)));
+					string reqTitle = HtmlHelper.MakeSafeForHtml("?Requirements?");
+					reqTitle = string.Format(CultureInfo.InvariantCulture, "<font size=+2 color={0}>{1}</font><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Potion)), reqTitle);
+					string separator1 = string.Format(CultureInfo.InvariantCulture, "<hr color={0}>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Broken)));
+					string separator2 = string.Format(CultureInfo.InvariantCulture, "<hr color={0}><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Broken)));
 					this.tooltipText = string.Concat(attributes, separator1, setitems, separator2, reqs);
 				}
 
 				// show tooltip
-				this.tooltipText = string.Concat(Database.DB.TooltipBodyTag, this.tooltipText);
+				this.tooltipText = string.Concat(HtmlHelper.TooltipBodyTag(Database.DB.Scale), this.tooltipText);
 				this.tooltip.ChangeText(this.tooltipText);
 			}
 

@@ -12,7 +12,7 @@ namespace TQVaultAE.Data
 	/// <summary>
 	/// Used to sort AttributeEffect groups so that effects that belong together stay together
 	/// </summary>
-	internal class ItemAttributeListCompare : IComparer<List<Variable>>
+	public class ItemAttributeListCompare : IComparer<List<Variable>>
 	{
 		/// <summary>
 		/// Flag to show whether the item is a piece of armor

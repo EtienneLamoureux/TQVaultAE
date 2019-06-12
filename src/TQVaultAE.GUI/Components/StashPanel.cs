@@ -15,6 +15,8 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
+	using TQVaultAE.Presentation.Html;
 
 	/// <summary>
 	/// Class for handling the stash panel ui functions
@@ -719,7 +721,7 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			StringBuilder answer = new StringBuilder();
-			answer.Append(Database.DB.TooltipTitleTag);
+			answer.Append(HtmlHelper.TooltipTitleTag(Database.DB.Scale));
 			bool first = true;
 			foreach (Item item in sack)
 			{
@@ -741,10 +743,10 @@ namespace TQVaultAE.GUI.Components
 				}
 
 				first = false;
-				string text = Database.MakeSafeForHtml(ItemProvider.ToString(item));
-				Color color = item.GetColorTag(text);
+				string text = HtmlHelper.MakeSafeForHtml(ItemProvider.ToFriendlyName(item));
+				Color color = ItemGfxHelper.GetColorTag(item, text);
 				text = Item.ClipColorTag(text);
-				string htmlcolor = Database.HtmlColor(color);
+				string htmlcolor = HtmlHelper.HtmlColor(color);
 				string htmlLine = string.Format(CultureInfo.CurrentCulture, "<font color={0}><b>{1}</b></font>", htmlcolor, text);
 				answer.Append(htmlLine);
 			}

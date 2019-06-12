@@ -11,6 +11,8 @@ namespace TQVaultAE.GUI.Models
 	using System.Linq;
 	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
+	using TQVaultAE.Presentation.Html;
 
 	/// <summary>
 	/// Class for an individual result in the results list.
@@ -37,11 +39,11 @@ namespace TQVaultAE.GUI.Models
 			this.sackType = sackType;
 			this.item = item ?? throw new ArgumentNullException(nameof(item));
 
-			this.itemName = Item.ClipColorTag(ItemProvider.ToString(item));
+			this.itemName = Item.ClipColorTag( ItemProvider.ToFriendlyName(item));
 
 			ItemStyle computedItemStyle = item.ItemStyle;
 			this.itemStyle = MainForm.GetItemStyleString(computedItemStyle);
-			this.color = Item.GetColor(computedItemStyle);
+			this.color = ItemGfxHelper.GetColor(computedItemStyle);
 
 			var requirementVariables = ItemProvider.GetRequirementVariables(item).Values;
 			this.requiredLevel = GetRequirement(requirementVariables, "levelRequirement");

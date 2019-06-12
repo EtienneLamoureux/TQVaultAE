@@ -11,7 +11,7 @@ namespace TQVaultAE.Data
 	/// <summary>
 	/// Used for autosorting of items within a group
 	/// </summary>
-	internal class ItemAttributeSubListCompare : IComparer<Variable>
+	public class ItemAttributeSubListCompare : IComparer<Variable>
 	{
 		/// <summary>
 		/// Initializes a new instance of the ItemAttributeSubListCompare class.

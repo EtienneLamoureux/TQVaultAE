@@ -593,6 +593,10 @@
       <Project>{a3715670-c701-4623-b9ba-9a48fca95adc}</Project>
       <Name>TQVaultAE.Logs</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj">
+      <Project>{6e20606d-9460-469f-b340-d3418165a19b}</Project>
+      <Name>TQVaultAE.Presentation</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

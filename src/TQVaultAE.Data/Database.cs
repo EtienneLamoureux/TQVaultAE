@@ -107,44 +107,23 @@ namespace TQVaultAE.Data
 		/// </summary>
 		public string TQLanguage { get; set; }
 
-		/// <summary>
-		/// Gets the Tooltip body tag.
-		/// </summary>
-		public string TooltipBodyTag
-		{
-			get
-			{
-				return string.Format(CultureInfo.CurrentCulture, "<body bgcolor=#2e291f text=white><font face=\"Albertus MT\" size={0}>", Convert.ToInt32(9.0F * this.Scale));
-			}
-		}
-
-		/// <summary>
-		/// Gets the Tooltip Title tag.
-		/// </summary>
-		public string TooltipTitleTag
-		{
-			get
-			{
-				return string.Format(CultureInfo.CurrentCulture, "<body bgcolor=#2e291f text=white><font face=\"Albertus MT\" size={0}>", Convert.ToInt32(10.0F * this.Scale));
-			}
-		}
 
 		/// <summary>
 		/// Gets the instance of the Titan Quest Database ArzFile.
 		/// </summary>
-		
+
 		public ArzFile ArzFile { get; private set; }
 
 		/// <summary>
 		/// Gets the instance of the Immortal Throne Database ArzFile.
 		/// </summary>
-		
+
 		public ArzFile ArzFileIT { get; private set; }
 
 		/// <summary>
 		/// Gets the instance of a custom map Database ArzFile.
 		/// </summary>
-		
+
 		public ArzFile ArzFileMod { get; private set; }
 
 		/// <summary>
@@ -367,29 +346,6 @@ namespace TQVaultAE.Data
 			return new Collection<string>(choppedLines);
 		}
 
-		/// <summary>
-		/// Takes plain text and replaces any characters that do not belong in html with the appropriate stuff.
-		/// i.e. replaces > with &gt; etc
-		/// </summary>
-		/// <param name="text">Text to be formatted</param>
-		/// <returns>Formatted text string</returns>
-		public static string MakeSafeForHtml(string text)
-		{
-			text = System.Text.RegularExpressions.Regex.Replace(text, "&", "&amp;");
-			text = System.Text.RegularExpressions.Regex.Replace(text, "<", "&lt;");
-			text = System.Text.RegularExpressions.Regex.Replace(text, ">", "&gt;");
-			return text;
-		}
-
-		/// <summary>
-		/// Gets the HTML formatted color of a specified color
-		/// </summary>
-		/// <param name="color">Color to be HTMLized</param>
-		/// <returns>string of HTML formatted color</returns>
-		public static string HtmlColor(Color color)
-		{
-			return string.Format(CultureInfo.InvariantCulture, "#{0:X2}{1:X2}{2:X2}", color.R, color.G, color.B);
-		}
 
 		/// <summary>
 		/// Used to Extract an ARC file into the destination directory.
@@ -517,7 +473,7 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="variable">variable for which we are making a nice string.</param>
 		/// <returns>Formatted string in the format of:  Attribute: value</returns>
-		
+
 		public string VariableToStringNice(Variable variable)
 		{
 			StringBuilder ans = new StringBuilder(64);
@@ -586,7 +542,7 @@ namespace TQVaultAE.Data
 		/// </remarks>
 		/// <param name="itemId">Item Id which we are looking up</param>
 		/// <returns>Returns the DBRecord for the item Id</returns>
-		
+
 		public DBRecordCollection GetRecordFromFile(string itemId)
 		{
 			itemId = TQData.NormalizeRecordPath(itemId);
@@ -682,18 +638,18 @@ namespace TQVaultAE.Data
 
 				bool xpack = false;
 
-                if (arcFileBase.ToUpperInvariant().Equals("XPACK"))
-                {
-                    // Comes from Immortal Throne
-                    xpack = true;
-                    rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack");
-                }
-                else if (arcFileBase.ToUpperInvariant().Equals("XPACK2"))
-                {
-                    // Comes from Ragnarok
-                    xpack = true;
-                    rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack2");
-                }
+				if (arcFileBase.ToUpperInvariant().Equals("XPACK"))
+				{
+					// Comes from Immortal Throne
+					xpack = true;
+					rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack");
+				}
+				else if (arcFileBase.ToUpperInvariant().Equals("XPACK2"))
+				{
+					// Comes from Ragnarok
+					xpack = true;
+					rootFolder = Path.Combine(Path.Combine(rootFolder, "Resources"), "XPack2");
+				}
 				else if (arcFileBase.ToUpperInvariant().Equals("XPACK3"))
 				{
 					// Comes from Atlantis
@@ -703,15 +659,15 @@ namespace TQVaultAE.Data
 
 
 				if (xpack == true)
-                {
-                    // throw away that value and use the next field.
-                    int previousBackslash = backslashLocation;
-                    backslashLocation = resourceId.IndexOf('\\', backslashLocation + 1);
-                    if (backslashLocation <= 0)
-                    {
-                        // not a proper resourceID
-                        return null;
-                    }
+				{
+					// throw away that value and use the next field.
+					int previousBackslash = backslashLocation;
+					backslashLocation = resourceId.IndexOf('\\', backslashLocation + 1);
+					if (backslashLocation <= 0)
+					{
+						// not a proper resourceID
+						return null;
+					}
 
 					arcFileBase = resourceId.Substring(previousBackslash + 1, backslashLocation - previousBackslash - 1);
 					resourceId = resourceId.Substring(previousBackslash + 1);
@@ -1217,16 +1173,17 @@ namespace TQVaultAE.Data
 				this.ParseTextDB(databaseFile, "text\\xnpc.txt"); // Added by VillageIdiot
 				this.ParseTextDB(databaseFile, "text\\modstrings.txt"); // Added by VillageIdiot
 
-                if (TQData.IsRagnarokInstalled) {
-                    this.ParseTextDB(databaseFile, "text\\x2commonequipment.txt");
-                    this.ParseTextDB(databaseFile, "text\\x2uniqueequipment.txt");
-                    this.ParseTextDB(databaseFile, "text\\x2quest.txt");
-                    this.ParseTextDB(databaseFile, "text\\x2ui.txt");
-                    this.ParseTextDB(databaseFile, "text\\x2skills.txt");
-                    this.ParseTextDB(databaseFile, "text\\x2monsters.txt"); // Added by VillageIdiot
-                    this.ParseTextDB(databaseFile, "text\\x2menu.txt"); // Added by VillageIdiot
-                    this.ParseTextDB(databaseFile, "text\\x2npc.txt"); // Added by VillageIdiot
-                }
+				if (TQData.IsRagnarokInstalled)
+				{
+					this.ParseTextDB(databaseFile, "text\\x2commonequipment.txt");
+					this.ParseTextDB(databaseFile, "text\\x2uniqueequipment.txt");
+					this.ParseTextDB(databaseFile, "text\\x2quest.txt");
+					this.ParseTextDB(databaseFile, "text\\x2ui.txt");
+					this.ParseTextDB(databaseFile, "text\\x2skills.txt");
+					this.ParseTextDB(databaseFile, "text\\x2monsters.txt"); // Added by VillageIdiot
+					this.ParseTextDB(databaseFile, "text\\x2menu.txt"); // Added by VillageIdiot
+					this.ParseTextDB(databaseFile, "text\\x2npc.txt"); // Added by VillageIdiot
+				}
 
 				if (TQData.IsAtlantisInstalled)
 				{

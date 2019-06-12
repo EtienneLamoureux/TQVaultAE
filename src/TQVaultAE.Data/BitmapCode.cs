@@ -3,12 +3,6 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-
-// Note: FreeImage is technically thread-safe. This is because internally, the
-// objects (FIBITMAP, FIMEMORY, etc.) are actually allocated via malloc, which
-// is thread-safe. The only thing which may not be thread-safe are plugins. But
-// since those probably are not being modified, it should be safe.
-
 namespace TQVaultAE.Data
 {
 	using System;
