@@ -3,19 +3,22 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultData
+namespace TQVaultAE.DAL
 {
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Globalization;
 	using System.IO;
+	using TQVaultAE.Logging;
 
 	/// <summary>
 	/// Loads, decodes, encodes and saves a Titan Quest player file.
 	/// </summary>
 	public class PlayerCollection : IEnumerable<SackCollection>
 	{
+		private readonly log4net.ILog Log = null;
+
 		/// <summary>
 		/// Static array holding the byte pattern for the beginning of a block in the player file.
 		/// </summary>
@@ -88,6 +91,8 @@ namespace TQVaultData
 		/// <param name="playerFile">filename of the player file</param>
 		public PlayerCollection(string playerName, string playerFile)
 		{
+			this.Log = Logger.Get(this);
+
 			this.PlayerFile = playerFile;
 			this.PlayerName = playerName;
 		}
@@ -106,6 +111,11 @@ namespace TQVaultData
 		/// Gets the equipment sack for this file.
 		/// </summary>
 		public SackCollection EquipmentSack { get; private set; }
+
+		/// <summary>
+		/// Holds playerInfo
+		/// </summary>
+		public PlayerInfo PlayerInfo { get; private set; }
 
 		/// <summary>
 		/// Gets the player file name
@@ -136,6 +146,14 @@ namespace TQVaultData
 					if (this.EquipmentSack.IsModified)
 					{
 						return true;
+					}
+				}
+
+				if (this.PlayerInfo != null)
+				{
+					if (this.PlayerInfo.Modified)
+					{
+						return (true);
 					}
 				}
 
@@ -198,6 +216,32 @@ namespace TQVaultData
 			}
 		}
 
+
+		public void CommitPlayerInfo(PlayerInfo playerInfo)
+		{
+			if (this.PlayerInfo == null) return;
+			if (playerInfo == null) return;
+			if (rawData == null || rawData.Length < 1) return;
+
+			var writer = new PlayerInfoWriter();
+			//validate the current data against the raw file
+			//there should be no changes 
+			writer.Validate(this.PlayerInfo, this.rawData);
+			this.PlayerInfo.CurrentLevel = playerInfo.CurrentLevel;
+			this.PlayerInfo.CurrentXP = playerInfo.CurrentXP;
+			this.PlayerInfo.DifficultyUnlocked = playerInfo.DifficultyUnlocked;
+			this.PlayerInfo.AttributesPoints = playerInfo.AttributesPoints;
+			this.PlayerInfo.SkillPoints = playerInfo.SkillPoints;
+			this.PlayerInfo.BaseStrength = playerInfo.BaseStrength;
+			this.PlayerInfo.BaseDexterity = playerInfo.BaseDexterity;
+			this.PlayerInfo.BaseIntelligence = playerInfo.BaseIntelligence;
+			this.PlayerInfo.BaseHealth = playerInfo.BaseHealth;
+			this.PlayerInfo.BaseMana = playerInfo.BaseMana;
+			this.PlayerInfo.Money = playerInfo.Money;
+			//commit the player changes to the raw file
+			writer.Commit(this.PlayerInfo, this.rawData);
+		}
+
 		/// <summary>
 		/// Non Generic enumerator interface.
 		/// </summary>
@@ -222,6 +266,7 @@ namespace TQVaultData
 				this.sacks[i].IsModified = false;
 			}
 		}
+
 
 		/// <summary>
 		/// Attempts to save the file.
@@ -371,8 +416,9 @@ namespace TQVaultData
 				// Now Parse the file
 				this.ParseRawData();
 			}
-			catch (ArgumentException)
+			catch (ArgumentException ex)
 			{
+				Log.Error("ParseRawData() Failed !", ex);
 				throw;
 			}
 		}
@@ -392,6 +438,7 @@ namespace TQVaultData
 					int currentOffset = 0;
 					int itemOffset = 0;
 					int equipmentOffset = 0;
+					var playerReader = new PlayerInfoReader();
 
 					// vaults start at the item data with no crap
 					bool foundItems = this.IsVault;
@@ -440,6 +487,10 @@ namespace TQVaultData
 								equipmentOffset = currentOffset; // skip value for useAlternate
 								foundEquipment = true;
 							}
+							else if (!this.IsVault && playerReader.Match(blockName))
+							{
+								playerReader.Record(blockName, currentOffset);
+							}
 
 							// Print the string with a nesting level indicator
 							////string levelString = new string ('-', System.Math.Max(0,blockNestLevel*2-2));
@@ -466,14 +517,10 @@ namespace TQVaultData
 						}
 						catch (ArgumentException exception)
 						{
-							if (!TQDebug.DebugEnabled)
-							{
-								TQDebug.DebugEnabled = true;
-							}
-
-							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error parsing player file Item Block - '{0}'", this.PlayerName));
-							TQDebug.DebugWriteLine(exception.ToString());
-							throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player file Item Block- '{0}'", this.PlayerName), exception);
+							var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player file Item Block- '{0}'", this.PlayerName), exception);
+							Log.ErrorFormat(CultureInfo.InvariantCulture, "Error parsing player file Item Block - '{0}'", this.PlayerName);
+							Log.ErrorException(exception);
+							throw ex;
 						}
 
 						try
@@ -517,16 +564,9 @@ namespace TQVaultData
 						}
 						catch (IOException exception)
 						{
-							if (!TQDebug.DebugEnabled)
-							{
-								TQDebug.DebugEnabled = true;
-							}
-
-							TQDebug.DebugWriteLine(string.Format(
-								CultureInfo.InvariantCulture,
-								"Error writing Export file - '{0}'",
-								string.Concat(Path.Combine(TQData.TQVaultSaveFolder, this.PlayerName), " Export.txt")));
-							TQDebug.DebugWriteLine(exception.ToString());
+							Log.ErrorFormat(exception, "Error writing Export file - '{0}'"
+								, string.Concat(Path.Combine(TQData.TQVaultSaveFolder, this.PlayerName), " Export.txt")
+							);
 						}
 					}
 
@@ -539,14 +579,9 @@ namespace TQVaultData
 						}
 						catch (ArgumentException exception)
 						{
-							if (!TQDebug.DebugEnabled)
-							{
-								TQDebug.DebugEnabled = true;
-							}
-
-							TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error parsing player file Equipment Block - '{0}'", this.PlayerName));
-							TQDebug.DebugWriteLine(exception.ToString());
-							throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player file Equipment Block - '{0}'", this.PlayerName), exception);
+							var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player file Equipment Block - '{0}'", this.PlayerName), exception);
+							Log.ErrorFormat(ex, "Error parsing player file Equipment Block - '{0}'", this.PlayerName);
+							throw ex;
 						}
 
 						try
@@ -576,17 +611,29 @@ namespace TQVaultData
 						}
 						catch (IOException exception)
 						{
+							Log.ErrorFormat(exception, "Error writing Export file - '{0}'"
+								, string.Concat(Path.Combine(TQData.TQVaultSaveFolder, this.PlayerName), " Equipment Export.txt")
+							);
+						}
+					}
+
+					if (playerReader.FoundPlayerInfo && !this.IsVault)
+					{
+						try
+						{
+							playerReader.Read(reader);
+							this.PlayerInfo = playerReader.GetPlayerInfo();
+
+						}
+						catch (ArgumentException exception)
+						{
 							if (!TQDebug.DebugEnabled)
 							{
 								TQDebug.DebugEnabled = true;
 							}
-
-							TQDebug.DebugWriteLine(string.Format(
-								CultureInfo.InvariantCulture,
-								"Error writing Export file - '{0}'",
-								string.Concat(Path.Combine(TQData.TQVaultSaveFolder, this.PlayerName), " Equipment Export.txt")));
-
-							TQDebug.DebugWriteLine(exception.ToString());
+							var rethrowex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player player info Block - '{0}'", this.PlayerName), exception);
+							this.Log.ErrorException(rethrowex);
+							throw rethrowex;
 						}
 					}
 				}
@@ -675,10 +722,11 @@ namespace TQVaultData
 
 				this.itemBlockEnd = (int)reader.BaseStream.Position;
 			}
-			catch (ArgumentException)
+			catch (ArgumentException ex)
 			{
 				// The ValidateNextString Method can throw an ArgumentException.
 				// We just pass it along at this point.
+				Log.Debug("ValidateNextString fail !", ex);
 				throw;
 			}
 		}
@@ -724,6 +772,7 @@ namespace TQVaultData
 			return realData;
 		}
 
+
 		/// <summary>
 		/// Parses the binary equipment block data
 		/// </summary>
@@ -750,8 +799,9 @@ namespace TQVaultData
 
 				this.equipmentBlockEnd = (int)reader.BaseStream.Position;
 			}
-			catch (ArgumentException)
+			catch (ArgumentException ex)
 			{
+				Log.Error($"ParseEquipmentBlock fail ! offset={offset}", ex);
 				throw;
 			}
 		}

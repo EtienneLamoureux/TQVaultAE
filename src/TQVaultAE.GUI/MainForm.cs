@@ -20,13 +20,18 @@ namespace TQVaultAE.GUI
 	using System.Threading;
 	using System.Windows.Forms;
 	using Tooltip;
-	using TQVaultData;
+	using TQVaultAE.GUI.Components;
+	using TQVaultAE.GUI.Models;
+	using TQVaultAE.DAL;
+	using TQVaultAE.Logging;
 
 	/// <summary>
 	/// Main Dialog class
 	/// </summary>
 	internal partial class MainForm : VaultForm
 	{
+		private readonly log4net.ILog Log = null;
+
 		/// <summary>
 		/// Indicates whether the database resources have completed loading.
 		/// </summary>
@@ -152,6 +157,8 @@ namespace TQVaultAE.GUI
 		[PermissionSet(SecurityAction.LinkDemand, Unrestricted = true)]
 		public MainForm()
 		{
+			Log = Logger.Get(this);
+
 			this.Enabled = false;
 			this.ShowInTaskbar = false;
 			this.Opacity = 0;
@@ -167,30 +174,30 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font & scaling
 
-			this.exitButton.Font = Program.GetFontAlbertusMTLight(12F, TQVaultData.Database.DB.Scale);
+			this.exitButton.Font = Program.GetFontAlbertusMTLight(12F, Database.DB.Scale);
 			ScaleControl(this.exitButton);
-			this.characterComboBox.Font = Program.GetFontAlbertusMTLight(13F, TQVaultData.Database.DB.Scale);
+			this.characterComboBox.Font = Program.GetFontAlbertusMTLight(13F, Database.DB.Scale);
 			ScaleControl(this.characterComboBox);
 			ScaleControl(this.characterLabel);
 			ScaleControl(this.itemTextPanel);
 			ScaleControl(this.itemText);
-			this.vaultListComboBox.Font = Program.GetFontAlbertusMTLight(13F, TQVaultData.Database.DB.Scale);
+			this.vaultListComboBox.Font = Program.GetFontAlbertusMTLight(13F, Database.DB.Scale);
 			ScaleControl(this.vaultListComboBox);
-			this.vaultLabel.Font = Program.GetFontAlbertusMTLight(11F, TQVaultData.Database.DB.Scale);
+			this.vaultLabel.Font = Program.GetFontAlbertusMTLight(11F, Database.DB.Scale);
 			ScaleControl(this.vaultLabel);
-			this.configureButton.Font = Program.GetFontAlbertusMTLight(12F, TQVaultData.Database.DB.Scale);
+			this.configureButton.Font = Program.GetFontAlbertusMTLight(12F, Database.DB.Scale);
 			ScaleControl(this.configureButton);
-			this.customMapText.Font = Program.GetFontAlbertusMT(11.25F, TQVaultData.Database.DB.Scale);
+			this.customMapText.Font = Program.GetFontAlbertusMT(11.25F, Database.DB.Scale);
 			ScaleControl(this.customMapText);
-			this.panelSelectButton.Font = Program.GetFontAlbertusMTLight(12F, TQVaultData.Database.DB.Scale);
+			this.panelSelectButton.Font = Program.GetFontAlbertusMTLight(12F, Database.DB.Scale);
 			ScaleControl(this.panelSelectButton);
-			this.secondaryVaultListComboBox.Font = Program.GetFontAlbertusMTLight(11F, TQVaultData.Database.DB.Scale);
+			this.secondaryVaultListComboBox.Font = Program.GetFontAlbertusMTLight(11F, Database.DB.Scale);
 			ScaleControl(this.secondaryVaultListComboBox);
-			this.aboutButton.Font = Program.GetFontMicrosoftSansSerif(8.25F, TQVaultData.Database.DB.Scale);
+			this.aboutButton.Font = Program.GetFontMicrosoftSansSerif(8.25F, Database.DB.Scale);
 			ScaleControl(this.aboutButton);
-			this.titleLabel.Font = Program.GetFontAlbertusMTLight(24F, TQVaultData.Database.DB.Scale);
+			this.titleLabel.Font = Program.GetFontAlbertusMTLight(24F, Database.DB.Scale);
 			ScaleControl(this.titleLabel);
-			this.searchButton.Font = Program.GetFontAlbertusMTLight(12F, TQVaultData.Database.DB.Scale);
+			this.searchButton.Font = Program.GetFontAlbertusMTLight(12F, Database.DB.Scale);
 			ScaleControl(this.searchButton);
 
 			#endregion
@@ -201,7 +208,8 @@ namespace TQVaultAE.GUI
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				Log.Error("Get TTLib fail !", ex);
+				MessageBox.Show(Log.FormatException(ex));
 				// Handle failure to create to tooltip here
 				// VXPlib not registered
 				checkVXPlibrary();
@@ -209,8 +217,7 @@ namespace TQVaultAE.GUI
 			}
 
 			// Changed to a global for versions in tqdebug
-			Assembly a = Assembly.GetExecutingAssembly();
-			AssemblyName aname = a.GetName();
+			AssemblyName aname = Assembly.GetExecutingAssembly().GetName();
 			this.currentVersion = aname.Version.ToString();
 			this.Text = string.Format(CultureInfo.CurrentCulture, "{0} {1}", aname.Name, this.currentVersion);
 
@@ -224,14 +231,14 @@ namespace TQVaultAE.GUI
 			if (TQDebug.DebugEnabled)
 			{
 				// Write this version into the debug file.
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Current TQVault Version: {0}", this.currentVersion));
-				TQDebug.DebugWriteLine(string.Empty);
-				TQDebug.DebugWriteLine("Debug Levels");
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "ARCFileDebugLevel: {0}", TQDebug.ArcFileDebugLevel));
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "DatabaseDebugLevel: {0}", TQDebug.DatabaseDebugLevel));
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "ItemAttributesDebugLevel: {0}", TQDebug.ItemAttributesDebugLevel));
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "ItemDebugLevel: {0}", TQDebug.ItemDebugLevel));
-				TQDebug.DebugWriteLine(string.Empty);
+				Log.DebugFormat(CultureInfo.InvariantCulture, "Current TQVault Version: {0}", this.currentVersion);
+				Log.Debug(string.Empty);
+				Log.Debug("Debug Levels");
+				Log.DebugFormat(CultureInfo.InvariantCulture, "ARCFileDebugLevel: {0}", TQDebug.ArcFileDebugLevel);
+				Log.DebugFormat(CultureInfo.InvariantCulture, "DatabaseDebugLevel: {0}", TQDebug.DatabaseDebugLevel);
+				Log.DebugFormat(CultureInfo.InvariantCulture, "ItemAttributesDebugLevel: {0}", TQDebug.ItemAttributesDebugLevel);
+				Log.DebugFormat(CultureInfo.InvariantCulture, "ItemDebugLevel: {0}", TQDebug.ItemDebugLevel);
+				Log.Debug(string.Empty);
 			}
 
 			SetupGamePaths();
@@ -299,7 +306,9 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				throw new FileNotFoundException("VXPlibrary.dll missing from TQVault directory!");
+				var ex = new FileNotFoundException("VXPlibrary.dll missing from TQVault directory!");
+				Log.ErrorException(ex);
+				throw ex;
 			}
 		}
 
@@ -323,7 +332,8 @@ namespace TQVaultAE.GUI
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				Log.ErrorException(ex);
+				MessageBox.Show(Log.FormatException(ex));
 			}
 		}
 
@@ -400,7 +410,7 @@ namespace TQVaultAE.GUI
 		/// Attempts to read the language from the config file and set the Current Thread's Culture and UICulture.
 		/// Defaults to the OS UI Culture.
 		/// </summary>
-		private static void SetUILanguage()
+		private void SetUILanguage()
 		{
 			string settingsCulture = null;
 			if (!string.IsNullOrEmpty(Settings.Default.UILanguage))
@@ -437,13 +447,11 @@ namespace TQVaultAE.GUI
 					}
 					catch (ArgumentNullException e)
 					{
-						TQDebug.DebugEnabled = true;
-						TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Argument Null Exception when setting the language:\n\n{0}", e));
+						Log.Error("Argument Null Exception when setting the language", e);
 					}
 					catch (NotSupportedException e)
 					{
-						TQDebug.DebugEnabled = true;
-						TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Not Supported Exception when setting the language:\n\n{0}", e));
+						Log.Error("Not Supported Exception when setting the language", e);
 					}
 				}
 
@@ -915,7 +923,7 @@ namespace TQVaultAE.GUI
 			this.ScaleOnResize = true;
 
 
-			TQVaultData.Database.DB.Scale = Settings.Default.Scale;
+			Database.DB.Scale = Settings.Default.Scale;
 
 			Settings.Default.Save();
 
@@ -1296,7 +1304,7 @@ namespace TQVaultAE.GUI
 			{
 				string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, transferStashFile, exception.ToString());
 				MessageBox.Show(msg, Resources.MainFormStashReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-
+				Log.Error(msg, exception);
 				this.stashPanel.TransferStash = null;
 			}
 		}
@@ -1711,7 +1719,8 @@ namespace TQVaultAE.GUI
 			}
 			catch (IOException exception)
 			{
-				MessageBox.Show(exception.ToString(), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+				Log.Error("Save files failed !", exception);
+				MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 			}
 
 			return ok;
@@ -1817,7 +1826,7 @@ namespace TQVaultAE.GUI
 			{
 				string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, playerFile, exception.ToString());
 				MessageBox.Show(msg, Resources.MainFormPlayerReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-
+				Log.Error(msg, exception);
 				this.playerPanel.Player = null;
 				this.characterComboBox.SelectedIndex = 0;
 			}
@@ -1867,7 +1876,7 @@ namespace TQVaultAE.GUI
 			{
 				string msg = string.Concat(Resources.MainFormReadError, stashFile, exception.ToString());
 				MessageBox.Show(msg, Resources.MainFormStashReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-
+				Log.Error(msg, exception);
 				this.stashPanel.Stash = null;
 			}
 
@@ -1968,7 +1977,8 @@ namespace TQVaultAE.GUI
 				}
 				catch (IOException exception)
 				{
-					MessageBox.Show(exception.ToString(), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+					Log.ErrorException(exception);
+					MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
 				this.backgroundWorker1.ReportProgress(1);
@@ -2010,7 +2020,8 @@ namespace TQVaultAE.GUI
 				}
 				catch (IOException exception)
 				{
-					MessageBox.Show(exception.ToString(), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+					Log.ErrorException(exception);
+					MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
 				this.backgroundWorker1.ReportProgress(1);
@@ -2524,7 +2535,8 @@ namespace TQVaultAE.GUI
 			}
 			catch (IOException exception)
 			{
-				MessageBox.Show(exception.ToString(), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+				Log.ErrorException(exception);
+				MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 			}
 		}
 
@@ -2565,7 +2577,8 @@ namespace TQVaultAE.GUI
 						catch (IOException exception)
 						{
 							string title = string.Format(CultureInfo.InvariantCulture, Resources.MainFormSaveError, player.PlayerName);
-							switch (MessageBox.Show(exception.ToString(), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
+							Log.Error(title, exception);
+							switch (MessageBox.Show(Log.FormatException(exception), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
 							{
 								case DialogResult.Abort:
 									{
@@ -2624,7 +2637,8 @@ namespace TQVaultAE.GUI
 						catch (IOException exception)
 						{
 							string title = string.Format(CultureInfo.InvariantCulture, Resources.MainFormSaveError, vault.PlayerName);
-							switch (MessageBox.Show(exception.ToString(), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
+							Log.Error(title, exception);
+							switch (MessageBox.Show(Log.FormatException(exception), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
 							{
 								case DialogResult.Abort:
 									{
@@ -2684,7 +2698,8 @@ namespace TQVaultAE.GUI
 						catch (IOException exception)
 						{
 							string title = string.Format(CultureInfo.InvariantCulture, Resources.MainFormSaveError, stash.PlayerName);
-							switch (MessageBox.Show(exception.ToString(), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
+							Log.Error(title, exception);
+							switch (MessageBox.Show(Log.FormatException(exception), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
 							{
 								case DialogResult.Abort:
 									{
@@ -2753,7 +2768,8 @@ namespace TQVaultAE.GUI
 			}
 			catch (IOException exception)
 			{
-				MessageBox.Show(exception.ToString(), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+				Log.ErrorException(exception);
+				MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 
 				// put the vault back to what it was
 				if (this.vaultPanel.Player != null)
@@ -3030,7 +3046,8 @@ namespace TQVaultAE.GUI
 			}
 			catch (IOException exception)
 			{
-				MessageBox.Show(exception.ToString(), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+				Log.ErrorException(exception);
+				MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 
 				// put the vault back to what it was
 				if (this.secondaryVaultPanel.Player != null)
@@ -3277,7 +3294,7 @@ namespace TQVaultAE.GUI
 
 				if (vault == null)
 				{
-					TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "vaultFile={0} returned null vault.", vaultFile));
+					Log.DebugFormat(CultureInfo.InvariantCulture, "vaultFile={0} returned null vault.", vaultFile);
 					continue;
 				}
 
@@ -3287,8 +3304,8 @@ namespace TQVaultAE.GUI
 					vaultNumber++;
 					if (sack == null)
 					{
-						TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "vaultFile={0}", vaultFile));
-						TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "sack({0}) returned null.", vaultNumber));
+						Log.DebugFormat(CultureInfo.InvariantCulture, "vaultFile={0}", vaultFile);
+						Log.DebugFormat(CultureInfo.InvariantCulture, "sack({0}) returned null.", vaultNumber);
 						continue;
 					}
 
@@ -3329,14 +3346,14 @@ namespace TQVaultAE.GUI
 				if (player == null)
 				{
 					// Make sure the name is valid and we have a player.
-					TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "playerFile={0} returned null player.", playerFile));
+					Log.DebugFormat(CultureInfo.InvariantCulture, "playerFile={0} returned null player.", playerFile);
 					continue;
 				}
 
 				string playerName = GetNameFromFile(playerFile);
 				if (playerName == null)
 				{
-					TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "playerFile={0} returned null playerName.", playerFile));
+					Log.DebugFormat(CultureInfo.InvariantCulture, "playerFile={0} returned null playerName.", playerFile);
 					continue;
 				}
 
@@ -3346,8 +3363,8 @@ namespace TQVaultAE.GUI
 					sackNumber++;
 					if (sack == null)
 					{
-						TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "playerFile={0}", playerFile));
-						TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "sack({0}) returned null.", sackNumber));
+						Log.DebugFormat(CultureInfo.InvariantCulture, "playerFile={0}", playerFile);
+						Log.DebugFormat(CultureInfo.InvariantCulture, "sack({0}) returned null.", sackNumber);
 						continue;
 					}
 
@@ -3368,7 +3385,7 @@ namespace TQVaultAE.GUI
 				SackCollection equipmentSack = player.EquipmentSack;
 				if (equipmentSack == null)
 				{
-					TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "playerFile={0} Equipment Sack returned null.", playerFile));
+					Log.DebugFormat(CultureInfo.InvariantCulture, "playerFile={0} Equipment Sack returned null.", playerFile);
 					continue;
 				}
 
@@ -3405,21 +3422,21 @@ namespace TQVaultAE.GUI
 				// Make sure we have a valid name and stash.
 				if (stash == null)
 				{
-					TQVaultData.TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "stashFile={0} returned null stash.", stashFile));
+					Log.WarnFormat(CultureInfo.InvariantCulture, "stashFile={0} returned null stash.", stashFile);
 					continue;
 				}
 
 				string stashName = GetNameFromFile(stashFile);
 				if (stashName == null)
 				{
-					TQVaultData.TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "stashFile={0} returned null stashName.", stashFile));
+					Log.WarnFormat(CultureInfo.InvariantCulture, "stashFile={0} returned null stashName.", stashFile);
 					continue;
 				}
 
 				SackCollection sack = stash.Sack;
 				if (sack == null)
 				{
-					TQVaultData.TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "stashFile={0} returned null sack.", stashFile));
+					Log.WarnFormat(CultureInfo.InvariantCulture, "stashFile={0} returned null sack.", stashFile);
 					continue;
 				}
 

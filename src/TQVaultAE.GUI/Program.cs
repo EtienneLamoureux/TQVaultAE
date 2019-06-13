@@ -15,14 +15,17 @@ namespace TQVaultAE.GUI
 	using System.Threading;
 	using System.Linq;
 	using System.Windows.Forms;
-	using TQVaultData;
 	using TQVaultAE.GUI.Properties;
+	using TQVaultAE.Logging;
+	using TQVaultAE.DAL;
 
 	/// <summary>
 	/// Main Program class
 	/// </summary>
 	public static class Program
 	{
+		private static readonly log4net.ILog Log = Logger.Get(typeof(Program));
+
 		/// <summary>
 		/// Right to left reading options for message boxes
 		/// </summary>
@@ -37,20 +40,28 @@ namespace TQVaultAE.GUI
 		[SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
 		public static void Main()
 		{
-			manageCulture();
+			try
+			{
+				manageCulture();
 
-			// Add the event handler for handling UI thread exceptions to the event.
-			Application.ThreadException += new ThreadExceptionEventHandler(MainForm_UIThreadException);
+				// Add the event handler for handling UI thread exceptions to the event.
+				Application.ThreadException += new ThreadExceptionEventHandler(MainForm_UIThreadException);
 
-			// Set the unhandled exception mode to force all Windows Forms errors to go through our handler.
-			Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+				// Set the unhandled exception mode to force all Windows Forms errors to go through our handler.
+				Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 
-			// Add the event handler for handling non-UI thread exceptions to the event.
-			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+				// Add the event handler for handling non-UI thread exceptions to the event.
+				AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new MainForm());
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
+				Application.Run(new MainForm());
+			}
+			catch (Exception ex)
+			{
+				Log.ErrorException(ex);
+				throw;
+			}
 		}
 
 		private static void manageCulture()
@@ -82,20 +93,15 @@ namespace TQVaultAE.GUI
 			DialogResult result = DialogResult.Cancel;
 			try
 			{
-				string errorMsg = string.Format(CultureInfo.InvariantCulture, "Message : {0}\n\nStack Trace:\n{1}", t.Exception.Message, t.Exception.StackTrace);
-				TQDebug.DebugEnabled = true;
-				TQDebug.DebugWriteLine("UI Thread Exception");
-				TQDebug.DebugWriteLine(errorMsg);
-				result = MessageBox.Show(errorMsg, "Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
+				Log.Error("UI Thread Exception", t.Exception);
+				result = MessageBox.Show(Log.FormatException(t.Exception), "Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
 			}
 			catch
 			{
 				try
 				{
-					TQDebug.DebugEnabled = true;
-					TQDebug.DebugWriteLine("Fatal Windows Forms Error");
-					TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Message : {0}\n\nStack Trace:\n{1}", t.Exception.Message, t.Exception.StackTrace));
-					MessageBox.Show("Fatal Windows Forms Error", "Fatal Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
+					Log.Fatal("Fatal Windows Forms Error", t.Exception);
+					MessageBox.Show(Log.FormatException(t.Exception), "Fatal Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
 				}
 				finally
 				{
@@ -121,10 +127,7 @@ namespace TQVaultAE.GUI
 			try
 			{
 				Exception ex = (Exception)e.ExceptionObject;
-
-				TQDebug.DebugEnabled = true;
-				TQDebug.DebugWriteLine("An application error occurred.");
-				TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Message : {0}\n\nStack Trace:\n{1}", ex.Message, ex.StackTrace));
+				Log.Error("An application error occurred.", ex);
 			}
 			finally
 			{
@@ -170,7 +173,7 @@ namespace TQVaultAE.GUI
 		public static Font GetFontMicrosoftSansSerif(float fontSize, float? scale = null)
 		{
 			scale = scale ?? 1F;
-			return new Font("Microsoft Sans Serif", 8.25F * scale.Value);
+			return new Font("Microsoft Sans Serif", fontSize * scale.Value);
 		}
 
 		public static Font GetFontAlbertusMT(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)

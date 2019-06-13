@@ -3,6 +3,8 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using TQVaultAE.GUI.Components;
+
 namespace TQVaultAE.GUI
 {
 	/// <summary>
@@ -58,10 +60,10 @@ namespace TQVaultAE.GUI
 		private void InitializeComponent()
 		{
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SearchDialog));
-            this.searchLabel = new TQVaultAE.GUI.ScalingLabel();
-            this.searchTextBox = new TQVaultAE.GUI.ScalingTextBox();
-            this.findButton = new TQVaultAE.GUI.ScalingButton();
-            this.cancelButton = new TQVaultAE.GUI.ScalingButton();
+            this.searchLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.searchTextBox = new TQVaultAE.GUI.Components.ScalingTextBox();
+            this.findButton = new TQVaultAE.GUI.Components.ScalingButton();
+            this.cancelButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.SuspendLayout();
             // 
             // searchLabel

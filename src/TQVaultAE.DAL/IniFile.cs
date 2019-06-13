@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.IO;
+using TQVaultAE.Logging;
 
-namespace TQVaultData
+namespace TQVaultAE.DAL
 {
 	static class IniFile
 	{
+		private static readonly log4net.ILog Log = Logger.Get(typeof(IniFile));
+
 		private static String INI_FILENAME = Directory.GetCurrentDirectory() + "\\TQVaultAE.ini";
 
 		[DllImport("kernel32", CharSet = CharSet.Unicode)]
@@ -70,7 +73,10 @@ namespace TQVaultData
 					}
 				}
 			}
-			catch (Exception e) { }
+			catch (Exception ex)
+			{
+				Log.Error("INI file creation failed !", ex);
+			}
 		}
 
 		public static string[] readKeys(string section)

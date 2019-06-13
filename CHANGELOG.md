@@ -2,9 +2,11 @@
 ## 3.0.0
 ### Features
 - #107 Support the new [Atlantis](https://titanquestgame.com/titan-quest-atlantis-release/) expansion
+  - #108 Support the new relics&charms/recipes/artifacts vault
 
 ### Bugs
 - Fix some localization issues
+- #118 Window layout issues on some scaling settings
 
 ## 2.6.0
 ### Features

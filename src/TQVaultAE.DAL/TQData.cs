@@ -3,7 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultData
+namespace TQVaultAE.DAL
 {
 	using System;
 	using System.Collections.Generic;
@@ -11,12 +11,15 @@ namespace TQVaultData
 	using System.IO;
 	using System.Text;
 	using System.Text.RegularExpressions;
+	using TQVaultAE.Logging;
 
 	/// <summary>
 	/// TQData is used to store information about reading and writing the data files in TQ.
 	/// </summary>
 	public static class TQData
 	{
+		private static readonly log4net.ILog Log = Logger.Get(typeof(TQData));
+
 		/// <summary>
 		/// Name of the vault folder
 		/// </summary>
@@ -138,14 +141,16 @@ namespace TQVaultData
 			}
 		}
 
-        /// <summary>
+		/// <summary>
 		/// Gets a value indicating whether Ragnarok DLC has been installed.
 		/// </summary>
-		public static bool IsRagnarokInstalled {
-            get {
-                return Directory.Exists(ImmortalThronePath + "\\Resources\\XPack2");
-            }
-        }
+		public static bool IsRagnarokInstalled
+		{
+			get
+			{
+				return Directory.Exists(ImmortalThronePath + "\\Resources\\XPack2");
+			}
+		}
 
 		/// <summary>
 		/// Gets a value indicating whether Atlantis DLC has been installed.
@@ -234,7 +239,7 @@ namespace TQVaultData
 					throw new InvalidOperationException("Unable to locate Titan Quest installation directory. Please edit TQVaultAE.ini to contain a valid path in the option 'ForceGamePath'.");
 				}
 
-                return immortalThroneGamePath;
+				return immortalThroneGamePath;
 			}
 
 			set
@@ -379,25 +384,14 @@ namespace TQVaultData
 			string label = ReadCString(reader);
 			if (!label.ToUpperInvariant().Equals(value.ToUpperInvariant()))
 			{
-				// Turn on debugging so we can log the exception.
-				if (!TQDebug.DebugEnabled)
-				{
-					TQDebug.DebugEnabled = true;
-				}
-
-				TQDebug.DebugWriteLine(string.Format(
+				var ex = new ArgumentException(string.Format(
 					CultureInfo.InvariantCulture,
 					"Error reading file at position {2}.  Expecting '{0}'.  Got '{1}'",
 					value,
 					label,
 					reader.BaseStream.Position - label.Length - 4));
-
-				throw new ArgumentException(string.Format(
-					CultureInfo.InvariantCulture,
-					"Error reading file at position {2}.  Expecting '{0}'.  Got '{1}'",
-					value,
-					label,
-					reader.BaseStream.Position - label.Length - 4));
+				Log.ErrorException(ex);
+				throw ex;
 			}
 		}
 
@@ -476,6 +470,26 @@ namespace TQVaultData
 			return ans;
 		}
 
+
+		/// <summary>
+		/// Reads a string from the binary stream.
+		/// Expects an integer length value followed by the actual string of the stated length.
+		/// </summary>
+		/// <param name="reader">BinaryReader instance</param>
+		/// <returns>string of data that was read</returns>
+		public static string ReadUTF16String(BinaryReader reader)
+		{
+			// first 4 bytes is the string length, followed by the string.
+			int len = reader.ReadInt32();
+			len *= 2;// 2 byte chars
+			var rawData = reader.ReadBytes(len);
+
+			//convert bytes string
+			return(UnicodeEncoding.Unicode.GetString(rawData));
+
+		}
+
+
 		/// <summary>
 		/// Reads a value from the registry
 		/// </summary>
@@ -518,13 +532,15 @@ namespace TQVaultData
 				string newFolder = Path.Combine(playerFolder, "Backup-moved by TQVault");
 				if (Directory.Exists(newFolder))
 				{
-					try {
+					try
+					{
 						// It already exists--we need to remove it
 						Directory.Delete(newFolder, true);
-					} catch (Exception e)
+					}
+					catch (Exception)
 					{
 						int fn = 1;
-						while(Directory.Exists(String.Format("{0}({1})",newFolder,fn)))
+						while (Directory.Exists(String.Format("{0}({1})", newFolder, fn)))
 						{
 							fn++;
 						}

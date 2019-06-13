@@ -1,248 +1,235 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="TQVault.AboutBox" Collapsed="true">
-    <Position X="5.25" Y="0.5" Width="1.5" />
+  <Class Name="TQVaultAE.GUI.AboutBox" Collapsed="true">
+    <Position X="9.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>kIAAAAgAACAACAcAAACAAAADAAAAAIAAAAAAAAEAAAA=</HashCode>
       <FileName>AboutBox.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVault.ActionButton" Collapsed="true">
-    <Position X="7" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>EARAQg0BADAABABCAEgwABEAIGCsQAhBQAAAACkgoMA=</HashCode>
-      <FileName>ActionButton.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.AutoSortButton" Collapsed="true">
-    <Position X="2.75" Y="5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAABAAAACAAAAgAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>AutoSortButton.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.BagButton" Collapsed="true">
-    <Position X="1.75" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>kAAAAAEAAgBQAAAACgABAAAAAQAAAAABAAQAAAggJAA=</HashCode>
-      <FileName>BagButton.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.CommandLineArgs" Collapsed="true">
-    <Position X="8.75" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgEABAAAAAAAAAAgQAAAAA=</HashCode>
-      <FileName>CommandLineArgs.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.Form1" Collapsed="true">
-    <Position X="10.5" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>ACAgAAAiACgAAFBEICCQAAgCCAAAAAQEAAAgAAARAAQ=</HashCode>
-      <FileName>Form1.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.ItemDragInfo" Collapsed="true">
-    <Position X="12.25" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AgEABoABQgIAJAIIEASAAAAEgACAACAAAAAgAABAAAQ=</HashCode>
-      <FileName>ItemDragInfo.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.ItemProperties" Collapsed="true">
-    <Position X="14" Y="0.5" Width="1.5" />
+  <Class Name="TQVaultAE.GUI.ItemProperties" Collapsed="true">
+    <Position X="9.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAABAABIBCAgBBEAAASQAAAGAAAAAAQAAAAAAAEABwA=</HashCode>
       <FileName>ItemProperties.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVault.ItemSeedDialog" Collapsed="true">
-    <Position X="5.25" Y="1.5" Width="1.5" />
+  <Class Name="TQVaultAE.GUI.ItemSeedDialog" Collapsed="true">
+    <Position X="11.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ABBiAEAAACAAABAAAACAAAACAABAAACAABAAAACQAQA=</HashCode>
       <FileName>ItemSeedDialog.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVault.MainForm" Collapsed="true">
-    <Position X="7" Y="1.5" Width="1.5" />
+  <Class Name="TQVaultAE.GUI.SettingsDialog" Collapsed="true">
+    <Position X="13.25" Y="3.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>rCim0CqowaRIpRRAYYioZYhqQUPEaAamsDHQEkIpgGg=</HashCode>
-      <FileName>MainForm.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.PlayerGroupBox" Collapsed="true">
-    <Position X="2.75" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAQBAABAAAAAAAAAAAABAAAAAAAAAAAAAAAAABA=</HashCode>
-      <FileName>PlayerGroupBox.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.Program" Collapsed="true">
-    <Position X="8.75" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
-      <FileName>Program.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.ResizeEventArgs" Collapsed="true">
-    <Position X="10.5" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
-      <FileName>ResizeEventArgs.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.Result" Collapsed="true">
-    <Position X="14" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAQAAgAAAAAAAAIAAAQEAAAEAAAAAAAAAAEAAAA=</HashCode>
-      <FileName>Result.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.ResultsDialog" Collapsed="true">
-    <Position X="5.25" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>KQAAAAAAAGIAAAKAAASCggACAABEAAABQAAAACEAAAA=</HashCode>
-      <FileName>ResultsDialog.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.SackPanel" Collapsed="true">
-    <Position X="7" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>NARoDtGRYiHkDQaIBUsIWFNgXgAIAIEwZKXmSmlg0oo=</HashCode>
-      <FileName>SackPanel.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.SackPanelEventArgs" Collapsed="true">
-    <Position X="8.75" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAgAAAAIAAAQAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>SackPanelEventArgs.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.ScalingButton" Collapsed="true">
-    <Position X="10.5" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ScalingButton.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.ScalingCheckBox" Collapsed="true">
-    <Position X="12.25" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ScalingCheckBox.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.ScalingComboBox" Collapsed="true">
-    <Position X="14" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ScalingComboBox.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.ScalingLabel" Collapsed="true">
-    <Position X="5.25" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ScalingLabel.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.ScalingRadioButton" Collapsed="true">
-    <Position X="7" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ScalingRadioButton.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.ScalingTextBox" Collapsed="true">
-    <Position X="8.75" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ScalingTextBox.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.SettingsDialog" Collapsed="true">
-    <Position X="12.25" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>EwAQABtagiTgwuYAGhvQRQAeUgAVRqZQhEgsyLhJCRU=</HashCode>
+      <HashCode>EwAQDBtagCQgwuYAGhvQQQAeUgAFQqZQBEAsSLhJCBQ=</HashCode>
       <FileName>SettingsDialog.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVault.StashButton" Collapsed="true">
-    <Position X="0.5" Y="5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>StashButton.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.StashGroupBox" Collapsed="true">
-    <Position X="0.5" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>EEAAAAAAAAgAAACEACAABAAAIACAAABAgACAQYAAIBA=</HashCode>
-      <FileName>StashGroupBox.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.UpdateDialog" Collapsed="true">
-    <Position X="14" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>kwIogAAABCQIAQQAAACKIAACCAAAIAEEAgAABAABBAE=</HashCode>
-      <FileName>UpdateDialog.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.VaultGroupBox" Collapsed="true">
-    <Position X="1.75" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>IEAgCAABAJFACAMcIAIgVAABsAAAAAYDBRiEJSAAQpA=</HashCode>
-      <FileName>VaultGroupBox.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="TQVault.VaultLoadProgressDialog" Collapsed="true">
-    <Position X="5.25" Y="4.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAQACAAAAAAAECAAAACEAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>VaultLoadProgressDialog.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TQVault.VaultMaintenanceDialog" Collapsed="true">
-    <Position X="7" Y="4.5" Width="1.5" />
+  <Class Name="TQVaultAE.GUI.VaultMaintenanceDialog" Collapsed="true">
+    <Position X="16.75" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IhAipAAkAiwAAAIAKAGAACAKgIIAABQAAkAAEAABgAQ=</HashCode>
       <FileName>VaultMaintenanceDialog.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVault.Properties.Resources" Collapsed="true">
-    <Position X="12.25" Y="1.5" Width="1.5" />
+  <Class Name="TQVaultAE.GUI.Models.ComboBoxItem" Collapsed="true">
+    <Position X="13.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ftetb7f55xgtH8f81RXPne+3795xf26/Sf+a0O7P/MQ=</HashCode>
+      <HashCode>AAAAEAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Models\ComboBoxItem.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVault.Properties.Settings" Collapsed="true">
-    <Position X="10.5" Y="3.5" Width="1.5" />
+  <Class Name="TQVaultAE.GUI.Models.CommandLineArgs" Collapsed="true">
+    <Position X="15" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>gCAKAAAABEAAAiAMMAaAIAEMJQABQAAgAACCAQAICQA=</HashCode>
-      <FileName>Settings.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgEABAAAAAAAAAAgQAAAAA=</HashCode>
+      <FileName>Models\CommandLineArgs.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Enum Name="TQVault.SackType" Collapsed="true">
-    <Position X="7" Y="6.75" Width="1.5" />
+  <Class Name="TQVaultAE.GUI.Models.ItemDragInfo" Collapsed="true">
+    <Position X="16.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAACAAgAAAAAAAAAAAAQAAAAIAAAAgAAAQQAAAAA=</HashCode>
-      <FileName>Item.cs</FileName>
+      <HashCode>AgUAD4ABQgIAJAIIEASAAAAEgACAACAAAAAgAABAAAQ=</HashCode>
+      <FileName>Models\ItemDragInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Models.ResizeEventArgs" Collapsed="true">
+    <Position X="13.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Models\ResizeEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Models.Result" Collapsed="true">
+    <Position X="15" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BABEAAQERAAABCAAAASgAAQEAAAEAACABAAAgAAAAAA=</HashCode>
+      <FileName>Models\Result.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Models.ResultChangedEventArgs" Collapsed="true">
+    <Position X="16.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ResultChangedEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Models.SackPanelEventArgs" Collapsed="true">
+    <Position X="9.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAIAAAQAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\SackPanelEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Models.User32" Collapsed="true">
+    <Position X="15" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\User32.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Models.WindowMenuEventArgs" Collapsed="true">
+    <Position X="11.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\WindowMenuEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.ActionButton" Collapsed="true">
+    <Position X="11.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EARAQg0BADAABABCAEgwABEAIGCsQAhBQAAAACkgoMA=</HashCode>
+      <FileName>Components\ActionButton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.AutoSortButton" Collapsed="true">
+    <Position X="2.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAACAAAAgEAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\AutoSortButton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.BagButton" Collapsed="true">
+    <Position X="4.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\BagButton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.BagButtonBase" Collapsed="true">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>kAAAAAEAAgBQAAAACgABAAAAAQAAAAABAAQAAAggJAA=</HashCode>
+      <FileName>Components\BagButtonBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.EquipmentPanel" Collapsed="true">
+    <Position X="7.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JAAAIiEAQAEgDAYABEAAQEAAEAAAAAAAAIAAgEACAAA=</HashCode>
+      <FileName>Components\EquipmentPanel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.PlayerPanel" Collapsed="true">
+    <Position X="4.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQBAABAAAAAAAAAAAABAAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>Components\PlayerPanel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.SackPanel" Collapsed="true">
+    <Position X="7.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>MEhILGGRYiHsDQKIAUoAGVMgTiBIAAEwZK3uymki2oo=</HashCode>
+      <FileName>Components\SackPanel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.ScalingButton" Collapsed="true">
+    <Position X="11.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAMBAAASCAIAAAAAAJAAAgABAAAFACAAIAgQAgA=</HashCode>
+      <FileName>Components\ScalingButton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.ScalingCheckBox" Collapsed="true">
+    <Position X="13.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\ScalingCheckBox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.ScalingComboBox" Collapsed="true">
+    <Position X="15" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAQAAA=</HashCode>
+      <FileName>Components\ScalingComboBox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.ScalingLabel" Collapsed="true">
+    <Position X="16.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAQAAA=</HashCode>
+      <FileName>Components\ScalingLabel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.ScalingRadioButton" Collapsed="true">
+    <Position X="9.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\ScalingRadioButton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.ScalingTextBox" Collapsed="true">
+    <Position X="11.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\ScalingTextBox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.StashButton" Collapsed="true">
+    <Position X="7" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\StashButton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.StashPanel" Collapsed="true">
+    <Position X="2.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EEAAAAAJAAgAAAIEACAQBBAAsACAAABAgAiAQYAAIBA=</HashCode>
+      <FileName>Components\StashPanel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.VaultPanel" Collapsed="true">
+    <Position X="3.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>MEAgCAABAJlACAMcIAIgVIABsAAAAAYDBRiEJSAAQpA=</HashCode>
+      <FileName>Components\VaultPanel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TQVaultAE.GUI.Components.WindowMenu" Collapsed="true">
+    <Position X="9.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JAAAAAIQIKQAgCAAACABEAAAABIEAAAAAAARAAAAAAA=</HashCode>
+      <FileName>Components\WindowMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="TQVaultAE.GUI.Models.AutoMoveLocation" Collapsed="true">
+    <Position X="9.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAgAAAAAAAAAAAAAAAAAIAAAAAAAAQQkAAAA=</HashCode>
+      <FileName>Models\AutoMoveLocation.cs</FileName>
     </TypeIdentifier>
   </Enum>
-  <Enum Name="TQVault.ItemStyle" Collapsed="true">
-    <Position X="5.25" Y="6.75" Width="1.5" />
+  <Delegate Name="TQVaultAE.GUI.Components.GetToolTip" Collapsed="true">
+    <Position X="9.75" Y="6.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>QAAAAAAIAECgAAAwAAAABACQAAIAAAAAAAAgAAAACAA=</HashCode>
-      <FileName>Item.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Delegate Name="TQVault.GetToolTip" Collapsed="true">
-    <Position X="5.25" Y="5.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>BagButton.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Components\BagButtonBase.cs</FileName>
     </TypeIdentifier>
   </Delegate>
   <Font Name="Segoe UI" Size="9" />

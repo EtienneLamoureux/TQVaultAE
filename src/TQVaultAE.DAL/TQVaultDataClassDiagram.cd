@@ -1,97 +1,97 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="TQVaultData.ArcFile" Collapsed="true">
+  <Class Name="TQVaultAE.DAL.ArcFile" Collapsed="true">
     <Position X="0.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AgAAAAAAUAAYCAAAAAAAAAQgAAAAAAAAAIAAQAFAAAA=</HashCode>
       <FileName>ArcFile.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVaultData.ArzFile" Collapsed="true">
+  <Class Name="TQVaultAE.DAL.ArzFile" Collapsed="true">
     <Position X="2.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ACAAAADAQAAICEAAAAQAAAQgAAYAAAAAAEAAAAAAAAQ=</HashCode>
       <FileName>ArzFile.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVaultData.BitmapCode" Collapsed="true">
+  <Class Name="TQVaultAE.DAL.BitmapCode" Collapsed="true">
     <Position X="4" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAABAAAACAAgAAAAAAAAIAAICAAAAAAA=</HashCode>
       <FileName>BitmapCode.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVaultData.Database" Collapsed="true">
+  <Class Name="TQVaultAE.DAL.Database" Collapsed="true">
     <Position X="5.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>kkATIEAiAEQAICBBAgJBAASCACIAQEAAAEAhBARABRA=</HashCode>
       <FileName>Database.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVaultData.DBRecord" Collapsed="true">
+  <Class Name="TQVaultAE.DAL.DBRecord" Collapsed="true">
     <Position X="0.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAABAAACAAABAQAAAAAAAARAAgIAAEEAgA=</HashCode>
       <FileName>DBRecord.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVaultData.Info" Collapsed="true">
+  <Class Name="TQVaultAE.DAL.Info" Collapsed="true">
     <Position X="2.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AACMAEQAAAAAAAACgAgABISgAAgAAQgQAAUAKAAAAwA=</HashCode>
       <FileName>Info.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVaultData.ItemAttributes" Collapsed="true">
+  <Class Name="TQVaultAE.DAL.ItemAttributes" Collapsed="true">
     <Position X="4" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IYCAgIKQgAAIAQBIkBAMADQkNAhQAIIBCBQACBQABRA=</HashCode>
       <FileName>ItemAttributes.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVaultData.ItemAttributesData" Collapsed="true">
+  <Class Name="TQVaultAE.DAL.ItemAttributesData" Collapsed="true">
     <Position X="5.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAgAAAAAAAAAAACAEAAABAAAAAQAAAAAAAA=</HashCode>
       <FileName>ItemAttributesData.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVaultData.TQData" Collapsed="true">
+  <Class Name="TQVaultAE.DAL.TQData" Collapsed="true">
     <Position X="0.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BBCCAiIgAAQAARQAIAIEBAgQBREAQAAAAAEATIAAABA=</HashCode>
       <FileName>TQData.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVaultData.TQDebug" Collapsed="true">
+  <Class Name="TQVaultAE.DAL.TQDebug" Collapsed="true">
     <Position X="2.25" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AIAAAAACAAgAhgAIAAAAAAAAQAAAAAAAAAACAAAAgQA=</HashCode>
       <FileName>TQDebug.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TQVaultData.Variable" Collapsed="true">
+  <Class Name="TQVaultAE.DAL.Variable" Collapsed="true">
     <Position X="4" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAIEAAAECAAEBAQAAAAAACAQAAAAAAAAAgA=</HashCode>
       <FileName>Variable.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Enum Name="TQVaultData.CompressedFileType" Collapsed="true">
+  <Enum Name="TQVaultAE.DAL.CompressedFileType" Collapsed="true">
     <Position X="0.5" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAABA=</HashCode>
       <FileName>Database.cs</FileName>
     </TypeIdentifier>
   </Enum>
-  <Enum Name="TQVaultData.ItemAttributesEffectType" Collapsed="true">
+  <Enum Name="TQVaultAE.DAL.ItemAttributesEffectType" Collapsed="true">
     <Position X="2.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BIAAAIBAAAAAACIAAAAAAABAQIAAgAAAAAAAIkAACCA=</HashCode>
       <FileName>ItemAttributes.cs</FileName>
     </TypeIdentifier>
   </Enum>
-  <Enum Name="TQVaultData.VariableDataType" Collapsed="true">
+  <Enum Name="TQVaultAE.DAL.VariableDataType" Collapsed="true">
     <Position X="4" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAQAAAAAAAAAAAAAAAAAAAgCAAAAAAAAgABA=</HashCode>

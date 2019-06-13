@@ -3,6 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Properties;
 
 namespace TQVaultAE.GUI
@@ -181,44 +182,46 @@ namespace TQVaultAE.GUI
 		{
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsDialog));
-            this.allowItemEditCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.allowItemCopyCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.skipTitleCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.loadLastCharacterCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.loadLastVaultCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.vaultPathTextBox = new TQVaultAE.GUI.ScalingTextBox();
-            this.vaultPathLabel = new TQVaultAE.GUI.ScalingLabel();
-            this.cancelButton = new TQVaultAE.GUI.ScalingButton();
-            this.okayButton = new TQVaultAE.GUI.ScalingButton();
+            this.allowItemEditCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.allowItemCopyCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.skipTitleCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.loadLastCharacterCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.loadLastVaultCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.vaultPathTextBox = new TQVaultAE.GUI.Components.ScalingTextBox();
+            this.vaultPathLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.cancelButton = new TQVaultAE.GUI.Components.ScalingButton();
+            this.okayButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.resetButton = new TQVaultAE.GUI.ScalingButton();
-            this.vaultPathBrowseButton = new TQVaultAE.GUI.ScalingButton();
+            this.resetButton = new TQVaultAE.GUI.Components.ScalingButton();
+            this.vaultPathBrowseButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.enableCustomMapsCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.loadAllFilesCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.suppressWarningsCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.playerReadonlyCheckbox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.languageComboBox = new TQVaultAE.GUI.ScalingComboBox();
-            this.languageLabel = new TQVaultAE.GUI.ScalingLabel();
-            this.detectLanguageCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.titanQuestPathTextBox = new TQVaultAE.GUI.ScalingTextBox();
-            this.titanQuestPathLabel = new TQVaultAE.GUI.ScalingLabel();
-            this.immortalThronePathLabel = new TQVaultAE.GUI.ScalingLabel();
-            this.immortalThronePathTextBox = new TQVaultAE.GUI.ScalingTextBox();
-            this.detectGamePathsCheckBox = new TQVaultAE.GUI.ScalingCheckBox();
-            this.titanQuestPathBrowseButton = new TQVaultAE.GUI.ScalingButton();
-            this.immortalThronePathBrowseButton = new TQVaultAE.GUI.ScalingButton();
-            this.customMapLabel = new TQVaultAE.GUI.ScalingLabel();
-            this.mapListComboBox = new TQVaultAE.GUI.ScalingComboBox();
+            this.enableCustomMapsCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.loadAllFilesCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.suppressWarningsCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.playerReadonlyCheckbox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.languageComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
+            this.languageLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.detectLanguageCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.titanQuestPathTextBox = new TQVaultAE.GUI.Components.ScalingTextBox();
+            this.titanQuestPathLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.immortalThronePathLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.immortalThronePathTextBox = new TQVaultAE.GUI.Components.ScalingTextBox();
+            this.detectGamePathsCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.titanQuestPathBrowseButton = new TQVaultAE.GUI.Components.ScalingButton();
+            this.immortalThronePathBrowseButton = new TQVaultAE.GUI.Components.ScalingButton();
+            this.customMapLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.mapListComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
+            this.characterEditCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+
             this.SuspendLayout();
             // 
             // allowItemEditCheckBox
             // 
             this.allowItemEditCheckBox.AutoSize = true;
-            this.allowItemEditCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.allowItemEditCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.allowItemEditCheckBox.Location = new System.Drawing.Point(498, 222);
             this.allowItemEditCheckBox.Name = "allowItemEditCheckBox";
-            this.allowItemEditCheckBox.Size = new System.Drawing.Size(202, 21);
+            this.allowItemEditCheckBox.Size = new System.Drawing.Size(204, 22);
             this.allowItemEditCheckBox.TabIndex = 3;
             this.allowItemEditCheckBox.Text = "Allow Item Editing Features";
             this.toolTip.SetToolTip(this.allowItemEditCheckBox, "Turns on the editing features in the context menu.\r\nThese include item creation a" +
@@ -229,10 +232,10 @@ namespace TQVaultAE.GUI
             // allowItemCopyCheckBox
             // 
             this.allowItemCopyCheckBox.AutoSize = true;
-            this.allowItemCopyCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.allowItemCopyCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.allowItemCopyCheckBox.Location = new System.Drawing.Point(498, 250);
             this.allowItemCopyCheckBox.Name = "allowItemCopyCheckBox";
-            this.allowItemCopyCheckBox.Size = new System.Drawing.Size(154, 21);
+            this.allowItemCopyCheckBox.Size = new System.Drawing.Size(152, 22);
             this.allowItemCopyCheckBox.TabIndex = 4;
             this.allowItemCopyCheckBox.Text = "Allow Item Copying";
             this.toolTip.SetToolTip(this.allowItemCopyCheckBox, "Enables copy selection in the context menu.");
@@ -244,10 +247,10 @@ namespace TQVaultAE.GUI
             this.skipTitleCheckBox.AutoSize = true;
             this.skipTitleCheckBox.Checked = true;
             this.skipTitleCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.skipTitleCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.skipTitleCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.skipTitleCheckBox.Location = new System.Drawing.Point(498, 43);
             this.skipTitleCheckBox.Name = "skipTitleCheckBox";
-            this.skipTitleCheckBox.Size = new System.Drawing.Size(239, 21);
+            this.skipTitleCheckBox.Size = new System.Drawing.Size(249, 22);
             this.skipTitleCheckBox.TabIndex = 2;
             this.skipTitleCheckBox.Text = "Automatically Bypass Title Screen";
             this.toolTip.SetToolTip(this.skipTitleCheckBox, "Ticking this box will automatically hit\r\nthe Enter key on the title screen.");
@@ -257,10 +260,10 @@ namespace TQVaultAE.GUI
             // loadLastCharacterCheckBox
             // 
             this.loadLastCharacterCheckBox.AutoSize = true;
-            this.loadLastCharacterCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.loadLastCharacterCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.loadLastCharacterCheckBox.Location = new System.Drawing.Point(498, 90);
             this.loadLastCharacterCheckBox.Name = "loadLastCharacterCheckBox";
-            this.loadLastCharacterCheckBox.Size = new System.Drawing.Size(314, 21);
+            this.loadLastCharacterCheckBox.Size = new System.Drawing.Size(324, 22);
             this.loadLastCharacterCheckBox.TabIndex = 5;
             this.loadLastCharacterCheckBox.Text = "Automatically Load the last opened Character";
             this.toolTip.SetToolTip(this.loadLastCharacterCheckBox, "Selecting this option will automatically load\r\nthe last open character when TQVau" +
@@ -271,10 +274,10 @@ namespace TQVaultAE.GUI
             // loadLastVaultCheckBox
             // 
             this.loadLastVaultCheckBox.AutoSize = true;
-            this.loadLastVaultCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.loadLastVaultCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.loadLastVaultCheckBox.Location = new System.Drawing.Point(498, 118);
             this.loadLastVaultCheckBox.Name = "loadLastVaultCheckBox";
-            this.loadLastVaultCheckBox.Size = new System.Drawing.Size(286, 21);
+            this.loadLastVaultCheckBox.Size = new System.Drawing.Size(291, 22);
             this.loadLastVaultCheckBox.TabIndex = 6;
             this.loadLastVaultCheckBox.Text = "Automatically Load the last opened Vault";
             this.toolTip.SetToolTip(this.loadLastVaultCheckBox, "Selecting this item will automatically load the\r\nlast opened vault when TQVault w" +
@@ -284,10 +287,10 @@ namespace TQVaultAE.GUI
             // 
             // vaultPathTextBox
             // 
-            this.vaultPathTextBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.vaultPathTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.vaultPathTextBox.Location = new System.Drawing.Point(12, 46);
             this.vaultPathTextBox.Name = "vaultPathTextBox";
-            this.vaultPathTextBox.Size = new System.Drawing.Size(397, 25);
+            this.vaultPathTextBox.Size = new System.Drawing.Size(397, 24);
             this.vaultPathTextBox.TabIndex = 0;
             this.toolTip.SetToolTip(this.vaultPathTextBox, resources.GetString("vaultPathTextBox.ToolTip"));
             this.vaultPathTextBox.Leave += new System.EventHandler(this.VaultPathTextBoxLeave);
@@ -295,10 +298,10 @@ namespace TQVaultAE.GUI
             // vaultPathLabel
             // 
             this.vaultPathLabel.AutoSize = true;
-            this.vaultPathLabel.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.vaultPathLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.vaultPathLabel.Location = new System.Drawing.Point(12, 24);
             this.vaultPathLabel.Name = "vaultPathLabel";
-            this.vaultPathLabel.Size = new System.Drawing.Size(72, 17);
+            this.vaultPathLabel.Size = new System.Drawing.Size(74, 18);
             this.vaultPathLabel.TabIndex = 14;
             this.vaultPathLabel.Text = "Vault Path";
             // 
@@ -311,7 +314,7 @@ namespace TQVaultAE.GUI
             this.cancelButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancelButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cancelButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
+            this.cancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.cancelButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancelButton.Image = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
             this.cancelButton.Location = new System.Drawing.Point(481, 419);
@@ -334,7 +337,7 @@ namespace TQVaultAE.GUI
             this.okayButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.okayButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.okayButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.okayButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
+            this.okayButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.okayButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.okayButton.Image = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
             this.okayButton.Location = new System.Drawing.Point(326, 419);
@@ -361,7 +364,7 @@ namespace TQVaultAE.GUI
             this.resetButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.resetButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.resetButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.resetButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
+            this.resetButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.resetButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.resetButton.Image = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
             this.resetButton.Location = new System.Drawing.Point(763, 419);
@@ -385,7 +388,7 @@ namespace TQVaultAE.GUI
             this.vaultPathBrowseButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.vaultPathBrowseButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.vaultPathBrowseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.vaultPathBrowseButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
+            this.vaultPathBrowseButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.vaultPathBrowseButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.vaultPathBrowseButton.Image = ((System.Drawing.Image)(resources.GetObject("vaultPathBrowseButton.Image")));
             this.vaultPathBrowseButton.Location = new System.Drawing.Point(415, 43);
@@ -403,10 +406,10 @@ namespace TQVaultAE.GUI
             // enableCustomMapsCheckBox
             // 
             this.enableCustomMapsCheckBox.AutoSize = true;
-            this.enableCustomMapsCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.enableCustomMapsCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.enableCustomMapsCheckBox.Location = new System.Drawing.Point(12, 354);
             this.enableCustomMapsCheckBox.Name = "enableCustomMapsCheckBox";
-            this.enableCustomMapsCheckBox.Size = new System.Drawing.Size(160, 21);
+            this.enableCustomMapsCheckBox.Size = new System.Drawing.Size(170, 22);
             this.enableCustomMapsCheckBox.TabIndex = 25;
             this.enableCustomMapsCheckBox.Text = "Enable Custom Maps";
             this.toolTip.SetToolTip(this.enableCustomMapsCheckBox, "Selecting this item will \r\nenable the dropdown\r\nto select custom maps.");
@@ -416,10 +419,10 @@ namespace TQVaultAE.GUI
             // loadAllFilesCheckBox
             // 
             this.loadAllFilesCheckBox.AutoSize = true;
-            this.loadAllFilesCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.loadAllFilesCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.loadAllFilesCheckBox.Location = new System.Drawing.Point(498, 146);
             this.loadAllFilesCheckBox.Name = "loadAllFilesCheckBox";
-            this.loadAllFilesCheckBox.Size = new System.Drawing.Size(273, 21);
+            this.loadAllFilesCheckBox.Size = new System.Drawing.Size(276, 22);
             this.loadAllFilesCheckBox.TabIndex = 28;
             this.loadAllFilesCheckBox.Text = "Pre-Load All Vault And Character Files";
             this.toolTip.SetToolTip(this.loadAllFilesCheckBox, "Selecting this item will automatically load all\r\nof the available character, stas" +
@@ -431,10 +434,10 @@ namespace TQVaultAE.GUI
             // suppressWarningsCheckBox
             // 
             this.suppressWarningsCheckBox.AutoSize = true;
-            this.suppressWarningsCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.suppressWarningsCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.suppressWarningsCheckBox.Location = new System.Drawing.Point(498, 300);
             this.suppressWarningsCheckBox.Name = "suppressWarningsCheckBox";
-            this.suppressWarningsCheckBox.Size = new System.Drawing.Size(221, 21);
+            this.suppressWarningsCheckBox.Size = new System.Drawing.Size(238, 22);
             this.suppressWarningsCheckBox.TabIndex = 30;
             this.suppressWarningsCheckBox.Text = "Bypass Confirmation Messages";
             this.toolTip.SetToolTip(this.suppressWarningsCheckBox, "When enabled, confirmation messages will no\r\nlonger be shown for item deletion an" +
@@ -445,44 +448,58 @@ namespace TQVaultAE.GUI
             // playerReadonlyCheckbox
             // 
             this.playerReadonlyCheckbox.AutoSize = true;
-            this.playerReadonlyCheckbox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.playerReadonlyCheckbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.playerReadonlyCheckbox.Location = new System.Drawing.Point(498, 328);
             this.playerReadonlyCheckbox.Name = "playerReadonlyCheckbox";
-            this.playerReadonlyCheckbox.Size = new System.Drawing.Size(203, 21);
+            this.playerReadonlyCheckbox.Size = new System.Drawing.Size(211, 22);
             this.playerReadonlyCheckbox.TabIndex = 33;
             this.playerReadonlyCheckbox.Text = "Player Equipment ReadOnly";
             this.toolTip.SetToolTip(this.playerReadonlyCheckbox, "Avoid save game corruption that occurs (randomly). When enabled, player equipment" +
         " will be read-only,  you won\'t be able to select or move any item.");
             this.playerReadonlyCheckbox.UseVisualStyleBackColor = true;
             this.playerReadonlyCheckbox.CheckedChanged += new System.EventHandler(this.PlayerReadonlyCheckboxCheckedChanged);
-			// 
+            // 
+            // characterEditCheckBox
+            // 
+            this.characterEditCheckBox.AutoSize = true;
+            this.characterEditCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
+            this.characterEditCheckBox.Location = new System.Drawing.Point(498, 194);
+            this.characterEditCheckBox.Name = "characterEditCheckBox";
+            this.characterEditCheckBox.Size = new System.Drawing.Size(241, 22);
+            this.characterEditCheckBox.TabIndex = 34;
+            this.characterEditCheckBox.Text = "Allow Character Editing Features";
+            this.toolTip.SetToolTip(this.characterEditCheckBox, "Turns on the editing features in the context menu.\r\nThese include item creation a" +
+        "nd modification.");
+            this.characterEditCheckBox.UseVisualStyleBackColor = true;
+            this.characterEditCheckBox.CheckedChanged += new System.EventHandler(this.CharacterEditCheckBox_CheckedChanged);
+            // 
             // languageComboBox
             // 
-            this.languageComboBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.languageComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.languageComboBox.FormattingEnabled = true;
             this.languageComboBox.Location = new System.Drawing.Point(12, 247);
             this.languageComboBox.Name = "languageComboBox";
-            this.languageComboBox.Size = new System.Drawing.Size(397, 25);
+            this.languageComboBox.Size = new System.Drawing.Size(397, 26);
             this.languageComboBox.TabIndex = 15;
             this.languageComboBox.SelectedIndexChanged += new System.EventHandler(this.LanguageComboBoxSelectedIndexChanged);
             // 
             // languageLabel
             // 
             this.languageLabel.AutoSize = true;
-            this.languageLabel.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.languageLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.languageLabel.Location = new System.Drawing.Point(12, 225);
             this.languageLabel.Name = "languageLabel";
-            this.languageLabel.Size = new System.Drawing.Size(108, 17);
+            this.languageLabel.Size = new System.Drawing.Size(117, 18);
             this.languageLabel.TabIndex = 16;
             this.languageLabel.Text = "Game Language";
             // 
             // detectLanguageCheckBox
             // 
             this.detectLanguageCheckBox.AutoSize = true;
-            this.detectLanguageCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.detectLanguageCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.detectLanguageCheckBox.Location = new System.Drawing.Point(12, 275);
             this.detectLanguageCheckBox.Name = "detectLanguageCheckBox";
-            this.detectLanguageCheckBox.Size = new System.Drawing.Size(162, 21);
+            this.detectLanguageCheckBox.Size = new System.Drawing.Size(165, 22);
             this.detectLanguageCheckBox.TabIndex = 17;
             this.detectLanguageCheckBox.Text = "Autodetect Language";
             this.detectLanguageCheckBox.UseVisualStyleBackColor = true;
@@ -490,49 +507,49 @@ namespace TQVaultAE.GUI
             // 
             // titanQuestPathTextBox
             // 
-            this.titanQuestPathTextBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.titanQuestPathTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.titanQuestPathTextBox.Location = new System.Drawing.Point(12, 108);
             this.titanQuestPathTextBox.Name = "titanQuestPathTextBox";
-            this.titanQuestPathTextBox.Size = new System.Drawing.Size(397, 25);
+            this.titanQuestPathTextBox.Size = new System.Drawing.Size(397, 24);
             this.titanQuestPathTextBox.TabIndex = 18;
             this.titanQuestPathTextBox.Leave += new System.EventHandler(this.TitanQuestPathTextBoxLeave);
             // 
             // titanQuestPathLabel
             // 
             this.titanQuestPathLabel.AutoSize = true;
-            this.titanQuestPathLabel.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.titanQuestPathLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.titanQuestPathLabel.Location = new System.Drawing.Point(12, 86);
             this.titanQuestPathLabel.Name = "titanQuestPathLabel";
-            this.titanQuestPathLabel.Size = new System.Drawing.Size(103, 17);
+            this.titanQuestPathLabel.Size = new System.Drawing.Size(108, 18);
             this.titanQuestPathLabel.TabIndex = 19;
             this.titanQuestPathLabel.Text = "TQ Game Path";
             // 
             // immortalThronePathLabel
             // 
             this.immortalThronePathLabel.AutoSize = true;
-            this.immortalThronePathLabel.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.immortalThronePathLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.immortalThronePathLabel.Location = new System.Drawing.Point(12, 137);
             this.immortalThronePathLabel.Name = "immortalThronePathLabel";
-            this.immortalThronePathLabel.Size = new System.Drawing.Size(94, 17);
+            this.immortalThronePathLabel.Size = new System.Drawing.Size(99, 18);
             this.immortalThronePathLabel.TabIndex = 20;
             this.immortalThronePathLabel.Text = "IT Game Path";
             // 
             // immortalThronePathTextBox
             // 
-            this.immortalThronePathTextBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.immortalThronePathTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.immortalThronePathTextBox.Location = new System.Drawing.Point(12, 159);
             this.immortalThronePathTextBox.Name = "immortalThronePathTextBox";
-            this.immortalThronePathTextBox.Size = new System.Drawing.Size(397, 25);
+            this.immortalThronePathTextBox.Size = new System.Drawing.Size(397, 24);
             this.immortalThronePathTextBox.TabIndex = 21;
             this.immortalThronePathTextBox.Leave += new System.EventHandler(this.ImmortalThronePathTextBoxLeave);
             // 
             // detectGamePathsCheckBox
             // 
             this.detectGamePathsCheckBox.AutoSize = true;
-            this.detectGamePathsCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.detectGamePathsCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.detectGamePathsCheckBox.Location = new System.Drawing.Point(12, 187);
             this.detectGamePathsCheckBox.Name = "detectGamePathsCheckBox";
-            this.detectGamePathsCheckBox.Size = new System.Drawing.Size(178, 21);
+            this.detectGamePathsCheckBox.Size = new System.Drawing.Size(184, 22);
             this.detectGamePathsCheckBox.TabIndex = 22;
             this.detectGamePathsCheckBox.Text = "Autodetect Game Paths";
             this.detectGamePathsCheckBox.UseVisualStyleBackColor = true;
@@ -546,7 +563,7 @@ namespace TQVaultAE.GUI
             this.titanQuestPathBrowseButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.titanQuestPathBrowseButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.titanQuestPathBrowseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.titanQuestPathBrowseButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
+            this.titanQuestPathBrowseButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.titanQuestPathBrowseButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.titanQuestPathBrowseButton.Image = ((System.Drawing.Image)(resources.GetObject("titanQuestPathBrowseButton.Image")));
             this.titanQuestPathBrowseButton.Location = new System.Drawing.Point(415, 102);
@@ -569,7 +586,7 @@ namespace TQVaultAE.GUI
             this.immortalThronePathBrowseButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.immortalThronePathBrowseButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.immortalThronePathBrowseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.immortalThronePathBrowseButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
+            this.immortalThronePathBrowseButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.immortalThronePathBrowseButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.immortalThronePathBrowseButton.Image = ((System.Drawing.Image)(resources.GetObject("immortalThronePathBrowseButton.Image")));
             this.immortalThronePathBrowseButton.Location = new System.Drawing.Point(415, 153);
@@ -587,20 +604,20 @@ namespace TQVaultAE.GUI
             // customMapLabel
             // 
             this.customMapLabel.AutoSize = true;
-            this.customMapLabel.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.customMapLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.customMapLabel.Location = new System.Drawing.Point(12, 304);
             this.customMapLabel.Name = "customMapLabel";
-            this.customMapLabel.Size = new System.Drawing.Size(90, 17);
+            this.customMapLabel.Size = new System.Drawing.Size(94, 18);
             this.customMapLabel.TabIndex = 27;
             this.customMapLabel.Text = "Custom Map";
             // 
             // mapListComboBox
             // 
-            this.mapListComboBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.mapListComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.mapListComboBox.FormattingEnabled = true;
             this.mapListComboBox.Location = new System.Drawing.Point(12, 326);
             this.mapListComboBox.Name = "mapListComboBox";
-            this.mapListComboBox.Size = new System.Drawing.Size(397, 25);
+            this.mapListComboBox.Size = new System.Drawing.Size(397, 26);
             this.mapListComboBox.TabIndex = 26;
             this.mapListComboBox.SelectedIndexChanged += new System.EventHandler(this.MapListComboBoxSelectedIndexChanged);
             // 
@@ -611,6 +628,7 @@ namespace TQVaultAE.GUI
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
             this.ClientSize = new System.Drawing.Size(922, 461);
+            this.Controls.Add(this.characterEditCheckBox);
             this.Controls.Add(this.playerReadonlyCheckbox);
             this.Controls.Add(this.titanQuestPathTextBox);
             this.Controls.Add(this.titanQuestPathLabel);
@@ -639,7 +657,7 @@ namespace TQVaultAE.GUI
             this.Controls.Add(this.resetButton);
             this.Controls.Add(this.loadLastCharacterCheckBox);
             this.DrawCustomBorder = true;
-            this.Font = new System.Drawing.Font("Albertus MT Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.White;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
@@ -679,6 +697,7 @@ namespace TQVaultAE.GUI
             this.Controls.SetChildIndex(this.titanQuestPathLabel, 0);
             this.Controls.SetChildIndex(this.titanQuestPathTextBox, 0);
             this.Controls.SetChildIndex(this.playerReadonlyCheckbox, 0);
+            this.Controls.SetChildIndex(this.characterEditCheckBox, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -687,5 +706,6 @@ namespace TQVaultAE.GUI
 		#endregion
 
 		private ScalingCheckBox playerReadonlyCheckbox;
+		private ScalingCheckBox characterEditCheckBox;
 	}
 }

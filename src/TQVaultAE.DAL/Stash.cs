@@ -3,17 +3,20 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultData
+namespace TQVaultAE.DAL
 {
 	using System;
 	using System.Globalization;
 	using System.IO;
+	using TQVaultAE.Logging;
 
 	/// <summary>
 	/// Class for handling the stash file
 	/// </summary>
 	public class Stash
 	{
+		private readonly log4net.ILog Log = null;
+
 		/// <summary>
 		/// Defines the raw data buffer size
 		/// </summary>
@@ -112,6 +115,8 @@ namespace TQVaultData
 		/// <param name="stashFile">name of the stash file</param>
 		public Stash(string playerName, string stashFile)
 		{
+			this.Log = Logger.Get(this);
+
 			this.StashFile = stashFile;
 			this.PlayerName = playerName;
 			this.IsImmortalThrone = true;
@@ -282,8 +287,9 @@ namespace TQVaultData
 				// Now Parse the file
 				this.ParseRawData();
 			}
-			catch (ArgumentException)
+			catch (ArgumentException ex)
 			{
+				Log.Error("ParseRawData fail !", ex);
 				throw;
 			}
 
@@ -404,13 +410,7 @@ namespace TQVaultData
 				}
 				catch (IOException exception)
 				{
-					if (!TQDebug.DebugEnabled)
-					{
-						TQDebug.DebugEnabled = true;
-					}
-
-					TQDebug.DebugWriteLine(string.Format(CultureInfo.InvariantCulture, "Error Exporting - '{0} Export.txt'", Path.Combine(TQData.TQVaultSaveFolder, this.PlayerName)));
-					TQDebug.DebugWriteLine(exception.ToString());
+					Log.ErrorFormat(exception, "Error Exporting - '{0} Export.txt'", Path.Combine(TQData.TQVaultSaveFolder, this.PlayerName));
 				}
 			}
 		}

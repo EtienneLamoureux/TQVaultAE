@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkProfile />
-    <PublishUrl>publish\</PublishUrl>
+    <PublishUrl>D:\TQVaultAE_Release\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -29,9 +29,10 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -42,8 +43,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -53,6 +55,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
@@ -67,7 +70,30 @@
   <PropertyGroup>
     <StartupObject>TQVaultAE.GUI.Program</StartupObject>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\log4net.2.0.8\lib\net35-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -75,6 +101,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="VXPLibrary, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -82,32 +109,42 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\ReleaseVersionInfo.cs">
+      <Link>ReleaseVersionInfo.cs</Link>
+    </Compile>
     <Compile Include="AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="ActionButton.cs">
+    <Compile Include="Components\ActionButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="AutoMoveLocation.cs" />
-    <Compile Include="AutoSortButton.cs">
+    <Compile Include="Models\AutoMoveLocation.cs" />
+    <Compile Include="Components\AutoSortButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="BagButton.cs">
+    <Compile Include="Components\BagButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="BagButtonBase.cs">
+    <Compile Include="Components\BagButtonBase.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ComboBoxItem.cs" />
-    <Compile Include="CommandLineArgs.cs" />
-    <Compile Include="ItemDragInfo.cs" />
-    <Compile Include="ResizeEventArgs.cs" />
-    <Compile Include="Result.cs" />
-    <Compile Include="ResultChangedEventArgs.cs" />
-    <Compile Include="SackPanelEventArgs.cs" />
+    <Compile Include="Models\ComboBoxItem.cs" />
+    <Compile Include="Models\CommandLineArgs.cs" />
+    <Compile Include="Models\ItemDragInfo.cs" />
+    <Compile Include="Models\ResizeEventArgs.cs" />
+    <Compile Include="Models\Result.cs" />
+    <Compile Include="Models\ResultChangedEventArgs.cs" />
+    <Compile Include="Models\SackPanelEventArgs.cs" />
+    <Compile Include="CharacterEditDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CharacterEditDialog.Designer.cs">
+      <DependentUpon>CharacterEditDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\PlayerInfoDisplay.cs" />
     <Compile Include="ItemProperties.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -126,7 +163,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="PlayerPanel.cs">
+    <Compile Include="Components\PlayerPanel.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Program.cs" />
@@ -137,7 +174,7 @@
     <Compile Include="SearchDialog.Designer.cs">
       <DependentUpon>SearchDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="EquipmentPanel.cs">
+    <Compile Include="Components\EquipmentPanel.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="SplashScreenForm.cs">
@@ -147,29 +184,33 @@
       <DependentUpon>SplashScreenForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Tooltip\TTLib.cs" />
-    <Compile Include="User32.cs" />
+    <Compile Include="Models\User32.cs" />
     <Compile Include="VaultForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="VaultForm.Designer.cs">
       <DependentUpon>VaultForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="VaultPanel.cs">
+    <Compile Include="Components\VaultPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="VaultProgressBar.cs">
+    <Compile Include="Components\VaultProgressBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="WindowMenu.cs">
+    <Compile Include="Components\WindowMenu.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="WindowMenuEventArgs.cs" />
+    <Compile Include="Models\WindowMenuEventArgs.cs" />
     <EmbeddedResource Include="AboutBox.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ItemProperties.resx">
       <DependentUpon>ItemProperties.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CharacterEditDialog.resx">
+      <DependentUpon>CharacterEditDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ItemSeedDialog.resx">
@@ -202,7 +243,7 @@
       <DependentUpon>ResultsDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ScalingButton.resx">
+    <EmbeddedResource Include="Components\ScalingButton.resx">
       <DependentUpon>ScalingButton.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SearchDialog.resx">
@@ -232,8 +273,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="resources\fonts\albertus mt light.ttf" />
     <EmbeddedResource Include="resources\fonts\albertus mt.ttf" />
+    <None Include="packages.config" />
     <None Include="resources\img\EquipmentPanel.psd" />
-    <None Include="TQVaultClassDiagram.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -249,38 +290,37 @@
     <Compile Include="ResultsDialog.Designer.cs">
       <DependentUpon>ResultsDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="SackPanel.cs">
+    <Compile Include="Components\SackPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ScalingButton.cs">
+    <Compile Include="Components\ScalingButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ScalingCheckBox.cs">
+    <Compile Include="Components\ScalingCheckBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ScalingComboBox.cs">
+    <Compile Include="Components\ScalingComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ScalingLabel.cs">
+    <Compile Include="Components\ScalingLabel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ScalingRadioButton.cs">
+    <Compile Include="Components\ScalingRadioButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ScalingTextBox.cs">
+    <Compile Include="Components\ScalingTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Settings.cs" />
     <Compile Include="SettingsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SettingsDialog.Designer.cs">
       <DependentUpon>SettingsDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="StashButton.cs">
+    <Compile Include="Components\StashButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="StashPanel.cs">
+    <Compile Include="Components\StashPanel.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="VaultMaintenanceDialog.cs">
@@ -289,8 +329,29 @@
     <Compile Include="VaultMaintenanceDialog.Designer.cs">
       <DependentUpon>VaultMaintenanceDialog.cs</DependentUpon>
     </Compile>
+    <None Include="TQVaultClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\libs\DevIL.dll">
+      <Link>resources\libs\DevIL.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\libs\VXPLib.dll">
+      <Link>resources\libs\VXPLib.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\txt\CharacterInfoDisplay.ru.txt" />
+    <None Include="resources\txt\CharacterInfoDisplay.pl.txt" />
+    <None Include="resources\txt\CharacterInfoDisplay.fr.txt" />
+    <None Include="resources\txt\CharacterInfoDisplay.es.txt" />
+    <None Include="resources\txt\CharacterInfoDisplay.de.txt" />
+    <None Include="resources\txt\CharacterInfoDisplay.txt" />
+    <None Include="resources\txt\CharacterClass.pl.txt" />
+    <None Include="resources\txt\CharacterClass.ru.txt" />
+    <None Include="resources\txt\CharacterClass.es.txt" />
+    <None Include="resources\txt\CharacterClass.de.txt" />
+    <None Include="resources\txt\CharacterClass.fr.txt" />
+    <None Include="resources\txt\CharacterClass.txt" />
     <Content Include="resources\img\AboutGraphic.png" />
     <Content Include="resources\img\autosortdown01.png" />
     <Content Include="resources\img\autosortover01.png" />
@@ -313,6 +374,7 @@
     <Content Include="resources\img\EquipmentPanel.png" />
     <Content Include="resources\img\EquipmentPanel_New.jpg" />
     <Content Include="resources\img\EquipmentPanel_New.png" />
+    <None Include="resources\img\equipment_bg_and_char.png" />
     <Content Include="resources\img\Equipment_bg_new.png" />
     <Content Include="resources\img\inventorybagdown01.png" />
     <Content Include="resources\img\inventorybagover01.png" />
@@ -344,6 +406,10 @@
       <Project>{35474E71-4ED2-4C3C-8BDB-C33D2B260496}</Project>
       <Name>TQVaultAE.DAL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TQVaultAE.Logging\TQVaultAE.Logging.csproj">
+      <Project>{74bdd814-3436-4d38-9789-f980309b8a6f}</Project>
+      <Name>TQVaultAE.Logging</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -365,13 +431,16 @@
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(SolutionDir)libs" "$(TargetDir)" /y
+    <PostBuildEvent>REM Copy Build
+xcopy "$(ProjectDir)bin\$(Platform)\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /y /s /i
 
-xcopy "$(ProjectDir)bin\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /y /s /i
+REM Clean output of unnecessary files
 cd "$(SolutionDir)bin\$(ConfigurationName)"
 del *.pdb
-del TQVaultAE.ini</PostBuildEvent>
+rmdir resources /S /Q
+rmdir Logging /S /Q</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\MsBuildAL1073WarningWorkaround.config" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
