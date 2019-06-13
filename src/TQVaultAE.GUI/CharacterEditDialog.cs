@@ -25,11 +25,6 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// MessageBoxOptions for right to left reading.
-		/// </summary>
-		private static MessageBoxOptions rightToLeftOptions = (MessageBoxOptions)0;
-
-		/// <summary>
 		/// Selected Item
 		/// </summary>
 		private Item selectedItem;
@@ -58,11 +53,6 @@ namespace TQVaultAE.GUI
 			this.cancel.Text = Resources.GlobalCancel;
 			this.ok.Text = Resources.GlobalOK;
 
-			// Set options for Right to Left reading.
-			if (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)
-			{
-				rightToLeftOptions = MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading;
-			}
 		}
 
 		private void setDifficultly()

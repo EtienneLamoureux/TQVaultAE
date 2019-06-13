@@ -8,6 +8,7 @@ using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Properties;
 using TQVaultAE.Entities;
 using TQVaultAE.Config;
+using TQVaultAE.Data;
 
 namespace TQVaultAE.GUI.Models
 {

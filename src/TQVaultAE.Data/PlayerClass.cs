@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace TQVaultAE.Entities
+namespace TQVaultAE.Data
 {
 
 	/// <summary>
@@ -12,6 +12,8 @@ namespace TQVaultAE.Entities
 
 		static Dictionary<string, string> _classKey = new Dictionary<string, string> {
 		};
+
+		// TODO Resource files exists to avoid LoadClassDataFile. classTagkey should be used to get translation from Resx directly and not from a file that you have to parse.
 
 
 		/// <summary>
@@ -36,6 +38,7 @@ namespace TQVaultAE.Entities
 				}
 			}
 		}
+		
 
 		public static string GetClassDisplayName(string classTagkey)
 		{

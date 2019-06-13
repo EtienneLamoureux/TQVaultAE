@@ -121,7 +121,8 @@ namespace ArzExplorer
 					this.Invoke(new MethodInvoker(this.UpdateLabel));
 
 					// Write the record
-					Form1.ARZFile.GetRecordNotCached(recordID).Write(this.baseFolder);
+					var dbc = Form1.ARZFile.GetRecordNotCached(recordID);
+					DBRecordCollectionProvider.Write(dbc, this.baseFolder);
 
 					// Update progressbar
 					this.Invoke(new MethodInvoker(this.IncrementProgress));

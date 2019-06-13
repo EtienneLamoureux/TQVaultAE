@@ -397,7 +397,7 @@ namespace ArzExplorer
 
 			if (fileType == CompressedFileType.ArzFile)
 			{
-				this.record.Write(Path.GetDirectoryName(filename), Path.GetFileName(filename));
+				DBRecordCollectionProvider.Write(this.record, Path.GetDirectoryName(filename), Path.GetFileName(filename));
 			}
 			else if (fileType == CompressedFileType.ArcFile)
 			{
