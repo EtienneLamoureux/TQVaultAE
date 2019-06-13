@@ -43,7 +43,9 @@ namespace TQVaultAE.Logs
 		static Logger()
 		{
 			// Configure log4net
-			_logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+			var assem = Assembly.GetEntryAssembly();
+			if (assem is null) return; // Because it's null during winform design time
+			_logRepository = LogManager.GetRepository(assem);
 			XmlConfigurator.Configure(_logRepository, new FileInfo("log4net.config"));
 
 			// By default, the EventID in Log4net is 0. But for ASP.NET or WCF, it should be, at least, 1.

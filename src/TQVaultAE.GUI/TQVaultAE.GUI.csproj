@@ -304,6 +304,22 @@
     <Compile Include="Components\ActionButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="MainForm.Stash.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Seach.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Player.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Panel.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Models\AutoMoveLocation.cs" />
     <Compile Include="Components\AutoSortButton.cs">
       <SubType>Component</SubType>
@@ -369,6 +385,10 @@
     </Compile>
     <Compile Include="Tooltip\TTLib.cs" />
     <Compile Include="Models\User32.cs" />
+    <Compile Include="MainForm.Vault.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="VaultForm.cs">
       <SubType>Form</SubType>
     </Compile>
