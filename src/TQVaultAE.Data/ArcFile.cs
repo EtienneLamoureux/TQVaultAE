@@ -12,6 +12,7 @@ namespace TQVaultAE.Data
 	using System.IO.Compression;
 	using System.Linq;
 	using System.Text;
+	using TQVaultAE.Config;
 	using TQVaultAE.Logs;
 
 	/// <summary>

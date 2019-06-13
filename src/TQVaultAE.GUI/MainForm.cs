@@ -27,6 +27,7 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.GUI.Services;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Presentation.Html;
+	using TQVaultAE.Config;
 
 	/// <summary>
 	/// Main Dialog class
@@ -223,13 +224,6 @@ namespace TQVaultAE.GUI
 			AssemblyName aname = Assembly.GetExecutingAssembly().GetName();
 			this.currentVersion = aname.Version.ToString();
 			this.Text = string.Format(CultureInfo.CurrentCulture, "{0} {1}", aname.Name, this.currentVersion);
-
-			// Setup debugging.
-			TQDebug.DebugEnabled = Config.Settings.Default.DebugEnabled;
-			TQDebug.ArcFileDebugLevel = Config.Settings.Default.ARCFileDebugLevel;
-			TQDebug.DatabaseDebugLevel = Config.Settings.Default.DatabaseDebugLevel;
-			TQDebug.ItemDebugLevel = Config.Settings.Default.ItemDebugLevel;
-			TQDebug.ItemAttributesDebugLevel = Config.Settings.Default.ItemAttributesDebugLevel;
 
 			if (TQDebug.DebugEnabled)
 			{

@@ -8,6 +8,7 @@ namespace TQVaultAE.Data
 	using System;
 	using System.Globalization;
 	using System.IO;
+	using TQVaultAE.Config;
 	using TQVaultAE.Entities;
 	using TQVaultAE.Logs;
 
@@ -395,10 +396,6 @@ namespace TQVaultAE.Data
 						}
 						catch (ArgumentException exception)
 						{
-							if (!TQDebug.DebugEnabled)
-							{
-								TQDebug.DebugEnabled = true;
-							}
 							var rethrowex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player player info Block - '{0}'", pc.PlayerName), exception);
 							Log.ErrorException(rethrowex);
 							throw rethrowex;

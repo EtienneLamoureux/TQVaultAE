@@ -12,6 +12,7 @@ namespace TQVaultAE.Data
 	using System.Globalization;
 	using System.IO;
 	using System.Text;
+	using TQVaultAE.Config;
 	using TQVaultAE.Entities;
 	using TQVaultAE.Logs;
 

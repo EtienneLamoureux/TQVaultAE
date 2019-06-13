@@ -3,7 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.Data
+namespace TQVaultAE.Config
 {
 	using log4net.Core;
 	using TQVaultAE.Logs;
@@ -13,32 +13,30 @@ namespace TQVaultAE.Data
 	/// </summary>
 	public static class TQDebug
 	{
-		private static readonly log4net.ILog Log = Logger.Get(typeof(TQDebug));
-
 		/// <summary>
 		/// Indicates whether debugging is globally enabled.
 		/// </summary>
-		private static bool debugEnabled;
+		private static bool debugEnabled = Config.Settings.Default.DebugEnabled;
 
 		/// <summary>
 		/// Holds the arc file debug level.
 		/// </summary>
-		private static int arcFileDebugLevel;
+		private static int arcFileDebugLevel = Config.Settings.Default.ARCFileDebugLevel;
 
 		/// <summary>
 		/// Holds the database debug level.
 		/// </summary>
-		private static int databaseDebugLevel;
+		private static int databaseDebugLevel = Config.Settings.Default.DatabaseDebugLevel;
 
 		/// <summary>
 		/// Holds the item debug level.
 		/// </summary>
-		private static int itemDebugLevel;
+		private static int itemDebugLevel = Config.Settings.Default.ItemDebugLevel;
 
 		/// <summary>
 		/// Holds the item attributes debug level.
 		/// </summary>
-		private static int itemAttributesDebugLevel;
+		private static int itemAttributesDebugLevel = Config.Settings.Default.ItemAttributesDebugLevel;
 
 		/// <summary>
 		/// Gets or sets a value indicating whether debugging has been enabled
