@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml.Linq;
-using TQVaultAE.DAL;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Properties;
-
-using TQVaultData;
+using TQVaultAE.Entities;
+using TQVaultAE.Config;
+using TQVaultAE.Data;
 
 namespace TQVaultAE.GUI.Models
 {

@@ -13,7 +13,10 @@ namespace TQVaultAE.GUI.Components
 	using System.Windows.Forms;
 	using Tooltip;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
+	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
+	using TQVaultAE.Presentation.Html;
 
 	/// <summary>
 	/// Class for handling the stash panel ui functions
@@ -131,7 +134,7 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			//x and y coordinates passed are normalized values between 0 and 1.0.   
-			playerInfoDisplay = new PlayerInfoDisplay(Settings.Default, this, this.Font,.83,.14);
+			playerInfoDisplay = new PlayerInfoDisplay(Config.Settings.Default, this, this.Font,.83,.14);
 
 			// Now that the buttons are set we can move the panel
 			this.BagSackPanel.SetLocation(new Point(
@@ -718,7 +721,7 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			StringBuilder answer = new StringBuilder();
-			answer.Append(Database.DB.TooltipTitleTag);
+			answer.Append(HtmlHelper.TooltipTitleTag(Database.DB.Scale));
 			bool first = true;
 			foreach (Item item in sack)
 			{
@@ -740,10 +743,10 @@ namespace TQVaultAE.GUI.Components
 				}
 
 				first = false;
-				string text = Database.MakeSafeForHtml(item.ToString());
-				Color color = item.GetColorTag(text);
+				string text = HtmlHelper.MakeSafeForHtml(ItemProvider.ToFriendlyName(item));
+				Color color = ItemGfxHelper.GetColorTag(item, text);
 				text = Item.ClipColorTag(text);
-				string htmlcolor = Database.HtmlColor(color);
+				string htmlcolor = HtmlHelper.HtmlColor(color);
 				string htmlLine = string.Format(CultureInfo.CurrentCulture, "<font color={0}><b>{1}</b></font>", htmlcolor, text);
 				answer.Append(htmlLine);
 			}

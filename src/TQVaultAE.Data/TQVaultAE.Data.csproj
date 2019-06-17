@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>3.0.0</Version>
+    <Description>Data layer</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/EtienneLamoureux/TQVaultAE</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/EtienneLamoureux/TQVaultAE</RepositoryUrl>
+    <RepositoryType>Github</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DDSReader" Version="1.0.6-pre" />
+    <PackageReference Include="log4net" Version="2.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ExpressionEval\ExpressionEval.csproj" />
+    <ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj" />
+    <ProjectReference Include="..\TQVaultAE.Entities\TQVaultAE.Entities.csproj" />
+    <ProjectReference Include="..\TQVaultAE.Logs\TQVaultAE.Logs.csproj" />
+  </ItemGroup>
+
+</Project>

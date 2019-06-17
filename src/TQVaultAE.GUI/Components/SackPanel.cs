@@ -15,8 +15,9 @@ namespace TQVaultAE.GUI.Components
 	using System.Linq;
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.DAL;
-	using TQVaultAE.Logging;
+	using TQVaultAE.Data;
+	using TQVaultAE.Logs;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel.
@@ -1241,7 +1242,7 @@ namespace TQVaultAE.GUI.Components
 					if (itemUnderUs.IsRelicComplete)
 					{
 						float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-						LootTableCollection table = itemUnderUs.BonusTable;
+						LootTableCollection table = ItemProvider.BonusTable(itemUnderUs);
 
 						if (table != null && table.Length > 0)
 						{
@@ -1261,7 +1262,7 @@ namespace TQVaultAE.GUI.Components
 							}
 						}
 
-						itemUnderUs.GetDBData();
+						ItemProvider.GetDBData(itemUnderUs);
 					}
 
 					itemUnderUs.MarkModified();
@@ -1349,7 +1350,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="e">MouseEventArgs data</param>
 		protected virtual void MouseDownCallback(object sender, MouseEventArgs e)
 		{
-			if (this.Sack == null || (Settings.Default.PlayerReadonly == true && this.SackType == SackType.Equipment))
+			if (this.Sack == null || (Config.Settings.Default.PlayerReadonly == true && this.SackType == SackType.Equipment))
 			{
 				return;
 			}
@@ -1407,7 +1408,7 @@ namespace TQVaultAE.GUI.Components
 
 					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
 					{
-						if (focusedItem.HasRelic && Settings.Default.AllowItemEdit)
+						if (focusedItem.HasRelic && Config.Settings.Default.AllowItemEdit)
 						{
 							this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
 						}
@@ -1417,7 +1418,7 @@ namespace TQVaultAE.GUI.Components
 							this.contextMenu.Items.Add(Resources.SackPanelMenuSplit);
 						}
 
-						if (Settings.Default.AllowItemCopy)
+						if (Config.Settings.Default.AllowItemCopy)
 						{
 							this.contextMenu.Items.Add(Resources.SackPanelMenuCopy);
 							this.contextMenu.Items.Add(Resources.SackPanelMenuDuplicate);
@@ -1502,7 +1503,7 @@ namespace TQVaultAE.GUI.Components
 					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
 					{
 						// Item Editing options
-						if (Settings.Default.AllowItemEdit)
+						if (Config.Settings.Default.AllowItemEdit)
 						{
 							this.contextMenu.Items.Add(Resources.SackPanelMenuSeed);
 
@@ -1532,7 +1533,7 @@ namespace TQVaultAE.GUI.Components
 								(focusedItem.IsRelic && focusedItem.IsRelicComplete) ||
 								(focusedItem.IsArtifact))
 							{
-								LootTableCollection table = focusedItem.BonusTable;
+								LootTableCollection table = ItemProvider.BonusTable(focusedItem);
 								if (table != null && table.Length > 0)
 								{
 									int numItems = table.Length;
@@ -1573,7 +1574,7 @@ namespace TQVaultAE.GUI.Components
 							}
 
 							// If the item is a set item, then add a menu to create the rest of the set
-							string[] setItems = focusedItem.GetSetItems(false);
+							string[] setItems = ItemProvider.GetSetItems(focusedItem, false);
 							if (setItems != null && setItems.Length > 1)
 							{
 								ToolStripItem[] choices = new ToolStripItem[setItems.Length - 1];
@@ -2192,7 +2193,7 @@ namespace TQVaultAE.GUI.Components
 		{
 			if (focusedItem != null)
 			{
-				if (suppressMessage || Settings.Default.SuppressWarnings || MessageBox.Show(
+				if (suppressMessage || Config.Settings.Default.SuppressWarnings || MessageBox.Show(
 					Resources.SackPanelDeleteMsg,
 					Resources.SackPanelDelete,
 					MessageBoxButtons.YesNo,
@@ -2437,7 +2438,7 @@ namespace TQVaultAE.GUI.Components
 				{
 					// Create the item
 					Item newItem = focusedItem.MakeEmptyCopy(item.Name);
-					newItem.GetDBData();
+					ItemProvider.GetDBData(newItem);
 
 					// Set DragInfo to focused item.
 					this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
@@ -2495,7 +2496,7 @@ namespace TQVaultAE.GUI.Components
 				{
 					if (this.selectedItems != null)
 					{
-						if (Settings.Default.SuppressWarnings || MessageBox.Show(
+						if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
 							Resources.SackPanelDeleteMultiMsg,
 							Resources.SackPanelDeleteMulti,
 							MessageBoxButtons.YesNo,
@@ -2518,7 +2519,7 @@ namespace TQVaultAE.GUI.Components
 				}
 				else if (selectedItem == Resources.SackPanelMenuRemoveRelic)
 				{
-					if (Settings.Default.SuppressWarnings || MessageBox.Show(
+					if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
 						Resources.SackPanelRemoveRelicMsg,
 						Resources.SackPanelMenuRemoveRelic,
 						MessageBoxButtons.YesNo,
@@ -2530,7 +2531,7 @@ namespace TQVaultAE.GUI.Components
 						this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
 
 						// pull out the relic
-						Item relic = focusedItem.RemoveRelic();
+						Item relic = ItemProvider.RemoveRelic(focusedItem);
 
 						// Put relic in DragInfo
 						this.DragInfo.MarkModified(relic);
@@ -2586,7 +2587,7 @@ namespace TQVaultAE.GUI.Components
 					focusedItem.Number = 10;
 
 					float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-					LootTableCollection table = focusedItem.BonusTable;
+					LootTableCollection table = ItemProvider.BonusTable(focusedItem);
 
 					if (table != null && table.Length > 0)
 					{
@@ -2606,7 +2607,8 @@ namespace TQVaultAE.GUI.Components
 						}
 					}
 
-					focusedItem.GetDBData();
+					ItemProvider.GetDBData(focusedItem);
+
 					focusedItem.MarkModified();
 					this.Sack.IsModified = true;
 					Refresh();
@@ -2617,11 +2619,11 @@ namespace TQVaultAE.GUI.Components
 					this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
 
 					// create artifact
-					Item artifact = focusedItem.CraftArtifact();
+					Item artifact = ItemProvider.CraftArtifact(focusedItem);
 
 					// generate bonus
 					float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-					LootTableCollection table = artifact.BonusTable;
+					LootTableCollection table = ItemProvider.BonusTable(artifact);
 
 					if (table != null && table.Length > 0)
 					{

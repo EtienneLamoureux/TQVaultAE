@@ -10,7 +10,10 @@ namespace TQVaultAE.GUI
 	using System.Drawing;
 	using System.Globalization;
 	using System.Windows.Forms;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
+	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
+	using TQVaultAE.Presentation.Html;
 
 	/// <summary>
 	/// Form for the item properties display
@@ -73,12 +76,12 @@ namespace TQVaultAE.GUI
 		/// <returns>string with the item name</returns>
 		private static string GetName(Item item)
 		{
-			string itemName = Database.MakeSafeForHtml(item.ToString(true, false));
+			string itemName = HtmlHelper.MakeSafeForHtml( ItemProvider.ToFriendlyName(item, true, false));
 			string bgcolor = "#2e1f15";
 
-			Color color = item.GetColorTag(itemName);
+			Color color = ItemGfxHelper.GetColorTag(item, itemName);
 			itemName = Item.ClipColorTag(itemName);
-			itemName = string.Format(CultureInfo.InvariantCulture, "<font size=+1 color={0}><b>{1}</b></font>", Database.HtmlColor(color), itemName);
+			itemName = string.Format(CultureInfo.InvariantCulture, "<font size=+1 color={0}><b>{1}</b></font>", HtmlHelper.HtmlColor(color), itemName);
 			return string.Format(CultureInfo.InvariantCulture, "<body bgcolor={0} text=white><font face=\"Albertus MT\" size=2>{1}", bgcolor, itemName);
 		}
 
@@ -100,7 +103,7 @@ namespace TQVaultAE.GUI
 		private void LoadProperties()
 		{
 			string[] bareAttr;
-			bareAttr = this.item.GetBareAttributes(this.filterExtra);
+			bareAttr = ItemHtmlHelper.GetBareAttributes(this.item, this.filterExtra);
 			string bgcolor = "#2e1f15";
 
 			// Base Item Attributes

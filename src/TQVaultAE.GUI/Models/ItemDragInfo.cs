@@ -9,7 +9,8 @@ namespace TQVaultAE.GUI.Models
 	using System.Collections.ObjectModel;
 	using System.Drawing;
 	using TQVaultAE.GUI.Components;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// Stores information about the item being dragged around by the user

@@ -1,0 +1,3 @@
+﻿Developers note
+
+- Remember to report any configuration design changes to the configuration file of EXE (TQVaultAE.GUI)
