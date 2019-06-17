@@ -7,10 +7,9 @@ namespace TQVaultAE.GUI
 {
 	using Properties;
 	using System;
-	using System.Drawing;
 	using System.Globalization;
 	using System.Windows.Forms;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// Dialog box class for the Item Seed Dialog

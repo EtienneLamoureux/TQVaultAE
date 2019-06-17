@@ -12,7 +12,8 @@ namespace TQVaultAE.GUI.Components
 	using System.Timers;
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// Class for displaying the action panel which has the animation of
@@ -268,7 +269,7 @@ namespace TQVaultAE.GUI.Components
 		private void SplitItemAndRelic()
 		{
 			// pull out the relic
-			Item relic = this.dragInfo.Item.RemoveRelic();
+			Item relic = ItemProvider.RemoveRelic(this.dragInfo.Item);
 			this.dragInfo.MarkModified(relic);
 			Refresh();
 		}

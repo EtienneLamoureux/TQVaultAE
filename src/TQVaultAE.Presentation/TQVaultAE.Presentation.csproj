@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TQVaultAE.Data\TQVaultAE.Data.csproj" />
+    <ProjectReference Include="..\TQVaultAE.Logs\TQVaultAE.Logs.csproj" />
+  </ItemGroup>
+
+</Project>

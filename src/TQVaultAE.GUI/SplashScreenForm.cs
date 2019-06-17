@@ -83,8 +83,8 @@ namespace TQVaultAE.GUI
 			this.Opacity = 0.0F;
 
 			this.FormBorderStyle = FormBorderStyle.None;
-			this.fadeInInterval = Settings.Default.FadeInInterval;
-			this.fadeOutInterval = Settings.Default.FadeOutInterval;
+			this.fadeInInterval = Config.Settings.Default.FadeInInterval;
+			this.fadeOutInterval = Config.Settings.Default.FadeOutInterval;
 			this.DrawCustomBorder = true;
 
 			if (this.UseRoundedRectangle)

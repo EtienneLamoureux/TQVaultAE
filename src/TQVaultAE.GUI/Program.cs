@@ -15,9 +15,8 @@ namespace TQVaultAE.GUI
 	using System.Threading;
 	using System.Linq;
 	using System.Windows.Forms;
-	using TQVaultAE.GUI.Properties;
-	using TQVaultAE.Logging;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Logs;
+	using TQVaultAE.Data;
 
 	/// <summary>
 	/// Main Program class
@@ -42,6 +41,7 @@ namespace TQVaultAE.GUI
 		{
 			try
 			{
+
 				manageCulture();
 
 				// Add the event handler for handling UI thread exceptions to the event.
@@ -223,8 +223,8 @@ namespace TQVaultAE.GUI
 			if (Database.DB is null)
 			{
 				Database.DB = new Database();
-				Database.DB.AutoDetectLanguage = Settings.Default.AutoDetectLanguage;
-				Database.DB.TQLanguage = Settings.Default.TQLanguage;
+				Database.DB.AutoDetectLanguage = Config.Settings.Default.AutoDetectLanguage;
+				Database.DB.TQLanguage = Config.Settings.Default.TQLanguage;
 			}
 		}
 

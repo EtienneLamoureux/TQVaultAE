@@ -12,8 +12,9 @@ namespace TQVaultAE.GUI.Components
 	using System.Drawing;
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.DAL;
-	using TQVaultAE.Logging;
+	using TQVaultAE.Data;
+	using TQVaultAE.Logs;
+	using TQVaultAE.Entities;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel in the stash panel.
@@ -372,7 +373,7 @@ namespace TQVaultAE.GUI.Components
 					if (itemUnderUs.IsRelicComplete)
 					{
 						float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-						LootTableCollection table = itemUnderUs.BonusTable;
+						LootTableCollection table = ItemProvider.BonusTable(itemUnderUs);
 
 						if (table != null && table.Length > 0)
 						{
@@ -392,7 +393,7 @@ namespace TQVaultAE.GUI.Components
 							}
 						}
 
-						itemUnderUs.GetDBData();
+						ItemProvider.GetDBData(itemUnderUs);
 					}
 
 					itemUnderUs.MarkModified();

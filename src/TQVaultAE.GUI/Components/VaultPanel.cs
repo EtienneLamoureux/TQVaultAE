@@ -15,7 +15,10 @@ namespace TQVaultAE.GUI.Components
 	using System.Windows.Forms;
 	using Tooltip;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
+	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
+	using TQVaultAE.Presentation.Html;
 
 	/// <summary>
 	/// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.
@@ -502,7 +505,7 @@ namespace TQVaultAE.GUI.Components
 					// Only show Copy, Merge and Empty if something is in the bag.
 					if (!this.BagSackPanel.Sack.IsEmpty)
 					{
-						if (Settings.Default.AllowItemCopy)
+						if (Config.Settings.Default.AllowItemCopy)
 						{
 							// Add the copy submenu
 							this.AddSubMenu(Resources.PlayerPanelMenuCopy, this.CopyBagClicked);
@@ -749,7 +752,7 @@ namespace TQVaultAE.GUI.Components
 			string selectedItem = e.ClickedItem.Text;
 			if (selectedItem == Resources.PlayerPanelMenuEmpty)
 			{
-				if (Settings.Default.SuppressWarnings || MessageBox.Show(
+				if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
 					Resources.PlayerPanelEmptyMsg,
 					Resources.PlayerPanelEmpty,
 					MessageBoxButtons.YesNo,
@@ -782,7 +785,7 @@ namespace TQVaultAE.GUI.Components
 
 				if (!this.Player.GetSack(destinationIndex + this.BagPanelOffset).IsEmpty)
 				{
-					if (Settings.Default.SuppressWarnings || MessageBox.Show(
+					if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
 						Resources.PlayerOverwriteSackMsg,
 						Resources.PlayerOverwriteSack,
 						MessageBoxButtons.YesNo,
@@ -915,11 +918,11 @@ namespace TQVaultAE.GUI.Components
 
 			if (sack.IsEmpty)
 			{
-				return string.Format(CultureInfo.CurrentCulture, "{0}<b>{1}</b>", Database.DB.TooltipTitleTag, Database.MakeSafeForHtml(Resources.VaultGroupBoxEmpty));
+				return string.Format(CultureInfo.CurrentCulture, "{0}<b>{1}</b>", HtmlHelper.TooltipTitleTag(Database.DB.Scale), HtmlHelper.MakeSafeForHtml(Resources.VaultGroupBoxEmpty));
 			}
 
 			StringBuilder toolTipStringBuilder = new StringBuilder();
-			toolTipStringBuilder.Append(Database.DB.TooltipTitleTag);
+			toolTipStringBuilder.Append(HtmlHelper.TooltipTitleTag(Database.DB.Scale));
 			bool first = true;
 			foreach (Item item in sack)
 			{
@@ -935,10 +938,10 @@ namespace TQVaultAE.GUI.Components
 				}
 
 				first = false;
-				string itemString = Database.MakeSafeForHtml(item.ToString());
-				Color color = item.GetColorTag(itemString);
+				string itemString = HtmlHelper.MakeSafeForHtml( ItemProvider.ToFriendlyName(item));
+				Color color = ItemGfxHelper.GetColorTag(item, itemString);
 				itemString = Item.ClipColorTag(itemString);
-				string htmlcolor = Database.HtmlColor(color);
+				string htmlcolor = HtmlHelper.HtmlColor(color);
 				string htmlLine = string.Format(CultureInfo.CurrentCulture, "<font color={0}><b>{1}</b></font>", htmlcolor, itemString);
 				toolTipStringBuilder.Append(htmlLine);
 			}
