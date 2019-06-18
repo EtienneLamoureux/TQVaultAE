@@ -174,8 +174,6 @@ namespace TQVaultAE.GUI
 
 			SetUILanguage();
 
-			//Program.LoadDB();
-
 			this.InitializeComponent();
 
 			this.SetupFormSize();
