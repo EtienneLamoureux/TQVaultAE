@@ -119,7 +119,7 @@ namespace TQVaultAE.Entities
 		/// Used for itemScalePercent calculation
 		/// </summary>
 		public float itemScalePercent;
-
+		
 		#endregion Item Fields
 
 		/// <summary>
@@ -340,11 +340,16 @@ namespace TQVaultAE.Entities
 		/// Gets or sets the second relic bonus info
 		/// </summary>
 		public Info RelicBonus2Info { get; set; }
+	
+		/// <summary>
+		/// Raw image data from game resource file
+		/// </summary>
+		public byte[] TexImage { get; set; }
 
 		/// <summary>
-		/// Gets the item's bitmap
+		/// ResourceId related to <see cref="TexImage"/>
 		/// </summary>
-		public Bitmap ItemBitmap { get; set; }
+		public string TexImageResourceId { get; set; }
 
 		/// <summary>
 		/// Gets the item's width in cells
@@ -388,6 +393,7 @@ namespace TQVaultAE.Entities
 				return this.Location.Y + this.Height;
 			}
 		}
+
 
 		/// <summary>
 		/// Gets or sets the item container type

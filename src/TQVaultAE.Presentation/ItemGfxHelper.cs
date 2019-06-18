@@ -225,5 +225,13 @@ namespace TQVaultAE.Presentation
 					return GetColor(itm.ItemStyle);
 			}
 		}
+
+		/// <summary>
+		/// Gets the item's bitmap
+		/// </summary>
+		public static Bitmap ItemBitmap(this Item itm) {
+			return UIService.UI.GetBitmap(itm);
+		}
 	}
+
 }

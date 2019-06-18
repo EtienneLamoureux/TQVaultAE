@@ -42,10 +42,10 @@ namespace TQVaultAE.GUI
 		{
 			this.vaultPanel = new VaultPanel(this.dragInfo, numBags, new Size(18, 20), this.tooltip, 1, AutoMoveLocation.Vault);
 
-			int locationY = this.vaultListComboBox.Location.Y + Convert.ToInt32(28.0F * Database.DB.Scale);
+			int locationY = this.vaultListComboBox.Location.Y + Convert.ToInt32(28.0F * UIService.UI.Scale);
 			this.vaultPanel.DrawAsGroupBox = false;
 
-			this.vaultPanel.Location = new Point(Convert.ToInt32(22.0F * Database.DB.Scale), locationY);
+			this.vaultPanel.Location = new Point(Convert.ToInt32(22.0F * UIService.UI.Scale), locationY);
 			this.vaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 			this.vaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
 			this.vaultPanel.OnActivateSearch += new EventHandler<SackPanelEventArgs>(this.ActivateSearchCallback);
@@ -66,7 +66,7 @@ namespace TQVaultAE.GUI
 
 			// Place it with the same Y value as the character panel and X value of the vault panel.
 			this.secondaryVaultPanel.Location = new Point(
-				this.ClientSize.Width - (this.secondaryVaultPanel.Width + Convert.ToInt32(49.0F * Database.DB.Scale)),
+				this.ClientSize.Width - (this.secondaryVaultPanel.Width + Convert.ToInt32(49.0F * UIService.UI.Scale)),
 				this.vaultPanel.Location.Y);
 
 			this.secondaryVaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
@@ -284,7 +284,7 @@ namespace TQVaultAE.GUI
 			{
 				this.SaveAllModifiedFiles();
 				VaultMaintenanceDialog dlg = new VaultMaintenanceDialog();
-				dlg.Scale(new SizeF(Database.DB.Scale, Database.DB.Scale));
+				dlg.Scale(new SizeF(UIService.UI.Scale, UIService.UI.Scale));
 
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{

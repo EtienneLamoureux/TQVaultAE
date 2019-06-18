@@ -3,7 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.Data
+namespace TQVaultAE.Presentation
 {
 	using System;
 	using System.Drawing;

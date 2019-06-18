@@ -39,12 +39,12 @@ namespace TQVaultAE.GUI.Components
 			this.NoPlayerString = Resources.PlayerPanelNoPlayer;
 
 			this.Size = new Size(
-				((panel1Size.Width + panel2Size.Width) * Database.DB.ItemUnitSize) + Convert.ToInt32(24.0F * Database.DB.Scale),
-				(Math.Max(panel1Size.Height, panel2Size.Height) * Database.DB.ItemUnitSize) + Convert.ToInt32(58.0F * Database.DB.Scale));
+				((panel1Size.Width + panel2Size.Width) * UIService.UI.ItemUnitSize) + Convert.ToInt32(24.0F * UIService.UI.Scale),
+				(Math.Max(panel1Size.Height, panel2Size.Height) * UIService.UI.ItemUnitSize) + Convert.ToInt32(58.0F * UIService.UI.Scale));
 			this.TabStop = false;
-			this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
+			this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * UIService.UI.Scale, this.Font.Style);
 
-			int borderPad = Convert.ToInt32(2.0F * Database.DB.Scale);
+			int borderPad = Convert.ToInt32(2.0F * UIService.UI.Scale);
 
 			this.BagPanelOffset = 1; // bag panel starts with bag #1
 			this.mainSackPanel = new SackPanel(panel1Size.Width, panel1Size.Height, this.DragInfo, AutoMoveLocation.Player);

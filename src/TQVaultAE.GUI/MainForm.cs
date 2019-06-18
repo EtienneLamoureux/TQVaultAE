@@ -172,38 +172,36 @@ namespace TQVaultAE.GUI
 			this.Opacity = 0;
 			this.Hide();
 
-			SetUILanguage();
-
 			this.InitializeComponent();
 
 			this.SetupFormSize();
 
 			#region Apply custom font & scaling
 
-			this.exitButton.Font = FontHelper.GetFontAlbertusMTLight(12F, Database.DB.Scale);
+			this.exitButton.Font = FontHelper.GetFontAlbertusMTLight(12F, UIService.UI.Scale);
 			ScaleControl(this.exitButton);
-			this.characterComboBox.Font = FontHelper.GetFontAlbertusMTLight(13F, Database.DB.Scale);
+			this.characterComboBox.Font = FontHelper.GetFontAlbertusMTLight(13F, UIService.UI.Scale);
 			ScaleControl(this.characterComboBox);
 			ScaleControl(this.characterLabel);
 			ScaleControl(this.itemTextPanel);
 			ScaleControl(this.itemText);
-			this.vaultListComboBox.Font = FontHelper.GetFontAlbertusMTLight(13F, Database.DB.Scale);
+			this.vaultListComboBox.Font = FontHelper.GetFontAlbertusMTLight(13F, UIService.UI.Scale);
 			ScaleControl(this.vaultListComboBox);
-			this.vaultLabel.Font = FontHelper.GetFontAlbertusMTLight(11F, Database.DB.Scale);
+			this.vaultLabel.Font = FontHelper.GetFontAlbertusMTLight(11F, UIService.UI.Scale);
 			ScaleControl(this.vaultLabel);
-			this.configureButton.Font = FontHelper.GetFontAlbertusMTLight(12F, Database.DB.Scale);
+			this.configureButton.Font = FontHelper.GetFontAlbertusMTLight(12F, UIService.UI.Scale);
 			ScaleControl(this.configureButton);
-			this.customMapText.Font = FontHelper.GetFontAlbertusMT(11.25F, Database.DB.Scale);
+			this.customMapText.Font = FontHelper.GetFontAlbertusMT(11.25F, UIService.UI.Scale);
 			ScaleControl(this.customMapText);
-			this.panelSelectButton.Font = FontHelper.GetFontAlbertusMTLight(12F, Database.DB.Scale);
+			this.panelSelectButton.Font = FontHelper.GetFontAlbertusMTLight(12F, UIService.UI.Scale);
 			ScaleControl(this.panelSelectButton);
-			this.secondaryVaultListComboBox.Font = FontHelper.GetFontAlbertusMTLight(11F, Database.DB.Scale);
+			this.secondaryVaultListComboBox.Font = FontHelper.GetFontAlbertusMTLight(11F, UIService.UI.Scale);
 			ScaleControl(this.secondaryVaultListComboBox);
-			this.aboutButton.Font = FontHelper.GetFontMicrosoftSansSerif(8.25F, Database.DB.Scale);
+			this.aboutButton.Font = FontHelper.GetFontMicrosoftSansSerif(8.25F, UIService.UI.Scale);
 			ScaleControl(this.aboutButton);
-			this.titleLabel.Font = FontHelper.GetFontAlbertusMTLight(24F, Database.DB.Scale);
+			this.titleLabel.Font = FontHelper.GetFontAlbertusMTLight(24F, UIService.UI.Scale);
 			ScaleControl(this.titleLabel);
-			this.searchButton.Font = FontHelper.GetFontAlbertusMTLight(12F, Database.DB.Scale);
+			this.searchButton.Font = FontHelper.GetFontAlbertusMTLight(12F, UIService.UI.Scale);
 			ScaleControl(this.searchButton);
 
 			#endregion
@@ -240,8 +238,6 @@ namespace TQVaultAE.GUI
 				Log.Debug(string.Empty);
 			}
 
-			SetupGamePaths();
-			SetupMapName();
 
 			// Setup localized strings.
 			this.characterLabel.Text = Resources.MainFormLabel1;
@@ -546,7 +542,7 @@ namespace TQVaultAE.GUI
 		private void AboutButtonClick(object sender, EventArgs e)
 		{
 			AboutBox dlg = new AboutBox();
-			dlg.Scale(new SizeF(Database.DB.Scale, Database.DB.Scale));
+			dlg.Scale(new SizeF(UIService.UI.Scale, UIService.UI.Scale));
 			dlg.ShowDialog();
 		}
 
@@ -609,7 +605,7 @@ namespace TQVaultAE.GUI
 			this.ScaleOnResize = true;
 
 
-			Database.DB.Scale = Config.Settings.Default.Scale;
+			UIService.UI.Scale = Config.Settings.Default.Scale;
 
 			Config.Settings.Default.Save();
 
@@ -627,8 +623,8 @@ namespace TQVaultAE.GUI
 			{
 				// We do not need to scale the main form controls since autoscaling will handle it.
 				// Scale internally to 96 dpi for the drawing functions.
-				Database.DB.Scale = this.CurrentAutoScaleDimensions.Width / Database.DesignDpi;
-				this.OriginalFormScale = Database.DB.Scale;
+				UIService.UI.Scale = this.CurrentAutoScaleDimensions.Width / Database.DesignDpi;
+				this.OriginalFormScale = UIService.UI.Scale;
 			}
 
 			this.LastFormSize = this.Size;
@@ -655,111 +651,6 @@ namespace TQVaultAE.GUI
 
 		#endregion
 
-		#region Init
-
-		/// <summary>
-		/// Reads the paths from the config files and sets them.
-		/// </summary>
-		private static void SetupGamePaths()
-		{
-			TQData.GamePathResolver = new GamePathResolverWin();
-
-			if (!Config.Settings.Default.AutoDetectGamePath)
-			{
-				TQData.TQPath = Config.Settings.Default.TQPath;
-				TQData.ImmortalThronePath = Config.Settings.Default.TQITPath;
-			}
-
-			// Show a message that the default path is going to be used.
-			if (string.IsNullOrEmpty(Config.Settings.Default.VaultPath))
-			{
-				string folderPath = Path.Combine(TQData.TQSaveFolder, "TQVaultData");
-
-				// Check to see if we are still using a shortcut to specify the vault path and display a message
-				// to use the configuration UI if we are.
-				if (!Directory.Exists(folderPath) && File.Exists(Path.ChangeExtension(folderPath, ".lnk")))
-				{
-					MessageBox.Show(Resources.DataLinkMsg, Resources.DataLink, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-				}
-				else
-				{
-					MessageBox.Show(Resources.DataDefaultPathMsg, Resources.DataDefaultPath, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-				}
-			}
-
-			TQData.TQVaultSaveFolder = Config.Settings.Default.VaultPath;
-		}
-
-		/// <summary>
-		/// Attempts to read the language from the config file and set the Current Thread's Culture and UICulture.
-		/// Defaults to the OS UI Culture.
-		/// </summary>
-		private void SetUILanguage()
-		{
-			string settingsCulture = null;
-			if (!string.IsNullOrEmpty(Config.Settings.Default.UILanguage))
-			{
-				settingsCulture = Config.Settings.Default.UILanguage;
-			}
-			else if (!Config.Settings.Default.AutoDetectLanguage)
-			{
-				settingsCulture = Config.Settings.Default.TQLanguage;
-			}
-
-			if (!string.IsNullOrEmpty(settingsCulture))
-			{
-				string myCulture = null;
-				foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
-				{
-					if (ci.EnglishName.Equals(settingsCulture, StringComparison.InvariantCultureIgnoreCase))
-					{
-						myCulture = ci.TextInfo.CultureName;
-						break;
-					}
-				}
-
-				// We found something so we will use it.
-				if (!string.IsNullOrEmpty(myCulture))
-				{
-					try
-					{
-						// Sets the culture
-						Thread.CurrentThread.CurrentCulture = new CultureInfo(myCulture);
-
-						// Sets the UI culture
-						Thread.CurrentThread.CurrentUICulture = new CultureInfo(myCulture);
-					}
-					catch (ArgumentNullException e)
-					{
-						Log.Error("Argument Null Exception when setting the language", e);
-					}
-					catch (NotSupportedException e)
-					{
-						Log.Error("Not Supported Exception when setting the language", e);
-					}
-				}
-
-				// If not then we just default to the OS UI culture.
-			}
-		}
-
-		/// <summary>
-		/// Sets the name of the game map if a custom map is set in the config file.
-		/// Defaults to Main otherwise.
-		/// </summary>
-		private static void SetupMapName()
-		{
-			// Set the map name.  Command line argument can override this setting in LoadResources().
-			string mapName = "main";
-			if (Config.Settings.Default.ModEnabled)
-			{
-				mapName = Config.Settings.Default.CustomMap;
-			}
-
-			TQData.MapName = mapName;
-		}
-
-		#endregion
 
 		#region Files
 
@@ -1372,9 +1263,9 @@ namespace TQVaultAE.GUI
 				Config.Settings.Default.TQPath = string.Empty;
 			}
 
-			if (Database.DB.Scale != 1.0F)
+			if (UIService.UI.Scale != 1.0F)
 			{
-				Config.Settings.Default.Scale = Database.DB.Scale;
+				Config.Settings.Default.Scale = UIService.UI.Scale;
 				this.configChanged = true;
 			}
 
@@ -1394,7 +1285,7 @@ namespace TQVaultAE.GUI
 		{
 			SettingsDialog settingsDialog = new SettingsDialog();
 			DialogResult result = DialogResult.Cancel;
-			settingsDialog.Scale(new SizeF(Database.DB.Scale, Database.DB.Scale));
+			settingsDialog.Scale(new SizeF(UIService.UI.Scale, UIService.UI.Scale));
 
 			string title = string.Empty;
 			string message = string.Empty;

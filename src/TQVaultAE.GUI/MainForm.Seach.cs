@@ -34,7 +34,7 @@ namespace TQVaultAE.GUI
 		private void OpenSearchDialog()
 		{
 			SearchDialog searchDialog = new SearchDialog();
-			searchDialog.Scale(new SizeF(Database.DB.Scale, Database.DB.Scale));
+			searchDialog.Scale(new SizeF(UIService.UI.Scale, UIService.UI.Scale));
 
 			if (searchDialog.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(searchDialog.SearchText))
 			{

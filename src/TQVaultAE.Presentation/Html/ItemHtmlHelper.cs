@@ -34,7 +34,7 @@ namespace TQVaultAE.Presentation.Html
 			string itemName = HtmlHelper.MakeSafeForHtml(ItemProvider.ToFriendlyName(itm, true, false));
 			Color color = ItemGfxHelper.GetColorTag(itm, itemName);
 			itemName = Item.ClipColorTag(itemName);
-			results.Add(string.Format(CultureInfo.CurrentCulture, "<font size={0} color={1}><b>{2}</b></font>", Convert.ToInt32(10.0F * Database.DB.Scale), HtmlHelper.HtmlColor(color), itemName));
+			results.Add(string.Format(CultureInfo.CurrentCulture, "<font size={0} color={1}><b>{2}</b></font>", Convert.ToInt32(10.0F * UIService.UI.Scale), HtmlHelper.HtmlColor(color), itemName));
 
 			// Add the sub-title for certain types
 			if (itm.baseItemInfo != null)

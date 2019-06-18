@@ -11,6 +11,7 @@ namespace TQVaultAE.GUI.Models
 	using TQVaultAE.GUI.Components;
 	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Stores information about the item being dragged around by the user
@@ -339,8 +340,8 @@ namespace TQVaultAE.GUI.Models
 				if (newItem.Width != this.original.item.Width ||
 					newItem.Height != this.original.item.Height)
 				{
-					this.mouseOffset.X = newItem.ItemBitmap.Width / 2;
-					this.mouseOffset.Y = newItem.ItemBitmap.Height / 2;
+					this.mouseOffset.X = newItem.ItemBitmap().Width / 2;
+					this.mouseOffset.Y = newItem.ItemBitmap().Height / 2;
 				}
 			}
 		}

@@ -72,14 +72,14 @@ namespace TQVaultAE.GUI.Components
 			int autosortOffset = 0;
 			if (numberOfAutosortButtons > 0)
 			{
-				autosortOffset = Convert.ToInt32(27.0F * Database.DB.Scale);
+				autosortOffset = Convert.ToInt32(27.0F * UIService.UI.Scale);
 			}
 
 			this.Size = new Size(
-				(panelSize.Width * Database.DB.ItemUnitSize) + Convert.ToInt32(10.0F * Database.DB.Scale) + autosortOffset + BorderPad,
-				(panelSize.Height * Database.DB.ItemUnitSize) + Convert.ToInt32(56.0F * Database.DB.Scale) + BorderPad);
+				(panelSize.Width * UIService.UI.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.UI.Scale) + autosortOffset + BorderPad,
+				(panelSize.Height * UIService.UI.ItemUnitSize) + Convert.ToInt32(56.0F * UIService.UI.Scale) + BorderPad);
 			this.TabStop = false;
-			this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
+			this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * UIService.UI.Scale, this.Font.Style);
 
 			this.BagPanelOffset = 0; // bag panel starts with bag #0
 			this.BagSackPanel = new SackPanel(panelSize.Width, panelSize.Height, this.DragInfo, autoMoveLocation);
@@ -119,7 +119,7 @@ namespace TQVaultAE.GUI.Components
 			this.contextMenu = new ContextMenuStrip();
 			this.contextMenu.BackColor = Color.FromArgb(46, 41, 31);
 			this.contextMenu.DropShadowEnabled = true;
-			this.contextMenu.Font = FontHelper.GetFontAlbertusMT(9.0F * Database.DB.Scale);
+			this.contextMenu.Font = FontHelper.GetFontAlbertusMT(9.0F * UIService.UI.Scale);
 			this.contextMenu.ForeColor = Color.FromArgb(200, 200, 200);
 			this.contextMenu.Opacity = 0.80;
 			this.contextMenu.ShowImageMargin = false;
@@ -165,7 +165,7 @@ namespace TQVaultAE.GUI.Components
 			get
 			{
 				{
-					return Convert.ToInt32(2.0F * Database.DB.Scale);
+					return Convert.ToInt32(2.0F * UIService.UI.Scale);
 				}
 			}
 		}
@@ -542,7 +542,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="specified">BoundsSpecified value.</param>
 		protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 		{
-			this.contextMenu.Font = new Font(this.contextMenu.Font.FontFamily, 9.0F * Database.DB.Scale);
+			this.contextMenu.Font = new Font(this.contextMenu.Font.FontFamily, 9.0F * UIService.UI.Scale);
 			this.Font = new Font(this.Font.Name, this.Font.SizeInPoints * factor.Height, this.Font.Style);
 
 			base.ScaleControl(factor, specified);
@@ -917,11 +917,11 @@ namespace TQVaultAE.GUI.Components
 
 			if (sack.IsEmpty)
 			{
-				return string.Format(CultureInfo.CurrentCulture, "{0}<b>{1}</b>", HtmlHelper.TooltipTitleTag(Database.DB.Scale), HtmlHelper.MakeSafeForHtml(Resources.VaultGroupBoxEmpty));
+				return string.Format(CultureInfo.CurrentCulture, "{0}<b>{1}</b>", HtmlHelper.TooltipTitleTag(UIService.UI.Scale), HtmlHelper.MakeSafeForHtml(Resources.VaultGroupBoxEmpty));
 			}
 
 			StringBuilder toolTipStringBuilder = new StringBuilder();
-			toolTipStringBuilder.Append(HtmlHelper.TooltipTitleTag(Database.DB.Scale));
+			toolTipStringBuilder.Append(HtmlHelper.TooltipTitleTag(UIService.UI.Scale));
 			bool first = true;
 			foreach (Item item in sack)
 			{

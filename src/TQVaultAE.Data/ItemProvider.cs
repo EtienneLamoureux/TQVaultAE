@@ -544,12 +544,13 @@ namespace TQVaultAE.Data
 				Log.DebugFormat(CultureInfo.InvariantCulture, "'{0}' baseItemInfo is {1} null", ToFriendlyName(itm), (itm.baseItemInfo == null) ? string.Empty : "NOT");
 			}
 
-			// Get the bitmaps we need
+			// Extract image raw data
 			if (itm.baseItemInfo != null)
 			{
 				if (itm.IsRelic && !itm.IsRelicComplete)
 				{
-					itm.ItemBitmap = Database.DB.LoadBitmap(itm.baseItemInfo.ShardBitmap);
+					itm.TexImageResourceId = itm.baseItemInfo.ShardBitmap;
+					itm.TexImage = Database.DB.LoadResource(itm.TexImageResourceId);
 					if (TQDebug.ItemDebugLevel > 1)
 					{
 						Log.DebugFormat(CultureInfo.InvariantCulture, "Loaded shardbitmap ({0})", itm.baseItemInfo.ShardBitmap);
@@ -557,7 +558,8 @@ namespace TQVaultAE.Data
 				}
 				else
 				{
-					itm.ItemBitmap = Database.DB.LoadBitmap(itm.baseItemInfo.Bitmap);
+					itm.TexImageResourceId = itm.baseItemInfo.Bitmap;
+					itm.TexImage = Database.DB.LoadResource(itm.TexImageResourceId);
 					if (TQDebug.ItemDebugLevel > 1)
 					{
 						Log.DebugFormat(CultureInfo.InvariantCulture, "Loaded regular bitmap ({0})", itm.baseItemInfo.Bitmap);
@@ -568,39 +570,12 @@ namespace TQVaultAE.Data
 			{
 				// Added by VillageIdiot
 				// Try showing something so unknown items are not invisible.
-				itm.ItemBitmap = Database.DB.LoadBitmap("DefaultBitmap");
+				itm.TexImageResourceId = "DefaultBitmap";
+				itm.TexImage = Database.DB.LoadResource(itm.TexImageResourceId);
 				if (TQDebug.ItemDebugLevel > 1)
 				{
 					Log.Debug("Try loading (DefaultBitmap)");
 				}
-			}
-
-			// Changed by VillageIdiot
-			// Moved outside of BaseItemInfo conditional since there are now 2 conditions
-			if (itm.ItemBitmap != null)
-			{
-				if (TQDebug.ItemDebugLevel > 1)
-				{
-					Log.DebugFormat(CultureInfo.InvariantCulture
-						, "size = {0}x{1} (unitsize={2})"
-						, itm.ItemBitmap.Width
-						, itm.ItemBitmap.Height
-						, Database.DB.ItemUnitSize
-					);
-				}
-
-				itm.Width = Convert.ToInt32((float)itm.ItemBitmap.Width * Database.DB.Scale / (float)Database.DB.ItemUnitSize);
-				itm.Height = Convert.ToInt32((float)itm.ItemBitmap.Height * Database.DB.Scale / (float)Database.DB.ItemUnitSize);
-			}
-			else
-			{
-				if (TQDebug.ItemDebugLevel > 1)
-				{
-					Log.Debug("bitmap is null");
-				}
-
-				itm.Width = 1;
-				itm.Height = 1;
 			}
 
 			if (TQDebug.ItemDebugLevel > 0)
