@@ -6,7 +6,6 @@
 
 namespace TQVaultAE.GUI.Components
 {
-	using Properties;
 	using System;
 	using System.Collections.Generic;
 	using System.Drawing;
@@ -15,6 +14,7 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Data;
 	using TQVaultAE.Logs;
 	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel in the stash panel.

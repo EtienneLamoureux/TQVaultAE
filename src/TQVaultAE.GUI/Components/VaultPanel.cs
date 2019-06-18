@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI.Components
 {
-	using Properties;
 	using System;
 	using System.Collections.ObjectModel;
 	using System.ComponentModel;
@@ -120,7 +119,7 @@ namespace TQVaultAE.GUI.Components
 			this.contextMenu = new ContextMenuStrip();
 			this.contextMenu.BackColor = Color.FromArgb(46, 41, 31);
 			this.contextMenu.DropShadowEnabled = true;
-			this.contextMenu.Font = Program.GetFontAlbertusMT(9.0F * Database.DB.Scale);
+			this.contextMenu.Font = FontHelper.GetFontAlbertusMT(9.0F * Database.DB.Scale);
 			this.contextMenu.ForeColor = Color.FromArgb(200, 200, 200);
 			this.contextMenu.Opacity = 0.80;
 			this.contextMenu.ShowImageMargin = false;

@@ -3,7 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-using TQVaultAE.GUI.Properties;
+using TQVaultAE.Presentation;
 using TQVaultAE.GUI.Tooltip;
 
 namespace TQVaultAE.GUI.Components

@@ -5,11 +5,11 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI.Components
 {
-	using Properties;
 	using System;
 	using System.Drawing;
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Class for creating a Window Menu on the form.

@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using TQVaultAE.Data;
 using TQVaultAE.Entities;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
-using TQVaultAE.GUI.Properties;
 using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Html;
 
