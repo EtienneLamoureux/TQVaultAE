@@ -12,7 +12,9 @@ namespace TQVaultAE.GUI
 	using System.Security.Permissions;
 	using System.Threading;
 	using System.Windows.Forms;
+	using TQVaultAE.GUI.Services;
 	using TQVaultAE.Logs;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Main Program class
@@ -49,6 +51,9 @@ namespace TQVaultAE.GUI
 
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
+
+				FontHelper.FontLoader = new AddFontToOSWin();
+
 				Application.Run(new MainForm());
 			}
 			catch (Exception ex)
