@@ -6,7 +6,7 @@
 using System;
 using System.Drawing;
 using TQVaultAE.GUI.Components;
-using TQVaultAE.GUI.Properties;
+using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI
 {
@@ -372,7 +372,7 @@ namespace TQVaultAE.GUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.BackgroundImage = global::TQVaultAE.GUI.Properties.Resources.MainForm_NewBackground;
+            this.BackgroundImage = global::TQVaultAE.Presentation.Resources.MainForm_NewBackground;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.CancelButton = this.exitButton;
             this.ClientSize = new System.Drawing.Size(1350, 910);

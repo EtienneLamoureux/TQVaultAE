@@ -5,7 +5,7 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Windows.Forms;
 using TQVaultAE.GUI.Components;
-using TQVaultAE.GUI.Properties;
+using TQVaultAE.Presentation;
 using TQVaultAE.Entities;
 using TQVaultAE.Config;
 using TQVaultAE.Data;

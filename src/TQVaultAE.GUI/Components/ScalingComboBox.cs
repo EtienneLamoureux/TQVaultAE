@@ -7,6 +7,7 @@ namespace TQVaultAE.GUI.Components
 {
 	using System.Drawing;
 	using System.Windows.Forms;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// ComboBox class to support scaling of the fonts.
@@ -20,7 +21,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="size">New Size of the control</param>
 		public void Revert(Point location, Size size)
 		{
-			this.Font = Program.GetFontAlbertusMTLight(8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Font = FontHelper.GetFontAlbertusMTLight(8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Location = location;
 			this.Size = size;
 			this.BackColor = SystemColors.Window;

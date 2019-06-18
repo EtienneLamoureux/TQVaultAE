@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using TQVaultAE.GUI.Components;
-using TQVaultAE.GUI.Properties;
+using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI
 {
@@ -309,22 +309,22 @@ namespace TQVaultAE.GUI
             // 
             this.cancelButton.BackColor = System.Drawing.Color.Transparent;
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.DownBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonDown;
+            this.cancelButton.DownBitmap = global::TQVaultAE.Presentation.Resources.MainButtonDown;
             this.cancelButton.FlatAppearance.BorderSize = 0;
             this.cancelButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancelButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.cancelButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.cancelButton.Image = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
+            this.cancelButton.Image = global::TQVaultAE.Presentation.Resources.MainButtonUp;
             this.cancelButton.Location = new System.Drawing.Point(481, 419);
             this.cancelButton.Name = "cancelButton";
-            this.cancelButton.OverBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonOver;
+            this.cancelButton.OverBitmap = global::TQVaultAE.Presentation.Resources.MainButtonOver;
             this.cancelButton.Size = new System.Drawing.Size(137, 30);
             this.cancelButton.SizeToGraphic = false;
             this.cancelButton.TabIndex = 13;
             this.cancelButton.Text = "Cancel";
-            this.cancelButton.UpBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
+            this.cancelButton.UpBitmap = global::TQVaultAE.Presentation.Resources.MainButtonUp;
             this.cancelButton.UseCustomGraphic = true;
             this.cancelButton.UseVisualStyleBackColor = false;
             // 
@@ -332,22 +332,22 @@ namespace TQVaultAE.GUI
             // 
             this.okayButton.BackColor = System.Drawing.Color.Transparent;
             this.okayButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okayButton.DownBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonDown;
+            this.okayButton.DownBitmap = global::TQVaultAE.Presentation.Resources.MainButtonDown;
             this.okayButton.FlatAppearance.BorderSize = 0;
             this.okayButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.okayButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.okayButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.okayButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.okayButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.okayButton.Image = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
+            this.okayButton.Image = global::TQVaultAE.Presentation.Resources.MainButtonUp;
             this.okayButton.Location = new System.Drawing.Point(326, 419);
             this.okayButton.Name = "okayButton";
-            this.okayButton.OverBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonOver;
+            this.okayButton.OverBitmap = global::TQVaultAE.Presentation.Resources.MainButtonOver;
             this.okayButton.Size = new System.Drawing.Size(137, 30);
             this.okayButton.SizeToGraphic = false;
             this.okayButton.TabIndex = 12;
             this.okayButton.Text = "OK";
-            this.okayButton.UpBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
+            this.okayButton.UpBitmap = global::TQVaultAE.Presentation.Resources.MainButtonUp;
             this.okayButton.UseCustomGraphic = true;
             this.okayButton.UseVisualStyleBackColor = false;
             this.okayButton.Click += new System.EventHandler(this.OkayButtonClick);
@@ -359,23 +359,23 @@ namespace TQVaultAE.GUI
             // resetButton
             // 
             this.resetButton.BackColor = System.Drawing.Color.Transparent;
-            this.resetButton.DownBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonDown;
+            this.resetButton.DownBitmap = global::TQVaultAE.Presentation.Resources.MainButtonDown;
             this.resetButton.FlatAppearance.BorderSize = 0;
             this.resetButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.resetButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.resetButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.resetButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.resetButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.resetButton.Image = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
+            this.resetButton.Image = global::TQVaultAE.Presentation.Resources.MainButtonUp;
             this.resetButton.Location = new System.Drawing.Point(763, 419);
             this.resetButton.Name = "resetButton";
-            this.resetButton.OverBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonOver;
+            this.resetButton.OverBitmap = global::TQVaultAE.Presentation.Resources.MainButtonOver;
             this.resetButton.Size = new System.Drawing.Size(137, 30);
             this.resetButton.SizeToGraphic = false;
             this.resetButton.TabIndex = 11;
             this.resetButton.Text = "Reset";
             this.toolTip.SetToolTip(this.resetButton, "Causes the configuration to Reset to the\r\nlast saved configuration.");
-            this.resetButton.UpBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
+            this.resetButton.UpBitmap = global::TQVaultAE.Presentation.Resources.MainButtonUp;
             this.resetButton.UseCustomGraphic = true;
             this.resetButton.UseVisualStyleBackColor = false;
             this.resetButton.Click += new System.EventHandler(this.ResetButtonClick);
@@ -383,7 +383,7 @@ namespace TQVaultAE.GUI
             // vaultPathBrowseButton
             // 
             this.vaultPathBrowseButton.BackColor = System.Drawing.Color.Transparent;
-            this.vaultPathBrowseButton.DownBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonDown;
+            this.vaultPathBrowseButton.DownBitmap = global::TQVaultAE.Presentation.Resources.MainButtonDown;
             this.vaultPathBrowseButton.FlatAppearance.BorderSize = 0;
             this.vaultPathBrowseButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.vaultPathBrowseButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
@@ -393,12 +393,12 @@ namespace TQVaultAE.GUI
             this.vaultPathBrowseButton.Image = ((System.Drawing.Image)(resources.GetObject("vaultPathBrowseButton.Image")));
             this.vaultPathBrowseButton.Location = new System.Drawing.Point(415, 43);
             this.vaultPathBrowseButton.Name = "vaultPathBrowseButton";
-            this.vaultPathBrowseButton.OverBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonOver;
+            this.vaultPathBrowseButton.OverBitmap = global::TQVaultAE.Presentation.Resources.MainButtonOver;
             this.vaultPathBrowseButton.Size = new System.Drawing.Size(47, 30);
             this.vaultPathBrowseButton.SizeToGraphic = false;
             this.vaultPathBrowseButton.TabIndex = 1;
             this.vaultPathBrowseButton.Text = "...";
-            this.vaultPathBrowseButton.UpBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
+            this.vaultPathBrowseButton.UpBitmap = global::TQVaultAE.Presentation.Resources.MainButtonUp;
             this.vaultPathBrowseButton.UseCustomGraphic = true;
             this.vaultPathBrowseButton.UseVisualStyleBackColor = false;
             this.vaultPathBrowseButton.Click += new System.EventHandler(this.VaultPathBrowseButtonClick);
@@ -558,7 +558,7 @@ namespace TQVaultAE.GUI
             // titanQuestPathBrowseButton
             // 
             this.titanQuestPathBrowseButton.BackColor = System.Drawing.Color.Transparent;
-            this.titanQuestPathBrowseButton.DownBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonDown;
+            this.titanQuestPathBrowseButton.DownBitmap = global::TQVaultAE.Presentation.Resources.MainButtonDown;
             this.titanQuestPathBrowseButton.FlatAppearance.BorderSize = 0;
             this.titanQuestPathBrowseButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.titanQuestPathBrowseButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
@@ -568,12 +568,12 @@ namespace TQVaultAE.GUI
             this.titanQuestPathBrowseButton.Image = ((System.Drawing.Image)(resources.GetObject("titanQuestPathBrowseButton.Image")));
             this.titanQuestPathBrowseButton.Location = new System.Drawing.Point(415, 102);
             this.titanQuestPathBrowseButton.Name = "titanQuestPathBrowseButton";
-            this.titanQuestPathBrowseButton.OverBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonOver;
+            this.titanQuestPathBrowseButton.OverBitmap = global::TQVaultAE.Presentation.Resources.MainButtonOver;
             this.titanQuestPathBrowseButton.Size = new System.Drawing.Size(47, 30);
             this.titanQuestPathBrowseButton.SizeToGraphic = false;
             this.titanQuestPathBrowseButton.TabIndex = 23;
             this.titanQuestPathBrowseButton.Text = "...";
-            this.titanQuestPathBrowseButton.UpBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
+            this.titanQuestPathBrowseButton.UpBitmap = global::TQVaultAE.Presentation.Resources.MainButtonUp;
             this.titanQuestPathBrowseButton.UseCustomGraphic = true;
             this.titanQuestPathBrowseButton.UseVisualStyleBackColor = false;
             this.titanQuestPathBrowseButton.Click += new System.EventHandler(this.TitanQuestPathBrowseButtonClick);
@@ -581,7 +581,7 @@ namespace TQVaultAE.GUI
             // immortalThronePathBrowseButton
             // 
             this.immortalThronePathBrowseButton.BackColor = System.Drawing.Color.Transparent;
-            this.immortalThronePathBrowseButton.DownBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonDown;
+            this.immortalThronePathBrowseButton.DownBitmap = global::TQVaultAE.Presentation.Resources.MainButtonDown;
             this.immortalThronePathBrowseButton.FlatAppearance.BorderSize = 0;
             this.immortalThronePathBrowseButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.immortalThronePathBrowseButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
@@ -591,12 +591,12 @@ namespace TQVaultAE.GUI
             this.immortalThronePathBrowseButton.Image = ((System.Drawing.Image)(resources.GetObject("immortalThronePathBrowseButton.Image")));
             this.immortalThronePathBrowseButton.Location = new System.Drawing.Point(415, 153);
             this.immortalThronePathBrowseButton.Name = "immortalThronePathBrowseButton";
-            this.immortalThronePathBrowseButton.OverBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonOver;
+            this.immortalThronePathBrowseButton.OverBitmap = global::TQVaultAE.Presentation.Resources.MainButtonOver;
             this.immortalThronePathBrowseButton.Size = new System.Drawing.Size(47, 30);
             this.immortalThronePathBrowseButton.SizeToGraphic = false;
             this.immortalThronePathBrowseButton.TabIndex = 24;
             this.immortalThronePathBrowseButton.Text = "...";
-            this.immortalThronePathBrowseButton.UpBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
+            this.immortalThronePathBrowseButton.UpBitmap = global::TQVaultAE.Presentation.Resources.MainButtonUp;
             this.immortalThronePathBrowseButton.UseCustomGraphic = true;
             this.immortalThronePathBrowseButton.UseVisualStyleBackColor = false;
             this.immortalThronePathBrowseButton.Click += new System.EventHandler(this.ImmortalThronePathBrowseButtonClick);

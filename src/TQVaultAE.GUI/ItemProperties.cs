@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
-	using Properties;
 	using System;
 	using System.Drawing;
 	using System.Globalization;
@@ -39,12 +38,12 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.ok.Font = Program.GetFontAlbertusMTLight(12F);
-			this.label1.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.label2.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.checkBox1.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.label3.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.ok.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.label1.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.label2.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.checkBox1.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.label3.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
 			#endregion
 

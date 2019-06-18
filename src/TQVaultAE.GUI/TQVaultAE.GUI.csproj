@@ -10,7 +10,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TQVaultAE.GUI</RootNamespace>
     <AssemblyName>TQVaultAE</AssemblyName>
-    <ApplicationIcon>app.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -428,24 +429,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.es.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.de.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.ru.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.fr.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.pl.resx" />
     <EmbeddedResource Include="ResultsDialog.resx">
       <DependentUpon>ResultsDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -470,21 +453,11 @@
       <DependentUpon>VaultMaintenanceDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Content Include="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="app.config" />
-    <EmbeddedResource Include="app.ico">
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources\fonts\albertus mt light.ttf" />
-    <EmbeddedResource Include="resources\fonts\albertus mt.ttf" />
     <None Include="packages.config" />
-    <None Include="resources\img\EquipmentPanel.psd" />
     <Compile Include="ResultsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -530,68 +503,6 @@
     <Compile Include="VaultMaintenanceDialog.Designer.cs">
       <DependentUpon>VaultMaintenanceDialog.cs</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="resources\txt\CharacterInfoDisplay.ru.txt" />
-    <None Include="resources\txt\CharacterInfoDisplay.pl.txt" />
-    <None Include="resources\txt\CharacterInfoDisplay.fr.txt" />
-    <None Include="resources\txt\CharacterInfoDisplay.es.txt" />
-    <None Include="resources\txt\CharacterInfoDisplay.de.txt" />
-    <None Include="resources\txt\CharacterInfoDisplay.txt" />
-    <None Include="resources\txt\CharacterClass.pl.txt" />
-    <None Include="resources\txt\CharacterClass.ru.txt" />
-    <None Include="resources\txt\CharacterClass.es.txt" />
-    <None Include="resources\txt\CharacterClass.de.txt" />
-    <None Include="resources\txt\CharacterClass.fr.txt" />
-    <None Include="resources\txt\CharacterClass.txt" />
-    <Content Include="resources\img\AboutGraphic.png" />
-    <Content Include="resources\img\autosortdown01.png" />
-    <Content Include="resources\img\autosortover01.png" />
-    <Content Include="resources\img\autosortup01.png" />
-    <Content Include="resources\img\BorderBottom.png" />
-    <Content Include="resources\img\BorderBottomLeftCorner.png" />
-    <Content Include="resources\img\BorderBottomRightCorner.png" />
-    <Content Include="resources\img\BorderSide.png" />
-    <Content Include="resources\img\BorderTop.png" />
-    <Content Include="resources\img\ButtonCloseDown.png" />
-    <Content Include="resources\img\ButtonCloseOver.png" />
-    <Content Include="resources\img\ButtonCloseUp.png" />
-    <Content Include="resources\img\ButtonMaximizeDown.png" />
-    <Content Include="resources\img\ButtonMaximizeOver.png" />
-    <Content Include="resources\img\ButtonMaximizeUp.png" />
-    <Content Include="resources\img\ButtonMinimizeDown.png" />
-    <Content Include="resources\img\ButtonMinimizeOver.png" />
-    <Content Include="resources\img\ButtonMinimizeUp.png" />
-    <Content Include="resources\img\caravan_bg.jpg" />
-    <Content Include="resources\img\EquipmentPanel.png" />
-    <Content Include="resources\img\EquipmentPanel_New.jpg" />
-    <Content Include="resources\img\EquipmentPanel_New.png" />
-    <None Include="resources\img\equipment_bg_and_char.png" />
-    <Content Include="resources\img\Equipment_bg_new.png" />
-    <Content Include="resources\img\inventorybagdown01.png" />
-    <Content Include="resources\img\inventorybagover01.png" />
-    <Content Include="resources\img\inventorybagup01.png" />
-    <Content Include="resources\img\MainButtonDown.jpg" />
-    <Content Include="resources\img\MainButtonOver.jpg" />
-    <Content Include="resources\img\MainButtonUp.jpg" />
-    <Content Include="resources\img\MainForm Background.PNG" />
-    <Content Include="resources\img\MainForm_NewBackground.jpg" />
-    <Content Include="resources\img\Majestic Chest.png" />
-    <Content Include="resources\img\Majestic Chest_small.png" />
-    <Content Include="resources\img\NewAboutGraphic.jpg" />
-    <Content Include="resources\img\NewSplashScreen.png" />
-    <Content Include="resources\img\ProgressBar.png" />
-    <Content Include="resources\img\ProgressBarFill.png" />
-    <Content Include="resources\img\rotatedautosortdown01.png" />
-    <Content Include="resources\img\rotatedautosortover01.png" />
-    <Content Include="resources\img\rotatedautosortup01.png" />
-    <Content Include="resources\img\SplashScreen.png" />
-    <Content Include="resources\img\StashPanel.png" />
-    <Content Include="resources\img\StashTabDown.png" />
-    <Content Include="resources\img\StashTabOver.png" />
-    <Content Include="resources\img\StashTabUp.png" />
-    <Content Include="resources\img\tqmedallion.JPG" />
-    <Content Include="resources\img\tqmedalliondoor.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj">
