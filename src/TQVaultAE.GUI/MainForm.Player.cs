@@ -99,8 +99,8 @@ namespace TQVaultAE.GUI
 			this.playerPanel = new PlayerPanel(this.dragInfo, 4, new Size(12, 5), new Size(8, 5), this.tooltip);
 
 			this.playerPanel.Location = new Point(
-				this.ClientSize.Width - (this.playerPanel.Width + Convert.ToInt32(22.0F * Database.DB.Scale)),
-				this.characterComboBox.Location.Y + Convert.ToInt32(28.0F * Database.DB.Scale));
+				this.ClientSize.Width - (this.playerPanel.Width + Convert.ToInt32(22.0F * UIService.UI.Scale)),
+				this.characterComboBox.Location.Y + Convert.ToInt32(28.0F * UIService.UI.Scale));
 
 			this.playerPanel.DrawAsGroupBox = false;
 

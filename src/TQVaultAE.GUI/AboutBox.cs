@@ -189,7 +189,7 @@ namespace TQVaultAE.GUI
 			{
 				this.logoPictureBox.Image = new Bitmap(
 					this.logoPictureBox.Image,
-					new Size(Convert.ToInt32((float)this.logoPictureBox.Size.Width * Database.DB.Scale), Convert.ToInt32((float)this.logoPictureBox.Size.Height * Database.DB.Scale)));
+					new Size(Convert.ToInt32((float)this.logoPictureBox.Size.Width * UIService.UI.Scale), Convert.ToInt32((float)this.logoPictureBox.Size.Height * UIService.UI.Scale)));
 			}
 
 			base.ScaleControl(factor, specified);

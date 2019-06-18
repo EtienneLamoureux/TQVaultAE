@@ -45,10 +45,10 @@ namespace TQVaultAE.GUI
 			this.secondaryVaultPanel.Visible = false;
 			this.lastBag = -1;
 
-			int textPanelOffset = Convert.ToInt32(18.0F * Database.DB.Scale);
-			this.itemTextPanel.Size = new Size(this.vaultPanel.Width, Convert.ToInt32(22.0F * Database.DB.Scale));
+			int textPanelOffset = Convert.ToInt32(18.0F * UIService.UI.Scale);
+			this.itemTextPanel.Size = new Size(this.vaultPanel.Width, Convert.ToInt32(22.0F * UIService.UI.Scale));
 			this.itemTextPanel.Location = new Point(this.vaultPanel.Location.X, this.ClientSize.Height - (this.itemTextPanel.Size.Height + textPanelOffset));
-			this.itemText.Width = this.itemTextPanel.Width - Convert.ToInt32(4.0F * Database.DB.Scale);
+			this.itemText.Width = this.itemTextPanel.Width - Convert.ToInt32(4.0F * UIService.UI.Scale);
 			this.GetVaultList(false);
 
 			// Now we always create the stash panel since everyone can have equipment
@@ -184,7 +184,7 @@ namespace TQVaultAE.GUI
 				}
 
 				// show tooltip
-				this.tooltipText = string.Concat(HtmlHelper.TooltipBodyTag(Database.DB.Scale), this.tooltipText);
+				this.tooltipText = string.Concat(HtmlHelper.TooltipBodyTag(UIService.UI.Scale), this.tooltipText);
 				this.tooltip.ChangeText(this.tooltipText);
 			}
 

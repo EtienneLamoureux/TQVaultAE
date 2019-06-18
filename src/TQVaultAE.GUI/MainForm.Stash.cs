@@ -33,7 +33,7 @@ namespace TQVaultAE.GUI
 			//Align to playerPanel
 			this.stashPanel.Location = new Point(
 				this.playerPanel.Location.X,
-				this.ClientSize.Height - (this.stashPanel.Height + Convert.ToInt32(16.0F * Database.DB.Scale)));
+				this.ClientSize.Height - (this.stashPanel.Height + Convert.ToInt32(16.0F * UIService.UI.Scale)));
 			this.stashPanel.DrawAsGroupBox = false;
 
 			this.stashPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);

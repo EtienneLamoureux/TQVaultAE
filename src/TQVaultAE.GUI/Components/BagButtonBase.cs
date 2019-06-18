@@ -213,7 +213,7 @@ namespace TQVaultAE.GUI.Components
 			// Display the text overlay if we have one.
 			if (!string.IsNullOrEmpty(this.ButtonText))
 			{
-				Font font = this.GetScaledButtonTextFont(e.Graphics, FontHelper.GetFontAlbertusMTLight(20.0F * Database.DB.Scale, GraphicsUnit.Pixel));
+				Font font = this.GetScaledButtonTextFont(e.Graphics, FontHelper.GetFontAlbertusMTLight(20.0F * UIService.UI.Scale, GraphicsUnit.Pixel));
 
 				if (font != null)
 				{

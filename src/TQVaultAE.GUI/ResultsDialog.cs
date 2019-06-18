@@ -254,7 +254,7 @@ namespace TQVaultAE.GUI
 				}
 
 				// show tooltip
-				this.tooltipText = string.Concat(HtmlHelper.TooltipBodyTag(Database.DB.Scale), this.tooltipText);
+				this.tooltipText = string.Concat(HtmlHelper.TooltipBodyTag(UIService.UI.Scale), this.tooltipText);
 				////this.tooltip.ChangeText(this.tooltipText);
 			}
 

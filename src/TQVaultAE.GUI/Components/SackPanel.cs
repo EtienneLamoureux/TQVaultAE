@@ -142,14 +142,14 @@ namespace TQVaultAE.GUI.Components
 
 			this.gridPen = new Pen(Color.FromArgb(142, 140, 129));
 
-			this.numberFont = new Font("Arial", 10.0F * Database.DB.Scale, GraphicsUnit.Pixel);
+			this.numberFont = new Font("Arial", 10.0F * UIService.UI.Scale, GraphicsUnit.Pixel);
 			this.numberBrush = new SolidBrush(Color.White);
 			this.numberFormat = new StringFormat();
 			this.numberFormat.Alignment = StringAlignment.Far; // right-justify
 
 			this.Size = new Size(
-				(Convert.ToInt32(this.borderPen.Width) * 2) + (Database.DB.ItemUnitSize * sackWidth),
-				(Convert.ToInt32(this.borderPen.Width) * 2) + (Database.DB.ItemUnitSize * sackHeight));
+				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.UI.ItemUnitSize * sackWidth),
+				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.UI.ItemUnitSize * sackHeight));
 			this.BackColor = ((SolidBrush)this.EmptyCellBrush).Color;
 			this.Paint += new PaintEventHandler(this.PaintCallback);
 			this.MouseMove += new MouseEventHandler(this.MouseMoveCallback);
@@ -164,7 +164,7 @@ namespace TQVaultAE.GUI.Components
 			this.contextMenu = new ContextMenuStrip();
 			this.contextMenu.BackColor = Color.FromArgb(46, 41, 31);
 			this.contextMenu.DropShadowEnabled = true;
-			this.contextMenu.Font = FontHelper.GetFontAlbertusMT(9.0F * Database.DB.Scale);
+			this.contextMenu.Font = FontHelper.GetFontAlbertusMT(9.0F * UIService.UI.Scale);
 			this.contextMenu.ForeColor = Color.FromArgb(200, 200, 200);
 			this.contextMenu.Opacity = 0.80;
 			this.contextMenu.ShowImageMargin = false;
@@ -185,7 +185,7 @@ namespace TQVaultAE.GUI.Components
 		{
 			get
 			{
-				return Math.Max((4.0F * Database.DB.Scale), 1.0F);
+				return Math.Max((4.0F * UIService.UI.Scale), 1.0F);
 			}
 		}
 
@@ -463,8 +463,8 @@ namespace TQVaultAE.GUI.Components
 		{
 			this.SackSize = new Size(sackWidth, sackHeight);
 			this.Size = new Size(
-				(Convert.ToInt32(this.borderPen.Width) * 2) + (Database.DB.ItemUnitSize * sackWidth),
-				(Convert.ToInt32(this.borderPen.Width) * 2) + (Database.DB.ItemUnitSize * sackHeight));
+				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.UI.ItemUnitSize * sackWidth),
+				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.UI.ItemUnitSize * sackHeight));
 			this.Invalidate();
 		}
 
@@ -479,8 +479,8 @@ namespace TQVaultAE.GUI.Components
 
 			// Set the unscaled origin.
 			this.originalLocation = new Point(
-				Convert.ToInt32((float)location.X / Database.DB.Scale),
-				Convert.ToInt32((float)location.Y / Database.DB.Scale));
+				Convert.ToInt32((float)location.X / UIService.UI.Scale),
+				Convert.ToInt32((float)location.Y / UIService.UI.Scale));
 		}
 
 		/// <summary>
@@ -810,17 +810,17 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="specified">BoundsSpecified value.</param>
 		protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 		{
-			this.borderPen.Width = Math.Max((4.0F * Database.DB.Scale), 1.0F);
-			this.numberFont = new Font(this.numberFont.Name, 10.0F * Database.DB.Scale, GraphicsUnit.Pixel);
-			this.contextMenu.Font = new Font(this.contextMenu.Font.Name, 9.0F * Database.DB.Scale);
+			this.borderPen.Width = Math.Max((4.0F * UIService.UI.Scale), 1.0F);
+			this.numberFont = new Font(this.numberFont.Name, 10.0F * UIService.UI.Scale, GraphicsUnit.Pixel);
+			this.contextMenu.Font = new Font(this.contextMenu.Font.Name, 9.0F * UIService.UI.Scale);
 
 			this.Size = new Size(
-				(Convert.ToInt32(this.borderPen.Width) * 2) + (Database.DB.ItemUnitSize * this.SackSize.Width),
-				(Convert.ToInt32(this.borderPen.Width) * 2) + (Database.DB.ItemUnitSize * this.SackSize.Height));
+				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.UI.ItemUnitSize * this.SackSize.Width),
+				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.UI.ItemUnitSize * this.SackSize.Height));
 
 			this.Location = new Point(
-				Convert.ToInt32((float)this.originalLocation.X * Database.DB.Scale),
-				Convert.ToInt32((float)this.originalLocation.Y * Database.DB.Scale));
+				Convert.ToInt32((float)this.originalLocation.X * UIService.UI.Scale),
+				Convert.ToInt32((float)this.originalLocation.Y * UIService.UI.Scale));
 		}
 
 		/// <summary>
@@ -837,7 +837,7 @@ namespace TQVaultAE.GUI.Components
 			}
 			else
 			{
-				x = (location.X - (int)this.borderPen.Width) / Database.DB.ItemUnitSize;
+				x = (location.X - (int)this.borderPen.Width) / UIService.UI.ItemUnitSize;
 			}
 
 			if (x >= this.SackSize.Width)
@@ -852,7 +852,7 @@ namespace TQVaultAE.GUI.Components
 			}
 			else
 			{
-				y = (location.Y - (int)this.borderPen.Width) / Database.DB.ItemUnitSize;
+				y = (location.Y - (int)this.borderPen.Width) / UIService.UI.ItemUnitSize;
 			}
 
 			if (y >= this.SackSize.Height)
@@ -948,8 +948,8 @@ namespace TQVaultAE.GUI.Components
 		protected Point CellTopLeft(Point location)
 		{
 			return new Point(
-				Convert.ToInt32(this.borderPen.Width) + (location.X * Database.DB.ItemUnitSize),
-				Convert.ToInt32(this.borderPen.Width) + (location.Y * Database.DB.ItemUnitSize));
+				Convert.ToInt32(this.borderPen.Width) + (location.X * UIService.UI.ItemUnitSize),
+				Convert.ToInt32(this.borderPen.Width) + (location.Y * UIService.UI.ItemUnitSize));
 		}
 
 		/// <summary>
@@ -960,8 +960,8 @@ namespace TQVaultAE.GUI.Components
 		protected Point CellTopRight(Point location)
 		{
 			return new Point(
-				Convert.ToInt32(this.borderPen.Width) + ((location.X + 1) * Database.DB.ItemUnitSize) - 1,
-				Convert.ToInt32(this.borderPen.Width) + (location.Y * Database.DB.ItemUnitSize));
+				Convert.ToInt32(this.borderPen.Width) + ((location.X + 1) * UIService.UI.ItemUnitSize) - 1,
+				Convert.ToInt32(this.borderPen.Width) + (location.Y * UIService.UI.ItemUnitSize));
 		}
 
 		/// <summary>
@@ -972,8 +972,8 @@ namespace TQVaultAE.GUI.Components
 		protected Point CellBottomLeft(Point location)
 		{
 			return new Point(
-				Convert.ToInt32(this.borderPen.Width) + (location.X * Database.DB.ItemUnitSize),
-				Convert.ToInt32(this.borderPen.Width) + ((location.Y + 1) * Database.DB.ItemUnitSize) - 1);
+				Convert.ToInt32(this.borderPen.Width) + (location.X * UIService.UI.ItemUnitSize),
+				Convert.ToInt32(this.borderPen.Width) + ((location.Y + 1) * UIService.UI.ItemUnitSize) - 1);
 		}
 
 		/// <summary>
@@ -994,8 +994,8 @@ namespace TQVaultAE.GUI.Components
 		protected Point CellBottomRight(Point location)
 		{
 			return new Point(
-				Convert.ToInt32(this.borderPen.Width) + ((location.X + 1) * Database.DB.ItemUnitSize) - 1,
-				Convert.ToInt32(this.borderPen.Width) + ((location.Y + 1) * Database.DB.ItemUnitSize) - 1);
+				Convert.ToInt32(this.borderPen.Width) + ((location.X + 1) * UIService.UI.ItemUnitSize) - 1,
+				Convert.ToInt32(this.borderPen.Width) + ((location.Y + 1) * UIService.UI.ItemUnitSize) - 1);
 		}
 
 		/// <summary>
@@ -1317,8 +1317,8 @@ namespace TQVaultAE.GUI.Components
 				{
 					// set our mouse offset to be the center of the item.
 					Point mouseOffset = new Point(
-						itemUnderUs.Width * Database.DB.HalfUnitSize,
-						itemUnderUs.Height * Database.DB.HalfUnitSize);
+						itemUnderUs.Width * UIService.UI.HalfUnitSize,
+						itemUnderUs.Height * UIService.UI.HalfUnitSize);
 					this.DragInfo.Set(this, this.Sack, itemUnderUs, mouseOffset);
 
 					// since we have dropped something in this location, we can no longer put this item here.
@@ -1769,8 +1769,8 @@ namespace TQVaultAE.GUI.Components
 			// Figure out the rectangle that needs to be redrawn
 			int x = this.LastDragLocation.X;
 			int y = this.LastDragLocation.Y;
-			int width = Convert.ToInt32(this.DragInfo.Item.ItemBitmap.Width * Database.DB.Scale);
-			int height = Convert.ToInt32(this.DragInfo.Item.ItemBitmap.Height * Database.DB.Scale);
+			int width = Convert.ToInt32(this.DragInfo.Item.ItemBitmap().Width * UIService.UI.Scale);
+			int height = Convert.ToInt32(this.DragInfo.Item.ItemBitmap().Height * UIService.UI.Scale);
 
 			// We also know we need to wipe out any cells under the old drag point
 			// This is used to restore the background after highlighting the cells underneath
@@ -2008,12 +2008,12 @@ namespace TQVaultAE.GUI.Components
 				return;
 			}
 
-			for (int x = redrawRectangle.X; x < redrawRectangle.Right; x += Database.DB.ItemUnitSize)
+			for (int x = redrawRectangle.X; x < redrawRectangle.Right; x += UIService.UI.ItemUnitSize)
 			{
 				graphics.DrawLine(this.gridPen, new Point(x, redrawRectangle.Y), new Point(x, redrawRectangle.Bottom - 1));
 			}
 
-			for (int y = redrawRectangle.Y; y < redrawRectangle.Bottom; y += Database.DB.ItemUnitSize)
+			for (int y = redrawRectangle.Y; y < redrawRectangle.Bottom; y += UIService.UI.ItemUnitSize)
 			{
 				graphics.DrawLine(this.gridPen, new Point(redrawRectangle.X, y), new Point(redrawRectangle.Right - 1, y));
 			}
@@ -2050,7 +2050,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="imageAttributes">ImageAttributes used for drawing the image.</param>
 		protected void DrawItem(Graphics graphics, Item item, Point screenLocation, System.Drawing.Imaging.ImageAttributes imageAttributes)
 		{
-			if (item == null || graphics == null || item.ItemBitmap == null)
+			if (item == null || graphics == null || item.ItemBitmap() == null)
 			{
 				return;
 			}
@@ -2058,26 +2058,26 @@ namespace TQVaultAE.GUI.Components
 			Rectangle itemRect = new Rectangle(
 				screenLocation.X,
 				screenLocation.Y,
-				Convert.ToInt32(item.ItemBitmap.Width * Database.DB.Scale),
-				Convert.ToInt32(item.ItemBitmap.Height * Database.DB.Scale));
+				Convert.ToInt32(item.ItemBitmap().Width * UIService.UI.Scale),
+				Convert.ToInt32(item.ItemBitmap().Height * UIService.UI.Scale));
 
-			graphics.DrawImage(item.ItemBitmap, itemRect, 0, 0, item.ItemBitmap.Width, item.ItemBitmap.Height, GraphicsUnit.Pixel, imageAttributes);
+			graphics.DrawImage(item.ItemBitmap(), itemRect, 0, 0, item.ItemBitmap().Width, item.ItemBitmap().Height, GraphicsUnit.Pixel, imageAttributes);
 
 			// Add the relic overlay if this item has a relic in it.
 			if (item.HasRelic)
 			{
-				Bitmap relicOverlay = Database.DB.LoadRelicOverlayBitmap();
+				Bitmap relicOverlay = UIService.UI.LoadRelicOverlayBitmap();
 				if (relicOverlay != null)
 				{
 					// draw it in the bottom-right most cell of this item
-					int x2 = screenLocation.X + ((item.Width - 1) * Database.DB.ItemUnitSize);
-					int y2 = screenLocation.Y + ((item.Height - 1) * Database.DB.ItemUnitSize);
+					int x2 = screenLocation.X + ((item.Width - 1) * UIService.UI.ItemUnitSize);
+					int y2 = screenLocation.Y + ((item.Height - 1) * UIService.UI.ItemUnitSize);
 
 					Rectangle overlayRect = new Rectangle(
 						x2,
 						y2,
-						Convert.ToInt32(relicOverlay.Width * Database.DB.Scale),
-						Convert.ToInt32(relicOverlay.Height * Database.DB.Scale));
+						Convert.ToInt32(relicOverlay.Width * UIService.UI.Scale),
+						Convert.ToInt32(relicOverlay.Height * UIService.UI.Scale));
 
 					graphics.DrawImage(relicOverlay, overlayRect, 0, 0, relicOverlay.Width, relicOverlay.Height, GraphicsUnit.Pixel, imageAttributes);
 				}
@@ -2091,9 +2091,9 @@ namespace TQVaultAE.GUI.Components
 				string numberString = item.Number.ToString(CultureInfo.CurrentCulture);
 
 				// Draw the number along the bottom of the cell
-				Point loc = new Point(screenLocation.X, screenLocation.Y + (item.Height * Database.DB.ItemUnitSize) - 1);
-				float height = (float)this.numberFont.Height * Database.DB.Scale;
-				float width = (float)item.Width * Database.DB.ItemUnitSize;
+				Point loc = new Point(screenLocation.X, screenLocation.Y + (item.Height * UIService.UI.ItemUnitSize) - 1);
+				float height = (float)this.numberFont.Height * UIService.UI.Scale;
+				float width = (float)item.Width * UIService.UI.ItemUnitSize;
 				float fy = (float)(loc.Y - (0.75F * this.numberFont.Height) - 1.0F);
 				float fx = (float)loc.X;
 
@@ -2116,7 +2116,7 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			Point screenLocation = this.CellTopLeft(item.Location);
-			this.ShadeAreaUnderItem(graphics, new Rectangle(screenLocation, new Size(item.Width * Database.DB.ItemUnitSize, item.Height * Database.DB.ItemUnitSize)), backgroundBrush);
+			this.ShadeAreaUnderItem(graphics, new Rectangle(screenLocation, new Size(item.Width * UIService.UI.ItemUnitSize, item.Height * UIService.UI.ItemUnitSize)), backgroundBrush);
 		}
 
 		/// <summary>
@@ -2157,7 +2157,7 @@ namespace TQVaultAE.GUI.Components
 			Point itemScreenLocation = this.CellTopLeft(item.Location);
 
 			// First draw the background for all the cells this item occupies
-			this.ShadeAreaUnderItem(graphics, new Rectangle(itemScreenLocation, new Size(item.Width * Database.DB.ItemUnitSize, item.Height * Database.DB.ItemUnitSize)), backgroundBrush);
+			this.ShadeAreaUnderItem(graphics, new Rectangle(itemScreenLocation, new Size(item.Width * UIService.UI.ItemUnitSize, item.Height * UIService.UI.ItemUnitSize)), backgroundBrush);
 
 			// Draw the item
 			this.DrawItem(graphics, item, itemScreenLocation);
@@ -2704,7 +2704,7 @@ namespace TQVaultAE.GUI.Components
 				// Identify all the cells and items under the drag item.  We want the actual cells that we will
 				// drop into so we add 1/2 a cell to the drag location so that we pick the cells closest
 				// to the center of the item.
-				Point topLeftCell = this.FindCell(new Point(location.X + Database.DB.HalfUnitSize, location.Y + Database.DB.HalfUnitSize));
+				Point topLeftCell = this.FindCell(new Point(location.X + UIService.UI.HalfUnitSize, location.Y + UIService.UI.HalfUnitSize));
 				if (topLeftCell.X < 0 || topLeftCell.Y < 0)
 				{
 					// out of area

@@ -543,8 +543,8 @@ namespace TQVaultAE.GUI.Components
 				{
 					// set our mouse offset to be the center of the item.
 					Point mouseOffset = new Point(
-						itemUnderUs.Width * Database.DB.HalfUnitSize,
-						itemUnderUs.Height * Database.DB.HalfUnitSize);
+						itemUnderUs.Width * UIService.UI.HalfUnitSize,
+						itemUnderUs.Height * UIService.UI.HalfUnitSize);
 					this.DragInfo.Set(this, this.Sack, itemUnderUs, mouseOffset);
 
 					// since we have dropped something in this location, we can no longer put this item here.
@@ -676,8 +676,8 @@ namespace TQVaultAE.GUI.Components
 			// Figure out the rectangle that needs to be redrawn
 			int x = this.LastDragLocation.X;
 			int y = this.LastDragLocation.Y;
-			int width = Convert.ToInt32(this.DragInfo.Item.ItemBitmap.Width * Database.DB.Scale);
-			int height = Convert.ToInt32(this.DragInfo.Item.ItemBitmap.Height * Database.DB.Scale);
+			int width = Convert.ToInt32(this.DragInfo.Item.ItemBitmap().Width * UIService.UI.Scale);
+			int height = Convert.ToInt32(this.DragInfo.Item.ItemBitmap().Height * UIService.UI.Scale);
 
 			// We also know we need to wipe out any cells under the old drag point
 			// This is used to restore the background after highlighting the cells underneath
@@ -938,10 +938,10 @@ namespace TQVaultAE.GUI.Components
 							// Draw additional weapon box area
 							e.Graphics.FillRectangle(
 								backgroundBrush,
-								tl.X + Database.DB.HalfUnitSize,
-								tl.Y - Database.DB.HalfUnitSize,
-								Database.DB.ItemUnitSize,
-								5 * Database.DB.ItemUnitSize);
+								tl.X + UIService.UI.HalfUnitSize,
+								tl.Y - UIService.UI.HalfUnitSize,
+								UIService.UI.ItemUnitSize,
+								5 * UIService.UI.ItemUnitSize);
 						}
 					}
 				}
@@ -1015,10 +1015,10 @@ namespace TQVaultAE.GUI.Components
 			{
 				graphics.FillRectangle(
 					backgroundBrush,
-					backgroundRectangle.X + Database.DB.HalfUnitSize,
-					backgroundRectangle.Y - Database.DB.HalfUnitSize,
-					Database.DB.ItemUnitSize,
-					Database.DB.ItemUnitSize * 5);
+					backgroundRectangle.X + UIService.UI.HalfUnitSize,
+					backgroundRectangle.Y - UIService.UI.HalfUnitSize,
+					UIService.UI.ItemUnitSize,
+					UIService.UI.ItemUnitSize * 5);
 			}
 		}
 
@@ -1037,7 +1037,7 @@ namespace TQVaultAE.GUI.Components
 			this.ShadeAreaUnderItem(graphics, item, backgroundBrush);
 
 			// Draw the item
-			if (item.ItemBitmap != null)
+			if (item.ItemBitmap() != null)
 			{
 				Point screenLocation;
 				if (item.IsInWeaponSlot)
@@ -1161,10 +1161,10 @@ namespace TQVaultAE.GUI.Components
 		private static Point WeaponTopLeft(int x, int y, int width, int height)
 		{
 			Point val = new Point();
-			int offsetX = ((SackCollection.WeaponLocationSize.Width - width) * Database.DB.ItemUnitSize) / 2;
-			int offsetY = ((SackCollection.WeaponLocationSize.Height - height) * Database.DB.ItemUnitSize) / 2;
-			val.X = Convert.ToInt32(BorderWidth) + (x * Database.DB.ItemUnitSize) + offsetX;
-			val.Y = Convert.ToInt32(BorderWidth) + (y * Database.DB.ItemUnitSize) + offsetY;
+			int offsetX = ((SackCollection.WeaponLocationSize.Width - width) * UIService.UI.ItemUnitSize) / 2;
+			int offsetY = ((SackCollection.WeaponLocationSize.Height - height) * UIService.UI.ItemUnitSize) / 2;
+			val.X = Convert.ToInt32(BorderWidth) + (x * UIService.UI.ItemUnitSize) + offsetX;
+			val.Y = Convert.ToInt32(BorderWidth) + (y * UIService.UI.ItemUnitSize) + offsetY;
 
 			return val;
 		}
@@ -1181,10 +1181,10 @@ namespace TQVaultAE.GUI.Components
 		private static Point WeaponBottomLeft(int x, int y, int width, int height)
 		{
 			Point val = new Point();
-			int offsetX = ((SackCollection.WeaponLocationSize.Width - width) * Database.DB.ItemUnitSize) / 2;
-			int offsetY = ((SackCollection.WeaponLocationSize.Height - height) * Database.DB.ItemUnitSize) / 2;
-			val.X = Convert.ToInt32(BorderWidth) + (x * Database.DB.ItemUnitSize) + offsetX;
-			val.Y = Convert.ToInt32(BorderWidth) + ((y + 1) * Database.DB.ItemUnitSize) + offsetY - 1;
+			int offsetX = ((SackCollection.WeaponLocationSize.Width - width) * UIService.UI.ItemUnitSize) / 2;
+			int offsetY = ((SackCollection.WeaponLocationSize.Height - height) * UIService.UI.ItemUnitSize) / 2;
+			val.X = Convert.ToInt32(BorderWidth) + (x * UIService.UI.ItemUnitSize) + offsetX;
+			val.Y = Convert.ToInt32(BorderWidth) + ((y + 1) * UIService.UI.ItemUnitSize) + offsetY - 1;
 
 			return val;
 		}
@@ -1221,15 +1221,15 @@ namespace TQVaultAE.GUI.Components
 			// Adjust the weapon slot for graphic
 			if (weaponSlot)
 			{
-				ul.Y += Database.DB.HalfUnitSize;
+				ul.Y += UIService.UI.HalfUnitSize;
 				offset = 1;
 			}
 
 			return new Rectangle(
 				ul.X,
 				ul.Y,
-				slotSize.Width * Database.DB.ItemUnitSize,
-				(slotSize.Height - offset) * Database.DB.ItemUnitSize);
+				slotSize.Width * UIService.UI.ItemUnitSize,
+				(slotSize.Height - offset) * UIService.UI.ItemUnitSize);
 		}
 
 		/// <summary>
@@ -1302,7 +1302,7 @@ namespace TQVaultAE.GUI.Components
 				height = SackCollection.GetEquipmentLocationSize(slot).Height;
 			}
 
-			return new Rectangle(screenLocation.X, screenLocation.Y, width * Database.DB.ItemUnitSize, height * Database.DB.ItemUnitSize);
+			return new Rectangle(screenLocation.X, screenLocation.Y, width * UIService.UI.ItemUnitSize, height * UIService.UI.ItemUnitSize);
 		}
 
 		/// <summary>
@@ -1348,7 +1348,7 @@ namespace TQVaultAE.GUI.Components
 			imgAttr.SetColorMatrix(colorMatrix);
 
 			// Draw the item
-			if (item2H.ItemBitmap != null)
+			if (item2H.ItemBitmap() != null)
 			{
 				Point screenLocation;
 				if (item.IsInWeaponSlot)

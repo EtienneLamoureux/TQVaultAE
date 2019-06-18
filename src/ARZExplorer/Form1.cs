@@ -14,6 +14,7 @@ namespace ArzExplorer
 	using System.Windows.Forms;
 	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Main Form for ArzExplorer

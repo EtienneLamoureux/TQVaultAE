@@ -11,7 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DDSReader" Version="1.0.6-pre" />
     <PackageReference Include="log4net" Version="2.0.8" />
   </ItemGroup>
 
