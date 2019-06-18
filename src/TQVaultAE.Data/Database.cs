@@ -79,6 +79,19 @@ namespace TQVaultAE.Data
 			this.bitmaps = new Dictionary<string, Bitmap>();
 		}
 
+		/// <summary>
+		/// Load DB in static constructor
+		/// </summary>
+		static Database()
+		{
+			if (Database.DB is null)
+			{
+				Database.DB = new Database();
+				Database.DB.AutoDetectLanguage = Config.Settings.Default.AutoDetectLanguage;
+				Database.DB.TQLanguage = Config.Settings.Default.TQLanguage;
+			}
+		}
+
 		#region Database Properties
 
 		/// <summary>

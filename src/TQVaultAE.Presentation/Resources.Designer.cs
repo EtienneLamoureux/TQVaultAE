@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TQVaultAE.GUI.Properties {
+namespace TQVaultAE.Presentation {
     using System;
     
     
@@ -22,7 +22,7 @@ namespace TQVaultAE.GUI.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace TQVaultAE.GUI.Properties {
         ///   Retourne l'instance ResourceManager mise en cache utilisée par cette classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TQVaultAE.GUI.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TQVaultAE.Presentation.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   les recherches de ressources à l'aide de cette classe de ressource fortement typée.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -90,9 +90,9 @@ namespace TQVaultAE.GUI.Properties {
         ///- Polish translation by Cygi.
         ///
         ///
-        ///- Russian translation by [le reste de la chaîne a été tronqué]&quot;;.
+        ///- Russ [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
-        internal static string AboutDescription {
+        public static string AboutDescription {
             get {
                 return ResourceManager.GetString("AboutDescription", resourceCulture);
             }
@@ -101,7 +101,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap AboutGraphic {
+        public static System.Drawing.Bitmap AboutGraphic {
             get {
                 object obj = ResourceManager.GetObject("AboutGraphic", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -111,7 +111,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à About {0}.
         /// </summary>
-        internal static string AboutText {
+        public static string AboutText {
             get {
                 return ResourceManager.GetString("AboutText", resourceCulture);
             }
@@ -120,7 +120,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Version {0}.
         /// </summary>
-        internal static string AboutVersion {
+        public static string AboutVersion {
             get {
                 return ResourceManager.GetString("AboutVersion", resourceCulture);
             }
@@ -129,7 +129,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Byte[].
         /// </summary>
-        internal static byte[] AlbertusMT {
+        public static byte[] AlbertusMT {
             get {
                 object obj = ResourceManager.GetObject("AlbertusMT", resourceCulture);
                 return ((byte[])(obj));
@@ -139,7 +139,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Byte[].
         /// </summary>
-        internal static byte[] AlbertusMTLight {
+        public static byte[] AlbertusMTLight {
             get {
                 object obj = ResourceManager.GetObject("AlbertusMTLight", resourceCulture);
                 return ((byte[])(obj));
@@ -149,7 +149,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Extract.
         /// </summary>
-        internal static string ARZExtractBtnExtract {
+        public static string ARZExtractBtnExtract {
             get {
                 return ResourceManager.GetString("ARZExtractBtnExtract", resourceCulture);
             }
@@ -158,7 +158,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à {0} does not exist.  Would you like to create it now?.
         /// </summary>
-        internal static string ARZExtractCreateFolder {
+        public static string ARZExtractCreateFolder {
             get {
                 return ResourceManager.GetString("ARZExtractCreateFolder", resourceCulture);
             }
@@ -167,7 +167,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Create folder?.
         /// </summary>
-        internal static string ARZExtractCreateFolder2 {
+        public static string ARZExtractCreateFolder2 {
             get {
                 return ResourceManager.GetString("ARZExtractCreateFolder2", resourceCulture);
             }
@@ -176,7 +176,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à {0} does not exist for IT database.  Would you like to create it now?.
         /// </summary>
-        internal static string ARZExtractCreateFolderIT {
+        public static string ARZExtractCreateFolderIT {
             get {
                 return ResourceManager.GetString("ARZExtractCreateFolderIT", resourceCulture);
             }
@@ -185,7 +185,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Select the destination folder for the extracted database records.
         /// </summary>
-        internal static string ARZExtractDestination {
+        public static string ARZExtractDestination {
             get {
                 return ResourceManager.GetString("ARZExtractDestination", resourceCulture);
             }
@@ -194,7 +194,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à You must specify a folder, not a file!.
         /// </summary>
-        internal static string ARZExtractFileDest {
+        public static string ARZExtractFileDest {
             get {
                 return ResourceManager.GetString("ARZExtractFileDest", resourceCulture);
             }
@@ -203,7 +203,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Currently there is no way to extract all of the game database records at once.  Also there currently exists a bug in the Toolset that destroys array values when you extract records one by one.  Using this tool, you can now extract all records at once and all the records will be extracted correctly..
         /// </summary>
-        internal static string ARZExtractLabel1 {
+        public static string ARZExtractLabel1 {
             get {
                 return ResourceManager.GetString("ARZExtractLabel1", resourceCulture);
             }
@@ -212,7 +212,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à After you have extracted the records, just copy the ones you want to use in your mod over to your mod folder..
         /// </summary>
-        internal static string ARZExtractLabel2 {
+        public static string ARZExtractLabel2 {
             get {
                 return ResourceManager.GetString("ARZExtractLabel2", resourceCulture);
             }
@@ -221,7 +221,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Choose a destination folder:.
         /// </summary>
-        internal static string ARZExtractLabel3 {
+        public static string ARZExtractLabel3 {
             get {
                 return ResourceManager.GetString("ARZExtractLabel3", resourceCulture);
             }
@@ -230,7 +230,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Choose a destination folder for IT Database Files:.
         /// </summary>
-        internal static string ARZExtractLabel4 {
+        public static string ARZExtractLabel4 {
             get {
                 return ResourceManager.GetString("ARZExtractLabel4", resourceCulture);
             }
@@ -239,7 +239,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à If not populated the destination folders for the TQ database and the IT database will default to the same folder.  The IT files will overwrite the TQ files when there are conflicts though you can select different folders to avoid overwriting files..
         /// </summary>
-        internal static string ARZExtractLabel5 {
+        public static string ARZExtractLabel5 {
             get {
                 return ResourceManager.GetString("ARZExtractLabel5", resourceCulture);
             }
@@ -248,7 +248,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Extract database.arz.
         /// </summary>
-        internal static string ARZExtractText {
+        public static string ARZExtractText {
             get {
                 return ResourceManager.GetString("ARZExtractText", resourceCulture);
             }
@@ -257,7 +257,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à You must enter a valid destination folder..
         /// </summary>
-        internal static string ARZExtractValidDest {
+        public static string ARZExtractValidDest {
             get {
                 return ResourceManager.GetString("ARZExtractValidDest", resourceCulture);
             }
@@ -266,7 +266,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Extraction cancelled..
         /// </summary>
-        internal static string ARZProgressCancelledText {
+        public static string ARZProgressCancelledText {
             get {
                 return ResourceManager.GetString("ARZProgressCancelledText", resourceCulture);
             }
@@ -275,7 +275,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Extraction complete..
         /// </summary>
-        internal static string ARZProgressCompleteText {
+        public static string ARZProgressCompleteText {
             get {
                 return ResourceManager.GetString("ARZProgressCompleteText", resourceCulture);
             }
@@ -284,7 +284,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Extraction Failed..
         /// </summary>
-        internal static string ARZProgressFailedText {
+        public static string ARZProgressFailedText {
             get {
                 return ResourceManager.GetString("ARZProgressFailedText", resourceCulture);
             }
@@ -293,7 +293,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Extracting {0} ....
         /// </summary>
-        internal static string ARZProgressLabel {
+        public static string ARZProgressLabel {
             get {
                 return ResourceManager.GetString("ARZProgressLabel", resourceCulture);
             }
@@ -302,7 +302,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Extracting.
         /// </summary>
-        internal static string ARZProgressLabel1 {
+        public static string ARZProgressLabel1 {
             get {
                 return ResourceManager.GetString("ARZProgressLabel1", resourceCulture);
             }
@@ -311,7 +311,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Extracting database.arz....
         /// </summary>
-        internal static string ARZProgressText {
+        public static string ARZProgressText {
             get {
                 return ResourceManager.GetString("ARZProgressText", resourceCulture);
             }
@@ -320,7 +320,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à English.
         /// </summary>
-        internal static string AUEnglishName {
+        public static string AUEnglishName {
             get {
                 return ResourceManager.GetString("AUEnglishName", resourceCulture);
             }
@@ -329,7 +329,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à 2.
         /// </summary>
-        internal static string AUFileVersion {
+        public static string AUFileVersion {
             get {
                 return ResourceManager.GetString("AUFileVersion", resourceCulture);
             }
@@ -338,7 +338,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à 2.3.1.0.
         /// </summary>
-        internal static string AUMinTQVaultVersion {
+        public static string AUMinTQVaultVersion {
             get {
                 return ResourceManager.GetString("AUMinTQVaultVersion", resourceCulture);
             }
@@ -347,7 +347,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap autosortdown01 {
+        public static System.Drawing.Bitmap autosortdown01 {
             get {
                 object obj = ResourceManager.GetObject("autosortdown01", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -357,7 +357,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap autosortover01 {
+        public static System.Drawing.Bitmap autosortover01 {
             get {
                 object obj = ResourceManager.GetObject("autosortover01", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -367,7 +367,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap autosortup01 {
+        public static System.Drawing.Bitmap autosortup01 {
             get {
                 object obj = ResourceManager.GetObject("autosortup01", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -377,7 +377,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap BorderBottom {
+        public static System.Drawing.Bitmap BorderBottom {
             get {
                 object obj = ResourceManager.GetObject("BorderBottom", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -387,7 +387,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap BorderBottomLeftCorner {
+        public static System.Drawing.Bitmap BorderBottomLeftCorner {
             get {
                 object obj = ResourceManager.GetObject("BorderBottomLeftCorner", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -397,7 +397,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap BorderBottomRightCorner {
+        public static System.Drawing.Bitmap BorderBottomRightCorner {
             get {
                 object obj = ResourceManager.GetObject("BorderBottomRightCorner", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -407,7 +407,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap BorderSide {
+        public static System.Drawing.Bitmap BorderSide {
             get {
                 object obj = ResourceManager.GetObject("BorderSide", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -417,7 +417,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap BorderTop {
+        public static System.Drawing.Bitmap BorderTop {
             get {
                 object obj = ResourceManager.GetObject("BorderTop", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -427,7 +427,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ButtonCloseDown {
+        public static System.Drawing.Bitmap ButtonCloseDown {
             get {
                 object obj = ResourceManager.GetObject("ButtonCloseDown", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -437,7 +437,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ButtonCloseOver {
+        public static System.Drawing.Bitmap ButtonCloseOver {
             get {
                 object obj = ResourceManager.GetObject("ButtonCloseOver", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -447,7 +447,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ButtonCloseUp {
+        public static System.Drawing.Bitmap ButtonCloseUp {
             get {
                 object obj = ResourceManager.GetObject("ButtonCloseUp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -457,7 +457,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ButtonMaximizeDown {
+        public static System.Drawing.Bitmap ButtonMaximizeDown {
             get {
                 object obj = ResourceManager.GetObject("ButtonMaximizeDown", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -467,7 +467,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ButtonMaximizeOver {
+        public static System.Drawing.Bitmap ButtonMaximizeOver {
             get {
                 object obj = ResourceManager.GetObject("ButtonMaximizeOver", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -477,7 +477,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ButtonMaximizeUp {
+        public static System.Drawing.Bitmap ButtonMaximizeUp {
             get {
                 object obj = ResourceManager.GetObject("ButtonMaximizeUp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -487,7 +487,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ButtonMinimizeDown {
+        public static System.Drawing.Bitmap ButtonMinimizeDown {
             get {
                 object obj = ResourceManager.GetObject("ButtonMinimizeDown", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -497,7 +497,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ButtonMinimizeOver {
+        public static System.Drawing.Bitmap ButtonMinimizeOver {
             get {
                 object obj = ResourceManager.GetObject("ButtonMinimizeOver", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -507,7 +507,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ButtonMinimizeUp {
+        public static System.Drawing.Bitmap ButtonMinimizeUp {
             get {
                 object obj = ResourceManager.GetObject("ButtonMinimizeUp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -517,7 +517,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap caravan_bg {
+        public static System.Drawing.Bitmap caravan_bg {
             get {
                 object obj = ResourceManager.GetObject("caravan_bg", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -527,7 +527,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Attribute Points.
         /// </summary>
-        internal static string CEAttributePoints {
+        public static string CEAttributePoints {
             get {
                 return ResourceManager.GetString("CEAttributePoints", resourceCulture);
             }
@@ -536,7 +536,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Base Attributes.
         /// </summary>
-        internal static string CEAttributes {
+        public static string CEAttributes {
             get {
                 return ResourceManager.GetString("CEAttributes", resourceCulture);
             }
@@ -545,7 +545,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Dexterity.
         /// </summary>
-        internal static string CEDexterity {
+        public static string CEDexterity {
             get {
                 return ResourceManager.GetString("CEDexterity", resourceCulture);
             }
@@ -554,7 +554,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Difficulty.
         /// </summary>
-        internal static string CEDifficulty {
+        public static string CEDifficulty {
             get {
                 return ResourceManager.GetString("CEDifficulty", resourceCulture);
             }
@@ -563,7 +563,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Enable Leveling.
         /// </summary>
-        internal static string CEEnableLeveling {
+        public static string CEEnableLeveling {
             get {
                 return ResourceManager.GetString("CEEnableLeveling", resourceCulture);
             }
@@ -572,7 +572,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Enable Redistribute.
         /// </summary>
-        internal static string CEEnableRedistribute {
+        public static string CEEnableRedistribute {
             get {
                 return ResourceManager.GetString("CEEnableRedistribute", resourceCulture);
             }
@@ -581,7 +581,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Health.
         /// </summary>
-        internal static string CEHealth {
+        public static string CEHealth {
             get {
                 return ResourceManager.GetString("CEHealth", resourceCulture);
             }
@@ -590,7 +590,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Intelligence.
         /// </summary>
-        internal static string CEIntelligence {
+        public static string CEIntelligence {
             get {
                 return ResourceManager.GetString("CEIntelligence", resourceCulture);
             }
@@ -599,7 +599,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Level.
         /// </summary>
-        internal static string CELevel {
+        public static string CELevel {
             get {
                 return ResourceManager.GetString("CELevel", resourceCulture);
             }
@@ -608,7 +608,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Leveling.
         /// </summary>
-        internal static string CELeveling {
+        public static string CELeveling {
             get {
                 return ResourceManager.GetString("CELeveling", resourceCulture);
             }
@@ -617,7 +617,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Mana.
         /// </summary>
-        internal static string CEMana {
+        public static string CEMana {
             get {
                 return ResourceManager.GetString("CEMana", resourceCulture);
             }
@@ -626,7 +626,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Skill Points.
         /// </summary>
-        internal static string CESkillPoints {
+        public static string CESkillPoints {
             get {
                 return ResourceManager.GetString("CESkillPoints", resourceCulture);
             }
@@ -635,7 +635,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Strength.
         /// </summary>
-        internal static string CEStrength {
+        public static string CEStrength {
             get {
                 return ResourceManager.GetString("CEStrength", resourceCulture);
             }
@@ -644,7 +644,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à XP.
         /// </summary>
-        internal static string CEXp {
+        public static string CEXp {
             get {
                 return ResourceManager.GetString("CEXp", resourceCulture);
             }
@@ -676,7 +676,7 @@ namespace TQVaultAE.GUI.Properties {
         ///tagCClass23=Summoner
         ///tag [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
-        internal static string CharacterClass {
+        public static string CharacterClass {
             get {
                 return ResourceManager.GetString("CharacterClass", resourceCulture);
             }
@@ -685,7 +685,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Edit.
         /// </summary>
-        internal static string CharacterEditBtn {
+        public static string CharacterEditBtn {
             get {
                 return ResourceManager.GetString("CharacterEditBtn", resourceCulture);
             }
@@ -714,7 +714,7 @@ namespace TQVaultAE.GUI.Properties {
         ///NumHitsReceived=Hits Recv
         ///NumHitsInflicted= [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
-        internal static string CharacterInfoDisplay {
+        public static string CharacterInfoDisplay {
             get {
                 return ResourceManager.GetString("CharacterInfoDisplay", resourceCulture);
             }
@@ -725,7 +725,7 @@ namespace TQVaultAE.GUI.Properties {
         ///
         ///Usage: TQVault [player name] [/mod:&lt;mod name&gt;].
         /// </summary>
-        internal static string CmdlineUsage {
+        public static string CmdlineUsage {
             get {
                 return ResourceManager.GetString("CmdlineUsage", resourceCulture);
             }
@@ -734,7 +734,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Default Vault Path.
         /// </summary>
-        internal static string DataDefaultPath {
+        public static string DataDefaultPath {
             get {
                 return ResourceManager.GetString("DataDefaultPath", resourceCulture);
             }
@@ -746,7 +746,7 @@ namespace TQVaultAE.GUI.Properties {
         ///Using the default setting.
         ///Please verify the Vault Path with the configuration dialog..
         /// </summary>
-        internal static string DataDefaultPathMsg {
+        public static string DataDefaultPathMsg {
             get {
                 return ResourceManager.GetString("DataDefaultPathMsg", resourceCulture);
             }
@@ -755,7 +755,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Please Update Vault Path.
         /// </summary>
-        internal static string DataLink {
+        public static string DataLink {
             get {
                 return ResourceManager.GetString("DataLink", resourceCulture);
             }
@@ -765,7 +765,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à Please update the vault path in the
         ///configuration to reflect the link..
         /// </summary>
-        internal static string DataLinkMsg {
+        public static string DataLinkMsg {
             get {
                 return ResourceManager.GetString("DataLinkMsg", resourceCulture);
             }
@@ -774,7 +774,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Normal.
         /// </summary>
-        internal static string Difficulty0 {
+        public static string Difficulty0 {
             get {
                 return ResourceManager.GetString("Difficulty0", resourceCulture);
             }
@@ -783,7 +783,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Epic.
         /// </summary>
-        internal static string Difficulty1 {
+        public static string Difficulty1 {
             get {
                 return ResourceManager.GetString("Difficulty1", resourceCulture);
             }
@@ -792,7 +792,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Legendary.
         /// </summary>
-        internal static string Difficulty2 {
+        public static string Difficulty2 {
             get {
                 return ResourceManager.GetString("Difficulty2", resourceCulture);
             }
@@ -801,7 +801,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap equipment_bg_and_char {
+        public static System.Drawing.Bitmap equipment_bg_and_char {
             get {
                 object obj = ResourceManager.GetObject("equipment_bg_and_char", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -811,7 +811,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Equipment_bg_new {
+        public static System.Drawing.Bitmap Equipment_bg_new {
             get {
                 object obj = ResourceManager.GetObject("Equipment_bg_new", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -821,7 +821,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap EquipmentPanel {
+        public static System.Drawing.Bitmap EquipmentPanel {
             get {
                 object obj = ResourceManager.GetObject("EquipmentPanel", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -834,7 +834,7 @@ namespace TQVaultAE.GUI.Properties {
         ///This may be caused by a bad language or game path setting.
         ///Would you like to restart TQVault?.
         /// </summary>
-        internal static string Form1BadLanguage {
+        public static string Form1BadLanguage {
             get {
                 return ResourceManager.GetString("Form1BadLanguage", resourceCulture);
             }
@@ -843,7 +843,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Enter The Vault.
         /// </summary>
-        internal static string Form1bNext {
+        public static string Form1bNext {
             get {
                 return ResourceManager.GetString("Form1bNext", resourceCulture);
             }
@@ -852,7 +852,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Error Loading Resources.
         /// </summary>
-        internal static string Form1ErrorLoadingResources {
+        public static string Form1ErrorLoadingResources {
             get {
                 return ResourceManager.GetString("Form1ErrorLoadingResources", resourceCulture);
             }
@@ -861,7 +861,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à A magical place where you can store your artifacts of power that you will need to save the world from the Titans..
         /// </summary>
-        internal static string Form1Label3 {
+        public static string Form1Label3 {
             get {
                 return ResourceManager.GetString("Form1Label3", resourceCulture);
             }
@@ -870,7 +870,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Loading Game Resources... Please Wait.
         /// </summary>
-        internal static string Form1LblPleaseWait {
+        public static string Form1LblPleaseWait {
             get {
                 return ResourceManager.GetString("Form1LblPleaseWait", resourceCulture);
             }
@@ -879,7 +879,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Titan Quest Item Vault.
         /// </summary>
-        internal static string Form1Text {
+        public static string Form1Text {
             get {
                 return ResourceManager.GetString("Form1Text", resourceCulture);
             }
@@ -888,7 +888,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à About.
         /// </summary>
-        internal static string GlobalAbout {
+        public static string GlobalAbout {
             get {
                 return ResourceManager.GetString("GlobalAbout", resourceCulture);
             }
@@ -897,7 +897,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Browse....
         /// </summary>
-        internal static string GlobalBrowse {
+        public static string GlobalBrowse {
             get {
                 return ResourceManager.GetString("GlobalBrowse", resourceCulture);
             }
@@ -906,7 +906,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Cancel.
         /// </summary>
-        internal static string GlobalCancel {
+        public static string GlobalCancel {
             get {
                 return ResourceManager.GetString("GlobalCancel", resourceCulture);
             }
@@ -915,7 +915,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Close.
         /// </summary>
-        internal static string GlobalClose {
+        public static string GlobalClose {
             get {
                 return ResourceManager.GetString("GlobalClose", resourceCulture);
             }
@@ -924,7 +924,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Error.
         /// </summary>
-        internal static string GlobalError {
+        public static string GlobalError {
             get {
                 return ResourceManager.GetString("GlobalError", resourceCulture);
             }
@@ -933,7 +933,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Exit.
         /// </summary>
-        internal static string GlobalExit {
+        public static string GlobalExit {
             get {
                 return ResourceManager.GetString("GlobalExit", resourceCulture);
             }
@@ -942,7 +942,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Maximize.
         /// </summary>
-        internal static string GlobalMaximize {
+        public static string GlobalMaximize {
             get {
                 return ResourceManager.GetString("GlobalMaximize", resourceCulture);
             }
@@ -951,7 +951,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Bag #{0}.
         /// </summary>
-        internal static string GlobalMenuBag {
+        public static string GlobalMenuBag {
             get {
                 return ResourceManager.GetString("GlobalMenuBag", resourceCulture);
             }
@@ -960,7 +960,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à #.
         /// </summary>
-        internal static string GlobalMenuBagDelimiter {
+        public static string GlobalMenuBagDelimiter {
             get {
                 return ResourceManager.GetString("GlobalMenuBagDelimiter", resourceCulture);
             }
@@ -969,7 +969,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Minimize.
         /// </summary>
-        internal static string GlobalMinimize {
+        public static string GlobalMinimize {
             get {
                 return ResourceManager.GetString("GlobalMinimize", resourceCulture);
             }
@@ -978,7 +978,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Move.
         /// </summary>
-        internal static string GlobalMove {
+        public static string GlobalMove {
             get {
                 return ResourceManager.GetString("GlobalMove", resourceCulture);
             }
@@ -987,7 +987,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à OK.
         /// </summary>
-        internal static string GlobalOK {
+        public static string GlobalOK {
             get {
                 return ResourceManager.GetString("GlobalOK", resourceCulture);
             }
@@ -996,7 +996,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Relic Vault.
         /// </summary>
-        internal static string GlobalRelicVaultStash {
+        public static string GlobalRelicVaultStash {
             get {
                 return ResourceManager.GetString("GlobalRelicVaultStash", resourceCulture);
             }
@@ -1005,7 +1005,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Restore.
         /// </summary>
-        internal static string GlobalRestore {
+        public static string GlobalRestore {
             get {
                 return ResourceManager.GetString("GlobalRestore", resourceCulture);
             }
@@ -1014,7 +1014,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Size.
         /// </summary>
-        internal static string GlobalSize {
+        public static string GlobalSize {
             get {
                 return ResourceManager.GetString("GlobalSize", resourceCulture);
             }
@@ -1023,7 +1023,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Transfer Stash.
         /// </summary>
-        internal static string GlobalTransferStash {
+        public static string GlobalTransferStash {
             get {
                 return ResourceManager.GetString("GlobalTransferStash", resourceCulture);
             }
@@ -1032,7 +1032,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Trash.
         /// </summary>
-        internal static string GlobalTrash {
+        public static string GlobalTrash {
             get {
                 return ResourceManager.GetString("GlobalTrash", resourceCulture);
             }
@@ -1041,7 +1041,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap inventorybagdown01 {
+        public static System.Drawing.Bitmap inventorybagdown01 {
             get {
                 object obj = ResourceManager.GetObject("inventorybagdown01", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -1051,7 +1051,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap inventorybagover01 {
+        public static System.Drawing.Bitmap inventorybagover01 {
             get {
                 object obj = ResourceManager.GetObject("inventorybagover01", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -1061,7 +1061,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap inventorybagup01 {
+        public static System.Drawing.Bitmap inventorybagup01 {
             get {
                 object obj = ResourceManager.GetObject("inventorybagup01", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -1071,7 +1071,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Atlantis Item.
         /// </summary>
-        internal static string ItemAtlantis {
+        public static string ItemAtlantis {
             get {
                 return ResourceManager.GetString("ItemAtlantis", resourceCulture);
             }
@@ -1080,7 +1080,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Immortal Throne Item.
         /// </summary>
-        internal static string ItemIT {
+        public static string ItemIT {
             get {
                 return ResourceManager.GetString("ItemIT", resourceCulture);
             }
@@ -1089,7 +1089,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Filter Extra Info.
         /// </summary>
-        internal static string ItemPropertiesCheckBox1Label {
+        public static string ItemPropertiesCheckBox1Label {
             get {
                 return ResourceManager.GetString("ItemPropertiesCheckBox1Label", resourceCulture);
             }
@@ -1098,7 +1098,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Prefix Properties.
         /// </summary>
-        internal static string ItemPropertiesLabel1 {
+        public static string ItemPropertiesLabel1 {
             get {
                 return ResourceManager.GetString("ItemPropertiesLabel1", resourceCulture);
             }
@@ -1107,7 +1107,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Base Item Properties.
         /// </summary>
-        internal static string ItemPropertiesLabel2 {
+        public static string ItemPropertiesLabel2 {
             get {
                 return ResourceManager.GetString("ItemPropertiesLabel2", resourceCulture);
             }
@@ -1116,7 +1116,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Suffix Properties.
         /// </summary>
-        internal static string ItemPropertiesLabel3 {
+        public static string ItemPropertiesLabel3 {
             get {
                 return ResourceManager.GetString("ItemPropertiesLabel3", resourceCulture);
             }
@@ -1125,7 +1125,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Item Properties.
         /// </summary>
-        internal static string ItemPropertiesText {
+        public static string ItemPropertiesText {
             get {
                 return ResourceManager.GetString("ItemPropertiesText", resourceCulture);
             }
@@ -1134,7 +1134,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à (Quest Item).
         /// </summary>
-        internal static string ItemQuest {
+        public static string ItemQuest {
             get {
                 return ResourceManager.GetString("ItemQuest", resourceCulture);
             }
@@ -1143,7 +1143,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Ragnarök Item.
         /// </summary>
-        internal static string ItemRagnarok {
+        public static string ItemRagnarok {
             get {
                 return ResourceManager.GetString("ItemRagnarok", resourceCulture);
             }
@@ -1152,7 +1152,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à (Completion Bonus: {0}).
         /// </summary>
-        internal static string ItemRelicBonus {
+        public static string ItemRelicBonus {
             get {
                 return ResourceManager.GetString("ItemRelicBonus", resourceCulture);
             }
@@ -1161,7 +1161,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à (Completed).
         /// </summary>
-        internal static string ItemRelicCompleted {
+        public static string ItemRelicCompleted {
             get {
                 return ResourceManager.GetString("ItemRelicCompleted", resourceCulture);
             }
@@ -1170,7 +1170,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à itemSeed: {0} (0x{0:X8}) ({1:p3}).
         /// </summary>
-        internal static string ItemSeed {
+        public static string ItemSeed {
             get {
                 return ResourceManager.GetString("ItemSeed", resourceCulture);
             }
@@ -1179,7 +1179,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Artifact.
         /// </summary>
-        internal static string ItemStyleArtifact {
+        public static string ItemStyleArtifact {
             get {
                 return ResourceManager.GetString("ItemStyleArtifact", resourceCulture);
             }
@@ -1188,7 +1188,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Broken.
         /// </summary>
-        internal static string ItemStyleBroken {
+        public static string ItemStyleBroken {
             get {
                 return ResourceManager.GetString("ItemStyleBroken", resourceCulture);
             }
@@ -1197,7 +1197,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Common.
         /// </summary>
-        internal static string ItemStyleCommon {
+        public static string ItemStyleCommon {
             get {
                 return ResourceManager.GetString("ItemStyleCommon", resourceCulture);
             }
@@ -1206,7 +1206,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Epic.
         /// </summary>
-        internal static string ItemStyleEpic {
+        public static string ItemStyleEpic {
             get {
                 return ResourceManager.GetString("ItemStyleEpic", resourceCulture);
             }
@@ -1215,7 +1215,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Formulae.
         /// </summary>
-        internal static string ItemStyleFormulae {
+        public static string ItemStyleFormulae {
             get {
                 return ResourceManager.GetString("ItemStyleFormulae", resourceCulture);
             }
@@ -1224,7 +1224,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Legendary.
         /// </summary>
-        internal static string ItemStyleLegendary {
+        public static string ItemStyleLegendary {
             get {
                 return ResourceManager.GetString("ItemStyleLegendary", resourceCulture);
             }
@@ -1233,7 +1233,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Mundane.
         /// </summary>
-        internal static string ItemStyleMundane {
+        public static string ItemStyleMundane {
             get {
                 return ResourceManager.GetString("ItemStyleMundane", resourceCulture);
             }
@@ -1242,7 +1242,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Parchment.
         /// </summary>
-        internal static string ItemStyleParchment {
+        public static string ItemStyleParchment {
             get {
                 return ResourceManager.GetString("ItemStyleParchment", resourceCulture);
             }
@@ -1251,7 +1251,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Potion.
         /// </summary>
-        internal static string ItemStylePotion {
+        public static string ItemStylePotion {
             get {
                 return ResourceManager.GetString("ItemStylePotion", resourceCulture);
             }
@@ -1260,7 +1260,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Quest.
         /// </summary>
-        internal static string ItemStyleQuest {
+        public static string ItemStyleQuest {
             get {
                 return ResourceManager.GetString("ItemStyleQuest", resourceCulture);
             }
@@ -1269,7 +1269,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Rare.
         /// </summary>
-        internal static string ItemStyleRare {
+        public static string ItemStyleRare {
             get {
                 return ResourceManager.GetString("ItemStyleRare", resourceCulture);
             }
@@ -1278,7 +1278,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Relic.
         /// </summary>
-        internal static string ItemStyleRelic {
+        public static string ItemStyleRelic {
             get {
                 return ResourceManager.GetString("ItemStyleRelic", resourceCulture);
             }
@@ -1287,7 +1287,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Scroll.
         /// </summary>
-        internal static string ItemStyleScroll {
+        public static string ItemStyleScroll {
             get {
                 return ResourceManager.GetString("ItemStyleScroll", resourceCulture);
             }
@@ -1296,7 +1296,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à with.
         /// </summary>
-        internal static string ItemWith {
+        public static string ItemWith {
             get {
                 return ResourceManager.GetString("ItemWith", resourceCulture);
             }
@@ -1305,7 +1305,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap MainButtonDown {
+        public static System.Drawing.Bitmap MainButtonDown {
             get {
                 object obj = ResourceManager.GetObject("MainButtonDown", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -1315,7 +1315,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap MainButtonOver {
+        public static System.Drawing.Bitmap MainButtonOver {
             get {
                 object obj = ResourceManager.GetObject("MainButtonOver", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -1325,7 +1325,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap MainButtonUp {
+        public static System.Drawing.Bitmap MainButtonUp {
             get {
                 object obj = ResourceManager.GetObject("MainButtonUp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -1335,7 +1335,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap MainForm_Background {
+        public static System.Drawing.Bitmap MainForm_Background {
             get {
                 object obj = ResourceManager.GetObject("MainForm_Background", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -1345,7 +1345,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap MainForm_NewBackground {
+        public static System.Drawing.Bitmap MainForm_NewBackground {
             get {
                 object obj = ResourceManager.GetObject("MainForm_NewBackground", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -1355,7 +1355,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à 2nd Vault:.
         /// </summary>
-        internal static string MainForm2ndVault {
+        public static string MainForm2ndVault {
             get {
                 return ResourceManager.GetString("MainForm2ndVault", resourceCulture);
             }
@@ -1364,7 +1364,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Configure.
         /// </summary>
-        internal static string MainFormBtnConfigure {
+        public static string MainFormBtnConfigure {
             get {
                 return ResourceManager.GetString("MainFormBtnConfigure", resourceCulture);
             }
@@ -1373,7 +1373,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Extract database.arz ....
         /// </summary>
-        internal static string MainFormBtnExtract {
+        public static string MainFormBtnExtract {
             get {
                 return ResourceManager.GetString("MainFormBtnExtract", resourceCulture);
             }
@@ -1382,7 +1382,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Show Vault.
         /// </summary>
-        internal static string MainFormBtnPanelSelect {
+        public static string MainFormBtnPanelSelect {
             get {
                 return ResourceManager.GetString("MainFormBtnPanelSelect", resourceCulture);
             }
@@ -1391,7 +1391,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Show Player.
         /// </summary>
-        internal static string MainFormBtnShowPlayer {
+        public static string MainFormBtnShowPlayer {
             get {
                 return ResourceManager.GetString("MainFormBtnShowPlayer", resourceCulture);
             }
@@ -1400,7 +1400,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à {0} Custom Map.
         /// </summary>
-        internal static string MainFormCustomMapLabel {
+        public static string MainFormCustomMapLabel {
             get {
                 return ResourceManager.GetString("MainFormCustomMapLabel", resourceCulture);
             }
@@ -1409,7 +1409,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Error extracting database.
         /// </summary>
-        internal static string MainFormDatabaseError {
+        public static string MainFormDatabaseError {
             get {
                 return ResourceManager.GetString("MainFormDatabaseError", resourceCulture);
             }
@@ -1419,7 +1419,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à There was an error attempting to load all files in the last run.
         ///Would you like to disable loading all files?.
         /// </summary>
-        internal static string MainFormDisableLoadAllFiles {
+        public static string MainFormDisableLoadAllFiles {
             get {
                 return ResourceManager.GetString("MainFormDisableLoadAllFiles", resourceCulture);
             }
@@ -1428,7 +1428,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Disable loading all files?.
         /// </summary>
-        internal static string MainFormDisableLoadAllFilesCaption {
+        public static string MainFormDisableLoadAllFilesCaption {
             get {
                 return ResourceManager.GetString("MainFormDisableLoadAllFilesCaption", resourceCulture);
             }
@@ -1438,7 +1438,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à You are currently holding an item.
         ///Please place the item down somewhere before quitting..
         /// </summary>
-        internal static string MainFormHoldingItem {
+        public static string MainFormHoldingItem {
             get {
                 return ResourceManager.GetString("MainFormHoldingItem", resourceCulture);
             }
@@ -1447,7 +1447,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Please set item down..
         /// </summary>
-        internal static string MainFormHoldingItem2 {
+        public static string MainFormHoldingItem2 {
             get {
                 return ResourceManager.GetString("MainFormHoldingItem2", resourceCulture);
             }
@@ -1456,7 +1456,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Character:.
         /// </summary>
-        internal static string MainFormLabel1 {
+        public static string MainFormLabel1 {
             get {
                 return ResourceManager.GetString("MainFormLabel1", resourceCulture);
             }
@@ -1465,7 +1465,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Vault:.
         /// </summary>
-        internal static string MainFormLabel2 {
+        public static string MainFormLabel2 {
             get {
                 return ResourceManager.GetString("MainFormLabel2", resourceCulture);
             }
@@ -1474,7 +1474,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Game Language Changed.
         /// </summary>
-        internal static string MainFormLanguageChanged {
+        public static string MainFormLanguageChanged {
             get {
                 return ResourceManager.GetString("MainFormLanguageChanged", resourceCulture);
             }
@@ -1486,7 +1486,7 @@ namespace TQVaultAE.GUI.Properties {
         ///You will need to restart TQVault for it take effect.
         ///Would you like to restart TQVault now?.
         /// </summary>
-        internal static string MainFormLanguageChangedMsg {
+        public static string MainFormLanguageChangedMsg {
             get {
                 return ResourceManager.GetString("MainFormLanguageChangedMsg", resourceCulture);
             }
@@ -1495,7 +1495,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Maintain Vault Files....
         /// </summary>
-        internal static string MainFormMaintainVault {
+        public static string MainFormMaintainVault {
             get {
                 return ResourceManager.GetString("MainFormMaintainVault", resourceCulture);
             }
@@ -1504,7 +1504,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Custom Maps Setting Changed.
         /// </summary>
-        internal static string MainFormMapsChanged {
+        public static string MainFormMapsChanged {
             get {
                 return ResourceManager.GetString("MainFormMapsChanged", resourceCulture);
             }
@@ -1516,7 +1516,7 @@ namespace TQVaultAE.GUI.Properties {
         ///You will need to restart TQVault for it take effect.
         ///Would you like to restart TQVault now?.
         /// </summary>
-        internal static string MainFormMapsChangedMsg {
+        public static string MainFormMapsChangedMsg {
             get {
                 return ResourceManager.GetString("MainFormMapsChangedMsg", resourceCulture);
             }
@@ -1525,7 +1525,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à No TQ characters detected.
         /// </summary>
-        internal static string MainFormNoCharacters {
+        public static string MainFormNoCharacters {
             get {
                 return ResourceManager.GetString("MainFormNoCharacters", resourceCulture);
             }
@@ -1534,7 +1534,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à No Custom Map characters detected.
         /// </summary>
-        internal static string MainFormNoCustomChars {
+        public static string MainFormNoCustomChars {
             get {
                 return ResourceManager.GetString("MainFormNoCustomChars", resourceCulture);
             }
@@ -1544,7 +1544,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à No items found of type &apos;{0}&apos;
         ///and quality &apos;{1}&apos;..
         /// </summary>
-        internal static string MainFormNoItemQualityFound {
+        public static string MainFormNoItemQualityFound {
             get {
                 return ResourceManager.GetString("MainFormNoItemQualityFound", resourceCulture);
             }
@@ -1553,7 +1553,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à No items found with &apos;{0}&apos;..
         /// </summary>
-        internal static string MainFormNoItemsFound {
+        public static string MainFormNoItemsFound {
             get {
                 return ResourceManager.GetString("MainFormNoItemsFound", resourceCulture);
             }
@@ -1562,7 +1562,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à No Items Found.
         /// </summary>
-        internal static string MainFormNoItemsFound2 {
+        public static string MainFormNoItemsFound2 {
             get {
                 return ResourceManager.GetString("MainFormNoItemsFound2", resourceCulture);
             }
@@ -1571,7 +1571,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à No items found of type &apos;{0}&apos;..
         /// </summary>
-        internal static string MainFormNoItemTypesFound {
+        public static string MainFormNoItemTypesFound {
             get {
                 return ResourceManager.GetString("MainFormNoItemTypesFound", resourceCulture);
             }
@@ -1580,7 +1580,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Game Paths Changed.
         /// </summary>
-        internal static string MainFormPathsChanged {
+        public static string MainFormPathsChanged {
             get {
                 return ResourceManager.GetString("MainFormPathsChanged", resourceCulture);
             }
@@ -1592,7 +1592,7 @@ namespace TQVaultAE.GUI.Properties {
         ///You will need to restart TQVault for it take effect.
         ///Would you like to restart TQVault now?.
         /// </summary>
-        internal static string MainFormPathsChangedMsg {
+        public static string MainFormPathsChangedMsg {
             get {
                 return ResourceManager.GetString("MainFormPathsChangedMsg", resourceCulture);
             }
@@ -1601,7 +1601,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Error reading player file.
         /// </summary>
-        internal static string MainFormPlayerReadError {
+        public static string MainFormPlayerReadError {
             get {
                 return ResourceManager.GetString("MainFormPlayerReadError", resourceCulture);
             }
@@ -1610,7 +1610,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Are you sure you wish to quit?.
         /// </summary>
-        internal static string MainFormQuit {
+        public static string MainFormQuit {
             get {
                 return ResourceManager.GetString("MainFormQuit", resourceCulture);
             }
@@ -1622,7 +1622,7 @@ namespace TQVaultAE.GUI.Properties {
         ///
         ///{1}.
         /// </summary>
-        internal static string MainFormReadError {
+        public static string MainFormReadError {
             get {
                 return ResourceManager.GetString("MainFormReadError", resourceCulture);
             }
@@ -1631,7 +1631,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Error saving data for &apos;{0}&apos;.
         /// </summary>
-        internal static string MainFormSaveError {
+        public static string MainFormSaveError {
             get {
                 return ResourceManager.GetString("MainFormSaveError", resourceCulture);
             }
@@ -1640,7 +1640,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Search.
         /// </summary>
-        internal static string MainFormSearchButtonText {
+        public static string MainFormSearchButtonText {
             get {
                 return ResourceManager.GetString("MainFormSearchButtonText", resourceCulture);
             }
@@ -1649,7 +1649,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Select a character.
         /// </summary>
-        internal static string MainFormSelectCharacter {
+        public static string MainFormSelectCharacter {
             get {
                 return ResourceManager.GetString("MainFormSelectCharacter", resourceCulture);
             }
@@ -1658,7 +1658,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Select a vault.
         /// </summary>
-        internal static string MainFormSelectVault {
+        public static string MainFormSelectVault {
             get {
                 return ResourceManager.GetString("MainFormSelectVault", resourceCulture);
             }
@@ -1667,7 +1667,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Game Settings Changed.
         /// </summary>
-        internal static string MainFormSettingsChanged {
+        public static string MainFormSettingsChanged {
             get {
                 return ResourceManager.GetString("MainFormSettingsChanged", resourceCulture);
             }
@@ -1679,7 +1679,7 @@ namespace TQVaultAE.GUI.Properties {
         ///You will need to restart TQVault for it take effect.
         ///Would you like to restart TQVault now?.
         /// </summary>
-        internal static string MainFormSettingsChangedMsg {
+        public static string MainFormSettingsChangedMsg {
             get {
                 return ResourceManager.GetString("MainFormSettingsChangedMsg", resourceCulture);
             }
@@ -1688,7 +1688,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Would you like to start TQVaultMon?.
         /// </summary>
-        internal static string MainFormStartVaultMon {
+        public static string MainFormStartVaultMon {
             get {
                 return ResourceManager.GetString("MainFormStartVaultMon", resourceCulture);
             }
@@ -1704,10 +1704,9 @@ namespace TQVaultAE.GUI.Properties {
         ///Once you have successfully loaded your character you will not need to
         ///use TQVaultMon again unless you make further edits.
         ///
-        ///It is suggested that you start TQVaultMon now and then run Titan
-        ///Quest a [le reste de la chaîne a été tronqué]&quot;;.
+        ///It is suggested that you start TQVaultMon now and then run Tita [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
-        internal static string MainFormStartVaultMonMsg {
+        public static string MainFormStartVaultMonMsg {
             get {
                 return ResourceManager.GetString("MainFormStartVaultMonMsg", resourceCulture);
             }
@@ -1716,7 +1715,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Error reading stash file.
         /// </summary>
-        internal static string MainFormStashReadError {
+        public static string MainFormStashReadError {
             get {
                 return ResourceManager.GetString("MainFormStashReadError", resourceCulture);
             }
@@ -1728,7 +1727,7 @@ namespace TQVaultAE.GUI.Properties {
         ///
         ///Are you sure you wish to throw away these items?.
         /// </summary>
-        internal static string MainFormTrashItems {
+        public static string MainFormTrashItems {
             get {
                 return ResourceManager.GetString("MainFormTrashItems", resourceCulture);
             }
@@ -1737,7 +1736,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Unable to start TQVaultMon.
         /// </summary>
-        internal static string MainFormUnableToStartVaultMon {
+        public static string MainFormUnableToStartVaultMon {
             get {
                 return ResourceManager.GetString("MainFormUnableToStartVaultMon", resourceCulture);
             }
@@ -1746,7 +1745,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Error trying to start TQVaultMon.
         /// </summary>
-        internal static string MainFormVaultMonError {
+        public static string MainFormVaultMonError {
             get {
                 return ResourceManager.GetString("MainFormVaultMonError", resourceCulture);
             }
@@ -1761,9 +1760,9 @@ namespace TQVaultAE.GUI.Properties {
         ///If you do not mind, please contact me and let me know about this problem
         ///because I may have a solution to the error that will save you some hassles.
         ///
-        ///Error mes [le reste de la chaîne a été tronqué]&quot;;.
+        ///E [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
-        internal static string MainFormVaultMonMsg {
+        public static string MainFormVaultMonMsg {
             get {
                 return ResourceManager.GetString("MainFormVaultMonMsg", resourceCulture);
             }
@@ -1772,7 +1771,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à You used invalid characters..
         /// </summary>
-        internal static string MaintenanceBadChars {
+        public static string MaintenanceBadChars {
             get {
                 return ResourceManager.GetString("MaintenanceBadChars", resourceCulture);
             }
@@ -1781,7 +1780,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à You must enter a name for the new vault.
         /// </summary>
-        internal static string MaintenanceBadName {
+        public static string MaintenanceBadName {
             get {
                 return ResourceManager.GetString("MaintenanceBadName", resourceCulture);
             }
@@ -1791,7 +1790,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à Please select the source to copy from the source drop down list
         ///and then type the destination name in the target box below..
         /// </summary>
-        internal static string MaintenanceCopy {
+        public static string MaintenanceCopy {
             get {
                 return ResourceManager.GetString("MaintenanceCopy", resourceCulture);
             }
@@ -1800,7 +1799,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Please select the vault to delete from the source drop down list..
         /// </summary>
-        internal static string MaintenanceDelete {
+        public static string MaintenanceDelete {
             get {
                 return ResourceManager.GetString("MaintenanceDelete", resourceCulture);
             }
@@ -1809,7 +1808,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Duplicate Vault Name.
         /// </summary>
-        internal static string MaintenanceDuplicate {
+        public static string MaintenanceDuplicate {
             get {
                 return ResourceManager.GetString("MaintenanceDuplicate", resourceCulture);
             }
@@ -1818,7 +1817,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à A vault named {0} already exists..
         /// </summary>
-        internal static string MaintenanceExists {
+        public static string MaintenanceExists {
             get {
                 return ResourceManager.GetString("MaintenanceExists", resourceCulture);
             }
@@ -1827,7 +1826,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Select Function.
         /// </summary>
-        internal static string MaintenanceGroup {
+        public static string MaintenanceGroup {
             get {
                 return ResourceManager.GetString("MaintenanceGroup", resourceCulture);
             }
@@ -1836,7 +1835,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Instructions.
         /// </summary>
-        internal static string MaintenanceInstructions {
+        public static string MaintenanceInstructions {
             get {
                 return ResourceManager.GetString("MaintenanceInstructions", resourceCulture);
             }
@@ -1845,7 +1844,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Invalid Vault Name.
         /// </summary>
-        internal static string MaintenanceInvalidName {
+        public static string MaintenanceInvalidName {
             get {
                 return ResourceManager.GetString("MaintenanceInvalidName", resourceCulture);
             }
@@ -1854,7 +1853,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Invalid Source Vault Name.
         /// </summary>
-        internal static string MaintenanceInvalidSourceName {
+        public static string MaintenanceInvalidSourceName {
             get {
                 return ResourceManager.GetString("MaintenanceInvalidSourceName", resourceCulture);
             }
@@ -1866,7 +1865,7 @@ namespace TQVaultAE.GUI.Properties {
         ///You may not use the following characters:
         ///.
         /// </summary>
-        internal static string MaintenanceNew {
+        public static string MaintenanceNew {
             get {
                 return ResourceManager.GetString("MaintenanceNew", resourceCulture);
             }
@@ -1875,7 +1874,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à New Vault.
         /// </summary>
-        internal static string MaintenanceNewVault {
+        public static string MaintenanceNewVault {
             get {
                 return ResourceManager.GetString("MaintenanceNewVault", resourceCulture);
             }
@@ -1884,7 +1883,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à You must enter a new name for your copied vault.
         /// </summary>
-        internal static string MaintenanceNoCopyTarget {
+        public static string MaintenanceNoCopyTarget {
             get {
                 return ResourceManager.GetString("MaintenanceNoCopyTarget", resourceCulture);
             }
@@ -1893,7 +1892,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Copy a Vault.
         /// </summary>
-        internal static string MaintenanceRbCopy {
+        public static string MaintenanceRbCopy {
             get {
                 return ResourceManager.GetString("MaintenanceRbCopy", resourceCulture);
             }
@@ -1902,7 +1901,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Delete a Vault.
         /// </summary>
-        internal static string MaintenanceRbDelete {
+        public static string MaintenanceRbDelete {
             get {
                 return ResourceManager.GetString("MaintenanceRbDelete", resourceCulture);
             }
@@ -1911,7 +1910,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Create a New Vault.
         /// </summary>
-        internal static string MaintenanceRbNew {
+        public static string MaintenanceRbNew {
             get {
                 return ResourceManager.GetString("MaintenanceRbNew", resourceCulture);
             }
@@ -1920,7 +1919,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Rename a Vault.
         /// </summary>
-        internal static string MaintenanceRbRename {
+        public static string MaintenanceRbRename {
             get {
                 return ResourceManager.GetString("MaintenanceRbRename", resourceCulture);
             }
@@ -1930,7 +1929,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à Please select the vault to rename from the source drop down list
         ///and then type the new name in the target box below..
         /// </summary>
-        internal static string MaintenanceRename {
+        public static string MaintenanceRename {
             get {
                 return ResourceManager.GetString("MaintenanceRename", resourceCulture);
             }
@@ -1939,7 +1938,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Source.
         /// </summary>
-        internal static string MaintenanceSource {
+        public static string MaintenanceSource {
             get {
                 return ResourceManager.GetString("MaintenanceSource", resourceCulture);
             }
@@ -1948,7 +1947,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Source Vault does not exist..
         /// </summary>
-        internal static string MaintenanceSourceNoExist {
+        public static string MaintenanceSourceNoExist {
             get {
                 return ResourceManager.GetString("MaintenanceSourceNoExist", resourceCulture);
             }
@@ -1957,7 +1956,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Target.
         /// </summary>
-        internal static string MaintenanceTarget {
+        public static string MaintenanceTarget {
             get {
                 return ResourceManager.GetString("MaintenanceTarget", resourceCulture);
             }
@@ -1966,7 +1965,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Vault Maintenance.
         /// </summary>
-        internal static string MaintenanceText {
+        public static string MaintenanceText {
             get {
                 return ResourceManager.GetString("MaintenanceText", resourceCulture);
             }
@@ -1975,7 +1974,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Majestic_Chest {
+        public static System.Drawing.Bitmap Majestic_Chest {
             get {
                 object obj = ResourceManager.GetObject("Majestic_Chest", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -1985,7 +1984,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Majestic_Chest_small {
+        public static System.Drawing.Bitmap Majestic_Chest_small {
             get {
                 object obj = ResourceManager.GetObject("Majestic_Chest_small", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -1995,7 +1994,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap NewAboutGraphic {
+        public static System.Drawing.Bitmap NewAboutGraphic {
             get {
                 object obj = ResourceManager.GetObject("NewAboutGraphic", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -2005,7 +2004,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap NewSplashScreen {
+        public static System.Drawing.Bitmap NewSplashScreen {
             get {
                 object obj = ResourceManager.GetObject("NewSplashScreen", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -2015,7 +2014,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Overwrite Sack.
         /// </summary>
-        internal static string PlayerOverwriteSack {
+        public static string PlayerOverwriteSack {
             get {
                 return ResourceManager.GetString("PlayerOverwriteSack", resourceCulture);
             }
@@ -2025,7 +2024,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à The destination is not empty.
         ///Are you sure you want to overwrite?.
         /// </summary>
-        internal static string PlayerOverwriteSackMsg {
+        public static string PlayerOverwriteSackMsg {
             get {
                 return ResourceManager.GetString("PlayerOverwriteSackMsg", resourceCulture);
             }
@@ -2034,7 +2033,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Empty Bag?.
         /// </summary>
-        internal static string PlayerPanelEmpty {
+        public static string PlayerPanelEmpty {
             get {
                 return ResourceManager.GetString("PlayerPanelEmpty", resourceCulture);
             }
@@ -2043,7 +2042,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Are you sure you wish to delete all of the items in the bag?.
         /// </summary>
-        internal static string PlayerPanelEmptyMsg {
+        public static string PlayerPanelEmptyMsg {
             get {
                 return ResourceManager.GetString("PlayerPanelEmptyMsg", resourceCulture);
             }
@@ -2052,7 +2051,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Copy Bag.
         /// </summary>
-        internal static string PlayerPanelMenuCopy {
+        public static string PlayerPanelMenuCopy {
             get {
                 return ResourceManager.GetString("PlayerPanelMenuCopy", resourceCulture);
             }
@@ -2061,7 +2060,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Empty Bag.
         /// </summary>
-        internal static string PlayerPanelMenuEmpty {
+        public static string PlayerPanelMenuEmpty {
             get {
                 return ResourceManager.GetString("PlayerPanelMenuEmpty", resourceCulture);
             }
@@ -2070,7 +2069,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Merge Bag.
         /// </summary>
-        internal static string PlayerPanelMenuMerge {
+        public static string PlayerPanelMenuMerge {
             get {
                 return ResourceManager.GetString("PlayerPanelMenuMerge", resourceCulture);
             }
@@ -2079,7 +2078,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Move Bag.
         /// </summary>
-        internal static string PlayerPanelMenuMove {
+        public static string PlayerPanelMenuMove {
             get {
                 return ResourceManager.GetString("PlayerPanelMenuMove", resourceCulture);
             }
@@ -2088,7 +2087,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à (No character selected).
         /// </summary>
-        internal static string PlayerPanelNoPlayer {
+        public static string PlayerPanelNoPlayer {
             get {
                 return ResourceManager.GetString("PlayerPanelNoPlayer", resourceCulture);
             }
@@ -2097,7 +2096,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à (No vault selected).
         /// </summary>
-        internal static string PlayerPanelNoVault {
+        public static string PlayerPanelNoVault {
             get {
                 return ResourceManager.GetString("PlayerPanelNoVault", resourceCulture);
             }
@@ -2106,7 +2105,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ProgressBar {
+        public static System.Drawing.Bitmap ProgressBar {
             get {
                 object obj = ResourceManager.GetObject("ProgressBar", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -2116,7 +2115,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ProgressBarFill {
+        public static System.Drawing.Bitmap ProgressBarFill {
             get {
                 object obj = ResourceManager.GetObject("ProgressBarFill", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -2126,7 +2125,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Container.
         /// </summary>
-        internal static string ResultsContainer {
+        public static string ResultsContainer {
             get {
                 return ResourceManager.GetString("ResultsContainer", resourceCulture);
             }
@@ -2135,7 +2134,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Equipment.
         /// </summary>
-        internal static string ResultsContainerEquip {
+        public static string ResultsContainerEquip {
             get {
                 return ResourceManager.GetString("ResultsContainerEquip", resourceCulture);
             }
@@ -2144,7 +2143,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Player.
         /// </summary>
-        internal static string ResultsContainerPlayer {
+        public static string ResultsContainerPlayer {
             get {
                 return ResourceManager.GetString("ResultsContainerPlayer", resourceCulture);
             }
@@ -2153,7 +2152,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Stash.
         /// </summary>
-        internal static string ResultsContainerStash {
+        public static string ResultsContainerStash {
             get {
                 return ResourceManager.GetString("ResultsContainerStash", resourceCulture);
             }
@@ -2162,7 +2161,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à ContainerType.
         /// </summary>
-        internal static string ResultsContainerType {
+        public static string ResultsContainerType {
             get {
                 return ResourceManager.GetString("ResultsContainerType", resourceCulture);
             }
@@ -2171,7 +2170,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Vault.
         /// </summary>
-        internal static string ResultsContainerVault {
+        public static string ResultsContainerVault {
             get {
                 return ResourceManager.GetString("ResultsContainerVault", resourceCulture);
             }
@@ -2180,7 +2179,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Item.
         /// </summary>
-        internal static string ResultsItem {
+        public static string ResultsItem {
             get {
                 return ResourceManager.GetString("ResultsItem", resourceCulture);
             }
@@ -2189,7 +2188,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Level.
         /// </summary>
-        internal static string ResultsLevel {
+        public static string ResultsLevel {
             get {
                 return ResourceManager.GetString("ResultsLevel", resourceCulture);
             }
@@ -2198,7 +2197,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Quality.
         /// </summary>
-        internal static string ResultsQuality {
+        public static string ResultsQuality {
             get {
                 return ResourceManager.GetString("ResultsQuality", resourceCulture);
             }
@@ -2207,7 +2206,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Sack.
         /// </summary>
-        internal static string ResultsSack {
+        public static string ResultsSack {
             get {
                 return ResourceManager.GetString("ResultsSack", resourceCulture);
             }
@@ -2216,7 +2215,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à {0} Items Found with &apos;{1}&apos;.
         /// </summary>
-        internal static string ResultsText {
+        public static string ResultsText {
             get {
                 return ResourceManager.GetString("ResultsText", resourceCulture);
             }
@@ -2225,7 +2224,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap rotatedautosortdown01 {
+        public static System.Drawing.Bitmap rotatedautosortdown01 {
             get {
                 object obj = ResourceManager.GetObject("rotatedautosortdown01", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -2235,7 +2234,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap rotatedautosortover01 {
+        public static System.Drawing.Bitmap rotatedautosortover01 {
             get {
                 object obj = ResourceManager.GetObject("rotatedautosortover01", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -2245,7 +2244,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap rotatedautosortup01 {
+        public static System.Drawing.Bitmap rotatedautosortup01 {
             get {
                 object obj = ResourceManager.GetObject("rotatedautosortup01", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -2255,7 +2254,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Please set item down..
         /// </summary>
-        internal static string SackPanelAutoSort {
+        public static string SackPanelAutoSort {
             get {
                 return ResourceManager.GetString("SackPanelAutoSort", resourceCulture);
             }
@@ -2264,7 +2263,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Autosort Error..
         /// </summary>
-        internal static string SackPanelAutoSortError {
+        public static string SackPanelAutoSortError {
             get {
                 return ResourceManager.GetString("SackPanelAutoSortError", resourceCulture);
             }
@@ -2274,7 +2273,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à There was an error during sorting.
         ///Not all items have been placed..
         /// </summary>
-        internal static string SackPanelAutoSortErrorMsg {
+        public static string SackPanelAutoSortErrorMsg {
             get {
                 return ResourceManager.GetString("SackPanelAutoSortErrorMsg", resourceCulture);
             }
@@ -2284,7 +2283,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à You are currently holding an item.
         ///Please place the item down somewhere before sorting..
         /// </summary>
-        internal static string SackPanelAutoSortMsg {
+        public static string SackPanelAutoSortMsg {
             get {
                 return ResourceManager.GetString("SackPanelAutoSortMsg", resourceCulture);
             }
@@ -2293,7 +2292,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Delete Item.
         /// </summary>
-        internal static string SackPanelDelete {
+        public static string SackPanelDelete {
             get {
                 return ResourceManager.GetString("SackPanelDelete", resourceCulture);
             }
@@ -2303,7 +2302,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à This item will be PERMANENTLY DELETED!
         ///Are you sure you want to delete this item?.
         /// </summary>
-        internal static string SackPanelDeleteMsg {
+        public static string SackPanelDeleteMsg {
             get {
                 return ResourceManager.GetString("SackPanelDeleteMsg", resourceCulture);
             }
@@ -2312,7 +2311,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Delete Multiple Items.
         /// </summary>
-        internal static string SackPanelDeleteMulti {
+        public static string SackPanelDeleteMulti {
             get {
                 return ResourceManager.GetString("SackPanelDeleteMulti", resourceCulture);
             }
@@ -2321,7 +2320,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Are you sure you want to PERMANENTLY DELETE the selected items?.
         /// </summary>
-        internal static string SackPanelDeleteMultiMsg {
+        public static string SackPanelDeleteMultiMsg {
             get {
                 return ResourceManager.GetString("SackPanelDeleteMultiMsg", resourceCulture);
             }
@@ -2330,7 +2329,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Change Completion Bonus.
         /// </summary>
-        internal static string SackPanelMenuBonus {
+        public static string SackPanelMenuBonus {
             get {
                 return ResourceManager.GetString("SackPanelMenuBonus", resourceCulture);
             }
@@ -2339,7 +2338,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Complete Charm.
         /// </summary>
-        internal static string SackPanelMenuCharm {
+        public static string SackPanelMenuCharm {
             get {
                 return ResourceManager.GetString("SackPanelMenuCharm", resourceCulture);
             }
@@ -2348,7 +2347,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Clear Selection.
         /// </summary>
-        internal static string SackPanelMenuClear {
+        public static string SackPanelMenuClear {
             get {
                 return ResourceManager.GetString("SackPanelMenuClear", resourceCulture);
             }
@@ -2357,7 +2356,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Copy Item.
         /// </summary>
-        internal static string SackPanelMenuCopy {
+        public static string SackPanelMenuCopy {
             get {
                 return ResourceManager.GetString("SackPanelMenuCopy", resourceCulture);
             }
@@ -2366,7 +2365,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Delete.
         /// </summary>
-        internal static string SackPanelMenuDelete {
+        public static string SackPanelMenuDelete {
             get {
                 return ResourceManager.GetString("SackPanelMenuDelete", resourceCulture);
             }
@@ -2375,7 +2374,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Duplicate Item.
         /// </summary>
-        internal static string SackPanelMenuDuplicate {
+        public static string SackPanelMenuDuplicate {
             get {
                 return ResourceManager.GetString("SackPanelMenuDuplicate", resourceCulture);
             }
@@ -2384,7 +2383,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Craft Artifact.
         /// </summary>
-        internal static string SackPanelMenuFormulae {
+        public static string SackPanelMenuFormulae {
             get {
                 return ResourceManager.GetString("SackPanelMenuFormulae", resourceCulture);
             }
@@ -2393,7 +2392,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Move Item To.
         /// </summary>
-        internal static string SackPanelMenuMoveTo {
+        public static string SackPanelMenuMoveTo {
             get {
                 return ResourceManager.GetString("SackPanelMenuMoveTo", resourceCulture);
             }
@@ -2402,7 +2401,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Player Panel.
         /// </summary>
-        internal static string SackPanelMenuPlayer {
+        public static string SackPanelMenuPlayer {
             get {
                 return ResourceManager.GetString("SackPanelMenuPlayer", resourceCulture);
             }
@@ -2411,7 +2410,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Properties.
         /// </summary>
-        internal static string SackPanelMenuProperties {
+        public static string SackPanelMenuProperties {
             get {
                 return ResourceManager.GetString("SackPanelMenuProperties", resourceCulture);
             }
@@ -2420,7 +2419,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Complete Relic.
         /// </summary>
-        internal static string SackPanelMenuRelic {
+        public static string SackPanelMenuRelic {
             get {
                 return ResourceManager.GetString("SackPanelMenuRelic", resourceCulture);
             }
@@ -2429,7 +2428,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Remove Relic.
         /// </summary>
-        internal static string SackPanelMenuRemoveRelic {
+        public static string SackPanelMenuRemoveRelic {
             get {
                 return ResourceManager.GetString("SackPanelMenuRemoveRelic", resourceCulture);
             }
@@ -2438,7 +2437,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Change Item Seed....
         /// </summary>
-        internal static string SackPanelMenuSeed {
+        public static string SackPanelMenuSeed {
             get {
                 return ResourceManager.GetString("SackPanelMenuSeed", resourceCulture);
             }
@@ -2447,7 +2446,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Create Set Items.
         /// </summary>
-        internal static string SackPanelMenuSet {
+        public static string SackPanelMenuSet {
             get {
                 return ResourceManager.GetString("SackPanelMenuSet", resourceCulture);
             }
@@ -2456,7 +2455,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Split.
         /// </summary>
-        internal static string SackPanelMenuSplit {
+        public static string SackPanelMenuSplit {
             get {
                 return ResourceManager.GetString("SackPanelMenuSplit", resourceCulture);
             }
@@ -2465,7 +2464,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Stash Panel.
         /// </summary>
-        internal static string SackPanelMenuStash {
+        public static string SackPanelMenuStash {
             get {
                 return ResourceManager.GetString("SackPanelMenuStash", resourceCulture);
             }
@@ -2474,7 +2473,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Trash Panel.
         /// </summary>
-        internal static string SackPanelMenuTrash {
+        public static string SackPanelMenuTrash {
             get {
                 return ResourceManager.GetString("SackPanelMenuTrash", resourceCulture);
             }
@@ -2483,7 +2482,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Vault Panel.
         /// </summary>
-        internal static string SackPanelMenuVault {
+        public static string SackPanelMenuVault {
             get {
                 return ResourceManager.GetString("SackPanelMenuVault", resourceCulture);
             }
@@ -2492,7 +2491,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Secondary Vault.
         /// </summary>
-        internal static string SackPanelMenuVault2 {
+        public static string SackPanelMenuVault2 {
             get {
                 return ResourceManager.GetString("SackPanelMenuVault2", resourceCulture);
             }
@@ -2501,7 +2500,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Are you sure you want to remove the relic from this item?.
         /// </summary>
-        internal static string SackPanelRemoveRelicMsg {
+        public static string SackPanelRemoveRelicMsg {
             get {
                 return ResourceManager.GetString("SackPanelRemoveRelicMsg", resourceCulture);
             }
@@ -2510,7 +2509,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Search for an item.
         /// </summary>
-        internal static string SearchDialogCaption {
+        public static string SearchDialogCaption {
             get {
                 return ResourceManager.GetString("SearchDialogCaption", resourceCulture);
             }
@@ -2524,9 +2523,9 @@ namespace TQVaultAE.GUI.Properties {
         ///* Type: by using @ at the beginning of the search term for example &apos;@sword&apos;
         ///* Attributes: by using # at the beginning of the search term for example &apos;#elemental resistance&apos;
         ///* Rarity: by using $ at the beginning of the search term for example &apos;$rare&apos;
-        ///You can use | in a term as an OR condition. [le reste de la chaîne a été tronqué]&quot;;.
+        ///You can use | in a term as an OR con [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
-        internal static string SearchDialogText {
+        public static string SearchDialogText {
             get {
                 return ResourceManager.GetString("SearchDialogText", resourceCulture);
             }
@@ -2535,7 +2534,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Random.
         /// </summary>
-        internal static string SeedBtnRandom {
+        public static string SeedBtnRandom {
             get {
                 return ResourceManager.GetString("SeedBtnRandom", resourceCulture);
             }
@@ -2550,7 +2549,7 @@ namespace TQVaultAE.GUI.Properties {
         ///
         ///Pick a number between 1 and 32767.
         /// </summary>
-        internal static string SeedLabel1 {
+        public static string SeedLabel1 {
             get {
                 return ResourceManager.GetString("SeedLabel1", resourceCulture);
             }
@@ -2559,7 +2558,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Item Seed must be a valid integer between 1 and 32767.
         /// </summary>
-        internal static string SeedRange {
+        public static string SeedRange {
             get {
                 return ResourceManager.GetString("SeedRange", resourceCulture);
             }
@@ -2568,7 +2567,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Change Item Seed.
         /// </summary>
-        internal static string SeedText {
+        public static string SeedText {
             get {
                 return ResourceManager.GetString("SeedText", resourceCulture);
             }
@@ -2577,7 +2576,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Allow Item Copying.
         /// </summary>
-        internal static string SettingsAllowCopy {
+        public static string SettingsAllowCopy {
             get {
                 return ResourceManager.GetString("SettingsAllowCopy", resourceCulture);
             }
@@ -2586,7 +2585,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Enables copy selection in the context menu..
         /// </summary>
-        internal static string SettingsAllowCopyTT {
+        public static string SettingsAllowCopyTT {
             get {
                 return ResourceManager.GetString("SettingsAllowCopyTT", resourceCulture);
             }
@@ -2595,7 +2594,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Allow Item Editing Features.
         /// </summary>
-        internal static string SettingsAllowEdit {
+        public static string SettingsAllowEdit {
             get {
                 return ResourceManager.GetString("SettingsAllowEdit", resourceCulture);
             }
@@ -2604,7 +2603,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Allow Character Editing Features.
         /// </summary>
-        internal static string SettingsAllowEditCE {
+        public static string SettingsAllowEditCE {
             get {
                 return ResourceManager.GetString("SettingsAllowEditCE", resourceCulture);
             }
@@ -2614,7 +2613,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à Turns on the editing features in the context menu.
         ///These include item creation and modification..
         /// </summary>
-        internal static string SettingsAllowEditTT {
+        public static string SettingsAllowEditTT {
             get {
                 return ResourceManager.GetString("SettingsAllowEditTT", resourceCulture);
             }
@@ -2623,7 +2622,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Automatically Check For Updates.
         /// </summary>
-        internal static string SettingsAutoUpdate {
+        public static string SettingsAutoUpdate {
             get {
                 return ResourceManager.GetString("SettingsAutoUpdate", resourceCulture);
             }
@@ -2635,7 +2634,7 @@ namespace TQVaultAE.GUI.Properties {
         ///the program starts up.  May cause startup to
         ///take longer if the network connection is slow..
         /// </summary>
-        internal static string SettingsAutoUpdateTT {
+        public static string SettingsAutoUpdateTT {
             get {
                 return ResourceManager.GetString("SettingsAutoUpdateTT", resourceCulture);
             }
@@ -2644,7 +2643,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Please select the path for the Immortal Throne game files..
         /// </summary>
-        internal static string SettingsBrowseIT {
+        public static string SettingsBrowseIT {
             get {
                 return ResourceManager.GetString("SettingsBrowseIT", resourceCulture);
             }
@@ -2653,7 +2652,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Please select the path for the Titan Quest game files..
         /// </summary>
-        internal static string SettingsBrowseTQ {
+        public static string SettingsBrowseTQ {
             get {
                 return ResourceManager.GetString("SettingsBrowseTQ", resourceCulture);
             }
@@ -2662,7 +2661,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Please select the path for TQVault Vault files..
         /// </summary>
-        internal static string SettingsBrowseVault {
+        public static string SettingsBrowseVault {
             get {
                 return ResourceManager.GetString("SettingsBrowseVault", resourceCulture);
             }
@@ -2671,7 +2670,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Auto detect Game Paths.
         /// </summary>
-        internal static string SettingsDetectGamePath {
+        public static string SettingsDetectGamePath {
             get {
                 return ResourceManager.GetString("SettingsDetectGamePath", resourceCulture);
             }
@@ -2680,7 +2679,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Auto detect Language.
         /// </summary>
-        internal static string SettingsDetectLanguage {
+        public static string SettingsDetectLanguage {
             get {
                 return ResourceManager.GetString("SettingsDetectLanguage", resourceCulture);
             }
@@ -2689,7 +2688,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Enable Custom Maps.
         /// </summary>
-        internal static string SettingsEnableMod {
+        public static string SettingsEnableMod {
             get {
                 return ResourceManager.GetString("SettingsEnableMod", resourceCulture);
             }
@@ -2700,7 +2699,7 @@ namespace TQVaultAE.GUI.Properties {
         ///enable the drop down
         ///to select custom maps..
         /// </summary>
-        internal static string SettingsEnableModTT {
+        public static string SettingsEnableModTT {
             get {
                 return ResourceManager.GetString("SettingsEnableModTT", resourceCulture);
             }
@@ -2709,7 +2708,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Check Now.
         /// </summary>
-        internal static string SettingsForceCheck {
+        public static string SettingsForceCheck {
             get {
                 return ResourceManager.GetString("SettingsForceCheck", resourceCulture);
             }
@@ -2719,7 +2718,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à Manually checks if there are any updates
         ///available..
         /// </summary>
-        internal static string SettingsForceCheckTT {
+        public static string SettingsForceCheckTT {
             get {
                 return ResourceManager.GetString("SettingsForceCheckTT", resourceCulture);
             }
@@ -2728,7 +2727,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Vault Path.
         /// </summary>
-        internal static string SettingsLabel1 {
+        public static string SettingsLabel1 {
             get {
                 return ResourceManager.GetString("SettingsLabel1", resourceCulture);
             }
@@ -2737,7 +2736,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Game Language.
         /// </summary>
-        internal static string SettingsLabel2 {
+        public static string SettingsLabel2 {
             get {
                 return ResourceManager.GetString("SettingsLabel2", resourceCulture);
             }
@@ -2746,7 +2745,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à TQ Game Path.
         /// </summary>
-        internal static string SettingsLabel3 {
+        public static string SettingsLabel3 {
             get {
                 return ResourceManager.GetString("SettingsLabel3", resourceCulture);
             }
@@ -2755,7 +2754,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à IT Game Path.
         /// </summary>
-        internal static string SettingsLabel4 {
+        public static string SettingsLabel4 {
             get {
                 return ResourceManager.GetString("SettingsLabel4", resourceCulture);
             }
@@ -2764,7 +2763,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Custom Map.
         /// </summary>
-        internal static string SettingsLabel5 {
+        public static string SettingsLabel5 {
             get {
                 return ResourceManager.GetString("SettingsLabel5", resourceCulture);
             }
@@ -2773,7 +2772,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Automatically Load the last opened Character.
         /// </summary>
-        internal static string SettingsLoadChar {
+        public static string SettingsLoadChar {
             get {
                 return ResourceManager.GetString("SettingsLoadChar", resourceCulture);
             }
@@ -2783,7 +2782,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à Selecting this option will automatically load
         ///the last open character when TQVault was closed..
         /// </summary>
-        internal static string SettingsLoadCharTT {
+        public static string SettingsLoadCharTT {
             get {
                 return ResourceManager.GetString("SettingsLoadCharTT", resourceCulture);
             }
@@ -2792,7 +2791,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Automatically Load the last opened Vault.
         /// </summary>
-        internal static string SettingsLoadVault {
+        public static string SettingsLoadVault {
             get {
                 return ResourceManager.GetString("SettingsLoadVault", resourceCulture);
             }
@@ -2804,7 +2803,7 @@ namespace TQVaultAE.GUI.Properties {
         ///TQVault will automatically open Main Vault
         ///if nothing is chosen..
         /// </summary>
-        internal static string SettingsLoadVaultTT {
+        public static string SettingsLoadVaultTT {
             get {
                 return ResourceManager.GetString("SettingsLoadVaultTT", resourceCulture);
             }
@@ -2813,7 +2812,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Bypass Confirmation Messages.
         /// </summary>
-        internal static string SettingsNoWarning {
+        public static string SettingsNoWarning {
             get {
                 return ResourceManager.GetString("SettingsNoWarning", resourceCulture);
             }
@@ -2825,7 +2824,7 @@ namespace TQVaultAE.GUI.Properties {
         ///relic removal or if there are items in the trash
         ///when TQVault is closed..
         /// </summary>
-        internal static string SettingsNoWarningTT {
+        public static string SettingsNoWarningTT {
             get {
                 return ResourceManager.GetString("SettingsNoWarningTT", resourceCulture);
             }
@@ -2834,7 +2833,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Player Equipment ReadOnly.
         /// </summary>
-        internal static string SettingsPlayerReadonly {
+        public static string SettingsPlayerReadonly {
             get {
                 return ResourceManager.GetString("SettingsPlayerReadonly", resourceCulture);
             }
@@ -2843,7 +2842,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Avoid save game corruption that occurs randomly. When enabled, player equipment will be read-only,  you won&apos;t be able to select or move any item..
         /// </summary>
-        internal static string SettingsPlayerReadonlyTT {
+        public static string SettingsPlayerReadonlyTT {
             get {
                 return ResourceManager.GetString("SettingsPlayerReadonlyTT", resourceCulture);
             }
@@ -2852,7 +2851,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Pre-Load All Vault And Character Files.
         /// </summary>
-        internal static string SettingsPreLoad {
+        public static string SettingsPreLoad {
             get {
                 return ResourceManager.GetString("SettingsPreLoad", resourceCulture);
             }
@@ -2864,7 +2863,7 @@ namespace TQVaultAE.GUI.Properties {
         ///on startup.  This aids the search function, but
         ///increases startup time..
         /// </summary>
-        internal static string SettingsPreLoadTT {
+        public static string SettingsPreLoadTT {
             get {
                 return ResourceManager.GetString("SettingsPreLoadTT", resourceCulture);
             }
@@ -2873,7 +2872,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Reset.
         /// </summary>
-        internal static string SettingsReset {
+        public static string SettingsReset {
             get {
                 return ResourceManager.GetString("SettingsReset", resourceCulture);
             }
@@ -2883,7 +2882,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à Causes the configuration to Reset to the
         ///last saved configuration..
         /// </summary>
-        internal static string SettingsResetTT {
+        public static string SettingsResetTT {
             get {
                 return ResourceManager.GetString("SettingsResetTT", resourceCulture);
             }
@@ -2892,7 +2891,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Automatically Bypass Title Screen.
         /// </summary>
-        internal static string SettingsSkipTitle {
+        public static string SettingsSkipTitle {
             get {
                 return ResourceManager.GetString("SettingsSkipTitle", resourceCulture);
             }
@@ -2902,7 +2901,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à Ticking this box will automatically hit
         ///the Enter key on the title screen..
         /// </summary>
-        internal static string SettingsSkipTitleTT {
+        public static string SettingsSkipTitleTT {
             get {
                 return ResourceManager.GetString("SettingsSkipTitleTT", resourceCulture);
             }
@@ -2911,7 +2910,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Configure Settings.
         /// </summary>
-        internal static string SettingsTitle {
+        public static string SettingsTitle {
             get {
                 return ResourceManager.GetString("SettingsTitle", resourceCulture);
             }
@@ -2920,7 +2919,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap SplashScreen {
+        public static System.Drawing.Bitmap SplashScreen {
             get {
                 object obj = ResourceManager.GetObject("SplashScreen", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -2930,7 +2929,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Cannot find Stash file..
         /// </summary>
-        internal static string StashNotFound {
+        public static string StashNotFound {
             get {
                 return ResourceManager.GetString("StashNotFound", resourceCulture);
             }
@@ -2941,7 +2940,7 @@ namespace TQVaultAE.GUI.Properties {
         ///Please visit the Caravan Trader in game to create the file.
         ///The Storage Area tab will be unavailable for this character..
         /// </summary>
-        internal static string StashNotFoundMsg {
+        public static string StashNotFoundMsg {
             get {
                 return ResourceManager.GetString("StashNotFoundMsg", resourceCulture);
             }
@@ -2950,7 +2949,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap StashPanel {
+        public static System.Drawing.Bitmap StashPanel {
             get {
                 object obj = ResourceManager.GetObject("StashPanel", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -2960,7 +2959,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Equipment.
         /// </summary>
-        internal static string StashPanelBtn1 {
+        public static string StashPanelBtn1 {
             get {
                 return ResourceManager.GetString("StashPanelBtn1", resourceCulture);
             }
@@ -2969,7 +2968,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Transfer Area.
         /// </summary>
-        internal static string StashPanelBtn2 {
+        public static string StashPanelBtn2 {
             get {
                 return ResourceManager.GetString("StashPanelBtn2", resourceCulture);
             }
@@ -2978,7 +2977,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Storage Area.
         /// </summary>
-        internal static string StashPanelBtn3 {
+        public static string StashPanelBtn3 {
             get {
                 return ResourceManager.GetString("StashPanelBtn3", resourceCulture);
             }
@@ -2987,7 +2986,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Caravan.
         /// </summary>
-        internal static string StashPanelText {
+        public static string StashPanelText {
             get {
                 return ResourceManager.GetString("StashPanelText", resourceCulture);
             }
@@ -2996,7 +2995,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap StashTabDown {
+        public static System.Drawing.Bitmap StashTabDown {
             get {
                 object obj = ResourceManager.GetObject("StashTabDown", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -3006,7 +3005,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap StashTabOver {
+        public static System.Drawing.Bitmap StashTabOver {
             get {
                 object obj = ResourceManager.GetObject("StashTabOver", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -3016,7 +3015,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap StashTabUp {
+        public static System.Drawing.Bitmap StashTabUp {
             get {
                 object obj = ResourceManager.GetObject("StashTabUp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -3026,7 +3025,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tqmedallion {
+        public static System.Drawing.Bitmap tqmedallion {
             get {
                 object obj = ResourceManager.GetObject("tqmedallion", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -3036,7 +3035,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tqmedalliondoor {
+        public static System.Drawing.Bitmap tqmedalliondoor {
             get {
                 object obj = ResourceManager.GetObject("tqmedalliondoor", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -3046,7 +3045,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Icon semblable à (Icône).
         /// </summary>
-        internal static System.Drawing.Icon TQVIcon {
+        public static System.Drawing.Icon TQVIcon {
             get {
                 object obj = ResourceManager.GetObject("TQVIcon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -3056,7 +3055,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à {0}    {1} % complete..
         /// </summary>
-        internal static string UpdateCompletion {
+        public static string UpdateCompletion {
             get {
                 return ResourceManager.GetString("UpdateCompletion", resourceCulture);
             }
@@ -3065,7 +3064,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à {0}    0 % complete..
         /// </summary>
-        internal static string UpdateCompletion2 {
+        public static string UpdateCompletion2 {
             get {
                 return ResourceManager.GetString("UpdateCompletion2", resourceCulture);
             }
@@ -3074,7 +3073,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Current Version: {0}.
         /// </summary>
-        internal static string UpdateCurrentVer {
+        public static string UpdateCurrentVer {
             get {
                 return ResourceManager.GetString("UpdateCurrentVer", resourceCulture);
             }
@@ -3083,7 +3082,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Cannot Start Setup.
         /// </summary>
-        internal static string UpdateError {
+        public static string UpdateError {
             get {
                 return ResourceManager.GetString("UpdateError", resourceCulture);
             }
@@ -3094,7 +3093,7 @@ namespace TQVaultAE.GUI.Properties {
         ///Please download the latest full setup install package and run it manually.
         ///Click OK to exit..
         /// </summary>
-        internal static string UpdateErrorMsg {
+        public static string UpdateErrorMsg {
             get {
                 return ResourceManager.GetString("UpdateErrorMsg", resourceCulture);
             }
@@ -3103,7 +3102,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à A newer version of TQVault has been found which requires a full installation..
         /// </summary>
-        internal static string UpdateFullInstall {
+        public static string UpdateFullInstall {
             get {
                 return ResourceManager.GetString("UpdateFullInstall", resourceCulture);
             }
@@ -3112,7 +3111,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Latest Version: {0}.
         /// </summary>
-        internal static string UpdateLatestVer {
+        public static string UpdateLatestVer {
             get {
                 return ResourceManager.GetString("UpdateLatestVer", resourceCulture);
             }
@@ -3121,7 +3120,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Minimum Version: {0}.
         /// </summary>
-        internal static string UpdateMinVer {
+        public static string UpdateMinVer {
             get {
                 return ResourceManager.GetString("UpdateMinVer", resourceCulture);
             }
@@ -3130,7 +3129,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à A newer version of TQVault has been found..
         /// </summary>
-        internal static string UpdateNewTQVault {
+        public static string UpdateNewTQVault {
             get {
                 return ResourceManager.GetString("UpdateNewTQVault", resourceCulture);
             }
@@ -3139,7 +3138,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à A newer version of the TQVault update program has been found..
         /// </summary>
-        internal static string UpdateNewUpdater {
+        public static string UpdateNewUpdater {
             get {
                 return ResourceManager.GetString("UpdateNewUpdater", resourceCulture);
             }
@@ -3148,7 +3147,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Your version is up to date..
         /// </summary>
-        internal static string UpdateNoUpdate {
+        public static string UpdateNoUpdate {
             get {
                 return ResourceManager.GetString("UpdateNoUpdate", resourceCulture);
             }
@@ -3157,7 +3156,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Click OK to perform an update..
         /// </summary>
-        internal static string UpdatePerform {
+        public static string UpdatePerform {
             get {
                 return ResourceManager.GetString("UpdatePerform", resourceCulture);
             }
@@ -3166,7 +3165,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Click OK to perform both updates..
         /// </summary>
-        internal static string UpdatePerformBoth {
+        public static string UpdatePerformBoth {
             get {
                 return ResourceManager.GetString("UpdatePerformBoth", resourceCulture);
             }
@@ -3175,7 +3174,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Click OK to download and run the installer..
         /// </summary>
-        internal static string UpdateRunInstall {
+        public static string UpdateRunInstall {
             get {
                 return ResourceManager.GetString("UpdateRunInstall", resourceCulture);
             }
@@ -3185,7 +3184,7 @@ namespace TQVaultAE.GUI.Properties {
         ///   Recherche une chaîne localisée semblable à There was an error connecting to the update server.
         ///An update cannot be performed..
         /// </summary>
-        internal static string UpdateStreamError {
+        public static string UpdateStreamError {
             get {
                 return ResourceManager.GetString("UpdateStreamError", resourceCulture);
             }
@@ -3194,7 +3193,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à TQVault Updates.
         /// </summary>
-        internal static string UpdateText {
+        public static string UpdateText {
             get {
                 return ResourceManager.GetString("UpdateText", resourceCulture);
             }
@@ -3203,7 +3202,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à The TQVault update program was either not found or the name has changed..
         /// </summary>
-        internal static string UpdateUpdaterNotFound {
+        public static string UpdateUpdaterNotFound {
             get {
                 return ResourceManager.GetString("UpdateUpdaterNotFound", resourceCulture);
             }
@@ -3212,7 +3211,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à &lt;EMPTY&gt;.
         /// </summary>
-        internal static string VaultGroupBoxEmpty {
+        public static string VaultGroupBoxEmpty {
             get {
                 return ResourceManager.GetString("VaultGroupBoxEmpty", resourceCulture);
             }
@@ -3221,7 +3220,7 @@ namespace TQVaultAE.GUI.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Loading Player and Vault Files....
         /// </summary>
-        internal static string VaultProgressText {
+        public static string VaultProgressText {
             get {
                 return ResourceManager.GetString("VaultProgressText", resourceCulture);
             }

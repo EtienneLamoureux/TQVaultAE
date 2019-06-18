@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI.Components
 {
-	using Properties;
 	using System;
 	using System.Drawing;
 	using System.Globalization;
@@ -14,6 +13,7 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Class for displaying the action panel which has the animation of

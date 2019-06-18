@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using TQVaultAE.GUI.Components;
-using TQVaultAE.GUI.Properties;
+using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI
 {
@@ -99,22 +99,22 @@ namespace TQVaultAE.GUI
             // ok
             // 
             this.ok.BackColor = System.Drawing.Color.Transparent;
-            this.ok.DownBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonDown;
+            this.ok.DownBitmap = global::TQVaultAE.Presentation.Resources.MainButtonDown;
             this.ok.FlatAppearance.BorderSize = 0;
             this.ok.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ok.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ok.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ok.Font = new System.Drawing.Font("Albertus MT Light", 12F);
             this.ok.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.ok.Image = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
+            this.ok.Image = global::TQVaultAE.Presentation.Resources.MainButtonUp;
 			this.ok.Location = new System.Drawing.Point(781, 419);
 			this.ok.Name = "ok";
-            this.ok.OverBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonOver;
+            this.ok.OverBitmap = global::TQVaultAE.Presentation.Resources.MainButtonOver;
             this.ok.Size = new System.Drawing.Size(137, 30);
             this.ok.SizeToGraphic = false;
             this.ok.TabIndex = 0;
             this.ok.Text = "OK";
-            this.ok.UpBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
+            this.ok.UpBitmap = global::TQVaultAE.Presentation.Resources.MainButtonUp;
             this.ok.UseCustomGraphic = true;
             this.ok.UseVisualStyleBackColor = false;
             this.ok.Click += new System.EventHandler(this.OK_Button_Click);

@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
-	using Properties;
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
@@ -175,7 +174,7 @@ namespace TQVaultAE.GUI
 
 			SetUILanguage();
 
-			Program.LoadDB();
+			//Program.LoadDB();
 
 			this.InitializeComponent();
 
@@ -183,30 +182,30 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font & scaling
 
-			this.exitButton.Font = Program.GetFontAlbertusMTLight(12F, Database.DB.Scale);
+			this.exitButton.Font = FontHelper.GetFontAlbertusMTLight(12F, Database.DB.Scale);
 			ScaleControl(this.exitButton);
-			this.characterComboBox.Font = Program.GetFontAlbertusMTLight(13F, Database.DB.Scale);
+			this.characterComboBox.Font = FontHelper.GetFontAlbertusMTLight(13F, Database.DB.Scale);
 			ScaleControl(this.characterComboBox);
 			ScaleControl(this.characterLabel);
 			ScaleControl(this.itemTextPanel);
 			ScaleControl(this.itemText);
-			this.vaultListComboBox.Font = Program.GetFontAlbertusMTLight(13F, Database.DB.Scale);
+			this.vaultListComboBox.Font = FontHelper.GetFontAlbertusMTLight(13F, Database.DB.Scale);
 			ScaleControl(this.vaultListComboBox);
-			this.vaultLabel.Font = Program.GetFontAlbertusMTLight(11F, Database.DB.Scale);
+			this.vaultLabel.Font = FontHelper.GetFontAlbertusMTLight(11F, Database.DB.Scale);
 			ScaleControl(this.vaultLabel);
-			this.configureButton.Font = Program.GetFontAlbertusMTLight(12F, Database.DB.Scale);
+			this.configureButton.Font = FontHelper.GetFontAlbertusMTLight(12F, Database.DB.Scale);
 			ScaleControl(this.configureButton);
-			this.customMapText.Font = Program.GetFontAlbertusMT(11.25F, Database.DB.Scale);
+			this.customMapText.Font = FontHelper.GetFontAlbertusMT(11.25F, Database.DB.Scale);
 			ScaleControl(this.customMapText);
-			this.panelSelectButton.Font = Program.GetFontAlbertusMTLight(12F, Database.DB.Scale);
+			this.panelSelectButton.Font = FontHelper.GetFontAlbertusMTLight(12F, Database.DB.Scale);
 			ScaleControl(this.panelSelectButton);
-			this.secondaryVaultListComboBox.Font = Program.GetFontAlbertusMTLight(11F, Database.DB.Scale);
+			this.secondaryVaultListComboBox.Font = FontHelper.GetFontAlbertusMTLight(11F, Database.DB.Scale);
 			ScaleControl(this.secondaryVaultListComboBox);
-			this.aboutButton.Font = Program.GetFontMicrosoftSansSerif(8.25F, Database.DB.Scale);
+			this.aboutButton.Font = FontHelper.GetFontMicrosoftSansSerif(8.25F, Database.DB.Scale);
 			ScaleControl(this.aboutButton);
-			this.titleLabel.Font = Program.GetFontAlbertusMTLight(24F, Database.DB.Scale);
+			this.titleLabel.Font = FontHelper.GetFontAlbertusMTLight(24F, Database.DB.Scale);
 			ScaleControl(this.titleLabel);
-			this.searchButton.Font = Program.GetFontAlbertusMTLight(12F, Database.DB.Scale);
+			this.searchButton.Font = FontHelper.GetFontAlbertusMTLight(12F, Database.DB.Scale);
 			ScaleControl(this.searchButton);
 
 			#endregion

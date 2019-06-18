@@ -5,10 +5,10 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI.Components
 {
-	using Properties;
 	using System;
 	using System.Drawing;
 	using System.Windows.Forms;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Button class to support skinning and scaling of the fonts.
