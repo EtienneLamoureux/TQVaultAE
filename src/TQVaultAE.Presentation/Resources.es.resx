@@ -987,12 +987,6 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
     <value>Almacén de Reliquias</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="CharacterClass" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Txt\CharacterClass.es.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="CharacterInfoDisplay" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Txt\CharacterInfoDisplay.es.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Permitir características de edición de caracteres</value>
   </data>
@@ -1050,4 +1044,87 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
   <data name="CharacterEditBtn" xml:space="preserve">
     <value>Editar</value>
   </data>
+
+  <data name="tagCClass01" xml:space="preserve"><value>Teurgista</value></data>
+  <data name="tagCClass02" xml:space="preserve"><value>Vagabundo</value></data>
+  <data name="tagCClass03" xml:space="preserve"><value>Pícaro</value></data>
+  <data name="tagCClass04" xml:space="preserve"><value>Cazador</value></data>
+  <data name="tagCClass05" xml:space="preserve"><value>Stormcaller</value></data>
+  <data name="tagCClass06" xml:space="preserve"><value>Piromante</value></data>
+  <data name="tagCClass07" xml:space="preserve"><value>Defensor</value></data>
+  <data name="tagCClass08" xml:space="preserve"><value>Guerrero</value></data>
+  <data name="tagCClass09" xml:space="preserve"><value>Rompehechizos</value></data>
+  <data name="tagCClass10" xml:space="preserve"><value>Campeón</value></data>
+  <data name="tagCClass11" xml:space="preserve"><value>Asesino</value></data>
+  <data name="tagCClass12" xml:space="preserve"><value>Asesino</value></data>
+  <data name="tagCClass13" xml:space="preserve"><value>Thane</value></data>
+  <data name="tagCClass14" xml:space="preserve"><value>Mago de batalla</value></data>
+  <data name="tagCClass15" xml:space="preserve"><value>Conquistador</value></data>
+  <data name="tagCClass16" xml:space="preserve"><value>Orador fascinante</value></data>
+  <data name="tagCClass17" xml:space="preserve"><value>guardián</value></data>
+  <data name="tagCClass18" xml:space="preserve"><value>Corsario</value></data>
+  <data name="tagCClass19" xml:space="preserve"><value>Guardián</value></data>
+  <data name="tagCClass20" xml:space="preserve"><value>Paladín</value></data>
+  <data name="tagCClass21" xml:space="preserve"><value>Juggernaut</value></data>
+  <data name="tagCClass22" xml:space="preserve"><value>Prestidigitador</value></data>
+  <data name="tagCClass23" xml:space="preserve"><value>Invocador</value></data>
+  <data name="tagCClass24" xml:space="preserve"><value>Mago</value></data>
+  <data name="tagCClass25" xml:space="preserve"><value>Vengador</value></data>
+  <data name="tagCClass26" xml:space="preserve"><value>Elementalista</value></data>
+  <data name="tagCClass27" xml:space="preserve"><value>Oráculo</value></data>
+  <data name="tagCClass28" xml:space="preserve"><value>druida</value></data>
+  <data name="tagCClass29" xml:space="preserve"><value>Hechicero</value></data>
+  <data name="tagCClass30" xml:space="preserve"><value>Sabio</value></data>
+  <data name="tagCClass31" xml:space="preserve"><value>Encantador de huesos</value></data>
+  <data name="tagCClass32" xml:space="preserve"><value>guardabosque</value></data>
+  <data name="tagCClass33" xml:space="preserve"><value>Bandido</value></data>
+  <data name="tagCClass34" xml:space="preserve"><value>Brujo</value></data>
+  <data name="tagCClass35" xml:space="preserve"><value>Ilusionista</value></data>
+  <data name="tagCClass36" xml:space="preserve"><value>Adivino</value></data>
+  <data name="xtagCharacterClass01" xml:space="preserve"><value>Vidente</value></data>
+  <data name="xtagCharacterClass02" xml:space="preserve"><value>Presagio</value></data>
+  <data name="xtagCharacterClass03" xml:space="preserve"><value>Templario</value></data>
+  <data name="xtagCharacterClass04" xml:space="preserve"><value>Evoker</value></data>
+  <data name="xtagCharacterClass05" xml:space="preserve"><value>Profeta</value></data>
+  <data name="xtagCharacterClass06" xml:space="preserve"><value>Aruspex</value></data>
+  <data name="xtagCharacterClass07" xml:space="preserve"><value>Asesino de sueños</value></data>
+  <data name="xtagCharacterClass08" xml:space="preserve"><value>Ritualista</value></data>
+  <data name="xtagCharacterClass09" xml:space="preserve"><value>Adivino</value></data>
+  <data name="x2tag_class_rm_rm" xml:space="preserve"><value>Runemaster</value></data>
+  <data name="x2tag_class_warfare_rm" xml:space="preserve"><value>frenético</value></data>
+  <data name="x2tag_class_defense_rm" xml:space="preserve"><value>Runesmith</value></data>
+  <data name="x2tag_class_earth_rm" xml:space="preserve"><value>Hablador de piedras</value></data>
+  <data name="x2tag_class_storm_rm" xml:space="preserve"><value>Trueno</value></data>
+  <data name="x2tag_class_hunting_rm" xml:space="preserve"><value>Cazador de Dragon</value></data>
+  <data name="x2tag_class_stealth_rm" xml:space="preserve"><value>Embaucador</value></data>
+  <data name="x2tag_class_nature_rm" xml:space="preserve"><value>Skinchanger</value></data>
+  <data name="x2tag_class_spirit_rm" xml:space="preserve"><value>Chamán</value></data>
+  <data name="x2tag_class_dream_rm" xml:space="preserve"><value>Trabajador seidr</value></data>
+
+  <data name="CurrentLevel" xml:space="preserve"><value>Nivel</value></data>
+  <data name="Class" xml:space="preserve"><value>Clase</value></data>
+  <data name="CurrentXP" xml:space="preserve"><value>XP</value></data>
+  <data name="DifficultyUnlocked" xml:space="preserve"><value>Dificultad</value></data>
+  <data name="Money" xml:space="preserve"><value>Dinero</value></data>
+  <data name="SkillPoints" xml:space="preserve"><value>Habilidades</value></data>
+  <data name="AttributesPoints" xml:space="preserve"><value>Puntos de atributo</value></data>
+  <data name="BaseStrength" xml:space="preserve"><value>Base Str</value></data>
+  <data name="BaseDexterity" xml:space="preserve"><value>Base Dex</value></data>
+  <data name="BaseIntelligence" xml:space="preserve"><value>Base Int</value></data>
+  <data name="BaseHealth" xml:space="preserve"><value>Base de Salud</value></data>
+  <data name="BaseMana" xml:space="preserve"><value>Base Mana</value></data>
+  <data name="PlayTimeInSeconds" xml:space="preserve"><value>Tiempo jugado</value></data>
+  <data name="NumberOfDeaths" xml:space="preserve"><value>Muertes</value></data>
+  <data name="NumberOfKills" xml:space="preserve"><value>Mata</value></data>
+  <data name="ExperienceFromKills" xml:space="preserve"><value>XP de muertes</value></data>
+  <data name="HealthPotionsUsed" xml:space="preserve"><value>Ollas de salud</value></data>
+  <data name="ManaPotionsUsed" xml:space="preserve"><value>Macetas De Maná</value></data>
+  <data name="MaxLevel" xml:space="preserve"><value>Máximo nivel</value></data>
+  <data name="NumHitsReceived" xml:space="preserve"><value>Hits Recv</value></data>
+  <data name="NumHitsInflicted" xml:space="preserve"><value>Golpes infligidos</value></data>
+  <data name="GreatestDamageInflicted" xml:space="preserve"><value>Mayor dmg</value></data>
+  <data name="GreatestMonster" xml:space="preserve"><value>La mafia mas grande</value></data>
+  <data name="CriticalHitsInflicted" xml:space="preserve"><value>Golpes críticos</value></data>
+  <data name="CriticalHitsReceived" xml:space="preserve"><value>Críticas tomadas</value></data>
+
 </root>
