@@ -11,22 +11,22 @@ namespace TQVaultAE.Presentation
 	{
 		public static IAddFontToOS FontLoader { get; set; }
 
-		private static FontFamily _FONT_ALBERTUSMT = null;
+		private static FontFamily _FONT_ALBERTUSMT = new FontFamily("Albertus MT");
 		internal static FontFamily FONT_ALBERTUSMT
 		{
 			get
 			{
-				if (_FONT_ALBERTUSMT is null) _FONT_ALBERTUSMT = FontLoader.AddFontToOS(Resources.AlbertusMT);
+				if (FontLoader != null) _FONT_ALBERTUSMT = FontLoader.AddFontToOS(Resources.AlbertusMT);// Runtime
 				return _FONT_ALBERTUSMT;
 			}
 		}
 
-		private static FontFamily _FONT_ALBERTUSMTLIGHT = null;
+		private static FontFamily _FONT_ALBERTUSMTLIGHT = new FontFamily("Albertus MT Light");
 		internal static FontFamily FONT_ALBERTUSMTLIGHT
 		{
 			get
 			{
-				if (_FONT_ALBERTUSMTLIGHT is null) _FONT_ALBERTUSMTLIGHT = FontLoader.AddFontToOS(Resources.AlbertusMTLight);
+				if (FontLoader != null) _FONT_ALBERTUSMTLIGHT = FontLoader.AddFontToOS(Resources.AlbertusMTLight);// Runtime
 				return _FONT_ALBERTUSMTLIGHT;
 			}
 		}
