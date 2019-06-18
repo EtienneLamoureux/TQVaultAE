@@ -18,12 +18,6 @@ namespace TQVaultAE.GUI.Models
 	public class PlayerInfoDisplay
 	{
 
-		private struct LabelData
-		{
-			public string Text;
-			public int Handler;
-		}
-
 		private double _startX = 0;
 		private double _startY = 0;
 		private Font _font;
@@ -31,9 +25,6 @@ namespace TQVaultAE.GUI.Models
 		private SolidBrush _whiteBrush = new SolidBrush(Color.White);
 		private SolidBrush _yellowGreenBrush = new SolidBrush(Color.YellowGreen);
 
-		static Dictionary<string, LabelData> _labelKey = new Dictionary<string, LabelData>
-		{
-		};
 		private RectangleF _editButton = new RectangleF(10, 100, 30, 20);
 		private static Brush _editNoHighlight = new SolidBrush(Color.FromArgb(0x52, 0x38, 0x12));
 		private Brush _editBckgrnd = _editNoHighlight;
@@ -61,59 +52,7 @@ namespace TQVaultAE.GUI.Models
 			_editTextAlignment.Alignment = StringAlignment.Center;
 			_editTextAlignment.LineAlignment = StringAlignment.Center;
 
-
-			// load titan quest class names, should be language specific.
-			PlayerClass.LoadClassDataFile(Resources.CharacterClass);
-			// load labels used to display character information, should be language specific
-			LoadCharacterLabelFile(Resources.CharacterInfoDisplay);
-
 		}
-
-
-		private static void LoadCharacterLabelFile(string fileContents)
-		{
-			using (var sr = new StringReader(fileContents))
-			{
-				var data = sr.ReadLine();
-				while (data != null)
-				{
-					var content = data.Split('=');
-					if (content != null && content.Length > 1)
-					{
-						if (!_labelKey.ContainsKey(content[0]))
-						{
-							switch (content[0].ToUpper()) {
-								case "GREATESTDAMAGEINFLICTED":
-								case "GREATESTMONSTER":
-								case "MAXLEVEL":
-									//ignore for now
-									break;
-								case "CLASS":
-									_labelKey.Add(
-										content[0],
-										new LabelData() { Text = content[1], Handler = 2 }
-									); ;
-									break;
-								case "DIFFICULTYUNLOCKED":
-									_labelKey.Add(
-										content[0],
-										new LabelData() { Text = content[1], Handler = 1 }
-									); ;
-									break;
-								default:
-									_labelKey.Add(
-										content[0],
-										new LabelData() { Text = content[1], Handler=0 }
-									); ;
-									break;
-						    }
-						}
-					}
-					data = sr.ReadLine();
-				}
-			}
-		}
-
 
 		/// <summary>
 		/// updates font being used, needed if window is resized
@@ -243,14 +182,13 @@ namespace TQVaultAE.GUI.Models
 		{
 			if (playerInfo == null) return;
 
-			//test(e, rect);
-
 			var startTextX = Convert.ToSingle(rect.Right * _startX);
 			var startTextY = Convert.ToSingle(rect.Bottom * _startY);
 
+			#region display character edit button
+
 			if (_settings.AllowCharacterEdit)
 			{
-				//display character edit button
 				var editSize = e.Graphics.MeasureString(Resources.CharacterEditBtn, _font);
 				_editButton.X = startTextX;
 				_editButton.Y = startTextY;
@@ -267,42 +205,39 @@ namespace TQVaultAE.GUI.Models
 				startTextY = startTextY + _editButton.Height + 3;
 			}
 
-			//converts playerinfo to xml so it can be bound to Resource data file CharacterInfoDispaly.txt
-			//Order of data displayed is controlled by order of the CharacterInfoDispaly.txt resource file.
-			var playerXml = playerInfo.ToXElement<PlayerInfo>();
+			#endregion
 
-			foreach (var labelKey in _labelKey.Keys)
+			printData(Resources.CurrentLevel, playerInfo.CurrentLevel);
+			printData(Resources.Class, Resources.ResourceManager.GetString(playerInfo.Class));
+			printData(Resources.CurrentXP, playerInfo.CurrentXP);
+			printData(Resources.DifficultyUnlocked, GetDifficultyDisplayName(playerInfo.DifficultyUnlocked));
+			printData(Resources.Money, playerInfo.Money);
+			printData(Resources.SkillPoints, playerInfo.SkillPoints);
+			printData(Resources.AttributesPoints, playerInfo.AttributesPoints);
+			printData(Resources.BaseStrength, playerInfo.BaseStrength);
+			printData(Resources.BaseDexterity, playerInfo.BaseDexterity);
+			printData(Resources.BaseIntelligence, playerInfo.BaseIntelligence);
+			printData(Resources.BaseHealth, playerInfo.BaseHealth);
+			printData(Resources.BaseMana, playerInfo.BaseMana);
+			printData(Resources.PlayTimeInSeconds, playerInfo.PlayTimeInSeconds);
+			printData(Resources.NumberOfDeaths, playerInfo.NumberOfDeaths);
+			printData(Resources.NumberOfKills, playerInfo.NumberOfKills);
+			printData(Resources.ExperienceFromKills, playerInfo.ExperienceFromKills);
+			printData(Resources.HealthPotionsUsed, playerInfo.HealthPotionsUsed);
+			printData(Resources.ManaPotionsUsed, playerInfo.ManaPotionsUsed);
+			printData(Resources.NumHitsReceived, playerInfo.NumHitsReceived);
+			printData(Resources.NumHitsInflicted, playerInfo.NumHitsInflicted);
+			printData(Resources.CriticalHitsInflicted, playerInfo.CriticalHitsInflicted);
+			printData(Resources.CriticalHitsReceived, playerInfo.CriticalHitsReceived);
+
+			void printData(string label, object data) // Local function
 			{
-				var elm = playerXml.Element(labelKey);
-				if (elm != null)
-				{
-					var label = _labelKey[labelKey];
-					var value = "";
-					switch (label.Handler)
-					{
-						case 1:
-							value = string.Format("{0}", GetDifficultyDisplayName(int.Parse(elm.Value)));
-							break;
-						case 2:
-							value = string.Format("{0}", PlayerClass.GetClassDisplayName(elm.Value));
-							break;
-						default:
-							value = string.Format("{0}", elm.Value);
-							break;
-					}
-					//label.Text should be language specific
-					printData(e, string.Format("{0}:", label.Text), value, startTextX, startTextY);
-					startTextY = startTextY + _font.Height;
-				}
+				label = string.Format("{0}:", label);
+				e.Graphics.DrawString(label, _font, _whiteBrush, startTextX, startTextY, _playerInfoAlignment);
+				e.Graphics.DrawString(data.ToString(), _font, _yellowGreenBrush, startTextX, startTextY);
+				startTextY = startTextY + _font.Height;
 			}
 		}
-
-		private void printData(PaintEventArgs e, string label, string data, float x, float y)
-		{
-			e.Graphics.DrawString(label, _font, _whiteBrush, x, y, _playerInfoAlignment);
-			e.Graphics.DrawString(data, _font, _yellowGreenBrush, x, y);
-		}
-
 
 	}
 }
