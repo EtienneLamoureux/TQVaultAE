@@ -377,6 +377,7 @@
     <Compile Include="Components\EquipmentPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Services\AddFontToOSWin.cs" />
     <Compile Include="Services\GamePathResolverWin.cs" />
     <Compile Include="SplashScreenForm.cs">
       <SubType>Form</SubType>
