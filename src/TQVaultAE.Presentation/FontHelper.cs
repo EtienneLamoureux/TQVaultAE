@@ -9,27 +9,14 @@ namespace TQVaultAE.Presentation
 {
 	public static class FontHelper
 	{
-		private static PrivateFontCollection privateFontCollection = new PrivateFontCollection();
-
-		private static FontFamily initCustomFont(byte[] fontData)
-		{
-			unsafe
-			{
-				fixed (byte* pinptr = fontData)
-				{
-					IntPtr ptr = (IntPtr)pinptr;
-					privateFontCollection.AddMemoryFont(ptr, fontData.Length);
-				}
-			}
-			return privateFontCollection.Families.Last();
-		}
+		public static IAddFontToOS FontLoader { get; set; }
 
 		private static FontFamily _FONT_ALBERTUSMT = null;
 		internal static FontFamily FONT_ALBERTUSMT
 		{
 			get
 			{
-				if (_FONT_ALBERTUSMT is null) _FONT_ALBERTUSMT = initCustomFont(Resources.AlbertusMT);
+				if (_FONT_ALBERTUSMT is null) _FONT_ALBERTUSMT = FontLoader.AddFontToOS(Resources.AlbertusMT);
 				return _FONT_ALBERTUSMT;
 			}
 		}
@@ -39,7 +26,7 @@ namespace TQVaultAE.Presentation
 		{
 			get
 			{
-				if (_FONT_ALBERTUSMTLIGHT is null) _FONT_ALBERTUSMTLIGHT = initCustomFont(Resources.AlbertusMTLight);
+				if (_FONT_ALBERTUSMTLIGHT is null) _FONT_ALBERTUSMTLIGHT = FontLoader.AddFontToOS(Resources.AlbertusMTLight);
 				return _FONT_ALBERTUSMTLIGHT;
 			}
 		}
