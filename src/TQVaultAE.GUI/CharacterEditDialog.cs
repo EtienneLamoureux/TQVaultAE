@@ -1,11 +1,11 @@
 namespace TQVaultAE.GUI
 {
-	using Properties;
 	using System;
 	using System.Globalization;
 	using System.Windows.Forms;
 	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Dialog box class for the Item Seed Dialog
@@ -42,9 +42,9 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.ok.Font = Program.GetFontAlbertusMTLight(12F);
-			this.cancel.Font = Program.GetFontAlbertusMTLight(12F);
-			this.Font = Program.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.ok.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.cancel.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.Font = FontHelper.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
 			#endregion
 

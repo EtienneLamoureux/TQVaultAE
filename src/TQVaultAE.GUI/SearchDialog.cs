@@ -5,9 +5,9 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
-	using Properties;
 	using System;
 	using System.Windows.Forms;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Class for the Search Dialog box.
@@ -23,11 +23,11 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.searchLabel.Font = Program.GetFontAlbertusMT(9F);
-			this.searchTextBox.Font = Program.GetFontAlbertusMT(9F);
-			this.findButton.Font = Program.GetFontAlbertusMTLight(12F);
-			this.cancelButton.Font = Program.GetFontAlbertusMTLight(12F);
-			this.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
+			this.searchLabel.Font = FontHelper.GetFontAlbertusMT(9F);
+			this.searchTextBox.Font = FontHelper.GetFontAlbertusMT(9F);
+			this.findButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.cancelButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
 
 			#endregion
 

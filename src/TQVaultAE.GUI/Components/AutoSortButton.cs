@@ -5,10 +5,10 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI.Components
 {
-	using Properties;
 	using System;
 	using System.Windows.Forms;
 	using TQVaultAE.Data;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Displays and handles the auto sort button.

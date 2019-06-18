@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
-	using Properties;
 	using System;
 	using System.Drawing;
 	using System.Globalization;
@@ -13,6 +12,7 @@ namespace TQVaultAE.GUI
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Data;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Class for the Settings/Configuration Dialog
@@ -153,34 +153,34 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.allowItemEditCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.allowItemCopyCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.skipTitleCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.loadLastCharacterCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.loadLastVaultCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.vaultPathTextBox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.vaultPathLabel.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.cancelButton.Font = Program.GetFontAlbertusMTLight(12F);
-			this.okayButton.Font = Program.GetFontAlbertusMTLight(12F);
-			this.resetButton.Font = Program.GetFontAlbertusMTLight(12F);
-			this.vaultPathBrowseButton.Font = Program.GetFontAlbertusMTLight(12F);
-			this.enableCustomMapsCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.loadAllFilesCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.suppressWarningsCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.playerReadonlyCheckbox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.languageComboBox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.languageLabel.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.detectLanguageCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.titanQuestPathTextBox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.titanQuestPathLabel.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.immortalThronePathLabel.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.immortalThronePathTextBox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.detectGamePathsCheckBox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.titanQuestPathBrowseButton.Font = Program.GetFontAlbertusMTLight(12F);
-			this.immortalThronePathBrowseButton.Font = Program.GetFontAlbertusMTLight(12F);
-			this.customMapLabel.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.mapListComboBox.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.Font = Program.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
+			this.allowItemEditCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.allowItemCopyCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.skipTitleCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.loadLastCharacterCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.loadLastVaultCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.vaultPathTextBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.vaultPathLabel.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.cancelButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.okayButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.resetButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.vaultPathBrowseButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.enableCustomMapsCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.loadAllFilesCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.suppressWarningsCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.playerReadonlyCheckbox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.languageComboBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.languageLabel.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.detectLanguageCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.titanQuestPathTextBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.titanQuestPathLabel.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.immortalThronePathLabel.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.immortalThronePathTextBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.detectGamePathsCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.titanQuestPathBrowseButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.immortalThronePathBrowseButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.customMapLabel.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.mapListComboBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.Font = FontHelper.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
 
 			#endregion
 

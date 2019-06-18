@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
-	using Properties;
 	using System;
 	using System.Drawing;
 	using System.Globalization;
@@ -14,6 +13,7 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.GUI.Components;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Data;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Abstract class used for constructing TQVault themed forms.
@@ -126,7 +126,7 @@ namespace TQVaultAE.GUI
 			this.bottomRightCorner = Resources.BorderBottomRightCorner;
 			this.bottomLeftCorner = Resources.BorderBottomLeftCorner;
 			this.ShowResizeBorders = false;
-			this.titleFont = Program.GetFontAlbertusMTLight(9.5F);
+			this.titleFont = FontHelper.GetFontAlbertusMTLight(9.5F);
 			this.TitleTextColor = SystemColors.ControlText;
 
 			this.InitializeComponent();
@@ -160,13 +160,11 @@ namespace TQVaultAE.GUI
 
 		protected Size ScaleSize(Size size)
 		{
-			if (Database.DB == null) return size;
 			return new Size((int)System.Math.Round(size.Width * Database.DB.Scale), (int)System.Math.Round(size.Height * Database.DB.Scale));
 		}
 
 		protected Point ScalePoint(Point point)
 		{
-			if (Database.DB == null) return point;
 			return new Point((int)System.Math.Round(point.X * Database.DB.Scale), (int)System.Math.Round(point.Y * Database.DB.Scale));
 		}
 
