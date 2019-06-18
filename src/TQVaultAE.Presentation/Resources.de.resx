@@ -993,12 +993,6 @@ Hier ist ein komplexes Beispiel: 'arctic &amp; frost @schwert $ episch | selten'
     <value>Reliktgewölbe</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="CharacterClass" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Txt\CharacterClass.de.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="CharacterInfoDisplay" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Txt\CharacterInfoDisplay.de.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Zeichenbearbeitungsfunktionen zulassen</value>
   </data>
@@ -1056,4 +1050,87 @@ Hier ist ein komplexes Beispiel: 'arctic &amp; frost @schwert $ episch | selten'
   <data name="CharacterEditBtn" xml:space="preserve">
     <value>Bearbeiten</value>
   </data>
+  
+  <data name="tagCClass01" xml:space="preserve"><value>Theurgist</value></data>
+  <data name="tagCClass02" xml:space="preserve"><value>Wanderer</value></data>
+  <data name="tagCClass03" xml:space="preserve"><value>Schurke</value></data>
+  <data name="tagCClass04" xml:space="preserve"><value>Jäger</value></data>
+  <data name="tagCClass05" xml:space="preserve"><value>Sturmrufer</value></data>
+  <data name="tagCClass06" xml:space="preserve"><value>Pyromant</value></data>
+  <data name="tagCClass07" xml:space="preserve"><value>Verteidiger</value></data>
+  <data name="tagCClass08" xml:space="preserve"><value>Krieger</value></data>
+  <data name="tagCClass09" xml:space="preserve"><value>Zauberbrecher</value></data>
+  <data name="tagCClass10" xml:space="preserve"><value>Champion</value></data>
+  <data name="tagCClass11" xml:space="preserve"><value>Attentäter</value></data>
+  <data name="tagCClass12" xml:space="preserve"><value>Jägerin</value></data>
+  <data name="tagCClass13" xml:space="preserve"><value>Thane</value></data>
+  <data name="tagCClass14" xml:space="preserve"><value>Kampfmagier</value></data>
+  <data name="tagCClass15" xml:space="preserve"><value>Eroberer</value></data>
+  <data name="tagCClass16" xml:space="preserve"><value>Zauberbinder</value></data>
+  <data name="tagCClass17" xml:space="preserve"><value>Wächter</value></data>
+  <data name="tagCClass18" xml:space="preserve"><value>Korsar</value></data>
+  <data name="tagCClass19" xml:space="preserve"><value>Aufseher</value></data>
+  <data name="tagCClass20" xml:space="preserve"><value>Paladin</value></data>
+  <data name="tagCClass21" xml:space="preserve"><value>Moloch</value></data>
+  <data name="tagCClass22" xml:space="preserve"><value>Zauberkünstler</value></data>
+  <data name="tagCClass23" xml:space="preserve"><value>Beschwörer</value></data>
+  <data name="tagCClass24" xml:space="preserve"><value>Zauberer</value></data>
+  <data name="tagCClass25" xml:space="preserve"><value>Rächer</value></data>
+  <data name="tagCClass26" xml:space="preserve"><value>Elementalist</value></data>
+  <data name="tagCClass27" xml:space="preserve"><value>Orakel</value></data>
+  <data name="tagCClass28" xml:space="preserve"><value>Druide</value></data>
+  <data name="tagCClass29" xml:space="preserve"><value>Zauberer</value></data>
+  <data name="tagCClass30" xml:space="preserve"><value>Salbei</value></data>
+  <data name="tagCClass31" xml:space="preserve"><value>Knochenbeschwörer</value></data>
+  <data name="tagCClass32" xml:space="preserve"><value>Ranger</value></data>
+  <data name="tagCClass33" xml:space="preserve"><value>Räuber</value></data>
+  <data name="tagCClass34" xml:space="preserve"><value>Hexenmeister</value></data>
+  <data name="tagCClass35" xml:space="preserve"><value>Illusionist</value></data>
+  <data name="tagCClass36" xml:space="preserve"><value>Wahrsager</value></data>
+  <data name="xtagCharacterClass01" xml:space="preserve"><value>Seher</value></data>
+  <data name="xtagCharacterClass02" xml:space="preserve"><value>Vorbote</value></data>
+  <data name="xtagCharacterClass03" xml:space="preserve"><value>Templer</value></data>
+  <data name="xtagCharacterClass04" xml:space="preserve"><value>Evoker</value></data>
+  <data name="xtagCharacterClass05" xml:space="preserve"><value>Prophet</value></data>
+  <data name="xtagCharacterClass06" xml:space="preserve"><value>Haruspex</value></data>
+  <data name="xtagCharacterClass07" xml:space="preserve"><value>Traumtöter</value></data>
+  <data name="xtagCharacterClass08" xml:space="preserve"><value>Ritualist</value></data>
+  <data name="xtagCharacterClass09" xml:space="preserve"><value>Wahrsager</value></data>
+  <data name="x2tag_class_rm_rm" xml:space="preserve"><value>Runenmeister</value></data>
+  <data name="x2tag_class_warfare_rm" xml:space="preserve"><value>Berserker</value></data>
+  <data name="x2tag_class_defense_rm" xml:space="preserve"><value>Runenschmied</value></data>
+  <data name="x2tag_class_earth_rm" xml:space="preserve"><value>Steinsprecher</value></data>
+  <data name="x2tag_class_storm_rm" xml:space="preserve"><value>Donnerer</value></data>
+  <data name="x2tag_class_hunting_rm" xml:space="preserve"><value>Drachenjäger</value></data>
+  <data name="x2tag_class_stealth_rm" xml:space="preserve"><value>Betrüger</value></data>
+  <data name="x2tag_class_nature_rm" xml:space="preserve"><value>Hautwechsler</value></data>
+  <data name="x2tag_class_spirit_rm" xml:space="preserve"><value>Schamane</value></data>
+  <data name="x2tag_class_dream_rm" xml:space="preserve"><value>Seidr Arbeiter</value></data>
+
+  <data name="CurrentLevel" xml:space="preserve"><value>Niveau</value></data>
+  <data name="Class" xml:space="preserve"><value>Klasse</value></data>
+  <data name="CurrentXP" xml:space="preserve"><value>XP</value></data>
+  <data name="DifficultyUnlocked" xml:space="preserve"><value>Schwierigkeit</value></data>
+  <data name="Money" xml:space="preserve"><value>Geld</value></data>
+  <data name="SkillPoints" xml:space="preserve"><value>Erfahrungspunkte</value></data>
+  <data name="AttributesPoints" xml:space="preserve"><value>Attributpunkte</value></data>
+  <data name="BaseStrength" xml:space="preserve"><value>Basisstr</value></data>
+  <data name="BaseDexterity" xml:space="preserve"><value>Base Dex</value></data>
+  <data name="BaseIntelligence" xml:space="preserve"><value>Base Int</value></data>
+  <data name="BaseHealth" xml:space="preserve"><value>Basiszustand</value></data>
+  <data name="BaseMana" xml:space="preserve"><value>Basis Mana</value></data>
+  <data name="PlayTimeInSeconds" xml:space="preserve"><value>Spielzeit</value></data>
+  <data name="NumberOfDeaths" xml:space="preserve"><value>Todesfälle</value></data>
+  <data name="NumberOfKills" xml:space="preserve"><value>Tötet</value></data>
+  <data name="ExperienceFromKills" xml:space="preserve"><value>XP von Kills</value></data>
+  <data name="HealthPotionsUsed" xml:space="preserve"><value>Gesundheitstöpfe</value></data>
+  <data name="ManaPotionsUsed" xml:space="preserve"><value>Mana Pots</value></data>
+  <data name="MaxLevel" xml:space="preserve"><value>Maximales Level</value></data>
+  <data name="NumHitsReceived" xml:space="preserve"><value>Hits Recv</value></data>
+  <data name="NumHitsInflicted" xml:space="preserve"><value>Treffer zugefügt</value></data>
+  <data name="GreatestDamageInflicted" xml:space="preserve"><value>Größtes Dmg</value></data>
+  <data name="GreatestMonster" xml:space="preserve"><value>Größter Mob</value></data>
+  <data name="CriticalHitsInflicted" xml:space="preserve"><value>Kritische Treffer</value></data>
+  <data name="CriticalHitsReceived" xml:space="preserve"><value>Kritische Treffer</value></data>
+
 </root>
