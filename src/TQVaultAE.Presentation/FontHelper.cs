@@ -12,6 +12,9 @@ namespace TQVaultAE.Presentation
 	{
 		public static IAddFontToOS FontLoader { get; set; }
 
+		private const string ALBERTUSMT_NAME = "Albertus MT";
+		private const string ALBERTUSMTLIGHT_NAME = "Albertus MT Light";
+
 		private static FontFamily _FONT_ALBERTUSMT = null;
 		internal static FontFamily FONT_ALBERTUSMT
 		{
@@ -20,7 +23,7 @@ namespace TQVaultAE.Presentation
 				if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
 				{
 					// Code here won't run in Visual Studio designer
-					if (FontLoader != null && _FONT_ALBERTUSMT is null) _FONT_ALBERTUSMT = FontLoader.AddFontToOS(Resources.AlbertusMT);// Runtime
+					if (FontLoader != null && _FONT_ALBERTUSMT is null) _FONT_ALBERTUSMT = FontLoader.AddFontToOS(ALBERTUSMT_NAME, Resources.AlbertusMT);// Runtime
 				}
 				else
 				{
@@ -29,7 +32,7 @@ namespace TQVaultAE.Presentation
 					{
 						try
 						{
-							_FONT_ALBERTUSMT = new FontFamily("Albertus MT");
+							_FONT_ALBERTUSMT = new FontFamily(ALBERTUSMT_NAME);
 						}
 						catch
 						{ // fallback to Safe font
@@ -49,7 +52,7 @@ namespace TQVaultAE.Presentation
 				if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
 				{
 					// Code here won't run in Visual Studio designer
-					if (FontLoader != null && _FONT_ALBERTUSMTLIGHT is null) _FONT_ALBERTUSMTLIGHT = FontLoader.AddFontToOS(Resources.AlbertusMTLight);// Runtime
+					if (FontLoader != null && _FONT_ALBERTUSMTLIGHT is null) _FONT_ALBERTUSMTLIGHT = FontLoader.AddFontToOS(ALBERTUSMTLIGHT_NAME, Resources.AlbertusMTLight);// Runtime
 				}
 				else
 				{
@@ -58,7 +61,7 @@ namespace TQVaultAE.Presentation
 					{
 						try
 						{
-							_FONT_ALBERTUSMTLIGHT = new FontFamily("Albertus MT Light");
+							_FONT_ALBERTUSMTLIGHT = new FontFamily(ALBERTUSMTLIGHT_NAME);
 						}
 						catch
 						{ // fallback to Safe font

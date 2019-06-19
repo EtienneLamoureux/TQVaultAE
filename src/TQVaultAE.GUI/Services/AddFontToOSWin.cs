@@ -27,7 +27,7 @@ namespace TQVaultAE.GUI.Services
 		[System.Runtime.InteropServices.DllImport("gdi32.dll")]
 		private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [System.Runtime.InteropServices.In] ref uint pcFonts);
 
-		public FontFamily AddFontToOS(byte[] fontData)
+		public FontFamily AddFontToOS(string fontName, byte[] fontData)
 		{
 			uint r = 0;
 			unsafe
@@ -39,7 +39,7 @@ namespace TQVaultAE.GUI.Services
 					privateFontCollection.AddMemoryFont(ptr, fontData.Length);
 				}
 			}
-			return privateFontCollection.Families.Last();
+			return privateFontCollection.Families.First(f => f.Name == fontName);
 		}
 	}
 }
