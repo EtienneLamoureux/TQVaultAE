@@ -55,6 +55,18 @@ namespace TQVaultAE.Presentation
 		}
 
 		/// <summary>
+		/// Gets the UI design DPI which is used to for scaling comparisons.
+		/// </summary>
+		public static float DesignDpi
+		{
+			get
+			{
+				// Use 96 DPI which is "normal" for Windows.
+				return 96.0F;
+			}
+		}
+
+		/// <summary>
 		/// Gets the item unit size which is the unit of measure of item size in TQ.
 		/// An item with a ItemUnitSize x ItemUnitSize bitmap would be 1x1.
 		/// Internally scaled by db scale.

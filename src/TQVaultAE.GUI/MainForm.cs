@@ -619,11 +619,11 @@ namespace TQVaultAE.GUI
 			this.OriginalFormSize = this.Size;
 			this.OriginalFormScale = Config.Settings.Default.Scale;
 
-			if (CurrentAutoScaleDimensions.Width != Database.DesignDpi)
+			if (CurrentAutoScaleDimensions.Width != UIService.DesignDpi)
 			{
 				// We do not need to scale the main form controls since autoscaling will handle it.
 				// Scale internally to 96 dpi for the drawing functions.
-				UIService.UI.Scale = this.CurrentAutoScaleDimensions.Width / Database.DesignDpi;
+				UIService.UI.Scale = this.CurrentAutoScaleDimensions.Width / UIService.DesignDpi;
 				this.OriginalFormScale = UIService.UI.Scale;
 			}
 
