@@ -10,6 +10,6 @@ namespace TQVaultAE.Presentation
 	/// </summary>
 	public interface IAddFontToOS
 	{
-		FontFamily AddFontToOS(byte[] fontData);
+		FontFamily AddFontToOS(string fontName, byte[] fontData);
 	}
 }
