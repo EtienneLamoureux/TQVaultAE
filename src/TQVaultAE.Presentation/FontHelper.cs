@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
@@ -11,22 +12,61 @@ namespace TQVaultAE.Presentation
 	{
 		public static IAddFontToOS FontLoader { get; set; }
 
-		private static FontFamily _FONT_ALBERTUSMT = new FontFamily("Albertus MT");
+		private static FontFamily _FONT_ALBERTUSMT = null;
 		internal static FontFamily FONT_ALBERTUSMT
 		{
 			get
 			{
-				if (FontLoader != null) _FONT_ALBERTUSMT = FontLoader.AddFontToOS(Resources.AlbertusMT);// Runtime
+				if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
+				{
+					// Code here won't run in Visual Studio designer
+					if (FontLoader != null && _FONT_ALBERTUSMT is null) _FONT_ALBERTUSMT = FontLoader.AddFontToOS(Resources.AlbertusMT);// Runtime
+				}
+				else
+				{
+					// Design time
+					if (_FONT_ALBERTUSMT is null)
+					{
+						try
+						{
+							_FONT_ALBERTUSMT = new FontFamily("Albertus MT");
+						}
+						catch
+						{ // fallback to Safe font
+							_FONT_ALBERTUSMT = new FontFamily("Times New Roman");
+						}
+					}
+				}
 				return _FONT_ALBERTUSMT;
 			}
 		}
 
-		private static FontFamily _FONT_ALBERTUSMTLIGHT = new FontFamily("Albertus MT Light");
+		private static FontFamily _FONT_ALBERTUSMTLIGHT = null;
 		internal static FontFamily FONT_ALBERTUSMTLIGHT
 		{
 			get
 			{
-				if (FontLoader != null) _FONT_ALBERTUSMTLIGHT = FontLoader.AddFontToOS(Resources.AlbertusMTLight);// Runtime
+				if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
+				{
+					// Code here won't run in Visual Studio designer
+					if (FontLoader != null && _FONT_ALBERTUSMTLIGHT is null) _FONT_ALBERTUSMTLIGHT = FontLoader.AddFontToOS(Resources.AlbertusMTLight);// Runtime
+				}
+				else
+				{
+					// Design time
+					if (_FONT_ALBERTUSMTLIGHT is null)
+					{
+						try
+						{
+							_FONT_ALBERTUSMTLIGHT = new FontFamily("Albertus MT Light");
+						}
+						catch
+						{ // fallback to Safe font
+							_FONT_ALBERTUSMTLIGHT = new FontFamily("Times New Roman");
+						}
+					}
+				}
+
 				return _FONT_ALBERTUSMTLIGHT;
 			}
 		}
