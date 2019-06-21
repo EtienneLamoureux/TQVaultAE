@@ -8,6 +8,7 @@ namespace TQVaultAE.Presentation
 	using System;
 	using System.Drawing;
 	using System.IO;
+	using TQVaultAE.Logs;
 
 	/// <summary>
 	/// Loads Titan Quest textures and converts them into bitmaps.
@@ -44,12 +45,14 @@ namespace TQVaultAE.Presentation
 
 			if (data.Length < 12)
 			{
-				throw new InvalidDataException("TEX is not long enough to be valid.");
+				Logger.Log.Error("TEX is not long enough to be valid.");
+				return null;
 			}
 
 			if (BitConverter.ToUInt32(data, offset) != 0x01584554)
 			{
-				throw new InvalidDataException("TEX magic is invalid.");
+				Logger.Log.Error("Unexpected TEX magic found in game files, ignoring.");
+				return null;
 			}
 
 			// We need to convert from TEX to DDS format as follows:
