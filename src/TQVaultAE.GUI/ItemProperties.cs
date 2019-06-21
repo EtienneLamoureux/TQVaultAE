@@ -8,6 +8,7 @@ namespace TQVaultAE.GUI
 	using System;
 	using System.Drawing;
 	using System.Globalization;
+	using System.Linq;
 	using System.Windows.Forms;
 	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
@@ -68,21 +69,6 @@ namespace TQVaultAE.GUI
 			}
 		}
 
-		/// <summary>
-		/// Gets the name of the item
-		/// </summary>
-		/// <param name="item">item being displayed</param>
-		/// <returns>string with the item name</returns>
-		private static string GetName(Item item)
-		{
-			string itemName = HtmlHelper.MakeSafeForHtml( ItemProvider.ToFriendlyName(item, true, false));
-			string bgcolor = "#2e1f15";
-
-			Color color = ItemGfxHelper.GetColorTag(item, itemName);
-			itemName = Item.ClipColorTag(itemName);
-			itemName = string.Format(CultureInfo.InvariantCulture, "<font size=+1 color={0}><b>{1}</b></font>", HtmlHelper.HtmlColor(color), itemName);
-			return string.Format(CultureInfo.InvariantCulture, "<body bgcolor={0} text=white><font face=\"Albertus MT\" size=2>{1}", bgcolor, itemName);
-		}
 
 		/// <summary>
 		/// Dialog load methond
@@ -92,7 +78,7 @@ namespace TQVaultAE.GUI
 		private void ItemProperties_Load(object sender, EventArgs e)
 		{
 			this.filterExtra = false;
-			this.itemName.DocumentText = GetName(this.item);
+			this.itemName.DocumentText = ItemHtmlHelper.GetName(this.item);
 			this.LoadProperties();
 		}
 
@@ -101,47 +87,45 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void LoadProperties()
 		{
-			string[] bareAttr;
-			bareAttr = ItemHtmlHelper.GetBareAttributes(this.item, this.filterExtra);
-			string bgcolor = "#2e1f15";
+			var result = ItemHtmlHelper.LoadProperties(this.item, this.filterExtra);
 
 			// Base Item Attributes
-			if (bareAttr[0].Length == 0)
+			if (result.BaseItemAttributes.Any())
+			{
+				this.webBrowser1.DocumentText = result.BaseItemAttributes;
+				this.webBrowser1.Show();
+				this.label2.Show();
+			}
+			else
 			{
 				this.webBrowser1.Hide();
 				this.label2.Hide();
 			}
-			else
-			{
-				this.webBrowser1.DocumentText = string.Format(CultureInfo.InvariantCulture, "<body bgcolor={0} text=white><font face=\"Albertus MT\" size=1>{1}", bgcolor, bareAttr[0]);
-				this.webBrowser1.Show();
-				this.label2.Show();
-			}
 
 			// Prefix Attributes
-			if (bareAttr[2].Length == 0)
+			if (result.PrefixAttributes.Any())
+			{
+				this.webBrowser2.DocumentText = result.PrefixAttributes;
+				this.webBrowser2.Show();
+				this.label1.Show();
+			}
+			else
 			{
 				this.webBrowser2.Hide();
 				this.label1.Hide();
 			}
-			else
-			{
-				this.webBrowser2.DocumentText = string.Format(CultureInfo.InvariantCulture, "<body bgcolor={0} text=white><font face=\"Albertus MT\" size=1>{1}", bgcolor, bareAttr[2]);
-				this.webBrowser2.Show();
-				this.label1.Show();
-			}
 
 			// Suffix Attributes
-			if (bareAttr[3].Length == 0)
+			if (result.SuffixAttributes.Any())
+			{
+				this.webBrowser3.DocumentText = result.SuffixAttributes;
+				this.webBrowser3.Show();
+				this.label3.Show();
+			}
+			else
 			{
 				this.webBrowser3.Hide();
 				this.label3.Hide();
-			}
-			else
-			{
-				this.webBrowser3.DocumentText = string.Format(CultureInfo.InvariantCulture, "<body bgcolor={0} text=white><font face=\"Albertus MT\" size=1>{1}", bgcolor, bareAttr[3]);
-				this.webBrowser3.Show();
-				this.label3.Show();
 			}
 		}
 

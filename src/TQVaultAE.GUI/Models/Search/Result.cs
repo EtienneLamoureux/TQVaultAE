@@ -19,34 +19,29 @@ namespace TQVaultAE.GUI.Models.Search
 	/// </summary>
 	public class Result
 	{
-		private readonly string container;
-		private readonly string containerName;
-		private readonly int sackNumber;
-		private readonly SackType sackType;
-		private readonly Item item;
-
-		private readonly string itemName;
-		private readonly string itemStyle;
-		private readonly Color color;
-
-		private readonly int requiredLevel;
+		public readonly string Container;
+		public readonly string ContainerName;
+		public readonly int SackNumber;
+		public readonly SackType SackType;
+		public readonly Item Item;
+		public readonly string ItemName;
+		public readonly string ItemStyle;
+		public readonly Color Color;
+		public readonly int RequiredLevel;
 
 		public Result(string container, string containerName, int sackNumber, SackType sackType, Item item)
 		{
-			this.container = container ?? throw new ArgumentNullException(nameof(container));
-			this.containerName = containerName ?? throw new ArgumentNullException(nameof(containerName));
-			this.sackNumber = sackNumber;
-			this.sackType = sackType;
-			this.item = item ?? throw new ArgumentNullException(nameof(item));
-
-			this.itemName = Item.ClipColorTag( ItemProvider.ToFriendlyName(item));
-
+			this.Container = container ?? throw new ArgumentNullException(nameof(container));
+			this.ContainerName = containerName ?? throw new ArgumentNullException(nameof(containerName));
+			this.SackNumber = sackNumber;
+			this.SackType = sackType;
+			this.Item = item ?? throw new ArgumentNullException(nameof(item));
+			this.ItemName = Entities.Item.ClipColorTag(ItemProvider.ToFriendlyName(item));
 			ItemStyle computedItemStyle = item.ItemStyle;
-			this.itemStyle = ItemStyleHelper.Translate(computedItemStyle);
-			this.color = ItemGfxHelper.GetColor(computedItemStyle);
-
+			this.ItemStyle = ItemStyleHelper.Translate(computedItemStyle);
+			this.Color = ItemGfxHelper.GetColor(computedItemStyle);
 			var requirementVariables = ItemProvider.GetRequirementVariables(item).Values;
-			this.requiredLevel = GetRequirement(requirementVariables, "levelRequirement");
+			this.RequiredLevel = GetRequirement(requirementVariables, "levelRequirement");
 		}
 
 		private int GetRequirement(IList<Variable> variables, string key)
@@ -58,22 +53,5 @@ namespace TQVaultAE.GUI.Models.Search
 				.Max();
 		}
 
-		public string Container => container;
-
-		public string ContainerName => containerName;
-
-		public SackType SackType => sackType;
-
-		public int SackNumber => sackNumber;
-
-		public Item Item => item;
-
-		public string ItemStyle => itemStyle;
-
-		public Color Color => color;
-
-		public string ItemName => itemName;
-
-		public int RequiredLevel => requiredLevel;
 	}
 }
