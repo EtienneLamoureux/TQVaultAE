@@ -10,8 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TQVaultAE.GUI</RootNamespace>
     <AssemblyName>TQVaultAE</AssemblyName>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>app.ico</ApplicationIcon>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -454,6 +453,7 @@
       <DependentUpon>VaultMaintenanceDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <Content Include="app.ico" />
     <Content Include="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
