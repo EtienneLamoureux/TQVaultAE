@@ -1,4 +1,17 @@
 # Changelog
+## 3.1.0
+### Features
+- Add character statistics to the character panel
+- New cheat: character statistics editing
+  - Difficulty unlock
+  - Leveling
+  - Attribute points redistribution
+- Add a new utility program: TQSaveExplorer
+  - This utility program allows developers to inspect Titan Quest save files to detect changes in structure
+
+### Bugs
+- #155 Fix an issue introduced by Titan Quest Anniversary Edition v2.7
+
 ## 3.0.0
 ### Features
 - #107 Support the new [Atlantis](https://titanquestgame.com/titan-quest-atlantis-release/) expansion
