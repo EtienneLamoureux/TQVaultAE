@@ -63,12 +63,10 @@ namespace TQVaultAE.Data
 		/// </summary>
 		static Database()
 		{
-			if (Database.DB is null)
-			{
-				Database.DB = new Database();
-				Database.DB.AutoDetectLanguage = Config.Settings.Default.AutoDetectLanguage;
-				Database.DB.TQLanguage = Config.Settings.Default.TQLanguage;
-			}
+			Database.DB = new Database();
+			Database.DB.AutoDetectLanguage = Config.Settings.Default.AutoDetectLanguage;
+			Database.DB.TQLanguage = Config.Settings.Default.TQLanguage;
+			Database.DB.LoadDBFile();
 		}
 
 		#region Database Properties
@@ -76,7 +74,7 @@ namespace TQVaultAE.Data
 		/// <summary>
 		/// Gets or sets the static database.
 		/// </summary>
-		public static Database DB { get; set; }
+		public static Database DB { get; private set; }
 
 
 		/// <summary>
@@ -434,7 +432,7 @@ namespace TQVaultAE.Data
 		/// <summary>
 		/// Load our data from the db file.
 		/// </summary>
-		public void LoadDBFile()
+		private void LoadDBFile()
 		{
 			this.LoadTextDB();
 			this.LoadARZFile();

@@ -304,11 +304,12 @@
     <Compile Include="Components\ActionButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Helpers\ItemStyleHelper.cs" />
     <Compile Include="MainForm.Stash.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Seach.cs">
+    <Compile Include="MainForm.Search.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
@@ -334,7 +335,7 @@
     <Compile Include="Models\CommandLineArgs.cs" />
     <Compile Include="Models\ItemDragInfo.cs" />
     <Compile Include="Models\ResizeEventArgs.cs" />
-    <Compile Include="Models\Result.cs" />
+    <Compile Include="Models\Search\Result.cs" />
     <Compile Include="Models\ResultChangedEventArgs.cs" />
     <Compile Include="Models\SackPanelEventArgs.cs" />
     <Compile Include="CharacterEditDialog.cs">
@@ -365,6 +366,8 @@
     <Compile Include="Components\PlayerPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Models\Search\Entities.cs" />
+    <Compile Include="Models\SessionContext.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchDialog.cs">
@@ -378,6 +381,10 @@
     </Compile>
     <Compile Include="Services\AddFontToOSWin.cs" />
     <Compile Include="Services\GamePathResolverWin.cs" />
+    <Compile Include="Services\VaultService.cs" />
+    <Compile Include="Services\StashService.cs" />
+    <Compile Include="Services\PlayerService.cs" />
+    <Compile Include="Services\SearchService.cs" />
     <Compile Include="SplashScreenForm.cs">
       <SubType>Form</SubType>
     </Compile>

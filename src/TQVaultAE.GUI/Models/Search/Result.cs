@@ -3,7 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.GUI.Models
+namespace TQVaultAE.GUI.Models.Search
 {
 	using System;
 	using System.Collections.Generic;
@@ -11,8 +11,8 @@ namespace TQVaultAE.GUI.Models
 	using System.Linq;
 	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
+	using TQVaultAE.GUI.Helpers;
 	using TQVaultAE.Presentation;
-	using TQVaultAE.Presentation.Html;
 
 	/// <summary>
 	/// Class for an individual result in the results list.
@@ -42,7 +42,7 @@ namespace TQVaultAE.GUI.Models
 			this.itemName = Item.ClipColorTag( ItemProvider.ToFriendlyName(item));
 
 			ItemStyle computedItemStyle = item.ItemStyle;
-			this.itemStyle = MainForm.GetItemStyleString(computedItemStyle);
+			this.itemStyle = ItemStyleHelper.Translate(computedItemStyle);
 			this.color = ItemGfxHelper.GetColor(computedItemStyle);
 
 			var requirementVariables = ItemProvider.GetRequirementVariables(item).Values;

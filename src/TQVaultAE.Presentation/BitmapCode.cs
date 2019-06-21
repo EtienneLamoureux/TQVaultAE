@@ -18,6 +18,7 @@ namespace TQVaultAE.Presentation
 	/// </remarks>
 	public static class BitmapCode
 	{
+		private static readonly log4net.ILog Log = Logger.Get(typeof(BitmapCode));
 
 		/// <summary>
 		/// Loads a .tex from memory and converts to bitmap
@@ -45,13 +46,13 @@ namespace TQVaultAE.Presentation
 
 			if (data.Length < 12)
 			{
-				Logger.Log.Error("TEX is not long enough to be valid.");
+				Log.Error("TEX is not long enough to be valid.");
 				return null;
 			}
 
 			if (BitConverter.ToUInt32(data, offset) != 0x01584554)
 			{
-				Logger.Log.Error("Unexpected TEX magic found in game files, ignoring.");
+				Log.Error("Unexpected TEX magic found in game files, ignoring.");
 				return null;
 			}
 
@@ -197,12 +198,6 @@ namespace TQVaultAE.Presentation
 			Buffer.BlockCopy(data, offset, buffer, 0, count);
 
 			Bitmap bitmap = DDSReader.DDSImage.ConvertDDSToPng(buffer);// Png for transparency
-
-			if (bitmap == null)
-			{
-				// bummer
-				return null;
-			}
 
 			return bitmap;
 		}

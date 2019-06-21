@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TQVaultAE.Data;
 using TQVaultAE.Entities;
@@ -13,11 +10,13 @@ using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 using TQVaultAE.Logs;
+using TQVaultAE.GUI.Services;
 
 namespace TQVaultAE.GUI
 {
 	internal partial class MainForm
 	{
+		private StashService stashService = null;
 
 		/// <summary>
 		/// Creates the stash panel
@@ -50,55 +49,38 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void LoadTransferStash()
 		{
-			string transferStashFile = TQData.TransferStashFile;
+			InitStashService();
+
+			var result = this.stashService.LoadTransferStash();
 
 			// Get the transfer stash
 			try
 			{
-				Stash stash;
-				try
+				if (result.StashPresent.HasValue && !result.StashPresent.Value)
 				{
-					stash = this.stashes[transferStashFile];
-				}
-				catch (KeyNotFoundException)
-				{
-					bool stashLoaded = false;
-					stash = new Stash(Resources.GlobalTransferStash, transferStashFile);
-					stash.IsImmortalThrone = true;
-
-					try
-					{
-						// Throw a message if the stash does not exist.
-						bool stashPresent = StashProvider.LoadFile(stash);
-						if (!stashPresent)
-						{
-							MessageBox.Show(Resources.StashNotFoundMsg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-						}
-
-						stashLoaded = stashPresent;
-					}
-					catch (ArgumentException argumentException)
-					{
-						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, transferStashFile, argumentException.Message);
-						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-						stashLoaded = false;
-					}
-
-					if (stashLoaded)
-					{
-						this.stashes.Add(transferStashFile, stash);
-					}
+					MessageBox.Show(Resources.StashNotFoundMsg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
-				this.stashPanel.TransferStash = stash;
+				if (result.ArgumentException != null)
+				{
+					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.TransferStashFile, result.ArgumentException.Message);
+					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+				}
+
+				this.stashPanel.TransferStash = result.Stash;
 			}
 			catch (IOException exception)
 			{
-				string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, transferStashFile, exception.ToString());
+				string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, result.TransferStashFile, exception.ToString());
 				MessageBox.Show(msg, Resources.MainFormStashReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				Log.Error(msg, exception);
 				this.stashPanel.TransferStash = null;
 			}
+		}
+
+		private void InitStashService()
+		{
+			if (this.stashService is null) this.stashService = new StashService(this.userContext);
 		}
 
 
@@ -107,119 +89,60 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void LoadRelicVaultStash()
 		{
-			string relicVaultStashFile = TQData.RelicVaultStashFile;
+			InitStashService();
+
+			var result = this.stashService.LoadRelicVaultStash();
 
 			// Get the relic vault stash
 			try
 			{
-				Stash stash;
-				try
+				if (result.StashPresent.HasValue && !result.StashPresent.Value)
 				{
-					stash = this.stashes[relicVaultStashFile];
-				}
-				catch (KeyNotFoundException)
-				{
-					bool stashLoaded = false;
-					stash = new Stash(Resources.GlobalRelicVaultStash, relicVaultStashFile);
-					stash.IsImmortalThrone = true;
-
-					try
-					{
-						// Throw a message if the stash does not exist.
-						bool stashPresent = StashProvider.LoadFile(stash);
-						if (!stashPresent)
-						{
-							MessageBox.Show(Resources.StashNotFoundMsg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-						}
-
-						stashLoaded = stashPresent;
-					}
-					catch (ArgumentException argumentException)
-					{
-						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, relicVaultStashFile, argumentException.Message);
-						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-						stashLoaded = false;
-					}
-
-					if (stashLoaded)
-					{
-						stash.Sack.StashType = SackType.RelicVaultStash;
-						this.stashes.Add(relicVaultStashFile, stash);
-					}
+					MessageBox.Show(Resources.StashNotFoundMsg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
-				this.stashPanel.RelicVaultStash = stash;
+				if (result.ArgumentException != null)
+				{
+					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.RelicVaultStashFile, result.ArgumentException.Message);
+					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+				}
+
+				this.stashPanel.RelicVaultStash = result.Stash;
 			}
 			catch (IOException exception)
 			{
-				string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, relicVaultStashFile, exception.ToString());
+				string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, result.RelicVaultStashFile, exception.ToString());
 				MessageBox.Show(msg, Resources.MainFormStashReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 
 				this.stashPanel.RelicVaultStash = null;
 			}
 		}
 
-
-
 		/// <summary>
 		/// Attempts to save all modified stash files.
 		/// </summary>
 		private void SaveAllModifiedStashes()
 		{
-			// Save each stash as necessary
-			foreach (KeyValuePair<string, Stash> kvp in this.stashes)
+		retry:
+			Stash stashOnError = null;
+			try
 			{
-				string stashFile = kvp.Key;
-				Stash stash = kvp.Value;
+				this.stashService.SaveAllModifiedStashes(ref stashOnError);
+			}
+			catch (IOException exception)
+			{
+				string title = string.Format(CultureInfo.InvariantCulture, Resources.MainFormSaveError, stashOnError.PlayerName);
+				Log.Error(title, exception);
 
-				if (stash == null)
+				switch (MessageBox.Show(Log.FormatException(exception), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
 				{
-					continue;
-				}
-
-				if (stash.IsModified)
-				{
-					bool done = false;
-
-					// backup the file
-					while (!done)
-					{
-						try
-						{
-							TQData.BackupFile(stash.PlayerName, stashFile);
-							StashProvider.Save(stash, stashFile);
-							done = true;
-						}
-						catch (IOException exception)
-						{
-							string title = string.Format(CultureInfo.InvariantCulture, Resources.MainFormSaveError, stash.PlayerName);
-							Log.Error(title, exception);
-							switch (MessageBox.Show(Log.FormatException(exception), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
-							{
-								case DialogResult.Abort:
-									{
-										// rethrow the exception
-										throw;
-									}
-
-								case DialogResult.Retry:
-									{
-										// retry
-										break;
-									}
-
-								case DialogResult.Ignore:
-									{
-										done = true;
-										break;
-									}
-							}
-						}
-					}
+					case DialogResult.Abort:
+						// rethrow the exception
+						throw;
+					case DialogResult.Retry:
+						goto retry;
 				}
 			}
-
-			return;
 		}
 	}
 }

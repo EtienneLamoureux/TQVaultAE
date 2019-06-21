@@ -13,26 +13,13 @@ using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 using TQVaultAE.Logs;
+using TQVaultAE.GUI.Services;
 
 namespace TQVaultAE.GUI
 {
 	internal partial class MainForm
 	{
-
-
-		/// <summary>
-		/// Creates a new empty vault file
-		/// </summary>
-		/// <param name="name">Name of the vault.</param>
-		/// <param name="file">file name of the vault.</param>
-		/// <returns>Player instance of the new vault.</returns>
-		private static PlayerCollection CreateVault(string name, string file)
-		{
-			PlayerCollection vault = new PlayerCollection(name, file);
-			vault.IsVault = true;
-			vault.CreateEmptySacks(12); // number of bags
-			return vault;
-		}
+		private VaultService vaultService = null;
 
 		/// <summary>
 		/// Creates the vault panel
@@ -78,19 +65,22 @@ namespace TQVaultAE.GUI
 			Controls.Add(this.secondaryVaultPanel);
 		}
 
+
 		/// <summary>
 		/// Gets a list of all available vault files and populates the drop down list.
 		/// </summary>
 		/// <param name="loadVault">Indicates whether the list will also load the last vault selected.</param>
 		private void GetVaultList(bool loadVault)
 		{
+			if (this.vaultService is null) this.vaultService = new VaultService(this.userContext);
+
 			string[] vaults = TQData.GetVaultList();
 
 			// Added by VillageIdiot
 			// See if the Vault path was set during GetVaultList and update the key accordingly
 			if (TQData.VaultFolderChanged)
 			{
-				UpdateVaultPath(TQData.TQVaultSaveFolder);
+				this.vaultService.UpdateVaultPath(TQData.TQVaultSaveFolder);
 			}
 
 			string currentVault;
@@ -102,7 +92,7 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				currentVault = "Main Vault";
+				currentVault = VaultService.MAINVAULT;
 			}
 
 			// Added by VillageIdiot
@@ -112,17 +102,17 @@ namespace TQVaultAE.GUI
 			this.vaultListComboBox.Items.Add(Resources.MainFormMaintainVault);
 
 			// Add Main Vault first
-			if (this.secondaryVaultListComboBox.SelectedItem == null || this.secondaryVaultListComboBox.SelectedItem.ToString() != "Main Vault")
+			if (this.secondaryVaultListComboBox.SelectedItem == null || this.secondaryVaultListComboBox.SelectedItem.ToString() != VaultService.MAINVAULT)
 			{
-				this.vaultListComboBox.Items.Add("Main Vault");
+				this.vaultListComboBox.Items.Add(VaultService.MAINVAULT);
 			}
 
-			if (vaults != null && vaults.Length > 0)
+			if ((vaults?.Length ?? 0) > 0)
 			{
 				// now add everything EXCEPT for main vault
 				foreach (string vault in vaults)
 				{
-					if (!vault.Equals("Main Vault"))
+					if (!vault.Equals(VaultService.MAINVAULT))
 					{
 						// we already added main vault
 						if (this.secondaryVaultListComboBox.SelectedItem != null && vault.Equals(this.secondaryVaultListComboBox.SelectedItem.ToString()) && this.showSecondaryVault)
@@ -144,7 +134,7 @@ namespace TQVaultAE.GUI
 				// We do not want to create new here.
 				if (string.IsNullOrEmpty(currentVault) || !File.Exists(TQData.GetVaultFile(currentVault)))
 				{
-					currentVault = "Main Vault";
+					currentVault = VaultService.MAINVAULT;
 				}
 			}
 
@@ -220,47 +210,15 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				// Get the filename
-				string filename = TQData.GetVaultFile(vaultName);
+				var result = this.vaultService.LoadVault(vaultName);
 
-				// Check the cache
-				try
+				if (result.ArgumentException != null)
 				{
-					vault = this.vaults[filename];
+					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.Filename, result.ArgumentException.Message);
+					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
-				catch (KeyNotFoundException)
-				{
-					// We need to load the vault.
-					bool vaultLoaded = false;
-					if (!File.Exists(filename))
-					{
-						// the file does not exist so create a new vault.
-						vault = CreateVault(vaultName, filename);
-						vaultLoaded = true;
-					}
-					else
-					{
-						vault = new PlayerCollection(vaultName, filename);
-						vault.IsVault = true;
-						try
-						{
-							PlayerCollectionProvider.LoadFile(vault);
-							vaultLoaded = true;
-						}
-						catch (ArgumentException argumentException)
-						{
-							string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, filename, argumentException.Message);
-							MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-							vaultLoaded = false;
-						}
-					}
 
-					// Add the vault to the cache, but only if we create it or it successfully loads.
-					if (vaultLoaded)
-					{
-						this.vaults.Add(filename, vault);
-					}
-				}
+				vault = result.Vault;
 			}
 
 			// Now assign the vault to the vaultpanel
@@ -274,11 +232,10 @@ namespace TQVaultAE.GUI
 			}
 		}
 
-
 		/// <summary>
 		/// Method for the maintain vault files dialog
 		/// </summary>
-		private void MaintainVaultFiles()
+		private void MaintainVaultFilesDialog()
 		{
 			try
 			{
@@ -343,7 +300,7 @@ namespace TQVaultAE.GUI
 						}
 
 						// Remove the file from the cache.
-						this.vaults.Remove(filename);
+						this.userContext.Vaults.Remove(filename);
 
 						// Remove the deleted file from the list.
 						this.vaultListComboBox.Items.Remove(oldName);
@@ -367,16 +324,16 @@ namespace TQVaultAE.GUI
 							File.Move(oldFilename, newFilename);
 
 							// Remove the old vault from the cache.
-							this.vaults.Remove(oldFilename);
+							this.userContext.Vaults.Remove(oldFilename);
 
 							// Get rid of the old name from the list
 							this.vaultListComboBox.Items.Remove(oldName);
 
 							// If we renamed something to main vault we need to remove it,
 							// since the list always contains Main Vault.
-							if (newName == "Main Vault")
+							if (newName == VaultService.MAINVAULT)
 							{
-								this.vaults.Remove(newFilename);
+								this.userContext.Vaults.Remove(newFilename);
 								this.vaultListComboBox.Items.Remove(newName);
 							}
 
@@ -423,59 +380,26 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void SaveAllModifiedVaults()
 		{
-			foreach (KeyValuePair<string, PlayerCollection> kvp in this.vaults)
+		retry:
+			PlayerCollection vaultOnError = null;
+			try
 			{
-				string vaultFile = kvp.Key;
-				PlayerCollection vault = kvp.Value;
-
-				if (vault == null)
+				this.vaultService.SaveAllModifiedVaults(ref vaultOnError);
+			}
+			catch (IOException exception)
+			{
+				string title = string.Format(CultureInfo.InvariantCulture, Resources.MainFormSaveError, vaultOnError.PlayerName);
+				Log.Error(title, exception);
+				switch (MessageBox.Show(Log.FormatException(exception), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
 				{
-					continue;
-				}
-
-				if (vault.IsModified)
-				{
-					bool done = false;
-
-					// backup the file
-					while (!done)
-					{
-						try
-						{
-							TQData.BackupFile(vault.PlayerName, vaultFile);
-							PlayerCollectionProvider.Save(vault, vaultFile);
-							done = true;
-						}
-						catch (IOException exception)
-						{
-							string title = string.Format(CultureInfo.InvariantCulture, Resources.MainFormSaveError, vault.PlayerName);
-							Log.Error(title, exception);
-							switch (MessageBox.Show(Log.FormatException(exception), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
-							{
-								case DialogResult.Abort:
-									{
-										// rethrow the exception
-										throw;
-									}
-
-								case DialogResult.Retry:
-									{
-										// retry
-										break;
-									}
-
-								case DialogResult.Ignore:
-									{
-										done = true;
-										break;
-									}
-							}
-						}
-					}
+					case DialogResult.Abort:
+						// rethrow the exception
+						throw;
+					case DialogResult.Retry:
+						// retry
+						goto retry;
 				}
 			}
-
-			return;
 		}
 
 		/// <summary>
@@ -489,7 +413,7 @@ namespace TQVaultAE.GUI
 			{
 				if (this.vaultListComboBox.SelectedIndex == 0)
 				{
-					this.MaintainVaultFiles();
+					this.MaintainVaultFilesDialog();
 				}
 				else
 				{

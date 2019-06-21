@@ -12,6 +12,7 @@ namespace TQVaultAE.GUI
 	using System.Text;
 	using System.Windows.Forms;
 	using TQVaultAE.Data;
+	using TQVaultAE.GUI.Services;
 	using TQVaultAE.Presentation;
 
 	/// <summary>
@@ -229,14 +230,14 @@ namespace TQVaultAE.GUI
 			if (vaults != null && vaults.Length > 0)
 			{
 				// Put Main Vault at the top of the list only if it exists.
-				if (Array.IndexOf(vaults, "Main Vault") != -1)
+				if (Array.IndexOf(vaults, VaultService.MAINVAULT) != -1)
 				{
-					this.vaultListComboBox.Items.Add("Main Vault");
+					this.vaultListComboBox.Items.Add(VaultService.MAINVAULT);
 				}
 
 				foreach (string vault in vaults)
 				{
-					if (!vault.Equals("Main Vault"))
+					if (!vault.Equals(VaultService.MAINVAULT))
 					{
 						// now add everything EXCEPT for main vault
 						this.vaultListComboBox.Items.Add(vault);

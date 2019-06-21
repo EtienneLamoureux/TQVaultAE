@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TQVaultAE.Data;
 using TQVaultAE.Entities;
@@ -13,11 +10,15 @@ using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 using TQVaultAE.Logs;
+using TQVaultAE.GUI.Services;
+using System.Linq;
 
 namespace TQVaultAE.GUI
 {
 	internal partial class MainForm
 	{
+		private PlayerService playerService = null;
+
 		/// <summary>
 		/// Handler for changing the Character drop down selection.
 		/// </summary>
@@ -46,6 +47,8 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void GetPlayerList()
 		{
+			if (this.playerService is null) this.playerService = new PlayerService(this.userContext);
+
 			// Initialize the character combo-box
 			this.characterComboBox.Items.Clear();
 
@@ -57,7 +60,7 @@ namespace TQVaultAE.GUI
 				numIT = charactersIT.Length;
 			}
 
-			if (numIT < 1)
+			if (numIT == 0)
 			{
 				this.characterComboBox.Items.Add(Resources.MainFormNoCharacters);
 				this.characterComboBox.SelectedIndex = 0;
@@ -73,20 +76,10 @@ namespace TQVaultAE.GUI
 				// Added to support custom Maps
 				if (TQData.IsCustom)
 				{
-					characterDesignator = string.Concat(characterDesignator, "<Custom Map>");
+					characterDesignator = string.Concat(characterDesignator, PlayerService.CustomDesignator);
 				}
 
-				// Combine the 2 arrays into 1 then add them
-				string[] characters = new string[numIT];
-				int i;
-				int j = 0;
-
-				// Put the IT chars first since that is most likely what people want to use.
-				for (i = 0; i < numIT; ++i)
-				{
-					characters[j++] = string.Concat(charactersIT[i], characterDesignator);
-				}
-
+				string[] characters = charactersIT.Select(c => string.Concat(c, characterDesignator)).ToArray();
 				this.characterComboBox.Items.AddRange(characters);
 			}
 		}
@@ -142,110 +135,54 @@ namespace TQVaultAE.GUI
 		/// <param name="selectedText">Player string from the drop down list.</param>
 		private void LoadPlayer(string selectedText)
 		{
-			string customDesignator = "<Custom Map>";
-
-			bool isCustom = selectedText.EndsWith(customDesignator, StringComparison.Ordinal);
-			if (isCustom)
-			{
-				// strip off the end from the player name.
-				selectedText = selectedText.Remove(selectedText.IndexOf(customDesignator, StringComparison.Ordinal), customDesignator.Length);
-			}
-
-			string playerFile = TQData.GetPlayerFile(selectedText);
+			var result = this.playerService.LoadPlayer(selectedText);
 
 			// Get the player
 			try
 			{
-				PlayerCollection player;
-				try
+				if (result.PlayerArgumentException != null)
 				{
-					player = this.players[playerFile];
-				}
-				catch (KeyNotFoundException)
-				{
-					bool playerLoaded = false;
-					player = new PlayerCollection(selectedText, playerFile);
-					try
-					{
-						PlayerCollectionProvider.LoadFile(player);
-						playerLoaded = true;
-					}
-					catch (ArgumentException argumentException)
-					{
-						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, playerFile, argumentException.Message);
-						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-						playerLoaded = false;
-					}
-
-					// Only add the player to the list if it loaded successfully.
-					if (playerLoaded)
-					{
-						this.players.Add(playerFile, player);
-					}
+					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.PlayerFile, result.PlayerArgumentException.Message);
+					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
-				this.playerPanel.Player = player;
-				this.stashPanel.Player = player;
+				this.playerPanel.Player = result.Player;
+				this.stashPanel.Player = result.Player;
 				this.stashPanel.CurrentBag = 0;
 			}
 			catch (IOException exception)
 			{
-				string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, playerFile, exception.ToString());
+				string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, result.PlayerFile, exception.ToString());
 				MessageBox.Show(msg, Resources.MainFormPlayerReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				Log.Error(msg, exception);
 				this.playerPanel.Player = null;
 				this.characterComboBox.SelectedIndex = 0;
 			}
 
-			string stashFile = TQData.GetPlayerStashFile(selectedText);
-
 			// Get the player's stash
 			try
 			{
-				Stash stash;
-				try
+				// Throw a message if the stash is not present.
+				if (result.StashFound.HasValue && !result.StashFound.Value)
 				{
-					stash = this.stashes[stashFile];
-				}
-				catch (KeyNotFoundException)
-				{
-					bool stashLoaded = false;
-					stash = new Stash(selectedText, stashFile);
-					try
-					{
-						bool stashPresent = StashProvider.LoadFile(stash);
-
-						// Throw a message if the stash is not present.
-						if (!stashPresent)
-						{
-							MessageBox.Show(Resources.StashNotFoundMsg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-						}
-
-						stashLoaded = stashPresent;
-					}
-					catch (ArgumentException argumentException)
-					{
-						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, stashFile, argumentException.Message);
-						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-						stashLoaded = false;
-					}
-
-					if (stashLoaded)
-					{
-						this.stashes.Add(stashFile, stash);
-					}
+					MessageBox.Show(Resources.StashNotFoundMsg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
-				this.stashPanel.Stash = stash;
+				if (result.StashArgumentException != null)
+				{
+					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.StashFile, result.StashArgumentException.Message);
+					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+				}
+
+				this.stashPanel.Stash = result.Stash;
 			}
 			catch (IOException exception)
 			{
-				string msg = string.Concat(Resources.MainFormReadError, stashFile, exception.ToString());
+				string msg = string.Concat(Resources.MainFormReadError, result.StashFile, exception.ToString());
 				MessageBox.Show(msg, Resources.MainFormStashReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				Log.Error(msg, exception);
 				this.stashPanel.Stash = null;
 			}
-
 		}
 
 		/// <summary>
@@ -254,64 +191,28 @@ namespace TQVaultAE.GUI
 		/// <returns>True if there were any modified player files.</returns>
 		private bool SaveAllModifiedPlayers()
 		{
-			int numModified = 0;
-
-			// Save each player as necessary
-			foreach (KeyValuePair<string, PlayerCollection> kvp in this.players)
+		retry:
+			bool saved = false;
+			PlayerCollection playerIfError = null;
+			try
 			{
-				string playerFile = kvp.Key;
-				PlayerCollection player = kvp.Value;
-
-				if (player == null)
+				saved = this.playerService.SaveAllModifiedPlayers(ref playerIfError);
+			}
+			catch (IOException exception)
+			{
+				string title = string.Format(CultureInfo.InvariantCulture, Resources.MainFormSaveError, playerIfError.PlayerName);
+				Log.Error(title, exception);
+				switch (MessageBox.Show(Log.FormatException(exception), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
 				{
-					continue;
-				}
-
-				if (player.IsModified)
-				{
-					++numModified;
-					bool done = false;
-
-					// backup the file
-					while (!done)
-					{
-						try
-						{
-							TQData.BackupFile(player.PlayerName, playerFile);
-							TQData.BackupStupidPlayerBackupFolder(playerFile);
-							PlayerCollectionProvider.Save(player, playerFile);
-							done = true;
-						}
-						catch (IOException exception)
-						{
-							string title = string.Format(CultureInfo.InvariantCulture, Resources.MainFormSaveError, player.PlayerName);
-							Log.Error(title, exception);
-							switch (MessageBox.Show(Log.FormatException(exception), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
-							{
-								case DialogResult.Abort:
-									{
-										// rethrow the exception
-										throw;
-									}
-
-								case DialogResult.Retry:
-									{
-										// retry
-										break;
-									}
-
-								case DialogResult.Ignore:
-									{
-										done = true;
-										break;
-									}
-							}
-						}
-					}
+					case DialogResult.Abort:
+						// rethrow the exception
+						throw;
+					case DialogResult.Retry:
+						goto retry;
+						//default: break; // DialogResult.Ignore
 				}
 			}
-
-			return numModified > 0;
+			return saved;
 		}
 	}
 }

@@ -119,7 +119,7 @@ namespace TQVaultAE.Entities
 		/// Used for itemScalePercent calculation
 		/// </summary>
 		public float itemScalePercent;
-		
+
 		#endregion Item Fields
 
 		/// <summary>
@@ -340,7 +340,7 @@ namespace TQVaultAE.Entities
 		/// Gets or sets the second relic bonus info
 		/// </summary>
 		public Info RelicBonus2Info { get; set; }
-	
+
 		/// <summary>
 		/// Raw image data from game resource file
 		/// </summary>
@@ -1201,19 +1201,11 @@ namespace TQVaultAE.Entities
 		/// <returns>text with color tag removed</returns>
 		public static string ClipColorTag(string text)
 		{
-			if (text.Contains("{^"))
+			int i = text.IndexOf("{^");
+			if (i != -1)
 			{
-				int i = text.IndexOf("{^");
-				if (i != -1)
-				{
-					// Make sure there is a control code in there.
-					text = text.Remove(i, 4);
-				}
-			}
-			else if (text.StartsWith("^", StringComparison.OrdinalIgnoreCase))
-			{
-				// If there are not braces assume a 2 character code.
-				text = text.Substring(2);
+				// Make sure there is a control code in there.
+				text = text.Remove(i, 4);
 			}
 			else if (text.StartsWith("^", StringComparison.OrdinalIgnoreCase))
 			{

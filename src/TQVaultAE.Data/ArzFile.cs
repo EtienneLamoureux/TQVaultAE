@@ -106,49 +106,47 @@ namespace TQVaultAE.Data
 				// 0x00000c int32 numEntries in dbRecord table
 				// 0x000010 int32 start of string table
 				// 0x000014 int32 size in bytes of string table
-				FileStream instream = new FileStream(this.fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-				BinaryReader reader = new BinaryReader(instream);
-				try
+				using (FileStream instream = new FileStream(this.fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+				using (BinaryReader reader = new BinaryReader(instream))
 				{
-					int[] header = new int[6];
-
-					for (int i = 0; i < 6; ++i)
+					try
 					{
-						header[i] = reader.ReadInt32();
-						if (outStream != null)
+						int[] header = new int[6];
+
+						for (int i = 0; i < 6; ++i)
 						{
-							outStream.WriteLine("Header[{0}] = {1:n0} (0x{1:X})", i, header[i]);
+							header[i] = reader.ReadInt32();
+							if (outStream != null)
+							{
+								outStream.WriteLine("Header[{0}] = {1:n0} (0x{1:X})", i, header[i]);
+							}
+						}
+
+						int firstTableStart = header[1];
+						int firstTableCount = header[3];
+						int secondTableStart = header[4];
+
+						this.ReadStringTable(secondTableStart, reader, outStream);
+						this.ReadRecordTable(firstTableStart, firstTableCount, reader, outStream);
+
+						// 4 final int32's from file
+						// first int32 is numstrings in the stringtable
+						// second int32 is something ;)
+						// 3rd and 4th are crap (timestamps maybe?)
+						for (int i = 0; i < 4; ++i)
+						{
+							int val = reader.ReadInt32();
+							if (outStream != null)
+							{
+								outStream.WriteLine("{0:n0} 0x{0:X}", val);
+							}
 						}
 					}
-
-					int firstTableStart = header[1];
-					int firstTableCount = header[3];
-					int secondTableStart = header[4];
-
-					this.ReadStringTable(secondTableStart, reader, outStream);
-					this.ReadRecordTable(firstTableStart, firstTableCount, reader, outStream);
-
-					// 4 final int32's from file
-					// first int32 is numstrings in the stringtable
-					// second int32 is something ;)
-					// 3rd and 4th are crap (timestamps maybe?)
-					for (int i = 0; i < 4; ++i)
+					catch (IOException ex)
 					{
-						int val = reader.ReadInt32();
-						if (outStream != null)
-						{
-							outStream.WriteLine("{0:n0} 0x{0:X}", val);
-						}
+						Log.ErrorException(ex);
+						throw;
 					}
-				}
-				catch (IOException ex)
-				{
-					Log.ErrorException(ex);
-					throw;
-				}
-				finally
-				{
-					reader.Close();
 				}
 			}
 			catch (IOException exception)

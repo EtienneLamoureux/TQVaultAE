@@ -16,6 +16,7 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Entities;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Presentation.Html;
+	using TQVaultAE.GUI.Models.Search;
 
 	/// <summary>
 	/// Results dialog form class
