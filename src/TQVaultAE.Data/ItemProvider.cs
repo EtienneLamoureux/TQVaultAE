@@ -79,7 +79,7 @@ namespace TQVaultAE.Data
 
 			if (lootTableID != null && lootTableID.Length > 0)
 			{
-				return new LootTableCollection(lootTableID);
+				return LootTableCollectionProvider.LoadTable(lootTableID);
 			}
 
 			return null;
