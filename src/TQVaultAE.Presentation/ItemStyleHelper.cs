@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TQVaultAE.Entities;
-using TQVaultAE.Presentation;
+﻿using TQVaultAE.Entities;
 
-namespace TQVaultAE.GUI.Helpers
+namespace TQVaultAE.Presentation
 {
 	public static class ItemStyleHelper
 	{

@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.IO;
 using System.Windows.Forms;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.Presentation;
 using TQVaultAE.Entities;
 using TQVaultAE.Config;
-using TQVaultAE.Data;
 
 namespace TQVaultAE.GUI.Models
 {

@@ -4,9 +4,9 @@ using System.Linq;
 using TQVaultAE.Presentation.Html;
 using TQVaultAE.Entities;
 using TQVaultAE.Data;
-using TQVaultAE.GUI.Helpers;
+using TQVaultAE.Presentation;
 
-namespace TQVaultAE.GUI.Models.Search
+namespace TQVaultAE.Services.Models.Search
 {
 
 	internal interface IItemPredicate

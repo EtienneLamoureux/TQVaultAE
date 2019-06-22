@@ -9,7 +9,6 @@ namespace TQVaultAE.GUI.Models
 	using System.Collections.ObjectModel;
 	using System.Drawing;
 	using TQVaultAE.GUI.Components;
-	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
 	using TQVaultAE.Presentation;
 

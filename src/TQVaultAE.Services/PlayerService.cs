@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TQVaultAE.Data;
 using TQVaultAE.Entities;
-using TQVaultAE.GUI.Models;
 using TQVaultAE.Logs;
-using TQVaultAE.Presentation;
 
-namespace TQVaultAE.GUI.Services
+namespace TQVaultAE.Services
 {
 	public class PlayerService
 	{
@@ -33,10 +26,9 @@ namespace TQVaultAE.GUI.Services
 			public PlayerCollection Player;
 			public Stash Stash;
 			public bool? StashFound;
-			internal ArgumentException PlayerArgumentException;
-			internal string StashFile;
-			internal ArgumentException StashArgumentException;
-			public bool IsEmpty => string.IsNullOrWhiteSpace(PlayerFile);
+			public ArgumentException PlayerArgumentException;
+			public string StashFile;
+			public ArgumentException StashArgumentException;
 		}
 
 		/// <summary>

@@ -6,11 +6,8 @@
 namespace TQVaultAE.GUI
 {
 	using System;
-	using System.Drawing;
-	using System.Globalization;
 	using System.Linq;
 	using System.Windows.Forms;
-	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Presentation.Html;

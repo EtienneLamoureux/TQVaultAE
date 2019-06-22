@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -10,8 +9,8 @@ using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 using TQVaultAE.Logs;
-using TQVaultAE.GUI.Services;
 using System.Linq;
+using TQVaultAE.Services;
 
 namespace TQVaultAE.GUI
 {

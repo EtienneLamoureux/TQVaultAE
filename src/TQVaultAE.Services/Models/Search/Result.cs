@@ -3,7 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.GUI.Models.Search
+namespace TQVaultAE.Services.Models.Search
 {
 	using System;
 	using System.Collections.Generic;
@@ -11,7 +11,6 @@ namespace TQVaultAE.GUI.Models.Search
 	using System.Linq;
 	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
-	using TQVaultAE.GUI.Helpers;
 	using TQVaultAE.Presentation;
 
 	/// <summary>

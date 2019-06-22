@@ -3,21 +3,20 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
+using System.Windows.Forms;
+using TQVaultAE.GUI.Tooltip;
+using TQVaultAE.GUI.Models;
+using TQVaultAE.Entities;
+using TQVaultAE.Presentation;
+using TQVaultAE.Presentation.Html;
+using TQVaultAE.Services.Models.Search;
+
 namespace TQVaultAE.GUI
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Drawing;
-	using System.Globalization;
-	using System.Windows.Forms;
-	using Tooltip;
-	using TQVaultAE.GUI.Models;
-	using TQVaultAE.Data;
-	using TQVaultAE.Entities;
-	using TQVaultAE.Presentation;
-	using TQVaultAE.Presentation.Html;
-	using TQVaultAE.GUI.Models.Search;
-
 	/// <summary>
 	/// Results dialog form class
 	/// </summary>

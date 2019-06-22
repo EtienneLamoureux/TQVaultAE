@@ -146,7 +146,7 @@
       <Name>TQVaultAE.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj">
-      <Project>{6e20606d-9460-469f-b340-d3418165a19b}</Project>
+      <Project>{6E20606D-9460-469F-B340-D3418165A19B}</Project>
       <Name>TQVaultAE.Presentation</Name>
     </ProjectReference>
   </ItemGroup>

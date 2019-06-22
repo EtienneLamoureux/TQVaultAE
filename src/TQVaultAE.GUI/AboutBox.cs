@@ -10,7 +10,6 @@ namespace TQVaultAE.GUI
 	using System.Globalization;
 	using System.Reflection;
 	using System.Windows.Forms;
-	using TQVaultAE.Data;
 	using TQVaultAE.Presentation;
 
 	/// <summary>

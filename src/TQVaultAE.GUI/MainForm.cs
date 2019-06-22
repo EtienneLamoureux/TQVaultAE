@@ -6,16 +6,13 @@
 namespace TQVaultAE.GUI
 {
 	using System;
-	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Diagnostics;
 	using System.Drawing;
 	using System.Globalization;
 	using System.IO;
-	using System.Linq;
 	using System.Reflection;
 	using System.Security.Permissions;
-	using System.Threading;
 	using System.Windows.Forms;
 	using Tooltip;
 	using TQVaultAE.GUI.Components;
@@ -23,10 +20,9 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Data;
 	using TQVaultAE.Logs;
 	using TQVaultAE.Entities;
-	using TQVaultAE.GUI.Services;
 	using TQVaultAE.Presentation;
-	using TQVaultAE.Presentation.Html;
 	using TQVaultAE.Config;
+	using TQVaultAE.Services;
 
 	/// <summary>
 	/// Main Dialog class

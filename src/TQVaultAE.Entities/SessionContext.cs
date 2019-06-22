@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TQVaultAE.Entities;
+﻿using System.Collections.Generic;
 
-namespace TQVaultAE.GUI.Models
+namespace TQVaultAE.Entities
 {
 	/// <summary>
 	/// Shared data context for all services

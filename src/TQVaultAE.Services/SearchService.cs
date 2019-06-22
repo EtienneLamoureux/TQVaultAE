@@ -4,12 +4,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using TQVaultAE.Entities;
-using TQVaultAE.GUI.Models;
-using TQVaultAE.GUI.Models.Search;
 using TQVaultAE.Logs;
 using TQVaultAE.Presentation;
+using TQVaultAE.Services.Models.Search;
 
-namespace TQVaultAE.GUI.Services
+namespace TQVaultAE.Services
 {
 	public class SearchService
 	{
