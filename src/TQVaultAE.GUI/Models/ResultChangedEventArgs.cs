@@ -6,6 +6,7 @@
 namespace TQVaultAE.GUI.Models
 {
 	using System;
+	using TQVaultAE.Services.Models.Search;
 
 	/// <summary>
 	/// Encapsulates the ResultsChanged event data

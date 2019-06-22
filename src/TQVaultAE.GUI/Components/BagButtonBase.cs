@@ -9,7 +9,6 @@ namespace TQVaultAE.GUI.Components
 	using System.Drawing;
 	using System.Windows.Forms;
 	using Tooltip;
-	using TQVaultAE.Data;
 	using TQVaultAE.Presentation;
 
 	/// <summary>

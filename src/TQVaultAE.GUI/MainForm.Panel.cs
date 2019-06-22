@@ -152,39 +152,10 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				string text = ItemProvider.ToFriendlyName(item);
-				Color color = ItemGfxHelper.GetColorTag(item, text);
-				text = Item.ClipColorTag(text);
-				this.itemText.ForeColor = color;
-				this.itemText.Text = text;
-
-				string attributes = ItemHtmlHelper.GetAttributes(item, true); // true means hide uninteresting attributes
-				string setitems = ItemHtmlHelper.GetItemSetString(item);
-				string reqs = ItemHtmlHelper.GetRequirements(item);
-
-				// combine the 2
-				if (reqs.Length < 1)
-				{
-					this.tooltipText = attributes;
-				}
-				else if (setitems.Length < 1)
-				{
-					string reqTitle = HtmlHelper.MakeSafeForHtml("?Requirements?");
-					reqTitle = string.Format(CultureInfo.InvariantCulture, "<font size=+2 color={0}>{1}</font><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Potion)), reqTitle);
-					string separator = string.Format(CultureInfo.InvariantCulture, "<hr color={0}><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Broken)));
-					this.tooltipText = string.Concat(attributes, separator, reqs);
-				}
-				else
-				{
-					string reqTitle = HtmlHelper.MakeSafeForHtml("?Requirements?");
-					reqTitle = string.Format(CultureInfo.InvariantCulture, "<font size=+2 color={0}>{1}</font><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Potion)), reqTitle);
-					string separator1 = string.Format(CultureInfo.InvariantCulture, "<hr color={0}>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Broken)));
-					string separator2 = string.Format(CultureInfo.InvariantCulture, "<hr color={0}><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Broken)));
-					this.tooltipText = string.Concat(attributes, separator1, setitems, separator2, reqs);
-				}
-
-				// show tooltip
-				this.tooltipText = string.Concat(HtmlHelper.TooltipBodyTag(UIService.UI.Scale), this.tooltipText);
+				var result = ItemHtmlHelper.NewItemHighlightedTooltip(item);
+				this.itemText.ForeColor = result.ForeColor;
+				this.itemText.Text = result.FriendlyName;
+				this.tooltipText = result.TooltipText;
 				this.tooltip.ChangeText(this.tooltipText);
 			}
 

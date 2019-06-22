@@ -6,16 +6,13 @@
 namespace TQVaultAE.GUI
 {
 	using System;
-	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Diagnostics;
 	using System.Drawing;
 	using System.Globalization;
 	using System.IO;
-	using System.Linq;
 	using System.Reflection;
 	using System.Security.Permissions;
-	using System.Threading;
 	using System.Windows.Forms;
 	using Tooltip;
 	using TQVaultAE.GUI.Components;
@@ -23,10 +20,9 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Data;
 	using TQVaultAE.Logs;
 	using TQVaultAE.Entities;
-	using TQVaultAE.GUI.Services;
 	using TQVaultAE.Presentation;
-	using TQVaultAE.Presentation.Html;
 	using TQVaultAE.Config;
+	using TQVaultAE.Services;
 
 	/// <summary>
 	/// Main Dialog class
@@ -75,19 +71,9 @@ namespace TQVaultAE.GUI
 		private Point lastDragPoint;
 
 		/// <summary>
-		/// Dictionary of all loaded player files
+		/// User current data context
 		/// </summary>
-		private Dictionary<string, PlayerCollection> players;
-
-		/// <summary>
-		/// Dictionary of all loaded vault files
-		/// </summary>
-		private Dictionary<string, PlayerCollection> vaults;
-
-		/// <summary>
-		/// Dictionary of all loaded player stash files
-		/// </summary>
-		private Dictionary<string, Stash> stashes;
+		private SessionContext userContext = new SessionContext();
 
 		/// <summary>
 		/// Instance of the vault panel control
@@ -267,10 +253,6 @@ namespace TQVaultAE.GUI
 			this.lastDragPoint.X = -1;
 			this.dragInfo = new ItemDragInfo();
 
-			this.players = new Dictionary<string, PlayerCollection>();
-			this.vaults = new Dictionary<string, PlayerCollection>();
-			this.stashes = new Dictionary<string, Stash>();
-
 			this.CreatePanels();
 
 			// Process the mouse scroll wheel to cycle through the vaults.
@@ -384,7 +366,6 @@ namespace TQVaultAE.GUI
 		/// <returns>TRUE if none of the conditions exist or the user selected to ignore the message</returns>
 		private bool DoCloseStuff()
 		{
-			bool modifiedFiles = false;
 			bool ok = false;
 			try
 			{
@@ -395,7 +376,7 @@ namespace TQVaultAE.GUI
 					return false;
 				}
 
-				modifiedFiles = this.SaveAllModifiedFiles();
+				this.SaveAllModifiedFiles();
 
 				// Added by VillageIdiot
 				this.SaveConfiguration();
@@ -588,22 +569,21 @@ namespace TQVaultAE.GUI
 			this.ScaleOnResize = false;
 			if (workingArea.Width < formWidth || workingArea.Height < formHeight)
 			{
-
 				initialScale = Math.Min(Convert.ToSingle(workingArea.Width) / Convert.ToSingle(formWidth), Convert.ToSingle(workingArea.Height) / Convert.ToSingle(formHeight));
-
 
 				if (Config.Settings.Default.Scale > initialScale)
 				{
 					Config.Settings.Default.Scale = initialScale;
 				}
+
 				this.ClientSize = new System.Drawing.Size((int)System.Math.Round(formWidth * Config.Settings.Default.Scale), (int)System.Math.Round(formHeight * Config.Settings.Default.Scale));
 			}
 			else
 			{
 				this.ClientSize = new System.Drawing.Size(formWidth, formHeight);
 			}
-			this.ScaleOnResize = true;
 
+			this.ScaleOnResize = true;
 
 			UIService.UI.Scale = Config.Settings.Default.Scale;
 
@@ -619,11 +599,11 @@ namespace TQVaultAE.GUI
 			this.OriginalFormSize = this.Size;
 			this.OriginalFormScale = Config.Settings.Default.Scale;
 
-			if (CurrentAutoScaleDimensions.Width != UIService.DesignDpi)
+			if (CurrentAutoScaleDimensions.Width != UIService.DESIGNDPI)
 			{
 				// We do not need to scale the main form controls since autoscaling will handle it.
 				// Scale internally to 96 dpi for the drawing functions.
-				UIService.UI.Scale = this.CurrentAutoScaleDimensions.Width / UIService.DesignDpi;
+				UIService.UI.Scale = this.CurrentAutoScaleDimensions.Width / UIService.DESIGNDPI;
 				this.OriginalFormScale = UIService.UI.Scale;
 			}
 
@@ -654,50 +634,6 @@ namespace TQVaultAE.GUI
 
 		#region Files
 
-		/// <summary>
-		/// Parses filename to try to determine the base character name.
-		/// </summary>
-		/// <param name="filename">filename of the character file</param>
-		/// <returns>string containing the character name</returns>
-		private static string GetNameFromFile(string filename)
-		{
-			// Strip off the filename
-			string basePath = Path.GetDirectoryName(filename);
-
-			// Get the containing folder
-			string charName = Path.GetFileName(basePath);
-
-			if (charName.ToUpperInvariant() == "SYS")
-			{
-				string fileAndExtension = Path.GetFileName(filename);
-				if (fileAndExtension.ToUpperInvariant().Contains("MISC"))
-				{
-					// Check for the relic vault stash.
-					charName = Resources.GlobalRelicVaultStash;
-				}
-				else if (fileAndExtension.ToUpperInvariant().Contains("WIN"))
-				{
-					// Check for the transfer stash.
-					charName = Resources.GlobalTransferStash;
-				}
-				else
-				{
-					charName = null;
-				}
-			}
-			else if (charName.StartsWith("_", StringComparison.Ordinal))
-			{
-				// See if it is a character folder.
-				charName = charName.Substring(1);
-			}
-			else
-			{
-				// The name is bogus so return a null.
-				charName = null;
-			}
-
-			return charName;
-		}
 
 		/// <summary>
 		/// Counts the number of files which LoadAllFiles will load.  Used to set the max value of the progress bar.
@@ -707,19 +643,11 @@ namespace TQVaultAE.GUI
 		{
 			string[] list;
 
-			int numIT = 0;
 			list = TQData.GetCharacterList();
-			if (list != null)
-			{
-				numIT = list.Length;
-			}
+			int numIT = list?.Length ?? 0;
 
-			int numVaults = 0;
 			list = TQData.GetVaultList();
-			if (list != null)
-			{
-				numVaults = list.Length;
-			}
+			int numVaults = list?.Length ?? 0;
 
 			return Math.Max(0, numIT + numIT + numVaults - 1);
 		}
@@ -754,17 +682,9 @@ namespace TQVaultAE.GUI
 
 			string[] charactersIT = TQData.GetCharacterList();
 
-			int numIT = 0;
-			if (charactersIT != null)
-			{
-				numIT = charactersIT.Length;
-			}
+			int numIT = charactersIT?.Length ?? 0;
 
-			int numVaults = 0;
-			if (vaults != null)
-			{
-				numVaults = vaults.Length;
-			}
+			int numVaults = vaults?.Length ?? 0;
 
 			// Since this takes a while, show a progress dialog box.
 			int total = numIT + numIT + numVaults - 1;
@@ -776,88 +696,25 @@ namespace TQVaultAE.GUI
 				Config.Settings.Default.Save();
 			}
 			else
-			{
 				return;
-			}
 
 			// Load all of the Immortal Throne player files and stashes.
 			for (int i = 0; i < numIT; ++i)
 			{
-				string playerFile = TQData.GetPlayerFile(charactersIT[i]);
-
-				// Get the player
+				// Get the player & player's stash
 				try
 				{
-					PlayerCollection player;
+					var result = this.playerService.LoadPlayer(charactersIT[i], true);
 
-					if (players.ContainsKey(playerFile))
+					if (result.PlayerArgumentException != null)
 					{
-						player = this.players[playerFile];
+						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.PlayerFile, result.PlayerArgumentException.Message);
+						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 					}
-					else
+					if (result.StashArgumentException != null)
 					{
-						bool playerLoaded = false;
-						player = new PlayerCollection(charactersIT[i], playerFile);
-						player.IsImmortalThrone = true;
-						try
-						{
-							PlayerCollectionProvider.LoadFile(player);
-							playerLoaded = true;
-						}
-						catch (ArgumentException argumentException)
-						{
-							string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, playerFile, argumentException.Message);
-							MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-							playerLoaded = false;
-						}
-
-						if (playerLoaded)
-						{
-							this.players.Add(playerFile, player);
-						}
-					}
-				}
-				catch (IOException exception)
-				{
-					Log.ErrorException(exception);
-					MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-				}
-
-				this.backgroundWorker1.ReportProgress(1);
-
-				string stashFile = TQData.GetPlayerStashFile(charactersIT[i]);
-
-				// Get the player's stash
-				try
-				{
-					Stash stash;
-					if (stashes.ContainsKey(stashFile))
-					{
-						stash = this.stashes[stashFile];
-					}
-					else
-					{
-						bool stashLoaded = false;
-						stash = new Stash(charactersIT[i], stashFile);
-						stash.IsImmortalThrone = true;
-
-						try
-						{
-							// Eat any file not found messages for the stash.
-							StashProvider.LoadFile(stash);
-							stashLoaded = true;
-						}
-						catch (ArgumentException argumentException)
-						{
-							string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, stashFile, argumentException.Message);
-							MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-							stashLoaded = false;
-						}
-
-						if (stashLoaded)
-						{
-							this.stashes.Add(stashFile, stash);
-						}
+						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.StashFile, result.StashArgumentException.Message);
+						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 					}
 				}
 				catch (IOException exception)
@@ -872,39 +729,11 @@ namespace TQVaultAE.GUI
 			// Load all of the vaults.
 			for (int i = 0; i < numVaults; ++i)
 			{
-				// Get the filename
-				string filename = TQData.GetVaultFile(vaults[i]);
-
-				// Check the cache
-				PlayerCollection vault;
-				try
+				var result = this.vaultService.LoadVault(vaults[i]);
+				if (result.ArgumentException != null)
 				{
-					vault = this.vaults[filename];
-				}
-				catch (KeyNotFoundException)
-				{
-					// We need to load the vault.
-					bool vaultLoaded = false;
-					vault = new PlayerCollection(vaults[i], filename);
-					vault.IsVault = true;
-					try
-					{
-						PlayerCollectionProvider.LoadFile(vault);
-						vaultLoaded = true;
-					}
-					catch (ArgumentException argumentException)
-					{
-						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, filename, argumentException.Message);
-						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-						vaultLoaded = false;
-					}
-
-					// Add the vault to the cache
-					// but only if we parse it successfully.
-					if (vaultLoaded)
-					{
-						this.vaults.Add(filename, vault);
-					}
+					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.Filename, result.ArgumentException.Message);
+					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
 				this.backgroundWorker1.ReportProgress(1);
@@ -1064,7 +893,6 @@ namespace TQVaultAE.GUI
 					TQData.MapName = args.MapName;
 				}
 
-				Database.DB.LoadDBFile();
 				this.resourcesLoaded = true;
 				this.backgroundWorker1.ReportProgress(1);
 
@@ -1141,7 +969,7 @@ namespace TQVaultAE.GUI
 					}
 				}
 
-				string currentVault = "Main Vault";
+				string currentVault = VaultService.MAINVAULT;
 
 				// See if we should load the last loaded vault
 				if (Config.Settings.Default.LoadLastVault)
@@ -1152,7 +980,7 @@ namespace TQVaultAE.GUI
 					// We do not want to create new here.
 					if (string.IsNullOrEmpty(currentVault) || !File.Exists(TQData.GetVaultFile(currentVault)))
 					{
-						currentVault = "Main Vault";
+						currentVault = VaultService.MAINVAULT;
 					}
 				}
 
@@ -1305,7 +1133,7 @@ namespace TQVaultAE.GUI
 				if (settingsDialog.VaultPathChanged)
 				{
 					TQData.TQVaultSaveFolder = settingsDialog.VaultPath;
-					UpdateVaultPath(settingsDialog.VaultPath);
+					this.vaultService.UpdateVaultPath(settingsDialog.VaultPath);
 					this.GetVaultList(true);
 				}
 
@@ -1347,16 +1175,6 @@ namespace TQVaultAE.GUI
 			}
 		}
 
-		/// <summary>
-		/// Updates VaultPath key from the configuration UI
-		/// Needed since all vaults will need to be reloaded if this key changes.
-		/// </summary>
-		/// <param name="vaultPath">Path to the vault files</param>
-		private static void UpdateVaultPath(string vaultPath)
-		{
-			Config.Settings.Default.VaultPath = vaultPath;
-			Config.Settings.Default.Save();
-		}
 
 		#endregion
 

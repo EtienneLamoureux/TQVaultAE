@@ -7,12 +7,9 @@ namespace TQVaultAE.GUI.Components
 {
 	using System;
 	using System.Drawing;
-	using System.Globalization;
-	using System.Text;
 	using System.Windows.Forms;
 	using Tooltip;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Presentation.Html;
@@ -133,7 +130,7 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			//x and y coordinates passed are normalized values between 0 and 1.0.   
-			playerInfoDisplay = new PlayerInfoDisplay(Config.Settings.Default, this, this.Font,.83,.14);
+			playerInfoDisplay = new PlayerInfoDisplay(Config.Settings.Default, this, this.Font, .83, .14);
 
 			// Now that the buttons are set we can move the panel
 			this.BagSackPanel.SetLocation(new Point(
@@ -719,38 +716,15 @@ namespace TQVaultAE.GUI.Components
 				return null;
 			}
 
-			StringBuilder answer = new StringBuilder();
-			answer.Append(HtmlHelper.TooltipTitleTag(UIService.UI.Scale));
-			bool first = true;
-			foreach (Item item in sack)
+			// skip the item being dragged
+			Item[] excluded = null;
+			if (this.DragInfo.IsActive)
 			{
-				if (this.DragInfo.IsActive && item == this.DragInfo.Item)
-				{
-					// skip the item being dragged
-					continue;
-				}
-
-				if (item.BaseItemId.Length == 0)
-				{
-					// skip empty items
-					continue;
-				}
-
-				if (!first)
-				{
-					answer.Append("<br>");
-				}
-
-				first = false;
-				string text = HtmlHelper.MakeSafeForHtml(ItemProvider.ToFriendlyName(item));
-				Color color = ItemGfxHelper.GetColorTag(item, text);
-				text = Item.ClipColorTag(text);
-				string htmlcolor = HtmlHelper.HtmlColor(color);
-				string htmlLine = string.Format(CultureInfo.CurrentCulture, "<font color={0}><b>{1}</b></font>", htmlcolor, text);
-				answer.Append(htmlLine);
+				excluded = new Item[] { this.DragInfo.Item };
 			}
 
-			return answer.ToString();
+			var html = ItemHtmlHelper.GetSackToolTip(sack, excluded);
+			return html;
 		}
 
 		/// <summary>

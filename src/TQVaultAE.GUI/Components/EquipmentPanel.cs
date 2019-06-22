@@ -203,51 +203,6 @@ namespace TQVaultAE.GUI.Components
 		}
 
 		/// <summary>
-		/// Find all items that are at least partially within the cell rectangle
-		/// </summary>
-		/// <param name="cellRectangle">cell rectangle we are looking at</param>
-		/// <returns>Array of items within the rectangle</returns>
-		/*protected override Item[] FindAllItems(Rectangle cellRectangle)
-        {
-            List<Item> items = new List<Item>();
-            int minX = cellRectangle.X;
-            int maxX = cellRectangle.X + cellRectangle.Width;
-            int minY = cellRectangle.Y;
-            int maxY = cellRectangle.Y + cellRectangle.Height;
-
-            for (int x = minX; x < maxX; ++x)
-            {
-                for (int y = minY; y < maxY; ++y)
-                {
-                    Item item = this.FindItem(new Point(x, y));
-
-                    if (item != null)
-                    {
-                        // Add this item to the array if it is not already in there
-                        if (!items.Contains(item))
-                        {
-                            items.Add(item);
-                        }
-
-                        if (item.PositionX == Item.WeaponSlotIndicator)
-                        {
-                            // If we are over an equipment panel then we skip to the next column
-                            // since the x, y coordinates embedded in the item are a special case
-                            y = SackCollection.WeaponLocationSize.Height + SackCollection.GetWeaponLocationOffset(item.PositionY).Y - 1;
-                        }
-                        else
-                        {
-                            // Speed things up by skipping past the remaining height of the item
-                            y = y + item.Height - 1 - (y - item.PositionY);
-                        }
-                    }
-                }
-            }
-
-            return items.ToArray<Item>();
-        }*/
-
-		/// <summary>
 		/// Calculates the mouse offset in screen coordinates within an item bitmap.
 		/// </summary>
 		/// <param name="location">Point containing the screen coordinates of the mouse.</param>
@@ -356,9 +311,11 @@ namespace TQVaultAE.GUI.Components
 
 					// we will just throw away the dragItem now.
 				}
-				else if (dragItem.IsRelic && itemUnderUs != null && itemUnderUs.IsRelic &&
-					!itemUnderUs.IsRelicComplete && !dragItem.IsRelicComplete &&
-					dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId))
+				else if (
+					dragItem.IsRelic && itemUnderUs != null && itemUnderUs.IsRelic
+					&& !itemUnderUs.IsRelicComplete && !dragItem.IsRelicComplete
+					&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
+				)
 				{
 					// Stack relics
 					// Save the original Relic number

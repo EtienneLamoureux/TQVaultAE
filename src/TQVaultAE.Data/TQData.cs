@@ -456,7 +456,7 @@ namespace TQVaultAE.Data
 				// Get all folders that start with a '_'.
 				string[] folders = Directory.GetDirectories(GetBaseCharacterFolder(), "_*");
 
-				if (folders == null || folders.Length < 1)
+				if (folders == null || folders.Length == 0)
 				{
 					return null;
 				}
