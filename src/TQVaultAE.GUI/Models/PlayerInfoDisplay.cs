@@ -233,6 +233,7 @@ namespace TQVaultAE.GUI.Models
 			void printData(string label, object data) // Local function
 			{
 				label = string.Format("{0}:", label);
+				data = data ?? string.Empty;
 				e.Graphics.DrawString(label, _font, _whiteBrush, startTextX, startTextY, _playerInfoAlignment);
 				e.Graphics.DrawString(data.ToString(), _font, _yellowGreenBrush, startTextX, startTextY);
 				startTextY = startTextY + _font.Height;
