@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
-	using Properties;
 	using System;
 	using System.Drawing;
 	using System.Globalization;
@@ -13,7 +12,8 @@ namespace TQVaultAE.GUI
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Components;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Abstract class used for constructing TQVault themed forms.
@@ -126,7 +126,7 @@ namespace TQVaultAE.GUI
 			this.bottomRightCorner = Resources.BorderBottomRightCorner;
 			this.bottomLeftCorner = Resources.BorderBottomLeftCorner;
 			this.ShowResizeBorders = false;
-			this.titleFont = Program.GetFontAlbertusMTLight(9.5F);
+			this.titleFont = FontHelper.GetFontAlbertusMTLight(9.5F);
 			this.TitleTextColor = SystemColors.ControlText;
 
 			this.InitializeComponent();
@@ -160,14 +160,12 @@ namespace TQVaultAE.GUI
 
 		protected Size ScaleSize(Size size)
 		{
-			if (TQVaultAE.DAL.Database.DB == null) return size;
-			return new Size((int)System.Math.Round(size.Width * Database.DB.Scale), (int)System.Math.Round(size.Height * Database.DB.Scale));
+			return new Size((int)System.Math.Round(size.Width * UIService.UI.Scale), (int)System.Math.Round(size.Height * UIService.UI.Scale));
 		}
 
 		protected Point ScalePoint(Point point)
 		{
-			if (TQVaultAE.DAL.Database.DB == null) return point;
-			return new Point((int)System.Math.Round(point.X * Database.DB.Scale), (int)System.Math.Round(point.Y * Database.DB.Scale));
+			return new Point((int)System.Math.Round(point.X * UIService.UI.Scale), (int)System.Math.Round(point.Y * UIService.UI.Scale));
 		}
 
 
@@ -445,19 +443,19 @@ namespace TQVaultAE.GUI
 			// Support relative resizing of the DB value.
 			if (useRelativeScaling && scaleFactor != 1.0F)
 			{
-				float newDBScale = Database.DB.Scale * scaleFactor;
+				float newDBScale = UIService.UI.Scale * scaleFactor;
 				if (newDBScale > 2.0F || newDBScale < 0.40F)
 				{
 					return;
 				}
 
-				Database.DB.Scale = newDBScale;
+				UIService.UI.Scale = newDBScale;
 				this.Scale(new SizeF(scaleFactor, scaleFactor));
 			}
 			else if (scaleFactor == 1.0F)
 			{
 				// Check if we are resetting the size.
-				if (Database.DB.Scale == 1.0F)
+				if (UIService.UI.Scale == 1.0F)
 				{
 					return;
 				}
@@ -469,7 +467,7 @@ namespace TQVaultAE.GUI
 				this.bottomRightCorner = Resources.BorderBottomRightCorner;
 				this.bottomLeftCorner = Resources.BorderBottomLeftCorner;
 
-				Database.DB.Scale = this.OriginalFormScale;
+				UIService.UI.Scale = this.OriginalFormScale;
 
 				// Use the width since it is usually more drastic of a change.
 				// especially when coming from a small size.
@@ -477,8 +475,8 @@ namespace TQVaultAE.GUI
 					(float)this.OriginalFormSize.Width / (float)this.Width,
 					(float)this.OriginalFormSize.Width / (float)this.Width));
 
-				Settings.Default.Scale = 1.0F;
-				Settings.Default.Save();
+				Config.Settings.Default.Scale = 1.0F;
+				Config.Settings.Default.Save();
 			}
 			else
 			{
@@ -492,7 +490,7 @@ namespace TQVaultAE.GUI
 					scaling = scalingHeight;
 				}
 
-				Database.DB.Scale = scaleFactor;
+				UIService.UI.Scale = scaleFactor;
 				this.Scale(new SizeF(scaling, scaling));
 			}
 		}
@@ -519,7 +517,7 @@ namespace TQVaultAE.GUI
 				}
 				else
 				{
-					scale = Database.DB.Scale + e.ResizeDelta;
+					scale = UIService.UI.Scale + e.ResizeDelta;
 				}
 
 				if (scale < 0.39F || scale > 2.01F)

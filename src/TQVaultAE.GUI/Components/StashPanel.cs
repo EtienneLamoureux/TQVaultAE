@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI.Components
 {
-	using Properties;
 	using System;
 	using System.Drawing;
 	using System.Globalization;
@@ -13,7 +12,10 @@ namespace TQVaultAE.GUI.Components
 	using System.Windows.Forms;
 	using Tooltip;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
+	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
+	using TQVaultAE.Presentation.Html;
 
 	/// <summary>
 	/// Class for handling the stash panel ui functions
@@ -112,8 +114,8 @@ namespace TQVaultAE.GUI.Components
 			this.Text = Resources.StashPanelText;
 			this.NoPlayerString = Resources.StashPanelText;
 			this.Size = new Size(
-				(panelSize.Width * Database.DB.ItemUnitSize) + Convert.ToInt32(10.0F * Database.DB.Scale) + BorderPad,
-				(panelSize.Height * Database.DB.ItemUnitSize) + Convert.ToInt32(60.0F * Database.DB.Scale) + BorderPad);
+				(panelSize.Width * UIService.UI.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.UI.Scale) + BorderPad,
+				(panelSize.Height * UIService.UI.ItemUnitSize) + Convert.ToInt32(60.0F * UIService.UI.Scale) + BorderPad);
 			this.Paint += new PaintEventHandler(this.PaintCallback);
 
 			this.BagSackPanel.SetLocation(new Point(BorderPad, this.Size.Height - (this.BagSackPanel.Size.Height + BorderPad)));
@@ -125,26 +127,26 @@ namespace TQVaultAE.GUI.Components
 			this.StashBackground = Resources.caravan_bg;
 
 			// Set up the inital font size
-			if (Database.DB.Scale != 1.0F)
+			if (UIService.UI.Scale != 1.0F)
 			{
-				this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
+				this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * UIService.UI.Scale, this.Font.Style);
 			}
 
 			//x and y coordinates passed are normalized values between 0 and 1.0.   
-			playerInfoDisplay = new PlayerInfoDisplay(Settings.Default, this, this.Font,.83,.14);
+			playerInfoDisplay = new PlayerInfoDisplay(Config.Settings.Default, this, this.Font,.83,.14);
 
 			// Now that the buttons are set we can move the panel
 			this.BagSackPanel.SetLocation(new Point(
 				BorderPad,
-				this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height + Database.DB.HalfUnitSize));
+				this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height + UIService.UI.HalfUnitSize));
 
-			int offsetX = (panelSize.Width - this.equipmentPanel.SackSize.Width) * Database.DB.HalfUnitSize;
+			int offsetX = (panelSize.Width - this.equipmentPanel.SackSize.Width) * UIService.UI.HalfUnitSize;
 			if (offsetX < 0)
 			{
 				offsetX = 0;
 			}
 
-			int offsetY = (panelSize.Height - this.equipmentPanel.SackSize.Height) * Database.DB.HalfUnitSize;
+			int offsetY = (panelSize.Height - this.equipmentPanel.SackSize.Height) * UIService.UI.HalfUnitSize;
 			if (offsetY < 0)
 			{
 				offsetY = 0;
@@ -239,13 +241,13 @@ namespace TQVaultAE.GUI.Components
 		{
 			get
 			{
-				if (Database.DB.Scale != 1.0F)
+				if (UIService.UI.Scale != 1.0F)
 				{
 					// We need to scale this since we use it to redraw the background.
 					return new Bitmap(
 						this.equipmentBackground,
-						(this.maxPanelSize.Width * Database.DB.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
-						(this.maxPanelSize.Height * Database.DB.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2));
+						(this.maxPanelSize.Width * UIService.UI.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
+						(this.maxPanelSize.Height * UIService.UI.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2));
 				}
 
 				return this.equipmentBackground;
@@ -264,13 +266,13 @@ namespace TQVaultAE.GUI.Components
 		{
 			get
 			{
-				if (Database.DB.Scale != 1.0F)
+				if (UIService.UI.Scale != 1.0F)
 				{
 					// We need to scale this since we use it to redraw the background.
 					return new Bitmap(
 						this.stashBackground,
-						(this.maxPanelSize.Width * Database.DB.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
-						(this.maxPanelSize.Height * Database.DB.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2));
+						(this.maxPanelSize.Width * UIService.UI.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
+						(this.maxPanelSize.Height * UIService.UI.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2));
 				}
 
 				return this.stashBackground;
@@ -343,8 +345,8 @@ namespace TQVaultAE.GUI.Components
 						this.BagSackPanel.ResizeSackPanel(this.transferStash.Width, this.transferStash.Height);
 
 						// Adjust location based on size.
-						int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.transferStash.Width) * Database.DB.HalfUnitSize);
-						int offsetY = Math.Max(0, (this.maxPanelSize.Height - this.transferStash.Height) * Database.DB.HalfUnitSize);
+						int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.transferStash.Width) * UIService.UI.HalfUnitSize);
+						int offsetY = Math.Max(0, (this.maxPanelSize.Height - this.transferStash.Height) * UIService.UI.HalfUnitSize);
 
 						this.BagSackPanel.Location = new Point(BorderPad + offsetX, buttonOffsetY + offsetY);
 						this.equipmentPanel.Visible = false;
@@ -361,8 +363,8 @@ namespace TQVaultAE.GUI.Components
 						this.BagSackPanel.ResizeSackPanel(this.stash.Width, this.stash.Height);
 
 						// Adjust location based on size so it will be centered.
-						int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.stash.Width) * Database.DB.HalfUnitSize);
-						int offsetY = Math.Max(0, (this.maxPanelSize.Height - Math.Max(15, this.stash.Height)) * Database.DB.HalfUnitSize);
+						int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.stash.Width) * UIService.UI.HalfUnitSize);
+						int offsetY = Math.Max(0, (this.maxPanelSize.Height - Math.Max(15, this.stash.Height)) * UIService.UI.HalfUnitSize);
 
 						this.BagSackPanel.Location = new Point(BorderPad + offsetX, buttonOffsetY + offsetY);
 						this.equipmentPanel.Visible = false;
@@ -379,8 +381,8 @@ namespace TQVaultAE.GUI.Components
 						this.BagSackPanel.ResizeSackPanel(this.relicVaultStash.Width, this.relicVaultStash.Height);
 
 						// Adjust location based on size.
-						int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.relicVaultStash.Width) * Database.DB.HalfUnitSize);
-						int offsetY = Math.Max(0, (this.maxPanelSize.Height - this.relicVaultStash.Height) * Database.DB.HalfUnitSize);
+						int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.relicVaultStash.Width) * UIService.UI.HalfUnitSize);
+						int offsetY = Math.Max(0, (this.maxPanelSize.Height - this.relicVaultStash.Height) * UIService.UI.HalfUnitSize);
 
 						this.BagSackPanel.Location = new Point(BorderPad + offsetX, buttonOffsetY + offsetY);
 						this.equipmentPanel.Visible = false;
@@ -460,7 +462,7 @@ namespace TQVaultAE.GUI.Components
 			float bagSlotWidth = scale * slotWidth;
 
 			// We are using tabs so only scale horizontally
-			button.Size = new Size((int)Math.Round(scale * buttonWidth), Convert.ToInt32(buttonHeight * Database.DB.Scale));
+			button.Size = new Size((int)Math.Round(scale * buttonWidth), Convert.ToInt32(buttonHeight * UIService.UI.Scale));
 			float offset = (bagSlotWidth * bagNumber) + ((bagSlotWidth - button.Width) / 2.0F);
 
 			button.Location = new Point(this.SackPanel.Location.X + (int)Math.Round(offset), this.SackPanel.Location.Y - button.Height);
@@ -718,7 +720,7 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			StringBuilder answer = new StringBuilder();
-			answer.Append(Database.DB.TooltipTitleTag);
+			answer.Append(HtmlHelper.TooltipTitleTag(UIService.UI.Scale));
 			bool first = true;
 			foreach (Item item in sack)
 			{
@@ -740,10 +742,10 @@ namespace TQVaultAE.GUI.Components
 				}
 
 				first = false;
-				string text = Database.MakeSafeForHtml(item.ToString());
-				Color color = item.GetColorTag(text);
+				string text = HtmlHelper.MakeSafeForHtml(ItemProvider.ToFriendlyName(item));
+				Color color = ItemGfxHelper.GetColorTag(item, text);
 				text = Item.ClipColorTag(text);
-				string htmlcolor = Database.HtmlColor(color);
+				string htmlcolor = HtmlHelper.HtmlColor(color);
 				string htmlLine = string.Format(CultureInfo.CurrentCulture, "<font color={0}><b>{1}</b></font>", htmlcolor, text);
 				answer.Append(htmlLine);
 			}

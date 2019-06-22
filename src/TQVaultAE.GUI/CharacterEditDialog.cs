@@ -1,13 +1,11 @@
 namespace TQVaultAE.GUI
 {
-	using Properties;
 	using System;
-	using System.ComponentModel;
-	using System.Drawing;
 	using System.Globalization;
 	using System.Windows.Forms;
-	using TQVaultAE.DAL;
-	using TQVaultData;
+	using TQVaultAE.Data;
+	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Dialog box class for the Item Seed Dialog
@@ -27,11 +25,6 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// MessageBoxOptions for right to left reading.
-		/// </summary>
-		private static MessageBoxOptions rightToLeftOptions = (MessageBoxOptions)0;
-
-		/// <summary>
 		/// Selected Item
 		/// </summary>
 		private Item selectedItem;
@@ -49,9 +42,9 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.ok.Font = Program.GetFontAlbertusMTLight(12F);
-			this.cancel.Font = Program.GetFontAlbertusMTLight(12F);
-			this.Font = Program.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.ok.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.cancel.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.Font = FontHelper.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
 			#endregion
 
@@ -60,11 +53,6 @@ namespace TQVaultAE.GUI
 			this.cancel.Text = Resources.GlobalCancel;
 			this.ok.Text = Resources.GlobalOK;
 
-			// Set options for Right to Left reading.
-			if (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)
-			{
-				rightToLeftOptions = MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading;
-			}
 		}
 
 		private void setDifficultly()
@@ -158,12 +146,14 @@ namespace TQVaultAE.GUI
 				playerInfo.BaseIntelligence = Convert.ToInt32(intelligenceUpDown.Value);
 				playerInfo.BaseHealth = Convert.ToInt32(healthUpDown.Value);
 				playerInfo.BaseMana = Convert.ToInt32(manacUpDown.Value);
-				UpdateMoneySituation(_playerCollection.PlayerInfo,playerInfo);
-				_playerCollection.CommitPlayerInfo(playerInfo);
+				UpdateMoneySituation(_playerCollection.PlayerInfo, playerInfo);
+				PlayerCollectionProvider.CommitPlayerInfo(_playerCollection, playerInfo);
+
 				this.Close();
-			}catch(Exception ex)
+			}
+			catch (Exception ex)
 			{
-				MessageBox.Show(string.Format("{0}",ex.Message));
+				MessageBox.Show(string.Format("{0}", ex.Message));
 			}
 		}
 
@@ -333,7 +323,7 @@ namespace TQVaultAE.GUI
 			var dif = prevValue - value;
 
 			var tag = (TagData)upDwnCtrl.Tag;
-			var newValue = Convert.ToInt32(dif/tag.IncrementValue);
+			var newValue = Convert.ToInt32(dif / tag.IncrementValue);
 			var newAttr = attributeNumericUpDown.Value + newValue;
 			if (newAttr < 0)
 			{
@@ -379,7 +369,7 @@ namespace TQVaultAE.GUI
 				this.difficultlyComboBox.Enabled = true;
 				this.skillPointsNumericUpDown.Enabled = true;
 				this.attributeNumericUpDown.Enabled = true;
-				this.levelNumericUpDown.Enabled = true; 
+				this.levelNumericUpDown.Enabled = true;
 			}
 			else
 			{

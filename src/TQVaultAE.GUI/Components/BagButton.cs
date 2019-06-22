@@ -6,8 +6,8 @@
 
 namespace TQVaultAE.GUI.Components
 {
-	using Properties;
 	using Tooltip;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Used to create sack bag buttons.

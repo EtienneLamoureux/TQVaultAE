@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using TQVaultAE.GUI.Components;
-using TQVaultAE.GUI.Properties;
+using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI
 {
@@ -104,22 +104,22 @@ namespace TQVaultAE.GUI
             // nextButton
             // 
             this.nextButton.BackColor = System.Drawing.Color.Transparent;
-            this.nextButton.DownBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonDown;
+            this.nextButton.DownBitmap = global::TQVaultAE.Presentation.Resources.MainButtonDown;
             this.nextButton.FlatAppearance.BorderSize = 0;
             this.nextButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.nextButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.nextButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.nextButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
             this.nextButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.nextButton.Image = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
+            this.nextButton.Image = global::TQVaultAE.Presentation.Resources.MainButtonUp;
             this.nextButton.Location = new System.Drawing.Point(286, 365);
             this.nextButton.Name = "nextButton";
-            this.nextButton.OverBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonOver;
+            this.nextButton.OverBitmap = global::TQVaultAE.Presentation.Resources.MainButtonOver;
             this.nextButton.Size = new System.Drawing.Size(137, 30);
             this.nextButton.SizeToGraphic = false;
             this.nextButton.TabIndex = 3;
             this.nextButton.Text = "Enter The Vault";
-            this.nextButton.UpBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
+            this.nextButton.UpBitmap = global::TQVaultAE.Presentation.Resources.MainButtonUp;
             this.nextButton.UseCustomGraphic = true;
             this.nextButton.UseVisualStyleBackColor = false;
             this.nextButton.Visible = false;
@@ -129,22 +129,22 @@ namespace TQVaultAE.GUI
             // 
             this.exitButton.BackColor = System.Drawing.Color.Transparent;
             this.exitButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.exitButton.DownBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonDown;
+            this.exitButton.DownBitmap = global::TQVaultAE.Presentation.Resources.MainButtonDown;
             this.exitButton.FlatAppearance.BorderSize = 0;
             this.exitButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.exitButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.exitButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
             this.exitButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.exitButton.Image = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
+            this.exitButton.Image = global::TQVaultAE.Presentation.Resources.MainButtonUp;
             this.exitButton.Location = new System.Drawing.Point(555, 420);
             this.exitButton.Name = "exitButton";
-            this.exitButton.OverBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonOver;
+            this.exitButton.OverBitmap = global::TQVaultAE.Presentation.Resources.MainButtonOver;
             this.exitButton.Size = new System.Drawing.Size(137, 30);
             this.exitButton.SizeToGraphic = false;
             this.exitButton.TabIndex = 4;
             this.exitButton.Text = "Exit";
-            this.exitButton.UpBitmap = global::TQVaultAE.GUI.Properties.Resources.MainButtonUp;
+            this.exitButton.UpBitmap = global::TQVaultAE.Presentation.Resources.MainButtonUp;
             this.exitButton.UseCustomGraphic = true;
             this.exitButton.UseVisualStyleBackColor = false;
             this.exitButton.Click += new System.EventHandler(this.ExitButtonClick);
@@ -190,7 +190,7 @@ namespace TQVaultAE.GUI
             this.AcceptButton = this.nextButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.BackgroundImage = global::TQVaultAE.GUI.Properties.Resources.NewSplashScreen;
+            this.BackgroundImage = global::TQVaultAE.Presentation.Resources.NewSplashScreen;
             this.CancelButton = this.exitButton;
             this.ClientSize = new System.Drawing.Size(716, 463);
             this.Controls.Add(this.labelPleaseWait);

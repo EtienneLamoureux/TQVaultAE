@@ -5,10 +5,10 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI.Components
 {
-	using Properties;
 	using System;
 	using System.Windows.Forms;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Displays and handles the auto sort button.
@@ -52,8 +52,8 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			// Scale the button to the size of the graphic.
-			this.Height = Convert.ToInt32((float)this.OffBitmap.Height * Database.DB.Scale);
-			this.Width = Convert.ToInt32((float)this.OffBitmap.Width * Database.DB.Scale);
+			this.Height = Convert.ToInt32((float)this.OffBitmap.Height * UIService.UI.Scale);
+			this.Width = Convert.ToInt32((float)this.OffBitmap.Width * UIService.UI.Scale);
 		}
 
 		/// <summary>

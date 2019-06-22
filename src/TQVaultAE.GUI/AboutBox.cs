@@ -10,8 +10,8 @@ namespace TQVaultAE.GUI
 	using System.Globalization;
 	using System.Reflection;
 	using System.Windows.Forms;
-	using TQVaultAE.GUI.Properties;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Class for About dialog box.
@@ -27,11 +27,11 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.labelProductName.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.labelVersion.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.labelCopyright.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.textBoxDescription.Font = Program.GetFontAlbertusMTLight(9.75F);
-			this.buttonOK.Font = Program.GetFontAlbertusMTLight(12F);
+			this.labelProductName.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.labelVersion.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.labelCopyright.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.textBoxDescription.Font = FontHelper.GetFontAlbertusMTLight(9.75F);
+			this.buttonOK.Font = FontHelper.GetFontAlbertusMTLight(12F);
 
 			#endregion
 
@@ -189,7 +189,7 @@ namespace TQVaultAE.GUI
 			{
 				this.logoPictureBox.Image = new Bitmap(
 					this.logoPictureBox.Image,
-					new Size(Convert.ToInt32((float)this.logoPictureBox.Size.Width * Database.DB.Scale), Convert.ToInt32((float)this.logoPictureBox.Size.Height * Database.DB.Scale)));
+					new Size(Convert.ToInt32((float)this.logoPictureBox.Size.Width * UIService.UI.Scale), Convert.ToInt32((float)this.logoPictureBox.Size.Height * UIService.UI.Scale)));
 			}
 
 			base.ScaleControl(factor, specified);

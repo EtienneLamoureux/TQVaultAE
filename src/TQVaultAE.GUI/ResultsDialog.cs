@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
-	using Properties;
 	using System;
 	using System.Collections.Generic;
 	using System.Drawing;
@@ -13,7 +12,10 @@ namespace TQVaultAE.GUI
 	using System.Windows.Forms;
 	using Tooltip;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
+	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
+	using TQVaultAE.Presentation.Html;
 
 	/// <summary>
 	/// Results dialog form class
@@ -54,13 +56,13 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.resultsDataGridView.ColumnHeadersDefaultCellStyle.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.item.DefaultCellStyle.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.quality.DefaultCellStyle.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.containerName.DefaultCellStyle.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.containerType.DefaultCellStyle.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.level.DefaultCellStyle.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.resultsDataGridView.ColumnHeadersDefaultCellStyle.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.item.DefaultCellStyle.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.quality.DefaultCellStyle.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.containerName.DefaultCellStyle.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.containerType.DefaultCellStyle.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.level.DefaultCellStyle.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
 			#endregion
 
@@ -226,9 +228,9 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				string attributes = selectedResult.Item.GetAttributes(true); // true means hide uninteresting attributes
-				string setitems = selectedResult.Item.GetItemSetString();
-				string reqs = selectedResult.Item.GetRequirements();
+				string attributes = ItemHtmlHelper.GetAttributes(selectedResult.Item, true); // true means hide uninteresting attributes
+				string setitems = ItemHtmlHelper.GetItemSetString(selectedResult.Item);
+				string reqs = ItemHtmlHelper.GetRequirements(selectedResult.Item);
 
 				// combine the 2
 				if (reqs.Length < 1)
@@ -237,22 +239,22 @@ namespace TQVaultAE.GUI
 				}
 				else if (setitems.Length < 1)
 				{
-					string reqTitle = Database.MakeSafeForHtml("?Requirements?");
-					reqTitle = string.Format(CultureInfo.InvariantCulture, "<font size=+2 color={0}>{1}</font><br>", Database.HtmlColor(Item.GetColor(ItemStyle.Potion)), reqTitle);
-					string separator = string.Format(CultureInfo.InvariantCulture, "<hr color={0}><br>", Database.HtmlColor(Item.GetColor(ItemStyle.Broken)));
+					string reqTitle = HtmlHelper.MakeSafeForHtml("?Requirements?");
+					reqTitle = string.Format(CultureInfo.InvariantCulture, "<font size=+2 color={0}>{1}</font><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Potion)), reqTitle);
+					string separator = string.Format(CultureInfo.InvariantCulture, "<hr color={0}><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Broken)));
 					this.tooltipText = string.Concat(attributes, separator, reqs);
 				}
 				else
 				{
-					string reqTitle = Database.MakeSafeForHtml("?Requirements?");
-					reqTitle = string.Format(CultureInfo.InvariantCulture, "<font size=+2 color={0}>{1}</font><br>", Database.HtmlColor(Item.GetColor(ItemStyle.Potion)), reqTitle);
-					string separator1 = string.Format(CultureInfo.InvariantCulture, "<hr color={0}>", Database.HtmlColor(Item.GetColor(ItemStyle.Broken)));
-					string separator2 = string.Format(CultureInfo.InvariantCulture, "<hr color={0}><br>", Database.HtmlColor(Item.GetColor(ItemStyle.Broken)));
+					string reqTitle = HtmlHelper.MakeSafeForHtml("?Requirements?");
+					reqTitle = string.Format(CultureInfo.InvariantCulture, "<font size=+2 color={0}>{1}</font><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Potion)), reqTitle);
+					string separator1 = string.Format(CultureInfo.InvariantCulture, "<hr color={0}>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Broken)));
+					string separator2 = string.Format(CultureInfo.InvariantCulture, "<hr color={0}><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Broken)));
 					this.tooltipText = string.Concat(attributes, separator1, setitems, separator2, reqs);
 				}
 
 				// show tooltip
-				this.tooltipText = string.Concat(Database.DB.TooltipBodyTag, this.tooltipText);
+				this.tooltipText = string.Concat(HtmlHelper.TooltipBodyTag(UIService.UI.Scale), this.tooltipText);
 				////this.tooltip.ChangeText(this.tooltipText);
 			}
 

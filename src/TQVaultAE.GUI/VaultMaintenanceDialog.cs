@@ -5,14 +5,14 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
-	using Properties;
 	using System;
 	using System.Drawing;
 	using System.Globalization;
 	using System.IO;
 	using System.Text;
 	using System.Windows.Forms;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Class for VaultMaintenanceDialog form
@@ -53,19 +53,19 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.targetTextBox.Font = Program.GetFontAlbertusMTLight(11F);
-			this.instructionsLabel.Font = Program.GetFontAlbertusMTLight(11F);
-			this.okayButton.Font = Program.GetFontAlbertusMTLight(12F);
-			this.cancelButton.Font = Program.GetFontAlbertusMTLight(12F);
-			this.vaultListComboBox.Font = Program.GetFontAlbertusMTLight(11F);
-			this.newRadioButton.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.selectFunctionGroupBox.Font = Program.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.renameRadioButton.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.copyRadioButton.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.deleteRadioButton.Font = Program.GetFontAlbertusMTLight(11.25F);
-			this.sourceLabel.Font = Program.GetFontAlbertusMTLight(11F);
-			this.targetLabel.Font = Program.GetFontAlbertusMTLight(11F);
-			this.Font = Program.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.targetTextBox.Font = FontHelper.GetFontAlbertusMTLight(11F);
+			this.instructionsLabel.Font = FontHelper.GetFontAlbertusMTLight(11F);
+			this.okayButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.cancelButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.vaultListComboBox.Font = FontHelper.GetFontAlbertusMTLight(11F);
+			this.newRadioButton.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.selectFunctionGroupBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.renameRadioButton.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.copyRadioButton.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.deleteRadioButton.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.sourceLabel.Font = FontHelper.GetFontAlbertusMTLight(11F);
+			this.targetLabel.Font = FontHelper.GetFontAlbertusMTLight(11F);
+			this.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
 			#endregion
 

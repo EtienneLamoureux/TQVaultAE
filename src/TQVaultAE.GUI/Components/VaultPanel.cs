@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI.Components
 {
-	using Properties;
 	using System;
 	using System.Collections.ObjectModel;
 	using System.ComponentModel;
@@ -15,7 +14,10 @@ namespace TQVaultAE.GUI.Components
 	using System.Windows.Forms;
 	using Tooltip;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
+	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
+	using TQVaultAE.Presentation.Html;
 
 	/// <summary>
 	/// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.
@@ -70,14 +72,14 @@ namespace TQVaultAE.GUI.Components
 			int autosortOffset = 0;
 			if (numberOfAutosortButtons > 0)
 			{
-				autosortOffset = Convert.ToInt32(27.0F * Database.DB.Scale);
+				autosortOffset = Convert.ToInt32(27.0F * UIService.UI.Scale);
 			}
 
 			this.Size = new Size(
-				(panelSize.Width * Database.DB.ItemUnitSize) + Convert.ToInt32(10.0F * Database.DB.Scale) + autosortOffset + BorderPad,
-				(panelSize.Height * Database.DB.ItemUnitSize) + Convert.ToInt32(56.0F * Database.DB.Scale) + BorderPad);
+				(panelSize.Width * UIService.UI.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.UI.Scale) + autosortOffset + BorderPad,
+				(panelSize.Height * UIService.UI.ItemUnitSize) + Convert.ToInt32(56.0F * UIService.UI.Scale) + BorderPad);
 			this.TabStop = false;
-			this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * Database.DB.Scale, this.Font.Style);
+			this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * UIService.UI.Scale, this.Font.Style);
 
 			this.BagPanelOffset = 0; // bag panel starts with bag #0
 			this.BagSackPanel = new SackPanel(panelSize.Width, panelSize.Height, this.DragInfo, autoMoveLocation);
@@ -117,7 +119,7 @@ namespace TQVaultAE.GUI.Components
 			this.contextMenu = new ContextMenuStrip();
 			this.contextMenu.BackColor = Color.FromArgb(46, 41, 31);
 			this.contextMenu.DropShadowEnabled = true;
-			this.contextMenu.Font = Program.GetFontAlbertusMT(9.0F * Database.DB.Scale);
+			this.contextMenu.Font = FontHelper.GetFontAlbertusMT(9.0F * UIService.UI.Scale);
 			this.contextMenu.ForeColor = Color.FromArgb(200, 200, 200);
 			this.contextMenu.Opacity = 0.80;
 			this.contextMenu.ShowImageMargin = false;
@@ -163,7 +165,7 @@ namespace TQVaultAE.GUI.Components
 			get
 			{
 				{
-					return Convert.ToInt32(2.0F * Database.DB.Scale);
+					return Convert.ToInt32(2.0F * UIService.UI.Scale);
 				}
 			}
 		}
@@ -502,7 +504,7 @@ namespace TQVaultAE.GUI.Components
 					// Only show Copy, Merge and Empty if something is in the bag.
 					if (!this.BagSackPanel.Sack.IsEmpty)
 					{
-						if (Settings.Default.AllowItemCopy)
+						if (Config.Settings.Default.AllowItemCopy)
 						{
 							// Add the copy submenu
 							this.AddSubMenu(Resources.PlayerPanelMenuCopy, this.CopyBagClicked);
@@ -540,7 +542,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="specified">BoundsSpecified value.</param>
 		protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 		{
-			this.contextMenu.Font = new Font(this.contextMenu.Font.FontFamily, 9.0F * Database.DB.Scale);
+			this.contextMenu.Font = new Font(this.contextMenu.Font.FontFamily, 9.0F * UIService.UI.Scale);
 			this.Font = new Font(this.Font.Name, this.Font.SizeInPoints * factor.Height, this.Font.Style);
 
 			base.ScaleControl(factor, specified);
@@ -749,7 +751,7 @@ namespace TQVaultAE.GUI.Components
 			string selectedItem = e.ClickedItem.Text;
 			if (selectedItem == Resources.PlayerPanelMenuEmpty)
 			{
-				if (Settings.Default.SuppressWarnings || MessageBox.Show(
+				if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
 					Resources.PlayerPanelEmptyMsg,
 					Resources.PlayerPanelEmpty,
 					MessageBoxButtons.YesNo,
@@ -782,7 +784,7 @@ namespace TQVaultAE.GUI.Components
 
 				if (!this.Player.GetSack(destinationIndex + this.BagPanelOffset).IsEmpty)
 				{
-					if (Settings.Default.SuppressWarnings || MessageBox.Show(
+					if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
 						Resources.PlayerOverwriteSackMsg,
 						Resources.PlayerOverwriteSack,
 						MessageBoxButtons.YesNo,
@@ -915,11 +917,11 @@ namespace TQVaultAE.GUI.Components
 
 			if (sack.IsEmpty)
 			{
-				return string.Format(CultureInfo.CurrentCulture, "{0}<b>{1}</b>", Database.DB.TooltipTitleTag, Database.MakeSafeForHtml(Resources.VaultGroupBoxEmpty));
+				return string.Format(CultureInfo.CurrentCulture, "{0}<b>{1}</b>", HtmlHelper.TooltipTitleTag(UIService.UI.Scale), HtmlHelper.MakeSafeForHtml(Resources.VaultGroupBoxEmpty));
 			}
 
 			StringBuilder toolTipStringBuilder = new StringBuilder();
-			toolTipStringBuilder.Append(Database.DB.TooltipTitleTag);
+			toolTipStringBuilder.Append(HtmlHelper.TooltipTitleTag(UIService.UI.Scale));
 			bool first = true;
 			foreach (Item item in sack)
 			{
@@ -935,10 +937,10 @@ namespace TQVaultAE.GUI.Components
 				}
 
 				first = false;
-				string itemString = Database.MakeSafeForHtml(item.ToString());
-				Color color = item.GetColorTag(itemString);
+				string itemString = HtmlHelper.MakeSafeForHtml( ItemProvider.ToFriendlyName(item));
+				Color color = ItemGfxHelper.GetColorTag(item, itemString);
 				itemString = Item.ClipColorTag(itemString);
-				string htmlcolor = Database.HtmlColor(color);
+				string htmlcolor = HtmlHelper.HtmlColor(color);
 				string htmlLine = string.Format(CultureInfo.CurrentCulture, "<font color={0}><b>{1}</b></font>", htmlcolor, itemString);
 				toolTipStringBuilder.Append(htmlLine);
 			}

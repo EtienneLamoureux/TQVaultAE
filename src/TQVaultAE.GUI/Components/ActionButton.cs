@@ -5,14 +5,15 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI.Components
 {
-	using Properties;
 	using System;
 	using System.Drawing;
 	using System.Globalization;
 	using System.Timers;
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
+	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Class for displaying the action panel which has the animation of
@@ -268,7 +269,7 @@ namespace TQVaultAE.GUI.Components
 		private void SplitItemAndRelic()
 		{
 			// pull out the relic
-			Item relic = this.dragInfo.Item.RemoveRelic();
+			Item relic = ItemProvider.RemoveRelic(this.dragInfo.Item);
 			this.dragInfo.MarkModified(relic);
 			Refresh();
 		}
@@ -327,7 +328,7 @@ namespace TQVaultAE.GUI.Components
 			this.normalBackground = new SolidBrush(Color.Black);
 			this.activeBackground = new SolidBrush(Color.FromArgb(23, 149, 15));
 			this.flashBackground = new SolidBrush(Color.White);
-			this.numberFont = new Font("Arial", 10F * Database.DB.Scale, GraphicsUnit.Pixel);
+			this.numberFont = new Font("Arial", 10F * UIService.UI.Scale, GraphicsUnit.Pixel);
 			this.numberBrush = new SolidBrush(Color.White);
 			this.numberFormat = new StringFormat();
 			this.numberFormat.Alignment = StringAlignment.Far; // right-justify
@@ -447,12 +448,12 @@ namespace TQVaultAE.GUI.Components
 			// Add the relic overlay if this item has a relic in it.
 			if (drawRelic)
 			{
-				Bitmap overlay = Database.DB.LoadRelicOverlayBitmap();
+				Bitmap overlay = UIService.UI.LoadRelicOverlayBitmap();
 				if (overlay != null)
 				{
 					// draw it in the bottom-right most cell of this item
-					float rx = x + ((item.Width - Database.DB.ItemUnitSize) * scale);
-					float ry = y + ((item.Height - Database.DB.ItemUnitSize) * scale);
+					float rx = x + ((item.Width - UIService.UI.ItemUnitSize) * scale);
+					float ry = y + ((item.Height - UIService.UI.ItemUnitSize) * scale);
 
 					g.DrawImage(overlay, rx, ry, overlay.Width * scale, overlay.Height * scale);
 				}
@@ -465,10 +466,10 @@ namespace TQVaultAE.GUI.Components
 
 				// Draw the number along the bottom of the item
 				float nx = x;
-				float ny = y + (Database.DB.ItemUnitSize * scale);
+				float ny = y + (UIService.UI.ItemUnitSize * scale);
 
 				float height = (float)this.numberFont.Height;
-				float width = (float)Database.DB.ItemUnitSize * scale;
+				float width = (float)UIService.UI.ItemUnitSize * scale;
 				float yy = (float)(ny - (0.75 * this.numberFont.Height) - 1);
 				float xx = (float)nx;
 
@@ -492,18 +493,18 @@ namespace TQVaultAE.GUI.Components
 				Item item = this.dragInfo.Item;
 
 				// draw the single item moving towards the center
-				float scale = Database.DB.Scale;
+				float scale = UIService.UI.Scale;
 
 				// Figure out its offset
 				float pctComplete = (float)(tickNum - prevTick) / (float)(tickTotal - prevTick - 1);
 
 				// linear interpolate between off-screen and center
-				float xloc = ((1 - pctComplete) * (-1 * item.ItemBitmap.Width * scale)) + (pctComplete * ((Width / 2.0F) - (scale * item.ItemBitmap.Width / 2.0F)));
+				float xloc = ((1 - pctComplete) * (-1 * item.ItemBitmap().Width * scale)) + (pctComplete * ((Width / 2.0F) - (scale * item.ItemBitmap().Width / 2.0F)));
 				float yloc = ((1 - pctComplete) * (Height / 4.0F)) + (pctComplete * (Height / 2.0F));
-				yloc -= scale * item.ItemBitmap.Height / 2.0F;
+				yloc -= scale * item.ItemBitmap().Height / 2.0F;
 
 				// now draw it
-				this.DrawItem(g, item.ItemBitmap, xloc, yloc, scale, item.Number, false);
+				this.DrawItem(g, item.ItemBitmap(), xloc, yloc, scale, item.Number, false);
 
 				return;
 			}
@@ -524,19 +525,19 @@ namespace TQVaultAE.GUI.Components
 				// draw the split stack -- all but 1 going up and 1 going down
 				Item item = this.dragInfo.Item;
 
-				float scale = Database.DB.Scale;
+				float scale = UIService.UI.Scale;
 
 				// Figure out its offset
 				float pctComplete = (float)(tickNum - prevTick) / (float)(tickTotal - prevTick - 1);
 
-				float offset = pctComplete * item.ItemBitmap.Height * scale;
-				float x = (Width / 2.0F) - (scale * item.ItemBitmap.Width / 2.0F);
+				float offset = pctComplete * item.ItemBitmap().Height * scale;
+				float x = (Width / 2.0F) - (scale * item.ItemBitmap().Width / 2.0F);
 
 				// Draw the stack
-				this.DrawItem(g, item.ItemBitmap, x, (Height / 2.0F) - offset, scale, item.Number - 1, false);
+				this.DrawItem(g, item.ItemBitmap(), x, (Height / 2.0F) - offset, scale, item.Number - 1, false);
 
 				// Draw the single
-				this.DrawItem(g, item.ItemBitmap, x, (Height / 2.0F) + offset, scale, 1, false);
+				this.DrawItem(g, item.ItemBitmap(), x, (Height / 2.0F) + offset, scale, 1, false);
 				return;
 			}
 
@@ -546,17 +547,17 @@ namespace TQVaultAE.GUI.Components
 				// draw the pause
 				Item item = this.dragInfo.Item;
 
-				float scale = Database.DB.Scale;
+				float scale = UIService.UI.Scale;
 
 				// Just draw the 2 stack at a fixed offset
-				float offset = item.ItemBitmap.Height * scale;
-				float x = (Width / 2.0F) - (scale * item.ItemBitmap.Width / 2.0F);
+				float offset = item.ItemBitmap().Height * scale;
+				float x = (Width / 2.0F) - (scale * item.ItemBitmap().Width / 2.0F);
 
 				// Draw the stack
-				this.DrawItem(g, item.ItemBitmap, x, (Height / 2.0F) - offset, scale, item.Number - 1, false);
+				this.DrawItem(g, item.ItemBitmap(), x, (Height / 2.0F) - offset, scale, item.Number - 1, false);
 
 				// Draw the single
-				this.DrawItem(g, item.ItemBitmap, x, (Height / 2.0F) + offset, scale, 1, false);
+				this.DrawItem(g, item.ItemBitmap(), x, (Height / 2.0F) + offset, scale, 1, false);
 			}
 		}
 
@@ -573,15 +574,15 @@ namespace TQVaultAE.GUI.Components
 
 			// We need to set the scale such that the item is no more than x% of the height or width
 			float maxPct = 0.50F;
-			float scale = Database.DB.Scale;
-			if (item.ItemBitmap.Width > maxPct * Width)
+			float scale = UIService.UI.Scale;
+			if (item.ItemBitmap().Width > maxPct * Width)
 			{
-				scale = (maxPct * Width * Database.DB.Scale) / item.ItemBitmap.Width;
+				scale = (maxPct * Width * UIService.UI.Scale) / item.ItemBitmap().Width;
 			}
 
-			if (item.ItemBitmap.Height > maxPct * Height)
+			if (item.ItemBitmap().Height > maxPct * Height)
 			{
-				float vscale = (maxPct * Height * Database.DB.Scale) / item.ItemBitmap.Height;
+				float vscale = (maxPct * Height * UIService.UI.Scale) / item.ItemBitmap().Height;
 				if (vscale < scale)
 				{
 					scale = vscale;
@@ -598,12 +599,12 @@ namespace TQVaultAE.GUI.Components
 				float pctComplete = (float)(tickNum - prevTick) / (float)(tickTotal - prevTick - 1);
 
 				// linear interpolate between off-screen and center
-				float xloc = ((1 - pctComplete) * (-1 * item.ItemBitmap.Width * scale)) + (pctComplete * ((Width / 2.0F) - (scale * item.ItemBitmap.Width / 2.0F)));
+				float xloc = ((1 - pctComplete) * (-1 * item.ItemBitmap().Width * scale)) + (pctComplete * ((Width / 2.0F) - (scale * item.ItemBitmap().Width / 2.0F)));
 				float yloc = ((1 - pctComplete) * (Height / 4.0F)) + (pctComplete * (Height / 2.0F));
-				yloc -= scale * item.ItemBitmap.Height / 2.0F;
+				yloc -= scale * item.ItemBitmap().Height / 2.0F;
 
 				// now draw it
-				this.DrawItem(g, item.ItemBitmap, xloc, yloc, scale, 0, true);
+				this.DrawItem(g, item.ItemBitmap(), xloc, yloc, scale, 0, true);
 
 				return;
 			}
@@ -625,29 +626,29 @@ namespace TQVaultAE.GUI.Components
 				// Figure out the item offset
 				float pctComplete = (float)(tickNum - prevTick) / (float)(tickTotal - prevTick - 1);
 
-				float offset = pctComplete * item.ItemBitmap.Height * scale;
+				float offset = pctComplete * item.ItemBitmap().Height * scale;
 				if (offset >= .75 * Height / 2.0F)
 				{
 					offset = .75F * Height / 2.0F;
 				}
 
-				float x = (Width / 2.0F) - (scale * item.ItemBitmap.Width / 2.0F);
+				float x = (Width / 2.0F) - (scale * item.ItemBitmap().Width / 2.0F);
 
 				// Draw the item
-				this.DrawItem(g, item.ItemBitmap, x, (Height / 2.0F) - offset, scale, 0, false);
+				this.DrawItem(g, item.ItemBitmap(), x, (Height / 2.0F) - offset, scale, 0, false);
 
 				// Draw the relic
 				// We need to figure out the bitmap to use
-				Bitmap relicBitmap = Database.DB.LoadRelicOverlayBitmap();
+				Bitmap relicBitmap = UIService.UI.LoadRelicOverlayBitmap();
 				if (item.RelicInfo != null)
 				{
 					if (item.Var1 >= item.RelicInfo.CompletedRelicLevel)
 					{
-						relicBitmap = Database.DB.LoadBitmap(item.RelicInfo.Bitmap);
+						relicBitmap = UIService.UI.LoadBitmap(item.RelicInfo.Bitmap);
 					}
 					else
 					{
-						relicBitmap = Database.DB.LoadBitmap(item.RelicInfo.ShardBitmap);
+						relicBitmap = UIService.UI.LoadBitmap(item.RelicInfo.ShardBitmap);
 					}
 				}
 
@@ -662,7 +663,7 @@ namespace TQVaultAE.GUI.Components
 					num = 0;
 				}
 
-				this.DrawItem(g, relicBitmap, x, (Height / 2.0F) + (offset * scale), Database.DB.Scale, num, false);
+				this.DrawItem(g, relicBitmap, x, (Height / 2.0F) + (offset * scale), UIService.UI.Scale, num, false);
 				return;
 			}
 
@@ -671,29 +672,29 @@ namespace TQVaultAE.GUI.Components
 			{
 				// draw the pause
 				// Just draw the item and relic at a fixed offset
-				float offset = item.ItemBitmap.Height * scale;
+				float offset = item.ItemBitmap().Height * scale;
 				if (offset >= .75 * Height / 2.0F)
 				{
 					offset = .75F * Height / 2.0F;
 				}
 
-				float x = (Width / 2.0F) - (scale * item.ItemBitmap.Width / 2.0F);
+				float x = (Width / 2.0F) - (scale * item.ItemBitmap().Width / 2.0F);
 
 				// Draw the item
-				this.DrawItem(g, item.ItemBitmap, x, (Height / 2.0F) - offset, scale, 0, false);
+				this.DrawItem(g, item.ItemBitmap(), x, (Height / 2.0F) - offset, scale, 0, false);
 
 				// Draw the relic
 				// We need to figure out the bitmap to use
-				Bitmap relicBitmap = Database.DB.LoadRelicOverlayBitmap();
+				Bitmap relicBitmap = UIService.UI.LoadRelicOverlayBitmap();
 				if (item.RelicInfo != null)
 				{
 					if (item.Var1 >= item.RelicInfo.CompletedRelicLevel)
 					{
-						relicBitmap = Database.DB.LoadBitmap(item.RelicInfo.Bitmap);
+						relicBitmap = UIService.UI.LoadBitmap(item.RelicInfo.Bitmap);
 					}
 					else
 					{
-						relicBitmap = Database.DB.LoadBitmap(item.RelicInfo.ShardBitmap);
+						relicBitmap = UIService.UI.LoadBitmap(item.RelicInfo.ShardBitmap);
 					}
 				}
 
@@ -708,7 +709,7 @@ namespace TQVaultAE.GUI.Components
 					num = 0;
 				}
 
-				this.DrawItem(g, relicBitmap, x, (Height / 2.0F) + (offset * scale), Database.DB.Scale, num, false);
+				this.DrawItem(g, relicBitmap, x, (Height / 2.0F) + (offset * scale), UIService.UI.Scale, num, false);
 			}
 		}
 
@@ -745,10 +746,10 @@ namespace TQVaultAE.GUI.Components
 			{
 				this.DrawItem(
 					e.Graphics,
-					this.dragInfo.Item.ItemBitmap,
+					this.dragInfo.Item.ItemBitmap(),
 					(float)this.dragLocation.X - this.dragInfo.MouseOffset.X,
 					(float)this.dragLocation.Y - this.dragInfo.MouseOffset.Y,
-					Database.DB.Scale,
+					UIService.UI.Scale,
 					this.dragInfo.Item.Number,
 					this.dragInfo.Item.HasRelic);
 			}

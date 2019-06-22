@@ -6,18 +6,17 @@
 namespace TQVaultAE.GUI
 {
 	using System;
-	using System.Drawing;
-	using System.Drawing.Text;
 	using System.Globalization;
+	using System.IO;
 	using System.Reflection;
 	using System.Resources;
 	using System.Security.Permissions;
 	using System.Threading;
-	using System.Linq;
 	using System.Windows.Forms;
-	using TQVaultAE.GUI.Properties;
-	using TQVaultAE.Logging;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
+	using TQVaultAE.GUI.Services;
+	using TQVaultAE.Logs;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Main Program class
@@ -31,8 +30,6 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private static MessageBoxOptions rightToLeft;
 
-		private static PrivateFontCollection privateFontCollection = new PrivateFontCollection();
-
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
@@ -42,6 +39,7 @@ namespace TQVaultAE.GUI
 		{
 			try
 			{
+
 				manageCulture();
 
 				// Add the event handler for handling UI thread exceptions to the event.
@@ -55,6 +53,12 @@ namespace TQVaultAE.GUI
 
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
+
+				SetUILanguage();
+				SetupGamePaths();
+				SetupMapName();
+				FontHelper.FontLoader = new AddFontToOSWin();
+
 				Application.Run(new MainForm());
 			}
 			catch (Exception ex)
@@ -64,6 +68,112 @@ namespace TQVaultAE.GUI
 			}
 		}
 
+
+		#region Init
+
+		/// <summary>
+		/// Reads the paths from the config files and sets them.
+		/// </summary>
+		private static void SetupGamePaths()
+		{
+			TQData.GamePathResolver = new GamePathResolverWin();
+
+			if (!Config.Settings.Default.AutoDetectGamePath)
+			{
+				TQData.TQPath = Config.Settings.Default.TQPath;
+				TQData.ImmortalThronePath = Config.Settings.Default.TQITPath;
+			}
+
+			// Show a message that the default path is going to be used.
+			if (string.IsNullOrEmpty(Config.Settings.Default.VaultPath))
+			{
+				string folderPath = Path.Combine(TQData.TQSaveFolder, "TQVaultData");
+
+				// Check to see if we are still using a shortcut to specify the vault path and display a message
+				// to use the configuration UI if we are.
+				if (!Directory.Exists(folderPath) && File.Exists(Path.ChangeExtension(folderPath, ".lnk")))
+				{
+					MessageBox.Show(Resources.DataLinkMsg, Resources.DataLink, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, VaultForm.RightToLeftOptions);
+				}
+				else
+				{
+					MessageBox.Show(Resources.DataDefaultPathMsg, Resources.DataDefaultPath, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, VaultForm.RightToLeftOptions);
+				}
+			}
+
+			TQData.TQVaultSaveFolder = Config.Settings.Default.VaultPath;
+		}
+
+		/// <summary>
+		/// Attempts to read the language from the config file and set the Current Thread's Culture and UICulture.
+		/// Defaults to the OS UI Culture.
+		/// </summary>
+		private static void SetUILanguage()
+		{
+			string settingsCulture = null;
+			if (!string.IsNullOrEmpty(Config.Settings.Default.UILanguage))
+			{
+				settingsCulture = Config.Settings.Default.UILanguage;
+			}
+			else if (!Config.Settings.Default.AutoDetectLanguage)
+			{
+				settingsCulture = Config.Settings.Default.TQLanguage;
+			}
+
+			if (!string.IsNullOrEmpty(settingsCulture))
+			{
+				string myCulture = null;
+				foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
+				{
+					if (ci.EnglishName.Equals(settingsCulture, StringComparison.InvariantCultureIgnoreCase))
+					{
+						myCulture = ci.TextInfo.CultureName;
+						break;
+					}
+				}
+
+				// We found something so we will use it.
+				if (!string.IsNullOrEmpty(myCulture))
+				{
+					try
+					{
+						// Sets the culture
+						Thread.CurrentThread.CurrentCulture = new CultureInfo(myCulture);
+
+						// Sets the UI culture
+						Thread.CurrentThread.CurrentUICulture = new CultureInfo(myCulture);
+					}
+					catch (ArgumentNullException e)
+					{
+						Log.Error("Argument Null Exception when setting the language", e);
+					}
+					catch (NotSupportedException e)
+					{
+						Log.Error("Not Supported Exception when setting the language", e);
+					}
+				}
+
+				// If not then we just default to the OS UI culture.
+			}
+		}
+
+		/// <summary>
+		/// Sets the name of the game map if a custom map is set in the config file.
+		/// Defaults to Main otherwise.
+		/// </summary>
+		private static void SetupMapName()
+		{
+			// Set the map name.  Command line argument can override this setting in LoadResources().
+			string mapName = "main";
+			if (Config.Settings.Default.ModEnabled)
+			{
+				mapName = Config.Settings.Default.CustomMap;
+			}
+
+			TQData.MapName = mapName;
+		}
+
+		#endregion
 		private static void manageCulture()
 		{
 			if (CultureInfo.CurrentCulture.IsNeutralCulture)
@@ -134,99 +244,5 @@ namespace TQVaultAE.GUI
 				Application.Exit();
 			}
 		}
-
-		#region Font Stuff
-
-		private static FontFamily initCustomFont(byte[] fontData)
-		{
-			unsafe
-			{
-				fixed (byte* pinptr = fontData)
-				{
-					IntPtr ptr = (IntPtr)pinptr;
-					privateFontCollection.AddMemoryFont(ptr, fontData.Length);
-				}
-			}
-			return privateFontCollection.Families.Last();
-		}
-
-		private static FontFamily _FONT_ALBERTUSMT = null;
-		internal static FontFamily FONT_ALBERTUSMT
-		{
-			get
-			{
-				if (_FONT_ALBERTUSMT is null) _FONT_ALBERTUSMT = initCustomFont(Properties.Resources.AlbertusMT);
-				return _FONT_ALBERTUSMT;
-			}
-		}
-
-		private static FontFamily _FONT_ALBERTUSMTLIGHT = null;
-		internal static FontFamily FONT_ALBERTUSMTLIGHT
-		{
-			get
-			{
-				if (_FONT_ALBERTUSMTLIGHT is null) _FONT_ALBERTUSMTLIGHT = initCustomFont(Properties.Resources.AlbertusMTLight);
-				return _FONT_ALBERTUSMTLIGHT;
-			}
-		}
-
-		public static Font GetFontMicrosoftSansSerif(float fontSize, float? scale = null)
-		{
-			scale = scale ?? 1F;
-			return new Font("Microsoft Sans Serif", fontSize * scale.Value);
-		}
-
-		public static Font GetFontAlbertusMT(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)
-		{
-			return new Font(Program.FONT_ALBERTUSMT, fontSize, fontStyle, unit, b);
-		}
-
-		public static Font GetFontAlbertusMT(float fontSize, GraphicsUnit unit)
-		{
-			return new Font(Program.FONT_ALBERTUSMT, fontSize, unit);
-		}
-
-		public static Font GetFontAlbertusMT(float fontSize, float? scale = null)
-		{
-			scale = scale ?? 1F;
-			return new Font(Program.FONT_ALBERTUSMT, fontSize * scale.Value);
-		}
-
-		public static Font GetFontAlbertusMTLight(float fontSize, GraphicsUnit unit)
-		{
-			return new Font(Program.FONT_ALBERTUSMT, fontSize, unit);
-		}
-
-		public static Font GetFontAlbertusMTLight(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)
-		{
-			return new Font(Program.FONT_ALBERTUSMTLIGHT, fontSize, fontStyle, unit, b);
-		}
-
-		public static Font GetFontAlbertusMTLight(float fontSize)
-		{
-			return new Font(Program.FONT_ALBERTUSMTLIGHT, fontSize);
-		}
-
-		public static Font GetFontAlbertusMTLight(float fontSize, float? scale = null)
-		{
-			scale = scale ?? 1F;
-			return new Font(Program.FONT_ALBERTUSMTLIGHT, fontSize * scale.Value);
-		}
-
-		#endregion
-
-		/// <summary>
-		/// Load DB if needed
-		/// </summary>
-		internal static void LoadDB()
-		{
-			if (Database.DB is null)
-			{
-				Database.DB = new Database();
-				Database.DB.AutoDetectLanguage = Settings.Default.AutoDetectLanguage;
-				Database.DB.TQLanguage = Settings.Default.TQLanguage;
-			}
-		}
-
 	}
 }

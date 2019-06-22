@@ -5,12 +5,12 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
-	using Properties;
 	using System;
 	using System.Drawing;
 	using System.Drawing.Drawing2D;
 	using System.Timers;
 	using System.Windows.Forms;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Class for inital form which load the resources.
@@ -66,10 +66,10 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.label3.Font = Program.GetFontAlbertusMTLight(12F);
-			this.nextButton.Font = Program.GetFontAlbertusMTLight(12F);
-			this.exitButton.Font = Program.GetFontAlbertusMTLight(12F);
-			this.labelPleaseWait.Font = Program.GetFontAlbertusMTLight(14.25F);
+			this.label3.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.nextButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.exitButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.labelPleaseWait.Font = FontHelper.GetFontAlbertusMTLight(14.25F);
 
 			#endregion
 
@@ -83,8 +83,8 @@ namespace TQVaultAE.GUI
 			this.Opacity = 0.0F;
 
 			this.FormBorderStyle = FormBorderStyle.None;
-			this.fadeInInterval = Settings.Default.FadeInInterval;
-			this.fadeOutInterval = Settings.Default.FadeOutInterval;
+			this.fadeInInterval = Config.Settings.Default.FadeInInterval;
+			this.fadeOutInterval = Config.Settings.Default.FadeOutInterval;
 			this.DrawCustomBorder = true;
 
 			if (this.UseRoundedRectangle)

@@ -12,7 +12,9 @@ namespace ArzExplorer
 	using System.Reflection;
 	using System.Text;
 	using System.Windows.Forms;
-	using TQVaultAE.DAL;
+	using TQVaultAE.Data;
+	using TQVaultAE.Entities;
+	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Main Form for ArzExplorer
@@ -136,7 +138,7 @@ namespace ArzExplorer
 			path[1] = "Iron Lore";
 			path[2] = "Titan Quest";
 			path[3] = "Install Location";
-			string startPath = TQData.ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
+			string startPath = Program.ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
 
 			// If the registry fails then default to the save folder.
 			if (startPath.Length < 1)
@@ -396,7 +398,7 @@ namespace ArzExplorer
 
 			if (fileType == CompressedFileType.ArzFile)
 			{
-				this.record.Write(Path.GetDirectoryName(filename), Path.GetFileName(filename));
+				DBRecordCollectionProvider.Write(this.record, Path.GetDirectoryName(filename), Path.GetFileName(filename));
 			}
 			else if (fileType == CompressedFileType.ArcFile)
 			{
