@@ -308,7 +308,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Seach.cs">
+    <Compile Include="MainForm.Search.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
@@ -334,7 +334,6 @@
     <Compile Include="Models\CommandLineArgs.cs" />
     <Compile Include="Models\ItemDragInfo.cs" />
     <Compile Include="Models\ResizeEventArgs.cs" />
-    <Compile Include="Models\Result.cs" />
     <Compile Include="Models\ResultChangedEventArgs.cs" />
     <Compile Include="Models\SackPanelEventArgs.cs" />
     <Compile Include="CharacterEditDialog.cs">
@@ -525,6 +524,10 @@
     <ProjectReference Include="..\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj">
       <Project>{6e20606d-9460-469f-b340-d3418165a19b}</Project>
       <Name>TQVaultAE.Presentation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TQVaultAE.Services\TQVaultAE.Services.csproj">
+      <Project>{23F812FB-B5C7-4022-90A7-3B8D7A793E6A}</Project>
+      <Name>TQVaultAE.Services</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

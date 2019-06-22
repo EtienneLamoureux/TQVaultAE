@@ -10,11 +10,9 @@ namespace TQVaultAE.GUI.Components
 	using System.ComponentModel;
 	using System.Drawing;
 	using System.Globalization;
-	using System.Text;
 	using System.Windows.Forms;
 	using Tooltip;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Presentation.Html;
@@ -915,37 +913,15 @@ namespace TQVaultAE.GUI.Components
 				return null;
 			}
 
-			if (sack.IsEmpty)
+			// skip the item being dragged
+			Item[] excluded = null;
+			if (this.DragInfo.IsActive)
 			{
-				return string.Format(CultureInfo.CurrentCulture, "{0}<b>{1}</b>", HtmlHelper.TooltipTitleTag(UIService.UI.Scale), HtmlHelper.MakeSafeForHtml(Resources.VaultGroupBoxEmpty));
+				excluded = new Item[] { this.DragInfo.Item };
 			}
 
-			StringBuilder toolTipStringBuilder = new StringBuilder();
-			toolTipStringBuilder.Append(HtmlHelper.TooltipTitleTag(UIService.UI.Scale));
-			bool first = true;
-			foreach (Item item in sack)
-			{
-				if (this.DragInfo.IsActive && item == this.DragInfo.Item)
-				{
-					// skip the item being dragged
-					continue;
-				}
-
-				if (!first)
-				{
-					toolTipStringBuilder.Append("<br>");
-				}
-
-				first = false;
-				string itemString = HtmlHelper.MakeSafeForHtml( ItemProvider.ToFriendlyName(item));
-				Color color = ItemGfxHelper.GetColorTag(item, itemString);
-				itemString = Item.ClipColorTag(itemString);
-				string htmlcolor = HtmlHelper.HtmlColor(color);
-				string htmlLine = string.Format(CultureInfo.CurrentCulture, "<font color={0}><b>{1}</b></font>", htmlcolor, itemString);
-				toolTipStringBuilder.Append(htmlLine);
-			}
-
-			return toolTipStringBuilder.ToString();
+			var html = ItemHtmlHelper.GetSackToolTip(sack, excluded);
+			return html;
 		}
 
 		#endregion VaultPanel Private Methods

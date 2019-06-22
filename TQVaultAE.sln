@@ -31,9 +31,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TQVaultAE.Logs", "src\TQVau
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpressionEval", "src\ExpressionEval\ExpressionEval.csproj", "{BD8B20B5-3C26-45F3-AECF-C439A0747DE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQVaultAE.Config", "src\TQVaultAE.Config\TQVaultAE.Config.csproj", "{2434D5C6-EFBB-414D-93D6-2236FA62C0BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TQVaultAE.Config", "src\TQVaultAE.Config\TQVaultAE.Config.csproj", "{2434D5C6-EFBB-414D-93D6-2236FA62C0BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQVaultAE.Presentation", "src\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj", "{6E20606D-9460-469F-B340-D3418165A19B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TQVaultAE.Presentation", "src\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj", "{6E20606D-9460-469F-B340-D3418165A19B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQVaultAE.Services", "src\TQVaultAE.Services\TQVaultAE.Services.csproj", "{23F812FB-B5C7-4022-90A7-3B8D7A793E6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -115,6 +117,14 @@ Global
 		{6E20606D-9460-469F-B340-D3418165A19B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6E20606D-9460-469F-B340-D3418165A19B}.Release|x86.ActiveCfg = Release|Any CPU
 		{6E20606D-9460-469F-B340-D3418165A19B}.Release|x86.Build.0 = Release|Any CPU
+		{23F812FB-B5C7-4022-90A7-3B8D7A793E6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23F812FB-B5C7-4022-90A7-3B8D7A793E6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23F812FB-B5C7-4022-90A7-3B8D7A793E6A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{23F812FB-B5C7-4022-90A7-3B8D7A793E6A}.Debug|x86.Build.0 = Debug|Any CPU
+		{23F812FB-B5C7-4022-90A7-3B8D7A793E6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23F812FB-B5C7-4022-90A7-3B8D7A793E6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23F812FB-B5C7-4022-90A7-3B8D7A793E6A}.Release|x86.ActiveCfg = Release|Any CPU
+		{23F812FB-B5C7-4022-90A7-3B8D7A793E6A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

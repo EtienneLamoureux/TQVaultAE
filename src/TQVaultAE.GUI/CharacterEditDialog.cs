@@ -1,7 +1,6 @@
 namespace TQVaultAE.GUI
 {
 	using System;
-	using System.Globalization;
 	using System.Windows.Forms;
 	using TQVaultAE.Data;
 	using TQVaultAE.Entities;

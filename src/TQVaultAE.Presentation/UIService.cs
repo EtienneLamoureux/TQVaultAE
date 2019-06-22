@@ -57,14 +57,8 @@ namespace TQVaultAE.Presentation
 		/// <summary>
 		/// Gets the UI design DPI which is used to for scaling comparisons.
 		/// </summary>
-		public static float DesignDpi
-		{
-			get
-			{
-				// Use 96 DPI which is "normal" for Windows.
-				return 96.0F;
-			}
-		}
+		/// <remarks>Use 96 DPI which is "normal" for Windows.</remarks>
+		public const float DESIGNDPI = 96.0F;
 
 		/// <summary>
 		/// Gets the item unit size which is the unit of measure of item size in TQ.
@@ -132,12 +126,11 @@ namespace TQVaultAE.Presentation
 
 
 		/// <summary>
-		/// Load DB in static constructor
+		/// Init instance
 		/// </summary>
 		static UIService()
 		{
-			if (UIService.UI is null)
-				UIService.UI = new UIService();
+			UIService.UI = new UIService();
 		}
 
 		/// <summary>

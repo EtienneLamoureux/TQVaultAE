@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.IO;
 using System.Windows.Forms;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.Presentation;
 using TQVaultAE.Entities;
 using TQVaultAE.Config;
-using TQVaultAE.Data;
 
 namespace TQVaultAE.GUI.Models
 {
@@ -233,6 +230,7 @@ namespace TQVaultAE.GUI.Models
 			void printData(string label, object data) // Local function
 			{
 				label = string.Format("{0}:", label);
+				data = data ?? string.Empty;
 				e.Graphics.DrawString(label, _font, _whiteBrush, startTextX, startTextY, _playerInfoAlignment);
 				e.Graphics.DrawString(data.ToString(), _font, _yellowGreenBrush, startTextX, startTextY);
 				startTextY = startTextY + _font.Height;

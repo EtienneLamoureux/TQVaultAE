@@ -7,7 +7,6 @@ namespace TQVaultAE.GUI.Components
 {
 	using System;
 	using System.Windows.Forms;
-	using TQVaultAE.Data;
 	using TQVaultAE.Presentation;
 
 	/// <summary>

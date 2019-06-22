@@ -39,7 +39,6 @@ namespace TQVaultAE.GUI
 		{
 			try
 			{
-
 				manageCulture();
 
 				// Add the event handler for handling UI thread exceptions to the event.

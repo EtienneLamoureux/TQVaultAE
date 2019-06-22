@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using TQVaultAE.Config;
 using TQVaultAE.Data;
@@ -527,8 +529,6 @@ namespace TQVaultAE.Presentation.Html
 			return itm.attributesString;
 		}
 
-
-
 		/// <summary>
 		/// Shows the bare attributes for properties display
 		/// </summary>
@@ -649,7 +649,6 @@ namespace TQVaultAE.Presentation.Html
 			return itm.bareAttributes;
 		}
 
-
 		/// <summary>
 		/// Shows the items in a set for the set items
 		/// </summary>
@@ -694,7 +693,6 @@ namespace TQVaultAE.Presentation.Html
 
 			return itm.setItemsString;
 		}
-
 
 		/// <summary>
 		/// Gets the item's requirements
@@ -771,7 +769,6 @@ namespace TQVaultAE.Presentation.Html
 			return itm.requirementsString;
 		}
 
-
 		/// <summary>
 		/// Get + to a Mastery string
 		/// </summary>
@@ -834,8 +831,6 @@ namespace TQVaultAE.Presentation.Html
 			return ItemProvider.Format(formatSpec, variable[0], skillName);
 		}
 
-
-
 		/// <summary>
 		/// Gets the + to all skills string
 		/// </summary>
@@ -865,7 +860,6 @@ namespace TQVaultAE.Presentation.Html
 
 			return ItemProvider.Format(formatSpec, variable[System.Math.Min(variable.NumberOfValues - 1, variableNumber)]);
 		}
-
 
 		/// <summary>
 		/// Gets the formatted racial bonus string(s)
@@ -1751,7 +1745,6 @@ namespace TQVaultAE.Presentation.Html
 
 			return line;
 		}
-
 
 		/// <summary>
 		/// Converts the item's offensice attributes to a string
@@ -2777,7 +2770,6 @@ namespace TQVaultAE.Presentation.Html
 			return label;
 		}
 
-
 		/// <summary>
 		/// Used for showing the pet statistics
 		/// </summary>
@@ -3015,7 +3007,6 @@ namespace TQVaultAE.Presentation.Html
 			}
 		}
 
-
 		/// <summary>
 		/// Converts the item's attribute list to a string
 		/// </summary>
@@ -3058,8 +3049,6 @@ namespace TQVaultAE.Presentation.Html
 			ConvertOffenseAttributesToString(itm, record, attributeList, data, recordId, results);
 			return;
 		}
-
-
 
 		/// <summary>
 		/// Gets the item's attributes from the database record.
@@ -3285,7 +3274,6 @@ namespace TQVaultAE.Presentation.Html
 			}
 		}
 
-
 		/// <summary>
 		/// For displaying raw attribute data
 		/// </summary>
@@ -3300,6 +3288,147 @@ namespace TQVaultAE.Presentation.Html
 					results.Add(variable.ToString());
 				}
 			}
+		}
+
+		public class NewItemHighlightedTooltipResult
+		{
+			public string FriendlyName;
+			public Color ForeColor;
+			public string Attributes;
+			public string ItemSet;
+			public string Requirements;
+			public string TooltipText;
+		}
+
+		/// <summary>
+		/// Produce Html content of Item Tooltip
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		public static NewItemHighlightedTooltipResult NewItemHighlightedTooltip(Item item)
+		{
+			var result = new NewItemHighlightedTooltipResult();
+			result.FriendlyName = ItemProvider.ToFriendlyName(item);
+			result.ForeColor = ItemGfxHelper.GetColorTag(item, result.FriendlyName);
+			result.FriendlyName = Item.ClipColorTag(result.FriendlyName);
+			result.Attributes = GetAttributes(item, true); // true means hide uninteresting attributes
+			result.ItemSet = GetItemSetString(item);
+			result.Requirements = GetRequirements(item);
+
+			// combine the 2
+			if (result.Requirements.Length < 1)
+			{
+				result.TooltipText = result.Attributes;
+			}
+			else if (result.ItemSet.Length < 1)
+			{
+				string reqTitle = HtmlHelper.MakeSafeForHtml("?Requirements?");
+				reqTitle = string.Format(CultureInfo.InvariantCulture, "<font size=+2 color={0}>{1}</font><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Potion)), reqTitle);
+				string separator = string.Format(CultureInfo.InvariantCulture, "<hr color={0}><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Broken)));
+				result.TooltipText = string.Concat(result.Attributes, separator, result.Requirements);
+			}
+			else
+			{
+				string reqTitle = HtmlHelper.MakeSafeForHtml("?Requirements?");
+				reqTitle = string.Format(CultureInfo.InvariantCulture, "<font size=+2 color={0}>{1}</font><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Potion)), reqTitle);
+				string separator1 = string.Format(CultureInfo.InvariantCulture, "<hr color={0}>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Broken)));
+				string separator2 = string.Format(CultureInfo.InvariantCulture, "<hr color={0}><br>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Broken)));
+				result.TooltipText = string.Concat(result.Attributes, separator1, result.ItemSet, separator2, result.Requirements);
+			}
+
+			result.TooltipText = string.Concat(HtmlHelper.TooltipBodyTag(UIService.UI.Scale), result.TooltipText);
+
+			return result;
+		}
+
+
+		/// <summary>
+		/// Gets the tooltip for a sack.  Summarizes the items within the sack
+		/// </summary>
+		/// <param name="button">button the mouse is over.  Corresponds to a sack</param>
+		/// <returns>string to be displayed in the tooltip</returns>
+		public static string GetSackToolTip(SackCollection sack, IEnumerable<Item> excluded = null)
+		{
+			if (sack.IsEmpty)
+			{
+				return string.Format(CultureInfo.CurrentCulture, "{0}<b>{1}</b>", HtmlHelper.TooltipTitleTag(UIService.UI.Scale), HtmlHelper.MakeSafeForHtml(Resources.VaultGroupBoxEmpty));
+			}
+
+			excluded = excluded ?? new Item[] { };
+			StringBuilder answer = new StringBuilder();
+			answer.Append(HtmlHelper.TooltipTitleTag(UIService.UI.Scale));
+			bool first = true;
+			foreach (Item item in sack)
+			{
+				if (excluded.Contains(item))
+					// skip the item being dragged
+					continue;
+
+				if (item.BaseItemId.Length == 0)
+					// skip empty items
+					continue;
+
+				if (!first)
+					answer.Append("<br>");
+
+				first = false;
+				string text = HtmlHelper.MakeSafeForHtml(ItemProvider.ToFriendlyName(item));
+				Color color = ItemGfxHelper.GetColorTag(item, text);
+				text = Item.ClipColorTag(text);
+				string htmlcolor = HtmlHelper.HtmlColor(color);
+				string htmlLine = string.Format(CultureInfo.CurrentCulture, "<font color={0}><b>{1}</b></font>", htmlcolor, text);
+				answer.Append(htmlLine);
+			}
+
+			return answer.ToString();
+		}
+
+
+		/// <summary>
+		/// Gets the name of the item
+		/// </summary>
+		/// <param name="item">item being displayed</param>
+		/// <returns>string with the item name</returns>
+		public static string GetName(Item item)
+		{
+			string itemName = HtmlHelper.MakeSafeForHtml(ItemProvider.ToFriendlyName(item, true, false));
+			string bgcolor = "#2e1f15";
+
+			Color color = ItemGfxHelper.GetColorTag(item, itemName);
+			itemName = Item.ClipColorTag(itemName);
+			itemName = string.Format(CultureInfo.InvariantCulture, "<font size=+1 color={0}><b>{1}</b></font>", HtmlHelper.HtmlColor(color), itemName);
+			return string.Format(CultureInfo.InvariantCulture, "<body bgcolor={0} text=white><font face=\"Albertus MT\" size=2>{1}", bgcolor, itemName);
+		}
+
+		public class LoadPropertiesResult
+		{
+			public string BaseItemAttributes = string.Empty;
+			public string PrefixAttributes = string.Empty;
+			public string SuffixAttributes = string.Empty;
+			public string BgColor = "#2e1f15";
+		}
+
+		/// <summary>
+		/// Loads the item properties
+		/// </summary>
+		public static LoadPropertiesResult LoadProperties(Item item, bool filterExtra)
+		{
+			var result = new LoadPropertiesResult();
+
+			string[] bareAttr = GetBareAttributes(item, filterExtra);
+
+			var pattern = "<body bgcolor={0} text=white><font face=\"Albertus MT\" size=1>{1}";
+
+			// Base Item Attributes
+			if (bareAttr[0].Any()) result.BaseItemAttributes = string.Format(CultureInfo.InvariantCulture, pattern, result.BgColor, bareAttr[0]);
+
+			// Prefix Attributes
+			if (bareAttr[2].Any()) result.PrefixAttributes = string.Format(CultureInfo.InvariantCulture, pattern, result.BgColor, bareAttr[2]);
+
+			// Suffix Attributes
+			if (bareAttr[3].Any()) result.SuffixAttributes = string.Format(CultureInfo.InvariantCulture, pattern, result.BgColor, bareAttr[3]);
+
+			return result;
 		}
 
 	}
