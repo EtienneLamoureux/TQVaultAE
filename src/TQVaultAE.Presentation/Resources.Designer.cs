@@ -1163,36 +1163,36 @@ namespace TQVaultAE.Presentation {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Filter Extra Info.
         /// </summary>
-        public static string ItemPropertiesCheckBox1Label {
+        public static string ItemPropertiesCheckBoxLabelFilterExtraInfo {
             get {
-                return ResourceManager.GetString("ItemPropertiesCheckBox1Label", resourceCulture);
+                return ResourceManager.GetString("ItemPropertiesCheckBoxLabelFilterExtraInfo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Prefix Properties.
         /// </summary>
-        public static string ItemPropertiesLabel1 {
+        public static string ItemPropertiesLabelPrefixProperties {
             get {
-                return ResourceManager.GetString("ItemPropertiesLabel1", resourceCulture);
+                return ResourceManager.GetString("ItemPropertiesLabelPrefixProperties", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Base Item Properties.
         /// </summary>
-        public static string ItemPropertiesLabel2 {
+        public static string ItemPropertiesLabelBaseItemProperties {
             get {
-                return ResourceManager.GetString("ItemPropertiesLabel2", resourceCulture);
+                return ResourceManager.GetString("ItemPropertiesLabelBaseItemProperties", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Suffix Properties.
         /// </summary>
-        public static string ItemPropertiesLabel3 {
+        public static string ItemPropertiesLabelSuffixProperties {
             get {
-                return ResourceManager.GetString("ItemPropertiesLabel3", resourceCulture);
+                return ResourceManager.GetString("ItemPropertiesLabelSuffixProperties", resourceCulture);
             }
         }
         

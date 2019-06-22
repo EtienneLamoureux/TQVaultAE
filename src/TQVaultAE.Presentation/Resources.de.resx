@@ -270,16 +270,16 @@ Soll TQVault neu gestartet werden?</value>
   <data name="ItemIT" xml:space="preserve">
     <value>Immortal Throne Gegenstand</value>
   </data>
-  <data name="ItemPropertiesCheckBox1Label" xml:space="preserve">
+  <data name="ItemPropertiesCheckBoxLabelFilterExtraInfo" xml:space="preserve">
     <value>Extra-Infos filtern</value>
   </data>
-  <data name="ItemPropertiesLabel1" xml:space="preserve">
+  <data name="ItemPropertiesLabelPrefixProperties" xml:space="preserve">
     <value>Präfix Eigenschaften</value>
   </data>
-  <data name="ItemPropertiesLabel2" xml:space="preserve">
+  <data name="ItemPropertiesLabelBaseItemProperties" xml:space="preserve">
     <value>Basisdaten des Gegenstandes</value>
   </data>
-  <data name="ItemPropertiesLabel3" xml:space="preserve">
+  <data name="ItemPropertiesLabelSuffixProperties" xml:space="preserve">
     <value>Suffix Eigenschaften</value>
   </data>
   <data name="ItemPropertiesText" xml:space="preserve">

@@ -36,21 +36,21 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.ok.Font = FontHelper.GetFontAlbertusMTLight(12F);
-			this.label1.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
-			this.label2.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
-			this.checkBox1.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
-			this.label3.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.ButtonOK.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.labelPrefixProperties.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.labelBaseItemProperties.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.checkBoxFilterExtraInfo.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.labelSuffixProperties.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
 			this.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
 			#endregion
 
 			this.Text = Resources.ItemPropertiesText;
-			this.ok.Text = Resources.GlobalOK;
-			this.label1.Text = Resources.ItemPropertiesLabel1;
-			this.label2.Text = Resources.ItemPropertiesLabel2;
-			this.label3.Text = Resources.ItemPropertiesLabel3;
-			this.checkBox1.Text = Resources.ItemPropertiesCheckBox1Label;
+			this.ButtonOK.Text = Resources.GlobalOK;
+			this.labelPrefixProperties.Text = Resources.ItemPropertiesLabelPrefixProperties;
+			this.labelBaseItemProperties.Text = Resources.ItemPropertiesLabelBaseItemProperties;
+			this.labelSuffixProperties.Text = Resources.ItemPropertiesLabelSuffixProperties;
+			this.checkBoxFilterExtraInfo.Text = Resources.ItemPropertiesCheckBoxLabelFilterExtraInfo;
 
 			this.DrawCustomBorder = true;
 		}
@@ -75,7 +75,7 @@ namespace TQVaultAE.GUI
 		private void ItemProperties_Load(object sender, EventArgs e)
 		{
 			this.filterExtra = false;
-			this.itemName.DocumentText = ItemHtmlHelper.GetName(this.item);
+			this.webBrowserItemName.DocumentText = ItemHtmlHelper.GetName(this.item);
 			this.LoadProperties();
 		}
 
@@ -89,40 +89,40 @@ namespace TQVaultAE.GUI
 			// Base Item Attributes
 			if (result.BaseItemAttributes.Any())
 			{
-				this.webBrowser1.DocumentText = result.BaseItemAttributes;
-				this.webBrowser1.Show();
-				this.label2.Show();
+				this.webBrowserBaseItemProperties.DocumentText = result.BaseItemAttributes;
+				this.webBrowserBaseItemProperties.Show();
+				this.labelBaseItemProperties.Show();
 			}
 			else
 			{
-				this.webBrowser1.Hide();
-				this.label2.Hide();
+				this.webBrowserBaseItemProperties.Hide();
+				this.labelBaseItemProperties.Hide();
 			}
 
 			// Prefix Attributes
 			if (result.PrefixAttributes.Any())
 			{
-				this.webBrowser2.DocumentText = result.PrefixAttributes;
-				this.webBrowser2.Show();
-				this.label1.Show();
+				this.webBrowserPrefixProperties.DocumentText = result.PrefixAttributes;
+				this.webBrowserPrefixProperties.Show();
+				this.labelPrefixProperties.Show();
 			}
 			else
 			{
-				this.webBrowser2.Hide();
-				this.label1.Hide();
+				this.webBrowserPrefixProperties.Hide();
+				this.labelPrefixProperties.Hide();
 			}
 
 			// Suffix Attributes
 			if (result.SuffixAttributes.Any())
 			{
-				this.webBrowser3.DocumentText = result.SuffixAttributes;
-				this.webBrowser3.Show();
-				this.label3.Show();
+				this.webBrowserSuffixProperties.DocumentText = result.SuffixAttributes;
+				this.webBrowserSuffixProperties.Show();
+				this.labelSuffixProperties.Show();
 			}
 			else
 			{
-				this.webBrowser3.Hide();
-				this.label3.Hide();
+				this.webBrowserSuffixProperties.Hide();
+				this.labelSuffixProperties.Hide();
 			}
 		}
 
@@ -131,7 +131,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
-		private void OK_Button_Click(object sender, EventArgs e)
+		private void ButtonOK_Button_Click(object sender, EventArgs e)
 		{
 			this.Close();
 		}
@@ -143,33 +143,11 @@ namespace TQVaultAE.GUI
 		/// <param name="e">EventArgs data</param>
 		private void CheckBox1_CheckedChanged(object sender, EventArgs e)
 		{
-			if (this.checkBox1.Checked)
-			{
-				if (this.filterExtra == false)
-				{
-					this.filterExtra = true;
-					this.item.RefreshBareAttributes();
-					this.LoadProperties();
-				}
+			if (this.filterExtra != this.checkBoxFilterExtraInfo.Checked) {
+				this.filterExtra = this.checkBoxFilterExtraInfo.Checked;
+				this.item.RefreshBareAttributes();
+				this.LoadProperties();
 			}
-			else
-			{
-				if (this.filterExtra == true)
-				{
-					this.filterExtra = false;
-					this.item.RefreshBareAttributes();
-					this.LoadProperties();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Item name completed handler
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void ItemName_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-		{
 		}
 	}
 }

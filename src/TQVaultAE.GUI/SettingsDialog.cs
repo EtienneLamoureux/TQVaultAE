@@ -157,7 +157,7 @@ namespace TQVaultAE.GUI
 			this.InitializeComponent();
 
 			#region Apply custom font
-
+			
 			this.characterEditCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
 			this.allowItemEditCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
 			this.allowItemCopyCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);

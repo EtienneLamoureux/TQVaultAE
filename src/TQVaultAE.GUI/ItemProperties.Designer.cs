@@ -16,47 +16,47 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// OK Button control
 		/// </summary>
-		private ScalingButton ok;
+		private ScalingButton ButtonOK;
 
 		/// <summary>
 		/// WebBrowser1 for first attribute set
 		/// </summary>
-		private System.Windows.Forms.WebBrowser webBrowser1;
+		private System.Windows.Forms.WebBrowser webBrowserBaseItemProperties;
 
 		/// <summary>
 		/// Item Name for the header
 		/// </summary>
-		private System.Windows.Forms.WebBrowser itemName;
+		private System.Windows.Forms.WebBrowser webBrowserItemName;
 
 		/// <summary>
 		/// WebBrowser2 for the second attribute set
 		/// </summary>
-		private System.Windows.Forms.WebBrowser webBrowser2;
+		private System.Windows.Forms.WebBrowser webBrowserPrefixProperties;
 
 		/// <summary>
 		/// Label1 control
 		/// </summary>
-		private ScalingLabel label1;
+		private ScalingLabel labelPrefixProperties;
 
 		/// <summary>
 		/// Label2 control
 		/// </summary>
-		private ScalingLabel label2;
+		private ScalingLabel labelBaseItemProperties;
 
 		/// <summary>
 		/// Checkbox1 used to turn on and off extended values
 		/// </summary>
-		private ScalingCheckBox checkBox1;
+		private ScalingCheckBox checkBoxFilterExtraInfo;
 
 		/// <summary>
 		/// WebBrowser3 for the third attribute set
 		/// </summary>
-		private System.Windows.Forms.WebBrowser webBrowser3;
+		private System.Windows.Forms.WebBrowser webBrowserSuffixProperties;
 
 		/// <summary>
 		/// label3 control
 		/// </summary>
-		private ScalingLabel label3;
+		private ScalingLabel labelSuffixProperties;
 
 		/// <summary>
 		/// Required designer variable.
@@ -85,156 +85,166 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void InitializeComponent()
 		{
-            this.ok = new TQVaultAE.GUI.Components.ScalingButton();
-            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.itemName = new System.Windows.Forms.WebBrowser();
-            this.webBrowser2 = new System.Windows.Forms.WebBrowser();
-            this.label1 = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.label2 = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.checkBox1 = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.webBrowser3 = new System.Windows.Forms.WebBrowser();
-            this.label3 = new TQVaultAE.GUI.Components.ScalingLabel();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ItemProperties));
+            this.ButtonOK = new TQVaultAE.GUI.Components.ScalingButton();
+            this.webBrowserBaseItemProperties = new System.Windows.Forms.WebBrowser();
+            this.webBrowserItemName = new System.Windows.Forms.WebBrowser();
+            this.webBrowserPrefixProperties = new System.Windows.Forms.WebBrowser();
+            this.labelPrefixProperties = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.labelBaseItemProperties = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.checkBoxFilterExtraInfo = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.webBrowserSuffixProperties = new System.Windows.Forms.WebBrowser();
+            this.labelSuffixProperties = new TQVaultAE.GUI.Components.ScalingLabel();
             this.SuspendLayout();
             // 
-            // ok
+            // ButtonOK
             // 
-            this.ok.BackColor = System.Drawing.Color.Transparent;
-            this.ok.DownBitmap = global::TQVaultAE.Presentation.Resources.MainButtonDown;
-            this.ok.FlatAppearance.BorderSize = 0;
-            this.ok.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.ok.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.ok.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ok.Font = new System.Drawing.Font("Albertus MT Light", 12F);
-            this.ok.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.ok.Image = global::TQVaultAE.Presentation.Resources.MainButtonUp;
-			this.ok.Location = new System.Drawing.Point(781, 419);
-			this.ok.Name = "ok";
-            this.ok.OverBitmap = global::TQVaultAE.Presentation.Resources.MainButtonOver;
-            this.ok.Size = new System.Drawing.Size(137, 30);
-            this.ok.SizeToGraphic = false;
-            this.ok.TabIndex = 0;
-            this.ok.Text = "OK";
-            this.ok.UpBitmap = global::TQVaultAE.Presentation.Resources.MainButtonUp;
-            this.ok.UseCustomGraphic = true;
-            this.ok.UseVisualStyleBackColor = false;
-            this.ok.Click += new System.EventHandler(this.OK_Button_Click);
+            this.ButtonOK.BackColor = System.Drawing.Color.Transparent;
+            this.ButtonOK.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ButtonOK.DownBitmap")));
+            this.ButtonOK.FlatAppearance.BorderSize = 0;
+            this.ButtonOK.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.ButtonOK.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.ButtonOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ButtonOK.Font = new System.Drawing.Font("Albertus MT Light", 15F);
+            this.ButtonOK.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.ButtonOK.Image = ((System.Drawing.Image)(resources.GetObject("ButtonOK.Image")));
+            this.ButtonOK.Location = new System.Drawing.Point(976, 524);
+            this.ButtonOK.Margin = new System.Windows.Forms.Padding(4);
+            this.ButtonOK.Name = "ButtonOK";
+            this.ButtonOK.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ButtonOK.OverBitmap")));
+            this.ButtonOK.Size = new System.Drawing.Size(171, 38);
+            this.ButtonOK.SizeToGraphic = false;
+            this.ButtonOK.TabIndex = 0;
+            this.ButtonOK.Text = "OK";
+            this.ButtonOK.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ButtonOK.UpBitmap")));
+            this.ButtonOK.UseCustomGraphic = true;
+            this.ButtonOK.UseVisualStyleBackColor = false;
+            this.ButtonOK.Click += new System.EventHandler(this.ButtonOK_Button_Click);
             // 
-            // webBrowser1
+            // webBrowserBaseItemProperties
             // 
-            this.webBrowser1.AllowWebBrowserDrop = false;
-            this.webBrowser1.IsWebBrowserContextMenuEnabled = false;
-            this.webBrowser1.Location = new System.Drawing.Point(12, 123);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(23, 22);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(292, 269);
-            this.webBrowser1.TabIndex = 2;
-            this.webBrowser1.TabStop = false;
-            this.webBrowser1.WebBrowserShortcutsEnabled = false;
+            this.webBrowserBaseItemProperties.AllowWebBrowserDrop = false;
+            this.webBrowserBaseItemProperties.IsWebBrowserContextMenuEnabled = false;
+            this.webBrowserBaseItemProperties.Location = new System.Drawing.Point(15, 154);
+            this.webBrowserBaseItemProperties.Margin = new System.Windows.Forms.Padding(4);
+            this.webBrowserBaseItemProperties.MinimumSize = new System.Drawing.Size(29, 28);
+            this.webBrowserBaseItemProperties.Name = "webBrowserBaseItemProperties";
+            this.webBrowserBaseItemProperties.Size = new System.Drawing.Size(365, 336);
+            this.webBrowserBaseItemProperties.TabIndex = 2;
+            this.webBrowserBaseItemProperties.TabStop = false;
+            this.webBrowserBaseItemProperties.WebBrowserShortcutsEnabled = false;
             // 
-            // itemName
+            // webBrowserItemName
             // 
-            this.itemName.AllowNavigation = false;
-            this.itemName.IsWebBrowserContextMenuEnabled = false;
-            this.itemName.Location = new System.Drawing.Point(15, 30);
-            this.itemName.MinimumSize = new System.Drawing.Size(23, 22);
-            this.itemName.Name = "itemName";
-            this.itemName.ScrollBarsEnabled = false;
-            this.itemName.Size = new System.Drawing.Size(730, 39);
-            this.itemName.TabIndex = 3;
-            this.itemName.TabStop = false;
-            this.itemName.WebBrowserShortcutsEnabled = false;
-            this.itemName.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.ItemName_DocumentCompleted);
+            this.webBrowserItemName.AllowNavigation = false;
+            this.webBrowserItemName.IsWebBrowserContextMenuEnabled = false;
+            this.webBrowserItemName.Location = new System.Drawing.Point(19, 38);
+            this.webBrowserItemName.Margin = new System.Windows.Forms.Padding(4);
+            this.webBrowserItemName.MinimumSize = new System.Drawing.Size(29, 28);
+            this.webBrowserItemName.Name = "webBrowserItemName";
+            this.webBrowserItemName.ScrollBarsEnabled = false;
+            this.webBrowserItemName.Size = new System.Drawing.Size(912, 49);
+            this.webBrowserItemName.TabIndex = 3;
+            this.webBrowserItemName.TabStop = false;
+            this.webBrowserItemName.WebBrowserShortcutsEnabled = false;
             // 
-            // webBrowser2
+            // webBrowserPrefixProperties
             // 
-            this.webBrowser2.AllowWebBrowserDrop = false;
-            this.webBrowser2.IsWebBrowserContextMenuEnabled = false;
-            this.webBrowser2.Location = new System.Drawing.Point(327, 123);
-            this.webBrowser2.MinimumSize = new System.Drawing.Size(23, 22);
-            this.webBrowser2.Name = "webBrowser2";
-            this.webBrowser2.Size = new System.Drawing.Size(292, 269);
-            this.webBrowser2.TabIndex = 4;
-            this.webBrowser2.TabStop = false;
-            this.webBrowser2.WebBrowserShortcutsEnabled = false;
+            this.webBrowserPrefixProperties.AllowWebBrowserDrop = false;
+            this.webBrowserPrefixProperties.IsWebBrowserContextMenuEnabled = false;
+            this.webBrowserPrefixProperties.Location = new System.Drawing.Point(409, 154);
+            this.webBrowserPrefixProperties.Margin = new System.Windows.Forms.Padding(4);
+            this.webBrowserPrefixProperties.MinimumSize = new System.Drawing.Size(29, 28);
+            this.webBrowserPrefixProperties.Name = "webBrowserPrefixProperties";
+            this.webBrowserPrefixProperties.Size = new System.Drawing.Size(365, 336);
+            this.webBrowserPrefixProperties.TabIndex = 4;
+            this.webBrowserPrefixProperties.TabStop = false;
+            this.webBrowserPrefixProperties.WebBrowserShortcutsEnabled = false;
             // 
-            // label1
+            // labelPrefixProperties
             // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-            this.label1.Location = new System.Drawing.Point(324, 101);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(111, 17);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "Prefix Properties";
+            this.labelPrefixProperties.AutoSize = true;
+            this.labelPrefixProperties.BackColor = System.Drawing.Color.Transparent;
+            this.labelPrefixProperties.Font = new System.Drawing.Font("Albertus MT Light", 14.0625F);
+            this.labelPrefixProperties.Location = new System.Drawing.Point(405, 126);
+            this.labelPrefixProperties.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelPrefixProperties.Name = "labelPrefixProperties";
+            this.labelPrefixProperties.Size = new System.Drawing.Size(182, 28);
+            this.labelPrefixProperties.TabIndex = 5;
+            this.labelPrefixProperties.Text = "Prefix Properties";
             // 
-            // label2
+            // labelBaseItemProperties
             // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-            this.label2.Location = new System.Drawing.Point(12, 101);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(136, 17);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Base Item Properties";
+            this.labelBaseItemProperties.AutoSize = true;
+            this.labelBaseItemProperties.BackColor = System.Drawing.Color.Transparent;
+            this.labelBaseItemProperties.Font = new System.Drawing.Font("Albertus MT Light", 14.0625F);
+            this.labelBaseItemProperties.Location = new System.Drawing.Point(15, 126);
+            this.labelBaseItemProperties.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelBaseItemProperties.Name = "labelBaseItemProperties";
+            this.labelBaseItemProperties.Size = new System.Drawing.Size(218, 28);
+            this.labelBaseItemProperties.TabIndex = 6;
+            this.labelBaseItemProperties.Text = "Base Item Properties";
             // 
-            // checkBox1
+            // checkBoxFilterExtraInfo
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox1.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-            this.checkBox1.Location = new System.Drawing.Point(763, 42);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(126, 21);
-            this.checkBox1.TabIndex = 7;
-            this.checkBox1.Text = "Filter Extra Info";
-            this.checkBox1.UseVisualStyleBackColor = false;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
+            this.checkBoxFilterExtraInfo.AutoSize = true;
+            this.checkBoxFilterExtraInfo.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxFilterExtraInfo.Font = new System.Drawing.Font("Albertus MT Light", 14.0625F);
+            this.checkBoxFilterExtraInfo.Location = new System.Drawing.Point(954, 52);
+            this.checkBoxFilterExtraInfo.Margin = new System.Windows.Forms.Padding(4);
+            this.checkBoxFilterExtraInfo.Name = "checkBoxFilterExtraInfo";
+            this.checkBoxFilterExtraInfo.Size = new System.Drawing.Size(197, 32);
+            this.checkBoxFilterExtraInfo.TabIndex = 7;
+            this.checkBoxFilterExtraInfo.Text = "Filter Extra Info";
+            this.checkBoxFilterExtraInfo.UseVisualStyleBackColor = false;
+            this.checkBoxFilterExtraInfo.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
             // 
-            // webBrowser3
+            // webBrowserSuffixProperties
             // 
-            this.webBrowser3.AllowWebBrowserDrop = false;
-            this.webBrowser3.IsWebBrowserContextMenuEnabled = false;
-            this.webBrowser3.Location = new System.Drawing.Point(655, 123);
-            this.webBrowser3.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser3.Name = "webBrowser3";
-            this.webBrowser3.Size = new System.Drawing.Size(262, 269);
-            this.webBrowser3.TabIndex = 8;
-            this.webBrowser3.TabStop = false;
-            this.webBrowser3.WebBrowserShortcutsEnabled = false;
+            this.webBrowserSuffixProperties.AllowWebBrowserDrop = false;
+            this.webBrowserSuffixProperties.IsWebBrowserContextMenuEnabled = false;
+            this.webBrowserSuffixProperties.Location = new System.Drawing.Point(819, 154);
+            this.webBrowserSuffixProperties.Margin = new System.Windows.Forms.Padding(4);
+            this.webBrowserSuffixProperties.MinimumSize = new System.Drawing.Size(25, 25);
+            this.webBrowserSuffixProperties.Name = "webBrowserSuffixProperties";
+            this.webBrowserSuffixProperties.Size = new System.Drawing.Size(328, 336);
+            this.webBrowserSuffixProperties.TabIndex = 8;
+            this.webBrowserSuffixProperties.TabStop = false;
+            this.webBrowserSuffixProperties.WebBrowserShortcutsEnabled = false;
             // 
-            // label3
+            // labelSuffixProperties
             // 
-            this.label3.AutoSize = true;
-            this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-            this.label3.Location = new System.Drawing.Point(655, 101);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(111, 17);
-            this.label3.TabIndex = 9;
-            this.label3.Text = "Suffix Properties";
+            this.labelSuffixProperties.AutoSize = true;
+            this.labelSuffixProperties.BackColor = System.Drawing.Color.Transparent;
+            this.labelSuffixProperties.Font = new System.Drawing.Font("Albertus MT Light", 14.0625F);
+            this.labelSuffixProperties.Location = new System.Drawing.Point(819, 126);
+            this.labelSuffixProperties.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelSuffixProperties.Name = "labelSuffixProperties";
+            this.labelSuffixProperties.Size = new System.Drawing.Size(181, 28);
+            this.labelSuffixProperties.TabIndex = 9;
+            this.labelSuffixProperties.Text = "Suffix Properties";
             // 
             // ItemProperties
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(944, 461);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.webBrowser3);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.webBrowser2);
-            this.Controls.Add(this.itemName);
-            this.Controls.Add(this.webBrowser1);
-            this.Controls.Add(this.ok);
+            this.ClientSize = new System.Drawing.Size(1180, 576);
+            this.Controls.Add(this.labelSuffixProperties);
+            this.Controls.Add(this.webBrowserSuffixProperties);
+            this.Controls.Add(this.checkBoxFilterExtraInfo);
+            this.Controls.Add(this.labelBaseItemProperties);
+            this.Controls.Add(this.labelPrefixProperties);
+            this.Controls.Add(this.webBrowserPrefixProperties);
+            this.Controls.Add(this.webBrowserItemName);
+            this.Controls.Add(this.webBrowserBaseItemProperties);
+            this.Controls.Add(this.ButtonOK);
             this.DrawCustomBorder = true;
             this.Font = new System.Drawing.Font("Albertus MT Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.White;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Margin = new System.Windows.Forms.Padding(5);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ItemProperties";
@@ -244,15 +254,15 @@ namespace TQVaultAE.GUI
             this.Text = "Item Properties";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.ItemProperties_Load);
-            this.Controls.SetChildIndex(this.ok, 0);
-            this.Controls.SetChildIndex(this.webBrowser1, 0);
-            this.Controls.SetChildIndex(this.itemName, 0);
-            this.Controls.SetChildIndex(this.webBrowser2, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.checkBox1, 0);
-            this.Controls.SetChildIndex(this.webBrowser3, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
+            this.Controls.SetChildIndex(this.ButtonOK, 0);
+            this.Controls.SetChildIndex(this.webBrowserBaseItemProperties, 0);
+            this.Controls.SetChildIndex(this.webBrowserItemName, 0);
+            this.Controls.SetChildIndex(this.webBrowserPrefixProperties, 0);
+            this.Controls.SetChildIndex(this.labelPrefixProperties, 0);
+            this.Controls.SetChildIndex(this.labelBaseItemProperties, 0);
+            this.Controls.SetChildIndex(this.checkBoxFilterExtraInfo, 0);
+            this.Controls.SetChildIndex(this.webBrowserSuffixProperties, 0);
+            this.Controls.SetChildIndex(this.labelSuffixProperties, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 

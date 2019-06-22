@@ -36,10 +36,10 @@ namespace TQVaultAE.GUI
 			#region Apply custom font
 
 			this.itemSeedBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
-			this.randomButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
-			this.ok.Font = FontHelper.GetFontAlbertusMTLight(12F);
-			this.cancel.Font = FontHelper.GetFontAlbertusMTLight(12F);
-			this.label1.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.ButtonRandom.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.ButtonOk.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.ButtonCancel.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.labelInfos.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
 			this.Font = FontHelper.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
 			#endregion
@@ -47,10 +47,10 @@ namespace TQVaultAE.GUI
 			this.DrawCustomBorder = true;
 
 			this.Text = Resources.SeedText;
-			this.label1.Text = Resources.SeedLabel1;
-			this.cancel.Text = Resources.GlobalCancel;
-			this.randomButton.Text = Resources.SeedBtnRandom;
-			this.ok.Text = Resources.GlobalOK;
+			this.labelInfos.Text = Resources.SeedLabel1;
+			this.ButtonCancel.Text = Resources.GlobalCancel;
+			this.ButtonRandom.Text = Resources.SeedBtnRandom;
+			this.ButtonOk.Text = Resources.GlobalOK;
 
 			// Set options for Right to Left reading.
 			if (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)

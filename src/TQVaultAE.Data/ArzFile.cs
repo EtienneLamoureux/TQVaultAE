@@ -172,14 +172,11 @@ namespace TQVaultAE.Data
 		/// <returns>DBRecord corresponding to the string ID.</returns>
 		public DBRecordCollection GetItem(string recordId)
 		{
-			DBRecordCollection result = null;
-			if (string.IsNullOrEmpty(recordId))
-			{
-				return result;
-			}
+			if (string.IsNullOrEmpty(recordId)) return null;
+
+			DBRecordCollection databaseRecord;
 
 			recordId = TQData.NormalizeRecordPath(recordId);
-			DBRecordCollection databaseRecord;
 
 			if (cache.ContainsKey(recordId))
 			{
@@ -188,7 +185,7 @@ namespace TQVaultAE.Data
 			else
 			{
 				RecordInfo rawRecord;
-				if (recordInfo.ContainsKey(recordId))
+				if (this.recordInfo.ContainsKey(recordId))
 				{
 					rawRecord = this.recordInfo[recordId];
 				}

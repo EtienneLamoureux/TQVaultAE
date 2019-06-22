@@ -649,7 +649,7 @@ namespace TQVaultAE.GUI
 			list = TQData.GetVaultList();
 			int numVaults = list?.Length ?? 0;
 
-			return Math.Max(0, numIT + numIT + numVaults - 1);
+			return Math.Max(0, numIT + numVaults - 1);
 		}
 
 		/// <summary>
@@ -687,7 +687,7 @@ namespace TQVaultAE.GUI
 			int numVaults = vaults?.Length ?? 0;
 
 			// Since this takes a while, show a progress dialog box.
-			int total = numIT + numIT + numVaults - 1;
+			int total = numIT + numVaults - 1;
 
 			if (total > 0)
 			{
