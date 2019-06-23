@@ -883,6 +883,7 @@ namespace TQVaultAE.GUI
 				{
 					Config.Settings.Default.AllowItemCopy = false;
 					Config.Settings.Default.AllowItemEdit = false;
+					Config.Settings.Default.AllowCharacterEdit = false;
 				}
 
 				CommandLineArgs args = new CommandLineArgs();

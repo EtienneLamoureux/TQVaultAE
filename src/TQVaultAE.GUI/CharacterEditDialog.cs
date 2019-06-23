@@ -130,6 +130,7 @@ namespace TQVaultAE.GUI
 		/// <param name="e">EventArgs data</param>
 		private void OKButton_Click(object sender, EventArgs e)
 		{
+			if (!Config.Settings.Default.AllowCharacterEdit) return;
 			if (_playerCollection.PlayerInfo == null) return;
 			try
 			{
