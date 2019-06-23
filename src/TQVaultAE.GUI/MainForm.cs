@@ -879,10 +879,11 @@ namespace TQVaultAE.GUI
 					TQData.MapName = Config.Settings.Default.Mod;
 				}
 
-				if (!Config.Settings.Default.ShowEditingCopyFeatures)
+				if (!Config.Settings.Default.AllowCheats)
 				{
 					Config.Settings.Default.AllowItemCopy = false;
 					Config.Settings.Default.AllowItemEdit = false;
+					Config.Settings.Default.AllowCharacterEdit = false;
 				}
 
 				CommandLineArgs args = new CommandLineArgs();

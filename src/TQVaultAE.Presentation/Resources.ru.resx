@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutDescription" xml:space="preserve">
     <value>TQVault by bman654 (wickedsoul_@yahoo.com) 
@@ -995,7 +995,6 @@ Would you like to disable loading all files?</value>
   <data name="GlobalRelicVaultStash" xml:space="preserve">
     <value>реликвия Свод</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Разрешить функции редактирования символов</value>
   </data>
@@ -1022,9 +1021,6 @@ Would you like to disable loading all files?</value>
   </data>
   <data name="CEEnableLeveling" xml:space="preserve">
     <value>Включить выравнивание</value>
-  </data>
-  <data name="CEEnableRedistribute" xml:space="preserve">
-    <value>Включить перераспределение</value>
   </data>
   <data name="CEHealth" xml:space="preserve">
     <value>Здоровье</value>
@@ -1053,87 +1049,244 @@ Would you like to disable loading all files?</value>
   <data name="CharacterEditBtn" xml:space="preserve">
     <value>монтировать</value>
   </data>
-
-  <data name="tagCClass01" xml:space="preserve"><value>маг</value></data>
-  <data name="tagCClass02" xml:space="preserve"><value>странник</value></data>
-  <data name="tagCClass03" xml:space="preserve"><value>мошенник</value></data>
-  <data name="tagCClass04" xml:space="preserve"><value>охотник</value></data>
-  <data name="tagCClass05" xml:space="preserve"><value>Буревестник</value></data>
-  <data name="tagCClass06" xml:space="preserve"><value>Пиротехник</value></data>
-  <data name="tagCClass07" xml:space="preserve"><value>Защитник</value></data>
-  <data name="tagCClass08" xml:space="preserve"><value>воин</value></data>
-  <data name="tagCClass09" xml:space="preserve"><value>Spellbreaker</value></data>
-  <data name="tagCClass10" xml:space="preserve"><value>чемпион</value></data>
-  <data name="tagCClass11" xml:space="preserve"><value>убийца</value></data>
-  <data name="tagCClass12" xml:space="preserve"><value>убийца</value></data>
-  <data name="tagCClass13" xml:space="preserve"><value>тан</value></data>
-  <data name="tagCClass14" xml:space="preserve"><value>Battlemage</value></data>
-  <data name="tagCClass15" xml:space="preserve"><value>завоеватель</value></data>
-  <data name="tagCClass16" xml:space="preserve"><value>оратор</value></data>
-  <data name="tagCClass17" xml:space="preserve"><value>блюститель</value></data>
-  <data name="tagCClass18" xml:space="preserve"><value>корсар</value></data>
-  <data name="tagCClass19" xml:space="preserve"><value>смотритель</value></data>
-  <data name="tagCClass20" xml:space="preserve"><value>паладин</value></data>
-  <data name="tagCClass21" xml:space="preserve"><value>Джаггернаут</value></data>
-  <data name="tagCClass22" xml:space="preserve"><value>фокусник</value></data>
-  <data name="tagCClass23" xml:space="preserve"><value>Summoner</value></data>
-  <data name="tagCClass24" xml:space="preserve"><value>фокусник</value></data>
-  <data name="tagCClass25" xml:space="preserve"><value>Мститель</value></data>
-  <data name="tagCClass26" xml:space="preserve"><value>Elementalist</value></data>
-  <data name="tagCClass27" xml:space="preserve"><value>оракул</value></data>
-  <data name="tagCClass28" xml:space="preserve"><value>друид</value></data>
-  <data name="tagCClass29" xml:space="preserve"><value>Колдун</value></data>
-  <data name="tagCClass30" xml:space="preserve"><value>шалфей</value></data>
-  <data name="tagCClass31" xml:space="preserve"><value>Заклинатель костей</value></data>
-  <data name="tagCClass32" xml:space="preserve"><value>рейнджер</value></data>
-  <data name="tagCClass33" xml:space="preserve"><value>разбойник</value></data>
-  <data name="tagCClass34" xml:space="preserve"><value>Чернокнижник</value></data>
-  <data name="tagCClass35" xml:space="preserve"><value>иллюзионист</value></data>
-  <data name="tagCClass36" xml:space="preserve"><value>предсказатель</value></data>
-  <data name="xtagCharacterClass01" xml:space="preserve"><value>провидец</value></data>
-  <data name="xtagCharacterClass02" xml:space="preserve"><value>предвестник</value></data>
-  <data name="xtagCharacterClass03" xml:space="preserve"><value>тамплиер</value></data>
-  <data name="xtagCharacterClass04" xml:space="preserve"><value>пробудителя</value></data>
-  <data name="xtagCharacterClass05" xml:space="preserve"><value>пророк</value></data>
-  <data name="xtagCharacterClass06" xml:space="preserve"><value>гаруспика</value></data>
-  <data name="xtagCharacterClass07" xml:space="preserve"><value>Dreamkiller</value></data>
-  <data name="xtagCharacterClass08" xml:space="preserve"><value>приверженец обрядности</value></data>
-  <data name="xtagCharacterClass09" xml:space="preserve"><value>предсказатель</value></data>
-  <data name="x2tag_class_rm_rm" xml:space="preserve"><value>mрун</value></data>
-  <data name="x2tag_class_warfare_rm" xml:space="preserve"><value>берсерк</value></data>
-  <data name="x2tag_class_defense_rm" xml:space="preserve"><value>Runesmith</value></data>
-  <data name="x2tag_class_earth_rm" xml:space="preserve"><value>Stonespeaker</value></data>
-  <data name="x2tag_class_storm_rm" xml:space="preserve"><value>Thгромовержец</value></data>
-  <data name="x2tag_class_hunting_rm" xml:space="preserve"><value>Охотник на драконов</value></data>
-  <data name="x2tag_class_stealth_rm" xml:space="preserve"><value>обманщик</value></data>
-  <data name="x2tag_class_nature_rm" xml:space="preserve"><value>Skinchanger</value></data>
-  <data name="x2tag_class_spirit_rm" xml:space="preserve"><value>шаман</value></data>
-  <data name="x2tag_class_dream_rm" xml:space="preserve"><value>Seidr Worker</value></data>
-
-  <data name="CurrentLevel" xml:space="preserve"><value>уровень</value></data>
-  <data name="Class" xml:space="preserve"><value>Учебный класс</value></data>
-  <data name="CurrentXP" xml:space="preserve"><value>XP</value></data>
-  <data name="DifficultyUnlocked" xml:space="preserve"><value>трудность</value></data>
-  <data name="Money" xml:space="preserve"><value>Деньги</value></data>
-  <data name="SkillPoints" xml:space="preserve"><value>Очки навыка</value></data>
-  <data name="AttributesPoints" xml:space="preserve"><value>Атрибуты</value></data>
-  <data name="BaseStrength" xml:space="preserve"><value>База ул</value></data>
-  <data name="BaseDexterity" xml:space="preserve"><value>Base Dex</value></data>
-  <data name="BaseIntelligence" xml:space="preserve"><value>Base Int</value></data>
-  <data name="BaseHealth" xml:space="preserve"><value>Базовое здоровье</value></data>
-  <data name="BaseMana" xml:space="preserve"><value>Базовая мана</value></data>
-  <data name="PlayTimeInSeconds" xml:space="preserve"><value>Время в игре</value></data>
-  <data name="NumberOfDeaths" xml:space="preserve"><value>Смертей</value></data>
-  <data name="NumberOfKills" xml:space="preserve"><value>Убийства</value></data>
-  <data name="ExperienceFromKills" xml:space="preserve"><value>XP от убийств</value></data>
-  <data name="HealthPotionsUsed" xml:space="preserve"><value>Зелья здоровья</value></data>
-  <data name="ManaPotionsUsed" xml:space="preserve"><value>Кастрюли маны</value></data>
-  <data name="MaxLevel" xml:space="preserve"><value>Максимальный уровень</value></data>
-  <data name="NumHitsReceived" xml:space="preserve"><value>Хиты Recv</value></data>
-  <data name="NumHitsInflicted" xml:space="preserve"><value>Хиты нанесены</value></data>
-  <data name="GreatestDamageInflicted" xml:space="preserve"><value>Величайший урон</value></data>
-  <data name="GreatestMonster" xml:space="preserve"><value>Величайшая Моб</value></data>
-  <data name="CriticalHitsInflicted" xml:space="preserve"><value>Критические Хиты</value></data>
-  <data name="CriticalHitsReceived" xml:space="preserve"><value>Критики приняты</value></data>
-
+  <data name="tagCClass01" xml:space="preserve">
+    <value>маг</value>
+  </data>
+  <data name="tagCClass02" xml:space="preserve">
+    <value>странник</value>
+  </data>
+  <data name="tagCClass03" xml:space="preserve">
+    <value>мошенник</value>
+  </data>
+  <data name="tagCClass04" xml:space="preserve">
+    <value>охотник</value>
+  </data>
+  <data name="tagCClass05" xml:space="preserve">
+    <value>Буревестник</value>
+  </data>
+  <data name="tagCClass06" xml:space="preserve">
+    <value>Пиротехник</value>
+  </data>
+  <data name="tagCClass07" xml:space="preserve">
+    <value>Защитник</value>
+  </data>
+  <data name="tagCClass08" xml:space="preserve">
+    <value>воин</value>
+  </data>
+  <data name="tagCClass09" xml:space="preserve">
+    <value>Spellbreaker</value>
+  </data>
+  <data name="tagCClass10" xml:space="preserve">
+    <value>чемпион</value>
+  </data>
+  <data name="tagCClass11" xml:space="preserve">
+    <value>убийца</value>
+  </data>
+  <data name="tagCClass12" xml:space="preserve">
+    <value>убийца</value>
+  </data>
+  <data name="tagCClass13" xml:space="preserve">
+    <value>тан</value>
+  </data>
+  <data name="tagCClass14" xml:space="preserve">
+    <value>Battlemage</value>
+  </data>
+  <data name="tagCClass15" xml:space="preserve">
+    <value>завоеватель</value>
+  </data>
+  <data name="tagCClass16" xml:space="preserve">
+    <value>оратор</value>
+  </data>
+  <data name="tagCClass17" xml:space="preserve">
+    <value>блюститель</value>
+  </data>
+  <data name="tagCClass18" xml:space="preserve">
+    <value>корсар</value>
+  </data>
+  <data name="tagCClass19" xml:space="preserve">
+    <value>смотритель</value>
+  </data>
+  <data name="tagCClass20" xml:space="preserve">
+    <value>паладин</value>
+  </data>
+  <data name="tagCClass21" xml:space="preserve">
+    <value>Джаггернаут</value>
+  </data>
+  <data name="tagCClass22" xml:space="preserve">
+    <value>фокусник</value>
+  </data>
+  <data name="tagCClass23" xml:space="preserve">
+    <value>Summoner</value>
+  </data>
+  <data name="tagCClass24" xml:space="preserve">
+    <value>фокусник</value>
+  </data>
+  <data name="tagCClass25" xml:space="preserve">
+    <value>Мститель</value>
+  </data>
+  <data name="tagCClass26" xml:space="preserve">
+    <value>Elementalist</value>
+  </data>
+  <data name="tagCClass27" xml:space="preserve">
+    <value>оракул</value>
+  </data>
+  <data name="tagCClass28" xml:space="preserve">
+    <value>друид</value>
+  </data>
+  <data name="tagCClass29" xml:space="preserve">
+    <value>Колдун</value>
+  </data>
+  <data name="tagCClass30" xml:space="preserve">
+    <value>шалфей</value>
+  </data>
+  <data name="tagCClass31" xml:space="preserve">
+    <value>Заклинатель костей</value>
+  </data>
+  <data name="tagCClass32" xml:space="preserve">
+    <value>рейнджер</value>
+  </data>
+  <data name="tagCClass33" xml:space="preserve">
+    <value>разбойник</value>
+  </data>
+  <data name="tagCClass34" xml:space="preserve">
+    <value>Чернокнижник</value>
+  </data>
+  <data name="tagCClass35" xml:space="preserve">
+    <value>иллюзионист</value>
+  </data>
+  <data name="tagCClass36" xml:space="preserve">
+    <value>предсказатель</value>
+  </data>
+  <data name="xtagCharacterClass01" xml:space="preserve">
+    <value>провидец</value>
+  </data>
+  <data name="xtagCharacterClass02" xml:space="preserve">
+    <value>предвестник</value>
+  </data>
+  <data name="xtagCharacterClass03" xml:space="preserve">
+    <value>тамплиер</value>
+  </data>
+  <data name="xtagCharacterClass04" xml:space="preserve">
+    <value>пробудителя</value>
+  </data>
+  <data name="xtagCharacterClass05" xml:space="preserve">
+    <value>пророк</value>
+  </data>
+  <data name="xtagCharacterClass06" xml:space="preserve">
+    <value>гаруспика</value>
+  </data>
+  <data name="xtagCharacterClass07" xml:space="preserve">
+    <value>Dreamkiller</value>
+  </data>
+  <data name="xtagCharacterClass08" xml:space="preserve">
+    <value>приверженец обрядности</value>
+  </data>
+  <data name="xtagCharacterClass09" xml:space="preserve">
+    <value>предсказатель</value>
+  </data>
+  <data name="x2tag_class_rm_rm" xml:space="preserve">
+    <value>mрун</value>
+  </data>
+  <data name="x2tag_class_warfare_rm" xml:space="preserve">
+    <value>берсерк</value>
+  </data>
+  <data name="x2tag_class_defense_rm" xml:space="preserve">
+    <value>Runesmith</value>
+  </data>
+  <data name="x2tag_class_earth_rm" xml:space="preserve">
+    <value>Stonespeaker</value>
+  </data>
+  <data name="x2tag_class_storm_rm" xml:space="preserve">
+    <value>Thгромовержец</value>
+  </data>
+  <data name="x2tag_class_hunting_rm" xml:space="preserve">
+    <value>Охотник на драконов</value>
+  </data>
+  <data name="x2tag_class_stealth_rm" xml:space="preserve">
+    <value>обманщик</value>
+  </data>
+  <data name="x2tag_class_nature_rm" xml:space="preserve">
+    <value>Skinchanger</value>
+  </data>
+  <data name="x2tag_class_spirit_rm" xml:space="preserve">
+    <value>шаман</value>
+  </data>
+  <data name="x2tag_class_dream_rm" xml:space="preserve">
+    <value>Seidr Worker</value>
+  </data>
+  <data name="CurrentLevel" xml:space="preserve">
+    <value>уровень</value>
+  </data>
+  <data name="Class" xml:space="preserve">
+    <value>Учебный класс</value>
+  </data>
+  <data name="CurrentXP" xml:space="preserve">
+    <value>XP</value>
+  </data>
+  <data name="DifficultyUnlocked" xml:space="preserve">
+    <value>трудность</value>
+  </data>
+  <data name="Money" xml:space="preserve">
+    <value>Деньги</value>
+  </data>
+  <data name="SkillPoints" xml:space="preserve">
+    <value>Очки навыка</value>
+  </data>
+  <data name="AttributesPoints" xml:space="preserve">
+    <value>Атрибуты</value>
+  </data>
+  <data name="BaseStrength" xml:space="preserve">
+    <value>База ул</value>
+  </data>
+  <data name="BaseDexterity" xml:space="preserve">
+    <value>Base Dex</value>
+  </data>
+  <data name="BaseIntelligence" xml:space="preserve">
+    <value>Base Int</value>
+  </data>
+  <data name="BaseHealth" xml:space="preserve">
+    <value>Базовое здоровье</value>
+  </data>
+  <data name="BaseMana" xml:space="preserve">
+    <value>Базовая мана</value>
+  </data>
+  <data name="PlayTimeInSeconds" xml:space="preserve">
+    <value>Время в игре</value>
+  </data>
+  <data name="NumberOfDeaths" xml:space="preserve">
+    <value>Смертей</value>
+  </data>
+  <data name="NumberOfKills" xml:space="preserve">
+    <value>Убийства</value>
+  </data>
+  <data name="ExperienceFromKills" xml:space="preserve">
+    <value>XP от убийств</value>
+  </data>
+  <data name="HealthPotionsUsed" xml:space="preserve">
+    <value>Зелья здоровья</value>
+  </data>
+  <data name="ManaPotionsUsed" xml:space="preserve">
+    <value>Кастрюли маны</value>
+  </data>
+  <data name="MaxLevel" xml:space="preserve">
+    <value>Максимальный уровень</value>
+  </data>
+  <data name="NumHitsReceived" xml:space="preserve">
+    <value>Хиты Recv</value>
+  </data>
+  <data name="NumHitsInflicted" xml:space="preserve">
+    <value>Хиты нанесены</value>
+  </data>
+  <data name="GreatestDamageInflicted" xml:space="preserve">
+    <value>Величайший урон</value>
+  </data>
+  <data name="GreatestMonster" xml:space="preserve">
+    <value>Величайшая Моб</value>
+  </data>
+  <data name="CriticalHitsInflicted" xml:space="preserve">
+    <value>Критические Хиты</value>
+  </data>
+  <data name="CriticalHitsReceived" xml:space="preserve">
+    <value>Критики приняты</value>
+  </data>
 </root>

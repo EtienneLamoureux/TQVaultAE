@@ -130,6 +130,7 @@ namespace TQVaultAE.GUI
 		/// <param name="e">EventArgs data</param>
 		private void OKButton_Click(object sender, EventArgs e)
 		{
+			if (!Config.Settings.Default.AllowCharacterEdit) return;
 			if (_playerCollection.PlayerInfo == null) return;
 			try
 			{
@@ -181,7 +182,6 @@ namespace TQVaultAE.GUI
 			attributeLabel1.Text = Resources.CEAttributePoints;
 			skillPointsLabel1.Text = Resources.CESkillPoints;
 			levelingCheckBox.Text = Resources.CEEnableLeveling;
-			redistrbuteCheckbox.Text = Resources.CEEnableRedistribute;
 			levelingGroupBox.Text = Resources.CELeveling;
 			attribGroupBox.Text = Resources.CEAttributes;
 			difficultyLabel.Text = Resources.CEDifficulty;
@@ -251,7 +251,6 @@ namespace TQVaultAE.GUI
 
 			setDifficultly();
 
-			redistrbuteCheckbox.Checked = true;
 			levelingCheckBox.Checked = false;
 
 			if (_playerCollection.PlayerInfo.HasBeenInGame == 0)
@@ -314,8 +313,6 @@ namespace TQVaultAE.GUI
 			var upDwnCtrl = (NumericUpDown)sender;
 			if (upDwnCtrl.Tag == null) return;
 
-			if (!redistrbuteCheckbox.Checked) return;
-
 			var prevValue = Convert.ToInt32(((UpDownBase)sender).Text);
 			var value = Convert.ToInt32(upDwnCtrl.Value);
 
@@ -337,22 +334,6 @@ namespace TQVaultAE.GUI
 
 		}
 
-		private void RedistrbuteCheckbox_CheckedChanged(object sender, EventArgs e)
-		{
-			if (sender == null) return;
-
-			var chkbx = (CheckBox)sender;
-			if (chkbx.Checked)
-			{
-
-			}
-			else
-			{
-
-			}
-
-		}
-
 		private void LevelingCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			if (sender == null) return;
@@ -360,21 +341,12 @@ namespace TQVaultAE.GUI
 			var chkbx = (CheckBox)sender;
 			if (chkbx.Checked)
 			{
-				//this.manacUpDown 
-				//this.healthUpDown
-				//this.intelligenceUpDown 
-				//this.dexterityUpDown 
-				//this.strengthUpDown 
 				this.difficultlyComboBox.Enabled = true;
-				this.skillPointsNumericUpDown.Enabled = true;
-				this.attributeNumericUpDown.Enabled = true;
 				this.levelNumericUpDown.Enabled = true;
 			}
 			else
 			{
 				this.difficultlyComboBox.Enabled = false;
-				this.skillPointsNumericUpDown.Enabled = false;
-				this.attributeNumericUpDown.Enabled = false;
 				this.levelNumericUpDown.Enabled = false;
 			}
 

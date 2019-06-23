@@ -228,7 +228,7 @@ namespace TQVaultAE.GUI
 			{
 				this.mapListComboBox.Items.AddRange(maps);
 			}
-			if (!Config.Settings.Default.ShowEditingCopyFeatures)
+			if (!Config.Settings.Default.AllowCheats)
 			{
 				this.allowItemEditCheckBox.Visible = false;
 				this.allowItemCopyCheckBox.Visible = false;
