@@ -54,7 +54,6 @@ namespace TQVaultAE.GUI
             this.healthLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.manaLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.attribGroupBox = new System.Windows.Forms.GroupBox();
-            this.redistrbuteCheckbox = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.manacUpDown = new System.Windows.Forms.NumericUpDown();
             this.healthUpDown = new System.Windows.Forms.NumericUpDown();
             this.intelligenceUpDown = new System.Windows.Forms.NumericUpDown();
@@ -186,7 +185,6 @@ namespace TQVaultAE.GUI
             // attribGroupBox
             // 
             this.attribGroupBox.BackColor = System.Drawing.Color.Transparent;
-            this.attribGroupBox.Controls.Add(this.redistrbuteCheckbox);
             this.attribGroupBox.Controls.Add(this.manacUpDown);
             this.attribGroupBox.Controls.Add(this.healthUpDown);
             this.attribGroupBox.Controls.Add(this.intelligenceUpDown);
@@ -205,19 +203,6 @@ namespace TQVaultAE.GUI
             this.attribGroupBox.TabStop = false;
             this.attribGroupBox.Text = "Base Attributes";
             this.attribGroupBox.Enter += new System.EventHandler(this.GroupBox1_Enter);
-            // 
-            // redistrbuteCheckbox
-            // 
-            this.redistrbuteCheckbox.AutoSize = true;
-            this.redistrbuteCheckbox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.redistrbuteCheckbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.redistrbuteCheckbox.Location = new System.Drawing.Point(25, 275);
-            this.redistrbuteCheckbox.Name = "redistrbuteCheckbox";
-            this.redistrbuteCheckbox.Size = new System.Drawing.Size(154, 22);
-            this.redistrbuteCheckbox.TabIndex = 6;
-            this.redistrbuteCheckbox.Text = "Enable Redistribute";
-            this.redistrbuteCheckbox.UseVisualStyleBackColor = true;
-            this.redistrbuteCheckbox.CheckedChanged += new System.EventHandler(this.RedistrbuteCheckbox_CheckedChanged);
             // 
             // manacUpDown
             // 
@@ -556,7 +541,6 @@ namespace TQVaultAE.GUI
             this.Controls.SetChildIndex(this.attribGroupBox, 0);
             this.Controls.SetChildIndex(this.levelingGroupBox, 0);
             this.attribGroupBox.ResumeLayout(false);
-            this.attribGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.manacUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.healthUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.intelligenceUpDown)).EndInit();
@@ -593,7 +577,6 @@ namespace TQVaultAE.GUI
 		private ScalingLabel attributeLabel1;
 		private System.Windows.Forms.NumericUpDown skillPointsNumericUpDown;
 		private ScalingLabel skillPointsLabel1;
-		private ScalingCheckBox redistrbuteCheckbox;
 		private ScalingLabel difficultyLabel;
 		private System.Windows.Forms.ComboBox difficultlyComboBox;
 		private ScalingCheckBox levelingCheckBox;
