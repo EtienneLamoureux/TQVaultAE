@@ -144,12 +144,12 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 
 *A. Yes*
 
-**Q. How to activate TQVaultAE "edition features"? (character edit, copy item, edit item)**
+**Q. How to activate the cheats (character edit, copy item, edit item)?**
 
 *A. Follow these steps:*
 1. *Navigate the the installation folder of TQVaultAE*
 2. *Open `TQVaultAE.exe.config` in a text editor (i.e. notepad, **not Microsoft Word**)*
-3. *Find the key `ShowEditingCopyFeatures` and change the value from `False` to `True`*
+3. *Find the key `AllowCheats` and change the value from `False` to `True`*
 
 **Q. I have a problem not listed here. What can I do?**
 
