@@ -398,12 +398,13 @@ namespace TQVaultAE.Config {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ShowEditingCopyFeatures {
+        public bool AllowCheats
+		{
             get {
-                return ((bool)(this["ShowEditingCopyFeatures"]));
+                return ((bool)(this["AllowCheats"]));
             }
             set {
-                this["ShowEditingCopyFeatures"] = value;
+                this["AllowCheats"] = value;
             }
         }
         

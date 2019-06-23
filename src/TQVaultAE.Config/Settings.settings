@@ -104,7 +104,7 @@
     <Setting Name="AllowCharacterEdit" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ShowEditingCopyFeatures" Type="System.Boolean" Scope="User">
+    <Setting Name="AllowCheats" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="ForceGamePath" Type="System.String" Scope="User">
