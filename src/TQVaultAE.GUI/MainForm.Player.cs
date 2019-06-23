@@ -134,7 +134,7 @@ namespace TQVaultAE.GUI
 		/// <param name="selectedText">Player string from the drop down list.</param>
 		private void LoadPlayer(string selectedText)
 		{
-			var result = this.playerService.LoadPlayer(selectedText);
+			var result = this.playerService.LoadPlayer(selectedText,true);
 
 			// Get the player
 			try
