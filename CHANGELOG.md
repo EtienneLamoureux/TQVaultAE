@@ -11,6 +11,13 @@
 
 ### Bugs
 - #155 Fix an issue introduced by Titan Quest Anniversary Edition v2.7
+- #161 Fixed ability to change completion bonus
+- #164 Properly support classless characters in the player panel
+- #166 Fixed issue when 'pre-load all vault and character files' is not selected
+
+### Other
+- Refactored solution
+  - Split layers
 
 ## 3.0.0
 ### Features
@@ -81,10 +88,12 @@
   - Fixed some tooltips
 - #25 Added an option to make equipped items read-only
   - Items equipped to a character cannot be interacted with by default
+
 ### Bugs
 - Fixed automatic path detection when using Steam
 - #7 Fixed interface flickering when dragging an item across
 - #30 Fixed an issue where switching between characters with different number of bags caused an error
+
 ### Other
 - Changed the font back to Albertus MT
 - #8 Disabled the old UI entierly
@@ -95,6 +104,7 @@
 ### Features
 - Added support for the Anniversary Edition (steam version)
   - #1 Make the whole stash accessible from the UI
+
 ### Other
 - Make the new UI the default
 - Remove TQVaultMon
@@ -326,12 +336,14 @@
 - Add command line arguments to enable mods. Use /mod:<modname> to automatically load a mod.
   - Can also use <charactername><Immortal Throne><Custom Map> to auto load a custom map character.
   - For example:
+
 ```
 To autoload the custom map character Sparticus with Lilith you use a shortcut like this:
 TQVault.exe "Sparticus<Immortal Throne><Custom Map>" /mod:Lilith
 To start with the Lilith map and load the last character you use a shortcut like this:
 TQVault.exe /mod:Lilith
 ```
+
 - Changed targets to x86 and Win32
 - Changed the method for item type determination. It now uses the class in the database record instead of the record path.
 - Changed scanf function to use TryParse function to handle the format exceptions that are appearing on occasion.
