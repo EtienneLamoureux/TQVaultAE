@@ -678,8 +678,15 @@ namespace TQVaultAE.Presentation.Html
 					}
 					else
 					{
+						String description = "Missing database info";
 						Info info = Database.DB.GetInfo(s);
-						name = string.Concat("&nbsp;&nbsp;&nbsp;&nbsp;", Database.DB.GetFriendlyName(info.DescriptionTag));
+
+						if (info != null)
+						{
+							description = info.DescriptionTag;
+						}
+
+						name = string.Concat("&nbsp;&nbsp;&nbsp;&nbsp;", Database.DB.GetFriendlyName(description));
 						results[i++] = string.Format(CultureInfo.CurrentCulture, "<font color={0}>{1}</font>", HtmlHelper.HtmlColor(ItemGfxHelper.GetColor(ItemStyle.Common)), name);
 					}
 				}
