@@ -88,9 +88,12 @@ namespace TQVaultAE.Data
 					data = _list["mana"];
 					UpdateIfChanged(writer, data, playerInfo.BaseMana);
 
-
-					///if this value is set to true, the TQVaultAE program will know save the player.chr file
-					playerInfo.Modified = _modified;
+					//ignore if already set
+					if (!playerInfo.Modified)
+					{
+						///if this value is set to true, the TQVaultAE program will know save the player.chr file
+						playerInfo.Modified = _modified;
+					}
 
 				}
 			}
