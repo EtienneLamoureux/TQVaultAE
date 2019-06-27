@@ -1,10 +1,10 @@
 # Changelog
 ## 3.1.0
 ### Features
-- Add character statistics to the character panel
-- New cheat: character statistics editing
+- Add character statistics to the character equipment panel
+- Add new character cheats:
   - Difficulty unlock
-  - Leveling
+  - Level up
   - Attribute points redistribution
 - Add a new utility program: TQSaveExplorer
   - This utility program allows developers to inspect Titan Quest save files to detect changes in structure
