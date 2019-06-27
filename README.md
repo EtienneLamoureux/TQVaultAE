@@ -1,6 +1,6 @@
 # TQVaultAE
 [![Steam](https://img.shields.io/badge/steam-link-lightgrey.svg)](https://steamcommunity.com/sharedfiles/filedetails/?id=1136716167)
-[![Release](https://img.shields.io/badge/stable-3.0.0-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
+[![Release](https://img.shields.io/badge/stable-3.1.0-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/LICENSE)
 
 TQVaultAE is an external tool for [Titan Quest Anniversary Edition](https://www.thqnordic.com/games/titan-quest) that allows you to store and search your items outside the game.
@@ -20,30 +20,36 @@ Works with all expansions!
   * [Contributors](#contributors)
     + [TQVaultAE](#tqvaultae-1)
     + [TQVault](#tqvault)
-    + [Translation team](#translation-team)
+      - [Translation team](#translation-team)
+  * [Disclaimer](#disclaimer)
 
 ## Features
 - **Infinite bank space**
 - Powerful search
 - Cheats
-  - Extract relic/charm from items at no cost, keeping both
-  - Modify the relic/charm completion bonus
-  - Complete relic/charm from a single piece
-  - Craft an artifact from its recipe
-  - Create missing set pieces
-  - Duplicate any item
+    - Items
+        - Extract relic/charm from items at no cost, keeping both
+        - Modify the relic/charm/artefact completion bonus
+        - Complete relic/charm from a single piece
+        - Craft an artifact from its recipe
+        - Create missing set pieces
+        - Duplicate any item
+    - Characters
+        - Redisribute attribute points
+        - Level up
+        - Unlock difficulties
 - QOL
-  - Bulk item transfer (CTRL-click, right-click)
-  - Combine stacks (potions, relics and charms) by dropping them onto each other
-  - Split potion stacks apart
+    - Bulk item transfer (CTRL-click, right-click)
+    - Combine stacks (potions, relics and charms) by dropping them onto each other
+    - Split potion stacks apart
 - Character backups
-  - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
+    - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
 
 ## Installation
 ### Installer
 1. Navigate to the [release page](https://github.com/EtienneLamoureux/TQVaultAE/releases)
 2. Download the latest release's `.exe` file.
-   - **Please note:** If you opt for a pre-release, be aware that they are alpha builds.
+    - **Please note:** If you opt for a pre-release, be aware that they are alpha builds.
 3. Double-click the `.exe`.
 4. Navigate to the folder where you installed TQVaultAE. Double-click `TQVaultAE.exe`
 5. Enjoy!
@@ -51,7 +57,7 @@ Works with all expansions!
 ### DIY Archive
 1. Navigate to the [release page](https://github.com/EtienneLamoureux/TQVaultAE/releases)
 2. Download the latest release's `.zip` file.
-   - **Please note:** If you opt for a pre-release, be aware that they are alpha builds.
+    - **Please note:** If you opt for a pre-release, be aware that they are alpha builds.
 3. Extract the content of the archive on your computer.
 4. Navigate to the folder where you extracted the artefacts. Double-click `TQVaultAE.exe`
 5. Enjoy!
@@ -64,10 +70,6 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 - The cheats (listed under the "item edition" options)
 
 ## Troubleshooting and F.A.Q.
-**Q. Can TQVaultAE use my old vault files?**
-
-*A. Yes, TQVaultAE is compatible with the legacy TQvault vault files.*
-
 **Q. Does TQVaultAE modify my items? The stats I see are not the same as the ones ingame.**
 
 *A. No, unless you specifically use the cheats, TQVaultAE doesn't alter items in any way. 
@@ -78,10 +80,21 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 
 *A. No, using TQVaultAE while running the game may lead to loss of progress or items. Best practice is to close the game before using TQVaultAE.*
 
+**Q. How to activate the cheats (character edition, item edition, item copy)?**
+
+*A. Follow these steps:*
+1. *Navigate the the installation folder of TQVaultAE*
+2. *Open `TQVaultAE.exe.config` in a text editor (i.e. notepad, **not Microsoft Word**)*
+3. *Find the key `AllowCheats` and change the value from `False` to `True`*
+
+**Q. Can TQVaultAE use my old vault files?**
+
+*A. Yes, TQVaultAE is compatible with the legacy TQvault vault files.*
+
 **Q. After updating from an older version of TQVault (2.18 or older), the new program won't start.**
 
 *A. Follow these steps (See [this comment](https://github.com/EtienneLamoureux/TQVaultAE/issues/85#issuecomment-447326792) for the original solution):*
-1. *Press the `Windows` key*
+1. *Press the <kbd>⊞ Win</kbd> key*
 2. *Type `cmd`*
 3. *Right-click the first option and run as administrator*
 4. *Type `regsvr32 /u VXPLib.dll`*
@@ -93,6 +106,7 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 1. *Navigate the the installation folder of TQVaultAE*
 2. *Open `TQVaultAE.exe.config` in a text editor (i.e. notepad, **not Microsoft Word**)*
 3. *Replace the following sections:*
+
 ```xml
 <setting name="AutoDetectGamePath" serializeAs="String">
     <value>True</value>
@@ -105,7 +119,9 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
     <value />
 </setting>
 ```
+
 *by (replace the path to the correct one for your computer)*
+
 ```xml
 <setting name="AutoDetectGamePath" serializeAs="String">
     <value>False</value>
@@ -118,8 +134,9 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
     <value>C:\examplePath\Titan Quest Anniversary Edition</value>
 </setting>
 ```
+
 4. *Open TQVaultAE*
-   - *You might be greeted with a warning dialog about the vault path not being set. Click OK.*
+    - *You might be greeted with a warning dialog about the vault path not being set. Click OK.*
 5. *Open the configuration menu by clicking the top-left button*
 6. *Validate the vault path and the game paths shown*
 7. *Click OK to close the configuration menu*
@@ -144,13 +161,6 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 
 *A. Yes*
 
-**Q. How to activate the cheats (character edit, copy item, edit item)?**
-
-*A. Follow these steps:*
-1. *Navigate the the installation folder of TQVaultAE*
-2. *Open `TQVaultAE.exe.config` in a text editor (i.e. notepad, **not Microsoft Word**)*
-3. *Find the key `AllowCheats` and change the value from `False` to `True`*
-
 **Q. I have a problem not listed here. What can I do?**
 
 *A. There are several things you can do:*
@@ -159,16 +169,10 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 - *Create an issue in [our issue tracking board](https://github.com/EtienneLamoureux/TQVaultAE/issues)*
 
 ## Contributors
-This project could not go on without the continued contributions of the Titan Quest community.
+This project could not go on without the continued volunteer contributions of the Titan Quest community. If you're thinking about contributing, please read our [contributing guidelines](/CONTRIBUTING.md).
 
 ### TQVaultAE
-- EPinter, *XL vault, Atlantis support, bug fixes, general improvements*
-- NorthFury, *search improvements, bug fixes, general improvements*
-- EtienneLamoureux, *maintenance, bug fixes, general improvements*
 - [Open-source contributors](https://github.com/EtienneLamoureux/TQVaultAE/graphs/contributors)
-  - Malgardian (a.k.a. Spectre), *Anniversary Edition port*
-  - KenAlin, *Ragnarok support*
-  - Ninakoru, *Atlantis support*
 
 ### TQVault
 - Brandon "bman654" Wallace, *original author*
@@ -176,10 +180,13 @@ This project could not go on without the continued contributions of the Titan Qu
 - VillageIdiot, *ARZExplorer util*
 - AvunaOs, *new UI*
 
-### Translation team
+#### Translation team
 - FOE, *german*
 - Jean, *French*
 - Vifarc, *French*
 - Cygi, *Polish*
 - Xelat, *Russian*
 - Kurrus, *Spanish*
+
+## Disclaimer
+Titan Quest, THQ and their respective logos are trademarks and/or registered trademarks of THQ Nordic AB. This non-commercial project is in no way associated with THQ Nordic AB.
