@@ -36,8 +36,8 @@ Works with all expansions!
         - Duplicate any item
     - Characters
         - Redisribute attribute points
-        - Level up
         - Unlock difficulties
+        - Level up
 - QOL
     - Bulk item transfer (CTRL-click, right-click)
     - Combine stacks (potions, relics and charms) by dropping them onto each other
@@ -67,7 +67,7 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 - The language used by the application
 - The paths where the vault files are located
 - The paths where the game files are located
-- The cheats (listed under the "item edition" options)
+- The cheats (To enable these options, see the F.A.Q. below)
 
 ## Troubleshooting and F.A.Q.
 **Q. Does TQVaultAE modify my items? The stats I see are not the same as the ones ingame.**
@@ -86,6 +86,7 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 1. *Navigate the the installation folder of TQVaultAE*
 2. *Open `TQVaultAE.exe.config` in a text editor (i.e. notepad, **not Microsoft Word**)*
 3. *Find the key `AllowCheats` and change the value from `False` to `True`*
+4. *Enable the cheats individually in the configuration menu*
 
 **Q. Can TQVaultAE use my old vault files?**
 
