@@ -13,6 +13,13 @@ namespace TQVaultAE.GUI.Services
 		public string ResolveTQ()
 		{
 			string titanQuestGamePath = null;
+
+			// ForceGamePath precedence for dev on PC with partial installation
+			if (string.IsNullOrEmpty(titanQuestGamePath) && !string.IsNullOrEmpty(Config.Settings.Default.ForceGamePath))
+			{
+				titanQuestGamePath = Config.Settings.Default.ForceGamePath;
+			}
+
 			// We are either autodetecting or the path has not been set
 			//
 			// Detection logic for a GOG install of the anniversary edition ~Malgardian
@@ -58,11 +65,6 @@ namespace TQVaultAE.GUI.Services
 			{
 				string[] path = { "SOFTWARE", "Iron Lore", "Titan Quest", "Install Location" };
 				titanQuestGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
-			}
-
-			if (string.IsNullOrEmpty(titanQuestGamePath) && !string.IsNullOrEmpty(Config.Settings.Default.ForceGamePath))
-			{
-				titanQuestGamePath = Config.Settings.Default.ForceGamePath;
 			}
 
 			if (string.IsNullOrEmpty(titanQuestGamePath))
@@ -76,6 +78,13 @@ namespace TQVaultAE.GUI.Services
 		public string ResolveTQIT()
 		{
 			string titanQuestGamePath = null;
+
+			// ForceGamePath precedence for dev on PC with partial installation
+			if (string.IsNullOrEmpty(titanQuestGamePath) && !string.IsNullOrEmpty(Config.Settings.Default.ForceGamePath))
+			{
+				titanQuestGamePath = Config.Settings.Default.ForceGamePath;
+			}
+
 			// We are either autodetecting or the path has not been set
 			//
 			// Detection logic for a GOG install of the anniversary edition ~Malgardian
@@ -121,11 +130,6 @@ namespace TQVaultAE.GUI.Services
 			{
 				string[] path = { "SOFTWARE", "Iron Lore", "Titan Quest", "Install Location" };
 				titanQuestGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
-			}
-
-			if (string.IsNullOrEmpty(titanQuestGamePath) && !string.IsNullOrEmpty(Config.Settings.Default.ForceGamePath))
-			{
-				titanQuestGamePath = Config.Settings.Default.ForceGamePath;
 			}
 
 			if (string.IsNullOrEmpty(titanQuestGamePath))
