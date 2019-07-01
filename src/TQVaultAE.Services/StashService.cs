@@ -85,13 +85,17 @@ namespace TQVaultAE.Services
 			catch (KeyNotFoundException)
 			{
 				result.Stash = new Stash(Resources.GlobalRelicVaultStash, result.RelicVaultStashFile);
-				result.Stash.IsImmortalThrone = true;
+				result.Stash.CreateEmptySack();
+				result.Stash.Sack.StashType = SackType.RelicVaultStash;
 
 				try
 				{
 					result.StashPresent = StashProvider.LoadFile(result.Stash);
-					result.Stash.Sack.StashType = SackType.RelicVaultStash;
-					this.userContext.Stashes.Add(result.RelicVaultStashFile, result.Stash);
+					if (result.StashPresent.Value)
+					{
+						result.Stash.Sack.StashType = SackType.RelicVaultStash;
+						this.userContext.Stashes.Add(result.RelicVaultStashFile, result.Stash);
+					}
 				}
 				catch (ArgumentException argumentException)
 				{
