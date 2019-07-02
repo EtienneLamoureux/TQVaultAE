@@ -5,6 +5,8 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI.Components
 {
+	using System;
+	using System.Linq;
 	using System.Drawing;
 	using System.Windows.Forms;
 	using TQVaultAE.Presentation;
@@ -14,18 +16,27 @@ namespace TQVaultAE.GUI.Components
 	/// </summary>
 	public class ScalingComboBox : ComboBox
 	{
-		/// <summary>
-		/// Reverts the basic settings of a control back to the original settings.
-		/// </summary>
-		/// <param name="location">New Location of the control</param>
-		/// <param name="size">New Size of the control</param>
-		public void Revert(Point location, Size size)
+		public ScalingComboBox() : base()
 		{
-			this.Font = FontHelper.GetFontAlbertusMTLight(8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.Location = location;
-			this.Size = size;
-			this.BackColor = SystemColors.Window;
-			this.ForeColor = SystemColors.WindowText;
+			// Take care by myself of items drawing because of cyrillic having trouble to display properly with Albertus MT when DrawMode = Normal
+			this.DrawMode = DrawMode.OwnerDrawFixed;// Fixed Size for all values
+			this.DrawItem += new DrawItemEventHandler(ScalingComboBox_DrawItem);
+		}
+
+		private void ScalingComboBox_DrawItem(object sender, DrawItemEventArgs e)
+		{
+			if (this.Items.Count == 0 || e.Index == -1) return;
+			var itemsValues = this.Items.Cast<object>().Select(o => o?.ToString() ?? string.Empty).ToArray();
+			var currentBrush = new SolidBrush(this.ForeColor);
+
+			// Draw the background of the item.
+			e.DrawBackground();
+
+			// Draw value
+			e.Graphics.DrawString(itemsValues[e.Index], this.Font, currentBrush, new RectangleF(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
+
+			// Draw the focus rectangle if the mouse hovers over an item.
+			e.DrawFocusRectangle();
 		}
 
 		/// <summary>
@@ -36,7 +47,6 @@ namespace TQVaultAE.GUI.Components
 		protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 		{
 			this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * factor.Height, this.Font.Style);
-
 			base.ScaleControl(factor, specified);
 		}
 	}
