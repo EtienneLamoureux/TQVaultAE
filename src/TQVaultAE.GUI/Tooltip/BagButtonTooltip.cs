@@ -104,8 +104,17 @@ namespace TQVaultAE.GUI.Tooltip
 					.ToArray();
 				var friendlylist = itemlist
 					.Select(i => ItemService.GetFriendlyNames(i))
-					.OrderByDescending(d => d.FullNameBagTooltip.Length).ToArray();
-				foreach (var item in friendlylist) AddRow(item);
+					.OrderByDescending(d => d.FullNameBagTooltip.Length)
+					.GroupBy(d => d.FullNameBagTooltip)
+					.Select(g => new
+					{
+						FullName = g.Key.InsertAfterColorPrefix($"{g.Count()} x "),
+						Data = g.First()
+					})
+					.ToArray();
+
+				foreach (var item in friendlylist)
+					AddRow(item.FullName, ItemGfxHelper.GetColorTag(item.Data.Item, item.Data.BaseItemInfoDescription));
 
 			}
 
