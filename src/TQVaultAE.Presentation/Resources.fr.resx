@@ -128,10 +128,7 @@ Traduction en français par Jean et Vifarc.
 Traduction en polonais par Cygi.
 Traduction en russe par Xelat
 Traduction en espagnol par Kurrus.
-
-Les bibliothèques tierces suivantes sont utilisées dans TQVault :
-VXPLib - A tooltip library with HTML rendering.
-DevIl &amp; Tao.Devil - bibliothèque d'image utilisée pour lire les images au format DDS</value>
+</value>
   </data>
   <data name="AboutText" xml:space="preserve">
     <value>A propos de {0}</value>

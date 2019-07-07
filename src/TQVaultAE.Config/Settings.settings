@@ -17,9 +17,6 @@
     <Setting Name="ItemAttributesDebugLevel" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="NoToolTipDelay" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="GameLanguages" Type="System.String" Scope="Application">
       <Value Profile="(Default)">de,en,es,fr,it,pl,ru,cs</Value>
     </Setting>

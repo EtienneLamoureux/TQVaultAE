@@ -1408,7 +1408,7 @@ namespace TQVaultAE.GUI.Components
 
 					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
 					{
-						if (focusedItem.HasRelic && Config.Settings.Default.AllowItemEdit)
+						if (focusedItem.HasRelicSlot1 && Config.Settings.Default.AllowItemEdit)
 						{
 							this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
 						}
@@ -1529,7 +1529,7 @@ namespace TQVaultAE.GUI.Components
 
 							// If the item is a completed relic/charm/artifact or contains such then
 							// add a menu of possible completion bonuses to choose from.
-							if ((focusedItem.HasRelic && focusedItem.RelicBonusInfo != null) ||
+							if ((focusedItem.HasRelicSlot1 && focusedItem.RelicBonusInfo != null) ||
 								(focusedItem.IsRelic && focusedItem.IsRelicComplete) ||
 								(focusedItem.IsArtifact))
 							{
@@ -2064,7 +2064,7 @@ namespace TQVaultAE.GUI.Components
 			graphics.DrawImage(item.ItemBitmap(), itemRect, 0, 0, item.ItemBitmap().Width, item.ItemBitmap().Height, GraphicsUnit.Pixel, imageAttributes);
 
 			// Add the relic overlay if this item has a relic in it.
-			if (item.HasRelic)
+			if (item.HasRelicSlot1)
 			{
 				Bitmap relicOverlay = UIService.UI.LoadRelicOverlayBitmap();
 				if (relicOverlay != null)

@@ -38,10 +38,10 @@ namespace TQVaultAE.Entities
 		/// </summary>
 		public string Name { get; private set; }
 
-		public Variable clone()
+		public Variable Clone()
 		{
-			Variable newVariable = (Variable) this.MemberwiseClone();
-			newVariable.values = (object []) this.values.Clone();
+			Variable newVariable = (Variable)this.MemberwiseClone();
+			newVariable.values = (object[])this.values.Clone();
 			return newVariable;
 		}
 
@@ -53,13 +53,7 @@ namespace TQVaultAE.Entities
 		/// <summary>
 		/// Gets the number of values that the variable contains.
 		/// </summary>
-		public int NumberOfValues
-		{
-			get
-			{
-				return this.values.Length;
-			}
-		}
+		public int NumberOfValues => this.values.Length;
 
 		/// <summary>
 		/// Gets or sets the generic object for a particular value.
@@ -68,15 +62,8 @@ namespace TQVaultAE.Entities
 		/// <returns>object containing the value.</returns>
 		public object this[int index]
 		{
-			get
-			{
-				return this.values[index];
-			}
-
-			set
-			{
-				this.values[index] = value;
-			}
+			get => this.values[index];
+			set => this.values[index] = value;
 		}
 
 		/// <summary>
@@ -85,20 +72,14 @@ namespace TQVaultAE.Entities
 		/// </summary>
 		/// <param name="index">Index of the value.</param>
 		/// <returns>Returns the integer for the value.</returns>
-		public int GetInt32(int index)
-		{
-			return Convert.ToInt32(this.values[index], CultureInfo.InvariantCulture);
-		}
+		public int GetInt32(int index = 0) => Convert.ToInt32(this.values[index], CultureInfo.InvariantCulture);
 
 		/// <summary>
 		/// Gets the float for a value.
 		/// </summary>
 		/// <param name="index">Index of the value.</param>
 		/// <returns>Single of the value.</returns>
-		public float GetSingle(int index)
-		{
-			return Convert.ToSingle(this.values[index], CultureInfo.InvariantCulture);
-		}
+		public float GetSingle(int index = 0) => Convert.ToSingle(this.values[index], CultureInfo.InvariantCulture);
 
 		/// <summary>
 		/// Gets a string for a particular value.
@@ -107,10 +88,7 @@ namespace TQVaultAE.Entities
 		/// <returns>
 		/// string of value.
 		/// </returns>
-		public string GetString(int index)
-		{
-			return Convert.ToString(this.values[index], CultureInfo.InvariantCulture);
-		}
+		public string GetString(int index = 0) => Convert.ToString(this.values[index], CultureInfo.InvariantCulture);
 
 		/// <summary>
 		/// Converts the variable to a string.
@@ -122,9 +100,7 @@ namespace TQVaultAE.Entities
 			// First set our val format string based on the data type
 			string formatSpec = "{0}";
 			if (this.DataType == VariableDataType.Float)
-			{
 				formatSpec = "{0:f6}";
-			}
 
 			StringBuilder ans = new StringBuilder(64);
 			ans.Append(this.Name);
@@ -133,15 +109,49 @@ namespace TQVaultAE.Entities
 			for (int i = 0; i < this.NumberOfValues; ++i)
 			{
 				if (i > 0)
-				{
 					ans.Append(";");
-				}
 
 				ans.AppendFormat(CultureInfo.InvariantCulture, formatSpec, this.values[i]);
 			}
 
 			ans.Append(",");
 			return ans.ToString();
+		}
+
+		/// <summary>
+		/// Indicate that some values are not equals default(type). Meaning there is something to display.
+		/// </summary>
+		public bool IsValueRelevant
+		{
+			get
+			{
+				foreach (var val in this.values)
+				{
+					switch (this.DataType)
+					{
+						case VariableDataType.Integer:
+							var intval = Convert.ToInt32(val, CultureInfo.InvariantCulture);
+							if (intval != default(int)) return true;
+							break;
+						case VariableDataType.Float:
+							var fltval = Convert.ToSingle(val, CultureInfo.InvariantCulture);
+							if (fltval != default(float)) return true;
+							break;
+						case VariableDataType.StringVar:
+							var strtval = Convert.ToString(val, CultureInfo.InvariantCulture);
+							if (!string.IsNullOrWhiteSpace(strtval)) return true;
+							break;
+						case VariableDataType.Boolean:
+							var boolval = Convert.ToBoolean(val, CultureInfo.InvariantCulture);
+							if (boolval != default(bool)) return true;
+							break;
+						case VariableDataType.Unknown:
+						default:
+							return true;
+					}
+				}
+				return false;
+			}
 		}
 
 		/// <summary>
@@ -154,17 +164,13 @@ namespace TQVaultAE.Entities
 			// First set our val format string based on the data type
 			string formatSpec = "{0}";
 			if (this.DataType == VariableDataType.Float)
-			{
 				formatSpec = "{0:f6}";
-			}
 
 			StringBuilder ans = new StringBuilder(64);
 			for (int i = 0; i < this.NumberOfValues; ++i)
 			{
 				if (i > 0)
-				{
 					ans.Append(", ");
-				}
 
 				ans.AppendFormat(CultureInfo.InvariantCulture, formatSpec, this.values[i]);
 			}

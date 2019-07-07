@@ -70,15 +70,6 @@ namespace TQVaultAE.Config {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool NoToolTipDelay {
-            get {
-                return ((bool)(this["NoToolTipDelay"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("de,en,es,fr,it,pl,ru,cs")]
         public string GameLanguages {
             get {

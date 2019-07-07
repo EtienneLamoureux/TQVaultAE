@@ -12,7 +12,6 @@ using TQVaultAE.GUI.Tooltip;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Entities;
 using TQVaultAE.Presentation;
-using TQVaultAE.Presentation.Html;
 using TQVaultAE.Services.Models.Search;
 
 namespace TQVaultAE.GUI
@@ -20,7 +19,7 @@ namespace TQVaultAE.GUI
 	/// <summary>
 	/// Results dialog form class
 	/// </summary>
-	internal partial class ResultsDialog : VaultForm
+	public partial class ResultsDialog : VaultForm
 	{
 		/// <summary>
 		/// List of all results
@@ -38,20 +37,12 @@ namespace TQVaultAE.GUI
 		private string searchString;
 
 		/// <summary>
-		/// Instance of the popup tool tip.
-		/// </summary>
-		private TTLib tooltip;
-
-		/// <summary>
-		/// Text for Tooltip control
-		/// </summary>
-		private string tooltipText;
-
-		/// <summary>
 		/// Initializes a new instance of the ResultsDialog class.
 		/// </summary>
-		public ResultsDialog()
+		public ResultsDialog(MainForm instance)
 		{
+			this.Owner = instance;
+
 			this.InitializeComponent();
 
 			#region Apply custom font
@@ -66,7 +57,6 @@ namespace TQVaultAE.GUI
 
 			#endregion
 
-			this.tooltip = new TTLib();
 			this.resultsList = new List<Result>();
 			////this.selectedResult = new Result();
 			this.item.HeaderText = Resources.ResultsItem;
@@ -103,23 +93,14 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Gets the list of results collection
 		/// </summary>
-		public List<Result> ResultsList
-		{
-			get
-			{
-				return this.resultsList;
-			}
-		}
+		public List<Result> ResultsList => this.resultsList;
 
 		/// <summary>
 		/// Sets the user search string
 		/// </summary>
 		public string SearchString
 		{
-			set
-			{
-				this.searchString = value;
-			}
+			set => this.searchString = value;
 		}
 
 		/// <summary>
@@ -166,24 +147,18 @@ namespace TQVaultAE.GUI
 
 			int totalWidth = 0;
 			foreach (DataGridViewColumn column in this.resultsDataGridView.Columns)
-			{
 				totalWidth += column.Width;
-			}
 
 			totalWidth += this.resultsDataGridView.Margin.Horizontal;
 
 			int totalHeight = 0;
 			foreach (DataGridViewRow row in this.resultsDataGridView.Rows)
-			{
 				totalHeight += row.Height;
-			}
 
 			totalHeight += this.Padding.Vertical;
 
 			if (totalHeight > this.Height)
-			{
 				totalWidth += SystemInformation.VerticalScrollBarWidth;
-			}
 
 			this.Width = Math.Min(Screen.PrimaryScreen.WorkingArea.Width, totalWidth + this.Padding.Horizontal);
 			this.Height = Math.Max(this.Height, Math.Min(Screen.PrimaryScreen.WorkingArea.Height - SystemInformation.HorizontalScrollBarHeight, totalHeight - SystemInformation.HorizontalScrollBarHeight));
@@ -191,26 +166,6 @@ namespace TQVaultAE.GUI
 
 			this.selectedResult = null;
 
-			// the tooltip must be initialized after the main form is shown and active.
-			this.tooltip.Initialize(this);
-			this.tooltip.ActivateCallback = new TTLibToolTipActivate(this.ToolTipCallback);
-		}
-
-		/// <summary>
-		/// Tooltip callback
-		/// </summary>
-		/// <param name="windowHandle">handle of this window form</param>
-		/// <returns>tooltip string</returns>
-		private string ToolTipCallback(int windowHandle)
-		{
-			// see if this is us
-			if (this.resultsDataGridView.Handle.ToInt32() == windowHandle)
-			{
-				// yep.
-				return this.GetToolTip(this.selectedResult);
-			}
-
-			return null;
 		}
 
 		/// <summary>
@@ -218,21 +173,14 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="selectedResult">Currently selected Result</param>
 		/// <returns>String containing the tool tip for the Result.</returns>
-		private string GetToolTip(Result selectedResult)
+		private void GetToolTip(Result selectedResult)
 		{
+			// hide the tooltip
 			if (selectedResult == null || selectedResult.Item == null)
-			{
-				// hide the tooltip
-				this.tooltipText = null;
-			}
+				ItemTooltip.HideTooltip();
+			// show tooltip
 			else
-			{
-				var result = ItemHtmlHelper.NewItemHighlightedTooltip(selectedResult.Item);
-				// show tooltip
-				this.tooltipText = result.TooltipText;
-			}
-
-			return this.tooltipText;
+				ItemTooltip.ShowTooltip(Program.MainFormInstance, selectedResult.Item, this);
 		}
 
 		/// <summary>
@@ -241,9 +189,7 @@ namespace TQVaultAE.GUI
 		private void PopulateDataGridView()
 		{
 			if (this.resultsList == null || this.resultsList.Count < 1)
-			{
 				return;
-			}
 
 			// Update the dialog text.
 			this.Text = string.Format(CultureInfo.CurrentCulture, Resources.ResultsText, this.resultsList.Count, this.searchString);
@@ -280,9 +226,7 @@ namespace TQVaultAE.GUI
 		{
 			// Ignore double click on the header.
 			if (e.RowIndex < 0)
-			{
 				return;
-			}
 
 			this.Close();
 		}
@@ -294,33 +238,9 @@ namespace TQVaultAE.GUI
 		/// <param name="e">KeyPressEventArgs data</param>
 		private void ResultsDataGridViewKeyPress(object sender, KeyPressEventArgs e)
 		{
+			// Escape key
 			if (e.KeyChar == 27)
-			{
-				// Escape key
 				this.Close();
-			}
-
-			/*if (e.KeyChar == 13)
-            {
-                // Enter key
-                if (this.resultsList.Count == 1)
-                {
-                    this.selectedResult = this.resultsList[0];
-                    this.Close();
-                }
-                else
-                {
-                    int index = this.resultsDataGridView.SelectedRows[0].Index - 1;
-                    if (index > -1 && index < this.resultsDataGridView.Rows.Count)
-                    {
-                        this.selectedResult = this.resultsList[index];
-                        if (this.selectedResult.Item != null)
-                        {
-                            this.Close();
-                        }
-                    }
-                }
-            }*/
 		}
 
 		/// <summary>
@@ -332,26 +252,16 @@ namespace TQVaultAE.GUI
 		{
 			// Ignore click on the header.
 			if (e.RowIndex < 0)
-			{
 				return;
-			}
 
 			var currentRow = this.resultsDataGridView.Rows[e.RowIndex];
 			if (currentRow.Tag == null)
-			{
 				return;
-			}
 
 			this.selectedResult = this.resultsList[(int)currentRow.Tag];
-			if (this.selectedResult.Item != null && this.ResultChanged != null)
-			{
-				this.ResultChanged(this, new ResultChangedEventArgs(this.selectedResult));
-			}
 
-			////if (!string.IsNullOrEmpty(this.tooltipText))
-			////{
-			////this.tooltip.ChangeText(this.GetToolTip());
-			////}
+			if (this.selectedResult.Item != null && this.ResultChanged != null)
+				this.ResultChanged(this, new ResultChangedEventArgs(this.selectedResult));
 		}
 
 		/// <summary>
@@ -359,11 +269,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
-		private void ResultsDataGridViewMouseLeave(object sender, EventArgs e)
-		{
-			this.tooltipText = null;
-			this.tooltip.ChangeText(this.tooltipText);
-		}
+		private void ResultsDataGridViewMouseLeave(object sender, EventArgs e) => ItemTooltip.HideTooltip();
 
 		/// <summary>
 		/// Handler for entering a cell in the DataGridView.
@@ -375,20 +281,15 @@ namespace TQVaultAE.GUI
 		{
 			// Ignore click on the header.
 			if (e.RowIndex < 0)
-			{
 				return;
-			}
 
 			var currentRow = this.resultsDataGridView.Rows[e.RowIndex];
 			if (currentRow.Tag == null)
-			{
 				return;
-			}
 
 			this.selectedResult = this.resultsList[(int)currentRow.Tag];
-
 			this.resultsDataGridView.CurrentCell = currentRow.Cells[e.ColumnIndex];
-			this.tooltip.ChangeText(this.GetToolTip(this.selectedResult));
+			this.GetToolTip(this.selectedResult);
 		}
 
 		/// <summary>
@@ -400,8 +301,7 @@ namespace TQVaultAE.GUI
 		private void ResultsDataGridViewCellMouseLeave(object sender, DataGridViewCellEventArgs e)
 		{
 			this.selectedResult = null;
-			this.tooltipText = null;
-			this.tooltip.ChangeText(this.tooltipText);
+			ItemTooltip.HideTooltip();
 		}
 
 		/// <summary>
@@ -413,8 +313,7 @@ namespace TQVaultAE.GUI
 		private void ResultsDataGridViewRowLeave(object sender, DataGridViewCellEventArgs e)
 		{
 			this.selectedResult = null;
-			this.tooltipText = null;
-			this.tooltip.ChangeText(this.tooltipText);
+			ItemTooltip.HideTooltip();
 		}
 
 		/// <summary>
@@ -426,7 +325,8 @@ namespace TQVaultAE.GUI
 		{
 			this.resultsDataGridView.Size = new Size(
 				Math.Max(this.Padding.Horizontal + 1, this.Width - this.Padding.Horizontal),
-				Math.Max(this.Padding.Vertical + 1, this.Height - this.Padding.Vertical));
+				Math.Max(this.Padding.Vertical + 1, this.Height - this.Padding.Vertical)
+			);
 		}
 	}
 }

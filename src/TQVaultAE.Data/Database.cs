@@ -10,7 +10,9 @@ namespace TQVaultAE.Data
 	using System.Collections.ObjectModel;
 	using System.Globalization;
 	using System.IO;
+	using System.Linq;
 	using System.Text;
+	using System.Text.RegularExpressions;
 	using TQVaultAE.Config;
 	using TQVaultAE.Entities;
 	using TQVaultAE.Logs;
@@ -177,80 +179,6 @@ namespace TQVaultAE.Data
 
 		#region Database Public Static Methods
 
-		/// <summary>
-		/// Wraps the words in a text description.
-		/// </summary>
-		/// <param name="text">Text to be word wrapped</param>
-		/// <param name="columns">maximum number of columns before wrapping</param>
-		/// <returns>List of wrapped text</returns>
-		public static Collection<string> WrapWords(string text, int columns)
-		{
-			List<string> choppedLines = new List<string>();
-
-			int chopped = 0;
-			int nextSpace = text.IndexOf(' ');
-
-			// Added by VillageIdiot
-			// Account for {^N} tag in text descriptions
-			int nextLF = text.IndexOf("{^N}", StringComparison.OrdinalIgnoreCase);
-
-			while (((text.Length - chopped) > columns) && nextSpace >= 0)
-			{
-				while ((nextSpace >= 0) && (nextSpace - chopped) < columns)
-				{
-					if (nextSpace < nextLF || nextLF < 0)
-					{
-						// Added check for LF tag
-						nextSpace = text.IndexOf(' ', nextSpace + 1);
-					}
-					else if (nextLF >= 0)
-					{
-						// we need to split at ^N which occurs < column size
-						string choppedPart = text.Substring(chopped, nextLF - chopped);
-						chopped = nextLF + 4;
-						choppedLines.Add(choppedPart);
-						nextLF = text.IndexOf("{^N}", chopped, StringComparison.OrdinalIgnoreCase);
-					}
-				}
-
-				if (nextSpace >= 0 && (nextSpace < nextLF || nextLF < 0))
-				{
-					// we need to split here.
-					string choppedPart = text.Substring(chopped, nextSpace - chopped);
-					// Added checks for LF tags
-					if (nextLF == nextSpace + 1)
-					{
-						chopped = nextSpace + 5;
-						nextLF = text.IndexOf("{^N}", chopped, StringComparison.OrdinalIgnoreCase);
-					}
-					else
-					{
-						chopped = nextSpace + 1;
-					}
-					choppedLines.Add(choppedPart);
-				}
-				else if (nextLF >= 0)
-				{
-					// we need to split at ^N which occurs > column size
-					string choppedPart = text.Substring(chopped, nextLF - chopped);
-					chopped = nextLF + 4;
-					choppedLines.Add(choppedPart);
-					nextLF = text.IndexOf("{^N}", chopped, StringComparison.OrdinalIgnoreCase);
-				}
-			}
-
-			// We need to split a string that is < column size in length
-			while (nextLF >= 0)
-			{
-				string choppedPart = text.Substring(chopped, nextLF - chopped);
-				chopped = nextLF + 4;
-				choppedLines.Add(choppedPart);
-				nextLF = text.IndexOf("{^N}", chopped, StringComparison.OrdinalIgnoreCase);
-			}
-
-			choppedLines.Add(text.Substring(chopped));
-			return new Collection<string>(choppedLines);
-		}
 
 
 		/// <summary>
@@ -381,15 +309,11 @@ namespace TQVaultAE.Data
 		{
 			ItemAttributesData data = ItemAttributeProvider.GetAttributeData(itemAttribute);
 			if (data == null)
-			{
 				return string.Concat("?", itemAttribute, "?");
-			}
 
 			string attributeTextTag = ItemAttributeProvider.GetAttributeTextTag(data);
 			if (string.IsNullOrEmpty(attributeTextTag))
-			{
 				return string.Concat("?", itemAttribute, "?");
-			}
 
 			string textFromTag = this.GetFriendlyName(attributeTextTag);
 			if (string.IsNullOrEmpty(textFromTag))
@@ -399,9 +323,7 @@ namespace TQVaultAE.Data
 			}
 
 			if (addVariable && data.Variable.Length > 0)
-			{
 				textFromTag = string.Concat(textFromTag, " ", data.Variable);
-			}
 
 			return textFromTag;
 		}

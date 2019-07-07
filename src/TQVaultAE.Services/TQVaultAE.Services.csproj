@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Collections" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj" />
     <ProjectReference Include="..\TQVaultAE.Data\TQVaultAE.Data.csproj" />
     <ProjectReference Include="..\TQVaultAE.Entities\TQVaultAE.Entities.csproj" />

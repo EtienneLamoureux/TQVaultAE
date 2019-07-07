@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TQVaultAE.Data;
 using TQVaultAE.Entities;
+using TQVaultAE.Entities.Results;
 using TQVaultAE.Logs;
 using TQVaultAE.Presentation;
 
@@ -19,13 +20,6 @@ namespace TQVaultAE.Services
 		}
 
 
-		public class LoadTransferStashResult
-		{
-			public string TransferStashFile;
-			public Stash Stash;
-			public bool? StashPresent;
-			public ArgumentException ArgumentException;
-		}
 
 		/// <summary>
 		/// Loads the transfer stash for immortal throne
@@ -60,13 +54,6 @@ namespace TQVaultAE.Services
 			return result;
 		}
 
-		public class LoadRelicVaultStashResult
-		{
-			public string RelicVaultStashFile;
-			public Stash Stash;
-			public bool? StashPresent;
-			public ArgumentException ArgumentException;
-		}
 
 		/// <summary>
 		/// Loads the relic vault stash

@@ -129,10 +129,7 @@ Neue Benutzeroberfläche von AvunaOs
 Übersetzung ins Polnische von Cygi.
 Übersetzung ins Russische von Xelat
 Übersetzung ins Spanische von Kurrus.
-
-Die folgenden zusätzlichen Bibliotheken werden in TQVault benutzt:
-VXPLib - A tooltip library with HTML rendering.
-DevIl &amp; Tao.Devil - Bild-Bibliothek zum Benutzten von DDS-Formatierten Bilddaten</value>
+</value>
   </data>
   <data name="AboutText" xml:space="preserve">
     <value>Über {0}</value>

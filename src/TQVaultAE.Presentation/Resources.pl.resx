@@ -129,10 +129,7 @@ Francuskie tłumaczenie od Jean i Vifarc.
 Polskie tłumaczenie od Cygi.
 Rosyjskie tłumaczenie od Xelat.
 Hiszpańskie tłumaczenie od Kurrus.
-
-Programy, które są używane w TQVault:
-VXPLib - A tooltip library with HTML rendering.
-DevIl &amp; Tao.Devil - biblioteka obrazów użyta do odczytu danych z obrazów w formacie DDS</value>
+</value>
   </data>
   <data name="AboutText" xml:space="preserve">
     <value>O programie {0}</value>

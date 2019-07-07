@@ -129,10 +129,7 @@ Traducción al francés por Jean y Vifarc.
 Traducción al polaco por Cygi.
 Traducción al ruso por Xelat.
 Traducción al español por Kurrus.
-
-TQVault usa las siguientes librerías de terceras partes:
-VXPLib - A tooltip library with HTML rendering.
-DevIl &amp; Tao.Devil - librería de imagen usada para leer el formato DDS</value>
+</value>
   </data>
   <data name="AboutText" xml:space="preserve">
     <value>Acerca de {0}</value>

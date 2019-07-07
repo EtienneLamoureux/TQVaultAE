@@ -7,6 +7,7 @@
 namespace TQVaultAE.GUI.Components
 {
 	using Tooltip;
+	using TQVaultAE.Entities;
 	using TQVaultAE.Presentation;
 
 	/// <summary>
@@ -14,15 +15,16 @@ namespace TQVaultAE.GUI.Components
 	/// </summary>
 	public class BagButton : BagButtonBase
 	{
+		
+
 		/// <summary>
 		/// Initializes a new instance of the BagButton class.
 		/// </summary>
 		/// <param name="bagNumber">number of the bag for display</param>
 		/// <param name="getToolTip">Tooltip delegate</param>
 		/// <param name="tooltip">Tooltip instance</param>
-		public BagButton(int bagNumber, GetToolTip getToolTip, TTLib tooltip) : base(bagNumber, getToolTip, tooltip)
-		{
-		}
+		public BagButton(int bagNumber, GetToolTip getToolTip) : base(bagNumber, getToolTip)
+		{ }
 
 		/// <summary>
 		/// Sets the background bitmaps for the BagButton

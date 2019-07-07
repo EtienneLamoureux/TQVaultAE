@@ -31,8 +31,8 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="panel1Size">Main panel size</param>
 		/// <param name="panel2Size">Secondary panel size for players who have the additional game sacks</param>
 		/// <param name="tooltip">Tooltip instance</param>
-		public PlayerPanel(ItemDragInfo dragInfo, int numberOfBags, Size panel1Size, Size panel2Size, TTLib tooltip)
-			: base(dragInfo, numberOfBags, panel2Size, tooltip, 2, AutoMoveLocation.Player)
+		public PlayerPanel(ItemDragInfo dragInfo, int numberOfBags, Size panel1Size, Size panel2Size)
+			: base(dragInfo, numberOfBags, panel2Size, 2, AutoMoveLocation.Player)
 		{
 			this.Text = Resources.PlayerPanelNoPlayer;
 			this.NoPlayerString = Resources.PlayerPanelNoPlayer;

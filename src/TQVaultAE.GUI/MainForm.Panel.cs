@@ -6,19 +6,23 @@ using TQVaultAE.Data;
 using TQVaultAE.Entities;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
+using TQVaultAE.GUI.Tooltip;
 using TQVaultAE.Presentation;
-using TQVaultAE.Presentation.Html;
+using TQVaultAE.Services;
 
 namespace TQVaultAE.GUI
 {
-	internal partial class MainForm
+	public partial class MainForm
 	{
+		private ItemService itemService;
 
 		/// <summary>
 		/// Creates the form's internal panels
 		/// </summary>
 		private void CreatePanels()
 		{
+			if (this.itemService is null) this.itemService = new ItemService(userContext);
+
 			this.CreatePlayerPanel();
 
 			// Put the secondary vault list on top of the player list drop down
@@ -147,17 +151,15 @@ namespace TQVaultAE.GUI
 					this.itemText.Text = string.Empty;
 
 					// hide the tooltip
-					this.tooltipText = null;
-					this.tooltip.ChangeText(this.tooltipText);
+					ItemTooltip.HideTooltip();
 				}
 			}
 			else
 			{
-				var result = ItemHtmlHelper.NewItemHighlightedTooltip(item);
-				this.itemText.ForeColor = result.ForeColor;
-				this.itemText.Text = result.FriendlyName;
-				this.tooltipText = result.TooltipText;
-				this.tooltip.ChangeText(this.tooltipText);
+				var itt = ItemTooltip.ShowTooltip(this, item, sackPanel);
+
+				this.itemText.ForeColor = ItemGfxHelper.GetColorTag(itt.Data.Item, itt.Data.BaseItemInfoDescription);
+				this.itemText.Text = itt.Data.FullNameBagTooltip;
 			}
 
 			this.lastSackHighlighted = sack;

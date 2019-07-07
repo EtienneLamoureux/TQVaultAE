@@ -7,10 +7,11 @@ namespace TQVaultAE.GUI
 {
 	using System;
 	using System.Linq;
-	using System.Windows.Forms;
 	using TQVaultAE.Entities;
+	using TQVaultAE.Entities.Results;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Presentation.Html;
+	using TQVaultAE.Services;
 
 	/// <summary>
 	/// Form for the item properties display
@@ -20,7 +21,7 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Item instance of the item we are displaying
 		/// </summary>
-		private Item item;
+		private Item _item;
 
 		/// <summary>
 		/// Flag indicating if we are showing the extra information
@@ -62,10 +63,9 @@ namespace TQVaultAE.GUI
 		{
 			set
 			{
-				this.item = value;
+				this._item = value;
 			}
 		}
-
 
 		/// <summary>
 		/// Dialog load methond
@@ -75,7 +75,7 @@ namespace TQVaultAE.GUI
 		private void ItemProperties_Load(object sender, EventArgs e)
 		{
 			this.filterExtra = false;
-			this.webBrowserItemName.DocumentText = ItemHtmlHelper.GetName(this.item);
+			this.webBrowserItemName.DocumentText = ItemHtmlHelper.GetName(this._item).RemoveAllTQTags();
 			this.LoadProperties();
 		}
 
@@ -84,12 +84,11 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void LoadProperties()
 		{
-			var result = ItemHtmlHelper.LoadProperties(this.item, this.filterExtra);
-
+			var res = ItemHtmlHelper.LoadProperties(this._item, this.filterExtra);
 			// Base Item Attributes
-			if (result.BaseItemAttributes.Any())
+			if (res.BaseItemAttributes.Any())
 			{
-				this.webBrowserBaseItemProperties.DocumentText = result.BaseItemAttributes;
+				this.webBrowserBaseItemProperties.DocumentText = res.BaseItemAttributes;
 				this.webBrowserBaseItemProperties.Show();
 				this.labelBaseItemProperties.Show();
 			}
@@ -100,9 +99,9 @@ namespace TQVaultAE.GUI
 			}
 
 			// Prefix Attributes
-			if (result.PrefixAttributes.Any())
+			if (res.PrefixAttributes.Any())
 			{
-				this.webBrowserPrefixProperties.DocumentText = result.PrefixAttributes;
+				this.webBrowserPrefixProperties.DocumentText = res.PrefixAttributes;
 				this.webBrowserPrefixProperties.Show();
 				this.labelPrefixProperties.Show();
 			}
@@ -113,9 +112,9 @@ namespace TQVaultAE.GUI
 			}
 
 			// Suffix Attributes
-			if (result.SuffixAttributes.Any())
+			if (res.PrefixAttributes.Any())
 			{
-				this.webBrowserSuffixProperties.DocumentText = result.SuffixAttributes;
+				this.webBrowserSuffixProperties.DocumentText = res.PrefixAttributes;
 				this.webBrowserSuffixProperties.Show();
 				this.labelSuffixProperties.Show();
 			}
@@ -143,9 +142,9 @@ namespace TQVaultAE.GUI
 		/// <param name="e">EventArgs data</param>
 		private void CheckBox1_CheckedChanged(object sender, EventArgs e)
 		{
-			if (this.filterExtra != this.checkBoxFilterExtraInfo.Checked) {
+			if (this.filterExtra != this.checkBoxFilterExtraInfo.Checked)
+			{
 				this.filterExtra = this.checkBoxFilterExtraInfo.Checked;
-				this.item.RefreshBareAttributes();
 				this.LoadProperties();
 			}
 		}

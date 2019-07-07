@@ -108,11 +108,6 @@ namespace TQVaultAE.Presentation
 			}
 		}
 
-		public static Font GetFontMicrosoftSansSerif(float fontSize, float? scale = null)
-		{
-			scale = scale ?? 1F;
-			return new Font("Microsoft Sans Serif", fontSize * scale.Value);
-		}
 
 		public static Font GetFontAlbertusMT(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)
 		{
@@ -122,6 +117,12 @@ namespace TQVaultAE.Presentation
 		public static Font GetFontAlbertusMT(float fontSize, GraphicsUnit unit)
 		{
 			return new Font(FontHelper.FONT_ALBERTUSMT, fontSize, unit);
+		}
+
+		public static Font GetFontAlbertusMT(float fontSize, FontStyle fontStyle, float? scale = null)
+		{
+			scale = scale ?? 1F;
+			return new Font(FontHelper.FONT_ALBERTUSMT, fontSize * scale.Value, fontStyle);
 		}
 
 		public static Font GetFontAlbertusMT(float fontSize, float? scale = null)
@@ -149,6 +150,11 @@ namespace TQVaultAE.Presentation
 		{
 			scale = scale ?? 1F;
 			return new Font(FontHelper.FONT_ALBERTUSMTLIGHT, fontSize * scale.Value);
+		}
+		public static Font GetFontAlbertusMTLight(float fontSize, FontStyle fontStyle, float? scale = null)
+		{
+			scale = scale ?? 1F;
+			return new Font(FontHelper.FONT_ALBERTUSMTLIGHT, fontSize * scale.Value, fontStyle);
 		}
 
 	}
