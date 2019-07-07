@@ -14,6 +14,7 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Entities;
 	using TQVaultAE.Presentation;
+	using TQVaultAE.GUI.Tooltip;
 
 	/// <summary>
 	/// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.
@@ -749,6 +750,7 @@ namespace TQVaultAE.GUI.Components
 					PlayerPanel.RightToLeftOptions) == DialogResult.Yes)
 				{
 					this.BagSackPanel.Sack.EmptySack();
+					BagButtonTooltip.InvalidateCache(this.BagSackPanel.Sack);
 					this.BagSackPanel.Refresh();
 				}
 			}

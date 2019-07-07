@@ -14,7 +14,7 @@ namespace TQVaultAE.GUI.Tooltip
 	public partial class BagButtonTooltip : Form
 	{
 		private static Dictionary<BagButtonBase, BagButtonTooltip> ItemTooltipOpened = new Dictionary<BagButtonBase, BagButtonTooltip>();
-		private static Dictionary<(SackCollection, float), Bitmap> ToImage = new Dictionary<(SackCollection, float), Bitmap>();
+		private static Dictionary<(SackCollection Sack, float Scale), Bitmap> ToImage = new Dictionary<(SackCollection, float), Bitmap>();
 		private ItemService ItemService;
 		public BagButtonBase ButtonSack;
 
@@ -31,6 +31,12 @@ namespace TQVaultAE.GUI.Tooltip
 
 			// Fill it outside of screen to avoid flickering
 			this.Location = new Point(0, wa.Height);
+		}
+
+		public static void InvalidateCache(params SackCollection[] sack)
+		{
+			var cacheentrytoremove = ToImage.Where(c => sack.Contains(c.Key.Sack)).Select(c => c.Key).ToList();
+			cacheentrytoremove.ForEach(c => ToImage.Remove(c));
 		}
 
 		public static void HideTooltip()
@@ -130,5 +136,6 @@ namespace TQVaultAE.GUI.Tooltip
 			loc.Y += this.ButtonSack.Size.Height;
 			this.Location = loc;
 		}
+
 	}
 }

@@ -159,7 +159,7 @@ namespace TQVaultAE.GUI
 				var itt = ItemTooltip.ShowTooltip(this, item, sackPanel);
 
 				this.itemText.ForeColor = ItemGfxHelper.GetColorTag(itt.Data.Item, itt.Data.BaseItemInfoDescription);
-				this.itemText.Text = itt.Data.FullNameBagTooltip;
+				this.itemText.Text = itt.Data.FullNameBagTooltip.RemoveAllTQTags();
 			}
 
 			this.lastSackHighlighted = sack;
@@ -247,50 +247,41 @@ namespace TQVaultAE.GUI
 			SackPanel sackPanel = (SackPanel)sender;
 
 			// Make sure we have to move something.
-			if (this.dragInfo.IsAutoMoveActive)
+			if (this.DragInfo.IsAutoMoveActive)
 			{
 				SackCollection oldSack = null;
 				VaultPanel destinationPlayerPanel = null;
 				int sackNumber = 0;
 
 				SackPanel destinationSackPanel = null;
-				if (this.dragInfo.AutoMove < AutoMoveLocation.Vault)
+				if (this.DragInfo.AutoMove < AutoMoveLocation.Vault)
 				{
 					// This is a sack to sack move on the same panel.
 					destinationSackPanel = sackPanel;
 					switch (sackPanel.SackType)
 					{
 						case SackType.Vault:
-							{
-								if (sackPanel.IsSecondaryVault)
-								{
-									destinationPlayerPanel = this.secondaryVaultPanel;
-								}
-								else
-								{
-									destinationPlayerPanel = this.vaultPanel;
-								}
-
-								break;
-							}
+							if (sackPanel.IsSecondaryVault)
+								destinationPlayerPanel = this.secondaryVaultPanel;
+							else
+								destinationPlayerPanel = this.vaultPanel;
+							break;
 
 						default:
-							{
-								destinationPlayerPanel = this.playerPanel;
-								break;
-							}
+							destinationPlayerPanel = this.playerPanel;
+							break;
 					}
 
-					sackNumber = (int)this.dragInfo.AutoMove;
+					sackNumber = (int)this.DragInfo.AutoMove;
 				}
-				else if (this.dragInfo.AutoMove == AutoMoveLocation.Vault)
+				else if (this.DragInfo.AutoMove == AutoMoveLocation.Vault)
 				{
 					// Vault
 					destinationPlayerPanel = this.vaultPanel;
 					destinationSackPanel = destinationPlayerPanel.SackPanel;
 					sackNumber = destinationPlayerPanel.CurrentBag;
 				}
-				else if (this.dragInfo.AutoMove == AutoMoveLocation.Player)
+				else if (this.DragInfo.AutoMove == AutoMoveLocation.Player)
 				{
 					// Player
 					destinationPlayerPanel = this.playerPanel;
@@ -299,7 +290,7 @@ namespace TQVaultAE.GUI
 					// Main Player panel
 					sackNumber = 0;
 				}
-				else if (this.dragInfo.AutoMove == AutoMoveLocation.SecondaryVault)
+				else if (this.DragInfo.AutoMove == AutoMoveLocation.SecondaryVault)
 				{
 					// Secondary Vault
 					destinationPlayerPanel = this.secondaryVaultPanel;
@@ -308,13 +299,13 @@ namespace TQVaultAE.GUI
 				}
 
 				// Special Case for moving to stash.
-				if (this.dragInfo.AutoMove == AutoMoveLocation.Stash)
+				if (this.DragInfo.AutoMove == AutoMoveLocation.Stash)
 				{
 					// Check if we are moving to the player's stash
 					if (this.stashPanel.CurrentBag == 2 && this.stashPanel.Player == null)
 					{
 						// We have nowhere to send the item so cancel the move.
-						this.dragInfo.Cancel();
+						this.DragInfo.Cancel();
 						return;
 					}
 
@@ -329,7 +320,7 @@ namespace TQVaultAE.GUI
 					if (this.stashPanel.TransferStash == null && this.stashPanel.CurrentBag == 1)
 					{
 						// We have nowhere to send the item so cancel the move.
-						this.dragInfo.Cancel();
+						this.DragInfo.Cancel();
 						return;
 					}
 
@@ -337,34 +328,34 @@ namespace TQVaultAE.GUI
 					if (this.stashPanel.RelicVaultStash == null && this.stashPanel.CurrentBag == 3)
 					{
 						// We have nowhere to send the item so cancel the move.
-						this.dragInfo.Cancel();
+						this.DragInfo.Cancel();
 						return;
 					}
 
 					// See if we have an open space to put the item.
-					Point location = this.stashPanel.SackPanel.FindOpenCells(this.dragInfo.Item.Width, this.dragInfo.Item.Height);
+					Point location = this.stashPanel.SackPanel.FindOpenCells(this.DragInfo.Item.Width, this.DragInfo.Item.Height);
 
 					// We have no space in the sack so we cancel.
 					if (location.X == -1)
 					{
-						this.dragInfo.Cancel();
+						this.DragInfo.Cancel();
 					}
 					else
 					{
-						Item dragItem = this.dragInfo.Item;
+						Item dragItem = this.DragInfo.Item;
 
 						if (!this.stashPanel.SackPanel.IsItemValidForPlacement(dragItem))
 						{
-							this.dragInfo.Cancel();
+							this.DragInfo.Cancel();
 							return;
 						}
 
 						// Use the same method as if we used to mouse to pickup and place the item.
-						this.dragInfo.MarkPlaced(-1);
+						this.DragInfo.MarkPlaced(-1);
 						dragItem.PositionX = location.X;
 						dragItem.PositionY = location.Y;
 						this.stashPanel.SackPanel.Sack.AddItem(dragItem);
-
+						BagButtonTooltip.InvalidateCache(this.stashPanel.SackPanel.Sack);
 						this.lastSackPanelHighlighted.Invalidate();
 						this.stashPanel.Refresh();
 					}
@@ -375,7 +366,7 @@ namespace TQVaultAE.GUI
 					if (destinationPlayerPanel.Player == null)
 					{
 						// We have nowhere to send the item so cancel the move.
-						this.dragInfo.Cancel();
+						this.DragInfo.Cancel();
 						return;
 					}
 
@@ -386,38 +377,35 @@ namespace TQVaultAE.GUI
 					destinationSackPanel.Sack = destinationPlayerPanel.Player.GetSack(sackNumber);
 
 					// See if we have an open space to put the item.
-					Point location = destinationSackPanel.FindOpenCells(this.dragInfo.Item.Width, this.dragInfo.Item.Height);
+					Point location = destinationSackPanel.FindOpenCells(this.DragInfo.Item.Width, this.DragInfo.Item.Height);
 
 					// CurrentBag only returns the values for the bag panels and is zero based.  Main sack is not included.
 					int destination = destinationPlayerPanel.CurrentBag;
 
 					// We need to accout for the player panel offsets.
 					if (sackPanel.SackType == SackType.Sack)
-					{
 						destination++;
-					}
 					else if (sackPanel.SackType == SackType.Player)
-					{
 						destination = 0;
-					}
 
 					// We either have no space or are sending the item to the same sack so we cancel.
-					if (location.X == -1 || (int)this.dragInfo.AutoMove == destination)
+					if (location.X == -1 || (int)this.DragInfo.AutoMove == destination)
 					{
 						destinationSackPanel.Sack = oldSack;
-						this.dragInfo.Cancel();
+						this.DragInfo.Cancel();
 					}
 					else
 					{
-						Item dragItem = this.dragInfo.Item;
+						Item dragItem = this.DragInfo.Item;
 
 						// Use the same method as if we used to mouse to pickup and place the item.
-						this.dragInfo.MarkPlaced(-1);
+						this.DragInfo.MarkPlaced(-1);
 						dragItem.PositionX = location.X;
 						dragItem.PositionY = location.Y;
 						destinationSackPanel.Sack.AddItem(dragItem);
 
 						// Set it back to the original sack so the display does not change.
+						BagButtonTooltip.InvalidateCache(destinationSackPanel.Sack, oldSack);
 						destinationSackPanel.Sack = oldSack;
 						sackPanel.Invalidate();
 						destinationPlayerPanel.Refresh();

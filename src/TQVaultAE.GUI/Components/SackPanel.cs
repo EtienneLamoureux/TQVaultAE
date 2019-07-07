@@ -18,6 +18,7 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Logs;
 	using TQVaultAE.Entities;
 	using TQVaultAE.Presentation;
+	using TQVaultAE.GUI.Tooltip;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel.
@@ -564,6 +565,7 @@ namespace TQVaultAE.GUI.Components
 									tempItem.PositionY = k;
 									this.Sack.AddItem(tempItem);
 									itemPlaced = true;
+									BagButtonTooltip.InvalidateCache(this.Sack);
 								}
 
 								break;
@@ -587,6 +589,7 @@ namespace TQVaultAE.GUI.Components
 									tempItem.PositionY = j;
 									this.Sack.AddItem(tempItem);
 									itemPlaced = true;
+									BagButtonTooltip.InvalidateCache(this.Sack);
 								}
 
 								break;
@@ -618,6 +621,7 @@ namespace TQVaultAE.GUI.Components
 						this.Sack.AddItem(item.Clone());
 					}
 					this.Sack.IsModified = false;
+					BagButtonTooltip.InvalidateCache(this.Sack);
 					return;
 				}
 			}
@@ -744,6 +748,9 @@ namespace TQVaultAE.GUI.Components
 
 					// Just in case clear any selected items.
 					this.ClearSelectedItems();
+
+					ItemTooltip.HideTooltip();
+					BagButtonTooltip.InvalidateCache(this.Sack);
 
 					// We moved something so return a true.
 					return true;
@@ -1057,6 +1064,9 @@ namespace TQVaultAE.GUI.Components
 
 				// process mouse move again to apply the graphical effects of dragging an item.
 				this.MouseMoveCallback(sender, e);
+
+				ItemTooltip.HideTooltip();
+				BagButtonTooltip.InvalidateCache(this.Sack);
 			}
 		}
 
@@ -1213,7 +1223,11 @@ namespace TQVaultAE.GUI.Components
 
 				// If we are a stackable and we have a stackable under us and we are the same type of stackable
 				// then just add to the stack instead of picking up the other stack
-				if (dragItem.DoesStack && itemUnderUs != null && itemUnderUs.DoesStack && dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId))
+				if (dragItem.DoesStack 
+					&& itemUnderUs != null 
+					&& itemUnderUs.DoesStack 
+					&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
+				)
 				{
 					itemUnderUs.StackSize += dragItem.StackSize;
 
@@ -1226,9 +1240,13 @@ namespace TQVaultAE.GUI.Components
 
 					// we will just throw away the dragItem now.
 				}
-				else if (dragItem.IsRelic && itemUnderUs != null && itemUnderUs.IsRelic &&
-					!itemUnderUs.IsRelicComplete && !dragItem.IsRelicComplete &&
-					dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId))
+				else if (dragItem.IsRelic 
+					&& itemUnderUs != null 
+					&& itemUnderUs.IsRelic 
+					&& !itemUnderUs.IsRelicComplete 
+					&& !dragItem.IsRelicComplete
+					&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
+				)
 				{
 					// Stack relics
 					// Save the original Relic number
@@ -1286,6 +1304,7 @@ namespace TQVaultAE.GUI.Components
 
 						// Now add the item to our sack
 						this.Sack.AddItem(dragItem);
+						BagButtonTooltip.InvalidateCache(this.Sack);
 					}
 					else
 					{
@@ -1304,6 +1323,7 @@ namespace TQVaultAE.GUI.Components
 
 					// Now add the item to our sack
 					this.Sack.AddItem(dragItem);
+					BagButtonTooltip.InvalidateCache(this.Sack);
 				}
 
 				// clear the "last drag" variables
@@ -1340,6 +1360,10 @@ namespace TQVaultAE.GUI.Components
 
 				// and now do a MouseMove() to properly draw the new drag item and/or focus
 				this.MouseMoveCallback(sender, e);
+
+				ItemTooltip.HideTooltip();
+				BagButtonTooltip.InvalidateCache(this.Sack);
+
 			}
 		}
 
@@ -1839,9 +1863,7 @@ namespace TQVaultAE.GUI.Components
 		protected void MouseMoveCallback(object sender, MouseEventArgs e)
 		{
 			if (this.Sack == null)
-			{
 				return;
-			}
 
 			Point cell = this.FindCell(e.Location);
 
@@ -2203,6 +2225,7 @@ namespace TQVaultAE.GUI.Components
 				{
 					// remove item
 					this.Sack.RemoveItem(focusedItem);
+					BagButtonTooltip.InvalidateCache(this.Sack);
 					this.Refresh();
 				}
 			}
@@ -2419,6 +2442,10 @@ namespace TQVaultAE.GUI.Components
 						this.OnAutoMoveItem(this, new SackPanelEventArgs(null, null));
 					}
 				}
+
+				ItemTooltip.HideTooltip();
+				BagButtonTooltip.InvalidateCache(this.Sack);
+
 			}
 		}
 
@@ -2446,6 +2473,9 @@ namespace TQVaultAE.GUI.Components
 					// now drag the new item
 					this.DragInfo.MarkModified(newItem);
 					Refresh();
+
+					ItemTooltip.HideTooltip();
+					BagButtonTooltip.InvalidateCache(this.Sack);
 				}
 			}
 		}
@@ -2666,6 +2696,10 @@ namespace TQVaultAE.GUI.Components
 					this.ClearSelection();
 					Refresh();
 				}
+
+				ItemTooltip.HideTooltip();
+				BagButtonTooltip.InvalidateCache(this.Sack);
+
 			}
 		}
 
@@ -2906,6 +2940,9 @@ namespace TQVaultAE.GUI.Components
 						}
 					}
 				}
+
+				ItemTooltip.HideTooltip();
+				BagButtonTooltip.InvalidateCache(this.Sack);
 			}
 		}
 

@@ -11,6 +11,7 @@ namespace TQVaultAE.GUI.Models
 	using TQVaultAE.GUI.Components;
 	using TQVaultAE.Entities;
 	using TQVaultAE.Presentation;
+	using TQVaultAE.GUI.Tooltip;
 
 	/// <summary>
 	/// Stores information about the item being dragged around by the user
@@ -260,6 +261,8 @@ namespace TQVaultAE.GUI.Models
 				{
 					this.sack.RemoveItem(this.item);
 				}
+
+				BagButtonTooltip.InvalidateCache(this.Sack, this.Original?.Sack);
 			}
 
 			// finally clear things out

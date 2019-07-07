@@ -23,7 +23,7 @@ namespace TQVaultAE.GUI
 		/// <param name="numBags">Number of bags in the vault panel.</param>
 		private void CreateVaultPanel(int numBags)
 		{
-			this.vaultPanel = new VaultPanel(this.dragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.Vault);
+			this.vaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.Vault);
 
 			int locationY = this.vaultListComboBox.Location.Y + Convert.ToInt32(28.0F * UIService.UI.Scale);
 			this.vaultPanel.DrawAsGroupBox = false;
@@ -44,7 +44,7 @@ namespace TQVaultAE.GUI
 		/// <param name="numBags">Number of bags in the secondary vault panel.</param>
 		private void CreateSecondaryVaultPanel(int numBags)
 		{
-			this.secondaryVaultPanel = new VaultPanel(this.dragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.SecondaryVault);
+			this.secondaryVaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.SecondaryVault);
 			this.secondaryVaultPanel.DrawAsGroupBox = false;
 
 			// Place it with the same Y value as the character panel and X value of the vault panel.

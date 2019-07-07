@@ -24,7 +24,7 @@ namespace TQVaultAE.GUI
 			// size params are width, height
 			Size panelSize = new Size(17, 16);
 
-			this.stashPanel = new StashPanel(this.dragInfo, panelSize);
+			this.stashPanel = new StashPanel(this.DragInfo, panelSize);
 
 			// New location in bottom right of the Main Form.
 			//Align to playerPanel

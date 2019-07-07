@@ -63,7 +63,7 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Info for the current item being dragged by the mouse
 		/// </summary>
-		private ItemDragInfo dragInfo;
+		private ItemDragInfo DragInfo;
 
 		/// <summary>
 		/// Holds the coordinates of the last drag item
@@ -227,7 +227,7 @@ namespace TQVaultAE.GUI
 			Item.ShowSkillLevel = Config.Settings.Default.ShowSkillLevel;
 
 			this.lastDragPoint.X = -1;
-			this.dragInfo = new ItemDragInfo();
+			this.DragInfo = new ItemDragInfo();
 
 			this.CreatePanels();
 
@@ -300,7 +300,7 @@ namespace TQVaultAE.GUI
 			try
 			{
 				// Make sure we are not dragging anything
-				if (this.dragInfo.IsActive)
+				if (this.DragInfo.IsActive)
 				{
 					MessageBox.Show(Resources.MainFormHoldingItem, Resources.MainFormHoldingItem2, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 					return false;
@@ -756,7 +756,7 @@ namespace TQVaultAE.GUI
 
 			// Changed by VillageIdiot
 			// If we are dragging something around, clear the tooltip and text box.
-			if (this.dragInfo.IsActive)
+			if (this.DragInfo.IsActive)
 			{
 				this.itemText.Text = string.Empty;
 				return null;
