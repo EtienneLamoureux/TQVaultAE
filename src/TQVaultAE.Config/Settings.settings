@@ -110,5 +110,8 @@
     <Setting Name="BaseFont" Type="System.String" Scope="User">
       <Value Profile="(Default)">AlbertusMT</Value>
     </Setting>
+    <Setting Name="BaseFont" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Albertus MT</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
