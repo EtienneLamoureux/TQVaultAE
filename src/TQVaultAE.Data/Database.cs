@@ -118,9 +118,7 @@ namespace TQVaultAE.Data
 				if (this.gameLanguage == null)
 				{
 					if (!this.AutoDetectLanguage)
-					{
 						this.gameLanguage = this.TQLanguage;
-					}
 				}
 
 				// Try to read the language from the settings file
@@ -141,9 +139,7 @@ namespace TQVaultAE.Data
 									// Split the line on the = sign
 									string[] fields = line.Split(delims);
 									if (fields.Length < 2)
-									{
 										continue;
-									}
 
 									string key = fields[0].Trim();
 									string val = fields[1].Trim();
@@ -270,9 +266,7 @@ namespace TQVaultAE.Data
 			bool result = false;
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Logger.Log.DebugFormat(CultureInfo.InvariantCulture, "Database.ExtractARCFile('{0}', '{1}')", arcFileName, destination);
-			}
 
 			try
 			{
@@ -288,14 +282,10 @@ namespace TQVaultAE.Data
 			}
 
 			if (TQDebug.DatabaseDebugLevel > 1)
-			{
 				Logger.Log.DebugFormat(CultureInfo.InvariantCulture, "Extraction Result = {0}", result);
-			}
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Logger.Log.Debug("Exiting Database.ReadARCFile()");
-			}
 
 			return result;
 		}
@@ -311,43 +301,31 @@ namespace TQVaultAE.Data
 		{
 			Info result = null;
 			if (string.IsNullOrEmpty(itemId))
-			{
 				return result;
-			}
 
 			itemId = TQData.NormalizeRecordPath(itemId);
 			Info info;
 
 			if (infoDB.ContainsKey(itemId))
-			{
 				info = this.infoDB[itemId];
-			}
 			else
 			{
 				DBRecordCollection record = null;
 
 				// Add support for searching a custom map database
 				if (this.ArzFileMod != null)
-				{
 					record = this.ArzFileMod.GetItem(itemId);
-				}
 
 				// Try the expansion pack database first.
 				if (record == null && this.ArzFileIT != null)
-				{
 					record = this.ArzFileIT.GetItem(itemId);
-				}
 
+				// Try looking in TQ database now
 				if (record == null || this.ArzFileIT == null)
-				{
-					// Try looking in TQ database now
 					record = this.ArzFile.GetItem(itemId);
-				}
 
 				if (record == null)
-				{
 					return null;
-				}
 
 				info = new Info(record);
 				this.infoDB.Add(itemId, info);
@@ -487,14 +465,12 @@ namespace TQVaultAE.Data
 		public byte[] LoadResource(string resourceId)
 		{
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.DebugFormat(CultureInfo.InvariantCulture, "Database.LoadResource({0})", resourceId);
-			}
+
 			resourceId = TQData.NormalizeRecordPath(resourceId);
+
 			if (TQDebug.DatabaseDebugLevel > 1)
-			{
 				Log.DebugFormat(CultureInfo.InvariantCulture, " Normalized({0})", resourceId);
-			}
 
 			// First we need to figure out the correct file to
 			// open, by grabbing it off the front of the resourceID
@@ -507,9 +483,7 @@ namespace TQVaultAE.Data
 
 			string arcFileBase = resourceId.Substring(0, backslashLocation);
 			if (TQDebug.DatabaseDebugLevel > 1)
-			{
 				Log.DebugFormat(CultureInfo.InvariantCulture, "arcFileBase = {0}", arcFileBase);
-			}
 
 			string rootFolder;
 			string arcFile;
@@ -520,12 +494,9 @@ namespace TQVaultAE.Data
 			if (TQData.IsCustom)
 			{
 				if (TQDebug.DatabaseDebugLevel > 1)
-				{
 					Log.Debug("Checking Custom Resources.");
-				}
 
-				rootFolder = Path.Combine(TQData.ImmortalThroneSaveFolder, "CustomMaps");
-				rootFolder = Path.Combine(Path.Combine(rootFolder, TQData.MapName), "resources");
+				rootFolder = Path.Combine(TQData.MapName, "resources");
 
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
 				arcFileData = this.ReadARCFile(arcFile, resourceId);
@@ -536,9 +507,7 @@ namespace TQVaultAE.Data
 			{
 				// See if this guy is from Immortal Throne expansion pack.
 				if (TQDebug.DatabaseDebugLevel > 1)
-				{
 					Log.Debug("Checking IT Resources.");
-				}
 
 				rootFolder = TQData.ImmortalThronePath;
 
@@ -569,11 +538,9 @@ namespace TQVaultAE.Data
 					// throw away that value and use the next field.
 					int previousBackslash = backslashLocation;
 					backslashLocation = resourceId.IndexOf('\\', backslashLocation + 1);
+
 					if (backslashLocation <= 0)
-					{
-						// not a proper resourceID
-						return null;
-					}
+						return null;// not a proper resourceID
 
 					arcFileBase = resourceId.Substring(previousBackslash + 1, backslashLocation - previousBackslash - 1);
 					resourceId = resourceId.Substring(previousBackslash + 1);
@@ -619,9 +586,7 @@ namespace TQVaultAE.Data
 				// We are either vanilla TQ or have not found our resource yet.
 				// from the original TQ folder
 				if (TQDebug.DatabaseDebugLevel > 1)
-				{
 					Log.Debug("Checking TQ Resources.");
-				}
 
 				rootFolder = TQData.TQPath;
 				rootFolder = Path.Combine(rootFolder, "Resources");
@@ -631,9 +596,7 @@ namespace TQVaultAE.Data
 			}
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.Debug("Exiting Database.LoadResource()");
-			}
 
 			return arcFileData;
 		}
@@ -656,16 +619,12 @@ namespace TQVaultAE.Data
 			try
 			{
 				if (TQDebug.DatabaseDebugLevel > 0)
-				{
 					Log.DebugFormat(CultureInfo.InvariantCulture, "Database.ReadARCFile('{0}', '{1}')", arcFileName, dataId);
-				}
 
 				ArcFile arcFile;
 
 				if (arcFiles.ContainsKey(arcFileName))
-				{
 					arcFile = this.arcFiles[arcFileName];
-				}
 				else
 				{
 					arcFile = new ArcFile(arcFileName);
@@ -676,9 +635,7 @@ namespace TQVaultAE.Data
 				byte[] ans = arcFile.GetData(dataId);
 
 				if (TQDebug.DatabaseDebugLevel > 0)
-				{
 					Log.Debug("Exiting Database.ReadARCFile()");
-				}
 
 				return ans;
 			}
@@ -699,22 +656,15 @@ namespace TQVaultAE.Data
 		private string FigureDBFileToUse(bool isImmortalThrone)
 		{
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.DebugFormat(CultureInfo.InvariantCulture, "Database.FigureDBFileToUse({0})", isImmortalThrone);
-			}
 
 			string rootFolder;
 			if (isImmortalThrone)
 			{
-				//rootFolder = Path.Combine(TQData.ImmortalThronePath, "Resources");
 				if (TQData.ImmortalThronePath.Contains("Anniversary"))
-				{
 					rootFolder = Path.Combine(TQData.ImmortalThronePath, "Text");
-				}
 				else
-				{
 					rootFolder = Path.Combine(TQData.ImmortalThronePath, "Resources");
-				}
 
 				if (TQDebug.DatabaseDebugLevel > 1)
 				{
@@ -738,9 +688,7 @@ namespace TQVaultAE.Data
 			if (!Directory.Exists(rootFolder))
 			{
 				if (TQDebug.DatabaseDebugLevel > 0)
-				{
 					Log.Debug("Error - Root Folder does not exist");
-				}
 
 				return null; // silently fail
 			}
@@ -766,16 +714,12 @@ namespace TQVaultAE.Data
 			{
 				// Try this method of getting the culture
 				if (TQDebug.DatabaseDebugLevel > 2)
-				{
 					Log.Debug("Try looking up cultureID");
-				}
 
 				foreach (CultureInfo cultureInfo in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
 				{
 					if (TQDebug.DatabaseDebugLevel > 2)
-					{
 						Log.DebugFormat(CultureInfo.InvariantCulture, "Trying {0}", cultureInfo.EnglishName.ToUpperInvariant());
-					}
 
 					if (cultureInfo.EnglishName.ToUpperInvariant().Equals(gameLanguage.ToUpperInvariant()) || cultureInfo.DisplayName.ToUpperInvariant().Equals(gameLanguage.ToUpperInvariant()))
 					{
@@ -788,14 +732,10 @@ namespace TQVaultAE.Data
 				// Force Czech to use CZ instead of CS for the 2 letter code.
 				// Added null check to fix exception when there is no culture found.
 				if (cultureID != null && cultureID.ToUpperInvariant() == "CS")
-				{
 					cultureID = "CZ";
-				}
 
 				if (TQDebug.DatabaseDebugLevel > 1)
-				{
 					Log.DebugFormat(CultureInfo.InvariantCulture, "cultureID = {0}", cultureID);
-				}
 
 				// Moved this inital check for the file into the loop
 				// and added a check to verify that we actually have a cultureID
@@ -811,9 +751,7 @@ namespace TQVaultAE.Data
 					if (File.Exists(filename))
 					{
 						if (TQDebug.DatabaseDebugLevel > 0)
-						{
 							Log.Debug("Exiting Database.FigureDBFileToUse()");
-						}
 
 						return filename;
 					}
@@ -834,16 +772,12 @@ namespace TQVaultAE.Data
 			{
 				filename = string.Concat(baseFile, cultureID, suffix);
 				if (TQDebug.DatabaseDebugLevel > 1)
-				{
 					Log.DebugFormat(CultureInfo.InvariantCulture, "filename = {0}", filename);
-				}
 
 				if (File.Exists(filename))
 				{
 					if (TQDebug.DatabaseDebugLevel > 0)
-					{
 						Log.Debug("Exiting Database.FigureDBFileToUse()");
-					}
 
 					return filename;
 				}
@@ -862,18 +796,14 @@ namespace TQVaultAE.Data
 			if (File.Exists(filename))
 			{
 				if (TQDebug.DatabaseDebugLevel > 0)
-				{
 					Log.Debug("Database.Exiting FigureDBFileToUse()");
-				}
 
 				return filename;
 			}
 
 			// Now just see if we can find anything.
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.Debug("Detection Failed - searching for files");
-			}
 
 			string[] files = Directory.GetFiles(rootFolder, "Text_??.arc");
 
@@ -887,9 +817,7 @@ namespace TQVaultAE.Data
 				}
 
 				if (TQDebug.DatabaseDebugLevel > 0)
-				{
 					Log.Debug("Exiting Database.FigureDBFileToUse()");
-				}
 
 				return files[0];
 			}
@@ -909,9 +837,7 @@ namespace TQVaultAE.Data
 		private void LoadTextDB()
 		{
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.Debug("Database.LoadTextDB()");
-			}
 
 			this.textDB = new Dictionary<string, string>();
 			string databaseFile = this.FigureDBFileToUse(false);
@@ -967,9 +893,7 @@ namespace TQVaultAE.Data
 			// For loading custom map text database.
 			if (TQData.IsCustom)
 			{
-				string baseFolder = Path.Combine(TQData.ImmortalThroneSaveFolder, "CustomMaps");
-
-				databaseFile = Path.Combine(Path.Combine(Path.Combine(baseFolder, TQData.MapName), "resources"), "text.arc");
+				databaseFile = Path.Combine(TQData.MapName, "resources", "text.arc");
 
 				if (TQDebug.DatabaseDebugLevel > 1)
 				{
@@ -978,26 +902,20 @@ namespace TQVaultAE.Data
 				}
 
 				if (databaseFile != null)
-				{
 					this.ParseTextDB(databaseFile, "text\\modstrings.txt");
-				}
 			}
 
 			// Added this check to see if anything was loaded.
 			if (this.textDB.Count == 0)
 			{
 				if (TQDebug.DatabaseDebugLevel > 0)
-				{
 					Log.Debug("Exception - Could not load Text DB.");
-				}
 
 				throw new FileLoadException("Could not load Text DB.");
 			}
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.Debug("Exiting Database.LoadTextDB()");
-			}
 		}
 
 		/// <summary>
@@ -1008,9 +926,7 @@ namespace TQVaultAE.Data
 		private void ParseTextDB(string databaseFile, string filename)
 		{
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.DebugFormat(CultureInfo.InvariantCulture, "Database.ParseTextDB({0}, {1})", databaseFile, filename);
-			}
 
 			byte[] data = this.ReadARCFile(databaseFile, filename);
 
@@ -1018,9 +934,7 @@ namespace TQVaultAE.Data
 			{
 				// Changed for mod support.  Sometimes the text file has more entries than just the x or non-x prefix files.
 				if (TQDebug.DatabaseDebugLevel > 0)
-				{
 					Log.DebugFormat(CultureInfo.InvariantCulture, "Error in ARC File: {0} does not contain an entry for '{1}'", databaseFile, filename);
-				}
 
 				return;
 			}
@@ -1037,24 +951,18 @@ namespace TQVaultAE.Data
 
 					// delete short lines
 					if (line.Length < 2)
-					{
 						continue;
-					}
 
 					// comment line
 					if (line.StartsWith("//", StringComparison.Ordinal))
-					{
 						continue;
-					}
 
 					// split on the equal sign
 					string[] fields = line.Split(delimiter);
 
 					// bad line
 					if (fields.Length < 2)
-					{
 						continue;
-					}
 
 					string label = fields[1].Trim();
 
@@ -1089,9 +997,7 @@ namespace TQVaultAE.Data
 			}
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.Debug("Exiting Database.ParseTextDB()");
-			}
 		}
 
 		/// <summary>
@@ -1100,9 +1006,7 @@ namespace TQVaultAE.Data
 		private void LoadARZFile()
 		{
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.Debug("Database.LoadARZFile()");
-			}
 
 			// from the original TQ folder
 			string file = Path.Combine(Path.Combine(TQData.TQPath, "Database"), "database.arz");
@@ -1118,29 +1022,11 @@ namespace TQVaultAE.Data
 
 			// now Immortal Throne expansion pack
 			this.ArzFileIT = this.ArzFile;
-			/* if (TQData.IsITInstalled)
-			{
-				file = Path.Combine(Path.Combine(TQData.ImmortalThronePath, "Database"), "database.arz");
-
-				if (TQDebug.DatabaseDebugLevel > 1)
-				{
-					Log.Debug("Load Immortal Throne database arz file");
-					Log.DebugFormat(CultureInfo.InvariantCulture, "file = {0}", file));
-				}
-
-				if (File.Exists(file))
-				{
-					this.ArzFileIT = new ArzFile(file);
-					this.ArzFileIT.Read();
-				}
-			} */
 
 			// Added to load a custom map database file.
 			if (TQData.IsCustom)
 			{
-				string baseFolder = Path.Combine(TQData.ImmortalThroneSaveFolder, "CustomMaps");
-
-				file = Path.Combine(Path.Combine(Path.Combine(baseFolder, TQData.MapName), "database"), string.Concat(TQData.MapName, ".arz"));
+				file = Path.Combine(TQData.MapName, "database", $"{Path.GetFileName(TQData.MapName)}.arz");
 
 				if (TQDebug.DatabaseDebugLevel > 1)
 				{
@@ -1154,15 +1040,11 @@ namespace TQVaultAE.Data
 					this.ArzFileMod.Read();
 				}
 				else
-				{
 					this.ArzFileMod = null;
-				}
 			}
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.Debug("Exiting Database.LoadARZFile()");
-			}
 		}
 
 		#endregion Database Private Methods

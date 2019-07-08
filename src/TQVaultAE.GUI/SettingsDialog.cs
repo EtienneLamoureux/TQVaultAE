@@ -14,6 +14,7 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Data;
 	using TQVaultAE.Presentation;
 	using EnumsNET;
+	using TQVaultAE.Entities.Results;
 
 	/// <summary>
 	/// Class for the Settings/Configuration Dialog
@@ -225,14 +226,12 @@ namespace TQVaultAE.GUI
 			this.DrawCustomBorder = true;
 
 			this.mapListComboBox.Items.Clear();
-			this.mapListComboBox.Items.Add(string.Empty);
 
-			string[] maps = TQData.GetCustomMapList();
+			var maps = TQData.GetCustomMapList();
 
-			if (maps != null && maps.Length > 0)
-			{
+			if (maps?.Any() ?? false)
 				this.mapListComboBox.Items.AddRange(maps);
-			}
+
 			if (!Config.Settings.Default.AllowCheats)
 			{
 				this.allowItemEditCheckBox.Visible = false;
@@ -418,11 +417,10 @@ namespace TQVaultAE.GUI
 			this.playerReadonlyCheckbox.Checked = this.playerReadonly;
 
 			this.enableCustomMapsCheckBox.Checked = this.enableMods;
-			int ind = this.mapListComboBox.FindStringExact(this.customMap);
-			if (ind != -1)
-			{
-				this.mapListComboBox.SelectedIndex = ind;
-			}
+
+			var lst = this.mapListComboBox.Items.Cast<GamePathEntry>();
+			var found = lst.Where(m => m.Path == this.customMap).FirstOrDefault();
+			this.mapListComboBox.SelectedItem = found;
 
 			this.mapListComboBox.Enabled = this.enableMods;
 
@@ -771,6 +769,7 @@ namespace TQVaultAE.GUI
 					this.enableMods = false;
 					this.ConfigurationChanged = true;
 					this.CustomMapsChanged = true;
+					this.customMap = string.Empty;// Reset value
 					this.mapListComboBox.Enabled = false;
 				}
 			}
@@ -786,10 +785,10 @@ namespace TQVaultAE.GUI
 			if (!this.settingsLoaded)
 				return;
 
-
-			if (this.mapListComboBox.SelectedItem.ToString() != Config.Settings.Default.CustomMap)
+			var custommap = (this.mapListComboBox.SelectedItem as GamePathEntry)?.Path ?? string.Empty;
+			if (custommap != Config.Settings.Default.CustomMap)
 			{
-				this.customMap = this.mapListComboBox.SelectedItem.ToString();
+				this.customMap = custommap;
 				this.ConfigurationChanged = true;
 				this.CustomMapsChanged = true;
 			}

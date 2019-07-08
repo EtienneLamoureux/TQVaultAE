@@ -110,9 +110,6 @@
     <Setting Name="ForceGamePath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Mod" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="BaseFont" Type="System.String" Scope="User">
       <Value Profile="(Default)">AlbertusMT</Value>
     </Setting>

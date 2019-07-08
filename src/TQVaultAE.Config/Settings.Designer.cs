@@ -421,18 +421,6 @@ namespace TQVaultAE.Config {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Mod {
-            get {
-                return ((string)(this["Mod"]));
-            }
-            set {
-                this["Mod"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("AlbertusMT")]
         public string BaseFont {
             get {

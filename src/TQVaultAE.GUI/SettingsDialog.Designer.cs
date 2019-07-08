@@ -496,6 +496,7 @@ namespace TQVaultAE.GUI
             // languageComboBox
             // 
             this.languageComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.languageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.languageComboBox.Font = new System.Drawing.Font("Albertus MT Light", 14.0625F);
             this.languageComboBox.FormattingEnabled = true;
             this.languageComboBox.Location = new System.Drawing.Point(15, 309);
@@ -646,6 +647,7 @@ namespace TQVaultAE.GUI
             // mapListComboBox
             // 
             this.mapListComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.mapListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.mapListComboBox.Font = new System.Drawing.Font("Albertus MT Light", 14.0625F);
             this.mapListComboBox.FormattingEnabled = true;
             this.mapListComboBox.Location = new System.Drawing.Point(15, 408);

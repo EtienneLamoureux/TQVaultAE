@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using TQVaultAE.Data;
 using TQVaultAE.Entities;
 using TQVaultAE.GUI.Components;
@@ -32,7 +33,7 @@ namespace TQVaultAE.GUI
 			if (TQData.IsCustom)
 			{
 				this.customMapText.Visible = true;
-				this.customMapText.Text = string.Format(CultureInfo.CurrentCulture, Resources.MainFormCustomMapLabel, TQData.MapName);
+				this.customMapText.Text = string.Format(CultureInfo.CurrentCulture, Resources.MainFormCustomMapLabel, Path.GetFileName(TQData.MapName));
 			}
 			else
 			{
