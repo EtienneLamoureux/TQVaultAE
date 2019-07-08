@@ -336,6 +336,7 @@ namespace TQVaultAE.GUI.Tooltip
 		private void ItemTooltip_Load(object sender, EventArgs e)
 		{
 			var usize = UIService.UI.ItemUnitSize;
+			var wa = Screen.FromControl(this).WorkingArea;
 
 			this.FillToolTip();
 
@@ -356,6 +357,18 @@ namespace TQVaultAE.GUI.Tooltip
 						x = loc.X + ((itemX + 2) * usize);
 						y = loc.Y + (itemY * usize);
 					}
+				}
+
+				// Ajust position if tooltip size goes offscreen
+				var bottom = y + this.Height;
+				if (bottom > wa.Height)
+				{
+					// Maximize vertical view
+					var offScreenHeight = bottom - wa.Height;
+					if (y - offScreenHeight < 0)
+						y = 0;// Do your best
+					else
+						y -= offScreenHeight;
 				}
 
 				this.Location = new Point(Convert.ToInt32(x), Convert.ToInt32(y));

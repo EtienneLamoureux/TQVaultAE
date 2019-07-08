@@ -140,8 +140,27 @@ namespace TQVaultAE.GUI.Tooltip
 		{
 			this.FillSackToolTip();
 
+			var wa = Screen.FromControl(this).WorkingArea;
+
+			// Move it under BagButton
 			var loc = this.ButtonSack.PointToScreen(Point.Empty);
 			loc.Y += this.ButtonSack.Size.Height;
+
+			// Ajust position if tooltip size goes offscreen
+			var bottom = loc.Y + this.Height;
+			if (bottom > wa.Height)
+			{
+				// Maximize vertical view
+				var offScreenHeight = bottom - wa.Height;
+				if (loc.Y - offScreenHeight < 0)
+					loc.Y = 0;// Do your best
+				else
+					loc.Y -= offScreenHeight;
+
+				// Put tooltip on right side of button to avoid mouse pointer overlap
+				loc.X += this.ButtonSack.Size.Width;
+			}
+
 			this.Location = loc;
 		}
 
