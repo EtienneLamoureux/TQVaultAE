@@ -421,17 +421,5 @@ namespace TQVaultAE.Config {
                 this["BaseFont"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("AlbertusMT")]
-        public string BaseFont {
-            get {
-                return ((string)(this["BaseFont"]));
-            }
-            set {
-                this["BaseFont"] = value;
-            }
-        }
     }
 }
