@@ -355,9 +355,9 @@ namespace TQVaultAE.GUI
 						dragItem.PositionX = location.X;
 						dragItem.PositionY = location.Y;
 						this.stashPanel.SackPanel.Sack.AddItem(dragItem);
-						BagButtonTooltip.InvalidateCache(this.stashPanel.SackPanel.Sack);
 						this.lastSackPanelHighlighted.Invalidate();
 						this.stashPanel.Refresh();
+						BagButtonTooltip.InvalidateCache(this.stashPanel.SackPanel.Sack);
 					}
 				}
 				else
@@ -405,10 +405,11 @@ namespace TQVaultAE.GUI
 						destinationSackPanel.Sack.AddItem(dragItem);
 
 						// Set it back to the original sack so the display does not change.
-						BagButtonTooltip.InvalidateCache(destinationSackPanel.Sack, oldSack);
+						var destsack = destinationSackPanel.Sack;
 						destinationSackPanel.Sack = oldSack;
 						sackPanel.Invalidate();
 						destinationPlayerPanel.Refresh();
+						BagButtonTooltip.InvalidateCache(destsack, oldSack);
 					}
 				}
 			}

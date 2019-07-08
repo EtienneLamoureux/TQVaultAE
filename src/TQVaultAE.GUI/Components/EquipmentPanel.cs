@@ -375,7 +375,6 @@ namespace TQVaultAE.GUI.Components
 
 						// Now add the item to our sack
 						this.Sack.AddItem(dragItem);
-						BagButtonTooltip.InvalidateCache(this.Sack);
 					}
 					else
 					{
@@ -411,8 +410,6 @@ namespace TQVaultAE.GUI.Components
 										this.Sack.AddItem(this.Sack.GetItem(slot).Duplicate(true));
 									}
 
-									BagButtonTooltip.InvalidateCache(this.Sack);
-
 									itemUnderUs = this.Sack.GetItem(this.Sack.Count - 1);
 
 									// Clear the item in the LH slot.
@@ -421,7 +418,6 @@ namespace TQVaultAE.GUI.Components
 									newItem.Location = SackCollection.GetEquipmentLocationOffset(slot);
 									this.Sack.RemoveAtItem(slot);
 									this.Sack.InsertItem(slot, newItem);
-									BagButtonTooltip.InvalidateCache(this.Sack);
 								}
 								else if (!string.IsNullOrEmpty(this.Sack.GetItem(slotRH).BaseItemId))
 								{
@@ -435,7 +431,6 @@ namespace TQVaultAE.GUI.Components
 									newItem.Location = SackCollection.GetEquipmentLocationOffset(slotRH);
 									this.Sack.RemoveAtItem(slotRH);
 									this.Sack.InsertItem(slotRH, newItem);
-									BagButtonTooltip.InvalidateCache(this.Sack);
 								}
 
 								slot = slotRH;
@@ -455,7 +450,6 @@ namespace TQVaultAE.GUI.Components
 									newItem.Location = SackCollection.GetEquipmentLocationOffset(slot);
 									this.Sack.RemoveAtItem(slot);
 									this.Sack.InsertItem(slot, newItem);
-									BagButtonTooltip.InvalidateCache(this.Sack);
 								}
 								else if (!string.IsNullOrEmpty(this.Sack.GetItem(slotLH).BaseItemId))
 								{
@@ -469,7 +463,6 @@ namespace TQVaultAE.GUI.Components
 									newItem.Location = SackCollection.GetEquipmentLocationOffset(slotLH);
 									this.Sack.RemoveAtItem(slotLH);
 									this.Sack.InsertItem(slotLH, newItem);
-									BagButtonTooltip.InvalidateCache(this.Sack);
 								}
 							}
 						}
@@ -488,14 +481,12 @@ namespace TQVaultAE.GUI.Components
 								newItem.Location = SackCollection.GetEquipmentLocationOffset(slotRH);
 								this.Sack.RemoveAtItem(slotRH);
 								this.Sack.InsertItem(slotRH, newItem);
-								BagButtonTooltip.InvalidateCache(this.Sack);
 							}
 						}
 
 						dragItem.Location = SackCollection.GetEquipmentLocationOffset(slot);
 						this.Sack.RemoveAtItem(slot);
 						this.Sack.InsertItem(slot, dragItem);
-						BagButtonTooltip.InvalidateCache(this.Sack);
 					}
 				}
 

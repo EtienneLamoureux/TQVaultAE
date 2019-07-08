@@ -538,14 +538,11 @@ namespace TQVaultAE.GUI.Components
 			{
 				bool itemPlaced = false;
 				int offset;
+
 				if (this.sortVertical)
-				{
 					offset = tempItem.Width - 1;
-				}
 				else
-				{
 					offset = tempItem.Height - 1;
-				}
 
 				for (int j = 0; j < param1 - offset; ++j)
 				{
@@ -565,7 +562,6 @@ namespace TQVaultAE.GUI.Components
 									tempItem.PositionY = k;
 									this.Sack.AddItem(tempItem);
 									itemPlaced = true;
-									BagButtonTooltip.InvalidateCache(this.Sack);
 								}
 
 								break;
@@ -589,7 +585,6 @@ namespace TQVaultAE.GUI.Components
 									tempItem.PositionY = j;
 									this.Sack.AddItem(tempItem);
 									itemPlaced = true;
-									BagButtonTooltip.InvalidateCache(this.Sack);
 								}
 
 								break;
@@ -605,9 +600,7 @@ namespace TQVaultAE.GUI.Components
 					// Check to see if the item was placed and
 					// move on to the next item.
 					if (itemPlaced)
-					{
 						break;
-					}
 				}
 
 				// We could not find a place for the item,
@@ -628,6 +621,7 @@ namespace TQVaultAE.GUI.Components
 
 			// Redraw the sack.
 			this.Invalidate();
+			BagButtonTooltip.InvalidateCache(this.Sack);
 		}
 
 		/// <summary>
@@ -721,9 +715,7 @@ namespace TQVaultAE.GUI.Components
 		{
 			// Do a little bit of error handling
 			if (destination < 0 || destination > this.MaxSacks - 1 || destination == this.CurrentSack)
-			{
 				return false;
-			}
 
 			if (!this.DragInfo.IsActive)
 			{
@@ -1194,17 +1186,13 @@ namespace TQVaultAE.GUI.Components
 				Item dragItem = this.DragInfo.Item;
 
 				if (!this.IsItemValidForPlacement(dragItem))
-				{
 					return;
-				}
 
 				// Yes we can drop it here!
 				// First take the item that is under us
 				Item itemUnderUs = null;
 				if (this.ItemsUnderDragItem != null && this.ItemsUnderDragItem.Count == 1)
-				{
 					itemUnderUs = this.ItemsUnderDragItem[0];
-				}
 
 				// Maybe we are putting the item back.
 				// Then we just cancel.
@@ -1223,9 +1211,9 @@ namespace TQVaultAE.GUI.Components
 
 				// If we are a stackable and we have a stackable under us and we are the same type of stackable
 				// then just add to the stack instead of picking up the other stack
-				if (dragItem.DoesStack 
-					&& itemUnderUs != null 
-					&& itemUnderUs.DoesStack 
+				if (dragItem.DoesStack
+					&& itemUnderUs != null
+					&& itemUnderUs.DoesStack
 					&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
 				)
 				{
@@ -1240,10 +1228,10 @@ namespace TQVaultAE.GUI.Components
 
 					// we will just throw away the dragItem now.
 				}
-				else if (dragItem.IsRelic 
-					&& itemUnderUs != null 
-					&& itemUnderUs.IsRelic 
-					&& !itemUnderUs.IsRelicComplete 
+				else if (dragItem.IsRelic
+					&& itemUnderUs != null
+					&& itemUnderUs.IsRelic
+					&& !itemUnderUs.IsRelicComplete
 					&& !dragItem.IsRelicComplete
 					&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
 				)
@@ -1304,7 +1292,6 @@ namespace TQVaultAE.GUI.Components
 
 						// Now add the item to our sack
 						this.Sack.AddItem(dragItem);
-						BagButtonTooltip.InvalidateCache(this.Sack);
 					}
 					else
 					{
@@ -1312,7 +1299,6 @@ namespace TQVaultAE.GUI.Components
 
 						// Get rid of ref to itemUnderUs so code below wont do anything with it.
 						itemUnderUs = null;
-
 						// we will just throw away the dragItem now.
 					}
 				}
@@ -1323,8 +1309,9 @@ namespace TQVaultAE.GUI.Components
 
 					// Now add the item to our sack
 					this.Sack.AddItem(dragItem);
-					BagButtonTooltip.InvalidateCache(this.Sack);
 				}
+
+				BagButtonTooltip.InvalidateCache(this.Sack);
 
 				// clear the "last drag" variables
 				this.LastDragLocation = InvalidDragLocation;
@@ -2225,8 +2212,8 @@ namespace TQVaultAE.GUI.Components
 				{
 					// remove item
 					this.Sack.RemoveItem(focusedItem);
-					BagButtonTooltip.InvalidateCache(this.Sack);
 					this.Refresh();
+					BagButtonTooltip.InvalidateCache(this.Sack);
 				}
 			}
 		}
@@ -2389,25 +2376,15 @@ namespace TQVaultAE.GUI.Components
 						automoveDestination = (AutoMoveLocation)(Convert.ToInt32(toolStripItem.Name.Substring(hashSign), CultureInfo.InvariantCulture) - offset);
 					}
 					else if (toolStripItem.Name == Resources.SackPanelMenuVault)
-					{
 						automoveDestination = AutoMoveLocation.Vault;
-					}
 					else if (toolStripItem.Name == Resources.SackPanelMenuPlayer)
-					{
 						automoveDestination = AutoMoveLocation.Player;
-					}
 					else if (toolStripItem.Name == Resources.SackPanelMenuTrash)
-					{
 						automoveDestination = AutoMoveLocation.Trash;
-					}
 					else if (toolStripItem.Name == Resources.SackPanelMenuVault2)
-					{
 						automoveDestination = AutoMoveLocation.SecondaryVault;
-					}
 					else if (toolStripItem.Name == Resources.SackPanelMenuStash)
-					{
 						automoveDestination = AutoMoveLocation.Stash;
-					}
 				}
 
 				if (this.selectedItems != null)
@@ -2445,7 +2422,6 @@ namespace TQVaultAE.GUI.Components
 
 				ItemTooltip.HideTooltip();
 				BagButtonTooltip.InvalidateCache(this.Sack);
-
 			}
 		}
 

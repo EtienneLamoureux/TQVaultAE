@@ -750,8 +750,8 @@ namespace TQVaultAE.GUI.Components
 					PlayerPanel.RightToLeftOptions) == DialogResult.Yes)
 				{
 					this.BagSackPanel.Sack.EmptySack();
-					BagButtonTooltip.InvalidateCache(this.BagSackPanel.Sack);
 					this.BagSackPanel.Refresh();
+					BagButtonTooltip.InvalidateCache(this.BagSackPanel.Sack);
 				}
 			}
 		}

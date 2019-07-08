@@ -98,9 +98,8 @@ namespace TQVaultAE.GUI.Tooltip
 			{
 
 				var itemlist = ButtonSack.Sack
-					// skip the item being dragged
-					// skip empty items
-					.Where(i => !ButtonSack.Excluded.Contains(i) && i.BaseItemId.Length != 0)
+					//.Where(i => !ButtonSack.Excluded.Contains(i))// skip the item being dragged ! No need anymore
+					.Where(i => i.BaseItemId.Length != 0)// skip empty items
 					.ToArray();
 				var friendlylist = itemlist
 					.Select(i => ItemService.GetFriendlyNames(i))

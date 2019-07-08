@@ -18,7 +18,7 @@ namespace TQVaultAE.Entities
 		public static string RemoveAllTQTags(this string TQText)
 		{
 			return Regex.Replace(TQText
-				, $@"{TQColorHelper.RegExColorTag}"
+				, TQColorHelper.RegExColorTag
 				, string.Empty
 			);
 		}
@@ -72,7 +72,7 @@ namespace TQVaultAE.Entities
 			if (string.IsNullOrEmpty(insertedText)) return TQText;
 			return Regex.Replace(TQText
 				, $@"{TQColorHelper.RegExStartingColorTagOrEmpty}(?<Content>.+)"
-				, @"${ColorTag}" + insertedText + @"${Content}"
+				, string.Concat(@"${ColorTag}", insertedText, @"${Content}")
 			).Trim();
 		}
 
@@ -145,8 +145,11 @@ namespace TQVaultAE.Entities
 					foreach (var word in batch)
 					{
 						var foundColor = TQColorHelper.GetColorFromTaggedString(word);
-						if (foundColor.HasValue) currentColor = foundColor.Value.ColorTag();
-						if (line != string.Empty) line += ' ';
+						if (line != string.Empty 
+							// Not a ColorTag alone
+							&& !(line.HasColorPrefix() && line.Length == 4) // TODO Should create line.IsColorTagOnly()
+						) line += ' ';
+						if (foundColor.HasValue) currentColor = foundColor?.ColorTag();
 						if (line.Length + word.Length > Columns)
 						{
 							res.Add(line);
