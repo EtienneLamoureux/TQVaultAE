@@ -7,14 +7,12 @@ namespace TQVaultAE.GUI
 {
 	using System;
 	using System.ComponentModel;
-	using System.Diagnostics;
 	using System.Drawing;
 	using System.Globalization;
 	using System.IO;
 	using System.Reflection;
 	using System.Security.Permissions;
 	using System.Windows.Forms;
-	using Tooltip;
 	using TQVaultAE.GUI.Components;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Data;
@@ -163,8 +161,10 @@ namespace TQVaultAE.GUI
 			ScaleControl(this.exitButton);
 			this.characterComboBox.Font = FontHelper.GetFontAlbertusMTLight(13F, UIService.UI.Scale);
 			ScaleControl(this.characterComboBox);
+			this.characterLabel.Font = FontHelper.GetFontAlbertusMTLight(11F, UIService.UI.Scale);
 			ScaleControl(this.characterLabel);
 			ScaleControl(this.itemTextPanel);
+
 			ScaleControl(this.itemText);
 			this.vaultListComboBox.Font = FontHelper.GetFontAlbertusMTLight(13F, UIService.UI.Scale);
 			ScaleControl(this.vaultListComboBox);

@@ -186,6 +186,8 @@ namespace TQVaultAE.GUI
 			this.immortalThronePathBrowseButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
 			this.customMapLabel.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
 			this.mapListComboBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.baseFontLabel.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
+			this.baseFontComboBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
 			this.Font = FontHelper.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
 
 			#endregion
@@ -429,15 +431,15 @@ namespace TQVaultAE.GUI
 			this.languageComboBox.Enabled = !this.detectLanguage;
 
 			// Build Font combo box
-			this.fontComboBoxBase.Items.Clear();
+			this.baseFontComboBox.Items.Clear();
 			var listItem = Enums.GetMembers<FontFamilyList>()
 				.Select(m => new ComboBoxItem()
 				{
 					Value = m.AsString(EnumFormat.Name),
 					DisplayName = m.AsString(EnumFormat.Description, EnumFormat.Name)
 				}).ToArray();
-			this.fontComboBoxBase.Items.AddRange(listItem);
-			this.fontComboBoxBase.SelectedItem = listItem.Where(i => i.Value == this.BaseFont).FirstOrDefault() ?? listItem.First();
+			this.baseFontComboBox.Items.AddRange(listItem);
+			this.baseFontComboBox.SelectedItem = listItem.Where(i => i.Value == this.BaseFont).FirstOrDefault() ?? listItem.First();
 		}
 
 		/// <summary>
@@ -887,7 +889,7 @@ namespace TQVaultAE.GUI
 
 		private void FontComboBoxBase_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			var font = this.fontComboBoxBase.SelectedItem as ComboBoxItem;
+			var font = this.baseFontComboBox.SelectedItem as ComboBoxItem;
 			if (font == null)
 				return;
 
