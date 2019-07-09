@@ -158,7 +158,7 @@ namespace TQVaultAE.GUI
 			{
 				var itt = ItemTooltip.ShowTooltip(this, item, sackPanel);
 
-				this.itemText.ForeColor = ItemGfxHelper.GetColorTag(itt.Data.Item, itt.Data.BaseItemInfoDescription);
+				this.itemText.ForeColor = ItemGfxHelper.GetColor(itt.Data.Item, itt.Data.BaseItemInfoDescription);
 				this.itemText.Text = itt.Data.FullNameBagTooltip.RemoveAllTQTags();
 			}
 

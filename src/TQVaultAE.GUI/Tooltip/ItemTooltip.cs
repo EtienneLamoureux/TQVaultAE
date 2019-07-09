@@ -113,7 +113,7 @@ namespace TQVaultAE.GUI.Tooltip
 			this.Data = this.ItemService.GetFriendlyNames(FocusedItem, FriendlyNamesExtraScopes.ItemFullDisplay);
 
 			// Fullname
-			AddRow(Data.FullName, FocusedItem.GetColorTag(Data.BaseItemInfoDescription), style: FontStyle.Bold);
+			AddRow(Data.FullName, FocusedItem.GetColor(Data.BaseItemInfoDescription), style: FontStyle.Bold);
 
 			// Artifact Level
 			if (Data.Item.IsArtifact)
@@ -121,7 +121,7 @@ namespace TQVaultAE.GUI.Tooltip
 
 			// Relic Completion
 			if (Data.Item.IsRelic)
-				AddRow(Data.RelicCompletionFormat, FocusedItem.GetColorTag(Data.BaseItemInfoDescription));
+				AddRow(Data.RelicCompletionFormat, FocusedItem.GetColor(Data.BaseItemInfoDescription));
 
 			// Recipe Label
 			if (Data.Item.IsFormulae)
@@ -150,7 +150,7 @@ namespace TQVaultAE.GUI.Tooltip
 			if (Data.FormulaeArtifactAttributes.Any())
 			{
 				AddRow(TOOLTIPSPACER);
-				AddRow(Data.FormulaeArtifactName, FocusedItem.GetColorTag(Data.BaseItemInfoDescription), style: FontStyle.Bold);
+				AddRow(Data.FormulaeArtifactName, FocusedItem.GetColor(Data.BaseItemInfoDescription), style: FontStyle.Bold);
 				AddRow(Data.FormulaeArtifactClass, ItemStyle.Broken.TQColor().Color());
 				foreach (var str in Data.FormulaeArtifactAttributes) AddRow(str);
 			}
@@ -240,12 +240,12 @@ namespace TQVaultAE.GUI.Tooltip
 		internal const string TOOLTIPSPACER = @"TOOLTIPSPACER";
 		private void AddRow(string friendlyName = TOOLTIPSPACER, Color? FGColor = null, float fontSize = 10F, FontStyle style = FontStyle.Regular, Color? BGColor = null)
 		{
-			Control row = MakeRow(ref friendlyName, FGColor, fontSize, style, BGColor: this.flowLayoutPanelFriendlyNames.BackColor);
+			Control row = MakeRow(friendlyName, FGColor, fontSize, style, BGColor: this.flowLayoutPanelFriendlyNames.BackColor);
 
 			this.flowLayoutPanelFriendlyNames.Controls.Add(row);
 		}
 
-		internal static Control MakeRow(ref string friendlyName, Color? FGColor, float fontSize, FontStyle style, Color? BGColor)
+		internal static Control MakeRow(string friendlyName, Color? FGColor = null, float fontSize = 10F, FontStyle style = FontStyle.Regular, Color? BGColor = null)
 		{
 			friendlyName = friendlyName ?? string.Empty;
 			Control row = null;
@@ -324,7 +324,7 @@ namespace TQVaultAE.GUI.Tooltip
 				Font = FontHelper.GetFontAlbertusMTLight(fontSize, style, UIService.UI.Scale),
 				AutoSize = true,
 				Anchor = AnchorStyles.Left,
-				BackColor = BGColor.Value,
+				BackColor = BGColor ?? Color.Transparent,
 
 				//BackColor = Color.Red,
 				BorderStyle = BorderStyle.None,// BorderStyle.FixedSingle

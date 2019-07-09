@@ -7,11 +7,11 @@ namespace TQVaultAE.GUI
 {
 	using System;
 	using System.Linq;
+	using TQVaultAE.Data;
 	using TQVaultAE.Entities;
 	using TQVaultAE.Entities.Results;
+	using TQVaultAE.GUI.Tooltip;
 	using TQVaultAE.Presentation;
-	using TQVaultAE.Presentation.Html;
-	using TQVaultAE.Services;
 
 	/// <summary>
 	/// Form for the item properties display
@@ -21,18 +21,19 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Item instance of the item we are displaying
 		/// </summary>
-		private Item _item;
+		public Item Item { get; set; }
 
 		/// <summary>
-		/// Flag indicating if we are showing the extra information
+		/// Item human readable data
 		/// </summary>
-		private bool filterExtra;
+		private ToFriendlyNameResult Data;
 
 		/// <summary>
 		/// Initializes a new instance of the ItemProperties class.
 		/// </summary>
-		public ItemProperties()
+		public ItemProperties(MainForm instance)
 		{
+			this.Owner = instance;
 			this.InitializeComponent();
 
 			#region Apply custom font
@@ -57,25 +58,12 @@ namespace TQVaultAE.GUI
 		}
 
 		/// <summary>
-		/// Sets the item for which we are displaying the properties.
-		/// </summary>
-		public Item Item
-		{
-			set
-			{
-				this._item = value;
-			}
-		}
-
-		/// <summary>
 		/// Dialog load methond
 		/// </summary>
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
 		private void ItemProperties_Load(object sender, EventArgs e)
 		{
-			this.filterExtra = false;
-			this.webBrowserItemName.DocumentText = ItemHtmlHelper.GetName(this._item).RemoveAllTQTags();
 			this.LoadProperties();
 		}
 
@@ -84,43 +72,54 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void LoadProperties()
 		{
-			var res = ItemHtmlHelper.LoadProperties(this._item, this.filterExtra);
+			this.Data = ItemProvider.GetFriendlyNames(this.Item, FriendlyNamesExtraScopes.ItemFullDisplay, this.checkBoxFilterExtraInfo.Checked);
+
+			// ItemName
+			this.labelItemName.ForeColor = this.Data.Item.GetColor(Data.BaseItemInfoDescription);
+			this.labelItemName.Text = this.Data.FullName.RemoveAllTQTags();
+
 			// Base Item Attributes
-			if (res.BaseItemAttributes.Any())
+			if (this.Data.BaseAttributes.Any())
 			{
-				this.webBrowserBaseItemProperties.DocumentText = res.BaseItemAttributes;
-				this.webBrowserBaseItemProperties.Show();
+				this.flowLayoutBaseItemProperties.Controls.Clear();
+				foreach (var prop in this.Data.BaseAttributes)
+					this.flowLayoutBaseItemProperties.Controls.Add(ItemTooltip.MakeRow(prop));
+				this.flowLayoutBaseItemProperties.Show();
 				this.labelBaseItemProperties.Show();
 			}
 			else
 			{
-				this.webBrowserBaseItemProperties.Hide();
+				this.flowLayoutBaseItemProperties.Hide();
 				this.labelBaseItemProperties.Hide();
 			}
 
 			// Prefix Attributes
-			if (res.PrefixAttributes.Any())
+			if (this.Data.PrefixAttributes.Any())
 			{
-				this.webBrowserPrefixProperties.DocumentText = res.PrefixAttributes;
-				this.webBrowserPrefixProperties.Show();
+				this.flowLayoutPrefixProperties.Controls.Clear();
+				foreach (var prop in this.Data.PrefixAttributes)
+					this.flowLayoutPrefixProperties.Controls.Add(ItemTooltip.MakeRow(prop));
+				this.flowLayoutPrefixProperties.Show();
 				this.labelPrefixProperties.Show();
 			}
 			else
 			{
-				this.webBrowserPrefixProperties.Hide();
+				this.flowLayoutPrefixProperties.Hide();
 				this.labelPrefixProperties.Hide();
 			}
 
 			// Suffix Attributes
-			if (res.PrefixAttributes.Any())
+			if (this.Data.SuffixAttributes.Any())
 			{
-				this.webBrowserSuffixProperties.DocumentText = res.PrefixAttributes;
-				this.webBrowserSuffixProperties.Show();
+				this.flowLayoutSuffixProperties.Controls.Clear();
+				foreach (var prop in this.Data.SuffixAttributes)
+					this.flowLayoutSuffixProperties.Controls.Add(ItemTooltip.MakeRow(prop));
+				this.flowLayoutSuffixProperties.Show();
 				this.labelSuffixProperties.Show();
 			}
 			else
 			{
-				this.webBrowserSuffixProperties.Hide();
+				this.flowLayoutSuffixProperties.Hide();
 				this.labelSuffixProperties.Hide();
 			}
 		}
@@ -130,10 +129,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
-		private void ButtonOK_Button_Click(object sender, EventArgs e)
-		{
-			this.Close();
-		}
+		private void ButtonOK_Button_Click(object sender, EventArgs e) => this.Close();
 
 		/// <summary>
 		/// Handler for clicking the check box
@@ -142,11 +138,9 @@ namespace TQVaultAE.GUI
 		/// <param name="e">EventArgs data</param>
 		private void CheckBox1_CheckedChanged(object sender, EventArgs e)
 		{
-			if (this.filterExtra != this.checkBoxFilterExtraInfo.Checked)
-			{
-				this.filterExtra = this.checkBoxFilterExtraInfo.Checked;
-				this.LoadProperties();
-			}
+			System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor;
+			this.LoadProperties();
+			System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default;
 		}
 	}
 }

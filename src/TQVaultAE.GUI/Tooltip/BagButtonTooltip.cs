@@ -116,7 +116,7 @@ namespace TQVaultAE.GUI.Tooltip
 					.ToArray();
 
 				foreach (var item in friendlylist)
-					AddRow(item.FullName, ItemGfxHelper.GetColorTag(item.Data.Item, item.Data.BaseItemInfoDescription));
+					AddRow(item.FullName, ItemGfxHelper.GetColor(item.Data.Item, item.Data.BaseItemInfoDescription));
 
 			}
 
@@ -131,10 +131,10 @@ namespace TQVaultAE.GUI.Tooltip
 			ToImage[key] = raster;
 		}
 
-		private void AddRow(ToFriendlyNameResult infos) => AddRow(infos.FullNameBagTooltip, ItemGfxHelper.GetColorTag(infos.Item, infos.BaseItemInfoDescription));
+		private void AddRow(ToFriendlyNameResult infos) => AddRow(infos.FullNameBagTooltip, ItemGfxHelper.GetColor(infos.Item, infos.BaseItemInfoDescription));
 		private void AddRow(string friendlyName, Color color)
 		{
-			Control row = ItemTooltip.MakeRow(ref friendlyName, color, 10F, FontStyle.Regular, BGColor: this.flowLayoutPanelFriendlyNames.BackColor);
+			Control row = ItemTooltip.MakeRow(friendlyName, color, 10F, FontStyle.Regular, BGColor: this.flowLayoutPanelFriendlyNames.BackColor);
 
 			this.flowLayoutPanelFriendlyNames.Controls.Add(row);
 		}

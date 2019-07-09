@@ -29,8 +29,10 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Initializes a new instance of the ItemSeedDialog class.
 		/// </summary>
-		public ItemSeedDialog()
+		public ItemSeedDialog(MainForm instance)
 		{
+			this.Owner = instance;
+
 			this.InitializeComponent();
 
 			#region Apply custom font

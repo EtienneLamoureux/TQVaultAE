@@ -2570,13 +2570,13 @@ namespace TQVaultAE.GUI.Components
 				}
 				else if (selectedItem == Resources.SackPanelMenuProperties)
 				{
-					ItemProperties dlg = new ItemProperties();
+					ItemProperties dlg = new ItemProperties(Program.MainFormInstance);
 					dlg.Item = focusedItem;
 					dlg.ShowDialog();
 				}
 				else if (selectedItem == Resources.SackPanelMenuSeed)
 				{
-					ItemSeedDialog dlg = new ItemSeedDialog();
+					ItemSeedDialog dlg = new ItemSeedDialog(Program.MainFormInstance);
 					dlg.SelectedItem = focusedItem;
 					int origSeed = focusedItem.Seed;
 					dlg.ShowDialog();

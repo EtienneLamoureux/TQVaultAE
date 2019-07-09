@@ -88,7 +88,7 @@ namespace TQVaultAE.Presentation
 		/// </summary>
 		/// <param name="text">text containing the color tag</param>
 		/// <returns>System.Drawing.Color of the embedded color code</returns>
-		public static Color GetColorTag(this Item itm, string text)
+		public static Color GetColor(this Item itm, string text)
 		{
 			if (string.IsNullOrEmpty(text))
 				// Use the standard color code for the item
