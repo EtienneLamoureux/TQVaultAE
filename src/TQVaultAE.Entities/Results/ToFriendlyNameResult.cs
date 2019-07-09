@@ -6,6 +6,7 @@ namespace TQVaultAE.Entities.Results
 {
 	public class ToFriendlyNameResult
 	{
+		public string FullNameClean => FullName.RemoveAllTQTags();
 		public string FullName => new string[] {
 				PrefixInfoDescription
 				, BaseItemInfoQuality
@@ -16,6 +17,7 @@ namespace TQVaultAE.Entities.Results
 			}.RemoveEmptyAndSanitize()
 		.JoinWithoutStartingSpaces(" ");
 
+		public string FullNameBagTooltipClean => FullNameBagTooltip.RemoveAllTQTags();
 		public string FullNameBagTooltip => new string[] {
 					PrefixInfoDescription
 					, BaseItemInfoQuality

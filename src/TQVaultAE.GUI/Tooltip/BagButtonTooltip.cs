@@ -28,6 +28,7 @@ namespace TQVaultAE.GUI.Tooltip
 			SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
 			var wa = Screen.FromControl(this).WorkingArea;
+			this.flowLayoutPanelFriendlyNames.MaximumSize = new Size(wa.Width, wa.Height);// Tooltip can goes multi-columns (especially for bloated Relic Vault)
 
 			// Fill it outside of screen to avoid flickering
 			this.Location = new Point(0, wa.Height);
@@ -106,7 +107,8 @@ namespace TQVaultAE.GUI.Tooltip
 					.ToArray();
 				var friendlylist = itemlist
 					.Select(i => ItemService.GetFriendlyNames(i))
-					.OrderByDescending(d => d.FullNameBagTooltip.Length)
+					.OrderBy(d => d.FullNameBagTooltipClean)
+					//.OrderByDescending(d => d.FullNameBagTooltip.Length)
 					.GroupBy(d => d.FullNameBagTooltip)
 					.Select(g => new
 					{
