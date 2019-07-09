@@ -42,6 +42,9 @@ namespace TQVaultAE.GUI.Tooltip
 			this.Location = new Point(0, wa.Height);
 		}
 
+		// to avoid Mainform lost focus with this.TopMost = false
+		protected override bool ShowWithoutActivation => true;
+
 		public static void HideTooltip()
 		{
 			lock (ToImage)

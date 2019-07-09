@@ -33,6 +33,9 @@ namespace TQVaultAE.GUI.Tooltip
 			this.Location = new Point(0, wa.Height);
 		}
 
+		// to avoid Mainform lost focus with this.TopMost = false
+		protected override bool ShowWithoutActivation => true;
+
 		public static void InvalidateCache(params SackCollection[] sack)
 		{
 			var cacheentrytoremove = ToImage.Where(c => sack.Contains(c.Key.Sack)).Select(c => c.Key).ToList();
