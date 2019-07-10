@@ -398,8 +398,7 @@ namespace TQVaultAE.Config {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AllowCheats
-		{
+        public bool AllowCheats {
             get {
                 return ((bool)(this["AllowCheats"]));
             }
@@ -429,6 +428,18 @@ namespace TQVaultAE.Config {
             }
             set {
                 this["Mod"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("AlbertusMT")]
+        public string BaseFont {
+            get {
+                return ((string)(this["BaseFont"]));
+            }
+            set {
+                this["BaseFont"] = value;
             }
         }
     }
