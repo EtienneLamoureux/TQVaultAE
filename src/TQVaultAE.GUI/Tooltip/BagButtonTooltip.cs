@@ -163,7 +163,7 @@ namespace TQVaultAE.GUI.Tooltip
 				this.LeftSide = loc.X - this.Width;
 
 				// Put tooltip on right side of button to avoid mouse pointer overlap
-				loc.X += this.ButtonSack.Size.Width;
+				loc.X += Convert.ToInt32(this.ButtonSack.Size.Width * UIService.UI.Scale);
 
 				this.RightSide = loc.X;
 

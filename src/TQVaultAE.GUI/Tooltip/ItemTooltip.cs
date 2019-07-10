@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Input;
 using TQVaultAE.Entities;
 using TQVaultAE.Entities.Results;
 using TQVaultAE.GUI.Components;
@@ -15,10 +16,10 @@ namespace TQVaultAE.GUI.Tooltip
 	public partial class ItemTooltip : Form
 	{
 		private static Dictionary<Item, ItemTooltip> ItemTooltipOpened = new Dictionary<Item, ItemTooltip>();
-		private static Dictionary<(Item, float), (Bitmap Bmp, ToFriendlyNameResult Data)> ToImage = new Dictionary<(Item, float), (Bitmap, ToFriendlyNameResult)>();
+		private static Dictionary<(Item Item, float Scale, bool AltView), (Bitmap Bmp, ToFriendlyNameResult Data)> ToImage = new Dictionary<(Item, float, bool), (Bitmap, ToFriendlyNameResult)>();
 		private Item FocusedItem;
 		private ItemService ItemService;
-
+		private bool LeftAltToggled;
 		private SackPanel SackPanel;
 		private ResultsDialog ResultsDialog;
 
@@ -28,11 +29,11 @@ namespace TQVaultAE.GUI.Tooltip
 		{
 			InitializeComponent();
 			this.Owner = instance;
-			FocusedItem = focusedItem;
-			ItemService = itemService;
-
-			SackPanel = sackPanel;
-			ResultsDialog = resultsDialog;
+			this.FocusedItem = focusedItem;
+			this.ItemService = itemService;
+			this.LeftAltToggled = Keyboard.IsKeyToggled(Key.LeftAlt);
+			this.SackPanel = sackPanel;
+			this.ResultsDialog = resultsDialog;
 
 			SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
@@ -90,7 +91,7 @@ namespace TQVaultAE.GUI.Tooltip
 		/// </summary>
 		public void FillToolTip()
 		{
-			var key = (this.FocusedItem, UIService.UI.Scale);
+			var key = (this.FocusedItem, UIService.UI.Scale, this.LeftAltToggled);
 
 			// Redraw
 			if (ToImage.ContainsKey(key))
@@ -142,9 +143,41 @@ namespace TQVaultAE.GUI.Tooltip
 			}
 
 			// Attributes
-			foreach (var str in Data.PrefixAttributes) AddRow(str);
-			foreach (var str in Data.BaseAttributes) AddRow(str);
-			foreach (var str in Data.SuffixAttributes) AddRow(str);
+			if (this.LeftAltToggled)
+			{
+				string AdjustColor(string TQText, string label)
+				{
+					TQText = TQText.InsertAfterColorPrefix($"{label} : ");
+					return TQText.HasColorPrefix() ? TQText : $"{ItemStyle.Relic.TQColor().ColorTag()}{TQText}";
+				}
+
+				// Detailed display
+				if (Data.PrefixAttributes.Any())
+				{
+					AddRow(TOOLTIPSPACER);
+					AddRow(AdjustColor(this.Data.PrefixInfoDescription, Resources.ItemPropertiesLabelPrefixProperties), style: FontStyle.Bold);
+					foreach (var str in Data.PrefixAttributes) AddRow(str);
+				}
+				if (Data.BaseAttributes.Any())
+				{
+					AddRow(TOOLTIPSPACER);
+					AddRow(AdjustColor(this.Data.BaseItemInfoDescription, Resources.ItemPropertiesLabelBaseItemProperties), style: FontStyle.Bold);
+					foreach (var str in Data.BaseAttributes) AddRow(str);
+				}
+				if (Data.SuffixAttributes.Any())
+				{
+					AddRow(TOOLTIPSPACER);
+					AddRow(AdjustColor(this.Data.SuffixInfoDescription, Resources.ItemPropertiesLabelSuffixProperties), style: FontStyle.Bold);
+					foreach (var str in Data.SuffixAttributes) AddRow(str);
+				}
+			}
+			else
+			{
+				// Classic display
+				foreach (var str in Data.PrefixAttributes) AddRow(str);
+				foreach (var str in Data.BaseAttributes) AddRow(str);
+				foreach (var str in Data.SuffixAttributes) AddRow(str);
+			}
 
 			// formula Artifact Details goes after formula attributes
 			if (Data.FormulaeArtifactAttributes.Any())
