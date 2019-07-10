@@ -657,7 +657,7 @@ namespace TQVaultAE.GUI
             this.mapListComboBox.TabIndex = 26;
             this.mapListComboBox.SelectedIndexChanged += new System.EventHandler(this.MapListComboBoxSelectedIndexChanged);
             // 
-            // scalingLabelBaseFont
+            // baseFontLabel
             // 
             this.baseFontLabel.AutoSize = true;
             this.baseFontLabel.Font = new System.Drawing.Font("Albertus MT Light", 14.0625F);
@@ -668,7 +668,7 @@ namespace TQVaultAE.GUI
             this.baseFontLabel.TabIndex = 36;
             this.baseFontLabel.Text = "Font";
             // 
-            // fontComboBoxBase
+            // baseFontComboBox
             // 
             this.baseFontComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.baseFontComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
