@@ -47,6 +47,8 @@ namespace TQVaultAE.Entities
 			return t.HasValue;
 		}
 
+
+		static char[] _Delim = new char[] { ' ' };
 		/// <summary>
 		/// Preprare <paramref name="TQPath"/> for display
 		/// </summary>
@@ -56,7 +58,17 @@ namespace TQVaultAE.Entities
 		{
 			if (TQPath is null) return null;
 			var filename = Path.GetFileNameWithoutExtension(TQPath).Replace('_', ' ');
-			filename = Regex.Replace(filename, @"(?<number>\d+)", "(${number})");
+			filename = Regex.Replace(filename, @"(?<number>\d+)", "(${number})");// Enclose Numbers
+
+			filename = Regex
+				.Replace(filename, @"(?<TitleCaseStart>[A-Z][a-z]*)", " ${TitleCaseStart}")// Add space on Title Case
+				.Split(_Delim, StringSplitOptions.RemoveEmptyEntries)// Split on spaces
+				.SelectMany(w => Regex
+					.Replace(w, @"(?<Start>resist|light|attac|speed|reduc|life|poison)", " ${Start}") // Add space on word begining for non TitleCase words
+					.Split(_Delim, StringSplitOptions.RemoveEmptyEntries)// Split on spaces
+				).Select(w => w.ToFirstCharUpperCase()) // Capitalize words
+				.JoinString(" ");// Put it back together
+
 			return filename;
 		}
 
@@ -145,7 +157,7 @@ namespace TQVaultAE.Entities
 					foreach (var word in batch)
 					{
 						var foundColor = TQColorHelper.GetColorFromTaggedString(word);
-						if (line != string.Empty 
+						if (line != string.Empty
 							// Not a ColorTag alone
 							&& !(line.HasColorPrefix() && line.Length == 4) // TODO Should create line.IsColorTagOnly()
 						) line += ' ';
