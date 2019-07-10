@@ -18,6 +18,10 @@ namespace TQVaultAE.GUI.Tooltip
 		private ItemService ItemService;
 		public BagButtonBase ButtonSack;
 
+		private Rectangle CurrentWorkingArea;
+		private int RightSide;
+		private int LeftSide;
+
 		public BagButtonTooltip(MainForm instance, BagButtonBase button, ItemService itemService)
 		{
 			InitializeComponent();
@@ -27,11 +31,12 @@ namespace TQVaultAE.GUI.Tooltip
 
 			SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
-			var wa = Screen.FromControl(this).WorkingArea;
-			this.flowLayoutPanelFriendlyNames.MaximumSize = new Size(wa.Width, wa.Height);// Tooltip can goes multi-columns (especially for bloated Relic Vault)
+			this.CurrentWorkingArea = Screen.FromControl(this).WorkingArea;
+			// Tooltip can goes multi-columns (especially for bloated Relic Vault)
+			this.flowLayoutPanelFriendlyNames.MaximumSize = new Size(this.CurrentWorkingArea.Width, this.CurrentWorkingArea.Height);
 
 			// Fill it outside of screen to avoid flickering
-			this.Location = new Point(0, wa.Height);
+			this.Location = new Point(0, this.CurrentWorkingArea.Height);
 		}
 
 		// to avoid Mainform lost focus with this.TopMost = false
@@ -95,20 +100,16 @@ namespace TQVaultAE.GUI.Tooltip
 			this.flowLayoutPanelFriendlyNames.SuspendLayout();
 
 			if (ButtonSack.Sack.IsEmpty)
-			{
 				AddRow(Resources.VaultGroupBoxEmpty, ItemGfxHelper.Color(ItemStyle.Broken));
-			}
 			else
 			{
 
 				var itemlist = ButtonSack.Sack
-					//.Where(i => !ButtonSack.Excluded.Contains(i))// skip the item being dragged ! No need anymore
 					.Where(i => i.BaseItemId.Length != 0)// skip empty items
 					.ToArray();
 				var friendlylist = itemlist
 					.Select(i => ItemService.GetFriendlyNames(i))
 					.OrderBy(d => d.FullNameBagTooltipClean)
-					//.OrderByDescending(d => d.FullNameBagTooltip.Length)
 					.GroupBy(d => d.FullNameBagTooltip)
 					.Select(g => new
 					{
@@ -133,7 +134,6 @@ namespace TQVaultAE.GUI.Tooltip
 			ToImage[key] = raster;
 		}
 
-		private void AddRow(ToFriendlyNameResult infos) => AddRow(infos.FullNameBagTooltip, ItemGfxHelper.GetColor(infos.Item, infos.BaseItemInfoDescription));
 		private void AddRow(string friendlyName, Color color)
 		{
 			Control row = ItemTooltip.MakeRow(friendlyName, color, 10F, FontStyle.Regular, BGColor: this.flowLayoutPanelFriendlyNames.BackColor);
@@ -145,29 +145,47 @@ namespace TQVaultAE.GUI.Tooltip
 		{
 			this.FillSackToolTip();
 
-			var wa = Screen.FromControl(this).WorkingArea;
-
 			// Move it under BagButton
 			var loc = this.ButtonSack.PointToScreen(Point.Empty);
 			loc.Y += this.ButtonSack.Size.Height;
 
 			// Ajust position if tooltip size goes offscreen
 			var bottom = loc.Y + this.Height;
-			if (bottom > wa.Height)
+			if (bottom > this.CurrentWorkingArea.Height)
 			{
 				// Maximize vertical view
-				var offScreenHeight = bottom - wa.Height;
+				var offScreenHeight = bottom - this.CurrentWorkingArea.Height;
 				if (loc.Y - offScreenHeight < 0)
 					loc.Y = 0;// Do your best
 				else
 					loc.Y -= offScreenHeight;
 
+				this.LeftSide = loc.X - this.Width;
+
 				// Put tooltip on right side of button to avoid mouse pointer overlap
 				loc.X += this.ButtonSack.Size.Width;
+
+				this.RightSide = loc.X;
+
+				// Capture mouse move when overing the button to allow dynamic tooltip placement on left<->right
+				this.ButtonSack.MouseMove += ButtonSack_MouseMove;
 			}
 
 			this.Location = loc;
 		}
 
+		private void ButtonSack_MouseMove(object sender, MouseEventArgs e)
+		{
+			var loc = this.Location;
+
+			if (e.Location.X > this.ButtonSack.Width / 2)
+				loc.X = this.RightSide;
+			else
+				loc.X = this.LeftSide;
+
+			this.Location = loc;
+		}
+
+		private void BagButtonTooltip_FormClosing(object sender, FormClosingEventArgs e) => this.ButtonSack.MouseMove -= ButtonSack_MouseMove;
 	}
 }

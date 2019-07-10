@@ -40,7 +40,7 @@
 			this.flowLayoutPanelFriendlyNames.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.flowLayoutPanelFriendlyNames.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.flowLayoutPanelFriendlyNames.Location = new System.Drawing.Point(1, 1);
-			this.flowLayoutPanelFriendlyNames.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.flowLayoutPanelFriendlyNames.Margin = new System.Windows.Forms.Padding(2);
 			this.flowLayoutPanelFriendlyNames.Name = "flowLayoutPanelFriendlyNames";
 			this.flowLayoutPanelFriendlyNames.Size = new System.Drawing.Size(263, 204);
 			this.flowLayoutPanelFriendlyNames.TabIndex = 0;
@@ -58,7 +58,7 @@
 			this.Controls.Add(this.flowLayoutPanelFriendlyNames);
 			this.DoubleBuffered = true;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-			this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.Margin = new System.Windows.Forms.Padding(2);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "BagButtonTooltip";
@@ -67,6 +67,7 @@
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "BagButtonTooltip";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BagButtonTooltip_FormClosing);
 			this.Load += new System.EventHandler(this.BagButtonTooltip_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
