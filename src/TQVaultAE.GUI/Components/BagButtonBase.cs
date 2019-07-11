@@ -41,10 +41,6 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		private GetToolTip getToolTip;
 
-
-		// Static car j'en ai qu'un seul de visible à la fois 
-		private static BagButtonTooltip BagButtonTooltipCurrent;
-
 		/// <summary>
 		/// Initializes a new instance of the BagButtonBase class.
 		/// </summary>
@@ -159,22 +155,11 @@ namespace TQVaultAE.GUI.Components
 			if (this.getToolTip != null)
 			{
 				tooltip = this.getToolTip(this);
-				CloseTooltip();
-				BagButtonTooltipCurrent = new BagButtonTooltip(Program.MainFormInstance, this, new ItemService(MainForm.userContext));
-				BagButtonTooltipCurrent.Show();
+				BagButtonTooltip.ShowTooltip(Program.MainFormInstance, this);
 			}
 
 			this.IsOver = true;
 			Refresh();
-		}
-
-		private static void CloseTooltip()
-		{
-			if (BagButtonTooltipCurrent != null)
-			{
-				BagButtonTooltipCurrent.Close();
-				BagButtonTooltipCurrent = null;
-			}
 		}
 
 		/// <summary>
@@ -188,7 +173,7 @@ namespace TQVaultAE.GUI.Components
 			Refresh();
 
 			// Clear out the tooltip if it is being displayed.
-			CloseTooltip();
+			BagButtonTooltip.HideTooltip();
 		}
 
 		/// <summary>

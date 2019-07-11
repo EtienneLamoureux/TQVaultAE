@@ -61,6 +61,7 @@ namespace TQVaultAE.GUI.Tooltip
 		public static BagButtonTooltip ShowTooltip(MainForm instance, BagButtonBase button)
 		{
 			BagButtonTooltip _Current;
+			if (button?.Sack is null) return null;
 			lock (ToImage)
 			{
 				HideTooltip();
