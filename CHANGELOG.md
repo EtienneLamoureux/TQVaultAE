@@ -4,6 +4,9 @@
 - #180 Prevent relic stash error when opening the vault
 - #177 Fix cyrillic symbols support in the drop-down menus
 
+### Other
+- Update french translations
+
 ## 3.1.0
 ### Features
 - Add character statistics to the character equipment panel

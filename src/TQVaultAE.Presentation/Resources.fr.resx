@@ -300,10 +300,10 @@ Voulez-vous redémarrer TQVault ?</value>
     <value>N° aléatoire: {0} (0x{0:X8}) ({1:p3})</value>
   </data>
   <data name="ItemStyleArtifact" xml:space="preserve">
-    <value>Artefact</value>
+    <value>Artéfact</value>
   </data>
   <data name="ItemStyleBroken" xml:space="preserve">
-    <value>Cassé</value>
+    <value>Brisé</value>
   </data>
   <data name="ItemStyleCommon" xml:space="preserve">
     <value>Commun</value>
@@ -360,7 +360,7 @@ Voulez-vous redémarrer TQVault ?</value>
     <value>Quête personnalisée {0}</value>
   </data>
   <data name="MainFormDatabaseError" xml:space="preserve">
-    <value>Erreur en extrayant la database</value>
+    <value>Erreur en extrayant la base de données</value>
   </data>
   <data name="MainFormHoldingItem" xml:space="preserve">
     <value>Vous êtes en train de manipuler un objet.
@@ -938,11 +938,11 @@ Used to track changes in the translation file.</comment>
     <value>&lt;Vide&gt;</value>
   </data>
   <data name="MainFormDisableLoadAllFiles" xml:space="preserve">
-    <value>There was an error attempting to load all files in the last run.
-Would you like to disable loading all files?</value>
+    <value>Une erreur est survenue lors du dernier chargement de tous les fichiers.
+Voulez-vous désactiver le chargement de tous les fichiers?</value>
   </data>
   <data name="MainFormDisableLoadAllFilesCaption" xml:space="preserve">
-    <value>Disable loading all files?</value>
+    <value>Désactiver le chargement de tous les fichiers?</value>
   </data>
   <data name="MainFormSearchButtonText" xml:space="preserve">
     <value>Chercher</value>
@@ -1050,10 +1050,10 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
     <value>Vagabond</value>
   </data>
   <data name="tagCClass03" xml:space="preserve">
-    <value>Coquin</value>
+    <value>Rogue</value>
   </data>
   <data name="tagCClass04" xml:space="preserve">
-    <value>chasseur</value>
+    <value>Chasseur</value>
   </data>
   <data name="tagCClass05" xml:space="preserve">
     <value>Stormcaller</value>
@@ -1089,7 +1089,7 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
     <value>Conquérant</value>
   </data>
   <data name="tagCClass16" xml:space="preserve">
-    <value>Relieur d'orthographe</value>
+    <value>Relieur de sorts</value>
   </data>
   <data name="tagCClass17" xml:space="preserve">
     <value>Gardien</value>
@@ -1131,19 +1131,19 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
     <value>Sorcier</value>
   </data>
   <data name="tagCClass30" xml:space="preserve">
-    <value>sauge</value>
+    <value>Sage</value>
   </data>
   <data name="tagCClass31" xml:space="preserve">
     <value>Charmeur d'os</value>
   </data>
   <data name="tagCClass32" xml:space="preserve">
-    <value>Ranger</value>
+    <value>Rôdeur</value>
   </data>
   <data name="tagCClass33" xml:space="preserve">
     <value>Brigand</value>
   </data>
   <data name="tagCClass34" xml:space="preserve">
-    <value>démoniste</value>
+    <value>Démoniste</value>
   </data>
   <data name="tagCClass35" xml:space="preserve">
     <value>Illusionniste</value>
@@ -1161,7 +1161,7 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
     <value>Templier</value>
   </data>
   <data name="xtagCharacterClass04" xml:space="preserve">
-    <value>Evoker</value>
+    <value>Evocateur</value>
   </data>
   <data name="xtagCharacterClass05" xml:space="preserve">
     <value>Prophète</value>
@@ -1170,7 +1170,7 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
     <value>Haruspex</value>
   </data>
   <data name="xtagCharacterClass07" xml:space="preserve">
-    <value>Dreamkiller</value>
+    <value>Tueur de rêves</value>
   </data>
   <data name="xtagCharacterClass08" xml:space="preserve">
     <value>Ritualiste</value>
@@ -1188,7 +1188,7 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
     <value>Runesmith</value>
   </data>
   <data name="x2tag_class_earth_rm" xml:space="preserve">
-    <value>Pierrespeaker</value>
+    <value>Parle-pierre</value>
   </data>
   <data name="x2tag_class_storm_rm" xml:space="preserve">
     <value>Thunderer</value>
@@ -1200,7 +1200,7 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
     <value>Filou</value>
   </data>
   <data name="x2tag_class_nature_rm" xml:space="preserve">
-    <value>Skinchanger</value>
+    <value>Change-peaux</value>
   </data>
   <data name="x2tag_class_spirit_rm" xml:space="preserve">
     <value>Chaman</value>
@@ -1248,34 +1248,34 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
     <value>Temps joué</value>
   </data>
   <data name="NumberOfDeaths" xml:space="preserve">
-    <value>Des morts</value>
+    <value>Nb de morts</value>
   </data>
   <data name="NumberOfKills" xml:space="preserve">
-    <value>Tue</value>
+    <value>Mises à mort</value>
   </data>
   <data name="ExperienceFromKills" xml:space="preserve">
     <value>XP de Kills</value>
   </data>
   <data name="HealthPotionsUsed" xml:space="preserve">
-    <value>santé utilisés</value>
+    <value>Potions de santé utilisées</value>
   </data>
   <data name="ManaPotionsUsed" xml:space="preserve">
-    <value>mana utilisés</value>
+    <value>Potions de mana utilisées</value>
   </data>
   <data name="MaxLevel" xml:space="preserve">
     <value>Niveau maximum</value>
   </data>
   <data name="NumHitsReceived" xml:space="preserve">
-    <value>Hits recv</value>
+    <value>Coups reçus</value>
   </data>
   <data name="NumHitsInflicted" xml:space="preserve">
-    <value>Hits infligés</value>
+    <value>Coups donnés</value>
   </data>
   <data name="GreatestDamageInflicted" xml:space="preserve">
-    <value>Plus grand Dmg</value>
+    <value>Dégâts maximal</value>
   </data>
   <data name="GreatestMonster" xml:space="preserve">
-    <value>Plus grand mob</value>
+    <value>Monstre le plus fort</value>
   </data>
   <data name="CriticalHitsInflicted" xml:space="preserve">
     <value>Coups critiques</value>
