@@ -3404,7 +3404,7 @@ namespace TQVaultAE.Presentation.Html
 			Color color = ItemGfxHelper.GetColorTag(item, itemName);
 			itemName = Item.ClipColorTag(itemName);
 			itemName = string.Format(CultureInfo.InvariantCulture, "<font size=+1 color={0}><b>{1}</b></font>", HtmlHelper.HtmlColor(color), itemName);
-			return string.Format(CultureInfo.InvariantCulture, "<body bgcolor={0} text=white><font face=\"Albertus MT\" size=2>{1}", bgcolor, itemName);
+			return string.Format(CultureInfo.InvariantCulture, @"<body bgcolor={0} text=white><font face=""{2}"" size=2>{1}", bgcolor, itemName, FontHelper.FONT_ALBERTUSMT.Name);
 		}
 
 		public class LoadPropertiesResult
@@ -3424,16 +3424,16 @@ namespace TQVaultAE.Presentation.Html
 
 			string[] bareAttr = GetBareAttributes(item, filterExtra);
 
-			var pattern = "<body bgcolor={0} text=white><font face=\"Albertus MT\" size=1>{1}";
+			var pattern = @"<body bgcolor={0} text=white><font face=""{2}"" size=1>{1}";
 
 			// Base Item Attributes
-			if (bareAttr[0].Any()) result.BaseItemAttributes = string.Format(CultureInfo.InvariantCulture, pattern, result.BgColor, bareAttr[0]);
+			if (bareAttr[0].Any()) result.BaseItemAttributes = string.Format(CultureInfo.InvariantCulture, pattern, result.BgColor, bareAttr[0], FontHelper.FONT_ALBERTUSMT.Name);
 
 			// Prefix Attributes
-			if (bareAttr[2].Any()) result.PrefixAttributes = string.Format(CultureInfo.InvariantCulture, pattern, result.BgColor, bareAttr[2]);
+			if (bareAttr[2].Any()) result.PrefixAttributes = string.Format(CultureInfo.InvariantCulture, pattern, result.BgColor, bareAttr[2], FontHelper.FONT_ALBERTUSMT.Name);
 
 			// Suffix Attributes
-			if (bareAttr[3].Any()) result.SuffixAttributes = string.Format(CultureInfo.InvariantCulture, pattern, result.BgColor, bareAttr[3]);
+			if (bareAttr[3].Any()) result.SuffixAttributes = string.Format(CultureInfo.InvariantCulture, pattern, result.BgColor, bareAttr[3], FontHelper.FONT_ALBERTUSMT.Name);
 
 			return result;
 		}

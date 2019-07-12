@@ -13,12 +13,16 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Data;
 	using TQVaultAE.Presentation;
+	using EnumsNET;
+	using TQVaultAE.Entities.Results;
 
 	/// <summary>
 	/// Class for the Settings/Configuration Dialog
 	/// </summary>
 	internal partial class SettingsDialog : VaultForm
 	{
+		public string BaseFont { get; private set; }
+
 		/// <summary>
 		/// Indicates whether the title screen will be skipped on startup
 		/// </summary>
@@ -27,7 +31,7 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Save path for the vault files
 		/// </summary>
-		private string vaultPath;
+		public string VaultPath { get; private set; }
 
 		/// <summary>
 		/// Indicates whether item copying is allowed
@@ -107,22 +111,22 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Indicates whether the vault path has been changed
 		/// </summary>
-		private bool vaultPathChanged;
+		public bool VaultPathChanged { get; private set; }
 
 		/// <summary>
 		/// Indicates whether the play list filter has been changed
 		/// </summary>
-		private bool playerFilterChanged;
+		public bool PlayerFilterChanged { get; private set; }
 
 		/// <summary>
 		/// Indicates that any configuration item has been changed
 		/// </summary>
-		private bool configurationChanged;
+		public bool ConfigurationChanged { get; private set; }
 
 		/// <summary>
 		/// Indicates that the UI setting has changed.
 		/// </summary>
-		private bool uiSettingChanged;
+		public bool UISettingChanged { get; private set; }
 
 		/// <summary>
 		/// Indicates that the settings have been loaded
@@ -132,17 +136,18 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Indicates that the language setting has been changed
 		/// </summary>
-		private bool languageChanged;
+		public bool LanguageChanged { get; private set; }
 
 		/// <summary>
 		/// Indicates that the game language has been changed
 		/// </summary>
-		private bool gamePathChanged;
+		public bool GamePathChanged { get; private set; }
 
 		/// <summary>
 		/// Indicates that the custom map selection has changed
 		/// </summary>
-		private bool customMapsChanged;
+		public bool CustomMapsChanged { get; private set; }
+		private bool baseFontChanged;
 
 		/// <summary>
 		/// Initializes a new instance of the SettingsDialog class.
@@ -153,6 +158,7 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
+			this.characterEditCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
 			this.allowItemEditCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
 			this.allowItemCopyCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
 			this.skipTitleCheckBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
@@ -220,107 +226,17 @@ namespace TQVaultAE.GUI
 			this.DrawCustomBorder = true;
 
 			this.mapListComboBox.Items.Clear();
-			this.mapListComboBox.Items.Add(string.Empty);
 
-			string[] maps = TQData.GetCustomMapList();
+			var maps = TQData.GetCustomMapList();
 
-			if (maps != null && maps.Length > 0)
-			{
+			if (maps?.Any() ?? false)
 				this.mapListComboBox.Items.AddRange(maps);
-			}
+
 			if (!Config.Settings.Default.AllowCheats)
 			{
 				this.allowItemEditCheckBox.Visible = false;
 				this.allowItemCopyCheckBox.Visible = false;
 				this.characterEditCheckBox.Visible = false;
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether the game path has been changed
-		/// </summary>
-		public bool GamePathChanged
-		{
-			get
-			{
-				return this.gamePathChanged;
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether the language setting has been changed
-		/// </summary>
-		public bool LanguageChanged
-		{
-			get
-			{
-				return this.languageChanged;
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether the UI setting was changed.
-		/// </summary>
-		public bool UISettingChanged
-		{
-			get
-			{
-				return this.uiSettingChanged;
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether the custom map selection has changed
-		/// </summary>
-		public bool CustomMapsChanged
-		{
-			get
-			{
-				return this.customMapsChanged;
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether any configuration item has been changed
-		/// </summary>
-		public bool ConfigurationChanged
-		{
-			get
-			{
-				return this.configurationChanged;
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether the vault save path has been changed
-		/// </summary>
-		public bool VaultPathChanged
-		{
-			get
-			{
-				return this.vaultPathChanged;
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether the player list filter has been changed
-		/// </summary>
-		public bool PlayerFilterChanged
-		{
-			get
-			{
-				return this.playerFilterChanged;
-			}
-		}
-
-		/// <summary>
-		/// Gets the vault save path
-		/// </summary>
-		public string VaultPath
-		{
-			get
-			{
-				return this.vaultPath;
 			}
 		}
 
@@ -344,15 +260,15 @@ namespace TQVaultAE.GUI
 		{
 			this.folderBrowserDialog.Description = Resources.SettingsBrowseVault;
 			this.folderBrowserDialog.RootFolder = Environment.SpecialFolder.Desktop;
-			this.folderBrowserDialog.SelectedPath = this.vaultPath;
+			this.folderBrowserDialog.SelectedPath = this.VaultPath;
 			this.folderBrowserDialog.ShowDialog();
-			if (this.folderBrowserDialog.SelectedPath.Trim().ToUpperInvariant() != this.vaultPath.Trim().ToUpperInvariant())
+			if (this.folderBrowserDialog.SelectedPath.Trim().ToUpperInvariant() != this.VaultPath.Trim().ToUpperInvariant())
 			{
-				this.vaultPath = this.folderBrowserDialog.SelectedPath.Trim().ToUpperInvariant();
-				this.vaultPathTextBox.Text = this.vaultPath.Trim().ToUpperInvariant();
+				this.VaultPath = this.folderBrowserDialog.SelectedPath.Trim().ToUpperInvariant();
+				this.vaultPathTextBox.Text = this.VaultPath.Trim().ToUpperInvariant();
 				this.vaultPathTextBox.Invalidate();
-				this.configurationChanged = true;
-				this.vaultPathChanged = true;
+				this.ConfigurationChanged = true;
+				this.VaultPathChanged = true;
 			}
 		}
 
@@ -363,7 +279,7 @@ namespace TQVaultAE.GUI
 		/// <param name="e">EventArgs data</param>
 		private void ResetButtonClick(object sender, EventArgs e)
 		{
-			if (this.configurationChanged)
+			if (this.ConfigurationChanged)
 			{
 				this.LoadSettings();
 				this.UpdateDialogSettings();
@@ -383,7 +299,7 @@ namespace TQVaultAE.GUI
 				if (this.skipTitle == false)
 				{
 					this.skipTitle = true;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 			else
@@ -391,7 +307,7 @@ namespace TQVaultAE.GUI
 				if (this.skipTitle == true)
 				{
 					this.skipTitle = false;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 		}
@@ -416,8 +332,11 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void LoadSettings()
 		{
+			this.BaseFont = Config.Settings.Default.BaseFont;
+			this.baseFontChanged = false;
+
 			this.skipTitle = Config.Settings.Default.SkipTitle;
-			this.vaultPath = Config.Settings.Default.VaultPath;
+			this.VaultPath = Config.Settings.Default.VaultPath;
 			this.allowItemCopy = Config.Settings.Default.AllowItemCopy;
 			this.allowItemEdit = Config.Settings.Default.AllowItemEdit;
 			this.allowCharacterEdit = Config.Settings.Default.AllowCharacterEdit;
@@ -446,12 +365,12 @@ namespace TQVaultAE.GUI
 			this.playerReadonly = Config.Settings.Default.PlayerReadonly;
 
 			this.settingsLoaded = true;
-			this.configurationChanged = false;
-			this.vaultPathChanged = false;
-			this.playerFilterChanged = false;
-			this.languageChanged = false;
-			this.gamePathChanged = false;
-			this.uiSettingChanged = false;
+			this.ConfigurationChanged = false;
+			this.VaultPathChanged = false;
+			this.PlayerFilterChanged = false;
+			this.LanguageChanged = false;
+			this.GamePathChanged = false;
+			this.UISettingChanged = false;
 		}
 
 		/// <summary>
@@ -461,9 +380,7 @@ namespace TQVaultAE.GUI
 		{
 			// Check to see that we can update things
 			if (!this.settingsLoaded)
-			{
 				return;
-			}
 
 			// Build language combo box
 			this.languageComboBox.Items.Clear();
@@ -479,8 +396,8 @@ namespace TQVaultAE.GUI
 			if (!languages.Any()) languages = new ComboBoxItem[] { new ComboBoxItem() { Value = "English", DisplayName = "English" } };
 
 			this.languageComboBox.Items.AddRange(languages);
-			
-			this.vaultPathTextBox.Text = this.vaultPath;
+
+			this.vaultPathTextBox.Text = this.VaultPath;
 			this.skipTitleCheckBox.Checked = this.skipTitle;
 			this.allowItemEditCheckBox.Checked = this.allowItemEdit;
 			this.allowItemCopyCheckBox.Checked = this.allowItemCopy;
@@ -500,17 +417,27 @@ namespace TQVaultAE.GUI
 			this.playerReadonlyCheckbox.Checked = this.playerReadonly;
 
 			this.enableCustomMapsCheckBox.Checked = this.enableMods;
-			int ind = this.mapListComboBox.FindStringExact(this.customMap);
-			if (ind != -1)
-			{
-				this.mapListComboBox.SelectedIndex = ind;
-			}
+
+			var lst = this.mapListComboBox.Items.Cast<GamePathEntry>();
+			var found = lst.Where(m => m.Path == this.customMap).FirstOrDefault();
+			this.mapListComboBox.SelectedItem = found;
 
 			this.mapListComboBox.Enabled = this.enableMods;
 
 			this.languageComboBox.SelectedItem = languages.FirstOrDefault(cb => cb.Value.Equals(this.titanQuestLanguage, StringComparison.InvariantCultureIgnoreCase));
 
 			this.languageComboBox.Enabled = !this.detectLanguage;
+
+			// Build Font combo box
+			this.fontComboBoxBase.Items.Clear();
+			var listItem = Enums.GetMembers<FontFamilyList>()
+				.Select(m => new ComboBoxItem()
+				{
+					Value = m.AsString(EnumFormat.Name),
+					DisplayName = m.AsString(EnumFormat.Description, EnumFormat.Name)
+				}).ToArray();
+			this.fontComboBoxBase.Items.AddRange(listItem);
+			this.fontComboBoxBase.SelectedItem = listItem.Where(i => i.Value == this.BaseFont).FirstOrDefault() ?? listItem.First();
 		}
 
 		/// <summary>
@@ -520,10 +447,10 @@ namespace TQVaultAE.GUI
 		/// <param name="e">EventArgs data</param>
 		private void OkayButtonClick(object sender, EventArgs e)
 		{
-			if (this.configurationChanged)
+			if (this.ConfigurationChanged)
 			{
 				Config.Settings.Default.SkipTitle = this.skipTitle;
-				Config.Settings.Default.VaultPath = this.vaultPath;
+				Config.Settings.Default.VaultPath = this.VaultPath;
 				Config.Settings.Default.AllowItemCopy = this.allowItemCopy;
 				Config.Settings.Default.AllowItemEdit = this.allowItemEdit;
 				Config.Settings.Default.AllowCharacterEdit = this.allowCharacterEdit;
@@ -539,6 +466,7 @@ namespace TQVaultAE.GUI
 				Config.Settings.Default.LoadAllFiles = this.loadAllFiles;
 				Config.Settings.Default.SuppressWarnings = this.suppressWarnings;
 				Config.Settings.Default.PlayerReadonly = this.playerReadonly;
+				Config.Settings.Default.BaseFont = this.BaseFont;
 			}
 		}
 
@@ -554,7 +482,7 @@ namespace TQVaultAE.GUI
 				if (this.allowItemEdit == false)
 				{
 					this.allowItemEdit = true;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 			else
@@ -562,7 +490,7 @@ namespace TQVaultAE.GUI
 				if (this.allowItemEdit == true)
 				{
 					this.allowItemEdit = false;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 		}
@@ -579,7 +507,7 @@ namespace TQVaultAE.GUI
 				if (this.allowItemCopy == false)
 				{
 					this.allowItemCopy = true;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 			else
@@ -587,7 +515,7 @@ namespace TQVaultAE.GUI
 				if (this.allowItemCopy == true)
 				{
 					this.allowItemCopy = false;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 		}
@@ -604,7 +532,7 @@ namespace TQVaultAE.GUI
 				if (this.loadLastCharacter == false)
 				{
 					this.loadLastCharacter = true;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 			else
@@ -612,7 +540,7 @@ namespace TQVaultAE.GUI
 				if (this.loadLastCharacter == true)
 				{
 					this.loadLastCharacter = false;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 		}
@@ -629,7 +557,7 @@ namespace TQVaultAE.GUI
 				if (this.loadLastVault == false)
 				{
 					this.loadLastVault = true;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 			else
@@ -637,7 +565,7 @@ namespace TQVaultAE.GUI
 				if (this.loadLastVault == true)
 				{
 					this.loadLastVault = false;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 		}
@@ -655,10 +583,10 @@ namespace TQVaultAE.GUI
 				{
 					this.detectLanguage = true;
 					this.languageComboBox.Enabled = false;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 
 					// Force TQVault to restart to autodetect the language
-					this.languageChanged = true;
+					this.LanguageChanged = true;
 				}
 			}
 			else
@@ -667,7 +595,7 @@ namespace TQVaultAE.GUI
 				{
 					this.detectLanguage = false;
 					this.languageComboBox.Enabled = true;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 		}
@@ -688,10 +616,10 @@ namespace TQVaultAE.GUI
 					this.titanQuestPathTextBox.Enabled = false;
 					this.titanQuestPathBrowseButton.Enabled = false;
 					this.immortalThronePathBrowseButton.Enabled = false;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 
 					// Force TQVault to restart to autodetect the game path
-					this.gamePathChanged = true;
+					this.GamePathChanged = true;
 				}
 			}
 			else
@@ -703,7 +631,7 @@ namespace TQVaultAE.GUI
 					this.titanQuestPathTextBox.Enabled = true;
 					this.titanQuestPathBrowseButton.Enabled = true;
 					this.immortalThronePathBrowseButton.Enabled = true;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 		}
@@ -718,17 +646,13 @@ namespace TQVaultAE.GUI
 			// There was some problem getting the game language so we ignore changing it.
 			var gl = Database.DB.GameLanguage;
 			if (gl == null)
-			{
 				return;
-			}
 
 			this.titanQuestLanguage = ((ComboBoxItem)this.languageComboBox.SelectedItem).Value;
 			if (this.titanQuestLanguage.ToUpperInvariant() != gl.ToUpperInvariant())
-			{
-				this.languageChanged = true;
-			}
+				this.LanguageChanged = true;
 
-			this.configurationChanged = true;
+			this.ConfigurationChanged = true;
 		}
 
 		/// <summary>
@@ -738,12 +662,12 @@ namespace TQVaultAE.GUI
 		/// <param name="e">EventArgs data</param>
 		private void VaultPathTextBoxLeave(object sender, EventArgs e)
 		{
-			if (this.vaultPath.ToUpperInvariant() != this.vaultPathTextBox.Text.Trim().ToUpperInvariant())
+			if (this.VaultPath.ToUpperInvariant() != this.vaultPathTextBox.Text.Trim().ToUpperInvariant())
 			{
-				this.vaultPath = this.vaultPathTextBox.Text.Trim();
+				this.VaultPath = this.vaultPathTextBox.Text.Trim();
 				this.vaultPathTextBox.Invalidate();
-				this.configurationChanged = true;
-				this.vaultPathChanged = true;
+				this.ConfigurationChanged = true;
+				this.VaultPathChanged = true;
 			}
 		}
 
@@ -758,8 +682,8 @@ namespace TQVaultAE.GUI
 			{
 				this.titanQuestPath = this.titanQuestPathTextBox.Text.Trim();
 				this.titanQuestPathTextBox.Invalidate();
-				this.configurationChanged = true;
-				this.gamePathChanged = true;
+				this.ConfigurationChanged = true;
+				this.GamePathChanged = true;
 			}
 		}
 
@@ -774,8 +698,8 @@ namespace TQVaultAE.GUI
 			{
 				this.immortalThronePath = this.immortalThronePathTextBox.Text.Trim();
 				this.immortalThronePathTextBox.Invalidate();
-				this.configurationChanged = true;
-				this.gamePathChanged = true;
+				this.ConfigurationChanged = true;
+				this.GamePathChanged = true;
 			}
 		}
 
@@ -795,8 +719,8 @@ namespace TQVaultAE.GUI
 				this.titanQuestPath = this.folderBrowserDialog.SelectedPath.Trim().ToUpperInvariant();
 				this.titanQuestPathTextBox.Text = this.titanQuestPath.Trim().ToUpperInvariant();
 				this.titanQuestPathTextBox.Invalidate();
-				this.configurationChanged = true;
-				this.gamePathChanged = true;
+				this.ConfigurationChanged = true;
+				this.GamePathChanged = true;
 			}
 		}
 
@@ -816,8 +740,8 @@ namespace TQVaultAE.GUI
 				this.immortalThronePath = this.folderBrowserDialog.SelectedPath.Trim().ToUpperInvariant();
 				this.immortalThronePathTextBox.Text = this.immortalThronePath.Trim().ToUpperInvariant();
 				this.immortalThronePathTextBox.Invalidate();
-				this.configurationChanged = true;
-				this.gamePathChanged = true;
+				this.ConfigurationChanged = true;
+				this.GamePathChanged = true;
 			}
 		}
 
@@ -833,8 +757,8 @@ namespace TQVaultAE.GUI
 				if (this.enableMods == false)
 				{
 					this.enableMods = true;
-					this.configurationChanged = true;
-					this.customMapsChanged = true;
+					this.ConfigurationChanged = true;
+					this.CustomMapsChanged = true;
 					this.mapListComboBox.Enabled = true;
 				}
 			}
@@ -843,8 +767,9 @@ namespace TQVaultAE.GUI
 				if (this.enableMods == true)
 				{
 					this.enableMods = false;
-					this.configurationChanged = true;
-					this.customMapsChanged = true;
+					this.ConfigurationChanged = true;
+					this.CustomMapsChanged = true;
+					this.customMap = string.Empty;// Reset value
 					this.mapListComboBox.Enabled = false;
 				}
 			}
@@ -858,15 +783,14 @@ namespace TQVaultAE.GUI
 		private void MapListComboBoxSelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (!this.settingsLoaded)
-			{
 				return;
-			}
 
-			if (this.mapListComboBox.SelectedItem.ToString() != Config.Settings.Default.CustomMap)
+			var custommap = (this.mapListComboBox.SelectedItem as GamePathEntry)?.Path ?? string.Empty;
+			if (custommap != Config.Settings.Default.CustomMap)
 			{
-				this.customMap = this.mapListComboBox.SelectedItem.ToString();
-				this.configurationChanged = true;
-				this.customMapsChanged = true;
+				this.customMap = custommap;
+				this.ConfigurationChanged = true;
+				this.CustomMapsChanged = true;
 			}
 		}
 
@@ -882,7 +806,7 @@ namespace TQVaultAE.GUI
 				if (this.loadAllFiles == false)
 				{
 					this.loadAllFiles = true;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 			else
@@ -890,7 +814,7 @@ namespace TQVaultAE.GUI
 				if (this.loadAllFiles == true)
 				{
 					this.loadAllFiles = false;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 		}
@@ -907,7 +831,7 @@ namespace TQVaultAE.GUI
 				if (this.suppressWarnings == false)
 				{
 					this.suppressWarnings = true;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 			else
@@ -915,7 +839,7 @@ namespace TQVaultAE.GUI
 				if (this.suppressWarnings == true)
 				{
 					this.suppressWarnings = false;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 		}
@@ -927,7 +851,7 @@ namespace TQVaultAE.GUI
 				if (this.playerReadonly == false)
 				{
 					this.playerReadonly = true;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 			else
@@ -935,7 +859,7 @@ namespace TQVaultAE.GUI
 				if (this.playerReadonly == true)
 				{
 					this.playerReadonly = false;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 
@@ -948,7 +872,7 @@ namespace TQVaultAE.GUI
 				if (this.allowCharacterEdit == false)
 				{
 					this.allowCharacterEdit = true;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
 			}
 			else
@@ -956,8 +880,24 @@ namespace TQVaultAE.GUI
 				if (this.allowCharacterEdit == true)
 				{
 					this.allowCharacterEdit = false;
-					this.configurationChanged = true;
+					this.ConfigurationChanged = true;
 				}
+			}
+		}
+
+		private void FontComboBoxBase_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			var font = this.fontComboBoxBase.SelectedItem as ComboBoxItem;
+			if (font == null)
+				return;
+
+			if (font.Value != Config.Settings.Default.BaseFont)
+			{
+				this.BaseFont = font.Value;
+				this.baseFontChanged = true;
+				this.ConfigurationChanged = true;
+
+				this.UISettingChanged = true;// Force restart
 			}
 		}
 	}

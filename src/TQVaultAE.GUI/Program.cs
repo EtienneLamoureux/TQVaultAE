@@ -165,9 +165,7 @@ namespace TQVaultAE.GUI
 			// Set the map name.  Command line argument can override this setting in LoadResources().
 			string mapName = "main";
 			if (Config.Settings.Default.ModEnabled)
-			{
 				mapName = Config.Settings.Default.CustomMap;
-			}
 
 			TQData.MapName = mapName;
 		}

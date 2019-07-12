@@ -9,7 +9,9 @@ namespace TQVaultAE.Data
 	using System.Collections.Generic;
 	using System.Globalization;
 	using System.IO;
+	using System.Linq;
 	using System.Text;
+	using TQVaultAE.Entities.Results;
 	using TQVaultAE.Logs;
 
 	/// <summary>
@@ -229,11 +231,9 @@ namespace TQVaultAE.Data
 			get
 			{
 				if (IsCustom)
-				{
-					return Path.Combine(Path.Combine(Path.Combine(Path.Combine(ImmortalThroneSaveFolder, "SaveData"), "Sys"), MapName), "winsys.dxb");
-				}
+					return Path.Combine(MapName, "SaveData", "Sys", Path.GetFileName(MapName), "winsys.dxb");
 
-				return Path.Combine(Path.Combine(Path.Combine(ImmortalThroneSaveFolder, "SaveData"), "Sys"), "winsys.dxb");
+				return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", "winsys.dxb");
 			}
 		}
 
@@ -246,11 +246,9 @@ namespace TQVaultAE.Data
 			get
 			{
 				if (IsCustom)
-				{
-					return Path.Combine(Path.Combine(Path.Combine(Path.Combine(ImmortalThroneSaveFolder, "SaveData"), "Sys"), MapName), "miscsys.dxb");
-				}
+					return Path.Combine(MapName, "SaveData", "Sys", Path.GetFileName(MapName), "miscsys.dxb");
 
-				return Path.Combine(Path.Combine(Path.Combine(ImmortalThroneSaveFolder, "SaveData"), "Sys"), "miscsys.dxb");
+				return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", "miscsys.dxb");
 			}
 		}
 
@@ -417,9 +415,7 @@ namespace TQVaultAE.Data
 			string mapSaveFolder = "Main";
 
 			if (IsCustom)
-			{
 				mapSaveFolder = "User";
-			}
 
 			return Path.Combine(Path.Combine(ImmortalThroneSaveFolder, "SaveData"), mapSaveFolder);
 		}
@@ -483,38 +479,9 @@ namespace TQVaultAE.Data
 		/// Gets a list of all of the custom maps.
 		/// </summary>
 		/// <returns>List of custom maps in a string array</returns>
-		public static string[] GetCustomMapList()
+		public static GamePathEntry[] GetCustomMapList()
 		{
-			try
-			{
-				// Get all folders in the CustomMaps directory.
-				string saveFolder;
-
-				saveFolder = ImmortalThroneSaveFolder;
-
-				string[] mapFolders = Directory.GetDirectories(Path.Combine(saveFolder, "CustomMaps"), "*");
-
-				if (mapFolders == null || mapFolders.Length < 1)
-				{
-					return null;
-				}
-
-				List<string> customMapList = new List<string>(mapFolders.Length);
-
-				// Strip out the path information
-				foreach (string mapFolder in mapFolders)
-				{
-					customMapList.Add(Path.GetFileName(mapFolder));
-				}
-
-				// sort alphabetically
-				customMapList.Sort();
-				return customMapList.ToArray();
-			}
-			catch (DirectoryNotFoundException)
-			{
-				return null;
-			}
+			return GamePathResolver.ResolveTQModDirectories();
 		}
 
 		/// <summary>

@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using TQVaultAE.Data;
+using TQVaultAE.Entities.Results;
 
 namespace TQVaultAE.GUI.Services
 {
@@ -10,15 +13,91 @@ namespace TQVaultAE.GUI.Services
 	/// </summary>
 	public class GamePathResolverWin : IGamePathResolver
 	{
+		/// <summary>
+		/// Return all known custom map directories
+		/// </summary>
+		/// <returns></returns>
+		public GamePathEntry[] ResolveTQModDirectories()
+		{
+			return new GamePathEntry[][] { GetCustomMapListLegacy(), GetCustomMapListSteamWork() }
+				.Where(g => g?.Any() ?? false)
+				.SelectMany(g => g)
+				.ToArray();
+		}
+
+
+		/// <summary>
+		/// Gets a list of all of the custom maps "old path".
+		/// </summary>
+		/// <returns>List of custom maps in a string array</returns>
+		GamePathEntry[] GetCustomMapListSteamWork()
+		{
+			try
+			{
+				// Get all folders in the Steam\steamapps\workshop\content directory.
+				string TQITFolder = TQData.ImmortalThronePath;
+				var steamworkshopRootDir = Regex.Replace(TQITFolder, @"(?i)^(?<SteamappsRoot>.+steamapps).*", @"${SteamappsRoot}\workshop\content\475150");
+
+				if (steamworkshopRootDir == TQITFolder)// regex failed ! This is not a steamapps path
+					return null;
+
+				var modDir = Directory.GetDirectories(steamworkshopRootDir, "*");
+
+				if (!(modDir?.Any() ?? false))
+					return null;
+
+				var customMapList = modDir
+					// Find SubModDir having readable Mod names
+					.SelectMany(rd => Directory.GetDirectories(rd, "*"))
+					// Make entries
+					.Select(p => new GamePathEntry(p, $"SteamWorkshop : {Path.GetFileName(p)}"))
+					.OrderBy(e => e.DisplayName)// sort alphabetically
+					.ToArray();
+
+				return customMapList;
+			}
+			catch (DirectoryNotFoundException)
+			{
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Gets a list of all of the custom maps "old path".
+		/// </summary>
+		/// <returns>List of custom maps in a string array</returns>
+		GamePathEntry[] GetCustomMapListLegacy()
+		{
+			try
+			{
+				// Get all folders in the CustomMaps directory.
+				string saveFolder = TQData.ImmortalThroneSaveFolder;
+
+				var mapFolders = Directory.GetDirectories(Path.Combine(saveFolder, "CustomMaps"), "*");
+
+				if (!(mapFolders?.Any() ?? false))
+					return null;
+
+				var customMapList = mapFolders
+				.Select(p => new GamePathEntry(p, $"Legacy : {Path.GetFileName(p)}"))
+				.OrderBy(e => e.DisplayName)// sort alphabetically
+				.ToArray();
+
+				return customMapList;
+			}
+			catch (DirectoryNotFoundException)
+			{
+				return null;
+			}
+		}
+
 		public string ResolveTQ()
 		{
 			string titanQuestGamePath = null;
 
 			// ForceGamePath precedence for dev on PC with partial installation
-			if (string.IsNullOrEmpty(titanQuestGamePath) && !string.IsNullOrEmpty(Config.Settings.Default.ForceGamePath))
-			{
+			if (!string.IsNullOrEmpty(Config.Settings.Default.ForceGamePath))
 				titanQuestGamePath = Config.Settings.Default.ForceGamePath;
-			}
 
 			// We are either autodetecting or the path has not been set
 			//
@@ -45,7 +124,7 @@ namespace TQVaultAE.GUI.Services
 				{
 					//further looking for Steam library
 					//read libraryfolders.vdf
-					Regex vdfPathRegex = new Regex("\"\\d+\"\t+\"([^\"]+)\"");  // "2"		"D:\\games\\Steam"
+					Regex vdfPathRegex = new Regex(@"""\d+""\t+""([^""]+)""");  // "2"		"D:\\games\\Steam"
 					string[] libFile = File.ReadAllLines(steamPath + "\\SteamApps\\libraryfolders.vdf");
 
 					foreach (var line in libFile)
@@ -68,9 +147,7 @@ namespace TQVaultAE.GUI.Services
 			}
 
 			if (string.IsNullOrEmpty(titanQuestGamePath))
-			{
 				throw new InvalidOperationException("Unable to locate Titan Quest installation directory. Please edit TQVaultAE.ini to contain a valid path in the option 'ForceGamePath'.");
-			}
 
 			return titanQuestGamePath;
 		}
@@ -80,10 +157,8 @@ namespace TQVaultAE.GUI.Services
 			string titanQuestGamePath = null;
 
 			// ForceGamePath precedence for dev on PC with partial installation
-			if (string.IsNullOrEmpty(titanQuestGamePath) && !string.IsNullOrEmpty(Config.Settings.Default.ForceGamePath))
-			{
+			if (!string.IsNullOrEmpty(Config.Settings.Default.ForceGamePath))
 				titanQuestGamePath = Config.Settings.Default.ForceGamePath;
-			}
 
 			// We are either autodetecting or the path has not been set
 			//
@@ -103,9 +178,7 @@ namespace TQVaultAE.GUI.Services
 				string steamPath = ReadRegistryKey(Microsoft.Win32.Registry.CurrentUser, registryPath).Replace("/", "\\");
 
 				if (Directory.Exists(steamPath + steamTQPath))
-				{
 					titanQuestGamePath = steamPath + steamTQPath;
-				}
 				else
 				{
 					//further looking for Steam library
@@ -133,9 +206,7 @@ namespace TQVaultAE.GUI.Services
 			}
 
 			if (string.IsNullOrEmpty(titanQuestGamePath))
-			{
 				throw new InvalidOperationException("Unable to locate Titan Quest installation directory. Please edit TQVaultAE.ini to contain a valid path in the option 'ForceGamePath'.");
-			}
 
 			return titanQuestGamePath;
 		}
@@ -158,9 +229,7 @@ namespace TQVaultAE.GUI.Services
 			{
 				key = key.OpenSubKey(path[i]);
 				if (key == null)
-				{
 					return string.Empty;
-				}
 			}
 
 			return (string)key.GetValue(path[valueKey]);

@@ -1,4 +1,6 @@
-﻿namespace TQVaultAE.Data
+﻿using TQVaultAE.Entities.Results;
+
+namespace TQVaultAE.Data
 {
 	/// <summary>
 	/// Used to inject environment specific code in agnostic layer 
@@ -7,5 +9,6 @@
 	{
 		string ResolveTQ();
 		string ResolveTQIT();
+		GamePathEntry[] ResolveTQModDirectories();
 	}
 }

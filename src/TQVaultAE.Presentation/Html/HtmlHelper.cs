@@ -23,7 +23,7 @@ namespace TQVaultAE.Presentation.Html
 		/// </summary>
 		public static string TooltipBodyTag(float Scale)
 		{
-			return string.Format(CultureInfo.CurrentCulture, "<body bgcolor=#2e291f text=white><font face=\"Albertus MT\" size={0}>", Convert.ToInt32(9.0F * Scale));
+			return string.Format(CultureInfo.CurrentCulture, @"<body bgcolor=#2e291f text=white><font face=""{1}"" size={0}>", Convert.ToInt32(9.0F * Scale), FontHelper.FONT_ALBERTUSMT.Name);
 		}
 
 		/// <summary>
@@ -31,7 +31,7 @@ namespace TQVaultAE.Presentation.Html
 		/// </summary>
 		public static string TooltipTitleTag(float Scale)
 		{
-			return string.Format(CultureInfo.CurrentCulture, "<body bgcolor=#2e291f text=white><font face=\"Albertus MT\" size={0}>", Convert.ToInt32(10.0F * Scale));
+			return string.Format(CultureInfo.CurrentCulture, @"<body bgcolor=#2e291f text=white><font face=""{1}"" size={0}>", Convert.ToInt32(10.0F * Scale), FontHelper.FONT_ALBERTUSMT.Name);
 		}
 
 		/// <summary>

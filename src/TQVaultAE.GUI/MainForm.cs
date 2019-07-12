@@ -873,11 +873,6 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				//read map name from ini file, main section
-				if (!String.IsNullOrEmpty(Config.Settings.Default.Mod))
-				{
-					TQData.MapName = Config.Settings.Default.Mod;
-				}
 
 				if (!Config.Settings.Default.AllowCheats)
 				{
@@ -890,9 +885,7 @@ namespace TQVaultAE.GUI
 
 				// Check to see if we loaded something from the command line.
 				if (args.HasMapName)
-				{
 					TQData.MapName = args.MapName;
-				}
 
 				this.resourcesLoaded = true;
 				this.backgroundWorker1.ReportProgress(1);
