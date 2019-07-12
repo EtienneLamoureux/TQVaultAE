@@ -1,4 +1,9 @@
 # Changelog
+## 3.1.1
+### Bugs
+- #180 Prevent relic stash error when opening the vault
+- #177 Fix cyrillic symbols support in the drop-down menus
+
 ## 3.1.0
 ### Features
 - Add character statistics to the character equipment panel
