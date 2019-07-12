@@ -100,20 +100,9 @@ namespace TQVaultAE.GUI
 		private int lastBag;
 
 		/// <summary>
-		/// Instance of the Action Button
-		/// This is the animated button which pops relics and separates stacks
-		/// </summary>
-		private ActionButton actionButton;
-
-		/// <summary>
 		/// Holds the current program version
 		/// </summary>
 		private string currentVersion;
-
-		/// <summary>
-		/// Text in the tool tip
-		/// </summary>
-		private string tooltipText;
 
 		/// <summary>
 		/// Signals that the configuration UI was loaded and the user changed something in there.

@@ -147,7 +147,6 @@ namespace TQVaultAE.GUI
 		/// Indicates that the custom map selection has changed
 		/// </summary>
 		public bool CustomMapsChanged { get; private set; }
-		private bool baseFontChanged;
 
 		/// <summary>
 		/// Initializes a new instance of the SettingsDialog class.
@@ -335,7 +334,6 @@ namespace TQVaultAE.GUI
 		private void LoadSettings()
 		{
 			this.BaseFont = Config.Settings.Default.BaseFont;
-			this.baseFontChanged = false;
 
 			this.skipTitle = Config.Settings.Default.SkipTitle;
 			this.VaultPath = Config.Settings.Default.VaultPath;
@@ -896,7 +894,6 @@ namespace TQVaultAE.GUI
 			if (font.Value != Config.Settings.Default.BaseFont)
 			{
 				this.BaseFont = font.Value;
-				this.baseFontChanged = true;
 				this.ConfigurationChanged = true;
 
 				this.UISettingChanged = true;// Force restart
