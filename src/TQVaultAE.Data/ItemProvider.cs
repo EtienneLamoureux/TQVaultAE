@@ -1643,7 +1643,7 @@ namespace TQVaultAE.Data
 			#region flavor text
 
 			// Removed Scroll flavor text since it gets printed by the skill effect code
-			if ((itm.IsQuestItem || itm.IsRelic || itm.IsPotion || itm.IsParchment || itm.IsScroll) && !string.IsNullOrWhiteSpace(itm.baseItemInfo?.StyleTag))
+			if ((itm.IsPotion || itm.IsRelic || itm.IsScroll || itm.IsParchment || itm.IsQuestItem) && !string.IsNullOrWhiteSpace(itm.baseItemInfo?.StyleTag))
 			{
 				string flavor = Database.DB.GetFriendlyName(itm.baseItemInfo.StyleTag);
 				if (flavor != null)

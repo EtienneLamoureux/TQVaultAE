@@ -534,10 +534,8 @@ namespace TQVaultAE.Entities
 			{
 				if (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis)
 				{
-					if (this.BaseItemId.ToUpperInvariant().IndexOf("\\PARCHMENTS\\", StringComparison.OrdinalIgnoreCase) >= 0)
-					{
+					if (this.BaseItemId.ToUpperInvariant().IndexOf("PARCHMENT", StringComparison.OrdinalIgnoreCase) >= 0)
 						return true;
-					}
 				}
 
 				return false;
@@ -773,6 +771,9 @@ namespace TQVaultAE.Entities
 			}
 		}
 
+		const string QUEST = "QUEST";
+		const string QUESTS = "QUESTS";
+		const string QUESTITEM = "QUESTITEM";
 		/// <summary>
 		/// Gets a value indicating whether the item is a quest item.
 		/// </summary>
@@ -782,22 +783,17 @@ namespace TQVaultAE.Entities
 			{
 				if (this.baseItemInfo != null)
 				{
-					if (this.baseItemInfo.ItemClassification.ToUpperInvariant().Equals("QUEST"))
-					{
+					if (this.baseItemInfo.ItemClassification.ToUpperInvariant().Equals(QUEST)
+						|| this.baseItemInfo.ItemClass.ToUpperInvariant().Equals(QUESTITEM))
 						return true;
-					}
 				}
 				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis)
 				{
-					if (this.BaseItemId.ToUpperInvariant().IndexOf("QUEST", StringComparison.OrdinalIgnoreCase) >= 0)
-					{
+					if (this.BaseItemId.ToUpperInvariant().IndexOf(QUEST, StringComparison.OrdinalIgnoreCase) >= 0)
 						return true;
-					}
 				}
-				else if (this.BaseItemId.ToUpperInvariant().IndexOf("QUESTS", StringComparison.OrdinalIgnoreCase) >= 0)
-				{
+				else if (this.BaseItemId.ToUpperInvariant().IndexOf(QUESTS, StringComparison.OrdinalIgnoreCase) >= 0)
 					return true;
-				}
 
 				return false;
 			}
