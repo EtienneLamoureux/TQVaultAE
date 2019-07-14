@@ -15,6 +15,7 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Logs;
 	using TQVaultAE.Entities;
 	using TQVaultAE.Presentation;
+	using TQVaultAE.GUI.Tooltip;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel in the stash panel.
@@ -523,6 +524,9 @@ namespace TQVaultAE.GUI.Components
 
 				// and now do a MouseMove() to properly draw the new drag item and/or focus
 				this.MouseMoveCallback(sender, e);
+
+				ItemTooltip.HideTooltip();
+				BagButtonTooltip.InvalidateCache(this.Sack);
 			}
 		}
 

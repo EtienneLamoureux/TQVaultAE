@@ -194,7 +194,7 @@ namespace TQVaultAE.GUI.Components
 		{
 			get
 			{
-				return this.dragInfo.IsActive && this.dragInfo.CanBeModified && this.dragInfo.Item.HasRelic;
+				return this.dragInfo.IsActive && this.dragInfo.CanBeModified && this.dragInfo.Item.HasRelicSlot1;
 			}
 		}
 
@@ -751,7 +751,7 @@ namespace TQVaultAE.GUI.Components
 					(float)this.dragLocation.Y - this.dragInfo.MouseOffset.Y,
 					UIService.UI.Scale,
 					this.dragInfo.Item.Number,
-					this.dragInfo.Item.HasRelic);
+					this.dragInfo.Item.HasRelicSlot1);
 			}
 		}
 

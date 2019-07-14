@@ -8,11 +8,9 @@ namespace TQVaultAE.GUI.Components
 	using System;
 	using System.Drawing;
 	using System.Windows.Forms;
-	using Tooltip;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Entities;
 	using TQVaultAE.Presentation;
-	using TQVaultAE.Presentation.Html;
 
 	/// <summary>
 	/// Class for handling the stash panel ui functions
@@ -91,7 +89,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="dragInfo">ItemDragInfo instance</param>
 		/// <param name="panelSize">Size of the panel in cells</param>
 		/// <param name="tooltip">ToolTip instance</param>
-		public StashPanel(ItemDragInfo dragInfo, Size panelSize, TTLib tooltip) : base(dragInfo, 4, panelSize, tooltip, 0, AutoMoveLocation.Stash)
+		public StashPanel(ItemDragInfo dragInfo, Size panelSize) : base(dragInfo, 4, panelSize, 0, AutoMoveLocation.Stash)
 		{
 			this.equipmentPanel = new EquipmentPanel(16, 14, dragInfo, AutoMoveLocation.Stash);
 
@@ -447,7 +445,7 @@ namespace TQVaultAE.GUI.Components
 		/// <returns>The new StashButton that is created.</returns>
 		protected StashButton CreateBagButton(int bagNumber, int numberOfBags)
 		{
-			StashButton button = new StashButton(bagNumber, new GetToolTip(this.GetSackToolTip), this.Tooltip);
+			StashButton button = new StashButton(bagNumber, new GetToolTip(this.GetSackToolTip));
 
 			float buttonWidth = (float)Resources.StashTabUp.Width;
 			float buttonHeight = (float)Resources.StashTabUp.Height;
@@ -711,20 +709,20 @@ namespace TQVaultAE.GUI.Components
 				sack = this.relicVaultStash.Sack;
 			}
 
+			button.Sack = sack;
+
 			if (sack == null || sack.IsEmpty)
 			{
 				return null;
 			}
 
 			// skip the item being dragged
-			Item[] excluded = null;
 			if (this.DragInfo.IsActive)
 			{
-				excluded = new Item[] { this.DragInfo.Item };
+				button.Excluded = new Item[] { this.DragInfo.Item };
 			}
 
-			var html = ItemHtmlHelper.GetSackToolTip(sack, excluded);
-			return html;
+			return null;
 		}
 
 		/// <summary>

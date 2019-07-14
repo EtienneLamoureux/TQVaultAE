@@ -35,10 +35,10 @@ namespace TQVaultAE.Services.Models.Search
 			this.SackNumber = sackNumber;
 			this.SackType = sackType;
 			this.Item = item ?? throw new ArgumentNullException(nameof(item));
-			this.ItemName = Entities.Item.ClipColorTag(ItemProvider.ToFriendlyName(item));
+			this.ItemName = TQColorHelper.RemoveLeadingColorTag(ItemProvider.ToFriendlyName(item));
 			ItemStyle computedItemStyle = item.ItemStyle;
 			this.ItemStyle = ItemStyleHelper.Translate(computedItemStyle);
-			this.Color = ItemGfxHelper.GetColor(computedItemStyle);
+			this.Color = ItemGfxHelper.Color(computedItemStyle);
 			var requirementVariables = ItemProvider.GetRequirementVariables(item).Values;
 			this.RequiredLevel = GetRequirement(requirementVariables, "levelRequirement");
 		}

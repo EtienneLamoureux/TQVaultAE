@@ -12,7 +12,7 @@ using TQVaultAE.Services.Models.Search;
 
 namespace TQVaultAE.GUI
 {
-	internal partial class MainForm
+	public partial class MainForm
 	{
 		private SearchService searchService = null;
 
@@ -71,7 +71,7 @@ namespace TQVaultAE.GUI
 		/// <param name="searchString">string that we are searching for</param>
 		private void Search(string searchString)
 		{
-			if (this.searchService is null) this.searchService = new SearchService(this.userContext);
+			if (this.searchService is null) this.searchService = new SearchService(userContext);
 
 			if (string.IsNullOrWhiteSpace(searchString)) return;
 
@@ -91,7 +91,7 @@ namespace TQVaultAE.GUI
 			}
 
 			// Display a dialog with the results.
-			ResultsDialog dlg = new ResultsDialog();
+			ResultsDialog dlg = new ResultsDialog(Program.MainFormInstance);
 			dlg.ResultChanged += new ResultsDialog.EventHandler<ResultChangedEventArgs>(this.SelectResult);
 			dlg.ResultsList.Clear();
 			dlg.ResultsList.AddRange(results);

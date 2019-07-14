@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TQVaultAE.Data;
 using TQVaultAE.Entities;
+using TQVaultAE.Entities.Results;
 using TQVaultAE.Logs;
 
 namespace TQVaultAE.Services
@@ -19,17 +20,6 @@ namespace TQVaultAE.Services
 			this.userContext = userContext;
 		}
 
-		public class LoadPlayerResult
-		{
-			public bool IsCustom;
-			public string PlayerFile;
-			public PlayerCollection Player;
-			public Stash Stash;
-			public bool? StashFound;
-			public ArgumentException PlayerArgumentException;
-			public string StashFile;
-			public ArgumentException StashArgumentException;
-		}
 
 		/// <summary>
 		/// Loads a player using the drop down list.

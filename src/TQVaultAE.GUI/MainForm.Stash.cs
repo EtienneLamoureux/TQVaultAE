@@ -12,7 +12,7 @@ using TQVaultAE.Services;
 
 namespace TQVaultAE.GUI
 {
-	internal partial class MainForm
+	public partial class MainForm
 	{
 		private StashService stashService = null;
 
@@ -24,7 +24,7 @@ namespace TQVaultAE.GUI
 			// size params are width, height
 			Size panelSize = new Size(17, 16);
 
-			this.stashPanel = new StashPanel(this.dragInfo, panelSize, this.tooltip);
+			this.stashPanel = new StashPanel(this.DragInfo, panelSize);
 
 			// New location in bottom right of the Main Form.
 			//Align to playerPanel
@@ -78,7 +78,7 @@ namespace TQVaultAE.GUI
 
 		private void InitStashService()
 		{
-			if (this.stashService is null) this.stashService = new StashService(this.userContext);
+			if (this.stashService is null) this.stashService = new StashService(userContext);
 		}
 
 

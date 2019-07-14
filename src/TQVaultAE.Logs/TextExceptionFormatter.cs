@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Reflection;
 using System.Security;
-using System.Security.Principal;
 using System.Text;
 using System.Threading;
 
@@ -21,7 +21,7 @@ namespace TQVaultAE.Logs
 		private readonly Exception exception;
 		private NameValueCollection additionalInfo;
 		private StringBuilder stringBuilder = new StringBuilder(1024);
-		private static readonly ArrayList IgnoredProperties = new ArrayList(new string[] { "Source", "Message", "HelpLink", "InnerException", "StackTrace" });
+		private static readonly List<string> IgnoredProperties = new List<string>() { "Source", "Message", "HelpLink", "InnerException", "StackTrace" };
 
 		/// <summary>
 		/// Ctrs
@@ -130,9 +130,8 @@ namespace TQVaultAE.Logs
 		{
 			object propertyAccessFailed;
 			if (exceptionToFormat == null)
-			{
 				throw new ArgumentNullException("exceptionToFormat");
-			}
+
 			Type type = exceptionToFormat.GetType();
 			PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 			FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
@@ -256,9 +255,6 @@ namespace TQVaultAE.Logs
 					this.additionalInfo.Add("FullName", Assembly.GetExecutingAssembly().FullName);
 					this.additionalInfo.Add("AppDomainName", AppDomain.CurrentDomain.FriendlyName);
 					this.additionalInfo.Add("ThreadIdentity", Thread.CurrentPrincipal.Identity.Name);
-#if !(NETSTANDARD || NETCOREAPP)
-					this.additionalInfo.Add("WindowsIdentity", GetWindowsIdentity());
-#endif
 				}
 				return this.additionalInfo;
 			}
@@ -276,21 +272,7 @@ namespace TQVaultAE.Logs
 			}
 		}
 
-#if !(NETSTANDARD || NETCOREAPP)
-		private static string GetWindowsIdentity()
-		{
-			try
-			{
-				return WindowsIdentity.GetCurrent().Name;
-			}
-			catch (SecurityException)
-			{
-				return "Permission Denied";
-			}
-		}
-#endif
-
-#region FormatException
+		#region FormatException
 
 		/// <summary>
 		/// Format une exception en utilisant <see cref="SizeOnDisk.Utilities.TextExceptionFormatter"/>
@@ -323,6 +305,6 @@ Exception :
 			return tef.Format();
 		}
 
-#endregion
+		#endregion
 	}
 }

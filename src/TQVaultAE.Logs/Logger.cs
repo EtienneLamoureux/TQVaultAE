@@ -3,11 +3,8 @@ using log4net.Config;
 using log4net.Core;
 using log4net.Repository;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace TQVaultAE.Logs
 {

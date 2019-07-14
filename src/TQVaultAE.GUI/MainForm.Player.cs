@@ -14,7 +14,7 @@ using TQVaultAE.Services;
 
 namespace TQVaultAE.GUI
 {
-	internal partial class MainForm
+	public partial class MainForm
 	{
 		private PlayerService playerService = null;
 
@@ -46,7 +46,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void GetPlayerList()
 		{
-			if (this.playerService is null) this.playerService = new PlayerService(this.userContext);
+			if (this.playerService is null) this.playerService = new PlayerService(userContext);
 
 			// Initialize the character combo-box
 			this.characterComboBox.Items.Clear();
@@ -88,7 +88,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void CreatePlayerPanel()
 		{
-			this.playerPanel = new PlayerPanel(this.dragInfo, 4, new Size(12, 5), new Size(8, 5), this.tooltip);
+			this.playerPanel = new PlayerPanel(this.DragInfo, 4, new Size(12, 5), new Size(8, 5));
 
 			this.playerPanel.Location = new Point(
 				this.ClientSize.Width - (this.playerPanel.Width + Convert.ToInt32(22.0F * UIService.UI.Scale)),

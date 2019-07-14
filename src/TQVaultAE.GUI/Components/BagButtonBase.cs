@@ -6,10 +6,14 @@
 namespace TQVaultAE.GUI.Components
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Drawing;
+	using System.Linq.Expressions;
 	using System.Windows.Forms;
 	using Tooltip;
+	using TQVaultAE.Entities;
 	using TQVaultAE.Presentation;
+	using TQVaultAE.Services;
 
 	/// <summary>
 	/// Delegate for displaying a tooltip with the bag's contents.
@@ -23,6 +27,9 @@ namespace TQVaultAE.GUI.Components
 	/// </summary>
 	public abstract class BagButtonBase : Panel
 	{
+		internal SackCollection Sack;
+		internal IEnumerable<Item> Excluded = Array.Empty<Item>();
+
 		/// <summary>
 		/// Flag to signal when the mouse is clicked on the button.
 		/// Used to display alternate graphic.
@@ -35,21 +42,14 @@ namespace TQVaultAE.GUI.Components
 		private GetToolTip getToolTip;
 
 		/// <summary>
-		/// Tooltip instance
-		/// </summary>
-		private TTLib toolTip;
-
-		/// <summary>
 		/// Initializes a new instance of the BagButtonBase class.
 		/// </summary>
 		/// <param name="bagNumber">number of the bag for display</param>
 		/// <param name="getToolTip">Tooltip delegate</param>
-		/// <param name="tooltip">Tooltip instance</param>
-		protected BagButtonBase(int bagNumber, GetToolTip getToolTip, TTLib tooltip)
+		protected BagButtonBase(int bagNumber, GetToolTip getToolTip)
 		{
 			this.getToolTip = getToolTip;
 			this.ButtonNumber = bagNumber;
-			this.toolTip = tooltip;
 
 			BackColor = Color.Black;
 
@@ -155,11 +155,7 @@ namespace TQVaultAE.GUI.Components
 			if (this.getToolTip != null)
 			{
 				tooltip = this.getToolTip(this);
-			}
-
-			if (this.toolTip != null)
-			{
-				this.toolTip.ChangeText(tooltip);
+				BagButtonTooltip.ShowTooltip(Program.MainFormInstance, this);
 			}
 
 			this.IsOver = true;
@@ -177,10 +173,7 @@ namespace TQVaultAE.GUI.Components
 			Refresh();
 
 			// Clear out the tooltip if it is being displayed.
-			if (this.toolTip != null)
-			{
-				this.toolTip.ChangeText(null);
-			}
+			BagButtonTooltip.HideTooltip();
 		}
 
 		/// <summary>
@@ -241,18 +234,14 @@ namespace TQVaultAE.GUI.Components
 		{
 			// Make sure we have something to test.
 			if (graphics == null || font == null)
-			{
 				return null;
-			}
 
 			// Make sure we use the bolded font for testing since the passed font may not be bolded.
 			Font testFont = new Font(font, FontStyle.Bold);
 
 			// See if the text can fit on the button and if it does we do not need to do anything.
 			if (TextRenderer.MeasureText(this.ButtonText, testFont).Width < this.Width)
-			{
 				return font;
-			}
 
 			// Try to get a substring of the button text to find the best size.
 			string teststring = this.GetTestString(this.ButtonText);

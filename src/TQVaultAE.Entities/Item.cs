@@ -87,18 +87,18 @@ namespace TQVaultAE.Entities
 		/// <summary>
 		/// String containing all of the item's attributes
 		/// </summary>
-		public string attributesString;
+		public string[] attributesStringArray = new string[] { };
 
 		/// <summary>
 		/// String containing all of the item's requirements
 		/// </summary>
-		public string requirementsString;
+		public string[] requirementsStringArray = new string[] { };
 
 		/// <summary>
 		/// String containing other items in a set
 		/// if this is a set item.
 		/// </summary>
-		public string setItemsString;
+		public string[] setItemsStringArray = new string[] { };
 
 		/// <summary>
 		/// Used for level calculation
@@ -136,6 +136,19 @@ namespace TQVaultAE.Entities
 
 			// Make sure the translatable strings have a value.
 			SetDefaultStrings();
+		}
+
+
+		public string GameExtensionSuffix
+		{
+			get
+			{
+				string ext = ItemStyle.Quest.TQColor().ColorTag();
+				if (this.IsImmortalThrone) ext += "(IT)";
+				else if (this.IsRagnarok) ext += "(RAG)";
+				else if (this.IsAtlantis) ext += "(ATL)";
+				return ext;
+			}
 		}
 
 
@@ -521,10 +534,8 @@ namespace TQVaultAE.Entities
 			{
 				if (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis)
 				{
-					if (this.BaseItemId.ToUpperInvariant().IndexOf("\\PARCHMENTS\\", StringComparison.OrdinalIgnoreCase) >= 0)
-					{
+					if (this.BaseItemId.ToUpperInvariant().IndexOf("PARCHMENT", StringComparison.OrdinalIgnoreCase) >= 0)
 						return true;
-					}
 				}
 
 				return false;
@@ -760,6 +771,9 @@ namespace TQVaultAE.Entities
 			}
 		}
 
+		const string QUEST = "QUEST";
+		const string QUESTS = "QUESTS";
+		const string QUESTITEM = "QUESTITEM";
 		/// <summary>
 		/// Gets a value indicating whether the item is a quest item.
 		/// </summary>
@@ -769,22 +783,17 @@ namespace TQVaultAE.Entities
 			{
 				if (this.baseItemInfo != null)
 				{
-					if (this.baseItemInfo.ItemClassification.ToUpperInvariant().Equals("QUEST"))
-					{
+					if (this.baseItemInfo.ItemClassification.ToUpperInvariant().Equals(QUEST)
+						|| this.baseItemInfo.ItemClass.ToUpperInvariant().Equals(QUESTITEM))
 						return true;
-					}
 				}
 				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis)
 				{
-					if (this.BaseItemId.ToUpperInvariant().IndexOf("QUEST", StringComparison.OrdinalIgnoreCase) >= 0)
-					{
+					if (this.BaseItemId.ToUpperInvariant().IndexOf(QUEST, StringComparison.OrdinalIgnoreCase) >= 0)
 						return true;
-					}
 				}
-				else if (this.BaseItemId.ToUpperInvariant().IndexOf("QUESTS", StringComparison.OrdinalIgnoreCase) >= 0)
-				{
+				else if (this.BaseItemId.ToUpperInvariant().IndexOf(QUESTS, StringComparison.OrdinalIgnoreCase) >= 0)
 					return true;
-				}
 
 				return false;
 			}
@@ -961,7 +970,7 @@ namespace TQVaultAE.Entities
 		/// <summary>
 		/// Gets a value indicating whether the item has an embedded relic.
 		/// </summary>
-		public bool HasRelic
+		public bool HasRelicSlot1
 		{
 			get
 			{
@@ -972,13 +981,18 @@ namespace TQVaultAE.Entities
 		/// <summary>
 		/// Gets a value indicating whether the item has a second embedded relic.
 		/// </summary>
-		public bool HasSecondRelic
+		public bool HasRelicSlot2
 		{
 			get
 			{
 				return !this.IsRelic && this.relic2ID.Length > 0;
 			}
 		}
+
+		/// <summary>
+		/// Indicate that the item has an embedded relic.
+		/// </summary>
+		public bool HasRelic => HasRelicSlot1 | HasRelicSlot2;
 
 		/// <summary>
 		/// Gets a value indicating whether the item is a potion.
@@ -1027,6 +1041,38 @@ namespace TQVaultAE.Entities
 		}
 
 		/// <summary>
+		/// Gets a value indicating whether the item first relic is a charm and only a charm.
+		/// </summary>
+		public bool IsRelic1Charm
+		{
+			get
+			{
+				if (this.RelicInfo != null)
+					return this.RelicInfo.ItemClass.ToUpperInvariant().Equals("ITEMCHARM");
+				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis)
+					return (this.RelicInfo?.ItemId.ToUpperInvariant().IndexOf("ANIMALRELICS", StringComparison.OrdinalIgnoreCase) ?? -1) != -1;
+				else
+					return (this.RelicInfo?.ItemId.ToUpperInvariant().IndexOf("\\CHARMS\\", StringComparison.OrdinalIgnoreCase) ?? -1) != -1;
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether the item second relic is a charm and only a charm.
+		/// </summary>
+		public bool IsRelic2Charm
+		{
+			get
+			{
+				if (this.Relic2Info != null)
+					return this.Relic2Info.ItemClass.ToUpperInvariant().Equals("ITEMCHARM");
+				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis)
+					return (this.Relic2Info?.ItemId.ToUpperInvariant().IndexOf("ANIMALRELICS", StringComparison.OrdinalIgnoreCase) ?? -1) != -1;
+				else
+					return (this.Relic2Info?.ItemId.ToUpperInvariant().IndexOf("\\CHARMS\\", StringComparison.OrdinalIgnoreCase) ?? -1) != -1;
+			}
+		}
+
+		/// <summary>
 		/// Gets a value indicating whether the item is a relic or a charm.
 		/// </summary>
 		public bool IsRelic
@@ -1060,20 +1106,48 @@ namespace TQVaultAE.Entities
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether the relic is completed or not.
+		/// Indicate if this item is a completed relic.
 		/// </summary>
 		public bool IsRelicComplete
 		{
 			get
 			{
 				if (this.baseItemInfo != null)
-				{
 					return this.Var1 >= this.baseItemInfo.CompletedRelicLevel;
-				}
 
 				return false;
 			}
 		}
+
+		/// <summary>
+		/// Indicate if the first relic completion bonus apply.
+		/// </summary>
+		public bool IsRelicBonus1Complete
+		{
+			get
+			{
+
+				if (this.RelicBonusInfo != null)
+					return this.Var1 >= this.RelicBonusInfo.CompletedRelicLevel;
+
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Indicate if the second relic completion bonus apply.
+		/// </summary>
+		public bool IsRelicBonus2Complete
+		{
+			get
+			{
+				if (this.RelicBonus2Info != null)
+					return this.Var2 >= this.RelicBonus2Info.CompletedRelicLevel;
+
+				return false;
+			}
+		}
+
 
 
 		/// <summary>
@@ -1194,28 +1268,6 @@ namespace TQVaultAE.Entities
 			return random.Next(0x00007fff);
 		}
 
-		/// <summary>
-		/// Removes the color tag from a line of text. Should be called after GetColorTag().
-		/// </summary>
-		/// <param name="text">text to be clipped</param>
-		/// <returns>text with color tag removed</returns>
-		public static string ClipColorTag(string text)
-		{
-			int i = text.IndexOf("{^");
-			if (i != -1)
-			{
-				// Make sure there is a control code in there.
-				text = text.Remove(i, 4);
-			}
-			else if (text.StartsWith("^", StringComparison.OrdinalIgnoreCase))
-			{
-				// If there are not braces assume a 2 character code.
-				text = text.Substring(2);
-			}
-
-			return text;
-		}
-
 		#endregion Item Public Static Methods
 
 		/// <summary>
@@ -1269,9 +1321,9 @@ namespace TQVaultAE.Entities
 		/// </summary>
 		public void MarkModified()
 		{
-			this.attributesString = null;
-			this.requirementsString = null;
-			this.setItemsString = null;
+			this.attributesStringArray = new string[] { };
+			this.requirementsStringArray = new string[] { };
+			this.setItemsStringArray = new string[] { };
 		}
 
 		/// <summary>
@@ -1336,17 +1388,6 @@ namespace TQVaultAE.Entities
 			return newItem;
 		}
 
-
 		public SortedList<string, Variable> requirementsList;
-
-		/// <summary>
-		/// Clears the stored attributes string so that it can be recreated
-		/// </summary>
-		public void RefreshBareAttributes()
-		{
-			Array.Clear(this.bareAttributes, 0, this.bareAttributes.Length);
-		}
-
-
 	}
 }

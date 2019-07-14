@@ -19,7 +19,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <param name="buttonNumber">Number for this button</param>
 		/// <param name="rotateGraphic">bool to signal the button is using a rotated background graphic</param>
-		public AutoSortButton(int buttonNumber, bool rotateGraphic) : base(buttonNumber, null, null)
+		public AutoSortButton(int buttonNumber, bool rotateGraphic) : base(buttonNumber, null)
 		{
 			this.IsVault = rotateGraphic;
 			this.CreateBackgroundGraphics();

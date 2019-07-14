@@ -129,10 +129,7 @@ Francuskie tłumaczenie od Jean i Vifarc.
 Polskie tłumaczenie od Cygi.
 Rosyjskie tłumaczenie od Xelat.
 Hiszpańskie tłumaczenie od Kurrus.
-
-Programy, które są używane w TQVault:
-VXPLib - A tooltip library with HTML rendering.
-DevIl &amp; Tao.Devil - biblioteka obrazów użyta do odczytu danych z obrazów w formacie DDS</value>
+</value>
   </data>
   <data name="AboutText" xml:space="preserve">
     <value>O programie {0}</value>
@@ -273,16 +270,16 @@ Chcesz zrestartować TQVault?</value>
   <data name="ItemIT" xml:space="preserve">
     <value>Przedmiot z Immortal Throne</value>
   </data>
-  <data name="ItemPropertiesCheckBox1Label" xml:space="preserve">
+  <data name="ItemPropertiesCheckBoxLabelFilterExtraInfo" xml:space="preserve">
     <value>Filtruj Extra Info</value>
   </data>
-  <data name="ItemPropertiesLabel1" xml:space="preserve">
+  <data name="ItemPropertiesLabelPrefixProperties" xml:space="preserve">
     <value>Właściwości Prefixów</value>
   </data>
-  <data name="ItemPropertiesLabel2" xml:space="preserve">
+  <data name="ItemPropertiesLabelBaseItemProperties" xml:space="preserve">
     <value>Właściwości Bazowych Przedmiotów</value>
   </data>
-  <data name="ItemPropertiesLabel3" xml:space="preserve">
+  <data name="ItemPropertiesLabelSuffixProperties" xml:space="preserve">
     <value>Właściwości Suffixów</value>
   </data>
   <data name="ItemPropertiesText" xml:space="preserve">

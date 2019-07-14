@@ -110,6 +110,7 @@
     <Reference Include="Pfim, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Pfim.0.7.0\lib\netstandard1.3\Pfim.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="SixLabors.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SixLabors.Core.1.0.0-beta0007\lib\netstandard2.0\SixLabors.Core.dll</HintPath>
     </Reference>
@@ -292,11 +293,7 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="VXPLibrary, Version=1.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\..\libs\VXPLibrary.dll</HintPath>
-    </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AboutBox.cs">
@@ -387,7 +384,18 @@
     <Compile Include="SplashScreenForm.Designer.cs">
       <DependentUpon>SplashScreenForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tooltip\TTLib.cs" />
+    <Compile Include="Tooltip\ItemTooltip.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tooltip\ItemTooltip.Designer.cs">
+      <DependentUpon>ItemTooltip.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tooltip\BagButtonTooltip.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tooltip\BagButtonTooltip.Designer.cs">
+      <DependentUpon>BagButtonTooltip.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\User32.cs" />
     <Compile Include="MainForm.Vault.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -409,9 +417,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Models\WindowMenuEventArgs.cs" />
-    <None Include="VXPLib.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <EmbeddedResource Include="AboutBox.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AboutBox.cs</DependentUpon>
@@ -448,6 +453,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SplashScreenForm.resx">
       <DependentUpon>SplashScreenForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tooltip\BagButtonTooltip.resx">
+      <DependentUpon>BagButtonTooltip.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tooltip\ItemTooltip.resx">
+      <DependentUpon>ItemTooltip.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VaultForm.resx">
       <DependentUpon>VaultForm.cs</DependentUpon>

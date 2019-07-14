@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TQVaultAE.Presentation.Html;
 using TQVaultAE.Entities;
 using TQVaultAE.Data;
 using TQVaultAE.Presentation;
@@ -162,7 +161,8 @@ namespace TQVaultAE.Services.Models.Search
 
 		public bool Apply(Item item)
 		{
-			return ItemHtmlHelper.GetAttributes(item, true).ToUpperInvariant().Contains(attribute.ToUpperInvariant());
+			var att = string.Join(" ", ItemProvider.GetAttributes(item, true).ToArray());
+			return att.ToUpperInvariant().Contains(attribute.ToUpperInvariant());
 		}
 
 		public override string ToString()

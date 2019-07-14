@@ -7,14 +7,12 @@ namespace TQVaultAE.GUI
 {
 	using System;
 	using System.ComponentModel;
-	using System.Diagnostics;
 	using System.Drawing;
 	using System.Globalization;
 	using System.IO;
 	using System.Reflection;
 	using System.Security.Permissions;
 	using System.Windows.Forms;
-	using Tooltip;
 	using TQVaultAE.GUI.Components;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Data;
@@ -27,7 +25,7 @@ namespace TQVaultAE.GUI
 	/// <summary>
 	/// Main Dialog class
 	/// </summary>
-	internal partial class MainForm : VaultForm
+	public partial class MainForm : VaultForm
 	{
 		private readonly log4net.ILog Log = null;
 
@@ -63,7 +61,7 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Info for the current item being dragged by the mouse
 		/// </summary>
-		private ItemDragInfo dragInfo;
+		private ItemDragInfo DragInfo;
 
 		/// <summary>
 		/// Holds the coordinates of the last drag item
@@ -73,7 +71,7 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// User current data context
 		/// </summary>
-		private SessionContext userContext = new SessionContext();
+		internal static SessionContext userContext = new SessionContext();
 
 		/// <summary>
 		/// Instance of the vault panel control
@@ -102,25 +100,9 @@ namespace TQVaultAE.GUI
 		private int lastBag;
 
 		/// <summary>
-		/// Instance of the Action Button
-		/// This is the animated button which pops relics and separates stacks
-		/// </summary>
-		private ActionButton actionButton;
-
-		/// <summary>
 		/// Holds the current program version
 		/// </summary>
 		private string currentVersion;
-
-		/// <summary>
-		/// Instance of the popup tool tip.
-		/// </summary>
-		private TTLib tooltip;
-
-		/// <summary>
-		/// Text in the tool tip
-		/// </summary>
-		private string tooltipText;
 
 		/// <summary>
 		/// Signals that the configuration UI was loaded and the user changed something in there.
@@ -168,8 +150,10 @@ namespace TQVaultAE.GUI
 			ScaleControl(this.exitButton);
 			this.characterComboBox.Font = FontHelper.GetFontAlbertusMTLight(13F, UIService.UI.Scale);
 			ScaleControl(this.characterComboBox);
+			this.characterLabel.Font = FontHelper.GetFontAlbertusMTLight(11F, UIService.UI.Scale);
 			ScaleControl(this.characterLabel);
 			ScaleControl(this.itemTextPanel);
+
 			ScaleControl(this.itemText);
 			this.vaultListComboBox.Font = FontHelper.GetFontAlbertusMTLight(13F, UIService.UI.Scale);
 			ScaleControl(this.vaultListComboBox);
@@ -183,7 +167,7 @@ namespace TQVaultAE.GUI
 			ScaleControl(this.panelSelectButton);
 			this.secondaryVaultListComboBox.Font = FontHelper.GetFontAlbertusMTLight(11F, UIService.UI.Scale);
 			ScaleControl(this.secondaryVaultListComboBox);
-			this.aboutButton.Font = FontHelper.GetFontMicrosoftSansSerif(8.25F, UIService.UI.Scale);
+			this.aboutButton.Font = FontHelper.GetFontAlbertusMTLight(8.25F, UIService.UI.Scale);
 			ScaleControl(this.aboutButton);
 			this.titleLabel.Font = FontHelper.GetFontAlbertusMTLight(24F, UIService.UI.Scale);
 			ScaleControl(this.titleLabel);
@@ -191,20 +175,6 @@ namespace TQVaultAE.GUI
 			ScaleControl(this.searchButton);
 
 			#endregion
-
-			try
-			{
-				this.tooltip = new TTLib();
-			}
-			catch (Exception ex)
-			{
-				Log.Error("Get TTLib fail !", ex);
-				MessageBox.Show(Log.FormatException(ex));
-				// Handle failure to create to tooltip here
-				// VXPlib not registered
-				checkVXPlibrary();
-				this.tooltip = new TTLib();
-			}
 
 			// Changed to a global for versions in tqdebug
 			AssemblyName aname = Assembly.GetExecutingAssembly().GetName();
@@ -245,13 +215,8 @@ namespace TQVaultAE.GUI
 			Item.ItemAtlantis = Resources.ItemAtlantis;
 			Item.ShowSkillLevel = Config.Settings.Default.ShowSkillLevel;
 
-			if (Config.Settings.Default.NoToolTipDelay)
-			{
-				this.tooltip.SetNoDelay();
-			}
-
 			this.lastDragPoint.X = -1;
-			this.dragInfo = new ItemDragInfo();
+			this.DragInfo = new ItemDragInfo();
 
 			this.CreatePanels();
 
@@ -271,52 +236,6 @@ namespace TQVaultAE.GUI
 			this.splashScreen.Update();
 		}
 
-		#region VXPlibrary
-
-		/// <summary>
-		/// Handles the registering and placement of the VXPlibrary.dll for tooltip creation.
-		/// </summary>
-		private void checkVXPlibrary()
-		{
-			if (File.Exists(Directory.GetCurrentDirectory() + "\\VXPlibrary.dll"))
-			{
-				// VXPlibrary.dll exists, but if it is not registered --> register it
-				registerVXPlibrary();
-			}
-			else
-			{
-				var ex = new FileNotFoundException("VXPlibrary.dll missing from TQVault directory!");
-				Log.ErrorException(ex);
-				throw ex;
-			}
-		}
-
-		/// <summary>
-		/// Registers the VXPlibrary.dll
-		/// </summary>
-		private void registerVXPlibrary()
-		{
-			Process proc = new Process();
-			ProcessStartInfo info = new ProcessStartInfo();
-			info.UseShellExecute = true;
-			info.WorkingDirectory = "\"" + Directory.GetCurrentDirectory() + "\"";
-			info.FileName = Environment.GetFolderPath(Environment.SpecialFolder.System) + "\\Regsvr32.exe";
-			info.Verb = "runas";
-			info.Arguments = "/c \"" + Directory.GetCurrentDirectory() + "\\VXPlib.dll\"";
-			try
-			{
-				proc.StartInfo = info;
-				proc.Start();
-				proc.WaitForExit();
-			}
-			catch (Exception ex)
-			{
-				Log.ErrorException(ex);
-				MessageBox.Show(Log.FormatException(ex));
-			}
-		}
-
-		#endregion
 
 		#region Mainform Events
 
@@ -370,7 +289,7 @@ namespace TQVaultAE.GUI
 			try
 			{
 				// Make sure we are not dragging anything
-				if (this.dragInfo.IsActive)
+				if (this.DragInfo.IsActive)
 				{
 					MessageBox.Show(Resources.MainFormHoldingItem, Resources.MainFormHoldingItem2, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 					return false;
@@ -542,10 +461,6 @@ namespace TQVaultAE.GUI
 
 			this.itemText.Text = string.Empty;
 
-			// hide the tooltip
-			this.tooltipText = null;
-			this.tooltip.ChangeText(this.tooltipText);
-
 			this.Invalidate();
 		}
 
@@ -649,7 +564,7 @@ namespace TQVaultAE.GUI
 			list = TQData.GetVaultList();
 			int numVaults = list?.Length ?? 0;
 
-			return Math.Max(0, numIT + numIT + numVaults - 1);
+			return Math.Max(0, numIT + numVaults - 1);
 		}
 
 		/// <summary>
@@ -687,7 +602,7 @@ namespace TQVaultAE.GUI
 			int numVaults = vaults?.Length ?? 0;
 
 			// Since this takes a while, show a progress dialog box.
-			int total = numIT + numIT + numVaults - 1;
+			int total = numIT + numVaults - 1;
 
 			if (total > 0)
 			{
@@ -775,10 +690,6 @@ namespace TQVaultAE.GUI
 				}
 
 				this.ShowMainForm();
-
-				// the tooltip must be initialized after the main form is shown and active.
-				this.tooltip.Initialize(this);
-				this.tooltip.ActivateCallback = new TTLibToolTipActivate(this.ToolTipCallback);
 			}
 			else
 			{
@@ -834,16 +745,13 @@ namespace TQVaultAE.GUI
 
 			// Changed by VillageIdiot
 			// If we are dragging something around, clear the tooltip and text box.
-			if (this.dragInfo.IsActive)
+			if (this.DragInfo.IsActive)
 			{
 				this.itemText.Text = string.Empty;
-				this.tooltipText = null;
-				this.tooltip.ChangeText(this.tooltipText);
 				return null;
 			}
 
-			// If nothing else returned a tooltip then display the current item text
-			return this.tooltipText;
+			return null;
 		}
 		#endregion
 

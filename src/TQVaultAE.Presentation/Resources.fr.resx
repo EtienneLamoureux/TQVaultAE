@@ -128,10 +128,7 @@ Traduction en français par Jean et Vifarc.
 Traduction en polonais par Cygi.
 Traduction en russe par Xelat
 Traduction en espagnol par Kurrus.
-
-Les bibliothèques tierces suivantes sont utilisées dans TQVault :
-VXPLib - A tooltip library with HTML rendering.
-DevIl &amp; Tao.Devil - bibliothèque d'image utilisée pour lire les images au format DDS</value>
+</value>
   </data>
   <data name="AboutText" xml:space="preserve">
     <value>A propos de {0}</value>
@@ -272,16 +269,16 @@ Voulez-vous redémarrer TQVault ?</value>
   <data name="ItemIT" xml:space="preserve">
     <value>Objet Immortal Throne</value>
   </data>
-  <data name="ItemPropertiesCheckBox1Label" xml:space="preserve">
+  <data name="ItemPropertiesCheckBoxLabelFilterExtraInfo" xml:space="preserve">
     <value>Filtrer les infos détaillées</value>
   </data>
-  <data name="ItemPropertiesLabel1" xml:space="preserve">
+  <data name="ItemPropertiesLabelPrefixProperties" xml:space="preserve">
     <value>Propriétés du préfixe</value>
   </data>
-  <data name="ItemPropertiesLabel2" xml:space="preserve">
+  <data name="ItemPropertiesLabelBaseItemProperties" xml:space="preserve">
     <value>Propriétés de l'objet de base</value>
   </data>
-  <data name="ItemPropertiesLabel3" xml:space="preserve">
+  <data name="ItemPropertiesLabelSuffixProperties" xml:space="preserve">
     <value>Propriétés du suffixe</value>
   </data>
   <data name="ItemPropertiesText" xml:space="preserve">

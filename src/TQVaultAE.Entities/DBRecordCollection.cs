@@ -8,6 +8,7 @@ namespace TQVaultAE.Entities
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Globalization;
+	using System.Linq;
 
 	/// <summary>
 	/// Class for encapsulating a record in the database.
@@ -203,6 +204,20 @@ namespace TQVaultAE.Entities
 			}
 
 			return ansArray;
+		}
+
+
+		KeyValuePair<string, Variable>[] _RelevantVars = null;
+		/// <summary>
+		/// Get the relevant vars, meaning there is something to display.
+		/// </summary>
+		public KeyValuePair<string, Variable>[] RelevantVars
+		{
+			get
+			{
+				if (this._RelevantVars is null) this._RelevantVars = this.variables?.Where(v => v.Value.IsValueRelevant).ToArray();
+				return this._RelevantVars;
+			}
 		}
 
 	}

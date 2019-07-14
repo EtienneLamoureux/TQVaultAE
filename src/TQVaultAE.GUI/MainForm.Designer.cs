@@ -13,7 +13,7 @@ namespace TQVaultAE.GUI
 	/// <summary>
 	/// MainForm Designer class
 	/// </summary>
-	internal partial class MainForm
+	public partial class MainForm
 	{
 		/// <summary>
 		/// Windows Form Exit button

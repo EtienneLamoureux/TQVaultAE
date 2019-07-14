@@ -19,7 +19,7 @@ namespace TQVaultAE.Presentation {
     // à l'aide d'un outil, tel que ResGen ou Visual Studio.
     // Pour ajouter ou supprimer un membre, modifiez votre fichier .ResX, puis réexécutez ResGen
     // avec l'option /str ou régénérez votre projet VS.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -66,31 +66,19 @@ namespace TQVaultAE.Presentation {
         ///Contributors:
         ///
         ///- EPinter: bug fixes, UI rework, new big vault, improvements
-        ///
         ///- NorthFury: bug fixes, search features, improvements
-        ///
         ///- Malgardian: Anniversary Edition port
-        ///
         ///- Help on Item Stats by SadYc (sadyc1@gmail.com)
         ///
         ///
         ///- Additional features by 
         ///VillageIdiot (villij-idjit@sbcglobal.net)
         ///
-        ///
-        ///
         ///- New User Interface by AvunaOs
-        ///
         ///- German translation by FOE.
-        ///
-        ///
         ///- French translation by Jean and Vifarc.
-        ///
-        ///
         ///- Polish translation by Cygi.
-        ///
-        ///
-        ///- Russ [le reste de la chaîne a été tronqué]&quot;;.
+        ///- Russian translation by Xelat [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
         public static string AboutDescription {
             get {
@@ -1163,36 +1151,36 @@ namespace TQVaultAE.Presentation {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Filter Extra Info.
         /// </summary>
-        public static string ItemPropertiesCheckBox1Label {
+        public static string ItemPropertiesCheckBoxLabelFilterExtraInfo {
             get {
-                return ResourceManager.GetString("ItemPropertiesCheckBox1Label", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Prefix Properties.
-        /// </summary>
-        public static string ItemPropertiesLabel1 {
-            get {
-                return ResourceManager.GetString("ItemPropertiesLabel1", resourceCulture);
+                return ResourceManager.GetString("ItemPropertiesCheckBoxLabelFilterExtraInfo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Base Item Properties.
         /// </summary>
-        public static string ItemPropertiesLabel2 {
+        public static string ItemPropertiesLabelBaseItemProperties {
             get {
-                return ResourceManager.GetString("ItemPropertiesLabel2", resourceCulture);
+                return ResourceManager.GetString("ItemPropertiesLabelBaseItemProperties", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Prefix Properties.
+        /// </summary>
+        public static string ItemPropertiesLabelPrefixProperties {
+            get {
+                return ResourceManager.GetString("ItemPropertiesLabelPrefixProperties", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Suffix Properties.
         /// </summary>
-        public static string ItemPropertiesLabel3 {
+        public static string ItemPropertiesLabelSuffixProperties {
             get {
-                return ResourceManager.GetString("ItemPropertiesLabel3", resourceCulture);
+                return ResourceManager.GetString("ItemPropertiesLabelSuffixProperties", resourceCulture);
             }
         }
         

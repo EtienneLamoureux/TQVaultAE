@@ -129,10 +129,7 @@ Traducción al francés por Jean y Vifarc.
 Traducción al polaco por Cygi.
 Traducción al ruso por Xelat.
 Traducción al español por Kurrus.
-
-TQVault usa las siguientes librerías de terceras partes:
-VXPLib - A tooltip library with HTML rendering.
-DevIl &amp; Tao.Devil - librería de imagen usada para leer el formato DDS</value>
+</value>
   </data>
   <data name="AboutText" xml:space="preserve">
     <value>Acerca de {0}</value>
@@ -281,16 +278,16 @@ Esto podría estar causado por un idioma o ruta del juego mal configurada.
   <data name="ItemIT" xml:space="preserve">
     <value>Objeto de Immortal Throne</value>
   </data>
-  <data name="ItemPropertiesCheckBox1Label" xml:space="preserve">
+  <data name="ItemPropertiesCheckBoxLabelFilterExtraInfo" xml:space="preserve">
     <value>Filtrar información superflua</value>
   </data>
-  <data name="ItemPropertiesLabel1" xml:space="preserve">
+  <data name="ItemPropertiesLabelPrefixProperties" xml:space="preserve">
     <value>Propiedades del prefijo</value>
   </data>
-  <data name="ItemPropertiesLabel2" xml:space="preserve">
+  <data name="ItemPropertiesLabelBaseItemProperties" xml:space="preserve">
     <value>Propiedades del objeto base</value>
   </data>
-  <data name="ItemPropertiesLabel3" xml:space="preserve">
+  <data name="ItemPropertiesLabelSuffixProperties" xml:space="preserve">
     <value>Propiedades del sufijo</value>
   </data>
   <data name="ItemPropertiesText" xml:space="preserve">

@@ -544,9 +544,7 @@ namespace TQVaultAE.Data
 			ItemAttributesData result = null;
 
 			if (String.IsNullOrEmpty(attribute))
-			{
 				return result;
-			}
 
 			try
 			{
@@ -566,9 +564,7 @@ namespace TQVaultAE.Data
 		public static string ConvertFormat(string formatValue)
 		{
 			if (TQDebug.ItemAttributesDebugLevel > 0)
-			{
 				Log.DebugFormat(CultureInfo.InvariantCulture, "ItemAttributes.ConvertFormatString({0})", formatValue);
-			}
 
 			// Takes a TQ Format string and converts it to a .NET Format string.
 			StringBuilder formatStringBuilder = new StringBuilder(formatValue.Length);
@@ -587,35 +583,26 @@ namespace TQVaultAE.Data
 				else
 				{
 					if (TQDebug.ItemAttributesDebugLevel > 2)
-					{
 						Log.DebugFormat(CultureInfo.InvariantCulture, "Found {{ at {0} (search start was {1})", index, startPosition);
-					}
 
 					// Copy everything up to (but not including) the open bracket
 					if (index > startPosition)
-					{
 						formatStringBuilder.Append(formatValue, startPosition, index - startPosition);
-					}
 
 					// Now process the brackets
 					startPosition = ConvertFormatStringBrackets(formatValue, formatStringBuilder, index + 1);
 					if (TQDebug.ItemAttributesDebugLevel > 2)
-					{
 						Log.DebugFormat(CultureInfo.InvariantCulture, "ConvertFormatStringBrackets() returned new ipos={0}", startPosition);
-					}
 				}
 			}
 
 			string processedFormatString = formatStringBuilder.ToString();
+
 			if (TQDebug.ItemAttributesDebugLevel > 1)
-			{
 				Log.DebugFormat(CultureInfo.InvariantCulture, "'{0}' . '{1}'", formatValue, processedFormatString);
-			}
 
 			if (TQDebug.ItemAttributesDebugLevel > 0)
-			{
 				Log.Debug("Exiting ItemAttributes.ConvertFormatString()");
-			}
 
 			return processedFormatString;
 		}
@@ -629,14 +616,10 @@ namespace TQVaultAE.Data
 		{
 			string result = string.Empty;
 			if (data == null)
-			{
 				return result;
-			}
 
 			if (string.IsNullOrEmpty(data.Effect))
-			{
 				return result;
-			}
 
 			switch (data.EffectType)
 			{
@@ -696,9 +679,7 @@ namespace TQVaultAE.Data
 		{
 			ItemAttributesData data = GetAttributeData(attribute);
 			if (data == null)
-			{
 				return attribute;
-			}
 
 			return GetAttributeTextTag(data);
 		}
@@ -709,19 +690,15 @@ namespace TQVaultAE.Data
 		/// <param name="variable">attribute variable</param>
 		/// <param name="variableName">string for variable name</param>
 		/// <returns>true if the variable == variable name</returns>
-		
+
 		public static bool AttributeHas(Variable variable, string variableName)
 		{
 			if (variable == null)
-			{
 				return false;
-			}
 
 			ItemAttributesData data = ItemAttributeProvider.GetAttributeData(variable.Name);
 			if (data == null)
-			{
 				return false;
-			}
 
 			return data.Variable.ToUpperInvariant().Equals(variableName.ToUpperInvariant());
 		}
@@ -732,15 +709,13 @@ namespace TQVaultAE.Data
 		/// <param name="attributeList">Array of attributes</param>
 		/// <param name="effect">effect string to be tested</param>
 		/// <returns>true if attribute effect in group == effect</returns>
-		
+
 		public static bool AttributeGroupIs(Collection<Variable> attributeList, string effect)
 		{
 			Variable variable = (Variable)attributeList[0];
 			ItemAttributesData data = ItemAttributeProvider.GetAttributeData(variable.Name);
 			if (data == null)
-			{
 				return false;
-			}
 
 			return data.Effect.ToUpperInvariant().Equals(effect.ToUpperInvariant());
 		}
@@ -751,15 +726,13 @@ namespace TQVaultAE.Data
 		/// <param name="attributeList">Array of attributes</param>
 		/// <param name="type">Effect type enumeration</param>
 		/// <returns>true if attribute effect in group == type</returns>
-		
+
 		public static bool AttributeGroupIs(Collection<Variable> attributeList, ItemAttributesEffectType type)
 		{
 			Variable variable = (Variable)attributeList[0];
 			ItemAttributesData data = ItemAttributeProvider.GetAttributeData(variable.Name);
 			if (data == null)
-			{
 				return false;
-			}
 
 			return data.EffectType == type;
 		}
@@ -769,15 +742,13 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="attributeList">array of attributes</param>
 		/// <returns>Effect type of the attribute list</returns>
-		
+
 		public static ItemAttributesEffectType AttributeGroupType(Collection<Variable> attributeList)
 		{
 			Variable variable = (Variable)attributeList[0];
 			ItemAttributesData data = ItemAttributeProvider.GetAttributeData(variable.Name);
 			if (data == null)
-			{
 				return ItemAttributesEffectType.Other;
-			}
 
 			return data.EffectType;
 		}
@@ -788,15 +759,13 @@ namespace TQVaultAE.Data
 		/// <param name="attributeList">array of attributes</param>
 		/// <param name="variableName">name of variable</param>
 		/// <returns>true if variable is present in the list</returns>
-		
+
 		public static bool AttributeGroupHas(Collection<Variable> attributeList, string variableName)
 		{
 			foreach (Variable variable in attributeList)
 			{
 				if (AttributeHas(variable, variableName))
-				{
 					return true;
-				}
 			}
 
 			return false;
@@ -814,14 +783,11 @@ namespace TQVaultAE.Data
 		private static string GetCharacterEffectTextTag(string effect)
 		{
 			if (effect.ToUpperInvariant() == "CHARACTERGLOBALREQREDUCTION")
-			{
 				// awful mispelling by IL.
 				return "CharcterItemGlobalReduction";
-			}
+
 			else if (effect.ToUpperInvariant() == "CHARACTERDEFLECTPROJECTILE")
-			{
 				return "CharacterDeflectProjectiles";
-			}
 
 			// Just return as-is since the effect is the text tag with the first letter capitalized.
 			return effect;
@@ -835,9 +801,7 @@ namespace TQVaultAE.Data
 		private static string GetShieldEffectTextTag(string effect)
 		{
 			if (effect.ToUpperInvariant() == "BLOCKRECOVERYTIME")
-			{
 				return "ShieldBlockRecoveryTime";
-			}
 
 			// Replace Defensive with Defense.
 			return string.Concat("Defense", effect.Substring(9));
@@ -871,9 +835,7 @@ namespace TQVaultAE.Data
 
 			// Replace DefensiveSlow with Defense
 			if (effect.ToUpperInvariant().StartsWith("DEFENSIVESLOW", StringComparison.Ordinal))
-			{
 				return string.Concat("Defense", effect.Substring(13));
-			}
 
 			// Otherwise replace Defensive with Defense.
 			return string.Concat("Defense", effect.Substring(9));
@@ -888,9 +850,7 @@ namespace TQVaultAE.Data
 		{
 			// Check for a skill and return as-is.
 			if (effect.ToUpperInvariant().StartsWith("SKILL", StringComparison.Ordinal))
-			{
 				return effect;
-			}
 
 			// Check for specific strings
 			switch (effect.ToUpperInvariant())
@@ -917,9 +877,7 @@ namespace TQVaultAE.Data
 
 			// Check for OffensiveBase and replace with Damage.
 			if (effect.ToUpperInvariant().StartsWith("OFFENSIVEBASE", StringComparison.Ordinal))
-			{
 				return string.Concat("Damage", effect.Substring(13));
-			}
 
 			// Otherwise replace Offensive with Damage.
 			return string.Concat("Damage", effect.Substring(9));
@@ -950,9 +908,7 @@ namespace TQVaultAE.Data
 
 			// Check for a skill and return as-is.
 			if (effect.ToUpperInvariant().StartsWith("SKILL", StringComparison.Ordinal))
-			{
 				return effect;
-			}
 
 			// Just replace Offensive with DamageModifier and remove trailing modifier.
 			return string.Concat("DamageModifier", effect.Substring(9, effect.Length - (9 + 8)));
@@ -1033,15 +989,11 @@ namespace TQVaultAE.Data
 		{
 			// Return SkillChanceWeight as-is.
 			if (effect.ToUpperInvariant() == "SKILLCHANCEWEIGHT")
-			{
 				return effect;
-			}
 
 			// Strip off Projectile from the text tag.
 			if (effect.ToUpperInvariant().StartsWith("PROJECTILE", StringComparison.Ordinal))
-			{
 				return effect.Substring(10);
-			}
 
 			// Otherwise strip off Skill from the tag.
 			return effect.Substring(5);
@@ -1057,9 +1009,7 @@ namespace TQVaultAE.Data
 		private static int ConvertFormatStringBrackets(string formatString, StringBuilder answer, int startPosition)
 		{
 			if (TQDebug.ItemAttributesDebugLevel > 0)
-			{
 				Log.DebugFormat(CultureInfo.InvariantCulture, "ItemAttributes.ConvertFormatStringBrackets({0}, {1}, {2})", formatString, answer, startPosition);
-			}
 
 			char[] keyChars =
 			{
@@ -1089,9 +1039,7 @@ namespace TQVaultAE.Data
 				else
 				{
 					if (TQDebug.ItemAttributesDebugLevel > 2)
-					{
 						Log.DebugFormat(CultureInfo.InvariantCulture, "Found special char({0}) at {1} (searchstart={2})", formatString.Substring(i, 1), i, startPosition);
-					}
 
 					// We found a special char.  First copy all the crap before the char
 					if (i > startPosition)
@@ -1104,78 +1052,68 @@ namespace TQVaultAE.Data
 					switch (formatString[startPosition++])
 					{
 						case '}':
+							if (TQDebug.ItemAttributesDebugLevel > 0)
+								Log.Debug("Exiting ItemAttributes.ConvertFormatStringBrackets()");
+
+							return startPosition; // end of the format section.
+
+						case '%':
+							// We now have a scanf() format spec.
+							// it should have some number of non-alpha characters followed by an alpha char
+							// then followed by a digit which is the variable#
+							int precisionStart = startPosition;
+
+							// find the letter
+							while ((startPosition < formatString.Length) && !char.IsLetter(formatString, startPosition))
 							{
+								++startPosition;
+							}
+
+							if (startPosition >= formatString.Length)
+							{
+								// shit we ran out of the string
+								answer.Append(formatString, precisionStart - 1, formatString.Length - (precisionStart - 1));
+
 								if (TQDebug.ItemAttributesDebugLevel > 0)
 								{
+									Log.Debug("Error - Ran out of string to parse.");
 									Log.Debug("Exiting ItemAttributes.ConvertFormatStringBrackets()");
 								}
 
-								return startPosition; // end of the format section.
+								return formatString.Length;
 							}
 
-						case '%':
+							string precision = formatString.Substring(precisionStart, startPosition - precisionStart);
+							string formatAlpha = formatString.Substring(startPosition, 1);
+							string formatNum = formatString.Substring(startPosition + 1, 1);
+
+							string newFormatSpec = ConvertScanFormatSpec(precision, formatAlpha, formatNum);
+							if (TQDebug.ItemAttributesDebugLevel > 2)
 							{
-								// We now have a scanf() format spec.
-								// it should have some number of non-alpha characters followed by an alpha char
-								// then followed by a digit which is the variable#
-								int precisionStart = startPosition;
-
-								// find the letter
-								while ((startPosition < formatString.Length) && !char.IsLetter(formatString, startPosition))
-								{
-									++startPosition;
-								}
-
-								if (startPosition >= formatString.Length)
-								{
-									// shit we ran out of the string
-									answer.Append(formatString, precisionStart - 1, formatString.Length - (precisionStart - 1));
-
-									if (TQDebug.ItemAttributesDebugLevel > 0)
-									{
-										Log.Debug("Error - Ran out of string to parse.");
-										Log.Debug("Exiting ItemAttributes.ConvertFormatStringBrackets()");
-									}
-
-									return formatString.Length;
-								}
-
-								string precision = formatString.Substring(precisionStart, startPosition - precisionStart);
-								string formatAlpha = formatString.Substring(startPosition, 1);
-								string formatNum = formatString.Substring(startPosition + 1, 1);
-
-								string newFormatSpec = ConvertScanFormatSpec(precision, formatAlpha, formatNum);
-								if (TQDebug.ItemAttributesDebugLevel > 2)
-								{
-									Log.DebugFormat(CultureInfo.InvariantCulture
-										, "<{0}> split into<{1}><{2}><{3}>New ipos={4}"
-										, formatString.Substring(precisionStart - 1, startPosition + 1 - precisionStart + 2)
-										, precision, formatAlpha, formatNum
-										, startPosition + 2
-									);
-								}
-
-								answer.Append(newFormatSpec);
-								startPosition = startPosition + 2;
-
-								break;
+								Log.DebugFormat(CultureInfo.InvariantCulture
+									, "<{0}> split into<{1}><{2}><{3}>New ipos={4}"
+									, formatString.Substring(precisionStart - 1, startPosition + 1 - precisionStart + 2)
+									, precision, formatAlpha, formatNum
+									, startPosition + 2
+								);
 							}
+
+							answer.Append(newFormatSpec);
+							startPosition = startPosition + 2;
+
+							break;
 
 						case '^':
-							{
-								// font change.  We currently ignore this crap so we want to skip over
-								// the next char which is the new font indicator
-								++startPosition; // skip the following char
-								break;
-							}
+							// font change.  We currently ignore this crap so we want to skip over
+							// the next char which is the new font indicator
+							++startPosition; // skip the following char
+							break;
 					}
 				}
 			}
 
 			if (TQDebug.ItemAttributesDebugLevel > 0)
-			{
 				Log.Debug("Exiting ItemAttributes.ConvertFormatStringBrackets()");
-			}
 
 			return startPosition;
 		}
@@ -1203,14 +1141,10 @@ namespace TQVaultAE.Data
 			{
 				// string format.  Ignore precision
 				if (TQDebug.ItemAttributesDebugLevel > 1)
-				{
 					Log.Debug("String Format Spec");
-				}
 
 				if (TQDebug.ItemAttributesDebugLevel > 0)
-				{
 					Log.Debug("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
-				}
 
 				return string.Format(CultureInfo.CurrentCulture, "{{{0}}}", formatNumber);
 			}
@@ -1222,14 +1156,10 @@ namespace TQVaultAE.Data
 				{
 					// simple
 					if (TQDebug.ItemAttributesDebugLevel > 1)
-					{
 						Log.Debug("Simple Numeric Format Spec");
-					}
 
 					if (TQDebug.ItemAttributesDebugLevel > 0)
-					{
 						Log.Debug("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
-					}
 
 					return string.Format(CultureInfo.CurrentCulture, "{{{0}}}", formatNumber);
 				}
@@ -1251,22 +1181,16 @@ namespace TQVaultAE.Data
 				{
 					++ipos;
 					if (TQDebug.ItemAttributesDebugLevel > 1)
-					{
 						Log.DebugFormat(CultureInfo.InvariantCulture, "Parsing Decimals ipos={0}, string=<{1}>", ipos, precision.Substring(ipos, 1));
-					}
 
 					// Changed by VillageIdiot
 					// Sometimes the parsing would cause a format exception with 0
 					// Use TryParse to handle the exception.
 					if (!Int32.TryParse(precision.Substring(ipos, 1), out numDecimals))
-					{
 						numDecimals = 0;
-					}
 
 					if (TQDebug.ItemAttributesDebugLevel > 1)
-					{
 						Log.DebugFormat(CultureInfo.InvariantCulture, "numDecimals={0}", numDecimals);
-					}
 
 					if (numDecimals > 0)
 					{
@@ -1279,28 +1203,20 @@ namespace TQVaultAE.Data
 				{
 					// Gotta get fancy
 					if (TQDebug.ItemAttributesDebugLevel > 1)
-					{
 						Log.Debug("Decimal with plus Format Spec");
-					}
 
 					if (TQDebug.ItemAttributesDebugLevel > 0)
-					{
 						Log.Debug("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
-					}
 
 					return string.Format(CultureInfo.CurrentCulture, "{{{0}:+#0{1};-#0{1}}}", formatNumber, decimalSpec);
 				}
 				else
 				{
 					if (TQDebug.ItemAttributesDebugLevel > 1)
-					{
 						Log.Debug("Decimal Format Spec");
-					}
 
 					if (TQDebug.ItemAttributesDebugLevel > 0)
-					{
 						Log.Debug("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
-					}
 
 					return string.Format(CultureInfo.CurrentCulture, "{{{0}:#0{1}}}", formatNumber, decimalSpec);
 				}
@@ -1309,14 +1225,10 @@ namespace TQVaultAE.Data
 			{
 				// unknown
 				if (TQDebug.ItemAttributesDebugLevel > 1)
-				{
 					Log.Debug("Error - Unknown Format Spec using default");
-				}
 
 				if (TQDebug.ItemAttributesDebugLevel > 0)
-				{
 					Log.Debug("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
-				}
 
 				return string.Format(CultureInfo.CurrentCulture, "{{{0}}}", formatNumber);
 			}

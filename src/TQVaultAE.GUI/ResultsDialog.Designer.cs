@@ -8,7 +8,7 @@ namespace TQVaultAE.GUI
 	/// <summary>
 	/// Results dialog form designer class
 	/// </summary>
-	internal partial class ResultsDialog
+	public partial class ResultsDialog
 	{
 		/// <summary>
 		/// Data Grid View for displaying the search results

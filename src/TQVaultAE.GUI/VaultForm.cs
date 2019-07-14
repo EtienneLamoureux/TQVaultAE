@@ -151,18 +151,18 @@ namespace TQVaultAE.GUI
 			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
 		}
 
-		protected void ScaleControl(System.Windows.Forms.Control ctrl)
+		public static void ScaleControl(System.Windows.Forms.Control ctrl)
 		{
-			ctrl.Location = this.ScalePoint(ctrl.Location);
-			ctrl.Size = this.ScaleSize(ctrl.Size);
+			ctrl.Location = ScalePoint(ctrl.Location);
+			ctrl.Size = ScaleSize(ctrl.Size);
 		}
 
-		protected Size ScaleSize(Size size)
+		public static Size ScaleSize(Size size)
 		{
 			return new Size((int)System.Math.Round(size.Width * UIService.UI.Scale), (int)System.Math.Round(size.Height * UIService.UI.Scale));
 		}
 
-		protected Point ScalePoint(Point point)
+		public static Point ScalePoint(Point point)
 		{
 			return new Point((int)System.Math.Round(point.X * UIService.UI.Scale), (int)System.Math.Round(point.Y * UIService.UI.Scale));
 		}

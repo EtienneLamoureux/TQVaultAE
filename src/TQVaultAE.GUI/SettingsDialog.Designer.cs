@@ -212,8 +212,8 @@ namespace TQVaultAE.GUI
             this.immortalThronePathBrowseButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.customMapLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.mapListComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
-            this.scalingLabelBaseFont = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.fontComboBoxBase = new TQVaultAE.GUI.Components.ScalingComboBox();
+            this.baseFontLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.baseFontComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.SuspendLayout();
             // 
             // allowItemEditCheckBox
@@ -657,29 +657,29 @@ namespace TQVaultAE.GUI
             this.mapListComboBox.TabIndex = 26;
             this.mapListComboBox.SelectedIndexChanged += new System.EventHandler(this.MapListComboBoxSelectedIndexChanged);
             // 
-            // scalingLabelBaseFont
+            // baseFontLabel
             // 
-            this.scalingLabelBaseFont.AutoSize = true;
-            this.scalingLabelBaseFont.Font = new System.Drawing.Font("Albertus MT Light", 14.0625F);
-            this.scalingLabelBaseFont.Location = new System.Drawing.Point(15, 476);
-            this.scalingLabelBaseFont.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.scalingLabelBaseFont.Name = "scalingLabelBaseFont";
-            this.scalingLabelBaseFont.Size = new System.Drawing.Size(58, 28);
-            this.scalingLabelBaseFont.TabIndex = 36;
-            this.scalingLabelBaseFont.Text = "Font";
+            this.baseFontLabel.AutoSize = true;
+            this.baseFontLabel.Font = new System.Drawing.Font("Albertus MT Light", 14.0625F);
+            this.baseFontLabel.Location = new System.Drawing.Point(15, 476);
+            this.baseFontLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.baseFontLabel.Name = "baseFontLabel";
+            this.baseFontLabel.Size = new System.Drawing.Size(58, 28);
+            this.baseFontLabel.TabIndex = 36;
+            this.baseFontLabel.Text = "Font";
             // 
-            // fontComboBoxBase
+            // baseFontComboBox
             // 
-            this.fontComboBoxBase.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.fontComboBoxBase.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.fontComboBoxBase.Font = new System.Drawing.Font("Albertus MT Light", 14.0625F);
-            this.fontComboBoxBase.FormattingEnabled = true;
-            this.fontComboBoxBase.Location = new System.Drawing.Point(15, 504);
-            this.fontComboBoxBase.Margin = new System.Windows.Forms.Padding(4);
-            this.fontComboBoxBase.Name = "fontComboBoxBase";
-            this.fontComboBoxBase.Size = new System.Drawing.Size(495, 36);
-            this.fontComboBoxBase.TabIndex = 35;
-            this.fontComboBoxBase.SelectedIndexChanged += new System.EventHandler(this.FontComboBoxBase_SelectedIndexChanged);
+            this.baseFontComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.baseFontComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.baseFontComboBox.Font = new System.Drawing.Font("Albertus MT Light", 14.0625F);
+            this.baseFontComboBox.FormattingEnabled = true;
+            this.baseFontComboBox.Location = new System.Drawing.Point(15, 504);
+            this.baseFontComboBox.Margin = new System.Windows.Forms.Padding(4);
+            this.baseFontComboBox.Name = "baseFontComboBox";
+            this.baseFontComboBox.Size = new System.Drawing.Size(495, 36);
+            this.baseFontComboBox.TabIndex = 35;
+            this.baseFontComboBox.SelectedIndexChanged += new System.EventHandler(this.FontComboBoxBase_SelectedIndexChanged);
             // 
             // SettingsDialog
             // 
@@ -688,8 +688,8 @@ namespace TQVaultAE.GUI
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
             this.ClientSize = new System.Drawing.Size(1152, 612);
-            this.Controls.Add(this.scalingLabelBaseFont);
-            this.Controls.Add(this.fontComboBoxBase);
+            this.Controls.Add(this.baseFontLabel);
+            this.Controls.Add(this.baseFontComboBox);
             this.Controls.Add(this.characterEditCheckBox);
             this.Controls.Add(this.playerReadonlyCheckbox);
             this.Controls.Add(this.titanQuestPathTextBox);
@@ -761,8 +761,8 @@ namespace TQVaultAE.GUI
             this.Controls.SetChildIndex(this.titanQuestPathTextBox, 0);
             this.Controls.SetChildIndex(this.playerReadonlyCheckbox, 0);
             this.Controls.SetChildIndex(this.characterEditCheckBox, 0);
-            this.Controls.SetChildIndex(this.fontComboBoxBase, 0);
-            this.Controls.SetChildIndex(this.scalingLabelBaseFont, 0);
+            this.Controls.SetChildIndex(this.baseFontComboBox, 0);
+            this.Controls.SetChildIndex(this.baseFontLabel, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -772,7 +772,7 @@ namespace TQVaultAE.GUI
 
 		private ScalingCheckBox playerReadonlyCheckbox;
 		private ScalingCheckBox characterEditCheckBox;
-		private ScalingLabel scalingLabelBaseFont;
-		private ScalingComboBox fontComboBoxBase;
+		private ScalingLabel baseFontLabel;
+		private ScalingComboBox baseFontComboBox;
 	}
 }

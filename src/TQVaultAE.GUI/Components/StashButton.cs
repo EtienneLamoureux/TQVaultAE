@@ -19,7 +19,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="bagNumber">number of the bag for display</param>
 		/// <param name="getToolTip">Tooltip delegate</param>
 		/// <param name="tooltip">Tooltip instance</param>
-		public StashButton(int bagNumber, GetToolTip getToolTip, TTLib tooltip) : base(bagNumber, getToolTip, tooltip)
+		public StashButton(int bagNumber, GetToolTip getToolTip) : base(bagNumber, getToolTip)
 		{
 			// Override the default background graphics.
 			this.CreateBackgroundGraphics();

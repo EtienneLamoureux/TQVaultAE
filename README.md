@@ -92,15 +92,6 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 
 *A. Yes, TQVaultAE is compatible with the legacy TQvault vault files.*
 
-**Q. After updating from an older version of TQVault (2.18 or older), the new program won't start.**
-
-*A. Follow these steps (See [this comment](https://github.com/EtienneLamoureux/TQVaultAE/issues/85#issuecomment-447326792) for the original solution):*
-1. *Press the <kbd>⊞ Win</kbd> key*
-2. *Type `cmd`*
-3. *Right-click the first option and run as administrator*
-4. *Type `regsvr32 /u VXPLib.dll`*
-5. *Hit enter*
-
 **Q. Error Loading Resources. This may be caused by a bad language or game path setting.**
 
 *A. Follow these steps:*

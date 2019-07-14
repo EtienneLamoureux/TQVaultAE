@@ -11,11 +11,10 @@ namespace TQVaultAE.GUI.Components
 	using System.Drawing;
 	using System.Globalization;
 	using System.Windows.Forms;
-	using Tooltip;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Entities;
 	using TQVaultAE.Presentation;
-	using TQVaultAE.Presentation.Html;
+	using TQVaultAE.GUI.Tooltip;
 
 	/// <summary>
 	/// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.
@@ -53,13 +52,11 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="dragInfo">Instance of the ItemDragInfo</param>
 		/// <param name="numberOfBags">Number of bags in this panel</param>
 		/// <param name="panelSize">Main panel size</param>
-		/// <param name="tooltip">Tooltip instance</param>
 		/// <param name="numberOfAutosortButtons">The number of AutoSort buttons associated with this panel.,</param>
 		/// <param name="autoMoveLocation">The automovelocation for this panel.</param>
-		public VaultPanel(ItemDragInfo dragInfo, int numberOfBags, Size panelSize, TTLib tooltip, int numberOfAutosortButtons, AutoMoveLocation autoMoveLocation)
+		public VaultPanel(ItemDragInfo dragInfo, int numberOfBags, Size panelSize, int numberOfAutosortButtons, AutoMoveLocation autoMoveLocation)
 		{
 			this.DragInfo = dragInfo;
-			this.Tooltip = tooltip;
 			this.AutoMoveLocation = autoMoveLocation;
 			this.Text = Resources.PlayerPanelNoVault;
 			this.NoPlayerString = Resources.PlayerPanelNoVault;
@@ -229,11 +226,6 @@ namespace TQVaultAE.GUI.Components
 		/// Gets or sets the AutoMoveLocation for this panel.
 		/// </summary>
 		public AutoMoveLocation AutoMoveLocation { get; protected set; }
-
-		/// <summary>
-		/// Gets the Tooltip instance
-		/// </summary>
-		public TTLib Tooltip { get; private set; }
 
 		/// <summary>
 		/// Gets this panel's ItemDragInfo instance
@@ -759,6 +751,7 @@ namespace TQVaultAE.GUI.Components
 				{
 					this.BagSackPanel.Sack.EmptySack();
 					this.BagSackPanel.Refresh();
+					BagButtonTooltip.InvalidateCache(this.BagSackPanel.Sack);
 				}
 			}
 		}
@@ -873,7 +866,12 @@ namespace TQVaultAE.GUI.Components
 		/// <returns>Instance of the new BagButton</returns>
 		private BagButton CreateBagButton(int bagNumber, int numberOfBags)
 		{
-			BagButton button = new BagButton(bagNumber, new GetToolTip(this.GetSackToolTip), this.Tooltip);
+			BagButton button = new BagButton(bagNumber, new GetToolTip(this.GetSackToolTip));
+
+			//button.Sack = () =>
+			//{
+			//	return this.Player.GetSack(button.ButtonNumber + this.BagPanelOffset);
+			//};
 
 			float buttonWidth = (float)Resources.inventorybagup01.Width;
 			float buttonHeight = (float)Resources.inventorybagup01.Height;
@@ -909,19 +907,19 @@ namespace TQVaultAE.GUI.Components
 			// Get the list of items and return them as a string
 			SackCollection sack = this.Player.GetSack(button.ButtonNumber + this.BagPanelOffset);
 			if (sack == null)
-			{
 				return null;
-			}
 
 			// skip the item being dragged
-			Item[] excluded = null;
 			if (this.DragInfo.IsActive)
 			{
-				excluded = new Item[] { this.DragInfo.Item };
+				button.Excluded = new Item[] { this.DragInfo.Item };
 			}
 
-			var html = ItemHtmlHelper.GetSackToolTip(sack, excluded);
-			return html;
+			button.Sack = sack;
+
+			//var html = ItemHtmlHelper.GetSackToolTip(sack, excluded);
+			//return html;
+			return null;
 		}
 
 		#endregion VaultPanel Private Methods

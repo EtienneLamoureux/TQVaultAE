@@ -129,10 +129,7 @@ French translation by Jean and Vifarc.
 Polish translation by Cygi.
 Russian translation by Xelat.
 Spanish translation by Kurrus.
-
-The following 3rd party libraries are used in TQVault:
-VXPLib - A tooltip library with HTML rendering.
-DevIl &amp; Tao.Devil - image library used to read DDS formatted image data</value>
+</value>
   </data>
   <data name="AboutText" xml:space="preserve">
     <value>About {0}</value>
@@ -269,16 +266,16 @@ configuration to reflect the link.</value>
   <data name="ItemIT" xml:space="preserve">
     <value>Предмет Immortal Throne</value>
   </data>
-  <data name="ItemPropertiesCheckBox1Label" xml:space="preserve">
+  <data name="ItemPropertiesCheckBoxLabelFilterExtraInfo" xml:space="preserve">
     <value>Фильтровать дополнительную информацию</value>
   </data>
-  <data name="ItemPropertiesLabel1" xml:space="preserve">
+  <data name="ItemPropertiesLabelPrefixProperties" xml:space="preserve">
     <value>Свойства префикса</value>
   </data>
-  <data name="ItemPropertiesLabel2" xml:space="preserve">
+  <data name="ItemPropertiesLabelBaseItemProperties" xml:space="preserve">
     <value>Базовые свойства предмета</value>
   </data>
-  <data name="ItemPropertiesLabel3" xml:space="preserve">
+  <data name="ItemPropertiesLabelSuffixProperties" xml:space="preserve">
     <value>Свойства суффикса</value>
   </data>
   <data name="ItemPropertiesText" xml:space="preserve">

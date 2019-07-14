@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using TQVaultAE.Data;
 using TQVaultAE.Entities;
+using TQVaultAE.Entities.Results;
 using TQVaultAE.Logs;
 
 namespace TQVaultAE.Services
@@ -59,13 +60,6 @@ namespace TQVaultAE.Services
 			}
 		}
 
-		public class LoadVaultResult
-		{
-			public PlayerCollection Vault;
-			public string Filename;
-			public bool VaultLoaded;
-			public ArgumentException ArgumentException;
-		}
 
 		/// <summary>
 		/// Loads a vault file
