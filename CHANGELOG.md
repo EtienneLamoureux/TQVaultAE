@@ -1,4 +1,20 @@
 # Changelog
+## 3.2.0
+### Features
+- #193 Add Support for Steam Workshop maps
+- Add configuration option to choose font
+  - Albertus MT
+  - Arial
+  - Verdana
+  - Times New Roman
+
+### Bugs
+- #121 Fix issues opening the program
+- #160 Fix tooltip of "Spell piece" items
+
+### Other
+- Tooltip rendering no longer uses VXPlib
+
 ## 3.1.1
 ### Bugs
 - #180 Prevent relic stash error when opening the vault
