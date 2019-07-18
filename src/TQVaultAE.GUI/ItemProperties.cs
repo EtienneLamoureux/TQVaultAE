@@ -8,10 +8,11 @@ namespace TQVaultAE.GUI
 	using System;
 	using System.Linq;
 	using TQVaultAE.Data;
-	using TQVaultAE.Entities;
-	using TQVaultAE.Entities.Results;
+	using TQVaultAE.Domain.Entities;
+	using TQVaultAE.Domain.Results;
 	using TQVaultAE.GUI.Tooltip;
 	using TQVaultAE.Presentation;
+	using TQVaultAE.Domain.Helpers;
 
 	/// <summary>
 	/// Form for the item properties display
@@ -31,19 +32,20 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Initializes a new instance of the ItemProperties class.
 		/// </summary>
-		public ItemProperties(MainForm instance)
+		public ItemProperties(MainForm instance) : base(instance.ServiceProvider)
 		{
 			this.Owner = instance;
+
 			this.InitializeComponent();
 
 			#region Apply custom font
 
-			this.ButtonOK.Font = FontHelper.GetFontAlbertusMTLight(12F);
-			this.labelPrefixProperties.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
-			this.labelBaseItemProperties.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
-			this.checkBoxFilterExtraInfo.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
-			this.labelSuffixProperties.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
-			this.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.ButtonOK.Font = FontService.GetFontAlbertusMTLight(12F);
+			this.labelPrefixProperties.Font = FontService.GetFontAlbertusMTLight(11.25F);
+			this.labelBaseItemProperties.Font = FontService.GetFontAlbertusMTLight(11.25F);
+			this.checkBoxFilterExtraInfo.Font = FontService.GetFontAlbertusMTLight(11.25F);
+			this.labelSuffixProperties.Font = FontService.GetFontAlbertusMTLight(11.25F);
+			this.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
 			#endregion
 
@@ -62,10 +64,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
-		private void ItemProperties_Load(object sender, EventArgs e)
-		{
-			this.LoadProperties();
-		}
+		private void ItemProperties_Load(object sender, EventArgs e) => this.LoadProperties();
 
 		/// <summary>
 		/// Loads the item properties
@@ -76,14 +75,14 @@ namespace TQVaultAE.GUI
 
 			// ItemName
 			this.labelItemName.ForeColor = this.Data.Item.GetColor(Data.BaseItemInfoDescription);
-			this.labelItemName.Text = this.Data.FullName.RemoveAllTQTags();
+			this.labelItemName.Text = this.Data.FullNameClean;
 
 			// Base Item Attributes
 			if (this.Data.BaseAttributes.Any())
 			{
 				this.flowLayoutBaseItemProperties.Controls.Clear();
 				foreach (var prop in this.Data.BaseAttributes)
-					this.flowLayoutBaseItemProperties.Controls.Add(ItemTooltip.MakeRow(prop));
+					this.flowLayoutBaseItemProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService, prop));
 				this.flowLayoutBaseItemProperties.Show();
 				this.labelBaseItemProperties.Show();
 			}
@@ -98,7 +97,7 @@ namespace TQVaultAE.GUI
 			{
 				this.flowLayoutPrefixProperties.Controls.Clear();
 				foreach (var prop in this.Data.PrefixAttributes)
-					this.flowLayoutPrefixProperties.Controls.Add(ItemTooltip.MakeRow(prop));
+					this.flowLayoutPrefixProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService, prop));
 				this.flowLayoutPrefixProperties.Show();
 				this.labelPrefixProperties.Show();
 			}
@@ -113,7 +112,7 @@ namespace TQVaultAE.GUI
 			{
 				this.flowLayoutSuffixProperties.Controls.Clear();
 				foreach (var prop in this.Data.SuffixAttributes)
-					this.flowLayoutSuffixProperties.Controls.Add(ItemTooltip.MakeRow(prop));
+					this.flowLayoutSuffixProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService, prop));
 				this.flowLayoutSuffixProperties.Show();
 				this.labelSuffixProperties.Show();
 			}

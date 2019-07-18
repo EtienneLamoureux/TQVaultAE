@@ -30,19 +30,13 @@ namespace TQVaultAE.Presentation
 		public static Bitmap LoadFromTexMemory(byte[] data, int offset, int count)
 		{
 			if (data == null)
-			{
 				throw new ArgumentNullException("data");
-			}
 
 			if (offset < 0 || offset > data.Length)
-			{
 				throw new ArgumentOutOfRangeException("offset");
-			}
 
 			if (count < 0 || (data.Length - offset) < count)
-			{
 				throw new ArgumentOutOfRangeException("count");
-			}
 
 			if (data.Length < 12)
 			{
@@ -66,20 +60,14 @@ namespace TQVaultAE.Presentation
 			System.Diagnostics.Debug.Assert(textureOffset == 0, "Texture Offset == 0");
 
 			if (textureOffset < 0 || textureOffset > (count - offset))
-			{
 				throw new InvalidDataException("TEX texture offset is invalid.");
-			}
 
 			int textureLength = BitConverter.ToInt32(data, offset + 8);
 			if (textureLength < 0 || textureLength > (count - offset - textureOffset))
-			{
 				throw new InvalidDataException("TEX texture length is invalid.");
-			}
 
 			if (textureLength < 4)
-			{
 				throw new InvalidDataException("Cannot read TEX texture image magic.");
-			}
 
 			int realOffset = offset + textureOffset + 12;
 
@@ -160,14 +148,10 @@ namespace TQVaultAE.Presentation
 					return LoadFromMemory(ddsData, 0, ddsData.Length);
 				}
 				else
-				{
 					throw new InvalidDataException("Invalid Header format.");
-				}
 			}
 			else
-			{
 				throw new InvalidDataException("Unknown texture format.");
-			}
 		}
 
 		/// <summary>
@@ -180,19 +164,13 @@ namespace TQVaultAE.Presentation
 		private static Bitmap LoadFromMemory(byte[] data, int offset, int count)
 		{
 			if (data == null)
-			{
 				throw new ArgumentNullException("data");
-			}
 
 			if (offset < 0 || offset > data.Length)
-			{
 				throw new ArgumentOutOfRangeException("offset");
-			}
 
 			if (count < 0 || (data.Length - offset) < count)
-			{
 				throw new ArgumentOutOfRangeException("count");
-			}
 
 			byte[] buffer = new byte[count];
 			Buffer.BlockCopy(data, offset, buffer, 0, count);

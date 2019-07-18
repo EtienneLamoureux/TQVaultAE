@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI.Components
 {
+	using Microsoft.Extensions.DependencyInjection;
 	using System;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
@@ -16,9 +17,11 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Data;
 	using TQVaultAE.Logs;
-	using TQVaultAE.Entities;
+	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.GUI.Tooltip;
+	using TQVaultAE.Domain.Contracts.Services;
+	using TQVaultAE.Domain.Contracts.Providers;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel.
@@ -26,6 +29,12 @@ namespace TQVaultAE.GUI.Components
 	public class SackPanel : Panel
 	{
 		private readonly log4net.ILog Log = null;
+		protected readonly IFontService FontService;
+		protected readonly IUIService UIService;
+		protected readonly IDatabase Database;
+		protected readonly IItemProvider ItemProvider;
+		protected readonly ITQDataService TQData;
+		protected readonly IServiceProvider ServiceProvider;
 
 		#region SackPanel Fields
 
@@ -115,9 +124,16 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="sackHeight">Height of the sack panel in cells</param>
 		/// <param name="dragInfo">ItemDragInfo instance.</param>
 		/// <param name="autoMoveLocation">AutoMoveLocation for this sack</param>
-		public SackPanel(int sackWidth, int sackHeight, ItemDragInfo dragInfo, AutoMoveLocation autoMoveLocation)
+		public SackPanel(int sackWidth, int sackHeight, ItemDragInfo dragInfo, AutoMoveLocation autoMoveLocation, IServiceProvider serviceProvider)
 		{
-			this.Log = Logger.Get(this);
+			this.ServiceProvider = serviceProvider;
+			this.FontService = this.ServiceProvider.GetService<IFontService>();
+			this.UIService = this.ServiceProvider.GetService<IUIService>();
+			this.Database = this.ServiceProvider.GetService<IDatabase>();
+			this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
+			this.TQData = this.ServiceProvider.GetService<ITQDataService>();
+
+			this.Log = this.ServiceProvider.GetService<ILogger<SackPanel>>().Logger;
 
 			this.DragInfo = dragInfo;
 			this.AutoMoveLocation = autoMoveLocation;
@@ -143,14 +159,14 @@ namespace TQVaultAE.GUI.Components
 
 			this.gridPen = new Pen(Color.FromArgb(142, 140, 129));
 
-			this.numberFont = new Font("Arial", 10.0F * UIService.UI.Scale, GraphicsUnit.Pixel);
+			this.numberFont = new Font("Arial", 10.0F * UIService.Scale, GraphicsUnit.Pixel);
 			this.numberBrush = new SolidBrush(Color.White);
 			this.numberFormat = new StringFormat();
 			this.numberFormat.Alignment = StringAlignment.Far; // right-justify
 
 			this.Size = new Size(
-				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.UI.ItemUnitSize * sackWidth),
-				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.UI.ItemUnitSize * sackHeight));
+				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * sackWidth),
+				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * sackHeight));
 			this.BackColor = ((SolidBrush)this.EmptyCellBrush).Color;
 			this.Paint += new PaintEventHandler(this.PaintCallback);
 			this.MouseMove += new MouseEventHandler(this.MouseMoveCallback);
@@ -165,7 +181,7 @@ namespace TQVaultAE.GUI.Components
 			this.contextMenu = new ContextMenuStrip();
 			this.contextMenu.BackColor = Color.FromArgb(46, 41, 31);
 			this.contextMenu.DropShadowEnabled = true;
-			this.contextMenu.Font = FontHelper.GetFontAlbertusMT(9.0F * UIService.UI.Scale);
+			this.contextMenu.Font = FontService.GetFontAlbertusMT(9.0F * UIService.Scale);
 			this.contextMenu.ForeColor = Color.FromArgb(200, 200, 200);
 			this.contextMenu.Opacity = 0.80;
 			this.contextMenu.ShowImageMargin = false;
@@ -182,13 +198,7 @@ namespace TQVaultAE.GUI.Components
 		/// <summary>
 		/// Gets the width of the border pen.  Scaled by the DB scale.
 		/// </summary>
-		public static float BorderWidth
-		{
-			get
-			{
-				return Math.Max((4.0F * UIService.UI.Scale), 1.0F);
-			}
-		}
+		public float BorderWidth => Math.Max((4.0F * UIService.Scale), 1.0F);
 
 		/// <summary>
 		/// Gets or sets the Clear selected items event handler
@@ -309,23 +319,14 @@ namespace TQVaultAE.GUI.Components
 		/// <summary>
 		/// Gets a value indicating whether items have been selected
 		/// </summary>
-		public bool SelectionActive
-		{
-			get
-			{
-				return this.selectedItems != null && this.selectedItems.Count > 0;
-			}
-		}
+		public bool SelectionActive => this.selectedItems != null && this.selectedItems.Count > 0;
 
 		/// <summary>
 		/// Gets or sets the sack instance
 		/// </summary>
 		public SackCollection Sack
 		{
-			get
-			{
-				return this.sack;
-			}
+			get => this.sack;
 
 			set
 			{
@@ -348,9 +349,7 @@ namespace TQVaultAE.GUI.Components
 			{
 				// Set options for Right to Left reading.
 				if (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)
-				{
 					return MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading;
-				}
 
 				return (MessageBoxOptions)0;
 			}
@@ -359,24 +358,12 @@ namespace TQVaultAE.GUI.Components
 		/// <summary>
 		/// Gets the Point (-1, -1) which is used to indicate an invalid location when dragging.
 		/// </summary>
-		protected static Point InvalidDragLocation
-		{
-			get
-			{
-				return new Point(-1, -1);
-			}
-		}
+		protected static Point InvalidDragLocation => new Point(-1, -1);
 
 		/// <summary>
 		/// Gets the Rectangle (-1, -1, 0, 0) which is used to indicate an invalid area when dragging.
 		/// </summary>
-		protected static Rectangle InvalidDragRectangle
-		{
-			get
-			{
-				return new Rectangle(InvalidDragLocation, Size.Empty);
-			}
-		}
+		protected static Rectangle InvalidDragRectangle => new Rectangle(InvalidDragLocation, Size.Empty);
 
 		/// <summary>
 		/// Gets or sets the dragInfo instance of any items being dragged.
@@ -403,13 +390,7 @@ namespace TQVaultAE.GUI.Components
 		/// Uses items that fall either partly or completely within the CellsUnderDragItem property.
 		/// Takes into account the the size of the drag item and the mouse position within the bitmap.
 		/// </remarks>
-		protected Collection<Item> ItemsUnderDragItem
-		{
-			get
-			{
-				return this.itemsUnderDragItem;
-			}
-		}
+		protected Collection<Item> ItemsUnderDragItem => this.itemsUnderDragItem;
 
 		/// <summary>
 		/// Gets the collection of items under the previous drag location.
@@ -417,13 +398,7 @@ namespace TQVaultAE.GUI.Components
 		/// <remarks>
 		/// Used to redraw the areas underneath the drag item as the item moves with the mouse.
 		/// </remarks>
-		protected Collection<Item> ItemsUnderOldDragLocation
-		{
-			get
-			{
-				return this.itemsUnderOldDragLocation;
-			}
-		}
+		protected Collection<Item> ItemsUnderOldDragLocation => this.itemsUnderOldDragLocation;
 
 		/// <summary>
 		/// Gets or sets the coordinates of the last cell which had focus.
@@ -434,25 +409,6 @@ namespace TQVaultAE.GUI.Components
 
 		#region SackPanel Public Methods
 
-		/// <summary>
-		/// Tooltip callback
-		/// </summary>
-		/// <param name="windowHandle">window handle of the caller</param>
-		/// <returns>Tooltip string</returns>
-		public string ToolTipCallback(int windowHandle)
-		{
-			// see if this is us
-			if (this.Handle.ToInt32() == windowHandle)
-			{
-				// yep.
-				/*if (this.m_getToolTip != null)
-				{
-					return this.m_getToolTip(this);
-				}*/
-			}
-
-			return null;
-		}
 
 		/// <summary>
 		/// Resizes the sack panel.
@@ -464,8 +420,8 @@ namespace TQVaultAE.GUI.Components
 		{
 			this.SackSize = new Size(sackWidth, sackHeight);
 			this.Size = new Size(
-				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.UI.ItemUnitSize * sackWidth),
-				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.UI.ItemUnitSize * sackHeight));
+				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * sackWidth),
+				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * sackHeight));
 			this.Invalidate();
 		}
 
@@ -480,8 +436,8 @@ namespace TQVaultAE.GUI.Components
 
 			// Set the unscaled origin.
 			this.originalLocation = new Point(
-				Convert.ToInt32((float)location.X / UIService.UI.Scale),
-				Convert.ToInt32((float)location.Y / UIService.UI.Scale));
+				Convert.ToInt32((float)location.X / UIService.Scale),
+				Convert.ToInt32((float)location.Y / UIService.Scale));
 		}
 
 		/// <summary>
@@ -507,18 +463,13 @@ namespace TQVaultAE.GUI.Components
 			SackCollection tempSack = new SackCollection();
 			var autoSortQuery = from Item item in this.Sack
 								orderby (((item.Height * 3) + item.Width) * 100) descending, item.ItemGroup descending, item.BaseItemId, item.IsRelicComplete descending
-
 								select item;
 
 			foreach (Item item in autoSortQuery)
-			{
 				tempSack.AddItem(item);
-			}
 
 			if (tempSack == null || tempSack.IsEmpty)
-			{
 				return;
-			}
 
 			SackCollection backUpSack = this.Sack.Duplicate();
 
@@ -567,10 +518,8 @@ namespace TQVaultAE.GUI.Components
 								break;
 							}
 							else
-							{
 								// Skip over the item
 								k += foundItems[0].Height - 1;
-							}
 						}
 						else
 						{
@@ -590,10 +539,8 @@ namespace TQVaultAE.GUI.Components
 								break;
 							}
 							else
-							{
 								// Skip over the item
 								k += foundItems[0].Width - 1;
-							}
 						}
 					}
 
@@ -609,10 +556,10 @@ namespace TQVaultAE.GUI.Components
 				{
 					this.sortVertical = !this.sortVertical;
 					this.Sack.EmptySack();
+
 					foreach (Item item in backUpSack)
-					{
 						this.Sack.AddItem(item.Clone());
-					}
+
 					this.Sack.IsModified = false;
 					BagButtonTooltip.InvalidateCache(this.Sack);
 					return;
@@ -642,15 +589,11 @@ namespace TQVaultAE.GUI.Components
 					if ((foundItems == null || foundItems.Count == 0) && width + j <= this.SackSize.Width)
 					{
 						if (k + height <= this.SackSize.Height)
-						{
 							// The slot is free.
 							return new Point(j, k);
-						}
 					}
 					else
-					{
 						k += foundItems[0].Height - 1;
-					}
 				}
 			}
 
@@ -693,14 +636,10 @@ namespace TQVaultAE.GUI.Components
 			if (this.Sack != null && !this.Sack.IsEmpty)
 			{
 				if (this.selectedItems != null)
-				{
 					this.ClearSelection();
-				}
 
 				foreach (Item item in this.Sack)
-				{
 					this.SelectItem(item);
-				}
 
 				this.Invalidate();
 			}
@@ -758,9 +697,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="itemToCheck">Item the method is going to validate</param>
 		/// <returns></returns>
 		public bool IsItemValidForPlacement(Item itemToCheck)
-		{
-			return this.sack.StashType != SackType.RelicVaultStash || itemToCheck.IsArtifact || itemToCheck.IsRelic || itemToCheck.IsFormulae || itemToCheck.IsCharm;
-		}
+			=> this.sack.StashType != SackType.RelicVaultStash || itemToCheck.IsArtifact || itemToCheck.IsRelic || itemToCheck.IsFormulae || itemToCheck.IsCharm;
 
 		/// <summary>
 		/// Cancels an item drag
@@ -778,9 +715,7 @@ namespace TQVaultAE.GUI.Components
 					Brush backgroundBrush = this.CellHasItemBrush;
 
 					if (this.IsItemSelected(dragInfo.Item))
-					{
 						backgroundBrush = this.HighlightSelectedItemBrush;
-					}
 
 					this.DrawItem(graphics, dragInfo.Item, backgroundBrush);
 				}
@@ -809,17 +744,17 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="specified">BoundsSpecified value.</param>
 		protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 		{
-			this.borderPen.Width = Math.Max((4.0F * UIService.UI.Scale), 1.0F);
-			this.numberFont = new Font(this.numberFont.Name, 10.0F * UIService.UI.Scale, GraphicsUnit.Pixel);
-			this.contextMenu.Font = new Font(this.contextMenu.Font.Name, 9.0F * UIService.UI.Scale);
+			this.borderPen.Width = Math.Max((4.0F * UIService.Scale), 1.0F);
+			this.numberFont = new Font(this.numberFont.Name, 10.0F * UIService.Scale, GraphicsUnit.Pixel);
+			this.contextMenu.Font = new Font(this.contextMenu.Font.Name, 9.0F * UIService.Scale);
 
 			this.Size = new Size(
-				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.UI.ItemUnitSize * this.SackSize.Width),
-				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.UI.ItemUnitSize * this.SackSize.Height));
+				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * this.SackSize.Width),
+				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * this.SackSize.Height));
 
 			this.Location = new Point(
-				Convert.ToInt32((float)this.originalLocation.X * UIService.UI.Scale),
-				Convert.ToInt32((float)this.originalLocation.Y * UIService.UI.Scale));
+				Convert.ToInt32((float)this.originalLocation.X * UIService.Scale),
+				Convert.ToInt32((float)this.originalLocation.Y * UIService.Scale));
 		}
 
 		/// <summary>
@@ -831,33 +766,21 @@ namespace TQVaultAE.GUI.Components
 		{
 			int x;
 			if (location.X < this.borderPen.Width)
-			{
 				x = -1;
-			}
 			else
-			{
-				x = (location.X - (int)this.borderPen.Width) / UIService.UI.ItemUnitSize;
-			}
+				x = (location.X - (int)this.borderPen.Width) / UIService.ItemUnitSize;
 
 			if (x >= this.SackSize.Width)
-			{
 				x = -2;
-			}
 
 			int y;
 			if (location.Y < this.borderPen.Width)
-			{
 				y = -1;
-			}
 			else
-			{
-				y = (location.Y - (int)this.borderPen.Width) / UIService.UI.ItemUnitSize;
-			}
+				y = (location.Y - (int)this.borderPen.Width) / UIService.ItemUnitSize;
 
 			if (y >= this.SackSize.Height)
-			{
 				y = -2;
-			}
 
 			return new Point(x, y);
 		}
@@ -870,28 +793,22 @@ namespace TQVaultAE.GUI.Components
 		protected virtual Item FindItem(Point cellLocation)
 		{
 			if (this.Sack == null)
-			{
 				return null;
-			}
 
 			// Find the item for this point
 			foreach (Item item in this.Sack)
 			{
 				if (item == this.DragInfo.Item)
-				{
 					// hide the item being dragged
 					continue;
-				}
 
 				// store the x and y values
 				int x = item.PositionX;
 				int y = item.PositionY;
 
 				if (string.IsNullOrEmpty(item.BaseItemId))
-				{
 					// Skip over empty items
 					continue;
-				}
 
 				// see if this item overlaps the cell
 				if ((x <= cellLocation.X) && ((x + item.Width - 1) >= cellLocation.X) &&
@@ -947,8 +864,8 @@ namespace TQVaultAE.GUI.Components
 		protected Point CellTopLeft(Point location)
 		{
 			return new Point(
-				Convert.ToInt32(this.borderPen.Width) + (location.X * UIService.UI.ItemUnitSize),
-				Convert.ToInt32(this.borderPen.Width) + (location.Y * UIService.UI.ItemUnitSize));
+				Convert.ToInt32(this.borderPen.Width) + (location.X * UIService.ItemUnitSize),
+				Convert.ToInt32(this.borderPen.Width) + (location.Y * UIService.ItemUnitSize));
 		}
 
 		/// <summary>
@@ -959,8 +876,8 @@ namespace TQVaultAE.GUI.Components
 		protected Point CellTopRight(Point location)
 		{
 			return new Point(
-				Convert.ToInt32(this.borderPen.Width) + ((location.X + 1) * UIService.UI.ItemUnitSize) - 1,
-				Convert.ToInt32(this.borderPen.Width) + (location.Y * UIService.UI.ItemUnitSize));
+				Convert.ToInt32(this.borderPen.Width) + ((location.X + 1) * UIService.ItemUnitSize) - 1,
+				Convert.ToInt32(this.borderPen.Width) + (location.Y * UIService.ItemUnitSize));
 		}
 
 		/// <summary>
@@ -971,8 +888,8 @@ namespace TQVaultAE.GUI.Components
 		protected Point CellBottomLeft(Point location)
 		{
 			return new Point(
-				Convert.ToInt32(this.borderPen.Width) + (location.X * UIService.UI.ItemUnitSize),
-				Convert.ToInt32(this.borderPen.Width) + ((location.Y + 1) * UIService.UI.ItemUnitSize) - 1);
+				Convert.ToInt32(this.borderPen.Width) + (location.X * UIService.ItemUnitSize),
+				Convert.ToInt32(this.borderPen.Width) + ((location.Y + 1) * UIService.ItemUnitSize) - 1);
 		}
 
 		/// <summary>
@@ -980,10 +897,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <param name="item">Item which we are checking</param>
 		/// <returns>Y value of the bottom cell of the item.</returns>
-		protected virtual int CellBottom(Item item)
-		{
-			return item.Height + item.Location.Y - 1;
-		}
+		protected virtual int CellBottom(Item item) => item.Height + item.Location.Y - 1;
 
 		/// <summary>
 		/// Given the cell X and Y coordinates, get the screen coordinates for the bottom right corner of the cell
@@ -993,8 +907,8 @@ namespace TQVaultAE.GUI.Components
 		protected Point CellBottomRight(Point location)
 		{
 			return new Point(
-				Convert.ToInt32(this.borderPen.Width) + ((location.X + 1) * UIService.UI.ItemUnitSize) - 1,
-				Convert.ToInt32(this.borderPen.Width) + ((location.Y + 1) * UIService.UI.ItemUnitSize) - 1);
+				Convert.ToInt32(this.borderPen.Width) + ((location.X + 1) * UIService.ItemUnitSize) - 1,
+				Convert.ToInt32(this.borderPen.Width) + ((location.Y + 1) * UIService.ItemUnitSize) - 1);
 		}
 
 		/// <summary>
@@ -1006,18 +920,14 @@ namespace TQVaultAE.GUI.Components
 		{
 			// Make sure we have something to check
 			if (this.selectedItems == null || this.selectedItems.Count == 0)
-			{
 				return false;
-			}
 
 			// Iterate through the list of selected items
 			foreach (Item selectedItem in this.selectedItems)
 			{
 				if (item == selectedItem)
-				{
 					// We have a match
 					return true;
-				}
 			}
 
 			return false;
@@ -1041,9 +951,7 @@ namespace TQVaultAE.GUI.Components
 				{
 					// We might be over the only selected item so no need to redraw the whole sack.
 					if (this.selectedItems.Count != 1 || focusedItem != this.selectedItems[0])
-					{
 						this.Invalidate();
-					}
 
 					this.ClearSelection();
 				}
@@ -1071,9 +979,7 @@ namespace TQVaultAE.GUI.Components
 		protected virtual Point GetMouseOffset(Point location, Item item)
 		{
 			if (item == null)
-			{
 				return Point.Empty;
-			}
 
 			Point topLeft = this.CellTopLeft(item.Location);
 			return new Point(location.X - topLeft.X, location.Y - topLeft.Y);
@@ -1086,15 +992,11 @@ namespace TQVaultAE.GUI.Components
 		protected void SelectItem(Item item)
 		{
 			if (item == null)
-			{
 				return;
-			}
 
 			// Allocate the List if needed.
 			if (this.selectedItems == null)
-			{
 				this.selectedItems = new List<Item>();
-			}
 
 			// Check to see if the item is already selected
 			if (!this.IsItemSelected(item))
@@ -1104,10 +1006,8 @@ namespace TQVaultAE.GUI.Components
 				this.selectedItemsChanged = true;
 			}
 			else
-			{
 				// It's already there so we need to remove it.
 				this.RemoveSelectedItem(item);
-			}
 
 			this.OnItemSelected(this, new SackPanelEventArgs(null, null));
 		}
@@ -1119,9 +1019,7 @@ namespace TQVaultAE.GUI.Components
 		protected void RemoveSelectedItem(Item item)
 		{
 			if (item == null || this.selectedItems == null)
-			{
 				return;
-			}
 
 			if (this.IsItemSelected(item))
 			{
@@ -1131,9 +1029,7 @@ namespace TQVaultAE.GUI.Components
 				this.selectedItemsChanged = true;
 
 				if (this.selectedItems.Count == 0)
-				{
 					this.ClearSelection();
-				}
 			}
 		}
 
@@ -1151,9 +1047,7 @@ namespace TQVaultAE.GUI.Components
 				return true;
 			}
 			else
-			{
 				return false;
-			}
 		}
 
 		/// <summary>
@@ -1162,9 +1056,7 @@ namespace TQVaultAE.GUI.Components
 		protected void ClearSelection()
 		{
 			if (this.selectedItems != null)
-			{
 				this.selectedItems = null;
-			}
 		}
 
 		/// <summary>
@@ -1262,9 +1154,7 @@ namespace TQVaultAE.GUI.Components
 									break;
 								}
 								else
-								{
 									randPercent -= e1.Value;
-								}
 							}
 						}
 
@@ -1324,8 +1214,8 @@ namespace TQVaultAE.GUI.Components
 				{
 					// set our mouse offset to be the center of the item.
 					Point mouseOffset = new Point(
-						itemUnderUs.Width * UIService.UI.HalfUnitSize,
-						itemUnderUs.Height * UIService.UI.HalfUnitSize);
+						itemUnderUs.Width * UIService.HalfUnitSize,
+						itemUnderUs.Height * UIService.HalfUnitSize);
 					this.DragInfo.Set(this, this.Sack, itemUnderUs, mouseOffset);
 
 					// since we have dropped something in this location, we can no longer put this item here.
@@ -1362,9 +1252,7 @@ namespace TQVaultAE.GUI.Components
 		protected virtual void MouseDownCallback(object sender, MouseEventArgs e)
 		{
 			if (this.Sack == null || (Config.Settings.Default.PlayerReadonly == true && this.SackType == SackType.Equipment))
-			{
 				return;
-			}
 
 			if (e.Button == MouseButtons.Left)
 			{
@@ -1372,14 +1260,10 @@ namespace TQVaultAE.GUI.Components
 				{
 					// Detect a CTRL-Click.
 					if (this.controlKeyDown)
-					{
 						// Add the focused item to the selected items list.
 						this.AddFocusedItemToSelectedItems(sender, e);
-					}
 					else
-					{
 						this.PickupItem(sender, e);
-					}
 				}
 				else
 				{
@@ -1401,16 +1285,12 @@ namespace TQVaultAE.GUI.Components
 					Item focusedItem = this.FindItem(this.LastCellWithFocus);
 					bool singleSelectionFocused = false;
 					if (this.selectedItems != null)
-					{
 						singleSelectionFocused = focusedItem == (Item)this.selectedItems[0] && this.selectedItems.Count == 1;
-					}
 
 					if (focusedItem != null || this.selectedItems != null)
 					{
 						if (focusedItem != null)
-						{
 							this.contextMenuCellWithFocus = this.LastCellWithFocus;
-						}
 
 						this.contextMenu.Items.Clear();
 						this.contextMenu.Items.Add(Resources.SackPanelMenuDelete);
@@ -1420,14 +1300,10 @@ namespace TQVaultAE.GUI.Components
 					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
 					{
 						if (focusedItem.HasRelicSlot1 && Config.Settings.Default.AllowItemEdit)
-						{
 							this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
-						}
 
 						if (focusedItem.DoesStack && focusedItem.Number > 1)
-						{
 							this.contextMenu.Items.Add(Resources.SackPanelMenuSplit);
-						}
 
 						if (Config.Settings.Default.AllowItemCopy)
 						{
@@ -1454,9 +1330,7 @@ namespace TQVaultAE.GUI.Components
 								// But internally to the sack panel they are still zero based
 								// so we need to account for that.
 								if (this.SackType == SackType.Sack)
-								{
 									offset2 = 1;
-								}
 							}
 
 							for (int i = 0; i < this.MaxSacks; ++i)
@@ -1464,9 +1338,7 @@ namespace TQVaultAE.GUI.Components
 								// The sacks do not need to list sack#0 since it is the Main player panel
 								// and it will be accounted for later.
 								if (this.SackType == SackType.Sack && i == 0)
-								{
 									continue;
-								}
 
 								if (i != this.CurrentSack + offset2)
 								{
@@ -1486,9 +1358,7 @@ namespace TQVaultAE.GUI.Components
 						{
 							string location = this.GetStringFromAutoMove(choice);
 							if (!string.IsNullOrEmpty(location))
-							{
 								choices.Add(location);
-							}
 						}
 
 						ToolStripItem[] moveChoices = new ToolStripItem[choices.Count];
@@ -1523,20 +1393,14 @@ namespace TQVaultAE.GUI.Components
 							if (focusedItem.IsRelic && !focusedItem.IsRelicComplete)
 							{
 								if (focusedItem.IsCharm)
-								{
 									this.contextMenu.Items.Add(Resources.SackPanelMenuCharm);
-								}
 								else
-								{
 									this.contextMenu.Items.Add(Resources.SackPanelMenuRelic);
-								}
 							}
 
 							// Add option to craft an artifact from formulae.
 							if (focusedItem.IsFormulae)
-							{
 								this.contextMenu.Items.Add(Resources.SackPanelMenuFormulae);
-							}
 
 							// If the item is a completed relic/charm/artifact or contains such then
 							// add a menu of possible completion bonuses to choose from.
@@ -1564,9 +1428,7 @@ namespace TQVaultAE.GUI.Components
 
 										// make the currently selected bonus bold
 										if (TQData.NormalizeRecordPath(e1.Key).Equals(TQData.NormalizeRecordPath(focusedItem.RelicBonusId)))
-										{
 											choices[i].Font = new Font(choices[i].Font, FontStyle.Bold);
-										}
 
 										++i;
 									}
@@ -1595,17 +1457,15 @@ namespace TQVaultAE.GUI.Components
 								{
 									// do not put the current item in the menu
 									if (TQData.NormalizeRecordPath(focusedItem.BaseItemId).Equals(TQData.NormalizeRecordPath(s)))
-									{
 										continue;
-									}
 
 									// Get the name of the item
-									Info info = Database.DB.GetInfo(s);
+									Info info = Database.GetInfo(s);
 									string name = Path.GetFileNameWithoutExtension(s);
 									if (info != null)
 									{
 										string nameTag = info.DescriptionTag;
-										name = Database.DB.GetFriendlyName(nameTag);
+										name = Database.GetFriendlyName(nameTag);
 									}
 
 									choices[i] = new ToolStripMenuItem(name, null, callback, s);
@@ -1635,14 +1495,10 @@ namespace TQVaultAE.GUI.Components
 					}
 
 					if (this.selectedItems != null)
-					{
 						this.contextMenu.Items.Add(Resources.SackPanelMenuClear);
-					}
 
 					if (focusedItem != null || this.selectedItems != null)
-					{
 						this.contextMenu.Show(this, new Point(e.X, e.Y));
-					}
 				}
 			}
 		}
@@ -1671,25 +1527,17 @@ namespace TQVaultAE.GUI.Components
 					{
 						// We need to restore the highlighted item's background
 						if (this.IsItemSelected(lastItem))
-						{
 							backgroundBrush = this.HighlightSelectedItemBrush;
-						}
 						else if (redrawSelection)
-						{
 							backgroundBrush = this.HighlightUnselectedItemBrush;
-						}
 						else
-						{
 							backgroundBrush = this.CellHasItemBrush;
-						}
 
 						this.DrawItem(g, lastItem, backgroundBrush);
 					}
 
 					if (cell != this.LastCellWithFocus)
-					{
 						this.LastCellWithFocus = cell;
-					}
 
 					if (newItem != lastItem)
 					{
@@ -1697,13 +1545,9 @@ namespace TQVaultAE.GUI.Components
 						{
 							// Check if the item is selected and use a different background
 							if (this.IsItemSelected(newItem))
-							{
 								backgroundBrush = this.HighlightSelectedItemBrush;
-							}
 							else
-							{
 								backgroundBrush = this.HighlightUnselectedItemBrush;
-							}
 
 							this.DrawItem(g, newItem, backgroundBrush);
 						}
@@ -1758,9 +1602,7 @@ namespace TQVaultAE.GUI.Components
 		protected virtual void RepaintLastDragLocation(Graphics graphics)
 		{
 			if (graphics == null)
-			{
 				return;
-			}
 
 			Rectangle dragRectangle = this.GetRepaintDragRect();
 
@@ -1780,8 +1622,9 @@ namespace TQVaultAE.GUI.Components
 			// Figure out the rectangle that needs to be redrawn
 			int x = this.LastDragLocation.X;
 			int y = this.LastDragLocation.Y;
-			int width = Convert.ToInt32(this.DragInfo.Item.ItemBitmap().Width * UIService.UI.Scale);
-			int height = Convert.ToInt32(this.DragInfo.Item.ItemBitmap().Height * UIService.UI.Scale);
+			var ibmp = this.UIService.GetBitmap(this.DragInfo.Item);
+			int width = Convert.ToInt32(ibmp.Width * UIService.Scale);
+			int height = Convert.ToInt32(ibmp.Height * UIService.Scale);
 
 			// We also know we need to wipe out any cells under the old drag point
 			// This is used to restore the background after highlighting the cells underneath
@@ -2013,19 +1856,13 @@ namespace TQVaultAE.GUI.Components
 		protected void RedrawGrid(Graphics graphics, Rectangle redrawRectangle)
 		{
 			if (this.DisableGrid || graphics == null)
-			{
 				return;
-			}
 
-			for (int x = redrawRectangle.X; x < redrawRectangle.Right; x += UIService.UI.ItemUnitSize)
-			{
+			for (int x = redrawRectangle.X; x < redrawRectangle.Right; x += UIService.ItemUnitSize)
 				graphics.DrawLine(this.gridPen, new Point(x, redrawRectangle.Y), new Point(x, redrawRectangle.Bottom - 1));
-			}
 
-			for (int y = redrawRectangle.Y; y < redrawRectangle.Bottom; y += UIService.UI.ItemUnitSize)
-			{
+			for (int y = redrawRectangle.Y; y < redrawRectangle.Bottom; y += UIService.ItemUnitSize)
 				graphics.DrawLine(this.gridPen, new Point(redrawRectangle.X, y), new Point(redrawRectangle.Right - 1, y));
-			}
 		}
 
 		/// <summary>
@@ -2059,34 +1896,33 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="imageAttributes">ImageAttributes used for drawing the image.</param>
 		protected void DrawItem(Graphics graphics, Item item, Point screenLocation, System.Drawing.Imaging.ImageAttributes imageAttributes)
 		{
-			if (item == null || graphics == null || item.ItemBitmap() == null)
-			{
+			if (item == null || graphics == null || this.UIService.GetBitmap(item) == null)
 				return;
-			}
 
+			var ibmp = this.UIService.GetBitmap(item);
 			Rectangle itemRect = new Rectangle(
-				screenLocation.X,
-				screenLocation.Y,
-				Convert.ToInt32(item.ItemBitmap().Width * UIService.UI.Scale),
-				Convert.ToInt32(item.ItemBitmap().Height * UIService.UI.Scale));
+				screenLocation.X
+				, screenLocation.Y
+				, Convert.ToInt32(ibmp.Width * UIService.Scale)
+				, Convert.ToInt32(ibmp.Height * UIService.Scale)
+			);
 
-			graphics.DrawImage(item.ItemBitmap(), itemRect, 0, 0, item.ItemBitmap().Width, item.ItemBitmap().Height, GraphicsUnit.Pixel, imageAttributes);
+			graphics.DrawImage(ibmp, itemRect, 0, 0, ibmp.Width, ibmp.Height, GraphicsUnit.Pixel, imageAttributes);
 
 			// Add the relic overlay if this item has a relic in it.
 			if (item.HasRelicSlot1)
 			{
-				Bitmap relicOverlay = UIService.UI.LoadRelicOverlayBitmap();
+				Bitmap relicOverlay = UIService.LoadRelicOverlayBitmap();
 				if (relicOverlay != null)
 				{
 					// draw it in the bottom-right most cell of this item
-					int x2 = screenLocation.X + ((item.Width - 1) * UIService.UI.ItemUnitSize);
-					int y2 = screenLocation.Y + ((item.Height - 1) * UIService.UI.ItemUnitSize);
+					int x2 = screenLocation.X + ((item.Width - 1) * UIService.ItemUnitSize);
+					int y2 = screenLocation.Y + ((item.Height - 1) * UIService.ItemUnitSize);
 
-					Rectangle overlayRect = new Rectangle(
-						x2,
-						y2,
-						Convert.ToInt32(relicOverlay.Width * UIService.UI.Scale),
-						Convert.ToInt32(relicOverlay.Height * UIService.UI.Scale));
+					Rectangle overlayRect = new Rectangle(x2, y2
+						, Convert.ToInt32(relicOverlay.Width * UIService.Scale)
+						, Convert.ToInt32(relicOverlay.Height * UIService.Scale)
+					);
 
 					graphics.DrawImage(relicOverlay, overlayRect, 0, 0, relicOverlay.Width, relicOverlay.Height, GraphicsUnit.Pixel, imageAttributes);
 				}
@@ -2100,9 +1936,9 @@ namespace TQVaultAE.GUI.Components
 				string numberString = item.Number.ToString(CultureInfo.CurrentCulture);
 
 				// Draw the number along the bottom of the cell
-				Point loc = new Point(screenLocation.X, screenLocation.Y + (item.Height * UIService.UI.ItemUnitSize) - 1);
-				float height = (float)this.numberFont.Height * UIService.UI.Scale;
-				float width = (float)item.Width * UIService.UI.ItemUnitSize;
+				Point loc = new Point(screenLocation.X, screenLocation.Y + (item.Height * UIService.ItemUnitSize) - 1);
+				float height = (float)this.numberFont.Height * UIService.Scale;
+				float width = (float)item.Width * UIService.ItemUnitSize;
 				float fy = (float)(loc.Y - (0.75F * this.numberFont.Height) - 1.0F);
 				float fx = (float)loc.X;
 
@@ -2120,12 +1956,10 @@ namespace TQVaultAE.GUI.Components
 		protected virtual void ShadeAreaUnderItem(Graphics graphics, Item item, Brush backgroundBrush)
 		{
 			if (item == null)
-			{
 				return;
-			}
 
 			Point screenLocation = this.CellTopLeft(item.Location);
-			this.ShadeAreaUnderItem(graphics, new Rectangle(screenLocation, new Size(item.Width * UIService.UI.ItemUnitSize, item.Height * UIService.UI.ItemUnitSize)), backgroundBrush);
+			this.ShadeAreaUnderItem(graphics, new Rectangle(screenLocation, new Size(item.Width * UIService.ItemUnitSize, item.Height * UIService.ItemUnitSize)), backgroundBrush);
 		}
 
 		/// <summary>
@@ -2137,9 +1971,7 @@ namespace TQVaultAE.GUI.Components
 		protected virtual void ShadeAreaUnderItem(Graphics graphics, Rectangle backgroundRectangle, Brush backgroundBrush)
 		{
 			if (graphics == null)
-			{
 				return;
-			}
 
 			if (backgroundBrush != null)
 			{
@@ -2159,14 +1991,12 @@ namespace TQVaultAE.GUI.Components
 		protected virtual void DrawItem(Graphics graphics, Item item, Brush backgroundBrush)
 		{
 			if (item == null)
-			{
 				return;
-			}
 
 			Point itemScreenLocation = this.CellTopLeft(item.Location);
 
 			// First draw the background for all the cells this item occupies
-			this.ShadeAreaUnderItem(graphics, new Rectangle(itemScreenLocation, new Size(item.Width * UIService.UI.ItemUnitSize, item.Height * UIService.UI.ItemUnitSize)), backgroundBrush);
+			this.ShadeAreaUnderItem(graphics, new Rectangle(itemScreenLocation, new Size(item.Width * UIService.ItemUnitSize, item.Height * UIService.ItemUnitSize)), backgroundBrush);
 
 			// Draw the item
 			this.DrawItem(graphics, item, itemScreenLocation);
@@ -2186,9 +2016,7 @@ namespace TQVaultAE.GUI.Components
 		{
 			int ans = string.Compare(item1.Text, item2.Text, StringComparison.OrdinalIgnoreCase);
 			if (ans == 0)
-			{
 				ans = string.Compare(item1.Name, item2.Name, StringComparison.OrdinalIgnoreCase);
-			}
 
 			return ans;
 		}
@@ -2226,9 +2054,7 @@ namespace TQVaultAE.GUI.Components
 		private void AddFocusedItemToSelectedItems(object sender, MouseEventArgs e)
 		{
 			if (this.DisableMultipleSelection)
-			{
 				return;
-			}
 
 			this.MouseMoveCallback(sender, e); // process the mouse moving to this location...just in case
 
@@ -2237,9 +2063,7 @@ namespace TQVaultAE.GUI.Components
 			{
 				// Allocate the List if not already done.
 				if (this.selectedItems == null)
-				{
 					this.selectedItems = new List<Item>();
-				}
 
 				if (!this.IsItemSelected(focusedItem))
 				{
@@ -2248,9 +2072,7 @@ namespace TQVaultAE.GUI.Components
 					this.selectedItemsChanged = true;
 				}
 				else
-				{
 					this.RemoveSelectedItem(focusedItem);
-				}
 			}
 
 			this.OnItemSelected(this, new SackPanelEventArgs(null, null));
@@ -2263,10 +2085,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
 		private void MouseEnterCallback(object sender, EventArgs e)
-		{
-			////this.Focus();
-			this.Select();
-		}
+			=> this.Select();
 
 		/// <summary>
 		/// Handler for the mouse pointer leaving the sack panel.
@@ -2277,14 +2096,10 @@ namespace TQVaultAE.GUI.Components
 		{
 			this.controlKeyDown = false;
 			if (this.Sack == null)
-			{
 				return;
-			}
 
 			if (!this.DragInfo.IsActive)
-			{
 				this.HighlightItemUnderMouse(new Point(-1, -1));
-			}
 			else
 			{
 				try
@@ -2311,29 +2126,19 @@ namespace TQVaultAE.GUI.Components
 		private string GetStringFromAutoMove(AutoMoveLocation autoMoveLocation)
 		{
 			if (autoMoveLocation == AutoMoveLocation.SecondaryVault && this.SecondaryVaultShown)
-			{
 				return Resources.SackPanelMenuVault2;
-			}
 
 			if (autoMoveLocation == AutoMoveLocation.Player && !this.SecondaryVaultShown)
-			{
 				return Resources.SackPanelMenuPlayer;
-			}
 
 			if (autoMoveLocation == AutoMoveLocation.Stash)
-			{
 				return Resources.SackPanelMenuStash;
-			}
 
 			if (autoMoveLocation == AutoMoveLocation.Vault)
-			{
 				return Resources.SackPanelMenuVault;
-			}
 
 			if (autoMoveLocation == AutoMoveLocation.Trash)
-			{
 				return Resources.SackPanelMenuTrash;
-			}
 
 			return string.Empty;
 		}
@@ -2359,9 +2164,7 @@ namespace TQVaultAE.GUI.Components
 					// we cannot hard code it.
 					int hashSign = Resources.GlobalMenuBag.IndexOf(Resources.GlobalMenuBagDelimiter, StringComparison.OrdinalIgnoreCase) + 1;
 					if (hashSign == -1)
-					{
 						return;
-					}
 
 					if (toolStripItem.Name.StartsWith(Resources.GlobalMenuBag.Substring(0, hashSign), StringComparison.OrdinalIgnoreCase))
 					{
@@ -2369,9 +2172,7 @@ namespace TQVaultAE.GUI.Components
 
 						// For the player panel we do not need an offset since the bags are already offset by 1.
 						if (this.SackType == SackType.Player || this.SackType == SackType.Sack)
-						{
 							offset = 0;
-						}
 
 						automoveDestination = (AutoMoveLocation)(Convert.ToInt32(toolStripItem.Name.Substring(hashSign), CultureInfo.InvariantCulture) - offset);
 					}
@@ -2477,7 +2278,7 @@ namespace TQVaultAE.GUI.Components
 					{
 						// change the item
 						focusedItem.RelicBonusId = newBonus;
-						focusedItem.RelicBonusInfo = Database.DB.GetInfo(newBonus);
+						focusedItem.RelicBonusInfo = Database.GetInfo(newBonus);
 						focusedItem.MarkModified();
 
 						// mark the sack as modified also
@@ -2511,9 +2312,7 @@ namespace TQVaultAE.GUI.Components
 							RightToLeftOptions) == DialogResult.Yes)
 						{
 							foreach (Item sackSelectedItem in this.selectedItems)
-							{
 								this.DeleteItem(sackSelectedItem, true);
-							}
 
 							this.ClearSelection();
 						}
@@ -2570,13 +2369,13 @@ namespace TQVaultAE.GUI.Components
 				}
 				else if (selectedItem == Resources.SackPanelMenuProperties)
 				{
-					ItemProperties dlg = new ItemProperties(Program.MainFormInstance);
+					var dlg = this.ServiceProvider.GetService<ItemProperties>();
 					dlg.Item = focusedItem;
 					dlg.ShowDialog();
 				}
 				else if (selectedItem == Resources.SackPanelMenuSeed)
 				{
-					ItemSeedDialog dlg = new ItemSeedDialog(Program.MainFormInstance);
+					var dlg = this.ServiceProvider.GetService<ItemSeedDialog>();
 					dlg.SelectedItem = focusedItem;
 					int origSeed = focusedItem.Seed;
 					dlg.ShowDialog();
@@ -2607,9 +2406,7 @@ namespace TQVaultAE.GUI.Components
 								break;
 							}
 							else
-							{
 								randPercent -= e1.Value;
-							}
 						}
 					}
 
@@ -2640,14 +2437,12 @@ namespace TQVaultAE.GUI.Components
 							if (randPercent <= e1.Value || i == 0)
 							{
 								artifact.RelicBonusId = TQData.NormalizeRecordPath(e1.Key);
-								artifact.RelicBonusInfo = Database.DB.GetInfo(e1.Key);
+								artifact.RelicBonusInfo = Database.GetInfo(e1.Key);
 								artifact.MarkModified();
 								break;
 							}
 							else
-							{
 								randPercent -= e1.Value;
-							}
 						}
 					}
 
@@ -2688,9 +2483,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="width">width of the fill</param>
 		/// <param name="height">height of the fill</param>
 		private void ClearArea(Graphics graphics, int x, int y, int width, int height)
-		{
-			graphics.FillRectangle(this.EmptyCellBrush, x, y, width, height);
-		}
+			=> graphics.FillRectangle(this.EmptyCellBrush, x, y, width, height);
 
 		/// <summary>
 		/// Draws an empty background in the specified rectangle.
@@ -2698,9 +2491,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="graphics">graphics instance</param>
 		/// <param name="clearRect">Rectangle to be cleared.</param>
 		private void ClearArea(Graphics graphics, Rectangle clearRect)
-		{
-			this.ClearArea(graphics, clearRect.X, clearRect.Y, clearRect.Width, clearRect.Height);
-		}
+			=> this.ClearArea(graphics, clearRect.X, clearRect.Y, clearRect.Width, clearRect.Height);
 
 		/// <summary>
 		/// Redraws the drag item.
@@ -2714,7 +2505,7 @@ namespace TQVaultAE.GUI.Components
 				// Identify all the cells and items under the drag item.  We want the actual cells that we will
 				// drop into so we add 1/2 a cell to the drag location so that we pick the cells closest
 				// to the center of the item.
-				Point topLeftCell = this.FindCell(new Point(location.X + UIService.UI.HalfUnitSize, location.Y + UIService.UI.HalfUnitSize));
+				Point topLeftCell = this.FindCell(new Point(location.X + UIService.HalfUnitSize, location.Y + UIService.HalfUnitSize));
 				if (topLeftCell.X < 0 || topLeftCell.Y < 0)
 				{
 					// out of area
@@ -2737,16 +2528,12 @@ namespace TQVaultAE.GUI.Components
 
 				this.ItemsUnderDragItem.Clear();
 				foreach (Item item in this.FindAllItems(this.CellsUnderDragItem))
-				{
 					this.ItemsUnderDragItem.Add(item);
-				}
 
 				this.LastDragLocation = location;
 				this.ItemsUnderOldDragLocation.Clear();
 				foreach (Item item in this.ItemsUnderDragItem)
-				{
 					this.ItemsUnderOldDragLocation.Add(item);
-				}
 
 				this.DrawItem(graphics, this.DragInfo.Item, this.LastDragLocation);
 			}
@@ -2764,9 +2551,7 @@ namespace TQVaultAE.GUI.Components
 		private void DrawBorder(Graphics graphics)
 		{
 			if (this.DisableBorder || graphics == null)
-			{
 				return;
-			}
 
 			graphics.DrawRectangle(this.borderPen, 0, 0, this.Size.Width, this.Size.Height);
 		}
@@ -2778,19 +2563,13 @@ namespace TQVaultAE.GUI.Components
 		private void DrawGrid(Graphics graphics)
 		{
 			if (this.DisableGrid || graphics == null)
-			{
 				return;
-			}
 
 			for (int x = 1; x < this.SackSize.Width; ++x)
-			{
 				graphics.DrawLine(this.gridPen, this.CellTopLeft(new Point(x, 0)), this.CellBottomLeft(new Point(x, this.SackSize.Height - 1)));
-			}
 
 			for (int y = 1; y < this.SackSize.Height; ++y)
-			{
 				graphics.DrawLine(this.gridPen, this.CellTopLeft(new Point(0, y)), this.CellTopRight(new Point(this.SackSize.Width - 1, y)));
-			}
 		}
 
 		/// <summary>
@@ -2801,44 +2580,28 @@ namespace TQVaultAE.GUI.Components
 		private void KeyDownCallback(object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.ControlKey)
-			{
 				this.controlKeyDown = true;
-			}
 
 			if (e.KeyData == (Keys.Control | Keys.F))
-			{
 				this.OnActivateSearch(this, new SackPanelEventArgs(null, null));
-			}
 
 			if (e.KeyData == (Keys.Control | Keys.A))
-			{
 				this.SelectAllItems();
-			}
 
 			if (e.KeyData == (Keys.Control | Keys.D))
-			{
 				this.OnClearAllItemsSelected(this, new SackPanelEventArgs(null, null));
-			}
 
 			if (e.KeyData == (Keys.Control | Keys.Add) || e.KeyData == (Keys.Control | Keys.Oemplus))
-			{
 				this.OnResizeForm(this, new ResizeEventArgs(0.1F));
-			}
 
 			if (e.KeyData == (Keys.Control | Keys.Subtract) || e.KeyData == (Keys.Control | Keys.OemMinus))
-			{
 				this.OnResizeForm(this, new ResizeEventArgs(-0.1F));
-			}
 
 			if (e.KeyData == (Keys.Control | Keys.Home))
-			{
 				this.OnResizeForm(this, new ResizeEventArgs(1.0F));
-			}
 
 			if (e.KeyData == Keys.F5)
-			{
 				this.Refresh();
-			}
 		}
 
 		/// <summary>
@@ -2849,9 +2612,7 @@ namespace TQVaultAE.GUI.Components
 		private void KeyUpCallback(object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.ControlKey)
-			{
 				this.controlKeyDown = false;
-			}
 		}
 
 		/// <summary>
@@ -2936,13 +2697,9 @@ namespace TQVaultAE.GUI.Components
 			protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
 			{
 				if (e.Item.Selected)
-				{
 					e.TextColor = Color.Black;
-				}
 				else
-				{
 					e.TextColor = Color.FromArgb(200, 200, 200);
-				}
 
 				base.OnRenderItemText(e);
 			}

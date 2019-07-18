@@ -4,8 +4,9 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.Presentation;
-using TQVaultAE.Entities;
+using TQVaultAE.Domain.Entities;
 using TQVaultAE.Config;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TQVaultAE.GUI.Models
 {
@@ -18,23 +19,26 @@ namespace TQVaultAE.GUI.Models
 		private double _startX = 0;
 		private double _startY = 0;
 		private Font _font;
-		private StringFormat _playerInfoAlignment;
-		private SolidBrush _whiteBrush = new SolidBrush(Color.White);
-		private SolidBrush _yellowGreenBrush = new SolidBrush(Color.YellowGreen);
+
+		private readonly StringFormat _playerInfoAlignment;
+		private readonly SolidBrush _whiteBrush = new SolidBrush(Color.White);
+		private readonly SolidBrush _yellowGreenBrush = new SolidBrush(Color.YellowGreen);
 
 		private RectangleF _editButton = new RectangleF(10, 100, 30, 20);
 		private static Brush _editNoHighlight = new SolidBrush(Color.FromArgb(0x52, 0x38, 0x12));
 		private Brush _editBckgrnd = _editNoHighlight;
 
-		private Pen _blackBorderPen = new Pen(Color.FromArgb(0xb8,0x8e,0x4b), 1);
-		private StringFormat _editTextAlignment;
+		private readonly Pen _blackBorderPen = new Pen(Color.FromArgb(0xb8,0x8e,0x4b), 1);
+		private readonly StringFormat _editTextAlignment;
 
-		private VaultPanel _stashPanel;
+		private readonly VaultPanel _stashPanel;
+		private readonly IServiceProvider ServiceProvider;
+		private readonly Settings _settings;
 
-		private Settings _settings;
-
-		internal PlayerInfoDisplay(Settings s, VaultPanel p, Font f, double x, double y)
+		internal PlayerInfoDisplay(IServiceProvider serviceProvider, Settings s, VaultPanel p, Font f, double x, double y)
 		{
+			this.ServiceProvider = serviceProvider;
+
 			_settings = s;
 			_stashPanel = p;
 			_font = f;
@@ -55,10 +59,7 @@ namespace TQVaultAE.GUI.Models
 		/// updates font being used, needed if window is resized
 		/// </summary>
 		/// <param name="f"></param>
-		public void UpdateFont(Font f)
-		{
-			_font = f;
-		}
+		public void UpdateFont(Font f) => _font = f;
 
 		/// <summary>
 		/// Display name for character unlocked difficulty
@@ -67,7 +68,6 @@ namespace TQVaultAE.GUI.Models
 		/// <returns>Display name</returns>
 		private string GetDifficultyDisplayName(int d)
 		{
-
 			switch (d)
 			{
 				case 0:
@@ -95,7 +95,8 @@ namespace TQVaultAE.GUI.Models
 
 			if (_editButton.Contains(stashPanelPoint))
 			{
-				var dlg = new CharacterEditDialog(_stashPanel.Player);
+				var dlg = this.ServiceProvider.GetService<CharacterEditDialog>();
+				dlg.PlayerCollection = _stashPanel.Player;
 				dlg.ShowDialog();
 				p.Invalidate();
 			}

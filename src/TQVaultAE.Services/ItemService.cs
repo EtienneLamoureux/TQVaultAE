@@ -1,33 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using TQVaultAE.Data;
-using TQVaultAE.Entities;
-using TQVaultAE.Entities.Results;
-using TQVaultAE.Logs;
-using TQVaultAE.Presentation;
-using static TQVaultAE.Data.ItemProvider;
+﻿using TQVaultAE.Domain.Contracts.Providers;
+using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.Services
 {
-	public class ItemService
+	public class ItemService : IItemService
 	{
-		private readonly log4net.ILog Log = null;
-		private readonly SessionContext userContext = null;
+		private readonly IItemProvider ItemProvider;
 
-		public ItemService(SessionContext userContext)
-		{
-			Log = Logger.Get(this);
-			this.userContext = userContext;
-		}
+		public ItemService(IItemProvider itemProvider)
+		{ this.ItemProvider = itemProvider; }
 
-		public ToFriendlyNameResult GetFriendlyNames(Item itm, FriendlyNamesExtraScopes? scopes = null)
+		/// <summary>
+		/// Gets the item name and attributes.
+		/// </summary>
+		/// <param name="itm"></param>
+		/// <param name="scopes">Extra data scopes as a bitmask</param>
+		/// <param name="filterExtra">filter extra properties</param>
+		/// <returns>An object containing the item name and attributes</returns>
+		public ToFriendlyNameResult GetFriendlyNames(Item itm, FriendlyNamesExtraScopes? scopes = null, bool filterExtra = true)
 		{
-			var result = ItemProvider.GetFriendlyNames(itm, scopes);
+			var result = ItemProvider.GetFriendlyNames(itm, scopes, filterExtra);
 			return result;
 		}
-
-
 	}
 }

@@ -8,15 +8,21 @@ namespace TQVaultAE.Data
 	using System;
 	using System.Globalization;
 	using System.IO;
-	using TQVaultAE.Entities;
+	using TQVaultAE.Domain.Contracts.Providers;
+	using TQVaultAE.Domain.Contracts.Services;
+	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Logs;
 
 	/// <summary>
 	/// Class for handling the stash file
 	/// </summary>
-	public static class StashProvider
+	public class StashProvider : IStashProvider
 	{
-		private static readonly log4net.ILog Log = Logger.Get(typeof(StashProvider));
+		private readonly log4net.ILog Log;
+		private readonly IItemProvider ItemProvider;
+		private readonly ISackCollectionProvider SackCollectionProvider;
+		private readonly IGamePathService GamePathResolver;
+		private readonly ITQDataService TQData;
 
 		/// <summary>
 		/// Defines the raw data buffer size
@@ -26,7 +32,7 @@ namespace TQVaultAE.Data
 		/// <summary>
 		/// CRC32 hash table.  Used for calculating the file CRC
 		/// </summary>
-		private static uint[] crc32Table =
+		private uint[] crc32Table =
 		{
 			0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
 			0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
@@ -73,11 +79,20 @@ namespace TQVaultAE.Data
 			0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d,
 		};
 
+		public StashProvider(IItemProvider itemProvider, ISackCollectionProvider sackCollectionProvider, IGamePathService gamePathResolver, ITQDataService tQData)
+		{
+			this.Log = Logger.Get(typeof(StashProvider));
+			this.ItemProvider = itemProvider;
+			this.SackCollectionProvider = sackCollectionProvider;
+			this.GamePathResolver = gamePathResolver;
+			this.TQData = tQData;
+		}
+
 		/// <summary>
 		/// Saves the stash file
 		/// </summary>
 		/// <param name="fileName">file name of this stash file</param>
-		public static void Save(Stash sta, string fileName)
+		public void Save(Stash sta, string fileName)
 		{
 			byte[] data = Encode(sta);
 
@@ -105,22 +120,18 @@ namespace TQVaultAE.Data
 		/// Converts the live data back into the raw binary data format
 		/// </summary>
 		/// <returns>byte array holding the raw data</returns>
-		public static byte[] Encode(Stash sta)
-		{
+		public byte[] Encode(Stash sta)
 			// We need to encode the item data to a memory stream
-			return EncodeItemData(sta);
-		}
+			=> EncodeItemData(sta);
 
 		/// <summary>
 		/// Loads a stash file
 		/// </summary>
 		/// <returns>false if the file does not exist otherwise true.</returns>
-		public static bool LoadFile(Stash sta)
+		public bool LoadFile(Stash sta)
 		{
 			if (!File.Exists(sta.StashFile))
-			{
 				return false;
-			}
 
 			using (FileStream file = new FileStream(sta.StashFile, FileMode.Open, FileAccess.Read))
 			{
@@ -150,7 +161,7 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="data">the raw file data</param>
 		/// <returns>raw file data with the updated file name extension</returns>
-		private static byte[] EncodeBackupFile(byte[] data)
+		private byte[] EncodeBackupFile(byte[] data)
 		{
 			// Find the length of the filename string.
 			// It's an Int32 starting at offset 52 in the file.
@@ -162,16 +173,12 @@ namespace TQVaultAE.Data
 
 			// look for the 'b' in .dxb
 			if (data[offset] == 98 || data[offset] == 66)
-			{
 				// and change it to 'g'
 				data[offset] = Convert.ToByte(103, CultureInfo.InvariantCulture);
-			}
 
 			// zero out the checksum
 			for (int i = 0; i < 4; i++)
-			{
 				data[i] = Convert.ToByte(0, CultureInfo.InvariantCulture);
-			}
 
 			return data;
 		}
@@ -181,7 +188,7 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="data">raw file data we are calculating</param>
 		/// <returns>raw file data with the crc calculated and inserted into the proper field</returns>
-		private static byte[] CalculateCRC(byte[] data)
+		private byte[] CalculateCRC(byte[] data)
 		{
 			using (BinaryReader reader = new BinaryReader(new MemoryStream(data, false)))
 			{
@@ -193,9 +200,7 @@ namespace TQVaultAE.Data
 				while (count > 0)
 				{
 					for (int i = 0; i < count; i++)
-					{
 						crc32Result = (crc32Result >> 8) ^ crc32Table[buffer[i] ^ (crc32Result & 0x000000FF)];
-					}
 
 					count = reader.Read(buffer, 0, readSize);
 				}
@@ -213,7 +218,7 @@ namespace TQVaultAE.Data
 		/// <summary>
 		/// Parses the raw data and converts to internal data.
 		/// </summary>
-		private static void ParseRawData(Stash sta)
+		private void ParseRawData(Stash sta)
 		{
 			// First create a memory stream so we can decode the binary data as needed.
 			using (BinaryReader reader = new BinaryReader(new MemoryStream(sta.rawData, false)))
@@ -230,7 +235,7 @@ namespace TQVaultAE.Data
 
 				try
 				{
-					string outfile = string.Concat(Path.Combine(TQData.TQVaultSaveFolder, sta.PlayerName), " Export.txt");
+					string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, sta.PlayerName), " Export.txt");
 					using (StreamWriter outStream = new StreamWriter(outfile, false))
 					{
 						outStream.WriteLine("Number of Sacks = {0}", sta.numberOfSacks);
@@ -246,7 +251,7 @@ namespace TQVaultAE.Data
 								object[] params1 = new object[20];
 
 								params1[0] = itemNumber;
-								params1[1] =  ItemProvider.ToFriendlyName(item);
+								params1[1] = ItemProvider.ToFriendlyName(item);
 								params1[2] = item.PositionX;
 								params1[3] = item.PositionY;
 								params1[4] = item.Seed;
@@ -259,7 +264,7 @@ namespace TQVaultAE.Data
 				}
 				catch (IOException exception)
 				{
-					Log.ErrorFormat(exception, "Error Exporting - '{0} Export.txt'", Path.Combine(TQData.TQVaultSaveFolder, sta.PlayerName));
+					Log.ErrorFormat(exception, "Error Exporting - '{0} Export.txt'", Path.Combine(GamePathResolver.TQVaultSaveFolder, sta.PlayerName));
 				}
 			}
 		}
@@ -268,7 +273,7 @@ namespace TQVaultAE.Data
 		/// Encodes the internal item data back into raw data
 		/// </summary>
 		/// <returns>raw data for the item data</returns>
-		private static byte[] EncodeItemData(Stash sta)
+		private byte[] EncodeItemData(Stash sta)
 		{
 			int dataLength;
 			byte[] data;
@@ -311,9 +316,7 @@ namespace TQVaultAE.Data
 			// The problem is that data[] may be bigger than the amount of data in it.
 			// We need to resize the array
 			if (dataLength == data.Length)
-			{
 				return data;
-			}
 
 			byte[] realData = new byte[dataLength];
 			Array.Copy(data, realData, dataLength);
@@ -325,7 +328,7 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="fileOffset">Offset into the file</param>
 		/// <param name="reader">BinaryReader instance</param>
-		private static void ParseItemBlock(Stash sta, int fileOffset, BinaryReader reader)
+		private void ParseItemBlock(Stash sta, int fileOffset, BinaryReader reader)
 		{
 			try
 			{

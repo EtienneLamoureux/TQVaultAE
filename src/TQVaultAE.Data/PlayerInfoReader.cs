@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using TQVaultAE.Entities;
+using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Data
 {
@@ -10,7 +11,7 @@ namespace TQVaultAE.Data
 	/// </summary>
 	public class PlayerInfoReader : PlayerInfoIO
 	{
-
+		private readonly ITQDataService TQData;
 		private PlayerInfo _playInfo = new PlayerInfo();
 
 		/// records starting point offsets as PlayerCollction reads player.chr file 
@@ -22,16 +23,15 @@ namespace TQVaultAE.Data
 			{ "PLAYTIMEINSECONDS", 0},
 		};
 
-		public PlayerInfoReader()
+		public PlayerInfoReader(ITQDataService tQData)
 		{
-
+			this.TQData = tQData;
 		}
 
 		/// <summary>
 		/// Will return true if one or more starting offsets found
 		/// </summary>
-		bool _foundPlayerInfo = false;
-		public bool FoundPlayerInfo { get => _foundPlayerInfo; }
+		public bool FoundPlayerInfo { get; private set; }
 
 
 		public bool Match(string blockName)
@@ -51,7 +51,7 @@ namespace TQVaultAE.Data
 			if (Match(blockName))
 			{
 				_playerKeys[blockName.ToUpper()] = offset;
-				_foundPlayerInfo = true;
+				FoundPlayerInfo = true;
 			}
 		}
 
@@ -59,10 +59,7 @@ namespace TQVaultAE.Data
 		/// Find character data in player.chr file
 		/// </summary>
 		/// <param name="reader"></param>
-		public void Read(BinaryReader reader)
-		{
-			ReadInternal(reader);
-		}
+		public void Read(BinaryReader reader) => ReadInternal(reader);
 
 
 		/// <summary>
@@ -93,7 +90,7 @@ namespace TQVaultAE.Data
 
 			_playInfo.Money = ReadMoneyValue(reader);
 
-			_playInfo.DifficultyUnlocked =  ReadDifficultyUnlockedValue(reader);
+			_playInfo.DifficultyUnlocked = ReadDifficultyUnlockedValue(reader);
 			TQData.ValidateNextString("hasBeenInGame", reader);
 			_playInfo.HasBeenInGame = reader.ReadInt32();
 
@@ -196,11 +193,7 @@ namespace TQVaultAE.Data
 		/// returns player data found in player.chr file
 		/// </summary>
 		/// <returns></returns>
-		public PlayerInfo GetPlayerInfo()
-		{
-			return (_playInfo);
-		}
-
+		public PlayerInfo GetPlayerInfo() => _playInfo;
 
 	}
 }

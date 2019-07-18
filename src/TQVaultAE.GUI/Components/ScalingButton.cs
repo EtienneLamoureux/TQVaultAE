@@ -6,6 +6,7 @@
 namespace TQVaultAE.GUI.Components
 {
 	using System;
+	using System.ComponentModel;
 	using System.Drawing;
 	using System.Windows.Forms;
 	using TQVaultAE.Presentation;
@@ -34,13 +35,10 @@ namespace TQVaultAE.GUI.Components
 		/// Initializes a new instance of the ScalingButton class.
 		/// </summary>
 		public ScalingButton()
-			: base()
 		{
 			this.DownBitmap = Resources.MainButtonDown;
 			this.OverBitmap = Resources.MainButtonOver;
 			this.UpBitmap = Resources.MainButtonUp;
-
-			////this.Font = GetScaledButtonTextFont(this.Font);
 
 			TextChanged += new EventHandler(this.TextChangedCallback);
 			GotFocus += new EventHandler(this.GotFocusCallback);
@@ -56,10 +54,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		public bool UseCustomGraphic
 		{
-			get
-			{
-				return this.useCustomGraphic;
-			}
+			get => this.useCustomGraphic;
 
 			set
 			{
@@ -71,9 +66,7 @@ namespace TQVaultAE.GUI.Components
 					this.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, (int)((byte)51), (int)((byte)44), (int)((byte)28));
 					this.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, (int)((byte)51), (int)((byte)44), (int)((byte)28));
 					if (this.UpBitmap != null)
-					{
 						this.Image = this.UpBitmap;
-					}
 				}
 				else
 				{
@@ -94,17 +87,12 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		public bool SizeToGraphic
 		{
-			get
-			{
-				return this.sizeToGraphic;
-			}
+			get => this.sizeToGraphic;
 
 			set
 			{
 				if (value && this.UpBitmap != null)
-				{
 					this.Size = this.UpBitmap.Size;
-				}
 
 				this.sizeToGraphic = value;
 			}
@@ -171,10 +159,8 @@ namespace TQVaultAE.GUI.Components
 					this.Image = newImage;
 				}
 				else
-				{
 					// Just scale the image normally.
 					this.Image = new Bitmap(this.Image, this.Size);
-				}
 			}
 
 			base.OnPaint(pevent);
@@ -189,24 +175,18 @@ namespace TQVaultAE.GUI.Components
 		{
 			// Get a reference for scaling.
 			if (this.baseFont == null)
-			{
 				this.baseFont = this.Font;
-			}
 
 			// We changed the font so reset the base font.
 			if (this.baseFont.FontFamily != this.Font.FontFamily)
-			{
 				this.baseFont = this.Font;
-			}
 
 			this.baseFont = new Font(this.baseFont.FontFamily, this.baseFont.SizeInPoints * factor.Height, this.baseFont.Style);
 			this.Font = this.GetScaledButtonTextFont(this.baseFont, Convert.ToInt32((float)this.Width * factor.Width));
 
 			// Reset the image to the original size.  Assume that we are resizing and that this button is not under the mouse.
 			if (this.Image != null)
-			{
 				this.Image = this.UpBitmap;
-			}
 
 			base.ScaleControl(factor, specified);
 		}
@@ -221,9 +201,7 @@ namespace TQVaultAE.GUI.Components
 			if (this.UseCustomGraphic)
 			{
 				if (this.OverBitmap != null)
-				{
 					this.Image = this.OverBitmap;
-				}
 				else
 				{
 					this.FlatAppearance.MouseOverBackColor = SystemColors.ButtonHighlight;
@@ -242,9 +220,7 @@ namespace TQVaultAE.GUI.Components
 			if (this.UseCustomGraphic)
 			{
 				if (this.OverBitmap != null)
-				{
 					this.Image = this.OverBitmap;
-				}
 				else
 				{
 					this.FlatAppearance.MouseOverBackColor = SystemColors.ButtonHighlight;
@@ -261,9 +237,7 @@ namespace TQVaultAE.GUI.Components
 		private void MouseLeaveCallback(object sender, EventArgs e)
 		{
 			if (this.UseCustomGraphic)
-			{
 				this.Image = this.UpBitmap;
-			}
 		}
 
 		/// <summary>
@@ -274,9 +248,7 @@ namespace TQVaultAE.GUI.Components
 		private void LostFocusCallback(object sender, EventArgs e)
 		{
 			if (this.UseCustomGraphic)
-			{
 				this.Image = this.UpBitmap;
-			}
 		}
 
 		/// <summary>
@@ -289,13 +261,9 @@ namespace TQVaultAE.GUI.Components
 			if (this.UseCustomGraphic)
 			{
 				if (this.OverBitmap != null)
-				{
 					this.Image = this.OverBitmap;
-				}
 				else
-				{
 					this.Image = this.UpBitmap;
-				}
 			}
 		}
 
@@ -309,9 +277,7 @@ namespace TQVaultAE.GUI.Components
 			if (this.UseCustomGraphic)
 			{
 				if (this.DownBitmap != null)
-				{
 					this.Image = this.DownBitmap;
-				}
 				else
 				{
 					this.FlatAppearance.MouseDownBackColor = SystemColors.ButtonShadow;
@@ -329,15 +295,11 @@ namespace TQVaultAE.GUI.Components
 		{
 			// Make sure we start somewhere.
 			if (this.baseFont == null)
-			{
 				this.baseFont = this.Font;
-			}
 
 			// We changed the font so reset the base font.
 			if (this.baseFont.FontFamily != this.Font.FontFamily)
-			{
 				this.baseFont = this.Font;
-			}
 
 			this.Font = this.GetScaledButtonTextFont(this.baseFont, this.Width);
 		}
@@ -352,15 +314,11 @@ namespace TQVaultAE.GUI.Components
 		{
 			// Make sure we have something to test.
 			if (font == null && newWidth > 0)
-			{
 				return null;
-			}
 
 			// See if the text can fit on the button and if it does we do not need to do anything.
 			if (TextRenderer.MeasureText(this.Text, font).Width < newWidth - 12)
-			{
 				return font;
-			}
 
 			float fontSize = font.Size;
 

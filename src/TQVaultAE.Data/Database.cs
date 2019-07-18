@@ -7,19 +7,20 @@ namespace TQVaultAE.Data
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
 	using System.Globalization;
 	using System.IO;
 	using System.Text;
 	using TQVaultAE.Config;
-	using TQVaultAE.Entities;
+	using TQVaultAE.Domain.Contracts.Providers;
+	using TQVaultAE.Domain.Contracts.Services;
+	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Logs;
 
 
 	/// <summary>
 	/// Reads a Titan Quest database file.
 	/// </summary>
-	public class Database
+	public class Database : IDatabase
 	{
 		private readonly log4net.ILog Log = null;
 
@@ -39,42 +40,46 @@ namespace TQVaultAE.Data
 		/// <summary>
 		/// Dictionary of all associated arc files in the database.
 		/// </summary>
-		private Dictionary<string, ArcFile> arcFiles;
+		private Dictionary<string, ArcFile> arcFiles = new Dictionary<string, ArcFile>();
 
 		/// <summary>
 		/// Game language to support setting language in UI
 		/// </summary>
 		private string gameLanguage;
 
+		private readonly IArcFileProvider arcProv;
+		private readonly IArzFileProvider arzProv;
+		private readonly IItemAttributeProvider ItemAttributeProvider;
+		private readonly IGamePathService GamePathResolver;
+		private readonly ITQDataService TQData;
+
 		#endregion Database Fields
 
 		/// <summary>
 		/// Initializes a new instance of the Database class.
 		/// </summary>
-		private Database()
+		public Database(
+			ILogger<Database> log
+			, IArcFileProvider arcFileProvider
+			, IArzFileProvider arzFileProvider
+			, IItemAttributeProvider itemAttributeProvider
+			, IGamePathService gamePathResolver
+			, ITQDataService tQData
+		)
 		{
-			this.Log = Logger.Get(this);
-			this.arcFiles = new Dictionary<string, ArcFile>();
+			this.Log = log.Logger;
+			this.AutoDetectLanguage = Config.Settings.Default.AutoDetectLanguage;
+			this.TQLanguage = Config.Settings.Default.TQLanguage;
+			this.arcProv = arcFileProvider;
+			this.arzProv = arzFileProvider;
+			this.ItemAttributeProvider = itemAttributeProvider;
+			this.GamePathResolver = gamePathResolver;
+			this.TQData = tQData;
+			this.LoadDBFile();
 		}
 
-		/// <summary>
-		/// Load DB in static constructor
-		/// </summary>
-		static Database()
-		{
-			Database.DB = new Database();
-			Database.DB.AutoDetectLanguage = Config.Settings.Default.AutoDetectLanguage;
-			Database.DB.TQLanguage = Config.Settings.Default.TQLanguage;
-			Database.DB.LoadDBFile();
-		}
 
 		#region Database Properties
-
-		/// <summary>
-		/// Gets or sets the static database.
-		/// </summary>
-		public static Database DB { get; private set; }
-
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the game language is being auto detected.
@@ -90,19 +95,16 @@ namespace TQVaultAE.Data
 		/// <summary>
 		/// Gets the instance of the Titan Quest Database ArzFile.
 		/// </summary>
-
 		public ArzFile ArzFile { get; private set; }
 
 		/// <summary>
 		/// Gets the instance of the Immortal Throne Database ArzFile.
 		/// </summary>
-
 		public ArzFile ArzFileIT { get; private set; }
 
 		/// <summary>
 		/// Gets the instance of a custom map Database ArzFile.
 		/// </summary>
-
 		public ArzFile ArzFileMod { get; private set; }
 
 		/// <summary>
@@ -126,7 +128,7 @@ namespace TQVaultAE.Data
 				{
 					try
 					{
-						string optionsFile = TQData.TQSettingsFile;
+						string optionsFile = GamePathResolver.TQSettingsFile;
 						if (File.Exists(optionsFile))
 						{
 							using (StreamReader reader = new StreamReader(optionsFile))
@@ -187,7 +189,7 @@ namespace TQVaultAE.Data
 		/// <param name="arcFileName">Name of the arc file</param>
 		/// <param name="destination">Destination path for extracted data</param>
 		/// <returns>Returns true on success otherwise false</returns>
-		public static bool ExtractArcFile(string arcFileName, string destination)
+		public bool ExtractArcFile(string arcFileName, string destination)
 		{
 			bool result = false;
 
@@ -199,7 +201,7 @@ namespace TQVaultAE.Data
 				ArcFile arcFile = new ArcFile(arcFileName);
 
 				// Extract the files
-				result = arcFile.ExtractArcFile(destination);
+				result = arcProv.ExtractArcFile(arcFile, destination);
 			}
 			catch (IOException exception)
 			{
@@ -237,18 +239,17 @@ namespace TQVaultAE.Data
 			else
 			{
 				DBRecordCollection record = null;
-
 				// Add support for searching a custom map database
 				if (this.ArzFileMod != null)
-					record = this.ArzFileMod.GetItem(itemId);
+					record = arzProv.GetItem(this.ArzFileMod, itemId);
 
 				// Try the expansion pack database first.
 				if (record == null && this.ArzFileIT != null)
-					record = this.ArzFileIT.GetItem(itemId);
+					record = arzProv.GetItem(this.ArzFileIT, itemId);
 
 				// Try looking in TQ database now
 				if (record == null || this.ArzFileIT == null)
-					record = this.ArzFile.GetItem(itemId);
+					record = arzProv.GetItem(this.ArzFile, itemId);
 
 				if (record == null)
 					return null;
@@ -287,7 +288,6 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="variable">variable for which we are making a nice string.</param>
 		/// <returns>Formatted string in the format of:  Attribute: value</returns>
-
 		public string VariableToStringNice(Variable variable)
 		{
 			StringBuilder ans = new StringBuilder(64);
@@ -347,14 +347,13 @@ namespace TQVaultAE.Data
 		/// </remarks>
 		/// <param name="itemId">Item Id which we are looking up</param>
 		/// <returns>Returns the DBRecord for the item Id</returns>
-
 		public DBRecordCollection GetRecordFromFile(string itemId)
 		{
 			itemId = TQData.NormalizeRecordPath(itemId);
 
 			if (this.ArzFileMod != null)
 			{
-				DBRecordCollection recordMod = this.ArzFileMod.GetItem(itemId);
+				DBRecordCollection recordMod = arzProv.GetItem(this.ArzFileMod, itemId);
 				if (recordMod != null)
 				{
 					// Custom Map records have highest precedence.
@@ -365,7 +364,7 @@ namespace TQVaultAE.Data
 			if (this.ArzFileIT != null)
 			{
 				// see if it's in IT ARZ file
-				DBRecordCollection recordIT = this.ArzFileIT.GetItem(itemId);
+				DBRecordCollection recordIT = arzProv.GetItem(this.ArzFileIT, itemId);
 				if (recordIT != null)
 				{
 					// IT file takes precedence over TQ.
@@ -373,7 +372,7 @@ namespace TQVaultAE.Data
 				}
 			}
 
-			return ArzFile.GetItem(itemId);
+			return arzProv.GetItem(ArzFile, itemId);
 		}
 
 		/// <summary>
@@ -395,11 +394,10 @@ namespace TQVaultAE.Data
 			// First we need to figure out the correct file to
 			// open, by grabbing it off the front of the resourceID
 			int backslashLocation = resourceId.IndexOf('\\');
+
+			// not a proper resourceID.
 			if (backslashLocation <= 0)
-			{
-				// not a proper resourceID.
 				return null;
-			}
 
 			string arcFileBase = resourceId.Substring(0, backslashLocation);
 			if (TQDebug.DatabaseDebugLevel > 1)
@@ -411,12 +409,12 @@ namespace TQVaultAE.Data
 
 			// Added by VillageIdiot
 			// Check the mod folder for the image resource.
-			if (TQData.IsCustom)
+			if (GamePathResolver.IsCustom)
 			{
 				if (TQDebug.DatabaseDebugLevel > 1)
 					Log.Debug("Checking Custom Resources.");
 
-				rootFolder = Path.Combine(TQData.MapName, "resources");
+				rootFolder = Path.Combine(GamePathResolver.MapName, "resources");
 
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
 				arcFileData = this.ReadARCFile(arcFile, resourceId);
@@ -429,7 +427,7 @@ namespace TQVaultAE.Data
 				if (TQDebug.DatabaseDebugLevel > 1)
 					Log.Debug("Checking IT Resources.");
 
-				rootFolder = TQData.ImmortalThronePath;
+				rootFolder = GamePathResolver.ImmortalThronePath;
 
 				bool xpack = false;
 
@@ -481,22 +479,22 @@ namespace TQVaultAE.Data
 			// Also could be that it says xpack in the record but the file is in the root.
 			if (arcFileData == null)
 			{
-				rootFolder = Path.Combine(Path.Combine(TQData.ImmortalThronePath, "Resources"), "XPack");
+				rootFolder = Path.Combine(Path.Combine(GamePathResolver.ImmortalThronePath, "Resources"), "XPack");
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
 				arcFileData = this.ReadARCFile(arcFile, resourceId);
 			}
 
 			// Now, let's check if the item is in Ragnarok DLC
-			if (arcFileData == null && TQData.IsRagnarokInstalled)
+			if (arcFileData == null && GamePathResolver.IsRagnarokInstalled)
 			{
-				rootFolder = Path.Combine(Path.Combine(TQData.ImmortalThronePath, "Resources"), "XPack2");
+				rootFolder = Path.Combine(Path.Combine(GamePathResolver.ImmortalThronePath, "Resources"), "XPack2");
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
 				arcFileData = this.ReadARCFile(arcFile, resourceId);
 			}
 
-			if (arcFileData == null && TQData.IsAtlantisInstalled)
+			if (arcFileData == null && GamePathResolver.IsAtlantisInstalled)
 			{
-				rootFolder = Path.Combine(Path.Combine(TQData.ImmortalThronePath, "Resources"), "XPack3");
+				rootFolder = Path.Combine(Path.Combine(GamePathResolver.ImmortalThronePath, "Resources"), "XPack3");
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
 				arcFileData = this.ReadARCFile(arcFile, resourceId);
 			}
@@ -508,7 +506,7 @@ namespace TQVaultAE.Data
 				if (TQDebug.DatabaseDebugLevel > 1)
 					Log.Debug("Checking TQ Resources.");
 
-				rootFolder = TQData.TQPath;
+				rootFolder = GamePathResolver.TQPath;
 				rootFolder = Path.Combine(rootFolder, "Resources");
 
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
@@ -552,7 +550,7 @@ namespace TQVaultAE.Data
 				}
 
 				// Now retrieve the data
-				byte[] ans = arcFile.GetData(dataId);
+				byte[] ans = arcProv.GetData(arcFile, dataId);
 
 				if (TQDebug.DatabaseDebugLevel > 0)
 					Log.Debug("Exiting Database.ReadARCFile()");
@@ -581,10 +579,10 @@ namespace TQVaultAE.Data
 			string rootFolder;
 			if (isImmortalThrone)
 			{
-				if (TQData.ImmortalThronePath.Contains("Anniversary"))
-					rootFolder = Path.Combine(TQData.ImmortalThronePath, "Text");
+				if (GamePathResolver.ImmortalThronePath.Contains("Anniversary"))
+					rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Text");
 				else
-					rootFolder = Path.Combine(TQData.ImmortalThronePath, "Resources");
+					rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources");
 
 				if (TQDebug.DatabaseDebugLevel > 1)
 				{
@@ -595,7 +593,7 @@ namespace TQVaultAE.Data
 			else
 			{
 				// from the original TQ folder
-				rootFolder = Path.Combine(TQData.TQPath, "Text");
+				rootFolder = Path.Combine(GamePathResolver.TQPath, "Text");
 
 				if (TQDebug.DatabaseDebugLevel > 1)
 				{
@@ -789,7 +787,7 @@ namespace TQVaultAE.Data
 				this.ParseTextDB(databaseFile, "text\\xnpc.txt"); // Added by VillageIdiot
 				this.ParseTextDB(databaseFile, "text\\modstrings.txt"); // Added by VillageIdiot
 
-				if (TQData.IsRagnarokInstalled)
+				if (GamePathResolver.IsRagnarokInstalled)
 				{
 					this.ParseTextDB(databaseFile, "text\\x2commonequipment.txt");
 					this.ParseTextDB(databaseFile, "text\\x2uniqueequipment.txt");
@@ -801,7 +799,7 @@ namespace TQVaultAE.Data
 					this.ParseTextDB(databaseFile, "text\\x2npc.txt"); // Added by VillageIdiot
 				}
 
-				if (TQData.IsAtlantisInstalled)
+				if (GamePathResolver.IsAtlantisInstalled)
 				{
 					this.ParseTextDB(databaseFile, "text\\x3basegame_nonvoiced.txt");
 					this.ParseTextDB(databaseFile, "text\\x3items_nonvoiced.txt");
@@ -811,9 +809,9 @@ namespace TQVaultAE.Data
 			}
 
 			// For loading custom map text database.
-			if (TQData.IsCustom)
+			if (GamePathResolver.IsCustom)
 			{
-				databaseFile = Path.Combine(TQData.MapName, "resources", "text.arc");
+				databaseFile = Path.Combine(GamePathResolver.MapName, "resources", "text.arc");
 
 				if (TQDebug.DatabaseDebugLevel > 1)
 				{
@@ -897,15 +895,11 @@ namespace TQVaultAE.Data
 						// find second [xxx]
 						int textEnd = label.IndexOf('[', textStart);
 						if (textEnd == -1)
-						{
 							// If it was the only [...] tag in the string then take the whole string after the tag
 							label = label.Substring(textStart);
-						}
 						else
-						{
 							// else take the string between the first 2 [...] tags
 							label = label.Substring(textStart, textEnd - textStart);
-						}
 
 						label = label.Trim();
 					}
@@ -929,7 +923,7 @@ namespace TQVaultAE.Data
 				Log.Debug("Database.LoadARZFile()");
 
 			// from the original TQ folder
-			string file = Path.Combine(Path.Combine(TQData.TQPath, "Database"), "database.arz");
+			string file = Path.Combine(Path.Combine(GamePathResolver.TQPath, "Database"), "database.arz");
 
 			if (TQDebug.DatabaseDebugLevel > 1)
 			{
@@ -938,15 +932,15 @@ namespace TQVaultAE.Data
 			}
 
 			this.ArzFile = new ArzFile(file);
-			this.ArzFile.Read();
+			arzProv.Read(this.ArzFile);
 
 			// now Immortal Throne expansion pack
 			this.ArzFileIT = this.ArzFile;
 
 			// Added to load a custom map database file.
-			if (TQData.IsCustom)
+			if (GamePathResolver.IsCustom)
 			{
-				file = Path.Combine(TQData.MapName, "database", $"{Path.GetFileName(TQData.MapName)}.arz");
+				file = Path.Combine(GamePathResolver.MapName, "database", $"{Path.GetFileName(GamePathResolver.MapName)}.arz");
 
 				if (TQDebug.DatabaseDebugLevel > 1)
 				{
@@ -957,7 +951,7 @@ namespace TQVaultAE.Data
 				if (File.Exists(file))
 				{
 					this.ArzFileMod = new ArzFile(file);
-					this.ArzFileMod.Read();
+					arzProv.Read(this.ArzFileMod);
 				}
 				else
 					this.ArzFileMod = null;

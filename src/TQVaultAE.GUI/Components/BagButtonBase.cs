@@ -5,30 +5,31 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI.Components
 {
+	using Microsoft.Extensions.DependencyInjection;
 	using System;
-	using System.Collections.Generic;
 	using System.Drawing;
-	using System.Linq.Expressions;
 	using System.Windows.Forms;
 	using Tooltip;
-	using TQVaultAE.Entities;
+	using TQVaultAE.Domain.Contracts.Services;
+	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Presentation;
-	using TQVaultAE.Services;
 
 	/// <summary>
 	/// Delegate for displaying a tooltip with the bag's contents.
 	/// </summary>
 	/// <param name="button">instance of this BagButton</param>
 	/// <returns>String containing the bag's contents</returns>
-	public delegate string GetToolTip(BagButtonBase button);
+	public delegate void GetToolTip(BagButtonBase button);
 
 	/// <summary>
 	/// Provides base class for creating and managing sack bag buttons.
 	/// </summary>
 	public abstract class BagButtonBase : Panel
 	{
+		protected readonly IServiceProvider ServiceProvider;
+		protected readonly IFontService FontService;
+		protected readonly IUIService UIService;
 		internal SackCollection Sack;
-		internal IEnumerable<Item> Excluded = Array.Empty<Item>();
 
 		/// <summary>
 		/// Flag to signal when the mouse is clicked on the button.
@@ -40,14 +41,18 @@ namespace TQVaultAE.GUI.Components
 		/// Tooltip delegate used to display summary of bag contents.
 		/// </summary>
 		private GetToolTip getToolTip;
-
+		
 		/// <summary>
 		/// Initializes a new instance of the BagButtonBase class.
 		/// </summary>
 		/// <param name="bagNumber">number of the bag for display</param>
 		/// <param name="getToolTip">Tooltip delegate</param>
-		protected BagButtonBase(int bagNumber, GetToolTip getToolTip)
+		protected BagButtonBase(int bagNumber, GetToolTip getToolTip, IServiceProvider serviceProvider)
 		{
+			this.ServiceProvider = serviceProvider;
+			this.FontService = this.ServiceProvider.GetService<IFontService>();
+			this.UIService = this.ServiceProvider.GetService<IUIService>();
+
 			this.getToolTip = getToolTip;
 			this.ButtonNumber = bagNumber;
 
@@ -98,10 +103,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		public bool IsOn
 		{
-			get
-			{
-				return this.isOn;
-			}
+			get => this.isOn;
 
 			set
 			{
@@ -120,20 +122,16 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <param name="windowHandle">window handle for parent</param>
 		/// <returns>string with the bag's contents</returns>
-		public string ToolTipCallback(int windowHandle)
+		public void ToolTipCallback(int windowHandle)
 		{
 			// see if this is us
 			if (this.Handle.ToInt32() == windowHandle)
 			{
 				// yep.
-				GetToolTip temp = this.getToolTip;
+				var temp = this.getToolTip;
 				if (temp != null)
-				{
-					return temp(this);
-				}
+					temp(this);
 			}
-
-			return null;
 		}
 
 		/// <summary>
@@ -150,12 +148,10 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="e">EventArgs data</param>
 		private void MouseEnterCallback(object sender, EventArgs e)
 		{
-			string tooltip = null;
-
 			if (this.getToolTip != null)
 			{
-				tooltip = this.getToolTip(this);
-				BagButtonTooltip.ShowTooltip(Program.MainFormInstance, this);
+				this.getToolTip(this);
+				BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
 			}
 
 			this.IsOver = true;
@@ -184,20 +180,14 @@ namespace TQVaultAE.GUI.Components
 		private void PaintCallback(object sender, PaintEventArgs e)
 		{
 			if (this.OffBitmap == null)
-			{
 				this.CreateBackgroundGraphics();
-			}
 
 			Bitmap bitmap = this.OffBitmap;
 
 			if (this.IsOn)
-			{
 				bitmap = this.OnBitmap;
-			}
 			else if (this.IsOver)
-			{
 				bitmap = this.OverBitmap;
-			}
 
 			// Draw the background graphic.
 			e.Graphics.DrawImage(bitmap, 0, 0, this.Width, this.Height);
@@ -205,15 +195,13 @@ namespace TQVaultAE.GUI.Components
 			// Display the text overlay if we have one.
 			if (!string.IsNullOrEmpty(this.ButtonText))
 			{
-				Font font = this.GetScaledButtonTextFont(e.Graphics, FontHelper.GetFontAlbertusMTLight(20.0F * UIService.UI.Scale, GraphicsUnit.Pixel));
+				Font font = this.GetScaledButtonTextFont(e.Graphics, FontService.GetFontAlbertusMTLight(20.0F * UIService.Scale, GraphicsUnit.Pixel));
 
 				if (font != null)
 				{
 					// If we are mousing over then display the bolded font.
 					if (this.IsOver)
-					{
 						font = new Font(font, FontStyle.Bold);
-					}
 
 					StringFormat textFormat = new StringFormat(StringFormatFlags.NoClip);
 					textFormat.LineAlignment = StringAlignment.Center;

@@ -6,8 +6,7 @@
 
 namespace TQVaultAE.GUI.Components
 {
-	using Tooltip;
-	using TQVaultAE.Entities;
+	using System;
 	using TQVaultAE.Presentation;
 
 	/// <summary>
@@ -22,8 +21,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <param name="bagNumber">number of the bag for display</param>
 		/// <param name="getToolTip">Tooltip delegate</param>
-		/// <param name="tooltip">Tooltip instance</param>
-		public BagButton(int bagNumber, GetToolTip getToolTip) : base(bagNumber, getToolTip)
+		public BagButton(int bagNumber, GetToolTip getToolTip, IServiceProvider serviceProvider) : base(bagNumber, getToolTip, serviceProvider)
 		{ }
 
 		/// <summary>

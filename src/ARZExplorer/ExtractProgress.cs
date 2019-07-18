@@ -11,7 +11,9 @@ namespace ArzExplorer
 	using System.Threading;
 	using System.Windows.Forms;
 	using TQVaultAE.Data;
-	using TQVaultAE.Entities;
+	using TQVaultAE.Domain.Contracts.Providers;
+	using TQVaultAE.Domain.Entities;
+	using TQVaultAE.Logs;
 
 	/// <summary>
 	/// ARZ file extraction progress dialog
@@ -26,7 +28,10 @@ namespace ArzExplorer
 		/// <summary>
 		/// Base extraction folder for database
 		/// </summary>
-		private string baseFolder;
+		internal string BaseFolder;
+		private readonly IArcFileProvider arcProv;
+		private readonly IArzFileProvider arzProv;
+		private readonly IDBRecordCollectionProvider DBRecordCollectionProvider;
 
 		/// <summary>
 		/// ID for current records
@@ -47,9 +52,11 @@ namespace ArzExplorer
 		/// Initializes a new instance of the ExtractProgress class.
 		/// </summary>
 		/// <param name="baseFolder">Base extraction folder for TQ database</param>
-		public ExtractProgress(string baseFolder)
+		public ExtractProgress(IArcFileProvider arcFileProvider, IArzFileProvider arzFileProvider, IDBRecordCollectionProvider dBRecordCollectionProvider)
 		{
-			this.baseFolder = baseFolder;
+			this.arcProv = arcFileProvider;
+			this.arzProv = arzFileProvider;
+			this.DBRecordCollectionProvider = dBRecordCollectionProvider;
 			this.InitializeComponent();
 
 			this.Text = Resources.ARZProgressText;
@@ -108,21 +115,18 @@ namespace ArzExplorer
 			try
 			{
 				bool canceled = false;
-
-				foreach (string recordID in Form1.ARZFile.GetKeyTable())
+				foreach (string recordID in arzProv.GetKeyTable(Form1.ARZFile))
 				{
 					if (canceled)
-					{
 						break;
-					}
 
 					// update label with recordID
 					this.recordIdBeingProcessed = recordID;
 					this.Invoke(new MethodInvoker(this.UpdateLabel));
 
 					// Write the record
-					var dbc = Form1.ARZFile.GetRecordNotCached(recordID);
-					DBRecordCollectionProvider.Write(dbc, this.baseFolder);
+					var dbc = arzProv.GetRecordNotCached(Form1.ARZFile, recordID);
+					DBRecordCollectionProvider.Write(dbc, this.BaseFolder);
 
 					// Update progressbar
 					this.Invoke(new MethodInvoker(this.IncrementProgress));
@@ -154,19 +158,17 @@ namespace ArzExplorer
 			{
 				bool canceled = false;
 
-				foreach (string recordID in Form1.ARCFile.GetKeyTable())
+				foreach (string recordID in arcProv.GetKeyTable(Form1.ARCFile))
 				{
 					if (canceled)
-					{
 						break;
-					}
 
 					// update label with recordID
 					this.recordIdBeingProcessed = recordID;
 					this.Invoke(new MethodInvoker(this.UpdateLabel));
 
 					// Write the record
-					Form1.ARCFile.Write(this.baseFolder, recordID, recordID);
+					arcProv.Write(Form1.ARCFile, this.BaseFolder, recordID, recordID);
 
 					// Update progressbar
 					this.Invoke(new MethodInvoker(this.IncrementProgress));

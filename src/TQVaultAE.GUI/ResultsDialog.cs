@@ -10,9 +10,10 @@ using System.Globalization;
 using System.Windows.Forms;
 using TQVaultAE.GUI.Tooltip;
 using TQVaultAE.GUI.Models;
-using TQVaultAE.Entities;
+using TQVaultAE.Domain.Entities;
 using TQVaultAE.Presentation;
-using TQVaultAE.Services.Models.Search;
+using TQVaultAE.Domain.Helpers;
+using TQVaultAE.Domain.Search;
 
 namespace TQVaultAE.GUI
 {
@@ -39,7 +40,7 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Initializes a new instance of the ResultsDialog class.
 		/// </summary>
-		public ResultsDialog(MainForm instance)
+		public ResultsDialog(MainForm instance) : base(instance.ServiceProvider)
 		{
 			this.Owner = instance;
 
@@ -47,13 +48,13 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.resultsDataGridView.ColumnHeadersDefaultCellStyle.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.item.DefaultCellStyle.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.quality.DefaultCellStyle.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.containerName.DefaultCellStyle.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.containerType.DefaultCellStyle.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.level.DefaultCellStyle.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.resultsDataGridView.ColumnHeadersDefaultCellStyle.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.item.DefaultCellStyle.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.quality.DefaultCellStyle.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.containerName.DefaultCellStyle.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.containerType.DefaultCellStyle.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.level.DefaultCellStyle.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
 			#endregion
 
@@ -176,11 +177,11 @@ namespace TQVaultAE.GUI
 		private void GetToolTip(Result selectedResult)
 		{
 			// hide the tooltip
-			if (selectedResult == null || selectedResult.Item == null)
+			if (selectedResult == null || selectedResult.FriendlyNames == null)
 				ItemTooltip.HideTooltip();
 			// show tooltip
 			else
-				ItemTooltip.ShowTooltip(Program.MainFormInstance, selectedResult.Item, this);
+				ItemTooltip.ShowTooltip(this.ServiceProvider, selectedResult.FriendlyNames.Item, this);
 		}
 
 		/// <summary>
@@ -209,8 +210,8 @@ namespace TQVaultAE.GUI
 				// Change the text color of the item string and style to match the style color.
 				if (currentRow > -1)
 				{
-					this.resultsDataGridView.Rows[currentRow].Cells[0].Style.ForeColor = result.Color;
-					this.resultsDataGridView.Rows[currentRow].Cells[1].Style.ForeColor = result.Color;
+					this.resultsDataGridView.Rows[currentRow].Cells[0].Style.ForeColor = result.TQColor.Color();
+					this.resultsDataGridView.Rows[currentRow].Cells[1].Style.ForeColor = result.TQColor.Color();
 					this.resultsDataGridView.Rows[currentRow].Cells[4].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
 					this.resultsDataGridView.Rows[currentRow].Tag = i;
 				}
@@ -260,7 +261,7 @@ namespace TQVaultAE.GUI
 
 			this.selectedResult = this.resultsList[(int)currentRow.Tag];
 
-			if (this.selectedResult.Item != null && this.ResultChanged != null)
+			if (this.selectedResult.FriendlyNames != null && this.ResultChanged != null)
 				this.ResultChanged(this, new ResultChangedEventArgs(this.selectedResult));
 		}
 

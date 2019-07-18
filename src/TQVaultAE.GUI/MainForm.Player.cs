@@ -4,19 +4,20 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using TQVaultAE.Data;
-using TQVaultAE.Entities;
+using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 using TQVaultAE.Logs;
 using System.Linq;
 using TQVaultAE.Services;
+using TQVaultAE.Domain.Contracts.Services;
 
 namespace TQVaultAE.GUI
 {
 	public partial class MainForm
 	{
-		private PlayerService playerService = null;
+		private IPlayerService playerService = null;
 
 		/// <summary>
 		/// Handler for changing the Character drop down selection.
@@ -46,12 +47,10 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void GetPlayerList()
 		{
-			if (this.playerService is null) this.playerService = new PlayerService(userContext);
-
 			// Initialize the character combo-box
 			this.characterComboBox.Items.Clear();
 
-			string[] charactersIT = TQData.GetCharacterList();
+			string[] charactersIT = GamePathResolver.GetCharacterList();
 
 			int numIT = 0;
 			if (charactersIT != null)
@@ -73,7 +72,7 @@ namespace TQVaultAE.GUI
 
 				// Modified by VillageIdiot
 				// Added to support custom Maps
-				if (TQData.IsCustom)
+				if (GamePathResolver.IsCustom)
 				{
 					characterDesignator = string.Concat(characterDesignator, PlayerService.CustomDesignator);
 				}
@@ -88,11 +87,11 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void CreatePlayerPanel()
 		{
-			this.playerPanel = new PlayerPanel(this.DragInfo, 4, new Size(12, 5), new Size(8, 5));
+			this.playerPanel = new PlayerPanel(this.DragInfo, 4, new Size(12, 5), new Size(8, 5), this.ServiceProvider);
 
 			this.playerPanel.Location = new Point(
-				this.ClientSize.Width - (this.playerPanel.Width + Convert.ToInt32(22.0F * UIService.UI.Scale)),
-				this.characterComboBox.Location.Y + Convert.ToInt32(28.0F * UIService.UI.Scale));
+				this.ClientSize.Width - (this.playerPanel.Width + Convert.ToInt32(22.0F * UIService.Scale)),
+				this.characterComboBox.Location.Y + Convert.ToInt32(28.0F * UIService.Scale));
 
 			this.playerPanel.DrawAsGroupBox = false;
 

@@ -5,14 +5,21 @@
 //-----------------------------------------------------------------------
 namespace ArzExplorer
 {
+	using Microsoft.Extensions.DependencyInjection;
 	using System;
 	using System.Windows.Forms;
+	using TQVaultAE.Data;
+	using TQVaultAE.Domain.Contracts.Providers;
+	using TQVaultAE.Domain.Contracts.Services;
+	using TQVaultAE.Logs;
 
 	/// <summary>
 	/// Holds the main program.
 	/// </summary>
 	public static class Program
 	{
+		internal static IServiceProvider ServiceProvider;
+		
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
@@ -21,7 +28,26 @@ namespace ArzExplorer
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new Form1());
+
+			// Configure DI
+			var scol = new ServiceCollection()
+			// Logs
+			.AddSingleton(typeof(ILogger<>), typeof(ILoggerImpl<>))
+			// Providers
+			.AddTransient<IRecordInfoProvider, RecordInfoProvider>()
+			.AddTransient<IArcFileProvider, ArcFileProvider>()
+			.AddTransient<IArzFileProvider, ArzFileProvider>()
+			.AddTransient<IDBRecordCollectionProvider, DBRecordCollectionProvider>()
+			// Services
+			.AddSingleton<ITQDataService, TQDataService>()
+			// Forms
+			.AddSingleton<Form1>()
+			.AddTransient<ExtractProgress>();
+
+			Program.ServiceProvider = scol.BuildServiceProvider();
+
+			var mainform = Program.ServiceProvider.GetService<Form1>();
+			Application.Run(mainform);
 		}
 
 

@@ -8,28 +8,42 @@ namespace TQVaultAE.Data
 	using System;
 	using System.Globalization;
 	using System.IO;
-	using TQVaultAE.Config;
-	using TQVaultAE.Entities;
+	using TQVaultAE.Domain.Contracts.Providers;
+	using TQVaultAE.Domain.Contracts.Services;
+	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Logs;
 
 	/// <summary>
 	/// Loads, decodes, encodes and saves a Titan Quest player file.
 	/// </summary>
-	public static class PlayerCollectionProvider
+	public class PlayerCollectionProvider : IPlayerCollectionProvider
 	{
-		private static readonly log4net.ILog Log = Logger.Get(typeof(PlayerCollectionProvider));
+		private readonly log4net.ILog Log;
+		private readonly IItemProvider ItemProvider;
+		private readonly ISackCollectionProvider SackCollectionProvider;
+		private readonly IGamePathService GamePathResolver;
+		private readonly ITQDataService TQData;
 
 		/// <summary>
-		/// Static array holding the byte pattern for the beginning of a block in the player file.
+		/// array holding the byte pattern for the beginning of a block in the player file.
 		/// </summary>
-		public static byte[] beginBlockPattern = { 0x0B, 0x00, 0x00, 0x00, 0x62, 0x65, 0x67, 0x69, 0x6E, 0x5F, 0x62, 0x6C, 0x6F, 0x63, 0x6B };
+		public byte[] beginBlockPattern = { 0x0B, 0x00, 0x00, 0x00, 0x62, 0x65, 0x67, 0x69, 0x6E, 0x5F, 0x62, 0x6C, 0x6F, 0x63, 0x6B };
 
 		/// <summary>
-		/// Static array holding the byte pattern for the end of a block in the player file.
+		/// array holding the byte pattern for the end of a block in the player file.
 		/// </summary>
-		public static byte[] endBlockPattern = { 0x09, 0x00, 0x00, 0x00, 0x65, 0x6E, 0x64, 0x5F, 0x62, 0x6C, 0x6F, 0x63, 0x6B };
+		public byte[] endBlockPattern = { 0x09, 0x00, 0x00, 0x00, 0x65, 0x6E, 0x64, 0x5F, 0x62, 0x6C, 0x6F, 0x63, 0x6B };
 
-		public static void CommitPlayerInfo(PlayerCollection pc, PlayerInfo playerInfo)
+		public PlayerCollectionProvider(IItemProvider itemProvider, ISackCollectionProvider sackCollectionProvider, IGamePathService gamePathResolver, ITQDataService tQData)
+		{
+			this.Log = Logger.Get(typeof(PlayerCollectionProvider));
+			this.ItemProvider = itemProvider;
+			this.SackCollectionProvider = sackCollectionProvider;
+			this.GamePathResolver = gamePathResolver;
+			this.TQData = tQData;
+		}
+
+		public void CommitPlayerInfo(PlayerCollection pc, PlayerInfo playerInfo)
 		{
 			if (pc.PlayerInfo == null) return;
 			if (playerInfo == null) return;
@@ -54,14 +68,11 @@ namespace TQVaultAE.Data
 			writer.Commit(pc.PlayerInfo, pc.rawData);
 		}
 
-
-
-
 		/// <summary>
 		/// Attempts to save the file.
 		/// </summary>
 		/// <param name="fileName">Name of the file to save</param>
-		public static void Save(PlayerCollection pc, string fileName)
+		public void Save(PlayerCollection pc, string fileName)
 		{
 			byte[] data = Encode(pc);
 
@@ -75,17 +86,15 @@ namespace TQVaultAE.Data
 		/// Converts the live data back into the raw binary data format.
 		/// </summary>
 		/// <returns>Byte Array holding the converted binary data</returns>
-		public static byte[] Encode(PlayerCollection pc)
+		public byte[] Encode(PlayerCollection pc)
 		{
 			// We need to encode the item data to a memory stream
 			// then splice it back in place of the old item data
 			byte[] rawItemData = EncodeItemData(pc);
 
+			// vaults do not have all the other crapola.
 			if (pc.IsVault)
-			{
-				// vaults do not have all the other crapola.
 				return rawItemData;
-			}
 
 			// Added to support equipment panel
 			byte[] rawEquipmentData = EncodeEquipmentData(pc);
@@ -114,7 +123,7 @@ namespace TQVaultAE.Data
 		/// <summary>
 		/// Attempts to load a player file
 		/// </summary>
-		public static void LoadFile(PlayerCollection pc)
+		public void LoadFile(PlayerCollection pc)
 		{
 			using (FileStream fileStream = new FileStream(pc.PlayerFile, FileMode.Open, FileAccess.Read))
 			{
@@ -143,7 +152,7 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="start">offset where we are starting our search</param>
 		/// <returns>Returns the index of the first char indicating the block delimiter or -1 if none is found.</returns>
-		public static int FindNextBlockDelim(PlayerCollection pc, int start)
+		public int FindNextBlockDelim(PlayerCollection pc, int start)
 		{
 			int beginMatch = 0;
 			int endMatch = 0;
@@ -154,9 +163,7 @@ namespace TQVaultAE.Data
 				{
 					++beginMatch;
 					if (beginMatch == beginBlockPattern.Length)
-					{
 						return i + 1 - beginMatch;
-					}
 				}
 				else if (beginMatch > 0)
 				{
@@ -164,18 +171,14 @@ namespace TQVaultAE.Data
 
 					// Test again to see if we are starting a new match
 					if (pc.rawData[i] == beginBlockPattern[beginMatch])
-					{
 						++beginMatch;
-					}
 				}
 
 				if (pc.rawData[i] == endBlockPattern[endMatch])
 				{
 					++endMatch;
 					if (endMatch == endBlockPattern.Length)
-					{
 						return i + 1 - endMatch;
-					}
 				}
 				else if (endMatch > 0)
 				{
@@ -183,9 +186,7 @@ namespace TQVaultAE.Data
 
 					// Test again to see if we are starting a new match
 					if (pc.rawData[i] == endBlockPattern[endMatch])
-					{
 						++endMatch;
-					}
 				}
 			}
 
@@ -195,7 +196,7 @@ namespace TQVaultAE.Data
 		/// <summary>
 		/// Parses the raw binary data for use within TQVault
 		/// </summary>
-		private static void ParseRawData(PlayerCollection pc)
+		private void ParseRawData(PlayerCollection pc)
 		{
 			// First create a memory stream so we can decode the binary data as needed.
 			using (MemoryStream stream = new MemoryStream(pc.rawData, false))
@@ -207,7 +208,7 @@ namespace TQVaultAE.Data
 					int currentOffset = 0;
 					int itemOffset = 0;
 					int equipmentOffset = 0;
-					var playerReader = new PlayerInfoReader();
+					var playerReader = new PlayerInfoReader(this.TQData);
 
 					// vaults start at the item data with no crap
 					bool foundItems = pc.IsVault;
@@ -257,26 +258,16 @@ namespace TQVaultAE.Data
 								foundEquipment = true;
 							}
 							else if (!pc.IsVault && playerReader.Match(blockName))
-							{
 								playerReader.Record(blockName, currentOffset);
-							}
 
-							// Print the string with a nesting level indicator
-							////string levelString = new string ('-', System.Math.Max(0,blockNestLevel*2-2));
-							////out.WriteLine ("{0} {2:n0} '{1}'", levelString, blockName, loc);
 						}
 						else
 						{
 							// end block
 							--blockNestLevel;
 							currentOffset += endBlockPattern.Length;
-							////if (blockNestLevel < 0)
-							////{
-							//// out.WriteLine ("{0:n0} Block Nest Level < 0!!!", loc);
-							////}
 						}
 					}
-					////out.WriteLine ("Final Block Level = {0:n0}", blockNestLevel);
 
 					if (foundItems)
 					{
@@ -294,7 +285,7 @@ namespace TQVaultAE.Data
 
 						try
 						{
-							string outfile = string.Concat(Path.Combine(TQData.TQVaultSaveFolder, pc.PlayerName), " Export.txt");
+							string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName), " Export.txt");
 							using (StreamWriter outStream = new StreamWriter(outfile, false))
 							{
 								outStream.WriteLine("Number of Sacks = {0}", pc.numberOfSacks);
@@ -315,7 +306,7 @@ namespace TQVaultAE.Data
 												object[] params1 = new object[20];
 
 												params1[0] = itemNumber;
-												params1[1] =  ItemProvider.ToFriendlyName(item);
+												params1[1] = ItemProvider.ToFriendlyName(item);
 												params1[2] = item.PositionX;
 												params1[3] = item.PositionY;
 												params1[4] = item.Seed;
@@ -334,7 +325,7 @@ namespace TQVaultAE.Data
 						catch (IOException exception)
 						{
 							Log.ErrorFormat(exception, "Error writing Export file - '{0}'"
-								, string.Concat(Path.Combine(TQData.TQVaultSaveFolder, pc.PlayerName), " Export.txt")
+								, string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName), " Export.txt")
 							);
 						}
 					}
@@ -355,7 +346,7 @@ namespace TQVaultAE.Data
 
 						try
 						{
-							string outfile = string.Concat(Path.Combine(TQData.TQVaultSaveFolder, pc.PlayerName), " Equipment Export.txt");
+							string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName), " Equipment Export.txt");
 							using (StreamWriter outStream = new StreamWriter(outfile, false))
 							{
 								if (!pc.EquipmentSack.IsEmpty)
@@ -366,7 +357,7 @@ namespace TQVaultAE.Data
 										object[] params1 = new object[20];
 
 										params1[0] = itemNumber;
-										params1[1] =  ItemProvider.ToFriendlyName(item);
+										params1[1] = ItemProvider.ToFriendlyName(item);
 										params1[2] = item.PositionX;
 										params1[3] = item.PositionY;
 										params1[4] = item.Seed;
@@ -381,7 +372,7 @@ namespace TQVaultAE.Data
 						catch (IOException exception)
 						{
 							Log.ErrorFormat(exception, "Error writing Export file - '{0}'"
-								, string.Concat(Path.Combine(TQData.TQVaultSaveFolder, pc.PlayerName), " Equipment Export.txt")
+								, string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName), " Equipment Export.txt")
 							);
 						}
 					}
@@ -409,7 +400,7 @@ namespace TQVaultAE.Data
 		/// Encodes the live item data into raw binary format
 		/// </summary>
 		/// <returns>byte array holding the converted binary data</returns>
-		private static byte[] EncodeItemData(PlayerCollection pc)
+		private byte[] EncodeItemData(PlayerCollection pc)
 		{
 			int dataLength;
 			byte[] data;
@@ -444,9 +435,7 @@ namespace TQVaultAE.Data
 			// The problem is that ans() may be bigger than the amount of data in it.
 			// We need to resize the array
 			if (dataLength == data.Length)
-			{
 				return data;
-			}
 
 			byte[] realData = new byte[dataLength];
 			Array.Copy(data, realData, dataLength);
@@ -458,7 +447,7 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="offset">offset in the player file</param>
 		/// <param name="reader">BinaryReader instance</param>
-		private static void ParseItemBlock(PlayerCollection pc, int offset, BinaryReader reader)
+		private void ParseItemBlock(PlayerCollection pc, int offset, BinaryReader reader)
 		{
 			try
 			{
@@ -500,7 +489,7 @@ namespace TQVaultAE.Data
 		/// Encodes the live equipment data into raw binary
 		/// </summary>
 		/// <returns>byte array holding the converted binary data</returns>
-		private static byte[] EncodeEquipmentData(PlayerCollection pc)
+		private byte[] EncodeEquipmentData(PlayerCollection pc)
 		{
 			int dataLength;
 			byte[] data;
@@ -528,9 +517,7 @@ namespace TQVaultAE.Data
 			// The problem is that ans() may be bigger than the amount of data in it.
 			// We need to resize the array
 			if (dataLength == data.Length)
-			{
 				return data;
-			}
 
 			byte[] realData = new byte[dataLength];
 			Array.Copy(data, realData, dataLength);
@@ -543,7 +530,7 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="offset">offset of the block within the player file.</param>
 		/// <param name="reader">BinaryReader instance</param>
-		private static void ParseEquipmentBlock(PlayerCollection pc, int offset, BinaryReader reader)
+		private void ParseEquipmentBlock(PlayerCollection pc, int offset, BinaryReader reader)
 		{
 			try
 			{

@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace ArzExplorer
 {
+	using Microsoft.Extensions.DependencyInjection;
 	using System;
 	using System.Collections.Generic;
 	using System.Drawing;
@@ -12,8 +13,11 @@ namespace ArzExplorer
 	using System.Reflection;
 	using System.Text;
 	using System.Windows.Forms;
+	using TQVaultAE.Common.Win.Services;
 	using TQVaultAE.Data;
-	using TQVaultAE.Entities;
+	using TQVaultAE.Domain.Contracts.Providers;
+	using TQVaultAE.Domain.Entities;
+	using TQVaultAE.Logs;
 	using TQVaultAE.Presentation;
 
 	/// <summary>
@@ -51,6 +55,10 @@ namespace ArzExplorer
 		/// </summary>
 		private string destFile;
 
+		private readonly IArcFileProvider arcProv;
+		private readonly IArzFileProvider arzProv;
+		private readonly IDBRecordCollectionProvider DBRecordCollectionProvider;
+
 		/// <summary>
 		/// Holds the title text.  Used to display the current file.
 		/// </summary>
@@ -74,11 +82,14 @@ namespace ArzExplorer
 		/// <summary>
 		/// Initializes a new instance of the Form1 class.
 		/// </summary>
-		public Form1()
+		public Form1(IArcFileProvider arcFileProvider, IArzFileProvider arzFileProvider, IDBRecordCollectionProvider dBRecordCollectionProvider)
 		{
 			this.InitializeComponent();
 			Assembly a = Assembly.GetExecutingAssembly();
 			AssemblyName aname = a.GetName();
+			this.arcProv = arcFileProvider;
+			this.arzProv = arzFileProvider;
+			this.DBRecordCollectionProvider = dBRecordCollectionProvider;
 			this.titleText = aname.Name;
 			this.selectedFileToolStripMenuItem.Enabled = false;
 			this.allFilesToolStripMenuItem.Enabled = false;
@@ -165,12 +176,11 @@ namespace ArzExplorer
 		private void OpenFile(string filename)
 		{
 			if (string.IsNullOrEmpty(filename))
-			{
 				return;
-			}
 
 			this.sourceFile = filename;
 			string fullSrcPath = null;
+
 
 			if (string.IsNullOrEmpty(this.sourceFile))
 			{
@@ -193,7 +203,7 @@ namespace ArzExplorer
 
 			// Try to read it as an ARC file since those have a header.
 			arcFile = new ArcFile(this.sourceFile);
-			if (arcFile.Read())
+			if (arcProv.Read(arcFile))
 			{
 				fileType = CompressedFileType.ArcFile;
 			}
@@ -208,7 +218,7 @@ namespace ArzExplorer
 			{
 				// Read our ARZ file into memory.
 				arzFile = new ArzFile(this.sourceFile);
-				if (arzFile.Read())
+				if (arzProv.Read(arzFile))
 				{
 					fileType = CompressedFileType.ArzFile;
 				}
@@ -267,22 +277,18 @@ namespace ArzExplorer
 			string[] dataRecords;
 			if (fileType == CompressedFileType.ArzFile)
 			{
-				dataRecords = arzFile.GetKeyTable();
+				dataRecords = arzProv.GetKeyTable(arzFile);
 			}
 			else if (fileType == CompressedFileType.ArcFile)
 			{
-				dataRecords = arcFile.GetKeyTable();
+				dataRecords = arcProv.GetKeyTable(arcFile);
 			}
 			else
-			{
 				return;
-			}
 
 			// We failed so return.
 			if (dataRecords == null)
-			{
 				return;
-			}
 
 			foreach (string recordID in dataRecords)
 			{
@@ -376,9 +382,7 @@ namespace ArzExplorer
 		private void SelectedFileToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (string.IsNullOrEmpty(this.destFile) || fileType == CompressedFileType.Unknown)
-			{
 				return;
-			}
 
 			string filename = null;
 			SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -402,7 +406,7 @@ namespace ArzExplorer
 			}
 			else if (fileType == CompressedFileType.ArcFile)
 			{
-				arcFile.Write(Path.GetDirectoryName(filename), this.destFile, Path.GetFileName(filename));
+				arcProv.Write(arcFile, Path.GetDirectoryName(filename), this.destFile, Path.GetFileName(filename));
 			}
 		}
 
@@ -473,8 +477,10 @@ namespace ArzExplorer
 				Directory.CreateDirectory(fullDestPath);
 			}
 
-			ExtractProgress extractProgress = new ExtractProgress(fullDestPath);
-			extractProgress.ShowDialog();
+
+			var form = Program.ServiceProvider.GetService<ExtractProgress>();
+			form.BaseFolder = fullDestPath;
+			form.ShowDialog();
 		}
 
 		/// <summary>
@@ -505,7 +511,7 @@ namespace ArzExplorer
 					List<string> recordText = new List<string>();
 					if (fileType == CompressedFileType.ArzFile)
 					{
-						this.record = arzFile.GetRecordNotCached(this.destFile);
+						this.record = arzProv.GetRecordNotCached(arzFile, this.destFile);
 						foreach (Variable variable in this.record)
 						{
 							recordText.Add(variable.ToString());
@@ -517,7 +523,7 @@ namespace ArzExplorer
 						string arcDataPath = Path.Combine(Path.GetFileNameWithoutExtension(arcFile.FileName), this.destFile);
 						if (extension == ".TXT")
 						{
-							byte[] rawData = arcFile.GetData(arcDataPath);
+							byte[] rawData = arcProv.GetData(arcFile, arcDataPath);
 
 							if (rawData == null)
 							{
@@ -536,7 +542,7 @@ namespace ArzExplorer
 						}
 						else if (extension == ".TEX")
 						{
-							byte[] rawData = arcFile.GetData(arcDataPath);
+							byte[] rawData = arcProv.GetData(arcFile, arcDataPath);
 
 							if (rawData == null)
 							{

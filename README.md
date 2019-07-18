@@ -44,6 +44,13 @@ Works with all expansions!
     - Split potion stacks apart
 - Character backups
     - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
+- Shortcuts
+    - `Ctrl` + `F` : Open search form
+    - `Ctrl` + `+` : Increase vault size
+    - `Ctrl` + `-` : Reduce vault size
+    - `Ctrl` + `Home` : Default vault size
+    - `Ctrl` + `Left-Click` : Activate multi selection
+    - `Left-Alt` : Toggle item tooltip detailed view (no need to keep key pressed)
 
 ## Installation
 ### Installer

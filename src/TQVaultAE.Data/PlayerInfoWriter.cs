@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using TQVaultAE.Entities;
+using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Data
 {
@@ -27,9 +27,9 @@ namespace TQVaultAE.Data
 				WriteKeyValue(writer, data);
 				///set modified to true to notify program the player.chr file needs to be updated
 				_modified = true;
-				return (true);
+				return true;
 			}
-			return (false);
+			return false;
 		}
 
 		/// <summary>
@@ -45,7 +45,7 @@ namespace TQVaultAE.Data
 			{
 				using (var writer = new BinaryWriter(ms))
 				{
-					
+
 					var data = _list["playerLevel"];
 					if (playerInfo.CurrentLevel != data.Value4byte)
 					{
@@ -115,58 +115,50 @@ namespace TQVaultAE.Data
 				{
 					var data = ReadPlayerLevel(reader);
 					if (data == null)
-					{
 						throw new ArgumentException("Error reading Player Level");
-					}
+
 					_list.Add("playerLevel", data);
 
 					data = ReadPlayerMoney(reader, reader.BaseStream.Position);
 					if (data == null)
-					{
 						throw new ArgumentException("Error reading money");
-					}
+
 					_list.Add("money", data);
 
 					data = ReadDiffcultyLevel(reader, reader.BaseStream.Position);
 					if (data == null)
-					{
 						throw new ArgumentException("Error reading difficulty Level");
-					}
+
 					_list.Add("playerdifficulty", data);
 
 					data = ReadPlayerCurrentLevel(reader, reader.BaseStream.Position);
 					if (data == null)
-					{
 						throw new ArgumentException("Error reading current Level");
-					}
+
 					_list.Add("playercurrentLevel", data);
 
 					data = ReadPlayerExperience(reader, reader.BaseStream.Position);
 					if (data == null)
-					{
 						throw new ArgumentException("Error reading XP");
-					}
+
 					_list.Add("playercurrentxp", data);
 
 					data = ReadPlayerModiferPoints(reader, reader.BaseStream.Position);
 					if (data == null)
-					{
 						throw new ArgumentException("Error reading attributes");
-					}
+
 					_list.Add("playermodifierpoints", data);
 
 					data = ReadPlayerSkillPoints(reader, reader.BaseStream.Position);
 					if (data == null)
-					{
 						throw new ArgumentException("Error reading skill points");
-					}
+
 					_list.Add("playerskillpoints", data);
 
 					var datalist = ReadAttributes(reader, reader.BaseStream.Position);
 					if (datalist == null || datalist.Count != 5)
-					{
 						throw new ArgumentException("Error reading attributes");
-					}
+
 					_list.Add("strength", datalist[0]);
 					_list.Add("dexterity", datalist[1]);
 					_list.Add("intelligence", datalist[2]);
@@ -175,9 +167,8 @@ namespace TQVaultAE.Data
 
 					data = ReadPlayerMaxLevel(reader, reader.BaseStream.Position);
 					if (data == null)
-					{
 						throw new ArgumentException("Error reading max level");
-					}
+
 					_list.Add("playerMaxLevel", data);
 				}
 				Validate(playerInfo);
@@ -194,61 +185,49 @@ namespace TQVaultAE.Data
 			//}
 			var data = _list["playerLevel"];
 			if (data.Value4byte != playerInfo.CurrentLevel)
-			{
 				throw new ArgumentException("Invalid player level");
-			}
+
 			data = _list["playercurrentLevel"];
 			if (data.Value4byte != playerInfo.CurrentLevel)
-			{
 				throw new ArgumentException("Invalid player current level");
-			}
+
 
 			data = _list["playerdifficulty"];
 			if (data.Value4byte != playerInfo.DifficultyUnlocked)
-			{
 				throw new ArgumentException("Invalid player difficulty");
-			}
 
 			data = _list["playercurrentxp"];
 			if (data.Value4byte != playerInfo.CurrentXP)
-			{
 				throw new ArgumentException("Invalid player xp");
-			}
+
 			data = _list["playermodifierpoints"];
 			if (data.Value4byte != playerInfo.AttributesPoints)
-			{
 				throw new ArgumentException("Invalid player attribute points");
-			}
+
 			data = _list["playerskillpoints"];
 			if (data.Value4byte != playerInfo.SkillPoints)
-			{
 				throw new ArgumentException("Invalid player skill points");
-			}
+
 			data = _list["strength"];
 			if (data.Value4byte != playerInfo.BaseStrength)
-			{
 				throw new ArgumentException("Invalid player strength");
-			}
+
 			data = _list["dexterity"];
 			if (data.Value4byte != playerInfo.BaseDexterity)
-			{
 				throw new ArgumentException("Invalid player dexterity");
-			}
+
 			data = _list["intelligence"];
 			if (data.Value4byte != playerInfo.BaseIntelligence)
-			{
 				throw new ArgumentException("Invalid player intelligence");
-			}
+
 			data = _list["health"];
 			if (data.Value4byte != playerInfo.BaseHealth)
-			{
 				throw new ArgumentException("Invalid player health");
-			}
+
 			data = _list["mana"];
 			if (data.Value4byte != playerInfo.BaseMana)
-			{
 				throw new ArgumentException("Invalid player mana");
-			}
+
 		}
 
 	}

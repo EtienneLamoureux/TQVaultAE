@@ -3,31 +3,37 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using TQVaultAE.Entities;
-using TQVaultAE.Entities.Results;
+using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.Presentation;
 using TQVaultAE.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TQVaultAE.GUI.Tooltip
 {
-	public partial class BagButtonTooltip : Form
+	public partial class BagButtonTooltip : BaseTooltip
 	{
 		private static Dictionary<BagButtonBase, BagButtonTooltip> ItemTooltipOpened = new Dictionary<BagButtonBase, BagButtonTooltip>();
 		private static Dictionary<(SackCollection Sack, float Scale), Bitmap> ToImage = new Dictionary<(SackCollection, float), Bitmap>();
-		private ItemService ItemService;
+
 		public BagButtonBase ButtonSack;
 
 		private Rectangle CurrentWorkingArea;
 		private int RightSide;
 		private int LeftSide;
 
-		public BagButtonTooltip(MainForm instance, BagButtonBase button, ItemService itemService)
+#if DEBUG
+		// For Design Mode
+		public BagButtonTooltip() => InitializeComponent();
+#endif
+
+		private BagButtonTooltip(MainForm instance, IItemService itemService, IFontService fontService, IUIService uiService) : base(itemService, fontService, uiService)
 		{
 			InitializeComponent();
+
 			this.Owner = instance;
-			ItemService = itemService;
-			ButtonSack = button;
 
 			SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
@@ -58,14 +64,22 @@ namespace TQVaultAE.GUI.Tooltip
 			}
 		}
 
-		public static BagButtonTooltip ShowTooltip(MainForm instance, BagButtonBase button)
+		public static BagButtonTooltip ShowTooltip(IServiceProvider serviceProvider, BagButtonBase button)
 		{
 			BagButtonTooltip _Current;
 			if (button?.Sack is null) return null;
 			lock (ToImage)
 			{
 				HideTooltip();
-				_Current = new BagButtonTooltip(instance, button, new ItemService(MainForm.userContext));
+				_Current = new BagButtonTooltip(
+					serviceProvider.GetService<MainForm>()
+					, serviceProvider.GetService<IItemService>()
+					, serviceProvider.GetService<IFontService>()
+					, serviceProvider.GetService<IUIService>()
+				)
+				{
+					ButtonSack = button
+				};
 				ItemTooltipOpened.Add(button, _Current);
 				_Current.Show();
 			}
@@ -80,7 +94,7 @@ namespace TQVaultAE.GUI.Tooltip
 		/// <returns>string to be displayed in the tooltip</returns>
 		public void FillSackToolTip()
 		{
-			var key = (this.ButtonSack.Sack, UIService.UI.Scale);
+			var key = (this.ButtonSack.Sack, UIService.Scale);
 
 			// Redraw
 			if (ToImage.ContainsKey(key))
@@ -101,7 +115,7 @@ namespace TQVaultAE.GUI.Tooltip
 			this.flowLayoutPanelFriendlyNames.SuspendLayout();
 
 			if (ButtonSack.Sack.IsEmpty)
-				AddRow(Resources.VaultGroupBoxEmpty, ItemGfxHelper.Color(ItemStyle.Broken));
+				AddRow(Resources.VaultGroupBoxEmpty, ItemStyle.Broken.Color());
 			else
 			{
 
@@ -120,7 +134,7 @@ namespace TQVaultAE.GUI.Tooltip
 					.ToArray();
 
 				foreach (var item in friendlylist)
-					AddRow(item.FullName, ItemGfxHelper.GetColor(item.Data.Item, item.Data.BaseItemInfoDescription));
+					AddRow(item.FullName, item.Data.Item.GetColor(item.Data.BaseItemInfoDescription));
 
 			}
 
@@ -137,7 +151,7 @@ namespace TQVaultAE.GUI.Tooltip
 
 		private void AddRow(string friendlyName, Color color)
 		{
-			Control row = ItemTooltip.MakeRow(friendlyName, color, 10F, FontStyle.Regular, BGColor: this.flowLayoutPanelFriendlyNames.BackColor);
+			Control row = MakeRow(this.UIService, this.FontService, friendlyName, color, 10F, FontStyle.Regular, BGColor: this.flowLayoutPanelFriendlyNames.BackColor);
 
 			this.flowLayoutPanelFriendlyNames.Controls.Add(row);
 		}
@@ -164,7 +178,7 @@ namespace TQVaultAE.GUI.Tooltip
 				this.LeftSide = loc.X - this.Width;
 
 				// Put tooltip on right side of button to avoid mouse pointer overlap
-				loc.X += Convert.ToInt32(this.ButtonSack.Size.Width * UIService.UI.Scale);
+				loc.X += Convert.ToInt32(this.ButtonSack.Size.Width * UIService.Scale);
 
 				this.RightSide = loc.X;
 

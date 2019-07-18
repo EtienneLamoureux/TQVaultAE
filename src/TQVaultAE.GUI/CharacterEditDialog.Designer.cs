@@ -202,7 +202,6 @@ namespace TQVaultAE.GUI
             this.attribGroupBox.TabIndex = 14;
             this.attribGroupBox.TabStop = false;
             this.attribGroupBox.Text = "Base Attributes";
-            this.attribGroupBox.Enter += new System.EventHandler(this.GroupBox1_Enter);
             // 
             // manacUpDown
             // 

@@ -4,19 +4,20 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using TQVaultAE.Config;
 using TQVaultAE.Data;
-using TQVaultAE.Entities;
+using TQVaultAE.Domain.Contracts.Providers;
+using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Entities;
 using TQVaultAE.Logs;
 
 namespace TQVaultAE.Presentation
 {
-	public class UIService
+	public class UIService : IUIService
 	{
-		public static UIService UI { get; private set; }
-
 		private readonly log4net.ILog Log = null;
+		private readonly IDatabase Database;
+		private readonly ITQDataService TQData;
 
 		/// <summary>
 		/// Item unit size in pixels for a 1x1 item.
@@ -26,17 +27,17 @@ namespace TQVaultAE.Presentation
 		/// <summary>
 		/// Dictionary of all bitmaps in the database.
 		/// </summary>
-		private Dictionary<string, Bitmap> bitmaps;
+		private Dictionary<string, Bitmap> _Bitmaps;
 
 		/// <summary>
 		/// Default bitmap when one cannot be found in the database.
 		/// </summary>
-		private Bitmap defaultBitmap;
+		private Bitmap _DefaultBitmap;
 
 		/// <summary>
 		/// Scaling factor used to scale the UI for higher DPI values than the default of 96.
 		/// </summary>
-		private float scale = 1.00F;
+		private float _Scale = 1.00F;
 
 		/// <summary>
 		/// Gets the default bitmap
@@ -45,12 +46,10 @@ namespace TQVaultAE.Presentation
 		{
 			get
 			{
-				if (this.defaultBitmap == null)
-				{
+				if (this._DefaultBitmap == null)
 					this.CreateDefaultBitmap();
-				}
 
-				return this.defaultBitmap;
+				return this._DefaultBitmap;
 			}
 		}
 
@@ -58,42 +57,27 @@ namespace TQVaultAE.Presentation
 		/// Gets the UI design DPI which is used to for scaling comparisons.
 		/// </summary>
 		/// <remarks>Use 96 DPI which is "normal" for Windows.</remarks>
-		public const float DESIGNDPI = 96.0F;
+		public float DESIGNDPI => 96.0F;
 
 		/// <summary>
 		/// Gets the item unit size which is the unit of measure of item size in TQ.
 		/// An item with a ItemUnitSize x ItemUnitSize bitmap would be 1x1.
 		/// Internally scaled by db scale.
 		/// </summary>
-		public int ItemUnitSize
-		{
-			get
-			{
-				return Convert.ToInt32(ITEMUNITSIZE * this.Scale);
-			}
-		}
+		public int ItemUnitSize => Convert.ToInt32(ITEMUNITSIZE * this.Scale);
 
 		/// <summary>
 		/// Gets the half of an item unit size which is the unit of measure of item size in TQ.
 		/// Division takes place after internal scaling by db scale.
 		/// </summary>
-		public int HalfUnitSize
-		{
-			get
-			{
-				return this.ItemUnitSize / 2;
-			}
-		}
+		public int HalfUnitSize => this.ItemUnitSize / 2;
 
 		/// <summary>
 		/// Gets or sets the scaling of the UI
 		/// </summary>
 		public float Scale
 		{
-			get
-			{
-				return this.scale;
-			}
+			get => _Scale;
 
 			set
 			{
@@ -109,28 +93,21 @@ namespace TQVaultAE.Presentation
 					value = 2.0F;
 				}
 
-				this.scale = value;
+				_Scale = value;
 			}
 		}
 
-		private UIService()
+		public UIService(IDatabase database, ITQDataService tQData)
 		{
 			if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
 			{
 				// Code here won't run in Visual Studio designer
 				this.Log = Logger.Get(this);
-				this.bitmaps = new Dictionary<string, Bitmap>();
+				this.Database = database;
+				this.TQData = tQData;
+				this._Bitmaps = new Dictionary<string, Bitmap>();
 				this.LoadRelicOverlayBitmap();
 			}
-		}
-
-
-		/// <summary>
-		/// Init instance
-		/// </summary>
-		static UIService()
-		{
-			UIService.UI = new UIService();
 		}
 
 		/// <summary>
@@ -139,9 +116,7 @@ namespace TQVaultAE.Presentation
 		private void CreateDefaultBitmap()
 		{
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.Debug("Database.CreateDefaultBitmap()");
-			}
 
 			// Make a bitmap with a small orange square with a ? mark in it.
 			Bitmap tempDefaultBitmap = new Bitmap(this.ItemUnitSize, this.ItemUnitSize);
@@ -169,12 +144,10 @@ namespace TQVaultAE.Presentation
 			tempDefaultBitmap.MakeTransparent(Color.Black);
 
 			// all done
-			this.defaultBitmap = tempDefaultBitmap;
+			this._DefaultBitmap = tempDefaultBitmap;
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.Debug("Exiting Database.CreateDefaultBitmap()");
-			}
 		}
 
 
@@ -187,70 +160,60 @@ namespace TQVaultAE.Presentation
 		{
 			Bitmap result = null;
 			if (string.IsNullOrEmpty(resourceId))
-			{
 				return result;
-			}
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.DebugFormat(CultureInfo.InvariantCulture, "Database.LoadBitmap({0})", resourceId);
-			}
 
 			resourceId = TQData.NormalizeRecordPath(resourceId);
 			Bitmap bitmap;
 
-			if (bitmaps.ContainsKey(resourceId))
-			{
-				bitmap = this.bitmaps[resourceId];
-			}
+			if (_Bitmaps.ContainsKey(resourceId))
+				bitmap = this._Bitmaps[resourceId];
 			else
 			{
 				// Load the resource
-				byte[] texData = Database.DB.LoadResource(resourceId);
+				byte[] texData = Database.LoadResource(resourceId);
 				bitmap = AddBitmap(resourceId, texData);
 			}
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.Debug("Exiting Database.LoadBitmap()");
-			}
 
 			return bitmap;
 		}
+
+		/// <summary>
+		/// Loads a bitmap from <paramref name="texData"/> with an identifier <paramref name="resourceId"/>
+		/// </summary>
+		/// <param name="resourceId">Resource Id which we are looking up.</param>
+		/// <param name="texData">raw DDS image data</param>
+		/// <returns>Bitmap converted from <paramref name="texData"/></returns>
 		public Bitmap LoadBitmap(string resourceId, byte[] texData)
 		{
 			Bitmap result = null;
 			if (string.IsNullOrEmpty(resourceId) || texData is null || !texData.Any())
-			{
 				return result;
-			}
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.DebugFormat(CultureInfo.InvariantCulture, "Database.LoadBitmap({0})", resourceId);
-			}
 
 			resourceId = TQData.NormalizeRecordPath(resourceId);
 			Bitmap bitmap;
 
-			if (bitmaps.ContainsKey(resourceId))
-			{
-				bitmap = this.bitmaps[resourceId];
-			}
+			if (_Bitmaps.ContainsKey(resourceId))
+				bitmap = this._Bitmaps[resourceId];
 			else
-			{
 				bitmap = AddBitmap(resourceId, texData);
-			}
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-			{
 				Log.Debug("Exiting Database.LoadBitmap()");
-			}
 
 			return bitmap;
 		}
+
 		/// <summary>
-		/// Create and Add the bitmap to <see cref="bitmaps"/>.
+		/// Create and Add the bitmap to <see cref="_Bitmaps"/>.
 		/// </summary>
 		/// <param name="resourceId"></param>
 		/// <param name="texData">image content from resource game file</param>
@@ -261,9 +224,7 @@ namespace TQVaultAE.Presentation
 			if (texData == null)
 			{
 				if (TQDebug.DatabaseDebugLevel > 0)
-				{
 					Log.Debug("Failure loading resource.  Using default bitmap");
-				}
 
 				// could not load the data.  Use a default bitmap
 				bitmap = this.DefaultBitmap;
@@ -271,33 +232,28 @@ namespace TQVaultAE.Presentation
 			else
 			{
 				if (TQDebug.DatabaseDebugLevel > 1)
-				{
 					Log.DebugFormat(CultureInfo.InvariantCulture, "Loaded resource size={0}", texData.Length);
-				}
 
 				// Create the bitmap
 				bitmap = BitmapCode.LoadFromTexMemory(texData, 0, texData.Length);
 				if (bitmap == null)
 				{
 					if (TQDebug.DatabaseDebugLevel > 0)
-					{
 						Log.DebugFormat(CultureInfo.InvariantCulture, "Failure creating bitmap from resource data len={0}", texData.Length);
-					}
 
 					// could not create the bitmap
 					bitmap = this.DefaultBitmap;
 				}
 
 				if (TQDebug.DatabaseDebugLevel > 1)
-				{
 					Log.DebugFormat(CultureInfo.InvariantCulture, "Created Bitmap {0} x {1}", bitmap.Width, bitmap.Height);
-				}
 			}
 
-			this.bitmaps.Add(resourceId, bitmap);
+			this._Bitmaps.Add(resourceId, bitmap);
 
 			return bitmap;
 		}
+
 		/// <summary>
 		/// Loads the relic overlay bitmap from the database.
 		/// </summary>
@@ -308,13 +264,14 @@ namespace TQVaultAE.Presentation
 
 			// do not return the defaultbitmap
 			if (relicOverlayBitmap == this.DefaultBitmap)
-			{
 				return null;
-			}
 
 			return relicOverlayBitmap;
 		}
 
+		/// <summary>
+		/// Gets the item's bitmap
+		/// </summary>
 		public Bitmap GetBitmap(Item itm)
 		{
 			Bitmap bmp = null;
@@ -337,9 +294,7 @@ namespace TQVaultAE.Presentation
 			else
 			{
 				if (TQDebug.ItemDebugLevel > 1)
-				{
 					Log.Debug("bitmap is null");
-				}
 
 				itm.Width = 1;
 				itm.Height = 1;

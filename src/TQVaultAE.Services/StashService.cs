@@ -1,22 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using TQVaultAE.Data;
-using TQVaultAE.Entities;
-using TQVaultAE.Entities.Results;
+using TQVaultAE.Domain.Contracts.Providers;
+using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Results;
 using TQVaultAE.Logs;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.Services
 {
-	public class StashService
+	public class StashService : IStashService
 	{
 		private readonly log4net.ILog Log = null;
 		private readonly SessionContext userContext = null;
+		private readonly IStashProvider StashProvider;
+		private readonly IGamePathService GamePathResolver;
 
-		public StashService(SessionContext userContext)
+		public StashService(ILogger<StashService> log, SessionContext userContext, IStashProvider stashProvider, IGamePathService gamePathResolver)
 		{
-			Log = Logger.Get(this);
+			this.Log = log.Logger;
 			this.userContext = userContext;
+			this.StashProvider = stashProvider;
+			this.GamePathResolver = gamePathResolver;
 		}
 
 
@@ -28,7 +34,7 @@ namespace TQVaultAE.Services
 		{
 			var result = new LoadTransferStashResult();
 
-			result.TransferStashFile = TQData.TransferStashFile;
+			result.TransferStashFile = GamePathResolver.TransferStashFile;
 
 			try
 			{
@@ -62,7 +68,7 @@ namespace TQVaultAE.Services
 		{
 			var result = new LoadRelicVaultStashResult();
 
-			result.RelicVaultStashFile = TQData.RelicVaultStashFile;
+			result.RelicVaultStashFile = GamePathResolver.RelicVaultStashFile;
 
 			// Get the relic vault stash
 			try
@@ -111,7 +117,7 @@ namespace TQVaultAE.Services
 				if (stash.IsModified)
 				{
 					stashOnError = stash;
-					TQData.BackupFile(stash.PlayerName, stashFile);
+					GamePathResolver.BackupFile(stash.PlayerName, stashFile);
 					StashProvider.Save(stash, stashFile);
 				}
 			}

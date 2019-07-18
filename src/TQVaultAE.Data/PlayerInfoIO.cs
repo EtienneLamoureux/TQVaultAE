@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using TQVaultAE.Entities;
+using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Data
 {
 	public class PlayerInfoIO
 	{
 
-		static byte[] _playerLevelKey = new byte[] {0x00, 0x00, 0x00, 0x70, 0x6C, 0x61, 0x79, 0x65, 0x72, 0x4C, 0x65, 0x76, 0x65, 0x6C };
+		static byte[] _playerLevelKey = new byte[] { 0x00, 0x00, 0x00, 0x70, 0x6C, 0x61, 0x79, 0x65, 0x72, 0x4C, 0x65, 0x76, 0x65, 0x6C };
 
 		static byte[] _charLevelKey = new byte[] {
 			0x00, 0x00, 0x00, 0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x53,
@@ -46,7 +46,7 @@ namespace TQVaultAE.Data
 
 		private PlayerInfoKeyPair ReadOffsets(BinaryReader reader, long startOffset, byte[] key, byte keyStart)
 		{
-			var offset = startOffset>0? startOffset:0;
+			var offset = startOffset > 0 ? startOffset : 0;
 			var keyData = new PlayerInfoKeyPair();
 			keyData.KeyNameLength = keyStart;
 			keyData.KeyId = key;
@@ -71,9 +71,8 @@ namespace TQVaultAE.Data
 				}
 			}
 			catch
-			{
+			{ }
 
-			}
 			return (null);
 		}
 
@@ -81,24 +80,16 @@ namespace TQVaultAE.Data
 		protected void WriteKeyValue(BinaryWriter writer, PlayerInfoKeyPair keyPair)
 		{
 			writer.BaseStream.Seek(keyPair.ValueOffset, SeekOrigin.Begin);
-			if (typeof(Single)== keyPair.Type)
-			{
+			if (typeof(Single) == keyPair.Type)
 				writer.Write(Convert.ToSingle(keyPair.Value4byte));
-			}
 			else if (typeof(Int32) == keyPair.Type)
-			{
 				writer.Write(keyPair.Value4byte);
-			}
 			else
-			{
 				writer.Write(keyPair.Value4byte);
-			}
 		}
 
 		private static byte KeyLength(byte[] key)
-		{
-			return ((byte)(key.Length - 3));
-		}
+			=> ((byte)(key.Length - 3));
 
 		protected PlayerInfoKeyPair ReadPlayerCurrentLevel(BinaryReader reader, long offset)
 		{
@@ -163,7 +154,7 @@ namespace TQVaultAE.Data
 
 		protected PlayerInfoKeyPair ReadPlayerSkillPoints(BinaryReader reader, long offset)
 		{
-			var keyData = ReadOffsets(reader, offset>0? offset: 0, _skillPointsKey, KeyLength(_skillPointsKey));
+			var keyData = ReadOffsets(reader, offset > 0 ? offset : 0, _skillPointsKey, KeyLength(_skillPointsKey));
 			if (keyData != null)
 			{
 				keyData.Value4byte = reader.ReadInt32();
@@ -254,11 +245,10 @@ namespace TQVaultAE.Data
 
 		protected int ReadDifficultyUnlockedValue(BinaryReader reader)
 		{
-			var keyData = ReadDiffcultyLevel(reader,0);
-			if (keyData!=null)
-			{
+			var keyData = ReadDiffcultyLevel(reader, 0);
+			if (keyData != null)
 				return (keyData.Value4byte);
-			}
+
 			return (0);
 		}
 
@@ -266,9 +256,8 @@ namespace TQVaultAE.Data
 		{
 			var keyData = ReadPlayerMoney(reader, 0);
 			if (keyData != null)
-			{
 				return (keyData.Value4byte);
-			}
+
 			return (0);
 		}
 
