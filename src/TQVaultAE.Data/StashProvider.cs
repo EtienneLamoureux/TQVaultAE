@@ -79,9 +79,9 @@ namespace TQVaultAE.Data
 			0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d,
 		};
 
-		public StashProvider(IItemProvider itemProvider, ISackCollectionProvider sackCollectionProvider, IGamePathService gamePathResolver, ITQDataService tQData)
+		public StashProvider(ILogger<StashProvider> log, IItemProvider itemProvider, ISackCollectionProvider sackCollectionProvider, IGamePathService gamePathResolver, ITQDataService tQData)
 		{
-			this.Log = Logger.Get(typeof(StashProvider));
+			this.Log = log.Logger;
 			this.ItemProvider = itemProvider;
 			this.SackCollectionProvider = sackCollectionProvider;
 			this.GamePathResolver = gamePathResolver;

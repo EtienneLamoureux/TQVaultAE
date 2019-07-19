@@ -16,6 +16,7 @@ namespace ArzExplorer
 	using TQVaultAE.Common.Win.Services;
 	using TQVaultAE.Data;
 	using TQVaultAE.Domain.Contracts.Providers;
+	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Logs;
 	using TQVaultAE.Presentation;
@@ -58,6 +59,7 @@ namespace ArzExplorer
 		private readonly IArcFileProvider arcProv;
 		private readonly IArzFileProvider arzProv;
 		private readonly IDBRecordCollectionProvider DBRecordCollectionProvider;
+		private readonly IBitmapService BitmapService;
 
 		/// <summary>
 		/// Holds the title text.  Used to display the current file.
@@ -82,7 +84,7 @@ namespace ArzExplorer
 		/// <summary>
 		/// Initializes a new instance of the Form1 class.
 		/// </summary>
-		public Form1(IArcFileProvider arcFileProvider, IArzFileProvider arzFileProvider, IDBRecordCollectionProvider dBRecordCollectionProvider)
+		public Form1(IArcFileProvider arcFileProvider, IArzFileProvider arzFileProvider, IDBRecordCollectionProvider dBRecordCollectionProvider, IBitmapService bitmapService)
 		{
 			this.InitializeComponent();
 			Assembly a = Assembly.GetExecutingAssembly();
@@ -90,6 +92,7 @@ namespace ArzExplorer
 			this.arcProv = arcFileProvider;
 			this.arzProv = arzFileProvider;
 			this.DBRecordCollectionProvider = dBRecordCollectionProvider;
+			this.BitmapService = bitmapService;
 			this.titleText = aname.Name;
 			this.selectedFileToolStripMenuItem.Enabled = false;
 			this.allFilesToolStripMenuItem.Enabled = false;
@@ -549,7 +552,7 @@ namespace ArzExplorer
 								return;
 							}
 
-							Bitmap bitmap = BitmapCode.LoadFromTexMemory(rawData, 0, rawData.Length);
+							Bitmap bitmap = BitmapService.LoadFromTexMemory(rawData, 0, rawData.Length);
 
 							if (bitmap != null)
 							{

@@ -34,9 +34,9 @@ namespace TQVaultAE.Data
 		private readonly ITQDataService TQData;
 		private readonly Dictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult> FriendlyNamesCache = new Dictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult>();
 
-		public ItemProvider(IDatabase database, ILootTableCollectionProvider lootTableCollectionProvider, IItemAttributeProvider itemAttributeProvider, ITQDataService tQData)
+		public ItemProvider(ILogger<ItemProvider> log, IDatabase database, ILootTableCollectionProvider lootTableCollectionProvider, IItemAttributeProvider itemAttributeProvider, ITQDataService tQData)
 		{
-			this.Log = Logger.Get(typeof(ItemProvider));
+			this.Log = log.Logger;
 			this.Database = database;
 			this.LootTableCollectionProvider = lootTableCollectionProvider;
 			this.ItemAttributeProvider = itemAttributeProvider;

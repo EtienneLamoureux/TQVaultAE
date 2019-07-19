@@ -18,6 +18,7 @@ namespace TQVaultAE.Presentation
 		private readonly log4net.ILog Log = null;
 		private readonly IDatabase Database;
 		private readonly ITQDataService TQData;
+		private readonly IBitmapService BitmapService;
 
 		/// <summary>
 		/// Item unit size in pixels for a 1x1 item.
@@ -97,15 +98,16 @@ namespace TQVaultAE.Presentation
 			}
 		}
 
-		public UIService(IDatabase database, ITQDataService tQData)
+		public UIService(ILogger<UIService> log, IDatabase database, ITQDataService tQData, IBitmapService bitmapService)
 		{
 			if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
 			{
 				// Code here won't run in Visual Studio designer
-				this.Log = Logger.Get(this);
+				this.Log = log.Logger;
 				this.Database = database;
 				this.TQData = tQData;
 				this._Bitmaps = new Dictionary<string, Bitmap>();
+				this.BitmapService = bitmapService;
 				this.LoadRelicOverlayBitmap();
 			}
 		}
@@ -235,7 +237,7 @@ namespace TQVaultAE.Presentation
 					Log.DebugFormat(CultureInfo.InvariantCulture, "Loaded resource size={0}", texData.Length);
 
 				// Create the bitmap
-				bitmap = BitmapCode.LoadFromTexMemory(texData, 0, texData.Length);
+				bitmap = BitmapService.LoadFromTexMemory(texData, 0, texData.Length);
 				if (bitmap == null)
 				{
 					if (TQDebug.DatabaseDebugLevel > 0)

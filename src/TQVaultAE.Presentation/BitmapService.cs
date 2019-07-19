@@ -8,6 +8,7 @@ namespace TQVaultAE.Presentation
 	using System;
 	using System.Drawing;
 	using System.IO;
+	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Logs;
 
 	/// <summary>
@@ -16,9 +17,14 @@ namespace TQVaultAE.Presentation
 	/// <remarks>
 	/// Heavily modified by Da_FileServer to improve sanity, performance, and add transparent DDS support.
 	/// </remarks>
-	public static class BitmapCode
+	public class BitmapService : IBitmapService
 	{
-		private static readonly log4net.ILog Log = Logger.Get(typeof(BitmapCode));
+		private readonly log4net.ILog Log;
+
+		public BitmapService(ILogger<BitmapService> log)
+		{
+			this.Log = log.Logger;
+		}
 
 		/// <summary>
 		/// Loads a .tex from memory and converts to bitmap
@@ -27,7 +33,7 @@ namespace TQVaultAE.Presentation
 		/// <param name="offset">offset into the array</param>
 		/// <param name="count">number of bytes</param>
 		/// <returns>bitmap of tex file.</returns>
-		public static Bitmap LoadFromTexMemory(byte[] data, int offset, int count)
+		public Bitmap LoadFromTexMemory(byte[] data, int offset, int count)
 		{
 			if (data == null)
 				throw new ArgumentNullException("data");
@@ -161,7 +167,7 @@ namespace TQVaultAE.Presentation
 		/// <param name="offset">offset into the raw data</param>
 		/// <param name="count">number of bytes to read</param>
 		/// <returns>converted bitmap</returns>
-		private static Bitmap LoadFromMemory(byte[] data, int offset, int count)
+		private Bitmap LoadFromMemory(byte[] data, int offset, int count)
 		{
 			if (data == null)
 				throw new ArgumentNullException("data");

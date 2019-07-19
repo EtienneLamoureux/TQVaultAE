@@ -22,9 +22,9 @@ namespace TQVaultAE.Data
 		/// <summary>
 		/// Initializes a new instance of the RecordInfo class.
 		/// </summary>
-		public RecordInfoProvider(ITQDataService tQData)
+		public RecordInfoProvider(ILogger<RecordInfoProvider> log, ITQDataService tQData)
 		{
-			this.Log = Logger.Get(this);
+			this.Log = log.Logger;
 			this.TQData = tQData;
 		}
 

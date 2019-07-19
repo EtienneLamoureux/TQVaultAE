@@ -23,9 +23,9 @@ namespace TQVaultAE.Data
 		private readonly IItemProvider ItemProvider;
 		private readonly ITQDataService TQData;
 
-		public SackCollectionProvider(IItemProvider itemProvider, ITQDataService tQData)
+		public SackCollectionProvider(ILogger<SackCollectionProvider> log, IItemProvider itemProvider, ITQDataService tQData)
 		{
-			this.Log = Logger.Get(typeof(SackCollectionProvider));
+			this.Log = log.Logger;
 			this.ItemProvider = itemProvider;
 			this.TQData = tQData;
 		}

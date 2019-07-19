@@ -34,9 +34,9 @@ namespace TQVaultAE.Data
 		/// </summary>
 		public byte[] endBlockPattern = { 0x09, 0x00, 0x00, 0x00, 0x65, 0x6E, 0x64, 0x5F, 0x62, 0x6C, 0x6F, 0x63, 0x6B };
 
-		public PlayerCollectionProvider(IItemProvider itemProvider, ISackCollectionProvider sackCollectionProvider, IGamePathService gamePathResolver, ITQDataService tQData)
+		public PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IItemProvider itemProvider, ISackCollectionProvider sackCollectionProvider, IGamePathService gamePathResolver, ITQDataService tQData)
 		{
-			this.Log = Logger.Get(typeof(PlayerCollectionProvider));
+			this.Log = log.Logger;
 			this.ItemProvider = itemProvider;
 			this.SackCollectionProvider = sackCollectionProvider;
 			this.GamePathResolver = gamePathResolver;
