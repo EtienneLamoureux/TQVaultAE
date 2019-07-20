@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Results;
@@ -16,14 +17,14 @@ namespace TQVaultAE.Services
 	{
 		private readonly log4net.ILog Log = null;
 		private readonly SessionContext UserContext = null;
-		private readonly IItemService ItemService;
+		private readonly IItemProvider ItemProvider;
 		private readonly IItemStyleService ItemStyleService;
 
-		public SearchService(ILogger<SearchService> log, SessionContext userContext, IItemService itemService, IItemStyleService itemStyleService)
+		public SearchService(ILogger<SearchService> log, SessionContext userContext, IItemProvider itemProvider, IItemStyleService itemStyleService)
 		{
 			this.Log = log.Logger;
 			this.UserContext = userContext;
-			this.ItemService = itemService;
+			this.ItemProvider = itemProvider;
 			this.ItemStyleService = itemStyleService;
 		}
 
@@ -296,7 +297,7 @@ namespace TQVaultAE.Services
 			// Query the sack for the items containing the search string.
 			var queryResult = (
 				from item in sack.Cast<Item>()
-				let fnames = this.ItemService.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay)
+				let fnames = this.ItemProvider.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay)
 				where predicate.Apply(fnames)
 				select fnames
 			).ToList();

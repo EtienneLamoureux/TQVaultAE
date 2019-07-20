@@ -32,7 +32,7 @@ namespace TQVaultAE.Data
 		private readonly ILootTableCollectionProvider LootTableCollectionProvider;
 		private readonly IItemAttributeProvider ItemAttributeProvider;
 		private readonly ITQDataService TQData;
-		private readonly Dictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult> FriendlyNamesCache = new Dictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult>();
+		private readonly Dictionary<(Item Item, FriendlyNamesExtraScopes? Scope, bool FilterExtra), ToFriendlyNameResult> FriendlyNamesCache = new Dictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult>();
 
 		public ItemProvider(ILogger<ItemProvider> log, IDatabase database, ILootTableCollectionProvider lootTableCollectionProvider, IItemAttributeProvider itemAttributeProvider, ITQDataService tQData)
 		{
@@ -41,6 +41,13 @@ namespace TQVaultAE.Data
 			this.LootTableCollectionProvider = lootTableCollectionProvider;
 			this.ItemAttributeProvider = itemAttributeProvider;
 			this.TQData = tQData;
+		}
+
+		public bool InvalidateFriendlyNamesCache(params Item[] items)
+		{
+			var keylist = this.FriendlyNamesCache.Where(i => items.Contains(i.Key.Item)).Select(i => i.Key).ToList();
+			keylist.ForEach(k => this.FriendlyNamesCache.Remove(k));
+			return keylist.Any();
 		}
 
 		#region Must be a flat prop

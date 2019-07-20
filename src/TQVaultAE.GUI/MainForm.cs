@@ -23,6 +23,7 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Config;
 	using TQVaultAE.Services;
 	using TQVaultAE.Domain.Contracts.Services;
+	using TQVaultAE.Domain.Contracts.Providers;
 
 	/// <summary>
 	/// Main Dialog class
@@ -142,7 +143,6 @@ namespace TQVaultAE.GUI
 			IServiceProvider serviceProvider
 			, ILogger<MainForm> log
 			, SessionContext sessionContext
-			, IItemService itemService
 			, IPlayerService playerService
 			, IVaultService vaultService
 			, ISearchService searchService
@@ -151,7 +151,6 @@ namespace TQVaultAE.GUI
 		) : base(serviceProvider)
 		{
 			this.userContext = sessionContext;
-			this.itemService = itemService;
 			this.playerService = playerService;
 			this.vaultService = vaultService;
 			this.searchService = searchService;

@@ -116,5 +116,12 @@ namespace TQVaultAE.Domain.Contracts.Providers
 		/// /// <param name="secondRelic">Flag indicating whether or not to return second relic info</param>
 		/// <returns>A string containing the item name and attributes</returns>
 		string ToFriendlyName(Item itm, bool basicInfoOnly = false, bool relicInfoOnly = false, bool secondRelic = false);
+
+		/// <summary>
+		/// Invalidate item data cache
+		/// </summary>
+		/// <param name="itm"></param>
+		/// <returns>true if cache have been changed</returns>
+		bool InvalidateFriendlyNamesCache(params Item[] items);
 	}
 }

@@ -125,9 +125,8 @@ namespace TQVaultAE.Domain.Helpers
 			for (int i = 0; i < tmp.Length; i++)
 			{
 				// Color Prefix alone
-				var HasColorPrefix = tmp[i].HasColorPrefix();
 				var IsColorTagOnly = tmp[i].IsColorTagOnly();
-				if (HasColorPrefix && tmp[i].Length == 4 && (i + 1) < tmp.Length - 1)
+				if (IsColorTagOnly && (i + 1) < tmp.Length - 1)
 				{
 					// Merge it with next element
 					res.Add(string.Concat(tmp[i], tmp[i + 1]));

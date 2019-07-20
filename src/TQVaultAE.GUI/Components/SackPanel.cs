@@ -2283,6 +2283,7 @@ namespace TQVaultAE.GUI.Components
 
 						// mark the sack as modified also
 						this.Sack.IsModified = true;
+						this.InvalidateItemCacheAll(focusedItem);
 					}
 				}
 			}
@@ -2341,6 +2342,8 @@ namespace TQVaultAE.GUI.Components
 						// Put relic in DragInfo
 						this.DragInfo.MarkModified(relic);
 						Refresh();
+
+						this.InvalidateItemCacheItemTooltip(focusedItem);
 					}
 				}
 				else if (selectedItem == Resources.SackPanelMenuCopy)
@@ -2385,6 +2388,7 @@ namespace TQVaultAE.GUI.Components
 					{
 						// Tell the sack that it has been modified
 						this.Sack.IsModified = true;
+						this.InvalidateItemCacheItemTooltip(focusedItem);
 					}
 				}
 				else if (selectedItem == Resources.SackPanelMenuCharm || selectedItem == Resources.SackPanelMenuRelic)
@@ -2402,7 +2406,7 @@ namespace TQVaultAE.GUI.Components
 							i--;
 							if (randPercent <= e1.Value || i == 0)
 							{
-								focusedItem.RelicBonusId = TQData.NormalizeRecordPath(e1.Key);
+								focusedItem.RelicBonusId = e1.Key;
 								break;
 							}
 							else
@@ -2414,6 +2418,7 @@ namespace TQVaultAE.GUI.Components
 
 					focusedItem.MarkModified();
 					this.Sack.IsModified = true;
+					InvalidateItemCacheItemTooltip(focusedItem);
 					Refresh();
 				}
 				else if (selectedItem == Resources.SackPanelMenuFormulae)
@@ -2436,7 +2441,7 @@ namespace TQVaultAE.GUI.Components
 							i--;
 							if (randPercent <= e1.Value || i == 0)
 							{
-								artifact.RelicBonusId = TQData.NormalizeRecordPath(e1.Key);
+								artifact.RelicBonusId = e1.Key;
 								artifact.RelicBonusInfo = Database.GetInfo(e1.Key);
 								artifact.MarkModified();
 								break;
@@ -2448,6 +2453,9 @@ namespace TQVaultAE.GUI.Components
 
 					// Put artifact in DragInfo
 					this.DragInfo.MarkModified(artifact);
+
+					InvalidateItemCacheItemTooltip(focusedItem);
+
 					Refresh();
 				}
 				else if (selectedItem == Resources.SackPanelMenuSplit)
@@ -2472,6 +2480,19 @@ namespace TQVaultAE.GUI.Components
 				BagButtonTooltip.InvalidateCache(this.Sack);
 
 			}
+		}
+
+		private void InvalidateItemCacheAll(params Item[] items)
+		{
+			ItemTooltip.InvalidateCache(items);
+			BagButtonTooltip.InvalidateCache(items);
+			this.ItemProvider.InvalidateFriendlyNamesCache(items);
+		}
+
+		private void InvalidateItemCacheItemTooltip(params Item[] items)
+		{
+			ItemTooltip.InvalidateCache(items);
+			this.ItemProvider.InvalidateFriendlyNamesCache(items);
 		}
 
 		/// <summary>

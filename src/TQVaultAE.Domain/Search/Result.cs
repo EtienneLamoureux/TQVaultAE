@@ -35,7 +35,6 @@ namespace TQVaultAE.Domain.Search
 			this.SackType = sackType;
 			this.FriendlyNames = fnames ?? throw new ArgumentNullException(nameof(fnames));
 			this.ItemName = fnames.FullNameClean;
-			//this.ItemStyle = fnames.Item.ItemStyle.Translate(); // TODO faire ça à l'exterieur (service)
 			this.ItemStyle = fnames.Item.ItemStyle;
 			this.TQColor = fnames.Item.ItemStyle.TQColor();
 			this.RequiredLevel = GetRequirement(fnames.Item.RequirementVariables.Values, "levelRequirement");

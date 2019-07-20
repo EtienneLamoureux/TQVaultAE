@@ -10,13 +10,12 @@ using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.GUI.Tooltip;
 using TQVaultAE.Presentation;
+using TQVaultAE.Domain.Contracts.Providers;
 
 namespace TQVaultAE.GUI
 {
 	public partial class MainForm
 	{
-		private IItemService itemService;
-
 		/// <summary>
 		/// Creates the form's internal panels
 		/// </summary>

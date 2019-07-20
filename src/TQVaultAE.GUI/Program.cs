@@ -80,7 +80,6 @@ namespace TQVaultAE.GUI
 				// Services
 				.AddTransient<IAddFontToOS, AddFontToOSWin>()
 				.AddSingleton<IGamePathService, GamePathServiceWin>()
-				.AddTransient<IItemService, ItemService>()
 				.AddTransient<IPlayerService, PlayerService>()
 				.AddTransient<IStashService, StashService>()
 				.AddTransient<IVaultService, VaultService>()

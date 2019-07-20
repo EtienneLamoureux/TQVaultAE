@@ -10,6 +10,7 @@ using TQVaultAE.GUI.Components;
 using TQVaultAE.Presentation;
 using TQVaultAE.Services;
 using Microsoft.Extensions.DependencyInjection;
+using TQVaultAE.Domain.Contracts.Providers;
 
 namespace TQVaultAE.GUI.Tooltip
 {
@@ -29,7 +30,7 @@ namespace TQVaultAE.GUI.Tooltip
 		public BagButtonTooltip() => InitializeComponent();
 #endif
 
-		private BagButtonTooltip(MainForm instance, IItemService itemService, IFontService fontService, IUIService uiService) : base(itemService, fontService, uiService)
+		private BagButtonTooltip(MainForm instance, IItemProvider itemProvider, IFontService fontService, IUIService uiService) : base(itemProvider, fontService, uiService)
 		{
 			InitializeComponent();
 
@@ -54,6 +55,15 @@ namespace TQVaultAE.GUI.Tooltip
 			cacheentrytoremove.ForEach(c => ToImage.Remove(c));
 		}
 
+		public static void InvalidateCache(params Item[] items)
+		{
+			var cacheentrytoremove = ToImage
+				.Where(c => c.Key.Sack.Intersect(items).Any())
+				.Select(c => c.Key)
+				.ToList();
+			cacheentrytoremove.ForEach(c => ToImage.Remove(c));
+		}
+
 		public static void HideTooltip()
 		{
 			lock (ToImage)
@@ -73,7 +83,7 @@ namespace TQVaultAE.GUI.Tooltip
 				HideTooltip();
 				_Current = new BagButtonTooltip(
 					serviceProvider.GetService<MainForm>()
-					, serviceProvider.GetService<IItemService>()
+					, serviceProvider.GetService<IItemProvider>()
 					, serviceProvider.GetService<IFontService>()
 					, serviceProvider.GetService<IUIService>()
 				)
@@ -123,7 +133,7 @@ namespace TQVaultAE.GUI.Tooltip
 					.Where(i => i.BaseItemId.Length != 0)// skip empty items
 					.ToArray();
 				var friendlylist = itemlist
-					.Select(i => ItemService.GetFriendlyNames(i))
+					.Select(i => ItemProvider.GetFriendlyNames(i))
 					.OrderBy(d => d.FullNameBagTooltipClean)
 					.GroupBy(d => d.FullNameBagTooltip)
 					.Select(g => new

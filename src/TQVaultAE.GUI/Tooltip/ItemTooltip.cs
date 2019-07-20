@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
+using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
@@ -33,7 +34,7 @@ namespace TQVaultAE.GUI.Tooltip
 		public ItemTooltip() => InitializeComponent();
 #endif
 
-		private ItemTooltip(MainForm instance, IItemService itemService, IFontService fontService, IUIService uiService) : base(itemService, fontService, uiService)
+		private ItemTooltip(MainForm instance, IItemProvider itemProvider, IFontService fontService, IUIService uiService) : base(itemProvider, fontService, uiService)
 		{
 			InitializeComponent();
 
@@ -46,6 +47,15 @@ namespace TQVaultAE.GUI.Tooltip
 
 			// Fill it outside of screen to avoid flickering
 			this.Location = new Point(0, wa.Height);
+		}
+
+		public static void InvalidateCache(params Item[] items)
+		{
+			var cacheentrytoremove = ToImage
+				.Where(c => items.Contains(c.Key.Item))
+				.Select(c => c.Key)
+				.ToList();
+			cacheentrytoremove.ForEach(c => ToImage.Remove(c));
 		}
 
 		// to avoid Mainform lost focus with this.TopMost = false
@@ -71,7 +81,7 @@ namespace TQVaultAE.GUI.Tooltip
 				HideTooltip();
 				_Current = new ItemTooltip(
 					serviceProvider.GetService<MainForm>()
-					, serviceProvider.GetService<IItemService>()
+					, serviceProvider.GetService<IItemProvider>()
 					, serviceProvider.GetService<IFontService>()
 					, serviceProvider.GetService<IUIService>()
 				)
@@ -93,7 +103,7 @@ namespace TQVaultAE.GUI.Tooltip
 				HideTooltip();
 				_Current = new ItemTooltip(
 					serviceProvider.GetService<MainForm>()
-					, serviceProvider.GetService<IItemService>()
+					, serviceProvider.GetService<IItemProvider>()
 					, serviceProvider.GetService<IFontService>()
 					, serviceProvider.GetService<IUIService>()
 				)
@@ -134,7 +144,7 @@ namespace TQVaultAE.GUI.Tooltip
 			this.SuspendLayout();
 			this.flowLayoutPanelFriendlyNames.SuspendLayout();
 
-			this.Data = this.ItemService.GetFriendlyNames(FocusedItem, FriendlyNamesExtraScopes.ItemFullDisplay);
+			this.Data = this.ItemProvider.GetFriendlyNames(FocusedItem, FriendlyNamesExtraScopes.ItemFullDisplay);
 
 			// Fullname
 			AddRow(Data.FullName, FocusedItem.GetColor(Data.BaseItemInfoDescription), style: FontStyle.Bold);

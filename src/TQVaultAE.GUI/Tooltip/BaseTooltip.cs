@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
@@ -10,7 +11,7 @@ namespace TQVaultAE.GUI.Tooltip
 {
 	public class BaseTooltip : Form
 	{
-		protected IItemService ItemService;
+		protected IItemProvider ItemProvider;
 		protected IFontService FontService;
 		protected IUIService UIService;
 
@@ -22,9 +23,9 @@ namespace TQVaultAE.GUI.Tooltip
 		public BaseTooltip() { }
 #endif
 
-		public BaseTooltip(IItemService itemService, IFontService fontService, IUIService uiService)
+		public BaseTooltip(IItemProvider itemProvider, IFontService fontService, IUIService uiService)
 		{
-			this.ItemService = itemService;
+			this.ItemProvider = itemProvider;
 			this.FontService = fontService;
 			this.UIService = uiService;
 		}
