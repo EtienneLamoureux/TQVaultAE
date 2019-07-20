@@ -155,33 +155,30 @@ namespace TQVaultAE.Data
 
 		public SortedList<string, Variable> GetRequirementVariables(Item itm)
 		{
-			if (itm.RequirementVariables != null)
-				return itm.RequirementVariables;// TODO Should i move itm.RequirementVariables to FriendlyResult ?
-
-			itm.RequirementVariables = new SortedList<string, Variable>();
+			var RequirementVariables = new SortedList<string, Variable>();
 			if (itm.baseItemInfo != null)
 			{
-				GetRequirementsFromRecord(itm.RequirementVariables, Database.GetRecordFromFile(itm.BaseItemId));
-				GetDynamicRequirementsFromRecord(itm, itm.RequirementVariables, itm.baseItemInfo);
+				GetRequirementsFromRecord(RequirementVariables, Database.GetRecordFromFile(itm.BaseItemId));
+				GetDynamicRequirementsFromRecord(itm, RequirementVariables, itm.baseItemInfo);
 			}
 
 			if (itm.prefixInfo != null)
-				GetRequirementsFromRecord(itm.RequirementVariables, Database.GetRecordFromFile(itm.prefixID));
+				GetRequirementsFromRecord(RequirementVariables, Database.GetRecordFromFile(itm.prefixID));
 
 			if (itm.suffixInfo != null)
-				GetRequirementsFromRecord(itm.RequirementVariables, Database.GetRecordFromFile(itm.suffixID));
+				GetRequirementsFromRecord(RequirementVariables, Database.GetRecordFromFile(itm.suffixID));
 
 			if (itm.RelicInfo != null)
-				GetRequirementsFromRecord(itm.RequirementVariables, Database.GetRecordFromFile(itm.relicID));
+				GetRequirementsFromRecord(RequirementVariables, Database.GetRecordFromFile(itm.relicID));
 
 			// Add Artifact level requirement to formula
 			if (itm.IsFormulae && itm.baseItemInfo != null)
 			{
 				string artifactID = itm.baseItemInfo.GetString("artifactName");
-				GetRequirementsFromRecord(itm.RequirementVariables, Database.GetRecordFromFile(artifactID));
+				GetRequirementsFromRecord(RequirementVariables, Database.GetRecordFromFile(artifactID));
 			}
 
-			return itm.RequirementVariables;
+			return RequirementVariables;
 		}
 
 		/// <summary>
@@ -635,19 +632,11 @@ namespace TQVaultAE.Data
 				"CANNOTPICKUPMULTIPLE" // Added by VillageIdiot
 			};
 
-			if (Array.IndexOf(notWanted, keyUpper) != -1)
-				return true;
-
-			if (keyUpper.EndsWith("SOUND", StringComparison.OrdinalIgnoreCase))
-				return true;
-
-			if (keyUpper.EndsWith("MESH", StringComparison.OrdinalIgnoreCase))
-				return true;
-
-			if (keyUpper.StartsWith("BODYMASK", StringComparison.OrdinalIgnoreCase))
-				return true;
-
-			return false;
+			return (Array.IndexOf(notWanted, keyUpper) != -1
+				|| keyUpper.EndsWith("SOUND", StringComparison.OrdinalIgnoreCase)
+				|| keyUpper.EndsWith("MESH", StringComparison.OrdinalIgnoreCase)
+				|| keyUpper.StartsWith("BODYMASK", StringComparison.OrdinalIgnoreCase)
+			);
 		}
 
 		/// <summary>
@@ -665,7 +654,7 @@ namespace TQVaultAE.Data
 				"STRENGTHREQUIREMENT",
 			};
 
-			return (Array.IndexOf(notWanted, key.ToUpperInvariant()) != -1);
+			return Array.IndexOf(notWanted, key.ToUpperInvariant()) != -1;
 		}
 
 		/// <summary>
@@ -1086,7 +1075,7 @@ namespace TQVaultAE.Data
 
 				string error = string.Concat("FormatErr(\"", formatSpec, parameters);
 
-				Logger.Log.Debug(error);
+				Log.Debug(error);
 
 				return error;
 			}
@@ -1687,7 +1676,11 @@ namespace TQVaultAE.Data
 				res.ItemSet = GetItemSetString(itm);
 
 			if (scopes?.HasFlag(FriendlyNamesExtraScopes.Requirements) ?? false)
-				res.Requirements = GetRequirements(itm);
+			{
+				var reqs = GetRequirements(itm);
+				res.Requirements = reqs.Requirements;
+				res.RequirementVariables = reqs.RequirementVariables;
+			}
 
 			#region Extra Attributes for specific types
 
@@ -3948,9 +3941,9 @@ namespace TQVaultAE.Data
 		/// Gets the item's requirements
 		/// </summary>
 		/// <returns>A string containing the items requirements</returns>
-		public string[] GetRequirements(Item itm)
+		public (string[] Requirements, SortedList<string, Variable> RequirementVariables) GetRequirements(Item itm)
 		{
-			SortedList<string, Variable> requirementsList = GetRequirementVariables(itm);
+			SortedList<string, Variable> requirementVariables = GetRequirementVariables(itm);
 
 			// Get the format string to use to list a requirement
 			string requirementFormat = Database.GetFriendlyName("MeetsRequirement");
@@ -3959,7 +3952,7 @@ namespace TQVaultAE.Data
 
 			// Now combine it all with spaces between
 			List<string> requirements = new List<string>();
-			foreach (KeyValuePair<string, Variable> kvp in requirementsList)
+			foreach (KeyValuePair<string, Variable> kvp in requirementVariables)
 			{
 				if (TQDebug.ItemDebugLevel > 1)
 					Log.DebugFormat(CultureInfo.InvariantCulture, "Retrieving requirement {0}={1} (type={2})", kvp.Key, kvp.Value, kvp.Value.GetType().ToString());
@@ -3988,7 +3981,7 @@ namespace TQVaultAE.Data
 				requirements.Add(requirementsText);
 			}
 
-			return requirements.ToArray();
+			return (requirements.ToArray(), requirementVariables);
 		}
 	}
 }

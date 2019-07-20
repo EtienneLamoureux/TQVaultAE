@@ -169,9 +169,7 @@ namespace TQVaultAE.Data
 		private byte[] DecompressBytes(ArzFile arzFile, RecordInfo info)
 		{
 			if (arzFile == null)
-			{
 				throw new ArgumentNullException("arzFile", "arzFile is null.");
-			}
 
 			// Read in the compressed data and decompress it, storing the results in a memorystream
 			using (FileStream arzStream = new FileStream(arzFile.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))

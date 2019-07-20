@@ -6,7 +6,6 @@
 namespace TQVaultAE.Domain.Entities
 {
 	using System;
-	using System.Collections.Generic;
 	using System.Drawing;
 	using TQVaultAE.Domain.Helpers;
 
@@ -18,8 +17,6 @@ namespace TQVaultAE.Domain.Entities
 	{
 
 		#region Item Fields
-
-		public SortedList<string, Variable> RequirementVariables;
 
 		/// <summary>
 		/// Default value for empty var2.

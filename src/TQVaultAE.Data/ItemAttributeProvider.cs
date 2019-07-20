@@ -744,7 +744,7 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="attributeList">array of attributes</param>
 		/// <returns>Effect type of the attribute list</returns>
-		public ItemAttributesEffectType AttributeGroupType(Collection<Variable> attributeList)
+		public ItemAttributesEffectType AttributeGroupType(Collection<Variable> attributeList) // TODO Not used ?
 		{
 			Variable variable = (Variable)attributeList[0];
 			ItemAttributesData data = this.GetAttributeData(variable.Name);

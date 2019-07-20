@@ -37,7 +37,7 @@ namespace TQVaultAE.Domain.Search
 			this.ItemName = fnames.FullNameClean;
 			this.ItemStyle = fnames.Item.ItemStyle;
 			this.TQColor = fnames.Item.ItemStyle.TQColor();
-			this.RequiredLevel = GetRequirement(fnames.Item.RequirementVariables.Values, "levelRequirement");
+			this.RequiredLevel = GetRequirement(fnames.RequirementVariables.Values, "levelRequirement");
 		}
 
 		private int GetRequirement(IList<Variable> variables, string key)

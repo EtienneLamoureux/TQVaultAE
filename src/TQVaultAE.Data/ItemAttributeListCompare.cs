@@ -36,16 +36,15 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="value1">First object to compare</param>
 		/// <param name="value2">Second object to compare</param>
-		/// <returns>-1 0 1 depending on comparison</returns>
-		int IComparer<List<Variable>>.Compare(List<Variable> value1, List<Variable> value2) => this.Compare(value1, value2);
+		/// <returns>-1 if value2 is larger, 1 if value1 is larger and 0 if equal</returns>
+		int IComparer<List<Variable>>.Compare(List<Variable> value1, List<Variable> value2)
+		{
+			// Calculate an "order" number for each
+			int ordera = this.CalcOrder(value1);
+			int orderb = this.CalcOrder(value2);
 
-		/// <summary>
-		/// Compares 2 values
-		/// </summary>
-		/// <param name="value1">First object to compare</param>
-		/// <param name="value2">Second object to compare</param>
-		/// <returns>-1 0 1 depending on comparison</returns>
-		protected int Compare(List<Variable> value1, List<Variable> value2) => this.DoCompare(value1, value2);
+			return (ordera < orderb) ? -1 : (ordera > orderb) ? 1 : 0;
+		}
 
 		/// <summary>
 		/// Makes the order global
@@ -130,19 +129,5 @@ namespace TQVaultAE.Data
 			return order;
 		}
 
-		/// <summary>
-		/// Compares 2 values
-		/// </summary>
-		/// <param name="value1">first value to compare</param>
-		/// <param name="value2">second value to compare</param>
-		/// <returns>-1 if value2 is larger, 1 if value1 is larger and 0 if equal</returns>
-		private int DoCompare(List<Variable> value1, List<Variable> value2)
-		{
-			// Calculate an "order" number for each
-			int ordera = this.CalcOrder(value1);
-			int orderb = this.CalcOrder(value2);
-
-			return (ordera < orderb) ? -1 : (ordera > orderb) ? 1 : 0;
-		}
 	}
 }

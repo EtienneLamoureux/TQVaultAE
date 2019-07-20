@@ -194,7 +194,7 @@ namespace TQVaultAE.Data
 			bool result = false;
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-				Logger.Log.DebugFormat(CultureInfo.InvariantCulture, "Database.ExtractARCFile('{0}', '{1}')", arcFileName, destination);
+				Log.DebugFormat(CultureInfo.InvariantCulture, "Database.ExtractARCFile('{0}', '{1}')", arcFileName, destination);
 
 			try
 			{
@@ -205,15 +205,15 @@ namespace TQVaultAE.Data
 			}
 			catch (IOException exception)
 			{
-				Logger.Log.Error("Exception occurred", exception);
+				Log.Error("Exception occurred", exception);
 				result = false;
 			}
 
 			if (TQDebug.DatabaseDebugLevel > 1)
-				Logger.Log.DebugFormat(CultureInfo.InvariantCulture, "Extraction Result = {0}", result);
+				Log.DebugFormat(CultureInfo.InvariantCulture, "Extraction Result = {0}", result);
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-				Logger.Log.Debug("Exiting Database.ReadARCFile()");
+				Log.Debug("Exiting Database.ReadARCFile()");
 
 			return result;
 		}

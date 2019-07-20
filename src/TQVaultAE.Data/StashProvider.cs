@@ -121,8 +121,54 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <returns>byte array holding the raw data</returns>
 		public byte[] Encode(Stash sta)
-			// We need to encode the item data to a memory stream
-			=> EncodeItemData(sta);
+		{
+			int dataLength;
+			byte[] data;
+
+			// Encode the item data into a memory stream
+			using (MemoryStream writeStream = new MemoryStream(2048))
+			{
+				using (BinaryWriter writer = new BinaryWriter(writeStream))
+				{
+					// Write zero into the checksum value
+					writer.Write(Convert.ToInt32(0, CultureInfo.InvariantCulture));
+
+					TQData.WriteCString(writer, "begin_block");
+					writer.Write(sta.beginBlockCrap);
+
+					TQData.WriteCString(writer, "stashVersion");
+					writer.Write(sta.stashVersion);
+
+					TQData.WriteCString(writer, "fName");
+
+					// Changed to raw data to support extended characters
+					writer.Write(sta.name.Length);
+					writer.Write(sta.name);
+
+					TQData.WriteCString(writer, "sackWidth");
+					writer.Write(sta.Width);
+
+					TQData.WriteCString(writer, "sackHeight");
+					writer.Write(sta.Height);
+
+					// SackType should already be set at sta point
+					SackCollectionProvider.Encode(sta.sack, writer);
+					dataLength = (int)writeStream.Length;
+				}
+
+				// now just return the buffer we wrote to.
+				data = writeStream.GetBuffer();
+			}
+
+			// The problem is that data[] may be bigger than the amount of data in it.
+			// We need to resize the array
+			if (dataLength == data.Length)
+				return data;
+
+			byte[] realData = new byte[dataLength];
+			Array.Copy(data, realData, dataLength);
+			return realData;
+		}
 
 		/// <summary>
 		/// Loads a stash file
@@ -267,60 +313,6 @@ namespace TQVaultAE.Data
 					Log.ErrorFormat(exception, "Error Exporting - '{0} Export.txt'", Path.Combine(GamePathResolver.TQVaultSaveFolder, sta.PlayerName));
 				}
 			}
-		}
-
-		/// <summary>
-		/// Encodes the internal item data back into raw data
-		/// </summary>
-		/// <returns>raw data for the item data</returns>
-		private byte[] EncodeItemData(Stash sta)
-		{
-			int dataLength;
-			byte[] data;
-
-			// Encode the item data into a memory stream
-			using (MemoryStream writeStream = new MemoryStream(2048))
-			{
-				using (BinaryWriter writer = new BinaryWriter(writeStream))
-				{
-					// Write zero into the checksum value
-					writer.Write(Convert.ToInt32(0, CultureInfo.InvariantCulture));
-
-					TQData.WriteCString(writer, "begin_block");
-					writer.Write(sta.beginBlockCrap);
-
-					TQData.WriteCString(writer, "stashVersion");
-					writer.Write(sta.stashVersion);
-
-					TQData.WriteCString(writer, "fName");
-
-					// Changed to raw data to support extended characters
-					writer.Write(sta.name.Length);
-					writer.Write(sta.name);
-
-					TQData.WriteCString(writer, "sackWidth");
-					writer.Write(sta.Width);
-
-					TQData.WriteCString(writer, "sackHeight");
-					writer.Write(sta.Height);
-
-					// SackType should already be set at sta point
-					SackCollectionProvider.Encode(sta.sack, writer);
-					dataLength = (int)writeStream.Length;
-				}
-
-				// now just return the buffer we wrote to.
-				data = writeStream.GetBuffer();
-			}
-
-			// The problem is that data[] may be bigger than the amount of data in it.
-			// We need to resize the array
-			if (dataLength == data.Length)
-				return data;
-
-			byte[] realData = new byte[dataLength];
-			Array.Copy(data, realData, dataLength);
-			return realData;
 		}
 
 		/// <summary>

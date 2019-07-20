@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 
@@ -50,6 +51,7 @@ namespace TQVaultAE.Domain.Results
 		public string ItemWith;
 		public string[] FlavorText = new string[] { };
 		public string[] Requirements = new string[] { };
+		public SortedList<string, Variable> RequirementVariables;
 		public string[] BaseAttributes = new string[] { };
 		public string[] ItemSet = new string[] { };
 		public DBRecordCollection BaseItemInfoRecords;
@@ -206,6 +208,7 @@ namespace TQVaultAE.Domain.Results
 		}
 
 		string[] _AttributesAll = null;
+
 		/// <summary>
 		/// Return the collection of all attributes without any color tags.
 		/// <see cref="BaseAttributes"/>

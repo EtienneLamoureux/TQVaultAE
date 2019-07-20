@@ -64,7 +64,7 @@ namespace TQVaultAE.Data
 						if (scan.SequenceEqual(key))
 						{
 							keyData.ValueOffset = reader.BaseStream.Position;
-							return (keyData);
+							return keyData;
 						}
 						reader.BaseStream.Seek(backOf, SeekOrigin.Begin);
 					}
@@ -73,7 +73,7 @@ namespace TQVaultAE.Data
 			catch
 			{ }
 
-			return (null);
+			return null;
 		}
 
 
@@ -89,7 +89,7 @@ namespace TQVaultAE.Data
 		}
 
 		private static byte KeyLength(byte[] key)
-			=> ((byte)(key.Length - 3));
+			=> (byte)(key.Length - 3);
 
 		protected PlayerInfoKeyPair ReadPlayerCurrentLevel(BinaryReader reader, long offset)
 		{
@@ -99,9 +99,9 @@ namespace TQVaultAE.Data
 			{
 				keyData.Value4byte = reader.ReadInt32();
 				keyData.Type = typeof(Int32);
-				return (keyData);
+				return keyData;
 			}
-			return (null);
+			return null;
 		}
 
 		protected PlayerInfoKeyPair ReadPlayerLevel(BinaryReader reader)
@@ -111,9 +111,9 @@ namespace TQVaultAE.Data
 			{
 				keyData.Value4byte = reader.ReadInt32();
 				keyData.Type = typeof(Int32);
-				return (keyData);
+				return keyData;
 			}
-			return (null);
+			return null;
 		}
 
 		protected PlayerInfoKeyPair ReadPlayerMaxLevel(BinaryReader reader, long offset)
@@ -123,9 +123,9 @@ namespace TQVaultAE.Data
 			{
 				keyData.Value4byte = reader.ReadInt32();
 				keyData.Type = typeof(Int32);
-				return (keyData);
+				return keyData;
 			}
-			return (null);
+			return null;
 		}
 
 		protected PlayerInfoKeyPair ReadPlayerExperience(BinaryReader reader, long offset)
@@ -135,9 +135,9 @@ namespace TQVaultAE.Data
 			{
 				keyData.Value4byte = reader.ReadInt32();
 				keyData.Type = typeof(Int32);
-				return (keyData);
+				return keyData;
 			}
-			return (null);
+			return null;
 		}
 
 		protected PlayerInfoKeyPair ReadPlayerModiferPoints(BinaryReader reader, long offset)
@@ -147,9 +147,9 @@ namespace TQVaultAE.Data
 			{
 				keyData.Value4byte = reader.ReadInt32();
 				keyData.Type = typeof(Int32);
-				return (keyData);
+				return keyData;
 			}
-			return (null);
+			return null;
 		}
 
 		protected PlayerInfoKeyPair ReadPlayerSkillPoints(BinaryReader reader, long offset)
@@ -159,9 +159,9 @@ namespace TQVaultAE.Data
 			{
 				keyData.Value4byte = reader.ReadInt32();
 				keyData.Type = typeof(Int32);
-				return (keyData);
+				return keyData;
 			}
-			return (null);
+			return null;
 		}
 
 		protected PlayerInfoKeyPair ReadPlayerMoney(BinaryReader reader, long offset)
@@ -171,9 +171,9 @@ namespace TQVaultAE.Data
 			{
 				keyData.Value4byte = reader.ReadInt32();
 				keyData.Type = typeof(Int32);
-				return (keyData);
+				return keyData;
 			}
-			return (null);
+			return null;
 		}
 
 
@@ -226,8 +226,7 @@ namespace TQVaultAE.Data
 				}
 			}
 
-
-			return (list);
+			return list;
 		}
 
 
@@ -238,27 +237,27 @@ namespace TQVaultAE.Data
 			{
 				keyData.Value4byte = reader.ReadInt32();
 				keyData.Type = typeof(Int32);
-				return (keyData);
+				return keyData;
 			}
-			return (null);
+			return null;
 		}
 
 		protected int ReadDifficultyUnlockedValue(BinaryReader reader)
 		{
 			var keyData = ReadDiffcultyLevel(reader, 0);
 			if (keyData != null)
-				return (keyData.Value4byte);
+				return keyData.Value4byte;
 
-			return (0);
+			return 0;
 		}
 
 		protected int ReadMoneyValue(BinaryReader reader)
 		{
 			var keyData = ReadPlayerMoney(reader, 0);
 			if (keyData != null)
-				return (keyData.Value4byte);
+				return keyData.Value4byte;
 
-			return (0);
+			return 0;
 		}
 
 
