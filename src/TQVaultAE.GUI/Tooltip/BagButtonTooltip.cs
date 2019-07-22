@@ -51,12 +51,14 @@ namespace TQVaultAE.GUI.Tooltip
 
 		public static void InvalidateCache(params SackCollection[] sack)
 		{
+			sack = sack.Where(s => s != null).ToArray();
 			var cacheentrytoremove = ToImage.Where(c => sack.Contains(c.Key.Sack)).Select(c => c.Key).ToList();
 			cacheentrytoremove.ForEach(c => ToImage.Remove(c));
 		}
 
 		public static void InvalidateCache(params Item[] items)
 		{
+			items = items.Where(i => i != null).ToArray();
 			var cacheentrytoremove = ToImage
 				.Where(c => c.Key.Sack.Intersect(items).Any())
 				.Select(c => c.Key)

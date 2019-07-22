@@ -45,6 +45,7 @@ namespace TQVaultAE.Data
 
 		public bool InvalidateFriendlyNamesCache(params Item[] items)
 		{
+			items = items.Where(i => i != null).ToArray();
 			var keylist = this.FriendlyNamesCache.Where(i => items.Contains(i.Key.Item)).Select(i => i.Key).ToList();
 			keylist.ForEach(k => this.FriendlyNamesCache.Remove(k));
 			return keylist.Any();

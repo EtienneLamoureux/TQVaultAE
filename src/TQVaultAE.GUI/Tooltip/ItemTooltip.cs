@@ -51,6 +51,7 @@ namespace TQVaultAE.GUI.Tooltip
 
 		public static void InvalidateCache(params Item[] items)
 		{
+			items = items.Where(i => i != null).ToArray();
 			var cacheentrytoremove = ToImage
 				.Where(c => items.Contains(c.Key.Item))
 				.Select(c => c.Key)

@@ -1111,6 +1111,8 @@ namespace TQVaultAE.GUI.Components
 				{
 					itemUnderUs.StackSize += dragItem.StackSize;
 
+					this.InvalidateItemCacheAll(itemUnderUs, dragItem);
+
 					// Added this so the tooltip would update with the correct number
 					itemUnderUs.MarkModified();
 					this.Sack.IsModified = true;
@@ -1150,7 +1152,7 @@ namespace TQVaultAE.GUI.Components
 								i--;
 								if (randPercent <= e1.Value || i == 0)
 								{
-									itemUnderUs.RelicBonusId = TQData.NormalizeRecordPath(e1.Key);
+									itemUnderUs.RelicBonusId = e1.Key;
 									break;
 								}
 								else
@@ -1162,6 +1164,8 @@ namespace TQVaultAE.GUI.Components
 					}
 
 					itemUnderUs.MarkModified();
+
+					this.InvalidateItemCacheAll(itemUnderUs, dragItem);
 
 					// Just in case we have more relics than what we need to complete
 					// We then adjust the one we are holding
@@ -1201,8 +1205,6 @@ namespace TQVaultAE.GUI.Components
 					this.Sack.AddItem(dragItem);
 				}
 
-				BagButtonTooltip.InvalidateCache(this.Sack);
-
 				// clear the "last drag" variables
 				this.LastDragLocation = InvalidDragLocation;
 				this.CellsUnderDragItem = InvalidDragRectangle;
@@ -1231,6 +1233,8 @@ namespace TQVaultAE.GUI.Components
 
 				// Clear any selections.
 				this.OnClearAllItemsSelected(this, new SackPanelEventArgs(null, null));
+
+				this.InvalidateItemCacheAll(itemUnderUs, dragItem);
 
 				// Repaint everything to clear up any graphical issues
 				this.Refresh();
@@ -2468,6 +2472,9 @@ namespace TQVaultAE.GUI.Components
 
 					// Put the item in DragInfo
 					this.DragInfo.MarkModified(newItem);
+
+					InvalidateItemCacheItemTooltip(focusedItem);
+
 					Refresh();
 				}
 				else if (selectedItem == Resources.SackPanelMenuClear)
