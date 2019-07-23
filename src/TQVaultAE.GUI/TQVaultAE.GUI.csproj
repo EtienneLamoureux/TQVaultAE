@@ -381,6 +381,8 @@
     <Compile Include="Components\EquipmentPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Services\AddFontToOSWin.cs" />
+    <Compile Include="Services\GamePathServiceWin.cs" />
     <Compile Include="SplashScreenForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -526,10 +528,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TQVaultAE.Common.Win\TQVaultAE.Common.Win.csproj">
-      <Project>{a8e06a41-ac5b-4824-a06b-0b8554b35803}</Project>
-      <Name>TQVaultAE.Common.Win</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj">
       <Project>{2434d5c6-efbb-414d-93d6-2236fa62c0bc}</Project>
       <Name>TQVaultAE.Config</Name>

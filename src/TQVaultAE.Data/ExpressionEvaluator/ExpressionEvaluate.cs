@@ -5,7 +5,7 @@
 // Taken from http://sourceforge.net/projects/expression-eval/
 // Ported to C# by VillageIdiot
 //-----------------------------------------------------------------------
-namespace ExpressionEvaluator
+namespace TQVaultAE.Data.ExpressionEvaluator
 {
 	using System;
 

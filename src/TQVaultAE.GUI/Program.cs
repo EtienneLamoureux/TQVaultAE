@@ -14,11 +14,11 @@ namespace TQVaultAE.GUI
 	using System.Security.Permissions;
 	using System.Threading;
 	using System.Windows.Forms;
-	using TQVaultAE.Common.Win.Services;
 	using TQVaultAE.Data;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
+	using TQVaultAE.GUI.Services;
 	using TQVaultAE.Logs;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Services;

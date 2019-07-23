@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ExpressionEval\ExpressionEval.csproj" />
     <ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj" />
     <ProjectReference Include="..\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
     <ProjectReference Include="..\TQVaultAE.Logs\TQVaultAE.Logs.csproj" />

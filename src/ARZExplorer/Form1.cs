@@ -13,13 +13,9 @@ namespace ArzExplorer
 	using System.Reflection;
 	using System.Text;
 	using System.Windows.Forms;
-	using TQVaultAE.Common.Win.Services;
-	using TQVaultAE.Data;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
-	using TQVaultAE.Logs;
-	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Main Form for ArzExplorer

@@ -4,7 +4,7 @@ using System.Drawing.Text;
 using System.Linq;
 using TQVaultAE.Domain.Contracts.Services;
 
-namespace TQVaultAE.Common.Win.Services
+namespace TQVaultAE.GUI.Services
 {
 	/// <summary>
 	/// Windows specific for loading a Font from resource file (hot load from memory)

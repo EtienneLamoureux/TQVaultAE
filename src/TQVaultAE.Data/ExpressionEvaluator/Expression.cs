@@ -3,7 +3,7 @@
 //     Copyright (c) BlueLaser505. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace ExpressionEvaluator
+namespace TQVaultAE.Data.ExpressionEvaluator
 {
 	/// <summary>
 	/// Parent class for the expression tree

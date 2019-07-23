@@ -9,7 +9,7 @@ using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Logs;
 
-namespace TQVaultAE.Common.Win.Services
+namespace TQVaultAE.GUI.Services
 {
 	/// <summary>
 	/// Win32 IGamePathResolver implementation
