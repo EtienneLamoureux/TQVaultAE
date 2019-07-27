@@ -8,9 +8,8 @@ namespace TQVaultAE.GUI.Components
 	using System;
 	using System.Drawing;
 	using System.Windows.Forms;
-	using Tooltip;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.Entities;
+	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Presentation;
 
 	/// <summary>
@@ -31,22 +30,22 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="panel1Size">Main panel size</param>
 		/// <param name="panel2Size">Secondary panel size for players who have the additional game sacks</param>
 		/// <param name="tooltip">Tooltip instance</param>
-		public PlayerPanel(ItemDragInfo dragInfo, int numberOfBags, Size panel1Size, Size panel2Size)
-			: base(dragInfo, numberOfBags, panel2Size, 2, AutoMoveLocation.Player)
+		public PlayerPanel(ItemDragInfo dragInfo, int numberOfBags, Size panel1Size, Size panel2Size, IServiceProvider serviceProvider)
+			: base(dragInfo, numberOfBags, panel2Size, 2, AutoMoveLocation.Player, serviceProvider)
 		{
 			this.Text = Resources.PlayerPanelNoPlayer;
 			this.NoPlayerString = Resources.PlayerPanelNoPlayer;
 
 			this.Size = new Size(
-				((panel1Size.Width + panel2Size.Width) * UIService.UI.ItemUnitSize) + Convert.ToInt32(24.0F * UIService.UI.Scale),
-				(Math.Max(panel1Size.Height, panel2Size.Height) * UIService.UI.ItemUnitSize) + Convert.ToInt32(58.0F * UIService.UI.Scale));
+				((panel1Size.Width + panel2Size.Width) * UIService.ItemUnitSize) + Convert.ToInt32(24.0F * UIService.Scale),
+				(Math.Max(panel1Size.Height, panel2Size.Height) * UIService.ItemUnitSize) + Convert.ToInt32(58.0F * UIService.Scale));
 			this.TabStop = false;
-			this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * UIService.UI.Scale, this.Font.Style);
+			this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * UIService.Scale, this.Font.Style);
 
-			int borderPad = Convert.ToInt32(2.0F * UIService.UI.Scale);
+			int borderPad = Convert.ToInt32(2.0F * UIService.Scale);
 
 			this.BagPanelOffset = 1; // bag panel starts with bag #1
-			this.mainSackPanel = new SackPanel(panel1Size.Width, panel1Size.Height, this.DragInfo, AutoMoveLocation.Player);
+			this.mainSackPanel = new SackPanel(panel1Size.Width, panel1Size.Height, this.DragInfo, AutoMoveLocation.Player, serviceProvider);
 			this.mainSackPanel.SetLocation(new Point(borderPad, this.Size.Height - this.mainSackPanel.Size.Height - borderPad));
 			this.mainSackPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 			this.mainSackPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
@@ -118,20 +117,9 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <param name="windowHandle">Window handle</param>
 		/// <returns>String containing the tooltip text</returns>
-		public override string ToolTipCallback(int windowHandle)
+		public override void ToolTipCallback(int windowHandle)
 		{
-			string toolTipString = null;
-			if (this.mainSackPanel != null)
-			{
-				toolTipString = SackPanel.ToolTipCallback(windowHandle);
-			}
-
-			if (toolTipString != null)
-			{
-				return toolTipString;
-			}
-
-			return base.ToolTipCallback(windowHandle);
+			base.ToolTipCallback(windowHandle);
 		}
 
 		/// <summary>
@@ -141,7 +129,7 @@ namespace TQVaultAE.GUI.Components
 		/// <returns>A new AutoSortButton instance</returns>
 		protected override AutoSortButton CreateAutoSortButton(int buttonNumber)
 		{
-			AutoSortButton button = new AutoSortButton(buttonNumber, false);
+			AutoSortButton button = new AutoSortButton(buttonNumber, false, this.ServiceProvider);
 
 			// Temporary location since we will be moving the panel later.
 			// This is called from the base constructor.

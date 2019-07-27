@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using TQVaultAE.Entities;
+﻿using System.IO;
+using TQVaultAE.Domain.Contracts.Providers;
+using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Data
 {
-	public static class DBRecordCollectionProvider
+	public class DBRecordCollectionProvider : IDBRecordCollectionProvider
 	{
+		public DBRecordCollectionProvider()
+		{ }
 
 		/// <summary>
 		/// Writes all variables into a file.
@@ -15,7 +15,7 @@ namespace TQVaultAE.Data
 		/// <param name="drc">source</param>
 		/// <param name="baseFolder">Path in the file.</param>
 		/// <param name="fileName">file name to be written</param>
-		public static void Write(DBRecordCollection drc, string baseFolder, string fileName = null)
+		public void Write(DBRecordCollection drc, string baseFolder, string fileName = null)
 		{
 			// construct the full path
 			string fullPath = Path.Combine(baseFolder, drc.Id);
@@ -29,9 +29,7 @@ namespace TQVaultAE.Data
 
 			// Create the folder path if necessary
 			if (!Directory.Exists(destinationFolder))
-			{
 				Directory.CreateDirectory(destinationFolder);
-			}
 
 			// Open the file
 			using (StreamWriter outStream = new StreamWriter(fullPath, false))

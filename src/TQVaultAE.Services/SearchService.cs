@@ -3,22 +3,29 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using TQVaultAE.Entities;
+using TQVaultAE.Domain.Contracts.Providers;
+using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Results;
+using TQVaultAE.Domain.Search;
 using TQVaultAE.Logs;
 using TQVaultAE.Presentation;
-using TQVaultAE.Services.Models.Search;
 
 namespace TQVaultAE.Services
 {
-	public class SearchService
+	public class SearchService : ISearchService
 	{
 		private readonly log4net.ILog Log = null;
-		private readonly SessionContext userContext = null;
+		private readonly SessionContext UserContext = null;
+		private readonly IItemProvider ItemProvider;
+		private readonly IItemStyleService ItemStyleService;
 
-		public SearchService(SessionContext userContext)
+		public SearchService(ILogger<SearchService> log, SessionContext userContext, IItemProvider itemProvider, IItemStyleService itemStyleService)
 		{
-			Log = Logger.Get(this);
-			this.userContext = userContext;
+			this.Log = log.Logger;
+			this.UserContext = userContext;
+			this.ItemProvider = itemProvider;
+			this.ItemStyleService = itemStyleService;
 		}
 
 		/// <summary>
@@ -36,7 +43,7 @@ namespace TQVaultAE.Services
 			return results;
 		}
 
-		private static IItemPredicate GetFilterFrom(string searchString)
+		private IItemPredicate GetFilterFrom(string searchString)
 		{
 			var predicates = new List<IItemPredicate>();
 			searchString = searchString.Trim();
@@ -50,9 +57,7 @@ namespace TQVaultAE.Services
 
 				toIndex = searchString.IndexOfAny(TOKENS, fromIndex + 1);
 				if (toIndex < 0)
-				{
 					term = searchString.Substring(fromIndex);
-				}
 				else
 				{
 					term = searchString.Substring(fromIndex, toIndex - fromIndex);
@@ -68,13 +73,11 @@ namespace TQVaultAE.Services
 						predicates.Add(GetPredicateFrom(term.Substring(1), it => new ItemAttributePredicate(it)));
 						break;
 					case '$':
-						predicates.Add(GetPredicateFrom(term.Substring(1), it => new ItemQualityPredicate(it)));
+						predicates.Add(GetPredicateFrom(term.Substring(1), it => new ItemQualityPredicate(this.ItemStyleService, it)));
 						break;
 					default:
 						foreach (var name in term.Split('&'))
-						{
 							predicates.Add(GetPredicateFrom(name, it => new ItemNamePredicate(it)));
-						}
 						break;
 				}
 			} while (toIndex >= 0);
@@ -91,12 +94,10 @@ namespace TQVaultAE.Services
 		/// <param name="results">List holding the search results.</param>
 		private void SearchVaults(IItemPredicate predicate, List<Result> results)
 		{
-			if (this.userContext.Vaults == null || this.userContext.Vaults.Count == 0)
-			{
+			if (this.UserContext.Vaults == null || this.UserContext.Vaults.Count == 0)
 				return;
-			}
 
-			foreach (KeyValuePair<string, PlayerCollection> kvp in this.userContext.Vaults)
+			foreach (KeyValuePair<string, PlayerCollection> kvp in this.UserContext.Vaults)
 			{
 				string vaultFile = kvp.Key;
 				PlayerCollection vault = kvp.Value;
@@ -119,14 +120,14 @@ namespace TQVaultAE.Services
 					}
 
 					// Query the sack for the items containing the search string.
-					foreach (Item item in QuerySack(predicate, sack))
+					foreach (var fnames in QuerySack(predicate, sack))
 					{
 						results.Add(new Result(
 							vaultFile,
 							Path.GetFileNameWithoutExtension(vaultFile),
 							vaultNumber,
 							SackType.Vault,
-							item
+							fnames
 						));
 					}
 				}
@@ -142,12 +143,10 @@ namespace TQVaultAE.Services
 		/// <param name="results">List holding the search results.</param>
 		private void SearchPlayers(IItemPredicate predicate, List<Result> results)
 		{
-			if (this.userContext.Players == null || this.userContext.Players.Count == 0)
-			{
+			if (this.UserContext.Players == null || this.UserContext.Players.Count == 0)
 				return;
-			}
 
-			foreach (KeyValuePair<string, PlayerCollection> kvp in this.userContext.Players)
+			foreach (KeyValuePair<string, PlayerCollection> kvp in this.UserContext.Players)
 			{
 				string playerFile = kvp.Key;
 				PlayerCollection player = kvp.Value;
@@ -178,14 +177,14 @@ namespace TQVaultAE.Services
 					}
 
 					// Query the sack for the items containing the search string.
-					foreach (Item item in QuerySack(predicate, sack))
+					foreach (var fnames in QuerySack(predicate, sack))
 					{
 						results.Add(new Result(
 							playerFile,
 							playerName,
 							sackNumber,
 							SackType.Player,
-							item
+							fnames
 						));
 					}
 				}
@@ -198,14 +197,14 @@ namespace TQVaultAE.Services
 					continue;
 				}
 
-				foreach (Item item in QuerySack(predicate, equipmentSack))
+				foreach (var fnames in QuerySack(predicate, equipmentSack))
 				{
 					results.Add(new Result(
 						playerFile,
 						playerName,
 						0,
 						SackType.Equipment,
-						item
+						fnames
 					));
 				}
 			}
@@ -218,12 +217,12 @@ namespace TQVaultAE.Services
 		/// <param name="results">List holding the search results.</param>
 		private void SearchStashes(IItemPredicate predicate, List<Result> results)
 		{
-			if (this.userContext.Stashes == null || this.userContext.Stashes.Count == 0)
+			if (this.UserContext.Stashes == null || this.UserContext.Stashes.Count == 0)
 			{
 				return;
 			}
 
-			foreach (KeyValuePair<string, Stash> kvp in this.userContext.Stashes)
+			foreach (KeyValuePair<string, Stash> kvp in this.UserContext.Stashes)
 			{
 				string stashFile = kvp.Key;
 				Stash stash = kvp.Value;
@@ -262,14 +261,14 @@ namespace TQVaultAE.Services
 					sackType = SackType.RelicVaultStash;
 				}
 
-				foreach (Item item in QuerySack(predicate, sack))
+				foreach (var fnames in QuerySack(predicate, sack))
 				{
 					results.Add(new Result(
 						stashFile,
 						stashName,
 						sackNumber,
 						sackType,
-						item
+						fnames
 					));
 				}
 			}
@@ -293,21 +292,17 @@ namespace TQVaultAE.Services
 		/// <param name="predicate">Predicate that the items should match</param>
 		/// <param name="sack">Sack that we are searching</param>
 		/// <returns>List of items which contain the search string.</returns>
-		private static List<Item> QuerySack(IItemPredicate predicate, SackCollection sack)
+		private List<ToFriendlyNameResult> QuerySack(IItemPredicate predicate, SackCollection sack)
 		{
 			// Query the sack for the items containing the search string.
-			var vaultQuery = from Item item in sack
-							 where predicate.Apply(item)
-							 select item;
+			var queryResult = (
+				from item in sack.Cast<Item>()
+				let fnames = this.ItemProvider.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay)
+				where predicate.Apply(fnames)
+				select fnames
+			).ToList();
 
-			List<Item> tmpList = new List<Item>();
-
-			foreach (Item item in vaultQuery)
-			{
-				tmpList.Add(item);
-			}
-
-			return tmpList;
+			return queryResult;
 		}
 
 		private static IItemPredicate GetPredicateFrom(string term, Func<string, IItemPredicate> newPredicate)
@@ -345,30 +340,20 @@ namespace TQVaultAE.Services
 			{
 				string fileAndExtension = Path.GetFileName(filename);
 				if (fileAndExtension.ToUpperInvariant().Contains("MISC"))
-				{
 					// Check for the relic vault stash.
 					charName = Resources.GlobalRelicVaultStash;
-				}
 				else if (fileAndExtension.ToUpperInvariant().Contains("WIN"))
-				{
 					// Check for the transfer stash.
 					charName = Resources.GlobalTransferStash;
-				}
 				else
-				{
 					charName = null;
-				}
 			}
 			else if (charName.StartsWith("_", StringComparison.Ordinal))
-			{
 				// See if it is a character folder.
 				charName = charName.Substring(1);
-			}
 			else
-			{
 				// The name is bogus so return a null.
 				charName = null;
-			}
 
 			return charName;
 		}

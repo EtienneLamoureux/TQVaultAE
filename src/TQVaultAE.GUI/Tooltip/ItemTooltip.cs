@@ -1,11 +1,15 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
-using TQVaultAE.Entities;
-using TQVaultAE.Entities.Results;
+using TQVaultAE.Domain.Contracts.Providers;
+using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
+using TQVaultAE.Domain.Results;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.Presentation;
 using TQVaultAE.Services;
@@ -13,27 +17,29 @@ using TQVaultAE.Services;
 namespace TQVaultAE.GUI.Tooltip
 {
 
-	public partial class ItemTooltip : Form
+	public partial class ItemTooltip : BaseTooltip
 	{
 		private static Dictionary<Item, ItemTooltip> ItemTooltipOpened = new Dictionary<Item, ItemTooltip>();
 		private static Dictionary<(Item Item, float Scale, bool AltView), (Bitmap Bmp, ToFriendlyNameResult Data)> ToImage = new Dictionary<(Item, float, bool), (Bitmap, ToFriendlyNameResult)>();
-		private Item FocusedItem;
-		private ItemService ItemService;
+		internal Item FocusedItem { get; set; }
+		internal SackPanel SackPanel { get; set; }
+		internal ResultsDialog ResultsDialog { get; set; }
+
 		private bool LeftAltToggled;
-		private SackPanel SackPanel;
-		private ResultsDialog ResultsDialog;
 
 		internal ToFriendlyNameResult Data { get; private set; }
 
-		private ItemTooltip(MainForm instance, Item focusedItem, ItemService itemService, SackPanel sackPanel = null, ResultsDialog resultsDialog = null)
+#if DEBUG
+		// For Design Mode
+		public ItemTooltip() => InitializeComponent();
+#endif
+
+		private ItemTooltip(MainForm instance, IItemProvider itemProvider, IFontService fontService, IUIService uiService) : base(itemProvider, fontService, uiService)
 		{
 			InitializeComponent();
+
 			this.Owner = instance;
-			this.FocusedItem = focusedItem;
-			this.ItemService = itemService;
 			this.LeftAltToggled = Keyboard.IsKeyToggled(Key.LeftAlt);
-			this.SackPanel = sackPanel;
-			this.ResultsDialog = resultsDialog;
 
 			SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
@@ -41,6 +47,16 @@ namespace TQVaultAE.GUI.Tooltip
 
 			// Fill it outside of screen to avoid flickering
 			this.Location = new Point(0, wa.Height);
+		}
+
+		public static void InvalidateCache(params Item[] items)
+		{
+			items = items.Where(i => i != null).ToArray();
+			var cacheentrytoremove = ToImage
+				.Where(c => items.Contains(c.Key.Item))
+				.Select(c => c.Key)
+				.ToList();
+			cacheentrytoremove.ForEach(c => ToImage.Remove(c));
 		}
 
 		// to avoid Mainform lost focus with this.TopMost = false
@@ -58,26 +74,44 @@ namespace TQVaultAE.GUI.Tooltip
 
 		#region Factory
 
-		public static ItemTooltip ShowTooltip(MainForm instance, Item focusedItem, SackPanel sackPanel)
+		public static ItemTooltip ShowTooltip(IServiceProvider serviceProvider, Item focusedItem, SackPanel sackPanel)
 		{
 			ItemTooltip _Current;
 			lock (ToImage)
 			{
 				HideTooltip();
-				_Current = new ItemTooltip(instance, focusedItem, new ItemService(MainForm.userContext), sackPanel);
+				_Current = new ItemTooltip(
+					serviceProvider.GetService<MainForm>()
+					, serviceProvider.GetService<IItemProvider>()
+					, serviceProvider.GetService<IFontService>()
+					, serviceProvider.GetService<IUIService>()
+				)
+				{
+					FocusedItem = focusedItem,
+					SackPanel = sackPanel,
+				};
 				ItemTooltipOpened.Add(focusedItem, _Current);
 				_Current.Show();
 			}
 			return _Current;
 		}
 
-		public static ItemTooltip ShowTooltip(MainForm instance, Item focusedItem, ResultsDialog resultsDialog)
+		public static ItemTooltip ShowTooltip(IServiceProvider serviceProvider, Item focusedItem, ResultsDialog resultsDialog)
 		{
 			ItemTooltip _Current;
 			lock (ToImage)
 			{
 				HideTooltip();
-				_Current = new ItemTooltip(instance, focusedItem, new ItemService(MainForm.userContext), resultsDialog: resultsDialog);
+				_Current = new ItemTooltip(
+					serviceProvider.GetService<MainForm>()
+					, serviceProvider.GetService<IItemProvider>()
+					, serviceProvider.GetService<IFontService>()
+					, serviceProvider.GetService<IUIService>()
+				)
+				{
+					FocusedItem = focusedItem,
+					ResultsDialog = resultsDialog,
+				};
 				ItemTooltipOpened.Add(focusedItem, _Current);
 				_Current.Show();
 			}
@@ -91,7 +125,7 @@ namespace TQVaultAE.GUI.Tooltip
 		/// </summary>
 		public void FillToolTip()
 		{
-			var key = (this.FocusedItem, UIService.UI.Scale, this.LeftAltToggled);
+			var key = (this.FocusedItem, UIService.Scale, this.LeftAltToggled);
 
 			// Redraw
 			if (ToImage.ContainsKey(key))
@@ -111,7 +145,7 @@ namespace TQVaultAE.GUI.Tooltip
 			this.SuspendLayout();
 			this.flowLayoutPanelFriendlyNames.SuspendLayout();
 
-			this.Data = this.ItemService.GetFriendlyNames(FocusedItem, FriendlyNamesExtraScopes.ItemFullDisplay);
+			this.Data = this.ItemProvider.GetFriendlyNames(FocusedItem, FriendlyNamesExtraScopes.ItemFullDisplay);
 
 			// Fullname
 			AddRow(Data.FullName, FocusedItem.GetColor(Data.BaseItemInfoDescription), style: FontStyle.Bold);
@@ -269,109 +303,16 @@ namespace TQVaultAE.GUI.Tooltip
 			ToImage[key] = (raster, Data);
 		}
 
-		internal const string TOOLTIPDELIM = @"TOOLTIPDELIM";
-		internal const string TOOLTIPSPACER = @"TOOLTIPSPACER";
 		private void AddRow(string friendlyName = TOOLTIPSPACER, Color? FGColor = null, float fontSize = 10F, FontStyle style = FontStyle.Regular, Color? BGColor = null)
 		{
-			Control row = MakeRow(friendlyName, FGColor, fontSize, style, BGColor: this.flowLayoutPanelFriendlyNames.BackColor);
+			Control row = MakeRow(this.UIService, this.FontService, friendlyName, FGColor, fontSize, style, BGColor: this.flowLayoutPanelFriendlyNames.BackColor);
 
 			this.flowLayoutPanelFriendlyNames.Controls.Add(row);
 		}
 
-		internal static Control MakeRow(string friendlyName, Color? FGColor = null, float fontSize = 10F, FontStyle style = FontStyle.Regular, Color? BGColor = null)
-		{
-			friendlyName = friendlyName ?? string.Empty;
-			Control row = null;
-			if (friendlyName == TOOLTIPSPACER)
-			{
-				row = new Label()
-				{
-					Text = " ",
-					Font = FontHelper.GetFontAlbertusMTLight(fontSize, style, UIService.UI.Scale),
-					AutoSize = true,
-				};
-			}
-			else if (friendlyName == TOOLTIPDELIM)
-			{
-				row = new Label()
-				{
-					Text = string.Empty,
-					BackColor = TQColor.DarkGray.Color(),
-					BorderStyle = BorderStyle.FixedSingle,
-					Height = 3,
-					Anchor = AnchorStyles.Left | AnchorStyles.Right,
-					Margin = new Padding(2, 3, 2, 3),
-				};
-			}
-			else
-			{
-				// If there is a color tag in the middle
-				if (friendlyName.LastIndexOf('{') > 0)
-				{
-					var multiColors = friendlyName.Split('{').Where(t => !string.IsNullOrEmpty(t)).ToArray();
-					if (multiColors.Count() > 1)
-					{
-						row = new FlowLayoutPanel()
-						{
-							AutoSize = true,
-							AutoSizeMode = AutoSizeMode.GrowOnly,
-							FlowDirection = FlowDirection.LeftToRight,
-							Padding = new Padding(0),
-							Anchor = AnchorStyles.Left,
-
-							BorderStyle = BorderStyle.None,
-							Margin = new Padding(0),
-							BackColor = BGColor.Value,
-						};
-						row.SuspendLayout();
-						foreach (var coloredSegment in multiColors)
-						{
-							// IsColorTagged
-							if (coloredSegment.First() == '^')
-							{
-								var segTxt = '{' + coloredSegment;
-								row.Controls.Add(MakeSingleColorLabel(segTxt, FGColor, fontSize, style, BGColor));
-							}
-							else
-								row.Controls.Add(MakeSingleColorLabel(coloredSegment, FGColor, fontSize, style, BGColor));
-						}
-						row.ResumeLayout();
-					}
-				}
-				else
-					row = MakeSingleColorLabel(friendlyName, FGColor, fontSize, style, BGColor);
-			}
-
-			return row;
-		}
-
-		internal static Label MakeSingleColorLabel(string friendlyName, Color? FGColor, float fontSize, FontStyle style, Color? BGColor = null)
-		{
-			// Single Color
-			FGColor = TQColorHelper.GetColorFromTaggedString(friendlyName)?.Color() ?? FGColor ?? TQColor.White.Color();// Color Tag take précédence
-			var txt = TQColorHelper.RemoveLeadingColorTag(friendlyName);
-			var row = new Label()
-			{
-				Text = txt,
-				ForeColor = FGColor.Value,
-				Font = FontHelper.GetFontAlbertusMTLight(fontSize, style, UIService.UI.Scale),
-				AutoSize = true,
-				Anchor = AnchorStyles.Left,
-				BackColor = BGColor ?? Color.Transparent,
-
-				//BackColor = Color.Red,
-				BorderStyle = BorderStyle.None,// BorderStyle.FixedSingle
-				Margin = new Padding(0),
-			};
-
-			if (BGColor.HasValue) row.BackColor = BGColor.Value;
-
-			return row;
-		}
-
 		private void ItemTooltip_Load(object sender, EventArgs e)
 		{
-			var usize = UIService.UI.ItemUnitSize;
+			var usize = UIService.ItemUnitSize;
 			var wa = Screen.FromControl(this).WorkingArea;
 
 			this.FillToolTip();

@@ -1,21 +1,23 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using TQVaultAE.Data;
-using TQVaultAE.Entities;
+using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 using TQVaultAE.Logs;
 using TQVaultAE.Services;
+using TQVaultAE.Domain.Contracts.Services;
 
 namespace TQVaultAE.GUI
 {
 	public partial class MainForm
 	{
-		private VaultService vaultService = null;
+		private IVaultService vaultService = null;
 
 		/// <summary>
 		/// Creates the vault panel
@@ -23,12 +25,12 @@ namespace TQVaultAE.GUI
 		/// <param name="numBags">Number of bags in the vault panel.</param>
 		private void CreateVaultPanel(int numBags)
 		{
-			this.vaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.Vault);
+			this.vaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.Vault, this.ServiceProvider);
 
-			int locationY = this.vaultListComboBox.Location.Y + Convert.ToInt32(28.0F * UIService.UI.Scale);
+			int locationY = this.vaultListComboBox.Location.Y + Convert.ToInt32(28.0F * UIService.Scale);
 			this.vaultPanel.DrawAsGroupBox = false;
 
-			this.vaultPanel.Location = new Point(Convert.ToInt32(22.0F * UIService.UI.Scale), locationY);
+			this.vaultPanel.Location = new Point(Convert.ToInt32(22.0F * UIService.Scale), locationY);
 			this.vaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 			this.vaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
 			this.vaultPanel.OnActivateSearch += new EventHandler<SackPanelEventArgs>(this.ActivateSearchCallback);
@@ -44,12 +46,12 @@ namespace TQVaultAE.GUI
 		/// <param name="numBags">Number of bags in the secondary vault panel.</param>
 		private void CreateSecondaryVaultPanel(int numBags)
 		{
-			this.secondaryVaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.SecondaryVault);
+			this.secondaryVaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.SecondaryVault, this.ServiceProvider);
 			this.secondaryVaultPanel.DrawAsGroupBox = false;
 
 			// Place it with the same Y value as the character panel and X value of the vault panel.
 			this.secondaryVaultPanel.Location = new Point(
-				this.ClientSize.Width - (this.secondaryVaultPanel.Width + Convert.ToInt32(49.0F * UIService.UI.Scale)),
+				this.ClientSize.Width - (this.secondaryVaultPanel.Width + Convert.ToInt32(49.0F * UIService.Scale)),
 				this.vaultPanel.Location.Y);
 
 			this.secondaryVaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
@@ -68,15 +70,13 @@ namespace TQVaultAE.GUI
 		/// <param name="loadVault">Indicates whether the list will also load the last vault selected.</param>
 		private void GetVaultList(bool loadVault)
 		{
-			if (this.vaultService is null) this.vaultService = new VaultService(userContext);
-
-			string[] vaults = TQData.GetVaultList();
+			string[] vaults = GamePathResolver.GetVaultList();
 
 			// Added by VillageIdiot
 			// See if the Vault path was set during GetVaultList and update the key accordingly
-			if (TQData.VaultFolderChanged)
+			if (GamePathResolver.VaultFolderChanged)
 			{
-				this.vaultService.UpdateVaultPath(TQData.TQVaultSaveFolder);
+				this.vaultService.UpdateVaultPath(GamePathResolver.TQVaultSaveFolder);
 			}
 
 			string currentVault;
@@ -128,7 +128,7 @@ namespace TQVaultAE.GUI
 
 				// Make sure there is something in the config file to load else load the Main Vault
 				// We do not want to create new here.
-				if (string.IsNullOrEmpty(currentVault) || !File.Exists(TQData.GetVaultFile(currentVault)))
+				if (string.IsNullOrEmpty(currentVault) || !File.Exists(GamePathResolver.GetVaultFile(currentVault)))
 				{
 					currentVault = VaultService.MAINVAULT;
 				}
@@ -236,8 +236,9 @@ namespace TQVaultAE.GUI
 			try
 			{
 				this.SaveAllModifiedFiles();
-				VaultMaintenanceDialog dlg = new VaultMaintenanceDialog();
-				dlg.Scale(new SizeF(UIService.UI.Scale, UIService.UI.Scale));
+
+				var dlg = this.ServiceProvider.GetService<VaultMaintenanceDialog>();
+				dlg.Scale(new SizeF(UIService.Scale, UIService.Scale));
 
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
@@ -260,8 +261,8 @@ namespace TQVaultAE.GUI
 					}
 					else if (dlg.Action == VaultMaintenanceDialog.VaultMaintenance.Copy && newName != null && oldName != null)
 					{
-						string oldFilename = TQData.GetVaultFile(oldName);
-						string newFilename = TQData.GetVaultFile(newName);
+						string oldFilename = GamePathResolver.GetVaultFile(oldName);
+						string newFilename = GamePathResolver.GetVaultFile(newName);
 
 						// Make sure we save all modifications first.
 						this.SaveAllModifiedFiles();
@@ -284,7 +285,7 @@ namespace TQVaultAE.GUI
 					}
 					else if (dlg.Action == VaultMaintenanceDialog.VaultMaintenance.Delete && oldName != null)
 					{
-						string filename = TQData.GetVaultFile(oldName);
+						string filename = GamePathResolver.GetVaultFile(oldName);
 
 						// Make sure we save all modifications first.
 						this.SaveAllModifiedFiles();
@@ -308,8 +309,8 @@ namespace TQVaultAE.GUI
 					}
 					else if (dlg.Action == VaultMaintenanceDialog.VaultMaintenance.Rename && newName != null && oldName != null)
 					{
-						string oldFilename = TQData.GetVaultFile(oldName);
-						string newFilename = TQData.GetVaultFile(newName);
+						string oldFilename = GamePathResolver.GetVaultFile(oldName);
+						string newFilename = GamePathResolver.GetVaultFile(newName);
 
 						// Make sure we save all modifications first.
 						this.SaveAllModifiedFiles();

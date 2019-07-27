@@ -3,18 +3,18 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
-using TQVaultAE.Entities;
+using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 using TQVaultAE.Logs;
-using TQVaultAE.Services;
+using TQVaultAE.Domain.Contracts.Services;
 
 namespace TQVaultAE.GUI
 {
 	public partial class MainForm
 	{
-		private StashService stashService = null;
+		private IStashService stashService = null;
 
 		/// <summary>
 		/// Creates the stash panel
@@ -24,13 +24,13 @@ namespace TQVaultAE.GUI
 			// size params are width, height
 			Size panelSize = new Size(17, 16);
 
-			this.stashPanel = new StashPanel(this.DragInfo, panelSize);
+			this.stashPanel = new StashPanel(this.DragInfo, panelSize, this.ServiceProvider);
 
 			// New location in bottom right of the Main Form.
 			//Align to playerPanel
 			this.stashPanel.Location = new Point(
 				this.playerPanel.Location.X,
-				this.ClientSize.Height - (this.stashPanel.Height + Convert.ToInt32(16.0F * UIService.UI.Scale)));
+				this.ClientSize.Height - (this.stashPanel.Height + Convert.ToInt32(16.0F * UIService.Scale)));
 			this.stashPanel.DrawAsGroupBox = false;
 
 			this.stashPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
@@ -47,8 +47,6 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void LoadTransferStash()
 		{
-			InitStashService();
-
 			var result = this.stashService.LoadTransferStash();
 
 			// Get the transfer stash
@@ -76,19 +74,11 @@ namespace TQVaultAE.GUI
 			}
 		}
 
-		private void InitStashService()
-		{
-			if (this.stashService is null) this.stashService = new StashService(userContext);
-		}
-
-
 		/// <summary>
 		/// Loads the relic vault stash
 		/// </summary>
 		private void LoadRelicVaultStash()
 		{
-			InitStashService();
-
 			var result = this.stashService.LoadRelicVaultStash();
 
 			// Get the relic vault stash

@@ -5,11 +5,15 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
+	using Microsoft.Extensions.DependencyInjection;
 	using System;
+	using System.ComponentModel;
 	using System.Drawing;
 	using System.Globalization;
 	using System.Security.Permissions;
 	using System.Windows.Forms;
+	using TQVaultAE.Domain.Contracts.Providers;
+	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.GUI.Components;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Presentation;
@@ -114,58 +118,91 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private bool resizeCustomAllowed;
 
+		public IFontService FontService;
+		public IUIService UIService;
+		public IDatabase Database;
+		public IItemProvider ItemProvider;
+		public IPlayerCollectionProvider PlayerCollectionProvider;
+		public IGamePathService GamePathResolver;
+		public IServiceProvider ServiceProvider;
+
+
+#if DEBUG
+		// For Design Mode
+		public VaultForm() => InitForm();
+#endif
 		/// <summary>
 		/// Initializes a new instance of the VaultForm class.
 		/// </summary>
-		protected VaultForm()
+		public VaultForm(IServiceProvider serviceProvider)
 		{
+			if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
+			{
+				this.ServiceProvider = serviceProvider;
+				this.FontService = this.ServiceProvider.GetService<IFontService>();
+				this.UIService = this.ServiceProvider.GetService<IUIService>();
+				this.Database = this.ServiceProvider.GetService<IDatabase>();
+				this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
+				this.PlayerCollectionProvider = this.ServiceProvider.GetService<IPlayerCollectionProvider>();
+				this.GamePathResolver = this.ServiceProvider.GetService<IGamePathService>();
+
+				this.titleFont = FontService.GetFontAlbertusMTLight(9.5F);
+				InitForm();
+			}
+		}
+
+		private void InitForm()
+		{
+			this.InitializeComponent();
+
 			this.topBorder = Resources.BorderTop;
 			this.bottomBorder = Resources.BorderBottom;
 			this.sideBorder = Resources.BorderSide;
 			this.bottomRightCorner = Resources.BorderBottomRightCorner;
 			this.bottomLeftCorner = Resources.BorderBottomLeftCorner;
 			this.ShowResizeBorders = false;
-			this.titleFont = FontHelper.GetFontAlbertusMTLight(9.5F);
-			this.TitleTextColor = SystemColors.ControlText;
 
-			this.InitializeComponent();
+			this.TitleTextColor = SystemColors.ControlText;
 
 			this.PlaceButtons();
 
-			this.CreateBorderRects();
-
 			#region Apply custom font & scaling
 
-			ScaleControl(this.buttonMaximize);
-			ScaleControl(this.buttonMinimize);
-			ScaleControl(this.buttonClose);
+			ScaleControl(this.UIService, this.buttonMaximize);
+			ScaleControl(this.UIService, this.buttonMinimize);
+			ScaleControl(this.UIService, this.buttonClose);
 
 			#endregion
+
+			this.CreateBorderRects();
+
+			// to avoid flickering use double buffer and to force control to use OnPaint
+			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
+
+
+			this.ResizeBegin += new System.EventHandler(this.ResizeBeginCallback);
+			this.ResizeEnd += new System.EventHandler(this.ResizeEndCallback);
+			this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
+			this.Resize += new System.EventHandler(this.ResizeCallback);
 
 			this.systemMenu = new WindowMenu(this);
 			this.systemMenu.SystemEvent += new EventHandler<WindowMenuEventArgs>(this.SystemMenuSystemEvent);
 			this.systemMenu.MaximizeEnabled = this.MaximizeBox;
 			this.systemMenu.MinimizeEnabled = this.MinimizeBox;
 
-			// to avoid flickering use double buffer and to force control to use OnPaint
-			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
 		}
 
-		public static void ScaleControl(System.Windows.Forms.Control ctrl)
+		public static void ScaleControl(IUIService uiService, System.Windows.Forms.Control ctrl)
 		{
-			ctrl.Location = ScalePoint(ctrl.Location);
-			ctrl.Size = ScaleSize(ctrl.Size);
+			ctrl.Location = ScalePoint(uiService, ctrl.Location);
+			ctrl.Size = ScaleSize(uiService, ctrl.Size);
 		}
 
-		public static Size ScaleSize(Size size)
-		{
-			return new Size((int)System.Math.Round(size.Width * UIService.UI.Scale), (int)System.Math.Round(size.Height * UIService.UI.Scale));
-		}
+		public static Size ScaleSize(IUIService uiService, Size size)
+			=> new Size((int)System.Math.Round(size.Width * uiService?.Scale ?? 1.0F), (int)System.Math.Round(size.Height * uiService?.Scale ?? 1.0F));
 
-		public static Point ScalePoint(Point point)
-		{
-			return new Point((int)System.Math.Round(point.X * UIService.UI.Scale), (int)System.Math.Round(point.Y * UIService.UI.Scale));
-		}
+		public static Point ScalePoint(IUIService uiService, Point point)
+			=> new Point((int)System.Math.Round(point.X * uiService?.Scale ?? 1.0F), (int)System.Math.Round(point.Y * uiService?.Scale ?? 1.0F));
 
 
 		/// <summary>
@@ -177,9 +214,7 @@ namespace TQVaultAE.GUI
 			{
 				// Set options for Right to Left reading.
 				if (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)
-				{
 					return MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading;
-				}
 
 				return (MessageBoxOptions)0;
 			}
@@ -240,10 +275,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		public bool DrawCustomBorder
 		{
-			get
-			{
-				return this.drawCustomBorder;
-			}
+			get => this.drawCustomBorder;
 
 			set
 			{
@@ -280,17 +312,12 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		public bool ResizeCustomAllowed
 		{
-			get
-			{
-				return this.resizeCustomAllowed;
-			}
+			get => this.resizeCustomAllowed;
 
 			set
 			{
 				if (this.systemMenu != null)
-				{
 					this.systemMenu.SizeEnabled = value;
-				}
 
 				this.resizeCustomAllowed = value;
 			}
@@ -301,17 +328,12 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		public new bool MaximizeBox
 		{
-			get
-			{
-				return base.MaximizeBox;
-			}
+			get => base.MaximizeBox;
 
 			set
 			{
 				if (this.systemMenu != null)
-				{
 					this.systemMenu.MaximizeEnabled = value;
-				}
 
 				if (this.buttonMaximize != null)
 				{
@@ -328,17 +350,12 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		public new bool MinimizeBox
 		{
-			get
-			{
-				return base.MinimizeBox;
-			}
+			get => base.MinimizeBox;
 
 			set
 			{
 				if (this.systemMenu != null)
-				{
 					this.systemMenu.MinimizeEnabled = value;
-				}
 
 				if (this.buttonMinimize != null)
 				{
@@ -359,10 +376,17 @@ namespace TQVaultAE.GUI
 		{
 			if (this.WindowState == FormWindowState.Maximized)
 			{
-				if (((m.Msg == (int)User32.WindowMessage.SysCommand) &&
-					(m.WParam.ToInt32() == (int)User32.SystemMenuCommand.Move)) ||
-					((m.Msg == (int)User32.NonClientMouseMessage.LeftButtonDown) &&
-					(m.WParam.ToInt32() == (int)User32.NonClientHitTestResult.Caption)))
+				if (
+					(
+						(m.Msg == (int)User32.WindowMessage.SysCommand)
+						&& (m.WParam.ToInt32() == (int)User32.SystemMenuCommand.Move)
+					)
+					||
+					(
+						(m.Msg == (int)User32.NonClientMouseMessage.LeftButtonDown)
+						&& (m.WParam.ToInt32() == (int)User32.NonClientHitTestResult.Caption)
+					)
+				)
 				{
 					m.Msg = (int)User32.WindowMessage.Null;
 				}
@@ -377,22 +401,12 @@ namespace TQVaultAE.GUI
 					case (int)User32.WindowMessage.GetSysMenu:
 						this.systemMenu.Show(this, this.PointToClient(new Point(m.LParam.ToInt32())));
 						break;
-					/*case USER32.WM_NCACTIVATE:
-                        this.formActive = m.WParam.ToInt32() != 0;
-                        this.Invalidate();
-                        break;*/
 					case (int)User32.WindowMessage.NonClientHitTest:
 						m.Result = this.OnNonClientHitTest(m.LParam);
 						break;
-					/*case (int)USER32.NCMouseMessage.WM_NCLBUTTONUP:
-                        OnNonClientLButtonUp(m.LParam);
-                        break;*/
 					case (int)User32.NonClientMouseMessage.RightButtonUp:
 						this.OnNonClientRButtonUp(m.LParam);
 						break;
-					/*case (int)USER32.NCMouseMessage.WM_NCMOUSEMOVE:
-                        OnNonClientMouseMove(m.LParam);
-                        break;*/
 					default:
 						break;
 				}
@@ -405,9 +419,7 @@ namespace TQVaultAE.GUI
 		/// <param name="sender">Sender object</param>
 		/// <param name="e">Window menu event args</param>
 		protected void SystemMenuSystemEvent(object sender, WindowMenuEventArgs e)
-		{
-			this.SendNCWinMessage(User32.WindowMessage.SysCommand, (IntPtr)e.SystemCommand, IntPtr.Zero);
-		}
+			=> this.SendNCWinMessage(User32.WindowMessage.SysCommand, (IntPtr)e.SystemCommand, IntPtr.Zero);
 
 		/// <summary>
 		/// Scales the form.
@@ -419,17 +431,13 @@ namespace TQVaultAE.GUI
 			if (this.DrawCustomBorder)
 			{
 				if (this.titleFont != null)
-				{
 					this.titleFont = new Font(this.titleFont.Name, this.titleFont.SizeInPoints * factor.Width);
-				}
 			}
 
 			base.ScaleControl(factor, specified);
 
 			if (this.DrawCustomBorder)
-			{
 				this.CreateBorderRects();
-			}
 		}
 
 		/// <summary>
@@ -442,22 +450,18 @@ namespace TQVaultAE.GUI
 			// Support relative resizing of the DB value.
 			if (useRelativeScaling && scaleFactor != 1.0F)
 			{
-				float newDBScale = UIService.UI.Scale * scaleFactor;
+				float newDBScale = UIService.Scale * scaleFactor;
 				if (newDBScale > 2.0F || newDBScale < 0.40F)
-				{
 					return;
-				}
 
-				UIService.UI.Scale = newDBScale;
+				UIService.Scale = newDBScale;
 				this.Scale(new SizeF(scaleFactor, scaleFactor));
 			}
 			else if (scaleFactor == 1.0F)
 			{
 				// Check if we are resetting the size.
-				if (UIService.UI.Scale == 1.0F)
-				{
+				if (UIService.Scale == 1.0F)
 					return;
-				}
 
 				// Reset the border graphics to the originals.
 				this.topBorder = Resources.BorderTop;
@@ -466,7 +470,7 @@ namespace TQVaultAE.GUI
 				this.bottomRightCorner = Resources.BorderBottomRightCorner;
 				this.bottomLeftCorner = Resources.BorderBottomLeftCorner;
 
-				UIService.UI.Scale = this.OriginalFormScale;
+				UIService.Scale = this.OriginalFormScale;
 
 				// Use the width since it is usually more drastic of a change.
 				// especially when coming from a small size.
@@ -485,11 +489,9 @@ namespace TQVaultAE.GUI
 
 				// Use the scaling factor closest to one.
 				if ((scalingHeight < scalingWidth && scalingHeight > 1.0F) || (scalingHeight > scalingWidth && scalingHeight < 1.0F))
-				{
 					scaling = scalingHeight;
-				}
 
-				UIService.UI.Scale = scaleFactor;
+				UIService.Scale = scaleFactor;
 				this.Scale(new SizeF(scaling, scaling));
 			}
 		}
@@ -502,27 +504,19 @@ namespace TQVaultAE.GUI
 		protected void ResizeFormCallback(object sender, ResizeEventArgs e)
 		{
 			if (e.ResizeDelta == 0.0F)
-			{
 				// Nothing to do so we return.
 				return;
-			}
 
 			if (this.ScaleOnResize)
 			{
 				float scale;
 				if (e.ResizeDelta == 1.0F)
-				{
 					scale = e.ResizeDelta;
-				}
 				else
-				{
-					scale = UIService.UI.Scale + e.ResizeDelta;
-				}
+					scale = UIService.Scale + e.ResizeDelta;
 
 				if (scale < 0.39F || scale > 2.01F)
-				{
 					return;
-				}
 
 				this.ScaleForm(scale, false);
 			}
@@ -544,9 +538,7 @@ namespace TQVaultAE.GUI
 				// If we are coming out of a minimized or maximized state, we need to restore
 				// the form the size prior to minimizing or maximizing.
 				if (this.lastState == FormWindowState.Minimized || this.lastState == FormWindowState.Maximized)
-				{
 					this.LastFormSize = this.RestoreBounds.Size;
-				}
 
 				this.ResizeEndCallback(this, new EventArgs());
 			}
@@ -557,24 +549,16 @@ namespace TQVaultAE.GUI
 				// Keep the resizing within the form's design aspect ratio and bounds.
 				// Find which was resized.
 				if (tempSize.Height != this.LastFormSize.Height)
-				{
 					tempSize.Width = Convert.ToInt32((float)tempSize.Height / this.FormDesignRatio);
-				}
 				else
-				{
 					tempSize.Height = Convert.ToInt32((float)tempSize.Width * this.FormDesignRatio);
-				}
 
 				// Make sure we do not exceed the maximum values.
 				if (tempSize.Height >= this.FormMaximumSize.Height || tempSize.Width >= this.FormMaximumSize.Width)
-				{
 					tempSize = this.FormMaximumSize;
-				}
 
 				if (tempSize.Height <= this.FormMinimumSize.Height || tempSize.Width <= this.FormMinimumSize.Width)
-				{
 					tempSize = this.FormMinimumSize;
-				}
 
 				this.Size = tempSize;
 			}
@@ -590,9 +574,7 @@ namespace TQVaultAE.GUI
 			// Dragging the form will trigger this event.
 			// If the size did not change or if sizing is disabled we just skip it.
 			if (this.Size == this.LastFormSize || !this.ResizeCustomAllowed)
-			{
 				return;
-			}
 
 			if (this.ScaleOnResize)
 			{
@@ -713,29 +695,6 @@ namespace TQVaultAE.GUI
 			}
 		}
 
-		/*private void OnNonClientLButtonUp(IntPtr lParam)
-        {
-            USER32.SysCommand code = USER32.SysCommand.SC_DEFAULT;
-            Point point = this.PointToClient(new Point(lParam.ToInt32()));
-
-            if (this.iconButton.IsVisible(point))
-            {
-                this.TopMost = !this.TopMost;
-                this.Invalidate();
-            }
-            else
-            {
-                if (this.closeButton.IsVisible(point))
-                    code = USER32.SysCommand.SC_CLOSE;
-                else if (this.maxButton.IsVisible(point))
-                    code = this.WindowState == FormWindowState.Normal ? USER32.SysCommand.SC_MAXIMIZE : USER32.SysCommand.SC_RESTORE;
-                else if (this.minButton.IsVisible(point))
-                    code = USER32.SysCommand.SC_MINIMIZE;
-
-                SendNCWinMessage(USER32.WM_SYSCOMMAND, (IntPtr)code, IntPtr.Zero);
-            }
-        }*/
-
 		/// <summary>
 		/// Processes a Client Right Button Up Event.
 		/// </summary>
@@ -743,29 +702,9 @@ namespace TQVaultAE.GUI
 		private void OnNonClientRButtonUp(IntPtr parameter)
 		{
 			if (this.topBorderRect.Contains(this.PointToClient(new Point(parameter.ToInt32()))))
-			{
 				this.SendNCWinMessage(User32.WindowMessage.GetSysMenu, IntPtr.Zero, parameter);
-			}
 		}
 
-		/*private void OnNonClientMouseMove(IntPtr lParam)
-        {
-            Point point = this.PointToClient(new Point(lParam.ToInt32()));
-            String tooltip;
-            if (this.buttonClose.ClientRectangle.Contains(point))
-                tooltip = "Close";
-            else if (this.maxButton.IsVisible(point))
-                tooltip = this.WindowState == FormWindowState.Normal ? "Maximize" : "Restore";
-            else if (this.minButton.IsVisible(point))
-                tooltip = "Minimize";
-            else if (this.iconButton.IsVisible(point))
-                tooltip = this.TopMost ? "Un-Pin" : "Pin";
-            else
-                tooltip = string.Empty;
-
-            if (ButtonTip.GetToolTip(this) != tooltip)
-                ButtonTip.SetToolTip(this, tooltip);
-        }*/
 
 		/// <summary>
 		/// Perfoms a hit test on the non client area
@@ -779,54 +718,28 @@ namespace TQVaultAE.GUI
 			Point point = this.PointToClient(new Point(parameter.ToInt32()));
 
 			if (this.topBorderRect.Contains(point))
-			{
 				result = User32.NonClientHitTestResult.Caption;
-			}
 
 			if (this.WindowState == FormWindowState.Normal && this.ResizeCustomAllowed)
 			{
 				if (this.upperLeftCorner.Contains(point))
-				{
 					result = User32.NonClientHitTestResult.TopLeftCorner;
-				}
 				else if (this.topResizeRect.Contains(point))
-				{
 					result = User32.NonClientHitTestResult.TopBorder;
-				}
 				else if (this.upperRightCorner.Contains(point))
-				{
 					result = User32.NonClientHitTestResult.TopRightCorner;
-				}
 				else if (this.leftBorderRect.Contains(point))
-				{
 					result = User32.NonClientHitTestResult.LeftBorder;
-				}
 				else if (this.rightBorderRect.Contains(point))
-				{
 					result = User32.NonClientHitTestResult.RightBorder;
-				}
 				else if (this.lowerLeftCorner.Contains(point))
-				{
 					result = User32.NonClientHitTestResult.BottomLeftCorner;
-				}
 				else if (this.bottomBorderRect.Contains(point))
-				{
 					result = User32.NonClientHitTestResult.BottomBorder;
-				}
 				else if (this.lowerRightCorner.Contains(point))
-				{
 					result = User32.NonClientHitTestResult.BottomRightCorner;
-				}
 			}
 
-			/*if (this.buttonClose.ClientRectangle.Contains(point))
-                result = USER32.NCHitTestResult.HTBORDER;
-            else if (this.maxButton.IsVisible(point))
-                result = USER32.NCHitTestResult.HTBORDER;
-            else if (this.minButton.IsVisible(point))
-                result = USER32.NCHitTestResult.HTBORDER;
-            else if (this.iconButton.IsVisible(point))
-                result = USER32.NCHitTestResult.HTBORDER;*/
 
 			return (IntPtr)result;
 		}
@@ -852,19 +765,15 @@ namespace TQVaultAE.GUI
 			if (this.buttonClose != null)
 			{
 				this.buttonClose.Location = new Point(
-											this.ClientRectangle.Right - (this.buttonClose.Width + this.sideBorder.Width),
-											this.ClientRectangle.Top);
+					this.ClientRectangle.Right - (this.buttonClose.Width + this.sideBorder.Width)
+					, this.ClientRectangle.Top);
 			}
 
 			if (this.buttonMaximize != null)
-			{
 				this.buttonMaximize.Location = new Point(this.buttonClose.Location.X - this.buttonMaximize.Width, this.ClientRectangle.Top);
-			}
 
 			if (this.buttonMinimize != null)
-			{
 				this.buttonMinimize.Location = new Point(this.buttonMaximize.Location.X - this.buttonMinimize.Width, this.ClientRectangle.Top);
-			}
 		}
 
 		/// <summary>
@@ -875,15 +784,11 @@ namespace TQVaultAE.GUI
 			// Make it a couple of pixels wider than the side graphic.
 			int cornerWidth = 6;
 			if (this.sideBorder != null)
-			{
 				cornerWidth = this.sideBorder.Width + 2;
-			}
 
 			int cornerHeight = 6;
 			if (this.bottomBorder != null)
-			{
 				cornerHeight = this.bottomBorder.Height + 2;
-			}
 
 			Size cornerSize = new Size(cornerWidth, cornerHeight);
 			this.upperLeftCorner = new Rectangle(new Point(ClientRectangle.Left, ClientRectangle.Top), cornerSize);
@@ -908,9 +813,7 @@ namespace TQVaultAE.GUI
 
 			int titleBarHeight = 21;
 			if (this.topBorder != null)
-			{
 				titleBarHeight = this.topBorder.Height + 2;
-			}
 
 			this.topBorderRect = new Rectangle(ClientRectangle.Left + cornerSize.Width, ClientRectangle.Top, ClientRectangle.Width - (2 * cornerSize.Width), titleBarHeight);
 
@@ -923,10 +826,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
-		private void CloseButtonClick(object sender, EventArgs e)
-		{
-			this.Close();
-		}
+		private void CloseButtonClick(object sender, EventArgs e) => this.Close();
 
 		/// <summary>
 		/// Handler for clicking the Minimize button
@@ -936,18 +836,12 @@ namespace TQVaultAE.GUI
 		private void MaximizeButtonClick(object sender, EventArgs e)
 		{
 			if (!this.MaximizeBox)
-			{
 				return;
-			}
 
 			if (this.WindowState == FormWindowState.Maximized)
-			{
 				this.WindowState = FormWindowState.Normal;
-			}
 			else
-			{
 				this.WindowState = FormWindowState.Maximized;
-			}
 		}
 
 		/// <summary>
@@ -958,14 +852,10 @@ namespace TQVaultAE.GUI
 		private void MinimizeButtonClick(object sender, EventArgs e)
 		{
 			if (!this.MinimizeBox)
-			{
 				return;
-			}
 
 			if (this.WindowState != FormWindowState.Minimized)
-			{
 				this.WindowState = FormWindowState.Minimized;
-			}
 		}
 	}
 }

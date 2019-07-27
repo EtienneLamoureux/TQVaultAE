@@ -20,17 +20,18 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Initializes a new instance of the AboutBox class.
 		/// </summary>
-		public AboutBox()
+		public AboutBox(IServiceProvider serviceProvider) : base(serviceProvider)
 		{
+
 			this.InitializeComponent();
 
 			#region Apply custom font
 
-			this.labelProductName.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
-			this.labelVersion.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
-			this.labelCopyright.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
-			this.textBoxDescription.Font = FontHelper.GetFontAlbertusMTLight(9.75F);
-			this.buttonOK.Font = FontHelper.GetFontAlbertusMTLight(12F);
+			this.labelProductName.Font = FontService.GetFontAlbertusMTLight(11.25F);
+			this.labelVersion.Font = FontService.GetFontAlbertusMTLight(11.25F);
+			this.labelCopyright.Font = FontService.GetFontAlbertusMTLight(11.25F);
+			this.textBoxDescription.Font = FontService.GetFontAlbertusMTLight(9.75F);
+			this.buttonOK.Font = FontService.GetFontAlbertusMTLight(12F);
 
 			#endregion
 
@@ -42,7 +43,6 @@ namespace TQVaultAE.GUI
 			this.labelProductName.Text = AssemblyProduct;
 			this.labelVersion.Text = string.Format(CultureInfo.CurrentCulture, Resources.AboutVersion, AssemblyVersion);
 			this.labelCopyright.Text = AssemblyCopyright;
-			////this.labelCompanyName.Text = AssemblyCompany;
 			this.textBoxDescription.Text = Resources.AboutDescription; // AssemblyDescription;
 
 			this.DrawCustomBorder = true;
@@ -188,7 +188,7 @@ namespace TQVaultAE.GUI
 			{
 				this.logoPictureBox.Image = new Bitmap(
 					this.logoPictureBox.Image,
-					new Size(Convert.ToInt32((float)this.logoPictureBox.Size.Width * UIService.UI.Scale), Convert.ToInt32((float)this.logoPictureBox.Size.Height * UIService.UI.Scale)));
+					new Size(Convert.ToInt32((float)this.logoPictureBox.Size.Width * UIService.Scale), Convert.ToInt32((float)this.logoPictureBox.Size.Height * UIService.Scale)));
 			}
 
 			base.ScaleControl(factor, specified);

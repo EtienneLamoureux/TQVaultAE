@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using TQVaultAE.Presentation;
-using TQVaultAE.GUI.Tooltip;
+using System;
 
 namespace TQVaultAE.GUI.Components
 {
@@ -18,8 +18,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <param name="bagNumber">number of the bag for display</param>
 		/// <param name="getToolTip">Tooltip delegate</param>
-		/// <param name="tooltip">Tooltip instance</param>
-		public StashButton(int bagNumber, GetToolTip getToolTip) : base(bagNumber, getToolTip)
+		public StashButton(int bagNumber, GetToolTip getToolTip, IServiceProvider serviceProvider) : base(bagNumber, getToolTip, serviceProvider)
 		{
 			// Override the default background graphics.
 			this.CreateBackgroundGraphics();

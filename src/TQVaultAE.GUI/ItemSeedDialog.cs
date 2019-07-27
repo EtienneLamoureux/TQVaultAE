@@ -8,7 +8,7 @@ namespace TQVaultAE.GUI
 	using System;
 	using System.Globalization;
 	using System.Windows.Forms;
-	using TQVaultAE.Entities;
+	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Presentation;
 
 	/// <summary>
@@ -29,7 +29,7 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Initializes a new instance of the ItemSeedDialog class.
 		/// </summary>
-		public ItemSeedDialog(MainForm instance)
+		public ItemSeedDialog(MainForm instance) : base(instance.ServiceProvider)
 		{
 			this.Owner = instance;
 
@@ -37,12 +37,12 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.itemSeedBox.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
-			this.ButtonRandom.Font = FontHelper.GetFontAlbertusMTLight(12F);
-			this.ButtonOk.Font = FontHelper.GetFontAlbertusMTLight(12F);
-			this.ButtonCancel.Font = FontHelper.GetFontAlbertusMTLight(12F);
-			this.labelInfos.Font = FontHelper.GetFontAlbertusMTLight(11.25F);
-			this.Font = FontHelper.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.itemSeedBox.Font = FontService.GetFontAlbertusMTLight(11.25F);
+			this.ButtonRandom.Font = FontService.GetFontAlbertusMTLight(12F);
+			this.ButtonOk.Font = FontService.GetFontAlbertusMTLight(12F);
+			this.ButtonCancel.Font = FontService.GetFontAlbertusMTLight(12F);
+			this.labelInfos.Font = FontService.GetFontAlbertusMTLight(11.25F);
+			this.Font = FontService.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
 			#endregion
 

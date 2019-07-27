@@ -19,7 +19,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <param name="buttonNumber">Number for this button</param>
 		/// <param name="rotateGraphic">bool to signal the button is using a rotated background graphic</param>
-		public AutoSortButton(int buttonNumber, bool rotateGraphic) : base(buttonNumber, null)
+		public AutoSortButton(int buttonNumber, bool rotateGraphic, IServiceProvider serviceProvider) : base(buttonNumber, null, serviceProvider)
 		{
 			this.IsVault = rotateGraphic;
 			this.CreateBackgroundGraphics();
@@ -51,8 +51,8 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			// Scale the button to the size of the graphic.
-			this.Height = Convert.ToInt32((float)this.OffBitmap.Height * UIService.UI.Scale);
-			this.Width = Convert.ToInt32((float)this.OffBitmap.Width * UIService.UI.Scale);
+			this.Height = Convert.ToInt32((float)this.OffBitmap.Height * UIService.Scale);
+			this.Width = Convert.ToInt32((float)this.OffBitmap.Width * UIService.Scale);
 		}
 
 		/// <summary>

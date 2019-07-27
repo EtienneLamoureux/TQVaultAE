@@ -6,6 +6,7 @@
 
 namespace TQVaultAE.GUI.Components
 {
+	using Microsoft.Extensions.DependencyInjection;
 	using System;
 	using System.Collections.Generic;
 	using System.Drawing;
@@ -13,7 +14,7 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Data;
 	using TQVaultAE.Logs;
-	using TQVaultAE.Entities;
+	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.GUI.Tooltip;
 
@@ -31,10 +32,10 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="sackHeight">Height of the sack panel in cells</param>
 		/// <param name="dragInfo">ItemDragInfo instance.</param>
 		/// <param name="autoMoveLocation">AutoMoveLocation for this panel.</param>
-		public EquipmentPanel(int sackWidth, int sackHeight, ItemDragInfo dragInfo, AutoMoveLocation autoMoveLocation)
-			: base(sackWidth, sackHeight, dragInfo, autoMoveLocation)
+		public EquipmentPanel(int sackWidth, int sackHeight, ItemDragInfo dragInfo, AutoMoveLocation autoMoveLocation, IServiceProvider serviceProvider)
+			: base(sackWidth, sackHeight, dragInfo, autoMoveLocation, serviceProvider)
 		{
-			this.Log = Logger.Get(this);
+			this.Log = serviceProvider.GetService<ILogger<EquipmentPanel>>().Logger;
 
 			this.SackType = SackType.Equipment;
 			this.BackColor = Color.Transparent;
@@ -94,9 +95,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="factor">SizeF for the scale factor</param>
 		/// <param name="specified">BoundsSpecified value.</param>
 		protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
-		{
-			base.ScaleControl(factor, specified);
-		}
+			=> base.ScaleControl(factor, specified);
 
 		/// <summary>
 		/// Gets an item at a cell location
@@ -106,9 +105,7 @@ namespace TQVaultAE.GUI.Components
 		protected override Item FindItem(Point cellLocation)
 		{
 			if (this.Sack == null)
-			{
 				return null;
-			}
 
 			// Find the item for this point
 			int itemSlot = -1;
@@ -116,10 +113,8 @@ namespace TQVaultAE.GUI.Components
 			{
 				++itemSlot;
 				if (item == this.DragInfo.Item)
-				{
 					// hide the item being dragged
 					continue;
-				}
 
 				// store the x and y values
 				int x = item.PositionX;
@@ -137,50 +132,31 @@ namespace TQVaultAE.GUI.Components
 						if (item.BaseItemId.Length == 0)
 						{
 							Item item2H = this.GetItemFromShadowSlot(itemSlot - 7);
-							/*if (itemSlot == 7 || itemSlot == 9)
-                            {
-                                item2H = this.Sack.GetItem(itemSlot + 1);
-                            }
-                            else if (itemSlot == 8 || itemSlot == 10)
-                            {
-                                item2H = this.Sack.GetItem(itemSlot - 1);
-                            }*/
 
 							if (item2H.BaseItemId.Length != 0 && item2H.Is2HWeapon)
-							{
 								// Make sure we got something and it's a 2 Handed weapon
 								return item2H;
-							}
 							else
-							{
 								// Otherwise just skip it
 								continue;
-							}
 						}
 						else
-						{
 							// There is really an item here so we just return it.
 							return item;
-						}
 					}
 					else
-					{
 						// Just skip the item if we are not over a weapon box.
 						continue;
-					}
 				}
 				else if (string.IsNullOrEmpty(item.BaseItemId))
-				{
 					// Skip over empty items
 					continue;
-				}
 
 				// see if this item overlaps the cell
-				if ((x <= cellLocation.X) && ((x + item.Width - 1) >= cellLocation.X) &&
-					(y <= cellLocation.Y) && ((y + item.Height - 1) >= cellLocation.Y))
-				{
+				if ((x <= cellLocation.X)
+					&& ((x + item.Width - 1) >= cellLocation.X)
+					&& (y <= cellLocation.Y) && ((y + item.Height - 1) >= cellLocation.Y))
 					return item;
-				}
 			}
 
 			return null;
@@ -212,9 +188,7 @@ namespace TQVaultAE.GUI.Components
 		protected override Point GetMouseOffset(Point location, Item item)
 		{
 			if (item == null)
-			{
 				return Point.Empty;
-			}
 
 			Point topLeft = this.CellTopLeft(item.Location);
 
@@ -228,9 +202,7 @@ namespace TQVaultAE.GUI.Components
 					int focusSlot = FindEquipmentSlot(this.FindCell(location));
 					int itemSlot = FindEquipmentSlot(this.Sack, item);
 					if (focusSlot != itemSlot)
-					{
 						itemOffset = SackCollection.GetEquipmentLocationOffset(focusSlot).Y;
-					}
 				}
 
 				topLeft = WeaponTopLeft(
@@ -265,22 +237,16 @@ namespace TQVaultAE.GUI.Components
 				int oldSlot = -1;
 				int slot = FindEquipmentSlot(this.CellsUnderDragItem);
 				if (slot == -1 || !this.CheckItemType(dragItem, slot))
-				{
 					return;
-				}
 
 				if (this.DragInfo.Sack != null)
-				{
 					oldSlot = FindEquipmentSlot(this.DragInfo.Sack, dragItem);
-				}
 
 				// Yes we can drop it here!
 				// First take the item that is under us
 				Item itemUnderUs = null;
 				if (this.ItemsUnderDragItem != null && this.ItemsUnderDragItem.Count == 1)
-				{
 					itemUnderUs = this.ItemsUnderDragItem[0];
-				}
 
 				// Maybe we are putting the item back or dropping on an equipment shadow slot.
 				// Then we just cancel.
@@ -345,9 +311,7 @@ namespace TQVaultAE.GUI.Components
 									break;
 								}
 								else
-								{
 									randPercent -= e1.Value;
-								}
 							}
 						}
 
@@ -401,14 +365,10 @@ namespace TQVaultAE.GUI.Components
 								if (itemUnderUs != null && itemUnderUs.BaseItemId.Length != 0)
 								{
 									if (itemUnderUs.Is2HWeapon)
-									{
 										// For 2H weapons itemUnderUs points to the real item in the RH slot.
 										this.Sack.AddItem(this.Sack.GetItem(slotRH).Duplicate(true));
-									}
 									else
-									{
 										this.Sack.AddItem(this.Sack.GetItem(slot).Duplicate(true));
-									}
 
 									itemUnderUs = this.Sack.GetItem(this.Sack.Count - 1);
 
@@ -501,8 +461,8 @@ namespace TQVaultAE.GUI.Components
 				{
 					// set our mouse offset to be the center of the item.
 					Point mouseOffset = new Point(
-						itemUnderUs.Width * UIService.UI.HalfUnitSize,
-						itemUnderUs.Height * UIService.UI.HalfUnitSize);
+						itemUnderUs.Width * UIService.HalfUnitSize,
+						itemUnderUs.Height * UIService.HalfUnitSize);
 					this.DragInfo.Set(this, this.Sack, itemUnderUs, mouseOffset);
 
 					// since we have dropped something in this location, we can no longer put this item here.
@@ -553,23 +513,15 @@ namespace TQVaultAE.GUI.Components
 					if (lastItem != null && lastItem.Is2HWeapon)
 					{
 						if (this.IsItemSelected(lastItem))
-						{
 							backgroundBrush = this.HighlightSelectedItemBrush;
-						}
 						else if (redrawSelection)
-						{
 							backgroundBrush = this.HighlightUnselectedItemBrush;
-						}
 						else
-						{
 							backgroundBrush = this.CellHasItemBrush;
-						}
 
 						Item last2HItem = this.GetItemFromShadowSlot(lastItem.PositionY);
 						if (last2HItem.BaseItemId.Length == 0)
-						{
 							this.DrawItemShaded(g, last2HItem, backgroundBrush);
-						}
 					}
 
 					if (newItem != lastItem)
@@ -579,19 +531,13 @@ namespace TQVaultAE.GUI.Components
 							// Now we need to highlight the current item
 							// Check if the item is selected and use a different background
 							if (this.IsItemSelected(newItem))
-							{
 								backgroundBrush = this.HighlightSelectedItemBrush;
-							}
 							else
-							{
 								backgroundBrush = this.HighlightUnselectedItemBrush;
-							}
 
 							Item new2HItem = this.GetItemFromShadowSlot(newItem.PositionY);
 							if (string.IsNullOrEmpty(new2HItem.BaseItemId))
-							{
 								this.DrawItemShaded(g, new2HItem, backgroundBrush);
-							}
 						}
 
 						// Call the base method to update the last cell and to draw the items.
@@ -620,9 +566,7 @@ namespace TQVaultAE.GUI.Components
 					break;
 				}
 				else
-				{
 					continue;
-				}
 			}
 
 			return cellRect;
@@ -637,8 +581,9 @@ namespace TQVaultAE.GUI.Components
 			// Figure out the rectangle that needs to be redrawn
 			int x = this.LastDragLocation.X;
 			int y = this.LastDragLocation.Y;
-			int width = Convert.ToInt32(this.DragInfo.Item.ItemBitmap().Width * UIService.UI.Scale);
-			int height = Convert.ToInt32(this.DragInfo.Item.ItemBitmap().Height * UIService.UI.Scale);
+			var ibmp = this.UIService.GetBitmap(this.DragInfo.Item);
+			int width = Convert.ToInt32(ibmp.Width * UIService.Scale);
+			int height = Convert.ToInt32(ibmp.Height * UIService.Scale);
 
 			// We also know we need to wipe out any cells under the old drag point
 			// This is used to restore the background after highlighting the cells underneath
@@ -786,13 +731,9 @@ namespace TQVaultAE.GUI.Components
 
 					// Check if the item is selected and use a different background
 					if (this.IsItemSelected(item))
-					{
 						backgroundBrush = this.HighlightSelectedItemBrush;
-					}
 					else
-					{
 						backgroundBrush = this.CellHasItemBrush;
-					}
 
 					if (this.DragInfo.IsActive)
 					{
@@ -801,38 +742,26 @@ namespace TQVaultAE.GUI.Components
 						{
 							// Use highlight color if it is the only item under the drag point, else use invalid
 							if (this.ItemsUnderDragItem.Count > 1)
-							{
 								backgroundBrush = this.HighlightInvalidItemBrush;
-							}
 							else
 							{
 								int slot = FindEquipmentSlot(this.Sack, this.ItemsUnderDragItem[0]);
 								if (slot != -1)
 								{
 									if (this.CheckItemType(this.DragInfo.Item, slot))
-									{
 										backgroundBrush = this.HighlightValidItemBrush;
-									}
 									else
-									{
 										backgroundBrush = this.HighlightInvalidItemBrush;
-									}
 								}
 								else
-								{
 									backgroundBrush = this.HighlightInvalidItemBrush;
-								}
 							}
 						}
 						else
-						{
 							backgroundBrush = this.CellHasItemBrush;
-						}
 					}
 					else if (item == lastItem)
-					{
 						backgroundBrush = this.HighlightValidItemBrush;
-					}
 
 					// Now do the shading
 					this.ShadeAreaUnderItem(e.Graphics, item, backgroundBrush);
@@ -857,8 +786,10 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="e">PaintEventArgs data</param>
 		protected override void PaintAreaUnderDragItem(PaintEventArgs e)
 		{
-			if (this.DragInfo.IsActive && !this.CellsUnderDragItem.Size.IsEmpty && (this.ItemsUnderDragItem == null ||
-				this.ItemsUnderDragItem.Count <= 1))
+			if (this.DragInfo.IsActive
+				&& !this.CellsUnderDragItem.Size.IsEmpty
+				&& (this.ItemsUnderDragItem == null || this.ItemsUnderDragItem.Count <= 1)
+			)
 			{
 				Point tl = Point.Empty;
 				Point br = Point.Empty;
@@ -876,21 +807,15 @@ namespace TQVaultAE.GUI.Components
 						br = new Point(rect.X + rect.Width - 1, rect.Y + rect.Height - 1);
 					}
 					else
-					{
 						slot = -1;
-					}
 
 					// Check to see if the item is correct for the slot
 					if (slot != -1)
 					{
 						if (this.CheckItemType(this.DragInfo.Item, slot))
-						{
 							backgroundBrush = this.HighlightValidItemBrush;
-						}
 						else
-						{
 							backgroundBrush = this.HighlightInvalidItemBrush;
-						}
 
 						e.Graphics.FillRectangle(backgroundBrush, tl.X, tl.Y, br.X - tl.X + 1, br.Y - tl.Y + 1);
 
@@ -899,10 +824,10 @@ namespace TQVaultAE.GUI.Components
 							// Draw additional weapon box area
 							e.Graphics.FillRectangle(
 								backgroundBrush,
-								tl.X + UIService.UI.HalfUnitSize,
-								tl.Y - UIService.UI.HalfUnitSize,
-								UIService.UI.ItemUnitSize,
-								5 * UIService.UI.ItemUnitSize);
+								tl.X + UIService.HalfUnitSize,
+								tl.Y - UIService.HalfUnitSize,
+								UIService.ItemUnitSize,
+								5 * UIService.ItemUnitSize);
 						}
 					}
 				}
@@ -925,25 +850,14 @@ namespace TQVaultAE.GUI.Components
 					{
 						// Weapon slots only
 						if (item.BaseItemId.Length == 0)
-						{
 							// If the item is null try to draw it grayed out
 							this.DrawItemShaded(e.Graphics, item, new SolidBrush(Color.Transparent));
-						}
 						else
-						{
 							// Otherwise draw it normally
 							this.DrawItem(e.Graphics, item, new SolidBrush(Color.Transparent));
-						}
 					}
-					else
-					if (item.BaseItemId.Length != 0)
-					{
+					else if (item.BaseItemId.Length != 0)
 						this.DrawItem(e.Graphics, item, new SolidBrush(Color.Transparent));
-					}
-				}
-				else
-				{
-					// item is being dragged
 				}
 			}
 		}
@@ -976,10 +890,10 @@ namespace TQVaultAE.GUI.Components
 			{
 				graphics.FillRectangle(
 					backgroundBrush,
-					backgroundRectangle.X + UIService.UI.HalfUnitSize,
-					backgroundRectangle.Y - UIService.UI.HalfUnitSize,
-					UIService.UI.ItemUnitSize,
-					UIService.UI.ItemUnitSize * 5);
+					backgroundRectangle.X + UIService.HalfUnitSize,
+					backgroundRectangle.Y - UIService.HalfUnitSize,
+					UIService.ItemUnitSize,
+					UIService.ItemUnitSize * 5);
 			}
 		}
 
@@ -998,7 +912,7 @@ namespace TQVaultAE.GUI.Components
 			this.ShadeAreaUnderItem(graphics, item, backgroundBrush);
 
 			// Draw the item
-			if (item.ItemBitmap() != null)
+			if (this.UIService.GetBitmap(item) != null)
 			{
 				Point screenLocation;
 				if (item.IsInWeaponSlot)
@@ -1011,9 +925,7 @@ namespace TQVaultAE.GUI.Components
 						item.Height);
 				}
 				else
-				{
 					screenLocation = this.CellTopLeft(item.Location);
-				}
 
 				this.DrawItem(graphics, item, screenLocation);
 			}
@@ -1029,9 +941,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="slot">equipment slot we are checking</param>
 		/// <returns>True if it is an equipment slot.</returns>
 		private static bool IsWeaponSlot(int slot)
-		{
-			return slot > 6 && slot < 11;
-		}
+			=> slot > 6 && slot < 11;
 
 		/// <summary>
 		/// Finds the equipment slot
@@ -1042,10 +952,8 @@ namespace TQVaultAE.GUI.Components
 		private static int FindEquipmentSlot(SackCollection sack, Item item)
 		{
 			if (sack == null || sack.SackType != SackType.Equipment || item == null)
-			{
 				// Make sure we are on the equipment panel
 				return -1;
-			}
 
 			// Iterate through the equipment slots
 			for (int slot = 0; slot < sack.NumberOfSlots; ++slot)
@@ -1075,14 +983,10 @@ namespace TQVaultAE.GUI.Components
 				}
 
 				if (itemX < upperLeft.X || itemX > (upperLeft.X + size.Width - 1) || itemY < upperLeft.Y || itemY > (upperLeft.Y + size.Height - 1))
-				{
 					continue;
-				}
 				else
-				{
 					// We found it
 					return slot;
-				}
 			}
 
 			return -1;
@@ -1099,15 +1003,10 @@ namespace TQVaultAE.GUI.Components
 			// adjust it to use the real position
 			Point slotUpperLeft = SackCollection.GetWeaponLocationOffset(weaponSlot);
 
-			if ((slotUpperLeft.X <= cellLocation.X) && ((slotUpperLeft.X + SackCollection.WeaponLocationSize.Width - 1) >= cellLocation.X) &&
-				(slotUpperLeft.Y <= cellLocation.Y) && ((slotUpperLeft.Y + SackCollection.WeaponLocationSize.Height - 1) >= cellLocation.Y))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			return slotUpperLeft.X <= cellLocation.X
+				&& (slotUpperLeft.X + SackCollection.WeaponLocationSize.Width - 1) >= cellLocation.X
+				&& slotUpperLeft.Y <= cellLocation.Y
+				&& (slotUpperLeft.Y + SackCollection.WeaponLocationSize.Height - 1) >= cellLocation.Y;
 		}
 
 		/// <summary>
@@ -1119,13 +1018,13 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="width">width of the weapon</param>
 		/// <param name="height">height of the weapon</param>
 		/// <returns>Point containing the top left corner of the weapon</returns>
-		private static Point WeaponTopLeft(int x, int y, int width, int height)
+		private Point WeaponTopLeft(int x, int y, int width, int height)
 		{
 			Point val = new Point();
-			int offsetX = ((SackCollection.WeaponLocationSize.Width - width) * UIService.UI.ItemUnitSize) / 2;
-			int offsetY = ((SackCollection.WeaponLocationSize.Height - height) * UIService.UI.ItemUnitSize) / 2;
-			val.X = Convert.ToInt32(BorderWidth) + (x * UIService.UI.ItemUnitSize) + offsetX;
-			val.Y = Convert.ToInt32(BorderWidth) + (y * UIService.UI.ItemUnitSize) + offsetY;
+			int offsetX = ((SackCollection.WeaponLocationSize.Width - width) * UIService.ItemUnitSize) / 2;
+			int offsetY = ((SackCollection.WeaponLocationSize.Height - height) * UIService.ItemUnitSize) / 2;
+			val.X = Convert.ToInt32(BorderWidth) + (x * UIService.ItemUnitSize) + offsetX;
+			val.Y = Convert.ToInt32(BorderWidth) + (y * UIService.ItemUnitSize) + offsetY;
 
 			return val;
 		}
@@ -1139,13 +1038,13 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="width">width of the weapon</param>
 		/// <param name="height">height of the weapon</param>
 		/// <returns>Point containing the bottom right corner of the weapon</returns>
-		private static Point WeaponBottomLeft(int x, int y, int width, int height)
+		private Point WeaponBottomLeft(int x, int y, int width, int height)
 		{
 			Point val = new Point();
-			int offsetX = ((SackCollection.WeaponLocationSize.Width - width) * UIService.UI.ItemUnitSize) / 2;
-			int offsetY = ((SackCollection.WeaponLocationSize.Height - height) * UIService.UI.ItemUnitSize) / 2;
-			val.X = Convert.ToInt32(BorderWidth) + (x * UIService.UI.ItemUnitSize) + offsetX;
-			val.Y = Convert.ToInt32(BorderWidth) + ((y + 1) * UIService.UI.ItemUnitSize) + offsetY - 1;
+			int offsetX = ((SackCollection.WeaponLocationSize.Width - width) * UIService.ItemUnitSize) / 2;
+			int offsetY = ((SackCollection.WeaponLocationSize.Height - height) * UIService.ItemUnitSize) / 2;
+			val.X = Convert.ToInt32(BorderWidth) + (x * UIService.ItemUnitSize) + offsetX;
+			val.Y = Convert.ToInt32(BorderWidth) + ((y + 1) * UIService.ItemUnitSize) + offsetY - 1;
 
 			return val;
 		}
@@ -1158,9 +1057,7 @@ namespace TQVaultAE.GUI.Components
 		private Rectangle FindSlotRect(int slot)
 		{
 			if (slot == -1 || slot > this.Sack.NumberOfSlots)
-			{
 				return Rectangle.Empty;
-			}
 
 			bool weaponSlot = false;
 			int offset = 0;
@@ -1182,15 +1079,15 @@ namespace TQVaultAE.GUI.Components
 			// Adjust the weapon slot for graphic
 			if (weaponSlot)
 			{
-				ul.Y += UIService.UI.HalfUnitSize;
+				ul.Y += UIService.HalfUnitSize;
 				offset = 1;
 			}
 
 			return new Rectangle(
 				ul.X,
 				ul.Y,
-				slotSize.Width * UIService.UI.ItemUnitSize,
-				(slotSize.Height - offset) * UIService.UI.ItemUnitSize);
+				slotSize.Width * UIService.ItemUnitSize,
+				(slotSize.Height - offset) * UIService.ItemUnitSize);
 		}
 
 		/// <summary>
@@ -1205,19 +1102,13 @@ namespace TQVaultAE.GUI.Components
 
 			// Make sure it is valid.
 			if (!IsWeaponSlot(offset))
-			{
 				return null;
-			}
 
 			// Find the corresponding slot in the pair.  Should be either 7/8 or 9/10.
 			if ((offset % 2) == 1)
-			{
 				offset++;
-			}
 			else
-			{
 				offset--;
-			}
 
 			return this.Sack.GetItem(offset);
 		}
@@ -1263,7 +1154,7 @@ namespace TQVaultAE.GUI.Components
 				height = SackCollection.GetEquipmentLocationSize(slot).Height;
 			}
 
-			return new Rectangle(screenLocation.X, screenLocation.Y, width * UIService.UI.ItemUnitSize, height * UIService.UI.ItemUnitSize);
+			return new Rectangle(screenLocation.X, screenLocation.Y, width * UIService.ItemUnitSize, height * UIService.ItemUnitSize);
 		}
 
 		/// <summary>
@@ -1286,7 +1177,7 @@ namespace TQVaultAE.GUI.Components
 
 			// TODO: Update logic to draw the shadow slot if the item was cancelled.
 			// otherwise it is skipped because this.m_dragInfo.Item == item2H will be true.
-			if (!item2H.Is2HWeapon || (this.DragInfo.Item == item2H && !this.DragInfo.IsBeingCanceled) || item2H.BaseItemId.Length == 0)
+			if (!item2H.Is2HWeapon || (this.DragInfo.Item == item2H && !this.DragInfo.IsBeingCancelled) || item2H.BaseItemId.Length == 0)
 			{
 				// Skip if the item is being dragged.
 				// Also, only 2 Handed weapons get drawn this way
@@ -1309,7 +1200,7 @@ namespace TQVaultAE.GUI.Components
 			imgAttr.SetColorMatrix(colorMatrix);
 
 			// Draw the item
-			if (item2H.ItemBitmap() != null)
+			if (this.UIService.GetBitmap(item2H) != null)
 			{
 				Point screenLocation;
 				if (item.IsInWeaponSlot)
@@ -1321,9 +1212,7 @@ namespace TQVaultAE.GUI.Components
 						item2H.Height);
 				}
 				else
-				{
 					screenLocation = this.CellTopLeft(item.Location);
-				}
 
 				this.DrawItem(g, item2H, screenLocation, imgAttr);
 			}
@@ -1337,10 +1226,8 @@ namespace TQVaultAE.GUI.Components
 		private int FindEquipmentSlot(Point cell)
 		{
 			if (cell == null)
-			{
 				// Make sure we are on the equipment panel
 				return -1;
-			}
 
 			// Iterate through the equipment slots
 			for (int slot = 0; slot < this.Sack.NumberOfSlots; ++slot)
@@ -1356,14 +1243,10 @@ namespace TQVaultAE.GUI.Components
 				}
 
 				if (cell.X < ul.X || cell.X > (ul.X + size.Width - 1) || cell.Y < ul.Y || cell.Y > (ul.Y + size.Height - 1))
-				{
 					continue;
-				}
 				else
-				{
 					// We found it
 					return slot;
-				}
 			}
 
 			return -1;
@@ -1377,10 +1260,8 @@ namespace TQVaultAE.GUI.Components
 		private int FindEquipmentSlot(Rectangle cellsUnderMouse)
 		{
 			if (cellsUnderMouse == null)
-			{
 				// Make sure we are on the equipment panel
 				return -1;
-			}
 
 			// Iterate through the equipment slots
 			Point slotUL;
@@ -1395,16 +1276,12 @@ namespace TQVaultAE.GUI.Components
 					slotSize = SackCollection.WeaponLocationSize;
 				}
 				else
-				{
 					slotSize = SackCollection.GetEquipmentLocationSize(slot);
-				}
 
 				slotRect = new Rectangle(slotUL, slotSize);
 				if (cellsUnderMouse.IntersectsWith(slotRect))
-				{
 					// Found it, so we return the slot number.
 					return slot;
-				}
 			}
 
 			// We didn't find it so we return -1
@@ -1419,10 +1296,8 @@ namespace TQVaultAE.GUI.Components
 		private Rectangle FindAllEquipmentCells(Rectangle cellsUnderMouse)
 		{
 			if (cellsUnderMouse == null)
-			{
 				// Make sure we are on the equipment panel
 				return Rectangle.Empty;
-			}
 
 			// Iterate through the equipment slots
 			Point slotUL, slotBR;
@@ -1445,9 +1320,7 @@ namespace TQVaultAE.GUI.Components
 					slotSize = SackCollection.WeaponLocationSize;
 				}
 				else
-				{
 					slotSize = SackCollection.GetEquipmentLocationSize(slot);
-				}
 
 				slotBR = new Point(slotUL.X + slotSize.Width - 1, slotUL.Y + slotSize.Height - 1);
 				slotRect = new Rectangle(slotUL, slotSize);
@@ -1479,13 +1352,9 @@ namespace TQVaultAE.GUI.Components
 
 			// We didn't find it so we return a null
 			if (foundCells)
-			{
 				return new Rectangle(x, y, width, height);
-			}
 			else
-			{
 				return Rectangle.Empty;
-			}
 		}
 
 		/// <summary>
@@ -1497,9 +1366,7 @@ namespace TQVaultAE.GUI.Components
 		private bool CheckItemType(Item item, int slot)
 		{
 			if (item == null || slot < 0 || slot > this.Sack.NumberOfSlots)
-			{
 				return false;
-			}
 
 			switch (slot)
 			{
@@ -1533,20 +1400,14 @@ namespace TQVaultAE.GUI.Components
 							// For 2H Weapons we need to check both weapon slots to make sure at least one is free
 							int itemOffset = slot;
 							if (((slot / 2) * 2) == slot)
-							{
 								itemOffset--;
-							}
 							else
-							{
 								itemOffset++;
-							}
 
 							return this.Sack.GetItem(itemOffset).BaseItemId.Length == 0 || this.Sack.GetItem(slot).BaseItemId.Length == 0;
 						}
 						else
-						{
 							return true;
-						}
 					}
 
 					break;

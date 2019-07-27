@@ -19,11 +19,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
+    <PackageReference Include="System.Drawing.Common" Version="4.6.0-preview6.19303.8" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TQVaultAE.Data\TQVaultAE.Data.csproj" />
+    <ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj" />
+    <ProjectReference Include="..\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
     <ProjectReference Include="..\TQVaultAE.Logs\TQVaultAE.Logs.csproj" />
   </ItemGroup>
 

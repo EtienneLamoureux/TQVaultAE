@@ -1,28 +1,26 @@
-﻿using System;
+﻿using TQVaultAE.Domain.Helpers;
+using System;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using TQVaultAE.Data;
-using TQVaultAE.Entities;
+using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.GUI.Tooltip;
 using TQVaultAE.Presentation;
-using TQVaultAE.Services;
+using TQVaultAE.Domain.Contracts.Providers;
 
 namespace TQVaultAE.GUI
 {
 	public partial class MainForm
 	{
-		private ItemService itemService;
-
 		/// <summary>
 		/// Creates the form's internal panels
 		/// </summary>
 		private void CreatePanels()
 		{
-			if (this.itemService is null) this.itemService = new ItemService(userContext);
-
 			this.CreatePlayerPanel();
 
 			// Put the secondary vault list on top of the player list drop down
@@ -34,10 +32,10 @@ namespace TQVaultAE.GUI
 			this.GetPlayerList();
 
 			// Added support for custom map character list
-			if (TQData.IsCustom)
+			if (GamePathResolver.IsCustom)
 			{
 				this.customMapText.Visible = true;
-				this.customMapText.Text = string.Format(CultureInfo.CurrentCulture, Resources.MainFormCustomMapLabel, Path.GetFileName(TQData.MapName));
+				this.customMapText.Text = string.Format(CultureInfo.CurrentCulture, Resources.MainFormCustomMapLabel, Path.GetFileName(GamePathResolver.MapName));
 			}
 			else
 			{
@@ -50,10 +48,10 @@ namespace TQVaultAE.GUI
 			this.secondaryVaultPanel.Visible = false;
 			this.lastBag = -1;
 
-			int textPanelOffset = Convert.ToInt32(18.0F * UIService.UI.Scale);
-			this.itemTextPanel.Size = new Size(this.vaultPanel.Width, Convert.ToInt32(22.0F * UIService.UI.Scale));
+			int textPanelOffset = Convert.ToInt32(18.0F * UIService.Scale);
+			this.itemTextPanel.Size = new Size(this.vaultPanel.Width, Convert.ToInt32(22.0F * UIService.Scale));
 			this.itemTextPanel.Location = new Point(this.vaultPanel.Location.X, this.ClientSize.Height - (this.itemTextPanel.Size.Height + textPanelOffset));
-			this.itemText.Width = this.itemTextPanel.Width - Convert.ToInt32(4.0F * UIService.UI.Scale);
+			this.itemText.Width = this.itemTextPanel.Width - Convert.ToInt32(4.0F * UIService.Scale);
 			this.GetVaultList(false);
 
 			// Now we always create the stash panel since everyone can have equipment
@@ -156,10 +154,10 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				var itt = ItemTooltip.ShowTooltip(this, item, sackPanel);
+				var itt = ItemTooltip.ShowTooltip(this.ServiceProvider, item, sackPanel);
 
-				this.itemText.ForeColor = ItemGfxHelper.GetColor(itt.Data.Item, itt.Data.BaseItemInfoDescription);
-				this.itemText.Text = itt.Data.FullNameBagTooltip.RemoveAllTQTags();
+				this.itemText.ForeColor = itt.Data.Item.GetColor(itt.Data.BaseItemInfoDescription);
+				this.itemText.Text = itt.Data.FullNameBagTooltipClean;
 			}
 
 			this.lastSackHighlighted = sack;

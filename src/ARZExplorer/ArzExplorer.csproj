@@ -63,14 +63,40 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=3.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Extensions.DependencyInjection.3.0.0-preview6.19304.6\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=3.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.3.0.0-preview6.19304.6\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration.ConfigurationManager, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Configuration.ConfigurationManager.4.6.0-preview6.19303.8\lib\net461\System.Configuration.ConfigurationManager.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Drawing.Common.4.5.1\lib\net461\System.Drawing.Common.dll</HintPath>
+    <Reference Include="System.Drawing.Common, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Drawing.Common.4.6.0-preview6.19303.8\lib\net461\System.Drawing.Common.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Security.AccessControl, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Security.AccessControl.4.6.0-preview6.19303.8\lib\net461\System.Security.AccessControl.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Permissions, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Security.Permissions.4.6.0-preview6.19303.8\lib\net461\System.Security.Permissions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Principal.Windows, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Security.Principal.Windows.4.6.0-preview6.19303.8\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -116,6 +142,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Content Include="..\TQVaultAE.GUI\log4net.config">
+      <Link>log4net.config</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -133,17 +163,21 @@
     <Content Include="Changes.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj">
+      <Project>{2434d5c6-efbb-414d-93d6-2236fa62c0bc}</Project>
+      <Name>TQVaultAE.Config</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TQVaultAE.Data\TQVaultAE.Data.csproj">
       <Project>{f0d211fa-6fe0-4ab6-ad33-65c1f3dfa895}</Project>
       <Name>TQVaultAE.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TQVaultAE.Entities\TQVaultAE.Entities.csproj">
-      <Project>{8A958C36-52A9-4EB5-A6CF-00B26FCE795C}</Project>
-      <Name>TQVaultAE.Entities</Name>
+    <ProjectReference Include="..\TQVaultAE.Domain\TQVaultAE.Domain.csproj">
+      <Project>{2a8e56bc-4567-4e29-a67d-202e39fc1748}</Project>
+      <Name>TQVaultAE.Domain</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TQVaultAE.Entities\TQVaultAE.Entities.csproj">
-      <Project>{8A958C36-52A9-4EB5-A6CF-00B26FCE795C}</Project>
-      <Name>TQVaultAE.Entities</Name>
+    <ProjectReference Include="..\TQVaultAE.Logs\TQVaultAE.Logs.csproj">
+      <Project>{A3715670-C701-4623-B9BA-9A48FCA95ADC}</Project>
+      <Name>TQVaultAE.Logs</Name>
     </ProjectReference>
     <ProjectReference Include="..\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj">
       <Project>{6E20606D-9460-469F-B340-D3418165A19B}</Project>

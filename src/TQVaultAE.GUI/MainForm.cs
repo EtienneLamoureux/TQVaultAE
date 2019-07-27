@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
+	using Microsoft.Extensions.DependencyInjection;
 	using System;
 	using System.ComponentModel;
 	using System.Drawing;
@@ -17,10 +18,12 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Data;
 	using TQVaultAE.Logs;
-	using TQVaultAE.Entities;
+	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Config;
 	using TQVaultAE.Services;
+	using TQVaultAE.Domain.Contracts.Services;
+	using TQVaultAE.Domain.Contracts.Providers;
 
 	/// <summary>
 	/// Main Dialog class
@@ -71,7 +74,7 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// User current data context
 		/// </summary>
-		internal static SessionContext userContext = new SessionContext();
+		internal SessionContext userContext;
 
 		/// <summary>
 		/// Instance of the vault panel control
@@ -126,60 +129,69 @@ namespace TQVaultAE.GUI
 
 		#endregion
 
+#if DEBUG
+		// For Design Mode
+		[PermissionSet(SecurityAction.LinkDemand, Unrestricted = true)]
+		public MainForm() => InitForm();
+#endif
+
 		/// <summary>
 		/// Initializes a new instance of the MainForm class.
 		/// </summary>
 		[PermissionSet(SecurityAction.LinkDemand, Unrestricted = true)]
-		public MainForm()
+		public MainForm(
+			IServiceProvider serviceProvider
+			, ILogger<MainForm> log
+			, SessionContext sessionContext
+			, IPlayerService playerService
+			, IVaultService vaultService
+			, ISearchService searchService
+			, IStashService stashService
+			, IFontService fontService
+		) : base(serviceProvider)
 		{
-			Log = Logger.Get(this);
+			this.userContext = sessionContext;
+			this.playerService = playerService;
+			this.vaultService = vaultService;
+			this.searchService = searchService;
+			this.stashService = stashService;
+
+			Log = log.Logger;
 			Log.Info("TQVaultAE Initialization !");
 
-			this.Enabled = false;
-			this.ShowInTaskbar = false;
-			this.Opacity = 0;
-			this.Hide();
-
-			this.InitializeComponent();
-
-			this.SetupFormSize();
+			InitForm();
 
 			#region Apply custom font & scaling
 
-			this.exitButton.Font = FontHelper.GetFontAlbertusMTLight(12F, UIService.UI.Scale);
-			ScaleControl(this.exitButton);
-			this.characterComboBox.Font = FontHelper.GetFontAlbertusMTLight(13F, UIService.UI.Scale);
-			ScaleControl(this.characterComboBox);
-			this.characterLabel.Font = FontHelper.GetFontAlbertusMTLight(11F, UIService.UI.Scale);
-			ScaleControl(this.characterLabel);
-			ScaleControl(this.itemTextPanel);
+			this.exitButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
+			ScaleControl(this.UIService, this.exitButton);
+			this.characterComboBox.Font = FontService.GetFontAlbertusMTLight(13F, UIService.Scale);
+			ScaleControl(this.UIService, this.characterComboBox);
+			this.characterLabel.Font = FontService.GetFontAlbertusMTLight(11F, UIService.Scale);
+			ScaleControl(this.UIService, this.characterLabel);
+			ScaleControl(this.UIService, this.itemTextPanel);
 
-			ScaleControl(this.itemText);
-			this.vaultListComboBox.Font = FontHelper.GetFontAlbertusMTLight(13F, UIService.UI.Scale);
-			ScaleControl(this.vaultListComboBox);
-			this.vaultLabel.Font = FontHelper.GetFontAlbertusMTLight(11F, UIService.UI.Scale);
-			ScaleControl(this.vaultLabel);
-			this.configureButton.Font = FontHelper.GetFontAlbertusMTLight(12F, UIService.UI.Scale);
-			ScaleControl(this.configureButton);
-			this.customMapText.Font = FontHelper.GetFontAlbertusMT(11.25F, UIService.UI.Scale);
-			ScaleControl(this.customMapText);
-			this.panelSelectButton.Font = FontHelper.GetFontAlbertusMTLight(12F, UIService.UI.Scale);
-			ScaleControl(this.panelSelectButton);
-			this.secondaryVaultListComboBox.Font = FontHelper.GetFontAlbertusMTLight(11F, UIService.UI.Scale);
-			ScaleControl(this.secondaryVaultListComboBox);
-			this.aboutButton.Font = FontHelper.GetFontAlbertusMTLight(8.25F, UIService.UI.Scale);
-			ScaleControl(this.aboutButton);
-			this.titleLabel.Font = FontHelper.GetFontAlbertusMTLight(24F, UIService.UI.Scale);
-			ScaleControl(this.titleLabel);
-			this.searchButton.Font = FontHelper.GetFontAlbertusMTLight(12F, UIService.UI.Scale);
-			ScaleControl(this.searchButton);
+			ScaleControl(this.UIService, this.itemText);
+			this.vaultListComboBox.Font = FontService.GetFontAlbertusMTLight(13F, UIService.Scale);
+			ScaleControl(this.UIService, this.vaultListComboBox);
+			this.vaultLabel.Font = FontService.GetFontAlbertusMTLight(11F, UIService.Scale);
+			ScaleControl(this.UIService, this.vaultLabel);
+			this.configureButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
+			ScaleControl(this.UIService, this.configureButton);
+			this.customMapText.Font = FontService.GetFontAlbertusMT(11.25F, UIService.Scale);
+			ScaleControl(this.UIService, this.customMapText);
+			this.panelSelectButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
+			ScaleControl(this.UIService, this.panelSelectButton);
+			this.secondaryVaultListComboBox.Font = FontService.GetFontAlbertusMTLight(11F, UIService.Scale);
+			ScaleControl(this.UIService, this.secondaryVaultListComboBox);
+			this.aboutButton.Font = FontService.GetFontAlbertusMTLight(8.25F, UIService.Scale);
+			ScaleControl(this.UIService, this.aboutButton);
+			this.titleLabel.Font = FontService.GetFontAlbertusMTLight(24F, UIService.Scale);
+			ScaleControl(this.UIService, this.titleLabel);
+			this.searchButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
+			ScaleControl(this.UIService, this.searchButton);
 
 			#endregion
-
-			// Changed to a global for versions in tqdebug
-			AssemblyName aname = Assembly.GetExecutingAssembly().GetName();
-			this.currentVersion = aname.Version.ToString();
-			this.Text = string.Format(CultureInfo.CurrentCulture, "{0} {1}", aname.Name, this.currentVersion);
 
 			if (TQDebug.DebugEnabled)
 			{
@@ -194,16 +206,6 @@ namespace TQVaultAE.GUI
 				Log.Debug(string.Empty);
 			}
 
-
-			// Setup localized strings.
-			this.characterLabel.Text = Resources.MainFormLabel1;
-			this.vaultLabel.Text = Resources.MainFormLabel2;
-			this.configureButton.Text = Resources.MainFormBtnConfigure;
-			this.exitButton.Text = Resources.GlobalExit;
-			this.panelSelectButton.Text = Resources.MainFormBtnPanelSelect;
-			this.Icon = Resources.TQVIcon;
-			this.searchButton.Text = Resources.MainFormSearchButtonText;
-
 			// Set up Item strings
 			Item.ItemWith = Resources.ItemWith;
 			Item.ItemRelicBonus = Resources.ItemRelicBonus;
@@ -215,25 +217,39 @@ namespace TQVaultAE.GUI
 			Item.ItemAtlantis = Resources.ItemAtlantis;
 			Item.ShowSkillLevel = Config.Settings.Default.ShowSkillLevel;
 
-			this.lastDragPoint.X = -1;
-			this.DragInfo = new ItemDragInfo();
-
-			this.CreatePanels();
-
 			// Process the mouse scroll wheel to cycle through the vaults.
 			this.MouseWheel += new MouseEventHandler(this.MainFormMouseWheel);
+		}
 
-			this.splashScreen = new SplashScreenForm();
-			this.splashScreen.MaximumValue = 1;
-			this.splashScreen.FormClosed += new FormClosedEventHandler(this.SplashScreenClosed);
+		private void InitForm()
+		{
+			this.Enabled = false;
+			this.ShowInTaskbar = false;
+			this.Opacity = 0;
+			this.Hide();
 
-			if (Config.Settings.Default.LoadAllFiles)
-			{
-				this.splashScreen.MaximumValue += LoadAllFilesTotal();
-			}
+			this.InitializeComponent();
 
-			this.splashScreen.Show();
-			this.splashScreen.Update();
+			this.SetupFormSize();
+
+			// Changed to a global for versions in tqdebug
+			AssemblyName aname = Assembly.GetExecutingAssembly().GetName();
+			this.currentVersion = aname.Version.ToString();
+			this.Text = string.Format(CultureInfo.CurrentCulture, "{0} {1}", aname.Name, this.currentVersion);
+
+			// Setup localized strings.
+			this.characterLabel.Text = Resources.MainFormLabel1;
+			this.vaultLabel.Text = Resources.MainFormLabel2;
+			this.configureButton.Text = Resources.MainFormBtnConfigure;
+			this.exitButton.Text = Resources.GlobalExit;
+			this.panelSelectButton.Text = Resources.MainFormBtnPanelSelect;
+			this.Icon = Resources.TQVIcon;
+			this.searchButton.Text = Resources.MainFormSearchButtonText;
+
+			this.lastDragPoint.X = -1;
+			this.DragInfo = new ItemDragInfo(this.UIService);
+
+			this.CreatePanels();
 		}
 
 
@@ -245,10 +261,8 @@ namespace TQVaultAE.GUI
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
 		protected override void ResizeEndCallback(object sender, EventArgs e)
-		{
 			// That override Look dumb but needed by Visual Studio WInform Designer
-			base.ResizeEndCallback(sender, e);
-		}
+			=> base.ResizeEndCallback(sender, e);
 
 		/// <summary>
 		/// Handler for the Resize event.  Used for handling the maximize and minimize functions.
@@ -256,10 +270,8 @@ namespace TQVaultAE.GUI
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
 		protected override void ResizeBeginCallback(object sender, EventArgs e)
-		{
 			// That override Look dumb but needed by Visual Studio WInform Designer
-			base.ResizeBeginCallback(sender, e);
-		}
+			=> base.ResizeBeginCallback(sender, e);
 
 		/// <summary>
 		/// Handler for closing the main form
@@ -267,16 +279,7 @@ namespace TQVaultAE.GUI
 		/// <param name="sender">sender object</param>
 		/// <param name="e">CancelEventArgs data</param>
 		private void MainFormClosing(object sender, CancelEventArgs e)
-		{
-			if (this.DoCloseStuff())
-			{
-				e.Cancel = false;
-			}
-			else
-			{
-				e.Cancel = true;
-			}
-		}
+			=> e.Cancel = !this.DoCloseStuff();
 
 		/// <summary>
 		/// Shows things that you may want to know before a close.
@@ -318,6 +321,16 @@ namespace TQVaultAE.GUI
 		/// <param name="e">EventArgs data</param>
 		private void MainFormLoad(object sender, EventArgs e)
 		{
+			this.splashScreen = this.ServiceProvider.GetService<SplashScreenForm>();
+			this.splashScreen.MaximumValue = 1;
+			this.splashScreen.FormClosed += new FormClosedEventHandler(this.SplashScreenClosed);
+
+			if (Config.Settings.Default.LoadAllFiles)
+				this.splashScreen.MaximumValue += LoadAllFilesTotal();
+
+			this.splashScreen.Show();
+			this.splashScreen.Update();
+
 			this.backgroundWorker1.RunWorkerAsync();
 		}
 
@@ -329,9 +342,7 @@ namespace TQVaultAE.GUI
 		private void MainFormKeyPress(object sender, KeyPressEventArgs e)
 		{
 			if (e.KeyChar != (char)27)
-			{
 				e.Handled = true;
-			}
 		}
 
 		/// <summary>
@@ -341,9 +352,7 @@ namespace TQVaultAE.GUI
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
 		private void MainFormShown(object sender, EventArgs e)
-		{
-			this.vaultPanel.SackPanel.Focus();
-		}
+			=> this.vaultPanel.SackPanel.Focus();
 
 		/// <summary>
 		/// Handler for moving the mouse wheel.
@@ -360,14 +369,10 @@ namespace TQVaultAE.GUI
 				int vaultSelection = this.vaultListComboBox.SelectedIndex;
 				vaultSelection -= numberOfTextLinesToMove;
 				if (vaultSelection < 1)
-				{
 					vaultSelection = 1;
-				}
 
 				if (vaultSelection >= this.vaultListComboBox.Items.Count)
-				{
 					vaultSelection = this.vaultListComboBox.Items.Count - 1;
-				}
 
 				this.vaultListComboBox.SelectedIndex = vaultSelection;
 			}
@@ -381,24 +386,16 @@ namespace TQVaultAE.GUI
 		private void MainFormKeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyData == (Keys.Control | Keys.F))
-			{
 				this.ActivateSearchCallback(this, new SackPanelEventArgs(null, null));
-			}
 
 			if (e.KeyData == (Keys.Control | Keys.Add) || e.KeyData == (Keys.Control | Keys.Oemplus))
-			{
 				this.ResizeFormCallback(this, new ResizeEventArgs(0.1F));
-			}
 
 			if (e.KeyData == (Keys.Control | Keys.Subtract) || e.KeyData == (Keys.Control | Keys.OemMinus))
-			{
 				this.ResizeFormCallback(this, new ResizeEventArgs(-0.1F));
-			}
 
 			if (e.KeyData == (Keys.Control | Keys.Home))
-			{
 				this.ResizeFormCallback(this, new ResizeEventArgs(1.0F));
-			}
 		}
 
 		/// <summary>
@@ -409,13 +406,9 @@ namespace TQVaultAE.GUI
 		private void FadeInTimerTick(object sender, EventArgs e)
 		{
 			if (this.Opacity < 1)
-			{
 				this.Opacity = Math.Min(1.0F, this.Opacity + this.fadeInterval);
-			}
 			else
-			{
 				this.fadeInTimer.Stop();
-			}
 		}
 
 		/// <summary>
@@ -424,10 +417,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
-		private void ExitButtonClick(object sender, EventArgs e)
-		{
-			this.Close();
-		}
+		private void ExitButtonClick(object sender, EventArgs e) => this.Close();
 
 		#endregion
 
@@ -441,8 +431,8 @@ namespace TQVaultAE.GUI
 		/// <param name="e">EventArgs data</param>
 		private void AboutButtonClick(object sender, EventArgs e)
 		{
-			AboutBox dlg = new AboutBox();
-			dlg.Scale(new SizeF(UIService.UI.Scale, UIService.UI.Scale));
+			AboutBox dlg = this.ServiceProvider.GetService<AboutBox>();
+			dlg.Scale(new SizeF(UIService.Scale, UIService.Scale));
 			dlg.ShowDialog();
 		}
 
@@ -487,20 +477,16 @@ namespace TQVaultAE.GUI
 				initialScale = Math.Min(Convert.ToSingle(workingArea.Width) / Convert.ToSingle(formWidth), Convert.ToSingle(workingArea.Height) / Convert.ToSingle(formHeight));
 
 				if (Config.Settings.Default.Scale > initialScale)
-				{
 					Config.Settings.Default.Scale = initialScale;
-				}
 
 				this.ClientSize = new System.Drawing.Size((int)System.Math.Round(formWidth * Config.Settings.Default.Scale), (int)System.Math.Round(formHeight * Config.Settings.Default.Scale));
 			}
 			else
-			{
 				this.ClientSize = new System.Drawing.Size(formWidth, formHeight);
-			}
 
 			this.ScaleOnResize = true;
 
-			UIService.UI.Scale = Config.Settings.Default.Scale;
+			UIService.Scale = Config.Settings.Default.Scale;
 
 			Config.Settings.Default.Save();
 
@@ -518,8 +504,8 @@ namespace TQVaultAE.GUI
 			{
 				// We do not need to scale the main form controls since autoscaling will handle it.
 				// Scale internally to 96 dpi for the drawing functions.
-				UIService.UI.Scale = this.CurrentAutoScaleDimensions.Width / UIService.DESIGNDPI;
-				this.OriginalFormScale = UIService.UI.Scale;
+				UIService.Scale = this.CurrentAutoScaleDimensions.Width / UIService.DESIGNDPI;
+				this.OriginalFormScale = UIService.Scale;
 			}
 
 			this.LastFormSize = this.Size;
@@ -554,14 +540,14 @@ namespace TQVaultAE.GUI
 		/// Counts the number of files which LoadAllFiles will load.  Used to set the max value of the progress bar.
 		/// </summary>
 		/// <returns>Total number of files that LoadAllFiles() will load.</returns>
-		private static int LoadAllFilesTotal()
+		private int LoadAllFilesTotal()
 		{
 			string[] list;
 
-			list = TQData.GetCharacterList();
+			list = GamePathResolver.GetCharacterList();
 			int numIT = list?.Length ?? 0;
 
-			list = TQData.GetVaultList();
+			list = GamePathResolver.GetVaultList();
 			int numVaults = list?.Length ?? 0;
 
 			return Math.Max(0, numIT + numVaults - 1);
@@ -593,9 +579,9 @@ namespace TQVaultAE.GUI
 				}
 			}
 
-			string[] vaults = TQData.GetVaultList();
+			string[] vaults = GamePathResolver.GetVaultList();
 
-			string[] charactersIT = TQData.GetCharacterList();
+			string[] charactersIT = GamePathResolver.GetCharacterList();
 
 			int numIT = charactersIT?.Length ?? 0;
 
@@ -685,16 +671,12 @@ namespace TQVaultAE.GUI
 			if (this.resourcesLoaded)
 			{
 				if (!this.loadingComplete)
-				{
 					this.backgroundWorker1.CancelAsync();
-				}
 
 				this.ShowMainForm();
 			}
 			else
-			{
 				Application.Exit();
-			}
 		}
 
 		/// <summary>
@@ -715,44 +697,19 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="windowHandle">handle of the main window form</param>
 		/// <returns>tooltip string</returns>
-		private string ToolTipCallback(int windowHandle)
+		private void ToolTipCallback(int windowHandle)
 		{
-			string answer;
-
-			answer = this.vaultPanel.ToolTipCallback(windowHandle);
-			if (answer != null)
-			{
-				return answer;
-			}
-
-			answer = this.playerPanel.ToolTipCallback(windowHandle);
-			if (answer != null)
-			{
-				return answer;
-			}
-
-			answer = this.stashPanel.ToolTipCallback(windowHandle);
-			if (answer != null)
-			{
-				return answer;
-			}
-
-			answer = this.secondaryVaultPanel.ToolTipCallback(windowHandle);
-			if (answer != null)
-			{
-				return answer;
-			}
+			this.vaultPanel.ToolTipCallback(windowHandle);
+			this.playerPanel.ToolTipCallback(windowHandle);
+			this.stashPanel.ToolTipCallback(windowHandle);
+			this.secondaryVaultPanel.ToolTipCallback(windowHandle);
 
 			// Changed by VillageIdiot
 			// If we are dragging something around, clear the tooltip and text box.
 			if (this.DragInfo.IsActive)
-			{
 				this.itemText.Text = string.Empty;
-				return null;
-			}
-
-			return null;
 		}
+
 		#endregion
 
 		#region Game Resources
@@ -793,15 +750,13 @@ namespace TQVaultAE.GUI
 
 				// Check to see if we loaded something from the command line.
 				if (args.HasMapName)
-					TQData.MapName = args.MapName;
+					GamePathResolver.MapName = args.MapName;
 
 				this.resourcesLoaded = true;
 				this.backgroundWorker1.ReportProgress(1);
 
 				if (Config.Settings.Default.LoadAllFiles)
-				{
 					this.LoadAllFiles();
-				}
 
 				// Notify the form that the resources are loaded.
 				return true;
@@ -836,24 +791,18 @@ namespace TQVaultAE.GUI
 			if (e.Error != null)
 			{
 				if (MessageBox.Show(
-					string.Concat(e.Error.Message, Resources.Form1BadLanguage),
-					Resources.Form1ErrorLoadingResources,
-					MessageBoxButtons.YesNo,
-					MessageBoxIcon.Exclamation,
-					MessageBoxDefaultButton.Button1,
-					RightToLeftOptions) == DialogResult.Yes)
-				{
-					Application.Restart();
-				}
+					string.Concat(e.Error.Message, Resources.Form1BadLanguage)
+					, Resources.Form1ErrorLoadingResources
+					, MessageBoxButtons.YesNo
+					, MessageBoxIcon.Exclamation
+					, MessageBoxDefaultButton.Button1
+					, RightToLeftOptions) == DialogResult.Yes
+				) Application.Restart();
 				else
-				{
 					Application.Exit();
-				}
 			}
 			else if (e.Cancelled && !this.resourcesLoaded)
-			{
 				Application.Exit();
-			}
 			else if (e.Result.Equals(true))
 			{
 				this.loadingComplete = true;
@@ -866,9 +815,7 @@ namespace TQVaultAE.GUI
 				{
 					int ind = this.characterComboBox.FindStringExact(Config.Settings.Default.LastCharacterName);
 					if (ind != -1)
-					{
 						this.characterComboBox.SelectedIndex = ind;
-					}
 				}
 
 				string currentVault = VaultService.MAINVAULT;
@@ -880,10 +827,8 @@ namespace TQVaultAE.GUI
 
 					// Make sure there is something in the config file to load else load the Main Vault
 					// We do not want to create new here.
-					if (string.IsNullOrEmpty(currentVault) || !File.Exists(TQData.GetVaultFile(currentVault)))
-					{
+					if (string.IsNullOrEmpty(currentVault) || !File.Exists(GamePathResolver.GetVaultFile(currentVault)))
 						currentVault = VaultService.MAINVAULT;
-					}
 				}
 
 				this.vaultListComboBox.SelectedItem = currentVault;
@@ -902,9 +847,7 @@ namespace TQVaultAE.GUI
 					string player = args.Player;
 					int index = this.characterComboBox.FindStringExact(player);
 					if (index != -1)
-					{
 						this.characterComboBox.SelectedIndex = index;
-					}
 
 					this.splashScreen.CloseForm();
 				}
@@ -929,9 +872,7 @@ namespace TQVaultAE.GUI
 		/// <param name="sender">sender object</param>
 		/// <param name="e">ProgressChangedEventArgs data</param>
 		private void BackgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
-		{
-			this.splashScreen.IncrementValue();
-		}
+			=> this.splashScreen.IncrementValue();
 
 		#endregion
 
@@ -965,9 +906,7 @@ namespace TQVaultAE.GUI
 					// Clear the value if no character is selected
 					string name = this.characterComboBox.SelectedItem.ToString();
 					if (name == Resources.MainFormSelectCharacter)
-					{
 						name = string.Empty;
-					}
 
 					Config.Settings.Default.LastCharacterName = name;
 					this.configChanged = true;
@@ -976,15 +915,11 @@ namespace TQVaultAE.GUI
 
 			// Update custom map settings
 			if (Config.Settings.Default.ModEnabled)
-			{
 				this.configChanged = true;
-			}
 
 			// Clear out the key if we are autodetecting.
 			if (Config.Settings.Default.AutoDetectLanguage)
-			{
 				Config.Settings.Default.TQLanguage = string.Empty;
-			}
 
 			// Clear out the settings if auto detecting.
 			if (Config.Settings.Default.AutoDetectGamePath)
@@ -993,16 +928,14 @@ namespace TQVaultAE.GUI
 				Config.Settings.Default.TQPath = string.Empty;
 			}
 
-			if (UIService.UI.Scale != 1.0F)
+			if (UIService.Scale != 1.0F)
 			{
-				Config.Settings.Default.Scale = UIService.UI.Scale;
+				Config.Settings.Default.Scale = UIService.Scale;
 				this.configChanged = true;
 			}
 
 			if (this.configChanged)
-			{
 				Config.Settings.Default.Save();
-			}
 		}
 
 		/// <summary>
@@ -1013,9 +946,9 @@ namespace TQVaultAE.GUI
 		/// <param name="e">EventArgs data</param>
 		private void ConfigureButtonClick(object sender, EventArgs e)
 		{
-			SettingsDialog settingsDialog = new SettingsDialog();
+			SettingsDialog settingsDialog = this.ServiceProvider.GetService<SettingsDialog>();
 			DialogResult result = DialogResult.Cancel;
-			settingsDialog.Scale(new SizeF(UIService.UI.Scale, UIService.UI.Scale));
+			settingsDialog.Scale(new SizeF(UIService.Scale, UIService.Scale));
 
 			string title = string.Empty;
 			string message = string.Empty;
@@ -1025,16 +958,14 @@ namespace TQVaultAE.GUI
 				{
 					this.characterComboBox.SelectedItem = Resources.MainFormSelectCharacter;
 					if (this.playerPanel.Player != null)
-					{
 						this.playerPanel.Player = null;
-					}
 
 					this.GetPlayerList();
 				}
 
 				if (settingsDialog.VaultPathChanged)
 				{
-					TQData.TQVaultSaveFolder = settingsDialog.VaultPath;
+					GamePathResolver.TQVaultSaveFolder = settingsDialog.VaultPath;
 					this.vaultService.UpdateVaultPath(settingsDialog.VaultPath);
 					this.GetVaultList(true);
 				}
@@ -1070,9 +1001,7 @@ namespace TQVaultAE.GUI
 				if (result == DialogResult.Yes)
 				{
 					if (this.DoCloseStuff())
-					{
 						Application.Restart();
-					}
 				}
 			}
 		}

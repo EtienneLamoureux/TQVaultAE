@@ -8,22 +8,33 @@ namespace TQVaultAE.Data
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
-	using TQVaultAE.Entities;
+	using TQVaultAE.Domain.Contracts.Providers;
+	using TQVaultAE.Domain.Contracts.Services;
+	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Logs;
 
 
 	/// <summary>
 	/// Encodes and decodes a Titan Quest item sack from a player file.
 	/// </summary>
-	public static class SackCollectionProvider
+	public class SackCollectionProvider : ISackCollectionProvider
 	{
-		private static readonly log4net.ILog Log = Logger.Get(typeof(SackCollectionProvider));
+		private readonly log4net.ILog Log;
+		private readonly IItemProvider ItemProvider;
+		private readonly ITQDataService TQData;
+
+		public SackCollectionProvider(ILogger<SackCollectionProvider> log, IItemProvider itemProvider, ITQDataService tQData)
+		{
+			this.Log = log.Logger;
+			this.ItemProvider = itemProvider;
+			this.TQData = tQData;
+		}
 
 		/// <summary>
 		/// Encodes the sack into binary form
 		/// </summary>
 		/// <param name="writer">BinaryWriter instance</param>
-		public static void Encode(SackCollection sc, BinaryWriter writer)
+		public void Encode(SackCollection sc, BinaryWriter writer)
 		{
 			if (sc.sackType == SackType.Stash)
 			{
@@ -64,15 +75,11 @@ namespace TQVaultAE.Data
 
 					TQData.WriteCString(writer, "alternate");
 					if (slotNumber == 9)
-					{
 						// Only set the flag for the second set of weapons
 						alternate = 1;
-					}
 					else
-					{
 						// Otherwise set the flag to false.
 						alternate = 0;
-					}
 
 					writer.Write(alternate);
 				}
@@ -83,16 +90,12 @@ namespace TQVaultAE.Data
 				{
 					TQData.WriteCString(writer, "itemAttached");
 					if (!string.IsNullOrEmpty(item.BaseItemId) && slotNumber != 9 && slotNumber != 10)
-					{
 						// If there is an item in sc slot, set the flag.
 						// Unless it's in the secondary weapon slot.
 						itemAttached = 1;
-					}
 					else
-					{
 						// sc is only a dummy item so we do not set the flag.
 						itemAttached = 0;
-					}
 
 					writer.Write(itemAttached);
 				}
@@ -113,7 +116,7 @@ namespace TQVaultAE.Data
 		/// Parses the binary sack data to internal data
 		/// </summary>
 		/// <param name="reader">BinaryReader instance</param>
-		public static void Parse(SackCollection sc, BinaryReader reader)
+		public void Parse(SackCollection sc, BinaryReader reader)
 		{
 			try
 			{
@@ -175,9 +178,7 @@ namespace TQVaultAE.Data
 
 					// Stack sc item with the previous item if necessary
 					if ((prevItem != null) && item.DoesStack && (item.PositionX == -1) && (item.PositionY == -1))
-					{
 						prevItem.StackSize++;
-					}
 					else
 					{
 						prevItem = item;

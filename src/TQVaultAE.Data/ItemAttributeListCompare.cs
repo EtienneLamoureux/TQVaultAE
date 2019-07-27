@@ -7,7 +7,8 @@ namespace TQVaultAE.Data
 {
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
-	using TQVaultAE.Entities;
+	using TQVaultAE.Domain.Contracts.Providers;
+	using TQVaultAE.Domain.Entities;
 
 	/// <summary>
 	/// Used to sort AttributeEffect groups so that effects that belong together stay together
@@ -18,14 +19,16 @@ namespace TQVaultAE.Data
 		/// Flag to show whether the item is a piece of armor
 		/// </summary>
 		private bool isArmor;
+		private readonly IItemAttributeProvider ItemAttributeProvider;
 
 		/// <summary>
 		/// Initializes a new instance of the ItemAttributeListCompare class.
 		/// </summary>
 		/// <param name="isArmor">flag to show that the item is a piece of armor</param>
-		public ItemAttributeListCompare(bool isArmor)
+		public ItemAttributeListCompare(bool isArmor, IItemAttributeProvider itemAttributeProvider)
 		{
 			this.isArmor = isArmor;
+			this.ItemAttributeProvider = itemAttributeProvider;
 		}
 
 		/// <summary>
@@ -33,21 +36,14 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="value1">First object to compare</param>
 		/// <param name="value2">Second object to compare</param>
-		/// <returns>-1 0 1 depending on comparison</returns>
+		/// <returns>-1 if value2 is larger, 1 if value1 is larger and 0 if equal</returns>
 		int IComparer<List<Variable>>.Compare(List<Variable> value1, List<Variable> value2)
 		{
-			return this.Compare(value1, value2);
-		}
+			// Calculate an "order" number for each
+			int ordera = this.CalcOrder(value1);
+			int orderb = this.CalcOrder(value2);
 
-		/// <summary>
-		/// Compares 2 values
-		/// </summary>
-		/// <param name="value1">First object to compare</param>
-		/// <param name="value2">Second object to compare</param>
-		/// <returns>-1 0 1 depending on comparison</returns>
-		protected int Compare(List<Variable> value1, List<Variable> value2)
-		{
-			return this.DoCompare(value1, value2);
+			return (ordera < orderb) ? -1 : (ordera > orderb) ? 1 : 0;
 		}
 
 		/// <summary>
@@ -55,10 +51,7 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="order">current order number of the parameter</param>
 		/// <returns>globalized order number</returns>
-		private static int MakeGlobal(int order)
-		{
-			return order + 10000000;
-		}
+		private static int MakeGlobal(int order) => order + 10000000;
 
 		/// <summary>
 		/// Calculates the base order of the attribute
@@ -74,17 +67,11 @@ namespace TQVaultAE.Data
 			if (this.isArmor)
 			{
 				if (effectType == ItemAttributesEffectType.ShieldEffect)
-				{
 					typeOrder = 0;
-				}
 				else if (effectType == ItemAttributesEffectType.Defense)
-				{
 					typeOrder = 1;
-				}
 				else if (typeOrder < ((int)ItemAttributesEffectType.Defense))
-				{
 					++typeOrder;
-				}
 			}
 
 			return ((1000 * (1 + typeOrder)) + subOrder) * 10;
@@ -103,14 +90,10 @@ namespace TQVaultAE.Data
 
 			// put granted skills at the end
 			if (v.Name.Equals("itemSkillName"))
-			{
 				return 4000000;
-			}
 
 			if (aa == null)
-			{
 				return 3000000;
-			}
 
 			// This is a good first estimate.
 			int order = this.CalcBaseOrder(aa.EffectType, aa.Suborder);
@@ -141,26 +124,10 @@ namespace TQVaultAE.Data
 
 			// Now see if the variable is global and move it to the global group if it is
 			if (ItemAttributeProvider.AttributeGroupHas(new Collection<Variable>(attributes), "Global"))
-			{
 				order = MakeGlobal(order);
-			}
 
 			return order;
 		}
 
-		/// <summary>
-		/// Compares 2 values
-		/// </summary>
-		/// <param name="value1">first value to compare</param>
-		/// <param name="value2">second value to compare</param>
-		/// <returns>-1 if value2 is larger, 1 if value1 is larger and 0 if equal</returns>
-		private int DoCompare(List<Variable> value1, List<Variable> value2)
-		{
-			// Calculate an "order" number for each
-			int ordera = this.CalcOrder(value1);
-			int orderb = this.CalcOrder(value2);
-
-			return (ordera < orderb) ? -1 : (ordera > orderb) ? 1 : 0;
-		}
 	}
 }

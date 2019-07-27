@@ -75,6 +75,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void InitializeComponent()
 		{
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutBox));
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.logoPictureBox = new System.Windows.Forms.PictureBox();
             this.labelProductName = new TQVaultAE.GUI.Components.ScalingLabel();
@@ -113,7 +114,7 @@ namespace TQVaultAE.GUI
             // logoPictureBox
             // 
             this.logoPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.logoPictureBox.Image = global::TQVaultAE.Presentation.Resources.NewAboutGraphic;
+            this.logoPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("logoPictureBox.Image")));
             this.logoPictureBox.Location = new System.Drawing.Point(3, 3);
             this.logoPictureBox.Name = "logoPictureBox";
             this.tableLayoutPanel.SetRowSpan(this.logoPictureBox, 6);
@@ -185,22 +186,22 @@ namespace TQVaultAE.GUI
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOK.BackColor = System.Drawing.Color.Transparent;
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonOK.DownBitmap = global::TQVaultAE.Presentation.Resources.MainButtonDown;
+            this.buttonOK.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonOK.DownBitmap")));
             this.buttonOK.FlatAppearance.BorderSize = 0;
             this.buttonOK.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.buttonOK.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.buttonOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonOK.Font = new System.Drawing.Font("Albertus MT Light", 12F);
             this.buttonOK.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.buttonOK.Image = global::TQVaultAE.Presentation.Resources.MainButtonUp;
+            this.buttonOK.Image = ((System.Drawing.Image)(resources.GetObject("buttonOK.Image")));
             this.buttonOK.Location = new System.Drawing.Point(428, 383);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.OverBitmap = global::TQVaultAE.Presentation.Resources.MainButtonOver;
+            this.buttonOK.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonOK.OverBitmap")));
             this.buttonOK.Size = new System.Drawing.Size(137, 30);
             this.buttonOK.SizeToGraphic = false;
             this.buttonOK.TabIndex = 24;
             this.buttonOK.Text = "&OK";
-            this.buttonOK.UpBitmap = global::TQVaultAE.Presentation.Resources.MainButtonUp;
+            this.buttonOK.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonOK.UpBitmap")));
             this.buttonOK.UseCustomGraphic = true;
             this.buttonOK.UseVisualStyleBackColor = false;
             // 

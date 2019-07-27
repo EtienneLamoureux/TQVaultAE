@@ -17,17 +17,19 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Initializes a new instance of the SearchDialog class.
 		/// </summary>
-		public SearchDialog()
+		public SearchDialog(MainForm instance) : base(instance.ServiceProvider)
 		{
+			this.Owner = instance;
+
 			this.InitializeComponent();
 
 			#region Apply custom font
 
-			this.searchLabel.Font = FontHelper.GetFontAlbertusMT(9F);
-			this.searchTextBox.Font = FontHelper.GetFontAlbertusMT(9F);
-			this.findButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
-			this.cancelButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
-			this.Font = FontHelper.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
+			this.searchLabel.Font = FontService.GetFontAlbertusMT(9F);
+			this.searchTextBox.Font = FontService.GetFontAlbertusMT(9F);
+			this.findButton.Font = FontService.GetFontAlbertusMTLight(12F);
+			this.cancelButton.Font = FontService.GetFontAlbertusMTLight(12F);
+			this.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
 
 			#endregion
 
@@ -43,13 +45,8 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Gets the search text from the search text box on the form.
 		/// </summary>
-		public string SearchText
-		{
-			get
-			{
-				return this.searchTextBox.Text;
-			}
-		}
+		public string SearchText 
+			=> this.searchTextBox.Text;
 
 		/// <summary>
 		/// Handler for clicking the search button on the form.
@@ -78,9 +75,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
-		private void SearchDialogShown(object sender, EventArgs e)
-		{
-			this.searchTextBox.Focus();
-		}
+		private void SearchDialogShown(object sender, EventArgs e) 
+			=> this.searchTextBox.Focus();
 	}
 }

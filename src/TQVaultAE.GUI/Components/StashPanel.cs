@@ -9,7 +9,7 @@ namespace TQVaultAE.GUI.Components
 	using System.Drawing;
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.Entities;
+	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Presentation;
 
 	/// <summary>
@@ -89,9 +89,9 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="dragInfo">ItemDragInfo instance</param>
 		/// <param name="panelSize">Size of the panel in cells</param>
 		/// <param name="tooltip">ToolTip instance</param>
-		public StashPanel(ItemDragInfo dragInfo, Size panelSize) : base(dragInfo, 4, panelSize, 0, AutoMoveLocation.Stash)
+		public StashPanel(ItemDragInfo dragInfo, Size panelSize, IServiceProvider serviceProvider) : base(dragInfo, 4, panelSize, 0, AutoMoveLocation.Stash, serviceProvider)
 		{
-			this.equipmentPanel = new EquipmentPanel(16, 14, dragInfo, AutoMoveLocation.Stash);
+			this.equipmentPanel = new EquipmentPanel(16, 14, dragInfo, AutoMoveLocation.Stash, serviceProvider);
 
 			this.Controls.Add(this.equipmentPanel);
 			this.equipmentPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
@@ -103,14 +103,12 @@ namespace TQVaultAE.GUI.Components
 			this.equipmentPanel.MouseMove += new MouseEventHandler(this.StashPanelMouseMove);
 			this.equipmentPanel.MouseLeave += new EventHandler(this.StashPanelMouseLeave);
 			this.equipmentPanel.MouseClick += new MouseEventHandler(this.StashPanelMouseClick);
-			//this.MouseMove += new MouseEventHandler(this.StashPanelMouseMove);
-			//this.MouseHover += new MouseEventHandler(this.StashPanelMouseMove);
 
 			this.Text = Resources.StashPanelText;
 			this.NoPlayerString = Resources.StashPanelText;
 			this.Size = new Size(
-				(panelSize.Width * UIService.UI.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.UI.Scale) + BorderPad,
-				(panelSize.Height * UIService.UI.ItemUnitSize) + Convert.ToInt32(60.0F * UIService.UI.Scale) + BorderPad);
+				(panelSize.Width * UIService.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.Scale) + BorderPad,
+				(panelSize.Height * UIService.ItemUnitSize) + Convert.ToInt32(60.0F * UIService.Scale) + BorderPad);
 			this.Paint += new PaintEventHandler(this.PaintCallback);
 
 			this.BagSackPanel.SetLocation(new Point(BorderPad, this.Size.Height - (this.BagSackPanel.Size.Height + BorderPad)));
@@ -122,30 +120,24 @@ namespace TQVaultAE.GUI.Components
 			this.StashBackground = Resources.caravan_bg;
 
 			// Set up the inital font size
-			if (UIService.UI.Scale != 1.0F)
-			{
-				this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * UIService.UI.Scale, this.Font.Style);
-			}
+			if (UIService.Scale != 1.0F)
+				this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * UIService.Scale, this.Font.Style);
 
 			//x and y coordinates passed are normalized values between 0 and 1.0.   
-			playerInfoDisplay = new PlayerInfoDisplay(Config.Settings.Default, this, this.Font, .83, .14);
+			playerInfoDisplay = new PlayerInfoDisplay(this.ServiceProvider, Config.Settings.Default, this, this.Font, .83, .14);
 
 			// Now that the buttons are set we can move the panel
 			this.BagSackPanel.SetLocation(new Point(
 				BorderPad,
-				this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height + UIService.UI.HalfUnitSize));
+				this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height + UIService.HalfUnitSize));
 
-			int offsetX = (panelSize.Width - this.equipmentPanel.SackSize.Width) * UIService.UI.HalfUnitSize;
+			int offsetX = (panelSize.Width - this.equipmentPanel.SackSize.Width) * UIService.HalfUnitSize;
 			if (offsetX < 0)
-			{
 				offsetX = 0;
-			}
 
-			int offsetY = (panelSize.Height - this.equipmentPanel.SackSize.Height) * UIService.UI.HalfUnitSize;
+			int offsetY = (panelSize.Height - this.equipmentPanel.SackSize.Height) * UIService.HalfUnitSize;
 			if (offsetY < 0)
-			{
 				offsetY = 0;
-			}
 
 			this.equipmentPanel.SetLocation(new Point(
 				offsetX,
@@ -164,10 +156,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		public Stash Stash
 		{
-			get
-			{
-				return this.stash;
-			}
+			get => this.stash;
 
 			set
 			{
@@ -182,10 +171,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		public Stash TransferStash
 		{
-			get
-			{
-				return this.transferStash;
-			}
+			get =>this.transferStash;
 
 			set
 			{
@@ -200,10 +186,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		public Stash RelicVaultStash
 		{
-			get
-			{
-				return this.relicVaultStash;
-			}
+			get => this.relicVaultStash;
 
 			set
 			{
@@ -221,9 +204,7 @@ namespace TQVaultAE.GUI.Components
 			get
 			{
 				if (this.CurrentBag == 0 && this.equipmentPanel != null)
-				{
 					return this.equipmentPanel;
-				}
 
 				return this.BagSackPanel;
 			}
@@ -236,22 +217,19 @@ namespace TQVaultAE.GUI.Components
 		{
 			get
 			{
-				if (UIService.UI.Scale != 1.0F)
+				if (UIService.Scale != 1.0F)
 				{
 					// We need to scale this since we use it to redraw the background.
 					return new Bitmap(
 						this.equipmentBackground,
-						(this.maxPanelSize.Width * UIService.UI.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
-						(this.maxPanelSize.Height * UIService.UI.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2));
+						(this.maxPanelSize.Width * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
+						(this.maxPanelSize.Height * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2));
 				}
 
 				return this.equipmentBackground;
 			}
 
-			set
-			{
-				this.equipmentBackground = value;
-			}
+			set => this.equipmentBackground = value;
 		}
 
 		/// <summary>
@@ -261,22 +239,19 @@ namespace TQVaultAE.GUI.Components
 		{
 			get
 			{
-				if (UIService.UI.Scale != 1.0F)
+				if (UIService.Scale != 1.0F)
 				{
 					// We need to scale this since we use it to redraw the background.
 					return new Bitmap(
 						this.stashBackground,
-						(this.maxPanelSize.Width * UIService.UI.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
-						(this.maxPanelSize.Height * UIService.UI.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2));
+						(this.maxPanelSize.Width * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
+						(this.maxPanelSize.Height * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2));
 				}
 
 				return this.stashBackground;
 			}
 
-			set
-			{
-				this.stashBackground = value;
-			}
+			set => this.stashBackground = value;
 		}
 
 		/// <summary>
@@ -284,10 +259,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		public new int CurrentBag
 		{
-			get
-			{
-				return this.currentBag;
-			}
+			get => this.currentBag;
 
 			set
 			{
@@ -295,14 +267,10 @@ namespace TQVaultAE.GUI.Components
 
 				// figure out the current bag to use
 				if (bagID < 0)
-				{
 					bagID = 0;
-				}
 
 				if (bagID >= 4)
-				{
 					bagID = 3;
-				}
 
 				if (bagID != this.currentBag)
 				{
@@ -317,13 +285,9 @@ namespace TQVaultAE.GUI.Components
 					{
 						// Equipment Panel
 						if (this.Player == null)
-						{
 							this.equipmentPanel.Sack = null;
-						}
 						else
-						{
 							this.equipmentPanel.Sack = this.Player.EquipmentSack;
-						}
 
 						this.background = this.EquipmentBackground;
 						this.equipmentPanel.Visible = true;
@@ -340,8 +304,8 @@ namespace TQVaultAE.GUI.Components
 						this.BagSackPanel.ResizeSackPanel(this.transferStash.Width, this.transferStash.Height);
 
 						// Adjust location based on size.
-						int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.transferStash.Width) * UIService.UI.HalfUnitSize);
-						int offsetY = Math.Max(0, (this.maxPanelSize.Height - this.transferStash.Height) * UIService.UI.HalfUnitSize);
+						int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.transferStash.Width) * UIService.HalfUnitSize);
+						int offsetY = Math.Max(0, (this.maxPanelSize.Height - this.transferStash.Height) * UIService.HalfUnitSize);
 
 						this.BagSackPanel.Location = new Point(BorderPad + offsetX, buttonOffsetY + offsetY);
 						this.equipmentPanel.Visible = false;
@@ -358,8 +322,8 @@ namespace TQVaultAE.GUI.Components
 						this.BagSackPanel.ResizeSackPanel(this.stash.Width, this.stash.Height);
 
 						// Adjust location based on size so it will be centered.
-						int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.stash.Width) * UIService.UI.HalfUnitSize);
-						int offsetY = Math.Max(0, (this.maxPanelSize.Height - Math.Max(15, this.stash.Height)) * UIService.UI.HalfUnitSize);
+						int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.stash.Width) * UIService.HalfUnitSize);
+						int offsetY = Math.Max(0, (this.maxPanelSize.Height - Math.Max(15, this.stash.Height)) * UIService.HalfUnitSize);
 
 						this.BagSackPanel.Location = new Point(BorderPad + offsetX, buttonOffsetY + offsetY);
 						this.equipmentPanel.Visible = false;
@@ -376,8 +340,8 @@ namespace TQVaultAE.GUI.Components
 						this.BagSackPanel.ResizeSackPanel(this.relicVaultStash.Width, this.relicVaultStash.Height);
 
 						// Adjust location based on size.
-						int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.relicVaultStash.Width) * UIService.UI.HalfUnitSize);
-						int offsetY = Math.Max(0, (this.maxPanelSize.Height - this.relicVaultStash.Height) * UIService.UI.HalfUnitSize);
+						int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.relicVaultStash.Width) * UIService.HalfUnitSize);
+						int offsetY = Math.Max(0, (this.maxPanelSize.Height - this.relicVaultStash.Height) * UIService.HalfUnitSize);
 
 						this.BagSackPanel.Location = new Point(BorderPad + offsetX, buttonOffsetY + offsetY);
 						this.equipmentPanel.Visible = false;
@@ -445,7 +409,7 @@ namespace TQVaultAE.GUI.Components
 		/// <returns>The new StashButton that is created.</returns>
 		protected StashButton CreateBagButton(int bagNumber, int numberOfBags)
 		{
-			StashButton button = new StashButton(bagNumber, new GetToolTip(this.GetSackToolTip));
+			StashButton button = new StashButton(bagNumber, new GetToolTip(this.GetSackToolTip), this.ServiceProvider);
 
 			float buttonWidth = (float)Resources.StashTabUp.Width;
 			float buttonHeight = (float)Resources.StashTabUp.Height;
@@ -457,7 +421,7 @@ namespace TQVaultAE.GUI.Components
 			float bagSlotWidth = scale * slotWidth;
 
 			// We are using tabs so only scale horizontally
-			button.Size = new Size((int)Math.Round(scale * buttonWidth), Convert.ToInt32(buttonHeight * UIService.UI.Scale));
+			button.Size = new Size((int)Math.Round(scale * buttonWidth), Convert.ToInt32(buttonHeight * UIService.Scale));
 			float offset = (bagSlotWidth * bagNumber) + ((bagSlotWidth - button.Width) / 2.0F);
 
 			button.Location = new Point(this.SackPanel.Location.X + (int)Math.Round(offset), this.SackPanel.Location.Y - button.Height);
@@ -489,9 +453,7 @@ namespace TQVaultAE.GUI.Components
 		{
 			this.Text = string.Empty;
 			if (this.DrawAsGroupBox)
-			{
 				this.Text = Resources.StashPanelText;
-			}
 		}
 
 		/// <summary>
@@ -501,14 +463,10 @@ namespace TQVaultAE.GUI.Components
 		{
 			// figure out the current bag to use
 			if (this.currentBag < 0)
-			{
 				this.currentBag = 0;
-			}
 
 			if (this.currentBag >= 4)
-			{
 				this.currentBag = 3;
-			}
 
 			// hide/show bag buttons and assign initial bitmaps
 			int buttonOffset = 0;
@@ -520,85 +478,57 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			if ((this.relicVaultStash == null) || (this.relicVaultStash.NumberOfSacks < 1))
-			{
 				this.BagButtons[3].Visible = false;
-			}
 
 			if ((this.stash == null) || (this.stash.NumberOfSacks < 1))
-			{
 				this.BagButtons[2].Visible = false;
-			}
 
 			if ((this.transferStash == null) || (this.transferStash.NumberOfSacks < 1))
-			{
 				this.BagButtons[1].Visible = false;
-			}
 
 			if (this.currentBag == 0)
 			{
 				if (this.Player == null)
-				{
 					this.SackPanel.Sack = null;
-				}
 				else
-				{
 					this.SackPanel.Sack = this.Player.EquipmentSack;
-				}
 			}
 			else if (this.currentBag == 1)
 			{
 				// Assign the transfer stash
 				if ((this.transferStash == null) || (this.transferStash.NumberOfSacks < 1))
-				{
 					this.SackPanel.Sack = null;
-				}
 				else
 				{
 					if (this.transferStash.NumberOfSacks > 0)
-					{
 						this.SackPanel.Sack = this.transferStash.Sack;
-					}
 					else
-					{
 						this.SackPanel.Sack = null;
-					}
 				}
 			}
 			else if (this.currentBag == 2)
 			{
 				if ((this.stash == null) || (this.stash.NumberOfSacks < 1))
-				{
 					this.SackPanel.Sack = null;
-				}
 				else
 				{
 					if (this.stash.NumberOfSacks > 0)
-					{
 						this.SackPanel.Sack = this.stash.Sack;
-					}
 					else
-					{
 						this.SackPanel.Sack = null;
-					}
 				}
 			}
 			else if (this.currentBag == 3)
 			{
 				// Assign the relic vault stash
 				if ((this.relicVaultStash == null) || (this.relicVaultStash.NumberOfSacks < 1))
-				{
 					this.SackPanel.Sack = null;
-				}
 				else
 				{
 					if (this.relicVaultStash.NumberOfSacks > 0)
-					{
 						this.SackPanel.Sack = this.relicVaultStash.Sack;
-					}
 					else
-					{
 						this.SackPanel.Sack = null;
-					}
 				}
 			}
 		}
@@ -616,14 +546,10 @@ namespace TQVaultAE.GUI.Components
 
 			// filter the bagID
 			if (bagID < 0)
-			{
 				bagID = 0;
-			}
 
 			if (bagID >= 4)
-			{
 				bagID = 3;
-			}
 
 			if (bagID != this.currentBag)
 			{
@@ -679,7 +605,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <param name="button">button the mouse is over.  Corresponds to a sack</param>
 		/// <returns>string to be displayed in the tooltip</returns>
-		private string GetSackToolTip(BagButtonBase button)
+		private void GetSackToolTip(BagButtonBase button)
 		{
 			// Get the list of items and return them as a string
 			int bagID = button.ButtonNumber;
@@ -688,41 +614,18 @@ namespace TQVaultAE.GUI.Components
 			if (bagID == 0)
 			{
 				if (this.Player == null)
-				{
 					sack = null;
-				}
 				else
-				{
 					sack = this.Player.EquipmentSack;
-				}
 			}
 			else if (bagID == 1)
-			{
 				sack = this.transferStash.Sack;
-			}
 			else if (bagID == 2)
-			{
 				sack = this.stash.Sack;
-			}
 			else
-			{
 				sack = this.relicVaultStash.Sack;
-			}
 
 			button.Sack = sack;
-
-			if (sack == null || sack.IsEmpty)
-			{
-				return null;
-			}
-
-			// skip the item being dragged
-			if (this.DragInfo.IsActive)
-			{
-				button.Excluded = new Item[] { this.DragInfo.Item };
-			}
-
-			return null;
 		}
 
 		/// <summary>
@@ -732,15 +635,14 @@ namespace TQVaultAE.GUI.Components
 		private Rectangle GetBackgroundRect()
 		{
 			if (this.BagButtons == null || this.BagButtons.Count == 0)
-			{
 				return Rectangle.Empty;
-			}
 
 			return new Rectangle(
-				BorderPad,
-				this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height,
-				this.Width - (BorderPad * 2),
-				this.Height - (this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height + BorderPad));
+				BorderPad
+				, this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height
+				, this.Width - (BorderPad * 2)
+				, this.Height - (this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height + BorderPad)
+			);
 		}
 
 		#endregion StashPanel Private Methods

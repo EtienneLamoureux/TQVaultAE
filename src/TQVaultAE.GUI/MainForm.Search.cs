@@ -1,20 +1,22 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using TQVaultAE.Data;
-using TQVaultAE.Entities;
+using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Search;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 using TQVaultAE.Services;
-using TQVaultAE.Services.Models.Search;
 
 namespace TQVaultAE.GUI
 {
 	public partial class MainForm
 	{
-		private SearchService searchService = null;
+		private ISearchService searchService = null;
 
 		/// <summary>
 		/// Handler for clicking the search button on the form.
@@ -31,8 +33,8 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void OpenSearchDialog()
 		{
-			SearchDialog searchDialog = new SearchDialog();
-			searchDialog.Scale(new SizeF(UIService.UI.Scale, UIService.UI.Scale));
+			var searchDialog = this.ServiceProvider.GetService<SearchDialog>();
+			searchDialog.Scale(new SizeF(UIService.Scale, UIService.Scale));
 
 			if (searchDialog.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(searchDialog.SearchText))
 			{
@@ -71,8 +73,6 @@ namespace TQVaultAE.GUI
 		/// <param name="searchString">string that we are searching for</param>
 		private void Search(string searchString)
 		{
-			if (this.searchService is null) this.searchService = new SearchService(userContext);
-
 			if (string.IsNullOrWhiteSpace(searchString)) return;
 
 			var results = this.searchService.Search(searchString);
@@ -91,7 +91,7 @@ namespace TQVaultAE.GUI
 			}
 
 			// Display a dialog with the results.
-			ResultsDialog dlg = new ResultsDialog(Program.MainFormInstance);
+			ResultsDialog dlg = this.ServiceProvider.GetService<ResultsDialog>();
 			dlg.ResultChanged += new ResultsDialog.EventHandler<ResultChangedEventArgs>(this.SelectResult);
 			dlg.ResultsList.Clear();
 			dlg.ResultsList.AddRange(results);
@@ -107,7 +107,7 @@ namespace TQVaultAE.GUI
 		private void SelectResult(object sender, ResultChangedEventArgs e)
 		{
 			Result selectedResult = e.Result;
-			if (selectedResult == null || selectedResult.Item == null) return;
+			if (selectedResult == null || selectedResult.FriendlyNames == null) return;
 
 			this.ClearAllItemsSelectedCallback(this, new SackPanelEventArgs(null, null));
 
@@ -116,7 +116,7 @@ namespace TQVaultAE.GUI
 				// Switch to the selected vault
 				this.vaultListComboBox.SelectedItem = selectedResult.ContainerName;
 				this.vaultPanel.CurrentBag = selectedResult.SackNumber;
-				this.vaultPanel.SackPanel.SelectItem(selectedResult.Item.Location);
+				this.vaultPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 			}
 			else if (selectedResult.SackType == SackType.Player || selectedResult.SackType == SackType.Equipment)
 			{
@@ -129,7 +129,7 @@ namespace TQVaultAE.GUI
 
 				string myName = selectedResult.ContainerName;
 
-				if (TQData.IsCustom)
+				if (GamePathResolver.IsCustom)
 				{
 					myName = string.Concat(myName, PlayerService.CustomDesignator);
 				}
@@ -146,11 +146,11 @@ namespace TQVaultAE.GUI
 					// Highlight the item if it's in the player inventory.
 					if (selectedResult.SackNumber == 0)
 					{
-						this.playerPanel.SackPanel.SelectItem(selectedResult.Item.Location);
+						this.playerPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 					}
 					else
 					{
-						this.playerPanel.BagSackPanel.SelectItem(selectedResult.Item.Location);
+						this.playerPanel.BagSackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 					}
 				}
 			}
@@ -166,7 +166,7 @@ namespace TQVaultAE.GUI
 				// Assume that only IT characters can have a stash.
 				string myName = string.Concat(selectedResult.ContainerName, "<Immortal Throne>");
 
-				if (TQData.IsCustom)
+				if (GamePathResolver.IsCustom)
 				{
 					myName = string.Concat(myName, PlayerService.CustomDesignator);
 				}
@@ -176,13 +176,13 @@ namespace TQVaultAE.GUI
 
 				// Switch to the Stash bag
 				this.stashPanel.CurrentBag = selectedResult.SackNumber;
-				this.stashPanel.SackPanel.SelectItem(selectedResult.Item.Location);
+				this.stashPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 			}
 			else if ((selectedResult.SackType == SackType.TransferStash) || (selectedResult.SackType == SackType.RelicVaultStash))
 			{
 				// Switch to the Stash bag
 				this.stashPanel.CurrentBag = selectedResult.SackNumber;
-				this.stashPanel.SackPanel.SelectItem(selectedResult.Item.Location);
+				this.stashPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 			}
 		}
 

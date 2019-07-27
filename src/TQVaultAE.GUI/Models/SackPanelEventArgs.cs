@@ -7,7 +7,7 @@ namespace TQVaultAE.GUI.Models
 {
 	using System;
 	using TQVaultAE.Data;
-	using TQVaultAE.Entities;
+	using TQVaultAE.Domain.Entities;
 
 	/// <summary>
 	/// Sack panel event data

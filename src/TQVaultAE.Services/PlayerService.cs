@@ -1,23 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using TQVaultAE.Data;
-using TQVaultAE.Entities;
-using TQVaultAE.Entities.Results;
+using TQVaultAE.Domain.Contracts.Providers;
+using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Results;
 using TQVaultAE.Logs;
 
 namespace TQVaultAE.Services
 {
-	public class PlayerService
+	public class PlayerService : IPlayerService
 	{
 		private readonly log4net.ILog Log = null;
 		private readonly SessionContext userContext = null;
-
+		private readonly IPlayerCollectionProvider PlayerCollectionProvider;
+		private readonly IStashProvider StashProvider;
+		private readonly IGamePathService GamePathResolver;
 		public const string CustomDesignator = "<Custom Map>";
 
-		public PlayerService(SessionContext userContext)
+		public PlayerService(ILogger<PlayerService> log, SessionContext userContext, IPlayerCollectionProvider playerCollectionProvider, IStashProvider stashProvider, IGamePathService gamePathResolver)
 		{
-			Log = Logger.Get(this);
+			this.Log = log.Logger;
 			this.userContext = userContext;
+			this.PlayerCollectionProvider = playerCollectionProvider;
+			this.StashProvider = stashProvider;
+			this.GamePathResolver = gamePathResolver;
 		}
 
 
@@ -43,7 +49,7 @@ namespace TQVaultAE.Services
 
 			#region Get the player
 
-			result.PlayerFile = TQData.GetPlayerFile(selectedText);
+			result.PlayerFile = GamePathResolver.GetPlayerFile(selectedText);
 
 			try
 			{
@@ -68,7 +74,7 @@ namespace TQVaultAE.Services
 
 			#region Get the player's stash
 
-			result.StashFile = TQData.GetPlayerStashFile(selectedText);
+			result.StashFile = GamePathResolver.GetPlayerStashFile(selectedText);
 
 			try
 			{
@@ -117,8 +123,8 @@ namespace TQVaultAE.Services
 				{
 					++numModified;
 					playerOnError = player;// if needed by caller
-					TQData.BackupFile(player.PlayerName, playerFile);
-					TQData.BackupStupidPlayerBackupFolder(playerFile);
+					GamePathResolver.BackupFile(player.PlayerName, playerFile);
+					GamePathResolver.BackupStupidPlayerBackupFolder(playerFile);
 					PlayerCollectionProvider.Save(player, playerFile);
 				}
 			}

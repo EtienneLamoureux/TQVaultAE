@@ -60,16 +60,18 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Initializes a new instance of the SplashScreenForm class.
 		/// </summary>
-		public SplashScreenForm()
+		public SplashScreenForm(MainForm instance) : base(instance.ServiceProvider)
 		{
+			this.Owner = instance;
+
 			this.InitializeComponent();
 
 			#region Apply custom font
 
-			this.label3.Font = FontHelper.GetFontAlbertusMTLight(12F);
-			this.nextButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
-			this.exitButton.Font = FontHelper.GetFontAlbertusMTLight(12F);
-			this.labelPleaseWait.Font = FontHelper.GetFontAlbertusMTLight(14.25F);
+			this.label3.Font = FontService.GetFontAlbertusMTLight(12F);
+			this.nextButton.Font = FontService.GetFontAlbertusMTLight(12F);
+			this.exitButton.Font = FontService.GetFontAlbertusMTLight(12F);
+			this.labelPleaseWait.Font = FontService.GetFontAlbertusMTLight(14.25F);
 
 			#endregion
 

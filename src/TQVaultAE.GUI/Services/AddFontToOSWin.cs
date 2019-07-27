@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TQVaultAE.Presentation;
+using TQVaultAE.Domain.Contracts.Services;
 
 namespace TQVaultAE.GUI.Services
 {
