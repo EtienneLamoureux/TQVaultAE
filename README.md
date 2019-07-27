@@ -43,11 +43,11 @@ Works with all expansions!
     - Combine stacks (potions, relics and charms) by dropping them onto each other
     - Split potion stacks apart
     - Keyboard shortcuts
-        - <kbd>CTRL</kbd>-<kbd>F</kbd>  : Open search form
-        - <kbd>CTRL</kbd>-<kbd>+</kbd> : Increase vault size
-        - <kbd>CTRL</kbd>-<kbd>-</kbd> : Reduce vault size
-        - <kbd>CTRL</kbd>-<kbd>Home</kbd> : Default vault size
-        - <kbd>CTRL</kbd>-click` : Activate multi selection
+        - <kbd>CTRL</kbd>+<kbd>F</kbd>  : Open search form
+        - <kbd>CTRL</kbd>+<kbd>+</kbd> : Increase vault size
+        - <kbd>CTRL</kbd>+<kbd>-</kbd> : Reduce vault size
+        - <kbd>CTRL</kbd>+<kbd>Home</kbd> : Default vault size
+        - <kbd>CTRL</kbd>+click : Activate multi selection
         - <kbd>ATL</kbd> : Toggle item tooltip detailed view (no need to keep key pressed)
 - Character backups
     - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
