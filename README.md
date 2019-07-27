@@ -1,6 +1,6 @@
 # TQVaultAE
 [![Steam](https://img.shields.io/badge/steam-link-lightgrey.svg)](https://steamcommunity.com/sharedfiles/filedetails/?id=1136716167)
-[![Release](https://img.shields.io/badge/stable-3.2.0-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
+[![Release](https://img.shields.io/badge/stable-3.2.1-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/LICENSE)
 
 TQVaultAE is an external tool for [Titan Quest Anniversary Edition](https://www.thqnordic.com/games/titan-quest) that allows you to store and search your items outside the game.
@@ -39,18 +39,18 @@ Works with all expansions!
         - Unlock difficulties
         - Level up
 - QOL
-    - Bulk item transfer (CTRL-click, right-click)
+    - Bulk item transfer (<kbd>CTRL</kbd>-click, right-click)
     - Combine stacks (potions, relics and charms) by dropping them onto each other
     - Split potion stacks apart
+    - Keyboard shortcuts
+        - <kbd>CTRL</kbd>-<kbd>F</kbd>  : Open search form
+        - <kbd>CTRL</kbd>-<kbd>+</kbd> : Increase vault size
+        - <kbd>CTRL</kbd>-<kbd>-</kbd> : Reduce vault size
+        - <kbd>CTRL</kbd>-<kbd>Home</kbd> : Default vault size
+        - <kbd>CTRL</kbd>-click` : Activate multi selection
+        - <kbd>ATL</kbd> : Toggle item tooltip detailed view (no need to keep key pressed)
 - Character backups
     - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
-- Shortcuts
-    - `Ctrl` + `F` : Open search form
-    - `Ctrl` + `+` : Increase vault size
-    - `Ctrl` + `-` : Reduce vault size
-    - `Ctrl` + `Home` : Default vault size
-    - `Ctrl` + `Left-Click` : Activate multi selection
-    - `Left-Alt` : Toggle item tooltip detailed view (no need to keep key pressed)
 
 ## Installation
 ### Installer
