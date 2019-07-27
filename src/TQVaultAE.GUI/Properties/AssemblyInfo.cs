@@ -32,7 +32,7 @@ using System.Windows.Media;
 // CLS compliant attribute
 //[assembly: CLSCompliant(true)]
 
-[assembly: AssemblyVersion("3.2.0")]
-[assembly: AssemblyFileVersion("3.2.0")]
+[assembly: AssemblyVersion("3.2.1")]
+[assembly: AssemblyFileVersion("3.2.1")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]
 [assembly: DisableDpiAwareness]
