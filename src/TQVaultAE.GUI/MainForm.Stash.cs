@@ -27,10 +27,8 @@ namespace TQVaultAE.GUI
 			this.stashPanel = new StashPanel(this.DragInfo, panelSize, this.ServiceProvider);
 
 			// New location in bottom right of the Main Form.
-			//Align to playerPanel
-			this.stashPanel.Location = new Point(
-				this.playerPanel.Location.X,
-				this.ClientSize.Height - (this.stashPanel.Height + Convert.ToInt32(16.0F * UIService.Scale)));
+			// Align to playerPanel
+
 			this.stashPanel.DrawAsGroupBox = false;
 
 			this.stashPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
@@ -39,7 +37,10 @@ namespace TQVaultAE.GUI
 			this.stashPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
 			this.stashPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
 			this.stashPanel.OnResizeForm += new EventHandler<ResizeEventArgs>(this.ResizeFormCallback);
-			Controls.Add(this.stashPanel);
+
+			this.flowLayoutPanelRightPanels.Controls.Add(this.stashPanel);
+			this.stashPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+			this.stashPanel.Margin = new Padding(0);
 		}
 
 		/// <summary>

@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
-using TQVaultAE.Data;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
@@ -89,10 +88,6 @@ namespace TQVaultAE.GUI
 		{
 			this.playerPanel = new PlayerPanel(this.DragInfo, 4, new Size(12, 5), new Size(8, 5), this.ServiceProvider);
 
-			this.playerPanel.Location = new Point(
-				this.ClientSize.Width - (this.playerPanel.Width + Convert.ToInt32(22.0F * UIService.Scale)),
-				this.characterComboBox.Location.Y + Convert.ToInt32(28.0F * UIService.Scale));
-
 			this.playerPanel.DrawAsGroupBox = false;
 
 			this.playerPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
@@ -101,7 +96,10 @@ namespace TQVaultAE.GUI
 			this.playerPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
 			this.playerPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
 			this.playerPanel.OnResizeForm += new EventHandler<ResizeEventArgs>(this.ResizeFormCallback);
-			Controls.Add(this.playerPanel);
+
+			this.flowLayoutPanelRightPanels.Controls.Add(this.playerPanel);
+			this.playerPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+			this.playerPanel.Margin = new Padding(0);
 		}
 
 
@@ -119,9 +117,7 @@ namespace TQVaultAE.GUI
 				this.stashPanel.CurrentBag = 0;
 
 				if (this.stashPanel.Stash != null)
-				{
 					this.stashPanel.Stash = null;
-				}
 			}
 		}
 
@@ -162,9 +158,7 @@ namespace TQVaultAE.GUI
 			{
 				// Throw a message if the stash is not present.
 				if (result.StashFound.HasValue && !result.StashFound.Value)
-				{
 					MessageBox.Show(Resources.StashNotFoundMsg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-				}
 
 				if (result.StashArgumentException != null)
 				{

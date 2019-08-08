@@ -192,9 +192,11 @@ namespace TQVaultAE.GUI
 
 		}
 
-		public static void ScaleControl(IUIService uiService, System.Windows.Forms.Control ctrl)
+		public static void ScaleControl(IUIService uiService, System.Windows.Forms.Control ctrl, bool isAbsolutePositioning = true)
 		{
-			ctrl.Location = ScalePoint(uiService, ctrl.Location);
+			if (isAbsolutePositioning)
+				ctrl.Location = ScalePoint(uiService, ctrl.Location);
+
 			ctrl.Size = ScaleSize(uiService, ctrl.Size);
 		}
 

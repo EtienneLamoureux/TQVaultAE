@@ -3,14 +3,11 @@ using System;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using TQVaultAE.Data;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.GUI.Tooltip;
 using TQVaultAE.Presentation;
-using TQVaultAE.Domain.Contracts.Providers;
 
 namespace TQVaultAE.GUI
 {
@@ -25,7 +22,6 @@ namespace TQVaultAE.GUI
 
 			// Put the secondary vault list on top of the player list drop down
 			// since only one can be shown at a time.
-			this.secondaryVaultListComboBox.Location = this.characterComboBox.Location;
 			this.secondaryVaultListComboBox.Enabled = false;
 			this.secondaryVaultListComboBox.Visible = false;
 
@@ -38,9 +34,7 @@ namespace TQVaultAE.GUI
 				this.customMapText.Text = string.Format(CultureInfo.CurrentCulture, Resources.MainFormCustomMapLabel, Path.GetFileName(GamePathResolver.MapName));
 			}
 			else
-			{
 				this.customMapText.Visible = false;
-			}
 
 			this.CreateVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function
 			this.CreateSecondaryVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function
@@ -48,10 +42,7 @@ namespace TQVaultAE.GUI
 			this.secondaryVaultPanel.Visible = false;
 			this.lastBag = -1;
 
-			int textPanelOffset = Convert.ToInt32(18.0F * UIService.Scale);
 			this.itemTextPanel.Size = new Size(this.vaultPanel.Width, Convert.ToInt32(22.0F * UIService.Scale));
-			this.itemTextPanel.Location = new Point(this.vaultPanel.Location.X, this.ClientSize.Height - (this.itemTextPanel.Size.Height + textPanelOffset));
-			this.itemText.Width = this.itemTextPanel.Width - Convert.ToInt32(4.0F * UIService.Scale);
 			this.GetVaultList(false);
 
 			// Now we always create the stash panel since everyone can have equipment
@@ -76,7 +67,7 @@ namespace TQVaultAE.GUI
 				this.stashPanel.Enabled = false;
 				this.secondaryVaultPanel.Enabled = true;
 				this.secondaryVaultPanel.Visible = true;
-				this.panelSelectButton.Text = Resources.MainFormBtnShowPlayer;
+				this.showVaulButton.Text = Resources.MainFormBtnShowPlayer;
 				this.characterComboBox.Enabled = false;
 				this.characterComboBox.Visible = false;
 				this.secondaryVaultListComboBox.Enabled = true;
@@ -107,7 +98,7 @@ namespace TQVaultAE.GUI
 				this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
 				this.playerPanel.Enabled = true;
 				this.playerPanel.Visible = true;
-				this.panelSelectButton.Text = Resources.MainFormBtnPanelSelect;
+				this.showVaulButton.Text = Resources.MainFormBtnPanelSelect;
 				this.characterComboBox.Enabled = true;
 				this.characterComboBox.Visible = true;
 				this.secondaryVaultListComboBox.Enabled = false;
@@ -231,9 +222,7 @@ namespace TQVaultAE.GUI
 		/// <param name="sender">sender object</param>
 		/// <param name="e">SackPanelEventArgs data</param>
 		private void ActivateSearchCallback(object sender, SackPanelEventArgs e)
-		{
-			this.OpenSearchDialog();
-		}
+			=> this.OpenSearchDialog();
 
 		/// <summary>
 		/// Used for sending items between sacks or panels.

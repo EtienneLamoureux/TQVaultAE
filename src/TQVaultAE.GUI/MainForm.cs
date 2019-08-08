@@ -16,14 +16,12 @@ namespace TQVaultAE.GUI
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Components;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.Data;
 	using TQVaultAE.Logs;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Config;
 	using TQVaultAE.Services;
 	using TQVaultAE.Domain.Contracts.Services;
-	using TQVaultAE.Domain.Contracts.Providers;
 
 	/// <summary>
 	/// Main Dialog class
@@ -65,6 +63,11 @@ namespace TQVaultAE.GUI
 		/// Info for the current item being dragged by the mouse
 		/// </summary>
 		private ItemDragInfo DragInfo;
+
+		/// <summary>
+		/// Used for show/hide table panel layout borders during debug
+		/// </summary>
+		private bool DebugLayoutBorderVisible = false;
 
 		/// <summary>
 		/// Holds the coordinates of the last drag item
@@ -166,30 +169,31 @@ namespace TQVaultAE.GUI
 			this.exitButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
 			ScaleControl(this.UIService, this.exitButton);
 			this.characterComboBox.Font = FontService.GetFontAlbertusMTLight(13F, UIService.Scale);
-			ScaleControl(this.UIService, this.characterComboBox);
+			ScaleControl(this.UIService, this.characterComboBox, false);
 			this.characterLabel.Font = FontService.GetFontAlbertusMTLight(11F, UIService.Scale);
-			ScaleControl(this.UIService, this.characterLabel);
-			ScaleControl(this.UIService, this.itemTextPanel);
+			ScaleControl(this.UIService, this.characterLabel, false);
 
-			ScaleControl(this.UIService, this.itemText);
+			this.itemText.Font = FontService.GetFontAlbertusMTLight(11F, FontStyle.Bold, UIService.Scale);
+
 			this.vaultListComboBox.Font = FontService.GetFontAlbertusMTLight(13F, UIService.Scale);
-			ScaleControl(this.UIService, this.vaultListComboBox);
+			ScaleControl(this.UIService, this.vaultListComboBox, false);
 			this.vaultLabel.Font = FontService.GetFontAlbertusMTLight(11F, UIService.Scale);
-			ScaleControl(this.UIService, this.vaultLabel);
+			ScaleControl(this.UIService, this.vaultLabel, false);
 			this.configureButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
 			ScaleControl(this.UIService, this.configureButton);
 			this.customMapText.Font = FontService.GetFontAlbertusMT(11.25F, UIService.Scale);
-			ScaleControl(this.UIService, this.customMapText);
-			this.panelSelectButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
-			ScaleControl(this.UIService, this.panelSelectButton);
+			ScaleControl(this.UIService, this.customMapText, false);
+			this.showVaulButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
+			ScaleControl(this.UIService, this.showVaulButton);
 			this.secondaryVaultListComboBox.Font = FontService.GetFontAlbertusMTLight(11F, UIService.Scale);
-			ScaleControl(this.UIService, this.secondaryVaultListComboBox);
+			ScaleControl(this.UIService, this.secondaryVaultListComboBox, false);
 			this.aboutButton.Font = FontService.GetFontAlbertusMTLight(8.25F, UIService.Scale);
 			ScaleControl(this.UIService, this.aboutButton);
 			this.titleLabel.Font = FontService.GetFontAlbertusMTLight(24F, UIService.Scale);
 			ScaleControl(this.UIService, this.titleLabel);
 			this.searchButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
 			ScaleControl(this.UIService, this.searchButton);
+			ScaleControl(this.UIService, this.tableLayoutPanelMain);
 
 			#endregion
 
@@ -242,12 +246,22 @@ namespace TQVaultAE.GUI
 			this.vaultLabel.Text = Resources.MainFormLabel2;
 			this.configureButton.Text = Resources.MainFormBtnConfigure;
 			this.exitButton.Text = Resources.GlobalExit;
-			this.panelSelectButton.Text = Resources.MainFormBtnPanelSelect;
+			this.showVaulButton.Text = Resources.MainFormBtnPanelSelect;
 			this.Icon = Resources.TQVIcon;
 			this.searchButton.Text = Resources.MainFormSearchButtonText;
 
 			this.lastDragPoint.X = -1;
 			this.DragInfo = new ItemDragInfo(this.UIService);
+#if DEBUG
+			this.DebugLayoutBorderVisible = false;// Set here what you want during debug
+#endif
+			if (!this.DebugLayoutBorderVisible)
+			{
+				this.flowLayoutPanelRightComboBox.BorderStyle = BorderStyle.None;
+				this.flowLayoutPanelVaultSelector.BorderStyle = BorderStyle.None;
+				this.flowLayoutPanelRightPanels.BorderStyle = BorderStyle.None;
+				this.tableLayoutPanelMain.CellBorderStyle = TableLayoutPanelCellBorderStyle.None;
+			}
 
 			this.CreatePanels();
 		}

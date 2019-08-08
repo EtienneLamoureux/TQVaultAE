@@ -178,7 +178,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Gets or sets the string used for 'with'
 		/// </summary>
-		public static string ItemWith { get; set; }
+		public static string ItemWith { get; set; }// TODO Should be provided by a TranslationService()
 
 		/// <summary>
 		/// Gets or sets the relic completion bonus string.
