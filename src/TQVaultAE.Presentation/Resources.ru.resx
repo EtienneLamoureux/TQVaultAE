@@ -132,25 +132,25 @@ Spanish translation by Kurrus.
 </value>
   </data>
   <data name="AboutText" xml:space="preserve">
-    <value>About {0}</value>
+    <value>Про программу {0}</value>
   </data>
   <data name="AboutVersion" xml:space="preserve">
-    <value>Version {0}</value>
+    <value>Версия {0}</value>
   </data>
   <data name="ARZExtractBtnExtract" xml:space="preserve">
     <value>Распаковать</value>
   </data>
   <data name="ARZExtractCreateFolder" xml:space="preserve">
-    <value>{0} не существует.  Хотите создать сейчас?</value>
+    <value>{0} не существует. Хотите создать её сейчас?</value>
   </data>
   <data name="ARZExtractCreateFolder2" xml:space="preserve">
     <value>Создать папку?</value>
   </data>
   <data name="ARZExtractCreateFolderIT" xml:space="preserve">
-    <value>{0} не существует для базы данных IT. Хотите создать сейчас?</value>
+    <value>{0} не существует для базы данных IT. Хотите создать её сейчас?</value>
   </data>
   <data name="ARZExtractDestination" xml:space="preserve">
-    <value>Выберите директорию назначения для распакованных записей базы данных.</value>
+    <value>Выберите конечную директорию для распакованных записей базы данных.</value>
   </data>
   <data name="ARZExtractFileDest" xml:space="preserve">
     <value>Вы должны указать не файл, а директорию!</value>
@@ -162,13 +162,13 @@ Spanish translation by Kurrus.
     <value>После того, как вы распакуете записи, просто скопируйте необходимые записи, которые вы хотите использовать в моде, в папку вашего мода.</value>
   </data>
   <data name="ARZExtractLabel3" xml:space="preserve">
-    <value>Укажите директорию назначения:</value>
+    <value>Укажите конечную директорию:</value>
   </data>
   <data name="ARZExtractLabel4" xml:space="preserve">
-    <value>Укажите директорию назначения для файлов базы данных IT:</value>
+    <value>Укажите конечную директорию для файлов базы данных IT:</value>
   </data>
   <data name="ARZExtractLabel5" xml:space="preserve">
-    <value>Если не задан путь для распаковки базы данных TQ и IT, будет использована общая директория. If not populated the destination folders for the TQ database and the IT database will default to the same folder.  The IT files will overwrite the TQ files when there are conflicts though you can select different folders to avoid overwriting files.</value>
+    <value>Если не задан путь для распаковки базы данных TQ и IT, будет использована общая директория. Файлы IT перезапишут файлы TQ если будут конфликты, однако вы можете указать разные папки чтобы избежать перезаписи.</value>
   </data>
   <data name="ARZExtractText" xml:space="preserve">
     <value>Распаковать database.arz</value>
@@ -195,26 +195,25 @@ Spanish translation by Kurrus.
     <value>Распаковка database.arz...</value>
   </data>
   <data name="CmdlineUsage" xml:space="preserve">
-    <value>Error parsing command-line arguments: {0}
-Usage: TQVault [player name] [/mod:&lt;mod name&gt;]</value>
+    <value>Ошибка при обработке аргументов командной строки: {0}
+Применение: TQVault [player name] [/mod:&lt;mod name&gt;]</value>
   </data>
   <data name="DataDefaultPath" xml:space="preserve">
-    <value>Default Vault Path</value>
+    <value>Стандартный путь к хранилищам</value>
   </data>
   <data name="DataDefaultPathMsg" xml:space="preserve">
-    <value>The Vault Path was not set.
-Using the default setting.
-Please verify the Vault Path with the configuration dialog.</value>
+    <value>Путь к хранилищам не указан.
+Используются стандартные значения.
+Пожалуйста укажите путь к хранилищам в окне конфигурации.</value>
   </data>
   <data name="DataLink" xml:space="preserve">
-    <value>Please Update Vault Path</value>
+    <value>Пожалуйста обновите путь к хранилищам</value>
   </data>
   <data name="DataLinkMsg" xml:space="preserve">
-    <value>Please update the vault path in the
-configuration to reflect the link.</value>
+    <value>Пожалуйста обновите путь к хранилищам в конфигурации чтобы отображать ссылку.</value>
   </data>
   <data name="Form1BadLanguage" xml:space="preserve">
-    <value>Это может быть вызвано неверными настройками языка или пути к игре.Перезапустить TQVault?</value>
+    <value>Это может быть вызвано неверными настройками языка или пути к игре. Перезапустить TQVault?</value>
   </data>
   <data name="Form1bNext" xml:space="preserve">
     <value>Войти</value>
@@ -223,7 +222,7 @@ configuration to reflect the link.</value>
     <value>Ошибка загрузки ресурсов</value>
   </data>
   <data name="Form1Label3" xml:space="preserve">
-    <value>Волшебное место, где вы можете хранить ваши мощные артефакты, для того чтобы спасти мир от Титанов.</value>
+    <value>Волшебное место, где вы можете хранить ваши мощные артефакты, которые вам понадобятся для спасения мира от Титанов.</value>
   </data>
   <data name="Form1LblPleaseWait" xml:space="preserve">
     <value>Загрузка игровых ресурсов. Пожалуйста подождите...</value>
@@ -232,7 +231,7 @@ configuration to reflect the link.</value>
     <value>Хранилище предметов Titan Quest</value>
   </data>
   <data name="GlobalAbout" xml:space="preserve">
-    <value>кредитов</value>
+    <value>Авторы</value>
   </data>
   <data name="GlobalBrowse" xml:space="preserve">
     <value>Обзор...</value>
@@ -258,7 +257,7 @@ configuration to reflect the link.</value>
     <value>OK</value>
   </data>
   <data name="GlobalTransferStash" xml:space="preserve">
-    <value>Общий сундук</value>
+    <value>Панель передачи</value>
   </data>
   <data name="GlobalTrash" xml:space="preserve">
     <value>Корзина</value>
@@ -285,19 +284,19 @@ configuration to reflect the link.</value>
     <value>(Квестовый предмет)</value>
   </data>
   <data name="ItemRelicBonus" xml:space="preserve">
-    <value>(Бонус сборки: {0})</value>
+    <value>(Сборный бонус: {0})</value>
   </data>
   <data name="ItemRelicCompleted" xml:space="preserve">
-    <value>(Собран)</value>
+    <value>(Собрано)</value>
   </data>
   <data name="ItemSeed" xml:space="preserve">
-    <value>itemSeed: {0} (0x{0:X8}) ({1:p3})</value>
+    <value>Сид предмета: {0} (0x{0:X8}) ({1:p3})</value>
   </data>
   <data name="ItemStyleArtifact" xml:space="preserve">
     <value>Артефакт</value>
   </data>
   <data name="ItemStyleBroken" xml:space="preserve">
-    <value>Поломанный</value>
+    <value>Сломанный</value>
   </data>
   <data name="ItemStyleCommon" xml:space="preserve">
     <value>Обычный</value>
@@ -312,7 +311,7 @@ configuration to reflect the link.</value>
     <value>Легендарный</value>
   </data>
   <data name="ItemStyleMundane" xml:space="preserve">
-    <value>Превосходный</value>
+    <value>Магический</value>
   </data>
   <data name="ItemStyleParchment" xml:space="preserve">
     <value>Пергамент</value>
@@ -345,13 +344,13 @@ configuration to reflect the link.</value>
     <value>Распаковать database.arz ...</value>
   </data>
   <data name="MainFormBtnPanelSelect" xml:space="preserve">
-    <value>Показать хранилище</value>
+    <value>Отображать хранилище</value>
   </data>
   <data name="MainFormBtnShowPlayer" xml:space="preserve">
-    <value>Показать игрока</value>
+    <value>Отображать игрока</value>
   </data>
   <data name="MainFormCustomMapLabel" xml:space="preserve">
-    <value>{0} пользовательская карта</value>
+    <value>Пользовательская карта {0}</value>
   </data>
   <data name="MainFormDatabaseError" xml:space="preserve">
     <value>Ошибка распаковки базы данных</value>
@@ -367,7 +366,7 @@ configuration to reflect the link.</value>
     <value>Персонаж:</value>
   </data>
   <data name="MainFormLabel2" xml:space="preserve">
-    <value>Сундук:</value>
+    <value>Хранилище:</value>
   </data>
   <data name="MainFormLanguageChanged" xml:space="preserve">
     <value>Язык игры изменён</value>
@@ -397,7 +396,7 @@ configuration to reflect the link.</value>
     <value>Не обнаружено персонажей пользовательских карт</value>
   </data>
   <data name="MainFormNoItemQualityFound" xml:space="preserve">
-    <value>Не найдено предметов типа  '{0}'
+    <value>Не найдено предметов типа '{0}'
 и качества '{1}'.</value>
   </data>
   <data name="MainFormNoItemsFound" xml:space="preserve">
@@ -426,7 +425,7 @@ configuration to reflect the link.</value>
   </data>
   <data name="MainFormReadError" xml:space="preserve">
     <value>Ошибка чтения {0}
-Вы уверены что это валидный файл?
+Вы уверены что это правильный файл?
 
 {1}</value>
   </data>
@@ -437,7 +436,7 @@ configuration to reflect the link.</value>
     <value>Выберите персонажа</value>
   </data>
   <data name="MainFormSelectVault" xml:space="preserve">
-    <value>Выберите сундук</value>
+    <value>Выберите хранилище</value>
   </data>
   <data name="MainFormSettingsChanged" xml:space="preserve">
     <value>Настройки игры изменены</value>
@@ -453,21 +452,21 @@ configuration to reflect the link.</value>
   </data>
   <data name="MainFormStartVaultMonMsg" xml:space="preserve">
     <value>Вы изменили инвентарь одного из ваших персонажей.
-Titan Quest определяет это и считает, что ваш персонаж испорчен
-и не позволяет вам загрузить его.
+Titan Quest увидит это, посчитает что ваш персонаж испорчен
+и не позволит вам загрузить его.
 
-TQVaultMon — это программа, которая в процессе работы делает так, что Titan Quest
-считает что с вашим персонажем всё в порядке и позволяет вам его загрузить.
-Единожды загрузив вашего персонажа вам больше не нужно
-использовать TQVaultMon, пока вы не внесёте очередные изменения.
+TQVaultMon — это программа, которая пока запущена заставляет 
+Titan Quest считать что с вашим персонажем всё в порядке и позволяет 
+вам его загрузить. Единожды загрузив вашего персонажа вам больше не 
+нужно использовать TQVaultMon, пока вы не внесёте очередные изменения.
 
-Поэтому мы предлагаем вам запустить сейчас TQVaultMon и затем запустить Titan
-Quest и загрузить всех персонажей, которые были изменены.
+Советуем сначала запускать TQVaultMon и только затем заходить в 
+Titan Quest и загружать всех персонажей, которые были изменены.
 
 Хотите запустить TQVaultMon сейчас?</value>
   </data>
   <data name="MainFormStashReadError" xml:space="preserve">
-    <value>Ошибка чтения файла сундука</value>
+    <value>Ошибка чтения файла погонщика</value>
   </data>
   <data name="MainFormTrashItems" xml:space="preserve">
     <value>В корзине находится {0} предметов.
@@ -484,11 +483,11 @@ Quest и загрузить всех персонажей, которые был
   <data name="MainFormVaultMonMsg" xml:space="preserve">
     <value>Мы не можем проверить запущен ли TQVaultMon.
 Скорее всего TQVaultMon не работает.
-Из-за того, что вы изменили одного из ваших персонажей, TQ будет считать что они испорченны.
-Для успешной игры вам необходимо скачать TQ Defiler
-и использовать его опции 'Patch' или 'Fix Me' для того, чтобы игра признала файлы ваших персонажей исправными.
-Если вы не против, пожалуйста, свяжитесь со мной и расскажите мне о вашей проблеме, 
-потому что возможно у меня будет решение этой проблемы, и вы сэкономите своё время.
+Из-за того, что вы изменили одного из ваших персонажей, TQ будет считать что они 
+испорченны. Для успешной игры вам необходимо скачать TQ Defiler и использовать его 
+опции 'Patch' или 'Fix Me' для того, чтобы игра признала файлы ваших персонажей 
+исправными. Если вы не против, пожалуйста, свяжитесь со мной и расскажите мне о вашей 
+проблеме, потому что возможно у меня найдется решение которое сэкономит вам время.
 
 Текст ошибки приведён ниже
 </value>
@@ -501,13 +500,13 @@ Quest и загрузить всех персонажей, которые был
   </data>
   <data name="MaintenanceCopy" xml:space="preserve">
     <value>Пожалуйста, выберите источник из выпадающего списка
- и затем введите имя назначения в поле метки.</value>
+ и затем введите новое имя в поле снизу.</value>
   </data>
   <data name="MaintenanceDelete" xml:space="preserve">
     <value>Пожалуйста, выберите удаляемое хранилище из выпадающего списка.</value>
   </data>
   <data name="MaintenanceDuplicate" xml:space="preserve">
-    <value>Дубрируется название хранилища</value>
+    <value>Дубликировать название хранилища</value>
   </data>
   <data name="MaintenanceExists" xml:space="preserve">
     <value>Хранилище под названием {0} уже существует.</value>
@@ -525,13 +524,13 @@ Quest и загрузить всех персонажей, которые был
     <value>Недопустимое имя исходного хранилища</value>
   </data>
   <data name="MaintenanceNew" xml:space="preserve">
-    <value>Пожалуйста, введите название для нового хранилища в поле метки.
+    <value>Пожалуйста, введите название для нового хранилища в поле ниже.
 
 Вы не можете использовать следующие символы:
 </value>
   </data>
   <data name="MaintenanceNewVault" xml:space="preserve">
-    <value>New Vault</value>
+    <value>Новое хранилище</value>
   </data>
   <data name="MaintenanceNoCopyTarget" xml:space="preserve">
     <value>Вы должны ввести новое название для копируемого хранилища</value>
@@ -549,29 +548,29 @@ Quest и загрузить всех персонажей, которые был
     <value>Переименовать хранилище</value>
   </data>
   <data name="MaintenanceRename" xml:space="preserve">
-    <value>Пожалуйста, выберите хранилище, которое нужно переименовать и затем введите новое имя в поле метки.</value>
+    <value>Пожалуйста, выберите хранилище, которое нужно переименовать и затем введите новое имя в поле ниже.</value>
   </data>
   <data name="MaintenanceSource" xml:space="preserve">
     <value>Источник</value>
   </data>
   <data name="MaintenanceSourceNoExist" xml:space="preserve">
-    <value>Хранилище источника не существует.</value>
+    <value>Указанного как источник хранилища не существует.</value>
   </data>
   <data name="MaintenanceTarget" xml:space="preserve">
-    <value>Метка</value>
+    <value>Цель</value>
   </data>
   <data name="MaintenanceText" xml:space="preserve">
     <value>Управление хранилищами</value>
   </data>
   <data name="PlayerOverwriteSack" xml:space="preserve">
-    <value>Overwrite Sack</value>
+    <value>Перезаписать сумку</value>
   </data>
   <data name="PlayerOverwriteSackMsg" xml:space="preserve">
-    <value>The destination is not empty.
-Are you sure you want to overwrite?</value>
+    <value>Указанная сумка не пустая.
+Вы действительно хотите перезаписать её?</value>
   </data>
   <data name="PlayerPanelEmpty" xml:space="preserve">
-    <value>Пустая сумка?</value>
+    <value>Очистить сумку?</value>
   </data>
   <data name="PlayerPanelEmptyMsg" xml:space="preserve">
     <value>Вы действительно хотите удалить все предметы в этой сумке?</value>
@@ -583,7 +582,7 @@ Are you sure you want to overwrite?</value>
     <value>Очистить сумку</value>
   </data>
   <data name="PlayerPanelMenuMerge" xml:space="preserve">
-    <value>Совместить сумку</value>
+    <value>Соединить сумку</value>
   </data>
   <data name="PlayerPanelMenuMove" xml:space="preserve">
     <value>Переместить сумку</value>
@@ -598,7 +597,7 @@ Are you sure you want to overwrite?</value>
     <value>Контейнер</value>
   </data>
   <data name="ResultsContainerEquip" xml:space="preserve">
-    <value>Инвентарь</value>
+    <value>Снаряжение</value>
   </data>
   <data name="ResultsContainerPlayer" xml:space="preserve">
     <value>Игрок</value>
@@ -622,7 +621,7 @@ Are you sure you want to overwrite?</value>
     <value>Сумка</value>
   </data>
   <data name="ResultsLevel" xml:space="preserve">
-    <value>уровень</value>
+    <value>Уровень</value>
   </data>
   <data name="ResultsText" xml:space="preserve">
     <value>{0} предметов найдено по запросу '{1}'</value>
@@ -635,7 +634,7 @@ Are you sure you want to overwrite?</value>
   </data>
   <data name="SackPanelAutoSortErrorMsg" xml:space="preserve">
     <value>Произошла ошибка во время сортировки.
-Поместились не все предметы.</value>
+Не все предметы отсортированы.</value>
   </data>
   <data name="SackPanelAutoSortMsg" xml:space="preserve">
     <value>В данный момент вы удерживаете предмет.
@@ -655,13 +654,13 @@ Are you sure you want to overwrite?</value>
     <value>Вы уверены что хотите НАВСЕГДА УДАЛИТЬ выделенные предметы?</value>
   </data>
   <data name="SackPanelMenuBonus" xml:space="preserve">
-    <value>Изменить бонус сборки</value>
+    <value>Изменить сборный бонус</value>
   </data>
   <data name="SackPanelMenuCharm" xml:space="preserve">
-    <value>Собранный талисман</value>
+    <value>Собрать талисман</value>
   </data>
   <data name="SackPanelMenuFormulae" xml:space="preserve">
-    <value>Артефакт ремесла</value>
+    <value>Создать артефакт</value>
   </data>
   <data name="SackPanelMenuClear" xml:space="preserve">
     <value>Очистить выделение</value>
@@ -673,7 +672,7 @@ Are you sure you want to overwrite?</value>
     <value>Удалить</value>
   </data>
   <data name="SackPanelMenuDuplicate" xml:space="preserve">
-    <value>Клонировать предмет</value>
+    <value>Создать дубликат</value>
   </data>
   <data name="SackPanelMenuMoveTo" xml:space="preserve">
     <value>Преместить предмет в</value>
@@ -685,16 +684,16 @@ Are you sure you want to overwrite?</value>
     <value>Свойства</value>
   </data>
   <data name="SackPanelMenuRelic" xml:space="preserve">
-    <value>Собранная реликвия</value>
+    <value>Собрать реликвию</value>
   </data>
   <data name="SackPanelMenuRemoveRelic" xml:space="preserve">
     <value>Убрать реликвию</value>
   </data>
   <data name="SackPanelMenuSeed" xml:space="preserve">
-    <value>Изменить Item Seed...</value>
+    <value>Изменить сид предмета...</value>
   </data>
   <data name="SackPanelMenuSet" xml:space="preserve">
-    <value>Создать набор предметов</value>
+    <value>Создать части сета</value>
   </data>
   <data name="SackPanelMenuSplit" xml:space="preserve">
     <value>Разделить</value>
@@ -718,154 +717,147 @@ Are you sure you want to overwrite?</value>
     <value>Случайно</value>
   </data>
   <data name="SeedLabel1" xml:space="preserve">
-    <value>Titan Quest использует Item Seed для генерации случайных аттрибутов
-ваших предметов, поэтому не существует двух абсолютно одинаковых предметов.
-В данный момент точно не ясно, как именно Item Seed влияет на аттрибуты предметов.
-Изменение Item Seed приведёт к некоторым изменениям
-в аттрибутах ваших предметов, когда вы в следующий раз зайдёте в игру.
+    <value>Titan Quest использует сид для генерации случайных значений аттрибутов
+ваших предметов, поэтому не существует двух абсолютно одинаковых предметов. В 
+данный момент точно не ясно, как именно сид влияет на аттрибуты предметов.
+Изменение сида приведёт к определенному разбросу в значениях атрибутов предмета,
+когда вы в следующий раз зайдёте в игру.
 
 Выберите число между 1 и 32767</value>
   </data>
   <data name="SeedRange" xml:space="preserve">
-    <value>Item Seed должен быть целым числом между 1 и 32767</value>
+    <value>Сид должен быть целым числом от 1 до 32767</value>
   </data>
   <data name="SeedText" xml:space="preserve">
-    <value>Изменить Item Seed</value>
+    <value>Изменить сид предмета</value>
   </data>
   <data name="SettingsAllowCopy" xml:space="preserve">
-    <value>Allow Item Copying</value>
+    <value>Разрешить копирование предметов</value>
   </data>
   <data name="SettingsAllowCopyTT" xml:space="preserve">
-    <value>Enables copy selection in the context menu.</value>
+    <value>Включает опцию Копирования в контекстном меню предмета.</value>
   </data>
   <data name="SettingsAllowEdit" xml:space="preserve">
-    <value>Allow Item Editing Features</value>
+    <value>Разрешить редактирование предметов</value>
   </data>
   <data name="SettingsAllowEditTT" xml:space="preserve">
-    <value>Turns on the editing features in the context menu.
-These include item creation and modification.</value>
+    <value>Включает опции создания и изменения в контекстном меню предмета.
+Сюда входят создание артефактов, частей сетовых наборов и собирание реликвий.</value>
   </data>
   <data name="SettingsAutoUpdate" xml:space="preserve">
-    <value>Automatically Check For Updates</value>
+    <value>Автоматически проверять обновления</value>
   </data>
   <data name="SettingsAutoUpdateTT" xml:space="preserve">
-    <value>Selecting this item will automatically check
-for new versions of TQVault on the web when
-the program starts up.  May cause startup to
-take longer if the network connection is slow.</value>
+    <value>Выбор этого пункта будет автоматически проверять наличие в сети
+новых версий TQVault когда программа запускается. Может сделать запуск более 
+долгим если у вас медленное подключение к Интернету.</value>
   </data>
   <data name="SettingsBrowseIT" xml:space="preserve">
-    <value>Please select the path for the Immortal Throne game files.</value>
+    <value>Пожалуйста укажите путь для игровых файлов Immortal Throne.</value>
   </data>
   <data name="SettingsBrowseTQ" xml:space="preserve">
-    <value>Please select the path for the Titan Quest game files.</value>
+    <value>Пожалуйста укажите путь для игровых файлов Titan Quest.</value>
   </data>
   <data name="SettingsBrowseVault" xml:space="preserve">
-    <value>Please select the path for TQVault Vault files.</value>
+    <value>Пожалуйста укажите путь для файлов хранилищ TQVault.</value>
   </data>
   <data name="SettingsDetectGamePath" xml:space="preserve">
-    <value>Autodetect Game Paths</value>
+    <value>Автоматически определять пути к игре</value>
   </data>
   <data name="SettingsDetectLanguage" xml:space="preserve">
-    <value>Autodetect Language</value>
+    <value>Автоматически определять язык</value>
   </data>
   <data name="SettingsEnableMod" xml:space="preserve">
-    <value>Enable Custom Maps</value>
+    <value>Разрешить пользовательские карты</value>
   </data>
   <data name="SettingsEnableModTT" xml:space="preserve">
-    <value>Selecting this item will 
-enable the dropdown
-to select custom maps.</value>
+    <value>Выбор этого пункта позволит программе видеть персонажей 
+ из пользовательских карт. (требуется перезапуск)</value>
   </data>
   <data name="SettingsForceCheck" xml:space="preserve">
-    <value>Check Now</value>
+    <value>Проверить</value>
   </data>
   <data name="SettingsForceCheckTT" xml:space="preserve">
-    <value>Manually checks if there are any updates
-available.</value>
+    <value>Вручную проверить есть ли обновления.</value>
   </data>
   <data name="SettingsLabel1" xml:space="preserve">
-    <value>Vault Path</value>
+    <value>Путь к хранилищам</value>
   </data>
   <data name="SettingsLabel2" xml:space="preserve">
-    <value>Game Language</value>
+    <value>Язык игры</value>
   </data>
   <data name="SettingsLabel3" xml:space="preserve">
-    <value>TQ Game Path</value>
+    <value>Путь к игре TQ</value>
   </data>
   <data name="SettingsLabel4" xml:space="preserve">
-    <value>IT Game Path</value>
+    <value>Путь к игре IT</value>
   </data>
   <data name="SettingsLabel5" xml:space="preserve">
-    <value>Custom Map</value>
+    <value>Пользовательская карта</value>
   </data>
   <data name="SettingsLoadChar" xml:space="preserve">
-    <value>Automatically Load the last opened Character</value>
+    <value>Автоматически загружать последнего открытого персонажа</value>
   </data>
   <data name="SettingsLoadCharTT" xml:space="preserve">
-    <value>Selecting this option will automatically load
-the last open character when TQVault was closed.</value>
+    <value>Выбор этого пункта будет автоматически загружать последнего на момент
+закрытия TQVault персонажа.</value>
   </data>
   <data name="SettingsLoadVault" xml:space="preserve">
-    <value>Automatically Load the last opened Vault</value>
+    <value>Автоматически загружать последнее открытое хранилище</value>
   </data>
   <data name="SettingsLoadVaultTT" xml:space="preserve">
-    <value>Selecting this item will automatically load the
-last opened vault when TQVault was closed.
-TQVault will automatically open Main Vault
-if nothing is chosen.</value>
+    <value>Выбор этого пункта будет автоматически загружать последнее на момент
+закрытия TQVault хранилище. Если ничего не было выбрано, откроется Главное хранилище.</value>
   </data>
   <data name="SettingsNoWarning" xml:space="preserve">
-    <value>Bypass Confirmation Messages</value>
+    <value>Обход окон подтверждения</value>
   </data>
   <data name="SettingsNoWarningTT" xml:space="preserve">
-    <value>When enabled, confirmation messages will no
-longer be shown for item deletion and
-relic removal or if there are items in the trash
-when TQVault is closed.</value>
+    <value>Если включено, окно о подтверждении действия больше не 
+будет появляться при удалении предмета, извлечении реликвии или при
+наличии предметов в корзине на момент закрытия TQVault.</value>
   </data>
   <data name="SettingsPreLoad" xml:space="preserve">
-    <value>Pre-Load All Vault And Character Files</value>
+    <value>Предзагрузка всех файлов хранилища и персонажа</value>
   </data>
   <data name="SettingsPreLoadTT" xml:space="preserve">
-    <value>Selecting this item will automatically load all
-of the available character, stash and vault files
-on startup.  This aids the search function, but
-increases startup time.</value>
+    <value>Выбор этого пункта будет автоматически подгружать все
+доступные файлы персонажа, сундука и хранилища при запуске. Это
+облегчит поиск, но увеличит время запуска программы.</value>
   </data>
   <data name="SettingsReset" xml:space="preserve">
-    <value>Reset</value>
+    <value>Сбросить</value>
   </data>
   <data name="SettingsResetTT" xml:space="preserve">
-    <value>Causes the configuration to Reset to the
-last saved configuration.</value>
+    <value>Сбрасывает конфигурацию до последней сохраненной.</value>
   </data>
   <data name="SettingsSkipTitle" xml:space="preserve">
-    <value>Automatically Bypass Title Screen</value>
+    <value>Автоматически пропускать экран приветствия</value>
   </data>
   <data name="SettingsSkipTitleTT" xml:space="preserve">
-    <value>Ticking this box will automatically hit
-the Enter key on the title screen.</value>
+    <value>Включение этого пунтка будет автоматически нажимать
+Enter когда появляется экран приветствия.</value>
   </data>
   <data name="SettingsTitle" xml:space="preserve">
-    <value>Configure Settings</value>
+    <value>Настроить параметры</value>
   </data>
   <data name="StashNotFound" xml:space="preserve">
-    <value>Cannot find Stash file.</value>
+    <value>Файл сундука не найден.</value>
   </data>
   <data name="StashNotFoundMsg" xml:space="preserve">
-    <value>The Stash file cannot be found.
-Please visit the Caravan Trader in game to create the file.
-The Storage Area tab will be unavailable for this character.</value>
+    <value>Программа не обнаружила файл сундука у персонажа.
+Чтобы создать его, поговорите с любым Погонщиком в игре. До
+тех пор вкладки, связанные с Погонщиком для этого персонажа 
+будут недоступны.</value>
   </data>
   <data name="StashPanelBtn1" xml:space="preserve">
     <value>Экипировка</value>
   </data>
   <data name="StashPanelBtn2" xml:space="preserve">
-    <value>Общий сундук</value>
+    <value>Панель передачи</value>
   </data>
   <data name="StashPanelBtn3" xml:space="preserve">
-    <value>Личный сундук</value>
+    <value>Склад</value>
   </data>
   <data name="StashPanelText" xml:space="preserve">
     <value>Караван</value>
@@ -915,8 +907,8 @@ The Storage Area tab will be unavailable for this character.</value>
     <value>Нажмите OK для скачивания и запуска установщика.</value>
   </data>
   <data name="UpdateStreamError" xml:space="preserve">
-    <value>There was an error connecting to the update server.
-An update cannot be performed.</value>
+    <value>Возникла ошибка при подключении к серверу обновления.
+Обновление не может быть выполнено.</value>
   </data>
   <data name="UpdateText" xml:space="preserve">
     <value>Обновления TQVault</value>
@@ -938,50 +930,56 @@ Used to determine which language file to update.</comment>
 Used to track changes in the translation file.</comment>
   </data>
   <data name="VaultGroupBoxEmpty" xml:space="preserve">
-    <value>&lt;Nустой&gt;</value>
+    <value>&lt;Пусто&gt;</value>
   </data>
   <data name="MainFormDisableLoadAllFiles" xml:space="preserve">
-    <value>There was an error attempting to load all files in the last run.
-Would you like to disable loading all files?</value>
+    <value>В прошлый раз при попытке подгрузки всех файлов возникла ошибка.
+Хотите ли отключить подгрузку всех файлов?</value>
   </data>
   <data name="MainFormDisableLoadAllFilesCaption" xml:space="preserve">
-    <value>Disable loading all files?</value>
+    <value>Отключить подгрузку всех файлов?</value>
   </data>
   <data name="MainFormSearchButtonText" xml:space="preserve">
     <value>Поиск</value>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
-    <value>Search for an Item</value>
+    <value>Поиск предмета</value>
   </data>
   <data name="SearchDialogText" xml:space="preserve">
-    <value>Поиск элементов в загруженных файлах: хранилищах, записях, запасах.
+    <value>Поиск предметов в загруженных файлах: хранилищах, сундуках, инвентарях.
 
 Вы можете комбинировать следующие параметры поиска:
-* имя: Это должен быть первый поисковый запрос. Вот пример: 'полярный &amp; иней'
+* Имя: Это должен быть первый поисковый запрос. Вот пример: 'арктическая &amp; инея'
 * Тип: используя @ в начале поискового запроса, например '@меч'
-* Атрибуты: используя # в начале поискового запроса, например '#сопротивление'
-* раритет: используя $ в начале поискового запроса, например '$редкий'
-Вы можете использовать | в терминах как условие ИЛИ. '$редкий | эпический' все распространенные и все редкие
+* Атрибуты: используя # в начале поискового запроса, например '#сопротивления силам природы'
+* Раритет: используя $ в начале поискового запроса, например '$редкий'
+Вы можете использовать | в терминах как условие ИЛИ. '$обычный | редкий' возвращает все обычные и все редкие вещи.
 
-Вот сложный пример: 'полярный &amp; иней @меч $редкий | эпический'</value>
+Вот полный пример: 'арктическая &amp; инея @меч $редкий | эпический'</value>
   </data>
   <data name="GlobalClose" xml:space="preserve">
-    <value>выход</value>
+    <value>Закрыть</value>
   </data>
   <data name="GlobalMaximize" xml:space="preserve">
-    <value>максимизировать</value>
+    <value>Максимизировать</value>
   </data>
   <data name="GlobalMinimize" xml:space="preserve">
-    <value>минимизировать</value>
+    <value>Минимизировать</value>
   </data>
   <data name="GlobalMove" xml:space="preserve">
-    <value>движение</value>
+    <value>Переместить</value>
   </data>
   <data name="GlobalRestore" xml:space="preserve">
-    <value>восстановление</value>
+    <value>Восстановить</value>
   </data>
   <data name="GlobalSize" xml:space="preserve">
-    <value>размер</value>
+    <value>Размер</value>
+  </data>
+  <data name="SettingsPlayerReadonly" xml:space="preserve">
+    <value>Только чтение для надетых вещей</value>
+  </data>
+  <data name="SettingsPlayerReadonlyTT" xml:space="preserve">
+    <value>Позволяет избежать ошибок или поломок сохранения при изменении надетых вещей. Если включено, надетые предметы будут достпуны только для просмотра.</value>
   </data>
   <data name="ItemRagnarok" xml:space="preserve">
     <value>Предмет Ragnarök</value>
@@ -990,22 +988,22 @@ Would you like to disable loading all files?</value>
     <value>Предмет Atlantis</value>
   </data>
   <data name="GlobalRelicVaultStash" xml:space="preserve">
-    <value>реликвия Свод</value>
+    <value>Хранилище реликвий</value>
   </data>
   <data name="SettingsAllowEditCE" xml:space="preserve">
-    <value>Разрешить функции редактирования символов</value>
+    <value>Разрешить редактирование персонажа</value>
   </data>
   <data name="Difficulty0" xml:space="preserve">
-    <value>Нормальный</value>
+    <value>Норма</value>
   </data>
   <data name="Difficulty1" xml:space="preserve">
-    <value>эпический</value>
+    <value>Эпос</value>
   </data>
   <data name="Difficulty2" xml:space="preserve">
-    <value>легендарный</value>
+    <value>Легенда</value>
   </data>
   <data name="CEAttributePoints" xml:space="preserve">
-    <value>Атрибутивные очки</value>
+    <value>Очки атрибутов</value>
   </data>
   <data name="CEAttributes" xml:space="preserve">
     <value>Базовые атрибуты</value>
@@ -1014,238 +1012,238 @@ Would you like to disable loading all files?</value>
     <value>Ловкость</value>
   </data>
   <data name="CEDifficulty" xml:space="preserve">
-    <value>трудность</value>
+    <value>Сложность</value>
   </data>
   <data name="CEEnableLeveling" xml:space="preserve">
-    <value>Включить выравнивание</value>
+    <value>Включить изменение уровня</value>
   </data>
   <data name="CEHealth" xml:space="preserve">
     <value>Здоровье</value>
   </data>
   <data name="CEIntelligence" xml:space="preserve">
-    <value>интеллект</value>
+    <value>Интеллект</value>
   </data>
   <data name="CELevel" xml:space="preserve">
-    <value>уровень</value>
+    <value>Уровень</value>
   </data>
   <data name="CELeveling" xml:space="preserve">
-    <value>нивелирование</value>
+    <value>Изменение уровня</value>
   </data>
   <data name="CEMana" xml:space="preserve">
-    <value>Mana</value>
+    <value>Энергия</value>
   </data>
   <data name="CESkillPoints" xml:space="preserve">
-    <value>Очки навыка</value>
+    <value>Очки навыков</value>
   </data>
   <data name="CEStrength" xml:space="preserve">
-    <value>Прочность</value>
+    <value>Сила</value>
   </data>
   <data name="CEXp" xml:space="preserve">
-    <value>XP</value>
+    <value>Опыт</value>
   </data>
   <data name="CharacterEditBtn" xml:space="preserve">
-    <value>монтировать</value>
+    <value>Изменить</value>
   </data>
   <data name="tagCClass01" xml:space="preserve">
-    <value>маг</value>
+    <value>Маг</value>
   </data>
   <data name="tagCClass02" xml:space="preserve">
-    <value>странник</value>
+    <value>Странник</value>
   </data>
   <data name="tagCClass03" xml:space="preserve">
-    <value>мошенник</value>
+    <value>Тень</value>
   </data>
   <data name="tagCClass04" xml:space="preserve">
-    <value>охотник</value>
+    <value>Охотник</value>
   </data>
   <data name="tagCClass05" xml:space="preserve">
-    <value>Буревестник</value>
+    <value>Хозяин бурь</value>
   </data>
   <data name="tagCClass06" xml:space="preserve">
-    <value>Пиротехник</value>
+    <value>Пиромант</value>
   </data>
   <data name="tagCClass07" xml:space="preserve">
     <value>Защитник</value>
   </data>
   <data name="tagCClass08" xml:space="preserve">
-    <value>воин</value>
+    <value>Воин</value>
   </data>
   <data name="tagCClass09" xml:space="preserve">
-    <value>Spellbreaker</value>
+    <value>Охотник на ведьм</value>
   </data>
   <data name="tagCClass10" xml:space="preserve">
-    <value>чемпион</value>
+    <value>Поборник</value>
   </data>
   <data name="tagCClass11" xml:space="preserve">
-    <value>убийца</value>
+    <value>Ассасин</value>
   </data>
   <data name="tagCClass12" xml:space="preserve">
-    <value>убийца</value>
+    <value>Убийца</value>
   </data>
   <data name="tagCClass13" xml:space="preserve">
-    <value>тан</value>
+    <value>Тан</value>
   </data>
   <data name="tagCClass14" xml:space="preserve">
-    <value>Battlemage</value>
+    <value>Боевой маг</value>
   </data>
   <data name="tagCClass15" xml:space="preserve">
-    <value>завоеватель</value>
+    <value>Завоеватель</value>
   </data>
   <data name="tagCClass16" xml:space="preserve">
-    <value>оратор</value>
+    <value>Властитель душ</value>
   </data>
   <data name="tagCClass17" xml:space="preserve">
-    <value>блюститель</value>
+    <value>Страж</value>
   </data>
   <data name="tagCClass18" xml:space="preserve">
-    <value>корсар</value>
+    <value>Корсар</value>
   </data>
   <data name="tagCClass19" xml:space="preserve">
-    <value>смотритель</value>
+    <value>Служитель</value>
   </data>
   <data name="tagCClass20" xml:space="preserve">
-    <value>паладин</value>
+    <value>Паладин</value>
   </data>
   <data name="tagCClass21" xml:space="preserve">
     <value>Джаггернаут</value>
   </data>
   <data name="tagCClass22" xml:space="preserve">
-    <value>фокусник</value>
+    <value>Заклинатель</value>
   </data>
   <data name="tagCClass23" xml:space="preserve">
-    <value>Summoner</value>
+    <value>Колдун</value>
   </data>
   <data name="tagCClass24" xml:space="preserve">
-    <value>фокусник</value>
+    <value>Волшебник</value>
   </data>
   <data name="tagCClass25" xml:space="preserve">
     <value>Мститель</value>
   </data>
   <data name="tagCClass26" xml:space="preserve">
-    <value>Elementalist</value>
+    <value>Хозяин стихий</value>
   </data>
   <data name="tagCClass27" xml:space="preserve">
-    <value>оракул</value>
+    <value>Оракул</value>
   </data>
   <data name="tagCClass28" xml:space="preserve">
-    <value>друид</value>
+    <value>Друид</value>
   </data>
   <data name="tagCClass29" xml:space="preserve">
-    <value>Колдун</value>
+    <value>Ведун</value>
   </data>
   <data name="tagCClass30" xml:space="preserve">
-    <value>шалфей</value>
+    <value>Мудрец</value>
   </data>
   <data name="tagCClass31" xml:space="preserve">
-    <value>Заклинатель костей</value>
+    <value>Шаман</value>
   </data>
   <data name="tagCClass32" xml:space="preserve">
-    <value>рейнджер</value>
+    <value>Рейнджер</value>
   </data>
   <data name="tagCClass33" xml:space="preserve">
-    <value>разбойник</value>
+    <value>Разбойник</value>
   </data>
   <data name="tagCClass34" xml:space="preserve">
-    <value>Чернокнижник</value>
+    <value>Варлок</value>
   </data>
   <data name="tagCClass35" xml:space="preserve">
-    <value>иллюзионист</value>
+    <value>Иллюзионист</value>
   </data>
   <data name="tagCClass36" xml:space="preserve">
-    <value>предсказатель</value>
+    <value>Прорицатель</value>
   </data>
   <data name="xtagCharacterClass01" xml:space="preserve">
-    <value>провидец</value>
+    <value>Провидец</value>
   </data>
   <data name="xtagCharacterClass02" xml:space="preserve">
-    <value>предвестник</value>
+    <value>Предвестник</value>
   </data>
   <data name="xtagCharacterClass03" xml:space="preserve">
-    <value>тамплиер</value>
+    <value>Храмовник</value>
   </data>
   <data name="xtagCharacterClass04" xml:space="preserve">
-    <value>пробудителя</value>
+    <value>Пробудитель</value>
   </data>
   <data name="xtagCharacterClass05" xml:space="preserve">
-    <value>пророк</value>
+    <value>Пророк</value>
   </data>
   <data name="xtagCharacterClass06" xml:space="preserve">
-    <value>гаруспика</value>
+    <value>Гаруспик</value>
   </data>
   <data name="xtagCharacterClass07" xml:space="preserve">
-    <value>Dreamkiller</value>
+    <value>Призрак</value>
   </data>
   <data name="xtagCharacterClass08" xml:space="preserve">
-    <value>приверженец обрядности</value>
+    <value>Обрядник</value>
   </data>
   <data name="xtagCharacterClass09" xml:space="preserve">
-    <value>предсказатель</value>
+    <value>Ворожей</value>
   </data>
   <data name="x2tag_class_rm_rm" xml:space="preserve">
-    <value>mрун</value>
+    <value>Мастер рун</value>
   </data>
   <data name="x2tag_class_warfare_rm" xml:space="preserve">
-    <value>берсерк</value>
+    <value>Берсерк</value>
   </data>
   <data name="x2tag_class_defense_rm" xml:space="preserve">
-    <value>Runesmith</value>
+    <value>Рунный кузнец</value>
   </data>
   <data name="x2tag_class_earth_rm" xml:space="preserve">
-    <value>Stonespeaker</value>
+    <value>Говорящий с камнями</value>
   </data>
   <data name="x2tag_class_storm_rm" xml:space="preserve">
-    <value>Thгромовержец</value>
+    <value>Громовержец</value>
   </data>
   <data name="x2tag_class_hunting_rm" xml:space="preserve">
     <value>Охотник на драконов</value>
   </data>
   <data name="x2tag_class_stealth_rm" xml:space="preserve">
-    <value>обманщик</value>
+    <value>Пройдоха</value>
   </data>
   <data name="x2tag_class_nature_rm" xml:space="preserve">
-    <value>Skinchanger</value>
+    <value>Оборотень</value>
   </data>
   <data name="x2tag_class_spirit_rm" xml:space="preserve">
-    <value>шаман</value>
+    <value>Шаман</value>
   </data>
   <data name="x2tag_class_dream_rm" xml:space="preserve">
-    <value>Seidr Worker</value>
+    <value>Сейд-маг</value>
   </data>
   <data name="CurrentLevel" xml:space="preserve">
-    <value>уровень</value>
+    <value>Уровень</value>
   </data>
   <data name="Class" xml:space="preserve">
-    <value>Учебный класс</value>
+    <value>Класс</value>
   </data>
   <data name="CurrentXP" xml:space="preserve">
-    <value>XP</value>
+    <value>Опыт</value>
   </data>
   <data name="DifficultyUnlocked" xml:space="preserve">
-    <value>трудность</value>
+    <value>Сложность</value>
   </data>
   <data name="Money" xml:space="preserve">
     <value>Деньги</value>
   </data>
   <data name="SkillPoints" xml:space="preserve">
-    <value>Очки навыка</value>
+    <value>Очки навыков</value>
   </data>
   <data name="AttributesPoints" xml:space="preserve">
-    <value>Атрибуты</value>
+    <value>Очки атрибутов</value>
   </data>
   <data name="BaseStrength" xml:space="preserve">
-    <value>База ул</value>
+    <value>Базовая сила</value>
   </data>
   <data name="BaseDexterity" xml:space="preserve">
-    <value>Base Dex</value>
+    <value>Базовая ловкость</value>
   </data>
   <data name="BaseIntelligence" xml:space="preserve">
-    <value>Base Int</value>
+    <value>Базовый интеллект</value>
   </data>
   <data name="BaseHealth" xml:space="preserve">
     <value>Базовое здоровье</value>
   </data>
   <data name="BaseMana" xml:space="preserve">
-    <value>Базовая мана</value>
+    <value>Базовая энергия</value>
   </data>
   <data name="PlayTimeInSeconds" xml:space="preserve">
     <value>Время в игре</value>
@@ -1254,36 +1252,36 @@ Would you like to disable loading all files?</value>
     <value>Смертей</value>
   </data>
   <data name="NumberOfKills" xml:space="preserve">
-    <value>Убийства</value>
+    <value>Убийств</value>
   </data>
   <data name="ExperienceFromKills" xml:space="preserve">
-    <value>XP от убийств</value>
+    <value>Опыт от убийств</value>
   </data>
   <data name="HealthPotionsUsed" xml:space="preserve">
-    <value>Зелья здоровья</value>
+    <value>Выпито снадобий здоровья</value>
   </data>
   <data name="ManaPotionsUsed" xml:space="preserve">
-    <value>Кастрюли маны</value>
+    <value>Выпито снадобий энергии</value>
   </data>
   <data name="MaxLevel" xml:space="preserve">
     <value>Максимальный уровень</value>
   </data>
   <data name="NumHitsReceived" xml:space="preserve">
-    <value>Хиты Recv</value>
+    <value>Получено ударов</value>
   </data>
   <data name="NumHitsInflicted" xml:space="preserve">
-    <value>Хиты нанесены</value>
+    <value>Нанесено ударов</value>
   </data>
   <data name="GreatestDamageInflicted" xml:space="preserve">
-    <value>Величайший урон</value>
+    <value>Сильнейший нанесенный урон</value>
   </data>
   <data name="GreatestMonster" xml:space="preserve">
-    <value>Величайшая Моб</value>
+    <value>Сильнейшее убитое существо</value>
   </data>
   <data name="CriticalHitsInflicted" xml:space="preserve">
-    <value>Критические Хиты</value>
+    <value>Нанесено критических ударов</value>
   </data>
   <data name="CriticalHitsReceived" xml:space="preserve">
-    <value>Критики приняты</value>
+    <value>Получено критических ударов</value>
   </data>
 </root>
