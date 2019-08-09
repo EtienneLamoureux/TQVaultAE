@@ -1459,6 +1459,7 @@ namespace TQVaultAE.Data
 				res.BaseItemId = itm.BaseItemId;
 			else
 			{
+				res.BaseItemId = itm.BaseItemId;
 				// style quality description
 				if (!string.IsNullOrEmpty(itm.baseItemInfo.StyleTag))
 				{
