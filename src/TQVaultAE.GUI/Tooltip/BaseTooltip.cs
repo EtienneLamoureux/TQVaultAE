@@ -73,8 +73,10 @@ namespace TQVaultAE.GUI.Tooltip
 
 							BorderStyle = BorderStyle.None,
 							Margin = new Padding(0),
-							BackColor = BGColor.Value,
 						};
+
+						if (BGColor.HasValue) row.BackColor = BGColor.Value;
+
 						row.SuspendLayout();
 						foreach (var coloredSegment in multiColors)
 						{
