@@ -12,7 +12,6 @@ namespace TQVaultAE.GUI.Components
 	using Tooltip;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
-	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Delegate for displaying a tooltip with the bag's contents.
@@ -41,7 +40,7 @@ namespace TQVaultAE.GUI.Components
 		/// Tooltip delegate used to display summary of bag contents.
 		/// </summary>
 		private GetToolTip getToolTip;
-		
+
 		/// <summary>
 		/// Initializes a new instance of the BagButtonBase class.
 		/// </summary>
@@ -150,6 +149,11 @@ namespace TQVaultAE.GUI.Components
 		{
 			if (this.getToolTip != null)
 			{
+				// Disable Tooltip bag
+				var panel = this.getToolTip.Target as VaultPanel;
+				if (panel?.DisabledTooltipBagId.Contains(this.ButtonNumber) ?? false)
+					return;
+
 				this.getToolTip(this);
 				BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
 			}
@@ -273,15 +277,11 @@ namespace TQVaultAE.GUI.Components
 		{
 			// Make sure we have something to test.
 			if (string.IsNullOrEmpty(teststring))
-			{
 				return string.Empty;
-			}
 
 			// Make sure the string has a space before attempting to split it.
 			if (!this.ButtonText.Contains(" "))
-			{
 				return teststring;
-			}
 
 			string[] text = this.ButtonText.Split(' ');
 
@@ -290,13 +290,9 @@ namespace TQVaultAE.GUI.Components
 			if (text.Length == 2)
 			{
 				if (text[0].Length > text[1].Length)
-				{
 					teststring = text[0];
-				}
 				else
-				{
 					teststring = text[1];
-				}
 			}
 			else
 			{
@@ -316,9 +312,7 @@ namespace TQVaultAE.GUI.Components
 
 					// Make sure we have the longer of the two strings.
 					if (left > this.ButtonText.Length - left)
-					{
 						testLeft = this.ButtonText.Substring(0, left);
-					}
 				}
 
 				// Use the whole string just in case we don't find a space.
@@ -332,9 +326,7 @@ namespace TQVaultAE.GUI.Components
 
 					// Make sure we have the longer of the two strings.
 					if (right > this.ButtonText.Length - right)
-					{
 						testRight = this.ButtonText.Substring(0, right);
-					}
 				}
 
 				teststring = testLeft;
@@ -342,9 +334,7 @@ namespace TQVaultAE.GUI.Components
 				// Make sure we take the one closest to the middle.
 				// Both values should not be set to whole string.
 				if (testRight.Length < testLeft.Length)
-				{
 					teststring = testRight;
-				}
 			}
 
 			return teststring;

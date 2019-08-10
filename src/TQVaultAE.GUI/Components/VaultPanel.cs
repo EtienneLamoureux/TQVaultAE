@@ -17,6 +17,8 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Presentation;
 	using TQVaultAE.GUI.Tooltip;
 	using TQVaultAE.Domain.Contracts.Services;
+	using System.Collections.Generic;
+	using System.Linq;
 
 	/// <summary>
 	/// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.
@@ -46,6 +48,11 @@ namespace TQVaultAE.GUI.Components
 		/// Holds the currently selected bag.
 		/// </summary>
 		private int currentBag;
+
+		/// <summary>
+		/// Holds the currently disabled tooltip bagId.
+		/// </summary>
+		internal readonly List<int> DisabledTooltipBagId = new List<int>();
 
 		/// <summary>
 		/// Context menu instance
@@ -434,20 +441,55 @@ namespace TQVaultAE.GUI.Components
 					if (!this.BagSackPanel.Sack.IsEmpty)
 					{
 						if (Config.Settings.Default.AllowItemCopy)
-						{
 							// Add the copy submenu
 							this.AddSubMenu(Resources.PlayerPanelMenuCopy, this.CopyBagClicked);
-						}
 
 						// Add the merge submenu
 						this.AddSubMenu(Resources.PlayerPanelMenuMerge, this.MergeBagClicked);
 
 						this.contextMenu.Items.Add("-");
 						this.contextMenu.Items.Add(Resources.PlayerPanelMenuEmpty);
+
+						// Add the Disable Tooltip submenu
+						this.contextMenu.Items.Add("-");
+						if (this.DisabledTooltipBagId.Contains(bagID))
+							this.AddMenuItem(Resources.PlayerPanelMenuEnableTooltip, this.DisableTooltipClicked);
+						else
+							this.AddMenuItem(Resources.PlayerPanelMenuDisableTooltip, this.DisableTooltipClicked);
+
+						if (this.DisabledTooltipBagId.Count < this.BagButtons.Count)
+							this.AddMenuItem(Resources.PlayerPanelMenuDisableAllTooltip, this.DisableTooltipClicked);
+
+						if (this.DisabledTooltipBagId.Any())
+							this.AddMenuItem(Resources.PlayerPanelMenuEnableAllTooltip, this.DisableTooltipClicked);
 					}
 
 					this.contextMenu.Show(this.BagButtons[this.CurrentBag], new Point(e.X, e.Y));
 				}
+			}
+		}
+
+		private void DisableTooltipClicked(object sender, EventArgs e)
+		{
+			ToolStripMenuItem item = (ToolStripMenuItem)sender;
+
+			if (item != null)
+			{
+				if (item.Text == Resources.PlayerPanelMenuEnableAllTooltip)
+					this.DisabledTooltipBagId.Clear();
+
+				if (item.Text == Resources.PlayerPanelMenuDisableAllTooltip)
+				{
+					var all = this.BagButtons.Select(b => b.ButtonNumber).ToArray();
+					this.DisabledTooltipBagId.Clear();
+					this.DisabledTooltipBagId.AddRange(all);
+				}
+
+				if (item.Text == Resources.PlayerPanelMenuEnableTooltip)
+					this.DisabledTooltipBagId.Remove(this.CurrentBag);
+
+				if (item.Text == Resources.PlayerPanelMenuDisableTooltip)
+					this.DisabledTooltipBagId.Add(this.CurrentBag);
 			}
 		}
 
@@ -628,8 +670,17 @@ namespace TQVaultAE.GUI.Components
 			subMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
 
 			this.contextMenu.Items.Add(subMenu);
+		}
 
-			return;
+		private void AddMenuItem(string menuText, EventHandler menuCallback)
+		{
+			ToolStripMenuItem subMenu = new ToolStripMenuItem(menuText, null, menuCallback);
+			subMenu.BackColor = this.contextMenu.BackColor;
+			subMenu.Font = this.contextMenu.Font;
+			subMenu.ForeColor = this.contextMenu.ForeColor;
+			subMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
+
+			this.contextMenu.Items.Add(subMenu);
 		}
 
 		/// <summary>
