@@ -479,30 +479,14 @@ namespace TQVaultAE.GUI
 
 			Rectangle workingArea = Screen.FromControl(this).WorkingArea;
 
-			int formWidth = 1350;
-			int formHeight = 910;
-			float initialScale = 1.0F;
-			Config.Settings.Default.Scale = initialScale;
-
-			// Ninakoru: trick to force close/min/max buttons to reposition...
 			this.ScaleOnResize = false;
-			if (workingArea.Width < formWidth || workingArea.Height < formHeight)
-			{
-				initialScale = Math.Min(Convert.ToSingle(workingArea.Width) / Convert.ToSingle(formWidth), Convert.ToSingle(workingArea.Height) / Convert.ToSingle(formHeight));
 
-				if (Config.Settings.Default.Scale > initialScale)
-					Config.Settings.Default.Scale = initialScale;
-
-				this.ClientSize = new System.Drawing.Size((int)System.Math.Round(formWidth * Config.Settings.Default.Scale), (int)System.Math.Round(formHeight * Config.Settings.Default.Scale));
-			}
-			else
-				this.ClientSize = new System.Drawing.Size(formWidth, formHeight);
+			// Rescale from last saved value
+			this.ClientSize = new System.Drawing.Size((int)System.Math.Round(NORMAL_FORMWIDTH * Config.Settings.Default.Scale), (int)System.Math.Round(NORMAL_FORMHEIGHT * Config.Settings.Default.Scale));
 
 			this.ScaleOnResize = true;
 
 			UIService.Scale = Config.Settings.Default.Scale;
-
-			Config.Settings.Default.Save();
 
 			// Save the height / width ratio for resizing.
 			this.FormDesignRatio = (float)this.Height / (float)this.Width;
@@ -527,11 +511,11 @@ namespace TQVaultAE.GUI
 			// Set the maximized size but keep the aspect ratio.
 			if (Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio) < workingArea.Height)
 			{
-				this.MaximizedBounds = new Rectangle(
-					0,
-					(workingArea.Height - Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio)) / 2,
-					workingArea.Width,
-					Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio));
+				this.MaximizedBounds = new Rectangle(0
+					, (workingArea.Height - Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio)) / 2
+					, workingArea.Width
+					, Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio)
+				);
 			}
 			else
 			{

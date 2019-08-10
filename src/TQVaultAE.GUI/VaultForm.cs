@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
+	using log4net;
 	using Microsoft.Extensions.DependencyInjection;
 	using System;
 	using System.ComponentModel;
@@ -16,6 +17,7 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.GUI.Components;
 	using TQVaultAE.GUI.Models;
+	using TQVaultAE.Logs;
 	using TQVaultAE.Presentation;
 
 	/// <summary>
@@ -107,6 +109,7 @@ namespace TQVaultAE.GUI
 		/// Font used to draw the title.
 		/// </summary>
 		private Font titleFont;
+		private readonly ILog Log;
 
 		/// <summary>
 		/// WindowMenu used to display the system menu.
@@ -145,8 +148,9 @@ namespace TQVaultAE.GUI
 				this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
 				this.PlayerCollectionProvider = this.ServiceProvider.GetService<IPlayerCollectionProvider>();
 				this.GamePathResolver = this.ServiceProvider.GetService<IGamePathService>();
-
 				this.titleFont = FontService.GetFontAlbertusMTLight(9.5F);
+				this.Log = this.ServiceProvider.GetService<ILogger<VaultForm>>().Logger;
+
 				InitForm();
 			}
 		}
@@ -442,6 +446,9 @@ namespace TQVaultAE.GUI
 				this.CreateBorderRects();
 		}
 
+		internal const int NORMAL_FORMWIDTH = 1350;
+		internal const int NORMAL_FORMHEIGHT = 910;
+
 		/// <summary>
 		/// Scales the form according to the scale factor.
 		/// </summary>
@@ -458,13 +465,12 @@ namespace TQVaultAE.GUI
 
 				UIService.Scale = newDBScale;
 				this.Scale(new SizeF(scaleFactor, scaleFactor));
+
+				Config.Settings.Default.Scale = UIService.Scale;
+				Config.Settings.Default.Save();
 			}
 			else if (scaleFactor == 1.0F)
 			{
-				// Check if we are resetting the size.
-				if (UIService.Scale == 1.0F)
-					return;
-
 				// Reset the border graphics to the originals.
 				this.topBorder = Resources.BorderTop;
 				this.bottomBorder = Resources.BorderBottom;
@@ -472,21 +478,22 @@ namespace TQVaultAE.GUI
 				this.bottomRightCorner = Resources.BorderBottomRightCorner;
 				this.bottomLeftCorner = Resources.BorderBottomLeftCorner;
 
-				UIService.Scale = this.OriginalFormScale;
+				UIService.Scale = 1.0F;
 
 				// Use the width since it is usually more drastic of a change.
 				// especially when coming from a small size.
-				this.Scale(new SizeF(
-					(float)this.OriginalFormSize.Width / (float)this.Width,
-					(float)this.OriginalFormSize.Width / (float)this.Width));
+				var size = new SizeF(
+					(float)NORMAL_FORMWIDTH / (float)this.Width,
+					(float)NORMAL_FORMWIDTH / (float)this.Width);
+				this.Scale(size);
 
 				Config.Settings.Default.Scale = 1.0F;
 				Config.Settings.Default.Save();
 			}
 			else
 			{
-				float scalingWidth = (float)this.OriginalFormSize.Width / (float)this.Width * scaleFactor;
-				float scalingHeight = (float)this.OriginalFormSize.Height / (float)this.Height * scaleFactor;
+				float scalingWidth = (float)NORMAL_FORMWIDTH / (float)this.Width * scaleFactor;
+				float scalingHeight = (float)NORMAL_FORMHEIGHT / (float)this.Height * scaleFactor;
 				float scaling = scalingWidth;
 
 				// Use the scaling factor closest to one.
@@ -495,7 +502,11 @@ namespace TQVaultAE.GUI
 
 				UIService.Scale = scaleFactor;
 				this.Scale(new SizeF(scaling, scaling));
+
+				Config.Settings.Default.Scale = UIService.Scale;
+				Config.Settings.Default.Save();
 			}
+			this.Log.DebugFormat("Config.Settings.Default.Scale changed to {0} !", Config.Settings.Default.Scale);
 		}
 
 		/// <summary>
