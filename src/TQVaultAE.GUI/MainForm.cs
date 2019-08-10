@@ -481,12 +481,12 @@ namespace TQVaultAE.GUI
 
 			this.ScaleOnResize = false;
 
-			// Rescale from last saved value
-			this.ClientSize = new System.Drawing.Size((int)System.Math.Round(NORMAL_FORMWIDTH * Config.Settings.Default.Scale), (int)System.Math.Round(NORMAL_FORMHEIGHT * Config.Settings.Default.Scale));
+			this.ClientSize = InitialScaling(workingArea);
 
 			this.ScaleOnResize = true;
 
 			UIService.Scale = Config.Settings.Default.Scale;
+			this.Log.DebugFormat("Config.Settings.Default.Scale changed to {0} !", UIService.Scale);
 
 			// Save the height / width ratio for resizing.
 			this.FormDesignRatio = (float)this.Height / (float)this.Width;
@@ -527,6 +527,7 @@ namespace TQVaultAE.GUI
 			}
 			this.Location = new Point(workingArea.Left + Convert.ToInt16((workingArea.Width - this.ClientSize.Width) / 2), workingArea.Top + Convert.ToInt16((workingArea.Height - this.ClientSize.Height) / 2));
 		}
+
 
 		#endregion
 

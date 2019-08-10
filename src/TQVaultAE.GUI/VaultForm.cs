@@ -13,6 +13,7 @@ namespace TQVaultAE.GUI
 	using System.Globalization;
 	using System.Security.Permissions;
 	using System.Windows.Forms;
+	using System.Windows.Input;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.GUI.Components;
@@ -537,6 +538,32 @@ namespace TQVaultAE.GUI
 			this.LastFormSize = this.Size;
 		}
 
+		protected Size InitialScaling(Rectangle workingArea)
+		{
+			// If screen is smaller than NORMAL_FORM sizes, adjust scaling (mostly at first run)
+			if (workingArea.Width < NORMAL_FORMWIDTH || workingArea.Height < NORMAL_FORMHEIGHT)
+			{
+				var initialScale = Math.Min(
+					Convert.ToSingle(workingArea.Width) / Convert.ToSingle(NORMAL_FORMWIDTH)
+					, Convert.ToSingle(workingArea.Height) / Convert.ToSingle(NORMAL_FORMHEIGHT)
+				);
+
+				if (Config.Settings.Default.Scale > initialScale)
+				{
+					Config.Settings.Default.Scale = initialScale;
+					Config.Settings.Default.Save();
+				}
+			}
+
+			// Rescale from last saved value
+			var thisClientSize = new Size(
+				(int)Math.Round(NORMAL_FORMWIDTH * Config.Settings.Default.Scale)
+				, (int)Math.Round(NORMAL_FORMHEIGHT * Config.Settings.Default.Scale)
+			);
+
+			return thisClientSize;
+		}
+
 		/// <summary>
 		/// Handler for the ResizeBegin event.  Used for handling the maximize and minimize functions.
 		/// </summary>
@@ -546,14 +573,18 @@ namespace TQVaultAE.GUI
 		{
 			if (this.WindowState != this.lastState)
 			{
-				this.lastState = this.WindowState;
-
 				// If we are coming out of a minimized or maximized state, we need to restore
 				// the form the size prior to minimizing or maximizing.
+				bool fromMinimizedMaximized = false;
 				if (this.lastState == FormWindowState.Minimized || this.lastState == FormWindowState.Maximized)
+				{
 					this.LastFormSize = this.RestoreBounds.Size;
+					fromMinimizedMaximized = true;
+				}
 
-				this.ResizeEndCallback(this, new EventArgs());
+				this.lastState = this.WindowState;
+
+				this.DoResizeEndCallback(this, e, fromMinimizedMaximized);
 			}
 			else if (this.Size != this.LastFormSize && this.FormDesignRatio != 0.0F && this.ConstrainToDesignRatio)
 			{
@@ -582,7 +613,8 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
-		protected virtual void ResizeEndCallback(object sender, EventArgs e)
+		protected virtual void ResizeEndCallback(object sender, EventArgs e) => DoResizeEndCallback(sender, e);
+		protected virtual void DoResizeEndCallback(object sender, EventArgs e, bool fromMinimizedMaximized = false)
 		{
 			// Dragging the form will trigger this event.
 			// If the size did not change or if sizing is disabled we just skip it.
@@ -591,11 +623,22 @@ namespace TQVaultAE.GUI
 
 			if (this.ScaleOnResize)
 			{
+				Size resizeTo = this.LastFormSize;
 				// Scale the internal controls to the new size.
-				float scalingFactor = (float)this.Size.Height / (float)this.LastFormSize.Height;
+				float scalingFactor = (float)this.Size.Height / (float)resizeTo.Height;
+
+				// Reset scaling to 1.0 if resize from minimize/maximize to normal with shift keydown
+				if (fromMinimizedMaximized)
+				{
+					if (Keyboard.IsKeyDown(Key.LeftShift))
+					{
+						resizeTo = new Size(NORMAL_FORMWIDTH, NORMAL_FORMHEIGHT);
+						scalingFactor = 1.0F;
+					}
+				}
 
 				// Set it back to the original size since the Scale() call in ScaleForm() will also resize the form.
-				this.Size = this.LastFormSize;
+				this.Size = resizeTo;
 				this.ScaleForm(scalingFactor, true);
 			}
 
