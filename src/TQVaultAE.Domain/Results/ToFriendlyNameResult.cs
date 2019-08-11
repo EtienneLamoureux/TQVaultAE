@@ -28,7 +28,7 @@ namespace TQVaultAE.Domain.Results
 					, SuffixInfoDescription
 					, Item.DoesStack ? NumberFormat : null
 					, Item.IsRelic ? "- " + RelicBonusFormat : null
-					, Item.IsQuestItem ? Item.ItemQuest : null
+					, Item.IsQuestItem ? this.ItemQuest : null
 					, Item.GameExtensionSuffix
 				}.RemoveEmptyAndSanitize()
 			.JoinWithoutStartingSpaces(" ");
@@ -47,6 +47,7 @@ namespace TQVaultAE.Domain.Results
 		public string BaseItemInfoQuality;
 		public string BaseItemInfoDescription;
 		public string ItemSeed;
+		public string ItemQuest;
 		public string NumberFormat;
 		public string ItemWith;
 		public string[] FlavorText = new string[] { };

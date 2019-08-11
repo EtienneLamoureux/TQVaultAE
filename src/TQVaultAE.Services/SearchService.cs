@@ -18,9 +18,9 @@ namespace TQVaultAE.Services
 		private readonly log4net.ILog Log = null;
 		private readonly SessionContext UserContext = null;
 		private readonly IItemProvider ItemProvider;
-		private readonly IItemStyleService ItemStyleService;
+		private readonly ITranslationService ItemStyleService;
 
-		public SearchService(ILogger<SearchService> log, SessionContext userContext, IItemProvider itemProvider, IItemStyleService itemStyleService)
+		public SearchService(ILogger<SearchService> log, SessionContext userContext, IItemProvider itemProvider, ITranslationService itemStyleService)
 		{
 			this.Log = log.Logger;
 			this.UserContext = userContext;

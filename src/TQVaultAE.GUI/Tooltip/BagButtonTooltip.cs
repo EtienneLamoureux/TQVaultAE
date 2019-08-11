@@ -30,7 +30,7 @@ namespace TQVaultAE.GUI.Tooltip
 		public BagButtonTooltip() => InitializeComponent();
 #endif
 
-		private BagButtonTooltip(MainForm instance, IItemProvider itemProvider, IFontService fontService, IUIService uiService) : base(itemProvider, fontService, uiService)
+		private BagButtonTooltip(MainForm instance, IItemProvider itemProvider, IFontService fontService, IUIService uiService, ITranslationService translationService) : base(itemProvider, fontService, uiService, translationService)
 		{
 			InitializeComponent();
 
@@ -88,6 +88,7 @@ namespace TQVaultAE.GUI.Tooltip
 					, serviceProvider.GetService<IItemProvider>()
 					, serviceProvider.GetService<IFontService>()
 					, serviceProvider.GetService<IUIService>()
+					, serviceProvider.GetService<ITranslationService>()
 				)
 				{
 					ButtonSack = button

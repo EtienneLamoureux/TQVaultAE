@@ -34,7 +34,7 @@ namespace TQVaultAE.GUI.Tooltip
 		public ItemTooltip() => InitializeComponent();
 #endif
 
-		private ItemTooltip(MainForm instance, IItemProvider itemProvider, IFontService fontService, IUIService uiService) : base(itemProvider, fontService, uiService)
+		private ItemTooltip(MainForm instance, IItemProvider itemProvider, IFontService fontService, IUIService uiService, ITranslationService translationService) : base(itemProvider, fontService, uiService, translationService)
 		{
 			InitializeComponent();
 
@@ -85,6 +85,7 @@ namespace TQVaultAE.GUI.Tooltip
 					, serviceProvider.GetService<IItemProvider>()
 					, serviceProvider.GetService<IFontService>()
 					, serviceProvider.GetService<IUIService>()
+					, serviceProvider.GetService<ITranslationService>()
 				)
 				{
 					FocusedItem = focusedItem,
@@ -107,6 +108,7 @@ namespace TQVaultAE.GUI.Tooltip
 					, serviceProvider.GetService<IItemProvider>()
 					, serviceProvider.GetService<IFontService>()
 					, serviceProvider.GetService<IUIService>()
+					, serviceProvider.GetService<ITranslationService>()
 				)
 				{
 					FocusedItem = focusedItem,
@@ -270,13 +272,13 @@ namespace TQVaultAE.GUI.Tooltip
 
 			// Add the Atlantis clause
 			if (Data.Item.IsAtlantis)
-				AddRow(Item.ItemAtlantis, TQColor.Green.Color());
+				AddRow(this.TranslationService.ItemAtlantis, TQColor.Green.Color());
 			// Add the Ragnarok clause
 			else if (Data.Item.IsRagnarok)
-				AddRow(Item.ItemRagnarok, TQColor.Green.Color());
+				AddRow(this.TranslationService.ItemRagnarok, TQColor.Green.Color());
 			// Add the Immortal Throne clause
 			else if (Data.Item.IsImmortalThrone)
-				AddRow(Item.ItemIT, TQColor.Green.Color());
+				AddRow(this.TranslationService.ItemIT, TQColor.Green.Color());
 
 			// ItemSet
 			if (Data.ItemSet.Any())

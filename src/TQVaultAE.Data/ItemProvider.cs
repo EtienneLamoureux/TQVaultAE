@@ -32,15 +32,17 @@ namespace TQVaultAE.Data
 		private readonly ILootTableCollectionProvider LootTableCollectionProvider;
 		private readonly IItemAttributeProvider ItemAttributeProvider;
 		private readonly ITQDataService TQData;
+		private readonly ITranslationService TranslationService;
 		private readonly Dictionary<(Item Item, FriendlyNamesExtraScopes? Scope, bool FilterExtra), ToFriendlyNameResult> FriendlyNamesCache = new Dictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult>();
 
-		public ItemProvider(ILogger<ItemProvider> log, IDatabase database, ILootTableCollectionProvider lootTableCollectionProvider, IItemAttributeProvider itemAttributeProvider, ITQDataService tQData)
+		public ItemProvider(ILogger<ItemProvider> log, IDatabase database, ILootTableCollectionProvider lootTableCollectionProvider, IItemAttributeProvider itemAttributeProvider, ITQDataService tQData, ITranslationService translationService)
 		{
 			this.Log = log.Logger;
 			this.Database = database;
 			this.LootTableCollectionProvider = lootTableCollectionProvider;
 			this.ItemAttributeProvider = itemAttributeProvider;
 			this.TQData = tQData;
+			this.TranslationService = translationService;
 		}
 
 		public bool InvalidateFriendlyNamesCache(params Item[] items)
@@ -1280,7 +1282,7 @@ namespace TQVaultAE.Data
 			{
 				if (!relicInfoOnly)
 				{
-					parameters[parameterCount++] = Item.ItemWith;
+					parameters[parameterCount++] = this.TranslationService.ItemWith;
 				}
 
 				if (relicInfoTarget != null)
@@ -1308,11 +1310,11 @@ namespace TQVaultAE.Data
 							if (!relicInfoOnly && !string.IsNullOrEmpty(relicBonusTarget))
 							{
 								string bonus = Path.GetFileNameWithoutExtension(TQData.NormalizeRecordPath(relicBonusTarget));
-								parameters[parameterCount] = string.Format(CultureInfo.CurrentCulture, Item.ItemRelicBonus, bonus);
+								parameters[parameterCount] = string.Format(CultureInfo.CurrentCulture, this.TranslationService.ItemRelicBonus, bonus);
 							}
 							else
 							{
-								parameters[parameterCount] = Item.ItemRelicCompleted;
+								parameters[parameterCount] = this.TranslationService.ItemRelicCompleted;
 							}
 						}
 						else
@@ -1331,7 +1333,7 @@ namespace TQVaultAE.Data
 
 			if (!relicInfoOnly && itm.IsQuestItem)
 			{
-				parameters[parameterCount++] = Item.ItemQuest;
+				parameters[parameterCount++] = this.TranslationService.ItemQuest;
 			}
 
 			if (!basicInfoOnly && !relicInfoOnly)
@@ -1398,7 +1400,8 @@ namespace TQVaultAE.Data
 			#region Minimal Info (ButtonBag tooltip + Common item properties)
 
 			// Item Seed
-			res.ItemSeed = string.Format(CultureInfo.CurrentCulture, Item.ItemSeed, itm.Seed, (itm.Seed != 0) ? (itm.Seed / (float)Int16.MaxValue) : 0.0f);
+			res.ItemSeed = string.Format(CultureInfo.CurrentCulture, this.TranslationService.ItemSeed, itm.Seed, (itm.Seed != 0) ? (itm.Seed / (float)Int16.MaxValue) : 0.0f);
+			res.ItemQuest = this.TranslationService.ItemQuest;
 
 			#region Prefix translation
 
@@ -1420,7 +1423,7 @@ namespace TQVaultAE.Data
 			// Load common relic translations if item is relic related by any means
 			if (itm.IsRelic || itm.HasRelicSlot1 || itm.HasRelicSlot2 || itm.RelicInfo != null || itm.Relic2Info != null)
 			{
-				res.ItemWith = Item.ItemWith;
+				res.ItemWith = this.TranslationService.ItemWith;
 
 				if (itm.RelicInfo != null)
 					res.RelicInfo1Description = Database.GetFriendlyName(itm.RelicInfo.DescriptionTag);
@@ -3607,7 +3610,7 @@ namespace TQVaultAE.Data
 										results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}    {skillDescriptionFromList}");
 
 									// Show granted skill level
-									if (Item.ShowSkillLevel)
+									if (Config.Settings.Default.ShowSkillLevel)
 									{
 										string formatSpec = Database.GetFriendlyName("MenuLevel");
 										if (string.IsNullOrEmpty(formatSpec))
@@ -3641,7 +3644,7 @@ namespace TQVaultAE.Data
 										results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}    {skillDescriptionFromList}");
 
 									// Show granted skill level
-									if (Item.ShowSkillLevel)
+									if (Config.Settings.Default.ShowSkillLevel)
 									{
 										string formatSpec = Database.GetFriendlyName("MenuLevel");
 										if (string.IsNullOrEmpty(formatSpec))

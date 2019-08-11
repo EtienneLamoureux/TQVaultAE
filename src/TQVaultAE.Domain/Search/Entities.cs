@@ -91,10 +91,10 @@ namespace TQVaultAE.Domain.Search
 
 	public class ItemQualityPredicate : IItemPredicate
 	{
-		private readonly IItemStyleService ItemStyleService;
+		private readonly ITranslationService ItemStyleService;
 		public readonly string quality;
 
-		public ItemQualityPredicate(IItemStyleService itemStyleService, string quality)
+		public ItemQualityPredicate(ITranslationService itemStyleService, string quality)
 		{
 			this.ItemStyleService = itemStyleService;
 			this.quality = quality;

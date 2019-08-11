@@ -14,7 +14,7 @@ namespace TQVaultAE.GUI.Tooltip
 		protected IItemProvider ItemProvider;
 		protected IFontService FontService;
 		protected IUIService UIService;
-
+		protected ITranslationService TranslationService;
 		internal const string TOOLTIPDELIM = @"TOOLTIPDELIM";
 		internal const string TOOLTIPSPACER = @"TOOLTIPSPACER";
 
@@ -23,11 +23,12 @@ namespace TQVaultAE.GUI.Tooltip
 		public BaseTooltip() { }
 #endif
 
-		public BaseTooltip(IItemProvider itemProvider, IFontService fontService, IUIService uiService)
+		public BaseTooltip(IItemProvider itemProvider, IFontService fontService, IUIService uiService, ITranslationService translationService)
 		{
 			this.ItemProvider = itemProvider;
 			this.FontService = fontService;
 			this.UIService = uiService;
+			this.TranslationService = translationService;
 		}
 
 		internal static Control MakeRow(IUIService uiService, IFontService fontService, string friendlyName, Color? FGColor = null, float fontSize = 10F, FontStyle style = FontStyle.Regular, Color? BGColor = null)
