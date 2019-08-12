@@ -8,7 +8,7 @@ namespace ArzExplorer
     /// <summary>
     /// Designer for the About Box.
     /// </summary>
-    public partial class AboutBox1
+    public partial class AboutBox
     {
         /// <summary>
         /// Generated TableLayoutPanel
@@ -77,7 +77,7 @@ namespace ArzExplorer
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutBox1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutBox));
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.logoPictureBox = new System.Windows.Forms.PictureBox();
             this.labelProductName = new System.Windows.Forms.Label();
