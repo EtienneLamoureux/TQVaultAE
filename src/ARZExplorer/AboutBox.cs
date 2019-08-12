@@ -12,12 +12,12 @@ namespace ArzExplorer
 	/// <summary>
 	/// Windows Form which represents the About Box.
 	/// </summary>
-	public partial class AboutBox1 : Form
+	public partial class AboutBox : Form
 	{
 		/// <summary>
 		/// Initializes a new instance of the AboutBox1 class.
 		/// </summary>
-		public AboutBox1()
+		public AboutBox()
 		{
 			this.InitializeComponent();
 

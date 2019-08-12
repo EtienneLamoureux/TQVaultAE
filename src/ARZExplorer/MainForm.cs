@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace ArzExplorer
 {
+	using log4net;
 	using Microsoft.Extensions.DependencyInjection;
 	using System;
 	using System.Collections.Generic;
@@ -16,11 +17,12 @@ namespace ArzExplorer
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
+	using TQVaultAE.Logs;
 
 	/// <summary>
 	/// Main Form for ArzExplorer
 	/// </summary>
-	public partial class Form1 : Form
+	public partial class MainForm : Form
 	{
 		/// <summary>
 		/// The static instance of the arcFile we are working on.
@@ -51,7 +53,7 @@ namespace ArzExplorer
 		/// File name for a single extracted file.
 		/// </summary>
 		private string destFile;
-
+		private readonly ILog Log;
 		private readonly IArcFileProvider arcProv;
 		private readonly IArzFileProvider arzProv;
 		private readonly IDBRecordCollectionProvider DBRecordCollectionProvider;
@@ -73,18 +75,16 @@ namespace ArzExplorer
 		private Size initialSize;
 
 		/// <summary>
-		/// Gutter size for sizing the form.
-		/// </summary>
-		private int gutter;
-
-		/// <summary>
 		/// Initializes a new instance of the Form1 class.
 		/// </summary>
-		public Form1(IArcFileProvider arcFileProvider, IArzFileProvider arzFileProvider, IDBRecordCollectionProvider dBRecordCollectionProvider, IBitmapService bitmapService)
+		public MainForm(ILogger<MainForm> log, IArcFileProvider arcFileProvider, IArzFileProvider arzFileProvider, IDBRecordCollectionProvider dBRecordCollectionProvider, IBitmapService bitmapService)
 		{
 			this.InitializeComponent();
+
 			Assembly a = Assembly.GetExecutingAssembly();
 			AssemblyName aname = a.GetName();
+
+			this.Log = log.Logger;
 			this.arcProv = arcFileProvider;
 			this.arzProv = arzFileProvider;
 			this.DBRecordCollectionProvider = dBRecordCollectionProvider;
@@ -94,41 +94,22 @@ namespace ArzExplorer
 			this.allFilesToolStripMenuItem.Enabled = false;
 			fileType = CompressedFileType.Unknown;
 			this.initialSize = this.Size;
-			this.gutter = this.initialSize.Width - this.textBox1.Width - this.treeView1.Width;
 		}
 
 		/// <summary>
 		/// Gets the instance of the current arcFile
 		/// </summary>
-		public static ArcFile ARCFile
-		{
-			get
-			{
-				return arcFile;
-			}
-		}
+		public static ArcFile ARCFile => arcFile;
 
 		/// <summary>
 		/// Gets the instance of the current arzFile
 		/// </summary>
-		public static ArzFile ARZFile
-		{
-			get
-			{
-				return arzFile;
-			}
-		}
+		public static ArzFile ARZFile => arzFile;
 
 		/// <summary>
 		/// Gets the type of file that is open.
 		/// </summary>
-		public static CompressedFileType FileType
-		{
-			get
-			{
-				return fileType;
-			}
-		}
+		public static CompressedFileType FileType => fileType;
 
 		/// <summary>
 		/// Handler for clicking Open on the menu.  Opens a file.
@@ -161,10 +142,6 @@ namespace ArzExplorer
 			if (result == DialogResult.OK)
 			{
 				this.OpenFile(openDialog.FileName);
-			}
-			else
-			{
-				return;
 			}
 		}
 
@@ -233,10 +210,10 @@ namespace ArzExplorer
 			if (fileType == CompressedFileType.Unknown)
 			{
 				this.Text = this.titleText;
-				this.treeView1.Nodes.Clear();
+				this.treeViewTOC.Nodes.Clear();
 				this.selectedFileToolStripMenuItem.Enabled = false;
 				this.allFilesToolStripMenuItem.Enabled = false;
-				this.textBox1.Lines = null;
+				this.textBoxDetails.Lines = null;
 				MessageBox.Show(string.Format("Error Reading {0}", this.sourceFile));
 				return;
 			}
@@ -246,8 +223,8 @@ namespace ArzExplorer
 
 			this.Text = string.Format("{0} - {1}", this.titleText, this.sourceFile);
 
-			this.textBox1.Lines = null;
-			this.pictureBox1.Visible = false;
+			this.textBoxDetails.Lines = null;
+			this.pictureBoxItem.Visible = false;
 
 			this.BuildTreeView();
 		}
@@ -260,8 +237,8 @@ namespace ArzExplorer
 			// Display a wait cursor while the TreeNodes are being created.
 			Cursor.Current = Cursors.WaitCursor;
 
-			this.treeView1.BeginUpdate();
-			this.treeView1.Nodes.Clear();
+			this.treeViewTOC.BeginUpdate();
+			this.treeViewTOC.Nodes.Clear();
 
 			int maxPaths = 20; // Hopefully there are no paths more than 20 deep.
 			TreeNode lastNode = null;
@@ -312,7 +289,7 @@ namespace ArzExplorer
 							if (lastNode == null || count == 0)
 							{
 								// The very top of the tree.
-								lastNode = this.treeView1.Nodes.Add(aggSubPath, subPath);
+								lastNode = this.treeViewTOC.Nodes.Add(aggSubPath, subPath);
 							}
 							else
 							{
@@ -339,7 +316,7 @@ namespace ArzExplorer
 						if (lastNode == null || count == 0)
 						{
 							// We do not assign last node since we are still at the root.
-							this.treeView1.Nodes.Add(aggSubPath, subPath);
+							this.treeViewTOC.Nodes.Add(aggSubPath, subPath);
 							lastNode = null;
 						}
 						else
@@ -359,7 +336,7 @@ namespace ArzExplorer
 			// Reset the cursor to the default for all controls.
 			Cursor.Current = Cursors.Default;
 
-			this.treeView1.EndUpdate();
+			this.treeViewTOC.EndUpdate();
 		}
 
 		/// <summary>
@@ -489,7 +466,7 @@ namespace ArzExplorer
 		/// <param name="e">EventArgs data</param>
 		private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			AboutBox1 d = new AboutBox1();
+			AboutBox d = new AboutBox();
 			d.ShowDialog();
 		}
 
@@ -502,9 +479,9 @@ namespace ArzExplorer
 		{
 			// Make sure we have selected the last child
 			// otherwise this will be a directory.
-			if (this.treeView1.SelectedNode.GetNodeCount(false) == 0)
+			if (this.treeViewTOC.SelectedNode.GetNodeCount(false) == 0)
 			{
-				this.destFile = this.treeView1.SelectedNode.FullPath;
+				this.destFile = this.treeViewTOC.SelectedNode.FullPath;
 				try
 				{
 					List<string> recordText = new List<string>();
@@ -552,65 +529,45 @@ namespace ArzExplorer
 
 							if (bitmap != null)
 							{
-								this.pictureBox1.Visible = true;
-								this.pictureBox1.Image = bitmap;
+								this.pictureBoxItem.Visible = true;
+								this.pictureBoxItem.Image = bitmap;
 							}
 						}
 						else
 						{
-							this.pictureBox1.Visible = false;
+							this.pictureBoxItem.Visible = false;
 						}
 					}
 					else
 					{
-						this.pictureBox1.Visible = false;
+						this.pictureBoxItem.Visible = false;
 						this.destFile = null;
-						this.textBox1.Lines = null;
+						this.textBoxDetails.Lines = null;
 						return;
 					}
 
 					// Now display our results.
 					if (recordText.Count != 0)
 					{
-						this.pictureBox1.Visible = false;
+						this.pictureBoxItem.Visible = false;
 						string[] output = new string[recordText.Count];
 						recordText.CopyTo(output);
-						this.textBox1.Lines = output;
+						this.textBoxDetails.Lines = output;
 					}
 					else
 					{
-						this.textBox1.Lines = null;
+						this.textBoxDetails.Lines = null;
 					}
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
-					// Eat the exception
+					this.Log.ErrorException(ex);
 				}
 			}
 			else
 			{
 				this.destFile = null;
-				this.textBox1.Lines = null;
-			}
-		}
-
-		/// <summary>
-		/// Handler for resizing the form
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void Form1_Resize(object sender, EventArgs e)
-		{
-			// if we get smaller then resize both panes.
-			if (this.Size.Width < this.initialSize.Width)
-			{
-				this.treeView1.Width = (this.Size.Width - this.gutter) / 2;
-				this.textBox1.Width = (this.Size.Width - this.gutter) / 2;
-			}
-			else
-			{
-				this.treeView1.Width = (this.initialSize.Width - this.gutter) / 2;
-				this.textBox1.Width = this.Size.Width - this.gutter - this.treeView1.Width;
+				this.textBoxDetails.Lines = null;
 			}
 		}
 
