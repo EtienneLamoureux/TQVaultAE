@@ -9,10 +9,13 @@ namespace TQVaultAE.Data
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.Globalization;
+	using System.Linq;
 	using System.Text;
+	using System.Text.RegularExpressions;
 	using TQVaultAE.Config;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Entities;
+	using TQVaultAE.Domain.Helpers;
 	using TQVaultAE.Logs;
 
 
@@ -568,48 +571,64 @@ namespace TQVaultAE.Data
 		/// <returns>updated format string</returns>
 		public string ConvertFormat(string formatValue)
 		{
-			if (TQDebug.ItemAttributesDebugLevel > 0)
-				Log.DebugFormat(CultureInfo.InvariantCulture, "ItemAttributes.ConvertFormatString({0})", formatValue);
-
-			// Takes a TQ Format string and converts it to a .NET Format string.
-			StringBuilder formatStringBuilder = new StringBuilder(formatValue.Length);
-
-			int startPosition = 0;
-			while (startPosition < formatValue.Length)
+			// Local func
+			string replaceMatch(Match m)
 			{
-				// Find the next {
-				int index = formatValue.IndexOf('{', startPosition);
-				if (index == -1)
+				var precis = m.Groups["precis"].Value;
+				var sign = m.Groups["sign"].Value;
+				var numDecimal = m.Groups["numDecimal"].Value;
+				var alpha = m.Groups["alpha"].Value;
+				var formatNumber = m.Groups["formatNumber"].Value;
+
+				if (alpha.Equals("d") || alpha.Equals("f"))
 				{
-					// no more {.  Just copy the rest of the string
-					formatStringBuilder.Append(formatValue, startPosition, formatValue.Length - startPosition);
-					startPosition = formatValue.Length;
+					// a number
+					if (!precis.Any())
+						// simple
+						return $@"{{{formatNumber}}}";
+
+					// see if they listed a decimal precision
+					string decimalSpec = string.Empty;
+					if (numDecimal.Any())
+					{
+						// Sometimes the parsing would cause a format exception with 0
+						// Use TryParse to handle the exception.
+						if (!int.TryParse(numDecimal, out var numDecimalParsed))
+							numDecimalParsed = 0;
+
+						if (numDecimalParsed > 0)
+							decimalSpec = ".".PadRight(numDecimalParsed + 1, '0');
+					}
+
+					// See if they want the +- sign.
+					return sign.Any()
+						? $"{{{formatNumber}:{sign}#0{decimalSpec}}}"
+						: $"{{{formatNumber}:#0{decimalSpec}}}";
 				}
 				else
-				{
-					if (TQDebug.ItemAttributesDebugLevel > 2)
-						Log.DebugFormat(CultureInfo.InvariantCulture, "Found {{ at {0} (search start was {1})", index, startPosition);
-
-					// Copy everything up to (but not including) the open bracket
-					if (index > startPosition)
-						formatStringBuilder.Append(formatValue, startPosition, index - startPosition);
-
-					// Now process the brackets
-					startPosition = ConvertFormatStringBrackets(formatValue, formatStringBuilder, index + 1);
-					if (TQDebug.ItemAttributesDebugLevel > 2)
-						Log.DebugFormat(CultureInfo.InvariantCulture, "ConvertFormatStringBrackets() returned new ipos={0}", startPosition);
-				}
+					// string
+					return $"{{{formatNumber}}}";
 			}
 
-			string processedFormatString = formatStringBuilder.ToString();
+			// Takes a TQ Format string and converts it to a .NET Format string using regex.
+			var newformat = Regex.Replace(formatValue
+				, @"%(?<precis>(?<sign>[+-])?\.(?<numDecimal>\d)?)?(?<alpha>[sdf])(?<formatNumber>\d)"
+				, new MatchEvaluator(replaceMatch)
+			).Replace("{{", "{").Replace("}}", "}");
 
-			if (TQDebug.ItemAttributesDebugLevel > 1)
-				Log.DebugFormat(CultureInfo.InvariantCulture, "'{0}' . '{1}'", formatValue, processedFormatString);
+			// Remove opening { on some residual signed format
+			newformat = Regex.Replace(newformat
+				, @"^\{(?<sign>[+-])"
+				, @"${sign}"
+			);
 
-			if (TQDebug.ItemAttributesDebugLevel > 0)
-				Log.Debug("Exiting ItemAttributes.ConvertFormatString()");
+			// Escape TQTags by doubling {}
+			newformat = Regex.Replace(newformat
+				, TQColorHelper.RegExTQTag
+				, @"{${ColorTag}}"
+			);
 
-			return processedFormatString;
+			return newformat;
 		}
 
 		/// <summary>
@@ -987,240 +1006,6 @@ namespace TQVaultAE.Data
 			return effect.Substring(5);
 		}
 
-		/// <summary>
-		/// Converts format string brackets % ^ }
-		/// </summary>
-		/// <param name="formatString">format string to be parsed</param>
-		/// <param name="answer">answer string</param>
-		/// <param name="startPosition">initial string position</param>
-		/// <returns>position of the closing bracket</returns>
-		private int ConvertFormatStringBrackets(string formatString, StringBuilder answer, int startPosition)
-		{
-			if (TQDebug.ItemAttributesDebugLevel > 0)
-				Log.DebugFormat(CultureInfo.InvariantCulture, "ItemAttributes.ConvertFormatStringBrackets({0}, {1}, {2})", formatString, answer, startPosition);
-
-			char[] keyChars =
-			{
-				'}', // end of format section
-                '%', // start of printf() format spec
-                '^'  // start of font change spec
-            };
-
-			// We need to process until we reach a close }
-			while (startPosition < formatString.Length)
-			{
-				// Scan forward until we hit a key character
-				int i = formatString.IndexOfAny(keyChars, startPosition);
-				if (i == -1)
-				{
-					// no special chars.  This should not happen! Indicates a missing closing }.
-					// Let's just copy the remainder of the string
-					answer.Append(formatString, startPosition, formatString.Length - startPosition);
-					if (TQDebug.ItemAttributesDebugLevel > 0)
-					{
-						Log.Debug("Error - No special characters found.");
-						Log.Debug("Exiting ItemAttributes.ConvertFormatStringBrackets()");
-					}
-
-					return formatString.Length;
-				}
-				else
-				{
-					if (TQDebug.ItemAttributesDebugLevel > 2)
-						Log.DebugFormat(CultureInfo.InvariantCulture, "Found special char({0}) at {1} (searchstart={2})", formatString.Substring(i, 1), i, startPosition);
-
-					// We found a special char.  First copy all the crap before the char
-					if (i > startPosition)
-					{
-						answer.Append(formatString, startPosition, i - startPosition);
-						startPosition = i;
-					}
-
-					// now process the special
-					switch (formatString[startPosition++])
-					{
-						case '}':
-							if (TQDebug.ItemAttributesDebugLevel > 0)
-								Log.Debug("Exiting ItemAttributes.ConvertFormatStringBrackets()");
-
-							return startPosition; // end of the format section.
-
-						case '%':
-							// We now have a scanf() format spec.
-							// it should have some number of non-alpha characters followed by an alpha char
-							// then followed by a digit which is the variable#
-							int precisionStart = startPosition;
-
-							// find the letter
-							while ((startPosition < formatString.Length) && !char.IsLetter(formatString, startPosition))
-							{
-								++startPosition;
-							}
-
-							if (startPosition >= formatString.Length)
-							{
-								// shit we ran out of the string
-								answer.Append(formatString, precisionStart - 1, formatString.Length - (precisionStart - 1));
-
-								if (TQDebug.ItemAttributesDebugLevel > 0)
-								{
-									Log.Debug("Error - Ran out of string to parse.");
-									Log.Debug("Exiting ItemAttributes.ConvertFormatStringBrackets()");
-								}
-
-								return formatString.Length;
-							}
-
-							string precision = formatString.Substring(precisionStart, startPosition - precisionStart);
-							string formatAlpha = formatString.Substring(startPosition, 1);
-							string formatNum = formatString.Substring(startPosition + 1, 1);
-
-							string newFormatSpec = ConvertScanFormatSpec(precision, formatAlpha, formatNum);
-							if (TQDebug.ItemAttributesDebugLevel > 2)
-							{
-								Log.DebugFormat(CultureInfo.InvariantCulture
-									, "<{0}> split into<{1}><{2}><{3}>New ipos={4}"
-									, formatString.Substring(precisionStart - 1, startPosition + 1 - precisionStart + 2)
-									, precision, formatAlpha, formatNum
-									, startPosition + 2
-								);
-							}
-
-							answer.Append(newFormatSpec);
-							startPosition = startPosition + 2;
-
-							break;
-
-						case '^':
-							// font change.  We currently ignore this crap so we want to skip over
-							// the next char which is the new font indicator
-							++startPosition; // skip the following char
-							break;
-					}
-				}
-			}
-
-			if (TQDebug.ItemAttributesDebugLevel > 0)
-				Log.Debug("Exiting ItemAttributes.ConvertFormatStringBrackets()");
-
-			return startPosition;
-		}
-
-		/// <summary>
-		/// Converts scan formats
-		/// </summary>
-		/// <param name="precision">numeric precision</param>
-		/// <param name="alpha">determines scan code s d f</param>
-		/// <param name="formatNumber">number to be formatted</param>
-		/// <returns>formatted string</returns>
-		private string ConvertScanFormatSpec(string precision, string alpha, string formatNumber)
-		{
-			if (TQDebug.ItemAttributesDebugLevel > 0)
-			{
-				Log.DebugFormat(
-					CultureInfo.InvariantCulture,
-					"ItemAttributes.ConvertScanfFormatSpec (precision=<{0}>, alpha=<{1}>, formatNum=<{2}>)",
-					precision,
-					alpha,
-					formatNumber);
-			}
-
-			if (alpha.Equals("s"))
-			{
-				// string format.  Ignore precision
-				if (TQDebug.ItemAttributesDebugLevel > 1)
-					Log.Debug("String Format Spec");
-
-				if (TQDebug.ItemAttributesDebugLevel > 0)
-					Log.Debug("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
-
-				return string.Format(CultureInfo.CurrentCulture, "{{{0}}}", formatNumber);
-			}
-
-			if (alpha.Equals("d") || alpha.Equals("f"))
-			{
-				// a number
-				if (precision.Length < 1)
-				{
-					// simple
-					if (TQDebug.ItemAttributesDebugLevel > 1)
-						Log.Debug("Simple Numeric Format Spec");
-
-					if (TQDebug.ItemAttributesDebugLevel > 0)
-						Log.Debug("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
-
-					return string.Format(CultureInfo.CurrentCulture, "{{{0}}}", formatNumber);
-				}
-
-				int ipos = 0;
-
-				// See if they want the plus sign.
-				bool showPlus = precision[ipos] == '+';
-				if (showPlus)
-				{
-					++ipos;
-				}
-
-				// see if they listed a decimal precision
-				bool hasDecimal = precision[ipos] == '.';
-				string decimalSpec = string.Empty;
-				int numDecimals = 0;
-				if (hasDecimal)
-				{
-					++ipos;
-					if (TQDebug.ItemAttributesDebugLevel > 1)
-						Log.DebugFormat(CultureInfo.InvariantCulture, "Parsing Decimals ipos={0}, string=<{1}>", ipos, precision.Substring(ipos, 1));
-
-					// Changed by VillageIdiot
-					// Sometimes the parsing would cause a format exception with 0
-					// Use TryParse to handle the exception.
-					if (!Int32.TryParse(precision.Substring(ipos, 1), out numDecimals))
-						numDecimals = 0;
-
-					if (TQDebug.ItemAttributesDebugLevel > 1)
-						Log.DebugFormat(CultureInfo.InvariantCulture, "numDecimals={0}", numDecimals);
-
-					if (numDecimals > 0)
-					{
-						decimalSpec = ".";
-						decimalSpec = decimalSpec.PadRight(numDecimals + 1, '0');
-					}
-				}
-
-				if (showPlus)
-				{
-					// Gotta get fancy
-					if (TQDebug.ItemAttributesDebugLevel > 1)
-						Log.Debug("Decimal with plus Format Spec");
-
-					if (TQDebug.ItemAttributesDebugLevel > 0)
-						Log.Debug("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
-
-					return string.Format(CultureInfo.CurrentCulture, "{{{0}:+#0{1};-#0{1}}}", formatNumber, decimalSpec);
-				}
-				else
-				{
-					if (TQDebug.ItemAttributesDebugLevel > 1)
-						Log.Debug("Decimal Format Spec");
-
-					if (TQDebug.ItemAttributesDebugLevel > 0)
-						Log.Debug("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
-
-					return string.Format(CultureInfo.CurrentCulture, "{{{0}:#0{1}}}", formatNumber, decimalSpec);
-				}
-			}
-			else
-			{
-				// unknown
-				if (TQDebug.ItemAttributesDebugLevel > 1)
-					Log.Debug("Error - Unknown Format Spec using default");
-
-				if (TQDebug.ItemAttributesDebugLevel > 0)
-					Log.Debug("Exiting ItemAttributes.ConvertScanfFormatSpec ()");
-
-				return string.Format(CultureInfo.CurrentCulture, "{{{0}}}", formatNumber);
-			}
-		}
 
 		/// <summary>
 		/// Initialize all of my arrays

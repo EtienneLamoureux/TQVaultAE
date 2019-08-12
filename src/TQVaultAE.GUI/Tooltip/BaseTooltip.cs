@@ -58,6 +58,8 @@ namespace TQVaultAE.GUI.Tooltip
 			}
 			else
 			{
+				// Replace all TQNewLine to regular '\n'
+				friendlyName = friendlyName.Replace(StringHelper.TQNewLineTag, "\n");
 				// If there is a color tag in the middle
 				if (friendlyName.LastIndexOf('{') > 0)
 				{

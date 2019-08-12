@@ -3092,9 +3092,7 @@ namespace TQVaultAE.Data
 											 ////Variable skillDurationVar = null;  // Added by VillageIdiot
 
 			bool isGlobal = ItemAttributeProvider.AttributeGroupHas(new Collection<Variable>(attributeList), "Global");
-			string globalIndent = null;
-			if (isGlobal)
-				globalIndent = new string(' ', 4);
+			string globalIndent = new string(' ', 4);
 
 			foreach (Variable variable in attributeList)
 			{
@@ -3434,7 +3432,7 @@ namespace TQVaultAE.Data
 					// Added by VillageIdiot
 					// Shows the header text for the pet bonus
 					if (normalizedFullAttribute == "PETBONUSNAME")
-						line = GetPetBonusName(ref color);
+						line = StringHelper.TQNewLineTag + GetPetBonusName(ref color);
 
 					// Added by VillageIdiot
 					// Set the scale percent here
@@ -3527,7 +3525,7 @@ namespace TQVaultAE.Data
 
 						// Indent formulae reagents
 						if (itm.IsFormulae && normalizedFullAttribute.StartsWith("REAGENT", StringComparison.OrdinalIgnoreCase))
-							line = line.InsertAfterColorPrefix("    ");
+							line = line.InsertAfterColorPrefix(globalIndent);
 
 						results.Add(line);
 					}
@@ -3540,7 +3538,9 @@ namespace TQVaultAE.Data
 						DBRecordCollection petBonusRecord = Database.GetRecordFromFile(petBonusID);
 						if (petBonusRecord != null)
 						{
-							GetAttributesFromRecord(itm, petBonusRecord, true, petBonusID, results);
+							var tmp = new List<string>();
+							GetAttributesFromRecord(itm, petBonusRecord, true, petBonusID, tmp);
+							results.AddRange(tmp.Select(s => s.InsertAfterColorPrefix(globalIndent)));
 							results.Add(string.Empty);
 						}
 					}
@@ -3894,7 +3894,7 @@ namespace TQVaultAE.Data
 		private string GetLabelAndColorFromTag(Item itm, ItemAttributesData data, string recordId, ref string labelTag, ref TQColor? labelColor)
 		{
 			labelTag = ItemAttributeProvider.GetAttributeTextTag(data);
-			string label;
+			string label, TrailingNL = string.Empty;
 
 			if (string.IsNullOrEmpty(labelTag))
 			{
@@ -3914,6 +3914,7 @@ namespace TQVaultAE.Data
 				{
 					// regular armor attribute is not magical
 					labelColor = ItemStyle.Mundane.TQColor();
+					TrailingNL = StringHelper.TQNewLineTag + ' ';// Add trailing '\n' + space for regular armor pieces to force empty row in tooltip
 				}
 			}
 
@@ -3924,7 +3925,7 @@ namespace TQVaultAE.Data
 				labelColor = ItemStyle.Legendary.TQColor();
 			}
 
-			return label;
+			return $"{label}{TrailingNL}";
 		}
 
 
