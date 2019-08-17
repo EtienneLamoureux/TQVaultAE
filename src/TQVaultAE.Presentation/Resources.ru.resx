@@ -1284,4 +1284,16 @@ Used to track changes in the translation file.</comment>
   <data name="CriticalHitsReceived" xml:space="preserve">
     <value>Получено критических ударов</value>
   </data>
+  <data name="PlayerPanelMenuDisableAllTooltip" xml:space="preserve">
+    <value>Отключить предпр. для всех</value>
+  </data>
+  <data name="PlayerPanelMenuDisableTooltip" xml:space="preserve">
+    <value>Отключить предпросмотр</value>
+  </data>
+  <data name="PlayerPanelMenuEnableAllTooltip" xml:space="preserve">
+    <value>Включить предпр. для всех</value>
+  </data>
+  <data name="PlayerPanelMenuEnableTooltip" xml:space="preserve">
+    <value>Включить предпросмотр</value>
+  </data>
 </root>
