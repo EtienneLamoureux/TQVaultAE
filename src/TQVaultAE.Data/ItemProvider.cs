@@ -132,7 +132,7 @@ namespace TQVaultAE.Data
 			itm.Relic2Info = null;
 			itm.RelicBonus2Info = null;
 
-			itm.MarkModified();
+			itm.IsModified = true;
 
 			return newRelic;
 		}
@@ -149,7 +149,7 @@ namespace TQVaultAE.Data
 				Item newArtifact = itm.MakeEmptyCopy(artifactID);
 				GetDBData(newArtifact);
 
-				itm.MarkModified();
+				itm.IsModified = true;
 
 				return newArtifact;
 			}
@@ -1369,6 +1369,7 @@ namespace TQVaultAE.Data
 			if (FriendlyNamesCache.ContainsKey(key)) return FriendlyNamesCache[key];
 
 			var res = new ToFriendlyNameResult(itm);
+			itm.CurrentFriendlyNameResult = res;
 
 			#region Local Helper
 
@@ -1747,7 +1748,8 @@ namespace TQVaultAE.Data
 			#endregion
 
 			FriendlyNamesCache.Add(key, res);
-
+			itm.CurrentFriendlyNameResult.TmpAttrib.Clear();
+			itm.CurrentFriendlyNameResult = null;
 			return res;
 		}
 
@@ -2476,7 +2478,7 @@ namespace TQVaultAE.Data
 		/// <param name="line">line string</param>
 		/// <param name="color">display font string</param>
 		/// <returns>formatted string of racial bonus(es)  adds to the results if there are multiple.</returns>
-		private string GetRacialBonus(DBRecordCollection record, List<string> results, int varNum, bool isGlobal, string globalIndent, Variable v, ItemAttributesData d, string line, ref TQColor? color)
+		private string GetRacialBonus(DBRecordCollection record, Item itm, List<string> results, int varNum, bool isGlobal, string globalIndent, Variable v, ItemAttributesData d, string line, ref TQColor? color)
 		{
 			// Added by VillageIdiot
 			// Updated to accept multiple racial bonuses in record
@@ -2522,6 +2524,7 @@ namespace TQVaultAE.Data
 							line = string.Concat(globalIndent, line);
 
 						results.Add(line);
+						itm.CurrentFriendlyNameResult.TmpAttrib.Add(line);
 					}
 
 					line = Format(formatSpec, v[Math.Min(v.NumberOfValues - 1, varNum)], finalRace);
@@ -2756,7 +2759,7 @@ namespace TQVaultAE.Data
 		/// <param name="line">line of text</param>
 		/// <param name="font">display font string</param>
 		/// <returns>formatted granted skill string.</returns>
-		private string GetGrantedSkill(DBRecordCollection record, List<string> results, Variable variable, string line, ref TQColor? font)
+		private string GetGrantedSkill(DBRecordCollection record, Item itm, List<string> results, Variable variable, string line, ref TQColor? font)
 		{
 			// Added by VillageIdiot
 			// Special case for granted skills
@@ -2771,7 +2774,9 @@ namespace TQVaultAE.Data
 				if (string.IsNullOrEmpty(skillTag))
 					skillTag = "Grants Skill :";
 
-				results.Add($"{font?.ColorTag()}{skillTag}");
+				var value = $"{font?.ColorTag()}{skillTag}";
+				results.Add(value);
+				itm.CurrentFriendlyNameResult.TmpAttrib.Add(value);
 
 				string skillName = null;
 				string nameTag = null;
@@ -3303,8 +3308,8 @@ namespace TQVaultAE.Data
 					}
 				}
 
+				// magical effect
 				if (!fontColor.HasValue)
-					// magical effect
 					fontColor = ItemStyle.Epic.TQColor();
 
 				if (!amountOrDurationText.HasColorPrefix())
@@ -3314,6 +3319,7 @@ namespace TQVaultAE.Data
 					amountOrDurationText = amountOrDurationText.InsertAfterColorPrefix(globalIndent);
 
 				results.Add(amountOrDurationText);
+				itm.CurrentFriendlyNameResult.TmpAttrib.Add(amountOrDurationText);
 			}
 			else
 			{
@@ -3357,6 +3363,7 @@ namespace TQVaultAE.Data
 					modifierText = $"{ItemStyle.Epic.TQColor().ColorTag()}{modifierText}";
 
 				results.Add(modifierText);
+				itm.CurrentFriendlyNameResult.TmpAttrib.Add(modifierText);
 			}
 			else
 			{
@@ -3417,7 +3424,7 @@ namespace TQVaultAE.Data
 					else if (normalizedFullAttribute.EndsWith("GLOBALCHANCE", StringComparison.OrdinalIgnoreCase))
 						line = GetGlobalChance(attributeList, variableNumber, variable, ref color);
 					else if (normalizedFullAttribute.StartsWith("RACIALBONUS", StringComparison.OrdinalIgnoreCase))
-						line = GetRacialBonus(record, results, variableNumber, isGlobal, globalIndent, variable, attributeData, line, ref color);
+						line = GetRacialBonus(record, itm, results, variableNumber, isGlobal, globalIndent, variable, attributeData, line, ref color);
 					else if (normalizedFullAttribute == "AUGMENTALLLEVEL")
 						line = GetAugmentAllLevel(variableNumber, variable, ref color);
 					else if (normalizedFullAttribute.StartsWith("AUGMENTMASTERYLEVEL", StringComparison.OrdinalIgnoreCase))
@@ -3427,7 +3434,7 @@ namespace TQVaultAE.Data
 					else if (itm.IsFormulae && recordId == itm.BaseItemId)
 						line = GetFormulae(results, variable, attributeData, line, ref color);
 					else if (normalizedFullAttribute == "ITEMSKILLNAME")
-						line = GetGrantedSkill(record, results, variable, line, ref color);
+						line = GetGrantedSkill(record, itm, results, variable, line, ref color);
 
 					// Added by VillageIdiot
 					// Shows the header text for the pet bonus
@@ -3468,6 +3475,7 @@ namespace TQVaultAE.Data
 						if (displayDamageQualifierTitle)
 						{
 							results.Add(title);
+							itm.CurrentFriendlyNameResult.TmpAttrib.Add(title);
 							displayDamageQualifierTitle = false;
 						}
 
@@ -3528,6 +3536,7 @@ namespace TQVaultAE.Data
 							line = line.InsertAfterColorPrefix(globalIndent);
 
 						results.Add(line);
+						itm.CurrentFriendlyNameResult.TmpAttrib.Add(line);
 					}
 
 					// Added by VillageIdiot
@@ -3607,7 +3616,11 @@ namespace TQVaultAE.Data
 									skillDescriptionList = StringHelper.WrapWords(skillDescription, lineLength);
 
 									foreach (string skillDescriptionFromList in skillDescriptionList)
-										results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}    {skillDescriptionFromList}");
+									{
+										var value = $"{ItemStyle.Mundane.TQColor().ColorTag()}    {skillDescriptionFromList}";
+										results.Add(value);
+										itm.CurrentFriendlyNameResult.TmpAttrib.Add(value);
+									}
 
 									// Show granted skill level
 									if (Config.Settings.Default.ShowSkillLevel)
@@ -3622,7 +3635,9 @@ namespace TQVaultAE.Data
 										if (skillLevel > 0)
 										{
 											line = Format(formatSpec, skillLevel);
-											results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}{line}");
+											var value = $"{ItemStyle.Mundane.TQColor().ColorTag()}{line}";
+											results.Add(value);
+											itm.CurrentFriendlyNameResult.TmpAttrib.Add(value);
 										}
 									}
 								}
@@ -3641,7 +3656,11 @@ namespace TQVaultAE.Data
 									skillDescriptionList = StringHelper.WrapWords(skillDescription, lineLength);
 
 									foreach (string skillDescriptionFromList in skillDescriptionList)
-										results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}    {skillDescriptionFromList}");
+									{
+										var value = $"{ItemStyle.Mundane.TQColor().ColorTag()}    {skillDescriptionFromList}";
+										results.Add(value);
+										itm.CurrentFriendlyNameResult.TmpAttrib.Add(value);
+									}
 
 									// Show granted skill level
 									if (Config.Settings.Default.ShowSkillLevel)
@@ -3656,7 +3675,9 @@ namespace TQVaultAE.Data
 										if (skillLevel > 0)
 										{
 											line = Format(formatSpec, skillLevel);
-											results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}    {line}");
+											var value = $"{ItemStyle.Mundane.TQColor().ColorTag()}    {line}";
+											results.Add(value);
+											itm.CurrentFriendlyNameResult.TmpAttrib.Add(value);
 										}
 									}
 								}
@@ -3712,7 +3733,9 @@ namespace TQVaultAE.Data
 					formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
 
 				petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, summonLimit.ToString(CultureInfo.CurrentCulture));
-				results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}");
+				var value = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
+				results.Add(value);
+				itm.CurrentFriendlyNameResult.TmpAttrib.Add(value);
 			}
 
 			DBRecordCollection petRecord = Database.GetRecordFromFile(skillRecord.GetString("spawnObjects", 0));
@@ -3728,8 +3751,11 @@ namespace TQVaultAE.Data
 				string petNameTag = petRecord.GetString("description", 0);
 				string petName = Database.GetFriendlyName(petNameTag);
 				float value = 0.0F;
+
 				petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, petName);
-				results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}");
+				var valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
+				results.Add(valueStr);
+				itm.CurrentFriendlyNameResult.TmpAttrib.Add(valueStr);
 
 				// Time to live
 				formatSpec = Database.GetFriendlyName("tagSkillPetTimeToLive");
@@ -3739,7 +3765,9 @@ namespace TQVaultAE.Data
 					formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
 
 				petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, skillRecord.GetSingle("spawnObjectsTimeToLive", 0));
-				results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}");
+				valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
+				results.Add(valueStr);
+				itm.CurrentFriendlyNameResult.TmpAttrib.Add(valueStr);
 
 				// Health
 				value = petRecord.GetSingle("characterLife", 0);
@@ -3752,7 +3780,9 @@ namespace TQVaultAE.Data
 						formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
 
 					petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value);
-					results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}");
+					valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
+					results.Add(valueStr);
+					itm.CurrentFriendlyNameResult.TmpAttrib.Add(valueStr);
 				}
 
 				// Energy
@@ -3766,7 +3796,9 @@ namespace TQVaultAE.Data
 						formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
 
 					petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value);
-					results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}");
+					valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
+					results.Add(valueStr);
+					itm.CurrentFriendlyNameResult.TmpAttrib.Add(valueStr);
 				}
 
 				// Add abilities text
@@ -3778,7 +3810,9 @@ namespace TQVaultAE.Data
 					formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
 
 				petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, petName);
-				results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}");
+				valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
+				results.Add(valueStr);
+				itm.CurrentFriendlyNameResult.TmpAttrib.Add(valueStr);
 
 				// Show Physical Damage
 				value = petRecord.GetSingle("handHitDamageMin", 0);
@@ -3795,7 +3829,9 @@ namespace TQVaultAE.Data
 							formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
 
 						petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value);
-						results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}");
+						valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
+						results.Add(valueStr);
+						itm.CurrentFriendlyNameResult.TmpAttrib.Add(valueStr);
 					}
 					else
 					{
@@ -3806,7 +3842,9 @@ namespace TQVaultAE.Data
 							formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
 
 						petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value, value2);
-						results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}");
+						valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
+						results.Add(valueStr);
+						itm.CurrentFriendlyNameResult.TmpAttrib.Add(valueStr);
 					}
 				}
 
@@ -3873,9 +3911,12 @@ namespace TQVaultAE.Data
 					}
 
 					if (skillName.Length == 0)
-						results.Add($"{ItemStyle.Legendary.TQColor().ColorTag()}{skillNameTag}");
+						valueStr = $"{ItemStyle.Legendary.TQColor().ColorTag()}{skillNameTag}";
 					else
-						results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}{skillName}");
+						valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{skillName}";
+
+					results.Add(valueStr);
+					itm.CurrentFriendlyNameResult.TmpAttrib.Add(valueStr);
 
 					GetAttributesFromRecord(itm, record, true, recordID, results);
 					results.Add(string.Empty);
@@ -3914,7 +3955,9 @@ namespace TQVaultAE.Data
 				{
 					// regular armor attribute is not magical
 					labelColor = ItemStyle.Mundane.TQColor();
-					TrailingNL = StringHelper.TQNewLineTag + ' ';// Add trailing '\n' + space for regular armor pieces to force empty row in tooltip
+					// Add trailing '\n' + space for regular armor pieces to force empty row in tooltip (only if is first attribute)
+					if (!itm.CurrentFriendlyNameResult.TmpAttrib.Any())
+						TrailingNL = StringHelper.TQNewLineTag + ' ';
 				}
 			}
 

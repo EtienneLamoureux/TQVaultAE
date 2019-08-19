@@ -270,7 +270,7 @@ namespace TQVaultAE.GUI.Components
 					itemUnderUs.StackSize += dragItem.StackSize;
 
 					// Added this so the tooltip would update with the correct number
-					itemUnderUs.MarkModified();
+					itemUnderUs.IsModified = true;
 					this.Sack.IsModified = true;
 
 					// Get rid of ref to itemUnderUs so code below wont do anything with it.
@@ -318,7 +318,7 @@ namespace TQVaultAE.GUI.Components
 						ItemProvider.GetDBData(itemUnderUs);
 					}
 
-					itemUnderUs.MarkModified();
+					itemUnderUs.IsModified = true;
 
 					// Just in case we have more relics than what we need to complete
 					// We then adjust the one we are holding
@@ -326,7 +326,7 @@ namespace TQVaultAE.GUI.Components
 					if (adjustedNumber != dragItem.Number)
 					{
 						dragItem.Number -= adjustedNumber;
-						dragItem.MarkModified();
+						dragItem.IsModified = true;
 
 						// Swap the items so the completed item stays in the
 						// sack and the remaining items are still being dragged

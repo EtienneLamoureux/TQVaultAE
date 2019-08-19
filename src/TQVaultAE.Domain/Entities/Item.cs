@@ -8,6 +8,7 @@ namespace TQVaultAE.Domain.Entities
 	using System;
 	using System.Drawing;
 	using TQVaultAE.Domain.Helpers;
+	using TQVaultAE.Domain.Results;
 
 
 	/// <summary>
@@ -95,11 +96,6 @@ namespace TQVaultAE.Domain.Entities
 		public bool isAttributeCounted;
 
 		/// <summary>
-		/// Used for properties display
-		/// </summary>
-		public string[] bareAttributes;
-
-		/// <summary>
 		/// Used for itemScalePercent calculation
 		/// </summary>
 		public float itemScalePercent;
@@ -114,7 +110,6 @@ namespace TQVaultAE.Domain.Entities
 			// Added by VillageIdiot
 			// Used for bare item attributes in properties display in this order:
 			// baseinfo, artifactCompletionBonus, prefixinfo, suffixinfo, relicinfo, relicCompletionBonus
-			this.bareAttributes = new string[6];  // Hard coded to 6
 			this.itemScalePercent = 1.00F;
 			this.StackSize = 1;
 		}
@@ -165,6 +160,8 @@ namespace TQVaultAE.Domain.Entities
 		/// Gets the number of relics
 		/// </summary>
 		private int var1;
+		public ToFriendlyNameResult CurrentFriendlyNameResult;
+
 		public int Var1
 		{
 			get
@@ -820,12 +817,10 @@ namespace TQVaultAE.Domain.Entities
 			return newItem;
 		}
 
-		public bool IsModified { get; set; }
-
 		/// <summary>
-		/// Marks the item as modified
+		/// Tell if the item is modified
 		/// </summary>
-		public void MarkModified() => IsModified = true; // TODO Refato promote IsModified 
+		public bool IsModified { get; set; }
 
 		/// <summary>
 		/// Makes a duplicate of the item
@@ -841,7 +836,7 @@ namespace TQVaultAE.Domain.Entities
 
 			newItem.PositionX = -1;
 			newItem.PositionY = -1;
-			newItem.MarkModified();
+			newItem.IsModified = true;
 
 			return newItem;
 		}
@@ -853,7 +848,7 @@ namespace TQVaultAE.Domain.Entities
 		public Item Clone()
 		{
 			Item newItem = (Item)this.MemberwiseClone();
-			newItem.MarkModified();
+			newItem.IsModified = true;
 			return newItem;
 		}
 
@@ -876,9 +871,9 @@ namespace TQVaultAE.Domain.Entities
 			newItem.Seed = GenerateSeed();
 			newItem.PositionX = -1;
 			newItem.PositionY = -1;
-			newItem.MarkModified();
+			newItem.IsModified = true;
 
-			this.MarkModified();
+			this.IsModified = true;
 
 			this.StackSize = 1;
 

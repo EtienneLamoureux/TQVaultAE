@@ -246,5 +246,10 @@ namespace TQVaultAE.Domain.Results
 			}
 		}
 
+		/// <summary>
+		/// Used to give attribute list factory some kind of global awareness during its process
+		/// </summary>
+		public readonly List<string> TmpAttrib = new List<string>();
+
 	}
 }
