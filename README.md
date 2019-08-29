@@ -39,7 +39,7 @@ Works with all expansions!
         - Unlock difficulties
         - Level up
 - QOL
-    - Bulk item transfer (<kbd>CTRL</kbd>-click, right-click)
+    - Bulk item transfer (<kbd>CTRL</kbd>+click, right-click)
     - Combine stacks (potions, relics and charms) by dropping them onto each other
     - Split potion stacks apart
     - Keyboard shortcuts
