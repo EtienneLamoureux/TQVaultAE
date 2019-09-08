@@ -8,11 +8,8 @@ namespace TQVaultAE.Data
 	using System;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
-	using System.Globalization;
 	using System.Linq;
-	using System.Text;
 	using System.Text.RegularExpressions;
-	using TQVaultAE.Config;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Domain.Helpers;
@@ -612,7 +609,7 @@ namespace TQVaultAE.Data
 
 			// Takes a TQ Format string and converts it to a .NET Format string using regex.
 			var newformat = Regex.Replace(formatValue
-				, @"%(?<precis>(?<sign>[+-])?\.(?<numDecimal>\d)?)?(?<alpha>[sdf])(?<formatNumber>\d)"
+				, @"%(?<precis>(?<sign>[+-])?\.(?<numDecimal>\d)?)?(?<alpha>[sdft])(?<formatNumber>\d)"
 				, new MatchEvaluator(replaceMatch)
 			).Replace("{{", "{").Replace("}}", "}");
 
