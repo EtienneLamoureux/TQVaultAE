@@ -8,6 +8,7 @@ namespace TQVaultAE.Domain.Entities
 	using System;
 	using System.Drawing;
 	using TQVaultAE.Domain.Helpers;
+	using TQVaultAE.Domain.Results;
 
 
 	/// <summary>
@@ -95,11 +96,6 @@ namespace TQVaultAE.Domain.Entities
 		public bool isAttributeCounted;
 
 		/// <summary>
-		/// Used for properties display
-		/// </summary>
-		public string[] bareAttributes;
-
-		/// <summary>
 		/// Used for itemScalePercent calculation
 		/// </summary>
 		public float itemScalePercent;
@@ -114,12 +110,8 @@ namespace TQVaultAE.Domain.Entities
 			// Added by VillageIdiot
 			// Used for bare item attributes in properties display in this order:
 			// baseinfo, artifactCompletionBonus, prefixinfo, suffixinfo, relicinfo, relicCompletionBonus
-			this.bareAttributes = new string[6];  // Hard coded to 6
 			this.itemScalePercent = 1.00F;
 			this.StackSize = 1;
-
-			// Make sure the translatable strings have a value.
-			SetDefaultStrings();
 		}
 
 
@@ -136,37 +128,6 @@ namespace TQVaultAE.Domain.Entities
 		}
 
 
-		/// <summary>
-		/// Sets the default string values for the translatable strings.
-		/// These strings are specific to TQVault and are not in the TQ Text database.
-		/// </summary>
-		private static void SetDefaultStrings()
-		{
-			if (string.IsNullOrEmpty(Item.ItemIT))
-				Item.ItemIT = "Immortal Throne Item";
-
-			if (string.IsNullOrEmpty(Item.ItemRagnarok))
-				Item.ItemRagnarok = "Ragnarok Item";
-
-			if (string.IsNullOrEmpty(Item.ItemAtlantis))
-				Item.ItemAtlantis = "Atlantis Item";
-
-			if (string.IsNullOrEmpty(Item.ItemWith))
-				Item.ItemWith = "with";
-
-			if (string.IsNullOrEmpty(Item.ItemRelicBonus))
-				Item.ItemRelicBonus = "(Completion Bonus: {0})";
-
-			if (string.IsNullOrEmpty(Item.ItemRelicCompleted))
-				Item.ItemRelicCompleted = "(Completed)";
-
-			if (string.IsNullOrEmpty(Item.ItemQuest))
-				Item.ItemQuest = "(Quest Item)";
-
-			if (string.IsNullOrEmpty(Item.ItemSeed))
-				Item.ItemSeed = "itemSeed: {0} (0x{0:X8}) ({1:p3})";
-		}
-
 		#region Item Properties
 
 		/// <summary>
@@ -174,51 +135,6 @@ namespace TQVaultAE.Domain.Entities
 		/// This is a special value in the coordinates that signals an item is in a weapon slot.
 		/// </summary>
 		public const int WeaponSlotIndicator = -3;
-
-		/// <summary>
-		/// Gets or sets the string used for 'with'
-		/// </summary>
-		public static string ItemWith { get; set; }
-
-		/// <summary>
-		/// Gets or sets the relic completion bonus string.
-		/// </summary>
-		public static string ItemRelicBonus { get; set; }
-
-		/// <summary>
-		/// Gets or sets the relic completed string.
-		/// </summary>
-		public static string ItemRelicCompleted { get; set; }
-
-		/// <summary>
-		/// Gets or sets the quest item indicator string.
-		/// </summary>
-		public static string ItemQuest { get; set; }
-
-		/// <summary>
-		/// Gets or sets the item seed format string.
-		/// </summary>
-		public static string ItemSeed { get; set; }
-
-		/// <summary>
-		/// Gets or sets the string which indicates an Immortal Throne item.
-		/// </summary>
-		public static string ItemIT { get; set; }
-
-		/// <summary>
-		/// Gets or sets the string which indicates an Immortal Throne item.
-		/// </summary>
-		public static string ItemRagnarok { get; set; }
-
-		/// <summary>
-		/// Gets or sets the string which indicates an Atlantis item.
-		/// </summary>
-		public static string ItemAtlantis { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating whether the skill level is shown on granted skills.
-		/// </summary>
-		public static bool ShowSkillLevel { get; set; }
 
 		/// <summary>
 		/// Gets the base item id
@@ -244,6 +160,8 @@ namespace TQVaultAE.Domain.Entities
 		/// Gets the number of relics
 		/// </summary>
 		private int var1;
+		public ToFriendlyNameResult CurrentFriendlyNameResult;
+
 		public int Var1
 		{
 			get
@@ -899,12 +817,10 @@ namespace TQVaultAE.Domain.Entities
 			return newItem;
 		}
 
-		public bool IsModified { get; set; }
-
 		/// <summary>
-		/// Marks the item as modified
+		/// Tell if the item is modified
 		/// </summary>
-		public void MarkModified() => IsModified = true; // TODO Refato promote IsModified 
+		public bool IsModified { get; set; }
 
 		/// <summary>
 		/// Makes a duplicate of the item
@@ -920,7 +836,7 @@ namespace TQVaultAE.Domain.Entities
 
 			newItem.PositionX = -1;
 			newItem.PositionY = -1;
-			newItem.MarkModified();
+			newItem.IsModified = true;
 
 			return newItem;
 		}
@@ -932,7 +848,7 @@ namespace TQVaultAE.Domain.Entities
 		public Item Clone()
 		{
 			Item newItem = (Item)this.MemberwiseClone();
-			newItem.MarkModified();
+			newItem.IsModified = true;
 			return newItem;
 		}
 
@@ -955,9 +871,9 @@ namespace TQVaultAE.Domain.Entities
 			newItem.Seed = GenerateSeed();
 			newItem.PositionX = -1;
 			newItem.PositionY = -1;
-			newItem.MarkModified();
+			newItem.IsModified = true;
 
-			this.MarkModified();
+			this.IsModified = true;
 
 			this.StackSize = 1;
 

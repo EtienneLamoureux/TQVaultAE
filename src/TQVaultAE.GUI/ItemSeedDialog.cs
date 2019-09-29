@@ -110,7 +110,7 @@ namespace TQVaultAE.GUI
 			if (int.TryParse(this.itemSeedBox.Text, out newSeed) && newSeed > 0 && newSeed < 0x7fff)
 			{
 				this.selectedItem.Seed = newSeed;
-				this.selectedItem.MarkModified();
+				this.selectedItem.IsModified = true;
 				this.Close();
 			}
 			else
