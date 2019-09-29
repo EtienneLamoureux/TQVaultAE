@@ -1,4 +1,19 @@
 # Changelog
+## 3.3.0
+### Features
+- #214 Ability to disable bag preview tooltips
+- #199 Better handling of tooltip attribute spacing
+
+### Bugs
+- #216 Show item and affixes full database path in item properties dialog
+- #209 Gram and Charybdis properties cause error dialog
+- #201 Show the name of character with certain issues
+- #207 Fix ability to delete all items in a stack at once
+
+### Others
+- Updated russian translations
+- ArzExplorer : Repaire image preview
+
 ## 3.2.1
 ### Bugs
 - #207 Fix ability to delete all items in a stack at once
