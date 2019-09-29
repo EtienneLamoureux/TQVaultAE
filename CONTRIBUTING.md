@@ -7,7 +7,8 @@
     + [Pull requests](#pull-requests)
 
 ## Style and format
-TQVaultAE follows the standard C# format and import order. Refrain from submitting white-space changes mixed-in with your functional changes.
+TQVaultAE follows the standard C# format and import order. Refrain from submitting white-space changes mixed-in with your functional changes. 
+**N.B.**: Braces are mandatory.
 
 ## Contributions
 ### What to work on
