@@ -189,9 +189,13 @@ namespace TQVaultAE.GUI.Components
 			Bitmap bitmap = this.OffBitmap;
 
 			if (this.IsOn)
+			{
 				bitmap = this.OnBitmap;
+			}
 			else if (this.IsOver)
+			{
 				bitmap = this.OverBitmap;
+			}
 
 			// Draw the background graphic.
 			e.Graphics.DrawImage(bitmap, 0, 0, this.Width, this.Height);
@@ -205,7 +209,9 @@ namespace TQVaultAE.GUI.Components
 				{
 					// If we are mousing over then display the bolded font.
 					if (this.IsOver)
+					{
 						font = new Font(font, FontStyle.Bold);
+					}
 
 					StringFormat textFormat = new StringFormat(StringFormatFlags.NoClip);
 					textFormat.LineAlignment = StringAlignment.Center;
@@ -226,14 +232,18 @@ namespace TQVaultAE.GUI.Components
 		{
 			// Make sure we have something to test.
 			if (graphics == null || font == null)
+			{
 				return null;
+			}
 
 			// Make sure we use the bolded font for testing since the passed font may not be bolded.
 			Font testFont = new Font(font, FontStyle.Bold);
 
 			// See if the text can fit on the button and if it does we do not need to do anything.
 			if (TextRenderer.MeasureText(this.ButtonText, testFont).Width < this.Width)
+			{
 				return font;
+			}
 
 			// Try to get a substring of the button text to find the best size.
 			string teststring = this.GetTestString(this.ButtonText);
@@ -277,11 +287,15 @@ namespace TQVaultAE.GUI.Components
 		{
 			// Make sure we have something to test.
 			if (string.IsNullOrEmpty(teststring))
+			{
 				return string.Empty;
+			}
 
 			// Make sure the string has a space before attempting to split it.
 			if (!this.ButtonText.Contains(" "))
+			{
 				return teststring;
+			}
 
 			string[] text = this.ButtonText.Split(' ');
 
@@ -290,9 +304,13 @@ namespace TQVaultAE.GUI.Components
 			if (text.Length == 2)
 			{
 				if (text[0].Length > text[1].Length)
+				{
 					teststring = text[0];
+				}
 				else
+				{
 					teststring = text[1];
+				}
 			}
 			else
 			{
@@ -312,7 +330,9 @@ namespace TQVaultAE.GUI.Components
 
 					// Make sure we have the longer of the two strings.
 					if (left > this.ButtonText.Length - left)
+					{
 						testLeft = this.ButtonText.Substring(0, left);
+					}
 				}
 
 				// Use the whole string just in case we don't find a space.
@@ -326,7 +346,9 @@ namespace TQVaultAE.GUI.Components
 
 					// Make sure we have the longer of the two strings.
 					if (right > this.ButtonText.Length - right)
+					{
 						testRight = this.ButtonText.Substring(0, right);
+					}
 				}
 
 				teststring = testLeft;
@@ -334,7 +356,9 @@ namespace TQVaultAE.GUI.Components
 				// Make sure we take the one closest to the middle.
 				// Both values should not be set to whole string.
 				if (testRight.Length < testLeft.Length)
+				{
 					teststring = testRight;
+				}
 			}
 
 			return teststring;
