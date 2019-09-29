@@ -83,7 +83,9 @@ namespace TQVaultAE.GUI.Components
 			// Setup the offset to make room for the autosort button
 			int autosortOffset = 0;
 			if (numberOfAutosortButtons > 0)
+			{
 				autosortOffset = Convert.ToInt32(27.0F * UIService.Scale);
+			}
 
 			this.Size = new Size(
 				(panelSize.Width * UIService.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.Scale) + autosortOffset + BorderPad,
@@ -110,7 +112,9 @@ namespace TQVaultAE.GUI.Components
 
 			// Assume it's the trash panel if we are not autosorting it.
 			if (numberOfAutosortButtons == 0)
+			{
 				this.BagSackPanel.SackType = SackType.Trash;
+			}
 			else
 			{
 				this.autoSortButtons = new Collection<AutoSortButton>();
@@ -308,7 +312,9 @@ namespace TQVaultAE.GUI.Components
 		public void PaintCallback(object sender, PaintEventArgs e)
 		{
 			if (this.DrawAsGroupBox)
+			{
 				GroupBoxRenderer.DrawGroupBox(e.Graphics, ClientRectangle, this.Text, this.Font, System.Windows.Forms.VisualStyles.GroupBoxState.Normal);
+			}
 		}
 
 		/// <summary>
@@ -324,7 +330,9 @@ namespace TQVaultAE.GUI.Components
 				foreach (BagButtonBase button in this.BagButtons)
 				{
 					if (button != null)
+					{
 						button.ToolTipCallback(windowHandle);
+					}
 				}
 			}
 		}
@@ -341,7 +349,9 @@ namespace TQVaultAE.GUI.Components
 			if ((this.Player == null) || (this.Player.NumberOfSacks < 1))
 			{
 				foreach (BagButtonBase button in this.BagButtons)
+				{
 					button.Visible = false;
+				}
 
 				this.BagSackPanel.Sack = null;
 
@@ -353,12 +363,16 @@ namespace TQVaultAE.GUI.Components
 
 				// figure out the current bag to use
 				if (this.CurrentBag < 0)
+				{
 					this.CurrentBag = 0;
+				}
 
 				int numberOfBags = this.Player.NumberOfSacks - this.BagPanelOffset;
 
 				if ((numberOfBags > 0) && (this.CurrentBag >= numberOfBags))
+				{
 					this.CurrentBag = this.Player.NumberOfSacks - 1;
+				}
 
 				// hide/show bag buttons and assign initial bitmaps
 				int index = 0;
@@ -370,9 +384,13 @@ namespace TQVaultAE.GUI.Components
 				}
 
 				if (numberOfBags > 0)
+				{
 					this.BagSackPanel.Sack = this.Player.GetSack(this.CurrentBag + this.BagPanelOffset);
+				}
 				else
+				{
 					this.BagSackPanel.Sack = null;
+				}
 			}
 		}
 
@@ -386,7 +404,9 @@ namespace TQVaultAE.GUI.Components
 			{
 				this.Text = this.NoPlayerString;
 				if (this.player != null)
+				{
 					this.Text = this.player.PlayerName;
+				}
 			}
 		}
 
@@ -441,8 +461,10 @@ namespace TQVaultAE.GUI.Components
 					if (!this.BagSackPanel.Sack.IsEmpty)
 					{
 						if (Config.Settings.Default.AllowItemCopy)
+						{
 							// Add the copy submenu
 							this.AddSubMenu(Resources.PlayerPanelMenuCopy, this.CopyBagClicked);
+						}
 
 						// Add the merge submenu
 						this.AddSubMenu(Resources.PlayerPanelMenuMerge, this.MergeBagClicked);
@@ -452,16 +474,25 @@ namespace TQVaultAE.GUI.Components
 
 						// Add the Disable Tooltip submenu
 						this.contextMenu.Items.Add("-");
+						
 						if (this.DisabledTooltipBagId.Contains(bagID))
+						{
 							this.AddMenuItem(Resources.PlayerPanelMenuEnableTooltip, this.DisableTooltipClicked);
+						}
 						else
+						{
 							this.AddMenuItem(Resources.PlayerPanelMenuDisableTooltip, this.DisableTooltipClicked);
+						}
 
 						if (this.DisabledTooltipBagId.Count < this.BagButtons.Count)
+						{
 							this.AddMenuItem(Resources.PlayerPanelMenuDisableAllTooltip, this.DisableTooltipClicked);
-
+						}
+						
 						if (this.DisabledTooltipBagId.Any())
+						{
 							this.AddMenuItem(Resources.PlayerPanelMenuEnableAllTooltip, this.DisableTooltipClicked);
+						}
 					}
 
 					this.contextMenu.Show(this.BagButtons[this.CurrentBag], new Point(e.X, e.Y));
@@ -476,7 +507,9 @@ namespace TQVaultAE.GUI.Components
 			if (item != null)
 			{
 				if (item.Text == Resources.PlayerPanelMenuEnableAllTooltip)
+				{
 					this.DisabledTooltipBagId.Clear();
+				}
 
 				if (item.Text == Resources.PlayerPanelMenuDisableAllTooltip)
 				{
@@ -486,10 +519,14 @@ namespace TQVaultAE.GUI.Components
 				}
 
 				if (item.Text == Resources.PlayerPanelMenuEnableTooltip)
+				{
 					this.DisabledTooltipBagId.Remove(this.CurrentBag);
+				}
 
 				if (item.Text == Resources.PlayerPanelMenuDisableTooltip)
+				{
 					this.DisabledTooltipBagId.Add(this.CurrentBag);
+				}
 			}
 		}
 
@@ -501,7 +538,9 @@ namespace TQVaultAE.GUI.Components
 		protected virtual void AutoSortButtonClick(object sender, MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Left)
+			{
 				this.BagSackPanel.Autosort();
+			}
 		}
 
 		/// <summary>
@@ -573,7 +612,9 @@ namespace TQVaultAE.GUI.Components
 			if (this.autoSortButtons != null && this.autoSortButtons.Count > 0)
 			{
 				foreach (AutoSortButton autoSortButton in this.autoSortButtons)
+				{
 					autoSortButton.Visible = false;
+				}
 			}
 		}
 
@@ -587,7 +628,9 @@ namespace TQVaultAE.GUI.Components
 				this.autoSortButtons[0].Visible = true;
 
 				if (this.autoSortButtons.Count == 2)
+				{
 					this.autoSortButtons[1].Visible = this.Player.NumberOfSacks - this.BagPanelOffset > 0;
+				}
 			}
 		}
 
@@ -628,11 +671,16 @@ namespace TQVaultAE.GUI.Components
 		private static int GetDestinationSackIndex(string selectedItem)
 		{
 			if (string.IsNullOrEmpty(selectedItem))
+			{
 				return -1;
+			}
 
 			int hashSign = Resources.GlobalMenuBag.IndexOf(Resources.GlobalMenuBagDelimiter, StringComparison.Ordinal) + 1;
+			
 			if (hashSign == -1)
+			{
 				return -1;
+			}
 
 			return Convert.ToInt32(selectedItem.Substring(hashSign), CultureInfo.InvariantCulture) - 1;
 		}
@@ -692,7 +740,9 @@ namespace TQVaultAE.GUI.Components
 			PropertyChangedEventHandler handler = this.PropertyChanged;
 
 			if (handler != null)
+			{
 				handler(this, new PropertyChangedEventArgs(name));
+			}
 		}
 
 		/// <summary>
@@ -733,7 +783,9 @@ namespace TQVaultAE.GUI.Components
 				int destinationIndex = VaultPanel.GetDestinationSackIndex(item.Name);
 
 				if (destinationIndex > this.Player.NumberOfSacks)
+				{
 					return;
+				}
 
 				if (!this.Player.GetSack(destinationIndex + this.BagPanelOffset).IsEmpty)
 				{
@@ -743,7 +795,10 @@ namespace TQVaultAE.GUI.Components
 						MessageBoxButtons.YesNo,
 						MessageBoxIcon.Question,
 						MessageBoxDefaultButton.Button1,
-						VaultPanel.RightToLeftOptions) != DialogResult.Yes) return;
+						VaultPanel.RightToLeftOptions) != DialogResult.Yes)
+					{
+						return;
+					}
 				}
 
 				if (this.Player.CopySack(this.CurrentBag, destinationIndex))
@@ -800,7 +855,9 @@ namespace TQVaultAE.GUI.Components
 				int destinationIndex = VaultPanel.GetDestinationSackIndex(item.Name);
 
 				if (destinationIndex < 0 || destinationIndex > this.Player.NumberOfSacks || this.CurrentBag == destinationIndex)
+				{
 					return;
+				}
 
 				SackPanel dstSackPanel = this.BagSackPanel;
 				if (dstSackPanel.MergeSack(destinationIndex))
@@ -860,7 +917,9 @@ namespace TQVaultAE.GUI.Components
 			SackCollection sack = this.Player.GetSack(button.ButtonNumber + this.BagPanelOffset);
 
 			if (sack == null)
+			{
 				return;
+			}
 
 			button.Sack = sack;// Init prop for Tooltip
 		}
@@ -879,9 +938,13 @@ namespace TQVaultAE.GUI.Components
 			protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
 			{
 				if (e.Item.Selected)
+				{
 					e.TextColor = Color.Black;
+				}
 				else
+				{
 					e.TextColor = Color.FromArgb(200, 200, 200);
+				}
 
 				base.OnRenderItemText(e);
 			}
