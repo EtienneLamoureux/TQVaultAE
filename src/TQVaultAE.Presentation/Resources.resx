@@ -1459,4 +1459,16 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   <data name="CriticalHitsReceived" xml:space="preserve">
     <value>Critical Hits Recv</value>
   </data>
+  <data name="PlayerPanelMenuDisableAllTooltip" xml:space="preserve">
+    <value>Disable all tooltips</value>
+  </data>
+  <data name="PlayerPanelMenuDisableTooltip" xml:space="preserve">
+    <value>Disable tooltip</value>
+  </data>
+  <data name="PlayerPanelMenuEnableTooltip" xml:space="preserve">
+    <value>Enable tooltip</value>
+  </data>
+  <data name="PlayerPanelMenuEnableAllTooltip" xml:space="preserve">
+    <value>Enable all tooltips</value>
+  </data>
 </root>

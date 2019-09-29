@@ -2183,11 +2183,47 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Disable all tooltips.
+        /// </summary>
+        public static string PlayerPanelMenuDisableAllTooltip {
+            get {
+                return ResourceManager.GetString("PlayerPanelMenuDisableAllTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Disable tooltip.
+        /// </summary>
+        public static string PlayerPanelMenuDisableTooltip {
+            get {
+                return ResourceManager.GetString("PlayerPanelMenuDisableTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Empty Bag.
         /// </summary>
         public static string PlayerPanelMenuEmpty {
             get {
                 return ResourceManager.GetString("PlayerPanelMenuEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Enable all tooltips.
+        /// </summary>
+        public static string PlayerPanelMenuEnableAllTooltip {
+            get {
+                return ResourceManager.GetString("PlayerPanelMenuEnableAllTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Enable tooltip.
+        /// </summary>
+        public static string PlayerPanelMenuEnableTooltip {
+            get {
+                return ResourceManager.GetString("PlayerPanelMenuEnableTooltip", resourceCulture);
             }
         }
         
