@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
+	using log4net;
 	using Microsoft.Extensions.DependencyInjection;
 	using System;
 	using System.ComponentModel;
@@ -12,10 +13,12 @@ namespace TQVaultAE.GUI
 	using System.Globalization;
 	using System.Security.Permissions;
 	using System.Windows.Forms;
+	using System.Windows.Input;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.GUI.Components;
 	using TQVaultAE.GUI.Models;
+	using TQVaultAE.Logs;
 	using TQVaultAE.Presentation;
 
 	/// <summary>
@@ -107,6 +110,7 @@ namespace TQVaultAE.GUI
 		/// Font used to draw the title.
 		/// </summary>
 		private Font titleFont;
+		private readonly ILog Log;
 
 		/// <summary>
 		/// WindowMenu used to display the system menu.
@@ -145,8 +149,9 @@ namespace TQVaultAE.GUI
 				this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
 				this.PlayerCollectionProvider = this.ServiceProvider.GetService<IPlayerCollectionProvider>();
 				this.GamePathResolver = this.ServiceProvider.GetService<IGamePathService>();
-
 				this.titleFont = FontService.GetFontAlbertusMTLight(9.5F);
+				this.Log = this.ServiceProvider.GetService<ILogger<VaultForm>>().Logger;
+
 				InitForm();
 			}
 		}
@@ -192,9 +197,11 @@ namespace TQVaultAE.GUI
 
 		}
 
-		public static void ScaleControl(IUIService uiService, System.Windows.Forms.Control ctrl)
+		public static void ScaleControl(IUIService uiService, System.Windows.Forms.Control ctrl, bool isAbsolutePositioning = true)
 		{
-			ctrl.Location = ScalePoint(uiService, ctrl.Location);
+			if (isAbsolutePositioning)
+				ctrl.Location = ScalePoint(uiService, ctrl.Location);
+
 			ctrl.Size = ScaleSize(uiService, ctrl.Size);
 		}
 
@@ -440,6 +447,9 @@ namespace TQVaultAE.GUI
 				this.CreateBorderRects();
 		}
 
+		internal const int NORMAL_FORMWIDTH = 1350;
+		internal const int NORMAL_FORMHEIGHT = 910;
+
 		/// <summary>
 		/// Scales the form according to the scale factor.
 		/// </summary>
@@ -456,13 +466,12 @@ namespace TQVaultAE.GUI
 
 				UIService.Scale = newDBScale;
 				this.Scale(new SizeF(scaleFactor, scaleFactor));
+
+				Config.Settings.Default.Scale = UIService.Scale;
+				Config.Settings.Default.Save();
 			}
 			else if (scaleFactor == 1.0F)
 			{
-				// Check if we are resetting the size.
-				if (UIService.Scale == 1.0F)
-					return;
-
 				// Reset the border graphics to the originals.
 				this.topBorder = Resources.BorderTop;
 				this.bottomBorder = Resources.BorderBottom;
@@ -470,21 +479,22 @@ namespace TQVaultAE.GUI
 				this.bottomRightCorner = Resources.BorderBottomRightCorner;
 				this.bottomLeftCorner = Resources.BorderBottomLeftCorner;
 
-				UIService.Scale = this.OriginalFormScale;
+				UIService.Scale = 1.0F;
 
 				// Use the width since it is usually more drastic of a change.
 				// especially when coming from a small size.
-				this.Scale(new SizeF(
-					(float)this.OriginalFormSize.Width / (float)this.Width,
-					(float)this.OriginalFormSize.Width / (float)this.Width));
+				var size = new SizeF(
+					(float)NORMAL_FORMWIDTH / (float)this.Width,
+					(float)NORMAL_FORMWIDTH / (float)this.Width);
+				this.Scale(size);
 
 				Config.Settings.Default.Scale = 1.0F;
 				Config.Settings.Default.Save();
 			}
 			else
 			{
-				float scalingWidth = (float)this.OriginalFormSize.Width / (float)this.Width * scaleFactor;
-				float scalingHeight = (float)this.OriginalFormSize.Height / (float)this.Height * scaleFactor;
+				float scalingWidth = (float)NORMAL_FORMWIDTH / (float)this.Width * scaleFactor;
+				float scalingHeight = (float)NORMAL_FORMHEIGHT / (float)this.Height * scaleFactor;
 				float scaling = scalingWidth;
 
 				// Use the scaling factor closest to one.
@@ -493,7 +503,11 @@ namespace TQVaultAE.GUI
 
 				UIService.Scale = scaleFactor;
 				this.Scale(new SizeF(scaling, scaling));
+
+				Config.Settings.Default.Scale = UIService.Scale;
+				Config.Settings.Default.Save();
 			}
+			this.Log.DebugFormat("Config.Settings.Default.Scale changed to {0} !", Config.Settings.Default.Scale);
 		}
 
 		/// <summary>
@@ -524,6 +538,32 @@ namespace TQVaultAE.GUI
 			this.LastFormSize = this.Size;
 		}
 
+		protected Size InitialScaling(Rectangle workingArea)
+		{
+			// If screen is smaller than NORMAL_FORM sizes, adjust scaling (mostly at first run)
+			if (workingArea.Width < NORMAL_FORMWIDTH || workingArea.Height < NORMAL_FORMHEIGHT)
+			{
+				var initialScale = Math.Min(
+					Convert.ToSingle(workingArea.Width) / Convert.ToSingle(NORMAL_FORMWIDTH)
+					, Convert.ToSingle(workingArea.Height) / Convert.ToSingle(NORMAL_FORMHEIGHT)
+				);
+
+				if (Config.Settings.Default.Scale > initialScale)
+				{
+					Config.Settings.Default.Scale = initialScale;
+					Config.Settings.Default.Save();
+				}
+			}
+
+			// Rescale from last saved value
+			var thisClientSize = new Size(
+				(int)Math.Round(NORMAL_FORMWIDTH * Config.Settings.Default.Scale)
+				, (int)Math.Round(NORMAL_FORMHEIGHT * Config.Settings.Default.Scale)
+			);
+
+			return thisClientSize;
+		}
+
 		/// <summary>
 		/// Handler for the ResizeBegin event.  Used for handling the maximize and minimize functions.
 		/// </summary>
@@ -533,14 +573,18 @@ namespace TQVaultAE.GUI
 		{
 			if (this.WindowState != this.lastState)
 			{
-				this.lastState = this.WindowState;
-
 				// If we are coming out of a minimized or maximized state, we need to restore
 				// the form the size prior to minimizing or maximizing.
+				bool fromMinimizedMaximized = false;
 				if (this.lastState == FormWindowState.Minimized || this.lastState == FormWindowState.Maximized)
+				{
 					this.LastFormSize = this.RestoreBounds.Size;
+					fromMinimizedMaximized = true;
+				}
 
-				this.ResizeEndCallback(this, new EventArgs());
+				this.lastState = this.WindowState;
+
+				this.DoResizeEndCallback(this, e, fromMinimizedMaximized);
 			}
 			else if (this.Size != this.LastFormSize && this.FormDesignRatio != 0.0F && this.ConstrainToDesignRatio)
 			{
@@ -569,7 +613,8 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
-		protected virtual void ResizeEndCallback(object sender, EventArgs e)
+		protected virtual void ResizeEndCallback(object sender, EventArgs e) => DoResizeEndCallback(sender, e);
+		protected virtual void DoResizeEndCallback(object sender, EventArgs e, bool fromMinimizedMaximized = false)
 		{
 			// Dragging the form will trigger this event.
 			// If the size did not change or if sizing is disabled we just skip it.
@@ -578,11 +623,22 @@ namespace TQVaultAE.GUI
 
 			if (this.ScaleOnResize)
 			{
+				Size resizeTo = this.LastFormSize;
 				// Scale the internal controls to the new size.
-				float scalingFactor = (float)this.Size.Height / (float)this.LastFormSize.Height;
+				float scalingFactor = (float)this.Size.Height / (float)resizeTo.Height;
+
+				// Reset scaling to 1.0 if resize from minimize/maximize to normal with shift keydown
+				if (fromMinimizedMaximized)
+				{
+					if (Keyboard.IsKeyDown(Key.LeftShift))
+					{
+						resizeTo = new Size(NORMAL_FORMWIDTH, NORMAL_FORMHEIGHT);
+						scalingFactor = 1.0F;
+					}
+				}
 
 				// Set it back to the original size since the Scale() call in ScaleForm() will also resize the form.
-				this.Size = this.LastFormSize;
+				this.Size = resizeTo;
 				this.ScaleForm(scalingFactor, true);
 			}
 

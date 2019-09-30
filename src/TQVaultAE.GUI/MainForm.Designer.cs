@@ -3,10 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
-using System.Drawing;
 using TQVaultAE.GUI.Components;
-using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI
 {
@@ -19,16 +16,6 @@ namespace TQVaultAE.GUI
 		/// Windows Form Exit button
 		/// </summary>
 		private ScalingButton exitButton;
-
-		/// <summary>
-		/// Windows Form Character dropdown
-		/// </summary>
-		private ScalingComboBox characterComboBox;
-
-		/// <summary>
-		/// Windows Form Character Label
-		/// </summary>
-		private ScalingLabel characterLabel;
 
 		/// <summary>
 		/// Windows Form Item Text Panel
@@ -63,12 +50,7 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Windows Form Panel Selection Button
 		/// </summary>
-		private ScalingButton panelSelectButton;
-
-		/// <summary>
-		/// Windows Form Secondary Vault List Dropdown
-		/// </summary>
-		private ScalingComboBox secondaryVaultListComboBox;
+		private ScalingButton showVaulButton;
 
 		/// <summary>
 		/// Windows Form About Button
@@ -125,22 +107,29 @@ namespace TQVaultAE.GUI
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.exitButton = new TQVaultAE.GUI.Components.ScalingButton();
-            this.characterComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
-            this.characterLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.itemTextPanel = new System.Windows.Forms.Panel();
             this.itemText = new TQVaultAE.GUI.Components.ScalingLabel();
             this.vaultListComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.vaultLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.configureButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.customMapText = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.panelSelectButton = new TQVaultAE.GUI.Components.ScalingButton();
-            this.secondaryVaultListComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
+            this.showVaulButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.aboutButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.titleLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.searchButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.fadeInTimer = new System.Windows.Forms.Timer(this.components);
+            this.flowLayoutPanelVaultSelector = new System.Windows.Forms.FlowLayoutPanel();
+            this.tableLayoutPanelMain = new System.Windows.Forms.TableLayoutPanel();
+            this.flowLayoutPanelRightPanels = new System.Windows.Forms.FlowLayoutPanel();
+            this.flowLayoutPanelRightComboBox = new System.Windows.Forms.FlowLayoutPanel();
+            this.characterLabel = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.characterComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
+            this.secondaryVaultListComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.itemTextPanel.SuspendLayout();
+            this.flowLayoutPanelVaultSelector.SuspendLayout();
+            this.tableLayoutPanelMain.SuspendLayout();
+            this.flowLayoutPanelRightComboBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // exitButton
@@ -167,54 +156,35 @@ namespace TQVaultAE.GUI
             this.exitButton.UseVisualStyleBackColor = false;
             this.exitButton.Click += new System.EventHandler(this.ExitButtonClick);
             // 
-            // characterComboBox
-            // 
-            this.characterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.characterComboBox.Font = new System.Drawing.Font("Albertus MT Light", 13F);
-            this.characterComboBox.Location = new System.Drawing.Point(777, 72);
-            this.characterComboBox.MaxDropDownItems = 10;
-            this.characterComboBox.Name = "characterComboBox";
-            this.characterComboBox.Size = new System.Drawing.Size(481, 28);
-            this.characterComboBox.TabIndex = 1;
-            this.characterComboBox.SelectedIndexChanged += new System.EventHandler(this.CharacterComboBoxSelectedIndexChanged);
-            // 
-            // characterLabel
-            // 
-            this.characterLabel.BackColor = System.Drawing.Color.Transparent;
-            this.characterLabel.Font = new System.Drawing.Font("Albertus MT Light", 11F);
-            this.characterLabel.ForeColor = System.Drawing.Color.White;
-            this.characterLabel.Location = new System.Drawing.Point(681, 72);
-            this.characterLabel.Name = "characterLabel";
-            this.characterLabel.Size = new System.Drawing.Size(90, 24);
-            this.characterLabel.TabIndex = 2;
-            this.characterLabel.Text = "Character:";
-            this.characterLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
             // itemTextPanel
             // 
             this.itemTextPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(188)))), ((int)(((byte)(97)))));
             this.itemTextPanel.Controls.Add(this.itemText);
-            this.itemTextPanel.Location = new System.Drawing.Point(6, 606);
+            this.itemTextPanel.Location = new System.Drawing.Point(4, 137);
+            this.itemTextPanel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 20);
             this.itemTextPanel.Name = "itemTextPanel";
+            this.itemTextPanel.Padding = new System.Windows.Forms.Padding(2);
             this.itemTextPanel.Size = new System.Drawing.Size(592, 22);
             this.itemTextPanel.TabIndex = 4;
             // 
             // itemText
             // 
             this.itemText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+            this.itemText.Dock = System.Windows.Forms.DockStyle.Fill;
             this.itemText.Font = new System.Drawing.Font("Arial Black", 8.25F);
             this.itemText.Location = new System.Drawing.Point(2, 2);
             this.itemText.Name = "itemText";
-            this.itemText.Size = new System.Drawing.Size(576, 18);
+            this.itemText.Size = new System.Drawing.Size(588, 18);
             this.itemText.TabIndex = 0;
             // 
             // vaultListComboBox
             // 
+            this.vaultListComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.vaultListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.vaultListComboBox.Font = new System.Drawing.Font("Albertus MT Light", 13F);
-            this.vaultListComboBox.Location = new System.Drawing.Point(108, 72);
+            this.vaultListComboBox.Location = new System.Drawing.Point(99, 3);
             this.vaultListComboBox.Name = "vaultListComboBox";
-            this.vaultListComboBox.Size = new System.Drawing.Size(481, 28);
+            this.vaultListComboBox.Size = new System.Drawing.Size(481, 29);
             this.vaultListComboBox.TabIndex = 5;
             this.vaultListComboBox.SelectedIndexChanged += new System.EventHandler(this.VaultListComboBoxSelectedIndexChanged);
             // 
@@ -223,7 +193,7 @@ namespace TQVaultAE.GUI
             this.vaultLabel.BackColor = System.Drawing.Color.Transparent;
             this.vaultLabel.Font = new System.Drawing.Font("Albertus MT Light", 11F);
             this.vaultLabel.ForeColor = System.Drawing.Color.White;
-            this.vaultLabel.Location = new System.Drawing.Point(12, 72);
+            this.vaultLabel.Location = new System.Drawing.Point(3, 0);
             this.vaultLabel.Name = "vaultLabel";
             this.vaultLabel.Size = new System.Drawing.Size(90, 24);
             this.vaultLabel.TabIndex = 6;
@@ -255,49 +225,40 @@ namespace TQVaultAE.GUI
             // 
             // customMapText
             // 
+            this.customMapText.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.customMapText.BackColor = System.Drawing.Color.Gold;
             this.customMapText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.customMapText.Font = new System.Drawing.Font("Albertus MT", 11.25F);
             this.customMapText.ForeColor = System.Drawing.Color.Black;
-            this.customMapText.Location = new System.Drawing.Point(312, 811);
+            this.customMapText.Location = new System.Drawing.Point(216, 98);
+            this.customMapText.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.customMapText.Name = "customMapText";
-            this.customMapText.Size = new System.Drawing.Size(323, 46);
+            this.customMapText.Size = new System.Drawing.Size(380, 30);
             this.customMapText.TabIndex = 11;
             this.customMapText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // panelSelectButton
+            // showVaulButton
             // 
-            this.panelSelectButton.BackColor = System.Drawing.Color.Transparent;
-            this.panelSelectButton.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("panelSelectButton.DownBitmap")));
-            this.panelSelectButton.FlatAppearance.BorderSize = 0;
-            this.panelSelectButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.panelSelectButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.panelSelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.panelSelectButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
-            this.panelSelectButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.panelSelectButton.Image = ((System.Drawing.Image)(resources.GetObject("panelSelectButton.Image")));
-            this.panelSelectButton.Location = new System.Drawing.Point(148, 24);
-            this.panelSelectButton.Name = "panelSelectButton";
-            this.panelSelectButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("panelSelectButton.OverBitmap")));
-            this.panelSelectButton.Size = new System.Drawing.Size(137, 30);
-            this.panelSelectButton.SizeToGraphic = false;
-            this.panelSelectButton.TabIndex = 12;
-            this.panelSelectButton.Text = "Show Vault";
-            this.panelSelectButton.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("panelSelectButton.UpBitmap")));
-            this.panelSelectButton.UseCustomGraphic = true;
-            this.panelSelectButton.UseVisualStyleBackColor = false;
-            this.panelSelectButton.Click += new System.EventHandler(this.PanelSelectButtonClick);
-            // 
-            // secondaryVaultListComboBox
-            // 
-            this.secondaryVaultListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.secondaryVaultListComboBox.Font = new System.Drawing.Font("Albertus MT Light", 11F);
-            this.secondaryVaultListComboBox.Location = new System.Drawing.Point(777, 59);
-            this.secondaryVaultListComboBox.MaxDropDownItems = 10;
-            this.secondaryVaultListComboBox.Name = "secondaryVaultListComboBox";
-            this.secondaryVaultListComboBox.Size = new System.Drawing.Size(481, 25);
-            this.secondaryVaultListComboBox.TabIndex = 15;
-            this.secondaryVaultListComboBox.SelectedIndexChanged += new System.EventHandler(this.SecondaryVaultListComboBoxSelectedIndexChanged);
+            this.showVaulButton.BackColor = System.Drawing.Color.Transparent;
+            this.showVaulButton.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("showVaulButton.DownBitmap")));
+            this.showVaulButton.FlatAppearance.BorderSize = 0;
+            this.showVaulButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.showVaulButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.showVaulButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.showVaulButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
+            this.showVaulButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.showVaulButton.Image = ((System.Drawing.Image)(resources.GetObject("showVaulButton.Image")));
+            this.showVaulButton.Location = new System.Drawing.Point(148, 24);
+            this.showVaulButton.Name = "showVaulButton";
+            this.showVaulButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("showVaulButton.OverBitmap")));
+            this.showVaulButton.Size = new System.Drawing.Size(137, 30);
+            this.showVaulButton.SizeToGraphic = false;
+            this.showVaulButton.TabIndex = 12;
+            this.showVaulButton.Text = "Show Vault";
+            this.showVaulButton.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("showVaulButton.UpBitmap")));
+            this.showVaulButton.UseCustomGraphic = true;
+            this.showVaulButton.UseVisualStyleBackColor = false;
+            this.showVaulButton.Click += new System.EventHandler(this.PanelSelectButtonClick);
             // 
             // aboutButton
             // 
@@ -368,26 +329,128 @@ namespace TQVaultAE.GUI
             this.fadeInTimer.Interval = 50;
             this.fadeInTimer.Tick += new System.EventHandler(this.FadeInTimerTick);
             // 
+            // flowLayoutPanelVaultSelector
+            // 
+            this.flowLayoutPanelVaultSelector.AutoSize = true;
+            this.flowLayoutPanelVaultSelector.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanelVaultSelector.BackColor = System.Drawing.Color.Transparent;
+            this.flowLayoutPanelVaultSelector.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.flowLayoutPanelVaultSelector.Controls.Add(this.vaultLabel);
+            this.flowLayoutPanelVaultSelector.Controls.Add(this.vaultListComboBox);
+            this.flowLayoutPanelVaultSelector.Location = new System.Drawing.Point(4, 4);
+            this.flowLayoutPanelVaultSelector.Name = "flowLayoutPanelVaultSelector";
+            this.flowLayoutPanelVaultSelector.Size = new System.Drawing.Size(587, 39);
+            this.flowLayoutPanelVaultSelector.TabIndex = 20;
+            // 
+            // tableLayoutPanelMain
+            // 
+            this.tableLayoutPanelMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanelMain.AutoSize = true;
+            this.tableLayoutPanelMain.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanelMain.BackColor = System.Drawing.Color.Transparent;
+            this.tableLayoutPanelMain.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+            this.tableLayoutPanelMain.ColumnCount = 3;
+            this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 5F));
+            this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelRightPanels, 2, 1);
+            this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelVaultSelector, 0, 0);
+            this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelRightComboBox, 2, 0);
+            this.tableLayoutPanelMain.Controls.Add(this.customMapText, 0, 2);
+            this.tableLayoutPanelMain.Controls.Add(this.itemTextPanel, 0, 3);
+            this.tableLayoutPanelMain.Location = new System.Drawing.Point(15, 60);
+            this.tableLayoutPanelMain.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanelMain.Name = "tableLayoutPanelMain";
+            this.tableLayoutPanelMain.RowCount = 4;
+            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanelMain.Size = new System.Drawing.Size(1320, 180);
+            this.tableLayoutPanelMain.TabIndex = 21;
+            // 
+            // flowLayoutPanelRightPanels
+            // 
+            this.flowLayoutPanelRightPanels.AutoSize = true;
+            this.flowLayoutPanelRightPanels.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanelRightPanels.BackColor = System.Drawing.Color.Transparent;
+            this.flowLayoutPanelRightPanels.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.flowLayoutPanelRightPanels.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanelRightPanels.Location = new System.Drawing.Point(606, 79);
+            this.flowLayoutPanelRightPanels.Margin = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanelRightPanels.MinimumSize = new System.Drawing.Size(200, 100);
+            this.flowLayoutPanelRightPanels.Name = "flowLayoutPanelRightPanels";
+            this.tableLayoutPanelMain.SetRowSpan(this.flowLayoutPanelRightPanels, 3);
+            this.flowLayoutPanelRightPanels.Size = new System.Drawing.Size(200, 100);
+            this.flowLayoutPanelRightPanels.TabIndex = 22;
+            // 
+            // flowLayoutPanelRightComboBox
+            // 
+            this.flowLayoutPanelRightComboBox.AutoSize = true;
+            this.flowLayoutPanelRightComboBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanelRightComboBox.BackColor = System.Drawing.Color.Transparent;
+            this.flowLayoutPanelRightComboBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.flowLayoutPanelRightComboBox.Controls.Add(this.characterLabel);
+            this.flowLayoutPanelRightComboBox.Controls.Add(this.characterComboBox);
+            this.flowLayoutPanelRightComboBox.Controls.Add(this.secondaryVaultListComboBox);
+            this.flowLayoutPanelRightComboBox.Location = new System.Drawing.Point(609, 4);
+            this.flowLayoutPanelRightComboBox.Name = "flowLayoutPanelRightComboBox";
+            this.flowLayoutPanelRightComboBox.Size = new System.Drawing.Size(587, 71);
+            this.flowLayoutPanelRightComboBox.TabIndex = 20;
+            // 
+            // characterLabel
+            // 
+            this.characterLabel.BackColor = System.Drawing.Color.Transparent;
+            this.characterLabel.Font = new System.Drawing.Font("Albertus MT Light", 11F);
+            this.characterLabel.ForeColor = System.Drawing.Color.White;
+            this.characterLabel.Location = new System.Drawing.Point(3, 0);
+            this.characterLabel.Name = "characterLabel";
+            this.characterLabel.Size = new System.Drawing.Size(90, 24);
+            this.characterLabel.TabIndex = 2;
+            this.characterLabel.Text = "Character:";
+            this.characterLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // characterComboBox
+            // 
+            this.characterComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.characterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.characterComboBox.Font = new System.Drawing.Font("Albertus MT Light", 13F);
+            this.characterComboBox.Location = new System.Drawing.Point(99, 3);
+            this.characterComboBox.MaxDropDownItems = 10;
+            this.characterComboBox.Name = "characterComboBox";
+            this.characterComboBox.Size = new System.Drawing.Size(481, 29);
+            this.characterComboBox.TabIndex = 1;
+            this.characterComboBox.SelectedIndexChanged += new System.EventHandler(this.CharacterComboBoxSelectedIndexChanged);
+            // 
+            // secondaryVaultListComboBox
+            // 
+            this.secondaryVaultListComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.secondaryVaultListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.secondaryVaultListComboBox.Font = new System.Drawing.Font("Albertus MT Light", 11F);
+            this.secondaryVaultListComboBox.Location = new System.Drawing.Point(3, 38);
+            this.secondaryVaultListComboBox.MaxDropDownItems = 10;
+            this.secondaryVaultListComboBox.Name = "secondaryVaultListComboBox";
+            this.secondaryVaultListComboBox.Size = new System.Drawing.Size(481, 26);
+            this.secondaryVaultListComboBox.TabIndex = 15;
+            this.secondaryVaultListComboBox.SelectedIndexChanged += new System.EventHandler(this.SecondaryVaultListComboBoxSelectedIndexChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.BackgroundImage = global::TQVaultAE.Presentation.Resources.MainForm_NewBackground;
+            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.CancelButton = this.exitButton;
             this.ClientSize = new System.Drawing.Size(1350, 910);
             this.ConstrainToDesignRatio = true;
+            this.Controls.Add(this.tableLayoutPanelMain);
             this.Controls.Add(this.searchButton);
             this.Controls.Add(this.aboutButton);
-            this.Controls.Add(this.secondaryVaultListComboBox);
-            this.Controls.Add(this.panelSelectButton);
-            this.Controls.Add(this.customMapText);
+            this.Controls.Add(this.showVaulButton);
             this.Controls.Add(this.configureButton);
-            this.Controls.Add(this.vaultLabel);
-            this.Controls.Add(this.vaultListComboBox);
-            this.Controls.Add(this.itemTextPanel);
-            this.Controls.Add(this.characterLabel);
-            this.Controls.Add(this.characterComboBox);
             this.Controls.Add(this.exitButton);
             this.Controls.Add(this.titleLabel);
             this.DrawCustomBorder = true;
@@ -409,23 +472,29 @@ namespace TQVaultAE.GUI
             this.Resize += new System.EventHandler(this.ResizeBeginCallback);
             this.Controls.SetChildIndex(this.titleLabel, 0);
             this.Controls.SetChildIndex(this.exitButton, 0);
-            this.Controls.SetChildIndex(this.characterComboBox, 0);
-            this.Controls.SetChildIndex(this.characterLabel, 0);
-            this.Controls.SetChildIndex(this.itemTextPanel, 0);
-            this.Controls.SetChildIndex(this.vaultListComboBox, 0);
-            this.Controls.SetChildIndex(this.vaultLabel, 0);
             this.Controls.SetChildIndex(this.configureButton, 0);
-            this.Controls.SetChildIndex(this.customMapText, 0);
-            this.Controls.SetChildIndex(this.panelSelectButton, 0);
-            this.Controls.SetChildIndex(this.secondaryVaultListComboBox, 0);
+            this.Controls.SetChildIndex(this.showVaulButton, 0);
             this.Controls.SetChildIndex(this.aboutButton, 0);
             this.Controls.SetChildIndex(this.searchButton, 0);
+            this.Controls.SetChildIndex(this.tableLayoutPanelMain, 0);
             this.itemTextPanel.ResumeLayout(false);
+            this.flowLayoutPanelVaultSelector.ResumeLayout(false);
+            this.tableLayoutPanelMain.ResumeLayout(false);
+            this.tableLayoutPanelMain.PerformLayout();
+            this.flowLayoutPanelRightComboBox.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
 		}
 
 		#endregion
+
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelVaultSelector;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanelMain;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelRightComboBox;
+		private ScalingLabel characterLabel;
+		private ScalingComboBox characterComboBox;
+		private ScalingComboBox secondaryVaultListComboBox;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelRightPanels;
 	}
 }

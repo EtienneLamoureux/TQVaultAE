@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
-using TQVaultAE.Data;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
@@ -27,17 +26,18 @@ namespace TQVaultAE.GUI
 		{
 			this.vaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.Vault, this.ServiceProvider);
 
-			int locationY = this.vaultListComboBox.Location.Y + Convert.ToInt32(28.0F * UIService.Scale);
 			this.vaultPanel.DrawAsGroupBox = false;
 
-			this.vaultPanel.Location = new Point(Convert.ToInt32(22.0F * UIService.Scale), locationY);
 			this.vaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 			this.vaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
 			this.vaultPanel.OnActivateSearch += new EventHandler<SackPanelEventArgs>(this.ActivateSearchCallback);
 			this.vaultPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
 			this.vaultPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
 			this.vaultPanel.OnResizeForm += new EventHandler<ResizeEventArgs>(this.ResizeFormCallback);
-			Controls.Add(this.vaultPanel);
+
+			this.tableLayoutPanelMain.Controls.Add(this.vaultPanel, 0, 1);
+			this.vaultPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+			this.vaultPanel.Margin = new Padding(0);
 		}
 
 		/// <summary>
@@ -49,18 +49,16 @@ namespace TQVaultAE.GUI
 			this.secondaryVaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.SecondaryVault, this.ServiceProvider);
 			this.secondaryVaultPanel.DrawAsGroupBox = false;
 
-			// Place it with the same Y value as the character panel and X value of the vault panel.
-			this.secondaryVaultPanel.Location = new Point(
-				this.ClientSize.Width - (this.secondaryVaultPanel.Width + Convert.ToInt32(49.0F * UIService.Scale)),
-				this.vaultPanel.Location.Y);
-
 			this.secondaryVaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 			this.secondaryVaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
 			this.secondaryVaultPanel.OnActivateSearch += new EventHandler<SackPanelEventArgs>(this.ActivateSearchCallback);
 			this.secondaryVaultPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
 			this.secondaryVaultPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
 			this.secondaryVaultPanel.OnResizeForm += new EventHandler<ResizeEventArgs>(this.ResizeFormCallback);
-			Controls.Add(this.secondaryVaultPanel);
+
+			this.flowLayoutPanelRightPanels.Controls.Add(this.secondaryVaultPanel);
+			this.secondaryVaultPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+			this.secondaryVaultPanel.Margin = new Padding(0);
 		}
 
 
@@ -75,21 +73,10 @@ namespace TQVaultAE.GUI
 			// Added by VillageIdiot
 			// See if the Vault path was set during GetVaultList and update the key accordingly
 			if (GamePathResolver.VaultFolderChanged)
-			{
 				this.vaultService.UpdateVaultPath(GamePathResolver.TQVaultSaveFolder);
-			}
-
-			string currentVault;
 
 			// There was something already selected so we will save it.
-			if (this.vaultListComboBox.Items.Count > 0)
-			{
-				currentVault = this.vaultListComboBox.SelectedItem.ToString();
-			}
-			else
-			{
-				currentVault = VaultService.MAINVAULT;
-			}
+			string currentVault = (this.vaultListComboBox.Items.Count > 0) ? this.vaultListComboBox.SelectedItem.ToString() : VaultService.MAINVAULT;
 
 			// Added by VillageIdiot
 			// Clear the list before creating since this function can be called multiple times.
@@ -99,9 +86,7 @@ namespace TQVaultAE.GUI
 
 			// Add Main Vault first
 			if (this.secondaryVaultListComboBox.SelectedItem == null || this.secondaryVaultListComboBox.SelectedItem.ToString() != VaultService.MAINVAULT)
-			{
 				this.vaultListComboBox.Items.Add(VaultService.MAINVAULT);
-			}
 
 			if ((vaults?.Length ?? 0) > 0)
 			{
@@ -112,9 +97,7 @@ namespace TQVaultAE.GUI
 					{
 						// we already added main vault
 						if (this.secondaryVaultListComboBox.SelectedItem != null && vault.Equals(this.secondaryVaultListComboBox.SelectedItem.ToString()) && this.showSecondaryVault)
-						{
 							break;
-						}
 
 						this.vaultListComboBox.Items.Add(vault);
 					}
@@ -129,9 +112,7 @@ namespace TQVaultAE.GUI
 				// Make sure there is something in the config file to load else load the Main Vault
 				// We do not want to create new here.
 				if (string.IsNullOrEmpty(currentVault) || !File.Exists(GamePathResolver.GetVaultFile(currentVault)))
-				{
 					currentVault = VaultService.MAINVAULT;
-				}
 			}
 
 			if (loadVault)
@@ -149,23 +130,13 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void GetSecondaryVaultList()
 		{
-			string currentVault;
 
 			// There was something already selected so we will save it.
-			if (this.secondaryVaultListComboBox.Items.Count > 0)
-			{
-				currentVault = this.secondaryVaultListComboBox.SelectedItem.ToString();
-			}
-			else
-			{
-				currentVault = Resources.MainFormSelectVault;
-			}
+			string currentVault = (this.secondaryVaultListComboBox.Items.Count > 0) ? this.secondaryVaultListComboBox.SelectedItem.ToString() : Resources.MainFormSelectVault;
 
 			if (currentVault == this.vaultListComboBox.SelectedItem.ToString())
-			{
 				// Clear the selection if it is already loaded on the main panel.
 				currentVault = Resources.MainFormSelectVault;
-			}
 
 			// Clear the list before creating since this function can be called multiple times.
 			this.secondaryVaultListComboBox.Items.Clear();
@@ -177,9 +148,8 @@ namespace TQVaultAE.GUI
 				for (int i = 1; i < this.vaultListComboBox.Items.Count; ++i)
 				{ // Skip over the maintenance selection.
 					if (i != this.vaultListComboBox.SelectedIndex)
-					{ // Skip over the selected item.
+						// Skip over the selected item.
 						this.secondaryVaultListComboBox.Items.Add(this.vaultListComboBox.Items[i]);
-					}
 				}
 			}
 
@@ -200,9 +170,7 @@ namespace TQVaultAE.GUI
 			if (secondaryVault && vaultName == Resources.MainFormSelectVault)
 			{
 				if (this.secondaryVaultPanel.Player != null)
-				{
 					this.secondaryVaultPanel.Player = null;
-				}
 			}
 			else
 			{
@@ -219,13 +187,9 @@ namespace TQVaultAE.GUI
 
 			// Now assign the vault to the vaultpanel
 			if (secondaryVault)
-			{
 				this.secondaryVaultPanel.Player = vault;
-			}
 			else
-			{
 				this.vaultPanel.Player = vault;
-			}
 		}
 
 		/// <summary>

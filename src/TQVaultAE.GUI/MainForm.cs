@@ -65,6 +65,11 @@ namespace TQVaultAE.GUI
 		private ItemDragInfo DragInfo;
 
 		/// <summary>
+		/// Used for show/hide table panel layout borders during debug
+		/// </summary>
+		private bool DebugLayoutBorderVisible = false;
+
+		/// <summary>
 		/// Holds the coordinates of the last drag item
 		/// </summary>
 		private Point lastDragPoint;
@@ -164,30 +169,31 @@ namespace TQVaultAE.GUI
 			this.exitButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
 			ScaleControl(this.UIService, this.exitButton);
 			this.characterComboBox.Font = FontService.GetFontAlbertusMTLight(13F, UIService.Scale);
-			ScaleControl(this.UIService, this.characterComboBox);
+			ScaleControl(this.UIService, this.characterComboBox, false);
 			this.characterLabel.Font = FontService.GetFontAlbertusMTLight(11F, UIService.Scale);
-			ScaleControl(this.UIService, this.characterLabel);
-			ScaleControl(this.UIService, this.itemTextPanel);
+			ScaleControl(this.UIService, this.characterLabel, false);
 
-			ScaleControl(this.UIService, this.itemText);
+			this.itemText.Font = FontService.GetFontAlbertusMTLight(11F, FontStyle.Bold, UIService.Scale);
+
 			this.vaultListComboBox.Font = FontService.GetFontAlbertusMTLight(13F, UIService.Scale);
-			ScaleControl(this.UIService, this.vaultListComboBox);
+			ScaleControl(this.UIService, this.vaultListComboBox, false);
 			this.vaultLabel.Font = FontService.GetFontAlbertusMTLight(11F, UIService.Scale);
-			ScaleControl(this.UIService, this.vaultLabel);
+			ScaleControl(this.UIService, this.vaultLabel, false);
 			this.configureButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
 			ScaleControl(this.UIService, this.configureButton);
 			this.customMapText.Font = FontService.GetFontAlbertusMT(11.25F, UIService.Scale);
-			ScaleControl(this.UIService, this.customMapText);
-			this.panelSelectButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
-			ScaleControl(this.UIService, this.panelSelectButton);
+			ScaleControl(this.UIService, this.customMapText, false);
+			this.showVaulButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
+			ScaleControl(this.UIService, this.showVaulButton);
 			this.secondaryVaultListComboBox.Font = FontService.GetFontAlbertusMTLight(11F, UIService.Scale);
-			ScaleControl(this.UIService, this.secondaryVaultListComboBox);
+			ScaleControl(this.UIService, this.secondaryVaultListComboBox, false);
 			this.aboutButton.Font = FontService.GetFontAlbertusMTLight(8.25F, UIService.Scale);
 			ScaleControl(this.UIService, this.aboutButton);
 			this.titleLabel.Font = FontService.GetFontAlbertusMTLight(24F, UIService.Scale);
 			ScaleControl(this.UIService, this.titleLabel);
 			this.searchButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
 			ScaleControl(this.UIService, this.searchButton);
+			ScaleControl(this.UIService, this.tableLayoutPanelMain);
 
 			#endregion
 
@@ -229,12 +235,22 @@ namespace TQVaultAE.GUI
 			this.vaultLabel.Text = Resources.MainFormLabel2;
 			this.configureButton.Text = Resources.MainFormBtnConfigure;
 			this.exitButton.Text = Resources.GlobalExit;
-			this.panelSelectButton.Text = Resources.MainFormBtnPanelSelect;
+			this.showVaulButton.Text = Resources.MainFormBtnPanelSelect;
 			this.Icon = Resources.TQVIcon;
 			this.searchButton.Text = Resources.MainFormSearchButtonText;
 
 			this.lastDragPoint.X = -1;
 			this.DragInfo = new ItemDragInfo(this.UIService);
+#if DEBUG
+			this.DebugLayoutBorderVisible = false;// Set here what you want during debug
+#endif
+			if (!this.DebugLayoutBorderVisible)
+			{
+				this.flowLayoutPanelRightComboBox.BorderStyle = BorderStyle.None;
+				this.flowLayoutPanelVaultSelector.BorderStyle = BorderStyle.None;
+				this.flowLayoutPanelRightPanels.BorderStyle = BorderStyle.None;
+				this.tableLayoutPanelMain.CellBorderStyle = TableLayoutPanelCellBorderStyle.None;
+			}
 
 			this.CreatePanels();
 		}
@@ -452,30 +468,14 @@ namespace TQVaultAE.GUI
 
 			Rectangle workingArea = Screen.FromControl(this).WorkingArea;
 
-			int formWidth = 1350;
-			int formHeight = 910;
-			float initialScale = 1.0F;
-			Config.Settings.Default.Scale = initialScale;
-
-			// Ninakoru: trick to force close/min/max buttons to reposition...
 			this.ScaleOnResize = false;
-			if (workingArea.Width < formWidth || workingArea.Height < formHeight)
-			{
-				initialScale = Math.Min(Convert.ToSingle(workingArea.Width) / Convert.ToSingle(formWidth), Convert.ToSingle(workingArea.Height) / Convert.ToSingle(formHeight));
 
-				if (Config.Settings.Default.Scale > initialScale)
-					Config.Settings.Default.Scale = initialScale;
-
-				this.ClientSize = new System.Drawing.Size((int)System.Math.Round(formWidth * Config.Settings.Default.Scale), (int)System.Math.Round(formHeight * Config.Settings.Default.Scale));
-			}
-			else
-				this.ClientSize = new System.Drawing.Size(formWidth, formHeight);
+			this.ClientSize = InitialScaling(workingArea);
 
 			this.ScaleOnResize = true;
 
 			UIService.Scale = Config.Settings.Default.Scale;
-
-			Config.Settings.Default.Save();
+			this.Log.DebugFormat("Config.Settings.Default.Scale changed to {0} !", UIService.Scale);
 
 			// Save the height / width ratio for resizing.
 			this.FormDesignRatio = (float)this.Height / (float)this.Width;
@@ -500,11 +500,11 @@ namespace TQVaultAE.GUI
 			// Set the maximized size but keep the aspect ratio.
 			if (Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio) < workingArea.Height)
 			{
-				this.MaximizedBounds = new Rectangle(
-					0,
-					(workingArea.Height - Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio)) / 2,
-					workingArea.Width,
-					Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio));
+				this.MaximizedBounds = new Rectangle(0
+					, (workingArea.Height - Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio)) / 2
+					, workingArea.Width
+					, Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio)
+				);
 			}
 			else
 			{
@@ -516,6 +516,7 @@ namespace TQVaultAE.GUI
 			}
 			this.Location = new Point(workingArea.Left + Convert.ToInt16((workingArea.Width - this.ClientSize.Width) / 2), workingArea.Top + Convert.ToInt16((workingArea.Height - this.ClientSize.Height) / 2));
 		}
+
 
 		#endregion
 

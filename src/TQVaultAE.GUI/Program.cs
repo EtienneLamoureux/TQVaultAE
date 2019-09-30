@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
+	using log4net.Core;
 	using Microsoft.Extensions.DependencyInjection;
 	using System;
 	using System.Globalization;
@@ -46,7 +47,6 @@ namespace TQVaultAE.GUI
 		{
 			try
 			{
-
 				// Add the event handler for handling UI thread exceptions to the event.
 				Application.ThreadException += new ThreadExceptionEventHandler(MainForm_UIThreadException);
 
@@ -58,6 +58,10 @@ namespace TQVaultAE.GUI
 
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
+
+#if DEBUG
+				Logger.ChangeRootLogLevel(Level.Debug);
+#endif
 
 				// Configure DI
 				var scol = new ServiceCollection()
