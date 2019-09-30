@@ -9,6 +9,8 @@ namespace TQVaultAE.Domain.Helpers
 {
 	public static class StringHelper
 	{
+		public const string TQNewLineTag = @"{^N}";
+
 		public static string ToFirstCharUpperCase(this string text)
 		{
 			if (string.IsNullOrEmpty(text)) return text;
@@ -29,13 +31,13 @@ namespace TQVaultAE.Domain.Helpers
 		public static (bool Value, int Length) IsColorTagOnlyExtended(this string TQText)
 		{
 			if (string.IsNullOrWhiteSpace(TQText)) return (false, 0);
-			return (Regex.IsMatch(TQText, $@"^{TQColorHelper.RegExColorTag}$"), TQText.Length);
+			return (Regex.IsMatch(TQText, $@"^{TQColorHelper.RegExTQTag}$"), TQText.Length);
 		}
 
 		public static string RemoveAllTQTags(this string TQText)
 		{
 			return Regex.Replace(TQText
-				, TQColorHelper.RegExColorTag
+				, TQColorHelper.RegExTQTag
 				, string.Empty
 			);
 		}

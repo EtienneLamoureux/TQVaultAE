@@ -89,7 +89,7 @@ namespace TQVaultAE.GUI
 				.AddTransient<IVaultService, VaultService>()
 				.AddTransient<ISearchService, SearchService>()
 				.AddTransient<IFontService, FontService>()
-				.AddTransient<IItemStyleService, ItemStyleService>()
+				.AddTransient<ITranslationService, TranslationService>()
 				.AddSingleton<IUIService, UIService>()
 				.AddSingleton<ITQDataService, TQDataService>()
 				.AddTransient<IBitmapService, BitmapService>()

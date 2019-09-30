@@ -158,7 +158,10 @@ namespace TQVaultAE.GUI
 			{
 				// Throw a message if the stash is not present.
 				if (result.StashFound.HasValue && !result.StashFound.Value)
-					MessageBox.Show(Resources.StashNotFoundMsg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+				{
+					var msg = string.Concat(Resources.StashNotFoundMsg, "\n\nCharacter : ", selectedText);
+					MessageBox.Show(msg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+				}
 
 				if (result.StashArgumentException != null)
 				{

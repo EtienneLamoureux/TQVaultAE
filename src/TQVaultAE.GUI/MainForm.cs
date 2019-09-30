@@ -210,17 +210,6 @@ namespace TQVaultAE.GUI
 				Log.Debug(string.Empty);
 			}
 
-			// Set up Item strings
-			Item.ItemWith = Resources.ItemWith;
-			Item.ItemRelicBonus = Resources.ItemRelicBonus;
-			Item.ItemRelicCompleted = Resources.ItemRelicCompleted;
-			Item.ItemQuest = Resources.ItemQuest;
-			Item.ItemSeed = Resources.ItemSeed;
-			Item.ItemIT = Resources.ItemIT;
-			Item.ItemRagnarok = Resources.ItemRagnarok;
-			Item.ItemAtlantis = Resources.ItemAtlantis;
-			Item.ShowSkillLevel = Config.Settings.Default.ShowSkillLevel;
-
 			// Process the mouse scroll wheel to cycle through the vaults.
 			this.MouseWheel += new MouseEventHandler(this.MainFormMouseWheel);
 		}

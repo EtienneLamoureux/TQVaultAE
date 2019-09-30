@@ -11,11 +11,11 @@ namespace TQVaultAE.Domain.Helpers
 		/// <summary>
 		/// Regex Match color tag 4 chars & 2 chars
 		/// </summary>
-		public const string RegExColorTag = @"(?<ColorTag>\{\^(?<ColorId>\w)}|\^(?<ColorId>\w))";
+		public const string RegExTQTag = @"(?<ColorTag>\{\^(?<ColorId>\w)}|\^(?<ColorId>\w))";
 		/// <summary>
 		/// Regex Match starting color tag 4 chars & 2 chars or empty
 		/// </summary>
-		public const string RegExStartingColorTagOrEmpty = @"^" + RegExColorTag + @"?";
+		public const string RegExStartingColorTagOrEmpty = @"^" + RegExTQTag + @"?";
 
 		/// <summary>
 		/// Return color from color tag identifier

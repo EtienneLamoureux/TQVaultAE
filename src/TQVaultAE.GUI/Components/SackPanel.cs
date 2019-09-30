@@ -1114,7 +1114,7 @@ namespace TQVaultAE.GUI.Components
 					this.InvalidateItemCacheAll(itemUnderUs, dragItem);
 
 					// Added this so the tooltip would update with the correct number
-					itemUnderUs.MarkModified();
+					itemUnderUs.IsModified = true;
 					this.Sack.IsModified = true;
 
 					// Get rid of ref to itemUnderUs so code below wont do anything with it.
@@ -1163,7 +1163,7 @@ namespace TQVaultAE.GUI.Components
 						ItemProvider.GetDBData(itemUnderUs);
 					}
 
-					itemUnderUs.MarkModified();
+					itemUnderUs.IsModified = true;
 
 					this.InvalidateItemCacheAll(itemUnderUs, dragItem);
 
@@ -1173,7 +1173,7 @@ namespace TQVaultAE.GUI.Components
 					if (adjustedNumber != dragItem.Number)
 					{
 						dragItem.Number -= adjustedNumber;
-						dragItem.MarkModified();
+						dragItem.IsModified = true;
 
 						// Swap the items so the completed item stays in the
 						// sack and the remaining items are still being dragged
@@ -2283,7 +2283,7 @@ namespace TQVaultAE.GUI.Components
 						// change the item
 						focusedItem.RelicBonusId = newBonus;
 						focusedItem.RelicBonusInfo = Database.GetInfo(newBonus);
-						focusedItem.MarkModified();
+						focusedItem.IsModified = true;
 
 						// mark the sack as modified also
 						this.Sack.IsModified = true;
@@ -2420,7 +2420,7 @@ namespace TQVaultAE.GUI.Components
 
 					ItemProvider.GetDBData(focusedItem);
 
-					focusedItem.MarkModified();
+					focusedItem.IsModified = true;
 					this.Sack.IsModified = true;
 					InvalidateItemCacheItemTooltip(focusedItem);
 					Refresh();
@@ -2447,7 +2447,7 @@ namespace TQVaultAE.GUI.Components
 							{
 								artifact.RelicBonusId = e1.Key;
 								artifact.RelicBonusInfo = Database.GetInfo(e1.Key);
-								artifact.MarkModified();
+								artifact.IsModified = true;
 								break;
 							}
 							else

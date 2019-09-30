@@ -12,7 +12,6 @@ namespace TQVaultAE.GUI.Components
 	using Tooltip;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
-	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Delegate for displaying a tooltip with the bag's contents.
@@ -41,7 +40,7 @@ namespace TQVaultAE.GUI.Components
 		/// Tooltip delegate used to display summary of bag contents.
 		/// </summary>
 		private GetToolTip getToolTip;
-		
+
 		/// <summary>
 		/// Initializes a new instance of the BagButtonBase class.
 		/// </summary>
@@ -150,6 +149,11 @@ namespace TQVaultAE.GUI.Components
 		{
 			if (this.getToolTip != null)
 			{
+				// Disable Tooltip bag
+				var panel = this.getToolTip.Target as VaultPanel;
+				if (panel?.DisabledTooltipBagId.Contains(this.ButtonNumber) ?? false)
+					return;
+
 				this.getToolTip(this);
 				BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
 			}
@@ -185,9 +189,13 @@ namespace TQVaultAE.GUI.Components
 			Bitmap bitmap = this.OffBitmap;
 
 			if (this.IsOn)
+			{
 				bitmap = this.OnBitmap;
+			}
 			else if (this.IsOver)
+			{
 				bitmap = this.OverBitmap;
+			}
 
 			// Draw the background graphic.
 			e.Graphics.DrawImage(bitmap, 0, 0, this.Width, this.Height);
@@ -201,7 +209,9 @@ namespace TQVaultAE.GUI.Components
 				{
 					// If we are mousing over then display the bolded font.
 					if (this.IsOver)
+					{
 						font = new Font(font, FontStyle.Bold);
+					}
 
 					StringFormat textFormat = new StringFormat(StringFormatFlags.NoClip);
 					textFormat.LineAlignment = StringAlignment.Center;
@@ -222,14 +232,18 @@ namespace TQVaultAE.GUI.Components
 		{
 			// Make sure we have something to test.
 			if (graphics == null || font == null)
+			{
 				return null;
+			}
 
 			// Make sure we use the bolded font for testing since the passed font may not be bolded.
 			Font testFont = new Font(font, FontStyle.Bold);
 
 			// See if the text can fit on the button and if it does we do not need to do anything.
 			if (TextRenderer.MeasureText(this.ButtonText, testFont).Width < this.Width)
+			{
 				return font;
+			}
 
 			// Try to get a substring of the button text to find the best size.
 			string teststring = this.GetTestString(this.ButtonText);

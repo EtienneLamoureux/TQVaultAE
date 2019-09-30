@@ -1280,4 +1280,16 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
   <data name="CriticalHitsReceived" xml:space="preserve">
     <value>Coups critiques</value>
   </data>
+  <data name="PlayerPanelMenuDisableAllTooltip" xml:space="preserve">
+    <value>Désactiver toutes les infobulles</value>
+  </data>
+  <data name="PlayerPanelMenuDisableTooltip" xml:space="preserve">
+    <value>Désactiver l'infobulle</value>
+  </data>
+  <data name="PlayerPanelMenuEnableTooltip" xml:space="preserve">
+    <value>Activer l'infobulle</value>
+  </data>
+  <data name="PlayerPanelMenuEnableAllTooltip" xml:space="preserve">
+    <value>Activer toutes les infobulles</value>
+  </data>
 </root>

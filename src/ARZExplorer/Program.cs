@@ -43,12 +43,12 @@ namespace ArzExplorer
 			.AddSingleton<ITQDataService, TQDataService>()
 			.AddTransient<IBitmapService, BitmapService>()
 			// Forms
-			.AddSingleton<Form1>()
+			.AddSingleton<MainForm>()
 			.AddTransient<ExtractProgress>();
 
 			Program.ServiceProvider = scol.BuildServiceProvider();
 
-			var mainform = Program.ServiceProvider.GetService<Form1>();
+			var mainform = Program.ServiceProvider.GetService<MainForm>();
 			Application.Run(mainform);
 		}
 

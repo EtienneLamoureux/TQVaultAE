@@ -39,7 +39,7 @@ Works with all expansions!
         - Unlock difficulties
         - Level up
 - QOL
-    - Bulk item transfer (<kbd>CTRL</kbd>-click, right-click)
+    - Bulk item transfer (<kbd>CTRL</kbd>+click, right-click)
     - Combine stacks (potions, relics and charms) by dropping them onto each other
     - Split potion stacks apart
     - Keyboard shortcuts
@@ -74,7 +74,7 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 - The language used by the application
 - The paths where the vault files are located
 - The paths where the game files are located
-- The cheats (To enable these options, see the F.A.Q. below)
+- The cheats (To enable/disable these options, see the F.A.Q. below)
 
 ## Troubleshooting and F.A.Q.
 **Q. Does TQVaultAE modify my items? The stats I see are not the same as the ones ingame.**
@@ -87,13 +87,14 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 
 *A. No, using TQVaultAE while running the game may lead to loss of progress or items. Best practice is to close the game before using TQVaultAE.*
 
-**Q. How to activate the cheats (character edition, item edition, item copy)?**
+**Q. How to enable/disable the cheats (character edition, item edition, item copy)?**
 
 *A. Follow these steps:*
 1. *Navigate the the installation folder of TQVaultAE*
 2. *Open `TQVaultAE.exe.config` in a text editor (i.e. notepad, **not Microsoft Word**)*
-3. *Find the key `AllowCheats` and change the value from `False` to `True`*
-4. *Enable the cheats individually in the configuration menu*
+3. *Find the key `AllowCheats` and change the value to `True` or `False`*
+    - *`True` will allow you to toggle the cheats individually in the configuration menu*
+    - *`False` will disable the cheats completely and make it impossible to enable them in the configuration menu*
 
 **Q. Can TQVaultAE use my old vault files?**
 
