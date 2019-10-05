@@ -1,4 +1,9 @@
 # Changelog
+## 3.3.1
+### Bugs
+- #233 #236 #239 Error dialogs when hovering over certain items
+- #210 Window elements misalign in portrait display mode
+
 ## 3.3.0
 ### Features
 - #214 Ability to disable bag preview tooltips
