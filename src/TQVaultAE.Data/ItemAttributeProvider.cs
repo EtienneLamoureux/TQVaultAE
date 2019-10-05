@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="ItemAttributes.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
@@ -582,7 +582,7 @@ namespace TQVaultAE.Data
 					// a number
 					if (!precis.Any())
 						// simple
-						return $@"{{{formatNumber}}}";
+						return $@"[{formatNumber}]";
 
 					// see if they listed a decimal precision
 					string decimalSpec = string.Empty;
@@ -599,25 +599,31 @@ namespace TQVaultAE.Data
 
 					// See if they want the +- sign.
 					return sign.Any()
-						? $"{{{formatNumber}:{sign}#0{decimalSpec}}}"
-						: $"{{{formatNumber}:#0{decimalSpec}}}";
+						? $"[{formatNumber}:{sign}#0{decimalSpec}]"
+						: $"[{formatNumber}:#0{decimalSpec}]";
 				}
 				else
 					// string
-					return $"{{{formatNumber}}}";
+					return $"[{formatNumber}]";
 			}
+
+			// Escape TQMarking changing "{^.}" by "[^.]"
+			formatValue = Regex.Replace(formatValue
+				, TQColorHelper.RegExTQTag
+				, @"[^${ColorId}]"
+			);
 
 			// Takes a TQ Format string and converts it to a .NET Format string using regex.
 			var newformat = Regex.Replace(formatValue
 				, @"%(?<precis>(?<sign>[+-])?\.(?<numDecimal>\d)?)?(?<alpha>[sdft])(?<formatNumber>\d)"
 				, new MatchEvaluator(replaceMatch)
-			).Replace("{{", "{").Replace("}}", "}");
-
-			// Remove opening { on some residual signed format
-			newformat = Regex.Replace(newformat
-				, @"^\{(?<sign>[+-])"
-				, @"${sign}"
 			);
+
+			// Remove residual irrelevant {} on some format
+			newformat = newformat.Split('{', '}').JoinString("");
+
+			// Reactivate string.Format markup
+			newformat = newformat.Replace("[", "{").Replace("]", "}");
 
 			// Escape TQTags by doubling {}
 			newformat = Regex.Replace(newformat
