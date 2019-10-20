@@ -200,6 +200,7 @@ namespace TQVaultAE.GUI
             this.suppressWarningsCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.playerReadonlyCheckbox = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.characterEditCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.EnableDetailedTooltipViewCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.languageComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.languageLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.detectLanguageCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
@@ -479,6 +480,19 @@ namespace TQVaultAE.GUI
             this.characterEditCheckBox.UseVisualStyleBackColor = true;
             this.characterEditCheckBox.CheckedChanged += new System.EventHandler(this.CharacterEditCheckBox_CheckedChanged);
             // 
+            // EnableDetailedTooltipViewCheckBox
+            // 
+            this.EnableDetailedTooltipViewCheckBox.AutoSize = true;
+            this.EnableDetailedTooltipViewCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
+            this.EnableDetailedTooltipViewCheckBox.Location = new System.Drawing.Point(497, 355);
+            this.EnableDetailedTooltipViewCheckBox.Name = "EnableDetailedTooltipViewCheckBox";
+            this.EnableDetailedTooltipViewCheckBox.Size = new System.Drawing.Size(206, 21);
+            this.EnableDetailedTooltipViewCheckBox.TabIndex = 38;
+            this.EnableDetailedTooltipViewCheckBox.Text = "Enable Detailed Tooltip View";
+            this.toolTip.SetToolTip(this.EnableDetailedTooltipViewCheckBox, "Split tooltip attributes into Prefix/Base/Suffix categories");
+            this.EnableDetailedTooltipViewCheckBox.UseVisualStyleBackColor = true;
+            this.EnableDetailedTooltipViewCheckBox.CheckedChanged += new System.EventHandler(this.EnableDetailedTooltipViewCheckBox_CheckedChanged);
+            // 
             // languageComboBox
             // 
             this.languageComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -680,6 +694,7 @@ namespace TQVaultAE.GUI
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
             this.ClientSize = new System.Drawing.Size(922, 490);
+            this.Controls.Add(this.EnableDetailedTooltipViewCheckBox);
             this.Controls.Add(this.tableLayoutPanelButtons);
             this.Controls.Add(this.baseFontLabel);
             this.Controls.Add(this.baseFontComboBox);
@@ -712,7 +727,7 @@ namespace TQVaultAE.GUI
             this.Font = new System.Drawing.Font("Albertus MT Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.White;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SettingsDialog";
@@ -751,6 +766,7 @@ namespace TQVaultAE.GUI
             this.Controls.SetChildIndex(this.baseFontComboBox, 0);
             this.Controls.SetChildIndex(this.baseFontLabel, 0);
             this.Controls.SetChildIndex(this.tableLayoutPanelButtons, 0);
+            this.Controls.SetChildIndex(this.EnableDetailedTooltipViewCheckBox, 0);
             this.tableLayoutPanelButtons.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -764,5 +780,6 @@ namespace TQVaultAE.GUI
 		private ScalingLabel baseFontLabel;
 		private ScalingComboBox baseFontComboBox;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanelButtons;
-	}
+        private ScalingCheckBox EnableDetailedTooltipViewCheckBox;
+    }
 }

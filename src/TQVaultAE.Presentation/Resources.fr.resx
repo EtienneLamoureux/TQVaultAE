@@ -987,7 +987,7 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
     <value>Chambre des reliques</value>
   </data>
   <data name="SettingsAllowEditCE" xml:space="preserve">
-    <value>Allow Character Editing Features</value>
+    <value>Autorise l'édition des personnages</value>
   </data>
   <data name="Difficulty0" xml:space="preserve">
     <value>Ordinaire</value>
@@ -1291,5 +1291,18 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
   </data>
   <data name="PlayerPanelMenuEnableAllTooltip" xml:space="preserve">
     <value>Activer toutes les infobulles</value>
+  </data>
+  <data name="SettingEnableDetailedTooltipView" xml:space="preserve">
+    <value>Activer la vue détaillée de l'infobulle</value>
+  </data>
+  <data name="SettingEnableDetailedTooltipViewTT" xml:space="preserve">
+    <value>Divise l'affichage des attributs dans les catégories Prefix/Base/Suffix</value>
+  </data>
+  <data name="SettingsPlayerReadonly" xml:space="preserve">
+    <value>Equipement du personnage en lecture seule</value>
+  </data>
+  <data name="SettingsPlayerReadonlyTT" xml:space="preserve">
+    <value>Évite la corruption de la sauvegarde qui se produit au hasard.
+Quand activé, l’équipement du personnage sera en lecture seule, vous ne serez pas en mesure de sélectionner ou de déplacer un élément.</value>
   </data>
 </root>

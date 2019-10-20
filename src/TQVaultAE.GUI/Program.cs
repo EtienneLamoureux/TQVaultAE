@@ -109,7 +109,7 @@ namespace TQVaultAE.GUI
 
 				var gamePathResolver = Program.ServiceProvider.GetService<IGamePathService>();
 
-				manageCulture();
+				ManageCulture();
 				SetUILanguage();
 				SetupGamePaths(gamePathResolver);
 				SetupMapName(gamePathResolver);
@@ -226,7 +226,7 @@ namespace TQVaultAE.GUI
 		}
 
 		#endregion
-		private static void manageCulture()
+		private static void ManageCulture()
 		{
 			if (CultureInfo.CurrentCulture.IsNeutralCulture)
 			{

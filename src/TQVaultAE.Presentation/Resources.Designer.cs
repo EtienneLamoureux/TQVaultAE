@@ -2744,6 +2744,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Enable Detailed Tooltip View.
+        /// </summary>
+        public static string SettingEnableDetailedTooltipView {
+            get {
+                return ResourceManager.GetString("SettingEnableDetailedTooltipView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Split tooltip attributes into Prefix/Base/Suffix categories.
+        /// </summary>
+        public static string SettingEnableDetailedTooltipViewTT {
+            get {
+                return ResourceManager.GetString("SettingEnableDetailedTooltipViewTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Allow Item Copying.
         /// </summary>
         public static string SettingsAllowCopy {

@@ -110,5 +110,8 @@
     <Setting Name="BaseFont" Type="System.String" Scope="User">
       <Value Profile="(Default)">AlbertusMT</Value>
     </Setting>
+    <Setting Name="EnableDetailedTooltipView" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
