@@ -607,7 +607,7 @@ namespace TQVaultAE.Data
 					return $"[{formatNumber}]";
 			}
 
-			// Escape TQMarking changing "{^.}" by "[^.]"
+			// Escape TQMarking changing "{^.}" to "[^.]"
 			formatValue = Regex.Replace(formatValue
 				, TQColorHelper.RegExTQTag
 				, @"[^${ColorId}]"

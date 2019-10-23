@@ -1471,4 +1471,10 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   <data name="PlayerPanelMenuEnableAllTooltip" xml:space="preserve">
     <value>Enable all tooltips</value>
   </data>
+  <data name="SettingEnableDetailedTooltipView" xml:space="preserve">
+    <value>Enable Detailed Tooltip View</value>
+  </data>
+  <data name="SettingEnableDetailedTooltipViewTT" xml:space="preserve">
+    <value>Split tooltip attributes into Prefix/Base/Suffix categories</value>
+  </data>
 </root>

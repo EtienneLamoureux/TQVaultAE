@@ -12,20 +12,17 @@ using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.Presentation;
-using TQVaultAE.Services;
 
 namespace TQVaultAE.GUI.Tooltip
 {
 
-	public partial class ItemTooltip : BaseTooltip
+    public partial class ItemTooltip : BaseTooltip
 	{
 		private static Dictionary<Item, ItemTooltip> ItemTooltipOpened = new Dictionary<Item, ItemTooltip>();
 		private static Dictionary<(Item Item, float Scale, bool AltView), (Bitmap Bmp, ToFriendlyNameResult Data)> ToImage = new Dictionary<(Item, float, bool), (Bitmap, ToFriendlyNameResult)>();
 		internal Item FocusedItem { get; set; }
 		internal SackPanel SackPanel { get; set; }
 		internal ResultsDialog ResultsDialog { get; set; }
-
-		private bool LeftAltToggled;
 
 		internal ToFriendlyNameResult Data { get; private set; }
 
@@ -39,7 +36,6 @@ namespace TQVaultAE.GUI.Tooltip
 			InitializeComponent();
 
 			this.Owner = instance;
-			this.LeftAltToggled = Keyboard.IsKeyToggled(Key.LeftAlt);
 
 			SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
@@ -127,7 +123,7 @@ namespace TQVaultAE.GUI.Tooltip
 		/// </summary>
 		public void FillToolTip()
 		{
-			var key = (this.FocusedItem, UIService.Scale, this.LeftAltToggled);
+			var key = (this.FocusedItem, UIService.Scale, Config.Settings.Default.EnableDetailedTooltipView);
 
 			// Redraw
 			if (ToImage.ContainsKey(key))
@@ -179,7 +175,7 @@ namespace TQVaultAE.GUI.Tooltip
 			}
 
 			// Attributes
-			if (this.LeftAltToggled)
+			if (Config.Settings.Default.EnableDetailedTooltipView)
 			{
 				string AdjustColor(string TQText, string label)
 				{
