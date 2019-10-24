@@ -1,4 +1,11 @@
 # Changelog
+## 3.2.0
+### Features
+- #225  Add a configuration option to choose between the two possible tooltip detail levels
+
+### Other
+- #232 Word-wrap labels in the player info panel
+
 ## 3.3.1
 ### Bugs
 - #233 #236 #239 Error dialogs when hovering over certain items
@@ -15,7 +22,7 @@
 - #201 Show the name of character with certain issues
 - #207 Fix ability to delete all items in a stack at once
 
-### Others
+### Other
 - Updated russian translations
 - ArzExplorer : Repaire image preview
 
