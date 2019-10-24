@@ -12,6 +12,7 @@ namespace TQVaultAE.Data
 	using System.Globalization;
 	using System.IO;
 	using System.Linq;
+	using System.Text.RegularExpressions;
 	using TQVaultAE.Config;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
@@ -2165,19 +2166,25 @@ namespace TQVaultAE.Data
 			{
 				// Adjust for itemScalePercent
 				// only for floats
+				var curvar = currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)];
 				if (currentVariable.DataType == VariableDataType.Float)
 				{
 					if (minDurVar != null)
 					{
-						currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] = (float)currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues - 1] * itm.itemScalePercent;
+						curvar = (float)curvar * (float)minDurVar[minDurVar.NumberOfValues - 1] * itm.itemScalePercent;
 					}
 					else
 					{
-						currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] = (float)currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] * itm.itemScalePercent;
+						curvar = (float)curvar * itm.itemScalePercent;
 					}
+					currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] = curvar;
+
+					// Fix#246, double signed result on negative value Ex : string.Format("{0:+#0} d'intelligence", -10) by removing format sign.
+					if ((float)curvar < 0)
+						formatSpec = Regex.Replace(formatSpec, @"(?<Prefix>\{(\d):)[+-](?<Suffix>#(\d+)})", "${Prefix}${Suffix}");
 				}
 
-				amount = this.Format(formatSpec, currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)]);
+				amount = this.Format(formatSpec, curvar);
 			}
 
 			return color.HasValue ? $"{color?.ColorTag()}{amount}" : amount;
