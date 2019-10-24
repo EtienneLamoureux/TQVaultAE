@@ -348,7 +348,6 @@
     <Compile Include="CharacterEditDialog.Designer.cs">
       <DependentUpon>CharacterEditDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\PlayerInfoDisplay.cs" />
     <Compile Include="ItemProperties.cs">
       <SubType>Form</SubType>
     </Compile>
