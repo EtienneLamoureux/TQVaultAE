@@ -1,5 +1,5 @@
 # Changelog
-## 3.2.0
+## 3.4.0
 ### Features
 - #225  Add a configuration option to choose between the two possible tooltip detail levels
 
