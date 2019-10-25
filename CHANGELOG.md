@@ -3,6 +3,9 @@
 ### Features
 - #225  Add a configuration option to choose between the two possible tooltip detail levels
 
+### Bugs
+- #246 Fix display of negative bonuses when listing item stats
+
 ### Other
 - #232 Word-wrap labels in the player info panel
 
