@@ -61,7 +61,6 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <param name="owner">ownder Form</param>
 		public WindowMenu(Form owner)
-			: base()
 		{
 			this.owner = owner;
 
