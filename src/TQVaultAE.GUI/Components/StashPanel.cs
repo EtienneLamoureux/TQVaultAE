@@ -165,11 +165,11 @@ namespace TQVaultAE.GUI.Components
 				Size = new Size(PLAYERINFO_WIDTH, PLAYERINFO_HEIGHT),
 				//CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
 				Margin = new Padding(0),
-				Padding = new Padding(3),
+				Padding = new Padding(1),
 				BackColor = Color.Transparent,
 			};
-			table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
-			table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
+			table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+			table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
 
 			this.Controls.Add(table);
 			this.PlayerPanel = table;
@@ -206,10 +206,14 @@ namespace TQVaultAE.GUI.Components
 			if (this.Player?.PlayerInfo != null)
 			{
 				DisplayPlayerInfoLastName = this.Player.PlayerName;
+				var pclass = Resources.ResourceManager.GetString(this.Player.PlayerInfo.Class) ?? string.Empty;
+				var mclass = Resources.ResourceManager.GetString($"Masteries{this.Player.PlayerInfo.Class}") ?? string.Empty;
+				mclass = mclass == Resources.Masteries ? string.Empty : mclass;
 				var pi = new Dictionary<string, string>
 				{
 					[Resources.CurrentLevel] = this.Player.PlayerInfo.CurrentLevel.ToString(),
-					[Resources.Class] = Resources.ResourceManager.GetString(this.Player.PlayerInfo.Class) ?? string.Empty,
+					[Resources.Class] = pclass,
+					[Resources.Masteries] = mclass,
 					[Resources.CurrentXP] = this.Player.PlayerInfo.CurrentXP.ToString(),
 					[Resources.DifficultyUnlocked] = Resources.ResourceManager.GetString($"Difficulty{this.Player.PlayerInfo.DifficultyUnlocked}") ?? "unknown",
 					[Resources.Money] = this.Player.PlayerInfo.Money.ToString(),
@@ -259,6 +263,7 @@ namespace TQVaultAE.GUI.Components
 					UseVisualStyleBackColor = false,
 					Font = FontService.GetFontAlbertusMTLight(11F),
 					Margin = new Padding(0, 0, 0, 10),
+					Padding = new Padding(10, 0, 10, 0),
 					Visible = Config.Settings.Default.AllowCharacterEdit,
 				};
 				editButton.FlatAppearance.BorderSize = 0;

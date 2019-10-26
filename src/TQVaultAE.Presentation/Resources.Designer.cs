@@ -2063,6 +2063,510 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Masteries.
+        /// </summary>
+        public static string Masteries {
+            get {
+                return ResourceManager.GetString("Masteries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Spirit.
+        /// </summary>
+        public static string MasteriestagCClass01 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass01", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Nature.
+        /// </summary>
+        public static string MasteriestagCClass02 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass02", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Rogue.
+        /// </summary>
+        public static string MasteriestagCClass03 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass03", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Hunting.
+        /// </summary>
+        public static string MasteriestagCClass04 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass04", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Storm.
+        /// </summary>
+        public static string MasteriestagCClass05 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass05", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Earth.
+        /// </summary>
+        public static string MasteriestagCClass06 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass06", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Defense.
+        /// </summary>
+        public static string MasteriestagCClass07 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass07", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Warfare.
+        /// </summary>
+        public static string MasteriestagCClass08 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass08", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Spirit-Warfare.
+        /// </summary>
+        public static string MasteriestagCClass09 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass09", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Nature-Warfare.
+        /// </summary>
+        public static string MasteriestagCClass10 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Rogue-Warfare.
+        /// </summary>
+        public static string MasteriestagCClass11 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass11", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Hunting-Warfare.
+        /// </summary>
+        public static string MasteriestagCClass12 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass12", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Storm-Warfare.
+        /// </summary>
+        public static string MasteriestagCClass13 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass13", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Earth-Warfare.
+        /// </summary>
+        public static string MasteriestagCClass14 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass14", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Defense-Warfare.
+        /// </summary>
+        public static string MasteriestagCClass15 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Spirit-Defense.
+        /// </summary>
+        public static string MasteriestagCClass16 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass16", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Nature-Defense.
+        /// </summary>
+        public static string MasteriestagCClass17 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass17", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Rogue-Defense.
+        /// </summary>
+        public static string MasteriestagCClass18 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass18", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Hunting-Defense.
+        /// </summary>
+        public static string MasteriestagCClass19 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass19", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Storm-Defense.
+        /// </summary>
+        public static string MasteriestagCClass20 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass20", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Earth-Defense.
+        /// </summary>
+        public static string MasteriestagCClass21 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass21", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Spirit-Earth.
+        /// </summary>
+        public static string MasteriestagCClass22 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass22", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Nature-Earth.
+        /// </summary>
+        public static string MasteriestagCClass23 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass23", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Rogue-Earth.
+        /// </summary>
+        public static string MasteriestagCClass24 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass24", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Hunting-Earth.
+        /// </summary>
+        public static string MasteriestagCClass25 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass25", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Storm-Earth.
+        /// </summary>
+        public static string MasteriestagCClass26 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass26", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Spirit-Storm.
+        /// </summary>
+        public static string MasteriestagCClass27 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass27", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Nature-Storm.
+        /// </summary>
+        public static string MasteriestagCClass28 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass28", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Rogue-Storm.
+        /// </summary>
+        public static string MasteriestagCClass29 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass29", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Hunting-Storm.
+        /// </summary>
+        public static string MasteriestagCClass30 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass30", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Spirit-Hunting.
+        /// </summary>
+        public static string MasteriestagCClass31 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass31", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Nature-Hunting.
+        /// </summary>
+        public static string MasteriestagCClass32 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass32", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Rogue-Hunting.
+        /// </summary>
+        public static string MasteriestagCClass33 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass33", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Spirit-Rogue.
+        /// </summary>
+        public static string MasteriestagCClass34 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass34", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Nature-Rogue.
+        /// </summary>
+        public static string MasteriestagCClass35 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass35", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Spirit-Nature.
+        /// </summary>
+        public static string MasteriestagCClass36 {
+            get {
+                return ResourceManager.GetString("MasteriestagCClass36", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Defense-Runes.
+        /// </summary>
+        public static string Masteriesx2tag_class_defense_rm {
+            get {
+                return ResourceManager.GetString("Masteriesx2tag_class_defense_rm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Dream-Runes.
+        /// </summary>
+        public static string Masteriesx2tag_class_dream_rm {
+            get {
+                return ResourceManager.GetString("Masteriesx2tag_class_dream_rm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Earth-Runes.
+        /// </summary>
+        public static string Masteriesx2tag_class_earth_rm {
+            get {
+                return ResourceManager.GetString("Masteriesx2tag_class_earth_rm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Hunting-Runes.
+        /// </summary>
+        public static string Masteriesx2tag_class_hunting_rm {
+            get {
+                return ResourceManager.GetString("Masteriesx2tag_class_hunting_rm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Nature-Runes.
+        /// </summary>
+        public static string Masteriesx2tag_class_nature_rm {
+            get {
+                return ResourceManager.GetString("Masteriesx2tag_class_nature_rm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Runes.
+        /// </summary>
+        public static string Masteriesx2tag_class_rm_rm {
+            get {
+                return ResourceManager.GetString("Masteriesx2tag_class_rm_rm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Spirit-Runes.
+        /// </summary>
+        public static string Masteriesx2tag_class_spirit_rm {
+            get {
+                return ResourceManager.GetString("Masteriesx2tag_class_spirit_rm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Rogue-Runes.
+        /// </summary>
+        public static string Masteriesx2tag_class_stealth_rm {
+            get {
+                return ResourceManager.GetString("Masteriesx2tag_class_stealth_rm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Storm-Runes.
+        /// </summary>
+        public static string Masteriesx2tag_class_storm_rm {
+            get {
+                return ResourceManager.GetString("Masteriesx2tag_class_storm_rm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Warfare-Runes.
+        /// </summary>
+        public static string Masteriesx2tag_class_warfare_rm {
+            get {
+                return ResourceManager.GetString("Masteriesx2tag_class_warfare_rm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Dream.
+        /// </summary>
+        public static string MasteriesxtagCharacterClass01 {
+            get {
+                return ResourceManager.GetString("MasteriesxtagCharacterClass01", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Warfare-Dream.
+        /// </summary>
+        public static string MasteriesxtagCharacterClass02 {
+            get {
+                return ResourceManager.GetString("MasteriesxtagCharacterClass02", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Defense-Dream.
+        /// </summary>
+        public static string MasteriesxtagCharacterClass03 {
+            get {
+                return ResourceManager.GetString("MasteriesxtagCharacterClass03", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Earth-Dream.
+        /// </summary>
+        public static string MasteriesxtagCharacterClass04 {
+            get {
+                return ResourceManager.GetString("MasteriesxtagCharacterClass04", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Storm-Dream.
+        /// </summary>
+        public static string MasteriesxtagCharacterClass05 {
+            get {
+                return ResourceManager.GetString("MasteriesxtagCharacterClass05", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Hunting-Dream.
+        /// </summary>
+        public static string MasteriesxtagCharacterClass06 {
+            get {
+                return ResourceManager.GetString("MasteriesxtagCharacterClass06", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Rogue-Dream.
+        /// </summary>
+        public static string MasteriesxtagCharacterClass07 {
+            get {
+                return ResourceManager.GetString("MasteriesxtagCharacterClass07", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Nature-Dream.
+        /// </summary>
+        public static string MasteriesxtagCharacterClass08 {
+            get {
+                return ResourceManager.GetString("MasteriesxtagCharacterClass08", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Spirit-Dream.
+        /// </summary>
+        public static string MasteriesxtagCharacterClass09 {
+            get {
+                return ResourceManager.GetString("MasteriesxtagCharacterClass09", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Max Level.
         /// </summary>
         public static string MaxLevel {
@@ -3346,7 +3850,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Conqueror.
+        ///   Recherche une chaîne localisée semblable à Conquerer.
         /// </summary>
         public static string tagCClass15 {
             get {
