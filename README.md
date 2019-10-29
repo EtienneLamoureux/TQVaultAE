@@ -48,7 +48,6 @@ Works with all expansions!
         - <kbd>CTRL</kbd>+<kbd>-</kbd> : Reduce vault size
         - <kbd>CTRL</kbd>+<kbd>Home</kbd> : Default vault size
         - <kbd>CTRL</kbd>+click : Activate multi selection
-        - <kbd>ATL</kbd> : Toggle item tooltip detailed view (no need to keep key pressed)
 - Character backups
     - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
 
