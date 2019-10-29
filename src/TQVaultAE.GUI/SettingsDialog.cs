@@ -61,6 +61,10 @@ namespace TQVaultAE.GUI
         /// Indicates whether the language will be auto detected
         /// </summary>
         private bool detectLanguage;
+
+		/// <summary>
+		/// Activate the alternative Tooltip display
+		/// </summary>
         private bool enableDetailedTooltipView;
 
         /// <summary>
