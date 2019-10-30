@@ -15,13 +15,13 @@ namespace TQVaultAE.GUI.Components
 	using System.Linq;
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.Data;
 	using TQVaultAE.Logs;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.GUI.Tooltip;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Contracts.Providers;
+	using TQVaultAE.Domain.Helpers;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel.
@@ -35,6 +35,7 @@ namespace TQVaultAE.GUI.Components
 		protected readonly IItemProvider ItemProvider;
 		protected readonly ITQDataService TQData;
 		protected readonly IServiceProvider ServiceProvider;
+		ItemStyle[] ItemStyleBackGroundColorEnable = new[] { ItemStyle.Epic, ItemStyle.Legendary, ItemStyle.Rare, ItemStyle.Common };
 
 		#region SackPanel Fields
 
@@ -1904,12 +1905,22 @@ namespace TQVaultAE.GUI.Components
 				return;
 
 			var ibmp = this.UIService.GetBitmap(item);
+
 			Rectangle itemRect = new Rectangle(
 				screenLocation.X
 				, screenLocation.Y
 				, Convert.ToInt32(ibmp.Width * UIService.Scale)
 				, Convert.ToInt32(ibmp.Height * UIService.Scale)
 			);
+
+			var alpha = Config.Settings.Default.ItemBGColorOpacity;
+			if (alpha > 0 && ItemStyleBackGroundColorEnable.Contains(item.ItemStyle))
+			{
+				using (SolidBrush brush = new SolidBrush(Color.FromArgb(alpha, item.ItemStyle.Color())))
+				{
+					graphics.FillRectangle(brush, itemRect);
+				}
+			}
 
 			graphics.DrawImage(ibmp, itemRect, 0, 0, ibmp.Width, ibmp.Height, GraphicsUnit.Pixel, imageAttributes);
 

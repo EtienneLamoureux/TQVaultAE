@@ -433,5 +433,17 @@ namespace TQVaultAE.Config {
                 this["EnableDetailedTooltipView"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public int ItemBGColorOpacity {
+            get {
+                return ((int)(this["ItemBGColorOpacity"]));
+            }
+            set {
+                this["ItemBGColorOpacity"] = value;
+            }
+        }
     }
 }

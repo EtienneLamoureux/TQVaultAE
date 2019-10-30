@@ -1305,4 +1305,10 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
     <value>Évite la corruption de la sauvegarde qui se produit au hasard.
 Quand activé, l’équipement du personnage sera en lecture seule, vous ne serez pas en mesure de sélectionner ou de déplacer un élément.</value>
   </data>
+  <data name="SettingsItemBGColorOpacityLabel" xml:space="preserve">
+    <value>Couleur de fond (Opacité) :</value>
+  </data>
+  <data name="SettingsItemBGColorOpacityLabelTT" xml:space="preserve">
+    <value>Opacité de la couleur de fond des objets</value>
+  </data>
 </root>

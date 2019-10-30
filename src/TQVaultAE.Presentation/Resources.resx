@@ -1477,4 +1477,10 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   <data name="SettingEnableDetailedTooltipViewTT" xml:space="preserve">
     <value>Split tooltip attributes into Prefix/Base/Suffix categories</value>
   </data>
+  <data name="SettingsItemBGColorOpacityLabel" xml:space="preserve">
+    <value>Item BG Alpha Color :</value>
+  </data>
+  <data name="SettingsItemBGColorOpacityLabelTT" xml:space="preserve">
+    <value>Item background color opacity level</value>
+  </data>
 </root>

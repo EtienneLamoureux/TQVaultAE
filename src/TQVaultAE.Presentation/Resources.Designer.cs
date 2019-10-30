@@ -2913,6 +2913,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Item BG Alpha Color :.
+        /// </summary>
+        public static string SettingsItemBGColorOpacityLabel {
+            get {
+                return ResourceManager.GetString("SettingsItemBGColorOpacityLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Item background color opacity level.
+        /// </summary>
+        public static string SettingsItemBGColorOpacityLabelTT {
+            get {
+                return ResourceManager.GetString("SettingsItemBGColorOpacityLabelTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Vault Path.
         /// </summary>
         public static string SettingsLabel1 {
