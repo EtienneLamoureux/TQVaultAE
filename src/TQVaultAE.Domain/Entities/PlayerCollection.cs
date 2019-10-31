@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Domain.Entities
 {
+	using System;
 	using System.Collections;
 	using System.Collections.Generic;
 
@@ -305,7 +306,41 @@ namespace TQVaultAE.Domain.Entities
 			return false;
 		}
 
+		const string Key_LevelRequirement = "LevelRequirement";
+		const string Key_Strength = "Strength";
+		const string Key_Dexterity = "Dexterity";
+		const string Key_Intelligence = "Intelligence";
 
+		public bool IsPlayerMeetRequierements(SortedList<string, Variable> requirementVariables)
+		{
+			if (this.IsVault || this.PlayerInfo is null) return true;
 
+			// "LevelRequirement"
+			int LevelRequirement = 0;
+			if (requirementVariables.ContainsKey(Key_LevelRequirement))
+				LevelRequirement = requirementVariables[Key_LevelRequirement].GetInt32();
+
+			// "Strength"
+			int Strength = 0;
+			if (requirementVariables.ContainsKey(Key_Strength))
+				Strength = requirementVariables[Key_Strength].GetInt32();
+
+			// Dexterity
+			int Dexterity = 0;
+			if (requirementVariables.ContainsKey(Key_Dexterity))
+				Dexterity = requirementVariables[Key_Dexterity].GetInt32();
+
+			// Intelligence
+			int Intelligence = 0;
+			if (requirementVariables.ContainsKey(Key_Intelligence))
+				Intelligence = requirementVariables[Key_Intelligence].GetInt32();
+
+			return
+				LevelRequirement <= this.PlayerInfo.CurrentLevel
+				&& Strength <= this.PlayerInfo.BaseStrength
+				&& Dexterity <= this.PlayerInfo.BaseDexterity
+				&& Intelligence <= this.PlayerInfo.BaseIntelligence
+			;
+		}
 	}
 }

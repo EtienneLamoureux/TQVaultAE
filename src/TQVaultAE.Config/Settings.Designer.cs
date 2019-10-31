@@ -445,5 +445,17 @@ namespace TQVaultAE.Config {
                 this["ItemBGColorOpacity"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableCharacterRequierementBGColor {
+            get {
+                return ((bool)(this["EnableCharacterRequierementBGColor"]));
+            }
+            set {
+                this["EnableCharacterRequierementBGColor"] = value;
+            }
+        }
     }
 }

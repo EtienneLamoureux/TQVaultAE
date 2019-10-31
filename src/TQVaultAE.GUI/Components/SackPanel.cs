@@ -40,6 +40,11 @@ namespace TQVaultAE.GUI.Components
 		#region SackPanel Fields
 
 		/// <summary>
+		/// User current data context
+		/// </summary>
+		private SessionContext userContext;
+
+		/// <summary>
 		/// The currently selected/displayed sack
 		/// </summary>
 		private SackCollection sack;
@@ -133,6 +138,7 @@ namespace TQVaultAE.GUI.Components
 			this.Database = this.ServiceProvider.GetService<IDatabase>();
 			this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
 			this.TQData = this.ServiceProvider.GetService<ITQDataService>();
+			this.userContext = this.ServiceProvider.GetService<SessionContext>();
 
 			this.Log = this.ServiceProvider.GetService<ILogger<SackPanel>>().Logger;
 
@@ -1914,6 +1920,23 @@ namespace TQVaultAE.GUI.Components
 			);
 
 			var alpha = Config.Settings.Default.ItemBGColorOpacity;
+
+			// Display Red BG Color if item cannot be equipped
+			if (Config.Settings.Default.EnableCharacterRequierementBGColor)
+			{
+				var reqs = this.ItemProvider.GetFriendlyNames(item, FriendlyNamesExtraScopes.Requirements).RequirementVariables;
+				var currPlayer = this.userContext.CurrentPlayer;
+				if (currPlayer != null && reqs != null && reqs.Any() && !currPlayer.IsPlayerMeetRequierements(reqs))
+				{
+					using (SolidBrush brush = new SolidBrush(Color.FromArgb(alpha, TQColor.Red.Color())))
+					{
+						graphics.FillRectangle(brush, itemRect);
+					}
+					goto normalBGColor;
+				}
+			}
+
+			// Display item BG color 
 			if (alpha > 0 && ItemStyleBackGroundColorEnable.Contains(item.ItemStyle))
 			{
 				using (SolidBrush brush = new SolidBrush(Color.FromArgb(alpha, item.ItemStyle.Color())))
@@ -1921,6 +1944,8 @@ namespace TQVaultAE.GUI.Components
 					graphics.FillRectangle(brush, itemRect);
 				}
 			}
+
+		normalBGColor:
 
 			graphics.DrawImage(ibmp, itemRect, 0, 0, ibmp.Width, ibmp.Height, GraphicsUnit.Pixel, imageAttributes);
 

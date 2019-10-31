@@ -8,6 +8,10 @@ namespace TQVaultAE.Domain.Entities
 	/// <remarks>must be agnostic so no Winform references. Only data</remarks>
 	public class SessionContext
 	{
+		/// <summary>
+		/// Currently selected player
+		/// </summary>
+		public PlayerCollection CurrentPlayer { get; set; }
 
 		/// <summary>
 		/// Dictionary of all loaded player files

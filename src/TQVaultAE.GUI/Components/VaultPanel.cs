@@ -105,7 +105,6 @@ namespace TQVaultAE.GUI.Components
 			this.Controls.Add(this.BagSackPanel);
 			this.BagSackPanel.IsPlayerBagPanel = false;
 			this.BagSackPanel.MaxSacks = numberOfBags;
-
 			// Create the buttons
 			this.bagButtons = new Collection<BagButtonBase>();
 			this.CreateBagButtons(numberOfBags);
@@ -254,6 +253,10 @@ namespace TQVaultAE.GUI.Components
 			set
 			{
 				this.player = value;
+
+				if (!this.player.IsVault)
+					this.ServiceProvider.GetService<SessionContext>().CurrentPlayer = this.player;
+
 				this.UpdateText();
 
 				this.OnPropertyChanged("Player");
@@ -474,7 +477,7 @@ namespace TQVaultAE.GUI.Components
 
 						// Add the Disable Tooltip submenu
 						this.contextMenu.Items.Add("-");
-						
+
 						if (this.DisabledTooltipBagId.Contains(bagID))
 						{
 							this.AddMenuItem(Resources.PlayerPanelMenuEnableTooltip, this.DisableTooltipClicked);
@@ -488,7 +491,7 @@ namespace TQVaultAE.GUI.Components
 						{
 							this.AddMenuItem(Resources.PlayerPanelMenuDisableAllTooltip, this.DisableTooltipClicked);
 						}
-						
+
 						if (this.DisabledTooltipBagId.Any())
 						{
 							this.AddMenuItem(Resources.PlayerPanelMenuEnableAllTooltip, this.DisableTooltipClicked);
@@ -676,7 +679,7 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			int hashSign = Resources.GlobalMenuBag.IndexOf(Resources.GlobalMenuBagDelimiter, StringComparison.Ordinal) + 1;
-			
+
 			if (hashSign == -1)
 			{
 				return -1;

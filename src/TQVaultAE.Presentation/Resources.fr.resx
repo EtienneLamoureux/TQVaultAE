@@ -1311,4 +1311,12 @@ Quand activé, l’équipement du personnage sera en lecture seule, vous ne sere
   <data name="SettingsItemBGColorOpacityLabelTT" xml:space="preserve">
     <value>Opacité de la couleur de fond des objets</value>
   </data>
+  <data name="SettingsEnableCharacterRequierementBGColor" xml:space="preserve">
+    <value>Enable Character Requierement BG Color</value>
+  </data>
+  <data name="SettingsEnableCharacterRequierementBGColorTT" xml:space="preserve">
+    <value>(Expérimental) Affiche une couleur de fond rouge sur les objets lorsque le personnage sélectionné ne répond pas aux exigences.
+TQVaultAE ne connaît pas les formules nécessaires pour calculer avec précision la force réelle, la dextérité et l’intelligence d’un personnage de la même façon que le jeu.
+Il n’utilise actuellement que les valeurs de "base" disponibles dans le fichier de sauvegarde.</value>
+  </data>
 </root>

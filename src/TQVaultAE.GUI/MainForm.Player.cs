@@ -39,6 +39,7 @@ namespace TQVaultAE.GUI
 			{
 				this.LoadPlayer(selectedText);
 			}
+			this.Refresh();
 		}
 
 		/// <summary>

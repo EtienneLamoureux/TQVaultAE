@@ -2815,6 +2815,10 @@ If Main Vault does not exist it will be created.</value>
         7yQ6jvr/2Q==
 </value>
   </data>
+  <data name="EnableCharacterRequierementBGColorCheckBox.ToolTip" xml:space="preserve">
+    <value>(Experimental) Display a red background color on items when the selected character does not meet the requierements.
+TQVaultAE doesn't know the math requiered to compute accurately the real strength, dexterity and intelligence of a character the same way as the game does.</value>
+  </data>
   <data name="titanQuestPathBrowseButton.DownBitmap" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         /9j/4AAQSkZJRgABAgEASABIAAD/7gAOQWRvYmUAZAAAAAAB/+ETTkV4aWYAAE1NACoAAAAIAAcBEgAD

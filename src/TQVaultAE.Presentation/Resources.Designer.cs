@@ -2874,6 +2874,26 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Enable Character Requierement BG Color.
+        /// </summary>
+        public static string SettingsEnableCharacterRequierementBGColor {
+            get {
+                return ResourceManager.GetString("SettingsEnableCharacterRequierementBGColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à (Experimental) Display a red background color on items when the selected character does not meet the requierements.
+        ///TQVaultAE doesn&apos;t know the math requiered to compute accurately the real strength, dexterity and intelligence of a character the same way as the game does.
+        ///It currently only use the &quot;base&quot; values available in the save file..
+        /// </summary>
+        public static string SettingsEnableCharacterRequierementBGColorTT {
+            get {
+                return ResourceManager.GetString("SettingsEnableCharacterRequierementBGColorTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Enable Custom Maps.
         /// </summary>
         public static string SettingsEnableMod {

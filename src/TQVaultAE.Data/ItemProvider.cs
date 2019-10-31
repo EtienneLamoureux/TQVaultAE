@@ -175,6 +175,9 @@ namespace TQVaultAE.Data
 			if (itm.RelicInfo != null)
 				GetRequirementsFromRecord(RequirementVariables, Database.GetRecordFromFile(itm.relicID));
 
+			if (itm.Relic2Info != null)
+				GetRequirementsFromRecord(RequirementVariables, Database.GetRecordFromFile(itm.relic2ID));
+
 			// Add Artifact level requirement to formula
 			if (itm.IsFormulae && itm.baseItemInfo != null)
 			{
@@ -1092,7 +1095,8 @@ namespace TQVaultAE.Data
 		/// <param name="relicInfoOnly">Flag indicating whether or not to return only relic info</param>
 		/// /// <param name="secondRelic">Flag indicating whether or not to return second relic info</param>
 		/// <returns>A string containing the item name and attributes</returns>
-		public string ToFriendlyName(Item itm, bool basicInfoOnly = false, bool relicInfoOnly = false, bool secondRelic = false) // TODO Supprimer au profit de GetFriendlyNames()
+		[Obsolete("Will be removed ! use " + nameof(GetFriendlyNames) + " instead")]
+		public string ToFriendlyName(Item itm, bool basicInfoOnly = false, bool relicInfoOnly = false, bool secondRelic = false)
 		{
 			string[] parameters = new string[16];
 			int parameterCount = 0;
