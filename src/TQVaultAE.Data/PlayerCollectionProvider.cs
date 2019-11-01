@@ -306,7 +306,7 @@ namespace TQVaultAE.Data
 												object[] params1 = new object[20];
 
 												params1[0] = itemNumber;
-												params1[1] = ItemProvider.ToFriendlyName(item);
+												params1[1] = ItemProvider.GetFriendlyNames(item).FullNameBagTooltip;
 												params1[2] = item.PositionX;
 												params1[3] = item.PositionY;
 												params1[4] = item.Seed;
@@ -357,7 +357,7 @@ namespace TQVaultAE.Data
 										object[] params1 = new object[20];
 
 										params1[0] = itemNumber;
-										params1[1] = ItemProvider.ToFriendlyName(item);
+										params1[1] = ItemProvider.GetFriendlyNames(item).FullNameBagTooltip;
 										params1[2] = item.PositionX;
 										params1[3] = item.PositionY;
 										params1[4] = item.Seed;

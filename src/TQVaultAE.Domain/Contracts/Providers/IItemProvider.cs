@@ -108,14 +108,6 @@ namespace TQVaultAE.Domain.Contracts.Providers
 		/// <returns>Returns the removed relic as a new Item, if the item has two relics, 
 		/// only the first one is returned and the second one is also removed</returns>
 		Item RemoveRelic(Item itm);
-		/// <summary>
-		/// Gets a string containing the item name and attributes.
-		/// </summary>
-		/// <param name="basicInfoOnly">Flag indicating whether or not to return only basic info</param>
-		/// <param name="relicInfoOnly">Flag indicating whether or not to return only relic info</param>
-		/// /// <param name="secondRelic">Flag indicating whether or not to return second relic info</param>
-		/// <returns>A string containing the item name and attributes</returns>
-		string ToFriendlyName(Item itm, bool basicInfoOnly = false, bool relicInfoOnly = false, bool secondRelic = false);
 
 		/// <summary>
 		/// Invalidate item data cache
