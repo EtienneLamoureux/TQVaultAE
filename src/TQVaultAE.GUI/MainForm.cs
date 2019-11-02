@@ -22,6 +22,12 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Config;
 	using TQVaultAE.Services;
 	using TQVaultAE.Domain.Contracts.Services;
+	using System.Diagnostics;
+	using System.Linq;
+	using System.Threading.Tasks;
+	using TQVaultAE.Domain.Results;
+	using System.Collections.Concurrent;
+	using System.Threading;
 
 	/// <summary>
 	/// Main Dialog class
@@ -333,6 +339,7 @@ namespace TQVaultAE.GUI
 
 			this.splashScreen.Show();
 			this.splashScreen.Update();
+			this.splashScreen.BringToFront();
 
 			this.backgroundWorker1.RunWorkerAsync();
 		}
@@ -587,14 +594,34 @@ namespace TQVaultAE.GUI
 			else
 				return;
 
+			Stopwatch stopWatch = new Stopwatch();
+			stopWatch.Start();
+
 			// Load all of the Immortal Throne player files and stashes.
-			for (int i = 0; i < numIT; ++i)
+			var bagPlayer = new ConcurrentBag<LoadPlayerResult>();
+			var bagVault = new ConcurrentBag<LoadVaultResult>();
+			var lambdacharactersIT = charactersIT.Select(c => (Action)(() =>
 			{
 				// Get the player & player's stash
-				try
-				{
-					var result = this.playerService.LoadPlayer(charactersIT[i], true);
+				var result = this.playerService.LoadPlayer(c, true);
+				bagPlayer.Add(result);
+				this.backgroundWorker1.ReportProgress(1);
+			})).ToArray();
 
+			var lambdaVault = vaults.Select(c => (Action)(() =>
+			{
+				// Load all of the vaults.
+				var result = this.vaultService.LoadVault(c);
+				bagVault.Add(result);
+				this.backgroundWorker1.ReportProgress(1);
+			})).ToArray();
+
+			Parallel.Invoke(lambdacharactersIT.Concat(lambdaVault).ToArray());// Parallele loading
+
+			// Dispay errors
+			bagPlayer.Where(p => p.PlayerArgumentException != null || p.StashArgumentException != null).ToList()
+				.ForEach(result =>
+				{
 					if (result.PlayerArgumentException != null)
 					{
 						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.PlayerFile, result.PlayerArgumentException.Message);
@@ -605,28 +632,26 @@ namespace TQVaultAE.GUI
 						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.StashFile, result.StashArgumentException.Message);
 						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 					}
-				}
-				catch (IOException exception)
+				});
+			bagVault.Where(p => p.ArgumentException != null).ToList()
+				.ForEach(result =>
 				{
-					Log.ErrorException(exception);
-					MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-				}
+					if (result.ArgumentException != null)
+					{
+						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.Filename, result.ArgumentException.Message);
+						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+					}
+				});
 
-				this.backgroundWorker1.ReportProgress(1);
-			}
 
-			// Load all of the vaults.
-			for (int i = 0; i < numVaults; ++i)
-			{
-				var result = this.vaultService.LoadVault(vaults[i]);
-				if (result.ArgumentException != null)
-				{
-					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.Filename, result.ArgumentException.Message);
-					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-				}
+			stopWatch.Stop();
+			// Get the elapsed time as a TimeSpan value.
+			TimeSpan ts = stopWatch.Elapsed;
 
-				this.backgroundWorker1.ReportProgress(1);
-			}
+			// Format and display the TimeSpan value.
+			Log.InfoFormat("LoadTime {0:00}:{1:00}:{2:00}.{3:00}",
+				ts.Hours, ts.Minutes, ts.Seconds,
+				ts.Milliseconds / 10);
 
 			// We made it so set the flag to indicate we were successful.
 			Config.Settings.Default.LoadAllFilesCompleted = true;

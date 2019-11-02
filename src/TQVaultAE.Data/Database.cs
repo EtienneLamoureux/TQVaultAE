@@ -14,6 +14,7 @@ namespace TQVaultAE.Data
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
+	using TQVaultAE.Domain.Helpers;
 	using TQVaultAE.Logs;
 
 
@@ -26,21 +27,20 @@ namespace TQVaultAE.Data
 
 		#region Database Fields
 
-
 		/// <summary>
 		/// Dictionary of all database info records
 		/// </summary>
-		private Dictionary<string, Info> infoDB;
+		private LazyConcurrentDictionary<string, Info> infoDB = new LazyConcurrentDictionary<string, Info>();
 
 		/// <summary>
 		/// Dictionary of all text database entries
 		/// </summary>
-		private Dictionary<string, string> textDB;
+		private LazyConcurrentDictionary<string, string> textDB = new LazyConcurrentDictionary<string, string>();
 
 		/// <summary>
 		/// Dictionary of all associated arc files in the database.
 		/// </summary>
-		private Dictionary<string, ArcFile> arcFiles = new Dictionary<string, ArcFile>();
+		private LazyConcurrentDictionary<string, ArcFile> arcFiles = new LazyConcurrentDictionary<string, ArcFile>();
 
 		/// <summary>
 		/// Game language to support setting language in UI
@@ -179,8 +179,6 @@ namespace TQVaultAE.Data
 
 		#region Database Public Static Methods
 
-
-
 		/// <summary>
 		/// Used to Extract an ARC file into the destination directory.
 		/// The ARC file will not be added to the cache.
@@ -227,38 +225,31 @@ namespace TQVaultAE.Data
 		/// <returns>Returns Infor for item ID and NULL if not found.</returns>
 		public Info GetInfo(string itemId)
 		{
-			Info result = null;
 			if (string.IsNullOrEmpty(itemId))
-				return result;
+				return null;
 
 			itemId = TQData.NormalizeRecordPath(itemId);
-			Info info;
 
-			if (infoDB.ContainsKey(itemId))
-				info = this.infoDB[itemId];
-			else
+			return this.infoDB.GetOrAddAtomic(itemId, k =>
 			{
 				DBRecordCollection record = null;
 				// Add support for searching a custom map database
 				if (this.ArzFileMod != null)
-					record = arzProv.GetItem(this.ArzFileMod, itemId);
+					record = arzProv.GetItem(this.ArzFileMod, k);
 
 				// Try the expansion pack database first.
 				if (record == null && this.ArzFileIT != null)
-					record = arzProv.GetItem(this.ArzFileIT, itemId);
+					record = arzProv.GetItem(this.ArzFileIT, k);
 
 				// Try looking in TQ database now
 				if (record == null || this.ArzFileIT == null)
-					record = arzProv.GetItem(this.ArzFile, itemId);
+					record = arzProv.GetItem(this.ArzFile, k);
 
 				if (record == null)
 					return null;
 
-				info = new Info(record);
-				this.infoDB.Add(itemId, info);
-			}
-
-			return info;
+				return new Info(record);
+			});
 		}
 
 		/// <summary>
@@ -268,20 +259,7 @@ namespace TQVaultAE.Data
 		/// <param name="tagId">Tag to be looked up in the text database normalized to upper case.</param>
 		/// <returns>Returns localized string, tagId if it cannot find a string or "?ErrorName?" in case of uncaught exception.</returns>
 		public string GetFriendlyName(string tagId)
-		{
-			try
-			{
-				return this.textDB[tagId.ToUpperInvariant()];
-			}
-			catch (KeyNotFoundException)
-			{
-				return tagId;
-			}
-			catch (Exception)
-			{
-				return "?ErrorName?";
-			}
-		}
+			=> this.textDB.TryGetValue(tagId.ToUpperInvariant(), out var text) ? text.Value : tagId;
 
 		/// <summary>
 		/// Gets the formatted string for the variable attribute.
@@ -333,8 +311,6 @@ namespace TQVaultAE.Data
 		{
 			this.LoadTextDB();
 			this.LoadARZFile();
-
-			this.infoDB = new Dictionary<string, Info>();
 		}
 
 		/// <summary>
@@ -539,15 +515,7 @@ namespace TQVaultAE.Data
 				if (TQDebug.DatabaseDebugLevel > 0)
 					Log.DebugFormat(CultureInfo.InvariantCulture, "Database.ReadARCFile('{0}', '{1}')", arcFileName, dataId);
 
-				ArcFile arcFile;
-
-				if (arcFiles.ContainsKey(arcFileName))
-					arcFile = this.arcFiles[arcFileName];
-				else
-				{
-					arcFile = new ArcFile(arcFileName);
-					this.arcFiles.Add(arcFileName, arcFile);
-				}
+				ArcFile arcFile = this.arcFiles.GetOrAddAtomic(arcFileName, k => new ArcFile(k));
 
 				// Now retrieve the data
 				byte[] ans = arcProv.GetData(arcFile, dataId);
@@ -757,7 +725,6 @@ namespace TQVaultAE.Data
 			if (TQDebug.DatabaseDebugLevel > 0)
 				Log.Debug("Database.LoadTextDB()");
 
-			this.textDB = new Dictionary<string, string>();
 			string databaseFile = this.FigureDBFileToUse(false);
 			if (TQDebug.DatabaseDebugLevel > 1)
 			{
@@ -906,7 +873,7 @@ namespace TQVaultAE.Data
 
 					// If this field is already in the db, then replace it
 					string key = fields[0].Trim().ToUpperInvariant();
-					this.textDB[key] = label;
+					this.textDB.AddOrUpdateAtomic(key, label);
 				}
 			}
 

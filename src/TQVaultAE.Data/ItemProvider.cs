@@ -1869,11 +1869,7 @@ namespace TQVaultAE.Data
 
 				// Find or create the attrList for itm effect
 				List<Variable> attrList;
-				try
-				{
-					attrList = attrByEffect[effectGroup];
-				}
-				catch (KeyNotFoundException)
+				if (!attrByEffect.TryGetValue(effectGroup, out attrList))
 				{
 					attrList = new List<Variable>();
 					attrByEffect[effectGroup] = attrList;

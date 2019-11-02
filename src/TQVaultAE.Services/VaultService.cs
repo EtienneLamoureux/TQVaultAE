@@ -77,11 +77,7 @@ namespace TQVaultAE.Services
 			result.Filename = GamePathResolver.GetVaultFile(vaultName);
 
 			// Check the cache
-			try
-			{
-				result.Vault = this.userContext.Vaults[result.Filename];
-			}
-			catch (KeyNotFoundException)
+			if (!this.userContext.Vaults.TryGetValue(result.Filename, out result.Vault))
 			{
 				// We need to load the vault.
 				if (!File.Exists(result.Filename))

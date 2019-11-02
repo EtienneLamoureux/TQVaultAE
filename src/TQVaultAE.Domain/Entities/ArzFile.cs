@@ -5,7 +5,10 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Domain.Entities
 {
+	using System;
+	using System.Collections.Concurrent;
 	using System.Collections.Generic;
+	using TQVaultAE.Domain.Helpers;
 
 	/// <summary>
 	/// Class for decoding Titan Quest ARZ files.
@@ -25,12 +28,12 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// RecordInfo keyed by their ID
 		/// </summary>
-		public Dictionary<string, RecordInfo> RecordInfo;
+		public LazyConcurrentDictionary<string, RecordInfo> RecordInfo = new LazyConcurrentDictionary<string, RecordInfo>();
 
 		/// <summary>
 		/// DBRecords cached as they get requested
 		/// </summary>
-		public Dictionary<string, DBRecordCollection> Cache;
+		public LazyConcurrentDictionary<string, DBRecordCollection> Cache = new LazyConcurrentDictionary<string, DBRecordCollection>();
 
 		/// <summary>
 		/// Holds the keys for the recordInfo Dictionary
@@ -44,7 +47,6 @@ namespace TQVaultAE.Domain.Entities
 		public ArzFile(string fileName)
 		{
 			this.FileName = fileName;
-			this.Cache = new Dictionary<string, DBRecordCollection>();
 		}
 
 		/// <summary>

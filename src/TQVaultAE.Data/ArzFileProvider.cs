@@ -12,6 +12,7 @@ namespace TQVaultAE.Data
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
+	using TQVaultAE.Domain.Helpers;
 	using TQVaultAE.Logs;
 
 	/// <summary>
@@ -132,27 +133,19 @@ namespace TQVaultAE.Data
 		{
 			if (string.IsNullOrEmpty(recordId)) return null;
 
-			DBRecordCollection databaseRecord;
-
 			recordId = TQData.NormalizeRecordPath(recordId);
 
-			if (file.Cache.ContainsKey(recordId))
-				databaseRecord = file.Cache[recordId];
-			else
+			return file.Cache.GetOrAddAtomic(recordId, k =>
 			{
 				RecordInfo rawRecord;
-
-				if (file.RecordInfo.ContainsKey(recordId))
-					rawRecord = file.RecordInfo[recordId];
+				if (file.RecordInfo.ContainsKey(k))
+					rawRecord = file.RecordInfo[k].Value;
 				else
 					// record not found
 					return null;
 
-				databaseRecord = infoProv.Decompress(file, rawRecord);
-				file.Cache.Add(recordId, databaseRecord);
-			}
-
-			return databaseRecord;
+				return infoProv.Decompress(file, rawRecord);
+			});
 		}
 
 		/// <summary>
@@ -169,25 +162,7 @@ namespace TQVaultAE.Data
 		public DBRecordCollection GetRecordNotCached(ArzFile file, string recordId)
 		{
 			recordId = TQData.NormalizeRecordPath(recordId);
-
-			try
-			{
-				// If it is already in the cache no need not to use it
-				return file.Cache[recordId];
-			}
-			catch (KeyNotFoundException ex)
-			{
-				Log.Debug("record not found first attempt", ex);
-				try
-				{
-					return infoProv.Decompress(file, file.RecordInfo[recordId]);
-				}
-				catch (KeyNotFoundException exx)
-				{
-					Log.Debug("record not found second attempt", exx);
-					return null;
-				}
-			}
+			return file.Cache.GetOrAddAtomic(recordId, k => infoProv.Decompress(file, file.RecordInfo[k].Value));
 		}
 
 		/// <summary>
@@ -250,7 +225,6 @@ namespace TQVaultAE.Data
 		/// <param name="outStream">output StreamWriter.</param>
 		private void ReadRecordTable(ArzFile file, int pos, int numEntries, BinaryReader reader, StreamWriter outStream)
 		{
-			file.RecordInfo = new Dictionary<string, RecordInfo>((int)Math.Round(numEntries * 1.2));
 			reader.BaseStream.Seek(pos, SeekOrigin.Begin);
 
 			if (outStream != null)
@@ -262,7 +236,7 @@ namespace TQVaultAE.Data
 
 				infoProv.Decode(recordInfo, reader, 24, file); // 24 is the offset of where all record data begins
 
-				file.RecordInfo.Add(TQData.NormalizeRecordPath(recordInfo.ID), recordInfo);
+				file.RecordInfo.TryAdd(TQData.NormalizeRecordPath(recordInfo.ID), new Lazy<RecordInfo>(() => { return recordInfo; }));
 
 				// output this record
 				if (outStream != null)
