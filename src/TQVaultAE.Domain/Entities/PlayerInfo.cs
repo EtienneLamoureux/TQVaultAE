@@ -139,6 +139,10 @@
 		/// Players Money
 		/// </summary>
 		public int Money { get; set; }
-
+		public int MasteriesAllowed { get; set; }
+		public int HeaderVersion { get; set; }
+		public string PlayerCharacterClass { get; set; }
+		public int GreatestMonsterKilledLevel { get; set; }
+		public int GreatestMonsterKilledLifeAndMana { get; set; }
 	}
 }

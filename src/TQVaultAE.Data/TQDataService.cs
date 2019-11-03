@@ -8,6 +8,7 @@ namespace TQVaultAE.Data
 	using System;
 	using System.Globalization;
 	using System.IO;
+	using System.Linq;
 	using System.Text;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Logs;
@@ -18,6 +19,8 @@ namespace TQVaultAE.Data
 	public class TQDataService : ITQDataService
 	{
 		private readonly log4net.ILog Log;
+		internal static readonly Encoding Encoding1252 = Encoding.GetEncoding(1252);
+		internal static readonly Encoding EncodingUnicode = Encoding.Unicode;
 
 		public TQDataService(ILogger<TQDataService> log)
 		{
@@ -118,7 +121,6 @@ namespace TQVaultAE.Data
 			return ans;
 		}
 
-
 		/// <summary>
 		/// Reads a string from the binary stream.
 		/// Expects an integer length value followed by the actual string of the stated length.
@@ -136,5 +138,79 @@ namespace TQVaultAE.Data
 			return (UnicodeEncoding.Unicode.GetString(rawData));
 		}
 
+		public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) WriteIntAfter(byte[] playerFileContent, string keyToLookFor, int newValue, int offset = 0)
+		{
+			var found = ReadIntAfter(playerFileContent, keyToLookFor, offset);
+			if (found.indexOf != -1)
+			{
+				var newValueBytes = BitConverter.GetBytes(newValue);
+				Array.ConstrainedCopy(newValueBytes, 0, playerFileContent, found.valueOffset, sizeof(int));
+			}
+			return found;
+		}
+
+		public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, float valueAsFloat) WriteFloatAfter(byte[] playerFileContent, string keyToLookFor, float newValue, int offset = 0)
+		{
+			var found = ReadFloatAfter(playerFileContent, keyToLookFor, offset);
+			if (found.indexOf != -1)
+			{
+				var newValueBytes = BitConverter.GetBytes(newValue);
+				Array.ConstrainedCopy(newValueBytes, 0, playerFileContent, found.valueOffset, sizeof(float));
+			}
+			return found;
+		}
+
+		public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, float valueAsFloat) ReadFloatAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
+		{
+			var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
+			var value = new ArraySegment<byte>(playerFileContent, idx.nextOffset, sizeof(float)).ToArray();
+			return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(float), value, BitConverter.ToSingle(value, 0));
+		}
+
+		public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) ReadIntAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
+		{
+			var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
+			var value = new ArraySegment<byte>(playerFileContent, idx.nextOffset, sizeof(int)).ToArray();
+			return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int), value, BitConverter.ToInt32(value, 0));
+		}
+
+		public (int indexOf, int valueOffset, int nextOffset, int valueLen, byte[] valueAsByteArray, string valueAsString) ReadCStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
+		{
+			var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
+			var len = BitConverter.ToInt32(new ArraySegment<byte>(playerFileContent, idx.nextOffset, sizeof(int)).ToArray(), 0);
+			var stringArray = new ArraySegment<byte>(playerFileContent, idx.nextOffset + sizeof(int), len).ToArray();
+			return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int) + len, len, stringArray, Encoding1252.GetString(stringArray));
+		}
+
+		public (int indexOf, int valueOffset, int nextOffset, int valueLen, byte[] valueAsByteArray, string valueAsString) ReadUnicodeStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
+		{
+			var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
+			var len = BitConverter.ToInt32(new ArraySegment<byte>(playerFileContent, idx.nextOffset, sizeof(int)).ToArray(), 0);
+			var stringArray = new ArraySegment<byte>(playerFileContent, idx.nextOffset + sizeof(int), len * 2).ToArray();
+			return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int) + len * 2, len, stringArray, EncodingUnicode.GetString(stringArray));
+		}
+
+		public (int indexOf, int nextOffset) BinaryFindKey(byte[] dataSource, string key, int offset = 0)
+			=> BinaryFindKey(dataSource, Encoding1252.GetBytes(key), offset);
+
+		public (int indexOf, int nextOffset) BinaryFindKey(byte[] dataSource, byte[] key, int offset = 0)
+		{
+			// adapted From https://www.codeproject.com/Questions/479424/C-23plusbinaryplusfilesplusfindingplusstrings
+			int i = offset, j = 0;
+			for (; i <= (dataSource.Length - key.Length); i++)
+			{
+				if (dataSource[i] == key[0])
+				{
+					j = 1;
+					for (; j < key.Length && dataSource[i + j] == key[j]; j++) ;
+					if (j == key.Length)
+						goto found;
+
+				}
+			}
+			i = -1;// Not found
+		found:
+			return (i, i + key.Length);
+		}
 	}
 }

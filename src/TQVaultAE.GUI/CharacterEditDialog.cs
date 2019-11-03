@@ -97,6 +97,14 @@ namespace TQVaultAE.GUI
 			{
 				var playerInfo = new PlayerInfo();
 				playerInfo.CurrentLevel = Convert.ToInt32(levelNumericUpDown.Value);
+
+				if (playerInfo.CurrentLevel < 2)
+					playerInfo.MasteriesAllowed = 0;
+				else if (playerInfo.CurrentLevel < 8)
+					playerInfo.MasteriesAllowed = 1;
+				else
+					playerInfo.MasteriesAllowed = 2;
+
 				playerInfo.CurrentXP = int.Parse(xpTextBox.Text);
 				playerInfo.Money = PlayerCollection.PlayerInfo.Money > 0 ? PlayerCollection.PlayerInfo.Money : 0;
 				playerInfo.DifficultyUnlocked = difficultlyComboBox.SelectedIndex;
