@@ -6,8 +6,10 @@
 namespace TQVaultAE.Data
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Globalization;
 	using System.IO;
+	using System.Linq;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
@@ -62,7 +64,8 @@ namespace TQVaultAE.Data
 			pc.PlayerInfo.BaseMana = playerInfo.BaseMana;
 			pc.PlayerInfo.Money = playerInfo.Money;
 			//commit the player changes to the raw file
-			Commit(pc.PlayerInfo, pc.rawData);
+			var result = Commit(pc.PlayerInfo, pc.rawData);
+			pc.rawData = result;
 		}
 
 
@@ -71,7 +74,7 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="playerInfo"></param>
 		/// <param name="playerFileRawData"></param>
-		public void Commit(PlayerInfo playerInfo, byte[] playerFileRawData)
+		public byte[] Commit(PlayerInfo playerInfo, byte[] playerFileRawData)
 		{
 			TQData.WriteIntAfter(playerFileRawData, "playerLevel", playerInfo.CurrentLevel);
 
@@ -96,8 +99,41 @@ namespace TQVaultAE.Data
 			var baseHealth = TQData.WriteFloatAfter(playerFileRawData, "temp", playerInfo.BaseHealth, baseIntelligence.nextOffset);
 			var baseMana = TQData.WriteFloatAfter(playerFileRawData, "temp", playerInfo.BaseMana, baseHealth.nextOffset);
 
+			var result = playerFileRawData;
+
+			if (playerInfo.MasteriesAllowed_OldValue.HasValue && playerInfo.MasteriesAllowed < playerInfo.MasteriesAllowed_OldValue)
+			{
+				playerInfo.ResetMasteries();
+				// Override skill lines block after reset
+
+				// Find skill section boundaries
+				var firstblock = TQData.ReadIntAfter(playerFileRawData, "begin_block");
+				var secondblock = TQData.ReadIntAfter(playerFileRawData, "begin_block", firstblock.nextOffset);
+				var max = TQData.ReadIntAfter(playerFileRawData, "max", secondblock.nextOffset);// Boundary top
+				var end_block = TQData.ReadIntAfter(playerFileRawData, "end_block", max.nextOffset);
+				var masteriesAllowed = TQData.ReadIntAfter(playerFileRawData, "masteriesAllowed", max.nextOffset);// Boundary bottom
+
+				// Split file
+				var startfile = playerFileRawData.Take(max.nextOffset).ToArray();
+				var endfile = playerFileRawData.Skip(masteriesAllowed.indexOf - 4).ToArray(); // -4 include key name length
+
+				// make binary section
+				var section = playerInfo.SkillRecordList.SelectMany(s => s.ToBinary(secondblock.valueAsInt, end_block.valueAsInt)).ToArray();
+
+				// put pieces back together
+				result = new[] {
+					startfile,
+					section,
+					endfile,
+				}.SelectMany(a => a).ToArray();
+
+				// Adjust "max" value
+				var found = TQData.WriteIntAfter(result, "max", playerInfo.SkillRecordList.Count, max.indexOf);
+			}
+
 			//if this value is set to true, the TQVaultAE program will know save the player.chr file
 			playerInfo.Modified = true;
+			return result;
 		}
 
 		/// <summary>
@@ -127,25 +163,33 @@ namespace TQVaultAE.Data
 			// Added to support equipment panel
 			byte[] rawEquipmentData = EncodeEquipmentData(pc);
 
-			// now make an array big enough to hold everything
-			byte[] ans = new byte[pc.itemBlockStart + rawItemData.Length + (pc.equipmentBlockStart - pc.itemBlockEnd) +
-				rawEquipmentData.Length + (pc.rawData.Length - pc.equipmentBlockEnd)];
+			// May have change with skill reset so i get the new offsets
+			var itemBlockStart = TQData.BinaryFindKey(pc.rawData, "numberOfSacks");
+			var itemBlockStartOffset = itemBlockStart.indexOf - 4;// -4 to include key name length
+			var itemBlockEnd = TQData.BinaryFindEndBlockOf(pc.rawData, "numberOfSacks");
+			var itemBlockEndOffset = itemBlockEnd.indexOf - 4;
 
-			// Now copy all the data into pc array
-			Array.Copy(pc.rawData, 0, ans, 0, pc.itemBlockStart);
-			Array.Copy(rawItemData, 0, ans, pc.itemBlockStart, rawItemData.Length);
-			Array.Copy(pc.rawData, pc.itemBlockEnd, ans
-				, pc.itemBlockStart + rawItemData.Length
-				, pc.equipmentBlockStart - pc.itemBlockEnd
-			);
-			Array.Copy(rawEquipmentData, 0, ans
-				, pc.itemBlockStart + rawItemData.Length + pc.equipmentBlockStart - pc.itemBlockEnd
-				, rawEquipmentData.Length
-			);
-			Array.Copy(pc.rawData, pc.equipmentBlockEnd, ans
-				, pc.itemBlockStart + rawItemData.Length + pc.equipmentBlockStart - pc.itemBlockEnd + rawEquipmentData.Length
-				, pc.rawData.Length - pc.equipmentBlockEnd
-			);
+			var equipmentBlockStart = TQData.ReadIntAfter(pc.rawData, "useAlternate");
+			var equipmentBlockStartOffset = equipmentBlockStart.nextOffset;
+			var equipmentBlockEnd = TQData.BinaryFindEndBlockOf(pc.rawData, "useAlternate");
+			var equipmentBlockEndOffset = equipmentBlockEnd.nextOffset;
+
+			var ans = new[] {
+				// Begining of the file
+				pc.rawData.Take(itemBlockStartOffset).ToArray(),
+
+				// new item segment
+				rawItemData,
+
+				// In between segment
+				new ArraySegment<byte>(pc.rawData, itemBlockEndOffset, equipmentBlockStartOffset - itemBlockEndOffset).ToArray(),
+
+				// new equipment segment
+				rawEquipmentData,
+
+				// End of file
+				pc.rawData.Skip(equipmentBlockEndOffset).ToArray(),
+			}.SelectMany(b => b).ToArray();
 
 			return ans;
 		}
@@ -526,6 +570,33 @@ namespace TQVaultAE.Data
 			var criticalHitsReceived = TQData.ReadIntAfter(pc.rawData, "criticalHitsReceived", criticalHitsInflicted.nextOffset);
 			pi.CriticalHitsReceived = criticalHitsReceived.valueAsInt;
 
+			// Parse skills collection
+			var firstblock = TQData.BinaryFindKey(pc.rawData, "begin_block");
+			var secondblock = TQData.BinaryFindKey(pc.rawData, "begin_block", firstblock.nextOffset);
+			var max = TQData.ReadIntAfter(pc.rawData, "max", secondblock.nextOffset);
+			// Loop of sub block
+			int nextOffset = max.nextOffset;
+			for (var i = 0; i < max.valueAsInt; i++)
+			{
+				var begin_block = TQData.ReadIntAfter(pc.rawData, "begin_block", nextOffset);
+				var skillName = TQData.ReadCStringAfter(pc.rawData, "skillName", nextOffset);
+				var skillLevel = TQData.ReadIntAfter(pc.rawData, "skillLevel", nextOffset);
+				var skillEnabled = TQData.ReadIntAfter(pc.rawData, "skillEnabled", nextOffset);
+				var skillSubLevel = TQData.ReadIntAfter(pc.rawData, "skillSubLevel", nextOffset);
+				var skillActive = TQData.ReadIntAfter(pc.rawData, "skillActive", nextOffset);
+				var skillTransition = TQData.ReadIntAfter(pc.rawData, "skillTransition", nextOffset);
+				pi.SkillRecordList.Add(new SkillRecord()
+				{
+					skillActive = skillActive.valueAsInt,
+					skillEnabled = skillEnabled.valueAsInt,
+					skillLevel = skillLevel.valueAsInt,
+					skillName = skillName.valueAsString,
+					skillSubLevel = skillSubLevel.valueAsInt,
+					skillTransition = skillTransition.valueAsInt,
+				});
+				nextOffset = skillTransition.nextOffset;
+			}
+
 			return pi;
 		}
 
@@ -584,7 +655,7 @@ namespace TQVaultAE.Data
 		{
 			try
 			{
-				pc.itemBlockStart = offset;
+				//pc.itemBlockStart = offset;
 
 				reader.BaseStream.Seek(offset, SeekOrigin.Begin);
 
@@ -607,7 +678,8 @@ namespace TQVaultAE.Data
 					SackCollectionProvider.Parse(pc.sacks[i], reader);
 				}
 
-				pc.itemBlockEnd = (int)reader.BaseStream.Position;
+				//pc.itemBlockEnd = (int)reader.BaseStream.Position;
+
 			}
 			catch (ArgumentException ex)
 			{
@@ -667,7 +739,7 @@ namespace TQVaultAE.Data
 		{
 			try
 			{
-				pc.equipmentBlockStart = offset;
+				//pc.equipmentBlockStart = offset;
 
 				reader.BaseStream.Seek(offset, SeekOrigin.Begin);
 
@@ -682,7 +754,8 @@ namespace TQVaultAE.Data
 				pc.EquipmentSack.IsImmortalThrone = pc.IsImmortalThrone;
 				SackCollectionProvider.Parse(pc.EquipmentSack, reader);
 
-				pc.equipmentBlockEnd = (int)reader.BaseStream.Position;
+				//pc.equipmentBlockEnd = (int)reader.BaseStream.Position;
+
 			}
 			catch (ArgumentException ex)
 			{

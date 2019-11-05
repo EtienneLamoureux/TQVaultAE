@@ -212,5 +212,56 @@ namespace TQVaultAE.Data
 		found:
 			return (i, i + key.Length);
 		}
+
+		/// <summary>
+		/// Find the "end_block" of <paramref name="keyToLookFor"/>
+		/// </summary>
+		/// <param name="playerFileContent"></param>
+		/// <param name="keyToLookFor"></param>
+		/// <param name="offset"></param>
+		/// <returns></returns>
+		public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) BinaryFindEndBlockOf(byte[] playerFileContent, string keyToLookFor, int offset = 0)
+		{
+			int level = 0;
+			var keybegin_block = "begin_block";
+			var keyend_block = "end_block";
+			var noMatch = (-1, 0, 0, new byte[] { }, 0);
+
+			var startPoint = BinaryFindKey(playerFileContent, keyToLookFor, offset);
+			if (startPoint.indexOf == -1)
+				return noMatch;
+
+			offset = startPoint.nextOffset;
+		recurse:
+			// Try to find next "end_block"
+			var nextend_block = ReadIntAfter(playerFileContent, keyend_block, offset);
+			// No more end_block left
+			if (nextend_block.indexOf == -1)
+				return noMatch;
+
+			// Try to find next "begin_block"
+			var nextbegin_block = ReadIntAfter(playerFileContent, keybegin_block, offset);
+			// No more begin_block left
+			if (nextbegin_block.indexOf == -1)
+				return nextend_block; // found
+
+			// next end_block is closer => found it
+			if (nextend_block.indexOf < nextbegin_block.indexOf && level == 0)
+				return nextend_block;
+			else if (nextend_block.indexOf < nextbegin_block.indexOf && level > 0)
+			{
+				level--;
+				offset = nextend_block.nextOffset;
+				goto recurse;
+			}
+			else
+			{
+				level++;
+				offset = nextbegin_block.nextOffset;
+				goto recurse;
+			}
+
+		}
+
 	}
 }

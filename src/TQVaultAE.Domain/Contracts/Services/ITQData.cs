@@ -53,5 +53,13 @@ namespace TQVaultAE.Domain.Contracts.Services
 		(int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) WriteIntAfter(byte[] playerFileContent, string keyToLookFor, int newValue, int offset = 0);
 		(int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, float valueAsFloat) WriteFloatAfter(byte[] playerFileContent, string keyToLookFor, float newValue, int offset = 0);
 
+		/// <summary>
+		/// Find the "end_block" of <paramref name="keyToLookFor"/>
+		/// </summary>
+		/// <param name="playerFileContent"></param>
+		/// <param name="keyToLookFor"></param>
+		/// <param name="offset"></param>
+		/// <returns></returns>
+		(int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) BinaryFindEndBlockOf(byte[] playerFileContent, string keyToLookFor, int offset = 0);
 	}
 }

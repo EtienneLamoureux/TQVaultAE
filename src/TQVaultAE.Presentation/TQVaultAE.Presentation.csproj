@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="DDSReader" Version="1.0.6-pre" />
-    <PackageReference Include="Enums.NET" Version="2.3.2" />
+    <PackageReference Include="Enums.NET" Version="3.0.0" />
     <PackageReference Include="Microsoft.DotNet.Analyzers.Compatibility" Version="0.2.12-alpha">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

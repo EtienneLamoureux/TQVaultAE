@@ -24,26 +24,6 @@ namespace TQVaultAE.Domain.Entities
 		public byte[] rawData;
 
 		/// <summary>
-		/// Position of the item block within the file.
-		/// </summary>
-		public int itemBlockStart;
-
-		/// <summary>
-		/// Position of the end of the item block within the file.
-		/// </summary>
-		public int itemBlockEnd;
-
-		/// <summary>
-		/// Position of the equipment block within the file.
-		/// </summary>
-		public int equipmentBlockStart;
-
-		/// <summary>
-		/// Position of the end of the equipment block within the file.
-		/// </summary>
-		public int equipmentBlockEnd;
-
-		/// <summary>
 		/// Number of sacks that this file holds
 		/// </summary>
 		public int numberOfSacks;

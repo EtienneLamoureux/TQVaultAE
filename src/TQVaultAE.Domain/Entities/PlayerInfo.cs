@@ -1,10 +1,74 @@
-﻿namespace TQVaultAE.Domain.Entities
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using EnumsNET;
+
+namespace TQVaultAE.Domain.Entities
 {
 	/// <summary>
 	/// Character data is saved here after reading through player.chr file
 	/// </summary>
 	public class PlayerInfo
 	{
+
+		public readonly List<SkillRecord> SkillRecordList = new List<SkillRecord>();
+
+		public bool MasteryDefensiveEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Defensive.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
+		public bool MasteryStormEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Storm.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
+		public bool MasteryEarthEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Earth.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
+		public bool MasteryNatureEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Nature.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
+		public bool MasteryDreamEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Dream.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
+		public bool MasteryRuneEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Rune.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
+		public bool MasteryWarfareEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Warfare.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
+		public bool MasteryHuntingEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Hunting.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
+		public bool MasteryStealthEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Stealth.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
+		public bool MasterySpiritEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Spirit.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
+
+		public Masteries? ActiveMasteries
+		{
+			get
+			{
+				Masteries? val = null;
+				int m = 0;
+				m = MasteryDefensiveEnabled ? m | (int)Masteries.Defensive : m;
+				m = MasteryStormEnabled ? m | (int)Masteries.Storm : m;
+				m = MasteryEarthEnabled ? m | (int)Masteries.Earth : m;
+				m = MasteryNatureEnabled ? m | (int)Masteries.Nature : m;
+				m = MasteryDreamEnabled ? m | (int)Masteries.Dream : m;
+				m = MasteryRuneEnabled ? m | (int)Masteries.Rune : m;
+				m = MasteryWarfareEnabled ? m | (int)Masteries.Warfare : m;
+				m = MasteryHuntingEnabled ? m | (int)Masteries.Hunting : m;
+				m = MasteryStealthEnabled ? m | (int)Masteries.Stealth : m;
+				m = MasterySpiritEnabled ? m | (int)Masteries.Spirit : m;
+				if (m > 0) val = (Masteries)m;
+				return val;
+			}
+		}
+
+		/// <summary>
+		/// Reset masteries if any
+		/// </summary>
+		/// <returns></returns>
+		public bool ResetMasteries()
+		{
+			bool isActive = ActiveMasteries.HasValue;
+			if (isActive)
+			{
+				var actives = ActiveMasteries.Value;
+				foreach (var mastery in Enums.GetValues<Masteries>().Where(v => actives.HasFlag(v)))
+				{
+					var rec = mastery.AsString(EnumFormat.Description);
+					var recBase = Path.GetDirectoryName(rec);
+					// Remove all skills having the same base skill line (ex :  storm, earth, etc...)
+					this.SkillRecordList.RemoveAll(sk => sk.skillName.StartsWith(recBase, StringComparison.InvariantCultureIgnoreCase));
+				}
+				this.Modified = true;
+			}
+			return isActive;
+		}
+
 		/// <summary>
 		/// Character current Level
 		/// </summary>
@@ -139,9 +203,35 @@
 		/// Players Money
 		/// </summary>
 		public int Money { get; set; }
-		public int MasteriesAllowed { get; set; }
+
+		int _MasteriesAllowed = 0;
+		/// <summary>
+		/// Nbr of masteries unlocked
+		/// </summary>
+		public int MasteriesAllowed
+		{
+			get => _MasteriesAllowed;
+			set
+			{
+				if (!MasteriesAllowed_OldValue.HasValue) MasteriesAllowed_OldValue = value;
+				_MasteriesAllowed = value;
+			}
+		}
+
+		/// <summary>
+		/// First set value of <see cref="MasteriesAllowed"/> 
+		/// </summary>
+		public int? MasteriesAllowed_OldValue { get; private set; }
+
+		/// <summary>
+		/// TQ, TQIT, TQITAE
+		/// </summary>
 		public int HeaderVersion { get; set; }
+		/// <summary>
+		/// Class name
+		/// </summary>
 		public string PlayerCharacterClass { get; set; }
+
 		public int GreatestMonsterKilledLevel { get; set; }
 		public int GreatestMonsterKilledLifeAndMana { get; set; }
 	}
