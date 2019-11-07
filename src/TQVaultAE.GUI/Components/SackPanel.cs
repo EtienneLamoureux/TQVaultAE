@@ -15,7 +15,6 @@ namespace TQVaultAE.GUI.Components
 	using System.Linq;
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.Data;
 	using TQVaultAE.Logs;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Presentation;
@@ -108,6 +107,7 @@ namespace TQVaultAE.GUI.Components
 		/// Indicates whether the current sort should be vertical.
 		/// </summary>
 		private bool sortVertical;
+		private System.ComponentModel.IContainer components;
 
 		/// <summary>
 		/// Holds the original location of the panel.
@@ -116,6 +116,43 @@ namespace TQVaultAE.GUI.Components
 		private Point originalLocation;
 
 		#endregion SackPanel Fields
+
+		public SackPanel()
+		{
+			InitializeComponent();
+		}
+
+		private void InitializeComponent()
+		{
+            this.components = new System.ComponentModel.Container();
+            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.SuspendLayout();
+            // 
+            // contextMenu
+            // 
+            this.contextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+            this.contextMenu.Font = new System.Drawing.Font("Albertus MT", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.contextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.contextMenu.Name = "contextMenu";
+            this.contextMenu.Opacity = 0.8D;
+            this.contextMenu.ShowImageMargin = false;
+            this.contextMenu.Size = new System.Drawing.Size(36, 4);
+            this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
+            // 
+            // SackPanel
+            // 
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyUpCallback);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyDownCallback);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCallback);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDownCallback);
+            this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
+            this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveCallback);
+            this.ResumeLayout(false);
+
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the SackPanel class.
@@ -126,6 +163,8 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="autoMoveLocation">AutoMoveLocation for this sack</param>
 		public SackPanel(int sackWidth, int sackHeight, ItemDragInfo dragInfo, AutoMoveLocation autoMoveLocation, IServiceProvider serviceProvider)
 		{
+			InitializeComponent();
+
 			this.ServiceProvider = serviceProvider;
 			this.FontService = this.ServiceProvider.GetService<IFontService>();
 			this.UIService = this.ServiceProvider.GetService<IUIService>();
@@ -168,26 +207,9 @@ namespace TQVaultAE.GUI.Components
 				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * sackWidth),
 				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * sackHeight));
 			this.BackColor = ((SolidBrush)this.EmptyCellBrush).Color;
-			this.Paint += new PaintEventHandler(this.PaintCallback);
-			this.MouseMove += new MouseEventHandler(this.MouseMoveCallback);
-			this.MouseLeave += new EventHandler(this.MouseLeaveCallback);
-			this.MouseEnter += new EventHandler(this.MouseEnterCallback);
-			this.MouseDown += new MouseEventHandler(this.MouseDownCallback);
-			this.KeyDown += new KeyEventHandler(this.KeyDownCallback);
-			this.KeyUp += new KeyEventHandler(this.KeyUpCallback);
-			this.KeyPress += new KeyPressEventHandler(this.KeyPressCallback);
-
-			// Context menu
-			this.contextMenu = new ContextMenuStrip();
-			this.contextMenu.BackColor = Color.FromArgb(46, 41, 31);
-			this.contextMenu.DropShadowEnabled = true;
-			this.contextMenu.Font = FontService.GetFontAlbertusMT(9.0F * UIService.Scale);
-			this.contextMenu.ForeColor = Color.FromArgb(200, 200, 200);
-			this.contextMenu.Opacity = 0.80;
-			this.contextMenu.ShowImageMargin = false;
-			this.contextMenu.ItemClicked += new ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
 
 			this.contextMenu.Renderer = new CustomProfessionalRenderer();
+			this.contextMenu.Font = FontService.GetFontAlbertusMT(9.0F * UIService.Scale);
 
 			// Da_FileServer: Enable double buffering to remove flickering.
 			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);

@@ -36,19 +36,30 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		public ScalingButton()
 		{
+			InitializeComponent();
+
 			this.DownBitmap = Resources.MainButtonDown;
 			this.OverBitmap = Resources.MainButtonOver;
 			this.UpBitmap = Resources.MainButtonUp;
-
-			TextChanged += new EventHandler(this.TextChangedCallback);
-			GotFocus += new EventHandler(this.GotFocusCallback);
-			LostFocus += new EventHandler(this.LostFocusCallback);
-			MouseEnter += new EventHandler(this.MouseEnterCallback);
-			MouseLeave += new EventHandler(this.MouseLeaveCallback);
-			MouseDown += new MouseEventHandler(this.MouseDownCallback);
-			MouseUp += new MouseEventHandler(this.MouseUpCallback);
 		}
 
+		private void InitializeComponent()
+		{
+			this.SuspendLayout();
+			// 
+			// ScalingButton
+			// 
+			this.TextChanged += new System.EventHandler(this.TextChangedCallback);
+			this.GotFocus += new System.EventHandler(this.GotFocusCallback);
+			this.LostFocus += new System.EventHandler(this.LostFocusCallback);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDownCallback);
+			this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
+			this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
+			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCallback);
+			this.ResumeLayout(false);
+
+		}
+		
 		/// <summary>
 		/// Gets or sets a value indicating whether the custom button graphic is shown.
 		/// </summary>

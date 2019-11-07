@@ -53,11 +53,41 @@ namespace TQVaultAE.GUI.Components
 		/// Holds the currently disabled tooltip bagId.
 		/// </summary>
 		internal readonly List<int> DisabledTooltipBagId = new List<int>();
+		private IContainer components;
 
 		/// <summary>
 		/// Context menu instance
 		/// </summary>
 		private ContextMenuStrip contextMenu;
+
+		public VaultPanel()
+		{
+			InitializeComponent();
+		}
+
+		private void InitializeComponent()
+		{
+            this.components = new System.ComponentModel.Container();
+            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.SuspendLayout();
+            // 
+            // contextMenu
+            // 
+            this.contextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+            this.contextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.contextMenu.Name = "contextMenu";
+            this.contextMenu.Opacity = 0.8D;
+            this.contextMenu.ShowImageMargin = false;
+            this.contextMenu.Size = new System.Drawing.Size(36, 4);
+            this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
+            // 
+            // VaultPanel
+            // 
+            this.BackColor = System.Drawing.Color.Transparent;
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
+            this.ResumeLayout(false);
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the VaultPanel class.
@@ -69,6 +99,8 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="autoMoveLocation">The automovelocation for this panel.</param>
 		public VaultPanel(ItemDragInfo dragInfo, int numberOfBags, Size panelSize, int numberOfAutosortButtons, AutoMoveLocation autoMoveLocation, IServiceProvider serviceProvider)
 		{
+			InitializeComponent();
+
 			this.ServiceProvider = serviceProvider;
 			this.FontService = this.ServiceProvider.GetService<IFontService>();
 			this.UIService = this.ServiceProvider.GetService<IUIService>();
@@ -77,7 +109,6 @@ namespace TQVaultAE.GUI.Components
 			this.AutoMoveLocation = autoMoveLocation;
 			this.Text = Resources.PlayerPanelNoVault;
 			this.NoPlayerString = Resources.PlayerPanelNoVault;
-			this.BackColor = Color.Transparent;
 			this.DrawAsGroupBox = false;
 
 			// Setup the offset to make room for the autosort button
@@ -90,7 +121,7 @@ namespace TQVaultAE.GUI.Components
 			this.Size = new Size(
 				(panelSize.Width * UIService.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.Scale) + autosortOffset + BorderPad,
 				(panelSize.Height * UIService.ItemUnitSize) + Convert.ToInt32(56.0F * UIService.Scale) + BorderPad);
-			this.TabStop = false;
+
 			this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * UIService.Scale, this.Font.Style);
 
 			this.BagPanelOffset = 0; // bag panel starts with bag #0
@@ -128,18 +159,9 @@ namespace TQVaultAE.GUI.Components
 				this.BagSackPanel.SackType = SackType.Vault;
 			}
 
-			this.contextMenu = new ContextMenuStrip();
-			this.contextMenu.BackColor = Color.FromArgb(46, 41, 31);
-			this.contextMenu.DropShadowEnabled = true;
 			this.contextMenu.Font = FontService.GetFontAlbertusMT(9.0F * UIService.Scale);
-			this.contextMenu.ForeColor = Color.FromArgb(200, 200, 200);
-			this.contextMenu.Opacity = 0.80;
-			this.contextMenu.ShowImageMargin = false;
-			this.contextMenu.ItemClicked += new ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
-			this.contextMenu.Renderer = new CustomProfessionalRenderer();
 
 			this.PropertyChanged += new PropertyChangedEventHandler(this.PropertyChangedCallback);
-			this.Paint += new PaintEventHandler(this.PaintCallback);
 
 			// to avoid flickering use double buffer and to force control to use OnPaint
 			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
@@ -256,7 +278,7 @@ namespace TQVaultAE.GUI.Components
 				this.player = value;
 				this.UpdateText();
 
-				this.OnPropertyChanged("Player");
+				this.OnPropertyChanged(nameof(Player));
 				this.Refresh();
 			}
 		}
@@ -298,7 +320,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="e">PropertyChangedEventArgs data</param>
 		public void PropertyChangedCallback(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName.ToUpperInvariant() == "PLAYER")
+			if (e.PropertyName == nameof(Player))
 			{
 				this.AssignSacks();
 			}
@@ -474,7 +496,7 @@ namespace TQVaultAE.GUI.Components
 
 						// Add the Disable Tooltip submenu
 						this.contextMenu.Items.Add("-");
-						
+
 						if (this.DisabledTooltipBagId.Contains(bagID))
 						{
 							this.AddMenuItem(Resources.PlayerPanelMenuEnableTooltip, this.DisableTooltipClicked);
@@ -488,7 +510,7 @@ namespace TQVaultAE.GUI.Components
 						{
 							this.AddMenuItem(Resources.PlayerPanelMenuDisableAllTooltip, this.DisableTooltipClicked);
 						}
-						
+
 						if (this.DisabledTooltipBagId.Any())
 						{
 							this.AddMenuItem(Resources.PlayerPanelMenuEnableAllTooltip, this.DisableTooltipClicked);
@@ -676,7 +698,7 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			int hashSign = Resources.GlobalMenuBag.IndexOf(Resources.GlobalMenuBagDelimiter, StringComparison.Ordinal) + 1;
-			
+
 			if (hashSign == -1)
 			{
 				return -1;

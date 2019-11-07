@@ -12,7 +12,6 @@ namespace TQVaultAE.GUI.Components
 	using System.Drawing;
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.Data;
 	using TQVaultAE.Logs;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Presentation;

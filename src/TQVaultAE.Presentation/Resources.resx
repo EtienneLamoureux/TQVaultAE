@@ -1222,167 +1222,335 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   <data name="tagCClass01" xml:space="preserve">
     <value>Theurgist</value>
   </data>
+  <data name="MasteriestagCClass01" xml:space="preserve">
+    <value>Spirit</value>
+  </data>
   <data name="tagCClass02" xml:space="preserve">
     <value>Wanderer</value>
   </data>
+  <data name="MasteriestagCClass02" xml:space="preserve">
+    <value>Nature</value>
+  </data>
   <data name="tagCClass03" xml:space="preserve">
+    <value>Rogue</value>
+  </data>
+  <data name="MasteriestagCClass03" xml:space="preserve">
     <value>Rogue</value>
   </data>
   <data name="tagCClass04" xml:space="preserve">
     <value>Hunter</value>
   </data>
+  <data name="MasteriestagCClass04" xml:space="preserve">
+    <value>Hunting</value>
+  </data>
   <data name="tagCClass05" xml:space="preserve">
     <value>Stormcaller</value>
+  </data>
+  <data name="MasteriestagCClass05" xml:space="preserve">
+    <value>Storm</value>
   </data>
   <data name="tagCClass06" xml:space="preserve">
     <value>Pyromancer</value>
   </data>
+  <data name="MasteriestagCClass06" xml:space="preserve">
+    <value>Earth</value>
+  </data>
   <data name="tagCClass07" xml:space="preserve">
     <value>Defender</value>
+  </data>
+  <data name="MasteriestagCClass07" xml:space="preserve">
+    <value>Defense</value>
   </data>
   <data name="tagCClass08" xml:space="preserve">
     <value>Warrior</value>
   </data>
+  <data name="MasteriestagCClass08" xml:space="preserve">
+    <value>Warfare</value>
+  </data>
   <data name="tagCClass09" xml:space="preserve">
     <value>Spellbreaker</value>
+  </data>
+  <data name="MasteriestagCClass09" xml:space="preserve">
+    <value>Spirit-Warfare</value>
   </data>
   <data name="tagCClass10" xml:space="preserve">
     <value>Champion</value>
   </data>
+  <data name="MasteriestagCClass10" xml:space="preserve">
+    <value>Nature-Warfare</value>
+  </data>
   <data name="tagCClass11" xml:space="preserve">
     <value>Assassin</value>
+  </data>
+  <data name="MasteriestagCClass11" xml:space="preserve">
+    <value>Rogue-Warfare</value>
   </data>
   <data name="tagCClass12" xml:space="preserve">
     <value>Slayer</value>
   </data>
+  <data name="MasteriestagCClass12" xml:space="preserve">
+    <value>Hunting-Warfare</value>
+  </data>
   <data name="tagCClass13" xml:space="preserve">
     <value>Thane</value>
+  </data>
+  <data name="MasteriestagCClass13" xml:space="preserve">
+    <value>Storm-Warfare</value>
   </data>
   <data name="tagCClass14" xml:space="preserve">
     <value>Battlemage</value>
   </data>
+  <data name="MasteriestagCClass14" xml:space="preserve">
+    <value>Earth-Warfare</value>
+  </data>
   <data name="tagCClass15" xml:space="preserve">
-    <value>Conqueror</value>
+    <value>Conquerer</value>
+  </data>
+  <data name="MasteriestagCClass15" xml:space="preserve">
+    <value>Defense-Warfare</value>
   </data>
   <data name="tagCClass16" xml:space="preserve">
     <value>Spellbinder</value>
   </data>
+  <data name="MasteriestagCClass16" xml:space="preserve">
+    <value>Spirit-Defense</value>
+  </data>
   <data name="tagCClass17" xml:space="preserve">
     <value>Guardian</value>
+  </data>
+  <data name="MasteriestagCClass17" xml:space="preserve">
+    <value>Nature-Defense</value>
   </data>
   <data name="tagCClass18" xml:space="preserve">
     <value>Corsair</value>
   </data>
+  <data name="MasteriestagCClass18" xml:space="preserve">
+    <value>Rogue-Defense</value>
+  </data>
   <data name="tagCClass19" xml:space="preserve">
     <value>Warden</value>
+  </data>
+  <data name="MasteriestagCClass19" xml:space="preserve">
+    <value>Hunting-Defense</value>
   </data>
   <data name="tagCClass20" xml:space="preserve">
     <value>Paladin</value>
   </data>
+  <data name="MasteriestagCClass20" xml:space="preserve">
+    <value>Storm-Defense</value>
+  </data>
   <data name="tagCClass21" xml:space="preserve">
     <value>Juggernaut</value>
+  </data>
+  <data name="MasteriestagCClass21" xml:space="preserve">
+    <value>Earth-Defense</value>
   </data>
   <data name="tagCClass22" xml:space="preserve">
     <value>Conjurer</value>
   </data>
+  <data name="MasteriestagCClass22" xml:space="preserve">
+    <value>Spirit-Earth</value>
+  </data>
   <data name="tagCClass23" xml:space="preserve">
     <value>Summoner</value>
+  </data>
+  <data name="MasteriestagCClass23" xml:space="preserve">
+    <value>Nature-Earth</value>
   </data>
   <data name="tagCClass24" xml:space="preserve">
     <value>Magician</value>
   </data>
+  <data name="MasteriestagCClass24" xml:space="preserve">
+    <value>Rogue-Earth</value>
+  </data>
   <data name="tagCClass25" xml:space="preserve">
     <value>Avenger</value>
+  </data>
+  <data name="MasteriestagCClass25" xml:space="preserve">
+    <value>Hunting-Earth</value>
   </data>
   <data name="tagCClass26" xml:space="preserve">
     <value>Elementalist</value>
   </data>
+  <data name="MasteriestagCClass26" xml:space="preserve">
+    <value>Storm-Earth</value>
+  </data>
   <data name="tagCClass27" xml:space="preserve">
     <value>Oracle</value>
+  </data>
+  <data name="MasteriestagCClass27" xml:space="preserve">
+    <value>Spirit-Storm</value>
   </data>
   <data name="tagCClass28" xml:space="preserve">
     <value>Druid</value>
   </data>
+  <data name="MasteriestagCClass28" xml:space="preserve">
+    <value>Nature-Storm</value>
+  </data>
   <data name="tagCClass29" xml:space="preserve">
     <value>Sorcerer</value>
+  </data>
+  <data name="MasteriestagCClass29" xml:space="preserve">
+    <value>Rogue-Storm</value>
   </data>
   <data name="tagCClass30" xml:space="preserve">
     <value>Sage</value>
   </data>
+  <data name="MasteriestagCClass30" xml:space="preserve">
+    <value>Hunting-Storm</value>
+  </data>
   <data name="tagCClass31" xml:space="preserve">
     <value>Bone Charmer</value>
+  </data>
+  <data name="MasteriestagCClass31" xml:space="preserve">
+    <value>Spirit-Hunting</value>
   </data>
   <data name="tagCClass32" xml:space="preserve">
     <value>Ranger</value>
   </data>
+  <data name="MasteriestagCClass32" xml:space="preserve">
+    <value>Nature-Hunting</value>
+  </data>
   <data name="tagCClass33" xml:space="preserve">
     <value>Brigand</value>
+  </data>
+  <data name="MasteriestagCClass33" xml:space="preserve">
+    <value>Rogue-Hunting</value>
   </data>
   <data name="tagCClass34" xml:space="preserve">
     <value>Warlock</value>
   </data>
+  <data name="MasteriestagCClass34" xml:space="preserve">
+    <value>Spirit-Rogue</value>
+  </data>
   <data name="tagCClass35" xml:space="preserve">
     <value>Illusionist</value>
+  </data>
+  <data name="MasteriestagCClass35" xml:space="preserve">
+    <value>Nature-Rogue</value>
   </data>
   <data name="tagCClass36" xml:space="preserve">
     <value>Soothsayer</value>
   </data>
+  <data name="MasteriestagCClass36" xml:space="preserve">
+    <value>Spirit-Nature</value>
+  </data>
   <data name="xtagCharacterClass01" xml:space="preserve">
     <value>Seer</value>
+  </data>
+  <data name="MasteriesxtagCharacterClass01" xml:space="preserve">
+    <value>Dream</value>
   </data>
   <data name="xtagCharacterClass02" xml:space="preserve">
     <value>Harbinger</value>
   </data>
+  <data name="MasteriesxtagCharacterClass02" xml:space="preserve">
+    <value>Warfare-Dream</value>
+  </data>
   <data name="xtagCharacterClass03" xml:space="preserve">
     <value>Templar</value>
+  </data>
+  <data name="MasteriesxtagCharacterClass03" xml:space="preserve">
+    <value>Defense-Dream</value>
   </data>
   <data name="xtagCharacterClass04" xml:space="preserve">
     <value>Evoker</value>
   </data>
+  <data name="MasteriesxtagCharacterClass04" xml:space="preserve">
+    <value>Earth-Dream</value>
+  </data>
   <data name="xtagCharacterClass05" xml:space="preserve">
     <value>Prophet</value>
+  </data>
+  <data name="MasteriesxtagCharacterClass05" xml:space="preserve">
+    <value>Storm-Dream</value>
   </data>
   <data name="xtagCharacterClass06" xml:space="preserve">
     <value>Haruspex</value>
   </data>
+  <data name="MasteriesxtagCharacterClass06" xml:space="preserve">
+    <value>Hunting-Dream</value>
+  </data>
   <data name="xtagCharacterClass07" xml:space="preserve">
     <value>Dreamkiller</value>
+  </data>
+  <data name="MasteriesxtagCharacterClass07" xml:space="preserve">
+    <value>Rogue-Dream</value>
   </data>
   <data name="xtagCharacterClass08" xml:space="preserve">
     <value>Ritualist</value>
   </data>
+  <data name="MasteriesxtagCharacterClass08" xml:space="preserve">
+    <value>Nature-Dream</value>
+  </data>
   <data name="xtagCharacterClass09" xml:space="preserve">
     <value>Diviner</value>
+  </data>
+  <data name="MasteriesxtagCharacterClass09" xml:space="preserve">
+    <value>Spirit-Dream</value>
   </data>
   <data name="x2tag_class_rm_rm" xml:space="preserve">
     <value>Runemaster</value>
   </data>
+  <data name="Masteriesx2tag_class_rm_rm" xml:space="preserve">
+    <value>Runes</value>
+  </data>
   <data name="x2tag_class_warfare_rm" xml:space="preserve">
     <value>Berserker</value>
+  </data>
+  <data name="Masteriesx2tag_class_warfare_rm" xml:space="preserve">
+    <value>Warfare-Runes</value>
   </data>
   <data name="x2tag_class_defense_rm" xml:space="preserve">
     <value>Runesmith</value>
   </data>
+  <data name="Masteriesx2tag_class_defense_rm" xml:space="preserve">
+    <value>Defense-Runes</value>
+  </data>
   <data name="x2tag_class_earth_rm" xml:space="preserve">
     <value>Stonespeaker</value>
+  </data>
+  <data name="Masteriesx2tag_class_earth_rm" xml:space="preserve">
+    <value>Earth-Runes</value>
   </data>
   <data name="x2tag_class_storm_rm" xml:space="preserve">
     <value>Thunderer</value>
   </data>
+  <data name="Masteriesx2tag_class_storm_rm" xml:space="preserve">
+    <value>Storm-Runes</value>
+  </data>
   <data name="x2tag_class_hunting_rm" xml:space="preserve">
     <value>Dragon Hunter</value>
+  </data>
+  <data name="Masteriesx2tag_class_hunting_rm" xml:space="preserve">
+    <value>Hunting-Runes</value>
   </data>
   <data name="x2tag_class_stealth_rm" xml:space="preserve">
     <value>Trickster</value>
   </data>
+  <data name="Masteriesx2tag_class_stealth_rm" xml:space="preserve">
+    <value>Rogue-Runes</value>
+  </data>
   <data name="x2tag_class_nature_rm" xml:space="preserve">
     <value>Skinchanger</value>
+  </data>
+  <data name="Masteriesx2tag_class_nature_rm" xml:space="preserve">
+    <value>Nature-Runes</value>
   </data>
   <data name="x2tag_class_spirit_rm" xml:space="preserve">
     <value>Shaman</value>
   </data>
+  <data name="Masteriesx2tag_class_spirit_rm" xml:space="preserve">
+    <value>Spirit-Runes</value>
+  </data>
   <data name="x2tag_class_dream_rm" xml:space="preserve">
     <value>Seidr Worker</value>
+  </data>
+  <data name="Masteriesx2tag_class_dream_rm" xml:space="preserve">
+    <value>Dream-Runes</value>
+  </data>
+  <data name="Masteries" xml:space="preserve">
+    <value>Masteries</value>
   </data>
   <data name="CurrentLevel" xml:space="preserve">
     <value>Level</value>
