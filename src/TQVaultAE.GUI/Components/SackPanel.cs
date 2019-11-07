@@ -1277,10 +1277,12 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="e">MouseEventArgs data</param>
 		protected virtual void MouseDownCallback(object sender, MouseEventArgs e)
 		{
-			if (this.Sack == null || (Config.Settings.Default.PlayerReadonly == true && this.SackType == SackType.Equipment))
+			if (this.Sack == null)
 				return;
 
-			if (e.Button == MouseButtons.Left)
+			var isEquipmentReadOnly = (Config.Settings.Default.PlayerReadonly == true && this.SackType == SackType.Equipment);
+
+			if (e.Button == MouseButtons.Left && !isEquipmentReadOnly)
 			{
 				if (!this.DragInfo.IsActive)
 				{
@@ -1299,7 +1301,7 @@ namespace TQVaultAE.GUI.Components
 			}
 			else if (e.Button == MouseButtons.Right)
 			{
-				if (this.DragInfo.IsActive && this.DragInfo.CanBeCanceled)
+				if (this.DragInfo.IsActive && this.DragInfo.CanBeCanceled && !isEquipmentReadOnly)
 				{
 					this.DragInfo.Cancel();
 
@@ -1313,24 +1315,28 @@ namespace TQVaultAE.GUI.Components
 					if (this.selectedItems != null)
 						singleSelectionFocused = focusedItem == (Item)this.selectedItems[0] && this.selectedItems.Count == 1;
 
-					if (focusedItem != null || this.selectedItems != null)
-					{
-						if (focusedItem != null)
-							this.contextMenuCellWithFocus = this.LastCellWithFocus;
+					this.contextMenu.Items.Clear();
 
-						this.contextMenu.Items.Clear();
+					if (focusedItem != null)
+						this.contextMenuCellWithFocus = this.LastCellWithFocus;
+
+					if ((focusedItem != null || this.selectedItems != null) && !isEquipmentReadOnly)
+					{
 						this.contextMenu.Items.Add(Resources.SackPanelMenuDelete);
 						this.contextMenu.Items.Add("-");
 					}
 
-					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
+					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused) && !isEquipmentReadOnly)
 					{
 						if (focusedItem.HasRelicSlot1 && Config.Settings.Default.AllowItemEdit)
 							this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
 
 						if (focusedItem.DoesStack && focusedItem.Number > 1)
 							this.contextMenu.Items.Add(Resources.SackPanelMenuSplit);
+					}
 
+					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
+					{
 						if (Config.Settings.Default.AllowItemCopy)
 						{
 							this.contextMenu.Items.Add(Resources.SackPanelMenuCopy);
@@ -1338,7 +1344,7 @@ namespace TQVaultAE.GUI.Components
 						}
 					}
 
-					if (focusedItem != null || this.selectedItems != null)
+					if ((focusedItem != null || this.selectedItems != null) && !isEquipmentReadOnly)
 					{
 						List<string> choices = new List<string>();
 
@@ -1407,7 +1413,7 @@ namespace TQVaultAE.GUI.Components
 						this.contextMenu.Items.Add(moveSubMenu);
 					}
 
-					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
+					if ((focusedItem != null && (this.selectedItems == null || singleSelectionFocused)) && !isEquipmentReadOnly)
 					{
 						// Item Editing options
 						if (Config.Settings.Default.AllowItemEdit)
@@ -1515,15 +1521,18 @@ namespace TQVaultAE.GUI.Components
 								this.contextMenu.Items.Add(subMenu);
 							}
 						}
+					}
 
+					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
+					{
 						this.contextMenu.Items.Add("-");
 						this.contextMenu.Items.Add(Resources.SackPanelMenuProperties);
 					}
 
-					if (this.selectedItems != null)
+					if (this.selectedItems != null && !isEquipmentReadOnly)
 						this.contextMenu.Items.Add(Resources.SackPanelMenuClear);
 
-					if (focusedItem != null || this.selectedItems != null)
+					if ((focusedItem != null || this.selectedItems != null) && this.contextMenu.Items.Count > 0)
 						this.contextMenu.Show(this, new Point(e.X, e.Y));
 				}
 			}
@@ -2325,8 +2334,8 @@ namespace TQVaultAE.GUI.Components
 			Item focusedItem = this.FindItem(this.contextMenuCellWithFocus);
 			if (focusedItem != null || this.selectedItems != null)
 			{
-				string selectedItem = e.ClickedItem.Text;
-				if (selectedItem == Resources.SackPanelMenuDelete)
+				string selectedMenuItem = e.ClickedItem.Text;
+				if (selectedMenuItem == Resources.SackPanelMenuDelete)
 				{
 					if (this.selectedItems != null)
 					{
@@ -2349,7 +2358,7 @@ namespace TQVaultAE.GUI.Components
 						this.DeleteItem(focusedItem, false);
 					}
 				}
-				else if (selectedItem == Resources.SackPanelMenuRemoveRelic)
+				else if (selectedMenuItem == Resources.SackPanelMenuRemoveRelic)
 				{
 					if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
 						Resources.SackPanelRemoveRelicMsg,
@@ -2372,7 +2381,7 @@ namespace TQVaultAE.GUI.Components
 						this.InvalidateItemCacheItemTooltip(focusedItem);
 					}
 				}
-				else if (selectedItem == Resources.SackPanelMenuCopy)
+				else if (selectedMenuItem == Resources.SackPanelMenuCopy)
 				{
 					// Set DragInfo to focused item.
 					this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
@@ -2384,7 +2393,7 @@ namespace TQVaultAE.GUI.Components
 					this.DragInfo.MarkModified(newItem);
 					Refresh();
 				}
-				else if (selectedItem == Resources.SackPanelMenuDuplicate)
+				else if (selectedMenuItem == Resources.SackPanelMenuDuplicate)
 				{
 					// Set DragInfo to focused item.
 					this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
@@ -2396,13 +2405,13 @@ namespace TQVaultAE.GUI.Components
 					this.DragInfo.MarkModified(newItem);
 					Refresh();
 				}
-				else if (selectedItem == Resources.SackPanelMenuProperties)
+				else if (selectedMenuItem == Resources.SackPanelMenuProperties)
 				{
 					var dlg = this.ServiceProvider.GetService<ItemProperties>();
 					dlg.Item = focusedItem;
 					dlg.ShowDialog();
 				}
-				else if (selectedItem == Resources.SackPanelMenuSeed)
+				else if (selectedMenuItem == Resources.SackPanelMenuSeed)
 				{
 					var dlg = this.ServiceProvider.GetService<ItemSeedDialog>();
 					dlg.SelectedItem = focusedItem;
@@ -2417,7 +2426,7 @@ namespace TQVaultAE.GUI.Components
 						this.InvalidateItemCacheItemTooltip(focusedItem);
 					}
 				}
-				else if (selectedItem == Resources.SackPanelMenuCharm || selectedItem == Resources.SackPanelMenuRelic)
+				else if (selectedMenuItem == Resources.SackPanelMenuCharm || selectedMenuItem == Resources.SackPanelMenuRelic)
 				{
 					focusedItem.Number = 10;
 
@@ -2447,7 +2456,7 @@ namespace TQVaultAE.GUI.Components
 					InvalidateItemCacheItemTooltip(focusedItem);
 					Refresh();
 				}
-				else if (selectedItem == Resources.SackPanelMenuFormulae)
+				else if (selectedMenuItem == Resources.SackPanelMenuFormulae)
 				{
 					// Set DragInfo to focused item.
 					this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
@@ -2484,7 +2493,7 @@ namespace TQVaultAE.GUI.Components
 
 					Refresh();
 				}
-				else if (selectedItem == Resources.SackPanelMenuSplit)
+				else if (selectedMenuItem == Resources.SackPanelMenuSplit)
 				{
 					// Set DragInfo to focused item.
 					this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
@@ -2499,7 +2508,7 @@ namespace TQVaultAE.GUI.Components
 
 					Refresh();
 				}
-				else if (selectedItem == Resources.SackPanelMenuClear)
+				else if (selectedMenuItem == Resources.SackPanelMenuClear)
 				{
 					this.ClearSelection();
 					Refresh();
