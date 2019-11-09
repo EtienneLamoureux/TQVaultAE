@@ -165,6 +165,8 @@ namespace TQVaultAE.GUI
 			attribGroupBox.Text = Resources.CEAttributes;
 			difficultyLabel.Text = Resources.CEDifficulty;
 
+			this.MasteriesGroupBox.Text = Resources.Masteries;
+
 			this.Mastery1NameScalingLabel.Visible
 				= this.Mastery1ValueScalingLabel.Visible
 				= this.Mastery2NameScalingLabel.Visible
