@@ -58,6 +58,7 @@ namespace ArzExplorer
 		private readonly IArzFileProvider arzProv;
 		private readonly IDBRecordCollectionProvider DBRecordCollectionProvider;
 		private readonly IBitmapService BitmapService;
+		private readonly IGamePathService GamePathService;
 
 		/// <summary>
 		/// Holds the title text.  Used to display the current file.
@@ -77,7 +78,12 @@ namespace ArzExplorer
 		/// <summary>
 		/// Initializes a new instance of the Form1 class.
 		/// </summary>
-		public MainForm(ILogger<MainForm> log, IArcFileProvider arcFileProvider, IArzFileProvider arzFileProvider, IDBRecordCollectionProvider dBRecordCollectionProvider, IBitmapService bitmapService)
+		public MainForm(ILogger<MainForm> log
+			, IArcFileProvider arcFileProvider
+			, IArzFileProvider arzFileProvider
+			, IDBRecordCollectionProvider dBRecordCollectionProvider
+			, IBitmapService bitmapService
+			, IGamePathService gamePathService)
 		{
 			this.InitializeComponent();
 
@@ -89,6 +95,7 @@ namespace ArzExplorer
 			this.arzProv = arzFileProvider;
 			this.DBRecordCollectionProvider = dBRecordCollectionProvider;
 			this.BitmapService = bitmapService;
+			this.GamePathService = gamePathService;
 			this.titleText = aname.Name;
 			this.selectedFileToolStripMenuItem.Enabled = false;
 			this.allFilesToolStripMenuItem.Enabled = false;
@@ -123,13 +130,8 @@ namespace ArzExplorer
 			openDialog.FilterIndex = 1;
 			openDialog.RestoreDirectory = true;
 
-			// Try to read the game path from the registry
-			string[] path = new string[4];
-			path[0] = "SOFTWARE";
-			path[1] = "Iron Lore";
-			path[2] = "Titan Quest";
-			path[3] = "Install Location";
-			string startPath = Program.ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
+			// Try to read the game path
+			string startPath = this.GamePathService.ResolveGamePath();
 
 			// If the registry fails then default to the save folder.
 			if (startPath.Length < 1)
@@ -374,15 +376,15 @@ namespace ArzExplorer
 			if (saveFileDialog.ShowDialog() == DialogResult.OK)
 			{
 				filename = saveFileDialog.FileName;
-			}
 
-			if (fileType == CompressedFileType.ArzFile)
-			{
-				DBRecordCollectionProvider.Write(this.record, Path.GetDirectoryName(filename), Path.GetFileName(filename));
-			}
-			else if (fileType == CompressedFileType.ArcFile)
-			{
-				arcProv.Write(arcFile, Path.GetDirectoryName(filename), this.destFile, Path.GetFileName(filename));
+				if (fileType == CompressedFileType.ArzFile)
+				{
+					DBRecordCollectionProvider.Write(this.record, Path.GetDirectoryName(filename), Path.GetFileName(filename));
+				}
+				else if (fileType == CompressedFileType.ArcFile)
+				{
+					arcProv.Write(arcFile, Path.GetDirectoryName(filename), this.destFile, Path.GetFileName(filename));
+				}
 			}
 		}
 

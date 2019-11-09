@@ -19,10 +19,10 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
-	using TQVaultAE.GUI.Services;
 	using TQVaultAE.Logs;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Services;
+	using TQVaultAE.Services.Win32;
 
 	/// <summary>
 	/// Main Program class

@@ -13,6 +13,7 @@ namespace ArzExplorer
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Logs;
 	using TQVaultAE.Presentation;
+	using TQVaultAE.Services.Win32;
 
 	/// <summary>
 	/// Holds the main program.
@@ -42,6 +43,7 @@ namespace ArzExplorer
 			// Services
 			.AddSingleton<ITQDataService, TQDataService>()
 			.AddTransient<IBitmapService, BitmapService>()
+			.AddSingleton<IGamePathService, GamePathServiceWin>()
 			// Forms
 			.AddSingleton<MainForm>()
 			.AddTransient<ExtractProgress>();

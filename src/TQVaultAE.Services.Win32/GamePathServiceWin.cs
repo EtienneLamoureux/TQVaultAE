@@ -9,7 +9,7 @@ using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Logs;
 
-namespace TQVaultAE.GUI.Services
+namespace TQVaultAE.Services.Win32
 {
 	/// <summary>
 	/// Win32 IGamePathResolver implementation
@@ -59,7 +59,7 @@ namespace TQVaultAE.GUI.Services
 			get
 			{
 				if (string.IsNullOrWhiteSpace(_TitanQuestGamePath))
-					_TitanQuestGamePath = ResolveTQ();
+					_TitanQuestGamePath = ResolveGamePath();
 				return _TitanQuestGamePath;
 			}
 
@@ -74,7 +74,7 @@ namespace TQVaultAE.GUI.Services
 			get
 			{
 				if (string.IsNullOrWhiteSpace(_ImmortalThroneGamePath))
-					_ImmortalThroneGamePath = ResolveTQIT();
+					_ImmortalThroneGamePath = ResolveGamePath();
 				return _ImmortalThroneGamePath;
 			}
 			set => _ImmortalThroneGamePath = value;
@@ -504,7 +504,11 @@ namespace TQVaultAE.GUI.Services
 			}
 		}
 
-		public string ResolveTQ()
+		/// <summary>
+		/// Try to resolve the local game path
+		/// </summary>
+		/// <returns></returns>
+		public string ResolveGamePath()
 		{
 			string titanQuestGamePath = null;
 
@@ -530,73 +534,12 @@ namespace TQVaultAE.GUI.Services
 				string steamPath = ReadRegistryKey(Microsoft.Win32.Registry.CurrentUser, registryPath).Replace("/", "\\");
 
 				if (Directory.Exists(steamPath + steamTQPath))
-				{
 					titanQuestGamePath = steamPath + steamTQPath;
-				}
 				else
 				{
 					//further looking for Steam library
 					//read libraryfolders.vdf
 					Regex vdfPathRegex = new Regex(@"""\d+""\t+""([^""]+)""");  // "2"		"D:\\games\\Steam"
-					string[] libFile = File.ReadAllLines(steamPath + "\\SteamApps\\libraryfolders.vdf");
-
-					foreach (var line in libFile)
-					{
-						Match match = vdfPathRegex.Match(line.Trim());
-						if (match.Success && Directory.Exists(match.Groups[1] + steamTQPath))
-						{
-							titanQuestGamePath = match.Groups[1] + steamTQPath;
-							break;
-						}
-					}
-				}
-			}
-
-			//Disc version detection logic -old
-			if (string.IsNullOrEmpty(titanQuestGamePath))
-			{
-				string[] path = { "SOFTWARE", "Iron Lore", "Titan Quest", "Install Location" };
-				titanQuestGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
-			}
-
-			if (string.IsNullOrEmpty(titanQuestGamePath))
-				throw new InvalidOperationException("Unable to locate Titan Quest installation directory. Please edit TQVaultAE.ini to contain a valid path in the option 'ForceGamePath'.");
-
-			return titanQuestGamePath;
-		}
-
-		public string ResolveTQIT()
-		{
-			string titanQuestGamePath = null;
-
-			// ForceGamePath precedence for dev on PC with partial installation
-			if (!string.IsNullOrEmpty(Config.Settings.Default.ForceGamePath))
-				titanQuestGamePath = Config.Settings.Default.ForceGamePath;
-
-			// We are either autodetecting or the path has not been set
-			//
-			// Detection logic for a GOG install of the anniversary edition ~Malgardian
-			if (string.IsNullOrEmpty(titanQuestGamePath))
-			{
-				string[] path = { "SOFTWARE", "GOG.com", "Games", "1196955511", "PATH" };
-				titanQuestGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
-			}
-
-			// Detection logic for a Steam install of the anniversary edition ~Malgardian
-			if (string.IsNullOrEmpty(titanQuestGamePath))
-			{
-				string steamTQPath = "\\SteamApps\\common\\Titan Quest Anniversary Edition";
-
-				string[] registryPath = { "Software", "Valve", "Steam", "SteamPath" };
-				string steamPath = ReadRegistryKey(Microsoft.Win32.Registry.CurrentUser, registryPath).Replace("/", "\\");
-
-				if (Directory.Exists(steamPath + steamTQPath))
-					titanQuestGamePath = steamPath + steamTQPath;
-				else
-				{
-					//further looking for Steam library
-					//read libraryfolders.vdf
-					Regex vdfPathRegex = new Regex("\"\\d+\"\t+\"([^\"]+)\"");  // "2"		"D:\\games\\Steam"
 					string[] libFile = File.ReadAllLines(steamPath + "\\SteamApps\\libraryfolders.vdf");
 
 					foreach (var line in libFile)
