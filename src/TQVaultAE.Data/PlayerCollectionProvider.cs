@@ -49,10 +49,11 @@ namespace TQVaultAE.Data
 		{
 			if (pc.PlayerInfo == null) return;
 			if (playerInfo == null) return;
-			if (pc.rawData == null || pc.rawData.Length < 1) return;
+			if (pc.rawData == null || !pc.rawData.Any()) return;
 
 			pc.PlayerInfo.CurrentLevel = playerInfo.CurrentLevel;
 			pc.PlayerInfo.MasteriesAllowed = playerInfo.MasteriesAllowed;
+			pc.PlayerInfo.MasteriesResetRequiered = playerInfo.MasteriesResetRequiered;
 			pc.PlayerInfo.CurrentXP = playerInfo.CurrentXP;
 			pc.PlayerInfo.DifficultyUnlocked = playerInfo.DifficultyUnlocked;
 			pc.PlayerInfo.AttributesPoints = playerInfo.AttributesPoints;
@@ -63,9 +64,9 @@ namespace TQVaultAE.Data
 			pc.PlayerInfo.BaseHealth = playerInfo.BaseHealth;
 			pc.PlayerInfo.BaseMana = playerInfo.BaseMana;
 			pc.PlayerInfo.Money = playerInfo.Money;
+
 			//commit the player changes to the raw file
-			var result = Commit(pc.PlayerInfo, pc.rawData);
-			pc.rawData = result;
+			Commit(pc);
 		}
 
 
@@ -74,66 +75,73 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="playerInfo"></param>
 		/// <param name="playerFileRawData"></param>
-		public byte[] Commit(PlayerInfo playerInfo, byte[] playerFileRawData)
+		public void Commit(PlayerCollection pc)
 		{
-			TQData.WriteIntAfter(playerFileRawData, "playerLevel", playerInfo.CurrentLevel);
+			TQData.WriteIntAfter(pc.rawData, "playerLevel", pc.PlayerInfo.CurrentLevel);
 
-			TQData.WriteIntAfter(playerFileRawData, "money", playerInfo.Money);
+			TQData.WriteIntAfter(pc.rawData, "money", pc.PlayerInfo.Money);
 
-			TQData.WriteIntAfter(playerFileRawData, "masteriesAllowed", playerInfo.MasteriesAllowed);
+			TQData.WriteIntAfter(pc.rawData, "masteriesAllowed", pc.PlayerInfo.MasteriesAllowed);
 
 			// first "temp" / first "block"
-			var difficultyUnlocked = TQData.WriteIntAfter(playerFileRawData, "temp", playerInfo.DifficultyUnlocked);
+			var difficultyUnlocked = TQData.WriteIntAfter(pc.rawData, "temp", pc.PlayerInfo.DifficultyUnlocked);
 
-			TQData.WriteIntAfter(playerFileRawData, "currentStats.charLevel", playerInfo.CurrentLevel);
+			TQData.WriteIntAfter(pc.rawData, "currentStats.charLevel", pc.PlayerInfo.CurrentLevel);
 
-			TQData.WriteIntAfter(playerFileRawData, "currentStats.experiencePoints", playerInfo.CurrentXP);
+			TQData.WriteIntAfter(pc.rawData, "currentStats.experiencePoints", pc.PlayerInfo.CurrentXP);
 
-			TQData.WriteIntAfter(playerFileRawData, "modifierPoints", playerInfo.AttributesPoints);
+			TQData.WriteIntAfter(pc.rawData, "modifierPoints", pc.PlayerInfo.AttributesPoints);
 
-			TQData.WriteIntAfter(playerFileRawData, "skillPoints", playerInfo.SkillPoints);
+			TQData.WriteIntAfter(pc.rawData, "skillPoints", pc.PlayerInfo.SkillPoints);
 
-			var baseStrength = TQData.WriteFloatAfter(playerFileRawData, "temp", playerInfo.BaseStrength, difficultyUnlocked.nextOffset);
-			var baseDexterity = TQData.WriteFloatAfter(playerFileRawData, "temp", playerInfo.BaseDexterity, baseStrength.nextOffset);
-			var baseIntelligence = TQData.WriteFloatAfter(playerFileRawData, "temp", playerInfo.BaseIntelligence, baseDexterity.nextOffset);
-			var baseHealth = TQData.WriteFloatAfter(playerFileRawData, "temp", playerInfo.BaseHealth, baseIntelligence.nextOffset);
-			var baseMana = TQData.WriteFloatAfter(playerFileRawData, "temp", playerInfo.BaseMana, baseHealth.nextOffset);
+			var baseStrength = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseStrength, difficultyUnlocked.nextOffset);
+			var baseDexterity = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseDexterity, baseStrength.nextOffset);
+			var baseIntelligence = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseIntelligence, baseDexterity.nextOffset);
+			var baseHealth = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseHealth, baseIntelligence.nextOffset);
+			var baseMana = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseMana, baseHealth.nextOffset);
 
-			var result = playerFileRawData;
-
-			if (playerInfo.MasteriesAllowed_OldValue.HasValue && playerInfo.MasteriesAllowed < playerInfo.MasteriesAllowed_OldValue)
+			if (pc.PlayerInfo.MasteriesAllowed_OldValue.HasValue && pc.PlayerInfo.MasteriesAllowed < pc.PlayerInfo.MasteriesAllowed_OldValue
+				|| pc.PlayerInfo.MasteriesResetRequiered)
 			{
-				playerInfo.ResetMasteries();
-				// Override skill lines block after reset
+				pc.PlayerInfo.ResetMasteries();
+
+				#region Override skill lines block after reset
 
 				// Find skill section boundaries
-				var firstblock = TQData.ReadIntAfter(playerFileRawData, "begin_block");
-				var secondblock = TQData.ReadIntAfter(playerFileRawData, "begin_block", firstblock.nextOffset);
-				var max = TQData.ReadIntAfter(playerFileRawData, "max", secondblock.nextOffset);// Boundary top
-				var end_block = TQData.ReadIntAfter(playerFileRawData, "end_block", max.nextOffset);
-				var masteriesAllowed = TQData.ReadIntAfter(playerFileRawData, "masteriesAllowed", max.nextOffset);// Boundary bottom
+				var firstblock = TQData.ReadIntAfter(pc.rawData, "begin_block");
+				var secondblock = TQData.ReadIntAfter(pc.rawData, "begin_block", firstblock.nextOffset);
+				var max = TQData.ReadIntAfter(pc.rawData, "max", secondblock.nextOffset);// Boundary top
+				var end_block = TQData.ReadIntAfter(pc.rawData, "end_block", max.nextOffset);
+				var masteriesAllowed = TQData.ReadIntAfter(pc.rawData, "masteriesAllowed", max.nextOffset);// Boundary bottom
 
 				// Split file
-				var startfile = playerFileRawData.Take(max.nextOffset).ToArray();
-				var endfile = playerFileRawData.Skip(masteriesAllowed.indexOf - 4).ToArray(); // -4 include key name length
+				var startfile = pc.rawData.Take(max.nextOffset).ToArray();
+				var endfile = pc.rawData.Skip(masteriesAllowed.indexOf - 4).ToArray(); // -4 include key name length
 
 				// make binary section
-				var section = playerInfo.SkillRecordList.SelectMany(s => s.ToBinary(secondblock.valueAsInt, end_block.valueAsInt)).ToArray();
+				var section = pc.PlayerInfo.SkillRecordList.SelectMany(s => s.ToBinary(secondblock.valueAsInt, end_block.valueAsInt)).ToArray();
 
 				// put pieces back together
-				result = new[] {
+				pc.rawData = new[] {
 					startfile,
 					section,
 					endfile,
 				}.SelectMany(a => a).ToArray();
 
 				// Adjust "max" value
-				var found = TQData.WriteIntAfter(result, "max", playerInfo.SkillRecordList.Count, max.indexOf);
+				var found = TQData.WriteIntAfter(pc.rawData, "max", pc.PlayerInfo.SkillRecordList.Count, max.indexOf);
+
+				// Adjust "skillPoints"
+				var skillpointsToRestore = pc.PlayerInfo.ReleasedSkillPoints;
+
+				if (skillpointsToRestore > 0)
+					TQData.WriteIntAfter(pc.rawData, "skillPoints", pc.PlayerInfo.SkillPoints + skillpointsToRestore);
+
+				#endregion
 			}
 
 			//if this value is set to true, the TQVaultAE program will know save the player.chr file
-			playerInfo.Modified = true;
-			return result;
+			pc.PlayerInfo.Modified = true;
 		}
 
 		/// <summary>

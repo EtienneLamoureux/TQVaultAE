@@ -37,6 +37,7 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
+			this.ResetMasteriesScalingButton.Font = FontService.GetFontAlbertusMTLight(12F);
 			this.ok.Font = FontService.GetFontAlbertusMTLight(12F);
 			this.cancel.Font = FontService.GetFontAlbertusMTLight(12F);
 			this.Font = FontService.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -47,6 +48,7 @@ namespace TQVaultAE.GUI
 
 			this.cancel.Text = Resources.GlobalCancel;
 			this.ok.Text = Resources.GlobalOK;
+			this.ResetMasteriesScalingButton.Text = Resources.ResetMasteriesButton;
 
 		}
 
@@ -91,6 +93,11 @@ namespace TQVaultAE.GUI
 		/// <param name="e">EventArgs data</param>
 		private void OKButton_Click(object sender, EventArgs e)
 		{
+			UpdatePlayerInfo();
+		}
+
+		private void UpdatePlayerInfo()
+		{
 			if (!Config.Settings.Default.AllowCharacterEdit) return;
 			if (PlayerCollection.PlayerInfo == null) return;
 			try
@@ -115,6 +122,7 @@ namespace TQVaultAE.GUI
 				playerInfo.BaseIntelligence = Convert.ToInt32(intelligenceUpDown.Value);
 				playerInfo.BaseHealth = Convert.ToInt32(healthUpDown.Value);
 				playerInfo.BaseMana = Convert.ToInt32(manacUpDown.Value);
+				playerInfo.MasteriesResetRequiered = this._MasteriesResetRequiered;
 				UpdateMoneySituation(PlayerCollection.PlayerInfo, playerInfo);
 				PlayerCollectionProvider.CommitPlayerInfo(PlayerCollection, playerInfo);
 
@@ -122,11 +130,13 @@ namespace TQVaultAE.GUI
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(string.Format("{0}", ex.Message));
+				this.Log.ErrorException(ex);
+				MessageBox.Show(ex.Message);
 			}
 		}
 
 		private bool _loaded = false;
+		private bool _MasteriesResetRequiered;
 
 		private struct TagData
 		{
@@ -155,6 +165,29 @@ namespace TQVaultAE.GUI
 			attribGroupBox.Text = Resources.CEAttributes;
 			difficultyLabel.Text = Resources.CEDifficulty;
 
+			this.Mastery1NameScalingLabel.Visible
+				= this.Mastery1ValueScalingLabel.Visible
+				= this.Mastery2NameScalingLabel.Visible
+				= this.Mastery2ValueScalingLabel.Visible = false;
+
+			var dbr = PlayerCollection.PlayerInfo.ActiveMasteriesRecordNames;
+			if (dbr.Any())
+			{
+				for (int i = 0; i < dbr.Length; i++)
+				{
+					var recId = dbr[i];
+					var relatedSkills = PlayerCollection.PlayerInfo.GetSkillsByBaseRecordName(recId);
+					var relatedPoints = relatedSkills.Sum(s => s.skillLevel);
+					var masteryInfo = this.Database.GetInfo(recId);
+					var masteryName = this.Database.GetFriendlyName(masteryInfo.DescriptionTag);
+					var label = this.Controls.Find($"Mastery{i + 1}NameScalingLabel", true).First();
+					label.Text = string.Format(label.Tag.ToString(), masteryName);
+					label.Visible = true;
+					var value = this.Controls.Find($"Mastery{i + 1}ValueScalingLabel", true).First();
+					value.Text = string.Format(value.Tag.ToString(), relatedSkills.Count(), relatedPoints);
+					value.Visible = true;
+				}
+			}
 
 			if (PlayerCollection.PlayerInfo.BaseStrength > Convert.ToInt32(strengthUpDown.Maximum))
 				strengthUpDown.Maximum = PlayerCollection.PlayerInfo.BaseStrength;
@@ -306,6 +339,12 @@ namespace TQVaultAE.GUI
 				this.difficultlyComboBox.Enabled = false;
 				this.levelNumericUpDown.Enabled = false;
 			}
+		}
+
+		private void ResetMasteriesScalingButton_Click(object sender, EventArgs e)
+		{
+			if (!_MasteriesResetRequiered) _MasteriesResetRequiered = true;
+			UpdatePlayerInfo();
 		}
 	}
 }

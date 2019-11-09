@@ -251,6 +251,17 @@ namespace TQVaultAE.Domain.Entities
 				this.qualityVar = string.Empty;
 				this.styleVar = "itemText";
 			}
+			else if (id.StartsWith("Skill_Mastery", StringComparison.OrdinalIgnoreCase))
+			{
+				this.descriptionVar = "skillDisplayName";//skillBaseDescription
+				this.itemClassificationVar = "itemClassification";
+				this.bitmapVar = "skillUpBitmapName";
+				this.shardBitmapVar = string.Empty;
+				this.itemClassVar = "Class"; 
+				this.completedRelicLevelVar = string.Empty;
+				this.qualityVar = string.Empty;
+				this.styleVar = string.Empty;
+			}
 			else
 			{
 				this.descriptionVar = "itemNameTag";

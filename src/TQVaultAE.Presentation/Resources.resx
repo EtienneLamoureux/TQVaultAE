@@ -1477,4 +1477,7 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   <data name="SettingEnableDetailedTooltipViewTT" xml:space="preserve">
     <value>Split tooltip attributes into Prefix/Base/Suffix categories</value>
   </data>
+  <data name="ResetMasteriesButton" xml:space="preserve">
+    <value>Reset Masteries</value>
+  </data>
 </root>

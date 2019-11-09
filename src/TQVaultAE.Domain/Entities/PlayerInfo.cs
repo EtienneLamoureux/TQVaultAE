@@ -12,7 +12,16 @@ namespace TQVaultAE.Domain.Entities
 	/// </summary>
 	public class PlayerInfo
 	{
+		public bool MasteriesResetRequiered { get; set; }
 
+		/// <summary>
+		/// Skills removed during <see cref="ResetMasteries"/>
+		/// </summary>
+		List<SkillRecord> _SkillRecordListRemoved = new List<SkillRecord>();
+
+		/// <summary>
+		/// List of Skills embded in the save file
+		/// </summary>
 		public readonly List<SkillRecord> SkillRecordList = new List<SkillRecord>();
 
 		public bool MasteryDefensiveEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Defensive.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
@@ -25,6 +34,20 @@ namespace TQVaultAE.Domain.Entities
 		public bool MasteryHuntingEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Hunting.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
 		public bool MasteryStealthEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Stealth.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
 		public bool MasterySpiritEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Spirit.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
+
+		public string[] ActiveMasteriesRecordNames
+		{
+			get
+			{
+				string[] ret = new string[] { };
+				if (ActiveMasteries.HasValue)
+				{
+					var actives = ActiveMasteries.Value;
+					ret = Enums.GetValues<Masteries>().Where(v => actives.HasFlag(v)).Select(s => s.AsString(EnumFormat.Description)).ToArray();
+				}
+				return ret;
+			}
+		}
 
 		public Masteries? ActiveMasteries
 		{
@@ -48,6 +71,12 @@ namespace TQVaultAE.Domain.Entities
 		}
 
 		/// <summary>
+		/// Released skill points from masteries reset
+		/// </summary>
+		public int ReleasedSkillPoints
+			=> this._SkillRecordListRemoved?.Sum(s => s.skillLevel) ?? 0;
+
+		/// <summary>
 		/// Reset masteries if any
 		/// </summary>
 		/// <returns></returns>
@@ -56,14 +85,16 @@ namespace TQVaultAE.Domain.Entities
 			bool isActive = ActiveMasteries.HasValue;
 			if (isActive)
 			{
-				var actives = ActiveMasteries.Value;
-				foreach (var mastery in Enums.GetValues<Masteries>().Where(v => actives.HasFlag(v)))
+				foreach (var mastery in ActiveMasteriesRecordNames)
 				{
-					var rec = mastery.AsString(EnumFormat.Description);
-					var recBase = Path.GetDirectoryName(rec);
+					var recBase = Path.GetDirectoryName(mastery);
 					// Remove all skills having the same base skill line (ex :  storm, earth, etc...)
-					this.SkillRecordList.RemoveAll(sk => sk.skillName.StartsWith(recBase, StringComparison.InvariantCultureIgnoreCase));
+					this._SkillRecordListRemoved.AddRange(
+						this.SkillRecordList
+						.Where(sk => sk.skillName.StartsWith(recBase, StringComparison.InvariantCultureIgnoreCase))
+					);
 				}
+				this.SkillRecordList.RemoveAll(s => this._SkillRecordListRemoved.Contains(s));
 				this.Modified = true;
 			}
 			return isActive;
@@ -113,6 +144,21 @@ namespace TQVaultAE.Domain.Entities
 		/// Base Mana
 		/// </summary>
 		public int BaseMana { get; set; }
+
+		/// <summary>
+		/// Return skills having the same skill line base.
+		/// </summary>
+		/// <param name="dbr"></param>
+		/// <returns></returns>
+		public IEnumerable<SkillRecord> GetSkillsByBaseRecordName(string dbr)
+		{
+			var baseRec = Path.GetDirectoryName(dbr);
+			foreach (var sk in this.SkillRecordList)
+			{
+				if (sk.skillName.StartsWith(baseRec, StringComparison.InvariantCultureIgnoreCase))
+					yield return sk;
+			}
+		}
 
 		/// <summary>
 		/// Total time played in seconds
