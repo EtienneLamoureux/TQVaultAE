@@ -99,17 +99,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		public new SackPanel SackPanel
 		{
-			get
-			{
-				if (this.mainSackPanel != null)
-				{
-					return this.mainSackPanel;
-				}
-				else
-				{
-					return this.BagSackPanel;
-				}
-			}
+			get => (this.mainSackPanel != null) ? this.mainSackPanel : this.BagSackPanel;
 		}
 
 		/// <summary>

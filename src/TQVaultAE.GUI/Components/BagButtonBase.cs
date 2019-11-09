@@ -23,7 +23,7 @@ namespace TQVaultAE.GUI.Components
 	/// <summary>
 	/// Provides base class for creating and managing sack bag buttons.
 	/// </summary>
-	public abstract class BagButtonBase : Panel
+	public class BagButtonBase : Panel
 	{
 		protected readonly IServiceProvider ServiceProvider;
 		protected readonly IFontService FontService;
@@ -41,25 +41,40 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		private GetToolTip getToolTip;
 
+		public BagButtonBase()
+		{
+			InitializeComponent();
+		}
+
+		private void InitializeComponent()
+		{
+			this.SuspendLayout();
+			// 
+			// BagButtonBase
+			// 
+			this.BackColor = System.Drawing.Color.Black;
+			this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
+			this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
+			this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
+			this.ResumeLayout(false);
+
+		}
+
 		/// <summary>
 		/// Initializes a new instance of the BagButtonBase class.
 		/// </summary>
 		/// <param name="bagNumber">number of the bag for display</param>
 		/// <param name="getToolTip">Tooltip delegate</param>
-		protected BagButtonBase(int bagNumber, GetToolTip getToolTip, IServiceProvider serviceProvider)
+		public BagButtonBase(int bagNumber, GetToolTip getToolTip, IServiceProvider serviceProvider)
 		{
+			InitializeComponent();
+
 			this.ServiceProvider = serviceProvider;
 			this.FontService = this.ServiceProvider.GetService<IFontService>();
 			this.UIService = this.ServiceProvider.GetService<IUIService>();
 
 			this.getToolTip = getToolTip;
 			this.ButtonNumber = bagNumber;
-
-			BackColor = Color.Black;
-
-			MouseEnter += new EventHandler(this.MouseEnterCallback);
-			MouseLeave += new EventHandler(this.MouseLeaveCallback);
-			Paint += new PaintEventHandler(this.PaintCallback);
 
 			// Da_FileServer: Some small paint optimizations.
 			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
@@ -136,7 +151,8 @@ namespace TQVaultAE.GUI.Components
 		/// <summary>
 		/// Sets the background bitmaps for the BagButton
 		/// </summary>
-		public abstract void CreateBackgroundGraphics();
+		public virtual void CreateBackgroundGraphics()
+			=> throw new NotImplementedException();
 
 		#region BagButton Private Methods
 

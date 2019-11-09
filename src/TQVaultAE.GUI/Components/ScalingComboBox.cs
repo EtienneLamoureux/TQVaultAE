@@ -16,11 +16,21 @@ namespace TQVaultAE.GUI.Components
 	/// </summary>
 	public class ScalingComboBox : ComboBox
 	{
-		public ScalingComboBox() : base()
+		public ScalingComboBox() 
 		{
 			// Take care by myself of items drawing because of cyrillic having trouble to display properly with Albertus MT when DrawMode = Normal
-			this.DrawMode = DrawMode.OwnerDrawFixed;// Fixed Size for all values
-			this.DrawItem += new DrawItemEventHandler(ScalingComboBox_DrawItem);
+			InitializeComponent();
+		}
+
+		private void InitializeComponent()
+		{
+			this.SuspendLayout();
+			// 
+			// ScalingComboBox
+			// 
+			this.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+			this.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ScalingComboBox_DrawItem);
+			this.ResumeLayout(false);
 		}
 
 		private void ScalingComboBox_DrawItem(object sender, DrawItemEventArgs e)

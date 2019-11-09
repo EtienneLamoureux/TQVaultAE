@@ -39,8 +39,9 @@ namespace TQVaultAE.GUI.Components
 		/// Initializes a new instance of the VaultProgressBar class.
 		/// </summary>
 		public VaultProgressBar()
-			: base()
 		{
+			InitializeComponent();
+
 			this.Minimum = 0;
 			this.Maximum = 0;
 			this.Value = 0;
@@ -49,7 +50,18 @@ namespace TQVaultAE.GUI.Components
 			this.fillImage = Resources.ProgressBarFill;
 
 			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.SupportsTransparentBackColor, true);
-			this.BackColor = Color.Transparent;
+		}
+
+		private void InitializeComponent()
+		{
+			this.SuspendLayout();
+			// 
+			// VaultProgressBar
+			// 
+			this.BackColor = System.Drawing.Color.Transparent;
+			this.Name = "VaultProgressBar";
+			this.ResumeLayout(false);
+
 		}
 
 		/// <summary>
@@ -134,5 +146,6 @@ namespace TQVaultAE.GUI.Components
 
 			base.OnPaint(e);
 		}
+
 	}
 }

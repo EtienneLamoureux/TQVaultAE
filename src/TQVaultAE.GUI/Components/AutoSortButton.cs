@@ -14,6 +14,24 @@ namespace TQVaultAE.GUI.Components
 	/// </summary>
 	public class AutoSortButton : BagButtonBase
 	{
+
+		public AutoSortButton()
+		{
+			InitializeComponent();
+		}
+
+		private void InitializeComponent()
+		{
+            this.SuspendLayout();
+            // 
+            // AutoSortButton
+            // 
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDownCallback);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCallback);
+            this.ResumeLayout(false);
+
+		}
+
 		/// <summary>
 		/// Initializes a new instance of the AutoSortButton class.
 		/// </summary>
@@ -21,12 +39,10 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="rotateGraphic">bool to signal the button is using a rotated background graphic</param>
 		public AutoSortButton(int buttonNumber, bool rotateGraphic, IServiceProvider serviceProvider) : base(buttonNumber, null, serviceProvider)
 		{
+			InitializeComponent();
+
 			this.IsVault = rotateGraphic;
 			this.CreateBackgroundGraphics();
-
-			// Add handlers for clicking the button since we will be changing the graphic based on the mouse click.
-			MouseUp += new MouseEventHandler(this.MouseUpCallback);
-			MouseDown += new MouseEventHandler(this.MouseDownCallback);
 		}
 
 		/// <summary>

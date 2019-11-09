@@ -14,8 +14,6 @@ namespace TQVaultAE.GUI.Components
 	/// </summary>
 	public class BagButton : BagButtonBase
 	{
-		
-
 		/// <summary>
 		/// Initializes a new instance of the BagButton class.
 		/// </summary>
