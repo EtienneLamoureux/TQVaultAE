@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using log4net;
 using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Exceptions;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Logs;
 
@@ -22,16 +23,6 @@ namespace TQVaultAE.Services.Win32
 		/// Name of the vault folder
 		/// </summary>
 		private string _VaultFolder;
-
-		/// <summary>
-		/// Path to the Immortal Throne game directory.
-		/// </summary>
-		private string _ImmortalThroneGamePath;
-
-		/// <summary>
-		/// Path to the Titan Quest Game directory.
-		/// </summary>
-		private string _TitanQuestGamePath;
 
 		/// <summary>
 		/// Gets the Immortal Throne Character save folder
@@ -54,31 +45,12 @@ namespace TQVaultAE.Services.Win32
 		/// <summary>
 		/// Gets or sets the Titan Quest game path.
 		/// </summary>
-		public string TQPath
-		{
-			get
-			{
-				if (string.IsNullOrWhiteSpace(_TitanQuestGamePath))
-					_TitanQuestGamePath = ResolveGamePath();
-				return _TitanQuestGamePath;
-			}
-
-			set => _TitanQuestGamePath = value;
-		}
+		public string TQPath { get; set; }
 
 		/// <summary>
 		/// Gets or sets the Immortal Throne game path.
 		/// </summary>
-		public string ImmortalThronePath
-		{
-			get
-			{
-				if (string.IsNullOrWhiteSpace(_ImmortalThroneGamePath))
-					_ImmortalThroneGamePath = ResolveGamePath();
-				return _ImmortalThroneGamePath;
-			}
-			set => _ImmortalThroneGamePath = value;
-		}
+		public string ImmortalThronePath { get; set; }
 
 		/// <summary>
 		/// Gets the filename for the game's transfer stash.
@@ -540,21 +512,25 @@ namespace TQVaultAE.Services.Win32
 					//further looking for Steam library
 					//read libraryfolders.vdf
 					Regex vdfPathRegex = new Regex(@"""\d+""\t+""([^""]+)""");  // "2"		"D:\\games\\Steam"
-					string[] libFile = File.ReadAllLines(steamPath + "\\SteamApps\\libraryfolders.vdf");
-
-					foreach (var line in libFile)
+					var vdfFile = Path.Combine(steamPath, @"\SteamApps\libraryfolders.vdf");
+					if (File.Exists(vdfFile))
 					{
-						Match match = vdfPathRegex.Match(line.Trim());
-						if (match.Success && Directory.Exists(match.Groups[1] + steamTQPath))
+						string[] libFile = File.ReadAllLines(vdfFile);
+
+						foreach (var line in libFile)
 						{
-							titanQuestGamePath = match.Groups[1] + steamTQPath;
-							break;
+							Match match = vdfPathRegex.Match(line.Trim());
+							if (match.Success && Directory.Exists(match.Groups[1] + steamTQPath))
+							{
+								titanQuestGamePath = match.Groups[1] + steamTQPath;
+								break;
+							}
 						}
 					}
 				}
 			}
 
-			//Disc version detection logic -old
+			// Disc version detection logic -old
 			if (string.IsNullOrEmpty(titanQuestGamePath))
 			{
 				string[] path = { "SOFTWARE", "Iron Lore", "Titan Quest", "Install Location" };
@@ -562,7 +538,8 @@ namespace TQVaultAE.Services.Win32
 			}
 
 			if (string.IsNullOrEmpty(titanQuestGamePath))
-				throw new InvalidOperationException("Unable to locate Titan Quest installation directory. Please edit TQVaultAE.ini to contain a valid path in the option 'ForceGamePath'.");
+				throw new ExGamePathNotFound(@"Unable to locate Titan Quest installation directory.
+Please select the game installation directory.");
 
 			return titanQuestGamePath;
 		}
