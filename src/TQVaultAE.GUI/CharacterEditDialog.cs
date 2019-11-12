@@ -41,6 +41,13 @@ namespace TQVaultAE.GUI
 			this.ok.Font = FontService.GetFontAlbertusMTLight(12F);
 			this.cancel.Font = FontService.GetFontAlbertusMTLight(12F);
 			this.Font = FontService.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			new[] {
+				this.attribGroupBox,
+				this.levelingGroupBox,
+				this.MasteriesGroupBox
+			}.SelectMany(gb => gb.Controls.OfType<Control>(), (gb, child) => (gb, child))
+				.ToList()
+				.ForEach(tup => tup.gb.Font = tup.child.Font = FontService.GetFontAlbertusMTLight(11F));
 
 			#endregion
 
