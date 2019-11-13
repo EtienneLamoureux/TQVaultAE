@@ -1487,4 +1487,7 @@ Quand activé, l’équipement du personnage sera en lecture seule, vous ne sere
 TQVaultAE ne connaît pas les formules nécessaires pour calculer avec précision la force réelle, la dextérité et l’intelligence d’un personnage de la même façon que le jeu.
 Il n’utilise actuellement que les valeurs de "base" disponibles dans le fichier de sauvegarde.</value>
   </data>
+  <data name="ResetMasteriesButton" xml:space="preserve">
+    <value>Réinit. Maîtrises</value>
+  </data>
 </root>

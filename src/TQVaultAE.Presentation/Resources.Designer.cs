@@ -2797,6 +2797,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Reset Masteries.
+        /// </summary>
+        public static string ResetMasteriesButton {
+            get {
+                return ResourceManager.GetString("ResetMasteriesButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Container.
         /// </summary>
         public static string ResultsContainer {

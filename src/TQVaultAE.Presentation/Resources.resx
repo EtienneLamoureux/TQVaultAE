@@ -1659,4 +1659,7 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
 TQVaultAE doesn't know the math requiered to compute accurately the real strength, dexterity and intelligence of a character the same way as the game does.
 It currently only use the "base" values available in the save file.</value>
   </data>
+  <data name="ResetMasteriesButton" xml:space="preserve">
+    <value>Reset Masteries</value>
+  </data>
 </root>
