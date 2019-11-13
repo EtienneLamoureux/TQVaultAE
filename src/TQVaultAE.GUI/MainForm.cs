@@ -22,6 +22,7 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Config;
 	using TQVaultAE.Services;
 	using TQVaultAE.Domain.Contracts.Services;
+	using System.Linq;
 
 	/// <summary>
 	/// Main Dialog class
@@ -530,14 +531,8 @@ namespace TQVaultAE.GUI
 		/// <returns>Total number of files that LoadAllFiles() will load.</returns>
 		private int LoadAllFilesTotal()
 		{
-			string[] list;
-
-			list = GamePathResolver.GetCharacterList();
-			int numIT = list?.Length ?? 0;
-
-			list = GamePathResolver.GetVaultList();
-			int numVaults = list?.Length ?? 0;
-
+			int numIT = GamePathResolver.GetCharacterList()?.Count() ?? 0;
+			int numVaults = GamePathResolver.GetVaultList()?.Count() ?? 0;
 			return Math.Max(0, numIT + numVaults - 1);
 		}
 
@@ -568,11 +563,9 @@ namespace TQVaultAE.GUI
 			}
 
 			string[] vaults = GamePathResolver.GetVaultList();
-
-			string[] charactersIT = GamePathResolver.GetCharacterList();
+			var charactersIT = this.characterComboBox.Items.OfType<PlayerSave>().ToArray();
 
 			int numIT = charactersIT?.Length ?? 0;
-
 			int numVaults = vaults?.Length ?? 0;
 
 			// Since this takes a while, show a progress dialog box.

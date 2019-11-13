@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
@@ -15,15 +17,24 @@ namespace TQVaultAE.Services
 		private readonly IPlayerCollectionProvider PlayerCollectionProvider;
 		private readonly IStashProvider StashProvider;
 		private readonly IGamePathService GamePathResolver;
+		private readonly ITranslationService TranslationService;
 		public const string CustomDesignator = "<Custom Map>";
 
-		public PlayerService(ILogger<PlayerService> log, SessionContext userContext, IPlayerCollectionProvider playerCollectionProvider, IStashProvider stashProvider, IGamePathService gamePathResolver)
+		public PlayerService(
+			ILogger<PlayerService> log
+			, SessionContext userContext
+			, IPlayerCollectionProvider playerCollectionProvider
+			, IStashProvider stashProvider
+			, IGamePathService gamePathResolver
+			, ITranslationService translationService
+		)
 		{
 			this.Log = log.Logger;
 			this.userContext = userContext;
 			this.PlayerCollectionProvider = playerCollectionProvider;
 			this.StashProvider = stashProvider;
 			this.GamePathResolver = gamePathResolver;
+			this.TranslationService = translationService;
 		}
 
 
@@ -31,38 +42,33 @@ namespace TQVaultAE.Services
 		/// Loads a player using the drop down list.
 		/// Assumes designators are appended to character name.
 		/// </summary>
-		/// <param name="selectedText">Player string from the drop down list.</param>
+		/// <param name="selectedSave">Player string from the drop down list.</param>
 		/// <param name="isIT"></param>
 		/// <returns></returns>
-		public LoadPlayerResult LoadPlayer(string selectedText, bool isIT = false)
+		public LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool isIT = false)
 		{
 			var result = new LoadPlayerResult();
 
-			if (string.IsNullOrWhiteSpace(selectedText)) return result;
-
-			result.IsCustom = selectedText.EndsWith(PlayerService.CustomDesignator, StringComparison.Ordinal);
-			if (result.IsCustom)
-			{
-				// strip off the end from the player name.
-				selectedText = selectedText.Remove(selectedText.IndexOf(PlayerService.CustomDesignator, StringComparison.Ordinal), PlayerService.CustomDesignator.Length);
-			}
+			if (string.IsNullOrWhiteSpace(selectedSave?.Name)) return result;
 
 			#region Get the player
 
-			result.PlayerFile = GamePathResolver.GetPlayerFile(selectedText);
+			result.PlayerFile = GamePathResolver.GetPlayerFile(selectedSave.Name);
 
 			try
 			{
 				result.Player = this.userContext.Players[result.PlayerFile];
+				if (selectedSave.Info is null && result.Player.PlayerInfo != null) selectedSave.Info = result.Player.PlayerInfo;
 			}
 			catch (KeyNotFoundException)
 			{
-				result.Player = new PlayerCollection(selectedText, result.PlayerFile);
+				result.Player = new PlayerCollection(selectedSave.Name, result.PlayerFile);
 				result.Player.IsImmortalThrone = isIT;
 				try
 				{
 					PlayerCollectionProvider.LoadFile(result.Player);
 					this.userContext.Players.Add(result.PlayerFile, result.Player);
+					selectedSave.Info = result.Player.PlayerInfo;
 				}
 				catch (ArgumentException argumentException)
 				{
@@ -70,11 +76,12 @@ namespace TQVaultAE.Services
 				}
 			}
 
+
 			#endregion
 
 			#region Get the player's stash
 
-			result.StashFile = GamePathResolver.GetPlayerStashFile(selectedText);
+			result.StashFile = GamePathResolver.GetPlayerStashFile(selectedSave.Name);
 
 			try
 			{
@@ -82,7 +89,7 @@ namespace TQVaultAE.Services
 			}
 			catch (KeyNotFoundException)
 			{
-				result.Stash = new Stash(selectedText, result.StashFile);
+				result.Stash = new Stash(selectedSave.Name, result.StashFile);
 				try
 				{
 					result.StashFound = StashProvider.LoadFile(result.Stash);
@@ -130,6 +137,20 @@ namespace TQVaultAE.Services
 			}
 
 			return numModified > 0;
+		}
+
+		/// <summary>
+		/// Gets a list of all of the character files in the save folder.
+		/// </summary>
+		/// <returns>List of character files descriptor</returns>
+		public PlayerSave[] GetPlayerSaveList()
+		{
+			string[] folders = this.GamePathResolver.GetCharacterList();
+
+			return (folders is null) ? null : folders
+				.Select(f => new PlayerSave(f, this.GamePathResolver.IsCustom, this.GamePathResolver.MapName, this.TranslationService))
+				.OrderBy(ps => ps.Name)
+				.ToArray();
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using TQVaultAE.Domain.Results;
+﻿using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.Domain.Contracts.Services
 {
@@ -95,7 +96,6 @@ namespace TQVaultAE.Domain.Contracts.Services
 		string GetBaseCharacterFolder();
 		/// <summary>
 		/// Gets a list of all of the character files in the save folder.
-		/// Added support for loading custom quest characters
 		/// </summary>
 		/// <returns>List of character files in a string array</returns>
 		string[] GetCharacterList();

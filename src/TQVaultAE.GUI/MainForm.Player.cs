@@ -26,7 +26,9 @@ namespace TQVaultAE.GUI
 		private void CharacterComboBoxSelectedIndexChanged(object sender, EventArgs e)
 		{
 			// Hmm. We can load a character now!
-			string selectedText = this.characterComboBox.SelectedItem.ToString();
+			var selected = this.characterComboBox.SelectedItem;
+			var selectedSave = selected as PlayerSave;
+			var selectedText = selected.ToString();
 
 			// See if they actually changed their selection and ignore "No TQ characters detected"
 			if (selectedText.Equals(Resources.MainFormSelectCharacter) || selectedText.Equals(Resources.MainFormNoCharacters)
@@ -37,7 +39,7 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				this.LoadPlayer(selectedText);
+				this.LoadPlayer(selectedSave);
 			}
 		}
 
@@ -49,36 +51,18 @@ namespace TQVaultAE.GUI
 			// Initialize the character combo-box
 			this.characterComboBox.Items.Clear();
 
-			string[] charactersIT = GamePathResolver.GetCharacterList();
+			var characters = this.playerService.GetPlayerSaveList();
 
-			int numIT = 0;
-			if (charactersIT != null)
-			{
-				numIT = charactersIT.Length;
-			}
-
-			if (numIT == 0)
-			{
+			if (!characters?.Any() ?? false)
 				this.characterComboBox.Items.Add(Resources.MainFormNoCharacters);
-				this.characterComboBox.SelectedIndex = 0;
-			}
 			else
 			{
 				this.characterComboBox.Items.Add(Resources.MainFormSelectCharacter);
-				this.characterComboBox.SelectedIndex = 0;
 
-				string characterDesignator = string.Empty;
-
-				// Modified by VillageIdiot
-				// Added to support custom Maps
-				if (GamePathResolver.IsCustom)
-				{
-					characterDesignator = string.Concat(characterDesignator, PlayerService.CustomDesignator);
-				}
-
-				string[] characters = charactersIT.Select(c => string.Concat(c, characterDesignator)).ToArray();
 				this.characterComboBox.Items.AddRange(characters);
 			}
+
+			this.characterComboBox.SelectedIndex = 0;
 		}
 
 		/// <summary>
@@ -126,10 +110,10 @@ namespace TQVaultAE.GUI
 		/// Assumes designators are appended to character name.
 		/// Changed by VillageIdiot to a separate function.
 		/// </summary>
-		/// <param name="selectedText">Player string from the drop down list.</param>
-		private void LoadPlayer(string selectedText)
+		/// <param name="selectedSave">Player string from the drop down list.</param>
+		private void LoadPlayer(PlayerSave selectedSave)
 		{
-			var result = this.playerService.LoadPlayer(selectedText,true);
+			var result = this.playerService.LoadPlayer(selectedSave, true);
 
 			// Get the player
 			try
@@ -159,7 +143,7 @@ namespace TQVaultAE.GUI
 				// Throw a message if the stash is not present.
 				if (result.StashFound.HasValue && !result.StashFound.Value)
 				{
-					var msg = string.Concat(Resources.StashNotFoundMsg, "\n\nCharacter : ", selectedText);
+					var msg = string.Concat(Resources.StashNotFoundMsg, "\n\nCharacter : ", selectedSave);
 					MessageBox.Show(msg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
