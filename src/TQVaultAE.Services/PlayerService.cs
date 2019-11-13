@@ -57,7 +57,7 @@ namespace TQVaultAE.Services
 
 			if (!this.userContext.Players.TryGetValue(result.PlayerFile, out result.Player))
 			{
-				result.Player = new PlayerCollection(selectedText, result.PlayerFile);
+				result.Player = new PlayerCollection(selectedSave.Name, result.PlayerFile);
 				result.Player.IsImmortalThrone = isIT;
 				try
 				{
@@ -80,7 +80,7 @@ namespace TQVaultAE.Services
 
 			if (!this.userContext.Stashes.TryGetValue(result.StashFile, out result.Stash))
 			{
-				result.Stash = new Stash(selectedText, result.StashFile);
+				result.Stash = new Stash(selectedSave.Name, result.StashFile);
 				try
 				{
 					result.StashFound = StashProvider.LoadFile(result.Stash);

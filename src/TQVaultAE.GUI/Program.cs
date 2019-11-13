@@ -21,7 +21,6 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Domain.Helpers;
-	using TQVaultAE.GUI.Services;
 	using TQVaultAE.Domain.Exceptions;
 	using TQVaultAE.Logs;
 	using TQVaultAE.Presentation;

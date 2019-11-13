@@ -24,6 +24,11 @@ namespace TQVaultAE.GUI
 		public string BaseFont { get; private set; }
 
 		/// <summary>
+		/// Indicates whether the last opened vault will be loaded at startup
+		/// </summary>
+		private bool loadLastVault;
+
+		/// <summary>
 		/// Indicates that the EnableCharacterRequierementBGColor setting has been changed
 		/// </summary>
 		public bool enableCharacterRequierementBGColor;
@@ -58,23 +63,13 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private bool loadLastCharacter;
 
-        /// <summary>
-        /// Indicates whether the language will be auto detected
-        /// </summary>
-        private bool detectLanguage;
-
-		/// <summary>
-		/// Activate the alternative Tooltip display
-		/// </summary>
-        private bool enableDetailedTooltipView;
-
 		/// <summary>
 		/// Indicates whether the language will be auto detected
 		/// </summary>
 		private bool detectLanguage;
 
 		/// <summary>
-		/// true for alternate tooltip display
+		/// Activate the alternative Tooltip display
 		/// </summary>
 		private bool enableDetailedTooltipView;
 

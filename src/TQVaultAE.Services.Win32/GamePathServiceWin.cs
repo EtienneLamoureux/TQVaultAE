@@ -115,7 +115,6 @@ namespace TQVaultAE.Services.Win32
 
 		/// <summary>
 		/// Gets a list of all of the character files in the save folder.
-		/// Added support for loading custom quest characters
 		/// </summary>
 		/// <returns>List of character files in a string array</returns>
 		public string[] GetCharacterList()
@@ -124,19 +123,7 @@ namespace TQVaultAE.Services.Win32
 			{
 				// Get all folders that start with a '_'.
 				string[] folders = Directory.GetDirectories(GetBaseCharacterFolder(), "_*");
-
-				if (folders == null || folders.Length == 0)
-					return null;
-
-				List<string> characterList = new List<string>(folders.Length);
-
-				// Copy the names over without the '_' and strip out the path information.
-				foreach (string folder in folders)
-					characterList.Add(Path.GetFileName(folder).Substring(1));
-
-				// sort alphabetically
-				characterList.Sort();
-				return characterList.ToArray();
+				return !folders.Any() ? null : folders;
 			}
 			catch (DirectoryNotFoundException)
 			{
