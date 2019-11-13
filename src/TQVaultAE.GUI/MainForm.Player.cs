@@ -41,6 +41,7 @@ namespace TQVaultAE.GUI
 			{
 				this.LoadPlayer(selectedSave);
 			}
+			this.Refresh();
 		}
 
 		/// <summary>

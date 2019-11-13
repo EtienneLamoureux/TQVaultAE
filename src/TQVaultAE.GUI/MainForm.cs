@@ -977,6 +977,9 @@ namespace TQVaultAE.GUI
 					result = MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
+				if (settingsDialog.ItemBGColorOpacityChanged || settingsDialog.EnableCharacterRequierementBGColorChanged)
+					this.Refresh();
+
 				this.configChanged = true;
 				this.SaveConfiguration();
 				if (result == DialogResult.Yes)

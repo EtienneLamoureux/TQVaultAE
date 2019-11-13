@@ -1645,4 +1645,18 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   <data name="SettingEnableDetailedTooltipViewTT" xml:space="preserve">
     <value>Split tooltip attributes into Prefix/Base/Suffix categories</value>
   </data>
+  <data name="SettingsItemBGColorOpacityLabel" xml:space="preserve">
+    <value>Item BG Alpha Color :</value>
+  </data>
+  <data name="SettingsItemBGColorOpacityLabelTT" xml:space="preserve">
+    <value>Item background color opacity level</value>
+  </data>
+  <data name="SettingsEnableCharacterRequierementBGColor" xml:space="preserve">
+    <value>Enable Character Requierement BG Color</value>
+  </data>
+  <data name="SettingsEnableCharacterRequierementBGColorTT" xml:space="preserve">
+    <value>(Experimental) Display a red background color on items when the selected character does not meet the requierements.
+TQVaultAE doesn't know the math requiered to compute accurately the real strength, dexterity and intelligence of a character the same way as the game does.
+It currently only use the "base" values available in the save file.</value>
+  </data>
 </root>
