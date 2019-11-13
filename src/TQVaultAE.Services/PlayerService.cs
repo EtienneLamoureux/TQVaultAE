@@ -55,14 +55,9 @@ namespace TQVaultAE.Services
 
 			result.PlayerFile = GamePathResolver.GetPlayerFile(selectedSave.Name);
 
-			try
+			if (!this.userContext.Players.TryGetValue(result.PlayerFile, out result.Player))
 			{
-				result.Player = this.userContext.Players[result.PlayerFile];
-				if (selectedSave.Info is null && result.Player.PlayerInfo != null) selectedSave.Info = result.Player.PlayerInfo;
-			}
-			catch (KeyNotFoundException)
-			{
-				result.Player = new PlayerCollection(selectedSave.Name, result.PlayerFile);
+				result.Player = new PlayerCollection(selectedText, result.PlayerFile);
 				result.Player.IsImmortalThrone = isIT;
 				try
 				{
@@ -83,13 +78,9 @@ namespace TQVaultAE.Services
 
 			result.StashFile = GamePathResolver.GetPlayerStashFile(selectedSave.Name);
 
-			try
+			if (!this.userContext.Stashes.TryGetValue(result.StashFile, out result.Stash))
 			{
-				result.Stash = this.userContext.Stashes[result.StashFile];
-			}
-			catch (KeyNotFoundException)
-			{
-				result.Stash = new Stash(selectedSave.Name, result.StashFile);
+				result.Stash = new Stash(selectedText, result.StashFile);
 				try
 				{
 					result.StashFound = StashProvider.LoadFile(result.Stash);

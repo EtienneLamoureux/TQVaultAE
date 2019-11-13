@@ -546,19 +546,10 @@ namespace TQVaultAE.Data
 		/// <returns>ItemAttributesData for the attribute</returns>
 		public ItemAttributesData GetAttributeData(string attribute)
 		{
-			ItemAttributesData result = null;
-
 			if (String.IsNullOrEmpty(attribute))
-				return result;
+				return null;
 
-			try
-			{
-				return attributeDictionary[attribute.ToUpperInvariant()];
-			}
-			catch (KeyNotFoundException)
-			{
-				return result;
-			}
+			return attributeDictionary.TryGetValue(attribute.ToUpperInvariant(), out var value) ? value : null;
 		}
 
 		/// <summary>

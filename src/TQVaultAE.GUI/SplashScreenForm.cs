@@ -82,7 +82,7 @@ namespace TQVaultAE.GUI
 			this.labelPleaseWait.Text = Resources.Form1LblPleaseWait;
 			this.Icon = Resources.TQVIcon;
 			this.ShowMainForm = false;
-			this.Opacity = 0.0F;
+			//this.Opacity = 0.0F;
 
 			this.FormBorderStyle = FormBorderStyle.None;
 			this.fadeInInterval = Config.Settings.Default.FadeInInterval;
@@ -112,20 +112,8 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		public bool UseRoundedRectangle
 		{
-			get
-			{
-				if (this.FormBorderStyle != FormBorderStyle.None || this.DrawCustomBorder)
-				{
-					return false;
-				}
-
-				return this.useRoundedRectangle;
-			}
-
-			set
-			{
-				this.useRoundedRectangle = value;
-			}
+			get => (this.FormBorderStyle != FormBorderStyle.None || this.DrawCustomBorder) ? false : this.useRoundedRectangle;
+			set => this.useRoundedRectangle = value;
 		}
 
 		/// <summary>
@@ -133,15 +121,8 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		public int MaximumValue
 		{
-			get
-			{
-				return this.progressBar.Maximum;
-			}
-
-			set
-			{
-				this.progressBar.Maximum = value;
-			}
+			get => this.progressBar.Maximum;
+			set => this.progressBar.Maximum = value;
 		}
 
 		/// <summary>
@@ -159,10 +140,7 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Increments the progress bar
 		/// </summary>
-		public void IncrementValue()
-		{
-			this.progressBar.Increment(1);
-		}
+		public void IncrementValue() => this.progressBar.Increment(1);
 
 		/// <summary>
 		/// Close the form and start the fade out.
@@ -259,13 +237,9 @@ namespace TQVaultAE.GUI
 		{
 			this.waitTimerFlip = 1 - this.waitTimerFlip;
 			if (this.waitTimerFlip == 0)
-			{
 				this.labelPleaseWait.ForeColor = Color.FromArgb((byte)255, (byte)255, (byte)255);
-			}
 			else
-			{
 				this.labelPleaseWait.ForeColor = this.flipColor;
-			}
 		}
 
 		/// <summary>
@@ -276,9 +250,7 @@ namespace TQVaultAE.GUI
 		private void SplashScreen_Click(object sender, EventArgs e)
 		{
 			if (this.ShowMainForm)
-			{
 				this.CloseForm();
-			}
 		}
 
 		/// <summary>
@@ -291,20 +263,14 @@ namespace TQVaultAE.GUI
 			if (!this.fadeOut)
 			{
 				if (this.Opacity < 1)
-				{
 					this.Opacity = Math.Min(1.0F, this.Opacity + this.fadeInInterval);
-				}
 				else
-				{
 					this.fadeTimer.Stop();
-				}
 			}
 			else
 			{
 				if (this.Opacity > 0)
-				{
 					this.Opacity = Math.Max(0.0F, this.Opacity - this.fadeOutInterval);
-				}
 				else
 				{
 					this.waitTimer.Stop();

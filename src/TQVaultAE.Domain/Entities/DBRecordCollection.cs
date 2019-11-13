@@ -60,17 +60,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <returns>Returns a Variable from the hashtable.</returns>
 		public Variable this[string variableName]
 		{
-			get
-			{
-				try
-				{
-					return this.variables[variableName.ToUpperInvariant()];
-				}
-				catch (KeyNotFoundException)
-				{
-					return null;
-				}
-			}
+			get => this.variables.TryGetValue(variableName.ToUpperInvariant(), out var val) ? val : null;
 		}
 
 		/// <summary>
@@ -121,16 +111,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <param name="index">Offset of the value in the array since a variable can have multiple values.</param>
 		/// <returns>Returns the integer value for the variable, or 0 if the variable does not exist.</returns>
 		public int GetInt32(string variableName, int index)
-		{
-			try
-			{
-				return this.variables[variableName.ToUpperInvariant()].GetInt32(index);
-			}
-			catch (KeyNotFoundException)
-			{
-				return 0;
-			}
-		}
+			=> this.variables.TryGetValue(variableName.ToUpperInvariant(), out var val) ? val.GetInt32(index) : 0;
 
 		/// <summary>
 		/// Gets the float value for the variable, or 0 if the variable does not exist.
@@ -140,16 +121,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <param name="index">Offset of the value in the array since a variable can have multiple values.</param>
 		/// <returns>Returns the float value for the variable, or 0 if the variable does not exist.</returns>
 		public float GetSingle(string variableName, int index)
-		{
-			try
-			{
-				return this.variables[variableName.ToUpperInvariant()].GetSingle(index);
-			}
-			catch (KeyNotFoundException)
-			{
-				return 0.0F;
-			}
-		}
+			=> this.variables.TryGetValue(variableName.ToUpperInvariant(), out var val) ? val.GetSingle(index) : 0.0F;
 
 		/// <summary>
 		/// Gets the string value for the variable, or empty string if the variable does not exist.
@@ -158,26 +130,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <param name="index">Offset of the value in the array since a variable can have multiple values.</param>
 		/// <returns>Returns the string value for the variable, or empty string if the variable does not exist.</returns>
 		public string GetString(string variableName, int index)
-		{
-			Variable variable;
-
-			if (variables.ContainsKey(variableName.ToUpperInvariant()))
-			{
-				variable = this.variables[variableName.ToUpperInvariant()];
-			}
-			else
-			{
-				return string.Empty;
-			}
-
-			string answer = variable.GetString(index);
-			if (answer == null)
-			{
-				return string.Empty;
-			}
-
-			return answer;
-		}
+			=> this.variables.TryGetValue(variableName.ToUpperInvariant(), out var val) ? val.GetString(index) ?? string.Empty : string.Empty;
 
 		/// <summary>
 		/// Gets all of the string values for a particular variable entry
@@ -188,20 +141,13 @@ namespace TQVaultAE.Domain.Entities
 		public string[] GetAllStrings(string variableName)
 		{
 			Variable variable;
-			try
-			{
-				variable = this.variables[variableName.ToUpperInvariant()];
-			}
-			catch (KeyNotFoundException)
-			{
+
+			if (!this.variables.TryGetValue(variableName.ToUpperInvariant(), out variable))
 				return null;
-			}
 
 			string[] ansArray = new string[variable.NumberOfValues];
 			for (int i = 0; i < variable.NumberOfValues; ++i)
-			{
 				ansArray[i] = variable.GetString(i);
-			}
 
 			return ansArray;
 		}

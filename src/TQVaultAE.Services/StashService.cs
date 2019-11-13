@@ -35,11 +35,7 @@ namespace TQVaultAE.Services
 
 			result.TransferStashFile = GamePathResolver.TransferStashFile;
 
-			try
-			{
-				result.Stash = this.userContext.Stashes[result.TransferStashFile];
-			}
-			catch (KeyNotFoundException)
+			if (!this.userContext.Stashes.TryGetValue(result.TransferStashFile, out result.Stash))
 			{
 				result.Stash = new Stash(Resources.GlobalTransferStash, result.TransferStashFile);
 				result.Stash.IsImmortalThrone = true;
@@ -70,11 +66,7 @@ namespace TQVaultAE.Services
 			result.RelicVaultStashFile = GamePathResolver.RelicVaultStashFile;
 
 			// Get the relic vault stash
-			try
-			{
-				result.Stash = this.userContext.Stashes[result.RelicVaultStashFile];
-			}
-			catch (KeyNotFoundException)
+			if (!this.userContext.Stashes.TryGetValue(result.RelicVaultStashFile, out result.Stash))
 			{
 				result.Stash = new Stash(Resources.GlobalRelicVaultStash, result.RelicVaultStashFile);
 				result.Stash.CreateEmptySack();

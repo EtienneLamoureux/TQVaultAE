@@ -332,10 +332,10 @@ namespace TQVaultAE.GUI
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
             this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorker1_ProgressChanged);
             this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorker1_RunWorkerCompleted);
-            // 
-            // fadeInTimer
-            // 
-            this.fadeInTimer.Interval = 50;
+			// 
+			// fadeInTimer
+			// 
+			this.fadeInTimer.Interval = 50;
             this.fadeInTimer.Tick += new System.EventHandler(this.FadeInTimerTick);
             // 
             // flowLayoutPanelVaultSelector
