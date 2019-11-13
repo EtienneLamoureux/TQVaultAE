@@ -127,7 +127,10 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		/// <returns>The list of all of the vault files in the save folder.</returns>
 		string[] GetVaultList();
-		string ResolveTQ();
-		string ResolveTQIT();
+		/// <summary>
+		/// Try to resolve the local game path
+		/// </summary>
+		/// <returns></returns>
+		string ResolveGamePath();
 	}
 }

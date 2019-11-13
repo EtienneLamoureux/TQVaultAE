@@ -22,9 +22,11 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Domain.Helpers;
 	using TQVaultAE.GUI.Services;
+	using TQVaultAE.Domain.Exceptions;
 	using TQVaultAE.Logs;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Services;
+	using TQVaultAE.Services.Win32;
 
 	/// <summary>
 	/// Main Program class
@@ -66,6 +68,7 @@ namespace TQVaultAE.GUI
 				//TQDebug.DebugEnabled = true;
 #endif
 
+			restart:
 				// Configure DI
 				var scol = new ServiceCollection()
 				// Logs
@@ -112,10 +115,28 @@ namespace TQVaultAE.GUI
 
 				var gamePathResolver = Program.ServiceProvider.GetService<IGamePathService>();
 
-				ManageCulture();
-				SetUILanguage();
-				SetupGamePaths(gamePathResolver);
-				SetupMapName(gamePathResolver);
+				try
+				{
+					ManageCulture();
+					SetUILanguage();
+					SetupGamePaths(gamePathResolver);
+					SetupMapName(gamePathResolver);
+				}
+				catch (ExGamePathNotFound ex)
+				{
+					using (var fbd = new FolderBrowserDialog() { Description = ex.Message, ShowNewFolderButton = false })
+					{
+						DialogResult result = fbd.ShowDialog();
+
+						if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+						{
+							Config.Settings.Default.ForceGamePath = fbd.SelectedPath;
+							Config.Settings.Default.Save();
+							goto restart;
+						}
+						else goto exit;
+					}
+				}
 
 				var mainform = Program.ServiceProvider.GetService<MainForm>();
 				Application.Run(mainform);
@@ -123,8 +144,10 @@ namespace TQVaultAE.GUI
 			catch (Exception ex)
 			{
 				Log.ErrorException(ex);
-				throw;
+				MessageBox.Show(Log.FormatException(ex), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
 			}
+
+		exit:;
 		}
 
 
@@ -135,7 +158,12 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private static void SetupGamePaths(IGamePathService gamePathResolver)
 		{
-			if (!Config.Settings.Default.AutoDetectGamePath)
+			if (Config.Settings.Default.AutoDetectGamePath)
+			{
+				gamePathResolver.TQPath = gamePathResolver.ResolveGamePath();
+				gamePathResolver.ImmortalThronePath = gamePathResolver.ResolveGamePath();
+			}
+			else
 			{
 				gamePathResolver.TQPath = Config.Settings.Default.TQPath;
 				gamePathResolver.ImmortalThronePath = Config.Settings.Default.TQITPath;
