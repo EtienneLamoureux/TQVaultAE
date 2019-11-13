@@ -15,6 +15,7 @@ namespace TQVaultAE.GUI
 	using System.Security.Permissions;
 	using System.Threading;
 	using System.Windows.Forms;
+	using TQVaultAE.Config;
 	using TQVaultAE.Data;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
@@ -61,6 +62,7 @@ namespace TQVaultAE.GUI
 
 #if DEBUG
 				Logger.ChangeRootLogLevel(Level.Debug);
+				//TQDebug.DebugEnabled = true;
 #endif
 
 				// Configure DI
