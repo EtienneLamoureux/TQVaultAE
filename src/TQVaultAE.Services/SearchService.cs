@@ -97,10 +97,10 @@ namespace TQVaultAE.Services
 			if (this.UserContext.Vaults == null || this.UserContext.Vaults.Count == 0)
 				return;
 
-			foreach (KeyValuePair<string, PlayerCollection> kvp in this.UserContext.Vaults)
+			foreach (KeyValuePair<string, Lazy<PlayerCollection>> kvp in this.UserContext.Vaults)
 			{
 				string vaultFile = kvp.Key;
-				PlayerCollection vault = kvp.Value;
+				PlayerCollection vault = kvp.Value.Value;
 
 				if (vault == null)
 				{
@@ -146,10 +146,10 @@ namespace TQVaultAE.Services
 			if (this.UserContext.Players == null || this.UserContext.Players.Count == 0)
 				return;
 
-			foreach (KeyValuePair<string, PlayerCollection> kvp in this.UserContext.Players)
+			foreach (KeyValuePair<string, Lazy<PlayerCollection>> kvp in this.UserContext.Players)
 			{
 				string playerFile = kvp.Key;
-				PlayerCollection player = kvp.Value;
+				PlayerCollection player = kvp.Value.Value;
 
 				if (player == null)
 				{
@@ -222,10 +222,10 @@ namespace TQVaultAE.Services
 				return;
 			}
 
-			foreach (KeyValuePair<string, Stash> kvp in this.UserContext.Stashes)
+			foreach (KeyValuePair<string, Lazy<Stash>> kvp in this.UserContext.Stashes)
 			{
 				string stashFile = kvp.Key;
-				Stash stash = kvp.Value;
+				Stash stash = kvp.Value.Value;
 
 				// Make sure we have a valid name and stash.
 				if (stash == null)

@@ -15,6 +15,16 @@ namespace TQVaultAE.Domain.Entities
 	public class PlayerCollection : IEnumerable<SackCollection>
 	{
 		/// <summary>
+		/// Tell if the Vault succesfully load
+		/// </summary>
+		public bool VaultLoaded;
+
+		/// <summary>
+		/// Raised exception at loading time.
+		/// </summary>
+		public ArgumentException ArgumentException;
+
+		/// <summary>
 		/// String holding the player name
 		/// </summary>
 		private string playerName;

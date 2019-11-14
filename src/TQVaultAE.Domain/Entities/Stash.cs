@@ -3,6 +3,8 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
+
 namespace TQVaultAE.Domain.Entities
 {
 	/// <summary>
@@ -10,7 +12,14 @@ namespace TQVaultAE.Domain.Entities
 	/// </summary>
 	public class Stash
 	{
-
+		/// <summary>
+		/// Raised exception at loading time.
+		/// </summary>
+		public ArgumentException StashArgumentException;
+		/// <summary>
+		/// return result of <see cref="StashProvider.LoadFile"/> from loading time.
+		/// </summary>
+		public bool? StashFound;
 		/// <summary>
 		/// Player name associated with this stash file.
 		/// </summary>
@@ -46,6 +55,7 @@ namespace TQVaultAE.Domain.Entities
 		/// Sack instance for this file
 		/// </summary>
 		public SackCollection sack;
+
 
 		/// <summary>
 		/// Initializes a new instance of the Stash class.

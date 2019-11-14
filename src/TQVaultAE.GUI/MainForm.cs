@@ -795,6 +795,8 @@ namespace TQVaultAE.GUI
 			// First, handle the case where an exception was thrown.
 			if (e.Error != null)
 			{
+				Log.Error($"resourcesLoaded = {this.resourcesLoaded}", e.Error);
+
 				if (MessageBox.Show(
 					string.Concat(e.Error.Message, Resources.Form1BadLanguage)
 					, Resources.Form1ErrorLoadingResources
@@ -859,6 +861,7 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
+				Log.Error($"resourcesLoaded = {this.resourcesLoaded}", e.Error);
 				// If for some reason the loading failed, but there was no error raised.
 				MessageBox.Show(
 					Resources.Form1ErrorLoadingResources,

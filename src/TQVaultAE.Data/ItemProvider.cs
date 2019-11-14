@@ -34,7 +34,7 @@ namespace TQVaultAE.Data
 		private readonly IItemAttributeProvider ItemAttributeProvider;
 		private readonly ITQDataService TQData;
 		private readonly ITranslationService TranslationService;
-		private readonly Dictionary<(Item Item, FriendlyNamesExtraScopes? Scope, bool FilterExtra), ToFriendlyNameResult> FriendlyNamesCache = new Dictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult>();
+		private readonly LazyConcurrentDictionary<(Item Item, FriendlyNamesExtraScopes? Scope, bool FilterExtra), ToFriendlyNameResult> FriendlyNamesCache = new LazyConcurrentDictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult>();
 
 		public ItemProvider(ILogger<ItemProvider> log, IDatabase database, ILootTableCollectionProvider lootTableCollectionProvider, IItemAttributeProvider itemAttributeProvider, ITQDataService tQData, ITranslationService translationService)
 		{
@@ -50,7 +50,7 @@ namespace TQVaultAE.Data
 		{
 			items = items.Where(i => i != null).ToArray();
 			var keylist = this.FriendlyNamesCache.Where(i => items.Contains(i.Key.Item)).Select(i => i.Key).ToList();
-			keylist.ForEach(k => this.FriendlyNamesCache.Remove(k));
+			keylist.ForEach(k => this.FriendlyNamesCache.TryRemove(k, out var outVal));
 			return keylist.Any();
 		}
 
@@ -1102,10 +1102,365 @@ namespace TQVaultAE.Data
 		public ToFriendlyNameResult GetFriendlyNames(Item itm, FriendlyNamesExtraScopes? scopes = null, bool filterExtra = true)
 		{
 			var key = (itm, scopes, filterExtra);
-			if (FriendlyNamesCache.ContainsKey(key)) return FriendlyNamesCache[key];
+			return FriendlyNamesCache.GetOrAddAtomic(key, k => {
 
-			var res = new ToFriendlyNameResult(itm);
-			itm.CurrentFriendlyNameResult = res;
+				var res = new ToFriendlyNameResult(itm);
+				itm.CurrentFriendlyNameResult = res;
+
+				#region Minimal Info (ButtonBag tooltip + Common item properties)
+
+				// Item Seed
+				res.ItemSeed = string.Format(CultureInfo.CurrentCulture, this.TranslationService.ItemSeed, itm.Seed, (itm.Seed != 0) ? (itm.Seed / (float)Int16.MaxValue) : 0.0f);
+				res.ItemQuest = this.TranslationService.ItemQuest;
+
+				#region Prefix translation
+
+				if (!itm.IsRelic && !string.IsNullOrEmpty(itm.prefixID))
+				{
+					res.PrefixInfoDescription = itm.prefixID;
+					if (itm.prefixInfo != null)
+					{
+						var prefixInfoDescriptionTag = Database.GetFriendlyName(itm.prefixInfo.DescriptionTag);
+						if (!string.IsNullOrEmpty(prefixInfoDescriptionTag))
+							res.PrefixInfoDescription = prefixInfoDescriptionTag;
+					}
+				}
+
+				#endregion
+
+				#region Base Item translation
+
+				// Load common relic translations if item is relic related by any means
+				if (itm.IsRelic || itm.HasRelicSlot1 || itm.HasRelicSlot2 || itm.RelicInfo != null || itm.Relic2Info != null)
+				{
+					res.ItemWith = this.TranslationService.ItemWith;
+
+					if (itm.RelicInfo != null)
+						res.RelicInfo1Description = Database.GetFriendlyName(itm.RelicInfo.DescriptionTag);
+
+					if (itm.Relic2Info != null)
+						res.RelicInfo2Description = Database.GetFriendlyName(itm.Relic2Info.DescriptionTag);
+
+					var labelCompleted = "Completed";
+					res.AnimalPartComplete = Database.GetFriendlyName("tagAnimalPartComplete");
+					res.AnimalPartComplete = string.IsNullOrWhiteSpace(res.AnimalPartComplete) ? labelCompleted : res.AnimalPartComplete;
+					res.RelicComplete = Database.GetFriendlyName("tagRelicComplete");
+					res.RelicComplete = string.IsNullOrWhiteSpace(res.RelicComplete) ? labelCompleted : res.RelicComplete;
+
+					var labelPartcomplete = "Completion Bonus: ";
+					res.AnimalPartcompleteBonus = Database.GetFriendlyName("tagAnimalPartcompleteBonus");
+					res.AnimalPartcompleteBonus = string.IsNullOrWhiteSpace(res.AnimalPartcompleteBonus) ? labelPartcomplete : res.AnimalPartcompleteBonus;
+					res.RelicBonus = Database.GetFriendlyName("tagRelicBonus");
+					res.RelicBonus = string.IsNullOrWhiteSpace(res.RelicBonus) ? labelPartcomplete : res.RelicBonus;
+
+					var labelRelic = "Relic";
+					res.AnimalPart = Database.GetFriendlyName("tagAnimalPart");
+					res.AnimalPart = string.IsNullOrWhiteSpace(res.AnimalPart) ? labelRelic : res.AnimalPart;
+
+					res.RelicShard = Database.GetFriendlyName("tagRelicShard");
+					res.RelicShard = string.IsNullOrWhiteSpace(res.RelicShard) ? labelRelic : res.RelicShard;
+
+					var labelRelicPattern = "{0} - {1} / {2}";
+					res.AnimalPartRatio = Database.GetFriendlyName("tagAnimalPartRatio");
+					res.AnimalPartRatio = string.IsNullOrWhiteSpace(res.AnimalPartRatio) ? labelRelicPattern : ItemAttributeProvider.ConvertFormat(res.AnimalPartRatio);
+
+					res.RelicRatio = Database.GetFriendlyName("tagRelicRatio");
+					res.RelicRatio = string.IsNullOrWhiteSpace(res.RelicRatio) ? labelRelicPattern : ItemAttributeProvider.ConvertFormat(res.RelicRatio);
+				}
+
+				if (itm.baseItemInfo == null)
+					res.BaseItemId = itm.BaseItemId;
+				else
+				{
+					res.BaseItemId = itm.BaseItemId;
+					// style quality description
+					if (!string.IsNullOrEmpty(itm.baseItemInfo.StyleTag))
+					{
+						if (!itm.IsPotion && !itm.IsRelic && !itm.IsScroll && !itm.IsParchment && !itm.IsQuestItem)
+						{
+							res.BaseItemInfoStyle = Database.GetFriendlyName(itm.baseItemInfo.StyleTag);
+							if (string.IsNullOrEmpty(res.BaseItemInfoStyle))
+								res.BaseItemInfoStyle = itm.baseItemInfo.StyleTag;
+						}
+					}
+
+					if (!string.IsNullOrEmpty(itm.baseItemInfo.QualityTag))
+					{
+						res.BaseItemInfoQuality = Database.GetFriendlyName(itm.baseItemInfo.QualityTag);
+						if (string.IsNullOrEmpty(res.BaseItemInfoQuality))
+							res.BaseItemInfoQuality = itm.baseItemInfo.QualityTag;
+					}
+
+					res.BaseItemInfoDescription = Database.GetFriendlyName(itm.baseItemInfo.DescriptionTag);
+					if (string.IsNullOrEmpty(res.BaseItemInfoDescription))
+						res.BaseItemInfoDescription = itm.BaseItemId;
+
+					res.BaseItemInfoRecords = Database.GetRecordFromFile(itm.BaseItemId);
+
+					if (itm.IsRelic)
+					{
+						// Add the number of charms in the set acquired.
+						if (itm.IsRelicComplete)
+						{
+							if (itm.IsCharm)
+							{
+								res.RelicCompletionFormat = res.AnimalPartComplete;
+								res.RelicBonusTitle = res.AnimalPartcompleteBonus;
+							}
+							else
+							{
+								res.RelicCompletionFormat = res.RelicComplete;
+								res.RelicBonusTitle = res.RelicBonus;
+							}
+
+							if (!string.IsNullOrEmpty(itm.RelicBonusId))
+							{
+								res.RelicBonusFileName = itm.RelicBonusId.PrettyFileName();
+								res.RelicBonusPattern = "{0} {1}";
+								res.RelicBonusFormat = string.Format(CultureInfo.CurrentCulture, res.RelicBonusPattern
+									, res.RelicBonusTitle
+									, TQColor.Yellow.ColorTag() + res.RelicBonusFileName
+								);
+							}
+							else
+							{
+								res.RelicBonusPattern = "{0}";
+								res.RelicBonusFormat = string.Format(CultureInfo.CurrentCulture, res.RelicBonusPattern, res.RelicBonusTitle);
+							}
+						}
+						else
+						{
+							if (itm.IsCharm)
+							{
+								res.RelicClass = res.AnimalPart;
+								res.RelicPattern = res.AnimalPartRatio;
+							}
+							else
+							{
+								res.RelicClass = res.RelicShard;
+								res.RelicPattern = res.RelicRatio;
+							}
+
+							res.RelicCompletionFormat = Format(res.RelicPattern, res.RelicClass, itm.Number, itm.baseItemInfo.CompletedRelicLevel);
+							res.RelicBonusFormat = res.RelicCompletionFormat;
+						}
+
+					}
+					else if (itm.IsArtifact)
+					{
+						// Add Artifact completion bonus
+						if (!string.IsNullOrEmpty(itm.RelicBonusId))
+						{
+							var RelicBonusIdExt = Path.GetFileNameWithoutExtension(TQData.NormalizeRecordPath(itm.RelicBonusId));
+							res.ArtifactBonus = Database.GetFriendlyName("xtagArtifactBonus");
+							res.ArtifactBonusFormat = string.Format(CultureInfo.CurrentCulture, "({0} {1})", res.ArtifactBonus, RelicBonusIdExt);
+						}
+
+						// Show Artifact Class (Lesser / Greater / Divine).
+						string artifactClassification = itm.baseItemInfo.GetString("artifactClassification").ToUpperInvariant();
+						res.ArtifactClass = TranslateArtifactClassification(artifactClassification);
+
+					}
+					else if (itm.IsFormulae)
+					{
+						// Added to show recipe type for Formulae
+						res.ArtifactRecipe = Database.GetFriendlyName("xtagArtifactRecipe");
+
+						if (string.IsNullOrWhiteSpace(res.ArtifactRecipe))
+							res.ArtifactRecipe = "Recipe";
+
+						// Get Reagents format
+						res.ArtifactReagents = Database.GetFriendlyName("xtagArtifactReagents");
+						if (string.IsNullOrWhiteSpace(res.ArtifactReagents))
+							res.ArtifactReagents = "Required Reagents  ({0}/{1})";
+						else
+							res.ArtifactReagents = ItemAttributeProvider.ConvertFormat(res.ArtifactReagents);
+
+						// it looks like the formulae reagents is hard coded at 3
+						res.FormulaeFormat = Format(res.ArtifactReagents, (object)0, 3);
+						res.FormulaeFormat = $"{TQColor.Orange.ColorTag()}{res.FormulaeFormat}";
+
+					}
+					else if (itm.DoesStack)
+					{
+						// display the # potions
+						if (itm.Number > 1)
+							res.NumberFormat = string.Format(CultureInfo.CurrentCulture, "({0:n0})", itm.Number);
+					}
+				}
+
+				#endregion
+
+				#region Suffix translation
+
+				if (!itm.IsRelic && !string.IsNullOrWhiteSpace(itm.suffixID))
+				{
+					if (itm.suffixInfo != null)
+					{
+						res.SuffixInfoDescription = Database.GetFriendlyName(itm.suffixInfo.DescriptionTag);
+						if (string.IsNullOrEmpty(res.SuffixInfoDescription))
+							res.SuffixInfoDescription = itm.suffixID;
+					}
+					else
+						res.SuffixInfoDescription = itm.suffixID;
+				}
+
+				#endregion
+
+				#region flavor text
+
+				// Removed Scroll flavor text since it gets printed by the skill effect code
+				if ((itm.IsPotion || itm.IsRelic || itm.IsScroll || itm.IsParchment || itm.IsQuestItem) && !string.IsNullOrWhiteSpace(itm.baseItemInfo?.StyleTag))
+				{
+					string flavor = Database.GetFriendlyName(itm.baseItemInfo.StyleTag);
+					if (flavor != null)
+					{
+						var ft = StringHelper.WrapWords(flavor, 40);
+						res.FlavorText = ft.ToArray();
+					}
+				}
+
+				#endregion
+
+				#endregion
+
+				List<string> results = new List<string>();
+
+				if (scopes?.HasFlag(FriendlyNamesExtraScopes.PrefixAttributes) ?? false)
+				{
+					if (itm.prefixInfo != null)
+						res.PrefixInfoRecords = Database.GetRecordFromFile(itm.prefixID);
+
+					if (res.PrefixInfoRecords?.Any() ?? false)
+						GetAttributesFromRecord(itm, res.PrefixInfoRecords, filterExtra, itm.prefixID, results);
+
+					res.PrefixAttributes = results.ToArray();
+				}
+
+				if (scopes?.HasFlag(FriendlyNamesExtraScopes.SuffixAttributes) ?? false)
+				{
+					results.Clear();
+
+					if (itm.suffixInfo != null)
+						res.SuffixInfoRecords = Database.GetRecordFromFile(itm.suffixID);
+
+					if (res.SuffixInfoRecords?.Any() ?? false)
+						GetAttributesFromRecord(itm, res.SuffixInfoRecords, filterExtra, itm.suffixID, results);
+
+					res.SuffixAttributes = results.ToArray();
+				}
+
+				if (scopes?.HasFlag(FriendlyNamesExtraScopes.BaseAttributes) ?? false)
+				{
+					results.Clear();
+
+					// res.baseItemInfoRecords should be already loaded
+					if (res.BaseItemInfoRecords?.Any() ?? false)
+						GetAttributesFromRecord(itm, res.BaseItemInfoRecords, filterExtra, itm.BaseItemId, results);
+				}
+
+				res.BaseAttributes = results.ToArray();
+
+				if (scopes?.HasFlag(FriendlyNamesExtraScopes.RelicAttributes) ?? false)
+				{
+					var tmp = new List<string>();
+
+					if (itm.RelicInfo != null)
+						res.RelicInfoRecords = Database.GetRecordFromFile(itm.relicID);
+
+					if (res.RelicInfoRecords?.Any() ?? false)
+						GetAttributesFromRecord(itm, res.RelicInfoRecords, filterExtra, itm.relicID, tmp);
+
+					res.Relic1Attributes = tmp.ToArray();
+				}
+
+				if (scopes?.HasFlag(FriendlyNamesExtraScopes.Relic2Attributes) ?? false)
+				{
+					var tmp = new List<string>();
+
+					if (itm.Relic2Info != null)
+						res.Relic2InfoRecords = Database.GetRecordFromFile(itm.relic2ID);
+
+					if (res.Relic2InfoRecords?.Any() ?? false)
+						GetAttributesFromRecord(itm, res.Relic2InfoRecords, filterExtra, itm.relic2ID, tmp);
+
+					res.Relic2Attributes = tmp.ToArray();
+				}
+
+				if (scopes?.HasFlag(FriendlyNamesExtraScopes.ItemSet) ?? false)
+					res.ItemSet = GetItemSetString(itm);
+
+				if (scopes?.HasFlag(FriendlyNamesExtraScopes.Requirements) ?? false)
+				{
+					var reqs = GetRequirements(itm);
+					res.Requirements = reqs.Requirements;
+					res.RequirementVariables = reqs.RequirementVariables;
+				}
+
+				#region Extra Attributes for specific types
+
+				// Shows Artifact stats for the formula
+				if (itm.IsFormulae && itm.baseItemInfo != null && (scopes?.HasFlag(FriendlyNamesExtraScopes.BaseAttributes) ?? false))
+				{
+					string artifactID = itm.baseItemInfo.GetString("artifactName");
+
+					if (!string.IsNullOrWhiteSpace(artifactID))
+					{
+						List<string> tmp = new List<string>();
+						res.FormulaeArtifactRecords = Database.GetRecordFromFile(artifactID);
+
+						// Display the name of the Artifact
+						res.FormulaeArtifactName = Database.GetFriendlyName(res.FormulaeArtifactRecords.GetString("description", 0));
+						if (string.IsNullOrEmpty(res.FormulaeArtifactName))
+							res.FormulaeArtifactName = "?Unknown Artifact Name?";
+
+						// Class
+						string artifactClassification = res.FormulaeArtifactRecords.GetString("artifactClassification", 0).ToUpperInvariant();
+						res.FormulaeArtifactClass = TranslateArtifactClassification(artifactClassification);
+
+						// Attributes
+						GetAttributesFromRecord(itm, res.FormulaeArtifactRecords, true, artifactID, tmp);
+						res.FormulaeArtifactAttributes = tmp.ToArray();
+					}
+				}
+
+				// Show the completion bonus. // TODO is it possible to have 2 relics on one artifact ?
+				if (itm.RelicBonusInfo != null
+					&& (scopes?.HasFlag(FriendlyNamesExtraScopes.RelicAttributes) ?? false)
+					&& (itm.IsArtifact // Artifact completion bonus
+						|| itm.IsRelic || itm.HasRelicSlot1 // Relic completion bonus
+					)
+				)
+				{
+					var tmp = new List<string>();
+
+					res.RelicBonus1InfoRecords = Database.GetRecordFromFile(itm.RelicBonusId);
+
+					if (res.RelicBonus1InfoRecords?.Any() ?? false)
+						GetAttributesFromRecord(itm, res.RelicBonus1InfoRecords, filterExtra, itm.RelicBonusId, tmp);
+
+					res.RelicBonus1Attributes = tmp.ToArray();
+				}
+
+				// Show the Relic2 completion bonus.
+				if (itm.HasRelicSlot2 && itm.RelicBonus2Info != null && (scopes?.HasFlag(FriendlyNamesExtraScopes.Relic2Attributes) ?? false))
+				{
+					var tmp = new List<string>();
+					res.RelicBonus2InfoRecords = Database.GetRecordFromFile(itm.RelicBonus2Id);
+
+					if (res.RelicBonus2InfoRecords?.Any() ?? false)
+						GetAttributesFromRecord(itm, res.RelicBonus2InfoRecords, filterExtra, itm.RelicBonus2Id, tmp);
+
+					res.RelicBonus2Attributes = tmp.ToArray();
+				}
+
+				#endregion
+
+				itm.CurrentFriendlyNameResult.TmpAttrib.Clear();
+				itm.CurrentFriendlyNameResult = null;
+				return res;
+
+			});
 
 			#region Local Helper
 
@@ -1133,360 +1488,6 @@ namespace TQVaultAE.Data
 			}
 
 			#endregion
-
-			#region Minimal Info (ButtonBag tooltip + Common item properties)
-
-			// Item Seed
-			res.ItemSeed = string.Format(CultureInfo.CurrentCulture, this.TranslationService.ItemSeed, itm.Seed, (itm.Seed != 0) ? (itm.Seed / (float)Int16.MaxValue) : 0.0f);
-			res.ItemQuest = this.TranslationService.ItemQuest;
-
-			#region Prefix translation
-
-			if (!itm.IsRelic && !string.IsNullOrEmpty(itm.prefixID))
-			{
-				res.PrefixInfoDescription = itm.prefixID;
-				if (itm.prefixInfo != null)
-				{
-					var prefixInfoDescriptionTag = Database.GetFriendlyName(itm.prefixInfo.DescriptionTag);
-					if (!string.IsNullOrEmpty(prefixInfoDescriptionTag))
-						res.PrefixInfoDescription = prefixInfoDescriptionTag;
-				}
-			}
-
-			#endregion
-
-			#region Base Item translation
-
-			// Load common relic translations if item is relic related by any means
-			if (itm.IsRelic || itm.HasRelicSlot1 || itm.HasRelicSlot2 || itm.RelicInfo != null || itm.Relic2Info != null)
-			{
-				res.ItemWith = this.TranslationService.ItemWith;
-
-				if (itm.RelicInfo != null)
-					res.RelicInfo1Description = Database.GetFriendlyName(itm.RelicInfo.DescriptionTag);
-
-				if (itm.Relic2Info != null)
-					res.RelicInfo2Description = Database.GetFriendlyName(itm.Relic2Info.DescriptionTag);
-
-				var labelCompleted = "Completed";
-				res.AnimalPartComplete = Database.GetFriendlyName("tagAnimalPartComplete");
-				res.AnimalPartComplete = string.IsNullOrWhiteSpace(res.AnimalPartComplete) ? labelCompleted : res.AnimalPartComplete;
-				res.RelicComplete = Database.GetFriendlyName("tagRelicComplete");
-				res.RelicComplete = string.IsNullOrWhiteSpace(res.RelicComplete) ? labelCompleted : res.RelicComplete;
-
-				var labelPartcomplete = "Completion Bonus: ";
-				res.AnimalPartcompleteBonus = Database.GetFriendlyName("tagAnimalPartcompleteBonus");
-				res.AnimalPartcompleteBonus = string.IsNullOrWhiteSpace(res.AnimalPartcompleteBonus) ? labelPartcomplete : res.AnimalPartcompleteBonus;
-				res.RelicBonus = Database.GetFriendlyName("tagRelicBonus");
-				res.RelicBonus = string.IsNullOrWhiteSpace(res.RelicBonus) ? labelPartcomplete : res.RelicBonus;
-
-				var labelRelic = "Relic";
-				res.AnimalPart = Database.GetFriendlyName("tagAnimalPart");
-				res.AnimalPart = string.IsNullOrWhiteSpace(res.AnimalPart) ? labelRelic : res.AnimalPart;
-
-				res.RelicShard = Database.GetFriendlyName("tagRelicShard");
-				res.RelicShard = string.IsNullOrWhiteSpace(res.RelicShard) ? labelRelic : res.RelicShard;
-
-				var labelRelicPattern = "{0} - {1} / {2}";
-				res.AnimalPartRatio = Database.GetFriendlyName("tagAnimalPartRatio");
-				res.AnimalPartRatio = string.IsNullOrWhiteSpace(res.AnimalPartRatio) ? labelRelicPattern : ItemAttributeProvider.ConvertFormat(res.AnimalPartRatio);
-
-				res.RelicRatio = Database.GetFriendlyName("tagRelicRatio");
-				res.RelicRatio = string.IsNullOrWhiteSpace(res.RelicRatio) ? labelRelicPattern : ItemAttributeProvider.ConvertFormat(res.RelicRatio);
-			}
-
-			if (itm.baseItemInfo == null)
-				res.BaseItemId = itm.BaseItemId;
-			else
-			{
-				res.BaseItemId = itm.BaseItemId;
-				// style quality description
-				if (!string.IsNullOrEmpty(itm.baseItemInfo.StyleTag))
-				{
-					if (!itm.IsPotion && !itm.IsRelic && !itm.IsScroll && !itm.IsParchment && !itm.IsQuestItem)
-					{
-						res.BaseItemInfoStyle = Database.GetFriendlyName(itm.baseItemInfo.StyleTag);
-						if (string.IsNullOrEmpty(res.BaseItemInfoStyle))
-							res.BaseItemInfoStyle = itm.baseItemInfo.StyleTag;
-					}
-				}
-
-				if (!string.IsNullOrEmpty(itm.baseItemInfo.QualityTag))
-				{
-					res.BaseItemInfoQuality = Database.GetFriendlyName(itm.baseItemInfo.QualityTag);
-					if (string.IsNullOrEmpty(res.BaseItemInfoQuality))
-						res.BaseItemInfoQuality = itm.baseItemInfo.QualityTag;
-				}
-
-				res.BaseItemInfoDescription = Database.GetFriendlyName(itm.baseItemInfo.DescriptionTag);
-				if (string.IsNullOrEmpty(res.BaseItemInfoDescription))
-					res.BaseItemInfoDescription = itm.BaseItemId;
-
-				res.BaseItemInfoRecords = Database.GetRecordFromFile(itm.BaseItemId);
-
-				if (itm.IsRelic)
-				{
-					// Add the number of charms in the set acquired.
-					if (itm.IsRelicComplete)
-					{
-						if (itm.IsCharm)
-						{
-							res.RelicCompletionFormat = res.AnimalPartComplete;
-							res.RelicBonusTitle = res.AnimalPartcompleteBonus;
-						}
-						else
-						{
-							res.RelicCompletionFormat = res.RelicComplete;
-							res.RelicBonusTitle = res.RelicBonus;
-						}
-
-						if (!string.IsNullOrEmpty(itm.RelicBonusId))
-						{
-							res.RelicBonusFileName = itm.RelicBonusId.PrettyFileName();
-							res.RelicBonusPattern = "{0} {1}";
-							res.RelicBonusFormat = string.Format(CultureInfo.CurrentCulture, res.RelicBonusPattern
-								, res.RelicBonusTitle
-								, TQColor.Yellow.ColorTag() + res.RelicBonusFileName
-							);
-						}
-						else
-						{
-							res.RelicBonusPattern = "{0}";
-							res.RelicBonusFormat = string.Format(CultureInfo.CurrentCulture, res.RelicBonusPattern, res.RelicBonusTitle);
-						}
-					}
-					else
-					{
-						if (itm.IsCharm)
-						{
-							res.RelicClass = res.AnimalPart;
-							res.RelicPattern = res.AnimalPartRatio;
-						}
-						else
-						{
-							res.RelicClass = res.RelicShard;
-							res.RelicPattern = res.RelicRatio;
-						}
-
-						res.RelicCompletionFormat = Format(res.RelicPattern, res.RelicClass, itm.Number, itm.baseItemInfo.CompletedRelicLevel);
-						res.RelicBonusFormat = res.RelicCompletionFormat;
-					}
-
-				}
-				else if (itm.IsArtifact)
-				{
-					// Add Artifact completion bonus
-					if (!string.IsNullOrEmpty(itm.RelicBonusId))
-					{
-						var RelicBonusIdExt = Path.GetFileNameWithoutExtension(TQData.NormalizeRecordPath(itm.RelicBonusId));
-						res.ArtifactBonus = Database.GetFriendlyName("xtagArtifactBonus");
-						res.ArtifactBonusFormat = string.Format(CultureInfo.CurrentCulture, "({0} {1})", res.ArtifactBonus, RelicBonusIdExt);
-					}
-
-					// Show Artifact Class (Lesser / Greater / Divine).
-					string artifactClassification = itm.baseItemInfo.GetString("artifactClassification").ToUpperInvariant();
-					res.ArtifactClass = TranslateArtifactClassification(artifactClassification);
-
-				}
-				else if (itm.IsFormulae)
-				{
-					// Added to show recipe type for Formulae
-					res.ArtifactRecipe = Database.GetFriendlyName("xtagArtifactRecipe");
-
-					if (string.IsNullOrWhiteSpace(res.ArtifactRecipe))
-						res.ArtifactRecipe = "Recipe";
-
-					// Get Reagents format
-					res.ArtifactReagents = Database.GetFriendlyName("xtagArtifactReagents");
-					if (string.IsNullOrWhiteSpace(res.ArtifactReagents))
-						res.ArtifactReagents = "Required Reagents  ({0}/{1})";
-					else
-						res.ArtifactReagents = ItemAttributeProvider.ConvertFormat(res.ArtifactReagents);
-
-					// it looks like the formulae reagents is hard coded at 3
-					res.FormulaeFormat = Format(res.ArtifactReagents, (object)0, 3);
-					res.FormulaeFormat = $"{TQColor.Orange.ColorTag()}{res.FormulaeFormat}";
-
-				}
-				else if (itm.DoesStack)
-				{
-					// display the # potions
-					if (itm.Number > 1)
-						res.NumberFormat = string.Format(CultureInfo.CurrentCulture, "({0:n0})", itm.Number);
-				}
-			}
-
-			#endregion
-
-			#region Suffix translation
-
-			if (!itm.IsRelic && !string.IsNullOrWhiteSpace(itm.suffixID))
-			{
-				if (itm.suffixInfo != null)
-				{
-					res.SuffixInfoDescription = Database.GetFriendlyName(itm.suffixInfo.DescriptionTag);
-					if (string.IsNullOrEmpty(res.SuffixInfoDescription))
-						res.SuffixInfoDescription = itm.suffixID;
-				}
-				else
-					res.SuffixInfoDescription = itm.suffixID;
-			}
-
-			#endregion
-
-			#region flavor text
-
-			// Removed Scroll flavor text since it gets printed by the skill effect code
-			if ((itm.IsPotion || itm.IsRelic || itm.IsScroll || itm.IsParchment || itm.IsQuestItem) && !string.IsNullOrWhiteSpace(itm.baseItemInfo?.StyleTag))
-			{
-				string flavor = Database.GetFriendlyName(itm.baseItemInfo.StyleTag);
-				if (flavor != null)
-				{
-					var ft = StringHelper.WrapWords(flavor, 40);
-					res.FlavorText = ft.ToArray();
-				}
-			}
-
-			#endregion
-
-			#endregion
-
-			List<string> results = new List<string>();
-
-			if (scopes?.HasFlag(FriendlyNamesExtraScopes.PrefixAttributes) ?? false)
-			{
-				if (itm.prefixInfo != null)
-					res.PrefixInfoRecords = Database.GetRecordFromFile(itm.prefixID);
-
-				if (res.PrefixInfoRecords?.Any() ?? false)
-					GetAttributesFromRecord(itm, res.PrefixInfoRecords, filterExtra, itm.prefixID, results);
-
-				res.PrefixAttributes = results.ToArray();
-			}
-
-			if (scopes?.HasFlag(FriendlyNamesExtraScopes.SuffixAttributes) ?? false)
-			{
-				results.Clear();
-
-				if (itm.suffixInfo != null)
-					res.SuffixInfoRecords = Database.GetRecordFromFile(itm.suffixID);
-
-				if (res.SuffixInfoRecords?.Any() ?? false)
-					GetAttributesFromRecord(itm, res.SuffixInfoRecords, filterExtra, itm.suffixID, results);
-
-				res.SuffixAttributes = results.ToArray();
-			}
-
-			if (scopes?.HasFlag(FriendlyNamesExtraScopes.BaseAttributes) ?? false)
-			{
-				results.Clear();
-
-				// res.baseItemInfoRecords should be already loaded
-				if (res.BaseItemInfoRecords?.Any() ?? false)
-					GetAttributesFromRecord(itm, res.BaseItemInfoRecords, filterExtra, itm.BaseItemId, results);
-			}
-
-			res.BaseAttributes = results.ToArray();
-
-			if (scopes?.HasFlag(FriendlyNamesExtraScopes.RelicAttributes) ?? false)
-			{
-				var tmp = new List<string>();
-
-				if (itm.RelicInfo != null)
-					res.RelicInfoRecords = Database.GetRecordFromFile(itm.relicID);
-
-				if (res.RelicInfoRecords?.Any() ?? false)
-					GetAttributesFromRecord(itm, res.RelicInfoRecords, filterExtra, itm.relicID, tmp);
-
-				res.Relic1Attributes = tmp.ToArray();
-			}
-
-			if (scopes?.HasFlag(FriendlyNamesExtraScopes.Relic2Attributes) ?? false)
-			{
-				var tmp = new List<string>();
-
-				if (itm.Relic2Info != null)
-					res.Relic2InfoRecords = Database.GetRecordFromFile(itm.relic2ID);
-
-				if (res.Relic2InfoRecords?.Any() ?? false)
-					GetAttributesFromRecord(itm, res.Relic2InfoRecords, filterExtra, itm.relic2ID, tmp);
-
-				res.Relic2Attributes = tmp.ToArray();
-			}
-
-			if (scopes?.HasFlag(FriendlyNamesExtraScopes.ItemSet) ?? false)
-				res.ItemSet = GetItemSetString(itm);
-
-			if (scopes?.HasFlag(FriendlyNamesExtraScopes.Requirements) ?? false)
-			{
-				var reqs = GetRequirements(itm);
-				res.Requirements = reqs.Requirements;
-				res.RequirementVariables = reqs.RequirementVariables;
-			}
-
-			#region Extra Attributes for specific types
-
-			// Shows Artifact stats for the formula
-			if (itm.IsFormulae && itm.baseItemInfo != null && (scopes?.HasFlag(FriendlyNamesExtraScopes.BaseAttributes) ?? false))
-			{
-				string artifactID = itm.baseItemInfo.GetString("artifactName");
-
-				if (!string.IsNullOrWhiteSpace(artifactID))
-				{
-					List<string> tmp = new List<string>();
-					res.FormulaeArtifactRecords = Database.GetRecordFromFile(artifactID);
-
-					// Display the name of the Artifact
-					res.FormulaeArtifactName = Database.GetFriendlyName(res.FormulaeArtifactRecords.GetString("description", 0));
-					if (string.IsNullOrEmpty(res.FormulaeArtifactName))
-						res.FormulaeArtifactName = "?Unknown Artifact Name?";
-
-					// Class
-					string artifactClassification = res.FormulaeArtifactRecords.GetString("artifactClassification", 0).ToUpperInvariant();
-					res.FormulaeArtifactClass = TranslateArtifactClassification(artifactClassification);
-
-					// Attributes
-					GetAttributesFromRecord(itm, res.FormulaeArtifactRecords, true, artifactID, tmp);
-					res.FormulaeArtifactAttributes = tmp.ToArray();
-				}
-			}
-
-			// Show the completion bonus. // TODO is it possible to have 2 relics on one artifact ?
-			if (itm.RelicBonusInfo != null
-				&& (scopes?.HasFlag(FriendlyNamesExtraScopes.RelicAttributes) ?? false)
-				&& (itm.IsArtifact // Artifact completion bonus
-					|| itm.IsRelic || itm.HasRelicSlot1 // Relic completion bonus
-				)
-			)
-			{
-				var tmp = new List<string>();
-
-				res.RelicBonus1InfoRecords = Database.GetRecordFromFile(itm.RelicBonusId);
-
-				if (res.RelicBonus1InfoRecords?.Any() ?? false)
-					GetAttributesFromRecord(itm, res.RelicBonus1InfoRecords, filterExtra, itm.RelicBonusId, tmp);
-
-				res.RelicBonus1Attributes = tmp.ToArray();
-			}
-
-			// Show the Relic2 completion bonus.
-			if (itm.HasRelicSlot2 && itm.RelicBonus2Info != null && (scopes?.HasFlag(FriendlyNamesExtraScopes.Relic2Attributes) ?? false))
-			{
-				var tmp = new List<string>();
-				res.RelicBonus2InfoRecords = Database.GetRecordFromFile(itm.RelicBonus2Id);
-
-				if (res.RelicBonus2InfoRecords?.Any() ?? false)
-					GetAttributesFromRecord(itm, res.RelicBonus2InfoRecords, filterExtra, itm.RelicBonus2Id, tmp);
-
-				res.RelicBonus2Attributes = tmp.ToArray();
-			}
-
-			#endregion
-
-			FriendlyNamesCache.Add(key, res);
-			itm.CurrentFriendlyNameResult.TmpAttrib.Clear();
-			itm.CurrentFriendlyNameResult = null;
-			return res;
 		}
 
 		/// <summary>

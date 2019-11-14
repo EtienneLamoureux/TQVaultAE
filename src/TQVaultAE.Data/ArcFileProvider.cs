@@ -304,7 +304,7 @@ namespace TQVaultAE.Data
 		/// <summary>
 		/// Read the table of contents of the ARC file
 		/// </summary>
-		private void ReadARCToC(ArcFile file)
+		public void ReadARCToC(ArcFile file)
 		{
 			// Format of an ARC file
 			// 0x08 - 4 bytes = # of files

@@ -515,7 +515,12 @@ namespace TQVaultAE.Data
 				if (TQDebug.DatabaseDebugLevel > 0)
 					Log.DebugFormat(CultureInfo.InvariantCulture, "Database.ReadARCFile('{0}', '{1}')", arcFileName, dataId);
 
-				ArcFile arcFile = this.arcFiles.GetOrAddAtomic(arcFileName, k => new ArcFile(k));
+				ArcFile arcFile = this.arcFiles.GetOrAddAtomic(arcFileName, k =>
+				{
+					var file = new ArcFile(k);
+					arcProv.ReadARCToC(file);// Heavy lifting in GetOrAddAtomic
+					return file;
+				});
 
 				// Now retrieve the data
 				byte[] ans = arcProv.GetData(arcFile, dataId);

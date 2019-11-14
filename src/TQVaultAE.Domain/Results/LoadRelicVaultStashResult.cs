@@ -7,7 +7,7 @@ namespace TQVaultAE.Domain.Results
 	{
 		public string RelicVaultStashFile;
 		public Stash Stash;
-		public bool? StashPresent;
-		public ArgumentException ArgumentException;
+		public bool? StashFound;
+		public ArgumentException StashArgumentException;
 	}
 }
