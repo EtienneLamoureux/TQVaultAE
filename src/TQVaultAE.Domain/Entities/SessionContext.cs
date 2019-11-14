@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Domain.Entities
 {
@@ -12,17 +13,17 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Dictionary of all loaded player files
 		/// </summary>
-		public readonly Dictionary<string, PlayerCollection> Players = new Dictionary<string, PlayerCollection>();
+		public readonly LazyConcurrentDictionary<string, PlayerCollection> Players = new LazyConcurrentDictionary<string, PlayerCollection>();
 
 		/// <summary>
 		/// Dictionary of all loaded vault files
 		/// </summary>
-		public readonly Dictionary<string, PlayerCollection> Vaults = new Dictionary<string, PlayerCollection>();
+		public readonly LazyConcurrentDictionary<string, PlayerCollection> Vaults = new LazyConcurrentDictionary<string, PlayerCollection>();
 
 		/// <summary>
 		/// Dictionary of all loaded player stash files
 		/// </summary>
-		public readonly Dictionary<string, Stash> Stashes = new Dictionary<string, Stash>();
+		public readonly LazyConcurrentDictionary<string, Stash> Stashes = new LazyConcurrentDictionary<string, Stash>();
 
 	}
 }

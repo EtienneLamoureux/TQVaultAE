@@ -261,7 +261,7 @@ namespace TQVaultAE.GUI
 						}
 
 						// Remove the file from the cache.
-						userContext.Vaults.Remove(filename);
+						userContext.Vaults.TryRemove(filename, out var remVault);
 
 						// Remove the deleted file from the list.
 						this.vaultListComboBox.Items.Remove(oldName);
@@ -285,7 +285,7 @@ namespace TQVaultAE.GUI
 							File.Move(oldFilename, newFilename);
 
 							// Remove the old vault from the cache.
-							userContext.Vaults.Remove(oldFilename);
+							userContext.Vaults.TryRemove(oldFilename, out var remOldVault);
 
 							// Get rid of the old name from the list
 							this.vaultListComboBox.Items.Remove(oldName);
@@ -294,7 +294,7 @@ namespace TQVaultAE.GUI
 							// since the list always contains Main Vault.
 							if (newName == VaultService.MAINVAULT)
 							{
-								userContext.Vaults.Remove(newFilename);
+								userContext.Vaults.TryRemove(newFilename, out var remMainVault);
 								this.vaultListComboBox.Items.Remove(newName);
 							}
 

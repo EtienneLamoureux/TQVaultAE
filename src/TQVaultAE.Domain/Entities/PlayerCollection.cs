@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Domain.Entities
 {
+	using System;
 	using System.Collections;
 	using System.Collections.Generic;
 
@@ -13,6 +14,16 @@ namespace TQVaultAE.Domain.Entities
 	/// </summary>
 	public class PlayerCollection : IEnumerable<SackCollection>
 	{
+
+		/// <summary>
+		/// Tell if the Vault succesfully load
+		/// </summary>
+		public bool VaultLoaded;
+
+		/// <summary>
+		/// Raised exception at loading time.
+		/// </summary>
+		public ArgumentException ArgumentException;
 
 		/// <summary>
 		/// String holding the player name

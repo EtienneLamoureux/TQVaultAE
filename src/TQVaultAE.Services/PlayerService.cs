@@ -51,21 +51,21 @@ namespace TQVaultAE.Services
 
 			result.PlayerFile = GamePathResolver.GetPlayerFile(selectedText);
 
-			if (!this.userContext.Players.TryGetValue(result.PlayerFile, out result.Player))
+			var resultPlayer = this.userContext.Players.GetOrAddAtomic(result.PlayerFile, k =>
 			{
-				result.Player = new PlayerCollection(selectedText, result.PlayerFile);
-				result.Player.IsImmortalThrone = isIT;
+				var resultPC = new PlayerCollection(selectedText, k);
+				resultPC.IsImmortalThrone = isIT;
 				try
 				{
-					PlayerCollectionProvider.LoadFile(result.Player);
-					this.userContext.Players.Add(result.PlayerFile, result.Player);
+					PlayerCollectionProvider.LoadFile(resultPC);
 				}
 				catch (ArgumentException argumentException)
 				{
-					result.PlayerArgumentException = argumentException;
+					resultPC.ArgumentException = argumentException;
 				}
-			}
-
+				return resultPC;
+			});
+			result.Player = resultPlayer;
 
 			#endregion
 
@@ -73,20 +73,22 @@ namespace TQVaultAE.Services
 
 			result.StashFile = GamePathResolver.GetPlayerStashFile(selectedText);
 
-			if (!this.userContext.Stashes.TryGetValue(result.StashFile, out result.Stash))
+			var resultStash = this.userContext.Stashes.GetOrAddAtomic(result.StashFile, k =>
 			{
-				result.Stash = new Stash(selectedText, result.StashFile);
+				var stash = new Stash(selectedText, k);
 				try
 				{
-					result.StashFound = StashProvider.LoadFile(result.Stash);
-					if (result.StashFound.Value)
-						this.userContext.Stashes.Add(result.StashFile, result.Stash);
+					stash.StashFound = StashProvider.LoadFile(stash);
 				}
 				catch (ArgumentException argumentException)
 				{
-					result.StashArgumentException = argumentException;
+					stash.StashArgumentException = argumentException;
 				}
-			}
+				return stash;
+			});
+			result.Stash = resultStash;
+			result.StashFound = resultStash.StashFound;
+			result.StashArgumentException = resultStash.StashArgumentException;
 
 			#endregion
 
@@ -105,10 +107,10 @@ namespace TQVaultAE.Services
 			int numModified = 0;
 
 			// Save each player as necessary
-			foreach (KeyValuePair<string, PlayerCollection> kvp in this.userContext.Players)
+			foreach (KeyValuePair<string, Lazy<PlayerCollection>> kvp in this.userContext.Players)
 			{
 				string playerFile = kvp.Key;
-				PlayerCollection player = kvp.Value;
+				PlayerCollection player = kvp.Value.Value;
 
 				if (player == null) continue;
 

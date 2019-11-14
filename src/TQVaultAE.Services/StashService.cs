@@ -35,22 +35,23 @@ namespace TQVaultAE.Services
 
 			result.TransferStashFile = GamePathResolver.TransferStashFile;
 
-			if (!this.userContext.Stashes.TryGetValue(result.TransferStashFile, out result.Stash))
+			var resultStash = this.userContext.Stashes.GetOrAddAtomic(result.TransferStashFile, k =>
 			{
-				result.Stash = new Stash(Resources.GlobalTransferStash, result.TransferStashFile);
-				result.Stash.IsImmortalThrone = true;
-
+				var stash = new Stash(Resources.GlobalTransferStash, result.TransferStashFile);
 				try
 				{
-					result.StashPresent = StashProvider.LoadFile(result.Stash);
-					if (result.StashPresent.Value)
-						this.userContext.Stashes.Add(result.TransferStashFile, result.Stash);
+					stash.StashFound = StashProvider.LoadFile(stash);
 				}
 				catch (ArgumentException argumentException)
 				{
-					result.ArgumentException = argumentException;
+					stash.StashArgumentException = argumentException;
 				}
-			}
+				return stash;
+			});
+			result.Stash = resultStash;
+			result.Stash.IsImmortalThrone = true;
+			result.StashFound = resultStash.StashFound;
+			result.StashArgumentException = resultStash.StashArgumentException;
 
 			return result;
 		}
@@ -66,26 +67,28 @@ namespace TQVaultAE.Services
 			result.RelicVaultStashFile = GamePathResolver.RelicVaultStashFile;
 
 			// Get the relic vault stash
-			if (!this.userContext.Stashes.TryGetValue(result.RelicVaultStashFile, out result.Stash))
+			var resultStash = this.userContext.Stashes.GetOrAddAtomic(result.RelicVaultStashFile, k =>
 			{
-				result.Stash = new Stash(Resources.GlobalRelicVaultStash, result.RelicVaultStashFile);
-				result.Stash.CreateEmptySack();
-				result.Stash.Sack.StashType = SackType.RelicVaultStash;
+				var stash = new Stash(Resources.GlobalRelicVaultStash, k);
+				stash.CreateEmptySack();
+				stash.Sack.StashType = SackType.RelicVaultStash;
 
 				try
 				{
-					result.StashPresent = StashProvider.LoadFile(result.Stash);
-					if (result.StashPresent.Value)
-					{
-						result.Stash.Sack.StashType = SackType.RelicVaultStash;
-						this.userContext.Stashes.Add(result.RelicVaultStashFile, result.Stash);
-					}
+					stash.StashFound = StashProvider.LoadFile(stash);
+					if (stash.StashFound.Value)
+						stash.Sack.StashType = SackType.RelicVaultStash;
 				}
 				catch (ArgumentException argumentException)
 				{
-					result.ArgumentException = argumentException;
+					stash.StashArgumentException = argumentException;
 				}
-			}
+
+				return stash;
+			});
+			result.Stash = resultStash;
+			result.StashFound = resultStash.StashFound;
+			result.StashArgumentException = resultStash.StashArgumentException;
 
 			return result;
 		}
@@ -98,10 +101,10 @@ namespace TQVaultAE.Services
 		public void SaveAllModifiedStashes(ref Stash stashOnError)
 		{
 			// Save each stash as necessary
-			foreach (KeyValuePair<string, Stash> kvp in this.userContext.Stashes)
+			foreach (KeyValuePair<string, Lazy<Stash>> kvp in this.userContext.Stashes)
 			{
 				string stashFile = kvp.Key;
-				Stash stash = kvp.Value;
+				Stash stash = kvp.Value.Value;
 
 				if (stash == null) continue;
 
