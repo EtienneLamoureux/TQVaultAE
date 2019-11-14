@@ -15,7 +15,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Raised exception at loading time.
 		/// </summary>
-		public ArgumentException StashArgumentException;
+		public ArgumentException ArgumentException;
 		/// <summary>
 		/// return result of <see cref="StashProvider.LoadFile"/> from loading time.
 		/// </summary>

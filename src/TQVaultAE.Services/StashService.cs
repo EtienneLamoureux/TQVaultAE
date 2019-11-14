@@ -44,14 +44,12 @@ namespace TQVaultAE.Services
 				}
 				catch (ArgumentException argumentException)
 				{
-					stash.StashArgumentException = argumentException;
+					stash.ArgumentException = argumentException;
 				}
 				return stash;
 			});
 			result.Stash = resultStash;
 			result.Stash.IsImmortalThrone = true;
-			result.StashFound = resultStash.StashFound;
-			result.StashArgumentException = resultStash.StashArgumentException;
 
 			return result;
 		}
@@ -81,14 +79,14 @@ namespace TQVaultAE.Services
 				}
 				catch (ArgumentException argumentException)
 				{
-					stash.StashArgumentException = argumentException;
+					stash.ArgumentException = argumentException;
 				}
 
 				return stash;
 			});
 			result.Stash = resultStash;
 			result.StashFound = resultStash.StashFound;
-			result.StashArgumentException = resultStash.StashArgumentException;
+			result.StashArgumentException = resultStash.ArgumentException;
 
 			return result;
 		}

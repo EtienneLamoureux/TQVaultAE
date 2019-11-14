@@ -53,15 +53,15 @@ namespace TQVaultAE.GUI
 			// Get the transfer stash
 			try
 			{
-				if (result.StashFound.HasValue && !result.StashFound.Value)
+				if (result.Stash.StashFound.HasValue && !result.Stash.StashFound.Value)
 				{
 					var msg = string.Concat(Resources.StashNotFoundMsg, "\n\nTransfer Stash\n\n", result.TransferStashFile);
 					MessageBox.Show(msg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
-				if (result.StashArgumentException != null)
+				if (result.Stash.ArgumentException != null)
 				{
-					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.TransferStashFile, result.StashArgumentException.Message);
+					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.TransferStashFile, result.Stash.ArgumentException.Message);
 					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 

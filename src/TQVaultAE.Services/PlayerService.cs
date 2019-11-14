@@ -87,13 +87,11 @@ namespace TQVaultAE.Services
 				}
 				catch (ArgumentException argumentException)
 				{
-					stash.StashArgumentException = argumentException;
+					stash.ArgumentException = argumentException;
 				}
 				return stash;
 			});
 			result.Stash = resultStash;
-			result.StashFound = resultStash.StashFound;
-			result.StashArgumentException = resultStash.StashArgumentException;
 
 			#endregion
 

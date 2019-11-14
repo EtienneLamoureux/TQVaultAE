@@ -611,17 +611,17 @@ namespace TQVaultAE.GUI
 			Parallel.Invoke(lambdacharactersIT.Concat(lambdaVault).ToArray());// Parallele loading
 
 			// Dispay errors
-			bagPlayer.Where(p => p.PlayerArgumentException != null || p.StashArgumentException != null).ToList()
+			bagPlayer.Where(p => p.Player.ArgumentException != null || p.Stash.ArgumentException != null).ToList()
 				.ForEach(result =>
 				{
-					if (result.PlayerArgumentException != null)
+					if (result.Player.ArgumentException != null)
 					{
-						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.PlayerFile, result.PlayerArgumentException.Message);
+						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.PlayerFile, result.Player.ArgumentException.Message);
 						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 					}
-					if (result.StashArgumentException != null)
+					if (result.Player.ArgumentException != null)
 					{
-						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.StashFile, result.StashArgumentException.Message);
+						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.StashFile, result.Stash.ArgumentException.Message);
 						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 					}
 				});

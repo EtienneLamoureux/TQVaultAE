@@ -7,7 +7,5 @@ namespace TQVaultAE.Domain.Results
 	{
 		public string TransferStashFile;
 		public Stash Stash;
-		public bool? StashFound;
-		public ArgumentException StashArgumentException;
 	}
 }
