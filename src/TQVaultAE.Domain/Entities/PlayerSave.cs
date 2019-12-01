@@ -28,10 +28,10 @@ namespace TQVaultAE.Domain.Entities
 		{
 			//return $"{this.Name}{PlayerService.CustomDesignator}"; // Old
 			return string.Join(string.Empty, new[] {
-				Info is null ? Name : $"<{Name}>"
-				, Info?.Class is null ? string.Empty : $", <{Translate.TranslateCharacterClassName(Info.Class)}>"
+				Info is null ? Name : $"{Name}"
+				, Info?.Class is null ? string.Empty : $", {Translate.TranslateCharacterClassName(Info.Class)}"
 				, !string.IsNullOrWhiteSpace(Info?.Class) && Info?.CurrentLevel != null ?  " -" : string.Empty
-				, Info?.CurrentLevel is null ? string.Empty : $" Level : <{Info.CurrentLevel}>"
+				, Info?.CurrentLevel is null ? string.Empty : $" Level : {Info.CurrentLevel}"
 				//, IsCustom ? $", IsCustom" : string.Empty // CustomMap is not specificaly related to this character
 			});
 		}
