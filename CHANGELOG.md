@@ -1,28 +1,23 @@
 # Changelog
-## 3.5.0
+## 3.4.0
 ### Features
-- #125 Add character class and level to character selection dropdown
-- #138 Add optional colored backgrounds to items
+- #138 Add optional colored backgrounds to items to reflect rarity
   - #147 Show equipability of item as a colored background
-- 
+- #125 Add character class and level to character selection dropdown
+- #220 Allow to copy/duplicate сharacter equipment if "Player equipment Readonly" is set
+- #234 Display class submasteries in character panel
+- #225 Add a configuration option to choose between the two possible tooltip detail levels
+- #215 Restore the last window size when re-opening the tool
 
 ### Bugs
 - #249 Unlock masteries at level 2 (First) and 8 (Second) when increasing level in Character editing
+- #246 Fix display of negative bonuses when listing item stats
+- #232 Word-wrap labels in the player info panel
 
 ### Other
 - #258 General loading time improvement on "PreloadAll" setting
 - #252 Make TQDebug.DebugEnabled available for Release build
 - #261 Fix game files lookup in ARZExplorer
-
-## 3.4.0
-### Features
-- #225  Add a configuration option to choose between the two possible tooltip detail levels
-
-### Bugs
-- #246 Fix display of negative bonuses when listing item stats
-
-### Other
-- #232 Word-wrap labels in the player info panel
 
 ## 3.3.1
 ### Bugs
