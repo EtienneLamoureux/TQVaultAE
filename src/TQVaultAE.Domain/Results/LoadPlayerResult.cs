@@ -9,9 +9,6 @@ namespace TQVaultAE.Domain.Results
 		public string PlayerFile;
 		public PlayerCollection Player;
 		public Stash Stash;
-		public bool? StashFound;
-		public ArgumentException PlayerArgumentException;
 		public string StashFile;
-		public ArgumentException StashArgumentException;
 	}
 }

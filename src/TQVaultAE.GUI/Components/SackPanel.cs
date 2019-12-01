@@ -21,6 +21,7 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.GUI.Tooltip;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Contracts.Providers;
+	using TQVaultAE.Domain.Helpers;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel.
@@ -34,8 +35,14 @@ namespace TQVaultAE.GUI.Components
 		protected readonly IItemProvider ItemProvider;
 		protected readonly ITQDataService TQData;
 		protected readonly IServiceProvider ServiceProvider;
+		ItemStyle[] ItemStyleBackGroundColorEnable = new[] { ItemStyle.Epic, ItemStyle.Legendary, ItemStyle.Rare, ItemStyle.Common };
 
 		#region SackPanel Fields
+
+		/// <summary>
+		/// User current data context
+		/// </summary>
+		private SessionContext userContext;
 
 		/// <summary>
 		/// The currently selected/displayed sack
@@ -171,6 +178,7 @@ namespace TQVaultAE.GUI.Components
 			this.Database = this.ServiceProvider.GetService<IDatabase>();
 			this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
 			this.TQData = this.ServiceProvider.GetService<ITQDataService>();
+			this.userContext = this.ServiceProvider.GetService<SessionContext>();
 
 			this.Log = this.ServiceProvider.GetService<ILogger<SackPanel>>().Logger;
 
@@ -1935,12 +1943,41 @@ namespace TQVaultAE.GUI.Components
 				return;
 
 			var ibmp = this.UIService.GetBitmap(item);
+
 			Rectangle itemRect = new Rectangle(
 				screenLocation.X
 				, screenLocation.Y
 				, Convert.ToInt32(ibmp.Width * UIService.Scale)
 				, Convert.ToInt32(ibmp.Height * UIService.Scale)
 			);
+
+			var alpha = Config.Settings.Default.ItemBGColorOpacity;
+
+			// Display Red BG Color if item cannot be equipped
+			if (Config.Settings.Default.EnableCharacterRequierementBGColor)
+			{
+				var reqs = this.ItemProvider.GetFriendlyNames(item, FriendlyNamesExtraScopes.Requirements).RequirementVariables;
+				var currPlayer = this.userContext.CurrentPlayer;
+				if (currPlayer != null && reqs != null && reqs.Any() && !currPlayer.IsPlayerMeetRequierements(reqs))
+				{
+					using (SolidBrush brush = new SolidBrush(Color.FromArgb(alpha, TQColor.Red.Color())))
+					{
+						graphics.FillRectangle(brush, itemRect);
+					}
+					goto normalBGColor;
+				}
+			}
+
+			// Display item BG color 
+			if (alpha > 0 && ItemStyleBackGroundColorEnable.Contains(item.ItemStyle))
+			{
+				using (SolidBrush brush = new SolidBrush(Color.FromArgb(alpha, item.ItemStyle.Color())))
+				{
+					graphics.FillRectangle(brush, itemRect);
+				}
+			}
+
+		normalBGColor:
 
 			graphics.DrawImage(ibmp, itemRect, 0, 0, ibmp.Width, ibmp.Height, GraphicsUnit.Pixel, imageAttributes);
 

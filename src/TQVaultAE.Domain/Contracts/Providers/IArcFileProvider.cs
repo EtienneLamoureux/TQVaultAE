@@ -18,6 +18,10 @@ namespace TQVaultAE.Domain.Contracts.Providers
 		/// <returns>Returns byte array of the data corresponding to the string ID.</returns>
 		byte[] GetData(ArcFile file, string dataId);
 		/// <summary>
+		/// Read the table of contents of the ARC file
+		/// </summary>
+		void ReadARCToC(ArcFile file);
+		/// <summary>
 		/// Gets the sorted list of directoryEntries.
 		/// </summary>
 		/// <returns>string array holding the sorted list</returns>

@@ -19,6 +19,11 @@ namespace TQVaultAE.Config
 		private static bool debugEnabled = Config.Settings.Default.DebugEnabled;
 
 		/// <summary>
+		/// Current debug level
+		/// </summary>
+		private static Level debugEnabledLevel = Level.Info;
+
+		/// <summary>
 		/// Holds the arc file debug level.
 		/// </summary>
 		private static int arcFileDebugLevel = Config.Settings.Default.ARCFileDebugLevel;
@@ -39,19 +44,30 @@ namespace TQVaultAE.Config
 		private static int itemAttributesDebugLevel = Config.Settings.Default.ItemAttributesDebugLevel;
 
 		/// <summary>
+		/// Ctor
+		/// </summary>
+		static TQDebug()
+		{
+			// Apply config at startup
+			if (debugEnabled && debugEnabledLevel != Level.Debug)
+				debugEnabledLevel = Level.Debug;
+
+			Logger.ChangeRootLogLevel(debugEnabledLevel);
+		}
+
+		/// <summary>
 		/// Gets or sets a value indicating whether debugging has been enabled
 		/// </summary>
 		public static bool DebugEnabled
 		{
-			get
-			{
-				return debugEnabled;
-			}
+			get => debugEnabled;
 			set
 			{
 				bool lastValue = debugEnabled;
 				debugEnabled = value;
-				Logger.ChangeRootLogLevel(value ? Level.Debug : Level.Info);
+
+				if (lastValue != debugEnabled)
+					Logger.ChangeRootLogLevel(value ? Level.Debug : Level.Info);
 			}
 		}
 
@@ -60,22 +76,8 @@ namespace TQVaultAE.Config
 		/// </summary>
 		public static int DatabaseDebugLevel
 		{
-			get
-			{
-				if (DebugEnabled)
-				{
-					return databaseDebugLevel;
-				}
-				else
-				{
-					return 0;
-				}
-			}
-
-			set
-			{
-				databaseDebugLevel = value;
-			}
+			get => DebugEnabled ? databaseDebugLevel : 0;
+			set => databaseDebugLevel = value;
 		}
 
 		/// <summary>
@@ -83,22 +85,8 @@ namespace TQVaultAE.Config
 		/// </summary>
 		public static int ArcFileDebugLevel
 		{
-			get
-			{
-				if (DebugEnabled)
-				{
-					return arcFileDebugLevel;
-				}
-				else
-				{
-					return 0;
-				}
-			}
-
-			set
-			{
-				arcFileDebugLevel = value;
-			}
+			get => DebugEnabled ? arcFileDebugLevel : 0;
+			set => arcFileDebugLevel = value;
 		}
 
 		/// <summary>
@@ -106,22 +94,8 @@ namespace TQVaultAE.Config
 		/// </summary>
 		public static int ItemDebugLevel
 		{
-			get
-			{
-				if (DebugEnabled)
-				{
-					return itemDebugLevel;
-				}
-				else
-				{
-					return 0;
-				}
-			}
-
-			set
-			{
-				itemDebugLevel = value;
-			}
+			get => DebugEnabled ? itemDebugLevel : 0;
+			set => itemDebugLevel = value;
 		}
 
 		/// <summary>
@@ -129,22 +103,8 @@ namespace TQVaultAE.Config
 		/// </summary>
 		public static int ItemAttributesDebugLevel
 		{
-			get
-			{
-				if (DebugEnabled)
-				{
-					return itemAttributesDebugLevel;
-				}
-				else
-				{
-					return 0;
-				}
-			}
-
-			set
-			{
-				itemAttributesDebugLevel = value;
-			}
+			get => DebugEnabled ? itemAttributesDebugLevel : 0;
+			set => itemAttributesDebugLevel = value;
 		}
 
 	}

@@ -33,6 +33,12 @@ namespace TQVaultAE.Presentation
 		/// </summary>
 		public string ItemSeed => Resources.ItemSeed ?? "ItemSeed: {0} (0x{0:X8}) ({1:p3})";
 		/// <summary>
+		/// Return Class Name translation
+		/// </summary>
+		/// <param name="xTagClassKey"></param>
+		/// <returns></returns>
+		public string TranslateCharacterClassName(string xTagClassKey) => Resources.ResourceManager.GetString(xTagClassKey);
+		/// <summary>
 		/// Gets the string which indicates an Immortal Throne item.
 		/// </summary>
 		public string ItemIT => Resources.ItemIT ?? "Immortal Throne Item";

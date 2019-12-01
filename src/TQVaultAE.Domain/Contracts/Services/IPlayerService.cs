@@ -9,10 +9,10 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// Loads a player using the drop down list.
 		/// Assumes designators are appended to character name.
 		/// </summary>
-		/// <param name="selectedText">Player string from the drop down list.</param>
+		/// <param name="selectedSave">Player string from the drop down list.</param>
 		/// <param name="isIT"></param>
 		/// <returns></returns>
-		LoadPlayerResult LoadPlayer(string selectedText, bool isIT = false);
+		LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool isIT = false);
 
 		/// <summary>
 		/// Attempts to save all modified player files
@@ -21,5 +21,11 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// <returns>True if there were any modified player files.</returns>
 		/// <exception cref="IOException">can happen during file save</exception>
 		bool SaveAllModifiedPlayers(ref PlayerCollection playerOnError);
+
+		/// <summary>
+		/// Gets a list of all of the character files in the save folder.
+		/// </summary>
+		/// <returns>List of character files descriptor</returns>
+		PlayerSave[] GetPlayerSaveList();
 	}
 }

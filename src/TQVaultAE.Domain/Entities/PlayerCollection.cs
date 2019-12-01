@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Domain.Entities
 {
+	using System;
 	using System.Collections;
 	using System.Collections.Generic;
 
@@ -13,6 +14,15 @@ namespace TQVaultAE.Domain.Entities
 	/// </summary>
 	public class PlayerCollection : IEnumerable<SackCollection>
 	{
+		/// <summary>
+		/// Tell if the Vault succesfully load
+		/// </summary>
+		public bool VaultLoaded;
+
+		/// <summary>
+		/// Raised exception at loading time.
+		/// </summary>
+		public ArgumentException ArgumentException;
 
 		/// <summary>
 		/// String holding the player name
@@ -23,26 +33,6 @@ namespace TQVaultAE.Domain.Entities
 		/// Byte array holding the raw data from the file.
 		/// </summary>
 		public byte[] rawData;
-
-		/// <summary>
-		/// Position of the item block within the file.
-		/// </summary>
-		public int itemBlockStart;
-
-		/// <summary>
-		/// Position of the end of the item block within the file.
-		/// </summary>
-		public int itemBlockEnd;
-
-		/// <summary>
-		/// Position of the equipment block within the file.
-		/// </summary>
-		public int equipmentBlockStart;
-
-		/// <summary>
-		/// Position of the end of the equipment block within the file.
-		/// </summary>
-		public int equipmentBlockEnd;
 
 		/// <summary>
 		/// Number of sacks that this file holds
@@ -80,6 +70,8 @@ namespace TQVaultAE.Domain.Entities
 			this.PlayerFile = playerFile;
 			this.PlayerName = playerName;
 		}
+
+		public bool IsPlayer { get => this.PlayerFile.EndsWith("player.chr", System.StringComparison.InvariantCultureIgnoreCase); }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this file is a vault
@@ -119,27 +111,15 @@ namespace TQVaultAE.Domain.Entities
 					foreach (SackCollection sack in this.sacks)
 					{
 						if (sack.IsModified)
-						{
 							return true;
-						}
 					}
 				}
 
-				if (this.EquipmentSack != null)
-				{
-					if (this.EquipmentSack.IsModified)
-					{
-						return true;
-					}
-				}
+				if (this.EquipmentSack != null && this.EquipmentSack.IsModified)
+					return true;
 
-				if (this.PlayerInfo != null)
-				{
-					if (this.PlayerInfo.Modified)
-					{
-						return (true);
-					}
-				}
+				if (this.PlayerInfo != null && this.PlayerInfo.Modified)
+					return true;
 
 				return false;
 			}
@@ -150,22 +130,8 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		public string PlayerName
 		{
-			get
-			{
-				if (!this.IsVault && this.IsImmortalThrone)
-				{
-					return string.Concat(this.playerName, " - Immortal Throne");
-				}
-				else
-				{
-					return this.playerName;
-				}
-			}
-
-			private set
-			{
-				this.playerName = value;
-			}
+			get => (!this.IsVault && this.IsImmortalThrone) ? string.Concat(this.playerName, " - Immortal Throne") : this.playerName;
+			private set => this.playerName = value;
 		}
 
 		/// <summary>
@@ -173,15 +139,7 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		public int NumberOfSacks
 		{
-			get
-			{
-				if (this.sacks == null)
-				{
-					return 0;
-				}
-
-				return this.sacks.Length;
-			}
+			get => (this.sacks == null) ? 0 : this.sacks.Length;
 		}
 
 		/// <summary>
@@ -191,25 +149,18 @@ namespace TQVaultAE.Domain.Entities
 		public IEnumerator<SackCollection> GetEnumerator()
 		{
 			if (this.sacks == null)
-			{
 				yield break;
-			}
+
 			foreach (SackCollection sack in this.sacks)
-			{
 				yield return sack;
-			}
 		}
-
-
 
 		/// <summary>
 		/// Non Generic enumerator interface.
 		/// </summary>
 		/// <returns>Generic interface implementation.</returns>
 		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return this.GetEnumerator();
-		}
+			=> this.GetEnumerator();
 
 		/// <summary>
 		/// Creates empty sacks within the file.
@@ -234,14 +185,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <param name="sackNumber">Number of the sack we are retrieving</param>
 		/// <returns>Sack instace for the corresponding sack number</returns>
 		public SackCollection GetSack(int sackNumber)
-		{
-			if (this.sacks == null || this.sacks.Length <= sackNumber)
-			{
-				return null;
-			}
-
-			return this.sacks[sackNumber];
-		}
+			=> (this.sacks == null || this.sacks.Length <= sackNumber) ? null : this.sacks[sackNumber];
 
 		/// <summary>
 		/// Moves a sack within the instance.  Used for renumbering the sacks.
@@ -252,9 +196,9 @@ namespace TQVaultAE.Domain.Entities
 		public bool MoveSack(int source, int destination)
 		{
 			// Do a little bit of error handling
-			if (this.sacks == null ||
-					destination < 0 || destination > this.sacks.Length ||
-					source < 0 || source > this.sacks.Length || source == destination)
+			if (this.sacks == null
+				|| destination < 0 || destination > this.sacks.Length
+				|| source < 0 || source > this.sacks.Length || source == destination)
 			{
 				return false;
 			}
@@ -263,9 +207,7 @@ namespace TQVaultAE.Domain.Entities
 
 			// Copy the whole array first.
 			foreach (SackCollection sack in this.sacks)
-			{
 				tmp.Add(sack);
-			}
 
 			// Now we can shuffle things around
 			tmp.RemoveAt(source);
@@ -287,9 +229,9 @@ namespace TQVaultAE.Domain.Entities
 		public bool CopySack(int source, int destination)
 		{
 			// Do a little bit of error handling
-			if (this.sacks == null ||
-					destination < 0 || destination > this.sacks.Length ||
-					source < 0 || source > this.sacks.Length || source == destination)
+			if (this.sacks == null
+				|| destination < 0 || destination > this.sacks.Length
+				|| source < 0 || source > this.sacks.Length || source == destination)
 			{
 				return false;
 			}
@@ -305,7 +247,41 @@ namespace TQVaultAE.Domain.Entities
 			return false;
 		}
 
+		const string Key_LevelRequirement = "LevelRequirement";
+		const string Key_Strength = "Strength";
+		const string Key_Dexterity = "Dexterity";
+		const string Key_Intelligence = "Intelligence";
 
+		public bool IsPlayerMeetRequierements(SortedList<string, Variable> requirementVariables)
+		{
+			if (this.IsVault || this.PlayerInfo is null) return true;
 
+			// "LevelRequirement"
+			int LevelRequirement = 0;
+			if (requirementVariables.ContainsKey(Key_LevelRequirement))
+				LevelRequirement = requirementVariables[Key_LevelRequirement].GetInt32();
+
+			// "Strength"
+			int Strength = 0;
+			if (requirementVariables.ContainsKey(Key_Strength))
+				Strength = requirementVariables[Key_Strength].GetInt32();
+
+			// Dexterity
+			int Dexterity = 0;
+			if (requirementVariables.ContainsKey(Key_Dexterity))
+				Dexterity = requirementVariables[Key_Dexterity].GetInt32();
+
+			// Intelligence
+			int Intelligence = 0;
+			if (requirementVariables.ContainsKey(Key_Intelligence))
+				Intelligence = requirementVariables[Key_Intelligence].GetInt32();
+
+			return
+				LevelRequirement <= this.PlayerInfo.CurrentLevel
+				&& Strength <= this.PlayerInfo.BaseStrength
+				&& Dexterity <= this.PlayerInfo.BaseDexterity
+				&& Intelligence <= this.PlayerInfo.BaseIntelligence
+			;
+		}
 	}
 }

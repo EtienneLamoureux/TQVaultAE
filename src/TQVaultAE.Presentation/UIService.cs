@@ -8,6 +8,7 @@ using TQVaultAE.Config;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Logs;
 
 namespace TQVaultAE.Presentation
@@ -27,7 +28,7 @@ namespace TQVaultAE.Presentation
 		/// <summary>
 		/// Dictionary of all bitmaps in the database.
 		/// </summary>
-		private Dictionary<string, Bitmap> _Bitmaps;
+		private LazyConcurrentDictionary<string, Bitmap> _Bitmaps = new LazyConcurrentDictionary<string, Bitmap>();
 
 		/// <summary>
 		/// Default bitmap when one cannot be found in the database.
@@ -105,7 +106,6 @@ namespace TQVaultAE.Presentation
 				this.Log = log.Logger;
 				this.Database = database;
 				this.TQData = tQData;
-				this._Bitmaps = new Dictionary<string, Bitmap>();
 				this.BitmapService = bitmapService;
 				this.LoadRelicOverlayBitmap();
 			}
@@ -167,16 +167,13 @@ namespace TQVaultAE.Presentation
 				Log.DebugFormat(CultureInfo.InvariantCulture, "Database.LoadBitmap({0})", resourceId);
 
 			resourceId = TQData.NormalizeRecordPath(resourceId);
-			Bitmap bitmap;
 
-			if (_Bitmaps.ContainsKey(resourceId))
-				bitmap = this._Bitmaps[resourceId];
-			else
+			Bitmap bitmap = _Bitmaps.GetOrAddAtomic(resourceId, k =>
 			{
 				// Load the resource
-				byte[] texData = Database.LoadResource(resourceId);
-				bitmap = AddBitmap(resourceId, texData);
-			}
+				byte[] texData = Database.LoadResource(k);
+				return AddBitmap(k, texData);
+			});
 
 			if (TQDebug.DatabaseDebugLevel > 0)
 				Log.Debug("Exiting Database.LoadBitmap()");
@@ -200,12 +197,11 @@ namespace TQVaultAE.Presentation
 				Log.DebugFormat(CultureInfo.InvariantCulture, "Database.LoadBitmap({0})", resourceId);
 
 			resourceId = TQData.NormalizeRecordPath(resourceId);
-			Bitmap bitmap;
 
-			if (_Bitmaps.ContainsKey(resourceId))
-				bitmap = this._Bitmaps[resourceId];
-			else
-				bitmap = AddBitmap(resourceId, texData);
+			Bitmap bitmap = _Bitmaps.GetOrAddAtomic(resourceId, k =>
+			{
+				return AddBitmap(k, texData);
+			});
 
 			if (TQDebug.DatabaseDebugLevel > 0)
 				Log.Debug("Exiting Database.LoadBitmap()");
@@ -249,8 +245,6 @@ namespace TQVaultAE.Presentation
 				if (TQDebug.DatabaseDebugLevel > 1)
 					Log.DebugFormat(CultureInfo.InvariantCulture, "Created Bitmap {0} x {1}", bitmap.Width, bitmap.Height);
 			}
-
-			this._Bitmaps.Add(resourceId, bitmap);
 
 			return bitmap;
 		}

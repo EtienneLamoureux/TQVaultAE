@@ -6,8 +6,10 @@
 namespace TQVaultAE.Data
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Globalization;
 	using System.IO;
+	using System.Linq;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
@@ -47,13 +49,11 @@ namespace TQVaultAE.Data
 		{
 			if (pc.PlayerInfo == null) return;
 			if (playerInfo == null) return;
-			if (pc.rawData == null || pc.rawData.Length < 1) return;
+			if (pc.rawData == null || !pc.rawData.Any()) return;
 
-			var writer = new PlayerInfoWriter();
-			//validate the current data against the raw file
-			//there should be no changes 
-			writer.Validate(pc.PlayerInfo, pc.rawData);
 			pc.PlayerInfo.CurrentLevel = playerInfo.CurrentLevel;
+			pc.PlayerInfo.MasteriesAllowed = playerInfo.MasteriesAllowed;
+			pc.PlayerInfo.MasteriesResetRequiered = playerInfo.MasteriesResetRequiered;
 			pc.PlayerInfo.CurrentXP = playerInfo.CurrentXP;
 			pc.PlayerInfo.DifficultyUnlocked = playerInfo.DifficultyUnlocked;
 			pc.PlayerInfo.AttributesPoints = playerInfo.AttributesPoints;
@@ -64,8 +64,84 @@ namespace TQVaultAE.Data
 			pc.PlayerInfo.BaseHealth = playerInfo.BaseHealth;
 			pc.PlayerInfo.BaseMana = playerInfo.BaseMana;
 			pc.PlayerInfo.Money = playerInfo.Money;
+
 			//commit the player changes to the raw file
-			writer.Commit(pc.PlayerInfo, pc.rawData);
+			Commit(pc);
+		}
+
+
+		/// <summary>
+		/// Commits the player info changes to the player.chr file
+		/// </summary>
+		/// <param name="playerInfo"></param>
+		/// <param name="playerFileRawData"></param>
+		public void Commit(PlayerCollection pc)
+		{
+			TQData.WriteIntAfter(pc.rawData, "playerLevel", pc.PlayerInfo.CurrentLevel);
+
+			TQData.WriteIntAfter(pc.rawData, "money", pc.PlayerInfo.Money);
+
+			TQData.WriteIntAfter(pc.rawData, "masteriesAllowed", pc.PlayerInfo.MasteriesAllowed);
+
+			// first "temp" / first "block"
+			var difficultyUnlocked = TQData.WriteIntAfter(pc.rawData, "temp", pc.PlayerInfo.DifficultyUnlocked);
+
+			TQData.WriteIntAfter(pc.rawData, "currentStats.charLevel", pc.PlayerInfo.CurrentLevel);
+
+			TQData.WriteIntAfter(pc.rawData, "currentStats.experiencePoints", pc.PlayerInfo.CurrentXP);
+
+			TQData.WriteIntAfter(pc.rawData, "modifierPoints", pc.PlayerInfo.AttributesPoints);
+
+			TQData.WriteIntAfter(pc.rawData, "skillPoints", pc.PlayerInfo.SkillPoints);
+
+			var baseStrength = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseStrength, difficultyUnlocked.nextOffset);
+			var baseDexterity = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseDexterity, baseStrength.nextOffset);
+			var baseIntelligence = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseIntelligence, baseDexterity.nextOffset);
+			var baseHealth = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseHealth, baseIntelligence.nextOffset);
+			var baseMana = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseMana, baseHealth.nextOffset);
+
+			if (pc.PlayerInfo.MasteriesAllowed_OldValue.HasValue && pc.PlayerInfo.MasteriesAllowed < pc.PlayerInfo.MasteriesAllowed_OldValue
+				|| pc.PlayerInfo.MasteriesResetRequiered)
+			{
+				pc.PlayerInfo.ResetMasteries();
+
+				#region Override skill lines block after reset
+
+				// Find skill section boundaries
+				var firstblock = TQData.ReadIntAfter(pc.rawData, "begin_block");
+				var secondblock = TQData.ReadIntAfter(pc.rawData, "begin_block", firstblock.nextOffset);
+				var max = TQData.ReadIntAfter(pc.rawData, "max", secondblock.nextOffset);// Boundary top
+				var end_block = TQData.ReadIntAfter(pc.rawData, "end_block", max.nextOffset);
+				var masteriesAllowed = TQData.ReadIntAfter(pc.rawData, "masteriesAllowed", max.nextOffset);// Boundary bottom
+
+				// Split file
+				var startfile = pc.rawData.Take(max.nextOffset).ToArray();
+				var endfile = pc.rawData.Skip(masteriesAllowed.indexOf - 4).ToArray(); // -4 include key name length
+
+				// make binary section
+				var section = pc.PlayerInfo.SkillRecordList.SelectMany(s => s.ToBinary(secondblock.valueAsInt, end_block.valueAsInt)).ToArray();
+
+				// put pieces back together
+				pc.rawData = new[] {
+					startfile,
+					section,
+					endfile,
+				}.SelectMany(a => a).ToArray();
+
+				// Adjust "max" value
+				var found = TQData.WriteIntAfter(pc.rawData, "max", pc.PlayerInfo.SkillRecordList.Count, max.indexOf);
+
+				// Adjust "skillPoints"
+				var skillpointsToRestore = pc.PlayerInfo.ReleasedSkillPoints;
+
+				if (skillpointsToRestore > 0)
+					TQData.WriteIntAfter(pc.rawData, "skillPoints", pc.PlayerInfo.SkillPoints + skillpointsToRestore);
+
+				#endregion
+			}
+
+			//if this value is set to true, the TQVaultAE program will know save the player.chr file
+			pc.PlayerInfo.Modified = true;
 		}
 
 		/// <summary>
@@ -75,11 +151,7 @@ namespace TQVaultAE.Data
 		public void Save(PlayerCollection pc, string fileName)
 		{
 			byte[] data = Encode(pc);
-
-			using (FileStream outStream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-			{
-				outStream.Write(data, 0, data.Length);
-			}
+			File.WriteAllBytes(fileName, data);
 		}
 
 		/// <summary>
@@ -99,21 +171,33 @@ namespace TQVaultAE.Data
 			// Added to support equipment panel
 			byte[] rawEquipmentData = EncodeEquipmentData(pc);
 
-			// now make an array big enough to hold everything
-			byte[] ans = new byte[pc.itemBlockStart + rawItemData.Length + (pc.equipmentBlockStart - pc.itemBlockEnd) +
-				rawEquipmentData.Length + (pc.rawData.Length - pc.equipmentBlockEnd)];
+			// May have change with skill reset so i get the new offsets
+			var itemBlockStart = TQData.BinaryFindKey(pc.rawData, "numberOfSacks");
+			var itemBlockStartOffset = itemBlockStart.indexOf - 4;// -4 to include key name length
+			var itemBlockEnd = TQData.BinaryFindEndBlockOf(pc.rawData, "numberOfSacks");
+			var itemBlockEndOffset = itemBlockEnd.indexOf - 4;
 
-			// Now copy all the data into pc array
-			Array.Copy(pc.rawData, 0, ans, 0, pc.itemBlockStart);
-			Array.Copy(rawItemData, 0, ans, pc.itemBlockStart, rawItemData.Length);
-			Array.Copy(pc.rawData, pc.itemBlockEnd, ans, pc.itemBlockStart + rawItemData.Length, pc.equipmentBlockStart - pc.itemBlockEnd);
-			Array.Copy(rawEquipmentData, 0, ans, pc.itemBlockStart + rawItemData.Length + pc.equipmentBlockStart - pc.itemBlockEnd, rawEquipmentData.Length);
-			Array.Copy(
-				pc.rawData,
-				pc.equipmentBlockEnd,
-				ans,
-				pc.itemBlockStart + rawItemData.Length + pc.equipmentBlockStart - pc.itemBlockEnd + rawEquipmentData.Length,
-				pc.rawData.Length - pc.equipmentBlockEnd);
+			var equipmentBlockStart = TQData.ReadIntAfter(pc.rawData, "useAlternate");
+			var equipmentBlockStartOffset = equipmentBlockStart.nextOffset;
+			var equipmentBlockEnd = TQData.BinaryFindEndBlockOf(pc.rawData, "useAlternate");
+			var equipmentBlockEndOffset = equipmentBlockEnd.nextOffset;
+
+			var ans = new[] {
+				// Begining of the file
+				pc.rawData.Take(itemBlockStartOffset).ToArray(),
+
+				// new item segment
+				rawItemData,
+
+				// In between segment
+				new ArraySegment<byte>(pc.rawData, itemBlockEndOffset, equipmentBlockStartOffset - itemBlockEndOffset).ToArray(),
+
+				// new equipment segment
+				rawEquipmentData,
+
+				// End of file
+				pc.rawData.Skip(equipmentBlockEndOffset).ToArray(),
+			}.SelectMany(b => b).ToArray();
 
 			return ans;
 		}
@@ -125,17 +209,9 @@ namespace TQVaultAE.Data
 		/// </summary>
 		public void LoadFile(PlayerCollection pc)
 		{
-			using (FileStream fileStream = new FileStream(pc.PlayerFile, FileMode.Open, FileAccess.Read))
-			{
-				using (BinaryReader reader = new BinaryReader(fileStream))
-				{
-					// Just suck the entire file into memory
-					pc.rawData = reader.ReadBytes((int)fileStream.Length);
-				}
-			}
-
 			try
 			{
+				pc.rawData = File.ReadAllBytes(pc.PlayerFile);
 				// Now Parse the file
 				ParseRawData(pc);
 			}
@@ -208,7 +284,6 @@ namespace TQVaultAE.Data
 					int currentOffset = 0;
 					int itemOffset = 0;
 					int equipmentOffset = 0;
-					var playerReader = new PlayerInfoReader(this.TQData);
 
 					// vaults start at the item data with no crap
 					bool foundItems = pc.IsVault;
@@ -257,8 +332,6 @@ namespace TQVaultAE.Data
 								equipmentOffset = currentOffset; // skip value for useAlternate
 								foundEquipment = true;
 							}
-							else if (!pc.IsVault && playerReader.Match(blockName))
-								playerReader.Record(blockName, currentOffset);
 
 						}
 						else
@@ -277,9 +350,8 @@ namespace TQVaultAE.Data
 						}
 						catch (ArgumentException exception)
 						{
-							var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player file Item Block- '{0}'", pc.PlayerName), exception);
-							Log.ErrorFormat(CultureInfo.InvariantCulture, "Error parsing player file Item Block - '{0}'", pc.PlayerName);
-							Log.ErrorException(exception);
+							var ex = new ArgumentException($"Error parsing player file Item Block- '{pc.PlayerName}'", exception);
+							Log.ErrorException(ex);
 							throw ex;
 						}
 
@@ -306,7 +378,7 @@ namespace TQVaultAE.Data
 												object[] params1 = new object[20];
 
 												params1[0] = itemNumber;
-												params1[1] = ItemProvider.ToFriendlyName(item);
+												params1[1] = ItemProvider.GetFriendlyNames(item).FullNameBagTooltip;
 												params1[2] = item.PositionX;
 												params1[3] = item.PositionY;
 												params1[4] = item.Seed;
@@ -324,8 +396,8 @@ namespace TQVaultAE.Data
 						}
 						catch (IOException exception)
 						{
-							Log.ErrorFormat(exception, "Error writing Export file - '{0}'"
-								, string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName), " Export.txt")
+							Log.ErrorFormat(exception, "Error writing Export file - '{0}' Export.txt"
+								, Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName)
 							);
 						}
 					}
@@ -339,8 +411,8 @@ namespace TQVaultAE.Data
 						}
 						catch (ArgumentException exception)
 						{
-							var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player file Equipment Block - '{0}'", pc.PlayerName), exception);
-							Log.ErrorFormat(ex, "Error parsing player file Equipment Block - '{0}'", pc.PlayerName);
+							var ex = new ArgumentException($"Error parsing player file Equipment Block - '{pc.PlayerName}'", exception);
+							Log.ErrorException(ex);
 							throw ex;
 						}
 
@@ -357,11 +429,10 @@ namespace TQVaultAE.Data
 										object[] params1 = new object[20];
 
 										params1[0] = itemNumber;
-										params1[1] = ItemProvider.ToFriendlyName(item);
+										params1[1] = ItemProvider.GetFriendlyNames(item).FullNameBagTooltip;
 										params1[2] = item.PositionX;
 										params1[3] = item.PositionY;
 										params1[4] = item.Seed;
-										////params1[5] =
 
 										outStream.WriteLine("  {0,5:n0} {1}", params1);
 										itemNumber++;
@@ -371,29 +442,170 @@ namespace TQVaultAE.Data
 						}
 						catch (IOException exception)
 						{
-							Log.ErrorFormat(exception, "Error writing Export file - '{0}'"
-								, string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName), " Equipment Export.txt")
+							Log.ErrorFormat(exception, "Error writing Export file - '{0}' Equipment Export.txt"
+								, Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName)
 							);
 						}
 					}
 
-					if (playerReader.FoundPlayerInfo && !pc.IsVault)
+					if (pc.IsPlayer)
 					{
 						try
 						{
-							playerReader.Read(reader);
-							pc.PlayerInfo = playerReader.GetPlayerInfo();
-
+							pc.PlayerInfo = ReadPlayerInfo(pc);
 						}
-						catch (ArgumentException exception)
+						catch (ArgumentException ex)
 						{
-							var rethrowex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error parsing player player info Block - '{0}'", pc.PlayerName), exception);
-							Log.ErrorException(rethrowex);
-							throw rethrowex;
+							var exx = new ArgumentException($"Error parsing player player info Block - '{pc.PlayerName}'", ex);
+							Log.ErrorException(exx);
+							throw exx;
 						}
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// Find character data in player.chr file
+		/// </summary>
+		public PlayerInfo ReadPlayerInfo(PlayerCollection pc)
+		{
+			var pi = new PlayerInfo();
+			pi.Modified = false;
+
+			var headerVersion = TQData.ReadIntAfter(pc.rawData, "headerVersion");
+			pi.HeaderVersion = headerVersion.valueAsInt;
+
+			var playerCharacterClass = TQData.ReadCStringAfter(pc.rawData, "playerCharacterClass");
+			pi.PlayerCharacterClass = playerCharacterClass.valueAsString;
+
+			var playerClassTag = TQData.ReadCStringAfter(pc.rawData, "playerClassTag");
+			pi.Class = playerClassTag.valueAsString;
+
+			var money = TQData.ReadIntAfter(pc.rawData, "money", playerClassTag.nextOffset);
+			pi.Money = money.valueAsInt;
+
+			var masteriesAllowed = TQData.ReadIntAfter(pc.rawData, "masteriesAllowed", money.nextOffset);
+			pi.MasteriesAllowed = masteriesAllowed.valueAsInt;
+
+			var difficultyUnlocked = TQData.ReadIntAfter(pc.rawData, "temp");// first "temp" / first "block"
+			pi.DifficultyUnlocked = difficultyUnlocked.valueAsInt;
+
+			var hasBeenInGame = TQData.ReadIntAfter(pc.rawData, "hasBeenInGame", difficultyUnlocked.nextOffset);
+			pi.HasBeenInGame = hasBeenInGame.valueAsInt;
+
+			var currentStatscharLevel = TQData.ReadIntAfter(pc.rawData, "currentStats.charLevel", hasBeenInGame.nextOffset);
+			pi.CurrentLevel = currentStatscharLevel.valueAsInt;
+
+			var currentStatsexperiencePoints = TQData.ReadIntAfter(pc.rawData, "currentStats.experiencePoints", currentStatscharLevel.nextOffset);
+			pi.CurrentXP = currentStatsexperiencePoints.valueAsInt;
+
+			var modifierPoints = TQData.ReadIntAfter(pc.rawData, "modifierPoints", currentStatsexperiencePoints.nextOffset);
+			pi.AttributesPoints = modifierPoints.valueAsInt;
+
+			var skillPoints = TQData.ReadIntAfter(pc.rawData, "skillPoints", modifierPoints.nextOffset);
+			pi.SkillPoints = skillPoints.valueAsInt;
+
+			var baseStrength = TQData.ReadFloatAfter(pc.rawData, "temp", difficultyUnlocked.nextOffset);// first "temp" after first one (difficultyUnlocked)
+			pi.BaseStrength = Convert.ToInt32(baseStrength.valueAsFloat);
+
+			var baseDexterity = TQData.ReadFloatAfter(pc.rawData, "temp", baseStrength.nextOffset);// second "temp" after first one
+			pi.BaseDexterity = Convert.ToInt32(baseDexterity.valueAsFloat);
+
+			var baseIntelligence = TQData.ReadFloatAfter(pc.rawData, "temp", baseDexterity.nextOffset);// third "temp" after first one
+			pi.BaseIntelligence = Convert.ToInt32(baseIntelligence.valueAsFloat);
+
+			var baseHealth = TQData.ReadFloatAfter(pc.rawData, "temp", baseIntelligence.nextOffset);// fourth "temp" after first one
+			pi.BaseHealth = Convert.ToInt32(baseHealth.valueAsFloat);
+
+			var baseMana = TQData.ReadFloatAfter(pc.rawData, "temp", baseHealth.nextOffset);// fifth "temp" after first one
+			pi.BaseMana = Convert.ToInt32(baseMana.valueAsFloat);
+
+			var playTimeInSeconds = TQData.ReadIntAfter(pc.rawData, "playTimeInSeconds", baseMana.nextOffset);
+			pi.PlayTimeInSeconds = playTimeInSeconds.valueAsInt;
+
+			var numberOfDeaths = TQData.ReadIntAfter(pc.rawData, "numberOfDeaths", playTimeInSeconds.nextOffset);
+			pi.NumberOfDeaths = numberOfDeaths.valueAsInt;
+
+			var numberOfKills = TQData.ReadIntAfter(pc.rawData, "numberOfKills", numberOfDeaths.nextOffset);
+			pi.NumberOfKills = numberOfKills.valueAsInt;
+
+			var experienceFromKills = TQData.ReadIntAfter(pc.rawData, "experienceFromKills", numberOfKills.nextOffset);
+			pi.ExperienceFromKills = experienceFromKills.valueAsInt;
+
+			var healthPotionsUsed = TQData.ReadIntAfter(pc.rawData, "healthPotionsUsed", experienceFromKills.nextOffset);
+			pi.HealthPotionsUsed = healthPotionsUsed.valueAsInt;
+
+			var manaPotionsUsed = TQData.ReadIntAfter(pc.rawData, "manaPotionsUsed", healthPotionsUsed.nextOffset);
+			pi.ManaPotionsUsed = manaPotionsUsed.valueAsInt;
+
+			var maxLevel = TQData.ReadIntAfter(pc.rawData, "maxLevel", manaPotionsUsed.nextOffset);
+			pi.MaxLevel = maxLevel.valueAsInt;
+
+			var numHitsReceived = TQData.ReadIntAfter(pc.rawData, "numHitsReceived", maxLevel.nextOffset);
+			pi.NumHitsReceived = numHitsReceived.valueAsInt;
+
+			var numHitsInflicted = TQData.ReadIntAfter(pc.rawData, "numHitsInflicted", numHitsReceived.nextOffset);
+			pi.NumHitsInflicted = numHitsInflicted.valueAsInt;
+
+			var greatestDamageInflicted = TQData.ReadIntAfter(pc.rawData, "greatestDamageInflicted", numHitsInflicted.nextOffset);
+			pi.GreatestDamageInflicted = greatestDamageInflicted.valueAsInt;
+
+			var greatestMonsterKilledName = TQData.ReadUnicodeStringAfter(pc.rawData, "(*greatestMonsterKilledName)[i]", greatestDamageInflicted.nextOffset);
+			pi.GreatestMonster = greatestMonsterKilledName.valueAsString;
+
+			var greatestMonsterKilledLevel = TQData.ReadIntAfter(pc.rawData, "(*greatestMonsterKilledLevel)[i]", greatestMonsterKilledName.nextOffset);
+			pi.GreatestMonsterKilledLevel = greatestMonsterKilledLevel.valueAsInt;
+
+			var greatestMonsterKilledLifeAndMana = TQData.ReadIntAfter(pc.rawData, "(*greatestMonsterKilledLifeAndMana)[i]", greatestMonsterKilledLevel.nextOffset);
+			pi.GreatestMonsterKilledLifeAndMana = greatestMonsterKilledLevel.valueAsInt;
+
+			var greatestMonsterKilledName2 = TQData.ReadUnicodeStringAfter(pc.rawData, "(*greatestMonsterKilledName)[i]", greatestMonsterKilledLifeAndMana.nextOffset);
+
+			var greatestMonsterKilledLevel2 = TQData.ReadIntAfter(pc.rawData, "(*greatestMonsterKilledLevel)[i]", greatestMonsterKilledName2.nextOffset);
+
+			var greatestMonsterKilledLifeAndMana2 = TQData.ReadIntAfter(pc.rawData, "(*greatestMonsterKilledLifeAndMana)[i]", greatestMonsterKilledLevel2.nextOffset);
+
+			var greatestMonsterKilledName3 = TQData.ReadUnicodeStringAfter(pc.rawData, "(*greatestMonsterKilledName)[i]", greatestMonsterKilledLifeAndMana2.nextOffset);
+
+			var greatestMonsterKilledLevel3 = TQData.ReadIntAfter(pc.rawData, "(*greatestMonsterKilledLevel)[i]", greatestMonsterKilledName3.nextOffset);
+
+			var greatestMonsterKilledLifeAndMana3 = TQData.ReadIntAfter(pc.rawData, "(*greatestMonsterKilledLifeAndMana)[i]", greatestMonsterKilledLevel3.nextOffset);
+
+			var criticalHitsInflicted = TQData.ReadIntAfter(pc.rawData, "criticalHitsInflicted", greatestMonsterKilledLifeAndMana3.nextOffset);
+			pi.CriticalHitsInflicted = criticalHitsInflicted.valueAsInt;
+
+			var criticalHitsReceived = TQData.ReadIntAfter(pc.rawData, "criticalHitsReceived", criticalHitsInflicted.nextOffset);
+			pi.CriticalHitsReceived = criticalHitsReceived.valueAsInt;
+
+			// Parse skills collection
+			var firstblock = TQData.BinaryFindKey(pc.rawData, "begin_block");
+			var secondblock = TQData.BinaryFindKey(pc.rawData, "begin_block", firstblock.nextOffset);
+			var max = TQData.ReadIntAfter(pc.rawData, "max", secondblock.nextOffset);
+			// Loop of sub block
+			int nextOffset = max.nextOffset;
+			for (var i = 0; i < max.valueAsInt; i++)
+			{
+				var begin_block = TQData.ReadIntAfter(pc.rawData, "begin_block", nextOffset);
+				var skillName = TQData.ReadCStringAfter(pc.rawData, "skillName", nextOffset);
+				var skillLevel = TQData.ReadIntAfter(pc.rawData, "skillLevel", nextOffset);
+				var skillEnabled = TQData.ReadIntAfter(pc.rawData, "skillEnabled", nextOffset);
+				var skillSubLevel = TQData.ReadIntAfter(pc.rawData, "skillSubLevel", nextOffset);
+				var skillActive = TQData.ReadIntAfter(pc.rawData, "skillActive", nextOffset);
+				var skillTransition = TQData.ReadIntAfter(pc.rawData, "skillTransition", nextOffset);
+				pi.SkillRecordList.Add(new SkillRecord()
+				{
+					skillActive = skillActive.valueAsInt,
+					skillEnabled = skillEnabled.valueAsInt,
+					skillLevel = skillLevel.valueAsInt,
+					skillName = skillName.valueAsString,
+					skillSubLevel = skillSubLevel.valueAsInt,
+					skillTransition = skillTransition.valueAsInt,
+				});
+				nextOffset = skillTransition.nextOffset;
+			}
+
+			return pi;
 		}
 
 		/// <summary>
@@ -451,7 +663,7 @@ namespace TQVaultAE.Data
 		{
 			try
 			{
-				pc.itemBlockStart = offset;
+				//pc.itemBlockStart = offset;
 
 				reader.BaseStream.Seek(offset, SeekOrigin.Begin);
 
@@ -474,7 +686,8 @@ namespace TQVaultAE.Data
 					SackCollectionProvider.Parse(pc.sacks[i], reader);
 				}
 
-				pc.itemBlockEnd = (int)reader.BaseStream.Position;
+				//pc.itemBlockEnd = (int)reader.BaseStream.Position;
+
 			}
 			catch (ArgumentException ex)
 			{
@@ -534,7 +747,7 @@ namespace TQVaultAE.Data
 		{
 			try
 			{
-				pc.equipmentBlockStart = offset;
+				//pc.equipmentBlockStart = offset;
 
 				reader.BaseStream.Seek(offset, SeekOrigin.Begin);
 
@@ -549,7 +762,8 @@ namespace TQVaultAE.Data
 				pc.EquipmentSack.IsImmortalThrone = pc.IsImmortalThrone;
 				SackCollectionProvider.Parse(pc.EquipmentSack, reader);
 
-				pc.equipmentBlockEnd = (int)reader.BaseStream.Position;
+				//pc.equipmentBlockEnd = (int)reader.BaseStream.Position;
+
 			}
 			catch (ArgumentException ex)
 			{

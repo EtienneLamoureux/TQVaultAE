@@ -136,7 +136,6 @@ namespace TQVaultAE.GUI.Components
 			this.Controls.Add(this.BagSackPanel);
 			this.BagSackPanel.IsPlayerBagPanel = false;
 			this.BagSackPanel.MaxSacks = numberOfBags;
-
 			// Create the buttons
 			this.bagButtons = new Collection<BagButtonBase>();
 			this.CreateBagButtons(numberOfBags);
@@ -276,6 +275,13 @@ namespace TQVaultAE.GUI.Components
 			set
 			{
 				this.player = value;
+
+				var session = this.ServiceProvider.GetService<SessionContext>();
+				if (this.player is null || this.player.IsVault)
+					session.CurrentPlayer = null;
+				else
+					session.CurrentPlayer = this.player;
+
 				this.UpdateText();
 
 				this.OnPropertyChanged(nameof(Player));

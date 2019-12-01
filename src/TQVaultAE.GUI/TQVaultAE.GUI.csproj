@@ -41,23 +41,24 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\AnyCPU\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\AnyCPU\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
@@ -78,28 +79,51 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DDSReader, Version=1.0.6.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\DDSReader.1.0.6-pre\lib\netstandard2.0\DDSReader.dll</HintPath>
     </Reference>
-    <Reference Include="Enums.NET, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7ea1c1650d506225, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Enums.NET.2.3.2\lib\net45\Enums.NET.dll</HintPath>
+    <Reference Include="Enums.NET, Version=3.0.0.0, Culture=neutral, PublicKeyToken=7ea1c1650d506225, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Enums.NET.3.0.0\lib\net45\Enums.NET.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
@@ -380,8 +404,6 @@
     <Compile Include="Components\EquipmentPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Services\AddFontToOSWin.cs" />
-    <Compile Include="Services\GamePathServiceWin.cs" />
     <Compile Include="SplashScreenForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -566,6 +588,10 @@
       <Project>{6e20606d-9460-469f-b340-d3418165a19b}</Project>
       <Name>TQVaultAE.Presentation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TQVaultAE.Services.Win32\TQVaultAE.Services.Win32.csproj">
+      <Project>{E7A1426B-E531-4D67-9272-18DA5AE79484}</Project>
+      <Name>TQVaultAE.Services.Win32</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TQVaultAE.Services\TQVaultAE.Services.csproj">
       <Project>{23F812FB-B5C7-4022-90A7-3B8D7A793E6A}</Project>
       <Name>TQVaultAE.Services</Name>
@@ -591,14 +617,17 @@
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>REM Copy Build
-xcopy "$(ProjectDir)bin\$(Platform)\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /y /s /i
+    <PostBuildEvent>REM Cleanup Output
+RMDIR "$(SolutionDir)bin" /S /Q
+MKDIR "$(SolutionDir)bin\$(ConfigurationName)" 
+
+REM Copy Build
+XCOPY "$(ProjectDir)bin\$(Platform)\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /Y /S /I
 
 REM Clean output of unnecessary files
-cd "$(SolutionDir)bin\$(ConfigurationName)"
-del *.pdb
-rmdir resources /S /Q
-rmdir Logging /S /Q</PostBuildEvent>
+CD "$(SolutionDir)bin\$(ConfigurationName)"
+DEL *.pdb
+RMDIR Logging /S /Q</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\MsBuildAL1073WarningWorkaround.config" />
   <Import Project="..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />

@@ -22,6 +22,12 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Config;
 	using TQVaultAE.Services;
 	using TQVaultAE.Domain.Contracts.Services;
+	using System.Diagnostics;
+	using System.Linq;
+	using System.Threading.Tasks;
+	using TQVaultAE.Domain.Results;
+	using System.Collections.Concurrent;
+	using System.Threading;
 
 	/// <summary>
 	/// Main Dialog class
@@ -333,6 +339,7 @@ namespace TQVaultAE.GUI
 
 			this.splashScreen.Show();
 			this.splashScreen.Update();
+			this.splashScreen.BringToFront();
 
 			this.backgroundWorker1.RunWorkerAsync();
 		}
@@ -530,14 +537,8 @@ namespace TQVaultAE.GUI
 		/// <returns>Total number of files that LoadAllFiles() will load.</returns>
 		private int LoadAllFilesTotal()
 		{
-			string[] list;
-
-			list = GamePathResolver.GetCharacterList();
-			int numIT = list?.Length ?? 0;
-
-			list = GamePathResolver.GetVaultList();
-			int numVaults = list?.Length ?? 0;
-
+			int numIT = GamePathResolver.GetCharacterList()?.Count() ?? 0;
+			int numVaults = GamePathResolver.GetVaultList()?.Count() ?? 0;
 			return Math.Max(0, numIT + numVaults - 1);
 		}
 
@@ -568,11 +569,9 @@ namespace TQVaultAE.GUI
 			}
 
 			string[] vaults = GamePathResolver.GetVaultList();
-
-			string[] charactersIT = GamePathResolver.GetCharacterList();
+			var charactersIT = this.characterComboBox.Items.OfType<PlayerSave>().ToArray();
 
 			int numIT = charactersIT?.Length ?? 0;
-
 			int numVaults = vaults?.Length ?? 0;
 
 			// Since this takes a while, show a progress dialog box.
@@ -587,46 +586,64 @@ namespace TQVaultAE.GUI
 			else
 				return;
 
+			Stopwatch stopWatch = new Stopwatch();
+			stopWatch.Start();
+
 			// Load all of the Immortal Throne player files and stashes.
-			for (int i = 0; i < numIT; ++i)
+			var bagPlayer = new ConcurrentBag<LoadPlayerResult>();
+			var bagVault = new ConcurrentBag<LoadVaultResult>();
+			var lambdacharactersIT = charactersIT.Select(c => (Action)(() =>
 			{
 				// Get the player & player's stash
-				try
-				{
-					var result = this.playerService.LoadPlayer(charactersIT[i], true);
-
-					if (result.PlayerArgumentException != null)
-					{
-						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.PlayerFile, result.PlayerArgumentException.Message);
-						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-					}
-					if (result.StashArgumentException != null)
-					{
-						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.StashFile, result.StashArgumentException.Message);
-						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-					}
-				}
-				catch (IOException exception)
-				{
-					Log.ErrorException(exception);
-					MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-				}
-
+				var result = this.playerService.LoadPlayer(c, true);
+				bagPlayer.Add(result);
 				this.backgroundWorker1.ReportProgress(1);
-			}
+			})).ToArray();
 
-			// Load all of the vaults.
-			for (int i = 0; i < numVaults; ++i)
+			var lambdaVault = vaults.Select(c => (Action)(() =>
 			{
-				var result = this.vaultService.LoadVault(vaults[i]);
-				if (result.ArgumentException != null)
-				{
-					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.Filename, result.ArgumentException.Message);
-					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-				}
-
+				// Load all of the vaults.
+				var result = this.vaultService.LoadVault(c);
+				bagVault.Add(result);
 				this.backgroundWorker1.ReportProgress(1);
-			}
+			})).ToArray();
+
+			Parallel.Invoke(lambdacharactersIT.Concat(lambdaVault).ToArray());// Parallele loading
+
+			// Dispay errors
+			bagPlayer.Where(p => p.Player.ArgumentException != null || p.Stash.ArgumentException != null).ToList()
+				.ForEach(result =>
+				{
+					if (result.Player.ArgumentException != null)
+					{
+						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.PlayerFile, result.Player.ArgumentException.Message);
+						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+					}
+					if (result.Player.ArgumentException != null)
+					{
+						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.StashFile, result.Stash.ArgumentException.Message);
+						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+					}
+				});
+			bagVault.Where(p => p.ArgumentException != null).ToList()
+				.ForEach(result =>
+				{
+					if (result.ArgumentException != null)
+					{
+						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.Filename, result.ArgumentException.Message);
+						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+					}
+				});
+
+
+			stopWatch.Stop();
+			// Get the elapsed time as a TimeSpan value.
+			TimeSpan ts = stopWatch.Elapsed;
+
+			// Format and display the TimeSpan value.
+			Log.InfoFormat("LoadTime {0:00}:{1:00}:{2:00}.{3:00}",
+				ts.Hours, ts.Minutes, ts.Seconds,
+				ts.Milliseconds / 10);
 
 			// We made it so set the flag to indicate we were successful.
 			Config.Settings.Default.LoadAllFilesCompleted = true;
@@ -778,6 +795,8 @@ namespace TQVaultAE.GUI
 			// First, handle the case where an exception was thrown.
 			if (e.Error != null)
 			{
+				Log.Error($"resourcesLoaded = {this.resourcesLoaded}", e.Error);
+
 				if (MessageBox.Show(
 					string.Concat(e.Error.Message, Resources.Form1BadLanguage)
 					, Resources.Form1ErrorLoadingResources
@@ -842,6 +861,7 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
+				Log.Error($"resourcesLoaded = {this.resourcesLoaded}", e.Error);
 				// If for some reason the loading failed, but there was no error raised.
 				MessageBox.Show(
 					Resources.Form1ErrorLoadingResources,
@@ -983,6 +1003,9 @@ namespace TQVaultAE.GUI
 
 					result = MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
+
+				if (settingsDialog.ItemBGColorOpacityChanged || settingsDialog.EnableCharacterRequierementBGColorChanged)
+					this.Refresh();
 
 				this.configChanged = true;
 				this.SaveConfiguration();

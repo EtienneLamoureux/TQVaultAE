@@ -31,6 +31,12 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		string ItemSeed { get; }
 		/// <summary>
+		/// Return Class Name translation
+		/// </summary>
+		/// <param name="xTagClassKey"></param>
+		/// <returns></returns>
+		string TranslateCharacterClassName(string xTagClassKey);
+		/// <summary>
 		/// Gets the string which indicates an Immortal Throne item.
 		/// </summary>
 		string ItemIT { get; }

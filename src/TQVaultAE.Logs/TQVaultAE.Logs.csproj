@@ -8,6 +8,7 @@
     <PackageProjectUrl>https://github.com/EtienneLamoureux/TQVaultAE</PackageProjectUrl>
     <RepositoryUrl>https://github.com/EtienneLamoureux/TQVaultAE</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
