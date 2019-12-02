@@ -1102,7 +1102,8 @@ namespace TQVaultAE.Data
 		public ToFriendlyNameResult GetFriendlyNames(Item itm, FriendlyNamesExtraScopes? scopes = null, bool filterExtra = true)
 		{
 			var key = (itm, scopes, filterExtra);
-			return FriendlyNamesCache.GetOrAddAtomic(key, k => {
+			return FriendlyNamesCache.GetOrAddAtomic(key, k =>
+			{
 
 				var res = new ToFriendlyNameResult(k.Item);
 				k.Item.CurrentFriendlyNameResult = res;
@@ -1912,8 +1913,22 @@ namespace TQVaultAE.Data
 					currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] = curvar;
 
 					// Fix#246, double signed result on negative value Ex : string.Format("{0:+#0} d'intelligence", -10) by removing format sign.
-					if ((float)curvar < 0)
-						formatSpec = Regex.Replace(formatSpec, @"(?<Prefix>\{(\d):)[+-](?<Suffix>#(\d+)})", "${Prefix}${Suffix}");
+					// Fix "Dotted decimal mask" matching Ex : {0:#0.0} Health Regeneration per second
+					formatSpec = Regex.Replace(formatSpec
+						, @"(?<Prefix>\{(\d):)(?<Sign>[+-])(?<Suffix>#([\d\.]+)})"
+						, new MatchEvaluator((Match m) =>
+						{
+							var Prefix = m.Groups["Prefix"].Value;
+							var Sign = m.Groups["Sign"].Value;
+							var Suffix = m.Groups["Suffix"].Value;
+							var val = (float)curvar;
+
+							if ((Sign == "+" && val < 0) || (Sign == "-" && val >= 0))
+								return $"{Prefix}{Suffix}";
+
+							return m.Value;
+						})
+					);
 				}
 
 				amount = this.Format(formatSpec, curvar);
