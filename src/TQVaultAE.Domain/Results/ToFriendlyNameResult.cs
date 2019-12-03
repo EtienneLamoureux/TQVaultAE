@@ -60,7 +60,7 @@ namespace TQVaultAE.Domain.Results
 		#region Relic Common
 
 		public string AnimalPartComplete;
-		public string AnimalPartcompleteBonus;
+		public string AnimalPartCompleteBonus;
 		public string AnimalPart;
 		public string AnimalPartRatio;
 		public string RelicComplete;
@@ -134,7 +134,7 @@ namespace TQVaultAE.Domain.Results
 			get
 			{
 				if (this.Item.IsRelic1Charm)
-					return this.Item.IsRelicBonus1Complete ? this.AnimalPartcompleteBonus : null;
+					return this.Item.IsRelicBonus1Complete ? this.AnimalPartCompleteBonus : null;
 				else
 					return this.Item.IsRelicBonus1Complete ? this.RelicBonus : null;
 			}
@@ -183,7 +183,7 @@ namespace TQVaultAE.Domain.Results
 			get
 			{
 				if (this.Item.IsRelic2Charm)
-					return this.Item.IsRelicBonus2Complete ? this.AnimalPartcompleteBonus : null;
+					return this.Item.IsRelicBonus2Complete ? this.AnimalPartCompleteBonus : null;
 				else
 					return this.Item.IsRelicBonus2Complete ? this.RelicBonus : null;
 			}

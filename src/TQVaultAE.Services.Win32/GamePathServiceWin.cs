@@ -484,6 +484,12 @@ namespace TQVaultAE.Services.Win32
 				titanQuestGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
 			}
 
+			if (string.IsNullOrEmpty(titanQuestGamePath))
+			{
+				string[] path = { "SOFTWARE", "WOW6432Node", "GOG.com", "Games", "1196955511", "PATH" };
+				titanQuestGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
+			}
+
 			// Detection logic for a Steam install of the anniversary edition ~Malgardian
 			if (string.IsNullOrEmpty(titanQuestGamePath))
 			{
