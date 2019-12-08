@@ -45,13 +45,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Gets the number of variables in the hashtable.
 		/// </summary>
-		public int Count
-		{
-			get
-			{
-				return this.variables.Count;
-			}
-		}
+		public int Count =>this.variables.Count;
 
 		/// <summary>
 		/// Gets a Variable from the hashtable.
@@ -59,9 +53,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <param name="variableName">Name of the variable we are looking up.</param>
 		/// <returns>Returns a Variable from the hashtable.</returns>
 		public Variable this[string variableName]
-		{
-			get => this.variables.TryGetValue(variableName.ToUpperInvariant(), out var val) ? val : null;
-		}
+			=> this.variables.TryGetValue(variableName.ToUpperInvariant(), out var val) ? val : null;
 
 		/// <summary>
 		/// Enumerates all of the variables in this DBrecord
@@ -79,29 +71,22 @@ namespace TQVaultAE.Domain.Entities
 		/// Non Generic enumerable interface.
 		/// </summary>
 		/// <returns>Generic interface implementation.</returns>
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return this.GetEnumerator();
-		}
+		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
 		/// <summary>
 		/// Adds a variable to the hashtable.
 		/// </summary>
 		/// <param name="variable">Variable that we are adding.</param>
-		public void Set(Variable variable)
-		{
-			this.variables.Add(variable.Name.ToUpperInvariant(), variable);
-		}
+		public void Set(Variable variable) 
+			=> this.variables.Add(variable.Name.ToUpperInvariant(), variable);
 
 		/// <summary>
 		/// Returns a short descriptive string in the format of:
 		/// recordID,recordType,numVariables
 		/// </summary>
 		/// <returns>string: recordID,recordType,numVariables</returns>
-		public string ToShortString()
-		{
-			return string.Format(CultureInfo.CurrentCulture, "{0},{1},{2}", this.Id, this.RecordType, this.Count);
-		}
+		public string ToShortString() 
+			=> string.Format(CultureInfo.CurrentCulture, "{0},{1},{2}", this.Id, this.RecordType, this.Count);
 
 		/// <summary>
 		/// Gets the integer value for the variable, or 0 if the variable does not exist.

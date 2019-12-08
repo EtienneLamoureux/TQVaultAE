@@ -131,39 +131,20 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Gets the Weapon slot size
 		/// </summary>
-		public static Size WeaponLocationSize
-		{
-			get
-			{
-				return weaponLocationSize;
-			}
-		}
+		public static Size WeaponLocationSize => weaponLocationSize;
 
 		/// <summary>
 		/// Gets the total number of offsets in the weapon location offsets array.
 		/// </summary>
-		public static int NumberOfWeaponSlots
-		{
-			get
-			{
-				return weaponLocationOffsets.Length;
-			}
-		}
+		public static int NumberOfWeaponSlots => weaponLocationOffsets.Length;
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this sack has been modified
 		/// </summary>
 		public bool IsModified
 		{
-			get
-			{
-				return this.isModified;
-			}
-
-			set
-			{
-				this.isModified = value;
-			}
+			get => this.isModified;
+			set => this.isModified = value;
 		}
 
 		/// <summary>
@@ -171,70 +152,38 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		public SackType SackType
 		{
-			get
-			{
-				return this.sackType;
-			}
-
-			set
-			{
-				this.sackType = value;
-			}
+			get => this.sackType;
+			set => this.sackType = value;
 		}
 
 		/// <summary>
 		/// Identifies the stash type.
 		/// </summary>
-		public SackType StashType {	get; set; }
+		public SackType StashType { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this is from Immortal Throne
 		/// </summary>
 		public bool IsImmortalThrone
 		{
-			get
-			{
-				return this.isImmortalThrone;
-			}
-
-			set
-			{
-				this.isImmortalThrone = value;
-			}
+			get => this.isImmortalThrone;
+			set => this.isImmortalThrone = value;
 		}
 
 		/// <summary>
 		/// Gets the number of equipment slots
 		/// </summary>
-		public int NumberOfSlots
-		{
-			get
-			{
-				return this.slots;
-			}
-		}
+		public int NumberOfSlots => this.slots;
 
 		/// <summary>
 		/// Gets the number of items in the sack.
 		/// </summary>
-		public int Count
-		{
-			get
-			{
-				return this.items.Count;
-			}
-		}
+		public int Count => this.items.Count;
 
 		/// <summary>
 		/// Gets a value indicating whether the number of items in the sack is equal to zero.
 		/// </summary>
-		public bool IsEmpty
-		{
-			get
-			{
-				return this.items.Count == 0;
-			}
-		}
+		public bool IsEmpty => this.items.Count == 0;
 
 		/// <summary>
 		/// Gets offset of the weapon slot
@@ -312,20 +261,14 @@ namespace TQVaultAE.Domain.Entities
 		/// Non Generic enumerator interface.
 		/// </summary>
 		/// <returns>Generic interface implementation.</returns>
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return this.GetEnumerator();
-		}
+		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
 		/// <summary>
 		/// Gets the index in the item list of a particular Item
 		/// </summary>
 		/// <param name="item">Item that we are looking for</param>
 		/// <returns>index in the item array</returns>
-		public int IndexOfItem(Item item)
-		{
-			return this.items.IndexOf(item);
-		}
+		public int IndexOfItem(Item item) => this.items.IndexOf(item);
 
 		/// <summary>
 		/// Removes an Item from the item list
@@ -397,10 +340,7 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		/// <param name="index">index in the item array</param>
 		/// <returns>Item from the array at the specified index</returns>
-		public Item GetItem(int index)
-		{
-			return this.items[index];
-		}
+		public Item GetItem(int index) => this.items[index];
 
 		/// <summary>
 		/// Gets the number of items according to TQ where each potion counts for 1.
@@ -412,18 +352,11 @@ namespace TQVaultAE.Domain.Entities
 			foreach (Item item in this)
 			{
 				if (item.DoesStack)
-				{
 					ans += item.StackSize;
-				}
 				else
-				{
 					ans++;
-				}
 			}
-
 			return ans;
 		}
-
-
 	}
 }

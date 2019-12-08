@@ -13,9 +13,7 @@ namespace TQVaultAE.Domain.Results
 			this.Path = path;
 			this.DisplayName = displayName;
 		}
-		public override string ToString()
-		{
-			return DisplayName ?? Path ?? "Empty";
-		}
+		public override string ToString() 
+			=> DisplayName ?? Path ?? "Empty";
 	}
 }
