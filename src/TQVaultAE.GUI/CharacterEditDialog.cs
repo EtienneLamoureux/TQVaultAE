@@ -51,12 +51,12 @@ namespace TQVaultAE.GUI
 
 			#endregion
 
+			this.NormalizeBox = false;
 			this.DrawCustomBorder = true;
 
 			this.cancel.Text = Resources.GlobalCancel;
 			this.ok.Text = Resources.GlobalOK;
 			this.ResetMasteriesScalingButton.Text = Resources.ResetMasteriesButton;
-
 		}
 
 		private void SetDifficultly()

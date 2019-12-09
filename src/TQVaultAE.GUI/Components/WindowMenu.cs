@@ -57,6 +57,11 @@ namespace TQVaultAE.GUI.Components
 		private MenuItem menuClose;
 
 		/// <summary>
+		/// Holds the Normalize menu item.
+		/// </summary>
+		private MenuItem menuNorm;
+
+		/// <summary>
 		/// Initializes a new instance of the WindowMenu class.
 		/// </summary>
 		/// <param name="owner">ownder Form</param>
@@ -86,6 +91,10 @@ namespace TQVaultAE.GUI.Components
 		/// Gets or sets a value indicating whether the Maximize menu item is enabled.
 		/// </summary>
 		public bool MaximizeEnabled { get; set; }
+		/// <summary>
+		/// Gets or sets a value indicating whether the Normalize menu item is enabled.
+		/// </summary>
+		public bool NormalizeEnabled { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the Minimize menu item is enabled.
@@ -108,6 +117,7 @@ namespace TQVaultAE.GUI.Components
 				case FormWindowState.Normal:
 					this.menuRestore.Enabled = false;
 					this.menuMax.Enabled = this.MaximizeEnabled;
+					this.menuNorm.Enabled = this.NormalizeEnabled;
 					this.menuMin.Enabled = this.MinimizeEnabled;
 					this.menuMove.Enabled = true;
 					this.menuSize.Enabled = this.SizeEnabled;
@@ -116,6 +126,7 @@ namespace TQVaultAE.GUI.Components
 				case FormWindowState.Minimized:
 					this.menuRestore.Enabled = true;
 					this.menuMax.Enabled = this.MaximizeEnabled;
+					this.menuNorm.Enabled = this.NormalizeEnabled;
 					this.menuMin.Enabled = false;
 					this.menuMove.Enabled = false;
 					this.menuSize.Enabled = false;
@@ -125,6 +136,7 @@ namespace TQVaultAE.GUI.Components
 					this.menuRestore.Enabled = true;
 					this.menuMax.Enabled = false;
 					this.menuMin.Enabled = this.MinimizeEnabled;
+					this.menuNorm.Enabled = this.NormalizeEnabled;
 					this.menuMove.Enabled = false;
 					this.menuSize.Enabled = false;
 					break;
@@ -173,10 +185,8 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <param name="text">Text tag for the menu item.</param>
 		/// <returns>new menu MenuItem with the passed text tag</returns>
-		private MenuItem CreateMenuItem(string text)
-		{
-			return this.CreateMenuItem(text, Shortcut.None);
-		}
+		private MenuItem CreateMenuItem(string text) 
+			=>this.CreateMenuItem(text, Shortcut.None);
 
 		/// <summary>
 		/// Creates a new menu item.
@@ -218,13 +228,9 @@ namespace TQVaultAE.GUI.Components
 			MenuItem item = this.MenuItems[e.Index];
 
 			if (item.Enabled)
-			{
 				e.DrawBackground();
-			}
 			else
-			{
 				e.Graphics.FillRectangle(SystemBrushes.Menu, e.Bounds);
-			}
 
 			if (e.Index == 5)
 			{

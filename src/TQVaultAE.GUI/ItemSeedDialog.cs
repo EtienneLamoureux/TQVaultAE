@@ -46,6 +46,7 @@ namespace TQVaultAE.GUI
 
 			#endregion
 
+			this.NormalizeBox = false;
 			this.DrawCustomBorder = true;
 
 			this.Text = Resources.SeedText;

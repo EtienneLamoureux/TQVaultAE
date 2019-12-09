@@ -261,6 +261,7 @@ namespace TQVaultAE.GUI
 			this.okayButton.Text = Resources.GlobalOK;
 			this.Text = Resources.SettingsTitle;
 
+			this.NormalizeBox = false;
 			this.DrawCustomBorder = true;
 
 			this.mapListComboBox.Items.Clear();

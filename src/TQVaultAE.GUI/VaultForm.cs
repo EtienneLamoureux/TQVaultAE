@@ -194,6 +194,7 @@ namespace TQVaultAE.GUI
 			this.systemMenu = new WindowMenu(this);
 			this.systemMenu.SystemEvent += new EventHandler<WindowMenuEventArgs>(this.SystemMenuSystemEvent);
 			this.systemMenu.MaximizeEnabled = this.MaximizeBox;
+			this.systemMenu.NormalizeEnabled = this.NormalizeBox;
 			this.systemMenu.MinimizeEnabled = this.MinimizeBox;
 
 		}
@@ -297,8 +298,8 @@ namespace TQVaultAE.GUI
 					this.buttonMaximize.Visible = this.MaximizeBox;
 					this.buttonMaximize.Enabled = this.MaximizeBox;
 
-					this.ButtonScaleTo1.Visible = this.MaximizeBox;
-					this.ButtonScaleTo1.Enabled = this.MaximizeBox;
+					this.ButtonScaleTo1.Visible = this.NormalizeBox;
+					this.ButtonScaleTo1.Enabled = this.NormalizeBox;
 
 					this.buttonMinimize.Visible = this.MinimizeBox;
 					this.buttonMinimize.Enabled = this.MinimizeBox;
@@ -357,6 +358,34 @@ namespace TQVaultAE.GUI
 				base.MaximizeBox = value;
 			}
 		}
+
+		bool _NormalizeBox = true;
+		/// <summary>
+		/// Gets a value indicating whether the Normalize button is displayed in the caption bar of the form.
+		/// </summary>
+		public virtual bool NormalizeBox
+		{
+			get => _NormalizeBox && this.UIService.Scale != 1.0F;
+			set
+			{
+				_NormalizeBox = value;
+				RefreshNormalizeBox();
+			}
+		}
+
+		private void RefreshNormalizeBox()
+		{
+			var val = _NormalizeBox && this.UIService.Scale != 1.0F;
+			if (this.systemMenu != null)
+				this.systemMenu.NormalizeEnabled = val;
+
+			if (this.ButtonScaleTo1 != null)
+			{
+				this.ButtonScaleTo1.Visible = val;
+				this.ButtonScaleTo1.Enabled = val;
+			}
+		}
+
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the Minimize button is displayed in the caption bar of the form.
@@ -513,6 +542,9 @@ namespace TQVaultAE.GUI
 				Config.Settings.Default.Scale = UIService.Scale;
 				Config.Settings.Default.Save();
 			}
+
+			RefreshNormalizeBox();
+
 			this.Log.DebugFormat("Config.Settings.Default.Scale changed to {0} !", Config.Settings.Default.Scale);
 		}
 
@@ -925,6 +957,9 @@ namespace TQVaultAE.GUI
 
 		private void ButtonScaleTo1_Click(object sender, EventArgs e)
 		{
+			if (!this.NormalizeBox)
+				return;
+
 			this.WindowState = FormWindowState.Normal;
 			ScaleForm(1.0f, false);
 		}

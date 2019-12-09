@@ -56,6 +56,7 @@ namespace TQVaultAE.GUI
 			this.labelSuffixProperties.Text = Resources.ItemPropertiesLabelSuffixProperties;
 			this.checkBoxFilterExtraInfo.Text = Resources.ItemPropertiesCheckBoxLabelFilterExtraInfo;
 
+			this.NormalizeBox = false;
 			this.DrawCustomBorder = true;
 		}
 

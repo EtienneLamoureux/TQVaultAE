@@ -40,6 +40,7 @@ namespace TQVaultAE.GUI
 			this.cancelButton.Text = Resources.GlobalCancel;
 
 			this.searchTextBox.Focus();
+			this.NormalizeBox = false;
 		}
 
 		/// <summary>
