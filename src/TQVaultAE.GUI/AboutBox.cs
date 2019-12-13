@@ -45,6 +45,7 @@ namespace TQVaultAE.GUI
 			this.labelCopyright.Text = AssemblyCopyright;
 			this.textBoxDescription.Text = Resources.AboutDescription; // AssemblyDescription;
 
+			this.NormalizeBox = false;
 			this.DrawCustomBorder = true;
 		}
 

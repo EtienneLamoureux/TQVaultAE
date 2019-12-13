@@ -155,7 +155,7 @@ namespace TQVaultAE.GUI.Components
 
 			#region Init Player Panel
 
-			// Based on testing at scaling 1
+			// Based on testing at scale 1
 			var table = new TableLayoutPanel()
 			{
 				Location = new Point(
@@ -168,8 +168,8 @@ namespace TQVaultAE.GUI.Components
 				Padding = new Padding(1),
 				BackColor = Color.Transparent,
 			};
-			table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-			table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+			table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
+			table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
 
 			this.Controls.Add(table);
 			this.PlayerPanel = table;
@@ -237,8 +237,7 @@ namespace TQVaultAE.GUI.Components
 				};
 
 				var labStyle = BorderStyle.None;
-				var labSize = new Size(PLAYERINFO_WIDTH / 2, 0);
-				var mg = new Padding(1);
+				var mg = new Padding(0, 0, 0, 1);
 				var pd = new Padding(0);
 				int rowIdx = 0;
 				var labFnt = new Font(this.Font.FontFamily, 7.5f * UIService.Scale);
@@ -262,7 +261,7 @@ namespace TQVaultAE.GUI.Components
 					UseCustomGraphic = true,
 					UseVisualStyleBackColor = false,
 					Font = FontService.GetFontAlbertusMTLight(11F),
-					Margin = new Padding(0, 0, 0, 10),
+					Margin = new Padding(0, 0, 0, 5),
 					Padding = new Padding(10, 0, 10, 0),
 					Visible = Config.Settings.Default.AllowCharacterEdit,
 				};

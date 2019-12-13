@@ -91,20 +91,7 @@ namespace TQVaultAE.Domain.Entities
 		/// Gets a value indicating whether this file has been modified
 		/// </summary>
 		public bool IsModified
-		{
-			get
-			{
-				if (this.sack != null)
-				{
-					if (this.sack.IsModified)
-					{
-						return true;
-					}
-				}
-
-				return false;
-			}
-		}
+			=> this.sack?.IsModified ?? false;
 
 		/// <summary>
 		/// Gets the height of the stash sack
@@ -121,22 +108,8 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		public string PlayerName
 		{
-			get
-			{
-				if (this.IsImmortalThrone)
-				{
-					return string.Concat(this.playerName, " - Immortal Throne");
-				}
-				else
-				{
-					return this.playerName;
-				}
-			}
-
-			private set
-			{
-				this.playerName = value;
-			}
+			get => this.IsImmortalThrone ? string.Concat(this.playerName, " - Immortal Throne") : this.playerName;
+			private set => this.playerName = value;
 		}
 
 		/// <summary>
@@ -148,28 +121,12 @@ namespace TQVaultAE.Domain.Entities
 		/// Gets the number of sack contained in this stash
 		/// </summary>
 		public int NumberOfSacks
-		{
-			get
-			{
-				if (this.sack == null)
-				{
-					return 0;
-				}
-
-				return this.numberOfSacks;
-			}
-		}
+			=> this.sack == null ? 0 : this.numberOfSacks;
 
 		/// <summary>
 		/// Gets the current sack instance
 		/// </summary>
-		public SackCollection Sack
-		{
-			get
-			{
-				return this.sack;
-			}
-		}
+		public SackCollection Sack => this.sack;
 
 	}
 }

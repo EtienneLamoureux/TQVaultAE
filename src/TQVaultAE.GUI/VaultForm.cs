@@ -174,6 +174,7 @@ namespace TQVaultAE.GUI
 			#region Apply custom font & scaling
 
 			ScaleControl(this.UIService, this.buttonMaximize);
+			ScaleControl(this.UIService, this.ButtonScaleTo1);
 			ScaleControl(this.UIService, this.buttonMinimize);
 			ScaleControl(this.UIService, this.buttonClose);
 
@@ -193,6 +194,7 @@ namespace TQVaultAE.GUI
 			this.systemMenu = new WindowMenu(this);
 			this.systemMenu.SystemEvent += new EventHandler<WindowMenuEventArgs>(this.SystemMenuSystemEvent);
 			this.systemMenu.MaximizeEnabled = this.MaximizeBox;
+			this.systemMenu.NormalizeEnabled = this.NormalizeBox;
 			this.systemMenu.MinimizeEnabled = this.MinimizeBox;
 
 		}
@@ -296,6 +298,9 @@ namespace TQVaultAE.GUI
 					this.buttonMaximize.Visible = this.MaximizeBox;
 					this.buttonMaximize.Enabled = this.MaximizeBox;
 
+					this.ButtonScaleTo1.Visible = this.NormalizeBox;
+					this.ButtonScaleTo1.Enabled = this.NormalizeBox;
+
 					this.buttonMinimize.Visible = this.MinimizeBox;
 					this.buttonMinimize.Enabled = this.MinimizeBox;
 				}
@@ -304,6 +309,8 @@ namespace TQVaultAE.GUI
 					this.FormBorderStyle = FormBorderStyle.FixedSingle;
 					this.buttonMaximize.Visible = false;
 					this.buttonMaximize.Enabled = false;
+					this.ButtonScaleTo1.Visible = false;
+					this.ButtonScaleTo1.Enabled = false;
 					this.buttonMinimize.Visible = false;
 					this.buttonMinimize.Enabled = false;
 					this.buttonClose.Visible = false;
@@ -351,6 +358,34 @@ namespace TQVaultAE.GUI
 				base.MaximizeBox = value;
 			}
 		}
+
+		bool _NormalizeBox = true;
+		/// <summary>
+		/// Gets a value indicating whether the Normalize button is displayed in the caption bar of the form.
+		/// </summary>
+		public virtual bool NormalizeBox
+		{
+			get => _NormalizeBox && this.UIService.Scale != 1.0F;
+			set
+			{
+				_NormalizeBox = value;
+				RefreshNormalizeBox();
+			}
+		}
+
+		private void RefreshNormalizeBox()
+		{
+			var val = _NormalizeBox && this.UIService.Scale != 1.0F;
+			if (this.systemMenu != null)
+				this.systemMenu.NormalizeEnabled = val;
+
+			if (this.ButtonScaleTo1 != null)
+			{
+				this.ButtonScaleTo1.Visible = val;
+				this.ButtonScaleTo1.Enabled = val;
+			}
+		}
+
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the Minimize button is displayed in the caption bar of the form.
@@ -507,6 +542,9 @@ namespace TQVaultAE.GUI
 				Config.Settings.Default.Scale = UIService.Scale;
 				Config.Settings.Default.Save();
 			}
+
+			RefreshNormalizeBox();
+
 			this.Log.DebugFormat("Config.Settings.Default.Scale changed to {0} !", Config.Settings.Default.Scale);
 		}
 
@@ -826,10 +864,13 @@ namespace TQVaultAE.GUI
 			}
 
 			if (this.buttonMaximize != null)
-				this.buttonMaximize.Location = new Point(this.buttonClose.Location.X - this.buttonMaximize.Width, this.ClientRectangle.Top);
+				this.buttonMaximize.Location = new Point(this.buttonClose.Location.X - 5 - this.buttonMaximize.Width, this.ClientRectangle.Top);
+
+			if (this.ButtonScaleTo1 != null)
+				this.ButtonScaleTo1.Location = new Point(this.buttonMaximize.Location.X - 5 - this.ButtonScaleTo1.Width, this.ClientRectangle.Top);
 
 			if (this.buttonMinimize != null)
-				this.buttonMinimize.Location = new Point(this.buttonMaximize.Location.X - this.buttonMinimize.Width, this.ClientRectangle.Top);
+				this.buttonMinimize.Location = new Point(this.ButtonScaleTo1.Location.X - 5 - this.buttonMinimize.Width, this.ClientRectangle.Top);
 		}
 
 		/// <summary>
@@ -912,6 +953,15 @@ namespace TQVaultAE.GUI
 
 			if (this.WindowState != FormWindowState.Minimized)
 				this.WindowState = FormWindowState.Minimized;
+		}
+
+		private void ButtonScaleTo1_Click(object sender, EventArgs e)
+		{
+			if (!this.NormalizeBox)
+				return;
+
+			this.WindowState = FormWindowState.Normal;
+			ScaleForm(1.0f, false);
 		}
 	}
 }

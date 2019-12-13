@@ -66,6 +66,7 @@ namespace TQVaultAE.GUI
 			this.quality.HeaderText = Resources.ResultsQuality;
 			this.level.HeaderText = Resources.ResultsLevel;
 
+			this.NormalizeBox = false;
 			this.DrawCustomBorder = true;
 
 			this.FormDesignRatio = 0.0F; //// (float)this.Height / (float)this.Width;

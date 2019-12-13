@@ -44,18 +44,8 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Gets the number of items in the loot table.
 		/// </summary>
-		public int Length
-		{
-			get
-			{
-				if (this.data == null)
-				{
-					return 0;
-				}
+		public int Length => this.data == null ? 0 : this.data.Count;
 
-				return this.data.Count;
-			}
-		}
 
 		/// <summary>
 		/// Generic Iterator Block which returns the individual table values with the weighting as percent of total weight.
@@ -67,9 +57,7 @@ namespace TQVaultAE.Domain.Entities
 
 			// Make sure we have something to divide by.
 			if (divisor == 0.0F)
-			{
 				divisor = 1.0F;
-			}
 
 			// Iterate and return the weighted values in the table.
 			foreach (KeyValuePair<string, float> kvp in this.data)
@@ -82,10 +70,7 @@ namespace TQVaultAE.Domain.Entities
 		/// Non Generic enumerator interface.
 		/// </summary>
 		/// <returns>Generic interface implementation.</returns>
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return this.GetEnumerator();
-		}
+		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
 	}
 }
