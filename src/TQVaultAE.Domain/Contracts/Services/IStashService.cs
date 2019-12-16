@@ -5,7 +5,12 @@ namespace TQVaultAE.Domain.Contracts.Services
 {
 	public interface IStashService
 	{
-
+		/// <summary>
+		/// Loads a player stash using the drop down list.
+		/// </summary>
+		/// <param name="selectedSave">Item from the drop down list.</param>
+		/// <returns></returns>
+		LoadPlayerStashResult LoadPlayerStash(PlayerSave selectedSave);
 		/// <summary>
 		/// Loads the relic vault stash
 		/// </summary>

@@ -538,6 +538,7 @@ namespace TQVaultAE.GUI
 		private int LoadAllFilesTotal()
 		{
 			int numIT = GamePathResolver.GetCharacterList()?.Count() ?? 0;
+			numIT = numIT * 2;// Assuming that there is 1 stash file per character
 			int numVaults = GamePathResolver.GetVaultList()?.Count() ?? 0;
 			return Math.Max(0, numIT + numVaults - 1);
 		}
@@ -591,12 +592,22 @@ namespace TQVaultAE.GUI
 
 			// Load all of the Immortal Throne player files and stashes.
 			var bagPlayer = new ConcurrentBag<LoadPlayerResult>();
+			var bagPlayerStashes = new ConcurrentBag<LoadPlayerStashResult>();
 			var bagVault = new ConcurrentBag<LoadVaultResult>();
+
 			var lambdacharactersIT = charactersIT.Select(c => (Action)(() =>
 			{
-				// Get the player & player's stash
+				// Get the player 
 				var result = this.playerService.LoadPlayer(c, true);
 				bagPlayer.Add(result);
+				this.backgroundWorker1.ReportProgress(1);
+			})).ToArray();
+
+			var lambdacharacterStashes = charactersIT.Select(c => (Action)(() =>
+			{
+				// Get the player's stash
+				var result = this.stashService.LoadPlayerStash(c);
+				bagPlayerStashes.Add(result);
 				this.backgroundWorker1.ReportProgress(1);
 			})).ToArray();
 
@@ -608,10 +619,10 @@ namespace TQVaultAE.GUI
 				this.backgroundWorker1.ReportProgress(1);
 			})).ToArray();
 
-			Parallel.Invoke(lambdacharactersIT.Concat(lambdaVault).ToArray());// Parallele loading
+			Parallel.Invoke(lambdacharactersIT.Concat(lambdacharacterStashes).Concat(lambdaVault).ToArray());// Parallel loading
 
 			// Dispay errors
-			bagPlayer.Where(p => p.Player.ArgumentException != null || p.Stash.ArgumentException != null).ToList()
+			bagPlayer.Where(p => p.Player.ArgumentException != null).ToList()
 				.ForEach(result =>
 				{
 					if (result.Player.ArgumentException != null)
@@ -619,7 +630,11 @@ namespace TQVaultAE.GUI
 						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.PlayerFile, result.Player.ArgumentException.Message);
 						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 					}
-					if (result.Player.ArgumentException != null)
+				});
+			bagPlayerStashes.Where(p => p.Stash.ArgumentException != null).ToList()
+				.ForEach(result =>
+				{
+					if (result.Stash.ArgumentException != null)
 					{
 						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.StashFile, result.Stash.ArgumentException.Message);
 						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
