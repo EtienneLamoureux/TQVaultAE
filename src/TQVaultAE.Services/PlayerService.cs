@@ -18,7 +18,7 @@ namespace TQVaultAE.Services
 		private readonly IStashProvider StashProvider;
 		private readonly IGamePathService GamePathResolver;
 		private readonly ITranslationService TranslationService;
-		public const string CustomDesignator = "<Custom Map>";
+		public const string CustomDesignator = "<Custom Map>";// TODO Is it still usefull ?
 
 		public PlayerService(
 			ILogger<PlayerService> log
@@ -40,9 +40,8 @@ namespace TQVaultAE.Services
 
 		/// <summary>
 		/// Loads a player using the drop down list.
-		/// Assumes designators are appended to character name.
 		/// </summary>
-		/// <param name="selectedSave">Player string from the drop down list.</param>
+		/// <param name="selectedSave">Item from the drop down list.</param>
 		/// <param name="isIT"></param>
 		/// <returns></returns>
 		public LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool isIT = false)
@@ -74,30 +73,8 @@ namespace TQVaultAE.Services
 
 			#endregion
 
-			#region Get the player's stash
-
-			result.StashFile = GamePathResolver.GetPlayerStashFile(selectedSave.Name);
-
-			var resultStash = this.userContext.Stashes.GetOrAddAtomic(result.StashFile, k =>
-			{
-				var stash = new Stash(selectedSave.Name, k);
-				try
-				{
-					stash.StashFound = StashProvider.LoadFile(stash);
-				}
-				catch (ArgumentException argumentException)
-				{
-					stash.ArgumentException = argumentException;
-				}
-				return stash;
-			});
-			result.Stash = resultStash;
-
-			#endregion
-
 			return result;
 		}
-
 
 		/// <summary>
 		/// Attempts to save all modified player files

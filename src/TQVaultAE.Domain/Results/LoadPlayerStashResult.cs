@@ -3,9 +3,9 @@ using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Domain.Results
 {
-	public class LoadPlayerResult
+	public class LoadPlayerStashResult
 	{
-		public string PlayerFile;
-		public PlayerCollection Player;
+		public Stash Stash;
+		public string StashFile;
 	}
 }

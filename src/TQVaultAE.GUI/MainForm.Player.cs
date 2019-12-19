@@ -139,26 +139,27 @@ namespace TQVaultAE.GUI
 			}
 
 			// Get the player's stash
+			var resultStash = this.stashService.LoadPlayerStash(selectedSave);
 			try
 			{
 				// Throw a message if the stash is not present.
-				if (result.Stash.StashFound.HasValue && !result.Stash.StashFound.Value)
+				if (resultStash.Stash.StashFound.HasValue && !resultStash.Stash.StashFound.Value)
 				{
 					var msg = string.Concat(Resources.StashNotFoundMsg, "\n\nCharacter : ", selectedSave);
 					MessageBox.Show(msg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
-				if (result.Stash.ArgumentException != null)
+				if (resultStash.Stash.ArgumentException != null)
 				{
-					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.StashFile, result.Stash.ArgumentException.Message);
+					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, resultStash.StashFile, resultStash.Stash.ArgumentException.Message);
 					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
-				this.stashPanel.Stash = result.Stash;
+				this.stashPanel.Stash = resultStash.Stash;
 			}
 			catch (IOException exception)
 			{
-				string msg = string.Concat(Resources.MainFormReadError, result.StashFile, exception.ToString());
+				string msg = string.Concat(Resources.MainFormReadError, resultStash.StashFile, exception.ToString());
 				MessageBox.Show(msg, Resources.MainFormStashReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				Log.Error(msg, exception);
 				this.stashPanel.Stash = null;

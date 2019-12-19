@@ -24,7 +24,39 @@ namespace TQVaultAE.Services
 			this.GamePathResolver = gamePathResolver;
 		}
 
+		/// <summary>
+		/// Loads a player stash using the drop down list.
+		/// </summary>
+		/// <param name="selectedSave">Item from the drop down list.</param>
+		/// <returns></returns>
+		public LoadPlayerStashResult LoadPlayerStash(PlayerSave selectedSave)
+		{
+			var result = new LoadPlayerStashResult();
 
+			if (string.IsNullOrWhiteSpace(selectedSave?.Name)) return result;
+
+			#region Get the player's stash
+
+			result.StashFile = GamePathResolver.GetPlayerStashFile(selectedSave.Name);
+
+			result.Stash = this.userContext.Stashes.GetOrAddAtomic(result.StashFile, k =>
+			{
+				var stash = new Stash(selectedSave.Name, k);
+				try
+				{
+					stash.StashFound = StashProvider.LoadFile(stash);
+				}
+				catch (ArgumentException argumentException)
+				{
+					stash.ArgumentException = argumentException;
+				}
+				return stash;
+			});
+
+			#endregion
+
+			return result;
+		}
 
 		/// <summary>
 		/// Loads the transfer stash for immortal throne

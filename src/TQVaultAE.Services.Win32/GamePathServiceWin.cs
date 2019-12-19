@@ -28,19 +28,19 @@ namespace TQVaultAE.Services.Win32
 		/// Gets the Immortal Throne Character save folder
 		/// </summary>
 		public string ImmortalThroneSaveFolder
-			=> Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games"), "Titan Quest - Immortal Throne");
+			=> Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", "Titan Quest - Immortal Throne");
 
 		/// <summary>
 		/// Gets the Titan Quest Character save folder.
 		/// </summary>
 		public string TQSaveFolder
-			=> Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games"), "Titan Quest");
+			=> Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", "Titan Quest");
 
 		/// <summary>
 		/// Gets the name of the game settings file.
 		/// </summary>
 		public string TQSettingsFile
-			=> Path.Combine(Path.Combine(TQSaveFolder, "Settings"), "options.txt");
+			=> Path.Combine(TQSaveFolder, "Settings", "options.txt");
 
 		/// <summary>
 		/// Gets or sets the Titan Quest game path.
@@ -103,7 +103,7 @@ namespace TQVaultAE.Services.Win32
 		/// <param name="characterName">name of the character</param>
 		/// <returns>full path to the character file.</returns>
 		public string GetPlayerFile(string characterName)
-			=> Path.Combine(Path.Combine(GetBaseCharacterFolder(), string.Concat("_", characterName)), "Player.chr");
+			=> Path.Combine(GetBaseCharacterFolder(), string.Concat("_", characterName), "Player.chr");
 
 		/// <summary>
 		/// Gets the full path to the player's stash file.
@@ -111,7 +111,7 @@ namespace TQVaultAE.Services.Win32
 		/// <param name="characterName">name of the character</param>
 		/// <returns>full path to the player stash file</returns>
 		public string GetPlayerStashFile(string characterName)
-			=> Path.Combine(Path.Combine(GetBaseCharacterFolder(), string.Concat("_", characterName)), "winsys.dxb");
+			=> Path.Combine(GetBaseCharacterFolder(), string.Concat("_", characterName), "winsys.dxb");
 
 		/// <summary>
 		/// Gets a list of all of the character files in the save folder.
@@ -507,7 +507,7 @@ namespace TQVaultAE.Services.Win32
 					Regex vdfPathRegex = new Regex(@"""\d+""\t+""([^""]+)""");  // "2"		"D:\\games\\Steam"
 					var vdfFile = Path.Combine(steamPath, @"\SteamApps\libraryfolders.vdf");
 					if (File.Exists(vdfFile))
-					{
+					{	
 						string[] libFile = File.ReadAllLines(vdfFile);
 
 						foreach (var line in libFile)
