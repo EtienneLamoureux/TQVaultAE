@@ -505,7 +505,7 @@ namespace TQVaultAE.Services.Win32
 					//further looking for Steam library
 					//read libraryfolders.vdf
 					Regex vdfPathRegex = new Regex(@"""\d+""\t+""([^""]+)""");  // "2"		"D:\\games\\Steam"
-					var vdfFile = Path.Combine(steamPath, @"\SteamApps\libraryfolders.vdf");
+					var vdfFile = Path.Combine(steamPath, @"SteamApps\libraryfolders.vdf");
 					if (File.Exists(vdfFile))
 					{	
 						string[] libFile = File.ReadAllLines(vdfFile);
