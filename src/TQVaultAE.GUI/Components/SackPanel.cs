@@ -2769,7 +2769,7 @@ namespace TQVaultAE.GUI.Components
 						// Set DragInfo to focused item.
 						this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
 
-						// copy the item
+						// duplicate the item
 						Item newItem = focusedItem.Duplicate(true);
 
 						// now drag it
