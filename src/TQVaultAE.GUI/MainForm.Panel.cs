@@ -350,7 +350,7 @@ namespace TQVaultAE.GUI
 				else
 				{
 					// The stash is not involved.
-					if (destinationPlayerPanel.Player == null)
+					if (destinationPlayerPanel ==  null || destinationPlayerPanel.Player == null)
 					{
 						// We have nowhere to send the item so cancel the move.
 						this.DragInfo.Cancel();
