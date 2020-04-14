@@ -2728,7 +2728,7 @@ namespace TQVaultAE.GUI.Components
 					this.Refresh();
 					e.Handled = true;
 				}
-				else if (e.KeyChar == 'c')
+				else if (e.KeyChar == 'c' && Config.Settings.Default.AllowItemCopy == true)
 				{
 					// Copy
 					Item focusedItem = this.FindItem(this.LastCellWithFocus);
@@ -2759,18 +2759,23 @@ namespace TQVaultAE.GUI.Components
 						e.Handled = true;
 					}
 				}
-				else if (e.KeyChar == 'd')
+				else if (e.KeyChar == 'd' && Config.Settings.Default.AllowItemCopy == true)
 				{
-					// Drop (move to trash)
-					if (!this.DragInfo.IsActive)
+					// Duplicate
+					Item focusedItem = this.FindItem(this.LastCellWithFocus);
+
+					if (focusedItem != null)
 					{
-						Item focusedItem = this.FindItem(this.LastCellWithFocus);
-						if (focusedItem != null)
-						{
-							this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
-							this.DragInfo.AutoMove = AutoMoveLocation.Trash;
-							this.OnAutoMoveItem(this, new SackPanelEventArgs(null, null));
-						}
+						// Set DragInfo to focused item.
+						this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
+
+						// duplicate the item
+						Item newItem = focusedItem.Duplicate(true);
+
+						// now drag it
+						this.DragInfo.MarkModified(newItem);
+						this.Refresh();
+						e.Handled = true;
 					}
 				}
 
