@@ -206,8 +206,8 @@ namespace TQVaultAE.GUI.Tooltip
 			else
 			{
 				// Classic display
-				foreach (var str in Data.PrefixAttributes) AddRow(str);
 				foreach (var str in Data.BaseAttributes) AddRow(str);
+				foreach (var str in Data.PrefixAttributes) AddRow(str);
 				foreach (var str in Data.SuffixAttributes) AddRow(str);
 			}
 
