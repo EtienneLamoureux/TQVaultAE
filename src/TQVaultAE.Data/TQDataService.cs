@@ -196,7 +196,8 @@ namespace TQVaultAE.Data
 			byte[] keyWithLen = new byte[key.Length + 4];
 			Buffer.BlockCopy(BitConverter.GetBytes(key.Length), 0, keyWithLen, 0, 4);
 			Buffer.BlockCopy(Encoding1252.GetBytes(key), 0, keyWithLen, 4, key.Length);
-			return BinaryFindKey(dataSource, keyWithLen, offset);
+			var result = BinaryFindKey(dataSource, keyWithLen, offset);
+			return (result.indexOf + 4, result.nextOffset);
 		}
 		
 		public (int indexOf, int nextOffset) BinaryFindKey(byte[] dataSource, byte[] key, int offset = 0)
@@ -216,7 +217,7 @@ namespace TQVaultAE.Data
 			}
 			i = -1;// Not found
 		found:
-			return (i + 4, i + key.Length);
+			return (i, i + key.Length);
 		}
 
 		/// <summary>
