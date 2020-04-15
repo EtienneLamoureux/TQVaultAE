@@ -147,6 +147,10 @@ namespace TQVaultAE.GUI.Components
 						// Just skip the item if we are not over a weapon box.
 						continue;
 				}
+				else if (item.IsAmulet && IsInsideAmuletBox(cellLocation))
+					// Check the amulet box since the item may not fill the entire box.
+					return item;
+
 				else if (string.IsNullOrEmpty(item.BaseItemId))
 					// Skip over empty items
 					continue;
@@ -444,7 +448,11 @@ namespace TQVaultAE.GUI.Components
 						}
 
 						dragItem.Location = SackCollection.GetEquipmentLocationOffset(slot);
-						this.Sack.RemoveAtItem(slot);
+
+						if (itemUnderUs != null)
+							// Only remove something if there is something to remove.
+							this.Sack.RemoveAtItem(slot);
+
 						this.Sack.InsertItem(slot, dragItem);
 					}
 				}
@@ -926,6 +934,10 @@ namespace TQVaultAE.GUI.Components
 				else
 					screenLocation = this.CellTopLeft(item.Location);
 
+				if (item.IsAmulet)
+					// Adjust the amulet to center it in the equipment box.
+					screenLocation.X = screenLocation.X + (SackCollection.GetEquipmentLocationSize(1).Width - item.Width) * UIService.HalfUnitSize;
+
 				this.DrawItem(graphics, item, screenLocation);
 			}
 		}
@@ -1006,6 +1018,23 @@ namespace TQVaultAE.GUI.Components
 				&& (slotUpperLeft.X + SackCollection.WeaponLocationSize.Width - 1) >= cellLocation.X
 				&& slotUpperLeft.Y <= cellLocation.Y
 				&& (slotUpperLeft.Y + SackCollection.WeaponLocationSize.Height - 1) >= cellLocation.Y;
+		}
+
+		/// <summary>
+		/// Checks whether the cell is within the amulet box.
+		/// </summary>
+		/// <param name="cellLocation">cell location Point that is being checked</param>
+		/// <returns>true if the cell location is within the amulet slot</returns>
+		private static bool IsInsideAmuletBox(Point cellLocation)
+		{
+			Point slotUpperLeft = SackCollection.GetEquipmentLocationOffset(1);
+
+			bool ans = slotUpperLeft.X <= cellLocation.X
+				&& (slotUpperLeft.X + SackCollection.GetEquipmentLocationSize(1).Width - 1) >= cellLocation.X
+				&& slotUpperLeft.Y <= cellLocation.Y
+				&& (slotUpperLeft.Y + SackCollection.GetEquipmentLocationSize(1).Height - 1) >= cellLocation.Y;
+
+			return ans;
 		}
 
 		/// <summary>

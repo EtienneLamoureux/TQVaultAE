@@ -332,7 +332,14 @@ namespace TQVaultAE.GUI.Tooltip
 						x = loc.X + ((itemX + 2) * usize);
 						y = loc.Y + (itemY * usize);
 					}
+
+					if (this.FocusedItem.IsAmulet)
+						// Adjust for the whole size of the amulet box.
+						x += (SackCollection.GetEquipmentLocationSize(1).Width - this.FocusedItem.Size.Width) * usize;
 				}
+
+				// Adjust position to avoid flickering if the tooltip appears on top of the cursor.
+				x += Cursor.Size.Width;
 
 				// Ajust position if tooltip size goes offscreen
 				var bottom = y + this.Height;
