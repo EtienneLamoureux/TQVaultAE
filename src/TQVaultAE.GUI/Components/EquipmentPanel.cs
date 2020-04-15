@@ -444,7 +444,11 @@ namespace TQVaultAE.GUI.Components
 						}
 
 						dragItem.Location = SackCollection.GetEquipmentLocationOffset(slot);
-						this.Sack.RemoveAtItem(slot);
+						
+						if (itemUnderUs != null)
+							// Only remove something if there is something to remove.
+							this.Sack.RemoveAtItem(slot);
+							
 						this.Sack.InsertItem(slot, dragItem);
 					}
 				}
