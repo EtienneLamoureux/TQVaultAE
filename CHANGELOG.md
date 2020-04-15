@@ -1,4 +1,18 @@
 # Changelog
+## 3.5.0
+### Features
+- #291 Improve readability of button labels with a lot of text
+- #298 Disable the "copy" hotkey when the copy cheat is turned off
+
+### Bugs
+- #297 Fix an issue when dropping an item with the "d" hotkey
+- #280 Fix crash when loading certain modded characters
+- #304 Fix disappearing equipped items when equipping another item into an empty slot
+- #302 Fix continuous tooltip flash when mousing over the edge of an item
+
+### Other
+- #128 Adjust the space on the character panel for Ragnarok necklaces
+
 ## 3.4.0
 ### Features
 - #138 Add optional colored backgrounds to items to reflect rarity
