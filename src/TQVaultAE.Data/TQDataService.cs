@@ -216,7 +216,7 @@ namespace TQVaultAE.Data
 			}
 			i = -1;// Not found
 		found:
-			return (i, i + key.Length);
+			return (i + 4, i + key.Length);
 		}
 
 		/// <summary>
