@@ -193,10 +193,10 @@ namespace TQVaultAE.Data
 		public (int indexOf, int nextOffset) BinaryFindKey(byte[] dataSource, string key, int offset = 0)
 		{
 			// Add the length of the key to help filter out unwanted hits.
-			byte[] keyWithLen = new byte[key.Length + 4];
-			Buffer.BlockCopy(BitConverter.GetBytes(key.Length), 0, keyWithLen, 0, 4);
-			Buffer.BlockCopy(Encoding1252.GetBytes(key), 0, keyWithLen, 4, key.Length);
-			return BinaryFindKey(dataSource, keyWithLen, offset);
+			byte[] keyWithLen = BitConverter.GetBytes(key.Length).Concat(Encoding1252.GetBytes(key)).ToArray();
+			var result = BinaryFindKey(dataSource, keyWithLen, offset);
+			// compensate the added length before returning the value
+			return (result.indexOf + sizeof(int), result.nextOffset);
 		}
 		
 		public (int indexOf, int nextOffset) BinaryFindKey(byte[] dataSource, byte[] key, int offset = 0)

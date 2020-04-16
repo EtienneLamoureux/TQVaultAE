@@ -86,15 +86,15 @@ namespace TQVaultAE.GUI
 			// Get the relic vault stash
 			try
 			{
-				if (result.StashFound.HasValue && !result.StashFound.Value)
+				if (result.Stash.StashFound.HasValue && !result.Stash.StashFound.Value)
 				{
 					var msg = string.Concat(Resources.StashNotFoundMsg, "\n\nRelic Stash\n\n", result.RelicVaultStashFile);
 					MessageBox.Show(msg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
-				if (result.StashArgumentException != null)
+				if (result.Stash.ArgumentException != null)
 				{
-					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.RelicVaultStashFile, result.StashArgumentException.Message);
+					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.RelicVaultStashFile, result.Stash.ArgumentException.Message);
 					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
