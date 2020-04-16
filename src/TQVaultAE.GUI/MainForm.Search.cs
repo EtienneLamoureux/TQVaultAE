@@ -117,7 +117,7 @@ namespace TQVaultAE.GUI
 				this.vaultPanel.CurrentBag = selectedResult.SackNumber;
 				this.vaultPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 			}
-			else if (selectedResult.SackType == SackType.Player || selectedResult.SackType == SackType.Equipment)
+			else if (selectedResult.SackType == SackType.Player || selectedResult.SackType == SackType.Equipment || selectedResult.SackType == SackType.Stash)
 			{
 				// Switch to the selected player
 				if (this.showSecondaryVault)
@@ -126,56 +126,29 @@ namespace TQVaultAE.GUI
 					this.UpdateTopPanel();
 				}
 
-				string myName = selectedResult.ContainerName;
+				// Update the selection list and load the character.				
+				this.characterComboBox.SelectedIndex = this.characterComboBox.FindString(selectedResult.ContainerName);
+				    
+				// Bail if we are attempting to highlight something in the stash panel and the stash does not exist.
+				if ((this.stashPanel == null || this.stashPanel.SackPanel == null) && selectedResult.SackType != SackType.Player)
+					return;
 
-				if (GamePathResolver.IsCustom)
-				{
-					myName = string.Concat(myName, PlayerService.CustomDesignator);
-				}
-
-				// Update the selection list and load the character.
-				this.characterComboBox.SelectedItem = myName;
-				if (selectedResult.SackNumber > 0)
-				{
-					this.playerPanel.CurrentBag = selectedResult.SackNumber - 1;
-				}
-
-				if (selectedResult.SackType != SackType.Equipment)
+				if (selectedResult.SackType == SackType.Player)
 				{
 					// Highlight the item if it's in the player inventory.
 					if (selectedResult.SackNumber == 0)
-					{
 						this.playerPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
-					}
 					else
 					{
+						this.playerPanel.CurrentBag = selectedResult.SackNumber - 1;
 						this.playerPanel.BagSackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 					}
 				}
-			}
-			else if (selectedResult.SackType == SackType.Stash)
-			{
-				// Switch to the selected player
-				if (this.showSecondaryVault)
+				else
 				{
-					this.showSecondaryVault = !this.showSecondaryVault;
-					this.UpdateTopPanel();
+					this.stashPanel.CurrentBag = selectedResult.SackNumber;
+					this.stashPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 				}
-
-				// Assume that only IT characters can have a stash.
-				string myName = string.Concat(selectedResult.ContainerName, "<Immortal Throne>");
-
-				if (GamePathResolver.IsCustom)
-				{
-					myName = string.Concat(myName, PlayerService.CustomDesignator);
-				}
-
-				// Update the selection list and load the character.
-				this.characterComboBox.SelectedItem = myName;
-
-				// Switch to the Stash bag
-				this.stashPanel.CurrentBag = selectedResult.SackNumber;
-				this.stashPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 			}
 			else if ((selectedResult.SackType == SackType.TransferStash) || (selectedResult.SackType == SackType.RelicVaultStash))
 			{
