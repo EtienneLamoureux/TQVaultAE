@@ -1,4 +1,13 @@
 # Changelog
+## 3.5.1
+### Bugs
+- #316 Fix an issue preventing loading the player file after placing an item into a stash
+- #276 Fix error when scrolling in the search results pop-up
+
+### Other
+- #314 Hide the relic stash tab if it fails to load
+- #296 Rearrange item stats to better match in-game display
+
 ## 3.5.0
 ### Features
 - #291 Improve readability of button labels with a lot of text
