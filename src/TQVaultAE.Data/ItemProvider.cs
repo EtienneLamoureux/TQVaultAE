@@ -2275,7 +2275,7 @@ namespace TQVaultAE.Data
 						}
 						else
 						{
-							// There are multiple lines to thei attribute so the color tag needs to be added.
+							// There are multiple lines to the attribute so the color tag needs to be added.
 							string s = $"{ItemStyle.Epic.TQColor().ColorTag()}";
 							line = string.Concat(s, line);
 						}
