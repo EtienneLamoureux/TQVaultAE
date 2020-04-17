@@ -257,9 +257,9 @@ namespace TQVaultAE.Data
 		/// The tag is normalized to upper case internally.
 		/// </summary>
 		/// <param name="tagId">Tag to be looked up in the text database normalized to upper case.</param>
-		/// <returns>Returns localized string, tagId if it cannot find a string or "?ErrorName?" in case of uncaught exception.</returns>
+		/// <returns>Returns localized string, empty string if it cannot find a string or "?ErrorName?" in case of uncaught exception.</returns>
 		public string GetFriendlyName(string tagId)
-			=> this.textDB.TryGetValue(tagId.ToUpperInvariant(), out var text) ? text.Value : tagId;
+			=> this.textDB.TryGetValue(tagId.ToUpperInvariant(), out var text) ? text.Value : string.Empty;
 
 		/// <summary>
 		/// Gets the formatted string for the variable attribute.
