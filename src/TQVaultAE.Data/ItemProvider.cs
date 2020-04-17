@@ -640,7 +640,14 @@ namespace TQVaultAE.Data
 				"SPEAR", // Added by VillageIdiot
 				"MACE", // Added by VillageIdiot
 				"QUEST", // Added by VillageIdiot
-				"CANNOTPICKUPMULTIPLE" // Added by VillageIdiot
+				"CANNOTPICKUPMULTIPLE", // Added by VillageIdiot
+				"BONUSLIFEPERCENT",
+				"BONUSLIFEPOINTS",
+				"BONUSMANAPERCENT",
+				"BONUSMANAPOINTS",
+				"DISPLAYASQUESTITEM",  // New tags from the latest expansions.
+				"ACTORSCALE",
+				"ACTORSCALETIME"
 			};
 
 			return (Array.IndexOf(notWanted, keyUpper) != -1

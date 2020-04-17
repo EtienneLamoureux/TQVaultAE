@@ -162,7 +162,7 @@ namespace TQVaultAE.Data
 		public DBRecordCollection GetRecordNotCached(ArzFile file, string recordId)
 		{
 			recordId = TQData.NormalizeRecordPath(recordId);
-			return file.Cache.GetOrAddAtomic(recordId, k => infoProv.Decompress(file, file.RecordInfo[k].Value));
+			return infoProv.Decompress(file, file.RecordInfo[recordId].Value);
 		}
 
 		/// <summary>
