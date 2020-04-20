@@ -171,6 +171,7 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 
 *A. There are several things you can do:*
 - *Close TQVaultAE and open it up again. It may fix your problem*
+- *Look up if your problem is featured in [our previously answered questions](https://github.com/EtienneLamoureux/TQVaultAE/issues?q=+is%3Aissue+label%3Aquestion+)*
 - *Look up if your problem is featured in [TQVault's documentation](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/documentation/TQVault%20common%20issues.pdf)*
 - *Create an issue in [our issue tracking board](https://github.com/EtienneLamoureux/TQVaultAE/issues)*
 
