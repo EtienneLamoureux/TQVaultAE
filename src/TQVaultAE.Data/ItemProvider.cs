@@ -1531,12 +1531,15 @@ namespace TQVaultAE.Data
 					}
 					else
 					{
+						name = "?? Missing database info ??";
 						Info info = Database.GetInfo(memb);
 
-						if (info != null)							
+						if (info != null)
+						{
 							name = Database.GetFriendlyName(info.DescriptionTag);
+							name = string.IsNullOrWhiteSpace(name) ? info.DescriptionTag : name;
+						}
 
-						name = string.IsNullOrWhiteSpace(name)? "?? Missing database info ??" : name;
 						results.Add($"{ItemStyle.Common.TQColor().ColorTag()}    {name}");
 					}
 				}
