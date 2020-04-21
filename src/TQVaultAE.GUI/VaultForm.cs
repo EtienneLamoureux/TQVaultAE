@@ -365,7 +365,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		public virtual bool NormalizeBox
 		{
-			get => _NormalizeBox && this.UIService.Scale != 1.0F;
+			get => _NormalizeBox && (this.UIService?.Scale ?? 1.0F) != 1.0F;
 			set
 			{
 				_NormalizeBox = value;

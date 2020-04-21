@@ -2273,6 +2273,12 @@ namespace TQVaultAE.Data
 							string s = $"{ItemStyle.Legendary.TQColor().ColorTag()}{d.Variable}";
 							line = string.Concat(line, s);
 						}
+						else
+						{
+							// There are multiple lines to the attribute so the color tag needs to be added.
+							string s = $"{ItemStyle.Epic.TQColor().ColorTag()}";
+							line = string.Concat(s, line);
+						}
 
 						if (isGlobal)
 							line = string.Concat(globalIndent, line);

@@ -100,8 +100,6 @@ namespace TQVaultAE.Services
 			var resultStash = this.userContext.Stashes.GetOrAddAtomic(result.RelicVaultStashFile, k =>
 			{
 				var stash = new Stash(Resources.GlobalRelicVaultStash, k);
-				stash.CreateEmptySack();
-				stash.Sack.StashType = SackType.RelicVaultStash;
 
 				try
 				{
@@ -117,8 +115,7 @@ namespace TQVaultAE.Services
 				return stash;
 			});
 			result.Stash = resultStash;
-			result.StashFound = resultStash.StashFound;
-			result.StashArgumentException = resultStash.ArgumentException;
+			result.Stash.IsImmortalThrone = true;
 
 			return result;
 		}
