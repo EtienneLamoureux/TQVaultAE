@@ -1506,6 +1506,7 @@ namespace TQVaultAE.GUI.Components
 									{
 										string nameTag = info.DescriptionTag;
 										name = Database.GetFriendlyName(nameTag);
+										name = string.IsNullOrWhiteSpace(name) ? nameTag : name;
 									}
 
 									choices[i] = new ToolStripMenuItem(name, null, callback, s);
