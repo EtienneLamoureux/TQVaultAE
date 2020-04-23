@@ -934,8 +934,8 @@ namespace TQVaultAE.Data
 
 				Expression expression = ExpressionEvaluate.CreateExpression(value);
 
-				if (TQDebug.DebugEnabled)
-					Log.LogDebug($"Create Expression : {value}");
+				//if (TQDebug.DebugEnabled)
+				//	Log.LogDebug($"Create Expression : {value}");
 
 				// Changed by Bman to fix random overflow crashes
 				Variable ans = new Variable(variableKey, VariableDataType.Integer, 1);

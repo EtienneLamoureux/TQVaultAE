@@ -323,10 +323,10 @@ namespace TQVaultAE.GUI
             this.backgroundWorkerLoadAllFiles.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorkerLoadAllFiles_DoWork);
             this.backgroundWorkerLoadAllFiles.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorkerLoadAllFiles_ProgressChanged);
             this.backgroundWorkerLoadAllFiles.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorkerLoadAllFiles_RunWorkerCompleted);
-			// 
-			// fadeInTimer
-			// 
-			this.fadeInTimer.Interval = 50;
+            // 
+            // fadeInTimer
+            // 
+            this.fadeInTimer.Interval = 50;
             this.fadeInTimer.Tick += new System.EventHandler(this.FadeInTimerTick);
             // 
             // flowLayoutPanelVaultSelector

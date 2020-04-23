@@ -63,7 +63,7 @@ namespace TQVaultAE.GUI
 				Application.SetCompatibleTextRenderingDefault(false);
 
 #if DEBUG
-				TQDebug.DebugEnabled = true;
+				//TQDebug.DebugEnabled = true;
 #endif
 				// Setup regular Microsoft.Extensions.Logging abstraction manualy
 				LoggerFactory = new LoggerFactory();

@@ -1,16 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Search;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
-using TQVaultAE.Services;
 
 namespace TQVaultAE.GUI
 {
@@ -117,7 +113,7 @@ namespace TQVaultAE.GUI
 
 				// Update the selection list and load the character.				
 				this.characterComboBox.SelectedIndex = this.characterComboBox.FindString(selectedResult.ContainerName);
-
+				    
 				// Bail if we are attempting to highlight something in the stash panel and the stash does not exist.
 				if ((this.stashPanel == null || this.stashPanel.SackPanel == null) && selectedResult.SackType != SackType.Player)
 					return;
