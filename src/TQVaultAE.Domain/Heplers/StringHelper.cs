@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace TQVaultAE.Domain.Helpers
@@ -10,6 +12,27 @@ namespace TQVaultAE.Domain.Helpers
 	public static class StringHelper
 	{
 		public const string TQNewLineTag = @"{^N}";
+
+		public static string MakeMD5(this string input)
+		{
+			string hash;
+			using (MD5 md5Hash = MD5.Create())
+			{
+				// Convert the input string to a byte array and compute the hash.
+				byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+				StringBuilder sBuilder = new StringBuilder();
+
+				for (int i = 0; i < data.Length; i++)
+				{
+					sBuilder.Append(data[i].ToString("x2"));
+				}
+
+				hash = sBuilder.ToString();
+			}
+
+			return hash;
+		}
 
 		public static string ToFirstCharUpperCase(this string text)
 		{

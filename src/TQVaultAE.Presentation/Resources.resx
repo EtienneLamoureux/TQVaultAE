@@ -306,45 +306,7 @@ Would you like to restart TQVault?</value>
   <data name="ItemSeed" xml:space="preserve">
     <value>itemSeed: {0} (0x{0:X8}) ({1:p3})</value>
   </data>
-  <data name="ItemStyleArtifact" xml:space="preserve">
-    <value>Artifact</value>
-  </data>
-  <data name="ItemStyleBroken" xml:space="preserve">
-    <value>Broken</value>
-  </data>
-  <data name="ItemStyleCommon" xml:space="preserve">
-    <value>Common</value>
-  </data>
-  <data name="ItemStyleEpic" xml:space="preserve">
-    <value>Epic</value>
-  </data>
-  <data name="ItemStyleFormulae" xml:space="preserve">
-    <value>Formulae</value>
-  </data>
-  <data name="ItemStyleLegendary" xml:space="preserve">
-    <value>Legendary</value>
-  </data>
-  <data name="ItemStyleMundane" xml:space="preserve">
-    <value>Mundane</value>
-  </data>
-  <data name="ItemStyleParchment" xml:space="preserve">
-    <value>Parchment</value>
-  </data>
-  <data name="ItemStylePotion" xml:space="preserve">
-    <value>Potion</value>
-  </data>
-  <data name="ItemStyleQuest" xml:space="preserve">
-    <value>Quest</value>
-  </data>
-  <data name="ItemStyleRare" xml:space="preserve">
-    <value>Rare</value>
-  </data>
-  <data name="ItemStyleRelic" xml:space="preserve">
-    <value>Relic</value>
-  </data>
-  <data name="ItemStyleScroll" xml:space="preserve">
-    <value>Scroll</value>
-  </data>
+
   <data name="ItemWith" xml:space="preserve">
     <value>with</value>
   </data>
@@ -1117,6 +1079,9 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   <data name="GlobalMinimize" xml:space="preserve">
     <value>Minimize</value>
   </data>
+  <data name="GlobalNormalize" xml:space="preserve">
+    <value>Scale back to normal size</value>
+  </data>
   <data name="GlobalMove" xml:space="preserve">
     <value>Move</value>
   </data>
@@ -1168,15 +1133,9 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Allow Character Editing Features</value>
   </data>
-  <data name="Difficulty0" xml:space="preserve">
-    <value>Normal</value>
-  </data>
-  <data name="Difficulty1" xml:space="preserve">
-    <value>Epic</value>
-  </data>
-  <data name="Difficulty2" xml:space="preserve">
-    <value>Legendary</value>
-  </data>
+
+
+
   <data name="CEAttributePoints" xml:space="preserve">
     <value>Attribute Points</value>
   </data>
@@ -1219,335 +1178,225 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   <data name="CharacterEditBtn" xml:space="preserve">
     <value>Edit</value>
   </data>
-  <data name="tagCClass01" xml:space="preserve">
-    <value>Theurgist</value>
-  </data>
+
   <data name="MasteriestagCClass01" xml:space="preserve">
-    <value>Spirit</value>
+    <value>tagMasteryBrief07</value>
   </data>
-  <data name="tagCClass02" xml:space="preserve">
-    <value>Wanderer</value>
-  </data>
+
   <data name="MasteriestagCClass02" xml:space="preserve">
-    <value>Nature</value>
+    <value>tagMasteryBrief08</value>
   </data>
-  <data name="tagCClass03" xml:space="preserve">
-    <value>Rogue</value>
-  </data>
+
   <data name="MasteriestagCClass03" xml:space="preserve">
-    <value>Rogue</value>
+    <value>tagMasteryBrief05</value>
   </data>
-  <data name="tagCClass04" xml:space="preserve">
-    <value>Hunter</value>
-  </data>
+
   <data name="MasteriestagCClass04" xml:space="preserve">
-    <value>Hunting</value>
+    <value>tagMasteryBrief06</value>
   </data>
-  <data name="tagCClass05" xml:space="preserve">
-    <value>Stormcaller</value>
-  </data>
+
   <data name="MasteriestagCClass05" xml:space="preserve">
-    <value>Storm</value>
+    <value>tagMasteryBrief04</value>
   </data>
-  <data name="tagCClass06" xml:space="preserve">
-    <value>Pyromancer</value>
-  </data>
+
   <data name="MasteriestagCClass06" xml:space="preserve">
-    <value>Earth</value>
+    <value>tagMasteryBrief03</value>
   </data>
-  <data name="tagCClass07" xml:space="preserve">
-    <value>Defender</value>
-  </data>
+
   <data name="MasteriestagCClass07" xml:space="preserve">
-    <value>Defense</value>
+    <value>tagMasteryBrief02</value>
   </data>
-  <data name="tagCClass08" xml:space="preserve">
-    <value>Warrior</value>
-  </data>
+
   <data name="MasteriestagCClass08" xml:space="preserve">
-    <value>Warfare</value>
+    <value>tagMasteryBrief01</value>
   </data>
-  <data name="tagCClass09" xml:space="preserve">
-    <value>Spellbreaker</value>
-  </data>
+
   <data name="MasteriestagCClass09" xml:space="preserve">
-    <value>Spirit-Warfare</value>
+    <value>tagMasteryBrief07-tagMasteryBrief01</value>
   </data>
-  <data name="tagCClass10" xml:space="preserve">
-    <value>Champion</value>
-  </data>
+
   <data name="MasteriestagCClass10" xml:space="preserve">
-    <value>Nature-Warfare</value>
+    <value>tagMasteryBrief08-tagMasteryBrief01</value>
   </data>
-  <data name="tagCClass11" xml:space="preserve">
-    <value>Assassin</value>
-  </data>
+
   <data name="MasteriestagCClass11" xml:space="preserve">
-    <value>Rogue-Warfare</value>
+    <value>tagMasteryBrief05-tagMasteryBrief01</value>
   </data>
-  <data name="tagCClass12" xml:space="preserve">
-    <value>Slayer</value>
-  </data>
+
   <data name="MasteriestagCClass12" xml:space="preserve">
-    <value>Hunting-Warfare</value>
+    <value>tagMasteryBrief06-tagMasteryBrief01</value>
   </data>
-  <data name="tagCClass13" xml:space="preserve">
-    <value>Thane</value>
-  </data>
+
   <data name="MasteriestagCClass13" xml:space="preserve">
-    <value>Storm-Warfare</value>
+    <value>tagMasteryBrief04-tagMasteryBrief01</value>
   </data>
-  <data name="tagCClass14" xml:space="preserve">
-    <value>Battlemage</value>
-  </data>
+
   <data name="MasteriestagCClass14" xml:space="preserve">
-    <value>Earth-Warfare</value>
+    <value>tagMasteryBrief03-tagMasteryBrief01</value>
   </data>
-  <data name="tagCClass15" xml:space="preserve">
-    <value>Conquerer</value>
-  </data>
+
   <data name="MasteriestagCClass15" xml:space="preserve">
-    <value>Defense-Warfare</value>
+    <value>tagMasteryBrief02-tagMasteryBrief01</value>
   </data>
-  <data name="tagCClass16" xml:space="preserve">
-    <value>Spellbinder</value>
-  </data>
+
   <data name="MasteriestagCClass16" xml:space="preserve">
-    <value>Spirit-Defense</value>
+    <value>tagMasteryBrief07-tagMasteryBrief02</value>
   </data>
-  <data name="tagCClass17" xml:space="preserve">
-    <value>Guardian</value>
-  </data>
+
   <data name="MasteriestagCClass17" xml:space="preserve">
-    <value>Nature-Defense</value>
+    <value>tagMasteryBrief08-tagMasteryBrief02</value>
   </data>
-  <data name="tagCClass18" xml:space="preserve">
-    <value>Corsair</value>
-  </data>
+
   <data name="MasteriestagCClass18" xml:space="preserve">
-    <value>Rogue-Defense</value>
+    <value>tagMasteryBrief05-tagMasteryBrief02</value>
   </data>
-  <data name="tagCClass19" xml:space="preserve">
-    <value>Warden</value>
-  </data>
+
   <data name="MasteriestagCClass19" xml:space="preserve">
-    <value>Hunting-Defense</value>
+    <value>tagMasteryBrief06-tagMasteryBrief02</value>
   </data>
-  <data name="tagCClass20" xml:space="preserve">
-    <value>Paladin</value>
-  </data>
+
   <data name="MasteriestagCClass20" xml:space="preserve">
-    <value>Storm-Defense</value>
+    <value>tagMasteryBrief04-tagMasteryBrief02</value>
   </data>
-  <data name="tagCClass21" xml:space="preserve">
-    <value>Juggernaut</value>
-  </data>
+
   <data name="MasteriestagCClass21" xml:space="preserve">
-    <value>Earth-Defense</value>
+    <value>tagMasteryBrief03-tagMasteryBrief02</value>
   </data>
-  <data name="tagCClass22" xml:space="preserve">
-    <value>Conjurer</value>
-  </data>
+
   <data name="MasteriestagCClass22" xml:space="preserve">
-    <value>Spirit-Earth</value>
+    <value>tagMasteryBrief07-tagMasteryBrief03</value>
   </data>
-  <data name="tagCClass23" xml:space="preserve">
-    <value>Summoner</value>
-  </data>
+
   <data name="MasteriestagCClass23" xml:space="preserve">
-    <value>Nature-Earth</value>
+    <value>tagMasteryBrief08-tagMasteryBrief03</value>
   </data>
-  <data name="tagCClass24" xml:space="preserve">
-    <value>Magician</value>
-  </data>
+
   <data name="MasteriestagCClass24" xml:space="preserve">
-    <value>Rogue-Earth</value>
+    <value>tagMasteryBrief05-tagMasteryBrief03</value>
   </data>
-  <data name="tagCClass25" xml:space="preserve">
-    <value>Avenger</value>
-  </data>
+
   <data name="MasteriestagCClass25" xml:space="preserve">
-    <value>Hunting-Earth</value>
+    <value>tagMasteryBrief06-tagMasteryBrief03</value>
   </data>
-  <data name="tagCClass26" xml:space="preserve">
-    <value>Elementalist</value>
-  </data>
+
   <data name="MasteriestagCClass26" xml:space="preserve">
-    <value>Storm-Earth</value>
+    <value>tagMasteryBrief04-tagMasteryBrief03</value>
   </data>
-  <data name="tagCClass27" xml:space="preserve">
-    <value>Oracle</value>
-  </data>
+
   <data name="MasteriestagCClass27" xml:space="preserve">
-    <value>Spirit-Storm</value>
+    <value>tagMasteryBrief07-tagMasteryBrief04</value>
   </data>
-  <data name="tagCClass28" xml:space="preserve">
-    <value>Druid</value>
-  </data>
+
   <data name="MasteriestagCClass28" xml:space="preserve">
-    <value>Nature-Storm</value>
+    <value>tagMasteryBrief08-tagMasteryBrief04</value>
   </data>
-  <data name="tagCClass29" xml:space="preserve">
-    <value>Sorcerer</value>
-  </data>
+
   <data name="MasteriestagCClass29" xml:space="preserve">
-    <value>Rogue-Storm</value>
+    <value>tagMasteryBrief05-tagMasteryBrief04</value>
   </data>
-  <data name="tagCClass30" xml:space="preserve">
-    <value>Sage</value>
-  </data>
+
   <data name="MasteriestagCClass30" xml:space="preserve">
-    <value>Hunting-Storm</value>
+    <value>tagMasteryBrief06-tagMasteryBrief04</value>
   </data>
-  <data name="tagCClass31" xml:space="preserve">
-    <value>Bone Charmer</value>
-  </data>
+
   <data name="MasteriestagCClass31" xml:space="preserve">
-    <value>Spirit-Hunting</value>
+    <value>tagMasteryBrief07-tagMasteryBrief06</value>
   </data>
-  <data name="tagCClass32" xml:space="preserve">
-    <value>Ranger</value>
-  </data>
+
   <data name="MasteriestagCClass32" xml:space="preserve">
-    <value>Nature-Hunting</value>
+    <value>tagMasteryBrief08-tagMasteryBrief06</value>
   </data>
-  <data name="tagCClass33" xml:space="preserve">
-    <value>Brigand</value>
-  </data>
+
   <data name="MasteriestagCClass33" xml:space="preserve">
-    <value>Rogue-Hunting</value>
+    <value>tagMasteryBrief05-tagMasteryBrief06</value>
   </data>
-  <data name="tagCClass34" xml:space="preserve">
-    <value>Warlock</value>
-  </data>
+
   <data name="MasteriestagCClass34" xml:space="preserve">
-    <value>Spirit-Rogue</value>
+    <value>tagMasteryBrief07-tagMasteryBrief05</value>
   </data>
-  <data name="tagCClass35" xml:space="preserve">
-    <value>Illusionist</value>
-  </data>
+
   <data name="MasteriestagCClass35" xml:space="preserve">
-    <value>Nature-Rogue</value>
+    <value>tagMasteryBrief08-tagMasteryBrief05</value>
   </data>
-  <data name="tagCClass36" xml:space="preserve">
-    <value>Soothsayer</value>
-  </data>
+
   <data name="MasteriestagCClass36" xml:space="preserve">
-    <value>Spirit-Nature</value>
+    <value>tagMasteryBrief07-tagMasteryBrief08</value>
   </data>
-  <data name="xtagCharacterClass01" xml:space="preserve">
-    <value>Seer</value>
-  </data>
+
   <data name="MasteriesxtagCharacterClass01" xml:space="preserve">
-    <value>Dream</value>
+    <value>xtagMasteryBrief09</value>
   </data>
-  <data name="xtagCharacterClass02" xml:space="preserve">
-    <value>Harbinger</value>
-  </data>
+
   <data name="MasteriesxtagCharacterClass02" xml:space="preserve">
-    <value>Warfare-Dream</value>
+    <value>tagMasteryBrief01-xtagMasteryBrief09</value>
   </data>
-  <data name="xtagCharacterClass03" xml:space="preserve">
-    <value>Templar</value>
-  </data>
+
   <data name="MasteriesxtagCharacterClass03" xml:space="preserve">
-    <value>Defense-Dream</value>
+    <value>tagMasteryBrief02-xtagMasteryBrief09</value>
   </data>
-  <data name="xtagCharacterClass04" xml:space="preserve">
-    <value>Evoker</value>
-  </data>
+
   <data name="MasteriesxtagCharacterClass04" xml:space="preserve">
-    <value>Earth-Dream</value>
+    <value>tagMasteryBrief03-xtagMasteryBrief09</value>
   </data>
-  <data name="xtagCharacterClass05" xml:space="preserve">
-    <value>Prophet</value>
-  </data>
+
   <data name="MasteriesxtagCharacterClass05" xml:space="preserve">
-    <value>Storm-Dream</value>
+    <value>tagMasteryBrief04-xtagMasteryBrief09</value>
   </data>
-  <data name="xtagCharacterClass06" xml:space="preserve">
-    <value>Haruspex</value>
-  </data>
+
   <data name="MasteriesxtagCharacterClass06" xml:space="preserve">
-    <value>Hunting-Dream</value>
+    <value>tagMasteryBrief06-xtagMasteryBrief09</value>
   </data>
-  <data name="xtagCharacterClass07" xml:space="preserve">
-    <value>Dreamkiller</value>
-  </data>
+
   <data name="MasteriesxtagCharacterClass07" xml:space="preserve">
-    <value>Rogue-Dream</value>
+    <value>tagMasteryBrief05-xtagMasteryBrief09</value>
   </data>
-  <data name="xtagCharacterClass08" xml:space="preserve">
-    <value>Ritualist</value>
-  </data>
+
   <data name="MasteriesxtagCharacterClass08" xml:space="preserve">
-    <value>Nature-Dream</value>
+    <value>tagMasteryBrief08-xtagMasteryBrief09</value>
   </data>
-  <data name="xtagCharacterClass09" xml:space="preserve">
-    <value>Diviner</value>
-  </data>
+
   <data name="MasteriesxtagCharacterClass09" xml:space="preserve">
-    <value>Spirit-Dream</value>
+    <value>tagMasteryBrief07-xtagMasteryBrief09</value>
   </data>
-  <data name="x2tag_class_rm_rm" xml:space="preserve">
-    <value>Runemaster</value>
-  </data>
+
   <data name="Masteriesx2tag_class_rm_rm" xml:space="preserve">
-    <value>Runes</value>
+    <value>x2tagRuneMasteryBrief</value>
   </data>
-  <data name="x2tag_class_warfare_rm" xml:space="preserve">
-    <value>Berserker</value>
-  </data>
+
   <data name="Masteriesx2tag_class_warfare_rm" xml:space="preserve">
-    <value>Warfare-Runes</value>
+    <value>tagMasteryBrief01-x2tagRuneMasteryBrief</value>
   </data>
-  <data name="x2tag_class_defense_rm" xml:space="preserve">
-    <value>Runesmith</value>
-  </data>
+
   <data name="Masteriesx2tag_class_defense_rm" xml:space="preserve">
-    <value>Defense-Runes</value>
+    <value>tagMasteryBrief02-x2tagRuneMasteryBrief</value>
   </data>
-  <data name="x2tag_class_earth_rm" xml:space="preserve">
-    <value>Stonespeaker</value>
-  </data>
+
   <data name="Masteriesx2tag_class_earth_rm" xml:space="preserve">
-    <value>Earth-Runes</value>
+    <value>tagMasteryBrief03-x2tagRuneMasteryBrief</value>
   </data>
-  <data name="x2tag_class_storm_rm" xml:space="preserve">
-    <value>Thunderer</value>
-  </data>
+
   <data name="Masteriesx2tag_class_storm_rm" xml:space="preserve">
-    <value>Storm-Runes</value>
+    <value>tagMasteryBrief04-x2tagRuneMasteryBrief</value>
   </data>
-  <data name="x2tag_class_hunting_rm" xml:space="preserve">
-    <value>Dragon Hunter</value>
-  </data>
+
   <data name="Masteriesx2tag_class_hunting_rm" xml:space="preserve">
-    <value>Hunting-Runes</value>
+    <value>tagMasteryBrief06-x2tagRuneMasteryBrief</value>
   </data>
-  <data name="x2tag_class_stealth_rm" xml:space="preserve">
-    <value>Trickster</value>
-  </data>
+
   <data name="Masteriesx2tag_class_stealth_rm" xml:space="preserve">
-    <value>Rogue-Runes</value>
+    <value>tagMasteryBrief05-x2tagRuneMasteryBrief</value>
   </data>
-  <data name="x2tag_class_nature_rm" xml:space="preserve">
-    <value>Skinchanger</value>
-  </data>
+
   <data name="Masteriesx2tag_class_nature_rm" xml:space="preserve">
-    <value>Nature-Runes</value>
+    <value>tagMasteryBrief08-x2tagRuneMasteryBrief</value>
   </data>
-  <data name="x2tag_class_spirit_rm" xml:space="preserve">
-    <value>Shaman</value>
-  </data>
+
   <data name="Masteriesx2tag_class_spirit_rm" xml:space="preserve">
-    <value>Spirit-Runes</value>
+    <value>tagMasteryBrief07-x2tagRuneMasteryBrief</value>
   </data>
-  <data name="x2tag_class_dream_rm" xml:space="preserve">
-    <value>Seidr Worker</value>
-  </data>
+
   <data name="Masteriesx2tag_class_dream_rm" xml:space="preserve">
-    <value>Dream-Runes</value>
+    <value>xtagMasteryBrief09-x2tagRuneMasteryBrief</value>
   </data>
   <data name="Masteries" xml:space="preserve">
     <value>Masteries</value>
@@ -1662,4 +1511,205 @@ It currently only use the "base" values available in the save file.</value>
   <data name="ResetMasteriesButton" xml:space="preserve">
     <value>Reset Masteries</value>
   </data>
+
+  <data name="TextTag_tagRelic" xml:space="preserve">
+    <value>Relic</value>
+    <comment>Substitute for missing tag for "Relic"</comment>
+  </data>
+
+  <data name="TextTag_tagArtifact" xml:space="preserve">
+    <value>Artifact</value>
+    <comment>Substitute for missing tag for "Artifact"</comment>
+  </data>
+
+  <data name="TextTag_tagSword" xml:space="preserve">
+    <value>Sword</value>
+    <comment>Substitute for missing tag for "Sword"</comment>
+  </data>
+
+  <data name="TextTag_bonusLifePercent" xml:space="preserve">
+    <value>{%.0f0}% Bonus Health</value>
+    <comment>Substitute for missing tag "bonusLifePercent"</comment>
+  </data>
+  <data name="TextTag_bonusLifePoints" xml:space="preserve">
+    <value>{%.0f0} Bonus Health</value>
+    <comment>Substitute for missing tag "bonusLifePoints"</comment>
+  </data>
+
+  <data name="TextTag_bonusManaPercent" xml:space="preserve">
+    <value>{%.0f0}% Bonus Energy</value>
+    <comment>Substitute for missing tag "bonusManaPercent"</comment>
+  </data>
+  <data name="TextTag_bonusManaPoints" xml:space="preserve">
+    <value>{%.0f0} Bonus Energy</value>
+    <comment>Substitute for missing tag "bonusManaPoints"</comment>
+  </data>
+
+  <data name="TextTag_alwaysUseSpecialAnimation" xml:space="preserve">
+    <value>{^O}Always use special animation</value>
+    <comment>Substitute for missing tag "alwaysUseSpecialAnimation"</comment>
+  </data>
+
+  <data name="TextTag_DisplayAsQuestItem" xml:space="preserve">
+    <value>{^O}Display as quest item</value>
+    <comment>Substitute for missing tag "DisplayAsQuestItem"</comment>
+  </data>
+
+  <data name="TextTag_headVelocity" xml:space="preserve">
+    <value>{%.0f0} Head Velocity</value>
+    <comment>Substitute for missing tag "headVelocity"</comment>
+  </data>
+
+  <data name="TextTag_tailVelocity" xml:space="preserve">
+    <value>{%.0f0} Tail Velocity</value>
+    <comment>Substitute for missing tag "tailVelocity"</comment>
+  </data>
+
+  <data name="TextTag_maxDistance" xml:space="preserve">
+    <value>{%.0f0} Meter Max Distance</value>
+    <comment>Substitute for missing tag "maxDistance"</comment>
+  </data>
+
+  <data name="TextTag_notDispelable" xml:space="preserve">
+    <value>{^O}Can't be dispelled</value>
+    <comment>Substitute for missing tag "notDispelable"</comment>
+  </data>
+
+  <data name="TextTag_dropMeshDontOverrideTextures" xml:space="preserve">
+    <value>{^D}Drop mesh don't override textures</value>
+    <comment>Substitute for missing tag "dropMeshDontOverrideTextures"</comment>
+  </data>
+
+  <data name="TextTag_defensiveTotalSpeedChance" xml:space="preserve">
+    <value>{%.0f0}% Defensive Total Speed Chance</value>
+    <comment>Substitute for missing tag "defensiveTotalSpeedChance"</comment>
+  </data>
+
+  <data name="SearchMatchingItemsTT" xml:space="preserve">
+    <value>{0} matching item(s)</value>
+  </data>
+
+  <data name="SearchFiltersSelected" xml:space="preserve">
+    <value>{0} filters selected</value>
+  </data>
+
+  <data name="SearchTermRequired" xml:space="preserve">
+    <value>Some filters must be selected</value>
+  </data>
+
+  <data name="SearchOperator" xml:space="preserve">
+    <value>Operator</value>
+  </data>
+
+  <data name="SearchOperatorTitle" xml:space="preserve">
+    <value>Search Operator</value>
+  </data>
+
+  <data name="SearchOperatorDescOr" xml:space="preserve">
+    <value>Find items having one filter or more</value>
+  </data>
+
+  <data name="SearchOperatorDescAnd" xml:space="preserve">
+    <value>Find items having all filters</value>
+  </data>
+
+  <data name="GlobalExpandAll" xml:space="preserve">
+    <value>Expand All</value>
+  </data>
+
+  <data name="GlobalCollapseAll" xml:space="preserve">
+    <value>Collapse All</value>
+  </data>
+
+  <data name="SearchReduceCategoriesDuringSelection" xml:space="preserve">
+    <value>Reduce categories during selection</value>
+  </data>
+
+  <data name="SearchVisibleElementsPerCategory" xml:space="preserve">
+    <value>Visible elements/category</value>
+  </data>
+
+  <data name="SearchQueries" xml:space="preserve">
+    <value>Queries</value>
+  </data>
+
+  <data name="GlobalSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+
+  <data name="GlobalBaseAttribute" xml:space="preserve">
+    <value>Base Attribute</value>
+  </data>
+
+  <data name="GlobalPrefix" xml:space="preserve">
+    <value>Prefix</value>
+  </data>
+  <data name="GlobalPrefixName" xml:space="preserve">
+    <value>Prefix Name</value>
+  </data>
+
+  <data name="GlobalSuffix" xml:space="preserve">
+    <value>Suffix</value>
+  </data>
+  <data name="GlobalSuffixName" xml:space="preserve">
+    <value>Suffix Name</value>
+  </data>
+
+  <data name="GlobalRarity" xml:space="preserve">
+    <value>Rarity</value>
+  </data>
+
+  <data name="GlobalStyle" xml:space="preserve">
+    <value>Style</value>
+  </data>
+
+  <data name="GlobalType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+
+  <data name="GlobalVaults" xml:space="preserve">
+    <value>Vaults</value>
+  </data>
+
+  <data name="SearchHavingCharm" xml:space="preserve">
+    <value>Having Charm</value>
+  </data>
+
+  <data name="SearchHavingRelic" xml:space="preserve">
+    <value>Having Relic</value>
+  </data>
+
+
+  <data name="SearchBuildingData" xml:space="preserve">
+    <value>Building Data</value>
+  </data>
+
+  <data name="SearchEngineReady" xml:space="preserve">
+    <value>Search engine is ready</value>
+  </data>
+
+  <data name="SearchItemCountIs" xml:space="preserve">
+    <value>Item count is {0}</value>
+  </data>
+
+  <data name="SearchTooManyResultToDisplay" xml:space="preserve">
+    <value>There is too many results to display.{^N}Adjust your search.</value>
+  </data>
+
+  <data name="GlobalInputWarning" xml:space="preserve">
+    <value>Input warning</value>
+  </data>
+
+  <data name="SearchQueryNameMustBeSet" xml:space="preserve">
+    <value>Query name must be set</value>
+  </data>
+
+  <data name="SearchQueryNameAlreadyExist" xml:space="preserve">
+    <value>Query name already exists. Do you want to override it ?</value>
+  </data>
+
+  <data name="GlobalDeleteConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete "{0}" ?</value>
+  </data>
+
 </root>

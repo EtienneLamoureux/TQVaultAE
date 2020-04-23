@@ -219,7 +219,7 @@ namespace TQVaultAE.GUI.Components
 			// Display the text overlay if we have one.
 			if (!string.IsNullOrEmpty(this.ButtonText))
 			{
-				Font font = this.GetScaledButtonTextFont(e.Graphics, FontService.GetFontAlbertusMTLight(20.0F * UIService.Scale, GraphicsUnit.Pixel));
+				Font font = this.GetScaledButtonTextFont(e.Graphics, FontService.GetFontLight(20.0F * UIService.Scale, GraphicsUnit.Pixel));
 
 				if (font != null)
 				{
@@ -253,7 +253,7 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			// Make sure we use the bolded font for testing since the passed font may not be bolded.
-			Font testFont = new Font(font, FontStyle.Bold);
+			Font testFont = FontService.GetFont(font.Size, FontStyle.Bold, GraphicsUnit.Pixel, font.GdiCharSet);
 
 			// See if the text can fit on the button and if it does we do not need to do anything.
 			if (TextRenderer.MeasureText(this.ButtonText, testFont).Width < this.Width)
@@ -267,26 +267,32 @@ namespace TQVaultAE.GUI.Components
 
 			// Measure bolded text just in case the bolding will cause the text to exceed the bounging box.
 			// We do not want the font to change size as we mouse over.
-			while (TextRenderer.MeasureText(teststring, testFont).Width > this.Width)
+			while (TextRenderer.MeasureText(teststring, testFont).Width >= this.Width)
 			{
 				--fontSize;
-				font = new Font(font.Name, fontSize, font.Style, font.Unit);
+				font = FontService.GetFont(fontSize, font.Style, GraphicsUnit.Pixel, font.GdiCharSet);
 
 				// Update comparison font.
-				testFont = new Font(font.Name, fontSize, testFont.Style, font.Unit);
+				testFont = FontService.GetFont(fontSize, testFont.Style, GraphicsUnit.Pixel, testFont.GdiCharSet);
 			}
 
 			// We might need to resize vertically if the line was split.
 			if (teststring != this.ButtonText)
 			{
 				// Use 2xHeight since there are 2 lines of text.
-				while ((TextRenderer.MeasureText(teststring, testFont).Height * 2) > this.Height)
+				while ((TextRenderer.MeasureText(teststring, testFont).Height * 2) >= this.Height)
 				{
 					--fontSize;
-					font = new Font(font.Name, fontSize, font.Style, font.Unit);
+					font = FontService.GetFont(fontSize, font.Style, GraphicsUnit.Pixel, font.GdiCharSet);
 
 					// Update comparison font.
-					testFont = new Font(font.Name, fontSize, testFont.Style, font.Unit);
+					testFont = FontService.GetFont(fontSize, testFont.Style, GraphicsUnit.Pixel, testFont.GdiCharSet);
+
+					// Check to see if the whole string will fit inside the button on a single line.
+					if(TextRenderer.MeasureText(this.ButtonText, testFont).Width < this.Width)
+					{
+						break;
+					}
 				}
 			}
 

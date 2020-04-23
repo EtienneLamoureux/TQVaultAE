@@ -48,18 +48,18 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.resultsDataGridView.ColumnHeadersDefaultCellStyle.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.item.DefaultCellStyle.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.quality.DefaultCellStyle.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.containerName.DefaultCellStyle.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.containerType.DefaultCellStyle.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.level.DefaultCellStyle.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.Font = FontService.GetFontAlbertusMT(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.resultsDataGridView.ColumnHeadersDefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.item.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.quality.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.containerName.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.containerType.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.level.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
 			#endregion
 
 			this.resultsList = new List<Result>();
-			////this.selectedResult = new Result();
+
 			this.item.HeaderText = Resources.ResultsItem;
 			this.containerName.HeaderText = Resources.ResultsContainer;
 			this.containerType.HeaderText = Resources.ResultsContainerType;
@@ -177,10 +177,8 @@ namespace TQVaultAE.GUI
 		/// <returns>String containing the tool tip for the Result.</returns>
 		private void GetToolTip(Result selectedResult)
 		{
-			// hide the tooltip
 			if (selectedResult == null || selectedResult.FriendlyNames == null)
 				ItemTooltip.HideTooltip();
-			// show tooltip
 			else
 				ItemTooltip.ShowTooltip(this.ServiceProvider, selectedResult.FriendlyNames.Item, this);
 		}
@@ -194,18 +192,20 @@ namespace TQVaultAE.GUI
 				return;
 
 			// Update the dialog text.
-			this.Text = string.Format(CultureInfo.CurrentCulture, Resources.ResultsText, this.resultsList.Count, this.searchString);
+			this.Text = string.IsNullOrWhiteSpace(this.searchString) 
+				? Resources.SearchDialogCaption
+				: string.Format(Resources.ResultsText, this.resultsList.Count, this.searchString);
 
 			for (int i = 0; i < this.resultsList.Count; i++)
 			{
 				Result result = this.resultsList[i];
 				// Add the result to the DataGridView
 				int currentRow = this.resultsDataGridView.Rows.Add(
-					result.ItemName,
-					result.ItemStyle,
-					result.ContainerName,
-					GetContainerTypeString(result.SackType),
-					result.RequiredLevel
+					result.ItemName
+					, result.ItemStyle
+					, result.ContainerName
+					, GetContainerTypeString(result.SackType)
+					, result.RequiredLevel
 				);
 
 				// Change the text color of the item string and style to match the style color.

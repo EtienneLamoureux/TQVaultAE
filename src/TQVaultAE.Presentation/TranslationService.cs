@@ -1,54 +1,105 @@
-﻿using TQVaultAE.Domain.Contracts.Services;
+﻿using EnumsNET;
+using Microsoft.Extensions.Logging;
+using System.Linq;
+using TQVaultAE.Domain.Contracts.Providers;
+using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Presentation
 {
 	public class TranslationService : ITranslationService
 	{
+		private readonly IDatabase Database;
+
+		public TranslationService(IDatabase database)
+		{
+			Database = database;
+		}
 
 		/// <summary>
 		/// Gets the string name of a particular item style
 		/// </summary>
 		/// <param name="itemStyle">ItemStyle enumeration</param>
 		/// <returns>Localized string of the item style</returns>
-		public string Translate(ItemStyle itemStyle) => Resources.ResourceManager.GetString($"ItemStyle{itemStyle}");
+		public string Translate(ItemStyle itemStyle)
+		{
+			var tags = itemStyle.AsString(EnumFormat.Description);
+			var values = tags.Split('|');
+			var trans = (values.Length > 1)
+				? string.Format(values.Last(), this.TranslateXTag(values.First()))
+				: this.TranslateXTag(values.First());
+			return trans;
+		}
+
 		/// <summary>
 		/// Gets the string used for 'with'
 		/// </summary>
-		public string ItemWith => Resources.ItemWith ?? "with";
+		public string ItemWith => Resources.ItemWith;
 		/// <summary>
 		/// Gets the relic completion bonus string.
 		/// </summary>
-		public string ItemRelicBonus => Resources.ItemRelicBonus ?? "(Completion Bonus: {0})";
+		public string ItemRelicBonus => Resources.ItemRelicBonus;
 		/// <summary>
 		/// Gets the relic completed string.
 		/// </summary>
-		public string ItemRelicCompleted => Resources.ItemRelicCompleted ?? "(Completed)";
+		public string ItemRelicCompleted => Resources.ItemRelicCompleted;
 		/// <summary>
 		/// Gets the quest item indicator string.
 		/// </summary>
-		public string ItemQuest => Resources.ItemQuest ?? "(Quest Item)";
+		public string ItemQuest => Resources.ItemQuest;
 		/// <summary>
 		/// Gets the item seed format string.
 		/// </summary>
-		public string ItemSeed => Resources.ItemSeed ?? "ItemSeed: {0} (0x{0:X8}) ({1:p3})";
+		public string ItemSeed => Resources.ItemSeed;
 		/// <summary>
-		/// Return Class Name translation
+		/// Translate <paramref name="xTagName"/> using resource file and database
 		/// </summary>
-		/// <param name="xTagClassKey"></param>
+		/// <param name="xTagName"></param>
 		/// <returns></returns>
-		public string TranslateCharacterClassName(string xTagClassKey) => Resources.ResourceManager.GetString(xTagClassKey);
+		public string TranslateXTag(string xTagName)
+		{
+			// all xtag substitute must have a "TextTag_" prefix in resource file (avoid colision & strong naming rule).
+			var resx = Resources.ResourceManager.GetString($"TextTag_{xTagName}");
+
+			if (resx is null)
+				resx = this.Database.GetFriendlyName(xTagName);// Try DB
+
+			return string.IsNullOrWhiteSpace(resx) ? xTagName : resx;
+		}
+
+		/// <summary>
+		/// Return Difficulty translation
+		/// </summary>
+		/// <param name="difficultyFromSaveFile"></param>
+		/// <returns></returns>
+		public string TranslateDifficulty(int difficultyFromSaveFile)
+			=> this.Database.GetFriendlyName($"tagRDifficultyTitle0{++difficultyFromSaveFile}");
+
+		/// <summary>
+		/// Translate character class to mastery
+		/// </summary>
+		/// <param name="characterXtagClass"></param>
+		/// <returns></returns>
+		public string TranslateMastery(string characterXtagClass)
+		{
+			var tags = Resources.ResourceManager.GetString($"Masteries{characterXtagClass}");
+			var dualclass = tags.Split('-');
+			return dualclass.Count() > 1
+				? $"{TranslateXTag(dualclass.First())}-{TranslateXTag(dualclass.Last())}"
+				: TranslateXTag(dualclass.First());
+		}
+
 		/// <summary>
 		/// Gets the string which indicates an Immortal Throne item.
 		/// </summary>
-		public string ItemIT => Resources.ItemIT ?? "Immortal Throne Item";
+		public string ItemIT => Resources.ItemIT;
 		/// <summary>
 		/// Gets the string which indicates an Ragnarok item.
 		/// </summary>
-		public string ItemRagnarok => Resources.ItemRagnarok ?? "Ragnarok Item";
+		public string ItemRagnarok => Resources.ItemRagnarok;
 		/// <summary>
 		/// Gets the string which indicates an Atlantis item.
 		/// </summary>
-		public string ItemAtlantis => Resources.ItemAtlantis ?? "Atlantis Item";
+		public string ItemAtlantis => Resources.ItemAtlantis;
 	}
 }

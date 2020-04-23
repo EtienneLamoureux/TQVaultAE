@@ -79,8 +79,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\log4net.2.0.8\lib\netstandard1.3\log4net.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Extensions.Logging.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -112,6 +112,10 @@
     <ProjectReference Include="..\TQVaultAE.Logs\TQVaultAE.Logs.csproj">
       <Project>{a3715670-c701-4623-b9ba-9a48fca95adc}</Project>
       <Name>TQVaultAE.Logs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj">
+      <Project>{6E20606D-9460-469F-B340-D3418165A19B}</Project>
+      <Name>TQVaultAE.Presentation</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

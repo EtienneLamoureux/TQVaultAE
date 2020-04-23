@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -15,8 +16,6 @@ namespace TQVaultAE.GUI
 {
 	public partial class MainForm
 	{
-		private ISearchService searchService = null;
-
 		/// <summary>
 		/// Handler for clicking the search button on the form.
 		/// </summary>
@@ -32,13 +31,12 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void OpenSearchDialog()
 		{
-			var searchDialog = this.ServiceProvider.GetService<SearchDialog>();
-			searchDialog.Scale(new SizeF(UIService.Scale, UIService.Scale));
+			var searchDialog = this.ServiceProvider.GetService<SearchDialogAdvanced>();
+			//searchDialog.Scale(new SizeF(UIService.Scale, UIService.Scale));
+			var result = searchDialog.ShowDialog();
 
-			if (searchDialog.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(searchDialog.SearchText))
-			{
-				this.Search(searchDialog.SearchText);
-			}
+			if (result == DialogResult.OK && searchDialog.QueryResults.Any())
+				this.DisplayResults(null, searchDialog.QueryResults);
 		}
 
 		/// <summary>
@@ -65,27 +63,18 @@ namespace TQVaultAE.GUI
 			}
 		}
 
-
-		/// <summary>
-		/// Searches loaded files based on the specified search string.  Internally normalized to UpperInvariant
-		/// </summary>
-		/// <param name="searchString">string that we are searching for</param>
-		private void Search(string searchString)
+		private void DisplayResults(string searchString, IEnumerable<Result> results)
 		{
-			if (string.IsNullOrWhiteSpace(searchString)) return;
-
-			var results = this.searchService.Search(searchString);
-
 			if (results is null || !results.Any())
 			{
 				MessageBox.Show(
-					string.Format(CultureInfo.CurrentCulture, Resources.MainFormNoItemsFound, searchString),
-					Resources.MainFormNoItemsFound2,
-					MessageBoxButtons.OK,
-					MessageBoxIcon.Information,
-					MessageBoxDefaultButton.Button1,
-					RightToLeftOptions);
-
+					string.Format(Resources.MainFormNoItemsFound, searchString)
+					, Resources.MainFormNoItemsFound2
+					, MessageBoxButtons.OK
+					, MessageBoxIcon.Information
+					, MessageBoxDefaultButton.Button1
+					, RightToLeftOptions
+				);
 				return;
 			}
 
@@ -117,7 +106,7 @@ namespace TQVaultAE.GUI
 				this.vaultPanel.CurrentBag = selectedResult.SackNumber;
 				this.vaultPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 			}
-			else if (selectedResult.SackType == SackType.Player || selectedResult.SackType == SackType.Equipment)
+			else if (selectedResult.SackType == SackType.Player || selectedResult.SackType == SackType.Equipment || selectedResult.SackType == SackType.Stash)
 			{
 				// Switch to the selected player
 				if (this.showSecondaryVault)
@@ -126,56 +115,29 @@ namespace TQVaultAE.GUI
 					this.UpdateTopPanel();
 				}
 
-				string myName = selectedResult.ContainerName;
+				// Update the selection list and load the character.				
+				this.characterComboBox.SelectedIndex = this.characterComboBox.FindString(selectedResult.ContainerName);
 
-				if (GamePathResolver.IsCustom)
-				{
-					myName = string.Concat(myName, PlayerService.CustomDesignator);
-				}
+				// Bail if we are attempting to highlight something in the stash panel and the stash does not exist.
+				if ((this.stashPanel == null || this.stashPanel.SackPanel == null) && selectedResult.SackType != SackType.Player)
+					return;
 
-				// Update the selection list and load the character.
-				this.characterComboBox.SelectedItem = myName;
-				if (selectedResult.SackNumber > 0)
-				{
-					this.playerPanel.CurrentBag = selectedResult.SackNumber - 1;
-				}
-
-				if (selectedResult.SackType != SackType.Equipment)
+				if (selectedResult.SackType == SackType.Player)
 				{
 					// Highlight the item if it's in the player inventory.
 					if (selectedResult.SackNumber == 0)
-					{
 						this.playerPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
-					}
 					else
 					{
+						this.playerPanel.CurrentBag = selectedResult.SackNumber - 1;
 						this.playerPanel.BagSackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 					}
 				}
-			}
-			else if (selectedResult.SackType == SackType.Stash)
-			{
-				// Switch to the selected player
-				if (this.showSecondaryVault)
+				else
 				{
-					this.showSecondaryVault = !this.showSecondaryVault;
-					this.UpdateTopPanel();
+					this.stashPanel.CurrentBag = selectedResult.SackNumber;
+					this.stashPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 				}
-
-				// Assume that only IT characters can have a stash.
-				string myName = string.Concat(selectedResult.ContainerName, "<Immortal Throne>");
-
-				if (GamePathResolver.IsCustom)
-				{
-					myName = string.Concat(myName, PlayerService.CustomDesignator);
-				}
-
-				// Update the selection list and load the character.
-				this.characterComboBox.SelectedItem = myName;
-
-				// Switch to the Stash bag
-				this.stashPanel.CurrentBag = selectedResult.SackNumber;
-				this.stashPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 			}
 			else if ((selectedResult.SackType == SackType.TransferStash) || (selectedResult.SackType == SackType.RelicVaultStash))
 			{

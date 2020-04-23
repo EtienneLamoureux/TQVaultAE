@@ -1,6 +1,6 @@
 # TQVaultAE
 [![Steam](https://img.shields.io/badge/steam-link-lightgrey.svg)](https://steamcommunity.com/sharedfiles/filedetails/?id=1136716167)
-[![Release](https://img.shields.io/badge/stable-3.4.0-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
+[![Release](https://img.shields.io/badge/stable-3.5.1-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/LICENSE)
 
 TQVaultAE is an external tool for [Titan Quest Anniversary Edition](https://www.thqnordic.com/games/titan-quest) that allows you to store and search your items outside the game.
@@ -47,6 +47,9 @@ Works with all expansions!
         - <kbd>CTRL</kbd>+<kbd>+</kbd> : Increase vault size
         - <kbd>CTRL</kbd>+<kbd>-</kbd> : Reduce vault size
         - <kbd>CTRL</kbd>+<kbd>Home</kbd> : Default vault size
+        - <kbd>CTRL</kbd>+<kbd>A</kbd> : Select all items in the vault
+        - <kbd>CTRL</kbd>+<kbd>D</kbd> : De-select all selected items
+        - <kbd>BACKSPACE</kbd> : Deletes currently hightlighted item
         - <kbd>CTRL</kbd>+click : Activate multi selection
 - Character backups
     - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
@@ -85,6 +88,10 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 **Q. Can I use TQVaultAE while playing the game?**
 
 *A. No, using TQVaultAE while running the game may lead to loss of progress or items. Best practice is to close the game before using TQVaultAE.*
+
+**Q. What happened to my items, I transferred items to my character and they are not there in game?**
+
+*A. If you are using the Steam version of the game, make sure Steam Cloud synchronization is disabled as it will overwrite local game saves modified by TQVaultAE with cloud older saves.*
 
 **Q. How to enable/disable the cheats (character edition, item edition, item copy)?**
 
@@ -164,6 +171,7 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 
 *A. There are several things you can do:*
 - *Close TQVaultAE and open it up again. It may fix your problem*
+- *Look up if your problem is featured in [our previously answered questions](https://github.com/EtienneLamoureux/TQVaultAE/issues?q=+is%3Aissue+label%3Aquestion+)*
 - *Look up if your problem is featured in [TQVault's documentation](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/documentation/TQVault%20common%20issues.pdf)*
 - *Create an issue in [our issue tracking board](https://github.com/EtienneLamoureux/TQVaultAE/issues)*
 
@@ -175,8 +183,8 @@ This project could not go on without the continued volunteer contributions of th
 
 ### TQVault
 - Brandon "bman654" Wallace, *original author*
-- Jesse "saydc" Calhoun, *item stats*
-- VillageIdiot, *ARZExplorer util*
+- saydc, *item stats*
+- Jesse "VillageIdiot/EJFudd" Calhoun, *item stats & ARZExplorer util*
 - AvunaOs, *new UI*
 
 #### Translation team

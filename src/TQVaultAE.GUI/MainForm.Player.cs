@@ -9,8 +9,8 @@ using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 using TQVaultAE.Logs;
 using System.Linq;
-using TQVaultAE.Services;
 using TQVaultAE.Domain.Contracts.Services;
+using Microsoft.Extensions.Logging;
 
 namespace TQVaultAE.GUI
 {
@@ -133,7 +133,7 @@ namespace TQVaultAE.GUI
 			{
 				string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, result.PlayerFile, exception.ToString());
 				MessageBox.Show(msg, Resources.MainFormPlayerReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-				Log.Error(msg, exception);
+				Log.LogError(exception, msg);
 				this.playerPanel.Player = null;
 				this.characterComboBox.SelectedIndex = 0;
 			}
@@ -161,7 +161,7 @@ namespace TQVaultAE.GUI
 			{
 				string msg = string.Concat(Resources.MainFormReadError, resultStash.StashFile, exception.ToString());
 				MessageBox.Show(msg, Resources.MainFormStashReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-				Log.Error(msg, exception);
+				Log.LogError(exception, msg);
 				this.stashPanel.Stash = null;
 			}
 		}
@@ -182,7 +182,7 @@ namespace TQVaultAE.GUI
 			catch (IOException exception)
 			{
 				string title = string.Format(CultureInfo.InvariantCulture, Resources.MainFormSaveError, playerIfError.PlayerName);
-				Log.Error(title, exception);
+				Log.LogError(exception, title);
 				switch (MessageBox.Show(Log.FormatException(exception), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
 				{
 					case DialogResult.Abort:

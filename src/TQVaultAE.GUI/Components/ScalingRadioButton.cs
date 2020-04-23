@@ -11,7 +11,7 @@ namespace TQVaultAE.GUI.Components
 	/// <summary>
 	/// RadioButton class to support scaling of the fonts.
 	/// </summary>
-	public class ScalingRadioButton : RadioButton
+	public class ScalingRadioButton : RadioButton, IScalingControl
 	{
 		/// <summary>
 		/// Override of ScaleControl which supports font scaling.

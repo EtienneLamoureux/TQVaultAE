@@ -68,10 +68,10 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.label3.Font = FontService.GetFontAlbertusMTLight(12F);
-			this.nextButton.Font = FontService.GetFontAlbertusMTLight(12F);
-			this.exitButton.Font = FontService.GetFontAlbertusMTLight(12F);
-			this.labelPleaseWait.Font = FontService.GetFontAlbertusMTLight(14.25F);
+			this.label3.Font = FontService.GetFontLight(12F);
+			this.nextButton.Font = FontService.GetFontLight(12F);
+			this.exitButton.Font = FontService.GetFontLight(12F);
+			this.labelPleaseWait.Font = FontService.GetFontLight(14.25F);
 
 			#endregion
 

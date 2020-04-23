@@ -6,6 +6,13 @@ namespace TQVaultAE.Domain.Contracts.Services
 	public interface IGamePathService
 	{
 		/// <summary>
+		/// Parses filename to try to determine the base character name.
+		/// </summary>
+		/// <param name="filename">filename of the character file</param>
+		/// <returns>string containing the character name</returns>
+		string GetNameFromFile(string filename);
+
+		/// <summary>
 		/// Gets or sets the Immortal Throne game path.
 		/// </summary>
 		string ImmortalThronePath { get; set; }

@@ -5,13 +5,13 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Data
 {
+	using Microsoft.Extensions.Logging;
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
-	using TQVaultAE.Logs;
 
 
 	/// <summary>
@@ -19,13 +19,13 @@ namespace TQVaultAE.Data
 	/// </summary>
 	public class SackCollectionProvider : ISackCollectionProvider
 	{
-		private readonly log4net.ILog Log;
+		private readonly ILogger Log;
 		private readonly IItemProvider ItemProvider;
 		private readonly ITQDataService TQData;
 
 		public SackCollectionProvider(ILogger<SackCollectionProvider> log, IItemProvider itemProvider, ITQDataService tQData)
 		{
-			this.Log = log.Logger;
+			this.Log = log;
 			this.ItemProvider = itemProvider;
 			this.TQData = tQData;
 		}
@@ -212,7 +212,7 @@ namespace TQVaultAE.Data
 			{
 				// The ValidateNextString Method can throw an ArgumentException.
 				// We just pass it along at sc point.
-				Log.Debug("ValidateNextString fail !", ex);
+				Log.LogDebug(ex, "ValidateNextString fail !");
 				throw;
 			}
 		}

@@ -5,11 +5,11 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Presentation
 {
+	using Microsoft.Extensions.Logging;
 	using System;
 	using System.Drawing;
 	using System.IO;
 	using TQVaultAE.Domain.Contracts.Services;
-	using TQVaultAE.Logs;
 
 	/// <summary>
 	/// Loads Titan Quest textures and converts them into bitmaps.
@@ -19,11 +19,11 @@ namespace TQVaultAE.Presentation
 	/// </remarks>
 	public class BitmapService : IBitmapService
 	{
-		private readonly log4net.ILog Log;
+		private readonly ILogger Log;
 
 		public BitmapService(ILogger<BitmapService> log)
 		{
-			this.Log = log.Logger;
+			this.Log = log;
 		}
 
 		/// <summary>
@@ -46,13 +46,13 @@ namespace TQVaultAE.Presentation
 
 			if (data.Length < 12)
 			{
-				Log.Error("TEX is not long enough to be valid.");
+				Log.LogError("TEX is not long enough to be valid.");
 				return null;
 			}
 
 			if (BitConverter.ToUInt32(data, offset) != 0x01584554)
 			{
-				Log.Error("Unexpected TEX magic found in game files, ignoring.");
+				Log.LogError("Unexpected TEX magic found in game files, ignoring.");
 				return null;
 			}
 

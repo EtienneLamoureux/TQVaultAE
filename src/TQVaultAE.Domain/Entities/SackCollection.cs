@@ -44,7 +44,7 @@ namespace TQVaultAE.Domain.Entities
 		private static Size[] equipmentLocationSizes =
 		{
 			new Size(2, 2), // Head
-            new Size(1, 1), // Neck
+            new Size(2, 1), // Neck
             new Size(2, 3), // Body
             new Size(2, 2), // Legs
             new Size(2, 2), // Arms

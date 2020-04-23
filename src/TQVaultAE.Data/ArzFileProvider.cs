@@ -5,14 +5,13 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Data
 {
+	using Microsoft.Extensions.Logging;
 	using System;
-	using System.Collections.Generic;
 	using System.IO;
 	using TQVaultAE.Config;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
-	using TQVaultAE.Domain.Helpers;
 	using TQVaultAE.Logs;
 
 	/// <summary>
@@ -20,7 +19,7 @@ namespace TQVaultAE.Data
 	/// </summary>
 	public class ArzFileProvider : IArzFileProvider
 	{
-		private readonly log4net.ILog Log = null;
+		private readonly ILogger Log = null;
 		private readonly ITQDataService TQData;
 		private readonly IRecordInfoProvider infoProv;
 
@@ -30,7 +29,7 @@ namespace TQVaultAE.Data
 		/// </summary>
 		public ArzFileProvider(ILogger<ArzFileProvider> log, IRecordInfoProvider recordInfoProvider, ITQDataService tQData)
 		{
-			this.Log = log.Logger;
+			this.Log = log;
 			this.TQData = tQData;
 			this.infoProv = recordInfoProvider;
 		}
@@ -162,7 +161,7 @@ namespace TQVaultAE.Data
 		public DBRecordCollection GetRecordNotCached(ArzFile file, string recordId)
 		{
 			recordId = TQData.NormalizeRecordPath(recordId);
-			return file.Cache.GetOrAddAtomic(recordId, k => infoProv.Decompress(file, file.RecordInfo[k].Value));
+			return infoProv.Decompress(file, file.RecordInfo[recordId].Value);
 		}
 
 		/// <summary>
