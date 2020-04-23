@@ -1,4 +1,16 @@
 # Changelog
+## 3.5.2
+### Bugs
+- #265 Fix tooltip font color when an item grants damage resistance against multiple enemy types
+- #229 Fix Ctrl+f keyboard shortcut to invoke Search dialog
+- #178 Fix the missing name and description for some Atlantis quest items
+- #322 Fix enemy types bonuses in tooltip for non-English languages
+- #323 Fix ArzFileExplorer failing to extract the entire database
+
+## Other
+- Changed set items decoding to keep the tag on a failed lookup
+
+
 ## 3.5.1
 ### Bugs
 - #316 Fix an issue preventing loading the player file after placing an item into a stash
