@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -12,6 +13,14 @@ namespace TQVaultAE.Domain.Helpers
 	public static class StringHelper
 	{
 		public const string TQNewLineTag = @"{^N}";
+
+		#region Eval
+
+		static DataTable CheapestDotNetEval = new DataTable();
+		public static T Eval<T>(this string expression)
+			=> (T)Convert.ChangeType(CheapestDotNetEval.Compute(expression, null), typeof(T));
+
+		#endregion
 
 		public static string MakeMD5(this string input)
 		{

@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Data
 {
-	using ExpressionEvaluator;
 	using Microsoft.Extensions.Logging;
 	using System;
 	using System.Collections.Generic;
@@ -932,16 +931,11 @@ namespace TQVaultAE.Data
 				// Changed to reflect Total Attribut count
 				value = value.Replace("totalAttCount", Convert.ToString(itm.attributeCount, CultureInfo.InvariantCulture));
 
-				Expression expression = ExpressionEvaluate.CreateExpression(value);
-
-				//if (TQDebug.DebugEnabled)
-				//	Log.LogDebug($"Create Expression : {value}");
-
 				// Changed by Bman to fix random overflow crashes
 				Variable ans = new Variable(variableKey, VariableDataType.Integer, 1);
 
 				// Changed by VillageIdiot to fix random overflow crashes.
-				double tempVal = Math.Ceiling(Convert.ToDouble(expression.Evaluate(), CultureInfo.InvariantCulture));
+				double tempVal = Math.Ceiling(value.Eval<double>());
 
 				int intVal = 0;
 				try
