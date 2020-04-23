@@ -189,6 +189,7 @@ namespace TQVaultAE.GUI
 					var relatedPoints = relatedSkills.Sum(s => s.skillLevel);
 					var masteryInfo = this.Database.GetInfo(recId);
 					var masteryName = this.Database.GetFriendlyName(masteryInfo.DescriptionTag);
+					masteryName = string.IsNullOrWhiteSpace(masteryName) ? masteryInfo.DescriptionTag : masteryName;
 					var label = this.Controls.Find($"Mastery{i + 1}NameScalingLabel", true).First();
 					label.Text = string.Format(label.Tag.ToString(), masteryName);
 					label.Visible = true;
