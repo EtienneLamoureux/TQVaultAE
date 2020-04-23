@@ -10,7 +10,6 @@
 ## Other
 - Changed set items decoding to keep the tag on a failed lookup
 
-
 ## 3.5.1
 ### Bugs
 - #316 Fix an issue preventing loading the player file after placing an item into a stash
