@@ -4,6 +4,7 @@ using System.Linq;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Presentation
 {
@@ -64,7 +65,7 @@ namespace TQVaultAE.Presentation
 			if (resx is null)
 				resx = this.Database.GetFriendlyName(xTagName);// Try DB
 
-			return string.IsNullOrWhiteSpace(resx) ? xTagName : resx;
+			return string.IsNullOrWhiteSpace(resx) ? $"{TQColor.Purple.ColorTag()}??{xTagName}??" : resx;
 		}
 
 		/// <summary>
