@@ -48,7 +48,8 @@ Works with all expansions!
         - <kbd>CTRL</kbd>+<kbd>-</kbd> : Reduce vault size
         - <kbd>CTRL</kbd>+<kbd>Home</kbd> : Default vault size
         - <kbd>CTRL</kbd>+<kbd>A</kbd> : Select all items in the vault
-        - <kbd>CTRL</kbd>+<kbd>D</kbd> : De-select all selected items
+        - <kbd>CTRL</kbd>+<kbd>C</kbd> : Copy currently hightlighted item
+        - <kbd>CTRL</kbd>+<kbd>D</kbd> : Duplicate currently hightlighted item
         - <kbd>BACKSPACE</kbd> : Deletes currently hightlighted item
         - <kbd>CTRL</kbd>+click : Activate multi selection
 - Character backups
