@@ -1,4 +1,4 @@
-﻿namespace TQVaultAE.GUI
+namespace TQVaultAE.GUI
 {
 	using System;
 	using System.Collections.Generic;
@@ -166,9 +166,6 @@
 			// Remove design time fake elements
 			scalingComboBoxQueryList.Items.Clear();
 			CleanAllCheckBoxes();
-
-			// Start
-			this.scalingTextBoxSearchTerm.Focus();
 		}
 
 		private void CleanAllCheckBoxes()
@@ -185,23 +182,7 @@
 		}
 
 		private void SetSearchBoxVisibility(bool isVisible)
-		{
-			flowLayoutPanelQuality.Visible =
-			flowLayoutPanelStyle.Visible =
-			flowLayoutPanelBaseAttributes.Visible =
-			flowLayoutPanelInVaults.Visible =
-			flowLayoutPanelItemAttributes.Visible =
-			flowLayoutPanelItemType.Visible =
-			flowLayoutPanelCharacters.Visible =
-			flowLayoutPanelPrefixAttributes.Visible =
-			flowLayoutPanelPrefixName.Visible =
-			flowLayoutPanelRarity.Visible =
-			flowLayoutPanelSuffixAttributes.Visible =
-			flowLayoutPanelSuffixName.Visible =
-			flowLayoutPanelWithCharm.Visible =
-			flowLayoutPanelWithRelic.Visible =
-			isVisible;
-		}
+			=> _NavMap.ToList().ForEach(m => m.Panel.Visible = isVisible);
 
 		#region Apply & Cancel
 
@@ -440,7 +421,12 @@
 
 			AdjustCheckBoxesHeight();
 
-			SyncNavButtonImage();
+			SetSearchBoxVisibility(true);
+
+			SyncNaveButton();
+
+			// Start
+			this.scalingTextBoxSearchTerm.Focus();
 		}
 
 		private void AdjustCheckBoxesHeight()
@@ -841,8 +827,22 @@
 
 		private void scalingButtonMenu_Click(object sender, EventArgs e)
 		{
-			var (button, panel) = this._NavMap.First(m => object.ReferenceEquals(m.Button, sender));
+			// Toggle
+			var (button, panel) = _NavMap.First(m => object.ReferenceEquals(m.Button, sender));
 			panel.Visible = !panel.Visible;
+
+			SyncNaveButton();
+		}
+
+		private void SyncNaveButton()
+		{
+			/// Push invisible categories at the end of <see cref="flowLayoutPanelMain"/> so nav buttons define categories order in flowpanel
+			var trail = _NavMap.Where(map => !map.Panel.Visible).Select(map => map.Panel).ToList();
+			// Remove
+			trail.ForEach(c => this.flowLayoutPanelMain.Controls.Remove(c));
+			// Then Put it back at the end
+			this.flowLayoutPanelMain.Controls.AddRange(trail.ToArray());
+
 			SyncNavButtonImage();
 		}
 
