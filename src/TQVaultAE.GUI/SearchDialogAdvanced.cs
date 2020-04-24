@@ -1042,6 +1042,7 @@
 
 		private void ResetSelectedFilters()
 		{
+			this.scalingComboBoxQueryList.ResetText();
 			UncheckCategories(flowLayoutPanelMain);
 			TextBoxSearchTerm_UpdateText_Notrigger(string.Empty);
 			TextBoxSearchTerm_TextChanged_Logic();
@@ -1076,10 +1077,10 @@
 		{
 			// Init a special BoxItem for the search term
 			var txt = searchTerm is null
-				? this.scalingTextBoxSearchTerm.Text.Trim()
+				? scalingTextBoxSearchTerm.Text.Trim()
 				: searchTerm.Trim();
 
-			var (_, searchTermBoxItem) = this.scalingTextBoxSearchTerm.GetBoxItem(true);// i need to make a new intance here to make the SearchQuery remember search term (must not share same object reference)
+			var (_, searchTermBoxItem) = scalingTextBoxSearchTerm.GetBoxItem(true);// true : i need to make a new intance here to make the SearchQuery remember search term (must not share same object reference)
 
 			searchTermBoxItem.Category = scalingLabelSearchTerm;
 			searchTermBoxItem.DisplayValue = txt;
@@ -1095,6 +1096,10 @@
 					select id
 				).ToArray();
 			}
+
+			// When this method is used as a BoxItem factory, i don't want the textbox to keep the reference.
+			if (searchTerm != null)
+				scalingTextBoxSearchTerm.Tag = null;
 
 			return searchTermBoxItem;
 		}
@@ -1190,8 +1195,6 @@
 					where m.CategoryName == scalingLabelSearchTerm.Name
 					select new { boxiLive = MakeSearchTermBoxItem(m.DisplayValue), matrix = m }
 				).ToList().ForEach(r => r.matrix.found.Add(r.boxiLive));// Bind
-
-				this.scalingTextBoxSearchTerm.Tag = null;/// Detach TextBox from last generated BoxItem in <see cref="MakeSearchTermBoxItem"/>
 
 				// Make newList
 				var newList = (

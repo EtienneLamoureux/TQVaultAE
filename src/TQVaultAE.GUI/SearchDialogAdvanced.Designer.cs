@@ -168,7 +168,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelCharacters.ForeColor = System.Drawing.Color.Gold;
             this.scalingLabelCharacters.Location = new System.Drawing.Point(4, 2);
             this.scalingLabelCharacters.Name = "scalingLabelCharacters";
-            this.scalingLabelCharacters.Size = new System.Drawing.Size(75, 17);
+            this.scalingLabelCharacters.Size = new System.Drawing.Size(81, 18);
             this.scalingLabelCharacters.TabIndex = 0;
             this.scalingLabelCharacters.Text = "Characters";
             this.scalingLabelCharacters.UseMnemonic = false;
@@ -298,7 +298,7 @@ namespace TQVaultAE.GUI
             "Char Name 1",
             "Char Name 2",
             "Char Name 3 (Not loaded)"});
-            this.scalingCheckedListBoxCharacters.Location = new System.Drawing.Point(4, 19);
+            this.scalingCheckedListBoxCharacters.Location = new System.Drawing.Point(4, 20);
             this.scalingCheckedListBoxCharacters.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.scalingCheckedListBoxCharacters.MultiColumn = true;
             this.scalingCheckedListBoxCharacters.Name = "scalingCheckedListBoxCharacters";
@@ -319,7 +319,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelCharacters.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelCharacters.Name = "flowLayoutPanelCharacters";
             this.flowLayoutPanelCharacters.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
-            this.flowLayoutPanelCharacters.Size = new System.Drawing.Size(224, 101);
+            this.flowLayoutPanelCharacters.Size = new System.Drawing.Size(224, 102);
             this.flowLayoutPanelCharacters.TabIndex = 8;
             // 
             // flowLayoutPanelItemType
@@ -334,7 +334,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelItemType.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelItemType.Name = "flowLayoutPanelItemType";
             this.flowLayoutPanelItemType.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
-            this.flowLayoutPanelItemType.Size = new System.Drawing.Size(224, 101);
+            this.flowLayoutPanelItemType.Size = new System.Drawing.Size(224, 102);
             this.flowLayoutPanelItemType.TabIndex = 9;
             // 
             // scalingLabelItemType
@@ -344,7 +344,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelItemType.ForeColor = System.Drawing.Color.Gold;
             this.scalingLabelItemType.Location = new System.Drawing.Point(4, 2);
             this.scalingLabelItemType.Name = "scalingLabelItemType";
-            this.scalingLabelItemType.Size = new System.Drawing.Size(40, 17);
+            this.scalingLabelItemType.Size = new System.Drawing.Size(40, 18);
             this.scalingLabelItemType.TabIndex = 0;
             this.scalingLabelItemType.Text = "Type";
             this.scalingLabelItemType.UseMnemonic = false;
@@ -364,7 +364,7 @@ namespace TQVaultAE.GUI
             "Sword",
             "Helmet",
             "Ring"});
-            this.scalingCheckedListBoxItemType.Location = new System.Drawing.Point(4, 19);
+            this.scalingCheckedListBoxItemType.Location = new System.Drawing.Point(4, 20);
             this.scalingCheckedListBoxItemType.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.scalingCheckedListBoxItemType.MultiColumn = true;
             this.scalingCheckedListBoxItemType.Name = "scalingCheckedListBoxItemType";
@@ -381,11 +381,11 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelItemAttributes.Controls.Add(this.scalingLabelItemAttributes);
             this.flowLayoutPanelItemAttributes.Controls.Add(this.scalingCheckedListBoxItemAttributes);
             this.flowLayoutPanelItemAttributes.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelItemAttributes.Location = new System.Drawing.Point(693, 110);
+            this.flowLayoutPanelItemAttributes.Location = new System.Drawing.Point(693, 111);
             this.flowLayoutPanelItemAttributes.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelItemAttributes.Name = "flowLayoutPanelItemAttributes";
             this.flowLayoutPanelItemAttributes.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
-            this.flowLayoutPanelItemAttributes.Size = new System.Drawing.Size(224, 101);
+            this.flowLayoutPanelItemAttributes.Size = new System.Drawing.Size(224, 102);
             this.flowLayoutPanelItemAttributes.TabIndex = 10;
             // 
             // scalingLabelItemAttributes
@@ -395,7 +395,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelItemAttributes.ForeColor = System.Drawing.Color.Gold;
             this.scalingLabelItemAttributes.Location = new System.Drawing.Point(4, 2);
             this.scalingLabelItemAttributes.Name = "scalingLabelItemAttributes";
-            this.scalingLabelItemAttributes.Size = new System.Drawing.Size(73, 17);
+            this.scalingLabelItemAttributes.Size = new System.Drawing.Size(69, 18);
             this.scalingLabelItemAttributes.TabIndex = 0;
             this.scalingLabelItemAttributes.Text = "Attributes";
             this.scalingLabelItemAttributes.UseMnemonic = false;
@@ -415,7 +415,7 @@ namespace TQVaultAE.GUI
             "Physical Damage",
             "Elemental Resistance",
             "Elemental Damage"});
-            this.scalingCheckedListBoxItemAttributes.Location = new System.Drawing.Point(4, 19);
+            this.scalingCheckedListBoxItemAttributes.Location = new System.Drawing.Point(4, 20);
             this.scalingCheckedListBoxItemAttributes.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.scalingCheckedListBoxItemAttributes.MultiColumn = true;
             this.scalingCheckedListBoxItemAttributes.Name = "scalingCheckedListBoxItemAttributes";
@@ -436,7 +436,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelRarity.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelRarity.Name = "flowLayoutPanelRarity";
             this.flowLayoutPanelRarity.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
-            this.flowLayoutPanelRarity.Size = new System.Drawing.Size(224, 101);
+            this.flowLayoutPanelRarity.Size = new System.Drawing.Size(224, 102);
             this.flowLayoutPanelRarity.TabIndex = 11;
             // 
             // scalingLabelRarity
@@ -446,7 +446,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelRarity.ForeColor = System.Drawing.Color.Gold;
             this.scalingLabelRarity.Location = new System.Drawing.Point(4, 2);
             this.scalingLabelRarity.Name = "scalingLabelRarity";
-            this.scalingLabelRarity.Size = new System.Drawing.Size(47, 17);
+            this.scalingLabelRarity.Size = new System.Drawing.Size(46, 18);
             this.scalingLabelRarity.TabIndex = 0;
             this.scalingLabelRarity.Text = "Rarity";
             this.scalingLabelRarity.UseMnemonic = false;
@@ -467,7 +467,7 @@ namespace TQVaultAE.GUI
             "Rare",
             "Epic",
             "Lengendary"});
-            this.scalingCheckedListBoxRarity.Location = new System.Drawing.Point(4, 19);
+            this.scalingCheckedListBoxRarity.Location = new System.Drawing.Point(4, 20);
             this.scalingCheckedListBoxRarity.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.scalingCheckedListBoxRarity.MultiColumn = true;
             this.scalingCheckedListBoxRarity.Name = "scalingCheckedListBoxRarity";
@@ -484,11 +484,11 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelPrefixAttributes.Controls.Add(this.scalingLabelPrefixAttributes);
             this.flowLayoutPanelPrefixAttributes.Controls.Add(this.scalingCheckedListBoxPrefixAttributes);
             this.flowLayoutPanelPrefixAttributes.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelPrefixAttributes.Location = new System.Drawing.Point(3, 217);
+            this.flowLayoutPanelPrefixAttributes.Location = new System.Drawing.Point(3, 219);
             this.flowLayoutPanelPrefixAttributes.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelPrefixAttributes.Name = "flowLayoutPanelPrefixAttributes";
             this.flowLayoutPanelPrefixAttributes.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
-            this.flowLayoutPanelPrefixAttributes.Size = new System.Drawing.Size(224, 101);
+            this.flowLayoutPanelPrefixAttributes.Size = new System.Drawing.Size(224, 102);
             this.flowLayoutPanelPrefixAttributes.TabIndex = 12;
             // 
             // scalingLabelPrefixAttributes
@@ -498,7 +498,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelPrefixAttributes.ForeColor = System.Drawing.Color.Gold;
             this.scalingLabelPrefixAttributes.Location = new System.Drawing.Point(4, 2);
             this.scalingLabelPrefixAttributes.Name = "scalingLabelPrefixAttributes";
-            this.scalingLabelPrefixAttributes.Size = new System.Drawing.Size(113, 17);
+            this.scalingLabelPrefixAttributes.Size = new System.Drawing.Size(110, 18);
             this.scalingLabelPrefixAttributes.TabIndex = 0;
             this.scalingLabelPrefixAttributes.Text = "Prefix Attributes";
             this.scalingLabelPrefixAttributes.UseMnemonic = false;
@@ -518,7 +518,7 @@ namespace TQVaultAE.GUI
             "Physical Damage",
             "Elemental Resistance",
             "Elemental Damage"});
-            this.scalingCheckedListBoxPrefixAttributes.Location = new System.Drawing.Point(4, 19);
+            this.scalingCheckedListBoxPrefixAttributes.Location = new System.Drawing.Point(4, 20);
             this.scalingCheckedListBoxPrefixAttributes.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.scalingCheckedListBoxPrefixAttributes.MultiColumn = true;
             this.scalingCheckedListBoxPrefixAttributes.Name = "scalingCheckedListBoxPrefixAttributes";
@@ -535,11 +535,11 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelSuffixAttributes.Controls.Add(this.scalingLabelSuffixAttributes);
             this.flowLayoutPanelSuffixAttributes.Controls.Add(this.scalingCheckedListBoxSuffixAttributes);
             this.flowLayoutPanelSuffixAttributes.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelSuffixAttributes.Location = new System.Drawing.Point(693, 217);
+            this.flowLayoutPanelSuffixAttributes.Location = new System.Drawing.Point(693, 219);
             this.flowLayoutPanelSuffixAttributes.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelSuffixAttributes.Name = "flowLayoutPanelSuffixAttributes";
             this.flowLayoutPanelSuffixAttributes.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
-            this.flowLayoutPanelSuffixAttributes.Size = new System.Drawing.Size(224, 101);
+            this.flowLayoutPanelSuffixAttributes.Size = new System.Drawing.Size(224, 102);
             this.flowLayoutPanelSuffixAttributes.TabIndex = 13;
             // 
             // scalingLabelSuffixAttributes
@@ -549,7 +549,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelSuffixAttributes.ForeColor = System.Drawing.Color.Gold;
             this.scalingLabelSuffixAttributes.Location = new System.Drawing.Point(4, 2);
             this.scalingLabelSuffixAttributes.Name = "scalingLabelSuffixAttributes";
-            this.scalingLabelSuffixAttributes.Size = new System.Drawing.Size(113, 17);
+            this.scalingLabelSuffixAttributes.Size = new System.Drawing.Size(109, 18);
             this.scalingLabelSuffixAttributes.TabIndex = 0;
             this.scalingLabelSuffixAttributes.Text = "Suffix Attributes";
             this.scalingLabelSuffixAttributes.UseMnemonic = false;
@@ -569,7 +569,7 @@ namespace TQVaultAE.GUI
             "Physical Damage",
             "Elemental Resistance",
             "Elemental Damage"});
-            this.scalingCheckedListBoxSuffixAttributes.Location = new System.Drawing.Point(4, 19);
+            this.scalingCheckedListBoxSuffixAttributes.Location = new System.Drawing.Point(4, 20);
             this.scalingCheckedListBoxSuffixAttributes.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.scalingCheckedListBoxSuffixAttributes.MultiColumn = true;
             this.scalingCheckedListBoxSuffixAttributes.Name = "scalingCheckedListBoxSuffixAttributes";
@@ -586,11 +586,11 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelBaseAttributes.Controls.Add(this.scalingLabelBaseAttributes);
             this.flowLayoutPanelBaseAttributes.Controls.Add(this.scalingCheckedListBoxBaseAttributes);
             this.flowLayoutPanelBaseAttributes.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelBaseAttributes.Location = new System.Drawing.Point(233, 217);
+            this.flowLayoutPanelBaseAttributes.Location = new System.Drawing.Point(233, 219);
             this.flowLayoutPanelBaseAttributes.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelBaseAttributes.Name = "flowLayoutPanelBaseAttributes";
             this.flowLayoutPanelBaseAttributes.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
-            this.flowLayoutPanelBaseAttributes.Size = new System.Drawing.Size(224, 101);
+            this.flowLayoutPanelBaseAttributes.Size = new System.Drawing.Size(224, 102);
             this.flowLayoutPanelBaseAttributes.TabIndex = 14;
             // 
             // scalingLabelBaseAttributes
@@ -600,7 +600,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelBaseAttributes.ForeColor = System.Drawing.Color.Gold;
             this.scalingLabelBaseAttributes.Location = new System.Drawing.Point(4, 2);
             this.scalingLabelBaseAttributes.Name = "scalingLabelBaseAttributes";
-            this.scalingLabelBaseAttributes.Size = new System.Drawing.Size(104, 17);
+            this.scalingLabelBaseAttributes.Size = new System.Drawing.Size(107, 18);
             this.scalingLabelBaseAttributes.TabIndex = 0;
             this.scalingLabelBaseAttributes.Text = "Base Attributes";
             this.scalingLabelBaseAttributes.UseMnemonic = false;
@@ -620,7 +620,7 @@ namespace TQVaultAE.GUI
             "Physical Damage",
             "Elemental Resistance",
             "Elemental Damage"});
-            this.scalingCheckedListBoxBaseAttributes.Location = new System.Drawing.Point(4, 19);
+            this.scalingCheckedListBoxBaseAttributes.Location = new System.Drawing.Point(4, 20);
             this.scalingCheckedListBoxBaseAttributes.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.scalingCheckedListBoxBaseAttributes.MultiColumn = true;
             this.scalingCheckedListBoxBaseAttributes.Name = "scalingCheckedListBoxBaseAttributes";
@@ -653,7 +653,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelMain.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanelMain.MinimumSize = new System.Drawing.Size(200, 100);
             this.flowLayoutPanelMain.Name = "flowLayoutPanelMain";
-            this.flowLayoutPanelMain.Size = new System.Drawing.Size(1150, 321);
+            this.flowLayoutPanelMain.Size = new System.Drawing.Size(1150, 324);
             this.flowLayoutPanelMain.TabIndex = 15;
             // 
             // flowLayoutPanelInVaults
@@ -668,7 +668,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelInVaults.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelInVaults.Name = "flowLayoutPanelInVaults";
             this.flowLayoutPanelInVaults.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
-            this.flowLayoutPanelInVaults.Size = new System.Drawing.Size(224, 101);
+            this.flowLayoutPanelInVaults.Size = new System.Drawing.Size(224, 102);
             this.flowLayoutPanelInVaults.TabIndex = 19;
             // 
             // scalingLabelInVaults
@@ -678,7 +678,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelInVaults.ForeColor = System.Drawing.Color.Gold;
             this.scalingLabelInVaults.Location = new System.Drawing.Point(4, 2);
             this.scalingLabelInVaults.Name = "scalingLabelInVaults";
-            this.scalingLabelInVaults.Size = new System.Drawing.Size(48, 17);
+            this.scalingLabelInVaults.Size = new System.Drawing.Size(48, 18);
             this.scalingLabelInVaults.TabIndex = 0;
             this.scalingLabelInVaults.Text = "Vaults";
             this.scalingLabelInVaults.UseMnemonic = false;
@@ -698,7 +698,7 @@ namespace TQVaultAE.GUI
             "Vault Name 1",
             "Vault Name 2",
             "Vault Name 3"});
-            this.scalingCheckedListBoxVaults.Location = new System.Drawing.Point(4, 19);
+            this.scalingCheckedListBoxVaults.Location = new System.Drawing.Point(4, 20);
             this.scalingCheckedListBoxVaults.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.scalingCheckedListBoxVaults.MultiColumn = true;
             this.scalingCheckedListBoxVaults.Name = "scalingCheckedListBoxVaults";
@@ -719,7 +719,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelQuality.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelQuality.Name = "flowLayoutPanelQuality";
             this.flowLayoutPanelQuality.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
-            this.flowLayoutPanelQuality.Size = new System.Drawing.Size(224, 101);
+            this.flowLayoutPanelQuality.Size = new System.Drawing.Size(224, 102);
             this.flowLayoutPanelQuality.TabIndex = 21;
             // 
             // scalingLabelQuality
@@ -729,7 +729,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelQuality.ForeColor = System.Drawing.Color.Gold;
             this.scalingLabelQuality.Location = new System.Drawing.Point(4, 2);
             this.scalingLabelQuality.Name = "scalingLabelQuality";
-            this.scalingLabelQuality.Size = new System.Drawing.Size(57, 17);
+            this.scalingLabelQuality.Size = new System.Drawing.Size(53, 18);
             this.scalingLabelQuality.TabIndex = 0;
             this.scalingLabelQuality.Text = "Quality";
             this.scalingLabelQuality.UseMnemonic = false;
@@ -750,7 +750,7 @@ namespace TQVaultAE.GUI
             "Rare",
             "Epic",
             "Lengendary"});
-            this.scalingCheckedListBoxQuality.Location = new System.Drawing.Point(4, 19);
+            this.scalingCheckedListBoxQuality.Location = new System.Drawing.Point(4, 20);
             this.scalingCheckedListBoxQuality.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.scalingCheckedListBoxQuality.MultiColumn = true;
             this.scalingCheckedListBoxQuality.Name = "scalingCheckedListBoxQuality";
@@ -767,11 +767,11 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelStyle.Controls.Add(this.scalingLabelStyle);
             this.flowLayoutPanelStyle.Controls.Add(this.scalingCheckedListBoxStyle);
             this.flowLayoutPanelStyle.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelStyle.Location = new System.Drawing.Point(3, 110);
+            this.flowLayoutPanelStyle.Location = new System.Drawing.Point(3, 111);
             this.flowLayoutPanelStyle.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelStyle.Name = "flowLayoutPanelStyle";
             this.flowLayoutPanelStyle.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
-            this.flowLayoutPanelStyle.Size = new System.Drawing.Size(224, 101);
+            this.flowLayoutPanelStyle.Size = new System.Drawing.Size(224, 102);
             this.flowLayoutPanelStyle.TabIndex = 20;
             // 
             // scalingLabelStyle
@@ -781,7 +781,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelStyle.ForeColor = System.Drawing.Color.Gold;
             this.scalingLabelStyle.Location = new System.Drawing.Point(4, 2);
             this.scalingLabelStyle.Name = "scalingLabelStyle";
-            this.scalingLabelStyle.Size = new System.Drawing.Size(39, 17);
+            this.scalingLabelStyle.Size = new System.Drawing.Size(40, 18);
             this.scalingLabelStyle.TabIndex = 0;
             this.scalingLabelStyle.Text = "Style";
             this.scalingLabelStyle.UseMnemonic = false;
@@ -802,7 +802,7 @@ namespace TQVaultAE.GUI
             "Alexandrian",
             "Asgardian",
             "Babylonian"});
-            this.scalingCheckedListBoxStyle.Location = new System.Drawing.Point(4, 19);
+            this.scalingCheckedListBoxStyle.Location = new System.Drawing.Point(4, 20);
             this.scalingCheckedListBoxStyle.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.scalingCheckedListBoxStyle.MultiColumn = true;
             this.scalingCheckedListBoxStyle.Name = "scalingCheckedListBoxStyle";
@@ -819,11 +819,11 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelWithCharm.Controls.Add(this.scalingLabelWithCharm);
             this.flowLayoutPanelWithCharm.Controls.Add(this.scalingCheckedListBoxWithCharm);
             this.flowLayoutPanelWithCharm.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelWithCharm.Location = new System.Drawing.Point(233, 110);
+            this.flowLayoutPanelWithCharm.Location = new System.Drawing.Point(233, 111);
             this.flowLayoutPanelWithCharm.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelWithCharm.Name = "flowLayoutPanelWithCharm";
             this.flowLayoutPanelWithCharm.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
-            this.flowLayoutPanelWithCharm.Size = new System.Drawing.Size(224, 101);
+            this.flowLayoutPanelWithCharm.Size = new System.Drawing.Size(224, 102);
             this.flowLayoutPanelWithCharm.TabIndex = 17;
             // 
             // scalingLabelWithCharm
@@ -833,7 +833,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelWithCharm.ForeColor = System.Drawing.Color.Gold;
             this.scalingLabelWithCharm.Location = new System.Drawing.Point(4, 2);
             this.scalingLabelWithCharm.Name = "scalingLabelWithCharm";
-            this.scalingLabelWithCharm.Size = new System.Drawing.Size(99, 17);
+            this.scalingLabelWithCharm.Size = new System.Drawing.Size(102, 18);
             this.scalingLabelWithCharm.TabIndex = 0;
             this.scalingLabelWithCharm.Text = "Having Charm";
             this.scalingLabelWithCharm.UseMnemonic = false;
@@ -853,7 +853,7 @@ namespace TQVaultAE.GUI
             "Demon\'s Blood",
             "Turtle Shell",
             "Saber Claw"});
-            this.scalingCheckedListBoxWithCharm.Location = new System.Drawing.Point(4, 19);
+            this.scalingCheckedListBoxWithCharm.Location = new System.Drawing.Point(4, 20);
             this.scalingCheckedListBoxWithCharm.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.scalingCheckedListBoxWithCharm.MultiColumn = true;
             this.scalingCheckedListBoxWithCharm.Name = "scalingCheckedListBoxWithCharm";
@@ -870,11 +870,11 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelWithRelic.Controls.Add(this.scalingLabelWithRelic);
             this.flowLayoutPanelWithRelic.Controls.Add(this.scalingCheckedListBoxWithRelic);
             this.flowLayoutPanelWithRelic.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelWithRelic.Location = new System.Drawing.Point(463, 110);
+            this.flowLayoutPanelWithRelic.Location = new System.Drawing.Point(463, 111);
             this.flowLayoutPanelWithRelic.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelWithRelic.Name = "flowLayoutPanelWithRelic";
             this.flowLayoutPanelWithRelic.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
-            this.flowLayoutPanelWithRelic.Size = new System.Drawing.Size(224, 101);
+            this.flowLayoutPanelWithRelic.Size = new System.Drawing.Size(224, 102);
             this.flowLayoutPanelWithRelic.TabIndex = 18;
             // 
             // scalingLabelWithRelic
@@ -884,7 +884,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelWithRelic.ForeColor = System.Drawing.Color.Gold;
             this.scalingLabelWithRelic.Location = new System.Drawing.Point(4, 2);
             this.scalingLabelWithRelic.Name = "scalingLabelWithRelic";
-            this.scalingLabelWithRelic.Size = new System.Drawing.Size(86, 17);
+            this.scalingLabelWithRelic.Size = new System.Drawing.Size(90, 18);
             this.scalingLabelWithRelic.TabIndex = 0;
             this.scalingLabelWithRelic.Text = "Having Relic";
             this.scalingLabelWithRelic.UseMnemonic = false;
@@ -904,7 +904,7 @@ namespace TQVaultAE.GUI
             "Aegis of Athena",
             "Anubis\' Wrath",
             "Rage of Ares"});
-            this.scalingCheckedListBoxWithRelic.Location = new System.Drawing.Point(4, 19);
+            this.scalingCheckedListBoxWithRelic.Location = new System.Drawing.Point(4, 20);
             this.scalingCheckedListBoxWithRelic.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.scalingCheckedListBoxWithRelic.MultiColumn = true;
             this.scalingCheckedListBoxWithRelic.Name = "scalingCheckedListBoxWithRelic";
@@ -921,11 +921,11 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelPrefixName.Controls.Add(this.scalingLabelPrefixName);
             this.flowLayoutPanelPrefixName.Controls.Add(this.scalingCheckedListBoxPrefixName);
             this.flowLayoutPanelPrefixName.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelPrefixName.Location = new System.Drawing.Point(923, 110);
+            this.flowLayoutPanelPrefixName.Location = new System.Drawing.Point(923, 111);
             this.flowLayoutPanelPrefixName.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelPrefixName.Name = "flowLayoutPanelPrefixName";
             this.flowLayoutPanelPrefixName.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
-            this.flowLayoutPanelPrefixName.Size = new System.Drawing.Size(224, 101);
+            this.flowLayoutPanelPrefixName.Size = new System.Drawing.Size(224, 102);
             this.flowLayoutPanelPrefixName.TabIndex = 16;
             // 
             // scalingLabelPrefixName
@@ -935,7 +935,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelPrefixName.ForeColor = System.Drawing.Color.Gold;
             this.scalingLabelPrefixName.Location = new System.Drawing.Point(4, 2);
             this.scalingLabelPrefixName.Name = "scalingLabelPrefixName";
-            this.scalingLabelPrefixName.Size = new System.Drawing.Size(86, 17);
+            this.scalingLabelPrefixName.Size = new System.Drawing.Size(89, 18);
             this.scalingLabelPrefixName.TabIndex = 0;
             this.scalingLabelPrefixName.Text = "Prefix Name";
             this.scalingLabelPrefixName.UseMnemonic = false;
@@ -955,7 +955,7 @@ namespace TQVaultAE.GUI
             "Divine",
             "Sacred",
             "Defender\'s"});
-            this.scalingCheckedListBoxPrefixName.Location = new System.Drawing.Point(4, 19);
+            this.scalingCheckedListBoxPrefixName.Location = new System.Drawing.Point(4, 20);
             this.scalingCheckedListBoxPrefixName.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.scalingCheckedListBoxPrefixName.MultiColumn = true;
             this.scalingCheckedListBoxPrefixName.Name = "scalingCheckedListBoxPrefixName";
@@ -972,11 +972,11 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelSuffixName.Controls.Add(this.scalingLabelSuffixName);
             this.flowLayoutPanelSuffixName.Controls.Add(this.scalingCheckedListBoxSuffixName);
             this.flowLayoutPanelSuffixName.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelSuffixName.Location = new System.Drawing.Point(463, 217);
+            this.flowLayoutPanelSuffixName.Location = new System.Drawing.Point(463, 219);
             this.flowLayoutPanelSuffixName.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelSuffixName.Name = "flowLayoutPanelSuffixName";
             this.flowLayoutPanelSuffixName.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
-            this.flowLayoutPanelSuffixName.Size = new System.Drawing.Size(224, 101);
+            this.flowLayoutPanelSuffixName.Size = new System.Drawing.Size(224, 102);
             this.flowLayoutPanelSuffixName.TabIndex = 15;
             // 
             // scalingLabelSuffixName
@@ -986,7 +986,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelSuffixName.ForeColor = System.Drawing.Color.Gold;
             this.scalingLabelSuffixName.Location = new System.Drawing.Point(4, 2);
             this.scalingLabelSuffixName.Name = "scalingLabelSuffixName";
-            this.scalingLabelSuffixName.Size = new System.Drawing.Size(86, 17);
+            this.scalingLabelSuffixName.Size = new System.Drawing.Size(88, 18);
             this.scalingLabelSuffixName.TabIndex = 0;
             this.scalingLabelSuffixName.Text = "Suffix Name";
             this.scalingLabelSuffixName.UseMnemonic = false;
@@ -1006,7 +1006,7 @@ namespace TQVaultAE.GUI
             "of Prowess",
             "of Finesse",
             "of Erudition"});
-            this.scalingCheckedListBoxSuffixName.Location = new System.Drawing.Point(4, 19);
+            this.scalingCheckedListBoxSuffixName.Location = new System.Drawing.Point(4, 20);
             this.scalingCheckedListBoxSuffixName.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.scalingCheckedListBoxSuffixName.MultiColumn = true;
             this.scalingCheckedListBoxSuffixName.Name = "scalingCheckedListBoxSuffixName";
@@ -1038,7 +1038,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelSearchTerm.Location = new System.Drawing.Point(3, 7);
             this.scalingLabelSearchTerm.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.scalingLabelSearchTerm.Name = "scalingLabelSearchTerm";
-            this.scalingLabelSearchTerm.Size = new System.Drawing.Size(57, 17);
+            this.scalingLabelSearchTerm.Size = new System.Drawing.Size(63, 18);
             this.scalingLabelSearchTerm.TabIndex = 1;
             this.scalingLabelSearchTerm.Text = "Search :";
             this.scalingLabelSearchTerm.UseMnemonic = false;
@@ -1047,9 +1047,9 @@ namespace TQVaultAE.GUI
             // 
             this.scalingTextBoxSearchTerm.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.scalingTextBoxSearchTerm.Font = new System.Drawing.Font("Albertus MT", 9F);
-            this.scalingTextBoxSearchTerm.Location = new System.Drawing.Point(66, 3);
+            this.scalingTextBoxSearchTerm.Location = new System.Drawing.Point(72, 3);
             this.scalingTextBoxSearchTerm.Name = "scalingTextBoxSearchTerm";
-            this.scalingTextBoxSearchTerm.Size = new System.Drawing.Size(387, 25);
+            this.scalingTextBoxSearchTerm.Size = new System.Drawing.Size(387, 24);
             this.scalingTextBoxSearchTerm.TabIndex = 2;
             this.scalingTextBoxSearchTerm.TextChanged += new System.EventHandler(this.scalingTextBoxSearchTerm_TextChanged);
             // 
@@ -1065,7 +1065,7 @@ namespace TQVaultAE.GUI
             this.scalingButtonReset.Font = new System.Drawing.Font("Albertus MT", 9F);
             this.scalingButtonReset.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.scalingButtonReset.Image = ((System.Drawing.Image)(resources.GetObject("scalingButtonReset.Image")));
-            this.scalingButtonReset.Location = new System.Drawing.Point(459, 3);
+            this.scalingButtonReset.Location = new System.Drawing.Point(465, 3);
             this.scalingButtonReset.Name = "scalingButtonReset";
             this.scalingButtonReset.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonReset.OverBitmap")));
             this.scalingButtonReset.Size = new System.Drawing.Size(100, 30);
@@ -1100,7 +1100,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelQueries.Location = new System.Drawing.Point(3, 7);
             this.scalingLabelQueries.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.scalingLabelQueries.Name = "scalingLabelQueries";
-            this.scalingLabelQueries.Size = new System.Drawing.Size(66, 17);
+            this.scalingLabelQueries.Size = new System.Drawing.Size(68, 18);
             this.scalingLabelQueries.TabIndex = 2;
             this.scalingLabelQueries.Text = "Queries :";
             this.scalingLabelQueries.UseMnemonic = false;
@@ -1113,11 +1113,11 @@ namespace TQVaultAE.GUI
             this.scalingComboBoxQueryList.Items.AddRange(new object[] {
             "Search term 1",
             "Search term 2"});
-            this.scalingComboBoxQueryList.Location = new System.Drawing.Point(75, 3);
+            this.scalingComboBoxQueryList.Location = new System.Drawing.Point(77, 3);
             this.scalingComboBoxQueryList.MaximumSize = new System.Drawing.Size(380, 0);
             this.scalingComboBoxQueryList.MinimumSize = new System.Drawing.Size(170, 0);
             this.scalingComboBoxQueryList.Name = "scalingComboBoxQueryList";
-            this.scalingComboBoxQueryList.Size = new System.Drawing.Size(300, 26);
+            this.scalingComboBoxQueryList.Size = new System.Drawing.Size(300, 25);
             this.scalingComboBoxQueryList.TabIndex = 3;
             this.scalingComboBoxQueryList.SelectedIndexChanged += new System.EventHandler(this.scalingComboBoxQueryList_SelectedIndexChanged);
             // 
@@ -1133,7 +1133,7 @@ namespace TQVaultAE.GUI
             this.scalingButtonQuerySave.Font = new System.Drawing.Font("Albertus MT", 9F);
             this.scalingButtonQuerySave.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.scalingButtonQuerySave.Image = ((System.Drawing.Image)(resources.GetObject("scalingButtonQuerySave.Image")));
-            this.scalingButtonQuerySave.Location = new System.Drawing.Point(381, 3);
+            this.scalingButtonQuerySave.Location = new System.Drawing.Point(383, 3);
             this.scalingButtonQuerySave.Name = "scalingButtonQuerySave";
             this.scalingButtonQuerySave.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonQuerySave.OverBitmap")));
             this.scalingButtonQuerySave.Size = new System.Drawing.Size(100, 30);
@@ -1157,7 +1157,7 @@ namespace TQVaultAE.GUI
             this.scalingButtonQueryDelete.Font = new System.Drawing.Font("Albertus MT", 9F);
             this.scalingButtonQueryDelete.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.scalingButtonQueryDelete.Image = ((System.Drawing.Image)(resources.GetObject("scalingButtonQueryDelete.Image")));
-            this.scalingButtonQueryDelete.Location = new System.Drawing.Point(487, 3);
+            this.scalingButtonQueryDelete.Location = new System.Drawing.Point(489, 3);
             this.scalingButtonQueryDelete.Name = "scalingButtonQueryDelete";
             this.scalingButtonQueryDelete.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonQueryDelete.OverBitmap")));
             this.scalingButtonQueryDelete.Size = new System.Drawing.Size(100, 30);
@@ -1201,7 +1201,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelMainAutoScroll.AutoScroll = true;
             this.tableLayoutPanelContent.SetColumnSpan(this.flowLayoutPanelMainAutoScroll, 2);
             this.flowLayoutPanelMainAutoScroll.Controls.Add(this.flowLayoutPanelMain);
-            this.flowLayoutPanelMainAutoScroll.Location = new System.Drawing.Point(142, 84);
+            this.flowLayoutPanelMainAutoScroll.Location = new System.Drawing.Point(142, 85);
             this.flowLayoutPanelMainAutoScroll.Name = "flowLayoutPanelMainAutoScroll";
             this.flowLayoutPanelMainAutoScroll.Size = new System.Drawing.Size(1246, 557);
             this.flowLayoutPanelMainAutoScroll.TabIndex = 21;
@@ -1222,7 +1222,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelMisc.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanelMisc.Location = new System.Drawing.Point(3, 45);
             this.flowLayoutPanelMisc.Name = "flowLayoutPanelMisc";
-            this.flowLayoutPanelMisc.Size = new System.Drawing.Size(1385, 33);
+            this.flowLayoutPanelMisc.Size = new System.Drawing.Size(1385, 34);
             this.flowLayoutPanelMisc.TabIndex = 18;
             // 
             // scalingLabelMaxVisibleElement
@@ -1233,7 +1233,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelMaxVisibleElement.Location = new System.Drawing.Point(3, 7);
             this.scalingLabelMaxVisibleElement.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.scalingLabelMaxVisibleElement.Name = "scalingLabelMaxVisibleElement";
-            this.scalingLabelMaxVisibleElement.Size = new System.Drawing.Size(180, 17);
+            this.scalingLabelMaxVisibleElement.Size = new System.Drawing.Size(183, 18);
             this.scalingLabelMaxVisibleElement.TabIndex = 5;
             this.scalingLabelMaxVisibleElement.Text = "Visible elements/category :";
             this.scalingLabelMaxVisibleElement.UseMnemonic = false;
@@ -1241,7 +1241,7 @@ namespace TQVaultAE.GUI
             // numericUpDownMaxElement
             // 
             this.numericUpDownMaxElement.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.numericUpDownMaxElement.Location = new System.Drawing.Point(189, 3);
+            this.numericUpDownMaxElement.Location = new System.Drawing.Point(192, 3);
             this.numericUpDownMaxElement.Maximum = new decimal(new int[] {
             150,
             0,
@@ -1253,7 +1253,7 @@ namespace TQVaultAE.GUI
             0,
             0});
             this.numericUpDownMaxElement.Name = "numericUpDownMaxElement";
-            this.numericUpDownMaxElement.Size = new System.Drawing.Size(43, 25);
+            this.numericUpDownMaxElement.Size = new System.Drawing.Size(43, 24);
             this.numericUpDownMaxElement.TabIndex = 4;
             this.numericUpDownMaxElement.Value = new decimal(new int[] {
             5,
@@ -1267,10 +1267,10 @@ namespace TQVaultAE.GUI
             this.scalingCheckBoxReduceDuringSelection.AutoSize = true;
             this.scalingCheckBoxReduceDuringSelection.Font = new System.Drawing.Font("Albertus MT", 9F);
             this.scalingCheckBoxReduceDuringSelection.ForeColor = System.Drawing.Color.Gold;
-            this.scalingCheckBoxReduceDuringSelection.Location = new System.Drawing.Point(248, 7);
+            this.scalingCheckBoxReduceDuringSelection.Location = new System.Drawing.Point(251, 7);
             this.scalingCheckBoxReduceDuringSelection.Margin = new System.Windows.Forms.Padding(13, 7, 3, 3);
             this.scalingCheckBoxReduceDuringSelection.Name = "scalingCheckBoxReduceDuringSelection";
-            this.scalingCheckBoxReduceDuringSelection.Size = new System.Drawing.Size(244, 21);
+            this.scalingCheckBoxReduceDuringSelection.Size = new System.Drawing.Size(261, 22);
             this.scalingCheckBoxReduceDuringSelection.TabIndex = 3;
             this.scalingCheckBoxReduceDuringSelection.Text = "Reduce categories during selection";
             this.scalingCheckBoxReduceDuringSelection.UseVisualStyleBackColor = true;
@@ -1283,9 +1283,9 @@ namespace TQVaultAE.GUI
             this.buttonCollapseAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(211)))), ((int)(((byte)(190)))), ((int)(((byte)(107)))));
             this.buttonCollapseAll.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.buttonCollapseAll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.buttonCollapseAll.Location = new System.Drawing.Point(498, 3);
+            this.buttonCollapseAll.Location = new System.Drawing.Point(518, 3);
             this.buttonCollapseAll.Name = "buttonCollapseAll";
-            this.buttonCollapseAll.Size = new System.Drawing.Size(95, 27);
+            this.buttonCollapseAll.Size = new System.Drawing.Size(95, 28);
             this.buttonCollapseAll.TabIndex = 6;
             this.buttonCollapseAll.Text = "Collapse All";
             this.buttonCollapseAll.UseVisualStyleBackColor = false;
@@ -1298,9 +1298,9 @@ namespace TQVaultAE.GUI
             this.buttonExpandAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(211)))), ((int)(((byte)(190)))), ((int)(((byte)(107)))));
             this.buttonExpandAll.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.buttonExpandAll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.buttonExpandAll.Location = new System.Drawing.Point(599, 3);
+            this.buttonExpandAll.Location = new System.Drawing.Point(619, 3);
             this.buttonExpandAll.Name = "buttonExpandAll";
-            this.buttonExpandAll.Size = new System.Drawing.Size(88, 27);
+            this.buttonExpandAll.Size = new System.Drawing.Size(86, 28);
             this.buttonExpandAll.TabIndex = 7;
             this.buttonExpandAll.Text = "Expand All";
             this.buttonExpandAll.UseVisualStyleBackColor = false;
@@ -1311,10 +1311,10 @@ namespace TQVaultAE.GUI
             this.scalingLabelOperator.AutoSize = true;
             this.scalingLabelOperator.Font = new System.Drawing.Font("Albertus MT", 9F);
             this.scalingLabelOperator.ForeColor = System.Drawing.Color.Gold;
-            this.scalingLabelOperator.Location = new System.Drawing.Point(693, 7);
+            this.scalingLabelOperator.Location = new System.Drawing.Point(711, 7);
             this.scalingLabelOperator.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.scalingLabelOperator.Name = "scalingLabelOperator";
-            this.scalingLabelOperator.Size = new System.Drawing.Size(76, 17);
+            this.scalingLabelOperator.Size = new System.Drawing.Size(75, 18);
             this.scalingLabelOperator.TabIndex = 17;
             this.scalingLabelOperator.Text = "Operator :";
             this.scalingLabelOperator.UseMnemonic = false;
@@ -1328,10 +1328,10 @@ namespace TQVaultAE.GUI
             this.scalingComboBoxOperator.Items.AddRange(new object[] {
             "And",
             "Or"});
-            this.scalingComboBoxOperator.Location = new System.Drawing.Point(775, 3);
+            this.scalingComboBoxOperator.Location = new System.Drawing.Point(792, 3);
             this.scalingComboBoxOperator.MaxDropDownItems = 2;
             this.scalingComboBoxOperator.Name = "scalingComboBoxOperator";
-            this.scalingComboBoxOperator.Size = new System.Drawing.Size(60, 26);
+            this.scalingComboBoxOperator.Size = new System.Drawing.Size(60, 25);
             this.scalingComboBoxOperator.TabIndex = 18;
             this.scalingComboBoxOperator.SelectionChangeCommitted += new System.EventHandler(this.scalingComboBoxOperator_SelectionChangeCommitted);
             // 
@@ -1340,10 +1340,10 @@ namespace TQVaultAE.GUI
             this.scalingLabelFiltersSelected.AutoSize = true;
             this.scalingLabelFiltersSelected.Font = new System.Drawing.Font("Albertus MT", 9F);
             this.scalingLabelFiltersSelected.ForeColor = System.Drawing.Color.Gold;
-            this.scalingLabelFiltersSelected.Location = new System.Drawing.Point(841, 7);
+            this.scalingLabelFiltersSelected.Location = new System.Drawing.Point(858, 7);
             this.scalingLabelFiltersSelected.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.scalingLabelFiltersSelected.Name = "scalingLabelFiltersSelected";
-            this.scalingLabelFiltersSelected.Size = new System.Drawing.Size(120, 17);
+            this.scalingLabelFiltersSelected.Size = new System.Drawing.Size(124, 18);
             this.scalingLabelFiltersSelected.TabIndex = 8;
             this.scalingLabelFiltersSelected.Tag = "{0} filters selected";
             this.scalingLabelFiltersSelected.Text = "{0} filters selected";
@@ -1373,7 +1373,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelLeftColumn.Controls.Add(this.scalingButtonMenuSuffixName);
             this.flowLayoutPanelLeftColumn.Controls.Add(this.scalingButtonMenuSuffixAttribute);
             this.flowLayoutPanelLeftColumn.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelLeftColumn.Location = new System.Drawing.Point(3, 84);
+            this.flowLayoutPanelLeftColumn.Location = new System.Drawing.Point(3, 85);
             this.flowLayoutPanelLeftColumn.MinimumSize = new System.Drawing.Size(100, 100);
             this.flowLayoutPanelLeftColumn.Name = "flowLayoutPanelLeftColumn";
             this.flowLayoutPanelLeftColumn.Size = new System.Drawing.Size(133, 557);
@@ -1714,7 +1714,8 @@ namespace TQVaultAE.GUI
             // 
             // SearchDialogAdvanced
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
+            this.AcceptButton = this.applyButton;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
             this.CancelButton = this.cancelButton;
