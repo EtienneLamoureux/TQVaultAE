@@ -1,5 +1,6 @@
 ﻿using EnumsNET;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Linq;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
@@ -17,11 +18,6 @@ namespace TQVaultAE.Presentation
 			Database = database;
 		}
 
-		/// <summary>
-		/// Gets the string name of a particular item style
-		/// </summary>
-		/// <param name="itemStyle">ItemStyle enumeration</param>
-		/// <returns>Localized string of the item style</returns>
 		public string Translate(ItemStyle itemStyle)
 		{
 			var tags = itemStyle.AsString(EnumFormat.Description);
@@ -32,55 +28,54 @@ namespace TQVaultAE.Presentation
 			return trans;
 		}
 
-		/// <summary>
-		/// Gets the string used for 'with'
-		/// </summary>
 		public string ItemWith => Resources.ItemWith;
-		/// <summary>
-		/// Gets the relic completion bonus string.
-		/// </summary>
+
 		public string ItemRelicBonus => Resources.ItemRelicBonus;
-		/// <summary>
-		/// Gets the relic completed string.
-		/// </summary>
+
 		public string ItemRelicCompleted => Resources.ItemRelicCompleted;
-		/// <summary>
-		/// Gets the quest item indicator string.
-		/// </summary>
+
 		public string ItemQuest => Resources.ItemQuest;
-		/// <summary>
-		/// Gets the item seed format string.
-		/// </summary>
+
 		public string ItemSeed => Resources.ItemSeed;
-		/// <summary>
-		/// Translate <paramref name="xTagName"/> using resource file and database
-		/// </summary>
-		/// <param name="xTagName"></param>
-		/// <returns></returns>
+
 		public string TranslateXTag(string xTagName)
+		{
+			string resx = LookFortranslation(xTagName);
+
+			return string.IsNullOrWhiteSpace(resx) ? xTagName : resx;
+		}
+
+		public bool TryTranslateXTag(string xTagName, out string translation)
+		{
+			string resx = LookFortranslation(xTagName);
+
+			if (string.IsNullOrWhiteSpace(resx))
+			{
+				translation = null;
+				return false;
+			}
+
+			translation = resx;
+			return true;
+		}
+
+		private string LookFortranslation(string xTagName)
 		{
 			// all xtag substitute must have a "TextTag_" prefix in resource file (avoid colision & strong naming rule).
 			var resx = Resources.ResourceManager.GetString($"TextTag_{xTagName}");
 
-			if (resx is null)
-				resx = this.Database.GetFriendlyName(xTagName);// Try DB
+			// Check if the value is a @redirectTag 
+			if (resx != null && resx.StartsWith("@"))
+				resx = this.Database.GetFriendlyName(resx.TrimStart('@'));
 
-			return string.IsNullOrWhiteSpace(resx) ? $"{TQColor.Purple.ColorTag()}??{xTagName}??" : resx;
+			if (resx is null)
+				resx = this.Database.GetFriendlyName(xTagName);
+			return resx;
 		}
 
-		/// <summary>
-		/// Return Difficulty translation
-		/// </summary>
-		/// <param name="difficultyFromSaveFile"></param>
-		/// <returns></returns>
 		public string TranslateDifficulty(int difficultyFromSaveFile)
 			=> this.Database.GetFriendlyName($"tagRDifficultyTitle0{++difficultyFromSaveFile}");
 
-		/// <summary>
-		/// Translate character class to mastery
-		/// </summary>
-		/// <param name="characterXtagClass"></param>
-		/// <returns></returns>
 		public string TranslateMastery(string characterXtagClass)
 		{
 			var tags = Resources.ResourceManager.GetString($"Masteries{characterXtagClass}");
@@ -90,17 +85,10 @@ namespace TQVaultAE.Presentation
 				: TranslateXTag(dualclass.First());
 		}
 
-		/// <summary>
-		/// Gets the string which indicates an Immortal Throne item.
-		/// </summary>
 		public string ItemIT => Resources.ItemIT;
-		/// <summary>
-		/// Gets the string which indicates an Ragnarok item.
-		/// </summary>
+
 		public string ItemRagnarok => Resources.ItemRagnarok;
-		/// <summary>
-		/// Gets the string which indicates an Atlantis item.
-		/// </summary>
+
 		public string ItemAtlantis => Resources.ItemAtlantis;
 	}
 }

@@ -64,27 +64,6 @@ namespace TQVaultAE.Domain.Search
 			this.RequiredLevel = GetRequirement(this.FriendlyNames.RequirementVariables.Values, "levelRequirement");
 		}
 
-		/// <summary>
-		/// Old Ctrs
-		/// </summary>
-		/// <param name="container"></param>
-		/// <param name="containerName"></param>
-		/// <param name="sackNumber"></param>
-		/// <param name="sackType"></param>
-		/// <param name="fnames"></param>
-		public Result(string container, string containerName, int sackNumber, SackType sackType, ToFriendlyNameResult fnames)
-		{
-			this.Container = container ?? throw new ArgumentNullException(nameof(container));
-			this.ContainerName = containerName ?? throw new ArgumentNullException(nameof(containerName));
-			this.SackNumber = sackNumber;
-			this.SackType = sackType;
-			this.FriendlyNames = fnames ?? throw new ArgumentNullException(nameof(fnames));
-			this.ItemName = fnames.FullNameClean;
-			this.ItemStyle = fnames.Item.ItemStyle;
-			this.TQColor = fnames.Item.ItemStyle.TQColor();
-			this.RequiredLevel = GetRequirement(fnames.RequirementVariables.Values, "levelRequirement");
-		}
-
 		private int GetRequirement(IList<Variable> variables, string key)
 		{
 			return variables

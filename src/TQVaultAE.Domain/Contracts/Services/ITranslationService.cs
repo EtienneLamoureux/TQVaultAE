@@ -49,7 +49,7 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		string ItemAtlantis { get; }
 		/// <summary>
-		/// Translate <paramref name="xTagName"/> using ressource file and database
+		/// Translate <paramref name="xTagName"/> using resource file and database
 		/// </summary>
 		/// <param name="xTagName"></param>
 		/// <returns></returns>
@@ -60,5 +60,12 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// <param name="characterXtagClass"></param>
 		/// <returns></returns>
 		string TranslateMastery(string characterXtagClass);
+		/// <summary>
+		/// Try translate <paramref name="xTagName"/> using resource file and database
+		/// </summary>
+		/// <param name="xTagName"></param>
+		/// <param name="translation"></param>
+		/// <returns></returns>
+		bool TryTranslateXTag(string xTagName, out string translation);
 	}
 }

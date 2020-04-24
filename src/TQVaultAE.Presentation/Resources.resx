@@ -1712,4 +1712,69 @@ It currently only use the "base" values available in the save file.</value>
     <value>Are you sure you want to delete "{0}" ?</value>
   </data>
 
+  <data name="TextTag_racialBonusRaceBeast" xml:space="preserve">
+    <value>@tagRace03P</value>
+    <comment>Redirect for racial Bonus "Beast"</comment>
+  </data>
+
+  <data name="TextTag_racialBonusRaceBeastman" xml:space="preserve">
+    <value>@tagRace04P</value>
+    <comment>Redirect for racial Bonus "Beastman"</comment>
+  </data>
+
+  <data name="TextTag_racialBonusRaceDemon" xml:space="preserve">
+    <value>@tagRace07P</value>
+    <comment>Redirect for racial Bonus "Demon"</comment>
+  </data>
+
+  <data name="TextTag_racialBonusRaceMagical" xml:space="preserve">
+    <value>@tagRace11P</value>
+    <comment>Redirect for racial Bonus "Magical"</comment>
+  </data>
+  
+  <data name="TextTag_racialBonusRaceGiant" xml:space="preserve">
+    <value>@x2tagRace01P</value>
+    <comment>Redirect for racial Bonus "Giant"</comment>
+  </data>
+  
+  <data name="TextTag_racialBonusRaceUndead" xml:space="preserve">
+    <value>@tagRace06P</value>
+    <comment>Redirect for racial Bonus "Undead"</comment>
+  </data>
+  
+  <data name="TextTag_racialBonusRaceConstruct" xml:space="preserve">
+    <value>@tagRace10P</value>
+    <comment>Redirect for racial Bonus "Construct"</comment>
+  </data>
+  
+  <data name="TextTag_racialBonusRaceDevice" xml:space="preserve">
+    <value>@tagRace12P</value>
+    <comment>Redirect for racial Bonus "Device"</comment>
+  </data>
+  
+  <data name="TextTag_racialBonusRacePlant" xml:space="preserve">
+    <value>@tagRace01P</value>
+    <comment>Redirect for racial Bonus "Plant"</comment>
+  </data>
+  
+  <data name="TextTag_racialBonusRaceOlympian" xml:space="preserve">
+    <value>@xtagRace01P</value>
+    <comment>Redirect for racial Bonus "Olympian"</comment>
+  </data>
+  
+  <data name="TextTag_racialBonusRaceInsectoid" xml:space="preserve">
+    <value>@tagRace05P</value>
+    <comment>Redirect for racial Bonus "Insectoid"</comment>
+  </data>
+
+  <data name="TextTag_racialBonusRaceGhost" xml:space="preserve">
+    <value>@x2tagRace02P</value>
+    <comment>Redirect for racial Bonus "Ghost"</comment>
+  </data>
+
+  <data name="TextTag_racialBonusRaceTitan" xml:space="preserve">
+    <value>@tagRace08P</value>
+    <comment>Redirect for racial Bonus "Titan"</comment>
+  </data>
+
 </root>

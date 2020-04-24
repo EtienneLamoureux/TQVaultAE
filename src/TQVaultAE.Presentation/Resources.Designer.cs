@@ -4023,6 +4023,123 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à @tagRace03P.
+        /// </summary>
+        public static string TextTag_racialBonusRaceBeast {
+            get {
+                return ResourceManager.GetString("TextTag_racialBonusRaceBeast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à @tagRace04P.
+        /// </summary>
+        public static string TextTag_racialBonusRaceBeastman {
+            get {
+                return ResourceManager.GetString("TextTag_racialBonusRaceBeastman", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à @tagRace10P.
+        /// </summary>
+        public static string TextTag_racialBonusRaceConstruct {
+            get {
+                return ResourceManager.GetString("TextTag_racialBonusRaceConstruct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à @tagRace07P.
+        /// </summary>
+        public static string TextTag_racialBonusRaceDemon {
+            get {
+                return ResourceManager.GetString("TextTag_racialBonusRaceDemon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à @tagRace12P.
+        /// </summary>
+        public static string TextTag_racialBonusRaceDevice {
+            get {
+                return ResourceManager.GetString("TextTag_racialBonusRaceDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à @x2tagRace02P.
+        /// </summary>
+        public static string TextTag_racialBonusRaceGhost {
+            get {
+                return ResourceManager.GetString("TextTag_racialBonusRaceGhost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à @x2tagRace01P.
+        /// </summary>
+        public static string TextTag_racialBonusRaceGiant {
+            get {
+                return ResourceManager.GetString("TextTag_racialBonusRaceGiant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à @tagRace05P.
+        /// </summary>
+        public static string TextTag_racialBonusRaceInsectoid {
+            get {
+                return ResourceManager.GetString("TextTag_racialBonusRaceInsectoid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à @tagRace11P.
+        /// </summary>
+        public static string TextTag_racialBonusRaceMagical {
+            get {
+                return ResourceManager.GetString("TextTag_racialBonusRaceMagical", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à @xtagRace01P.
+        /// </summary>
+        public static string TextTag_racialBonusRaceOlympian {
+            get {
+                return ResourceManager.GetString("TextTag_racialBonusRaceOlympian", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à @tagRace01P.
+        /// </summary>
+        public static string TextTag_racialBonusRacePlant {
+            get {
+                return ResourceManager.GetString("TextTag_racialBonusRacePlant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à @tagRace08P.
+        /// </summary>
+        public static string TextTag_racialBonusRaceTitan {
+            get {
+                return ResourceManager.GetString("TextTag_racialBonusRaceTitan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à @tagRace06P.
+        /// </summary>
+        public static string TextTag_racialBonusRaceUndead {
+            get {
+                return ResourceManager.GetString("TextTag_racialBonusRaceUndead", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Artifact.
         /// </summary>
         public static string TextTag_tagArtifact {
