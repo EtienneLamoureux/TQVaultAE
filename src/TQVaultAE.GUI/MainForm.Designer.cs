@@ -70,7 +70,7 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Background worker to load resources.
 		/// </summary>
-		private System.ComponentModel.BackgroundWorker backgroundWorker1;
+		private System.ComponentModel.BackgroundWorker backgroundWorkerLoadAllFiles;
 
 		/// <summary>
 		/// Timer for fading in the main form.
@@ -117,7 +117,7 @@ namespace TQVaultAE.GUI
             this.aboutButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.titleLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.searchButton = new TQVaultAE.GUI.Components.ScalingButton();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.backgroundWorkerLoadAllFiles = new System.ComponentModel.BackgroundWorker();
             this.fadeInTimer = new System.Windows.Forms.Timer(this.components);
             this.flowLayoutPanelVaultSelector = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanelMain = new System.Windows.Forms.TableLayoutPanel();
@@ -315,14 +315,14 @@ namespace TQVaultAE.GUI
             this.searchButton.UseCustomGraphic = true;
             this.searchButton.UseVisualStyleBackColor = false;
             this.searchButton.Click += new System.EventHandler(this.SearchButtonClick);
-            // 
-            // backgroundWorker1
-            // 
-            this.backgroundWorker1.WorkerReportsProgress = true;
-            this.backgroundWorker1.WorkerSupportsCancellation = true;
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
-            this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorker1_ProgressChanged);
-            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorker1_RunWorkerCompleted);
+			// 
+			// backgroundWorker1
+			// 
+			this.backgroundWorkerLoadAllFiles.WorkerReportsProgress = true;
+			this.backgroundWorkerLoadAllFiles.WorkerSupportsCancellation = true;
+            this.backgroundWorkerLoadAllFiles.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorkerLoadAllFiles_DoWork);
+            this.backgroundWorkerLoadAllFiles.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorkerLoadAllFiles_ProgressChanged);
+            this.backgroundWorkerLoadAllFiles.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorkerLoadAllFiles_RunWorkerCompleted);
             // 
             // fadeInTimer
             // 

@@ -14,7 +14,7 @@ namespace TQVaultAE.GUI.Components
 	/// <summary>
 	/// Button class to support skinning and scaling of the fonts.
 	/// </summary>
-	public class ScalingButton : Button
+	public class ScalingButton : Button, IScalingControl
 	{
 		/// <summary>
 		/// Base Font used for scaling of the text to fit within the bounds of the button.
@@ -57,7 +57,6 @@ namespace TQVaultAE.GUI.Components
 			this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
 			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCallback);
 			this.ResumeLayout(false);
-
 		}
 		
 		/// <summary>

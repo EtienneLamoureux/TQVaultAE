@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,13 +7,12 @@ using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Results;
-using TQVaultAE.Logs;
 
 namespace TQVaultAE.Services
 {
 	public class PlayerService : IPlayerService
 	{
-		private readonly log4net.ILog Log = null;
+		private readonly ILogger Log = null;
 		private readonly SessionContext userContext = null;
 		private readonly IPlayerCollectionProvider PlayerCollectionProvider;
 		private readonly IStashProvider StashProvider;
@@ -29,7 +29,7 @@ namespace TQVaultAE.Services
 			, ITranslationService translationService
 		)
 		{
-			this.Log = log.Logger;
+			this.Log = log;
 			this.userContext = userContext;
 			this.PlayerCollectionProvider = playerCollectionProvider;
 			this.StashProvider = stashProvider;

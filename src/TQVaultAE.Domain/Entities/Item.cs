@@ -6,7 +6,9 @@
 namespace TQVaultAE.Domain.Entities
 {
 	using System;
+	using System.Collections.ObjectModel;
 	using System.Drawing;
+	using System.Linq;
 	using TQVaultAE.Domain.Helpers;
 	using TQVaultAE.Domain.Results;
 
@@ -50,6 +52,7 @@ namespace TQVaultAE.Domain.Entities
 		public int endBlockCrap2;
 
 		public bool atlantis = false;
+
 		/// <summary>
 		/// Prefix database record ID
 		/// </summary>
@@ -700,6 +703,45 @@ namespace TQVaultAE.Domain.Entities
 		public bool IsRelicBonus2Complete
 			=> (this.RelicBonus2Info != null) ? this.Var2 >= this.RelicBonus2Info.CompletedRelicLevel : false;
 
+		internal static ReadOnlyCollection<(string ItemClass, string xTagName)> ItemClassMap = new[]
+		{
+			("QUESTITEM", "tagQuestItem"),
+			("ONESHOT_POTIONHEALTH", "tagHUDHealthPotion"),
+			("ONESHOT_POTIONMANA", "tagHUDEnergyPotion"),
+			("ARMORJEWELRY_AMULET", "tagItemAmulet") ,
+			("ARMORJEWELRY_RING", "tagItemRing") ,
+			("ITEMCHARM", "tagItemCharm") ,
+			("ITEMRELIC", "tagRelic"),
+			("ITEMARTIFACTFORMULA", "xtagEnchant02"),
+			("ITEMARTIFACT", "tagArtifact"),
+			("ONESHOT_SCROLL", "xtagLogScroll"),
+			("ARMORPROTECTIVE_LOWERBODY", "tagCR_Leg"),
+			("ARMORPROTECTIVE_FOREARM", "tagCR_Arm"),
+			("ARMORPROTECTIVE_HEAD", "tagCR_Head"),
+			("ARMORPROTECTIVE_UPPERBODY", "tagCR_Torso"),
+			("WEAPONARMOR_SHIELD", "tagItemWarShield"),
+			("WEAPONMELEE_AXE", "tagItemAxe"),
+			("WEAPONMELEE_MACE", "tagItemMace"),
+			("WEAPONMELEE_SWORD", "tagItemWarBlade"),//tagSword
+			("WEAPONHUNTING_BOW", "tagItemWarBow"),
+			("WEAPONHUNTING_RANGEDONEHAND", "tagItemShortBow"),
+			("WEAPONMAGICAL_STAFF", "tagItemBattleStaff"),// xtagLogStaff
+			("WEAPONHUNTING_SPEAR","tagItemLance"),
+		}.ToList().AsReadOnly();
+
+		/// <summary>
+		/// Get the tagName assigned to the <see cref="ItemClass"/>
+		/// </summary>
+		public string ItemClassTagName
+		{
+			get
+			{
+				var iclass = this.baseItemInfo.ItemClass.ToUpperInvariant();
+				var map = ItemClassMap.Where(i => i.ItemClass == iclass).Select(i => i.xTagName);
+				return map.Any() ? map.First() : this.baseItemInfo.ItemClass;
+			}
+		}
+
 		/// <summary>
 		/// Gets the item group.
 		/// Used for grouping during autosort.
@@ -711,51 +753,9 @@ namespace TQVaultAE.Domain.Entities
 				if (this.baseItemInfo == null)
 					return 0;
 
-				int group = 0;
-				if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ONESHOT_POTIONHEALTH"))
-					group = 0;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ONESHOT_POTIONMANA"))
-					group = 1;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ARMORJEWELRY_AMULET"))
-					group = 2;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ARMORJEWELRY_RING"))
-					group = 3;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMCHARM"))
-					group = 4;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMRELIC"))
-					group = 5;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMARTIFACTFORMULA"))
-					group = 6;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMARTIFACT"))
-					group = 7;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ONESHOT_SCROLL"))
-					group = 8;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ARMORPROTECTIVE_LOWERBODY"))
-					group = 9;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ARMORPROTECTIVE_FOREARM"))
-					group = 10;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ARMORPROTECTIVE_HEAD"))
-					group = 11;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ARMORPROTECTIVE_UPPERBODY"))
-					group = 12;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("WEAPONARMOR_SHIELD"))
-					group = 13;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("WEAPONMELEE_AXE"))
-					group = 14;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("WEAPONMELEE_MACE"))
-					group = 15;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("WEAPONMELEE_SWORD"))
-					group = 16;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("WEAPONHUNTING_BOW"))
-					group = 17;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("WEAPONMAGICAL_STAFF"))
-					group = 18;
-				else if (this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("WEAPONHUNTING_SPEAR"))
-					group = 19;
-				else
-					group = 0;
-
-				return group;
+				var iclass = this.baseItemInfo.ItemClass.ToUpperInvariant();
+				var idx = ItemClassMap.Select((val, index) => new { val, index }).Where(m => m.val.ItemClass == iclass).Select(m => m.index);
+				return idx.Any() ? idx.First() : 0;
 			}
 		}
 

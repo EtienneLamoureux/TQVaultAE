@@ -11,7 +11,7 @@ namespace TQVaultAE.GUI.Components
 	/// <summary>
 	/// CheckBox class to support scaling of the fonts.
 	/// </summary>
-	public class ScalingCheckBox : CheckBox
+	public class ScalingCheckBox : CheckBox, IScalingControl
 	{
 		/// <summary>
 		/// Override of ScaleControl which supports font scaling.

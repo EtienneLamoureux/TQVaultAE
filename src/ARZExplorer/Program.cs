@@ -6,6 +6,7 @@
 namespace ArzExplorer
 {
 	using Microsoft.Extensions.DependencyInjection;
+	using Microsoft.Extensions.Logging;
 	using System;
 	using System.Windows.Forms;
 	using TQVaultAE.Config;
@@ -13,7 +14,6 @@ namespace ArzExplorer
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Exceptions;
-	using TQVaultAE.Logs;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Services.Win32;
 
@@ -23,7 +23,8 @@ namespace ArzExplorer
 	public static class Program
 	{
 		internal static IServiceProvider ServiceProvider;
-
+		private static ILoggerFactory LoggerFactory;
+		private static ILogger Log;
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
@@ -33,11 +34,17 @@ namespace ArzExplorer
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
+			// Setup regular Microsoft.Extensions.Logging abstraction manualy
+			LoggerFactory = new LoggerFactory();
+			LoggerFactory.AddLog4Net();
+			Log = LoggerFactory.CreateLogger(typeof(Program));// Make static level logger
+
 		restart:;
 			// Configure DI
 			var scol = new ServiceCollection()
 			// Logs
-			.AddSingleton(typeof(ILogger<>), typeof(ILoggerImpl<>))
+			.AddSingleton(LoggerFactory)// Register factory
+			.AddSingleton(typeof(ILogger<>), typeof(Logger<>))
 			// Providers
 			.AddTransient<IRecordInfoProvider, RecordInfoProvider>()
 			.AddTransient<IArcFileProvider, ArcFileProvider>()

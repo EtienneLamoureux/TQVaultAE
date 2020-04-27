@@ -40,7 +40,7 @@ namespace TQVaultAE.GUI.Tooltip
 				row = new Label()
 				{
 					Text = " ",
-					Font = fontService.GetFontAlbertusMTLight(fontSize, style, uiService.Scale),
+					Font = fontService.GetFontLight(fontSize, style, uiService.Scale),
 					AutoSize = true,
 				};
 			}
@@ -111,7 +111,7 @@ namespace TQVaultAE.GUI.Tooltip
 			{
 				Text = txt,
 				ForeColor = FGColor.Value,
-				Font = fontService.GetFontAlbertusMTLight(fontSize, style, uiService.Scale),
+				Font = fontService.GetFontLight(fontSize, style, uiService.Scale),
 				AutoSize = true,
 				Anchor = AnchorStyles.Left,
 				BackColor = BGColor ?? Color.Transparent,

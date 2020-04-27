@@ -5,8 +5,8 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
-	using log4net;
 	using Microsoft.Extensions.DependencyInjection;
+	using Microsoft.Extensions.Logging;
 	using System;
 	using System.ComponentModel;
 	using System.Drawing;
@@ -18,14 +18,14 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.GUI.Components;
 	using TQVaultAE.GUI.Models;
-	using TQVaultAE.Logs;
 	using TQVaultAE.Presentation;
 
 	/// <summary>
 	/// Abstract class used for constructing TQVault themed forms.
 	/// </summary>
-	public partial class VaultForm : Form
+	public partial class VaultForm : Form, IScalingControl
 	{
+		private readonly ILogger Log;
 		/// <summary>
 		/// Holds the last state of the form.  Used to support maximizing.
 		/// </summary>
@@ -110,7 +110,6 @@ namespace TQVaultAE.GUI
 		/// Font used to draw the title.
 		/// </summary>
 		private Font titleFont;
-		private readonly ILog Log;
 
 		/// <summary>
 		/// WindowMenu used to display the system menu.
@@ -149,8 +148,8 @@ namespace TQVaultAE.GUI
 				this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
 				this.PlayerCollectionProvider = this.ServiceProvider.GetService<IPlayerCollectionProvider>();
 				this.GamePathResolver = this.ServiceProvider.GetService<IGamePathService>();
-				this.titleFont = FontService.GetFontAlbertusMTLight(9.5F);
-				this.Log = this.ServiceProvider.GetService<ILogger<VaultForm>>().Logger;
+				this.titleFont = FontService.GetFontLight(9.5F);
+				this.Log = this.ServiceProvider.GetService<ILogger<VaultForm>>();
 
 				InitForm();
 			}
@@ -375,7 +374,7 @@ namespace TQVaultAE.GUI
 
 		private void RefreshNormalizeBox()
 		{
-			var val = _NormalizeBox && this.UIService.Scale != 1.0F;
+			var val = _NormalizeBox && (this.UIService?.Scale ?? 1.0F) != 1.0F;
 			if (this.systemMenu != null)
 				this.systemMenu.NormalizeEnabled = val;
 
@@ -545,7 +544,7 @@ namespace TQVaultAE.GUI
 
 			RefreshNormalizeBox();
 
-			this.Log.DebugFormat("Config.Settings.Default.Scale changed to {0} !", Config.Settings.Default.Scale);
+			this.Log.LogDebug("Config.Settings.Default.Scale changed to {0} !", Config.Settings.Default.Scale);
 		}
 
 		/// <summary>
@@ -858,19 +857,29 @@ namespace TQVaultAE.GUI
 		{
 			if (this.buttonClose != null)
 			{
+				this.buttonClose.Text = Resources.GlobalClose;
 				this.buttonClose.Location = new Point(
 					this.ClientRectangle.Right - (this.buttonClose.Width + this.sideBorder.Width)
 					, this.ClientRectangle.Top);
 			}
 
 			if (this.buttonMaximize != null)
+			{
+				this.buttonMaximize.Text = Resources.GlobalMaximize;
 				this.buttonMaximize.Location = new Point(this.buttonClose.Location.X - 5 - this.buttonMaximize.Width, this.ClientRectangle.Top);
+			}
 
 			if (this.ButtonScaleTo1 != null)
+			{
+				this.ButtonScaleTo1.Text = Resources.GlobalNormalize;
 				this.ButtonScaleTo1.Location = new Point(this.buttonMaximize.Location.X - 5 - this.ButtonScaleTo1.Width, this.ClientRectangle.Top);
+			}
 
 			if (this.buttonMinimize != null)
+			{
+				this.buttonMinimize.Text = Resources.GlobalMinimize;
 				this.buttonMinimize.Location = new Point(this.ButtonScaleTo1.Location.X - 5 - this.buttonMinimize.Width, this.ClientRectangle.Top);
+			}
 		}
 
 		/// <summary>

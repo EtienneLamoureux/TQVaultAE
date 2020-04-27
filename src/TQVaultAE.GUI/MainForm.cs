@@ -27,14 +27,14 @@ namespace TQVaultAE.GUI
 	using System.Threading.Tasks;
 	using TQVaultAE.Domain.Results;
 	using System.Collections.Concurrent;
-	using System.Threading;
+	using Microsoft.Extensions.Logging;
 
 	/// <summary>
 	/// Main Dialog class
 	/// </summary>
 	public partial class MainForm : VaultForm
 	{
-		private readonly log4net.ILog Log = null;
+		private readonly ILogger Log = null;
 
 		#region	Fields
 
@@ -149,12 +149,11 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		[PermissionSet(SecurityAction.LinkDemand, Unrestricted = true)]
 		public MainForm(
-			IServiceProvider serviceProvider
+			IServiceProvider serviceProvider // TODO Refactor : injecting service factory is anti pattern
 			, ILogger<MainForm> log
 			, SessionContext sessionContext
 			, IPlayerService playerService
 			, IVaultService vaultService
-			, ISearchService searchService
 			, IStashService stashService
 			, IFontService fontService
 		) : base(serviceProvider)
@@ -162,42 +161,41 @@ namespace TQVaultAE.GUI
 			this.userContext = sessionContext;
 			this.playerService = playerService;
 			this.vaultService = vaultService;
-			this.searchService = searchService;
 			this.stashService = stashService;
 
-			Log = log.Logger;
-			Log.Info("TQVaultAE Initialization !");
+			Log = log;
+			Log.LogInformation("TQVaultAE Initialization !");
 
 			InitForm();
 
 			#region Apply custom font & scaling
 
-			this.exitButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
+			this.exitButton.Font = FontService.GetFontLight(12F, UIService.Scale);
 			ScaleControl(this.UIService, this.exitButton);
-			this.characterComboBox.Font = FontService.GetFontAlbertusMTLight(13F, UIService.Scale);
+			this.characterComboBox.Font = FontService.GetFontLight(13F, UIService.Scale);
 			ScaleControl(this.UIService, this.characterComboBox, false);
-			this.characterLabel.Font = FontService.GetFontAlbertusMTLight(11F, UIService.Scale);
+			this.characterLabel.Font = FontService.GetFontLight(11F, UIService.Scale);
 			ScaleControl(this.UIService, this.characterLabel, false);
 
-			this.itemText.Font = FontService.GetFontAlbertusMTLight(11F, FontStyle.Bold, UIService.Scale);
+			this.itemText.Font = FontService.GetFontLight(11F, FontStyle.Bold, UIService.Scale);
 
-			this.vaultListComboBox.Font = FontService.GetFontAlbertusMTLight(13F, UIService.Scale);
+			this.vaultListComboBox.Font = FontService.GetFontLight(13F, UIService.Scale);
 			ScaleControl(this.UIService, this.vaultListComboBox, false);
-			this.vaultLabel.Font = FontService.GetFontAlbertusMTLight(11F, UIService.Scale);
+			this.vaultLabel.Font = FontService.GetFontLight(11F, UIService.Scale);
 			ScaleControl(this.UIService, this.vaultLabel, false);
-			this.configureButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
+			this.configureButton.Font = FontService.GetFontLight(12F, UIService.Scale);
 			ScaleControl(this.UIService, this.configureButton);
-			this.customMapText.Font = FontService.GetFontAlbertusMT(11.25F, UIService.Scale);
+			this.customMapText.Font = FontService.GetFont(11.25F, UIService.Scale);
 			ScaleControl(this.UIService, this.customMapText, false);
-			this.showVaulButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
+			this.showVaulButton.Font = FontService.GetFontLight(12F, UIService.Scale);
 			ScaleControl(this.UIService, this.showVaulButton);
-			this.secondaryVaultListComboBox.Font = FontService.GetFontAlbertusMTLight(11F, UIService.Scale);
+			this.secondaryVaultListComboBox.Font = FontService.GetFontLight(11F, UIService.Scale);
 			ScaleControl(this.UIService, this.secondaryVaultListComboBox, false);
-			this.aboutButton.Font = FontService.GetFontAlbertusMTLight(8.25F, UIService.Scale);
+			this.aboutButton.Font = FontService.GetFontLight(8.25F, UIService.Scale);
 			ScaleControl(this.UIService, this.aboutButton);
-			this.titleLabel.Font = FontService.GetFontAlbertusMTLight(24F, UIService.Scale);
+			this.titleLabel.Font = FontService.GetFontLight(24F, UIService.Scale);
 			ScaleControl(this.UIService, this.titleLabel);
-			this.searchButton.Font = FontService.GetFontAlbertusMTLight(12F, UIService.Scale);
+			this.searchButton.Font = FontService.GetFontLight(12F, UIService.Scale);
 			ScaleControl(this.UIService, this.searchButton);
 			ScaleControl(this.UIService, this.tableLayoutPanelMain);
 
@@ -206,14 +204,14 @@ namespace TQVaultAE.GUI
 			if (TQDebug.DebugEnabled)
 			{
 				// Write this version into the debug file.
-				Log.DebugFormat(CultureInfo.InvariantCulture, "Current TQVault Version: {0}", this.currentVersion);
-				Log.Debug(string.Empty);
-				Log.Debug("Debug Levels");
-				Log.DebugFormat(CultureInfo.InvariantCulture, "ARCFileDebugLevel: {0}", TQDebug.ArcFileDebugLevel);
-				Log.DebugFormat(CultureInfo.InvariantCulture, "DatabaseDebugLevel: {0}", TQDebug.DatabaseDebugLevel);
-				Log.DebugFormat(CultureInfo.InvariantCulture, "ItemAttributesDebugLevel: {0}", TQDebug.ItemAttributesDebugLevel);
-				Log.DebugFormat(CultureInfo.InvariantCulture, "ItemDebugLevel: {0}", TQDebug.ItemDebugLevel);
-				Log.Debug(string.Empty);
+				Log.LogDebug(
+$@"Current TQVault Version: {this.currentVersion}
+Debug Levels
+{nameof(TQDebug.ArcFileDebugLevel)}: {TQDebug.ArcFileDebugLevel}
+{nameof(TQDebug.DatabaseDebugLevel)}: {TQDebug.DatabaseDebugLevel}
+{nameof(TQDebug.ItemAttributesDebugLevel)}: {TQDebug.ItemAttributesDebugLevel}
+{nameof(TQDebug.ItemDebugLevel)}: {TQDebug.ItemDebugLevel}
+");
 			}
 
 			// Process the mouse scroll wheel to cycle through the vaults.
@@ -316,7 +314,7 @@ namespace TQVaultAE.GUI
 			}
 			catch (IOException exception)
 			{
-				Log.Error("Save files failed !", exception);
+				Log.LogError(exception, "Save files failed !");
 				MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 			}
 
@@ -341,7 +339,7 @@ namespace TQVaultAE.GUI
 			this.splashScreen.Update();
 			this.splashScreen.BringToFront();
 
-			this.backgroundWorker1.RunWorkerAsync();
+			this.backgroundWorkerLoadAllFiles.RunWorkerAsync();
 		}
 
 		/// <summary>
@@ -482,7 +480,7 @@ namespace TQVaultAE.GUI
 			this.ScaleOnResize = true;
 
 			UIService.Scale = Config.Settings.Default.Scale;
-			this.Log.DebugFormat("Config.Settings.Default.Scale changed to {0} !", UIService.Scale);
+			this.Log.LogDebug("Config.Settings.Default.Scale changed to {0} !", UIService.Scale);
 
 			// Save the height / width ratio for resizing.
 			this.FormDesignRatio = (float)this.Height / (float)this.Width;
@@ -600,7 +598,7 @@ namespace TQVaultAE.GUI
 				// Get the player 
 				var result = this.playerService.LoadPlayer(c, true);
 				bagPlayer.Add(result);
-				this.backgroundWorker1.ReportProgress(1);
+				this.backgroundWorkerLoadAllFiles.ReportProgress(1);
 			})).ToArray();
 
 			var lambdacharacterStashes = charactersIT.Select(c => (Action)(() =>
@@ -608,7 +606,7 @@ namespace TQVaultAE.GUI
 				// Get the player's stash
 				var result = this.stashService.LoadPlayerStash(c);
 				bagPlayerStashes.Add(result);
-				this.backgroundWorker1.ReportProgress(1);
+				this.backgroundWorkerLoadAllFiles.ReportProgress(1);
 			})).ToArray();
 
 			var lambdaVault = vaults.Select(c => (Action)(() =>
@@ -616,7 +614,7 @@ namespace TQVaultAE.GUI
 				// Load all of the vaults.
 				var result = this.vaultService.LoadVault(c);
 				bagVault.Add(result);
-				this.backgroundWorker1.ReportProgress(1);
+				this.backgroundWorkerLoadAllFiles.ReportProgress(1);
 			})).ToArray();
 
 			Parallel.Invoke(lambdacharactersIT.Concat(lambdacharacterStashes).Concat(lambdaVault).ToArray());// Parallel loading
@@ -656,7 +654,7 @@ namespace TQVaultAE.GUI
 			TimeSpan ts = stopWatch.Elapsed;
 
 			// Format and display the TimeSpan value.
-			Log.InfoFormat("LoadTime {0:00}:{1:00}:{2:00}.{3:00}",
+			Log.LogInformation("LoadTime {0:00}:{1:00}:{2:00}.{3:00}",
 				ts.Hours, ts.Minutes, ts.Seconds,
 				ts.Milliseconds / 10);
 
@@ -691,7 +689,7 @@ namespace TQVaultAE.GUI
 			if (this.resourcesLoaded)
 			{
 				if (!this.loadingComplete)
-					this.backgroundWorker1.CancelAsync();
+					this.backgroundWorkerLoadAllFiles.CancelAsync();
 
 				this.ShowMainForm();
 			}
@@ -773,7 +771,7 @@ namespace TQVaultAE.GUI
 					GamePathResolver.MapName = args.MapName;
 
 				this.resourcesLoaded = true;
-				this.backgroundWorker1.ReportProgress(1);
+				this.backgroundWorkerLoadAllFiles.ReportProgress(1);
 
 				if (Config.Settings.Default.LoadAllFiles)
 					this.LoadAllFiles();
@@ -788,7 +786,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="sender">sender object</param>
 		/// <param name="e">DoWorkEventArgs data</param>
-		private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+		private void BackgroundWorkerLoadAllFiles_DoWork(object sender, DoWorkEventArgs e)
 		{
 			// Get the BackgroundWorker that raised this event.
 			BackgroundWorker worker = sender as BackgroundWorker;
@@ -805,12 +803,12 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="sender">sender object</param>
 		/// <param name="e">RunWorkerCompletedEventArgs data</param>
-		private void BackgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		private void BackgroundWorkerLoadAllFiles_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
 			// First, handle the case where an exception was thrown.
 			if (e.Error != null)
 			{
-				Log.Error($"resourcesLoaded = {this.resourcesLoaded}", e.Error);
+				Log.LogError(e.Error, $"resourcesLoaded = {this.resourcesLoaded}");
 
 				if (MessageBox.Show(
 					string.Concat(e.Error.Message, Resources.Form1BadLanguage)
@@ -876,7 +874,7 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				Log.Error($"resourcesLoaded = {this.resourcesLoaded}", e.Error);
+				Log.LogError(e.Error, $"resourcesLoaded = {this.resourcesLoaded}");
 				// If for some reason the loading failed, but there was no error raised.
 				MessageBox.Show(
 					Resources.Form1ErrorLoadingResources,
@@ -894,7 +892,7 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		/// <param name="sender">sender object</param>
 		/// <param name="e">ProgressChangedEventArgs data</param>
-		private void BackgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		private void BackgroundWorkerLoadAllFiles_ProgressChanged(object sender, ProgressChangedEventArgs e)
 			=> this.splashScreen.IncrementValue();
 
 		#endregion

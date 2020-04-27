@@ -4,11 +4,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using log4net;
+using Microsoft.Extensions.Logging;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Exceptions;
 using TQVaultAE.Domain.Results;
-using TQVaultAE.Logs;
+using TQVaultAE.Presentation;
 
 namespace TQVaultAE.Services.Win32
 {
@@ -17,7 +17,47 @@ namespace TQVaultAE.Services.Win32
 	/// </summary>
 	public class GamePathServiceWin : IGamePathService
 	{
-		private readonly ILog Log;
+		private readonly ILogger Log;
+
+		public GamePathServiceWin(ILogger<GamePathServiceWin> log)
+		{
+			this.Log = log;
+		}
+
+		/// <summary>
+		/// Parses filename to try to determine the base character name.
+		/// </summary>
+		/// <param name="filename">filename of the character file</param>
+		/// <returns>string containing the character name</returns>
+		public string GetNameFromFile(string filename)
+		{
+			// Strip off the filename
+			string basePath = Path.GetDirectoryName(filename);
+
+			// Get the containing folder
+			string charName = Path.GetFileName(basePath);
+
+			if (charName.ToUpperInvariant() == "SYS")
+			{
+				string fileAndExtension = Path.GetFileName(filename);
+				if (fileAndExtension.ToUpperInvariant().Contains("MISC"))
+					// Check for the relic vault stash.
+					charName = Resources.GlobalRelicVaultStash;
+				else if (fileAndExtension.ToUpperInvariant().Contains("WIN"))
+					// Check for the transfer stash.
+					charName = Resources.GlobalTransferStash;
+				else
+					charName = null;
+			}
+			else if (charName.StartsWith("_", StringComparison.Ordinal))
+				// See if it is a character folder.
+				charName = charName.Substring(1);
+			else
+				// The name is bogus so return a null.
+				charName = null;
+
+			return charName;
+		}
 
 		/// <summary>
 		/// Name of the vault folder
@@ -390,11 +430,6 @@ namespace TQVaultAE.Services.Win32
 			{
 				return null;
 			}
-		}
-
-		public GamePathServiceWin(ILogger<GamePathServiceWin> log)
-		{
-			this.Log = log.Logger;
 		}
 
 

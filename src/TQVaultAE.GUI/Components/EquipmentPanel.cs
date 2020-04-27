@@ -16,13 +16,14 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.GUI.Tooltip;
+	using Microsoft.Extensions.Logging;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel in the stash panel.
 	/// </summary>
-	public class EquipmentPanel : SackPanel
+	public class EquipmentPanel : SackPanel, IScalingControl
 	{
-		private readonly log4net.ILog Log = null;
+		private readonly ILogger Log = null;
 
 		/// <summary>
 		/// Initializes a new instance of the EquipmentPanel class.
@@ -34,7 +35,7 @@ namespace TQVaultAE.GUI.Components
 		public EquipmentPanel(int sackWidth, int sackHeight, ItemDragInfo dragInfo, AutoMoveLocation autoMoveLocation, IServiceProvider serviceProvider)
 			: base(sackWidth, sackHeight, dragInfo, autoMoveLocation, serviceProvider)
 		{
-			this.Log = serviceProvider.GetService<ILogger<EquipmentPanel>>().Logger;
+			this.Log = serviceProvider.GetService<ILogger<EquipmentPanel>>();
 
 			this.SackType = SackType.Equipment;
 			this.BackColor = Color.Transparent;

@@ -1,24 +1,24 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Results;
-using TQVaultAE.Logs;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.Services
 {
 	public class StashService : IStashService
 	{
-		private readonly log4net.ILog Log = null;
+		private readonly ILogger Log = null;
 		private readonly SessionContext userContext = null;
 		private readonly IStashProvider StashProvider;
 		private readonly IGamePathService GamePathResolver;
 
 		public StashService(ILogger<StashService> log, SessionContext userContext, IStashProvider stashProvider, IGamePathService gamePathResolver)
 		{
-			this.Log = log.Logger;
+			this.Log = log;
 			this.userContext = userContext;
 			this.StashProvider = stashProvider;
 			this.GamePathResolver = gamePathResolver;

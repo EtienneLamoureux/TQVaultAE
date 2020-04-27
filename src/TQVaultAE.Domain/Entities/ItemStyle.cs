@@ -1,4 +1,6 @@
-﻿namespace TQVaultAE.Domain.Entities
+﻿using System.ComponentModel;
+
+namespace TQVaultAE.Domain.Entities
 {
 
 	/// <summary>
@@ -7,70 +9,81 @@
 	public enum ItemStyle
 	{
 		/// <summary>
-		/// Broken Item Enumeration
+		/// Broken Item : Have a prefix BROKEN
 		/// </summary>
+		[Description("tagTutorialTip05TextC")]
 		Broken,
 
 		/// <summary>
-		/// Mundane Item Enumeration
+		/// Mundane Item : normal item without any prefix/suffix
 		/// </summary>
+		[Description("tagTutorialTip05TextD")]
 		Mundane,
 
 		/// <summary>
-		/// Common Item Enumeration
+		/// Common Item : normal item with any prefix or suffix
 		/// </summary>
+		[Description("tagTutorialTip05TextD|{0} (+ affix)")]
 		Common,
 
 		/// <summary>
-		/// Rare Item Enumeration
+		/// Rare Item : item with classification "Rare" or <see cref="Common"> item with any "Rare" prefix/suffix
 		/// </summary>
+		[Description("tagTutorialTip05TextF")]
 		Rare,
 
 		/// <summary>
-		/// Epic Item Enumeration
+		/// Epic Item : item with classification EPIC
 		/// </summary>
+		[Description("tagTutorialTip05TextG")]
 		Epic,
 
 		/// <summary>
-		/// Legendary Item Enumeration
+		/// Legendary Item : item with classification LEGENDARY
 		/// </summary>
+		[Description("tagRDifficultyTitle03")]
 		Legendary,
 
 		/// <summary>
-		/// Quest Item Enumeration
+		/// Quest Item
 		/// </summary>
+		[Description("tagQuestItem")]
 		Quest,
 
 		/// <summary>
-		/// Relic Enumeration
+		/// Relic
 		/// </summary>
+		[Description("tagRelic")]
 		Relic,
 
 		/// <summary>
-		/// Potion Enumeration
+		/// Potion
 		/// </summary>
+		[Description("tagTutorialTip14Title")]
 		Potion,
 
 		/// <summary>
-		/// Scroll Enumeration
+		/// Scroll
 		/// </summary>
+		[Description("xtagLogScroll")]
 		Scroll,
 
 		/// <summary>
-		/// Parchment Enumeration
+		/// Parchment
 		/// </summary>
+		[Description("x3tagSq04_Letter")]
 		Parchment,
 
 		/// <summary>
-		/// Artifact Formulae Enumeration
+		/// Formulae
 		/// </summary>
+		[Description("xtagLogArcaneFormula")]// xtagEnchant02
 		Formulae,
 
 		/// <summary>
-		/// Artifact Enumeration
+		/// Artifact
 		/// </summary>
+		[Description("tagArtifact")]
 		Artifact
 	}
-
-
 }

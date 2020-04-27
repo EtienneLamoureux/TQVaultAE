@@ -31,11 +31,11 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		string ItemSeed { get; }
 		/// <summary>
-		/// Return Class Name translation
+		/// Return Difficulty translation
 		/// </summary>
-		/// <param name="xTagClassKey"></param>
+		/// <param name="difficultyFromSaveFile"></param>
 		/// <returns></returns>
-		string TranslateCharacterClassName(string xTagClassKey);
+		string TranslateDifficulty(int difficultyFromSaveFile);
 		/// <summary>
 		/// Gets the string which indicates an Immortal Throne item.
 		/// </summary>
@@ -48,5 +48,24 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// Gets the string which indicates an Atlantis item.
 		/// </summary>
 		string ItemAtlantis { get; }
+		/// <summary>
+		/// Translate <paramref name="xTagName"/> using resource file and database
+		/// </summary>
+		/// <param name="xTagName"></param>
+		/// <returns></returns>
+		string TranslateXTag(string xTagName);
+		/// <summary>
+		/// Translate character class to mastery
+		/// </summary>
+		/// <param name="characterXtagClass"></param>
+		/// <returns></returns>
+		string TranslateMastery(string characterXtagClass);
+		/// <summary>
+		/// Try translate <paramref name="xTagName"/> using resource file and database
+		/// </summary>
+		/// <param name="xTagName"></param>
+		/// <param name="translation"></param>
+		/// <returns></returns>
+		bool TryTranslateXTag(string xTagName, out string translation);
 	}
 }

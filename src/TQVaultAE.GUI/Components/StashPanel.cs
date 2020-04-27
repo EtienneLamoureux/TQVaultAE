@@ -13,11 +13,12 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Presentation;
 	using System.Collections.Generic;
 	using Microsoft.Extensions.DependencyInjection;
+	using TQVaultAE.Domain.Contracts.Services;
 
 	/// <summary>
 	/// Class for handling the stash panel ui functions
 	/// </summary>
-	public class StashPanel : VaultPanel
+	public class StashPanel : VaultPanel, IScalingControl
 	{
 		#region StashPanel Fields
 
@@ -76,6 +77,7 @@ namespace TQVaultAE.GUI.Components
 		/// Background image for the stash vault panels
 		/// </summary>
 		private Bitmap stashBackground;
+
 		private TableLayoutPanel PlayerPanel;
 
 		string DisplayPlayerInfoLastName;
@@ -83,6 +85,7 @@ namespace TQVaultAE.GUI.Components
 		private const int NORMAL_PLAYERINFO_WIDTH = 186;//BGImage = 186
 		private const int NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_WIDTH = 17;
 		private const int NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_HEIGHT = 25;
+
 		int PLAYERINFO_TOPRIGHT => this.ClientRectangle.Right - Convert.ToInt32(NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_WIDTH * this.UIService.Scale);
 		int PLAYERINFO_TOPHEIGHT =>
 			this.BagSackPanel.ClientRectangle.Top + this.BagButtons[0].Size.Height + UIService.HalfUnitSize
@@ -90,6 +93,7 @@ namespace TQVaultAE.GUI.Components
 		int PLAYERINFO_WIDTH => Convert.ToInt32(NORMAL_PLAYERINFO_WIDTH * this.UIService.Scale);
 		int PLAYERINFO_HEIGHT => Convert.ToInt32(NORMAL_PLAYERINFO_HEIGHT * this.UIService.Scale);
 
+		private readonly ITranslationService TranslationService;
 
 		#endregion StashPanel Fields
 
@@ -101,6 +105,8 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="tooltip">ToolTip instance</param>
 		public StashPanel(ItemDragInfo dragInfo, Size panelSize, IServiceProvider serviceProvider) : base(dragInfo, 4, panelSize, 0, AutoMoveLocation.Stash, serviceProvider)
 		{
+			this.TranslationService = this.ServiceProvider.GetService<ITranslationService>();
+
 			SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
 			this.equipmentPanel = new EquipmentPanel(16, 14, dragInfo, AutoMoveLocation.Stash, serviceProvider);
@@ -206,8 +212,8 @@ namespace TQVaultAE.GUI.Components
 			if (this.Player?.PlayerInfo != null)
 			{
 				DisplayPlayerInfoLastName = this.Player.PlayerName;
-				var pclass = Resources.ResourceManager.GetString(this.Player.PlayerInfo.Class) ?? string.Empty;
-				var mclass = Resources.ResourceManager.GetString($"Masteries{this.Player.PlayerInfo.Class}") ?? string.Empty;
+				var pclass = TranslationService.TranslateXTag(this.Player.PlayerInfo.Class) ?? string.Empty;
+				var mclass = TranslationService.TranslateMastery(this.Player.PlayerInfo.Class) ?? string.Empty;
 				mclass = mclass == Resources.Masteries ? string.Empty : mclass;
 				var pi = new Dictionary<string, string>
 				{
@@ -215,7 +221,7 @@ namespace TQVaultAE.GUI.Components
 					[Resources.Class] = pclass,
 					[Resources.Masteries] = mclass,
 					[Resources.CurrentXP] = this.Player.PlayerInfo.CurrentXP.ToString(),
-					[Resources.DifficultyUnlocked] = Resources.ResourceManager.GetString($"Difficulty{this.Player.PlayerInfo.DifficultyUnlocked}") ?? "unknown",
+					[Resources.DifficultyUnlocked] = TranslationService.TranslateDifficulty(this.Player.PlayerInfo.DifficultyUnlocked) ?? "unknown",
 					[Resources.Money] = this.Player.PlayerInfo.Money.ToString(),
 					[Resources.SkillPoints] = this.Player.PlayerInfo.SkillPoints.ToString(),
 					[Resources.AttributesPoints] = this.Player.PlayerInfo.AttributesPoints.ToString(),
@@ -260,7 +266,7 @@ namespace TQVaultAE.GUI.Components
 					UpBitmap = Resources.MainButtonUp,
 					UseCustomGraphic = true,
 					UseVisualStyleBackColor = false,
-					Font = FontService.GetFontAlbertusMTLight(11F),
+					Font = FontService.GetFontLight(11F),
 					Margin = new Padding(0, 0, 0, 5),
 					Padding = new Padding(10, 0, 10, 0),
 					Visible = Config.Settings.Default.AllowCharacterEdit,

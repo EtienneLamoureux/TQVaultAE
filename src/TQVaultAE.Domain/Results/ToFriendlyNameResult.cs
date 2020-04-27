@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 
@@ -7,6 +8,26 @@ namespace TQVaultAE.Domain.Results
 {
 	public class ToFriendlyNameResult
 	{
+		string _FullText = null;
+		public string FullText
+		{
+			get
+			{
+				// Produced only on first demande (Memory vs Speed vs CPU)
+				if (_FullText is null)
+				{
+					_FullText = new[] {
+						new[] { FullName }
+						, AttributesAll
+						, FlavorText
+						, ItemSet
+						, Requirements
+					}.SelectMany(s => s).JoinString(" ").RemoveAllTQTags();
+				}
+				return _FullText;
+			}
+		}
+
 		public string FullNameClean => FullName.RemoveAllTQTags();
 		public string FullName => new string[] {
 				PrefixInfoDescription
@@ -43,6 +64,15 @@ namespace TQVaultAE.Domain.Results
 		public DBRecordCollection SuffixInfoRecords;
 
 		public string BaseItemId;
+		public string BaseItemRarity;
+
+		string _BaseItemInfoClass;
+		public string BaseItemInfoClass
+		{
+			get => _BaseItemInfoClass;
+			set => _BaseItemInfoClass = Regex.Replace((value ?? string.Empty), @"[^\w\s']", string.Empty);// Clean everything except few things;
+		}
+
 		public string BaseItemInfoStyle;
 		public string BaseItemInfoQuality;
 		public string BaseItemInfoDescription;
@@ -245,6 +275,7 @@ namespace TQVaultAE.Domain.Results
 				return _AttributesAll;
 			}
 		}
+
 
 		/// <summary>
 		/// Used to give attribute list factory some kind of global awareness during its process
