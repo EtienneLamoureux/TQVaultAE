@@ -14,7 +14,7 @@ namespace TQVaultAE.GUI.Components
 	/// <summary>
 	/// ComboBox class to support scaling of the fonts.
 	/// </summary>
-	public class ScalingComboBox : ComboBox
+	public class ScalingComboBox : ComboBox, IScalingControl
 	{
 		public ScalingComboBox() 
 		{

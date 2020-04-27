@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 
 namespace TQVaultAE.Logs
 {
@@ -7,27 +8,15 @@ namespace TQVaultAE.Logs
 	/// </summary>
 	public static class ILogExtension
 	{
-		/// <summary>
-		/// ErrorFormat avec exception.
-		/// </summary>
-		/// <param name="Log"></param>
-		/// <param name="ex"></param>
-		/// <param name="format"></param>
-		/// <param name="args"></param>
-		public static void ErrorFormat(this log4net.ILog Log, Exception ex, string format, params object[] args)
-		{
-			Log.Error(string.Format(format, args), ex);
-
-		}
 
 		/// <summary>
 		/// Error Exception Only
 		/// </summary>
 		/// <param name="Log"></param>
 		/// <param name="ex"></param>
-		public static void ErrorException(this log4net.ILog Log, Exception ex)
+		public static void ErrorException(this ILogger Log, Exception ex)
 		{
-			Log.Error(ex.Message, ex);
+			Log.LogError(ex, ex.Message);
 		}
 
 		/// <summary>
@@ -35,7 +24,7 @@ namespace TQVaultAE.Logs
 		/// </summary>
 		/// <param name="Log"></param>
 		/// <param name="ex"></param>
-		public static string FormatException(this log4net.ILog Log, Exception ex)
+		public static string FormatException(this ILogger Log, Exception ex)
 		{
 			string mess = string.Empty;
 			try
@@ -44,10 +33,9 @@ namespace TQVaultAE.Logs
 			}
 			catch (Exception)
 			{
-				mess = "TextExceptionFormatter().Format() failed !";
+				mess = $@"TextExceptionFormatter().Format() failed for error ""{ex.Message}"" !";
 			}
 			return mess;
 		}
-
 	}
 }

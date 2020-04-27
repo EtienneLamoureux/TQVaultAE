@@ -17,6 +17,26 @@ namespace TQVaultAE.Domain.Helpers
 		/// </summary>
 		public const string RegExStartingColorTagOrEmpty = @"^" + RegExTQTag + @"?";
 
+		static readonly (TQColor ColorEnum, char ColorChar, Color ColorSys)[] ColorMap = new[] {
+			(TQColor.Aqua, 'A', System.Drawing.Color.FromArgb(0, 255, 255))
+			, (TQColor.Blue, 'B', System.Drawing.Color.FromArgb(0, 163, 255))
+			, (TQColor.LightCyan, 'C', System.Drawing.Color.FromArgb(224, 255, 255))
+			, (TQColor.DarkGray, 'D', System.Drawing.Color.FromArgb(153, 153, 153))
+			, (TQColor.Fuschia, 'F', System.Drawing.Color.FromArgb(255, 0, 255))
+			, (TQColor.Green, 'G', System.Drawing.Color.FromArgb(64, 255, 64))
+			, (TQColor.Indigo, 'I', System.Drawing.Color.FromArgb(75, 0, 130))
+			, (TQColor.Khaki, 'K', System.Drawing.Color.FromArgb(195, 176, 145))
+			, (TQColor.YellowGreen, 'L', System.Drawing.Color.FromArgb(145, 203, 0))
+			, (TQColor.Maroon, 'M', System.Drawing.Color.FromArgb(128, 0, 0))
+			, (TQColor.Orange, 'O', System.Drawing.Color.FromArgb(255, 173, 0))
+			, (TQColor.Purple, 'P', System.Drawing.Color.FromArgb(217, 5, 255))
+			, (TQColor.Red, 'R', System.Drawing.Color.FromArgb(255, 0, 0))
+			, (TQColor.Silver, 'S', System.Drawing.Color.FromArgb(224, 224, 224))
+			, (TQColor.Turquoise, 'T', System.Drawing.Color.FromArgb(0, 255, 209))
+			, (TQColor.Yellow, 'Y', System.Drawing.Color.FromArgb(255, 245, 43))
+			, (TQColor.White, 'W', System.Drawing.Color.White)
+		};
+
 		/// <summary>
 		/// Return color from color tag identifier
 		/// </summary>
@@ -24,60 +44,8 @@ namespace TQVaultAE.Domain.Helpers
 		/// <returns></returns>
 		public static TQColor GetColorFromTagIdentifier(char identifier)
 		{
-			switch (identifier)
-			{
-				case 'A':
-					return TQColor.Aqua;
-
-				case 'B':
-					return TQColor.Blue;
-
-				case 'C':
-					return TQColor.LightCyan;
-
-				case 'D':
-					return TQColor.DarkGray;
-
-				case 'F':
-					return TQColor.Fuschia;
-
-				case 'G':
-					return TQColor.Green;
-
-				case 'I':
-					return TQColor.Indigo;
-
-				case 'K':
-					return TQColor.Khaki;
-
-				case 'L':
-					return TQColor.YellowGreen;
-
-				case 'M':
-					return TQColor.Maroon;
-
-				case 'O':
-					return TQColor.Orange;
-
-				case 'P':
-					return TQColor.Purple;
-
-				case 'R':
-					return TQColor.Red;
-
-				case 'S':
-					return TQColor.Silver;
-
-				case 'T':
-					return TQColor.Turquoise;
-
-				case 'Y':
-					return TQColor.Yellow;
-
-				case 'W':
-				default:
-					return TQColor.White;
-			}
+			var map = ColorMap.Where(c => c.ColorChar == identifier).Select(c => c.ColorEnum);
+			return map.Any() ? map.First() : TQColor.White;
 		}
 
 		/// <summary>
@@ -87,60 +55,8 @@ namespace TQVaultAE.Domain.Helpers
 		/// <returns></returns>
 		public static char TagIdentifier(this TQColor color)
 		{
-			switch (color)
-			{
-				case TQColor.Aqua:
-					return 'A';
-
-				case TQColor.Blue:
-					return 'B';
-
-				case TQColor.LightCyan:
-					return 'C';
-
-				case TQColor.DarkGray:
-					return 'D';
-
-				case TQColor.Fuschia:
-					return 'F';
-
-				case TQColor.Green:
-					return 'G';
-
-				case TQColor.Indigo:
-					return 'I';
-
-				case TQColor.Khaki:
-					return 'K';
-
-				case TQColor.YellowGreen:
-					return 'L';
-
-				case TQColor.Maroon:
-					return 'M';
-
-				case TQColor.Orange:
-					return 'O';
-
-				case TQColor.Purple:
-					return 'P';
-
-				case TQColor.Red:
-					return 'R';
-
-				case TQColor.Silver:
-					return 'S';
-
-				case TQColor.Turquoise:
-					return 'T';
-
-				case TQColor.Yellow:
-					return 'Y';
-
-				case TQColor.White:
-				default:
-					return 'W';
-			}
+			var map = ColorMap.Where(c => c.ColorEnum == color).Select(c => c.ColorChar);
+			return map.Any() ? map.First() : 'W';
 		}
 
 		/// <summary>
@@ -186,64 +102,8 @@ namespace TQVaultAE.Domain.Helpers
 		/// <returns>System.Drawing.Color for the particular TQ color</returns>
 		public static Color Color(this TQColor color)
 		{
-			switch (color)
-			{
-				case TQColor.Aqua:
-					return System.Drawing.Color.FromArgb(0, 255, 255);
-
-				case TQColor.Blue:
-					return System.Drawing.Color.FromArgb(0, 163, 255);
-
-				case TQColor.DarkGray:
-					return System.Drawing.Color.FromArgb(153, 153, 153);
-
-				case TQColor.Fuschia:
-					return System.Drawing.Color.FromArgb(255, 0, 255);
-
-				case TQColor.Green:
-					return System.Drawing.Color.FromArgb(64, 255, 64);
-
-				case TQColor.Indigo:
-					return System.Drawing.Color.FromArgb(75, 0, 130);
-
-				case TQColor.Khaki:
-					return System.Drawing.Color.FromArgb(195, 176, 145);
-
-				case TQColor.LightCyan:
-					return System.Drawing.Color.FromArgb(224, 255, 255);
-
-				case TQColor.Maroon:
-					return System.Drawing.Color.FromArgb(128, 0, 0);
-
-				case TQColor.Orange:
-					return System.Drawing.Color.FromArgb(255, 173, 0);
-
-				case TQColor.Purple:
-					return System.Drawing.Color.FromArgb(217, 5, 255);
-
-				case TQColor.Red:
-					return System.Drawing.Color.FromArgb(255, 0, 0);
-
-				case TQColor.Silver:
-					return System.Drawing.Color.FromArgb(224, 224, 224);
-
-				case TQColor.Turquoise:
-					return System.Drawing.Color.FromArgb(0, 255, 209);
-
-				case TQColor.White:
-					return System.Drawing.Color.FromArgb(255, 255, 255);
-
-				case TQColor.Yellow:
-					return System.Drawing.Color.FromArgb(255, 245, 43);
-
-				case TQColor.YellowGreen:
-					return System.Drawing.Color.FromArgb(145, 203, 0);
-
-				default:
-					return System.Drawing.Color.White;
-			}
+			var map = ColorMap.Where(c => c.ColorEnum == color).Select(c => c.ColorSys);
+			return map.Any() ? map.First() : System.Drawing.Color.White;
 		}
-
-
 	}
 }

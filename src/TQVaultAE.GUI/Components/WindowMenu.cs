@@ -73,11 +73,21 @@ namespace TQVaultAE.GUI.Components
 			this.menuMove = this.CreateMenuItem(Resources.GlobalMove);
 			this.menuSize = this.CreateMenuItem(Resources.GlobalSize);
 			this.menuMin = this.CreateMenuItem(Resources.GlobalMinimize);
+			this.menuNorm = this.CreateMenuItem(Resources.GlobalNormalize);
 			this.menuMax = this.CreateMenuItem(Resources.GlobalMaximize);
 			this.menuSep = this.CreateMenuItem("-");
 			this.menuClose = this.CreateMenuItem(Resources.GlobalClose, Shortcut.AltF4);
 
-			this.MenuItems.AddRange(new MenuItem[] { this.menuRestore, this.menuMove, this.menuSize, this.menuMin, this.menuMax, this.menuSep, this.menuClose });
+			this.MenuItems.AddRange(new MenuItem[] {
+				this.menuRestore
+				, this.menuMove
+				, this.menuSize
+				, this.menuMin
+				, this.menuNorm
+				, this.menuMax
+				, this.menuSep
+				, this.menuClose
+			});
 
 			this.menuClose.DefaultItem = true;
 		}
@@ -185,8 +195,8 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <param name="text">Text tag for the menu item.</param>
 		/// <returns>new menu MenuItem with the passed text tag</returns>
-		private MenuItem CreateMenuItem(string text) 
-			=>this.CreateMenuItem(text, Shortcut.None);
+		private MenuItem CreateMenuItem(string text)
+			=> this.CreateMenuItem(text, Shortcut.None);
 
 		/// <summary>
 		/// Creates a new menu item.

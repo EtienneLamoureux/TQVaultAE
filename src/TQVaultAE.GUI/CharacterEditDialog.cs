@@ -5,8 +5,9 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Logs;
-	using log4net;
 	using System.Linq;
+	using TQVaultAE.Domain.Contracts.Services;
+	using Microsoft.Extensions.Logging;
 
 	/// <summary>
 	/// Dialog box class for the Item Seed Dialog
@@ -22,32 +23,34 @@ namespace TQVaultAE.GUI
 			public override string ToString() => Text;
 		}
 
-		private readonly ILog Log;
+		private readonly ILogger Log;
+		private readonly ITranslationService TranslationService;
 
 		internal PlayerCollection PlayerCollection { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the ItemSeedDialog class.
 		/// </summary>
-		public CharacterEditDialog(IServiceProvider serviceProvider, ILogger<CharacterEditDialog> log) : base(serviceProvider)
+		public CharacterEditDialog(IServiceProvider serviceProvider, ITranslationService translationService, ILogger<CharacterEditDialog> log) : base(serviceProvider)
 		{
-			this.Log = log.Logger;
+			this.Log = log;
+			this.TranslationService = translationService;
 
 			this.InitializeComponent();
 
 			#region Apply custom font
 
-			this.ResetMasteriesScalingButton.Font = FontService.GetFontAlbertusMTLight(12F);
-			this.ok.Font = FontService.GetFontAlbertusMTLight(12F);
-			this.cancel.Font = FontService.GetFontAlbertusMTLight(12F);
-			this.Font = FontService.GetFontAlbertusMTLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.ResetMasteriesScalingButton.Font = FontService.GetFontLight(12F);
+			this.ok.Font = FontService.GetFontLight(12F);
+			this.cancel.Font = FontService.GetFontLight(12F);
+			this.Font = FontService.GetFontLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			new[] {
 				this.attribGroupBox,
 				this.levelingGroupBox,
 				this.MasteriesGroupBox
 			}.SelectMany(gb => gb.Controls.OfType<Control>(), (gb, child) => (gb, child))
 				.ToList()
-				.ForEach(tup => tup.gb.Font = tup.child.Font = FontService.GetFontAlbertusMTLight(11F));
+				.ForEach(tup => tup.gb.Font = tup.child.Font = FontService.GetFontLight(11F));
 
 			#endregion
 
@@ -188,8 +191,7 @@ namespace TQVaultAE.GUI
 					var relatedSkills = PlayerCollection.PlayerInfo.GetSkillsByBaseRecordName(recId);
 					var relatedPoints = relatedSkills.Sum(s => s.skillLevel);
 					var masteryInfo = this.Database.GetInfo(recId);
-					var masteryName = this.Database.GetFriendlyName(masteryInfo.DescriptionTag);
-					masteryName = string.IsNullOrWhiteSpace(masteryName) ? masteryInfo.DescriptionTag : masteryName;
+					var masteryName = this.TranslationService.TranslateXTag(masteryInfo.DescriptionTag);
 					var label = this.Controls.Find($"Mastery{i + 1}NameScalingLabel", true).First();
 					label.Text = string.Format(label.Tag.ToString(), masteryName);
 					label.Visible = true;
@@ -249,9 +251,9 @@ namespace TQVaultAE.GUI
 			skillPointsNumericUpDown.Value = PlayerCollection.PlayerInfo.SkillPoints;
 
 			difficultlyComboBox.Items.Clear();
-			difficultlyComboBox.Items.Add(new DifficultData { Text = Resources.Difficulty0, Id = 0 });
-			difficultlyComboBox.Items.Add(new DifficultData { Text = Resources.Difficulty1, Id = 1 });
-			difficultlyComboBox.Items.Add(new DifficultData { Text = Resources.Difficulty2, Id = 2 });
+			difficultlyComboBox.Items.Add(new DifficultData { Text = TranslationService.TranslateDifficulty(0), Id = 0 });
+			difficultlyComboBox.Items.Add(new DifficultData { Text = TranslationService.TranslateDifficulty(1), Id = 1 });
+			difficultlyComboBox.Items.Add(new DifficultData { Text = TranslationService.TranslateDifficulty(2), Id = 2 });
 
 			SetDifficultly();
 

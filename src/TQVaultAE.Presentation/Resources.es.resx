@@ -305,45 +305,7 @@ Esto podría estar causado por un idioma o ruta del juego mal configurada.
   <data name="ItemSeed" xml:space="preserve">
     <value>Semilla: {0} (0x{0:X8}) ({1:p3})</value>
   </data>
-  <data name="ItemStyleArtifact" xml:space="preserve">
-    <value>Artefacto</value>
-  </data>
-  <data name="ItemStyleBroken" xml:space="preserve">
-    <value>Roto</value>
-  </data>
-  <data name="ItemStyleCommon" xml:space="preserve">
-    <value>Estándar</value>
-  </data>
-  <data name="ItemStyleEpic" xml:space="preserve">
-    <value>Épico</value>
-  </data>
-  <data name="ItemStyleFormulae" xml:space="preserve">
-    <value>Fórmula arcana</value>
-  </data>
-  <data name="ItemStyleLegendary" xml:space="preserve">
-    <value>Legendario</value>
-  </data>
-  <data name="ItemStyleMundane" xml:space="preserve">
-    <value>Corriente</value>
-  </data>
-  <data name="ItemStyleParchment" xml:space="preserve">
-    <value>Pergamino</value>
-  </data>
-  <data name="ItemStylePotion" xml:space="preserve">
-    <value>Poción</value>
-  </data>
-  <data name="ItemStyleQuest" xml:space="preserve">
-    <value>Misión</value>
-  </data>
-  <data name="ItemStyleRare" xml:space="preserve">
-    <value>Raro</value>
-  </data>
-  <data name="ItemStyleRelic" xml:space="preserve">
-    <value>Reliquia</value>
-  </data>
-  <data name="ItemStyleScroll" xml:space="preserve">
-    <value>Pergamino</value>
-  </data>
+  
   <data name="ItemWith" xml:space="preserve">
     <value>con</value>
   </data>
@@ -986,15 +948,9 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Permitir características de edición de caracteres</value>
   </data>
-  <data name="Difficulty0" xml:space="preserve">
-    <value>Normal</value>
-  </data>
-  <data name="Difficulty1" xml:space="preserve">
-    <value>Épico</value>
-  </data>
-  <data name="Difficulty2" xml:space="preserve">
-    <value>Legendario</value>
-  </data>
+  
+  
+  
   <data name="CEAttributePoints" xml:space="preserve">
     <value>Puntos de atributo</value>
   </data>
@@ -1037,171 +993,61 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
   <data name="CharacterEditBtn" xml:space="preserve">
     <value>Editar</value>
   </data>
-  <data name="tagCClass01" xml:space="preserve">
-    <value>Teurgista</value>
-  </data>
-  <data name="tagCClass02" xml:space="preserve">
-    <value>Vagabundo</value>
-  </data>
-  <data name="tagCClass03" xml:space="preserve">
-    <value>Pícaro</value>
-  </data>
-  <data name="tagCClass04" xml:space="preserve">
-    <value>Cazador</value>
-  </data>
-  <data name="tagCClass05" xml:space="preserve">
-    <value>Stormcaller</value>
-  </data>
-  <data name="tagCClass06" xml:space="preserve">
-    <value>Piromante</value>
-  </data>
-  <data name="tagCClass07" xml:space="preserve">
-    <value>Defensor</value>
-  </data>
-  <data name="tagCClass08" xml:space="preserve">
-    <value>Guerrero</value>
-  </data>
-  <data name="tagCClass09" xml:space="preserve">
-    <value>Rompehechizos</value>
-  </data>
-  <data name="tagCClass10" xml:space="preserve">
-    <value>Campeón</value>
-  </data>
-  <data name="tagCClass11" xml:space="preserve">
-    <value>Asesino</value>
-  </data>
-  <data name="tagCClass12" xml:space="preserve">
-    <value>Asesino</value>
-  </data>
-  <data name="tagCClass13" xml:space="preserve">
-    <value>Thane</value>
-  </data>
-  <data name="tagCClass14" xml:space="preserve">
-    <value>Mago de batalla</value>
-  </data>
-  <data name="tagCClass15" xml:space="preserve">
-    <value>Conquistador</value>
-  </data>
-  <data name="tagCClass16" xml:space="preserve">
-    <value>Orador fascinante</value>
-  </data>
-  <data name="tagCClass17" xml:space="preserve">
-    <value>guardián</value>
-  </data>
-  <data name="tagCClass18" xml:space="preserve">
-    <value>Corsario</value>
-  </data>
-  <data name="tagCClass19" xml:space="preserve">
-    <value>Guardián</value>
-  </data>
-  <data name="tagCClass20" xml:space="preserve">
-    <value>Paladín</value>
-  </data>
-  <data name="tagCClass21" xml:space="preserve">
-    <value>Juggernaut</value>
-  </data>
-  <data name="tagCClass22" xml:space="preserve">
-    <value>Prestidigitador</value>
-  </data>
-  <data name="tagCClass23" xml:space="preserve">
-    <value>Invocador</value>
-  </data>
-  <data name="tagCClass24" xml:space="preserve">
-    <value>Mago</value>
-  </data>
-  <data name="tagCClass25" xml:space="preserve">
-    <value>Vengador</value>
-  </data>
-  <data name="tagCClass26" xml:space="preserve">
-    <value>Elementalista</value>
-  </data>
-  <data name="tagCClass27" xml:space="preserve">
-    <value>Oráculo</value>
-  </data>
-  <data name="tagCClass28" xml:space="preserve">
-    <value>druida</value>
-  </data>
-  <data name="tagCClass29" xml:space="preserve">
-    <value>Hechicero</value>
-  </data>
-  <data name="tagCClass30" xml:space="preserve">
-    <value>Sabio</value>
-  </data>
-  <data name="tagCClass31" xml:space="preserve">
-    <value>Encantador de huesos</value>
-  </data>
-  <data name="tagCClass32" xml:space="preserve">
-    <value>guardabosque</value>
-  </data>
-  <data name="tagCClass33" xml:space="preserve">
-    <value>Bandido</value>
-  </data>
-  <data name="tagCClass34" xml:space="preserve">
-    <value>Brujo</value>
-  </data>
-  <data name="tagCClass35" xml:space="preserve">
-    <value>Ilusionista</value>
-  </data>
-  <data name="tagCClass36" xml:space="preserve">
-    <value>Adivino</value>
-  </data>
-  <data name="xtagCharacterClass01" xml:space="preserve">
-    <value>Vidente</value>
-  </data>
-  <data name="xtagCharacterClass02" xml:space="preserve">
-    <value>Presagio</value>
-  </data>
-  <data name="xtagCharacterClass03" xml:space="preserve">
-    <value>Templario</value>
-  </data>
-  <data name="xtagCharacterClass04" xml:space="preserve">
-    <value>Evoker</value>
-  </data>
-  <data name="xtagCharacterClass05" xml:space="preserve">
-    <value>Profeta</value>
-  </data>
-  <data name="xtagCharacterClass06" xml:space="preserve">
-    <value>Aruspex</value>
-  </data>
-  <data name="xtagCharacterClass07" xml:space="preserve">
-    <value>Asesino de sueños</value>
-  </data>
-  <data name="xtagCharacterClass08" xml:space="preserve">
-    <value>Ritualista</value>
-  </data>
-  <data name="xtagCharacterClass09" xml:space="preserve">
-    <value>Adivino</value>
-  </data>
-  <data name="x2tag_class_rm_rm" xml:space="preserve">
-    <value>Runemaster</value>
-  </data>
-  <data name="x2tag_class_warfare_rm" xml:space="preserve">
-    <value>frenético</value>
-  </data>
-  <data name="x2tag_class_defense_rm" xml:space="preserve">
-    <value>Runesmith</value>
-  </data>
-  <data name="x2tag_class_earth_rm" xml:space="preserve">
-    <value>Hablador de piedras</value>
-  </data>
-  <data name="x2tag_class_storm_rm" xml:space="preserve">
-    <value>Trueno</value>
-  </data>
-  <data name="x2tag_class_hunting_rm" xml:space="preserve">
-    <value>Cazador de Dragon</value>
-  </data>
-  <data name="x2tag_class_stealth_rm" xml:space="preserve">
-    <value>Embaucador</value>
-  </data>
-  <data name="x2tag_class_nature_rm" xml:space="preserve">
-    <value>Skinchanger</value>
-  </data>
-  <data name="x2tag_class_spirit_rm" xml:space="preserve">
-    <value>Chamán</value>
-  </data>
-  <data name="x2tag_class_dream_rm" xml:space="preserve">
-    <value>Trabajador seidr</value>
-  </data>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   <data name="CurrentLevel" xml:space="preserve">
     <value>Nivel</value>
   </data>
@@ -1276,5 +1122,16 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
   </data>
   <data name="CriticalHitsReceived" xml:space="preserve">
     <value>Críticas tomadas</value>
+  </data>
+
+
+  <data name="TextTag_tagRelic" xml:space="preserve">
+    <value>Reliquia</value>
+    <comment>Substitute for missing tag for "Relic"</comment>
+  </data>
+
+  <data name="TextTag_tagArtifact" xml:space="preserve">
+    <value>Artefacto</value>
+    <comment>Substitute for missing tag for "Artifact"</comment>
   </data>
 </root>

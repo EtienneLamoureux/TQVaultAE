@@ -23,7 +23,7 @@ namespace TQVaultAE.GUI.Components
 	/// <summary>
 	/// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.
 	/// </summary>
-	public class VaultPanel : Panel, INotifyPropertyChanged
+	public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	{
 		protected readonly IFontService FontService;
 		protected readonly IUIService UIService;
@@ -158,7 +158,7 @@ namespace TQVaultAE.GUI.Components
 				this.BagSackPanel.SackType = SackType.Vault;
 			}
 
-			this.contextMenu.Font = FontService.GetFontAlbertusMT(9.0F * UIService.Scale);
+			this.contextMenu.Font = FontService.GetFont(9.0F * UIService.Scale);
 
 			this.PropertyChanged += new PropertyChangedEventHandler(this.PropertyChangedCallback);
 

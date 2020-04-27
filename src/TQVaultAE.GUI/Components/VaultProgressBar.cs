@@ -69,22 +69,8 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		public int Minimum
 		{
-			get
-			{
-				return this.minimum;
-			}
-
-			set
-			{
-				if (value < 0)
-				{
-					this.minimum = 0;
-				}
-				else
-				{
-					this.minimum = value;
-				}
-			}
+			get => this.minimum;
+			set => this.minimum = (value < 0) ? 0 : value;
 		}
 
 		/// <summary>
@@ -92,22 +78,8 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		public int Maximum
 		{
-			get
-			{
-				return this.maximum;
-			}
-
-			set
-			{
-				if (value < this.Minimum)
-				{
-					this.maximum = this.Minimum;
-				}
-				else
-				{
-					this.maximum = value;
-				}
-			}
+			get => this.maximum;
+			set => this.maximum = (value < this.Minimum) ? this.Minimum : value;
 		}
 
 		/// <summary>

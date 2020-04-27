@@ -11,6 +11,7 @@ using TQVaultAE.Presentation;
 using TQVaultAE.Logs;
 using TQVaultAE.Services;
 using TQVaultAE.Domain.Contracts.Services;
+using Microsoft.Extensions.Logging;
 
 namespace TQVaultAE.GUI
 {
@@ -350,7 +351,7 @@ namespace TQVaultAE.GUI
 			catch (IOException exception)
 			{
 				string title = string.Format(CultureInfo.InvariantCulture, Resources.MainFormSaveError, vaultOnError.PlayerName);
-				Log.Error(title, exception);
+				Log.LogError(exception, title);
 				switch (MessageBox.Show(Log.FormatException(exception), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
 				{
 					case DialogResult.Abort:

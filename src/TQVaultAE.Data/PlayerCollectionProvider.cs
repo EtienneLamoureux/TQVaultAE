@@ -5,9 +5,8 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Data
 {
+	using Microsoft.Extensions.Logging;
 	using System;
-	using System.Collections.Generic;
-	using System.Globalization;
 	using System.IO;
 	using System.Linq;
 	using TQVaultAE.Domain.Contracts.Providers;
@@ -20,7 +19,7 @@ namespace TQVaultAE.Data
 	/// </summary>
 	public class PlayerCollectionProvider : IPlayerCollectionProvider
 	{
-		private readonly log4net.ILog Log;
+		private readonly ILogger Log;
 		private readonly IItemProvider ItemProvider;
 		private readonly ISackCollectionProvider SackCollectionProvider;
 		private readonly IGamePathService GamePathResolver;
@@ -38,7 +37,7 @@ namespace TQVaultAE.Data
 
 		public PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IItemProvider itemProvider, ISackCollectionProvider sackCollectionProvider, IGamePathService gamePathResolver, ITQDataService tQData)
 		{
-			this.Log = log.Logger;
+			this.Log = log;
 			this.ItemProvider = itemProvider;
 			this.SackCollectionProvider = sackCollectionProvider;
 			this.GamePathResolver = gamePathResolver;
@@ -217,7 +216,7 @@ namespace TQVaultAE.Data
 			}
 			catch (ArgumentException ex)
 			{
-				Log.Error("ParseRawData() Failed !", ex);
+				Log.LogError(ex, "ParseRawData() Failed !");
 				throw;
 			}
 		}
@@ -276,190 +275,188 @@ namespace TQVaultAE.Data
 		{
 			// First create a memory stream so we can decode the binary data as needed.
 			using (MemoryStream stream = new MemoryStream(pc.rawData, false))
+			using (BinaryReader reader = new BinaryReader(stream))
 			{
-				using (BinaryReader reader = new BinaryReader(stream))
+				// Find the block pairs until we find the block that contains the item data.
+				int blockNestLevel = 0;
+				int currentOffset = 0;
+				int itemOffset = 0;
+				int equipmentOffset = 0;
+
+				// vaults start at the item data with no crap
+				bool foundItems = pc.IsVault;
+				bool foundEquipment = pc.IsVault;
+
+				while ((!foundItems || !foundEquipment) && (currentOffset = FindNextBlockDelim(pc, currentOffset)) != -1)
 				{
-					// Find the block pairs until we find the block that contains the item data.
-					int blockNestLevel = 0;
-					int currentOffset = 0;
-					int itemOffset = 0;
-					int equipmentOffset = 0;
-
-					// vaults start at the item data with no crap
-					bool foundItems = pc.IsVault;
-					bool foundEquipment = pc.IsVault;
-
-					while ((!foundItems || !foundEquipment) && (currentOffset = FindNextBlockDelim(pc, currentOffset)) != -1)
+					if (pc.rawData[currentOffset] == beginBlockPattern[0])
 					{
-						if (pc.rawData[currentOffset] == beginBlockPattern[0])
-						{
-							// begin block
-							++blockNestLevel;
-							currentOffset += beginBlockPattern.Length;
+						// begin block
+						++blockNestLevel;
+						currentOffset += beginBlockPattern.Length;
 
-							// skip past the 4 bytes of noise after begin_block
+						// skip past the 4 bytes of noise after begin_block
+						currentOffset += 4;
+
+						// Seek our stream to the correct position
+						stream.Seek(currentOffset, SeekOrigin.Begin);
+
+						// Now get the string for pc block
+						string blockName = TQData.ReadCString(reader).ToUpperInvariant();
+
+						// Assign loc to our new stream position
+						currentOffset = (int)stream.Position;
+
+						// See if we accidentally got a begin_block or end_block
+						if (blockName.Equals("BEGIN_BLOCK"))
+						{
+							blockName = "(NONAME)";
+							currentOffset -= beginBlockPattern.Length;
+						}
+						else if (blockName.Equals("END_BLOCK"))
+						{
+							blockName = "(NONAME)";
+							currentOffset -= endBlockPattern.Length;
+						}
+						else if (blockName.Equals("ITEMPOSITIONSSAVEDASGRIDCOORDS"))
+						{
 							currentOffset += 4;
-
-							// Seek our stream to the correct position
-							stream.Seek(currentOffset, SeekOrigin.Begin);
-
-							// Now get the string for pc block
-							string blockName = TQData.ReadCString(reader).ToUpperInvariant();
-
-							// Assign loc to our new stream position
-							currentOffset = (int)stream.Position;
-
-							// See if we accidentally got a begin_block or end_block
-							if (blockName.Equals("BEGIN_BLOCK"))
-							{
-								blockName = "(NONAME)";
-								currentOffset -= beginBlockPattern.Length;
-							}
-							else if (blockName.Equals("END_BLOCK"))
-							{
-								blockName = "(NONAME)";
-								currentOffset -= endBlockPattern.Length;
-							}
-							else if (blockName.Equals("ITEMPOSITIONSSAVEDASGRIDCOORDS"))
-							{
-								currentOffset += 4;
-								itemOffset = currentOffset; // skip value for itemPositionsSavedAsGridCoords
-								foundItems = true;
-							}
-							else if (blockName.Equals("USEALTERNATE"))
-							{
-								currentOffset += 4;
-								equipmentOffset = currentOffset; // skip value for useAlternate
-								foundEquipment = true;
-							}
-
+							itemOffset = currentOffset; // skip value for itemPositionsSavedAsGridCoords
+							foundItems = true;
 						}
-						else
+						else if (blockName.Equals("USEALTERNATE"))
 						{
-							// end block
-							--blockNestLevel;
-							currentOffset += endBlockPattern.Length;
+							currentOffset += 4;
+							equipmentOffset = currentOffset; // skip value for useAlternate
+							foundEquipment = true;
 						}
+
+					}
+					else
+					{
+						// end block
+						--blockNestLevel;
+						currentOffset += endBlockPattern.Length;
+					}
+				}
+
+				if (foundItems)
+				{
+					try
+					{
+						ParseItemBlock(pc, itemOffset, reader);
+					}
+					catch (ArgumentException exception)
+					{
+						var ex = new ArgumentException($"Error parsing player file Item Block- '{pc.PlayerName}'", exception);
+						Log.ErrorException(ex);
+						throw ex;
 					}
 
-					if (foundItems)
+					try
 					{
-						try
+						string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName), " PlayerCollection Export.txt");
+						using (StreamWriter outStream = new StreamWriter(outfile, false))
 						{
-							ParseItemBlock(pc, itemOffset, reader);
-						}
-						catch (ArgumentException exception)
-						{
-							var ex = new ArgumentException($"Error parsing player file Item Block- '{pc.PlayerName}'", exception);
-							Log.ErrorException(ex);
-							throw ex;
-						}
+							outStream.WriteLine("Number of Sacks = {0}", pc.numberOfSacks);
 
-						try
-						{
-							string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName), " Export.txt");
-							using (StreamWriter outStream = new StreamWriter(outfile, false))
+							int sackNumber = 0;
+							if (pc.sacks != null)
 							{
-								outStream.WriteLine("Number of Sacks = {0}", pc.numberOfSacks);
-
-								int sackNumber = 0;
-								if (pc.sacks != null)
+								foreach (SackCollection sack in pc.sacks)
 								{
-									foreach (SackCollection sack in pc.sacks)
+									if (!sack.IsEmpty)
 									{
-										if (!sack.IsEmpty)
+										outStream.WriteLine();
+										outStream.WriteLine("SACK {0}", sackNumber);
+
+										int itemNumber = 0;
+										foreach (Item item in sack)
 										{
-											outStream.WriteLine();
-											outStream.WriteLine("SACK {0}", sackNumber);
+											object[] params1 = new object[20];
 
-											int itemNumber = 0;
-											foreach (Item item in sack)
-											{
-												object[] params1 = new object[20];
+											params1[0] = itemNumber;
+											params1[1] = ItemProvider.GetFriendlyNames(item).FullNameBagTooltip;
+											params1[2] = item.PositionX;
+											params1[3] = item.PositionY;
+											params1[4] = item.Seed;
+											////params1[5] =
 
-												params1[0] = itemNumber;
-												params1[1] = ItemProvider.GetFriendlyNames(item).FullNameBagTooltip;
-												params1[2] = item.PositionX;
-												params1[3] = item.PositionY;
-												params1[4] = item.Seed;
-												////params1[5] =
-
-												outStream.WriteLine("  {0,5:n0} {1}", params1);
-												itemNumber++;
-											}
+											outStream.WriteLine("  {0,5:n0} {1}", params1);
+											itemNumber++;
 										}
-
-										sackNumber++;
 									}
+
+									sackNumber++;
 								}
 							}
 						}
-						catch (IOException exception)
-						{
-							Log.ErrorFormat(exception, "Error writing Export file - '{0}' Export.txt"
-								, Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName)
-							);
-						}
+					}
+					catch (IOException exception)
+					{
+						Log.LogError(exception, "Error writing Export file - '{0}' Export.txt"
+							, Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName)
+						);
+					}
+				}
+
+				// Process the equipment block
+				if (foundEquipment && !pc.IsVault)
+				{
+					try
+					{
+						ParseEquipmentBlock(pc, equipmentOffset, reader);
+					}
+					catch (ArgumentException exception)
+					{
+						var ex = new ArgumentException($"Error parsing player file Equipment Block - '{pc.PlayerName}'", exception);
+						Log.ErrorException(ex);
+						throw ex;
 					}
 
-					// Process the equipment block
-					if (foundEquipment && !pc.IsVault)
+					try
 					{
-						try
+						string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName), " Equipment Export.txt");
+						using (StreamWriter outStream = new StreamWriter(outfile, false))
 						{
-							ParseEquipmentBlock(pc, equipmentOffset, reader);
-						}
-						catch (ArgumentException exception)
-						{
-							var ex = new ArgumentException($"Error parsing player file Equipment Block - '{pc.PlayerName}'", exception);
-							Log.ErrorException(ex);
-							throw ex;
-						}
-
-						try
-						{
-							string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName), " Equipment Export.txt");
-							using (StreamWriter outStream = new StreamWriter(outfile, false))
+							if (!pc.EquipmentSack.IsEmpty)
 							{
-								if (!pc.EquipmentSack.IsEmpty)
+								int itemNumber = 0;
+								foreach (Item item in pc.EquipmentSack)
 								{
-									int itemNumber = 0;
-									foreach (Item item in pc.EquipmentSack)
-									{
-										object[] params1 = new object[20];
+									object[] params1 = new object[20];
 
-										params1[0] = itemNumber;
-										params1[1] = ItemProvider.GetFriendlyNames(item).FullNameBagTooltip;
-										params1[2] = item.PositionX;
-										params1[3] = item.PositionY;
-										params1[4] = item.Seed;
+									params1[0] = itemNumber;
+									params1[1] = ItemProvider.GetFriendlyNames(item).FullNameBagTooltip;
+									params1[2] = item.PositionX;
+									params1[3] = item.PositionY;
+									params1[4] = item.Seed;
 
-										outStream.WriteLine("  {0,5:n0} {1}", params1);
-										itemNumber++;
-									}
+									outStream.WriteLine("  {0,5:n0} {1}", params1);
+									itemNumber++;
 								}
 							}
 						}
-						catch (IOException exception)
-						{
-							Log.ErrorFormat(exception, "Error writing Export file - '{0}' Equipment Export.txt"
-								, Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName)
-							);
-						}
 					}
-
-					if (pc.IsPlayer)
+					catch (IOException exception)
 					{
-						try
-						{
-							pc.PlayerInfo = ReadPlayerInfo(pc);
-						}
-						catch (ArgumentException ex)
-						{
-							var exx = new ArgumentException($"Error parsing player player info Block - '{pc.PlayerName}'", ex);
-							Log.ErrorException(exx);
-							throw exx;
-						}
+						Log.LogError(exception, "Error writing Export file - '{0}' Equipment Export.txt"
+							, Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName)
+						);
+					}
+				}
+
+				if (pc.IsPlayer)
+				{
+					try
+					{
+						pc.PlayerInfo = ReadPlayerInfo(pc);
+					}
+					catch (ArgumentException ex)
+					{
+						var exx = new ArgumentException($"Error parsing player player info Block - '{pc.PlayerName}'", ex);
+						Log.ErrorException(exx);
+						throw exx;
 					}
 				}
 			}
@@ -693,7 +690,7 @@ namespace TQVaultAE.Data
 			{
 				// The ValidateNextString Method can throw an ArgumentException.
 				// We just pass it along at pc point.
-				Log.Debug("ValidateNextString fail !", ex);
+				Log.LogDebug(ex, "ValidateNextString fail !");
 				throw;
 			}
 		}
@@ -767,7 +764,7 @@ namespace TQVaultAE.Data
 			}
 			catch (ArgumentException ex)
 			{
-				Log.Error($"ParseEquipmentBlock fail ! offset={offset}", ex);
+				Log.LogError(ex, $"ParseEquipmentBlock fail ! offset={offset}");
 				throw;
 			}
 		}

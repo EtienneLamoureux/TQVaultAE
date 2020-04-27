@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Data
 {
+	using Microsoft.Extensions.Logging;
 	using System;
 	using System.Globalization;
 	using System.IO;
@@ -18,13 +19,13 @@ namespace TQVaultAE.Data
 	/// </summary>
 	public class TQDataService : ITQDataService
 	{
-		private readonly log4net.ILog Log;
+		private readonly ILogger Log;
 		internal static readonly Encoding Encoding1252 = Encoding.GetEncoding(1252);
 		internal static readonly Encoding EncodingUnicode = Encoding.Unicode;
 
 		public TQDataService(ILogger<TQDataService> log)
 		{
-			this.Log = log.Logger;
+			this.Log = log;
 		}
 
 		/// <summary>

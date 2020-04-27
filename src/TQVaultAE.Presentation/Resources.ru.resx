@@ -292,45 +292,7 @@ Spanish translation by Kurrus.
   <data name="ItemSeed" xml:space="preserve">
     <value>Сид предмета: {0} (0x{0:X8}) ({1:p3})</value>
   </data>
-  <data name="ItemStyleArtifact" xml:space="preserve">
-    <value>Артефакт</value>
-  </data>
-  <data name="ItemStyleBroken" xml:space="preserve">
-    <value>Сломанный</value>
-  </data>
-  <data name="ItemStyleCommon" xml:space="preserve">
-    <value>Обычный</value>
-  </data>
-  <data name="ItemStyleEpic" xml:space="preserve">
-    <value>Эпический</value>
-  </data>
-  <data name="ItemStyleFormulae" xml:space="preserve">
-    <value>Формула</value>
-  </data>
-  <data name="ItemStyleLegendary" xml:space="preserve">
-    <value>Легендарный</value>
-  </data>
-  <data name="ItemStyleMundane" xml:space="preserve">
-    <value>Магический</value>
-  </data>
-  <data name="ItemStyleParchment" xml:space="preserve">
-    <value>Пергамент</value>
-  </data>
-  <data name="ItemStylePotion" xml:space="preserve">
-    <value>Зелье</value>
-  </data>
-  <data name="ItemStyleQuest" xml:space="preserve">
-    <value>Квест</value>
-  </data>
-  <data name="ItemStyleRare" xml:space="preserve">
-    <value>Редкий</value>
-  </data>
-  <data name="ItemStyleRelic" xml:space="preserve">
-    <value>Реликвия</value>
-  </data>
-  <data name="ItemStyleScroll" xml:space="preserve">
-    <value>Свиток</value>
-  </data>
+  
   <data name="ItemWith" xml:space="preserve">
     <value>с</value>
   </data>
@@ -993,15 +955,9 @@ Used to track changes in the translation file.</comment>
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Разрешить редактирование персонажа</value>
   </data>
-  <data name="Difficulty0" xml:space="preserve">
-    <value>Норма</value>
-  </data>
-  <data name="Difficulty1" xml:space="preserve">
-    <value>Эпос</value>
-  </data>
-  <data name="Difficulty2" xml:space="preserve">
-    <value>Легенда</value>
-  </data>
+  
+  
+  
   <data name="CEAttributePoints" xml:space="preserve">
     <value>Очки атрибутов</value>
   </data>
@@ -1044,171 +1000,61 @@ Used to track changes in the translation file.</comment>
   <data name="CharacterEditBtn" xml:space="preserve">
     <value>Изменить</value>
   </data>
-  <data name="tagCClass01" xml:space="preserve">
-    <value>Маг</value>
-  </data>
-  <data name="tagCClass02" xml:space="preserve">
-    <value>Странник</value>
-  </data>
-  <data name="tagCClass03" xml:space="preserve">
-    <value>Тень</value>
-  </data>
-  <data name="tagCClass04" xml:space="preserve">
-    <value>Охотник</value>
-  </data>
-  <data name="tagCClass05" xml:space="preserve">
-    <value>Хозяин бурь</value>
-  </data>
-  <data name="tagCClass06" xml:space="preserve">
-    <value>Пиромант</value>
-  </data>
-  <data name="tagCClass07" xml:space="preserve">
-    <value>Защитник</value>
-  </data>
-  <data name="tagCClass08" xml:space="preserve">
-    <value>Воин</value>
-  </data>
-  <data name="tagCClass09" xml:space="preserve">
-    <value>Охотник на ведьм</value>
-  </data>
-  <data name="tagCClass10" xml:space="preserve">
-    <value>Поборник</value>
-  </data>
-  <data name="tagCClass11" xml:space="preserve">
-    <value>Ассасин</value>
-  </data>
-  <data name="tagCClass12" xml:space="preserve">
-    <value>Убийца</value>
-  </data>
-  <data name="tagCClass13" xml:space="preserve">
-    <value>Тан</value>
-  </data>
-  <data name="tagCClass14" xml:space="preserve">
-    <value>Боевой маг</value>
-  </data>
-  <data name="tagCClass15" xml:space="preserve">
-    <value>Завоеватель</value>
-  </data>
-  <data name="tagCClass16" xml:space="preserve">
-    <value>Властитель душ</value>
-  </data>
-  <data name="tagCClass17" xml:space="preserve">
-    <value>Страж</value>
-  </data>
-  <data name="tagCClass18" xml:space="preserve">
-    <value>Корсар</value>
-  </data>
-  <data name="tagCClass19" xml:space="preserve">
-    <value>Служитель</value>
-  </data>
-  <data name="tagCClass20" xml:space="preserve">
-    <value>Паладин</value>
-  </data>
-  <data name="tagCClass21" xml:space="preserve">
-    <value>Джаггернаут</value>
-  </data>
-  <data name="tagCClass22" xml:space="preserve">
-    <value>Заклинатель</value>
-  </data>
-  <data name="tagCClass23" xml:space="preserve">
-    <value>Колдун</value>
-  </data>
-  <data name="tagCClass24" xml:space="preserve">
-    <value>Волшебник</value>
-  </data>
-  <data name="tagCClass25" xml:space="preserve">
-    <value>Мститель</value>
-  </data>
-  <data name="tagCClass26" xml:space="preserve">
-    <value>Хозяин стихий</value>
-  </data>
-  <data name="tagCClass27" xml:space="preserve">
-    <value>Оракул</value>
-  </data>
-  <data name="tagCClass28" xml:space="preserve">
-    <value>Друид</value>
-  </data>
-  <data name="tagCClass29" xml:space="preserve">
-    <value>Ведун</value>
-  </data>
-  <data name="tagCClass30" xml:space="preserve">
-    <value>Мудрец</value>
-  </data>
-  <data name="tagCClass31" xml:space="preserve">
-    <value>Шаман</value>
-  </data>
-  <data name="tagCClass32" xml:space="preserve">
-    <value>Рейнджер</value>
-  </data>
-  <data name="tagCClass33" xml:space="preserve">
-    <value>Разбойник</value>
-  </data>
-  <data name="tagCClass34" xml:space="preserve">
-    <value>Варлок</value>
-  </data>
-  <data name="tagCClass35" xml:space="preserve">
-    <value>Иллюзионист</value>
-  </data>
-  <data name="tagCClass36" xml:space="preserve">
-    <value>Прорицатель</value>
-  </data>
-  <data name="xtagCharacterClass01" xml:space="preserve">
-    <value>Провидец</value>
-  </data>
-  <data name="xtagCharacterClass02" xml:space="preserve">
-    <value>Предвестник</value>
-  </data>
-  <data name="xtagCharacterClass03" xml:space="preserve">
-    <value>Храмовник</value>
-  </data>
-  <data name="xtagCharacterClass04" xml:space="preserve">
-    <value>Пробудитель</value>
-  </data>
-  <data name="xtagCharacterClass05" xml:space="preserve">
-    <value>Пророк</value>
-  </data>
-  <data name="xtagCharacterClass06" xml:space="preserve">
-    <value>Гаруспик</value>
-  </data>
-  <data name="xtagCharacterClass07" xml:space="preserve">
-    <value>Призрак</value>
-  </data>
-  <data name="xtagCharacterClass08" xml:space="preserve">
-    <value>Обрядник</value>
-  </data>
-  <data name="xtagCharacterClass09" xml:space="preserve">
-    <value>Ворожей</value>
-  </data>
-  <data name="x2tag_class_rm_rm" xml:space="preserve">
-    <value>Мастер рун</value>
-  </data>
-  <data name="x2tag_class_warfare_rm" xml:space="preserve">
-    <value>Берсерк</value>
-  </data>
-  <data name="x2tag_class_defense_rm" xml:space="preserve">
-    <value>Рунный кузнец</value>
-  </data>
-  <data name="x2tag_class_earth_rm" xml:space="preserve">
-    <value>Говорящий с камнями</value>
-  </data>
-  <data name="x2tag_class_storm_rm" xml:space="preserve">
-    <value>Громовержец</value>
-  </data>
-  <data name="x2tag_class_hunting_rm" xml:space="preserve">
-    <value>Охотник на драконов</value>
-  </data>
-  <data name="x2tag_class_stealth_rm" xml:space="preserve">
-    <value>Пройдоха</value>
-  </data>
-  <data name="x2tag_class_nature_rm" xml:space="preserve">
-    <value>Оборотень</value>
-  </data>
-  <data name="x2tag_class_spirit_rm" xml:space="preserve">
-    <value>Шаман</value>
-  </data>
-  <data name="x2tag_class_dream_rm" xml:space="preserve">
-    <value>Сейд-маг</value>
-  </data>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   <data name="CurrentLevel" xml:space="preserve">
     <value>Уровень</value>
   </data>
@@ -1296,4 +1142,15 @@ Used to track changes in the translation file.</comment>
   <data name="PlayerPanelMenuEnableTooltip" xml:space="preserve">
     <value>Включить предпросмотр</value>
   </data>
+
+  <data name="TextTag_tagRelic" xml:space="preserve">
+    <value>Реликвия</value>
+    <comment>Substitute for missing tag for "Relic"</comment>
+  </data>
+
+  <data name="TextTag_tagArtifact" xml:space="preserve">
+    <value>Артефакт</value>
+    <comment>Substitute for missing tag for "Artifact"</comment>
+  </data>
+
 </root>

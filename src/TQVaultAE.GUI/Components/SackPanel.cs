@@ -22,18 +22,20 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Helpers;
+	using Microsoft.Extensions.Logging;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel.
 	/// </summary>
-	public class SackPanel : Panel
+	public class SackPanel : Panel, IScalingControl
 	{
-		private readonly log4net.ILog Log = null;
+		private readonly ILogger Log = null;
 		protected readonly IFontService FontService;
 		protected readonly IUIService UIService;
 		protected readonly IDatabase Database;
 		protected readonly IItemProvider ItemProvider;
 		protected readonly ITQDataService TQData;
+		private readonly ITranslationService TranslationService;
 		protected readonly IServiceProvider ServiceProvider;
 		ItemStyle[] ItemStyleBackGroundColorEnable = new[] { ItemStyle.Epic, ItemStyle.Legendary, ItemStyle.Rare, ItemStyle.Common };
 
@@ -178,9 +180,10 @@ namespace TQVaultAE.GUI.Components
 			this.Database = this.ServiceProvider.GetService<IDatabase>();
 			this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
 			this.TQData = this.ServiceProvider.GetService<ITQDataService>();
+			this.TranslationService = this.ServiceProvider.GetService<ITranslationService>();
 			this.userContext = this.ServiceProvider.GetService<SessionContext>();
 
-			this.Log = this.ServiceProvider.GetService<ILogger<SackPanel>>().Logger;
+			this.Log = this.ServiceProvider.GetService<ILogger<SackPanel>>();
 
 			this.DragInfo = dragInfo;
 			this.AutoMoveLocation = autoMoveLocation;
@@ -217,7 +220,7 @@ namespace TQVaultAE.GUI.Components
 			this.BackColor = ((SolidBrush)this.EmptyCellBrush).Color;
 
 			this.contextMenu.Renderer = new CustomProfessionalRenderer();
-			this.contextMenu.Font = FontService.GetFontAlbertusMT(9.0F * UIService.Scale);
+			this.contextMenu.Font = FontService.GetFont(9.0F * UIService.Scale);
 
 			// Da_FileServer: Enable double buffering to remove flickering.
 			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
@@ -1504,9 +1507,7 @@ namespace TQVaultAE.GUI.Components
 									string name = Path.GetFileNameWithoutExtension(s);
 									if (info != null)
 									{
-										string nameTag = info.DescriptionTag;
-										name = Database.GetFriendlyName(nameTag);
-										name = string.IsNullOrWhiteSpace(name) ? nameTag : name;
+										name = this.TranslationService.TranslateXTag(info.DescriptionTag);
 									}
 
 									choices[i] = new ToolStripMenuItem(name, null, callback, s);

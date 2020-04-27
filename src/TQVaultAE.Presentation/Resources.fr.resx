@@ -296,45 +296,7 @@ Voulez-vous redémarrer TQVault ?</value>
   <data name="ItemSeed" xml:space="preserve">
     <value>N° aléatoire: {0} (0x{0:X8}) ({1:p3})</value>
   </data>
-  <data name="ItemStyleArtifact" xml:space="preserve">
-    <value>Artéfact</value>
-  </data>
-  <data name="ItemStyleBroken" xml:space="preserve">
-    <value>Brisé</value>
-  </data>
-  <data name="ItemStyleCommon" xml:space="preserve">
-    <value>Commun</value>
-  </data>
-  <data name="ItemStyleEpic" xml:space="preserve">
-    <value>Epique</value>
-  </data>
-  <data name="ItemStyleFormulae" xml:space="preserve">
-    <value>Formule</value>
-  </data>
-  <data name="ItemStyleLegendary" xml:space="preserve">
-    <value>Légendaire</value>
-  </data>
-  <data name="ItemStyleMundane" xml:space="preserve">
-    <value>Standard</value>
-  </data>
-  <data name="ItemStyleParchment" xml:space="preserve">
-    <value>Lettre</value>
-  </data>
-  <data name="ItemStylePotion" xml:space="preserve">
-    <value>Potion</value>
-  </data>
-  <data name="ItemStyleQuest" xml:space="preserve">
-    <value>Quête</value>
-  </data>
-  <data name="ItemStyleRare" xml:space="preserve">
-    <value>Rare</value>
-  </data>
-  <data name="ItemStyleRelic" xml:space="preserve">
-    <value>Relique</value>
-  </data>
-  <data name="ItemStyleScroll" xml:space="preserve">
-    <value>Parchemin</value>
-  </data>
+  
   <data name="ItemWith" xml:space="preserve">
     <value>avec</value>
   </data>
@@ -989,15 +951,9 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Autorise l'édition des personnages</value>
   </data>
-  <data name="Difficulty0" xml:space="preserve">
-    <value>Ordinaire</value>
-  </data>
-  <data name="Difficulty1" xml:space="preserve">
-    <value>Épique</value>
-  </data>
-  <data name="Difficulty2" xml:space="preserve">
-    <value>Légendaire</value>
-  </data>
+  
+  
+  
   <data name="CEAttributePoints" xml:space="preserve">
     <value>Points d'attributs</value>
   </data>
@@ -1040,336 +996,8 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
   <data name="CharacterEditBtn" xml:space="preserve">
     <value>modifier</value>
   </data>
-  <data name="tagCClass01" xml:space="preserve">
-    <value>Théurgiste</value>
-  </data>
-  <data name="MasteriestagCClass01" xml:space="preserve">
-    <value>Esprit</value>
-  </data>
-  <data name="tagCClass02" xml:space="preserve">
-    <value>Vagabond</value>
-  </data>
-  <data name="MasteriestagCClass02" xml:space="preserve">
-    <value>Nature</value>
-  </data>
-  <data name="tagCClass03" xml:space="preserve">
-    <value>Rôdeur</value>
-  </data>
-  <data name="MasteriestagCClass03" xml:space="preserve">
-    <value>Ruse</value>
-  </data>
-  <data name="tagCClass04" xml:space="preserve">
-    <value>Chasseur</value>
-  </data>
-  <data name="MasteriestagCClass04" xml:space="preserve">
-    <value>Chasse</value>
-  </data>
-  <data name="tagCClass05" xml:space="preserve">
-    <value>Homme-tempête</value>
-  </data>
-  <data name="MasteriestagCClass05" xml:space="preserve">
-    <value>Tempête</value>
-  </data>
-  <data name="tagCClass06" xml:space="preserve">
-    <value>Pyromancien</value>
-  </data>
-  <data name="MasteriestagCClass06" xml:space="preserve">
-    <value>Terre</value>
-  </data>
-  <data name="tagCClass07" xml:space="preserve">
-    <value>Défenseur</value>
-  </data>
-  <data name="MasteriestagCClass07" xml:space="preserve">
-    <value>Défense</value>
-  </data>
-  <data name="tagCClass08" xml:space="preserve">
-    <value>Guerrier</value>
-  </data>
-  <data name="MasteriestagCClass08" xml:space="preserve">
-    <value>Guerre</value>
-  </data>
-  <data name="tagCClass09" xml:space="preserve">
-    <value>Briseur de sorts</value>
-  </data>
-  <data name="MasteriestagCClass09" xml:space="preserve">
-    <value>Esprit-Guerre</value>
-  </data>
-  <data name="tagCClass10" xml:space="preserve">
-    <value>Champion</value>
-  </data>
-  <data name="MasteriestagCClass10" xml:space="preserve">
-    <value>Nature-Guerre</value>
-  </data>
-  <data name="tagCClass11" xml:space="preserve">
-    <value>Assassin</value>
-  </data>
-  <data name="MasteriestagCClass11" xml:space="preserve">
-    <value>Ruse-Guerre</value>
-  </data>
-  <data name="tagCClass12" xml:space="preserve">
-    <value>Tueur</value>
-  </data>
-  <data name="MasteriestagCClass12" xml:space="preserve">
-    <value>Chasse-Guerre</value>
-  </data>
-  <data name="tagCClass13" xml:space="preserve">
-    <value>Chevalier</value>
-  </data>
-  <data name="MasteriestagCClass13" xml:space="preserve">
-    <value>Tempête-Guerre</value>
-  </data>
-  <data name="tagCClass14" xml:space="preserve">
-    <value>Mage-guerrier</value>
-  </data>
-  <data name="MasteriestagCClass14" xml:space="preserve">
-    <value>Terre-Guerre</value>
-  </data>
-  <data name="tagCClass15" xml:space="preserve">
-    <value>Conquérant</value>
-  </data>
-  <data name="MasteriestagCClass15" xml:space="preserve">
-    <value>Défense-Guerre</value>
-  </data>
-  <data name="tagCClass16" xml:space="preserve">
-    <value>Ensorceleur</value>
-  </data>
-  <data name="MasteriestagCClass16" xml:space="preserve">
-    <value>Esprit-Défense</value>
-  </data>
-  <data name="tagCClass17" xml:space="preserve">
-    <value>Gardien</value>
-  </data>
-  <data name="MasteriestagCClass17" xml:space="preserve">
-    <value>Nature-Défense</value>
-  </data>
-  <data name="tagCClass18" xml:space="preserve">
-    <value>Corsaire</value>
-  </data>
-  <data name="MasteriestagCClass18" xml:space="preserve">
-    <value>Ruse-Défense</value>
-  </data>
-  <data name="tagCClass19" xml:space="preserve">
-    <value>Garde</value>
-  </data>
-  <data name="MasteriestagCClass19" xml:space="preserve">
-    <value>Chasse-Défense</value>
-  </data>
-  <data name="tagCClass20" xml:space="preserve">
-    <value>Paladin</value>
-  </data>
-  <data name="MasteriestagCClass20" xml:space="preserve">
-    <value>Tempête-Défense</value>
-  </data>
-  <data name="tagCClass21" xml:space="preserve">
-    <value>Mastodonte</value>
-  </data>
-  <data name="MasteriestagCClass21" xml:space="preserve">
-    <value>Terre-Défense</value>
-  </data>
-  <data name="tagCClass22" xml:space="preserve">
-    <value>Conjureur</value>
-  </data>
-  <data name="MasteriestagCClass22" xml:space="preserve">
-    <value>Esprit-Terre</value>
-  </data>
-  <data name="tagCClass23" xml:space="preserve">
-    <value>Invocateur</value>
-  </data>
-  <data name="MasteriestagCClass23" xml:space="preserve">
-    <value>Nature-Terre</value>
-  </data>
-  <data name="tagCClass24" xml:space="preserve">
-    <value>Magicien</value>
-  </data>
-  <data name="MasteriestagCClass24" xml:space="preserve">
-    <value>Ruse-Terre</value>
-  </data>
-  <data name="tagCClass25" xml:space="preserve">
-    <value>Vengeur</value>
-  </data>
-  <data name="MasteriestagCClass25" xml:space="preserve">
-    <value>Chasse-Terre</value>
-  </data>
-  <data name="tagCClass26" xml:space="preserve">
-    <value>Élémentaliste</value>
-  </data>
-  <data name="MasteriestagCClass26" xml:space="preserve">
-    <value>Tempête-Terre</value>
-  </data>
-  <data name="tagCClass27" xml:space="preserve">
-    <value>Oracle</value>
-  </data>
-  <data name="MasteriestagCClass27" xml:space="preserve">
-    <value>Esprit-Tempête</value>
-  </data>
-  <data name="tagCClass28" xml:space="preserve">
-    <value>Druide</value>
-  </data>
-  <data name="MasteriestagCClass28" xml:space="preserve">
-    <value>Nature-Tempête</value>
-  </data>
-  <data name="tagCClass29" xml:space="preserve">
-    <value>Sorcier</value>
-  </data>
-  <data name="MasteriestagCClass29" xml:space="preserve">
-    <value>Ruse-Tempête</value>
-  </data>
-  <data name="tagCClass30" xml:space="preserve">
-    <value>Sage</value>
-  </data>
-  <data name="MasteriestagCClass30" xml:space="preserve">
-    <value>Chasse-Tempête</value>
-  </data>
-  <data name="tagCClass31" xml:space="preserve">
-    <value>Charmeur d'os</value>
-  </data>
-  <data name="MasteriestagCClass31" xml:space="preserve">
-    <value>Esprit-Chasse</value>
-  </data>
-  <data name="tagCClass32" xml:space="preserve">
-    <value>Garde-chasse</value>
-  </data>
-  <data name="MasteriestagCClass32" xml:space="preserve">
-    <value>Nature-Chasse</value>
-  </data>
-  <data name="tagCClass33" xml:space="preserve">
-    <value>Brigand</value>
-  </data>
-  <data name="MasteriestagCClass33" xml:space="preserve">
-    <value>Ruse-Chasse</value>
-  </data>
-  <data name="tagCClass34" xml:space="preserve">
-    <value>Enchanteur</value>
-  </data>
-  <data name="MasteriestagCClass34" xml:space="preserve">
-    <value>Esprit-Ruse</value>
-  </data>
-  <data name="tagCClass35" xml:space="preserve">
-    <value>Illusionniste</value>
-  </data>
-  <data name="MasteriestagCClass35" xml:space="preserve">
-    <value>Nature-Ruse</value>
-  </data>
-  <data name="tagCClass36" xml:space="preserve">
-    <value>Augure</value>
-  </data>
-  <data name="MasteriestagCClass36" xml:space="preserve">
-    <value>Esprit-Nature</value>
-  </data>
-  <data name="xtagCharacterClass01" xml:space="preserve">
-    <value>Voyant</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass01" xml:space="preserve">
-    <value>Rêve</value>
-  </data>
-  <data name="xtagCharacterClass02" xml:space="preserve">
-    <value>Héraut</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass02" xml:space="preserve">
-    <value>Guerre-Rêve</value>
-  </data>
-  <data name="xtagCharacterClass03" xml:space="preserve">
-    <value>Templier</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass03" xml:space="preserve">
-    <value>Défense-Rêve</value>
-  </data>
-  <data name="xtagCharacterClass04" xml:space="preserve">
-    <value>Evocateur</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass04" xml:space="preserve">
-    <value>Terre-Rêve</value>
-  </data>
-  <data name="xtagCharacterClass05" xml:space="preserve">
-    <value>Prophète</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass05" xml:space="preserve">
-    <value>Tempête-Rêve</value>
-  </data>
-  <data name="xtagCharacterClass06" xml:space="preserve">
-    <value>Aruspice</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass06" xml:space="preserve">
-    <value>Chasse-Rêve</value>
-  </data>
-  <data name="xtagCharacterClass07" xml:space="preserve">
-    <value>Briseur de rêves</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass07" xml:space="preserve">
-    <value>Ruse-Rêve</value>
-  </data>
-  <data name="xtagCharacterClass08" xml:space="preserve">
-    <value>Ritualiste</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass08" xml:space="preserve">
-    <value>Nature-Rêve</value>
-  </data>
-  <data name="xtagCharacterClass09" xml:space="preserve">
-    <value>Devin</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass09" xml:space="preserve">
-    <value>Esprit-Rêve</value>
-  </data>
-  <data name="x2tag_class_rm_rm" xml:space="preserve">
-    <value>Maître des runes</value>
-  </data>
-  <data name="Masteriesx2tag_class_rm_rm" xml:space="preserve">
-    <value>Runes</value>
-  </data>
-  <data name="x2tag_class_warfare_rm" xml:space="preserve">
-    <value>Berserker</value>
-  </data>
-  <data name="Masteriesx2tag_class_warfare_rm" xml:space="preserve">
-    <value>Guerre-Runes</value>
-  </data>
-  <data name="x2tag_class_defense_rm" xml:space="preserve">
-    <value>Forgeur de runes</value>
-  </data>
-  <data name="Masteriesx2tag_class_defense_rm" xml:space="preserve">
-    <value>Défense-Runes</value>
-  </data>
-  <data name="x2tag_class_earth_rm" xml:space="preserve">
-    <value>Parlepierre</value>
-  </data>
-  <data name="Masteriesx2tag_class_earth_rm" xml:space="preserve">
-    <value>Terre-Runes</value>
-  </data>
-  <data name="x2tag_class_storm_rm" xml:space="preserve">
-    <value>Foudroyeur</value>
-  </data>
-  <data name="Masteriesx2tag_class_storm_rm" xml:space="preserve">
-    <value>Tempête-Runes</value>
-  </data>
-  <data name="x2tag_class_hunting_rm" xml:space="preserve">
-    <value>Chasseur de dragons</value>
-  </data>
-  <data name="Masteriesx2tag_class_hunting_rm" xml:space="preserve">
-    <value>Chasse-Runes</value>
-  </data>
-  <data name="x2tag_class_stealth_rm" xml:space="preserve">
-    <value>Spoliateur</value>
-  </data>
-  <data name="Masteriesx2tag_class_stealth_rm" xml:space="preserve">
-    <value>Ruse-Runes</value>
-  </data>
-  <data name="x2tag_class_nature_rm" xml:space="preserve">
-    <value>Change-forme</value>
-  </data>
-  <data name="Masteriesx2tag_class_nature_rm" xml:space="preserve">
-    <value>Nature-Runes</value>
-  </data>
-  <data name="x2tag_class_spirit_rm" xml:space="preserve">
-    <value>Chaman</value>
-  </data>
-  <data name="Masteriesx2tag_class_spirit_rm" xml:space="preserve">
-    <value>Esprit-Runes</value>
-  </data>
-  <data name="x2tag_class_dream_rm" xml:space="preserve">
-    <value>Ouvrier Seidr</value>
-  </data>
-  <data name="Masteriesx2tag_class_dream_rm" xml:space="preserve">
-    <value>Rêve-Runes</value>
-  </data>
+  
+  
   <data name="Masteries" xml:space="preserve">
     <value>Maîtrises</value>
   </data>
@@ -1490,4 +1118,127 @@ Il n’utilise actuellement que les valeurs de "base" disponibles dans le fichie
   <data name="ResetMasteriesButton" xml:space="preserve">
     <value>Réinit. Maîtrises</value>
   </data>
+
+  <data name="TextTag_tagRelic" xml:space="preserve">
+    <value>Relique</value>
+    <comment>Substitute for missing tag for "Relic"</comment>
+  </data>
+
+  <data name="TextTag_tagArtifact" xml:space="preserve">
+    <value>Artéfact</value>
+    <comment>Substitute for missing tag for "Artifact"</comment>
+  </data>
+
+
+  <data name="SearchMatchingItemsTT" xml:space="preserve">
+    <value>{0} objets trouvés</value>
+  </data>
+
+  <data name="SearchFiltersSelected" xml:space="preserve">
+    <value>{0} filtres sélectionnés</value>
+  </data>
+
+  <data name="SearchTermRequired" xml:space="preserve">
+    <value>Certains filtres doivent être sélectionnés</value>
+  </data>
+
+  <data name="SearchOperator" xml:space="preserve">
+    <value>Opérateur</value>
+  </data>
+
+  <data name="SearchOperatorTitle" xml:space="preserve">
+    <value>Opérateur de recherche</value>
+  </data>
+
+  <data name="SearchOperatorDescOr" xml:space="preserve">
+    <value>Trouve les objets ayant un filtre ou plus</value>
+  </data>
+
+  <data name="SearchOperatorDescAnd" xml:space="preserve">
+    <value>Trouve les objets ayant tous les filtres</value>
+  </data>
+
+  <data name="GlobalExpandAll" xml:space="preserve">
+    <value>Ouvrir tout</value>
+  </data>
+
+  <data name="GlobalCollapseAll" xml:space="preserve">
+    <value>Fermer tout</value>
+  </data>
+
+  <data name="SearchReduceCategoriesDuringSelection" xml:space="preserve">
+    <value>Réduit les catégories durant la sélection</value>
+  </data>
+
+  <data name="SearchVisibleElementsPerCategory" xml:space="preserve">
+    <value>Eléments visibles/catégorie</value>
+  </data>
+
+  <data name="SearchQueries" xml:space="preserve">
+    <value>Requêtes</value>
+  </data>
+
+  <data name="GlobalSave" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  
+  <data name="GlobalBaseAttribute" xml:space="preserve">
+    <value>Attribut de Base</value>
+  </data>
+  
+  <data name="GlobalPrefix" xml:space="preserve">
+    <value>Préfixe</value>
+  </data>
+  <data name="GlobalPrefixName" xml:space="preserve">
+    <value>Nom Préfixe</value>
+  </data>
+
+  <data name="GlobalSuffix" xml:space="preserve">
+    <value>Suffixe</value>
+  </data>
+  <data name="GlobalSuffixName" xml:space="preserve">
+    <value>Nom Suffixe</value>
+  </data>
+
+  <data name="GlobalRarity" xml:space="preserve">
+    <value>Rareté</value>
+  </data>
+
+  <data name="SearchHavingCharm" xml:space="preserve">
+    <value>Avec Charme</value>
+  </data>
+
+  <data name="SearchHavingRelic" xml:space="preserve">
+    <value>Avec Relique</value>
+  </data>
+  
+
+  <data name="SearchBuildingData" xml:space="preserve">
+    <value>Création des données</value>
+  </data>
+
+  <data name="SearchEngineReady" xml:space="preserve">
+    <value>Le moteur de recherche est prêt</value>
+  </data>
+
+  <data name="SearchItemCountIs" xml:space="preserve">
+    <value>{0} objets trouvés</value>
+  </data>
+
+  <data name="SearchTooManyResultToDisplay" xml:space="preserve">
+    <value>Il y a trop de résultats à afficher.{^N}Ajustez votre recherche.</value>
+  </data>
+
+  <data name="SearchQueryNameMustBeSet" xml:space="preserve">
+    <value>Le nom de la requête doit être saisi.</value>
+  </data>
+
+  <data name="SearchQueryNameAlreadyExist" xml:space="preserve">
+    <value>Le nom de la requête existe déjà. Voulez vous l'écraser ?</value>
+  </data>
+
+  <data name="GlobalDeleteConfirm" xml:space="preserve">
+    <value>Etes-vous sûr de vouloir supprimer "{0}" ?</value>
+  </data>
+  
 </root>

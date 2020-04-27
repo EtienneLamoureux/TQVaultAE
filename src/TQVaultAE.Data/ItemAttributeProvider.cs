@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Data
 {
+	using Microsoft.Extensions.Logging;
 	using System;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
@@ -13,7 +14,6 @@ namespace TQVaultAE.Data
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Domain.Helpers;
-	using TQVaultAE.Logs;
 
 
 	/// <summary>
@@ -21,11 +21,11 @@ namespace TQVaultAE.Data
 	/// </summary>
 	public class ItemAttributeProvider : IItemAttributeProvider
 	{
-		private readonly log4net.ILog Log;
+		private readonly ILogger Log;
 
 		public ItemAttributeProvider(ILogger<ItemAttributeProvider> log)
 		{
-			this.Log = log.Logger;
+			this.Log = log;
 			this.attributeDictionary = InitializeAttributeDictionary();
 		}
 
@@ -35,15 +35,15 @@ namespace TQVaultAE.Data
 		/// Other Effects Tags
 		/// </summary>
 		private string[] otherEffects =
-			{
-				"characterBaseAttackSpeedTag",  // string text = TextTag(value)
-                "levelRequirement",             // integer level requirement text = Format(TextTag(MeetsRequirement), TextTag(LevelRequirement), (float) value)
-                "offensiveGlobalChance",        // float
-                "retaliationGlobalChance",      // float
-                "racialBonusPercentDamage",     // Added by VillageIdiot : float
-                "racialBonusAbsoluteDefense",   // Added by VillageIdiot : int
-                "itemSkillName"                 // Added by VillageIdiot : string text (dbr)
-            };
+		{
+			"characterBaseAttackSpeedTag",  // string text = TextTag(value)
+            "levelRequirement",             // integer level requirement text = Format(TextTag(MeetsRequirement), TextTag(LevelRequirement), (float) value)
+            "offensiveGlobalChance",        // float
+            "retaliationGlobalChance",      // float
+            "racialBonusPercentDamage",     // Added by VillageIdiot : float
+            "racialBonusAbsoluteDefense",   // Added by VillageIdiot : int
+            "itemSkillName"                 // Added by VillageIdiot : string text (dbr)
+        };
 
 		/// <summary>
 		/// Character Effects Tags
@@ -51,74 +51,74 @@ namespace TQVaultAE.Data
 		/// Effect name is also the text tag
 		/// </summary>
 		private string[] characterEffects =
-			{
-				"characterStrength",
-				"characterDexterity",
-				"characterIntelligence",
-				"characterLife",
-				"characterMana",
-				"characterStrengthModifier",
-				"characterDexterityModifier",
-				"characterIntelligenceModifier",
-				"characterLifeModifier",
-				"characterManaModifier",
-				"characterIncreasedExperience",
-				"characterRunSpeed",
-				"characterAttackSpeed",
-				"characterSpellCastSpeed",
-				"characterRunSpeedModifier",
-				"characterAttackSpeedModifier",
-				"characterSpellCastSpeedModifier",
-				"characterTotalSpeedModifier", // Added by VillageIdiot
-                "characterLifeRegen",
-				"characterManaRegen",
-				"characterLifeRegenModifier",
-				"characterManaRegenModifier",
-				"characterOffensiveAbility",
-				"characterDefensiveAbility",
-				"characterOffensiveAbilityModifier",
-				"characterDefensiveAbilityModifier",
-				"characterDefensiveBlockRecoveryReduction",
-				"characterEnergyAbsorptionPercent",
-				"characterDodgePercent",
-				"characterDeflectProjectile",
-				"characterDeflectProjectiles",  // Do we need this??
-                "characterManaLimitReserve",
-				"characterManaLimitReserveReduction",
-				"characterManaLimitReserveModifier",
-				"characterManaLimitReserveReductionModifier",
-				"characterGlobalReqReduction",
-				"characterWeaponStrengthReqReduction",
-				"characterWeaponDexterityReqReduction",
-				"characterWeaponIntelligenceReqReduction",
-				"characterMeleeStrengthReqReduction",
-				"characterMeleeDexterityReqReduction",
-				"characterMeleeIntelligenceReqReduction",
-				"characterHuntingStrengthReqReduction",
-				"characterHuntingDexterityReqReduction",
-				"characterHuntingIntelligenceReqReduction",
-				"characterStaffStrengthReqReduction",
-				"characterStaffDexterityReqReduction",
-				"characterStaffIntelligenceReqReduction",
-				"characterShieldStrengthReqReduction",
-				"characterShieldIntelligenceReqReduction",
-				"characterShieldDexterityReqReduction",
-				"characterArmorStrengthReqReduction",
-				"characterArmorDexterityReqReduction",
-				"characterArmorIntelligenceReqReduction",
-				"characterJewelryStrengthReqReduction",
-				"characterJewelryDexterityReqReduction",
-				"characterJewelryIntelligenceReqReduction",
-				"characterLevelReqReduction", // Added by VillageIdiot
-                "skillCooldownReduction",
-				"skillCooldownReductionModifier",
-				"skillManaCostReduction",
-				"skillManaCostReductionModifier",
-				"projectileLaunchNumber", // Added by VillageIdiot
-                "projectilePiercingChance", // Added by VillageIdiot
-                "projectileLaunchRotation", // Added by VillageIdiot
-                "skillLifeBonus" // Added by VillageIdiot
-            };
+		{
+			"characterStrength",
+			"characterDexterity",
+			"characterIntelligence",
+			"characterLife",
+			"characterMana",
+			"characterStrengthModifier",
+			"characterDexterityModifier",
+			"characterIntelligenceModifier",
+			"characterLifeModifier",
+			"characterManaModifier",
+			"characterIncreasedExperience",
+			"characterRunSpeed",
+			"characterAttackSpeed",
+			"characterSpellCastSpeed",
+			"characterRunSpeedModifier",
+			"characterAttackSpeedModifier",
+			"characterSpellCastSpeedModifier",
+			"characterTotalSpeedModifier", // Added by VillageIdiot
+            "characterLifeRegen",
+			"characterManaRegen",
+			"characterLifeRegenModifier",
+			"characterManaRegenModifier",
+			"characterOffensiveAbility",
+			"characterDefensiveAbility",
+			"characterOffensiveAbilityModifier",
+			"characterDefensiveAbilityModifier",
+			"characterDefensiveBlockRecoveryReduction",
+			"characterEnergyAbsorptionPercent",
+			"characterDodgePercent",
+			"characterDeflectProjectile",
+			"characterDeflectProjectiles",  // Do we need this??
+            "characterManaLimitReserve",
+			"characterManaLimitReserveReduction",
+			"characterManaLimitReserveModifier",
+			"characterManaLimitReserveReductionModifier",
+			"characterGlobalReqReduction",
+			"characterWeaponStrengthReqReduction",
+			"characterWeaponDexterityReqReduction",
+			"characterWeaponIntelligenceReqReduction",
+			"characterMeleeStrengthReqReduction",
+			"characterMeleeDexterityReqReduction",
+			"characterMeleeIntelligenceReqReduction",
+			"characterHuntingStrengthReqReduction",
+			"characterHuntingDexterityReqReduction",
+			"characterHuntingIntelligenceReqReduction",
+			"characterStaffStrengthReqReduction",
+			"characterStaffDexterityReqReduction",
+			"characterStaffIntelligenceReqReduction",
+			"characterShieldStrengthReqReduction",
+			"characterShieldIntelligenceReqReduction",
+			"characterShieldDexterityReqReduction",
+			"characterArmorStrengthReqReduction",
+			"characterArmorDexterityReqReduction",
+			"characterArmorIntelligenceReqReduction",
+			"characterJewelryStrengthReqReduction",
+			"characterJewelryDexterityReqReduction",
+			"characterJewelryIntelligenceReqReduction",
+			"characterLevelReqReduction", // Added by VillageIdiot
+            "skillCooldownReduction",
+			"skillCooldownReductionModifier",
+			"skillManaCostReduction",
+			"skillManaCostReductionModifier",
+			"projectileLaunchNumber", // Added by VillageIdiot
+            "projectilePiercingChance", // Added by VillageIdiot
+            "projectileLaunchRotation", // Added by VillageIdiot
+            "skillLifeBonus" // Added by VillageIdiot
+        };
 
 		/// <summary>
 		/// Defensive Effect Tags
@@ -126,135 +126,136 @@ namespace TQVaultAE.Data
 		/// Look for "Chance" variable to get the chance of this effect.
 		/// </summary>
 		private string[] defenseEffects =
-			{
-				"defensiveProtection",
-				"defensiveProtectionModifier",
-				"defensiveAbsorption",
-				"defensiveAbsorptionModifier",
-				"defensivePhysical",
-				"defensivePhysicalDuration",
-				"defensivePhysicalDurationChanceModifier",
-				"defensivePhysicalDurationModifier",
-				"defensivePhysicalModifier",
-				"defensivePierce",
-				"defensivePierceDuration",
-				"defensivePierceDurationModifier",
-				"defensivePierceModifier",
-				"defensiveFire",
-				"defensiveFireDuration",
-				"defensiveFireDurationModifier",
-				"defensiveFireModifier",
-				"defensiveCold",
-				"defensiveColdDuration",
-				"defensiveColdDurationModifier",
-				"defensiveColdModifier",
-				"defensiveLightning",
-				"defensiveLightningDuration",
-				"defensiveLightningDurationModifier",
-				"defensiveLightningModifier",
-				"defensivePoison",
-				"defensivePoisonDuration",
-				"defensivePoisonDurationModifier",
-				"defensivePoisonModifier",
-				"defensiveLife",
-				"defensiveLifeDuration",
-				"defensiveLifeDurationModifier",
-				"defensiveLifeModifier",
-				"defensiveDisruption", // Added by VillageIdiot
-                "defensiveElemental",
-				"defensiveElementalModifier",
-				"defensiveElementalResistance",
-				"defensiveSlowLifeLeach",
-				"defensiveSlowLifeLeachDuration",
-				"defensiveSlowLifeLeachDurationModifier",
-				"defensiveSlowLifeLeachModifier",
-				"defensiveSlowManaLeach",
-				"defensiveSlowManaLeachDuration",
-				"defensiveSlowManaLeachDurationModifier",
-				"defensiveSlowManaLeachModifier",
-				"defensiveBleeding", // Added by VillageIdiot
-                "defensiveBleedingDuration", // Added by VillageIdiot
-                "defensiveBleedingDurationModifier", // Added by VillageIdiot
-                "defensiveBleedingModifier", // Added by VillageIdiot
-                "defensiveBlockModifier",
-				"defensiveReflect",
-				"defensiveConfusion", // Added by VillageIdiot
-                "defensiveTaunt", // Added by VillageIdiot
-                "defensiveFear", // Added by VillageIdiot
-                "defensiveConvert", // Added by VillageIdiot
-                "defensiveTrap", // Added by VillageIdiot
-                "defensivePetrify", // Added by VillageIdiot
-                "defensiveFreeze", // Added by VillageIdiot
-                "defensiveStun",
-				"defensiveStunModifier",
-				"defensiveSleep", // Added by VillageIdiot
-                "defensiveSleepModifier", // Added by VillageIdiot
-                "defensiveManaBurnRatio", // Added by VillageIdiot
-                "defensivePercentCurrentLife", // Added by VillageIdiot
-                "defensiveTotalSpeedResistance", // Added by VillageIdiot
-                "damageAbsorption", // Added by VillageIdiot
-                "damageAbsorptionPercent" // Added by VillageIdiot
-            };
+		{
+			"defensiveProtection",
+			"defensiveProtectionModifier",
+			"defensiveAbsorption",
+			"defensiveAbsorptionModifier",
+			"defensivePhysical",
+			"defensivePhysicalDuration",
+			"defensivePhysicalDurationChanceModifier",
+			"defensivePhysicalDurationModifier",
+			"defensivePhysicalModifier",
+			"defensivePierce",
+			"defensivePierceDuration",
+			"defensivePierceDurationModifier",
+			"defensivePierceModifier",
+			"defensiveFire",
+			"defensiveFireDuration",
+			"defensiveFireDurationModifier",
+			"defensiveFireModifier",
+			"defensiveCold",
+			"defensiveColdDuration",
+			"defensiveColdDurationModifier",
+			"defensiveColdModifier",
+			"defensiveLightning",
+			"defensiveLightningDuration",
+			"defensiveLightningDurationModifier",
+			"defensiveLightningModifier",
+			"defensivePoison",
+			"defensivePoisonDuration",
+			"defensivePoisonDurationModifier",
+			"defensivePoisonModifier",
+			"defensiveLife",
+			"defensiveLifeDuration",
+			"defensiveLifeDurationModifier",
+			"defensiveLifeModifier",
+			"defensiveDisruption", // Added by VillageIdiot
+            "defensiveElemental",
+			"defensiveElementalModifier",
+			"defensiveElementalResistance",
+			"defensiveSlowLifeLeach",
+			"defensiveSlowLifeLeachDuration",
+			"defensiveSlowLifeLeachDurationModifier",
+			"defensiveSlowLifeLeachModifier",
+			"defensiveSlowManaLeach",
+			"defensiveSlowManaLeachDuration",
+			"defensiveSlowManaLeachDurationModifier",
+			"defensiveSlowManaLeachModifier",
+			"defensiveBleeding", // Added by VillageIdiot
+            "defensiveBleedingDuration", // Added by VillageIdiot
+            "defensiveBleedingDurationModifier", // Added by VillageIdiot
+            "defensiveBleedingModifier", // Added by VillageIdiot
+            "defensiveBlockModifier",
+			"defensiveReflect",
+			"defensiveConfusion", // Added by VillageIdiot
+            "defensiveTaunt", // Added by VillageIdiot
+            "defensiveFear", // Added by VillageIdiot
+            "defensiveConvert", // Added by VillageIdiot
+            "defensiveTrap", // Added by VillageIdiot
+            "defensivePetrify", // Added by VillageIdiot
+            "defensiveFreeze", // Added by VillageIdiot
+            "defensiveStun",
+			"defensiveStunModifier",
+			"defensiveSleep", // Added by VillageIdiot
+            "defensiveSleepModifier", // Added by VillageIdiot
+            "defensiveManaBurnRatio", // Added by VillageIdiot
+            "defensivePercentCurrentLife", // Added by VillageIdiot
+            "defensiveTotalSpeedResistance", // Added by VillageIdiot
+            "damageAbsorption", // Added by VillageIdiot
+            "damageAbsorptionPercent",  // Added by VillageIdiot
+			"defensiveTotalSpeedChance"
+		};
 
 		/// <summary>
 		/// Offensive Effects Tags
 		/// Change "offensive" to "Damage" to get the text tag.
 		/// </summary>
 		private string[] offensiveEffects =
-			{
-				"offensiveBasePhysical",
-				"offensiveBaseCold",
-				"offensiveBaseFire",
-				"offensiveBasePoison", // Added by VillageIdiot
-                "offensiveBaseLightning",
-				"offensiveBaseLife", // Added by VillageIdiot
-                "offensivePhysical",
-				"offensivePierceRatio",
-				"offensivePierce",
-				"offensiveCold",
-				"offensiveFire",
-				"offensivePoison",
-				"offensiveLightning",
-				"offensiveLife",
-				"offensivePercentCurrentLife",
-				"offensiveManaBurn", // Added by VillageIdiot
-                "offensiveDisruption", // Added by VillageIdiot
-                "offensiveLifeLeech",
-				"offensiveElemental",
-				"offensiveTotalDamageReductionPercent", // Added by VillageIdiot
-                "offensiveTotalDamageReductionAbsolute", // Added by VillageIdiot
-                "offensiveTotalResistanceReductionPercent", // Added by VillageIdiot
-                "offensiveTotalResistanceReductionAbsolute", // Added by VillageIdiot
-                "offensiveFumble", // Added by VillageIdiot
-                "offensiveProjectileFumble", // Added by VillageIdiot
-                "offensiveConvert",
-				"offensiveTaunt",
-				"offensiveFear",
-				"offensiveConfusion",
-				"offensiveTrap", // Added by VillageIdiot
-                "offensiveFreeze", // Added by VillageIdiot
-                "offensivePetrify", // Added by VillageIdiot
-                "offensiveStun",
-				"offensiveSleep", // Added by VillageIdiot
-                "offensiveBonusPhysical"
-			};
+		{
+			"offensiveBasePhysical",
+			"offensiveBaseCold",
+			"offensiveBaseFire",
+			"offensiveBasePoison", // Added by VillageIdiot
+            "offensiveBaseLightning",
+			"offensiveBaseLife", // Added by VillageIdiot
+            "offensivePhysical",
+			"offensivePierceRatio",
+			"offensivePierce",
+			"offensiveCold",
+			"offensiveFire",
+			"offensivePoison",
+			"offensiveLightning",
+			"offensiveLife",
+			"offensivePercentCurrentLife",
+			"offensiveManaBurn", // Added by VillageIdiot
+            "offensiveDisruption", // Added by VillageIdiot
+            "offensiveLifeLeech",
+			"offensiveElemental",
+			"offensiveTotalDamageReductionPercent", // Added by VillageIdiot
+            "offensiveTotalDamageReductionAbsolute", // Added by VillageIdiot
+            "offensiveTotalResistanceReductionPercent", // Added by VillageIdiot
+            "offensiveTotalResistanceReductionAbsolute", // Added by VillageIdiot
+            "offensiveFumble", // Added by VillageIdiot
+            "offensiveProjectileFumble", // Added by VillageIdiot
+            "offensiveConvert",
+			"offensiveTaunt",
+			"offensiveFear",
+			"offensiveConfusion",
+			"offensiveTrap", // Added by VillageIdiot
+            "offensiveFreeze", // Added by VillageIdiot
+            "offensivePetrify", // Added by VillageIdiot
+            "offensiveStun",
+			"offensiveSleep", // Added by VillageIdiot
+            "offensiveBonusPhysical"
+		};
 
 		/// <summary>
 		/// Offensive Effects Variables Tags
 		/// </summary>
 		private string[] offensiveEffectVariables =
-			{
-				"Min",
-				"Max",
-				"Chance",
-				"XOR",         // boolean
-                "Global",      // boolean
-                "DurationMin", // Added by VillageIdiot
-                "DurationMax",
-				"DrainMin",    // Added by VillageIdiot
-                "DrainMax",    // Added by VillageIdiot
-                "DamageRatio"  // Added by VillageIdiot
-            };
+		{
+			"Min",
+			"Max",
+			"Chance",
+			"XOR",         // boolean
+            "Global",      // boolean
+            "DurationMin", // Added by VillageIdiot
+            "DurationMax",
+			"DrainMin",    // Added by VillageIdiot
+            "DrainMax",    // Added by VillageIdiot
+            "DamageRatio"  // Added by VillageIdiot
+        };
 
 		/// <summary>
 		/// Offensive Modifier Effect Tags
@@ -262,126 +263,126 @@ namespace TQVaultAE.Data
 		/// Look for "Chance" variable to get the chance of this effect.
 		/// </summary>
 		private string[] offensiveModifierEffects =
-			{
-				"offensivePhysicalModifier",
-				"offensivePierceRatioModifier",
-				"offensivePierceModifier",
-				"offensiveColdModifier",
-				"offensiveFireModifier",
-				"offensivePoisonModifier",
-				"offensiveLightningModifier",
-				"offensiveLifeModifier",
-				"offensiveManaBurnRatioAdder",   // Added by VillageIdiot
-                "offensiveElementalModifier",
-				"offensiveTotalDamageModifier",  // Added by VillageIdiot
-                "offensiveStunModifier",
-				"offensiveSleepModifier",        // Added by VillageIdiot
-                "skillProjectileSpeedModifier",  // Added by VillageIdiot
-                "sparkMaxNumber"                 // Added by VillageIdiot
-            };
+		{
+			"offensivePhysicalModifier",
+			"offensivePierceRatioModifier",
+			"offensivePierceModifier",
+			"offensiveColdModifier",
+			"offensiveFireModifier",
+			"offensivePoisonModifier",
+			"offensiveLightningModifier",
+			"offensiveLifeModifier",
+			"offensiveManaBurnRatioAdder",   // Added by VillageIdiot
+            "offensiveElementalModifier",
+			"offensiveTotalDamageModifier",  // Added by VillageIdiot
+            "offensiveStunModifier",
+			"offensiveSleepModifier",        // Added by VillageIdiot
+            "skillProjectileSpeedModifier",  // Added by VillageIdiot
+            "sparkMaxNumber"                 // Added by VillageIdiot
+        };
 
 		/// <summary>
 		/// Offensive Slow Effects Tags
 		/// Change "offensiveSlow" to "DamageDuration" to get the text tag.
 		/// </summary>
 		private string[] offensiveSlowEffects =
-			{
-				"offensiveSlowPhysical",
-				"offensiveSlowBleeding",
-				"offensiveSlowCold",
-				"offensiveSlowFire",
-				"offensiveSlowPoison",
-				"offensiveSlowLightning",
-				"offensiveSlowLife",
-				"offensiveSlowTotalSpeed",
-				"offensiveSlowAttackSpeed",
-				"offensiveSlowRunSpeed",
-				"offensiveSlowLifeLeach",
-				"offensiveSlowManaLeach",
-				"offensiveSlowOffensiveAbility",
-				"offensiveSlowDefensiveAbility",
-				"offensiveSlowOffensiveReduction",
-				"offensiveSlowDefensiveReduction"
-			};
+		{
+			"offensiveSlowPhysical",
+			"offensiveSlowBleeding",
+			"offensiveSlowCold",
+			"offensiveSlowFire",
+			"offensiveSlowPoison",
+			"offensiveSlowLightning",
+			"offensiveSlowLife",
+			"offensiveSlowTotalSpeed",
+			"offensiveSlowAttackSpeed",
+			"offensiveSlowRunSpeed",
+			"offensiveSlowLifeLeach",
+			"offensiveSlowManaLeach",
+			"offensiveSlowOffensiveAbility",
+			"offensiveSlowDefensiveAbility",
+			"offensiveSlowOffensiveReduction",
+			"offensiveSlowDefensiveReduction"
+		};
 
 		/// <summary>
 		/// Offensive Slow Effect Variables Tags
 		/// </summary>
 		private string[] offensiveSlowEffectVariables =
-			{
-				"Min",
-				"Max",
-				"DurationMin",
-				"DurationMax",
-				"Chance",
-				"XOR",         // boolean
-                "Global"       // boolean
-            };
+		{
+			"Min",
+			"Max",
+			"DurationMin",
+			"DurationMax",
+			"Chance",
+			"XOR",         // boolean
+            "Global"       // boolean
+        };
 
 		/// <summary>
 		/// Offensive Slow Modifier Effects Tags
 		/// Replace offensiveSlow with DamageDurationModifier to get the text tag
 		/// </summary>
 		private string[] offensiveSlowModifierEffects =
-			{
-				"offensiveSlowPhysical",
-				"offensiveSlowBleeding",
-				"offensiveSlowCold",
-				"offensiveSlowFire",
-				"offensiveSlowPoison",
-				"offensiveSlowLightning",
-				"offensiveSlowLife",
-				"offensiveSlowTotalSpeed",
-				"offensiveSlowAttackSpeed",
-				"offensiveSlowRunSpeed",
-				"offensiveSlowLifeLeach",
-				"offensiveSlowManaLeach",
-				"offensiveSlowOffensiveAbility",   // messes things up
-                "offensiveSlowDefensiveAbility",   // messes things up
-                "offensiveSlowOffensiveReduction", // messes things up
-                "offensiveSlowDefensiveReduction"  // messes things up
-            };
+		{
+			"offensiveSlowPhysical",
+			"offensiveSlowBleeding",
+			"offensiveSlowCold",
+			"offensiveSlowFire",
+			"offensiveSlowPoison",
+			"offensiveSlowLightning",
+			"offensiveSlowLife",
+			"offensiveSlowTotalSpeed",
+			"offensiveSlowAttackSpeed",
+			"offensiveSlowRunSpeed",
+			"offensiveSlowLifeLeach",
+			"offensiveSlowManaLeach",
+			"offensiveSlowOffensiveAbility",   // messes things up
+            "offensiveSlowDefensiveAbility",   // messes things up
+            "offensiveSlowOffensiveReduction", // messes things up
+            "offensiveSlowDefensiveReduction"  // messes things up
+        };
 
 		/// <summary>
 		/// Offensive Slow Modifer Effect Variables Tags
 		/// </summary>
 		private string[] offensiveSlowModifierEffectVariables =
-			{
-				"DurationModifier",
-				"Modifier",
-				"ModifierChance"
-			};
+		{
+			"DurationModifier",
+			"Modifier",
+			"ModifierChance"
+		};
 
 		/// <summary>
 		/// Retaliation Effects Tags
 		/// Replace "retaliation" with "Retaliation" to get text tag
 		/// </summary>
 		private string[] retaliationEffects =
-			{
-				"retaliationPhysical",
-				"retaliationPierceRatio",
-				"retaliationPierce",
-				"retaliationCold",
-				"retaliationFire",
-				"retaliationPoison",
-				"retaliationLightning",
-				"retaliationLife",
-				"retaliationStun",
-				"retaliationPercentCurrentLife",
-				"retaliationElemental"
-			};
+		{
+			"retaliationPhysical",
+			"retaliationPierceRatio",
+			"retaliationPierce",
+			"retaliationCold",
+			"retaliationFire",
+			"retaliationPoison",
+			"retaliationLightning",
+			"retaliationLife",
+			"retaliationStun",
+			"retaliationPercentCurrentLife",
+			"retaliationElemental"
+		};
 
 		/// <summary>
 		/// Retaliation Effect Variables Tags
 		/// </summary>
 		private string[] retaliationEffectVariables =
-			{
-				"Chance",
-				"Max",
-				"Min",
-				"Global",   // boolean
-                "XOR"       // boolean
-            };
+		{
+			"Chance",
+			"Max",
+			"Min",
+			"Global",   // boolean
+            "XOR"       // boolean
+        };
 
 		/// <summary>
 		/// Retaliation Modifier Effects Tags
@@ -389,139 +390,145 @@ namespace TQVaultAE.Data
 		/// Look for "Chance" variable to get the chance of this effect.
 		/// </summary>
 		private string[] retaliationModifierEffects =
-			{
-				"retaliationPhysicalModifier",
-				"retaliationPierceRatioModifier",
-				"retaliationPierceModifier",
-				"retaliationColdModifier",
-				"retaliationFireModifier",
-				"retaliationPoisonModifier",
-				"retaliationLightningModifier",
-				"retaliationLifeModifier",
-				"retaliationStunModifier",
-				"retaliationElementalModifier"
-			};
+		{
+			"retaliationPhysicalModifier",
+			"retaliationPierceRatioModifier",
+			"retaliationPierceModifier",
+			"retaliationColdModifier",
+			"retaliationFireModifier",
+			"retaliationPoisonModifier",
+			"retaliationLightningModifier",
+			"retaliationLifeModifier",
+			"retaliationStunModifier",
+			"retaliationElementalModifier"
+		};
 
 		/// <summary>
 		/// Retaliation Slow Effects Tags
 		/// Replace "retaliationSlow" with "RetaliationDuration" to get text tag
 		/// </summary>
 		private string[] retaliationSlowEffects =
-			{
-				"retaliationSlowPhysical",
-				"retaliationSlowBleeding",
-				"retaliationSlowCold",
-				"retaliationSlowFire",
-				"retaliationSlowPoison",
-				"retaliationSlowLightning",
-				"retaliationSlowLife",
-				"retaliationSlowTotalSpeed",
-				"retaliationSlowAttackSpeed",
-				"retaliationSlowRunSpeed",
-				"retaliationSlowLifeLeach",
-				"retaliationSlowManaLeach",
-				"retaliationSlowOffensiveAbility",
-				"retaliationSlowDefensiveAbility",
-				"retaliationSlowOffensiveReduction"
-			};
+		{
+			"retaliationSlowPhysical",
+			"retaliationSlowBleeding",
+			"retaliationSlowCold",
+			"retaliationSlowFire",
+			"retaliationSlowPoison",
+			"retaliationSlowLightning",
+			"retaliationSlowLife",
+			"retaliationSlowTotalSpeed",
+			"retaliationSlowAttackSpeed",
+			"retaliationSlowRunSpeed",
+			"retaliationSlowLifeLeach",
+			"retaliationSlowManaLeach",
+			"retaliationSlowOffensiveAbility",
+			"retaliationSlowDefensiveAbility",
+			"retaliationSlowOffensiveReduction"
+		};
 
 		/// <summary>
 		/// Retaliation Slow Effect Variables Tags
 		/// </summary>
 		private string[] retaliationSlowEffectVariables =
-			{
-				"Chance",
-				"Max",
-				"Min",
-				"DurationMax",
-				"DurationMin",
-				"Global",      // boolean
-                "XOR"          // boolean
-            };
+		{
+			"Chance",
+			"Max",
+			"Min",
+			"DurationMax",
+			"DurationMin",
+			"Global",      // boolean
+            "XOR"          // boolean
+        };
 
 		/// <summary>
 		/// Retaliation Slow Modifier Effects Tags
 		/// Replace "retaliationSlow" with "RetaliationDurationModifier" to get text tag
 		/// </summary>
 		private string[] retaliationSlowModifierEffects =
-			{
-				"retaliationSlowPhysical",
-				"retaliationSlowBleeding",
-				"retaliationSlowCold",
-				"retaliationSlowFire",
-				"retaliationSlowPoison",
-				"retaliationSlowLightning",
-				"retaliationSlowLife",
-				"retaliationSlowTotalSpeed",
-				"retaliationSlowAttackSpeed",
-				"retaliationSlowRunSpeed",
-				"retaliationSlowLifeLeach",
-				"retaliationSlowManaLeach",
-				"retaliationSlowOffensiveAbility",
-				"retaliationSlowDefensiveAbility",
-				"retaliationSlowOffensiveReduction"
-			};
+		{
+			"retaliationSlowPhysical",
+			"retaliationSlowBleeding",
+			"retaliationSlowCold",
+			"retaliationSlowFire",
+			"retaliationSlowPoison",
+			"retaliationSlowLightning",
+			"retaliationSlowLife",
+			"retaliationSlowTotalSpeed",
+			"retaliationSlowAttackSpeed",
+			"retaliationSlowRunSpeed",
+			"retaliationSlowLifeLeach",
+			"retaliationSlowManaLeach",
+			"retaliationSlowOffensiveAbility",
+			"retaliationSlowDefensiveAbility",
+			"retaliationSlowOffensiveReduction"
+		};
 
 		/// <summary>
 		/// Retaliation Slow Modifier Effect Variables Tags
 		/// </summary>
 		private string[] retaliationSlowModifierEffectVariables =
-			{
-				"Modifier",
-				"ModifierChance",
-				"DurationModifier",
-			};
+		{
+			"Modifier",
+			"ModifierChance",
+			"DurationModifier",
+		};
 
 		/// <summary>
 		/// Reagents for formulae
 		/// </summary>
 		private string[] reagents =
-			{
-				"reagent1BaseName",
-				"reagent2BaseName",
-				"reagent3BaseName"
-			};
+		{
+			"reagent1BaseName",
+			"reagent2BaseName",
+			"reagent3BaseName"
+		};
 
 		/// <summary>
 		/// For skill parameters (duration, radius, angle, etc.)
 		/// </summary>
 		private string[] skillEffects =
-			{
-				"skillManaCost",
-				"skillActiveManaCost",
-				"skillChanceWeight",
-				"skillActiveDuration",
-				"skillTargetRadius",
-				"projectileExplosionRadius",
-				"skillTargetAngle",
-				"skillTargetNumber"
-			};
+		{
+			"skillManaCost",
+			"skillActiveManaCost",
+			"skillChanceWeight",
+			"skillActiveDuration",
+			"skillTargetRadius",
+			"projectileExplosionRadius",
+			"skillTargetAngle",
+			"skillTargetNumber",
+			"skillChargeDuration",
+			"skillChargeLevel",
+			"piercingProjectile",
+			"headVelocity",
+			"maxDistance",
+			"tailVelocity",
+		};
 
 		/// <summary>
 		/// For grouping the "Protects Against:" damage qualifiers.
 		/// </summary>
 		private string[] damageQualifierEffects =
-			{
-				"physicalDamageQualifier",
-				"pierceDamageQualifier",
-				"lightningDamageQualifier",
-				"fireDamageQualifier",
-				"coldDamageQualifier",
-				"poisonDamageQualifier",
-				"lifeDamageQualifier",
-				"bleedingDamageQualifier",
-				"elementalDamageQualifier"
-			};
+		{
+			"physicalDamageQualifier",
+			"pierceDamageQualifier",
+			"lightningDamageQualifier",
+			"fireDamageQualifier",
+			"coldDamageQualifier",
+			"poisonDamageQualifier",
+			"lifeDamageQualifier",
+			"bleedingDamageQualifier",
+			"elementalDamageQualifier"
+		};
 
 		/// <summary>
 		/// For shield parameters (defensiveBlock and blockRecoveryTime)
 		/// </summary>
 		private string[] shieldEffects =
-			{
-				"defensiveBlock",
-                ////"blockAbsorption",  // This one is suppressed
-                "blockRecoveryTime"
-			};
+		{
+			"defensiveBlock",
+            ////"blockAbsorption",  // This one is suppressed
+            "blockRecoveryTime"
+		};
 
 		/// <summary>
 		/// Dictionary holding all of the attributes
@@ -633,6 +640,7 @@ namespace TQVaultAE.Data
 		public string GetAttributeTextTag(ItemAttributesData data)
 		{
 			string result = string.Empty;
+
 			if (data == null)
 				return result;
 
@@ -827,6 +835,10 @@ namespace TQVaultAE.Data
 		/// <returns>modified effect text tag</returns>
 		private string GetDefenseEffectTextTag(string effect)
 		{
+			// database orphan tag with no substitute => return as is
+			if (effect.Equals("defensiveTotalSpeedChance", StringComparison.OrdinalIgnoreCase))
+				return effect;
+
 			// Check for specific strings.
 			switch (effect.ToUpperInvariant())
 			{
@@ -981,6 +993,13 @@ namespace TQVaultAE.Data
 			// Replace retaliationSlow with RetaliationDurationModifier.
 			=> string.Concat("RetaliationDurationModifier", effect.Substring(15));
 
+
+		string[] _GetSkillEffectTextTagUnchanged = new[] {
+			"SkillChanceWeight",
+			"headVelocity",
+			"maxDistance",
+			"tailVelocity",
+		};
 		/// <summary>
 		/// Gets modifier skill effect text tag.  Normalized to UpperInvariant.
 		/// </summary>
@@ -988,9 +1007,17 @@ namespace TQVaultAE.Data
 		/// <returns>modified effect text tag</returns>
 		private string GetSkillEffectTextTag(string effect)
 		{
-			// Return SkillChanceWeight as-is.
-			if (effect.ToUpperInvariant() == "SKILLCHANCEWEIGHT")
+			// Return effet as-is.
+			if (_GetSkillEffectTextTagUnchanged.Any(s => s.Equals(effect, StringComparison.OrdinalIgnoreCase)))
 				return effect;
+
+			// Misspeling
+			if (effect.Equals("skillChargeDuration", StringComparison.OrdinalIgnoreCase))
+				return "SkillChargeDurationMod";
+			if (effect.Equals("skillChargeLevel", StringComparison.OrdinalIgnoreCase))
+				return "SkillChargeDuration";
+			if (effect.Equals("piercingProjectile", StringComparison.OrdinalIgnoreCase))
+				return "ProjectilePiercingChance";
 
 			// Strip off Projectile from the text tag.
 			if (effect.ToUpperInvariant().StartsWith("PROJECTILE", StringComparison.Ordinal))
@@ -1013,7 +1040,9 @@ namespace TQVaultAE.Data
 			int subOrder = 0;
 			foreach (string otherEffect in otherEffects)
 			{
-				attributeDictionary.Add(otherEffect.ToUpperInvariant(), new ItemAttributesData(ItemAttributesEffectType.Other, otherEffect, otherEffect, string.Empty, subOrder));
+				attributeDictionary.Add(otherEffect.ToUpperInvariant()
+					, new ItemAttributesData(ItemAttributesEffectType.Other, otherEffect, otherEffect, string.Empty, subOrder)
+				);
 				++subOrder;
 			}
 
@@ -1022,10 +1051,14 @@ namespace TQVaultAE.Data
 			foreach (string shieldEffect in shieldEffects)
 			{
 				string normalizedEffect = shieldEffect.ToUpperInvariant();
-				attributeDictionary.Add(normalizedEffect, new ItemAttributesData(ItemAttributesEffectType.ShieldEffect, shieldEffect, shieldEffect, "Min", subOrder));
+				attributeDictionary.Add(
+					normalizedEffect
+					, new ItemAttributesData(ItemAttributesEffectType.ShieldEffect, shieldEffect, shieldEffect, "Min", subOrder)
+				);
 				attributeDictionary.Add(
 					string.Concat(normalizedEffect, "CHANCE"),
-					new ItemAttributesData(ItemAttributesEffectType.ShieldEffect, shieldEffect, shieldEffect, "Chance", subOrder));
+					new ItemAttributesData(ItemAttributesEffectType.ShieldEffect, shieldEffect, shieldEffect, "Chance", subOrder)
+				);
 				++subOrder;
 			}
 
@@ -1033,10 +1066,13 @@ namespace TQVaultAE.Data
 			foreach (string characterEffect in characterEffects)
 			{
 				string normalizedEffect = characterEffect.ToUpperInvariant();
-				attributeDictionary.Add(normalizedEffect, new ItemAttributesData(ItemAttributesEffectType.Character, characterEffect, characterEffect, "Min", subOrder));
+				attributeDictionary.Add(normalizedEffect
+					, new ItemAttributesData(ItemAttributesEffectType.Character, characterEffect, characterEffect, "Min", subOrder)
+				);
 				attributeDictionary.Add(
-					string.Concat(normalizedEffect, "CHANCE"),
-					new ItemAttributesData(ItemAttributesEffectType.Character, characterEffect, characterEffect, "Chance", subOrder));
+					string.Concat(normalizedEffect, "CHANCE")
+					, new ItemAttributesData(ItemAttributesEffectType.Character, characterEffect, characterEffect, "Chance", subOrder)
+				);
 				++subOrder;
 			}
 
@@ -1044,10 +1080,13 @@ namespace TQVaultAE.Data
 			foreach (string defenseEffect in defenseEffects)
 			{
 				string normalizedEffect = defenseEffect.ToUpperInvariant();
-				attributeDictionary.Add(normalizedEffect, new ItemAttributesData(ItemAttributesEffectType.Defense, defenseEffect, defenseEffect, "Min", subOrder));
+				attributeDictionary.Add(normalizedEffect
+					, new ItemAttributesData(ItemAttributesEffectType.Defense, defenseEffect, defenseEffect, "Min", subOrder)
+				);
 				attributeDictionary.Add(
-					string.Concat(normalizedEffect, "CHANCE"),
-					new ItemAttributesData(ItemAttributesEffectType.Defense, defenseEffect, defenseEffect, "Chance", subOrder));
+					string.Concat(normalizedEffect, "CHANCE")
+					, new ItemAttributesData(ItemAttributesEffectType.Defense, defenseEffect, defenseEffect, "Chance", subOrder)
+				);
 				++subOrder;
 			}
 
@@ -1057,8 +1096,11 @@ namespace TQVaultAE.Data
 				foreach (string offensiveEffectVariable in offensiveEffectVariables)
 				{
 					attributeDictionary.Add(
-						string.Concat(offensiveEffect.ToUpperInvariant(), offensiveEffectVariable.ToUpperInvariant()),
-						new ItemAttributesData(ItemAttributesEffectType.Offense, string.Concat(offensiveEffect, offensiveEffectVariable), offensiveEffect, offensiveEffectVariable, subOrder));
+						string.Concat(offensiveEffect.ToUpperInvariant(), offensiveEffectVariable.ToUpperInvariant())
+						, new ItemAttributesData(ItemAttributesEffectType.Offense
+							, string.Concat(offensiveEffect, offensiveEffectVariable), offensiveEffect, offensiveEffectVariable, subOrder
+						)
+					);
 				}
 
 				++subOrder;
@@ -1069,11 +1111,13 @@ namespace TQVaultAE.Data
 			{
 				string normalizedEffect = offensiveModifierEffect.ToUpperInvariant();
 				attributeDictionary.Add(
-					normalizedEffect,
-					new ItemAttributesData(ItemAttributesEffectType.OffenseModifier, offensiveModifierEffect, offensiveModifierEffect, "Min", subOrder));
+					normalizedEffect
+					, new ItemAttributesData(ItemAttributesEffectType.OffenseModifier, offensiveModifierEffect, offensiveModifierEffect, "Min", subOrder)
+				);
 				attributeDictionary.Add(
-					string.Concat(normalizedEffect, "CHANCE"),
-					new ItemAttributesData(ItemAttributesEffectType.OffenseModifier, offensiveModifierEffect, offensiveModifierEffect, "Chance", subOrder));
+					string.Concat(normalizedEffect, "CHANCE")
+					, new ItemAttributesData(ItemAttributesEffectType.OffenseModifier, offensiveModifierEffect, offensiveModifierEffect, "Chance", subOrder)
+				);
 				++subOrder;
 			}
 
@@ -1083,10 +1127,12 @@ namespace TQVaultAE.Data
 				foreach (string offensiveSlowEffectVariable in offensiveSlowEffectVariables)
 				{
 					attributeDictionary.Add(
-						string.Concat(offensiveSlowEffect.ToUpperInvariant(), offensiveSlowEffectVariable.ToUpperInvariant()),
-						new ItemAttributesData(ItemAttributesEffectType.OffenseSlow, string.Concat(offensiveSlowEffect, offensiveSlowEffectVariable), offensiveSlowEffect, offensiveSlowEffectVariable, subOrder));
+						string.Concat(offensiveSlowEffect.ToUpperInvariant(), offensiveSlowEffectVariable.ToUpperInvariant())
+						, new ItemAttributesData(ItemAttributesEffectType.OffenseSlow
+							, string.Concat(offensiveSlowEffect, offensiveSlowEffectVariable), offensiveSlowEffect, offensiveSlowEffectVariable, subOrder
+						)
+					);
 				}
-
 				++subOrder;
 			}
 
@@ -1096,10 +1142,12 @@ namespace TQVaultAE.Data
 				foreach (string offensiveSlowModifierEffectVariable in offensiveSlowModifierEffectVariables)
 				{
 					attributeDictionary.Add(
-						string.Concat(offensiveSlowModifierEffect.ToUpperInvariant(), offensiveSlowModifierEffectVariable.ToUpperInvariant()),
-						new ItemAttributesData(ItemAttributesEffectType.OffenseSlowModifier, string.Concat(offensiveSlowModifierEffect, offensiveSlowModifierEffectVariable), offensiveSlowModifierEffect, offensiveSlowModifierEffectVariable, subOrder));
+						string.Concat(offensiveSlowModifierEffect.ToUpperInvariant(), offensiveSlowModifierEffectVariable.ToUpperInvariant())
+						, new ItemAttributesData(ItemAttributesEffectType.OffenseSlowModifier
+							, string.Concat(offensiveSlowModifierEffect, offensiveSlowModifierEffectVariable), offensiveSlowModifierEffect, offensiveSlowModifierEffectVariable, subOrder
+						)
+					);
 				}
-
 				++subOrder;
 			}
 
@@ -1109,10 +1157,12 @@ namespace TQVaultAE.Data
 				foreach (string retaliationEffectVariable in retaliationEffectVariables)
 				{
 					attributeDictionary.Add(
-						string.Concat(retaliationEffect.ToUpperInvariant(), retaliationEffectVariable.ToUpperInvariant()),
-						new ItemAttributesData(ItemAttributesEffectType.Retaliation, string.Concat(retaliationEffect, retaliationEffectVariable), retaliationEffect, retaliationEffectVariable, subOrder));
+						string.Concat(retaliationEffect.ToUpperInvariant(), retaliationEffectVariable.ToUpperInvariant())
+						, new ItemAttributesData(ItemAttributesEffectType.Retaliation
+							, string.Concat(retaliationEffect, retaliationEffectVariable), retaliationEffect, retaliationEffectVariable, subOrder
+						)
+					);
 				}
-
 				++subOrder;
 			}
 
@@ -1121,11 +1171,17 @@ namespace TQVaultAE.Data
 			{
 				string normalizedEffect = retaliationModifierEffect.ToUpperInvariant();
 				attributeDictionary.Add(
-					normalizedEffect,
-					new ItemAttributesData(ItemAttributesEffectType.RetaliationModifier, retaliationModifierEffect, retaliationModifierEffect, "Min", subOrder));
+					normalizedEffect
+					, new ItemAttributesData(ItemAttributesEffectType.RetaliationModifier
+						, retaliationModifierEffect, retaliationModifierEffect, "Min", subOrder
+					)
+				);
 				attributeDictionary.Add(
-					string.Concat(normalizedEffect, "CHANCE"),
-					new ItemAttributesData(ItemAttributesEffectType.RetaliationModifier, retaliationModifierEffect, retaliationModifierEffect, "Chance", subOrder));
+					string.Concat(normalizedEffect, "CHANCE")
+					, new ItemAttributesData(ItemAttributesEffectType.RetaliationModifier
+						, retaliationModifierEffect, retaliationModifierEffect, "Chance", subOrder
+					)
+				);
 				++subOrder;
 			}
 
@@ -1135,10 +1191,12 @@ namespace TQVaultAE.Data
 				foreach (string retaliationSlowEffectVariable in retaliationSlowEffectVariables)
 				{
 					attributeDictionary.Add(
-						string.Concat(retaliationSlowEffect.ToUpperInvariant(), retaliationSlowEffectVariable.ToUpperInvariant()),
-						new ItemAttributesData(ItemAttributesEffectType.RetaliationSlow, string.Concat(retaliationSlowEffect, retaliationSlowEffectVariable), retaliationSlowEffect, retaliationSlowEffectVariable, subOrder));
+						string.Concat(retaliationSlowEffect.ToUpperInvariant(), retaliationSlowEffectVariable.ToUpperInvariant())
+						, new ItemAttributesData(ItemAttributesEffectType.RetaliationSlow
+							, string.Concat(retaliationSlowEffect, retaliationSlowEffectVariable), retaliationSlowEffect, retaliationSlowEffectVariable, subOrder
+						)
+					);
 				}
-
 				++subOrder;
 			}
 
@@ -1148,10 +1206,12 @@ namespace TQVaultAE.Data
 				foreach (string retaliationSlowModifierEffectVariable in retaliationSlowModifierEffectVariables)
 				{
 					attributeDictionary.Add(
-						string.Concat(retaliationSlowModifierEffect.ToUpperInvariant(), retaliationSlowModifierEffectVariable.ToUpperInvariant()),
-						new ItemAttributesData(ItemAttributesEffectType.RetaliationSlowModifier, string.Concat(retaliationSlowModifierEffect, retaliationSlowModifierEffectVariable), retaliationSlowModifierEffect, retaliationSlowModifierEffectVariable, subOrder));
+						string.Concat(retaliationSlowModifierEffect.ToUpperInvariant(), retaliationSlowModifierEffectVariable.ToUpperInvariant())
+						, new ItemAttributesData(ItemAttributesEffectType.RetaliationSlowModifier
+							, string.Concat(retaliationSlowModifierEffect, retaliationSlowModifierEffectVariable), retaliationSlowModifierEffect, retaliationSlowModifierEffectVariable, subOrder
+						)
+					);
 				}
-
 				++subOrder;
 			}
 
@@ -1160,8 +1220,11 @@ namespace TQVaultAE.Data
 			foreach (string damageQualifierEffect in damageQualifierEffects)
 			{
 				attributeDictionary.Add(
-					damageQualifierEffect.ToUpperInvariant(),
-					new ItemAttributesData(ItemAttributesEffectType.DamageQualifierEffect, damageQualifierEffect, damageQualifierEffect, string.Empty, subOrder));
+					damageQualifierEffect.ToUpperInvariant()
+					, new ItemAttributesData(ItemAttributesEffectType.DamageQualifierEffect
+						, damageQualifierEffect, damageQualifierEffect, string.Empty, subOrder
+					)
+				);
 				++subOrder;
 			}
 
@@ -1169,7 +1232,10 @@ namespace TQVaultAE.Data
 			subOrder = 0;
 			foreach (string reagent in reagents)
 			{
-				attributeDictionary.Add(reagent.ToUpperInvariant(), new ItemAttributesData(ItemAttributesEffectType.Reagent, reagent, reagent, string.Empty, subOrder));
+				attributeDictionary.Add(
+					reagent.ToUpperInvariant()
+					, new ItemAttributesData(ItemAttributesEffectType.Reagent, reagent, reagent, string.Empty, subOrder)
+				);
 				++subOrder;
 			}
 
@@ -1177,7 +1243,10 @@ namespace TQVaultAE.Data
 			subOrder = 0;
 			foreach (string skillEffect in skillEffects)
 			{
-				attributeDictionary.Add(skillEffect.ToUpperInvariant(), new ItemAttributesData(ItemAttributesEffectType.SkillEffect, skillEffect, skillEffect, string.Empty, subOrder));
+				attributeDictionary.Add(
+					skillEffect.ToUpperInvariant()
+					, new ItemAttributesData(ItemAttributesEffectType.SkillEffect, skillEffect, skillEffect, string.Empty, subOrder)
+				);
 				++subOrder;
 			}
 

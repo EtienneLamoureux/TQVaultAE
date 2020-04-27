@@ -1,22 +1,17 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Drawing;
-using System.Globalization;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Search;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
-using TQVaultAE.Services;
 
 namespace TQVaultAE.GUI
 {
 	public partial class MainForm
 	{
-		private ISearchService searchService = null;
-
 		/// <summary>
 		/// Handler for clicking the search button on the form.
 		/// </summary>
@@ -32,13 +27,12 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void OpenSearchDialog()
 		{
-			var searchDialog = this.ServiceProvider.GetService<SearchDialog>();
-			searchDialog.Scale(new SizeF(UIService.Scale, UIService.Scale));
+			var searchDialog = this.ServiceProvider.GetService<SearchDialogAdvanced>();
+			//searchDialog.Scale(new SizeF(UIService.Scale, UIService.Scale));
+			var result = searchDialog.ShowDialog();
 
-			if (searchDialog.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(searchDialog.SearchText))
-			{
-				this.Search(searchDialog.SearchText);
-			}
+			if (result == DialogResult.OK && searchDialog.QueryResults.Any())
+				this.DisplayResults(null, searchDialog.QueryResults);
 		}
 
 		/// <summary>
@@ -65,27 +59,18 @@ namespace TQVaultAE.GUI
 			}
 		}
 
-
-		/// <summary>
-		/// Searches loaded files based on the specified search string.  Internally normalized to UpperInvariant
-		/// </summary>
-		/// <param name="searchString">string that we are searching for</param>
-		private void Search(string searchString)
+		private void DisplayResults(string searchString, IEnumerable<Result> results)
 		{
-			if (string.IsNullOrWhiteSpace(searchString)) return;
-
-			var results = this.searchService.Search(searchString);
-
 			if (results is null || !results.Any())
 			{
 				MessageBox.Show(
-					string.Format(CultureInfo.CurrentCulture, Resources.MainFormNoItemsFound, searchString),
-					Resources.MainFormNoItemsFound2,
-					MessageBoxButtons.OK,
-					MessageBoxIcon.Information,
-					MessageBoxDefaultButton.Button1,
-					RightToLeftOptions);
-
+					string.Format(Resources.MainFormNoItemsFound, searchString)
+					, Resources.MainFormNoItemsFound2
+					, MessageBoxButtons.OK
+					, MessageBoxIcon.Information
+					, MessageBoxDefaultButton.Button1
+					, RightToLeftOptions
+				);
 				return;
 			}
 

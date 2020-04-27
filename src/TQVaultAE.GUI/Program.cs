@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.GUI
 {
-	using log4net.Core;
 	using Microsoft.Extensions.DependencyInjection;
 	using System;
 	using System.Globalization;
@@ -15,24 +14,24 @@ namespace TQVaultAE.GUI
 	using System.Security.Permissions;
 	using System.Threading;
 	using System.Windows.Forms;
-	using TQVaultAE.Config;
 	using TQVaultAE.Data;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
-	using TQVaultAE.Domain.Helpers;
 	using TQVaultAE.Domain.Exceptions;
 	using TQVaultAE.Logs;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Services;
 	using TQVaultAE.Services.Win32;
+	using TQVaultAE.Config;
+	using Microsoft.Extensions.Logging;
 
 	/// <summary>
 	/// Main Program class
 	/// </summary>
 	public static class Program
 	{
-		private static readonly log4net.ILog Log = Logger.Get(typeof(Program));
+		private static ILogger Log;
 
 		/// <summary>
 		/// Right to left reading options for message boxes
@@ -40,6 +39,7 @@ namespace TQVaultAE.GUI
 		private static MessageBoxOptions rightToLeft;
 
 		internal static ServiceProvider ServiceProvider { get; private set; }
+		private static ILoggerFactory LoggerFactory;
 
 		/// <summary>
 		/// The main entry point for the application.
@@ -63,15 +63,19 @@ namespace TQVaultAE.GUI
 				Application.SetCompatibleTextRenderingDefault(false);
 
 #if DEBUG
-				Logger.ChangeRootLogLevel(Level.Debug);
 				//TQDebug.DebugEnabled = true;
 #endif
+				// Setup regular Microsoft.Extensions.Logging abstraction manualy
+				LoggerFactory = new LoggerFactory();
+				LoggerFactory.AddLog4Net();
+				Log = LoggerFactory.CreateLogger(typeof(Program));// Make static level logger
 
 			restart:
 				// Configure DI
 				var scol = new ServiceCollection()
 				// Logs
-				.AddSingleton(typeof(ILogger<>), typeof(ILoggerImpl<>))
+				.AddSingleton(LoggerFactory)
+				.AddSingleton(typeof(ILogger<>), typeof(Logger<>))
 				// States
 				.AddSingleton<SessionContext>()
 				// Providers
@@ -92,7 +96,6 @@ namespace TQVaultAE.GUI
 				.AddTransient<IPlayerService, PlayerService>()
 				.AddTransient<IStashService, StashService>()
 				.AddTransient<IVaultService, VaultService>()
-				.AddTransient<ISearchService, SearchService>()
 				.AddTransient<IFontService, FontService>()
 				.AddTransient<ITranslationService, TranslationService>()
 				.AddSingleton<IUIService, UIService>()
@@ -105,7 +108,7 @@ namespace TQVaultAE.GUI
 				.AddTransient<ItemProperties>()
 				.AddTransient<ItemSeedDialog>()
 				.AddTransient<ResultsDialog>()
-				.AddTransient<SearchDialog>()
+				.AddTransient<SearchDialogAdvanced>()
 				.AddTransient<SettingsDialog>()
 				.AddTransient<VaultMaintenanceDialog>()
 				.AddTransient<SplashScreenForm>();
@@ -229,11 +232,11 @@ namespace TQVaultAE.GUI
 					}
 					catch (ArgumentNullException e)
 					{
-						Log.Error("Argument Null Exception when setting the language", e);
+						Log.LogError(e, "Argument Null Exception when setting the language");
 					}
 					catch (NotSupportedException e)
 					{
-						Log.Error("Not Supported Exception when setting the language", e);
+						Log.LogError(e, "Not Supported Exception when setting the language");
 					}
 				}
 
@@ -285,14 +288,14 @@ namespace TQVaultAE.GUI
 			DialogResult result = DialogResult.Cancel;
 			try
 			{
-				Log.Error("UI Thread Exception", t.Exception);
+				Log.LogError(t.Exception, "UI Thread Exception");
 				result = MessageBox.Show(Log.FormatException(t.Exception), "Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
 			}
 			catch
 			{
 				try
 				{
-					Log.Fatal("Fatal Windows Forms Error", t.Exception);
+					Log.LogCritical(t.Exception, "Fatal Windows Forms Error");
 					MessageBox.Show(Log.FormatException(t.Exception), "Fatal Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
 				}
 				finally
@@ -319,7 +322,7 @@ namespace TQVaultAE.GUI
 			try
 			{
 				Exception ex = (Exception)e.ExceptionObject;
-				Log.Error("An application error occurred.", ex);
+				Log.LogError(ex, "An application error occurred.");
 			}
 			finally
 			{

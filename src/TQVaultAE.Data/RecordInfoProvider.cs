@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -16,7 +17,7 @@ namespace TQVaultAE.Data
 	/// </summary>
 	public class RecordInfoProvider : IRecordInfoProvider
 	{
-		private readonly log4net.ILog Log = null;
+		private readonly ILogger Log = null;
 		private readonly ITQDataService TQData;
 
 		/// <summary>
@@ -24,7 +25,7 @@ namespace TQVaultAE.Data
 		/// </summary>
 		public RecordInfoProvider(ILogger<RecordInfoProvider> log, ITQDataService tQData)
 		{
-			this.Log = log.Logger;
+			this.Log = log;
 			this.TQData = tQData;
 		}
 
@@ -106,16 +107,16 @@ namespace TQVaultAE.Data
 
 					if (variableName == null)
 					{
-						var ex = new ArgumentNullException(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable is NULL", info.ID));
-						Log.ErrorFormat(CultureInfo.InvariantCulture, "Error in ARZFile - {0}", arzFile.FileName);
+						var ex = new ArgumentNullException(string.Format("Error while parsing arz record {0}, variable is NULL", info.ID));
+						Log.LogError("Error in ARZFile - {0}", arzFile.FileName);
 						Log.ErrorException(ex);
 						throw ex;
 					}
 
 					if (dataType < 0 || dataType > 3)
 					{
-						var ex = new ArgumentOutOfRangeException(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable {1}, bad dataType {2}", info.ID, variableName, dataType));
-						Log.ErrorFormat(CultureInfo.InvariantCulture, "Error in ARZFile - {0}", arzFile.FileName);
+						var ex = new ArgumentOutOfRangeException(string.Format("Error while parsing arz record {0}, variable {1}, bad dataType {2}", info.ID, variableName, dataType));
+						Log.LogError("Error in ARZFile - {0}", arzFile.FileName);
 						Log.ErrorException(ex);
 						throw ex;
 					}
@@ -124,8 +125,8 @@ namespace TQVaultAE.Data
 
 					if (valCount < 1)
 					{
-						var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error while parsing arz record {0}, variable {1}, bad valCount {2}", info.ID, variableName, valCount));
-						Log.ErrorFormat(CultureInfo.InvariantCulture, "Error in ARZFile - {0}", arzFile.FileName);
+						var ex = new ArgumentException(string.Format("Error while parsing arz record {0}, variable {1}, bad valCount {2}", info.ID, variableName, valCount));
+						Log.LogError("Error in ARZFile - {0}", arzFile.FileName);
 						Log.ErrorException(ex);
 						throw ex;
 					}

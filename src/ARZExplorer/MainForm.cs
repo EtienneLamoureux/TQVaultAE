@@ -5,8 +5,8 @@
 //-----------------------------------------------------------------------
 namespace ArzExplorer
 {
-	using log4net;
 	using Microsoft.Extensions.DependencyInjection;
+	using Microsoft.Extensions.Logging;
 	using System;
 	using System.Collections.Generic;
 	using System.Drawing;
@@ -53,7 +53,7 @@ namespace ArzExplorer
 		/// File name for a single extracted file.
 		/// </summary>
 		private string destFile;
-		private readonly ILog Log;
+		private readonly ILogger Log;
 		private readonly IArcFileProvider arcProv;
 		private readonly IArzFileProvider arzProv;
 		private readonly IDBRecordCollectionProvider DBRecordCollectionProvider;
@@ -90,7 +90,7 @@ namespace ArzExplorer
 			Assembly a = Assembly.GetExecutingAssembly();
 			AssemblyName aname = a.GetName();
 
-			this.Log = log.Logger;
+			this.Log = log;
 			this.arcProv = arcFileProvider;
 			this.arzProv = arzFileProvider;
 			this.DBRecordCollectionProvider = dBRecordCollectionProvider;

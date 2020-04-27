@@ -6,14 +6,14 @@ namespace TQVaultAE.Domain.Contracts.Services
 	{
 		IAddFontToOS FontLoader { get; }
 
-		Font GetFontAlbertusMT(float fontSize, float? scale = null);
-		Font GetFontAlbertusMT(float fontSize, FontStyle fontStyle, float? scale = null);
-		Font GetFontAlbertusMT(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b);
-		Font GetFontAlbertusMT(float fontSize, GraphicsUnit unit);
-		Font GetFontAlbertusMTLight(float fontSize);
-		Font GetFontAlbertusMTLight(float fontSize, float? scale = null);
-		Font GetFontAlbertusMTLight(float fontSize, FontStyle fontStyle, float? scale = null);
-		Font GetFontAlbertusMTLight(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b);
-		Font GetFontAlbertusMTLight(float fontSize, GraphicsUnit unit);
+		Font GetFont(float fontSize, float? scale = null);
+		Font GetFont(float fontSize, FontStyle fontStyle, float? scale = null);
+		Font GetFont(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b);
+		Font GetFont(float fontSize, GraphicsUnit unit);
+		Font GetFontLight(float fontSize);
+		Font GetFontLight(float fontSize, float? scale = null);
+		Font GetFontLight(float fontSize, FontStyle fontStyle, float? scale = null);
+		Font GetFontLight(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b);
+		Font GetFontLight(float fontSize, GraphicsUnit unit);
 	}
 }
