@@ -27,11 +27,11 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.labelProductName.Font = FontService.GetFontAlbertusMTLight(11.25F);
-			this.labelVersion.Font = FontService.GetFontAlbertusMTLight(11.25F);
-			this.labelCopyright.Font = FontService.GetFontAlbertusMTLight(11.25F);
-			this.textBoxDescription.Font = FontService.GetFontAlbertusMTLight(9.75F);
-			this.buttonOK.Font = FontService.GetFontAlbertusMTLight(12F);
+			this.labelProductName.Font = FontService.GetFontLight(11.25F);
+			this.labelVersion.Font = FontService.GetFontLight(11.25F);
+			this.labelCopyright.Font = FontService.GetFontLight(11.25F);
+			this.textBoxDescription.Font = FontService.GetFontLight(9.75F);
+			this.buttonOK.Font = FontService.GetFontLight(12F);
 
 			#endregion
 

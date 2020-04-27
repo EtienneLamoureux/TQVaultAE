@@ -5,20 +5,20 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Data
 {
+	using Microsoft.Extensions.Logging;
 	using System;
 	using System.Globalization;
 	using System.IO;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
-	using TQVaultAE.Logs;
 
 	/// <summary>
 	/// Class for handling the stash file
 	/// </summary>
 	public class StashProvider : IStashProvider
 	{
-		private readonly log4net.ILog Log;
+		private readonly ILogger Log;
 		private readonly IItemProvider ItemProvider;
 		private readonly ISackCollectionProvider SackCollectionProvider;
 		private readonly IGamePathService GamePathResolver;
@@ -81,7 +81,7 @@ namespace TQVaultAE.Data
 
 		public StashProvider(ILogger<StashProvider> log, IItemProvider itemProvider, ISackCollectionProvider sackCollectionProvider, IGamePathService gamePathResolver, ITQDataService tQData)
 		{
-			this.Log = log.Logger;
+			this.Log = log;
 			this.ItemProvider = itemProvider;
 			this.SackCollectionProvider = sackCollectionProvider;
 			this.GamePathResolver = gamePathResolver;
@@ -195,7 +195,7 @@ namespace TQVaultAE.Data
 			}
 			catch (ArgumentException ex)
 			{
-				Log.Error("ParseRawData fail !", ex);
+				Log.LogError(ex, "ParseRawData fail !");
 				throw;
 			}
 
@@ -270,18 +270,12 @@ namespace TQVaultAE.Data
 			using (BinaryReader reader = new BinaryReader(new MemoryStream(sta.rawData, false)))
 			{
 				int offset = 0;
-				try
-				{
-					ParseItemBlock(sta, offset, reader);
-				}
-				catch (ArgumentException)
-				{
-					throw;
-				}
+
+				ParseItemBlock(sta, offset, reader);
 
 				try
 				{
-					string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, sta.PlayerName), " Export.txt");
+					string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, sta.PlayerName), " Stash Export.txt");
 					using (StreamWriter outStream = new StreamWriter(outfile, false))
 					{
 						outStream.WriteLine("Number of Sacks = {0}", sta.numberOfSacks);
@@ -310,7 +304,9 @@ namespace TQVaultAE.Data
 				}
 				catch (IOException exception)
 				{
-					Log.ErrorFormat(exception, "Error Exporting - '{0} Export.txt'", Path.Combine(GamePathResolver.TQVaultSaveFolder, sta.PlayerName));
+					Log.LogError(exception, "Error Exporting - '{0} Export.txt'"
+						, Path.Combine(GamePathResolver.TQVaultSaveFolder, sta.PlayerName)
+					);
 				}
 			}
 		}
@@ -322,41 +318,35 @@ namespace TQVaultAE.Data
 		/// <param name="reader">BinaryReader instance</param>
 		private void ParseItemBlock(Stash sta, int fileOffset, BinaryReader reader)
 		{
-			try
-			{
-				reader.BaseStream.Seek(fileOffset, SeekOrigin.Begin);
-				reader.ReadInt32();
+			reader.BaseStream.Seek(fileOffset, SeekOrigin.Begin);
+			reader.ReadInt32();
 
-				TQData.ValidateNextString("begin_block", reader);
-				sta.beginBlockCrap = reader.ReadInt32();
+			TQData.ValidateNextString("begin_block", reader);
+			sta.beginBlockCrap = reader.ReadInt32();
 
-				TQData.ValidateNextString("stashVersion", reader);
-				sta.stashVersion = reader.ReadInt32();
+			TQData.ValidateNextString("stashVersion", reader);
+			sta.stashVersion = reader.ReadInt32();
 
-				TQData.ValidateNextString("fName", reader);
+			TQData.ValidateNextString("fName", reader);
 
-				// Changed to raw data to support extended characters
-				int stringLength = reader.ReadInt32();
-				sta.name = reader.ReadBytes(stringLength);
+			// Changed to raw data to support extended characters
+			int stringLength = reader.ReadInt32();
+			sta.name = reader.ReadBytes(stringLength);
 
-				TQData.ValidateNextString("sackWidth", reader);
-				sta.Width = reader.ReadInt32();
+			TQData.ValidateNextString("sackWidth", reader);
+			sta.Width = reader.ReadInt32();
 
-				TQData.ValidateNextString("sackHeight", reader);
-				sta.Height = reader.ReadInt32();
+			TQData.ValidateNextString("sackHeight", reader);
+			sta.Height = reader.ReadInt32();
 
-				sta.numberOfSacks = 1;
-				sta.sack = new SackCollection();
-				sta.sack.SackType = SackType.Stash;
-				sta.sack.IsImmortalThrone = true;
-				SackCollectionProvider.Parse(sta.sack, reader);
-			}
-			catch (ArgumentException)
-			{
-				// The ValidateNextString Method can throw an ArgumentException.
-				// We just pass it along at sta point.
-				throw;
-			}
+			sta.numberOfSacks = 1;
+			sta.sack = new SackCollection();
+			sta.sack.SackType = SackType.Stash;
+			sta.sack.IsImmortalThrone = true;
+			SackCollectionProvider.Parse(sta.sack, reader);
+
+			// The ValidateNextString Method can throw an ArgumentException.
+			// We just pass it along at sta point.
 		}
 	}
 }

@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
-using TQVaultAE.Logs;
 
 namespace TQVaultAE.Presentation
 {
 	public class UIService : IUIService
 	{
-		private readonly log4net.ILog Log = null;
+		private readonly ILogger Log = null;
 		private readonly IDatabase Database;
 		private readonly ITQDataService TQData;
 		private readonly IBitmapService BitmapService;
@@ -103,7 +101,7 @@ namespace TQVaultAE.Presentation
 			if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
 			{
 				// Code here won't run in Visual Studio designer
-				this.Log = log.Logger;
+				this.Log = log;
 				this.Database = database;
 				this.TQData = tQData;
 				this.BitmapService = bitmapService;
@@ -117,7 +115,7 @@ namespace TQVaultAE.Presentation
 		private void CreateDefaultBitmap()
 		{
 			if (TQDebug.DatabaseDebugLevel > 0)
-				Log.Debug("Database.CreateDefaultBitmap()");
+				Log.LogDebug("Database.CreateDefaultBitmap()");
 
 			// Make a bitmap with a small orange square with a ? mark in it.
 			Bitmap tempDefaultBitmap = new Bitmap(this.ItemUnitSize, this.ItemUnitSize);
@@ -148,7 +146,7 @@ namespace TQVaultAE.Presentation
 			this._DefaultBitmap = tempDefaultBitmap;
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-				Log.Debug("Exiting Database.CreateDefaultBitmap()");
+				Log.LogDebug("Exiting Database.CreateDefaultBitmap()");
 		}
 
 
@@ -164,7 +162,7 @@ namespace TQVaultAE.Presentation
 				return result;
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-				Log.DebugFormat(CultureInfo.InvariantCulture, "Database.LoadBitmap({0})", resourceId);
+				Log.LogDebug("Database.LoadBitmap({0})", resourceId);
 
 			resourceId = TQData.NormalizeRecordPath(resourceId);
 
@@ -176,7 +174,7 @@ namespace TQVaultAE.Presentation
 			});
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-				Log.Debug("Exiting Database.LoadBitmap()");
+				Log.LogDebug("Exiting Database.LoadBitmap()");
 
 			return bitmap;
 		}
@@ -194,7 +192,7 @@ namespace TQVaultAE.Presentation
 				return result;
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-				Log.DebugFormat(CultureInfo.InvariantCulture, "Database.LoadBitmap({0})", resourceId);
+				Log.LogDebug("Database.LoadBitmap({0})", resourceId);
 
 			resourceId = TQData.NormalizeRecordPath(resourceId);
 
@@ -204,7 +202,7 @@ namespace TQVaultAE.Presentation
 			});
 
 			if (TQDebug.DatabaseDebugLevel > 0)
-				Log.Debug("Exiting Database.LoadBitmap()");
+				Log.LogDebug("Exiting Database.LoadBitmap()");
 
 			return bitmap;
 		}
@@ -221,7 +219,7 @@ namespace TQVaultAE.Presentation
 			if (texData == null)
 			{
 				if (TQDebug.DatabaseDebugLevel > 0)
-					Log.Debug("Failure loading resource.  Using default bitmap");
+					Log.LogDebug("Failure loading resource.  Using default bitmap");
 
 				// could not load the data.  Use a default bitmap
 				bitmap = this.DefaultBitmap;
@@ -229,21 +227,21 @@ namespace TQVaultAE.Presentation
 			else
 			{
 				if (TQDebug.DatabaseDebugLevel > 1)
-					Log.DebugFormat(CultureInfo.InvariantCulture, "Loaded resource size={0}", texData.Length);
+					Log.LogDebug("Loaded resource size={0}", texData.Length);
 
 				// Create the bitmap
 				bitmap = BitmapService.LoadFromTexMemory(texData, 0, texData.Length);
 				if (bitmap == null)
 				{
 					if (TQDebug.DatabaseDebugLevel > 0)
-						Log.DebugFormat(CultureInfo.InvariantCulture, "Failure creating bitmap from resource data len={0}", texData.Length);
+						Log.LogDebug("Failure creating bitmap from resource data len={0}", texData.Length);
 
 					// could not create the bitmap
 					bitmap = this.DefaultBitmap;
 				}
 
 				if (TQDebug.DatabaseDebugLevel > 1)
-					Log.DebugFormat(CultureInfo.InvariantCulture, "Created Bitmap {0} x {1}", bitmap.Width, bitmap.Height);
+					Log.LogDebug("Created Bitmap {0} x {1}", bitmap.Width, bitmap.Height);
 			}
 
 			return bitmap;
@@ -275,8 +273,7 @@ namespace TQVaultAE.Presentation
 				bmp = LoadBitmap(itm.TexImageResourceId, itm.TexImage);
 				if (TQDebug.ItemDebugLevel > 1)
 				{
-					Log.DebugFormat(CultureInfo.InvariantCulture
-						, "size = {0}x{1} (unitsize={2})"
+					Log.LogDebug("size = {0}x{1} (unitsize={2})"
 						, bmp.Width
 						, bmp.Height
 						, this.ItemUnitSize
@@ -289,7 +286,7 @@ namespace TQVaultAE.Presentation
 			else
 			{
 				if (TQDebug.ItemDebugLevel > 1)
-					Log.Debug("bitmap is null");
+					Log.LogDebug("bitmap is null");
 
 				itm.Width = 1;
 				itm.Height = 1;

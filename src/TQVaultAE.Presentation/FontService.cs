@@ -110,38 +110,38 @@ namespace TQVaultAE.Presentation
 			this.FontLoader = addFontToOS;
 		}
 
-		public Font GetFontAlbertusMT(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)
+		public Font GetFont(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)
 			=> new Font(FONT_ALBERTUSMT, fontSize, fontStyle, unit, b);
 
-		public Font GetFontAlbertusMT(float fontSize, GraphicsUnit unit)
+		public Font GetFont(float fontSize, GraphicsUnit unit)
 			=> new Font(FONT_ALBERTUSMT, fontSize, unit);
 
-		public Font GetFontAlbertusMT(float fontSize, FontStyle fontStyle, float? scale = null)
+		public Font GetFont(float fontSize, FontStyle fontStyle, float? scale = null)
 		{
 			scale = scale ?? 1F;
 			return new Font(FONT_ALBERTUSMT, fontSize * scale.Value, fontStyle);
 		}
 
-		public Font GetFontAlbertusMT(float fontSize, float? scale = null)
+		public Font GetFont(float fontSize, float? scale = null)
 		{
 			scale = scale ?? 1F;
 			return new Font(FONT_ALBERTUSMT, fontSize * scale.Value);
 		}
 
-		public Font GetFontAlbertusMTLight(float fontSize, GraphicsUnit unit)
+		public Font GetFontLight(float fontSize, GraphicsUnit unit)
 			=> new Font(FONT_ALBERTUSMT, fontSize, unit);
 
-		public Font GetFontAlbertusMTLight(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)
+		public Font GetFontLight(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)
 			=> new Font(FONT_ALBERTUSMTLIGHT, fontSize, fontStyle, unit, b);
 
-		public Font GetFontAlbertusMTLight(float fontSize) => new Font(FONT_ALBERTUSMTLIGHT, fontSize);
+		public Font GetFontLight(float fontSize) => new Font(FONT_ALBERTUSMTLIGHT, fontSize);
 
-		public Font GetFontAlbertusMTLight(float fontSize, float? scale = null)
+		public Font GetFontLight(float fontSize, float? scale = null)
 		{
 			scale = scale ?? 1F;
 			return new Font(FONT_ALBERTUSMTLIGHT, fontSize * scale.Value);
 		}
-		public Font GetFontAlbertusMTLight(float fontSize, FontStyle fontStyle, float? scale = null)
+		public Font GetFontLight(float fontSize, FontStyle fontStyle, float? scale = null)
 		{
 			scale = scale ?? 1F;
 			return new Font(FONT_ALBERTUSMTLIGHT, fontSize * scale.Value, fontStyle);

@@ -11,7 +11,7 @@ namespace TQVaultAE.GUI.Components
 	/// <summary>
 	/// TextBox class to support scaling of the fonts.
 	/// </summary>
-	public class ScalingTextBox : TextBox
+	public class ScalingTextBox : TextBox, IScalingControl
 	{
 		/// <summary>
 		/// Override of ScaleControl which supports font scaling.

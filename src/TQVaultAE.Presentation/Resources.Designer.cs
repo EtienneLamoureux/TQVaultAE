@@ -789,33 +789,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Normal.
-        /// </summary>
-        public static string Difficulty0 {
-            get {
-                return ResourceManager.GetString("Difficulty0", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Epic.
-        /// </summary>
-        public static string Difficulty1 {
-            get {
-                return ResourceManager.GetString("Difficulty1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Legendary.
-        /// </summary>
-        public static string Difficulty2 {
-            get {
-                return ResourceManager.GetString("Difficulty2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Difficulty.
         /// </summary>
         public static string DifficultyUnlocked {
@@ -930,6 +903,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Base Attribute.
+        /// </summary>
+        public static string GlobalBaseAttribute {
+            get {
+                return ResourceManager.GetString("GlobalBaseAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Browse....
         /// </summary>
         public static string GlobalBrowse {
@@ -957,6 +939,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Collapse All.
+        /// </summary>
+        public static string GlobalCollapseAll {
+            get {
+                return ResourceManager.GetString("GlobalCollapseAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Are you sure you want to delete &quot;{0}&quot; ?.
+        /// </summary>
+        public static string GlobalDeleteConfirm {
+            get {
+                return ResourceManager.GetString("GlobalDeleteConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Error.
         /// </summary>
         public static string GlobalError {
@@ -971,6 +971,24 @@ namespace TQVaultAE.Presentation {
         public static string GlobalExit {
             get {
                 return ResourceManager.GetString("GlobalExit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Expand All.
+        /// </summary>
+        public static string GlobalExpandAll {
+            get {
+                return ResourceManager.GetString("GlobalExpandAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Input warning.
+        /// </summary>
+        public static string GlobalInputWarning {
+            get {
+                return ResourceManager.GetString("GlobalInputWarning", resourceCulture);
             }
         }
         
@@ -1020,11 +1038,47 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Scale back to normal size.
+        /// </summary>
+        public static string GlobalNormalize {
+            get {
+                return ResourceManager.GetString("GlobalNormalize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à OK.
         /// </summary>
         public static string GlobalOK {
             get {
                 return ResourceManager.GetString("GlobalOK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Prefix.
+        /// </summary>
+        public static string GlobalPrefix {
+            get {
+                return ResourceManager.GetString("GlobalPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Prefix Name.
+        /// </summary>
+        public static string GlobalPrefixName {
+            get {
+                return ResourceManager.GetString("GlobalPrefixName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Rarity.
+        /// </summary>
+        public static string GlobalRarity {
+            get {
+                return ResourceManager.GetString("GlobalRarity", resourceCulture);
             }
         }
         
@@ -1047,11 +1101,47 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Save.
+        /// </summary>
+        public static string GlobalSave {
+            get {
+                return ResourceManager.GetString("GlobalSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Size.
         /// </summary>
         public static string GlobalSize {
             get {
                 return ResourceManager.GetString("GlobalSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Style.
+        /// </summary>
+        public static string GlobalStyle {
+            get {
+                return ResourceManager.GetString("GlobalStyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Suffix.
+        /// </summary>
+        public static string GlobalSuffix {
+            get {
+                return ResourceManager.GetString("GlobalSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Suffix Name.
+        /// </summary>
+        public static string GlobalSuffixName {
+            get {
+                return ResourceManager.GetString("GlobalSuffixName", resourceCulture);
             }
         }
         
@@ -1070,6 +1160,24 @@ namespace TQVaultAE.Presentation {
         public static string GlobalTrash {
             get {
                 return ResourceManager.GetString("GlobalTrash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Type.
+        /// </summary>
+        public static string GlobalType {
+            get {
+                return ResourceManager.GetString("GlobalType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Vaults.
+        /// </summary>
+        public static string GlobalVaults {
+            get {
+                return ResourceManager.GetString("GlobalVaults", resourceCulture);
             }
         }
         
@@ -1235,123 +1343,6 @@ namespace TQVaultAE.Presentation {
         public static string ItemSeed {
             get {
                 return ResourceManager.GetString("ItemSeed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Artifact.
-        /// </summary>
-        public static string ItemStyleArtifact {
-            get {
-                return ResourceManager.GetString("ItemStyleArtifact", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Broken.
-        /// </summary>
-        public static string ItemStyleBroken {
-            get {
-                return ResourceManager.GetString("ItemStyleBroken", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Common.
-        /// </summary>
-        public static string ItemStyleCommon {
-            get {
-                return ResourceManager.GetString("ItemStyleCommon", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Epic.
-        /// </summary>
-        public static string ItemStyleEpic {
-            get {
-                return ResourceManager.GetString("ItemStyleEpic", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Formulae.
-        /// </summary>
-        public static string ItemStyleFormulae {
-            get {
-                return ResourceManager.GetString("ItemStyleFormulae", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Legendary.
-        /// </summary>
-        public static string ItemStyleLegendary {
-            get {
-                return ResourceManager.GetString("ItemStyleLegendary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Mundane.
-        /// </summary>
-        public static string ItemStyleMundane {
-            get {
-                return ResourceManager.GetString("ItemStyleMundane", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Parchment.
-        /// </summary>
-        public static string ItemStyleParchment {
-            get {
-                return ResourceManager.GetString("ItemStyleParchment", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Potion.
-        /// </summary>
-        public static string ItemStylePotion {
-            get {
-                return ResourceManager.GetString("ItemStylePotion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Quest.
-        /// </summary>
-        public static string ItemStyleQuest {
-            get {
-                return ResourceManager.GetString("ItemStyleQuest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Rare.
-        /// </summary>
-        public static string ItemStyleRare {
-            get {
-                return ResourceManager.GetString("ItemStyleRare", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Relic.
-        /// </summary>
-        public static string ItemStyleRelic {
-            get {
-                return ResourceManager.GetString("ItemStyleRelic", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Scroll.
-        /// </summary>
-        public static string ItemStyleScroll {
-            get {
-                return ResourceManager.GetString("ItemStyleScroll", resourceCulture);
             }
         }
         
@@ -2072,7 +2063,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Spirit.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief07.
         /// </summary>
         public static string MasteriestagCClass01 {
             get {
@@ -2081,7 +2072,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Nature.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief08.
         /// </summary>
         public static string MasteriestagCClass02 {
             get {
@@ -2090,7 +2081,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Rogue.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief05.
         /// </summary>
         public static string MasteriestagCClass03 {
             get {
@@ -2099,7 +2090,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Hunting.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief06.
         /// </summary>
         public static string MasteriestagCClass04 {
             get {
@@ -2108,7 +2099,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Storm.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief04.
         /// </summary>
         public static string MasteriestagCClass05 {
             get {
@@ -2117,7 +2108,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Earth.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief03.
         /// </summary>
         public static string MasteriestagCClass06 {
             get {
@@ -2126,7 +2117,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Defense.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief02.
         /// </summary>
         public static string MasteriestagCClass07 {
             get {
@@ -2135,7 +2126,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Warfare.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief01.
         /// </summary>
         public static string MasteriestagCClass08 {
             get {
@@ -2144,7 +2135,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Spirit-Warfare.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief07-tagMasteryBrief01.
         /// </summary>
         public static string MasteriestagCClass09 {
             get {
@@ -2153,7 +2144,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Nature-Warfare.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief08-tagMasteryBrief01.
         /// </summary>
         public static string MasteriestagCClass10 {
             get {
@@ -2162,7 +2153,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Rogue-Warfare.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief05-tagMasteryBrief01.
         /// </summary>
         public static string MasteriestagCClass11 {
             get {
@@ -2171,7 +2162,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Hunting-Warfare.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief06-tagMasteryBrief01.
         /// </summary>
         public static string MasteriestagCClass12 {
             get {
@@ -2180,7 +2171,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Storm-Warfare.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief04-tagMasteryBrief01.
         /// </summary>
         public static string MasteriestagCClass13 {
             get {
@@ -2189,7 +2180,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Earth-Warfare.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief03-tagMasteryBrief01.
         /// </summary>
         public static string MasteriestagCClass14 {
             get {
@@ -2198,7 +2189,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Defense-Warfare.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief02-tagMasteryBrief01.
         /// </summary>
         public static string MasteriestagCClass15 {
             get {
@@ -2207,7 +2198,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Spirit-Defense.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief07-tagMasteryBrief02.
         /// </summary>
         public static string MasteriestagCClass16 {
             get {
@@ -2216,7 +2207,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Nature-Defense.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief08-tagMasteryBrief02.
         /// </summary>
         public static string MasteriestagCClass17 {
             get {
@@ -2225,7 +2216,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Rogue-Defense.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief05-tagMasteryBrief02.
         /// </summary>
         public static string MasteriestagCClass18 {
             get {
@@ -2234,7 +2225,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Hunting-Defense.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief06-tagMasteryBrief02.
         /// </summary>
         public static string MasteriestagCClass19 {
             get {
@@ -2243,7 +2234,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Storm-Defense.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief04-tagMasteryBrief02.
         /// </summary>
         public static string MasteriestagCClass20 {
             get {
@@ -2252,7 +2243,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Earth-Defense.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief03-tagMasteryBrief02.
         /// </summary>
         public static string MasteriestagCClass21 {
             get {
@@ -2261,7 +2252,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Spirit-Earth.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief07-tagMasteryBrief03.
         /// </summary>
         public static string MasteriestagCClass22 {
             get {
@@ -2270,7 +2261,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Nature-Earth.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief08-tagMasteryBrief03.
         /// </summary>
         public static string MasteriestagCClass23 {
             get {
@@ -2279,7 +2270,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Rogue-Earth.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief05-tagMasteryBrief03.
         /// </summary>
         public static string MasteriestagCClass24 {
             get {
@@ -2288,7 +2279,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Hunting-Earth.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief06-tagMasteryBrief03.
         /// </summary>
         public static string MasteriestagCClass25 {
             get {
@@ -2297,7 +2288,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Storm-Earth.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief04-tagMasteryBrief03.
         /// </summary>
         public static string MasteriestagCClass26 {
             get {
@@ -2306,7 +2297,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Spirit-Storm.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief07-tagMasteryBrief04.
         /// </summary>
         public static string MasteriestagCClass27 {
             get {
@@ -2315,7 +2306,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Nature-Storm.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief08-tagMasteryBrief04.
         /// </summary>
         public static string MasteriestagCClass28 {
             get {
@@ -2324,7 +2315,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Rogue-Storm.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief05-tagMasteryBrief04.
         /// </summary>
         public static string MasteriestagCClass29 {
             get {
@@ -2333,7 +2324,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Hunting-Storm.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief06-tagMasteryBrief04.
         /// </summary>
         public static string MasteriestagCClass30 {
             get {
@@ -2342,7 +2333,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Spirit-Hunting.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief07-tagMasteryBrief06.
         /// </summary>
         public static string MasteriestagCClass31 {
             get {
@@ -2351,7 +2342,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Nature-Hunting.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief08-tagMasteryBrief06.
         /// </summary>
         public static string MasteriestagCClass32 {
             get {
@@ -2360,7 +2351,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Rogue-Hunting.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief05-tagMasteryBrief06.
         /// </summary>
         public static string MasteriestagCClass33 {
             get {
@@ -2369,7 +2360,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Spirit-Rogue.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief07-tagMasteryBrief05.
         /// </summary>
         public static string MasteriestagCClass34 {
             get {
@@ -2378,7 +2369,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Nature-Rogue.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief08-tagMasteryBrief05.
         /// </summary>
         public static string MasteriestagCClass35 {
             get {
@@ -2387,7 +2378,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Spirit-Nature.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief07-tagMasteryBrief08.
         /// </summary>
         public static string MasteriestagCClass36 {
             get {
@@ -2396,7 +2387,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Defense-Runes.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief02-x2tagRuneMasteryBrief.
         /// </summary>
         public static string Masteriesx2tag_class_defense_rm {
             get {
@@ -2405,7 +2396,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Dream-Runes.
+        ///   Recherche une chaîne localisée semblable à xtagMasteryBrief09-x2tagRuneMasteryBrief.
         /// </summary>
         public static string Masteriesx2tag_class_dream_rm {
             get {
@@ -2414,7 +2405,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Earth-Runes.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief03-x2tagRuneMasteryBrief.
         /// </summary>
         public static string Masteriesx2tag_class_earth_rm {
             get {
@@ -2423,7 +2414,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Hunting-Runes.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief06-x2tagRuneMasteryBrief.
         /// </summary>
         public static string Masteriesx2tag_class_hunting_rm {
             get {
@@ -2432,7 +2423,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Nature-Runes.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief08-x2tagRuneMasteryBrief.
         /// </summary>
         public static string Masteriesx2tag_class_nature_rm {
             get {
@@ -2441,7 +2432,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Runes.
+        ///   Recherche une chaîne localisée semblable à x2tagRuneMasteryBrief.
         /// </summary>
         public static string Masteriesx2tag_class_rm_rm {
             get {
@@ -2450,7 +2441,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Spirit-Runes.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief07-x2tagRuneMasteryBrief.
         /// </summary>
         public static string Masteriesx2tag_class_spirit_rm {
             get {
@@ -2459,7 +2450,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Rogue-Runes.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief05-x2tagRuneMasteryBrief.
         /// </summary>
         public static string Masteriesx2tag_class_stealth_rm {
             get {
@@ -2468,7 +2459,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Storm-Runes.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief04-x2tagRuneMasteryBrief.
         /// </summary>
         public static string Masteriesx2tag_class_storm_rm {
             get {
@@ -2477,7 +2468,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Warfare-Runes.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief01-x2tagRuneMasteryBrief.
         /// </summary>
         public static string Masteriesx2tag_class_warfare_rm {
             get {
@@ -2486,7 +2477,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Dream.
+        ///   Recherche une chaîne localisée semblable à xtagMasteryBrief09.
         /// </summary>
         public static string MasteriesxtagCharacterClass01 {
             get {
@@ -2495,7 +2486,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Warfare-Dream.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief01-xtagMasteryBrief09.
         /// </summary>
         public static string MasteriesxtagCharacterClass02 {
             get {
@@ -2504,7 +2495,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Defense-Dream.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief02-xtagMasteryBrief09.
         /// </summary>
         public static string MasteriesxtagCharacterClass03 {
             get {
@@ -2513,7 +2504,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Earth-Dream.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief03-xtagMasteryBrief09.
         /// </summary>
         public static string MasteriesxtagCharacterClass04 {
             get {
@@ -2522,7 +2513,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Storm-Dream.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief04-xtagMasteryBrief09.
         /// </summary>
         public static string MasteriesxtagCharacterClass05 {
             get {
@@ -2531,7 +2522,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Hunting-Dream.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief06-xtagMasteryBrief09.
         /// </summary>
         public static string MasteriesxtagCharacterClass06 {
             get {
@@ -2540,7 +2531,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Rogue-Dream.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief05-xtagMasteryBrief09.
         /// </summary>
         public static string MasteriesxtagCharacterClass07 {
             get {
@@ -2549,7 +2540,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Nature-Dream.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief08-xtagMasteryBrief09.
         /// </summary>
         public static string MasteriesxtagCharacterClass08 {
             get {
@@ -2558,7 +2549,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Spirit-Dream.
+        ///   Recherche une chaîne localisée semblable à tagMasteryBrief07-xtagMasteryBrief09.
         /// </summary>
         public static string MasteriesxtagCharacterClass09 {
             get {
@@ -3190,6 +3181,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Building Data.
+        /// </summary>
+        public static string SearchBuildingData {
+            get {
+                return ResourceManager.GetString("SearchBuildingData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Search for an item.
         /// </summary>
         public static string SearchDialogCaption {
@@ -3211,6 +3211,159 @@ namespace TQVaultAE.Presentation {
         public static string SearchDialogText {
             get {
                 return ResourceManager.GetString("SearchDialogText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Search engine is ready.
+        /// </summary>
+        public static string SearchEngineReady {
+            get {
+                return ResourceManager.GetString("SearchEngineReady", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à {0} filters selected.
+        /// </summary>
+        public static string SearchFiltersSelected {
+            get {
+                return ResourceManager.GetString("SearchFiltersSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Having Charm.
+        /// </summary>
+        public static string SearchHavingCharm {
+            get {
+                return ResourceManager.GetString("SearchHavingCharm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Having Relic.
+        /// </summary>
+        public static string SearchHavingRelic {
+            get {
+                return ResourceManager.GetString("SearchHavingRelic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Item count is {0}.
+        /// </summary>
+        public static string SearchItemCountIs {
+            get {
+                return ResourceManager.GetString("SearchItemCountIs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à {0} matching item(s).
+        /// </summary>
+        public static string SearchMatchingItemsTT {
+            get {
+                return ResourceManager.GetString("SearchMatchingItemsTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Operator.
+        /// </summary>
+        public static string SearchOperator {
+            get {
+                return ResourceManager.GetString("SearchOperator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Find items having all filters.
+        /// </summary>
+        public static string SearchOperatorDescAnd {
+            get {
+                return ResourceManager.GetString("SearchOperatorDescAnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Find items having one filter or more.
+        /// </summary>
+        public static string SearchOperatorDescOr {
+            get {
+                return ResourceManager.GetString("SearchOperatorDescOr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Search Operator.
+        /// </summary>
+        public static string SearchOperatorTitle {
+            get {
+                return ResourceManager.GetString("SearchOperatorTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Queries.
+        /// </summary>
+        public static string SearchQueries {
+            get {
+                return ResourceManager.GetString("SearchQueries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Query name already exists. Do you want to override it ?.
+        /// </summary>
+        public static string SearchQueryNameAlreadyExist {
+            get {
+                return ResourceManager.GetString("SearchQueryNameAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Query name must be set.
+        /// </summary>
+        public static string SearchQueryNameMustBeSet {
+            get {
+                return ResourceManager.GetString("SearchQueryNameMustBeSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Reduce categories during selection.
+        /// </summary>
+        public static string SearchReduceCategoriesDuringSelection {
+            get {
+                return ResourceManager.GetString("SearchReduceCategoriesDuringSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Some filters must be selected.
+        /// </summary>
+        public static string SearchTermRequired {
+            get {
+                return ResourceManager.GetString("SearchTermRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à There is too many results to display.{^N}Adjust your search..
+        /// </summary>
+        public static string SearchTooManyResultToDisplay {
+            get {
+                return ResourceManager.GetString("SearchTooManyResultToDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Visible elements/category.
+        /// </summary>
+        public static string SearchVisibleElementsPerCategory {
+            get {
+                return ResourceManager.GetString("SearchVisibleElementsPerCategory", resourceCulture);
             }
         }
         
@@ -3771,326 +3924,254 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Theurgist.
+        ///   Recherche une chaîne localisée semblable à {^O}Always use special animation.
         /// </summary>
-        public static string tagCClass01 {
+        public static string TextTag_alwaysUseSpecialAnimation {
             get {
-                return ResourceManager.GetString("tagCClass01", resourceCulture);
+                return ResourceManager.GetString("TextTag_alwaysUseSpecialAnimation", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Wanderer.
+        ///   Recherche une chaîne localisée semblable à {%.0f0}% Bonus Health.
         /// </summary>
-        public static string tagCClass02 {
+        public static string TextTag_bonusLifePercent {
             get {
-                return ResourceManager.GetString("tagCClass02", resourceCulture);
+                return ResourceManager.GetString("TextTag_bonusLifePercent", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Rogue.
+        ///   Recherche une chaîne localisée semblable à {%.0f0} Bonus Health.
         /// </summary>
-        public static string tagCClass03 {
+        public static string TextTag_bonusLifePoints {
             get {
-                return ResourceManager.GetString("tagCClass03", resourceCulture);
+                return ResourceManager.GetString("TextTag_bonusLifePoints", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Hunter.
+        ///   Recherche une chaîne localisée semblable à {%.0f0}% Bonus Energy.
         /// </summary>
-        public static string tagCClass04 {
+        public static string TextTag_bonusManaPercent {
             get {
-                return ResourceManager.GetString("tagCClass04", resourceCulture);
+                return ResourceManager.GetString("TextTag_bonusManaPercent", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Stormcaller.
+        ///   Recherche une chaîne localisée semblable à {%.0f0} Bonus Energy.
         /// </summary>
-        public static string tagCClass05 {
+        public static string TextTag_bonusManaPoints {
             get {
-                return ResourceManager.GetString("tagCClass05", resourceCulture);
+                return ResourceManager.GetString("TextTag_bonusManaPoints", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Pyromancer.
+        ///   Recherche une chaîne localisée semblable à {%.0f0}% Defensive Total Speed Chance.
         /// </summary>
-        public static string tagCClass06 {
+        public static string TextTag_defensiveTotalSpeedChance {
             get {
-                return ResourceManager.GetString("tagCClass06", resourceCulture);
+                return ResourceManager.GetString("TextTag_defensiveTotalSpeedChance", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Defender.
+        ///   Recherche une chaîne localisée semblable à {^O}Display as quest item.
         /// </summary>
-        public static string tagCClass07 {
+        public static string TextTag_DisplayAsQuestItem {
             get {
-                return ResourceManager.GetString("tagCClass07", resourceCulture);
+                return ResourceManager.GetString("TextTag_DisplayAsQuestItem", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Warrior.
+        ///   Recherche une chaîne localisée semblable à {^D}Drop mesh don&apos;t override textures.
         /// </summary>
-        public static string tagCClass08 {
+        public static string TextTag_dropMeshDontOverrideTextures {
             get {
-                return ResourceManager.GetString("tagCClass08", resourceCulture);
+                return ResourceManager.GetString("TextTag_dropMeshDontOverrideTextures", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Spellbreaker.
+        ///   Recherche une chaîne localisée semblable à {%.0f0} Head Velocity.
         /// </summary>
-        public static string tagCClass09 {
+        public static string TextTag_headVelocity {
             get {
-                return ResourceManager.GetString("tagCClass09", resourceCulture);
+                return ResourceManager.GetString("TextTag_headVelocity", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Champion.
+        ///   Recherche une chaîne localisée semblable à {%.0f0} Meter Max Distance.
         /// </summary>
-        public static string tagCClass10 {
+        public static string TextTag_maxDistance {
             get {
-                return ResourceManager.GetString("tagCClass10", resourceCulture);
+                return ResourceManager.GetString("TextTag_maxDistance", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Assassin.
+        ///   Recherche une chaîne localisée semblable à {^O}Can&apos;t be dispelled.
         /// </summary>
-        public static string tagCClass11 {
+        public static string TextTag_notDispelable {
             get {
-                return ResourceManager.GetString("tagCClass11", resourceCulture);
+                return ResourceManager.GetString("TextTag_notDispelable", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Slayer.
+        ///   Recherche une chaîne localisée semblable à @tagRace03P.
         /// </summary>
-        public static string tagCClass12 {
+        public static string TextTag_racialBonusRaceBeast {
             get {
-                return ResourceManager.GetString("tagCClass12", resourceCulture);
+                return ResourceManager.GetString("TextTag_racialBonusRaceBeast", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Thane.
+        ///   Recherche une chaîne localisée semblable à @tagRace04P.
         /// </summary>
-        public static string tagCClass13 {
+        public static string TextTag_racialBonusRaceBeastman {
             get {
-                return ResourceManager.GetString("tagCClass13", resourceCulture);
+                return ResourceManager.GetString("TextTag_racialBonusRaceBeastman", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Battlemage.
+        ///   Recherche une chaîne localisée semblable à @tagRace10P.
         /// </summary>
-        public static string tagCClass14 {
+        public static string TextTag_racialBonusRaceConstruct {
             get {
-                return ResourceManager.GetString("tagCClass14", resourceCulture);
+                return ResourceManager.GetString("TextTag_racialBonusRaceConstruct", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Conquerer.
+        ///   Recherche une chaîne localisée semblable à @tagRace07P.
         /// </summary>
-        public static string tagCClass15 {
+        public static string TextTag_racialBonusRaceDemon {
             get {
-                return ResourceManager.GetString("tagCClass15", resourceCulture);
+                return ResourceManager.GetString("TextTag_racialBonusRaceDemon", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Spellbinder.
+        ///   Recherche une chaîne localisée semblable à @tagRace12P.
         /// </summary>
-        public static string tagCClass16 {
+        public static string TextTag_racialBonusRaceDevice {
             get {
-                return ResourceManager.GetString("tagCClass16", resourceCulture);
+                return ResourceManager.GetString("TextTag_racialBonusRaceDevice", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Guardian.
+        ///   Recherche une chaîne localisée semblable à @x2tagRace02P.
         /// </summary>
-        public static string tagCClass17 {
+        public static string TextTag_racialBonusRaceGhost {
             get {
-                return ResourceManager.GetString("tagCClass17", resourceCulture);
+                return ResourceManager.GetString("TextTag_racialBonusRaceGhost", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Corsair.
+        ///   Recherche une chaîne localisée semblable à @x2tagRace01P.
         /// </summary>
-        public static string tagCClass18 {
+        public static string TextTag_racialBonusRaceGiant {
             get {
-                return ResourceManager.GetString("tagCClass18", resourceCulture);
+                return ResourceManager.GetString("TextTag_racialBonusRaceGiant", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Warden.
+        ///   Recherche une chaîne localisée semblable à @tagRace05P.
         /// </summary>
-        public static string tagCClass19 {
+        public static string TextTag_racialBonusRaceInsectoid {
             get {
-                return ResourceManager.GetString("tagCClass19", resourceCulture);
+                return ResourceManager.GetString("TextTag_racialBonusRaceInsectoid", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Paladin.
+        ///   Recherche une chaîne localisée semblable à @tagRace11P.
         /// </summary>
-        public static string tagCClass20 {
+        public static string TextTag_racialBonusRaceMagical {
             get {
-                return ResourceManager.GetString("tagCClass20", resourceCulture);
+                return ResourceManager.GetString("TextTag_racialBonusRaceMagical", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Juggernaut.
+        ///   Recherche une chaîne localisée semblable à @xtagRace01P.
         /// </summary>
-        public static string tagCClass21 {
+        public static string TextTag_racialBonusRaceOlympian {
             get {
-                return ResourceManager.GetString("tagCClass21", resourceCulture);
+                return ResourceManager.GetString("TextTag_racialBonusRaceOlympian", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Conjurer.
+        ///   Recherche une chaîne localisée semblable à @tagRace01P.
         /// </summary>
-        public static string tagCClass22 {
+        public static string TextTag_racialBonusRacePlant {
             get {
-                return ResourceManager.GetString("tagCClass22", resourceCulture);
+                return ResourceManager.GetString("TextTag_racialBonusRacePlant", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Summoner.
+        ///   Recherche une chaîne localisée semblable à @tagRace08P.
         /// </summary>
-        public static string tagCClass23 {
+        public static string TextTag_racialBonusRaceTitan {
             get {
-                return ResourceManager.GetString("tagCClass23", resourceCulture);
+                return ResourceManager.GetString("TextTag_racialBonusRaceTitan", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Magician.
+        ///   Recherche une chaîne localisée semblable à @tagRace06P.
         /// </summary>
-        public static string tagCClass24 {
+        public static string TextTag_racialBonusRaceUndead {
             get {
-                return ResourceManager.GetString("tagCClass24", resourceCulture);
+                return ResourceManager.GetString("TextTag_racialBonusRaceUndead", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Avenger.
+        ///   Recherche une chaîne localisée semblable à Artifact.
         /// </summary>
-        public static string tagCClass25 {
+        public static string TextTag_tagArtifact {
             get {
-                return ResourceManager.GetString("tagCClass25", resourceCulture);
+                return ResourceManager.GetString("TextTag_tagArtifact", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Elementalist.
+        ///   Recherche une chaîne localisée semblable à Relic.
         /// </summary>
-        public static string tagCClass26 {
+        public static string TextTag_tagRelic {
             get {
-                return ResourceManager.GetString("tagCClass26", resourceCulture);
+                return ResourceManager.GetString("TextTag_tagRelic", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Oracle.
+        ///   Recherche une chaîne localisée semblable à Sword.
         /// </summary>
-        public static string tagCClass27 {
+        public static string TextTag_tagSword {
             get {
-                return ResourceManager.GetString("tagCClass27", resourceCulture);
+                return ResourceManager.GetString("TextTag_tagSword", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Druid.
+        ///   Recherche une chaîne localisée semblable à {%.0f0} Tail Velocity.
         /// </summary>
-        public static string tagCClass28 {
+        public static string TextTag_tailVelocity {
             get {
-                return ResourceManager.GetString("tagCClass28", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Sorcerer.
-        /// </summary>
-        public static string tagCClass29 {
-            get {
-                return ResourceManager.GetString("tagCClass29", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Sage.
-        /// </summary>
-        public static string tagCClass30 {
-            get {
-                return ResourceManager.GetString("tagCClass30", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Bone Charmer.
-        /// </summary>
-        public static string tagCClass31 {
-            get {
-                return ResourceManager.GetString("tagCClass31", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Ranger.
-        /// </summary>
-        public static string tagCClass32 {
-            get {
-                return ResourceManager.GetString("tagCClass32", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Brigand.
-        /// </summary>
-        public static string tagCClass33 {
-            get {
-                return ResourceManager.GetString("tagCClass33", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Warlock.
-        /// </summary>
-        public static string tagCClass34 {
-            get {
-                return ResourceManager.GetString("tagCClass34", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Illusionist.
-        /// </summary>
-        public static string tagCClass35 {
-            get {
-                return ResourceManager.GetString("tagCClass35", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Soothsayer.
-        /// </summary>
-        public static string tagCClass36 {
-            get {
-                return ResourceManager.GetString("tagCClass36", resourceCulture);
+                return ResourceManager.GetString("TextTag_tailVelocity", resourceCulture);
             }
         }
         
@@ -4295,177 +4376,6 @@ namespace TQVaultAE.Presentation {
         public static string VaultProgressText {
             get {
                 return ResourceManager.GetString("VaultProgressText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Runesmith.
-        /// </summary>
-        public static string x2tag_class_defense_rm {
-            get {
-                return ResourceManager.GetString("x2tag_class_defense_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Seidr Worker.
-        /// </summary>
-        public static string x2tag_class_dream_rm {
-            get {
-                return ResourceManager.GetString("x2tag_class_dream_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Stonespeaker.
-        /// </summary>
-        public static string x2tag_class_earth_rm {
-            get {
-                return ResourceManager.GetString("x2tag_class_earth_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Dragon Hunter.
-        /// </summary>
-        public static string x2tag_class_hunting_rm {
-            get {
-                return ResourceManager.GetString("x2tag_class_hunting_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Skinchanger.
-        /// </summary>
-        public static string x2tag_class_nature_rm {
-            get {
-                return ResourceManager.GetString("x2tag_class_nature_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Runemaster.
-        /// </summary>
-        public static string x2tag_class_rm_rm {
-            get {
-                return ResourceManager.GetString("x2tag_class_rm_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Shaman.
-        /// </summary>
-        public static string x2tag_class_spirit_rm {
-            get {
-                return ResourceManager.GetString("x2tag_class_spirit_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Trickster.
-        /// </summary>
-        public static string x2tag_class_stealth_rm {
-            get {
-                return ResourceManager.GetString("x2tag_class_stealth_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Thunderer.
-        /// </summary>
-        public static string x2tag_class_storm_rm {
-            get {
-                return ResourceManager.GetString("x2tag_class_storm_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Berserker.
-        /// </summary>
-        public static string x2tag_class_warfare_rm {
-            get {
-                return ResourceManager.GetString("x2tag_class_warfare_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Seer.
-        /// </summary>
-        public static string xtagCharacterClass01 {
-            get {
-                return ResourceManager.GetString("xtagCharacterClass01", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Harbinger.
-        /// </summary>
-        public static string xtagCharacterClass02 {
-            get {
-                return ResourceManager.GetString("xtagCharacterClass02", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Templar.
-        /// </summary>
-        public static string xtagCharacterClass03 {
-            get {
-                return ResourceManager.GetString("xtagCharacterClass03", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Evoker.
-        /// </summary>
-        public static string xtagCharacterClass04 {
-            get {
-                return ResourceManager.GetString("xtagCharacterClass04", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Prophet.
-        /// </summary>
-        public static string xtagCharacterClass05 {
-            get {
-                return ResourceManager.GetString("xtagCharacterClass05", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Haruspex.
-        /// </summary>
-        public static string xtagCharacterClass06 {
-            get {
-                return ResourceManager.GetString("xtagCharacterClass06", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Dreamkiller.
-        /// </summary>
-        public static string xtagCharacterClass07 {
-            get {
-                return ResourceManager.GetString("xtagCharacterClass07", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Ritualist.
-        /// </summary>
-        public static string xtagCharacterClass08 {
-            get {
-                return ResourceManager.GetString("xtagCharacterClass08", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Diviner.
-        /// </summary>
-        public static string xtagCharacterClass09 {
-            get {
-                return ResourceManager.GetString("xtagCharacterClass09", resourceCulture);
             }
         }
     }

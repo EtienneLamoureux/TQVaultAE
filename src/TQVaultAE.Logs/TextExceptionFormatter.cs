@@ -275,7 +275,7 @@ namespace TQVaultAE.Logs
 		#region FormatException
 
 		/// <summary>
-		/// Format une exception en utilisant <see cref="SizeOnDisk.Utilities.TextExceptionFormatter"/>
+		/// Format une exception en utilisant <see cref="TextExceptionFormatter"/>
 		/// </summary>
 		/// <param name="message"></param>
 		/// <param name="ex"></param>
@@ -295,7 +295,7 @@ Exception :
 		}
 
 		/// <summary>
-		/// Format une exception en utilisant <see cref="Vp.UE.Common.Logging.TextExceptionFormatter"/>
+		/// Format une exception en utilisant <see cref="TextExceptionFormatter"/>
 		/// </summary>
 		/// <param name="ex"></param>
 		/// <returns></returns>

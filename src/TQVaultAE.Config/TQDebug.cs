@@ -5,79 +5,43 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Config
 {
-	using log4net.Core;
-	using TQVaultAE.Logs;
-
 	/// <summary>
 	/// Class used for runtime debugging with the configuration file.
 	/// </summary>
 	public static class TQDebug
 	{
 		/// <summary>
-		/// Indicates whether debugging is globally enabled.
-		/// </summary>
-		private static bool debugEnabled = Config.Settings.Default.DebugEnabled;
-
-		/// <summary>
-		/// Current debug level
-		/// </summary>
-		private static Level debugEnabledLevel = Level.Info;
-
-		/// <summary>
 		/// Holds the arc file debug level.
 		/// </summary>
-		private static int arcFileDebugLevel = Config.Settings.Default.ARCFileDebugLevel;
+		private static int _ArcFileDebugLevel = Config.Settings.Default.ARCFileDebugLevel;
 
 		/// <summary>
 		/// Holds the database debug level.
 		/// </summary>
-		private static int databaseDebugLevel = Config.Settings.Default.DatabaseDebugLevel;
+		private static int _DatabaseDebugLevel = Config.Settings.Default.DatabaseDebugLevel;
 
 		/// <summary>
 		/// Holds the item debug level.
 		/// </summary>
-		private static int itemDebugLevel = Config.Settings.Default.ItemDebugLevel;
+		private static int _ItemDebugLevel = Config.Settings.Default.ItemDebugLevel;
 
 		/// <summary>
 		/// Holds the item attributes debug level.
 		/// </summary>
-		private static int itemAttributesDebugLevel = Config.Settings.Default.ItemAttributesDebugLevel;
-
-		/// <summary>
-		/// Ctor
-		/// </summary>
-		static TQDebug()
-		{
-			// Apply config at startup
-			if (debugEnabled && debugEnabledLevel != Level.Debug)
-				debugEnabledLevel = Level.Debug;
-
-			Logger.ChangeRootLogLevel(debugEnabledLevel);
-		}
+		private static int _ItemAttributesDebugLevel = Config.Settings.Default.ItemAttributesDebugLevel;
 
 		/// <summary>
 		/// Gets or sets a value indicating whether debugging has been enabled
 		/// </summary>
-		public static bool DebugEnabled
-		{
-			get => debugEnabled;
-			set
-			{
-				bool lastValue = debugEnabled;
-				debugEnabled = value;
-
-				if (lastValue != debugEnabled)
-					Logger.ChangeRootLogLevel(value ? Level.Debug : Level.Info);
-			}
-		}
+		public static bool DebugEnabled { get; set; } = Config.Settings.Default.DebugEnabled;
 
 		/// <summary>
 		/// Gets or sets the database debug level
 		/// </summary>
 		public static int DatabaseDebugLevel
 		{
-			get => DebugEnabled ? databaseDebugLevel : 0;
-			set => databaseDebugLevel = value;
+			get => DebugEnabled ? _DatabaseDebugLevel : 0;
+			set => _DatabaseDebugLevel = value;
 		}
 
 		/// <summary>
@@ -85,8 +49,8 @@ namespace TQVaultAE.Config
 		/// </summary>
 		public static int ArcFileDebugLevel
 		{
-			get => DebugEnabled ? arcFileDebugLevel : 0;
-			set => arcFileDebugLevel = value;
+			get => DebugEnabled ? _ArcFileDebugLevel : 0;
+			set => _ArcFileDebugLevel = value;
 		}
 
 		/// <summary>
@@ -94,8 +58,8 @@ namespace TQVaultAE.Config
 		/// </summary>
 		public static int ItemDebugLevel
 		{
-			get => DebugEnabled ? itemDebugLevel : 0;
-			set => itemDebugLevel = value;
+			get => DebugEnabled ? _ItemDebugLevel : 0;
+			set => _ItemDebugLevel = value;
 		}
 
 		/// <summary>
@@ -103,8 +67,8 @@ namespace TQVaultAE.Config
 		/// </summary>
 		public static int ItemAttributesDebugLevel
 		{
-			get => DebugEnabled ? itemAttributesDebugLevel : 0;
-			set => itemAttributesDebugLevel = value;
+			get => DebugEnabled ? _ItemAttributesDebugLevel : 0;
+			set => _ItemAttributesDebugLevel = value;
 		}
 
 	}

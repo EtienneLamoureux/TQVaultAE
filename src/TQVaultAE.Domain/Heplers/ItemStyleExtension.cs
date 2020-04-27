@@ -45,8 +45,6 @@ namespace TQVaultAE.Domain.Helpers
 					return Entities.TQColor.YellowGreen;
 
 				case ItemStyle.Formulae:
-					return Entities.TQColor.Turquoise;
-
 				case ItemStyle.Artifact:
 					return Entities.TQColor.Turquoise;
 

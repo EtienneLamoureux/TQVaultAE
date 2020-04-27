@@ -11,7 +11,7 @@ namespace TQVaultAE.GUI.Components
 	/// <summary>
 	/// Label class to support scaling of the fonts.
 	/// </summary>
-	public class ScalingLabel : Label
+	public class ScalingLabel : Label, IScalingControl
 	{
 		/// <summary>
 		/// Reverts the basic settings of a control back to the original settings.
