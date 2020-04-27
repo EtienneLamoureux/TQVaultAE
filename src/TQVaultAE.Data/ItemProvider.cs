@@ -2217,7 +2217,12 @@ namespace TQVaultAE.Data
 				{
 
 					if (!TranslationService.TryTranslateXTag($"racialBonusRace{races[j]}", out var finalRace))
-						Log.LogDebug("missing racialBonusRace={0}", races[j]);
+					{
+						finalRace = races[j];
+
+						if (TQDebug.DebugEnabled)
+							Log.LogDebug("missing racialBonusRace={0}", finalRace);
+					}
 
 					string formatTag = string.Concat(d.FullAttribute.Substring(0, 1).ToUpperInvariant(), d.FullAttribute.Substring(1));
 
