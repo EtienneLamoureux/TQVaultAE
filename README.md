@@ -8,7 +8,7 @@ Works with all expansions!
 
 ![TQVaultAE screenshot](https://raw.githubusercontent.com/EtienneLamoureux/TQVaultAE/master/documentation/screenshot.PNG "Hey, I can see my inventory from here!")
 
-![TQVaultAE search screenshot](https://raw.githubusercontent.com/EtienneLamoureux/TQVaultAE/master/documentation/screenshot_searh.PNG "Find anything, anywhere!")
+![TQVaultAE search screenshot](https://raw.githubusercontent.com/EtienneLamoureux/TQVaultAE/master/documentation/screenshot_search.PNG "Find anything, anywhere!")
 
 ## Table of contents
 - [TQVaultAE](#tqvaultae)
