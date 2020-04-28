@@ -349,8 +349,9 @@ Debug Levels
 		/// <param name="e">KeyPressEventArgs data</param>
 		private void MainFormKeyPress(object sender, KeyPressEventArgs e)
 		{
-			if (e.KeyChar != (char)27)
-				e.Handled = true;
+			// Don't handle this here since we handle key presses within each component.
+			////if (e.KeyChar != (char)27)
+				////e.Handled = true;
 		}
 
 		/// <summary>
