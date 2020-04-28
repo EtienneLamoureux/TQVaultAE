@@ -180,7 +180,7 @@ namespace TQVaultAE.GUI.Components
             this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
             this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveCallback);
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCallbask);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCallback);
             this.ResumeLayout(false);
 
 		}
@@ -1303,7 +1303,7 @@ namespace TQVaultAE.GUI.Components
 			}
 		}
 
-		protected virtual void MouseUpCallbask(object sender, MouseEventArgs e)
+		protected virtual void MouseUpCallback(object sender, MouseEventArgs e)
 		{
 			this.mouseDraw = false;
 			Invalidate();
