@@ -1,4 +1,17 @@
 # Changelog
+## 3.6.0
+### Features
+- Advanced search
+  - New Search Dialog Window
+  - Supports complex filtering rules
+  - #146 Support searching by exact phrase, instead of contains, using double-quotes separators
+
+### Bugs
+- #175 Fix rare error when searching with complex query and "load all" set to false
+
+### Other
+- #231 "+% damages to Olympians" is now "+% damages to Deities"
+
 ## 3.5.2
 ### Bugs
 - #265 Fix tooltip font color when an item grants damage resistance against multiple enemy types
