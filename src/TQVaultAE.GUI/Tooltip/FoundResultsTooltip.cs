@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
-using TQVaultAE.GUI.Components;
 using TQVaultAE.Presentation;
 using Microsoft.Extensions.DependencyInjection;
 using TQVaultAE.Domain.Contracts.Providers;

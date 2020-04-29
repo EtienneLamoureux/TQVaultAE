@@ -15,10 +15,8 @@ namespace TQVaultAE.Services
 		private readonly ILogger Log = null;
 		private readonly SessionContext userContext = null;
 		private readonly IPlayerCollectionProvider PlayerCollectionProvider;
-		private readonly IStashProvider StashProvider;
 		private readonly IGamePathService GamePathResolver;
 		private readonly ITranslationService TranslationService;
-		public const string CustomDesignator = "<Custom Map>";// TODO Is it still usefull ?
 
 		public PlayerService(
 			ILogger<PlayerService> log
@@ -32,7 +30,6 @@ namespace TQVaultAE.Services
 			this.Log = log;
 			this.userContext = userContext;
 			this.PlayerCollectionProvider = playerCollectionProvider;
-			this.StashProvider = stashProvider;
 			this.GamePathResolver = gamePathResolver;
 			this.TranslationService = translationService;
 		}

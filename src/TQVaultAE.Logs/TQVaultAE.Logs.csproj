@@ -24,8 +24,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.3" />
     <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="REM Cleanup Output&#xD;&#xA;RMDIR &quot;$(SolutionDir)bin&quot; /S /Q&#xD;&#xA;MKDIR &quot;$(SolutionDir)bin\$(ConfigurationName)&quot;&#xD;&#xA;" />
+  </Target>
 
 </Project>
