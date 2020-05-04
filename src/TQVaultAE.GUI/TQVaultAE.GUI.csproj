@@ -376,6 +376,12 @@
     <Compile Include="AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\BufferedFlowLayoutPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\BufferedTableLayoutPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\IScalingControl.cs" />
     <Compile Include="Components\ScalingCheckedListBox.cs">
       <SubType>Component</SubType>
