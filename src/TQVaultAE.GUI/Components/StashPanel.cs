@@ -535,16 +535,6 @@ namespace TQVaultAE.GUI.Components
 
 		#endregion StashPanel Properties
 
-		/// <summary>
-		/// Sets the equipment panel background image and cursor background image.
-		/// </summary>
-		/// <param name="background">Bitmap which is to be used for the background.</param>
-		public void SetEquipmentBackground(Bitmap background)
-		{
-			this.EquipmentBackground = background;
-			this.background = background;
-		}
-
 		#region StashPanel Protected Methods
 
 		/// <summary>

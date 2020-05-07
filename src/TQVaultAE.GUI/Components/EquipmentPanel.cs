@@ -42,9 +42,6 @@ namespace TQVaultAE.GUI.Components
 			this.DisableGrid = true;
 			this.DisableBorder = true;
 			this.DisableMultipleSelection = true;
-
-			// Change the highlight color to green.
-			this.HighlightUnselectedItemBrush = new SolidBrush(Color.FromArgb(23, 149, 15));
 		}
 
 		#region EquipmentPanel Public Methods
@@ -60,22 +57,10 @@ namespace TQVaultAE.GUI.Components
 			// Check to see if we need to restore the shadow slot.
 			if (this.Sack == dragInfo.Sack && dragInfo.Item.Is2HWeapon)
 			{
-				Graphics graphics = this.CreateGraphics();
 				try
 				{
-					Brush backgroundBrush = this.CellHasItemBrush;
-
-					if (this.IsItemSelected(dragInfo.Item))
-					{
-						backgroundBrush = this.HighlightSelectedItemBrush;
-					}
-
 					Item new2HItem = this.GetItemFromShadowSlot(dragInfo.Item.PositionY);
-
-					if (new2HItem.BaseItemId.Length == 0)
-					{
-						this.DrawItemShaded(graphics, new2HItem, backgroundBrush);
-					}
+					this.Invalidate(this.FindSlotRect(new2HItem.Location.X, new2HItem.Location.Y));				
 				}
 				catch (NullReferenceException exception)
 				{
@@ -83,6 +68,55 @@ namespace TQVaultAE.GUI.Components
 					MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Finds the equipment slot
+		/// </summary>
+		/// <param name="sack">current sack instance</param>
+		/// <param name="item">item we are checking</param>
+		/// <returns>slot number if the item is in an equipment slot otherwise -1</returns>
+		public static int FindEquipmentSlot(SackCollection sack, Item item)
+		{
+			if (sack == null || sack.SackType != SackType.Equipment || item == null)
+				// Make sure we are on the equipment panel
+				return -1;
+
+			// Iterate through the equipment slots
+			for (int slot = 0; slot < sack.NumberOfSlots; ++slot)
+			{
+				int itemX;
+				int itemY;
+
+				if (item.IsInWeaponSlot)
+				{
+					// adjust for weapon panel
+					itemX = SackCollection.GetWeaponLocationOffset(item.PositionY).X;
+					itemY = SackCollection.GetWeaponLocationOffset(item.PositionY).Y;
+				}
+				else
+				{
+					itemX = item.PositionX;
+					itemY = item.PositionY;
+				}
+
+				Point upperLeft = SackCollection.GetEquipmentLocationOffset(slot);
+				Size size = SackCollection.GetEquipmentLocationSize(slot);
+				if (SackCollection.IsWeaponSlot(slot))
+				{
+					// Adjust for the equipment slots
+					size = SackCollection.WeaponLocationSize;
+					upperLeft = SackCollection.GetWeaponLocationOffset(upperLeft.Y);
+				}
+
+				if (itemX < upperLeft.X || itemX > (upperLeft.X + size.Width - 1) || itemY < upperLeft.Y || itemY > (upperLeft.Y + size.Height - 1))
+					continue;
+				else
+					// We found it
+					return slot;
+			}
+
+			return -1;
 		}
 
 		#endregion EquipmentPanel Public Methods
@@ -238,13 +272,9 @@ namespace TQVaultAE.GUI.Components
 				Item dragItem = this.DragInfo.Item;
 
 				// Check that the item is being dropped into the proper slot.
-				int oldSlot = -1;
 				int slot = FindEquipmentSlot(this.CellsUnderDragItem);
 				if (slot == -1 || !this.CheckItemType(dragItem, slot))
 					return;
-
-				if (this.DragInfo.Sack != null)
-					oldSlot = FindEquipmentSlot(this.DragInfo.Sack, dragItem);
 
 				// Yes we can drop it here!
 				// First take the item that is under us
@@ -264,8 +294,8 @@ namespace TQVaultAE.GUI.Components
 					return;
 				}
 
-				// Notify that the item has been placed.  This will remove it from the old sack
-				this.DragInfo.MarkPlaced(oldSlot);
+				// Notify that the item has been placed.  This will remove it from the old sack				
+				this.DragInfo.MarkPlaced();
 
 				// If we are a stackable and we have a stackable under us and we are the same type of stackable
 				// then just add to the stack instead of picking up the other stack
@@ -450,10 +480,9 @@ namespace TQVaultAE.GUI.Components
 
 						dragItem.Location = SackCollection.GetEquipmentLocationOffset(slot);
 
-						if (itemUnderUs != null)
-							// Only remove something if there is something to remove.
-							this.Sack.RemoveAtItem(slot);
-
+						// The equipment sack always contains a fixed number of items (12)
+						// so we always remove and insert.
+						this.Sack.RemoveAtItem(slot);
 						this.Sack.InsertItem(slot, dragItem);
 					}
 				}
@@ -510,26 +539,16 @@ namespace TQVaultAE.GUI.Components
 			if (cell != this.LastCellWithFocus || redrawSelection)
 			{
 				// We have moved to a different cell
-				Item lastItem = this.FindItem(this.LastCellWithFocus);
+				Item lastItem = this.FindItem(LastCellWithFocus);
 				Item newItem = this.FindItem(cell);
 
 				if (newItem != lastItem || redrawSelection)
 				{
 					// We have moved to a different item
-					Graphics g = this.CreateGraphics();
-					Brush backgroundBrush;
 					if (lastItem != null && lastItem.Is2HWeapon)
 					{
-						if (this.IsItemSelected(lastItem))
-							backgroundBrush = this.HighlightSelectedItemBrush;
-						else if (redrawSelection)
-							backgroundBrush = this.HighlightUnselectedItemBrush;
-						else
-							backgroundBrush = this.CellHasItemBrush;
-
 						Item last2HItem = this.GetItemFromShadowSlot(lastItem.PositionY);
-						if (last2HItem.BaseItemId.Length == 0)
-							this.DrawItemShaded(g, last2HItem, backgroundBrush);
+						this.Invalidate(this.FindSlotRect(last2HItem.Location.X, last2HItem.Location.Y));
 					}
 
 					if (newItem != lastItem)
@@ -538,21 +557,15 @@ namespace TQVaultAE.GUI.Components
 						{
 							// Now we need to highlight the current item
 							// Check if the item is selected and use a different background
-							if (this.IsItemSelected(newItem))
-								backgroundBrush = this.HighlightSelectedItemBrush;
-							else
-								backgroundBrush = this.HighlightUnselectedItemBrush;
-
 							Item new2HItem = this.GetItemFromShadowSlot(newItem.PositionY);
-							if (string.IsNullOrEmpty(new2HItem.BaseItemId))
-								this.DrawItemShaded(g, new2HItem, backgroundBrush);
+							this.Invalidate(this.FindSlotRect(new2HItem.Location.X, new2HItem.Location.Y));
 						}
-
-						// Call the base method to update the last cell and to draw the items.
-						base.HighlightItemUnderMouse(cell);
 					}
 				}
 			}
+
+			// Call the base method to update the last cell and to draw the items.
+			base.HighlightItemUnderMouse(cell);
 		}
 
 		/// <summary>
@@ -578,6 +591,19 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			return cellRect;
+		}
+
+		/// <summary>
+		/// Gets the item Rectangle converted to screen coordinates.
+		/// </summary>
+		/// <param name="item">Item that needs screen coordinates</param>
+		/// <returns>Rectangle containing the screen coordinates occupied by the item.</returns>
+		protected override Rectangle GetItemScreenRectangle(Item item)
+		{
+			if (item == null)
+				return Rectangle.Empty;
+
+			return this.FindSlotRect(item.Location.X, item.Location.Y);			
 		}
 
 		/// <summary>
@@ -728,63 +754,76 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="e">PaintEventArgs data</param>
 		protected override void PaintAreaUnderItem(PaintEventArgs e)
 		{
-			Item lastItem = this.FindItem(this.LastCellWithFocus);
+			Item focusedItem = this.FindItem(this.LastCellWithFocus);
 			foreach (Item item in this.Sack)
 			{
-				if (item != this.DragInfo.Item)
+				// Do not draw the item being dragged.
+				if (item == this.DragInfo.Item)
+					continue;
+
+				// Figure out the background brush to use.
+				bool showAccent = true;
+				int alpha = this.UserAlpha;
+				Color backgroundColor = this.GetItemBackgroundColor(item);
+
+				// Check if the item is selected and use a different background
+				if (this.IsItemSelected(item))
+					alpha = AdjustAlpha(alpha);
+
+				// If we are showing the cannot equip background then 
+				// change to invalid color and adjust the alpha.
+				if (Config.Settings.Default.EnableCharacterRequierementBGColor && !this.CanBeEquipped(item))
 				{
-					// do not draw the item being dragged.
-					// Figure out the background brush to use.
-					Brush backgroundBrush = null;
+					backgroundColor = this.HighlightInvalidItemColor;
 
-					// Check if the item is selected and use a different background
-					if (this.IsItemSelected(item))
-						backgroundBrush = this.HighlightSelectedItemBrush;
-					else
-						backgroundBrush = this.CellHasItemBrush;
+					// Un-equippable items do not show the accent.
+					showAccent = false;
 
-					if (this.DragInfo.IsActive)
+					// Make the background stand out since we are not showing the accent.
+					alpha = AdjustAlpha(alpha);
+				}
+								
+				// See if this item is under the drag item
+				if (this.DragInfo.IsActive && this.ItemsUnderDragItem != null && this.ItemsUnderDragItem.Contains(item))
+				{
+					// Use highlight color if it is the only item under the drag point, else use invalid
+					alpha = AdjustAlpha(alpha);
+					backgroundColor = this.HighlightInvalidItemColor;
+
+					if (this.ItemsUnderDragItem.Count == 1)
 					{
-						// See if this item is under the drag item
-						if (this.ItemsUnderDragItem != null && this.ItemsUnderDragItem.Contains(item))
-						{
-							// Use highlight color if it is the only item under the drag point, else use invalid
-							if (this.ItemsUnderDragItem.Count > 1)
-								backgroundBrush = this.HighlightInvalidItemBrush;
-							else
-							{
-								int slot = FindEquipmentSlot(this.Sack, this.ItemsUnderDragItem[0]);
-								if (slot != -1)
-								{
-									if (this.CheckItemType(this.DragInfo.Item, slot))
-										backgroundBrush = this.HighlightValidItemBrush;
-									else
-										backgroundBrush = this.HighlightInvalidItemBrush;
-								}
-								else
-									backgroundBrush = this.HighlightInvalidItemBrush;
-							}
-						}
-						else
-							backgroundBrush = this.CellHasItemBrush;
-					}
-					else if (item == lastItem)
-						backgroundBrush = this.HighlightValidItemBrush;
-
-					// Now do the shading
-					this.ShadeAreaUnderItem(e.Graphics, item, backgroundBrush);
-
-					// Check to see if we need to shade a 2H weapon slot
-					if (item.IsInWeaponSlot && item.Is2HWeapon)
-					{
-						Item item2H = this.GetItemFromShadowSlot(item.PositionY);
-						if (string.IsNullOrEmpty(item2H.BaseItemId))
-						{
-							Rectangle rect = this.FindSlotRect(item2H.PositionX, item2H.PositionY, backgroundBrush == null);
-							this.ShadeAreaUnderItem(e.Graphics, rect, backgroundBrush);
-						}
+						int slot = FindEquipmentSlot(this.Sack, this.ItemsUnderDragItem[0]);
+						if (slot != -1 && this.CheckItemType(this.DragInfo.Item, slot))
+							backgroundColor = this.HighlightValidItemColor;
 					}
 				}
+
+				if (!this.DragInfo.IsActive && item == focusedItem)
+					alpha = AdjustAlpha(alpha);
+
+				// Now do the shading
+				if (!string.IsNullOrWhiteSpace(item.BaseItemId))
+					this.ShadeAreaUnderItem(e.Graphics, item, backgroundColor, alpha);
+
+				// Adjust the alpha and draw the accent.
+				if (showAccent & HasItemBackgroundColor(item))
+					this.DrawItemAccent(e.Graphics, item, backgroundColor, AdjustAlpha(alpha));
+
+				// Check to see if we need to shade a 2H weapon slot
+				if (item.IsInWeaponSlot && item.Is2HWeapon)
+				{
+					Item item2H = this.GetItemFromShadowSlot(item.PositionY);
+					if (string.IsNullOrEmpty(item2H.BaseItemId))
+					{
+						Rectangle rect = this.FindSlotRect(item2H.PositionX, item2H.PositionY);
+						this.ShadeAreaUnderItem(e.Graphics, rect, backgroundColor, alpha);
+
+						// Adjust the alpha and draw the accent.
+						if (showAccent & HasItemBackgroundColor(item))
+							this.DrawItemAccent(e.Graphics, item2H, backgroundColor, AdjustAlpha(alpha));
+					}
+				}
+
 			}
 		}
 
@@ -794,14 +833,14 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="e">PaintEventArgs data</param>
 		protected override void PaintAreaUnderDragItem(PaintEventArgs e)
 		{
-			if (this.DragInfo.IsActive
-				&& !this.CellsUnderDragItem.Size.IsEmpty
-				&& (this.ItemsUnderDragItem == null || this.ItemsUnderDragItem.Count <= 1)
-			)
+			if (!this.DragInfo.IsActive || this.CellsUnderDragItem.Size.IsEmpty)
+				return;
+				
+			if (this.ItemsUnderDragItem == null || this.ItemsUnderDragItem.Count <= 1)			
 			{
 				Point tl = Point.Empty;
 				Point br = Point.Empty;
-				Brush backgroundBrush = null;
+				Color backgroundColor;
 				int slot = -1;
 
 				if (this.ItemsUnderDragItem.Count == 0)
@@ -820,22 +859,22 @@ namespace TQVaultAE.GUI.Components
 					// Check to see if the item is correct for the slot
 					if (slot != -1)
 					{
-						if (this.CheckItemType(this.DragInfo.Item, slot))
-							backgroundBrush = this.HighlightValidItemBrush;
-						else
-							backgroundBrush = this.HighlightInvalidItemBrush;
+						backgroundColor = this.CheckItemType(this.DragInfo.Item, slot) ? this.HighlightValidItemColor : this.HighlightInvalidItemColor;
 
-						e.Graphics.FillRectangle(backgroundBrush, tl.X, tl.Y, br.X - tl.X + 1, br.Y - tl.Y + 1);
-
-						if (IsWeaponSlot(slot))
+						using (Brush brush = new SolidBrush(backgroundColor))
 						{
-							// Draw additional weapon box area
-							e.Graphics.FillRectangle(
-								backgroundBrush,
-								tl.X + UIService.HalfUnitSize,
-								tl.Y - UIService.HalfUnitSize,
-								UIService.ItemUnitSize,
-								5 * UIService.ItemUnitSize);
+							e.Graphics.FillRectangle(brush, tl.X, tl.Y, br.X - tl.X + 1, br.Y - tl.Y + 1);
+
+							if (IsWeaponSlot(slot))
+							{
+								// Draw additional weapon box area
+								e.Graphics.FillRectangle(
+									brush,
+									tl.X + UIService.HalfUnitSize,
+									tl.Y - UIService.HalfUnitSize,
+									UIService.ItemUnitSize,
+									5 * UIService.ItemUnitSize);
+							}
 						}
 					}
 				}
@@ -859,15 +898,36 @@ namespace TQVaultAE.GUI.Components
 						// Weapon slots only
 						if (item.BaseItemId.Length == 0)
 							// If the item is null try to draw it grayed out
-							this.DrawItemShaded(e.Graphics, item, new SolidBrush(Color.Transparent));
+							this.DrawItemShaded(e.Graphics, item);
 						else
 							// Otherwise draw it normally
-							this.DrawItem(e.Graphics, item, new SolidBrush(Color.Transparent));
+							this.DrawItem(e.Graphics, item);
 					}
 					else if (item.BaseItemId.Length != 0)
-						this.DrawItem(e.Graphics, item, new SolidBrush(Color.Transparent));
+						this.DrawItem(e.Graphics, item);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Draws an accent on the item graphic
+		/// </summary>
+		/// <param name="graphics">graphics instance</param>
+		/// <param name="item">item we are adding the accent to</param>
+		/// <param name="accentColor">Color that the accent will be painted</param>
+		/// <param name="alpha">alpha value for the color</param>
+		protected override void DrawItemAccent(Graphics graphics, Item item, Color accentColor, int alpha)
+		{
+			if (item == null)
+				return;
+
+			Rectangle rect = this.FindSlotRect(item.PositionX, item.PositionY);
+
+			if (item.IsInWeaponSlot)	
+				// Adjust the accent to appear in the center 2x4 area of the weapon slot.
+				rect = new Rectangle(rect.X, rect.Y + UIService.HalfUnitSize, rect.Width, rect.Height - UIService.ItemUnitSize);
+			
+			base.DrawItemAccent(graphics, rect, accentColor, alpha);
 		}
 
 		/// <summary>
@@ -875,33 +935,46 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <param name="graphics">graphics instance</param>
 		/// <param name="item">Item to be shaded</param>
-		/// <param name="backgroundBrush">brush we are using to paint the background.</param>
-		protected override void ShadeAreaUnderItem(Graphics graphics, Item item, Brush backgroundBrush)
-		{
-			Rectangle rect = this.FindSlotRect(item.PositionX, item.PositionY, backgroundBrush == null);
-			this.ShadeAreaUnderItem(graphics, rect, backgroundBrush);
-		}
+		/// <param name="backgroundColor">Color that we are using to paint the background.</param>
+		/// <param name="alpha">Int containing the alpha value</param>
+		protected override void ShadeAreaUnderItem(Graphics graphics, Item item, Color backgroundColor, int alpha)
+			=> this.ShadeAreaUnderItem(graphics, this.FindSlotRect(item.PositionX, item.PositionY), backgroundColor, alpha);
+		
 
 		/// <summary>
 		/// Shades the background of an item.
 		/// </summary>
 		/// <param name="graphics">graphics instance</param>
 		/// <param name="backgroundRectangle">cell rectangle that needs to be drawn</param>
-		/// <param name="backgroundBrush">brush we are using to paint the background.</param>
-		protected override void ShadeAreaUnderItem(Graphics graphics, Rectangle backgroundRectangle, Brush backgroundBrush)
+		/// <param name="backgroundColor">Color that we are using to paint the background.</param>
+		/// <param name="alpha">Int containing the alpha value</param>
+		protected override void ShadeAreaUnderItem(Graphics graphics, Rectangle backgroundRectangle, Color backgroundColor, int alpha)
 		{
-			// Do the normal shading.
-			base.ShadeAreaUnderItem(graphics, backgroundRectangle, backgroundBrush);
-
-			// Fill the center 1x5 strip in the weapon boxes.
-			if (IsWeaponSlot(FindEquipmentSlot(FindCell(backgroundRectangle.Location))) && backgroundBrush != null)
+			// Fill the weapon box shape.
+			int slot = this.FindEquipmentSlot(this.FindCell(backgroundRectangle.Location));
+			if (IsWeaponSlot(slot))
 			{
-				graphics.FillRectangle(
-					backgroundBrush,
-					backgroundRectangle.X + UIService.HalfUnitSize,
-					backgroundRectangle.Y - UIService.HalfUnitSize,
-					UIService.ItemUnitSize,
-					UIService.ItemUnitSize * 5);
+				// Since the weapon box is not a single rectangle, it needs to be drawn using CompositingMode.SourceCopy
+				// so that the alpha values remain consistent for the combined image.
+				using (Bitmap weaponBmp = new Bitmap(2 * UIService.ItemUnitSize, 5 * UIService.ItemUnitSize))
+				using (Brush brush = new SolidBrush(Color.FromArgb(alpha, backgroundColor)))
+				using (Graphics weaponBmpGraphics = Graphics.FromImage(weaponBmp))
+				{
+					weaponBmpGraphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+					weaponBmpGraphics.FillRectangle(brush, UIService.HalfUnitSize, 0, UIService.ItemUnitSize, UIService.ItemUnitSize * 5);
+					weaponBmpGraphics.FillRectangle(brush, 0, UIService.HalfUnitSize, UIService.ItemUnitSize * 2, UIService.ItemUnitSize * 4);
+				
+					graphics.DrawImage(weaponBmp, backgroundRectangle.X, backgroundRectangle.Y);
+				}
+			}
+			else
+			{
+				if (slot == 1)
+					// Adjust the rectangle to fit the amulet box.
+					backgroundRectangle = this.FindSlotRect(1);
+
+				// Do the normal shading.
+				base.ShadeAreaUnderItem(graphics, backgroundRectangle, backgroundColor, alpha);
 			}
 		}
 
@@ -914,33 +987,26 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="graphics">graphics instance</param>
 		/// <param name="item">item we are drawing</param>
 		/// <param name="backgroundBrush">brush used to draw the background</param>
-		protected override void DrawItem(Graphics graphics, Item item, Brush backgroundBrush)
+		protected override void DrawItem(Graphics graphics, Item item)
 		{
-			// First draw the background for all the cells this item occupies
-			this.ShadeAreaUnderItem(graphics, item, backgroundBrush);
-
-			// Draw the item
-			if (this.UIService.GetBitmap(item) != null)
+			Point screenLocation;
+			if (item.IsInWeaponSlot)
 			{
-				Point screenLocation;
-				if (item.IsInWeaponSlot)
-				{
-					// Adjust for weapon slots
-					screenLocation = WeaponTopLeft(
-						SackCollection.GetWeaponLocationOffset(item.PositionY).X,
-						SackCollection.GetWeaponLocationOffset(item.PositionY).Y,
-						item.Width,
-						item.Height);
-				}
-				else
-					screenLocation = this.CellTopLeft(item.Location);
-
-				if (item.IsAmulet)
-					// Adjust the amulet to center it in the equipment box.
-					screenLocation.X = screenLocation.X + (SackCollection.GetEquipmentLocationSize(1).Width - item.Width) * UIService.HalfUnitSize;
-
-				this.DrawItem(graphics, item, screenLocation);
+				// Adjust for weapon slots
+				screenLocation = WeaponTopLeft(
+					SackCollection.GetWeaponLocationOffset(item.PositionY).X,
+					SackCollection.GetWeaponLocationOffset(item.PositionY).Y,
+					item.Width,
+					item.Height);
 			}
+			else
+				screenLocation = this.CellTopLeft(item.Location);
+
+			if (item.IsAmulet)
+				// Adjust the amulet to center it in the equipment box.
+				screenLocation.X += (SackCollection.GetEquipmentLocationSize(1).Width - item.Width) * UIService.HalfUnitSize;
+
+			this.DrawItem(graphics, item, screenLocation);
 		}
 
 		#endregion EquipmentPanel Protected Methods
@@ -954,55 +1020,6 @@ namespace TQVaultAE.GUI.Components
 		/// <returns>True if it is an equipment slot.</returns>
 		private static bool IsWeaponSlot(int slot)
 			=> slot > 6 && slot < 11;
-
-		/// <summary>
-		/// Finds the equipment slot
-		/// </summary>
-		/// <param name="sack">current sack instance</param>
-		/// <param name="item">item we are checking</param>
-		/// <returns>slot number if the item is in an equipment slot otherwise -1</returns>
-		private static int FindEquipmentSlot(SackCollection sack, Item item)
-		{
-			if (sack == null || sack.SackType != SackType.Equipment || item == null)
-				// Make sure we are on the equipment panel
-				return -1;
-
-			// Iterate through the equipment slots
-			for (int slot = 0; slot < sack.NumberOfSlots; ++slot)
-			{
-				int itemX;
-				int itemY;
-
-				if (item.IsInWeaponSlot)
-				{
-					// adjust for weapon panel
-					itemX = SackCollection.GetWeaponLocationOffset(item.PositionY).X;
-					itemY = SackCollection.GetWeaponLocationOffset(item.PositionY).Y;
-				}
-				else
-				{
-					itemX = item.PositionX;
-					itemY = item.PositionY;
-				}
-
-				Point upperLeft = SackCollection.GetEquipmentLocationOffset(slot);
-				Size size = SackCollection.GetEquipmentLocationSize(slot);
-				if (SackCollection.IsWeaponSlot(slot))
-				{
-					// Adjust for the equipment slots
-					size = SackCollection.WeaponLocationSize;
-					upperLeft = SackCollection.GetWeaponLocationOffset(upperLeft.Y);
-				}
-
-				if (itemX < upperLeft.X || itemX > (upperLeft.X + size.Width - 1) || itemY < upperLeft.Y || itemY > (upperLeft.Y + size.Height - 1))
-					continue;
-				else
-					// We found it
-					return slot;
-			}
-
-			return -1;
-		}
 
 		/// <summary>
 		/// Returns whether the cell is within a specific weapon box.
@@ -1149,7 +1166,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="y">Y coordinate of the cell to be checked.</param>
 		/// <param name="useImage">Specifies whether we are using an image or a colored fill for the background.</param>
 		/// <returns>Scaled rectangle for the weapon slot.</returns>
-		private Rectangle FindSlotRect(int x, int y, bool useImage)
+		private Rectangle FindSlotRect(int x, int y)
 		{
 			int width;
 			int height;
@@ -1161,14 +1178,6 @@ namespace TQVaultAE.GUI.Components
 				// Adjust for special placement of weapons in the equipment panel
 				width = SackCollection.GetEquipmentLocationSize(y + 7).Width;
 				height = SackCollection.GetEquipmentLocationSize(y + 7).Height;
-				if (!useImage)
-				{
-					// Make the bounding rectagle a little smaller
-					// because of the additional drawing for the 1x5 center piece.
-					// We use the larger size to restore the background image.
-					height--;
-				}
-
 				int itemX = SackCollection.GetWeaponLocationOffset(y).X;
 				int itemY = SackCollection.GetWeaponLocationOffset(y).Y;
 
@@ -1192,13 +1201,13 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="g">graphics instance</param>
 		/// <param name="item">item we are drawing</param>
 		/// <param name="backgroundBrush">brush we are using for the background</param>
-		private void DrawItemShaded(Graphics g, Item item, Brush backgroundBrush)
+		private void DrawItemShaded(Graphics g, Item item)
 		{
 			if (item.BaseItemId.Length != 0)
 			{
 				// The item is not null
 				// So we draw it normally and exit
-				this.DrawItem(g, item, backgroundBrush);
+				this.DrawItem(g, item);
 				return;
 			}
 
@@ -1213,38 +1222,35 @@ namespace TQVaultAE.GUI.Components
 				return;
 			}
 
-			// First draw the background for all the cells this item occupies
-			Rectangle rect = this.FindSlotRect(item.PositionX, item.PositionY, backgroundBrush == null);
-			this.ShadeAreaUnderItem(g, rect, backgroundBrush);
+			if (this.UIService.GetBitmap(item2H) == null)
+				return;
+
+			Point screenLocation;
+			if (item.IsInWeaponSlot)
+			{
+				screenLocation = WeaponTopLeft(
+					SackCollection.GetWeaponLocationOffset(item.PositionY).X,
+					SackCollection.GetWeaponLocationOffset(item.PositionY).Y,
+					item2H.Width,
+					item2H.Height);
+			}
+			else
+				screenLocation = this.CellTopLeft(item.Location);
 
 			// Set the color matrix so that the item is dimmed
-			System.Drawing.Imaging.ColorMatrix colorMatrix = new System.Drawing.Imaging.ColorMatrix();
-			colorMatrix.Matrix00 = 0.80f; // Red
-			colorMatrix.Matrix11 = 0.80f; // Green
-			colorMatrix.Matrix22 = 0.80f; // Blue
-			colorMatrix.Matrix33 = 0.60f; // alpha
-			colorMatrix.Matrix44 = 1.00f; // w
+			System.Drawing.Imaging.ColorMatrix colorMatrix = new System.Drawing.Imaging.ColorMatrix()
+			{
+				Matrix00 = 0.80f, // Red
+				Matrix11 = 0.80f, // Green
+				Matrix22 = 0.80f, // Blue
+				Matrix33 = 0.60f, // alpha
+				Matrix44 = 1.00f  // w
+			};
 
 			System.Drawing.Imaging.ImageAttributes imgAttr = new System.Drawing.Imaging.ImageAttributes();
 			imgAttr.SetColorMatrix(colorMatrix);
 
-			// Draw the item
-			if (this.UIService.GetBitmap(item2H) != null)
-			{
-				Point screenLocation;
-				if (item.IsInWeaponSlot)
-				{
-					screenLocation = WeaponTopLeft(
-						SackCollection.GetWeaponLocationOffset(item.PositionY).X,
-						SackCollection.GetWeaponLocationOffset(item.PositionY).Y,
-						item2H.Width,
-						item2H.Height);
-				}
-				else
-					screenLocation = this.CellTopLeft(item.Location);
-
-				this.DrawItem(g, item2H, screenLocation, imgAttr);
-			}
+			this.DrawItem(g, item2H, screenLocation, imgAttr);
 		}
 
 		/// <summary>

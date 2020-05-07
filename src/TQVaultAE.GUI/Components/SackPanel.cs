@@ -23,6 +23,7 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Helpers;
 	using Microsoft.Extensions.Logging;
+	using System.Windows.Forms.VisualStyles;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel.
@@ -37,7 +38,17 @@ namespace TQVaultAE.GUI.Components
 		protected readonly ITQDataService TQData;
 		private readonly ITranslationService TranslationService;
 		protected readonly IServiceProvider ServiceProvider;
-		ItemStyle[] ItemStyleBackGroundColorEnable = new[] { ItemStyle.Epic, ItemStyle.Legendary, ItemStyle.Rare, ItemStyle.Common };
+		ItemStyle[] ItemStyleBackGroundColorEnable = new[] { 
+			ItemStyle.Epic, 
+			ItemStyle.Legendary, 
+			ItemStyle.Rare, 
+			ItemStyle.Common, 
+			ItemStyle.Relic, 
+			ItemStyle.Artifact, 
+			ItemStyle.Quest, 
+			ItemStyle.Scroll, 
+			ItemStyle.Formulae, 
+			ItemStyle.Parchment };
 
 		#region SackPanel Fields
 
@@ -133,33 +144,33 @@ namespace TQVaultAE.GUI.Components
 
 		private void InitializeComponent()
 		{
-            this.components = new System.ComponentModel.Container();
-            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.SuspendLayout();
-            // 
-            // contextMenu
-            // 
-            this.contextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-            this.contextMenu.Font = new System.Drawing.Font("Albertus MT", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.contextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-            this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Opacity = 0.8D;
-            this.contextMenu.ShowImageMargin = false;
-            this.contextMenu.Size = new System.Drawing.Size(36, 4);
-            this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
-            // 
-            // SackPanel
-            // 
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyUpCallback);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyDownCallback);
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCallback);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDownCallback);
-            this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
-            this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveCallback);
-            this.ResumeLayout(false);
+			this.components = new System.ComponentModel.Container();
+			this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.SuspendLayout();
+			// 
+			// contextMenu
+			// 
+			this.contextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+			this.contextMenu.Font = new System.Drawing.Font("Albertus MT", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.contextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+			this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+			this.contextMenu.Name = "contextMenu";
+			this.contextMenu.Opacity = 0.8D;
+			this.contextMenu.ShowImageMargin = false;
+			this.contextMenu.Size = new System.Drawing.Size(36, 4);
+			this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
+			// 
+			// SackPanel
+			// 
+			this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyUpCallback);
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyDownCallback);
+			this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCallback);
+			this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDownCallback);
+			this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
+			this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveCallback);
+			this.ResumeLayout(false);
 
 		}
 
@@ -200,12 +211,9 @@ namespace TQVaultAE.GUI.Components
 			this.borderPen = new Pen(Color.FromArgb(223, 188, 97));
 			this.borderPen.Width = BorderWidth;
 
-			this.CellHasItemBrush = new SolidBrush(Color.FromArgb(64, 60, 60));
-			this.EmptyCellBrush = new SolidBrush(Color.FromArgb(46, 41, 31));
-			this.HighlightUnselectedItemBrush = new SolidBrush(Color.FromArgb(26, 29, 157));  // Light Blue
-			this.HighlightValidItemBrush = new SolidBrush(Color.FromArgb(23, 149, 15));       // Green
-			this.HighlightInvalidItemBrush = new SolidBrush(Color.FromArgb(153, 28, 28));     // Red
-			this.HighlightSelectedItemBrush = new SolidBrush(Color.FromArgb(50, 60, 229));    // Dark Blue
+			this.DefaultItemBackgroundColor = Color.FromArgb(220, 220, 220);  // White
+			this.HighlightValidItemColor = Color.FromArgb(23, 149, 15);       // Green
+			this.HighlightInvalidItemColor = Color.FromArgb(153, 28, 28);     // Red
 
 			this.gridPen = new Pen(Color.FromArgb(142, 140, 129));
 
@@ -217,7 +225,7 @@ namespace TQVaultAE.GUI.Components
 			this.Size = new Size(
 				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * sackWidth),
 				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * sackHeight));
-			this.BackColor = ((SolidBrush)this.EmptyCellBrush).Color;
+			this.BackColor = Color.FromArgb(46, 41, 31);
 
 			this.contextMenu.Renderer = new CustomProfessionalRenderer();
 			this.contextMenu.Font = FontService.GetFont(9.0F * UIService.Scale);
@@ -319,35 +327,19 @@ namespace TQVaultAE.GUI.Components
 		public bool DisableMultipleSelection { get; set; }
 
 		/// <summary>
-		/// Gets or sets the background Brush for cells which contain an item.
+		/// Gets or sets the default background Color for cells which contain an item.
 		/// </summary>
-		public Brush CellHasItemBrush { get; protected set; }
+		public Color DefaultItemBackgroundColor { get; protected set; }
 
 		/// <summary>
-		/// Gets or sets the background Brush for cells which do not contain an item.
+		/// Gets or sets the background Color for cells which are valid for an item drop.
 		/// </summary>
-		public Brush EmptyCellBrush { get; protected set; }
+		public Color HighlightValidItemColor { get; protected set; }
 
 		/// <summary>
-		/// Gets or sets the background Brush for cells which are valid for an item drop.
+		/// Gets or sets the background Color for cells which are NOT valid for an item drop.
 		/// </summary>
-		public Brush HighlightValidItemBrush { get; protected set; }
-
-		/// <summary>
-		/// Gets or sets the background Brush for cells which are NOT valid for an item drop.
-		/// </summary>
-		public Brush HighlightInvalidItemBrush { get; protected set; }
-
-		/// <summary>
-		/// Gets or sets the background Brush for items as you mouse over them.
-		/// Is not used if the item have been multi-selected.
-		/// </summary>
-		public Brush HighlightUnselectedItemBrush { get; protected set; }
-
-		/// <summary>
-		/// Gets or sets the background Brush for items that have been multi-selected.
-		/// </summary>
-		public Brush HighlightSelectedItemBrush { get; protected set; }
+		public Color HighlightInvalidItemColor { get; protected set; }
 
 		/// <summary>
 		/// Gets a value indicating whether items have been selected
@@ -438,6 +430,11 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		protected Point LastCellWithFocus { get; set; }
 
+		/// <summary>
+		/// Gets the alpha value from the user settings and applies any necessary clamping of the value.
+		/// </summary>
+		protected  int UserAlpha => Config.Settings.Default.ItemBGColorOpacity > 127 ? 127 : Config.Settings.Default.ItemBGColorOpacity;
+		
 		#endregion SackPanel Properties
 
 		#region SackPanel Public Methods
@@ -739,36 +736,27 @@ namespace TQVaultAE.GUI.Components
 		public virtual void CancelDrag(ItemDragInfo dragInfo)
 		{
 			// if the drag sack is not visible then we really do not need to do anything
-			if (this.Sack == dragInfo.Sack)
-			{
-				// All we need to do is redraw the item to restore it
-				Graphics graphics = this.CreateGraphics();
-				try
-				{
-					Brush backgroundBrush = this.CellHasItemBrush;
-
-					if (this.IsItemSelected(dragInfo.Item))
-						backgroundBrush = this.HighlightSelectedItemBrush;
-
-					this.DrawItem(graphics, dragInfo.Item, backgroundBrush);
-				}
-				catch (NullReferenceException exception)
-				{
-					Log.ErrorException(exception);
-					MessageBox.Show(
-						Log.FormatException(exception),
-						Resources.GlobalError,
-						MessageBoxButtons.OK,
-						MessageBoxIcon.Warning,
-						MessageBoxDefaultButton.Button1,
-						RightToLeftOptions);
-				}
-			}
+			if (this.Sack == dragInfo.Sack)			
+				this.Invalidate(this.GetItemScreenRectangle(dragInfo.Item));							
 		}
 
 		#endregion SackPanel Public Methods
 
 		#region SackPanel Protected Methods
+
+		/// <summary>
+		/// Adjusts the alpha value to provide contrast for highlighting the background of an item.
+		/// </summary>
+		/// <param name="alpha">Int with the adjusted alpha value.</param>
+		/// <returns></returns>
+		protected static int AdjustAlpha(int alpha)
+		{
+			alpha += 64;
+			if (alpha < 127) alpha = 127;
+			if (alpha > 255) alpha = 255;
+
+			return alpha;
+		}
 
 		/// <summary>
 		/// Override of ScaleControl which supports scaling of the fonts and internal items.
@@ -1069,7 +1057,7 @@ namespace TQVaultAE.GUI.Components
 		/// <summary>
 		/// Indicates whether the item selection has changed.
 		/// </summary>
-		/// <returns>true if the item selection has changed</returns>
+		/// <returns>True if the item selection has changed and resets back to false afterward.</returns>
 		protected bool IsSelectedItemsChanged()
 		{
 			// Check if the flag is set
@@ -1132,7 +1120,7 @@ namespace TQVaultAE.GUI.Components
 				}
 
 				// Notify that the item has been placed.  This will remove it from the old sack
-				this.DragInfo.MarkPlaced(-1);
+				this.DragInfo.MarkPlaced();
 
 				// If we are a stackable and we have a stackable under us and we are the same type of stackable
 				// then just add to the stack instead of picking up the other stack
@@ -1565,37 +1553,16 @@ namespace TQVaultAE.GUI.Components
 
 				if (newItem != lastItem || redrawSelection)
 				{
-					// We have moved to a different item
-					Graphics g = this.CreateGraphics();
-					Brush backgroundBrush;
 					if (lastItem != null)
-					{
-						// We need to restore the highlighted item's background
-						if (this.IsItemSelected(lastItem))
-							backgroundBrush = this.HighlightSelectedItemBrush;
-						else if (redrawSelection)
-							backgroundBrush = this.HighlightUnselectedItemBrush;
-						else
-							backgroundBrush = this.CellHasItemBrush;
-
-						this.DrawItem(g, lastItem, backgroundBrush);
-					}
-
+						this.Invalidate(GetItemScreenRectangle(lastItem));
+					
 					if (cell != this.LastCellWithFocus)
 						this.LastCellWithFocus = cell;
 
 					if (newItem != lastItem)
 					{
-						if (newItem != null)
-						{
-							// Check if the item is selected and use a different background
-							if (this.IsItemSelected(newItem))
-								backgroundBrush = this.HighlightSelectedItemBrush;
-							else
-								backgroundBrush = this.HighlightUnselectedItemBrush;
-
-							this.DrawItem(g, newItem, backgroundBrush);
-						}
+						if (newItem != null)						
+							this.Invalidate(GetItemScreenRectangle(newItem));						
 
 						this.OnNewItemHighlighted(this, new SackPanelEventArgs(this.Sack, newItem));
 					}
@@ -1640,22 +1607,17 @@ namespace TQVaultAE.GUI.Components
 		}
 
 		/// <summary>
-		/// Redraws what was under the last drag location.
-		/// Used to restore the screen when the item is dragged around.
+		/// Gets the item Rectangle converted to screen coordinates.
 		/// </summary>
-		/// <param name="graphics">graphics instance</param>
-		protected virtual void RepaintLastDragLocation(Graphics graphics)
+		/// <param name="item">Item that needs screen coordinates</param>
+		/// <returns>Rectangle containing the screen coordinates occupied by the item.</returns>
+		protected virtual Rectangle GetItemScreenRectangle(Item item)
 		{
-			if (graphics == null)
-				return;
+			if (item == null)
+				return Rectangle.Empty;
 
-			Rectangle dragRectangle = this.GetRepaintDragRect();
-
-			// we know we need to wipe out the area under the old drag point
-			this.ClearArea(graphics, dragRectangle);
-
-			// Now just call the Paint method to redraw the grids and items.
-			this.PaintCallback(this, new PaintEventArgs(graphics, dragRectangle));
+			Point screenLocation = this.CellTopLeft(item.Location);
+			return new Rectangle(screenLocation.X, screenLocation.Y, item.Size.Width* UIService.ItemUnitSize, item.Size.Height * UIService.ItemUnitSize);
 		}
 
 		/// <summary>
@@ -1740,16 +1702,10 @@ namespace TQVaultAE.GUI.Components
 			if (this.Sack == null)
 				return;
 
-			Point cell = this.FindCell(e.Location);
+			this.HighlightItemUnderMouse(this.FindCell(e.Location));
 
-			if (!this.DragInfo.IsActive)
-			{
-				this.HighlightItemUnderMouse(cell);
-			}
-			else
-			{
+			if (this.DragInfo.IsActive)
 				this.Invalidate();
-			}
 		}
 
 		/// <summary>
@@ -1766,10 +1722,8 @@ namespace TQVaultAE.GUI.Components
 			try
 			{
 				if (this.Sack == null)
-				{
-					// Otherwise draw the medallion
+					// Draw the medallion if the sack is not created
 					e.Graphics.DrawImage(Resources.tqmedallion, 0, 0, this.Width, this.Height);
-				}
 				else
 				{
 					// Draw the border.
@@ -1778,7 +1732,7 @@ namespace TQVaultAE.GUI.Components
 					// shade the area under all the items
 					this.PaintAreaUnderItem(e);
 
-					// Shade the area under the drag item if there is <= 1 items under the drag item
+					// Shade the area under the drag item
 					this.PaintAreaUnderDragItem(e);
 
 					// Draw the grid.
@@ -1789,9 +1743,7 @@ namespace TQVaultAE.GUI.Components
 
 					Point cursorPosition = this.PointToClient(Cursor.Position);
 					if (this.DragInfo.IsActive && this.ClientRectangle.Contains(cursorPosition))
-					{
-						this.RedrawDragItem(e.Graphics, new Point(cursorPosition.X - this.DragInfo.MouseOffset.X, cursorPosition.Y - this.DragInfo.MouseOffset.Y));
-					}
+						this.RedrawDragItem(e.Graphics, new Point(cursorPosition.X - this.DragInfo.MouseOffset.X, cursorPosition.Y - this.DragInfo.MouseOffset.Y));					
 				}
 			}
 			finally
@@ -1806,17 +1758,23 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="e">PaintEventArgs data</param>
 		protected virtual void PaintAreaUnderDragItem(PaintEventArgs e)
 		{
-			if (this.DragInfo.IsActive && !this.CellsUnderDragItem.Size.IsEmpty && (this.ItemsUnderDragItem == null ||
-				this.ItemsUnderDragItem.Count <= 1))
+			if (!this.DragInfo.IsActive || this.CellsUnderDragItem.Size.IsEmpty)
+				return;
+
+			Color highlightColor =  this.HighlightInvalidItemColor;
+
+			if ((this.ItemsUnderDragItem == null || this.ItemsUnderDragItem.Count <= 1) && this.IsItemValidForPlacement(this.DragInfo.Item))
+				highlightColor = this.HighlightValidItemColor;
+
+			Point topLeft = this.CellTopLeft(this.CellsUnderDragItem.Location);
+			Point bottomRight = this.CellBottomRight(new Point(this.CellsUnderDragItem.Right - 1, this.CellsUnderDragItem.Bottom - 1));
+
+			using (SolidBrush brush = new SolidBrush(highlightColor))
 			{
-				Brush highlightBrush = this.IsItemValidForPlacement(this.DragInfo.Item) ? this.HighlightValidItemBrush : this.HighlightInvalidItemBrush;
-
-				Point topLeft = this.CellTopLeft(this.CellsUnderDragItem.Location);
-				Point bottomRight = this.CellBottomRight(new Point(this.CellsUnderDragItem.Right - 1, this.CellsUnderDragItem.Bottom - 1));
-
 				// Draw the area
-				e.Graphics.FillRectangle(highlightBrush, topLeft.X, topLeft.Y, bottomRight.X - topLeft.X + 1, bottomRight.Y - topLeft.Y + 1);
+				e.Graphics.FillRectangle(brush, topLeft.X, topLeft.Y, bottomRight.X - topLeft.X + 1, bottomRight.Y - topLeft.Y + 1);
 			}
+
 		}
 
 		/// <summary>
@@ -1830,11 +1788,41 @@ namespace TQVaultAE.GUI.Components
 			{
 				// Skip over empty and dragged items.
 				if (item != this.DragInfo.Item && !string.IsNullOrEmpty(item.BaseItemId))
-				{
-					this.DrawItem(e.Graphics, item, new SolidBrush(Color.Transparent));
-				}
+					this.DrawItem(e.Graphics, item);
 			}
 		}
+
+		/// <summary>
+		/// Gets the item background shading color based on the item quality.
+		/// </summary>
+		/// <param name="item">Item that needs the color applied.</param>
+		/// <returns>Color for the item.  Returns base color if specific color is not found.</returns>
+		protected virtual Color GetItemBackgroundColor(Item item)
+			=> this.HasItemBackgroundColor(item) ? item.ItemStyle.Color() : this.DefaultItemBackgroundColor;
+		
+
+		/// <summary>
+		/// Indicates whether the passed item meets the item requirementt for equipping
+		/// </summary>
+		/// <param name="item">Item to check</param>
+		/// <returns>True if item is able to be equipped</returns>
+		protected virtual bool CanBeEquipped(Item item)
+		{
+			var reqs = this.ItemProvider.GetFriendlyNames(item, FriendlyNamesExtraScopes.Requirements).RequirementVariables;
+			var currPlayer = this.userContext.CurrentPlayer;
+			if (currPlayer != null && reqs != null && reqs.Any() && !currPlayer.IsPlayerMeetRequierements(reqs))
+				return false;
+
+			return true;
+		}
+
+		/// <summary>
+		/// Indicates whether the item has a specific background color based on the ItemStyle.
+		/// </summary>
+		/// <param name="item">Item that needs needs a background color</param>
+		/// <returns>True if the Item has a specific background color</returns>
+		protected virtual bool HasItemBackgroundColor(Item item)
+			=> this.ItemStyleBackGroundColorEnable.Contains(item.ItemStyle);
 
 		/// <summary>
 		/// Draws the background of the items in the panel during a Paint call.
@@ -1842,53 +1830,53 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="e">PaintEventArgs data</param>
 		protected virtual void PaintAreaUnderItem(PaintEventArgs e)
 		{
-			Item lastItem = this.FindItem(this.LastCellWithFocus);
+			Item focusedItem = this.FindItem(this.LastCellWithFocus);
 			foreach (Item item in this.Sack)
 			{
 				// Do not draw the item being dragged.
-				if (item != this.DragInfo.Item)
+				if (item == this.DragInfo.Item)
+					continue;
+
+				// Figure out the background brush to use.
+				bool showAccent = true;
+				int alpha = this.UserAlpha;
+				Color backgroundColor = this.GetItemBackgroundColor(item);
+
+				// If we are showing the cannot equip background then 
+				// change to invalid color and adjust the alpha.
+				if (Config.Settings.Default.EnableCharacterRequierementBGColor && !this.CanBeEquipped(item))
 				{
-					// Figure out the background brush to use.
-					Brush backgroundBrush = this.CellHasItemBrush;
+					backgroundColor = this.HighlightInvalidItemColor;
 
-					// Check if the item is selected and use a different background
-					if (this.IsItemSelected(item))
-					{
-						backgroundBrush = this.HighlightSelectedItemBrush;
-					}
+					// Un-equippable items do not show the accent.
+					showAccent = false;
 
-					if (this.DragInfo.IsActive)
-					{
-						// See if this item is under the drag item
-						if (this.ItemsUnderDragItem != null && this.ItemsUnderDragItem.Contains(item))
-						{
-							// Use highlight color if it is the only item under the drag point, else use invalid
-							if (this.ItemsUnderDragItem.Count > 1)
-							{
-								backgroundBrush = this.HighlightInvalidItemBrush;
-							}
-							else
-							{
-								backgroundBrush = this.HighlightUnselectedItemBrush;
-							}
-						}
-						else
-						{
-							backgroundBrush = this.CellHasItemBrush;
-						}
-					}
-					else if (item == lastItem)
-					{
-						backgroundBrush = this.HighlightUnselectedItemBrush;
-					}
-
-					// Now do the shading
-					this.ShadeAreaUnderItem(e.Graphics, item, backgroundBrush);
+					// Make the background stand out since we are not showing the accent.
+					alpha = AdjustAlpha(alpha);
 				}
-				else
+
+				// Check if the item is selected and use adjust the alpha
+				if (this.IsItemSelected(item))
+					alpha = AdjustAlpha(alpha);
+
+				// See if this item is under the drag item
+				if (this.DragInfo.IsActive && this.ItemsUnderDragItem != null && this.ItemsUnderDragItem.Contains(item))
 				{
-					// item is being dragged
+					// Use highlight color if it is the only item under the drag point, else use invalid
+					backgroundColor = this.ItemsUnderDragItem.Count > 1 ? this.HighlightInvalidItemColor : this.HighlightValidItemColor;
+					alpha = AdjustAlpha(alpha);
 				}
+
+				// See if this is the focused item and adjust the alpha again.
+				if (!this.DragInfo.IsActive && item == focusedItem)
+					alpha = AdjustAlpha(alpha);
+
+				// Now do the shading
+				this.ShadeAreaUnderItem(e.Graphics, item, backgroundColor, alpha);
+
+				// Adjust the alpha and draw the accent.
+				if (showAccent && HasItemBackgroundColor(item))
+					this.DrawItemAccent(e.Graphics, item, backgroundColor, AdjustAlpha(alpha));
 			}
 		}
 
@@ -1915,17 +1903,27 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <param name="graphics">graphics instance</param>
 		/// <param name="item">item we are drawing</param>
+		protected virtual void DrawItem(Graphics graphics, Item item)
+			=> this.DrawItem(graphics, item, this.CellTopLeft(item.Location));
+
+		/// <summary>
+		/// Draws an item on the screen at the specified coordinates without background shading.
+		/// </summary>
+		/// <param name="graphics">graphics instance</param>
+		/// <param name="item">item we are drawing</param>
 		/// <param name="screenLocation">Point containing the screen coordinates where the item will be drawn</param>
 		protected void DrawItem(Graphics graphics, Item item, Point screenLocation)
 		{
-			// Set the color matrix so that the item is dimmed
-			System.Drawing.Imaging.ColorMatrix colorMatrix = new System.Drawing.Imaging.ColorMatrix();
-			colorMatrix.Matrix00 = 1.00f; // Red
-			colorMatrix.Matrix11 = 1.00f; // Green
-			colorMatrix.Matrix22 = 1.00f; // Blue
-			colorMatrix.Matrix33 = 1.00f; // alpha
-			colorMatrix.Matrix44 = 1.00f; // w
-
+			// Color matrix for drawing the image as-is
+			System.Drawing.Imaging.ColorMatrix colorMatrix = new System.Drawing.Imaging.ColorMatrix()
+			{
+				Matrix00 = 1.00f, // Red
+				Matrix11 = 1.00f, // Green
+				Matrix22 = 1.00f, // Blue
+				Matrix33 = 1.00f, // alpha
+				Matrix44 = 1.00f  // w
+			};
+			
 			System.Drawing.Imaging.ImageAttributes imgAttr = new System.Drawing.Imaging.ImageAttributes();
 			imgAttr.SetColorMatrix(colorMatrix);
 
@@ -1952,34 +1950,6 @@ namespace TQVaultAE.GUI.Components
 				, Convert.ToInt32(ibmp.Width * UIService.Scale)
 				, Convert.ToInt32(ibmp.Height * UIService.Scale)
 			);
-
-			var alpha = Config.Settings.Default.ItemBGColorOpacity;
-
-			// Display Red BG Color if item cannot be equipped
-			if (Config.Settings.Default.EnableCharacterRequierementBGColor)
-			{
-				var reqs = this.ItemProvider.GetFriendlyNames(item, FriendlyNamesExtraScopes.Requirements).RequirementVariables;
-				var currPlayer = this.userContext.CurrentPlayer;
-				if (currPlayer != null && reqs != null && reqs.Any() && !currPlayer.IsPlayerMeetRequierements(reqs))
-				{
-					using (SolidBrush brush = new SolidBrush(Color.FromArgb(alpha, TQColor.Red.Color())))
-					{
-						graphics.FillRectangle(brush, itemRect);
-					}
-					goto normalBGColor;
-				}
-			}
-
-			// Display item BG color 
-			if (alpha > 0 && ItemStyleBackGroundColorEnable.Contains(item.ItemStyle))
-			{
-				using (SolidBrush brush = new SolidBrush(Color.FromArgb(alpha, item.ItemStyle.Color())))
-				{
-					graphics.FillRectangle(brush, itemRect);
-				}
-			}
-
-		normalBGColor:
 
 			graphics.DrawImage(ibmp, itemRect, 0, 0, ibmp.Width, ibmp.Height, GraphicsUnit.Pixel, imageAttributes);
 
@@ -2022,58 +1992,80 @@ namespace TQVaultAE.GUI.Components
 		}
 
 		/// <summary>
-		/// Shades the background of an item.
+		/// Draws an accent on the item graphic
 		/// </summary>
 		/// <param name="graphics">graphics instance</param>
-		/// <param name="item">item we are shading</param>
-		/// <param name="backgroundBrush">brush we are using for painting the background</param>
-		protected virtual void ShadeAreaUnderItem(Graphics graphics, Item item, Brush backgroundBrush)
+		/// <param name="item">item we are adding the accent to</param>
+		/// <param name="accentColor">Color that the accent will be painted</param>
+		/// <param name="alpha">alpha value for the color</param>
+		protected virtual void DrawItemAccent(Graphics graphics, Item item, Color accentColor, int alpha)
 		{
 			if (item == null)
 				return;
 
 			Point screenLocation = this.CellTopLeft(item.Location);
-			this.ShadeAreaUnderItem(graphics, new Rectangle(screenLocation, new Size(item.Width * UIService.ItemUnitSize, item.Height * UIService.ItemUnitSize)), backgroundBrush);
+			this.DrawItemAccent(graphics, new Rectangle(screenLocation, new Size(item.Width * UIService.ItemUnitSize, item.Height * UIService.ItemUnitSize)), accentColor, alpha);
 		}
 
 		/// <summary>
-		/// Shades the background of an item.
+		/// Draws an accent on the item graphic
 		/// </summary>
 		/// <param name="graphics">graphics instance</param>
-		/// <param name="backgroundRectangle">cell rectangle which needs to be drawn</param>
-		/// <param name="backgroundBrush">brush we are using to paint the background</param>
-		protected virtual void ShadeAreaUnderItem(Graphics graphics, Rectangle backgroundRectangle, Brush backgroundBrush)
+		/// <param name="itemRectangle">cell rectangle for the item</param>
+		/// <param name="accentColor">Color that the accent will be painted</param>
+		/// <param name="alpha">alpha value for the color</param>
+		protected virtual void DrawItemAccent(Graphics graphics, Rectangle itemRectangle, Color accentColor, int alpha)
 		{
 			if (graphics == null)
 				return;
 
-			if (backgroundBrush != null)
+			System.Drawing.Imaging.ColorMatrix colorMatrix = new System.Drawing.Imaging.ColorMatrix()
 			{
-				graphics.FillRectangle(backgroundBrush, backgroundRectangle);
-				this.RedrawGrid(graphics, backgroundRectangle);
-			}
+				Matrix00 = accentColor.R / 255.0f, // Red
+				Matrix11 = accentColor.G / 255.0f, // Green
+				Matrix22 = accentColor.B / 255.0f, // Blue
+				Matrix33 = alpha / 255.0f,         // alpha
+				Matrix44 = 1.00f                   // w
+			};
+
+			System.Drawing.Imaging.ImageAttributes imgAttr = new System.Drawing.Imaging.ImageAttributes();
+			imgAttr.SetColorMatrix(colorMatrix);
+
+			graphics.DrawImage(Resources.ItemAccent, itemRectangle, 0, 0, Resources.ItemAccent.Width, Resources.ItemAccent.Height, GraphicsUnit.Pixel, imgAttr);
 		}
 
 		/// <summary>
-		/// Draws an item
-		/// A null background is now used to signal that there is a background bitmap that needs to be redrawn
-		/// Use the transparent color to draw without a background
+		/// Shades the background of an item with alpha blending.
 		/// </summary>
 		/// <param name="graphics">graphics instance</param>
-		/// <param name="item">item we are drawing</param>
-		/// <param name="backgroundBrush">brush used to draw the background</param>
-		protected virtual void DrawItem(Graphics graphics, Item item, Brush backgroundBrush)
+		/// <param name="item">item we are shading</param>
+		/// <param name="backgroundColor">Color that the background will be painted</param>
+		/// <param name="alpha">alpha value for the color</param>
+		protected virtual void ShadeAreaUnderItem(Graphics graphics, Item item, Color backgroundColor, int alpha)
 		{
 			if (item == null)
 				return;
 
-			Point itemScreenLocation = this.CellTopLeft(item.Location);
+			Point screenLocation = this.CellTopLeft(item.Location);
+			this.ShadeAreaUnderItem(graphics, new Rectangle(screenLocation, new Size(item.Width * UIService.ItemUnitSize, item.Height * UIService.ItemUnitSize)), backgroundColor, alpha);
+		}
 
-			// First draw the background for all the cells this item occupies
-			this.ShadeAreaUnderItem(graphics, new Rectangle(itemScreenLocation, new Size(item.Width * UIService.ItemUnitSize, item.Height * UIService.ItemUnitSize)), backgroundBrush);
+		/// <summary>
+		/// Shades the background of an item with alpha blending.
+		/// </summary>
+		/// <param name="graphics">graphics instance</param>
+		/// <param name="backgroundRectangle">cell rectangle which needs to be drawn</param>
+		/// <param name="backgroundColor">Color that the background will be painted</param>
+		/// <param name="alpha">alpha value for the color</param>
+		protected virtual void ShadeAreaUnderItem(Graphics graphics, Rectangle backgroundRectangle, Color backgroundColor, int alpha)
+		{
+			if (graphics == null)
+				return;
 
-			// Draw the item
-			this.DrawItem(graphics, item, itemScreenLocation);
+			using (SolidBrush brush = new SolidBrush(Color.FromArgb(alpha, backgroundColor)))
+			{
+				graphics.FillRectangle(brush, backgroundRectangle);
+			}
 		}
 
 		#endregion SackPanel Protected Methods
@@ -2147,6 +2139,8 @@ namespace TQVaultAE.GUI.Components
 				}
 				else
 					this.RemoveSelectedItem(focusedItem);
+
+				this.Invalidate(this.GetItemScreenRectangle(focusedItem));
 			}
 
 			this.OnItemSelected(this, new SackPanelEventArgs(null, null));
@@ -2571,25 +2565,6 @@ namespace TQVaultAE.GUI.Components
 			ItemTooltip.InvalidateCache(items);
 			this.ItemProvider.InvalidateFriendlyNamesCache(items);
 		}
-
-		/// <summary>
-		/// Draws an empty background in the specified area
-		/// </summary>
-		/// <param name="graphics">graphics instance</param>
-		/// <param name="x">x cell coordinate</param>
-		/// <param name="y">y cell coordinate</param>
-		/// <param name="width">width of the fill</param>
-		/// <param name="height">height of the fill</param>
-		private void ClearArea(Graphics graphics, int x, int y, int width, int height)
-			=> graphics.FillRectangle(this.EmptyCellBrush, x, y, width, height);
-
-		/// <summary>
-		/// Draws an empty background in the specified rectangle.
-		/// </summary>
-		/// <param name="graphics">graphics instance</param>
-		/// <param name="clearRect">Rectangle to be cleared.</param>
-		private void ClearArea(Graphics graphics, Rectangle clearRect)
-			=> this.ClearArea(graphics, clearRect.X, clearRect.Y, clearRect.Width, clearRect.Height);
 
 		/// <summary>
 		/// Redraws the drag item.
