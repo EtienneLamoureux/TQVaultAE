@@ -3,8 +3,7 @@
 ### Features
 - Advanced search
   - New Search Dialog Window
-  - Supports complex filtering rules
-  - #146 Support searching by exact phrase, instead of contains, using double-quotes separators
+  - #146 Supports complex filtering rules
 
 ### Bugs
 - #175 Fix rare error when searching with complex query and "load all" set to false

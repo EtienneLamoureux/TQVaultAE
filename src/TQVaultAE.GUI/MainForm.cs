@@ -255,7 +255,7 @@ Debug Levels
 				this.flowLayoutPanelRightPanels.BorderStyle = BorderStyle.None;
 				this.tableLayoutPanelMain.CellBorderStyle = TableLayoutPanelCellBorderStyle.None;
 			}
-
+			
 			this.CreatePanels();
 		}
 

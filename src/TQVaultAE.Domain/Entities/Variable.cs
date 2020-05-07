@@ -91,6 +91,28 @@ namespace TQVaultAE.Domain.Entities
 		public string GetString(int index = 0) => Convert.ToString(this.values[index], CultureInfo.InvariantCulture);
 
 		/// <summary>
+		/// Indicates whether any of the values in the variable are not zero.
+		/// </summary>
+		/// <returns>false if all values are zero or empty strings</returns>
+		public bool IsValueNonZero()
+		{
+			if (this.NumberOfValues == 0)
+				return false;
+
+			foreach(object value in this.values)
+			{
+				if (this.DataType == VariableDataType.Float && Convert.ToSingle(value, CultureInfo.InvariantCulture) != 0.0F)
+					return true;
+				if (this.DataType == VariableDataType.StringVar && !string.IsNullOrWhiteSpace(Convert.ToString(value, CultureInfo.InvariantCulture)))
+					return true;
+				if (this.DataType == VariableDataType.Integer && Convert.ToInt32(value, CultureInfo.InvariantCulture) != 0)
+					return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
 		/// Converts the variable to a string.
 		/// Format is name,val1;val2;val3;val4;...;valn,
 		/// </summary>
