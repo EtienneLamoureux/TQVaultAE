@@ -1493,11 +1493,10 @@ namespace TQVaultAE.GUI.Components
 									// Get the name of the item
 									Info info = Database.GetInfo(s);
 									string name = Path.GetFileNameWithoutExtension(s);
-									if (info != null)
-									{
-										name = this.TranslationService.TranslateXTag(info.DescriptionTag);
-									}
-
+									if (info == null)
+										continue;
+									
+									name = this.TranslationService.TranslateXTag(info.DescriptionTag);								
 									choices[i] = new ToolStripMenuItem(name, null, callback, s);
 									choices[i].BackColor = this.contextMenu.BackColor;
 									choices[i].Font = this.contextMenu.Font;
@@ -2199,7 +2198,7 @@ namespace TQVaultAE.GUI.Components
 			if (autoMoveLocation == AutoMoveLocation.Player && !this.SecondaryVaultShown)
 				return Resources.SackPanelMenuPlayer;
 
-			if (autoMoveLocation == AutoMoveLocation.Stash)
+			if (autoMoveLocation == AutoMoveLocation.Stash && !this.SecondaryVaultShown)
 				return Resources.SackPanelMenuStash;
 
 			if (autoMoveLocation == AutoMoveLocation.Vault)
@@ -2618,6 +2617,105 @@ namespace TQVaultAE.GUI.Components
 		}
 
 		/// <summary>
+		/// Moves an item from one sack to another without the context menu.
+		/// </summary>
+		/// <param name="desintationSack">int containing the number of the destination sack.</param>
+		private void QuickMoveSack(int sackNumber)
+		{
+			if (Sack == null)
+				return;
+
+			var isEquipmentReadOnly = (Config.Settings.Default.PlayerReadonly == true && SackType == SackType.Equipment);
+			Item focusedItem = FindItem(LastCellWithFocus);
+
+			if ((focusedItem == null && selectedItems == null) || isEquipmentReadOnly)
+				return;
+
+			if (MaxSacks > 1 && sackNumber < MaxSacks)
+			{
+				// Calculate offsets for the Player's sack panels.
+				int offset = 1; // This is for the numerical display in the menu.
+				int offset2 = 0; // This is for comparison of the current sack.
+
+				if (SackType == SackType.Player || SackType == SackType.Sack)
+				{
+					// Since the player panel bag's are already starting with 1.
+					offset = 0;
+
+					// But internally to the sack panel they are still zero based
+					// so we need to account for that.
+					if (SackType == SackType.Sack)
+						offset2 = 1;
+				}
+
+				if (sackNumber != CurrentSack + offset2)
+				{
+					QuickMovePanel((AutoMoveLocation)sackNumber);// + offset2);					
+				}
+			}
+		}
+
+		/// <summary>
+		/// Moves an item from one panel to another without the context menu.
+		/// </summary>
+		/// <param name="location">Destination AutoMoveLocation</param>
+		private void QuickMovePanel(AutoMoveLocation location)
+		{
+			if (Sack == null)
+				return;
+
+			var isEquipmentReadOnly = (Config.Settings.Default.PlayerReadonly == true && SackType == SackType.Equipment);
+			Item focusedItem = FindItem(LastCellWithFocus);
+			AutoMoveLocation destination = AutoMoveLocation.NotSet;
+
+			if ((focusedItem == null && selectedItems == null) || isEquipmentReadOnly)
+				return;
+
+			if (location != AutoMoveLocation)
+			{
+				destination = location;
+
+				if (SecondaryVaultShown && location == AutoMoveLocation.Player)
+					destination = AutoMoveLocation.SecondaryVault;
+			}
+			 			
+			if ((SecondaryVaultShown && (destination == AutoMoveLocation.Stash || destination == AutoMoveLocation.Player)) || destination == AutoMoveLocation.NotSet)
+				return;
+
+			if (this.selectedItems != null)
+			{
+				// Moving selected items.
+				var autoMoveQuery = from Item item in selectedItems
+									where item != null
+									orderby (((item.Height * 3) + item.Width) * 100) + item.ItemGroup descending
+									select item;
+
+				foreach (Item item in autoMoveQuery)
+				{
+					if (!DragInfo.IsActive)
+					{
+						// Check to make sure the last item got placed.
+						DragInfo.Set(this, Sack, item, new Point(1, 1));
+						DragInfo.AutoMove = destination;
+						OnAutoMoveItem(this, new SackPanelEventArgs(null, null));
+					}
+				}
+
+				ClearSelectedItems();
+			}
+			else if (focusedItem != null)
+			{
+				// Single item highlighted
+				DragInfo.Set(this, Sack, focusedItem, new Point(1, 1));
+				DragInfo.AutoMove = destination;
+				OnAutoMoveItem(this, new SackPanelEventArgs(null, null));
+			}
+
+			ItemTooltip.HideTooltip();
+			BagButtonTooltip.InvalidateCache(Sack);
+		}
+
+		/// <summary>
 		/// Draw the sack panel border
 		/// </summary>
 		/// <param name="graphics">graphics instance</param>
@@ -2675,6 +2773,43 @@ namespace TQVaultAE.GUI.Components
 
 			if (e.KeyData == Keys.F5)
 				this.Refresh();
+
+			if (e.KeyData == Keys.Right)
+				QuickMovePanel(AutoMoveLocation.Player);
+
+			if (e.KeyData == Keys.Left)
+				QuickMovePanel(AutoMoveLocation.Vault);
+
+			if (e.KeyData == Keys.Down)
+				QuickMovePanel(AutoMoveLocation.Stash);
+
+			if (char.IsDigit((char)e.KeyData) || e.KeyData == Keys.OemMinus || e.KeyData == Keys.Oemplus)
+			{
+				int keyOffset = 49;
+
+				switch (e.KeyData)
+				{
+					case Keys.Oemplus:
+						{
+							keyOffset = 176;
+							break;
+						}
+					case Keys.OemMinus:
+						{
+							keyOffset = 179;
+							break;
+						}
+					case Keys.D0:
+						{
+							keyOffset = 39;
+							break;
+						}
+					default:
+						break;
+					}
+
+				QuickMoveSack(e.KeyValue - keyOffset);
+			}
 		}
 
 		/// <summary>
