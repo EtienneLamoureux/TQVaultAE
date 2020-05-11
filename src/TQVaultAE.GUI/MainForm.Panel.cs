@@ -340,7 +340,6 @@ namespace TQVaultAE.GUI
 						}
 
 						// Use the same method as if we used to mouse to pickup and place the item.
-						////this.DragInfo.MarkPlaced(-1);
 						this.DragInfo.MarkPlaced();
 						dragItem.PositionX = location.X;
 						dragItem.PositionY = location.Y;
@@ -389,7 +388,6 @@ namespace TQVaultAE.GUI
 						Item dragItem = this.DragInfo.Item;
 
 						// Use the same method as if we used to mouse to pickup and place the item.
-						////this.DragInfo.MarkPlaced(-1);
 						this.DragInfo.MarkPlaced();
 						dragItem.PositionX = location.X;
 						dragItem.PositionY = location.Y;
