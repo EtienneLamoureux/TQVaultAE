@@ -1,17 +1,13 @@
 ﻿using TQ.SaveFilesExplorer.Components;
 using TQ.SaveFilesExplorer.Entities;
-using TQ.SaveFilesExplorer.Services;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using TQ.SaveFilesExplorer.Helpers;
+using AutoMapper;
 
 namespace TQ.SaveFilesExplorer
 {
@@ -19,10 +15,13 @@ namespace TQ.SaveFilesExplorer
 	{
 		internal static MainForm StaticRef { get; private set; } = null;
 
-		public MainForm()
+		private readonly IMapper _Mapper;
+
+		public MainForm(IMapper mapper)
 		{
 			InitializeComponent();
 			StaticRef = this;
+			_Mapper = mapper;
 		}
 
 		private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -171,7 +170,7 @@ namespace TQ.SaveFilesExplorer
 				UseVisualStyleBackColor = this.tabPageTemplate.UseVisualStyleBackColor,
 				Tag = path,
 			};
-			var content = new TabPageFileContent()
+			var content = new TabPageFileContent(_Mapper)
 			{
 				Tag = path,
 				Dock = DockStyle.Fill,

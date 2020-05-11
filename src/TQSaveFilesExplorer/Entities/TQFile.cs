@@ -60,13 +60,16 @@ namespace TQ.SaveFilesExplorer.Entities
 		{
 			get => this.Ext.Equals(Ext_Player, StringComparison.InvariantCultureIgnoreCase);
 		}
+		public IMapper _Mapper { get; }
 
-		private TQFile()
-		{ }
-
-		public static TQFile ReadFile(string path)
+		private TQFile(IMapper mapper)
 		{
-			return new TQFile()
+			_Mapper = mapper;
+		}
+
+		public static TQFile ReadFile(string path, IMapper mapper)
+		{
+			return new TQFile(mapper)
 			{
 				Path = path,
 				Ext = System.IO.Path.GetExtension(path).ToLower(),
@@ -140,11 +143,11 @@ namespace TQ.SaveFilesExplorer.Entities
 				switch (this.Ext)
 				{
 					case Ext_Player:
-						retval = Mapper.Map<TQFilePlayerRecord>(m);
+						retval = _Mapper.Map<TQFilePlayerRecord>(m);
 						break;
 					case Ext_SharedStash:
 					case Ext_SharedStashBackup:
-						retval = Mapper.Map<TQFilePlayerTransferStashRecord>(m);
+						retval = _Mapper.Map<TQFilePlayerTransferStashRecord>(m);
 						break;
 					default:
 						throw new ArgumentException("must be a file with extension chr, dxb, dxg");

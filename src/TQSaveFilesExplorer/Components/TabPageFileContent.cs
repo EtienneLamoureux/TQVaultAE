@@ -12,17 +12,23 @@ using TQ.SaveFilesExplorer.Entities;
 using System.Diagnostics;
 using System.IO;
 using EnumsNET;
+using AutoMapper;
 
 namespace TQ.SaveFilesExplorer.Components
 {
 	public partial class TabPageFileContent : UserControl
 	{
 		private bool _DisplayDataDecimal = true;
-		private readonly TQFileService Service = new TQFileService();
+		private readonly TQFileService Service;
+		private readonly IMapper _Mapper;
+
 		public TQFile File { get; private set; }
 
-		public TabPageFileContent()
+		public TabPageFileContent(IMapper mapper)
 		{
+			_Mapper = mapper;
+			Service = new TQFileService(mapper);
+
 			InitializeComponent();
 		}
 

@@ -1,11 +1,8 @@
 ﻿using EnumsNET;
-using Microsoft.Extensions.Logging;
-using System;
 using System.Linq;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
-using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Presentation
 {

@@ -7,7 +7,6 @@ namespace TQVaultAE.GUI
 {
 	using System;
 	using System.Linq;
-	using TQVaultAE.Data;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Domain.Results;
 	using TQVaultAE.GUI.Tooltip;

@@ -5,7 +5,6 @@ using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
-using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Tooltip
 {
