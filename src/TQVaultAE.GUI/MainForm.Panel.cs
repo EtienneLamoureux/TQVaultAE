@@ -87,6 +87,7 @@ namespace TQVaultAE.GUI
 				this.stashPanel.SackPanel.SecondaryVaultShown = true;
 
 				this.secondaryVaultPanel.SackPanel.IsSecondaryVault = true;
+				this.secondaryVaultPanel.SackPanel.SecondaryVaultShown = true;
 				this.GetSecondaryVaultList();
 			}
 			else
@@ -117,6 +118,7 @@ namespace TQVaultAE.GUI
 
 				this.vaultPanel.SackPanel.SecondaryVaultShown = false;
 				this.stashPanel.SackPanel.SecondaryVaultShown = false;
+				this.secondaryVaultPanel.SackPanel.SecondaryVaultShown = false;
 			}
 		}
 
