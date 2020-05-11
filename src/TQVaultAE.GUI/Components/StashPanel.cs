@@ -78,7 +78,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		private Bitmap stashBackground;
 
-		private TableLayoutPanel PlayerPanel;
+		private BufferedTableLayoutPanel PlayerPanel;
 
 		string DisplayPlayerInfoLastName;
 		private const int NORMAL_PLAYERINFO_HEIGHT = 480;//BGImage = 490
@@ -162,7 +162,7 @@ namespace TQVaultAE.GUI.Components
 			#region Init Player Panel
 
 			// Based on testing at scale 1
-			var table = new TableLayoutPanel()
+			var table = new BufferedTableLayoutPanel()
 			{
 				Location = new Point(
 					PLAYERINFO_TOPRIGHT - PLAYERINFO_WIDTH
