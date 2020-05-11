@@ -11,7 +11,6 @@ namespace TQVaultAE.GUI
 	using System.IO;
 	using System.Text;
 	using System.Windows.Forms;
-	using TQVaultAE.Data;
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Services;
 

@@ -10,7 +10,6 @@ namespace TQVaultAE.GUI.Models
 	using System.Drawing;
 	using TQVaultAE.GUI.Components;
 	using TQVaultAE.Domain.Entities;
-	using TQVaultAE.Presentation;
 	using TQVaultAE.GUI.Tooltip;
 	using TQVaultAE.Domain.Contracts.Services;
 
