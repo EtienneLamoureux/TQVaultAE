@@ -23,7 +23,6 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Presentation;
 	using TQVaultAE.Services;
 	using TQVaultAE.Services.Win32;
-	using TQVaultAE.Config;
 	using Microsoft.Extensions.Logging;
 
 	/// <summary>

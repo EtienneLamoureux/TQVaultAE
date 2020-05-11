@@ -23,6 +23,7 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Helpers;
 	using Microsoft.Extensions.Logging;
+	using System.Net.Http.Headers;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel.
@@ -61,6 +62,27 @@ namespace TQVaultAE.GUI.Components
 		/// Used to multi-select items.
 		/// </summary>
 		private bool controlKeyDown;
+
+		/// <summary>
+		/// Idicates that the shift key is being held down.
+		/// Used to start a mouse drag rectangle.
+		/// </summary>
+		private bool shiftKeyDown;
+
+		/// <summary>
+		/// Indicates that the mouse currently has a drag rectangle.
+		/// </summary>
+		private bool mouseDraw;
+
+		/// <summary>
+		/// The start corner of the mouse drag rectangle.
+		/// </summary>
+		private Point startPosition;
+
+		/// <summary>
+		/// The current corner of the mouse drag rectangle.
+		/// </summary>
+		private Point currentPosition;
 
 		/// <summary>
 		/// Collection of items under the drag item.
@@ -159,6 +181,7 @@ namespace TQVaultAE.GUI.Components
             this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
             this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveCallback);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCallback);
             this.ResumeLayout(false);
 
 		}
@@ -1281,6 +1304,12 @@ namespace TQVaultAE.GUI.Components
 			}
 		}
 
+		protected virtual void MouseUpCallback(object sender, MouseEventArgs e)
+		{
+			this.mouseDraw = false;
+			Invalidate();
+		}
+
 		/// <summary>
 		/// Handler for mouse button down click
 		/// </summary>
@@ -1301,6 +1330,13 @@ namespace TQVaultAE.GUI.Components
 					if (this.controlKeyDown)
 						// Add the focused item to the selected items list.
 						this.AddFocusedItemToSelectedItems(sender, e);
+					// Detect a mouse drag for a multiselect.
+					else if (this.shiftKeyDown)
+					{
+						this.mouseDraw = true;
+						this.startPosition = this.currentPosition = e.Location;
+						this.OnClearAllItemsSelected(this, new SackPanelEventArgs(null, null));
+					}
 					else
 						this.PickupItem(sender, e);
 				}
@@ -1505,11 +1541,10 @@ namespace TQVaultAE.GUI.Components
 									// Get the name of the item
 									Info info = Database.GetInfo(s);
 									string name = Path.GetFileNameWithoutExtension(s);
-									if (info != null)
-									{
-										name = this.TranslationService.TranslateXTag(info.DescriptionTag);
-									}
-
+									if (info == null)
+										continue;
+									
+									name = this.TranslationService.TranslateXTag(info.DescriptionTag);								
 									choices[i] = new ToolStripMenuItem(name, null, callback, s);
 									choices[i].BackColor = this.contextMenu.BackColor;
 									choices[i].Font = this.contextMenu.Font;
@@ -1744,7 +1779,15 @@ namespace TQVaultAE.GUI.Components
 
 			if (!this.DragInfo.IsActive)
 			{
-				this.HighlightItemUnderMouse(cell);
+				if (this.mouseDraw)
+				{
+					this.OnClearAllItemsSelected(this, new SackPanelEventArgs(null, null));
+					currentPosition = e.Location;
+					SelectItemsInMouseDraw(sender, e);
+					Invalidate();
+				}
+				else
+					this.HighlightItemUnderMouse(cell);
 			}
 			else
 			{
@@ -1752,6 +1795,13 @@ namespace TQVaultAE.GUI.Components
 			}
 		}
 
+		/// <summary>
+		/// Finds the rectangle under the mouse drag
+		/// </summary>
+		/// <returns>Rectangle representing the mouse drag area</returns>
+		protected Rectangle GetMouseDragRectangle()
+			=>new Rectangle(Math.Min(startPosition.X, currentPosition.X), Math.Min(startPosition.Y, currentPosition.Y), Math.Abs(startPosition.X - currentPosition.X), Math.Abs(startPosition.Y - currentPosition.Y));
+				
 		/// <summary>
 		/// Paint callback
 		/// </summary>
@@ -1792,6 +1842,9 @@ namespace TQVaultAE.GUI.Components
 					{
 						this.RedrawDragItem(e.Graphics, new Point(cursorPosition.X - this.DragInfo.MouseOffset.X, cursorPosition.Y - this.DragInfo.MouseOffset.Y));
 					}
+
+					if (mouseDraw)
+						e.Graphics.DrawRectangle(Pens.White, GetMouseDragRectangle());
 				}
 			}
 			finally
@@ -2154,6 +2207,36 @@ namespace TQVaultAE.GUI.Components
 		}
 
 		/// <summary>
+		/// Adds the items inside of the mouse drag to the selected items list.
+		/// </summary>
+		/// <param name="sender">sender object</param>
+		/// <param name="e">MouseEventArgs data</param>
+		private void SelectItemsInMouseDraw(object sender, MouseEventArgs e)
+		{
+			if (!this.mouseDraw)
+				return;
+
+			// Allocate the List if not already done.
+			if (this.selectedItems == null)
+				this.selectedItems = new List<Item>();
+
+			Collection<Item> itemsUnderDraw = FindAllItems(FindAllCells(GetMouseDragRectangle()));
+
+			if (itemsUnderDraw != null)
+			{
+				foreach (Item item in itemsUnderDraw)
+				{
+					if (!selectedItems.Contains(item))
+					{
+						this.selectedItems.Add(item);
+					}
+				}
+
+				this.OnItemSelected(this, new SackPanelEventArgs(null, null));
+			}
+		}
+
+		/// <summary>
 		/// Handler for the mouse pointer entering the sack panel.
 		/// </summary>
 		/// <param name="sender">sender object</param>
@@ -2205,7 +2288,7 @@ namespace TQVaultAE.GUI.Components
 			if (autoMoveLocation == AutoMoveLocation.Player && !this.SecondaryVaultShown)
 				return Resources.SackPanelMenuPlayer;
 
-			if (autoMoveLocation == AutoMoveLocation.Stash)
+			if (autoMoveLocation == AutoMoveLocation.Stash && !this.SecondaryVaultShown)
 				return Resources.SackPanelMenuStash;
 
 			if (autoMoveLocation == AutoMoveLocation.Vault)
@@ -2643,6 +2726,105 @@ namespace TQVaultAE.GUI.Components
 		}
 
 		/// <summary>
+		/// Moves an item from one sack to another without the context menu.
+		/// </summary>
+		/// <param name="desintationSack">int containing the number of the destination sack.</param>
+		private void QuickMoveSack(int sackNumber)
+		{
+			if (Sack == null)
+				return;
+
+			var isEquipmentReadOnly = (Config.Settings.Default.PlayerReadonly == true && SackType == SackType.Equipment);
+			Item focusedItem = FindItem(LastCellWithFocus);
+
+			if ((focusedItem == null && selectedItems == null) || isEquipmentReadOnly)
+				return;
+
+			if (MaxSacks > 1 && sackNumber < MaxSacks)
+			{
+				// Calculate offsets for the Player's sack panels.
+				int offset = 1; // This is for the numerical display in the menu.
+				int offset2 = 0; // This is for comparison of the current sack.
+
+				if (SackType == SackType.Player || SackType == SackType.Sack)
+				{
+					// Since the player panel bag's are already starting with 1.
+					offset = 0;
+
+					// But internally to the sack panel they are still zero based
+					// so we need to account for that.
+					if (SackType == SackType.Sack)
+						offset2 = 1;
+				}
+
+				if (sackNumber != CurrentSack + offset2)
+				{
+					QuickMovePanel((AutoMoveLocation)sackNumber);// + offset2);					
+				}
+			}
+		}
+
+		/// <summary>
+		/// Moves an item from one panel to another without the context menu.
+		/// </summary>
+		/// <param name="location">Destination AutoMoveLocation</param>
+		private void QuickMovePanel(AutoMoveLocation location)
+		{
+			if (Sack == null)
+				return;
+
+			var isEquipmentReadOnly = (Config.Settings.Default.PlayerReadonly == true && SackType == SackType.Equipment);
+			Item focusedItem = FindItem(LastCellWithFocus);
+			AutoMoveLocation destination = AutoMoveLocation.NotSet;
+
+			if ((focusedItem == null && selectedItems == null) || isEquipmentReadOnly)
+				return;
+
+			if (location != AutoMoveLocation)
+			{
+				destination = location;
+
+				if (SecondaryVaultShown && location == AutoMoveLocation.Player)
+					destination = AutoMoveLocation.SecondaryVault;
+			}
+			 			
+			if ((SecondaryVaultShown && (destination == AutoMoveLocation.Stash || destination == AutoMoveLocation.Player)) || destination == AutoMoveLocation.NotSet)
+				return;
+
+			if (this.selectedItems != null)
+			{
+				// Moving selected items.
+				var autoMoveQuery = from Item item in selectedItems
+									where item != null
+									orderby (((item.Height * 3) + item.Width) * 100) + item.ItemGroup descending
+									select item;
+
+				foreach (Item item in autoMoveQuery)
+				{
+					if (!DragInfo.IsActive)
+					{
+						// Check to make sure the last item got placed.
+						DragInfo.Set(this, Sack, item, new Point(1, 1));
+						DragInfo.AutoMove = destination;
+						OnAutoMoveItem(this, new SackPanelEventArgs(null, null));
+					}
+				}
+
+				ClearSelectedItems();
+			}
+			else if (focusedItem != null)
+			{
+				// Single item highlighted
+				DragInfo.Set(this, Sack, focusedItem, new Point(1, 1));
+				DragInfo.AutoMove = destination;
+				OnAutoMoveItem(this, new SackPanelEventArgs(null, null));
+			}
+
+			ItemTooltip.HideTooltip();
+			BagButtonTooltip.InvalidateCache(Sack);
+		}
+
+		/// <summary>
 		/// Draw the sack panel border
 		/// </summary>
 		/// <param name="graphics">graphics instance</param>
@@ -2680,6 +2862,9 @@ namespace TQVaultAE.GUI.Components
 			if (e.KeyCode == Keys.ControlKey)
 				this.controlKeyDown = true;
 
+			if (e.KeyCode == Keys.ShiftKey)
+				this.shiftKeyDown = true;
+
 			if (e.KeyData == (Keys.Control | Keys.F))
 				this.OnActivateSearch(this, new SackPanelEventArgs(null, null));
 
@@ -2700,6 +2885,43 @@ namespace TQVaultAE.GUI.Components
 
 			if (e.KeyData == Keys.F5)
 				this.Refresh();
+
+			if (e.KeyData == Keys.Right)
+				QuickMovePanel(AutoMoveLocation.Player);
+
+			if (e.KeyData == Keys.Left)
+				QuickMovePanel(AutoMoveLocation.Vault);
+
+			if (e.KeyData == Keys.Down)
+				QuickMovePanel(AutoMoveLocation.Stash);
+
+			if (char.IsDigit((char)e.KeyData) || e.KeyData == Keys.OemMinus || e.KeyData == Keys.Oemplus)
+			{
+				int keyOffset = 49;
+
+				switch (e.KeyData)
+				{
+					case Keys.Oemplus:
+						{
+							keyOffset = 176;
+							break;
+						}
+					case Keys.OemMinus:
+						{
+							keyOffset = 179;
+							break;
+						}
+					case Keys.D0:
+						{
+							keyOffset = 39;
+							break;
+						}
+					default:
+						break;
+					}
+
+				QuickMoveSack(e.KeyValue - keyOffset);
+			}
 		}
 
 		/// <summary>
@@ -2711,6 +2933,9 @@ namespace TQVaultAE.GUI.Components
 		{
 			if (e.KeyCode == Keys.ControlKey)
 				this.controlKeyDown = false;
+
+			if (e.KeyCode == Keys.ShiftKey)
+				this.shiftKeyDown = false;
 		}
 
 		/// <summary>
