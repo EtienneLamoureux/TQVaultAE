@@ -63,6 +63,27 @@ namespace TQVaultAE.GUI.Components
 		private bool controlKeyDown;
 
 		/// <summary>
+		/// Idicates that the shift key is being held down.
+		/// Used to start a mouse drag rectangle.
+		/// </summary>
+		private bool shiftKeyDown;
+
+		/// <summary>
+		/// Indicates that the mouse currently has a drag rectangle.
+		/// </summary>
+		private bool mouseDraw;
+
+		/// <summary>
+		/// The start corner of the mouse drag rectangle.
+		/// </summary>
+		private Point startPosition;
+
+		/// <summary>
+		/// The current corner of the mouse drag rectangle.
+		/// </summary>
+		private Point currentPosition;
+
+		/// <summary>
 		/// Collection of items under the drag item.
 		/// </summary>
 		private Collection<Item> itemsUnderDragItem;
@@ -159,6 +180,7 @@ namespace TQVaultAE.GUI.Components
             this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
             this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveCallback);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCallback);
             this.ResumeLayout(false);
 
 		}
@@ -1281,6 +1303,12 @@ namespace TQVaultAE.GUI.Components
 			}
 		}
 
+		protected virtual void MouseUpCallback(object sender, MouseEventArgs e)
+		{
+			this.mouseDraw = false;
+			Invalidate();
+		}
+
 		/// <summary>
 		/// Handler for mouse button down click
 		/// </summary>
@@ -1301,6 +1329,13 @@ namespace TQVaultAE.GUI.Components
 					if (this.controlKeyDown)
 						// Add the focused item to the selected items list.
 						this.AddFocusedItemToSelectedItems(sender, e);
+					// Detect a mouse drag for a multiselect.
+					else if (this.shiftKeyDown)
+					{
+						this.mouseDraw = true;
+						this.startPosition = this.currentPosition = e.Location;
+						this.OnClearAllItemsSelected(this, new SackPanelEventArgs(null, null));
+					}
 					else
 						this.PickupItem(sender, e);
 				}
@@ -1744,7 +1779,15 @@ namespace TQVaultAE.GUI.Components
 
 			if (!this.DragInfo.IsActive)
 			{
-				this.HighlightItemUnderMouse(cell);
+				if (this.mouseDraw)
+				{
+					this.OnClearAllItemsSelected(this, new SackPanelEventArgs(null, null));
+					currentPosition = e.Location;
+					SelectItemsInMouseDraw(sender, e);
+					Invalidate();
+				}
+				else
+					this.HighlightItemUnderMouse(cell);
 			}
 			else
 			{
@@ -1752,6 +1795,13 @@ namespace TQVaultAE.GUI.Components
 			}
 		}
 
+		/// <summary>
+		/// Finds the rectangle under the mouse drag
+		/// </summary>
+		/// <returns>Rectangle representing the mouse drag area</returns>
+		protected Rectangle GetMouseDragRectangle()
+			=>new Rectangle(Math.Min(startPosition.X, currentPosition.X), Math.Min(startPosition.Y, currentPosition.Y), Math.Abs(startPosition.X - currentPosition.X), Math.Abs(startPosition.Y - currentPosition.Y));
+				
 		/// <summary>
 		/// Paint callback
 		/// </summary>
@@ -1792,6 +1842,9 @@ namespace TQVaultAE.GUI.Components
 					{
 						this.RedrawDragItem(e.Graphics, new Point(cursorPosition.X - this.DragInfo.MouseOffset.X, cursorPosition.Y - this.DragInfo.MouseOffset.Y));
 					}
+
+					if (mouseDraw)
+						e.Graphics.DrawRectangle(Pens.White, GetMouseDragRectangle());
 				}
 			}
 			finally
@@ -2151,6 +2204,36 @@ namespace TQVaultAE.GUI.Components
 
 			this.OnItemSelected(this, new SackPanelEventArgs(null, null));
 			this.MouseMoveCallback(sender, e); // process mouse move again to apply the graphical effects of dragging an item.
+		}
+
+		/// <summary>
+		/// Adds the items inside of the mouse drag to the selected items list.
+		/// </summary>
+		/// <param name="sender">sender object</param>
+		/// <param name="e">MouseEventArgs data</param>
+		private void SelectItemsInMouseDraw(object sender, MouseEventArgs e)
+		{
+			if (!this.mouseDraw)
+				return;
+
+			// Allocate the List if not already done.
+			if (this.selectedItems == null)
+				this.selectedItems = new List<Item>();
+
+			Collection<Item> itemsUnderDraw = FindAllItems(FindAllCells(GetMouseDragRectangle()));
+
+			if (itemsUnderDraw != null)
+			{
+				foreach (Item item in itemsUnderDraw)
+				{
+					if (!selectedItems.Contains(item))
+					{
+						this.selectedItems.Add(item);
+					}
+				}
+
+				this.OnItemSelected(this, new SackPanelEventArgs(null, null));
+			}
 		}
 
 		/// <summary>
@@ -2680,6 +2763,9 @@ namespace TQVaultAE.GUI.Components
 			if (e.KeyCode == Keys.ControlKey)
 				this.controlKeyDown = true;
 
+			if (e.KeyCode == Keys.ShiftKey)
+				this.shiftKeyDown = true;
+
 			if (e.KeyData == (Keys.Control | Keys.F))
 				this.OnActivateSearch(this, new SackPanelEventArgs(null, null));
 
@@ -2711,6 +2797,9 @@ namespace TQVaultAE.GUI.Components
 		{
 			if (e.KeyCode == Keys.ControlKey)
 				this.controlKeyDown = false;
+
+			if (e.KeyCode == Keys.ShiftKey)
+				this.shiftKeyDown = false;
 		}
 
 		/// <summary>
