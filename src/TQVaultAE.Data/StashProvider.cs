@@ -9,6 +9,7 @@ namespace TQVaultAE.Data
 	using System;
 	using System.Globalization;
 	using System.IO;
+	using TQVaultAE.Config;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
@@ -273,40 +274,43 @@ namespace TQVaultAE.Data
 
 				ParseItemBlock(sta, offset, reader);
 
-				try
+				if (TQDebug.DebugEnabled && TQDebug.ItemDebugLevel > 2)
 				{
-					string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, sta.PlayerName), " Stash Export.txt");
-					using (StreamWriter outStream = new StreamWriter(outfile, false))
+					try
 					{
-						outStream.WriteLine("Number of Sacks = {0}", sta.numberOfSacks);
-
-						if (!sta.sack.IsEmpty)
+						string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, sta.PlayerName), " Stash Export.txt");
+						using (StreamWriter outStream = new StreamWriter(outfile, false))
 						{
-							outStream.WriteLine();
-							outStream.WriteLine("SACK 0");
+							outStream.WriteLine("Number of Sacks = {0}", sta.numberOfSacks);
 
-							int itemNumber = 0;
-							foreach (Item item in sta.sack)
+							if (!sta.sack.IsEmpty)
 							{
-								object[] params1 = new object[20];
+								outStream.WriteLine();
+								outStream.WriteLine("SACK 0");
 
-								params1[0] = itemNumber;
-								params1[1] = ItemProvider.GetFriendlyNames(item).FullNameBagTooltip;
-								params1[2] = item.PositionX;
-								params1[3] = item.PositionY;
-								params1[4] = item.Seed;
+								int itemNumber = 0;
+								foreach (Item item in sta.sack)
+								{
+									object[] params1 = new object[20];
 
-								outStream.WriteLine("  {0,5:n0} {1}", params1);
-								itemNumber++;
+									params1[0] = itemNumber;
+									params1[1] = ItemProvider.GetFriendlyNames(item).FullNameBagTooltip;
+									params1[2] = item.PositionX;
+									params1[3] = item.PositionY;
+									params1[4] = item.Seed;
+
+									outStream.WriteLine("  {0,5:n0} {1}", params1);
+									itemNumber++;
+								}
 							}
 						}
 					}
-				}
-				catch (IOException exception)
-				{
-					Log.LogError(exception, "Error Exporting - '{0} Export.txt'"
-						, Path.Combine(GamePathResolver.TQVaultSaveFolder, sta.PlayerName)
-					);
+					catch (IOException exception)
+					{
+						Log.LogError(exception, "Error Exporting - '{0} Export.txt'"
+							, Path.Combine(GamePathResolver.TQVaultSaveFolder, sta.PlayerName)
+						);
+					}
 				}
 			}
 		}

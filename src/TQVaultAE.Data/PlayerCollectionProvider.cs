@@ -9,6 +9,7 @@ namespace TQVaultAE.Data
 	using System;
 	using System.IO;
 	using System.Linq;
+	using TQVaultAE.Config;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
@@ -353,50 +354,53 @@ namespace TQVaultAE.Data
 						throw ex;
 					}
 
-					try
+					if (TQDebug.DebugEnabled && TQDebug.ItemDebugLevel > 2)
 					{
-						string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName), " PlayerCollection Export.txt");
-						using (StreamWriter outStream = new StreamWriter(outfile, false))
+						try
 						{
-							outStream.WriteLine("Number of Sacks = {0}", pc.numberOfSacks);
-
-							int sackNumber = 0;
-							if (pc.sacks != null)
+							string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName), " PlayerCollection Export.txt");
+							using (StreamWriter outStream = new StreamWriter(outfile, false))
 							{
-								foreach (SackCollection sack in pc.sacks)
+								outStream.WriteLine("Number of Sacks = {0}", pc.numberOfSacks);
+
+								int sackNumber = 0;
+								if (pc.sacks != null)
 								{
-									if (!sack.IsEmpty)
+									foreach (SackCollection sack in pc.sacks)
 									{
-										outStream.WriteLine();
-										outStream.WriteLine("SACK {0}", sackNumber);
-
-										int itemNumber = 0;
-										foreach (Item item in sack)
+										if (!sack.IsEmpty)
 										{
-											object[] params1 = new object[20];
+											outStream.WriteLine();
+											outStream.WriteLine("SACK {0}", sackNumber);
 
-											params1[0] = itemNumber;
-											params1[1] = ItemProvider.GetFriendlyNames(item).FullNameBagTooltip;
-											params1[2] = item.PositionX;
-											params1[3] = item.PositionY;
-											params1[4] = item.Seed;
-											////params1[5] =
+											int itemNumber = 0;
+											foreach (Item item in sack)
+											{
+												object[] params1 = new object[20];
 
-											outStream.WriteLine("  {0,5:n0} {1}", params1);
-											itemNumber++;
+												params1[0] = itemNumber;
+												params1[1] = ItemProvider.GetFriendlyNames(item).FullNameBagTooltip;
+												params1[2] = item.PositionX;
+												params1[3] = item.PositionY;
+												params1[4] = item.Seed;
+												////params1[5] =
+
+												outStream.WriteLine("  {0,5:n0} {1}", params1);
+												itemNumber++;
+											}
 										}
-									}
 
-									sackNumber++;
+										sackNumber++;
+									}
 								}
 							}
 						}
-					}
-					catch (IOException exception)
-					{
-						Log.LogError(exception, "Error writing Export file - '{0}' Export.txt"
-							, Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName)
-						);
+						catch (IOException exception)
+						{
+							Log.LogError(exception, "Error writing Export file - '{0}' Export.txt"
+								, Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName)
+							);
+						}
 					}
 				}
 
@@ -414,35 +418,38 @@ namespace TQVaultAE.Data
 						throw ex;
 					}
 
-					try
+					if (TQDebug.DebugEnabled && TQDebug.ItemDebugLevel > 2)
 					{
-						string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName), " Equipment Export.txt");
-						using (StreamWriter outStream = new StreamWriter(outfile, false))
+						try
 						{
-							if (!pc.EquipmentSack.IsEmpty)
+							string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName), " Equipment Export.txt");
+							using (StreamWriter outStream = new StreamWriter(outfile, false))
 							{
-								int itemNumber = 0;
-								foreach (Item item in pc.EquipmentSack)
+								if (!pc.EquipmentSack.IsEmpty)
 								{
-									object[] params1 = new object[20];
+									int itemNumber = 0;
+									foreach (Item item in pc.EquipmentSack)
+									{
+										object[] params1 = new object[20];
 
-									params1[0] = itemNumber;
-									params1[1] = ItemProvider.GetFriendlyNames(item).FullNameBagTooltip;
-									params1[2] = item.PositionX;
-									params1[3] = item.PositionY;
-									params1[4] = item.Seed;
+										params1[0] = itemNumber;
+										params1[1] = ItemProvider.GetFriendlyNames(item).FullNameBagTooltip;
+										params1[2] = item.PositionX;
+										params1[3] = item.PositionY;
+										params1[4] = item.Seed;
 
-									outStream.WriteLine("  {0,5:n0} {1}", params1);
-									itemNumber++;
+										outStream.WriteLine("  {0,5:n0} {1}", params1);
+										itemNumber++;
+									}
 								}
 							}
 						}
-					}
-					catch (IOException exception)
-					{
-						Log.LogError(exception, "Error writing Export file - '{0}' Equipment Export.txt"
-							, Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName)
-						);
+						catch (IOException exception)
+						{
+							Log.LogError(exception, "Error writing Export file - '{0}' Equipment Export.txt"
+								, Path.Combine(GamePathResolver.TQVaultSaveFolder, pc.PlayerName)
+							);
+						}
 					}
 				}
 
