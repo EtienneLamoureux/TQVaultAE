@@ -142,17 +142,19 @@ namespace TQVaultAE.GUI.Models
 		/// Marks the item as placed removing it from the original container.
 		/// </summary>
 		/// <param name="slot">slot if an equipment placement.</param>
-		public void MarkPlaced(int slot)
+		public void MarkPlaced()
 		{
-			// Remove the item from the old sack
-			if (this.IsModifiedItem)
-			{
-				// modified items do not have a source sack.
-				// so no one needs to be notified of the placement.
-			}
-			else
-			{
-				if (this.sack.SackType == SackType.Equipment && slot != -1)
+			int slot = -1;
+
+			// modified items do not have a source sack.
+			// so no one needs to be notified of the placement.
+			if (!this.IsModifiedItem)
+			{       
+				// Check to see if the dragged item is from one of the equipped slots.
+				if (this.sack.SackType == SackType.Equipment)
+					slot = EquipmentPanel.FindEquipmentSlot(this.sack, this.item);
+
+				if (slot != -1)
 				{
 					// Remove the item out of the equipment slot
 					this.sack.RemoveAtItem(slot);
@@ -164,6 +166,7 @@ namespace TQVaultAE.GUI.Models
 					this.sack.InsertItem(slot, newItem);
 				}
 				else
+					// Remove the item from the old sack
 					this.sack.RemoveItem(this.item);
 
 				BagButtonTooltip.InvalidateCache(this.Sack, this.Original?.Sack);
