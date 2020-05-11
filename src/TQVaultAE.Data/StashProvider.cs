@@ -9,6 +9,7 @@ namespace TQVaultAE.Data
 	using System;
 	using System.Globalization;
 	using System.IO;
+	using TQVaultAE.Config;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
@@ -270,44 +271,7 @@ namespace TQVaultAE.Data
 			using (BinaryReader reader = new BinaryReader(new MemoryStream(sta.rawData, false)))
 			{
 				int offset = 0;
-
 				ParseItemBlock(sta, offset, reader);
-
-				try
-				{
-					string outfile = string.Concat(Path.Combine(GamePathResolver.TQVaultSaveFolder, sta.PlayerName), " Stash Export.txt");
-					using (StreamWriter outStream = new StreamWriter(outfile, false))
-					{
-						outStream.WriteLine("Number of Sacks = {0}", sta.numberOfSacks);
-
-						if (!sta.sack.IsEmpty)
-						{
-							outStream.WriteLine();
-							outStream.WriteLine("SACK 0");
-
-							int itemNumber = 0;
-							foreach (Item item in sta.sack)
-							{
-								object[] params1 = new object[20];
-
-								params1[0] = itemNumber;
-								params1[1] = ItemProvider.GetFriendlyNames(item).FullNameBagTooltip;
-								params1[2] = item.PositionX;
-								params1[3] = item.PositionY;
-								params1[4] = item.Seed;
-
-								outStream.WriteLine("  {0,5:n0} {1}", params1);
-								itemNumber++;
-							}
-						}
-					}
-				}
-				catch (IOException exception)
-				{
-					Log.LogError(exception, "Error Exporting - '{0} Export.txt'"
-						, Path.Combine(GamePathResolver.TQVaultSaveFolder, sta.PlayerName)
-					);
-				}
 			}
 		}
 
