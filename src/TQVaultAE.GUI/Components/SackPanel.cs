@@ -1736,9 +1736,19 @@ namespace TQVaultAE.GUI.Components
 			if (this.Sack == null)
 				return;
 
-			this.HighlightItemUnderMouse(this.FindCell(e.Location));
-
-			if (this.DragInfo.IsActive)
+			if (!this.DragInfo.IsActive)
+			{
+				if (this.mouseDraw)
+				{
+					this.OnClearAllItemsSelected(this, new SackPanelEventArgs(null, null));
+					currentPosition = e.Location;
+					this.SelectItemsInMouseDraw(sender, e);
+					this.Invalidate();
+				}
+				else
+					this.HighlightItemUnderMouse(this.FindCell(e.Location));
+			}
+			else
 				this.Invalidate();
 		}
 
