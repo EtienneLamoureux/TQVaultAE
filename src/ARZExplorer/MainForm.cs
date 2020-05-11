@@ -222,6 +222,7 @@ namespace ArzExplorer
 
 			this.selectedFileToolStripMenuItem.Enabled = true;
 			this.allFilesToolStripMenuItem.Enabled = true;
+			this.hideZeroValuesToolStripMenuItem.Enabled = fileType == CompressedFileType.ArzFile;
 
 			this.Text = string.Format("{0} - {1}", this.titleText, this.sourceFile);
 
@@ -489,10 +490,13 @@ namespace ArzExplorer
 					List<string> recordText = new List<string>();
 					if (fileType == CompressedFileType.ArzFile)
 					{
+						this.dataGridView1.Visible = true;
+						this.textBoxDetails.Visible = false;
 						this.record = arzProv.GetRecordNotCached(arzFile, this.destFile);
 						foreach (Variable variable in this.record)
 						{
-							recordText.Add(variable.ToString());
+							if (variable.IsValueNonZero() || !hideZeroValuesToolStripMenuItem.Checked)
+								recordText.Add(variable.ToString());
 						}
 					}
 					else if (fileType == CompressedFileType.ArcFile)
@@ -517,6 +521,9 @@ namespace ArzExplorer
 									recordText.Add(line);
 								}
 							}
+
+							this.dataGridView1.Visible = false;
+							this.textBoxDetails.Visible = true;
 						}
 						else if (extension == ".TEX")
 						{
@@ -531,6 +538,7 @@ namespace ArzExplorer
 
 							if (bitmap != null)
 							{
+								this.dataGridView1.Visible = false;
 								this.pictureBoxItem.Visible = true;
 								this.pictureBoxItem.Image = bitmap;
 							}
@@ -542,6 +550,7 @@ namespace ArzExplorer
 					}
 					else
 					{
+						this.dataGridView1.Visible = false;
 						this.pictureBoxItem.Visible = false;
 						this.destFile = null;
 						this.textBoxDetails.Lines = null;
@@ -552,9 +561,20 @@ namespace ArzExplorer
 					if (recordText.Count != 0)
 					{
 						this.pictureBoxItem.Visible = false;
-						string[] output = new string[recordText.Count];
-						recordText.CopyTo(output);
-						this.textBoxDetails.Lines = output;
+						if (fileType == CompressedFileType.ArzFile)
+						{
+							this.textBoxDetails.Visible = false;
+							this.dataGridView1.Visible = true;
+							PopulateGridView(recordText);
+						}
+						else
+						{
+							this.dataGridView1.Visible = false;
+							this.textBoxDetails.Visible = true;
+							string[] output = new string[recordText.Count];
+							recordText.CopyTo(output);
+							this.textBoxDetails.Lines = output;
+						}
 					}
 					else
 					{
@@ -570,6 +590,16 @@ namespace ArzExplorer
 			{
 				this.destFile = null;
 				this.textBoxDetails.Lines = null;
+			}
+		}
+
+		private void PopulateGridView(List<string> recordText)
+		{
+			dataGridView1.Rows.Clear();
+			foreach(string line in recordText)
+			{
+				string[] values = line.Split(',');
+				dataGridView1.Rows.Add(values);
 			}
 		}
 
@@ -613,6 +643,21 @@ namespace ArzExplorer
 			else
 			{
 				e.Effect = DragDropEffects.None;
+			}
+		}
+
+		private void hideZeroValuesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (this.record != null)
+			{
+				List<string> recordText = new List<string>();
+				foreach (Variable variable in this.record)
+				{
+					if (variable.IsValueNonZero() || !hideZeroValuesToolStripMenuItem.Checked)
+						recordText.Add(variable.ToString());
+				}
+
+				PopulateGridView(recordText);
 			}
 		}
 	}

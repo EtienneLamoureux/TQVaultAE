@@ -119,10 +119,10 @@ namespace TQVaultAE.GUI
             this.searchButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.backgroundWorkerLoadAllFiles = new System.ComponentModel.BackgroundWorker();
             this.fadeInTimer = new System.Windows.Forms.Timer(this.components);
-            this.flowLayoutPanelVaultSelector = new System.Windows.Forms.FlowLayoutPanel();
-            this.tableLayoutPanelMain = new System.Windows.Forms.TableLayoutPanel();
-            this.flowLayoutPanelRightPanels = new System.Windows.Forms.FlowLayoutPanel();
-            this.flowLayoutPanelRightComboBox = new System.Windows.Forms.FlowLayoutPanel();
+            this.flowLayoutPanelVaultSelector = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
+            this.tableLayoutPanelMain = new TQVaultAE.GUI.Components.BufferedTableLayoutPanel();
+            this.flowLayoutPanelRightPanels = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
+            this.flowLayoutPanelRightComboBox = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.characterLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.characterComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.secondaryVaultListComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
@@ -490,12 +490,12 @@ namespace TQVaultAE.GUI
 
 		#endregion
 
-		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelVaultSelector;
-		private System.Windows.Forms.TableLayoutPanel tableLayoutPanelMain;
-		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelRightComboBox;
+		private BufferedFlowLayoutPanel flowLayoutPanelVaultSelector;
+		private BufferedTableLayoutPanel tableLayoutPanelMain;
+		private BufferedFlowLayoutPanel flowLayoutPanelRightComboBox;
 		private ScalingLabel characterLabel;
 		private ScalingComboBox characterComboBox;
 		private ScalingComboBox secondaryVaultListComboBox;
-		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelRightPanels;
+		private BufferedFlowLayoutPanel flowLayoutPanelRightPanels;
 	}
 }
