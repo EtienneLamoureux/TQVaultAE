@@ -23,7 +23,7 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Helpers;
 	using Microsoft.Extensions.Logging;
-	using System.Windows.Forms.VisualStyles;
+	using System.Net.Http.Headers;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel.
