@@ -52,7 +52,13 @@ Works with all expansions!
         - <kbd>CTRL</kbd>+<kbd>A</kbd> : Select all items in the vault
         - <kbd>CTRL</kbd>+<kbd>D</kbd> : De-select all selected items
         - <kbd>BACKSPACE</kbd> : Deletes currently hightlighted item
+        - <kbd>C</kbd> : Copies currently hightlighted item and <b>randomizes the item seed</b> on the new item
+        - <kbd>D</kbd> : Duplicates currently hightlighted item and <b>keeps the same item seed</b> on the new item
+        - <kbd>&#8592;</kbd> : Moves currently hightlighted item to vault panel
+        - <kbd>&#8594;</kbd> : Moves currently hightlighted item to player/secondary vault panel
+        - <kbd>&#8595;</kbd> : Moves currently hightlighted item to stash panel
         - <kbd>CTRL</kbd>+click : Activate multi selection
+        - <kbd>SHIFT</kbd>+drag : Activate mouse lasso for multi selection
 - Character backups
     - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
 
