@@ -1021,6 +1021,9 @@ Debug Levels
 				if (settingsDialog.ItemBGColorOpacityChanged || settingsDialog.EnableCharacterRequierementBGColorChanged)
 					this.Refresh();
 
+				if (settingsDialog.EnableCharacterEditChanged)
+					stashPanel?.UpdatePlayerInfo();
+
 				this.configChanged = true;
 				this.SaveConfiguration();
 				if (result == DialogResult.Yes)

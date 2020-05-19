@@ -193,6 +193,13 @@ namespace TQVaultAE.GUI.Models
 
 			// now clear things out
 			this.item = null;
+
+			// If the item came from the equipment panel,
+			// recalcuate the gear stats before clearing out the sackPanel.
+			// The item needs to be cleared at this point to get the correct calculation.
+			EquipmentPanel equipmentPanel = sackPanel as EquipmentPanel;
+			equipmentPanel?.GetGearStatBonus();
+
 			this.sack = null;
 			this.sackPanel = null;
 			this.AutoMove = AutoMoveLocation.NotSet;

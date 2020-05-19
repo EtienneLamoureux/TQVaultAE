@@ -247,6 +247,128 @@ namespace TQVaultAE.Domain.Entities
 			return false;
 		}
 
+		/// <summary>
+		/// Sets all of the bonuses from the equipped gear to 0.
+		/// </summary>
+		public void ClearPlayerGearBonuses()
+		{
+			if (PlayerInfo.GearBonus == null)
+				return;
+
+			PlayerInfo.GearBonus.StrengthBonus = 0;
+			PlayerInfo.GearBonus.StrengthModifier = 0;
+
+			PlayerInfo.GearBonus.DexterityBonus = 0;
+			PlayerInfo.GearBonus.DexterityModifier = 0;
+
+			PlayerInfo.GearBonus.IntelligenceBonus = 0;
+			PlayerInfo.GearBonus.IntelligenceModifier = 0;
+
+			PlayerInfo.GearBonus.HealthBonus = 0;
+			PlayerInfo.GearBonus.HealthModifier = 0;
+
+			PlayerInfo.GearBonus.ManaBonus = 0;
+			PlayerInfo.GearBonus.ManaModifier = 0;
+		}
+
+		/// <summary>
+		/// Sets all of the bonuses from the player sklills to 0.
+		/// </summary>
+		public void ClearPlayerSkillBonuses()
+		{
+			if (PlayerInfo.SkillBonus == null)
+				return;
+
+			PlayerInfo.SkillBonus.StrengthBonus = 0;
+			PlayerInfo.SkillBonus.StrengthModifier = 0;
+
+			PlayerInfo.SkillBonus.DexterityBonus = 0;
+			PlayerInfo.SkillBonus.DexterityModifier = 0;
+
+			PlayerInfo.SkillBonus.IntelligenceBonus = 0;
+			PlayerInfo.SkillBonus.IntelligenceModifier = 0;
+
+			PlayerInfo.SkillBonus.HealthBonus = 0;
+			PlayerInfo.SkillBonus.HealthModifier = 0;
+
+			PlayerInfo.SkillBonus.ManaBonus = 0;
+			PlayerInfo.SkillBonus.ManaModifier = 0;
+		}
+
+		/// <summary>
+		/// Updates GearBonus values based on the passed SortedList of bonus values.
+		/// </summary>
+		/// <param name="statBonusVariables">SortedList containing a list of the bonuses and values to be added.</param>
+		public void UpdatePlayerGearBonuses(SortedList<string, int> statBonusVariables)
+		{
+			if (this.IsVault || this.PlayerInfo is null) return;
+
+			if (PlayerInfo.GearBonus == null)
+				PlayerInfo.GearBonus = new PlayerStatBonus();
+
+			if (statBonusVariables.ContainsKey("CHARACTERSTRENGTH"))
+				PlayerInfo.GearBonus.StrengthBonus += statBonusVariables["CHARACTERSTRENGTH"];
+			if (statBonusVariables.ContainsKey("CHARACTERSTRENGTHMODIFIER"))
+				PlayerInfo.GearBonus.StrengthModifier += statBonusVariables["CHARACTERSTRENGTHMODIFIER"];
+
+			if (statBonusVariables.ContainsKey("CHARACTERDEXTERITY"))
+				PlayerInfo.GearBonus.DexterityBonus += statBonusVariables["CHARACTERDEXTERITY"];
+			if (statBonusVariables.ContainsKey("CHARACTERDEXTERITYMODIFIER"))
+				PlayerInfo.GearBonus.DexterityModifier += statBonusVariables["CHARACTERDEXTERITYMODIFIER"];
+
+			if (statBonusVariables.ContainsKey("CHARACTERINTELLIGENCE"))
+				PlayerInfo.GearBonus.IntelligenceBonus += statBonusVariables["CHARACTERINTELLIGENCE"];
+			if (statBonusVariables.ContainsKey("CHARACTERINTELLIGENCEMODIFIER"))
+				PlayerInfo.GearBonus.IntelligenceModifier += statBonusVariables["CHARACTERINTELLIGENCEMODIFIER"];
+
+			if (statBonusVariables.ContainsKey("CHARACTERLIFE"))
+				PlayerInfo.GearBonus.HealthBonus += statBonusVariables["CHARACTERLIFE"];
+			if (statBonusVariables.ContainsKey("CHARACTERLIFEMODIFIER"))
+				PlayerInfo.GearBonus.HealthModifier += statBonusVariables["CHARACTERLIFEMODIFIER"];
+
+			if (statBonusVariables.ContainsKey("CHARACTERMANA"))
+				PlayerInfo.GearBonus.ManaBonus += statBonusVariables["CHARACTERMANA"];
+			if (statBonusVariables.ContainsKey("CHARACTERMANAMODIFIER"))
+				PlayerInfo.GearBonus.ManaModifier += statBonusVariables["CHARACTERMANAMODIFIER"];
+		}
+
+		/// <summary>
+		/// Updates SkillBonus values based on the passed SortedList of bonus values.
+		/// </summary>
+		/// <param name="statBonusVariables">SortedList containing a list of the bonuses and values to be added.</param>
+		public void UpdatePlayerSkillBonuses(SortedList<string, int> skillStatBonusVariables)
+		{
+			if (this.IsVault || this.PlayerInfo is null) return;
+
+			if (PlayerInfo.SkillBonus == null)
+				PlayerInfo.SkillBonus = new PlayerStatBonus();
+
+			if (skillStatBonusVariables.ContainsKey("CHARACTERSTRENGTH"))
+				PlayerInfo.SkillBonus.StrengthBonus += skillStatBonusVariables["CHARACTERSTRENGTH"];
+			if (skillStatBonusVariables.ContainsKey("CHARACTERSTRENGTHMODIFIER"))
+				PlayerInfo.SkillBonus.StrengthModifier += skillStatBonusVariables["CHARACTERSTRENGTHMODIFIER"];
+
+			if (skillStatBonusVariables.ContainsKey("CHARACTERDEXTERITY"))
+				PlayerInfo.SkillBonus.DexterityBonus += skillStatBonusVariables["CHARACTERDEXTERITY"];
+			if (skillStatBonusVariables.ContainsKey("CHARACTERDEXTERITYMODIFIER"))
+				PlayerInfo.SkillBonus.DexterityModifier += skillStatBonusVariables["CHARACTERDEXTERITYMODIFIER"];
+
+			if (skillStatBonusVariables.ContainsKey("CHARACTERINTELLIGENCE"))
+				PlayerInfo.SkillBonus.IntelligenceBonus += skillStatBonusVariables["CHARACTERINTELLIGENCE"];
+			if (skillStatBonusVariables.ContainsKey("CHARACTERINTELLIGENCEMODIFIER"))
+				PlayerInfo.SkillBonus.IntelligenceModifier += skillStatBonusVariables["CHARACTERINTELLIGENCEMODIFIER"];
+
+			if (skillStatBonusVariables.ContainsKey("CHARACTERLIFE"))
+				PlayerInfo.SkillBonus.HealthBonus += skillStatBonusVariables["CHARACTERLIFE"];
+			if (skillStatBonusVariables.ContainsKey("CHARACTERLIFEMODIFIER"))
+				PlayerInfo.SkillBonus.HealthModifier += skillStatBonusVariables["CHARACTERLIFEMODIFIER"];
+
+			if (skillStatBonusVariables.ContainsKey("CHARACTERMANA"))
+				PlayerInfo.SkillBonus.ManaBonus += skillStatBonusVariables["CHARACTERMANA"];
+			if (skillStatBonusVariables.ContainsKey("CHARACTERMANAMODIFIER"))
+				PlayerInfo.SkillBonus.ManaModifier += skillStatBonusVariables["CHARACTERMANAMODIFIER"];
+		}
+
 		const string Key_LevelRequirement = "LevelRequirement";
 		const string Key_Strength = "Strength";
 		const string Key_Dexterity = "Dexterity";
@@ -278,9 +400,9 @@ namespace TQVaultAE.Domain.Entities
 
 			return
 				LevelRequirement <= this.PlayerInfo.CurrentLevel
-				&& Strength <= this.PlayerInfo.BaseStrength
-				&& Dexterity <= this.PlayerInfo.BaseDexterity
-				&& Intelligence <= this.PlayerInfo.BaseIntelligence
+				&& Strength <= this.PlayerInfo.CalculatedStrength
+				&& Dexterity <= this.PlayerInfo.CalculatedDexterity
+				&& Intelligence <= this.PlayerInfo.CalculatedIntelligence
 			;
 		}
 	}

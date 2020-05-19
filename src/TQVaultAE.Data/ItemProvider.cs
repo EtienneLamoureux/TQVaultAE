@@ -195,6 +195,33 @@ namespace TQVaultAE.Data
 		}
 
 		/// <summary>
+		/// Gets the character stat bonuses for an item
+		/// </summary>
+		/// <param name="item">Item that needs stat bonuses looked up</param>
+		/// <returns>Sorted List containing all of the stat bonuses</returns>
+		public SortedList<string, int> GetStatBonuses(Item item)
+		{
+			var statBonuses = new SortedList<string, int>();
+
+			if (item.baseItemInfo != null)			
+				GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(item.BaseItemId));
+
+			if (item.prefixInfo != null)
+				GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(item.prefixID));
+
+			if (item.suffixInfo != null)
+				GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(item.suffixID));
+
+			if (item.RelicInfo != null)
+				GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(item.relicID), item.RelicInfo.CompletedRelicLevel);
+
+			if (item.Relic2Info != null)
+				GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(item.relic2ID), item.Relic2Info.CompletedRelicLevel);
+
+			return statBonuses;
+		}
+
+		/// <summary>
 		/// Gets the itemID's of all the items in the set.
 		/// </summary>
 		/// <param name="includeName">Flag to include the set name in the returned array</param>
@@ -680,6 +707,30 @@ namespace TQVaultAE.Data
 			return Array.IndexOf(notWanted, key.ToUpperInvariant()) != -1;
 		}
 
+		/// <summary>
+		/// Indicates whether the key is a character stat boosting attribute
+		/// </summary>
+		/// <param name="key">string containing the key that is being checked</param>
+		/// <returns>True if the key is a stat boosting attrbute.</returns>
+		public bool IsStatBonus(string key)
+		{
+			string[] bonus =
+			{
+				"CHARACTERSTRENGTH",
+				"CHARACTERSTRENGTHMODIFIER",
+				"CHARACTERDEXTERITY",
+				"CHARACTERDEXTERITYMODIFIER",
+				"CHARACTERINTELLIGENCE",
+				"CHARACTERINTELLIGENCEMODIFIER",
+				"CHARACTERLIFE",
+				"CHARACTERLIFEMODIFIER",
+				"CHARACTERMANA",
+				"CHARACTERMANAMODIFIER",
+			};
+
+			return Array.IndexOf(bonus, key.ToUpperInvariant()) != -1;
+		}
+
 		internal static ReadOnlyCollection<(string ItemClass, string RequirementEquationPrefix)> ItemClassMap = new[]
 		{
 			("ARMORPROTECTIVE_HEAD", "head"),
@@ -760,6 +811,39 @@ namespace TQVaultAE.Data
 		}
 
 		/// <summary>
+		/// Gets the stat bonuses for a database record.
+		/// </summary>
+		/// <param name="statBonuses">SortedList of stat bonuses</param>
+		/// <param name="record">database record</param>
+		/// <param name="statLevel">optional level if there can be multiple values</param>
+		public void GetStatBonusesFromRecord(SortedList<string, int> statBonuses, DBRecordCollection record, int statLevel = 0)
+		{
+			if (record == null || statBonuses == null)
+				return;
+
+			// Some entries can have multiple values, but the value needs to be adjusted for 0 based lookups.
+			statLevel = statLevel < 1 ? 0 : statLevel - 1;
+
+			foreach (Variable variable in record)
+			{
+				if (FilterValue(variable, false) || !IsStatBonus(variable.Name) || statLevel >= variable.NumberOfValues)
+					continue;
+
+				string key = variable.Name.ToUpperInvariant();
+				int value = variable.GetInt32(statLevel);
+
+				// Update the value if it already exists.
+				if (statBonuses.ContainsKey(key))
+				{
+					value += statBonuses[key];
+					statBonuses.Remove(key);
+				}
+
+				statBonuses.Add(key, value);
+			}
+		}
+
+		/// <summary>
 		/// Checks to see if the id ends with .dbr and adds it if not.
 		/// Sometimes the .dbr extension is not written into the item
 		/// </summary>
@@ -778,8 +862,6 @@ namespace TQVaultAE.Data
 			else
 				return string.Concat(itemId, ".dbr");
 		}
-
-
 
 		/// <summary>
 		/// Gets the item requirements from the database record
@@ -857,10 +939,6 @@ namespace TQVaultAE.Data
 			if (TQDebug.ItemDebugLevel > 0)
 				Log.LogDebug("Exiting Item.GetDynamicRequirementsFromRecord()");
 		}
-
-
-
-		#endregion Item Private Methods
 
 		/// <summary>
 		/// Gets the dynamic requirements from a database record.
@@ -968,7 +1046,7 @@ namespace TQVaultAE.Data
 				Log.LogDebug("Exiting Item.GetDynamicRequirementsFromRecord()");
 		}
 
-
+		#endregion Item Private Methods
 
 		/// <summary>
 		/// Gets the level of a triggered skill

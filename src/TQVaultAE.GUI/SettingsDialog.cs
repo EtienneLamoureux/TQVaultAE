@@ -159,6 +159,11 @@ namespace TQVaultAE.GUI
 		public bool EnableCharacterRequierementBGColorChanged { get; private set; }
 
 		/// <summary>
+		/// Indicates that the allow character edit setting has been changed.
+		/// </summary>
+		public bool EnableCharacterEditChanged { get; private set; }
+
+		/// <summary>
 		/// Indicates that the language setting has been changed
 		/// </summary>
 		public bool LanguageChanged { get; private set; }
@@ -883,7 +888,7 @@ namespace TQVaultAE.GUI
 			{
 				if (!this.allowCharacterEdit)
 				{
-					this.allowCharacterEdit = this.ConfigurationChanged = true;
+					this.allowCharacterEdit = this.ConfigurationChanged = this.EnableCharacterEditChanged = true;
 				}
 			}
 			else
@@ -891,7 +896,7 @@ namespace TQVaultAE.GUI
 				if (this.allowCharacterEdit)
 				{
 					this.allowCharacterEdit = false;
-					this.ConfigurationChanged = true;
+					this.ConfigurationChanged = this.EnableCharacterEditChanged = true;
 				}
 			}
 		}
