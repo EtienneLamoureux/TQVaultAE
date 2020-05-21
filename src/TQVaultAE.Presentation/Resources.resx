@@ -1445,9 +1445,8 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
     <value>Enable Character Requierement BG Color</value>
   </data>
   <data name="SettingsEnableCharacterRequierementBGColorTT" xml:space="preserve">
-    <value>(Experimental) Display a red background color on items when the selected character does not meet the requierements.
-TQVaultAE doesn't know the math requiered to compute accurately the real strength, dexterity and intelligence of a character the same way as the game does.
-It currently only use the "base" values available in the save file.</value>
+    <value>When enabled, a red background color is displayed on items where the selected character does not meet the item requirements.
+The character will also not be able to equip items where the requirements are not met.</value>
   </data>
   <data name="ResetMasteriesButton" xml:space="preserve">
     <value>Reset Masteries</value>

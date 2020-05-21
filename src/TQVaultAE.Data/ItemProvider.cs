@@ -35,6 +35,114 @@ namespace TQVaultAE.Data
 		private readonly ITranslationService TranslationService;
 		private readonly LazyConcurrentDictionary<(Item Item, FriendlyNamesExtraScopes? Scope, bool FilterExtra), ToFriendlyNameResult> FriendlyNamesCache = new LazyConcurrentDictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult>();
 
+		internal static readonly string[] unwantedTags =
+		{
+			"MAXTRANSPARENCY",
+			"SCALE",
+			"CASTSSHADOWS",
+			"MARKETADJUSTMENTPERCENT",
+			"LOOTRANDOMIZERCOST",
+			"LOOTRANDOMIZERJITTER",
+			"ACTORHEIGHT",
+			"ACTORRADIUS",
+			"SHADOWBIAS",
+			"ITEMLEVEL",
+			"ITEMCOST",
+			"COMPLETEDRELICLEVEL",
+			"CHARACTERBASEATTACKSPEED",
+			"HIDESUFFIXNAME",
+			"HIDEPREFIXNAME",
+			"AMULET",
+			"RING",
+			"HELMET",
+			"GREAVES",
+			"ARMBAND",
+			"BODYARMOR",
+			"BOW",
+			"SPEAR",
+			"STAFF",
+			"MACE",
+			"SWORD",
+			"RANGEDONEHAND",
+			"AXE",
+			"SHIELD",
+			"BRACELET",
+			"AMULET",
+			"RING",
+			"BLOCKABSORPTION",
+			"ITEMCOSTSCALEPERCENT",
+			"ITEMSKILLLEVEL",
+			"USEDELAYTIME", 
+			"CAMERASHAKEAMPLITUDE", 
+			"SKILLMAXLEVEL", 
+			"SKILLCOOLDOWNTIME", 
+			"EXPANSIONTIME", 
+			"SKILLTIER", 
+			"CAMERASHAKEDURATIONSECS", 
+			"SKILLULTIMATELEVEL", 
+			"SKILLCONNECTIONSPACING", 
+			"PETBURSTSPAWN",
+			"PETLIMIT", 
+			"ISPETDISPLAYABLE", 
+			"SPAWNOBJECTSTIMETOLIVE", 
+			"SKILLPROJECTILENUMBER", 
+			"SKILLMASTERYLEVELREQUIRED", 
+			"EXCLUDERACIALDAMAGE", 
+			"SKILLWEAPONTINTRED", 
+			"SKILLWEAPONTINTGREEN", 
+			"SKILLWEAPONTINTBLUE", 
+			"DEBUFSKILL", 
+			"HIDEFROMUI", 
+			"INSTANTCAST", 
+			"WAVEENDWIDTH", 
+			"WAVEDISTANCE", 
+			"WAVEDEPTH", 
+			"WAVESTARTWIDTH", 
+			"RAGDOLLAMPLIFICATION", 
+			"WAVETIME", 
+			"SPARKGAP", 
+			"SPARKCHANCE", 
+			"PROJECTILEUSESALLDAMAGE", 
+			"DROPOFFSET", 
+			"DROPHEIGHT", 
+			"NUMPROJECTILES", 
+			"SWORD", 
+			"AXE", 
+			"SPEAR", 
+			"MACE", 
+			"QUEST", 
+			"CANNOTPICKUPMULTIPLE", 
+			"BONUSLIFEPERCENT",
+			"BONUSLIFEPOINTS",
+			"BONUSMANAPERCENT",
+			"BONUSMANAPOINTS",
+			"DISPLAYASQUESTITEM",  // New tags from the latest expansions.
+			"ACTORSCALE",
+			"ACTORSCALETIME"
+		};
+
+		internal static readonly string[] requirementTags =
+		{
+			"LEVELREQUIREMENT",
+			"INTELLIGENCEREQUIREMENT",
+			"DEXTERITYREQUIREMENT",
+			"STRENGTHREQUIREMENT",
+		};
+
+		internal static readonly string[] statBonusTags =
+		{
+			"CHARACTERSTRENGTH",
+			"CHARACTERSTRENGTHMODIFIER",
+			"CHARACTERDEXTERITY",
+			"CHARACTERDEXTERITYMODIFIER",
+			"CHARACTERINTELLIGENCE",
+			"CHARACTERINTELLIGENCEMODIFIER",
+			"CHARACTERLIFE",
+			"CHARACTERLIFEMODIFIER",
+			"CHARACTERMANA",
+			"CHARACTERMANAMODIFIER",
+		};
+
 		public ItemProvider(
 			ILogger<ItemProvider> log
 			, IDatabase database
@@ -596,93 +704,7 @@ namespace TQVaultAE.Data
 		public bool FilterKey(string key)
 		{
 			string keyUpper = key.ToUpperInvariant();
-			string[] notWanted =
-			{
-				"MAXTRANSPARENCY",
-				"SCALE",
-				"CASTSSHADOWS",
-				"MARKETADJUSTMENTPERCENT",
-				"LOOTRANDOMIZERCOST",
-				"LOOTRANDOMIZERJITTER",
-				"ACTORHEIGHT",
-				"ACTORRADIUS",
-				"SHADOWBIAS",
-				"ITEMLEVEL",
-				"ITEMCOST",
-				"COMPLETEDRELICLEVEL",
-				"CHARACTERBASEATTACKSPEED",
-				"HIDESUFFIXNAME",
-				"HIDEPREFIXNAME",
-				"AMULET",
-				"RING",
-				"HELMET",
-				"GREAVES",
-				"ARMBAND",
-				"BODYARMOR",
-				"BOW",
-				"SPEAR",
-				"STAFF",
-				"MACE",
-				"SWORD",
-				"RANGEDONEHAND",
-				"AXE",
-				"SHIELD",
-				"BRACELET",
-				"AMULET",
-				"RING",
-				"BLOCKABSORPTION",
-				"ITEMCOSTSCALEPERCENT", // Added by VillageIdiot
-				"ITEMSKILLLEVEL", // Added by VillageIdiot
-				"USEDELAYTIME", // Added by VillageIdiot
-				"CAMERASHAKEAMPLITUDE", // Added by VillageIdiot
-				"SKILLMAXLEVEL", // Added by VillageIdiot
-				"SKILLCOOLDOWNTIME", // Added by VillageIdiot
-				"EXPANSIONTIME", // Added by VillageIdiot
-				"SKILLTIER", // Added by VillageIdiot
-				"CAMERASHAKEDURATIONSECS", // Added by VillageIdiot
-				"SKILLULTIMATELEVEL", // Added by VillageIdiot
-				"SKILLCONNECTIONSPACING", // Added by VillageIdiot
-				"PETBURSTSPAWN", // Added by VillageIdiot
-				"PETLIMIT", // Added by VillageIdiot
-				"ISPETDISPLAYABLE", // Added by VillageIdiot
-				"SPAWNOBJECTSTIMETOLIVE", // Added by VillageIdiot
-				"SKILLPROJECTILENUMBER", // Added by VillageIdiot
-				"SKILLMASTERYLEVELREQUIRED", // Added by VillageIdiot
-				"EXCLUDERACIALDAMAGE", // Added by VillageIdiot
-				"SKILLWEAPONTINTRED", // Added by VillageIdiot
-				"SKILLWEAPONTINTGREEN", // Added by VillageIdiot
-				"SKILLWEAPONTINTBLUE", // Added by VillageIdiot
-				"DEBUFSKILL", // Added by VillageIdiot
-				"HIDEFROMUI", // Added by VillageIdiot
-				"INSTANTCAST", // Added by VillageIdiot
-				"WAVEENDWIDTH", // Added by VillageIdiot
-				"WAVEDISTANCE",  // Added by VillageIdiot
-				"WAVEDEPTH", // Added by VillageIdiot
-				"WAVESTARTWIDTH", // Added by VillageIdiot
-				"RAGDOLLAMPLIFICATION", // Added by VillageIdiot
-				"WAVETIME", // Added by VillageIdiot
-				"SPARKGAP", // Added by VillageIdiot
-				"SPARKCHANCE", // Added by VillageIdiot
-				"PROJECTILEUSESALLDAMAGE", // Added by VillageIdiot
-				"DROPOFFSET", // Added by VillageIdiot
-				"DROPHEIGHT", // Added by VillageIdiot
-				"NUMPROJECTILES", // Added by VillageIdiot
-				"SWORD", // Added by VillageIdiot
-				"AXE", // Added by VillageIdiot
-				"SPEAR", // Added by VillageIdiot
-				"MACE", // Added by VillageIdiot
-				"QUEST", // Added by VillageIdiot
-				"CANNOTPICKUPMULTIPLE", // Added by VillageIdiot
-				"BONUSLIFEPERCENT",
-				"BONUSLIFEPOINTS",
-				"BONUSMANAPERCENT",
-				"BONUSMANAPOINTS",
-				"DISPLAYASQUESTITEM",  // New tags from the latest expansions.
-				"ACTORSCALE",
-				"ACTORSCALETIME"
-			};
-
-			return (Array.IndexOf(notWanted, keyUpper) != -1
+			return (Array.IndexOf(unwantedTags, keyUpper) != -1
 				|| keyUpper.EndsWith("SOUND", StringComparison.OrdinalIgnoreCase)
 				|| keyUpper.EndsWith("MESH", StringComparison.OrdinalIgnoreCase)
 				|| keyUpper.StartsWith("BODYMASK", StringComparison.OrdinalIgnoreCase)
@@ -695,17 +717,7 @@ namespace TQVaultAE.Data
 		/// <param name="key">key which we are checking whether or not it gets filtered.</param>
 		/// <returns>true if key is present in this list</returns>
 		public bool FilterRequirements(string key)
-		{
-			string[] notWanted =
-			{
-				"LEVELREQUIREMENT",
-				"INTELLIGENCEREQUIREMENT",
-				"DEXTERITYREQUIREMENT",
-				"STRENGTHREQUIREMENT",
-			};
-
-			return Array.IndexOf(notWanted, key.ToUpperInvariant()) != -1;
-		}
+			=> Array.IndexOf(requirementTags, key.ToUpperInvariant()) != -1;
 
 		/// <summary>
 		/// Indicates whether the key is a character stat boosting attribute
@@ -713,23 +725,7 @@ namespace TQVaultAE.Data
 		/// <param name="key">string containing the key that is being checked</param>
 		/// <returns>True if the key is a stat boosting attrbute.</returns>
 		public bool IsStatBonus(string key)
-		{
-			string[] bonus =
-			{
-				"CHARACTERSTRENGTH",
-				"CHARACTERSTRENGTHMODIFIER",
-				"CHARACTERDEXTERITY",
-				"CHARACTERDEXTERITYMODIFIER",
-				"CHARACTERINTELLIGENCE",
-				"CHARACTERINTELLIGENCEMODIFIER",
-				"CHARACTERLIFE",
-				"CHARACTERLIFEMODIFIER",
-				"CHARACTERMANA",
-				"CHARACTERMANAMODIFIER",
-			};
-
-			return Array.IndexOf(bonus, key.ToUpperInvariant()) != -1;
-		}
+			=> Array.IndexOf(statBonusTags, key.ToUpperInvariant()) != -1;
 
 		internal static ReadOnlyCollection<(string ItemClass, string RequirementEquationPrefix)> ItemClassMap = new[]
 		{

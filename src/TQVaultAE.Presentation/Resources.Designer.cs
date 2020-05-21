@@ -3559,9 +3559,8 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to (Experimental) Display a red background color on items when the selected character does not meet the requierements.
-        ///TQVaultAE doesn&apos;t know the math requiered to compute accurately the real strength, dexterity and intelligence of a character the same way as the game does.
-        ///It currently only use the &quot;base&quot; values available in the save file..
+        ///   Looks up a localized string similar to When enabled, a red background color is displayed on items where the selected character does not meet the item requirements.
+        ///The character will also not be able to equip items where the requirements are not met..
         /// </summary>
         public static string SettingsEnableCharacterRequierementBGColorTT {
             get {
