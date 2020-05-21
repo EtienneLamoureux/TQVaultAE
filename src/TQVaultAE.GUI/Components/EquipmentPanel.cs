@@ -333,7 +333,7 @@ namespace TQVaultAE.GUI.Components
 					return;
 
 				// If the requirement setting is enabled check to see if the item can be equipped.
-				if (Config.Settings.Default.EnableCharacterRequierementBGColor && !this.CanBeEquipped(DragInfo.Item))
+				if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(DragInfo.Item))
 					return;
 
 				// Yes we can drop it here!
@@ -835,7 +835,7 @@ namespace TQVaultAE.GUI.Components
 
 				// If we are showing the cannot equip background then 
 				// change to invalid color and adjust the alpha.
-				if (Config.Settings.Default.EnableCharacterRequierementBGColor && !this.CanBeEquipped(item))
+				if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
 				{
 					backgroundColor = this.HighlightInvalidItemColor;
 
@@ -859,7 +859,7 @@ namespace TQVaultAE.GUI.Components
 						if (slot != -1 && this.CheckItemType(this.DragInfo.Item, slot))
 						{
 							backgroundColor = this.HighlightValidItemColor;
-							if (Config.Settings.Default.EnableCharacterRequierementBGColor && !this.CanBeEquipped(DragInfo.Item))							
+							if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(DragInfo.Item))							
 								backgroundColor = this.HighlightInvalidItemColor;							
 						}
 					}
@@ -927,7 +927,7 @@ namespace TQVaultAE.GUI.Components
 					if (slot != -1)
 					{
 						backgroundColor = this.HighlightValidItemColor;
-						if (!this.CheckItemType(this.DragInfo.Item, slot) || (Config.Settings.Default.EnableCharacterRequierementBGColor && !this.CanBeEquipped(DragInfo.Item)))					
+						if (!this.CheckItemType(this.DragInfo.Item, slot) || (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(DragInfo.Item)))					
 							backgroundColor =  this.HighlightInvalidItemColor;
 
 						using (Brush brush = new SolidBrush(backgroundColor))

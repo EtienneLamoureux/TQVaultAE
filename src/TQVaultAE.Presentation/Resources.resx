@@ -1441,10 +1441,10 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   <data name="SettingsItemBGColorOpacityLabelTT" xml:space="preserve">
     <value>Item background color opacity level</value>
   </data>
-  <data name="SettingsEnableCharacterRequierementBGColor" xml:space="preserve">
-    <value>Enable Character Requierement BG Color</value>
+  <data name="SettingsEnableItemRequirementRestriction" xml:space="preserve">
+    <value>Enable Item Requirement Restriction</value>
   </data>
-  <data name="SettingsEnableCharacterRequierementBGColorTT" xml:space="preserve">
+  <data name="SettingsEnableItemRequirementRestrictionTT" xml:space="preserve">
     <value>When enabled, a red background color is displayed on items where the selected character does not meet the item requirements.
 The character will also not be able to equip items where the requirements are not met.</value>
   </data>

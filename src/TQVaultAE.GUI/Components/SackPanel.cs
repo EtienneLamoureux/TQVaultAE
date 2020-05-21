@@ -1907,7 +1907,7 @@ namespace TQVaultAE.GUI.Components
 
 				// If we are showing the cannot equip background then 
 				// change to invalid color and adjust the alpha.
-				if (Config.Settings.Default.EnableCharacterRequierementBGColor && !this.CanBeEquipped(item))
+				if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
 				{
 					backgroundColor = this.HighlightInvalidItemColor;
 

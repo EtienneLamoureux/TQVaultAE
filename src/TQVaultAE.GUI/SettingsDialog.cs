@@ -31,7 +31,7 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Indicates that the EnableCharacterRequierementBGColor setting has been changed
 		/// </summary>
-		public bool enableCharacterRequierementBGColor;
+		public bool enableItemRequirementRestriction;
 
 		/// <summary>
 		/// Indicates whether the title screen will be skipped on startup
@@ -156,7 +156,7 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Indicates that the EnableCharacterRequierementBGColor setting has been changed
 		/// </summary>
-		public bool EnableCharacterRequierementBGColorChanged { get; private set; }
+		public bool EnableItemRequirementRestrictionChanged { get; private set; }
 
 		/// <summary>
 		/// Indicates that the allow character edit setting has been changed.
@@ -220,7 +220,7 @@ namespace TQVaultAE.GUI
 			this.baseFontLabel.Font = FontService.GetFontLight(11.25F);
 			this.baseFontComboBox.Font = FontService.GetFontLight(11.25F);
 			this.EnableDetailedTooltipViewCheckBox.Font = FontService.GetFontLight(11.25F);
-			this.EnableCharacterRequierementBGColorCheckBox.Font = FontService.GetFontLight(11.25F);
+			this.EnableItemRequirementRestrictionCheckBox.Font = FontService.GetFontLight(11.25F);
 			this.ItemBGColorOpacityLabel.Font = FontService.GetFontLight(11.25F);
 			this.Font = FontService.GetFontLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
 
@@ -259,8 +259,8 @@ namespace TQVaultAE.GUI
 			this.toolTip.SetToolTip(this.EnableDetailedTooltipViewCheckBox, Resources.SettingEnableDetailedTooltipViewTT);
 			this.ItemBGColorOpacityLabel.Text = Resources.SettingsItemBGColorOpacityLabel;
 			this.toolTip.SetToolTip(this.ItemBGColorOpacityLabel, Resources.SettingsItemBGColorOpacityLabelTT);
-			this.EnableCharacterRequierementBGColorCheckBox.Text = Resources.SettingsEnableCharacterRequierementBGColor;
-			this.toolTip.SetToolTip(this.EnableCharacterRequierementBGColorCheckBox, Resources.SettingsEnableCharacterRequierementBGColorTT);
+			this.EnableItemRequirementRestrictionCheckBox.Text = Resources.SettingsEnableItemRequirementRestriction;
+			this.toolTip.SetToolTip(this.EnableItemRequirementRestrictionCheckBox, Resources.SettingsEnableItemRequirementRestrictionTT);
 
 			this.cancelButton.Text = Resources.GlobalCancel;
 			this.okayButton.Text = Resources.GlobalOK;
@@ -387,7 +387,7 @@ namespace TQVaultAE.GUI
 			this.detectLanguage = Config.Settings.Default.AutoDetectLanguage;
 			this.enableDetailedTooltipView = Config.Settings.Default.EnableDetailedTooltipView;
 			this.itemBGColorOpacity = Config.Settings.Default.ItemBGColorOpacity;
-			this.enableCharacterRequierementBGColor = Config.Settings.Default.EnableCharacterRequierementBGColor;
+			this.enableItemRequirementRestriction = Config.Settings.Default.EnableItemRequirementRestriction;
 
 			// Force English since there was some issue with getting the proper language setting.
 			var gl = Database.GameLanguage;
@@ -455,7 +455,7 @@ namespace TQVaultAE.GUI
 			this.playerReadonlyCheckbox.Checked = this.playerReadonly;
 			this.EnableDetailedTooltipViewCheckBox.Checked = this.enableDetailedTooltipView;
 			this.ItemBGColorOpacityTrackBar.Value = this.itemBGColorOpacity;
-			this.EnableCharacterRequierementBGColorCheckBox.Checked = this.enableCharacterRequierementBGColor;
+			this.EnableItemRequirementRestrictionCheckBox.Checked = this.enableItemRequirementRestriction;
 
 			this.enableCustomMapsCheckBox.Checked = this.enableMods;
 
@@ -510,7 +510,7 @@ namespace TQVaultAE.GUI
 				Config.Settings.Default.BaseFont = this.BaseFont;
 				Config.Settings.Default.EnableDetailedTooltipView = this.enableDetailedTooltipView;
 				Config.Settings.Default.ItemBGColorOpacity = this.itemBGColorOpacity;
-				Config.Settings.Default.EnableCharacterRequierementBGColor = this.enableCharacterRequierementBGColor;
+				Config.Settings.Default.EnableItemRequirementRestriction = this.enableItemRequirementRestriction;
 			}
 		}
 
@@ -939,17 +939,17 @@ namespace TQVaultAE.GUI
 
 		private void EnableCharacterRequierementBGColorCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			if (this.EnableCharacterRequierementBGColorCheckBox.Checked)
+			if (this.EnableItemRequirementRestrictionCheckBox.Checked)
 			{
-				if (!this.enableCharacterRequierementBGColor)
-					this.enableCharacterRequierementBGColor = this.ConfigurationChanged = this.EnableCharacterRequierementBGColorChanged = true;
+				if (!this.enableItemRequirementRestriction)
+					this.enableItemRequirementRestriction = this.ConfigurationChanged = this.EnableItemRequirementRestrictionChanged = true;
 			}
 			else
 			{
-				if (this.enableCharacterRequierementBGColor)
+				if (this.enableItemRequirementRestriction)
 				{
-					this.enableCharacterRequierementBGColor = false;
-					this.ConfigurationChanged = this.EnableCharacterRequierementBGColorChanged = true;
+					this.enableItemRequirementRestriction = false;
+					this.ConfigurationChanged = this.EnableItemRequirementRestrictionChanged = true;
 				}
 			}
 		}

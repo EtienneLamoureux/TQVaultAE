@@ -1101,12 +1101,12 @@ Quand activé, l’équipement du personnage sera en lecture seule, vous ne sere
   <data name="SettingsItemBGColorOpacityLabelTT" xml:space="preserve">
     <value>Opacité de la couleur de fond des objets</value>
   </data>
-  <data name="SettingsEnableCharacterRequierementBGColor" xml:space="preserve">
-    <value>Enable Character Requierement BG Color</value>
+  <data name="SettingsEnableItemRequirementRestriction" xml:space="preserve">
+    <value>Active les restrictions liés aux exigences des objets</value>
   </data>
-  <data name="SettingsEnableCharacterRequierementBGColorTT" xml:space="preserve">
+  <data name="SettingsEnableItemRequirementRestrictionTT" xml:space="preserve">
     <value>Affiche une couleur de fond rouge sur les objets lorsque le personnage sélectionné ne répond pas aux exigences.
-Vous ne serez égalament pas en mesure d'équiper l'objet sur ce personnage.</value>
+Vous ne serez également pas en mesure d'équiper l'objet sur ce personnage.</value>
   </data>
   <data name="ResetMasteriesButton" xml:space="preserve">
     <value>Réinit. Maîtrises</value>

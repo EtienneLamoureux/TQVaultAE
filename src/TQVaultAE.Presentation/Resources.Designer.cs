@@ -3550,11 +3550,11 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable Character Requierement BG Color.
+        ///   Looks up a localized string similar to Enable Item Requirement Restriction.
         /// </summary>
-        public static string SettingsEnableCharacterRequierementBGColor {
+        public static string SettingsEnableItemRequirementRestriction {
             get {
-                return ResourceManager.GetString("SettingsEnableCharacterRequierementBGColor", resourceCulture);
+                return ResourceManager.GetString("SettingsEnableItemRequirementRestriction", resourceCulture);
             }
         }
         
@@ -3562,9 +3562,9 @@ namespace TQVaultAE.Presentation {
         ///   Looks up a localized string similar to When enabled, a red background color is displayed on items where the selected character does not meet the item requirements.
         ///The character will also not be able to equip items where the requirements are not met..
         /// </summary>
-        public static string SettingsEnableCharacterRequierementBGColorTT {
+        public static string SettingsEnableItemRequirementRestrictionTT {
             get {
-                return ResourceManager.GetString("SettingsEnableCharacterRequierementBGColorTT", resourceCulture);
+                return ResourceManager.GetString("SettingsEnableItemRequirementRestrictionTT", resourceCulture);
             }
         }
         
