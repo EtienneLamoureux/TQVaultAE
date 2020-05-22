@@ -29,7 +29,7 @@ namespace TQVaultAE.GUI
 		private bool loadLastVault;
 
 		/// <summary>
-		/// Indicates that the EnableCharacterRequierementBGColor setting has been changed
+		/// Indicates that the <see cref="Config.Settings.EnableItemRequirementRestriction"/> setting has been changed
 		/// </summary>
 		public bool enableItemRequirementRestriction;
 
@@ -154,7 +154,7 @@ namespace TQVaultAE.GUI
 		public bool ItemBGColorOpacityChanged { get; private set; }
 
 		/// <summary>
-		/// Indicates that the EnableCharacterRequierementBGColor setting has been changed
+		/// Indicates that the <see cref="Config.Settings.EnableItemRequirementRestriction"/> setting has been changed
 		/// </summary>
 		public bool EnableItemRequirementRestrictionChanged { get; private set; }
 
