@@ -71,6 +71,16 @@ namespace TQVaultAE.Domain.Entities
 		}
 
 		/// <summary>
+		/// Gets or sets the PlayerStatBonus which contains the cululative stat bonus for the character's skills.
+		/// </summary>
+		public PlayerStatBonus SkillBonus { get; set; }
+
+		/// <summary>
+		/// Gets or sets the PlayerStatBonus which contains the cululative stat bonus for the character's equipped gear.
+		/// </summary>
+		public PlayerStatBonus GearBonus { get; set; }
+
+		/// <summary>
 		/// Released skill points from masteries reset
 		/// </summary>
 		public int ReleasedSkillPoints
@@ -126,9 +136,21 @@ namespace TQVaultAE.Domain.Entities
 		public int BaseStrength { get; set; }
 
 		/// <summary>
+		/// Character Strength with included bonuses and modifiers from gear and skills.
+		/// </summary>
+		public int CalculatedStrength => Convert.ToInt32(((float)((this.BaseStrength + (SkillBonus?.StrengthBonus ?? 0) + (GearBonus?.StrengthBonus ?? 0))) *
+					(100.0f + ((SkillBonus?.StrengthModifier ?? 0) + (GearBonus?.StrengthModifier ?? 0)))) / 100.0f);
+
+		/// <summary>
 		/// Base Dexterity
 		/// </summary>
 		public int BaseDexterity { get; set; }
+
+		/// <summary>
+		/// Character Dexterity with included bonuses and modifiers from gear and skills.
+		/// </summary>
+		public int CalculatedDexterity => Convert.ToInt32(((float)((this.BaseDexterity + (SkillBonus?.DexterityBonus ?? 0) + (GearBonus?.DexterityBonus ?? 0))) *
+					(100.0f + ((SkillBonus?.DexterityModifier ?? 0) + (GearBonus?.DexterityModifier ?? 0)))) / 100.0f);
 
 		/// <summary>
 		/// Base Intelligence
@@ -136,14 +158,32 @@ namespace TQVaultAE.Domain.Entities
 		public int BaseIntelligence { get; set; }
 
 		/// <summary>
+		/// Character Intelligence with included bonuses and modifiers from gear and skills.
+		/// </summary>
+		public int CalculatedIntelligence => Convert.ToInt32(((float)((this.BaseIntelligence + (SkillBonus?.IntelligenceBonus ?? 0) + (GearBonus?.IntelligenceBonus ?? 0))) *
+					(100.0f + ((SkillBonus?.IntelligenceModifier ?? 0) + (GearBonus?.IntelligenceModifier ?? 0)))) / 100.0f);
+
+		/// <summary>
 		/// Base Health
 		/// </summary>
 		public int BaseHealth { get; set; }
 
 		/// <summary>
+		/// Character Health with included bonuses and modifiers from gear and skills.
+		/// </summary>
+		public int CalculatedHealth => Convert.ToInt32(((float)((this.BaseHealth + (SkillBonus?.HealthBonus ?? 0) + (GearBonus?.HealthBonus ?? 0))) *
+					(100.0f + ((SkillBonus?.HealthModifier ?? 0) + (GearBonus?.HealthModifier ?? 0)))) / 100.0f);
+
+		/// <summary>
 		/// Base Mana
 		/// </summary>
 		public int BaseMana { get; set; }
+
+		/// <summary>
+		/// Character Mana with included bonuses and modifiers from gear and skills.
+		/// </summary>
+		public int CalculatedMana => Convert.ToInt32(((float)((this.BaseMana + (SkillBonus?.ManaBonus ?? 0) + (GearBonus?.ManaBonus ?? 0))) *
+					(100.0f + ((SkillBonus?.ManaModifier ?? 0) + (GearBonus?.ManaModifier ?? 0)))) / 100.0f);
 
 		/// <summary>
 		/// Return skills having the same skill line base.

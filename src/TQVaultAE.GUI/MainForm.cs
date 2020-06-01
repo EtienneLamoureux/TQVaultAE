@@ -1018,8 +1018,11 @@ Debug Levels
 					result = MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
-				if (settingsDialog.ItemBGColorOpacityChanged || settingsDialog.EnableCharacterRequierementBGColorChanged)
+				if (settingsDialog.ItemBGColorOpacityChanged || settingsDialog.EnableItemRequirementRestrictionChanged)
 					this.Refresh();
+
+				if (settingsDialog.EnableCharacterEditChanged)
+					stashPanel?.UpdatePlayerInfo();
 
 				this.configChanged = true;
 				this.SaveConfiguration();

@@ -42,7 +42,19 @@ namespace TQVaultAE.GUI.Components
 			this.DisableGrid = true;
 			this.DisableBorder = true;
 			this.DisableMultipleSelection = true;
+			this.DefaultImage = null;
 		}
+
+
+		#region EquipmentPanel Properties
+
+		/// <summary>
+		/// Gets or sets the equipment changed event handler
+		/// </summary>
+		public EventHandler<SackPanelEventArgs> OnEquipmentChanged { get; set; }
+
+		#endregion EquipmentPanel Properties
+
 
 		#region EquipmentPanel Public Methods
 
@@ -117,6 +129,37 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			return -1;
+		}
+
+		/// <summary>
+		/// Calculates the stat bonuses for the equipped gear and updates the player
+		/// </summary>
+		public void GetGearStatBonus()
+		{
+			if (Sack == null)
+				return;
+
+			var currentPlayer = userContext.CurrentPlayer;
+			if (currentPlayer == null)
+				return;
+
+			currentPlayer.ClearPlayerGearBonuses();
+
+			foreach (Item item in this.Sack)
+			{
+				// Ignore the item if it is being dragged
+				if (DragInfo.Item == item)
+					continue;
+
+				// Skip weapons in the secondary slots.
+				if (item.IsInWeaponSlot && (item.PositionY == 2 || item.PositionY == 3))
+					continue;
+
+				currentPlayer.UpdatePlayerGearBonuses(ItemProvider.GetStatBonuses(item));
+			}
+
+			// Let the container panel know that the calculation has changed.
+			OnEquipmentChanged?.Invoke(this, new SackPanelEventArgs(null, null));
 		}
 
 		#endregion EquipmentPanel Public Methods
@@ -254,6 +297,19 @@ namespace TQVaultAE.GUI.Components
 		}
 
 		/// <summary>
+		/// Handler for picking up an item with the mouse
+		/// </summary>
+		/// <param name="sender">sender object</param>
+		/// <param name="e">MouseEventArgs data</param>
+		protected override void PickupItem(object sender, MouseEventArgs e)
+		{
+			base.PickupItem(sender, e);
+
+			// Recalculate the character stat bonuses.
+			GetGearStatBonus();
+		}
+
+		/// <summary>
 		/// Handler for putting an item down with the mouse
 		/// </summary>
 		/// <param name="sender">sender object</param>
@@ -274,6 +330,10 @@ namespace TQVaultAE.GUI.Components
 				// Check that the item is being dropped into the proper slot.
 				int slot = FindEquipmentSlot(this.CellsUnderDragItem);
 				if (slot == -1 || !this.CheckItemType(dragItem, slot))
+					return;
+
+				// If the requirement setting is enabled check to see if the item can be equipped.
+				if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(DragInfo.Item))
 					return;
 
 				// Yes we can drop it here!
@@ -521,6 +581,9 @@ namespace TQVaultAE.GUI.Components
 
 				// and now do a MouseMove() to properly draw the new drag item and/or focus
 				this.MouseMoveCallback(sender, e);
+
+				// Recalculate the character stat bonuses.
+				GetGearStatBonus();
 
 				ItemTooltip.HideTooltip();
 				BagButtonTooltip.InvalidateCache(this.Sack);
@@ -772,7 +835,7 @@ namespace TQVaultAE.GUI.Components
 
 				// If we are showing the cannot equip background then 
 				// change to invalid color and adjust the alpha.
-				if (Config.Settings.Default.EnableCharacterRequierementBGColor && !this.CanBeEquipped(item))
+				if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
 				{
 					backgroundColor = this.HighlightInvalidItemColor;
 
@@ -794,7 +857,11 @@ namespace TQVaultAE.GUI.Components
 					{
 						int slot = FindEquipmentSlot(this.Sack, this.ItemsUnderDragItem[0]);
 						if (slot != -1 && this.CheckItemType(this.DragInfo.Item, slot))
+						{
 							backgroundColor = this.HighlightValidItemColor;
+							if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(DragInfo.Item))							
+								backgroundColor = this.HighlightInvalidItemColor;							
+						}
 					}
 				}
 
@@ -859,7 +926,9 @@ namespace TQVaultAE.GUI.Components
 					// Check to see if the item is correct for the slot
 					if (slot != -1)
 					{
-						backgroundColor = this.CheckItemType(this.DragInfo.Item, slot) ? this.HighlightValidItemColor : this.HighlightInvalidItemColor;
+						backgroundColor = this.HighlightValidItemColor;
+						if (!this.CheckItemType(this.DragInfo.Item, slot) || (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(DragInfo.Item)))					
+							backgroundColor =  this.HighlightInvalidItemColor;
 
 						using (Brush brush = new SolidBrush(backgroundColor))
 						{
@@ -1008,6 +1077,7 @@ namespace TQVaultAE.GUI.Components
 
 			this.DrawItem(graphics, item, screenLocation);
 		}
+
 
 		#endregion EquipmentPanel Protected Methods
 

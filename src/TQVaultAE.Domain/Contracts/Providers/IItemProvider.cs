@@ -83,6 +83,8 @@ namespace TQVaultAE.Domain.Contracts.Providers
 		/// <returns>A string containing the items requirements</returns>
 		(string[] Requirements, SortedList<string, Variable> RequirementVariables) GetRequirements(Item itm);
 		SortedList<string, Variable> GetRequirementVariables(Item itm);
+		SortedList<string, int> GetStatBonuses(Item item);
+		void GetStatBonusesFromRecord(SortedList<string, int> statBonuses, DBRecordCollection record, int statLevel = 0);
 		/// <summary>
 		/// Gets the itemID's of all the items in the set.
 		/// </summary>
