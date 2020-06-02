@@ -999,6 +999,10 @@ namespace TQVaultAE.Data
 				if (key.Equals("Level"))
 					key = "LevelRequirement";
 
+				// Skip over any requirements that have been set by the database record. 
+				if (requirements.ContainsKey(key))
+					continue;
+
 				string value = variable.ToStringValue().Replace(itemLevelTag, itemLevel);
 
 				// Added by VillageIdiot
@@ -1023,17 +1027,8 @@ namespace TQVaultAE.Data
 
 				ans[0] = intVal;
 
-				value = ans.ToStringValue();
-				if (requirements.ContainsKey(key))
-				{
-					if (string.Compare(value, ((Variable)requirements[key]).ToStringValue(), StringComparison.OrdinalIgnoreCase) <= 0)
-						return;
-
-					requirements.Remove(key);
-				}
-
 				if (TQDebug.ItemDebugLevel > 2)
-					Log.LogDebug("Added Requirement {0}={1}", key, value);
+					Log.LogDebug("Added Requirement {0}={1}", key, ans.ToStringValue());
 
 				requirements.Add(key, ans);
 			}
