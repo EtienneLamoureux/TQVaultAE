@@ -202,7 +202,7 @@ namespace TQVaultAE.GUI
             this.characterEditCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.EnableDetailedTooltipViewCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.ItemBGColorOpacityLabel = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.EnableCharacterRequierementBGColorCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.EnableItemRequirementRestrictionCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.languageComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.languageLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.detectLanguageCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
@@ -528,18 +528,18 @@ namespace TQVaultAE.GUI
             // 
             // EnableCharacterRequierementBGColorCheckBox
             // 
-            this.EnableCharacterRequierementBGColorCheckBox.AutoSize = true;
-            this.EnableCharacterRequierementBGColorCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 14.0625F);
-            this.EnableCharacterRequierementBGColorCheckBox.ForeColor = System.Drawing.Color.Orange;
-            this.EnableCharacterRequierementBGColorCheckBox.Location = new System.Drawing.Point(619, 508);
-            this.EnableCharacterRequierementBGColorCheckBox.Margin = new System.Windows.Forms.Padding(4);
-            this.EnableCharacterRequierementBGColorCheckBox.Name = "EnableCharacterRequierementBGColorCheckBox";
-            this.EnableCharacterRequierementBGColorCheckBox.Size = new System.Drawing.Size(460, 32);
-            this.EnableCharacterRequierementBGColorCheckBox.TabIndex = 41;
-            this.EnableCharacterRequierementBGColorCheckBox.Text = "Enable Character Requierement BG Color";
-            this.toolTip.SetToolTip(this.EnableCharacterRequierementBGColorCheckBox, resources.GetString("EnableCharacterRequierementBGColorCheckBox.ToolTip"));
-            this.EnableCharacterRequierementBGColorCheckBox.UseVisualStyleBackColor = true;
-            this.EnableCharacterRequierementBGColorCheckBox.CheckedChanged += new System.EventHandler(this.EnableCharacterRequierementBGColorCheckBox_CheckedChanged);
+            this.EnableItemRequirementRestrictionCheckBox.AutoSize = true;
+            this.EnableItemRequirementRestrictionCheckBox.Font = new System.Drawing.Font("Albertus MT Light", 14.0625F);
+            this.EnableItemRequirementRestrictionCheckBox.ForeColor = System.Drawing.Color.Orange;
+            this.EnableItemRequirementRestrictionCheckBox.Location = new System.Drawing.Point(619, 508);
+            this.EnableItemRequirementRestrictionCheckBox.Margin = new System.Windows.Forms.Padding(4);
+            this.EnableItemRequirementRestrictionCheckBox.Name = "EnableCharacterRequierementBGColorCheckBox";
+            this.EnableItemRequirementRestrictionCheckBox.Size = new System.Drawing.Size(460, 32);
+            this.EnableItemRequirementRestrictionCheckBox.TabIndex = 41;
+            this.EnableItemRequirementRestrictionCheckBox.Text = "Enable Character Requierement BG Color";
+            this.toolTip.SetToolTip(this.EnableItemRequirementRestrictionCheckBox, resources.GetString("EnableCharacterRequierementBGColorCheckBox.ToolTip"));
+            this.EnableItemRequirementRestrictionCheckBox.UseVisualStyleBackColor = true;
+            this.EnableItemRequirementRestrictionCheckBox.CheckedChanged += new System.EventHandler(this.EnableCharacterRequierementBGColorCheckBox_CheckedChanged);
             // 
             // languageComboBox
             // 
@@ -768,7 +768,7 @@ namespace TQVaultAE.GUI
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
             this.ClientSize = new System.Drawing.Size(1152, 614);
-            this.Controls.Add(this.EnableCharacterRequierementBGColorCheckBox);
+            this.Controls.Add(this.EnableItemRequirementRestrictionCheckBox);
             this.Controls.Add(this.ItemBGColorOpacityLabel);
             this.Controls.Add(this.ItemBGColorOpacityTrackBar);
             this.Controls.Add(this.EnableDetailedTooltipViewCheckBox);
@@ -846,7 +846,7 @@ namespace TQVaultAE.GUI
             this.Controls.SetChildIndex(this.EnableDetailedTooltipViewCheckBox, 0);
             this.Controls.SetChildIndex(this.ItemBGColorOpacityTrackBar, 0);
             this.Controls.SetChildIndex(this.ItemBGColorOpacityLabel, 0);
-            this.Controls.SetChildIndex(this.EnableCharacterRequierementBGColorCheckBox, 0);
+            this.Controls.SetChildIndex(this.EnableItemRequirementRestrictionCheckBox, 0);
             this.tableLayoutPanelButtons.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ItemBGColorOpacityTrackBar)).EndInit();
             this.ResumeLayout(false);
@@ -864,6 +864,6 @@ namespace TQVaultAE.GUI
         private ScalingCheckBox EnableDetailedTooltipViewCheckBox;
 		private System.Windows.Forms.TrackBar ItemBGColorOpacityTrackBar;
 		private ScalingLabel ItemBGColorOpacityLabel;
-		private ScalingCheckBox EnableCharacterRequierementBGColorCheckBox;
+		private ScalingCheckBox EnableItemRequirementRestrictionCheckBox;
 	}
 }

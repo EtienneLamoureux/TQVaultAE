@@ -296,7 +296,6 @@ Voulez-vous redémarrer TQVault ?</value>
   <data name="ItemSeed" xml:space="preserve">
     <value>N° aléatoire: {0} (0x{0:X8}) ({1:p3})</value>
   </data>
-  
   <data name="ItemWith" xml:space="preserve">
     <value>avec</value>
   </data>
@@ -951,9 +950,6 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Autorise l'édition des personnages</value>
   </data>
-  
-  
-  
   <data name="CEAttributePoints" xml:space="preserve">
     <value>Points d'attributs</value>
   </data>
@@ -996,8 +992,6 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
   <data name="CharacterEditBtn" xml:space="preserve">
     <value>modifier</value>
   </data>
-  
-  
   <data name="Masteries" xml:space="preserve">
     <value>Maîtrises</value>
   </data>
@@ -1107,138 +1101,106 @@ Quand activé, l’équipement du personnage sera en lecture seule, vous ne sere
   <data name="SettingsItemBGColorOpacityLabelTT" xml:space="preserve">
     <value>Opacité de la couleur de fond des objets</value>
   </data>
-  <data name="SettingsEnableCharacterRequierementBGColor" xml:space="preserve">
-    <value>Enable Character Requierement BG Color</value>
+  <data name="SettingsEnableItemRequirementRestriction" xml:space="preserve">
+    <value>Active les restrictions liés aux exigences des objets</value>
   </data>
-  <data name="SettingsEnableCharacterRequierementBGColorTT" xml:space="preserve">
-    <value>(Expérimental) Affiche une couleur de fond rouge sur les objets lorsque le personnage sélectionné ne répond pas aux exigences.
-TQVaultAE ne connaît pas les formules nécessaires pour calculer avec précision la force réelle, la dextérité et l’intelligence d’un personnage de la même façon que le jeu.
-Il n’utilise actuellement que les valeurs de "base" disponibles dans le fichier de sauvegarde.</value>
+  <data name="SettingsEnableItemRequirementRestrictionTT" xml:space="preserve">
+    <value>Affiche une couleur de fond rouge sur les objets lorsque le personnage sélectionné ne répond pas aux exigences.
+Vous ne serez également pas en mesure d'équiper l'objet sur ce personnage.</value>
   </data>
   <data name="ResetMasteriesButton" xml:space="preserve">
     <value>Réinit. Maîtrises</value>
   </data>
-
   <data name="TextTag_tagRelic" xml:space="preserve">
     <value>Relique</value>
     <comment>Substitute for missing tag for "Relic"</comment>
   </data>
-
   <data name="TextTag_tagArtifact" xml:space="preserve">
     <value>Artéfact</value>
     <comment>Substitute for missing tag for "Artifact"</comment>
   </data>
-
-
   <data name="SearchMatchingItemsTT" xml:space="preserve">
     <value>{0} objets trouvés</value>
   </data>
-
   <data name="SearchFiltersSelected" xml:space="preserve">
     <value>{0} filtres sélectionnés</value>
   </data>
-
   <data name="SearchTermRequired" xml:space="preserve">
     <value>Certains filtres doivent être sélectionnés</value>
   </data>
-
   <data name="SearchOperator" xml:space="preserve">
     <value>Opérateur</value>
   </data>
-
   <data name="SearchOperatorTitle" xml:space="preserve">
     <value>Opérateur de recherche</value>
   </data>
-
   <data name="SearchOperatorDescOr" xml:space="preserve">
     <value>Trouve les objets ayant un filtre ou plus</value>
   </data>
-
   <data name="SearchOperatorDescAnd" xml:space="preserve">
     <value>Trouve les objets ayant tous les filtres</value>
   </data>
-
   <data name="GlobalExpandAll" xml:space="preserve">
     <value>Ouvrir tout</value>
   </data>
-
   <data name="GlobalCollapseAll" xml:space="preserve">
     <value>Fermer tout</value>
   </data>
-
   <data name="SearchReduceCategoriesDuringSelection" xml:space="preserve">
     <value>Réduit les catégories durant la sélection</value>
   </data>
-
   <data name="SearchVisibleElementsPerCategory" xml:space="preserve">
     <value>Eléments visibles/catégorie</value>
   </data>
-
   <data name="SearchQueries" xml:space="preserve">
     <value>Requêtes</value>
   </data>
-
   <data name="GlobalSave" xml:space="preserve">
     <value>Sauvegarder</value>
   </data>
-  
   <data name="GlobalBaseAttribute" xml:space="preserve">
     <value>Attribut de Base</value>
   </data>
-  
   <data name="GlobalPrefix" xml:space="preserve">
     <value>Préfixe</value>
   </data>
   <data name="GlobalPrefixName" xml:space="preserve">
     <value>Nom Préfixe</value>
   </data>
-
   <data name="GlobalSuffix" xml:space="preserve">
     <value>Suffixe</value>
   </data>
   <data name="GlobalSuffixName" xml:space="preserve">
     <value>Nom Suffixe</value>
   </data>
-
   <data name="GlobalRarity" xml:space="preserve">
     <value>Rareté</value>
   </data>
-
   <data name="SearchHavingCharm" xml:space="preserve">
     <value>Avec Charme</value>
   </data>
-
   <data name="SearchHavingRelic" xml:space="preserve">
     <value>Avec Relique</value>
   </data>
-  
-
   <data name="SearchBuildingData" xml:space="preserve">
     <value>Création des données</value>
   </data>
-
   <data name="SearchEngineReady" xml:space="preserve">
     <value>Le moteur de recherche est prêt</value>
   </data>
-
   <data name="SearchItemCountIs" xml:space="preserve">
     <value>{0} objets trouvés</value>
   </data>
-
   <data name="SearchTooManyResultToDisplay" xml:space="preserve">
     <value>Il y a trop de résultats à afficher.{^N}Ajustez votre recherche.</value>
   </data>
-
   <data name="SearchQueryNameMustBeSet" xml:space="preserve">
     <value>Le nom de la requête doit être saisi.</value>
   </data>
-
   <data name="SearchQueryNameAlreadyExist" xml:space="preserve">
     <value>Le nom de la requête existe déjà. Voulez vous l'écraser ?</value>
   </data>
-
   <data name="GlobalDeleteConfirm" xml:space="preserve">
     <value>Etes-vous sûr de vouloir supprimer "{0}" ?</value>
   </data>
-  
 </root>

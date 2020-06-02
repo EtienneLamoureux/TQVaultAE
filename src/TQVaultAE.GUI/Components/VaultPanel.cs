@@ -274,17 +274,13 @@ namespace TQVaultAE.GUI.Components
 
 			set
 			{
-				this.player = value;
-
-				var session = this.ServiceProvider.GetService<SessionContext>();
-
-				if (!this.player.IsVault)
+				if ((!this.player?.IsVault ?? false) || (!value?.IsVault ?? false))
 				{
-					if (this.player is null)
-						session.CurrentPlayer = null;
-					else
-						session.CurrentPlayer = this.player;
+					var session = this.ServiceProvider.GetService<SessionContext>();
+					session.CurrentPlayer = value;
 				}
+
+				this.player = value;
 
 				this.UpdateText();
 

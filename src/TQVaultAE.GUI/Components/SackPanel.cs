@@ -55,7 +55,7 @@ namespace TQVaultAE.GUI.Components
 		/// <summary>
 		/// User current data context
 		/// </summary>
-		private SessionContext userContext;
+		protected SessionContext userContext;
 
 		/// <summary>
 		/// The currently selected/displayed sack
@@ -233,6 +233,7 @@ namespace TQVaultAE.GUI.Components
 			this.borderPen = new Pen(Color.FromArgb(223, 188, 97));
 			this.borderPen.Width = BorderWidth;
 
+			this.DefaultImage = Resources.tqmedallion;
 			this.DefaultItemBackgroundColor = Color.FromArgb(220, 220, 220);  // White
 			this.HighlightValidItemColor = Color.FromArgb(23, 149, 15);       // Green
 			this.HighlightInvalidItemColor = Color.FromArgb(153, 28, 28);     // Red
@@ -455,7 +456,12 @@ namespace TQVaultAE.GUI.Components
 		/// <summary>
 		/// Gets the alpha value from the user settings and applies any necessary clamping of the value.
 		/// </summary>
-		protected  int UserAlpha => Config.Settings.Default.ItemBGColorOpacity > 127 ? 127 : Config.Settings.Default.ItemBGColorOpacity;
+		protected int UserAlpha => Config.Settings.Default.ItemBGColorOpacity > 127 ? 127 : Config.Settings.Default.ItemBGColorOpacity;
+
+		/// <summary>
+		/// Gets or sets the background image that is shown when there are no sacks to display.
+		/// </summary>
+		protected Bitmap DefaultImage { get; set; }
 		
 		#endregion SackPanel Properties
 
@@ -1427,7 +1433,7 @@ namespace TQVaultAE.GUI.Components
 								choices.Add(location);
 						}
 
-						ToolStripItem[] moveChoices = new ToolStripItem[choices.Count];
+						ToolStripItem[] moveChoices = new ToolStripItem[choices.Count];						
 						EventHandler moveCallback = new EventHandler(this.MoveItemClicked);
 
 						for (int j = 0; j < choices.Count; ++j)
@@ -1435,7 +1441,7 @@ namespace TQVaultAE.GUI.Components
 							moveChoices[j] = new ToolStripMenuItem(choices[j], null, moveCallback, choices[j]);
 							moveChoices[j].BackColor = this.contextMenu.BackColor;
 							moveChoices[j].Font = this.contextMenu.Font;
-							moveChoices[j].ForeColor = this.contextMenu.ForeColor;
+							moveChoices[j].ForeColor = this.contextMenu.ForeColor;							
 						}
 
 						ToolStripMenuItem moveSubMenu = new ToolStripMenuItem(Resources.SackPanelMenuMoveTo, null, moveChoices);
@@ -1443,7 +1449,7 @@ namespace TQVaultAE.GUI.Components
 						moveSubMenu.Font = this.contextMenu.Font;
 						moveSubMenu.ForeColor = this.contextMenu.ForeColor;
 						moveSubMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
-
+											
 						this.contextMenu.Items.Add(moveSubMenu);
 					}
 
@@ -1773,8 +1779,11 @@ namespace TQVaultAE.GUI.Components
 			try
 			{
 				if (this.Sack == null)
-					// Draw the medallion if the sack is not created
-					e.Graphics.DrawImage(Resources.tqmedallion, 0, 0, this.Width, this.Height);
+				{
+					if (DefaultImage != null)
+						// Draw the medallion if the sack is not created
+						e.Graphics.DrawImage(DefaultImage, 0, 0, this.Width, this.Height);
+				}
 				else
 				{
 					// Draw the border.
@@ -1898,7 +1907,7 @@ namespace TQVaultAE.GUI.Components
 
 				// If we are showing the cannot equip background then 
 				// change to invalid color and adjust the alpha.
-				if (Config.Settings.Default.EnableCharacterRequierementBGColor && !this.CanBeEquipped(item))
+				if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
 				{
 					backgroundColor = this.HighlightInvalidItemColor;
 

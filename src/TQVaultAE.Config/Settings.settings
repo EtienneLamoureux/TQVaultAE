@@ -116,7 +116,7 @@
     <Setting Name="ItemBGColorOpacity" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">15</Value>
     </Setting>
-    <Setting Name="EnableCharacterRequierementBGColor" Type="System.Boolean" Scope="User">
+    <Setting Name="EnableItemRequirementRestriction" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="SearchQueries" Type="System.String" Scope="User">
