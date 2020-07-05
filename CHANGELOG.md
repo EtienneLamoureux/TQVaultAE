@@ -2,7 +2,9 @@
 ## 3.7.0
 ### Features
 - #2 Allow group selection using a square-drag
+  - By holding-down SHIFT and dragging the mouse
 - #3 Allow fast transfer of items between inventories
+  - Using the arrow keys
 
 ### Bugs
 - #301 Fix creating the rest of the set from Ba'als Heart item
@@ -12,8 +14,7 @@
 - #315 Adjust the colored background of items in the equipment panel to fill the entire space
 - Improve startup time
 - Reflect more accurately in-game character stats
-- Enable Double Buffering to reduce flicker
-- Converts the display for database records to a grid
+- Reduce flickering
 
 ## 3.6.0
 ### Features
