@@ -202,6 +202,7 @@ This project could not go on without the continued volunteer contributions of th
 - Cygi, *Polish*
 - Xelat, *Russian*
 - Kurrus, *Spanish*
+- Klauhs, *Portuguese*
 
 ## Disclaimer
 Titan Quest, THQ and their respective logos are trademarks and/or registered trademarks of THQ Nordic AB. This non-commercial project is in no way associated with THQ Nordic AB.

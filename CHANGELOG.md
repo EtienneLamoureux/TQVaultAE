@@ -5,6 +5,7 @@
   - By holding-down SHIFT and dragging the mouse
 - #3 Allow fast transfer of items between inventories
   - Using the arrow keys
+- #346 New interface language: brazilian portuguese
 
 ### Bugs
 - #301 Fix creating the rest of the set from Ba'als Heart item
