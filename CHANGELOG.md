@@ -1,4 +1,8 @@
 # Changelog
+## 3.7.1
+### Bugs
+- #349 Fix missing languages from "Language selection"
+
 ## 3.7.0
 ### Features
 - #2 Allow group selection using a square-drag
