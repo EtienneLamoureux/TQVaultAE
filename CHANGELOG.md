@@ -1,4 +1,8 @@
 # Changelog
+## 3.7.2
+### Bugs
+- Correctly display item text in brazilian portuguese, when that language is selected
+
 ## 3.7.1
 ### Bugs
 - #349 Fix missing languages from "Language selection"

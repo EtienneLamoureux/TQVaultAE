@@ -619,12 +619,22 @@ namespace TQVaultAE.Data
 					}
 				}
 
-				// For some reason they use CZ which is not in the cultures list.
-				// Force Czech to use CZ instead of CS for the 2 letter code.
+				// Titan Quest doesn't use the ISO language code for some languages
 				// Added null check to fix exception when there is no culture found.
-				if (cultureID != null && cultureID.ToUpperInvariant() == "CS")
-					cultureID = "CZ";
-
+				if (cultureID != null)
+				{
+					if (cultureID.ToUpperInvariant() == "CS")
+					{
+						// Force Czech to use CZ instead of CS for the 2 letter code.
+						cultureID = "CZ";
+					} 
+					else if (cultureID.ToUpperInvariant() == "PT")
+					{
+						// Force brazilian portuguese to use BR instead of PT
+						cultureID = "BR";
+					}
+				}
+					
 				if (TQDebug.DatabaseDebugLevel > 1)
 					Log.LogDebug("cultureID = {0}", cultureID);
 
