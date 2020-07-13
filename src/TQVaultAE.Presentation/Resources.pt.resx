@@ -137,6 +137,7 @@ VillageIdiot (villij-idjit@sbcglobal.net)
 - Tradução para o polonês por Cygi.
 - Tradução russa por Xelat.
 - Tradução para o espanhol por Kurrus.
+- Tradução para o português/Br por Klauhs
 </value>
   </data>
   <data name="AboutText" xml:space="preserve">
@@ -149,7 +150,7 @@ VillageIdiot (villij-idjit@sbcglobal.net)
     <value>Extrair</value>
   </data>
   <data name="ARZExtractCreateFolder" xml:space="preserve">
-    <value>{0} não existe. Deseja criá-lo agora?</value>
+    <value>{0} Não existe. Deseja criá-lo agora?</value>
   </data>
   <data name="ARZExtractCreateFolder2" xml:space="preserve">
     <value>Criar pasta?</value>
@@ -167,16 +168,16 @@ VillageIdiot (villij-idjit@sbcglobal.net)
     <value>Atualmente, não há como extrair todos os registros do banco de dados do jogo de uma só vez. Também existe atualmente um bug no conjunto de ferramentas que destrói os valores da matriz quando você extrai os registros um por um. Usando esta ferramenta, agora você pode extrair todos os registros de uma só vez e todos os registros serão extraídos corretamente.</value>
   </data>
   <data name="ARZExtractLabel2" xml:space="preserve">
-    <value>Depois de extrair os registros, basta copiar os que você deseja usar no seu mod para a sua pasta mod.</value>
+    <value>Depois de extrair os registros, basta copiar os que você deseja usar no seu mod e enviá-los para a sua pasta mod.</value>
   </data>
   <data name="ARZExtractLabel3" xml:space="preserve">
     <value>Escolha uma pasta de destino:</value>
   </data>
   <data name="ARZExtractLabel4" xml:space="preserve">
-    <value>Escolha uma pasta de destino para os arquivos de banco de dados de TI:</value>
+    <value>Escolha uma pasta de destino para os arquivos de banco de dados do TI:</value>
   </data>
   <data name="ARZExtractLabel5" xml:space="preserve">
-    <value>Se não escolher as pastas de destino do banco de dados TQ e o banco de dados de TI serão padronizados para a mesma pasta. Os arquivos de TI substituirão os arquivos TQ quando houver conflitos, embora você possa selecionar pastas diferentes para evitar a substituição de arquivos.</value>
+    <value>Se não escolher as pastas de destino do banco de dados do TQ e o banco de dados do TI serão padronizados para a mesma pasta. Os arquivos do TI substituirão os arquivos do TQ quando houver conflitos, embora você possa selecionar pastas diferentes para evitar a substituição de arquivos.</value>
   </data>
   <data name="ARZExtractText" xml:space="preserve">
     <value>Extrair database.arz</value>
@@ -205,15 +206,15 @@ VillageIdiot (villij-idjit@sbcglobal.net)
   <data name="CmdlineUsage" xml:space="preserve">
     <value>Erro ao analisar argumentos da linha de comandos: {0}
 
-Uso: TQVault [nome do jogador] [/ mod: &lt;nome do mod&gt;]</value>
+Uso: TQVault [nome do jogador] [/mod: &lt;nome do mod&gt;]</value>
   </data>
   <data name="DataDefaultPath" xml:space="preserve">
-    <value>Caminho padrão do Vault</value>
+    <value>Caminho padrão do Cofre</value>
   </data>
   <data name="DataDefaultPathMsg" xml:space="preserve">
     <value>O caminho do cofre não foi definido.
 
-Usando a configuração padrão.
+As configurações padrão serão usadas.
 Por favor, verifique o caminho do cofre com a caixa de diálogo de configuração.</value>
   </data>
   <data name="DataLink" xml:space="preserve">
@@ -221,7 +222,7 @@ Por favor, verifique o caminho do cofre com a caixa de diálogo de configuraçã
   </data>
   <data name="DataLinkMsg" xml:space="preserve">
     <value>Atualize o caminho do cofre em
-configuração para estabelecer o link.</value>
+configuração para refletir o link.</value>
   </data>
   <data name="Form1BadLanguage" xml:space="preserve">
     <value>
@@ -242,7 +243,7 @@ Deseja reiniciar o TQVault?</value>
     <value>Carregando Recursos do Jogo ... Aguarde</value>
   </data>
   <data name="Form1Text" xml:space="preserve">
-    <value>Itens do cofre de Titan Quest</value>
+    <value>Cofre de itens do Titan Quest</value>
   </data>
   <data name="GlobalAbout" xml:space="preserve">
     <value>Sobre</value>
@@ -271,7 +272,7 @@ Deseja reiniciar o TQVault?</value>
     <value>OK</value>
   </data>
   <data name="GlobalTransferStash" xml:space="preserve">
-    <value>Armazém de caravana (Área de Transferência)</value>
+    <value>Área de Transferência)</value>
   </data>
   <data name="GlobalTrash" xml:space="preserve">
     <value>Lixo</value>
@@ -349,7 +350,7 @@ Coloque o item em algum lugar antes de sair.</value>
   <data name="MainFormLanguageChangedMsg" xml:space="preserve">
     <value>A configuração do idioma do jogo foi alterada.
 
-Você precisará reiniciar o TQVault para que ele entre em vigor.
+Por favor, reinicie o TQVault para que ela entre em vigor.
 Deseja reiniciar o TQVault agora?</value>
   </data>
   <data name="MainFormMaintainVault" xml:space="preserve">
@@ -361,7 +362,7 @@ Deseja reiniciar o TQVault agora?</value>
   <data name="MainFormMapsChangedMsg" xml:space="preserve">
     <value>A configuração de mapas personalizados foi alterada.
 
-Você precisará reiniciar o TQVault para que ele entre em vigor.
+Por favor, reinicie o TQVault para que ela entre em vigor.
 Deseja reiniciar o TQVault agora?</value>
   </data>
   <data name="MainFormNoCharacters" xml:space="preserve">
@@ -389,7 +390,7 @@ e qualidade '{1}' encontrado.</value>
   <data name="MainFormPathsChangedMsg" xml:space="preserve">
     <value>Os Caminhos do jogo foram alterados.
 
-Você precisará reiniciar o TQVault para que ele entre em vigor.
+Por favor, reinicie o TQVault para que eles entre em vigor.
 Deseja reiniciar o TQVault agora?</value>
   </data>
   <data name="MainFormPlayerReadError" xml:space="preserve">
@@ -419,7 +420,7 @@ Tem certeza de que é um arquivo válido?
   <data name="MainFormSettingsChangedMsg" xml:space="preserve">
     <value>As configurações do jogo foram alteradas.
 
-Você precisará reiniciar o TQVault para que ele entre em vigor.
+Por favor, reinicie o TQVault para que elas entre em vigor.
 Deseja reiniciar o TQVault agora?</value>
   </data>
   <data name="MainFormStartVaultMon" xml:space="preserve">
@@ -441,7 +442,7 @@ Quest e carregue brevemente todos os personagens que você acabou de modificar.
 Deseja iniciar o TQVaultMon agora?</value>
   </data>
   <data name="MainFormStashReadError" xml:space="preserve">
-    <value>Erro ao ler o arquivo do armazém de caravana</value>
+    <value>Erro ao ler o arquivo da Área de Armazenamento</value>
   </data>
   <data name="MainFormTrashItems" xml:space="preserve">
     <value>No momento, existem {0} itens na lixeira.
@@ -457,11 +458,11 @@ Tem certeza de que deseja excluir esses itens?</value>
   </data>
   <data name="MainFormVaultMonMsg" xml:space="preserve">
     <value>Não foi possível ver se o TQVaultMon estava em execução.
-Provavelmente, o TQVaultMon também não funcione.
-Como você modificou alguns de seus personagens, o TQ pensará que eles estão corrompidos.
+Provavelmente, o TQVaultMon também não funcionará.
+Como você modificou alguns de seus personagens, o TQ pensará que os aquivos estão corrompidos.
 Para carregar o jogo e jogar com sucesso, você precisará baixar o TQ Defiler (em inglês)
-e usar as opções 'Patch' ou 'Fix Me' para permitir que o jogo valide seu personagem.
-Se você não se importar, por favor entre em contato comigo e me informe sobre este problema
+e usar as opções 'Patch' ou 'Fix Me' para permitir que o jogo valide seus personagens.
+Se você não se importa, por favor entre em contato comigo e me informe sobre este problema
 porque eu posso ter uma solução para o erro que lhe poupará alguns aborrecimentos.
 
 Segue a mensagem de erro
@@ -505,7 +506,7 @@ Você não pode usar os seguintes caracteres:
 </value>
   </data>
   <data name="MaintenanceNewVault" xml:space="preserve">
-    <value>New Vault</value>
+    <value>Novo cofre</value>
   </data>
   <data name="MaintenanceNoCopyTarget" xml:space="preserve">
     <value>Você deve inserir um novo nome para o seu cofre copiado</value>
@@ -533,7 +534,7 @@ e digite o novo nome no campo de destino abaixo..</value>
     <value>O cofre não existe.</value>
   </data>
   <data name="MaintenanceTarget" xml:space="preserve">
-    <value>Alvo</value>
+    <value>Destino</value>
   </data>
   <data name="MaintenanceText" xml:space="preserve">
     <value>Gerenciamento do cofre</value>
@@ -610,7 +611,7 @@ Tem certeza de que deseja substituir?</value>
   </data>
   <data name="SackPanelAutoSortErrorMsg" xml:space="preserve">
     <value>Ocorreu um erro durante a organização.
-Nem todos os itens foram colocados.</value>
+Nem todos os itens foram realocados.</value>
   </data>
   <data name="SackPanelAutoSortMsg" xml:space="preserve">
     <value>Você está segurando um item no momento.
@@ -666,7 +667,7 @@ Tem certeza de que deseja excluir este item?</value>
     <value>Remover relíquia</value>
   </data>
   <data name="SackPanelMenuSeed" xml:space="preserve">
-    <value>Alterar semente de item ...</value>
+    <value>Alterar semente do item ...</value>
   </data>
   <data name="SackPanelMenuSet" xml:space="preserve">
     <value>Criar itens definidos</value>
@@ -693,7 +694,7 @@ Tem certeza de que deseja excluir este item?</value>
     <value>Aleatório</value>
   </data>
   <data name="SeedLabel1" xml:space="preserve">
-    <value>Titan Quest usa o item semente para randomizar as estatísticas
+    <value>Titan Quest usa a semente para randomizar as estatísticas
 dos seus itens para que dois itens não sejam exatamente iguais.
 Não se sabe exatamente como a semente afeta o status do seu item.
 Mudar a semente causará algumas pequenas mudanças
@@ -702,10 +703,10 @@ nas estatísticas do seu item na próxima vez que você jogar o jogo.
 Escolha um número entre 1 e 32767</value>
   </data>
   <data name="SeedRange" xml:space="preserve">
-    <value>A semente do item deve ser um número inteiro válido entre 1 e 32767</value>
+    <value>A semente deve ser um número inteiro válido entre 1 e 32767</value>
   </data>
   <data name="SeedText" xml:space="preserve">
-    <value>Alterar semente do item</value>
+    <value>Alterar semente</value>
   </data>
   <data name="SettingsAllowCopy" xml:space="preserve">
     <value>Permitir cópia do item</value>
@@ -760,7 +761,7 @@ mapas personalizados.</value>
 disponível.</value>
   </data>
   <data name="SettingsLabel1" xml:space="preserve">
-    <value>Caminho do cofre</value>
+    <value>Caminho do cofre (TQVault)</value>
   </data>
   <data name="SettingsLabel2" xml:space="preserve">
     <value>Idioma do jogo</value>
@@ -804,7 +805,7 @@ o TQVault for fechado.</value>
   </data>
   <data name="SettingsPreLoadTT" xml:space="preserve">
     <value>A seleção deste item carregará automaticamente todos
-dos arquivos de personagem, cofre e armazém disponíveis
+os arquivos de personagem, cofre e armazém disponíveis
 durante a inicialização. Isso ajuda a função de pesquisa, mas
 aumenta o tempo de inicialização.</value>
   </data>
@@ -837,10 +838,10 @@ A guia área de armazenamento ficará indisponível para esse personagem.</value
     <value>Equipamento</value>
   </data>
   <data name="StashPanelBtn2" xml:space="preserve">
-    <value>Armazém de caravanas (Área de Transferência)</value>
+    <value>Área de Transferência</value>
   </data>
   <data name="StashPanelBtn3" xml:space="preserve">
-    <value>Armazém de caravanas (Área de armazenamento)</value>
+    <value>Área de Armazenamento</value>
   </data>
   <data name="StashPanelText" xml:space="preserve">
     <value>Caravana</value>
@@ -926,12 +927,17 @@ Deseja desativar o carregamento de todos os arquivos?</value>
     <value>Desativar o carregamento de todos os arquivos?</value>
   </data>
   <data name="MainFormSearchButtonText" xml:space="preserve">
-    <value>Encontrar</value>
+    <value>Pesquisar</value>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
-    <value>Encontrar um item</value>
+    <value>Pesquisar um item</value>
   </data>
   <data name="SearchDialogText" xml:space="preserve">
+  
+    <data name="VaultGroupBoxEmpty" xml:space="preserve">
+    <value>&lt;VAZIA&gt;</value>
+  </data>
+  
     <value>Pesquise itens nos arquivos carregados: cofres, esconderijos, inventários.
 
 Você pode combinar as seguintes opções de pesquisa (todas são opcionais):
@@ -983,7 +989,8 @@ Aqui está um exemplo complexo: 'glacial &amp; gelo @anel $raro'</value>
     <value>Equipamento do jogador somente leitura</value>
   </data>
   <data name="SettingsPlayerReadonlyTT" xml:space="preserve">
-    <value>Evite a corrupção do jogo salvo, que ocorre aleatoriamente. Quando ativado, o equipamento do personagem será somente leitura, você não poderá selecionar ou mover nenhum item.</value>
+    <value>Evite a corrupção do jogo salvo, que ocorre aleatoriamente.
+Quando ativado, o equipamento do personagem será somente leitura, você não poderá selecionar ou mover nenhum item.</value>
   </data>
   <data name="ItemRagnarok" xml:space="preserve">
     <value>Item de Ragnarök </value>
@@ -998,7 +1005,7 @@ Aqui está um exemplo complexo: 'glacial &amp; gelo @anel $raro'</value>
     <value> Item de Atlantis</value>
   </data>
   <data name="GlobalRelicVaultStash" xml:space="preserve">
-    <value>Cofre de Relíquia</value>
+    <value>Câmara das Relíquias</value>
   </data>
   <data name="equipment_bg_and_char" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Img\equipment_bg_and_char.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -1268,7 +1275,7 @@ Aqui está um exemplo complexo: 'glacial &amp; gelo @anel $raro'</value>
     <value>Poção de vida usada</value>
   </data>
   <data name="ManaPotionsUsed" xml:space="preserve">
-    <value>Poção de energia usada</value>
+    <value>Poção energia usada</value>
   </data>
   <data name="MaxLevel" xml:space="preserve">
     <value>Nível máximo</value>
@@ -1283,7 +1290,7 @@ Aqui está um exemplo complexo: 'glacial &amp; gelo @anel $raro'</value>
     <value>Maior dano</value>
   </data>
   <data name="GreatestMonster" xml:space="preserve">
-    <value>Maior Mob</value>
+    <value>Maior monstro</value>
   </data>
   <data name="CriticalHitsInflicted" xml:space="preserve">
     <value>Golpes críticos</value>
@@ -1307,7 +1314,7 @@ Aqui está um exemplo complexo: 'glacial &amp; gelo @anel $raro'</value>
     <value>Ativar exibição de dica de ferramenta detalhada</value>
   </data>
   <data name="SettingEnableDetailedTooltipViewTT" xml:space="preserve">
-    <value>Dividir atributos da dica de ferramenta em categorias Prefixo / Base / Sufixo</value>
+    <value>Dividir atributos da dica de ferramenta em categorias Prefixo/Base/Sufixo</value>
   </data>
   <data name="SettingsItemBGColorOpacityLabel" xml:space="preserve">
     <value> Cor do item BG Alpha :</value>
@@ -1327,63 +1334,63 @@ O personagem também não poderá equipar itens onde os requisitos não forem at
   </data>
   <data name="TextTag_tagRelic" xml:space="preserve">
     <value>Relíquia</value>
-    <comment>Substitua a tag ausente por "Relíquia"</comment>
+    <comment>Substitua o marcador ausente por "Relíquia"</comment>
   </data>
   <data name="TextTag_tagArtifact" xml:space="preserve">
     <value>Artefato</value>
-    <comment>Substitua a tag ausente por "Artefato"</comment>
+    <comment>Substitua o marcador ausente por "Artefato"</comment>
   </data>
   <data name="TextTag_tagSword" xml:space="preserve">
     <value>Espada"</value>
-    <comment>Substitua a tag ausente por "Espada"</comment>
+    <comment>Substitua o marcador ausente por "Espada"</comment>
   </data>
   <data name="TextTag_bonusLifePercent" xml:space="preserve">
     <value>{%.0f0}% Vida bônus</value>
-    <comment>Substitua a tag ausente por "Porcentagem bônus de vida útil"</comment>
+    <comment>Substitua o marcador ausente por "PorcentagemBônusDeVida"</comment>
   </data>
   <data name="TextTag_bonusLifePoints" xml:space="preserve">
     <value>{%.0f0} Vida bônus</value>
-    <comment>Substitua a tag ausente por "Bônus de pontos de vida"</comment>
+    <comment>Substitua o marcador ausente por "BônusDePontosDeVida"</comment>
   </data>
   <data name="TextTag_bonusManaPercent" xml:space="preserve">
     <value>{%.0f0}% Bônus de energia</value>
-    <comment>Substitua a tag ausente por "Porcentagem bônus de energia"</comment>
+    <comment>Substitua o marcador ausente por "PorcentagemBônusDeEnergia"</comment>
   </data>
   <data name="TextTag_bonusManaPoints" xml:space="preserve">
     <value>{%.0f0} Bônus de energia</value>
-    <comment>Substitua a tag ausente por "Bônus de pontos de energia"</comment>
+    <comment>Substitua o marcador ausente por "BônusDePontosDeEnergia"</comment>
   </data>
   <data name="TextTag_alwaysUseSpecialAnimation" xml:space="preserve">
     <value>{^O}Sempre use animação especial</value>
-    <comment>Substitua a tag ausente por "Sempre use animação especial"</comment>
+    <comment>Substitua o marcador ausente por "SempreUseAnimaçãoEspecial"</comment>
   </data>
   <data name="TextTag_DisplayAsQuestItem" xml:space="preserve">
     <value>{^O}Exibir como item de missão</value>
-    <comment>Substitua a tag ausente por "Exibir como item de missão"</comment>
+    <comment>Substitua o marcador ausente por "ExibirComoItemDeMissão"</comment>
   </data>
   <data name="TextTag_headVelocity" xml:space="preserve">
     <value>{%.0f0} Cabeça veloz</value>
-    <comment>Substitua a tag ausente por "Cabeça veloz"</comment>
+    <comment>Substitua o marcador ausente por "CabeçaVeloz"</comment>
   </data>
   <data name="TextTag_tailVelocity" xml:space="preserve">
     <value>{%.0f0} Velocidade da cauda</value>
-    <comment>Substitua a tag ausente por "Velocidade da cauda"</comment>
+    <comment>Substitua o marcador ausente por "VelocidadeDaCauda"</comment>
   </data>
   <data name="TextTag_maxDistance" xml:space="preserve">
     <value>{%.0f0} Distância máxima do medidor</value>
-    <comment>Substitua a tag ausente por "Distância máxima" </comment>
+    <comment>Substitua o marcador ausente por "DistânciaMáxima" </comment>
   </data>
   <data name="TextTag_notDispelable" xml:space="preserve">
     <value>{^O}Não pode ser dissipado</value>
-    <comment>Substitua a tag ausente por "Não pode ser dissipado" </comment>
+    <comment>Substitua a o marcador por "NãoPodeSerDissipado" </comment>
   </data>
   <data name="TextTag_dropMeshDontOverrideTextures" xml:space="preserve">
     <value>{^D}Soltar a malha não substitui as texturas</value>
-    <comment>Substitua a tag ausente por "Soltar a malha não substitui as texturas"</comment>
+    <comment>Substitua o marcador ausente por "SoltarAMalhaNãoSubstituiAsTexturas"</comment>
   </data>
   <data name="TextTag_defensiveTotalSpeedChance" xml:space="preserve">
     <value>{%.0f0}% Chance da velocidade total de defesa</value>
-    <comment>Substitua a tag ausente por "Chance da velocidade total de defesa"</comment>
+    <comment>Substitua o marcador ausente por "ChanceDaVelocidadeTotalDedefesa"</comment>
   </data>
   <data name="SearchMatchingItemsTT" xml:space="preserve">
     <value>{0} Item correspondente(s)</value>
@@ -1416,7 +1423,7 @@ O personagem também não poderá equipar itens onde os requisitos não forem at
     <value>Reduzir categorias durante a seleção</value>
   </data>
   <data name="SearchVisibleElementsPerCategory" xml:space="preserve">
-    <value>Elementos visíveis / categoria</value>
+    <value>Elementos visíveis/categoria</value>
   </data>
   <data name="SearchQueries" xml:space="preserve">
     <value>Consultas</value>
@@ -1452,13 +1459,13 @@ O personagem também não poderá equipar itens onde os requisitos não forem at
     <value>Cofres</value>
   </data>
   <data name="SearchHavingCharm" xml:space="preserve">
-    <value>Tendo charme</value>
+    <value>Com charme</value>
   </data>
   <data name="SearchHavingRelic" xml:space="preserve">
-    <value>Tendo relíquia</value>
+    <value>Com relíquia</value>
   </data>
   <data name="SearchBuildingData" xml:space="preserve">
-    <value>Dados de construção</value>
+    <value>Construindo dados</value>
   </data>
   <data name="SearchEngineReady" xml:space="preserve">
     <value>O mecanismo de pesquisa está pronto</value>

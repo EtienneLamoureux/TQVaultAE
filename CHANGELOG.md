@@ -1,4 +1,8 @@
 # Changelog
+## 3.7.3
+## Bugs
+- Revise some brazilian portuguese display labels
+
 ## 3.7.2
 ### Bugs
 - Correctly display item text in brazilian portuguese, when that language is selected
