@@ -919,6 +919,9 @@ Used to track changes in the translation file.</comment>
     <comment>Do not Translate.  Used for AutoUpdate.
 Change this value to match program version when new keys are added.  Will trigger an update on next restart.</comment>
   </data>
+    <data name="VaultGroupBoxEmpty" xml:space="preserve">
+    <value>&lt;VAZIA&gt;</value>
+  </data>
   <data name="MainFormDisableLoadAllFiles" xml:space="preserve">
     <value>Ocorreu um erro ao tentar carregar todos os arquivos na última execução.
 Deseja desativar o carregamento de todos os arquivos?</value>
@@ -933,11 +936,6 @@ Deseja desativar o carregamento de todos os arquivos?</value>
     <value>Pesquisar um item</value>
   </data>
   <data name="SearchDialogText" xml:space="preserve">
-  
-    <data name="VaultGroupBoxEmpty" xml:space="preserve">
-    <value>&lt;VAZIA&gt;</value>
-  </data>
-  
     <value>Pesquise itens nos arquivos carregados: cofres, esconderijos, inventários.
 
 Você pode combinar as seguintes opções de pesquisa (todas são opcionais):
