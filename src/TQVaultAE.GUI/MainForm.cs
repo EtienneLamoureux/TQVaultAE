@@ -255,7 +255,7 @@ Debug Levels
 				this.flowLayoutPanelRightPanels.BorderStyle = BorderStyle.None;
 				this.tableLayoutPanelMain.CellBorderStyle = TableLayoutPanelCellBorderStyle.None;
 			}
-			
+
 			this.CreatePanels();
 		}
 
@@ -351,7 +351,7 @@ Debug Levels
 		{
 			// Don't handle this here since we handle key presses within each component.
 			////if (e.KeyChar != (char)27)
-				////e.Handled = true;
+			////e.Handled = true;
 		}
 
 		/// <summary>
@@ -834,9 +834,11 @@ Debug Levels
 				// Load last character here if selected
 				if (Config.Settings.Default.LoadLastCharacter)
 				{
-					int ind = this.characterComboBox.FindStringExact(Config.Settings.Default.LastCharacterName);
-					if (ind != -1)
-						this.characterComboBox.SelectedIndex = ind;
+					var lastPlayerSave = this.characterComboBox.Items.OfType<PlayerSave>()
+						.FirstOrDefault(ps => ps.Name == Config.Settings.Default.LastCharacterName);
+
+					if (lastPlayerSave != null)
+						this.characterComboBox.SelectedItem = lastPlayerSave;
 				}
 
 				string currentVault = VaultService.MAINVAULT;
@@ -930,7 +932,10 @@ Debug Levels
 					if (name == Resources.MainFormSelectCharacter)
 						name = string.Empty;
 
-					Config.Settings.Default.LastCharacterName = name;
+					var ps = this.characterComboBox.SelectedItem as PlayerSave;
+
+					Config.Settings.Default.LastCharacterName = ps?.Name ?? string.Empty;
+
 					this.configChanged = true;
 				}
 			}
