@@ -128,8 +128,10 @@ namespace TQVaultAE.Data
 					endfile,
 				}.SelectMany(a => a).ToArray();
 
-				// Adjust "max" value
-				var found = TQData.WriteIntAfter(pc.rawData, "max", pc.PlayerInfo.SkillRecordList.Count, max.indexOf);
+				// Adjust "max" value (need to find new offsets)
+				firstblock = TQData.ReadIntAfter(pc.rawData, "begin_block");
+				secondblock = TQData.ReadIntAfter(pc.rawData, "begin_block", firstblock.nextOffset);
+				TQData.WriteIntAfter(pc.rawData, "max", pc.PlayerInfo.SkillRecordList.Count, secondblock.nextOffset);
 
 				// Adjust "skillPoints"
 				var skillpointsToRestore = pc.PlayerInfo.ReleasedSkillPoints;
@@ -138,6 +140,13 @@ namespace TQVaultAE.Data
 					TQData.WriteIntAfter(pc.rawData, "skillPoints", pc.PlayerInfo.SkillPoints + skillpointsToRestore);
 
 				#endregion
+
+				#region Reset Class tag
+
+				TQData.RemoveCStringValueAfter(ref pc.rawData, "playerClassTag");
+
+				#endregion
+
 			}
 
 			//if this value is set to true, the TQVaultAE program will know save the player.chr file

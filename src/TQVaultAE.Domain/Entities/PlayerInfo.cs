@@ -313,12 +313,14 @@ namespace TQVaultAE.Domain.Entities
 		/// TQ, TQIT, TQITAE
 		/// </summary>
 		public int HeaderVersion { get; set; }
+
 		/// <summary>
 		/// Class name
 		/// </summary>
 		public string PlayerCharacterClass { get; set; }
 
 		public int GreatestMonsterKilledLevel { get; set; }
+
 		public int GreatestMonsterKilledLifeAndMana { get; set; }
 	}
 }

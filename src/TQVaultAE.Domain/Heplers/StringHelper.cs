@@ -25,20 +25,18 @@ namespace TQVaultAE.Domain.Helpers
 		public static string MakeMD5(this string input)
 		{
 			string hash;
-			using (MD5 md5Hash = MD5.Create())
-			{
-				// Convert the input string to a byte array and compute the hash.
-				byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
 
-				StringBuilder sBuilder = new StringBuilder();
+			using var md5Hash = MD5.Create();
 
-				for (int i = 0; i < data.Length; i++)
-				{
-					sBuilder.Append(data[i].ToString("x2"));
-				}
+			// Convert the input string to a byte array and compute the hash.
+			byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
 
-				hash = sBuilder.ToString();
-			}
+			StringBuilder sBuilder = new StringBuilder();
+
+			for (int i = 0; i < data.Length; i++)
+				sBuilder.Append(data[i].ToString("x2"));
+
+			hash = sBuilder.ToString();
 
 			return hash;
 		}
@@ -67,12 +65,10 @@ namespace TQVaultAE.Domain.Helpers
 		}
 
 		public static string RemoveAllTQTags(this string TQText)
-		{
-			return Regex.Replace(TQText
+			=> Regex.Replace(TQText
 				, TQColorHelper.RegExTQTag
 				, string.Empty
 			);
-		}
 
 		/// <summary>
 		/// Remove Leading ColorTag + Trailing comment

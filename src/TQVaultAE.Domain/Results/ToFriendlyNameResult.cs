@@ -268,7 +268,7 @@ namespace TQVaultAE.Domain.Results
 						, FormulaeArtifactAttributes
 					}.Where(c => c?.Any() ?? false)
 					.SelectMany(a => a)
-					.Where(a => !string.IsNullOrWhiteSpace(a) || !a.IsColorTagOnly())
+					.Where(a => !(string.IsNullOrWhiteSpace(a) || a.IsColorTagOnly()))
 					.Select(a => a.RemoveAllTQTags())
 					.ToArray();
 				}
