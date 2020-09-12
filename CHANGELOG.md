@@ -1,4 +1,12 @@
 # Changelog
+## 3.7.4
+### Bugs
+- #354 Correctly load last character when opening the tool
+- #357 Fix character from not appearing in menus after resetting masteries
+
+### Other
+- Update portuguese translation file
+
 ## 3.7.3
 ## Bugs
 - Revise some brazilian portuguese display labels
