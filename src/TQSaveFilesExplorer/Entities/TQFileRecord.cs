@@ -42,7 +42,7 @@ namespace TQ.SaveFilesExplorer.Entities
 		public string DataAsStr { get; set; }
 		public byte[] DataAsByteArray { get; set; }
 		public int? DataAsInt { get; set; }
-
+		public float? DataAsFloat { get; set; }
 		public bool IsSubStructureOpening { get => this.KeyName == TQFilePlayerRecordKey.begin_block.ToString(); }
 		public bool IsStructureClosing { get => this.KeyName == TQFilePlayerRecordKey.end_block.ToString(); }
 		public bool IsUnknownSegment { get => this.KeyName == unknown_segment; }
@@ -92,6 +92,13 @@ namespace TQ.SaveFilesExplorer.Entities
 					ValueEnd = ValueStart + sizeof(int) - 1; // -1 because ValueStart is first relevant byte
 					DataAsByteArray = new ArraySegment<byte>(this.File.Content, ValueStart, sizeof(int)).ToArray();
 					DataAsInt = BitConverter.ToInt32(DataAsByteArray, 0);
+					DataAsFloat = BitConverter.ToSingle(DataAsByteArray, 0);
+					break;
+				case TQFileDataType.Float:
+					ValueEnd = ValueStart + sizeof(float) - 1;
+					DataAsByteArray = new ArraySegment<byte>(this.File.Content, ValueStart, sizeof(float)).ToArray();
+					DataAsInt = BitConverter.ToInt32(DataAsByteArray, 0);
+					DataAsFloat = BitConverter.ToSingle(DataAsByteArray, 0);
 					break;
 				case TQFileDataType.String1252:
 					// Read StrLen
@@ -139,6 +146,9 @@ namespace TQ.SaveFilesExplorer.Entities
 			{
 				case TQFileDataType.Int:
 					data = _DisplayDataDecimal ? this.DataAsInt.Value.ToString() : this.DataAsInt.Value.ToString("X8");
+					break;
+				case TQFileDataType.Float:
+					data = _DisplayDataDecimal ? this.DataAsFloat.Value.ToString() : this.DataAsFloat.Value.ToString("X8");
 					break;
 				case TQFileDataType.String1252:
 				case TQFileDataType.StringUTF16:
