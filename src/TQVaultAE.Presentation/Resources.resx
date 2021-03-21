@@ -1451,6 +1451,9 @@ The character will also not be able to equip items where the requirements are no
   <data name="ResetMasteriesButton" xml:space="preserve">
     <value>Reset Masteries</value>
   </data>
+  <data name="ResetAttributesButton" xml:space="preserve">
+    <value>Reset Attributes</value>
+  </data>
   <data name="TextTag_tagRelic" xml:space="preserve">
     <value>Relic</value>
     <comment>Substitute for missing tag for "Relic"</comment>
