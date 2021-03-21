@@ -272,7 +272,7 @@ namespace TQVaultAE.Data
 
 		public bool RemoveCStringValueAfter(ref byte[] playerFileContent, string keyToLookFor, int offset = 0)
 		{
-			var found = ReadCStringAfter(playerFileContent, keyToLookFor);
+			var found = ReadCStringAfter(playerFileContent, keyToLookFor, offset);
 			if (found.indexOf == -1) return false;
 
 			// Remove CString value
