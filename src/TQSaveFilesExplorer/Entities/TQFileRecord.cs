@@ -148,7 +148,7 @@ namespace TQ.SaveFilesExplorer.Entities
 					data = _DisplayDataDecimal ? this.DataAsInt.Value.ToString() : this.DataAsInt.Value.ToString("X8");
 					break;
 				case TQFileDataType.Float:
-					data = _DisplayDataDecimal ? this.DataAsFloat.Value.ToString() : this.DataAsFloat.Value.ToString("X8");
+					data = _DisplayDataDecimal ? this.DataAsFloat.Value.ToString() : this.DataAsInt.Value.ToString("X8");
 					break;
 				case TQFileDataType.String1252:
 				case TQFileDataType.StringUTF16:
