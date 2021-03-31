@@ -1111,6 +1111,9 @@ Vous ne serez également pas en mesure d'équiper l'objet sur ce personnage.</va
   <data name="ResetMasteriesButton" xml:space="preserve">
     <value>Réinit. Maîtrises</value>
   </data>
+  <data name="ResetAttributesButton" xml:space="preserve">
+    <value>Réinit. Attributs</value>
+  </data>
   <data name="TextTag_tagRelic" xml:space="preserve">
     <value>Relique</value>
     <comment>Substitute for missing tag for "Relic"</comment>

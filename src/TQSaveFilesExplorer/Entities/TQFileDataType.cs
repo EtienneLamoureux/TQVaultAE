@@ -16,6 +16,10 @@ namespace TQ.SaveFilesExplorer.Entities
 		/// </summary>
 		Unknown,
 		/// <summary>
+		/// sizeof(float) as Data
+		/// </summary>
+		Float,
+		/// <summary>
 		/// sizeof(int) as Data
 		/// </summary>
 		Int,
