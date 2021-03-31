@@ -169,6 +169,8 @@ namespace TQVaultAE.GUI
 				gamePathResolver.TQPath = Config.Settings.Default.TQPath;
 				gamePathResolver.ImmortalThronePath = Config.Settings.Default.TQITPath;
 			}
+			Log.LogInformation("Selected TQ path {0}", gamePathResolver.TQPath);
+			Log.LogInformation("Selected TQIT path {0}", gamePathResolver.ImmortalThronePath);
 
 			// Show a message that the default path is going to be used.
 			if (string.IsNullOrEmpty(Config.Settings.Default.VaultPath))
