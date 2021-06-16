@@ -798,6 +798,60 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Duplicate.
+        /// </summary>
+        public static string DuplicateCharacter_ButtonText {
+            get {
+                return ResourceManager.GetString("DuplicateCharacter_ButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Error during character duplication.
+        /// </summary>
+        public static string DuplicateCharacter_Error {
+            get {
+                return ResourceManager.GetString("DuplicateCharacter_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Character duplication.
+        /// </summary>
+        public static string DuplicateCharacter_ModalTitle {
+            get {
+                return ResourceManager.GetString("DuplicateCharacter_ModalTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The new name must be valid!.
+        /// </summary>
+        public static string DuplicateCharacter_NewNameMustBeValid {
+            get {
+                return ResourceManager.GetString("DuplicateCharacter_NewNameMustBeValid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Input the new character name.
+        /// </summary>
+        public static string DuplicateCharacter_NewNameRequired {
+            get {
+                return ResourceManager.GetString("DuplicateCharacter_NewNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à A source character must be selected!.
+        /// </summary>
+        public static string DuplicateCharacter_SourceRequired {
+            get {
+                return ResourceManager.GetString("DuplicateCharacter_SourceRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap equipment_bg_and_char {

@@ -242,6 +242,7 @@ Debug Levels
 			this.showVaulButton.Text = Resources.MainFormBtnPanelSelect;
 			this.Icon = Resources.TQVIcon;
 			this.searchButton.Text = Resources.MainFormSearchButtonText;
+			this.duplicateButton.Text = Resources.DuplicateCharacter_ButtonText;
 
 			this.lastDragPoint.X = -1;
 			this.DragInfo = new ItemDragInfo(this.UIService);
@@ -525,7 +526,6 @@ Debug Levels
 
 
 		#endregion
-
 
 		#region Files
 
@@ -1041,6 +1041,8 @@ Debug Levels
 
 
 		#endregion
+
+		private void duplicateButton_Click(object sender, EventArgs e) => DuplicateCharacter();
 
 	}
 }
