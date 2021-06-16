@@ -219,6 +219,13 @@ namespace TQVaultAE.GUI
 					goto askAgain;
 				}
 
+				var alreadyUsed = this.characterComboBox.Items.OfType<PlayerSave>().Any(ps => newname.Equals(ps.Name, StringComparison.OrdinalIgnoreCase));
+				if (alreadyUsed)
+				{
+					MessageBox.Show(Resources.DuplicateCharacter_NewNameAlreadyUsed, Resources.DuplicateCharacter_ModalTitle, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+					goto askAgain;
+				}
+
 				string newFolder = null;
 				try
 				{

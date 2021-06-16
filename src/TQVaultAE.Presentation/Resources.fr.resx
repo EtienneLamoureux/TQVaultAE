@@ -1224,4 +1224,7 @@ Vous ne serez également pas en mesure d'équiper l'objet sur ce personnage.</va
 	<data name="DuplicateCharacter_ButtonText" xml:space="preserve">
     <value>Dupliquer</value>
   </data>
+	<data name="DuplicateCharacter_NewNameAlreadyUsed" xml:space="preserve">
+    <value>Ce nom est déjà utilisé !</value>
+  </data>
 </root>

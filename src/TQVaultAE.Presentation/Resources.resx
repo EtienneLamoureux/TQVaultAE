@@ -1680,6 +1680,9 @@ The character will also not be able to equip items where the requirements are no
 	<data name="DuplicateCharacter_ButtonText" xml:space="preserve">
     <value>Duplicate</value>
   </data>
+	<data name="DuplicateCharacter_NewNameAlreadyUsed" xml:space="preserve">
+    <value>Name is already used!</value>
+  </data>
 
 	<data name="ItemAccent" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\ItemAccent.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

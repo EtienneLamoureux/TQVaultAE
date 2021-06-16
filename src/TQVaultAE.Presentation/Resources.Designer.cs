@@ -825,6 +825,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Name is already used!.
+        /// </summary>
+        public static string DuplicateCharacter_NewNameAlreadyUsed {
+            get {
+                return ResourceManager.GetString("DuplicateCharacter_NewNameAlreadyUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à The new name must be valid!.
         /// </summary>
         public static string DuplicateCharacter_NewNameMustBeValid {
