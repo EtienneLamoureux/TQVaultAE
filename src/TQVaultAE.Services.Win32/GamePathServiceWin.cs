@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.VisualBasic.Devices;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Exceptions;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Presentation;
@@ -96,14 +98,14 @@ namespace TQVaultAE.Services.Win32
 		/// Gets the filename for the game's transfer stash.
 		/// Stash files for Mods all have their own subdirectory which is the same as the mod's custom map folder
 		/// </summary>
-		public string TransferStashFile
+		public string TransferStashFileFullPath
 		{
 			get
 			{
 				if (IsCustom)
-					return Path.Combine(MapName, "SaveData", "Sys", Path.GetFileName(MapName), "winsys.dxb");
+					return Path.Combine(MapName, "SaveData", "Sys", Path.GetFileName(MapName), TRANSFERSTASHFILENAME);
 
-				return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", "winsys.dxb");
+				return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", TRANSFERSTASHFILENAME);
 			}
 		}
 
@@ -111,14 +113,14 @@ namespace TQVaultAE.Services.Win32
 		/// Gets the filename for the game's relic vault stash.
 		/// Stash files for Mods all have their own subdirectory which is the same as the mod's custom map folder
 		/// </summary>
-		public string RelicVaultStashFile
+		public string RelicVaultStashFileFullPath
 		{
 			get
 			{
 				if (IsCustom)
-					return Path.Combine(MapName, "SaveData", "Sys", Path.GetFileName(MapName), "miscsys.dxb");
+					return Path.Combine(MapName, "SaveData", "Sys", Path.GetFileName(MapName), RELICVAULTSTASHFILENAME);
 
-				return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", "miscsys.dxb");
+				return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", RELICVAULTSTASHFILENAME);
 			}
 		}
 
@@ -143,7 +145,7 @@ namespace TQVaultAE.Services.Win32
 		/// <param name="characterName">name of the character</param>
 		/// <returns>full path to the character file.</returns>
 		public string GetPlayerFile(string characterName)
-			=> Path.Combine(GetBaseCharacterFolder(), string.Concat("_", characterName), "Player.chr");
+			=> Path.Combine(GetBaseCharacterFolder(), string.Concat("_", characterName), PLAYERSAVEFILENAME);
 
 		/// <summary>
 		/// Gets the full path to the player's stash file.
@@ -151,7 +153,7 @@ namespace TQVaultAE.Services.Win32
 		/// <param name="characterName">name of the character</param>
 		/// <returns>full path to the player stash file</returns>
 		public string GetPlayerStashFile(string characterName)
-			=> Path.Combine(GetBaseCharacterFolder(), string.Concat("_", characterName), "winsys.dxb");
+			=> Path.Combine(GetBaseCharacterFolder(), string.Concat("_", characterName), PLAYERSTASHFILENAMEB);
 
 		/// <summary>
 		/// Gets a list of all of the character files in the save folder.
@@ -298,7 +300,7 @@ namespace TQVaultAE.Services.Win32
 
 				// Added by VillageIdiot
 				// Backup the file pairs for the player stash files.
-				if (Path.GetFileName(file).ToUpperInvariant() == "WINSYS.DXB")
+				if (Path.GetFileName(file).ToUpperInvariant() == PLAYERSTASHFILENAMEB.ToUpperInvariant())
 				{
 					string dxgfile = Path.ChangeExtension(file, ".dxg");
 
@@ -390,6 +392,21 @@ namespace TQVaultAE.Services.Win32
 				return folderPath;
 			}
 		}
+
+		public const string TRANSFERSTASHFILENAME = "winsys.dxb";
+		public string TransferStashFileName => TRANSFERSTASHFILENAME;
+
+		public const string RELICVAULTSTASHFILENAME = "miscsys.dxb";
+		public string RelicVaultStashFileName => RELICVAULTSTASHFILENAME;
+
+		public const string PLAYERSAVEFILENAME = "Player.chr";
+		public string PlayerSaveFileName => PLAYERSAVEFILENAME;
+
+		public const string PLAYERSTASHFILENAMEB = "winsys.dxb";
+		public string PlayerStashFileNameB => PLAYERSTASHFILENAMEB;
+
+		public const string PLAYERSTASHFILENAMEG = "winsys.dxg";
+		public string PlayerStashFileNameG => PLAYERSTASHFILENAMEG;
 
 
 		/// <summary>
@@ -542,7 +559,7 @@ namespace TQVaultAE.Services.Win32
 					Regex vdfPathRegex = new Regex(@"""\d+""\t+""([^""]+)""");  // "2"		"D:\\games\\Steam"
 					var vdfFile = Path.Combine(steamPath, @"SteamApps\libraryfolders.vdf");
 					if (File.Exists(vdfFile))
-					{	
+					{
 						string[] libFile = File.ReadAllLines(vdfFile);
 
 						foreach (var line in libFile)

@@ -164,6 +164,16 @@ namespace TQVaultAE.GUI
 		public bool EnableCharacterEditChanged { get; private set; }
 
 		/// <summary>
+		/// Enale the hot reload feature
+		/// </summary>
+		private bool enableHotReload;
+		/// <summary>
+		/// Indicates that the <see cref="Config.Settings.EnableHotReload"/> setting has been changed
+		/// </summary>
+		public bool EnableHotReloadChanged { get; private set; }
+
+
+		/// <summary>
 		/// Indicates that the language setting has been changed
 		/// </summary>
 		public bool LanguageChanged { get; private set; }
@@ -261,6 +271,8 @@ namespace TQVaultAE.GUI
 			this.toolTip.SetToolTip(this.ItemBGColorOpacityLabel, Resources.SettingsItemBGColorOpacityLabelTT);
 			this.EnableItemRequirementRestrictionCheckBox.Text = Resources.SettingsEnableItemRequirementRestriction;
 			this.toolTip.SetToolTip(this.EnableItemRequirementRestrictionCheckBox, Resources.SettingsEnableItemRequirementRestrictionTT);
+			this.hotReloadCheckBox.Text = Resources.SettingsEnableHotReload;
+			this.toolTip.SetToolTip(this.hotReloadCheckBox, Resources.SettingsEnableHotReloadTT);
 
 			this.cancelButton.Text = Resources.GlobalCancel;
 			this.okayButton.Text = Resources.GlobalOK;
@@ -388,6 +400,7 @@ namespace TQVaultAE.GUI
 			this.enableDetailedTooltipView = Config.Settings.Default.EnableDetailedTooltipView;
 			this.itemBGColorOpacity = Config.Settings.Default.ItemBGColorOpacity;
 			this.enableItemRequirementRestriction = Config.Settings.Default.EnableItemRequirementRestriction;
+			this.enableHotReload = Config.Settings.Default.EnableHotReload;
 
 			// Force English since there was some issue with getting the proper language setting.
 			var gl = Database.GameLanguage;
@@ -456,6 +469,7 @@ namespace TQVaultAE.GUI
 			this.EnableDetailedTooltipViewCheckBox.Checked = this.enableDetailedTooltipView;
 			this.ItemBGColorOpacityTrackBar.Value = this.itemBGColorOpacity;
 			this.EnableItemRequirementRestrictionCheckBox.Checked = this.enableItemRequirementRestriction;
+			this.hotReloadCheckBox.Checked = this.enableHotReload;
 
 			this.enableCustomMapsCheckBox.Checked = this.enableMods;
 
@@ -511,6 +525,7 @@ namespace TQVaultAE.GUI
 				Config.Settings.Default.EnableDetailedTooltipView = this.enableDetailedTooltipView;
 				Config.Settings.Default.ItemBGColorOpacity = this.itemBGColorOpacity;
 				Config.Settings.Default.EnableItemRequirementRestriction = this.enableItemRequirementRestriction;
+				Config.Settings.Default.EnableHotReload = this.enableHotReload;
 			}
 		}
 
@@ -937,7 +952,7 @@ namespace TQVaultAE.GUI
 			this.ConfigurationChanged = this.ItemBGColorOpacityChanged = true;
 		}
 
-		private void EnableCharacterRequierementBGColorCheckBox_CheckedChanged(object sender, EventArgs e)
+		private void EnableItemRequirementRestrictionCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			if (this.EnableItemRequirementRestrictionCheckBox.Checked)
 			{
@@ -951,6 +966,21 @@ namespace TQVaultAE.GUI
 					this.enableItemRequirementRestriction = false;
 					this.ConfigurationChanged = this.EnableItemRequirementRestrictionChanged = true;
 				}
+			}
+		}
+
+		private void hotReloadCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			if (this.hotReloadCheckBox.Checked && !this.enableHotReload)
+			{
+				this.enableHotReload = this.ConfigurationChanged = this.EnableHotReloadChanged = this.UISettingChanged = true;// Force restart
+				return;
+			}
+
+			if (!this.hotReloadCheckBox.Checked && this.enableHotReload)
+			{
+				this.enableHotReload = false;
+				this.ConfigurationChanged = this.EnableHotReloadChanged = this.UISettingChanged = true;// Force restart
 			}
 		}
 	}

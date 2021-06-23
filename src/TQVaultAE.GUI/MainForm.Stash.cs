@@ -10,6 +10,7 @@ using TQVaultAE.Presentation;
 using TQVaultAE.Logs;
 using TQVaultAE.Domain.Contracts.Services;
 using Microsoft.Extensions.Logging;
+using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.GUI
 {
@@ -47,9 +48,10 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Loads the transfer stash for immortal throne
 		/// </summary>
-		private void LoadTransferStash()
+		/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
+		private LoadTransferStashResult LoadTransferStash(bool fromFileWatcher = false)
 		{
-			var result = this.stashService.LoadTransferStash();
+			var result = this.stashService.LoadTransferStash(fromFileWatcher);
 
 			// Get the transfer stash
 			try
@@ -66,7 +68,8 @@ namespace TQVaultAE.GUI
 					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
-				this.stashPanel.TransferStash = result.Stash;
+				if (!fromFileWatcher)
+					this.stashPanel.TransferStash = result.Stash;
 			}
 			catch (IOException exception)
 			{
@@ -75,14 +78,17 @@ namespace TQVaultAE.GUI
 				Log.LogError(exception, msg);
 				this.stashPanel.TransferStash = null;
 			}
+
+			return result;
 		}
 
 		/// <summary>
 		/// Loads the relic vault stash
 		/// </summary>
-		private void LoadRelicVaultStash()
+		/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
+		private LoadRelicVaultStashResult LoadRelicVaultStash(bool fromFileWatcher = false)
 		{
-			var result = this.stashService.LoadRelicVaultStash();
+			var result = this.stashService.LoadRelicVaultStash(fromFileWatcher);
 
 			// Get the relic vault stash
 			try
@@ -99,7 +105,8 @@ namespace TQVaultAE.GUI
 					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
-				this.stashPanel.RelicVaultStash = result.Stash;
+				if (!fromFileWatcher)
+					this.stashPanel.RelicVaultStash = result.Stash;
 			}
 			catch (IOException exception)
 			{
@@ -108,8 +115,49 @@ namespace TQVaultAE.GUI
 
 				this.stashPanel.RelicVaultStash = null;
 			}
+
+			return result;
 		}
 
+		private void fileSystemWatcherRelicStash_Changed(object sender, FileSystemEventArgs e)
+		{
+			if (e.ChangeType != WatcherChangeTypes.Changed) return;
+
+			var fw = sender as FileSystemWatcher;
+			fw.EnableRaisingEvents = false;
+
+			// Reload
+			var stashResult = LoadRelicVaultStash(true);
+
+			// Refresh
+			this.Invoke((MethodInvoker)delegate
+			{
+				if (stashResult is not null)
+					this.stashPanel.RelicVaultStash = stashResult.Stash;
+
+				fw.EnableRaisingEvents = true;
+			});
+		}
+
+		private void fileSystemWatcherTransferStash_Changed(object sender, FileSystemEventArgs e)
+		{
+			if (e.ChangeType != WatcherChangeTypes.Changed) return;
+
+			var fw = sender as FileSystemWatcher;
+			fw.EnableRaisingEvents = false;
+
+			// Reload
+			var stashResult = LoadTransferStash(true);
+
+			// Refresh
+			this.Invoke((MethodInvoker)delegate
+			{
+				if (stashResult is not null)
+					this.stashPanel.TransferStash = stashResult.Stash;
+
+				fw.EnableRaisingEvents = true;
+			});
+		}
 		/// <summary>
 		/// Attempts to save all modified stash files.
 		/// </summary>
