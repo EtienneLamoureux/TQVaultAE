@@ -93,7 +93,15 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 
 **Q. Can I use TQVaultAE while playing the game?**
 
-*A. No, using TQVaultAE while running the game may lead to loss of progress or items. Best practice is to close the game before using TQVaultAE.*
+*A. Yes, the setting "Allow hot reload features" allow TQVaultAE to reflect any change you make "in game". Be aware that any unsaved changes made in TQVaultAE will be lost.*
+*Here's how things work.*
+
+See #382 for details
+
+- *TQVaultAE save changes when it's closed.*
+- *Changes done in the Transfer Area, Storage Area or Relic Vault can be retrieved in game as long as the caravan __is not__ opened in game when you close TQVaultAE.*
+- *Changes done in the Equipment panel or Inventory are __ok__ when the character __is not loaded in game__.*
+- *Changes done in the Equipment panel or Inventory are __lost__ when the character __is loaded in game__. You have to go back to the start screen of the game, save your changes by quitting TQVaultAE and reload you character.*
 
 **Q. What happened to my items, I transferred items to my character and they are not there in game?**
 

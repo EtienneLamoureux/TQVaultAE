@@ -11,6 +11,7 @@ using TQVaultAE.Logs;
 using TQVaultAE.Domain.Contracts.Services;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Domain.Results;
+using System.Threading;
 
 namespace TQVaultAE.GUI
 {
@@ -126,17 +127,27 @@ namespace TQVaultAE.GUI
 			var fw = sender as FileSystemWatcher;
 			fw.EnableRaisingEvents = false;
 
-			// Reload
-			var stashResult = LoadRelicVaultStash(true);
-
-			// Refresh
-			this.Invoke((MethodInvoker)delegate
+		retryOnLock:
+			try
 			{
-				if (stashResult is not null)
-					this.stashPanel.RelicVaultStash = stashResult.Stash;
+				// Reload
+				var stashResult = LoadRelicVaultStash(true);
 
-				fw.EnableRaisingEvents = true;
-			});
+				// Refresh
+				this.Invoke((MethodInvoker)delegate
+				{
+					if (stashResult is not null)
+						this.stashPanel.RelicVaultStash = stashResult.Stash;
+
+					fw.EnableRaisingEvents = true;
+				});
+			}
+			catch (IOException ioException)
+			{
+				Log.LogError(ioException, "Retry in 0.5 sec");
+				Thread.Sleep(500);
+				goto retryOnLock;
+			}
 		}
 
 		private void fileSystemWatcherTransferStash_Changed(object sender, FileSystemEventArgs e)
@@ -146,17 +157,27 @@ namespace TQVaultAE.GUI
 			var fw = sender as FileSystemWatcher;
 			fw.EnableRaisingEvents = false;
 
-			// Reload
-			var stashResult = LoadTransferStash(true);
-
-			// Refresh
-			this.Invoke((MethodInvoker)delegate
+		retryOnLock:
+			try
 			{
-				if (stashResult is not null)
-					this.stashPanel.TransferStash = stashResult.Stash;
+				// Reload
+				var stashResult = LoadTransferStash(true);
 
-				fw.EnableRaisingEvents = true;
-			});
+				// Refresh
+				this.Invoke((MethodInvoker)delegate
+				{
+					if (stashResult is not null)
+						this.stashPanel.TransferStash = stashResult.Stash;
+
+					fw.EnableRaisingEvents = true;
+				});
+			}
+			catch (IOException ioException)
+			{
+				Log.LogError(ioException, "Retry in 0.5 sec");
+				Thread.Sleep(500);
+				goto retryOnLock;
+			}
 		}
 		/// <summary>
 		/// Attempts to save all modified stash files.

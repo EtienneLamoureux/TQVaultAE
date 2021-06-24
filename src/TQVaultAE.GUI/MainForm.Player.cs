@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using TQVaultAE.Domain.Results;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace TQVaultAE.GUI
 {
@@ -104,33 +105,43 @@ namespace TQVaultAE.GUI
 			// retrieve PlayerSave
 			var playerSave = this.characterComboBox.Items.OfType<PlayerSave>().FirstOrDefault(ps => ps.Folder == fw.Path);
 
-			// Reload player file
-			LoadPlayerResult playerResult = null;
-			if (e.Name.Equals(this.GamePathResolver.PlayerSaveFileName, StringComparison.OrdinalIgnoreCase))
-				playerResult = this.LoadPlayer(playerSave, true);
-
-			LoadPlayerStashResult stashResult = null;
-			if (e.Name.Equals(this.GamePathResolver.PlayerStashFileNameB, StringComparison.OrdinalIgnoreCase))
-				stashResult = this.LoadPlayerStash(playerSave, true);
-
-			// Refresh
-			this.Invoke((MethodInvoker)delegate
+		retryOnLock:
+			try
 			{
-				// if is current displayed character
-				if (this.characterComboBox.SelectedItem == playerSave)
+				// Reload player file
+				LoadPlayerResult playerResult = null;
+				if (e.Name.Equals(this.GamePathResolver.PlayerSaveFileName, StringComparison.OrdinalIgnoreCase))
+					playerResult = this.LoadPlayer(playerSave, true);
+
+				LoadPlayerStashResult stashResult = null;
+				if (e.Name.Equals(this.GamePathResolver.PlayerStashFileNameB, StringComparison.OrdinalIgnoreCase))
+					stashResult = this.LoadPlayerStash(playerSave, true);
+
+				// Refresh
+				this.Invoke((MethodInvoker)delegate
 				{
-					if (playerResult is not null)
+					// if is current displayed character
+					if (this.characterComboBox.SelectedItem == playerSave)
 					{
-						this.playerPanel.Player = playerResult.Player;
-						this.stashPanel.Player = playerResult.Player;
+						if (playerResult is not null)
+						{
+							this.playerPanel.Player = playerResult.Player;
+							this.stashPanel.Player = playerResult.Player;
+						}
+
+						if (stashResult is not null)
+							this.stashPanel.Stash = stashResult.Stash;
 					}
 
-					if (stashResult is not null)
-						this.stashPanel.Stash = stashResult.Stash;
-				}
-
-				fw.EnableRaisingEvents = true;
-			});
+					fw.EnableRaisingEvents = true;
+				});
+			}
+			catch (IOException ioException)
+			{
+				Log.LogError(ioException, "Retry in 0.5 sec");
+				Thread.Sleep(500);
+				goto retryOnLock;
+			}
 		}
 
 
