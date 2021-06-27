@@ -1,6 +1,6 @@
 # TQVaultAE
 [![Steam](https://img.shields.io/badge/steam-link-lightgrey.svg)](https://steamcommunity.com/sharedfiles/filedetails/?id=1136716167)
-[![Release](https://img.shields.io/badge/stable-3.7.4-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
+[![Release](https://img.shields.io/badge/stable-3.8.0-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/LICENSE)
 
 TQVaultAE is an external tool for [Titan Quest Anniversary Edition](https://www.thqnordic.com/games/titan-quest) that allows you to store and search your items outside the game.
@@ -87,21 +87,11 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 ## Troubleshooting and F.A.Q.
 **Q. Does TQVaultAE modify my items? The stats I see are not the same as the ones ingame.**
 
-*A. No, unless you specifically use the cheats, TQVaultAE doesn't alter items in any way. 
-The difference you see is simply due to the way stats are generated in Titan Quest: each item has base stats and a unique seed that modifies those stats. 
-TQVaultAE only displays the base stats (and not the modifications due to the RNG).*
+*A. No, unless you specifically use the cheats, TQVaultAE doesn't alter items in any way. The difference you see is simply due to the way stats are generated in Titan Quest: each item has base stats and a unique seed that modifies those stats. TQVaultAE only displays the base stats (and not the modifications due to the RNG).*
 
 **Q. Can I use TQVaultAE while playing the game?**
 
-*A. Yes, the setting "Allow hot reload features" allow TQVaultAE to reflect any change you make "in game". Be aware that any unsaved changes made in TQVaultAE will be lost.*
-*Here's how things work.*
-
-See #382 for details
-
-- *TQVaultAE save changes when it's closed.*
-- *Changes done in the Transfer Area, Storage Area or Relic Vault can be retrieved in game as long as the caravan __is not__ opened in game when you close TQVaultAE.*
-- *Changes done in the Equipment panel or Inventory are __ok__ when the character __is not loaded in game__.*
-- *Changes done in the Equipment panel or Inventory are __lost__ when the character __is loaded in game__. You have to go back to the start screen of the game, save your changes by quitting TQVaultAE and reload you character.*
+*A. Only when using the "Allow hot reload features" setting, otherwise it is not safe to do so. Even then, be aware that any unsaved changes made in TQVaultAE will be lost when interacting with in-game inventories.*
 
 **Q. What happened to my items, I transferred items to my character and they are not there in game?**
 
