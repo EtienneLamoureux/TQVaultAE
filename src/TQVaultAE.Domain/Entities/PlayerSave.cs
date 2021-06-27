@@ -1,10 +1,14 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using TQVaultAE.Domain.Contracts.Services;
 
 namespace TQVaultAE.Domain.Entities
 {
-	public class PlayerSave
+	public class PlayerSave : IDisposable
 	{
+		public FileSystemWatcher PlayerSaveWatcher { get; set; }
+		public FileSystemWatcher PlayerStashWatcher { get; set; }
+
 		public readonly string Folder;
 		public readonly string Name;
 		public readonly bool IsCustom;
@@ -22,6 +26,12 @@ namespace TQVaultAE.Domain.Entities
 			CustomMap = customMap;
 			CustomMapName = Path.GetFileName(customMap);
 			Translate = translate;
+		}
+
+		public void Dispose()
+		{
+			if (PlayerSaveWatcher is not null)
+				PlayerSaveWatcher.Dispose();
 		}
 
 		public override string ToString()

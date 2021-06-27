@@ -126,10 +126,14 @@ namespace TQVaultAE.GUI
             this.characterLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.characterComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.secondaryVaultListComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
+            this.fileSystemWatcherTransferStash = new System.IO.FileSystemWatcher();
+            this.fileSystemWatcherRelicStash = new System.IO.FileSystemWatcher();
             this.itemTextPanel.SuspendLayout();
             this.flowLayoutPanelVaultSelector.SuspendLayout();
             this.tableLayoutPanelMain.SuspendLayout();
             this.flowLayoutPanelRightComboBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherTransferStash)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherRelicStash)).BeginInit();
             this.SuspendLayout();
             // 
             // exitButton
@@ -315,11 +319,11 @@ namespace TQVaultAE.GUI
             this.searchButton.UseCustomGraphic = true;
             this.searchButton.UseVisualStyleBackColor = false;
             this.searchButton.Click += new System.EventHandler(this.SearchButtonClick);
-			// 
-			// backgroundWorker1
-			// 
-			this.backgroundWorkerLoadAllFiles.WorkerReportsProgress = true;
-			this.backgroundWorkerLoadAllFiles.WorkerSupportsCancellation = true;
+            // 
+            // backgroundWorkerLoadAllFiles
+            // 
+            this.backgroundWorkerLoadAllFiles.WorkerReportsProgress = true;
+            this.backgroundWorkerLoadAllFiles.WorkerSupportsCancellation = true;
             this.backgroundWorkerLoadAllFiles.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorkerLoadAllFiles_DoWork);
             this.backgroundWorkerLoadAllFiles.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorkerLoadAllFiles_ProgressChanged);
             this.backgroundWorkerLoadAllFiles.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorkerLoadAllFiles_RunWorkerCompleted);
@@ -437,6 +441,18 @@ namespace TQVaultAE.GUI
             this.secondaryVaultListComboBox.TabIndex = 15;
             this.secondaryVaultListComboBox.SelectedIndexChanged += new System.EventHandler(this.SecondaryVaultListComboBoxSelectedIndexChanged);
             // 
+            // fileSystemWatcherTransferStash
+            // 
+            this.fileSystemWatcherTransferStash.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.CreationTime)));
+            this.fileSystemWatcherTransferStash.SynchronizingObject = this;
+            this.fileSystemWatcherTransferStash.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherTransferStash_Changed);
+            // 
+            // fileSystemWatcherRelicStash
+            // 
+            this.fileSystemWatcherRelicStash.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.CreationTime)));
+            this.fileSystemWatcherRelicStash.SynchronizingObject = this;
+            this.fileSystemWatcherRelicStash.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherRelicStash_Changed);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -457,7 +473,7 @@ namespace TQVaultAE.GUI
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainForm";
             this.ResizeCustomAllowed = true;
             this.ScaleOnResize = true;
@@ -483,6 +499,8 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelMain.ResumeLayout(false);
             this.tableLayoutPanelMain.PerformLayout();
             this.flowLayoutPanelRightComboBox.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherTransferStash)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherRelicStash)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -497,5 +515,7 @@ namespace TQVaultAE.GUI
 		private ScalingComboBox characterComboBox;
 		private ScalingComboBox secondaryVaultListComboBox;
 		private BufferedFlowLayoutPanel flowLayoutPanelRightPanels;
+		private System.IO.FileSystemWatcher fileSystemWatcherTransferStash;
+		private System.IO.FileSystemWatcher fileSystemWatcherRelicStash;
 	}
 }

@@ -198,14 +198,14 @@ namespace TQVaultAE.GUI.Components
 		/// Forces an update to the player panel.
 		/// </summary>
 		public void UpdatePlayerInfo()
-		{ 
+		{
 			// Force an update of the Player Info Panel.
 			DisplayPlayerInfoLastName = null;
 			PlayerPanel.Invalidate();
 		}
 
 		private void EquipmentPanel_VisibleChanged(object sender, EventArgs e)
-			=>DisplayPlayerInfo();
+			=> DisplayPlayerInfo();
 
 		/// <summary>
 		/// Used to signal that the gear stats bonuses have been re-calculated.
@@ -234,7 +234,7 @@ namespace TQVaultAE.GUI.Components
 
 
 			Player.ClearPlayerSkillBonuses();
-			Player.UpdatePlayerSkillBonuses(statBonuses);		
+			Player.UpdatePlayerSkillBonuses(statBonuses);
 		}
 
 		private void DisplayPlayerInfo()
@@ -248,7 +248,7 @@ namespace TQVaultAE.GUI.Components
 			this.PlayerPanel.Visible = true;
 
 			if (DisplayPlayerInfoLastName == this.Player.PlayerName) return;
-			
+
 			this.SuspendLayout();
 			this.PlayerPanel.SuspendLayout();
 
@@ -485,6 +485,11 @@ namespace TQVaultAE.GUI.Components
 			set => this.stashBackground = value;
 		}
 
+		public const int BAGID_EQUIPMENTPANEL = 0;
+		public const int BAGID_TRANSFERSTASH = 1;
+		public const int BAGID_PLAYERSTASH = 2;
+		public const int BAGID_RELICVAULTSTASH = 3;
+
 		/// <summary>
 		/// Gets or sets the currently selected bag id
 		/// </summary>
@@ -512,7 +517,7 @@ namespace TQVaultAE.GUI.Components
 					BagButtonBase button = this.BagButtons[this.currentBag];
 					int buttonOffsetY = button.Location.Y + button.Size.Height;
 
-					if (this.currentBag == 0)
+					if (this.currentBag == BAGID_EQUIPMENTPANEL)
 					{
 						// Equipment Panel
 						if (this.Player == null)
@@ -526,7 +531,7 @@ namespace TQVaultAE.GUI.Components
 						this.BagSackPanel.Visible = false;
 						this.BagSackPanel.Enabled = false;
 					}
-					else if (this.currentBag == 1)
+					else if (this.currentBag == BAGID_TRANSFERSTASH)
 					{
 						// Transfer Stash
 						this.background = this.StashBackground;
@@ -544,7 +549,7 @@ namespace TQVaultAE.GUI.Components
 						this.BagSackPanel.Visible = true;
 						this.BagSackPanel.Enabled = true;
 					}
-					else if (this.currentBag == 2)
+					else if (this.currentBag == BAGID_PLAYERSTASH)
 					{
 						// Stash
 						this.background = this.StashBackground;
@@ -562,7 +567,7 @@ namespace TQVaultAE.GUI.Components
 						this.BagSackPanel.Visible = true;
 						this.BagSackPanel.Enabled = true;
 					}
-					else if (this.currentBag == 3)
+					else if (this.currentBag == BAGID_RELICVAULTSTASH)
 					{
 						// Relic Vault Stash
 						this.background = this.StashBackground;
@@ -665,12 +670,13 @@ namespace TQVaultAE.GUI.Components
 		{
 			// figure out the current bag to use
 			if (this.currentBag < 0)
-				this.currentBag = 0;
+				this.currentBag = BAGID_EQUIPMENTPANEL;
 
 			if (this.currentBag >= 4)
-				this.currentBag = 3;
+				this.currentBag = BAGID_RELICVAULTSTASH;
 
-			// hide/show bag buttons and assign initial bitmaps
+			#region hide/show bag buttons and assign initial bitmaps
+
 			int buttonOffset = 0;
 			foreach (StashButton button in this.BagButtons)
 			{
@@ -688,7 +694,9 @@ namespace TQVaultAE.GUI.Components
 			if ((this.transferStash == null) || (this.transferStash.NumberOfSacks < 1))
 				this.BagButtons[1].Visible = false;
 
-			if (this.currentBag == 0)
+			#endregion
+
+			if (this.currentBag == BAGID_EQUIPMENTPANEL)
 			{
 				if (this.Player == null)
 					this.SackPanel.Sack = null;
@@ -699,7 +707,7 @@ namespace TQVaultAE.GUI.Components
 					GetSkillStatBonus();
 				}
 			}
-			else if (this.currentBag == 1)
+			else if (this.currentBag == BAGID_TRANSFERSTASH)
 			{
 				// Assign the transfer stash
 				if ((this.transferStash == null) || (this.transferStash.NumberOfSacks < 1))
@@ -712,7 +720,7 @@ namespace TQVaultAE.GUI.Components
 						this.SackPanel.Sack = null;
 				}
 			}
-			else if (this.currentBag == 2)
+			else if (this.currentBag == BAGID_PLAYERSTASH)
 			{
 				if ((this.stash == null) || (this.stash.NumberOfSacks < 1))
 					this.SackPanel.Sack = null;
@@ -724,7 +732,7 @@ namespace TQVaultAE.GUI.Components
 						this.SackPanel.Sack = null;
 				}
 			}
-			else if (this.currentBag == 3)
+			else if (this.currentBag == BAGID_RELICVAULTSTASH)
 			{
 				// Assign the relic vault stash
 				if ((this.relicVaultStash == null) || (this.relicVaultStash.NumberOfSacks < 1))

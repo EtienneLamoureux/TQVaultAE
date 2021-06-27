@@ -1658,11 +1658,20 @@ The character will also not be able to equip items where the requirements are no
     <value>@x2tagRace02P</value>
     <comment>Redirect for racial Bonus "Ghost"</comment>
   </data>
-  <data name="TextTag_racialBonusRaceTitan" xml:space="preserve">
+	<data name="TextTag_racialBonusRaceTitan" xml:space="preserve">
     <value>@tagRace08P</value>
     <comment>Redirect for racial Bonus "Titan"</comment>
   </data>
-  <data name="ItemAccent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<data name="SettingsEnableHotReload" xml:space="preserve">
+    <value>Allow Hot Reload Features</value>
+  </data>
+	<data name="SettingsEnableHotReloadTT" xml:space="preserve">
+    <value>All "in game" update of a monitored save file (Player, Stash, Transfer Stash, Relic Stash) are visible in real time in TQVaultAE.
+In case you have unsaved changes in TQVaultAE, the "in game" saving system prevail and override your changes.
+You still have to close TQVaultAE to apply your changes.
+    </value>
+  </data>
+	<data name="ItemAccent" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Img\ItemAccent.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
