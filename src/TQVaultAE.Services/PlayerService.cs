@@ -43,8 +43,9 @@ namespace TQVaultAE.Services
 		/// </summary>
 		/// <param name="selectedSave">Item from the drop down list.</param>
 		/// <param name="isIT"></param>
+		/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
 		/// <returns></returns>
-		public LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool isIT = false)
+		public LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool isIT = false, bool fromFileWatcher = false)
 		{
 			var result = new LoadPlayerResult();
 
@@ -54,7 +55,7 @@ namespace TQVaultAE.Services
 
 			result.PlayerFile = GamePathResolver.GetPlayerFile(selectedSave.Name);
 
-			var resultPlayer = this.userContext.Players.GetOrAddAtomic(result.PlayerFile, k =>
+			PlayerCollection addFactory(string k)
 			{
 				var resultPC = new PlayerCollection(selectedSave.Name, k);
 				resultPC.IsImmortalThrone = isIT;
@@ -68,7 +69,18 @@ namespace TQVaultAE.Services
 					resultPC.ArgumentException = argumentException;
 				}
 				return resultPC;
-			});
+			};
+
+			PlayerCollection updateFactory(string k, PlayerCollection oldValue)
+			{
+				// No check on oldValue
+				return addFactory(k);
+			};
+
+			var resultPlayer = fromFileWatcher 
+				? this.userContext.Players.AddOrUpdateAtomic(result.PlayerFile, addFactory, updateFactory)
+				: this.userContext.Players.GetOrAddAtomic(result.PlayerFile, addFactory);
+
 			result.Player = resultPlayer;
 
 			#endregion

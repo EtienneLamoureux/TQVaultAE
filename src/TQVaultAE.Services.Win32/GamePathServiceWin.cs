@@ -98,7 +98,7 @@ namespace TQVaultAE.Services.Win32
 		/// Gets the filename for the game's transfer stash.
 		/// Stash files for Mods all have their own subdirectory which is the same as the mod's custom map folder
 		/// </summary>
-		public string TransferStashFile
+		public string TransferStashFileFullPath
 		{
 			get
 			{
@@ -113,7 +113,7 @@ namespace TQVaultAE.Services.Win32
 		/// Gets the filename for the game's relic vault stash.
 		/// Stash files for Mods all have their own subdirectory which is the same as the mod's custom map folder
 		/// </summary>
-		public string RelicVaultStashFile
+		public string RelicVaultStashFileFullPath
 		{
 			get
 			{

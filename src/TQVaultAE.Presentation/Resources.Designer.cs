@@ -3622,6 +3622,27 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Allow Hot Reload Features.
+        /// </summary>
+        public static string SettingsEnableHotReload {
+            get {
+                return ResourceManager.GetString("SettingsEnableHotReload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à All &quot;in game&quot; update of a monitored save file (Player, Stash, Transfer Stash, Relic Stash) are visible in real time in TQVaultAE.
+        ///In case you have unsaved changes in TQVaultAE, the &quot;in game&quot; saving system prevail and override your changes.
+        ///You still have to close TQVaultAE to apply your changes.
+        ///    .
+        /// </summary>
+        public static string SettingsEnableHotReloadTT {
+            get {
+                return ResourceManager.GetString("SettingsEnableHotReloadTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Enable Item Requirement Restriction.
         /// </summary>
         public static string SettingsEnableItemRequirementRestriction {

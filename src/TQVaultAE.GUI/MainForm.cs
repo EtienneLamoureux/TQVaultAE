@@ -828,8 +828,25 @@ Debug Levels
 			{
 				this.loadingComplete = true;
 				this.Enabled = true;
+
 				this.LoadTransferStash();
 				this.LoadRelicVaultStash();
+
+				if (Config.Settings.Default.EnableHotReload)
+				{
+					var relicPath = GamePathResolver.RelicVaultStashFileFullPath;
+					var transferPath = GamePathResolver.TransferStashFileFullPath;
+
+					this.fileSystemWatcherRelicStash.EnableRaisingEvents = false;
+					this.fileSystemWatcherRelicStash.Path = Path.GetDirectoryName(relicPath);
+					this.fileSystemWatcherRelicStash.Filter = Path.GetFileName(relicPath);
+					this.fileSystemWatcherRelicStash.EnableRaisingEvents = true;
+
+					this.fileSystemWatcherTransferStash.EnableRaisingEvents = false;
+					this.fileSystemWatcherTransferStash.Path = Path.GetDirectoryName(transferPath);
+					this.fileSystemWatcherTransferStash.Filter = Path.GetFileName(transferPath);
+					this.fileSystemWatcherTransferStash.EnableRaisingEvents = true;
+				}
 
 				// Load last character here if selected
 				if (Config.Settings.Default.LoadLastCharacter)
@@ -922,19 +939,18 @@ Debug Levels
 			// Update last loaded character
 			if (Config.Settings.Default.LoadLastCharacter)
 			{
-				// Changed by VillageIdiot
-				// Now check the last value to see if it has changed since the logic would
-				// always load a character even if no character was selected on the last run
-				if (this.characterComboBox.SelectedItem.ToString().ToUpperInvariant() != Config.Settings.Default.LastCharacterName.ToUpperInvariant())
+				string name = this.characterComboBox.SelectedItem.ToString();
+				var ps = this.characterComboBox.SelectedItem as PlayerSave;
+
+				if (ps is not null) name = ps.Name;
+
+				if (name.ToUpperInvariant() != Config.Settings.Default.LastCharacterName.ToUpperInvariant())
 				{
 					// Clear the value if no character is selected
-					string name = this.characterComboBox.SelectedItem.ToString();
 					if (name == Resources.MainFormSelectCharacter)
 						name = string.Empty;
 
-					var ps = this.characterComboBox.SelectedItem as PlayerSave;
-
-					Config.Settings.Default.LastCharacterName = ps?.Name ?? string.Empty;
+					Config.Settings.Default.LastCharacterName = name;
 
 					this.configChanged = true;
 				}

@@ -127,10 +127,14 @@ namespace TQVaultAE.GUI
             this.characterComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.secondaryVaultListComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.duplicateButton = new TQVaultAE.GUI.Components.ScalingButton();
+            this.fileSystemWatcherTransferStash = new System.IO.FileSystemWatcher();
+            this.fileSystemWatcherRelicStash = new System.IO.FileSystemWatcher();
             this.itemTextPanel.SuspendLayout();
             this.flowLayoutPanelVaultSelector.SuspendLayout();
             this.tableLayoutPanelMain.SuspendLayout();
             this.flowLayoutPanelRightComboBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherTransferStash)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherRelicStash)).BeginInit();
             this.SuspendLayout();
             // 
             // exitButton
@@ -316,11 +320,11 @@ namespace TQVaultAE.GUI
             this.searchButton.UseCustomGraphic = true;
             this.searchButton.UseVisualStyleBackColor = false;
             this.searchButton.Click += new System.EventHandler(this.SearchButtonClick);
-            // 
+			// 
             // backgroundWorkerLoadAllFiles
-            // 
-            this.backgroundWorkerLoadAllFiles.WorkerReportsProgress = true;
-            this.backgroundWorkerLoadAllFiles.WorkerSupportsCancellation = true;
+			// 
+			this.backgroundWorkerLoadAllFiles.WorkerReportsProgress = true;
+			this.backgroundWorkerLoadAllFiles.WorkerSupportsCancellation = true;
             this.backgroundWorkerLoadAllFiles.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorkerLoadAllFiles_DoWork);
             this.backgroundWorkerLoadAllFiles.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorkerLoadAllFiles_ProgressChanged);
             this.backgroundWorkerLoadAllFiles.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorkerLoadAllFiles_RunWorkerCompleted);
@@ -438,6 +442,18 @@ namespace TQVaultAE.GUI
             this.secondaryVaultListComboBox.TabIndex = 15;
             this.secondaryVaultListComboBox.SelectedIndexChanged += new System.EventHandler(this.SecondaryVaultListComboBoxSelectedIndexChanged);
             // 
+            // fileSystemWatcherTransferStash
+            // 
+            this.fileSystemWatcherTransferStash.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.CreationTime)));
+            this.fileSystemWatcherTransferStash.SynchronizingObject = this;
+            this.fileSystemWatcherTransferStash.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherTransferStash_Changed);
+            // 
+            // fileSystemWatcherRelicStash
+            // 
+            this.fileSystemWatcherRelicStash.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.CreationTime)));
+            this.fileSystemWatcherRelicStash.SynchronizingObject = this;
+            this.fileSystemWatcherRelicStash.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherRelicStash_Changed);
+            // 
             // duplicateButton
             // 
             this.duplicateButton.BackColor = System.Drawing.Color.Transparent;
@@ -510,6 +526,8 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelMain.ResumeLayout(false);
             this.tableLayoutPanelMain.PerformLayout();
             this.flowLayoutPanelRightComboBox.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherTransferStash)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherRelicStash)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -525,5 +543,7 @@ namespace TQVaultAE.GUI
 		private ScalingComboBox secondaryVaultListComboBox;
 		private BufferedFlowLayoutPanel flowLayoutPanelRightPanels;
 		private ScalingButton duplicateButton;
+		private System.IO.FileSystemWatcher fileSystemWatcherTransferStash;
+		private System.IO.FileSystemWatcher fileSystemWatcherRelicStash;
 	}
 }

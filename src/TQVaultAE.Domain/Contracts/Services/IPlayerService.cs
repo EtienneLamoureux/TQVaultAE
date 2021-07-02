@@ -1,5 +1,6 @@
 ﻿using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Results;
+using System.IO;
 
 namespace TQVaultAE.Domain.Contracts.Services
 {
@@ -11,8 +12,9 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		/// <param name="selectedSave">Player string from the drop down list.</param>
 		/// <param name="isIT"></param>
+		/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
 		/// <returns></returns>
-		LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool isIT = false);
+		LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool isIT = false, bool fromFileWatcher = false);
 
 		/// <summary>
 		/// Attempts to save all modified player files

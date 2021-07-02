@@ -1,4 +1,12 @@
 # Changelog
+## 3.8.0
+### Features
+- #282 Add "hot reload" setting, allowing the tool to stay open when the game runs
+- Add a "Reset Attributes" feature
+
+### Other
+- Augment logs to facilitate debugging
+
 ## 3.7.4
 ### Bugs
 - #354 Correctly load last character when opening the tool

@@ -1391,6 +1391,9 @@
   <metadata name="fadeInTimer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>359, 17</value>
   </metadata>
+  <metadata name="fileSystemWatcherTransferStash.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>476, 17</value>
+  </metadata>
   <data name="duplicateButton.DownBitmap" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIkAAAAeCAYAAAAYRz0yAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
@@ -14958,4 +14961,7 @@
         wAGsQYAHrEGAD6xBgA+sQYAHrEEAB6xBAAesQQA/rEHw/6xB/f+sQf//rEE=
 </value>
   </data>
+  <metadata name="fileSystemWatcherRelicStash.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>702, 17</value>
+  </metadata>
 </root>
