@@ -1060,5 +1060,6 @@ Debug Levels
 
 		private void duplicateButton_Click(object sender, EventArgs e) => DuplicateCharacter();
 
+		private void saveButton_Click(object sender, EventArgs e) => this.SaveAllModifiedFiles();
 	}
 }

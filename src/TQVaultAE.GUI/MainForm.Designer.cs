@@ -129,6 +129,7 @@ namespace TQVaultAE.GUI
             this.duplicateButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.fileSystemWatcherTransferStash = new System.IO.FileSystemWatcher();
             this.fileSystemWatcherRelicStash = new System.IO.FileSystemWatcher();
+            this.saveButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.itemTextPanel.SuspendLayout();
             this.flowLayoutPanelVaultSelector.SuspendLayout();
             this.tableLayoutPanelMain.SuspendLayout();
@@ -149,7 +150,7 @@ namespace TQVaultAE.GUI
             this.exitButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.exitButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.exitButton.Image = ((System.Drawing.Image)(resources.GetObject("exitButton.Image")));
-            this.exitButton.Location = new System.Drawing.Point(577, 24);
+            this.exitButton.Location = new System.Drawing.Point(720, 24);
             this.exitButton.Name = "exitButton";
             this.exitButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("exitButton.OverBitmap")));
             this.exitButton.Size = new System.Drawing.Size(137, 30);
@@ -320,11 +321,11 @@ namespace TQVaultAE.GUI
             this.searchButton.UseCustomGraphic = true;
             this.searchButton.UseVisualStyleBackColor = false;
             this.searchButton.Click += new System.EventHandler(this.SearchButtonClick);
-			// 
+            // 
             // backgroundWorkerLoadAllFiles
-			// 
-			this.backgroundWorkerLoadAllFiles.WorkerReportsProgress = true;
-			this.backgroundWorkerLoadAllFiles.WorkerSupportsCancellation = true;
+            // 
+            this.backgroundWorkerLoadAllFiles.WorkerReportsProgress = true;
+            this.backgroundWorkerLoadAllFiles.WorkerSupportsCancellation = true;
             this.backgroundWorkerLoadAllFiles.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorkerLoadAllFiles_DoWork);
             this.backgroundWorkerLoadAllFiles.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorkerLoadAllFiles_ProgressChanged);
             this.backgroundWorkerLoadAllFiles.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorkerLoadAllFiles_RunWorkerCompleted);
@@ -442,18 +443,6 @@ namespace TQVaultAE.GUI
             this.secondaryVaultListComboBox.TabIndex = 15;
             this.secondaryVaultListComboBox.SelectedIndexChanged += new System.EventHandler(this.SecondaryVaultListComboBoxSelectedIndexChanged);
             // 
-            // fileSystemWatcherTransferStash
-            // 
-            this.fileSystemWatcherTransferStash.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.CreationTime)));
-            this.fileSystemWatcherTransferStash.SynchronizingObject = this;
-            this.fileSystemWatcherTransferStash.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherTransferStash_Changed);
-            // 
-            // fileSystemWatcherRelicStash
-            // 
-            this.fileSystemWatcherRelicStash.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.CreationTime)));
-            this.fileSystemWatcherRelicStash.SynchronizingObject = this;
-            this.fileSystemWatcherRelicStash.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherRelicStash_Changed);
-            // 
             // duplicateButton
             // 
             this.duplicateButton.BackColor = System.Drawing.Color.Transparent;
@@ -478,6 +467,44 @@ namespace TQVaultAE.GUI
             this.duplicateButton.UseVisualStyleBackColor = false;
             this.duplicateButton.Click += new System.EventHandler(this.duplicateButton_Click);
             // 
+            // fileSystemWatcherTransferStash
+            // 
+            this.fileSystemWatcherTransferStash.EnableRaisingEvents = true;
+            this.fileSystemWatcherTransferStash.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.CreationTime)));
+            this.fileSystemWatcherTransferStash.SynchronizingObject = this;
+            this.fileSystemWatcherTransferStash.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherTransferStash_Changed);
+            // 
+            // fileSystemWatcherRelicStash
+            // 
+            this.fileSystemWatcherRelicStash.EnableRaisingEvents = true;
+            this.fileSystemWatcherRelicStash.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.CreationTime)));
+            this.fileSystemWatcherRelicStash.SynchronizingObject = this;
+            this.fileSystemWatcherRelicStash.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherRelicStash_Changed);
+            // 
+            // saveButton
+            // 
+            this.saveButton.BackColor = System.Drawing.Color.Transparent;
+            this.saveButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.saveButton.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("saveButton.DownBitmap")));
+            this.saveButton.FlatAppearance.BorderSize = 0;
+            this.saveButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.saveButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.saveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.saveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.saveButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.saveButton.Image = ((System.Drawing.Image)(resources.GetObject("saveButton.Image")));
+            this.saveButton.Location = new System.Drawing.Point(577, 24);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("saveButton.OverBitmap")));
+            this.saveButton.Size = new System.Drawing.Size(137, 30);
+            this.saveButton.SizeToGraphic = false;
+            this.saveButton.TabIndex = 23;
+            this.saveButton.Text = "Save";
+            this.saveButton.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("saveButton.UpBitmap")));
+            this.saveButton.UseCustomGraphic = true;
+            this.saveButton.UseVisualStyleBackColor = false;
+            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -486,6 +513,7 @@ namespace TQVaultAE.GUI
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1350, 910);
             this.ConstrainToDesignRatio = true;
+            this.Controls.Add(this.saveButton);
             this.Controls.Add(this.duplicateButton);
             this.Controls.Add(this.tableLayoutPanelMain);
             this.Controls.Add(this.searchButton);
@@ -521,6 +549,7 @@ namespace TQVaultAE.GUI
             this.Controls.SetChildIndex(this.searchButton, 0);
             this.Controls.SetChildIndex(this.tableLayoutPanelMain, 0);
             this.Controls.SetChildIndex(this.duplicateButton, 0);
+            this.Controls.SetChildIndex(this.saveButton, 0);
             this.itemTextPanel.ResumeLayout(false);
             this.flowLayoutPanelVaultSelector.ResumeLayout(false);
             this.tableLayoutPanelMain.ResumeLayout(false);
@@ -545,5 +574,6 @@ namespace TQVaultAE.GUI
 		private ScalingButton duplicateButton;
 		private System.IO.FileSystemWatcher fileSystemWatcherTransferStash;
 		private System.IO.FileSystemWatcher fileSystemWatcherRelicStash;
+		private ScalingButton saveButton;
 	}
 }
