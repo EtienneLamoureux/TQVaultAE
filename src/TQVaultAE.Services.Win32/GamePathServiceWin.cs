@@ -612,5 +612,34 @@ Please select the game installation directory.");
 
 			return (string)key.GetValue(path[valueKey]);
 		}
+
+		/// <summary>
+		/// Duplicate player save files
+		/// </summary>
+		/// <param name="playerSaveDirectory"></param>
+		/// <param name="newname"></param>
+		/// <returns>new directory path</returns>
+		public string DuplicateCharacterFiles(string playerSaveDirectory, string newname)
+		{
+			var baseFolder = Path.GetDirectoryName(playerSaveDirectory);
+			var newFolder = Path.Combine(baseFolder, $"_{newname}");
+			var newPlayerFile = Path.Combine(newFolder, PLAYERSAVEFILENAME);
+			var newStashFileB = Path.Combine(playerSaveDirectory, PLAYERSTASHFILENAMEB);
+			var newStashFileG = Path.Combine(playerSaveDirectory, PLAYERSTASHFILENAMEG);
+
+			Directory.CreateDirectory(newFolder);
+			File.Copy(Path.Combine(playerSaveDirectory, PLAYERSAVEFILENAME), newPlayerFile);
+			if (File.Exists(newStashFileB)) File.Copy(newStashFileB, Path.Combine(newFolder, PLAYERSTASHFILENAMEB));
+			if (File.Exists(newStashFileG)) File.Copy(newStashFileG, Path.Combine(newFolder, PLAYERSTASHFILENAMEG));
+
+			// Copy Progression
+			// Easyest way of doing that (why VB has all the easy stuff?)
+			new Computer().FileSystem.CopyDirectory(
+				Path.Combine(playerSaveDirectory, "Levels_World_World01.map")
+				, Path.Combine(newFolder, "Levels_World_World01.map")
+			);
+
+			return newFolder;
+		}
 	}
 }

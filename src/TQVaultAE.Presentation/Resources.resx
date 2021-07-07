@@ -1658,7 +1658,7 @@ The character will also not be able to equip items where the requirements are no
     <value>@x2tagRace02P</value>
     <comment>Redirect for racial Bonus "Ghost"</comment>
   </data>
-	<data name="TextTag_racialBonusRaceTitan" xml:space="preserve">
+  <data name="TextTag_racialBonusRaceTitan" xml:space="preserve">
     <value>@tagRace08P</value>
     <comment>Redirect for racial Bonus "Titan"</comment>
   </data>
@@ -1671,7 +1671,29 @@ In case you have unsaved changes in TQVaultAE, the "in game" saving system preva
 You still have to close TQVaultAE to apply your changes.
     </value>
   </data>
-	<data name="ItemAccent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<data name="DuplicateCharacter_SourceRequired" xml:space="preserve">
+    <value>A source character must be selected!</value>
+  </data>
+	<data name="DuplicateCharacter_ModalTitle" xml:space="preserve">
+    <value>Character duplication</value>
+  </data>
+	<data name="DuplicateCharacter_NewNameRequired" xml:space="preserve">
+    <value>Input the new character name</value>
+  </data>
+	<data name="DuplicateCharacter_NewNameMustBeValid" xml:space="preserve">
+    <value>The new name must be valid!</value>
+  </data>
+	<data name="DuplicateCharacter_Error" xml:space="preserve">
+    <value>Error during character duplication</value>
+  </data>
+	<data name="DuplicateCharacter_ButtonText" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
+	<data name="DuplicateCharacter_NewNameAlreadyUsed" xml:space="preserve">
+    <value>Name is already used!</value>
+  </data>
+
+  <data name="ItemAccent" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Img\ItemAccent.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

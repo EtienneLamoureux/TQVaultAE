@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -310,6 +311,68 @@ namespace TQVaultAE.GUI
 				}
 			}
 			return saved;
+		}
+
+		/// <summary>
+		/// Attempt to duplicate a character
+		/// </summary>
+		private void DuplicateCharacter()
+		{
+			var ps = this.characterComboBox.SelectedItem as PlayerSave;
+			if (ps is not null)
+			{
+
+			askAgain:
+				// Ask for new name
+				var newname = Interaction.InputBox(Resources.DuplicateCharacter_NewNameRequired, Resources.DuplicateCharacter_ModalTitle, "NewName").Trim();
+				if (newname == string.Empty) return;// Cancel button
+
+				// validate new name
+				char[] invalidChars = Path.GetInvalidPathChars().Concat(Path.GetInvalidFileNameChars()).ToArray();
+				if (string.IsNullOrWhiteSpace(newname) || newname.IndexOfAny(invalidChars) > -1)
+				{
+					MessageBox.Show(Resources.DuplicateCharacter_NewNameMustBeValid, Resources.DuplicateCharacter_ModalTitle, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+					goto askAgain;
+				}
+
+				var alreadyUsed = this.characterComboBox.Items.OfType<PlayerSave>().Any(ps => newname.Equals(ps.Name, StringComparison.OrdinalIgnoreCase));
+				if (alreadyUsed)
+				{
+					MessageBox.Show(Resources.DuplicateCharacter_NewNameAlreadyUsed, Resources.DuplicateCharacter_ModalTitle, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+					goto askAgain;
+				}
+
+				string newFolder = null;
+				try
+				{
+					// Duplicate File
+					newFolder = this.GamePathResolver.DuplicateCharacterFiles(ps.Folder, newname);
+					this.playerService.AlterNameInPlayerFileSave(newname, newFolder);
+				}
+				catch (Exception ex)
+				{
+					// Display Error
+					Log.LogError(ex, Resources.DuplicateCharacter_Error);
+					MessageBox.Show(Log.FormatException(ex), Resources.DuplicateCharacter_Error, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+					// Rollback IO
+					try
+					{
+						if (newFolder is not null) Directory.Delete(newFolder, true);
+					}
+					catch (Exception exx)
+					{
+						// log & mute
+						Log.LogError(exx, Resources.DuplicateCharacter_Error);
+					}
+					return;
+				}
+
+				Application.Restart();
+				return;
+			}
+
+			// Player must be selected
+			MessageBox.Show(Resources.DuplicateCharacter_SourceRequired, Resources.DuplicateCharacter_ModalTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 		}
 	}
 }
