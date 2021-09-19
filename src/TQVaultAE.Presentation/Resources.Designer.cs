@@ -3297,6 +3297,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à And.
+        /// </summary>
+        public static string SearchOperatorAnd {
+            get {
+                return ResourceManager.GetString("SearchOperatorAnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Find items having all filters.
         /// </summary>
         public static string SearchOperatorDescAnd {
@@ -3311,6 +3320,15 @@ namespace TQVaultAE.Presentation {
         public static string SearchOperatorDescOr {
             get {
                 return ResourceManager.GetString("SearchOperatorDescOr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Or.
+        /// </summary>
+        public static string SearchOperatorOr {
+            get {
+                return ResourceManager.GetString("SearchOperatorOr", resourceCulture);
             }
         }
         
