@@ -73,7 +73,7 @@ namespace TQVaultAE.GUI.Tooltip
 		public static SearchFiltersTooltip ShowTooltip(IServiceProvider serviceProvider, Control anchorControl, List<BoxItem> filters, SearchOperator ope)
 		{
 			if (anchorControl is null) return null;
-			if (!filters?.Any() ?? false) return null;
+			if (!(filters?.Any() ?? false)) return null;
 
 			SearchFiltersTooltip newTT;
 			lock (syncObj)

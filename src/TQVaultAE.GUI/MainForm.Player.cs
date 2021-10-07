@@ -80,7 +80,7 @@ namespace TQVaultAE.GUI
 				}
 			}
 
-			if (!characters?.Any() ?? false)
+			if (!(characters?.Any() ?? false))
 				this.characterComboBox.Items.Add(Resources.MainFormNoCharacters);
 			else
 			{

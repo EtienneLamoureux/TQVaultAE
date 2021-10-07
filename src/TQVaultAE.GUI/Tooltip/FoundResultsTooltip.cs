@@ -79,7 +79,7 @@ namespace TQVaultAE.GUI.Tooltip
 		public static FoundResultsTooltip ShowTooltip(IServiceProvider serviceProvider, Control anchorControl, IEnumerable<Result> results)
 		{
 			if (anchorControl is null) return null;
-			if (!results?.Any() ?? false) return null;
+			if (!(results?.Any() ?? false)) return null;
 
 			FoundResultsTooltip newTT;
 			lock (ToImage)
