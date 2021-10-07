@@ -1137,6 +1137,12 @@ Vous ne serez également pas en mesure d'équiper l'objet sur ce personnage.</va
 	<data name="SearchOperatorTitle" xml:space="preserve">
     <value>Opérateur de recherche</value>
   </data>
+	<data name="SearchOperatorAnd" xml:space="preserve">
+    <value>Et</value>
+  </data>
+	<data name="SearchOperatorOr" xml:space="preserve">
+    <value>Ou</value>
+  </data>
 	<data name="SearchOperatorDescOr" xml:space="preserve">
     <value>Trouve les objets ayant un filtre ou plus</value>
   </data>

@@ -34,7 +34,7 @@ namespace TQVaultAE.GUI
 		private readonly (ScalingButton Button, FlowLayoutPanel Panel)[] _NavMap;
 		private readonly List<BoxItem> _SelectedFilters = new List<BoxItem>();
 		private readonly List<SearchQuery> _Queries = new List<SearchQuery>();
-		public Result[] QueryResults { get; private set; } = Enumerable.Empty<Result>().ToArray();
+		public Result[] QueryResults { get; private set; } = new Result[] { };
 		private bool scalingCheckBoxReduceDuringSelection_LastChecked;
 
 		/// <summary>
@@ -90,6 +90,9 @@ namespace TQVaultAE.GUI
 			this.scalingButtonQuerySave.Text = Resources.GlobalSave;
 			this.scalingButtonQueryDelete.Text = TranslationService.TranslateXTag("tagMenuButton03");
 			this.scalingCheckBoxReduceDuringSelection.Text = Resources.SearchReduceCategoriesDuringSelection;
+
+			this.scalingComboBoxOperator.Items.Clear();
+			this.scalingComboBoxOperator.Items.AddRange(new[] { Resources.SearchOperatorAnd, Resources.SearchOperatorOr });
 
 			this.scalingButtonMenuAttribute.Text
 				= this.scalingLabelItemAttributes.Text
