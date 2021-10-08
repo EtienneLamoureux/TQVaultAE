@@ -40,7 +40,7 @@ namespace TQVaultAE.Domain.Entities
 				Info is null ? Name : $"{Name}"
 				, Info?.Class is null ? string.Empty : $", {Translate.TranslateXTag(Info.Class)}"
 				, !string.IsNullOrWhiteSpace(Info?.Class) && Info?.CurrentLevel != null ?  " -" : string.Empty
-				, Info?.CurrentLevel is null ? string.Empty : $" Level : {Info.CurrentLevel}"
+				, Info?.CurrentLevel is null ? string.Empty : $" {Translate.TranslateXTag("tagMenuImport05")} : {Info.CurrentLevel}"
 				//, IsCustom ? $", IsCustom" : string.Empty // CustomMap is not specificaly related to this character
 			});
 		}

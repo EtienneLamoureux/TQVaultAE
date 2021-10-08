@@ -73,7 +73,7 @@ namespace TQVaultAE.GUI.Tooltip
 		public static SearchFiltersTooltip ShowTooltip(IServiceProvider serviceProvider, Control anchorControl, List<BoxItem> filters, SearchOperator ope)
 		{
 			if (anchorControl is null) return null;
-			if (!filters?.Any() ?? false) return null;
+			if (!(filters?.Any() ?? false)) return null;
 
 			SearchFiltersTooltip newTT;
 			lock (syncObj)
@@ -108,7 +108,8 @@ namespace TQVaultAE.GUI.Tooltip
 			this.flowLayoutPanelFriendlyNames.SuspendLayout();
 
 			// Operator description
-			AddRow($"{Resources.SearchOperatorTitle} : {this.Operator}", FGColor: TQColor.Aqua.Color(), style: FontStyle.Bold);
+			var opeTranslate = this.Operator == SearchOperator.And ? Resources.SearchOperatorAnd : Resources.SearchOperatorOr;
+			AddRow($"{Resources.SearchOperatorTitle} : {opeTranslate}", FGColor: TQColor.Aqua.Color(), style: FontStyle.Bold);
 			if (this.Operator == SearchOperator.And)
 				AddRow(Resources.SearchOperatorDescAnd);
 			else

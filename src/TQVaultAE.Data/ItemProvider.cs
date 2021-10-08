@@ -72,46 +72,46 @@ namespace TQVaultAE.Data
 			"BLOCKABSORPTION",
 			"ITEMCOSTSCALEPERCENT",
 			"ITEMSKILLLEVEL",
-			"USEDELAYTIME", 
-			"CAMERASHAKEAMPLITUDE", 
-			"SKILLMAXLEVEL", 
-			"SKILLCOOLDOWNTIME", 
-			"EXPANSIONTIME", 
-			"SKILLTIER", 
-			"CAMERASHAKEDURATIONSECS", 
-			"SKILLULTIMATELEVEL", 
-			"SKILLCONNECTIONSPACING", 
+			"USEDELAYTIME",
+			"CAMERASHAKEAMPLITUDE",
+			"SKILLMAXLEVEL",
+			"SKILLCOOLDOWNTIME",
+			"EXPANSIONTIME",
+			"SKILLTIER",
+			"CAMERASHAKEDURATIONSECS",
+			"SKILLULTIMATELEVEL",
+			"SKILLCONNECTIONSPACING",
 			"PETBURSTSPAWN",
-			"PETLIMIT", 
-			"ISPETDISPLAYABLE", 
-			"SPAWNOBJECTSTIMETOLIVE", 
-			"SKILLPROJECTILENUMBER", 
-			"SKILLMASTERYLEVELREQUIRED", 
-			"EXCLUDERACIALDAMAGE", 
-			"SKILLWEAPONTINTRED", 
-			"SKILLWEAPONTINTGREEN", 
-			"SKILLWEAPONTINTBLUE", 
-			"DEBUFSKILL", 
-			"HIDEFROMUI", 
-			"INSTANTCAST", 
-			"WAVEENDWIDTH", 
-			"WAVEDISTANCE", 
-			"WAVEDEPTH", 
-			"WAVESTARTWIDTH", 
-			"RAGDOLLAMPLIFICATION", 
-			"WAVETIME", 
-			"SPARKGAP", 
-			"SPARKCHANCE", 
-			"PROJECTILEUSESALLDAMAGE", 
-			"DROPOFFSET", 
-			"DROPHEIGHT", 
-			"NUMPROJECTILES", 
-			"SWORD", 
-			"AXE", 
-			"SPEAR", 
-			"MACE", 
-			"QUEST", 
-			"CANNOTPICKUPMULTIPLE", 
+			"PETLIMIT",
+			"ISPETDISPLAYABLE",
+			"SPAWNOBJECTSTIMETOLIVE",
+			"SKILLPROJECTILENUMBER",
+			"SKILLMASTERYLEVELREQUIRED",
+			"EXCLUDERACIALDAMAGE",
+			"SKILLWEAPONTINTRED",
+			"SKILLWEAPONTINTGREEN",
+			"SKILLWEAPONTINTBLUE",
+			"DEBUFSKILL",
+			"HIDEFROMUI",
+			"INSTANTCAST",
+			"WAVEENDWIDTH",
+			"WAVEDISTANCE",
+			"WAVEDEPTH",
+			"WAVESTARTWIDTH",
+			"RAGDOLLAMPLIFICATION",
+			"WAVETIME",
+			"SPARKGAP",
+			"SPARKCHANCE",
+			"PROJECTILEUSESALLDAMAGE",
+			"DROPOFFSET",
+			"DROPHEIGHT",
+			"NUMPROJECTILES",
+			"SWORD",
+			"AXE",
+			"SPEAR",
+			"MACE",
+			"QUEST",
+			"CANNOTPICKUPMULTIPLE",
 			"BONUSLIFEPERCENT",
 			"BONUSLIFEPOINTS",
 			"BONUSMANAPERCENT",
@@ -311,7 +311,7 @@ namespace TQVaultAE.Data
 		{
 			var statBonuses = new SortedList<string, int>();
 
-			if (item.baseItemInfo != null)			
+			if (item.baseItemInfo != null)
 				GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(item.BaseItemId));
 
 			if (item.prefixInfo != null)
@@ -982,6 +982,7 @@ namespace TQVaultAE.Data
 					// our equation is a string, so we want also strings
 					return;
 
+				string keyRaw = variable.Name;
 				string key = variable.Name.Replace(prefix, string.Empty);
 				key = key.Replace("Equation", string.Empty);
 				key = key.Replace(key[0], char.ToUpperInvariant(key[0]));
@@ -1003,6 +1004,7 @@ namespace TQVaultAE.Data
 				if (requirements.ContainsKey(key))
 					continue;
 
+				string valueRaw = variable.ToStringValue();
 				string value = variable.ToStringValue().Replace(itemLevelTag, itemLevel);
 
 				// Added by VillageIdiot
@@ -1013,7 +1015,28 @@ namespace TQVaultAE.Data
 				Variable ans = new Variable(variableKey, VariableDataType.Integer, 1);
 
 				// Changed by VillageIdiot to fix random overflow crashes.
-				double tempVal = Math.Ceiling(value.Eval<double>());
+				double tempVal = 0;
+				try
+				{
+					tempVal = value.Eval<double>();
+					tempVal = Math.Ceiling(tempVal);
+				}
+				catch (System.Data.EvaluateException)
+				{
+					var mess = $@"Item Property value computation failed!
+
+ItemID : {itemInfo.ItemId}
+ItemLevel : {lvl.ToStringValue()}
+Variablekey : {key}
+Variablekey Raw : {keyRaw}
+VariableValue : {value} 
+VariableValue Raw : {valueRaw}
+""{value}"" can't be evaluated!
+";
+					if (TQDebug.ItemDebugLevel > 0)
+						throw new System.Data.EvaluateException(mess);
+					else Log.LogError(mess);
+				}
 
 				int intVal = 0;
 				try
