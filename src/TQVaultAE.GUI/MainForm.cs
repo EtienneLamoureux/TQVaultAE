@@ -257,7 +257,21 @@ Debug Levels
 				this.tableLayoutPanelMain.CellBorderStyle = TableLayoutPanelCellBorderStyle.None;
 			}
 
+			AdjustMenuButtonVisibility();
+
 			this.CreatePanels();
+		}
+
+		private void AdjustMenuButtonVisibility()
+		{
+			this.duplicateButton.Visible = Config.Settings.Default.AllowCharacterEdit;
+			this.saveButton.Visible = Config.Settings.Default.EnableHotReload;
+			// Get last position
+			var flowctr = this.flowLayoutPanelMenuButtons.Controls;
+			var lastctr = flowctr[flowctr.Count-1];
+			var lastidx = flowctr.GetChildIndex(lastctr);
+			// Force "Exit" button in last position
+			flowctr.SetChildIndex(this.exitButton, lastidx + 1);
 		}
 
 
@@ -1047,6 +1061,9 @@ Debug Levels
 
 				this.configChanged = true;
 				this.SaveConfiguration();
+
+				AdjustMenuButtonVisibility();
+
 				if (result == DialogResult.Yes)
 				{
 					if (this.DoCloseStuff())
