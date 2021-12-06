@@ -269,6 +269,9 @@ namespace TQVaultAE.GUI.Tooltip
 			// Add the Atlantis clause
 			if (Data.Item.IsAtlantis)
 				AddRow(this.TranslationService.ItemAtlantis, TQColor.Green.Color());
+			// Add the Eternal Embers clause
+			else if (Data.Item.IsEmbers)
+				AddRow(this.TranslationService.ItemEmbers, TQColor.Green.Color());
 			// Add the Ragnarok clause
 			else if (Data.Item.IsRagnarok)
 				AddRow(this.TranslationService.ItemRagnarok, TQColor.Green.Color());

@@ -126,6 +126,7 @@ namespace TQVaultAE.Domain.Entities
 				if (this.IsImmortalThrone) ext += "(IT)";
 				else if (this.IsRagnarok) ext += "(RAG)";
 				else if (this.IsAtlantis) ext += "(ATL)";
+				else if (this.IsEmbers) ext += "(EEM)";
 				return ext;
 			}
 		}
@@ -305,6 +306,14 @@ namespace TQVaultAE.Domain.Entities
 			|| this.prefixID != null && this.prefixID.ToUpperInvariant().IndexOf("XPACK3\\", StringComparison.OrdinalIgnoreCase) >= 0
 			|| this.suffixID != null && this.suffixID.ToUpperInvariant().IndexOf("XPACK3\\", StringComparison.OrdinalIgnoreCase) >= 0;
 
+		/// <summary>
+		/// Gets a value indicating whether or not the item comes from Eternal Embers DLC.
+		/// </summary>
+		public bool IsEmbers
+			=> this.BaseItemId.ToUpperInvariant().IndexOf("XPACK4\\", StringComparison.OrdinalIgnoreCase) >= 0
+			|| this.prefixID != null && this.prefixID.ToUpperInvariant().IndexOf("XPACK4\\", StringComparison.OrdinalIgnoreCase) >= 0
+			|| this.suffixID != null && this.suffixID.ToUpperInvariant().IndexOf("XPACK4\\", StringComparison.OrdinalIgnoreCase) >= 0;
+
 
 		/// <summary>
 		/// Gets a value indicating whether the item is a scroll.
@@ -315,7 +324,7 @@ namespace TQVaultAE.Domain.Entities
 			{
 				if (this.baseItemInfo != null)
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ONESHOT_SCROLL");
-				else if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis)
+				else if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
 					&& (this.BaseItemId.ToUpperInvariant().IndexOf("\\SCROLLS\\", StringComparison.OrdinalIgnoreCase) >= 0))
 					return true;
 
@@ -330,7 +339,7 @@ namespace TQVaultAE.Domain.Entities
 		{
 			get
 			{
-				if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis)
+				if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
 					&& (this.BaseItemId.ToUpperInvariant().IndexOf("PARCHMENT", StringComparison.OrdinalIgnoreCase) >= 0))
 					return true;
 
@@ -347,7 +356,7 @@ namespace TQVaultAE.Domain.Entities
 			{
 				if (this.baseItemInfo != null)
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMARTIFACTFORMULA");
-				else if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis)
+				else if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
 					&& (this.BaseItemId.ToUpperInvariant().IndexOf("\\ARCANEFORMULAE\\", StringComparison.OrdinalIgnoreCase) >= 0))
 					return true;
 
@@ -364,7 +373,7 @@ namespace TQVaultAE.Domain.Entities
 			{
 				if (this.baseItemInfo != null)
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMARTIFACT");
-				else if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis)
+				else if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
 					&& (!this.IsFormulae && this.BaseItemId.ToUpperInvariant().IndexOf("\\ARTIFACTS\\", StringComparison.OrdinalIgnoreCase) >= 0))
 					return true;
 
@@ -462,7 +471,7 @@ namespace TQVaultAE.Domain.Entities
 						|| this.baseItemInfo.ItemClass.ToUpperInvariant().Equals(QUESTITEM))
 						return true;
 				}
-				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
 				{
 					if (this.BaseItemId.ToUpperInvariant().IndexOf(QUEST, StringComparison.OrdinalIgnoreCase) >= 0)
 						return true;
@@ -622,7 +631,7 @@ namespace TQVaultAE.Domain.Entities
 			{
 				if (this.baseItemInfo != null)
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMCHARM");
-				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
 					return this.BaseItemId.ToUpperInvariant().IndexOf("ANIMALRELICS", StringComparison.OrdinalIgnoreCase) != -1;
 				else
 					return (this.BaseItemId.ToUpperInvariant().IndexOf("\\CHARMS\\", StringComparison.OrdinalIgnoreCase) != -1);
@@ -638,7 +647,7 @@ namespace TQVaultAE.Domain.Entities
 			{
 				if (this.RelicInfo != null)
 					return this.RelicInfo.ItemClass.ToUpperInvariant().Equals("ITEMCHARM");
-				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
 					return (this.RelicInfo?.ItemId.ToUpperInvariant().IndexOf("ANIMALRELICS", StringComparison.OrdinalIgnoreCase) ?? -1) != -1;
 				else
 					return (this.RelicInfo?.ItemId.ToUpperInvariant().IndexOf("\\CHARMS\\", StringComparison.OrdinalIgnoreCase) ?? -1) != -1;
@@ -654,7 +663,7 @@ namespace TQVaultAE.Domain.Entities
 			{
 				if (this.Relic2Info != null)
 					return this.Relic2Info.ItemClass.ToUpperInvariant().Equals("ITEMCHARM");
-				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
 					return (this.Relic2Info?.ItemId.ToUpperInvariant().IndexOf("ANIMALRELICS", StringComparison.OrdinalIgnoreCase) ?? -1) != -1;
 				else
 					return (this.Relic2Info?.ItemId.ToUpperInvariant().IndexOf("\\CHARMS\\", StringComparison.OrdinalIgnoreCase) ?? -1) != -1;
@@ -673,7 +682,7 @@ namespace TQVaultAE.Domain.Entities
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMRELIC")
 						|| this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ITEMCHARM");
 				}
-				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis)
+				else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
 					return this.BaseItemId.ToUpperInvariant().IndexOf("RELICS", StringComparison.OrdinalIgnoreCase) != -1;
 				else
 				{

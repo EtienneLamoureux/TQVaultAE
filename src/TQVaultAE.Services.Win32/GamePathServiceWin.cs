@@ -195,6 +195,12 @@ namespace TQVaultAE.Services.Win32
 		public bool IsAtlantisInstalled
 			=> Directory.Exists(ImmortalThronePath + "\\Resources\\XPack3");
 
+		/// <summary>
+		/// Gets a value indicating whether Eternal Embers DLC has been installed.
+		/// </summary>
+		public bool IsEmbersInstalled
+			=> Directory.Exists(ImmortalThronePath + "\\Resources\\XPack4");
+
 
 		/// <summary>
 		/// Gets or sets the name of the custom map.

@@ -297,7 +297,6 @@ Chcesz zrestartować TQVault?</value>
   <data name="ItemSeed" xml:space="preserve">
     <value>Wartości Początkowe przedmiotu: {0} (0x{0:X8}) ({1:p3})</value>
   </data>
-  
   <data name="ItemWith" xml:space="preserve">
     <value>z</value>
   </data>
@@ -950,9 +949,6 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Zezwalaj na funkcje edycji znaków</value>
   </data>
-  
-  
-  
   <data name="CEAttributePoints" xml:space="preserve">
     <value>Punkty atrybutów</value>
   </data>
@@ -995,61 +991,6 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   <data name="CharacterEditBtn" xml:space="preserve">
     <value>Edytować</value>
   </data>
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   <data name="CurrentLevel" xml:space="preserve">
     <value>Poziom</value>
   </data>
@@ -1125,15 +1066,15 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   <data name="CriticalHitsReceived" xml:space="preserve">
     <value>krytyczne Recv</value>
   </data>
-
-
   <data name="TextTag_tagRelic" xml:space="preserve">
     <value>Relikt</value>
     <comment>Substitute for missing tag for "Relic"</comment>
   </data>
-
   <data name="TextTag_tagArtifact" xml:space="preserve">
     <value>Artekaft</value>
     <comment>Substitute for missing tag for "Artifact"</comment>
+  </data>
+  <data name="ItemEmbers" xml:space="preserve">
+    <value>Przedmiot z Eternal Embers</value>
   </data>
 </root>
