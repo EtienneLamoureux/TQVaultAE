@@ -2496,6 +2496,105 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidan {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief02-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanDefense {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanDefense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to xtagMasteryBrief09-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanDream {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanDream", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief03-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanEarth {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanEarth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief06-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanHunting {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanHunting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief08-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanNature {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanNature", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief05-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanRogue {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanRogue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to x2tagRuneMasteryBrief-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanRune {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanRune", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief07-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanSpirit {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanSpirit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief04-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanStorm {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanStorm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief01-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanWarfare {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanWarfare", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to xtagMasteryBrief09.
         /// </summary>
         public static string MasteriesxtagCharacterClass01 {

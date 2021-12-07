@@ -1683,4 +1683,37 @@ You still have to close TQVaultAE to apply your changes.
   <data name="ItemEmbers" xml:space="preserve">
     <value>Eternal Embers Item</value>
   </data>
+  <data name="Masteriesx4tagNeidan" xml:space="preserve">
+    <value>x4tagNeidan</value>
+  </data>
+  <data name="Masteriesx4tagNeidanDefense" xml:space="preserve">
+    <value>tagMasteryBrief02-x4tagNeidan</value>
+  </data>
+  <data name="Masteriesx4tagNeidanDream" xml:space="preserve">
+    <value>xtagMasteryBrief09-x4tagNeidan</value>
+  </data>
+  <data name="Masteriesx4tagNeidanEarth" xml:space="preserve">
+    <value>tagMasteryBrief03-x4tagNeidan</value>
+  </data>
+  <data name="Masteriesx4tagNeidanHunting" xml:space="preserve">
+    <value>tagMasteryBrief06-x4tagNeidan</value>
+  </data>
+  <data name="Masteriesx4tagNeidanNature" xml:space="preserve">
+    <value>tagMasteryBrief08-x4tagNeidan</value>
+  </data>
+  <data name="Masteriesx4tagNeidanRogue" xml:space="preserve">
+    <value>tagMasteryBrief05-x4tagNeidan</value>
+  </data>
+  <data name="Masteriesx4tagNeidanRune" xml:space="preserve">
+    <value>x2tagRuneMasteryBrief-x4tagNeidan</value>
+  </data>
+  <data name="Masteriesx4tagNeidanSpirit" xml:space="preserve">
+    <value>tagMasteryBrief07-x4tagNeidan</value>
+  </data>
+  <data name="Masteriesx4tagNeidanStorm" xml:space="preserve">
+    <value>tagMasteryBrief04-x4tagNeidan</value>
+  </data>
+  <data name="Masteriesx4tagNeidanWarfare" xml:space="preserve">
+    <value>tagMasteryBrief01-x4tagNeidan</value>
+  </data>
 </root>

@@ -1091,7 +1091,7 @@ Used to track changes in the translation file.</comment>
     <value>Артефакт</value>
     <comment>Substitute for missing tag for "Artifact"</comment>
   </data>
-  <data name="ItemRagnarok1" xml:space="preserve">
+  <data name="ItemEmbers" xml:space="preserve">
     <value>Предмет Eternal Embers</value>
   </data>
 </root>
