@@ -615,7 +615,8 @@ namespace TQVaultAE.Domain.Entities
 				if (this.baseItemInfo != null)
 				{
 					return this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ONESHOT_POTIONHEALTH")
-						|| this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ONESHOT_POTIONMANA");
+						|| this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ONESHOT_POTIONMANA")
+						|| this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ONESHOT_SCROLL_ETERNAL"); //AMS: New EE Potions (Mystical Potions)
 				}
 
 				return this.BaseItemId.ToUpperInvariant().IndexOf("ONESHOT\\POTION", StringComparison.OrdinalIgnoreCase) != -1;
@@ -717,6 +718,7 @@ namespace TQVaultAE.Domain.Entities
 			("QUESTITEM", "tagQuestItem"),
 			("ONESHOT_POTIONHEALTH", "tagHUDHealthPotion"),
 			("ONESHOT_POTIONMANA", "tagHUDEnergyPotion"),
+			("ONESHOT_SCROLL_ETERNAL", "x4tag_PotionReward"), // Translate into: Mystical Potion
 			("ARMORJEWELRY_AMULET", "tagItemAmulet") ,
 			("ARMORJEWELRY_RING", "tagItemRing") ,
 			("ITEMCHARM", "tagItemCharm") ,
