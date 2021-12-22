@@ -305,7 +305,6 @@ Esto podría estar causado por un idioma o ruta del juego mal configurada.
   <data name="ItemSeed" xml:space="preserve">
     <value>Semilla: {0} (0x{0:X8}) ({1:p3})</value>
   </data>
-  
   <data name="ItemWith" xml:space="preserve">
     <value>con</value>
   </data>
@@ -948,9 +947,6 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Permitir características de edición de caracteres</value>
   </data>
-  
-  
-  
   <data name="CEAttributePoints" xml:space="preserve">
     <value>Puntos de atributo</value>
   </data>
@@ -993,61 +989,6 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
   <data name="CharacterEditBtn" xml:space="preserve">
     <value>Editar</value>
   </data>
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   <data name="CurrentLevel" xml:space="preserve">
     <value>Nivel</value>
   </data>
@@ -1123,15 +1064,15 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
   <data name="CriticalHitsReceived" xml:space="preserve">
     <value>Críticas tomadas</value>
   </data>
-
-
   <data name="TextTag_tagRelic" xml:space="preserve">
     <value>Reliquia</value>
     <comment>Substitute for missing tag for "Relic"</comment>
   </data>
-
   <data name="TextTag_tagArtifact" xml:space="preserve">
     <value>Artefacto</value>
     <comment>Substitute for missing tag for "Artifact"</comment>
+  </data>
+  <data name="ItemEmbers" xml:space="preserve">
+    <value>Objeto de Eternal Embers</value>
   </data>
 </root>

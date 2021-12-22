@@ -34,6 +34,7 @@ namespace TQVaultAE.Domain.Entities
 		public bool MasteryHuntingEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Hunting.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
 		public bool MasteryStealthEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Stealth.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
 		public bool MasterySpiritEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Spirit.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
+		public bool MasteryNeidanEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Neidan.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
 
 		public string[] ActiveMasteriesRecordNames
 		{
@@ -65,6 +66,7 @@ namespace TQVaultAE.Domain.Entities
 				m = MasteryHuntingEnabled ? m | (int)Masteries.Hunting : m;
 				m = MasteryStealthEnabled ? m | (int)Masteries.Stealth : m;
 				m = MasterySpiritEnabled ? m | (int)Masteries.Spirit : m;
+				m = MasteryNeidanEnabled ? m | (int)Masteries.Neidan : m;
 				if (m > 0) val = (Masteries)m;
 				return val;
 			}

@@ -118,7 +118,16 @@ namespace TQVaultAE.Data
 			"BONUSMANAPOINTS",
 			"DISPLAYASQUESTITEM",  // New tags from the latest expansions.
 			"ACTORSCALE",
-			"ACTORSCALETIME"
+			"ACTORSCALETIME",
+			"SPAWNOBJECTSDISTANCEINCREMENT", // AMS: Additional tags to ignore
+			"SPAWNOBJECTSDISTANCEINNERCIRCLE",
+			"SPAWNOBJECTSNUMBEROFRINGS",
+			"SPAWNOBJECTSSPACINGANGLE",
+			"CONTAGIONINTERVAL",
+			"CONTAGIONLIMIT",
+			"CONTAGIONMAXSPREAD",
+			"CONTAGIONRADIUS",
+			"NOHIGHLIGHTDEFAULTCOLORA" // AMS: New property on most EE items
 		};
 
 		internal static readonly string[] requirementTags =
@@ -141,6 +150,21 @@ namespace TQVaultAE.Data
 			"CHARACTERLIFEMODIFIER",
 			"CHARACTERMANA",
 			"CHARACTERMANAMODIFIER",
+		};
+
+		internal static readonly string[] durationIndependentEffects =
+		{
+			"OFFENSIVESLOWTOTALSPEED",
+			"OFFENSIVESLOWATTACKSPEED",
+			"OFFENSIVESLOWRUNSPEED",
+			"OFFENSIVESLOWOFFENSIVEABILITY",
+			"OFFENSIVESLOWDEFENSIVEABILITY",
+			"OFFENSIVESLOWOFFENSIVEREDUCTION",
+			"OFFENSIVESLOWDEFENSIVEREDUCTION",
+			"OFFENSIVETOTALDAMAGEREDUCTIONPERCENT",
+			"OFFENSIVETOTALDAMAGEREDUCTIONABSOLUTE",
+			"OFFENSIVETOTALRESISTANCEREDUCTIONPERCENT",
+			"OFFENSIVETOTALRESISTANCEREDUCTIONABSOLUTE"
 		};
 
 		public ItemProvider(
@@ -1828,6 +1852,16 @@ VariableValue Raw : {valueRaw}
 		}
 
 		/// <summary>
+		/// Checks if the Effect type does not has value magnitude dependent on Duration.
+		/// </summary>
+		/// <param name="effectName">ItemAttributesData.Effect value</param>
+		/// <returns>True if the effect magnitude does depend on the duration</returns>
+		private bool IsDurationReliantValue(string effectName)
+		{
+			return Array.IndexOf(durationIndependentEffects, effectName.ToUpperInvariant()) == -1;
+		}
+
+		/// <summary>
 		/// Gets a formatted range amount
 		/// </summary>
 		/// <param name="data">ItemAttributesData data</param>
@@ -1892,7 +1926,8 @@ VariableValue Raw : {valueRaw}
 
 			// Added by VillageIdiot
 			// Adjust for itemScalePercent
-			if (minDurVar != null)
+			// AMS: Added If the value is reliant on the duration.
+			if ((minDurVar != null) && IsDurationReliantValue(data.Effect))
 			{
 				min[Math.Min(min.NumberOfValues - 1, varNum)] = (float)min[Math.Min(min.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues - 1] * itm.itemScalePercent;
 				max[Math.Min(max.NumberOfValues - 1, varNum)] = (float)max[Math.Min(max.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues - 1] * itm.itemScalePercent;
@@ -1972,7 +2007,7 @@ VariableValue Raw : {valueRaw}
 				var curvar = currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)];
 				if (currentVariable.DataType == VariableDataType.Float)
 				{
-					if (minDurVar != null)
+					if ((minDurVar != null) && IsDurationReliantValue(data.Effect))
 					{
 						curvar = (float)curvar * (float)minDurVar[minDurVar.NumberOfValues - 1] * itm.itemScalePercent;
 					}
@@ -3206,7 +3241,7 @@ VariableValue Raw : {valueRaw}
 						&& (normalizedAttributeVariable == "MIN"
 							|| normalizedAttributeVariable == "MAX"
 							|| normalizedAttributeVariable == "DRAINMIN"
-							|| attributeData.Variable == "DRAINMAX"
+							|| normalizedAttributeVariable == "DRAINMAX"
 						)
 					)
 					&& !(duration != null && (normalizedAttributeVariable == "DURATIONMIN" || normalizedAttributeVariable == "DURATIONMAX"))

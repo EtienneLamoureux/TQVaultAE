@@ -45,6 +45,10 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		string ItemRagnarok { get; }
 		/// <summary>
+		/// Gets the string which indicates an Eternal Embers item.
+		/// </summary>
+		string ItemEmbers { get; }
+		/// <summary>
 		/// Gets the string which indicates an Atlantis item.
 		/// </summary>
 		string ItemAtlantis { get; }

@@ -35,6 +35,9 @@ namespace TQVaultAE.Presentation
 		/// <returns>bitmap of tex file.</returns>
 		public Bitmap LoadFromTexMemory(byte[] data, int offset, int count)
 		{
+			// AMS: Yet another hack to new offset needed for Atlantis and Eternal Ember Images...
+			int newTextureOffsetAdd = int.MinValue;
+
 			if (data == null)
 				throw new ArgumentNullException("data");
 
@@ -50,7 +53,15 @@ namespace TQVaultAE.Presentation
 				return null;
 			}
 
-			if (BitConverter.ToUInt32(data, offset) != 0x01584554)
+			if (BitConverter.ToUInt32(data, offset) == 0x01584554)
+			{
+				newTextureOffsetAdd = 0;
+			}
+			else if (BitConverter.ToUInt32(data, offset) == 39339348)
+			{
+				newTextureOffsetAdd = 1;
+			}
+			else
 			{
 				Log.LogError("Unexpected TEX magic found in game files, ignoring.");
 				return null;
@@ -68,14 +79,14 @@ namespace TQVaultAE.Presentation
 			if (textureOffset < 0 || textureOffset > (count - offset))
 				throw new InvalidDataException("TEX texture offset is invalid.");
 
-			int textureLength = BitConverter.ToInt32(data, offset + 8);
+			int textureLength = BitConverter.ToInt32(data, offset + 8 + newTextureOffsetAdd);
 			if (textureLength < 0 || textureLength > (count - offset - textureOffset))
 				throw new InvalidDataException("TEX texture length is invalid.");
 
 			if (textureLength < 4)
 				throw new InvalidDataException("Cannot read TEX texture image magic.");
 
-			int realOffset = offset + textureOffset + 12;
+			int realOffset = offset + textureOffset + 12 + newTextureOffsetAdd;
 
 			// realOffset + 0           = DDSmagic "DDS " or "DDSR"
 			//                            Following DDSmagic we have the DDS_HEADER structure.
