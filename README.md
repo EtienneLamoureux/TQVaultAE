@@ -167,6 +167,10 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 
 *A. Yes*
 
+**Q. Does TQVaultAE work with the Eternal Embers expansion?**
+
+*A. Yes*
+
 **Q. Can I still earn achievements while using TQVaultAE?**
 
 *A. Yes*
