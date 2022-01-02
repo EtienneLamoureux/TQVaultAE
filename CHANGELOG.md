@@ -7,6 +7,7 @@
 - #222 Fix displayed stats for "over time" effects
 - #388 Prevent crashes when using certain "hard" mods
 - #391 Fix crash when there are no player saves present
+- #385 Correctly display Atlantis items
 
 ### Other
 - Fix SearchOperator + ComboBox "Level"
