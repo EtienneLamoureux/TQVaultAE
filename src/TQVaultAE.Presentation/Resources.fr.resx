@@ -1111,6 +1111,9 @@ Vous ne serez également pas en mesure d'équiper l'objet sur ce personnage.</va
   <data name="ResetMasteriesButton" xml:space="preserve">
     <value>Réinit. Maîtrises</value>
   </data>
+  <data name="ResetAttributesButton" xml:space="preserve">
+    <value>Réinit. Attributs</value>
+  </data>
   <data name="TextTag_tagRelic" xml:space="preserve">
     <value>Relique</value>
     <comment>Substitute for missing tag for "Relic"</comment>
@@ -1133,6 +1136,12 @@ Vous ne serez également pas en mesure d'équiper l'objet sur ce personnage.</va
   </data>
   <data name="SearchOperatorTitle" xml:space="preserve">
     <value>Opérateur de recherche</value>
+  </data>
+  <data name="SearchOperatorAnd" xml:space="preserve">
+    <value>Et</value>
+  </data>
+  <data name="SearchOperatorOr" xml:space="preserve">
+    <value>Ou</value>
   </data>
   <data name="SearchOperatorDescOr" xml:space="preserve">
     <value>Trouve les objets ayant un filtre ou plus</value>
@@ -1202,5 +1211,17 @@ Vous ne serez également pas en mesure d'équiper l'objet sur ce personnage.</va
   </data>
   <data name="GlobalDeleteConfirm" xml:space="preserve">
     <value>Etes-vous sûr de vouloir supprimer "{0}" ?</value>
+  </data>
+  <data name="SettingsEnableHotReload" xml:space="preserve">
+    <value>Active le rechargement dynamique des sauvegardes</value>
+  </data>
+  <data name="SettingsEnableHotReloadTT" xml:space="preserve">
+    <value>Les modifications des fichiers de sauvegarde du jeu (Player, Stash, Transfer Stash, Relic Stash) son visibles en temps réel dans TQVaultAE.
+Au cas ou vous auriez des modifications non sauvegardées dans TQVaultAE, les modifications dans le jeu l'emportent et les écrasent.
+Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les fichiers sauvegarde.
+    </value>
+  </data>
+  <data name="ItemEmbers" xml:space="preserve">
+    <value>Objet Eternal Embers</value>
   </data>
 </root>

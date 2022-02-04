@@ -11,12 +11,28 @@ using TQVaultAE.Logs;
 using System.Linq;
 using TQVaultAE.Domain.Contracts.Services;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+using TQVaultAE.Domain.Results;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace TQVaultAE.GUI
 {
 	public partial class MainForm
 	{
 		private IPlayerService playerService = null;
+
+		private IReadOnlyCollection<string> _watchedPlayerFiles = null;
+		private IEnumerable<string> WatchedPlayerFiles
+		{
+			get
+			{
+				if (_watchedPlayerFiles is null)
+					_watchedPlayerFiles = new List<string> { this.GamePathResolver.PlayerSaveFileName, this.GamePathResolver.PlayerStashFileNameB }.AsReadOnly();
+
+				return _watchedPlayerFiles;
+			}
+		}
 
 		/// <summary>
 		/// Handler for changing the Character drop down selection.
@@ -39,7 +55,7 @@ namespace TQVaultAE.GUI
 			}
 			else
 			{
-				this.LoadPlayer(selectedSave);
+				this.LoadPlayerAndStash(selectedSave);
 			}
 			this.Refresh();
 		}
@@ -54,7 +70,17 @@ namespace TQVaultAE.GUI
 
 			var characters = this.playerService.GetPlayerSaveList();
 
-			if (!characters?.Any() ?? false)
+			// Init FileWatcher
+			if (Config.Settings.Default.EnableHotReload)
+			{
+				foreach (var ps in characters)
+				{
+					ps.PlayerSaveWatcher = CreateFileWatcher(ps.Folder, this.GamePathResolver.PlayerSaveFileName);
+					ps.PlayerStashWatcher = CreateFileWatcher(ps.Folder, this.GamePathResolver.PlayerStashFileNameB);
+				}
+			}
+
+			if (!(characters?.Any() ?? false))
 				this.characterComboBox.Items.Add(Resources.MainFormNoCharacters);
 			else
 			{
@@ -64,6 +90,75 @@ namespace TQVaultAE.GUI
 			}
 
 			this.characterComboBox.SelectedIndex = 0;
+		}
+
+		// Called on FileSystemWatcher thread
+		private void PlayerSaveFile_Changed(object sender, FileSystemEventArgs e)
+		{
+			if (e.ChangeType != WatcherChangeTypes.Changed
+				|| !this.WatchedPlayerFiles.Any(f => f.Equals(e.Name, StringComparison.OrdinalIgnoreCase))
+			) return;
+
+			var fw = sender as FileSystemWatcher;
+			fw.EnableRaisingEvents = false;
+
+			// retrieve PlayerSave
+			var playerSave = this.characterComboBox.Items.OfType<PlayerSave>().FirstOrDefault(ps => ps.Folder == fw.Path);
+
+		retryOnLock:
+			try
+			{
+				// Reload player file
+				LoadPlayerResult playerResult = null;
+				if (e.Name.Equals(this.GamePathResolver.PlayerSaveFileName, StringComparison.OrdinalIgnoreCase))
+					playerResult = this.LoadPlayer(playerSave, true);
+
+				LoadPlayerStashResult stashResult = null;
+				if (e.Name.Equals(this.GamePathResolver.PlayerStashFileNameB, StringComparison.OrdinalIgnoreCase))
+					stashResult = this.LoadPlayerStash(playerSave, true);
+
+				// Refresh
+				this.Invoke((MethodInvoker)delegate
+				{
+					// if is current displayed character
+					if (this.characterComboBox.SelectedItem == playerSave)
+					{
+						if (playerResult is not null)
+						{
+							this.playerPanel.Player = playerResult.Player;
+							this.stashPanel.Player = playerResult.Player;
+						}
+
+						if (stashResult is not null)
+							this.stashPanel.Stash = stashResult.Stash;
+					}
+
+					fw.EnableRaisingEvents = true;
+				});
+			}
+			catch (IOException ioException)
+			{
+				Log.LogError(ioException, "Retry in 0.5 sec");
+				Thread.Sleep(500);
+				goto retryOnLock;
+			}
+		}
+
+
+		private FileSystemWatcher CreateFileWatcher(string folder, string filename)
+		{
+			// the game write save file when inventory is opened and again when it's closed. We can't distinguish between both events.
+			var fw = new FileSystemWatcher();
+			fw.BeginInit();
+			fw.Path = folder;
+			fw.Filter = filename;
+			fw.EnableRaisingEvents = true;
+			fw.IncludeSubdirectories = false;
+			fw.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.CreationTime;// You need "CreationTime" in order to trigger "LastWrite"
+			fw.SynchronizingObject = this;
+			fw.Changed += new FileSystemEventHandler(this.PlayerSaveFile_Changed);
+			fw.EndInit();
+			return fw;
 		}
 
 		/// <summary>
@@ -99,7 +194,7 @@ namespace TQVaultAE.GUI
 			{
 				this.playerPanel.Player = null;
 				this.stashPanel.Player = null;
-				this.stashPanel.CurrentBag = 0;
+				this.stashPanel.CurrentBag = StashPanel.BAGID_EQUIPMENTPANEL;
 
 				if (this.stashPanel.Stash != null)
 					this.stashPanel.Stash = null;
@@ -112,9 +207,20 @@ namespace TQVaultAE.GUI
 		/// Changed by VillageIdiot to a separate function.
 		/// </summary>
 		/// <param name="selectedSave">Player string from the drop down list.</param>
-		private void LoadPlayer(PlayerSave selectedSave)
+		/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
+		/// <returns></returns>
+		private (LoadPlayerResult PlayerResult, LoadPlayerStashResult StashResult) LoadPlayerAndStash(PlayerSave selectedSave, bool fromFileWatcher = false)
 		{
-			var result = this.playerService.LoadPlayer(selectedSave, true);
+			var result = LoadPlayer(selectedSave, fromFileWatcher);
+
+			var resultStash = this.LoadPlayerStash(selectedSave, fromFileWatcher);
+
+			return (result, resultStash);
+		}
+
+		private LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool fromFileWatcher)
+		{
+			var result = this.playerService.LoadPlayer(selectedSave, true, fromFileWatcher);
 
 			// Get the player
 			try
@@ -125,9 +231,12 @@ namespace TQVaultAE.GUI
 					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
-				this.playerPanel.Player = result.Player;
-				this.stashPanel.Player = result.Player;
-				this.stashPanel.CurrentBag = 0;
+				if (!fromFileWatcher)
+				{
+					this.playerPanel.Player = result.Player;
+					this.stashPanel.Player = result.Player;
+					this.stashPanel.CurrentBag = StashPanel.BAGID_EQUIPMENTPANEL;
+				}
 			}
 			catch (IOException exception)
 			{
@@ -138,8 +247,13 @@ namespace TQVaultAE.GUI
 				this.characterComboBox.SelectedIndex = 0;
 			}
 
+			return result;
+		}
+
+		private LoadPlayerStashResult LoadPlayerStash(PlayerSave selectedSave, bool fromFileWatcher = false)
+		{
 			// Get the player's stash
-			var resultStash = this.stashService.LoadPlayerStash(selectedSave);
+			var resultStash = this.stashService.LoadPlayerStash(selectedSave, fromFileWatcher);
 			try
 			{
 				// Throw a message if the stash is not present.
@@ -155,7 +269,7 @@ namespace TQVaultAE.GUI
 					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
 
-				this.stashPanel.Stash = resultStash.Stash;
+				if (!fromFileWatcher) this.stashPanel.Stash = resultStash.Stash;
 			}
 			catch (IOException exception)
 			{
@@ -164,6 +278,8 @@ namespace TQVaultAE.GUI
 				Log.LogError(exception, msg);
 				this.stashPanel.Stash = null;
 			}
+
+			return resultStash;
 		}
 
 		/// <summary>

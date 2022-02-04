@@ -33,6 +33,10 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		bool IsRagnarokInstalled { get; }
 		/// <summary>
+		/// Gets a value indicating whether Eternal Embers DLC has been installed.
+		/// </summary>
+		bool IsEmbersInstalled { get; }
+		/// <summary>
 		/// Gets or sets the name of the custom map.
 		/// Added to support custom quest characters
 		/// </summary>
@@ -41,7 +45,7 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// Gets the filename for the game's relic vault stash.
 		/// Stash files for Mods all have their own subdirectory which is the same as the mod's custom map folder
 		/// </summary>
-		string RelicVaultStashFile { get; }
+		string RelicVaultStashFileFullPath { get; }
 		/// <summary>
 		/// Gets or sets the Titan Quest game path.
 		/// </summary>
@@ -67,7 +71,7 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// Gets the filename for the game's transfer stash.
 		/// Stash files for Mods all have their own subdirectory which is the same as the mod's custom map folder
 		/// </summary>
-		string TransferStashFile { get; }
+		string TransferStashFileFullPath { get; }
 		/// <summary>
 		/// Gets a value indicating whether the vault save folder has been changed.
 		/// Usually done via settings and triggers a reload of the vaults.
@@ -139,5 +143,12 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		/// <returns></returns>
 		string ResolveGamePath();
+
+		string TransferStashFileName { get; }
+		string RelicVaultStashFileName { get; }
+		string PlayerSaveFileName { get; }
+		string PlayerStashFileNameB { get; }
+		string PlayerStashFileNameG { get; }
+
 	}
 }

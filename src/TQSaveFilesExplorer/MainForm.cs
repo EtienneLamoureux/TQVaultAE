@@ -89,13 +89,6 @@ namespace TQ.SaveFilesExplorer
 			this.tabControlFiles.TabPages.Clear();
 
 			DetectLocalSaves();
-
-#if DEBUG
-			//var path = @"C:\Users\hguyau\Documents\My Games\Titan Quest - Immortal Throne\SaveData\Main\_Davina\Player.chr";
-			//var path = @"C:\Users\Hervé\Documents\my games\Titan Quest Backup\FirstRun\SaveData\Main\_yujiro\winsys.dxb";
-			//var path = @"C:\Users\Hervé\Documents\my games\Titan Quest Backup\FirstRun\SaveData\Main\_yujiro\Player.chr";
-			//AddFilePage(path);
-#endif
 		}
 
 

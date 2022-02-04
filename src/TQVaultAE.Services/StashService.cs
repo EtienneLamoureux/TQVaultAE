@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
@@ -28,8 +29,9 @@ namespace TQVaultAE.Services
 		/// Loads a player stash using the drop down list.
 		/// </summary>
 		/// <param name="selectedSave">Item from the drop down list.</param>
+		/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
 		/// <returns></returns>
-		public LoadPlayerStashResult LoadPlayerStash(PlayerSave selectedSave)
+		public LoadPlayerStashResult LoadPlayerStash(PlayerSave selectedSave, bool fromFileWatcher = false)
 		{
 			var result = new LoadPlayerStashResult();
 
@@ -39,7 +41,7 @@ namespace TQVaultAE.Services
 
 			result.StashFile = GamePathResolver.GetPlayerStashFile(selectedSave.Name);
 
-			result.Stash = this.userContext.Stashes.GetOrAddAtomic(result.StashFile, k =>
+			Stash addStash(string k)
 			{
 				var stash = new Stash(selectedSave.Name, k);
 				try
@@ -51,7 +53,17 @@ namespace TQVaultAE.Services
 					stash.ArgumentException = argumentException;
 				}
 				return stash;
-			});
+			}
+
+			Stash updateStash(string k, Stash oldValue)
+			{
+				// no logic with oldValue
+				return addStash(k);
+			}
+
+			result.Stash = fromFileWatcher
+				? this.userContext.Stashes.AddOrUpdateAtomic(result.StashFile, addStash, updateStash)
+				: this.userContext.Stashes.GetOrAddAtomic(result.StashFile, addStash);
 
 			#endregion
 
@@ -61,13 +73,15 @@ namespace TQVaultAE.Services
 		/// <summary>
 		/// Loads the transfer stash for immortal throne
 		/// </summary>
-		public LoadTransferStashResult LoadTransferStash()
+		/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
+		/// <returns></returns>
+		public LoadTransferStashResult LoadTransferStash(bool fromFileWatcher = false)
 		{
 			var result = new LoadTransferStashResult();
 
-			result.TransferStashFile = GamePathResolver.TransferStashFile;
+			result.TransferStashFile = GamePathResolver.TransferStashFileFullPath;
 
-			var resultStash = this.userContext.Stashes.GetOrAddAtomic(result.TransferStashFile, k =>
+			Stash addStash(string k)
 			{
 				var stash = new Stash(Resources.GlobalTransferStash, result.TransferStashFile);
 				try
@@ -79,7 +93,17 @@ namespace TQVaultAE.Services
 					stash.ArgumentException = argumentException;
 				}
 				return stash;
-			});
+			}
+
+			Stash updateStash(string k, Stash oldValue)
+			{
+				return addStash(k);
+			}
+
+			var resultStash = fromFileWatcher
+				? this.userContext.Stashes.AddOrUpdateAtomic(result.TransferStashFile, addStash, updateStash)
+				: this.userContext.Stashes.GetOrAddAtomic(result.TransferStashFile, addStash);
+
 			result.Stash = resultStash;
 			result.Stash.IsImmortalThrone = true;
 
@@ -90,14 +114,15 @@ namespace TQVaultAE.Services
 		/// <summary>
 		/// Loads the relic vault stash
 		/// </summary>
-		public LoadRelicVaultStashResult LoadRelicVaultStash()
+		/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
+		/// <returns></returns>
+		public LoadRelicVaultStashResult LoadRelicVaultStash(bool fromFileWatcher = false)
 		{
 			var result = new LoadRelicVaultStashResult();
 
-			result.RelicVaultStashFile = GamePathResolver.RelicVaultStashFile;
+			result.RelicVaultStashFile = GamePathResolver.RelicVaultStashFileFullPath;
 
-			// Get the relic vault stash
-			var resultStash = this.userContext.Stashes.GetOrAddAtomic(result.RelicVaultStashFile, k =>
+			Stash addStash(string k)
 			{
 				var stash = new Stash(Resources.GlobalRelicVaultStash, k);
 
@@ -113,7 +138,18 @@ namespace TQVaultAE.Services
 				}
 
 				return stash;
-			});
+			}
+
+			Stash updateStash(string k, Stash oldValue)
+			{
+				return addStash(k);
+			}
+
+			// Get the relic vault stash
+			var resultStash = fromFileWatcher
+				? this.userContext.Stashes.AddOrUpdateAtomic(result.RelicVaultStashFile, addStash, updateStash)
+				: this.userContext.Stashes.GetOrAddAtomic(result.RelicVaultStashFile, addStash);
+
 			result.Stash = resultStash;
 			result.Stash.IsImmortalThrone = true;
 

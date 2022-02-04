@@ -1258,6 +1258,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Eternal Embers Item.
+        /// </summary>
+        public static string ItemEmbers {
+            get {
+                return ResourceManager.GetString("ItemEmbers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Immortal Throne Item.
         /// </summary>
         public static string ItemIT {
@@ -2487,6 +2496,105 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidan {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief02-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanDefense {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanDefense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to xtagMasteryBrief09-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanDream {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanDream", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief03-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanEarth {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanEarth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief06-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanHunting {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanHunting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief08-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanNature {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanNature", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief05-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanRogue {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanRogue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to x2tagRuneMasteryBrief-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanRune {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanRune", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief07-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanSpirit {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanSpirit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief04-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanStorm {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanStorm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tagMasteryBrief01-x4tagNeidan.
+        /// </summary>
+        public static string Masteriesx4tagNeidanWarfare {
+            get {
+                return ResourceManager.GetString("Masteriesx4tagNeidanWarfare", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to xtagMasteryBrief09.
         /// </summary>
         public static string MasteriesxtagCharacterClass01 {
@@ -2794,6 +2902,15 @@ namespace TQVaultAE.Presentation {
             get {
                 object obj = ResourceManager.GetObject("ProgressBarFill", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset Attributes.
+        /// </summary>
+        public static string ResetAttributesButton {
+            get {
+                return ResourceManager.GetString("ResetAttributesButton", resourceCulture);
             }
         }
         
@@ -3288,6 +3405,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to And.
+        /// </summary>
+        public static string SearchOperatorAnd {
+            get {
+                return ResourceManager.GetString("SearchOperatorAnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Find items having all filters.
         /// </summary>
         public static string SearchOperatorDescAnd {
@@ -3302,6 +3428,15 @@ namespace TQVaultAE.Presentation {
         public static string SearchOperatorDescOr {
             get {
                 return ResourceManager.GetString("SearchOperatorDescOr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Or.
+        /// </summary>
+        public static string SearchOperatorOr {
+            get {
+                return ResourceManager.GetString("SearchOperatorOr", resourceCulture);
             }
         }
         
@@ -3546,6 +3681,27 @@ namespace TQVaultAE.Presentation {
         public static string SettingsDetectLanguage {
             get {
                 return ResourceManager.GetString("SettingsDetectLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow Hot Reload Features.
+        /// </summary>
+        public static string SettingsEnableHotReload {
+            get {
+                return ResourceManager.GetString("SettingsEnableHotReload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All &quot;in game&quot; update of a monitored save file (Player, Stash, Transfer Stash, Relic Stash) are visible in real time in TQVaultAE.
+        ///In case you have unsaved changes in TQVaultAE, the &quot;in game&quot; saving system prevail and override your changes.
+        ///You still have to close TQVaultAE to apply your changes.
+        ///    .
+        /// </summary>
+        public static string SettingsEnableHotReloadTT {
+            get {
+                return ResourceManager.GetString("SettingsEnableHotReloadTT", resourceCulture);
             }
         }
         

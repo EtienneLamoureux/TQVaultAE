@@ -28,13 +28,12 @@ namespace TQVaultAE.GUI
 			this.GetPlayerList();
 
 			// Added support for custom map character list
+			this.customMapText.Visible = false;
 			if (GamePathResolver.IsCustom)
 			{
 				this.customMapText.Visible = true;
 				this.customMapText.Text = string.Format(CultureInfo.CurrentCulture, Resources.MainFormCustomMapLabel, Path.GetFileName(GamePathResolver.MapName));
 			}
-			else
-				this.customMapText.Visible = false;
 
 			this.CreateVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function
 			this.CreateSecondaryVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function
@@ -77,10 +76,10 @@ namespace TQVaultAE.GUI
 				this.lastBag = this.stashPanel.CurrentBag;
 				this.stashPanel.Player = null;
 				this.stashPanel.Stash = null;
-				if (this.stashPanel.CurrentBag != 1)
+				if (this.stashPanel.CurrentBag != StashPanel.BAGID_TRANSFERSTASH)
 				{
 					this.stashPanel.SackPanel.ClearSelectedItems();
-					this.stashPanel.CurrentBag = 1;
+					this.stashPanel.CurrentBag = StashPanel.BAGID_TRANSFERSTASH;
 				}
 
 				this.vaultPanel.SackPanel.SecondaryVaultShown = true;
@@ -291,7 +290,7 @@ namespace TQVaultAE.GUI
 				if (this.DragInfo.AutoMove == AutoMoveLocation.Stash)
 				{
 					// Check if we are moving to the player's stash
-					if (this.stashPanel.CurrentBag == 2 && this.stashPanel.Player == null)
+					if (this.stashPanel.CurrentBag == StashPanel.BAGID_PLAYERSTASH && this.stashPanel.Player == null)
 					{
 						// We have nowhere to send the item so cancel the move.
 						this.DragInfo.Cancel();
@@ -299,14 +298,14 @@ namespace TQVaultAE.GUI
 					}
 
 					// Check for the equipment panel
-					if (this.stashPanel.CurrentBag == 0)
+					if (this.stashPanel.CurrentBag == StashPanel.BAGID_EQUIPMENTPANEL)
 					{
 						// Equipment Panel is active so switch to the transfer stash.
-						this.stashPanel.CurrentBag = 1;
+						this.stashPanel.CurrentBag = StashPanel.BAGID_TRANSFERSTASH;
 					}
 
 					// Check the transfer stash
-					if (this.stashPanel.TransferStash == null && this.stashPanel.CurrentBag == 1)
+					if (this.stashPanel.TransferStash == null && this.stashPanel.CurrentBag == StashPanel.BAGID_TRANSFERSTASH)
 					{
 						// We have nowhere to send the item so cancel the move.
 						this.DragInfo.Cancel();
@@ -314,7 +313,7 @@ namespace TQVaultAE.GUI
 					}
 
 					// Check the relic vault stash
-					if (this.stashPanel.RelicVaultStash == null && this.stashPanel.CurrentBag == 3)
+					if (this.stashPanel.RelicVaultStash == null && this.stashPanel.CurrentBag == StashPanel.BAGID_RELICVAULTSTASH)
 					{
 						// We have nowhere to send the item so cancel the move.
 						this.DragInfo.Cancel();

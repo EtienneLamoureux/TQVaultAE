@@ -195,6 +195,7 @@ namespace TQ.SaveFilesExplorer.Components
 		{
 			this.textBoxDataAsByteArray.Text = string.Join(" ", k.DataAsByteArray.Select(b => _DisplayDataDecimal ? b.ToString() : b.ToString("X2")));
 			this.textBoxDataAsInt.Text = _DisplayDataDecimal ? $"{k.DataAsInt}" : $"{k.DataAsInt:X8}";
+			this.textBoxDataAsFloat.Text = _DisplayDataDecimal ? $"{k.DataAsFloat}" : $"{k.DataAsInt:X8}";
 			this.textBoxDataAsString.Text = k.DataType == TQFileDataType.Unknown ? SanitizeString(k.DataAsByteArray) : k.DataAsStr;
 		}
 

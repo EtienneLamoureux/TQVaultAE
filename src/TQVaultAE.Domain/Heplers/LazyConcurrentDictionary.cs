@@ -34,5 +34,14 @@ namespace TQVaultAE.Domain.Helpers
 			);
 			return lazyResult.Value;
 		}
+
+		public TValue AddOrUpdateAtomic(TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
+		{
+			var lazyResult = this.AddOrUpdate(key
+				, k => new Lazy<TValue>(() => addValueFactory(k), LazyThreadSafetyMode.ExecutionAndPublication)
+				, (k, oldValue) => new Lazy<TValue>(() => updateValueFactory(k, oldValue.Value), LazyThreadSafetyMode.ExecutionAndPublication)
+			);
+			return lazyResult.Value;
+		}
 	}
 }

@@ -110,7 +110,7 @@ namespace TQ.SaveFilesExplorer.Entities.Players
 		[TQFileDataType(TQVersion.TQIT | TQVersion.TQAE, TQFileDataType.Int)]
 		itemsFoundOverLifetimeRandomizedTotal,
 
-		[TQFileDataType(TQVersion.TQ_All, TQFileDataType.Int)]
+		[TQFileDataType(TQVersion.TQ_All, TQFileDataType.Float)]
 		temp,
 
 		[TQFileDataType(TQVersion.TQ_All, TQFileDataType.Int)]

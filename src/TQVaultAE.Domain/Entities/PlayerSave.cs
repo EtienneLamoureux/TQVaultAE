@@ -1,10 +1,14 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using TQVaultAE.Domain.Contracts.Services;
 
 namespace TQVaultAE.Domain.Entities
 {
-	public class PlayerSave
+	public class PlayerSave : IDisposable
 	{
+		public FileSystemWatcher PlayerSaveWatcher { get; set; }
+		public FileSystemWatcher PlayerStashWatcher { get; set; }
+
 		public readonly string Folder;
 		public readonly string Name;
 		public readonly bool IsCustom;
@@ -24,13 +28,19 @@ namespace TQVaultAE.Domain.Entities
 			Translate = translate;
 		}
 
+		public void Dispose()
+		{
+			if (PlayerSaveWatcher is not null)
+				PlayerSaveWatcher.Dispose();
+		}
+
 		public override string ToString()
 		{
 			return string.Join(string.Empty, new[] {
 				Info is null ? Name : $"{Name}"
 				, Info?.Class is null ? string.Empty : $", {Translate.TranslateXTag(Info.Class)}"
 				, !string.IsNullOrWhiteSpace(Info?.Class) && Info?.CurrentLevel != null ?  " -" : string.Empty
-				, Info?.CurrentLevel is null ? string.Empty : $" Level : {Info.CurrentLevel}"
+				, Info?.CurrentLevel is null ? string.Empty : $" {Translate.TranslateXTag("tagMenuImport05")} : {Info.CurrentLevel}"
 				//, IsCustom ? $", IsCustom" : string.Empty // CustomMap is not specificaly related to this character
 			});
 		}

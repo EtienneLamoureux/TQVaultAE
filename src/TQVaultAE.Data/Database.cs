@@ -425,7 +425,12 @@ namespace TQVaultAE.Data
 					xpack = true;
 					rootFolder = Path.Combine(rootFolder, "Resources", "XPack3");
 				}
-
+				else if (arcFileBase.ToUpperInvariant().Equals("XPACK4"))
+				{
+					// Comes from Eternal Embers
+					xpack = true;
+					rootFolder = Path.Combine(rootFolder, "Resources", "XPack4");
+				}
 
 				if (xpack == true)
 				{
@@ -471,6 +476,13 @@ namespace TQVaultAE.Data
 			if (arcFileData == null && GamePathResolver.IsAtlantisInstalled)
 			{
 				rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack3");
+				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
+				arcFileData = this.ReadARCFile(arcFile, resourceId);
+			}
+
+			if (arcFileData == null && GamePathResolver.IsEmbersInstalled)
+			{
+				rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack4");
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
 				arcFileData = this.ReadARCFile(arcFile, resourceId);
 			}
@@ -619,12 +631,22 @@ namespace TQVaultAE.Data
 					}
 				}
 
-				// For some reason they use CZ which is not in the cultures list.
-				// Force Czech to use CZ instead of CS for the 2 letter code.
+				// Titan Quest doesn't use the ISO language code for some languages
 				// Added null check to fix exception when there is no culture found.
-				if (cultureID != null && cultureID.ToUpperInvariant() == "CS")
-					cultureID = "CZ";
-
+				if (cultureID != null)
+				{
+					if (cultureID.ToUpperInvariant() == "CS")
+					{
+						// Force Czech to use CZ instead of CS for the 2 letter code.
+						cultureID = "CZ";
+					} 
+					else if (cultureID.ToUpperInvariant() == "PT")
+					{
+						// Force brazilian portuguese to use BR instead of PT
+						cultureID = "BR";
+					}
+				}
+					
 				if (TQDebug.DatabaseDebugLevel > 1)
 					Log.LogDebug("cultureID = {0}", cultureID);
 
@@ -779,6 +801,16 @@ namespace TQVaultAE.Data
 					this.ParseTextDB(databaseFile, "text\\x3mainquest_nonvoiced.txt");
 					this.ParseTextDB(databaseFile, "text\\x3misctags_nonvoiced.txt");
 					this.ParseTextDB(databaseFile, "text\\x3sidequests_nonvoiced.txt");
+				}
+
+				if (GamePathResolver.IsEmbersInstalled)
+				{
+					this.ParseTextDB(databaseFile, "text\\x4basegame_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x4items_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x4mainquest_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x4misctags_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x4nametags_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x4sidequests_nonvoiced.txt");
 				}
 			}
 

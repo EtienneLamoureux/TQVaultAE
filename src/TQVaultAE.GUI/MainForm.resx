@@ -1385,11 +1385,14 @@
         a2Otf6nzFzJfIuexsn03eDq/Ac0CeWH85/hfRNqFE5kZCvcAAAAASUVORK5CYII=
 </value>
   </data>
-  <metadata name="backgroundWorker1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>255, 17</value>
+  <metadata name="backgroundWorkerLoadAllFiles.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>138, 17</value>
   </metadata>
   <metadata name="fadeInTimer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>138, 17</value>
+    <value>359, 17</value>
+  </metadata>
+  <metadata name="fileSystemWatcherTransferStash.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>476, 17</value>
   </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>64</value>
@@ -14674,4 +14677,7 @@
         wAGsQYAHrEGAD6xBgA+sQYAHrEEAB6xBAAesQQA/rEHw/6xB/f+sQf//rEE=
 </value>
   </data>
+  <metadata name="fileSystemWatcherRelicStash.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>702, 17</value>
+  </metadata>
 </root>

@@ -292,7 +292,6 @@ Spanish translation by Kurrus.
   <data name="ItemSeed" xml:space="preserve">
     <value>Сид предмета: {0} (0x{0:X8}) ({1:p3})</value>
   </data>
-  
   <data name="ItemWith" xml:space="preserve">
     <value>с</value>
   </data>
@@ -955,9 +954,6 @@ Used to track changes in the translation file.</comment>
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Разрешить редактирование персонажа</value>
   </data>
-  
-  
-  
   <data name="CEAttributePoints" xml:space="preserve">
     <value>Очки атрибутов</value>
   </data>
@@ -1000,61 +996,6 @@ Used to track changes in the translation file.</comment>
   <data name="CharacterEditBtn" xml:space="preserve">
     <value>Изменить</value>
   </data>
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   <data name="CurrentLevel" xml:space="preserve">
     <value>Уровень</value>
   </data>
@@ -1142,15 +1083,15 @@ Used to track changes in the translation file.</comment>
   <data name="PlayerPanelMenuEnableTooltip" xml:space="preserve">
     <value>Включить предпросмотр</value>
   </data>
-
   <data name="TextTag_tagRelic" xml:space="preserve">
     <value>Реликвия</value>
     <comment>Substitute for missing tag for "Relic"</comment>
   </data>
-
   <data name="TextTag_tagArtifact" xml:space="preserve">
     <value>Артефакт</value>
     <comment>Substitute for missing tag for "Artifact"</comment>
   </data>
-
+  <data name="ItemEmbers" xml:space="preserve">
+    <value>Предмет Eternal Embers</value>
+  </data>
 </root>

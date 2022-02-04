@@ -199,7 +199,7 @@ namespace TQVaultAE.Data
 			// compensate the added length before returning the value
 			return (result.indexOf + sizeof(int), result.nextOffset);
 		}
-		
+
 		public (int indexOf, int nextOffset) BinaryFindKey(byte[] dataSource, byte[] key, int offset = 0)
 		{
 			// adapted From https://www.codeproject.com/Questions/479424/C-23plusbinaryplusfilesplusfindingplusstrings
@@ -270,5 +270,22 @@ namespace TQVaultAE.Data
 
 		}
 
+		public bool RemoveCStringValueAfter(ref byte[] playerFileContent, string keyToLookFor, int offset = 0)
+		{
+			var found = ReadCStringAfter(playerFileContent, keyToLookFor, offset);
+			if (found.indexOf == -1) return false;
+
+			// Remove CString value
+			var keyBytes = Encoding1252.GetBytes(keyToLookFor);
+			playerFileContent = new[] {
+					playerFileContent.Take(found.indexOf - sizeof(int)).ToArray(),// start content
+					BitConverter.GetBytes(keyToLookFor.Length),// KeyLen
+					keyBytes,// Key
+					BitConverter.GetBytes(0),// ValueLen
+					playerFileContent.Skip(found.nextOffset).ToArray(),// end content
+				}.SelectMany(a => a).ToArray();
+
+			return true;
+		}
 	}
 }

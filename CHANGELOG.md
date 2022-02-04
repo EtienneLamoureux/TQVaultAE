@@ -1,4 +1,64 @@
 # Changelog
+## 3.9.0
+### Features
+- #402 Support Eternal Embers
+
+### Bugs
+- #222 Fix displayed stats for "over time" effects
+- #388 Prevent crashes when using certain "hard" mods
+- #391 Fix crash when there are no player saves present
+- #385 Correctly display Atlantis items
+
+### Other
+- Fix SearchOperator + ComboBox "Level"
+- Update in Player info
+
+## 3.8.0
+### Features
+- #282 Add "hot reload" setting, allowing the tool to stay open when the game runs
+- Add a "Reset Attributes" feature
+
+### Other
+- Augment logs to facilitate debugging
+
+## 3.7.4
+### Bugs
+- #354 Correctly load last character when opening the tool
+- #357 Fix character from not appearing in menus after resetting masteries
+
+### Other
+- Update portuguese translation file
+
+## 3.7.3
+## Bugs
+- Revise some brazilian portuguese display labels
+
+## 3.7.2
+### Bugs
+- Correctly display item text in brazilian portuguese, when that language is selected
+
+## 3.7.1
+### Bugs
+- #349 Fix missing languages from "Language selection"
+
+## 3.7.0
+### Features
+- #2 Allow group selection using a square-drag
+  - By holding-down SHIFT and dragging the mouse
+- #3 Allow fast transfer of items between inventories
+  - Using the arrow keys
+- #346 New interface language: brazilian portuguese
+
+### Bugs
+- #301 Fix creating the rest of the set from Ba'als Heart item
+- #342 Fix the Strength requirement for "Tachylite Kopis"
+
+### Other
+- #315 Adjust the colored background of items in the equipment panel to fill the entire space
+- Improve startup time
+- Reflect more accurately in-game character stats
+- Reduce flickering
+
 ## 3.6.0
 ### Features
 - Advanced search

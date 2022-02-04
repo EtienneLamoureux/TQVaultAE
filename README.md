@@ -1,14 +1,12 @@
 # TQVaultAE
 [![Steam](https://img.shields.io/badge/steam-link-lightgrey.svg)](https://steamcommunity.com/sharedfiles/filedetails/?id=1136716167)
-[![Release](https://img.shields.io/badge/stable-3.6.0-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
+[![Release](https://img.shields.io/badge/stable-3.9.0-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/LICENSE)
 
 TQVaultAE is an external tool for [Titan Quest Anniversary Edition](https://www.thqnordic.com/games/titan-quest) that allows you to store and search your items outside the game.
 Works with all expansions!
 
 ![TQVaultAE screenshot](https://raw.githubusercontent.com/EtienneLamoureux/TQVaultAE/master/documentation/screenshot.PNG "Hey, I can see my inventory from here!")
-
-![TQVaultAE search screenshot](https://raw.githubusercontent.com/EtienneLamoureux/TQVaultAE/master/documentation/screenshot_search.PNG "Find anything, anywhere!")
 
 ## Table of contents
 - [TQVaultAE](#tqvaultae)
@@ -89,13 +87,11 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 ## Troubleshooting and F.A.Q.
 **Q. Does TQVaultAE modify my items? The stats I see are not the same as the ones ingame.**
 
-*A. No, unless you specifically use the cheats, TQVaultAE doesn't alter items in any way. 
-The difference you see is simply due to the way stats are generated in Titan Quest: each item has base stats and a unique seed that modifies those stats. 
-TQVaultAE only displays the base stats (and not the modifications due to the RNG).*
+*A. No, unless you specifically use the cheats, TQVaultAE doesn't alter items in any way. The difference you see is simply due to the way stats are generated in Titan Quest: each item has base stats and a unique seed that modifies those stats. TQVaultAE only displays the base stats (and not the modifications due to the RNG).*
 
 **Q. Can I use TQVaultAE while playing the game?**
 
-*A. No, using TQVaultAE while running the game may lead to loss of progress or items. Best practice is to close the game before using TQVaultAE.*
+*A. Only when using the "Allow hot reload features" setting, otherwise it is not safe to do so. Even then, be aware that any unsaved changes made in TQVaultAE will be lost when interacting with in-game inventories.*
 
 **Q. What happened to my items, I transferred items to my character and they are not there in game?**
 
@@ -171,6 +167,10 @@ TQVaultAE only displays the base stats (and not the modifications due to the RNG
 
 *A. Yes*
 
+**Q. Does TQVaultAE work with the Eternal Embers expansion?**
+
+*A. Yes*
+
 **Q. Can I still earn achievements while using TQVaultAE?**
 
 *A. Yes*
@@ -202,6 +202,7 @@ This project could not go on without the continued volunteer contributions of th
 - Cygi, *Polish*
 - Xelat, *Russian*
 - Kurrus, *Spanish*
+- Klauhs, *Portuguese*
 
 ## Disclaimer
 Titan Quest, THQ and their respective logos are trademarks and/or registered trademarks of THQ Nordic AB. This non-commercial project is in no way associated with THQ Nordic AB.

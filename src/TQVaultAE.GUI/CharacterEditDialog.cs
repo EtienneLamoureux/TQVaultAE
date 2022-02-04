@@ -41,6 +41,7 @@ namespace TQVaultAE.GUI
 			#region Apply custom font
 
 			this.ResetMasteriesScalingButton.Font = FontService.GetFontLight(12F);
+			this.ResetAttributesScalingButton.Font = FontService.GetFontLight(12F);
 			this.ok.Font = FontService.GetFontLight(12F);
 			this.cancel.Font = FontService.GetFontLight(12F);
 			this.Font = FontService.GetFontLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -60,6 +61,7 @@ namespace TQVaultAE.GUI
 			this.cancel.Text = Resources.GlobalCancel;
 			this.ok.Text = Resources.GlobalOK;
 			this.ResetMasteriesScalingButton.Text = Resources.ResetMasteriesButton;
+			this.ResetAttributesScalingButton.Text = Resources.ResetAttributesButton;
 		}
 
 		private void SetDifficultly()
@@ -106,7 +108,7 @@ namespace TQVaultAE.GUI
 			UpdatePlayerInfo();
 		}
 
-		private void UpdatePlayerInfo()
+		private void UpdatePlayerInfo(bool mustResetAttributes = false)
 		{
 			if (!Config.Settings.Default.AllowCharacterEdit) return;
 			if (PlayerCollection.PlayerInfo == null) return;
@@ -125,13 +127,32 @@ namespace TQVaultAE.GUI
 				playerInfo.CurrentXP = int.Parse(xpTextBox.Text);
 				playerInfo.Money = PlayerCollection.PlayerInfo.Money > 0 ? PlayerCollection.PlayerInfo.Money : 0;
 				playerInfo.DifficultyUnlocked = difficultlyComboBox.SelectedIndex;
-				playerInfo.AttributesPoints = Convert.ToInt32(attributeNumericUpDown.Value);
 				playerInfo.SkillPoints = Convert.ToInt32(skillPointsNumericUpDown.Value);
+
+				playerInfo.AttributesPoints = Convert.ToInt32(attributeNumericUpDown.Value);
 				playerInfo.BaseStrength = Convert.ToInt32(strengthUpDown.Value);
 				playerInfo.BaseDexterity = Convert.ToInt32(dexterityUpDown.Value);
 				playerInfo.BaseIntelligence = Convert.ToInt32(intelligenceUpDown.Value);
 				playerInfo.BaseHealth = Convert.ToInt32(healthUpDown.Value);
 				playerInfo.BaseMana = Convert.ToInt32(manacUpDown.Value);
+
+				if (mustResetAttributes)
+				{
+					playerInfo.AttributesPoints = PlayerCollection.PlayerInfo.AttributesPoints;
+					playerInfo.BaseStrength = PlayerLevel.MinStrength;
+					playerInfo.BaseDexterity = PlayerLevel.MinDexterity;
+					playerInfo.BaseIntelligence = PlayerLevel.MinIntelligence;
+					playerInfo.BaseHealth = PlayerLevel.MinHealth;
+					playerInfo.BaseMana = PlayerLevel.MinMana;
+
+					// Return invested points into attributes point pool
+					playerInfo.AttributesPoints += (PlayerCollection.PlayerInfo.BaseStrength - PlayerLevel.MinStrength) / PlayerLevel.AtrributeIncrementPerPoint;
+					playerInfo.AttributesPoints += (PlayerCollection.PlayerInfo.BaseDexterity - PlayerLevel.MinDexterity) / PlayerLevel.AtrributeIncrementPerPoint;
+					playerInfo.AttributesPoints += (PlayerCollection.PlayerInfo.BaseIntelligence - PlayerLevel.MinIntelligence) / PlayerLevel.AtrributeIncrementPerPoint;
+					playerInfo.AttributesPoints += (PlayerCollection.PlayerInfo.BaseHealth - PlayerLevel.MinHealth) / PlayerLevel.HealthAndManaIncrementPerPoint;
+					playerInfo.AttributesPoints += (PlayerCollection.PlayerInfo.BaseMana - PlayerLevel.MinMana) / PlayerLevel.HealthAndManaIncrementPerPoint;
+				}
+
 				playerInfo.MasteriesResetRequiered = this._MasteriesResetRequiered;
 				UpdateMoneySituation(PlayerCollection.PlayerInfo, playerInfo);
 				PlayerCollectionProvider.CommitPlayerInfo(PlayerCollection, playerInfo);
@@ -166,10 +187,10 @@ namespace TQVaultAE.GUI
 			IntelligenceLabel.Text = Resources.CEIntelligence;
 			healthLabel.Text = Resources.CEHealth;
 			manaLabel.Text = Resources.CEMana;
-			levelLabel1.Text = Resources.CELevel;
-			xpLabel1.Text = Resources.CEXp;
-			attributeLabel1.Text = Resources.CEAttributePoints;
-			skillPointsLabel1.Text = Resources.CESkillPoints;
+			levelLabel.Text = Resources.CELevel;
+			xpLabel.Text = Resources.CEXp;
+			attributeLabel.Text = Resources.CEAttributePoints;
+			skillPointsLabel.Text = Resources.CESkillPoints;
 			levelingCheckBox.Text = Resources.CEEnableLeveling;
 			levelingGroupBox.Text = Resources.CELeveling;
 			attribGroupBox.Text = Resources.CEAttributes;
@@ -357,6 +378,11 @@ namespace TQVaultAE.GUI
 		{
 			if (!_MasteriesResetRequiered) _MasteriesResetRequiered = true;
 			UpdatePlayerInfo();
+		}
+
+		private void ResetAttributesScalingButton_Click(object sender, EventArgs e)
+		{
+			UpdatePlayerInfo(true);
 		}
 	}
 }

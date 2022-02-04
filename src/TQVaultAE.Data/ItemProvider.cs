@@ -72,53 +72,62 @@ namespace TQVaultAE.Data
 			"BLOCKABSORPTION",
 			"ITEMCOSTSCALEPERCENT",
 			"ITEMSKILLLEVEL",
-			"USEDELAYTIME", 
-			"CAMERASHAKEAMPLITUDE", 
-			"SKILLMAXLEVEL", 
-			"SKILLCOOLDOWNTIME", 
-			"EXPANSIONTIME", 
-			"SKILLTIER", 
-			"CAMERASHAKEDURATIONSECS", 
-			"SKILLULTIMATELEVEL", 
-			"SKILLCONNECTIONSPACING", 
+			"USEDELAYTIME",
+			"CAMERASHAKEAMPLITUDE",
+			"SKILLMAXLEVEL",
+			"SKILLCOOLDOWNTIME",
+			"EXPANSIONTIME",
+			"SKILLTIER",
+			"CAMERASHAKEDURATIONSECS",
+			"SKILLULTIMATELEVEL",
+			"SKILLCONNECTIONSPACING",
 			"PETBURSTSPAWN",
-			"PETLIMIT", 
-			"ISPETDISPLAYABLE", 
-			"SPAWNOBJECTSTIMETOLIVE", 
-			"SKILLPROJECTILENUMBER", 
-			"SKILLMASTERYLEVELREQUIRED", 
-			"EXCLUDERACIALDAMAGE", 
-			"SKILLWEAPONTINTRED", 
-			"SKILLWEAPONTINTGREEN", 
-			"SKILLWEAPONTINTBLUE", 
-			"DEBUFSKILL", 
-			"HIDEFROMUI", 
-			"INSTANTCAST", 
-			"WAVEENDWIDTH", 
-			"WAVEDISTANCE", 
-			"WAVEDEPTH", 
-			"WAVESTARTWIDTH", 
-			"RAGDOLLAMPLIFICATION", 
-			"WAVETIME", 
-			"SPARKGAP", 
-			"SPARKCHANCE", 
-			"PROJECTILEUSESALLDAMAGE", 
-			"DROPOFFSET", 
-			"DROPHEIGHT", 
-			"NUMPROJECTILES", 
-			"SWORD", 
-			"AXE", 
-			"SPEAR", 
-			"MACE", 
-			"QUEST", 
-			"CANNOTPICKUPMULTIPLE", 
+			"PETLIMIT",
+			"ISPETDISPLAYABLE",
+			"SPAWNOBJECTSTIMETOLIVE",
+			"SKILLPROJECTILENUMBER",
+			"SKILLMASTERYLEVELREQUIRED",
+			"EXCLUDERACIALDAMAGE",
+			"SKILLWEAPONTINTRED",
+			"SKILLWEAPONTINTGREEN",
+			"SKILLWEAPONTINTBLUE",
+			"DEBUFSKILL",
+			"HIDEFROMUI",
+			"INSTANTCAST",
+			"WAVEENDWIDTH",
+			"WAVEDISTANCE",
+			"WAVEDEPTH",
+			"WAVESTARTWIDTH",
+			"RAGDOLLAMPLIFICATION",
+			"WAVETIME",
+			"SPARKGAP",
+			"SPARKCHANCE",
+			"PROJECTILEUSESALLDAMAGE",
+			"DROPOFFSET",
+			"DROPHEIGHT",
+			"NUMPROJECTILES",
+			"SWORD",
+			"AXE",
+			"SPEAR",
+			"MACE",
+			"QUEST",
+			"CANNOTPICKUPMULTIPLE",
 			"BONUSLIFEPERCENT",
 			"BONUSLIFEPOINTS",
 			"BONUSMANAPERCENT",
 			"BONUSMANAPOINTS",
 			"DISPLAYASQUESTITEM",  // New tags from the latest expansions.
 			"ACTORSCALE",
-			"ACTORSCALETIME"
+			"ACTORSCALETIME",
+			"SPAWNOBJECTSDISTANCEINCREMENT", // AMS: Additional tags to ignore
+			"SPAWNOBJECTSDISTANCEINNERCIRCLE",
+			"SPAWNOBJECTSNUMBEROFRINGS",
+			"SPAWNOBJECTSSPACINGANGLE",
+			"CONTAGIONINTERVAL",
+			"CONTAGIONLIMIT",
+			"CONTAGIONMAXSPREAD",
+			"CONTAGIONRADIUS",
+			"NOHIGHLIGHTDEFAULTCOLORA" // AMS: New property on most EE items
 		};
 
 		internal static readonly string[] requirementTags =
@@ -141,6 +150,21 @@ namespace TQVaultAE.Data
 			"CHARACTERLIFEMODIFIER",
 			"CHARACTERMANA",
 			"CHARACTERMANAMODIFIER",
+		};
+
+		internal static readonly string[] durationIndependentEffects =
+		{
+			"OFFENSIVESLOWTOTALSPEED",
+			"OFFENSIVESLOWATTACKSPEED",
+			"OFFENSIVESLOWRUNSPEED",
+			"OFFENSIVESLOWOFFENSIVEABILITY",
+			"OFFENSIVESLOWDEFENSIVEABILITY",
+			"OFFENSIVESLOWOFFENSIVEREDUCTION",
+			"OFFENSIVESLOWDEFENSIVEREDUCTION",
+			"OFFENSIVETOTALDAMAGEREDUCTIONPERCENT",
+			"OFFENSIVETOTALDAMAGEREDUCTIONABSOLUTE",
+			"OFFENSIVETOTALRESISTANCEREDUCTIONPERCENT",
+			"OFFENSIVETOTALRESISTANCEREDUCTIONABSOLUTE"
 		};
 
 		public ItemProvider(
@@ -311,7 +335,7 @@ namespace TQVaultAE.Data
 		{
 			var statBonuses = new SortedList<string, int>();
 
-			if (item.baseItemInfo != null)			
+			if (item.baseItemInfo != null)
 				GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(item.BaseItemId));
 
 			if (item.prefixInfo != null)
@@ -982,6 +1006,7 @@ namespace TQVaultAE.Data
 					// our equation is a string, so we want also strings
 					return;
 
+				string keyRaw = variable.Name;
 				string key = variable.Name.Replace(prefix, string.Empty);
 				key = key.Replace("Equation", string.Empty);
 				key = key.Replace(key[0], char.ToUpperInvariant(key[0]));
@@ -999,6 +1024,11 @@ namespace TQVaultAE.Data
 				if (key.Equals("Level"))
 					key = "LevelRequirement";
 
+				// Skip over any requirements that have been set by the database record. 
+				if (requirements.ContainsKey(key))
+					continue;
+
+				string valueRaw = variable.ToStringValue();
 				string value = variable.ToStringValue().Replace(itemLevelTag, itemLevel);
 
 				// Added by VillageIdiot
@@ -1009,7 +1039,28 @@ namespace TQVaultAE.Data
 				Variable ans = new Variable(variableKey, VariableDataType.Integer, 1);
 
 				// Changed by VillageIdiot to fix random overflow crashes.
-				double tempVal = Math.Ceiling(value.Eval<double>());
+				double tempVal = 0;
+				try
+				{
+					tempVal = value.Eval<double>();
+					tempVal = Math.Ceiling(tempVal);
+				}
+				catch (System.Data.EvaluateException)
+				{
+					var mess = $@"Item Property value computation failed!
+
+ItemID : {itemInfo.ItemId}
+ItemLevel : {lvl.ToStringValue()}
+Variablekey : {key}
+Variablekey Raw : {keyRaw}
+VariableValue : {value} 
+VariableValue Raw : {valueRaw}
+""{value}"" can't be evaluated!
+";
+					if (TQDebug.ItemDebugLevel > 0)
+						throw new System.Data.EvaluateException(mess);
+					else Log.LogError(mess);
+				}
 
 				int intVal = 0;
 				try
@@ -1023,17 +1074,8 @@ namespace TQVaultAE.Data
 
 				ans[0] = intVal;
 
-				value = ans.ToStringValue();
-				if (requirements.ContainsKey(key))
-				{
-					if (string.Compare(value, ((Variable)requirements[key]).ToStringValue(), StringComparison.OrdinalIgnoreCase) <= 0)
-						return;
-
-					requirements.Remove(key);
-				}
-
 				if (TQDebug.ItemDebugLevel > 2)
-					Log.LogDebug("Added Requirement {0}={1}", key, value);
+					Log.LogDebug("Added Requirement {0}={1}", key, ans.ToStringValue());
 
 				requirements.Add(key, ans);
 			}
@@ -1810,6 +1852,16 @@ namespace TQVaultAE.Data
 		}
 
 		/// <summary>
+		/// Checks if the Effect type does not has value magnitude dependent on Duration.
+		/// </summary>
+		/// <param name="effectName">ItemAttributesData.Effect value</param>
+		/// <returns>True if the effect magnitude does depend on the duration</returns>
+		private bool IsDurationReliantValue(string effectName)
+		{
+			return Array.IndexOf(durationIndependentEffects, effectName.ToUpperInvariant()) == -1;
+		}
+
+		/// <summary>
 		/// Gets a formatted range amount
 		/// </summary>
 		/// <param name="data">ItemAttributesData data</param>
@@ -1874,7 +1926,8 @@ namespace TQVaultAE.Data
 
 			// Added by VillageIdiot
 			// Adjust for itemScalePercent
-			if (minDurVar != null)
+			// AMS: Added If the value is reliant on the duration.
+			if ((minDurVar != null) && IsDurationReliantValue(data.Effect))
 			{
 				min[Math.Min(min.NumberOfValues - 1, varNum)] = (float)min[Math.Min(min.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues - 1] * itm.itemScalePercent;
 				max[Math.Min(max.NumberOfValues - 1, varNum)] = (float)max[Math.Min(max.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues - 1] * itm.itemScalePercent;
@@ -1954,7 +2007,7 @@ namespace TQVaultAE.Data
 				var curvar = currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)];
 				if (currentVariable.DataType == VariableDataType.Float)
 				{
-					if (minDurVar != null)
+					if ((minDurVar != null) && IsDurationReliantValue(data.Effect))
 					{
 						curvar = (float)curvar * (float)minDurVar[minDurVar.NumberOfValues - 1] * itm.itemScalePercent;
 					}
@@ -3188,7 +3241,7 @@ namespace TQVaultAE.Data
 						&& (normalizedAttributeVariable == "MIN"
 							|| normalizedAttributeVariable == "MAX"
 							|| normalizedAttributeVariable == "DRAINMIN"
-							|| attributeData.Variable == "DRAINMAX"
+							|| normalizedAttributeVariable == "DRAINMAX"
 						)
 					)
 					&& !(duration != null && (normalizedAttributeVariable == "DURATIONMIN" || normalizedAttributeVariable == "DURATIONMAX"))

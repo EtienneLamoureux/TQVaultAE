@@ -68,6 +68,8 @@
             this.labelFileUnknownSegments = new System.Windows.Forms.Label();
             this.linkLabelFilePath = new System.Windows.Forms.LinkLabel();
             this.toolTipCopy = new System.Windows.Forms.ToolTip(this.components);
+            this.labelDataAsFloat = new System.Windows.Forms.Label();
+            this.textBoxDataAsFloat = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -172,6 +174,8 @@
             // 
             // groupBoxKeyData
             // 
+            this.groupBoxKeyData.Controls.Add(this.labelDataAsFloat);
+            this.groupBoxKeyData.Controls.Add(this.textBoxDataAsFloat);
             this.groupBoxKeyData.Controls.Add(this.labelDataAsInt);
             this.groupBoxKeyData.Controls.Add(this.textBoxDataAsInt);
             this.groupBoxKeyData.Controls.Add(this.labelDataAsByteArray);
@@ -216,7 +220,7 @@
             // labelDataAsByteArray
             // 
             this.labelDataAsByteArray.AutoSize = true;
-            this.labelDataAsByteArray.Location = new System.Drawing.Point(16, 182);
+            this.labelDataAsByteArray.Location = new System.Drawing.Point(16, 204);
             this.labelDataAsByteArray.Margin = new System.Windows.Forms.Padding(10, 5, 3, 0);
             this.labelDataAsByteArray.Name = "labelDataAsByteArray";
             this.labelDataAsByteArray.Size = new System.Drawing.Size(116, 17);
@@ -230,20 +234,20 @@
             this.textBoxDataAsByteArray.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxDataAsByteArray.Location = new System.Drawing.Point(13, 208);
+            this.textBoxDataAsByteArray.Location = new System.Drawing.Point(13, 227);
             this.textBoxDataAsByteArray.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
             this.textBoxDataAsByteArray.Multiline = true;
             this.textBoxDataAsByteArray.Name = "textBoxDataAsByteArray";
             this.textBoxDataAsByteArray.ReadOnly = true;
             this.textBoxDataAsByteArray.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxDataAsByteArray.Size = new System.Drawing.Size(580, 221);
+            this.textBoxDataAsByteArray.Size = new System.Drawing.Size(580, 202);
             this.textBoxDataAsByteArray.TabIndex = 10;
             this.textBoxDataAsByteArray.Visible = false;
             // 
             // labelDataAsString
             // 
             this.labelDataAsString.AutoSize = true;
-            this.labelDataAsString.Location = new System.Drawing.Point(16, 107);
+            this.labelDataAsString.Location = new System.Drawing.Point(16, 135);
             this.labelDataAsString.Margin = new System.Windows.Forms.Padding(10, 5, 3, 0);
             this.labelDataAsString.Name = "labelDataAsString";
             this.labelDataAsString.Size = new System.Drawing.Size(89, 17);
@@ -255,7 +259,7 @@
             // 
             this.textBoxDataAsString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxDataAsString.Location = new System.Drawing.Point(13, 131);
+            this.textBoxDataAsString.Location = new System.Drawing.Point(13, 159);
             this.textBoxDataAsString.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
             this.textBoxDataAsString.Multiline = true;
             this.textBoxDataAsString.Name = "textBoxDataAsString";
@@ -569,6 +573,30 @@
             this.linkLabelFilePath.Text = "linkLabelFilePath";
             this.linkLabelFilePath.Click += new System.EventHandler(this.LinkLabelFilePath_Click);
             // 
+            // labelDataAsFloat
+            // 
+            this.labelDataAsFloat.AutoSize = true;
+            this.labelDataAsFloat.Location = new System.Drawing.Point(16, 110);
+            this.labelDataAsFloat.Margin = new System.Windows.Forms.Padding(10, 5, 3, 0);
+            this.labelDataAsFloat.Name = "labelDataAsFloat";
+            this.labelDataAsFloat.Size = new System.Drawing.Size(79, 17);
+            this.labelDataAsFloat.TabIndex = 15;
+            this.labelDataAsFloat.Text = "As a Float :";
+            this.labelDataAsFloat.Visible = false;
+			this.labelDataAsFloat.Click += new System.EventHandler(this.LabelKeyOffset_Click);
+			// 
+			// textBoxDataAsFloat
+			// 
+			this.textBoxDataAsFloat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxDataAsFloat.Location = new System.Drawing.Point(96, 108);
+            this.textBoxDataAsFloat.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
+            this.textBoxDataAsFloat.Name = "textBoxDataAsFloat";
+            this.textBoxDataAsFloat.ReadOnly = true;
+            this.textBoxDataAsFloat.Size = new System.Drawing.Size(497, 22);
+            this.textBoxDataAsFloat.TabIndex = 14;
+            this.textBoxDataAsFloat.Visible = false;
+            // 
             // TabPageFileContent
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -643,5 +671,7 @@
 		private System.Windows.Forms.ToolTip toolTipCopy;
 		private System.Windows.Forms.TextBox textBoxKeyName;
 		private System.Windows.Forms.Label labelIsKeyValue;
+		private System.Windows.Forms.Label labelDataAsFloat;
+		private System.Windows.Forms.TextBox textBoxDataAsFloat;
 	}
 }

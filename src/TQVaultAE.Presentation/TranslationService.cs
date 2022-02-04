@@ -87,5 +87,7 @@ namespace TQVaultAE.Presentation
 		public string ItemRagnarok => Resources.ItemRagnarok;
 
 		public string ItemAtlantis => Resources.ItemAtlantis;
+
+		public string ItemEmbers => Resources.ItemEmbers;
 	}
 }
