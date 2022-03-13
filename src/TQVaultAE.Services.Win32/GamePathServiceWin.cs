@@ -103,7 +103,7 @@ namespace TQVaultAE.Services.Win32
 			get
 			{
 				if (IsCustom)
-					return Path.Combine(MapName, "SaveData", "Sys", Path.GetFileName(MapName), TRANSFERSTASHFILENAME);
+					return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", Path.GetFileName(MapName), TRANSFERSTASHFILENAME);
 
 				return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", TRANSFERSTASHFILENAME);
 			}
@@ -118,7 +118,7 @@ namespace TQVaultAE.Services.Win32
 			get
 			{
 				if (IsCustom)
-					return Path.Combine(MapName, "SaveData", "Sys", Path.GetFileName(MapName), RELICVAULTSTASHFILENAME);
+					return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", Path.GetFileName(MapName), RELICVAULTSTASHFILENAME);
 
 				return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", RELICVAULTSTASHFILENAME);
 			}
