@@ -183,6 +183,9 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 - *Look up if your problem is featured in [TQVault's documentation](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/documentation/TQVault%20common%20issues.pdf)*
 - *Create an issue in [our issue tracking board](https://github.com/EtienneLamoureux/TQVaultAE/issues)*
 
+## Tips
+- If you want to use Chinese, please copy Text_CH.arc file in {game path}\Text\ folder and then rename the new one to Text_ZH.arc, otherwise the language of the item information will be wrong.
+
 ## Contributors
 This project could not go on without the continued volunteer contributions of the Titan Quest community. If you're thinking about contributing, please read our [contributing guidelines](/CONTRIBUTING.md).
 

@@ -1,0 +1,1686 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <!-- 
+      Microsoft ResX Schema 
+      
+      Version 2.0
+      
+      The primary goals of this format is to allow a simple XML format 
+      that is mostly human readable. The generation and parsing of the 
+      various data types are done through the TypeConverter classes 
+      associated with the data types.
+      
+      Example:
+      
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+                  
+      There are any number of "resheader" rows that contain simple 
+      name/value pairs.
+      
+      Each data row contains a name, and value. The row also contains a 
+      type or mimetype. Type corresponds to a .NET class that support 
+      text/value conversion through the TypeConverter architecture. 
+      Classes that don't support this are serialized and stored with the 
+      mimetype set.
+      
+      The mimetype is used for serialized objects, and tells the 
+      ResXResourceReader how to depersist the object. This is currently not 
+      extensible. For a given mimetype the value must be set accordingly:
+      
+      Note - application/x-microsoft.net.object.binary.base64 is the format 
+      that the ResXResourceWriter will generate, however the reader can 
+      read any of the formats listed below.
+      
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+      
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+  
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array 
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string" />
+                            <xsd:attribute name="type" type="xsd:string" />
+                            <xsd:attribute name="mimetype" type="xsd:string" />
+                            <xsd:attribute ref="xml:space" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string" />
+                            <xsd:attribute name="name" type="xsd:string" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+                            <xsd:attribute ref="xml:space" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" />
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="AboutDescription" xml:space="preserve">
+    <value>TQVault bman654（wickedsoul@yahoo.com）
+贡献者：
+-EPinter：缺陷修复、UI修改、新的大型仓库、改进
+-NorthFury：漏洞修复、搜索功能和改进
+-Malgardian：周年纪念版端口
+-SadYc：物品统计帮助(sadyc1@gmail.com)
+      
+-VillageIdiot：其他功能(villij-idjit@sbcglobal.net)
+
+-AvunaOs的新UI
+-FOE的德语翻译。
+-Jean和Vifarc的法语翻译。
+-Cygi波兰语翻译。
+-Xelat的俄语翻译。
+-Kurrus的西班牙语翻译。
+</value>
+  </data>
+    <data name="AboutText" xml:space="preserve">
+    <value>关于 {0}</value>
+  </data>
+    <data name="AboutVersion" xml:space="preserve">
+    <value>版本 {0}</value>
+  </data>
+    <data name="ARZExtractBtnExtract" xml:space="preserve">
+    <value>提取</value>
+  </data>
+    <data name="ARZExtractCreateFolder" xml:space="preserve">
+    <value>{0} 不存在.你现在想创建它吗?</value>
+  </data>
+    <data name="ARZExtractCreateFolder2" xml:space="preserve">
+    <value>创建文件夹?</value>
+  </data>
+    <data name="ARZExtractCreateFolderIT" xml:space="preserve">
+    <value>{0} 在不朽王座(IT)数据库中不存在.你现在想创建它吗?</value>
+  </data>
+    <data name="ARZExtractDestination" xml:space="preserve">
+    <value>选择文件夹来存储提取数据库记录</value>
+  </data>
+    <data name="ARZExtractFileDest" xml:space="preserve">
+    <value>你必须指定一个文件夹,而不是一个文件!</value>
+  </data>
+    <data name="ARZExtractLabel1" xml:space="preserve">
+    <value>目前无法一次提取所有游戏数据库记录。此外，该工具集中目前还存在一个缺陷，在逐个提取记录时会破坏数组值。使用此工具，您现在可以一次提取所有记录，并且所有记录都将被正确提取。</value>
+  </data>
+    <data name="ARZExtractLabel2" xml:space="preserve">
+    <value>提取完记录后，只需将你想在mod中使用的记录复制到mod文件夹中即可。</value>
+  </data>
+    <data name="ARZExtractLabel3" xml:space="preserve">
+    <value>选择一个目标文件夹:</value>
+  </data>
+    <data name="ARZExtractLabel4" xml:space="preserve">
+    <value>为不朽王座(IT)数据库文件选择一个目标文件夹:</value>
+  </data>
+    <data name="ARZExtractLabel5" xml:space="preserve">
+    <value>如果未指定TQ原版数据库和不朽王座(IT)数据库的目标文件夹，则默认为同一文件夹。当有冲突时，IT文件将覆盖TQ文件，但是你可以选择不同的文件夹以避免覆盖文件。</value>
+  </data>
+    <data name="ARZExtractText" xml:space="preserve">
+    <value>提取 database.arz</value>
+  </data>
+    <data name="ARZExtractValidDest" xml:space="preserve">
+    <value>你必须输入一个有效的目标文件夹.</value>
+  </data>
+    <data name="ARZProgressCancelledText" xml:space="preserve">
+    <value>提取取消.</value>
+  </data>
+    <data name="ARZProgressCompleteText" xml:space="preserve">
+    <value>提取完成.</value>
+  </data>
+    <data name="ARZProgressFailedText" xml:space="preserve">
+    <value>提取失败.</value>
+  </data>
+    <data name="ARZProgressLabel" xml:space="preserve">
+    <value>正在提取 {0} ...</value>
+  </data>
+    <data name="ARZProgressLabel1" xml:space="preserve">
+    <value>正在提取</value>
+  </data>
+    <data name="ARZProgressText" xml:space="preserve">
+    <value>正在提取 database.arz...</value>
+  </data>
+    <data name="CmdlineUsage" xml:space="preserve">
+    <value>解析命令行参数时出错: {0}
+
+使用方法: TQVault [角色名称] [/mod:&lt;mod名称&gt;]</value>
+  </data>
+    <data name="DataDefaultPath" xml:space="preserve">
+    <value>默认仓库路径</value>
+  </data>
+    <data name="DataDefaultPathMsg" xml:space="preserve">
+    <value>仓库路径未设置.
+
+使用默认设置.
+请在配置界面确认仓库路径.</value>
+  </data>
+    <data name="DataLink" xml:space="preserve">
+    <value>请更新仓库路径</value>
+  </data>
+    <data name="DataLinkMsg" xml:space="preserve">
+    <value>请在配置界面更新仓库路径来显示链接</value>
+  </data>
+    <data name="Form1BadLanguage" xml:space="preserve">
+      <value>这可能是由错误的语言或游戏路径设置导致的。
+你想重启TQVault吗?</value>
+    </data>
+    <data name="Form1bNext" xml:space="preserve">
+    <value>进入仓库</value>
+  </data>
+    <data name="Form1ErrorLoadingResources" xml:space="preserve">
+    <value>加载资源错误</value>
+  </data>
+    <data name="Form1Label3" xml:space="preserve">
+      <value>这是个神奇的地方，你可以把那些从泰坦手中拯救世界的神器存储在这里。</value>
+    </data>
+    <data name="Form1LblPleaseWait" xml:space="preserve">
+    <value>加载游戏资源中...请等待</value>
+  </data>
+    <data name="Form1Text" xml:space="preserve">
+    <value>泰坦之旅物品仓库</value>
+  </data>
+    <data name="GlobalAbout" xml:space="preserve">
+    <value>关于</value>
+  </data>
+    <data name="GlobalBrowse" xml:space="preserve">
+    <value>浏览...</value>
+  </data>
+    <data name="GlobalCancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+    <data name="GlobalError" xml:space="preserve">
+    <value>错误</value>
+  </data>
+    <data name="GlobalExit" xml:space="preserve">
+    <value>退出</value>
+  </data>
+    <data name="GlobalMenuBag" xml:space="preserve">
+    <value>背包 #{0}</value>
+        <comment>此条目必须要有GlobalMenuBagDelimiter，否则会破坏物品和背包移动代码。</comment>
+  </data>
+    <data name="GlobalMenuBagDelimiter" xml:space="preserve">
+    <value>#</value>
+        <comment>与GlobalMenuBag一起使用，表示菜单中的行李编号</comment>
+  </data>
+    <data name="GlobalOK" xml:space="preserve">
+      <value>确定</value>
+    </data>
+    <data name="GlobalTransferStash" xml:space="preserve">
+    <value>转移存储</value>
+  </data>
+    <data name="GlobalTrash" xml:space="preserve">
+    <value>垃圾</value>
+  </data>
+    <data name="ItemIT" xml:space="preserve">
+    <value>不朽王座物品</value>
+  </data>
+    <data name="ItemPropertiesCheckBoxLabelFilterExtraInfo" xml:space="preserve">
+      <value>过滤器额外信息</value>
+    </data>
+    <data name="ItemPropertiesLabelPrefixProperties" xml:space="preserve">
+    <value>前缀属性</value>
+  </data>
+    <data name="ItemPropertiesLabelBaseItemProperties" xml:space="preserve">
+    <value>物品本体属性</value>
+  </data>
+    <data name="ItemPropertiesLabelSuffixProperties" xml:space="preserve">
+    <value>后缀属性</value>
+  </data>
+    <data name="ItemPropertiesText" xml:space="preserve">
+    <value>物品属性</value>
+  </data>
+    <data name="ItemQuest" xml:space="preserve">
+    <value>(任务物品)</value>
+  </data>
+    <data name="ItemRelicBonus" xml:space="preserve">
+      <value>(完整奖励: {0})</value>
+    </data>
+    <data name="ItemRelicCompleted" xml:space="preserve">
+    <value>(完整)</value>
+  </data>
+    <data name="ItemSeed" xml:space="preserve">
+    <value>物品种子: {0} (0x{0:X8}) ({1:p3})</value>
+  </data>
+    <data name="ItemWith" xml:space="preserve">
+    <value>和</value>
+  </data>
+    <data name="MainForm2ndVault" xml:space="preserve">
+      <value>次级仓库:</value>
+    </data>
+    <data name="MainFormBtnConfigure" xml:space="preserve">
+    <value>配置</value>
+  </data>
+    <data name="MainFormBtnExtract" xml:space="preserve">
+    <value>提取 database.arz ...</value>
+  </data>
+    <data name="MainFormBtnPanelSelect" xml:space="preserve">
+    <value>显示仓库</value>
+  </data>
+    <data name="MainFormBtnShowPlayer" xml:space="preserve">
+    <value>显示角色</value>
+  </data>
+    <data name="MainFormCustomMapLabel" xml:space="preserve">
+    <value>{0} 自定义地图</value>
+  </data>
+    <data name="MainFormDatabaseError" xml:space="preserve">
+    <value>提取数据库错误</value>
+  </data>
+    <data name="MainFormHoldingItem" xml:space="preserve">
+    <value>你当前正在拿着一个物品.
+请在退出前把这个物品放置到某个地方。</value>
+  </data>
+    <data name="MainFormHoldingItem2" xml:space="preserve">
+    <value>请把物品放下.</value>
+  </data>
+    <data name="MainFormLabel1" xml:space="preserve">
+    <value>角色:</value>
+  </data>
+    <data name="MainFormLabel2" xml:space="preserve">
+    <value>仓库:</value>
+  </data>
+    <data name="MainFormLanguageChanged" xml:space="preserve">
+    <value>游戏语言已改变</value>
+  </data>
+    <data name="MainFormLanguageChangedMsg" xml:space="preserve">
+    <value>游戏语言设置已改变.
+
+你需要重启TQVault来使之生效。
+你想现在重启TQVault吗？</value>
+  </data>
+    <data name="MainFormMaintainVault" xml:space="preserve">
+    <value>储物仓库文件...</value>
+  </data>
+    <data name="MainFormMapsChanged" xml:space="preserve">
+    <value>自定义地图设置已改变</value>
+  </data>
+    <data name="MainFormMapsChangedMsg" xml:space="preserve">
+    <value>自定义地图设置已改变
+
+你需要重启TQVault来使之生效。
+你想现在重启TQVault吗？</value>
+  </data>
+    <data name="MainFormNoCharacters" xml:space="preserve">
+    <value>没有识别到泰坦之旅(TQ)的角色</value>
+  </data>
+    <data name="MainFormNoCustomChars" xml:space="preserve">
+    <value>没有识别到自定义地图的角色</value>
+  </data>
+    <data name="MainFormNoItemQualityFound" xml:space="preserve">
+    <value>没有找到'{0}'类型和'{1}'品质的物品.</value>
+  </data>
+    <data name="MainFormNoItemsFound" xml:space="preserve">
+    <value>找不到包含'{0}'的物品.</value>
+  </data>
+    <data name="MainFormNoItemsFound2" xml:space="preserve">
+    <value>没有找到物品</value>
+  </data>
+    <data name="MainFormNoItemTypesFound" xml:space="preserve">
+    <value>没有找到'{0}'类型的物品.</value>
+  </data>
+    <data name="MainFormPathsChanged" xml:space="preserve">
+    <value>游戏路径已改变</value>
+  </data>
+    <data name="MainFormPathsChangedMsg" xml:space="preserve">
+    <value>游戏路径已改变.
+
+你需要重启TQVault来使之生效。
+你想现在重启TQVault吗？</value>
+  </data>
+    <data name="MainFormPlayerReadError" xml:space="preserve">
+    <value>读取玩家文件错误</value>
+  </data>
+    <data name="MainFormQuit" xml:space="preserve">
+    <value>你确定要退出吗?</value>
+  </data>
+    <data name="MainFormReadError" xml:space="preserve">
+    <value>读取 {0} 错误.
+你确定这是一个有效的文件吗?
+
+{1}</value>
+  </data>
+    <data name="MainFormSaveError" xml:space="preserve">
+    <value>保存'{0}'的数据时出错</value>
+  </data>
+    <data name="MainFormSelectCharacter" xml:space="preserve">
+    <value>选择一个角色</value>
+  </data>
+    <data name="MainFormSelectVault" xml:space="preserve">
+    <value>选择一个仓库</value>
+  </data>
+    <data name="MainFormSettingsChanged" xml:space="preserve">
+    <value>游戏设置已改变</value>
+  </data>
+    <data name="MainFormSettingsChangedMsg" xml:space="preserve">
+    <value>游戏设置已改变.
+
+你需要重启TQVault来使之生效。
+你想现在重启TQVault吗？</value>
+  </data>
+    <data name="MainFormStartVaultMon" xml:space="preserve">
+    <value>你想启动TQVaultMon?</value>
+  </data>
+    <data name="MainFormStartVaultMonMsg" xml:space="preserve">
+    <value>你刚刚修改了角色的库存.
+泰坦之旅会检测到并会认为你的角色已损坏
+并且不会让你加载你的角色.
+
+TQVaultMon是一个程序，当它运行时，可以让泰坦之旅认为你的角色是OK的，会成功加载你的角色.
+一旦你的角色加载成功，你就不需要再使用TQVaultMon了，除非你又进行了修改.
+
+建议你现在就开始TqVault Mon，然后运行泰坦之旅并短暂加载你刚刚修改的所有角色。
+
+你想现在启动TQVaultMon吗?</value>
+  </data>
+    <data name="MainFormStashReadError" xml:space="preserve">
+    <value>读取储物文件错误</value>
+  </data>
+    <data name="MainFormTrashItems" xml:space="preserve">
+    <value>垃圾箱当前有{0}个物品.
+如果你退出，这些物品将永远丢失.
+
+你确定要丢掉这些物品吗?</value>
+  </data>
+    <data name="MainFormUnableToStartVaultMon" xml:space="preserve">
+    <value>不能启动TQVaultMon</value>
+  </data>
+    <data name="MainFormVaultMonError" xml:space="preserve">
+    <value>尝试启动TQVaultMon错误</value>
+  </data>
+    <data name="MainFormVaultMonMsg" xml:space="preserve">
+    <value>我不知道TQVaultMon是否在运行.
+很可能TQVaultMon没有启动.
+因为你修改过你的角色，泰坦之旅会认为你的角色已经损坏.
+为了成功地加载游戏并游玩，需要你下载TQ Defiler
+然后使用它的'Patch'或'Fix Me'选项来让游戏校验你的角色.
+如果你不介意的话，请联系我让我知道这个问题，
+因为我可能有解决方案，这样，你就省点麻烦.
+
+错误信息如下
+</value>
+  </data>
+    <data name="MaintenanceBadChars" xml:space="preserve">
+    <value>你使用了无效的角色.</value>
+  </data>
+    <data name="MaintenanceBadName" xml:space="preserve">
+    <value>你必须给新仓库输入一个名字</value>
+  </data>
+    <data name="MaintenanceCopy" xml:space="preserve">
+    <value>请从源下拉列表中选择要复制的源，然后在下面的目标框中键入目标名称。</value>
+  </data>
+    <data name="MaintenanceDelete" xml:space="preserve">
+    <value>请从源下拉列表中选择一个仓库来删除.</value>
+  </data>
+    <data name="MaintenanceDuplicate" xml:space="preserve">
+    <value>重复的仓库名称</value>
+  </data>
+    <data name="MaintenanceExists" xml:space="preserve">
+    <value>已经有一个仓库叫{0}.</value>
+  </data>
+    <data name="MaintenanceGroup" xml:space="preserve">
+    <value>选择功能</value>
+  </data>
+    <data name="MaintenanceInstructions" xml:space="preserve">
+    <value>说明</value>
+  </data>
+    <data name="MaintenanceInvalidName" xml:space="preserve">
+    <value>无效的仓库名称</value>
+  </data>
+    <data name="MaintenanceInvalidSourceName" xml:space="preserve">
+    <value>无效的源仓库名称</value>
+  </data>
+    <data name="MaintenanceNew" xml:space="preserve">
+    <value>请在下面目标框中给你的新仓库输入一个名称.
+
+您不能使用以下字符：
+</value>
+  </data>
+    <data name="MaintenanceNewVault" xml:space="preserve">
+    <value>新仓库</value>
+  </data>
+    <data name="MaintenanceNoCopyTarget" xml:space="preserve">
+    <value>你必须给你复制的仓库起一个新名字</value>
+  </data>
+    <data name="MaintenanceRbCopy" xml:space="preserve">
+    <value>复制仓库</value>
+  </data>
+    <data name="MaintenanceRbDelete" xml:space="preserve">
+    <value>删除仓库</value>
+  </data>
+    <data name="MaintenanceRbNew" xml:space="preserve">
+    <value>创建新仓库</value>
+  </data>
+    <data name="MaintenanceRbRename" xml:space="preserve">
+    <value>重命名仓库</value>
+  </data>
+    <data name="MaintenanceRename" xml:space="preserve">
+    <value>请从源下拉列表选择一个要重命名的仓库，然后在下方的目标框中输入新名称.</value>
+  </data>
+    <data name="MaintenanceSource" xml:space="preserve">
+    <value>源</value>
+  </data>
+    <data name="MaintenanceSourceNoExist" xml:space="preserve">
+    <value>源仓库不存在.</value>
+  </data>
+    <data name="MaintenanceTarget" xml:space="preserve">
+    <value>目标</value>
+  </data>
+    <data name="MaintenanceText" xml:space="preserve">
+    <value>仓库维护</value>
+  </data>
+    <data name="PlayerOverwriteSack" xml:space="preserve">
+    <value>覆盖袋(Overwrite Sack)</value>
+  </data>
+    <data name="PlayerOverwriteSackMsg" xml:space="preserve">
+    <value>目标不是空的.
+你确定要覆盖吗?</value>
+  </data>
+    <data name="PlayerPanelEmpty" xml:space="preserve">
+    <value>空背包?</value>
+  </data>
+    <data name="PlayerPanelEmptyMsg" xml:space="preserve">
+    <value>你确定要删除这个背包里的所有物品吗?</value>
+  </data>
+    <data name="PlayerPanelMenuCopy" xml:space="preserve">
+    <value>复制背包</value>
+  </data>
+    <data name="PlayerPanelMenuEmpty" xml:space="preserve">
+    <value>空背包</value>
+  </data>
+    <data name="PlayerPanelMenuMerge" xml:space="preserve">
+    <value>合并背包</value>
+  </data>
+    <data name="PlayerPanelMenuMove" xml:space="preserve">
+    <value>移动背包</value>
+  </data>
+    <data name="PlayerPanelNoPlayer" xml:space="preserve">
+    <value>(没有选择角色)</value>
+  </data>
+    <data name="PlayerPanelNoVault" xml:space="preserve">
+    <value>(没有选择仓库)</value>
+  </data>
+    <data name="ResultsContainer" xml:space="preserve">
+    <value>容器(Container)</value>
+  </data>
+    <data name="ResultsContainerEquip" xml:space="preserve">
+    <value>装备</value>
+  </data>
+    <data name="ResultsContainerPlayer" xml:space="preserve">
+    <value>玩家</value>
+  </data>
+    <data name="ResultsContainerStash" xml:space="preserve">
+    <value>储物箱</value>
+  </data>
+    <data name="ResultsContainerType" xml:space="preserve">
+    <value>容器类型(ContainerType)</value>
+  </data>
+    <data name="ResultsContainerVault" xml:space="preserve">
+    <value>仓库</value>
+  </data>
+    <data name="ResultsItem" xml:space="preserve">
+    <value>物品</value>
+  </data>
+    <data name="ResultsQuality" xml:space="preserve">
+    <value>品质</value>
+  </data>
+    <data name="ResultsSack" xml:space="preserve">
+    <value>大袋(Sack)</value>
+  </data>
+    <data name="ResultsLevel" xml:space="preserve">
+    <value>等级</value>
+  </data>
+    <data name="ResultsText" xml:space="preserve">
+    <value>已找到包含'{1}'的{0}个物品</value>
+  </data>
+    <data name="SackPanelAutoSort" xml:space="preserve">
+    <value>请放下物品.</value>
+  </data>
+    <data name="SackPanelAutoSortError" xml:space="preserve">
+    <value>自动排序错误.</value>
+  </data>
+    <data name="SackPanelAutoSortErrorMsg" xml:space="preserve">
+    <value>在排序的时候发生了一个错误.
+有些物品没有被安置.</value>
+  </data>
+    <data name="SackPanelAutoSortMsg" xml:space="preserve">
+    <value>你当前正拿着一个物品.
+在排序前请把这个物品放到某个地方.</value>
+  </data>
+    <data name="SackPanelDelete" xml:space="preserve">
+    <value>删除物品</value>
+  </data>
+    <data name="SackPanelDeleteMsg" xml:space="preserve">
+    <value>这个物品将被永久删除!
+你确定要删除这个物品吗?</value>
+  </data>
+    <data name="SackPanelDeleteMulti" xml:space="preserve">
+    <value>删除多个物品</value>
+  </data>
+    <data name="SackPanelDeleteMultiMsg" xml:space="preserve">
+    <value>你确定要永久删除选中的物品吗?</value>
+  </data>
+    <data name="SackPanelMenuBonus" xml:space="preserve">
+    <value>修改完成奖励</value>
+  </data>
+    <data name="SackPanelMenuCharm" xml:space="preserve">
+      <value>完整符咒</value>
+    </data>
+    <data name="SackPanelMenuFormulae" xml:space="preserve">
+    <value>制作神器</value>
+  </data>
+    <data name="SackPanelMenuClear" xml:space="preserve">
+    <value>清除选定物品</value>
+  </data>
+    <data name="SackPanelMenuCopy" xml:space="preserve">
+    <value>复制物品</value>
+  </data>
+    <data name="SackPanelMenuDelete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+    <data name="SackPanelMenuDuplicate" xml:space="preserve">
+    <value>复印物品</value>
+  </data>
+    <data name="SackPanelMenuMoveTo" xml:space="preserve">
+    <value>把物品移动到</value>
+  </data>
+    <data name="SackPanelMenuPlayer" xml:space="preserve">
+    <value>玩家面板</value>
+  </data>
+    <data name="SackPanelMenuProperties" xml:space="preserve">
+    <value>属性</value>
+  </data>
+    <data name="SackPanelMenuRelic" xml:space="preserve">
+    <value>完成奖励</value>
+  </data>
+    <data name="SackPanelMenuRemoveRelic" xml:space="preserve">
+    <value>移除遗物</value>
+  </data>
+    <data name="SackPanelMenuSeed" xml:space="preserve">
+    <value>修改物品种子...</value>
+  </data>
+    <data name="SackPanelMenuSet" xml:space="preserve">
+    <value>创建套装物品</value>
+  </data>
+    <data name="SackPanelMenuSplit" xml:space="preserve">
+    <value>分离</value>
+  </data>
+    <data name="SackPanelMenuStash" xml:space="preserve">
+    <value>储物箱面板</value>
+  </data>
+    <data name="SackPanelMenuTrash" xml:space="preserve">
+    <value>垃圾箱面板</value>
+  </data>
+    <data name="SackPanelMenuVault" xml:space="preserve">
+    <value>仓库面板</value>
+  </data>
+    <data name="SackPanelMenuVault2" xml:space="preserve">
+    <value>次要仓库</value>
+  </data>
+    <data name="SackPanelRemoveRelicMsg" xml:space="preserve">
+    <value>你确定要从这个物品上移除遗物吗?</value>
+  </data>
+    <data name="SeedBtnRandom" xml:space="preserve">
+    <value>随机</value>
+  </data>
+    <data name="SeedLabel1" xml:space="preserve">
+    <value>泰坦之旅使用物品种子来随机化物品的数据，这样就没有物品是一样的啦。
+现在还不是很清楚地知道种子是怎么影响物品数据的。修改种子会使你的物品数据再下次进入游戏的时候发生一些轻微的变化.
+
+请输入1~32767之间的数字</value>
+  </data>
+    <data name="SeedRange" xml:space="preserve">
+    <value>物品种子必须是一个在1~32767区间的整数</value>
+  </data>
+    <data name="SeedText" xml:space="preserve">
+    <value>修改物品种子</value>
+  </data>
+    <data name="SettingsAllowCopy" xml:space="preserve">
+    <value>允许复制物品</value>
+  </data>
+    <data name="SettingsAllowCopyTT" xml:space="preserve">
+    <value>启用右键菜单中的复制选项.</value>
+  </data>
+    <data name="SettingsAllowEdit" xml:space="preserve">
+    <value>允许物品编辑功能</value>
+  </data>
+    <data name="SettingsAllowEditTT" xml:space="preserve">
+    <value>在右键菜单开启编辑功能选项.
+该功能包含了物品的创建和修改.</value>
+  </data>
+    <data name="SettingsAutoUpdate" xml:space="preserve">
+    <value>自动检查更新</value>
+  </data>
+    <data name="SettingsAutoUpdateTT" xml:space="preserve">
+    <value>选择此项将会在程序启动的时候自动联网检查TQVault的新版本.
+如果网络不好的话，可能会导致启动时间变长.</value>
+  </data>
+    <data name="SettingsBrowseIT" xml:space="preserve">
+    <value>请选择不朽王座的游戏文件路径.</value>
+  </data>
+    <data name="SettingsBrowseTQ" xml:space="preserve">
+    <value>请选择泰坦之旅的游戏文件路径.</value>
+  </data>
+    <data name="SettingsBrowseVault" xml:space="preserve">
+    <value>请选择TQVault仓库文件的路径.</value>
+  </data>
+    <data name="SettingsDetectGamePath" xml:space="preserve">
+    <value>自动检测游戏路径</value>
+  </data>
+    <data name="SettingsDetectLanguage" xml:space="preserve">
+    <value>自动检测语言</value>
+  </data>
+    <data name="SettingsEnableMod" xml:space="preserve">
+    <value>启用自定义地图</value>
+  </data>
+    <data name="SettingsEnableModTT" xml:space="preserve">
+    <value>选择此项将启用下拉菜单来选择自定义地图.</value>
+  </data>
+    <data name="SettingsForceCheck" xml:space="preserve">
+    <value>检查更新</value>
+  </data>
+    <data name="SettingsForceCheckTT" xml:space="preserve">
+    <value>手动检查是否有可用的更新.</value>
+  </data>
+    <data name="SettingsLabel1" xml:space="preserve">
+    <value>仓库路径</value>
+  </data>
+    <data name="SettingsLabel2" xml:space="preserve">
+    <value>游戏语言</value>
+  </data>
+    <data name="SettingsLabel3" xml:space="preserve">
+    <value>泰坦之旅游戏路径</value>
+  </data>
+    <data name="SettingsLabel4" xml:space="preserve">
+    <value>不朽王座游戏路径</value>
+  </data>
+    <data name="SettingsLabel5" xml:space="preserve">
+    <value>自定义地图</value>
+  </data>
+    <data name="SettingsLoadChar" xml:space="preserve">
+    <value>自动加载上一次打开的角色</value>
+  </data>
+    <data name="SettingsLoadCharTT" xml:space="preserve">
+    <value>选择此项将会自动加载在TQVault关闭时最后一个打开的角色.</value>
+  </data>
+    <data name="SettingsLoadVault" xml:space="preserve">
+    <value>自动加载上一次打开的仓库</value>
+  </data>
+    <data name="SettingsLoadVaultTT" xml:space="preserve">
+    <value>选择此项将会自动加载在TQVault关闭时最后一个打开的仓库.
+如果没有选择的话，那么TQVault会自动打开主仓库.</value>
+  </data>
+    <data name="SettingsNoWarning" xml:space="preserve">
+    <value>跳过确认提示</value>
+  </data>
+    <data name="SettingsNoWarningTT" xml:space="preserve">
+    <value>启用后，物品删除、移除遗物、TQVault在垃圾箱内有物品并关闭时的提示信息将不会在显示。</value>
+  </data>
+    <data name="SettingsPreLoad" xml:space="preserve">
+    <value>预加载所有的仓库和角色文件</value>
+  </data>
+    <data name="SettingsPreLoadTT" xml:space="preserve">
+    <value>选择此项将会在程序启动时，自动加载所有的角色，储物箱和仓库文件。
+该选项是为了搜索功能，但会增加启动时间.</value>
+  </data>
+    <data name="SettingsReset" xml:space="preserve">
+    <value>重置</value>
+  </data>
+    <data name="SettingsResetTT" xml:space="preserve">
+    <value>将配置重置为上次保存的配置.</value>
+  </data>
+    <data name="SettingsSkipTitle" xml:space="preserve">
+    <value>自动跳过启动画面</value>
+  </data>
+    <data name="SettingsSkipTitleTT" xml:space="preserve">
+    <value>勾选此框将自动点击标题屏幕上的Enter键。</value>
+  </data>
+    <data name="SettingsTitle" xml:space="preserve">
+    <value>配置设置</value>
+  </data>
+    <data name="StashNotFound" xml:space="preserve">
+    <value>找不到储物箱文件.</value>
+  </data>
+    <data name="StashNotFoundMsg" xml:space="preserve">
+    <value>找不到储物箱文件.
+请在游戏中找旅行商队来创建这个文件.
+该角色不会有存储区域选项卡.</value>
+  </data>
+    <data name="StashPanelBtn1" xml:space="preserve">
+    <value>装备</value>
+  </data>
+    <data name="StashPanelBtn2" xml:space="preserve">
+    <value>转移区域</value>
+  </data>
+    <data name="StashPanelBtn3" xml:space="preserve">
+    <value>存储区域</value>
+  </data>
+    <data name="StashPanelText" xml:space="preserve">
+    <value>旅行商队</value>
+  </data>
+    <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <data name="TQVIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Icon\app.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="UpdateCompletion" xml:space="preserve">
+    <value>{0}    {1} % 完成.</value>
+  </data>
+    <data name="UpdateCompletion2" xml:space="preserve">
+    <value>{0}    0 % 完成.</value>
+  </data>
+    <data name="UpdateCurrentVer" xml:space="preserve">
+    <value>当前版本: {0}</value>
+  </data>
+    <data name="UpdateError" xml:space="preserve">
+    <value>无法启动安装程序</value>
+  </data>
+    <data name="UpdateErrorMsg" xml:space="preserve">
+    <value>下载或者提取的时候出了问题.
+请下载最新的完整的安装包并手动运行它.
+点击确定退出.</value>
+  </data>
+    <data name="UpdateFullInstall" xml:space="preserve">
+    <value>发现TQVault的更新版本，需要进行完整安装.</value>
+  </data>
+    <data name="UpdateLatestVer" xml:space="preserve">
+    <value>最新的版本: {0}</value>
+  </data>
+    <data name="UpdateMinVer" xml:space="preserve">
+    <value>最低版本: {0}</value>
+  </data>
+    <data name="UpdateNewTQVault" xml:space="preserve">
+    <value>发现新版本的TQVault.</value>
+  </data>
+    <data name="UpdateNewUpdater" xml:space="preserve">
+    <value>发现新版本的TQVault.</value>
+  </data>
+    <data name="UpdateNoUpdate" xml:space="preserve">
+    <value>你的版本是最新的.</value>
+  </data>
+    <data name="UpdatePerform" xml:space="preserve">
+    <value>点击确定进行更新.</value>
+  </data>
+    <data name="UpdatePerformBoth" xml:space="preserve">
+    <value>单击确定进行两个更新.</value>
+  </data>
+    <data name="UpdateRunInstall" xml:space="preserve">
+    <value>点击确定来下载和运行安装程序.</value>
+  </data>
+    <data name="UpdateStreamError" xml:space="preserve">
+    <value>连接更新服务时出错了.
+更新停止了.</value>
+  </data>
+    <data name="UpdateText" xml:space="preserve">
+    <value>更新TQVault</value>
+  </data>
+    <data name="UpdateUpdaterNotFound" xml:space="preserve">
+    <value>找不到TQVault更新程序，被重命名了？</value>
+  </data>
+    <data name="VaultProgressText" xml:space="preserve">
+    <value>正在加载玩家和仓库文件...</value>
+  </data>
+    <data name="AUEnglishName" xml:space="preserve">
+    <value>Chinese</value>
+        <comment>Do not Translate.  Used for AutoUpdate.
+Used to determine which language file to update.</comment>
+  </data>
+    <data name="AUFileVersion" xml:space="preserve">
+    <value>2</value>
+        <comment>Do not Translate.  Used for AutoUpdate.
+Used to track changes in the translation file.</comment>
+  </data>
+    <data name="AUMinTQVaultVersion" xml:space="preserve">
+    <value>2.3.1.0</value>
+        <comment>Do not Translate.  Used for AutoUpdate.
+Change this value to match program version when new keys are added.  Will trigger an update on next restart.</comment>
+  </data>
+    <data name="AboutGraphic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\aboutgraphic.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="autosortdown01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\autosortdown01.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="autosortover01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\autosortover01.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="autosortup01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\autosortup01.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="EquipmentPanel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\EquipmentPanel.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="inventorybagdown01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\inventorybagdown01.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="inventorybagover01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\inventorybagover01.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="inventorybagup01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\inventorybagup01.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="MainForm_Background" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\MainForm Background.PNG;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="rotatedautosortdown01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\rotatedautosortdown01.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="rotatedautosortover01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\rotatedautosortover01.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="rotatedautosortup01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\rotatedautosortup01.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="StashPanel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\StashPanel.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="StashTabDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\StashTabDown.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="StashTabOver" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\StashTabOver.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="StashTabUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\StashTabUp.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="tqmedallion" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\tqmedallion.JPG;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="tqmedalliondoor" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\tqmedalliondoor.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="VaultGroupBoxEmpty" xml:space="preserve">
+    <value>&lt;空&gt;</value>
+  </data>
+    <data name="MainFormDisableLoadAllFiles" xml:space="preserve">
+    <value>在上次运行中尝试加载所有文件时出错。
+是否要禁用加载所有文件？</value>
+  </data>
+    <data name="MainFormDisableLoadAllFilesCaption" xml:space="preserve">
+    <value>禁用加载所有文件?</value>
+  </data>
+    <data name="caravan_bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\caravan_bg.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="MainButtonDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\mainbuttondown.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="MainButtonOver" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\mainbuttonover.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="MainButtonUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\mainbuttonup.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="MainForm_NewBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\mainform_newbackground.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="Majestic_Chest" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\majestic chest.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="Majestic_Chest_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\majestic chest_small.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="MainFormSearchButtonText" xml:space="preserve">
+    <value>搜索</value>
+  </data>
+    <data name="SearchDialogCaption" xml:space="preserve">
+    <value>搜索物品</value>
+  </data>
+    <data name="SearchDialogText" xml:space="preserve">
+    <value>在以下文件中搜索:仓库，储物箱，物品栏.
+
+你可以组合下列的所有选项(所有选项都是可选的):
+* 名称: 必须是第一个搜索词. 例子：'严寒的 霜冻之'
+* 类型: 在搜索字前使用 @ 符号来搜索. 例子：'@剑'
+* 属性: 在搜索字前使用 # 符号来搜索. 例子：'#元素抗性'
+* 稀有度: 在搜索字前使用 $ 符号来搜索.例子： '$稀有'      
+你可以使用在搜索字之间使用 | 来表示或条件. 例子：'$普通 | 稀有' 将会返回所有的普通和稀有物品.
+
+一个复杂例子: '严寒的 霜冻之 @戒指 $稀有 | 普通'</value>
+  </data>
+    <data name="BorderBottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\borderbottom.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="BorderBottomLeftCorner" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\borderbottomleftcorner.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="BorderBottomRightCorner" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\borderbottomrightcorner.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="BorderSide" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\borderside.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="BorderTop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\bordertop.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="ButtonMaximizeDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\buttonmaximizedown.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="ButtonMaximizeOver" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\buttonmaximizeover.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="ButtonMaximizeUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\buttonmaximizeup.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="ButtonMinimizeDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\buttonminimizedown.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="ButtonMinimizeOver" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\buttonminimizeover.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="ButtonMinimizeUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\buttonminimizeup.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="ButtonCloseDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\buttonclosedown.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="ButtonCloseOver" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\buttoncloseover.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="ButtonCloseUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\buttoncloseup.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="Equipment_bg_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\equipment_bg_new.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="GlobalClose" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+    <data name="GlobalMaximize" xml:space="preserve">
+    <value>最大化</value>
+  </data>
+    <data name="GlobalMinimize" xml:space="preserve">
+    <value>最小化</value>
+  </data>
+    <data name="GlobalNormalize" xml:space="preserve">
+    <value>缩小到正常大小</value>
+  </data>
+    <data name="GlobalMove" xml:space="preserve">
+    <value>移动</value>
+  </data>
+    <data name="GlobalRestore" xml:space="preserve">
+    <value>恢复</value>
+  </data>
+    <data name="GlobalSize" xml:space="preserve">
+    <value>大小</value>
+  </data>
+    <data name="NewAboutGraphic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\newaboutgraphic.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="NewSplashScreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\newsplashscreen.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="SplashScreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\splashscreen.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="ProgressBar" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\progressbar.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="ProgressBarFill" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\progressbarfill.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="SettingsPlayerReadonly" xml:space="preserve">
+    <value>角色装备只读</value>
+  </data>
+    <data name="SettingsPlayerReadonlyTT" xml:space="preserve">
+    <value>避免可能发生的保存游戏损坏。启用后，玩家装备将为只读，您将无法选择或移动任何物品。</value>
+  </data>
+    <data name="ItemRagnarok" xml:space="preserve">
+    <value>诸神黄昏(Ragnarök)物品</value>
+  </data>
+    <data name="AlbertusMTLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Fonts\albertus mt light.ttf;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </data>
+    <data name="AlbertusMT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Fonts\albertus mt.ttf;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </data>
+    <data name="ItemAtlantis" xml:space="preserve">
+    <value>亚特拉迪斯物品</value>
+  </data>
+    <data name="GlobalRelicVaultStash" xml:space="preserve">
+    <value>遗物仓库</value>
+  </data>
+    <data name="equipment_bg_and_char" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\equipment_bg_and_char.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="SettingsAllowEditCE" xml:space="preserve">
+    <value>允许角色编辑功能</value>
+  </data>
+    <data name="CEAttributePoints" xml:space="preserve">
+    <value>属性点</value>
+  </data>
+    <data name="CEAttributes" xml:space="preserve">
+    <value>基础属性</value>
+  </data>
+    <data name="CEDexterity" xml:space="preserve">
+    <value>敏捷</value>
+  </data>
+    <data name="CEDifficulty" xml:space="preserve">
+    <value>难度</value>
+  </data>
+    <data name="CEEnableLeveling" xml:space="preserve">
+    <value>启用分级(Enable Leveling)</value>
+  </data>
+    <data name="CEHealth" xml:space="preserve">
+    <value>生命</value>
+  </data>
+    <data name="CEIntelligence" xml:space="preserve">
+    <value>智力</value>
+  </data>
+    <data name="CELevel" xml:space="preserve">
+    <value>等级</value>
+  </data>
+    <data name="CELeveling" xml:space="preserve">
+    <value>分级(Leveling)</value>
+  </data>
+    <data name="CEMana" xml:space="preserve">
+    <value>法力</value>
+  </data>
+    <data name="CESkillPoints" xml:space="preserve">
+    <value>技能点</value>
+  </data>
+    <data name="CEStrength" xml:space="preserve">
+    <value>力量</value>
+  </data>
+    <data name="CEXp" xml:space="preserve">
+    <value>经验</value>
+  </data>
+    <data name="CharacterEditBtn" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+    <data name="MasteriestagCClass01" xml:space="preserve">
+    <value>tagMasteryBrief07</value>
+  </data>
+    <data name="MasteriestagCClass02" xml:space="preserve">
+    <value>tagMasteryBrief08</value>
+  </data>
+    <data name="MasteriestagCClass03" xml:space="preserve">
+    <value>tagMasteryBrief05</value>
+  </data>
+    <data name="MasteriestagCClass04" xml:space="preserve">
+    <value>tagMasteryBrief06</value>
+  </data>
+    <data name="MasteriestagCClass05" xml:space="preserve">
+    <value>tagMasteryBrief04</value>
+  </data>
+    <data name="MasteriestagCClass06" xml:space="preserve">
+    <value>tagMasteryBrief03</value>
+  </data>
+    <data name="MasteriestagCClass07" xml:space="preserve">
+    <value>tagMasteryBrief02</value>
+  </data>
+    <data name="MasteriestagCClass08" xml:space="preserve">
+    <value>tagMasteryBrief01</value>
+  </data>
+    <data name="MasteriestagCClass09" xml:space="preserve">
+    <value>tagMasteryBrief07-tagMasteryBrief01</value>
+  </data>
+    <data name="MasteriestagCClass10" xml:space="preserve">
+    <value>tagMasteryBrief08-tagMasteryBrief01</value>
+  </data>
+    <data name="MasteriestagCClass11" xml:space="preserve">
+    <value>tagMasteryBrief05-tagMasteryBrief01</value>
+  </data>
+    <data name="MasteriestagCClass12" xml:space="preserve">
+    <value>tagMasteryBrief06-tagMasteryBrief01</value>
+  </data>
+    <data name="MasteriestagCClass13" xml:space="preserve">
+    <value>tagMasteryBrief04-tagMasteryBrief01</value>
+  </data>
+    <data name="MasteriestagCClass14" xml:space="preserve">
+    <value>tagMasteryBrief03-tagMasteryBrief01</value>
+  </data>
+    <data name="MasteriestagCClass15" xml:space="preserve">
+    <value>tagMasteryBrief02-tagMasteryBrief01</value>
+  </data>
+    <data name="MasteriestagCClass16" xml:space="preserve">
+    <value>tagMasteryBrief07-tagMasteryBrief02</value>
+  </data>
+    <data name="MasteriestagCClass17" xml:space="preserve">
+    <value>tagMasteryBrief08-tagMasteryBrief02</value>
+  </data>
+    <data name="MasteriestagCClass18" xml:space="preserve">
+    <value>tagMasteryBrief05-tagMasteryBrief02</value>
+  </data>
+    <data name="MasteriestagCClass19" xml:space="preserve">
+    <value>tagMasteryBrief06-tagMasteryBrief02</value>
+  </data>
+    <data name="MasteriestagCClass20" xml:space="preserve">
+    <value>tagMasteryBrief04-tagMasteryBrief02</value>
+  </data>
+    <data name="MasteriestagCClass21" xml:space="preserve">
+    <value>tagMasteryBrief03-tagMasteryBrief02</value>
+  </data>
+    <data name="MasteriestagCClass22" xml:space="preserve">
+    <value>tagMasteryBrief07-tagMasteryBrief03</value>
+  </data>
+    <data name="MasteriestagCClass23" xml:space="preserve">
+    <value>tagMasteryBrief08-tagMasteryBrief03</value>
+  </data>
+    <data name="MasteriestagCClass24" xml:space="preserve">
+    <value>tagMasteryBrief05-tagMasteryBrief03</value>
+  </data>
+    <data name="MasteriestagCClass25" xml:space="preserve">
+    <value>tagMasteryBrief06-tagMasteryBrief03</value>
+  </data>
+    <data name="MasteriestagCClass26" xml:space="preserve">
+    <value>tagMasteryBrief04-tagMasteryBrief03</value>
+  </data>
+    <data name="MasteriestagCClass27" xml:space="preserve">
+    <value>tagMasteryBrief07-tagMasteryBrief04</value>
+  </data>
+    <data name="MasteriestagCClass28" xml:space="preserve">
+    <value>tagMasteryBrief08-tagMasteryBrief04</value>
+  </data>
+    <data name="MasteriestagCClass29" xml:space="preserve">
+    <value>tagMasteryBrief05-tagMasteryBrief04</value>
+  </data>
+    <data name="MasteriestagCClass30" xml:space="preserve">
+    <value>tagMasteryBrief06-tagMasteryBrief04</value>
+  </data>
+    <data name="MasteriestagCClass31" xml:space="preserve">
+    <value>tagMasteryBrief07-tagMasteryBrief06</value>
+  </data>
+    <data name="MasteriestagCClass32" xml:space="preserve">
+    <value>tagMasteryBrief08-tagMasteryBrief06</value>
+  </data>
+    <data name="MasteriestagCClass33" xml:space="preserve">
+    <value>tagMasteryBrief05-tagMasteryBrief06</value>
+  </data>
+    <data name="MasteriestagCClass34" xml:space="preserve">
+    <value>tagMasteryBrief07-tagMasteryBrief05</value>
+  </data>
+    <data name="MasteriestagCClass35" xml:space="preserve">
+    <value>tagMasteryBrief08-tagMasteryBrief05</value>
+  </data>
+    <data name="MasteriestagCClass36" xml:space="preserve">
+    <value>tagMasteryBrief07-tagMasteryBrief08</value>
+  </data>
+    <data name="MasteriesxtagCharacterClass01" xml:space="preserve">
+    <value>xtagMasteryBrief09</value>
+  </data>
+    <data name="MasteriesxtagCharacterClass02" xml:space="preserve">
+    <value>tagMasteryBrief01-xtagMasteryBrief09</value>
+  </data>
+    <data name="MasteriesxtagCharacterClass03" xml:space="preserve">
+    <value>tagMasteryBrief02-xtagMasteryBrief09</value>
+  </data>
+    <data name="MasteriesxtagCharacterClass04" xml:space="preserve">
+    <value>tagMasteryBrief03-xtagMasteryBrief09</value>
+  </data>
+    <data name="MasteriesxtagCharacterClass05" xml:space="preserve">
+    <value>tagMasteryBrief04-xtagMasteryBrief09</value>
+  </data>
+    <data name="MasteriesxtagCharacterClass06" xml:space="preserve">
+    <value>tagMasteryBrief06-xtagMasteryBrief09</value>
+  </data>
+    <data name="MasteriesxtagCharacterClass07" xml:space="preserve">
+    <value>tagMasteryBrief05-xtagMasteryBrief09</value>
+  </data>
+    <data name="MasteriesxtagCharacterClass08" xml:space="preserve">
+    <value>tagMasteryBrief08-xtagMasteryBrief09</value>
+  </data>
+    <data name="MasteriesxtagCharacterClass09" xml:space="preserve">
+    <value>tagMasteryBrief07-xtagMasteryBrief09</value>
+  </data>
+    <data name="Masteriesx2tag_class_rm_rm" xml:space="preserve">
+    <value>x2tagRuneMasteryBrief</value>
+  </data>
+    <data name="Masteriesx2tag_class_warfare_rm" xml:space="preserve">
+    <value>tagMasteryBrief01-x2tagRuneMasteryBrief</value>
+  </data>
+    <data name="Masteriesx2tag_class_defense_rm" xml:space="preserve">
+    <value>tagMasteryBrief02-x2tagRuneMasteryBrief</value>
+  </data>
+    <data name="Masteriesx2tag_class_earth_rm" xml:space="preserve">
+    <value>tagMasteryBrief03-x2tagRuneMasteryBrief</value>
+  </data>
+    <data name="Masteriesx2tag_class_storm_rm" xml:space="preserve">
+    <value>tagMasteryBrief04-x2tagRuneMasteryBrief</value>
+  </data>
+    <data name="Masteriesx2tag_class_hunting_rm" xml:space="preserve">
+    <value>tagMasteryBrief06-x2tagRuneMasteryBrief</value>
+  </data>
+    <data name="Masteriesx2tag_class_stealth_rm" xml:space="preserve">
+    <value>tagMasteryBrief05-x2tagRuneMasteryBrief</value>
+  </data>
+    <data name="Masteriesx2tag_class_nature_rm" xml:space="preserve">
+    <value>tagMasteryBrief08-x2tagRuneMasteryBrief</value>
+  </data>
+    <data name="Masteriesx2tag_class_spirit_rm" xml:space="preserve">
+    <value>tagMasteryBrief07-x2tagRuneMasteryBrief</value>
+  </data>
+    <data name="Masteriesx2tag_class_dream_rm" xml:space="preserve">
+    <value>xtagMasteryBrief09-x2tagRuneMasteryBrief</value>
+  </data>
+    <data name="Masteries" xml:space="preserve">
+    <value>专精</value>
+  </data>
+    <data name="CurrentLevel" xml:space="preserve">
+    <value>等级</value>
+  </data>
+    <data name="Class" xml:space="preserve">
+    <value>职业</value>
+  </data>
+    <data name="CurrentXP" xml:space="preserve">
+    <value>经验</value>
+  </data>
+    <data name="DifficultyUnlocked" xml:space="preserve">
+    <value>难度</value>
+  </data>
+    <data name="Money" xml:space="preserve">
+    <value>金钱</value>
+  </data>
+    <data name="SkillPoints" xml:space="preserve">
+    <value>技能点</value>
+  </data>
+    <data name="AttributesPoints" xml:space="preserve">
+    <value>属性点</value>
+  </data>
+    <data name="BaseStrength" xml:space="preserve">
+    <value>基础力量</value>
+  </data>
+    <data name="BaseDexterity" xml:space="preserve">
+    <value>基础敏捷</value>
+  </data>
+    <data name="BaseIntelligence" xml:space="preserve">
+    <value>基础智力</value>
+  </data>
+    <data name="BaseHealth" xml:space="preserve">
+    <value>基础生命</value>
+  </data>
+    <data name="BaseMana" xml:space="preserve">
+    <value>基础法力</value>
+  </data>
+    <data name="PlayTimeInSeconds" xml:space="preserve">
+    <value>已游玩时间</value>
+  </data>
+    <data name="NumberOfDeaths" xml:space="preserve">
+    <value>死亡次数</value>
+  </data>
+    <data name="NumberOfKills" xml:space="preserve">
+    <value>击杀总数</value>
+  </data>
+    <data name="ExperienceFromKills" xml:space="preserve">
+    <value>击杀获取的经验</value>
+  </data>
+    <data name="HealthPotionsUsed" xml:space="preserve">
+    <value>使用的血瓶数量</value>
+  </data>
+    <data name="ManaPotionsUsed" xml:space="preserve">
+    <value>使用的蓝瓶数量</value>
+  </data>
+    <data name="MaxLevel" xml:space="preserve">
+    <value>最大等级</value>
+  </data>
+    <data name="NumHitsReceived" xml:space="preserve">
+    <value>受击次数(Hits Recv)</value>
+  </data>
+    <data name="NumHitsInflicted" xml:space="preserve">
+    <value>攻击次数(Hits Inflicted)</value>
+  </data>
+    <data name="GreatestDamageInflicted" xml:space="preserve">
+    <value>最大伤害</value>
+  </data>
+    <data name="GreatestMonster" xml:space="preserve">
+    <value>击杀的最强怪物</value>
+  </data>
+    <data name="CriticalHitsInflicted" xml:space="preserve">
+    <value>暴击次数</value>
+  </data>
+    <data name="CriticalHitsReceived" xml:space="preserve">
+    <value>被暴击次数</value>
+  </data>
+    <data name="PlayerPanelMenuDisableAllTooltip" xml:space="preserve">
+    <value>禁用所有信息</value>
+  </data>
+    <data name="PlayerPanelMenuDisableTooltip" xml:space="preserve">
+    <value>禁用信息</value>
+  </data>
+    <data name="PlayerPanelMenuEnableTooltip" xml:space="preserve">
+    <value>启用信息</value>
+  </data>
+    <data name="PlayerPanelMenuEnableAllTooltip" xml:space="preserve">
+    <value>开启所有信息</value>
+  </data>
+    <data name="SettingEnableDetailedTooltipView" xml:space="preserve">
+    <value>开启详细信息面板</value>
+  </data>
+    <data name="SettingEnableDetailedTooltipViewTT" xml:space="preserve">
+    <value>将提示信息分为前缀/基础/后缀类别</value>
+  </data>
+    <data name="SettingsItemBGColorOpacityLabel" xml:space="preserve">
+    <value>物品背景不透明度颜色:</value>
+  </data>
+    <data name="SettingsItemBGColorOpacityLabelTT" xml:space="preserve">
+    <value>物品背景颜色不透明度级别</value>
+  </data>
+    <data name="SettingsEnableItemRequirementRestriction" xml:space="preserve">
+    <value>启用物品需求限制</value>
+  </data>
+    <data name="SettingsEnableItemRequirementRestrictionTT" xml:space="preserve">
+    <value>启用时，当角色不符合物品的要求时，物品背景将变成红色，角色也不能装备这些物品.</value>
+  </data>
+    <data name="ResetMasteriesButton" xml:space="preserve">
+    <value>重置专精</value>
+  </data>
+    <data name="ResetAttributesButton" xml:space="preserve">
+    <value>重置属性</value>
+  </data>
+    <data name="TextTag_tagRelic" xml:space="preserve">
+    <value>遗物</value>
+        <comment>Substitute for missing tag for "Relic"</comment>
+  </data>
+    <data name="TextTag_tagArtifact" xml:space="preserve">
+    <value>神器</value>
+        <comment>Substitute for missing tag for "Artifact"</comment>
+  </data>
+    <data name="TextTag_tagSword" xml:space="preserve">
+    <value>剑</value>
+        <comment>Substitute for missing tag for "Sword"</comment>
+  </data>
+    <data name="TextTag_bonusLifePercent" xml:space="preserve">
+    <value>{%.0f0}% 生命</value>
+        <comment>Substitute for missing tag "bonusLifePercent"</comment>
+  </data>
+    <data name="TextTag_bonusLifePoints" xml:space="preserve">
+    <value>{%.0f0} 生命</value>
+        <comment>Substitute for missing tag "bonusLifePoints"</comment>
+  </data>
+    <data name="TextTag_bonusManaPercent" xml:space="preserve">
+    <value>{%.0f0}% 法力</value>
+        <comment>Substitute for missing tag "bonusManaPercent"</comment>
+  </data>
+    <data name="TextTag_bonusManaPoints" xml:space="preserve">
+    <value>{%.0f0} 法力</value>
+        <comment>Substitute for missing tag "bonusManaPoints"</comment>
+  </data>
+    <data name="TextTag_alwaysUseSpecialAnimation" xml:space="preserve">
+    <value>{^O}总是使用特殊动画</value>
+        <comment>Substitute for missing tag "alwaysUseSpecialAnimation"</comment>
+  </data>
+    <data name="TextTag_DisplayAsQuestItem" xml:space="preserve">
+    <value>{^O}显示为任务物品</value>
+        <comment>Substitute for missing tag "DisplayAsQuestItem"</comment>
+  </data>
+    <data name="TextTag_headVelocity" xml:space="preserve">
+    <value>{%.0f0} Head Velocity</value>
+        <comment>Substitute for missing tag "headVelocity"</comment>
+  </data>
+    <data name="TextTag_tailVelocity" xml:space="preserve">
+    <value>{%.0f0} Tail Velocity</value>
+        <comment>Substitute for missing tag "tailVelocity"</comment>
+  </data>
+    <data name="TextTag_maxDistance" xml:space="preserve">
+    <value>{%.0f0} Meter Max Distance</value>
+        <comment>Substitute for missing tag "maxDistance"</comment>
+  </data>
+    <data name="TextTag_notDispelable" xml:space="preserve">
+    <value>{^O}无法驱散</value>
+        <comment>Substitute for missing tag "notDispelable"</comment>
+  </data>
+    <data name="TextTag_dropMeshDontOverrideTextures" xml:space="preserve">
+    <value>{^D}Drop mesh don't override textures</value>
+        <comment>Substitute for missing tag "dropMeshDontOverrideTextures"</comment>
+  </data>
+    <data name="TextTag_defensiveTotalSpeedChance" xml:space="preserve">
+    <value>{%.0f0}% Defensive Total Speed Chance</value>
+        <comment>Substitute for missing tag "defensiveTotalSpeedChance"</comment>
+  </data>
+    <data name="SearchMatchingItemsTT" xml:space="preserve">
+    <value>匹配{0}个物品</value>
+  </data>
+    <data name="SearchFiltersSelected" xml:space="preserve">
+    <value>选择{0}个条件</value>
+  </data>
+    <data name="SearchTermRequired" xml:space="preserve">
+    <value>必须选择一些条件</value>
+  </data>
+    <data name="SearchOperator" xml:space="preserve">
+    <value>操作</value>
+  </data>
+    <data name="SearchOperatorTitle" xml:space="preserve">
+    <value>搜索操作</value>
+  </data>
+    <data name="SearchOperatorAnd" xml:space="preserve">
+    <value>与(And)</value>
+  </data>
+    <data name="SearchOperatorOr" xml:space="preserve">
+    <value>或(Or)</value>
+  </data>
+    <data name="SearchOperatorDescOr" xml:space="preserve">
+    <value>找到了满足一个或多个条件的物品</value>
+  </data>
+    <data name="SearchOperatorDescAnd" xml:space="preserve">
+    <value>找到了满足所有条件的物品</value>
+  </data>
+    <data name="GlobalExpandAll" xml:space="preserve">
+    <value>展开全部</value>
+  </data>
+    <data name="GlobalCollapseAll" xml:space="preserve">
+    <value>折叠全部</value>
+  </data>
+    <data name="SearchReduceCategoriesDuringSelection" xml:space="preserve">
+    <value>在选择的时候减少类别</value>
+  </data>
+    <data name="SearchVisibleElementsPerCategory" xml:space="preserve">
+    <value>可见元素/类别</value>
+  </data>
+    <data name="SearchQueries" xml:space="preserve">
+    <value>查询</value>
+  </data>
+    <data name="GlobalSave" xml:space="preserve">
+    <value>保存</value>
+  </data>
+    <data name="GlobalBaseAttribute" xml:space="preserve">
+    <value>基础属性</value>
+  </data>
+    <data name="GlobalPrefix" xml:space="preserve">
+    <value>前缀</value>
+  </data>
+    <data name="GlobalPrefixName" xml:space="preserve">
+    <value>前缀名称</value>
+  </data>
+    <data name="GlobalSuffix" xml:space="preserve">
+    <value>后缀</value>
+  </data>
+    <data name="GlobalSuffixName" xml:space="preserve">
+    <value>后缀名称</value>
+  </data>
+    <data name="GlobalRarity" xml:space="preserve">
+    <value>稀有度</value>
+  </data>
+    <data name="GlobalStyle" xml:space="preserve">
+    <value>样式</value>
+  </data>
+    <data name="GlobalType" xml:space="preserve">
+    <value>类别</value>
+  </data>
+    <data name="GlobalVaults" xml:space="preserve">
+    <value>仓库</value>
+  </data>
+    <data name="SearchHavingCharm" xml:space="preserve">
+      <value>拥有符咒</value>
+    </data>
+    <data name="SearchHavingRelic" xml:space="preserve">
+      <value>拥有遗物</value>
+    </data>
+    <data name="SearchBuildingData" xml:space="preserve">
+    <value>构筑数据</value>
+  </data>
+    <data name="SearchEngineReady" xml:space="preserve">
+    <value>搜索引擎准备就绪</value>
+  </data>
+    <data name="SearchItemCountIs" xml:space="preserve">
+    <value>物品总数{0}</value>
+  </data>
+    <data name="SearchTooManyResultToDisplay" xml:space="preserve">
+    <value>要展示的物品太多了.{^N}建议搜索.</value>
+  </data>
+    <data name="GlobalInputWarning" xml:space="preserve">
+    <value>输入警告</value>
+  </data>
+    <data name="SearchQueryNameMustBeSet" xml:space="preserve">
+    <value>必须设置查询名称</value>
+  </data>
+    <data name="SearchQueryNameAlreadyExist" xml:space="preserve">
+    <value>查询名称已存在。你想覆盖它吗？</value>
+  </data>
+    <data name="GlobalDeleteConfirm" xml:space="preserve">
+    <value>你确认要删除"{0}" ?</value>
+  </data>
+    <data name="TextTag_racialBonusRaceBeast" xml:space="preserve">
+    <value>@tagRace03P</value>
+        <comment>Redirect for racial Bonus "Beast"</comment>
+  </data>
+    <data name="TextTag_racialBonusRaceBeastman" xml:space="preserve">
+    <value>@tagRace04P</value>
+        <comment>Redirect for racial Bonus "Beastman"</comment>
+  </data>
+    <data name="TextTag_racialBonusRaceDemon" xml:space="preserve">
+    <value>@tagRace07P</value>
+        <comment>Redirect for racial Bonus "Demon"</comment>
+  </data>
+    <data name="TextTag_racialBonusRaceMagical" xml:space="preserve">
+    <value>@tagRace11P</value>
+        <comment>Redirect for racial Bonus "Magical"</comment>
+  </data>
+    <data name="TextTag_racialBonusRaceGiant" xml:space="preserve">
+    <value>@x2tagRace01P</value>
+        <comment>Redirect for racial Bonus "Giant"</comment>
+  </data>
+    <data name="TextTag_racialBonusRaceUndead" xml:space="preserve">
+    <value>@tagRace06P</value>
+        <comment>Redirect for racial Bonus "Undead"</comment>
+  </data>
+    <data name="TextTag_racialBonusRaceConstruct" xml:space="preserve">
+    <value>@tagRace10P</value>
+        <comment>Redirect for racial Bonus "Construct"</comment>
+  </data>
+    <data name="TextTag_racialBonusRaceDevice" xml:space="preserve">
+    <value>@tagRace12P</value>
+        <comment>Redirect for racial Bonus "Device"</comment>
+  </data>
+    <data name="TextTag_racialBonusRacePlant" xml:space="preserve">
+    <value>@tagRace01P</value>
+        <comment>Redirect for racial Bonus "Plant"</comment>
+  </data>
+    <data name="TextTag_racialBonusRaceOlympian" xml:space="preserve">
+    <value>@xtagRace01P</value>
+        <comment>Redirect for racial Bonus "Olympian"</comment>
+  </data>
+    <data name="TextTag_racialBonusRaceInsectoid" xml:space="preserve">
+    <value>@tagRace05P</value>
+        <comment>Redirect for racial Bonus "Insectoid"</comment>
+  </data>
+    <data name="TextTag_racialBonusRaceGhost" xml:space="preserve">
+    <value>@x2tagRace02P</value>
+        <comment>Redirect for racial Bonus "Ghost"</comment>
+  </data>
+    <data name="TextTag_racialBonusRaceTitan" xml:space="preserve">
+    <value>@tagRace08P</value>
+        <comment>Redirect for racial Bonus "Titan"</comment>
+  </data>
+    <data name="SettingsEnableHotReload" xml:space="preserve">
+    <value>允许即时重新加载功能</value>
+  </data>
+    <data name="SettingsEnableHotReloadTT" xml:space="preserve">
+    <value>在TQVaultAE中，所有受监控的保存文件（玩家、存储箱、转移存储箱、遗物存储箱）在“游戏中”的更新都是实时可见的。
+如果你在TQVaultAE中有未保存的更改，则以“游戏中”保存系统为准，并覆盖您的更改。
+你要关闭TQVaultAE才能应用更改。</value>
+  </data>
+    <data name="ItemAccent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>Resources\Img\ItemAccent.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    </data>
+    <data name="ItemEmbers" xml:space="preserve">
+    <value>永恒余烬物品</value>
+  </data>
+    <data name="Masteriesx4tagNeidan" xml:space="preserve">
+    <value>x4tagNeidan</value>
+  </data>
+    <data name="Masteriesx4tagNeidanDefense" xml:space="preserve">
+    <value>tagMasteryBrief02-x4tagNeidan</value>
+  </data>
+    <data name="Masteriesx4tagNeidanDream" xml:space="preserve">
+    <value>xtagMasteryBrief09-x4tagNeidan</value>
+  </data>
+    <data name="Masteriesx4tagNeidanEarth" xml:space="preserve">
+    <value>tagMasteryBrief03-x4tagNeidan</value>
+  </data>
+    <data name="Masteriesx4tagNeidanHunting" xml:space="preserve">
+    <value>tagMasteryBrief06-x4tagNeidan</value>
+  </data>
+    <data name="Masteriesx4tagNeidanNature" xml:space="preserve">
+    <value>tagMasteryBrief08-x4tagNeidan</value>
+  </data>
+    <data name="Masteriesx4tagNeidanRogue" xml:space="preserve">
+    <value>tagMasteryBrief05-x4tagNeidan</value>
+  </data>
+    <data name="Masteriesx4tagNeidanRune" xml:space="preserve">
+    <value>x2tagRuneMasteryBrief-x4tagNeidan</value>
+  </data>
+    <data name="Masteriesx4tagNeidanSpirit" xml:space="preserve">
+    <value>tagMasteryBrief07-x4tagNeidan</value>
+  </data>
+    <data name="Masteriesx4tagNeidanStorm" xml:space="preserve">
+    <value>tagMasteryBrief04-x4tagNeidan</value>
+  </data>
+    <data name="Masteriesx4tagNeidanWarfare" xml:space="preserve">
+    <value>tagMasteryBrief01-x4tagNeidan</value>
+  </data>
+</root>

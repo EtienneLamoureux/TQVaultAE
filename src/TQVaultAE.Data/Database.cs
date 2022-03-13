@@ -129,6 +129,11 @@ namespace TQVaultAE.Data
 					try
 					{
 						string optionsFile = GamePathResolver.TQSettingsFile;
+						if (!File.Exists(optionsFile))
+						{
+							// Try IT Folder if there is no settings file in TQ Folder
+							optionsFile = GamePathResolver.ITSettingsFile;
+						}
 						if (File.Exists(optionsFile))
 						{
 							using (StreamReader reader = new StreamReader(optionsFile))
@@ -144,7 +149,8 @@ namespace TQVaultAE.Data
 										continue;
 
 									string key = fields[0].Trim();
-									string val = fields[1].Trim();
+									// The value of the language field in IT settings file is wrapped by "".
+									string val = fields[1].Replace("\"", "").Trim();
 
 									if (key.ToUpperInvariant().Equals("LANGUAGE"))
 									{
@@ -893,7 +899,7 @@ namespace TQVaultAE.Data
 					// Now for the foreign languages there is a bunch of crap in here so the proper version of the adjective can be used with the proper
 					// noun form.  I don' want to code all that so this next code will just take the first version of the adjective and then
 					// throw away all the metadata.
-					if (label.IndexOf('[') != -1)
+					if (label.IndexOf('[') != -1 && NeedClearAdjective())
 					{
 						// find first [xxx]
 						int textStart = label.IndexOf(']') + 1;
@@ -968,5 +974,25 @@ namespace TQVaultAE.Data
 		}
 
 		#endregion Database Private Methods
+		
+		/// <summary>
+		/// Detect whether to clear the adjective in [] in the currently used language
+		/// </summary>
+		/// <returns>Clear flag</returns>
+		private bool NeedClearAdjective()
+		{
+			string cultureID =
+				AutoDetectLanguage ? CultureInfo.CurrentUICulture.EnglishName : GameLanguage;
+			if (TQDebug.DatabaseDebugLevel > 1)
+				Log.LogDebug("cultureID = {0}", cultureID);
+
+			// The context of [] in chinese is meaningful 
+			if (cultureID.ToUpperInvariant().StartsWith("CHINESE"))
+			{
+				return false;
+			}
+
+			return true;
+		}
 	}
 }

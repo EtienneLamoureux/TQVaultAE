@@ -59,6 +59,10 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		string TQSettingsFile { get; }
 		/// <summary>
+		/// Gets the name of the game settings file.
+		/// </summary>
+		string ITSettingsFile { get; }
+		/// <summary>
 		/// Gets the vault backup folder path.
 		/// </summary>
 		string TQVaultBackupFolder { get; }

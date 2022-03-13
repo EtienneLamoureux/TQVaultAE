@@ -85,6 +85,12 @@ namespace TQVaultAE.Services.Win32
 			=> Path.Combine(TQSaveFolder, "Settings", "options.txt");
 
 		/// <summary>
+		/// Gets the name of the game settings file.
+		/// </summary>
+		public string ITSettingsFile
+			=> Path.Combine(ImmortalThroneSaveFolder, "Settings", "options.txt");
+
+		/// <summary>
 		/// Gets or sets the Titan Quest game path.
 		/// </summary>
 		public string TQPath { get; set; }
