@@ -47,6 +47,11 @@ namespace TQVaultAE.Data
 		/// </summary>
 		private string gameLanguage;
 
+		/// <summary>
+		/// Culture ID of localization file
+		/// </summary>
+		private string cultureID = string.Empty;
+
 		private readonly IArcFileProvider arcProv;
 		private readonly IArzFileProvider arzProv;
 		private readonly IItemAttributeProvider ItemAttributeProvider;
@@ -765,6 +770,12 @@ namespace TQVaultAE.Data
 				Log.LogDebug("dbFile = {0}", databaseFile);
 			}
 
+			if (!string.IsNullOrEmpty(databaseFile))
+			{
+				string fileName = Path.GetFileNameWithoutExtension(databaseFile);
+				this.cultureID = fileName.Split('_')[1];
+			}
+
 			if (databaseFile != null)
 			{
 				// Try to suck what we want into memory and then parse it.
@@ -981,13 +992,10 @@ namespace TQVaultAE.Data
 		/// <returns>Clear flag</returns>
 		private bool NeedClearAdjective()
 		{
-			string cultureID =
-				AutoDetectLanguage ? CultureInfo.CurrentUICulture.EnglishName : GameLanguage;
-			if (TQDebug.DatabaseDebugLevel > 1)
-				Log.LogDebug("cultureID = {0}", cultureID);
+			string cultureID = this.cultureID;
 
-			// The context of [] in chinese is meaningful 
-			if (cultureID.ToUpperInvariant().StartsWith("CHINESE"))
+			// The context of [] in chinese is meaningful
+			if (cultureID.ToUpperInvariant().Equals("ZH"))
 			{
 				return false;
 			}
