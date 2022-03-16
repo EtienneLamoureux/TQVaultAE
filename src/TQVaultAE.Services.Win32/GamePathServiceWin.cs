@@ -103,7 +103,7 @@ namespace TQVaultAE.Services.Win32
 			get
 			{
 				if (IsCustom)
-					return Path.Combine(MapName, "SaveData", "Sys", Path.GetFileName(MapName), TRANSFERSTASHFILENAME);
+					return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", Path.GetFileName(MapName), TRANSFERSTASHFILENAME);
 
 				return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", TRANSFERSTASHFILENAME);
 			}
@@ -118,7 +118,7 @@ namespace TQVaultAE.Services.Win32
 			get
 			{
 				if (IsCustom)
-					return Path.Combine(MapName, "SaveData", "Sys", Path.GetFileName(MapName), RELICVAULTSTASHFILENAME);
+					return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", Path.GetFileName(MapName), RELICVAULTSTASHFILENAME);
 
 				return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", RELICVAULTSTASHFILENAME);
 			}
@@ -136,7 +136,7 @@ namespace TQVaultAE.Services.Win32
 			if (IsCustom)
 				mapSaveFolder = "User";
 
-			return Path.Combine(Path.Combine(ImmortalThroneSaveFolder, "SaveData"), mapSaveFolder);
+			return Path.Combine(ImmortalThroneSaveFolder, "SaveData", mapSaveFolder);
 		}
 
 		/// <summary>
@@ -194,6 +194,12 @@ namespace TQVaultAE.Services.Win32
 		/// </summary>
 		public bool IsAtlantisInstalled
 			=> Directory.Exists(ImmortalThronePath + "\\Resources\\XPack3");
+
+		/// <summary>
+		/// Gets a value indicating whether Eternal Embers DLC has been installed.
+		/// </summary>
+		public bool IsEmbersInstalled
+			=> Directory.Exists(ImmortalThronePath + "\\Resources\\XPack4");
 
 
 		/// <summary>
@@ -407,6 +413,9 @@ namespace TQVaultAE.Services.Win32
 
 		public const string PLAYERSTASHFILENAMEG = "winsys.dxg";
 		public string PlayerStashFileNameG => PLAYERSTASHFILENAMEG;
+
+		public const string PLAYERSETTINGSFILENAME = "settings.txt";
+		public string PlayerSettingsFileName => PLAYERSETTINGSFILENAME;
 
 
 		/// <summary>
@@ -624,13 +633,17 @@ Please select the game installation directory.");
 			var baseFolder = Path.GetDirectoryName(playerSaveDirectory);
 			var newFolder = Path.Combine(baseFolder, $"_{newname}");
 			var newPlayerFile = Path.Combine(newFolder, PLAYERSAVEFILENAME);
-			var newStashFileB = Path.Combine(playerSaveDirectory, PLAYERSTASHFILENAMEB);
-			var newStashFileG = Path.Combine(playerSaveDirectory, PLAYERSTASHFILENAMEG);
+
+			var playerFile = Path.Combine(playerSaveDirectory, PLAYERSAVEFILENAME);
+			var stashFileB = Path.Combine(playerSaveDirectory, PLAYERSTASHFILENAMEB);
+			var stashFileG = Path.Combine(playerSaveDirectory, PLAYERSTASHFILENAMEG);
+			var settingsFile = Path.Combine(playerSaveDirectory, PLAYERSETTINGSFILENAME);
 
 			Directory.CreateDirectory(newFolder);
-			File.Copy(Path.Combine(playerSaveDirectory, PLAYERSAVEFILENAME), newPlayerFile);
-			if (File.Exists(newStashFileB)) File.Copy(newStashFileB, Path.Combine(newFolder, PLAYERSTASHFILENAMEB));
-			if (File.Exists(newStashFileG)) File.Copy(newStashFileG, Path.Combine(newFolder, PLAYERSTASHFILENAMEG));
+			File.Copy(playerFile, newPlayerFile);
+			if (File.Exists(stashFileB)) File.Copy(stashFileB, Path.Combine(newFolder, PLAYERSTASHFILENAMEB));
+			if (File.Exists(stashFileG)) File.Copy(stashFileG, Path.Combine(newFolder, PLAYERSTASHFILENAMEG));
+			if (File.Exists(settingsFile)) File.Copy(settingsFile, Path.Combine(newFolder, PLAYERSETTINGSFILENAME));
 
 			// Copy Progression
 			// Easyest way of doing that (why VB has all the easy stuff?)

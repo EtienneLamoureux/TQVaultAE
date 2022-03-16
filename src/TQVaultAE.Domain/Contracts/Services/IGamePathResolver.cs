@@ -33,6 +33,10 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		bool IsRagnarokInstalled { get; }
 		/// <summary>
+		/// Gets a value indicating whether Eternal Embers DLC has been installed.
+		/// </summary>
+		bool IsEmbersInstalled { get; }
+		/// <summary>
 		/// Gets or sets the name of the custom map.
 		/// Added to support custom quest characters
 		/// </summary>
@@ -145,6 +149,8 @@ namespace TQVaultAE.Domain.Contracts.Services
 		string PlayerSaveFileName { get; }
 		string PlayerStashFileNameB { get; }
 		string PlayerStashFileNameG { get; }
+		string PlayerSettingsFileName { get; }
+
 		/// <summary>
 		/// Duplicate player save files
 		/// </summary>

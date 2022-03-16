@@ -1,4 +1,18 @@
 # Changelog
+## 3.9.0
+### Features
+- #402 Support Eternal Embers
+
+### Bugs
+- #222 Fix displayed stats for "over time" effects
+- #388 Prevent crashes when using certain "hard" mods
+- #391 Fix crash when there are no player saves present
+- #385 Correctly display Atlantis items
+
+### Other
+- Fix SearchOperator + ComboBox "Level"
+- Update in Player info
+
 ## 3.8.0
 ### Features
 - #282 Add "hot reload" setting, allowing the tool to stay open when the game runs

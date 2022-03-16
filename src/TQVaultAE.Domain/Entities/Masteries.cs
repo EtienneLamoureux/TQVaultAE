@@ -26,5 +26,7 @@ namespace TQVaultAE.Domain.Entities
 		Stealth = 1 << 8,
 		[Description(@"Records\Skills\Spirit\SpiritMastery.dbr")]
 		Spirit = 1 << 9,
+		[Description(@"Records\Xpack4\Skills\Neidan\NeidanMastery.dbr")]
+		Neidan = 1 << 10,
 	}
 }

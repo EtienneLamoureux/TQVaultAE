@@ -1221,6 +1221,9 @@ Au cas ou vous auriez des modifications non sauvegardées dans TQVaultAE, les mo
 Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les fichiers sauvegarde.
     </value>
   </data>
+  <data name="ItemEmbers" xml:space="preserve">
+    <value>Objet Eternal Embers</value>
+  </data>
 	<data name="DuplicateCharacter_SourceRequired" xml:space="preserve">
     <value>Un personnage source doit être sélectionné.</value>
   </data>

@@ -425,7 +425,12 @@ namespace TQVaultAE.Data
 					xpack = true;
 					rootFolder = Path.Combine(rootFolder, "Resources", "XPack3");
 				}
-
+				else if (arcFileBase.ToUpperInvariant().Equals("XPACK4"))
+				{
+					// Comes from Eternal Embers
+					xpack = true;
+					rootFolder = Path.Combine(rootFolder, "Resources", "XPack4");
+				}
 
 				if (xpack == true)
 				{
@@ -471,6 +476,13 @@ namespace TQVaultAE.Data
 			if (arcFileData == null && GamePathResolver.IsAtlantisInstalled)
 			{
 				rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack3");
+				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
+				arcFileData = this.ReadARCFile(arcFile, resourceId);
+			}
+
+			if (arcFileData == null && GamePathResolver.IsEmbersInstalled)
+			{
+				rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack4");
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
 				arcFileData = this.ReadARCFile(arcFile, resourceId);
 			}
@@ -789,6 +801,16 @@ namespace TQVaultAE.Data
 					this.ParseTextDB(databaseFile, "text\\x3mainquest_nonvoiced.txt");
 					this.ParseTextDB(databaseFile, "text\\x3misctags_nonvoiced.txt");
 					this.ParseTextDB(databaseFile, "text\\x3sidequests_nonvoiced.txt");
+				}
+
+				if (GamePathResolver.IsEmbersInstalled)
+				{
+					this.ParseTextDB(databaseFile, "text\\x4basegame_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x4items_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x4mainquest_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x4misctags_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x4nametags_nonvoiced.txt");
+					this.ParseTextDB(databaseFile, "text\\x4sidequests_nonvoiced.txt");
 				}
 			}
 
