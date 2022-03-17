@@ -10,6 +10,7 @@ namespace TQVaultAE.Data
 	using System.Globalization;
 	using System.IO;
 	using System.Text;
+	using System.Text.RegularExpressions;
 	using TQVaultAE.Config;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
@@ -46,11 +47,6 @@ namespace TQVaultAE.Data
 		/// Game language to support setting language in UI
 		/// </summary>
 		private string gameLanguage;
-
-		/// <summary>
-		/// Culture ID of localization file
-		/// </summary>
-		private string cultureID = string.Empty;
 
 		private readonly IArcFileProvider arcProv;
 		private readonly IArzFileProvider arzProv;
@@ -141,31 +137,15 @@ namespace TQVaultAE.Data
 						}
 						if (File.Exists(optionsFile))
 						{
-							using (StreamReader reader = new StreamReader(optionsFile))
+							var fileContent = File.ReadAllText(optionsFile);
+							var match = Regex.Match(fileContent, @"(?i)language\s*=\s*(""(?<Language>[^""]+)""|(?<Language>[^\r\n]*))[\r\n]");
+							if (match.Success)
 							{
-								// scan the file for the language line
-								string line;
-								char delims = '=';
-								while ((line = reader.ReadLine()) != null)
-								{
-									// Split the line on the = sign
-									string[] fields = line.Split(delims);
-									if (fields.Length < 2)
-										continue;
-
-									string key = fields[0].Trim();
-									// The value of the language field in IT settings file is wrapped by "".
-									string val = fields[1].Replace("\"", "").Trim();
-
-									if (key.ToUpperInvariant().Equals("LANGUAGE"))
-									{
-										this.gameLanguage = val.ToUpperInvariant();
-										return this.gameLanguage;
-									}
-								}
-
-								return null;
+								this.gameLanguage = match.Groups["Language"].Value.ToUpperInvariant();
+								return this.gameLanguage;
 							}
+
+							return null;
 						}
 
 						return null;
@@ -650,14 +630,19 @@ namespace TQVaultAE.Data
 					{
 						// Force Czech to use CZ instead of CS for the 2 letter code.
 						cultureID = "CZ";
-					} 
+					}
 					else if (cultureID.ToUpperInvariant() == "PT")
 					{
 						// Force brazilian portuguese to use BR instead of PT
 						cultureID = "BR";
 					}
+					else if (cultureID.ToUpperInvariant() == "ZH")
+					{
+						// Force chinese to use CH instead of ZH
+						cultureID = "CH";
+					}
 				}
-					
+
 				if (TQDebug.DatabaseDebugLevel > 1)
 					Log.LogDebug("cultureID = {0}", cultureID);
 
@@ -773,7 +758,6 @@ namespace TQVaultAE.Data
 			if (!string.IsNullOrEmpty(databaseFile))
 			{
 				string fileName = Path.GetFileNameWithoutExtension(databaseFile);
-				this.cultureID = fileName.Split('_')[1];
 			}
 
 			if (databaseFile != null)
@@ -910,22 +894,12 @@ namespace TQVaultAE.Data
 					// Now for the foreign languages there is a bunch of crap in here so the proper version of the adjective can be used with the proper
 					// noun form.  I don' want to code all that so this next code will just take the first version of the adjective and then
 					// throw away all the metadata.
-					if (label.IndexOf('[') != -1 && NeedClearAdjective())
-					{
-						// find first [xxx]
-						int textStart = label.IndexOf(']') + 1;
 
-						// find second [xxx]
-						int textEnd = label.IndexOf('[', textStart);
-						if (textEnd == -1)
-							// If it was the only [...] tag in the string then take the whole string after the tag
-							label = label.Substring(textStart);
-						else
-							// else take the string between the first 2 [...] tags
-							label = label.Substring(textStart, textEnd - textStart);
-
-						label = label.Trim();
-					}
+					// hguy : one expression to rule them all 
+					if (Regex.Match(label, @"^(?<Tag>\[\w+\])(?<Label>[^\\[]+)|^\[(?<Label>[^\]]+)\]$") is { Success: true } match)
+						label = match.Groups["Label"].Value.Trim();
+					else
+						label = label.Replace("[", string.Empty).Replace("]", string.Empty).Trim();
 
 					// If this field is already in the db, then replace it
 					string key = fields[0].Trim().ToUpperInvariant();
@@ -985,22 +959,5 @@ namespace TQVaultAE.Data
 		}
 
 		#endregion Database Private Methods
-		
-		/// <summary>
-		/// Detect whether to clear the adjective in [] in the currently used language
-		/// </summary>
-		/// <returns>Clear flag</returns>
-		private bool NeedClearAdjective()
-		{
-			string cultureID = this.cultureID;
 
-			// The context of [] in chinese is meaningful
-			if (cultureID.ToUpperInvariant().Equals("ZH"))
-			{
-				return false;
-			}
-
-			return true;
-		}
-	}
 }
