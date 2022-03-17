@@ -960,4 +960,5 @@ namespace TQVaultAE.Data
 
 		#endregion Database Private Methods
 
+	}
 }
