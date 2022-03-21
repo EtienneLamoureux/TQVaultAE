@@ -53,6 +53,7 @@ namespace TQVaultAE.GUI.Components
 		/// Holds the currently disabled tooltip bagId.
 		/// </summary>
 		internal readonly List<int> DisabledTooltipBagId = new List<int>();
+
 		private IContainer components;
 
 		/// <summary>
@@ -67,26 +68,26 @@ namespace TQVaultAE.GUI.Components
 
 		private void InitializeComponent()
 		{
-            this.components = new System.ComponentModel.Container();
-            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.SuspendLayout();
-            // 
-            // contextMenu
-            // 
-            this.contextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-            this.contextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-            this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Opacity = 0.8D;
-            this.contextMenu.ShowImageMargin = false;
-            this.contextMenu.Size = new System.Drawing.Size(36, 4);
-            this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
-            // 
-            // VaultPanel
-            // 
-            this.BackColor = System.Drawing.Color.Transparent;
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
-            this.ResumeLayout(false);
+			this.components = new System.ComponentModel.Container();
+			this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.SuspendLayout();
+			// 
+			// contextMenu
+			// 
+			this.contextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+			this.contextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+			this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+			this.contextMenu.Name = "contextMenu";
+			this.contextMenu.Opacity = 0.8D;
+			this.contextMenu.ShowImageMargin = false;
+			this.contextMenu.Size = new System.Drawing.Size(36, 4);
+			this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
+			// 
+			// VaultPanel
+			// 
+			this.BackColor = System.Drawing.Color.Transparent;
+			this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
+			this.ResumeLayout(false);
 		}
 
 		/// <summary>
@@ -266,6 +267,14 @@ namespace TQVaultAE.GUI.Components
 		public bool DrawAsGroupBox { get; set; }
 
 		/// <summary>
+		/// return the vault instance if it's a vault
+		/// </summary>
+		public PlayerCollection Vault
+		{
+			get => (this.player?.IsVault ?? false) ? this.player : null;
+		}
+
+		/// <summary>
 		/// Gets or sets the player instance
 		/// </summary>
 		public PlayerCollection Player
@@ -306,6 +315,22 @@ namespace TQVaultAE.GUI.Components
 					this.currentBag = value;
 					this.BagSackPanel.Sack = this.Player.GetSack(this.currentBag + this.BagPanelOffset);
 					this.BagSackPanel.CurrentSack = this.currentBag;
+
+					// persistance of currentbag
+					if (this.Vault is not null)
+					{
+						if (this.AutoMoveLocation == AutoMoveLocation.Vault && this.Vault.currentlySelectedSackNumber != this.currentBag)
+						{
+							this.Vault.currentlySelectedSackNumber = this.currentBag;
+							this.Vault.sacks.First().IsModified = true;
+						}
+
+						if (this.AutoMoveLocation == AutoMoveLocation.SecondaryVault && this.Vault.currentlyFocusedSackNumber != this.currentBag)
+						{
+							this.Vault.currentlyFocusedSackNumber = this.currentBag;
+							this.Vault.sacks.First().IsModified = true;
+						}
+					}
 				}
 			}
 		}
@@ -400,6 +425,16 @@ namespace TQVaultAE.GUI.Components
 				if ((numberOfBags > 0) && (this.CurrentBag >= numberOfBags))
 				{
 					this.CurrentBag = this.Player.NumberOfSacks - 1;
+				}
+
+				// Use saved bagId
+				if (this.Vault is not null)
+				{
+					if (this.AutoMoveLocation == AutoMoveLocation.Vault && this.Vault.currentlySelectedSackNumber > -1)
+						this.CurrentBag = this.Vault.currentlySelectedSackNumber;
+
+					if (this.AutoMoveLocation == AutoMoveLocation.SecondaryVault && this.Vault.currentlyFocusedSackNumber > -1)
+						this.CurrentBag = this.Vault.currentlyFocusedSackNumber;
 				}
 
 				// hide/show bag buttons and assign initial bitmaps

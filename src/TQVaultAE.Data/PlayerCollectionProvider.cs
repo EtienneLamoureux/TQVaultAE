@@ -162,12 +162,13 @@ namespace TQVaultAE.Data
 		public void Save(PlayerCollection pc, string fileName)
 		{
 			if (pc.IsVault)
-				SaveVaultAsJson(pc, fileName);
-			else
 			{
-				byte[] data = Encode(pc);
-				File.WriteAllBytes(fileName, data);
+				SaveVaultAsJson(pc, fileName);
+				return;
 			}
+
+			byte[] data = Encode(pc);
+			File.WriteAllBytes(fileName, data);
 		}
 
 		/// <summary>
@@ -269,14 +270,13 @@ namespace TQVaultAE.Data
 				if (path.EndsWith(".json"))
 				{
 					ParseJsonData(pc, path);
+					return;
 				}
-				else
-				{
-					// Old binary Format
-					pc.rawData = File.ReadAllBytes(path);
-					// Now Parse the file
-					ParseRawData(pc);
-				}
+
+				// Old binary Format
+				pc.rawData = File.ReadAllBytes(path);
+				// Now Parse the file
+				ParseRawData(pc);
 			}
 			catch (ArgumentException ex)
 			{

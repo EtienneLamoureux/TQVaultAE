@@ -5,6 +5,10 @@ using System.Text;
 
 namespace TQVaultAE.Data.Dto
 {
+	/// <summary>
+	/// Minimal dataset for item storage
+	/// </summary>
+	/// <remarks>Preserve original names</remarks>
 	public class ItemDto
 	{
 		public int stackSize;
