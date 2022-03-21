@@ -84,9 +84,6 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 - The paths where the game files are located
 - The cheats (To enable/disable these options, see the F.A.Q. below)
 
-## Tips
-- If you want to use Chinese, please copy Text_CH.arc file in {game path}\Text\ folder and then rename the new one to Text_ZH.arc, otherwise the language of the item information will be wrong.
-
 ## Troubleshooting and F.A.Q.
 **Q. Does TQVaultAE modify my items? The stats I see are not the same as the ones ingame.**
 
