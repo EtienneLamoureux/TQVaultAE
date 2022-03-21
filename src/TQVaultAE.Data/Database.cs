@@ -899,7 +899,7 @@ namespace TQVaultAE.Data
 					if (Regex.Match(label, @"^(?<Tag>\[\w+\])(?<Label>[^\\[]+)|^\[(?<Label>[^\]]+)\]$") is { Success: true } match)
 						label = match.Groups["Label"].Value.Trim();
 					else
-						label = label.Replace("[", string.Empty).Replace("]", string.Empty).Trim();
+						label = label.Trim();
 
 					// If this field is already in the db, then replace it
 					string key = fields[0].Trim().ToUpperInvariant();
