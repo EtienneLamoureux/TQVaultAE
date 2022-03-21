@@ -62,5 +62,15 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// <param name="offset"></param>
 		/// <returns></returns>
 		(int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) BinaryFindEndBlockOf(byte[] playerFileContent, string keyToLookFor, int offset = 0);
+
+		/// <summary>
+		/// Return value for "beginBlock" tag
+		/// </summary>
+		public int BeginBlockValue { get; }
+		/// <summary>
+		/// Return value for "endBlock" tag
+		/// </summary>
+		public int EndBlockValue { get; }
+
 	}
 }

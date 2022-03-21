@@ -421,7 +421,7 @@ namespace TQVaultAE.Services.Win32
 		/// <param name="vaultName">The name of the vault file.</param>
 		/// <returns>The full path along with extension of the vault file.</returns>
 		public string GetVaultFile(string vaultName)
-			=> string.Concat(Path.Combine(TQVaultSaveFolder, vaultName), ".vault");
+			=> string.Concat(Path.Combine(TQVaultSaveFolder, vaultName), ".vault.json");
 
 		/// <summary>
 		/// Gets a list of all of the vault files.
@@ -432,17 +432,28 @@ namespace TQVaultAE.Services.Win32
 			try
 			{
 				// Get all files that have a .vault extension.
-				string[] files = Directory.GetFiles(TQVaultSaveFolder, "*.vault");
+				string[] filesOld = Directory.GetFiles(TQVaultSaveFolder, "*.vault");
+				string[] filesJson = Directory.GetFiles(TQVaultSaveFolder, "*.vault.json");
 
-				if (files == null || files.Length < 1)
+				if (!filesOld.Any() && !filesJson.Any())
 					return null;
 
-				List<string> vaultList = new List<string>(files.Length);
+				List<string> vaultList = new List<string>();
 
 				// Strip out the path information and extension.
-				foreach (string file in files)
+				foreach (string file in filesOld)
 				{
 					vaultList.Add(Path.GetFileNameWithoutExtension(file));
+				}
+
+				// Pure Json vaults
+				foreach (string newfile in filesJson)
+				{
+					if (!filesOld.Any(oldfile => newfile.StartsWith(oldfile)))
+					{
+						var remain = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(newfile));
+						vaultList.Add(remain);
+					}
 				}
 
 				// sort alphabetically
