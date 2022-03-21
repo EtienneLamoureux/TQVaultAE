@@ -239,7 +239,7 @@
       <value>这是个神奇的地方，您可以把那些从泰坦手中拯救世界的神器存储在这里。</value>
     </data>
     <data name="Form1LblPleaseWait" xml:space="preserve">
-    <value>正在加载游戏资源...请等待</value>
+    <value>正在加载游戏资源...请稍候</value>
   </data>
     <data name="Form1Text" xml:space="preserve">
     <value>泰坦之旅物品仓库</value>
