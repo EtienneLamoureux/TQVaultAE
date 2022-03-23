@@ -203,7 +203,7 @@ namespace TQVaultAE.Data
 				}).ToList()
 			};
 
-			using var sw = new StreamWriter(fileName, false, Encoding.Unicode);
+			using var sw = new StreamWriter(fileName, false, Encoding.UTF8);
 			new JsonSerializer().Serialize(sw, pcjson);
 		}
 
@@ -287,7 +287,7 @@ namespace TQVaultAE.Data
 
 		private void ParseJsonData(PlayerCollection pc, string path)
 		{
-			using var jsonfile = new StreamReader(path);
+			using var jsonfile = new StreamReader(path, Encoding.UTF8);
 			var vaultDto = new JsonSerializer().Deserialize(jsonfile, typeof(VaultDto)) as VaultDto;
 
 			pc.numberOfSacks = vaultDto.sacks.Count;
