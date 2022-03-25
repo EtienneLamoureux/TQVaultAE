@@ -36,13 +36,13 @@ namespace TQVaultAE.Data
 		/// <param name="writer">BinaryWriter instance</param>
 		public void Encode(SackCollection sc, BinaryWriter writer)
 		{
-			if (sc.sackType == SackType.Stash)
+			if (sc.SackType == SackType.Stash)
 			{
 				// Item stacks are stored as single items in the stash
 				TQData.WriteCString(writer, "numItems");
 				writer.Write(sc.Count);
 			}
-			else if (sc.sackType == SackType.Equipment)
+			else if (sc.SackType == SackType.Equipment)
 			{
 				// Nothing special except to skip all of the other header crap
 				// since the number of items is always fixed.
@@ -63,12 +63,12 @@ namespace TQVaultAE.Data
 			foreach (Item item in sc)
 			{
 				++slotNumber;
-				item.ContainerType = sc.sackType;
+				item.ContainerType = sc.SackType;
 				int itemAttached = 0;
 				int alternate = 0;
 
 				// Additional logic to encode the weapon slots in the equipment section
-				if (sc.sackType == SackType.Equipment && (slotNumber == 7 || slotNumber == 9))
+				if (sc.SackType == SackType.Equipment && (slotNumber == 7 || slotNumber == 9))
 				{
 					TQData.WriteCString(writer, "begin_block");
 					writer.Write(sc.beginBlockCrap);
@@ -86,7 +86,7 @@ namespace TQVaultAE.Data
 
 				ItemProvider.Encode(item, writer);
 
-				if (sc.sackType == SackType.Equipment)
+				if (sc.SackType == SackType.Equipment)
 				{
 					TQData.WriteCString(writer, "itemAttached");
 					if (!string.IsNullOrEmpty(item.BaseItemId) && slotNumber != 9 && slotNumber != 10)
@@ -101,7 +101,7 @@ namespace TQVaultAE.Data
 				}
 
 				// Additional logic to encode the weapon slots in the equipment section
-				if (sc.sackType == SackType.Equipment && (slotNumber == 8 || slotNumber == 10))
+				if (sc.SackType == SackType.Equipment && (slotNumber == 8 || slotNumber == 10))
 				{
 					TQData.WriteCString(writer, "end_block");
 					writer.Write(sc.endBlockCrap);
@@ -120,17 +120,17 @@ namespace TQVaultAE.Data
 		{
 			try
 			{
-				sc.isModified = false;
+				sc.IsModified = false;
 
-				if (sc.sackType == SackType.Stash)
+				if (sc.SackType == SackType.Stash)
 				{
 					// IL decided to use a different format for the stash files.
 					TQData.ValidateNextString("numItems", reader);
 					sc.size = reader.ReadInt32();
 				}
-				else if (sc.sackType == SackType.Equipment)
+				else if (sc.SackType == SackType.Equipment)
 				{
-					if (sc.isImmortalThrone)
+					if (sc.IsImmortalThrone)
 					{
 						sc.size = 12;
 						sc.slots = 12;
@@ -160,7 +160,7 @@ namespace TQVaultAE.Data
 				for (int i = 0; i < sc.size; ++i)
 				{
 					// Additional logic to decode the weapon slots in the equipment section
-					if (sc.sackType == SackType.Equipment && (i == 7 || i == 9))
+					if (sc.SackType == SackType.Equipment && (i == 7 || i == 9))
 					{
 						TQData.ValidateNextString("begin_block", reader);
 						sc.beginBlockCrap = reader.ReadInt32();
@@ -173,7 +173,7 @@ namespace TQVaultAE.Data
 					}
 
 					Item item = new Item();
-					item.ContainerType = sc.sackType;
+					item.ContainerType = sc.SackType;
 					ItemProvider.Parse(item, reader);
 
 					// Stack sc item with the previous item if necessary
@@ -183,7 +183,7 @@ namespace TQVaultAE.Data
 					{
 						prevItem = item;
 						sc.items.Add(item);
-						if (sc.sackType == SackType.Equipment)
+						if (sc.SackType == SackType.Equipment)
 						{
 							// Get the item location from the table
 							item.PositionX = SackCollection.GetEquipmentLocationOffset(i).X;
@@ -198,7 +198,7 @@ namespace TQVaultAE.Data
 					}
 
 					// Additional logic to decode the weapon slots in the equipment section
-					if (sc.sackType == SackType.Equipment && (i == 8 || i == 10))
+					if (sc.SackType == SackType.Equipment && (i == 8 || i == 10))
 					{
 						TQData.ValidateNextString("end_block", reader);
 						sc.endBlockCrap = reader.ReadInt32();

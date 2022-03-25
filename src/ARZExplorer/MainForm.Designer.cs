@@ -61,11 +61,6 @@ namespace ArzExplorer
         private System.Windows.Forms.TreeView treeViewTOC;
 
         /// <summary>
-        /// Generated TextBox
-        /// </summary>
-        private System.Windows.Forms.TextBox textBoxDetails;
-
-        /// <summary>
         /// Generated PictureBox
         /// </summary>
         private System.Windows.Forms.PictureBox pictureBoxItem;
@@ -97,9 +92,9 @@ namespace ArzExplorer
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -107,24 +102,31 @@ namespace ArzExplorer
             this.extractToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.allFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideZeroValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.treeViewTOC = new System.Windows.Forms.TreeView();
-            this.textBoxDetails = new System.Windows.Forms.TextBox();
             this.pictureBoxItem = new System.Windows.Forms.PictureBox();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.splitContainerBrowser = new System.Windows.Forms.SplitContainer();
+            this.panelPicture = new System.Windows.Forms.Panel();
+            this.dataGridViewDetails = new System.Windows.Forms.DataGridView();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hideZeroValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.textBoxDetails = new System.Windows.Forms.TextBox();
+            this.labelPath = new System.Windows.Forms.Label();
+            this.textBoxPath = new System.Windows.Forms.TextBox();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxItem)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerBrowser)).BeginInit();
+            this.splitContainerBrowser.Panel1.SuspendLayout();
+            this.splitContainerBrowser.Panel2.SuspendLayout();
+            this.splitContainerBrowser.SuspendLayout();
+            this.panelPicture.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDetails)).BeginInit();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -198,6 +200,25 @@ namespace ArzExplorer
             this.allFilesToolStripMenuItem.Text = "&All Files";
             this.allFilesToolStripMenuItem.Click += new System.EventHandler(this.AllFilesToolStripMenuItem_Click);
             // 
+            // viewToolStripMenuItem
+            // 
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.hideZeroValuesToolStripMenuItem});
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.viewToolStripMenuItem.Text = "&View";
+            // 
+            // hideZeroValuesToolStripMenuItem
+            // 
+            this.hideZeroValuesToolStripMenuItem.Checked = true;
+            this.hideZeroValuesToolStripMenuItem.CheckOnClick = true;
+            this.hideZeroValuesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.hideZeroValuesToolStripMenuItem.Enabled = false;
+            this.hideZeroValuesToolStripMenuItem.Name = "hideZeroValuesToolStripMenuItem";
+            this.hideZeroValuesToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.hideZeroValuesToolStripMenuItem.Text = "Hide &Zero Values";
+            this.hideZeroValuesToolStripMenuItem.Click += new System.EventHandler(this.hideZeroValuesToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
@@ -221,91 +242,94 @@ namespace ArzExplorer
             this.treeViewTOC.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeViewTOC.Location = new System.Drawing.Point(0, 0);
             this.treeViewTOC.Name = "treeViewTOC";
-            this.treeViewTOC.Size = new System.Drawing.Size(281, 453);
+            this.treeViewTOC.Size = new System.Drawing.Size(271, 343);
             this.treeViewTOC.TabIndex = 12;
             this.treeViewTOC.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeView1_AfterSelect);
             // 
-            // textBoxDetails
-            // 
-            this.textBoxDetails.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxDetails.Location = new System.Drawing.Point(50, 0);
-            this.textBoxDetails.Multiline = true;
-            this.textBoxDetails.Name = "textBoxDetails";
-            this.textBoxDetails.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.textBoxDetails.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxDetails.Size = new System.Drawing.Size(468, 453);
-            this.textBoxDetails.TabIndex = 13;
-            // 
             // pictureBoxItem
             // 
-            this.pictureBoxItem.Dock = System.Windows.Forms.DockStyle.Left;
+            this.pictureBoxItem.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBoxItem.Location = new System.Drawing.Point(0, 0);
-            this.pictureBoxItem.MinimumSize = new System.Drawing.Size(50, 0);
             this.pictureBoxItem.Name = "pictureBoxItem";
-            this.pictureBoxItem.Size = new System.Drawing.Size(50, 453);
+            this.pictureBoxItem.Size = new System.Drawing.Size(50, 50);
             this.pictureBoxItem.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBoxItem.TabIndex = 14;
             this.pictureBoxItem.TabStop = false;
-            this.pictureBoxItem.Visible = false;
             // 
-            // splitContainer1
+            // splitContainerBrowser
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 24);
-            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainerBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainerBrowser.Location = new System.Drawing.Point(15, 57);
+            this.splitContainerBrowser.Name = "splitContainerBrowser";
             // 
-            // splitContainer1.Panel1
+            // splitContainerBrowser.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.treeViewTOC);
+            this.splitContainerBrowser.Panel1.Controls.Add(this.treeViewTOC);
             // 
-            // splitContainer1.Panel2
+            // splitContainerBrowser.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.dataGridView1);
-            this.splitContainer1.Panel2.Controls.Add(this.textBoxDetails);
-            this.splitContainer1.Panel2.Controls.Add(this.pictureBoxItem);
-            this.splitContainer1.Size = new System.Drawing.Size(803, 453);
-            this.splitContainer1.SplitterDistance = 281;
-            this.splitContainer1.TabIndex = 15;
+            this.splitContainerBrowser.Panel2.Controls.Add(this.panelPicture);
+            this.splitContainerBrowser.Panel2.Controls.Add(this.dataGridViewDetails);
+            this.splitContainerBrowser.Panel2.Controls.Add(this.textBoxDetails);
+            this.splitContainerBrowser.Size = new System.Drawing.Size(776, 343);
+            this.splitContainerBrowser.SplitterDistance = 271;
+            this.splitContainerBrowser.TabIndex = 15;
             // 
-            // dataGridView1
+            // panelPicture
             // 
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.panelPicture.AutoSize = true;
+            this.panelPicture.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panelPicture.Controls.Add(this.pictureBoxItem);
+            this.panelPicture.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panelPicture.Location = new System.Drawing.Point(0, 0);
+            this.panelPicture.MinimumSize = new System.Drawing.Size(50, 0);
+            this.panelPicture.Name = "panelPicture";
+            this.panelPicture.Size = new System.Drawing.Size(53, 212);
+            this.panelPicture.TabIndex = 16;
+            this.panelPicture.Visible = false;
+            // 
+            // dataGridViewDetails
+            // 
+            this.dataGridViewDetails.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewDetails.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.dataGridViewDetails.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewDetails.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Column1,
             this.Column2});
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle11;
-            this.dataGridView1.Location = new System.Drawing.Point(14, 3);
-            this.dataGridView1.MultiSelect = false;
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
-            this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.Size = new System.Drawing.Size(479, 438);
-            this.dataGridView1.TabIndex = 15;
-            this.dataGridView1.Visible = false;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewDetails.DefaultCellStyle = dataGridViewCellStyle5;
+            this.dataGridViewDetails.Dock = System.Windows.Forms.DockStyle.Right;
+            this.dataGridViewDetails.Location = new System.Drawing.Point(50, 0);
+            this.dataGridViewDetails.MultiSelect = false;
+            this.dataGridViewDetails.Name = "dataGridViewDetails";
+            this.dataGridViewDetails.ReadOnly = true;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewDetails.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            this.dataGridViewDetails.RowHeadersVisible = false;
+            this.dataGridViewDetails.Size = new System.Drawing.Size(451, 212);
+            this.dataGridViewDetails.TabIndex = 15;
+            this.dataGridViewDetails.Visible = false;
             // 
             // Column1
             // 
@@ -321,32 +345,66 @@ namespace ArzExplorer
             this.Column2.ReadOnly = true;
             this.Column2.Width = 64;
             // 
-            // viewToolStripMenuItem
+            // textBoxDetails
             // 
-            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.hideZeroValuesToolStripMenuItem});
-            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.viewToolStripMenuItem.Text = "&View";
+            this.textBoxDetails.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.textBoxDetails.Location = new System.Drawing.Point(0, 212);
+            this.textBoxDetails.MinimumSize = new System.Drawing.Size(451, 131);
+            this.textBoxDetails.Multiline = true;
+            this.textBoxDetails.Name = "textBoxDetails";
+            this.textBoxDetails.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.textBoxDetails.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBoxDetails.Size = new System.Drawing.Size(501, 131);
+            this.textBoxDetails.TabIndex = 13;
+            this.textBoxDetails.Visible = false;
+            this.textBoxDetails.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.textBoxDetails_MouseDoubleClick);
             // 
-            // hideZeroValuesToolStripMenuItem
+            // labelPath
             // 
-            this.hideZeroValuesToolStripMenuItem.Checked = true;
-            this.hideZeroValuesToolStripMenuItem.CheckOnClick = true;
-            this.hideZeroValuesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.hideZeroValuesToolStripMenuItem.Enabled = false;
-            this.hideZeroValuesToolStripMenuItem.Name = "hideZeroValuesToolStripMenuItem";
-            this.hideZeroValuesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.hideZeroValuesToolStripMenuItem.Text = "Hide &Zero Values";
-            this.hideZeroValuesToolStripMenuItem.Click += new System.EventHandler(this.hideZeroValuesToolStripMenuItem_Click);
+            this.labelPath.AutoSize = true;
+            this.labelPath.Location = new System.Drawing.Point(12, 34);
+            this.labelPath.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
+            this.labelPath.Name = "labelPath";
+            this.labelPath.Size = new System.Drawing.Size(35, 13);
+            this.labelPath.TabIndex = 0;
+            this.labelPath.Text = "Path :";
+            // 
+            // textBoxPath
+            // 
+            this.textBoxPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxPath.Location = new System.Drawing.Point(54, 31);
+            this.textBoxPath.Name = "textBoxPath";
+            this.textBoxPath.Size = new System.Drawing.Size(737, 20);
+            this.textBoxPath.TabIndex = 17;
+            this.textBoxPath.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.textBoxPath_MouseDoubleClick);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 403);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(803, 22);
+            this.statusStrip1.TabIndex = 18;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel
+            // 
+            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
+            this.toolStripStatusLabel.Size = new System.Drawing.Size(112, 17);
+            this.toolStripStatusLabel.Text = "toolStripStatusLabel";
             // 
             // MainForm
             // 
             this.AllowDrop = true;
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(803, 477);
-            this.Controls.Add(this.splitContainer1);
+            this.ClientSize = new System.Drawing.Size(803, 425);
+            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.textBoxPath);
+            this.Controls.Add(this.labelPath);
+            this.Controls.Add(this.splitContainerBrowser);
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -359,12 +417,16 @@ namespace ArzExplorer
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxItem)).EndInit();
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.splitContainerBrowser.Panel1.ResumeLayout(false);
+            this.splitContainerBrowser.Panel2.ResumeLayout(false);
+            this.splitContainerBrowser.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerBrowser)).EndInit();
+            this.splitContainerBrowser.ResumeLayout(false);
+            this.panelPicture.ResumeLayout(false);
+            this.panelPicture.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDetails)).EndInit();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -372,12 +434,18 @@ namespace ArzExplorer
 
 		#endregion
 
-		private System.Windows.Forms.SplitContainer splitContainer1;
-		private System.Windows.Forms.DataGridView dataGridView1;
+		private System.Windows.Forms.SplitContainer splitContainerBrowser;
+		private System.Windows.Forms.DataGridView dataGridViewDetails;
 		private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
 		private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
 		private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem hideZeroValuesToolStripMenuItem;
+		private System.Windows.Forms.Label labelPath;
+		private System.Windows.Forms.TextBox textBoxPath;
+		private System.Windows.Forms.TextBox textBoxDetails;
+		private System.Windows.Forms.Panel panelPicture;
+		private System.Windows.Forms.StatusStrip statusStrip1;
+		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
 	}
 }
 

@@ -19,7 +19,7 @@ namespace TQVaultAE.Presentation {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -368,6 +368,169 @@ namespace TQVaultAE.Presentation {
             get {
                 object obj = ResourceManager.GetObject("autosortup01", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Available pictures.
+        /// </summary>
+        public static string BagButtonSettingsAvailablePictures {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsAvailablePictures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Button properties.
+        /// </summary>
+        public static string BagButtonSettingsButtonProperties {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsButtonProperties", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom icon.
+        /// </summary>
+        public static string BagButtonSettingsCustomIcon {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsCustomIcon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Drag and drop in &quot;Selected pictures&quot; placeholders.
+        /// </summary>
+        public static string BagButtonSettingsDragDropNotice {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsDragDropNotice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image.
+        /// </summary>
+        public static string BagButtonSettingsImageBitmap {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsImageBitmap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Label :.
+        /// </summary>
+        public static string BagButtonSettingsLabel {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Detailed.
+        /// </summary>
+        public static string BagButtonSettingsModeDetailed {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsModeDetailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Simple.
+        /// </summary>
+        public static string BagButtonSettingsModeSimple {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsModeSimple", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Number.
+        /// </summary>
+        public static string BagButtonSettingsNumber {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Off.
+        /// </summary>
+        public static string BagButtonSettingsOffBitmap {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsOffBitmap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On.
+        /// </summary>
+        public static string BagButtonSettingsOnBitmap {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsOnBitmap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Over.
+        /// </summary>
+        public static string BagButtonSettingsOverBitmap {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsOverBitmap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selected button :.
+        /// </summary>
+        public static string BagButtonSettingsSelectedButton {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsSelectedButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selected pictures.
+        /// </summary>
+        public static string BagButtonSettingsSelectedPictures {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsSelectedPictures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bag Button Settings.
+        /// </summary>
+        public static string BagButtonSettingsTitle {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Default.
+        /// </summary>
+        public static string BagButtonSettingsUseDefault {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsUseDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bag Button Validation.
+        /// </summary>
+        public static string BagButtonSettingsValidationCaption {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsValidationCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;On&quot; and &quot;Off&quot; icons are required.
+        ///&quot;Label&quot; may be required..
+        /// </summary>
+        public static string BagButtonSettingsValidationMessage {
+            get {
+                return ResourceManager.GetString("BagButtonSettingsValidationMessage", resourceCulture);
             }
         }
         
@@ -921,6 +1084,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Buttons.
+        /// </summary>
+        public static string GlobalButtons {
+            get {
+                return ResourceManager.GetString("GlobalButtons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string GlobalCancel {
@@ -993,6 +1165,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Jewellery.
+        /// </summary>
+        public static string GlobalJewellery {
+            get {
+                return ResourceManager.GetString("GlobalJewellery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximize.
         /// </summary>
         public static string GlobalMaximize {
@@ -1025,6 +1206,15 @@ namespace TQVaultAE.Presentation {
         public static string GlobalMinimize {
             get {
                 return ResourceManager.GetString("GlobalMinimize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Miscellaneous.
+        /// </summary>
+        public static string GlobalMiscellaneous {
+            get {
+                return ResourceManager.GetString("GlobalMiscellaneous", resourceCulture);
             }
         }
         
@@ -1205,6 +1395,40 @@ namespace TQVaultAE.Presentation {
         public static string HealthPotionsUsed {
             get {
                 return ResourceManager.GetString("HealthPotionsUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {
+        ///	&quot;list&quot;: [
+        ///		{
+        ///			&quot;file&quot;: &quot;ITEMS&quot;,
+        ///			&quot;img&quot;: [
+        ///				{
+        ///					&quot;ca&quot;: &quot;Relics&quot;,
+        ///					&quot;pa&quot;: &quot;ANIMALRELICS\\\\ANIMALPART[^_\\.]+\\.TEX&quot;,
+        ///					&quot;on&quot;: &quot;|&quot;,
+        ///					&quot;of&quot;: &quot;.TEX|_E.TEX&quot;,
+        ///					&quot;ov&quot;: &quot;.TEX|_L.TEX&quot;
+        ///				},
+        ///				{
+        ///					&quot;ca&quot;: &quot;Jewellery&quot;,
+        ///					&quot;pa&quot;: &quot;EQUIPMENTAMULET\\\\UIBITMAPS\\\\C.._AMULET..\\.TEX&quot;,
+        ///					&quot;on&quot;: &quot;|&quot;,
+        ///					&quot;of&quot;: &quot;|&quot;,
+        ///					&quot;ov&quot;: &quot;|&quot;
+        ///				},
+        ///				{
+        ///					&quot;ca&quot;: &quot;Relics&quot;,
+        ///					&quot;pa&quot;: &quot;RELIC\\\\SHARD...\\.TEX&quot;,
+        ///					&quot;on&quot;: &quot;|&quot;,
+        ///					&quot;of&quot;: &quot;.TEX|_E.TEX&quot;,
+        ///					&quot;ov&quot;: &quot;.TEX|_L.TEX&quot;
+        ///	 [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string IconServiceList {
+            get {
+                return ResourceManager.GetString("IconServiceList", resourceCulture);
             }
         }
         
@@ -2765,6 +2989,15 @@ namespace TQVaultAE.Presentation {
         public static string PlayerOverwriteSackMsg {
             get {
                 return ResourceManager.GetString("PlayerOverwriteSackMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change icon.
+        /// </summary>
+        public static string PlayerPanelChangeIcon {
+            get {
+                return ResourceManager.GetString("PlayerPanelChangeIcon", resourceCulture);
             }
         }
         

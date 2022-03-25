@@ -184,6 +184,7 @@ namespace TQVaultAE.Data
 				currentlySelectedSackNumber = pc.currentlySelectedSackNumber,
 				sacks = pc.Select(sack => new SackDto()
 				{
+					iconinfo = sack.BagButtonIconInfo,
 					items = sack.Select(i => new ItemDto()
 					{
 						stackSize = i.StackSize,
@@ -203,7 +204,7 @@ namespace TQVaultAE.Data
 				}).ToList()
 			};
 
-			using var sw = new StreamWriter(fileName, false, Encoding.Unicode);
+			using var sw = new StreamWriter(fileName, false, Encoding.UTF8);
 			new JsonSerializer().Serialize(sw, pcjson);
 		}
 
@@ -287,7 +288,7 @@ namespace TQVaultAE.Data
 
 		private void ParseJsonData(PlayerCollection pc, string path)
 		{
-			using var jsonfile = new StreamReader(path);
+			using var jsonfile = new StreamReader(path, Encoding.UTF8);
 			var vaultDto = new JsonSerializer().Deserialize(jsonfile, typeof(VaultDto)) as VaultDto;
 
 			pc.numberOfSacks = vaultDto.sacks.Count;
@@ -298,10 +299,11 @@ namespace TQVaultAE.Data
 			{
 				SackType = SackType.Sack,
 				IsImmortalThrone = pc.IsImmortalThrone,
-				isModified = false,
+				IsModified = false,
 				size = s.items.Count,
 				beginBlockCrap = this.TQData.BeginBlockValue,
 				tempBool = 0,// Crap
+				BagButtonIconInfo = s.iconinfo,
 				items = s.items.Select(s =>
 				{
 					var itm = new Item()

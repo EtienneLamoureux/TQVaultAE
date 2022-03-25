@@ -101,6 +101,7 @@ namespace ArzExplorer
 			this.allFilesToolStripMenuItem.Enabled = false;
 			fileType = CompressedFileType.Unknown;
 			this.initialSize = this.Size;
+			this.toolStripStatusLabel.Text = string.Empty;
 		}
 
 		/// <summary>
@@ -227,7 +228,8 @@ namespace ArzExplorer
 			this.Text = string.Format("{0} - {1}", this.titleText, this.sourceFile);
 
 			this.textBoxDetails.Lines = null;
-			this.pictureBoxItem.Visible = false;
+
+			this.toolStripStatusLabel.Text = string.Empty;
 
 			this.BuildTreeView();
 		}
@@ -407,20 +409,22 @@ namespace ArzExplorer
 				return;
 			}
 
-			FolderBrowserDialog browseDialog = new FolderBrowserDialog();
-			browseDialog.Description = "Select the destination folder for the extracted database records";
-			browseDialog.ShowNewFolderButton = true;
-			string startPath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games"), "Titan Quest");
-			browseDialog.SelectedPath = startPath;
-			DialogResult result = browseDialog.ShowDialog();
+			using (FolderBrowserDialog browseDialog = new FolderBrowserDialog())
+			{
+				browseDialog.Description = "Select the destination folder for the extracted database records";
+				browseDialog.ShowNewFolderButton = true;
+				string startPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", "Titan Quest");
+				browseDialog.SelectedPath = startPath;
+				DialogResult result = browseDialog.ShowDialog();
 
-			if (result == DialogResult.OK)
-			{
-				this.destDirectory = browseDialog.SelectedPath;
-			}
-			else
-			{
-				return;
+				if (result == DialogResult.OK)
+				{
+					this.destDirectory = browseDialog.SelectedPath;
+				}
+				else
+				{
+					return;
+				}
 			}
 
 			string fullDestPath = null;
@@ -484,20 +488,21 @@ namespace ArzExplorer
 			// otherwise this will be a directory.
 			if (this.treeViewTOC.SelectedNode.GetNodeCount(false) == 0)
 			{
-				this.destFile = this.treeViewTOC.SelectedNode.FullPath;
+				this.destFile
+					= this.textBoxPath.Text
+					= this.treeViewTOC.SelectedNode.FullPath;
 				try
 				{
 					List<string> recordText = new List<string>();
 					if (fileType == CompressedFileType.ArzFile)
 					{
-						this.dataGridView1.Visible = true;
-						this.textBoxDetails.Visible = false;
 						this.record = arzProv.GetRecordNotCached(arzFile, this.destFile);
 						foreach (Variable variable in this.record)
 						{
 							if (variable.IsValueNonZero() || !hideZeroValuesToolStripMenuItem.Checked)
 								recordText.Add(variable.ToString());
 						}
+						ShowTextboxDetail(recordText.Count);
 					}
 					else if (fileType == CompressedFileType.ArcFile)
 					{
@@ -522,8 +527,7 @@ namespace ArzExplorer
 								}
 							}
 
-							this.dataGridView1.Visible = false;
-							this.textBoxDetails.Visible = true;
+							ShowTextboxDetail(recordText.Count);
 						}
 						else if (extension == ".TEX")
 						{
@@ -538,20 +542,14 @@ namespace ArzExplorer
 
 							if (bitmap != null)
 							{
-								this.dataGridView1.Visible = false;
-								this.pictureBoxItem.Visible = true;
-								this.pictureBoxItem.Image = bitmap;
+								ShowPictureBox(bitmap);
 							}
 						}
-						else
-						{
-							this.pictureBoxItem.Visible = false;
-						}
+
 					}
 					else
 					{
-						this.dataGridView1.Visible = false;
-						this.pictureBoxItem.Visible = false;
+						HideAllBox();
 						this.destFile = null;
 						this.textBoxDetails.Lines = null;
 						return;
@@ -560,20 +558,17 @@ namespace ArzExplorer
 					// Now display our results.
 					if (recordText.Count != 0)
 					{
-						this.pictureBoxItem.Visible = false;
 						if (fileType == CompressedFileType.ArzFile)
 						{
-							this.textBoxDetails.Visible = false;
-							this.dataGridView1.Visible = true;
 							PopulateGridView(recordText);
+							ShowGridView(recordText.Count);
 						}
 						else
 						{
-							this.dataGridView1.Visible = false;
-							this.textBoxDetails.Visible = true;
 							string[] output = new string[recordText.Count];
 							recordText.CopyTo(output);
 							this.textBoxDetails.Lines = output;
+							ShowTextboxDetail(recordText.Count);
 						}
 					}
 					else
@@ -593,13 +588,49 @@ namespace ArzExplorer
 			}
 		}
 
+		private void HideAllBox()
+		{
+			this.dataGridViewDetails.Visible = false;
+			this.textBoxDetails.Visible = false;
+			this.panelPicture.Visible = false;
+			this.toolStripStatusLabel.Text = string.Empty;
+		}
+
+		private void ShowPictureBox(Image bitmap)
+		{
+			this.dataGridViewDetails.Visible = false;
+			this.textBoxDetails.Visible = false;
+			this.panelPicture.Visible = true;
+			this.pictureBoxItem.Image = bitmap;
+			this.pictureBoxItem.Size = bitmap.Size;
+			this.toolStripStatusLabel.Text = string.Format("PixelFormat : {0}, Size : {1}", bitmap.PixelFormat, bitmap.Size);
+		}
+
+		private void ShowGridView(int Count)
+		{
+			this.dataGridViewDetails.Visible = true;
+			this.dataGridViewDetails.Dock = DockStyle.Fill;
+			this.textBoxDetails.Visible = false;
+			this.panelPicture.Visible = false;
+			this.toolStripStatusLabel.Text = string.Format("Record Count : {0}", Count);
+		}
+
+		private void ShowTextboxDetail(int Count)
+		{
+			this.dataGridViewDetails.Visible = false;
+			this.textBoxDetails.Visible = true;
+			this.textBoxDetails.Dock = DockStyle.Fill;
+			this.panelPicture.Visible = false;
+			this.toolStripStatusLabel.Text = string.Format("Line Count : {0}", Count);
+		}
+
 		private void PopulateGridView(List<string> recordText)
 		{
-			dataGridView1.Rows.Clear();
-			foreach(string line in recordText)
+			dataGridViewDetails.Rows.Clear();
+			foreach (string line in recordText)
 			{
 				string[] values = line.Split(',');
-				dataGridView1.Rows.Add(values);
+				dataGridViewDetails.Rows.Add(values);
 			}
 		}
 
@@ -659,6 +690,16 @@ namespace ArzExplorer
 
 				PopulateGridView(recordText);
 			}
+		}
+
+		private void textBoxPath_MouseDoubleClick(object sender, MouseEventArgs e)
+		{
+			Clipboard.SetText(this.textBoxPath.Text);
+		}
+
+		private void textBoxDetails_MouseDoubleClick(object sender, MouseEventArgs e)
+		{
+			Clipboard.SetText(this.textBoxDetails.Text);
 		}
 	}
 }

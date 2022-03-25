@@ -443,12 +443,14 @@ namespace TQVaultAE.GUI
             // 
             // fileSystemWatcherTransferStash
             // 
+            this.fileSystemWatcherTransferStash.EnableRaisingEvents = true;
             this.fileSystemWatcherTransferStash.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.CreationTime)));
             this.fileSystemWatcherTransferStash.SynchronizingObject = this;
             this.fileSystemWatcherTransferStash.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherTransferStash_Changed);
             // 
             // fileSystemWatcherRelicStash
             // 
+            this.fileSystemWatcherRelicStash.EnableRaisingEvents = true;
             this.fileSystemWatcherRelicStash.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.CreationTime)));
             this.fileSystemWatcherRelicStash.SynchronizingObject = this;
             this.fileSystemWatcherRelicStash.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherRelicStash_Changed);

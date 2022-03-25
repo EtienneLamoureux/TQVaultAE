@@ -9,6 +9,7 @@ namespace TQVaultAE.Data
 	using System;
 	using System.Globalization;
 	using System.IO;
+	using System.Linq;
 	using System.Text;
 	using TQVaultAE.Config;
 	using TQVaultAE.Domain.Contracts.Providers;
@@ -352,6 +353,44 @@ namespace TQVaultAE.Data
 		}
 
 		/// <summary>
+		/// Return ARC filename from <paramref name="resourceIdOrPrefix"/>
+		/// </summary>
+		/// <param name="resourceIdOrPrefix"></param>
+		/// <returns></returns>
+		public string ResolveArcFileName(string resourceIdOrPrefix)
+		{
+			resourceIdOrPrefix = TQData.NormalizeRecordPath(resourceIdOrPrefix);
+			var segments = resourceIdOrPrefix.Split('\\');
+
+			string rootFolder = GamePathResolver.ImmortalThronePath;
+			switch (segments.First())
+			{
+				case "XPACK":
+					// Comes from Immortal Throne
+					rootFolder = Path.Combine(rootFolder, "Resources", "XPack", segments[1] + ".arc");
+					break;
+				case "XPACK2":
+					// Comes from Ragnarok
+					rootFolder = Path.Combine(rootFolder, "Resources", "XPack2", segments[1] + ".arc");
+					break;
+				case "XPACK3":
+					// Comes from Atlantis
+					rootFolder = Path.Combine(rootFolder, "Resources", "XPack3", segments[1] + ".arc");
+					break;
+				case "XPACK4":
+					// Comes from Eternal Embers
+					rootFolder = Path.Combine(rootFolder, "Resources", "XPack4", segments[1] + ".arc");
+					break;
+				default:
+					// Base game
+					rootFolder = Path.Combine(rootFolder, "Resources", segments[0] + ".arc");
+					break;
+			}
+
+			return rootFolder;
+		}
+
+		/// <summary>
 		/// Gets a resource from the database using the resource Id.
 		/// Modified by VillageIdiot to support loading resources from a custom map folder.
 		/// </summary>
@@ -527,12 +566,7 @@ namespace TQVaultAE.Data
 				if (TQDebug.DatabaseDebugLevel > 0)
 					Log.LogDebug("Database.ReadARCFile('{0}', '{1}')", arcFileName, dataId);
 
-				ArcFile arcFile = this.arcFiles.GetOrAddAtomic(arcFileName, k =>
-				{
-					var file = new ArcFile(k);
-					arcProv.ReadARCToC(file);// Heavy lifting in GetOrAddAtomic
-					return file;
-				});
+				ArcFile arcFile = ReadARCFile(arcFileName);
 
 				// Now retrieve the data
 				byte[] ans = arcProv.GetData(arcFile, dataId);
@@ -547,6 +581,25 @@ namespace TQVaultAE.Data
 				Log.LogError(e, "Exception occurred");
 				throw;
 			}
+		}
+
+		/// <summary>
+		/// Read ARC file
+		/// </summary>
+		/// <param name="arcFileName"></param>
+		/// <returns></returns>
+		public ArcFile ReadARCFile(string arcFileName)
+		{
+			// See if we have this arcfile already and if not create it.
+
+			ArcFile arcFile = this.arcFiles.GetOrAddAtomic(arcFileName, k =>
+			{
+				var file = new ArcFile(k);
+				arcProv.ReadARCToC(file);// Heavy lifting in GetOrAddAtomic
+				return file;
+			});
+
+			return arcFile;
 		}
 
 		/// <summary>
@@ -639,14 +692,14 @@ namespace TQVaultAE.Data
 					{
 						// Force Czech to use CZ instead of CS for the 2 letter code.
 						cultureID = "CZ";
-					} 
+					}
 					else if (cultureID.ToUpperInvariant() == "PT")
 					{
 						// Force brazilian portuguese to use BR instead of PT
 						cultureID = "BR";
 					}
 				}
-					
+
 				if (TQDebug.DatabaseDebugLevel > 1)
 					Log.LogDebug("cultureID = {0}", cultureID);
 
@@ -781,6 +834,7 @@ namespace TQVaultAE.Data
 				this.ParseTextDB(databaseFile, "text\\xmenu.txt"); // Added by VillageIdiot
 				this.ParseTextDB(databaseFile, "text\\xnpc.txt"); // Added by VillageIdiot
 				this.ParseTextDB(databaseFile, "text\\modstrings.txt"); // Added by VillageIdiot
+				this.ParseTextDB(databaseFile, "text\\xtutorial.txt"); // Added by hguy
 
 				if (GamePathResolver.IsRagnarokInstalled)
 				{
@@ -929,7 +983,7 @@ namespace TQVaultAE.Data
 				Log.LogDebug("Database.LoadARZFile()");
 
 			// from the original TQ folder
-			string file = Path.Combine(Path.Combine(GamePathResolver.TQPath, "Database"), "database.arz");
+			string file = Path.Combine(GamePathResolver.TQPath, "Database", "database.arz");
 
 			if (TQDebug.DatabaseDebugLevel > 1)
 			{
