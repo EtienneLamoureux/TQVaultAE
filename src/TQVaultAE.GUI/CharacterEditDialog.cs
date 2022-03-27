@@ -135,6 +135,7 @@ namespace TQVaultAE.GUI
 				playerInfo.BaseIntelligence = Convert.ToInt32(intelligenceUpDown.Value);
 				playerInfo.BaseHealth = Convert.ToInt32(healthUpDown.Value);
 				playerInfo.BaseMana = Convert.ToInt32(manacUpDown.Value);
+				playerInfo.Money = Convert.ToInt32(moneyUpDown.Value);
 
 				if (mustResetAttributes)
 				{
@@ -253,6 +254,8 @@ namespace TQVaultAE.GUI
 
 			manacUpDown.Value = PlayerCollection.PlayerInfo.BaseMana;
 			manacUpDown.Tag = attrHMTag;
+
+			moneyUpDown.Value = PlayerCollection.PlayerInfo.Money;
 
 			if (PlayerCollection.PlayerInfo.CurrentLevel > Convert.ToInt32(levelNumericUpDown.Maximum))
 				levelNumericUpDown.Maximum = PlayerCollection.PlayerInfo.CurrentLevel;
