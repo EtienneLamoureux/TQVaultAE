@@ -62,11 +62,11 @@ namespace TQVaultAE.Presentation
 				select new IconInfo(
 					img.Category
 					, onID
-					, this.UIService.LoadBitmap(onID, Database.LoadResource(onID))
+					, this.UIService.LoadBitmap(onID)
 					, offID
-					, this.UIService.LoadBitmap(offID, Database.LoadResource(offID))
+					, this.UIService.LoadBitmap(offID)
 					, ovID
-					, this.UIService.LoadBitmap(ovID, Database.LoadResource(ovID))
+					, this.UIService.LoadBitmap(ovID)
 				);
 
 			var literalMatch =
@@ -75,7 +75,7 @@ namespace TQVaultAE.Presentation
 				where img.Literal?.Any() ?? false
 				from lit in img.Literal
 				let resID = file.fileName + '\\' + lit
-				let bmp = this.UIService.LoadBitmap(resID, Database.LoadResource(resID))
+				let bmp = this.UIService.LoadBitmap(resID)
 				select new IconInfo(
 					img.Category
 					, resID
