@@ -184,6 +184,7 @@ namespace TQVaultAE.Data
 				currentlySelectedSackNumber = pc.currentlySelectedSackNumber,
 				sacks = pc.Select(sack => new SackDto()
 				{
+					iconinfo = sack.BagButtonIconInfo,
 					items = sack.Select(i => new ItemDto()
 					{
 						stackSize = i.StackSize,
@@ -298,10 +299,11 @@ namespace TQVaultAE.Data
 			{
 				SackType = SackType.Sack,
 				IsImmortalThrone = pc.IsImmortalThrone,
-				isModified = false,
+				IsModified = false,
 				size = s.items.Count,
 				beginBlockCrap = this.TQData.BeginBlockValue,
 				tempBool = 0,// Crap
+				BagButtonIconInfo = s.iconinfo,
 				items = s.items.Select(s =>
 				{
 					var itm = new Item()
