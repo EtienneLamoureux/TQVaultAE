@@ -219,11 +219,11 @@ namespace TQVaultAE.GUI.Components
 
 				// Disable Tooltip bag
 				var panel = this.getToolTip.Target as VaultPanel;
-				if (panel?.DisabledTooltipBagId.Contains(this.ButtonNumber) ?? false)
-					return;
-
-				this.getToolTip(this);
-				BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
+				if (!panel?.DisabledTooltipBagId.Contains(this.ButtonNumber) ?? false)
+				{
+					this.getToolTip(this);
+					BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
+				}
 			}
 
 			this.IsOver = true;
