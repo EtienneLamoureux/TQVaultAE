@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using TQVaultAE.GUI.Tooltip;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Helpers;
 
 namespace TQVaultAE.GUI.Components
 {
@@ -269,8 +270,15 @@ namespace TQVaultAE.GUI.Components
 					bitmap = this.OverBitmap;
 			}
 
+
 			// Draw the background graphic.
-			e.Graphics.DrawImage(bitmap, 0, 0, this.Width, this.Height);
+			Image bmp;
+			if (this.Parent is VaultPanel vp && vp.Vault is not null)
+				bmp = bitmap.ResizeImage(this.Width, this.Height, maintainAspectRatio: true);
+			else
+				bmp = bitmap;
+
+			e.Graphics.DrawImage(bmp, 0, 0, this.Width, this.Height);
 
 			if (this.CurrentIconInfo.DisplayMode != BagButtonDisplayMode.Default // Vault Only
 				&& !this.CurrentIconInfo.DisplayMode.HasFlag(BagButtonDisplayMode.Number))// No Number
