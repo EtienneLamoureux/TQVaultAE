@@ -214,13 +214,16 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="e">EventArgs data</param>
 		private void MouseEnterCallback(object sender, EventArgs e)
 		{
+			BagButtonLabelTooltip.ShowTooltip(this.ServiceProvider, this);
+
 			if (this.getToolTip != null)
 			{
-				BagButtonLabelTooltip.ShowTooltip(this.ServiceProvider, this);
-
 				// Disable Tooltip bag
-				var panel = this.getToolTip.Target as VaultPanel;
-				if (!panel?.Vault?.DisabledTooltipBagId.Contains(this.ButtonNumber) ?? false)
+				var panel = this.getToolTip.Target as Panel;
+				if(
+					(panel is VaultPanel vp && vp.Vault is not null && !vp.Vault.DisabledTooltipBagId.Contains(this.ButtonNumber))
+					|| panel is PlayerPanel || panel is SackPanel || panel is StashPanel
+				)
 				{
 					this.getToolTip(this);
 					BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
