@@ -62,6 +62,11 @@ namespace TQVaultAE.Domain.Entities
 		public SackCollection[] sacks;
 
 		/// <summary>
+		/// Holds the currently disabled tooltip bagId.
+		/// </summary>
+		public List<int> DisabledTooltipBagId = new();
+
+		/// <summary>
 		/// Initializes a new instance of the PlayerCollection class.
 		/// </summary>
 		/// <param name="playerName">Name of the player</param>

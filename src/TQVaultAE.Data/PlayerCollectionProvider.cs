@@ -180,6 +180,7 @@ namespace TQVaultAE.Data
 		{
 			var pcjson = new VaultDto()
 			{
+				disabledtooltip = pc.DisabledTooltipBagId,
 				currentlyFocusedSackNumber = pc.currentlyFocusedSackNumber,
 				currentlySelectedSackNumber = pc.currentlySelectedSackNumber,
 				sacks = pc.Select(sack => new SackDto()
@@ -291,6 +292,7 @@ namespace TQVaultAE.Data
 			using var jsonfile = new StreamReader(path, Encoding.UTF8);
 			var vaultDto = new JsonSerializer().Deserialize(jsonfile, typeof(VaultDto)) as VaultDto;
 
+			pc.DisabledTooltipBagId = vaultDto.disabledtooltip ?? new();
 			pc.numberOfSacks = vaultDto.sacks.Count;
 			pc.currentlyFocusedSackNumber = vaultDto.currentlyFocusedSackNumber;
 			pc.currentlySelectedSackNumber = vaultDto.currentlySelectedSackNumber;

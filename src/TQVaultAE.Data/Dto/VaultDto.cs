@@ -11,6 +11,10 @@ namespace TQVaultAE.Data.Dto
 	public class VaultDto
 	{
 		/// <summary>
+		/// Persisted disabled tooltip ids
+		/// </summary>
+		public List<int> disabledtooltip { get; set; }
+		/// <summary>
 		/// Holds the currently focused sack
 		/// </summary>
 		/// <remarks>used to preseve right vault selected tab (Type = Vault only)</remarks>

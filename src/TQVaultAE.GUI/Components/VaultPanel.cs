@@ -54,10 +54,6 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		private int currentBag;
 
-		/// <summary>
-		/// Holds the currently disabled tooltip bagId.
-		/// </summary>
-		internal readonly List<int> DisabledTooltipBagId = new List<int>();
 
 		private IContainer components;
 
@@ -548,28 +544,30 @@ namespace TQVaultAE.GUI.Components
 						this.contextMenu.Items.Add("-");
 						this.contextMenu.Items.Add(Resources.PlayerPanelMenuEmpty);
 
-						// Add the Disable Tooltip submenu
-						this.contextMenu.Items.Add("-");
-
-						if (this.DisabledTooltipBagId.Contains(bagID))
+						if (this.Vault is not null)
 						{
-							this.AddMenuItem(Resources.PlayerPanelMenuEnableTooltip, this.DisableTooltipClicked);
-						}
-						else
-						{
-							this.AddMenuItem(Resources.PlayerPanelMenuDisableTooltip, this.DisableTooltipClicked);
-						}
+							// Add the Disable Tooltip submenu
+							this.contextMenu.Items.Add("-");
 
-						if (this.DisabledTooltipBagId.Count < this.BagButtons.Count)
-						{
-							this.AddMenuItem(Resources.PlayerPanelMenuDisableAllTooltip, this.DisableTooltipClicked);
-						}
+							if (this.Vault.DisabledTooltipBagId.Contains(bagID))
+							{
+								this.AddMenuItem(Resources.PlayerPanelMenuEnableTooltip, this.DisableTooltipClicked);
+							}
+							else
+							{
+								this.AddMenuItem(Resources.PlayerPanelMenuDisableTooltip, this.DisableTooltipClicked);
+							}
 
-						if (this.DisabledTooltipBagId.Any())
-						{
-							this.AddMenuItem(Resources.PlayerPanelMenuEnableAllTooltip, this.DisableTooltipClicked);
-						}
+							if (this.Vault.DisabledTooltipBagId.Count < this.BagButtons.Count)
+							{
+								this.AddMenuItem(Resources.PlayerPanelMenuDisableAllTooltip, this.DisableTooltipClicked);
+							}
 
+							if (this.Vault.DisabledTooltipBagId.Any())
+							{
+								this.AddMenuItem(Resources.PlayerPanelMenuEnableAllTooltip, this.DisableTooltipClicked);
+							}
+						}
 					}
 
 					if (this.Vault is not null)
@@ -591,24 +589,24 @@ namespace TQVaultAE.GUI.Components
 			{
 				if (item.Text == Resources.PlayerPanelMenuEnableAllTooltip)
 				{
-					this.DisabledTooltipBagId.Clear();
+					this.Vault.DisabledTooltipBagId.Clear();
 				}
 
 				if (item.Text == Resources.PlayerPanelMenuDisableAllTooltip)
 				{
 					var all = this.BagButtons.Select(b => b.ButtonNumber).ToArray();
-					this.DisabledTooltipBagId.Clear();
-					this.DisabledTooltipBagId.AddRange(all);
+					this.Vault.DisabledTooltipBagId.Clear();
+					this.Vault.DisabledTooltipBagId.AddRange(all);
 				}
 
 				if (item.Text == Resources.PlayerPanelMenuEnableTooltip)
 				{
-					this.DisabledTooltipBagId.Remove(this.CurrentBag);
+					this.Vault.DisabledTooltipBagId.Remove(this.CurrentBag);
 				}
 
 				if (item.Text == Resources.PlayerPanelMenuDisableTooltip)
 				{
-					this.DisabledTooltipBagId.Add(this.CurrentBag);
+					this.Vault.DisabledTooltipBagId.Add(this.CurrentBag);
 				}
 			}
 		}
