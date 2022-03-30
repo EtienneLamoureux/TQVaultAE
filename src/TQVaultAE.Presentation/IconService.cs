@@ -32,6 +32,8 @@ namespace TQVaultAE.Presentation
 		{
 			if (Pictures is not null) return;
 
+			Log.LogDebug(@"START LOADING ICON DATABASE!");
+
 			var configfile = JsonConvert.DeserializeObject<ConfRoot>(Resources.IconServiceList);
 
 			// Build Keys
@@ -59,14 +61,17 @@ namespace TQVaultAE.Presentation
 				let onID = string.IsNullOrEmpty(img.On) ? null : replace(key, onrep)
 				let offID = string.IsNullOrEmpty(img.Off) ? null : replace(key, ofrep)
 				let ovID = string.IsNullOrEmpty(img.Over) ? null : replace(key, ovrep)
+				let resOn = Database.LoadResource(onID)
+				let resOff = Database.LoadResource(offID)
+				let resOver = Database.LoadResource(ovID)
 				let iconinfo = new IconInfo(
 					img.Category
 					, onID
-					, this.UIService.LoadBitmap(onID)
+					, resOn is null ? null : this.UIService.LoadBitmap(onID, resOn)
 					, offID
-					, this.UIService.LoadBitmap(offID)
+					, resOff is null ? null : this.UIService.LoadBitmap(offID, resOff)
 					, ovID
-					, this.UIService.LoadBitmap(ovID)
+					, resOver is null ? null : this.UIService.LoadBitmap(ovID, resOver)
 				)
 				where 
 				(// Square Only for Shields
@@ -83,7 +88,8 @@ namespace TQVaultAE.Presentation
 				where img.Literal?.Any() ?? false
 				from lit in img.Literal
 				let resID = file.fileName + '\\' + lit
-				let bmp = this.UIService.LoadBitmap(resID)
+				let res = Database.LoadResource(resID)
+				let bmp = res is null ? null : this.UIService.LoadBitmap(resID, res)
 				select new IconInfo(
 					img.Category
 					, resID
@@ -122,6 +128,8 @@ namespace TQVaultAE.Presentation
 			Pictures = distinct.ToList().AsReadOnly();
 
 			Log.LogInformation("{IconInfoCount} IconInfo Reduced !", Pictures.Count);
+
+			Log.LogDebug(@"STOP LOADING ICON DATABASE!");
 		}
 
 		private static string replace(string input, string[] onrep)

@@ -161,15 +161,29 @@
 				},
 				{
 					"ca": "Skills",
-					"pa": "ICONS\\\\SKILLS\\\\\\w+UP01.TEX",
+					"pa": "ICONS\\\\SKILLS\\\\(?!BUFFGREENF|HUD_BUFFGREENF)\\w+UP01.TEX",
 					"on": "UP01|DOWN01",
 					"of": "|",
 					"ov": "|"
 				},
 				{
 					"ca": "Skills",
-					"pa": "ICONS\\\\SKILLS\\\\(DEFENSIVE|EARTH|HUNTING|NATURE|SPIRIT|STEALTH|STORM|WARFARE)\\\\(?!FAVORABLEWIND)\\w+UP01.TEX",
+					"pa": "ICONS\\\\SKILLS\\\\(HUD_)?BUFFGREENFUP01.TEX",
+					"on": "FUP01|DOWN01",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Skills",
+					"pa": "ICONS\\\\SKILLS\\\\(DEFENSIVE|EARTH|HUNTING|NATURE|SPIRIT|STEALTH|STORM|WARFARE)\\\\(?!FAVORABLEWIND|HUD_NIGHTSHADER|NIGHTSHADER)\\w+UP01.TEX",
 					"on": "UP01|DOWN01",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Skills",
+					"pa": "ICONS\\\\SKILLS\\\\STEALTH\\\\(HUD_)?NIGHTSHADERUP01.TEX",
+					"on": "RUP01|DOWN01",
 					"of": "|",
 					"ov": "|"
 				},
@@ -213,10 +227,17 @@
 				},
 				{
 					"ca": "Relics",
-					"pa": "CHARMS\\\\X_ANIMALPART\\d{2}[AB].TEX",
+					"pa": "CHARMS\\\\(?!X_ANIMALPART02A)X_ANIMALPART\\d{2}[AB].TEX",
 					"on": "|",
 					"of": ".TEX|_E.TEX",
 					"ov": ".TEX|_L.TEX"
+				},
+				{
+					"ca": "Relics",
+					"pa": "CHARMS\\\\X_ANIMALPART02A.TEX",
+					"on": "|",
+					"of": ".TEX|_E.TEX",
+					"ov": ".TEX|_P.TEX"
 				},
 				{
 					"ca": "Relics",
