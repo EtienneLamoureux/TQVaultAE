@@ -10,5 +10,9 @@
 		Scrolls,
 		Skills,
 		Buttons,
+		Helmets,
+		Shields,
+		Armbands,
+		Greaves,
 	}
 }

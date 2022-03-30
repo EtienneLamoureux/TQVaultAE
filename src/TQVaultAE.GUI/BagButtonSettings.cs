@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components;
 using System.Linq;
+using System.IO;
 
 namespace TQVaultAE.GUI
 {
@@ -324,6 +325,11 @@ namespace TQVaultAE.GUI
 
 				bmp.Tag = resourceId;
 
+				// Magnifier
+				picOff.MouseEnter += PicOff_MouseEnter;
+				picOff.MouseLeave += PicOff_MouseLeave;
+
+
 				// Drag & Drop events
 				picOff.MouseDown += PicOff_MouseDown;
 				picOff.MouseMove += PicOff_MouseMove;
@@ -356,9 +362,49 @@ namespace TQVaultAE.GUI
 					case IconCategory.Buttons:
 						this.flowLayoutPanelPicsButtons.Controls.Add(picOff);
 						break;
+					case IconCategory.Helmets:
+						this.flowLayoutPanelPicsHelmets.Controls.Add(picOff);
+						break;
+					case IconCategory.Shields:
+						this.flowLayoutPanelPicsShields.Controls.Add(picOff);
+						break;
+					case IconCategory.Armbands:
+						this.flowLayoutPanelPicsArmbands.Controls.Add(picOff);
+						break;
+					case IconCategory.Greaves:
+						this.flowLayoutPanelPicsGreaves.Controls.Add(picOff);
+						break;
 				}
 				alreadyAddedPics.Add(resourceId);
 			}
+		}
+
+		private void PicOff_MouseEnter(object sender, EventArgs e)
+		{
+			if (IsDragging) return;
+
+			var picB = sender as PictureBox;
+			var picFilePath = picB.Image.Tag as string;
+			var picName = Path.GetFileNameWithoutExtension(picFilePath);
+			picName = picName[0] + new string(picName.ToLower().Skip(1).ToArray());// Titlecase
+			var info = picB.Tag as IconInfo;
+
+			// Compute Position of Magnifier relative to picB
+			var loc = this.PointToClient(picB.PointToScreen(Point.Empty));
+			this.iconMagnifier.Location = new Point(loc.X, loc.Y + 32);// Locate below icon
+
+			this.iconMagnifier.pictureBox.Image = picB.Image;
+			this.iconMagnifier.scalingLabelFilename.Text = picName;
+			this.iconMagnifier.scalingLabelSize.Text = string.Format("{0} x {1}", picB.Size.Width, picB.Size.Height);
+
+			this.iconMagnifier.Visible = true;
+		}
+
+		private void PicOff_MouseLeave(object sender, EventArgs e)
+		{
+			if (IsDragging) return;
+
+			this.iconMagnifier.Visible = false;
 		}
 
 		#region Drag & Drop

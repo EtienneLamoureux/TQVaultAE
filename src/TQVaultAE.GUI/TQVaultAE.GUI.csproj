@@ -163,6 +163,12 @@
     <Compile Include="Components\BufferedTableLayoutPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Components\IconMagnifier.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\IconMagnifier.Designer.cs">
+      <DependentUpon>IconMagnifier.cs</DependentUpon>
+    </Compile>
     <Compile Include="Components\IScalingControl.cs" />
     <Compile Include="Components\ScalingCheckedListBox.cs">
       <SubType>Component</SubType>
@@ -323,6 +329,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Components\BagButtonBase.resx">
       <DependentUpon>BagButtonBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\IconMagnifier.resx">
+      <DependentUpon>IconMagnifier.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Components\SackPanel.resx">
       <DependentUpon>SackPanel.cs</DependentUpon>

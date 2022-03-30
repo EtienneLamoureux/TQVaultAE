@@ -59,7 +59,7 @@ namespace TQVaultAE.Presentation
 				let onID = string.IsNullOrEmpty(img.On) ? null : replace(key, onrep)
 				let offID = string.IsNullOrEmpty(img.Off) ? null : replace(key, ofrep)
 				let ovID = string.IsNullOrEmpty(img.Over) ? null : replace(key, ovrep)
-				select new IconInfo(
+				let iconinfo = new IconInfo(
 					img.Category
 					, onID
 					, this.UIService.LoadBitmap(onID)
@@ -67,7 +67,15 @@ namespace TQVaultAE.Presentation
 					, this.UIService.LoadBitmap(offID)
 					, ovID
 					, this.UIService.LoadBitmap(ovID)
-				);
+				)
+				where 
+				(// Square Only for Shields
+					iconinfo.Category == IconCategory.Shields
+					&& iconinfo.OffBitmap.Size.Width == iconinfo.OffBitmap.Size.Height
+				) 
+				// Everything else
+				|| iconinfo.Category != IconCategory.Shields
+				select iconinfo;
 
 			var literalMatch =
 				from file in configfile.list

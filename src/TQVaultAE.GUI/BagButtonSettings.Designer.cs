@@ -31,7 +31,6 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void InitializeComponent()
 		{
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BagButtonSettings));
             this.tableLayoutPanelBottom = new System.Windows.Forms.TableLayoutPanel();
             this.scalingTextBoxDebug = new TQVaultAE.GUI.Components.ScalingTextBox();
@@ -80,9 +79,17 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelPicsButtons = new System.Windows.Forms.FlowLayoutPanel();
             this.tabPageMisc = new System.Windows.Forms.TabPage();
             this.flowLayoutPanelPicsMisc = new System.Windows.Forms.FlowLayoutPanel();
+            this.tabPageHelmets = new System.Windows.Forms.TabPage();
+            this.flowLayoutPanelPicsHelmets = new System.Windows.Forms.FlowLayoutPanel();
+            this.tabPageShields = new System.Windows.Forms.TabPage();
+            this.flowLayoutPanelPicsShields = new System.Windows.Forms.FlowLayoutPanel();
+            this.tabPageArmbands = new System.Windows.Forms.TabPage();
+            this.flowLayoutPanelPicsArmbands = new System.Windows.Forms.FlowLayoutPanel();
+            this.tabPageGreaves = new System.Windows.Forms.TabPage();
+            this.flowLayoutPanelPicsGreaves = new System.Windows.Forms.FlowLayoutPanel();
             this.scalingLabelDragDropNotice = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.toolTipPics = new System.Windows.Forms.ToolTip(this.components);
             this.pictureBoxDrag = new System.Windows.Forms.PictureBox();
+            this.iconMagnifier = new TQVaultAE.GUI.Components.IconMagnifier();
             this.tableLayoutPanelBottom.SuspendLayout();
             this.flowLayoutPanelSelectedButton.SuspendLayout();
             this.groupBoxEdit.SuspendLayout();
@@ -110,6 +117,10 @@ namespace TQVaultAE.GUI
             this.tabPagePotions.SuspendLayout();
             this.tabPageButtons.SuspendLayout();
             this.tabPageMisc.SuspendLayout();
+            this.tabPageHelmets.SuspendLayout();
+            this.tabPageShields.SuspendLayout();
+            this.tabPageArmbands.SuspendLayout();
+            this.tabPageGreaves.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDrag)).BeginInit();
             this.SuspendLayout();
             // 
@@ -128,16 +139,16 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelBottom.Name = "tableLayoutPanelBottom";
             this.tableLayoutPanelBottom.RowCount = 1;
             this.tableLayoutPanelBottom.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanelBottom.Size = new System.Drawing.Size(771, 37);
+            this.tableLayoutPanelBottom.Size = new System.Drawing.Size(872, 37);
             this.tableLayoutPanelBottom.TabIndex = 7;
             // 
             // scalingTextBoxDebug
             // 
             this.scalingTextBoxDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.scalingTextBoxDebug.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-            this.scalingTextBoxDebug.Location = new System.Drawing.Point(118, 6);
+            this.scalingTextBoxDebug.Location = new System.Drawing.Point(133, 6);
             this.scalingTextBoxDebug.Name = "scalingTextBoxDebug";
-            this.scalingTextBoxDebug.Size = new System.Drawing.Size(533, 25);
+            this.scalingTextBoxDebug.Size = new System.Drawing.Size(604, 25);
             this.scalingTextBoxDebug.TabIndex = 4;
             this.scalingTextBoxDebug.Visible = false;
             // 
@@ -178,7 +189,7 @@ namespace TQVaultAE.GUI
             this.cancelButton.Font = new System.Drawing.Font("Albertus MT", 12F);
             this.cancelButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancelButton.Image = ((System.Drawing.Image)(resources.GetObject("cancelButton.Image")));
-            this.cancelButton.Location = new System.Drawing.Point(686, 3);
+            this.cancelButton.Location = new System.Drawing.Point(787, 3);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("cancelButton.OverBitmap")));
             this.cancelButton.Size = new System.Drawing.Size(82, 30);
@@ -199,7 +210,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelSelectedButton.Controls.Add(this.scalingLabelSelectedButtonValue);
             this.flowLayoutPanelSelectedButton.Location = new System.Drawing.Point(26, 35);
             this.flowLayoutPanelSelectedButton.Name = "flowLayoutPanelSelectedButton";
-            this.flowLayoutPanelSelectedButton.Size = new System.Drawing.Size(771, 28);
+            this.flowLayoutPanelSelectedButton.Size = new System.Drawing.Size(872, 28);
             this.flowLayoutPanelSelectedButton.TabIndex = 8;
             // 
             // scalingLabelSelectedButton
@@ -498,7 +509,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelUpperParts.Controls.Add(this.groupBoxSelectedPictures);
             this.flowLayoutPanelUpperParts.Location = new System.Drawing.Point(26, 69);
             this.flowLayoutPanelUpperParts.Name = "flowLayoutPanelUpperParts";
-            this.flowLayoutPanelUpperParts.Size = new System.Drawing.Size(771, 176);
+            this.flowLayoutPanelUpperParts.Size = new System.Drawing.Size(872, 192);
             this.flowLayoutPanelUpperParts.TabIndex = 11;
             // 
             // groupBoxAvailablePictures
@@ -512,7 +523,7 @@ namespace TQVaultAE.GUI
             this.groupBoxAvailablePictures.ForeColor = System.Drawing.Color.Gold;
             this.groupBoxAvailablePictures.Location = new System.Drawing.Point(26, 251);
             this.groupBoxAvailablePictures.Name = "groupBoxAvailablePictures";
-            this.groupBoxAvailablePictures.Size = new System.Drawing.Size(771, 363);
+            this.groupBoxAvailablePictures.Size = new System.Drawing.Size(872, 363);
             this.groupBoxAvailablePictures.TabIndex = 12;
             this.groupBoxAvailablePictures.TabStop = false;
             this.groupBoxAvailablePictures.Text = "Available pictures";
@@ -530,10 +541,14 @@ namespace TQVaultAE.GUI
             this.tabControlPics.Controls.Add(this.tabPagePotions);
             this.tabControlPics.Controls.Add(this.tabPageButtons);
             this.tabControlPics.Controls.Add(this.tabPageMisc);
+            this.tabControlPics.Controls.Add(this.tabPageHelmets);
+            this.tabControlPics.Controls.Add(this.tabPageShields);
+            this.tabControlPics.Controls.Add(this.tabPageArmbands);
+            this.tabControlPics.Controls.Add(this.tabPageGreaves);
             this.tabControlPics.Location = new System.Drawing.Point(17, 39);
             this.tabControlPics.Name = "tabControlPics";
             this.tabControlPics.SelectedIndex = 0;
-            this.tabControlPics.Size = new System.Drawing.Size(731, 309);
+            this.tabControlPics.Size = new System.Drawing.Size(832, 309);
             this.tabControlPics.TabIndex = 3;
             // 
             // tabPageSkills
@@ -541,7 +556,7 @@ namespace TQVaultAE.GUI
             this.tabPageSkills.Controls.Add(this.flowLayoutPanelPicsSkills);
             this.tabPageSkills.Location = new System.Drawing.Point(4, 27);
             this.tabPageSkills.Name = "tabPageSkills";
-            this.tabPageSkills.Size = new System.Drawing.Size(723, 278);
+            this.tabPageSkills.Size = new System.Drawing.Size(824, 278);
             this.tabPageSkills.TabIndex = 6;
             this.tabPageSkills.Text = "Skills";
             this.tabPageSkills.UseVisualStyleBackColor = true;
@@ -553,7 +568,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelPicsSkills.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanelPicsSkills.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanelPicsSkills.Name = "flowLayoutPanelPicsSkills";
-            this.flowLayoutPanelPicsSkills.Size = new System.Drawing.Size(723, 278);
+            this.flowLayoutPanelPicsSkills.Size = new System.Drawing.Size(824, 278);
             this.flowLayoutPanelPicsSkills.TabIndex = 3;
             // 
             // tabPageRelics
@@ -700,6 +715,89 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelPicsMisc.Size = new System.Drawing.Size(717, 272);
             this.flowLayoutPanelPicsMisc.TabIndex = 2;
             // 
+            // tabPageHelmets
+            // 
+            this.tabPageHelmets.Controls.Add(this.flowLayoutPanelPicsHelmets);
+            this.tabPageHelmets.Location = new System.Drawing.Point(4, 27);
+            this.tabPageHelmets.Name = "tabPageHelmets";
+            this.tabPageHelmets.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageHelmets.Size = new System.Drawing.Size(723, 278);
+            this.tabPageHelmets.TabIndex = 8;
+            this.tabPageHelmets.Text = "Helmets";
+            this.tabPageHelmets.UseVisualStyleBackColor = true;
+            // 
+            // flowLayoutPanelPicsHelmets
+            // 
+            this.flowLayoutPanelPicsHelmets.AutoScroll = true;
+            this.flowLayoutPanelPicsHelmets.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
+            this.flowLayoutPanelPicsHelmets.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanelPicsHelmets.Location = new System.Drawing.Point(3, 3);
+            this.flowLayoutPanelPicsHelmets.Name = "flowLayoutPanelPicsHelmets";
+            this.flowLayoutPanelPicsHelmets.Size = new System.Drawing.Size(717, 272);
+            this.flowLayoutPanelPicsHelmets.TabIndex = 3;
+            // 
+            // tabPageShields
+            // 
+            this.tabPageShields.Controls.Add(this.flowLayoutPanelPicsShields);
+            this.tabPageShields.Location = new System.Drawing.Point(4, 27);
+            this.tabPageShields.Name = "tabPageShields";
+            this.tabPageShields.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageShields.Size = new System.Drawing.Size(723, 278);
+            this.tabPageShields.TabIndex = 9;
+            this.tabPageShields.Text = "Shields";
+            this.tabPageShields.UseVisualStyleBackColor = true;
+            // 
+            // flowLayoutPanelPicsShields
+            // 
+            this.flowLayoutPanelPicsShields.AutoScroll = true;
+            this.flowLayoutPanelPicsShields.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
+            this.flowLayoutPanelPicsShields.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanelPicsShields.Location = new System.Drawing.Point(3, 3);
+            this.flowLayoutPanelPicsShields.Name = "flowLayoutPanelPicsShields";
+            this.flowLayoutPanelPicsShields.Size = new System.Drawing.Size(717, 272);
+            this.flowLayoutPanelPicsShields.TabIndex = 4;
+            // 
+            // tabPageArmbands
+            // 
+            this.tabPageArmbands.Controls.Add(this.flowLayoutPanelPicsArmbands);
+            this.tabPageArmbands.Location = new System.Drawing.Point(4, 27);
+            this.tabPageArmbands.Name = "tabPageArmbands";
+            this.tabPageArmbands.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageArmbands.Size = new System.Drawing.Size(723, 278);
+            this.tabPageArmbands.TabIndex = 10;
+            this.tabPageArmbands.Text = "Armbands";
+            this.tabPageArmbands.UseVisualStyleBackColor = true;
+            // 
+            // flowLayoutPanelPicsArmbands
+            // 
+            this.flowLayoutPanelPicsArmbands.AutoScroll = true;
+            this.flowLayoutPanelPicsArmbands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
+            this.flowLayoutPanelPicsArmbands.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanelPicsArmbands.Location = new System.Drawing.Point(3, 3);
+            this.flowLayoutPanelPicsArmbands.Name = "flowLayoutPanelPicsArmbands";
+            this.flowLayoutPanelPicsArmbands.Size = new System.Drawing.Size(717, 272);
+            this.flowLayoutPanelPicsArmbands.TabIndex = 5;
+            // 
+            // tabPageGreaves
+            // 
+            this.tabPageGreaves.Controls.Add(this.flowLayoutPanelPicsGreaves);
+            this.tabPageGreaves.Location = new System.Drawing.Point(4, 27);
+            this.tabPageGreaves.Name = "tabPageGreaves";
+            this.tabPageGreaves.Size = new System.Drawing.Size(723, 278);
+            this.tabPageGreaves.TabIndex = 11;
+            this.tabPageGreaves.Text = "Greaves";
+            this.tabPageGreaves.UseVisualStyleBackColor = true;
+            // 
+            // flowLayoutPanelPicsGreaves
+            // 
+            this.flowLayoutPanelPicsGreaves.AutoScroll = true;
+            this.flowLayoutPanelPicsGreaves.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
+            this.flowLayoutPanelPicsGreaves.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanelPicsGreaves.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanelPicsGreaves.Name = "flowLayoutPanelPicsGreaves";
+            this.flowLayoutPanelPicsGreaves.Size = new System.Drawing.Size(723, 278);
+            this.flowLayoutPanelPicsGreaves.TabIndex = 6;
+            // 
             // scalingLabelDragDropNotice
             // 
             this.scalingLabelDragDropNotice.AutoSize = true;
@@ -713,17 +811,6 @@ namespace TQVaultAE.GUI
             this.scalingLabelDragDropNotice.Tag = "";
             this.scalingLabelDragDropNotice.Text = "Drag and drop in \"Selected Pictures\" placeholders";
             // 
-            // toolTipPics
-            // 
-            this.toolTipPics.AutomaticDelay = 200;
-            this.toolTipPics.AutoPopDelay = 1000;
-            this.toolTipPics.InitialDelay = 200;
-            this.toolTipPics.IsBalloon = true;
-            this.toolTipPics.ReshowDelay = 40;
-            this.toolTipPics.ShowAlways = true;
-            this.toolTipPics.UseAnimation = false;
-            this.toolTipPics.UseFading = false;
-            // 
             // pictureBoxDrag
             // 
             this.pictureBoxDrag.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -735,12 +822,26 @@ namespace TQVaultAE.GUI
             this.pictureBoxDrag.TabStop = false;
             this.pictureBoxDrag.Visible = false;
             // 
+            // iconMagnifier
+            // 
+            this.iconMagnifier.AutoSize = true;
+            this.iconMagnifier.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.iconMagnifier.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
+            this.iconMagnifier.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.iconMagnifier.Location = new System.Drawing.Point(845, 0);
+            this.iconMagnifier.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.iconMagnifier.Name = "iconMagnifier";
+            this.iconMagnifier.Size = new System.Drawing.Size(77, 99);
+            this.iconMagnifier.TabIndex = 14;
+            this.iconMagnifier.Visible = false;
+            // 
             // BagButtonSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-            this.ClientSize = new System.Drawing.Size(822, 680);
+            this.ClientSize = new System.Drawing.Size(923, 680);
+            this.Controls.Add(this.iconMagnifier);
             this.Controls.Add(this.pictureBoxDrag);
             this.Controls.Add(this.groupBoxAvailablePictures);
             this.Controls.Add(this.flowLayoutPanelUpperParts);
@@ -767,6 +868,7 @@ namespace TQVaultAE.GUI
             this.Controls.SetChildIndex(this.flowLayoutPanelUpperParts, 0);
             this.Controls.SetChildIndex(this.groupBoxAvailablePictures, 0);
             this.Controls.SetChildIndex(this.pictureBoxDrag, 0);
+            this.Controls.SetChildIndex(this.iconMagnifier, 0);
             this.tableLayoutPanelBottom.ResumeLayout(false);
             this.tableLayoutPanelBottom.PerformLayout();
             this.flowLayoutPanelSelectedButton.ResumeLayout(false);
@@ -803,6 +905,10 @@ namespace TQVaultAE.GUI
             this.tabPagePotions.ResumeLayout(false);
             this.tabPageButtons.ResumeLayout(false);
             this.tabPageMisc.ResumeLayout(false);
+            this.tabPageHelmets.ResumeLayout(false);
+            this.tabPageShields.ResumeLayout(false);
+            this.tabPageArmbands.ResumeLayout(false);
+            this.tabPageGreaves.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDrag)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -838,7 +944,6 @@ namespace TQVaultAE.GUI
 		private System.Windows.Forms.GroupBox groupBoxAvailablePictures;
 		private ScalingLabel scalingLabelDragDropNotice;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelPicsMisc;
-		private System.Windows.Forms.ToolTip toolTipPics;
 		private ScalingTextBox scalingTextBoxDebug;
 		private System.Windows.Forms.TabControl tabControlPics;
 		private System.Windows.Forms.TabPage tabPageMisc;
@@ -861,5 +966,14 @@ namespace TQVaultAE.GUI
 		private ScalingCheckBox scalingCheckBoxLabel;
 		private ScalingRadioButton scalingRadioButtonDefaultIcon;
 		private ScalingRadioButton scalingRadioButtonCustomIcon;
+		private System.Windows.Forms.TabPage tabPageHelmets;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelPicsHelmets;
+		private System.Windows.Forms.TabPage tabPageShields;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelPicsShields;
+		private System.Windows.Forms.TabPage tabPageArmbands;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelPicsArmbands;
+		private System.Windows.Forms.TabPage tabPageGreaves;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelPicsGreaves;
+		private IconMagnifier iconMagnifier;
 	}
 }

@@ -12,7 +12,35 @@
 				},
 				{
 					"ca": "Jewellery",
-					"pa": "EQUIPMENTAMULET\\\\UIBITMAPS\\\\C.._AMULET..\\.TEX",
+					"pa": "(EQUIPMENT AMULET|EQUIPMENTRING)\\\\UIBITMAPS\\\\\\w+\\.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Helmets",
+					"pa": "EQUIPMENTHELM\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Shields",
+					"pa": "EQUIPMENTSHIELD\\\\UIBITMAPS\\\\\\w+(?<!BMP).TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Armbands",
+					"pa": "EQUIPMENTARMBAND\\\\UIBITMAPS\\\\(?!ZPLACEHOLDERICON)\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Greaves",
+					"pa": "EQUIPMENTGREAVES\\\\UIBITMAPS\\\\\\w+.TEX",
 					"on": "|",
 					"of": "|",
 					"ov": "|"
@@ -30,6 +58,40 @@
 					"on": "1.TEX|1A.TEX",
 					"of": "|",
 					"ov": "|"
+				},
+				{
+					"ca": "Potions",
+					"pa": "MISCELLANEOUS\\\\ONESHOT\\\\UIBITMAPS\\\\(LIFE|ENERGY)POTION0.B.TEX",
+					"on": "B.|A.",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Misc",
+					"pa": "MISCELLANEOUS\\\\ONESHOT\\\\UIBITMAPS\\\\DYEBOTTLE_\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Misc",
+					"lt": [
+						"MISCELLANEOUS\\ONESHOT\\UIBITMAPS\\GOLDCOINS01.TEX",
+						"MISCELLANEOUS\\ONESHOT\\UIBITMAPS\\SACK01.TEX",
+						"QUESTITEMS\\UIBITMAPS\\QI_EYEOFCHAOS.TEX"
+					]
+				},
+				{
+					"ca": "Jewellery",
+					"lt": [
+						"QUESTITEMS\\UIBITMAPS\\QI_DOWRYNECKLACE.TEX"
+					]
+				},
+				{
+					"ca": "Scrolls",
+					"lt": [
+						"QUESTITEMS\\UIBITMAPS\\QI_RHAKOTISSCROLL.TEX"
+					]
 				}
 			]
 		},
@@ -170,6 +232,12 @@
 					]
 				},
 				{
+					"ca": "Misc",
+					"lt": [
+						"GRAVESTONES\\GRAVEICON01.TEX"
+					]
+				},
+				{
 					"ca": "Scrolls",
 					"pa": "SCROLLS\\\\[ELN]_SCROLL_\\w+UP.TEX",
 					"on": "UP.TEX|DWN.TEX",
@@ -182,6 +250,52 @@
 					"on": "|",
 					"of": "|",
 					"ov": "|"
+				},
+				{
+					"ca": "Misc",
+					"pa": "QUESTITEMS\\\\UIBITMAPS\\\\(?!CHARONOAR|HEALINGELIXIR)\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Helmets",
+					"pa": "EQUIPMENTARMOR\\\\HELM\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Armbands",
+					"pa": "EQUIPMENTARMOR\\\\ARMBAND\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Greaves",
+					"pa": "EQUIPMENTARMOR\\\\GREAVES\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Shields",
+					"pa": "EQUIPMENTWEAPONS\\\\SHIELD\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				}
+			]
+		},
+		{
+			"file": "XPACK\\QUESTS",
+			"img": [
+				{
+					"ca": "Misc",
+					"lt": [
+						"Z_THEOVERLORD COPY.TEX"
+					]
 				}
 			]
 		},
@@ -261,6 +375,17 @@
 			]
 		},
 		{
+			"file": "XPACK2\\QUESTS",
+			"img": [
+				{
+					"ca": "Misc",
+					"lt": [
+						"Z_THEPRIMROSE COPY.TEX"
+					]
+				}
+			]
+		},
+		{
 			"file": "XPACK2\\ITEMS",
 			"img": [
 				{
@@ -301,6 +426,41 @@
 				{
 					"ca": "Jewellery",
 					"pa": "EQUIPMENTARMOR\\\\RING\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Armbands",
+					"pa": "EQUIPMENTARMOR\\\\ARMBANDS\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Greaves",
+					"pa": "EQUIPMENTARMOR\\\\GREAVES\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Helmets",
+					"pa": "EQUIPMENTARMOR\\\\HELMET\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Shields",
+					"pa": "EQUIPMENTWEAPON\\\\SHIELD\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Misc",
+					"pa": "QUESTITEMS\\\\UIBITMAPS\\\\(?!KORNWYFSCYTHE|LOKISCEPTER|MEAD|YLVASSPEAR_MISTLETOE)\\w+.TEX",
 					"on": "|",
 					"of": "|",
 					"ov": "|"
@@ -356,9 +516,10 @@
 			"img": [
 				{
 					"ca": "Misc",
-					"lt": [
-						"QUESTITEMS\\UIBITMAPS\\U_LETTER01.TEX"
-					]
+					"pa": "QUESTITEMS\\\\UIBITMAPS\\\\(?!U_HOOKAH01|U_RODOFFERROPHILUM01)\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
 				},
 				{
 					"ca": "Relics",
@@ -370,6 +531,27 @@
 				{
 					"ca": "Jewellery",
 					"pa": "EQUIPMENTARMOR\\\\(AMULET|RING)\\\\UIBITMAPS\\\\(U_AMULET0[12]|U_RING.[1234]).TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Armbands",
+					"pa": "EQUIPMENTARMOR\\\\ARMBAND\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Greaves",
+					"pa": "EQUIPMENTARMOR\\\\GREAVES\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Helmets",
+					"pa": "EQUIPMENTARMOR\\\\HELM\\\\UIBITMAPS\\\\\\w+.TEX",
 					"on": "|",
 					"of": "|",
 					"ov": "|"
@@ -477,6 +659,41 @@
 					"ca": "Scrolls",
 					"pa": "SCROLLS\\\\UIBITMAPS\\\\HUD_03_\\w+_UP.TEX",
 					"on": "UP.|DOWN.",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Armbands",
+					"pa": "EQUIPMENTARMOR\\\\ARMBAND\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Greaves",
+					"pa": "EQUIPMENTARMOR\\\\GREAVES\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Helmets",
+					"pa": "EQUIPMENTARMOR\\\\HELM\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Shields",
+					"pa": "EQUIPMENTWEAPON\\\\SHIELD\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Misc",
+					"pa": "QUESTITEMS\\\\UIBITMAPS\\\\(?!X4_QI_INCENSECANDLE|X4_QI_KEY|X4_QI_LOWERFRAGMENTOFHOUYISBOW|X4_QI_MAUSOLEUMKEY|X4_QI_SEALOFTHEDRAGONKING|X4_QI_SLAVERCAMPSCELLKEY|X4_QI_UPPERFRAGMENTOFHOUYISBOW|X4_QI_VILLAGEIDOL)\\w+.TEX",
+					"on": "|",
 					"of": "|",
 					"ov": "|"
 				}
