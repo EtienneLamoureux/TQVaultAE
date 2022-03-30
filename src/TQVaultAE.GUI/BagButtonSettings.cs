@@ -36,9 +36,16 @@ namespace TQVaultAE.GUI
 		// From Database
 		private ReadOnlyCollection<IconInfo> Pictures;
 
+		private BagButtonIconInfo _DefaultBagButtonIconInfo = new()
+		{
+			DisplayMode = BagButtonDisplayMode.Default
+		};
+
 		#region CurrentBagButton
 
 		private BagButtonBase _CurrentBagButton;
+		private bool IsLoaded;
+
 		internal BagButtonBase CurrentBagButton
 		{
 			set
@@ -180,26 +187,31 @@ namespace TQVaultAE.GUI
 
 		private void BagButtonSettings_Load(object sender, EventArgs e)
 		{
-			this.Pictures = this.iconService.GetIconDatabase();
+			this.Pictures = this.iconService.GetIconDatabase();// Singleton
 
 			ApplyIconInfo();
 
-			TogglePicturePickup();
+			if (!IsLoaded)
+			{
 
-			this.PicsPanelList.ForEach(p => p.SuspendLayout());
+				TogglePicturePickup();
 
-			this.SuspendLayout();
+				this.PicsPanelList.ForEach(p => p.SuspendLayout());
 
-			foreach (var pic in this.Pictures) AddPicture(pic);
+				this.SuspendLayout();
 
-			this.PicsPanelList.ForEach(p => p.ResumeLayout(false));
-			this.PicsPanelList.ForEach(p => p.PerformLayout());
+				foreach (var pic in this.Pictures) AddPicture(pic);
 
-			DisplayPictures();
+				this.PicsPanelList.ForEach(p => p.ResumeLayout(false));
+				this.PicsPanelList.ForEach(p => p.PerformLayout());
 
-			this.ResumeLayout(false);
-			this.PerformLayout();
+				DisplayPictures();
 
+				this.ResumeLayout(false);
+				this.PerformLayout();
+
+				IsLoaded = true;
+			}
 		}
 
 		/// <summary>
@@ -208,7 +220,10 @@ namespace TQVaultAE.GUI
 		private void ApplyIconInfo()
 		{
 			var info = _CurrentBagButton.Sack.BagButtonIconInfo;
-			if (info is null) return;
+
+			if (info is null)
+				info = _DefaultBagButtonIconInfo;
+
 
 			this.scalingTextBoxLabel.Text = info.Label;
 
@@ -247,7 +262,13 @@ namespace TQVaultAE.GUI
 					this.pictureBoxOver.Image = prevOver.OffBitmap;
 					this.pictureBoxOver.Tag = prevOver;
 				}
+
+				return;
 			}
+
+			// Reset image picker
+			this.pictureBoxOn.Image = this.pictureBoxOff.Image =
+			this.pictureBoxSimple.Image = this.pictureBoxOver.Image = null;
 		}
 
 
@@ -510,7 +531,6 @@ namespace TQVaultAE.GUI
 		private void radioButtonPictureSimple_CheckedChanged(object sender, EventArgs e)
 		{ TogglePicturePickup(); DisplayPictures(); }
 
-
 		private void radioButtonPictureDetailed_CheckedChanged(object sender, EventArgs e)
 		{ TogglePicturePickup(); DisplayPictures(); }
 
@@ -604,5 +624,6 @@ namespace TQVaultAE.GUI
 				this.pictureBoxOver.Image = Resources.inventorybagover01;
 			}
 		}
+
 	}
 }

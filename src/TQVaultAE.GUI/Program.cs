@@ -104,7 +104,7 @@ namespace TQVaultAE.GUI
 				// Forms
 				.AddSingleton<MainForm>()
 				.AddTransient<AboutBox>()
-				.AddTransient<BagButtonSettings>()
+				.AddSingleton<BagButtonSettings>()
 				.AddTransient<CharacterEditDialog>()
 				.AddTransient<ItemProperties>()
 				.AddTransient<ItemSeedDialog>()
