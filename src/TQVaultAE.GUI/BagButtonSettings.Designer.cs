@@ -139,16 +139,16 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelBottom.Name = "tableLayoutPanelBottom";
             this.tableLayoutPanelBottom.RowCount = 1;
             this.tableLayoutPanelBottom.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanelBottom.Size = new System.Drawing.Size(872, 37);
+            this.tableLayoutPanelBottom.Size = new System.Drawing.Size(996, 37);
             this.tableLayoutPanelBottom.TabIndex = 7;
             // 
             // scalingTextBoxDebug
             // 
             this.scalingTextBoxDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.scalingTextBoxDebug.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-            this.scalingTextBoxDebug.Location = new System.Drawing.Point(133, 6);
+            this.scalingTextBoxDebug.Location = new System.Drawing.Point(152, 6);
             this.scalingTextBoxDebug.Name = "scalingTextBoxDebug";
-            this.scalingTextBoxDebug.Size = new System.Drawing.Size(604, 25);
+            this.scalingTextBoxDebug.Size = new System.Drawing.Size(691, 25);
             this.scalingTextBoxDebug.TabIndex = 4;
             this.scalingTextBoxDebug.Visible = false;
             // 
@@ -189,7 +189,7 @@ namespace TQVaultAE.GUI
             this.cancelButton.Font = new System.Drawing.Font("Albertus MT", 12F);
             this.cancelButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancelButton.Image = ((System.Drawing.Image)(resources.GetObject("cancelButton.Image")));
-            this.cancelButton.Location = new System.Drawing.Point(787, 3);
+            this.cancelButton.Location = new System.Drawing.Point(911, 3);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("cancelButton.OverBitmap")));
             this.cancelButton.Size = new System.Drawing.Size(82, 30);
@@ -210,7 +210,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelSelectedButton.Controls.Add(this.scalingLabelSelectedButtonValue);
             this.flowLayoutPanelSelectedButton.Location = new System.Drawing.Point(26, 35);
             this.flowLayoutPanelSelectedButton.Name = "flowLayoutPanelSelectedButton";
-            this.flowLayoutPanelSelectedButton.Size = new System.Drawing.Size(872, 28);
+            this.flowLayoutPanelSelectedButton.Size = new System.Drawing.Size(996, 28);
             this.flowLayoutPanelSelectedButton.TabIndex = 8;
             // 
             // scalingLabelSelectedButton
@@ -509,7 +509,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelUpperParts.Controls.Add(this.groupBoxSelectedPictures);
             this.flowLayoutPanelUpperParts.Location = new System.Drawing.Point(26, 69);
             this.flowLayoutPanelUpperParts.Name = "flowLayoutPanelUpperParts";
-            this.flowLayoutPanelUpperParts.Size = new System.Drawing.Size(872, 192);
+            this.flowLayoutPanelUpperParts.Size = new System.Drawing.Size(996, 192);
             this.flowLayoutPanelUpperParts.TabIndex = 11;
             // 
             // groupBoxAvailablePictures
@@ -523,7 +523,7 @@ namespace TQVaultAE.GUI
             this.groupBoxAvailablePictures.ForeColor = System.Drawing.Color.Gold;
             this.groupBoxAvailablePictures.Location = new System.Drawing.Point(26, 251);
             this.groupBoxAvailablePictures.Name = "groupBoxAvailablePictures";
-            this.groupBoxAvailablePictures.Size = new System.Drawing.Size(872, 363);
+            this.groupBoxAvailablePictures.Size = new System.Drawing.Size(996, 363);
             this.groupBoxAvailablePictures.TabIndex = 12;
             this.groupBoxAvailablePictures.TabStop = false;
             this.groupBoxAvailablePictures.Text = "Available pictures";
@@ -548,7 +548,7 @@ namespace TQVaultAE.GUI
             this.tabControlPics.Location = new System.Drawing.Point(17, 39);
             this.tabControlPics.Name = "tabControlPics";
             this.tabControlPics.SelectedIndex = 0;
-            this.tabControlPics.Size = new System.Drawing.Size(832, 309);
+            this.tabControlPics.Size = new System.Drawing.Size(956, 309);
             this.tabControlPics.TabIndex = 3;
             // 
             // tabPageSkills
@@ -556,7 +556,7 @@ namespace TQVaultAE.GUI
             this.tabPageSkills.Controls.Add(this.flowLayoutPanelPicsSkills);
             this.tabPageSkills.Location = new System.Drawing.Point(4, 27);
             this.tabPageSkills.Name = "tabPageSkills";
-            this.tabPageSkills.Size = new System.Drawing.Size(824, 278);
+            this.tabPageSkills.Size = new System.Drawing.Size(948, 278);
             this.tabPageSkills.TabIndex = 6;
             this.tabPageSkills.Text = "Skills";
             this.tabPageSkills.UseVisualStyleBackColor = true;
@@ -568,7 +568,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelPicsSkills.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanelPicsSkills.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanelPicsSkills.Name = "flowLayoutPanelPicsSkills";
-            this.flowLayoutPanelPicsSkills.Size = new System.Drawing.Size(824, 278);
+            this.flowLayoutPanelPicsSkills.Size = new System.Drawing.Size(948, 278);
             this.flowLayoutPanelPicsSkills.TabIndex = 3;
             // 
             // tabPageRelics
@@ -840,7 +840,7 @@ namespace TQVaultAE.GUI
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-            this.ClientSize = new System.Drawing.Size(923, 680);
+            this.ClientSize = new System.Drawing.Size(1047, 680);
             this.Controls.Add(this.iconMagnifier);
             this.Controls.Add(this.pictureBoxDrag);
             this.Controls.Add(this.groupBoxAvailablePictures);
