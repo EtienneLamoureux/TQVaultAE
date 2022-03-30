@@ -389,13 +389,19 @@ namespace TQVaultAE.GUI
 			picName = picName[0] + new string(picName.ToLower().Skip(1).ToArray());// Titlecase
 			var info = picB.Tag as IconInfo;
 
+			// Find original size
+			Size? orig = null;
+			if (info.On == picFilePath) orig = info?.OnBitmap?.Size;
+			else if (info.Off == picFilePath) orig = info?.OffBitmap?.Size;
+			else if (info.Over == picFilePath) orig = info?.OverBitmap?.Size;
+
 			// Compute Position of Magnifier relative to picB
 			var loc = this.PointToClient(picB.PointToScreen(Point.Empty));
 			this.iconMagnifier.Location = new Point(loc.X, loc.Y + 32);// Locate below icon
 
 			this.iconMagnifier.pictureBox.Image = picB.Image;
 			this.iconMagnifier.scalingLabelFilename.Text = picName;
-			this.iconMagnifier.scalingLabelSize.Text = string.Format("{0} x {1}", picB.Size.Width, picB.Size.Height);
+			this.iconMagnifier.scalingLabelSize.Text = orig is not null ? string.Format("{0} x {1}", orig?.Width, orig?.Height) : string.Empty;
 
 			this.iconMagnifier.Visible = true;
 		}
