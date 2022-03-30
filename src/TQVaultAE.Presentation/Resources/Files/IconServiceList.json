@@ -274,7 +274,14 @@
 				},
 				{
 					"ca": "Misc",
-					"pa": "QUESTITEMS\\\\UIBITMAPS\\\\(?!CHARONOAR|HEALINGELIXIR)\\w+.TEX",
+					"pa": "QUESTITEMS\\\\UIBITMAPS\\\\(?!CHARONOAR|HEALINGELIXIR|ENEMYMESSAGE|PARCHMENT)\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Scrolls",
+					"pa": "QUESTITEMS\\\\UIBITMAPS\\\\(ENEMYMESSAGE|PARCHMENT).TEX",
 					"on": "|",
 					"of": "|",
 					"ov": "|"
@@ -684,6 +691,12 @@
 					"ov": "|"
 				},
 				{
+					"ca": "Scrolls",
+					"lt": [
+						"QUESTITEMS\\UIBITMAPS\\X4_QI_BELLSCHEMATICS_01.TEX"
+					]
+				},
+				{
 					"ca": "Armbands",
 					"pa": "EQUIPMENTARMOR\\\\ARMBAND\\\\UIBITMAPS\\\\\\w+.TEX",
 					"on": "|",
@@ -713,7 +726,7 @@
 				},
 				{
 					"ca": "Misc",
-					"pa": "QUESTITEMS\\\\UIBITMAPS\\\\(?!X4_QI_INCENSECANDLE|X4_QI_KEY|X4_QI_LOWERFRAGMENTOFHOUYISBOW|X4_QI_MAUSOLEUMKEY|X4_QI_SEALOFTHEDRAGONKING|X4_QI_SLAVERCAMPSCELLKEY|X4_QI_UPPERFRAGMENTOFHOUYISBOW|X4_QI_VILLAGEIDOL)\\w+.TEX",
+					"pa": "QUESTITEMS\\\\UIBITMAPS\\\\(?!X4_QI_INCENSECANDLE|X4_QI_KEY|X4_QI_LOWERFRAGMENTOFHOUYISBOW|X4_QI_MAUSOLEUMKEY|X4_QI_SEALOFTHEDRAGONKING|X4_QI_SLAVERCAMPSCELLKEY|X4_QI_UPPERFRAGMENTOFHOUYISBOW|X4_QI_VILLAGEIDOL|X4_QI_BELLSCHEMATICS)\\w+.TEX",
 					"on": "|",
 					"of": "|",
 					"ov": "|"
