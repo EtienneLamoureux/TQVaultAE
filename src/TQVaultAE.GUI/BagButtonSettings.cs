@@ -119,6 +119,10 @@ namespace TQVaultAE.GUI
 			this.tabPagePotions.Text = TranslationService.TranslateXTag("tagTutorialTip14Title");
 			this.tabPageButtons.Text = Resources.GlobalButtons;
 			this.tabPageMisc.Text = Resources.GlobalMiscellaneous;
+			this.tabPageHelmets.Text = TranslationService.TranslateXTag("tagItemHelmet");
+			this.tabPageArmbands.Text = TranslationService.TranslateXTag("tagItemArmband");
+			this.tabPageShields.Text = TranslationService.TranslateXTag("tagItemBuckler");
+			this.tabPageGreaves.Text = TranslationService.TranslateXTag("tagItemGreaves");
 
 			// Exit
 			this.applyButton.Text = TranslationService.TranslateXTag("tagMenuButton07");

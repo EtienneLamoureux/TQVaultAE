@@ -1241,7 +1241,7 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
     <value>Par défaut</value>
   </data>
 	<data name="BagButtonSettingsCustomIcon" xml:space="preserve">
-    <value>Icone personalisé</value>
+    <value>Icône personalisée</value>
   </data>
 	<data name="BagButtonSettingsButtonProperties" xml:space="preserve">
     <value>Propriétés</value>
@@ -1260,9 +1260,6 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   </data>
 	<data name="BagButtonSettingsModeSimple" xml:space="preserve">
     <value>Simple</value>
-  </data>
-	<data name="BagButtonSettingsModeDetailed" xml:space="preserve">
-    <value>Détaillé</value>
   </data>
 	<data name="BagButtonSettingsModeDetailed" xml:space="preserve">
     <value>Détaillé</value>
@@ -1294,5 +1291,5 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="GlobalMiscellaneous" xml:space="preserve">
     <value>Divers</value>
   </data>
-
+	
 </root>
