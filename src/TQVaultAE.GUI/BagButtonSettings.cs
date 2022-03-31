@@ -224,6 +224,8 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void ApplyIconInfo()
 		{
+			ResetImagePicker();
+
 			var info = _CurrentBagButton.Sack.BagButtonIconInfo;
 
 			if (info is null)
@@ -272,12 +274,17 @@ namespace TQVaultAE.GUI
 
 				return;
 			}
+		}
 
+		private void ResetImagePicker()
+		{
 			// Reset image picker
 			this.pictureBoxOn.Image = this.pictureBoxOff.Image =
 			this.pictureBoxSimple.Image = this.pictureBoxOver.Image = null;
-		}
 
+			this.pictureBoxOn.Tag = this.pictureBoxOff.Tag =
+			this.pictureBoxSimple.Tag = this.pictureBoxOver.Tag = null;
+		}
 
 		void TogglePicturePickup()
 		{
