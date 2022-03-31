@@ -266,9 +266,10 @@ namespace TQVaultAE.GUI
 
 					foreach (var item in sack.Cast<Item>())
 					{
+						var vaultName = GamePathResolver.GetVaultNameFromPath(vaultFile);
 						ItemDatabase.Add(new Result(
 							vaultFile
-							, Path.GetFileNameWithoutExtension(vaultFile)
+							, vaultName
 							, vaultNumber
 							, SackType.Vault
 							, new Lazy<Domain.Results.ToFriendlyNameResult>(

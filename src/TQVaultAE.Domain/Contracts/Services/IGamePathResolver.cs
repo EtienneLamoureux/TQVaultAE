@@ -150,5 +150,11 @@ namespace TQVaultAE.Domain.Contracts.Services
 		string PlayerStashFileNameB { get; }
 		string PlayerStashFileNameG { get; }
 
+		/// <summary>
+		/// Return the vault name from <paramref name="vaultFilePath"/>
+		/// </summary>
+		/// <param name="vaultFilePath"></param>
+		/// <returns>name stripted from path and extension</returns>
+		string GetVaultNameFromPath(string vaultFilePath);
 	}
 }

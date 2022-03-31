@@ -414,6 +414,11 @@ namespace TQVaultAE.Services.Win32
 		public const string PLAYERSTASHFILENAMEG = "winsys.dxg";
 		public string PlayerStashFileNameG => PLAYERSTASHFILENAMEG;
 
+		public const string PLAYERSETTINGSFILENAME = "settings.txt";
+		public string PlayerSettingsFileName => PLAYERSETTINGSFILENAME;
+
+		public const string VAULTFILENAME_EXTENSION_OLD = ".vault";
+		public const string VAULTFILENAME_EXTENSION_JSON = ".vault.json";
 
 		/// <summary>
 		/// Gets the file name and path for a vault.
@@ -421,7 +426,7 @@ namespace TQVaultAE.Services.Win32
 		/// <param name="vaultName">The name of the vault file.</param>
 		/// <returns>The full path along with extension of the vault file.</returns>
 		public string GetVaultFile(string vaultName)
-			=> string.Concat(Path.Combine(TQVaultSaveFolder, vaultName), ".vault.json");
+			=> string.Concat(Path.Combine(TQVaultSaveFolder, vaultName), VAULTFILENAME_EXTENSION_JSON);
 
 		/// <summary>
 		/// Gets a list of all of the vault files.
@@ -432,8 +437,8 @@ namespace TQVaultAE.Services.Win32
 			try
 			{
 				// Get all files that have a .vault extension.
-				string[] filesOld = Directory.GetFiles(TQVaultSaveFolder, "*.vault");
-				string[] filesJson = Directory.GetFiles(TQVaultSaveFolder, "*.vault.json");
+				string[] filesOld = Directory.GetFiles(TQVaultSaveFolder, $"*{VAULTFILENAME_EXTENSION_OLD}");
+				string[] filesJson = Directory.GetFiles(TQVaultSaveFolder, $"*{VAULTFILENAME_EXTENSION_JSON}");
 
 				if (!filesOld.Any() && !filesJson.Any())
 					return null;
@@ -628,6 +633,23 @@ Please select the game installation directory.");
 			}
 
 			return (string)key.GetValue(path[valueKey]);
+		}
+
+		/// <summary>
+		/// Return the vault name from <paramref name="vaultFilePath"/>
+		/// </summary>
+		/// <param name="vaultFilePath"></param>
+		/// <returns>name stripted from path and extension</returns>
+		public string GetVaultNameFromPath(string vaultFilePath)
+		{
+			string vaultname = null;
+
+			if (vaultFilePath.EndsWith(VAULTFILENAME_EXTENSION_JSON, StringComparison.InvariantCultureIgnoreCase))
+				vaultname = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(vaultFilePath));
+			else if (vaultFilePath.EndsWith(VAULTFILENAME_EXTENSION_OLD, StringComparison.InvariantCultureIgnoreCase))
+				vaultname = Path.GetFileNameWithoutExtension(vaultFilePath);
+
+			return vaultname;
 		}
 	}
 }
