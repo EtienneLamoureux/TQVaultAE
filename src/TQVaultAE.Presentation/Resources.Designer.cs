@@ -399,7 +399,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Drag and drop in &quot;Selected pictures&quot; placeholders.
+        ///   Looks up a localized string similar to Drag and drop in &quot;Selected pictures&quot; placeholders or [Shift + Click] for a predefined selection.
         /// </summary>
         public static string BagButtonSettingsDragDropNotice {
             get {
@@ -1413,18 +1413,17 @@ namespace TQVaultAE.Presentation {
         ///				},
         ///				{
         ///					&quot;ca&quot;: &quot;Jewellery&quot;,
-        ///					&quot;pa&quot;: &quot;EQUIPMENTAMULET\\\\UIBITMAPS\\\\C.._AMULET..\\.TEX&quot;,
+        ///					&quot;pa&quot;: &quot;(EQUIPMENT AMULET|EQUIPMENTRING)\\\\UIBITMAPS\\\\\\w+\\.TEX&quot;,
         ///					&quot;on&quot;: &quot;|&quot;,
         ///					&quot;of&quot;: &quot;|&quot;,
         ///					&quot;ov&quot;: &quot;|&quot;
         ///				},
         ///				{
-        ///					&quot;ca&quot;: &quot;Relics&quot;,
-        ///					&quot;pa&quot;: &quot;RELIC\\\\SHARD...\\.TEX&quot;,
+        ///					&quot;ca&quot;: &quot;Helmets&quot;,
+        ///					&quot;pa&quot;: &quot;EQUIPMENTHELM\\\\UIBITMAPS\\\\\\w+.TEX&quot;,
         ///					&quot;on&quot;: &quot;|&quot;,
-        ///					&quot;of&quot;: &quot;.TEX|_E.TEX&quot;,
-        ///					&quot;ov&quot;: &quot;.TEX|_L.TEX&quot;
-        ///	 [rest of string was truncated]&quot;;.
+        ///					&quot;of&quot;: &quot;|&quot;,
+        ///					&quot;ov&quot;: &quot; [rest of string was truncated]&quot;;.
         /// </summary>
         public static string IconServiceList {
             get {

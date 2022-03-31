@@ -12,6 +12,7 @@ using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components;
 using System.Linq;
 using System.IO;
+using System.Diagnostics;
 
 namespace TQVaultAE.GUI
 {
@@ -233,8 +234,10 @@ namespace TQVaultAE.GUI
 
 			if (info.DisplayMode.HasFlag(BagButtonDisplayMode.CustomIcon))
 				this.scalingRadioButtonCustomIcon.Checked = true;
+
 			if (info.DisplayMode.HasFlag(BagButtonDisplayMode.Label))
 				this.scalingCheckBoxLabel.Checked = true;
+
 			if (info.DisplayMode.HasFlag(BagButtonDisplayMode.Number))
 				this.scalingCheckBoxNumber.Checked = true;
 
@@ -404,11 +407,38 @@ namespace TQVaultAE.GUI
 			}
 		}
 
+		private void CherryPickIconSimpleMode(IconInfo info, Image bmp)
+		{
+			pictureBoxSimple.Image = pictureBoxOff.Image = bmp;// Which is Off
+			pictureBoxSimple.Image.Tag = pictureBoxOff.Image.Tag = info.Off;// Which is Off
+
+			pictureBoxSimple.Tag = pictureBoxOver.Tag = pictureBoxOff.Tag = pictureBoxOn.Tag = info;
+
+			pictureBoxOn.Image = info.OnBitmap;
+			if (pictureBoxOn.Image is not null)// May happen on rare exception (TEX Filename rule not consitent)
+				pictureBoxOn.Image.Tag = info.On;
+
+			// Apply only if different
+			if (info.IsOverSameAsOthers)
+			{
+				pictureBoxOver.Image = null;
+			}
+			else
+			{
+				pictureBoxOver.Image = info.OverBitmap;
+				if (pictureBoxOver.Image is not null)
+					pictureBoxOver.Image.Tag = info.Over;
+			}
+		}
+
 		private void PicOff_MouseEnter(object sender, EventArgs e)
 		{
 			if (IsDragging) return;
 
 			var picB = sender as PictureBox;
+
+			if (picB.Image is null) return;
+
 			var picFilePath = picB.Image.Tag as string;
 			var picName = Path.GetFileNameWithoutExtension(picFilePath);
 			picName = picName[0] + new string(picName.ToLower().Skip(1).ToArray());// Titlecase
@@ -444,6 +474,21 @@ namespace TQVaultAE.GUI
 		{
 			var picB = sender as PictureBox;
 			var info = picB.Tag as IconInfo;
+
+			var bmp = info.OffBitmap;
+
+			// Auto assign on Shift + Click
+			if (Control.ModifierKeys == Keys.Shift)
+			{
+				CherryPickIconSimpleMode(info, bmp);
+
+				this.scalingRadioButtonCustomIcon.Checked = true;
+
+				UpdateTextBoxDebug(bmp);
+
+				return;
+			}
+
 			IsDragging = true;
 			pictureBoxDrag.Location = this.PointToClient(Cursor.Position);
 			pictureBoxDrag.Image = picB.Image;
@@ -462,11 +507,15 @@ namespace TQVaultAE.GUI
 
 		private void PicOff_MouseUp(object sender, MouseEventArgs e)
 		{
+			PictureBox picB = sender as PictureBox;
+			Image bmp = null;
+			IconInfo info = null;
+
 			IsDragging = false;
 			pictureBoxDrag.Visible = false;
 
-			var info = pictureBoxDrag.Tag as IconInfo;
-			var bmp = pictureBoxDrag.Image;
+			info = pictureBoxDrag.Tag as IconInfo;
+			bmp = pictureBoxDrag.Image;
 
 			var found = flowLayoutPanelPicturePickup.GetChildAtPoint(
 				flowLayoutPanelPicturePickup.PointToClient(Cursor.Position)
@@ -499,38 +548,24 @@ namespace TQVaultAE.GUI
 			{
 				if (found == this.groupBoxSimpleImage)
 				{
-					pictureBoxSimple.Image = pictureBoxOff.Image = bmp;// Which is Off
-					pictureBoxSimple.Image.Tag = pictureBoxOff.Image.Tag = info.Off;// Which is Off
-
-					pictureBoxSimple.Tag = pictureBoxOver.Tag = pictureBoxOff.Tag = pictureBoxOn.Tag = info;
-
-					pictureBoxOn.Image = info.OnBitmap;
-					if (pictureBoxOn.Image is not null)// May happen on rare exception (TEX Filename rule not consitent)
-						pictureBoxOn.Image.Tag = info.On;
-
-					// Apply only if different
-					if (info.IsOverSameAsOthers)
-					{
-						pictureBoxOver.Image = null;
-					}
-					else
-					{
-						pictureBoxOver.Image = info.OverBitmap;
-						if (pictureBoxOver.Image is not null)
-							pictureBoxOver.Image.Tag = info.Over;
-					}
+					CherryPickIconSimpleMode(info, bmp);
 				}
 			}
 
 			if (found is not null)
+			{
 				this.scalingRadioButtonCustomIcon.Checked = true;
-
-#if DEBUG
-			this.scalingTextBoxDebug.Text = bmp.Tag.ToString() + $" - ({bmp.Size.Width}x{bmp.Size.Height})";
-#endif
+				UpdateTextBoxDebug(bmp);
+			}
 		}
 
 		#endregion
+
+		[Conditional("DEBUG")]
+		private void UpdateTextBoxDebug(Image bmp)
+		{
+			this.scalingTextBoxDebug.Text = bmp.Tag.ToString() + $" - ({bmp.Size.Width}x{bmp.Size.Height})";
+		}
 
 		private void radioButtonPictureSimple_CheckedChanged(object sender, EventArgs e)
 		{ TogglePicturePickup(); DisplayPictures(); }

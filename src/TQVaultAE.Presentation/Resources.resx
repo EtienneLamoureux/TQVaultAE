@@ -1775,7 +1775,7 @@ You still have to close TQVaultAE to apply your changes.
     <value>Available pictures</value>
   </data>
 	<data name="BagButtonSettingsDragDropNotice" xml:space="preserve">
-    <value>Drag and drop in "Selected pictures" placeholders</value>
+    <value>Drag and drop in "Selected pictures" placeholders or [Shift + Click] for a predefined selection</value>
   </data>
 	<data name="GlobalJewellery" xml:space="preserve">
     <value>Jewellery</value>
