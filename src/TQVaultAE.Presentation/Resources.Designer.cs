@@ -399,7 +399,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Drag and drop in &quot;Selected pictures&quot; placeholders or [Shift + Click] for a predefined selection.
+        ///   Looks up a localized string similar to Drag and drop in &quot;Selected pictures&quot; placeholders or [Right-Click] for a predefined selection.
         /// </summary>
         public static string BagButtonSettingsDragDropNotice {
             get {

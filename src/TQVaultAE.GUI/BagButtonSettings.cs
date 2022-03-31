@@ -477,8 +477,8 @@ namespace TQVaultAE.GUI
 
 			var bmp = info.OffBitmap;
 
-			// Auto assign on Shift + Click
-			if (Control.ModifierKeys == Keys.Shift)
+			// Auto assign on Right Click
+			if (e.Button == MouseButtons.Right)
 			{
 				CherryPickIconSimpleMode(info, bmp);
 

@@ -1280,7 +1280,7 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
     <value>Images disponibles</value>
   </data>
 	<data name="BagButtonSettingsDragDropNotice" xml:space="preserve">
-    <value>Glisser-Déposer dans l'espace "Images sélectionnées" ou [Shift + Clic] pour une sélection automatique</value>
+    <value>Glisser-Déposer dans l'espace "Images sélectionnées" ou [Clic-Droit] pour une sélection automatique</value>
   </data>
 	<data name="GlobalJewellery" xml:space="preserve">
     <value>Bijoux</value>
