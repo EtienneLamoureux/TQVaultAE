@@ -441,6 +441,14 @@ namespace TQVaultAE.GUI
 		private void PicOff_MouseEnter(object sender, EventArgs e)
 		{
 			if (IsDragging) return;
+			// No magnifier from icon placeholders for default icon
+			if (this.scalingRadioButtonDefaultIcon.Checked
+				&& (sender == this.pictureBoxOff
+				|| sender == this.pictureBoxOn
+				|| sender == this.pictureBoxOver 
+				|| sender == this.pictureBoxSimple)
+			) return;
+
 
 			var picB = sender as PictureBox;
 
