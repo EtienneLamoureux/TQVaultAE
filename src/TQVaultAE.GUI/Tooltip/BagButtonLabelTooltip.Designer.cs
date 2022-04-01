@@ -69,7 +69,6 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "BagButtonTooltip";
             this.TopMost = true;
-            this.Load += new System.EventHandler(this.ItemTooltip_Load);
             this.ResumeLayout(false);
 
 		}
