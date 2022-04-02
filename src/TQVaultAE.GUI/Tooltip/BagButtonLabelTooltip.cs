@@ -55,6 +55,8 @@ namespace TQVaultAE.GUI.Tooltip
 				if (txtsize.Height > this.Height - 25)
 					this.Height = txtsize.Height + 20;// +20 for marging
 
+				this.scalingLabel.Visible = true;
+
 			}
 		}
 
@@ -96,7 +98,10 @@ namespace TQVaultAE.GUI.Tooltip
 			lock (syncObj)
 			{
 				if (_Current is not null)
+				{
 					_Current.Hide();
+					_Current.scalingLabel.Visible = false;
+				}
 			}
 		}
 
