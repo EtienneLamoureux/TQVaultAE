@@ -268,7 +268,7 @@ Debug Levels
 			this.saveButton.Visible = Config.Settings.Default.EnableHotReload;
 			// Get last position
 			var flowctr = this.flowLayoutPanelMenuButtons.Controls;
-			var lastctr = flowctr[flowctr.Count-1];
+			var lastctr = flowctr[flowctr.Count - 1];
 			var lastidx = flowctr.GetChildIndex(lastctr);
 			// Force "Exit" button in last position
 			flowctr.SetChildIndex(this.exitButton, lastidx + 1);
@@ -685,8 +685,17 @@ Debug Levels
 		private bool SaveAllModifiedFiles()
 		{
 			bool playersModified = this.SaveAllModifiedPlayers();
-			this.SaveAllModifiedVaults();
-			this.SaveAllModifiedStashes();
+			bool vaultsModified = this.SaveAllModifiedVaults();
+			bool stashesModified = this.SaveAllModifiedStashes();
+
+			// Notification Last Save
+			if (playersModified || vaultsModified || stashesModified)
+			{
+				var saved = string.Format(Resources.SavedAtNotification, DateTime.Now);
+				this.itemText.Text = saved;
+				this.toolTip.SetToolTip(this.saveButton, saved);
+			}
+
 			return playersModified;
 		}
 

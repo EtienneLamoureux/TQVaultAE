@@ -113,6 +113,7 @@ namespace TQVaultAE.Services
 					GamePathResolver.BackupFile(player.PlayerName, playerFile);
 					GamePathResolver.BackupStupidPlayerBackupFolder(playerFile);
 					PlayerCollectionProvider.Save(player, playerFile);
+					player.Saved();
 				}
 			}
 

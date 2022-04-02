@@ -1245,4 +1245,7 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="DuplicateCharacter_NewNameAlreadyUsed" xml:space="preserve">
     <value>Ce nom est déjà utilisé !</value>
   </data>
+	<data name="SavedAtNotification" xml:space="preserve">
+    <value>Sauvegardé le {0:g}</value>
+  </data>
 </root>

@@ -3371,6 +3371,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Saved at {0:g}.
+        /// </summary>
+        public static string SavedAtNotification {
+            get {
+                return ResourceManager.GetString("SavedAtNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Building Data.
         /// </summary>
         public static string SearchBuildingData {

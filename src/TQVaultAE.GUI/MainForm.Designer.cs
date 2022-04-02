@@ -131,6 +131,7 @@ namespace TQVaultAE.GUI
             this.fileSystemWatcherRelicStash = new System.IO.FileSystemWatcher();
             this.saveButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.flowLayoutPanelMenuButtons = new System.Windows.Forms.FlowLayoutPanel();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.itemTextPanel.SuspendLayout();
             this.flowLayoutPanelVaultSelector.SuspendLayout();
             this.tableLayoutPanelMain.SuspendLayout();
@@ -585,5 +586,6 @@ namespace TQVaultAE.GUI
 		private System.IO.FileSystemWatcher fileSystemWatcherRelicStash;
 		private ScalingButton saveButton;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelMenuButtons;
+		private System.Windows.Forms.ToolTip toolTip;
 	}
 }
