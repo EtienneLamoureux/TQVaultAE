@@ -7,6 +7,7 @@ namespace TQVaultAE.GUI.Components
 {
 	using Microsoft.Extensions.DependencyInjection;
 	using System;
+	using System.Diagnostics;
 	using System.Drawing;
 	using System.Windows.Forms;
 	using Tooltip;
@@ -165,13 +166,27 @@ namespace TQVaultAE.GUI.Components
 		{
 			if (this.getToolTip != null)
 			{
+
 				// Disable Tooltip bag
-				var panel = this.getToolTip.Target as VaultPanel;
-				if (panel?.DisabledTooltipBagId.Contains(this.ButtonNumber) ?? false)
-					return;
+				var panel = this.getToolTip.Target as Panel;
 
 				this.getToolTip(this);
-				BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
+
+				if (panel is StashPanel sp)
+				{
+					switch (this.ButtonNumber)
+					{
+						case StashPanel.BAGID_EQUIPMENTPANEL when !Config.Settings.Default.DisableTooltipEquipment:
+						case StashPanel.BAGID_PLAYERSTASH when !Config.Settings.Default.DisableTooltipStash:
+						case StashPanel.BAGID_RELICVAULTSTASH when !Config.Settings.Default.DisableTooltipRelic:
+						case StashPanel.BAGID_TRANSFERSTASH when !Config.Settings.Default.DisableTooltipTransfer:
+							BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
+							break;
+					}
+				}
+				else if (panel is VaultPanel vp && !vp.DisabledTooltipBagId.Contains(this.ButtonNumber))
+					BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
+
 			}
 
 			this.IsOver = true;
@@ -289,7 +304,7 @@ namespace TQVaultAE.GUI.Components
 					testFont = FontService.GetFont(fontSize, testFont.Style, GraphicsUnit.Pixel, testFont.GdiCharSet);
 
 					// Check to see if the whole string will fit inside the button on a single line.
-					if(TextRenderer.MeasureText(this.ButtonText, testFont).Width < this.Width)
+					if (TextRenderer.MeasureText(this.ButtonText, testFont).Width < this.Width)
 					{
 						break;
 					}
