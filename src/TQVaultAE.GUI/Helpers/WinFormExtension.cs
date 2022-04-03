@@ -48,7 +48,10 @@ namespace TQVaultAE.GUI.Helpers
 		/// <param name="mode">Interpolation mode.</param>
 		/// <param name="maintainAspectRatio">If true, the image is centered in the middle of the returned image, maintaining the aspect ratio of the original image.</param>
 		/// <returns>The new image. The old image is unaffected.</returns>
-		public static Image ResizeImage(this Image image, int newWidth, int newHeight, InterpolationMode mode = InterpolationMode.Default, bool maintainAspectRatio = false)
+		public static Image ResizeImage(this Image image, int newWidth, int newHeight
+			, InterpolationMode mode = InterpolationMode.Default
+			, bool maintainAspectRatio = false
+		)
 		{
 			Bitmap output = new Bitmap(newWidth, newHeight, image.PixelFormat);
 
@@ -62,13 +65,31 @@ namespace TQVaultAE.GUI.Helpers
 					gfx.SmoothingMode = SmoothingMode.HighQuality;
 				}
 
-				double ratioW = (double)newWidth / (double)image.Width;
-				double ratioH = (double)newHeight / (double)image.Height;
-				double ratio = ratioW < ratioH ? ratioW : ratioH;
-				int insideWidth = (int)(image.Width * ratio);
-				int insideHeight = (int)(image.Height * ratio);
+				// Default = Stretch
+				Rectangle drawArea = new Rectangle(
+						0
+						, 0
+						, newWidth
+						, newHeight
+					);
 
-				gfx.DrawImage(image, new Rectangle((newWidth / 2) - (insideWidth / 2), (newHeight / 2) - (insideHeight / 2), insideWidth, insideHeight));
+				if (maintainAspectRatio)
+				{
+					double ratioW = (double)newWidth / (double)image.Width;
+					double ratioH = (double)newHeight / (double)image.Height;
+					double ratio = ratioW < ratioH ? ratioW : ratioH;
+					int insideWidth = (int)(image.Width * ratio);
+					int insideHeight = (int)(image.Height * ratio);
+
+					drawArea = new Rectangle(
+						(newWidth / 2) - (insideWidth / 2)
+						, (newHeight / 2) - (insideHeight / 2)
+						, insideWidth
+						, insideHeight
+					);
+				}
+
+				gfx.DrawImage(image, drawArea);
 			}
 
 			return output;
