@@ -262,6 +262,17 @@ namespace TQVaultAE.Domain.Entities
 				this.qualityVar = string.Empty;
 				this.styleVar = string.Empty;
 			}
+			else if (id.Equals("WeaponHunting_RangedOneHand", StringComparison.OrdinalIgnoreCase))
+			{
+				this.descriptionVar = "itemNameTag";
+				this.itemClassificationVar = "itemClassification";
+				this.bitmapVar = "bitmap";
+				this.shardBitmapVar = string.Empty;
+				this.itemClassVar = "Class";
+				this.completedRelicLevelVar = string.Empty;
+				this.qualityVar = "itemQualityTag";
+				this.styleVar = "itemText";
+			}
 			else
 			{
 				this.descriptionVar = "itemNameTag";

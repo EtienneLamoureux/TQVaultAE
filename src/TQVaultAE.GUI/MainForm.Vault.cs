@@ -340,13 +340,14 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Attempts to save all modified vault files
 		/// </summary>
-		private void SaveAllModifiedVaults()
+		private bool SaveAllModifiedVaults()
 		{
 		retry:
+			int saved = 0;
 			PlayerCollection vaultOnError = null;
 			try
 			{
-				this.vaultService.SaveAllModifiedVaults(ref vaultOnError);
+				saved = this.vaultService.SaveAllModifiedVaults(ref vaultOnError);
 			}
 			catch (IOException exception)
 			{
@@ -362,6 +363,7 @@ namespace TQVaultAE.GUI
 						goto retry;
 				}
 			}
+			return saved > 0;
 		}
 
 		/// <summary>

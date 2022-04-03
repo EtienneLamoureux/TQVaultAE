@@ -94,6 +94,15 @@ namespace TQVaultAE.Domain.Entities
 			=> this.sack?.IsModified ?? false;
 
 		/// <summary>
+		/// Adjust internal status when the collection is saved
+		/// </summary>
+		public void Saved()
+		{
+			if (this.sack is not null)
+				this.sack.IsModified = false;
+		}
+
+		/// <summary>
 		/// Gets the height of the stash sack
 		/// </summary>
 		public int Height { get; set; }

@@ -33,7 +33,7 @@ namespace TQVaultAE.Domain.Results
 				PrefixInfoDescription
 				, BaseItemInfoQuality
 				, BaseItemInfoDescription
-				, BaseItemInfoStyle
+				, Item.IsThrownWeapon ? null : BaseItemInfoStyle
 				, SuffixInfoDescription
 				, Item.DoesStack ? NumberFormat : null
 			}.RemoveEmptyAndSanitize()
@@ -45,7 +45,7 @@ namespace TQVaultAE.Domain.Results
 					, BaseItemInfoQuality
 					, Item.IsRelic && !Item.IsCharm ? TQColor.Silver.ColorTag() : null // Make a color diff for Relic & Charm
 					, BaseItemInfoDescription
-					, BaseItemInfoStyle
+					, Item.IsThrownWeapon ? null : BaseItemInfoStyle
 					, SuffixInfoDescription
 					, Item.DoesStack ? NumberFormat : null
 					, Item.IsRelic ? "- " + RelicBonusFormat : null

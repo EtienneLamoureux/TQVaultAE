@@ -440,6 +440,14 @@ namespace TQVaultAE.Domain.Entities
 			: false;
 
 		/// <summary>
+		/// Gets a value indicating whether the item is a thrown weapon.
+		/// </summary>
+		public bool IsThrownWeapon
+			=> (this.baseItemInfo != null)
+			? this.baseItemInfo.ItemClass.Equals("WeaponHunting_RangedOneHand", StringComparison.OrdinalIgnoreCase)
+			: false;
+
+		/// <summary>
 		/// Gets a value indicating whether the item is a two handed weapon.
 		/// </summary>
 		public bool Is2HWeapon

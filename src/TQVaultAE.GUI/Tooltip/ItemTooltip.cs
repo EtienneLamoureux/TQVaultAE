@@ -144,9 +144,13 @@ namespace TQVaultAE.GUI.Tooltip
 			this.flowLayoutPanelFriendlyNames.SuspendLayout();
 
 			this.Data = this.ItemProvider.GetFriendlyNames(FocusedItem, FriendlyNamesExtraScopes.ItemFullDisplay);
-
+			
 			// Fullname
 			AddRow(Data.FullName, FocusedItem.GetColor(Data.BaseItemInfoDescription), style: FontStyle.Bold);
+
+			// Thrown
+			if (Data.Item.IsThrownWeapon)
+				AddRow(Data.BaseItemInfoStyle, style: FontStyle.Regular);
 
 			// Artifact Level
 			if (Data.Item.IsArtifact)

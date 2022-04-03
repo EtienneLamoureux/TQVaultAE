@@ -45,8 +45,10 @@ namespace TQVaultAE.Services
 		/// </summary>
 		/// <param name="vaultOnError"></param>
 		/// <exception cref="IOException">can happen during file save</exception>
-		public void SaveAllModifiedVaults(ref PlayerCollection vaultOnError)
+		public int SaveAllModifiedVaults(ref PlayerCollection vaultOnError)
 		{
+			int saved = 0;
+
 			foreach (KeyValuePair<string, Lazy<PlayerCollection>> kvp in this.userContext.Vaults)
 			{
 				string vaultFile = kvp.Key;
@@ -60,8 +62,12 @@ namespace TQVaultAE.Services
 					vaultOnError = vault;
 					GamePathResolver.BackupFile(vault.PlayerName, vaultFile);
 					PlayerCollectionProvider.Save(vault, vaultFile);
+					vault.Saved();
+					saved++;
 				}
 			}
+
+			return saved;
 		}
 
 

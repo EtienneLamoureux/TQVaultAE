@@ -38,6 +38,7 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// <param name="value">string value to be written.</param>
 		void WriteCString(BinaryWriter writer, string value);
 
+		bool ReplaceUnicodeValueAfter(ref byte[] playerFileContent, string keyToLookFor, string replacement, int offset = 0);
 		bool RemoveCStringValueAfter(ref byte[] playerFileContent, string keyToLookFor, int offset = 0);
 		(int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, float valueAsFloat) ReadFloatAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0);
 

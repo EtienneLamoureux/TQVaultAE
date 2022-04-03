@@ -30,6 +30,7 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		/// <param name="stashOnError"></param>
 		/// <exception cref="IOException">can happen during file save</exception>
-		void SaveAllModifiedStashes(ref Stash stashOnError);
+		/// <returns>Number of stash saved</returns>
+		int SaveAllModifiedStashes(ref Stash stashOnError);
 	}
 }
