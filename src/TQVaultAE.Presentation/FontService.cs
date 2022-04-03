@@ -110,6 +110,9 @@ namespace TQVaultAE.Presentation
 			this.FontLoader = addFontToOS;
 		}
 
+		public Font GetFont(float fontSize, FontStyle fontStyle, GraphicsUnit unit)
+			=> new Font(FONT_ALBERTUSMT, fontSize, fontStyle, unit);
+
 		public Font GetFont(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)
 			=> new Font(FONT_ALBERTUSMT, fontSize, fontStyle, unit, b);
 
@@ -130,6 +133,9 @@ namespace TQVaultAE.Presentation
 
 		public Font GetFontLight(float fontSize, GraphicsUnit unit)
 			=> new Font(FONT_ALBERTUSMT, fontSize, unit);
+
+		public Font GetFontLight(float fontSize, FontStyle fontStyle, GraphicsUnit unit)
+			=> new Font(FONT_ALBERTUSMTLIGHT, fontSize, fontStyle, unit);
 
 		public Font GetFontLight(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)
 			=> new Font(FONT_ALBERTUSMTLIGHT, fontSize, fontStyle, unit, b);

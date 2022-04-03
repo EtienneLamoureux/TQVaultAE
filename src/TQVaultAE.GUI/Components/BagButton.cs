@@ -7,6 +7,7 @@
 namespace TQVaultAE.GUI.Components
 {
 	using System;
+	using System.Drawing;
 	using TQVaultAE.Presentation;
 
 	/// <summary>
@@ -19,7 +20,9 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <param name="bagNumber">number of the bag for display</param>
 		/// <param name="getToolTip">Tooltip delegate</param>
-		public BagButton(int bagNumber, GetToolTip getToolTip, IServiceProvider serviceProvider) : base(bagNumber, getToolTip, serviceProvider)
+		/// <param name="serviceProvider"></param>
+		public BagButton(int bagNumber, GetToolTip getToolTip, IServiceProvider serviceProvider)
+			: base(bagNumber, getToolTip, serviceProvider)
 		{ }
 
 		/// <summary>
@@ -27,9 +30,9 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		public override void CreateBackgroundGraphics()
 		{
-			this.OnBitmap = Resources.inventorybagup01;
-			this.OffBitmap = Resources.inventorybagdown01;
-			this.OverBitmap = Resources.inventorybagover01;
+			if (this.OnBitmap is null) this.OnBitmap = Resources.inventorybagup01;
+			if (this.OffBitmap is null) this.OffBitmap = Resources.inventorybagdown01;
+			if (this.OverBitmap is null) this.OverBitmap = Resources.inventorybagover01;
 		}
 	}
 }

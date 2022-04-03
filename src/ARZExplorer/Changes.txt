@@ -14,3 +14,7 @@ Added support for ARC files.
 	Will display txt files in the text pane.
 Added width resizing of panes.
 Added ability to drop files onto the main form.
+
+v1.2.0.0 (hguy)
+Added Textbox displaying the file path inside the archive (double click copy the value into the clipboard).
+Added Statusbar displaying detailed informations about current selection.

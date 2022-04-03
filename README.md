@@ -83,6 +83,7 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 - The paths where the vault files are located
 - The paths where the game files are located
 - The cheats (To enable/disable these options, see the F.A.Q. below)
+- Every vault button can be customized using in-game pictures
 
 ## Troubleshooting and F.A.Q.
 **Q. Does TQVaultAE modify my items? The stats I see are not the same as the ones ingame.**
@@ -182,6 +183,12 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 - *Look up if your problem is featured in [our previously answered questions](https://github.com/EtienneLamoureux/TQVaultAE/issues?q=+is%3Aissue+label%3Aquestion+)*
 - *Look up if your problem is featured in [TQVault's documentation](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/documentation/TQVault%20common%20issues.pdf)*
 - *Create an issue in [our issue tracking board](https://github.com/EtienneLamoureux/TQVaultAE/issues)*
+
+**Q. How can i change my vault icons?**
+<br />
+<img src="./documentation/TQVaultAE_changeIcon.png" width="700" alt="Open the wizard" />
+<br />
+<img src="./documentation/TQVaultAE_CustomIcon.png" width="700" alt="Customize your vault" />
 
 ## Contributors
 This project could not go on without the continued volunteer contributions of the Titan Quest community. If you're thinking about contributing, please read our [contributing guidelines](/CONTRIBUTING.md).

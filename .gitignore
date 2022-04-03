@@ -254,3 +254,6 @@ paket-files/
 # Git
 *.orig
 *.odt
+
+# Winmerge Diff Backup file
+*.bak

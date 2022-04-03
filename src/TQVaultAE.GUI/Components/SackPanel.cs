@@ -2728,14 +2728,10 @@ namespace TQVaultAE.GUI.Components
 			if (MaxSacks > 1 && sackNumber < MaxSacks)
 			{
 				// Calculate offsets for the Player's sack panels.
-				int offset = 1; // This is for the numerical display in the menu.
 				int offset2 = 0; // This is for comparison of the current sack.
 
 				if (SackType == SackType.Player || SackType == SackType.Sack)
 				{
-					// Since the player panel bag's are already starting with 1.
-					offset = 0;
-
 					// But internally to the sack panel they are still zero based
 					// so we need to account for that.
 					if (SackType == SackType.Sack)
