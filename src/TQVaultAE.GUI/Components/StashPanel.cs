@@ -70,6 +70,11 @@ namespace TQVaultAE.GUI.Components
 		private EquipmentPanel equipmentPanel;
 
 		/// <summary>
+		/// Gets the equipment panel instance
+		/// </summary>
+		internal EquipmentPanel EquipmentPanel => equipmentPanel;
+
+		/// <summary>
 		/// Background image for the equipment panel
 		/// </summary>
 		private Bitmap equipmentBackground;

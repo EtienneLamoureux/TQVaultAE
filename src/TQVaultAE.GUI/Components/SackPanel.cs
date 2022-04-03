@@ -38,16 +38,16 @@ namespace TQVaultAE.GUI.Components
 		protected readonly ITQDataService TQData;
 		private readonly ITranslationService TranslationService;
 		protected readonly IServiceProvider ServiceProvider;
-		ItemStyle[] ItemStyleBackGroundColorEnable = new[] { 
-			ItemStyle.Epic, 
-			ItemStyle.Legendary, 
-			ItemStyle.Rare, 
-			ItemStyle.Common, 
-			ItemStyle.Relic, 
-			ItemStyle.Artifact, 
-			ItemStyle.Quest, 
-			ItemStyle.Scroll, 
-			ItemStyle.Formulae, 
+		ItemStyle[] ItemStyleBackGroundColorEnable = new[] {
+			ItemStyle.Epic,
+			ItemStyle.Legendary,
+			ItemStyle.Rare,
+			ItemStyle.Common,
+			ItemStyle.Relic,
+			ItemStyle.Artifact,
+			ItemStyle.Quest,
+			ItemStyle.Scroll,
+			ItemStyle.Formulae,
 			ItemStyle.Parchment };
 
 		#region SackPanel Fields
@@ -156,6 +156,11 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		private Point originalLocation;
 
+		/// <summary>
+		/// Items to highlight
+		/// </summary>
+		protected List<Item> HighlightedItems;
+
 		#endregion SackPanel Fields
 
 		public SackPanel()
@@ -165,34 +170,34 @@ namespace TQVaultAE.GUI.Components
 
 		private void InitializeComponent()
 		{
-            this.components = new System.ComponentModel.Container();
-            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.SuspendLayout();
-            // 
-            // contextMenu
-            // 
-            this.contextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-            this.contextMenu.Font = new System.Drawing.Font("Albertus MT", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.contextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-            this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Opacity = 0.8D;
-            this.contextMenu.ShowImageMargin = false;
-            this.contextMenu.Size = new System.Drawing.Size(36, 4);
-            this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
-            // 
-            // SackPanel
-            // 
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyUpCallback);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyDownCallback);
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCallback);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDownCallback);
-            this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
-            this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveCallback);
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCallback);
-            this.ResumeLayout(false);
+			this.components = new System.ComponentModel.Container();
+			this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.SuspendLayout();
+			// 
+			// contextMenu
+			// 
+			this.contextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+			this.contextMenu.Font = new System.Drawing.Font("Albertus MT", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.contextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+			this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+			this.contextMenu.Name = "contextMenu";
+			this.contextMenu.Opacity = 0.8D;
+			this.contextMenu.ShowImageMargin = false;
+			this.contextMenu.Size = new System.Drawing.Size(36, 4);
+			this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
+			// 
+			// SackPanel
+			// 
+			this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyUpCallback);
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyDownCallback);
+			this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCallback);
+			this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDownCallback);
+			this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
+			this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveCallback);
+			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCallback);
+			this.ResumeLayout(false);
 
 		}
 
@@ -238,6 +243,8 @@ namespace TQVaultAE.GUI.Components
 			this.HighlightValidItemColor = Color.FromArgb(23, 149, 15);       // Green
 			this.HighlightInvalidItemColor = Color.FromArgb(153, 28, 28);     // Red
 
+			SetHighlightSearchItemBorderColor();
+
 			this.gridPen = new Pen(Color.FromArgb(142, 140, 129));
 
 			this.numberFont = new Font("Arial", 10.0F * UIService.Scale, GraphicsUnit.Pixel);
@@ -255,6 +262,17 @@ namespace TQVaultAE.GUI.Components
 
 			// Da_FileServer: Enable double buffering to remove flickering.
 			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
+		}
+
+		/// <summary>
+		/// Configure the <see cref="HighlightSearchItemBorder"/> based on <see cref="HighlightSearchItemColor"/>.
+		/// </summary>
+		public void SetHighlightSearchItemBorderColor()
+		{
+			this.HighlightSearchItemBorder = new Pen(this.HighlightSearchItemBorderColor)
+			{
+				Width = 3 * UIService.Scale
+			};
 		}
 
 		#region SackPanel Properties
@@ -365,6 +383,21 @@ namespace TQVaultAE.GUI.Components
 		public Color HighlightInvalidItemColor { get; protected set; }
 
 		/// <summary>
+		/// Gets or sets the background Color for item highlight.
+		/// </summary>
+		public Color HighlightSearchItemColor { get; protected set; } = TQColor.Indigo.Color();
+		/// <summary>
+		/// Gets or sets the border color for item highlight.
+		/// </summary>
+		public Color HighlightSearchItemBorderColor { get; protected set; } = TQColor.Red.Color();
+
+		/// <summary>
+		/// Gets or sets the border for item highlight.
+		/// </summary>
+		public Pen HighlightSearchItemBorder { get; protected set; }
+
+
+		/// <summary>
 		/// Gets a value indicating whether items have been selected
 		/// </summary>
 		public bool SelectionActive => this.selectedItems != null && this.selectedItems.Count > 0;
@@ -379,9 +412,39 @@ namespace TQVaultAE.GUI.Components
 			set
 			{
 				this.sack = value;
+				FindHighlight();
 				this.Refresh();
 			}
 		}
+
+		/// <summary>
+		/// Find items to highlight
+		/// </summary>
+		public void FindHighlight()
+		{
+			if (!string.IsNullOrWhiteSpace(this.userContext.HighlightSearch) && this.Sack is not null)
+			{
+				this.HighlightedItems = this.Sack
+					.Where(i =>
+						ItemProvider
+						.GetFriendlyNames(i, FriendlyNamesExtraScopes.ItemFullDisplay)
+						.FullText.IndexOf(
+							this.userContext.HighlightSearch, StringComparison.OrdinalIgnoreCase
+						) != -1
+					).ToList();
+				return;
+			}
+			ResetHighlight();
+		}
+
+		/// <summary>
+		/// Remove item highlights
+		/// </summary>
+		public void ResetHighlight()
+		{
+			this.HighlightedItems = new();
+		}
+
 
 		/// <summary>
 		/// Gets or sets the type of container this is.
@@ -390,7 +453,7 @@ namespace TQVaultAE.GUI.Components
 
 		/// <summary>
 		/// Gets MessageBoxOptions for right to left reading.
-		/// </summary>
+		/// </summary>7
 		protected static MessageBoxOptions RightToLeftOptions
 		{
 			get
@@ -462,7 +525,7 @@ namespace TQVaultAE.GUI.Components
 		/// Gets or sets the background image that is shown when there are no sacks to display.
 		/// </summary>
 		protected Bitmap DefaultImage { get; set; }
-		
+
 		#endregion SackPanel Properties
 
 		#region SackPanel Public Methods
@@ -764,8 +827,8 @@ namespace TQVaultAE.GUI.Components
 		public virtual void CancelDrag(ItemDragInfo dragInfo)
 		{
 			// if the drag sack is not visible then we really do not need to do anything
-			if (this.Sack == dragInfo.Sack)			
-				this.Invalidate(this.GetItemScreenRectangle(dragInfo.Item));							
+			if (this.Sack == dragInfo.Sack)
+				this.Invalidate(this.GetItemScreenRectangle(dragInfo.Item));
 		}
 
 		#endregion SackPanel Public Methods
@@ -1433,7 +1496,7 @@ namespace TQVaultAE.GUI.Components
 								choices.Add(location);
 						}
 
-						ToolStripItem[] moveChoices = new ToolStripItem[choices.Count];						
+						ToolStripItem[] moveChoices = new ToolStripItem[choices.Count];
 						EventHandler moveCallback = new EventHandler(this.MoveItemClicked);
 
 						for (int j = 0; j < choices.Count; ++j)
@@ -1441,7 +1504,7 @@ namespace TQVaultAE.GUI.Components
 							moveChoices[j] = new ToolStripMenuItem(choices[j], null, moveCallback, choices[j]);
 							moveChoices[j].BackColor = this.contextMenu.BackColor;
 							moveChoices[j].Font = this.contextMenu.Font;
-							moveChoices[j].ForeColor = this.contextMenu.ForeColor;							
+							moveChoices[j].ForeColor = this.contextMenu.ForeColor;
 						}
 
 						ToolStripMenuItem moveSubMenu = new ToolStripMenuItem(Resources.SackPanelMenuMoveTo, null, moveChoices);
@@ -1449,7 +1512,7 @@ namespace TQVaultAE.GUI.Components
 						moveSubMenu.Font = this.contextMenu.Font;
 						moveSubMenu.ForeColor = this.contextMenu.ForeColor;
 						moveSubMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
-											
+
 						this.contextMenu.Items.Add(moveSubMenu);
 					}
 
@@ -1536,8 +1599,8 @@ namespace TQVaultAE.GUI.Components
 									string name = Path.GetFileNameWithoutExtension(s);
 									if (info == null)
 										continue;
-									
-									name = this.TranslationService.TranslateXTag(info.DescriptionTag);								
+
+									name = this.TranslationService.TranslateXTag(info.DescriptionTag);
 									choices[i] = new ToolStripMenuItem(name, null, callback, s);
 									choices[i].BackColor = this.contextMenu.BackColor;
 									choices[i].Font = this.contextMenu.Font;
@@ -1595,14 +1658,14 @@ namespace TQVaultAE.GUI.Components
 				{
 					if (lastItem != null)
 						this.Invalidate(GetItemScreenRectangle(lastItem));
-					
+
 					if (cell != this.LastCellWithFocus)
 						this.LastCellWithFocus = cell;
 
 					if (newItem != lastItem)
 					{
-						if (newItem != null)						
-							this.Invalidate(GetItemScreenRectangle(newItem));						
+						if (newItem != null)
+							this.Invalidate(GetItemScreenRectangle(newItem));
 
 						this.OnNewItemHighlighted(this, new SackPanelEventArgs(this.Sack, newItem));
 					}
@@ -1657,7 +1720,7 @@ namespace TQVaultAE.GUI.Components
 				return Rectangle.Empty;
 
 			Point screenLocation = this.CellTopLeft(item.Location);
-			return new Rectangle(screenLocation.X, screenLocation.Y, item.Size.Width* UIService.ItemUnitSize, item.Size.Height * UIService.ItemUnitSize);
+			return new Rectangle(screenLocation.X, screenLocation.Y, item.Size.Width * UIService.ItemUnitSize, item.Size.Height * UIService.ItemUnitSize);
 		}
 
 		/// <summary>
@@ -1763,8 +1826,8 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <returns>Rectangle representing the mouse drag area</returns>
 		protected Rectangle GetMouseDragRectangle()
-			=>new Rectangle(Math.Min(startPosition.X, currentPosition.X), Math.Min(startPosition.Y, currentPosition.Y), Math.Abs(startPosition.X - currentPosition.X), Math.Abs(startPosition.Y - currentPosition.Y));
-				
+			=> new Rectangle(Math.Min(startPosition.X, currentPosition.X), Math.Min(startPosition.Y, currentPosition.Y), Math.Abs(startPosition.X - currentPosition.X), Math.Abs(startPosition.Y - currentPosition.Y));
+
 		/// <summary>
 		/// Paint callback
 		/// </summary>
@@ -1824,7 +1887,7 @@ namespace TQVaultAE.GUI.Components
 			if (!this.DragInfo.IsActive || this.CellsUnderDragItem.Size.IsEmpty)
 				return;
 
-			Color highlightColor =  this.HighlightInvalidItemColor;
+			Color highlightColor = this.HighlightInvalidItemColor;
 
 			if ((this.ItemsUnderDragItem == null || this.ItemsUnderDragItem.Count <= 1) && this.IsItemValidForPlacement(this.DragInfo.Item))
 				highlightColor = this.HighlightValidItemColor;
@@ -1862,7 +1925,7 @@ namespace TQVaultAE.GUI.Components
 		/// <returns>Color for the item.  Returns base color if specific color is not found.</returns>
 		protected virtual Color GetItemBackgroundColor(Item item)
 			=> this.HasItemBackgroundColor(item) ? item.ItemStyle.Color() : this.DefaultItemBackgroundColor;
-		
+
 
 		/// <summary>
 		/// Indicates whether the passed item meets the item requirementt for equipping
@@ -1905,9 +1968,17 @@ namespace TQVaultAE.GUI.Components
 				int alpha = this.UserAlpha;
 				Color backgroundColor = this.GetItemBackgroundColor(item);
 
+				var highlight = false;
+				// Highlight search
+				if (this.HighlightedItems.Contains(item))
+				{
+					highlight = true;
+					backgroundColor = this.HighlightSearchItemColor;
+					alpha = AdjustAlpha(alpha);
+				}
 				// If we are showing the cannot equip background then 
 				// change to invalid color and adjust the alpha.
-				if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
+				else if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
 				{
 					backgroundColor = this.HighlightInvalidItemColor;
 
@@ -1935,13 +2006,14 @@ namespace TQVaultAE.GUI.Components
 					alpha = AdjustAlpha(alpha);
 
 				// Now do the shading
-				this.ShadeAreaUnderItem(e.Graphics, item, backgroundColor, alpha);
+				this.ShadeAreaUnderItem(e.Graphics, item, backgroundColor, alpha, highlight);
 
 				// Adjust the alpha and draw the accent.
 				if (showAccent && HasItemBackgroundColor(item))
 					this.DrawItemAccent(e.Graphics, item, backgroundColor, AdjustAlpha(alpha));
 			}
 		}
+
 
 		/// <summary>
 		/// Redraws the grid for a specified area.
@@ -1986,7 +2058,7 @@ namespace TQVaultAE.GUI.Components
 				Matrix33 = 1.00f, // alpha
 				Matrix44 = 1.00f  // w
 			};
-			
+
 			System.Drawing.Imaging.ImageAttributes imgAttr = new System.Drawing.Imaging.ImageAttributes();
 			imgAttr.SetColorMatrix(colorMatrix);
 
@@ -2104,13 +2176,13 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="item">item we are shading</param>
 		/// <param name="backgroundColor">Color that the background will be painted</param>
 		/// <param name="alpha">alpha value for the color</param>
-		protected virtual void ShadeAreaUnderItem(Graphics graphics, Item item, Color backgroundColor, int alpha)
+		protected virtual void ShadeAreaUnderItem(Graphics graphics, Item item, Color backgroundColor, int alpha, bool highlight)
 		{
 			if (item == null)
 				return;
 
 			Point screenLocation = this.CellTopLeft(item.Location);
-			this.ShadeAreaUnderItem(graphics, new Rectangle(screenLocation, new Size(item.Width * UIService.ItemUnitSize, item.Height * UIService.ItemUnitSize)), backgroundColor, alpha);
+			this.ShadeAreaUnderItem(graphics, new Rectangle(screenLocation, new Size(item.Width * UIService.ItemUnitSize, item.Height * UIService.ItemUnitSize)), backgroundColor, alpha, highlight);
 		}
 
 		/// <summary>
@@ -2120,7 +2192,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="backgroundRectangle">cell rectangle which needs to be drawn</param>
 		/// <param name="backgroundColor">Color that the background will be painted</param>
 		/// <param name="alpha">alpha value for the color</param>
-		protected virtual void ShadeAreaUnderItem(Graphics graphics, Rectangle backgroundRectangle, Color backgroundColor, int alpha)
+		protected virtual void ShadeAreaUnderItem(Graphics graphics, Rectangle backgroundRectangle, Color backgroundColor, int alpha, bool highlight)
 		{
 			if (graphics == null)
 				return;
@@ -2128,6 +2200,11 @@ namespace TQVaultAE.GUI.Components
 			using (SolidBrush brush = new SolidBrush(Color.FromArgb(alpha, backgroundColor)))
 			{
 				graphics.FillRectangle(brush, backgroundRectangle);
+
+				// Add highlight borders
+				if (highlight)
+					graphics.DrawRectangle(this.HighlightSearchItemBorder, backgroundRectangle);
+
 			}
 		}
 
@@ -2772,7 +2849,7 @@ namespace TQVaultAE.GUI.Components
 				if (SecondaryVaultShown && location == AutoMoveLocation.Player)
 					destination = AutoMoveLocation.SecondaryVault;
 			}
-			 			
+
 			if ((SecondaryVaultShown && (destination == AutoMoveLocation.Stash || destination == AutoMoveLocation.Player)) || destination == AutoMoveLocation.NotSet)
 				return;
 
@@ -2903,7 +2980,7 @@ namespace TQVaultAE.GUI.Components
 						}
 					default:
 						break;
-					}
+				}
 
 				QuickMoveSack(e.KeyValue - keyOffset);
 			}

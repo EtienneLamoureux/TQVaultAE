@@ -28,6 +28,10 @@ namespace TQVaultAE.Domain.Entities
 		/// Dictionary of all loaded player stash files
 		/// </summary>
 		public readonly LazyConcurrentDictionary<string, Stash> Stashes = new LazyConcurrentDictionary<string, Stash>();
-
+		
+		/// <summary>
+		/// Hightlight search string
+		/// </summary>
+		public string HighlightSearch;
 	}
 }

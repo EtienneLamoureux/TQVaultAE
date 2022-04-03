@@ -19,6 +19,7 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Domain.Contracts.Services;
 	using System.Collections.Generic;
 	using System.Linq;
+	using TQVaultAE.Domain.Contracts.Providers;
 
 	/// <summary>
 	/// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.

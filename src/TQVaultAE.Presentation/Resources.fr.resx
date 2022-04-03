@@ -1224,4 +1224,8 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   <data name="ItemEmbers" xml:space="preserve">
     <value>Objet Eternal Embers</value>
   </data>
+	<data name="MainFormHighlightLabelText" xml:space="preserve">
+    <value>Mettre en évidence les objets ayants :</value>
+  </data>
+
 </root>

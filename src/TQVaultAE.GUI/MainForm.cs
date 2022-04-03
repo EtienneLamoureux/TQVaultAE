@@ -199,6 +199,9 @@ namespace TQVaultAE.GUI
 			ScaleControl(this.UIService, this.searchButton);
 			ScaleControl(this.UIService, this.tableLayoutPanelMain);
 
+			this.scalingLabelHighlight.Font = FontService.GetFontLight(10F, UIService.Scale);
+			this.scalingTextBoxHighlight.Font = FontService.GetFontLight(10F, UIService.Scale);
+
 			#endregion
 
 			if (TQDebug.DebugEnabled)
@@ -242,6 +245,7 @@ Debug Levels
 			this.showVaulButton.Text = Resources.MainFormBtnPanelSelect;
 			this.Icon = Resources.TQVIcon;
 			this.searchButton.Text = Resources.MainFormSearchButtonText;
+			this.scalingLabelHighlight.Text = Resources.MainFormHighlightLabelText;
 
 			this.lastDragPoint.X = -1;
 			this.DragInfo = new ItemDragInfo(this.UIService);
@@ -361,7 +365,10 @@ Debug Levels
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
 		private void MainFormShown(object sender, EventArgs e)
-			=> this.vaultPanel.SackPanel.Focus();
+		{
+			this.scalingTextBoxHighlight.Dock = DockStyle.Fill;
+			this.vaultPanel.SackPanel.Focus();
+		}
 
 		/// <summary>
 		/// Handler for moving the mouse wheel.
@@ -525,7 +532,6 @@ Debug Levels
 
 
 		#endregion
-
 
 		#region Files
 
@@ -1058,5 +1064,76 @@ Debug Levels
 
 		#endregion
 
+		#region HighlightItems
+
+		private void typeAssistant_Idled(object sender, EventArgs e)
+		{
+			var value = (scalingTextBoxHighlight.Text ?? string.Empty).Trim();
+
+			if (string.IsNullOrWhiteSpace(value))
+			{
+				ResetHighlightItems();
+				return;
+			}
+
+			HighlightItems(value);
+		}
+
+		private void ResetHighlightItems()
+		{
+			// Look for primary vault
+			this.vaultPanel.SackPanel?.ResetHighlight();
+			// Look for secondary vault ?
+			this.secondaryVaultPanel.SackPanel?.ResetHighlight();
+			// Look for relic
+			// Look for transfer
+			// Look for stash
+			// Look for equipment
+			this.stashPanel.SackPanel?.ResetHighlight();
+			this.stashPanel.BagSackPanel?.ResetHighlight();
+			this.stashPanel.EquipmentPanel?.ResetHighlight();
+			
+			this.playerPanel.SackPanel?.ResetHighlight();
+			this.playerPanel.BagSackPanel?.ResetHighlight();
+			
+
+			this.Invoke(new MethodInvoker(this.Refresh));
+		}
+
+		private void scalingTextBoxHighlight_TextChanged(object sender, EventArgs e)
+		{
+			/// Wait for the end of typing by delaying the call to <see cref="typeAssistant_Idled"/>
+			this.typeAssistant.TextChanged();
+		}
+
+		private void HighlightItems(string value)
+		{
+			this.userContext.HighlightSearch = value;
+			FindHighlight();
+		}
+
+		private void FindHighlight()
+		{
+			// Look for primary vault
+			this.vaultPanel.SackPanel?.FindHighlight();
+			//this.vaultPanel.BagSackPanel?.FindHighlight();
+			// Look for secondary vault ?
+			this.secondaryVaultPanel.SackPanel?.FindHighlight();
+			//this.secondaryVaultPanel.BagSackPanel?.FindHighlight();
+			// Look for relic
+			// Look for transfer
+			// Look for stash
+			// Look for equipment
+			this.stashPanel.SackPanel?.FindHighlight();
+			this.stashPanel.BagSackPanel?.FindHighlight();
+			this.stashPanel.EquipmentPanel?.FindHighlight();
+
+			this.playerPanel.SackPanel?.FindHighlight();
+			this.playerPanel.BagSackPanel?.FindHighlight();
+
+			this.Invoke(new MethodInvoker(this.Refresh));
+		}
+
+		#endregion
 	}
 }

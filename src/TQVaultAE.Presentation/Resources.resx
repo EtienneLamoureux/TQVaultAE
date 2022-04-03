@@ -1713,7 +1713,11 @@ You still have to close TQVaultAE to apply your changes.
   <data name="Masteriesx4tagNeidanStorm" xml:space="preserve">
     <value>tagMasteryBrief04-x4tagNeidan</value>
   </data>
-  <data name="Masteriesx4tagNeidanWarfare" xml:space="preserve">
+	<data name="Masteriesx4tagNeidanWarfare" xml:space="preserve">
     <value>tagMasteryBrief01-x4tagNeidan</value>
   </data>
+	<data name="MainFormHighlightLabelText" xml:space="preserve">
+    <value>Highlight items having :</value>
+  </data>
+	
 </root>

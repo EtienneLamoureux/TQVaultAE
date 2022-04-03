@@ -17,6 +17,7 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Presentation;
 	using TQVaultAE.GUI.Tooltip;
 	using Microsoft.Extensions.Logging;
+	using TQVaultAE.Domain.Helpers;
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel in the stash panel.
@@ -72,7 +73,7 @@ namespace TQVaultAE.GUI.Components
 				try
 				{
 					Item new2HItem = this.GetItemFromShadowSlot(dragInfo.Item.PositionY);
-					this.Invalidate(this.FindSlotRect(new2HItem.Location.X, new2HItem.Location.Y));				
+					this.Invalidate(this.FindSlotRect(new2HItem.Location.X, new2HItem.Location.Y));
 				}
 				catch (NullReferenceException exception)
 				{
@@ -666,7 +667,7 @@ namespace TQVaultAE.GUI.Components
 			if (item == null)
 				return Rectangle.Empty;
 
-			return this.FindSlotRect(item.Location.X, item.Location.Y);			
+			return this.FindSlotRect(item.Location.X, item.Location.Y);
 		}
 
 		/// <summary>
@@ -833,9 +834,17 @@ namespace TQVaultAE.GUI.Components
 				if (this.IsItemSelected(item))
 					alpha = AdjustAlpha(alpha);
 
+				var highlight = false;
+				// Highlight search
+				if (this.HighlightedItems.Contains(item))
+				{
+					highlight = true;
+					backgroundColor = this.HighlightSearchItemColor;
+					alpha = AdjustAlpha(alpha);
+				}
 				// If we are showing the cannot equip background then 
 				// change to invalid color and adjust the alpha.
-				if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
+				else if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
 				{
 					backgroundColor = this.HighlightInvalidItemColor;
 
@@ -845,7 +854,7 @@ namespace TQVaultAE.GUI.Components
 					// Make the background stand out since we are not showing the accent.
 					alpha = AdjustAlpha(alpha);
 				}
-								
+
 				// See if this item is under the drag item
 				if (this.DragInfo.IsActive && this.ItemsUnderDragItem != null && this.ItemsUnderDragItem.Contains(item))
 				{
@@ -859,8 +868,8 @@ namespace TQVaultAE.GUI.Components
 						if (slot != -1 && this.CheckItemType(this.DragInfo.Item, slot))
 						{
 							backgroundColor = this.HighlightValidItemColor;
-							if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(DragInfo.Item))							
-								backgroundColor = this.HighlightInvalidItemColor;							
+							if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(DragInfo.Item))
+								backgroundColor = this.HighlightInvalidItemColor;
 						}
 					}
 				}
@@ -870,7 +879,7 @@ namespace TQVaultAE.GUI.Components
 
 				// Now do the shading
 				if (!string.IsNullOrWhiteSpace(item.BaseItemId))
-					this.ShadeAreaUnderItem(e.Graphics, item, backgroundColor, alpha);
+					this.ShadeAreaUnderItem(e.Graphics, item, backgroundColor, alpha, highlight);
 
 				// Adjust the alpha and draw the accent.
 				if (showAccent & HasItemBackgroundColor(item))
@@ -883,7 +892,7 @@ namespace TQVaultAE.GUI.Components
 					if (string.IsNullOrEmpty(item2H.BaseItemId))
 					{
 						Rectangle rect = this.FindSlotRect(item2H.PositionX, item2H.PositionY);
-						this.ShadeAreaUnderItem(e.Graphics, rect, backgroundColor, alpha);
+						this.ShadeAreaUnderItem(e.Graphics, rect, backgroundColor, alpha, highlight);
 
 						// Adjust the alpha and draw the accent.
 						if (showAccent & HasItemBackgroundColor(item))
@@ -902,8 +911,8 @@ namespace TQVaultAE.GUI.Components
 		{
 			if (!this.DragInfo.IsActive || this.CellsUnderDragItem.Size.IsEmpty)
 				return;
-				
-			if (this.ItemsUnderDragItem == null || this.ItemsUnderDragItem.Count <= 1)			
+
+			if (this.ItemsUnderDragItem == null || this.ItemsUnderDragItem.Count <= 1)
 			{
 				Point tl = Point.Empty;
 				Point br = Point.Empty;
@@ -927,8 +936,16 @@ namespace TQVaultAE.GUI.Components
 					if (slot != -1)
 					{
 						backgroundColor = this.HighlightValidItemColor;
-						if (!this.CheckItemType(this.DragInfo.Item, slot) || (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(DragInfo.Item)))					
-							backgroundColor =  this.HighlightInvalidItemColor;
+
+						if (!this.CheckItemType(this.DragInfo.Item, slot)
+							|| (
+								Config.Settings.Default.EnableItemRequirementRestriction
+								&& !this.CanBeEquipped(DragInfo.Item)
+							)
+						)
+						{
+							backgroundColor = this.HighlightInvalidItemColor;
+						}
 
 						using (Brush brush = new SolidBrush(backgroundColor))
 						{
@@ -992,10 +1009,10 @@ namespace TQVaultAE.GUI.Components
 
 			Rectangle rect = this.FindSlotRect(item.PositionX, item.PositionY);
 
-			if (item.IsInWeaponSlot)	
+			if (item.IsInWeaponSlot)
 				// Adjust the accent to appear in the center 2x4 area of the weapon slot.
 				rect = new Rectangle(rect.X, rect.Y + UIService.HalfUnitSize, rect.Width, rect.Height - UIService.ItemUnitSize);
-			
+
 			base.DrawItemAccent(graphics, rect, accentColor, alpha);
 		}
 
@@ -1006,9 +1023,9 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="item">Item to be shaded</param>
 		/// <param name="backgroundColor">Color that we are using to paint the background.</param>
 		/// <param name="alpha">Int containing the alpha value</param>
-		protected override void ShadeAreaUnderItem(Graphics graphics, Item item, Color backgroundColor, int alpha)
-			=> this.ShadeAreaUnderItem(graphics, this.FindSlotRect(item.PositionX, item.PositionY), backgroundColor, alpha);
-		
+		protected override void ShadeAreaUnderItem(Graphics graphics, Item item, Color backgroundColor, int alpha, bool highlight)
+			=> this.ShadeAreaUnderItem(graphics, this.FindSlotRect(item.PositionX, item.PositionY), backgroundColor, alpha, highlight);
+
 
 		/// <summary>
 		/// Shades the background of an item.
@@ -1017,7 +1034,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="backgroundRectangle">cell rectangle that needs to be drawn</param>
 		/// <param name="backgroundColor">Color that we are using to paint the background.</param>
 		/// <param name="alpha">Int containing the alpha value</param>
-		protected override void ShadeAreaUnderItem(Graphics graphics, Rectangle backgroundRectangle, Color backgroundColor, int alpha)
+		protected override void ShadeAreaUnderItem(Graphics graphics, Rectangle backgroundRectangle, Color backgroundColor, int alpha, bool highlight)
 		{
 			// Fill the weapon box shape.
 			int slot = this.FindEquipmentSlot(this.FindCell(backgroundRectangle.Location));
@@ -1030,9 +1047,35 @@ namespace TQVaultAE.GUI.Components
 				using (Graphics weaponBmpGraphics = Graphics.FromImage(weaponBmp))
 				{
 					weaponBmpGraphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+
 					weaponBmpGraphics.FillRectangle(brush, UIService.HalfUnitSize, 0, UIService.ItemUnitSize, UIService.ItemUnitSize * 5);
+					if (highlight)
+					{
+						// Add Highlight border
+						weaponBmpGraphics.DrawRectangle(this.HighlightSearchItemBorder
+							, UIService.HalfUnitSize
+							, 0
+							, UIService.ItemUnitSize, UIService.ItemUnitSize * 5);
+					}
+
 					weaponBmpGraphics.FillRectangle(brush, 0, UIService.HalfUnitSize, UIService.ItemUnitSize * 2, UIService.ItemUnitSize * 4);
-				
+					if (highlight)
+					{
+						// Add Highlight border
+						weaponBmpGraphics.DrawRectangle(this.HighlightSearchItemBorder
+							, 0
+							, UIService.HalfUnitSize
+							, UIService.ItemUnitSize * 2, UIService.ItemUnitSize * 4);
+						
+						// Cover inner borders
+						weaponBmpGraphics.FillRectangle(brush
+							, UIService.HalfUnitSize + this.HighlightSearchItemBorder.Width
+							, this.HighlightSearchItemBorder.Width
+							, UIService.ItemUnitSize - (this.HighlightSearchItemBorder.Width * 2)
+							, (UIService.ItemUnitSize * 5) - (this.HighlightSearchItemBorder.Width * 2)
+						);
+					}
+
 					graphics.DrawImage(weaponBmp, backgroundRectangle.X, backgroundRectangle.Y);
 				}
 			}
@@ -1043,7 +1086,7 @@ namespace TQVaultAE.GUI.Components
 					backgroundRectangle = this.FindSlotRect(1);
 
 				// Do the normal shading.
-				base.ShadeAreaUnderItem(graphics, backgroundRectangle, backgroundColor, alpha);
+				base.ShadeAreaUnderItem(graphics, backgroundRectangle, backgroundColor, alpha, highlight);
 			}
 		}
 

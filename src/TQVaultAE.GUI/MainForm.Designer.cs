@@ -121,6 +121,9 @@ namespace TQVaultAE.GUI
             this.fadeInTimer = new System.Windows.Forms.Timer(this.components);
             this.flowLayoutPanelVaultSelector = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.tableLayoutPanelMain = new TQVaultAE.GUI.Components.BufferedTableLayoutPanel();
+            this.tableLayoutPanelHighlight = new System.Windows.Forms.TableLayoutPanel();
+            this.scalingTextBoxHighlight = new TQVaultAE.GUI.Components.ScalingTextBox();
+            this.scalingLabelHighlight = new TQVaultAE.GUI.Components.ScalingLabel();
             this.flowLayoutPanelRightPanels = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.flowLayoutPanelRightComboBox = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.characterLabel = new TQVaultAE.GUI.Components.ScalingLabel();
@@ -128,9 +131,11 @@ namespace TQVaultAE.GUI
             this.secondaryVaultListComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.fileSystemWatcherTransferStash = new System.IO.FileSystemWatcher();
             this.fileSystemWatcherRelicStash = new System.IO.FileSystemWatcher();
+            this.typeAssistant = new TQVaultAE.GUI.Components.TypeAssistant();
             this.itemTextPanel.SuspendLayout();
             this.flowLayoutPanelVaultSelector.SuspendLayout();
             this.tableLayoutPanelMain.SuspendLayout();
+            this.tableLayoutPanelHighlight.SuspendLayout();
             this.flowLayoutPanelRightComboBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherTransferStash)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherRelicStash)).BeginInit();
@@ -164,7 +169,7 @@ namespace TQVaultAE.GUI
             // 
             this.itemTextPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(188)))), ((int)(((byte)(97)))));
             this.itemTextPanel.Controls.Add(this.itemText);
-            this.itemTextPanel.Location = new System.Drawing.Point(4, 135);
+            this.itemTextPanel.Location = new System.Drawing.Point(4, 146);
             this.itemTextPanel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 20);
             this.itemTextPanel.Name = "itemTextPanel";
             this.itemTextPanel.Padding = new System.Windows.Forms.Padding(2);
@@ -234,7 +239,7 @@ namespace TQVaultAE.GUI
             this.customMapText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.customMapText.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.customMapText.ForeColor = System.Drawing.Color.Black;
-            this.customMapText.Location = new System.Drawing.Point(216, 96);
+            this.customMapText.Location = new System.Drawing.Point(216, 83);
             this.customMapText.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.customMapText.Name = "customMapText";
             this.customMapText.Size = new System.Drawing.Size(380, 30);
@@ -358,23 +363,62 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 5F));
             this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelMain.Controls.Add(this.tableLayoutPanelHighlight, 0, 3);
             this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelRightPanels, 2, 1);
             this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelVaultSelector, 0, 0);
             this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelRightComboBox, 2, 0);
             this.tableLayoutPanelMain.Controls.Add(this.customMapText, 0, 2);
-            this.tableLayoutPanelMain.Controls.Add(this.itemTextPanel, 0, 3);
+            this.tableLayoutPanelMain.Controls.Add(this.itemTextPanel, 0, 4);
             this.tableLayoutPanelMain.Location = new System.Drawing.Point(15, 60);
             this.tableLayoutPanelMain.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanelMain.Name = "tableLayoutPanelMain";
-            this.tableLayoutPanelMain.RowCount = 4;
+            this.tableLayoutPanelMain.RowCount = 5;
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanelMain.Size = new System.Drawing.Size(1320, 178);
+            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelMain.Size = new System.Drawing.Size(1320, 189);
             this.tableLayoutPanelMain.TabIndex = 21;
+            // 
+            // tableLayoutPanelHighlight
+            // 
+            this.tableLayoutPanelHighlight.AutoSize = true;
+            this.tableLayoutPanelHighlight.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanelHighlight.ColumnCount = 2;
+            this.tableLayoutPanelHighlight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelHighlight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanelHighlight.Controls.Add(this.scalingTextBoxHighlight, 0, 0);
+            this.tableLayoutPanelHighlight.Controls.Add(this.scalingLabelHighlight, 0, 0);
+            this.tableLayoutPanelHighlight.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanelHighlight.Location = new System.Drawing.Point(1, 119);
+            this.tableLayoutPanelHighlight.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanelHighlight.Name = "tableLayoutPanelHighlight";
+            this.tableLayoutPanelHighlight.RowCount = 1;
+            this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelHighlight.Size = new System.Drawing.Size(598, 23);
+            this.tableLayoutPanelHighlight.TabIndex = 24;
+            // 
+            // scalingTextBoxHighlight
+            // 
+            this.scalingTextBoxHighlight.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.scalingTextBoxHighlight.Location = new System.Drawing.Point(135, 0);
+            this.scalingTextBoxHighlight.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
+            this.scalingTextBoxHighlight.Name = "scalingTextBoxHighlight";
+            this.scalingTextBoxHighlight.Size = new System.Drawing.Size(262, 23);
+            this.scalingTextBoxHighlight.TabIndex = 2;
+            this.scalingTextBoxHighlight.TextChanged += new System.EventHandler(this.scalingTextBoxHighlight_TextChanged);
+            // 
+            // scalingLabelHighlight
+            // 
+            this.scalingLabelHighlight.AutoSize = true;
+            this.scalingLabelHighlight.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.scalingLabelHighlight.Location = new System.Drawing.Point(0, 1);
+            this.scalingLabelHighlight.Margin = new System.Windows.Forms.Padding(0, 1, 0, 0);
+            this.scalingLabelHighlight.Name = "scalingLabelHighlight";
+            this.scalingLabelHighlight.Size = new System.Drawing.Size(135, 15);
+            this.scalingLabelHighlight.TabIndex = 1;
+            this.scalingLabelHighlight.Text = "Highlight items having :";
             // 
             // flowLayoutPanelRightPanels
             // 
@@ -387,7 +431,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelRightPanels.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanelRightPanels.MinimumSize = new System.Drawing.Size(200, 100);
             this.flowLayoutPanelRightPanels.Name = "flowLayoutPanelRightPanels";
-            this.tableLayoutPanelMain.SetRowSpan(this.flowLayoutPanelRightPanels, 3);
+            this.tableLayoutPanelMain.SetRowSpan(this.flowLayoutPanelRightPanels, 4);
             this.flowLayoutPanelRightPanels.Size = new System.Drawing.Size(200, 100);
             this.flowLayoutPanelRightPanels.TabIndex = 22;
             // 
@@ -443,15 +487,21 @@ namespace TQVaultAE.GUI
             // 
             // fileSystemWatcherTransferStash
             // 
+            this.fileSystemWatcherTransferStash.EnableRaisingEvents = true;
             this.fileSystemWatcherTransferStash.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.CreationTime)));
             this.fileSystemWatcherTransferStash.SynchronizingObject = this;
             this.fileSystemWatcherTransferStash.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherTransferStash_Changed);
             // 
             // fileSystemWatcherRelicStash
             // 
+            this.fileSystemWatcherRelicStash.EnableRaisingEvents = true;
             this.fileSystemWatcherRelicStash.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.CreationTime)));
             this.fileSystemWatcherRelicStash.SynchronizingObject = this;
             this.fileSystemWatcherRelicStash.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherRelicStash_Changed);
+            // 
+            // typeAssistant
+            // 
+            this.typeAssistant.Idled += new System.EventHandler(this.typeAssistant_Idled);
             // 
             // MainForm
             // 
@@ -498,6 +548,8 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelVaultSelector.ResumeLayout(false);
             this.tableLayoutPanelMain.ResumeLayout(false);
             this.tableLayoutPanelMain.PerformLayout();
+            this.tableLayoutPanelHighlight.ResumeLayout(false);
+            this.tableLayoutPanelHighlight.PerformLayout();
             this.flowLayoutPanelRightComboBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherTransferStash)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherRelicStash)).EndInit();
@@ -517,5 +569,9 @@ namespace TQVaultAE.GUI
 		private BufferedFlowLayoutPanel flowLayoutPanelRightPanels;
 		private System.IO.FileSystemWatcher fileSystemWatcherTransferStash;
 		private System.IO.FileSystemWatcher fileSystemWatcherRelicStash;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanelHighlight;
+		private ScalingTextBox scalingTextBoxHighlight;
+		private ScalingLabel scalingLabelHighlight;
+		private TypeAssistant typeAssistant;
 	}
 }
