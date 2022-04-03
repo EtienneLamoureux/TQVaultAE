@@ -293,5 +293,24 @@ namespace TQVaultAE.Data
 
 			return true;
 		}
+
+		public bool ReplaceUnicodeValueAfter(ref byte[] playerFileContent, string keyToLookFor, string replacement, int offset = 0)
+		{
+			var found = ReadUnicodeStringAfter(playerFileContent, keyToLookFor, offset);
+			if (found.indexOf == -1) return false;
+
+			// Replace Unicode String value
+			var keyBytes = Encoding1252.GetBytes(keyToLookFor);
+			playerFileContent = new[] {
+					playerFileContent.Take(found.indexOf - sizeof(int)).ToArray(),// start content
+					BitConverter.GetBytes(keyToLookFor.Length),// KeyLen
+					keyBytes,// Key
+					BitConverter.GetBytes(replacement.Length),// ValueLen
+					EncodingUnicode.GetBytes(replacement),// Value
+					playerFileContent.Skip(found.nextOffset).ToArray(),// end content
+				}.SelectMany(a => a).ToArray();
+
+			return true;
+		}
 	}
 }

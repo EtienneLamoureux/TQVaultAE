@@ -22,7 +22,8 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		/// <param name="vaultOnError"></param>
 		/// <exception cref="IOException">can happen during file save</exception>
-		void SaveAllModifiedVaults(ref PlayerCollection vaultOnError);
+		/// <returns>nNumber of vault saved</returns>
+		int SaveAllModifiedVaults(ref PlayerCollection vaultOnError);
 		/// <summary>
 		/// Updates VaultPath key from the configuration UI
 		/// Needed since all vaults will need to be reloaded if this key changes.

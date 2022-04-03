@@ -961,6 +961,69 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Duplicate.
+        /// </summary>
+        public static string DuplicateCharacter_ButtonText {
+            get {
+                return ResourceManager.GetString("DuplicateCharacter_ButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error during character duplication.
+        /// </summary>
+        public static string DuplicateCharacter_Error {
+            get {
+                return ResourceManager.GetString("DuplicateCharacter_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Character duplication.
+        /// </summary>
+        public static string DuplicateCharacter_ModalTitle {
+            get {
+                return ResourceManager.GetString("DuplicateCharacter_ModalTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name is already used!.
+        /// </summary>
+        public static string DuplicateCharacter_NewNameAlreadyUsed {
+            get {
+                return ResourceManager.GetString("DuplicateCharacter_NewNameAlreadyUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The new name must be valid!.
+        /// </summary>
+        public static string DuplicateCharacter_NewNameMustBeValid {
+            get {
+                return ResourceManager.GetString("DuplicateCharacter_NewNameMustBeValid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Input the new character name.
+        /// </summary>
+        public static string DuplicateCharacter_NewNameRequired {
+            get {
+                return ResourceManager.GetString("DuplicateCharacter_NewNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A source character must be selected!.
+        /// </summary>
+        public static string DuplicateCharacter_SourceRequired {
+            get {
+                return ResourceManager.GetString("DuplicateCharacter_SourceRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap equipment_bg_and_char {
@@ -3536,6 +3599,15 @@ namespace TQVaultAE.Presentation {
         public static string SackPanelRemoveRelicMsg {
             get {
                 return ResourceManager.GetString("SackPanelRemoveRelicMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Saved at {0:g}.
+        /// </summary>
+        public static string SavedAtNotification {
+            get {
+                return ResourceManager.GetString("SavedAtNotification", resourceCulture);
             }
         }
         

@@ -149,6 +149,15 @@ namespace TQVaultAE.Domain.Contracts.Services
 		string PlayerSaveFileName { get; }
 		string PlayerStashFileNameB { get; }
 		string PlayerStashFileNameG { get; }
+		string PlayerSettingsFileName { get; }
+
+		/// <summary>
+		/// Duplicate player save files
+		/// </summary>
+		/// <param name="playerSaveDirectory"></param>
+		/// <param name="newname"></param>
+		/// <returns>new directory path</returns>
+		string DuplicateCharacterFiles(string playerSaveDirectory, string newname);
 
 		/// <summary>
 		/// Return the vault name from <paramref name="vaultFilePath"/>

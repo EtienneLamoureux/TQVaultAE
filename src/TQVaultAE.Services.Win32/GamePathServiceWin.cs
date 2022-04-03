@@ -136,7 +136,7 @@ namespace TQVaultAE.Services.Win32
 			if (IsCustom)
 				mapSaveFolder = "User";
 
-			return Path.Combine(Path.Combine(ImmortalThroneSaveFolder, "SaveData"), mapSaveFolder);
+			return Path.Combine(ImmortalThroneSaveFolder, "SaveData", mapSaveFolder);
 		}
 
 		/// <summary>
@@ -650,6 +650,39 @@ Please select the game installation directory.");
 				vaultname = Path.GetFileNameWithoutExtension(vaultFilePath);
 
 			return vaultname;
+		}
+
+		/// <summary>
+		/// Duplicate player save files
+		/// </summary>
+		/// <param name="playerSaveDirectory"></param>
+		/// <param name="newname"></param>
+		/// <returns>new directory path</returns>
+		public string DuplicateCharacterFiles(string playerSaveDirectory, string newname)
+		{
+			var baseFolder = Path.GetDirectoryName(playerSaveDirectory);
+			var newFolder = Path.Combine(baseFolder, $"_{newname}");
+			var newPlayerFile = Path.Combine(newFolder, PLAYERSAVEFILENAME);
+
+			var playerFile = Path.Combine(playerSaveDirectory, PLAYERSAVEFILENAME);
+			var stashFileB = Path.Combine(playerSaveDirectory, PLAYERSTASHFILENAMEB);
+			var stashFileG = Path.Combine(playerSaveDirectory, PLAYERSTASHFILENAMEG);
+			var settingsFile = Path.Combine(playerSaveDirectory, PLAYERSETTINGSFILENAME);
+
+			Directory.CreateDirectory(newFolder);
+			File.Copy(playerFile, newPlayerFile);
+			if (File.Exists(stashFileB)) File.Copy(stashFileB, Path.Combine(newFolder, PLAYERSTASHFILENAMEB));
+			if (File.Exists(stashFileG)) File.Copy(stashFileG, Path.Combine(newFolder, PLAYERSTASHFILENAMEG));
+			if (File.Exists(settingsFile)) File.Copy(settingsFile, Path.Combine(newFolder, PLAYERSETTINGSFILENAME));
+
+			// Copy Progression
+			// Easyest way of doing that (why VB has all the easy stuff?)
+			new Computer().FileSystem.CopyDirectory(
+				Path.Combine(playerSaveDirectory, "Levels_World_World01.map")
+				, Path.Combine(newFolder, "Levels_World_World01.map")
+			);
+
+			return newFolder;
 		}
 	}
 }

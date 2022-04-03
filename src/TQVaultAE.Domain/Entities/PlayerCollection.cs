@@ -133,6 +133,24 @@ namespace TQVaultAE.Domain.Entities
 		}
 
 		/// <summary>
+		/// Adjust internal status when the collection is saved
+		/// </summary>
+		public void Saved()
+		{
+			if (this.sacks != null)
+			{
+				foreach (SackCollection sack in this.sacks)
+					sack.IsModified = false;
+			}
+
+			if (this.EquipmentSack != null && this.EquipmentSack.IsModified)
+				this.EquipmentSack.IsModified = false;
+
+			if (this.PlayerInfo != null && this.PlayerInfo.Modified)
+				this.PlayerInfo.Modified = false;
+		}
+
+		/// <summary>
 		/// Gets the player name
 		/// </summary>
 		public string PlayerName

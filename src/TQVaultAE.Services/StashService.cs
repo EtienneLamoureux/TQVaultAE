@@ -161,9 +161,11 @@ namespace TQVaultAE.Services
 		/// </summary>
 		/// <param name="stashOnError"></param>
 		/// <exception cref="IOException">can happen during file save</exception>
-		public void SaveAllModifiedStashes(ref Stash stashOnError)
+		/// <returns>Number of stash saved</returns>
+		public int SaveAllModifiedStashes(ref Stash stashOnError)
 		{
 			// Save each stash as necessary
+			int saved = 0;
 			foreach (KeyValuePair<string, Lazy<Stash>> kvp in this.userContext.Stashes)
 			{
 				string stashFile = kvp.Key;
@@ -176,9 +178,11 @@ namespace TQVaultAE.Services
 					stashOnError = stash;
 					GamePathResolver.BackupFile(stash.PlayerName, stashFile);
 					StashProvider.Save(stash, stashFile);
+					stash.Saved();
+					saved++;
 				}
 			}
-
+			return saved;
 		}
 
 	}
