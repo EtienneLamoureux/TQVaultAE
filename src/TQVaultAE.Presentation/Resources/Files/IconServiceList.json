@@ -1,0 +1,737 @@
+{
+	"list": [
+		{
+			"file": "ITEMS",
+			"img": [
+				{
+					"ca": "Relics",
+					"pa": "ANIMALRELICS\\\\ANIMALPART[^_\\.]+\\.TEX",
+					"on": "|",
+					"of": ".TEX|_E.TEX",
+					"ov": ".TEX|_L.TEX"
+				},
+				{
+					"ca": "Jewellery",
+					"pa": "(EQUIPMENT AMULET|EQUIPMENTRING)\\\\UIBITMAPS\\\\\\w+\\.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Helmets",
+					"pa": "EQUIPMENTHELM\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Shields",
+					"pa": "EQUIPMENTSHIELD\\\\UIBITMAPS\\\\\\w+(?<!BMP).TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Armbands",
+					"pa": "EQUIPMENTARMBAND\\\\UIBITMAPS\\\\(?!ZPLACEHOLDERICON)\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Greaves",
+					"pa": "EQUIPMENTGREAVES\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Relics",
+					"pa": "RELIC\\\\SHARD...\\.TEX",
+					"on": "|",
+					"of": ".TEX|_E.TEX",
+					"ov": ".TEX|_L.TEX"
+				},
+				{
+					"ca": "Relics",
+					"pa": "RELIC\\\\RELIC_TEST_1.TEX",
+					"on": "1.TEX|1A.TEX",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Potions",
+					"pa": "MISCELLANEOUS\\\\ONESHOT\\\\UIBITMAPS\\\\(LIFE|ENERGY)POTION0.B.TEX",
+					"on": "B.|A.",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Misc",
+					"pa": "MISCELLANEOUS\\\\ONESHOT\\\\UIBITMAPS\\\\DYEBOTTLE_\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Misc",
+					"lt": [
+						"MISCELLANEOUS\\ONESHOT\\UIBITMAPS\\GOLDCOINS01.TEX",
+						"MISCELLANEOUS\\ONESHOT\\UIBITMAPS\\SACK01.TEX",
+						"QUESTITEMS\\UIBITMAPS\\QI_EYEOFCHAOS.TEX"
+					]
+				},
+				{
+					"ca": "Jewellery",
+					"lt": [
+						"QUESTITEMS\\UIBITMAPS\\QI_DOWRYNECKLACE.TEX"
+					]
+				},
+				{
+					"ca": "Scrolls",
+					"lt": [
+						"QUESTITEMS\\UIBITMAPS\\QI_RHAKOTISSCROLL.TEX"
+					]
+				}
+			]
+		},
+		{
+			"file": "UI",
+			"img": [
+				{
+					"ca": "Skills",
+					"pa": "SKILLBUTTONS\\\\\\w+UPSMALL.TEX$",
+					"on": "UPSMALL.TEX|DOWNSMALL.TEX",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Buttons",
+					"pa": "UI_CHARACTERBUTTONUP.TEX|UI_HELPBUTTONUP.TEX|UI_INVENTORYBUTTONUP.TEX|UI_MAPBUTTON_UP.TEX|UI_QUESTBUTTONUP.TEX|UI_QUESTDIALOGBUTTONUP.TEX|UI_QUESTDIALOGBUTTONUP.TEX|UI_QUESTNEXTBUTTONUP.TEX|UI_QUESTPREVBUTTONUP.TEX|UI_SKILLBUTTONUP.TEX|UI_WEAPONSWAPBUTTONUP.TEX",
+					"on": "UP.TEX|DOWN.TEX",
+					"of": "|",
+					"ov": "|"
+				}
+			]
+		},
+		{
+			"file": "INGAMEUI",
+			"img": [
+				{
+					"ca": "Buttons",
+					"pa": "BUTTONUP01.TEX$",
+					"on": "UP|DOWN",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Buttons",
+					"pa": "HUD\\w+BUTTONUP01.TEX",
+					"on": "UP01|DOWN01",
+					"of": "|",
+					"ov": "UP01|OVER01"
+				},
+				{
+					"ca": "Buttons",
+					"pa": "HUDPARTYGRAYPETICON01.TEX|HUDPARTYGRAYPLAYERICON01.TEX",
+					"on": "GRAY|",
+					"of": "|",
+					"ov": "GRAY|RED"
+				},
+				{
+					"ca": "Buttons",
+					"pa": "ICONS\\\\PARTY\\\\\\w+GREY01.TEX",
+					"on": "GREY|DOWN",
+					"of": "|",
+					"ov": "GREY|UP"
+				},
+				{
+					"ca": "Potions",
+					"pa": "ICONS\\\\POTIONS\\\\\\w+_UP.TEX$",
+					"on": "_UP|_DOWN",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Misc",
+					"pa": "ICONS\\\\SHRINES\\\\\\w+UP01.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Skills",
+					"pa": "ICONS\\\\SKILLS\\\\(?!BUFFGREENF|HUD_BUFFGREENF)\\w+UP01.TEX",
+					"on": "UP01|DOWN01",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Skills",
+					"pa": "ICONS\\\\SKILLS\\\\(HUD_)?BUFFGREENFUP01.TEX",
+					"on": "FUP01|DOWN01",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Skills",
+					"pa": "ICONS\\\\SKILLS\\\\(DEFENSIVE|EARTH|HUNTING|NATURE|SPIRIT|STEALTH|STORM|WARFARE)\\\\(?!FAVORABLEWIND|HUD_NIGHTSHADER|NIGHTSHADER)\\w+UP01.TEX",
+					"on": "UP01|DOWN01",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Skills",
+					"pa": "ICONS\\\\SKILLS\\\\STEALTH\\\\(HUD_)?NIGHTSHADERUP01.TEX",
+					"on": "RUP01|DOWN01",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Misc",
+					"pa": "MAP\\\\ICONS\\\\\\w+OVER01.TEX",
+					"on": "OVER01|01",
+					"of": "OVER01|01",
+					"ov": "|"
+				},
+				{
+					"ca": "Misc",
+					"pa": "QUEST\\\\QUESTICON(ACTIVE|COMPLETE|GLOW|SELECTED).TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				}
+			]
+		},
+		{
+			"file": "MENU",
+			"img": [
+				{
+					"ca": "Misc",
+					"pa": "DIFFICULTY(EPIC|LEGENDARY|NORMAL)UP01.TEX",
+					"on": "UP01|DOWN01",
+					"of": "|",
+					"ov": "UP01|OVER01"
+				}
+			]
+		},
+		{
+			"file": "XPACK\\ITEMS",
+			"img": [
+				{
+					"ca": "Artifacts",
+					"pa": "ARTIFACTS\\\\X_ARTIFACT...TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Relics",
+					"pa": "CHARMS\\\\(?!X_ANIMALPART02A)X_ANIMALPART\\d{2}[AB].TEX",
+					"on": "|",
+					"of": ".TEX|_E.TEX",
+					"ov": ".TEX|_L.TEX"
+				},
+				{
+					"ca": "Relics",
+					"pa": "CHARMS\\\\X_ANIMALPART02A.TEX",
+					"on": "|",
+					"of": ".TEX|_E.TEX",
+					"ov": ".TEX|_P.TEX"
+				},
+				{
+					"ca": "Relics",
+					"pa": "RELICS\\\\X_SHARD\\d{2}[AB].TEX",
+					"on": "|",
+					"of": ".TEX|_E.TEX",
+					"ov": ".TEX|_L.TEX"
+				},
+				{
+					"ca": "Relics",
+					"lt": [
+						"RELICS\\X_RELIC_MASTER.TEX"
+					]
+				},
+				{
+					"ca": "Misc",
+					"lt": [
+						"GRAVESTONES\\GRAVEICON01.TEX"
+					]
+				},
+				{
+					"ca": "Scrolls",
+					"pa": "SCROLLS\\\\[ELN]_SCROLL_\\w+UP.TEX",
+					"on": "UP.TEX|DWN.TEX",
+					"of": "|",
+					"ov": "UP.TEX|RO.TEX"
+				},
+				{
+					"ca": "Jewellery",
+					"pa": "EQUIPMENTARMOR\\\\(AMULET|RING)\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Misc",
+					"pa": "QUESTITEMS\\\\UIBITMAPS\\\\(?!CHARONOAR|HEALINGELIXIR|ENEMYMESSAGE|PARCHMENT)\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Scrolls",
+					"pa": "QUESTITEMS\\\\UIBITMAPS\\\\(ENEMYMESSAGE|PARCHMENT).TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Helmets",
+					"pa": "EQUIPMENTARMOR\\\\HELM\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Armbands",
+					"pa": "EQUIPMENTARMOR\\\\ARMBAND\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Greaves",
+					"pa": "EQUIPMENTARMOR\\\\GREAVES\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Shields",
+					"pa": "EQUIPMENTWEAPONS\\\\SHIELD\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				}
+			]
+		},
+		{
+			"file": "XPACK\\QUESTS",
+			"img": [
+				{
+					"ca": "Misc",
+					"lt": [
+						"Z_THEOVERLORD COPY.TEX"
+					]
+				}
+			]
+		},
+		{
+			"file": "XPACK\\MENU",
+			"img": [
+				{
+					"ca": "Misc",
+					"lt": [
+						"LOBBY\\AUTOPARTY01.TEX",
+						"LOBBY\\PVP01.TEX"
+					]
+				}
+			]
+		},
+		{
+			"file": "XPACK\\UI",
+			"img": [
+				{
+					"ca": "Buttons",
+					"pa": "DETAILMAP\\\\ICONS\\\\\\w+UP01.TEX",
+					"on": "UP01|DOWN01",
+					"of": "|",
+					"ov": "UP01|OVER01"
+				},
+				{
+					"ca": "Buttons",
+					"pa": "HUD\\\\HSELECTUP01.TEX",
+					"on": "UP01|DOWN01",
+					"of": "|",
+					"ov": "UP01|OVER01"
+				},
+				{
+					"ca": "Buttons",
+					"pa": "ICONS\\\\PARTY\\\\NIGHTMAREUP01.TEX",
+					"on": "UP01|DOWN01",
+					"of": "|",
+					"ov": "UP01|GREY01"
+				},
+				{
+					"ca": "Misc",
+					"lt": [
+						"ICONS\\PARTY\\NIGHTMARERED01.TEX"
+					]
+				},
+				{
+					"ca": "Skills",
+					"pa": "ICONS\\\\SKILLS\\\\.+UP01.TEX",
+					"on": "UP01|DOWN01",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Buttons",
+					"pa": "MAP\\\\ICONS\\\\ICONSMALLENCHANTER01.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "01|OVER01"
+				}
+			]
+		},
+		{
+			"file": "XPACK2\\INGAMEUI",
+			"img": [
+				{
+					"ca": "Misc",
+					"lt": [
+						"CHARACTERSCREEN\\RESISTANCES\\FREEZEICON01.TEX",
+						"CHARACTERSCREEN\\RESISTANCES\\LIFELEACHICON01.TEX",
+						"CHARACTERSCREEN\\RESISTANCES\\PERTIFICATIONICON01.TEX",
+						"CHARACTERSCREEN\\RESISTANCES\\PHYSICALICON01.TEX",
+						"CHARACTERSCREEN\\RESISTANCES\\SLEEPICON01.TEX",
+						"CHARACTERSCREEN\\RESISTANCES\\SLOWDOWNICON01.TEX",
+						"CHARACTERSCREEN\\RESISTANCES\\TRAPICON01.TEX"
+					]
+				}
+			]
+		},
+		{
+			"file": "XPACK2\\QUESTS",
+			"img": [
+				{
+					"ca": "Misc",
+					"lt": [
+						"Z_THEPRIMROSE COPY.TEX"
+					]
+				}
+			]
+		},
+		{
+			"file": "XPACK2\\ITEMS",
+			"img": [
+				{
+					"ca": "Artifacts",
+					"pa": "ARTIFACTS\\\\X2_ARTIFACT...TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Relics",
+					"pa": "CHARMS\\\\X2_ANIMALPART\\d{2}[AB]_N.TEX",
+					"on": "|",
+					"of": "_N.TEX|_E.TEX",
+					"ov": "_N.TEX|_L.TEX"
+				},
+				{
+					"ca": "Relics",
+					"pa": "RELICS\\\\X2_SHARD0.._N.TEX",
+					"on": "|",
+					"of": "_N.TEX|_E.TEX",
+					"ov": "_N.TEX|_L.TEX"
+				},
+				{
+					"ca": "Scrolls",
+					"pa": "SCROLLS\\\\[ELN]_SCROLL_\\w+UP.TEX",
+					"on": "UP.TEX|DWN.TEX",
+					"of": "|",
+					"ov": "UP.TEX|RO.TEX"
+				},
+				{
+					"ca": "Jewellery",
+					"pa": "EQUIPMENTARMOR\\\\AMULET\\\\UIBITMAPS\\\\(C_AMULET02.|U_[ELN]_00\\d|US_\\w+|USM_\\w+).TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Jewellery",
+					"pa": "EQUIPMENTARMOR\\\\RING\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Armbands",
+					"pa": "EQUIPMENTARMOR\\\\ARMBANDS\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Greaves",
+					"pa": "EQUIPMENTARMOR\\\\GREAVES\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Helmets",
+					"pa": "EQUIPMENTARMOR\\\\HELMET\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Shields",
+					"pa": "EQUIPMENTWEAPON\\\\SHIELD\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Misc",
+					"pa": "QUESTITEMS\\\\UIBITMAPS\\\\(?!KORNWYFSCYTHE|LOKISCEPTER|MEAD|YLVASSPEAR_MISTLETOE)\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Potions",
+					"lt": [
+						"POTIONS\\ENERGYPOTION04B.TEX",
+						"POTIONS\\LIFEPOTION04B.TEX"
+					]
+				}
+			]
+		},
+		{
+			"file": "XPACK2\\UI",
+			"img": [
+				{
+					"ca": "Misc",
+					"pa": "ICONS\\\\PETS\\\\YLVA_UP.TEX",
+					"on": "UP|DOWN",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Skills",
+					"pa": "ICONS\\\\SKILLS\\\\\\w+UP.TEX",
+					"on": "UP.|DOWN.",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Buttons",
+					"pa": "MAP\\\\ICONS\\\\ICONSMALLITEMUPGRADER01.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "01|OVER01"
+				}
+			]
+		},
+		{
+			"file": "XPACK3\\INGAMEUI",
+			"img": [
+				{
+					"ca": "Misc",
+					"lt": [
+						"TARTARUSUI\\TARTARUSPLAYERBUFFICON.TEX"
+					]
+				}
+			]
+		},
+		{
+			"file": "XPACK3\\ITEMS",
+			"img": [
+				{
+					"ca": "Misc",
+					"pa": "QUESTITEMS\\\\UIBITMAPS\\\\(?!U_HOOKAH01|U_RODOFFERROPHILUM01)\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Relics",
+					"pa": "(CHARMS|RELICS)\\\\(X3_ANIMALPART.[1234][AB]|X3_SHARD.[1234][AB]).TEX",
+					"on": "|",
+					"of": ".TEX|_E.TEX",
+					"ov": ".TEX|_L.TEX"
+				},
+				{
+					"ca": "Jewellery",
+					"pa": "EQUIPMENTARMOR\\\\(AMULET|RING)\\\\UIBITMAPS\\\\(U_AMULET0[12]|U_RING.[1234]).TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Armbands",
+					"pa": "EQUIPMENTARMOR\\\\ARMBAND\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Greaves",
+					"pa": "EQUIPMENTARMOR\\\\GREAVES\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Helmets",
+					"pa": "EQUIPMENTARMOR\\\\HELM\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Potions",
+					"lt": [
+						"POTIONS\\XPPOTION01A.TEX"
+					]
+				},
+				{
+					"ca": "Potions",
+					"pa": "POTIONS\\\\XPPOTION0.A_UP.TEX",
+					"on": "UP.|DOWN.",
+					"of": "|",
+					"ov": "_UP.|."
+				},
+				{
+					"ca": "Scrolls",
+					"pa": "SCROLLS\\\\[ELN]_SCROLL_\\w+UP.TEX",
+					"on": "UP.TEX|DWN.TEX",
+					"of": "|",
+					"ov": "UP.TEX|RO.TEX"
+				}
+			]
+		},
+		{
+			"file": "XPACK3\\UI",
+			"img": [
+				{
+					"ca": "Skills",
+					"pa": "ICONS\\\\SKILLS\\\\\\w+UP.TEX",
+					"on": "UP.|DOWN.",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Buttons",
+					"pa": "MAP\\\\ICONS\\\\ICONSMALLCASINOMERCHANT01.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "01|OVER01"
+				}
+			]
+		},
+		{
+			"file": "XPACK4\\ITEM",
+			"img": [
+				{
+					"ca": "Misc",
+					"lt": [
+						"ARTIFACTS\\UIBITMAPS\\HUD_L_DA_ENVYOFSET_ACTIVE_UP.TEX"
+					]
+				},
+				{
+					"ca": "Artifacts",
+					"pa": "ARTIFACTS\\\\UIBITMAPS\\\\L_DA_(DISCIPLINEOFKUNLUN|ENVYOFSET|ESSENCEOFANUBISHASTE|ORBOFSIHAILONGWANG|PEACHOFIMMORTALITY|STRENGHTOFPANGU).TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Misc",
+					"pa": "ARTIFACTS\\\\UIBITMAPS\\\\L_DA_(ORBOFSIHAILONGWANG|ENVYOFSET)_ACTIVE_UP.TEX",
+					"on": "UP.|DOWN.",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Relics",
+					"pa": "(CHARMS|RELICS)\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Jewellery",
+					"pa": "EQUIPMENTARMOR\\\\AMULET\\\\UIBITMAPS\\\\[CU]_L_(DYNASTYCOLLAR|PAVILLIONPENDANT|PECTORAL|BAIDIESSENCE|BAIDIESSENCE|CHIDIESSENCE|CHIYOUPENDANT|FANGSUEKNOT|FIRSTEMPERORSRESOLVE|KWANYUSSONG|REDSEADRAGON)_01.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Jewellery",
+					"pa": "EQUIPMENTARMOR\\\\RING\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Potions",
+					"pa": "POTIONS\\\\UIBITMAPS\\\\HUD_\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Potions",
+					"pa": "POTIONS\\\\UIBITMAPS\\\\X4POT_\\w+_HUD.TEX",
+					"on": "_HUD.|.",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Scrolls",
+					"pa": "SCROLLS\\\\UIBITMAPS\\\\HUD_03_\\w+_UP.TEX",
+					"on": "UP.|DOWN.",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Scrolls",
+					"lt": [
+						"QUESTITEMS\\UIBITMAPS\\X4_QI_BELLSCHEMATICS_01.TEX"
+					]
+				},
+				{
+					"ca": "Armbands",
+					"pa": "EQUIPMENTARMOR\\\\ARMBAND\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Greaves",
+					"pa": "EQUIPMENTARMOR\\\\GREAVES\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Helmets",
+					"pa": "EQUIPMENTARMOR\\\\HELM\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Shields",
+					"pa": "EQUIPMENTWEAPON\\\\SHIELD\\\\UIBITMAPS\\\\\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Misc",
+					"pa": "QUESTITEMS\\\\UIBITMAPS\\\\(?!X4_QI_INCENSECANDLE|X4_QI_KEY|X4_QI_LOWERFRAGMENTOFHOUYISBOW|X4_QI_MAUSOLEUMKEY|X4_QI_SEALOFTHEDRAGONKING|X4_QI_SLAVERCAMPSCELLKEY|X4_QI_UPPERFRAGMENTOFHOUYISBOW|X4_QI_VILLAGEIDOL|X4_QI_BELLSCHEMATICS)\\w+.TEX",
+					"on": "|",
+					"of": "|",
+					"ov": "|"
+				}
+			]
+		}
+	]
+}

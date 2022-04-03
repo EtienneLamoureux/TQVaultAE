@@ -19,6 +19,12 @@ namespace TQVaultAE.Data
 	/// </summary>
 	public class TQDataService : ITQDataService
 	{
+		public const int BEGIN_BLOCK_VALUE = -1340212530;
+		public const int END_BLOCK_VALUE = -559038242;
+
+		public int BeginBlockValue => BEGIN_BLOCK_VALUE;
+		public int EndBlockValue => END_BLOCK_VALUE;
+
 		private readonly ILogger Log;
 		internal static readonly Encoding Encoding1252 = Encoding.GetEncoding(1252);
 		internal static readonly Encoding EncodingUnicode = Encoding.Unicode;

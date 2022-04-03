@@ -3,16 +3,17 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using TQVaultAE.GUI.Tooltip;
+using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Helpers;
+
 namespace TQVaultAE.GUI.Components
 {
-	using Microsoft.Extensions.DependencyInjection;
-	using System;
-	using System.Drawing;
-	using System.Windows.Forms;
-	using Tooltip;
-	using TQVaultAE.Domain.Contracts.Services;
-	using TQVaultAE.Domain.Entities;
-
 	/// <summary>
 	/// Delegate for displaying a tooltip with the bag's contents.
 	/// </summary>
@@ -28,7 +29,57 @@ namespace TQVaultAE.GUI.Components
 		protected readonly IServiceProvider ServiceProvider;
 		protected readonly IFontService FontService;
 		protected readonly IUIService UIService;
+
 		internal SackCollection Sack;
+
+		private BagButtonIconInfo _DefaultIconInfo = new BagButtonIconInfo()
+		{
+			DisplayMode = BagButtonDisplayMode.Default,
+		};
+
+		internal BagButtonIconInfo CurrentIconInfo
+		{
+			get
+			{
+				var info = this.Sack?.BagButtonIconInfo;
+				if (info is null) return _DefaultIconInfo;
+				return info;
+			}
+		}
+
+		/// <summary>
+		/// Apply custom bitmap from config file
+		/// </summary>
+		internal void ApplyIconInfo(SackCollection sack)
+		{
+			this.Sack = sack;
+			var info = this.CurrentIconInfo;
+
+			ApplyDefaultIcon();
+
+			// custom config detected
+			if (info.DisplayMode != BagButtonDisplayMode.Default)
+			{
+				// Load custom
+				this.OnBitmap = string.IsNullOrWhiteSpace(info.On) ? null : UIService.LoadBitmap(info.On);
+				this.OffBitmap = string.IsNullOrWhiteSpace(info.Off) ? null : UIService.LoadBitmap(info.Off);
+				this.OverBitmap = string.IsNullOrWhiteSpace(info.Over) ? null : UIService.LoadBitmap(info.Over);
+
+				if (this.OnBitmap is not null && this.OffBitmap is not null) return;// Done
+
+				// Bitmap not found ?? Should not happen except missing DLC and Vault file sharing
+				ApplyDefaultIcon();
+			}
+
+			this.Refresh();
+		}
+
+		internal void ApplyDefaultIcon()
+		{
+			// Apply default config
+			this.OnBitmap = this.OffBitmap = this.OverBitmap = null;// Reset
+			this.CreateBackgroundGraphics();
+		}
 
 		/// <summary>
 		/// Flag to signal when the mouse is clicked on the button.
@@ -52,12 +103,11 @@ namespace TQVaultAE.GUI.Components
 			// 
 			// BagButtonBase
 			// 
-			this.BackColor = System.Drawing.Color.Black;
+			this.BackColor = System.Drawing.Color.Transparent;
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
 			this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
 			this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
 			this.ResumeLayout(false);
-
 		}
 
 		/// <summary>
@@ -129,6 +179,7 @@ namespace TQVaultAE.GUI.Components
 			}
 		}
 
+
 		#endregion BagButton Properties
 
 		/// <summary>
@@ -163,15 +214,20 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="e">EventArgs data</param>
 		private void MouseEnterCallback(object sender, EventArgs e)
 		{
+			BagButtonLabelTooltip.ShowTooltip(this.ServiceProvider, this);
+
 			if (this.getToolTip != null)
 			{
 				// Disable Tooltip bag
-				var panel = this.getToolTip.Target as VaultPanel;
-				if (panel?.DisabledTooltipBagId.Contains(this.ButtonNumber) ?? false)
-					return;
-
-				this.getToolTip(this);
-				BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
+				var panel = this.getToolTip.Target as Panel;
+				if(
+					(panel is VaultPanel vp && vp.Vault is not null && !vp.Vault.DisabledTooltipBagId.Contains(this.ButtonNumber))
+					|| panel is PlayerPanel || panel is SackPanel || panel is StashPanel
+				)
+				{
+					this.getToolTip(this);
+					BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
+				}
 			}
 
 			this.IsOver = true;
@@ -190,6 +246,7 @@ namespace TQVaultAE.GUI.Components
 
 			// Clear out the tooltip if it is being displayed.
 			BagButtonTooltip.HideTooltip();
+			BagButtonLabelTooltip.HideTooltip();
 		}
 
 		/// <summary>
@@ -199,7 +256,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="e">PaintEventArgs data</param>
 		private void PaintCallback(object sender, PaintEventArgs e)
 		{
-			if (this.OffBitmap == null)
+			if (this.OffBitmap is null)
 				this.CreateBackgroundGraphics();
 
 			Bitmap bitmap = this.OffBitmap;
@@ -210,14 +267,28 @@ namespace TQVaultAE.GUI.Components
 			}
 			else if (this.IsOver)
 			{
-				bitmap = this.OverBitmap;
+				if (this.OverBitmap is null)
+					bitmap = this.OffBitmap;// use off state
+				else
+					bitmap = this.OverBitmap;
 			}
 
+
 			// Draw the background graphic.
-			e.Graphics.DrawImage(bitmap, 0, 0, this.Width, this.Height);
+			Image bmp;
+			if (this.Parent is VaultPanel vp && vp.Vault is not null)
+				bmp = bitmap.ResizeImage(this.Width, this.Height, maintainAspectRatio: true);
+			else
+				bmp = bitmap;
+
+			e.Graphics.DrawImage(bmp, 0, 0, this.Width, this.Height);
+
+			if (this.CurrentIconInfo.DisplayMode != BagButtonDisplayMode.Default // Vault Only
+				&& !this.CurrentIconInfo.DisplayMode.HasFlag(BagButtonDisplayMode.Number))// No Number
+				return;
 
 			// Display the text overlay if we have one.
-			if (!string.IsNullOrEmpty(this.ButtonText))
+			if (!string.IsNullOrEmpty(this.ButtonText))// ButtonText is a number for Vault
 			{
 				Font font = this.GetScaledButtonTextFont(e.Graphics, FontService.GetFontLight(20.0F * UIService.Scale, GraphicsUnit.Pixel));
 
@@ -289,7 +360,7 @@ namespace TQVaultAE.GUI.Components
 					testFont = FontService.GetFont(fontSize, testFont.Style, GraphicsUnit.Pixel, testFont.GdiCharSet);
 
 					// Check to see if the whole string will fit inside the button on a single line.
-					if(TextRenderer.MeasureText(this.ButtonText, testFont).Width < this.Width)
+					if (TextRenderer.MeasureText(this.ButtonText, testFont).Width < this.Width)
 					{
 						break;
 					}

@@ -1,644 +1,680 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
-  <PropertyGroup>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-  </PropertyGroup>
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{5A472C5B-BC7E-46EE-905E-93CCD53E8EAA}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TQVaultAE.GUI</RootNamespace>
-    <AssemblyName>TQVaultAE</AssemblyName>
-    <ApplicationIcon>app.ico</ApplicationIcon>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkProfile />
-    <PublishUrl>D:\TQVaultAE_Release\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <PublishWizardCompleted>true</PublishWizardCompleted>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\AnyCPU\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\AnyCPU\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>false</SignManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>TQVaultAE.GUI.Program</StartupObject>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-    <Optimize>false</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
+	<PropertyGroup>
+		<RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+	</PropertyGroup>
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProductVersion>9.0.30729</ProductVersion>
+		<SchemaVersion>2.0</SchemaVersion>
+		<ProjectGuid>{5A472C5B-BC7E-46EE-905E-93CCD53E8EAA}</ProjectGuid>
+		<OutputType>WinExe</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>TQVaultAE.GUI</RootNamespace>
+		<AssemblyName>TQVaultAE</AssemblyName>
+		<ApplicationIcon>app.ico</ApplicationIcon>
+		<FileUpgradeFlags>
+		</FileUpgradeFlags>
+		<OldToolsVersion>3.5</OldToolsVersion>
+		<UpgradeBackupLocation>
+		</UpgradeBackupLocation>
+		<TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+		<IsWebBootstrapper>false</IsWebBootstrapper>
+		<TargetFrameworkProfile />
+		<PublishUrl>D:\TQVaultAE_Release\</PublishUrl>
+		<Install>true</Install>
+		<InstallFrom>Disk</InstallFrom>
+		<UpdateEnabled>false</UpdateEnabled>
+		<UpdateMode>Foreground</UpdateMode>
+		<UpdateInterval>7</UpdateInterval>
+		<UpdateIntervalUnits>Days</UpdateIntervalUnits>
+		<UpdatePeriodically>false</UpdatePeriodically>
+		<UpdateRequired>false</UpdateRequired>
+		<MapFileExtensions>true</MapFileExtensions>
+		<ApplicationRevision>1</ApplicationRevision>
+		<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+		<UseApplicationTrust>false</UseApplicationTrust>
+		<PublishWizardCompleted>true</PublishWizardCompleted>
+		<BootstrapperEnabled>true</BootstrapperEnabled>
+		<NuGetPackageImportStamp>
+		</NuGetPackageImportStamp>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>full</DebugType>
+		<Optimize>false</Optimize>
+		<OutputPath>bin\AnyCPU\Debug\</OutputPath>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Prefer32Bit>false</Prefer32Bit>
 		<LangVersion>9</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>pdbonly</DebugType>
+		<Optimize>true</Optimize>
+		<OutputPath>bin\AnyCPU\Release\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<Prefer32Bit>false</Prefer32Bit>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<LangVersion>9</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <ItemGroup>
+	</PropertyGroup>
+	<PropertyGroup>
+		<SignManifests>false</SignManifests>
+	</PropertyGroup>
+	<PropertyGroup>
+		<SignAssembly>false</SignAssembly>
+	</PropertyGroup>
+	<PropertyGroup>
+		<AssemblyOriginatorKeyFile>
+		</AssemblyOriginatorKeyFile>
+	</PropertyGroup>
+	<PropertyGroup>
+		<StartupObject>TQVaultAE.GUI.Program</StartupObject>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+		<DebugSymbols>true</DebugSymbols>
+		<OutputPath>bin\x86\Debug\</OutputPath>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<DebugType>full</DebugType>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<ErrorReport>prompt</ErrorReport>
+		<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+		<Prefer32Bit>false</Prefer32Bit>
+		<Optimize>false</Optimize>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+		<OutputPath>bin\x86\Release\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<Optimize>true</Optimize>
+		<DebugType>pdbonly</DebugType>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<ErrorReport>prompt</ErrorReport>
+		<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Prefer32Bit>false</Prefer32Bit>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+		<DebugSymbols>true</DebugSymbols>
+		<OutputPath>bin\x64\Debug\</OutputPath>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<DebugType>full</DebugType>
+		<PlatformTarget>x64</PlatformTarget>
+		<LangVersion>9</LangVersion>
+		<ErrorReport>prompt</ErrorReport>
+		<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+		<OutputPath>bin\x64\Release\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Optimize>true</Optimize>
+		<DebugType>pdbonly</DebugType>
+		<PlatformTarget>x64</PlatformTarget>
+		<LangVersion>9</LangVersion>
+		<ErrorReport>prompt</ErrorReport>
+		<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+	<ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.OracleClient" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AboutBox.cs">
+		<Reference Include="PresentationCore" />
+		<Reference Include="System" />
+		<Reference Include="System.ComponentModel.Composition" />
+		<Reference Include="System.ComponentModel.DataAnnotations" />
+		<Reference Include="System.configuration" />
+		<Reference Include="System.Data" />
+		<Reference Include="System.Data.OracleClient" />
+		<Reference Include="System.Deployment" />
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.IO.Compression.FileSystem" />
+		<Reference Include="System.Net" />
+		<Reference Include="System.Numerics" />
+		<Reference Include="System.Security" />
+		<Reference Include="System.ServiceProcess" />
+		<Reference Include="System.Transactions" />
+		<Reference Include="System.Windows.Forms" />
+		<Reference Include="System.Xml" />
+		<Reference Include="System.Xml.Linq" />
+		<Reference Include="WindowsBase" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="AboutBox.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="AboutBox.Designer.cs">
+			<DependentUpon>AboutBox.cs</DependentUpon>
+		</Compile>
+    <Compile Include="BagButtonSettings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AboutBox.Designer.cs">
-      <DependentUpon>AboutBox.cs</DependentUpon>
+    <Compile Include="BagButtonSettings.Designer.cs">
+      <DependentUpon>BagButtonSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="Components\BufferedFlowLayoutPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\BufferedTableLayoutPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\IScalingControl.cs" />
-    <Compile Include="Components\ScalingCheckedListBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\TypeAssistant.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Helpers\WinFormExtension.cs" />
-    <Compile Include="MainForm.Stash.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm.Search.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm.Player.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm.Panel.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Models\AutoMoveLocation.cs" />
-    <Compile Include="Components\AutoSortButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\BagButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\BagButtonBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Models\ComboBoxItem.cs" />
-    <Compile Include="Models\CommandLineArgs.cs" />
-    <Compile Include="Models\ItemDragInfo.cs" />
-    <Compile Include="Models\ResizeEventArgs.cs" />
-    <Compile Include="Models\ResultChangedEventArgs.cs" />
-    <Compile Include="Models\SackPanelEventArgs.cs" />
-    <Compile Include="CharacterEditDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CharacterEditDialog.Designer.cs">
-      <DependentUpon>CharacterEditDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ItemProperties.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ItemProperties.Designer.cs">
-      <DependentUpon>ItemProperties.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ItemSeedDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ItemSeedDialog.Designer.cs">
-      <DependentUpon>ItemSeedDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Components\PlayerPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Models\SearchDialogAdvanced\SearchQuery.cs" />
-    <Compile Include="Models\SearchDialogAdvanced\BoxItem.cs" />
-    <Compile Include="Models\SearchDialogAdvanced\SearchOperator.cs" />
-    <Compile Include="Models\SearchDialogAdvanced\BoxTag.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SearchDialogAdvanced.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SearchDialogAdvanced.Designer.cs">
-      <DependentUpon>SearchDialogAdvanced.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Components\EquipmentPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="SplashScreenForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SplashScreenForm.Designer.cs">
-      <DependentUpon>SplashScreenForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tooltip\FoundResultsTooltip.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Tooltip\FoundResultsTooltip.Designer.cs">
-      <DependentUpon>FoundResultsTooltip.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tooltip\BaseTooltip.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Tooltip\ItemTooltip.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Tooltip\ItemTooltip.Designer.cs">
-      <DependentUpon>ItemTooltip.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tooltip\BagButtonTooltip.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Tooltip\BagButtonTooltip.Designer.cs">
-      <DependentUpon>BagButtonTooltip.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\User32.cs" />
-    <Compile Include="MainForm.Vault.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Tooltip\SearchFiltersTooltip.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Tooltip\SearchFiltersTooltip.Designer.cs">
-      <DependentUpon>SearchFiltersTooltip.cs</DependentUpon>
-    </Compile>
-    <Compile Include="VaultForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="VaultForm.Designer.cs">
-      <DependentUpon>VaultForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Components\VaultPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\VaultProgressBar.cs">
+		<Compile Include="Components\BufferedFlowLayoutPanel.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\BufferedTableLayoutPanel.cs">
+			<SubType>Component</SubType>
+		</Compile>
+    <Compile Include="Components\IconMagnifier.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Components\WindowMenu.cs">
-      <SubType>Component</SubType>
+    <Compile Include="Components\IconMagnifier.Designer.cs">
+      <DependentUpon>IconMagnifier.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\WindowMenuEventArgs.cs" />
-    <EmbeddedResource Include="AboutBox.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>AboutBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Components\AutoSortButton.resx">
-      <DependentUpon>AutoSortButton.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Components\BagButtonBase.resx">
-      <DependentUpon>BagButtonBase.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Components\SackPanel.resx">
-      <DependentUpon>SackPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Components\ScalingCheckedListBox.resx">
-      <DependentUpon>ScalingCheckedListBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Components\ScalingComboBox.resx">
-      <DependentUpon>ScalingComboBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Components\VaultPanel.resx">
-      <DependentUpon>VaultPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Components\VaultProgressBar.resx">
-      <DependentUpon>VaultProgressBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ItemProperties.resx">
-      <DependentUpon>ItemProperties.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CharacterEditDialog.resx">
-      <DependentUpon>CharacterEditDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ItemSeedDialog.resx">
-      <DependentUpon>ItemSeedDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ResultsDialog.resx">
-      <DependentUpon>ResultsDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Components\ScalingButton.resx">
-      <DependentUpon>ScalingButton.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SearchDialogAdvanced.resx">
-      <DependentUpon>SearchDialogAdvanced.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SettingsDialog.resx">
-      <DependentUpon>SettingsDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SplashScreenForm.resx">
-      <DependentUpon>SplashScreenForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tooltip\FoundResultsTooltip.resx">
-      <DependentUpon>FoundResultsTooltip.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tooltip\BagButtonTooltip.resx">
-      <DependentUpon>BagButtonTooltip.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tooltip\ItemTooltip.resx">
-      <DependentUpon>ItemTooltip.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tooltip\SearchFiltersTooltip.resx">
-      <DependentUpon>SearchFiltersTooltip.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="VaultForm.resx">
-      <DependentUpon>VaultForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="VaultMaintenanceDialog.resx">
-      <DependentUpon>VaultMaintenanceDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Content Include="app.ico" />
-    <Content Include="log4net.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <None Include="app.config" />
-    <Compile Include="ResultsDialog.cs">
+		<Compile Include="Components\IScalingControl.cs" />
+		<Compile Include="Components\ScalingCheckedListBox.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\TypeAssistant.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Helpers\WinFormExtension.cs" />
+		<Compile Include="MainForm.Stash.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="MainForm.Search.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="MainForm.Player.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="MainForm.Panel.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Models\AutoMoveLocation.cs" />
+		<Compile Include="Components\AutoSortButton.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\BagButton.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\BagButtonBase.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Models\ComboBoxItem.cs" />
+		<Compile Include="Models\CommandLineArgs.cs" />
+		<Compile Include="Models\ItemDragInfo.cs" />
+		<Compile Include="Models\ResizeEventArgs.cs" />
+		<Compile Include="Models\ResultChangedEventArgs.cs" />
+		<Compile Include="Models\SackPanelEventArgs.cs" />
+		<Compile Include="CharacterEditDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="CharacterEditDialog.Designer.cs">
+			<DependentUpon>CharacterEditDialog.cs</DependentUpon>
+		</Compile>
+		<Compile Include="ItemProperties.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="ItemProperties.Designer.cs">
+			<DependentUpon>ItemProperties.cs</DependentUpon>
+		</Compile>
+		<Compile Include="ItemSeedDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="ItemSeedDialog.Designer.cs">
+			<DependentUpon>ItemSeedDialog.cs</DependentUpon>
+		</Compile>
+		<Compile Include="MainForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="MainForm.Designer.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Components\PlayerPanel.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Models\SearchDialogAdvanced\SearchQuery.cs" />
+		<Compile Include="Models\SearchDialogAdvanced\BoxItem.cs" />
+		<Compile Include="Models\SearchDialogAdvanced\SearchOperator.cs" />
+		<Compile Include="Models\SearchDialogAdvanced\BoxTag.cs" />
+		<Compile Include="Program.cs" />
+		<Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+		<Compile Include="SearchDialogAdvanced.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="SearchDialogAdvanced.Designer.cs">
+			<DependentUpon>SearchDialogAdvanced.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Components\EquipmentPanel.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="SplashScreenForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="SplashScreenForm.Designer.cs">
+			<DependentUpon>SplashScreenForm.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Tooltip\FoundResultsTooltip.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Tooltip\FoundResultsTooltip.Designer.cs">
+			<DependentUpon>FoundResultsTooltip.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Tooltip\BaseTooltip.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Tooltip\ItemTooltip.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Tooltip\ItemTooltip.Designer.cs">
+			<DependentUpon>ItemTooltip.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Tooltip\BagButtonTooltip.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Tooltip\BagButtonTooltip.Designer.cs">
+			<DependentUpon>BagButtonTooltip.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Models\User32.cs" />
+		<Compile Include="MainForm.Vault.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+			<SubType>Form</SubType>
+		</Compile>
+    <Compile Include="Tooltip\BagButtonLabelTooltip.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ResultsDialog.Designer.cs">
-      <DependentUpon>ResultsDialog.cs</DependentUpon>
+    <Compile Include="Tooltip\BagButtonLabelTooltip.Designer.cs">
+      <DependentUpon>BagButtonLabelTooltip.cs</DependentUpon>
     </Compile>
-    <Compile Include="Components\SackPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\ScalingButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\ScalingCheckBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\ScalingComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\ScalingLabel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\ScalingRadioButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\ScalingTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="SettingsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SettingsDialog.Designer.cs">
-      <DependentUpon>SettingsDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Components\StashButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\StashPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="VaultMaintenanceDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="VaultMaintenanceDialog.Designer.cs">
-      <DependentUpon>VaultMaintenanceDialog.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj">
-      <Project>{2434d5c6-efbb-414d-93d6-2236fa62c0bc}</Project>
-      <Name>TQVaultAE.Config</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TQVaultAE.Data\TQVaultAE.Data.csproj">
-      <Project>{f0d211fa-6fe0-4ab6-ad33-65c1f3dfa895}</Project>
-      <Name>TQVaultAE.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TQVaultAE.Domain\TQVaultAE.Domain.csproj">
-      <Project>{2a8e56bc-4567-4e29-a67d-202e39fc1748}</Project>
-      <Name>TQVaultAE.Domain</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TQVaultAE.Logs\TQVaultAE.Logs.csproj">
-      <Project>{a3715670-c701-4623-b9ba-9a48fca95adc}</Project>
-      <Name>TQVaultAE.Logs</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj">
-      <Project>{6e20606d-9460-469f-b340-d3418165a19b}</Project>
-      <Name>TQVaultAE.Presentation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TQVaultAE.Services.Win32\TQVaultAE.Services.Win32.csproj">
-      <Project>{E7A1426B-E531-4D67-9272-18DA5AE79484}</Project>
-      <Name>TQVaultAE.Services.Win32</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TQVaultAE.Services\TQVaultAE.Services.csproj">
-      <Project>{23F812FB-B5C7-4022-90A7-3B8D7A793E6A}</Project>
-      <Name>TQVaultAE.Services</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="DDSReader">
-      <Version>1.0.8-pre</Version>
-    </PackageReference>
-    <PackageReference Include="Enums.NET">
-      <Version>3.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection">
-      <Version>3.1.3</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore">
-      <Version>3.1.0</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.NETCore.Platforms">
-      <Version>3.1.0</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Win32.Primitives">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="NETStandard.Library">
-      <Version>2.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="System.AppContext">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Buffers">
-      <Version>4.5.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Collections">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Collections.Concurrent">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Configuration.ConfigurationManager">
-      <Version>4.7.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Console">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Diagnostics.Debug">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Diagnostics.DiagnosticSource">
-      <Version>4.7.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Diagnostics.Tools">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Diagnostics.Tracing">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Globalization">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Globalization.Calendars">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.IO.Compression">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.IO.Compression.ZipFile">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Linq">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Linq.Expressions">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Net.Http">
-      <Version>4.3.4</Version>
-    </PackageReference>
-    <PackageReference Include="System.Net.Primitives">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Net.Sockets">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Numerics.Vectors">
-      <Version>4.6.0-preview5.19224.8</Version>
-    </PackageReference>
-    <PackageReference Include="System.ObjectModel">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Reflection">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Reflection.Extensions">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Reflection.Primitives">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Resources.ResourceManager">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
-      <Version>4.7.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.Extensions">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.Handles">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.InteropServices">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.Numerics">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Security.Cryptography.Algorithms">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Security.Cryptography.X509Certificates">
-      <Version>4.3.2</Version>
-    </PackageReference>
-    <PackageReference Include="System.Text.Encoding">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Text.Encoding.Extensions">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Text.RegularExpressions">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading.Tasks">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading.Timer">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Xml.ReaderWriter">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Xml.XDocument">
-      <Version>4.3.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-REM Copy Build
-XCOPY "$(ProjectDir)bin\$(Platform)\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /Y /S /I
+		<Compile Include="Tooltip\SearchFiltersTooltip.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Tooltip\SearchFiltersTooltip.Designer.cs">
+			<DependentUpon>SearchFiltersTooltip.cs</DependentUpon>
+		</Compile>
+		<Compile Include="VaultForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="VaultForm.Designer.cs">
+			<DependentUpon>VaultForm.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Components\VaultPanel.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\VaultProgressBar.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Components\WindowMenu.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Models\WindowMenuEventArgs.cs" />
+		<EmbeddedResource Include="AboutBox.resx">
+			<SubType>Designer</SubType>
+			<DependentUpon>AboutBox.cs</DependentUpon>
+		</EmbeddedResource>
+    <EmbeddedResource Include="BagButtonSettings.resx">
+      <DependentUpon>BagButtonSettings.cs</DependentUpon>
+    </EmbeddedResource>
+		<EmbeddedResource Include="Components\AutoSortButton.resx">
+			<DependentUpon>AutoSortButton.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Components\BagButtonBase.resx">
+			<DependentUpon>BagButtonBase.cs</DependentUpon>
+		</EmbeddedResource>
+    <EmbeddedResource Include="Components\IconMagnifier.resx">
+      <DependentUpon>IconMagnifier.cs</DependentUpon>
+    </EmbeddedResource>
+		<EmbeddedResource Include="Components\SackPanel.resx">
+			<DependentUpon>SackPanel.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Components\ScalingCheckedListBox.resx">
+			<DependentUpon>ScalingCheckedListBox.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Components\ScalingComboBox.resx">
+			<DependentUpon>ScalingComboBox.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Components\VaultPanel.resx">
+			<DependentUpon>VaultPanel.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Components\VaultProgressBar.resx">
+			<DependentUpon>VaultProgressBar.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Include="ItemProperties.resx">
+			<DependentUpon>ItemProperties.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="CharacterEditDialog.resx">
+			<DependentUpon>CharacterEditDialog.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="ItemSeedDialog.resx">
+			<DependentUpon>ItemSeedDialog.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="MainForm.resx">
+			<SubType>Designer</SubType>
+			<DependentUpon>MainForm.cs</DependentUpon>
+		</EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+		<EmbeddedResource Include="ResultsDialog.resx">
+			<DependentUpon>ResultsDialog.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Components\ScalingButton.resx">
+			<DependentUpon>ScalingButton.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Include="SearchDialogAdvanced.resx">
+			<DependentUpon>SearchDialogAdvanced.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Include="SettingsDialog.resx">
+			<DependentUpon>SettingsDialog.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="SplashScreenForm.resx">
+			<DependentUpon>SplashScreenForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Tooltip\FoundResultsTooltip.resx">
+			<DependentUpon>FoundResultsTooltip.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Tooltip\BagButtonTooltip.resx">
+			<DependentUpon>BagButtonTooltip.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Tooltip\ItemTooltip.resx">
+			<DependentUpon>ItemTooltip.cs</DependentUpon>
+		</EmbeddedResource>
+    <EmbeddedResource Include="Tooltip\BagButtonLabelTooltip.resx">
+      <DependentUpon>BagButtonLabelTooltip.cs</DependentUpon>
+    </EmbeddedResource>
+		<EmbeddedResource Include="Tooltip\SearchFiltersTooltip.resx">
+			<DependentUpon>SearchFiltersTooltip.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Include="VaultForm.resx">
+			<DependentUpon>VaultForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Include="VaultMaintenanceDialog.resx">
+			<DependentUpon>VaultMaintenanceDialog.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<Content Include="app.ico" />
+		<Content Include="log4net.config">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<None Include="app.config" />
+		<Compile Include="ResultsDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="ResultsDialog.Designer.cs">
+			<DependentUpon>ResultsDialog.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Components\SackPanel.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\ScalingButton.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\ScalingCheckBox.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\ScalingComboBox.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\ScalingLabel.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\ScalingRadioButton.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\ScalingTextBox.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="SettingsDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="SettingsDialog.Designer.cs">
+			<DependentUpon>SettingsDialog.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Components\StashButton.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\StashPanel.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="VaultMaintenanceDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="VaultMaintenanceDialog.Designer.cs">
+			<DependentUpon>VaultMaintenanceDialog.cs</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj">
+			<Project>{2434d5c6-efbb-414d-93d6-2236fa62c0bc}</Project>
+			<Name>TQVaultAE.Config</Name>
+		</ProjectReference>
+		<ProjectReference Include="..\TQVaultAE.Data\TQVaultAE.Data.csproj">
+			<Project>{f0d211fa-6fe0-4ab6-ad33-65c1f3dfa895}</Project>
+			<Name>TQVaultAE.Data</Name>
+		</ProjectReference>
+		<ProjectReference Include="..\TQVaultAE.Domain\TQVaultAE.Domain.csproj">
+			<Project>{2a8e56bc-4567-4e29-a67d-202e39fc1748}</Project>
+			<Name>TQVaultAE.Domain</Name>
+		</ProjectReference>
+		<ProjectReference Include="..\TQVaultAE.Logs\TQVaultAE.Logs.csproj">
+			<Project>{a3715670-c701-4623-b9ba-9a48fca95adc}</Project>
+			<Name>TQVaultAE.Logs</Name>
+		</ProjectReference>
+		<ProjectReference Include="..\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj">
+			<Project>{6e20606d-9460-469f-b340-d3418165a19b}</Project>
+			<Name>TQVaultAE.Presentation</Name>
+		</ProjectReference>
+		<ProjectReference Include="..\TQVaultAE.Services.Win32\TQVaultAE.Services.Win32.csproj">
+			<Project>{E7A1426B-E531-4D67-9272-18DA5AE79484}</Project>
+			<Name>TQVaultAE.Services.Win32</Name>
+		</ProjectReference>
+		<ProjectReference Include="..\TQVaultAE.Services\TQVaultAE.Services.csproj">
+			<Project>{23F812FB-B5C7-4022-90A7-3B8D7A793E6A}</Project>
+			<Name>TQVaultAE.Services</Name>
+		</ProjectReference>
+	</ItemGroup>
+	<ItemGroup>
+		<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+			<Visible>False</Visible>
+			<ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+			<Install>false</Install>
+		</BootstrapperPackage>
+		<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+			<Visible>False</Visible>
+			<ProductName>.NET Framework 3.5 SP1</ProductName>
+			<Install>true</Install>
+		</BootstrapperPackage>
+		<BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+			<Visible>False</Visible>
+			<ProductName>Windows Installer 3.1</ProductName>
+			<Install>true</Install>
+		</BootstrapperPackage>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="DDSReader">
+			<Version>1.0.8-pre</Version>
+		</PackageReference>
+		<PackageReference Include="Enums.NET">
+			<Version>3.0.3</Version>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection">
+			<Version>3.1.3</Version>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore">
+			<Version>3.1.0</Version>
+		</PackageReference>
+		<PackageReference Include="Microsoft.NETCore.Platforms">
+			<Version>3.1.0</Version>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Win32.Primitives">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="NETStandard.Library">
+			<Version>2.0.3</Version>
+		</PackageReference>
+		<PackageReference Include="Newtonsoft.Json">
+			<Version>12.0.3</Version>
+		</PackageReference>
+		<PackageReference Include="System.AppContext">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Buffers">
+			<Version>4.5.1</Version>
+		</PackageReference>
+		<PackageReference Include="System.Collections">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Collections.Concurrent">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Configuration.ConfigurationManager">
+			<Version>4.7.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Console">
+			<Version>4.3.1</Version>
+		</PackageReference>
+		<PackageReference Include="System.Diagnostics.Debug">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Diagnostics.DiagnosticSource">
+			<Version>4.7.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Diagnostics.Tools">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Diagnostics.Tracing">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Globalization">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Globalization.Calendars">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.IO.Compression">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.IO.Compression.ZipFile">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Linq">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Linq.Expressions">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Net.Http">
+			<Version>4.3.4</Version>
+		</PackageReference>
+		<PackageReference Include="System.Net.Primitives">
+			<Version>4.3.1</Version>
+		</PackageReference>
+		<PackageReference Include="System.Net.Sockets">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Numerics.Vectors">
+			<Version>4.6.0-preview5.19224.8</Version>
+		</PackageReference>
+		<PackageReference Include="System.ObjectModel">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Reflection">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Reflection.Extensions">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Reflection.Primitives">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Resources.ResourceManager">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Runtime">
+			<Version>4.3.1</Version>
+		</PackageReference>
+		<PackageReference Include="System.Runtime.CompilerServices.Unsafe">
+			<Version>4.7.1</Version>
+		</PackageReference>
+		<PackageReference Include="System.Runtime.Extensions">
+			<Version>4.3.1</Version>
+		</PackageReference>
+		<PackageReference Include="System.Runtime.Handles">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Runtime.InteropServices">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Runtime.InteropServices.RuntimeInformation">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Runtime.Numerics">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Security.Cryptography.Algorithms">
+			<Version>4.3.1</Version>
+		</PackageReference>
+		<PackageReference Include="System.Security.Cryptography.X509Certificates">
+			<Version>4.3.2</Version>
+		</PackageReference>
+		<PackageReference Include="System.Text.Encoding">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Text.Encoding.Extensions">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Text.RegularExpressions">
+			<Version>4.3.1</Version>
+		</PackageReference>
+		<PackageReference Include="System.Threading">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Threading.Tasks">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Threading.Timer">
+			<Version>4.3.0</Version>
+		</PackageReference>
+		<PackageReference Include="System.Xml.ReaderWriter">
+			<Version>4.3.1</Version>
+		</PackageReference>
+		<PackageReference Include="System.Xml.XDocument">
+			<Version>4.3.0</Version>
+		</PackageReference>
+	</ItemGroup>
+	<Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+	<PropertyGroup>
+		<PostBuildEvent>
+			REM Copy Build
+			XCOPY "$(ProjectDir)bin\$(Platform)\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /Y /S /I
 
-REM Clean output of unnecessary files
-DEL "$(SolutionDir)bin\$(ConfigurationName)\*.pdb"
-RMDIR "$(SolutionDir)bin\$(ConfigurationName)\Logging" /S /Q
-</PostBuildEvent>
-  </PropertyGroup>
-  <Import Project="..\MsBuildAL1073WarningWorkaround.config" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+			REM Clean output of unnecessary files
+			DEL "$(SolutionDir)bin\$(ConfigurationName)\*.pdb"
+			RMDIR "$(SolutionDir)bin\$(ConfigurationName)\Logging" /S /Q
+		</PostBuildEvent>
+	</PropertyGroup>
+	<Import Project="..\MsBuildAL1073WarningWorkaround.config" />
+	<PropertyGroup>
+		<PreBuildEvent>
+		</PreBuildEvent>
+	</PropertyGroup>
+	<!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
