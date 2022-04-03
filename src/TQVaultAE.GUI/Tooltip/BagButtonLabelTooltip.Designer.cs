@@ -39,10 +39,10 @@
             this.scalingLabel.BackColor = System.Drawing.Color.Transparent;
             this.scalingLabel.Font = new System.Drawing.Font("Albertus MT", 15F);
             this.scalingLabel.ForeColor = System.Drawing.Color.Gold;
-            this.scalingLabel.Location = new System.Drawing.Point(5, 5);
+            this.scalingLabel.Location = new System.Drawing.Point(0, 0);
             this.scalingLabel.Margin = new System.Windows.Forms.Padding(0);
             this.scalingLabel.Name = "scalingLabel";
-            this.scalingLabel.Size = new System.Drawing.Size(177, 30);
+            this.scalingLabel.Size = new System.Drawing.Size(187, 40);
             this.scalingLabel.TabIndex = 0;
             this.scalingLabel.Text = "scalingLabel";
             this.scalingLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -64,7 +64,6 @@
             this.MinimizeBox = false;
             this.Name = "BagButtonLabelTooltip";
             this.Opacity = 0.9D;
-            this.Padding = new System.Windows.Forms.Padding(5);
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "BagButtonTooltip";

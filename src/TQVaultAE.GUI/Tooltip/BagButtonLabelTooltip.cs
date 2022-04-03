@@ -15,7 +15,6 @@ namespace TQVaultAE.GUI.Tooltip
 		private static BagButtonLabelTooltip _Current = null;
 		private string _Label;
 		private Control _AnchorControl;
-		private readonly Rectangle CurrentWorkingArea;
 		private readonly Bitmap bgimg;
 
 		internal Control AnchorControl
@@ -47,7 +46,7 @@ namespace TQVaultAE.GUI.Tooltip
 				this.scalingLabel.Text = _Label;
 
 				// Adjust size to text
-				var txtsize = TextRenderer.MeasureText(this._Label, this.scalingLabel.Font);// May vary with font
+				var txtsize = TextRenderer.MeasureText(this._Label, this.scalingLabel.Font, this.Size, TextFormatFlags.SingleLine);// May vary with font
 
 				if (txtsize.Width > this.Width)
 					this.Width = txtsize.Width + 25;// +20 for marging
@@ -79,8 +78,6 @@ namespace TQVaultAE.GUI.Tooltip
 			InitializeComponent();
 
 			SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
-
-			this.CurrentWorkingArea = Screen.FromControl(this).WorkingArea;
 
 			this.scalingLabel.Font = fontService.GetFont(15F, GraphicsUnit.Point);
 
@@ -124,8 +121,10 @@ namespace TQVaultAE.GUI.Tooltip
 						, serviceProvider.GetService<IUIService>()
 						, serviceProvider.GetService<ITranslationService>()
 					);
-				_Current.AnchorControl = anchorControl;
+
+				_Current.ClientSize = new Size(187, 40);// Reset Size before computation
 				_Current.Label = label;
+				_Current.AnchorControl = anchorControl;
 				_Current.Show();
 			}
 			return _Current;
