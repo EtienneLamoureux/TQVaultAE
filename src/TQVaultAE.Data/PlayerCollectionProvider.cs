@@ -6,12 +6,14 @@
 namespace TQVaultAE.Data
 {
 	using Microsoft.Extensions.Logging;
+	using Newtonsoft.Json;
 	using System;
 	using System.IO;
 	using System.Linq;
-	using TQVaultAE.Config;
+	using System.Text;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
+	using TQVaultAE.Data.Dto;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Logs;
 
@@ -159,8 +161,52 @@ namespace TQVaultAE.Data
 		/// <param name="fileName">Name of the file to save</param>
 		public void Save(PlayerCollection pc, string fileName)
 		{
+			if (pc.IsVault)
+			{
+				SaveVaultAsJson(pc, fileName);
+				return;
+			}
+
 			byte[] data = Encode(pc);
 			File.WriteAllBytes(fileName, data);
+		}
+
+		/// <summary>
+		/// Save Vault file (only) as modern format Json
+		/// </summary>
+		/// <param name="pc"></param>
+		/// <param name="fileName"></param>
+		private static void SaveVaultAsJson(PlayerCollection pc, string fileName)
+		{
+			var pcjson = new VaultDto()
+			{
+				disabledtooltip = pc.DisabledTooltipBagId,
+				currentlyFocusedSackNumber = pc.currentlyFocusedSackNumber,
+				currentlySelectedSackNumber = pc.currentlySelectedSackNumber,
+				sacks = pc.Select(sack => new SackDto()
+				{
+					iconinfo = sack.BagButtonIconInfo,
+					items = sack.Select(i => new ItemDto()
+					{
+						stackSize = i.StackSize,
+						seed = i.Seed,
+						baseName = i.BaseItemId,
+						prefixName = i.prefixID,
+						suffixName = i.suffixID,
+						relicName = i.relicID,
+						relicBonus = i.RelicBonusId,
+						var1 = i.Var1,
+						relicName2 = i.relic2ID,
+						relicBonus2 = i.RelicBonus2Id,
+						var2 = i.Var2,
+						pointX = i.PositionX,
+						pointY = i.PositionY,
+					}).ToList()
+				}).ToList()
+			};
+
+			using var sw = new StreamWriter(fileName, false, Encoding.UTF8);
+			new JsonSerializer().Serialize(sw, pcjson);
 		}
 
 		/// <summary>
@@ -216,11 +262,21 @@ namespace TQVaultAE.Data
 		/// <summary>
 		/// Attempts to load a player file
 		/// </summary>
-		public void LoadFile(PlayerCollection pc)
+		/// <param name="pc"></param>
+		/// <param name="filePathToUse">if not <code>null</code>, use this file instead of <see cref="PlayerCollection.PlayerFile"/> </param>
+		public void LoadFile(PlayerCollection pc, string filePathToUse = null)
 		{
 			try
 			{
-				pc.rawData = File.ReadAllBytes(pc.PlayerFile);
+				var path = filePathToUse ?? pc.PlayerFile;
+				if (path.EndsWith(".json"))
+				{
+					ParseJsonData(pc, path);
+					return;
+				}
+
+				// Old binary Format
+				pc.rawData = File.ReadAllBytes(path);
 				// Now Parse the file
 				ParseRawData(pc);
 			}
@@ -229,6 +285,66 @@ namespace TQVaultAE.Data
 				Log.LogError(ex, "ParseRawData() Failed !");
 				throw;
 			}
+		}
+
+		private void ParseJsonData(PlayerCollection pc, string path)
+		{
+			using var jsonfile = new StreamReader(path, Encoding.UTF8);
+			var vaultDto = new JsonSerializer().Deserialize(jsonfile, typeof(VaultDto)) as VaultDto;
+
+			pc.DisabledTooltipBagId = vaultDto.disabledtooltip ?? new();
+			pc.numberOfSacks = vaultDto.sacks.Count;
+			pc.currentlyFocusedSackNumber = vaultDto.currentlyFocusedSackNumber;
+			pc.currentlySelectedSackNumber = vaultDto.currentlySelectedSackNumber;
+
+			pc.sacks = vaultDto.sacks.Select(s => new SackCollection()
+			{
+				SackType = SackType.Sack,
+				IsImmortalThrone = pc.IsImmortalThrone,
+				IsModified = false,
+				size = s.items.Count,
+				beginBlockCrap = this.TQData.BeginBlockValue,
+				tempBool = 0,// Crap
+				BagButtonIconInfo = s.iconinfo,
+				items = s.items.Select(s =>
+				{
+					var itm = new Item()
+					{
+						// General
+						ContainerType = SackType.Sack,
+						beginBlockCrap1 = this.TQData.BeginBlockValue,
+						beginBlockCrap2 = this.TQData.BeginBlockValue,
+						BaseItemId = s.baseName,
+						prefixID = s.prefixName,
+						suffixID = s.suffixName,
+						relicID = s.relicName,
+						RelicBonusId = s.relicBonus,
+						Seed = s.seed,
+						Var1 = s.var1,
+						endBlockCrap2 = this.TQData.EndBlockValue,
+						PositionX = s.pointX,
+						PositionY = s.pointY,
+						endBlockCrap1 = this.TQData.EndBlockValue,
+						StackSize = s.stackSize,
+						// Atlantis
+						relic2ID = string.Empty,
+						RelicBonus2Id = string.Empty,
+						Var2 = Item.var2Default,
+					};
+
+					if (!string.IsNullOrWhiteSpace(s.relicName2))
+					{
+						itm.atlantis = true;
+						itm.relic2ID = s.relicName2;
+						itm.RelicBonus2Id = s.relicBonus2;
+						itm.Var2 = s.var2;
+					}
+
+					this.ItemProvider.GetDBData(itm);
+
+					return itm;
+				}).ToList()
+			}).ToArray();
 		}
 
 

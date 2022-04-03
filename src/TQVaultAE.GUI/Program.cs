@@ -98,11 +98,13 @@ namespace TQVaultAE.GUI
 				.AddTransient<IFontService, FontService>()
 				.AddTransient<ITranslationService, TranslationService>()
 				.AddSingleton<IUIService, UIService>()
+				.AddSingleton<IIconService, IconService>()
 				.AddSingleton<ITQDataService, TQDataService>()
 				.AddTransient<IBitmapService, BitmapService>()
 				// Forms
 				.AddSingleton<MainForm>()
 				.AddTransient<AboutBox>()
+				.AddSingleton<BagButtonSettings>()
 				.AddTransient<CharacterEditDialog>()
 				.AddTransient<ItemProperties>()
 				.AddTransient<ItemSeedDialog>()

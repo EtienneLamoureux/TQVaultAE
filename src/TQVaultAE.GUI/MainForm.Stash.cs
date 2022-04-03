@@ -182,13 +182,14 @@ namespace TQVaultAE.GUI
 		/// <summary>
 		/// Attempts to save all modified stash files.
 		/// </summary>
-		private void SaveAllModifiedStashes()
+		private bool SaveAllModifiedStashes()
 		{
 		retry:
+			int saved = 0;
 			Stash stashOnError = null;
 			try
 			{
-				this.stashService.SaveAllModifiedStashes(ref stashOnError);
+				saved = this.stashService.SaveAllModifiedStashes(ref stashOnError);
 			}
 			catch (IOException exception)
 			{
@@ -204,6 +205,7 @@ namespace TQVaultAE.GUI
 						goto retry;
 				}
 			}
+			return saved > 0;
 		}
 	}
 }

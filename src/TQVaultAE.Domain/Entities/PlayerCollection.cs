@@ -42,11 +42,13 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Holds the currently focused sack
 		/// </summary>
+		/// <remarks>used to preseve right vault selected tab (Type = Vault only)</remarks>
 		public int currentlyFocusedSackNumber;
 
 		/// <summary>
 		/// Holds the currently selected sack
 		/// </summary>
+		/// <remarks>used to preseve left vault selected tab (Type = Vault only)</remarks>
 		public int currentlySelectedSackNumber;
 
 		/// <summary>
@@ -58,6 +60,11 @@ namespace TQVaultAE.Domain.Entities
 		/// Array of the sacks
 		/// </summary>
 		public SackCollection[] sacks;
+
+		/// <summary>
+		/// Holds the currently disabled tooltip bagId.
+		/// </summary>
+		public List<int> DisabledTooltipBagId = new();
 
 		/// <summary>
 		/// Initializes a new instance of the PlayerCollection class.
@@ -123,6 +130,24 @@ namespace TQVaultAE.Domain.Entities
 
 				return false;
 			}
+		}
+
+		/// <summary>
+		/// Adjust internal status when the collection is saved
+		/// </summary>
+		public void Saved()
+		{
+			if (this.sacks != null)
+			{
+				foreach (SackCollection sack in this.sacks)
+					sack.IsModified = false;
+			}
+
+			if (this.EquipmentSack != null && this.EquipmentSack.IsModified)
+				this.EquipmentSack.IsModified = false;
+
+			if (this.PlayerInfo != null && this.PlayerInfo.Modified)
+				this.PlayerInfo.Modified = false;
 		}
 
 		/// <summary>

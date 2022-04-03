@@ -85,6 +85,12 @@ namespace TQVaultAE.Services.Win32
 			=> Path.Combine(TQSaveFolder, "Settings", "options.txt");
 
 		/// <summary>
+		/// Gets the name of the game settings file.
+		/// </summary>
+		public string ITSettingsFile
+			=> Path.Combine(ImmortalThroneSaveFolder, "Settings", "options.txt");
+
+		/// <summary>
 		/// Gets or sets the Titan Quest game path.
 		/// </summary>
 		public string TQPath { get; set; }
@@ -136,7 +142,7 @@ namespace TQVaultAE.Services.Win32
 			if (IsCustom)
 				mapSaveFolder = "User";
 
-			return Path.Combine(Path.Combine(ImmortalThroneSaveFolder, "SaveData"), mapSaveFolder);
+			return Path.Combine(ImmortalThroneSaveFolder, "SaveData", mapSaveFolder);
 		}
 
 		/// <summary>
@@ -414,6 +420,11 @@ namespace TQVaultAE.Services.Win32
 		public const string PLAYERSTASHFILENAMEG = "winsys.dxg";
 		public string PlayerStashFileNameG => PLAYERSTASHFILENAMEG;
 
+		public const string PLAYERSETTINGSFILENAME = "settings.txt";
+		public string PlayerSettingsFileName => PLAYERSETTINGSFILENAME;
+
+		public const string VAULTFILENAME_EXTENSION_OLD = ".vault";
+		public const string VAULTFILENAME_EXTENSION_JSON = ".vault.json";
 
 		/// <summary>
 		/// Gets the file name and path for a vault.
@@ -421,7 +432,7 @@ namespace TQVaultAE.Services.Win32
 		/// <param name="vaultName">The name of the vault file.</param>
 		/// <returns>The full path along with extension of the vault file.</returns>
 		public string GetVaultFile(string vaultName)
-			=> string.Concat(Path.Combine(TQVaultSaveFolder, vaultName), ".vault");
+			=> string.Concat(Path.Combine(TQVaultSaveFolder, vaultName), VAULTFILENAME_EXTENSION_JSON);
 
 		/// <summary>
 		/// Gets a list of all of the vault files.
@@ -432,17 +443,28 @@ namespace TQVaultAE.Services.Win32
 			try
 			{
 				// Get all files that have a .vault extension.
-				string[] files = Directory.GetFiles(TQVaultSaveFolder, "*.vault");
+				string[] filesOld = Directory.GetFiles(TQVaultSaveFolder, $"*{VAULTFILENAME_EXTENSION_OLD}");
+				string[] filesJson = Directory.GetFiles(TQVaultSaveFolder, $"*{VAULTFILENAME_EXTENSION_JSON}");
 
-				if (files == null || files.Length < 1)
+				if (!filesOld.Any() && !filesJson.Any())
 					return null;
 
-				List<string> vaultList = new List<string>(files.Length);
+				List<string> vaultList = new List<string>();
 
 				// Strip out the path information and extension.
-				foreach (string file in files)
+				foreach (string file in filesOld)
 				{
 					vaultList.Add(Path.GetFileNameWithoutExtension(file));
+				}
+
+				// Pure Json vaults
+				foreach (string newfile in filesJson)
+				{
+					if (!filesOld.Any(oldfile => newfile.StartsWith(oldfile)))
+					{
+						var remain = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(newfile));
+						vaultList.Add(remain);
+					}
 				}
 
 				// sort alphabetically
@@ -617,6 +639,56 @@ Please select the game installation directory.");
 			}
 
 			return (string)key.GetValue(path[valueKey]);
+		}
+
+		/// <summary>
+		/// Return the vault name from <paramref name="vaultFilePath"/>
+		/// </summary>
+		/// <param name="vaultFilePath"></param>
+		/// <returns>name stripted from path and extension</returns>
+		public string GetVaultNameFromPath(string vaultFilePath)
+		{
+			string vaultname = null;
+
+			if (vaultFilePath.EndsWith(VAULTFILENAME_EXTENSION_JSON, StringComparison.InvariantCultureIgnoreCase))
+				vaultname = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(vaultFilePath));
+			else if (vaultFilePath.EndsWith(VAULTFILENAME_EXTENSION_OLD, StringComparison.InvariantCultureIgnoreCase))
+				vaultname = Path.GetFileNameWithoutExtension(vaultFilePath);
+
+			return vaultname;
+		}
+
+		/// <summary>
+		/// Duplicate player save files
+		/// </summary>
+		/// <param name="playerSaveDirectory"></param>
+		/// <param name="newname"></param>
+		/// <returns>new directory path</returns>
+		public string DuplicateCharacterFiles(string playerSaveDirectory, string newname)
+		{
+			var baseFolder = Path.GetDirectoryName(playerSaveDirectory);
+			var newFolder = Path.Combine(baseFolder, $"_{newname}");
+			var newPlayerFile = Path.Combine(newFolder, PLAYERSAVEFILENAME);
+
+			var playerFile = Path.Combine(playerSaveDirectory, PLAYERSAVEFILENAME);
+			var stashFileB = Path.Combine(playerSaveDirectory, PLAYERSTASHFILENAMEB);
+			var stashFileG = Path.Combine(playerSaveDirectory, PLAYERSTASHFILENAMEG);
+			var settingsFile = Path.Combine(playerSaveDirectory, PLAYERSETTINGSFILENAME);
+
+			Directory.CreateDirectory(newFolder);
+			File.Copy(playerFile, newPlayerFile);
+			if (File.Exists(stashFileB)) File.Copy(stashFileB, Path.Combine(newFolder, PLAYERSTASHFILENAMEB));
+			if (File.Exists(stashFileG)) File.Copy(stashFileG, Path.Combine(newFolder, PLAYERSTASHFILENAMEG));
+			if (File.Exists(settingsFile)) File.Copy(settingsFile, Path.Combine(newFolder, PLAYERSETTINGSFILENAME));
+
+			// Copy Progression
+			// Easyest way of doing that (why VB has all the easy stuff?)
+			new Computer().FileSystem.CopyDirectory(
+				Path.Combine(playerSaveDirectory, "Levels_World_World01.map")
+				, Path.Combine(newFolder, "Levels_World_World01.map")
+			);
+
+			return newFolder;
 		}
 	}
 }

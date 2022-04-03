@@ -19,6 +19,12 @@ namespace TQVaultAE.Data
 	/// </summary>
 	public class TQDataService : ITQDataService
 	{
+		public const int BEGIN_BLOCK_VALUE = -1340212530;
+		public const int END_BLOCK_VALUE = -559038242;
+
+		public int BeginBlockValue => BEGIN_BLOCK_VALUE;
+		public int EndBlockValue => END_BLOCK_VALUE;
+
 		private readonly ILogger Log;
 		internal static readonly Encoding Encoding1252 = Encoding.GetEncoding(1252);
 		internal static readonly Encoding EncodingUnicode = Encoding.Unicode;
@@ -282,6 +288,25 @@ namespace TQVaultAE.Data
 					BitConverter.GetBytes(keyToLookFor.Length),// KeyLen
 					keyBytes,// Key
 					BitConverter.GetBytes(0),// ValueLen
+					playerFileContent.Skip(found.nextOffset).ToArray(),// end content
+				}.SelectMany(a => a).ToArray();
+
+			return true;
+		}
+
+		public bool ReplaceUnicodeValueAfter(ref byte[] playerFileContent, string keyToLookFor, string replacement, int offset = 0)
+		{
+			var found = ReadUnicodeStringAfter(playerFileContent, keyToLookFor, offset);
+			if (found.indexOf == -1) return false;
+
+			// Replace Unicode String value
+			var keyBytes = Encoding1252.GetBytes(keyToLookFor);
+			playerFileContent = new[] {
+					playerFileContent.Take(found.indexOf - sizeof(int)).ToArray(),// start content
+					BitConverter.GetBytes(keyToLookFor.Length),// KeyLen
+					keyBytes,// Key
+					BitConverter.GetBytes(replacement.Length),// ValueLen
+					EncodingUnicode.GetBytes(replacement),// Value
 					playerFileContent.Skip(found.nextOffset).ToArray(),// end content
 				}.SelectMany(a => a).ToArray();
 

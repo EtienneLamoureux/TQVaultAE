@@ -17,6 +17,7 @@ namespace TQVaultAE.Services
 		private readonly IPlayerCollectionProvider PlayerCollectionProvider;
 		private readonly IGamePathService GamePathResolver;
 		private readonly ITranslationService TranslationService;
+		private readonly ITQDataService TQDataService;
 
 		public PlayerService(
 			ILogger<PlayerService> log
@@ -25,6 +26,7 @@ namespace TQVaultAE.Services
 			, IStashProvider stashProvider
 			, IGamePathService gamePathResolver
 			, ITranslationService translationService
+			, ITQDataService tQDataService
 		)
 		{
 			this.Log = log;
@@ -32,6 +34,7 @@ namespace TQVaultAE.Services
 			this.PlayerCollectionProvider = playerCollectionProvider;
 			this.GamePathResolver = gamePathResolver;
 			this.TranslationService = translationService;
+			this.TQDataService = tQDataService;
 		}
 
 
@@ -110,6 +113,7 @@ namespace TQVaultAE.Services
 					GamePathResolver.BackupFile(player.PlayerName, playerFile);
 					GamePathResolver.BackupStupidPlayerBackupFolder(playerFile);
 					PlayerCollectionProvider.Save(player, playerFile);
+					player.Saved();
 				}
 			}
 
@@ -128,6 +132,15 @@ namespace TQVaultAE.Services
 				.Select(f => new PlayerSave(f, this.GamePathResolver.IsCustom, this.GamePathResolver.MapName, this.TranslationService))
 				.OrderBy(ps => ps.Name)
 				.ToArray();
+		}
+
+		public void AlterNameInPlayerFileSave(string newname, string saveFolder)
+		{
+			// Alter name in Player file
+			var newPlayerFile = Path.Combine(saveFolder, this.GamePathResolver.PlayerSaveFileName);
+			var fileContent = File.ReadAllBytes(newPlayerFile);
+			this.TQDataService.ReplaceUnicodeValueAfter(ref fileContent, "myPlayerName", newname);
+			File.WriteAllBytes(newPlayerFile, fileContent);
 		}
 	}
 }

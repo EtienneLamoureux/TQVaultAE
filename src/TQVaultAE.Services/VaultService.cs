@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
@@ -34,8 +35,24 @@ namespace TQVaultAE.Services
 		/// <returns>Player instance of the new vault.</returns>
 		public PlayerCollection CreateVault(string name, string file)
 		{
+			// From .json to .vault
+			var oldFormatfileName = Path.Combine(Path.GetDirectoryName(file), Path.GetFileNameWithoutExtension(file));
+
 			PlayerCollection vault = new PlayerCollection(name, file);
 			vault.IsVault = true;
+
+			// Convert by reading old format
+			if (File.Exists(oldFormatfileName))
+			{
+				LoadVault(vault, oldFormatfileName);
+
+				if (vault.sacks.Any())
+					vault.sacks.First().IsModified = true;// Force Save into json on closing
+
+				return vault;
+			}
+
+			// CreatNew
 			vault.CreateEmptySacks(12); // number of bags
 			return vault;
 		}
@@ -45,8 +62,10 @@ namespace TQVaultAE.Services
 		/// </summary>
 		/// <param name="vaultOnError"></param>
 		/// <exception cref="IOException">can happen during file save</exception>
-		public void SaveAllModifiedVaults(ref PlayerCollection vaultOnError)
+		public int SaveAllModifiedVaults(ref PlayerCollection vaultOnError)
 		{
+			int saved = 0;
+
 			foreach (KeyValuePair<string, Lazy<PlayerCollection>> kvp in this.userContext.Vaults)
 			{
 				string vaultFile = kvp.Key;
@@ -60,8 +79,12 @@ namespace TQVaultAE.Services
 					vaultOnError = vault;
 					GamePathResolver.BackupFile(vault.PlayerName, vaultFile);
 					PlayerCollectionProvider.Save(vault, vaultFile);
+					vault.Saved();
+					saved++;
 				}
 			}
+
+			return saved;
 		}
 
 
@@ -83,7 +106,7 @@ namespace TQVaultAE.Services
 				// We need to load the vault.
 				if (!File.Exists(k))
 				{
-					// the file does not exist so create a new vault.
+					// the file does not exist so create a new vault or convert old format to Json.
 					pc = this.CreateVault(vaultName, k);
 					pc.VaultLoaded = true;
 				}
@@ -91,15 +114,7 @@ namespace TQVaultAE.Services
 				{
 					pc = new PlayerCollection(vaultName, k);
 					pc.IsVault = true;
-					try
-					{
-						PlayerCollectionProvider.LoadFile(pc);
-						pc.VaultLoaded = true;
-					}
-					catch (ArgumentException argumentException)
-					{
-						pc.ArgumentException = argumentException;
-					}
+					LoadVault(pc);
 				}
 				return pc;
 			});
@@ -108,6 +123,24 @@ namespace TQVaultAE.Services
 			result.ArgumentException = resultVault.ArgumentException;
 
 			return result;
+		}
+
+		/// <summary>
+		/// Load vault
+		/// </summary>
+		/// <param name="pc"></param>
+		/// <param name="filePathToUse">if not <code>null</code>, use this file instead of <see cref="PlayerCollection.PlayerFile"/> </param>
+		private void LoadVault(PlayerCollection pc, string filePathToUse = null)
+		{
+			try
+			{
+				PlayerCollectionProvider.LoadFile(pc, filePathToUse);
+				pc.VaultLoaded = true;
+			}
+			catch (ArgumentException argumentException)
+			{
+				pc.ArgumentException = argumentException;
+			}
 		}
 
 

@@ -100,21 +100,6 @@ namespace TQVaultAE.Domain.Entities
 		public List<Item> items;
 
 		/// <summary>
-		/// Flag to indicate this sack has been modified.
-		/// </summary>
-		public bool isModified;
-
-		/// <summary>
-		/// Indicates the type of sack
-		/// </summary>
-		public SackType sackType;
-
-		/// <summary>
-		/// Indicates whether this is Immortal Throne
-		/// </summary>
-		public bool isImmortalThrone;
-
-		/// <summary>
 		/// Number of equipment slots
 		/// </summary>
 		public int slots;
@@ -125,7 +110,7 @@ namespace TQVaultAE.Domain.Entities
 		public SackCollection()
 		{
 			this.items = new List<Item>();
-			this.sackType = SackType.Sack;
+			this.SackType = SackType.Sack;
 		}
 
 		/// <summary>
@@ -141,20 +126,18 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Gets or sets a value indicating whether this sack has been modified
 		/// </summary>
-		public bool IsModified
-		{
-			get => this.isModified;
-			set => this.isModified = value;
-		}
+		/// <remarks>
+		/// Flag to indicate this sack has been modified.
+		/// </remarks>
+		public bool IsModified { get; set; }
 
 		/// <summary>
 		/// Gets or sets the sack type
 		/// </summary>
-		public SackType SackType
-		{
-			get => this.sackType;
-			set => this.sackType = value;
-		}
+		/// <remarks>
+		/// Indicates the type of sack
+		/// </remarks>
+		public SackType SackType { get; set; }
 
 		/// <summary>
 		/// Identifies the stash type.
@@ -164,11 +147,10 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Gets or sets a value indicating whether this is from Immortal Throne
 		/// </summary>
-		public bool IsImmortalThrone
-		{
-			get => this.isImmortalThrone;
-			set => this.isImmortalThrone = value;
-		}
+		/// <remarks>
+		/// Indicates whether this is Immortal Throne
+		/// </remarks>
+		public bool IsImmortalThrone { get; set; }
 
 		/// <summary>
 		/// Gets the number of equipment slots
@@ -184,6 +166,11 @@ namespace TQVaultAE.Domain.Entities
 		/// Gets a value indicating whether the number of items in the sack is equal to zero.
 		/// </summary>
 		public bool IsEmpty => this.items.Count == 0;
+
+		/// <summary>
+		/// Loaded icon details
+		/// </summary>
+		public BagButtonIconInfo BagButtonIconInfo { get; set; }
 
 		/// <summary>
 		/// Gets offset of the weapon slot

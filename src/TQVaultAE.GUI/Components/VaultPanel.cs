@@ -31,6 +31,11 @@ namespace TQVaultAE.GUI.Components
 		protected readonly IServiceProvider ServiceProvider;
 
 		/// <summary>
+		/// Gets the SackPanel instance
+		/// </summary>
+		public SackPanel SackPanel => this.BagSackPanel;
+
+		/// <summary>
 		/// player instance
 		/// </summary>
 		private PlayerCollection player;
@@ -50,10 +55,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		private int currentBag;
 
-		/// <summary>
-		/// Holds the currently disabled tooltip bagId.
-		/// </summary>
-		internal readonly List<int> DisabledTooltipBagId = new List<int>();
+
 		private IContainer components;
 
 		/// <summary>
@@ -68,26 +70,26 @@ namespace TQVaultAE.GUI.Components
 
 		private void InitializeComponent()
 		{
-            this.components = new System.ComponentModel.Container();
-            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.SuspendLayout();
-            // 
-            // contextMenu
-            // 
-            this.contextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-            this.contextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-            this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Opacity = 0.8D;
-            this.contextMenu.ShowImageMargin = false;
-            this.contextMenu.Size = new System.Drawing.Size(36, 4);
-            this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
-            // 
-            // VaultPanel
-            // 
-            this.BackColor = System.Drawing.Color.Transparent;
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
-            this.ResumeLayout(false);
+			this.components = new System.ComponentModel.Container();
+			this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.SuspendLayout();
+			// 
+			// contextMenu
+			// 
+			this.contextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+			this.contextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+			this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+			this.contextMenu.Name = "contextMenu";
+			this.contextMenu.Opacity = 0.8D;
+			this.contextMenu.ShowImageMargin = false;
+			this.contextMenu.Size = new System.Drawing.Size(36, 4);
+			this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
+			// 
+			// VaultPanel
+			// 
+			this.BackColor = System.Drawing.Color.Transparent;
+			this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
+			this.ResumeLayout(false);
 		}
 
 		/// <summary>
@@ -267,6 +269,12 @@ namespace TQVaultAE.GUI.Components
 		public bool DrawAsGroupBox { get; set; }
 
 		/// <summary>
+		/// return the vault instance if it's a vault
+		/// </summary>
+		public PlayerCollection Vault
+			=> (this.player?.IsVault ?? false) ? this.player : null;
+
+		/// <summary>
 		/// Gets or sets the player instance
 		/// </summary>
 		public PlayerCollection Player
@@ -277,6 +285,7 @@ namespace TQVaultAE.GUI.Components
 			{
 				if ((!this.player?.IsVault ?? false) || (!value?.IsVault ?? false))
 				{
+					// Not Vault
 					var session = this.ServiceProvider.GetService<SessionContext>();
 					session.CurrentPlayer = value;
 				}
@@ -285,8 +294,22 @@ namespace TQVaultAE.GUI.Components
 
 				this.UpdateText();
 
+				this.ApplyCustomButtonIcons();
+
 				this.OnPropertyChanged(nameof(Player));
 				this.Refresh();
+			}
+		}
+
+		private void ApplyCustomButtonIcons()
+		{
+			if (this.Vault is not null)
+			{
+				foreach (var button in this.BagButtons)
+				{
+					var sack = this.Vault.GetSack(button.ButtonNumber);
+					button.ApplyIconInfo(sack);
+				}
 			}
 		}
 
@@ -307,14 +330,25 @@ namespace TQVaultAE.GUI.Components
 					this.currentBag = value;
 					this.BagSackPanel.Sack = this.Player.GetSack(this.currentBag + this.BagPanelOffset);
 					this.BagSackPanel.CurrentSack = this.currentBag;
+
+					// persistance of currentbag
+					if (this.Vault is not null)
+					{
+						if (this.AutoMoveLocation == AutoMoveLocation.Vault && this.Vault.currentlySelectedSackNumber != this.currentBag)
+						{
+							this.Vault.currentlySelectedSackNumber = this.currentBag;
+							this.Vault.sacks.First().IsModified = true;
+						}
+
+						if (this.AutoMoveLocation == AutoMoveLocation.SecondaryVault && this.Vault.currentlyFocusedSackNumber != this.currentBag)
+						{
+							this.Vault.currentlyFocusedSackNumber = this.currentBag;
+							this.Vault.sacks.First().IsModified = true;
+						}
+					}
 				}
 			}
 		}
-
-		/// <summary>
-		/// Gets the SackPanel instance
-		/// </summary>
-		public SackPanel SackPanel => this.BagSackPanel;
 
 		#endregion VaultPanel Properties
 
@@ -401,6 +435,16 @@ namespace TQVaultAE.GUI.Components
 				if ((numberOfBags > 0) && (this.CurrentBag >= numberOfBags))
 				{
 					this.CurrentBag = this.Player.NumberOfSacks - 1;
+				}
+
+				// Use saved bagId
+				if (this.Vault is not null)
+				{
+					if (this.AutoMoveLocation == AutoMoveLocation.Vault && this.Vault.currentlySelectedSackNumber > -1)
+						this.CurrentBag = this.Vault.currentlySelectedSackNumber;
+
+					if (this.AutoMoveLocation == AutoMoveLocation.SecondaryVault && this.Vault.currentlyFocusedSackNumber > -1)
+						this.CurrentBag = this.Vault.currentlyFocusedSackNumber;
 				}
 
 				// hide/show bag buttons and assign initial bitmaps
@@ -501,27 +545,36 @@ namespace TQVaultAE.GUI.Components
 						this.contextMenu.Items.Add("-");
 						this.contextMenu.Items.Add(Resources.PlayerPanelMenuEmpty);
 
-						// Add the Disable Tooltip submenu
+						if (this.Vault is not null)
+						{
+							// Add the Disable Tooltip submenu
+							this.contextMenu.Items.Add("-");
+
+							if (this.Vault.DisabledTooltipBagId.Contains(bagID))
+							{
+								this.AddMenuItem(Resources.PlayerPanelMenuEnableTooltip, this.DisableTooltipClicked);
+							}
+							else
+							{
+								this.AddMenuItem(Resources.PlayerPanelMenuDisableTooltip, this.DisableTooltipClicked);
+							}
+
+							if (this.Vault.DisabledTooltipBagId.Count < this.BagButtons.Count)
+							{
+								this.AddMenuItem(Resources.PlayerPanelMenuDisableAllTooltip, this.DisableTooltipClicked);
+							}
+
+							if (this.Vault.DisabledTooltipBagId.Any())
+							{
+								this.AddMenuItem(Resources.PlayerPanelMenuEnableAllTooltip, this.DisableTooltipClicked);
+							}
+						}
+					}
+
+					if (this.Vault is not null)
+					{
 						this.contextMenu.Items.Add("-");
-
-						if (this.DisabledTooltipBagId.Contains(bagID))
-						{
-							this.AddMenuItem(Resources.PlayerPanelMenuEnableTooltip, this.DisableTooltipClicked);
-						}
-						else
-						{
-							this.AddMenuItem(Resources.PlayerPanelMenuDisableTooltip, this.DisableTooltipClicked);
-						}
-
-						if (this.DisabledTooltipBagId.Count < this.BagButtons.Count)
-						{
-							this.AddMenuItem(Resources.PlayerPanelMenuDisableAllTooltip, this.DisableTooltipClicked);
-						}
-
-						if (this.DisabledTooltipBagId.Any())
-						{
-							this.AddMenuItem(Resources.PlayerPanelMenuEnableAllTooltip, this.DisableTooltipClicked);
-						}
+						this.contextMenu.Items.Add(Resources.PlayerPanelChangeIcon);
 					}
 
 					this.contextMenu.Show(this.BagButtons[this.CurrentBag], new Point(e.X, e.Y));
@@ -537,24 +590,24 @@ namespace TQVaultAE.GUI.Components
 			{
 				if (item.Text == Resources.PlayerPanelMenuEnableAllTooltip)
 				{
-					this.DisabledTooltipBagId.Clear();
+					this.Vault.DisabledTooltipBagId.Clear();
 				}
 
 				if (item.Text == Resources.PlayerPanelMenuDisableAllTooltip)
 				{
 					var all = this.BagButtons.Select(b => b.ButtonNumber).ToArray();
-					this.DisabledTooltipBagId.Clear();
-					this.DisabledTooltipBagId.AddRange(all);
+					this.Vault.DisabledTooltipBagId.Clear();
+					this.Vault.DisabledTooltipBagId.AddRange(all);
 				}
 
 				if (item.Text == Resources.PlayerPanelMenuEnableTooltip)
 				{
-					this.DisabledTooltipBagId.Remove(this.CurrentBag);
+					this.Vault.DisabledTooltipBagId.Remove(this.CurrentBag);
 				}
 
 				if (item.Text == Resources.PlayerPanelMenuDisableTooltip)
 				{
-					this.DisabledTooltipBagId.Add(this.CurrentBag);
+					this.Vault.DisabledTooltipBagId.Add(this.CurrentBag);
 				}
 			}
 		}
@@ -797,6 +850,20 @@ namespace TQVaultAE.GUI.Components
 					BagButtonTooltip.InvalidateCache(this.BagSackPanel.Sack);
 				}
 			}
+
+			if (selectedItem == Resources.PlayerPanelChangeIcon)
+			{
+				var button = this.BagButtons[this.CurrentBag];
+
+				var bbs = this.ServiceProvider.GetService<BagButtonSettings>();
+				bbs.CurrentBagButton = button;
+
+				if (bbs.ShowDialog() == DialogResult.OK)
+				{
+					button.Refresh();
+				}
+			}
+
 		}
 
 		/// <summary>
@@ -809,7 +876,7 @@ namespace TQVaultAE.GUI.Components
 			ToolStripMenuItem item = (ToolStripMenuItem)sender;
 			if (item != null)
 			{
-				int destinationIndex = VaultPanel.GetDestinationSackIndex(item.Name);
+				int destinationIndex = GetDestinationSackIndex(item.Name);
 
 				if (destinationIndex > this.Player.NumberOfSacks)
 				{
@@ -824,7 +891,7 @@ namespace TQVaultAE.GUI.Components
 						MessageBoxButtons.YesNo,
 						MessageBoxIcon.Question,
 						MessageBoxDefaultButton.Button1,
-						VaultPanel.RightToLeftOptions) != DialogResult.Yes)
+						RightToLeftOptions) != DialogResult.Yes)
 					{
 						return;
 					}
@@ -855,7 +922,7 @@ namespace TQVaultAE.GUI.Components
 			ToolStripMenuItem item = (ToolStripMenuItem)sender;
 			if (item != null)
 			{
-				int destinationIndex = VaultPanel.GetDestinationSackIndex(item.Name);
+				int destinationIndex = GetDestinationSackIndex(item.Name);
 				if (this.Player.MoveSack(this.CurrentBag, destinationIndex))
 				{
 					if (this.CurrentBag != destinationIndex)
@@ -881,7 +948,7 @@ namespace TQVaultAE.GUI.Components
 			ToolStripMenuItem item = (ToolStripMenuItem)sender;
 			if (item != null)
 			{
-				int destinationIndex = VaultPanel.GetDestinationSackIndex(item.Name);
+				int destinationIndex = GetDestinationSackIndex(item.Name);
 
 				if (destinationIndex < 0 || destinationIndex > this.Player.NumberOfSacks || this.CurrentBag == destinationIndex)
 				{

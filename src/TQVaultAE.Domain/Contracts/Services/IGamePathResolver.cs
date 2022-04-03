@@ -59,6 +59,10 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		string TQSettingsFile { get; }
 		/// <summary>
+		/// Gets the name of the game settings file.
+		/// </summary>
+		string ITSettingsFile { get; }
+		/// <summary>
 		/// Gets the vault backup folder path.
 		/// </summary>
 		string TQVaultBackupFolder { get; }
@@ -149,6 +153,21 @@ namespace TQVaultAE.Domain.Contracts.Services
 		string PlayerSaveFileName { get; }
 		string PlayerStashFileNameB { get; }
 		string PlayerStashFileNameG { get; }
+		string PlayerSettingsFileName { get; }
 
+		/// <summary>
+		/// Duplicate player save files
+		/// </summary>
+		/// <param name="playerSaveDirectory"></param>
+		/// <param name="newname"></param>
+		/// <returns>new directory path</returns>
+		string DuplicateCharacterFiles(string playerSaveDirectory, string newname);
+
+		/// <summary>
+		/// Return the vault name from <paramref name="vaultFilePath"/>
+		/// </summary>
+		/// <param name="vaultFilePath"></param>
+		/// <returns>name stripted from path and extension</returns>
+		string GetVaultNameFromPath(string vaultFilePath);
 	}
 }

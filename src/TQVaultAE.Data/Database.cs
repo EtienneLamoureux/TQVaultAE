@@ -9,7 +9,9 @@ namespace TQVaultAE.Data
 	using System;
 	using System.Globalization;
 	using System.IO;
+	using System.Linq;
 	using System.Text;
+	using System.Text.RegularExpressions;
 	using TQVaultAE.Config;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
@@ -129,32 +131,22 @@ namespace TQVaultAE.Data
 					try
 					{
 						string optionsFile = GamePathResolver.TQSettingsFile;
+						if (!File.Exists(optionsFile))
+						{
+							// Try IT Folder if there is no settings file in TQ Folder
+							optionsFile = GamePathResolver.ITSettingsFile;
+						}
 						if (File.Exists(optionsFile))
 						{
-							using (StreamReader reader = new StreamReader(optionsFile))
+							var fileContent = File.ReadAllText(optionsFile);
+							var match = Regex.Match(fileContent, @"(?i)language\s*=\s*(""(?<Language>[^""]+)""|(?<Language>[^\r\n]*))[\r\n]");
+							if (match.Success)
 							{
-								// scan the file for the language line
-								string line;
-								char delims = '=';
-								while ((line = reader.ReadLine()) != null)
-								{
-									// Split the line on the = sign
-									string[] fields = line.Split(delims);
-									if (fields.Length < 2)
-										continue;
-
-									string key = fields[0].Trim();
-									string val = fields[1].Trim();
-
-									if (key.ToUpperInvariant().Equals("LANGUAGE"))
-									{
-										this.gameLanguage = val.ToUpperInvariant();
-										return this.gameLanguage;
-									}
-								}
-
-								return null;
+								this.gameLanguage = match.Groups["Language"].Value.ToUpperInvariant();
+								return this.gameLanguage;
 							}
+
+							return null;
 						}
 
 						return null;
@@ -352,6 +344,44 @@ namespace TQVaultAE.Data
 		}
 
 		/// <summary>
+		/// Return ARC filename from <paramref name="resourceIdOrPrefix"/>
+		/// </summary>
+		/// <param name="resourceIdOrPrefix"></param>
+		/// <returns></returns>
+		public string ResolveArcFileName(string resourceIdOrPrefix)
+		{
+			resourceIdOrPrefix = TQData.NormalizeRecordPath(resourceIdOrPrefix);
+			var segments = resourceIdOrPrefix.Split('\\');
+
+			string rootFolder = GamePathResolver.ImmortalThronePath;
+			switch (segments.First())
+			{
+				case "XPACK":
+					// Comes from Immortal Throne
+					rootFolder = Path.Combine(rootFolder, "Resources", "XPack", segments[1] + ".arc");
+					break;
+				case "XPACK2":
+					// Comes from Ragnarok
+					rootFolder = Path.Combine(rootFolder, "Resources", "XPack2", segments[1] + ".arc");
+					break;
+				case "XPACK3":
+					// Comes from Atlantis
+					rootFolder = Path.Combine(rootFolder, "Resources", "XPack3", segments[1] + ".arc");
+					break;
+				case "XPACK4":
+					// Comes from Eternal Embers
+					rootFolder = Path.Combine(rootFolder, "Resources", "XPack4", segments[1] + ".arc");
+					break;
+				default:
+					// Base game
+					rootFolder = Path.Combine(rootFolder, "Resources", segments[0] + ".arc");
+					break;
+			}
+
+			return rootFolder;
+		}
+
+		/// <summary>
 		/// Gets a resource from the database using the resource Id.
 		/// Modified by VillageIdiot to support loading resources from a custom map folder.
 		/// </summary>
@@ -527,12 +557,7 @@ namespace TQVaultAE.Data
 				if (TQDebug.DatabaseDebugLevel > 0)
 					Log.LogDebug("Database.ReadARCFile('{0}', '{1}')", arcFileName, dataId);
 
-				ArcFile arcFile = this.arcFiles.GetOrAddAtomic(arcFileName, k =>
-				{
-					var file = new ArcFile(k);
-					arcProv.ReadARCToC(file);// Heavy lifting in GetOrAddAtomic
-					return file;
-				});
+				ArcFile arcFile = ReadARCFile(arcFileName);
 
 				// Now retrieve the data
 				byte[] ans = arcProv.GetData(arcFile, dataId);
@@ -547,6 +572,25 @@ namespace TQVaultAE.Data
 				Log.LogError(e, "Exception occurred");
 				throw;
 			}
+		}
+
+		/// <summary>
+		/// Read ARC file
+		/// </summary>
+		/// <param name="arcFileName"></param>
+		/// <returns></returns>
+		public ArcFile ReadARCFile(string arcFileName)
+		{
+			// See if we have this arcfile already and if not create it.
+
+			ArcFile arcFile = this.arcFiles.GetOrAddAtomic(arcFileName, k =>
+			{
+				var file = new ArcFile(k);
+				arcProv.ReadARCToC(file);// Heavy lifting in GetOrAddAtomic
+				return file;
+			});
+
+			return arcFile;
 		}
 
 		/// <summary>
@@ -639,14 +683,19 @@ namespace TQVaultAE.Data
 					{
 						// Force Czech to use CZ instead of CS for the 2 letter code.
 						cultureID = "CZ";
-					} 
+					}
 					else if (cultureID.ToUpperInvariant() == "PT")
 					{
 						// Force brazilian portuguese to use BR instead of PT
 						cultureID = "BR";
 					}
+					else if (cultureID.ToUpperInvariant() == "ZH")
+					{
+						// Force chinese to use CH instead of ZH
+						cultureID = "CH";
+					}
 				}
-					
+
 				if (TQDebug.DatabaseDebugLevel > 1)
 					Log.LogDebug("cultureID = {0}", cultureID);
 
@@ -759,6 +808,11 @@ namespace TQVaultAE.Data
 				Log.LogDebug("dbFile = {0}", databaseFile);
 			}
 
+			if (!string.IsNullOrEmpty(databaseFile))
+			{
+				string fileName = Path.GetFileNameWithoutExtension(databaseFile);
+			}
+
 			if (databaseFile != null)
 			{
 				// Try to suck what we want into memory and then parse it.
@@ -781,6 +835,7 @@ namespace TQVaultAE.Data
 				this.ParseTextDB(databaseFile, "text\\xmenu.txt"); // Added by VillageIdiot
 				this.ParseTextDB(databaseFile, "text\\xnpc.txt"); // Added by VillageIdiot
 				this.ParseTextDB(databaseFile, "text\\modstrings.txt"); // Added by VillageIdiot
+				this.ParseTextDB(databaseFile, "text\\xtutorial.txt"); // Added by hguy
 
 				if (GamePathResolver.IsRagnarokInstalled)
 				{
@@ -893,22 +948,10 @@ namespace TQVaultAE.Data
 					// Now for the foreign languages there is a bunch of crap in here so the proper version of the adjective can be used with the proper
 					// noun form.  I don' want to code all that so this next code will just take the first version of the adjective and then
 					// throw away all the metadata.
-					if (label.IndexOf('[') != -1)
-					{
-						// find first [xxx]
-						int textStart = label.IndexOf(']') + 1;
 
-						// find second [xxx]
-						int textEnd = label.IndexOf('[', textStart);
-						if (textEnd == -1)
-							// If it was the only [...] tag in the string then take the whole string after the tag
-							label = label.Substring(textStart);
-						else
-							// else take the string between the first 2 [...] tags
-							label = label.Substring(textStart, textEnd - textStart);
-
-						label = label.Trim();
-					}
+					// hguy : one expression to rule them all 
+					if (Regex.Match(label, @"^(?<Tag>\[\w+\])(?<Label>[^\\[]+)|^\[(?<Label>[^\]]+)\]$") is { Success: true } match)
+						label = match.Groups["Label"].Value.Trim();
 
 					// If this field is already in the db, then replace it
 					string key = fields[0].Trim().ToUpperInvariant();
@@ -929,7 +972,7 @@ namespace TQVaultAE.Data
 				Log.LogDebug("Database.LoadARZFile()");
 
 			// from the original TQ folder
-			string file = Path.Combine(Path.Combine(GamePathResolver.TQPath, "Database"), "database.arz");
+			string file = Path.Combine(GamePathResolver.TQPath, "Database", "database.arz");
 
 			if (TQDebug.DatabaseDebugLevel > 1)
 			{
@@ -968,5 +1011,6 @@ namespace TQVaultAE.Data
 		}
 
 		#endregion Database Private Methods
+
 	}
 }

@@ -245,6 +245,7 @@ Debug Levels
 			this.showVaulButton.Text = Resources.MainFormBtnPanelSelect;
 			this.Icon = Resources.TQVIcon;
 			this.searchButton.Text = Resources.MainFormSearchButtonText;
+			this.duplicateButton.Text = Resources.DuplicateCharacter_ButtonText;
 			this.scalingLabelHighlight.Text = Resources.MainFormHighlightLabelText;
 
 			this.lastDragPoint.X = -1;
@@ -260,7 +261,21 @@ Debug Levels
 				this.tableLayoutPanelMain.CellBorderStyle = TableLayoutPanelCellBorderStyle.None;
 			}
 
+			AdjustMenuButtonVisibility();
+
 			this.CreatePanels();
+		}
+
+		private void AdjustMenuButtonVisibility()
+		{
+			this.duplicateButton.Visible = Config.Settings.Default.AllowCharacterEdit;
+			this.saveButton.Visible = Config.Settings.Default.EnableHotReload;
+			// Get last position
+			var flowctr = this.flowLayoutPanelMenuButtons.Controls;
+			var lastctr = flowctr[flowctr.Count - 1];
+			var lastidx = flowctr.GetChildIndex(lastctr);
+			// Force "Exit" button in last position
+			flowctr.SetChildIndex(this.exitButton, lastidx + 1);
 		}
 
 
@@ -367,7 +382,7 @@ Debug Levels
 		private void MainFormShown(object sender, EventArgs e)
 		{
 			this.scalingTextBoxHighlight.Dock = DockStyle.Fill;
-			this.vaultPanel.SackPanel.Focus();
+			this.scalingTextBoxHighlight.Focus();
 		}
 
 		/// <summary>
@@ -533,6 +548,7 @@ Debug Levels
 
 		#endregion
 
+
 		#region Files
 
 
@@ -677,8 +693,17 @@ Debug Levels
 		private bool SaveAllModifiedFiles()
 		{
 			bool playersModified = this.SaveAllModifiedPlayers();
-			this.SaveAllModifiedVaults();
-			this.SaveAllModifiedStashes();
+			bool vaultsModified = this.SaveAllModifiedVaults();
+			bool stashesModified = this.SaveAllModifiedStashes();
+
+			// Notification Last Save
+			if (playersModified || vaultsModified || stashesModified)
+			{
+				var saved = string.Format(Resources.SavedAtNotification, DateTime.Now);
+				this.itemText.Text = saved;
+				this.toolTip.SetToolTip(this.saveButton, saved);
+			}
+
 			return playersModified;
 		}
 
@@ -1053,6 +1078,9 @@ Debug Levels
 
 				this.configChanged = true;
 				this.SaveConfiguration();
+
+				AdjustMenuButtonVisibility();
+
 				if (result == DialogResult.Yes)
 				{
 					if (this.DoCloseStuff())
@@ -1064,6 +1092,10 @@ Debug Levels
 
 		#endregion
 
+		private void duplicateButton_Click(object sender, EventArgs e) => DuplicateCharacter();
+
+		private void saveButton_Click(object sender, EventArgs e) => this.SaveAllModifiedFiles();
+		
 		#region HighlightItems
 
 		private void typeAssistant_Idled(object sender, EventArgs e)
