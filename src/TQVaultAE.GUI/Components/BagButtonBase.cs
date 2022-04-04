@@ -29,7 +29,6 @@ namespace TQVaultAE.GUI.Components
 		protected readonly IServiceProvider ServiceProvider;
 		protected readonly IFontService FontService;
 		protected readonly IUIService UIService;
-
 		internal SackCollection Sack;
 
 		private BagButtonIconInfo _DefaultIconInfo = new BagButtonIconInfo()
@@ -108,6 +107,7 @@ namespace TQVaultAE.GUI.Components
 			this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
 			this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
 			this.ResumeLayout(false);
+
 		}
 
 		/// <summary>
@@ -179,7 +179,6 @@ namespace TQVaultAE.GUI.Components
 			}
 		}
 
-
 		#endregion BagButton Properties
 
 		/// <summary>
@@ -220,12 +219,25 @@ namespace TQVaultAE.GUI.Components
 			{
 				// Disable Tooltip bag
 				var panel = this.getToolTip.Target as Panel;
-				if(
-					(panel is VaultPanel vp && vp.Vault is not null && !vp.Vault.DisabledTooltipBagId.Contains(this.ButtonNumber))
-					|| panel is PlayerPanel || panel is SackPanel || panel is StashPanel
+				this.getToolTip(this);
+
+				if (panel is StashPanel sp)
+				{
+					switch (this.ButtonNumber)
+					{
+						case StashPanel.BAGID_EQUIPMENTPANEL when !Config.Settings.Default.DisableTooltipEquipment:
+						case StashPanel.BAGID_PLAYERSTASH when !Config.Settings.Default.DisableTooltipStash:
+						case StashPanel.BAGID_RELICVAULTSTASH when !Config.Settings.Default.DisableTooltipRelic:
+						case StashPanel.BAGID_TRANSFERSTASH when !Config.Settings.Default.DisableTooltipTransfer:
+							BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
+							break;
+					}
+				}
+				else if (
+					(panel is VaultPanel vp && vp.Vault is not null && !vp.Vault.DisabledTooltipBagId.Contains(this.ButtonNumber)) // Vault Only
+					|| panel is PlayerPanel || panel is SackPanel || panel is StashPanel // Others
 				)
 				{
-					this.getToolTip(this);
 					BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
 				}
 			}
@@ -272,7 +284,6 @@ namespace TQVaultAE.GUI.Components
 				else
 					bitmap = this.OverBitmap;
 			}
-
 
 			// Draw the background graphic.
 			Image bmp;

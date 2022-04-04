@@ -198,6 +198,10 @@ namespace TQVaultAE.GUI
 			this.searchButton.Font = FontService.GetFontLight(12F, UIService.Scale);
 			ScaleControl(this.UIService, this.searchButton);
 			ScaleControl(this.UIService, this.tableLayoutPanelMain);
+			this.duplicateButton.Font = FontService.GetFontLight(12F, UIService.Scale);
+			ScaleControl(this.UIService, this.duplicateButton);
+			this.saveButton.Font = FontService.GetFontLight(12F, UIService.Scale);
+			ScaleControl(this.UIService, this.saveButton);
 
 			this.scalingLabelHighlight.Font = FontService.GetFontLight(10F, UIService.Scale);
 			this.scalingTextBoxHighlight.Font = FontService.GetFontLight(10F, UIService.Scale);

@@ -15,6 +15,7 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Presentation;
+	using System.Linq;
 
 	/// <summary>
 	/// Class for handling the stash panel ui functions
@@ -103,7 +104,16 @@ namespace TQVaultAE.GUI.Components
 		private readonly IDatabase Database;
 		private readonly IItemProvider ItemProvider;
 
+		private System.ComponentModel.IContainer components;
+		private ContextMenuStrip buttonContextMenuStrip;
+		private ToolStripMenuItem toolStripMenuItemEnableTooltip;
+		private ToolStripMenuItem toolStripMenuItemDisableTooltip;
+
 		#endregion StashPanel Fields
+
+#if DEBUG
+		public StashPanel() => InitializeComponent();
+#endif
 
 		/// <summary>
 		/// Initializes a new instance of the StashPanel class.  Hard coded to 4 stash buttons and no autosort buttons.
@@ -113,6 +123,8 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="tooltip">ToolTip instance</param>
 		public StashPanel(ItemDragInfo dragInfo, Size panelSize, IServiceProvider serviceProvider) : base(dragInfo, 4, panelSize, 0, AutoMoveLocation.Stash, serviceProvider)
 		{
+			InitializeComponent();
+
 			this.TranslationService = this.ServiceProvider.GetService<ITranslationService>();
 			this.Database = this.ServiceProvider.GetService<IDatabase>();
 			this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
@@ -197,6 +209,12 @@ namespace TQVaultAE.GUI.Components
 
 			#endregion
 
+			this.buttonContextMenuStrip.Font = FontService.GetFont(9.0F * UIService.Scale);
+
+			this.toolStripMenuItemEnableTooltip.Text = Resources.PlayerPanelMenuEnableTooltip;
+			this.toolStripMenuItemDisableTooltip.Text = Resources.PlayerPanelMenuDisableTooltip;
+			foreach (var bag in this.BagButtons)
+				bag.ContextMenuStrip = this.buttonContextMenuStrip;
 		}
 
 		/// <summary>
@@ -508,10 +526,10 @@ namespace TQVaultAE.GUI.Components
 
 				// figure out the current bag to use
 				if (bagID < 0)
-					bagID = 0;
+					bagID = BAGID_EQUIPMENTPANEL;
 
 				if (bagID >= 4)
-					bagID = 3;
+					bagID = BAGID_RELICVAULTSTASH;
 
 				if (bagID != this.currentBag)
 				{
@@ -636,6 +654,7 @@ namespace TQVaultAE.GUI.Components
 			button.Location = new Point(this.SackPanel.Location.X + (int)Math.Round(offset), this.SackPanel.Location.Y - button.Height);
 			button.Visible = false;
 			button.MouseDown += new MouseEventHandler(this.BagButtonClick);
+
 			button.ButtonText = buttonNames[bagNumber];
 
 			return button;
@@ -765,10 +784,10 @@ namespace TQVaultAE.GUI.Components
 
 			// filter the bagID
 			if (bagID < 0)
-				bagID = 0;
+				bagID = BAGID_EQUIPMENTPANEL;
 
 			if (bagID >= 4)
-				bagID = 3;
+				bagID = BAGID_RELICVAULTSTASH;
 
 			if (bagID != this.currentBag)
 			{
@@ -782,6 +801,8 @@ namespace TQVaultAE.GUI.Components
 			}
 
 			DisplayPlayerInfo();
+
+			//this.BagButtons[bagID].ContextMenuStrip.Show();
 		}
 
 		/// <summary>
@@ -815,16 +836,16 @@ namespace TQVaultAE.GUI.Components
 			int bagID = button.ButtonNumber;
 			SackCollection sack;
 
-			if (bagID == 0)
+			if (bagID == BAGID_EQUIPMENTPANEL)
 			{
 				if (this.Player == null)
 					sack = null;
 				else
 					sack = this.Player.EquipmentSack;
 			}
-			else if (bagID == 1)
+			else if (bagID == BAGID_TRANSFERSTASH)
 				sack = this.transferStash.Sack;
-			else if (bagID == 2)
+			else if (bagID == BAGID_PLAYERSTASH)
 				sack = this.stash.Sack;
 			else
 				sack = this.relicVaultStash.Sack;
@@ -850,5 +871,123 @@ namespace TQVaultAE.GUI.Components
 		}
 
 		#endregion StashPanel Private Methods
+
+		private void InitializeComponent()
+		{
+			this.components = new System.ComponentModel.Container();
+			this.buttonContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.toolStripMenuItemEnableTooltip = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripMenuItemDisableTooltip = new System.Windows.Forms.ToolStripMenuItem();
+			this.buttonContextMenuStrip.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// buttonContextMenuStrip
+			// 
+			this.buttonContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.toolStripMenuItemEnableTooltip,
+			this.toolStripMenuItemDisableTooltip});
+			this.buttonContextMenuStrip.Name = "contextMenuStrip";
+			this.buttonContextMenuStrip.Size = new System.Drawing.Size(151, 48);
+			this.buttonContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.buttonContextMenuStrip_Opening);
+			this.buttonContextMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip_ItemClicked);
+			this.buttonContextMenuStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+			this.buttonContextMenuStrip.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+			this.buttonContextMenuStrip.Opacity = 0.8D;
+			this.buttonContextMenuStrip.ShowImageMargin = false;
+			// 
+			// toolStripMenuItemEnableTooltip
+			// 
+			this.toolStripMenuItemEnableTooltip.Name = "toolStripMenuItemEnableTooltip";
+			this.toolStripMenuItemEnableTooltip.Size = new System.Drawing.Size(150, 22);
+			this.toolStripMenuItemEnableTooltip.Text = "Enable tooltip";
+			this.toolStripMenuItemEnableTooltip.Visible = true;
+			// 
+			// toolStripMenuItemDisableTooltip
+			// 
+			this.toolStripMenuItemDisableTooltip.Name = "toolStripMenuItemDisableTooltip";
+			this.toolStripMenuItemDisableTooltip.Size = new System.Drawing.Size(150, 22);
+			this.toolStripMenuItemDisableTooltip.Text = "Disable tooltip";
+			this.toolStripMenuItemDisableTooltip.Visible = true;
+			this.buttonContextMenuStrip.ResumeLayout(false);
+			this.ResumeLayout(false);
+
+		}
+
+		private void contextMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+		{
+			if (e.ClickedItem == this.toolStripMenuItemDisableTooltip)
+			{
+				switch (this.CurrentBag)
+				{
+					case BAGID_EQUIPMENTPANEL:
+						Config.Settings.Default.DisableTooltipEquipment = true;
+						break;
+					case BAGID_PLAYERSTASH:
+						Config.Settings.Default.DisableTooltipStash = true;
+						break;
+					case BAGID_RELICVAULTSTASH:
+						Config.Settings.Default.DisableTooltipRelic = true;
+						break;
+					case BAGID_TRANSFERSTASH:
+						Config.Settings.Default.DisableTooltipTransfer = true;
+						break;
+				}
+			}
+
+			if (e.ClickedItem == this.toolStripMenuItemEnableTooltip)
+			{
+				switch (this.CurrentBag)
+				{
+					case BAGID_EQUIPMENTPANEL:
+						Config.Settings.Default.DisableTooltipEquipment = false;
+						break;
+					case BAGID_PLAYERSTASH:
+						Config.Settings.Default.DisableTooltipStash = false;
+						break;
+					case BAGID_RELICVAULTSTASH:
+						Config.Settings.Default.DisableTooltipRelic = false;
+						break;
+					case BAGID_TRANSFERSTASH:
+						Config.Settings.Default.DisableTooltipTransfer = false;
+						break;
+				}
+			}
+
+			Config.Settings.Default.Save();
+		}
+
+		private void buttonContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			void SetMenuItemDisableTooltip(bool disabled)
+			{
+				if (disabled)
+				{
+					this.toolStripMenuItemDisableTooltip.Visible = false;
+					this.toolStripMenuItemEnableTooltip.Visible = true;
+					return;
+				}
+				this.toolStripMenuItemDisableTooltip.Visible = true;
+				this.toolStripMenuItemEnableTooltip.Visible = false;
+			}
+
+			var sourceButton = ((ContextMenuStrip)sender).SourceControl as StashButton;
+
+			// Adjust menu items display
+			switch (sourceButton.ButtonNumber)
+			{
+				case BAGID_EQUIPMENTPANEL:
+					SetMenuItemDisableTooltip(Config.Settings.Default.DisableTooltipEquipment);
+					break;
+				case BAGID_PLAYERSTASH:
+					SetMenuItemDisableTooltip(Config.Settings.Default.DisableTooltipStash);
+					break;
+				case BAGID_RELICVAULTSTASH:
+					SetMenuItemDisableTooltip(Config.Settings.Default.DisableTooltipRelic);
+					break;
+				case BAGID_TRANSFERSTASH:
+					SetMenuItemDisableTooltip(Config.Settings.Default.DisableTooltipTransfer);
+					break;
+			}
+		}
 	}
 }
