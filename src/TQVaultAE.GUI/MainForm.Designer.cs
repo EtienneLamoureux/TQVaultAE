@@ -122,8 +122,8 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelVaultSelector = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.tableLayoutPanelMain = new TQVaultAE.GUI.Components.BufferedTableLayoutPanel();
             this.tableLayoutPanelHighlight = new System.Windows.Forms.TableLayoutPanel();
+            this.scalingLabelHighlight = new System.Windows.Forms.LinkLabel();
             this.scalingTextBoxHighlight = new TQVaultAE.GUI.Components.ScalingTextBox();
-            this.scalingLabelHighlight = new TQVaultAE.GUI.Components.ScalingLabel();
             this.flowLayoutPanelRightPanels = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.flowLayoutPanelRightComboBox = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.characterLabel = new TQVaultAE.GUI.Components.ScalingLabel();
@@ -136,6 +136,7 @@ namespace TQVaultAE.GUI
             this.saveButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.flowLayoutPanelMenuButtons = new System.Windows.Forms.FlowLayoutPanel();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.highlightFilters = new TQVaultAE.GUI.Components.HighlightFilters();
             this.itemTextPanel.SuspendLayout();
             this.flowLayoutPanelVaultSelector.SuspendLayout();
             this.tableLayoutPanelMain.SuspendLayout();
@@ -174,7 +175,7 @@ namespace TQVaultAE.GUI
             // 
             this.itemTextPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(188)))), ((int)(((byte)(97)))));
             this.itemTextPanel.Controls.Add(this.itemText);
-            this.itemTextPanel.Location = new System.Drawing.Point(4, 146);
+            this.itemTextPanel.Location = new System.Drawing.Point(4, 135);
             this.itemTextPanel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 20);
             this.itemTextPanel.Name = "itemTextPanel";
             this.itemTextPanel.Padding = new System.Windows.Forms.Padding(2);
@@ -185,7 +186,7 @@ namespace TQVaultAE.GUI
             // 
             this.itemText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
             this.itemText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.itemText.Font = new System.Drawing.Font("Arial Black", 8.25F);
+            this.itemText.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
             this.itemText.Location = new System.Drawing.Point(2, 2);
             this.itemText.Name = "itemText";
             this.itemText.Size = new System.Drawing.Size(588, 18);
@@ -239,15 +240,14 @@ namespace TQVaultAE.GUI
             // 
             // customMapText
             // 
-            this.customMapText.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.customMapText.BackColor = System.Drawing.Color.Gold;
             this.customMapText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.customMapText.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
+            this.customMapText.Dock = System.Windows.Forms.DockStyle.Right;
+            this.customMapText.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
             this.customMapText.ForeColor = System.Drawing.Color.Black;
-            this.customMapText.Location = new System.Drawing.Point(216, 83);
-            this.customMapText.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.customMapText.Location = new System.Drawing.Point(216, 84);
             this.customMapText.Name = "customMapText";
-            this.customMapText.Size = new System.Drawing.Size(380, 30);
+            this.customMapText.Size = new System.Drawing.Size(380, 23);
             this.customMapText.TabIndex = 11;
             this.customMapText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -383,7 +383,7 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanelMain.Size = new System.Drawing.Size(1320, 189);
+            this.tableLayoutPanelMain.Size = new System.Drawing.Size(1320, 178);
             this.tableLayoutPanelMain.TabIndex = 21;
             // 
             // tableLayoutPanelHighlight
@@ -393,10 +393,10 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelHighlight.ColumnCount = 2;
             this.tableLayoutPanelHighlight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelHighlight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelHighlight.Controls.Add(this.scalingTextBoxHighlight, 0, 0);
             this.tableLayoutPanelHighlight.Controls.Add(this.scalingLabelHighlight, 0, 0);
+            this.tableLayoutPanelHighlight.Controls.Add(this.scalingTextBoxHighlight, 1, 0);
             this.tableLayoutPanelHighlight.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanelHighlight.Location = new System.Drawing.Point(1, 119);
+            this.tableLayoutPanelHighlight.Location = new System.Drawing.Point(1, 108);
             this.tableLayoutPanelHighlight.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanelHighlight.Name = "tableLayoutPanelHighlight";
             this.tableLayoutPanelHighlight.RowCount = 1;
@@ -404,26 +404,28 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelHighlight.Size = new System.Drawing.Size(598, 23);
             this.tableLayoutPanelHighlight.TabIndex = 24;
             // 
+            // scalingLabelHighlight
+            // 
+            this.scalingLabelHighlight.AutoSize = true;
+            this.scalingLabelHighlight.BackColor = System.Drawing.Color.Transparent;
+            this.scalingLabelHighlight.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.scalingLabelHighlight.Location = new System.Drawing.Point(3, 0);
+            this.scalingLabelHighlight.Name = "scalingLabelHighlight";
+            this.scalingLabelHighlight.Size = new System.Drawing.Size(135, 15);
+            this.scalingLabelHighlight.TabIndex = 25;
+            this.scalingLabelHighlight.TabStop = true;
+            this.scalingLabelHighlight.Text = "Highlight items having :";
+            this.scalingLabelHighlight.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.scalingLabelHighlight_LinkClicked);
+            // 
             // scalingTextBoxHighlight
             // 
             this.scalingTextBoxHighlight.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
-            this.scalingTextBoxHighlight.Location = new System.Drawing.Point(135, 0);
+            this.scalingTextBoxHighlight.Location = new System.Drawing.Point(141, 0);
             this.scalingTextBoxHighlight.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.scalingTextBoxHighlight.Name = "scalingTextBoxHighlight";
             this.scalingTextBoxHighlight.Size = new System.Drawing.Size(262, 23);
             this.scalingTextBoxHighlight.TabIndex = 2;
             this.scalingTextBoxHighlight.TextChanged += new System.EventHandler(this.scalingTextBoxHighlight_TextChanged);
-            // 
-            // scalingLabelHighlight
-            // 
-            this.scalingLabelHighlight.AutoSize = true;
-            this.scalingLabelHighlight.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
-            this.scalingLabelHighlight.Location = new System.Drawing.Point(0, 1);
-            this.scalingLabelHighlight.Margin = new System.Windows.Forms.Padding(0, 1, 0, 0);
-            this.scalingLabelHighlight.Name = "scalingLabelHighlight";
-            this.scalingLabelHighlight.Size = new System.Drawing.Size(135, 15);
-            this.scalingLabelHighlight.TabIndex = 1;
-            this.scalingLabelHighlight.Text = "Highlight items having :";
             // 
             // flowLayoutPanelRightPanels
             // 
@@ -572,6 +574,18 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelMenuButtons.Size = new System.Drawing.Size(858, 36);
             this.flowLayoutPanelMenuButtons.TabIndex = 24;
             // 
+            // highlightFilters
+            // 
+            this.highlightFilters.AutoSize = true;
+            this.highlightFilters.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.highlightFilters.BackColor = System.Drawing.Color.Gold;
+            this.highlightFilters.Location = new System.Drawing.Point(73, 288);
+            this.highlightFilters.Name = "highlightFilters";
+            this.highlightFilters.Padding = new System.Windows.Forms.Padding(1);
+            this.highlightFilters.Size = new System.Drawing.Size(482, 239);
+            this.highlightFilters.TabIndex = 25;
+            this.highlightFilters.Visible = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -580,6 +594,7 @@ namespace TQVaultAE.GUI
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1350, 910);
             this.ConstrainToDesignRatio = true;
+            this.Controls.Add(this.highlightFilters);
             this.Controls.Add(this.flowLayoutPanelMenuButtons);
             this.Controls.Add(this.tableLayoutPanelMain);
             this.Controls.Add(this.aboutButton);
@@ -607,6 +622,7 @@ namespace TQVaultAE.GUI
             this.Controls.SetChildIndex(this.aboutButton, 0);
             this.Controls.SetChildIndex(this.tableLayoutPanelMain, 0);
             this.Controls.SetChildIndex(this.flowLayoutPanelMenuButtons, 0);
+            this.Controls.SetChildIndex(this.highlightFilters, 0);
             this.itemTextPanel.ResumeLayout(false);
             this.flowLayoutPanelVaultSelector.ResumeLayout(false);
             this.tableLayoutPanelMain.ResumeLayout(false);
@@ -639,7 +655,8 @@ namespace TQVaultAE.GUI
 		private System.Windows.Forms.ToolTip toolTip;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanelHighlight;
 		private ScalingTextBox scalingTextBoxHighlight;
-		private ScalingLabel scalingLabelHighlight;
 		private TypeAssistant typeAssistant;
+		private System.Windows.Forms.LinkLabel scalingLabelHighlight;
+		private HighlightFilters highlightFilters;
 	}
 }

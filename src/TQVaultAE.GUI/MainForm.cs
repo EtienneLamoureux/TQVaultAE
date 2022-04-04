@@ -35,6 +35,7 @@ namespace TQVaultAE.GUI
 	public partial class MainForm : VaultForm
 	{
 		private readonly ILogger Log = null;
+		private readonly ITranslationService TranslationService;
 
 		#region	Fields
 
@@ -149,19 +150,20 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		[PermissionSet(SecurityAction.LinkDemand, Unrestricted = true)]
 		public MainForm(
-			IServiceProvider serviceProvider // TODO Refactor : injecting service factory is anti pattern
+			IServiceProvider serviceProvider
 			, ILogger<MainForm> log
 			, SessionContext sessionContext
 			, IPlayerService playerService
 			, IVaultService vaultService
 			, IStashService stashService
-			, IFontService fontService
+			, ITranslationService translationService
 		) : base(serviceProvider)
 		{
 			this.userContext = sessionContext;
 			this.playerService = playerService;
 			this.vaultService = vaultService;
 			this.stashService = stashService;
+			this.TranslationService = translationService;
 
 			Log = log;
 			Log.LogInformation("TQVaultAE Initialization !");
@@ -1105,13 +1107,6 @@ Debug Levels
 		{
 			var value = (scalingTextBoxHighlight.Text ?? string.Empty).Trim();
 
-			if (string.IsNullOrWhiteSpace(value))
-			{
-				this.userContext.ResetHighlight();
-				this.Invoke(new MethodInvoker(this.Refresh));
-				return;
-			}
-
 			this.userContext.HighlightSearch = value;
 			this.userContext.FindHighlight();
 			this.Invoke(new MethodInvoker(this.Refresh));
@@ -1125,5 +1120,26 @@ Debug Levels
 		}
 
 		#endregion
+
+		private void scalingLabelHighlight_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			var link = sender as LinkLabel;
+			if (this.highlightFilters.Visible)
+			{
+				this.highlightFilters.Visible = false;
+				return;
+			}
+
+			// Show it
+			if (this.highlightFilters.UserContext is null)
+			{ // First time
+				this.highlightFilters.UserContext = this.userContext;
+				this.highlightFilters.Link = link;
+				this.highlightFilters.TranslationService = this.TranslationService;
+				this.highlightFilters.ResetAll();
+				this.highlightFilters.InitTypeList();
+			}
+			this.highlightFilters.Visible = true;
+		}
 	}
 }

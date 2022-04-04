@@ -108,7 +108,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-		<LangVersion>9</LangVersion>
+    <LangVersion>9</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -119,7 +119,7 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-		<LangVersion>9</LangVersion>
+    <LangVersion>9</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -163,6 +163,12 @@
     </Compile>
     <Compile Include="Components\BufferedTableLayoutPanel.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\HighlightFilters.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\HighlightFilters.Designer.cs">
+      <DependentUpon>HighlightFilters.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\IconMagnifier.cs">
       <SubType>UserControl</SubType>
@@ -330,6 +336,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Components\BagButtonBase.resx">
       <DependentUpon>BagButtonBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\HighlightFilters.resx">
+      <DependentUpon>HighlightFilters.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Components\IconMagnifier.resx">
       <DependentUpon>IconMagnifier.cs</DependentUpon>

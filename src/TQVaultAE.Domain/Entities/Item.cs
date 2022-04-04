@@ -164,6 +164,10 @@ namespace TQVaultAE.Domain.Entities
 		/// Gets the number of relics
 		/// </summary>
 		private int var1;
+
+		/// <summary>
+		/// Last <see cref="ToFriendlyNameResult"/> queried for this item.
+		/// </summary>
 		public ToFriendlyNameResult CurrentFriendlyNameResult;
 
 		public int Var1
@@ -743,22 +747,27 @@ namespace TQVaultAE.Domain.Entities
 			("WEAPONMELEE_MACE", "tagItemMace"),
 			("WEAPONMELEE_SWORD", "tagItemWarBlade"),//tagSword
 			("WEAPONHUNTING_BOW", "tagItemWarBow"),
-			("WEAPONHUNTING_RANGEDONEHAND", "tagItemShortBow"),
+			("WEAPONHUNTING_RANGEDONEHAND", "x2tagThrownWeapon"),
 			("WEAPONMAGICAL_STAFF", "tagItemBattleStaff"),// xtagLogStaff
 			("WEAPONHUNTING_SPEAR","tagItemLance"),
+			("ITEMEQUIPMENT","xtagArtifactReagentTypeEquipment"),
+			("ONESHOT_DYE","tagDye"),
 		}.ToList().AsReadOnly();
 
 		/// <summary>
 		/// Get the tagName assigned to the <see cref="ItemClass"/>
 		/// </summary>
 		public string ItemClassTagName
+			=> GetClassTagName(this.baseItemInfo.ItemClass);
+
+		/// <summary>
+		/// Get the tagName assigned to the <see cref="ItemClass"/>
+		/// </summary>
+		public static string GetClassTagName(string ItemClass)
 		{
-			get
-			{
-				var iclass = this.baseItemInfo.ItemClass.ToUpperInvariant();
-				var map = ItemClassMap.Where(i => i.ItemClass == iclass).Select(i => i.xTagName);
-				return map.Any() ? map.First() : this.baseItemInfo.ItemClass;
-			}
+			var iclass = ItemClass.ToUpperInvariant();
+			var map = ItemClassMap.Where(i => i.ItemClass == iclass).Select(i => i.xTagName);
+			return map.Any() ? map.First() : ItemClass;
 		}
 
 		/// <summary>

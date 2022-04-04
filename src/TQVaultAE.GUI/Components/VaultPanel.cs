@@ -26,6 +26,7 @@ namespace TQVaultAE.GUI.Components
 	{
 		protected readonly IFontService FontService;
 		protected readonly IUIService UIService;
+		protected readonly SessionContext userContext;
 		protected readonly IServiceProvider ServiceProvider;
 
 		/// <summary>
@@ -105,6 +106,7 @@ namespace TQVaultAE.GUI.Components
 			this.ServiceProvider = serviceProvider;
 			this.FontService = this.ServiceProvider.GetService<IFontService>();
 			this.UIService = this.ServiceProvider.GetService<IUIService>();
+			this.userContext = this.ServiceProvider.GetService<SessionContext>();
 
 			this.DragInfo = dragInfo;
 			this.AutoMoveLocation = autoMoveLocation;
@@ -284,8 +286,7 @@ namespace TQVaultAE.GUI.Components
 				if ((!this.player?.IsVault ?? false) || (!value?.IsVault ?? false))
 				{
 					// Not Vault
-					var session = this.ServiceProvider.GetService<SessionContext>();
-					session.CurrentPlayer = value;
+					this.userContext.CurrentPlayer = value;
 				}
 
 				this.player = value;
@@ -362,6 +363,7 @@ namespace TQVaultAE.GUI.Components
 			if (e.PropertyName == nameof(Player))
 			{
 				this.AssignSacks();
+				this.userContext.FindHighlight();
 			}
 		}
 
@@ -451,6 +453,9 @@ namespace TQVaultAE.GUI.Components
 				{
 					button.Visible = index < numberOfBags;
 					button.IsOn = index == this.CurrentBag;
+
+					button.Sack = this.Player.GetSack(index + this.BagPanelOffset);
+
 					++index;
 				}
 

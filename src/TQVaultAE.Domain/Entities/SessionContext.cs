@@ -57,6 +57,11 @@ namespace TQVaultAE.Domain.Entities
 		public string HighlightSearch { get; set; }
 
 		/// <summary>
+		/// Hightlight search filters
+		/// </summary>
+		public HighlightFilterValues HighlightFilter { get; set; }
+
+		/// <summary>
 		/// Hightlight search items
 		/// </summary>
 		public readonly List<Item> HighlightedItems = new();
@@ -66,31 +71,149 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		public void FindHighlight()
 		{
-			if (!string.IsNullOrWhiteSpace(this.HighlightSearch))
+			var hasSearch = !string.IsNullOrWhiteSpace(this.HighlightSearch);
+			var hasFilter = this.HighlightFilter is not null;
+
+			if (hasSearch || hasFilter)
 			{
 				this.HighlightedItems.Clear();
 
 				// Check for players
 				var sacksplayers = this.Players.Select(p => p.Value.Value)
-					.SelectMany(p => new[] { p.EquipmentSack }.Concat(p.Sacks));
+					.SelectMany(p => new[] { p.EquipmentSack }.Concat(p.Sacks))
+					.Where(s => s is not null && s.Count > 0);
 				// Check for Vaults
 				var sacksVault = this.Vaults.Select(p => p.Value.Value)
-					.SelectMany(p => p.Sacks);
+					.SelectMany(p => p.Sacks)
+					.Where(s => s is not null && s.Count > 0);
 				// Check for Stash
 				var sacksStash = this.Stashes.Select(p => p.Value.Value)
-					.Select(p => p.Sack);
+					.Select(p => p.Sack)
+					.Where(s => s is not null && s.Count > 0);
 
-				var foundItems = sacksplayers.Concat(sacksVault).Concat(sacksStash)
-					.SelectMany(i => i)
-					.Where(i =>
-						ItemProvider
-						.GetFriendlyNames(i, FriendlyNamesExtraScopes.ItemFullDisplay)
-						.FullText.IndexOf(
-							this.HighlightSearch, StringComparison.OrdinalIgnoreCase
-						) != -1
+				var availableItems = sacksplayers.Concat(sacksVault).Concat(sacksStash).SelectMany(i => i)
+					.Select(i =>
+					{
+						var fnr = ItemProvider.GetFriendlyNames(i, FriendlyNamesExtraScopes.ItemFullDisplay);
+
+						int? Lvl = null, Str = null, Int = null, Dex = null;
+
+						if (fnr.RequirementVariables.TryGetValue("LevelRequirement", out var varLvl))
+							Lvl = varLvl.GetInt32(0);
+
+						if (fnr.RequirementVariables.TryGetValue("Strength", out var varStr))
+							Str = varStr.GetInt32(0);
+
+						if (fnr.RequirementVariables.TryGetValue("Dexterity", out var varDex))
+							Dex = varDex.GetInt32(0);
+
+						if (fnr.RequirementVariables.TryGetValue("Intelligence", out var varIntel))
+							Int = varIntel.GetInt32(0);
+
+						return new
+						{
+							Item = i,
+							FriendlyNames = fnr,
+							Lvl,
+							Str,
+							Dex,
+							Int
+						};
+					}).AsQueryable();
+
+				if (hasSearch)
+				{
+					availableItems = availableItems.Where(i =>
+						   i.FriendlyNames.FullText.IndexOf(
+							   this.HighlightSearch, StringComparison.OrdinalIgnoreCase
+						   ) != -1
 					);
+				}
 
-				this.HighlightedItems.AddRange(foundItems);
+				if (hasFilter)
+				{
+					if (this.HighlightFilter.MinRequierement)
+					{
+						// Min Lvl
+						if (this.HighlightFilter.MinLvl != 0)
+						{
+							availableItems = availableItems.Where(i =>
+								!i.Lvl.HasValue // Item doesn't have requirement
+								|| i.Lvl >= this.HighlightFilter.MinLvl
+							);
+						}
+						// Min Dex
+						if (this.HighlightFilter.MinDex != 0)
+						{
+							availableItems = availableItems.Where(i =>
+								!i.Dex.HasValue
+								|| i.Dex >= this.HighlightFilter.MinDex
+							);
+						}
+						// Min Str
+						if (this.HighlightFilter.MinStr != 0)
+						{
+							availableItems = availableItems.Where(i =>
+								!i.Str.HasValue
+								|| i.Str >= this.HighlightFilter.MinStr
+							);
+						}
+						// Min Int
+						if (this.HighlightFilter.MinInt != 0)
+						{
+							availableItems = availableItems.Where(i =>
+								!i.Int.HasValue
+								|| i.Int >= this.HighlightFilter.MinInt
+							);
+						}
+					}
+
+					if (this.HighlightFilter.MaxRequierement)
+					{
+						// Max Lvl
+						if (this.HighlightFilter.MaxLvl != 0)
+						{
+							availableItems = availableItems.Where(i =>
+								!i.Lvl.HasValue // Item doesn't have requirement
+								|| i.Lvl <= this.HighlightFilter.MaxLvl
+							);
+						}
+						// Max Dex
+						if (this.HighlightFilter.MaxDex != 0)
+						{
+							availableItems = availableItems.Where(i =>
+								!i.Dex.HasValue
+								|| i.Dex <= this.HighlightFilter.MaxDex
+							);
+						}
+						// Max Str
+						if (this.HighlightFilter.MaxStr != 0)
+						{
+							availableItems = availableItems.Where(i =>
+								!i.Str.HasValue
+								|| i.Str <= this.HighlightFilter.MaxStr
+							);
+						}
+						// Max Int
+						if (this.HighlightFilter.MaxInt != 0)
+						{
+							availableItems = availableItems.Where(i =>
+								!i.Int.HasValue
+								|| i.Int <= this.HighlightFilter.MaxInt
+							);
+						}
+					}
+
+					if (this.HighlightFilter.ClassItem.Count > 0)
+					{
+						availableItems = availableItems.Where(i =>
+							this.HighlightFilter.ClassItem
+							.Any(ci => ci.Equals(i.Item.ItemClass, StringComparison.OrdinalIgnoreCase))
+						);
+					}
+				}
+
+				this.HighlightedItems.AddRange(availableItems.Select(i => i.Item));
 				return;
 			}
 			ResetHighlight();
@@ -103,6 +226,7 @@ namespace TQVaultAE.Domain.Entities
 		{
 			this.HighlightedItems.Clear();
 			this.HighlightSearch = null;
+			this.HighlightFilter = null;
 		}
 
 		#endregion

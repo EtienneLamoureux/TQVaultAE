@@ -1813,4 +1813,19 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="GlobalMiscellaneous" xml:space="preserve">
     <value>Miscellaneous</value>
   </data>
+	<data name="TextTag_tagDye" xml:space="preserve">
+    <value>Dye</value>
+  </data>
+	<data name="HighlightFiltersZeroToIgnore" xml:space="preserve">
+    <value>Use "0" to ignore filter</value>
+  </data>
+	<data name="GlobalMin" xml:space="preserve">
+    <value>Min</value>
+  </data>
+	<data name="GlobalMax" xml:space="preserve">
+    <value>Max</value>
+  </data>
+	<data name="GlobalRequirements" xml:space="preserve">
+    <value>Requirements</value>
+  </data>
 </root>

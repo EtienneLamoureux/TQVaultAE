@@ -925,6 +925,7 @@ namespace TQVaultAE.Data
 				if (key.Equals("Level"))
 					key = "LevelRequirement";
 
+				// Keep Max value per Requirement (LevelRequirement, Strength, Dexterity, Intelligence)
 				if (requirements.ContainsKey(key))
 				{
 					Variable oldVariable = (Variable)requirements[key];

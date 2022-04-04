@@ -1237,6 +1237,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Max.
+        /// </summary>
+        public static string GlobalMax {
+            get {
+                return ResourceManager.GetString("GlobalMax", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximize.
         /// </summary>
         public static string GlobalMaximize {
@@ -1260,6 +1269,15 @@ namespace TQVaultAE.Presentation {
         public static string GlobalMenuBagDelimiter {
             get {
                 return ResourceManager.GetString("GlobalMenuBagDelimiter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Min.
+        /// </summary>
+        public static string GlobalMin {
+            get {
+                return ResourceManager.GetString("GlobalMin", resourceCulture);
             }
         }
         
@@ -1341,6 +1359,15 @@ namespace TQVaultAE.Presentation {
         public static string GlobalRelicVaultStash {
             get {
                 return ResourceManager.GetString("GlobalRelicVaultStash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requirements.
+        /// </summary>
+        public static string GlobalRequirements {
+            get {
+                return ResourceManager.GetString("GlobalRequirements", resourceCulture);
             }
         }
         
@@ -1458,6 +1485,15 @@ namespace TQVaultAE.Presentation {
         public static string HealthPotionsUsed {
             get {
                 return ResourceManager.GetString("HealthPotionsUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use &quot;0&quot; to ignore filter.
+        /// </summary>
+        public static string HighlightFiltersZeroToIgnore {
+            get {
+                return ResourceManager.GetString("HighlightFiltersZeroToIgnore", resourceCulture);
             }
         }
         
@@ -4623,6 +4659,15 @@ namespace TQVaultAE.Presentation {
         public static string TextTag_tagArtifact {
             get {
                 return ResourceManager.GetString("TextTag_tagArtifact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dye.
+        /// </summary>
+        public static string TextTag_tagDye {
+            get {
+                return ResourceManager.GetString("TextTag_tagDye", resourceCulture);
             }
         }
         

@@ -238,7 +238,10 @@ namespace TQVaultAE.GUI.Components
 			this.HighlightValidItemColor = Color.FromArgb(23, 149, 15);       // Green
 			this.HighlightInvalidItemColor = Color.FromArgb(153, 28, 28);     // Red
 
-			SetHighlightSearchItemBorderColor();
+			this.HighlightSearchItemBorder = new Pen(this.userContext.HighlightSearchItemBorderColor)
+			{
+				Width = 4,
+			};
 
 			this.gridPen = new Pen(Color.FromArgb(142, 140, 129));
 
@@ -257,17 +260,6 @@ namespace TQVaultAE.GUI.Components
 
 			// Da_FileServer: Enable double buffering to remove flickering.
 			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
-		}
-
-		/// <summary>
-		/// Configure the <see cref="HighlightSearchItemBorder"/> based on <see cref="SessionContext.HighlightSearchItemBorderColor"/>.
-		/// </summary>
-		public void SetHighlightSearchItemBorderColor()
-		{
-			this.HighlightSearchItemBorder = new Pen(this.userContext.HighlightSearchItemBorderColor)
-			{
-				Width = 4,
-			};
 		}
 
 		#region SackPanel Properties

@@ -3,6 +3,7 @@ using System.Linq;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Presentation
 {
@@ -35,11 +36,14 @@ namespace TQVaultAE.Presentation
 
 		public string ItemSeed => Resources.ItemSeed;
 
-		public string TranslateXTag(string xTagName)
+		public string TranslateXTag(string xTagName, bool removeAllTQTags = false)
 		{
 			string resx = LookFortranslation(xTagName);
 
-			return string.IsNullOrWhiteSpace(resx) ? xTagName : resx;
+			if (string.IsNullOrWhiteSpace(resx))
+				return xTagName;
+			else
+				return removeAllTQTags ? resx.RemoveAllTQTags() : resx;
 		}
 
 		public bool TryTranslateXTag(string xTagName, out string translation)
