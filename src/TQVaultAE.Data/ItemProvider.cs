@@ -1211,6 +1211,8 @@ VariableValue Raw : {valueRaw}
 				res.ItemSeed = string.Format(CultureInfo.CurrentCulture, this.TranslationService.ItemSeed, k.Item.Seed, (k.Item.Seed != 0) ? (k.Item.Seed / (float)Int16.MaxValue) : 0.0f);
 				res.ItemQuest = this.TranslationService.ItemQuest;
 
+				res.ItemThrown = itm.IsThrownWeapon ? this.TranslationService.TranslateXTag("x2tagThrownWeapon") : null;
+
 				#region Prefix translation
 
 				if (!k.Item.IsRelic && !string.IsNullOrEmpty(k.Item.prefixID))

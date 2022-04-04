@@ -59,7 +59,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Array of the sacks
 		/// </summary>
-		public SackCollection[] sacks;
+		public SackCollection[] Sacks;
 
 		/// <summary>
 		/// Holds the currently disabled tooltip bagId.
@@ -113,9 +113,9 @@ namespace TQVaultAE.Domain.Entities
 			get
 			{
 				// look through each sack and see if the sack has been modified
-				if (this.sacks != null)
+				if (this.Sacks != null)
 				{
-					foreach (SackCollection sack in this.sacks)
+					foreach (SackCollection sack in this.Sacks)
 					{
 						if (sack.IsModified)
 							return true;
@@ -137,9 +137,9 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		public void Saved()
 		{
-			if (this.sacks != null)
+			if (this.Sacks != null)
 			{
-				foreach (SackCollection sack in this.sacks)
+				foreach (SackCollection sack in this.Sacks)
 					sack.IsModified = false;
 			}
 
@@ -164,7 +164,7 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		public int NumberOfSacks
 		{
-			get => (this.sacks == null) ? 0 : this.sacks.Length;
+			get => (this.Sacks == null) ? 0 : this.Sacks.Length;
 		}
 
 		/// <summary>
@@ -173,10 +173,10 @@ namespace TQVaultAE.Domain.Entities
 		/// <returns>Each Sack in the sack array.</returns>
 		public IEnumerator<SackCollection> GetEnumerator()
 		{
-			if (this.sacks == null)
+			if (this.Sacks == null)
 				yield break;
 
-			foreach (SackCollection sack in this.sacks)
+			foreach (SackCollection sack in this.Sacks)
 				yield return sack;
 		}
 
@@ -193,13 +193,13 @@ namespace TQVaultAE.Domain.Entities
 		/// <param name="numberOfSacks">Number of sacks to create</param>
 		public void CreateEmptySacks(int numberOfSacks)
 		{
-			this.sacks = new SackCollection[numberOfSacks];
+			this.Sacks = new SackCollection[numberOfSacks];
 			this.numberOfSacks = numberOfSacks;
 
 			for (int i = 0; i < numberOfSacks; ++i)
 			{
-				this.sacks[i] = new SackCollection();
-				this.sacks[i].IsModified = false;
+				this.Sacks[i] = new SackCollection();
+				this.Sacks[i].IsModified = false;
 			}
 		}
 
@@ -210,7 +210,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <param name="sackNumber">Number of the sack we are retrieving</param>
 		/// <returns>Sack instace for the corresponding sack number</returns>
 		public SackCollection GetSack(int sackNumber)
-			=> (this.sacks == null || this.sacks.Length <= sackNumber) ? null : this.sacks[sackNumber];
+			=> (this.Sacks == null || this.Sacks.Length <= sackNumber) ? null : this.Sacks[sackNumber];
 
 		/// <summary>
 		/// Moves a sack within the instance.  Used for renumbering the sacks.
@@ -221,26 +221,26 @@ namespace TQVaultAE.Domain.Entities
 		public bool MoveSack(int source, int destination)
 		{
 			// Do a little bit of error handling
-			if (this.sacks == null
-				|| destination < 0 || destination > this.sacks.Length
-				|| source < 0 || source > this.sacks.Length || source == destination)
+			if (this.Sacks == null
+				|| destination < 0 || destination > this.Sacks.Length
+				|| source < 0 || source > this.Sacks.Length || source == destination)
 			{
 				return false;
 			}
 
-			List<SackCollection> tmp = new List<SackCollection>(this.sacks.Length);
+			List<SackCollection> tmp = new List<SackCollection>(this.Sacks.Length);
 
 			// Copy the whole array first.
-			foreach (SackCollection sack in this.sacks)
+			foreach (SackCollection sack in this.Sacks)
 				tmp.Add(sack);
 
 			// Now we can shuffle things around
 			tmp.RemoveAt(source);
-			tmp.Insert(destination, this.sacks[source]);
-			this.sacks[source].IsModified = true;
-			this.sacks[destination].IsModified = true;
+			tmp.Insert(destination, this.Sacks[source]);
+			this.Sacks[source].IsModified = true;
+			this.Sacks[destination].IsModified = true;
 
-			tmp.CopyTo(this.sacks);
+			tmp.CopyTo(this.Sacks);
 
 			return true;
 		}
@@ -254,18 +254,18 @@ namespace TQVaultAE.Domain.Entities
 		public bool CopySack(int source, int destination)
 		{
 			// Do a little bit of error handling
-			if (this.sacks == null
-				|| destination < 0 || destination > this.sacks.Length
-				|| source < 0 || source > this.sacks.Length || source == destination)
+			if (this.Sacks == null
+				|| destination < 0 || destination > this.Sacks.Length
+				|| source < 0 || source > this.Sacks.Length || source == destination)
 			{
 				return false;
 			}
 
-			SackCollection newSack = this.sacks[source].Duplicate();
+			SackCollection newSack = this.Sacks[source].Duplicate();
 
 			if (newSack != null)
 			{
-				this.sacks[destination] = newSack;
+				this.Sacks[destination] = newSack;
 				return true;
 			}
 

@@ -153,7 +153,7 @@ namespace TQVaultAE.Data
 					writer.Write(sta.Height);
 
 					// SackType should already be set at sta point
-					SackCollectionProvider.Encode(sta.sack, writer);
+					SackCollectionProvider.Encode(sta.Sack, writer);
 					dataLength = (int)writeStream.Length;
 				}
 
@@ -304,10 +304,10 @@ namespace TQVaultAE.Data
 			sta.Height = reader.ReadInt32();
 
 			sta.numberOfSacks = 1;
-			sta.sack = new SackCollection();
-			sta.sack.SackType = SackType.Stash;
-			sta.sack.IsImmortalThrone = true;
-			SackCollectionProvider.Parse(sta.sack, reader);
+			sta.Sack = new SackCollection();
+			sta.Sack.SackType = SackType.Stash;
+			sta.Sack.IsImmortalThrone = true;
+			SackCollectionProvider.Parse(sta.Sack, reader);
 
 			// The ValidateNextString Method can throw an ArgumentException.
 			// We just pass it along at sta point.

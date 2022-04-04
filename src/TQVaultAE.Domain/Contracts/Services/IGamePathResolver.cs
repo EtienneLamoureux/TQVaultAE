@@ -169,5 +169,13 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// <param name="vaultFilePath"></param>
 		/// <returns>name stripted from path and extension</returns>
 		string GetVaultNameFromPath(string vaultFilePath);
+
+		/// <summary>
+		/// Return ARC filename from <paramref name="resourceIdOrPrefix"/>
+		/// </summary>
+		/// <param name="resourceIdOrPrefix"></param>
+		/// <returns></returns>
+		string ResolveArcFileName(string resourceIdOrPrefix);
+
 	}
 }

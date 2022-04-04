@@ -297,7 +297,7 @@ namespace TQVaultAE.Data
 			pc.currentlyFocusedSackNumber = vaultDto.currentlyFocusedSackNumber;
 			pc.currentlySelectedSackNumber = vaultDto.currentlySelectedSackNumber;
 
-			pc.sacks = vaultDto.sacks.Select(s => new SackCollection()
+			pc.Sacks = vaultDto.sacks.Select(s => new SackCollection()
 			{
 				SackType = SackType.Sack,
 				IsImmortalThrone = pc.IsImmortalThrone,
@@ -680,7 +680,7 @@ namespace TQVaultAE.Data
 					for (int i = 0; i < pc.numberOfSacks; ++i)
 					{
 						// SackType should already be set at pc point
-						SackCollectionProvider.Encode(pc.sacks[i], writer);
+						SackCollectionProvider.Encode(pc.Sacks[i], writer);
 					}
 
 					dataLength = (int)writeStream.Length;
@@ -722,14 +722,14 @@ namespace TQVaultAE.Data
 				TQData.ValidateNextString("currentlySelectedSackNumber", reader);
 				pc.currentlySelectedSackNumber = reader.ReadInt32();
 
-				pc.sacks = new SackCollection[pc.numberOfSacks];
+				pc.Sacks = new SackCollection[pc.numberOfSacks];
 
 				for (int i = 0; i < pc.numberOfSacks; ++i)
 				{
-					pc.sacks[i] = new SackCollection();
-					pc.sacks[i].SackType = SackType.Sack;
-					pc.sacks[i].IsImmortalThrone = pc.IsImmortalThrone;
-					SackCollectionProvider.Parse(pc.sacks[i], reader);
+					pc.Sacks[i] = new SackCollection();
+					pc.Sacks[i].SackType = SackType.Sack;
+					pc.Sacks[i].IsImmortalThrone = pc.IsImmortalThrone;
+					SackCollectionProvider.Parse(pc.Sacks[i], reader);
 				}
 
 				//pc.itemBlockEnd = (int)reader.BaseStream.Position;

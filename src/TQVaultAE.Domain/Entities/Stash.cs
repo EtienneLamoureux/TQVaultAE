@@ -52,10 +52,9 @@ namespace TQVaultAE.Domain.Entities
 		public byte[] name;
 
 		/// <summary>
-		/// Sack instance for this file
+		/// Gets the current sack instance
 		/// </summary>
-		public SackCollection sack;
-
+		public SackCollection Sack;
 
 		/// <summary>
 		/// Initializes a new instance of the Stash class.
@@ -75,8 +74,8 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		public void CreateEmptySack()
 		{
-			this.sack = new SackCollection();
-			this.sack.IsModified = false;
+			this.Sack = new SackCollection();
+			this.Sack.IsModified = false;
 		}
 
 		/// <summary>
@@ -91,15 +90,15 @@ namespace TQVaultAE.Domain.Entities
 		/// Gets a value indicating whether this file has been modified
 		/// </summary>
 		public bool IsModified
-			=> this.sack?.IsModified ?? false;
+			=> this.Sack?.IsModified ?? false;
 
 		/// <summary>
 		/// Adjust internal status when the collection is saved
 		/// </summary>
 		public void Saved()
 		{
-			if (this.sack is not null)
-				this.sack.IsModified = false;
+			if (this.Sack is not null)
+				this.Sack.IsModified = false;
 		}
 
 		/// <summary>
@@ -130,12 +129,7 @@ namespace TQVaultAE.Domain.Entities
 		/// Gets the number of sack contained in this stash
 		/// </summary>
 		public int NumberOfSacks
-			=> this.sack == null ? 0 : this.numberOfSacks;
-
-		/// <summary>
-		/// Gets the current sack instance
-		/// </summary>
-		public SackCollection Sack => this.sack;
+			=> this.Sack == null ? 0 : this.numberOfSacks;
 
 	}
 }

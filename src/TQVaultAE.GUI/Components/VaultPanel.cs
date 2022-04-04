@@ -17,9 +17,7 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Presentation;
 	using TQVaultAE.GUI.Tooltip;
 	using TQVaultAE.Domain.Contracts.Services;
-	using System.Collections.Generic;
 	using System.Linq;
-	using TQVaultAE.Domain.Contracts.Providers;
 
 	/// <summary>
 	/// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.
@@ -337,13 +335,13 @@ namespace TQVaultAE.GUI.Components
 						if (this.AutoMoveLocation == AutoMoveLocation.Vault && this.Vault.currentlySelectedSackNumber != this.currentBag)
 						{
 							this.Vault.currentlySelectedSackNumber = this.currentBag;
-							this.Vault.sacks.First().IsModified = true;
+							this.Vault.Sacks.First().IsModified = true;
 						}
 
 						if (this.AutoMoveLocation == AutoMoveLocation.SecondaryVault && this.Vault.currentlyFocusedSackNumber != this.currentBag)
 						{
 							this.Vault.currentlyFocusedSackNumber = this.currentBag;
-							this.Vault.sacks.First().IsModified = true;
+							this.Vault.Sacks.First().IsModified = true;
 						}
 					}
 				}

@@ -156,11 +156,6 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		private Point originalLocation;
 
-		/// <summary>
-		/// Items to highlight
-		/// </summary>
-		protected List<Item> HighlightedItems;
-
 		#endregion SackPanel Fields
 
 		public SackPanel()
@@ -265,13 +260,13 @@ namespace TQVaultAE.GUI.Components
 		}
 
 		/// <summary>
-		/// Configure the <see cref="HighlightSearchItemBorder"/> based on <see cref="HighlightSearchItemColor"/>.
+		/// Configure the <see cref="HighlightSearchItemBorder"/> based on <see cref="SessionContext.HighlightSearchItemBorderColor"/>.
 		/// </summary>
 		public void SetHighlightSearchItemBorderColor()
 		{
-			this.HighlightSearchItemBorder = new Pen(this.HighlightSearchItemBorderColor)
+			this.HighlightSearchItemBorder = new Pen(this.userContext.HighlightSearchItemBorderColor)
 			{
-				Width = 3 * UIService.Scale
+				Width = 4,
 			};
 		}
 
@@ -383,19 +378,9 @@ namespace TQVaultAE.GUI.Components
 		public Color HighlightInvalidItemColor { get; protected set; }
 
 		/// <summary>
-		/// Gets or sets the background Color for item highlight.
-		/// </summary>
-		public Color HighlightSearchItemColor { get; protected set; } = TQColor.Indigo.Color();
-		/// <summary>
-		/// Gets or sets the border color for item highlight.
-		/// </summary>
-		public Color HighlightSearchItemBorderColor { get; protected set; } = TQColor.Red.Color();
-
-		/// <summary>
 		/// Gets or sets the border for item highlight.
 		/// </summary>
 		public Pen HighlightSearchItemBorder { get; protected set; }
-
 
 		/// <summary>
 		/// Gets a value indicating whether items have been selected
@@ -412,39 +397,9 @@ namespace TQVaultAE.GUI.Components
 			set
 			{
 				this.sack = value;
-				FindHighlight();
 				this.Refresh();
 			}
 		}
-
-		/// <summary>
-		/// Find items to highlight
-		/// </summary>
-		public void FindHighlight()
-		{
-			if (!string.IsNullOrWhiteSpace(this.userContext.HighlightSearch) && this.Sack is not null)
-			{
-				this.HighlightedItems = this.Sack
-					.Where(i =>
-						ItemProvider
-						.GetFriendlyNames(i, FriendlyNamesExtraScopes.ItemFullDisplay)
-						.FullText.IndexOf(
-							this.userContext.HighlightSearch, StringComparison.OrdinalIgnoreCase
-						) != -1
-					).ToList();
-				return;
-			}
-			ResetHighlight();
-		}
-
-		/// <summary>
-		/// Remove item highlights
-		/// </summary>
-		public void ResetHighlight()
-		{
-			this.HighlightedItems = new();
-		}
-
 
 		/// <summary>
 		/// Gets or sets the type of container this is.
@@ -1970,10 +1925,10 @@ namespace TQVaultAE.GUI.Components
 
 				var highlight = false;
 				// Highlight search
-				if (this.HighlightedItems.Contains(item))
+				if (this.userContext.HighlightedItems.Count > 0 && this.userContext.HighlightedItems.Contains(item))
 				{
 					highlight = true;
-					backgroundColor = this.HighlightSearchItemColor;
+					backgroundColor = this.userContext.HighlightSearchItemColor;
 					alpha = AdjustAlpha(alpha);
 				}
 				// If we are showing the cannot equip background then 

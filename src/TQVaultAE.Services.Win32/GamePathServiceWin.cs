@@ -20,10 +20,12 @@ namespace TQVaultAE.Services.Win32
 	public class GamePathServiceWin : IGamePathService
 	{
 		private readonly ILogger Log;
+		private readonly ITQDataService TQData;
 
-		public GamePathServiceWin(ILogger<GamePathServiceWin> log)
+		public GamePathServiceWin(ILogger<GamePathServiceWin> log, ITQDataService tQDataService)
 		{
 			this.Log = log;
+			this.TQData = tQDataService;
 		}
 
 		/// <summary>
@@ -689,6 +691,44 @@ Please select the game installation directory.");
 			);
 
 			return newFolder;
+		}
+
+		/// <summary>
+		/// Return ARC filename from <paramref name="resourceIdOrPrefix"/>
+		/// </summary>
+		/// <param name="resourceIdOrPrefix"></param>
+		/// <returns></returns>
+		public string ResolveArcFileName(string resourceIdOrPrefix)
+		{
+			resourceIdOrPrefix = TQData.NormalizeRecordPath(resourceIdOrPrefix);
+			var segments = resourceIdOrPrefix.Split('\\');
+			
+			string path;
+			switch (segments.First())
+			{
+				case "XPACK":
+					// Comes from Immortal Throne
+					path = Path.Combine(ImmortalThronePath, "Resources", "XPack", segments[1] + ".arc");
+					break;
+				case "XPACK2":
+					// Comes from Ragnarok
+					path = Path.Combine(ImmortalThronePath, "Resources", "XPack2", segments[1] + ".arc");
+					break;
+				case "XPACK3":
+					// Comes from Atlantis
+					path = Path.Combine(ImmortalThronePath, "Resources", "XPack3", segments[1] + ".arc");
+					break;
+				case "XPACK4":
+					// Comes from Eternal Embers
+					path = Path.Combine(ImmortalThronePath, "Resources", "XPack4", segments[1] + ".arc");
+					break;
+				default:
+					// Base game
+					path = Path.Combine(ImmortalThronePath, "Resources", segments[0] + ".arc");
+					break;
+			}
+
+			return path;
 		}
 	}
 }

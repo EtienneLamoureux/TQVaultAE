@@ -19,13 +19,15 @@ namespace TQVaultAE.Presentation
 		private readonly ILogger Log;
 		private readonly IDatabase Database;
 		private readonly IUIService UIService;
+		private readonly IGamePathService GamePathService;
 		private ReadOnlyCollection<IconInfo> Pictures;
 
-		public IconService(ILogger<IconService> log, IDatabase database, IUIService uiService)
+		public IconService(ILogger<IconService> log, IDatabase database, IUIService uiService, IGamePathService gamePathService)
 		{
 			this.Log = log;
 			this.Database = database;
 			this.UIService = uiService;
+			this.GamePathService = gamePathService;
 		}
 
 		void InitIconList()
@@ -40,7 +42,7 @@ namespace TQVaultAE.Presentation
 			var consolitatedFilekeys =
 				from file in configfile.list
 				let filename = file.fileName
-				let arcpath = Database.ResolveArcFileName(filename)
+				let arcpath = GamePathService.ResolveArcFileName(filename)
 				where File.Exists(arcpath)
 				let arcfile = Database.ReadARCFile(arcpath)
 				from key in arcfile.DirectoryEntries.Keys.Cast<string>()

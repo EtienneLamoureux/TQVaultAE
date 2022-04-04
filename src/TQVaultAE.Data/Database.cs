@@ -343,43 +343,6 @@ namespace TQVaultAE.Data
 			return arzProv.GetItem(ArzFile, itemId);
 		}
 
-		/// <summary>
-		/// Return ARC filename from <paramref name="resourceIdOrPrefix"/>
-		/// </summary>
-		/// <param name="resourceIdOrPrefix"></param>
-		/// <returns></returns>
-		public string ResolveArcFileName(string resourceIdOrPrefix)
-		{
-			resourceIdOrPrefix = TQData.NormalizeRecordPath(resourceIdOrPrefix);
-			var segments = resourceIdOrPrefix.Split('\\');
-
-			string rootFolder = GamePathResolver.ImmortalThronePath;
-			switch (segments.First())
-			{
-				case "XPACK":
-					// Comes from Immortal Throne
-					rootFolder = Path.Combine(rootFolder, "Resources", "XPack", segments[1] + ".arc");
-					break;
-				case "XPACK2":
-					// Comes from Ragnarok
-					rootFolder = Path.Combine(rootFolder, "Resources", "XPack2", segments[1] + ".arc");
-					break;
-				case "XPACK3":
-					// Comes from Atlantis
-					rootFolder = Path.Combine(rootFolder, "Resources", "XPack3", segments[1] + ".arc");
-					break;
-				case "XPACK4":
-					// Comes from Eternal Embers
-					rootFolder = Path.Combine(rootFolder, "Resources", "XPack4", segments[1] + ".arc");
-					break;
-				default:
-					// Base game
-					rootFolder = Path.Combine(rootFolder, "Resources", segments[0] + ".arc");
-					break;
-			}
-
-			return rootFolder;
-		}
 
 		/// <summary>
 		/// Gets a resource from the database using the resource Id.

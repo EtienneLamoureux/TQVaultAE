@@ -836,10 +836,10 @@ namespace TQVaultAE.GUI.Components
 
 				var highlight = false;
 				// Highlight search
-				if (this.HighlightedItems.Contains(item))
+				if (this.userContext.HighlightedItems.Count > 0 && this.userContext.HighlightedItems.Contains(item))
 				{
 					highlight = true;
-					backgroundColor = this.HighlightSearchItemColor;
+					backgroundColor = this.userContext.HighlightSearchItemColor;
 					alpha = AdjustAlpha(alpha);
 				}
 				// If we are showing the cannot equip background then 
