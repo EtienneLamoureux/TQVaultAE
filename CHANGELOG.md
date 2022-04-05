@@ -1,4 +1,21 @@
 # Changelog
+## 4.0.0
+### Features
+- #283 Enable saving the modified stashes without closing the tool
+- #264 Add ability to choose the vault-tab icon
+- #185 New interface language: chinese
+- Enable/Disable tooltip on StashPanel
+- Add support for "Thrown" weapons
+- Allow character duplication
+
+### Bugs
+- #398 Fix "cannot find stash file" error
+- #370 Fix display name for the relic "Aegis of Athena"
+
+### Other
+- #296 Rearrange item stats to better match in-game display
+- Change the vaults' data structure
+
 ## 3.9.0
 ### Features
 - #402 Support Eternal Embers
