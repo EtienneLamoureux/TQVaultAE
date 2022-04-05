@@ -502,6 +502,8 @@ namespace TQVaultAE.Data
 			"headVelocity",
 			"maxDistance",
 			"tailVelocity",
+			"refreshTime",
+			"skillCooldownTime"
 		};
 
 		/// <summary>
@@ -1018,6 +1020,8 @@ namespace TQVaultAE.Data
 				return "SkillChargeDuration";
 			if (effect.Equals("piercingProjectile", StringComparison.OrdinalIgnoreCase))
 				return "ProjectilePiercingChance";
+			if (effect.Equals("refreshTime", StringComparison.OrdinalIgnoreCase))
+				return "tagSkillRefreshTime";
 
 			// Strip off Projectile from the text tag.
 			if (effect.ToUpperInvariant().StartsWith("PROJECTILE", StringComparison.Ordinal))
