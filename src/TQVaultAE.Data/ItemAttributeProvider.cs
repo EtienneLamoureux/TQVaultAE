@@ -838,9 +838,10 @@ namespace TQVaultAE.Data
 		private string GetDefenseEffectTextTag(string effect)
 		{
 			// database orphan tag with no substitute => return as is
-			if (effect.Equals("defensiveTotalSpeedChance", StringComparison.OrdinalIgnoreCase))
+			if (effect.Equals("defensiveTotalSpeedChance", StringComparison.OrdinalIgnoreCase)
+				|| effect.Equals("defensiveAbsorption", StringComparison.OrdinalIgnoreCase))
 				return effect;
-
+			
 			// Check for specific strings.
 			switch (effect.ToUpperInvariant())
 			{
