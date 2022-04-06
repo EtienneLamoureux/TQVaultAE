@@ -27,6 +27,7 @@ namespace TQVaultAE.GUI.Components
 	{
 		protected readonly IFontService FontService;
 		protected readonly IUIService UIService;
+		protected readonly SessionContext userContext;
 		protected readonly IServiceProvider ServiceProvider;
 
 		/// <summary>
@@ -106,6 +107,7 @@ namespace TQVaultAE.GUI.Components
 			this.ServiceProvider = serviceProvider;
 			this.FontService = this.ServiceProvider.GetService<IFontService>();
 			this.UIService = this.ServiceProvider.GetService<IUIService>();
+			this.userContext = this.ServiceProvider.GetService<SessionContext>();
 
 			this.DragInfo = dragInfo;
 			this.AutoMoveLocation = autoMoveLocation;
@@ -574,6 +576,10 @@ namespace TQVaultAE.GUI.Components
 					{
 						this.contextMenu.Items.Add("-");
 						this.contextMenu.Items.Add(Resources.PlayerPanelChangeIcon);
+						this.contextMenu.Items.Add(Resources.PlayerPanelCopyIcon);
+
+						if (this.userContext.IconInfoCopy is not null)
+							this.contextMenu.Items.Add(Resources.PlayerPanelPasteIcon);
 					}
 
 					this.contextMenu.Show(this.BagButtons[this.CurrentBag], new Point(e.X, e.Y));
@@ -861,6 +867,26 @@ namespace TQVaultAE.GUI.Components
 				{
 					button.Refresh();
 				}
+			}
+
+			if (selectedItem == Resources.PlayerPanelCopyIcon)
+			{
+				var button = this.BagButtons[this.CurrentBag];
+
+				this.userContext.IconInfoCopy = button.Sack?.BagButtonIconInfo;
+				MainForm frm = this.FindForm() as MainForm;
+				frm.NotificationText.Text = Resources.GlobalCopied;
+			}
+
+			if (selectedItem == Resources.PlayerPanelPasteIcon)
+			{
+				var button = this.BagButtons[this.CurrentBag];
+				button.Sack.BagButtonIconInfo = this.userContext.IconInfoCopy;
+				button.Sack.IsModified = true;
+				MainForm frm = this.FindForm() as MainForm;
+				frm.NotificationText.Text = Resources.GlobalPasted;
+				button.ApplyIconInfo(button.Sack);
+				Refresh();
 			}
 
 		}

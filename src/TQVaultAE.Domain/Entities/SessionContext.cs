@@ -15,6 +15,11 @@ namespace TQVaultAE.Domain.Entities
 		public PlayerCollection CurrentPlayer { get; set; }
 
 		/// <summary>
+		/// Last icon info copied
+		/// </summary>
+		public BagButtonIconInfo IconInfoCopy { get; set; }
+
+		/// <summary>
 		/// Dictionary of all loaded player files
 		/// </summary>
 		public readonly LazyConcurrentDictionary<string, PlayerCollection> Players = new LazyConcurrentDictionary<string, PlayerCollection>();
