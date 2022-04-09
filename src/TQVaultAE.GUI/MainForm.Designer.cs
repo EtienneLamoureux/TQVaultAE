@@ -409,12 +409,14 @@ namespace TQVaultAE.GUI
             this.scalingLabelHighlight.AutoSize = true;
             this.scalingLabelHighlight.BackColor = System.Drawing.Color.Transparent;
             this.scalingLabelHighlight.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.scalingLabelHighlight.LinkColor = System.Drawing.Color.Gold;
             this.scalingLabelHighlight.Location = new System.Drawing.Point(3, 0);
             this.scalingLabelHighlight.Name = "scalingLabelHighlight";
             this.scalingLabelHighlight.Size = new System.Drawing.Size(135, 15);
             this.scalingLabelHighlight.TabIndex = 25;
             this.scalingLabelHighlight.TabStop = true;
             this.scalingLabelHighlight.Text = "Highlight items having :";
+            this.scalingLabelHighlight.VisitedLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(255)))), ((int)(((byte)(64)))));
             this.scalingLabelHighlight.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.scalingLabelHighlight_LinkClicked);
             // 
             // scalingTextBoxHighlight
