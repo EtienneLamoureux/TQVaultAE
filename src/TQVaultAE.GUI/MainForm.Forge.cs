@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TQVaultAE.GUI.Components;
 
@@ -11,22 +7,32 @@ namespace TQVaultAE.GUI
 {
 	public partial class MainForm
 	{
+		private ForgePanel forgePanel;
+
 		private (bool configureButton, bool showVaulButton, bool searchButton, bool duplicateButton, bool saveButton, bool playerPanel, bool stashPanel, bool secondaryVaultPanel, bool flowLayoutPanelRightComboBox) lastVisibility;
 
 		private ForgePanel CreateForgePanel()
 		{
-			this.forgePanel = new ForgePanel(this.UIService, this.FontService);
+			forgePanel = new ForgePanel(DragInfo, ServiceProvider);
 
-			this.flowLayoutPanelRightPanels.Controls.Add(this.forgePanel);
-			this.forgePanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-			this.forgePanel.Visible = false;
-			this.forgePanel.CancelAction = ForgeHideUI;
-			return this.forgePanel;
+			flowLayoutPanelRightPanels.Controls.Add(forgePanel);
+			forgePanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+			forgePanel.Visible = false;
+			forgePanel.NotifyAction = ForgeNotify;
+			forgePanel.CancelAction = ForgeHideUI;
+			forgePanel.ForgeAction = ForgeHideUI;
+			return forgePanel;
+		}
+
+		private void ForgeNotify(string message)
+		{
+			itemText.ForeColor = Color.Red;
+			itemText.Text = message;
 		}
 
 		private void scalingButtonForge_Click(object sender, EventArgs e)
 		{
-			if (!this.forgePanel.Visible)
+			if (!forgePanel.Visible)
 			{
 				ForgeShowUI();
 
@@ -39,7 +45,7 @@ namespace TQVaultAE.GUI
 		private void ForgeShowUI()
 		{
 			// Save UI visibility
-			this.lastVisibility = (
+			lastVisibility = (
 				configureButton: configureButton.Visible
 				, showVaulButton: showVaulButton.Visible
 				, searchButton: searchButton.Visible
@@ -66,8 +72,8 @@ namespace TQVaultAE.GUI
 			false;
 
 			// Show the forge
-			this.forgePanel.Dock = DockStyle.Left;
-			this.forgePanel.Visible = true;
+			forgePanel.Dock = DockStyle.Left;
+			forgePanel.Visible = true;
 		}
 
 		private void ForgeHideUI()
@@ -83,8 +89,8 @@ namespace TQVaultAE.GUI
 			stashPanel.Visible = lastVisibility.stashPanel;
 			secondaryVaultPanel.Visible = lastVisibility.secondaryVaultPanel;
 			// Hide the forge
-			this.forgePanel.Dock = DockStyle.None;
-			this.forgePanel.Visible = false;
+			forgePanel.Dock = DockStyle.None;
+			forgePanel.Visible = false;
 		}
 	}
 }

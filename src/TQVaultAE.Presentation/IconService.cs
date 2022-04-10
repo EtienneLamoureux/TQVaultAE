@@ -43,8 +43,8 @@ namespace TQVaultAE.Presentation
 				from file in configfile.list
 				let filename = file.fileName
 				let arcpath = GamePathService.ResolveArcFileName(filename)
-				where File.Exists(arcpath)
-				let arcfile = Database.ReadARCFile(arcpath)
+				where File.Exists(arcpath.ArcFileName)
+				let arcfile = Database.ReadARCFile(arcpath.ArcFileName)
 				from key in arcfile.DirectoryEntries.Keys.Cast<string>()
 				select filename + '\\' + key;
 

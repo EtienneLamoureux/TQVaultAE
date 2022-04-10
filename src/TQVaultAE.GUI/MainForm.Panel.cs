@@ -13,7 +13,6 @@ namespace TQVaultAE.GUI
 {
 	public partial class MainForm
 	{
-		private ForgePanel forgePanel;
 
 		/// <summary>
 		/// Creates the form's internal panels

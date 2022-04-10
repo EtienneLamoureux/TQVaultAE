@@ -58,10 +58,22 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		public string prefixID;
 
+		public bool HasPrefix
+			=> !string.IsNullOrWhiteSpace(prefixID);
+
 		/// <summary>
 		/// Suffix database record ID
 		/// </summary>
 		public string suffixID;
+
+		public bool HasSuffix
+			=> !string.IsNullOrWhiteSpace(suffixID);
+
+		/// <summary>
+		/// Gets the value indicating whether the item allows 2 relic socketing
+		/// </summary>
+		public bool IsOfTheTinkerer
+			=> HasSuffix && suffixID.ToUpper().EndsWith("RARE_EXTRARELIC_01.DBR");
 
 		/// <summary>
 		/// Relic database record ID
@@ -424,6 +436,12 @@ namespace TQVaultAE.Domain.Entities
 			=> (this.baseItemInfo != null) ? this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ARMORPROTECTIVE_LOWERBODY") : false;
 
 		/// <summary>
+		/// Gets a value indicating whether the item is Jewellery.
+		/// </summary>
+		public bool IsJewellery
+			=> IsRing || IsAmulet;
+
+		/// <summary>
 		/// Gets a value indicating whether the item is a ring.
 		/// </summary>
 		public bool IsRing
@@ -492,6 +510,40 @@ namespace TQVaultAE.Domain.Entities
 					return true;
 
 				return false;
+			}
+		}
+
+		/// <summary>
+		/// Get a value indicating gear level from <see cref="ItemGearLevel.Broken"/> to <see cref="ItemGearLevel.Legendary"/>
+		/// </summary>
+		public ItemGearLevel GearLevel
+		{
+			get
+			{
+				switch (ItemStyle)
+				{
+					case ItemStyle.Broken:
+						return ItemGearLevel.Broken;
+					case ItemStyle.Mundane:
+						return ItemGearLevel.Mundane;
+					case ItemStyle.Common:
+						return ItemGearLevel.Common;
+					case ItemStyle.Rare:
+						return ItemGearLevel.Rare;
+					case ItemStyle.Epic:
+						return ItemGearLevel.Epic;
+					case ItemStyle.Legendary:
+						return ItemGearLevel.Legendary;
+					case ItemStyle.Quest:
+					case ItemStyle.Relic:
+					case ItemStyle.Potion:
+					case ItemStyle.Scroll:
+					case ItemStyle.Parchment:
+					case ItemStyle.Formulae:
+					case ItemStyle.Artifact:
+					default:
+						return ItemGearLevel.NoGear;
+				}
 			}
 		}
 

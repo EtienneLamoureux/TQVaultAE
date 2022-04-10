@@ -1828,4 +1828,73 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="GlobalRequirements" xml:space="preserve">
     <value>Requirements</value>
   </data>
+	<data name="ForgeGodMode" xml:space="preserve">
+    <value>God Mode</value>
+  </data>
+	<data name="ForgeGodModeTT" xml:space="preserve">
+    <value>Allow the use of all types of properties in placeholders</value>
+  </data>
+	<data name="ForgeRelaxMode" xml:space="preserve">
+    <value>Relax Mode</value>
+  </data>
+	<data name="ForgeRelaxModeTT" xml:space="preserve">
+    <value>Allow the use of a second relic without "{0}" suffix and an Epic/Legendary as a base item</value>
+  </data>
+	<data name="ForgeStrictMode" xml:space="preserve">
+    <value>Strict Mode</value>
+  </data>
+	<data name="ForgeStrictModeTT" xml:space="preserve">
+    <value>Constrain the Forge to game rules</value>
+  </data>
+	<data name="ForgeUseBase" xml:space="preserve">
+    <value>Use Base</value>
+  </data>
+	<data name="ForgeUsePrefix" xml:space="preserve">
+    <value>Use Prefix</value>
+  </data>
+	<data name="ForgeUseSuffix" xml:space="preserve">
+    <value>Use Suffix</value>
+  </data>
+	<data name="ForgeUseRelic1" xml:space="preserve">
+    <value>Use Relic1</value>
+  </data>
+	<data name="ForgeUseRelic2" xml:space="preserve">
+    <value>Use Relic2</value>
+  </data>
+	<data name="ForgeMustSelectBaseItem" xml:space="preserve">
+    <value>You must select a base item!</value>
+  </data>
+	<data name="ForgeMustSelectItemToMerge" xml:space="preserve">
+    <value>You must select an item to merge!</value>
+  </data>
+	<data name="ForgeMustHavePrefixOutsideOfGodMode" xml:space="preserve">
+    <value>You must select an item with prefix!</value>
+  </data>
+	<data name="ForgeMustHaveSuffixOutsideOfGodMode" xml:space="preserve">
+    <value>You must select an item with suffix!</value>
+  </data>
+	<data name="ForgeMustHaveRelicOutsideOfGodMode" xml:space="preserve">
+    <value>You must select an item with a relic or a relic!</value>
+  </data>
+	<data name="ForgeMustSelectArmorOrWeaponOrJewellery" xml:space="preserve">
+    <value>You must select an Armor/Weapon/Jewellery item!</value>
+  </data>
+	<data name="ForgeMustSelectRelicOrItemWithRelic" xml:space="preserve">
+    <value>You must select a relic or an item with relic!</value>
+  </data>
+	<data name="ForgeMustHaveTinkeredSuffix" xml:space="preserve">
+    <value>You must select a "{0}" suffix!</value>
+  </data>
+	<data name="ForgeNoEpicLegendaryAllowed" xml:space="preserve">
+    <value>Epic and Legendary is not allowed in Strict Mode !</value>
+  </data>
+	<data name="ForgeMustSelectBaseItemFirst" xml:space="preserve">
+    <value>You must select a base item first!</value>
+  </data>
+	<data name="ForgeCantUsePrefixSuffixBetterThanBase" xml:space="preserve">
+    <value>Strict : You can't use a Prefix/Suffix better than Base item!</value>
+  </data>
+	<data name="ForgeCantUsePrefixSuffixOfAnotherGearType" xml:space="preserve">
+    <value>Strict : Prefix/Suffix must be of same gear type than Base item!</value>
+  </data>	
 </root>

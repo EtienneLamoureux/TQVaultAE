@@ -1,5 +1,4 @@
-﻿using TQVaultAE.Domain.Entities;
-using TQVaultAE.Domain.Results;
+﻿using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.Domain.Contracts.Services
 {
@@ -175,7 +174,7 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		/// <param name="resourceIdOrPrefix"></param>
 		/// <returns></returns>
-		string ResolveArcFileName(string resourceIdOrPrefix);
+		(string ArcFileName, bool IsDLC) ResolveArcFileName(string resourceIdOrPrefix);
 
 	}
 }

@@ -135,9 +135,9 @@ namespace TQVaultAE.GUI
             this.typeAssistant = new TQVaultAE.GUI.Components.TypeAssistant();
             this.saveButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.flowLayoutPanelMenuButtons = new System.Windows.Forms.FlowLayoutPanel();
+            this.scalingButtonForge = new TQVaultAE.GUI.Components.ScalingButton();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.highlightFilters = new TQVaultAE.GUI.Components.HighlightFilters();
-            this.scalingButtonForge = new TQVaultAE.GUI.Components.ScalingButton();
             this.itemTextPanel.SuspendLayout();
             this.flowLayoutPanelVaultSelector.SuspendLayout();
             this.tableLayoutPanelMain.SuspendLayout();
@@ -362,13 +362,13 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanelMain.AutoSize = true;
-            this.tableLayoutPanelMain.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanelMain.BackColor = System.Drawing.Color.Transparent;
             this.tableLayoutPanelMain.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
-            this.tableLayoutPanelMain.ColumnCount = 3;
+            this.tableLayoutPanelMain.ColumnCount = 4;
             this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 5F));
             this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 10F));
             this.tableLayoutPanelMain.Controls.Add(this.tableLayoutPanelHighlight, 0, 3);
             this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelRightPanels, 2, 1);
             this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelVaultSelector, 0, 0);
@@ -378,13 +378,14 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelMain.Location = new System.Drawing.Point(15, 60);
             this.tableLayoutPanelMain.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanelMain.Name = "tableLayoutPanelMain";
-            this.tableLayoutPanelMain.RowCount = 5;
+            this.tableLayoutPanelMain.RowCount = 6;
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanelMain.Size = new System.Drawing.Size(1320, 178);
+            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanelMain.Size = new System.Drawing.Size(1320, 199);
             this.tableLayoutPanelMain.TabIndex = 21;
             // 
             // tableLayoutPanelHighlight
@@ -578,18 +579,6 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelMenuButtons.Size = new System.Drawing.Size(1001, 36);
             this.flowLayoutPanelMenuButtons.TabIndex = 24;
             // 
-            // highlightFilters
-            // 
-            this.highlightFilters.AutoSize = true;
-            this.highlightFilters.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.highlightFilters.BackColor = System.Drawing.Color.Gold;
-            this.highlightFilters.Location = new System.Drawing.Point(73, 288);
-            this.highlightFilters.Name = "highlightFilters";
-            this.highlightFilters.Padding = new System.Windows.Forms.Padding(1);
-            this.highlightFilters.Size = new System.Drawing.Size(482, 239);
-            this.highlightFilters.TabIndex = 25;
-            this.highlightFilters.Visible = false;
-            // 
             // scalingButtonForge
             // 
             this.scalingButtonForge.BackColor = System.Drawing.Color.Transparent;
@@ -613,6 +602,18 @@ namespace TQVaultAE.GUI
             this.scalingButtonForge.UseCustomGraphic = true;
             this.scalingButtonForge.UseVisualStyleBackColor = false;
             this.scalingButtonForge.Click += new System.EventHandler(this.scalingButtonForge_Click);
+            // 
+            // highlightFilters
+            // 
+            this.highlightFilters.AutoSize = true;
+            this.highlightFilters.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.highlightFilters.BackColor = System.Drawing.Color.Gold;
+            this.highlightFilters.Location = new System.Drawing.Point(73, 288);
+            this.highlightFilters.Name = "highlightFilters";
+            this.highlightFilters.Padding = new System.Windows.Forms.Padding(1);
+            this.highlightFilters.Size = new System.Drawing.Size(482, 239);
+            this.highlightFilters.TabIndex = 25;
+            this.highlightFilters.Visible = false;
             // 
             // MainForm
             // 
@@ -669,7 +670,6 @@ namespace TQVaultAE.GUI
 		#endregion
 
 		private BufferedFlowLayoutPanel flowLayoutPanelVaultSelector;
-		private BufferedTableLayoutPanel tableLayoutPanelMain;
 		private BufferedFlowLayoutPanel flowLayoutPanelRightComboBox;
 		private ScalingLabel characterLabel;
 		private ScalingComboBox characterComboBox;
@@ -687,5 +687,6 @@ namespace TQVaultAE.GUI
 		private System.Windows.Forms.LinkLabel scalingLabelHighlight;
 		private HighlightFilters highlightFilters;
 		private ScalingButton scalingButtonForge;
+		internal BufferedTableLayoutPanel tableLayoutPanelMain;
 	}
 }

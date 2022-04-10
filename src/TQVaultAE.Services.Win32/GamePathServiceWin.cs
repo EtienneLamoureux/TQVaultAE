@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Domain.Contracts.Services;
-using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Exceptions;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Presentation;
@@ -698,17 +697,22 @@ Please select the game installation directory.");
 		/// </summary>
 		/// <param name="resourceIdOrPrefix"></param>
 		/// <returns></returns>
-		public string ResolveArcFileName(string resourceIdOrPrefix)
+		public (string ArcFileName, bool IsDLC) ResolveArcFileName(string resourceIdOrPrefix)
 		{
 			resourceIdOrPrefix = TQData.NormalizeRecordPath(resourceIdOrPrefix);
 			var segments = resourceIdOrPrefix.Split('\\');
-			
+
 			string path;
+			bool isDLC = true;
 			switch (segments.First())
 			{
-				case "XPACK":
+				case "XPACK" when segments[1] != "SOUNDS":
 					// Comes from Immortal Throne
 					path = Path.Combine(ImmortalThronePath, "Resources", "XPack", segments[1] + ".arc");
+					break;
+				case "XPACK" when segments[1] == "SOUNDS": // Sounds file exception for IT
+														   // Comes from Immortal Throne
+					path = Path.Combine(ImmortalThronePath, "Resources", segments[1] + ".arc");
 					break;
 				case "XPACK2":
 					// Comes from Ragnarok
@@ -722,13 +726,19 @@ Please select the game installation directory.");
 					// Comes from Eternal Embers
 					path = Path.Combine(ImmortalThronePath, "Resources", "XPack4", segments[1] + ".arc");
 					break;
+				case "SOUNDS":
+					// Regular Dialogs/Sounds/Music/PlayerSounds
+					path = Path.Combine(ImmortalThronePath, "Audio", segments[0] + ".arc");
+					isDLC = false;
+					break;
 				default:
 					// Base game
 					path = Path.Combine(ImmortalThronePath, "Resources", segments[0] + ".arc");
+					isDLC = false;
 					break;
 			}
 
-			return path;
+			return (path, isDLC);
 		}
 	}
 }

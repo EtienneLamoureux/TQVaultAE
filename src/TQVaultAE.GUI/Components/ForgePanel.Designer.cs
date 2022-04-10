@@ -28,54 +28,92 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ForgePanel));
-            this.tableLayoutPanelForge = new System.Windows.Forms.TableLayoutPanel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.pictureBox3 = new System.Windows.Forms.PictureBox();
-            this.pictureBox4 = new System.Windows.Forms.PictureBox();
-            this.pictureBox5 = new System.Windows.Forms.PictureBox();
-            this.scalingLabelRelic1 = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.scalingLabelBaseItem = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.pictureBoxDragDrop = new System.Windows.Forms.PictureBox();
+            this.tableLayoutPanelForge = new TQVaultAE.GUI.Components.BufferedTableLayoutPanel();
             this.scalingLabelSuffix = new TQVaultAE.GUI.Components.ScalingLabel();
             this.scalingLabelPrefix = new TQVaultAE.GUI.Components.ScalingLabel();
             this.CancelButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.ForgeButton = new TQVaultAE.GUI.Components.ScalingButton();
+            this.pictureBoxRelic2 = new System.Windows.Forms.PictureBox();
+            this.pictureBoxSuffix = new System.Windows.Forms.PictureBox();
+            this.pictureBoxRelic1 = new System.Windows.Forms.PictureBox();
+            this.pictureBoxPrefix = new System.Windows.Forms.PictureBox();
+            this.pictureBoxBaseItem = new System.Windows.Forms.PictureBox();
+            this.flowLayoutPanelPropertiesLeft = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
+            this.scalingLabelRelic1 = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.flowLayoutPanel2PropertiesRight = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.scalingLabelRelic2 = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.flowLayoutPanelTop = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
+            this.scalingLabelBaseItem = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.scalingRadioButtonGod = new TQVaultAE.GUI.Components.ScalingRadioButton();
+            this.scalingRadioButtonRelax = new TQVaultAE.GUI.Components.ScalingRadioButton();
+            this.scalingRadioButtonStrict = new TQVaultAE.GUI.Components.ScalingRadioButton();
+            this.comboBoxSuffix = new System.Windows.Forms.ComboBox();
+            this.comboBoxPrefix = new System.Windows.Forms.ComboBox();
+            this.comboBoxRelic1 = new System.Windows.Forms.ComboBox();
+            this.comboBoxRelic2 = new System.Windows.Forms.ComboBox();
+            this.ResetButton = new TQVaultAE.GUI.Components.ScalingButton();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDragDrop)).BeginInit();
             this.tableLayoutPanelForge.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRelic2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSuffix)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRelic1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPrefix)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBaseItem)).BeginInit();
+            this.flowLayoutPanelPropertiesLeft.SuspendLayout();
+            this.flowLayoutPanel2PropertiesRight.SuspendLayout();
+            this.flowLayoutPanelTop.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // pictureBoxDragDrop
+            // 
+            this.pictureBoxDragDrop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+            this.pictureBoxDragDrop.Location = new System.Drawing.Point(466, 21);
+            this.pictureBoxDragDrop.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBoxDragDrop.Name = "pictureBoxDragDrop";
+            this.pictureBoxDragDrop.Size = new System.Drawing.Size(78, 95);
+            this.pictureBoxDragDrop.TabIndex = 1;
+            this.pictureBoxDragDrop.TabStop = false;
+            this.pictureBoxDragDrop.Visible = false;
+            this.pictureBoxDragDrop.Click += new System.EventHandler(this.pictureBoxDragDrop_Click);
+            this.pictureBoxDragDrop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBoxDragDrop_MouseMove);
             // 
             // tableLayoutPanelForge
             // 
             this.tableLayoutPanelForge.AutoSize = true;
             this.tableLayoutPanelForge.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanelForge.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-            this.tableLayoutPanelForge.ColumnCount = 4;
-            this.tableLayoutPanelForge.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
-            this.tableLayoutPanelForge.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
-            this.tableLayoutPanelForge.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
-            this.tableLayoutPanelForge.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
-            this.tableLayoutPanelForge.Controls.Add(this.scalingLabelRelic1, 0, 4);
-            this.tableLayoutPanelForge.Controls.Add(this.scalingLabelBaseItem, 1, 2);
-            this.tableLayoutPanelForge.Controls.Add(this.scalingLabelSuffix, 3, 0);
-            this.tableLayoutPanelForge.Controls.Add(this.scalingLabelPrefix, 0, 0);
-            this.tableLayoutPanelForge.Controls.Add(this.CancelButton, 0, 6);
-            this.tableLayoutPanelForge.Controls.Add(this.ForgeButton, 3, 6);
-            this.tableLayoutPanelForge.Controls.Add(this.pictureBox1, 3, 5);
-            this.tableLayoutPanelForge.Controls.Add(this.pictureBox2, 3, 1);
-            this.tableLayoutPanelForge.Controls.Add(this.scalingLabelRelic2, 3, 4);
-            this.tableLayoutPanelForge.Controls.Add(this.pictureBox3, 0, 5);
-            this.tableLayoutPanelForge.Controls.Add(this.pictureBox4, 0, 1);
-            this.tableLayoutPanelForge.Controls.Add(this.pictureBox5, 1, 3);
-            this.tableLayoutPanelForge.Location = new System.Drawing.Point(1, 1);
+            this.tableLayoutPanelForge.ColumnCount = 6;
+            this.tableLayoutPanelForge.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanelForge.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelForge.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelForge.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelForge.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelForge.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanelForge.Controls.Add(this.scalingLabelSuffix, 4, 1);
+            this.tableLayoutPanelForge.Controls.Add(this.scalingLabelPrefix, 1, 1);
+            this.tableLayoutPanelForge.Controls.Add(this.CancelButton, 1, 7);
+            this.tableLayoutPanelForge.Controls.Add(this.ForgeButton, 4, 7);
+            this.tableLayoutPanelForge.Controls.Add(this.pictureBoxRelic2, 4, 5);
+            this.tableLayoutPanelForge.Controls.Add(this.pictureBoxSuffix, 4, 2);
+            this.tableLayoutPanelForge.Controls.Add(this.pictureBoxRelic1, 1, 5);
+            this.tableLayoutPanelForge.Controls.Add(this.pictureBoxPrefix, 1, 2);
+            this.tableLayoutPanelForge.Controls.Add(this.pictureBoxBaseItem, 2, 4);
+            this.tableLayoutPanelForge.Controls.Add(this.flowLayoutPanelPropertiesLeft, 1, 4);
+            this.tableLayoutPanelForge.Controls.Add(this.flowLayoutPanel2PropertiesRight, 4, 4);
+            this.tableLayoutPanelForge.Controls.Add(this.flowLayoutPanelTop, 2, 2);
+            this.tableLayoutPanelForge.Controls.Add(this.comboBoxSuffix, 4, 3);
+            this.tableLayoutPanelForge.Controls.Add(this.comboBoxPrefix, 1, 3);
+            this.tableLayoutPanelForge.Controls.Add(this.comboBoxRelic1, 1, 6);
+            this.tableLayoutPanelForge.Controls.Add(this.comboBoxRelic2, 4, 6);
+            this.tableLayoutPanelForge.Controls.Add(this.ResetButton, 2, 7);
+            this.tableLayoutPanelForge.Location = new System.Drawing.Point(15, 15);
             this.tableLayoutPanelForge.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanelForge.Name = "tableLayoutPanelForge";
-            this.tableLayoutPanelForge.RowCount = 7;
+            this.tableLayoutPanelForge.RowCount = 9;
+            this.tableLayoutPanelForge.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanelForge.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelForge.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelForge.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -83,116 +121,31 @@
             this.tableLayoutPanelForge.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelForge.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelForge.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanelForge.Size = new System.Drawing.Size(449, 700);
+            this.tableLayoutPanelForge.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanelForge.Size = new System.Drawing.Size(430, 730);
             this.tableLayoutPanelForge.TabIndex = 0;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(311, 455);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(3, 5, 10, 3);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(128, 192);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox1.TabIndex = 7;
-            this.pictureBox1.TabStop = false;
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-            this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox2.Location = new System.Drawing.Point(311, 25);
-            this.pictureBox2.Margin = new System.Windows.Forms.Padding(3, 5, 10, 3);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(128, 192);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox2.TabIndex = 8;
-            this.pictureBox2.TabStop = false;
-            // 
-            // pictureBox3
-            // 
-            this.pictureBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-            this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox3.Location = new System.Drawing.Point(10, 455);
-            this.pictureBox3.Margin = new System.Windows.Forms.Padding(10, 5, 3, 3);
-            this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(128, 192);
-            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox3.TabIndex = 9;
-            this.pictureBox3.TabStop = false;
-            // 
-            // pictureBox4
-            // 
-            this.pictureBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-            this.pictureBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox4.Location = new System.Drawing.Point(10, 25);
-            this.pictureBox4.Margin = new System.Windows.Forms.Padding(10, 5, 3, 3);
-            this.pictureBox4.Name = "pictureBox4";
-            this.pictureBox4.Size = new System.Drawing.Size(128, 192);
-            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox4.TabIndex = 10;
-            this.pictureBox4.TabStop = false;
-            // 
-            // pictureBox5
-            // 
-            this.pictureBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-            this.pictureBox5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tableLayoutPanelForge.SetColumnSpan(this.pictureBox5, 2);
-            this.pictureBox5.Location = new System.Drawing.Point(160, 240);
-            this.pictureBox5.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
-            this.pictureBox5.Name = "pictureBox5";
-            this.pictureBox5.Size = new System.Drawing.Size(128, 192);
-            this.pictureBox5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox5.TabIndex = 11;
-            this.pictureBox5.TabStop = false;
-            // 
-            // scalingLabelRelic1
-            // 
-            this.scalingLabelRelic1.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
-            this.scalingLabelRelic1.ForeColor = System.Drawing.Color.Gold;
-            this.scalingLabelRelic1.Location = new System.Drawing.Point(3, 435);
-            this.scalingLabelRelic1.Name = "scalingLabelRelic1";
-            this.scalingLabelRelic1.Size = new System.Drawing.Size(138, 15);
-            this.scalingLabelRelic1.TabIndex = 0;
-            this.scalingLabelRelic1.Text = "First Relic";
-            this.scalingLabelRelic1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // scalingLabelBaseItem
-            // 
-            this.tableLayoutPanelForge.SetColumnSpan(this.scalingLabelBaseItem, 2);
-            this.scalingLabelBaseItem.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
-            this.scalingLabelBaseItem.ForeColor = System.Drawing.Color.Gold;
-            this.scalingLabelBaseItem.Location = new System.Drawing.Point(160, 220);
-            this.scalingLabelBaseItem.Name = "scalingLabelBaseItem";
-            this.scalingLabelBaseItem.Size = new System.Drawing.Size(128, 15);
-            this.scalingLabelBaseItem.TabIndex = 1;
-            this.scalingLabelBaseItem.Text = "Base Item";
-            this.scalingLabelBaseItem.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // scalingLabelSuffix
             // 
             this.scalingLabelSuffix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.scalingLabelSuffix.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.scalingLabelSuffix.Font = new System.Drawing.Font("Albertus MT", 9.75F, System.Drawing.FontStyle.Bold);
             this.scalingLabelSuffix.ForeColor = System.Drawing.Color.Gold;
-            this.scalingLabelSuffix.Location = new System.Drawing.Point(308, 5);
-            this.scalingLabelSuffix.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
+            this.scalingLabelSuffix.Location = new System.Drawing.Point(282, 20);
+            this.scalingLabelSuffix.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
             this.scalingLabelSuffix.Name = "scalingLabelSuffix";
-            this.scalingLabelSuffix.Size = new System.Drawing.Size(138, 15);
+            this.scalingLabelSuffix.Size = new System.Drawing.Size(128, 15);
             this.scalingLabelSuffix.TabIndex = 0;
             this.scalingLabelSuffix.Text = "Suffix Item";
             this.scalingLabelSuffix.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // scalingLabelPrefix
             // 
-            this.scalingLabelPrefix.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.scalingLabelPrefix.Font = new System.Drawing.Font("Albertus MT", 9.75F, System.Drawing.FontStyle.Bold);
             this.scalingLabelPrefix.ForeColor = System.Drawing.Color.Gold;
-            this.scalingLabelPrefix.Location = new System.Drawing.Point(3, 5);
-            this.scalingLabelPrefix.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
+            this.scalingLabelPrefix.Location = new System.Drawing.Point(20, 20);
+            this.scalingLabelPrefix.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
             this.scalingLabelPrefix.Name = "scalingLabelPrefix";
-            this.scalingLabelPrefix.Size = new System.Drawing.Size(138, 15);
+            this.scalingLabelPrefix.Size = new System.Drawing.Size(128, 15);
             this.scalingLabelPrefix.TabIndex = 0;
             this.scalingLabelPrefix.Text = "Prefix Item";
             this.scalingLabelPrefix.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -209,11 +162,11 @@
             this.CancelButton.Font = new System.Drawing.Font("Albertus MT", 12F);
             this.CancelButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.CancelButton.Image = ((System.Drawing.Image)(resources.GetObject("CancelButton.Image")));
-            this.CancelButton.Location = new System.Drawing.Point(10, 660);
-            this.CancelButton.Margin = new System.Windows.Forms.Padding(10);
+            this.CancelButton.Location = new System.Drawing.Point(35, 670);
+            this.CancelButton.Margin = new System.Windows.Forms.Padding(0, 10, 0, 10);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("CancelButton.OverBitmap")));
-            this.CancelButton.Size = new System.Drawing.Size(137, 30);
+            this.CancelButton.Size = new System.Drawing.Size(100, 30);
             this.CancelButton.SizeToGraphic = false;
             this.CancelButton.TabIndex = 6;
             this.CancelButton.Text = "Cancel";
@@ -234,11 +187,11 @@
             this.ForgeButton.Font = new System.Drawing.Font("Albertus MT", 12F);
             this.ForgeButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ForgeButton.Image = ((System.Drawing.Image)(resources.GetObject("ForgeButton.Image")));
-            this.ForgeButton.Location = new System.Drawing.Point(301, 660);
-            this.ForgeButton.Margin = new System.Windows.Forms.Padding(10);
+            this.ForgeButton.Location = new System.Drawing.Point(294, 670);
+            this.ForgeButton.Margin = new System.Windows.Forms.Padding(0);
             this.ForgeButton.Name = "ForgeButton";
             this.ForgeButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ForgeButton.OverBitmap")));
-            this.ForgeButton.Size = new System.Drawing.Size(137, 30);
+            this.ForgeButton.Size = new System.Drawing.Size(100, 30);
             this.ForgeButton.SizeToGraphic = false;
             this.ForgeButton.TabIndex = 5;
             this.ForgeButton.Text = "Forge";
@@ -247,17 +200,302 @@
             this.ForgeButton.UseVisualStyleBackColor = false;
             this.ForgeButton.Click += new System.EventHandler(this.ForgeButton_Click);
             // 
+            // pictureBoxRelic2
+            // 
+            this.pictureBoxRelic2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxRelic2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+            this.pictureBoxRelic2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pictureBoxRelic2.Location = new System.Drawing.Point(282, 445);
+            this.pictureBoxRelic2.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.pictureBoxRelic2.Name = "pictureBoxRelic2";
+            this.pictureBoxRelic2.Size = new System.Drawing.Size(128, 192);
+            this.pictureBoxRelic2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxRelic2.TabIndex = 7;
+            this.pictureBoxRelic2.TabStop = false;
+            this.pictureBoxRelic2.MouseEnter += new System.EventHandler(this.pictureBox_MouseEnter);
+            this.pictureBoxRelic2.MouseLeave += new System.EventHandler(this.pictureBox_MouseLeave);
+            // 
+            // pictureBoxSuffix
+            // 
+            this.pictureBoxSuffix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxSuffix.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+            this.pictureBoxSuffix.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pictureBoxSuffix.Location = new System.Drawing.Point(282, 38);
+            this.pictureBoxSuffix.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.pictureBoxSuffix.Name = "pictureBoxSuffix";
+            this.pictureBoxSuffix.Size = new System.Drawing.Size(128, 192);
+            this.pictureBoxSuffix.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxSuffix.TabIndex = 8;
+            this.pictureBoxSuffix.TabStop = false;
+            this.pictureBoxSuffix.MouseEnter += new System.EventHandler(this.pictureBox_MouseEnter);
+            this.pictureBoxSuffix.MouseLeave += new System.EventHandler(this.pictureBox_MouseLeave);
+            // 
+            // pictureBoxRelic1
+            // 
+            this.pictureBoxRelic1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+            this.pictureBoxRelic1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pictureBoxRelic1.Location = new System.Drawing.Point(20, 445);
+            this.pictureBoxRelic1.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
+            this.pictureBoxRelic1.Name = "pictureBoxRelic1";
+            this.pictureBoxRelic1.Size = new System.Drawing.Size(128, 192);
+            this.pictureBoxRelic1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxRelic1.TabIndex = 9;
+            this.pictureBoxRelic1.TabStop = false;
+            this.pictureBoxRelic1.MouseEnter += new System.EventHandler(this.pictureBox_MouseEnter);
+            this.pictureBoxRelic1.MouseLeave += new System.EventHandler(this.pictureBox_MouseLeave);
+            // 
+            // pictureBoxPrefix
+            // 
+            this.pictureBoxPrefix.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+            this.pictureBoxPrefix.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pictureBoxPrefix.Location = new System.Drawing.Point(20, 38);
+            this.pictureBoxPrefix.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBoxPrefix.Name = "pictureBoxPrefix";
+            this.pictureBoxPrefix.Size = new System.Drawing.Size(128, 192);
+            this.pictureBoxPrefix.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxPrefix.TabIndex = 10;
+            this.pictureBoxPrefix.TabStop = false;
+            this.pictureBoxPrefix.MouseEnter += new System.EventHandler(this.pictureBox_MouseEnter);
+            this.pictureBoxPrefix.MouseLeave += new System.EventHandler(this.pictureBox_MouseLeave);
+            // 
+            // pictureBoxBaseItem
+            // 
+            this.pictureBoxBaseItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+            this.pictureBoxBaseItem.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.tableLayoutPanelForge.SetColumnSpan(this.pictureBoxBaseItem, 2);
+            this.pictureBoxBaseItem.Location = new System.Drawing.Point(151, 253);
+            this.pictureBoxBaseItem.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBoxBaseItem.Name = "pictureBoxBaseItem";
+            this.pictureBoxBaseItem.Size = new System.Drawing.Size(128, 192);
+            this.pictureBoxBaseItem.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxBaseItem.TabIndex = 11;
+            this.pictureBoxBaseItem.TabStop = false;
+            this.pictureBoxBaseItem.MouseEnter += new System.EventHandler(this.pictureBox_MouseEnter);
+            this.pictureBoxBaseItem.MouseLeave += new System.EventHandler(this.pictureBox_MouseLeave);
+            // 
+            // flowLayoutPanelPropertiesLeft
+            // 
+            this.flowLayoutPanelPropertiesLeft.AutoSize = true;
+            this.flowLayoutPanelPropertiesLeft.Controls.Add(this.scalingLabelRelic1);
+            this.flowLayoutPanelPropertiesLeft.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanelPropertiesLeft.FlowDirection = System.Windows.Forms.FlowDirection.BottomUp;
+            this.flowLayoutPanelPropertiesLeft.Location = new System.Drawing.Point(20, 253);
+            this.flowLayoutPanelPropertiesLeft.Margin = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanelPropertiesLeft.Name = "flowLayoutPanelPropertiesLeft";
+            this.flowLayoutPanelPropertiesLeft.Size = new System.Drawing.Size(131, 192);
+            this.flowLayoutPanelPropertiesLeft.TabIndex = 12;
+            // 
+            // scalingLabelRelic1
+            // 
+            this.scalingLabelRelic1.Font = new System.Drawing.Font("Albertus MT", 9.75F, System.Drawing.FontStyle.Bold);
+            this.scalingLabelRelic1.ForeColor = System.Drawing.Color.Gold;
+            this.scalingLabelRelic1.Location = new System.Drawing.Point(0, 174);
+            this.scalingLabelRelic1.Margin = new System.Windows.Forms.Padding(0, 0, 3, 3);
+            this.scalingLabelRelic1.Name = "scalingLabelRelic1";
+            this.scalingLabelRelic1.Size = new System.Drawing.Size(128, 15);
+            this.scalingLabelRelic1.TabIndex = 0;
+            this.scalingLabelRelic1.Text = "First Relic";
+            this.scalingLabelRelic1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // flowLayoutPanel2PropertiesRight
+            // 
+            this.flowLayoutPanel2PropertiesRight.AutoSize = true;
+            this.flowLayoutPanel2PropertiesRight.Controls.Add(this.scalingLabelRelic2);
+            this.flowLayoutPanel2PropertiesRight.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel2PropertiesRight.FlowDirection = System.Windows.Forms.FlowDirection.BottomUp;
+            this.flowLayoutPanel2PropertiesRight.Location = new System.Drawing.Point(279, 253);
+            this.flowLayoutPanel2PropertiesRight.Margin = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanel2PropertiesRight.Name = "flowLayoutPanel2PropertiesRight";
+            this.flowLayoutPanel2PropertiesRight.Size = new System.Drawing.Size(131, 192);
+            this.flowLayoutPanel2PropertiesRight.TabIndex = 13;
+            // 
             // scalingLabelRelic2
             // 
             this.scalingLabelRelic2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.scalingLabelRelic2.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.scalingLabelRelic2.Font = new System.Drawing.Font("Albertus MT", 9.75F, System.Drawing.FontStyle.Bold);
             this.scalingLabelRelic2.ForeColor = System.Drawing.Color.Gold;
-            this.scalingLabelRelic2.Location = new System.Drawing.Point(308, 435);
+            this.scalingLabelRelic2.Location = new System.Drawing.Point(3, 174);
+            this.scalingLabelRelic2.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
             this.scalingLabelRelic2.Name = "scalingLabelRelic2";
-            this.scalingLabelRelic2.Size = new System.Drawing.Size(138, 15);
+            this.scalingLabelRelic2.Size = new System.Drawing.Size(128, 15);
             this.scalingLabelRelic2.TabIndex = 0;
             this.scalingLabelRelic2.Text = "Second Relic";
             this.scalingLabelRelic2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // flowLayoutPanelTop
+            // 
+            this.flowLayoutPanelTop.AutoSize = true;
+            this.tableLayoutPanelForge.SetColumnSpan(this.flowLayoutPanelTop, 2);
+            this.flowLayoutPanelTop.Controls.Add(this.scalingLabelBaseItem);
+            this.flowLayoutPanelTop.Controls.Add(this.scalingRadioButtonGod);
+            this.flowLayoutPanelTop.Controls.Add(this.scalingRadioButtonRelax);
+            this.flowLayoutPanelTop.Controls.Add(this.scalingRadioButtonStrict);
+            this.flowLayoutPanelTop.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanelTop.FlowDirection = System.Windows.Forms.FlowDirection.BottomUp;
+            this.flowLayoutPanelTop.Location = new System.Drawing.Point(151, 38);
+            this.flowLayoutPanelTop.Margin = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanelTop.Name = "flowLayoutPanelTop";
+            this.flowLayoutPanelTop.Size = new System.Drawing.Size(128, 192);
+            this.flowLayoutPanelTop.TabIndex = 14;
+            // 
+            // scalingLabelBaseItem
+            // 
+            this.scalingLabelBaseItem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.scalingLabelBaseItem.Font = new System.Drawing.Font("Albertus MT", 9.75F, System.Drawing.FontStyle.Bold);
+            this.scalingLabelBaseItem.ForeColor = System.Drawing.Color.Gold;
+            this.scalingLabelBaseItem.Location = new System.Drawing.Point(0, 177);
+            this.scalingLabelBaseItem.Margin = new System.Windows.Forms.Padding(0);
+            this.scalingLabelBaseItem.Name = "scalingLabelBaseItem";
+            this.scalingLabelBaseItem.Size = new System.Drawing.Size(128, 15);
+            this.scalingLabelBaseItem.TabIndex = 1;
+            this.scalingLabelBaseItem.Text = "Base Item";
+            this.scalingLabelBaseItem.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // scalingRadioButtonGod
+            // 
+            this.scalingRadioButtonGod.AutoSize = true;
+            this.scalingRadioButtonGod.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.scalingRadioButtonGod.ForeColor = System.Drawing.Color.Gold;
+            this.scalingRadioButtonGod.Location = new System.Drawing.Point(20, 128);
+            this.scalingRadioButtonGod.Margin = new System.Windows.Forms.Padding(20, 3, 3, 30);
+            this.scalingRadioButtonGod.Name = "scalingRadioButtonGod";
+            this.scalingRadioButtonGod.Size = new System.Drawing.Size(85, 19);
+            this.scalingRadioButtonGod.TabIndex = 5;
+            this.scalingRadioButtonGod.Text = "God Mode";
+            this.scalingRadioButtonGod.UseVisualStyleBackColor = true;
+            this.scalingRadioButtonGod.Click += new System.EventHandler(this.ForgeMode_Clicked);
+            // 
+            // scalingRadioButtonRelax
+            // 
+            this.scalingRadioButtonRelax.AutoSize = true;
+            this.scalingRadioButtonRelax.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.scalingRadioButtonRelax.ForeColor = System.Drawing.Color.Gold;
+            this.scalingRadioButtonRelax.Location = new System.Drawing.Point(20, 103);
+            this.scalingRadioButtonRelax.Margin = new System.Windows.Forms.Padding(20, 3, 3, 3);
+            this.scalingRadioButtonRelax.Name = "scalingRadioButtonRelax";
+            this.scalingRadioButtonRelax.Size = new System.Drawing.Size(89, 19);
+            this.scalingRadioButtonRelax.TabIndex = 4;
+            this.scalingRadioButtonRelax.Text = "Relax Mode";
+            this.scalingRadioButtonRelax.UseVisualStyleBackColor = true;
+            this.scalingRadioButtonRelax.Click += new System.EventHandler(this.ForgeMode_Clicked);
+            // 
+            // scalingRadioButtonStrict
+            // 
+            this.scalingRadioButtonStrict.AutoSize = true;
+            this.scalingRadioButtonStrict.Checked = true;
+            this.scalingRadioButtonStrict.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.scalingRadioButtonStrict.ForeColor = System.Drawing.Color.Gold;
+            this.scalingRadioButtonStrict.Location = new System.Drawing.Point(20, 78);
+            this.scalingRadioButtonStrict.Margin = new System.Windows.Forms.Padding(20, 3, 3, 3);
+            this.scalingRadioButtonStrict.Name = "scalingRadioButtonStrict";
+            this.scalingRadioButtonStrict.Size = new System.Drawing.Size(89, 19);
+            this.scalingRadioButtonStrict.TabIndex = 3;
+            this.scalingRadioButtonStrict.TabStop = true;
+            this.scalingRadioButtonStrict.Text = "Strict Mode";
+            this.scalingRadioButtonStrict.UseVisualStyleBackColor = true;
+            this.scalingRadioButtonStrict.Click += new System.EventHandler(this.ForgeMode_Clicked);
+            // 
+            // comboBoxSuffix
+            // 
+            this.comboBoxSuffix.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxSuffix.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxSuffix.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.comboBoxSuffix.FormattingEnabled = true;
+            this.comboBoxSuffix.Items.AddRange(new object[] {
+            "Use Base",
+            "Use Prefix",
+            "Use Suffix",
+            "Use Relic1",
+            "Use Relic2"});
+            this.comboBoxSuffix.Location = new System.Drawing.Point(279, 230);
+            this.comboBoxSuffix.Margin = new System.Windows.Forms.Padding(0);
+            this.comboBoxSuffix.Name = "comboBoxSuffix";
+            this.comboBoxSuffix.Size = new System.Drawing.Size(131, 23);
+            this.comboBoxSuffix.TabIndex = 19;
+            this.comboBoxSuffix.SelectedIndexChanged += new System.EventHandler(this.comboBox_SelectedIndexChanged);
+            // 
+            // comboBoxPrefix
+            // 
+            this.comboBoxPrefix.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxPrefix.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxPrefix.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.comboBoxPrefix.FormattingEnabled = true;
+            this.comboBoxPrefix.Items.AddRange(new object[] {
+            "Use Base",
+            "Use Prefix",
+            "Use Suffix",
+            "Use Relic1",
+            "Use Relic2"});
+            this.comboBoxPrefix.Location = new System.Drawing.Point(20, 230);
+            this.comboBoxPrefix.Margin = new System.Windows.Forms.Padding(0);
+            this.comboBoxPrefix.Name = "comboBoxPrefix";
+            this.comboBoxPrefix.Size = new System.Drawing.Size(131, 23);
+            this.comboBoxPrefix.TabIndex = 20;
+            this.comboBoxPrefix.SelectedIndexChanged += new System.EventHandler(this.comboBox_SelectedIndexChanged);
+            // 
+            // comboBoxRelic1
+            // 
+            this.comboBoxRelic1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxRelic1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxRelic1.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.comboBoxRelic1.FormattingEnabled = true;
+            this.comboBoxRelic1.Items.AddRange(new object[] {
+            "Use Base",
+            "Use Prefix",
+            "Use Suffix",
+            "Use Relic1",
+            "Use Relic2"});
+            this.comboBoxRelic1.Location = new System.Drawing.Point(20, 637);
+            this.comboBoxRelic1.Margin = new System.Windows.Forms.Padding(0);
+            this.comboBoxRelic1.Name = "comboBoxRelic1";
+            this.comboBoxRelic1.Size = new System.Drawing.Size(131, 23);
+            this.comboBoxRelic1.TabIndex = 21;
+            this.comboBoxRelic1.SelectedIndexChanged += new System.EventHandler(this.comboBox_SelectedIndexChanged);
+            // 
+            // comboBoxRelic2
+            // 
+            this.comboBoxRelic2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxRelic2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxRelic2.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.comboBoxRelic2.FormattingEnabled = true;
+            this.comboBoxRelic2.Items.AddRange(new object[] {
+            "Use Base",
+            "Use Prefix",
+            "Use Suffix",
+            "Use Relic1",
+            "Use Relic2"});
+            this.comboBoxRelic2.Location = new System.Drawing.Point(279, 637);
+            this.comboBoxRelic2.Margin = new System.Windows.Forms.Padding(0);
+            this.comboBoxRelic2.Name = "comboBoxRelic2";
+            this.comboBoxRelic2.Size = new System.Drawing.Size(131, 23);
+            this.comboBoxRelic2.TabIndex = 22;
+            this.comboBoxRelic2.SelectedIndexChanged += new System.EventHandler(this.comboBox_SelectedIndexChanged);
+            // 
+            // ResetButton
+            // 
+            this.ResetButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.ResetButton.BackColor = System.Drawing.Color.Transparent;
+            this.tableLayoutPanelForge.SetColumnSpan(this.ResetButton, 2);
+            this.ResetButton.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetButton.DownBitmap")));
+            this.ResetButton.FlatAppearance.BorderSize = 0;
+            this.ResetButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.ResetButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.ResetButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ResetButton.Font = new System.Drawing.Font("Albertus MT", 12F);
+            this.ResetButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.ResetButton.Image = ((System.Drawing.Image)(resources.GetObject("ResetButton.Image")));
+            this.ResetButton.Location = new System.Drawing.Point(165, 670);
+            this.ResetButton.Margin = new System.Windows.Forms.Padding(0, 10, 0, 10);
+            this.ResetButton.Name = "ResetButton";
+            this.ResetButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetButton.OverBitmap")));
+            this.ResetButton.Size = new System.Drawing.Size(100, 30);
+            this.ResetButton.SizeToGraphic = false;
+            this.ResetButton.TabIndex = 23;
+            this.ResetButton.Text = "Reset";
+            this.ResetButton.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetButton.UpBitmap")));
+            this.ResetButton.UseCustomGraphic = true;
+            this.ResetButton.UseVisualStyleBackColor = false;
+            this.ResetButton.Click += new System.EventHandler(this.scalingButtonReset_Click);
             // 
             // ForgePanel
             // 
@@ -265,18 +503,26 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.BackColor = System.Drawing.Color.Gold;
+            this.BackColor = System.Drawing.Color.Transparent;
+            this.Controls.Add(this.pictureBoxDragDrop);
             this.Controls.Add(this.tableLayoutPanelForge);
-            this.Margin = new System.Windows.Forms.Padding(0, 64, 0, 0);
+            this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.Name = "ForgePanel";
-            this.Padding = new System.Windows.Forms.Padding(1);
-            this.Size = new System.Drawing.Size(451, 702);
+            this.Padding = new System.Windows.Forms.Padding(15);
+            this.Size = new System.Drawing.Size(559, 760);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDragDrop)).EndInit();
             this.tableLayoutPanelForge.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
+            this.tableLayoutPanelForge.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRelic2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSuffix)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRelic1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPrefix)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBaseItem)).EndInit();
+            this.flowLayoutPanelPropertiesLeft.ResumeLayout(false);
+            this.flowLayoutPanel2PropertiesRight.ResumeLayout(false);
+            this.flowLayoutPanelTop.ResumeLayout(false);
+            this.flowLayoutPanelTop.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -284,7 +530,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.TableLayoutPanel tableLayoutPanelForge;
+		private BufferedTableLayoutPanel tableLayoutPanelForge;
 		private ScalingLabel scalingLabelPrefix;
 		private ScalingLabel scalingLabelRelic2;
 		private ScalingLabel scalingLabelRelic1;
@@ -292,10 +538,23 @@
 		private ScalingLabel scalingLabelBaseItem;
 		private ScalingButton CancelButton;
 		private ScalingButton ForgeButton;
-		private System.Windows.Forms.PictureBox pictureBox1;
-		private System.Windows.Forms.PictureBox pictureBox2;
-		private System.Windows.Forms.PictureBox pictureBox3;
-		private System.Windows.Forms.PictureBox pictureBox4;
-		private System.Windows.Forms.PictureBox pictureBox5;
+		private System.Windows.Forms.PictureBox pictureBoxRelic2;
+		private System.Windows.Forms.PictureBox pictureBoxSuffix;
+		private System.Windows.Forms.PictureBox pictureBoxRelic1;
+		private System.Windows.Forms.PictureBox pictureBoxPrefix;
+		private System.Windows.Forms.PictureBox pictureBoxBaseItem;
+		private BufferedFlowLayoutPanel flowLayoutPanelPropertiesLeft;
+		private BufferedFlowLayoutPanel flowLayoutPanel2PropertiesRight;
+		private BufferedFlowLayoutPanel flowLayoutPanelTop;
+		private ScalingRadioButton scalingRadioButtonGod;
+		private ScalingRadioButton scalingRadioButtonRelax;
+		private ScalingRadioButton scalingRadioButtonStrict;
+		private System.Windows.Forms.ToolTip toolTip;
+		private System.Windows.Forms.ComboBox comboBoxSuffix;
+		private System.Windows.Forms.ComboBox comboBoxPrefix;
+		private System.Windows.Forms.ComboBox comboBoxRelic1;
+		private System.Windows.Forms.ComboBox comboBoxRelic2;
+		private System.Windows.Forms.PictureBox pictureBoxDragDrop;
+		private ScalingButton ResetButton;
 	}
 }
