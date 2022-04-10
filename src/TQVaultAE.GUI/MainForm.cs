@@ -204,6 +204,8 @@ namespace TQVaultAE.GUI
 			ScaleControl(this.UIService, this.duplicateButton);
 			this.saveButton.Font = FontService.GetFontLight(12F, UIService.Scale);
 			ScaleControl(this.UIService, this.saveButton);
+			this.scalingButtonForge.Font = FontService.GetFontLight(12F, UIService.Scale);
+			ScaleControl(this.UIService, this.scalingButtonForge);
 
 			this.scalingLabelHighlight.Font = FontService.GetFontLight(10F, UIService.Scale);
 			this.scalingTextBoxHighlight.Font = FontService.GetFontLight(10F, UIService.Scale);
@@ -1141,5 +1143,7 @@ Debug Levels
 			}
 			this.highlightFilters.Visible = true;
 		}
+
+
 	}
 }
