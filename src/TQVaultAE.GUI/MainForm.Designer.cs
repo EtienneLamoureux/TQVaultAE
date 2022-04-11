@@ -580,11 +580,14 @@ namespace TQVaultAE.GUI
             // 
             this.highlightFilters.AutoSize = true;
             this.highlightFilters.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.highlightFilters.BackColor = System.Drawing.Color.Gold;
-            this.highlightFilters.Location = new System.Drawing.Point(73, 288);
+            this.highlightFilters.BackColor = System.Drawing.Color.Transparent;
+            this.highlightFilters.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("highlightFilters.BackgroundImage")));
+            this.highlightFilters.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.highlightFilters.Location = new System.Drawing.Point(104, 279);
+            this.highlightFilters.Margin = new System.Windows.Forms.Padding(0);
             this.highlightFilters.Name = "highlightFilters";
-            this.highlightFilters.Padding = new System.Windows.Forms.Padding(1);
-            this.highlightFilters.Size = new System.Drawing.Size(482, 239);
+            this.highlightFilters.Padding = new System.Windows.Forms.Padding(15);
+            this.highlightFilters.Size = new System.Drawing.Size(510, 267);
             this.highlightFilters.TabIndex = 25;
             this.highlightFilters.Visible = false;
             // 

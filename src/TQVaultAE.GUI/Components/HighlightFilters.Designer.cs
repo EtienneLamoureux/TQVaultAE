@@ -29,8 +29,8 @@
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HighlightFilters));
             this.tableLayoutPanelHighlight = new System.Windows.Forms.TableLayoutPanel();
-            this.buttonApply = new System.Windows.Forms.Button();
             this.flowLayoutPanelMax = new System.Windows.Forms.FlowLayoutPanel();
             this.numericUpDownMaxLvl = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownMaxStr = new System.Windows.Forms.NumericUpDown();
@@ -41,7 +41,6 @@
             this.numericUpDownMinStr = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownMinDex = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownMinInt = new System.Windows.Forms.NumericUpDown();
-            this.buttonReset = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.scalingLabelMaxLvl = new TQVaultAE.GUI.Components.ScalingLabel();
             this.scalingLabelMaxStr = new TQVaultAE.GUI.Components.ScalingLabel();
@@ -54,6 +53,8 @@
             this.scalingLabelMinDex = new TQVaultAE.GUI.Components.ScalingLabel();
             this.scalingLabelMinInt = new TQVaultAE.GUI.Components.ScalingLabel();
             this.scalingCheckedListBoxTypes = new TQVaultAE.GUI.Components.ScalingCheckedListBox();
+            this.buttonApply = new TQVaultAE.GUI.Components.ScalingButton();
+            this.buttonReset = new TQVaultAE.GUI.Components.ScalingButton();
             this.tableLayoutPanelHighlight.SuspendLayout();
             this.flowLayoutPanelMax.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxLvl)).BeginInit();
@@ -71,18 +72,18 @@
             // 
             this.tableLayoutPanelHighlight.AutoSize = true;
             this.tableLayoutPanelHighlight.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanelHighlight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
+            this.tableLayoutPanelHighlight.BackColor = System.Drawing.Color.Transparent;
             this.tableLayoutPanelHighlight.ColumnCount = 2;
             this.tableLayoutPanelHighlight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelHighlight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelHighlight.Controls.Add(this.buttonApply, 1, 3);
             this.tableLayoutPanelHighlight.Controls.Add(this.flowLayoutPanelMax, 1, 1);
             this.tableLayoutPanelHighlight.Controls.Add(this.scalingCheckBoxMax, 0, 1);
             this.tableLayoutPanelHighlight.Controls.Add(this.scalingCheckBoxMin, 0, 0);
             this.tableLayoutPanelHighlight.Controls.Add(this.flowLayoutPanelMin, 1, 0);
             this.tableLayoutPanelHighlight.Controls.Add(this.scalingCheckedListBoxTypes, 0, 2);
+            this.tableLayoutPanelHighlight.Controls.Add(this.buttonApply, 1, 3);
             this.tableLayoutPanelHighlight.Controls.Add(this.buttonReset, 0, 3);
-            this.tableLayoutPanelHighlight.Location = new System.Drawing.Point(1, 1);
+            this.tableLayoutPanelHighlight.Location = new System.Drawing.Point(10, 10);
             this.tableLayoutPanelHighlight.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanelHighlight.Name = "tableLayoutPanelHighlight";
             this.tableLayoutPanelHighlight.RowCount = 4;
@@ -90,22 +91,9 @@
             this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanelHighlight.Size = new System.Drawing.Size(480, 239);
+            this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanelHighlight.Size = new System.Drawing.Size(480, 233);
             this.tableLayoutPanelHighlight.TabIndex = 25;
-            // 
-            // buttonApply
-            // 
-            this.buttonApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonApply.AutoSize = true;
-            this.buttonApply.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
-            this.buttonApply.ForeColor = System.Drawing.Color.Black;
-            this.buttonApply.Location = new System.Drawing.Point(402, 211);
-            this.buttonApply.Name = "buttonApply";
-            this.buttonApply.Size = new System.Drawing.Size(75, 25);
-            this.buttonApply.TabIndex = 29;
-            this.buttonApply.Text = "Apply";
-            this.buttonApply.UseVisualStyleBackColor = true;
-            this.buttonApply.Click += new System.EventHandler(this.buttonSave_Click);
             // 
             // flowLayoutPanelMax
             // 
@@ -325,19 +313,6 @@
             0});
             this.numericUpDownMinInt.ValueChanged += new System.EventHandler(this.numericUpDownMinLvl_ValueChanged);
             // 
-            // buttonReset
-            // 
-            this.buttonReset.AutoSize = true;
-            this.buttonReset.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
-            this.buttonReset.ForeColor = System.Drawing.Color.Black;
-            this.buttonReset.Location = new System.Drawing.Point(3, 211);
-            this.buttonReset.Name = "buttonReset";
-            this.buttonReset.Size = new System.Drawing.Size(75, 25);
-            this.buttonReset.TabIndex = 28;
-            this.buttonReset.Text = "Reset";
-            this.buttonReset.UseVisualStyleBackColor = true;
-            this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
-            // 
             // scalingLabelMaxLvl
             // 
             this.scalingLabelMaxLvl.AutoSize = true;
@@ -452,7 +427,7 @@
             // 
             // scalingCheckedListBoxTypes
             // 
-            this.scalingCheckedListBoxTypes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
+            this.scalingCheckedListBoxTypes.BackColor = System.Drawing.Color.Black;
             this.scalingCheckedListBoxTypes.CheckOnClick = true;
             this.tableLayoutPanelHighlight.SetColumnSpan(this.scalingCheckedListBoxTypes, 2);
             this.scalingCheckedListBoxTypes.ColumnWidth = 100;
@@ -489,17 +464,69 @@
             this.scalingCheckedListBoxTypes.Size = new System.Drawing.Size(474, 150);
             this.scalingCheckedListBoxTypes.TabIndex = 27;
             // 
+            // buttonApply
+            // 
+            this.buttonApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonApply.BackColor = System.Drawing.Color.Transparent;
+            this.buttonApply.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.buttonApply.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonApply.DownBitmap")));
+            this.buttonApply.FlatAppearance.BorderSize = 0;
+            this.buttonApply.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.buttonApply.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.buttonApply.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonApply.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.buttonApply.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.buttonApply.Image = ((System.Drawing.Image)(resources.GetObject("buttonApply.Image")));
+            this.buttonApply.Location = new System.Drawing.Point(405, 208);
+            this.buttonApply.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonApply.Name = "buttonApply";
+            this.buttonApply.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonApply.OverBitmap")));
+            this.buttonApply.Size = new System.Drawing.Size(75, 25);
+            this.buttonApply.SizeToGraphic = false;
+            this.buttonApply.TabIndex = 30;
+            this.buttonApply.Text = "Apply";
+            this.buttonApply.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonApply.UpBitmap")));
+            this.buttonApply.UseCustomGraphic = true;
+            this.buttonApply.UseVisualStyleBackColor = false;
+            this.buttonApply.Click += new System.EventHandler(this.buttonSave_Click);
+            // 
+            // buttonReset
+            // 
+            this.buttonReset.BackColor = System.Drawing.Color.Transparent;
+            this.buttonReset.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.buttonReset.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonReset.DownBitmap")));
+            this.buttonReset.FlatAppearance.BorderSize = 0;
+            this.buttonReset.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.buttonReset.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.buttonReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonReset.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.buttonReset.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.buttonReset.Image = ((System.Drawing.Image)(resources.GetObject("buttonReset.Image")));
+            this.buttonReset.Location = new System.Drawing.Point(0, 208);
+            this.buttonReset.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonReset.Name = "buttonReset";
+            this.buttonReset.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonReset.OverBitmap")));
+            this.buttonReset.Size = new System.Drawing.Size(75, 25);
+            this.buttonReset.SizeToGraphic = false;
+            this.buttonReset.TabIndex = 31;
+            this.buttonReset.Text = "Reset";
+            this.buttonReset.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonReset.UpBitmap")));
+            this.buttonReset.UseCustomGraphic = true;
+            this.buttonReset.UseVisualStyleBackColor = false;
+            this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
+            // 
             // HighlightFilters
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.BackColor = System.Drawing.Color.Gold;
+            this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.tableLayoutPanelHighlight);
+            this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "HighlightFilters";
-            this.Padding = new System.Windows.Forms.Padding(1);
-            this.Size = new System.Drawing.Size(482, 241);
+            this.Padding = new System.Windows.Forms.Padding(10);
+            this.Size = new System.Drawing.Size(500, 253);
             this.tableLayoutPanelHighlight.ResumeLayout(false);
             this.tableLayoutPanelHighlight.PerformLayout();
             this.flowLayoutPanelMax.ResumeLayout(false);
@@ -543,8 +570,8 @@
 		private ScalingLabel scalingLabelMinInt;
 		private System.Windows.Forms.NumericUpDown numericUpDownMinInt;
 		private ScalingCheckedListBox scalingCheckedListBoxTypes;
-		private System.Windows.Forms.Button buttonApply;
-		private System.Windows.Forms.Button buttonReset;
 		private System.Windows.Forms.ToolTip toolTip;
+		private ScalingButton buttonApply;
+		private ScalingButton buttonReset;
 	}
 }

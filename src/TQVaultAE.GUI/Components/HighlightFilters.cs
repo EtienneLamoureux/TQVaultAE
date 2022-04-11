@@ -40,6 +40,9 @@ namespace TQVaultAE.GUI.Components
 			toolTip.SetToolTip(this.numericUpDownMaxLvl, Resources.HighlightFiltersZeroToIgnore);
 			toolTip.SetToolTip(this.numericUpDownMaxStr, Resources.HighlightFiltersZeroToIgnore);
 
+			this.BackgroundImageLayout = ImageLayout.Stretch;
+			this.BackgroundImage = Resources.caravan_bg;
+
 		}
 
 		internal void InitTypeList()
