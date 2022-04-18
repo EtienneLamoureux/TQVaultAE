@@ -285,6 +285,10 @@ namespace TQVaultAE.GUI
 				levelingCheckBox.Enabled = false;
 				levelingCheckBox.Visible = false;
 			}
+			else
+			{
+				levelingCheckBox.Checked = true;
+			}
 
 			_loaded = true;
 		}
@@ -360,18 +364,12 @@ namespace TQVaultAE.GUI
 		private void LevelingCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			if (sender == null) return;
-
 			var chkbx = (CheckBox)sender;
-			if (chkbx.Checked)
-			{
-				this.difficultlyComboBox.Enabled = true;
-				this.levelNumericUpDown.Enabled = true;
-			}
-			else
-			{
-				this.difficultlyComboBox.Enabled = false;
-				this.levelNumericUpDown.Enabled = false;
-			}
+
+			this.difficultlyComboBox.Enabled = chkbx.Checked;
+			this.levelNumericUpDown.Enabled = chkbx.Checked;
+			this.attributeNumericUpDown.Enabled = chkbx.Checked;
+			this.skillPointsNumericUpDown.Enabled = chkbx.Checked;
 		}
 
 		private void ResetMasteriesScalingButton_Click(object sender, EventArgs e)

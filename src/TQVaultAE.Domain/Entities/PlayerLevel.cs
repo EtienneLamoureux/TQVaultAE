@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TQVaultAE.Domain.Entities
 {
@@ -159,6 +160,26 @@ namespace TQVaultAE.Domain.Entities
 				return (_levelKey[level]);
 			}
 			throw new ArgumentOutOfRangeException("Level does not exist or is not supported");
+		}
+
+		public static int GetLevelByXP(int xp, out int levelXp)
+		{
+			foreach (var item in _levelKey.Reverse())
+			{
+				if (xp >= item.Value)
+				{
+					levelXp = item.Value;
+					return item.Key;
+				}
+			}
+			var last = _levelKey.Last();
+			levelXp = last.Value;
+			return last.Key;
+		}
+
+		public static int GetMaxXp()
+		{
+			return _levelKey.Last().Value;
 		}
 	}
 }
