@@ -818,11 +818,22 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("CEMana", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Skill Points.
-        /// </summary>
-        public static string CESkillPoints {
+
+		/// <summary>
+		///   Looks up a localized string similar to Money.
+		/// </summary>
+		public static string CEMoney
+		{
+			get
+			{
+				return ResourceManager.GetString("CEMoney", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Skill Points.
+		/// </summary>
+		public static string CESkillPoints {
             get {
                 return ResourceManager.GetString("CESkillPoints", resourceCulture);
             }
