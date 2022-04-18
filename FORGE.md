@@ -74,6 +74,8 @@ You can create game breaking items. Even useless one.
 All restrictions are lifted.
 The UI change to let you peek & choose each property group you want to inherit.
 
+**Be aware that the game may ignore some crafting combination. (e.g., artifact can't be crafted (base item) but can be used as material)**
+
 _**Note:** Here's an example of a useless quest item with offensive properties._
 <br />
 <img src="./documentation/forge_ui_godmode.png" width="750" alt="God Mode Example" />
