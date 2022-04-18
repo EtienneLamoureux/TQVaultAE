@@ -959,6 +959,9 @@ namespace TQVaultAE.GUI.Components
 						this.BagSackPanel.Sack = this.Player.GetSack(this.CurrentBag + this.BagPanelOffset);
 						this.BagSackPanel.CurrentSack = this.CurrentBag;
 					}
+
+					ApplyCustomButtonIcons();
+					Refresh();
 				}
 			}
 		}
