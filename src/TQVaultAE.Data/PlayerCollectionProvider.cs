@@ -56,6 +56,7 @@ namespace TQVaultAE.Data
 			pc.PlayerInfo.CurrentLevel = playerInfo.CurrentLevel;
 			pc.PlayerInfo.MasteriesAllowed = playerInfo.MasteriesAllowed;
 			pc.PlayerInfo.MasteriesResetRequiered = playerInfo.MasteriesResetRequiered;
+			pc.PlayerInfo.ResetMasteryAndKeepSkillsFlag = playerInfo.ResetMasteryAndKeepSkillsFlag;
 			pc.PlayerInfo.CurrentXP = playerInfo.CurrentXP;
 			pc.PlayerInfo.DifficultyUnlocked = playerInfo.DifficultyUnlocked;
 			pc.PlayerInfo.AttributesPoints = playerInfo.AttributesPoints;

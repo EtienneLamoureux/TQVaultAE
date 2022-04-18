@@ -61,6 +61,7 @@ namespace TQVaultAE.GUI
 			this.cancel.Text = Resources.GlobalCancel;
 			this.ok.Text = Resources.GlobalOK;
 			this.ResetMasteriesScalingButton.Text = Resources.ResetMasteriesButton;
+			this.ResetOnlyMasteriesScalingButton.Text = Resources.ResetOnlyMasteriesButton;
 			this.ResetAttributesScalingButton.Text = Resources.ResetAttributesButton;
 		}
 
@@ -154,6 +155,7 @@ namespace TQVaultAE.GUI
 				}
 
 				playerInfo.MasteriesResetRequiered = this._MasteriesResetRequiered;
+				playerInfo.ResetMasteryAndKeepSkillsFlag = this._OnlyMasteriesResetRequiered;
 				UpdateMoneySituation(PlayerCollection.PlayerInfo, playerInfo);
 				PlayerCollectionProvider.CommitPlayerInfo(PlayerCollection, playerInfo);
 
@@ -168,6 +170,7 @@ namespace TQVaultAE.GUI
 
 		private bool _loaded = false;
 		private bool _MasteriesResetRequiered;
+		private bool _OnlyMasteriesResetRequiered;
 
 		private struct TagData
 		{
@@ -377,6 +380,13 @@ namespace TQVaultAE.GUI
 		private void ResetMasteriesScalingButton_Click(object sender, EventArgs e)
 		{
 			if (!_MasteriesResetRequiered) _MasteriesResetRequiered = true;
+			UpdatePlayerInfo();
+		}
+
+		private void ResetOnlyMasteriesScalingButton_Click(object sender, EventArgs e)
+		{
+			if (!_MasteriesResetRequiered) _MasteriesResetRequiered = true;
+			if (!_OnlyMasteriesResetRequiered) _OnlyMasteriesResetRequiered = true;
 			UpdatePlayerInfo();
 		}
 

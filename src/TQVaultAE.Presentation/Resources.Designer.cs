@@ -3210,18 +3210,29 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reset Masteries.
+        ///   Looks up a localized string similar to Reset Masteries + Skills.
         /// </summary>
         public static string ResetMasteriesButton {
             get {
                 return ResourceManager.GetString("ResetMasteriesButton", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Container.
-        /// </summary>
-        public static string ResultsContainer {
+
+		/// <summary>
+		///   Looks up a localized string similar to Reset Only Masteries.
+		/// </summary>
+		public static string ResetOnlyMasteriesButton
+		{
+			get
+			{
+				return ResourceManager.GetString("ResetOnlyMasteriesButton", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Container.
+		/// </summary>
+		public static string ResultsContainer {
             get {
                 return ResourceManager.GetString("ResultsContainer", resourceCulture);
             }

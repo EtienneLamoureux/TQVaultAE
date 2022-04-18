@@ -1109,7 +1109,10 @@ Quand activé, l’équipement du personnage sera en lecture seule, vous ne sere
 Vous ne serez également pas en mesure d'équiper l'objet sur ce personnage.</value>
   </data>
   <data name="ResetMasteriesButton" xml:space="preserve">
-    <value>Réinit. Maîtrises</value>
+    <value>Réinit. Maîtrises + compétences</value>
+  </data>
+  <data name="ResetOnlyMasteriesButton" xml:space="preserve">
+    <value>Réinit. uniquement les maîtrises</value>
   </data>
   <data name="ResetAttributesButton" xml:space="preserve">
     <value>Réinit. Attributs</value>

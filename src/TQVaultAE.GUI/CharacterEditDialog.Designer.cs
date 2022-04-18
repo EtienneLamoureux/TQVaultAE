@@ -78,6 +78,7 @@ namespace TQVaultAE.GUI
             this.Mastery2NameScalingLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.Mastery1NameScalingLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.ResetAttributesScalingButton = new TQVaultAE.GUI.Components.ScalingButton();
+            this.ResetOnlyMasteriesScalingButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.attribGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.manacUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.healthUpDown)).BeginInit();
@@ -102,13 +103,13 @@ namespace TQVaultAE.GUI
             this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.ok.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ok.Image = ((System.Drawing.Image)(resources.GetObject("ok.Image")));
-            this.ok.Location = new System.Drawing.Point(540, 438);
+            this.ok.Location = new System.Drawing.Point(920, 331);
             this.ok.Margin = new System.Windows.Forms.Padding(4);
             this.ok.Name = "ok";
             this.ok.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ok.OverBitmap")));
-            this.ok.Size = new System.Drawing.Size(171, 38);
+            this.ok.Size = new System.Drawing.Size(264, 37);
             this.ok.SizeToGraphic = false;
-            this.ok.TabIndex = 13;
+            this.ok.TabIndex = 19;
             this.ok.Text = "OK";
             this.ok.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ok.UpBitmap")));
             this.ok.UseCustomGraphic = true;
@@ -127,13 +128,13 @@ namespace TQVaultAE.GUI
             this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.cancel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancel.Image = ((System.Drawing.Image)(resources.GetObject("cancel.Image")));
-            this.cancel.Location = new System.Drawing.Point(722, 438);
+            this.cancel.Location = new System.Drawing.Point(920, 377);
             this.cancel.Margin = new System.Windows.Forms.Padding(4);
             this.cancel.Name = "cancel";
             this.cancel.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("cancel.OverBitmap")));
-            this.cancel.Size = new System.Drawing.Size(171, 38);
+            this.cancel.Size = new System.Drawing.Size(264, 38);
             this.cancel.SizeToGraphic = false;
-            this.cancel.TabIndex = 14;
+            this.cancel.TabIndex = 20;
             this.cancel.Text = "Cancel";
             this.cancel.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("cancel.UpBitmap")));
             this.cancel.UseCustomGraphic = true;
@@ -570,14 +571,14 @@ namespace TQVaultAE.GUI
             this.ResetMasteriesScalingButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.ResetMasteriesScalingButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ResetMasteriesScalingButton.Image = ((System.Drawing.Image)(resources.GetObject("ResetMasteriesScalingButton.Image")));
-            this.ResetMasteriesScalingButton.Location = new System.Drawing.Point(39, 438);
+            this.ResetMasteriesScalingButton.Location = new System.Drawing.Point(920, 35);
             this.ResetMasteriesScalingButton.Margin = new System.Windows.Forms.Padding(4);
             this.ResetMasteriesScalingButton.Name = "ResetMasteriesScalingButton";
             this.ResetMasteriesScalingButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetMasteriesScalingButton.OverBitmap")));
-            this.ResetMasteriesScalingButton.Size = new System.Drawing.Size(171, 38);
+            this.ResetMasteriesScalingButton.Size = new System.Drawing.Size(264, 38);
             this.ResetMasteriesScalingButton.SizeToGraphic = false;
             this.ResetMasteriesScalingButton.TabIndex = 16;
-            this.ResetMasteriesScalingButton.Text = "Reset Masteries";
+            this.ResetMasteriesScalingButton.Text = "Reset Masteries + Skills";
             this.ResetMasteriesScalingButton.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetMasteriesScalingButton.UpBitmap")));
             this.ResetMasteriesScalingButton.UseCustomGraphic = true;
             this.ResetMasteriesScalingButton.UseVisualStyleBackColor = false;
@@ -660,11 +661,11 @@ namespace TQVaultAE.GUI
             this.ResetAttributesScalingButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.ResetAttributesScalingButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ResetAttributesScalingButton.Image = ((System.Drawing.Image)(resources.GetObject("ResetAttributesScalingButton.Image")));
-            this.ResetAttributesScalingButton.Location = new System.Drawing.Point(236, 438);
+            this.ResetAttributesScalingButton.Location = new System.Drawing.Point(920, 127);
             this.ResetAttributesScalingButton.Margin = new System.Windows.Forms.Padding(4);
             this.ResetAttributesScalingButton.Name = "ResetAttributesScalingButton";
             this.ResetAttributesScalingButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetAttributesScalingButton.OverBitmap")));
-            this.ResetAttributesScalingButton.Size = new System.Drawing.Size(171, 38);
+            this.ResetAttributesScalingButton.Size = new System.Drawing.Size(264, 38);
             this.ResetAttributesScalingButton.SizeToGraphic = false;
             this.ResetAttributesScalingButton.TabIndex = 18;
             this.ResetAttributesScalingButton.Text = "Reset Attributes";
@@ -673,12 +674,37 @@ namespace TQVaultAE.GUI
             this.ResetAttributesScalingButton.UseVisualStyleBackColor = false;
             this.ResetAttributesScalingButton.Click += new System.EventHandler(this.ResetAttributesScalingButton_Click);
             // 
+            // ResetOnlyMasteriesScalingButton
+            // 
+            this.ResetOnlyMasteriesScalingButton.BackColor = System.Drawing.Color.Transparent;
+            this.ResetOnlyMasteriesScalingButton.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetOnlyMasteriesScalingButton.DownBitmap")));
+            this.ResetOnlyMasteriesScalingButton.FlatAppearance.BorderSize = 0;
+            this.ResetOnlyMasteriesScalingButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.ResetOnlyMasteriesScalingButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.ResetOnlyMasteriesScalingButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ResetOnlyMasteriesScalingButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ResetOnlyMasteriesScalingButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.ResetOnlyMasteriesScalingButton.Image = ((System.Drawing.Image)(resources.GetObject("ResetOnlyMasteriesScalingButton.Image")));
+            this.ResetOnlyMasteriesScalingButton.Location = new System.Drawing.Point(920, 81);
+            this.ResetOnlyMasteriesScalingButton.Margin = new System.Windows.Forms.Padding(4);
+            this.ResetOnlyMasteriesScalingButton.Name = "ResetOnlyMasteriesScalingButton";
+            this.ResetOnlyMasteriesScalingButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetOnlyMasteriesScalingButton.OverBitmap")));
+            this.ResetOnlyMasteriesScalingButton.Size = new System.Drawing.Size(264, 38);
+            this.ResetOnlyMasteriesScalingButton.SizeToGraphic = false;
+            this.ResetOnlyMasteriesScalingButton.TabIndex = 17;
+            this.ResetOnlyMasteriesScalingButton.Text = "Reset Only Masteries";
+            this.ResetOnlyMasteriesScalingButton.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetOnlyMasteriesScalingButton.UpBitmap")));
+            this.ResetOnlyMasteriesScalingButton.UseCustomGraphic = true;
+            this.ResetOnlyMasteriesScalingButton.UseVisualStyleBackColor = false;
+            this.ResetOnlyMasteriesScalingButton.Click += new System.EventHandler(this.ResetOnlyMasteriesScalingButton_Click);
+            // 
             // CharacterEditDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-            this.ClientSize = new System.Drawing.Size(932, 504);
+            this.ClientSize = new System.Drawing.Size(1209, 448);
+            this.Controls.Add(this.ResetOnlyMasteriesScalingButton);
             this.Controls.Add(this.ResetAttributesScalingButton);
             this.Controls.Add(this.MasteriesGroupBox);
             this.Controls.Add(this.ResetMasteriesScalingButton);
@@ -707,6 +733,7 @@ namespace TQVaultAE.GUI
             this.Controls.SetChildIndex(this.ResetMasteriesScalingButton, 0);
             this.Controls.SetChildIndex(this.MasteriesGroupBox, 0);
             this.Controls.SetChildIndex(this.ResetAttributesScalingButton, 0);
+            this.Controls.SetChildIndex(this.ResetOnlyMasteriesScalingButton, 0);
             this.attribGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.manacUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.healthUpDown)).EndInit();
@@ -755,5 +782,6 @@ namespace TQVaultAE.GUI
 		private ScalingLabel Mastery2NameScalingLabel;
 		private ScalingLabel Mastery1NameScalingLabel;
 		private ScalingButton ResetAttributesScalingButton;
+		private ScalingButton ResetOnlyMasteriesScalingButton;
 	}
 }

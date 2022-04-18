@@ -1328,7 +1328,10 @@ Quando ativado, o equipamento do personagem será somente leitura, você não po
 O personagem também não poderá equipar itens onde os requisitos não forem atendidos..</value>
   </data>
   <data name="ResetMasteriesButton" xml:space="preserve">
-    <value>Redefinir Maestria</value>
+    <value>Redefinir Maestrias + Habilidades</value>
+  </data>
+  <data name="ResetOnlyMasteriesButton" xml:space="preserve">
+    <value>Redefinir apenas maestrias</value>
   </data>
   <data name="TextTag_tagRelic" xml:space="preserve">
     <value>Relíquia</value>

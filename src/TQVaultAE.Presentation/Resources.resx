@@ -1449,7 +1449,10 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
 The character will also not be able to equip items where the requirements are not met.</value>
   </data>
   <data name="ResetMasteriesButton" xml:space="preserve">
-    <value>Reset Masteries</value>
+    <value>Reset Masteries + Skills</value>
+  </data>
+  <data name="ResetOnlyMasteriesButton" xml:space="preserve">
+    <value>Reset Only Masteries</value>
   </data>
   <data name="ResetAttributesButton" xml:space="preserve">
     <value>Reset Attributes</value>

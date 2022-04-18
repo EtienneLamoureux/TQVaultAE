@@ -1436,7 +1436,10 @@ Change this value to match program version when new keys are added.  Will trigge
 角色也不能装备这些物品。</value>
   </data>
     <data name="ResetMasteriesButton" xml:space="preserve">
-    <value>重置专精</value>
+    <value>重置精通+技能</value>
+  </data>
+  <data name="ResetOnlyMasteriesButton" xml:space="preserve">
+    <value>仅重置精通</value>
   </data>
     <data name="ResetAttributesButton" xml:space="preserve">
     <value>重置属性</value>
