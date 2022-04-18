@@ -1318,4 +1318,7 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="GlobalMiscellaneous" xml:space="preserve">
     <value>Divers</value>
   </data>
+  <data name="CEMoney" xml:space="preserve">
+    <value>De l'argent</value>
+  </data>
 </root>

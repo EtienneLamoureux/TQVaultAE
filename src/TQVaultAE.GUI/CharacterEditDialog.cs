@@ -126,7 +126,7 @@ namespace TQVaultAE.GUI
 					playerInfo.MasteriesAllowed = 2;
 
 				playerInfo.CurrentXP = int.Parse(xpTextBox.Text);
-				playerInfo.Money = PlayerCollection.PlayerInfo.Money > 0 ? PlayerCollection.PlayerInfo.Money : 0;
+				playerInfo.Money = Math.Max(0, Math.Abs(int.Parse(moneyTextBox.Text)));
 				playerInfo.DifficultyUnlocked = difficultlyComboBox.SelectedIndex;
 				playerInfo.SkillPoints = Convert.ToInt32(skillPointsNumericUpDown.Value);
 
@@ -190,6 +190,7 @@ namespace TQVaultAE.GUI
 			IntelligenceLabel.Text = Resources.CEIntelligence;
 			healthLabel.Text = Resources.CEHealth;
 			manaLabel.Text = Resources.CEMana;
+			moneyLabel.Text = Resources.CEMoney;
 			levelLabel.Text = Resources.CELevel;
 			xpLabel.Text = Resources.CEXp;
 			attributeLabel.Text = Resources.CEAttributePoints;
@@ -256,6 +257,8 @@ namespace TQVaultAE.GUI
 
 			manacUpDown.Value = PlayerCollection.PlayerInfo.BaseMana;
 			manacUpDown.Tag = attrHMTag;
+
+			moneyTextBox.Text = PlayerCollection.PlayerInfo.Money.ToString();
 
 			if (PlayerCollection.PlayerInfo.CurrentLevel > Convert.ToInt32(levelNumericUpDown.Maximum))
 				levelNumericUpDown.Maximum = PlayerCollection.PlayerInfo.CurrentLevel;

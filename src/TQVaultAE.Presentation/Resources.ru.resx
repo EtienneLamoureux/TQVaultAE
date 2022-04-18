@@ -1094,4 +1094,7 @@ Used to track changes in the translation file.</comment>
   <data name="ItemEmbers" xml:space="preserve">
     <value>Предмет Eternal Embers</value>
   </data>
+  <data name="CEMoney" xml:space="preserve">
+    <value>Деньги</value>
+  </data>
 </root>

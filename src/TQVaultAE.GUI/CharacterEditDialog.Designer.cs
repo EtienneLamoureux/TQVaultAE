@@ -54,6 +54,8 @@ namespace TQVaultAE.GUI
             this.healthLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.manaLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.attribGroupBox = new System.Windows.Forms.GroupBox();
+            this.moneyTextBox = new System.Windows.Forms.TextBox();
+            this.moneyLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.manacUpDown = new System.Windows.Forms.NumericUpDown();
             this.healthUpDown = new System.Windows.Forms.NumericUpDown();
             this.intelligenceUpDown = new System.Windows.Forms.NumericUpDown();
@@ -201,6 +203,8 @@ namespace TQVaultAE.GUI
             // attribGroupBox
             // 
             this.attribGroupBox.BackColor = System.Drawing.Color.Transparent;
+            this.attribGroupBox.Controls.Add(this.moneyTextBox);
+            this.attribGroupBox.Controls.Add(this.moneyLabel);
             this.attribGroupBox.Controls.Add(this.manacUpDown);
             this.attribGroupBox.Controls.Add(this.healthUpDown);
             this.attribGroupBox.Controls.Add(this.intelligenceUpDown);
@@ -217,10 +221,34 @@ namespace TQVaultAE.GUI
             this.attribGroupBox.Margin = new System.Windows.Forms.Padding(4);
             this.attribGroupBox.Name = "attribGroupBox";
             this.attribGroupBox.Padding = new System.Windows.Forms.Padding(4);
-            this.attribGroupBox.Size = new System.Drawing.Size(339, 265);
+            this.attribGroupBox.Size = new System.Drawing.Size(339, 293);
             this.attribGroupBox.TabIndex = 14;
             this.attribGroupBox.TabStop = false;
             this.attribGroupBox.Text = "Base Attributes";
+            // 
+            // moneyTextBox
+            // 
+            this.moneyTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.moneyTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.moneyTextBox.Location = new System.Drawing.Point(142, 225);
+            this.moneyTextBox.Margin = new System.Windows.Forms.Padding(4);
+            this.moneyTextBox.MaxLength = 9;
+            this.moneyTextBox.Name = "moneyTextBox";
+            this.moneyTextBox.Size = new System.Drawing.Size(108, 28);
+            this.moneyTextBox.TabIndex = 16;
+            this.moneyTextBox.WordWrap = false;
+            // 
+            // moneyLabel
+            // 
+            this.moneyLabel.CausesValidation = false;
+            this.moneyLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
+            this.moneyLabel.Location = new System.Drawing.Point(15, 227);
+            this.moneyLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.moneyLabel.Name = "moneyLabel";
+            this.moneyLabel.Size = new System.Drawing.Size(120, 22);
+            this.moneyLabel.TabIndex = 15;
+            this.moneyLabel.Text = "Money";
+            this.moneyLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // manacUpDown
             // 
@@ -244,7 +272,7 @@ namespace TQVaultAE.GUI
             0});
             this.manacUpDown.Name = "manacUpDown";
             this.manacUpDown.ReadOnly = true;
-            this.manacUpDown.Size = new System.Drawing.Size(81, 28);
+            this.manacUpDown.Size = new System.Drawing.Size(108, 28);
             this.manacUpDown.TabIndex = 5;
             this.manacUpDown.Value = new decimal(new int[] {
             300,
@@ -275,7 +303,7 @@ namespace TQVaultAE.GUI
             0});
             this.healthUpDown.Name = "healthUpDown";
             this.healthUpDown.ReadOnly = true;
-            this.healthUpDown.Size = new System.Drawing.Size(81, 28);
+            this.healthUpDown.Size = new System.Drawing.Size(108, 28);
             this.healthUpDown.TabIndex = 4;
             this.healthUpDown.Value = new decimal(new int[] {
             300,
@@ -306,7 +334,7 @@ namespace TQVaultAE.GUI
             0});
             this.intelligenceUpDown.Name = "intelligenceUpDown";
             this.intelligenceUpDown.ReadOnly = true;
-            this.intelligenceUpDown.Size = new System.Drawing.Size(81, 28);
+            this.intelligenceUpDown.Size = new System.Drawing.Size(108, 28);
             this.intelligenceUpDown.TabIndex = 3;
             this.intelligenceUpDown.Value = new decimal(new int[] {
             50,
@@ -337,7 +365,7 @@ namespace TQVaultAE.GUI
             0});
             this.dexterityUpDown.Name = "dexterityUpDown";
             this.dexterityUpDown.ReadOnly = true;
-            this.dexterityUpDown.Size = new System.Drawing.Size(81, 28);
+            this.dexterityUpDown.Size = new System.Drawing.Size(108, 28);
             this.dexterityUpDown.TabIndex = 2;
             this.dexterityUpDown.Value = new decimal(new int[] {
             50,
@@ -368,7 +396,7 @@ namespace TQVaultAE.GUI
             0});
             this.strengthUpDown.Name = "strengthUpDown";
             this.strengthUpDown.ReadOnly = true;
-            this.strengthUpDown.Size = new System.Drawing.Size(81, 28);
+            this.strengthUpDown.Size = new System.Drawing.Size(108, 28);
             this.strengthUpDown.TabIndex = 1;
             this.strengthUpDown.Value = new decimal(new int[] {
             50,
@@ -397,7 +425,7 @@ namespace TQVaultAE.GUI
             this.levelingGroupBox.Margin = new System.Windows.Forms.Padding(4);
             this.levelingGroupBox.Name = "levelingGroupBox";
             this.levelingGroupBox.Padding = new System.Windows.Forms.Padding(4);
-            this.levelingGroupBox.Size = new System.Drawing.Size(482, 265);
+            this.levelingGroupBox.Size = new System.Drawing.Size(482, 293);
             this.levelingGroupBox.TabIndex = 15;
             this.levelingGroupBox.TabStop = false;
             this.levelingGroupBox.Text = "Leveling";
@@ -407,7 +435,7 @@ namespace TQVaultAE.GUI
             this.levelingCheckBox.AutoSize = true;
             this.levelingCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.levelingCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.levelingCheckBox.Location = new System.Drawing.Point(86, 224);
+            this.levelingCheckBox.Location = new System.Drawing.Point(94, 224);
             this.levelingCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.levelingCheckBox.Name = "levelingCheckBox";
             this.levelingCheckBox.Size = new System.Drawing.Size(168, 28);
@@ -593,7 +621,7 @@ namespace TQVaultAE.GUI
             this.MasteriesGroupBox.Controls.Add(this.Mastery1NameScalingLabel);
             this.MasteriesGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MasteriesGroupBox.ForeColor = System.Drawing.Color.Gold;
-            this.MasteriesGroupBox.Location = new System.Drawing.Point(39, 308);
+            this.MasteriesGroupBox.Location = new System.Drawing.Point(39, 336);
             this.MasteriesGroupBox.Margin = new System.Windows.Forms.Padding(4);
             this.MasteriesGroupBox.Name = "MasteriesGroupBox";
             this.MasteriesGroupBox.Padding = new System.Windows.Forms.Padding(4);
@@ -735,6 +763,7 @@ namespace TQVaultAE.GUI
             this.Controls.SetChildIndex(this.ResetAttributesScalingButton, 0);
             this.Controls.SetChildIndex(this.ResetOnlyMasteriesScalingButton, 0);
             this.attribGroupBox.ResumeLayout(false);
+            this.attribGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.manacUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.healthUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.intelligenceUpDown)).EndInit();
@@ -783,5 +812,7 @@ namespace TQVaultAE.GUI
 		private ScalingLabel Mastery1NameScalingLabel;
 		private ScalingButton ResetAttributesScalingButton;
 		private ScalingButton ResetOnlyMasteriesScalingButton;
+		private ScalingLabel moneyLabel;
+		private System.Windows.Forms.TextBox moneyTextBox;
 	}
 }

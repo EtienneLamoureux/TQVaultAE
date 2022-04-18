@@ -1813,4 +1813,7 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="GlobalMiscellaneous" xml:space="preserve">
     <value>Miscellaneous</value>
   </data>
+  <data name="CEMoney" xml:space="preserve">
+    <value>Money</value>
+  </data>
 </root>

@@ -1075,4 +1075,7 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
   <data name="ItemEmbers" xml:space="preserve">
     <value>Objeto de Eternal Embers</value>
   </data>
+  <data name="CEMoney" xml:space="preserve">
+    <value>Dinero</value>
+  </data>
 </root>
