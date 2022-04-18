@@ -1459,6 +1459,7 @@ namespace TQVaultAE.GUI.Components
 						if (Config.Settings.Default.AllowItemEdit)
 						{
 							this.contextMenu.Items.Add(Resources.SackPanelMenuSeed);
+							this.contextMenu.Items.Add(Resources.SackPanelMenuSeedForce);
 
 							// Add option to complete a charm or relic if
 							// not already completed.
@@ -2543,6 +2544,20 @@ namespace TQVaultAE.GUI.Components
 					dlg.SelectedItem = focusedItem;
 					int origSeed = focusedItem.Seed;
 					dlg.ShowDialog();
+
+					// See if the seed was changed
+					if (focusedItem.Seed != origSeed)
+					{
+						// Tell the sack that it has been modified
+						this.Sack.IsModified = true;
+						this.InvalidateItemCacheItemTooltip(focusedItem);
+					}
+				}
+				else if (selectedMenuItem == Resources.SackPanelMenuSeedForce)
+				{
+					int origSeed = focusedItem.Seed;
+					focusedItem.Seed = Item.GenerateSeed();
+					focusedItem.IsModified = true;
 
 					// See if the seed was changed
 					if (focusedItem.Seed != origSeed)

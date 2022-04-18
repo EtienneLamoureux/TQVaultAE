@@ -1081,4 +1081,7 @@ Hier ist ein komplexes Beispiel: 'arctic &amp; frost @schwert $ episch | selten'
   <data name="ItemEmbers" xml:space="preserve">
     <value>Eternal Embers Gegenstand</value>
   </data>
+  <data name="SackPanelMenuSeedForce" xml:space="preserve">
+    <value>Item Seed ändern (Force)</value>
+  </data>
 </root>

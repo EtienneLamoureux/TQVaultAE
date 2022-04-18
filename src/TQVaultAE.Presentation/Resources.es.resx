@@ -1075,4 +1075,7 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
   <data name="ItemEmbers" xml:space="preserve">
     <value>Objeto de Eternal Embers</value>
   </data>
+  <data name="SackPanelMenuSeedForce" xml:space="preserve">
+    <value>Cambiar semilla de artículo (Forzar)</value>
+  </data>
 </root>
