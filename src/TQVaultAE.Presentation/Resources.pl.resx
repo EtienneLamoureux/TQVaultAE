@@ -1080,4 +1080,7 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   <data name="CEMoney" xml:space="preserve">
     <value>Pieniądze</value>
   </data>
+  <data name="SackPanelMenuSeedForce" xml:space="preserve">
+    <value>Zmień ziarno przedmiotu (siła)</value>
+  </data>
 </root>

@@ -1084,4 +1084,7 @@ Hier ist ein komplexes Beispiel: 'arctic &amp; frost @schwert $ episch | selten'
   <data name="CEMoney" xml:space="preserve">
     <value>Geld</value>
   </data>
+  <data name="SackPanelMenuSeedForce" xml:space="preserve">
+    <value>Item Seed ändern (Force)</value>
+  </data>
 </root>

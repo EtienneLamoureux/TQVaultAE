@@ -1708,4 +1708,7 @@ Change this value to match program version when new keys are added.  Will trigge
   <data name="CEMoney" xml:space="preserve">
     <value>钱</value>
   </data>
+  <data name="SackPanelMenuSeedForce" xml:space="preserve">
+    <value>更改项目种子（力）</value>
+  </data>
 </root>
