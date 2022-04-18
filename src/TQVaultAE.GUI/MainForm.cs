@@ -1127,22 +1127,25 @@ Debug Levels
 		private void scalingLabelHighlight_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			var link = sender as LinkLabel;
-			if (this.highlightFilters.Visible)
+			if (highlightFilters.Visible)
 			{
-				this.highlightFilters.Visible = false;
+				highlightFilters.Visible = false;
 				return;
 			}
 
 			// Show it
-			if (this.highlightFilters.UserContext is null)
+			if (highlightFilters.UserContext is null)
 			{ // First time
-				this.highlightFilters.UserContext = this.userContext;
-				this.highlightFilters.Link = link;
-				this.highlightFilters.TranslationService = this.TranslationService;
-				this.highlightFilters.ResetAll();
-				this.highlightFilters.InitTypeList();
+				highlightFilters.UserContext = userContext;
+				highlightFilters.Link = link;
+				highlightFilters.TranslationService = TranslationService;
+				highlightFilters.ResetAll();
+				highlightFilters.InitTypeList();
 			}
-			this.highlightFilters.Visible = true;
+
+			highlightFilters.SendToBack();// To avoid flickering
+			highlightFilters.Visible = true;
+			highlightFilters.BringToFront();
 		}
 
 

@@ -368,7 +368,7 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 5F));
             this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 11F));
+            this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 14F));
             this.tableLayoutPanelMain.Controls.Add(this.tableLayoutPanelHighlight, 0, 3);
             this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelRightPanels, 2, 1);
             this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelVaultSelector, 0, 0);
@@ -610,11 +610,11 @@ namespace TQVaultAE.GUI
             this.highlightFilters.BackColor = System.Drawing.Color.Transparent;
             this.highlightFilters.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("highlightFilters.BackgroundImage")));
             this.highlightFilters.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.highlightFilters.Location = new System.Drawing.Point(104, 279);
+            this.highlightFilters.Location = new System.Drawing.Point(205, 274);
             this.highlightFilters.Margin = new System.Windows.Forms.Padding(0);
             this.highlightFilters.Name = "highlightFilters";
-            this.highlightFilters.Padding = new System.Windows.Forms.Padding(15);
-            this.highlightFilters.Size = new System.Drawing.Size(510, 267);
+            this.highlightFilters.Padding = new System.Windows.Forms.Padding(10);
+            this.highlightFilters.Size = new System.Drawing.Size(500, 251);
             this.highlightFilters.TabIndex = 25;
             this.highlightFilters.Visible = false;
             // 
@@ -688,8 +688,8 @@ namespace TQVaultAE.GUI
 		private ScalingTextBox scalingTextBoxHighlight;
 		private TypeAssistant typeAssistant;
 		private System.Windows.Forms.LinkLabel scalingLabelHighlight;
-		private HighlightFilters highlightFilters;
 		private ScalingButton forgeButton;
 		internal BufferedTableLayoutPanel tableLayoutPanelMain;
+		private HighlightFilters highlightFilters;
 	}
 }

@@ -31,6 +31,9 @@ namespace TQVaultAE.GUI.Components
 		{
 			InitializeComponent();
 
+			DoubleBuffered = true;
+			SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.SupportsTransparentBackColor, true);
+
 			toolTip.SetToolTip(this.numericUpDownMinDex, Resources.HighlightFiltersZeroToIgnore);
 			toolTip.SetToolTip(this.numericUpDownMinInt, Resources.HighlightFiltersZeroToIgnore);
 			toolTip.SetToolTip(this.numericUpDownMinLvl, Resources.HighlightFiltersZeroToIgnore);
@@ -42,7 +45,6 @@ namespace TQVaultAE.GUI.Components
 
 			this.BackgroundImageLayout = ImageLayout.Stretch;
 			this.BackgroundImage = Resources.caravan_bg;
-
 		}
 
 		internal void InitTypeList()
@@ -202,11 +204,16 @@ namespace TQVaultAE.GUI.Components
 			set
 			{
 				link = value;
-				// Adjust location
-				var frm = this.FindForm();
-				var linklocation = frm.PointToClient(link.PointToScreen(Point.Empty));
-				this.Location = new Point(linklocation.X, linklocation.Y - this.Height);
+				AdjustLocation();
 			}
+		}
+
+		private void AdjustLocation()
+		{
+			// Adjust location
+			var frm = this.FindForm();
+			var linklocation = frm.PointToClient(link.PointToScreen(Point.Empty));
+			this.Location = new Point(linklocation.X, linklocation.Y - this.Height);
 		}
 
 		private void buttonReset_Click(object sender, EventArgs e)
