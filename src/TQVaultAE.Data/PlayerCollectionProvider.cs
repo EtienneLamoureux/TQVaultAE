@@ -16,6 +16,7 @@ namespace TQVaultAE.Data
 	using TQVaultAE.Data.Dto;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Logs;
+	using TQVaultAE.Domain.Helpers;
 
 	/// <summary>
 	/// Loads, decodes, encodes and saves a Titan Quest player file.
@@ -345,6 +346,50 @@ namespace TQVaultAE.Data
 					return itm;
 				}).ToList()
 			}).ToArray();
+
+			/*
+#if DEBUG
+			// Generate RelicAndCharm Enum
+			if (path.Contains("Artefacts"))
+			{
+				var str = pc.Sacks.Skip(8)
+					.SelectMany(s => s.items)
+					.Select(s =>
+					{
+						var Id = s.BaseItemId.ToUpper().Replace('/', '\\');
+						var filename = Path.GetFileNameWithoutExtension(Id);
+						var filesplit = filename.Split('_');
+						var enumName = filesplit.Reverse().JoinString("_");
+						return new
+						{
+							Item = s,
+							Friendly = ItemProvider.GetFriendlyNames(s, FriendlyNamesExtraScopes.ItemFullDisplay),
+							Id,
+							filename,
+							enumName
+						};
+					})
+					.OrderBy(s => s.enumName)
+					.GroupBy(s => s.enumName)
+					.Select(g =>
+					{
+						var i = g.First();
+						return $@"
+/// <summary>
+/// {i.Friendly.FullNameClean}
+/// </summary>
+/// <remarks>
+/// {string.Join("\n/// ", i.Friendly.FlavorText).RemoveAllTQTags()}
+/// </remarks>
+[Description(@""{i.Id}"")]
+[GearType(GearType.Undefined)]
+{i.enumName},";
+					})
+					.JoinString("\n");
+			}
+
+#endif
+			*/
 		}
 
 

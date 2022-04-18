@@ -48,6 +48,7 @@ namespace TQVaultAE.GUI.Components
 		internal Action ForgeAction;
 		internal Action<string> NotifyAction;
 
+		private SackCollection BaseItemSack;
 		private Item BaseItem;
 		private Item PrefixItem;
 		private Item SuffixItem;
@@ -127,7 +128,7 @@ namespace TQVaultAE.GUI.Components
 			UIService = serviceProvider.GetService<IUIService>();
 			FontService = serviceProvider.GetService<IFontService>();
 			TranslationService = serviceProvider.GetService<ITranslationService>();
-			this.ItemProvider = serviceProvider.GetService<IItemProvider>();
+			ItemProvider = serviceProvider.GetService<IItemProvider>();
 
 			#region Font, Scaling, Translate, BackGround
 
@@ -221,24 +222,27 @@ namespace TQVaultAE.GUI.Components
 				else
 				{ // God Mode
 					var selectedPropreties = comboBoxPrefix.SelectedItem as ForgeComboItem;
-					switch (selectedPropreties.Value)
+					if (selectedPropreties is not null)
 					{
-						case ItemPropertyType.Prefix:
-							itm.prefixID = PrefixItem.prefixID;
-							break;
-						case ItemPropertyType.Suffix:
-							itm.prefixID = PrefixItem.suffixID;
-							break;
-						case ItemPropertyType.Relic1:
-							itm.prefixID = PrefixItem.relicID;
-							break;
-						case ItemPropertyType.Relic2:
-							itm.prefixID = PrefixItem.relic2ID;
-							break;
-						case ItemPropertyType.Base:
-						default:
-							itm.prefixID = PrefixItem.BaseItemId;
-							break;
+						switch (selectedPropreties.Value)
+						{
+							case ItemPropertyType.Prefix:
+								itm.prefixID = PrefixItem.prefixID;
+								break;
+							case ItemPropertyType.Suffix:
+								itm.prefixID = PrefixItem.suffixID;
+								break;
+							case ItemPropertyType.Relic1:
+								itm.prefixID = PrefixItem.relicID;
+								break;
+							case ItemPropertyType.Relic2:
+								itm.prefixID = PrefixItem.relic2ID;
+								break;
+							case ItemPropertyType.Base:
+							default:
+								itm.prefixID = PrefixItem.BaseItemId;
+								break;
+						}
 					}
 				}
 			}
@@ -251,24 +255,27 @@ namespace TQVaultAE.GUI.Components
 				else
 				{ // God Mode
 					var selectedPropreties = comboBoxSuffix.SelectedItem as ForgeComboItem;
-					switch (selectedPropreties.Value)
+					if (selectedPropreties is not null)
 					{
-						case ItemPropertyType.Prefix:
-							itm.suffixID = SuffixItem.prefixID;
-							break;
-						case ItemPropertyType.Suffix:
-							itm.suffixID = SuffixItem.suffixID;
-							break;
-						case ItemPropertyType.Relic1:
-							itm.suffixID = SuffixItem.relicID;
-							break;
-						case ItemPropertyType.Relic2:
-							itm.suffixID = SuffixItem.relic2ID;
-							break;
-						case ItemPropertyType.Base:
-						default:
-							itm.suffixID = SuffixItem.BaseItemId;
-							break;
+						switch (selectedPropreties.Value)
+						{
+							case ItemPropertyType.Prefix:
+								itm.suffixID = SuffixItem.prefixID;
+								break;
+							case ItemPropertyType.Suffix:
+								itm.suffixID = SuffixItem.suffixID;
+								break;
+							case ItemPropertyType.Relic1:
+								itm.suffixID = SuffixItem.relicID;
+								break;
+							case ItemPropertyType.Relic2:
+								itm.suffixID = SuffixItem.relic2ID;
+								break;
+							case ItemPropertyType.Base:
+							default:
+								itm.suffixID = SuffixItem.BaseItemId;
+								break;
+						}
 					}
 				}
 			}
@@ -295,34 +302,37 @@ namespace TQVaultAE.GUI.Components
 				else
 				{ // God Mode
 					var selectedPropreties = comboBoxRelic1.SelectedItem as ForgeComboItem;
-					switch (selectedPropreties.Value)
+					if (selectedPropreties is not null)
 					{
-						case ItemPropertyType.Prefix:
-							itm.relicID = Relic1Item.prefixID;
-							itm.RelicBonusId = null;
-							itm.Var1 = 1;
-							break;
-						case ItemPropertyType.Suffix:
-							itm.relicID = Relic1Item.suffixID;
-							itm.RelicBonusId = null;
-							itm.Var1 = 1;
-							break;
-						case ItemPropertyType.Relic1:
-							itm.relicID = Relic1Item.relicID;
-							itm.RelicBonusId = Relic1Item.RelicBonusId;
-							itm.Var1 = Relic1Item.Var1;
-							break;
-						case ItemPropertyType.Relic2:
-							itm.relicID = Relic1Item.relic2ID;
-							itm.RelicBonusId = Relic1Item.RelicBonus2Id;
-							itm.Var1 = Relic1Item.Var2;
-							break;
-						case ItemPropertyType.Base:
-						default:
-							itm.relicID = Relic1Item.BaseItemId;
-							itm.RelicBonusId = Relic1Item.RelicBonusId;
-							itm.Var1 = Relic1Item.Var1;
-							break;
+						switch (selectedPropreties.Value)
+						{
+							case ItemPropertyType.Prefix:
+								itm.relicID = Relic1Item.prefixID;
+								itm.RelicBonusId = null;
+								itm.Var1 = 1;
+								break;
+							case ItemPropertyType.Suffix:
+								itm.relicID = Relic1Item.suffixID;
+								itm.RelicBonusId = null;
+								itm.Var1 = 1;
+								break;
+							case ItemPropertyType.Relic1:
+								itm.relicID = Relic1Item.relicID;
+								itm.RelicBonusId = Relic1Item.RelicBonusId;
+								itm.Var1 = Relic1Item.Var1;
+								break;
+							case ItemPropertyType.Relic2:
+								itm.relicID = Relic1Item.relic2ID;
+								itm.RelicBonusId = Relic1Item.RelicBonus2Id;
+								itm.Var1 = Relic1Item.Var2;
+								break;
+							case ItemPropertyType.Base:
+							default:
+								itm.relicID = Relic1Item.BaseItemId;
+								itm.RelicBonusId = Relic1Item.RelicBonusId;
+								itm.Var1 = Relic1Item.Var1;
+								break;
+						}
 					}
 				}
 			}
@@ -349,34 +359,37 @@ namespace TQVaultAE.GUI.Components
 				else
 				{ // God Mode
 					var selectedPropreties = comboBoxRelic2.SelectedItem as ForgeComboItem;
-					switch (selectedPropreties.Value)
+					if (selectedPropreties is not null)
 					{
-						case ItemPropertyType.Prefix:
-							itm.relic2ID = Relic2Item.prefixID;
-							itm.RelicBonus2Id = null;
-							itm.Var2 = 1;
-							break;
-						case ItemPropertyType.Suffix:
-							itm.relic2ID = Relic2Item.suffixID;
-							itm.RelicBonus2Id = null;
-							itm.Var2 = 1;
-							break;
-						case ItemPropertyType.Relic1:
-							itm.relic2ID = Relic2Item.relicID;
-							itm.RelicBonus2Id = Relic2Item.RelicBonusId;
-							itm.Var2 = Relic2Item.Var1;
-							break;
-						case ItemPropertyType.Relic2:
-							itm.relic2ID = Relic2Item.relic2ID;
-							itm.RelicBonus2Id = Relic2Item.RelicBonus2Id;
-							itm.Var2 = Relic2Item.Var2;
-							break;
-						case ItemPropertyType.Base:
-						default:
-							itm.relic2ID = Relic2Item.BaseItemId;
-							itm.RelicBonus2Id = Relic2Item.RelicBonusId;
-							itm.Var2 = Relic2Item.Var1;
-							break;
+						switch (selectedPropreties.Value)
+						{
+							case ItemPropertyType.Prefix:
+								itm.relic2ID = Relic2Item.prefixID;
+								itm.RelicBonus2Id = null;
+								itm.Var2 = 1;
+								break;
+							case ItemPropertyType.Suffix:
+								itm.relic2ID = Relic2Item.suffixID;
+								itm.RelicBonus2Id = null;
+								itm.Var2 = 1;
+								break;
+							case ItemPropertyType.Relic1:
+								itm.relic2ID = Relic2Item.relicID;
+								itm.RelicBonus2Id = Relic2Item.RelicBonusId;
+								itm.Var2 = Relic2Item.Var1;
+								break;
+							case ItemPropertyType.Relic2:
+								itm.relic2ID = Relic2Item.relic2ID;
+								itm.RelicBonus2Id = Relic2Item.RelicBonus2Id;
+								itm.Var2 = Relic2Item.Var2;
+								break;
+							case ItemPropertyType.Base:
+							default:
+								itm.relic2ID = Relic2Item.BaseItemId;
+								itm.RelicBonus2Id = Relic2Item.RelicBonusId;
+								itm.Var2 = Relic2Item.Var1;
+								break;
+						}
 					}
 				}
 			}
@@ -400,19 +413,27 @@ namespace TQVaultAE.GUI.Components
 			PrefixItem =
 			Relic1Item =
 			Relic2Item =
-			SuffixItem =
-			_PreviewItem = null;
+			SuffixItem = null;
+
+			BaseItemSack = null;
 
 			comboBoxPrefix.Items.Clear();
 			comboBoxSuffix.Items.Clear();
 			comboBoxRelic1.Items.Clear();
 			comboBoxRelic2.Items.Clear();
+
+			ResetPreviewItem();
+		}
+
+		private void ResetPreviewItem()
+		{
+			if (_PreviewItem is not null)
+				ItemTooltip.InvalidateCache(_PreviewItem);// Invalide old preview item
+			_PreviewItem = null;
 		}
 
 		private void CancelButton_Click(object sender, EventArgs e)
 		{
-			SoundService.PlayRandomCancel();
-
 			ResetSelection();
 
 			if (CancelAction is not null)
@@ -420,6 +441,11 @@ namespace TQVaultAE.GUI.Components
 		}
 
 		private void ForgeButton_Click(object sender, EventArgs e)
+		{
+			ForgeItem();
+		}
+
+		private void ForgeItem()
 		{
 			if (MustSelectBaseItem())
 				return;
@@ -431,6 +457,15 @@ namespace TQVaultAE.GUI.Components
 			var itm = BaseItem;
 
 			MergeItemProperties(itm);
+
+			ItemProvider.GetDBData(itm);
+
+			BaseItemSack.IsModified = true;
+
+			ItemTooltip.InvalidateCache(itm);
+			ItemProvider.InvalidateFriendlyNamesCache(itm);
+
+			ResetSelection();
 
 			// Sound
 			if (IsGodMode)
@@ -479,6 +514,7 @@ namespace TQVaultAE.GUI.Components
 				lastMode = scalingRadioButtonGod;
 			}
 		}
+
 		private void ForgePanel_MouseEnter(object sender, EventArgs e)
 		{
 			// Enforce first autosize display
@@ -497,7 +533,8 @@ namespace TQVaultAE.GUI.Components
 
 				pictureBoxDragDrop.Location = CurrentDragPicturePosition;
 				pictureBoxDragDrop.Size = dragingBmp.Size;
-				//pictureBoxDragDrop.BackColor = Color.FromArgb(46, 41, 31);// Not pretty but Transparent doesn't work
+				// TODO try to make transparency work with a picturebox with an overrided Paint() event https://stackoverflow.com/questions/34673496/override-picturbox-onpaint-event-to-rotate-the-image-create-custom-picturebox
+				//pictureBoxDragDrop.BackColor = Color.FromArgb(46, 41, 31);// Not pretty but Transparent doesn't work 
 				pictureBoxDragDrop.Image = dragingBmp;
 				pictureBoxDragDrop.BringToFront();
 				pictureBoxDragDrop.Visible = true;
@@ -509,7 +546,6 @@ namespace TQVaultAE.GUI.Components
 
 		private void SubscribeExternalMouseMove()
 		{
-			Debug.WriteLine("SUBSCRIBE");
 			// tout le form sauf ce control
 			this.FindForm().ProcessAllControlsWithExclusion(c =>
 			{
@@ -524,10 +560,8 @@ namespace TQVaultAE.GUI.Components
 
 		private void UnsubscribeExternalMouseMove()
 		{
-			Debug.WriteLine("UNSUBSCRIBE");
 			// tout le form sauf ce control
-			var frm = this.FindForm();
-			frm.ProcessAllControlsWithExclusion(c =>
+			this.FindForm().ProcessAllControlsWithExclusion(c =>
 				{
 					if (c == this)
 						return true;// Exclude myself and my children
@@ -539,17 +573,8 @@ namespace TQVaultAE.GUI.Components
 			);
 		}
 
-		private void pictureBoxDragDrop_MouseMove(object sender, MouseEventArgs e)
-		{
-			if (IsDraging)
-			{
-				pictureBoxDragDrop.Location = CurrentDragPicturePosition;
-			}
-		}
-
 		private void Parent_MouseMove(object sender, EventArgs e)
 		{
-			Debug.WriteLine("Parent_MouseMove");
 			// Out of Panel
 			if (pictureBoxDragDrop.Visible)
 			{
@@ -559,6 +584,15 @@ namespace TQVaultAE.GUI.Components
 			}
 		}
 
+		private void pictureBoxDragDrop_MouseMove(object sender, MouseEventArgs e)
+		{
+			if (IsDraging)
+			{
+				pictureBoxDragDrop.Location = CurrentDragPicturePosition;
+			}
+		}
+
+
 		/// <summary>
 		/// Drop <see cref="pictureBoxDragDrop"/>
 		/// </summary>
@@ -566,6 +600,9 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="e"></param>
 		private void pictureBoxDragDrop_Click(object sender, EventArgs e)
 		{
+			if (ItemMustBeInsideASack())
+				return;
+
 			if (IsAlreadyPlaced(DragInfo.Item))
 				return;
 
@@ -593,23 +630,46 @@ namespace TQVaultAE.GUI.Components
 				if (IsStrictMode
 					&& Relic2Item is not null
 					&& SuffixItem is not null
-					&& !SuffixItem.IsOfTheTinkerer
-					&& drgItm.IsOfTheTinkerer
+					&& !SuffixItem.AcceptExtraRelic
+					&& drgItm.AcceptExtraRelic
 				)
 				{
 					ResetRelic2();
-					//return;
 				}
 
-				// Only Weapon/Armor allowed
-				if (drgItm.IsWeaponShield || drgItm.IsArmor || drgItm.IsJewellery)
+				// Strict/Relax reset relic 1 & 2 if non allowed gear type
+				if (!IsGodMode)
+				{
+					if (Relic1Item is not null
+						&& (
+							(Relic1Item.IsRelic && !drgItm.IsRelicAllowed(Relic1Item))
+							|| (Relic1Item.HasRelicSlot1 && !drgItm.IsRelicAllowed(Relic1Item.relicID))
+						)
+					)
+					{
+						ResetRelic1();
+					}
+					if (Relic2Item is not null
+						&& (
+							(Relic2Item.IsRelic && !drgItm.IsRelicAllowed(Relic2Item))
+							|| (Relic2Item.HasRelicSlot1 && !drgItm.IsRelicAllowed(Relic2Item.relicID))
+						)
+					)
+					{
+						ResetRelic2();
+					}
+				}
+
+				// Only Weapon/Armor/Jewellery allowed
+				if (drgItm.IsWeaponShield || drgItm.IsArmor || drgItm.IsJewellery || IsGodMode)
 				{
 					BaseItem = drgItm;
+					BaseItemSack = DragInfo.Sack;
 					pictureBoxBaseItem.Image = UIService.LoadBitmap(BaseItem.TexImageResourceId);
 					pictureBoxBaseItem.BackColor = Color.FromArgb(127, ControlPaint.Dark(drgItm.ItemStyle.Color()));
 					DragInfo.Cancel();
 					SoundService.PlayRandomItemDrop();
-					_PreviewItem = null;
+					ResetPreviewItem();
 					return;
 				}
 				// Not good item class
@@ -640,7 +700,7 @@ namespace TQVaultAE.GUI.Components
 					return;
 				}
 
-				// Only Weapon/Armor allowed
+				// Only Weapon/Armor/Jewellery allowed
 				if (drgItm.IsWeaponShield || drgItm.IsArmor || drgItm.IsJewellery || IsGodMode)
 				{
 					PrefixItem = drgItm;
@@ -649,7 +709,7 @@ namespace TQVaultAE.GUI.Components
 					DragInfo.Cancel();
 					AdjustComboBox(comboBoxPrefix);
 					SoundService.PlayRandomItemDrop();
-					_PreviewItem = null;
+					ResetPreviewItem();
 					return;
 				}
 
@@ -672,10 +732,10 @@ namespace TQVaultAE.GUI.Components
 				if (StrictModeCantUsePrefixSuffixOfHigherLevelThanBaseItem(found, drgItm))
 					return;
 
-				// Strict reset relic 2 if non Tinkered forge result
+				// Strict mode : reset relic 2 if non Tinkered forge result
 				if (IsStrictMode
 					&& Relic2Item is not null
-					&& !drgItm.IsOfTheTinkerer
+					&& !drgItm.AcceptExtraRelic
 				)
 				{
 					ResetRelic2();
@@ -690,7 +750,7 @@ namespace TQVaultAE.GUI.Components
 					return;
 				}
 
-				// Only Weapon/Armor allowed
+				// Only Weapon/Armor/Jewellery allowed
 				if (drgItm.IsWeaponShield || drgItm.IsArmor || drgItm.IsJewellery || IsGodMode)
 				{
 					SuffixItem = drgItm;
@@ -699,7 +759,7 @@ namespace TQVaultAE.GUI.Components
 					DragInfo.Cancel();
 					AdjustComboBox(comboBoxSuffix);
 					SoundService.PlayRandomItemDrop();
-					_PreviewItem = null;
+					ResetPreviewItem();
 					return;
 				}
 				// Not good item class
@@ -712,16 +772,16 @@ namespace TQVaultAE.GUI.Components
 				if (BaseItemFirst())
 					return;
 
-				// Strict & Relax mode need item having relic
-				if (!IsGodMode
-					&& (!drgItm.IsRelic && !drgItm.HasRelicSlot1) // Not a Relic without relic
-				)
-				{
-					pictureBoxDragDrop.Visible = true;
-					if (NotifyAction is not null) NotifyAction(Resources.ForgeMustHaveRelicOutsideOfGodMode);
-					SoundService.PlayRandomCancel();
+				// Strict mode need relic
+				if (StrictModeMustBeRelic(drgItm))
 					return;
-				}
+
+				// Relax mode need item having relic or a relic
+				if (RelaxModeMustHaveRelic(drgItm))
+					return;
+
+				if (StrictRelaxEnforceRelicGearConstraint(drgItm))
+					return;
 
 				// Only Weapon/Armor/Jewellery with relic allowed or a relic item
 				if (
@@ -740,7 +800,7 @@ namespace TQVaultAE.GUI.Components
 					DragInfo.Cancel();
 					AdjustComboBox(comboBoxRelic1);
 					SoundService.PlayRandomItemDrop();
-					_PreviewItem = null;
+					ResetPreviewItem();
 					return;
 				}
 				// Not good item class
@@ -753,30 +813,30 @@ namespace TQVaultAE.GUI.Components
 				if (BaseItemFirst())
 					return;
 
+				// Strict mode need relic
+				if (StrictModeMustBeRelic(drgItm))
+					return;
+
+				// Relax mode need item having relic or a relic
+				if (RelaxModeMustHaveRelic(drgItm))
+					return;
+
+				if (StrictRelaxEnforceRelicGearConstraint(drgItm))
+					return;
+
 				// Strict Mode only allowed on BaseItem "of the Tinkered"
 				if (IsStrictMode
 					&& !(
 						// No Suffix Item && BaseItem of Tinkerer
-						(SuffixItem is null && BaseItem.IsOfTheTinkerer)
+						(SuffixItem is null && BaseItem.AcceptExtraRelic)
 						// Or Suffix Item of Tinkerer
-						|| (SuffixItem is not null && SuffixItem.IsOfTheTinkerer)
+						|| (SuffixItem is not null && SuffixItem.AcceptExtraRelic)
 					)
 				)
 				{
 					pictureBoxDragDrop.Visible = true;
 					if (NotifyAction is not null)
 						NotifyAction(string.Format(Resources.ForgeMustHaveTinkeredSuffix, OfTheTinkererTranslation));
-					SoundService.PlayRandomCancel();
-					return;
-				}
-
-				// Strict & Relax mode need item having relic
-				if (!IsGodMode
-					&& (!drgItm.IsRelic && !drgItm.HasRelicSlot1)
-				)
-				{
-					pictureBoxDragDrop.Visible = true;
-					if (NotifyAction is not null) NotifyAction(Resources.ForgeMustHaveRelicOutsideOfGodMode);
 					SoundService.PlayRandomCancel();
 					return;
 				}
@@ -798,7 +858,7 @@ namespace TQVaultAE.GUI.Components
 					DragInfo.Cancel();
 					AdjustComboBox(comboBoxRelic2);
 					SoundService.PlayRandomItemDrop();
-					_PreviewItem = null;
+					ResetPreviewItem();
 					return;
 				}
 				// Not good item class
@@ -809,7 +869,93 @@ namespace TQVaultAE.GUI.Components
 			pictureBoxDragDrop.Visible = true;
 		}
 
+
 		#region Validate
+
+		private bool ItemMustBeInsideASack()
+		{
+			// Happen when i copy an item without droping it in a sack first
+			if (DragInfo.Sack is null)
+			{
+				if (NotifyAction is not null)
+					NotifyAction(Resources.ForgeItemMustBeStoredFirst);
+
+				SoundService.PlayRandomCancel();
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Strict/Relax : Enforce relic gear constraint 
+		/// </summary>
+		/// <param name="drgItm"></param>
+		/// <returns></returns>
+		private bool StrictRelaxEnforceRelicGearConstraint(Item drgItm)
+		{
+			if (!IsGodMode
+				&& (
+					(drgItm.IsRelic && !BaseItem.IsRelicAllowed(drgItm))
+					|| (drgItm.HasRelicSlot1 && !BaseItem.IsRelicAllowed(drgItm.relicID))
+				)
+			)
+			{
+				pictureBoxDragDrop.Visible = true;
+				if (NotifyAction is not null) NotifyAction(Resources.ForgeRelicNotAllowed);
+				SoundService.PlayRandomCancel();
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Relax mode need item having relic or a relic
+		/// </summary>
+		/// <param name="drgItm"></param>
+		/// <returns></returns>
+		private bool RelaxModeMustHaveRelic(Item drgItm)
+		{
+			// Relax mode need item having relic
+			if (IsRelaxMode
+				&& !(drgItm.IsRelic || drgItm.HasRelicSlot1)
+			)
+			{
+				pictureBoxDragDrop.Visible = true;
+				if (NotifyAction is not null) NotifyAction(Resources.ForgeMustHaveRelicInRelaxMode);
+				SoundService.PlayRandomCancel();
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Strict mode need relic
+		/// </summary>
+		/// <param name="drgItm"></param>
+		/// <returns></returns>
+		private bool StrictModeMustBeRelic(Item drgItm)
+		{
+			// Strict mode need relic
+			if (IsStrictMode
+				&& !drgItm.IsRelic
+			)
+			{
+				pictureBoxDragDrop.Visible = true;
+				if (NotifyAction is not null) NotifyAction(Resources.ForgeMustBeRelicInStrictMode);
+				SoundService.PlayRandomCancel();
+				return true;
+			}
+			return false;
+		}
+
+		private void ResetRelic1()
+		{
+			Relic1Item = null;
+			pictureBoxRelic1.Image = null;
+			pictureBoxRelic1.BackColor = PictureBoxBaseColor;
+			comboBoxRelic1.Items.Clear();
+		}
 
 		private void ResetRelic2()
 		{
@@ -858,9 +1004,14 @@ namespace TQVaultAE.GUI.Components
 			return false;
 		}
 
+		/// <summary>
+		/// Strict Mode Can't use Prefix/Suffix of another type
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="drgItm"></param>
+		/// <returns></returns>
 		private bool StrictModePrefixSuffixMustBeSameType(PictureBox from, Item drgItm)
 		{
-			// Strict Mode Can't use Prefix/Suffix of another type
 			if (IsStrictMode)
 			{
 				var baseClass = string.IsNullOrWhiteSpace(BaseItem?.ItemClass) ? "NoClass" : BaseItem.ItemClass;
@@ -894,9 +1045,14 @@ namespace TQVaultAE.GUI.Components
 			}
 		}
 
+		/// <summary>
+		/// Strict Mode Can't use Prefix/Suffix of higher level than baseitem
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="drgItm"></param>
+		/// <returns></returns>
 		private bool StrictModeCantUsePrefixSuffixOfHigherLevelThanBaseItem(PictureBox from, Item drgItm)
 		{
-			// Strict Mode Can't use Prefix/Suffix of higher level than baseitem
 			if (IsStrictMode)
 			{
 				if (from == pictureBoxBaseItem
@@ -953,11 +1109,15 @@ namespace TQVaultAE.GUI.Components
 			return false;
 		}
 
+		/// <summary>
+		/// No Epic/Legendary item in Strict Mode
+		/// </summary>
+		/// <param name="drgItm"></param>
+		/// <returns></returns>
 		private bool StrictModeNoEpicLegendaryItem(Item drgItm)
 		{
-			// No Epic/Legendary item in Strict Mode
 			if (IsStrictMode
-				&& (drgItm.GearLevel > ItemGearLevel.Rare)
+				&& (drgItm.GearLevel > GearLevel.Rare)
 			)
 			{
 				pictureBoxDragDrop.Visible = true;
@@ -1022,12 +1182,13 @@ namespace TQVaultAE.GUI.Components
 		private void pictureBox_MouseEnter(object sender, EventArgs e)
 		{
 			var picbox = sender as PictureBox;
+
 			Item itm = null;
 			if (picbox == pictureBoxPrefix) itm = PrefixItem;
 			if (picbox == pictureBoxSuffix) itm = SuffixItem;
-			if (picbox == pictureBoxBaseItem) itm = PreviewItem;
 			if (picbox == pictureBoxRelic1) itm = Relic1Item;
 			if (picbox == pictureBoxRelic2) itm = Relic2Item;
+			if (picbox == pictureBoxBaseItem) itm = PreviewItem;
 
 			if (itm is null) return;
 
@@ -1042,7 +1203,7 @@ namespace TQVaultAE.GUI.Components
 		private void comboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			var combo = sender as ComboBox;
-			_PreviewItem = null;
+			ResetPreviewItem();
 		}
 	}
 }

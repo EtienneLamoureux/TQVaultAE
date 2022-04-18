@@ -44,6 +44,8 @@ namespace TQVaultAE.GUI
 
 		private void ForgeShowUI()
 		{
+			SoundService.PlayRandomMetalHit();
+
 			// Save UI visibility
 			lastVisibility = (
 				configureButton: configureButton.Visible
@@ -74,10 +76,13 @@ namespace TQVaultAE.GUI
 			// Show the forge
 			forgePanel.Dock = DockStyle.Left;
 			forgePanel.Visible = true;
+
 		}
 
 		private void ForgeHideUI()
 		{
+			SoundService.PlayRandomCancel();
+
 			// Restore UI visibility
 			configureButton.Visible = lastVisibility.configureButton;
 			showVaulButton.Visible = lastVisibility.showVaulButton;
@@ -91,6 +96,8 @@ namespace TQVaultAE.GUI
 			// Hide the forge
 			forgePanel.Dock = DockStyle.None;
 			forgePanel.Visible = false;
+
+			Refresh();
 		}
 	}
 }

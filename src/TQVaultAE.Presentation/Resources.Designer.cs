@@ -1063,7 +1063,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Strict : You can&apos;t use a Prefix/Suffix better than Base item!.
+        ///   Looks up a localized string similar to You can&apos;t use a Prefix/Suffix better than Base item!.
         /// </summary>
         public static string ForgeCantUsePrefixSuffixBetterThanBase {
             get {
@@ -1072,7 +1072,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Strict : Prefix/Suffix must be of same gear type than Base item!.
+        ///   Looks up a localized string similar to Prefix/Suffix must be of same gear type than Base item!.
         /// </summary>
         public static string ForgeCantUsePrefixSuffixOfAnotherGearType {
             get {
@@ -1099,6 +1099,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The item must be stored first!.
+        /// </summary>
+        public static string ForgeItemMustBeStoredFirst {
+            get {
+                return ResourceManager.GetString("ForgeItemMustBeStoredFirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must select a relic!.
+        /// </summary>
+        public static string ForgeMustBeRelicInStrictMode {
+            get {
+                return ResourceManager.GetString("ForgeMustBeRelicInStrictMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You must select an item with prefix!.
         /// </summary>
         public static string ForgeMustHavePrefixOutsideOfGodMode {
@@ -1110,9 +1128,9 @@ namespace TQVaultAE.Presentation {
         /// <summary>
         ///   Looks up a localized string similar to You must select an item with a relic or a relic!.
         /// </summary>
-        public static string ForgeMustHaveRelicOutsideOfGodMode {
+        public static string ForgeMustHaveRelicInRelaxMode {
             get {
-                return ResourceManager.GetString("ForgeMustHaveRelicOutsideOfGodMode", resourceCulture);
+                return ResourceManager.GetString("ForgeMustHaveRelicInRelaxMode", resourceCulture);
             }
         }
         
@@ -1203,6 +1221,15 @@ namespace TQVaultAE.Presentation {
         public static string ForgeRelaxModeTT {
             get {
                 return ResourceManager.GetString("ForgeRelaxModeTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to That relic is not allowed on that gear!.
+        /// </summary>
+        public static string ForgeRelicNotAllowed {
+            get {
+                return ResourceManager.GetString("ForgeRelicNotAllowed", resourceCulture);
             }
         }
         

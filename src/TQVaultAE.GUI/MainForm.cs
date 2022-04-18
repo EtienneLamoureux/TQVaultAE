@@ -204,8 +204,8 @@ namespace TQVaultAE.GUI
 			ScaleControl(this.UIService, this.duplicateButton);
 			this.saveButton.Font = FontService.GetFontLight(12F, UIService.Scale);
 			ScaleControl(this.UIService, this.saveButton);
-			this.scalingButtonForge.Font = FontService.GetFontLight(12F, UIService.Scale);
-			ScaleControl(this.UIService, this.scalingButtonForge);
+			this.forgeButton.Font = FontService.GetFontLight(12F, UIService.Scale);
+			ScaleControl(this.UIService, this.forgeButton);
 
 			this.scalingLabelHighlight.Font = FontService.GetFontLight(10F, UIService.Scale);
 			this.scalingTextBoxHighlight.Font = FontService.GetFontLight(10F, UIService.Scale);
@@ -276,6 +276,7 @@ Debug Levels
 
 		private void AdjustMenuButtonVisibility()
 		{
+			this.forgeButton.Visible = Config.Settings.Default.AllowItemEdit;
 			this.duplicateButton.Visible = Config.Settings.Default.AllowCharacterEdit;
 			this.saveButton.Visible = Config.Settings.Default.EnableHotReload;
 			// Get last position

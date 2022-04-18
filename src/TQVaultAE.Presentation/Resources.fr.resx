@@ -1378,8 +1378,11 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="ForgeMustHaveSuffixOutsideOfGodMode" xml:space="preserve">
     <value>Vous devez sélectionner un objet avec suffix!</value>
   </data>
-	<data name="ForgeMustHaveRelicOutsideOfGodMode" xml:space="preserve">
-    <value>Vous devez sélectionner un objet avec relic ou une relic!</value>
+	<data name="ForgeMustHaveRelicInRelaxMode" xml:space="preserve">
+    <value>Vous devez sélectionner un objet avec relique ou une relique!</value>
+  </data>
+	<data name="ForgeMustBeRelicInStrictMode" xml:space="preserve">
+    <value>Vous devez sélectionner une relique!</value>
   </data>
 	<data name="ForgeMustSelectArmorOrWeaponOrJewellery" xml:space="preserve">
     <value>Vous devez sélectionner une Armure/Arme/Bijou !</value>
@@ -1394,12 +1397,18 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
     <value>les objets Epiques and Légendaires ne sont pas autorisés en mode strict !</value>
   </data>
 	<data name="ForgeMustSelectBaseItemFirst" xml:space="preserve">
-    <value>>Vous devez sélectionner un objet de base en premier!</value>
+    <value>Vous devez sélectionner un objet de base en premier!</value>
   </data>
 	<data name="ForgeCantUsePrefixSuffixBetterThanBase" xml:space="preserve">
     <value>Vous ne pouvez pas utiliser un Prefix/Suffix meilleur que l'objet de base!</value>
   </data>
 	<data name="ForgeCantUsePrefixSuffixOfAnotherGearType" xml:space="preserve">
     <value>Vous devez utiliser un Prefix/Suffix de même type que l'objet de base!</value>
+  </data>
+	<data name="ForgeRelicNotAllowed" xml:space="preserve">
+    <value>Cette relique n'est pas autorisée sur cet objet!</value>
+  </data>
+	<data name="ForgeItemMustBeStoredFirst" xml:space="preserve">
+    <value>L'objet doit être stocké d'abord !</value>
   </data>
 </root>

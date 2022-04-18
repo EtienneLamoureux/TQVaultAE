@@ -1873,8 +1873,11 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="ForgeMustHaveSuffixOutsideOfGodMode" xml:space="preserve">
     <value>You must select an item with suffix!</value>
   </data>
-	<data name="ForgeMustHaveRelicOutsideOfGodMode" xml:space="preserve">
+	<data name="ForgeMustHaveRelicInRelaxMode" xml:space="preserve">
     <value>You must select an item with a relic or a relic!</value>
+  </data>
+	<data name="ForgeMustBeRelicInStrictMode" xml:space="preserve">
+    <value>You must select a relic!</value>
   </data>
 	<data name="ForgeMustSelectArmorOrWeaponOrJewellery" xml:space="preserve">
     <value>You must select an Armor/Weapon/Jewellery item!</value>
@@ -1892,9 +1895,16 @@ You still have to close TQVaultAE to apply your changes.
     <value>You must select a base item first!</value>
   </data>
 	<data name="ForgeCantUsePrefixSuffixBetterThanBase" xml:space="preserve">
-    <value>Strict : You can't use a Prefix/Suffix better than Base item!</value>
+    <value>You can't use a Prefix/Suffix better than Base item!</value>
   </data>
 	<data name="ForgeCantUsePrefixSuffixOfAnotherGearType" xml:space="preserve">
-    <value>Strict : Prefix/Suffix must be of same gear type than Base item!</value>
-  </data>	
+    <value>Prefix/Suffix must be of same gear type than Base item!</value>
+  </data>
+	<data name="ForgeRelicNotAllowed" xml:space="preserve">
+    <value>That relic is not allowed on that gear!</value>
+  </data>
+	<data name="ForgeItemMustBeStoredFirst" xml:space="preserve">
+    <value>The item must be stored first!</value>
+  </data>
+
 </root>

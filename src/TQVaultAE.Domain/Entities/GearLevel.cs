@@ -1,12 +1,15 @@
-﻿namespace TQVaultAE.Domain.Entities
+﻿using System;
+
+namespace TQVaultAE.Domain.Entities
 {
+
 	/// <summary>
 	/// Gear level classification
 	/// </summary>
-	public enum ItemGearLevel
+	public enum GearLevel
 	{
 		/// <summary>
-		/// Item is not gear
+		/// Item is no gear
 		/// </summary>
 		NoGear = 0,
 		Broken = 1,

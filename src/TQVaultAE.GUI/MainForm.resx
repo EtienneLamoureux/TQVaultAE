@@ -12322,7 +12322,7 @@
         lgcL6DH/ADOVirTOf/AEP8XqMV6olKgIz/OWQgYyGkaIiImeHIjiEpI0Uo2Sw46yXCS0aywBAH//2Q==
 </value>
   </data>
-  <data name="scalingButtonForge.DownBitmap" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="forgeButton.DownBitmap" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIkAAAAeCAYAAAAYRz0yAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         vAAADrwBlbxySQAAD9VJREFUeF7tnNlz3MdxxxcgRTmSLUqkeOEmeANY7I3FfS2OXewujgXAxbE4FyBu
@@ -12396,7 +12396,7 @@
         RU5ErkJggg==
 </value>
   </data>
-  <data name="scalingButtonForge.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="forgeButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIkAAAAeCAYAAAAYRz0yAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         vAAADrwBlbxySQAAD0lJREFUeF7tm3lU1FeWx0GjTs9kktPdc9JtujXTSad7OiIIFJuoUfaCYnVhrUJw
@@ -12467,7 +12467,7 @@
         a2Otf6nzFzJfIuexsn03eDq/Ac0CeWH85/hfRNqFE5kZCvcAAAAASUVORK5CYII=
 </value>
   </data>
-  <data name="scalingButtonForge.OverBitmap" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="forgeButton.OverBitmap" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIgAAAAeCAYAAAD3hVYMAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         vAAADrwBlbxySQAADpBJREFUeF7tm3l8VUWWx1+S1o8jn25n7HFsUZGenk/PHxoISYBgO7YRsr4sIBAC
@@ -12535,7 +12535,7 @@
         /hRzLodO4Qv0npgw7n6RD94P3of/BzWvW342eX3gAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="scalingButtonForge.UpBitmap" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="forgeButton.UpBitmap" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIkAAAAeCAYAAAAYRz0yAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         vAAADrwBlbxySQAAD0lJREFUeF7tm3lU1FeWx0GjTs9kktPdc9JtujXTSad7OiIIFJuoUfaCYnVhrUJw
