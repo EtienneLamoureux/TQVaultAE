@@ -480,7 +480,6 @@ namespace TQVaultAE.GUI
             0,
             0});
             this.skillPointsNumericUpDown.Name = "skillPointsNumericUpDown";
-            this.skillPointsNumericUpDown.ReadOnly = true;
             this.skillPointsNumericUpDown.Size = new System.Drawing.Size(200, 28);
             this.skillPointsNumericUpDown.TabIndex = 10;
             // 
@@ -508,7 +507,6 @@ namespace TQVaultAE.GUI
             0,
             0});
             this.attributeNumericUpDown.Name = "attributeNumericUpDown";
-            this.attributeNumericUpDown.ReadOnly = true;
             this.attributeNumericUpDown.Size = new System.Drawing.Size(200, 28);
             this.attributeNumericUpDown.TabIndex = 9;
             // 
