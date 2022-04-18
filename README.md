@@ -26,6 +26,7 @@ Works with all expansions!
 ## Features
 - **Infinite bank space**
 - Powerful search
+- [Highlight items](HIGHLIGHT.md)
 - Cheats
     - Items
         - Extract relic/charm from items at no cost, keeping both
