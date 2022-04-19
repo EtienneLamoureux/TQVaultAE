@@ -578,7 +578,7 @@ namespace TQVaultAE.GUI.Components
 						this.contextMenu.Items.Add(Resources.PlayerPanelChangeIcon);
 						this.contextMenu.Items.Add(Resources.PlayerPanelCopyIcon);
 
-						if (this.userContext.IconInfoCopy is not null)
+						if (this.userContext.IconInfoCopied)
 							this.contextMenu.Items.Add(Resources.PlayerPanelPasteIcon);
 					}
 
