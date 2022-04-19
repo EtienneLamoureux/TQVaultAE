@@ -3531,6 +3531,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove 2nd Relic.
+        /// </summary>
+        public static string SackPanelMenuRemoveRelic2 {
+            get {
+                return ResourceManager.GetString("SackPanelMenuRemoveRelic2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change Item Seed....
         /// </summary>
         public static string SackPanelMenuSeed {
