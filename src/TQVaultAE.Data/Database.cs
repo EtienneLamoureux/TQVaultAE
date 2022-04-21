@@ -7,6 +7,7 @@ namespace TQVaultAE.Data
 {
 	using Microsoft.Extensions.Logging;
 	using System;
+	using System.Collections.Concurrent;
 	using System.Globalization;
 	using System.IO;
 	using System.Linq;
@@ -37,7 +38,7 @@ namespace TQVaultAE.Data
 		/// <summary>
 		/// Dictionary of all text database entries
 		/// </summary>
-		private LazyConcurrentDictionary<string, string> textDB = new LazyConcurrentDictionary<string, string>();
+		private ConcurrentDictionary<string, string> textDB = new ConcurrentDictionary<string, string>();
 
 		/// <summary>
 		/// Dictionary of all associated arc files in the database.
@@ -53,7 +54,7 @@ namespace TQVaultAE.Data
 		/// Dictionary of all record collections loaded from the database.
 		/// </summary>
 		private LazyConcurrentDictionary<string, DBRecordCollection> dbRecordCollections = new LazyConcurrentDictionary<string, DBRecordCollection>();
-		
+
 		/// <summary>
 		/// Game language to support setting language in UI
 		/// </summary>
@@ -250,7 +251,7 @@ namespace TQVaultAE.Data
 		/// <param name="tagId">Tag to be looked up in the text database normalized to upper case.</param>
 		/// <returns>Returns localized string, empty string if it cannot find a string or "?ErrorName?" in case of uncaught exception.</returns>
 		public string GetFriendlyName(string tagId)
-			=> this.textDB.TryGetValue(tagId.ToUpperInvariant(), out var text) ? text.Value : string.Empty;
+			=> this.textDB.TryGetValue(tagId.ToUpperInvariant(), out var text) ? text : string.Empty;
 
 		/// <summary>
 		/// Gets the formatted string for the variable attribute.
@@ -318,7 +319,8 @@ namespace TQVaultAE.Data
 		{
 			itemId = TQData.NormalizeRecordPath(itemId);
 
-			var cachedDBRecordCollection = this.dbRecordCollections.GetOrAddAtomic(itemId, key => {
+			var cachedDBRecordCollection = this.dbRecordCollections.GetOrAddAtomic(itemId, key =>
+			{
 
 				if (this.ArzFileMod != null)
 				{
@@ -915,7 +917,11 @@ namespace TQVaultAE.Data
 
 					// If this field is already in the db, then replace it
 					string key = fields[0].Trim().ToUpperInvariant();
-					this.textDB.AddOrUpdateAtomic(key, label);
+
+					//if (!this.textDB.TryAdd(key, label))
+					//	Log.LogDebug(@"TextDB Overlap ! Try to override ""{key}"" = ""{oldvalue}"" with ""{newvalue}"" !", key, this.textDB[key], label);
+
+					this.textDB.AddOrUpdate(key, label, (k, v) => label);// Override with the new "label"
 				}
 			}
 
