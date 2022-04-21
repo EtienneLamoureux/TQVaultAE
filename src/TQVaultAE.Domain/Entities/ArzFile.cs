@@ -28,12 +28,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// RecordInfo keyed by their ID
 		/// </summary>
-		public LazyConcurrentDictionary<string, RecordInfo> RecordInfo = new LazyConcurrentDictionary<string, RecordInfo>();
-
-		/// <summary>
-		/// DBRecords cached as they get requested
-		/// </summary>
-		public LazyConcurrentDictionary<string, DBRecordCollection> Cache = new LazyConcurrentDictionary<string, DBRecordCollection>();
+		public Dictionary<string, RecordInfo> RecordInfo = new Dictionary<string, RecordInfo>();
 
 		/// <summary>
 		/// Holds the keys for the recordInfo Dictionary
