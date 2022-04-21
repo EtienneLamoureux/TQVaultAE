@@ -50,6 +50,11 @@ namespace TQVaultAE.Data
 		private LazyConcurrentDictionary<string, byte[]> resourcesData = new LazyConcurrentDictionary<string, byte[]>();
 
 		/// <summary>
+		/// Dictionary of all record collections loaded from the database.
+		/// </summary>
+		private LazyConcurrentDictionary<string, DBRecordCollection> dbRecordCollections = new LazyConcurrentDictionary<string, DBRecordCollection>();
+		
+		/// <summary>
 		/// Game language to support setting language in UI
 		/// </summary>
 		private string gameLanguage;
@@ -229,18 +234,7 @@ namespace TQVaultAE.Data
 
 			return this.infoDB.GetOrAddAtomic(itemId, k =>
 			{
-				DBRecordCollection record = null;
-				// Add support for searching a custom map database
-				if (this.ArzFileMod != null)
-					record = arzProv.GetItem(this.ArzFileMod, k);
-
-				// Try the expansion pack database first.
-				if (record == null && this.ArzFileIT != null)
-					record = arzProv.GetItem(this.ArzFileIT, k);
-
-				// Try looking in TQ database now
-				if (record == null || this.ArzFileIT == null)
-					record = arzProv.GetItem(this.ArzFile, k);
+				DBRecordCollection record = GetRecordFromFile(k);
 
 				if (record == null)
 					return null;
@@ -324,28 +318,33 @@ namespace TQVaultAE.Data
 		{
 			itemId = TQData.NormalizeRecordPath(itemId);
 
-			if (this.ArzFileMod != null)
-			{
-				DBRecordCollection recordMod = arzProv.GetItem(this.ArzFileMod, itemId);
-				if (recordMod != null)
-				{
-					// Custom Map records have highest precedence.
-					return recordMod;
-				}
-			}
+			var cachedDBRecordCollection = this.dbRecordCollections.GetOrAddAtomic(itemId, key => {
 
-			if (this.ArzFileIT != null)
-			{
-				// see if it's in IT ARZ file
-				DBRecordCollection recordIT = arzProv.GetItem(this.ArzFileIT, itemId);
-				if (recordIT != null)
+				if (this.ArzFileMod != null)
 				{
-					// IT file takes precedence over TQ.
-					return recordIT;
+					DBRecordCollection recordMod = arzProv.GetItem(this.ArzFileMod, key);
+					if (recordMod != null)
+					{
+						// Custom Map records have highest precedence.
+						return recordMod;
+					}
 				}
-			}
 
-			return arzProv.GetItem(ArzFile, itemId);
+				if (this.ArzFileIT != null)
+				{
+					// see if it's in IT ARZ file
+					DBRecordCollection recordIT = arzProv.GetItem(this.ArzFileIT, key);
+					if (recordIT != null)
+					{
+						// IT file takes precedence over TQ.
+						return recordIT;
+					}
+				}
+
+				return arzProv.GetItem(ArzFile, key);
+			});
+
+			return cachedDBRecordCollection;
 		}
 
 
