@@ -10,6 +10,8 @@ namespace TQVaultAE.GUI
 		private ForgePanel forgePanel;
 
 		private (bool configureButton, bool showVaulButton, bool searchButton, bool duplicateButton, bool saveButton, bool playerPanel, bool stashPanel, bool secondaryVaultPanel, bool flowLayoutPanelRightComboBox) lastVisibility;
+		
+		private bool lastEnableDetailedTooltipView;
 
 		private ForgePanel CreateForgePanel()
 		{
@@ -77,6 +79,8 @@ namespace TQVaultAE.GUI
 			forgePanel.Dock = DockStyle.Left;
 			forgePanel.Visible = true;
 
+			this.lastEnableDetailedTooltipView = Config.Settings.Default.EnableDetailedTooltipView;
+			Config.Settings.Default.EnableDetailedTooltipView = true;
 		}
 
 		private void ForgeHideUI()
@@ -96,6 +100,8 @@ namespace TQVaultAE.GUI
 			// Hide the forge
 			forgePanel.Dock = DockStyle.None;
 			forgePanel.Visible = false;
+
+			Config.Settings.Default.EnableDetailedTooltipView = this.lastEnableDetailedTooltipView;
 
 			Refresh();
 		}
