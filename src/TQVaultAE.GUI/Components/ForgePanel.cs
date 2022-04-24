@@ -460,7 +460,7 @@ namespace TQVaultAE.GUI.Components
 
 			ItemProvider.GetDBData(itm);
 
-			BaseItemSack.IsModified = true;
+			BaseItemSack.IsModified = itm.IsModified = true;
 
 			ItemTooltip.InvalidateCache(itm);
 			ItemProvider.InvalidateFriendlyNamesCache(itm);
