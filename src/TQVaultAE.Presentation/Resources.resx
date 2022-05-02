@@ -662,10 +662,13 @@ Are you sure you want to delete this item?</value>
   <data name="SackPanelMenuRelic" xml:space="preserve">
     <value>Complete Relic</value>
   </data>
-  <data name="SackPanelMenuRemoveRelic" xml:space="preserve">
+	<data name="SackPanelMenuRemoveRelic" xml:space="preserve">
     <value>Remove Relic</value>
   </data>
-  <data name="SackPanelMenuSeed" xml:space="preserve">
+	<data name="SackPanelMenuRemoveRelic2" xml:space="preserve">
+    <value>Remove 2nd Relic</value>
+  </data>
+	<data name="SackPanelMenuSeed" xml:space="preserve">
     <value>Change Item Seed...</value>
   </data>
   <data name="SackPanelMenuSet" xml:space="preserve">
