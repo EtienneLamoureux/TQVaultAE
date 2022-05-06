@@ -75,7 +75,6 @@ namespace TQVaultAE.Data
 			"USEDELAYTIME",
 			"CAMERASHAKEAMPLITUDE",
 			"SKILLMAXLEVEL",
-			"SKILLCOOLDOWNTIME",
 			"EXPANSIONTIME",
 			"SKILLTIER",
 			"CAMERASHAKEDURATIONSECS",
@@ -2540,9 +2539,26 @@ VariableValue Raw : {valueRaw}
 								DBRecordCollection petSkillRecord = Database.GetRecordFromFile(petSkillID);
 								if (petSkillRecord != null)
 								{
+									// Try to get display name
 									string petNameTag = petSkillRecord.GetString("skillDisplayName", 0);
 									if (!string.IsNullOrEmpty(petNameTag))
 										TranslationService.TryTranslateXTag(petNameTag, out skillName);
+									else
+									{ // It may fail because there is another level of redirection (records\xpack\skills\dream\nightmare_petmodifier_mastermind.dbr)
+										petNameTag = petSkillRecord.GetString("buffSkillName", 0);
+										if (!string.IsNullOrWhiteSpace(petNameTag))
+										{
+											var petSkillRecordLvl2 = Database.GetRecordFromFile(petNameTag);
+											if (petSkillRecordLvl2 is not null)
+											{
+												petNameTag = petSkillRecordLvl2.GetString("skillDisplayName", 0);
+												if (!string.IsNullOrEmpty(petNameTag))
+													TranslationService.TryTranslateXTag(petNameTag, out skillName);
+
+											}
+										}
+									}
+
 								}
 							}
 						}
