@@ -245,11 +245,10 @@ namespace TQVaultAE.Data
 		#region Item Public Methods
 
 		/// <summary>
-		/// Removes the relic from this item
+		/// Removes the first relic from this item
 		/// </summary>
-		/// <returns>Returns the removed relic as a new Item, if the item has two relics, 
-		/// only the first one is returned and the second one is also removed</returns>
-		public Item RemoveRelic(Item itm)
+		/// <returns>Returns the removed relic as a new Item</returns>
+		public Item RemoveRelic1(Item itm)
 		{
 			if (!itm.HasRelicSlot1)
 				return null;
@@ -258,16 +257,39 @@ namespace TQVaultAE.Data
 			GetDBData(newRelic);
 			newRelic.RelicBonusId = itm.RelicBonusId;
 			newRelic.RelicBonusInfo = itm.RelicBonusInfo;
+			newRelic.Var1 = itm.Var1;
 
 			// Now clear out our relic data
 			itm.relicID = string.Empty;
-			itm.relic2ID = string.Empty;
 			itm.RelicBonusId = string.Empty;
-			itm.RelicBonus2Id = string.Empty;
 			itm.Var1 = 0;
-			itm.Var2 = Item.var2Default;
 			itm.RelicInfo = null;
 			itm.RelicBonusInfo = null;
+
+			itm.IsModified = true;
+
+			return newRelic;
+		}
+
+		/// <summary>
+		/// Removes the second relic from this item
+		/// </summary>
+		/// <returns>Returns the removed relic as a new Item</returns>
+		public Item RemoveRelic2(Item itm)
+		{
+			if (!itm.HasRelicSlot2)
+				return null;
+
+			Item newRelic = itm.MakeEmptyCopy(itm.relic2ID);
+			GetDBData(newRelic);
+			newRelic.RelicBonusId = itm.RelicBonus2Id;
+			newRelic.RelicBonusInfo = itm.RelicBonus2Info;
+			newRelic.Var1 = itm.Var2;
+
+			// Now clear out our relic data
+			itm.relic2ID = string.Empty;
+			itm.RelicBonus2Id = string.Empty;
+			itm.Var2 = Item.var2Default;
 			itm.Relic2Info = null;
 			itm.RelicBonus2Info = null;
 

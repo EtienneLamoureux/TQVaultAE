@@ -1378,8 +1378,14 @@ namespace TQVaultAE.GUI.Components
 
 					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused) && !isEquipmentReadOnly)
 					{
-						if (focusedItem.HasRelicSlot1 && Config.Settings.Default.AllowItemEdit)
-							this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
+						if (Config.Settings.Default.AllowItemEdit)
+						{
+							if (focusedItem.HasRelicSlot1)
+								this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
+
+							if (focusedItem.HasRelicSlot2)
+								this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic2);
+						}
 
 						if (focusedItem.DoesStack && focusedItem.Number > 1)
 							this.contextMenu.Items.Add(Resources.SackPanelMenuSplit);
@@ -2508,7 +2514,7 @@ namespace TQVaultAE.GUI.Components
 						this.DeleteItem(focusedItem, false);
 					}
 				}
-				else if (selectedMenuItem == Resources.SackPanelMenuRemoveRelic)
+				else if (selectedMenuItem == Resources.SackPanelMenuRemoveRelic || selectedMenuItem == Resources.SackPanelMenuRemoveRelic2)
 				{
 					if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
 						Resources.SackPanelRemoveRelicMsg,
@@ -2522,7 +2528,9 @@ namespace TQVaultAE.GUI.Components
 						this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
 
 						// pull out the relic
-						Item relic = ItemProvider.RemoveRelic(focusedItem);
+						Item relic = selectedMenuItem == Resources.SackPanelMenuRemoveRelic 
+							? ItemProvider.RemoveRelic1(focusedItem) 
+							: ItemProvider.RemoveRelic2(focusedItem);
 
 						// Put relic in DragInfo
 						this.DragInfo.MarkModified(relic);
