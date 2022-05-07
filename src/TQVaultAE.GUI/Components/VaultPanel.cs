@@ -578,6 +578,10 @@ namespace TQVaultAE.GUI.Components
 					{
 						this.contextMenu.Items.Add("-");
 						this.contextMenu.Items.Add(Resources.PlayerPanelChangeIcon);
+						this.contextMenu.Items.Add(Resources.PlayerPanelCopyIcon);
+
+						if (this.userContext.IconInfoCopied)
+							this.contextMenu.Items.Add(Resources.PlayerPanelPasteIcon);
 					}
 
 					this.contextMenu.Show(this.BagButtons[this.CurrentBag], new Point(e.X, e.Y));
@@ -867,6 +871,26 @@ namespace TQVaultAE.GUI.Components
 				}
 			}
 
+			if (selectedItem == Resources.PlayerPanelCopyIcon)
+			{
+				var button = this.BagButtons[this.CurrentBag];
+
+				this.userContext.IconInfoCopy = button.Sack?.BagButtonIconInfo;
+				MainForm frm = this.FindForm() as MainForm;
+				frm.NotificationText.Text = Resources.GlobalCopied;
+			}
+
+			if (selectedItem == Resources.PlayerPanelPasteIcon)
+			{
+				var button = this.BagButtons[this.CurrentBag];
+				button.Sack.BagButtonIconInfo = this.userContext.IconInfoCopy;
+				button.Sack.IsModified = true;
+				MainForm frm = this.FindForm() as MainForm;
+				frm.NotificationText.Text = Resources.GlobalPasted;
+				button.ApplyIconInfo(button.Sack);
+				Refresh();
+			}
+
 		}
 
 		/// <summary>
@@ -937,6 +961,9 @@ namespace TQVaultAE.GUI.Components
 						this.BagSackPanel.Sack = this.Player.GetSack(this.CurrentBag + this.BagPanelOffset);
 						this.BagSackPanel.CurrentSack = this.CurrentBag;
 					}
+
+					ApplyCustomButtonIcons();
+					Refresh();
 				}
 			}
 		}

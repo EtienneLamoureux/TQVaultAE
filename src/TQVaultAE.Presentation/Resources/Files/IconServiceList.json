@@ -732,6 +732,56 @@
 					"ov": "|"
 				}
 			]
+		},
+		{
+			"file": "XPACK4\\UI",
+			"img": [
+				{
+					"ca": "Skills",
+					"lt": [
+						"ICONS\\PETS\\NEIDANREDUP01.TEX"
+					]
+				},
+				{
+					"ca": "Skills",
+					"pa": "ICONS\\\\SKILLS\\\\\\w+_UP.TEX",
+					"on": "_UP|_DOWN",
+					"of": "|",
+					"ov": "|"
+				},
+				{
+					"ca": "Skills",
+					"pa": "ICONS\\\\PETS\\\\\\w+GREY01.TEX",
+					"on": "GREY|DOWN",
+					"of": "|",
+					"ov": "GREY|UP"
+				}
+			]
+		},
+		{
+			"file": "XPACK4\\INGAMEUI",
+			"img": [
+				{
+					"ca": "Skills",
+					"lt": [
+						"SKILLS\\ALCHEMYMASTERYBUTTONDISABLED01.TEX"
+					]
+				},
+				{
+					"ca": "Skills",
+					"pa": "SKILLS\\\\ALCHEMYMASTERYBUTTONUP01.TEX",
+					"on": "UP01|DOWN01",
+					"of": "|",
+					"ov": "UP01|OVER01"
+				},
+				{
+					"ca": "Buttons",
+					"pa": "SKILLS\\\\ALCHEMYMASTERYBTNUP01.TEX",
+					"on": "UP01|DOWN01",
+					"of": "|",
+					"ov": "|"
+				}
+			]
 		}
 	]
 }

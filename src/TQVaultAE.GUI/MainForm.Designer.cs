@@ -23,11 +23,6 @@ namespace TQVaultAE.GUI
 		private System.Windows.Forms.Panel itemTextPanel;
 
 		/// <summary>
-		/// Windows Form item text label
-		/// </summary>
-		private ScalingLabel itemText;
-
-		/// <summary>
 		/// Windows Form Vault List Dropdown
 		/// </summary>
 		private ScalingComboBox vaultListComboBox;
@@ -108,7 +103,7 @@ namespace TQVaultAE.GUI
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.exitButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.itemTextPanel = new System.Windows.Forms.Panel();
-            this.itemText = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.NotificationText = new TQVaultAE.GUI.Components.ScalingLabel();
             this.vaultListComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.vaultLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.configureButton = new TQVaultAE.GUI.Components.ScalingButton();
@@ -175,7 +170,7 @@ namespace TQVaultAE.GUI
             // itemTextPanel
             // 
             this.itemTextPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(188)))), ((int)(((byte)(97)))));
-            this.itemTextPanel.Controls.Add(this.itemText);
+            this.itemTextPanel.Controls.Add(this.NotificationText);
             this.itemTextPanel.Location = new System.Drawing.Point(4, 135);
             this.itemTextPanel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 20);
             this.itemTextPanel.Name = "itemTextPanel";
@@ -183,15 +178,15 @@ namespace TQVaultAE.GUI
             this.itemTextPanel.Size = new System.Drawing.Size(592, 22);
             this.itemTextPanel.TabIndex = 4;
             // 
-            // itemText
+            // NotificationText
             // 
-            this.itemText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-            this.itemText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.itemText.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
-            this.itemText.Location = new System.Drawing.Point(2, 2);
-            this.itemText.Name = "itemText";
-            this.itemText.Size = new System.Drawing.Size(588, 18);
-            this.itemText.TabIndex = 0;
+            this.NotificationText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+            this.NotificationText.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.NotificationText.Font = new System.Drawing.Font("Arial Black", 8.25F);
+            this.NotificationText.Location = new System.Drawing.Point(2, 2);
+            this.NotificationText.Name = "NotificationText";
+            this.NotificationText.Size = new System.Drawing.Size(588, 18);
+            this.NotificationText.TabIndex = 0;
             // 
             // vaultListComboBox
             // 
@@ -684,6 +679,7 @@ namespace TQVaultAE.GUI
 		private ScalingButton saveButton;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelMenuButtons;
 		private System.Windows.Forms.ToolTip toolTip;
+		internal ScalingLabel NotificationText;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanelHighlight;
 		private ScalingTextBox scalingTextBoxHighlight;
 		private TypeAssistant typeAssistant;

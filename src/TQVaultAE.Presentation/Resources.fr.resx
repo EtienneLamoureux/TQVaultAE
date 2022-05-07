@@ -642,13 +642,13 @@ Voulez-vous vraiment supprimer cet objet ?</value>
   <data name="SackPanelMenuRelic" xml:space="preserve">
     <value>Compléter la relique</value>
   </data>
-  <data name="SackPanelMenuRemoveRelic" xml:space="preserve">
+	<data name="SackPanelMenuRemoveRelic" xml:space="preserve">
     <value>Retirer la relique</value>
   </data>
 	<data name="SackPanelMenuRemoveRelic2" xml:space="preserve">
     <value>Retirer la 2eme relique</value>
   </data>
-  <data name="SackPanelMenuSeed" xml:space="preserve">
+	<data name="SackPanelMenuSeed" xml:space="preserve">
     <value>Changer le N° aléatoire ...</value>
   </data>
   <data name="SackPanelMenuSet" xml:space="preserve">
@@ -1320,6 +1320,18 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   </data>
 	<data name="GlobalMiscellaneous" xml:space="preserve">
     <value>Divers</value>
+  </data>
+	<data name="PlayerPanelCopyIcon" xml:space="preserve">
+    <value>Copier la configuration de l'icône</value>
+  </data>
+	<data name="PlayerPanelPasteIcon" xml:space="preserve">
+    <value>Coller la configuration de l'icône</value>
+  </data>
+	<data name="GlobalCopied" xml:space="preserve">
+    <value>Copié !</value>
+  </data>
+	<data name="GlobalPasted" xml:space="preserve">
+    <value>Collé !</value>
   </data>
 	<data name="TextTag_tagDye" xml:space="preserve">
     <value>Teinture</value>

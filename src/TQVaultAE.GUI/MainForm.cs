@@ -179,7 +179,7 @@ namespace TQVaultAE.GUI
 			this.characterLabel.Font = FontService.GetFontLight(11F, UIService.Scale);
 			ScaleControl(this.UIService, this.characterLabel, false);
 
-			this.itemText.Font = FontService.GetFontLight(11F, FontStyle.Bold, UIService.Scale);
+			this.NotificationText.Font = FontService.GetFontLight(11F, FontStyle.Bold, UIService.Scale);
 
 			this.vaultListComboBox.Font = FontService.GetFontLight(13F, UIService.Scale);
 			ScaleControl(this.UIService, this.vaultListComboBox, false);
@@ -489,7 +489,7 @@ Debug Levels
 		{
 			base.ScaleForm(scaleFactor, useRelativeScaling);
 
-			this.itemText.Text = string.Empty;
+			this.NotificationText.Text = string.Empty;
 
 			this.Invalidate();
 		}
@@ -708,7 +708,7 @@ Debug Levels
 			if (playersModified || vaultsModified || stashesModified)
 			{
 				var saved = string.Format(Resources.SavedAtNotification, DateTime.Now);
-				this.itemText.Text = saved;
+				this.NotificationText.Text = saved;
 				this.toolTip.SetToolTip(this.saveButton, saved);
 			}
 
@@ -765,7 +765,7 @@ Debug Levels
 			// Changed by VillageIdiot
 			// If we are dragging something around, clear the tooltip and text box.
 			if (this.DragInfo.IsActive)
-				this.itemText.Text = string.Empty;
+				this.NotificationText.Text = string.Empty;
 		}
 
 		#endregion

@@ -10,7 +10,7 @@ namespace TQVaultAE.GUI
 		private ForgePanel forgePanel;
 
 		private (bool configureButton, bool showVaulButton, bool searchButton, bool duplicateButton, bool saveButton, bool playerPanel, bool stashPanel, bool secondaryVaultPanel, bool flowLayoutPanelRightComboBox) lastVisibility;
-		
+
 		private bool lastEnableDetailedTooltipView;
 
 		private ForgePanel CreateForgePanel()
@@ -28,8 +28,8 @@ namespace TQVaultAE.GUI
 
 		private void ForgeNotify(string message)
 		{
-			itemText.ForeColor = Color.Red;
-			itemText.Text = message;
+			NotificationText.ForeColor = Color.Red;
+			NotificationText.Text = message;
 		}
 
 		private void scalingButtonForge_Click(object sender, EventArgs e)
