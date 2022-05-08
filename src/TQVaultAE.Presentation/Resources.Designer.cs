@@ -1183,6 +1183,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copied!.
+        /// </summary>
+        public static string GlobalCopied {
+            get {
+                return ResourceManager.GetString("GlobalCopied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete &quot;{0}&quot; ?.
         /// </summary>
         public static string GlobalDeleteConfirm {
@@ -1305,6 +1314,15 @@ namespace TQVaultAE.Presentation {
         public static string GlobalOK {
             get {
                 return ResourceManager.GetString("GlobalOK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pasted!.
+        /// </summary>
+        public static string GlobalPasted {
+            get {
+                return ResourceManager.GetString("GlobalPasted", resourceCulture);
             }
         }
         
@@ -3064,6 +3082,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy icon configuration.
+        /// </summary>
+        public static string PlayerPanelCopyIcon {
+            get {
+                return ResourceManager.GetString("PlayerPanelCopyIcon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Empty Bag?.
         /// </summary>
         public static string PlayerPanelEmpty {
@@ -3168,6 +3195,15 @@ namespace TQVaultAE.Presentation {
         public static string PlayerPanelNoVault {
             get {
                 return ResourceManager.GetString("PlayerPanelNoVault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paste icon configuration.
+        /// </summary>
+        public static string PlayerPanelPasteIcon {
+            get {
+                return ResourceManager.GetString("PlayerPanelPasteIcon", resourceCulture);
             }
         }
         
@@ -3527,6 +3563,15 @@ namespace TQVaultAE.Presentation {
         public static string SackPanelMenuRemoveRelic {
             get {
                 return ResourceManager.GetString("SackPanelMenuRemoveRelic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove 2nd Relic.
+        /// </summary>
+        public static string SackPanelMenuRemoveRelic2 {
+            get {
+                return ResourceManager.GetString("SackPanelMenuRemoveRelic2", resourceCulture);
             }
         }
         

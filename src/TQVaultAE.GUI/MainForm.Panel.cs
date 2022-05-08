@@ -138,7 +138,7 @@ namespace TQVaultAE.GUI
 				// Only do something if this sack is the "owner" of the current item highlighted.
 				if (sack == this.lastSackHighlighted)
 				{
-					this.itemText.Text = string.Empty;
+					this.NotificationText.Text = string.Empty;
 
 					// hide the tooltip
 					ItemTooltip.HideTooltip();
@@ -148,8 +148,8 @@ namespace TQVaultAE.GUI
 			{
 				var itt = ItemTooltip.ShowTooltip(this.ServiceProvider, item, sackPanel);
 
-				this.itemText.ForeColor = itt.Data.Item.GetColor(itt.Data.BaseItemInfoDescription);
-				this.itemText.Text = itt.Data.FullNameBagTooltipClean;
+				this.NotificationText.ForeColor = itt.Data.Item.GetColor(itt.Data.BaseItemInfoDescription);
+				this.NotificationText.Text = itt.Data.FullNameBagTooltipClean;
 			}
 
 			this.lastSackHighlighted = sack;

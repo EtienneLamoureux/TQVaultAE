@@ -665,6 +665,9 @@ Are you sure you want to delete this item?</value>
   <data name="SackPanelMenuRemoveRelic" xml:space="preserve">
     <value>Remove Relic</value>
   </data>
+	<data name="SackPanelMenuRemoveRelic2" xml:space="preserve">
+    <value>Remove 2nd Relic</value>
+  </data>
   <data name="SackPanelMenuSeed" xml:space="preserve">
     <value>Change Item Seed...</value>
   </data>
@@ -1809,5 +1812,17 @@ You still have to close TQVaultAE to apply your changes.
   </data>
 	<data name="GlobalMiscellaneous" xml:space="preserve">
     <value>Miscellaneous</value>
+  </data>
+	<data name="PlayerPanelCopyIcon" xml:space="preserve">
+    <value>Copy icon configuration</value>
+  </data>
+	<data name="PlayerPanelPasteIcon" xml:space="preserve">
+    <value>Paste icon configuration</value>
+  </data>
+	<data name="GlobalCopied" xml:space="preserve">
+    <value>Copied!</value>
+  </data>
+	<data name="GlobalPasted" xml:space="preserve">
+    <value>Pasted!</value>
   </data>
 </root>
