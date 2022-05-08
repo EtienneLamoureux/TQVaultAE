@@ -645,6 +645,9 @@ Voulez-vous vraiment supprimer cet objet ?</value>
   <data name="SackPanelMenuRemoveRelic" xml:space="preserve">
     <value>Retirer la relique</value>
   </data>
+	<data name="SackPanelMenuRemoveRelic2" xml:space="preserve">
+    <value>Retirer la 2eme relique</value>
+  </data>
   <data name="SackPanelMenuSeed" xml:space="preserve">
     <value>Changer le N° aléatoire ...</value>
   </data>
@@ -1109,10 +1112,7 @@ Quand activé, l’équipement du personnage sera en lecture seule, vous ne sere
 Vous ne serez également pas en mesure d'équiper l'objet sur ce personnage.</value>
   </data>
   <data name="ResetMasteriesButton" xml:space="preserve">
-    <value>Réinit. Maîtrises + compétences</value>
-  </data>
-  <data name="ResetOnlyMasteriesButton" xml:space="preserve">
-    <value>Réinit. uniquement les maîtrises</value>
+    <value>Réinit. Maîtrises</value>
   </data>
   <data name="ResetAttributesButton" xml:space="preserve">
     <value>Réinit. Attributs</value>
@@ -1227,101 +1227,107 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   <data name="ItemEmbers" xml:space="preserve">
     <value>Objet Eternal Embers</value>
   </data>
-  <data name="DuplicateCharacter_SourceRequired" xml:space="preserve">
+	<data name="DuplicateCharacter_SourceRequired" xml:space="preserve">
     <value>Un personnage source doit être sélectionné.</value>
   </data>
-  <data name="DuplicateCharacter_ModalTitle" xml:space="preserve">
+	<data name="DuplicateCharacter_ModalTitle" xml:space="preserve">
     <value>Duplication de personnage</value>
   </data>
-  <data name="DuplicateCharacter_NewNameRequired" xml:space="preserve">
+	<data name="DuplicateCharacter_NewNameRequired" xml:space="preserve">
     <value>Saisisez le nom du nouveau personnage.</value>
   </data>
-  <data name="DuplicateCharacter_NewNameMustBeValid" xml:space="preserve">
+	<data name="DuplicateCharacter_NewNameMustBeValid" xml:space="preserve">
     <value>Le nouveau nom doit être valide !</value>
   </data>
-  <data name="DuplicateCharacter_Error" xml:space="preserve">
+	<data name="DuplicateCharacter_Error" xml:space="preserve">
     <value>Erreur durant la duplication du personnage.</value>
   </data>
-  <data name="DuplicateCharacter_ButtonText" xml:space="preserve">
+	<data name="DuplicateCharacter_ButtonText" xml:space="preserve">
     <value>Dupliquer</value>
   </data>
-  <data name="DuplicateCharacter_NewNameAlreadyUsed" xml:space="preserve">
+	<data name="DuplicateCharacter_NewNameAlreadyUsed" xml:space="preserve">
     <value>Ce nom est déjà utilisé !</value>
   </data>
-  <data name="SavedAtNotification" xml:space="preserve">
+	<data name="SavedAtNotification" xml:space="preserve">
     <value>Sauvegardé le {0:g}</value>
   </data>
-  <data name="PlayerPanelChangeIcon" xml:space="preserve">
+	<data name="PlayerPanelChangeIcon" xml:space="preserve">
     <value>Modifier l'icône</value>
   </data>
-  <data name="BagButtonSettingsTitle" xml:space="preserve">
+	<data name="BagButtonSettingsTitle" xml:space="preserve">
     <value>Editeur de bouton</value>
   </data>
-  <data name="BagButtonSettingsValidationCaption" xml:space="preserve">
+	<data name="BagButtonSettingsValidationCaption" xml:space="preserve">
     <value>Bag Button Validation</value>
   </data>
-  <data name="BagButtonSettingsValidationMessage" xml:space="preserve">
+	<data name="BagButtonSettingsValidationMessage" xml:space="preserve">
     <value>les icones "On" et "Off" sont requis.
 "Libellé" peut l'être aussi.</value>
   </data>
-  <data name="BagButtonSettingsUseDefault" xml:space="preserve">
+	<data name="BagButtonSettingsUseDefault" xml:space="preserve">
     <value>Par défaut</value>
   </data>
-  <data name="BagButtonSettingsCustomIcon" xml:space="preserve">
+	<data name="BagButtonSettingsCustomIcon" xml:space="preserve">
     <value>Icône personalisée</value>
   </data>
-  <data name="BagButtonSettingsButtonProperties" xml:space="preserve">
+	<data name="BagButtonSettingsButtonProperties" xml:space="preserve">
     <value>Propriétés</value>
   </data>
-  <data name="BagButtonSettingsSelectedButton" xml:space="preserve">
+	<data name="BagButtonSettingsSelectedButton" xml:space="preserve">
     <value>Bouton sélectionné :</value>
   </data>
-  <data name="BagButtonSettingsNumber" xml:space="preserve">
+	<data name="BagButtonSettingsNumber" xml:space="preserve">
     <value>Numéro</value>
   </data>
-  <data name="BagButtonSettingsLabel" xml:space="preserve">
+	<data name="BagButtonSettingsLabel" xml:space="preserve">
     <value>Libellé :</value>
   </data>
-  <data name="BagButtonSettingsSelectedPictures" xml:space="preserve">
+	<data name="BagButtonSettingsSelectedPictures" xml:space="preserve">
     <value>Images sélectionnées</value>
   </data>
-  <data name="BagButtonSettingsModeSimple" xml:space="preserve">
+	<data name="BagButtonSettingsModeSimple" xml:space="preserve">
     <value>Simple</value>
   </data>
-  <data name="BagButtonSettingsModeDetailed" xml:space="preserve">
+	<data name="BagButtonSettingsModeDetailed" xml:space="preserve">
     <value>Détaillé</value>
   </data>
-  <data name="BagButtonSettingsOffBitmap" xml:space="preserve">
+	<data name="BagButtonSettingsOffBitmap" xml:space="preserve">
     <value>Off</value>
   </data>
-  <data name="BagButtonSettingsOnBitmap" xml:space="preserve">
+	<data name="BagButtonSettingsOnBitmap" xml:space="preserve">
     <value>On</value>
   </data>
-  <data name="BagButtonSettingsOverBitmap" xml:space="preserve">
+	<data name="BagButtonSettingsOverBitmap" xml:space="preserve">
     <value>Over</value>
   </data>
-  <data name="BagButtonSettingsImageBitmap" xml:space="preserve">
+	<data name="BagButtonSettingsImageBitmap" xml:space="preserve">
     <value>Image</value>
   </data>
-  <data name="BagButtonSettingsAvailablePictures" xml:space="preserve">
+	<data name="BagButtonSettingsAvailablePictures" xml:space="preserve">
     <value>Images disponibles</value>
   </data>
-  <data name="BagButtonSettingsDragDropNotice" xml:space="preserve">
+	<data name="BagButtonSettingsDragDropNotice" xml:space="preserve">
     <value>Glisser-Déposer dans l'espace "Images sélectionnées" ou [Clic-Droit] pour une sélection automatique</value>
   </data>
-  <data name="GlobalJewellery" xml:space="preserve">
+	<data name="GlobalJewellery" xml:space="preserve">
     <value>Bijoux</value>
   </data>
-  <data name="GlobalButtons" xml:space="preserve">
+	<data name="GlobalButtons" xml:space="preserve">
     <value>Boutons</value>
   </data>
-  <data name="GlobalMiscellaneous" xml:space="preserve">
+	<data name="GlobalMiscellaneous" xml:space="preserve">
     <value>Divers</value>
   </data>
-  <data name="CEMoney" xml:space="preserve">
-    <value>De l'argent</value>
+	<data name="PlayerPanelCopyIcon" xml:space="preserve">
+    <value>Copier la configuration de l'icône</value>
   </data>
-  <data name="SackPanelMenuSeedForce" xml:space="preserve">
-    <value>Modifier la valeur de départ de l'élément (Forcer)</value>
+	<data name="PlayerPanelPasteIcon" xml:space="preserve">
+    <value>Coller la configuration de l'icône</value>
+  </data>
+	<data name="GlobalCopied" xml:space="preserve">
+    <value>Copié !</value>
+  </data>
+	<data name="GlobalPasted" xml:space="preserve">
+    <value>Collé !</value>
   </data>
 </root>

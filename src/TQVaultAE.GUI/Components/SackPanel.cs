@@ -38,16 +38,16 @@ namespace TQVaultAE.GUI.Components
 		protected readonly ITQDataService TQData;
 		private readonly ITranslationService TranslationService;
 		protected readonly IServiceProvider ServiceProvider;
-		ItemStyle[] ItemStyleBackGroundColorEnable = new[] { 
-			ItemStyle.Epic, 
-			ItemStyle.Legendary, 
-			ItemStyle.Rare, 
-			ItemStyle.Common, 
-			ItemStyle.Relic, 
-			ItemStyle.Artifact, 
-			ItemStyle.Quest, 
-			ItemStyle.Scroll, 
-			ItemStyle.Formulae, 
+		ItemStyle[] ItemStyleBackGroundColorEnable = new[] {
+			ItemStyle.Epic,
+			ItemStyle.Legendary,
+			ItemStyle.Rare,
+			ItemStyle.Common,
+			ItemStyle.Relic,
+			ItemStyle.Artifact,
+			ItemStyle.Quest,
+			ItemStyle.Scroll,
+			ItemStyle.Formulae,
 			ItemStyle.Parchment };
 
 		#region SackPanel Fields
@@ -165,34 +165,34 @@ namespace TQVaultAE.GUI.Components
 
 		private void InitializeComponent()
 		{
-            this.components = new System.ComponentModel.Container();
-            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.SuspendLayout();
-            // 
-            // contextMenu
-            // 
-            this.contextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-            this.contextMenu.Font = new System.Drawing.Font("Albertus MT", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.contextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-            this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Opacity = 0.8D;
-            this.contextMenu.ShowImageMargin = false;
-            this.contextMenu.Size = new System.Drawing.Size(36, 4);
-            this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
-            // 
-            // SackPanel
-            // 
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyUpCallback);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyDownCallback);
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCallback);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDownCallback);
-            this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
-            this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveCallback);
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCallback);
-            this.ResumeLayout(false);
+			this.components = new System.ComponentModel.Container();
+			this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.SuspendLayout();
+			// 
+			// contextMenu
+			// 
+			this.contextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+			this.contextMenu.Font = new System.Drawing.Font("Albertus MT", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.contextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+			this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+			this.contextMenu.Name = "contextMenu";
+			this.contextMenu.Opacity = 0.8D;
+			this.contextMenu.ShowImageMargin = false;
+			this.contextMenu.Size = new System.Drawing.Size(36, 4);
+			this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
+			// 
+			// SackPanel
+			// 
+			this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyUpCallback);
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyDownCallback);
+			this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCallback);
+			this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDownCallback);
+			this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
+			this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveCallback);
+			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCallback);
+			this.ResumeLayout(false);
 
 		}
 
@@ -462,7 +462,7 @@ namespace TQVaultAE.GUI.Components
 		/// Gets or sets the background image that is shown when there are no sacks to display.
 		/// </summary>
 		protected Bitmap DefaultImage { get; set; }
-		
+
 		#endregion SackPanel Properties
 
 		#region SackPanel Public Methods
@@ -764,8 +764,8 @@ namespace TQVaultAE.GUI.Components
 		public virtual void CancelDrag(ItemDragInfo dragInfo)
 		{
 			// if the drag sack is not visible then we really do not need to do anything
-			if (this.Sack == dragInfo.Sack)			
-				this.Invalidate(this.GetItemScreenRectangle(dragInfo.Item));							
+			if (this.Sack == dragInfo.Sack)
+				this.Invalidate(this.GetItemScreenRectangle(dragInfo.Item));
 		}
 
 		#endregion SackPanel Public Methods
@@ -1368,8 +1368,14 @@ namespace TQVaultAE.GUI.Components
 
 					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused) && !isEquipmentReadOnly)
 					{
-						if (focusedItem.HasRelicSlot1 && Config.Settings.Default.AllowItemEdit)
-							this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
+						if (Config.Settings.Default.AllowItemEdit)
+						{
+							if (focusedItem.HasRelicSlot1)
+								this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
+
+							if (focusedItem.HasRelicSlot2)
+								this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic2);
+						}
 
 						if (focusedItem.DoesStack && focusedItem.Number > 1)
 							this.contextMenu.Items.Add(Resources.SackPanelMenuSplit);
@@ -1433,7 +1439,7 @@ namespace TQVaultAE.GUI.Components
 								choices.Add(location);
 						}
 
-						ToolStripItem[] moveChoices = new ToolStripItem[choices.Count];						
+						ToolStripItem[] moveChoices = new ToolStripItem[choices.Count];
 						EventHandler moveCallback = new EventHandler(this.MoveItemClicked);
 
 						for (int j = 0; j < choices.Count; ++j)
@@ -1441,7 +1447,7 @@ namespace TQVaultAE.GUI.Components
 							moveChoices[j] = new ToolStripMenuItem(choices[j], null, moveCallback, choices[j]);
 							moveChoices[j].BackColor = this.contextMenu.BackColor;
 							moveChoices[j].Font = this.contextMenu.Font;
-							moveChoices[j].ForeColor = this.contextMenu.ForeColor;							
+							moveChoices[j].ForeColor = this.contextMenu.ForeColor;
 						}
 
 						ToolStripMenuItem moveSubMenu = new ToolStripMenuItem(Resources.SackPanelMenuMoveTo, null, moveChoices);
@@ -1449,7 +1455,7 @@ namespace TQVaultAE.GUI.Components
 						moveSubMenu.Font = this.contextMenu.Font;
 						moveSubMenu.ForeColor = this.contextMenu.ForeColor;
 						moveSubMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
-											
+
 						this.contextMenu.Items.Add(moveSubMenu);
 					}
 
@@ -1537,8 +1543,8 @@ namespace TQVaultAE.GUI.Components
 									string name = Path.GetFileNameWithoutExtension(s);
 									if (info == null)
 										continue;
-									
-									name = this.TranslationService.TranslateXTag(info.DescriptionTag);								
+
+									name = this.TranslationService.TranslateXTag(info.DescriptionTag);
 									choices[i] = new ToolStripMenuItem(name, null, callback, s);
 									choices[i].BackColor = this.contextMenu.BackColor;
 									choices[i].Font = this.contextMenu.Font;
@@ -1596,14 +1602,14 @@ namespace TQVaultAE.GUI.Components
 				{
 					if (lastItem != null)
 						this.Invalidate(GetItemScreenRectangle(lastItem));
-					
+
 					if (cell != this.LastCellWithFocus)
 						this.LastCellWithFocus = cell;
 
 					if (newItem != lastItem)
 					{
-						if (newItem != null)						
-							this.Invalidate(GetItemScreenRectangle(newItem));						
+						if (newItem != null)
+							this.Invalidate(GetItemScreenRectangle(newItem));
 
 						this.OnNewItemHighlighted(this, new SackPanelEventArgs(this.Sack, newItem));
 					}
@@ -1658,7 +1664,7 @@ namespace TQVaultAE.GUI.Components
 				return Rectangle.Empty;
 
 			Point screenLocation = this.CellTopLeft(item.Location);
-			return new Rectangle(screenLocation.X, screenLocation.Y, item.Size.Width* UIService.ItemUnitSize, item.Size.Height * UIService.ItemUnitSize);
+			return new Rectangle(screenLocation.X, screenLocation.Y, item.Size.Width * UIService.ItemUnitSize, item.Size.Height * UIService.ItemUnitSize);
 		}
 
 		/// <summary>
@@ -1764,8 +1770,8 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <returns>Rectangle representing the mouse drag area</returns>
 		protected Rectangle GetMouseDragRectangle()
-			=>new Rectangle(Math.Min(startPosition.X, currentPosition.X), Math.Min(startPosition.Y, currentPosition.Y), Math.Abs(startPosition.X - currentPosition.X), Math.Abs(startPosition.Y - currentPosition.Y));
-				
+			=> new Rectangle(Math.Min(startPosition.X, currentPosition.X), Math.Min(startPosition.Y, currentPosition.Y), Math.Abs(startPosition.X - currentPosition.X), Math.Abs(startPosition.Y - currentPosition.Y));
+
 		/// <summary>
 		/// Paint callback
 		/// </summary>
@@ -1825,7 +1831,7 @@ namespace TQVaultAE.GUI.Components
 			if (!this.DragInfo.IsActive || this.CellsUnderDragItem.Size.IsEmpty)
 				return;
 
-			Color highlightColor =  this.HighlightInvalidItemColor;
+			Color highlightColor = this.HighlightInvalidItemColor;
 
 			if ((this.ItemsUnderDragItem == null || this.ItemsUnderDragItem.Count <= 1) && this.IsItemValidForPlacement(this.DragInfo.Item))
 				highlightColor = this.HighlightValidItemColor;
@@ -1863,7 +1869,7 @@ namespace TQVaultAE.GUI.Components
 		/// <returns>Color for the item.  Returns base color if specific color is not found.</returns>
 		protected virtual Color GetItemBackgroundColor(Item item)
 			=> this.HasItemBackgroundColor(item) ? item.ItemStyle.Color() : this.DefaultItemBackgroundColor;
-		
+
 
 		/// <summary>
 		/// Indicates whether the passed item meets the item requirementt for equipping
@@ -1987,7 +1993,7 @@ namespace TQVaultAE.GUI.Components
 				Matrix33 = 1.00f, // alpha
 				Matrix44 = 1.00f  // w
 			};
-			
+
 			System.Drawing.Imaging.ImageAttributes imgAttr = new System.Drawing.Imaging.ImageAttributes();
 			imgAttr.SetColorMatrix(colorMatrix);
 
@@ -2485,7 +2491,7 @@ namespace TQVaultAE.GUI.Components
 						this.DeleteItem(focusedItem, false);
 					}
 				}
-				else if (selectedMenuItem == Resources.SackPanelMenuRemoveRelic)
+				else if (selectedMenuItem == Resources.SackPanelMenuRemoveRelic || selectedMenuItem == Resources.SackPanelMenuRemoveRelic2)
 				{
 					if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
 						Resources.SackPanelRemoveRelicMsg,
@@ -2499,7 +2505,9 @@ namespace TQVaultAE.GUI.Components
 						this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
 
 						// pull out the relic
-						Item relic = ItemProvider.RemoveRelic(focusedItem);
+						Item relic = selectedMenuItem == Resources.SackPanelMenuRemoveRelic 
+							? ItemProvider.RemoveRelic1(focusedItem) 
+							: ItemProvider.RemoveRelic2(focusedItem);
 
 						// Put relic in DragInfo
 						this.DragInfo.MarkModified(relic);
@@ -2783,7 +2791,7 @@ namespace TQVaultAE.GUI.Components
 				if (SecondaryVaultShown && location == AutoMoveLocation.Player)
 					destination = AutoMoveLocation.SecondaryVault;
 			}
-			 			
+
 			if ((SecondaryVaultShown && (destination == AutoMoveLocation.Stash || destination == AutoMoveLocation.Player)) || destination == AutoMoveLocation.NotSet)
 				return;
 
@@ -2914,7 +2922,7 @@ namespace TQVaultAE.GUI.Components
 						}
 					default:
 						break;
-					}
+				}
 
 				QuickMoveSack(e.KeyValue - keyOffset);
 			}

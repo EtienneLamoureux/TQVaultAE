@@ -818,22 +818,20 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("CEMana", resourceCulture);
             }
         }
-
-		/// <summary>
-		///   Looks up a localized string similar to Money.
-		/// </summary>
-		public static string CEMoney
-		{
-			get
-			{
-				return ResourceManager.GetString("CEMoney", resourceCulture);
-			}
-		}
-
-		/// <summary>
-		///   Looks up a localized string similar to Skill Points.
-		/// </summary>
-		public static string CESkillPoints {
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Money.
+        /// </summary>
+        public static string CEMoney {
+            get {
+                return ResourceManager.GetString("CEMoney", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Skill Points.
+        /// </summary>
+        public static string CESkillPoints {
             get {
                 return ResourceManager.GetString("CESkillPoints", resourceCulture);
             }
@@ -1194,6 +1192,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Copied!.
+        /// </summary>
+        public static string GlobalCopied {
+            get {
+                return ResourceManager.GetString("GlobalCopied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Vyhledá lokalizovaný řetězec podobný Are you sure you want to delete &quot;{0}&quot; ?.
         /// </summary>
         public static string GlobalDeleteConfirm {
@@ -1316,6 +1323,15 @@ namespace TQVaultAE.Presentation {
         public static string GlobalOK {
             get {
                 return ResourceManager.GetString("GlobalOK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Pasted!.
+        /// </summary>
+        public static string GlobalPasted {
+            get {
+                return ResourceManager.GetString("GlobalPasted", resourceCulture);
             }
         }
         
@@ -3075,6 +3091,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Copy icon configuration.
+        /// </summary>
+        public static string PlayerPanelCopyIcon {
+            get {
+                return ResourceManager.GetString("PlayerPanelCopyIcon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Vyhledá lokalizovaný řetězec podobný Empty Bag?.
         /// </summary>
         public static string PlayerPanelEmpty {
@@ -3183,6 +3208,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Paste icon configuration.
+        /// </summary>
+        public static string PlayerPanelPasteIcon {
+            get {
+                return ResourceManager.GetString("PlayerPanelPasteIcon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Vyhledá lokalizovaný řetězec podobný Time Played.
         /// </summary>
         public static string PlayTimeInSeconds {
@@ -3221,29 +3255,27 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reset Masteries + Skills.
+        ///   Vyhledá lokalizovaný řetězec podobný Reset Masteries + Skills.
         /// </summary>
         public static string ResetMasteriesButton {
             get {
                 return ResourceManager.GetString("ResetMasteriesButton", resourceCulture);
             }
         }
-
-		/// <summary>
-		///   Looks up a localized string similar to Reset Only Masteries.
-		/// </summary>
-		public static string ResetOnlyMasteriesButton
-		{
-			get
-			{
-				return ResourceManager.GetString("ResetOnlyMasteriesButton", resourceCulture);
-			}
-		}
-
-		/// <summary>
-		///   Looks up a localized string similar to Container.
-		/// </summary>
-		public static string ResultsContainer {
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Reset Only Masteries.
+        /// </summary>
+        public static string ResetOnlyMasteriesButton {
+            get {
+                return ResourceManager.GetString("ResetOnlyMasteriesButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Container.
+        /// </summary>
+        public static string ResultsContainer {
             get {
                 return ResourceManager.GetString("ResultsContainer", resourceCulture);
             }
@@ -3549,6 +3581,15 @@ namespace TQVaultAE.Presentation {
         public static string SackPanelMenuRemoveRelic {
             get {
                 return ResourceManager.GetString("SackPanelMenuRemoveRelic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Remove 2nd Relic.
+        /// </summary>
+        public static string SackPanelMenuRemoveRelic2 {
+            get {
+                return ResourceManager.GetString("SackPanelMenuRemoveRelic2", resourceCulture);
             }
         }
         
