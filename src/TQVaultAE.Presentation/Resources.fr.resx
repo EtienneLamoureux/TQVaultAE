@@ -645,6 +645,9 @@ Voulez-vous vraiment supprimer cet objet ?</value>
   <data name="SackPanelMenuRemoveRelic" xml:space="preserve">
     <value>Retirer la relique</value>
   </data>
+	<data name="SackPanelMenuRemoveRelic2" xml:space="preserve">
+    <value>Retirer la 2eme relique</value>
+  </data>
   <data name="SackPanelMenuSeed" xml:space="preserve">
     <value>Changer le N° aléatoire ...</value>
   </data>
@@ -1109,10 +1112,7 @@ Quand activé, l’équipement du personnage sera en lecture seule, vous ne sere
 Vous ne serez également pas en mesure d'équiper l'objet sur ce personnage.</value>
   </data>
   <data name="ResetMasteriesButton" xml:space="preserve">
-    <value>Réinit. Maîtrises + compétences</value>
-  </data>
-  <data name="ResetOnlyMasteriesButton" xml:space="preserve">
-    <value>Réinit. uniquement les maîtrises</value>
+    <value>Réinit. Maîtrises</value>
   </data>
   <data name="ResetAttributesButton" xml:space="preserve">
     <value>Réinit. Attributs</value>
@@ -1317,5 +1317,17 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   </data>
 	<data name="GlobalMiscellaneous" xml:space="preserve">
     <value>Divers</value>
+  </data>
+	<data name="PlayerPanelCopyIcon" xml:space="preserve">
+    <value>Copier la configuration de l'icône</value>
+  </data>
+	<data name="PlayerPanelPasteIcon" xml:space="preserve">
+    <value>Coller la configuration de l'icône</value>
+  </data>
+	<data name="GlobalCopied" xml:space="preserve">
+    <value>Copié !</value>
+  </data>
+	<data name="GlobalPasted" xml:space="preserve">
+    <value>Collé !</value>
   </data>
 </root>

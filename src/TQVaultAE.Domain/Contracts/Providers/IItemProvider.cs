@@ -104,12 +104,18 @@ namespace TQVaultAE.Domain.Contracts.Providers
 		/// </summary>
 		/// <param name="reader">BinaryReader instance</param>
 		void Parse(Item itm, BinaryReader reader);
+
 		/// <summary>
-		/// Removes the relic from this item
+		/// Removes the first relic from this item
 		/// </summary>
-		/// <returns>Returns the removed relic as a new Item, if the item has two relics, 
-		/// only the first one is returned and the second one is also removed</returns>
-		Item RemoveRelic(Item itm);
+		/// <returns>Returns the removed relic as a new Item</returns>
+		Item RemoveRelic1(Item itm);
+
+		/// <summary>
+		/// Removes the second relic from this item
+		/// </summary>
+		/// <returns>Returns the removed relic as a new Item</returns>
+		Item RemoveRelic2(Item itm);
 
 		/// <summary>
 		/// Invalidate item data cache
