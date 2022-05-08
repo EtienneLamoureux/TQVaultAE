@@ -14,6 +14,27 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		public PlayerCollection CurrentPlayer { get; set; }
 
+		private BagButtonIconInfo iconInfoCopy;
+		/// <summary>
+		/// Last icon info copied
+		/// </summary>
+		public BagButtonIconInfo IconInfoCopy
+		{
+			get => iconInfoCopy;
+			set
+			{
+				iconInfoCopy = value;
+				iconInfoCopied = true;
+			}
+		}
+
+		private bool iconInfoCopied;
+		/// <summary>
+		/// Is there any IconInfo copied
+		/// </summary>
+		/// <remarks>this allow <see cref="IconInfoCopy"/> to have null relevant</remarks>
+		public bool IconInfoCopied => iconInfoCopied;
+
 		/// <summary>
 		/// Dictionary of all loaded player files
 		/// </summary>
@@ -28,6 +49,5 @@ namespace TQVaultAE.Domain.Entities
 		/// Dictionary of all loaded player stash files
 		/// </summary>
 		public readonly LazyConcurrentDictionary<string, Stash> Stashes = new LazyConcurrentDictionary<string, Stash>();
-
 	}
 }
