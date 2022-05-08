@@ -1183,6 +1183,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Copied!.
+        /// </summary>
+        public static string GlobalCopied {
+            get {
+                return ResourceManager.GetString("GlobalCopied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Vyhledá lokalizovaný řetězec podobný Are you sure you want to delete &quot;{0}&quot; ?.
         /// </summary>
         public static string GlobalDeleteConfirm {
@@ -1305,6 +1314,15 @@ namespace TQVaultAE.Presentation {
         public static string GlobalOK {
             get {
                 return ResourceManager.GetString("GlobalOK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Pasted!.
+        /// </summary>
+        public static string GlobalPasted {
+            get {
+                return ResourceManager.GetString("GlobalPasted", resourceCulture);
             }
         }
         
@@ -3064,6 +3082,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Copy icon configuration.
+        /// </summary>
+        public static string PlayerPanelCopyIcon {
+            get {
+                return ResourceManager.GetString("PlayerPanelCopyIcon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Vyhledá lokalizovaný řetězec podobný Empty Bag?.
         /// </summary>
         public static string PlayerPanelEmpty {
@@ -3168,6 +3195,15 @@ namespace TQVaultAE.Presentation {
         public static string PlayerPanelNoVault {
             get {
                 return ResourceManager.GetString("PlayerPanelNoVault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Paste icon configuration.
+        /// </summary>
+        public static string PlayerPanelPasteIcon {
+            get {
+                return ResourceManager.GetString("PlayerPanelPasteIcon", resourceCulture);
             }
         }
         
@@ -3527,6 +3563,15 @@ namespace TQVaultAE.Presentation {
         public static string SackPanelMenuRemoveRelic {
             get {
                 return ResourceManager.GetString("SackPanelMenuRemoveRelic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Remove 2nd Relic.
+        /// </summary>
+        public static string SackPanelMenuRemoveRelic2 {
+            get {
+                return ResourceManager.GetString("SackPanelMenuRemoveRelic2", resourceCulture);
             }
         }
         
