@@ -56,7 +56,7 @@ Here the list of the restrictions
 + You can't have a second relic without "Of the Tinkerer" Suffix.
 + Only Weapon/Shield/Armor/Jewellery is allowed.
 + 1st/2nd Relic must be of type relic or charm.
-+ 1st/2nd Relic gear contraint is enforced (e.g., a "shield only" relic with an "Axe" as Base item is rejected).
++ 1st/2nd Relic gear constraint is enforced (e.g., a "shield only" relic with an "Axe" as Base item is rejected).
 
 #### <a id="RelaxMode"></a>Relax Mode
 Relax mode break many game rules but keep the item structure intact.
