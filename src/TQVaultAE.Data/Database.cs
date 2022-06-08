@@ -7,6 +7,7 @@ namespace TQVaultAE.Data
 {
 	using Microsoft.Extensions.Logging;
 	using System;
+	using System.Collections.Concurrent;
 	using System.Globalization;
 	using System.IO;
 	using System.Linq;
@@ -37,12 +38,22 @@ namespace TQVaultAE.Data
 		/// <summary>
 		/// Dictionary of all text database entries
 		/// </summary>
-		private LazyConcurrentDictionary<string, string> textDB = new LazyConcurrentDictionary<string, string>();
+		private ConcurrentDictionary<string, string> textDB = new ConcurrentDictionary<string, string>();
 
 		/// <summary>
 		/// Dictionary of all associated arc files in the database.
 		/// </summary>
 		private LazyConcurrentDictionary<string, ArcFile> arcFiles = new LazyConcurrentDictionary<string, ArcFile>();
+
+		/// <summary>
+		/// Dictionary of all records dataset loaded from the database.
+		/// </summary>
+		private LazyConcurrentDictionary<string, byte[]> resourcesData = new LazyConcurrentDictionary<string, byte[]>();
+
+		/// <summary>
+		/// Dictionary of all record collections loaded from the database.
+		/// </summary>
+		private LazyConcurrentDictionary<string, DBRecordCollection> dbRecordCollections = new LazyConcurrentDictionary<string, DBRecordCollection>();
 
 		/// <summary>
 		/// Game language to support setting language in UI
@@ -224,18 +235,7 @@ namespace TQVaultAE.Data
 
 			return this.infoDB.GetOrAddAtomic(itemId, k =>
 			{
-				DBRecordCollection record = null;
-				// Add support for searching a custom map database
-				if (this.ArzFileMod != null)
-					record = arzProv.GetItem(this.ArzFileMod, k);
-
-				// Try the expansion pack database first.
-				if (record == null && this.ArzFileIT != null)
-					record = arzProv.GetItem(this.ArzFileIT, k);
-
-				// Try looking in TQ database now
-				if (record == null || this.ArzFileIT == null)
-					record = arzProv.GetItem(this.ArzFile, k);
+				DBRecordCollection record = GetRecordFromFile(k);
 
 				if (record == null)
 					return null;
@@ -251,7 +251,7 @@ namespace TQVaultAE.Data
 		/// <param name="tagId">Tag to be looked up in the text database normalized to upper case.</param>
 		/// <returns>Returns localized string, empty string if it cannot find a string or "?ErrorName?" in case of uncaught exception.</returns>
 		public string GetFriendlyName(string tagId)
-			=> this.textDB.TryGetValue(tagId.ToUpperInvariant(), out var text) ? text.Value : string.Empty;
+			=> this.textDB.TryGetValue(tagId.ToUpperInvariant(), out var text) ? text : string.Empty;
 
 		/// <summary>
 		/// Gets the formatted string for the variable attribute.
@@ -319,67 +319,36 @@ namespace TQVaultAE.Data
 		{
 			itemId = TQData.NormalizeRecordPath(itemId);
 
-			if (this.ArzFileMod != null)
+			var cachedDBRecordCollection = this.dbRecordCollections.GetOrAddAtomic(itemId, key =>
 			{
-				DBRecordCollection recordMod = arzProv.GetItem(this.ArzFileMod, itemId);
-				if (recordMod != null)
-				{
-					// Custom Map records have highest precedence.
-					return recordMod;
-				}
-			}
 
-			if (this.ArzFileIT != null)
-			{
-				// see if it's in IT ARZ file
-				DBRecordCollection recordIT = arzProv.GetItem(this.ArzFileIT, itemId);
-				if (recordIT != null)
+				if (this.ArzFileMod != null)
 				{
-					// IT file takes precedence over TQ.
-					return recordIT;
+					DBRecordCollection recordMod = arzProv.GetItem(this.ArzFileMod, key);
+					if (recordMod != null)
+					{
+						// Custom Map records have highest precedence.
+						return recordMod;
+					}
 				}
-			}
 
-			return arzProv.GetItem(ArzFile, itemId);
+				if (this.ArzFileIT != null)
+				{
+					// see if it's in IT ARZ file
+					DBRecordCollection recordIT = arzProv.GetItem(this.ArzFileIT, key);
+					if (recordIT != null)
+					{
+						// IT file takes precedence over TQ.
+						return recordIT;
+					}
+				}
+
+				return arzProv.GetItem(ArzFile, key);
+			});
+
+			return cachedDBRecordCollection;
 		}
 
-		/// <summary>
-		/// Return ARC filename from <paramref name="resourceIdOrPrefix"/>
-		/// </summary>
-		/// <param name="resourceIdOrPrefix"></param>
-		/// <returns></returns>
-		public string ResolveArcFileName(string resourceIdOrPrefix)
-		{
-			resourceIdOrPrefix = TQData.NormalizeRecordPath(resourceIdOrPrefix);
-			var segments = resourceIdOrPrefix.Split('\\');
-
-			string rootFolder = GamePathResolver.ImmortalThronePath;
-			switch (segments.First())
-			{
-				case "XPACK":
-					// Comes from Immortal Throne
-					rootFolder = Path.Combine(rootFolder, "Resources", "XPack", segments[1] + ".arc");
-					break;
-				case "XPACK2":
-					// Comes from Ragnarok
-					rootFolder = Path.Combine(rootFolder, "Resources", "XPack2", segments[1] + ".arc");
-					break;
-				case "XPACK3":
-					// Comes from Atlantis
-					rootFolder = Path.Combine(rootFolder, "Resources", "XPack3", segments[1] + ".arc");
-					break;
-				case "XPACK4":
-					// Comes from Eternal Embers
-					rootFolder = Path.Combine(rootFolder, "Resources", "XPack4", segments[1] + ".arc");
-					break;
-				default:
-					// Base game
-					rootFolder = Path.Combine(rootFolder, "Resources", segments[0] + ".arc");
-					break;
-			}
-
-			return rootFolder;
-		}
 
 		/// <summary>
 		/// Gets a resource from the database using the resource Id.
@@ -397,144 +366,137 @@ namespace TQVaultAE.Data
 			if (TQDebug.DatabaseDebugLevel > 1)
 				Log.LogDebug(" Normalized({0})", resourceId);
 
-			// First we need to figure out the correct file to
-			// open, by grabbing it off the front of the resourceID
-			int backslashLocation = resourceId.IndexOf('\\');
-
-			// not a proper resourceID.
-			if (backslashLocation <= 0)
-				return null;
-
-			string arcFileBase = resourceId.Substring(0, backslashLocation);
-			if (TQDebug.DatabaseDebugLevel > 1)
-				Log.LogDebug("arcFileBase = {0}", arcFileBase);
-
-			string rootFolder;
-			string arcFile;
-			byte[] arcFileData = null;
-
-			// Added by VillageIdiot
-			// Check the mod folder for the image resource.
-			if (GamePathResolver.IsCustom)
+			byte[] cachedArcFileData = this.resourcesData.GetOrAddAtomic(resourceId, key =>
 			{
+				var resourceIdSplited = key.Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);// hguy : easier to understand than substring everywhere
+
+				// not a proper resourceID.
+				if (resourceIdSplited.Length == 1)
+					return null;
+
+				// First we need to figure out the correct file to
+				// open, by grabbing it off the front of the resourceID
+
+				string arcFile; bool isDLC = false;
+				string rootFolder;
+				byte[] arcFileData = null;
+				string arcFileBase = resourceIdSplited.First();
+
 				if (TQDebug.DatabaseDebugLevel > 1)
-					Log.LogDebug("Checking Custom Resources.");
+					Log.LogDebug("arcFileBase = {0}", arcFileBase);
 
-				rootFolder = Path.Combine(GamePathResolver.MapName, "resources");
-
-				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
-				arcFileData = this.ReadARCFile(arcFile, resourceId);
-			}
-
-			// We either didn't load the resource or didn't find what we were looking for so check the normal game resources.
-			if (arcFileData == null)
-			{
-				// See if this guy is from Immortal Throne expansion pack.
-				if (TQDebug.DatabaseDebugLevel > 1)
-					Log.LogDebug("Checking IT Resources.");
-
-				rootFolder = GamePathResolver.ImmortalThronePath;
-
-				bool xpack = false;
-
-				if (arcFileBase.ToUpperInvariant().Equals("XPACK"))
+				// Added by VillageIdiot
+				// Check the mod folder for the image resource.
+				if (GamePathResolver.IsCustom)
 				{
-					// Comes from Immortal Throne
-					xpack = true;
-					rootFolder = Path.Combine(rootFolder, "Resources", "XPack");
-				}
-				else if (arcFileBase.ToUpperInvariant().Equals("XPACK2"))
-				{
-					// Comes from Ragnarok
-					xpack = true;
-					rootFolder = Path.Combine(rootFolder, "Resources", "XPack2");
-				}
-				else if (arcFileBase.ToUpperInvariant().Equals("XPACK3"))
-				{
-					// Comes from Atlantis
-					xpack = true;
-					rootFolder = Path.Combine(rootFolder, "Resources", "XPack3");
-				}
-				else if (arcFileBase.ToUpperInvariant().Equals("XPACK4"))
-				{
-					// Comes from Eternal Embers
-					xpack = true;
-					rootFolder = Path.Combine(rootFolder, "Resources", "XPack4");
+					if (TQDebug.DatabaseDebugLevel > 1)
+						Log.LogDebug("Checking Custom Resources.");
+
+					rootFolder = Path.Combine(GamePathResolver.MapName, "resources");
+
+					arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
+					arcFileData = this.ReadARCFile(arcFile, key);
+
+					if (TQDebug.DatabaseDebugLevel > 1 && arcFileData is not null)
+						Log.LogDebug(@"Custom resource found ""{resourceId}"" into ""{arcFile}""", key, arcFile);
 				}
 
-				if (xpack == true)
+				// We either didn't load the resource or didn't find what we were looking for so check the normal game resources.
+				if (arcFileData == null)
 				{
-					// throw away that value and use the next field.
-					int previousBackslash = backslashLocation;
-					backslashLocation = resourceId.IndexOf('\\', backslashLocation + 1);
+					// See if this guy is from Immortal Throne expansion pack.
+					if (TQDebug.DatabaseDebugLevel > 1)
+						Log.LogDebug("Checking IT Resources.");
 
-					if (backslashLocation <= 0)
-						return null;// not a proper resourceID
+					(arcFile, isDLC) = this.GamePathResolver.ResolveArcFileName(key);
+					if (isDLC)
+					{
+						// not a proper resourceID.
+						if (resourceIdSplited.Length == 2)
+							return null;
 
-					arcFileBase = resourceId.Substring(previousBackslash + 1, backslashLocation - previousBackslash - 1);
-					resourceId = resourceId.Substring(previousBackslash + 1);
+						arcFileBase = resourceIdSplited[1];
+						key = resourceIdSplited.Skip(1).JoinString("\\");
+					}
+
+					arcFileData = this.ReadARCFile(arcFile, key);
+
+					if (TQDebug.DatabaseDebugLevel > 0 && arcFileData is null)
+						Log.LogError(@"Resource not found ""{resourceId}"" into ""{arcFile}""", key, arcFile);
 				}
-				else
+
+				#region Fallback : It looks like we never go there
+
+				// Added by VillageIdiot
+				// Maybe the arc file is in the XPack folder even though the record does not state it.
+				// Also could be that it says xpack in the record but the file is in the root.
+				if (arcFileData == null)
 				{
-					// Changed by VillageIdiot to search the IT resources folder for updated resources
-					// if IT is installed otherwise just the TQ folder.
+					rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack");
+					arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
+					arcFileData = this.ReadARCFile(arcFile, key);
+
+					if (TQDebug.DatabaseDebugLevel > 1 && arcFileData is not null)
+						Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
+				}
+
+				// Now, let's check if the item is in Ragnarok DLC
+				if (arcFileData == null && GamePathResolver.IsRagnarokInstalled)
+				{
+					rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack2");
+					arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
+					arcFileData = this.ReadARCFile(arcFile, key);
+
+					if (TQDebug.DatabaseDebugLevel > 1 && arcFileData is not null)
+						Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
+				}
+
+				if (arcFileData == null && GamePathResolver.IsAtlantisInstalled)
+				{
+					rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack3");
+					arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
+					arcFileData = this.ReadARCFile(arcFile, key);
+
+					if (TQDebug.DatabaseDebugLevel > 1 && arcFileData is not null)
+						Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
+				}
+
+				if (arcFileData == null && GamePathResolver.IsEmbersInstalled)
+				{
+					rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack4");
+					arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
+					arcFileData = this.ReadARCFile(arcFile, key);
+
+					if (TQDebug.DatabaseDebugLevel > 1 && arcFileData is not null)
+						Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
+				}
+
+				if (arcFileData == null)
+				{
+					// We are either vanilla TQ or have not found our resource yet.
+					// from the original TQ folder
+					if (TQDebug.DatabaseDebugLevel > 1)
+						Log.LogDebug("Checking TQ Resources.");
+
+					rootFolder = GamePathResolver.TQPath;
 					rootFolder = Path.Combine(rootFolder, "Resources");
+
+					arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
+					arcFileData = this.ReadARCFile(arcFile, key);
+
+					if (TQDebug.DatabaseDebugLevel > 0 && arcFileData is null)
+						Log.LogError(@"Resource unknown ""{resourceId}""", key);
 				}
 
-				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
-				arcFileData = this.ReadARCFile(arcFile, resourceId);
-			}
+				#endregion
 
-			// Added by VillageIdiot
-			// Maybe the arc file is in the XPack folder even though the record does not state it.
-			// Also could be that it says xpack in the record but the file is in the root.
-			if (arcFileData == null)
-			{
-				rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack");
-				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
-				arcFileData = this.ReadARCFile(arcFile, resourceId);
-			}
-
-			// Now, let's check if the item is in Ragnarok DLC
-			if (arcFileData == null && GamePathResolver.IsRagnarokInstalled)
-			{
-				rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack2");
-				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
-				arcFileData = this.ReadARCFile(arcFile, resourceId);
-			}
-
-			if (arcFileData == null && GamePathResolver.IsAtlantisInstalled)
-			{
-				rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack3");
-				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
-				arcFileData = this.ReadARCFile(arcFile, resourceId);
-			}
-
-			if (arcFileData == null && GamePathResolver.IsEmbersInstalled)
-			{
-				rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack4");
-				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
-				arcFileData = this.ReadARCFile(arcFile, resourceId);
-			}
-
-			if (arcFileData == null)
-			{
-				// We are either vanilla TQ or have not found our resource yet.
-				// from the original TQ folder
-				if (TQDebug.DatabaseDebugLevel > 1)
-					Log.LogDebug("Checking TQ Resources.");
-
-				rootFolder = GamePathResolver.TQPath;
-				rootFolder = Path.Combine(rootFolder, "Resources");
-
-				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
-				arcFileData = this.ReadARCFile(arcFile, resourceId);
-			}
+				return arcFileData;
+			});
 
 			if (TQDebug.DatabaseDebugLevel > 0)
 				Log.LogDebug("Exiting Database.LoadResource()");
 
-			return arcFileData;
+			return cachedArcFileData;
 		}
 
 
@@ -955,7 +917,11 @@ namespace TQVaultAE.Data
 
 					// If this field is already in the db, then replace it
 					string key = fields[0].Trim().ToUpperInvariant();
-					this.textDB.AddOrUpdateAtomic(key, label);
+
+					//if (!this.textDB.TryAdd(key, label))
+					//	Log.LogDebug(@"TextDB Overlap ! Try to override ""{key}"" = ""{oldvalue}"" with ""{newvalue}"" !", key, this.textDB[key], label);
+
+					this.textDB.AddOrUpdate(key, label, (k, v) => label);// Override with the new "label"
 				}
 			}
 

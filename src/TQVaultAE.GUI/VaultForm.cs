@@ -127,6 +127,7 @@ namespace TQVaultAE.GUI
 		public IItemProvider ItemProvider;
 		public IPlayerCollectionProvider PlayerCollectionProvider;
 		public IGamePathService GamePathResolver;
+		public ISoundService SoundService;
 		public IServiceProvider ServiceProvider;
 
 
@@ -148,6 +149,7 @@ namespace TQVaultAE.GUI
 				this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
 				this.PlayerCollectionProvider = this.ServiceProvider.GetService<IPlayerCollectionProvider>();
 				this.GamePathResolver = this.ServiceProvider.GetService<IGamePathService>();
+				this.SoundService = this.ServiceProvider.GetService<ISoundService>();
 				this.titleFont = FontService.GetFontLight(9.5F);
 				this.Log = this.ServiceProvider.GetService<ILogger<VaultForm>>();
 

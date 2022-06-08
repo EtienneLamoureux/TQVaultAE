@@ -35,6 +35,7 @@ namespace TQVaultAE.GUI
 	public partial class MainForm : VaultForm
 	{
 		private readonly ILogger Log = null;
+		private readonly ITranslationService TranslationService;
 
 		#region	Fields
 
@@ -149,19 +150,20 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		[PermissionSet(SecurityAction.LinkDemand, Unrestricted = true)]
 		public MainForm(
-			IServiceProvider serviceProvider // TODO Refactor : injecting service factory is anti pattern
+			IServiceProvider serviceProvider
 			, ILogger<MainForm> log
 			, SessionContext sessionContext
 			, IPlayerService playerService
 			, IVaultService vaultService
 			, IStashService stashService
-			, IFontService fontService
+			, ITranslationService translationService
 		) : base(serviceProvider)
 		{
 			this.userContext = sessionContext;
 			this.playerService = playerService;
 			this.vaultService = vaultService;
 			this.stashService = stashService;
+			this.TranslationService = translationService;
 
 			Log = log;
 			Log.LogInformation("TQVaultAE Initialization !");
@@ -202,6 +204,11 @@ namespace TQVaultAE.GUI
 			ScaleControl(this.UIService, this.duplicateButton);
 			this.saveButton.Font = FontService.GetFontLight(12F, UIService.Scale);
 			ScaleControl(this.UIService, this.saveButton);
+			this.forgeButton.Font = FontService.GetFontLight(12F, UIService.Scale);
+			ScaleControl(this.UIService, this.forgeButton);
+
+			this.scalingLabelHighlight.Font = FontService.GetFontLight(10F, UIService.Scale);
+			this.scalingTextBoxHighlight.Font = FontService.GetFontLight(10F, UIService.Scale);
 
 			#endregion
 
@@ -247,6 +254,7 @@ Debug Levels
 			this.Icon = Resources.TQVIcon;
 			this.searchButton.Text = Resources.MainFormSearchButtonText;
 			this.duplicateButton.Text = Resources.DuplicateCharacter_ButtonText;
+			this.scalingLabelHighlight.Text = Resources.MainFormHighlightLabelText;
 
 			this.lastDragPoint.X = -1;
 			this.DragInfo = new ItemDragInfo(this.UIService);
@@ -268,6 +276,7 @@ Debug Levels
 
 		private void AdjustMenuButtonVisibility()
 		{
+			this.forgeButton.Visible = Config.Settings.Default.AllowItemEdit;
 			this.duplicateButton.Visible = Config.Settings.Default.AllowCharacterEdit;
 			this.saveButton.Visible = Config.Settings.Default.EnableHotReload;
 			// Get last position
@@ -380,7 +389,10 @@ Debug Levels
 		/// <param name="sender">sender object</param>
 		/// <param name="e">EventArgs data</param>
 		private void MainFormShown(object sender, EventArgs e)
-			=> this.vaultPanel.SackPanel.Focus();
+		{
+			this.scalingTextBoxHighlight.Dock = DockStyle.Fill;
+			this.scalingTextBoxHighlight.Focus();
+		}
 
 		/// <summary>
 		/// Handler for moving the mouse wheel.
@@ -1091,5 +1103,51 @@ Debug Levels
 		private void duplicateButton_Click(object sender, EventArgs e) => DuplicateCharacter();
 
 		private void saveButton_Click(object sender, EventArgs e) => this.SaveAllModifiedFiles();
+
+		#region HighlightItems
+
+		private void typeAssistant_Idled(object sender, EventArgs e)
+		{
+			var value = (scalingTextBoxHighlight.Text ?? string.Empty).Trim();
+
+			this.userContext.HighlightSearch = value;
+			this.userContext.FindHighlight();
+			this.Invoke(new MethodInvoker(this.Refresh));
+		}
+
+
+		private void scalingTextBoxHighlight_TextChanged(object sender, EventArgs e)
+		{
+			/// Wait for the end of typing by delaying the call to <see cref="typeAssistant_Idled"/>
+			this.typeAssistant.TextChanged();
+		}
+
+		#endregion
+
+		private void scalingLabelHighlight_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			var link = sender as LinkLabel;
+			if (highlightFilters.Visible)
+			{
+				highlightFilters.Visible = false;
+				return;
+			}
+
+			// Show it
+			if (highlightFilters.UserContext is null)
+			{ // First time
+				highlightFilters.UserContext = userContext;
+				highlightFilters.Link = link;
+				highlightFilters.TranslationService = TranslationService;
+				highlightFilters.ResetAll();
+				highlightFilters.InitTypeList();
+			}
+
+			highlightFilters.SendToBack();// To avoid flickering
+			highlightFilters.Visible = true;
+			highlightFilters.BringToFront();
+		}
+
+
 	}
 }

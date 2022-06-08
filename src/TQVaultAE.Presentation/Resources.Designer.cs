@@ -1063,6 +1063,240 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You can&apos;t use a Prefix/Suffix better than Base item!.
+        /// </summary>
+        public static string ForgeCantUsePrefixSuffixBetterThanBase {
+            get {
+                return ResourceManager.GetString("ForgeCantUsePrefixSuffixBetterThanBase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prefix/Suffix must be of same gear type than Base item!.
+        /// </summary>
+        public static string ForgeCantUsePrefixSuffixOfAnotherGearType {
+            get {
+                return ResourceManager.GetString("ForgeCantUsePrefixSuffixOfAnotherGearType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to God Mode.
+        /// </summary>
+        public static string ForgeGodMode {
+            get {
+                return ResourceManager.GetString("ForgeGodMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow the use of all types of properties in placeholders.
+        /// </summary>
+        public static string ForgeGodModeTT {
+            get {
+                return ResourceManager.GetString("ForgeGodModeTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The item must be stored first!.
+        /// </summary>
+        public static string ForgeItemMustBeStoredFirst {
+            get {
+                return ResourceManager.GetString("ForgeItemMustBeStoredFirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must select a relic!.
+        /// </summary>
+        public static string ForgeMustBeRelicInStrictMode {
+            get {
+                return ResourceManager.GetString("ForgeMustBeRelicInStrictMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must select an item with prefix!.
+        /// </summary>
+        public static string ForgeMustHavePrefixOutsideOfGodMode {
+            get {
+                return ResourceManager.GetString("ForgeMustHavePrefixOutsideOfGodMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must select an item with a relic or a relic!.
+        /// </summary>
+        public static string ForgeMustHaveRelicInRelaxMode {
+            get {
+                return ResourceManager.GetString("ForgeMustHaveRelicInRelaxMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must select an item with suffix!.
+        /// </summary>
+        public static string ForgeMustHaveSuffixOutsideOfGodMode {
+            get {
+                return ResourceManager.GetString("ForgeMustHaveSuffixOutsideOfGodMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must select a &quot;{0}&quot; suffix!.
+        /// </summary>
+        public static string ForgeMustHaveTinkeredSuffix {
+            get {
+                return ResourceManager.GetString("ForgeMustHaveTinkeredSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must select an Armor/Weapon/Jewellery item!.
+        /// </summary>
+        public static string ForgeMustSelectArmorOrWeaponOrJewellery {
+            get {
+                return ResourceManager.GetString("ForgeMustSelectArmorOrWeaponOrJewellery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must select a base item!.
+        /// </summary>
+        public static string ForgeMustSelectBaseItem {
+            get {
+                return ResourceManager.GetString("ForgeMustSelectBaseItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must select a base item first!.
+        /// </summary>
+        public static string ForgeMustSelectBaseItemFirst {
+            get {
+                return ResourceManager.GetString("ForgeMustSelectBaseItemFirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must select an item to merge!.
+        /// </summary>
+        public static string ForgeMustSelectItemToMerge {
+            get {
+                return ResourceManager.GetString("ForgeMustSelectItemToMerge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must select a relic or an item with relic!.
+        /// </summary>
+        public static string ForgeMustSelectRelicOrItemWithRelic {
+            get {
+                return ResourceManager.GetString("ForgeMustSelectRelicOrItemWithRelic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Epic and Legendary is not allowed in Strict Mode !.
+        /// </summary>
+        public static string ForgeNoEpicLegendaryAllowed {
+            get {
+                return ResourceManager.GetString("ForgeNoEpicLegendaryAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Relax Mode.
+        /// </summary>
+        public static string ForgeRelaxMode {
+            get {
+                return ResourceManager.GetString("ForgeRelaxMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow the use of a second relic without &quot;{0}&quot; suffix and an Epic/Legendary as a base item.
+        /// </summary>
+        public static string ForgeRelaxModeTT {
+            get {
+                return ResourceManager.GetString("ForgeRelaxModeTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to That relic is not allowed on that gear!.
+        /// </summary>
+        public static string ForgeRelicNotAllowed {
+            get {
+                return ResourceManager.GetString("ForgeRelicNotAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Strict Mode.
+        /// </summary>
+        public static string ForgeStrictMode {
+            get {
+                return ResourceManager.GetString("ForgeStrictMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Constrain the Forge to game rules.
+        /// </summary>
+        public static string ForgeStrictModeTT {
+            get {
+                return ResourceManager.GetString("ForgeStrictModeTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Base.
+        /// </summary>
+        public static string ForgeUseBase {
+            get {
+                return ResourceManager.GetString("ForgeUseBase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Prefix.
+        /// </summary>
+        public static string ForgeUsePrefix {
+            get {
+                return ResourceManager.GetString("ForgeUsePrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Relic1.
+        /// </summary>
+        public static string ForgeUseRelic1 {
+            get {
+                return ResourceManager.GetString("ForgeUseRelic1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Relic2.
+        /// </summary>
+        public static string ForgeUseRelic2 {
+            get {
+                return ResourceManager.GetString("ForgeUseRelic2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Suffix.
+        /// </summary>
+        public static string ForgeUseSuffix {
+            get {
+                return ResourceManager.GetString("ForgeUseSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 
         ///
         ///This may be caused by a bad language or game path setting.
@@ -1246,6 +1480,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Max.
+        /// </summary>
+        public static string GlobalMax {
+            get {
+                return ResourceManager.GetString("GlobalMax", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximize.
         /// </summary>
         public static string GlobalMaximize {
@@ -1269,6 +1512,15 @@ namespace TQVaultAE.Presentation {
         public static string GlobalMenuBagDelimiter {
             get {
                 return ResourceManager.GetString("GlobalMenuBagDelimiter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Min.
+        /// </summary>
+        public static string GlobalMin {
+            get {
+                return ResourceManager.GetString("GlobalMin", resourceCulture);
             }
         }
         
@@ -1359,6 +1611,15 @@ namespace TQVaultAE.Presentation {
         public static string GlobalRelicVaultStash {
             get {
                 return ResourceManager.GetString("GlobalRelicVaultStash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requirements.
+        /// </summary>
+        public static string GlobalRequirements {
+            get {
+                return ResourceManager.GetString("GlobalRequirements", resourceCulture);
             }
         }
         
@@ -1476,6 +1737,15 @@ namespace TQVaultAE.Presentation {
         public static string HealthPotionsUsed {
             get {
                 return ResourceManager.GetString("HealthPotionsUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use &quot;0&quot; to ignore filter.
+        /// </summary>
+        public static string HighlightFiltersZeroToIgnore {
+            get {
+                return ResourceManager.GetString("HighlightFiltersZeroToIgnore", resourceCulture);
             }
         }
         
@@ -1807,6 +2077,15 @@ namespace TQVaultAE.Presentation {
         public static string MainFormDisableLoadAllFilesCaption {
             get {
                 return ResourceManager.GetString("MainFormDisableLoadAllFilesCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Highlight items having :.
+        /// </summary>
+        public static string MainFormHighlightLabelText {
+            get {
+                return ResourceManager.GetString("MainFormHighlightLabelText", resourceCulture);
             }
         }
         
@@ -4659,6 +4938,15 @@ namespace TQVaultAE.Presentation {
         public static string TextTag_tagArtifact {
             get {
                 return ResourceManager.GetString("TextTag_tagArtifact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dye.
+        /// </summary>
+        public static string TextTag_tagDye {
+            get {
+                return ResourceManager.GetString("TextTag_tagDye", resourceCulture);
             }
         }
         

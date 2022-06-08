@@ -24,6 +24,7 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Services;
 	using TQVaultAE.Services.Win32;
 	using Microsoft.Extensions.Logging;
+	using System.Media;
 
 	/// <summary>
 	/// Main Program class
@@ -101,6 +102,7 @@ namespace TQVaultAE.GUI
 				.AddSingleton<IIconService, IconService>()
 				.AddSingleton<ITQDataService, TQDataService>()
 				.AddTransient<IBitmapService, BitmapService>()
+				.AddSingleton<ISoundService, SoundServiceWin>()
 				// Forms
 				.AddSingleton<MainForm>()
 				.AddTransient<AboutBox>()

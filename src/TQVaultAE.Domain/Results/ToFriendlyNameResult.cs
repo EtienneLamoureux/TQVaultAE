@@ -78,6 +78,7 @@ namespace TQVaultAE.Domain.Results
 		public string BaseItemInfoDescription;
 		public string ItemSeed;
 		public string ItemQuest;
+		public string ItemThrown;
 		public string NumberFormat;
 		public string ItemWith;
 		public string[] FlavorText = new string[] { };
@@ -259,6 +260,7 @@ namespace TQVaultAE.Domain.Results
 				{
 					_AttributesAll = new string[][] {
 						BaseAttributes
+						, new[]{ ItemThrown }
 						, PrefixAttributes
 						, SuffixAttributes
 						, Relic1Attributes
