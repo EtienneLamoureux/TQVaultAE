@@ -46,8 +46,8 @@ namespace TQVaultAE.Services
 			{
 				LoadVault(vault, oldFormatfileName);
 
-				if (vault.sacks.Any())
-					vault.sacks.First().IsModified = true;// Force Save into json on closing
+				if (vault.Sacks.Any())
+					vault.Sacks.First().IsModified = true;// Force Save into json on closing
 
 				return vault;
 			}

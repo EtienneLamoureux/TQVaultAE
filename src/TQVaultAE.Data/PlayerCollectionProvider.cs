@@ -16,6 +16,7 @@ namespace TQVaultAE.Data
 	using TQVaultAE.Data.Dto;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Logs;
+	using TQVaultAE.Domain.Helpers;
 
 	/// <summary>
 	/// Loads, decodes, encodes and saves a Titan Quest player file.
@@ -297,7 +298,7 @@ namespace TQVaultAE.Data
 			pc.currentlyFocusedSackNumber = vaultDto.currentlyFocusedSackNumber;
 			pc.currentlySelectedSackNumber = vaultDto.currentlySelectedSackNumber;
 
-			pc.sacks = vaultDto.sacks.Select(s => new SackCollection()
+			pc.Sacks = vaultDto.sacks.Select(s => new SackCollection()
 			{
 				SackType = SackType.Sack,
 				IsImmortalThrone = pc.IsImmortalThrone,
@@ -345,6 +346,50 @@ namespace TQVaultAE.Data
 					return itm;
 				}).ToList()
 			}).ToArray();
+
+			/*
+#if DEBUG
+			// Generate RelicAndCharm Enum
+			if (path.Contains("Artefacts"))
+			{
+				var str = pc.Sacks.Skip(8)
+					.SelectMany(s => s.items)
+					.Select(s =>
+					{
+						var Id = s.BaseItemId.ToUpper().Replace('/', '\\');
+						var filename = Path.GetFileNameWithoutExtension(Id);
+						var filesplit = filename.Split('_');
+						var enumName = filesplit.Reverse().JoinString("_");
+						return new
+						{
+							Item = s,
+							Friendly = ItemProvider.GetFriendlyNames(s, FriendlyNamesExtraScopes.ItemFullDisplay),
+							Id,
+							filename,
+							enumName
+						};
+					})
+					.OrderBy(s => s.enumName)
+					.GroupBy(s => s.enumName)
+					.Select(g =>
+					{
+						var i = g.First();
+						return $@"
+/// <summary>
+/// {i.Friendly.FullNameClean}
+/// </summary>
+/// <remarks>
+/// {string.Join("\n/// ", i.Friendly.FlavorText).RemoveAllTQTags()}
+/// </remarks>
+[Description(@""{i.Id}"")]
+[GearType(GearType.Undefined)]
+{i.enumName},";
+					})
+					.JoinString("\n");
+			}
+
+#endif
+			*/
 		}
 
 
@@ -680,7 +725,7 @@ namespace TQVaultAE.Data
 					for (int i = 0; i < pc.numberOfSacks; ++i)
 					{
 						// SackType should already be set at pc point
-						SackCollectionProvider.Encode(pc.sacks[i], writer);
+						SackCollectionProvider.Encode(pc.Sacks[i], writer);
 					}
 
 					dataLength = (int)writeStream.Length;
@@ -722,14 +767,14 @@ namespace TQVaultAE.Data
 				TQData.ValidateNextString("currentlySelectedSackNumber", reader);
 				pc.currentlySelectedSackNumber = reader.ReadInt32();
 
-				pc.sacks = new SackCollection[pc.numberOfSacks];
+				pc.Sacks = new SackCollection[pc.numberOfSacks];
 
 				for (int i = 0; i < pc.numberOfSacks; ++i)
 				{
-					pc.sacks[i] = new SackCollection();
-					pc.sacks[i].SackType = SackType.Sack;
-					pc.sacks[i].IsImmortalThrone = pc.IsImmortalThrone;
-					SackCollectionProvider.Parse(pc.sacks[i], reader);
+					pc.Sacks[i] = new SackCollection();
+					pc.Sacks[i].SackType = SackType.Sack;
+					pc.Sacks[i].IsImmortalThrone = pc.IsImmortalThrone;
+					SackCollectionProvider.Parse(pc.Sacks[i], reader);
 				}
 
 				//pc.itemBlockEnd = (int)reader.BaseStream.Position;

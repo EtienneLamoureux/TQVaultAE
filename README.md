@@ -26,6 +26,7 @@ Works with all expansions!
 ## Features
 - **Infinite bank space**
 - Powerful search
+- [Highlight items](HIGHLIGHT.md)
 - Cheats
     - Items
         - Extract relic/charm from items at no cost, keeping both
@@ -33,6 +34,7 @@ Works with all expansions!
         - Complete relic/charm from a single piece
         - Craft an artifact from its recipe
         - Create missing set pieces
+        - [Craft custom items](FORGE.md)
         - Duplicate any item
     - Characters
         - Redisribute attribute points
@@ -189,6 +191,10 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 <img src="./documentation/TQVaultAE_changeIcon.png" width="700" alt="Open the wizard" />
 <br />
 <img src="./documentation/TQVaultAE_CustomIcon.png" width="700" alt="Customize your vault" />
+
+**Q. How can adjust the volume?**
+
+*A. You can enable/Disable the sounds in the tool settings or adjust the volume via Windows Volume Mixer.*
 
 ## Contributors
 This project could not go on without the continued volunteer contributions of the Titan Quest community. If you're thinking about contributing, please read our [contributing guidelines](/CONTRIBUTING.md).

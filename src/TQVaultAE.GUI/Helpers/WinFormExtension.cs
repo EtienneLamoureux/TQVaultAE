@@ -17,6 +17,22 @@ namespace TQVaultAE.GUI.Helpers
 				action(childControl);
 			}
 		}
+
+		public static void ProcessAllControlsWithExclusion(this Control rootControl, Func<Control, bool> action, Control extraControl = null)
+		{
+			if (extraControl is not null)
+				action(extraControl);// Used to add rootControl in the loop
+
+			foreach (Control childControl in rootControl.Controls)
+			{
+				var excludeFromHere = action(childControl);
+				if (excludeFromHere) 
+					continue;
+
+				ProcessAllControlsWithExclusion(childControl, action);
+			}
+		}
+
 		public static void AdjustToMaxTextWidth(this CheckedListBox ctrl, int? maxVerticalItems)
 		{
 			var width = ctrl.GetMaxTextWidth();

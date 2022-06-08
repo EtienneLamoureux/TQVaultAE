@@ -16,13 +16,17 @@ using TQVaultAE.Presentation;
 namespace TQVaultAE.GUI.Tooltip
 {
 
-    public partial class ItemTooltip : BaseTooltip
+	public partial class ItemTooltip : BaseTooltip
 	{
 		private static Dictionary<Item, ItemTooltip> ItemTooltipOpened = new Dictionary<Item, ItemTooltip>();
 		private static Dictionary<(Item Item, float Scale, bool AltView), (Bitmap Bmp, ToFriendlyNameResult Data)> ToImage = new Dictionary<(Item, float, bool), (Bitmap, ToFriendlyNameResult)>();
+
+		internal bool EnableDetailedTooltipView { get; set; }
 		internal Item FocusedItem { get; set; }
 		internal SackPanel SackPanel { get; set; }
 		internal ResultsDialog ResultsDialog { get; set; }
+		internal PictureBox PictureBox { get; set; }
+
 
 		internal ToFriendlyNameResult Data { get; private set; }
 
@@ -70,7 +74,12 @@ namespace TQVaultAE.GUI.Tooltip
 
 		#region Factory
 
-		public static ItemTooltip ShowTooltip(IServiceProvider serviceProvider, Item focusedItem, SackPanel sackPanel)
+		public static ItemTooltip ShowTooltip(
+			IServiceProvider serviceProvider
+			, Item focusedItem
+			, SackPanel sackPanel
+			, bool? enableDetailedTooltipView = null
+		)
 		{
 			ItemTooltip _Current;
 			lock (ToImage)
@@ -86,6 +95,7 @@ namespace TQVaultAE.GUI.Tooltip
 				{
 					FocusedItem = focusedItem,
 					SackPanel = sackPanel,
+					EnableDetailedTooltipView = enableDetailedTooltipView ?? Config.Settings.Default.EnableDetailedTooltipView
 				};
 				ItemTooltipOpened.Add(focusedItem, _Current);
 				_Current.Show();
@@ -93,7 +103,12 @@ namespace TQVaultAE.GUI.Tooltip
 			return _Current;
 		}
 
-		public static ItemTooltip ShowTooltip(IServiceProvider serviceProvider, Item focusedItem, ResultsDialog resultsDialog)
+		public static ItemTooltip ShowTooltip(
+			IServiceProvider serviceProvider
+			, Item focusedItem
+			, ResultsDialog resultsDialog
+			, bool? enableDetailedTooltipView = null
+		)
 		{
 			ItemTooltip _Current;
 			lock (ToImage)
@@ -109,6 +124,36 @@ namespace TQVaultAE.GUI.Tooltip
 				{
 					FocusedItem = focusedItem,
 					ResultsDialog = resultsDialog,
+					EnableDetailedTooltipView = enableDetailedTooltipView ?? Config.Settings.Default.EnableDetailedTooltipView
+				};
+				ItemTooltipOpened.Add(focusedItem, _Current);
+				_Current.Show();
+			}
+			return _Current;
+		}
+
+		public static ItemTooltip ShowTooltip(
+			IServiceProvider serviceProvider
+			, Item focusedItem
+			, PictureBox picBox
+			, bool? enableDetailedTooltipView = null
+		)
+		{
+			ItemTooltip _Current;
+			lock (ToImage)
+			{
+				HideTooltip();
+				_Current = new ItemTooltip(
+					serviceProvider.GetService<MainForm>()
+					, serviceProvider.GetService<IItemProvider>()
+					, serviceProvider.GetService<IFontService>()
+					, serviceProvider.GetService<IUIService>()
+					, serviceProvider.GetService<ITranslationService>()
+				)
+				{
+					FocusedItem = focusedItem,
+					PictureBox = picBox,
+					EnableDetailedTooltipView = enableDetailedTooltipView ?? Config.Settings.Default.EnableDetailedTooltipView
 				};
 				ItemTooltipOpened.Add(focusedItem, _Current);
 				_Current.Show();
@@ -123,7 +168,7 @@ namespace TQVaultAE.GUI.Tooltip
 		/// </summary>
 		public void FillToolTip()
 		{
-			var key = (this.FocusedItem, UIService.Scale, Config.Settings.Default.EnableDetailedTooltipView);
+			var key = (this.FocusedItem, UIService.Scale, this.EnableDetailedTooltipView);
 
 			// Redraw
 			if (ToImage.ContainsKey(key))
@@ -144,7 +189,7 @@ namespace TQVaultAE.GUI.Tooltip
 			this.flowLayoutPanelFriendlyNames.SuspendLayout();
 
 			this.Data = this.ItemProvider.GetFriendlyNames(FocusedItem, FriendlyNamesExtraScopes.ItemFullDisplay);
-			
+
 			// Fullname
 			AddRow(Data.FullName, FocusedItem.GetColor(Data.BaseItemInfoDescription), style: FontStyle.Bold);
 
@@ -179,7 +224,7 @@ namespace TQVaultAE.GUI.Tooltip
 			}
 
 			// Attributes
-			if (Config.Settings.Default.EnableDetailedTooltipView)
+			if (this.EnableDetailedTooltipView)
 			{
 				string AdjustColor(string TQText, string label)
 				{
@@ -360,7 +405,7 @@ namespace TQVaultAE.GUI.Tooltip
 						y -= offScreenHeight;
 				}
 
-				this.Location = new Point(Convert.ToInt32(x), Convert.ToInt32(y));
+				this.Location = new Point(x, y);
 				return;
 			}
 
@@ -371,7 +416,17 @@ namespace TQVaultAE.GUI.Tooltip
 				var x = loc.X + this.ResultsDialog.Width;
 				var y = loc.Y;
 
-				this.Location = new Point(Convert.ToInt32(x), Convert.ToInt32(y));
+				this.Location = new Point(x, y);
+			}
+
+			// Move it to view area from PictureBox (Forge)
+			if (this.PictureBox != null)
+			{
+				var loc = this.PictureBox.PointToScreen(Point.Empty);
+				var x = loc.X + this.PictureBox.Width;
+				var y = loc.Y;
+
+				this.Location = new Point(x, y);
 			}
 		}
 	}
