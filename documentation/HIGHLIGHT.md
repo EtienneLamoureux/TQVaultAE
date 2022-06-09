@@ -7,11 +7,11 @@ Looking for "health regen" attribute?
 
 ## Vault and Player
 
-![Vault and Player](documentation/highlight_ui_players.png)
+![Vault and Player](highlight_ui_players.png)
 
 ## With secondary vault
 
-![Vault and Player](documentation/highlight_ui_vaults.png)
+![Vault and Player](highlight_ui_vaults.png)
 
 ## Extended filters
 
@@ -23,4 +23,4 @@ You can create a "requirement range" via Min/Max checkboxes.
 
 _**Note:** Leaving a value to 0 means "ignore"._
 
-![Vault and Player](documentation/highlight_ui_extended.png)
+![Vault and Player](highlight_ui_extended.png)
