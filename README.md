@@ -1,6 +1,6 @@
 # TQVaultAE
 [![Steam](https://img.shields.io/badge/steam-link-lightgrey.svg)](https://steamcommunity.com/sharedfiles/filedetails/?id=1136716167)
-[![Release](https://img.shields.io/badge/stable-4.0.0-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
+[![Release](https://img.shields.io/badge/stable-4.1.0-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/LICENSE)
 
 TQVaultAE is an external tool for [Titan Quest Anniversary Edition](https://www.thqnordic.com/games/titan-quest) that allows you to store and search your items outside the game.
@@ -8,25 +8,9 @@ Works with all expansions!
 
 ![TQVaultAE screenshot](https://raw.githubusercontent.com/EtienneLamoureux/TQVaultAE/master/documentation/screenshot.PNG "Hey, I can see my inventory from here!")
 
-## Table of contents
-- [TQVaultAE](#tqvaultae)
-  * [Table of contents](#table-of-contents)
-  * [Features](#features)
-  * [Installation](#installation)
-    + [Installer](#installer)
-    + [DIY Archive](#diy-archive)
-    + [Configuration](#configuration)
-  * [Troubleshooting and F.A.Q.](#troubleshooting-and-faq)
-  * [Contributors](#contributors)
-    + [TQVaultAE](#tqvaultae-1)
-    + [TQVault](#tqvault)
-      - [Translation team](#translation-team)
-  * [Disclaimer](#disclaimer)
-
 ## Features
 - **Infinite bank space**
 - Powerful search
-- [Highlight items](HIGHLIGHT.md)
 - Cheats
     - Items
         - Extract relic/charm from items at no cost, keeping both
@@ -34,7 +18,7 @@ Works with all expansions!
         - Complete relic/charm from a single piece
         - Craft an artifact from its recipe
         - Create missing set pieces
-        - [Craft custom items](FORGE.md)
+        - [Craft custom items](/documentation/FORGE.md)
         - Duplicate any item
     - Characters
         - Redisribute attribute points
@@ -42,6 +26,7 @@ Works with all expansions!
         - Level up
 - QOL
     - Bulk item transfer (<kbd>CTRL</kbd>+click, right-click)
+    - [Highlight items](/documentation/HIGHLIGHT.md)
     - Combine stacks (potions, relics and charms) by dropping them onto each other
     - Split potion stacks apart
     - Keyboard shortcuts

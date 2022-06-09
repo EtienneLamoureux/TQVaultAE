@@ -1,4 +1,16 @@
 # Changelog
+## 4.1.0
+### Features
+- New cheat: item forge
+  - More info [here](/documentation/FORGE.md)
+- Add the ability to copy/paste custom bag icons
+
+### Bugs
+- #362 Properly support "Of the Tinkerer" items
+- #200 Fix the displayed description of "Falcon Cape"
+- Add support for Neidan class icons
+- Fix hotreload player not triggering
+
 ## 4.0.0
 ### Features
 - #283 Enable saving the modified stashes without closing the tool
