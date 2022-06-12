@@ -238,6 +238,11 @@ namespace TQVaultAE.GUI.Components
 			this.HighlightValidItemColor = Color.FromArgb(23, 149, 15);       // Green
 			this.HighlightInvalidItemColor = Color.FromArgb(153, 28, 28);     // Red
 
+			this.HighlightSearchItemBorder = new Pen(this.userContext.HighlightSearchItemBorderColor)
+			{
+				Width = 4,
+			};
+
 			this.gridPen = new Pen(Color.FromArgb(142, 140, 129));
 
 			this.numberFont = new Font("Arial", 10.0F * UIService.Scale, GraphicsUnit.Pixel);
@@ -365,6 +370,11 @@ namespace TQVaultAE.GUI.Components
 		public Color HighlightInvalidItemColor { get; protected set; }
 
 		/// <summary>
+		/// Gets or sets the border for item highlight.
+		/// </summary>
+		public Pen HighlightSearchItemBorder { get; protected set; }
+
+		/// <summary>
 		/// Gets a value indicating whether items have been selected
 		/// </summary>
 		public bool SelectionActive => this.selectedItems != null && this.selectedItems.Count > 0;
@@ -390,7 +400,7 @@ namespace TQVaultAE.GUI.Components
 
 		/// <summary>
 		/// Gets MessageBoxOptions for right to left reading.
-		/// </summary>
+		/// </summary>7
 		protected static MessageBoxOptions RightToLeftOptions
 		{
 			get
@@ -1912,9 +1922,17 @@ namespace TQVaultAE.GUI.Components
 				int alpha = this.UserAlpha;
 				Color backgroundColor = this.GetItemBackgroundColor(item);
 
+				var highlight = false;
+				// Highlight search
+				if (this.userContext.HighlightedItems.Count > 0 && this.userContext.HighlightedItems.Contains(item))
+				{
+					highlight = true;
+					backgroundColor = this.userContext.HighlightSearchItemColor;
+					alpha = AdjustAlpha(alpha);
+				}
 				// If we are showing the cannot equip background then 
 				// change to invalid color and adjust the alpha.
-				if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
+				else if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
 				{
 					backgroundColor = this.HighlightInvalidItemColor;
 
@@ -1942,13 +1960,14 @@ namespace TQVaultAE.GUI.Components
 					alpha = AdjustAlpha(alpha);
 
 				// Now do the shading
-				this.ShadeAreaUnderItem(e.Graphics, item, backgroundColor, alpha);
+				this.ShadeAreaUnderItem(e.Graphics, item, backgroundColor, alpha, highlight);
 
 				// Adjust the alpha and draw the accent.
 				if (showAccent && HasItemBackgroundColor(item))
 					this.DrawItemAccent(e.Graphics, item, backgroundColor, AdjustAlpha(alpha));
 			}
 		}
+
 
 		/// <summary>
 		/// Redraws the grid for a specified area.
@@ -2111,13 +2130,13 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="item">item we are shading</param>
 		/// <param name="backgroundColor">Color that the background will be painted</param>
 		/// <param name="alpha">alpha value for the color</param>
-		protected virtual void ShadeAreaUnderItem(Graphics graphics, Item item, Color backgroundColor, int alpha)
+		protected virtual void ShadeAreaUnderItem(Graphics graphics, Item item, Color backgroundColor, int alpha, bool highlight)
 		{
 			if (item == null)
 				return;
 
 			Point screenLocation = this.CellTopLeft(item.Location);
-			this.ShadeAreaUnderItem(graphics, new Rectangle(screenLocation, new Size(item.Width * UIService.ItemUnitSize, item.Height * UIService.ItemUnitSize)), backgroundColor, alpha);
+			this.ShadeAreaUnderItem(graphics, new Rectangle(screenLocation, new Size(item.Width * UIService.ItemUnitSize, item.Height * UIService.ItemUnitSize)), backgroundColor, alpha, highlight);
 		}
 
 		/// <summary>
@@ -2127,7 +2146,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="backgroundRectangle">cell rectangle which needs to be drawn</param>
 		/// <param name="backgroundColor">Color that the background will be painted</param>
 		/// <param name="alpha">alpha value for the color</param>
-		protected virtual void ShadeAreaUnderItem(Graphics graphics, Rectangle backgroundRectangle, Color backgroundColor, int alpha)
+		protected virtual void ShadeAreaUnderItem(Graphics graphics, Rectangle backgroundRectangle, Color backgroundColor, int alpha, bool highlight)
 		{
 			if (graphics == null)
 				return;
@@ -2135,6 +2154,11 @@ namespace TQVaultAE.GUI.Components
 			using (SolidBrush brush = new SolidBrush(Color.FromArgb(alpha, backgroundColor)))
 			{
 				graphics.FillRectangle(brush, backgroundRectangle);
+
+				// Add highlight borders
+				if (highlight)
+					graphics.DrawRectangle(this.HighlightSearchItemBorder, backgroundRectangle);
+
 			}
 		}
 

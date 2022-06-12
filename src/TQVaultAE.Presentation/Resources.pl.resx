@@ -1077,7 +1077,7 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   <data name="ItemEmbers" xml:space="preserve">
     <value>Przedmiot z Eternal Embers</value>
   </data>
-  <data name="SackPanelMenuSeedForce" xml:space="preserve">
-    <value>Zmień ziarno przedmiotu (siła)</value>
+  <data name="CEMoney" xml:space="preserve">
+    <value>Pieniądze</value>
   </data>
 </root>

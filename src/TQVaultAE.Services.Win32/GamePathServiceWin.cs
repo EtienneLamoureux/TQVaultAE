@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Domain.Contracts.Services;
-using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Exceptions;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Presentation;
@@ -20,10 +19,12 @@ namespace TQVaultAE.Services.Win32
 	public class GamePathServiceWin : IGamePathService
 	{
 		private readonly ILogger Log;
+		private readonly ITQDataService TQData;
 
-		public GamePathServiceWin(ILogger<GamePathServiceWin> log)
+		public GamePathServiceWin(ILogger<GamePathServiceWin> log, ITQDataService tQDataService)
 		{
 			this.Log = log;
+			this.TQData = tQDataService;
 		}
 
 		/// <summary>
@@ -689,6 +690,55 @@ Please select the game installation directory.");
 			);
 
 			return newFolder;
+		}
+
+		/// <summary>
+		/// Return ARC filename from <paramref name="resourceIdOrPrefix"/>
+		/// </summary>
+		/// <param name="resourceIdOrPrefix"></param>
+		/// <returns></returns>
+		public (string ArcFileName, bool IsDLC) ResolveArcFileName(string resourceIdOrPrefix)
+		{
+			resourceIdOrPrefix = TQData.NormalizeRecordPath(resourceIdOrPrefix);
+			var segments = resourceIdOrPrefix.Split('\\');
+
+			string path;
+			bool isDLC = true;
+			switch (segments.First())
+			{
+				case "XPACK" when segments[1] != "SOUNDS":
+					// Comes from Immortal Throne
+					path = Path.Combine(ImmortalThronePath, "Resources", "XPack", segments[1] + ".arc");
+					break;
+				case "XPACK" when segments[1] == "SOUNDS": // Sounds file exception for IT
+														   // Comes from Immortal Throne
+					path = Path.Combine(ImmortalThronePath, "Resources", segments[1] + ".arc");
+					break;
+				case "XPACK2":
+					// Comes from Ragnarok
+					path = Path.Combine(ImmortalThronePath, "Resources", "XPack2", segments[1] + ".arc");
+					break;
+				case "XPACK3":
+					// Comes from Atlantis
+					path = Path.Combine(ImmortalThronePath, "Resources", "XPack3", segments[1] + ".arc");
+					break;
+				case "XPACK4":
+					// Comes from Eternal Embers
+					path = Path.Combine(ImmortalThronePath, "Resources", "XPack4", segments[1] + ".arc");
+					break;
+				case "SOUNDS":
+					// Regular Dialogs/Sounds/Music/PlayerSounds
+					path = Path.Combine(ImmortalThronePath, "Audio", segments[0] + ".arc");
+					isDLC = false;
+					break;
+				default:
+					// Base game
+					path = Path.Combine(ImmortalThronePath, "Resources", segments[0] + ".arc");
+					isDLC = false;
+					break;
+			}
+
+			return (path, isDLC);
 		}
 	}
 }

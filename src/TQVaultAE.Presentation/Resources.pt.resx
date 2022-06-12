@@ -1544,7 +1544,7 @@ O personagem também não poderá equipar itens onde os requisitos não forem at
   <data name="ItemEmbers" xml:space="preserve">
     <value>Item de Eternal Embers</value>
   </data>
-  <data name="SackPanelMenuSeedForce" xml:space="preserve">
-    <value>Alterar Semente do Item (Força)</value>
+  <data name="CEMoney" xml:space="preserve">
+    <value>Dinheiro</value>
   </data>
 </root>

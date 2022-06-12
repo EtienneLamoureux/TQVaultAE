@@ -17,7 +17,6 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Presentation;
 	using TQVaultAE.GUI.Tooltip;
 	using TQVaultAE.Domain.Contracts.Services;
-	using System.Collections.Generic;
 	using System.Linq;
 
 	/// <summary>
@@ -287,8 +286,7 @@ namespace TQVaultAE.GUI.Components
 				if ((!this.player?.IsVault ?? false) || (!value?.IsVault ?? false))
 				{
 					// Not Vault
-					var session = this.ServiceProvider.GetService<SessionContext>();
-					session.CurrentPlayer = value;
+					this.userContext.CurrentPlayer = value;
 				}
 
 				this.player = value;
@@ -338,13 +336,13 @@ namespace TQVaultAE.GUI.Components
 						if (this.AutoMoveLocation == AutoMoveLocation.Vault && this.Vault.currentlySelectedSackNumber != this.currentBag)
 						{
 							this.Vault.currentlySelectedSackNumber = this.currentBag;
-							this.Vault.sacks.First().IsModified = true;
+							this.Vault.Sacks.First().IsModified = true;
 						}
 
 						if (this.AutoMoveLocation == AutoMoveLocation.SecondaryVault && this.Vault.currentlyFocusedSackNumber != this.currentBag)
 						{
 							this.Vault.currentlyFocusedSackNumber = this.currentBag;
-							this.Vault.sacks.First().IsModified = true;
+							this.Vault.Sacks.First().IsModified = true;
 						}
 					}
 				}
@@ -365,6 +363,7 @@ namespace TQVaultAE.GUI.Components
 			if (e.PropertyName == nameof(Player))
 			{
 				this.AssignSacks();
+				this.userContext.FindHighlight();
 			}
 		}
 
@@ -454,6 +453,9 @@ namespace TQVaultAE.GUI.Components
 				{
 					button.Visible = index < numberOfBags;
 					button.IsOn = index == this.CurrentBag;
+
+					button.Sack = this.Player.GetSack(index + this.BagPanelOffset);
+
 					++index;
 				}
 

@@ -112,11 +112,17 @@ namespace TQVaultAE.GUI
 				// Reload player file
 				LoadPlayerResult playerResult = null;
 				if (e.Name.Equals(this.GamePathResolver.PlayerSaveFileName, StringComparison.OrdinalIgnoreCase))
+				{
+					Thread.Sleep(500);// Wait for content availability
 					playerResult = this.LoadPlayer(playerSave, true);
+				}
 
 				LoadPlayerStashResult stashResult = null;
 				if (e.Name.Equals(this.GamePathResolver.PlayerStashFileNameB, StringComparison.OrdinalIgnoreCase))
+				{
+					Thread.Sleep(500);// Wait for content availability
 					stashResult = this.LoadPlayerStash(playerSave, true);
+				}
 
 				// Refresh
 				this.Invoke((MethodInvoker)delegate
@@ -153,11 +159,11 @@ namespace TQVaultAE.GUI
 			fw.BeginInit();
 			fw.Path = folder;
 			fw.Filter = filename;
-			fw.EnableRaisingEvents = true;
 			fw.IncludeSubdirectories = false;
-			fw.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.CreationTime;// You need "CreationTime" in order to trigger "LastWrite"
+			fw.NotifyFilter = NotifyFilters.Attributes;// Attributes triggers after file update
 			fw.SynchronizingObject = this;
 			fw.Changed += new FileSystemEventHandler(this.PlayerSaveFile_Changed);
+			fw.EnableRaisingEvents = true;
 			fw.EndInit();
 			return fw;
 		}
