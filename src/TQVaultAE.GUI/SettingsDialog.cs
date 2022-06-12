@@ -29,6 +29,11 @@ namespace TQVaultAE.GUI
 		private bool loadLastVault;
 
 		/// <summary>
+		/// Indicates that the <see cref="Config.Settings.EnableTQVaultSounds"/> setting has been changed
+		/// </summary>
+		public bool enableTQVaultSounds;
+
+		/// <summary>
 		/// Indicates that the <see cref="Config.Settings.EnableItemRequirementRestriction"/> setting has been changed
 		/// </summary>
 		public bool enableItemRequirementRestriction;
@@ -187,6 +192,11 @@ namespace TQVaultAE.GUI
 		/// Indicates that the custom map selection has changed
 		/// </summary>
 		public bool CustomMapsChanged { get; private set; }
+
+		/// <summary>
+		/// Indicates that the <see cref="Config.Settings.EnableTQVaultSounds"/> setting has been changed
+		/// </summary>
+		public bool EnableTQVaultSoundsChanged { get; private set; }
 
 		/// <summary>
 		/// Initializes a new instance of the SettingsDialog class.
@@ -401,7 +411,8 @@ namespace TQVaultAE.GUI
 			this.itemBGColorOpacity = Config.Settings.Default.ItemBGColorOpacity;
 			this.enableItemRequirementRestriction = Config.Settings.Default.EnableItemRequirementRestriction;
 			this.enableHotReload = Config.Settings.Default.EnableHotReload;
-
+			this.enableTQVaultSounds = Config.Settings.Default.EnableTQVaultSounds;
+			
 			// Force English since there was some issue with getting the proper language setting.
 			var gl = Database.GameLanguage;
 			this.titanQuestLanguage = gl == null ? "English" : gl;
@@ -470,7 +481,8 @@ namespace TQVaultAE.GUI
 			this.ItemBGColorOpacityTrackBar.Value = this.itemBGColorOpacity;
 			this.EnableItemRequirementRestrictionCheckBox.Checked = this.enableItemRequirementRestriction;
 			this.hotReloadCheckBox.Checked = this.enableHotReload;
-
+			this.scalingCheckBoxEnableSounds.Checked = this.enableTQVaultSounds;
+			
 			this.enableCustomMapsCheckBox.Checked = this.enableMods;
 
 			var lst = this.mapListComboBox.Items.Cast<GamePathEntry>();
@@ -526,6 +538,7 @@ namespace TQVaultAE.GUI
 				Config.Settings.Default.ItemBGColorOpacity = this.itemBGColorOpacity;
 				Config.Settings.Default.EnableItemRequirementRestriction = this.enableItemRequirementRestriction;
 				Config.Settings.Default.EnableHotReload = this.enableHotReload;
+				Config.Settings.Default.EnableTQVaultSounds = this.enableTQVaultSounds;
 			}
 		}
 
@@ -981,6 +994,23 @@ namespace TQVaultAE.GUI
 			{
 				this.enableHotReload = false;
 				this.ConfigurationChanged = this.EnableHotReloadChanged = this.UISettingChanged = true;// Force restart
+			}
+		}
+
+		private void scalingCheckBoxEnableSounds_CheckedChanged(object sender, EventArgs e)
+		{
+			if (this.scalingCheckBoxEnableSounds.Checked)
+			{
+				if (!this.enableTQVaultSounds)
+					this.enableTQVaultSounds = this.ConfigurationChanged = this.EnableTQVaultSoundsChanged = true;
+			}
+			else
+			{
+				if (this.enableTQVaultSounds)
+				{
+					this.enableTQVaultSounds = false;
+					this.ConfigurationChanged = this.EnableTQVaultSoundsChanged = true;
+				}
 			}
 		}
 	}

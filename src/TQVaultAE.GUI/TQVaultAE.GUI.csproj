@@ -108,7 +108,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-		<LangVersion>9</LangVersion>
+    <LangVersion>9</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -119,7 +119,7 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-		<LangVersion>9</LangVersion>
+    <LangVersion>9</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -158,11 +158,27 @@
     <Compile Include="BagButtonSettings.Designer.cs">
       <DependentUpon>BagButtonSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="MainForm.Forge.cs">
+      <SubType>Form</SubType>
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Components\BufferedFlowLayoutPanel.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\BufferedTableLayoutPanel.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\ForgePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\ForgePanel.Designer.cs">
+      <DependentUpon>ForgePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\HighlightFilters.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\HighlightFilters.Designer.cs">
+      <DependentUpon>HighlightFilters.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\IconMagnifier.cs">
       <SubType>UserControl</SubType>
@@ -330,6 +346,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Components\BagButtonBase.resx">
       <DependentUpon>BagButtonBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\ForgePanel.resx">
+      <DependentUpon>ForgePanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\HighlightFilters.resx">
+      <DependentUpon>HighlightFilters.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Components\IconMagnifier.resx">
       <DependentUpon>IconMagnifier.cs</DependentUpon>
@@ -664,13 +686,13 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-REM Copy Build
-XCOPY "$(ProjectDir)bin\$(Platform)\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /Y /S /I
+			REM Copy Build
+			XCOPY "$(ProjectDir)bin\$(Platform)\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /Y /S /I
 
-REM Clean output of unnecessary files
-DEL "$(SolutionDir)bin\$(ConfigurationName)\*.pdb"
-RMDIR "$(SolutionDir)bin\$(ConfigurationName)\Logging" /S /Q
-</PostBuildEvent>
+			REM Clean output of unnecessary files
+			DEL "$(SolutionDir)bin\$(ConfigurationName)\*.pdb"
+			RMDIR "$(SolutionDir)bin\$(ConfigurationName)\Logging" /S /Q
+		</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\MsBuildAL1073WarningWorkaround.config" />
   <PropertyGroup>

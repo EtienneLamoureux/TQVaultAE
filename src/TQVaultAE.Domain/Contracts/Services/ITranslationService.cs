@@ -56,8 +56,9 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// Translate <paramref name="xTagName"/> using resource file and database
 		/// </summary>
 		/// <param name="xTagName"></param>
+		/// <param name="removeAllTQTags"></param>
 		/// <returns></returns>
-		string TranslateXTag(string xTagName);
+		string TranslateXTag(string xTagName, bool removeAllTQTags = false);
 		/// <summary>
 		/// Translate character class to mastery
 		/// </summary>

@@ -8,6 +8,7 @@ namespace TQVaultAE.Domain.Entities
 	using System;
 	using System.Collections.ObjectModel;
 	using System.Drawing;
+	using System.IO;
 	using System.Linq;
 	using TQVaultAE.Domain.Helpers;
 	using TQVaultAE.Domain.Results;
@@ -58,10 +59,22 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		public string prefixID;
 
+		public bool HasPrefix
+			=> !string.IsNullOrWhiteSpace(prefixID);
+
 		/// <summary>
 		/// Suffix database record ID
 		/// </summary>
 		public string suffixID;
+
+		public bool HasSuffix
+			=> !string.IsNullOrWhiteSpace(suffixID);
+
+		/// <summary>
+		/// Gets the value indicating whether the item allows 2 relic socketing
+		/// </summary>
+		public bool AcceptExtraRelic
+			=> HasSuffix && suffixID.ToUpper().EndsWith("RARE_EXTRARELIC_01.DBR");
 
 		/// <summary>
 		/// Relic database record ID
@@ -131,7 +144,6 @@ namespace TQVaultAE.Domain.Entities
 			}
 		}
 
-
 		#region Item Properties
 
 		/// <summary>
@@ -164,6 +176,10 @@ namespace TQVaultAE.Domain.Entities
 		/// Gets the number of relics
 		/// </summary>
 		private int var1;
+
+		/// <summary>
+		/// Last <see cref="ToFriendlyNameResult"/> queried for this item.
+		/// </summary>
 		public ToFriendlyNameResult CurrentFriendlyNameResult;
 
 		public int Var1
@@ -420,6 +436,12 @@ namespace TQVaultAE.Domain.Entities
 			=> (this.baseItemInfo != null) ? this.baseItemInfo.ItemClass.ToUpperInvariant().Equals("ARMORPROTECTIVE_LOWERBODY") : false;
 
 		/// <summary>
+		/// Gets a value indicating whether the item is Jewellery.
+		/// </summary>
+		public bool IsJewellery
+			=> IsRing || IsAmulet;
+
+		/// <summary>
 		/// Gets a value indicating whether the item is a ring.
 		/// </summary>
 		public bool IsRing
@@ -488,6 +510,40 @@ namespace TQVaultAE.Domain.Entities
 					return true;
 
 				return false;
+			}
+		}
+
+		/// <summary>
+		/// Get a value indicating gear level from <see cref="GearLevel.Broken"/> to <see cref="GearLevel.Legendary"/>
+		/// </summary>
+		public GearLevel GearLevel
+		{
+			get
+			{
+				switch (ItemStyle)
+				{
+					case ItemStyle.Broken:
+						return GearLevel.Broken;
+					case ItemStyle.Mundane:
+						return GearLevel.Mundane;
+					case ItemStyle.Common:
+						return GearLevel.Common;
+					case ItemStyle.Rare:
+						return GearLevel.Rare;
+					case ItemStyle.Epic:
+						return GearLevel.Epic;
+					case ItemStyle.Legendary:
+						return GearLevel.Legendary;
+					case ItemStyle.Quest:
+					case ItemStyle.Relic:
+					case ItemStyle.Potion:
+					case ItemStyle.Scroll:
+					case ItemStyle.Parchment:
+					case ItemStyle.Formulae:
+					case ItemStyle.Artifact:
+					default:
+						return GearLevel.NoGear;
+				}
 			}
 		}
 
@@ -743,22 +799,27 @@ namespace TQVaultAE.Domain.Entities
 			("WEAPONMELEE_MACE", "tagItemMace"),
 			("WEAPONMELEE_SWORD", "tagItemWarBlade"),//tagSword
 			("WEAPONHUNTING_BOW", "tagItemWarBow"),
-			("WEAPONHUNTING_RANGEDONEHAND", "tagItemShortBow"),
+			("WEAPONHUNTING_RANGEDONEHAND", "x2tagThrownWeapon"),
 			("WEAPONMAGICAL_STAFF", "tagItemBattleStaff"),// xtagLogStaff
 			("WEAPONHUNTING_SPEAR","tagItemLance"),
+			("ITEMEQUIPMENT","xtagArtifactReagentTypeEquipment"),
+			("ONESHOT_DYE","tagDye"),
 		}.ToList().AsReadOnly();
 
 		/// <summary>
 		/// Get the tagName assigned to the <see cref="ItemClass"/>
 		/// </summary>
 		public string ItemClassTagName
+			=> GetClassTagName(this.baseItemInfo.ItemClass);
+
+		/// <summary>
+		/// Get the tagName assigned to the <see cref="ItemClass"/>
+		/// </summary>
+		public static string GetClassTagName(string ItemClass)
 		{
-			get
-			{
-				var iclass = this.baseItemInfo.ItemClass.ToUpperInvariant();
-				var map = ItemClassMap.Where(i => i.ItemClass == iclass).Select(i => i.xTagName);
-				return map.Any() ? map.First() : this.baseItemInfo.ItemClass;
-			}
+			var iclass = ItemClass.ToUpperInvariant();
+			var map = ItemClassMap.Where(i => i.ItemClass == iclass).Select(i => i.xTagName);
+			return map.Any() ? map.First() : ItemClass;
 		}
 
 		/// <summary>
@@ -871,8 +932,6 @@ namespace TQVaultAE.Domain.Entities
 			return newItem;
 		}
 
-
-
 		/// <summary>
 		/// Pops all but one item from the stack.
 		/// </summary>
@@ -898,6 +957,144 @@ namespace TQVaultAE.Domain.Entities
 
 			return newItem;
 		}
+
+		#region GearType related
+
+		/// <summary>
+		/// <see cref="GearType"/> of this Item.
+		/// </summary>
+		/// <remarks>return <see cref="GearType.Undefined"/> if not a piece of gear</remarks>
+		public GearType GearType
+			=> ItemClassGearTypeMap
+				.Where(m => m.ItemClass.Equals(this.ItemClass, StringComparison.OrdinalIgnoreCase))
+				.Select(m => m.Type).FirstOrDefault();
+
+		internal static ReadOnlyCollection<(string ItemClass, GearType Type)> ItemClassGearTypeMap = new[]
+		{
+			("ARMORJEWELRY_AMULET", GearType.Amulet),
+			("ARMORJEWELRY_RING", GearType.Ring),
+			("ITEMARTIFACT", GearType.Artifact),
+			("ARMORPROTECTIVE_LOWERBODY", GearType.Leg),
+			("ARMORPROTECTIVE_FOREARM", GearType.Arm),
+			("ARMORPROTECTIVE_HEAD", GearType.Head),
+			("ARMORPROTECTIVE_UPPERBODY", GearType.Torso),
+			("WEAPONARMOR_SHIELD", GearType.Shield),
+			("WEAPONMELEE_AXE", GearType.Axe),
+			("WEAPONMELEE_MACE", GearType.Mace),
+			("WEAPONMELEE_SWORD", GearType.Sword),
+			("WEAPONHUNTING_BOW", GearType.Bow),
+			("WEAPONHUNTING_RANGEDONEHAND", GearType.Thrown),
+			("WEAPONMAGICAL_STAFF", GearType.Staff),
+			("WEAPONHUNTING_SPEAR",GearType.Spear),
+		}.ToList().AsReadOnly();
+
+		#endregion
+
+		#region IsRelicAllowed
+
+		/// <summary>
+		/// Tells if <paramref name="relicBaseItemId"/> is allowed.
+		/// </summary>
+		/// <param name="relicBaseItemId"></param>
+		/// <returns></returns>
+		public bool IsRelicAllowed(string relicBaseItemId)
+			=> IsRelicAllowed(this, relicBaseItemId);
+
+		/// <summary>
+		/// Tells if <paramref name="relicItem"/> is allowed.
+		/// </summary>
+		/// <param name="relicItem"></param>
+		/// <returns></returns>
+		public bool IsRelicAllowed(Item relicItem)
+			=> IsRelicAllowed(this, relicItem);
+
+		/// <summary>
+		/// Tells if <paramref name="relicItem"/> is allowed on <paramref name="item"/>.
+		/// </summary>
+		/// <param name="item"></param>
+		/// <param name="relicItem"></param>
+		/// <returns></returns>
+		public static bool IsRelicAllowed(Item item, Item relicItem)
+		{
+			// relicItem a relic ?
+			if (!relicItem.IsRelic) throw new ArgumentException("Must be a relic or a charm!", nameof(relicItem));
+
+			var itemGearType = item.GearType;
+
+			if (itemGearType == GearType.Undefined) return false;
+
+			// Is it allowed ?
+			if (!TryGetAllowedGearTypes(relicItem, out var relicAllowedGearTypes))
+				return false;
+
+			return relicAllowedGearTypes.HasFlag(itemGearType);
+		}
+
+		/// <summary>
+		/// Tells if <paramref name="relicBaseItemId"/> is allowed on <paramref name="item"/>.
+		/// </summary>
+		/// <param name="item"></param>
+		/// <param name="relicBaseItemId"></param>
+		/// <returns></returns>
+		public static bool IsRelicAllowed(Item item, string relicBaseItemId)
+		{
+			var itemGearType = item.GearType;
+
+			if (itemGearType == GearType.Undefined) return false;
+
+			// Is it allowed ?
+			if (!TryGetAllowedGearTypes(relicBaseItemId, out var relicAllowedGearTypes))
+				return false;
+
+			return relicAllowedGearTypes.HasFlag(itemGearType);
+		}
+
+		#endregion
+
+		#region TryGetAllowedGearTypes
+
+		/// <summary>
+		/// Try to get <paramref name="relicItem"/> allowed <see cref="GearType"/>
+		/// </summary>
+		/// <param name="relicItem"></param>
+		/// <param name="types"></param>
+		/// <returns></returns>
+		public static bool TryGetAllowedGearTypes(Item relicItem, out GearType types)
+		{
+			types = GearType.Undefined;
+
+			// relicItem a relic ?
+			if (!relicItem.IsRelic) return false;
+
+			return TryGetAllowedGearTypes(relicItem.BaseItemId, out types);
+		}
+
+		/// <summary>
+		/// Try to get allowed <see cref="GearType"/> for that <paramref name="relicBaseItemId"/>
+		/// </summary>
+		/// <param name="relicBaseItemId"></param>
+		/// <param name="types"></param>
+		/// <returns></returns>
+		public static bool TryGetAllowedGearTypes(string relicBaseItemId, out GearType types)
+		{
+			types = GearType.Undefined;
+
+			if (string.IsNullOrWhiteSpace(relicBaseItemId)) return false;
+
+			// Find GearType
+			var map = RelicAndCharmExtension.RelicAndCharmMap
+				.Where(m => m.FileName.Equals(Path.GetFileName(relicBaseItemId), StringComparison.OrdinalIgnoreCase))
+				.FirstOrDefault();
+
+			if (map.Value == RelicAndCharm.Unknown) return false;
+
+			// Found
+			types = map.Types;
+
+			return true;
+		}
+
+		#endregion
 
 	}
 }

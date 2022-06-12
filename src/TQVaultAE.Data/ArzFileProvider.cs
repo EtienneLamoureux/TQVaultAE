@@ -134,17 +134,14 @@ namespace TQVaultAE.Data
 
 			recordId = TQData.NormalizeRecordPath(recordId);
 
-			return file.Cache.GetOrAddAtomic(recordId, k =>
-			{
-				RecordInfo rawRecord;
-				if (file.RecordInfo.ContainsKey(k))
-					rawRecord = file.RecordInfo[k].Value;
-				else
-					// record not found
-					return null;
+			RecordInfo rawRecord;
+			if (file.RecordInfo.ContainsKey(recordId))
+				rawRecord = file.RecordInfo[recordId];
+			else
+				// record not found
+				return null;
 
-				return infoProv.Decompress(file, rawRecord);
-			});
+			return infoProv.Decompress(file, rawRecord);
 		}
 
 		/// <summary>
@@ -161,7 +158,7 @@ namespace TQVaultAE.Data
 		public DBRecordCollection GetRecordNotCached(ArzFile file, string recordId)
 		{
 			recordId = TQData.NormalizeRecordPath(recordId);
-			return infoProv.Decompress(file, file.RecordInfo[recordId].Value);
+			return infoProv.Decompress(file, file.RecordInfo[recordId]);
 		}
 
 		/// <summary>
@@ -235,7 +232,10 @@ namespace TQVaultAE.Data
 
 				infoProv.Decode(recordInfo, reader, 24, file); // 24 is the offset of where all record data begins
 
-				file.RecordInfo.TryAdd(TQData.NormalizeRecordPath(recordInfo.ID), new Lazy<RecordInfo>(() => { return recordInfo; }));
+				file.RecordInfo.Add(
+					TQData.NormalizeRecordPath(recordInfo.ID)
+					, recordInfo
+				);
 
 				// output this record
 				if (outStream != null)

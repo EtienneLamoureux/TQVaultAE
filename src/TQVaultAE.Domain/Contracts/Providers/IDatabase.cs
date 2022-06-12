@@ -83,13 +83,7 @@ namespace TQVaultAE.Domain.Contracts.Providers
 		/// <param name="variable">variable for which we are making a nice string.</param>
 		/// <returns>Formatted string in the format of:  Attribute: value</returns>
 		string VariableToStringNice(Variable variable);
-		/// <summary>
-		/// Return ARC filename from <paramref name="resourceIdOrPrefix"/>
-		/// </summary>
-		/// <param name="resourceIdOrPrefix"></param>
-		/// <returns></returns>
-		string ResolveArcFileName(string resourceIdOrPrefix)
-;       /// <summary>
+       /// <summary>
 		/// Read ARC file
 		/// </summary>
 		/// <param name="arcFileName"></param>

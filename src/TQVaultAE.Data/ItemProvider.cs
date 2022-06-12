@@ -946,6 +946,7 @@ namespace TQVaultAE.Data
 				if (key.Equals("Level"))
 					key = "LevelRequirement";
 
+				// Keep Max value per Requirement (LevelRequirement, Strength, Dexterity, Intelligence)
 				if (requirements.ContainsKey(key))
 				{
 					Variable oldVariable = (Variable)requirements[key];
@@ -1231,6 +1232,8 @@ VariableValue Raw : {valueRaw}
 				// Item Seed
 				res.ItemSeed = string.Format(CultureInfo.CurrentCulture, this.TranslationService.ItemSeed, k.Item.Seed, (k.Item.Seed != 0) ? (k.Item.Seed / (float)Int16.MaxValue) : 0.0f);
 				res.ItemQuest = this.TranslationService.ItemQuest;
+
+				res.ItemThrown = itm.IsThrownWeapon ? this.TranslationService.TranslateXTag("x2tagThrownWeapon") : null;
 
 				#region Prefix translation
 
