@@ -116,6 +116,9 @@ namespace TQVaultAE.GUI
             this.fadeInTimer = new System.Windows.Forms.Timer(this.components);
             this.flowLayoutPanelVaultSelector = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.tableLayoutPanelMain = new TQVaultAE.GUI.Components.BufferedTableLayoutPanel();
+            this.tableLayoutPanelHighlight = new System.Windows.Forms.TableLayoutPanel();
+            this.scalingLabelHighlight = new System.Windows.Forms.LinkLabel();
+            this.scalingTextBoxHighlight = new TQVaultAE.GUI.Components.ScalingTextBox();
             this.flowLayoutPanelRightPanels = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.flowLayoutPanelRightComboBox = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.characterLabel = new TQVaultAE.GUI.Components.ScalingLabel();
@@ -124,12 +127,16 @@ namespace TQVaultAE.GUI
             this.duplicateButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.fileSystemWatcherTransferStash = new System.IO.FileSystemWatcher();
             this.fileSystemWatcherRelicStash = new System.IO.FileSystemWatcher();
+            this.typeAssistant = new TQVaultAE.GUI.Components.TypeAssistant();
             this.saveButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.flowLayoutPanelMenuButtons = new System.Windows.Forms.FlowLayoutPanel();
+            this.forgeButton = new TQVaultAE.GUI.Components.ScalingButton();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.highlightFilters = new TQVaultAE.GUI.Components.HighlightFilters();
             this.itemTextPanel.SuspendLayout();
             this.flowLayoutPanelVaultSelector.SuspendLayout();
             this.tableLayoutPanelMain.SuspendLayout();
+            this.tableLayoutPanelHighlight.SuspendLayout();
             this.flowLayoutPanelRightComboBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherTransferStash)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherRelicStash)).BeginInit();
@@ -145,10 +152,10 @@ namespace TQVaultAE.GUI
             this.exitButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.exitButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.exitButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.exitButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
             this.exitButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.exitButton.Image = ((System.Drawing.Image)(resources.GetObject("exitButton.Image")));
-            this.exitButton.Location = new System.Drawing.Point(718, 3);
+            this.exitButton.Location = new System.Drawing.Point(861, 3);
             this.exitButton.Name = "exitButton";
             this.exitButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("exitButton.OverBitmap")));
             this.exitButton.Size = new System.Drawing.Size(137, 30);
@@ -195,7 +202,7 @@ namespace TQVaultAE.GUI
             // vaultLabel
             // 
             this.vaultLabel.BackColor = System.Drawing.Color.Transparent;
-            this.vaultLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.vaultLabel.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
             this.vaultLabel.ForeColor = System.Drawing.Color.White;
             this.vaultLabel.Location = new System.Drawing.Point(3, 0);
             this.vaultLabel.Name = "vaultLabel";
@@ -212,7 +219,7 @@ namespace TQVaultAE.GUI
             this.configureButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.configureButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.configureButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.configureButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.configureButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
             this.configureButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.configureButton.Image = ((System.Drawing.Image)(resources.GetObject("configureButton.Image")));
             this.configureButton.Location = new System.Drawing.Point(3, 3);
@@ -229,15 +236,14 @@ namespace TQVaultAE.GUI
             // 
             // customMapText
             // 
-            this.customMapText.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.customMapText.BackColor = System.Drawing.Color.Gold;
             this.customMapText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.customMapText.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
+            this.customMapText.Dock = System.Windows.Forms.DockStyle.Right;
+            this.customMapText.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
             this.customMapText.ForeColor = System.Drawing.Color.Black;
-            this.customMapText.Location = new System.Drawing.Point(216, 96);
-            this.customMapText.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.customMapText.Location = new System.Drawing.Point(216, 84);
             this.customMapText.Name = "customMapText";
-            this.customMapText.Size = new System.Drawing.Size(380, 30);
+            this.customMapText.Size = new System.Drawing.Size(380, 23);
             this.customMapText.TabIndex = 11;
             this.customMapText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -249,7 +255,7 @@ namespace TQVaultAE.GUI
             this.showVaulButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.showVaulButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.showVaulButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.showVaulButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.showVaulButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
             this.showVaulButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.showVaulButton.Image = ((System.Drawing.Image)(resources.GetObject("showVaulButton.Image")));
             this.showVaulButton.Location = new System.Drawing.Point(146, 3);
@@ -305,7 +311,7 @@ namespace TQVaultAE.GUI
             this.searchButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.searchButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.searchButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.searchButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.searchButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
             this.searchButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.searchButton.Image = ((System.Drawing.Image)(resources.GetObject("searchButton.Image")));
             this.searchButton.Location = new System.Drawing.Point(289, 3);
@@ -351,30 +357,74 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanelMain.AutoSize = true;
-            this.tableLayoutPanelMain.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanelMain.BackColor = System.Drawing.Color.Transparent;
             this.tableLayoutPanelMain.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
-            this.tableLayoutPanelMain.ColumnCount = 3;
+            this.tableLayoutPanelMain.ColumnCount = 4;
             this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 5F));
             this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 14F));
+            this.tableLayoutPanelMain.Controls.Add(this.tableLayoutPanelHighlight, 0, 3);
             this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelRightPanels, 2, 1);
             this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelVaultSelector, 0, 0);
             this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelRightComboBox, 2, 0);
             this.tableLayoutPanelMain.Controls.Add(this.customMapText, 0, 2);
-            this.tableLayoutPanelMain.Controls.Add(this.itemTextPanel, 0, 3);
+            this.tableLayoutPanelMain.Controls.Add(this.itemTextPanel, 0, 4);
             this.tableLayoutPanelMain.Location = new System.Drawing.Point(15, 60);
             this.tableLayoutPanelMain.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanelMain.Name = "tableLayoutPanelMain";
-            this.tableLayoutPanelMain.RowCount = 4;
+            this.tableLayoutPanelMain.RowCount = 6;
+            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanelMain.Size = new System.Drawing.Size(1320, 178);
+            this.tableLayoutPanelMain.Size = new System.Drawing.Size(1320, 199);
             this.tableLayoutPanelMain.TabIndex = 21;
+            // 
+            // tableLayoutPanelHighlight
+            // 
+            this.tableLayoutPanelHighlight.AutoSize = true;
+            this.tableLayoutPanelHighlight.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanelHighlight.ColumnCount = 2;
+            this.tableLayoutPanelHighlight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelHighlight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanelHighlight.Controls.Add(this.scalingLabelHighlight, 0, 0);
+            this.tableLayoutPanelHighlight.Controls.Add(this.scalingTextBoxHighlight, 1, 0);
+            this.tableLayoutPanelHighlight.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanelHighlight.Location = new System.Drawing.Point(1, 108);
+            this.tableLayoutPanelHighlight.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanelHighlight.Name = "tableLayoutPanelHighlight";
+            this.tableLayoutPanelHighlight.RowCount = 1;
+            this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelHighlight.Size = new System.Drawing.Size(598, 23);
+            this.tableLayoutPanelHighlight.TabIndex = 24;
+            // 
+            // scalingLabelHighlight
+            // 
+            this.scalingLabelHighlight.AutoSize = true;
+            this.scalingLabelHighlight.BackColor = System.Drawing.Color.Transparent;
+            this.scalingLabelHighlight.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.scalingLabelHighlight.LinkColor = System.Drawing.Color.Gold;
+            this.scalingLabelHighlight.Location = new System.Drawing.Point(3, 0);
+            this.scalingLabelHighlight.Name = "scalingLabelHighlight";
+            this.scalingLabelHighlight.Size = new System.Drawing.Size(135, 15);
+            this.scalingLabelHighlight.TabIndex = 25;
+            this.scalingLabelHighlight.TabStop = true;
+            this.scalingLabelHighlight.Text = "Highlight items having :";
+            this.scalingLabelHighlight.VisitedLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(255)))), ((int)(((byte)(64)))));
+            this.scalingLabelHighlight.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.scalingLabelHighlight_LinkClicked);
+            // 
+            // scalingTextBoxHighlight
+            // 
+            this.scalingTextBoxHighlight.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.scalingTextBoxHighlight.Location = new System.Drawing.Point(141, 0);
+            this.scalingTextBoxHighlight.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
+            this.scalingTextBoxHighlight.Name = "scalingTextBoxHighlight";
+            this.scalingTextBoxHighlight.Size = new System.Drawing.Size(262, 23);
+            this.scalingTextBoxHighlight.TabIndex = 2;
+            this.scalingTextBoxHighlight.TextChanged += new System.EventHandler(this.scalingTextBoxHighlight_TextChanged);
             // 
             // flowLayoutPanelRightPanels
             // 
@@ -387,7 +437,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelRightPanels.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanelRightPanels.MinimumSize = new System.Drawing.Size(200, 100);
             this.flowLayoutPanelRightPanels.Name = "flowLayoutPanelRightPanels";
-            this.tableLayoutPanelMain.SetRowSpan(this.flowLayoutPanelRightPanels, 3);
+            this.tableLayoutPanelMain.SetRowSpan(this.flowLayoutPanelRightPanels, 4);
             this.flowLayoutPanelRightPanels.Size = new System.Drawing.Size(200, 100);
             this.flowLayoutPanelRightPanels.TabIndex = 22;
             // 
@@ -408,7 +458,7 @@ namespace TQVaultAE.GUI
             // characterLabel
             // 
             this.characterLabel.BackColor = System.Drawing.Color.Transparent;
-            this.characterLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.characterLabel.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
             this.characterLabel.ForeColor = System.Drawing.Color.White;
             this.characterLabel.Location = new System.Drawing.Point(3, 0);
             this.characterLabel.Name = "characterLabel";
@@ -450,7 +500,7 @@ namespace TQVaultAE.GUI
             this.duplicateButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.duplicateButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.duplicateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.duplicateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.duplicateButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
             this.duplicateButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.duplicateButton.Image = ((System.Drawing.Image)(resources.GetObject("duplicateButton.Image")));
             this.duplicateButton.Location = new System.Drawing.Point(432, 3);
@@ -479,6 +529,10 @@ namespace TQVaultAE.GUI
             this.fileSystemWatcherRelicStash.SynchronizingObject = this;
             this.fileSystemWatcherRelicStash.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherRelicStash_Changed);
             // 
+            // typeAssistant
+            // 
+            this.typeAssistant.Idled += new System.EventHandler(this.typeAssistant_Idled);
+            // 
             // saveButton
             // 
             this.saveButton.BackColor = System.Drawing.Color.Transparent;
@@ -488,10 +542,10 @@ namespace TQVaultAE.GUI
             this.saveButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.saveButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.saveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.saveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.saveButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
             this.saveButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.saveButton.Image = ((System.Drawing.Image)(resources.GetObject("saveButton.Image")));
-            this.saveButton.Location = new System.Drawing.Point(575, 3);
+            this.saveButton.Location = new System.Drawing.Point(718, 3);
             this.saveButton.Name = "saveButton";
             this.saveButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("saveButton.OverBitmap")));
             this.saveButton.Size = new System.Drawing.Size(137, 30);
@@ -512,12 +566,52 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelMenuButtons.Controls.Add(this.showVaulButton);
             this.flowLayoutPanelMenuButtons.Controls.Add(this.searchButton);
             this.flowLayoutPanelMenuButtons.Controls.Add(this.duplicateButton);
+            this.flowLayoutPanelMenuButtons.Controls.Add(this.forgeButton);
             this.flowLayoutPanelMenuButtons.Controls.Add(this.saveButton);
             this.flowLayoutPanelMenuButtons.Controls.Add(this.exitButton);
             this.flowLayoutPanelMenuButtons.Location = new System.Drawing.Point(15, 18);
             this.flowLayoutPanelMenuButtons.Name = "flowLayoutPanelMenuButtons";
-            this.flowLayoutPanelMenuButtons.Size = new System.Drawing.Size(858, 36);
+            this.flowLayoutPanelMenuButtons.Size = new System.Drawing.Size(1001, 36);
             this.flowLayoutPanelMenuButtons.TabIndex = 24;
+            // 
+            // forgeButton
+            // 
+            this.forgeButton.BackColor = System.Drawing.Color.Transparent;
+            this.forgeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.forgeButton.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("forgeButton.DownBitmap")));
+            this.forgeButton.FlatAppearance.BorderSize = 0;
+            this.forgeButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.forgeButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.forgeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.forgeButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
+            this.forgeButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.forgeButton.Image = ((System.Drawing.Image)(resources.GetObject("forgeButton.Image")));
+            this.forgeButton.Location = new System.Drawing.Point(575, 3);
+            this.forgeButton.Name = "forgeButton";
+            this.forgeButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("forgeButton.OverBitmap")));
+            this.forgeButton.Size = new System.Drawing.Size(137, 30);
+            this.forgeButton.SizeToGraphic = false;
+            this.forgeButton.TabIndex = 24;
+            this.forgeButton.Text = "Forge";
+            this.forgeButton.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("forgeButton.UpBitmap")));
+            this.forgeButton.UseCustomGraphic = true;
+            this.forgeButton.UseVisualStyleBackColor = false;
+            this.forgeButton.Click += new System.EventHandler(this.scalingButtonForge_Click);
+            // 
+            // highlightFilters
+            // 
+            this.highlightFilters.AutoSize = true;
+            this.highlightFilters.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.highlightFilters.BackColor = System.Drawing.Color.Transparent;
+            this.highlightFilters.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("highlightFilters.BackgroundImage")));
+            this.highlightFilters.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.highlightFilters.Location = new System.Drawing.Point(205, 274);
+            this.highlightFilters.Margin = new System.Windows.Forms.Padding(0);
+            this.highlightFilters.Name = "highlightFilters";
+            this.highlightFilters.Padding = new System.Windows.Forms.Padding(10);
+            this.highlightFilters.Size = new System.Drawing.Size(500, 251);
+            this.highlightFilters.TabIndex = 25;
+            this.highlightFilters.Visible = false;
             // 
             // MainForm
             // 
@@ -527,6 +621,7 @@ namespace TQVaultAE.GUI
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1350, 910);
             this.ConstrainToDesignRatio = true;
+            this.Controls.Add(this.highlightFilters);
             this.Controls.Add(this.flowLayoutPanelMenuButtons);
             this.Controls.Add(this.tableLayoutPanelMain);
             this.Controls.Add(this.aboutButton);
@@ -554,10 +649,13 @@ namespace TQVaultAE.GUI
             this.Controls.SetChildIndex(this.aboutButton, 0);
             this.Controls.SetChildIndex(this.tableLayoutPanelMain, 0);
             this.Controls.SetChildIndex(this.flowLayoutPanelMenuButtons, 0);
+            this.Controls.SetChildIndex(this.highlightFilters, 0);
             this.itemTextPanel.ResumeLayout(false);
             this.flowLayoutPanelVaultSelector.ResumeLayout(false);
             this.tableLayoutPanelMain.ResumeLayout(false);
             this.tableLayoutPanelMain.PerformLayout();
+            this.tableLayoutPanelHighlight.ResumeLayout(false);
+            this.tableLayoutPanelHighlight.PerformLayout();
             this.flowLayoutPanelRightComboBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherTransferStash)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherRelicStash)).EndInit();
@@ -570,7 +668,6 @@ namespace TQVaultAE.GUI
 		#endregion
 
 		private BufferedFlowLayoutPanel flowLayoutPanelVaultSelector;
-		private BufferedTableLayoutPanel tableLayoutPanelMain;
 		private BufferedFlowLayoutPanel flowLayoutPanelRightComboBox;
 		private ScalingLabel characterLabel;
 		private ScalingComboBox characterComboBox;
@@ -583,5 +680,12 @@ namespace TQVaultAE.GUI
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelMenuButtons;
 		private System.Windows.Forms.ToolTip toolTip;
 		internal ScalingLabel NotificationText;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanelHighlight;
+		private ScalingTextBox scalingTextBoxHighlight;
+		private TypeAssistant typeAssistant;
+		private System.Windows.Forms.LinkLabel scalingLabelHighlight;
+		private ScalingButton forgeButton;
+		internal BufferedTableLayoutPanel tableLayoutPanelMain;
+		private HighlightFilters highlightFilters;
 	}
 }

@@ -1077,4 +1077,7 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   <data name="ItemEmbers" xml:space="preserve">
     <value>Przedmiot z Eternal Embers</value>
   </data>
+  <data name="CEMoney" xml:space="preserve">
+    <value>Pieniądze</value>
+  </data>
 </root>

@@ -11,6 +11,7 @@ using TQVaultAE.GUI.Tooltip;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Helpers;
+using System.Linq;
 
 namespace TQVaultAE.GUI.Components
 {
@@ -29,6 +30,7 @@ namespace TQVaultAE.GUI.Components
 		protected readonly IServiceProvider ServiceProvider;
 		protected readonly IFontService FontService;
 		protected readonly IUIService UIService;
+		private readonly SessionContext userContext;
 		internal SackCollection Sack;
 
 		private BagButtonIconInfo _DefaultIconInfo = new BagButtonIconInfo()
@@ -91,6 +93,12 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		private GetToolTip getToolTip;
 
+		/// <summary>
+		/// Gets or sets the border for item highlight.
+		/// </summary>
+		public Pen HighlightSearchItemBorder { get; protected set; }
+
+
 		public BagButtonBase()
 		{
 			InitializeComponent();
@@ -122,9 +130,15 @@ namespace TQVaultAE.GUI.Components
 			this.ServiceProvider = serviceProvider;
 			this.FontService = this.ServiceProvider.GetService<IFontService>();
 			this.UIService = this.ServiceProvider.GetService<IUIService>();
+			this.userContext = this.ServiceProvider.GetService<SessionContext>();
 
 			this.getToolTip = getToolTip;
 			this.ButtonNumber = bagNumber;
+
+			this.HighlightSearchItemBorder = new Pen(this.userContext.HighlightSearchItemBorderColor)
+			{
+				Width = 4,
+			};
 
 			// Da_FileServer: Some small paint optimizations.
 			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
@@ -262,6 +276,19 @@ namespace TQVaultAE.GUI.Components
 		}
 
 		/// <summary>
+		/// Draws the background of the items in the panel during a Paint call.
+		/// </summary>
+		/// <param name="e">PaintEventArgs data</param>
+		protected virtual void PaintHighlightAreaUnderButton(PaintEventArgs e)
+		{
+			// Highlight search
+			using (SolidBrush brush = new SolidBrush(Color.FromArgb(127, this.userContext.HighlightSearchItemColor)))
+			{
+				e.Graphics.FillRectangle(brush, 0, 0, this.Width, this.Height);
+			}
+		}
+
+		/// <summary>
 		/// Paint callback
 		/// </summary>
 		/// <param name="sender">sender object</param>
@@ -285,7 +312,16 @@ namespace TQVaultAE.GUI.Components
 					bitmap = this.OverBitmap;
 			}
 
-			// Draw the background graphic.
+			bool highlight = false;
+			if (this is not AutoSortButton && this.Sack is not null)
+			{
+				highlight = this.userContext.HighlightedItems.Count > 0
+					&& this.userContext.HighlightedItems.Intersect(this.Sack.ToList()).Any();
+			}
+
+			if (highlight) PaintHighlightAreaUnderButton(e);
+
+			// Draw the icon
 			Image bmp;
 			if (this.Parent is VaultPanel vp && vp.Vault is not null)
 				bmp = bitmap.ResizeImage(this.Width, this.Height, maintainAspectRatio: true);
@@ -294,30 +330,41 @@ namespace TQVaultAE.GUI.Components
 
 			e.Graphics.DrawImage(bmp, 0, 0, this.Width, this.Height);
 
-			if (this.CurrentIconInfo.DisplayMode != BagButtonDisplayMode.Default // Vault Only
-				&& !this.CurrentIconInfo.DisplayMode.HasFlag(BagButtonDisplayMode.Number))// No Number
-				return;
-
-			// Display the text overlay if we have one.
-			if (!string.IsNullOrEmpty(this.ButtonText))// ButtonText is a number for Vault
+			if (// If it's not a vault with a number restriction
+				!(this.CurrentIconInfo.DisplayMode != BagButtonDisplayMode.Default // Vault Only
+					&& !this.CurrentIconInfo.DisplayMode.HasFlag(BagButtonDisplayMode.Number)// No Number
+				)
+			)
 			{
-				Font font = this.GetScaledButtonTextFont(e.Graphics, FontService.GetFontLight(20.0F * UIService.Scale, GraphicsUnit.Pixel));
-
-				if (font != null)
+				// Display the text overlay if we have one.
+				if (!string.IsNullOrEmpty(this.ButtonText))// ButtonText is a number for Vault
 				{
-					// If we are mousing over then display the bolded font.
-					if (this.IsOver)
+					Font font = this.GetScaledButtonTextFont(e.Graphics, FontService.GetFontLight(20.0F * UIService.Scale, GraphicsUnit.Pixel));
+
+					if (font != null)
 					{
-						font = new Font(font, FontStyle.Bold);
+						// If we are mousing over then display the bolded font.
+						if (this.IsOver)
+						{
+							font = new Font(font, FontStyle.Bold);
+						}
+
+						StringFormat textFormat = new StringFormat(StringFormatFlags.NoClip);
+						textFormat.LineAlignment = StringAlignment.Center;
+						textFormat.Alignment = StringAlignment.Center;
+
+						e.Graphics.DrawString(this.ButtonText, font, new SolidBrush(Color.White), new RectangleF(0.0F, 0.0F, (float)this.Width, (float)this.Height), textFormat);
 					}
-
-					StringFormat textFormat = new StringFormat(StringFormatFlags.NoClip);
-					textFormat.LineAlignment = StringAlignment.Center;
-					textFormat.Alignment = StringAlignment.Center;
-
-					e.Graphics.DrawString(this.ButtonText, font, new SolidBrush(Color.White), new RectangleF(0.0F, 0.0F, (float)this.Width, (float)this.Height), textFormat);
 				}
 			}
+
+			if (highlight) PaintHighlightAreaOnTopOfButton(e);
+		}
+
+		private void PaintHighlightAreaOnTopOfButton(PaintEventArgs e)
+		{
+			// Add highlight borders
+			e.Graphics.DrawRectangle(this.HighlightSearchItemBorder, 0, 0, this.Width, this.Height);
 		}
 
 		/// <summary>

@@ -71,6 +71,11 @@ namespace TQVaultAE.GUI.Components
 		private EquipmentPanel equipmentPanel;
 
 		/// <summary>
+		/// Gets the equipment panel instance
+		/// </summary>
+		internal EquipmentPanel EquipmentPanel => equipmentPanel;
+
+		/// <summary>
 		/// Background image for the equipment panel
 		/// </summary>
 		private Bitmap equipmentBackground;
@@ -208,8 +213,10 @@ namespace TQVaultAE.GUI.Components
 
 			this.toolStripMenuItemEnableTooltip.Text = Resources.PlayerPanelMenuEnableTooltip;
 			this.toolStripMenuItemDisableTooltip.Text = Resources.PlayerPanelMenuDisableTooltip;
+			
 			foreach (var bag in this.BagButtons)
 				bag.ContextMenuStrip = this.buttonContextMenuStrip;
+
 		}
 
 		/// <summary>
@@ -701,6 +708,7 @@ namespace TQVaultAE.GUI.Components
 			{
 				button.Visible = buttonOffset < 4;
 				button.IsOn = buttonOffset == this.currentBag;
+
 				++buttonOffset;
 			}
 
@@ -762,6 +770,19 @@ namespace TQVaultAE.GUI.Components
 						this.SackPanel.Sack = this.relicVaultStash.Sack;
 					else
 						this.SackPanel.Sack = null;
+				}
+			}
+
+			// Assign sacks to button
+			for (int i = 0; i < this.BagButtons.Count; i++)
+			{
+				var but = this.BagButtons[i];
+				switch (i)
+				{
+					case BAGID_EQUIPMENTPANEL: but.Sack = this.Player?.EquipmentSack; break;
+					case BAGID_PLAYERSTASH: but.Sack = this.stash?.Sack; break;
+					case BAGID_RELICVAULTSTASH: but.Sack = this.relicVaultStash?.Sack; break;
+					case BAGID_TRANSFERSTASH: but.Sack = this.transferStash?.Sack; break;
 				}
 			}
 		}

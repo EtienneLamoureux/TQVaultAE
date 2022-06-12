@@ -13,6 +13,7 @@ namespace TQVaultAE.GUI
 {
 	public partial class MainForm
 	{
+
 		/// <summary>
 		/// Creates the form's internal panels
 		/// </summary>
@@ -47,6 +48,9 @@ namespace TQVaultAE.GUI
 			// Now we always create the stash panel since everyone can have equipment
 			this.CreateStashPanel();
 			this.stashPanel.CurrentBag = 0; // set to default to the equipment panel
+
+			// Add the Forge
+			this.CreateForgePanel();
 		}
 
 
