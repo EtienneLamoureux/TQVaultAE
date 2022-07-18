@@ -24,3 +24,14 @@ You can create a "requirement range" via Min/Max checkboxes.
 _**Note:** Leaving a value to 0 means "ignore"._
 
 ![Vault and Player](highlight_ui_extended.png)
+
+## Regular expression
+By using '/' as first char everything else is a standard C# regular expression
+
+Here's few examples
+```
+"/chance of .+%.+bleeding damage" : All chance of + percent bleeding damage
+"/\+.+%.+(life|mana) leech" : Any + percentage of life or mana leech
+"/\+.+%.+(cold|fire) damage" : Any + percentage of cold or fire leech
+```
+![Regex](highlight_ui_regex.png)
