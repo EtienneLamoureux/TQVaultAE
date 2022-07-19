@@ -1072,11 +1072,47 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Prefix/Suffix can&apos;t have a level requirement greater than base item!.
+        /// </summary>
+        public static string ForgeCantUsePrefixSuffixHavingGreaterReqLevelThanBaseItem {
+            get {
+                return ResourceManager.GetString("ForgeCantUsePrefixSuffixHavingGreaterReqLevelThanBaseItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prefix/Suffix must have the same base than Base item!.
+        /// </summary>
+        public static string ForgeCantUsePrefixSuffixOfAnotherBaseItem {
+            get {
+                return ResourceManager.GetString("ForgeCantUsePrefixSuffixOfAnotherBaseItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Prefix/Suffix must be of same gear type than Base item!.
         /// </summary>
         public static string ForgeCantUsePrefixSuffixOfAnotherGearType {
             get {
                 return ResourceManager.GetString("ForgeCantUsePrefixSuffixOfAnotherGearType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game Mode.
+        /// </summary>
+        public static string ForgeGameMode {
+            get {
+                return ResourceManager.GetString("ForgeGameMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Constrain the Forge to game rules.
+        /// </summary>
+        public static string ForgeGameModeTT {
+            get {
+                return ResourceManager.GetString("ForgeGameModeTT", resourceCulture);
             }
         }
         
@@ -1095,6 +1131,15 @@ namespace TQVaultAE.Presentation {
         public static string ForgeGodModeTT {
             get {
                 return ResourceManager.GetString("ForgeGodModeTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Materials are destroyed in the process.
+        /// </summary>
+        public static string ForgeHardcoreTT {
+            get {
+                return ResourceManager.GetString("ForgeHardcoreTT", resourceCulture);
             }
         }
         
@@ -1243,7 +1288,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Constrain the Forge to game rules.
+        ///   Looks up a localized string similar to Constrain the Forge to game rules with a twist.
         /// </summary>
         public static string ForgeStrictModeTT {
             get {
@@ -1458,6 +1503,15 @@ namespace TQVaultAE.Presentation {
         public static string GlobalExpandAll {
             get {
                 return ResourceManager.GetString("GlobalExpandAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hardcore.
+        /// </summary>
+        public static string GlobalHardcore {
+            get {
+                return ResourceManager.GetString("GlobalHardcore", resourceCulture);
             }
         }
         

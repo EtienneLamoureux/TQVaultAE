@@ -118,16 +118,16 @@ namespace TQVaultAE.Domain.Entities
 
 						int? Lvl = null, Str = null, Int = null, Dex = null;
 
-						if (fnr.RequirementVariables.TryGetValue("LevelRequirement", out var varLvl))
+						if (fnr.RequirementVariables.TryGetValue(Variable.KEY_LEVELREQ, out var varLvl))
 							Lvl = varLvl.GetInt32(0);
 
-						if (fnr.RequirementVariables.TryGetValue("Strength", out var varStr))
+						if (fnr.RequirementVariables.TryGetValue(Variable.KEY_STRENGTH, out var varStr))
 							Str = varStr.GetInt32(0);
 
-						if (fnr.RequirementVariables.TryGetValue("Dexterity", out var varDex))
+						if (fnr.RequirementVariables.TryGetValue(Variable.KEY_DEXTERITY, out var varDex))
 							Dex = varDex.GetInt32(0);
 
-						if (fnr.RequirementVariables.TryGetValue("Intelligence", out var varIntel))
+						if (fnr.RequirementVariables.TryGetValue(Variable.KEY_INTELLIGENCE, out var varIntel))
 							Int = varIntel.GetInt32(0);
 
 						return new

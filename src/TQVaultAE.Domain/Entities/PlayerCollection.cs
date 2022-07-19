@@ -394,10 +394,6 @@ namespace TQVaultAE.Domain.Entities
 				PlayerInfo.SkillBonus.ManaModifier += skillStatBonusVariables["CHARACTERMANAMODIFIER"];
 		}
 
-		const string Key_LevelRequirement = "LevelRequirement";
-		const string Key_Strength = "Strength";
-		const string Key_Dexterity = "Dexterity";
-		const string Key_Intelligence = "Intelligence";
 
 		public bool IsPlayerMeetRequierements(SortedList<string, Variable> requirementVariables)
 		{
@@ -405,23 +401,23 @@ namespace TQVaultAE.Domain.Entities
 
 			// "LevelRequirement"
 			int LevelRequirement = 0;
-			if (requirementVariables.ContainsKey(Key_LevelRequirement))
-				LevelRequirement = requirementVariables[Key_LevelRequirement].GetInt32();
+			if (requirementVariables.ContainsKey(Variable.KEY_LEVELREQ))
+				LevelRequirement = requirementVariables[Variable.KEY_LEVELREQ].GetInt32();
 
 			// "Strength"
 			int Strength = 0;
-			if (requirementVariables.ContainsKey(Key_Strength))
-				Strength = requirementVariables[Key_Strength].GetInt32();
+			if (requirementVariables.ContainsKey(Variable.KEY_STRENGTH))
+				Strength = requirementVariables[Variable.KEY_STRENGTH].GetInt32();
 
 			// Dexterity
 			int Dexterity = 0;
-			if (requirementVariables.ContainsKey(Key_Dexterity))
-				Dexterity = requirementVariables[Key_Dexterity].GetInt32();
+			if (requirementVariables.ContainsKey(Variable.KEY_DEXTERITY))
+				Dexterity = requirementVariables[Variable.KEY_DEXTERITY].GetInt32();
 
 			// Intelligence
 			int Intelligence = 0;
-			if (requirementVariables.ContainsKey(Key_Intelligence))
-				Intelligence = requirementVariables[Key_Intelligence].GetInt32();
+			if (requirementVariables.ContainsKey(Variable.KEY_INTELLIGENCE))
+				Intelligence = requirementVariables[Variable.KEY_INTELLIGENCE].GetInt32();
 
 			return
 				LevelRequirement <= this.PlayerInfo.CurrentLevel

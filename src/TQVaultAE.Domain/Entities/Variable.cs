@@ -15,6 +15,15 @@ namespace TQVaultAE.Domain.Entities
 	/// </summary>
 	public class Variable
 	{
+		#region  Variable Key Const
+
+		public const string KEY_LEVELREQ = "LevelRequirement";
+		public const string KEY_STRENGTH = "Strength";
+		public const string KEY_DEXTERITY = "Dexterity";
+		public const string KEY_INTELLIGENCE = "Intelligence";
+
+		#endregion
+
 		/// <summary>
 		/// the variable values.
 		/// </summary>
