@@ -2987,5 +2987,153 @@ namespace TQVaultAE.Domain.Entities
 		[GearType(GearType.AllWeapons)]
 		ZEUSTHUNDERBOLT_ACT1_03,
 
+		#region Eternal Embers
+
+		/// <summary>
+		/// Legendary Aspect of Chi
+		/// </summary>
+		/// <remarks>
+		/// Fragmented essence of the five aspects 
+		/// of Chi. 
+		/// 
+		/// Can enchant torso armor or shields.
+		/// </remarks>
+		[Description(@"RECORDS\XPACK4\ITEM\CHARMS\03_X4_ASPECTSOFCHI.DBR")]
+		[GearType(GearType.Torso | GearType.Shield)]
+		ASPECTSOFCHI_X4_03,
+
+		/// <summary>
+		/// Legendary Dragon Tendon
+		/// </summary>
+		/// <remarks>
+		/// Tendons of the Dragonkin, spawn of Sihai 
+		/// Longwang, ruler of the seas. 
+		/// 
+		/// Can enchant bows.
+		/// </remarks>
+		[Description(@"RECORDS\XPACK4\ITEM\CHARMS\03_X4_DRAGONTENDON.DBR")]
+		[GearType(GearType.Bow)]
+		DRAGONTENDON_X4_03,
+
+		/// <summary>
+		/// Essence of Chaos
+		/// </summary>
+		/// <remarks>
+		/// A shard of a mystical artefact capable 
+		/// of wielding the powers of Chaos itself. 
+		/// Can enchant head armor only.
+		/// </remarks>
+		[Description(@"RECORDS\XPACK4\ITEM\RELICS\03_X4_ESSENCEOFCHAOS.DBR")]
+		[GearType(GearType.Head)]
+		ESSENCEOFCHAOS_X4_03,
+
+		/// <summary>
+		/// Incarnation of Embers
+		/// </summary>
+		/// <remarks>
+		/// A shard of the Suns' celestial forms, 
+		/// scattered throughout the land. 
+		/// 
+		/// Can enchant rings and amulets.
+		/// </remarks>
+		[Description(@"RECORDS\XPACK4\ITEM\RELICS\03_X4_INCARNATIONOFEMBER.DBR")]
+		[GearType(GearType.Jewellery)]
+		INCARNATIONOFEMBER_X4_03,
+
+		/// <summary>
+		/// Incarnation of Hou Yi's Determination
+		/// </summary>
+		/// <remarks>
+		/// A fragment of the archery god's own bow. 
+		/// 
+		/// 
+		/// Can enchant piercing weapons.
+		/// </remarks>
+		[Description(@"RECORDS\XPACK4\ITEM\RELICS\03_X4_INCARNATIONOFHOUYISDETERMINATION.DBR")]
+		[GearType(GearType.Bow | GearType.Spear | GearType.Sword | GearType.Thrown)]
+		INCARNATIONOFHOUYISDETERMINATION_X4_03,
+
+		/// <summary>
+		/// Incarnation of Serket's Touch
+		/// </summary>
+		/// <remarks>
+		/// A shard of the original healing vial 
+		/// used by Serket to treat venomous 
+		/// injuries. 
+		/// 
+		/// Can enchant any ring.
+		/// </remarks>
+		[Description(@"RECORDS\XPACK4\ITEM\RELICS\03_X4_INCARNATIONOFSERKETSTOUCH.DBR")]
+		[GearType(GearType.Ring)]
+		INCARNATIONOFSERKETSTOUCH_X4_03,
+
+		/// <summary>
+		/// Incarnation of Sobek's Sanctuary
+		/// </summary>
+		/// <remarks>
+		/// Sobek, the Egyptian god of military 
+		/// prowess kneels for no man. 
+		/// 
+		/// Can enchant any armor.
+		/// </remarks>
+		[Description(@"RECORDS\XPACK4\ITEM\RELICS\03_X4_INCARNATIONOFSOBEKSANCTUARY.DBR")]
+		[GearType(GearType.AllArmor)]
+		INCARNATIONOFSOBEKSANCTUARY_X4_03,
+
+		/// <summary>
+		/// Incarnation of the Taotie's Gluttony
+		/// </summary>
+		/// <remarks>
+		/// One of the Four Perils, the Taotie's 
+		/// insatiable hunger is unmatched, 
+		/// consuming everything in its path. 
+		/// 
+		/// Can enchant all weapons.
+		/// </remarks>
+		[Description(@"RECORDS\XPACK4\ITEM\RELICS\03_X4_INCARNATIONOFTHETAOTIESGLUTTONY.DBR")]
+		[GearType(GearType.AllWeapons)]
+		INCARNATIONOFTHETAOTIESGLUTTONY_X4_03,
+
+		/// <summary>
+		/// Legendary Sunworshipper Ichor
+		/// </summary>
+		/// <remarks>
+		/// Corrupted blood of the followers of 
+		/// Akhenaten, the sun worshiping heretic. 
+		/// 
+		/// Can enchant all weapons.
+		/// </remarks>
+		[Description(@"RECORDS\XPACK4\ITEM\CHARMS\03_X4_SUNWORSHIPPERICHOR.DBR")]
+		[GearType(GearType.AllWeapons)]
+		SUNWORSHIPPERICHOR_X4_03,
+
+		/// <summary>
+		/// Legendary Terracotta Plating
+		/// </summary>
+		/// <remarks>
+		/// Chips of the the animated terracotta 
+		/// soldiers' lamellar armor. 
+		/// 
+		/// Can enchant all armor.
+		/// </remarks>
+		[Description(@"RECORDS\XPACK4\ITEM\CHARMS\03_X4_TERRACOTTAPLATING.DBR")]
+		[GearType(GearType.AllArmor)]
+		TERRACOTTAPLATING_X4_03,
+
+		/// <summary>
+		/// Legendary Yaoguai Horn
+		/// </summary>
+		/// <remarks>
+		/// Horns of adult Yaoguai, a soul devouring 
+		/// demon, infused with the Chi of their 
+		/// victims. 
+		/// 
+		/// Can enchant all weapons.
+		/// </remarks>
+		[Description(@"RECORDS\XPACK4\ITEM\CHARMS\03_X4_YAOGUAIHORN.DBR")]
+		[GearType(GearType.AllWeapons)]
+		YAOGUAIHORN_X4_03,
+
+		#endregion
 	}
 }
