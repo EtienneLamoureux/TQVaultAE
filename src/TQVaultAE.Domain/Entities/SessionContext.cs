@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Helpers;
+using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.Domain.Entities
 {
@@ -143,10 +144,12 @@ namespace TQVaultAE.Domain.Entities
 
 				if (hasSearch)
 				{
+					var (isRegex, _, regex, regexIsValid) = ToFriendlyNameResult.FulltextIsRegEx(this.HighlightSearch);
+
 					availableItems = availableItems.Where(i =>
-						   i.FriendlyNames.FullText.IndexOf(
-							   this.HighlightSearch, StringComparison.OrdinalIgnoreCase
-						   ) != -1
+						isRegex && regexIsValid
+							? i.FriendlyNames.FulltextIsMatchRegex(regex)
+							: i.FriendlyNames.FulltextIsMatchIndexOf(this.HighlightSearch)
 					);
 				}
 
@@ -224,13 +227,33 @@ namespace TQVaultAE.Domain.Entities
 						}
 					}
 
-					if (this.HighlightFilter.ClassItem.Count > 0)
+					if (this.HighlightFilter.ClassItem.Any())
 					{
 						availableItems = availableItems.Where(i =>
 							this.HighlightFilter.ClassItem
 							.Any(ci => ci.Equals(i.Item.ItemClass, StringComparison.OrdinalIgnoreCase))
 						);
 					}
+
+					if (this.HighlightFilter.Rarity.Any())
+					{
+						availableItems = availableItems.Where(i =>
+							this.HighlightFilter.Rarity.Contains(i.Item.GearLevel)
+						);
+					}
+
+					if (this.HighlightFilter.Origin.Any())
+					{
+						availableItems = availableItems.Where(i =>
+							this.HighlightFilter.Origin.Contains(i.Item.GameExtension)
+						);
+					}
+
+					if (this.HighlightFilter.HavingPrefix)
+						availableItems = availableItems.Where(i => i.Item.HasPrefix);
+
+					if (this.HighlightFilter.HavingSuffix)
+						availableItems = availableItems.Where(i => i.Item.HasSuffix);
 				}
 
 				this.HighlightedItems.AddRange(availableItems.Select(i => i.Item));

@@ -5,6 +5,18 @@ namespace TQVaultAE.Domain.Contracts.Services
 	public interface ITranslationService
 	{
 		/// <summary>
+		/// Gets the translation of titan quest extensions
+		/// </summary>
+		/// <param name="extension"></param>
+		/// <returns></returns>
+		public string Translate(GameExtension extension);
+		/// <summary>
+		/// Gets the string name of a particular gear level
+		/// </summary>
+		/// <param name="GearLevel">GearLevel enumeration</param>
+		/// <returns>Localized string of the item style</returns>
+		string Translate(GearLevel level);
+		/// <summary>
 		/// Gets the string name of a particular item style
 		/// </summary>
 		/// <param name="itemStyle">ItemStyle enumeration</param>

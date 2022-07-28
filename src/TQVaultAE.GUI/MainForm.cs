@@ -1140,7 +1140,7 @@ Debug Levels
 				highlightFilters.Link = link;
 				highlightFilters.TranslationService = TranslationService;
 				highlightFilters.ResetAll();
-				highlightFilters.InitTypeList();
+				highlightFilters.InitializeFilters();
 			}
 
 			highlightFilters.SendToBack();// To avoid flickering
