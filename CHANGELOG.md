@@ -1,4 +1,11 @@
 # Changelog
+## 4.2.0
+### Features
+- #452 Add a new, [more restrictive mode](/documentation/FORGE.md#GameMode) to the item forge
+  - Add an option to [destroy the inputs](/documentation/FORGE.md#Hardcore) of the item forge
+- "Highlight" function supports all objects' metadata
+  - More info [here](/documentation/HIGHLIGHT.md#regular-expression)
+
 ## 4.1.0
 ### Features
 - New cheat: item forge
