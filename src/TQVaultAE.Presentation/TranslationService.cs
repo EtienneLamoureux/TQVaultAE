@@ -16,6 +16,9 @@ namespace TQVaultAE.Presentation
 			Database = database;
 		}
 
+		public string Translate(GameExtension extension)
+			=> this.TranslateXTag(extension.GetTranslationTag());
+
 		public string Translate(ItemStyle itemStyle)
 		{
 			var tags = itemStyle.AsString(EnumFormat.Description);
@@ -24,6 +27,13 @@ namespace TQVaultAE.Presentation
 				? string.Format(values.Last(), this.TranslateXTag(values.First()))
 				: this.TranslateXTag(values.First());
 			return trans;
+		}
+
+		public string Translate(GearLevel level)
+		{
+			var style = level.GetItemStyle();
+			if (style is null) return level.ToString();
+			return Translate(style.Value);
 		}
 
 		public string ItemWith => Resources.ItemWith;

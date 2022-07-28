@@ -19,6 +19,7 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.GUI.Models.SearchDialogAdvanced;
 	using TQVaultAE.GUI.Tooltip;
 	using Newtonsoft.Json;
+	using TQVaultAE.Domain.Results;
 
 	/// <summary>
 	/// Class for the Search Dialog box.
@@ -1094,9 +1095,13 @@ namespace TQVaultAE.GUI
 			else
 			{
 				// Item fulltext search
+				var (isRegex, _, regex, regexIsValid) = ToFriendlyNameResult.FulltextIsRegEx(txt);
+
 				searchTermBoxItem.MatchingResults = (
 					from id in ItemDatabase
-					where id.FriendlyNames.FullText.IndexOf(txt, StringComparison.OrdinalIgnoreCase) > -1
+					where isRegex && regexIsValid 
+						? id.FriendlyNames.FulltextIsMatchRegex(regex) 
+						: id.FriendlyNames.FulltextIsMatchIndexOf(txt)
 					select id
 				).ToArray();
 			}
