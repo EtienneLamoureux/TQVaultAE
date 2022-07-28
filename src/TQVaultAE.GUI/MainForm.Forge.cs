@@ -21,8 +21,8 @@ namespace TQVaultAE.GUI
 			forgePanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
 			forgePanel.Visible = false;
 			forgePanel.NotifyAction = ForgeNotify;
-			forgePanel.CancelAction = ForgeHideUI;
-			forgePanel.ForgeAction = ForgeHideUI;
+			forgePanel.CancelAction = ForgeActionCanceled;
+			forgePanel.ForgeAction = ForgeActionForged;
 			return forgePanel;
 		}
 
@@ -81,6 +81,17 @@ namespace TQVaultAE.GUI
 
 			this.lastEnableDetailedTooltipView = Config.Settings.Default.EnableDetailedTooltipView;
 			Config.Settings.Default.EnableDetailedTooltipView = true;
+		}
+
+		private void ForgeActionForged()
+		{
+			ForgeHideUI();
+		}
+
+		private void ForgeActionCanceled()
+		{
+			SoundService.PlayRandomCancel();
+			ForgeHideUI();
 		}
 
 		private void ForgeHideUI()

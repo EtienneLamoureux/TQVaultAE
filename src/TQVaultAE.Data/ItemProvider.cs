@@ -948,8 +948,8 @@ namespace TQVaultAE.Data
 
 				// Level needs to be LevelRequirement bah
 				if (key.Equals("Level"))
-					key = "LevelRequirement";
-
+					key = Variable.KEY_LEVELREQ;
+;
 				// Keep Max value per Requirement (LevelRequirement, Strength, Dexterity, Intelligence)
 				if (requirements.ContainsKey(key))
 				{
@@ -1048,7 +1048,7 @@ namespace TQVaultAE.Data
 
 				// Level needs to be LevelRequirement bah
 				if (key.Equals("Level"))
-					key = "LevelRequirement";
+					key = Variable.KEY_LEVELREQ;
 
 				// Skip over any requirements that have been set by the database record. 
 				if (requirements.ContainsKey(key))
