@@ -397,16 +397,16 @@ namespace TQVaultAE.GUI.Components
 						if (table != null && table.Length > 0)
 						{
 							int i = table.Length;
-							foreach (KeyValuePair<string, float> e1 in table)
+							foreach (KeyValuePair<string, LootTableValue> e1 in table)
 							{
 								i--;
-								if (randPercent <= e1.Value || i == 0)
+								if (randPercent <= e1.Value.WeightPercent || i == 0)
 								{
 									itemUnderUs.RelicBonusId = TQData.NormalizeRecordPath(e1.Key);
 									break;
 								}
 								else
-									randPercent -= e1.Value;
+									randPercent -= e1.Value.WeightPercent;
 							}
 						}
 

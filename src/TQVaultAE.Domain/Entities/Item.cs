@@ -1137,18 +1137,11 @@ public class Item
 	{
 		get
 		{
-			switch (this.GameExtension)
-			{
-				case GameExtension.TitanQuest:
-					return string.Empty;
-				default:
-					string ext = ItemStyle.Quest.TQColor().ColorTag();
-					ext += $"({this.GameExtensionCode})";
-					return ext;
-			}
+			string code;
+			if ((code = this.GameExtension.GetSuffix()) == string.Empty) return string.Empty;
+			return ItemStyle.Quest.TQColor().ColorTag() + code;
 		}
 	}
 
 	#endregion
-
 }

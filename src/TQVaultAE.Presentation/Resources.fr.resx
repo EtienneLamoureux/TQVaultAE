@@ -1445,4 +1445,10 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
     <data name="ForgeHardcoreTT" xml:space="preserve">
     <value>Les matériaux sont détruits durant le processus</value>
   </data>
+  <data name="AffixesDisplayByName" xml:space="preserve">
+    <value>Affiche les affixes par noms</value>
+  </data>
+  <data name="AffixesDisplayByEffect" xml:space="preserve">
+    <value>Affiche les affixes par effets</value>
+  </data>
 </root>

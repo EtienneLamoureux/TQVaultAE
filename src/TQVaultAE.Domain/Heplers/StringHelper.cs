@@ -12,6 +12,8 @@ namespace TQVaultAE.Domain.Helpers
 {
 	public static class StringHelper
 	{
+		const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
+
 		public const string TQNewLineTag = @"{^N}";
 
 		#region Eval
@@ -108,16 +110,106 @@ namespace TQVaultAE.Domain.Helpers
 			filename = Regex.Replace(filename, @"(?<number>\d+)", "(${number})");// Enclose Numbers
 
 			filename = Regex
-				.Replace(filename, @"(?<TitleCaseStart>[A-Z][a-z]*)", " ${TitleCaseStart}")// Add space on Title Case
+				.Replace(filename
+					, @"(?<TitleCaseStart>BOW|DA|OA|[A-Z][a-z]*)"
+					, " ${TitleCaseStart}")// Add space on Title Case
 				.Split(_Delim, StringSplitOptions.RemoveEmptyEntries)// Split on spaces
 				.SelectMany(w => Regex
-					.Replace(w, @"(?<Start>resist|light|attac|speed|reduc|life|poison)", " ${Start}") // Add space on word begining for non TitleCase words
+// Orderered by word length
+					.Replace(w, @"
+(?<Start>
+	intelligence|mobility|protection|impairment|elemental|offensive|defensive|dexterity|
+	cooldown|mastery|current|protect|defense|offense|reflect|
+	damage|energy|pierce|guards|neidan|resist|health|poison|weapon|plants|
+	armor|chance|runes|dream|bleed|total|bonus|woods|multi|relic|light|attac|speed|reduc|block|equip|
+	clubs|sleep|metal|leech|regen|dodge|retal|
+	cold|burn|life|fire|mana|stun|(?<!ext)rare|slow|wood|
+	req|int|(?<!h)all(?!owed)|dmg|(?<!con)str(?!uction)|atk|spd|run|dex|(?<=pierce)ret|
+	xp|(?<=chance)of|(?<!insec)to(?!rm)|(?<=%)da|
+	[\-\+]?%|(?<=(offense|resists|%da))x(?!(tra|alted))|&|[\-\+]
+)".UnIndentRegexPattern(), " ${Start}") // Add space on word begining for non TitleCase words
 					.Split(_Delim, StringSplitOptions.RemoveEmptyEntries)// Split on spaces
-				).Select(w => w.ToFirstCharUpperCase()) // Capitalize words
+				).Select(w =>
+				{
+					var title = w.ToFirstCharUpperCase();
+					return title switch // Substitute acronym
+					{
+						"Dmg" => "Damage",
+						"Int" => "Intelligence",
+						"Str" => "Strength",
+						"Att" => "Attribute",
+						"Neg" => "Negative",
+						"Req" => "Requirement",
+						"Protect" => "Protection",
+						"Equip" => "Equipement",
+						"Atk" => "Attack",
+						"Xp" => "XP",
+						"Spd" => "Speed",
+						"BOW" => "Bow",
+						"Dex" => "Dexterity",
+						var x when x == "Retal" || x == "Ret" => "Retaliation",
+						var x when x == "DA" || x == "Da" => "Defensive Ability",
+						var x when x == "OA" || x == "Oa" => "Offensive Ability",
+						var x when x.Equals("MasteryA", noCase) => "Mastery Warfare",
+						var x when x.Equals("MasteryB", noCase) => "Mastery Defense",
+						var x when x.Equals("MasteryC", noCase) => "Mastery Hunting",
+						var x when x.Equals("MasteryD", noCase) => "Mastery Rogue",
+						var x when x.Equals("MasteryE", noCase) => "Mastery Earth",
+						var x when x.Equals("MasteryF", noCase) => "Mastery Nature",
+						var x when x.Equals("MasteryG", noCase) => "Mastery Spirit",
+						var x when x.Equals("MasteryH", noCase) => "Mastery Storm",
+						_ => title
+					};
+				}) // Capitalize words
 				.JoinString(" ");// Put it back together
 
 			return filename;
 		}
+
+		/// <summary>
+		/// Normalizes the record path to Upper Case Invariant Culture and replace backslashes with slashes.
+		/// </summary>
+		/// <param name="recordId">record path to be normalized</param>
+		/// <returns>normalized record path</returns>
+		public static string NormalizeRecordPath(this string recordId)
+		{
+			// uppercase it
+			string normalizedRecordId = recordId.ToUpperInvariant();
+
+			// replace any '/' with '\\'
+			normalizedRecordId = normalizedRecordId.Replace('/', '\\');
+			return normalizedRecordId;
+		}
+
+		/// <summary>
+		/// Explode <see cref="PrettyFileName"/> result 
+		/// </summary>
+		/// <param name="TQPath"></param>
+		/// <returns></returns>
+		public static (string Effect, string Number, bool IsMatch) PrettyFileNameExploded(this string TQPath)
+		{
+			var pretty = TQPath.PrettyFileName();
+			return pretty.ExplodePrettyFileName();
+		}
+
+		static Regex _ExplodePrettyFileName = new Regex(@"(?<Effect>[^\(]+)\((?<Num>\d+)\)", RegexOptions.Compiled);
+		/// <summary>
+		/// Explode an already prettyfied file name
+		/// </summary>
+		/// <param name="prettyFileName"></param>
+		/// <returns></returns>
+		public static (string Effect, string Number, bool IsMatch) ExplodePrettyFileName(this string prettyFileName)
+		{
+			var m = _ExplodePrettyFileName.Match(prettyFileName);
+
+			if (!m.Success)
+				return (prettyFileName, string.Empty, false);
+
+			return (m.Groups["Effect"].Value.Trim(), m.Groups["Num"].Value, true);
+		}
+
+		public static string UnIndentRegexPattern(this string pattern)
+			=> Regex.Replace(pattern, @"\s+", string.Empty);
 
 		/// <summary>
 		/// Insert <paramref name="insertedText"/> between the color tag prefix and the text.

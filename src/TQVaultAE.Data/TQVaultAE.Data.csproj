@@ -12,12 +12,16 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<LangVersion>9.0</LangVersion>
+		<LangVersion>10</LangVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<LangVersion>9.0</LangVersion>
+		<LangVersion>10</LangVersion>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Include="..\IsExternalInit.cs" Link="IsExternalInit.cs" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.DotNet.Analyzers.Compatibility" Version="0.2.12-alpha">

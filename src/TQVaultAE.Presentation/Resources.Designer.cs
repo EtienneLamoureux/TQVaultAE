@@ -115,6 +115,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display affixes by effect.
+        /// </summary>
+        public static string AffixesDisplayByEffect {
+            get {
+                return ResourceManager.GetString("AffixesDisplayByEffect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display affixes by name.
+        /// </summary>
+        public static string AffixesDisplayByName {
+            get {
+                return ResourceManager.GetString("AffixesDisplayByName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         public static byte[] AlbertusMT {

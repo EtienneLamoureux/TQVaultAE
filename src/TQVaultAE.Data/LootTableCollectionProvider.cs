@@ -1,34 +1,80 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using TQVaultAE.Domain.Contracts.Providers;
+using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 
-namespace TQVaultAE.Data
+namespace TQVaultAE.Data;
+
+public class LootTableCollectionProvider : ILootTableCollectionProvider
 {
-	public class LootTableCollectionProvider : ILootTableCollectionProvider
+	private readonly ILogger<LootTableCollectionProvider> log;
+	private readonly IDatabase Database;
+	private readonly ITranslationService TranslationService;
+	private readonly LazyConcurrentDictionary<string, LootTableCollection> LootTableCache = new LazyConcurrentDictionary<string, LootTableCollection>();
+
+	private ReadOnlyCollection<LootRandomizerItem> _LootRandomizerList;
+	/// <summary>
+	/// Return all loot randomizer (Affix effect infos)
+	/// </summary>
+	/// <returns></returns>
+	public ReadOnlyCollection<LootRandomizerItem> LootRandomizerList
 	{
-		private readonly IDatabase Database;
-
-		public LootTableCollectionProvider(IDatabase database)
+		get
 		{
-			this.Database = database;
+			if (_LootRandomizerList is null)
+			{
+				var records = Database.ReadLootRandomizerList();
+
+				_LootRandomizerList = records.Select(r =>
+				{
+					var translation = TranslationService.TranslateXTag(r.Tag).TQCleanup();// Get translation
+					translation = string.IsNullOrWhiteSpace(translation)
+						? string.IsNullOrWhiteSpace(r.FileDescription) // Or FileDesc
+							? r.PrettyFileName // Or Pretty
+							: r.FileDescription.TQCleanup()
+						: translation;
+					return r with
+					{
+						Translation = translation,
+					};
+				}).ToList().AsReadOnly();
+			}
+
+			return _LootRandomizerList;
 		}
+	}
 
-		/// <summary>
-		/// Builds the table from the database using the passed table Id.
-		/// </summary>
-		public LootTableCollection LoadTable(string tableId)
+	public LootTableCollectionProvider(ILogger<LootTableCollectionProvider> log, IDatabase database, ITranslationService translationService)
+	{
+		this.log = log;
+		this.Database = database;
+		this.TranslationService = translationService;
+	}
+
+	/// <summary>
+	/// Builds the table from the database using the passed table Id.
+	/// </summary>
+	public LootTableCollection LoadTable(string tableId)
+	{
+		return LootTableCache.GetOrAddAtomic(tableId, k =>
 		{
-			var ntab = new LootTableCollection(tableId);
+			var Data = new Dictionary<string, (float Weight, LootRandomizerItem LootRandomizer)>();
+
+			#region Build Table
+
 			// Get the data
-			DBRecordCollection record = Database.GetRecordFromFile(ntab.tableId);
+			DBRecordCollection record = Database.GetRecordFromFile(k);
 			if (record == null)
-				return ntab;
+				return null;
 
 			// Go through and get all of the randomizerWeight randomizerName pairs that have a weight > 0.
-			Dictionary<int, float> weights = new Dictionary<int, float>();
-			Dictionary<int, string> names = new Dictionary<int, string>();
+			var weights = new Dictionary<int, float>();
+			var names = new Dictionary<int, string>();
 
 			foreach (Variable variable in record)
 			{
@@ -66,25 +112,42 @@ namespace TQVaultAE.Data
 			}
 
 			// Now do an INNER JOIN on the 2 dictionaries to find valid pairs.
-			IEnumerable<KeyValuePair<string, float>> buildTableQuery = from weight in weights
-																	   join name in names on weight.Key equals name.Key
-																	   select new KeyValuePair<string, float>(name.Value, weight.Value);
+			IEnumerable<KeyValuePair<string, float>> buildTableQuery =
+				from weight in weights
+				join name in names on weight.Key equals name.Key
+				select new KeyValuePair<string, float>(name.Value, weight.Value);
+
+			#endregion
 
 			// Iterate the query to build the new unweighted table.
 			foreach (KeyValuePair<string, float> kvp in buildTableQuery)
 			{
 				// Check for a double entry in the table.
-				if (ntab.data.ContainsKey(kvp.Key))
+				if (Data.ContainsKey(kvp.Key))
+				{
 					// for a double entry just add the chance.
-					ntab.data[kvp.Key] += kvp.Value;
-				else
-					ntab.data.Add(kvp.Key, kvp.Value);
+					var val = Data[kvp.Key];
+					val.Weight += kvp.Value;
+					Data[kvp.Key] = val;
+					continue;
+				}
+
+				// get affix translations
+				var affixRec = this.LootRandomizerList.SingleOrDefault(lr =>
+					lr.Id == kvp.Key.NormalizeRecordPath()
+				);
+				if (affixRec is null)
+				{
+					log.LogError(@"Unknown affix record ""{RecordId}"" in table ""{TableId}"""
+						, kvp.Key, tableId);
+					Data.Add(kvp.Key, (kvp.Value, LootRandomizerItem.Empty));
+					continue;
+				}
+
+				Data.Add(kvp.Key, (kvp.Value, affixRec));
 			}
 
-			// Calculate the total weight.
-			ntab.totalWeight = buildTableQuery.Sum(kvp => kvp.Value);
-
-			return ntab;
-		}
+			return new LootTableCollection(k, Data);
+		});
 	}
 }

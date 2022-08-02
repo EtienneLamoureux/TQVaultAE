@@ -21,7 +21,11 @@ namespace TQVaultAE.Domain.Entities
 		public const string KEY_STRENGTH = "Strength";
 		public const string KEY_DEXTERITY = "Dexterity";
 		public const string KEY_INTELLIGENCE = "Intelligence";
-
+		public const string KEY_LOOTRANDNAME = "lootRandomizerName";
+		public const string KEY_LOOTRANDCOST = "lootRandomizerCost";
+		public const string KEY_ITEMCLASS = "itemClassification";
+		public const string KEY_FILEDESC = "FileDescription";
+		
 		#endregion
 
 		/// <summary>
