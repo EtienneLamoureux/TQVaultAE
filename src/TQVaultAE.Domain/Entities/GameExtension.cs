@@ -1,5 +1,6 @@
 ﻿using EnumsNET;
 using System;
+using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Domain.Entities;
 
@@ -28,6 +29,16 @@ public static class GameExtensionExtension
 		=> Enums.GetAttributes(ext).Get<GameExtensionDescriptionAttribute>().Code;
 	public static string GetTranslationTag(this GameExtension ext)
 		=> Enums.GetAttributes(ext).Get<GameExtensionDescriptionAttribute>().TranslationTag;
+	public static string GetSuffix(this GameExtension ext)
+	{
+		switch (ext)
+		{
+			case GameExtension.TitanQuest:
+				return string.Empty;
+			default:
+				return $"(" + GetCode(ext) + ")";
+		}
+	}
 }
 
 public class GameExtensionDescriptionAttribute : Attribute

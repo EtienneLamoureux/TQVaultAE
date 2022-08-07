@@ -20,7 +20,7 @@ namespace TQVaultAE.Domain.Contracts.Providers
 		/// Attempts to load a player file
 		/// </summary>
 		/// <param name="pc"></param>
-		/// <param name="filePathToUse">if not <code>null</code>, use this file instead of <see cref="PlayerCollection.PlayerFile"/> </param>
+		/// <param name="filePathToUse">if not <c>null</c>, use this file instead of <see cref="PlayerCollection.PlayerFile"/> </param>
 		void LoadFile(PlayerCollection pc, string filePathToUse = null);
 		/// <summary>
 		/// Attempts to save the file.

@@ -13,12 +13,14 @@ Works with all expansions!
 - Powerful search
 - Cheats
     - Items
-        - Extract relic/charm from items at no cost, keeping both
-        - Modify the relic/charm/artefact completion bonus
-        - Complete relic/charm from a single piece
-        - Craft an artifact from its recipe
-        - Create missing set pieces
+        - [Extract relic/charm from items at no cost, keeping both](documentation/AFFIXES.md#RelicRemoval)
+        - [Modify the relic/charm/artefact completion bonus](documentation/AFFIXES.md#RelicCompletion)
+        - [Complete relic/charm from a single piece](documentation/AFFIXES.md#RelicCompleteStack)
+        - [Craft an artifact from its recipe](documentation/AFFIXES.md#Formula)
+        - [Change item seed](documentation/AFFIXES.md#Seed)
+        - [Create missing set pieces](documentation/AFFIXES.md#MissingSetPiece)
         - [Craft custom items](/documentation/FORGE.md)
+        - [Change items affixes](documentation/AFFIXES.md)
         - Duplicate any item
     - Characters
         - Redisribute attribute points
