@@ -614,9 +614,7 @@ namespace TQVaultAE.Data
 			);
 
 			// Takes a TQ Format string and converts it to a .NET Format string using regex.
-			var newformat = ConvertFormatRegEx.Replace(formatValue
-				, new MatchEvaluator(replaceMatch)
-			);
+			var newformat = ConvertFormatRegEx.Replace(formatValue, replaceMatch);
 
 			// Remove residual irrelevant {} on some format
 			newformat = newformat.Split('{', '}').JoinString("");
@@ -839,7 +837,7 @@ namespace TQVaultAE.Data
 			if (effect.Equals("defensiveTotalSpeedChance", StringComparison.OrdinalIgnoreCase)
 				|| effect.Equals("defensiveAbsorption", StringComparison.OrdinalIgnoreCase))
 				return effect;
-			
+
 			// Check for specific strings.
 			switch (effect.ToUpperInvariant())
 			{

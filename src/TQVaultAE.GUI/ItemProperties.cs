@@ -74,7 +74,7 @@ namespace TQVaultAE.GUI
 			this.Data = ItemProvider.GetFriendlyNames(this.Item, FriendlyNamesExtraScopes.ItemFullDisplay, this.checkBoxFilterExtraInfo.Checked);
 
 			// ItemName
-			this.labelItemName.ForeColor = this.Data.Item.GetColor(Data.BaseItemInfoDescription);
+			this.labelItemName.ForeColor = this.Data.Item.ExtractTextColorOrItemColor(Data.BaseItemInfoDescription);
 			this.labelItemName.Text = this.Data.FullNameClean;
 
 			// Base Item Attributes

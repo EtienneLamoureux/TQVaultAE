@@ -24,8 +24,7 @@ public enum Rarity
 public static class RarityExtension
 {
 	public static ItemStyle? GetItemStyle(this Rarity level)
-	{
-		var style = level switch
+		=> level switch
 		{
 			Rarity.Broken => ItemStyle.Broken,
 			Rarity.Mundane => ItemStyle.Mundane,
@@ -33,13 +32,8 @@ public static class RarityExtension
 			Rarity.Rare => ItemStyle.Rare,
 			Rarity.Epic => ItemStyle.Epic,
 			Rarity.Legendary => ItemStyle.Legendary,
-			_ => ItemStyle.Quest
+			_ => null
 		};
-
-		if (style == ItemStyle.Quest) return null;
-
-		return style;
-	}
 
 	public static string GetTranslationTag(this Rarity level)
 	{

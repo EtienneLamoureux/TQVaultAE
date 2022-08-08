@@ -146,7 +146,7 @@ namespace TQVaultAE.GUI.Tooltip
 					.ToArray();
 
 				foreach (var item in friendlylist)
-					AddRow(item.FullName, item.Data.Item.GetColor(item.Data.BaseItemInfoDescription));
+					AddRow(item.FullName, item.Data.Item.ExtractTextColorOrItemColor(item.Data.BaseItemInfoDescription));
 
 			}
 

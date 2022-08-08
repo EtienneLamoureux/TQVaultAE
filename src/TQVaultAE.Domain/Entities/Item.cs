@@ -1142,18 +1142,18 @@ public class Item
 	#endregion
 
 	/// <summary>
-	/// Gets a color tag for a line of text
+	/// Extract color from <paramref name="TQText"/> and fallback to default item color if none.
 	/// </summary>
-	/// <param name="text">text containing the color tag</param>
-	/// <returns>System.Drawing.Color of the embedded color code</returns>
-	public Color GetColor(string text)
+	/// <param name="TQText">text containing the color tag</param>
+	/// <returns><see cref="System.Drawing.Color"/> of the embedded color code</returns>
+	public Color ExtractTextColorOrItemColor(string TQText)
 	{
-		if (string.IsNullOrEmpty(text))
+		if (string.IsNullOrWhiteSpace(TQText))
 			// Use the standard color code for the item
 			return ItemStyle.Color();
 
 		// Look for a formatting tag in the beginning of the string
-		TQColor? colorCode = TQColorHelper.GetColorFromTaggedString(text);
+		TQColor? colorCode = TQColorHelper.GetColorFromTaggedString(TQText);
 
 		// We didn't find a code so use the standard color code for the item
 		if (colorCode is null)
@@ -1162,4 +1162,5 @@ public class Item
 		// We found something so lets try to find the code
 		return colorCode.Value.Color();
 	}
+
 }

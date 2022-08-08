@@ -12,7 +12,7 @@ namespace TQVaultAE.Data;
 
 public class LootTableCollectionProvider : ILootTableCollectionProvider
 {
-	private readonly ILogger<LootTableCollectionProvider> log;
+	private readonly ILogger<LootTableCollectionProvider> Log;
 	private readonly IDatabase Database;
 	private readonly ITranslationService TranslationService;
 	private readonly LazyConcurrentDictionary<string, LootTableCollection> LootTableCache = new LazyConcurrentDictionary<string, LootTableCollection>();
@@ -51,7 +51,7 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 
 	public LootTableCollectionProvider(ILogger<LootTableCollectionProvider> log, IDatabase database, ITranslationService translationService)
 	{
-		this.log = log;
+		this.Log = log;
 		this.Database = database;
 		this.TranslationService = translationService;
 	}
@@ -136,26 +136,13 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 				var affixRec = this.LootRandomizerList.SingleOrDefault(lr =>
 					lr.Id == kvp.Key.NormalizeRecordPath()
 				);
+
 				if (affixRec is null)
 				{
-					log.LogError(@"Unknown or empty affix record ""{RecordId}"" in table ""{TableId}"""
+					Log.LogError(@"Unknown affix record ""{RecordId}"" from table ""{TableId}"""
 						, kvp.Key, tableId);
 
-					var pretty = kvp.Key.PrettyFileName();
-					var exploded = pretty.ExplodePrettyFileName();
-					// Make a default based on RecordId prettyfied
-					affixRec = new LootRandomizerItem(
-						kvp.Key.NormalizeRecordPath()
-						, string.Empty
-						, 0
-						, 0
-						, string.Empty
-						, string.Empty
-						, pretty
-						, pretty
-						, exploded.Effect
-						, exploded.Number
-					);
+					affixRec = LootRandomizerItem.Default(kvp.Key);
 				}
 
 				Data.Add(kvp.Key, (kvp.Value, affixRec));

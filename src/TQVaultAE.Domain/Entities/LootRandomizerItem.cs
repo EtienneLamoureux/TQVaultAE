@@ -1,4 +1,6 @@
-﻿namespace TQVaultAE.Domain.Entities;
+﻿using TQVaultAE.Domain.Helpers;
+
+namespace TQVaultAE.Domain.Entities;
 
 public record LootRandomizerItem(
 	string Id
@@ -13,18 +15,23 @@ public record LootRandomizerItem(
 	, string Number
 )
 {
-	static LootRandomizerItem _Empty = new LootRandomizerItem(
-			string.Empty
-			, string.Empty
-			, 0
-			, 0
-			, string.Empty
-			, string.Empty
-			, string.Empty
-			, string.Empty
-			, string.Empty
-			, string.Empty
-		);
+	public static LootRandomizerItem Default(string rawRecordId)
+	{
+		var pretty = rawRecordId.PrettyFileName();
+		var exploded = pretty.ExplodePrettyFileName();
 
-	public static LootRandomizerItem Empty => _Empty;
+		// Make a default based on RecordId prettyfied
+		return new LootRandomizerItem(
+			rawRecordId.NormalizeRecordPath()
+			, string.Empty
+			, 0
+			, 0
+			, string.Empty
+			, string.Empty
+			, pretty
+			, pretty
+			, exploded.Effect
+			, exploded.Number
+		);
+	}
 };

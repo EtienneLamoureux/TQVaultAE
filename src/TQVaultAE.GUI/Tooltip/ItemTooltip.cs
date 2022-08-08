@@ -191,7 +191,7 @@ namespace TQVaultAE.GUI.Tooltip
 			this.Data = this.ItemProvider.GetFriendlyNames(FocusedItem, FriendlyNamesExtraScopes.ItemFullDisplay);
 
 			// Fullname
-			AddRow(Data.FullName, FocusedItem.GetColor(Data.BaseItemInfoDescription), style: FontStyle.Bold);
+			AddRow(Data.FullName, FocusedItem.ExtractTextColorOrItemColor(Data.BaseItemInfoDescription), style: FontStyle.Bold);
 
 			// Thrown
 			if (Data.Item.IsThrownWeapon)
@@ -203,7 +203,7 @@ namespace TQVaultAE.GUI.Tooltip
 
 			// Relic Completion
 			if (Data.Item.IsRelic)
-				AddRow(Data.RelicCompletionFormat, FocusedItem.GetColor(Data.BaseItemInfoDescription));
+				AddRow(Data.RelicCompletionFormat, FocusedItem.ExtractTextColorOrItemColor(Data.BaseItemInfoDescription));
 
 			// Recipe Label
 			if (Data.Item.IsFormulae)
@@ -264,7 +264,7 @@ namespace TQVaultAE.GUI.Tooltip
 			if (Data.FormulaeArtifactAttributes.Any())
 			{
 				AddRow(TOOLTIPSPACER);
-				AddRow(Data.FormulaeArtifactName, FocusedItem.GetColor(Data.BaseItemInfoDescription), style: FontStyle.Bold);
+				AddRow(Data.FormulaeArtifactName, FocusedItem.ExtractTextColorOrItemColor(Data.BaseItemInfoDescription), style: FontStyle.Bold);
 				AddRow(Data.FormulaeArtifactClass, ItemStyle.Broken.TQColor().Color());
 				foreach (var str in Data.FormulaeArtifactAttributes) AddRow(str);
 			}

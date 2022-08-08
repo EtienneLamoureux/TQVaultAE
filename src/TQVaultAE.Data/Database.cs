@@ -339,19 +339,23 @@ public class Database : IDatabase
 			{
 				var rec = GetRecordFromFile(r.Key);
 
+				if (rec is null)
+				{
+					Log.LogError(@"Unknown {RCLASS_LOOTRANDOMIZER} record ""{RecordId}""", RCLASS_LOOTRANDOMIZER, r.Key);
+					return null;
+				}
+
 				string Tag = rec.GetString(Variable.KEY_LOOTRANDNAME, 0);
 				int Cost = rec.GetInt32(Variable.KEY_LOOTRANDCOST, 0);
 				int LevelRequirement = rec.GetInt32(Variable.KEY_LEVELREQ, 0);
 				string ItemClass = rec.GetString(Variable.KEY_ITEMCLASS, 0);
 				string FileDescription = rec.GetString(Variable.KEY_FILEDESC, 0);
 
-				var IsEmpty = string.IsNullOrWhiteSpace(Tag)
+				var hasNoVisualData = string.IsNullOrWhiteSpace(Tag)
 					&& string.IsNullOrWhiteSpace(ItemClass)
 					&& string.IsNullOrWhiteSpace(FileDescription)
 					&& Cost == 0
 					&& LevelRequirement == 0;
-
-				if (IsEmpty) return null;
 
 				var prettyFileName = r.Value.ID.PrettyFileName();// Use r.Value.ID because i need the non Normalized record Id
 				var exploded = prettyFileName.ExplodePrettyFileName();
@@ -362,7 +366,7 @@ public class Database : IDatabase
 					, LevelRequirement
 					, ItemClass
 					, FileDescription
-					, string.Empty // Translation
+					, prettyFileName // Default Translation
 					, prettyFileName
 					, exploded.Effect
 					, exploded.Number
