@@ -293,5 +293,21 @@ namespace TQVaultAE.Presentation
 			}
 			return bmp;
 		}
+
+		#region Notifications
+
+		public void NotifyUser(string message, TQColor color = TQColor.Turquoise)
+		{
+			NotifyUserEvent?.Invoke(this, message, color.Color());
+		}
+
+		public void NotifyUser(string message, Color color)
+		{
+			NotifyUserEvent?.Invoke(this, message, color);
+		}
+
+		public event NotifyUserEventHandler NotifyUserEvent;
+
+		#endregion
 	}
 }

@@ -138,10 +138,24 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 				);
 				if (affixRec is null)
 				{
-					log.LogError(@"Unknown affix record ""{RecordId}"" in table ""{TableId}"""
+					log.LogError(@"Unknown or empty affix record ""{RecordId}"" in table ""{TableId}"""
 						, kvp.Key, tableId);
-					Data.Add(kvp.Key, (kvp.Value, LootRandomizerItem.Empty));
-					continue;
+
+					var pretty = kvp.Key.PrettyFileName();
+					var exploded = pretty.ExplodePrettyFileName();
+					// Make a default based on RecordId prettyfied
+					affixRec = new LootRandomizerItem(
+						kvp.Key.NormalizeRecordPath()
+						, string.Empty
+						, 0
+						, 0
+						, string.Empty
+						, string.Empty
+						, pretty
+						, pretty
+						, exploded.Effect
+						, exploded.Number
+					);
 				}
 
 				Data.Add(kvp.Key, (kvp.Value, affixRec));

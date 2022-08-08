@@ -29,7 +29,7 @@ public class TranslationService : ITranslationService
 		return trans;
 	}
 
-	public string Translate(GearLevel level)
+	public string Translate(Rarity level)
 	{
 		var style = level.GetItemStyle();
 		if (style is null) return level.ToString();

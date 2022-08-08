@@ -222,6 +222,7 @@
     </Compile>
     <Compile Include="Models\ComboBoxItem.cs" />
     <Compile Include="Models\CommandLineArgs.cs" />
+    <Compile Include="Models\CsvDelimiter.cs" />
     <Compile Include="Models\ItemDragInfo.cs" />
     <Compile Include="Models\ResizeEventArgs.cs" />
     <Compile Include="Models\ResultChangedEventArgs.cs" />

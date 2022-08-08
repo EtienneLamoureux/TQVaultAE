@@ -15,7 +15,7 @@ TQVaultAE provide a dedicated crafting system that helps you create the item of 
     + [Strict](#StrictMode)
     + [Relax](#RelaxMode)
     + [Hephaestus](#GodMode)
-* [Hardcore](#Hardcore)
+    + [Hardcore](#Hardcore)
 
 ---
 
@@ -54,10 +54,6 @@ _**Note:** Here's an example of a white item getting stronger._
 Crafting modes allows you to play as you want.
 <br />
 Do you want some restrictions as the game would have probably put in place or the crazyness of an OP item that break the game ?
-
-#### <a id="Hardcore"></a>*Hardcore*
-For purist only.
-_**If checked the materials used are destroyed during the process**_.
 
 #### <a id="GameMode"></a>*Game Mode*
 Game mode is an attempt to be the closest of a genuine Titan Quest crafting experience.
@@ -105,5 +101,11 @@ _**Note:** Here's an example of a useless quest item with offensive properties._
 <br />
 <img src="./forge_ui_godmode.png" width="750" alt="God Mode Example" />
 <br />
+
+#### <a id="Hardcore"></a>*Hardcore*
+For purist only.
+_**If checked the materials used are destroyed during the process**_.
+
+---
 
 **May the power of Hephaestus be with you!**

@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using TQVaultAE.GUI.Models;
@@ -20,10 +19,7 @@ using TQVaultAE.Presentation;
 using TQVaultAE.GUI.Tooltip;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Helpers;
 using Microsoft.Extensions.Logging;
-using System.Net.Http.Headers;
-using System.Text.RegularExpressions;
 
 namespace TQVaultAE.GUI.Components;
 
@@ -43,16 +39,16 @@ public class SackPanel : Panel, IScalingControl
 	private readonly IGamePathService GamePathService;
 	protected readonly IServiceProvider ServiceProvider;
 	ItemStyle[] ItemStyleBackGroundColorEnable = new[] {
-		ItemStyle.Epic,
-		ItemStyle.Legendary,
-		ItemStyle.Rare,
-		ItemStyle.Common,
-		ItemStyle.Relic,
-		ItemStyle.Artifact,
-		ItemStyle.Quest,
-		ItemStyle.Scroll,
-		ItemStyle.Formulae,
-		ItemStyle.Parchment };
+			ItemStyle.Epic,
+			ItemStyle.Legendary,
+			ItemStyle.Rare,
+			ItemStyle.Common,
+			ItemStyle.Relic,
+			ItemStyle.Artifact,
+			ItemStyle.Quest,
+			ItemStyle.Scroll,
+			ItemStyle.Formulae,
+			ItemStyle.Parchment };
 
 	#region SackPanel Fields
 
@@ -1445,7 +1441,7 @@ public class SackPanel : Panel, IScalingControl
 						from location in this.DragInfo.AllAutoMoveLocations
 						where location != this.AutoMoveLocation
 						select location
-					).Distinct();
+				).Distinct();
 
 					foreach (var choice in autoMoveChoices)
 					{
@@ -1850,8 +1846,8 @@ public class SackPanel : Panel, IScalingControl
 
 				var swapDisplayMenuItem = new ToolStripMenuItem()
 				{
-					Text = _DisplayAffixesByEffect 
-						? Resources.AffixesDisplayByName 
+					Text = _DisplayAffixesByEffect
+						? Resources.AffixesDisplayByName
 						: Resources.AffixesDisplayByEffect,
 					BackColor = backC,
 					Font = fnt,
@@ -1959,6 +1955,23 @@ public class SackPanel : Panel, IScalingControl
 					DisplayStyle = dispStl,
 				};
 				choice.Click += handler;
+
+				if (affixMenu is not null)
+				{
+					choice.Text = _DisplayAffixesByEffect
+							? string.Format("({0}) {1} ({2:p2}) {3}"
+								, val.LootRandomizer.Number
+								, val.LootRandomizer.Translation
+								, val.WeightPercent
+								, val.AffixDlc.GetSuffix()
+							)
+							: string.Format("({0}) {1} ({2:p2}) {3}"
+								, val.LootRandomizer.Number
+								, val.LootRandomizer.Effect
+								, val.WeightPercent
+								, val.AffixDlc.GetSuffix()
+							);
+				}
 
 				// make the currently selected affix bold
 				if (TQData.NormalizeRecordPath(val.AffixId)

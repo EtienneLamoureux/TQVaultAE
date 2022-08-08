@@ -10,7 +10,7 @@ Works with all expansions!
 
 ## Features
 - **Infinite bank space**
-- Powerful search
+- [Powerful search](documentation/ADVANCEDSEARCH.md)
 - Cheats
     - Items
         - [Extract relic/charm from items at no cost, keeping both](documentation/AFFIXES.md#RelicRemoval)
@@ -48,6 +48,9 @@ Works with all expansions!
         - <kbd>SHIFT</kbd>+drag : Activate mouse lasso for multi selection
 - Character backups
     - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
+- External tools
+    - [ARZ Explorer](documentation/ARZEXPLORER.md) : Game resource file exploration
+    - [Save File Explorer](documentation/SAVEFILEEXPLORER.md) : Game save file exploration
 
 ## Installation
 ### Installer

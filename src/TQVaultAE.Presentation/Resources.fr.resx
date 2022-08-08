@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
     <!--
       Microsoft ResX Schema
@@ -1444,6 +1444,18 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   </data>
     <data name="ForgeHardcoreTT" xml:space="preserve">
     <value>Les matériaux sont détruits durant le processus</value>
+  </data>
+	<data name="ExportBagCSVToClipboard" xml:space="preserve">
+    <value>Exporter l'onglet dans le presse papier</value>
+  </data>
+	<data name="ExportVaultCSVToClipboard" xml:space="preserve">
+    <value>Exporter le coffre dans le presse papier</value>
+  </data>
+	<data name="CSVExportedToClipboardNotification" xml:space="preserve">
+    <value>CSV exporté vers le presse papier à {0:g}</value>
+  </data>
+	<data name="SettingsCsvDelimiterLabel" xml:space="preserve">
+    <value>Délimiteur CSV</value>
   </data>
   <data name="AffixesDisplayByName" xml:space="preserve">
     <value>Affiche les affixes par noms</value>

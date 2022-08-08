@@ -10,7 +10,6 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.Domain.Entities;
@@ -508,26 +507,26 @@ public class Item
 	}
 
 	/// <summary>
-	/// Get a value indicating gear level from <see cref="GearLevel.Broken"/> to <see cref="GearLevel.Legendary"/>
+	/// Get a value indicating gear level from <see cref="Rarity.Broken"/> to <see cref="Rarity.Legendary"/>
 	/// </summary>
-	public GearLevel GearLevel
+	public Rarity GearLevel
 	{
 		get
 		{
 			switch (ItemStyle)
 			{
 				case ItemStyle.Broken:
-					return GearLevel.Broken;
+					return Rarity.Broken;
 				case ItemStyle.Mundane:
-					return GearLevel.Mundane;
+					return Rarity.Mundane;
 				case ItemStyle.Common:
-					return GearLevel.Common;
+					return Rarity.Common;
 				case ItemStyle.Rare:
-					return GearLevel.Rare;
+					return Rarity.Rare;
 				case ItemStyle.Epic:
-					return GearLevel.Epic;
+					return Rarity.Epic;
 				case ItemStyle.Legendary:
-					return GearLevel.Legendary;
+					return Rarity.Legendary;
 				case ItemStyle.Quest:
 				case ItemStyle.Relic:
 				case ItemStyle.Potion:
@@ -536,7 +535,7 @@ public class Item
 				case ItemStyle.Formulae:
 				case ItemStyle.Artifact:
 				default:
-					return GearLevel.NoGear;
+					return Rarity.NoGear;
 			}
 		}
 	}
@@ -840,10 +839,7 @@ public class Item
 	/// Get the tagName assigned to the <see cref="ItemClass"/>
 	/// </summary>
 	public static string GetClassTagName(string ItemClass)
-	{
-		var map = ItemClassToTagNameMap.Where(i => i.ItemClass.Equals(ItemClass, noCase)).Select(i => i.Value);
-		return map.Any() ? map.First() : ItemClass;
-	}
+		=> ItemClassToTagNameMap.Where(i => i.ItemClass.Equals(ItemClass, noCase)).Select(i => i.Value).FirstOrDefault() ?? ItemClass;
 
 	/// <summary>
 	/// Gets the item group.
@@ -857,10 +853,10 @@ public class Item
 				return 0;
 
 			var iclass = this.baseItemInfo.ItemClass;
-			var idx = ItemClassToTagNameMap.Select((val, index) => new { val, index })
+			return ItemClassToTagNameMap.Select((val, index) => new { val, index })
 				.Where(m => m.val.ItemClass.Equals(iclass, noCase))
-				.Select(m => m.index);
-			return idx.Any() ? idx.First() : 0;
+				.Select(m => m.index)
+				.FirstOrDefault();
 		}
 	}
 
@@ -1144,4 +1140,26 @@ public class Item
 	}
 
 	#endregion
+
+	/// <summary>
+	/// Gets a color tag for a line of text
+	/// </summary>
+	/// <param name="text">text containing the color tag</param>
+	/// <returns>System.Drawing.Color of the embedded color code</returns>
+	public Color GetColor(string text)
+	{
+		if (string.IsNullOrEmpty(text))
+			// Use the standard color code for the item
+			return ItemStyle.Color();
+
+		// Look for a formatting tag in the beginning of the string
+		TQColor? colorCode = TQColorHelper.GetColorFromTaggedString(text);
+
+		// We didn't find a code so use the standard color code for the item
+		if (colorCode is null)
+			return ItemStyle.Color();
+
+		// We found something so lets try to find the code
+		return colorCode.Value.Color();
+	}
 }

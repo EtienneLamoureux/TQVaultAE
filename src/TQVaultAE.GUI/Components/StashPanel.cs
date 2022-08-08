@@ -102,7 +102,6 @@ namespace TQVaultAE.GUI.Components
 
 		private readonly ITranslationService TranslationService;
 		private readonly IDatabase Database;
-		private readonly IItemProvider ItemProvider;
 
 		private System.ComponentModel.IContainer components;
 		private ContextMenuStrip buttonContextMenuStrip;
@@ -121,13 +120,13 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="dragInfo">ItemDragInfo instance</param>
 		/// <param name="panelSize">Size of the panel in cells</param>
 		/// <param name="tooltip">ToolTip instance</param>
-		public StashPanel(ItemDragInfo dragInfo, Size panelSize, IServiceProvider serviceProvider) : base(dragInfo, 4, panelSize, 0, AutoMoveLocation.Stash, serviceProvider)
+		public StashPanel(ItemDragInfo dragInfo, Size panelSize, IServiceProvider serviceProvider)
+			: base(dragInfo, 4, panelSize, 0, AutoMoveLocation.Stash, serviceProvider)
 		{
 			InitializeComponent();
 
 			this.TranslationService = this.ServiceProvider.GetService<ITranslationService>();
 			this.Database = this.ServiceProvider.GetService<IDatabase>();
-			this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
 
 			SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
@@ -213,7 +212,7 @@ namespace TQVaultAE.GUI.Components
 
 			this.toolStripMenuItemEnableTooltip.Text = Resources.PlayerPanelMenuEnableTooltip;
 			this.toolStripMenuItemDisableTooltip.Text = Resources.PlayerPanelMenuDisableTooltip;
-			
+
 			foreach (var bag in this.BagButtons)
 				bag.ContextMenuStrip = this.buttonContextMenuStrip;
 

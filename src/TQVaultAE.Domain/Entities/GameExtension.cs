@@ -1,6 +1,5 @@
 ﻿using EnumsNET;
 using System;
-using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Domain.Entities;
 

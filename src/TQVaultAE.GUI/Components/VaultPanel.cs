@@ -17,6 +17,8 @@ using TQVaultAE.Presentation;
 using TQVaultAE.GUI.Tooltip;
 using TQVaultAE.Domain.Contracts.Services;
 using System.Linq;
+using TQVaultAE.Domain.Contracts.Providers;
+using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.GUI.Components;
 
@@ -28,6 +30,7 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	protected readonly IFontService FontService;
 	protected readonly IUIService UIService;
 	protected readonly SessionContext userContext;
+	protected readonly IItemProvider ItemProvider;
 	protected readonly IServiceProvider ServiceProvider;
 
 	/// <summary>
@@ -108,6 +111,7 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		this.FontService = this.ServiceProvider.GetService<IFontService>();
 		this.UIService = this.ServiceProvider.GetService<IUIService>();
 		this.userContext = this.ServiceProvider.GetService<SessionContext>();
+		this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
 
 		this.DragInfo = dragInfo;
 		this.AutoMoveLocation = autoMoveLocation;
@@ -572,7 +576,12 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 						{
 							this.AddMenuItem(Resources.PlayerPanelMenuEnableAllTooltip, this.DisableTooltipClicked);
 						}
+						// Export to CSV
+						this.contextMenu.Items.Add("-");
+						this.AddMenuItem(Resources.ExportBagCSVToClipboard, this.ExportBagCSVToClipboard);
+						this.AddMenuItem(Resources.ExportVaultCSVToClipboard, this.ExportVaultCSVToClipboard);
 					}
+
 				}
 
 				if (this.Vault is not null)
@@ -588,6 +597,62 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 				this.contextMenu.Show(this.BagButtons[this.CurrentBag], new Point(e.X, e.Y));
 			}
 		}
+	}
+
+	private (char charDelimiter, CsvDelimiter csvDelimiter) GetCSVDelimiter()
+	{
+		var delimStr = Config.Settings.Default.CSVDelimiter;
+
+		char delim = ',';
+
+		if (!EnumsNET.Enums.TryParse<CsvDelimiter>(delimStr, out var delimEnum))
+			delimEnum = CsvDelimiter.Comma;
+
+		delim = EnumsNET.Enums.AsString(delimEnum, EnumsNET.EnumFormat.Description).First();
+
+		return (delim, delimEnum);
+	}
+
+	private void ExportVaultCSVToClipboard(object sender, EventArgs e)
+	{
+		var (delim, _) = GetCSVDelimiter();
+
+		var csvRows = this.Vault.Sacks.SelectMany((sack, idx)
+				=> sack.Select(itm => (itm, bagid: idx + 1, vaultname: this.Vault.PlayerName))
+			)
+			.Select((vt, idx) =>
+			{
+				var fnr = this.ItemProvider.GetFriendlyNames(vt.itm, FriendlyNamesExtraScopes.Requirements);
+				return new CsvRow(vt.vaultname, vt.bagid, fnr, idx, delim).ToString();
+			}).ToList();
+
+		csvRows.Insert(0, CsvRow.GetCSVHeader(delim));
+
+		var export = string.Join(Environment.NewLine, csvRows);
+
+		Clipboard.SetText(export, TextDataFormat.UnicodeText);
+
+		this.UIService.NotifyUser(string.Format(Resources.CSVExportedToClipboardNotification, DateTime.Now));
+	}
+
+	private void ExportBagCSVToClipboard(object sender, EventArgs e)
+	{
+		var (delim, _) = GetCSVDelimiter();
+
+		var csvRows = this.BagSackPanel.Sack.Select(itm => (itm, bagid: this.BagSackPanel.CurrentSack + 1, vaultname: this.Vault.PlayerName))
+			.Select((vt, idx) =>
+			{
+				var fnr = this.ItemProvider.GetFriendlyNames(vt.itm, FriendlyNamesExtraScopes.Requirements);
+				return new CsvRow(vt.vaultname, vt.bagid, fnr, idx, delim).ToString();
+			}).ToList();
+
+		csvRows.Insert(0, CsvRow.GetCSVHeader(delim));
+
+		var export = string.Join(Environment.NewLine, csvRows);
+
+		Clipboard.SetText(export, TextDataFormat.UnicodeText);
+
+		this.UIService.NotifyUser(string.Format(Resources.CSVExportedToClipboardNotification, DateTime.Now));
 	}
 
 	private void DisableTooltipClicked(object sender, EventArgs e)

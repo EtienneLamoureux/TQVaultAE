@@ -43,41 +43,12 @@ public class ToFriendlyNameResult
 		}
 	}
 
-	/// <summary>
-	/// Tells if <paramref name="search"/> is a regex input search
-	/// </summary>
-	/// <param name="search"></param>
-	/// <returns></returns>
-	public static (bool IsRegex, string Pattern, Regex Regex, bool RegexIsValid) FulltextIsRegEx(string search)
-	{
-		if (string.IsNullOrWhiteSpace(search)) return (false, string.Empty, null, false);
-
-		var isregex = search.First() == '/';
-
-		if (isregex)
-		{
-			Regex rex = null;
-			var pattern = search.Substring(1);
-			try
-			{
-				rex = new Regex(pattern, RegexOptions.IgnoreCase);
-				return (isregex, pattern, rex, true);
-			}
-			catch (ArgumentException)
-			{
-				return (true, pattern, null, false);
-			}
-		}
-
-		return (false, search, null, false);
-	}
-
 
 	public bool FulltextIsMatch(string search)
 	{
 		if (string.IsNullOrWhiteSpace(search)) return false;
 
-		var isrex = FulltextIsRegEx(search);
+		var isrex = StringHelper.IsTQVaultSearchRegEx(search);
 
 		if (isrex.IsRegex)
 			return FulltextIsMatchRegex(isrex.Pattern);
@@ -168,11 +139,12 @@ public class ToFriendlyNameResult
 	public string BaseItemId;
 	public string BaseItemRarity;
 
+	static Regex BaseItemInfoClassRegEx = new Regex(@"[^\w\s']", RegexOptions.Compiled);
 	string _BaseItemInfoClass;
 	public string BaseItemInfoClass
 	{
 		get => _BaseItemInfoClass;
-		set => _BaseItemInfoClass = Regex.Replace((value ?? string.Empty), @"[^\w\s']", string.Empty);// Clean everything except few things;
+		set => _BaseItemInfoClass = BaseItemInfoClassRegEx.Replace((value ?? string.Empty), string.Empty);// Clean everything except few things;
 	}
 
 	public string BaseItemInfoStyle;
@@ -187,6 +159,7 @@ public class ToFriendlyNameResult
 	public string[] FlavorText = new string[] { };
 	public string[] Requirements = new string[] { };
 	public SortedList<string, Variable> RequirementVariables;
+		public RequirementInfo RequirementInfo;
 	public string[] BaseAttributes = new string[] { };
 	public string[] ItemSet = new string[] { };
 	public DBRecordCollection BaseItemInfoRecords;

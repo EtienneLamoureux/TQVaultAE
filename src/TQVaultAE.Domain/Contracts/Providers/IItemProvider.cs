@@ -99,6 +99,22 @@ public interface IItemProvider
 	/// <returns>A string containing the items requirements</returns>
 	(string[] Requirements, SortedList<string, Variable> RequirementVariables) GetRequirements(Item itm);
 	SortedList<string, Variable> GetRequirementVariables(Item itm);
+
+	/// <summary>
+	/// Extract numerical requirements
+	/// </summary>
+	/// <param name="item"></param>
+	/// <returns></returns>
+	RequirementInfo GetRequirementInfo(Item item);
+
+	/// <summary>
+	/// Extract numerical requirements
+	/// </summary>
+	/// <param name="item"></param>
+	/// <param name="requirementVariables"></param>
+	/// <returns></returns>
+	RequirementInfo GetRequirementInfo(Item item, SortedList<string, Variable> requirementVariables);
+
 	SortedList<string, int> GetStatBonuses(Item item);
 	void GetStatBonusesFromRecord(SortedList<string, int> statBonuses, DBRecordCollection record, int statLevel = 0);
 	/// <summary>
