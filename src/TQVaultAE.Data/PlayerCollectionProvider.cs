@@ -16,7 +16,6 @@ namespace TQVaultAE.Data
 	using TQVaultAE.Data.Dto;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Logs;
-	using TQVaultAE.Domain.Helpers;
 
 	/// <summary>
 	/// Loads, decodes, encodes and saves a Titan Quest player file.
@@ -26,7 +25,6 @@ namespace TQVaultAE.Data
 		private readonly ILogger Log;
 		private readonly IItemProvider ItemProvider;
 		private readonly ISackCollectionProvider SackCollectionProvider;
-		private readonly IGamePathService GamePathResolver;
 		private readonly ITQDataService TQData;
 
 		/// <summary>
@@ -39,12 +37,11 @@ namespace TQVaultAE.Data
 		/// </summary>
 		public byte[] endBlockPattern = { 0x09, 0x00, 0x00, 0x00, 0x65, 0x6E, 0x64, 0x5F, 0x62, 0x6C, 0x6F, 0x63, 0x6B };
 
-		public PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IItemProvider itemProvider, ISackCollectionProvider sackCollectionProvider, IGamePathService gamePathResolver, ITQDataService tQData)
+		public PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IItemProvider itemProvider, ISackCollectionProvider sackCollectionProvider, ITQDataService tQData)
 		{
 			this.Log = log;
 			this.ItemProvider = itemProvider;
 			this.SackCollectionProvider = sackCollectionProvider;
-			this.GamePathResolver = gamePathResolver;
 			this.TQData = tQData;
 		}
 
@@ -264,7 +261,7 @@ namespace TQVaultAE.Data
 		/// Attempts to load a player file
 		/// </summary>
 		/// <param name="pc"></param>
-		/// <param name="filePathToUse">if not <code>null</code>, use this file instead of <see cref="PlayerCollection.PlayerFile"/> </param>
+		/// <param name="filePathToUse">if not <c>null</c>, use this file instead of <see cref="PlayerCollection.PlayerFile"/> </param>
 		public void LoadFile(PlayerCollection pc, string filePathToUse = null)
 		{
 			try

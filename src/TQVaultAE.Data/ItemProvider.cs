@@ -3,37 +3,41 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.Data
+namespace TQVaultAE.Data;
+
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using TQVaultAE.Config;
+using TQVaultAE.Domain.Contracts.Providers;
+using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
+using TQVaultAE.Domain.Results;
+
+
+
+/// <summary>
+/// Class for holding item information
+/// </summary>
+public class ItemProvider : IItemProvider
 {
-	using Microsoft.Extensions.Logging;
-	using System;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.Globalization;
-	using System.IO;
-	using System.Linq;
-	using System.Text.RegularExpressions;
-	using TQVaultAE.Config;
-	using TQVaultAE.Domain.Contracts.Providers;
-	using TQVaultAE.Domain.Contracts.Services;
-	using TQVaultAE.Domain.Entities;
-	using TQVaultAE.Domain.Helpers;
-	using TQVaultAE.Domain.Results;
+		private const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
 
-
-
-	/// <summary>
-	/// Class for holding item information
-	/// </summary>
-	public class ItemProvider : IItemProvider
-	{
 		private readonly ILogger Log;
 		private readonly IDatabase Database;
 		private readonly ILootTableCollectionProvider LootTableCollectionProvider;
 		private readonly IItemAttributeProvider ItemAttributeProvider;
 		private readonly ITQDataService TQData;
 		private readonly ITranslationService TranslationService;
+	private readonly IGamePathService GamePathService;
 		private readonly LazyConcurrentDictionary<(Item Item, FriendlyNamesExtraScopes? Scope, bool FilterExtra), ToFriendlyNameResult> FriendlyNamesCache = new LazyConcurrentDictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult>();
+	private readonly LazyConcurrentDictionary<string, ItemAffixes> ItemAffixesCache = new LazyConcurrentDictionary<string, ItemAffixes>();
 
 		internal static readonly string[] unwantedTags =
 		{
@@ -173,6 +177,7 @@ namespace TQVaultAE.Data
 			, IItemAttributeProvider itemAttributeProvider
 			, ITQDataService tQData
 			, ITranslationService translationService
+		, IGamePathService gamePathService
 		)
 		{
 			this.Log = log;
@@ -181,6 +186,62 @@ namespace TQVaultAE.Data
 			this.ItemAttributeProvider = itemAttributeProvider;
 			this.TQData = tQData;
 			this.TranslationService = translationService;
+		this.GamePathService = gamePathService;
+	}
+
+
+	public ItemAffixes GetItemAffixes(string itemId)
+	{
+		return ItemAffixesCache.GetOrAddAtomic(itemId, k =>
+		{
+			var affixmap = this.Database.GetItemAffixTableMap(k);
+			if (affixmap is null || affixmap.All(a => a.IsEmpty)) return null;
+
+			Dictionary<GameExtension, ReadOnlyCollection<LootTableCollection>> Broken, Prefix, Suffix;
+
+			List<(GameExtension Dlc, LootTableCollection Table)>
+				LBroken = new List<(GameExtension, LootTableCollection)>(),
+				LPrefix = new List<(GameExtension, LootTableCollection)>(),
+				LSuffix = new List<(GameExtension, LootTableCollection)>();
+
+			LootTableCollection table;
+			GameExtension dlc;
+			foreach (var map in affixmap)
+			{
+				if (!string.IsNullOrWhiteSpace(map.BrokenTable))
+				{
+					dlc = GamePathService.ResolveExtensionFromPath(map.BrokenTable);
+					table = this.LootTableCollectionProvider.LoadTable(map.BrokenTable);
+					if (table is not null) LBroken.Add((dlc, table));
+				}
+
+				if (!string.IsNullOrWhiteSpace(map.PrefixTable))
+				{
+					dlc = GamePathService.ResolveExtensionFromPath(map.PrefixTable);
+					table = this.LootTableCollectionProvider.LoadTable(map.PrefixTable);
+					if (table is not null) LPrefix.Add((dlc, table));
+				}
+				if (!string.IsNullOrWhiteSpace(map.SuffixTable))
+				{
+					dlc = GamePathService.ResolveExtensionFromPath(map.SuffixTable);
+					table = this.LootTableCollectionProvider.LoadTable(map.SuffixTable);
+					if (table is not null) LSuffix.Add((dlc, table));
+				}
+			}
+
+			Broken = LBroken.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
+				.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly());
+			Prefix = LPrefix.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
+				.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly());
+			Suffix = LSuffix.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
+				.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly());
+
+			return new ItemAffixes(
+				new ReadOnlyDictionary<GameExtension, ReadOnlyCollection<LootTableCollection>>(Broken)
+				, new ReadOnlyDictionary<GameExtension, ReadOnlyCollection<LootTableCollection>>(Prefix)
+				, new ReadOnlyDictionary<GameExtension, ReadOnlyCollection<LootTableCollection>>(Suffix)
+			);
+		});
 		}
 
 		public bool InvalidateFriendlyNamesCache(params Item[] items)
@@ -194,9 +255,45 @@ namespace TQVaultAE.Data
 		#region Must be a flat prop
 
 		/// <summary>
+	/// Gets the socketed charm/relic bonus loot table
+	/// </summary>
+	/// <param name="Item"></param>
+	/// <param name="RelicTable1"></param>
+	/// <param name="RelicTable2"></param>
+	/// <returns>Returns <c>false</c> if the item does not contain a charm/relic</returns>
+	public bool BonusTableSocketedRelic(Item Item, out LootTableCollection RelicTable1, out LootTableCollection RelicTable2)
+	{
+		RelicTable1 = RelicTable2 = null;
+		var hasCompleteRelic1 = Item.HasRelicSlot1 && Item.RelicInfo is not null && Item.IsRelicBonus1Complete;
+		var hasCompleteRelic2 = Item.HasRelicSlot2 && Item.Relic2Info is not null && Item.IsRelicBonus2Complete;
+
+		if (Item.baseItemInfo is null
+			|| (!hasCompleteRelic1 && !hasCompleteRelic2)
+		) return false;
+
+		string tableId = null;
+
+		if (hasCompleteRelic1)
+		{
+			tableId = Item.RelicInfo.GetString("bonusTableName");
+			RelicTable1 = LootTableCollectionProvider.LoadTable(tableId);
+		}
+
+		if (hasCompleteRelic2)
+		{
+			tableId = Item.Relic2Info.GetString("bonusTableName");
+			RelicTable2 = LootTableCollectionProvider.LoadTable(tableId);
+		}
+
+		return RelicTable1 is not null || RelicTable2 is not null;
+	}
+
+	/// <summary>
 		/// Gets the artifact/charm/relic bonus loot table
-		/// returns null if the item is not an artifact/charm/relic or does not contain a charm/relic
+	/// returns null if the item is not an artifact/charm/relic or does not contain a charm/relic
 		/// </summary>
+	/// <param name="itm"></param>
+	/// <returns>returns null if the item is not an artifact/charm/relic</returns>
 		public LootTableCollection BonusTable(Item itm)
 		{
 			if (itm.baseItemInfo == null)
@@ -205,11 +302,6 @@ namespace TQVaultAE.Data
 			string lootTableID = null;
 			if (itm.IsRelic)
 				lootTableID = itm.baseItemInfo.GetString("bonusTableName");
-			else if (itm.HasRelicSlot1)
-			{
-				if (itm.RelicInfo != null)
-					lootTableID = itm.RelicInfo.GetString("bonusTableName");
-			}
 			else if (itm.IsArtifact)
 			{
 				// for artifacts we need to find the formulae that was used to create the artifact.  sucks to be us
@@ -220,7 +312,7 @@ namespace TQVaultAE.Data
 				string file = Path.GetFileNameWithoutExtension(itm.BaseItemId);
 
 				// Damn it, IL did not keep the filename consistent on Kingslayer (Sands of Kronos)
-				if (file.ToUpperInvariant() == "E_GA_SANDOFKRONOS")
+			if (file.Equals("E_GA_SANDOFKRONOS", noCase))
 					file = file.Insert(9, "s");
 
 				file = string.Concat(file, "_formula");
@@ -229,11 +321,11 @@ namespace TQVaultAE.Data
 
 				// Now lookup itm record.
 				DBRecordCollection record = Database.GetRecordFromFile(file);
-				if (record != null)
+			if (record is not null)
 					lootTableID = record.GetString("artifactBonusTableName", 0);
 			}
 
-			if (lootTableID != null && lootTableID.Length > 0)
+		if (!string.IsNullOrWhiteSpace(lootTableID))
 				return LootTableCollectionProvider.LoadTable(lootTableID);
 
 			return null;
@@ -253,10 +345,10 @@ namespace TQVaultAE.Data
 				return null;
 
 			Item newRelic = itm.MakeEmptyCopy(itm.relicID);
-			GetDBData(newRelic);
 			newRelic.RelicBonusId = itm.RelicBonusId;
 			newRelic.RelicBonusInfo = itm.RelicBonusInfo;
 			newRelic.Var1 = itm.Var1;
+		GetDBData(newRelic);
 
 			// Now clear out our relic data
 			itm.relicID = string.Empty;
@@ -280,10 +372,10 @@ namespace TQVaultAE.Data
 				return null;
 
 			Item newRelic = itm.MakeEmptyCopy(itm.relic2ID);
-			GetDBData(newRelic);
 			newRelic.RelicBonusId = itm.RelicBonus2Id;
 			newRelic.RelicBonusInfo = itm.RelicBonus2Info;
 			newRelic.Var1 = itm.Var2;
+		GetDBData(newRelic);
 
 			// Now clear out our relic data
 			itm.relic2ID = string.Empty;
@@ -750,9 +842,9 @@ namespace TQVaultAE.Data
 		{
 			string keyUpper = key.ToUpperInvariant();
 			return (Array.IndexOf(unwantedTags, keyUpper) != -1
-				|| keyUpper.EndsWith("SOUND", StringComparison.OrdinalIgnoreCase)
-				|| keyUpper.EndsWith("MESH", StringComparison.OrdinalIgnoreCase)
-				|| keyUpper.StartsWith("BODYMASK", StringComparison.OrdinalIgnoreCase)
+				|| keyUpper.EndsWith("SOUND", noCase)
+				|| keyUpper.EndsWith("MESH", noCase)
+				|| keyUpper.StartsWith("BODYMASK", noCase)
 			);
 		}
 
@@ -772,24 +864,24 @@ namespace TQVaultAE.Data
 		public bool IsStatBonus(string key)
 			=> Array.IndexOf(statBonusTags, key.ToUpperInvariant()) != -1;
 
-		internal static ReadOnlyCollection<(string ItemClass, string RequirementEquationPrefix)> ItemClassMap = new[]
+		internal static ReadOnlyCollection<ItemClassMapItem<string>> ItemClassToRequirementEquationPrefixMap = new List<ItemClassMapItem<string>>
 		{
-			("ARMORPROTECTIVE_HEAD", "head"),
-			("ARMORPROTECTIVE_FOREARM", "forearm"),
-			("ARMORPROTECTIVE_LOWERBODY", "lowerBody"),
-			("ARMORPROTECTIVE_UPPERBODY", "upperBody"),
-			("ARMORJEWELRY_BRACELET", "bracelet"),
-			("ARMORJEWELRY_RING", "ring"),
-			("ARMORJEWELRY_AMULET", "amulet"),
-			("WEAPONHUNTING_BOW", "bow"),
-			("WEAPONHUNTING_SPEAR", "spear"),
-			("WEAPONHUNTING_RANGEDONEHAND", "bow"),
-			("WEAPONMELEE_AXE", "axe"),
-			("WEAPONMELEE_SWORD", "sword"),
-			("WEAPONMELEE_MACE", "mace"),
-			("WEAPONMAGICAL_STAFF", "staff"),
-			("WEAPONARMOR_SHIELD", "shield"),
-		}.ToList().AsReadOnly();
+			new (Item.ICLASS_HEAD, "head"),
+			new (Item.ICLASS_FOREARM, "forearm"),
+			new (Item.ICLASS_LOWERBODY, "lowerBody"),
+			new (Item.ICLASS_UPPERBODY, "upperBody"),
+			//new ("ARMORJEWELRY_BRACELET", "bracelet"),// TODO Does it exist ? ARMORJEWELRY_BRACELET
+			new (Item.ICLASS_RING, "ring"),
+			new (Item.ICLASS_AMULET, "amulet"),
+			new (Item.ICLASS_BOW, "bow"),
+			new (Item.ICLASS_SPEAR, "spear"),
+			new (Item.ICLASS_RANGEDONEHAND, "bow"),
+			new (Item.ICLASS_AXE, "axe"),
+			new (Item.ICLASS_SWORD, "sword"),
+			new (Item.ICLASS_MACE, "mace"),
+			new (Item.ICLASS_STAFF, "staff"),
+			new (Item.ICLASS_SHIELD, "shield"),
+		}.AsReadOnly();
 
 		/// <summary>
 		/// Gets s string containing the prefix of the item class for use in the requirements equation.
@@ -797,11 +889,10 @@ namespace TQVaultAE.Data
 		/// <param name="itemClass">string containing the item class</param>
 		/// <returns>string containing the prefix of the item class for use in the requirements equation</returns>
 		private string GetRequirementEquationPrefix(string itemClass)
-		{
-			var itemClassUI = itemClass.ToUpperInvariant();
-			var map = ItemClassMap.Where(m => m.ItemClass == itemClassUI).Select(m => m.RequirementEquationPrefix);
-			return map.Any() ? map.First() : "none";
-		}
+		=> ItemClassToRequirementEquationPrefixMap
+				.Where(m => m.ItemClass.Equals(itemClass, noCase))
+			.Select(m => m.Value)
+			.FirstOrDefault() ?? "none";
 
 
 		/// <summary>
@@ -829,10 +920,10 @@ namespace TQVaultAE.Data
 					case VariableDataType.StringVar:
 						if ((
 								allowStrings
-								|| variable.Name.ToUpperInvariant().Equals("CHARACTERBASEATTACKSPEEDTAG")
-								|| variable.Name.ToUpperInvariant().Equals("ITEMSKILLNAME") // Added by VillageIdiot for Granted skills
-								|| variable.Name.ToUpperInvariant().Equals("SKILLNAME") // Added by VillageIdiot for scroll skills
-								|| variable.Name.ToUpperInvariant().Equals("PETBONUSNAME") // Added by VillageIdiot for pet bonuses
+							|| variable.Name.Equals("CHARACTERBASEATTACKSPEEDTAG", noCase)
+							|| variable.Name.Equals("ITEMSKILLNAME", noCase) // Added by VillageIdiot for Granted skills
+							|| variable.Name.Equals("SKILLNAME", noCase) // Added by VillageIdiot for scroll skills
+							|| variable.Name.Equals("PETBONUSNAME", noCase) // Added by VillageIdiot for pet bonuses
 								|| ItemAttributeProvider.IsReagent(variable.Name)
 							) && variable.GetString(i).Length > 0
 						)
@@ -898,7 +989,7 @@ namespace TQVaultAE.Data
 			if (itemId.Length < 4)
 				return itemId;
 
-			if (Path.GetExtension(itemId).ToUpperInvariant().Equals(".DBR"))
+		if (Path.GetExtension(itemId).Equals(".DBR", noCase))
 				return itemId;
 			else
 				return string.Concat(itemId, ".dbr");
@@ -944,8 +1035,8 @@ namespace TQVaultAE.Data
 
 				// Level needs to be LevelRequirement bah
 				if (key.Equals("Level"))
-					key = "LevelRequirement";
-
+					key = Variable.KEY_LEVELREQ;
+			;
 				// Keep Max value per Requirement (LevelRequirement, Strength, Dexterity, Intelligence)
 				if (requirements.ContainsKey(key))
 				{
@@ -958,7 +1049,7 @@ namespace TQVaultAE.Data
 					{
 						// Just in case there is something with multiple values
 						// Keep the original code
-						if (string.Compare(value, oldVariable.ToStringValue(), StringComparison.OrdinalIgnoreCase) <= 0)
+						if (string.Compare(value, oldVariable.ToStringValue(), noCase) <= 0)
 							continue;
 
 						requirements.Remove(key);
@@ -1018,7 +1109,7 @@ namespace TQVaultAE.Data
 			string prefix = GetRequirementEquationPrefix(itemInfo.ItemClass);
 			foreach (Variable variable in record)
 			{
-				if (string.Compare(variable.Name, 0, prefix, 0, prefix.Length, StringComparison.OrdinalIgnoreCase) != 0)
+				if (string.Compare(variable.Name, 0, prefix, 0, prefix.Length, noCase) != 0)
 					continue;
 
 				if (TQDebug.ItemDebugLevel > 2)
@@ -1044,7 +1135,7 @@ namespace TQVaultAE.Data
 
 				// Level needs to be LevelRequirement bah
 				if (key.Equals("Level"))
-					key = "LevelRequirement";
+					key = Variable.KEY_LEVELREQ;
 
 				// Skip over any requirements that have been set by the database record. 
 				if (requirements.ContainsKey(key))
@@ -1123,7 +1214,7 @@ VariableValue Raw : {valueRaw}
 			if (baseItem.GetString("itemSkillAutoController", 0) != null)
 			{
 				int level = baseItem.GetInt32("itemSkillLevel", 0);
-				if (record.GetString("Class", 0).ToUpperInvariant().StartsWith("SKILLBUFF", StringComparison.OrdinalIgnoreCase))
+				if (record.GetString("Class", 0).StartsWith("SKILLBUFF", noCase))
 				{
 					DBRecordCollection skill = Database.GetRecordFromFile(itm.baseItemInfo.GetString("itemSkillName"));
 					if (skill != null && skill.GetString("buffSkillName", 0) == recordId)
@@ -1149,7 +1240,7 @@ VariableValue Raw : {valueRaw}
 		public int GetPetSkillLevel(Item itm, DBRecordCollection record, string recordId, int varNum)
 		{
 			// Check to see if itm really is a skill
-			if (record.GetString("Class", 0).ToUpperInvariant().StartsWith("SKILL_ATTACK", StringComparison.OrdinalIgnoreCase))
+			if (record.GetString("Class", 0).StartsWith("SKILL_ATTACK", noCase))
 			{
 				// Check to see if itm item creates a pet
 				DBRecordCollection petSkill = Database.GetRecordFromFile(itm.baseItemInfo.GetString("skillName"));
@@ -1235,6 +1326,15 @@ VariableValue Raw : {valueRaw}
 
 				res.ItemThrown = itm.IsThrownWeapon ? this.TranslationService.TranslateXTag("x2tagThrownWeapon") : null;
 
+			res.ItemOrigin = itm.GameExtension switch
+			{
+					GameExtension.Atlantis => this.TranslationService.ItemAtlantis,
+					GameExtension.EternalEmbers => this.TranslationService.ItemEmbers,
+					GameExtension.Ragnarok => this.TranslationService.ItemRagnarok,
+					GameExtension.ImmortalThrone => this.TranslationService.ItemIT,
+					_ => null
+				};
+
 				#region Prefix translation
 
 				if (!k.Item.IsRelic && !string.IsNullOrEmpty(k.Item.prefixID))
@@ -1243,7 +1343,7 @@ VariableValue Raw : {valueRaw}
 					if (k.Item.prefixInfo != null)
 					{
 						if (TranslationService.TryTranslateXTag(k.Item.prefixInfo.DescriptionTag, out var desc))
-							res.PrefixInfoDescription = desc;
+						res.PrefixInfoDescription = desc.TQCleanup(true);
 					}
 				}
 
@@ -1423,8 +1523,10 @@ VariableValue Raw : {valueRaw}
 				{
 					if (k.Item.suffixInfo != null)
 					{
-						if (!TranslationService.TryTranslateXTag(k.Item.suffixInfo.DescriptionTag, out res.SuffixInfoDescription))
-							res.SuffixInfoDescription = k.Item.suffixID;
+					res.SuffixInfoDescription =
+						TranslationService.TryTranslateXTag(k.Item.suffixInfo.DescriptionTag, out res.SuffixInfoDescription)
+							? res.SuffixInfoDescription.TQCleanup(true)
+							: k.Item.suffixID;
 					}
 					else
 						res.SuffixInfoDescription = k.Item.suffixID;
@@ -1519,6 +1621,7 @@ VariableValue Raw : {valueRaw}
 					var reqs = GetRequirements(k.Item);
 					res.Requirements = reqs.Requirements;
 					res.RequirementVariables = reqs.RequirementVariables;
+				res.RequirementInfo = GetRequirementInfo(k.Item, reqs.RequirementVariables);
 				}
 
 				#region Extra Attributes for specific types
@@ -1547,7 +1650,7 @@ VariableValue Raw : {valueRaw}
 					}
 				}
 
-				// Show the completion bonus. // TODO is it possible to have 2 relics on one artifact ?
+			// Show the completion bonus.
 				if (k.Item.RelicBonusInfo != null
 					&& (k.Scope?.HasFlag(FriendlyNamesExtraScopes.RelicAttributes) ?? false)
 					&& (k.Item.IsArtifact // Artifact completion bonus
@@ -1615,6 +1718,43 @@ VariableValue Raw : {valueRaw}
 		}
 
 		/// <summary>
+	/// Extract numerical requirements
+	/// </summary>
+	/// <param name="item"></param>
+	/// <returns></returns>
+	public RequirementInfo GetRequirementInfo(Item item)
+	{
+		SortedList<string, Variable> requirementVariables = GetRequirementVariables(item);
+		return GetRequirementInfo(item, requirementVariables);
+	}
+
+	/// <summary>
+	/// Extract numerical requirements
+	/// </summary>
+	/// <param name="item"></param>
+	/// <param name="requirementVariables"></param>
+	/// <returns></returns>
+	public RequirementInfo GetRequirementInfo(Item item, SortedList<string, Variable> requirementVariables)
+	{
+		var info = new RequirementInfo();
+		info.Item = item;
+
+		if (requirementVariables.TryGetValue("LevelRequirement", out var varLvl))
+			info.Lvl = varLvl.GetInt32(0);
+
+		if (requirementVariables.TryGetValue("Strength", out var varStr))
+			info.Str = varStr.GetInt32(0);
+
+		if (requirementVariables.TryGetValue("Dexterity", out var varDex))
+			info.Dex = varDex.GetInt32(0);
+
+		if (requirementVariables.TryGetValue("Intelligence", out var varIntel))
+			info.Int = varIntel.GetInt32(0);
+
+		return info;
+	}
+
+	/// <summary>
 		/// Shows the items in a set for the set items
 		/// </summary>
 		/// <returns>string containing the set items</returns>
@@ -1760,7 +1900,7 @@ VariableValue Raw : {valueRaw}
 								normalizedVariableName != "OFFENSIVEPIERCERATIOMIN")
 							{
 								// Chance of effects are still messed up.
-								if (normalizedVariableName.StartsWith("AUGMENTSKILLLEVEL", StringComparison.OrdinalIgnoreCase))
+								if (normalizedVariableName.StartsWith("AUGMENTSKILLLEVEL", noCase))
 								{
 									// Add value of augment skill level to count instead of incrementing
 									itm.attributeCount += variable.GetInt32(0);
@@ -1912,14 +2052,14 @@ VariableValue Raw : {valueRaw}
 
 			// sweet we have a range
 			string tag = "DamageRangeFormat";
-			if (data.Effect.EndsWith("Stun", StringComparison.OrdinalIgnoreCase)
-				|| data.Effect.EndsWith("Freeze", StringComparison.OrdinalIgnoreCase)
-				|| data.Effect.EndsWith("Petrify", StringComparison.OrdinalIgnoreCase)
-				|| data.Effect.EndsWith("Trap", StringComparison.OrdinalIgnoreCase)
-				|| data.Effect.EndsWith("Convert", StringComparison.OrdinalIgnoreCase)
-				|| data.Effect.EndsWith("Fear", StringComparison.OrdinalIgnoreCase)
-				|| data.Effect.EndsWith("Confusion", StringComparison.OrdinalIgnoreCase)
-				|| data.Effect.EndsWith("Disruption", StringComparison.OrdinalIgnoreCase)
+			if (data.Effect.EndsWith("Stun", noCase)
+				|| data.Effect.EndsWith("Freeze", noCase)
+				|| data.Effect.EndsWith("Petrify", noCase)
+				|| data.Effect.EndsWith("Trap", noCase)
+				|| data.Effect.EndsWith("Convert", noCase)
+				|| data.Effect.EndsWith("Fear", noCase)
+				|| data.Effect.EndsWith("Confusion", noCase)
+				|| data.Effect.EndsWith("Disruption", noCase)
 			)
 			{
 				tag = "DamageInfluenceRangeFormat";
@@ -1966,6 +2106,7 @@ VariableValue Raw : {valueRaw}
 			return color.HasValue ? $"{color?.ColorTag()}{amount}" : amount;
 		}
 
+	static Regex GetAmountSingleRegEx = new Regex(@"(?<Prefix>\{(\d):)(?<Sign>[+-])(?<Suffix>#([\d\.]+)})", RegexOptions.Compiled);
 		/// <summary>
 		/// Gets a formatted single amount
 		/// </summary>
@@ -1983,14 +2124,14 @@ VariableValue Raw : {valueRaw}
 			string amount = null;
 
 			string tag = "DamageSingleFormat";
-			if (data.Effect.EndsWith("Stun", StringComparison.OrdinalIgnoreCase)
-				|| data.Effect.EndsWith("Freeze", StringComparison.OrdinalIgnoreCase)
-				|| data.Effect.EndsWith("Petrify", StringComparison.OrdinalIgnoreCase)
-				|| data.Effect.EndsWith("Trap", StringComparison.OrdinalIgnoreCase)
-				|| data.Effect.EndsWith("Convert", StringComparison.OrdinalIgnoreCase)
-				|| data.Effect.EndsWith("Fear", StringComparison.OrdinalIgnoreCase)
-				|| data.Effect.EndsWith("Confusion", StringComparison.OrdinalIgnoreCase)
-				|| data.Effect.EndsWith("Disruption", StringComparison.OrdinalIgnoreCase)
+			if (data.Effect.EndsWith("Stun", noCase)
+				|| data.Effect.EndsWith("Freeze", noCase)
+				|| data.Effect.EndsWith("Petrify", noCase)
+				|| data.Effect.EndsWith("Trap", noCase)
+				|| data.Effect.EndsWith("Convert", noCase)
+				|| data.Effect.EndsWith("Fear", noCase)
+				|| data.Effect.EndsWith("Confusion", noCase)
+				|| data.Effect.EndsWith("Disruption", noCase)
 			)
 			{
 				tag = "DamageInfluenceSingleFormat";
@@ -2043,8 +2184,7 @@ VariableValue Raw : {valueRaw}
 
 					// Fix#246, double signed result on negative value Ex : string.Format("{0:+#0} d'intelligence", -10) by removing format sign.
 					// Fix "Dotted decimal mask" matching Ex : {0:#0.0} Health Regeneration per second
-					formatSpec = Regex.Replace(formatSpec
-						, @"(?<Prefix>\{(\d):)(?<Sign>[+-])(?<Suffix>#([\d\.]+)})"
+				formatSpec = GetAmountSingleRegEx.Replace(formatSpec
 						, new MatchEvaluator((Match m) =>
 						{
 							var Prefix = m.Groups["Prefix"].Value;
@@ -2615,7 +2755,7 @@ VariableValue Raw : {valueRaw}
 		private string GetFormulae(List<string> results, Variable variable, ItemAttributesData attributeData, string line, ref TQColor? font)
 		{
 			// Special case for formulae reagents
-			if (attributeData.FullAttribute.StartsWith("reagent", StringComparison.OrdinalIgnoreCase))
+			if (attributeData.FullAttribute.StartsWith("reagent", noCase))
 			{
 				DBRecordCollection reagentRecord = Database.GetRecordFromFile(variable.GetString(0));
 				if (reagentRecord != null)
@@ -2844,13 +2984,13 @@ VariableValue Raw : {valueRaw}
 			// Find the extra format tag for those that take 2 parameters.
 			string formatSpecTag = null;
 			string formatSpec = null;
-			if (currentAttributeData.FullAttribute.EndsWith("Cost", StringComparison.OrdinalIgnoreCase))
+			if (currentAttributeData.FullAttribute.EndsWith("Cost", noCase))
 				formatSpecTag = "SkillIntFormat";
-			else if (currentAttributeData.FullAttribute.EndsWith("Level", StringComparison.OrdinalIgnoreCase))
+			else if (currentAttributeData.FullAttribute.EndsWith("Level", noCase))
 				formatSpecTag = "SkillIntFormat";
-			else if (currentAttributeData.FullAttribute.EndsWith("Duration", StringComparison.OrdinalIgnoreCase))
+			else if (currentAttributeData.FullAttribute.EndsWith("Duration", noCase))
 				formatSpecTag = "SkillSecondFormat";
-			else if (currentAttributeData.FullAttribute.EndsWith("Radius", StringComparison.OrdinalIgnoreCase))
+			else if (currentAttributeData.FullAttribute.EndsWith("Radius", noCase))
 				formatSpecTag = "SkillDistanceFormat";
 
 			if (!string.IsNullOrEmpty(formatSpecTag))
@@ -2960,7 +3100,7 @@ VariableValue Raw : {valueRaw}
 				variableNumber = GetPetSkillLevel(itm, record, recordId, variableNumber);
 
 			// Triggered skills can have also multiple values so we need to decode it here
-			if (record.GetString("Class", 0).ToUpperInvariant().StartsWith("SKILL", StringComparison.OrdinalIgnoreCase))
+			if (record.GetString("Class", 0).StartsWith("SKILL", noCase))
 				variableNumber = GetTriggeredSkillLevel(itm, record, recordId, variableNumber);
 
 			// See what variables we have
@@ -3309,15 +3449,15 @@ VariableValue Raw : {valueRaw}
 						else
 							line = string.Empty;
 					}
-					else if (normalizedFullAttribute.EndsWith("GLOBALCHANCE", StringComparison.OrdinalIgnoreCase))
+					else if (normalizedFullAttribute.EndsWith("GLOBALCHANCE", noCase))
 						line = GetGlobalChance(attributeList, variableNumber, variable, ref color);
-					else if (normalizedFullAttribute.StartsWith("RACIALBONUS", StringComparison.OrdinalIgnoreCase))
+					else if (normalizedFullAttribute.StartsWith("RACIALBONUS", noCase))
 						line = GetRacialBonus(record, itm, results, variableNumber, isGlobal, globalIndent, variable, attributeData, line, ref color);
 					else if (normalizedFullAttribute == "AUGMENTALLLEVEL")
 						line = GetAugmentAllLevel(variableNumber, variable, ref color);
-					else if (normalizedFullAttribute.StartsWith("AUGMENTMASTERYLEVEL", StringComparison.OrdinalIgnoreCase))
+					else if (normalizedFullAttribute.StartsWith("AUGMENTMASTERYLEVEL", noCase))
 						line = GetAugmentMasteryLevel(record, variable, attributeData, ref color);
-					else if (normalizedFullAttribute.StartsWith("AUGMENTSKILLLEVEL", StringComparison.OrdinalIgnoreCase))
+					else if (normalizedFullAttribute.StartsWith("AUGMENTSKILLLEVEL", noCase))
 						line = GetAugmentSkillLevel(record, variable, attributeData, line, ref color);
 					else if (itm.IsFormulae && recordId == itm.BaseItemId)
 						line = GetFormulae(results, variable, attributeData, line, ref color);
@@ -3349,7 +3489,7 @@ VariableValue Raw : {valueRaw}
 					{
 						line = GetSkillEffect(data, variableNumber, variable, attributeData, line, ref color);
 					}
-					else if (normalizedFullAttribute.EndsWith("DAMAGEQUALIFIER", StringComparison.OrdinalIgnoreCase))
+					else if (normalizedFullAttribute.EndsWith("DAMAGEQUALIFIER", noCase))
 					{
 						// Added by VillageIdiot
 						// for Damage Absorption
@@ -3418,7 +3558,7 @@ VariableValue Raw : {valueRaw}
 							line = line.InsertAfterColorPrefix(globalIndent);
 
 						// Indent formulae reagents
-						if (itm.IsFormulae && normalizedFullAttribute.StartsWith("REAGENT", StringComparison.OrdinalIgnoreCase))
+						if (itm.IsFormulae && normalizedFullAttribute.StartsWith("REAGENT", noCase))
 							line = line.InsertAfterColorPrefix(globalIndent);
 
 						results.Add(line);
@@ -3581,7 +3721,7 @@ VariableValue Raw : {valueRaw}
 					if (skillRecord != null)
 					{
 						// itm is a summon
-						if (skillRecord.GetString("Class", 0).ToUpperInvariant().Equals("SKILL_SPAWNPET"))
+					if (skillRecord.GetString("Class", 0).Equals("SKILL_SPAWNPET", noCase))
 							ConvertPetStats(itm, skillRecord, results);
 						else
 						{
@@ -3754,7 +3894,7 @@ VariableValue Raw : {valueRaw}
 					string skillClass = skillRecord1.GetString("Class", 0);
 
 					// Skip passive skills
-					if (skillClass.ToUpperInvariant() == "SKILL_PASSIVE")
+				if (skillClass.Equals("SKILL_PASSIVE", noCase))
 						continue;
 
 					string skillNameTag = null;
@@ -3819,7 +3959,7 @@ VariableValue Raw : {valueRaw}
 			}
 
 			// if itm is an Armor effect and we are not armor, then change it to bonus
-			if (labelTag.ToUpperInvariant().Equals("DEFENSEABSORPTIONPROTECTION"))
+		if (labelTag.Equals("DEFENSEABSORPTIONPROTECTION", noCase))
 			{
 				if (!itm.IsArmor || recordId != itm.BaseItemId)
 				{
@@ -3906,7 +4046,6 @@ VariableValue Raw : {valueRaw}
 			}
 
 			return (requirements.ToArray(), requirementVariables);
-		}
 	}
 }
 

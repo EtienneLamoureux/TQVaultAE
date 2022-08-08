@@ -115,6 +115,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display affixes by effect.
+        /// </summary>
+        public static string AffixesDisplayByEffect {
+            get {
+                return ResourceManager.GetString("AffixesDisplayByEffect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display affixes by name.
+        /// </summary>
+        public static string AffixesDisplayByName {
+            get {
+                return ResourceManager.GetString("AffixesDisplayByName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         public static byte[] AlbertusMT {
@@ -894,6 +912,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CSV exported to clipboard at {0:g}.
+        /// </summary>
+        public static string CSVExportedToClipboardNotification {
+            get {
+                return ResourceManager.GetString("CSVExportedToClipboardNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Level.
         /// </summary>
         public static string CurrentLevel {
@@ -1063,6 +1090,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export bag to clipboard.
+        /// </summary>
+        public static string ExportBagCSVToClipboard {
+            get {
+                return ResourceManager.GetString("ExportBagCSVToClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export vault to clipboard.
+        /// </summary>
+        public static string ExportVaultCSVToClipboard {
+            get {
+                return ResourceManager.GetString("ExportVaultCSVToClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You can&apos;t use a Prefix/Suffix better than Base item!.
         /// </summary>
         public static string ForgeCantUsePrefixSuffixBetterThanBase {
@@ -1072,11 +1117,47 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Prefix/Suffix can&apos;t have a level requirement greater than base item!.
+        /// </summary>
+        public static string ForgeCantUsePrefixSuffixHavingGreaterReqLevelThanBaseItem {
+            get {
+                return ResourceManager.GetString("ForgeCantUsePrefixSuffixHavingGreaterReqLevelThanBaseItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prefix/Suffix must have the same base than Base item!.
+        /// </summary>
+        public static string ForgeCantUsePrefixSuffixOfAnotherBaseItem {
+            get {
+                return ResourceManager.GetString("ForgeCantUsePrefixSuffixOfAnotherBaseItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Prefix/Suffix must be of same gear type than Base item!.
         /// </summary>
         public static string ForgeCantUsePrefixSuffixOfAnotherGearType {
             get {
                 return ResourceManager.GetString("ForgeCantUsePrefixSuffixOfAnotherGearType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game Mode.
+        /// </summary>
+        public static string ForgeGameMode {
+            get {
+                return ResourceManager.GetString("ForgeGameMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Constrain the Forge to game rules.
+        /// </summary>
+        public static string ForgeGameModeTT {
+            get {
+                return ResourceManager.GetString("ForgeGameModeTT", resourceCulture);
             }
         }
         
@@ -1095,6 +1176,15 @@ namespace TQVaultAE.Presentation {
         public static string ForgeGodModeTT {
             get {
                 return ResourceManager.GetString("ForgeGodModeTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Materials are destroyed in the process.
+        /// </summary>
+        public static string ForgeHardcoreTT {
+            get {
+                return ResourceManager.GetString("ForgeHardcoreTT", resourceCulture);
             }
         }
         
@@ -1243,7 +1333,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Constrain the Forge to game rules.
+        ///   Looks up a localized string similar to Constrain the Forge to game rules with a twist.
         /// </summary>
         public static string ForgeStrictModeTT {
             get {
@@ -1458,6 +1548,15 @@ namespace TQVaultAE.Presentation {
         public static string GlobalExpandAll {
             get {
                 return ResourceManager.GetString("GlobalExpandAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hardcore.
+        /// </summary>
+        public static string GlobalHardcore {
+            get {
+                return ResourceManager.GetString("GlobalHardcore", resourceCulture);
             }
         }
         
@@ -4291,6 +4390,15 @@ namespace TQVaultAE.Presentation {
         public static string SettingsBrowseVault {
             get {
                 return ResourceManager.GetString("SettingsBrowseVault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CSV Delimiter.
+        /// </summary>
+        public static string SettingsCsvDelimiterLabel {
+            get {
+                return ResourceManager.GetString("SettingsCsvDelimiterLabel", resourceCulture);
             }
         }
         

@@ -51,7 +51,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Prefer32Bit>false</Prefer32Bit>
-    <LangVersion>9</LangVersion>
+    <LangVersion>10</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -63,7 +63,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>9</LangVersion>
+    <LangVersion>10</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
@@ -108,7 +108,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9</LangVersion>
+    <LangVersion>10</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -119,7 +119,7 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9</LangVersion>
+    <LangVersion>10</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -222,6 +222,7 @@
     </Compile>
     <Compile Include="Models\ComboBoxItem.cs" />
     <Compile Include="Models\CommandLineArgs.cs" />
+    <Compile Include="Models\CsvDelimiter.cs" />
     <Compile Include="Models\ItemDragInfo.cs" />
     <Compile Include="Models\ResizeEventArgs.cs" />
     <Compile Include="Models\ResultChangedEventArgs.cs" />

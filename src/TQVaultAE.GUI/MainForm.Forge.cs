@@ -1,109 +1,111 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 using TQVaultAE.GUI.Components;
 
-namespace TQVaultAE.GUI
+namespace TQVaultAE.GUI;
+
+public partial class MainForm
 {
-	public partial class MainForm
+	private ForgePanel forgePanel;
+
+	private (bool configureButton, bool showVaulButton, bool searchButton, bool duplicateButton, bool saveButton, bool playerPanel, bool stashPanel, bool secondaryVaultPanel, bool flowLayoutPanelRightComboBox) lastVisibility;
+
+	private bool lastEnableDetailedTooltipView;
+
+	private ForgePanel CreateForgePanel()
 	{
-		private ForgePanel forgePanel;
+		forgePanel = new ForgePanel(DragInfo, ServiceProvider);
 
-		private (bool configureButton, bool showVaulButton, bool searchButton, bool duplicateButton, bool saveButton, bool playerPanel, bool stashPanel, bool secondaryVaultPanel, bool flowLayoutPanelRightComboBox) lastVisibility;
+		flowLayoutPanelRightPanels.Controls.Add(forgePanel);
+		forgePanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+		forgePanel.Visible = false;
+		forgePanel.CancelAction = ForgeActionCanceled;
+		forgePanel.ForgeAction = ForgeActionForged;
+		return forgePanel;
+	}
 
-		private bool lastEnableDetailedTooltipView;
-
-		private ForgePanel CreateForgePanel()
+	private void scalingButtonForge_Click(object sender, EventArgs e)
+	{
+		if (!forgePanel.Visible)
 		{
-			forgePanel = new ForgePanel(DragInfo, ServiceProvider);
+			ForgeShowUI();
 
-			flowLayoutPanelRightPanels.Controls.Add(forgePanel);
-			forgePanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-			forgePanel.Visible = false;
-			forgePanel.NotifyAction = ForgeNotify;
-			forgePanel.CancelAction = ForgeHideUI;
-			forgePanel.ForgeAction = ForgeHideUI;
-			return forgePanel;
+			return;
 		}
 
-		private void ForgeNotify(string message)
-		{
-			NotificationText.ForeColor = Color.Red;
-			NotificationText.Text = message;
-		}
+		ForgeHideUI();
+	}
 
-		private void scalingButtonForge_Click(object sender, EventArgs e)
-		{
-			if (!forgePanel.Visible)
-			{
-				ForgeShowUI();
+	private void ForgeShowUI()
+	{
+		SoundService.PlayRandomMetalHit();
 
-				return;
-			}
+		// Save UI visibility
+		lastVisibility = (
+			configureButton: configureButton.Visible
+			, showVaulButton: showVaulButton.Visible
+			, searchButton: searchButton.Visible
+			, duplicateButton: duplicateButton.Visible
+			, saveButton: saveButton.Visible
+			, playerPanel: playerPanel.Visible
+			, stashPanel: stashPanel.Visible
+			, secondaryVaultPanel: secondaryVaultPanel.Visible
+			, flowLayoutPanelRightComboBox: flowLayoutPanelRightComboBox.Visible
+		);
 
-			ForgeHideUI();
-		}
+		// Hide buttons
+		configureButton.Visible =
+		showVaulButton.Visible =
+		searchButton.Visible =
+		duplicateButton.Visible =
+		saveButton.Visible =
 
-		private void ForgeShowUI()
-		{
-			SoundService.PlayRandomMetalHit();
+		// Hide right panels
+		flowLayoutPanelRightComboBox.Visible =
+		playerPanel.Visible =
+		stashPanel.Visible =
+		secondaryVaultPanel.Visible =
+		false;
 
-			// Save UI visibility
-			lastVisibility = (
-				configureButton: configureButton.Visible
-				, showVaulButton: showVaulButton.Visible
-				, searchButton: searchButton.Visible
-				, duplicateButton: duplicateButton.Visible
-				, saveButton: saveButton.Visible
-				, playerPanel: playerPanel.Visible
-				, stashPanel: stashPanel.Visible
-				, secondaryVaultPanel: secondaryVaultPanel.Visible
-				, flowLayoutPanelRightComboBox: flowLayoutPanelRightComboBox.Visible
-			);
+		// Show the forge
+		forgePanel.Dock = DockStyle.Left;
+		forgePanel.Visible = true;
 
-			// Hide buttons
-			configureButton.Visible =
-			showVaulButton.Visible =
-			searchButton.Visible =
-			duplicateButton.Visible =
-			saveButton.Visible =
+		this.lastEnableDetailedTooltipView = Config.Settings.Default.EnableDetailedTooltipView;
+		Config.Settings.Default.EnableDetailedTooltipView = true;
+	}
 
-			// Hide right panels
-			flowLayoutPanelRightComboBox.Visible =
-			playerPanel.Visible =
-			stashPanel.Visible =
-			secondaryVaultPanel.Visible =
-			false;
+	private void ForgeActionForged()
+	{
+		ForgeHideUI();
+	}
 
-			// Show the forge
-			forgePanel.Dock = DockStyle.Left;
-			forgePanel.Visible = true;
+	private void ForgeActionCanceled()
+	{
+		SoundService.PlayRandomCancel();
+		ForgeHideUI();
+	}
 
-			this.lastEnableDetailedTooltipView = Config.Settings.Default.EnableDetailedTooltipView;
-			Config.Settings.Default.EnableDetailedTooltipView = true;
-		}
+	private void ForgeHideUI()
+	{
+		SoundService.PlayRandomCancel();
 
-		private void ForgeHideUI()
-		{
-			SoundService.PlayRandomCancel();
+		// Restore UI visibility
+		configureButton.Visible = lastVisibility.configureButton;
+		showVaulButton.Visible = lastVisibility.showVaulButton;
+		searchButton.Visible = lastVisibility.searchButton;
+		duplicateButton.Visible = lastVisibility.duplicateButton;
+		saveButton.Visible = lastVisibility.saveButton;
+		flowLayoutPanelRightComboBox.Visible = lastVisibility.flowLayoutPanelRightComboBox;
+		playerPanel.Visible = lastVisibility.playerPanel;
+		stashPanel.Visible = lastVisibility.stashPanel;
+		secondaryVaultPanel.Visible = lastVisibility.secondaryVaultPanel;
+		// Hide the forge
+		forgePanel.Dock = DockStyle.None;
+		forgePanel.Visible = false;
 
-			// Restore UI visibility
-			configureButton.Visible = lastVisibility.configureButton;
-			showVaulButton.Visible = lastVisibility.showVaulButton;
-			searchButton.Visible = lastVisibility.searchButton;
-			duplicateButton.Visible = lastVisibility.duplicateButton;
-			saveButton.Visible = lastVisibility.saveButton;
-			flowLayoutPanelRightComboBox.Visible = lastVisibility.flowLayoutPanelRightComboBox;
-			playerPanel.Visible = lastVisibility.playerPanel;
-			stashPanel.Visible = lastVisibility.stashPanel;
-			secondaryVaultPanel.Visible = lastVisibility.secondaryVaultPanel;
-			// Hide the forge
-			forgePanel.Dock = DockStyle.None;
-			forgePanel.Visible = false;
+		Config.Settings.Default.EnableDetailedTooltipView = this.lastEnableDetailedTooltipView;
 
-			Config.Settings.Default.EnableDetailedTooltipView = this.lastEnableDetailedTooltipView;
-
-			Refresh();
-		}
+		Refresh();
 	}
 }

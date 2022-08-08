@@ -99,6 +99,7 @@ namespace TQVaultAE.GUI.Tooltip
 
 		#endregion
 
+		static Regex FillToolTipRegEx = new Regex(@"[^\w]", RegexOptions.Compiled);
 		/// <summary>
 		/// Init the tooltip content.
 		/// </summary>
@@ -122,7 +123,7 @@ namespace TQVaultAE.GUI.Tooltip
 			var searchTermsGroup = // TODO Maybe multiple in the future using old notation
 				from f in this.Filters
 				where f.CheckedList is null
-				let cleanName = Regex.Replace(f.Category.Text, @"[^\w]", string.Empty)
+				let cleanName = FillToolTipRegEx.Replace(f.Category.Text, string.Empty)
 				group f by cleanName into grp
 				orderby grp.Key
 				select grp;

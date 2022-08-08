@@ -2,27 +2,8 @@
 
 namespace TQVaultAE.Domain.Entities
 {
-	public class IconInfo
+	public record IconInfo(IconCategory Category, string On, Bitmap OnBitmap, string Off, Bitmap OffBitmap, string Over, Bitmap OverBitmap)
 	{
-		public IconInfo(IconCategory category, string on, Bitmap onBitmap, string off, Bitmap offBitmap, string over, Bitmap overBitmap)
-		{
-			Category = category;
-			On = on;
-			OnBitmap = onBitmap;
-			Off = off;
-			OffBitmap = offBitmap;
-			Over = over;
-			OverBitmap = overBitmap;
-		}
-
-		public readonly IconCategory Category;
-		public readonly string On;
-		public readonly Bitmap OnBitmap;
-		public readonly string Off;
-		public readonly Bitmap OffBitmap;
-		public readonly string Over;
-		public readonly Bitmap OverBitmap;
-
 		/// <summary>
 		/// Tell if <see cref="Over"/> is a duplicate of <see cref="On"/> or <see cref="Off"/>
 		/// </summary>
@@ -40,6 +21,5 @@ namespace TQVaultAE.Domain.Entities
 			if (string.IsNullOrWhiteSpace(resourceId)) return false;
 			return resourceId == this.Off || resourceId == this.On || resourceId == this.Over;
 		}
-
 	}
 }

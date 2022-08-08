@@ -11,11 +11,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQVaultAE.GUI", "src\TQVaul
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{20915EFE-C25B-499E-9CB6-5888F29BC32F}"
 	ProjectSection(SolutionItems) = preProject
+		documentation\AFFIXES.md = documentation\AFFIXES.md
+		documentation\ADVANCEDSEARCH.md = documentation\ADVANCEDSEARCH.md
+		documentation\ARZEXPLORER.md = documentation\ARZEXPLORER.md
 		CHANGELOG.md = CHANGELOG.md
 		CONTRIBUTING.md = CONTRIBUTING.md
-		FORGE.md = FORGE.md
+		documentation\FORGE.md = documentation\FORGE.md
+		documentation\HIGHLIGHT.md = documentation\HIGHLIGHT.md
+		src\IsExternalInit.cs = src\IsExternalInit.cs
 		src\MsBuildAL1073WarningWorkaround.config = src\MsBuildAL1073WarningWorkaround.config
 		README.md = README.md
+		documentation\SAVEFILEEXPLORER.md = documentation\SAVEFILEEXPLORER.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQ.SaveFilesExplorer", "src\TQSaveFilesExplorer\TQ.SaveFilesExplorer.csproj", "{C74E317C-9516-401B-88B5-29B2AE551013}"

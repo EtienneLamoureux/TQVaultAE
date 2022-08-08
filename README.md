@@ -1,6 +1,6 @@
 # TQVaultAE
 [![Steam](https://img.shields.io/badge/steam-link-lightgrey.svg)](https://steamcommunity.com/sharedfiles/filedetails/?id=1136716167)
-[![Release](https://img.shields.io/badge/stable-4.1.0-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
+[![Release](https://img.shields.io/badge/stable-4.2.0-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/LICENSE)
 
 TQVaultAE is an external tool for [Titan Quest Anniversary Edition](https://www.thqnordic.com/games/titan-quest) that allows you to store and search your items outside the game.
@@ -10,15 +10,17 @@ Works with all expansions!
 
 ## Features
 - **Infinite bank space**
-- Powerful search
+- [Powerful search](documentation/ADVANCEDSEARCH.md)
 - Cheats
     - Items
-        - Extract relic/charm from items at no cost, keeping both
-        - Modify the relic/charm/artefact completion bonus
-        - Complete relic/charm from a single piece
-        - Craft an artifact from its recipe
-        - Create missing set pieces
+        - [Extract relic/charm from items at no cost, keeping both](documentation/AFFIXES.md#RelicRemoval)
+        - [Modify the relic/charm/artefact completion bonus](documentation/AFFIXES.md#RelicCompletion)
+        - [Complete relic/charm from a single piece](documentation/AFFIXES.md#RelicCompleteStack)
+        - [Craft an artifact from its recipe](documentation/AFFIXES.md#Formula)
+        - [Change item seed](documentation/AFFIXES.md#Seed)
+        - [Create missing set pieces](documentation/AFFIXES.md#MissingSetPiece)
         - [Craft custom items](/documentation/FORGE.md)
+        - [Change items affixes](documentation/AFFIXES.md)
         - Duplicate any item
     - Characters
         - Redisribute attribute points
@@ -46,6 +48,9 @@ Works with all expansions!
         - <kbd>SHIFT</kbd>+drag : Activate mouse lasso for multi selection
 - Character backups
     - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
+- External tools
+    - [ARZ Explorer](documentation/ARZEXPLORER.md) : Game resource file exploration
+    - [Save File Explorer](documentation/SAVEFILEEXPLORER.md) : Game save file exploration
 
 ## Installation
 ### Installer

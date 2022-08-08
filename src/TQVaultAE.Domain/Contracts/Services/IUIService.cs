@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Domain.Contracts.Services
 {
@@ -59,5 +60,33 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		/// <returns>Relic overlay bitmap</returns>
 		Bitmap LoadRelicOverlayBitmap();
+
+		/// <summary>
+		/// Display notification to user
+		/// </summary>
+		/// <param name="message"></param>
+		/// <param name="color"></param>
+		void NotifyUser(string message, TQColor color = TQColor.Turquoise);
+
+		/// <summary>
+		/// Display notification to user
+		/// </summary>
+		/// <param name="message"></param>
+		/// <param name="color"></param>
+		void NotifyUser(string message, Color color);	
+
+		/// <summary>
+		/// Notification event
+		/// </summary>
+		event NotifyUserEventHandler NotifyUserEvent;
 	}
+
+	/// <summary>
+	/// Notification delegate
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="message"></param>
+	/// <param name="color"></param>
+	public delegate void NotifyUserEventHandler(object sender, string message, Color color);
+
 }

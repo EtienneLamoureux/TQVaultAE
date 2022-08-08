@@ -12,6 +12,7 @@ namespace TQVaultAE.Data
 	using System.Linq;
 	using System.Text;
 	using TQVaultAE.Domain.Contracts.Services;
+	using TQVaultAE.Domain.Helpers;
 	using TQVaultAE.Logs;
 
 	/// <summary>
@@ -94,14 +95,7 @@ namespace TQVaultAE.Data
 		/// <param name="recordId">record path to be normalized</param>
 		/// <returns>normalized record path</returns>
 		public string NormalizeRecordPath(string recordId)
-		{
-			// uppercase it
-			string normalizedRecordId = recordId.ToUpperInvariant();
-
-			// replace any '/' with '\\'
-			normalizedRecordId = normalizedRecordId.Replace('/', '\\');
-			return normalizedRecordId;
-		}
+			=> recordId.NormalizeRecordPath();
 
 		/// <summary>
 		/// Reads a string from the binary stream.

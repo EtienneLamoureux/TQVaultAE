@@ -140,5 +140,8 @@
     <Setting Name="EnableTQVaultSounds" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="CSVDelimiter" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Comma</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

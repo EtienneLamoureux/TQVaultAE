@@ -12,6 +12,7 @@ namespace TQVaultAE.Domain.Entities
 	/// </summary>
 	public class Info
 	{
+		private const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
 		// tags
 		// animalrelics - description relicBitmap shardBitmap Class itemClassification completedRelicLevel
 		// equipment* - itemQualityTag itemStyleTag itemNameTag bitmap Class itemClassification
@@ -172,9 +173,9 @@ namespace TQVaultAE.Domain.Entities
 		/// </remarks>
 		private void AssignVariableNames()
 		{
-			string id = this.record.RecordType.ToUpperInvariant();
+			string id = this.record.RecordType;
 
-			if (id.StartsWith("LOOTRANDOMIZER", StringComparison.OrdinalIgnoreCase))
+			if (id.StartsWith("LOOTRANDOMIZER", noCase))
 			{
 				this.descriptionVar = "lootRandomizerName";
 				this.itemClassificationVar = "itemClassification";
@@ -185,7 +186,7 @@ namespace TQVaultAE.Domain.Entities
 				this.qualityVar = string.Empty;
 				this.styleVar = string.Empty;
 			}
-			else if (id.StartsWith("ITEMRELIC", StringComparison.OrdinalIgnoreCase) || id.StartsWith("ITEMCHARM", StringComparison.OrdinalIgnoreCase))
+			else if (id.StartsWith(Item.ICLASS_RELIC, noCase) || id.StartsWith(Item.ICLASS_CHARM, noCase))
 			{
 				this.descriptionVar = "description";
 				this.itemClassificationVar = "itemClassification";
@@ -196,7 +197,7 @@ namespace TQVaultAE.Domain.Entities
 				this.qualityVar = string.Empty;
 				this.styleVar = "itemText";
 			}
-			else if (id.StartsWith("ONESHOT_DYE", StringComparison.OrdinalIgnoreCase))
+			else if (id.StartsWith(Item.ICLASS_DYE, noCase))
 			{
 				this.descriptionVar = "description";
 				this.itemClassificationVar = string.Empty;
@@ -207,7 +208,7 @@ namespace TQVaultAE.Domain.Entities
 				this.qualityVar = string.Empty;
 				this.styleVar = string.Empty;
 			}
-			else if (id.StartsWith("ONESHOT", StringComparison.OrdinalIgnoreCase) || id.StartsWith("QUESTITEM", StringComparison.OrdinalIgnoreCase))
+			else if (id.StartsWith("ONESHOT", noCase) || id.StartsWith(Item.ICLASS_QUESTITEM, noCase))
 			{
 				this.descriptionVar = "description";
 				this.itemClassificationVar = "itemClassification";
@@ -218,7 +219,7 @@ namespace TQVaultAE.Domain.Entities
 				this.qualityVar = string.Empty;
 				this.styleVar = "itemText";
 			}
-			else if (id.StartsWith("ITEMARTIFACTFORMULA", StringComparison.OrdinalIgnoreCase))
+			else if (id.StartsWith(Item.ICLASS_FORMULA, noCase))
 			{
 				this.descriptionVar = "description";
 				this.itemClassificationVar = "itemClassification";
@@ -229,7 +230,7 @@ namespace TQVaultAE.Domain.Entities
 				this.qualityVar = string.Empty;
 				this.styleVar = string.Empty;
 			}
-			else if (id.StartsWith("ITEMARTIFACT", StringComparison.OrdinalIgnoreCase))
+			else if (id.StartsWith(Item.ICLASS_ARTIFACT, noCase))
 			{
 				this.descriptionVar = "description";
 				this.itemClassificationVar = "itemClassification";
@@ -240,7 +241,7 @@ namespace TQVaultAE.Domain.Entities
 				this.qualityVar = string.Empty;
 				this.styleVar = string.Empty;
 			}
-			else if (id.StartsWith("ITEMEQUIPMENT", StringComparison.OrdinalIgnoreCase))
+			else if (id.StartsWith(Item.ICLASS_EQUIPMENT, noCase))
 			{
 				this.descriptionVar = "description";
 				this.itemClassificationVar = "itemClassification";
@@ -251,18 +252,18 @@ namespace TQVaultAE.Domain.Entities
 				this.qualityVar = string.Empty;
 				this.styleVar = "itemText";
 			}
-			else if (id.StartsWith("Skill_Mastery", StringComparison.OrdinalIgnoreCase))
+			else if (id.StartsWith("Skill_Mastery", noCase))
 			{
 				this.descriptionVar = "skillDisplayName";//skillBaseDescription
 				this.itemClassificationVar = "itemClassification";
 				this.bitmapVar = "skillUpBitmapName";
 				this.shardBitmapVar = string.Empty;
-				this.itemClassVar = "Class"; 
+				this.itemClassVar = "Class";
 				this.completedRelicLevelVar = string.Empty;
 				this.qualityVar = string.Empty;
 				this.styleVar = string.Empty;
 			}
-			else if (id.Equals("WeaponHunting_RangedOneHand", StringComparison.OrdinalIgnoreCase))
+			else if (id.Equals(Item.ICLASS_RANGEDONEHAND, noCase))
 			{
 				this.descriptionVar = "itemNameTag";
 				this.itemClassificationVar = "itemClassification";
