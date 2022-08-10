@@ -16,6 +16,7 @@ namespace TQVaultAE.Data
 	using TQVaultAE.Data.Dto;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Logs;
+	using TQVaultAE.Domain.Helpers;
 
 	/// <summary>
 	/// Loads, decodes, encodes and saves a Titan Quest player file.
@@ -188,14 +189,14 @@ namespace TQVaultAE.Data
 					{
 						stackSize = i.StackSize,
 						seed = i.Seed,
-						baseName = i.BaseItemId,
-						prefixName = i.prefixID,
-						suffixName = i.suffixID,
-						relicName = i.relicID,
-						relicBonus = i.RelicBonusId,
+						baseName = i.BaseItemId.Raw,
+						prefixName = i.prefixID.Raw,
+						suffixName = i.suffixID.Raw,
+						relicName = i.relicID.Raw,
+						relicBonus = i.RelicBonusId.Raw,
 						var1 = i.Var1,
-						relicName2 = i.relic2ID,
-						relicBonus2 = i.RelicBonus2Id,
+						relicName2 = i.relic2ID.Raw,
+						relicBonus2 = i.RelicBonus2Id.Raw,
 						var2 = i.Var2,
 						pointX = i.PositionX,
 						pointY = i.PositionY,
@@ -312,11 +313,11 @@ namespace TQVaultAE.Data
 						ContainerType = SackType.Sack,
 						beginBlockCrap1 = this.TQData.BeginBlockValue,
 						beginBlockCrap2 = this.TQData.BeginBlockValue,
-						BaseItemId = s.baseName,
-						prefixID = s.prefixName,
-						suffixID = s.suffixName,
-						relicID = s.relicName,
-						RelicBonusId = s.relicBonus,
+						BaseItemId = s.baseName.ToRecordId(),
+						prefixID = s.prefixName.ToRecordId(),
+						suffixID = s.suffixName.ToRecordId(),
+						relicID = s.relicName.ToRecordId(),
+						RelicBonusId = s.relicBonus.ToRecordId(),
 						Seed = s.seed,
 						Var1 = s.var1,
 						endBlockCrap2 = this.TQData.EndBlockValue,
@@ -325,16 +326,16 @@ namespace TQVaultAE.Data
 						endBlockCrap1 = this.TQData.EndBlockValue,
 						StackSize = s.stackSize,
 						// Atlantis
-						relic2ID = string.Empty,
-						RelicBonus2Id = string.Empty,
+						relic2ID = RecordId.Empty,
+						RelicBonus2Id = RecordId.Empty,
 						Var2 = Item.var2Default,
 					};
 
 					if (!string.IsNullOrWhiteSpace(s.relicName2))
 					{
 						itm.atlantis = true;
-						itm.relic2ID = s.relicName2;
-						itm.RelicBonus2Id = s.relicBonus2;
+						itm.relic2ID = s.relicName2.ToRecordId();
+						itm.RelicBonus2Id = s.relicBonus2.ToRecordId();
 						itm.Var2 = s.var2;
 					}
 

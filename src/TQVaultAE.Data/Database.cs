@@ -45,27 +45,27 @@ public class Database : IDatabase
 	/// <summary>
 	/// Dictionary of all database info records
 	/// </summary>
-	private LazyConcurrentDictionary<string, Info> infoDB = new LazyConcurrentDictionary<string, Info>();
+	private LazyConcurrentDictionary<RecordId, Info> infoDB = new();
 
 	/// <summary>
 	/// Dictionary of all text database entries
 	/// </summary>
-	private ConcurrentDictionary<string, string> textDB = new ConcurrentDictionary<string, string>();
+	private ConcurrentDictionary<string, string> textDB = new();
 
 	/// <summary>
 	/// Dictionary of all associated arc files in the database.
 	/// </summary>
-	private LazyConcurrentDictionary<string, ArcFile> arcFiles = new LazyConcurrentDictionary<string, ArcFile>();
+	private LazyConcurrentDictionary<string, ArcFile> arcFiles = new();
 
 	/// <summary>
 	/// Dictionary of all records dataset loaded from the database.
 	/// </summary>
-	private LazyConcurrentDictionary<string, byte[]> resourcesData = new LazyConcurrentDictionary<string, byte[]>();
+	private LazyConcurrentDictionary<RecordId, byte[]> resourcesData = new();
 
 	/// <summary>
 	/// Dictionary of all record collections loaded from the database.
 	/// </summary>
-	private LazyConcurrentDictionary<string, DBRecordCollection> dbRecordCollections = new LazyConcurrentDictionary<string, DBRecordCollection>();
+	private LazyConcurrentDictionary<RecordId, DBRecordCollection> dbRecordCollections = new();
 
 	/// <summary>
 	/// Game language to support setting language in UI
@@ -109,7 +109,7 @@ public class Database : IDatabase
 	/// <summary>
 	/// Mapping between ItemId and Affixes LootTable
 	/// </summary>
-	private static ReadOnlyDictionary<string, ReadOnlyCollection<AffixTableMapItem>> ItemAffixTableMap;
+	private static ReadOnlyDictionary<RecordId, ReadOnlyCollection<AffixTableMapItem>> ItemAffixTableMap;
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the game language is being auto detected.
@@ -243,12 +243,10 @@ public class Database : IDatabase
 	/// </summary>
 	/// <param name="itemId">Item ID which we are looking up.  Will be normalized internally.</param>
 	/// <returns>Returns Infor for item ID and NULL if not found.</returns>
-	public Info GetInfo(string itemId)
+	public Info GetInfo(RecordId itemId)
 	{
-		if (string.IsNullOrEmpty(itemId))
+		if (itemId is null)
 			return null;
-
-		itemId = TQData.NormalizeRecordPath(itemId);
 
 		return this.infoDB.GetOrAddAtomic(itemId, k =>
 		{
@@ -342,7 +340,7 @@ public class Database : IDatabase
 				if (rec is null)
 				{
 					Log.LogError(@"Unknown {RCLASS_LOOTRANDOMIZER} record ""{RecordId}""", RCLASS_LOOTRANDOMIZER, r.Key);
-					return null;
+					return LootRandomizerItem.Default(r.Key);
 				}
 
 				string Tag = rec.GetString(Variable.KEY_LOOTRANDNAME, 0);
@@ -357,8 +355,9 @@ public class Database : IDatabase
 					&& Cost == 0
 					&& LevelRequirement == 0;
 
-				var prettyFileName = r.Value.ID.PrettyFileName();// Use r.Value.ID because i need the non Normalized record Id
-				var exploded = prettyFileName.ExplodePrettyFileName();
+				if (hasNoVisualData)
+					return LootRandomizerItem.Default(r.Key);
+
 				var val = new LootRandomizerItem(
 					r.Key
 					, Tag
@@ -366,15 +365,11 @@ public class Database : IDatabase
 					, LevelRequirement
 					, ItemClass
 					, FileDescription
-					, prettyFileName // Default Translation
-					, prettyFileName
-					, exploded.Effect
-					, exploded.Number
+					, r.Key.PrettyFileName
 				);
 
 				return val;
 			})
-			.Where(db => db is not null)
 			.ToList().AsReadOnly();
 
 		return lootRandomizerList;
@@ -400,61 +395,113 @@ public class Database : IDatabase
 			.Select(r =>
 			{
 				var rec = GetRecordFromFile(r.Key);
-				var lootNames = new List<string>();
-				var records = new List<(string brokenTable, string prefixTable, string suffixTable, List<string> lootNames)>();
-
-				int forceReadMax = 3, lootTableIdx = 1;
+				var lootNames = new List<RecordId>();
+				var records = new List<(RecordId brokenTable, RecordId prefixTable, RecordId suffixTable, List<RecordId> lootNames)>();
 
 				// Read loot names
 				switch (r.Value.RecordType)
 				{
 					case RCLASS_LOOTITEMTABLE_FIXEDWEIGHT:
-						int lootNameIdx = 0;
-						bool noMore = false;
-						do // Because sometimes it start at "lootName2"
+						foreach (var variable in rec)
 						{
-							var name = "lootName" + ++lootNameIdx;
-							var lootName = rec.GetString(name, 0);
-							var haslootName = !string.IsNullOrWhiteSpace(lootName);
-							if (!haslootName)
+							if (variable.Name.StartsWith("lootName", noCase))
 							{
-								if (lootNameIdx <= forceReadMax) continue;
+								var lootName = variable.GetString(0);
 
-								noMore = true; continue;
+								if (!string.IsNullOrWhiteSpace(lootName))
+									lootNames.Add(lootName.ToRecordId());
 							}
-
-							lootNames.Add(lootName);
 						}
-						while (!noMore);
-
 						break;
 					default: // LootItemTable_DynWeight
-						var itemNames = rec.GetAllStrings("itemNames");
-						if (itemNames is not null && itemNames.Length > 0)
-							lootNames.AddRange(itemNames);
+						var itemNames = rec.GetAllStrings("itemNames")?.Where(ina => !string.IsNullOrWhiteSpace(ina));
+						if (itemNames?.Any() ?? false)
+							lootNames.AddRange(itemNames.Select(ina => ina.ToRecordId()));
 						break;
 				}
 
 				// Read loot tables
-				bool isOver;
-				do
+				Dictionary<string, (RecordId brokenRandomizerName, RecordId prefixRandomizerName, RecordId suffixRandomizerName)> dico = new();
+				foreach (var variable in rec)
 				{
-					var brokenTable = rec.GetString("brokenRandomizerName" + lootTableIdx, 0);
-					var prefixTable = rec.GetString("prefixRandomizerName" + lootTableIdx, 0);
-					var suffixTable = rec.GetString("suffixRandomizerName" + lootTableIdx, 0);
+					var varname = "brokenRandomizerName";
+					if (variable.Name.StartsWith(varname, noCase))
+					{
+						var brokenTable = variable.GetString(0);
+						if (!string.IsNullOrWhiteSpace(brokenTable))
+						{
+							var num = variable.Name.Substring(varname.Length);
 
-					isOver = string.IsNullOrWhiteSpace(brokenTable)
-						&& string.IsNullOrWhiteSpace(prefixTable)
-						&& string.IsNullOrWhiteSpace(suffixTable);
+							var tableId = brokenTable.ToRecordId();
 
-					if (isOver) continue;
+							if (dico.Keys.Contains(num))
+							{// ValueTuple are not ref
+								var val = dico[num];
+								val.brokenRandomizerName = tableId;
+								dico[num] = val;
+							}
+							else
+								dico.Add(num, (tableId, RecordId.Empty, RecordId.Empty));
+						}
+						continue;
+					}
 
-					if (lootNames.Count > 0)
-						records.Add((brokenTable, prefixTable, suffixTable, lootNames));
+					varname = "prefixRandomizerName";
+					if (variable.Name.StartsWith(varname, noCase))
+					{
+						var prefixTable = variable.GetString(0);
+						if (!string.IsNullOrWhiteSpace(prefixTable))
+						{
+							var num = variable.Name.Substring(varname.Length);
 
-					lootTableIdx++;
+							var tableId = prefixTable.ToRecordId();
+
+							if (dico.Keys.Contains(num))
+							{// ValueTuple are not ref
+								var val = dico[num];
+								val.prefixRandomizerName = tableId;
+								dico[num] = val;
+							}
+							else
+								dico.Add(num, (RecordId.Empty, tableId, RecordId.Empty));
+						}
+						continue;
+					}
+
+					varname = "suffixRandomizerName";
+					if (variable.Name.StartsWith(varname, noCase))
+					{
+						var suffixTable = variable.GetString(0);
+						if (!string.IsNullOrWhiteSpace(suffixTable))
+						{
+							var num = variable.Name.Substring(varname.Length);
+
+							var tableId = suffixTable.ToRecordId();
+
+							if (dico.Keys.Contains(num))
+							{// ValueTuple are not ref
+								var val = dico[num];
+								val.suffixRandomizerName = tableId;
+								dico[num] = val;
+							}
+							else
+								dico.Add(num, (RecordId.Empty, RecordId.Empty, tableId));
+						}
+					}
 				}
-				while (!isOver);
+
+				// Avoid useless records
+				if (lootNames.Count > 0 && dico.Count > 0)
+				{
+					records.AddRange(dico.Select(kv =>
+						(
+							kv.Value.brokenRandomizerName,
+							kv.Value.prefixRandomizerName,
+							kv.Value.suffixRandomizerName,
+							lootNames
+						)
+					));
+				}
 
 				return records;
 			})
@@ -462,7 +509,7 @@ public class Database : IDatabase
 			.SelectMany(itemAffix => itemAffix.lootNames
 				.Select(itemId => new
 				{
-					itemId = TQData.NormalizeRecordPath(itemId),
+					itemId = itemId,
 					itemAffix.suffixTable,
 					itemAffix.prefixTable,
 					itemAffix.brokenTable
@@ -476,13 +523,11 @@ public class Database : IDatabase
 					.ToList().AsReadOnly()
 			);
 
-		ItemAffixTableMap = new ReadOnlyDictionary<string, ReadOnlyCollection<AffixTableMapItem>>(data);
+		ItemAffixTableMap = new ReadOnlyDictionary<RecordId, ReadOnlyCollection<AffixTableMapItem>>(data);
 	}
 
-	public ReadOnlyCollection<AffixTableMapItem> GetItemAffixTableMap(string itemId)
+	public ReadOnlyCollection<AffixTableMapItem> GetItemAffixTableMap(RecordId itemId)
 	{
-		itemId = TQData.NormalizeRecordPath(itemId);
-
 		var affixmap = ItemAffixTableMap.SingleOrDefault(i => i.Key == itemId);
 		if (affixmap.Key is null) return null;
 
@@ -501,10 +546,8 @@ public class Database : IDatabase
 	/// </remarks>
 	/// <param name="itemId">Item Id which we are looking up</param>
 	/// <returns>Returns the DBRecord for the item Id</returns>
-	public DBRecordCollection GetRecordFromFile(string itemId)
+	public DBRecordCollection GetRecordFromFile(RecordId itemId)
 	{
-		itemId = TQData.NormalizeRecordPath(itemId);
-
 		var cachedDBRecordCollection = this.dbRecordCollections.GetOrAddAtomic(itemId, key =>
 		{
 
@@ -542,19 +585,20 @@ public class Database : IDatabase
 	/// </summary>
 	/// <param name="resourceId">Resource which we are fetching</param>
 	/// <returns>Retruns a byte array of the resource.</returns>
-	public byte[] LoadResource(string resourceId)
+	public byte[] LoadResource(RecordId resourceId)
 	{
+		if (RecordId.IsNullOrEmpty(resourceId))
+			return null;
+
 		if (TQDebug.DatabaseDebugLevel > 0)
 			Log.LogDebug("Database.LoadResource({0})", resourceId);
-
-		resourceId = TQData.NormalizeRecordPath(resourceId);
 
 		if (TQDebug.DatabaseDebugLevel > 1)
 			Log.LogDebug(" Normalized({0})", resourceId);
 
 		byte[] cachedArcFileData = this.resourcesData.GetOrAddAtomic(resourceId, key =>
 		{
-			var resourceIdSplited = key.Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);// hguy : easier to understand than substring everywhere
+			var resourceIdSplited = key.Normalized.Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);// hguy : easier to understand than substring everywhere
 
 			// not a proper resourceID.
 			if (resourceIdSplited.Length == 1)
@@ -602,7 +646,7 @@ public class Database : IDatabase
 						return null;
 
 					arcFileBase = resourceIdSplited[1];
-					key = resourceIdSplited.Skip(1).JoinString("\\");
+					key = resourceIdSplited.Skip(1).JoinString("\\").ToRecordId();
 				}
 
 				arcFileData = this.ReadARCFile(arcFile, key);
@@ -697,7 +741,7 @@ public class Database : IDatabase
 	/// <param name="arcFileName">Name of the arc file.</param>
 	/// <param name="dataId">Id of data which we are getting from the arc file</param>
 	/// <returns>Byte array of the data from the arc file.</returns>
-	private byte[] ReadARCFile(string arcFileName, string dataId)
+	private byte[] ReadARCFile(string arcFileName, RecordId dataId)
 	{
 		// See if we have this arcfile already and if not create it.
 		try
@@ -1045,6 +1089,7 @@ public class Database : IDatabase
 			Log.LogDebug("Exiting Database.LoadTextDB()");
 	}
 
+	static Regex ParseTextDBRegEx = new Regex(@"^(?<Tag>\[\w+\])(?<Label>[^\\[]+)|^\[(?<Label>[^\]]+)\]$", RegexOptions.Compiled);
 	/// <summary>
 	/// Parses the text database to put the entries into a hash table.
 	/// </summary>
@@ -1055,7 +1100,7 @@ public class Database : IDatabase
 		if (TQDebug.DatabaseDebugLevel > 0)
 			Log.LogDebug("Database.ParseTextDB({0}, {1})", databaseFile, filename);
 
-		byte[] data = this.ReadARCFile(databaseFile, filename);
+		byte[] data = this.ReadARCFile(databaseFile, filename.ToRecordId());
 
 		if (data == null)
 		{
@@ -1098,7 +1143,7 @@ public class Database : IDatabase
 				// throw away all the metadata.
 
 				// hguy : one expression to rule them all 
-				if (Regex.Match(label, @"^(?<Tag>\[\w+\])(?<Label>[^\\[]+)|^\[(?<Label>[^\]]+)\]$") is { Success: true } match)
+				if (ParseTextDBRegEx.Match(label) is { Success: true } match)
 					label = match.Groups["Label"].Value.Trim();
 
 				// If this field is already in the db, then replace it

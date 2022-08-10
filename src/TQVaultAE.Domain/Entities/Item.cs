@@ -58,22 +58,22 @@ public class Item
 	/// <summary>
 	/// Prefix database record ID
 	/// </summary>
-	public string prefixID;
+	public RecordId prefixID;
 
 	/// <summary>
 	/// Suffix database record ID
 	/// </summary>
-	public string suffixID;
+	public RecordId suffixID;
 
 	/// <summary>
 	/// Relic database record ID
 	/// </summary>
-	public string relicID;
+	public RecordId relicID;
 
 	/// <summary>
 	/// Relic database record ID
 	/// </summary>
-	public string relic2ID;
+	public RecordId relic2ID;
 
 	/// <summary>
 	/// Info structure for the base item
@@ -122,16 +122,16 @@ public class Item
 	#region Item Properties
 
 	public bool HasPrefix
-		=> !string.IsNullOrWhiteSpace(prefixID);
+		=> !RecordId.IsNullOrEmpty(prefixID);
 
 	public bool HasSuffix
-		=> !string.IsNullOrWhiteSpace(suffixID);
+		=> !RecordId.IsNullOrEmpty(suffixID);
 
 	/// <summary>
 	/// Gets the value indicating whether the item allows 2 relic socketing
 	/// </summary>
 	public bool AcceptExtraRelic
-		=> HasSuffix && suffixID.EndsWith("RARE_EXTRARELIC_01.DBR", noCase);
+		=> HasSuffix && suffixID.Normalized.EndsWith("RARE_EXTRARELIC_01.DBR");
 
 	/// <summary>
 	/// Tell if the item is modified
@@ -147,17 +147,17 @@ public class Item
 	/// <summary>
 	/// Gets the base item id
 	/// </summary>
-	public string BaseItemId { get; set; }
+	public RecordId BaseItemId { get; set; }
 
 	/// <summary>
 	/// Gets or sets the relic bonus id
 	/// </summary>
-	public string RelicBonusId { get; set; }
+	public RecordId RelicBonusId { get; set; }
 
 	/// <summary>
 	/// Gets or sets the relic bonus2 id
 	/// </summary>
-	public string RelicBonus2Id { get; set; }
+	public RecordId RelicBonus2Id { get; set; }
 
 	/// <summary>
 	/// Gets or sets the item seed
@@ -252,7 +252,7 @@ public class Item
 	/// <summary>
 	/// ResourceId related to <see cref="TexImage"/>
 	/// </summary>
-	public string TexImageResourceId { get; set; }
+	public RecordId TexImageResourceId { get; set; }
 
 	/// <summary>
 	/// Gets the item's width in cells
@@ -294,33 +294,36 @@ public class Item
 	/// Gets a value indicating whether or not the item comes from Immortal Throne expansion pack.
 	/// </summary>
 	public bool IsImmortalThrone
-		=> this.BaseItemId.IndexOf("XPACK\\", noCase) >= 0
-		|| this.prefixID != null && this.prefixID.IndexOf("XPACK\\", noCase) >= 0
-		|| this.suffixID != null && this.suffixID.IndexOf("XPACK\\", noCase) >= 0;
+		=> (this.BaseItemId.Normalized.IndexOf("XPACK\\") >= 0
+		|| this.prefixID != null && this.prefixID.Normalized.IndexOf("XPACK\\") >= 0
+		|| this.suffixID != null && this.suffixID.Normalized.IndexOf("XPACK\\") >= 0)
+		&& !IsRagnarok && !IsAtlantis && !IsEmbers;
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Ragnarok DLC.
 	/// </summary>
 	public bool IsRagnarok
-		=> this.BaseItemId.IndexOf("XPACK2\\", noCase) >= 0
-		|| this.prefixID != null && this.prefixID.IndexOf("XPACK2\\", noCase) >= 0
-		|| this.suffixID != null && this.suffixID.IndexOf("XPACK2\\", noCase) >= 0;
+		=> (this.BaseItemId.Normalized.IndexOf("XPACK2\\") >= 0
+		|| this.prefixID != null && this.prefixID.Normalized.IndexOf("XPACK2\\") >= 0
+		|| this.suffixID != null && this.suffixID.Normalized.IndexOf("XPACK2\\") >= 0)
+		&& !IsAtlantis && !IsEmbers;
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Atlantis DLC.
 	/// </summary>
 	public bool IsAtlantis
-		=> this.BaseItemId.IndexOf("XPACK3\\", noCase) >= 0
-		|| this.prefixID != null && this.prefixID.IndexOf("XPACK3\\", noCase) >= 0
-		|| this.suffixID != null && this.suffixID.IndexOf("XPACK3\\", noCase) >= 0;
+		=> (this.BaseItemId.Normalized.IndexOf("XPACK3\\") >= 0
+		|| this.prefixID != null && this.prefixID.Normalized.IndexOf("XPACK3\\") >= 0
+		|| this.suffixID != null && this.suffixID.Normalized.IndexOf("XPACK3\\") >= 0)
+		&& !IsEmbers;
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Eternal Embers DLC.
 	/// </summary>
 	public bool IsEmbers
-		=> this.BaseItemId.IndexOf("XPACK4\\", noCase) >= 0
-		|| this.prefixID != null && this.prefixID.IndexOf("XPACK4\\", noCase) >= 0
-		|| this.suffixID != null && this.suffixID.IndexOf("XPACK4\\", noCase) >= 0;
+		=> this.BaseItemId.Normalized.IndexOf("XPACK4\\") >= 0
+		|| this.prefixID != null && this.prefixID.Normalized.IndexOf("XPACK4\\") >= 0
+		|| this.suffixID != null && this.suffixID.Normalized.IndexOf("XPACK4\\") >= 0;
 
 
 	/// <summary>
@@ -333,7 +336,7 @@ public class Item
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_SCROLL, noCase);
 			else if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
-				&& (this.BaseItemId.IndexOf("\\SCROLLS\\", noCase) >= 0))
+				&& (this.BaseItemId.Normalized.IndexOf("\\SCROLLS\\") >= 0))
 				return true;
 
 			return false;
@@ -348,7 +351,7 @@ public class Item
 		get
 		{
 			if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
-				&& (this.BaseItemId.IndexOf("PARCHMENT", noCase) >= 0))
+				&& (this.BaseItemId.Normalized.IndexOf("PARCHMENT") >= 0))
 				return true;
 
 			return false;
@@ -365,7 +368,7 @@ public class Item
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_FORMULA, noCase);
 			else if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
-				&& (this.BaseItemId.IndexOf("\\ARCANEFORMULAE\\", noCase) >= 0))
+				&& (this.BaseItemId.Normalized.IndexOf("\\ARCANEFORMULAE\\") >= 0))
 				return true;
 
 			return false;
@@ -382,7 +385,7 @@ public class Item
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_ARTIFACT, noCase);
 			else if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
-				&& (!this.IsFormulae && this.BaseItemId.IndexOf("\\ARTIFACTS\\", noCase) >= 0))
+				&& (!this.IsFormulae && this.BaseItemId.Normalized.IndexOf("\\ARTIFACTS\\") >= 0))
 				return true;
 
 			return false;
@@ -496,10 +499,10 @@ public class Item
 			}
 			else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
 			{
-				if (this.BaseItemId.IndexOf(QUEST, noCase) >= 0)
+				if (this.BaseItemId.Normalized.IndexOf(QUEST) >= 0)
 					return true;
 			}
-			else if (this.BaseItemId.IndexOf(QUESTS, noCase) >= 0)
+			else if (this.BaseItemId.Normalized.IndexOf(QUESTS) >= 0)
 				return true;
 
 			return false;
@@ -650,12 +653,12 @@ public class Item
 	/// <summary>
 	/// Gets a value indicating whether the item has an embedded relic.
 	/// </summary>
-	public bool HasRelicSlot1 => !this.IsRelic && this.relicID.Length > 0;
+	public bool HasRelicSlot1 => !this.IsRelic && !RecordId.IsNullOrEmpty(this.relicID);
 
 	/// <summary>
 	/// Gets a value indicating whether the item has a second embedded relic.
 	/// </summary>
-	public bool HasRelicSlot2 => !this.IsRelic && this.relic2ID.Length > 0;
+	public bool HasRelicSlot2 => !this.IsRelic && !RecordId.IsNullOrEmpty(this.relic2ID);
 
 	/// <summary>
 	/// Indicate that the item has an embedded relic.
@@ -676,7 +679,7 @@ public class Item
 					|| this.baseItemInfo.ItemClass.Equals(ICLASS_SCROLL_ETERNAL, noCase); //AMS: New EE Potions (Mystical Potions)
 			}
 
-			return this.BaseItemId.IndexOf("ONESHOT\\POTION", noCase) != -1;
+			return this.BaseItemId.Normalized.IndexOf("ONESHOT\\POTION") != -1;
 		}
 	}
 
@@ -690,9 +693,9 @@ public class Item
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_CHARM, noCase);
 			else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
-				return this.BaseItemId.IndexOf("ANIMALRELICS", noCase) != -1;
+				return this.BaseItemId.Normalized.IndexOf("ANIMALRELICS") != -1;
 			else
-				return (this.BaseItemId.IndexOf("\\CHARMS\\", noCase) != -1);
+				return (this.BaseItemId.Normalized.IndexOf("\\CHARMS\\") != -1);
 		}
 	}
 
@@ -706,9 +709,9 @@ public class Item
 			if (this.RelicInfo != null)
 				return this.RelicInfo.ItemClass.Equals(ICLASS_CHARM, noCase);
 			else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
-				return (this.RelicInfo?.ItemId.IndexOf("ANIMALRELICS", noCase) ?? -1) != -1;
+				return (this.RelicInfo?.ItemId.Normalized.IndexOf("ANIMALRELICS") ?? -1) != -1;
 			else
-				return (this.RelicInfo?.ItemId.IndexOf("\\CHARMS\\", noCase) ?? -1) != -1;
+				return (this.RelicInfo?.ItemId.Normalized.IndexOf("\\CHARMS\\") ?? -1) != -1;
 		}
 	}
 
@@ -722,9 +725,9 @@ public class Item
 			if (this.Relic2Info != null)
 				return this.Relic2Info.ItemClass.Equals(ICLASS_CHARM, noCase);
 			else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
-				return (this.Relic2Info?.ItemId.IndexOf("ANIMALRELICS", noCase) ?? -1) != -1;
+				return (this.Relic2Info?.ItemId.Normalized.IndexOf("ANIMALRELICS") ?? -1) != -1;
 			else
-				return (this.Relic2Info?.ItemId.IndexOf("\\CHARMS\\", noCase) ?? -1) != -1;
+				return (this.Relic2Info?.ItemId.Normalized.IndexOf("\\CHARMS\\") ?? -1) != -1;
 		}
 	}
 
@@ -741,12 +744,12 @@ public class Item
 					|| this.baseItemInfo.ItemClass.Equals(ICLASS_CHARM, noCase);
 			}
 			else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
-				return this.BaseItemId.IndexOf("RELICS", noCase) != -1;
+				return this.BaseItemId.Normalized.IndexOf("RELICS") != -1;
 			else
 			{
 				return (
-					(this.BaseItemId.IndexOf("\\RELICS\\", noCase) != -1)
-					|| (this.BaseItemId.IndexOf("\\CHARMS\\", noCase) != -1)
+					(this.BaseItemId.Normalized.IndexOf("\\RELICS\\") != -1)
+					|| (this.BaseItemId.Normalized.IndexOf("\\CHARMS\\") != -1)
 				);
 			}
 		}
@@ -879,40 +882,39 @@ public class Item
 	/// Creates an empty item
 	/// </summary>
 	/// <returns>Empty Item structure</returns>
-	public Item MakeEmptyItem()
-	{
-		Item newItem = new Item();
-		newItem.beginBlockCrap1 = this.beginBlockCrap1;
-		newItem.endBlockCrap1 = this.endBlockCrap1;
-		newItem.beginBlockCrap2 = this.beginBlockCrap2;
-		newItem.endBlockCrap2 = this.endBlockCrap2;
-		newItem.BaseItemId = string.Empty;
-		newItem.prefixID = string.Empty;
-		newItem.suffixID = string.Empty;
-		newItem.relicID = string.Empty;
-		newItem.relic2ID = string.Empty;
-		newItem.RelicBonusId = string.Empty;
-		newItem.RelicBonus2Id = string.Empty;
-		newItem.Seed = GenerateSeed();
-		newItem.Var1 = this.var1;
-		newItem.Var2 = var2Default;
-		newItem.PositionX = -1;
-		newItem.PositionY = -1;
-
-		return newItem;
-	}
+	public Item MakeEmptyItem() =>
+		new Item()
+		{
+			beginBlockCrap1 = this.beginBlockCrap1,
+			endBlockCrap1 = this.endBlockCrap1,
+			beginBlockCrap2 = this.beginBlockCrap2,
+			endBlockCrap2 = this.endBlockCrap2,
+			BaseItemId = RecordId.Empty,
+			prefixID = RecordId.Empty,
+			suffixID = RecordId.Empty,
+			relicID = RecordId.Empty,
+			relic2ID = RecordId.Empty,
+			RelicBonusId = RecordId.Empty,
+			RelicBonus2Id = RecordId.Empty,
+			Seed = GenerateSeed(),
+			Var1 = this.var1,
+			Var2 = var2Default,
+			PositionX = -1,
+			PositionY = -1,
+		};
 
 	/// <summary>
 	/// Makes a new item based on the passed item id string
 	/// </summary>
 	/// <param name="baseItemId">base item id of the new item</param>
 	/// <returns>Empty Item structure based on the passed item string</returns>
-	public Item MakeEmptyCopy(string baseItemId)
+	public Item MakeEmptyCopy(RecordId baseItemId)
 	{
-		if (string.IsNullOrEmpty(baseItemId))
-			throw new ArgumentNullException(baseItemId, "The base item ID cannot be NULL or Empty.");
+		if (RecordId.IsNullOrEmpty(baseItemId))
+			throw new ArgumentNullException(nameof(baseItemId), "The base item ID cannot be NULL or Empty.");
 
 		Item newItem = MakeEmptyItem();
+
 		newItem.BaseItemId = baseItemId;
 
 		return newItem;
@@ -1013,7 +1015,7 @@ public class Item
 	/// </summary>
 	/// <param name="relicBaseItemId"></param>
 	/// <returns></returns>
-	public bool IsRelicAllowed(string relicBaseItemId)
+	public bool IsRelicAllowed(RecordId relicBaseItemId)
 		=> IsRelicAllowed(this, relicBaseItemId);
 
 	/// <summary>
@@ -1052,7 +1054,7 @@ public class Item
 	/// <param name="item"></param>
 	/// <param name="relicBaseItemId"></param>
 	/// <returns></returns>
-	public static bool IsRelicAllowed(Item item, string relicBaseItemId)
+	public static bool IsRelicAllowed(Item item, RecordId relicBaseItemId)
 	{
 		var itemGearType = item.GearType;
 
@@ -1091,15 +1093,15 @@ public class Item
 	/// <param name="relicBaseItemId"></param>
 	/// <param name="types"></param>
 	/// <returns></returns>
-	public static bool TryGetAllowedGearTypes(string relicBaseItemId, out GearType types)
+	public static bool TryGetAllowedGearTypes(RecordId relicBaseItemId, out GearType types)
 	{
 		types = GearType.Undefined;
 
-		if (string.IsNullOrWhiteSpace(relicBaseItemId)) return false;
+		if (RecordId.IsNullOrEmpty(relicBaseItemId)) return false;
 
 		// Find GearType
 		var map = RelicAndCharmExtension.RelicAndCharmMap
-			.Where(m => m.FileName.Equals(Path.GetFileName(relicBaseItemId), noCase))
+			.Where(m => m.RecordId == relicBaseItemId)
 			.FirstOrDefault();
 
 		if (map.Value == RelicAndCharm.Unknown) return false;

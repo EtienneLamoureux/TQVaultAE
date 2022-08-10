@@ -26,7 +26,7 @@ namespace TQVaultAE.Presentation
 		/// <summary>
 		/// Dictionary of all bitmaps in the database.
 		/// </summary>
-		private LazyConcurrentDictionary<string, Bitmap> _Bitmaps = new LazyConcurrentDictionary<string, Bitmap>();
+		private LazyConcurrentDictionary<RecordId, Bitmap> _Bitmaps = new();
 
 		/// <summary>
 		/// Default bitmap when one cannot be found in the database.
@@ -155,16 +155,13 @@ namespace TQVaultAE.Presentation
 		/// </summary>
 		/// <param name="resourceId">Resource Id which we are looking up.</param>
 		/// <returns>Bitmap fetched from the database</returns>
-		public Bitmap LoadBitmap(string resourceId)
+		public Bitmap LoadBitmap(RecordId resourceId)
 		{
-			Bitmap result = null;
-			if (string.IsNullOrEmpty(resourceId))
-				return result;
+			if (RecordId.IsNullOrEmpty(resourceId))
+				return null;
 
 			if (TQDebug.DatabaseDebugLevel > 0)
 				Log.LogDebug("Database.LoadBitmap({0})", resourceId);
-
-			resourceId = TQData.NormalizeRecordPath(resourceId);
 
 			Bitmap bitmap = _Bitmaps.GetOrAddAtomic(resourceId, k =>
 			{
@@ -185,16 +182,13 @@ namespace TQVaultAE.Presentation
 		/// <param name="resourceId">Resource Id which we are looking up.</param>
 		/// <param name="texData">raw DDS image data</param>
 		/// <returns>Bitmap converted from <paramref name="texData"/></returns>
-		public Bitmap LoadBitmap(string resourceId, byte[] texData)
+		public Bitmap LoadBitmap(RecordId resourceId, byte[] texData)
 		{
-			Bitmap result = null;
-			if (string.IsNullOrEmpty(resourceId) || texData is null || !texData.Any())
-				return result;
+			if (RecordId.IsNullOrEmpty(resourceId) || !(texData?.Any() ?? false))
+				return null;
 
 			if (TQDebug.DatabaseDebugLevel > 0)
 				Log.LogDebug("Database.LoadBitmap({0})", resourceId);
-
-			resourceId = TQData.NormalizeRecordPath(resourceId);
 
 			Bitmap bitmap = _Bitmaps.GetOrAddAtomic(resourceId, k =>
 			{
@@ -213,8 +207,11 @@ namespace TQVaultAE.Presentation
 		/// <param name="resourceId"></param>
 		/// <param name="texData">image content from resource game file</param>
 		/// <returns></returns>
-		private Bitmap AddBitmap(string resourceId, byte[] texData)
+		private Bitmap AddBitmap(RecordId resourceId, byte[] texData)
 		{
+			if (RecordId.IsNullOrEmpty(resourceId))
+				return null;
+
 			Bitmap bitmap;
 			if (texData == null)
 			{
@@ -247,13 +244,14 @@ namespace TQVaultAE.Presentation
 			return bitmap;
 		}
 
+		static readonly RecordId LoadRelicOverlayBitmapId = "Items\\Relic\\ItemRelicOverlay.tex".ToRecordId();
 		/// <summary>
 		/// Loads the relic overlay bitmap from the database.
 		/// </summary>
 		/// <returns>Relic overlay bitmap</returns>
 		public Bitmap LoadRelicOverlayBitmap()
 		{
-			Bitmap relicOverlayBitmap = this.LoadBitmap("Items\\Relic\\ItemRelicOverlay.tex");
+			Bitmap relicOverlayBitmap = this.LoadBitmap(LoadRelicOverlayBitmapId);
 
 			// do not return the defaultbitmap
 			if (relicOverlayBitmap == this.DefaultBitmap)

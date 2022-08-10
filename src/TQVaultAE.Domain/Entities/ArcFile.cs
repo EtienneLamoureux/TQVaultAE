@@ -20,12 +20,12 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Dictionary of the directory entries.
 		/// </summary>
-		public Dictionary<string, ArcDirEntry> DirectoryEntries;
+		public Dictionary<RecordId, ArcDirEntry> DirectoryEntries;
 
 		/// <summary>
 		/// Holds the keys for the directoryEntries dictionary.
 		/// </summary>
-		public string[] Keys;
+		public RecordId[] Keys;
 
 		/// <summary>
 		/// Initializes a new instance of the ArcFile class.

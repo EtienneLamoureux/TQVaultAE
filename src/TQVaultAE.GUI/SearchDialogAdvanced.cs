@@ -1211,9 +1211,6 @@ public partial class SearchDialogAdvanced : VaultForm
 		ScalingLabelProgressAdjustSizeAndPosition(label);
 	}
 
-	private void SearchDialogAdvanced_FormClosing(object sender, FormClosingEventArgs e)
-		=> SavePersonnalQueries();
-
 	private void SavePersonnalQueries()
 	{
 		Config.Settings.Default.SearchQueries = JsonConvert.SerializeObject(this._Queries);
@@ -1363,6 +1360,8 @@ public partial class SearchDialogAdvanced : VaultForm
 		.ToArray();
 
 		SearchQueriesInit(newList);
+
+		SavePersonnalQueries();
 	}
 
 	private void SearchQueriesInit(IEnumerable<SearchQuery> newList)

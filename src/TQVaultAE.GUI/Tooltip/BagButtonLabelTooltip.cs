@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components;
 
 namespace TQVaultAE.GUI.Tooltip
@@ -81,7 +82,7 @@ namespace TQVaultAE.GUI.Tooltip
 
 			this.scalingLabel.Font = fontService.GetFont(15F, GraphicsUnit.Point);
 
-			this.bgimg = this.UIService.LoadBitmap(@"INGAMEUI\HEALTHMANAOVERLAY01_NEW.TEX");
+			this.bgimg = this.UIService.LoadBitmap(@"INGAMEUI\HEALTHMANAOVERLAY01_NEW.TEX".ToRecordId());
 
 			this.Size = new Size(bgimg.Width, bgimg.Height);
 			this.BackgroundImage = bgimg;

@@ -3,7 +3,7 @@
 This form brings great search capabilities to TQVault.
 It can not only help find items but also theory craft.
 
-_**This tool is meant to be use with "Preload All" setting enabled.**_
+_**This tool is meant to be used with "Preload All" setting enabled.**_
 
 _**The first load can be long but reopening the form si fast.**_
 

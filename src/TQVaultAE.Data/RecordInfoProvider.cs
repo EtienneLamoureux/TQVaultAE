@@ -6,6 +6,7 @@ using System.IO.Compression;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Logs;
 
 namespace TQVaultAE.Data
@@ -62,7 +63,7 @@ namespace TQVaultAE.Data
 			inReader.ReadInt32();
 
 			// Get the ID string
-			info.ID = arzFile.Getstring(info.IdStringIndex);
+			info.ID = arzFile.Getstring(info.IdStringIndex).ToRecordId();
 		}
 
 		/// <summary>

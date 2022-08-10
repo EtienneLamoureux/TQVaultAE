@@ -1768,7 +1768,6 @@ namespace TQVaultAE.GUI
             this.Text = "Search for an Item";
             this.TitleTextColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.TopMost = true;
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SearchDialogAdvanced_FormClosing);
             this.Load += new System.EventHandler(this.SearchDialogAdvanced_Load);
             this.Shown += new System.EventHandler(this.SearchDialogShown);
             this.Controls.SetChildIndex(this.tableLayoutPanelBottom, 0);

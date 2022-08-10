@@ -19,6 +19,7 @@ using TQVaultAE.Presentation;
 using TQVaultAE.GUI.Tooltip;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Contracts.Providers;
+using TQVaultAE.Domain.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace TQVaultAE.GUI.Components;
@@ -866,7 +867,7 @@ public class SackPanel : Panel, IScalingControl
 			int x = item.PositionX;
 			int y = item.PositionY;
 
-			if (string.IsNullOrEmpty(item.BaseItemId))
+			if (RecordId.IsNullOrEmpty(item.BaseItemId))
 				// Skip over empty items
 				continue;
 
@@ -1202,12 +1203,12 @@ public class SackPanel : Panel, IScalingControl
 				if (itemUnderUs.IsRelicComplete)
 				{
 					float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-					LootTableCollection table = ItemProvider.BonusTable(itemUnderUs);
+					LootTableCollection table = ItemProvider.BonusTableRelicOrArtifact(itemUnderUs);
 
 					if (table != null && table.Length > 0)
 					{
 						int i = table.Length;
-						foreach (KeyValuePair<string, LootTableValue> e1 in table)
+						foreach (var e1 in table)
 						{
 							i--;
 							if (randPercent <= e1.Value.WeightPercent || i == 0)
@@ -1272,7 +1273,7 @@ public class SackPanel : Panel, IScalingControl
 			this.ItemsUnderDragItem.Clear();
 
 			// Now mark itemUnderUs as picked up.
-			if (itemUnderUs != null && !string.IsNullOrEmpty(itemUnderUs.BaseItemId))
+			if (itemUnderUs != null && !RecordId.IsNullOrEmpty(itemUnderUs.BaseItemId))
 			{
 				// set our mouse offset to be the center of the item.
 				Point mouseOffset = new Point(
@@ -1526,11 +1527,11 @@ public class SackPanel : Panel, IScalingControl
 		if (setItems?.Any() ?? false)
 		{
 			var choices = new List<ToolStripItem>();
-			foreach (string setPieceId in setItems)
+			foreach (string setPiece in setItems)
 			{
 				// do not put the current item in the menu
-				if (TQData.NormalizeRecordPath(focusedItem.BaseItemId)
-					.Equals(TQData.NormalizeRecordPath(setPieceId))) continue;
+				var setPieceId = setPiece.ToRecordId();
+				if (focusedItem.BaseItemId == setPieceId) continue;
 
 				// Get the name of the item
 				Info info = Database.GetInfo(setPieceId);
@@ -1539,11 +1540,11 @@ public class SackPanel : Panel, IScalingControl
 				var choice = new ToolStripMenuItem()
 				{
 					Text = this.TranslationService.TranslateXTag(info.DescriptionTag),
-					Name = setPieceId,
+					Name = setPiece,
 					BackColor = this.contextMenu.BackColor,
 					Font = this.contextMenu.Font,
 					ForeColor = this.contextMenu.ForeColor,
-					ToolTipText = setPieceId,
+					ToolTipText = setPiece,
 				};
 				choice.Click += NewSetItemClicked;
 
@@ -1581,29 +1582,28 @@ public class SackPanel : Panel, IScalingControl
 		void BuildMenu(Item itm, LootTableCollection table, string menuText, bool isRelic1)
 		{
 			var choices = new List<ToolStripItem>();
-			foreach (KeyValuePair<string, LootTableValue> tableitem in table)
+			foreach (var tableitem in table)
 			{
 				var choice = new ToolStripMenuItem()
 				{
 					Text = string.Format("{2} : {0} ({1:p2}) {3}"
-						, tableitem.Value.LootRandomizer.PrettyFileName
+						, tableitem.Key.PrettyFileName
 						, tableitem.Value.WeightPercent
 						, tableitem.Value.LootRandomizer.Translation
 						, GamePathService.ResolveExtensionFromPath(tableitem.Key).GetSuffix()
 					),
-					Name = tableitem.Key,
+					Name = tableitem.Key.Raw,
 					BackColor = this.contextMenu.BackColor,
 					Font = this.contextMenu.Font,
 					ForeColor = this.contextMenu.ForeColor,
-					ToolTipText = tableitem.Key,
+					ToolTipText = tableitem.Key.Raw,
 					Tag = isRelic1,
 				};
 				choice.Click += ChangeSocketedBonusItemClicked;
 
 				// make the currently selected bonus bold
 				var relicId = isRelic1 ? itm.RelicBonusId : itm.RelicBonus2Id;
-				if (TQData.NormalizeRecordPath(tableitem.Key)
-					.Equals(TQData.NormalizeRecordPath(relicId)))
+				if (tableitem.Key == relicId)
 				{
 					choice.Font = new Font(choice.Font, FontStyle.Bold);
 					choice.BackColor = ControlPaint.Dark(choice.BackColor);
@@ -1632,31 +1632,30 @@ public class SackPanel : Panel, IScalingControl
 			|| focusedItem.IsArtifact
 		)
 		{
-			LootTableCollection table = ItemProvider.BonusTable(focusedItem);
+			LootTableCollection table = ItemProvider.BonusTableRelicOrArtifact(focusedItem);
 			if (table?.Any() ?? false)
 			{
 				var choices = new List<ToolStripItem>();
-				foreach (KeyValuePair<string, LootTableValue> tableitem in table)
+				foreach (var tableitem in table)
 				{
 					var choice = new ToolStripMenuItem()
 					{
 						Text = string.Format("{0} : {1} ({2:p2}) {3}"
 							, tableitem.Value.LootRandomizer.Translation
-							, tableitem.Value.LootRandomizer.PrettyFileName
+							, tableitem.Key.PrettyFileName
 							, tableitem.Value.WeightPercent
 							, GamePathService.ResolveExtensionFromPath(tableitem.Key).GetSuffix()
 						),
-						Name = tableitem.Key,
+						Name = tableitem.Key.Raw,
 						BackColor = this.contextMenu.BackColor,
 						Font = this.contextMenu.Font,
 						ForeColor = this.contextMenu.ForeColor,
-						ToolTipText = tableitem.Key,
+						ToolTipText = tableitem.Key.Raw,
 					};
 					choice.Click += ChangeBonusItemClicked;
 
 					// make the currently selected bonus bold
-					if (TQData.NormalizeRecordPath(tableitem.Key)
-						.Equals(TQData.NormalizeRecordPath(focusedItem.RelicBonusId)))
+					if (tableitem.Key == focusedItem.RelicBonusId)
 					{
 						choice.Font = new Font(choice.Font, FontStyle.Bold);
 						choice.BackColor = ControlPaint.Dark(choice.BackColor);
@@ -1714,32 +1713,27 @@ public class SackPanel : Panel, IScalingControl
 					select new
 					{
 						TypeId = types.AffixTypeId,
-						Dlc = dlc.Key,
-						ltvalues.TableId,
 						AffixId = value.Key,
 						value.Value.WeightPercent,
 						value.Value.LootRandomizer
 					} into flat
-					orderby flat.AffixId, flat.Dlc // Promote TQ loot table over dlc when duplicates
-
-					group flat by flat.AffixId into grp // Distinct by AffixId
+					group flat by new { flat.TypeId, flat.AffixId } into grp
 					let f = grp.First()
-					let ext = GamePathService.ResolveExtensionFromPath(grp.Key)
+					let _AffixIdDlc = GamePathService.ResolveExtensionFromPath(grp.Key.AffixId)
+					let _translation = f.LootRandomizer.Translation
+					let _WeightPercent = grp.Max(v => v.WeightPercent)
 					select
 					(
-						f.TypeId,
-						AffixId: grp.Key,
-						f.TableId,
-						TableDlc: f.Dlc,// Originating TableId
-						f.LootRandomizer.Translation,
-						f.WeightPercent,
-						AffixDlc: ext, // Originating Affix
-						AffixNumber: f.LootRandomizer.Number,
+						TypeId : grp.Key.TypeId,
+						AffixId: grp.Key.AffixId,
+						AffixIdDlc : _AffixIdDlc,
+						Translation : _translation,
+						WeightPercent : _WeightPercent,
 						FormatedText: string.Format("{0} : {1} ({2:p2}) {3}" // Default format for Order by affix name
-							, f.LootRandomizer.Translation
-							, f.LootRandomizer.PrettyFileName
-							, f.WeightPercent
-							, ext.GetSuffix()
+							, _translation
+							, grp.Key.AffixId.PrettyFileName
+							, _WeightPercent
+							, _AffixIdDlc.GetSuffix()
 						),
 						f.LootRandomizer
 					) into flattenedAffix
@@ -1876,14 +1870,14 @@ public class SackPanel : Panel, IScalingControl
 	private static bool _DisplayAffixesByEffect = false;
 
 	private void BuildAffixesMenuItems(
-		string currentSelectedAffix
+		RecordId currentSelectedAffix
 		, ToolStripMenuItem currentchoicesMenu
 		, EventHandler handler
 		, IEnumerable<IGrouping<
 			(int TypeId, string Translation)
-			, (int TypeId, string AffixId, string TableId, GameExtension TableDlc
-				, string Translation, float WeightPercent, GameExtension AffixDlc
-				, string AffixNumber, string FormatedText, LootRandomizerItem LootRandomizer
+			, (int TypeId, RecordId AffixId, GameExtension AffixIdDlc
+				, string Translation, float WeightPercent
+				, string FormatedText, LootRandomizerItem LootRandomizer
 			)>
 		> currentaffixGroup
 	)
@@ -1898,26 +1892,24 @@ public class SackPanel : Panel, IScalingControl
 			currentaffixGroup =
 				from grp in currentaffixGroup
 				from av in grp
+				let effect = av.AffixId.PrettyFileNameExploded.Effect
 				select
 				(
 					av.TypeId,
 					av.AffixId,
-					av.TableId,
-					av.TableDlc,
-					Translation: av.LootRandomizer.Effect,
+					av.AffixIdDlc,
+					Translation: effect,
 					av.WeightPercent,
-					av.AffixDlc,
-					AffixNumber: av.LootRandomizer.Number,
 					FormatedText: string.Format("{0} : ({1}) {2} ({3:p2}) {4}"
-						, av.LootRandomizer.Effect
-						, av.LootRandomizer.Number
-						, av.LootRandomizer.Translation
+						, effect
+						, av.AffixId.PrettyFileNameExploded.Number
+						, av.Translation 
 						, av.WeightPercent
-						, av.AffixDlc.GetSuffix()
+						, av.AffixIdDlc.GetSuffix()
 					),
 					av.LootRandomizer
 				) into flattenedAffix
-				orderby flattenedAffix.Translation, flattenedAffix.AffixNumber
+				orderby flattenedAffix.Translation, flattenedAffix.AffixId.PrettyFileNameExploded.Number
 				group flattenedAffix by (flattenedAffix.TypeId, flattenedAffix.Translation) into grp2
 				select grp2;
 		}
@@ -1947,8 +1939,8 @@ public class SackPanel : Panel, IScalingControl
 				var choice = new ToolStripMenuItem()
 				{
 					Text = val.FormatedText,
-					Name = val.AffixId,
-					ToolTipText = val.AffixId,
+					Name = val.AffixId.Raw,
+					ToolTipText = val.AffixId.Raw,
 					BackColor = backC,
 					Font = fnt,
 					ForeColor = foreC,
@@ -1959,23 +1951,24 @@ public class SackPanel : Panel, IScalingControl
 				if (affixMenu is not null)
 				{
 					choice.Text = _DisplayAffixesByEffect
+							// By Effect
 							? string.Format("({0}) {1} ({2:p2}) {3}"
-								, val.LootRandomizer.Number
-								, val.LootRandomizer.Translation
+								, val.AffixId.PrettyFileNameExploded.Number
+								, val.Translation // Sub menu item display affix Name
 								, val.WeightPercent
-								, val.AffixDlc.GetSuffix()
+								, val.AffixIdDlc.GetSuffix()
 							)
+							// By Name
 							: string.Format("({0}) {1} ({2:p2}) {3}"
-								, val.LootRandomizer.Number
-								, val.LootRandomizer.Effect
+								, val.AffixId.PrettyFileNameExploded.Number
+								, val.AffixId.PrettyFileNameExploded.Effect // Sub menu item display affix Effect
 								, val.WeightPercent
-								, val.AffixDlc.GetSuffix()
+								, val.AffixIdDlc.GetSuffix()
 							);
 				}
 
 				// make the currently selected affix bold
-				if (TQData.NormalizeRecordPath(val.AffixId)
-					.Equals(TQData.NormalizeRecordPath(currentSelectedAffix)))
+				if (val.AffixId == currentSelectedAffix)
 				{
 					choice.Font = new Font(choice.Font, FontStyle.Bold);
 					choice.BackColor = ControlPaint.Dark(choice.BackColor);
@@ -2265,7 +2258,7 @@ public class SackPanel : Panel, IScalingControl
 		foreach (Item item in this.Sack)
 		{
 			// Skip over empty and dragged items.
-			if (item != this.DragInfo.Item && !string.IsNullOrEmpty(item.BaseItemId))
+			if (item != this.DragInfo.Item && !RecordId.IsNullOrEmpty(item.BaseItemId))
 				this.DrawItem(e.Graphics, item);
 		}
 	}
@@ -2441,7 +2434,7 @@ public class SackPanel : Panel, IScalingControl
 		graphics.DrawImage(ibmp, itemRect, 0, 0, ibmp.Width, ibmp.Height, GraphicsUnit.Pixel, imageAttributes);
 
 		// Add the relic overlay if this item has a relic in it.
-		if (item.HasRelicSlot1)
+		if (item.HasRelicSlot1 || item.HasRelicSlot2)
 		{
 			Bitmap relicOverlay = UIService.LoadRelicOverlayBitmap();
 			if (relicOverlay != null)
@@ -2817,7 +2810,8 @@ public class SackPanel : Panel, IScalingControl
 			if (item != null)
 			{
 				// Create the item
-				Item newItem = focusedItem.MakeEmptyCopy(item.Name);
+				var newId = item.Name.ToRecordId();
+				Item newItem = focusedItem.MakeEmptyCopy(newId);
 				ItemProvider.GetDBData(newItem);
 
 				// Set DragInfo to focused item.
@@ -2839,7 +2833,7 @@ public class SackPanel : Panel, IScalingControl
 		if (focusedItem is not null)
 		{
 			// change the item
-			focusedItem.suffixID = string.Empty;
+			focusedItem.suffixID = RecordId.Empty;
 			focusedItem.suffixInfo = null;
 			// mark the sack as modified also
 			this.Sack.IsModified = focusedItem.IsModified = true;
@@ -2853,7 +2847,7 @@ public class SackPanel : Panel, IScalingControl
 		if (focusedItem is not null)
 		{
 			// change the item
-			focusedItem.prefixID = string.Empty;
+			focusedItem.prefixID = RecordId.Empty;
 			focusedItem.prefixInfo = null;
 			// mark the sack as modified also
 			this.Sack.IsModified = focusedItem.IsModified = true;
@@ -2875,14 +2869,14 @@ public class SackPanel : Panel, IScalingControl
 			if (menuItem is not null)
 			{
 				string newAffix = menuItem.Name;
+				var newAffixId = newAffix.ToRecordId();
 
 				// See if the bonus is different
-				if (!TQData.NormalizeRecordPath(newAffix)
-					.Equals(TQData.NormalizeRecordPath(focusedItem.suffixID)))
+				if (newAffixId != focusedItem.suffixID)
 				{
 					// change the item
-					focusedItem.suffixID = newAffix;
-					focusedItem.suffixInfo = Database.GetInfo(focusedItem.suffixID);
+					focusedItem.suffixID = newAffixId;
+					focusedItem.suffixInfo = Database.GetInfo(newAffixId);
 					// mark the sack as modified also
 					this.Sack.IsModified = focusedItem.IsModified = true;
 					this.InvalidateItemCacheAll(focusedItem);
@@ -2905,14 +2899,14 @@ public class SackPanel : Panel, IScalingControl
 			if (menuItem is not null)
 			{
 				string newAffix = menuItem.Name;
+				var newAffixId = newAffix.ToRecordId();
 
 				// See if the bonus is different
-				if (!TQData.NormalizeRecordPath(newAffix)
-					.Equals(TQData.NormalizeRecordPath(focusedItem.prefixID)))
+				if (newAffixId != focusedItem.prefixID)
 				{
 					// change the item
-					focusedItem.prefixID = newAffix;
-					focusedItem.prefixInfo = Database.GetInfo(focusedItem.prefixID);
+					focusedItem.prefixID = newAffixId;
+					focusedItem.prefixInfo = Database.GetInfo(newAffixId);
 					// mark the sack as modified also
 					this.Sack.IsModified = focusedItem.IsModified = true;
 					this.InvalidateItemCacheAll(focusedItem);
@@ -2939,22 +2933,22 @@ public class SackPanel : Panel, IScalingControl
 			if (menuItem is not null)
 			{
 				string newBonus = menuItem.Name;
+				var newBonusId = newBonus.ToRecordId();
 
 				// See if the bonus is different
 				var relicId = isRelic1 ? focusedItem.RelicBonusId : focusedItem.RelicBonus2Id;
-				if (!TQData.NormalizeRecordPath(newBonus)
-					.Equals(TQData.NormalizeRecordPath(relicId)))
+				if (newBonusId != relicId)
 				{
 					// change the item
 					if (isRelic1)
 					{
-						focusedItem.RelicBonusId = newBonus;
-						focusedItem.RelicBonusInfo = Database.GetInfo(newBonus);
+						focusedItem.RelicBonusId = newBonusId;
+						focusedItem.RelicBonusInfo = Database.GetInfo(newBonusId);
 					}
 					else
 					{
-						focusedItem.RelicBonus2Id = newBonus;
-						focusedItem.RelicBonus2Info = Database.GetInfo(newBonus);
+						focusedItem.RelicBonus2Id = newBonusId;
+						focusedItem.RelicBonus2Info = Database.GetInfo(newBonusId);
 					}
 					// mark the sack as modified also
 					this.Sack.IsModified = focusedItem.IsModified = true;
@@ -2979,13 +2973,14 @@ public class SackPanel : Panel, IScalingControl
 			if (item != null)
 			{
 				string newBonus = item.Name;
+				var newBonusId = newBonus.ToRecordId();
 
 				// See if the bonus is different
-				if (!TQData.NormalizeRecordPath(newBonus).Equals(TQData.NormalizeRecordPath(focusedItem.RelicBonusId)))
+				if (newBonusId != focusedItem.RelicBonusId)
 				{
 					// change the item
-					focusedItem.RelicBonusId = newBonus;
-					focusedItem.RelicBonusInfo = Database.GetInfo(newBonus);
+					focusedItem.RelicBonusId = newBonusId;
+					focusedItem.RelicBonusInfo = Database.GetInfo(newBonusId);
 					focusedItem.IsModified = true;
 
 					// mark the sack as modified also
@@ -3105,12 +3100,12 @@ public class SackPanel : Panel, IScalingControl
 				focusedItem.Number = 10;
 
 				float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-				LootTableCollection table = ItemProvider.BonusTable(focusedItem);
+				LootTableCollection table = ItemProvider.BonusTableRelicOrArtifact(focusedItem);
 
 				if (table != null && table.Length > 0)
 				{
 					int i = table.Length;
-					foreach (KeyValuePair<string, LootTableValue> e1 in table)
+					foreach (var e1 in table)
 					{
 						i--;
 						if (randPercent <= e1.Value.WeightPercent || i == 0)
@@ -3140,12 +3135,12 @@ public class SackPanel : Panel, IScalingControl
 
 				// generate bonus
 				float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-				LootTableCollection table = ItemProvider.BonusTable(artifact);
+				LootTableCollection table = ItemProvider.BonusTableRelicOrArtifact(artifact);
 
 				if (table != null && table.Length > 0)
 				{
 					int i = table.Length;
-					foreach (KeyValuePair<string, LootTableValue> e1 in table)
+					foreach (var e1 in table)
 					{
 						i--;
 						if (randPercent <= e1.Value.WeightPercent || i == 0)

@@ -14,8 +14,8 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Entities;
+	using TQVaultAE.Domain.Helpers;
 	using TQVaultAE.Presentation;
-	using System.Linq;
 
 	/// <summary>
 	/// Class for handling the stash panel ui functions
@@ -254,7 +254,7 @@ namespace TQVaultAE.GUI.Components
 			SortedList<string, int> statBonuses = new SortedList<string, int>();
 
 			foreach (SkillRecord skill in Player.PlayerInfo.SkillRecordList)
-				ItemProvider.GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(skill.skillName), skill.skillLevel);
+				ItemProvider.GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(skill.skillName.ToRecordId()), skill.skillLevel);
 
 
 			Player.ClearPlayerSkillBonuses();

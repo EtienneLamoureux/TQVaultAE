@@ -15,7 +15,7 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 	private readonly ILogger<LootTableCollectionProvider> Log;
 	private readonly IDatabase Database;
 	private readonly ITranslationService TranslationService;
-	private readonly LazyConcurrentDictionary<string, LootTableCollection> LootTableCache = new LazyConcurrentDictionary<string, LootTableCollection>();
+	private readonly LazyConcurrentDictionary<RecordId, LootTableCollection> LootTableCache = new();
 
 	private ReadOnlyCollection<LootRandomizerItem> _LootRandomizerList;
 	/// <summary>
@@ -33,11 +33,13 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 				_LootRandomizerList = records.Select(r =>
 				{
 					var translation = TranslationService.TranslateXTag(r.Tag).TQCleanup();// Get translation
-					translation = string.IsNullOrWhiteSpace(translation)
-						? string.IsNullOrWhiteSpace(r.FileDescription) // Or FileDesc
-							? r.PrettyFileName // Or Pretty
-							: r.FileDescription.TQCleanup()
-						: translation;
+
+					if (string.IsNullOrWhiteSpace(translation))
+						translation = r.FileDescription.TQCleanup();
+
+					if (string.IsNullOrWhiteSpace(translation))
+						translation = r.Id.PrettyFileName;
+
 					return r with
 					{
 						Translation = translation,
@@ -59,16 +61,17 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 	/// <summary>
 	/// Builds the table from the database using the passed table Id.
 	/// </summary>
-	public LootTableCollection LoadTable(string tableId)
+	public LootTableCollection LoadTable(RecordId tableId)
 	{
 		return LootTableCache.GetOrAddAtomic(tableId, k =>
 		{
-			var Data = new Dictionary<string, (float Weight, LootRandomizerItem LootRandomizer)>();
+			var Data = new Dictionary<RecordId, (float Weight, LootRandomizerItem LootRandomizer)>();
 
 			#region Build Table
 
 			// Get the data
 			DBRecordCollection record = Database.GetRecordFromFile(k);
+
 			if (record == null)
 				return null;
 
@@ -122,30 +125,30 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 			// Iterate the query to build the new unweighted table.
 			foreach (KeyValuePair<string, float> kvp in buildTableQuery)
 			{
+				var KeyRecord = kvp.Key.ToRecordId();
+
 				// Check for a double entry in the table.
-				if (Data.ContainsKey(kvp.Key))
+				if (Data.ContainsKey(KeyRecord)) // DISTINCT
 				{
 					// for a double entry just add the chance.
-					var val = Data[kvp.Key];
+					var val = Data[KeyRecord];
 					val.Weight += kvp.Value;
-					Data[kvp.Key] = val;
+					Data[KeyRecord] = val;
 					continue;
 				}
 
 				// get affix translations
-				var affixRec = this.LootRandomizerList.SingleOrDefault(lr =>
-					lr.Id == kvp.Key.NormalizeRecordPath()
-				);
+				var affixRec = this.LootRandomizerList.SingleOrDefault(lr => lr.Id == KeyRecord);
 
 				if (affixRec is null)
 				{
 					Log.LogError(@"Unknown affix record ""{RecordId}"" from table ""{TableId}"""
 						, kvp.Key, tableId);
 
-					affixRec = LootRandomizerItem.Default(kvp.Key);
+					affixRec = LootRandomizerItem.Default(KeyRecord);
 				}
 
-				Data.Add(kvp.Key, (kvp.Value, affixRec));
+				Data.Add(KeyRecord, (kvp.Value, affixRec));
 			}
 
 			return new LootTableCollection(k, Data);

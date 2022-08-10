@@ -80,23 +80,23 @@ public class CsvRow
 			, fnr.BaseItemRarity
 			, fnr.BaseItemInfoStyle
 			, fnr.BaseItemInfoQuality
-			, fnr.Item.BaseItemId // @"BaseId"
-			, fnr.BaseItemInfoDescription.RemoveAllTQTags() // @"BaseName"
+			, fnr.Item.BaseItemId?.Raw // @"BaseId"
+			, fnr.BaseItemInfoDescription?.RemoveAllTQTags() // @"BaseName"
 
-			, fnr.Item.prefixID // @"PrefixId"
-			, fnr.PrefixInfoDescription.RemoveAllTQTags() // @"PrefixName"
+			, fnr.Item.prefixID?.Raw // @"PrefixId"
+			, fnr.PrefixInfoDescription?.RemoveAllTQTags() // @"PrefixName"
 
-			, fnr.Item.suffixID // @"SuffixId"
-			, fnr.SuffixInfoDescription.RemoveAllTQTags() // @"SuffixName"
+			, fnr.Item.suffixID?.Raw // @"SuffixId"
+			, fnr.SuffixInfoDescription?.RemoveAllTQTags() // @"SuffixName"
 
-			, fnr.Item.relicID // @"RelicId"
-			, fnr.RelicInfo1Description.RemoveAllTQTags() // @"RelicName"
-			, fnr.Item.RelicBonusId // @"RelicBonusId"
+			, fnr.Item.relicID?.Raw // @"RelicId"
+			, fnr.RelicInfo1Description?.RemoveAllTQTags() // @"RelicName"
+			, fnr.Item.RelicBonusId?.Raw // @"RelicBonusId"
 			, fnr.Item.Var1 // @"RelicVar"
 
-			, fnr.Item.relic2ID // @"Relic2Id"
-			, fnr.RelicInfo2Description.RemoveAllTQTags() // @"Relic2Name"
-			, fnr.Item.RelicBonus2Id // @"Relic2BonusId"
+			, fnr.Item.relic2ID?.Raw // @"Relic2Id"
+			, fnr.RelicInfo2Description?.RemoveAllTQTags() // @"Relic2Name"
+			, fnr.Item.RelicBonus2Id?.Raw // @"Relic2BonusId"
 			, fnr.Item.Var2 // @"Relic2Var"
 			);
 	}

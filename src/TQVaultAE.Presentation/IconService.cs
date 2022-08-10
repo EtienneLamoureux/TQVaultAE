@@ -10,6 +10,7 @@ namespace TQVaultAE.Presentation
 	using System.Text.RegularExpressions;
 	using System.Collections.ObjectModel;
 	using TQVaultAE.Domain.Entities;
+	using TQVaultAE.Domain.Helpers;
 
 	/// <summary>
 	/// Loads Titan Quest Icons.
@@ -42,11 +43,12 @@ namespace TQVaultAE.Presentation
 			var consolitatedFilekeys =
 				from file in configfile.list
 				let filename = file.fileName
-				let arcpath = GamePathService.ResolveArcFileName(filename)
+				let filenameId = filename.ToRecordId()
+				let arcpath = GamePathService.ResolveArcFileName(filenameId)
 				where File.Exists(arcpath.ArcFileName)
 				let arcfile = Database.ReadARCFile(arcpath.ArcFileName)
-				from key in arcfile.DirectoryEntries.Keys.Cast<string>()
-				select filename + '\\' + key;
+				from key in arcfile.DirectoryEntries.Keys.Cast<RecordId>()
+				select filename + '\\' + key.Normalized;
 
 			// Regex Match
 			var regexMatch =
@@ -60,9 +62,9 @@ namespace TQVaultAE.Presentation
 				let onrep = img.On.Split('|')
 				let ofrep = img.Off.Split('|')
 				let ovrep = img.Over.Split('|')
-				let onID = string.IsNullOrEmpty(img.On) ? null : replace(key, onrep)
-				let offID = string.IsNullOrEmpty(img.Off) ? null : replace(key, ofrep)
-				let ovID = string.IsNullOrEmpty(img.Over) ? null : replace(key, ovrep)
+				let onID = string.IsNullOrEmpty(img.On) ? null : replace(key, onrep).ToRecordId()
+				let offID = string.IsNullOrEmpty(img.Off) ? null : replace(key, ofrep).ToRecordId()
+				let ovID = string.IsNullOrEmpty(img.Over) ? null : replace(key, ovrep).ToRecordId()
 				let resOn = Database.LoadResource(onID)
 				let resOff = Database.LoadResource(offID)
 				let resOver = Database.LoadResource(ovID)
@@ -89,7 +91,7 @@ namespace TQVaultAE.Presentation
 				from img in file.imgMatch
 				where img.Literal?.Any() ?? false
 				from lit in img.Literal
-				let resID = file.fileName + '\\' + lit
+				let resID = (file.fileName + '\\' + lit).ToRecordId()
 				let res = Database.LoadResource(resID)
 				let bmp = res is null ? null : this.UIService.LoadBitmap(resID, res)
 				select new IconInfo(

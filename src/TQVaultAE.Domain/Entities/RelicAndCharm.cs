@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Domain.Entities;
 
@@ -3144,20 +3145,21 @@ public enum RelicAndCharm
 
 public static class RelicAndCharmExtension
 {
-	internal record RelicAndCharmMapItem(RelicAndCharm Value, string Name, string RecordId, string FileName, GearType Types);
+	internal record RelicAndCharmMapItem(RelicAndCharm Value, RecordId RecordId, GearType Types);
 
 	internal static ReadOnlyCollection<RelicAndCharmMapItem> RelicAndCharmMap =
 		EnumsNET.Enums.GetValues<RelicAndCharm>()
 		.Select(v => EnumsNET.Enums.GetMember(v))
 		.Select(m =>
-			new RelicAndCharmMapItem(
+		{
+			var idStr = m.AsString(EnumsNET.EnumFormat.Description);
+			var id = idStr.ToRecordId();
+			return new RelicAndCharmMapItem(
 				m.Value,
-				m.Name,
-				RecordId: m.AsString(EnumsNET.EnumFormat.Description),
-				FileName: Path.GetFileName(m.AsString(EnumsNET.EnumFormat.Description)),
+				RecordId: id,
 				Types: m.Attributes.Get<GearTypeAttribute>().Type
-			)
-		).ToList().AsReadOnly();
+			);
+		}).ToList().AsReadOnly();
 
 	/// <summary>
 	/// Gets the <see cref="GearType"/> for a <see cref="RelicAndCharm"/>
@@ -3172,7 +3174,7 @@ public static class RelicAndCharmExtension
 	/// </summary>
 	/// <param name="relic"></param>
 	/// <returns></returns>
-	public static string GetRecordId(this RelicAndCharm relic)
+	public static RecordId GetRecordId(this RelicAndCharm relic)
 		=> RelicAndCharmMap.First(m => m.Value == relic).RecordId;
 
 }

@@ -137,24 +137,23 @@ public static class StringHelper
 		return t.HasValue;
 	}
 
-
 	static char[] _Delim = new char[] { ' ' };
 	static Regex PrettyFileNameRegExNumber = new Regex(@"(?<number>\d+)", RegexOptions.Compiled);
-	static Regex PrettyFileNameRegExTitleCaseStart = new Regex(@"(?<TitleCaseStart>BOW|DA|OA|[A-Z][a-z]*)", RegexOptions.Compiled);
+	static Regex PrettyFileNameRegExTitleCaseStart = new Regex(@"(?<TitleCaseStart>BOW|DA|OA|Mastery[A-Ha-h]|[A-Z][a-z]*)", RegexOptions.Compiled);
 	// Orderered by word length
-	static Regex PrettyFileNameRegExLowerCaseStart = new Regex(@"
+	static string PrettyFileNameRegExLowerCaseStartPattern = @"
 (?<Start>
 	intelligence|mobility|protection|impairment|elemental|offensive|defensive|dexterity|
 	cooldown|mastery|current|protect|defense|offense|reflect|
-	damage|energy|pierce|guards|neidan|resist|health|poison|weapon|plants|
+	damage|energy|pierce|guards|neidan|resist|health|poison|weapon|plants|hermes|sandal|
 	armor|chance|runes|dream|bleed|total|bonus|woods|multi|relic|light|attac|speed|reduc|block|equip|
 	clubs|sleep|metal|leech|regen|dodge|retal|
 	cold|burn|life|fire|mana|stun|(?<!ext)rare|slow|wood|
-	req|int|(?<!h)all(?!owed)|dmg|(?<!con)str(?!uction)|atk|spd|run|dex|(?<=pierce)ret|
-	xp|(?<=chance)of|(?<!insec)to(?!rm)|(?<=%)da|
+	req|int|(?<!h)all(?!owed)|dmg|(?<!con)str(?!uction)|atk|att|spd|run|dex|(?<=pierce)ret|
+	xp|(?<=chance)of|(?<!insec)to(?!rm)|(?<=(%|att))da|(?<=att)oa|
 	[\-\+]?%|(?<=(offense|resists|%da))x(?!(tra|alted))|&|[\-\+]
-)".UnIndentRegexPattern()
-	, RegexOptions.Compiled);
+)".UnIndentRegexPattern();
+	static Regex PrettyFileNameRegExLowerCaseStart = new Regex(PrettyFileNameRegExLowerCaseStartPattern, RegexOptions.Compiled);
 	/// <summary>
 	/// Preprare <paramref name="TQPath"/> for display
 	/// </summary>
@@ -166,14 +165,18 @@ public static class StringHelper
 		var filename = Path.GetFileNameWithoutExtension(TQPath).Replace('_', ' ');
 		filename = PrettyFileNameRegExNumber.Replace(filename, "(${number})");// Enclose Numbers
 
-		filename = PrettyFileNameRegExTitleCaseStart
+		var filenameSplit1 = PrettyFileNameRegExTitleCaseStart
 			.Replace(filename, " ${TitleCaseStart}")// Add space on Title Case
-			.Split(_Delim, StringSplitOptions.RemoveEmptyEntries)// Split on spaces
-			.SelectMany(w => PrettyFileNameRegExLowerCaseStart.Replace(w, " ${Start}") // Add space on word begining for non TitleCase words
-			.Split(_Delim, StringSplitOptions.RemoveEmptyEntries)// Split on spaces
-			).Select(w =>
+				.Split(_Delim, StringSplitOptions.RemoveEmptyEntries);// Split on spaces
+
+		var filenameSplit2 = filenameSplit1.SelectMany(w => PrettyFileNameRegExLowerCaseStart
+			.Replace(w, " ${Start}") // Add space on word begining for non TitleCase words
+				.Split(_Delim, StringSplitOptions.RemoveEmptyEntries)// Split on spaces
+			);
+
+		filename = filenameSplit2.Select(w =>
 			{
-				var title = w.ToFirstCharUpperCase();
+				var title = w.ToFirstCharUpperCase();// TitleCase words
 				return title switch // Substitute acronym
 				{
 					"Dmg" => "Damage",
@@ -202,7 +205,7 @@ public static class StringHelper
 					var x when x.Equals("MasteryH", noCase) => "Mastery Storm",
 					_ => title
 				};
-			}) // Capitalize words
+			}) 
 			.JoinString(" ");// Put it back together
 
 		return filename;
@@ -224,30 +227,44 @@ public static class StringHelper
 	}
 
 	/// <summary>
+	/// Make a <see cref="RecordId"/> from <paramref name="recordId"/>.
+	/// </summary>
+	/// <param name="recordId"></param>
+	/// <returns></returns>
+	public static RecordId ToRecordId(this string recordId)
+		=> RecordId.Create(recordId);
+
+	/// <summary>
 	/// Explode <see cref="PrettyFileName"/> result 
 	/// </summary>
 	/// <param name="TQPath"></param>
 	/// <returns></returns>
-	public static (string Effect, string Number, bool IsMatch) PrettyFileNameExploded(this string TQPath)
+	public static (string PrettyFileName, string Effect, string Number, bool IsMatch) PrettyFileNameExploded(this string TQPath)
 	{
 		var pretty = TQPath.PrettyFileName();
 		return pretty.ExplodePrettyFileName();
 	}
 
-	static Regex _ExplodePrettyFileName = new Regex(@"(?<Effect>[^\(]+)\((?<Num>\d+)\)", RegexOptions.Compiled);
+	static Regex _ExplodePrettyFileName = new Regex(@"
+[^\(]+\((?<Num1>\d+)\)(?<Effect>[^\(]+)\((?<Num>\d+)\)
+|
+\((?<Num>\d+)\)(?<Effect>.+)
+|
+(?<Effect>[^\(]+)\((?<Num>\d+)\)
+".UnIndentRegexPattern(), RegexOptions.Compiled);
 	/// <summary>
 	/// Explode an already prettyfied file name
 	/// </summary>
 	/// <param name="prettyFileName"></param>
 	/// <returns></returns>
-	public static (string Effect, string Number, bool IsMatch) ExplodePrettyFileName(this string prettyFileName)
+	public static (string PrettyFileName, string Effect, string Number, bool IsMatch) ExplodePrettyFileName(this string prettyFileName)
 	{
 		var m = _ExplodePrettyFileName.Match(prettyFileName);
 
 		if (!m.Success)
-			return (prettyFileName, string.Empty, false);
+			return (prettyFileName, prettyFileName, string.Empty, false);
 
-		return (m.Groups["Effect"].Value.Trim(), m.Groups["Num"].Value, true);
+		return (prettyFileName, m.Groups["Effect"].Value.Trim(), m.Groups["Num"].Value, true);
 	}
 
 	static Regex AllContiguousSpaceRegEx;

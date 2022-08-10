@@ -62,9 +62,9 @@ namespace TQVaultAE.GUI.Components
 			if (info.DisplayMode != BagButtonDisplayMode.Default)
 			{
 				// Load custom
-				this.OnBitmap = string.IsNullOrWhiteSpace(info.On) ? null : UIService.LoadBitmap(info.On);
-				this.OffBitmap = string.IsNullOrWhiteSpace(info.Off) ? null : UIService.LoadBitmap(info.Off);
-				this.OverBitmap = string.IsNullOrWhiteSpace(info.Over) ? null : UIService.LoadBitmap(info.Over);
+				this.OnBitmap = RecordId.IsNullOrEmpty(info.On) ? null : UIService.LoadBitmap(info.On);
+				this.OffBitmap = RecordId.IsNullOrEmpty(info.Off) ? null : UIService.LoadBitmap(info.Off);
+				this.OverBitmap = RecordId.IsNullOrEmpty(info.Over) ? null : UIService.LoadBitmap(info.Over);
 
 				if (this.OnBitmap is not null && this.OffBitmap is not null) return;// Done
 

@@ -57,10 +57,10 @@ public partial class ForgePanel : UserControl
 
 	private ScalingRadioButton lastMode;
 
-	private const string SoundStricMode = @"Sounds\MONSTERS\GREECE\G_TELKINE\TELEKINEVOICE01.WAV";
-	private const string SoundRelaxMode = @"Sounds\MONSTERS\GREECE\G_TELKINE\TELEKINEVOICE02.WAV";
-	private const string SoundGameMode = @"Sounds\MONSTERS\GREECE\G_TELKINE\TELEKINEVOICE03.WAV";
-	private const string SoundGodMode = @"Sounds\AMBIENCE\RANDOMEVENT\TYPHONLAUGHDISTANCE.WAV";
+	private static RecordId SoundStricMode = @"Sounds\MONSTERS\GREECE\G_TELKINE\TELEKINEVOICE01.WAV".ToRecordId();
+	private static RecordId SoundRelaxMode = @"Sounds\MONSTERS\GREECE\G_TELKINE\TELEKINEVOICE02.WAV".ToRecordId();
+	private static RecordId SoundGameMode = @"Sounds\MONSTERS\GREECE\G_TELKINE\TELEKINEVOICE03.WAV".ToRecordId();
+	private static RecordId SoundGodMode = @"Sounds\AMBIENCE\RANDOMEVENT\TYPHONLAUGHDISTANCE.WAV".ToRecordId();
 
 	/// <summary>
 	/// Gets or sets the dragInfo instance of any items being dragged.
@@ -1147,8 +1147,8 @@ public partial class ForgePanel : UserControl
 	{
 		if (IsGameMode)
 		{
-			var baseId = string.IsNullOrWhiteSpace(BaseItem?.BaseItemId) ? "NoID" : BaseItem.BaseItemId;
-			var drgItmBaseId = string.IsNullOrWhiteSpace(drgItm?.BaseItemId) ? "NoID" : drgItm.BaseItemId;
+			var baseId = RecordId.IsNullOrEmpty(BaseItem?.BaseItemId) ? RecordId.Empty : BaseItem.BaseItemId;
+			var drgItmBaseId = RecordId.IsNullOrEmpty(drgItm?.BaseItemId) ? RecordId.Empty : drgItm.BaseItemId;
 
 			if (from == pictureBoxBaseItem
 				&& BaseItem is not null

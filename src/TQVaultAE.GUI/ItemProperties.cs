@@ -81,10 +81,15 @@ namespace TQVaultAE.GUI
 			if (this.Data.BaseAttributes.Any())
 			{
 				this.flowLayoutBaseItemProperties.Controls.Clear();
+
 				if (!this.checkBoxFilterExtraInfo.Checked)
-					this.flowLayoutBaseItemProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService, this.Data.BaseItemId, FGColor: ItemStyle.Relic.Color()));
+					this.flowLayoutBaseItemProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService
+						, this.Data.BaseItemId.Normalized
+						, FGColor: ItemStyle.Relic.Color()));
+				
 				foreach (var prop in this.Data.BaseAttributes)
 					this.flowLayoutBaseItemProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService, prop));
+				
 				this.flowLayoutBaseItemProperties.Show();
 				this.labelBaseItemProperties.Show();
 			}
@@ -98,10 +103,16 @@ namespace TQVaultAE.GUI
 			if (this.Data.PrefixAttributes.Any())
 			{
 				this.flowLayoutPrefixProperties.Controls.Clear();
+				
 				if (!this.checkBoxFilterExtraInfo.Checked)
-					this.flowLayoutPrefixProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService, this.Data.PrefixInfoRecords.Id, FGColor: ItemStyle.Relic.Color()));
+					this.flowLayoutPrefixProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService
+						, this.Data.PrefixInfoRecords.Id.Normalized
+						, FGColor: ItemStyle.Relic.Color())
+					);
+				
 				foreach (var prop in this.Data.PrefixAttributes)
 					this.flowLayoutPrefixProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService, prop));
+				
 				this.flowLayoutPrefixProperties.Show();
 				this.labelPrefixProperties.Show();
 			}
@@ -115,10 +126,16 @@ namespace TQVaultAE.GUI
 			if (this.Data.SuffixAttributes.Any())
 			{
 				this.flowLayoutSuffixProperties.Controls.Clear();
+				
 				if (!this.checkBoxFilterExtraInfo.Checked)
-					this.flowLayoutSuffixProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService, this.Data.SuffixInfoRecords.Id, FGColor: ItemStyle.Relic.Color()));
+					this.flowLayoutSuffixProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService
+						, this.Data.SuffixInfoRecords.Id.Normalized // TODO Prettyfied ?
+						, FGColor: ItemStyle.Relic.Color())
+					);
+
 				foreach (var prop in this.Data.SuffixAttributes)
 					this.flowLayoutSuffixProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService, prop));
+				
 				this.flowLayoutSuffixProperties.Show();
 				this.labelSuffixProperties.Show();
 			}

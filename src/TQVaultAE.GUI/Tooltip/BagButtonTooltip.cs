@@ -132,7 +132,7 @@ namespace TQVaultAE.GUI.Tooltip
 			{
 
 				var itemlist = ButtonSack.Sack
-					.Where(i => i.BaseItemId.Length != 0)// skip empty items
+					.Where(i => !RecordId.IsNullOrEmpty(i.BaseItemId))// skip empty items
 					.ToArray();
 				var friendlylist = itemlist
 					.Select(i => ItemProvider.GetFriendlyNames(i))

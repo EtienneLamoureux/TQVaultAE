@@ -13,7 +13,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Gets or sets the filename.
 		/// </summary>
-		public string FileName { get; set; }
+		public RecordId FileName { get; set; }
 
 		/// <summary>
 		/// Gets or sets the storage type.
