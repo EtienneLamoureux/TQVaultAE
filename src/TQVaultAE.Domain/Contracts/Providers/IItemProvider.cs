@@ -21,13 +21,13 @@ public interface IItemProvider
 	/// </summary>
 	/// <param name="itemId"></param>
 	/// <returns></returns>
-	ItemAffixes GetItemAffixes(string itemId);
+	ItemAffixes GetItemAffixes(RecordId itemId);
 	/// <summary>
 	/// Gets the artifact/charm/relic bonus loot table
 	/// </summary>
 	/// <param name="itm"></param>
 	/// <returns>returns null if the item is not an artifact/charm/relic</returns>
-	LootTableCollection BonusTable(Item itm);
+	LootTableCollection BonusTableRelicOrArtifact(Item itm);
 	/// <summary>
 	/// Create an artifact from its formulae
 	/// </summary>
@@ -92,7 +92,7 @@ public interface IItemProvider
 	/// <param name="recordId">string of the record id</param>
 	/// <param name="varNum">Which variable we are using since there can be multiple values.</param>
 	/// <returns>int containing the pet skill level</returns>
-	int GetPetSkillLevel(Item itm, DBRecordCollection record, string recordId, int varNum);
+	int GetPetSkillLevel(Item itm, DBRecordCollection record, RecordId recordId, int varNum);
 	/// <summary>
 	/// Gets the item's requirements
 	/// </summary>
@@ -130,7 +130,7 @@ public interface IItemProvider
 	/// <param name="recordId">string containing the record id</param>
 	/// <param name="varNum">variable number which we are looking up since there can be multiple values</param>
 	/// <returns>int containing the skill level</returns>
-	int GetTriggeredSkillLevel(Item itm, DBRecordCollection record, string recordId, int varNum);
+	int GetTriggeredSkillLevel(Item itm, DBRecordCollection record, RecordId recordId, int varNum);
 	/// <summary>
 	/// Parses an item from the save file format
 	/// </summary>

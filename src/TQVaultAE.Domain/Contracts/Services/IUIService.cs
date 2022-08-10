@@ -45,7 +45,7 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		/// <param name="resourceId">Resource Id which we are looking up.</param>
 		/// <returns>Bitmap fetched from the database</returns>
-		Bitmap LoadBitmap(string resourceId);
+		Bitmap LoadBitmap(RecordId resourceId);
 
 		/// <summary>
 		/// Loads a bitmap from <paramref name="texData"/> with an identifier <paramref name="resourceId"/>
@@ -53,7 +53,7 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// <param name="resourceId">Resource Id which we are looking up.</param>
 		/// <param name="texData">raw DDS image data</param>
 		/// <returns>Bitmap converted from <paramref name="texData"/></returns>
-		Bitmap LoadBitmap(string resourceId, byte[] texData);
+		Bitmap LoadBitmap(RecordId resourceId, byte[] texData);
 
 		/// <summary>
 		/// Loads the relic overlay bitmap from the database.

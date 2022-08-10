@@ -5,7 +5,7 @@ namespace TQVaultAE.Domain.Contracts.Services;
 
 public interface IGamePathService
 {
-	GameExtension ResolveExtensionFromPath(string pathOrRecordId);
+	GameExtension ResolveExtensionFromPath(RecordId pathOrRecordId);
 
 	/// <summary>
 	/// Parses filename to try to determine the base character name.
@@ -177,6 +177,6 @@ public interface IGamePathService
 	/// </summary>
 	/// <param name="resourceIdOrPrefix"></param>
 	/// <returns></returns>
-	(string ArcFileName, bool IsDLC) ResolveArcFileName(string resourceIdOrPrefix);
+	(string ArcFileName, bool IsDLC) ResolveArcFileName(RecordId resourceIdOrPrefix);
 
 }

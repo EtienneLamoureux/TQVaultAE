@@ -136,7 +136,7 @@ public class ToFriendlyNameResult
 	public string[] SuffixAttributes;
 	public DBRecordCollection SuffixInfoRecords;
 
-	public string BaseItemId;
+	public RecordId BaseItemId;
 	public string BaseItemRarity;
 
 	static Regex BaseItemInfoClassRegEx = new Regex(@"[^\w\s']", RegexOptions.Compiled);

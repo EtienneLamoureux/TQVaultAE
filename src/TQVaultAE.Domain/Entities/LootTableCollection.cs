@@ -16,17 +16,17 @@ namespace TQVaultAE.Domain.Entities;
 /// <remarks>
 /// Used for showing possible completion bonuses.
 /// </remarks>
-public class LootTableCollection : IEnumerable<KeyValuePair<string, LootTableValue>>
+public class LootTableCollection : IEnumerable<KeyValuePair<RecordId, LootTableValue>>
 {
 	/// <summary>
 	/// String containing the database Id for the table
 	/// </summary>
-	public readonly string TableId;
+	public readonly RecordId TableId;
 
 	/// <summary>
 	/// Loot table data
 	/// </summary>
-	public readonly ReadOnlyDictionary<string, LootTableValue> Data;
+	public readonly ReadOnlyDictionary<RecordId, LootTableValue> Data;
 
 	/// <summary>
 	/// Holds the total of all of the weight values in the table.  Used to calculate the percentage in the interator block.
@@ -37,7 +37,7 @@ public class LootTableCollection : IEnumerable<KeyValuePair<string, LootTableVal
 	/// Initializes a new instance of the LootTableCollection class.
 	/// </summary>
 	/// <param name="tableId">String containing the table Id we are looking up.</param>
-	public LootTableCollection(string tableId, Dictionary<string, (float Weight, LootRandomizerItem LootRandomizer)> data)
+	public LootTableCollection(RecordId tableId, Dictionary<RecordId, (float Weight, LootRandomizerItem LootRandomizer)> data)
 	{
 		TableId = tableId;
 		// Calculate the total weight.
@@ -47,7 +47,7 @@ public class LootTableCollection : IEnumerable<KeyValuePair<string, LootTableVal
 			TotalWeight = 1.0F;
 
 		// Compute and make immutable
-		Data = new ReadOnlyDictionary<string, LootTableValue>(
+		Data = new ReadOnlyDictionary<RecordId, LootTableValue>(
 			data.ToDictionary(kv =>
 				kv.Key
 				, kv => new LootTableValue(
@@ -69,7 +69,7 @@ public class LootTableCollection : IEnumerable<KeyValuePair<string, LootTableVal
 	/// Generic Iterator Block which returns the individual table values with the weighting as percent of total weight.
 	/// </summary>
 	/// <returns>KeyValuePair for each value in the table.</returns>
-	public IEnumerator<KeyValuePair<string, LootTableValue>> GetEnumerator()
+	public IEnumerator<KeyValuePair<RecordId, LootTableValue>> GetEnumerator()
 	{
 		foreach (var kvp in this.Data) yield return kvp;
 	}

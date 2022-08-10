@@ -1062,6 +1062,12 @@ Debug Levels
 				this.GetVaultList(true);
 			}
 
+			if (settingsDialog.EnableTQVaultSoundsChanged)
+			{
+				var soundSrv = this.ServiceProvider.GetService<ISoundService>();
+				soundSrv.InitAllPlayers();
+			}
+
 			if (settingsDialog.LanguageChanged || settingsDialog.GamePathChanged || settingsDialog.CustomMapsChanged || settingsDialog.UISettingChanged)
 			{
 				if ((settingsDialog.GamePathChanged && settingsDialog.LanguageChanged) || settingsDialog.UISettingChanged)

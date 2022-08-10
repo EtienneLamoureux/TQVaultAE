@@ -206,11 +206,11 @@ public class EquipmentPanel : SackPanel, IScalingControl
 					// If we are over an empty weapon box we need to check if there is a 2 Handed weapon
 					// in the corresponding weapon box and if there is we return that instead.
 					// Otherwise we just skip the empty item.
-					if (item.BaseItemId.Length == 0)
+					if (RecordId.IsNullOrEmpty(item.BaseItemId))
 					{
 						Item item2H = this.GetItemFromShadowSlot(itemSlot - 7);
 
-						if (item2H.BaseItemId.Length != 0 && item2H.Is2HWeapon)
+						if (!RecordId.IsNullOrEmpty(item2H.BaseItemId) && item2H.Is2HWeapon)
 							// Make sure we got something and it's a 2 Handed weapon
 							return item2H;
 						else
@@ -229,7 +229,7 @@ public class EquipmentPanel : SackPanel, IScalingControl
 				// Check the amulet box since the item may not fill the entire box.
 				return item;
 
-			else if (string.IsNullOrEmpty(item.BaseItemId))
+			else if (RecordId.IsNullOrEmpty(item.BaseItemId))
 				// Skip over empty items
 				continue;
 
@@ -391,17 +391,17 @@ public class EquipmentPanel : SackPanel, IScalingControl
 				if (itemUnderUs.IsRelicComplete)
 				{
 					float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-					LootTableCollection table = ItemProvider.BonusTable(itemUnderUs);
+					LootTableCollection table = ItemProvider.BonusTableRelicOrArtifact(itemUnderUs);
 
 					if (table != null && table.Length > 0)
 					{
 						int i = table.Length;
-						foreach (KeyValuePair<string, LootTableValue> e1 in table)
+						foreach (var e1 in table)
 						{
 							i--;
 							if (randPercent <= e1.Value.WeightPercent || i == 0)
 							{
-								itemUnderUs.RelicBonusId = TQData.NormalizeRecordPath(e1.Key);
+								itemUnderUs.RelicBonusId = e1.Key;
 								break;
 							}
 							else
@@ -456,7 +456,7 @@ public class EquipmentPanel : SackPanel, IScalingControl
 						if (slot != slotRH)
 						{
 							// If I am not dropping on the RH slot then we may need to pick up the item in the LH slot.
-							if (itemUnderUs != null && itemUnderUs.BaseItemId.Length != 0)
+							if (itemUnderUs != null && !RecordId.IsNullOrEmpty(itemUnderUs.BaseItemId))
 							{
 								if (itemUnderUs.Is2HWeapon)
 									// For 2H weapons itemUnderUs points to the real item in the RH slot.
@@ -473,7 +473,7 @@ public class EquipmentPanel : SackPanel, IScalingControl
 								this.Sack.RemoveAtItem(slot);
 								this.Sack.InsertItem(slot, newItem);
 							}
-							else if (!string.IsNullOrEmpty(this.Sack.GetItem(slotRH).BaseItemId))
+							else if (!RecordId.IsNullOrEmpty(this.Sack.GetItem(slotRH).BaseItemId))
 							{
 								// There might be something in the other slot so we pick it up.
 								// Move the original item to the end of the sack temporarily
@@ -493,7 +493,7 @@ public class EquipmentPanel : SackPanel, IScalingControl
 						{
 							// We are over the RH slot, but there may be something in the LH slot.
 							int slotLH = slotRH - 1;
-							if (itemUnderUs != null && !string.IsNullOrEmpty(itemUnderUs.BaseItemId))
+							if (itemUnderUs != null && !RecordId.IsNullOrEmpty(itemUnderUs.BaseItemId))
 							{
 								this.Sack.AddItem(this.Sack.GetItem(slot).Duplicate(true));
 								itemUnderUs = this.Sack.GetItem(this.Sack.Count - 1);
@@ -505,7 +505,7 @@ public class EquipmentPanel : SackPanel, IScalingControl
 								this.Sack.RemoveAtItem(slot);
 								this.Sack.InsertItem(slot, newItem);
 							}
-							else if (!string.IsNullOrEmpty(this.Sack.GetItem(slotLH).BaseItemId))
+							else if (!RecordId.IsNullOrEmpty(this.Sack.GetItem(slotLH).BaseItemId))
 							{
 								// There might be something in the other slot so we pick it up.
 								// Move the original item to the end of the sack temporarily
@@ -554,7 +554,7 @@ public class EquipmentPanel : SackPanel, IScalingControl
 			this.ItemsUnderDragItem.Clear();
 
 			// Now mark itemUnderUs as picked up.
-			if (itemUnderUs != null && !string.IsNullOrEmpty(itemUnderUs.BaseItemId))
+			if (itemUnderUs != null && !RecordId.IsNullOrEmpty(itemUnderUs.BaseItemId))
 			{
 				// set our mouse offset to be the center of the item.
 				Point mouseOffset = new Point(
@@ -877,7 +877,7 @@ public class EquipmentPanel : SackPanel, IScalingControl
 				alpha = AdjustAlpha(alpha);
 
 			// Now do the shading
-			if (!string.IsNullOrWhiteSpace(item.BaseItemId))
+			if (!RecordId.IsNullOrEmpty(item.BaseItemId))
 				this.ShadeAreaUnderItem(e.Graphics, item, backgroundColor, alpha, highlight);
 
 			// Adjust the alpha and draw the accent.
@@ -888,7 +888,7 @@ public class EquipmentPanel : SackPanel, IScalingControl
 			if (item.IsInWeaponSlot && item.Is2HWeapon)
 			{
 				Item item2H = this.GetItemFromShadowSlot(item.PositionY);
-				if (string.IsNullOrEmpty(item2H.BaseItemId))
+				if (RecordId.IsNullOrEmpty(item2H.BaseItemId))
 				{
 					Rectangle rect = this.FindSlotRect(item2H.PositionX, item2H.PositionY);
 					this.ShadeAreaUnderItem(e.Graphics, rect, backgroundColor, alpha, highlight);
@@ -981,14 +981,14 @@ public class EquipmentPanel : SackPanel, IScalingControl
 				if (item.IsInWeaponSlot)
 				{
 					// Weapon slots only
-					if (item.BaseItemId.Length == 0)
+					if (RecordId.IsNullOrEmpty(item.BaseItemId))
 						// If the item is null try to draw it grayed out
 						this.DrawItemShaded(e.Graphics, item);
 					else
 						// Otherwise draw it normally
 						this.DrawItem(e.Graphics, item);
 				}
-				else if (item.BaseItemId.Length != 0)
+				else if (!RecordId.IsNullOrEmpty(item.BaseItemId))
 					this.DrawItem(e.Graphics, item);
 			}
 		}
@@ -1315,7 +1315,7 @@ public class EquipmentPanel : SackPanel, IScalingControl
 	/// <param name="backgroundBrush">brush we are using for the background</param>
 	private void DrawItemShaded(Graphics g, Item item)
 	{
-		if (item.BaseItemId.Length != 0)
+		if (!RecordId.IsNullOrEmpty(item.BaseItemId))
 		{
 			// The item is not null
 			// So we draw it normally and exit
@@ -1327,7 +1327,7 @@ public class EquipmentPanel : SackPanel, IScalingControl
 
 		// TODO: Update logic to draw the shadow slot if the item was cancelled.
 		// otherwise it is skipped because this.m_dragInfo.Item == item2H will be true.
-		if (!item2H.Is2HWeapon || (this.DragInfo.Item == item2H && !this.DragInfo.IsBeingCancelled) || item2H.BaseItemId.Length == 0)
+		if (!item2H.Is2HWeapon || (this.DragInfo.Item == item2H && !this.DragInfo.IsBeingCancelled) || RecordId.IsNullOrEmpty(item2H.BaseItemId))
 		{
 			// Skip if the item is being dragged.
 			// Also, only 2 Handed weapons get drawn this way
@@ -1551,7 +1551,7 @@ public class EquipmentPanel : SackPanel, IScalingControl
 						else
 							itemOffset++;
 
-						return this.Sack.GetItem(itemOffset).BaseItemId.Length == 0 || this.Sack.GetItem(slot).BaseItemId.Length == 0;
+						return RecordId.IsNullOrEmpty(this.Sack.GetItem(itemOffset).BaseItemId) || RecordId.IsNullOrEmpty(this.Sack.GetItem(slot).BaseItemId);
 					}
 					else
 						return true;

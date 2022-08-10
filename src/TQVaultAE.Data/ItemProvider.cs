@@ -37,7 +37,7 @@ public class ItemProvider : IItemProvider
 	private readonly ITranslationService TranslationService;
 	private readonly IGamePathService GamePathService;
 	private readonly LazyConcurrentDictionary<(Item Item, FriendlyNamesExtraScopes? Scope, bool FilterExtra), ToFriendlyNameResult> FriendlyNamesCache = new LazyConcurrentDictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult>();
-	private readonly LazyConcurrentDictionary<string, ItemAffixes> ItemAffixesCache = new LazyConcurrentDictionary<string, ItemAffixes>();
+	private readonly LazyConcurrentDictionary<RecordId, ItemAffixes> ItemAffixesCache = new();
 
 	internal static readonly string[] unwantedTags =
 	{
@@ -177,7 +177,7 @@ public class ItemProvider : IItemProvider
 		, IItemAttributeProvider itemAttributeProvider
 		, ITQDataService tQData
 		, ITranslationService translationService
-	, IGamePathService gamePathService
+		, IGamePathService gamePathService
 	)
 	{
 		this.Log = log;
@@ -190,7 +190,7 @@ public class ItemProvider : IItemProvider
 	}
 
 
-	public ItemAffixes GetItemAffixes(string itemId)
+	public ItemAffixes GetItemAffixes(RecordId itemId)
 	{
 		return ItemAffixesCache.GetOrAddAtomic(itemId, k =>
 		{
@@ -208,20 +208,20 @@ public class ItemProvider : IItemProvider
 			GameExtension dlc;
 			foreach (var map in affixmap)
 			{
-				if (!string.IsNullOrWhiteSpace(map.BrokenTable))
+				if (!map.BrokenTable.IsEmpty)
 				{
 					dlc = GamePathService.ResolveExtensionFromPath(map.BrokenTable);
 					table = this.LootTableCollectionProvider.LoadTable(map.BrokenTable);
 					if (table is not null) LBroken.Add((dlc, table));
 				}
 
-				if (!string.IsNullOrWhiteSpace(map.PrefixTable))
+				if (!map.PrefixTable.IsEmpty)
 				{
 					dlc = GamePathService.ResolveExtensionFromPath(map.PrefixTable);
 					table = this.LootTableCollectionProvider.LoadTable(map.PrefixTable);
 					if (table is not null) LPrefix.Add((dlc, table));
 				}
-				if (!string.IsNullOrWhiteSpace(map.SuffixTable))
+				if (!map.SuffixTable.IsEmpty)
 				{
 					dlc = GamePathService.ResolveExtensionFromPath(map.SuffixTable);
 					table = this.LootTableCollectionProvider.LoadTable(map.SuffixTable);
@@ -272,17 +272,20 @@ public class ItemProvider : IItemProvider
 		) return false;
 
 		string tableId = null;
+		RecordId tableIdRec = null;
 
 		if (hasCompleteRelic1)
 		{
 			tableId = Item.RelicInfo.GetString("bonusTableName");
-			RelicTable1 = LootTableCollectionProvider.LoadTable(tableId);
+			tableIdRec = tableId;
+			RelicTable1 = LootTableCollectionProvider.LoadTable(tableIdRec);
 		}
 
 		if (hasCompleteRelic2)
 		{
 			tableId = Item.Relic2Info.GetString("bonusTableName");
-			RelicTable2 = LootTableCollectionProvider.LoadTable(tableId);
+			tableIdRec = tableId;
+			RelicTable2 = LootTableCollectionProvider.LoadTable(tableIdRec);
 		}
 
 		return RelicTable1 is not null || RelicTable2 is not null;
@@ -294,7 +297,7 @@ public class ItemProvider : IItemProvider
 	/// </summary>
 	/// <param name="itm"></param>
 	/// <returns>returns null if the item is not an artifact/charm/relic</returns>
-	public LootTableCollection BonusTable(Item itm)
+	public LootTableCollection BonusTableRelicOrArtifact(Item itm)
 	{
 		if (itm.baseItemInfo == null)
 			return null;
@@ -307,9 +310,9 @@ public class ItemProvider : IItemProvider
 			// for artifacts we need to find the formulae that was used to create the artifact.  sucks to be us
 			// The formulas seem to always be in the arcaneformulae subfolder with a _formula on the end
 			// of the filename
-			string folder = Path.GetDirectoryName(itm.BaseItemId);
+			string folder = Path.GetDirectoryName(itm.BaseItemId.Raw);
 			folder = Path.Combine(folder, "arcaneformulae");
-			string file = Path.GetFileNameWithoutExtension(itm.BaseItemId);
+			string file = Path.GetFileNameWithoutExtension(itm.BaseItemId.Raw);
 
 			// Damn it, IL did not keep the filename consistent on Kingslayer (Sands of Kronos)
 			if (file.Equals("E_GA_SANDOFKRONOS", noCase))
@@ -317,7 +320,7 @@ public class ItemProvider : IItemProvider
 
 			file = string.Concat(file, "_formula");
 			file = Path.Combine(folder, file);
-			file = Path.ChangeExtension(file, Path.GetExtension(itm.BaseItemId));
+			file = Path.ChangeExtension(file, Path.GetExtension(itm.BaseItemId.Raw));
 
 			// Now lookup itm record.
 			DBRecordCollection record = Database.GetRecordFromFile(file);
@@ -351,8 +354,8 @@ public class ItemProvider : IItemProvider
 		GetDBData(newRelic);
 
 		// Now clear out our relic data
-		itm.relicID = string.Empty;
-		itm.RelicBonusId = string.Empty;
+		itm.relicID = RecordId.Empty;
+		itm.RelicBonusId = RecordId.Empty;
 		itm.Var1 = 0;
 		itm.RelicInfo = null;
 		itm.RelicBonusInfo = null;
@@ -378,8 +381,8 @@ public class ItemProvider : IItemProvider
 		GetDBData(newRelic);
 
 		// Now clear out our relic data
-		itm.relic2ID = string.Empty;
-		itm.RelicBonus2Id = string.Empty;
+		itm.relic2ID = RecordId.Empty;
+		itm.RelicBonus2Id = RecordId.Empty;
 		itm.Var2 = Item.var2Default;
 		itm.Relic2Info = null;
 		itm.RelicBonus2Info = null;
@@ -397,8 +400,8 @@ public class ItemProvider : IItemProvider
 	{
 		if (itm.IsFormulae && itm.baseItemInfo != null)
 		{
-			string artifactID = itm.baseItemInfo.GetString("artifactName");
-			Item newArtifact = itm.MakeEmptyCopy(artifactID);
+			string artifactname = itm.baseItemInfo.GetString("artifactName");
+			Item newArtifact = itm.MakeEmptyCopy(artifactname);
 			GetDBData(newArtifact);
 
 			itm.IsModified = true;
@@ -432,8 +435,8 @@ public class ItemProvider : IItemProvider
 		// Add Artifact level requirement to formula
 		if (itm.IsFormulae && itm.baseItemInfo != null)
 		{
-			string artifactID = itm.baseItemInfo.GetString("artifactName");
-			GetRequirementsFromRecord(RequirementVariables, Database.GetRecordFromFile(artifactID));
+			string artifactName = itm.baseItemInfo.GetString("artifactName");
+			GetRequirementsFromRecord(RequirementVariables, Database.GetRecordFromFile(artifactName));
 		}
 
 		return RequirementVariables;
@@ -477,7 +480,7 @@ public class ItemProvider : IItemProvider
 			return null;
 
 		string setID = itm.baseItemInfo.GetString("itemSetName");
-		if (string.IsNullOrEmpty(setID))
+		if (string.IsNullOrWhiteSpace(setID))
 			return null;
 
 		// Get the set record
@@ -526,19 +529,19 @@ public class ItemProvider : IItemProvider
 			writer.Write(itm.beginBlockCrap2);
 
 			TQData.WriteCString(writer, "baseName");
-			TQData.WriteCString(writer, itm.BaseItemId);
+			TQData.WriteCString(writer, itm.BaseItemId.Raw);
 
 			TQData.WriteCString(writer, "prefixName");
-			TQData.WriteCString(writer, itm.prefixID);
+			TQData.WriteCString(writer, itm.prefixID.Raw);
 
 			TQData.WriteCString(writer, "suffixName");
-			TQData.WriteCString(writer, itm.suffixID);
+			TQData.WriteCString(writer, itm.suffixID.Raw);
 
 			TQData.WriteCString(writer, "relicName");
-			TQData.WriteCString(writer, itm.relicID);
+			TQData.WriteCString(writer, itm.relicID.Raw);
 
 			TQData.WriteCString(writer, "relicBonus");
-			TQData.WriteCString(writer, itm.RelicBonusId);
+			TQData.WriteCString(writer, itm.RelicBonusId.Raw);
 
 			TQData.WriteCString(writer, "seed");
 			writer.Write(cseed);
@@ -549,10 +552,10 @@ public class ItemProvider : IItemProvider
 			if (itm.atlantis)
 			{
 				TQData.WriteCString(writer, "relicName2");
-				TQData.WriteCString(writer, itm.relic2ID);
+				TQData.WriteCString(writer, itm.relic2ID.Raw);
 
 				TQData.WriteCString(writer, "relicBonus2");
-				TQData.WriteCString(writer, itm.RelicBonus2Id);
+				TQData.WriteCString(writer, itm.RelicBonus2Id.Raw);
 
 				TQData.WriteCString(writer, "var2");
 				writer.Write(itm.Var2);
@@ -583,19 +586,19 @@ public class ItemProvider : IItemProvider
 				writer.Write(itm.beginBlockCrap2);
 
 				TQData.WriteCString(writer, "baseName");
-				TQData.WriteCString(writer, itm.BaseItemId);
+				TQData.WriteCString(writer, itm.BaseItemId.Raw);
 
 				TQData.WriteCString(writer, "prefixName");
-				TQData.WriteCString(writer, itm.prefixID);
+				TQData.WriteCString(writer, itm.prefixID.Raw);
 
 				TQData.WriteCString(writer, "suffixName");
-				TQData.WriteCString(writer, itm.suffixID);
+				TQData.WriteCString(writer, itm.suffixID.Raw);
 
 				TQData.WriteCString(writer, "relicName");
-				TQData.WriteCString(writer, itm.relicID);
+				TQData.WriteCString(writer, itm.relicID.Raw);
 
 				TQData.WriteCString(writer, "relicBonus");
-				TQData.WriteCString(writer, itm.RelicBonusId);
+				TQData.WriteCString(writer, itm.RelicBonusId.Raw);
 
 				TQData.WriteCString(writer, "seed");
 				writer.Write(cseed);
@@ -606,10 +609,10 @@ public class ItemProvider : IItemProvider
 				if (itm.atlantis)
 				{
 					TQData.WriteCString(writer, "relicName2");
-					TQData.WriteCString(writer, itm.relic2ID);
+					TQData.WriteCString(writer, itm.relic2ID.Raw);
 
 					TQData.WriteCString(writer, "relicBonus2");
-					TQData.WriteCString(writer, itm.RelicBonus2Id);
+					TQData.WriteCString(writer, itm.RelicBonus2Id.Raw);
 
 					TQData.WriteCString(writer, "var2");
 					writer.Write(itm.Var2);
@@ -650,6 +653,7 @@ public class ItemProvider : IItemProvider
 	{
 		try
 		{
+			string valueStr = string.Empty;
 			if (itm.ContainerType == SackType.Stash)
 			{
 				TQData.ValidateNextString("stackCount", reader);
@@ -702,8 +706,8 @@ public class ItemProvider : IItemProvider
 			}
 			else
 			{
-				itm.relic2ID = string.Empty;
-				itm.RelicBonus2Id = string.Empty;
+				itm.relic2ID = RecordId.Empty;
+				itm.RelicBonus2Id = RecordId.Empty;
 				itm.Var2 = Item.var2Default;
 			}
 
@@ -981,18 +985,18 @@ public class ItemProvider : IItemProvider
 	/// </summary>
 	/// <param name="itemId">item id to be checked</param>
 	/// <returns>string containing itemId with a .dbr extension.</returns>
-	private string CheckExtension(string itemId)
+	private RecordId CheckExtension(RecordId itemId)
 	{
-		if (itemId == null)
-			return null;
+		if (RecordId.IsNullOrEmpty(itemId))
+			return RecordId.Empty;
 
-		if (itemId.Length < 4)
+		if (itemId.Normalized.Length < 4)
 			return itemId;
 
-		if (Path.GetExtension(itemId).Equals(".DBR", noCase))
+		if (Path.GetExtension(itemId.Normalized).Equals(".DBR"))
 			return itemId;
 		else
-			return string.Concat(itemId, ".dbr");
+			return string.Concat(itemId.Raw, ".dbr");
 	}
 
 	/// <summary>
@@ -1014,7 +1018,7 @@ public class ItemProvider : IItemProvider
 		}
 
 		if (TQDebug.ItemDebugLevel > 1)
-			Log.LogDebug(record.Id);
+			Log.LogDebug(record.Id.Normalized);
 
 		foreach (Variable variable in record)
 		{
@@ -1093,9 +1097,9 @@ public class ItemProvider : IItemProvider
 			return;
 
 		string itemLevel = lvl.ToStringValue();
-		string itemCostID = itemInfo.GetString("itemCostName");
-
-		record = Database.GetRecordFromFile(itemCostID);
+		string itemCostName = itemInfo.GetString("itemCostName");
+		
+		record = Database.GetRecordFromFile(itemCostName);
 		if (record == null)
 		{
 			record = Database.GetRecordFromFile("records/game/itemcost.dbr");
@@ -1104,7 +1108,7 @@ public class ItemProvider : IItemProvider
 		}
 
 		if (TQDebug.ItemDebugLevel > 1)
-			Log.LogDebug(record.Id);
+			Log.LogDebug(record.Id.Normalized);
 
 		string prefix = GetRequirementEquationPrefix(itemInfo.ItemClass);
 		foreach (Variable variable in record)
@@ -1206,7 +1210,7 @@ VariableValue Raw : {valueRaw}
 	/// <param name="recordId">string containing the record id</param>
 	/// <param name="varNum">variable number which we are looking up since there can be multiple values</param>
 	/// <returns>int containing the skill level</returns>
-	public int GetTriggeredSkillLevel(Item itm, DBRecordCollection record, string recordId, int varNum)
+	public int GetTriggeredSkillLevel(Item itm, DBRecordCollection record, RecordId recordId, int varNum)
 	{
 		DBRecordCollection baseItem = Database.GetRecordFromFile(itm.baseItemInfo.ItemId);
 
@@ -1214,14 +1218,23 @@ VariableValue Raw : {valueRaw}
 		if (baseItem.GetString("itemSkillAutoController", 0) != null)
 		{
 			int level = baseItem.GetInt32("itemSkillLevel", 0);
+			string itemSkillName = baseItem.GetString("itemSkillName", 0);
+
 			if (record.GetString("Class", 0).StartsWith("SKILLBUFF", noCase))
 			{
-				DBRecordCollection skill = Database.GetRecordFromFile(itm.baseItemInfo.GetString("itemSkillName"));
-				if (skill != null && skill.GetString("buffSkillName", 0) == recordId)
-					// Use the level from the Base Item.
-					varNum = Math.Max(level, 1) - 1;
+				itemSkillName = itm.baseItemInfo.GetString("itemSkillName");
+				DBRecordCollection skill = Database.GetRecordFromFile(itemSkillName);
+
+				if (skill != null)
+				{
+					var buffSkillName = skill.GetString("buffSkillName", 0);
+
+					if (buffSkillName == recordId)
+						// Use the level from the Base Item.
+						varNum = Math.Max(level, 1) - 1;
+				}
 			}
-			else if (baseItem.GetString("itemSkillName", 0) == recordId)
+			else if (itemSkillName == recordId)
 				varNum = Math.Max(level, 1) - 1;
 		}
 
@@ -1237,15 +1250,18 @@ VariableValue Raw : {valueRaw}
 	/// <param name="recordId">string of the record id</param>
 	/// <param name="varNum">Which variable we are using since there can be multiple values.</param>
 	/// <returns>int containing the pet skill level</returns>
-	public int GetPetSkillLevel(Item itm, DBRecordCollection record, string recordId, int varNum)
+	public int GetPetSkillLevel(Item itm, DBRecordCollection record, RecordId recordId, int varNum)
 	{
 		// Check to see if itm really is a skill
 		if (record.GetString("Class", 0).StartsWith("SKILL_ATTACK", noCase))
 		{
 			// Check to see if itm item creates a pet
-			DBRecordCollection petSkill = Database.GetRecordFromFile(itm.baseItemInfo.GetString("skillName"));
+			var skillName = itm.baseItemInfo.GetString("skillName");
+			var skillNameId = skillName;
+			var petSkill = Database.GetRecordFromFile(skillNameId);
+
 			string petID = petSkill.GetString("spawnObjects", 0);
-			if (!string.IsNullOrEmpty(petID))
+			if (!string.IsNullOrWhiteSpace(petID))
 			{
 				DBRecordCollection petRecord = Database.GetRecordFromFile(petID);
 				int foundSkillOffset = 0;
@@ -1253,7 +1269,8 @@ VariableValue Raw : {valueRaw}
 				{
 					// There are upto 17 skills
 					// Find the skill in the skill tree so that we can get the level
-					if (petRecord.GetString(string.Concat("skillName", skillOffset), 0) == recordId)
+					var skillNameOffset = petRecord.GetString(string.Concat("skillName", skillOffset), 0);
+					if (skillNameOffset == recordId)
 						break;
 
 					foundSkillOffset++;
@@ -1337,9 +1354,9 @@ VariableValue Raw : {valueRaw}
 
 			#region Prefix translation
 
-			if (!k.Item.IsRelic && !string.IsNullOrEmpty(k.Item.prefixID))
+			if (!k.Item.IsRelic && !RecordId.IsNullOrEmpty(k.Item.prefixID))
 			{
-				res.PrefixInfoDescription = k.Item.prefixID;
+				res.PrefixInfoDescription = k.Item.prefixID.Raw;
 				if (k.Item.prefixInfo != null)
 				{
 					if (TranslationService.TryTranslateXTag(k.Item.prefixInfo.DescriptionTag, out var desc))
@@ -1419,7 +1436,7 @@ VariableValue Raw : {valueRaw}
 				}
 
 				if (!TranslationService.TryTranslateXTag(k.Item.baseItemInfo.DescriptionTag, out res.BaseItemInfoDescription))
-					res.BaseItemInfoDescription = k.Item.BaseItemId;
+					res.BaseItemInfoDescription = k.Item.BaseItemId.Raw;
 
 				res.BaseItemInfoClass = TranslationService.TranslateXTag(k.Item.ItemClassTagName);
 
@@ -1441,9 +1458,9 @@ VariableValue Raw : {valueRaw}
 							res.RelicBonusTitle = res.RelicBonus;
 						}
 
-						if (!string.IsNullOrEmpty(k.Item.RelicBonusId))
+						if (!RecordId.IsNullOrEmpty(k.Item.RelicBonusId))
 						{
-							res.RelicBonusFileName = k.Item.RelicBonusId.PrettyFileName();
+							res.RelicBonusFileName = k.Item.RelicBonusId.PrettyFileName;
 							res.RelicBonusPattern = "{0} {1}";
 							res.RelicBonusFormat = string.Format(CultureInfo.CurrentCulture, res.RelicBonusPattern
 								, res.RelicBonusTitle
@@ -1477,9 +1494,9 @@ VariableValue Raw : {valueRaw}
 				else if (k.Item.IsArtifact)
 				{
 					// Add Artifact completion bonus
-					if (!string.IsNullOrEmpty(k.Item.RelicBonusId))
+					if (!RecordId.IsNullOrEmpty(k.Item.RelicBonusId))
 					{
-						var RelicBonusIdExt = Path.GetFileNameWithoutExtension(TQData.NormalizeRecordPath(k.Item.RelicBonusId));
+						var RelicBonusIdExt = Path.GetFileNameWithoutExtension(k.Item.RelicBonusId.Normalized);
 						res.ArtifactBonus = TranslationService.TranslateXTag("xtagArtifactBonus");
 						res.ArtifactBonusFormat = string.Format(CultureInfo.CurrentCulture, "({0} {1})", res.ArtifactBonus, RelicBonusIdExt);
 					}
@@ -1519,17 +1536,17 @@ VariableValue Raw : {valueRaw}
 
 			#region Suffix translation
 
-			if (!k.Item.IsRelic && !string.IsNullOrWhiteSpace(k.Item.suffixID))
+			if (!k.Item.IsRelic && !RecordId.IsNullOrEmpty(k.Item.suffixID))
 			{
 				if (k.Item.suffixInfo != null)
 				{
 					res.SuffixInfoDescription =
 							TranslationService.TryTranslateXTag(k.Item.suffixInfo.DescriptionTag, out res.SuffixInfoDescription)
 								? res.SuffixInfoDescription.TQCleanup(true)
-								: k.Item.suffixID;
+								: k.Item.suffixID.Raw;
 				}
 				else
-					res.SuffixInfoDescription = k.Item.suffixID;
+					res.SuffixInfoDescription = k.Item.suffixID.Raw;
 			}
 
 			#endregion
@@ -1629,12 +1646,13 @@ VariableValue Raw : {valueRaw}
 			// Shows Artifact stats for the formula
 			if (k.Item.IsFormulae && k.Item.baseItemInfo != null && (k.Scope?.HasFlag(FriendlyNamesExtraScopes.BaseAttributes) ?? false))
 			{
-				string artifactID = k.Item.baseItemInfo.GetString("artifactName");
+				string artifactName = k.Item.baseItemInfo.GetString("artifactName");
 
-				if (!string.IsNullOrWhiteSpace(artifactID))
+				if (!string.IsNullOrWhiteSpace(artifactName))
 				{
 					List<string> tmp = new List<string>();
-					res.FormulaeArtifactRecords = Database.GetRecordFromFile(artifactID);
+
+					res.FormulaeArtifactRecords = Database.GetRecordFromFile(artifactName);
 
 					// Display the name of the Artifact
 					if (!TranslationService.TryTranslateXTag(res.FormulaeArtifactRecords.GetString("description", 0), out res.FormulaeArtifactName))
@@ -1645,7 +1663,7 @@ VariableValue Raw : {valueRaw}
 					res.FormulaeArtifactClass = TranslateArtifactClassification(artifactClassification);
 
 					// Attributes
-					GetAttributesFromRecord(k.Item, res.FormulaeArtifactRecords, true, artifactID, tmp);
+					GetAttributesFromRecord(k.Item, res.FormulaeArtifactRecords, true, artifactName, tmp);
 					res.FormulaeArtifactAttributes = tmp.ToArray();
 				}
 			}
@@ -1805,7 +1823,7 @@ VariableValue Raw : {valueRaw}
 	/// <param name="recordId">string containing the database record id</param>
 	/// <param name="results">List for the results</param>
 	/// <param name="convertStrings">flag on whether we convert attributes to strings.</param>
-	private void GetAttributesFromRecord(Item itm, DBRecordCollection record, bool filtering, string recordId, List<string> results, bool convertStrings = true)
+	private void GetAttributesFromRecord(Item itm, DBRecordCollection record, bool filtering, RecordId recordId, List<string> results, bool convertStrings = true)
 	{
 		if (TQDebug.ItemDebugLevel > 0)
 		{
@@ -1826,7 +1844,7 @@ VariableValue Raw : {valueRaw}
 		}
 
 		if (TQDebug.ItemDebugLevel > 1)
-			Log.LogDebug(record.Id);
+			Log.LogDebug(record.Id.Normalized);
 
 		// Added by Village Idiot
 		// To keep track of groups so they are not counted twice
@@ -1987,7 +2005,7 @@ VariableValue Raw : {valueRaw}
 	/// <param name="attributeList">ArrayList containing the attributes list</param>
 	/// <param name="recordId">string containing the record id</param>
 	/// <param name="results">List containing the results</param>
-	private void ConvertAttributeListToString(Item itm, DBRecordCollection record, List<Variable> attributeList, string recordId, List<string> results)
+	private void ConvertAttributeListToString(Item itm, DBRecordCollection record, List<Variable> attributeList, RecordId recordId, List<string> results)
 	{
 		if (TQDebug.ItemDebugLevel > 0)
 		{
@@ -2597,14 +2615,15 @@ VariableValue Raw : {valueRaw}
 	private string GetAugmentMasteryLevel(DBRecordCollection record, Variable variable, ItemAttributesData attributeData, ref TQColor? font)
 	{
 		string augmentNumber = attributeData.FullAttribute.Substring(19, 1);
-		string skillRecordKey = string.Concat("augmentMasteryName", augmentNumber);
-		string skillRecordID = record.GetString(skillRecordKey, 0);
-
-		if (string.IsNullOrEmpty(skillRecordID))
-			skillRecordID = skillRecordKey;
+		string augmentMasteryName = string.Concat("augmentMasteryName", augmentNumber);
+		string augmentMasteryValue = record.GetString(augmentMasteryName, 0);
+		
+		if (string.IsNullOrEmpty(augmentMasteryValue))
+			augmentMasteryValue = augmentMasteryName;
 
 		string skillName = null;
-		DBRecordCollection skillRecord = Database.GetRecordFromFile(skillRecordID);
+		DBRecordCollection skillRecord = Database.GetRecordFromFile(augmentMasteryValue);
+
 		if (skillRecord != null)
 		{
 			string nameTag = skillRecord.GetString("skillDisplayName", 0);
@@ -2615,7 +2634,7 @@ VariableValue Raw : {valueRaw}
 
 		if (string.IsNullOrEmpty(skillName))
 		{
-			skillName = Path.GetFileNameWithoutExtension(skillRecordID);
+			skillName = Path.GetFileNameWithoutExtension(augmentMasteryValue);
 			font = ItemStyle.Legendary.TQColor();
 		}
 
@@ -2757,7 +2776,8 @@ VariableValue Raw : {valueRaw}
 		// Special case for formulae reagents
 		if (attributeData.FullAttribute.StartsWith("reagent", noCase))
 		{
-			DBRecordCollection reagentRecord = Database.GetRecordFromFile(variable.GetString(0));
+			var reagentId = variable.GetString(0);
+			DBRecordCollection reagentRecord = Database.GetRecordFromFile(reagentId);
 			if (reagentRecord != null)
 			{
 				string nameTag = reagentRecord.GetString("description", 0);
@@ -2801,7 +2821,8 @@ VariableValue Raw : {valueRaw}
 	{
 		// Added by VillageIdiot
 		// Special case for granted skills
-		DBRecordCollection skillRecord = Database.GetRecordFromFile(variable.GetString(0));
+		var grantedSkillId = variable.GetString(0);
+		DBRecordCollection skillRecord = Database.GetRecordFromFile(grantedSkillId);
 		if (skillRecord != null)
 		{
 			// Add a blank line and then the Grants Skill text
@@ -2832,8 +2853,9 @@ VariableValue Raw : {valueRaw}
 			}
 			else
 			{
+				var buffSkillId = buffSkillName;
 				// This is a buff skill
-				DBRecordCollection buffSkillRecord = Database.GetRecordFromFile(buffSkillName);
+				DBRecordCollection buffSkillRecord = Database.GetRecordFromFile(buffSkillId);
 				if (buffSkillRecord != null)
 				{
 					nameTag = buffSkillRecord.GetString("skillDisplayName", 0);
@@ -3076,7 +3098,7 @@ VariableValue Raw : {valueRaw}
 	/// <param name="data">ItemAttributesData for the item</param>
 	/// <param name="recordId">string containing the record id</param>
 	/// <param name="results">List containing the results</param>
-	private void ConvertOffenseAttributesToString(Item itm, DBRecordCollection record, List<Variable> attributeList, ItemAttributesData data, string recordId, List<string> results)
+	private void ConvertOffenseAttributesToString(Item itm, DBRecordCollection record, List<Variable> attributeList, ItemAttributesData data, RecordId recordId, List<string> results)
 	{
 		if (TQDebug.ItemDebugLevel > 0)
 		{
@@ -3601,9 +3623,11 @@ VariableValue Raw : {valueRaw}
 	private void GetSkillDescriptionAndEffects(Item itm, DBRecordCollection record, List<string> results, Variable variable, string line)
 	{
 		string autoController = record.GetString("itemSkillAutoController", 0);
+		string SkillDescriptionAndEffectsVar = variable.GetString(0);
+
 		if (!string.IsNullOrEmpty(autoController) || itm.IsScroll)
 		{
-			DBRecordCollection skillRecord = Database.GetRecordFromFile(variable.GetString(0));
+			DBRecordCollection skillRecord = Database.GetRecordFromFile(SkillDescriptionAndEffectsVar);
 
 			// Changed by VillageIdiot
 			// Get title from the last line
@@ -3622,6 +3646,7 @@ VariableValue Raw : {valueRaw}
 			if (skillRecord != null)
 			{
 				string buffSkillName = skillRecord.GetString("buffSkillName", 0);
+				var buffSkillNameId = buffSkillName.ToRecordId();
 
 				if (!itm.IsScroll)
 				{
@@ -3670,7 +3695,7 @@ VariableValue Raw : {valueRaw}
 					else
 					{
 						// itm skill is a buff
-						DBRecordCollection buffSkillRecord = Database.GetRecordFromFile(buffSkillName);
+						DBRecordCollection buffSkillRecord = Database.GetRecordFromFile(buffSkillNameId);
 						if (buffSkillRecord != null)
 						{
 							descriptionTag = buffSkillRecord.GetString("skillBaseDescription", 0);
@@ -3727,9 +3752,9 @@ VariableValue Raw : {valueRaw}
 					{
 						// Skill Effects
 						if (!string.IsNullOrEmpty(buffSkillName))
-							GetAttributesFromRecord(itm, Database.GetRecordFromFile(buffSkillName), true, buffSkillName, results);
+							GetAttributesFromRecord(itm, Database.GetRecordFromFile(buffSkillNameId), true, buffSkillNameId, results);
 						else
-							GetAttributesFromRecord(itm, skillRecord, true, variable.GetString(0), results);
+							GetAttributesFromRecord(itm, skillRecord, true, SkillDescriptionAndEffectsVar, results);
 					}
 				}
 			}
@@ -3758,8 +3783,8 @@ VariableValue Raw : {valueRaw}
 			results.Add(value);
 			itm.CurrentFriendlyNameResult.TmpAttrib.Add(value);
 		}
-
-		DBRecordCollection petRecord = Database.GetRecordFromFile(skillRecord.GetString("spawnObjects", 0));
+		var skillRecordspawnObjects = skillRecord.GetString("spawnObjects", 0);
+		DBRecordCollection petRecord = Database.GetRecordFromFile(skillRecordspawnObjects);
 		if (petRecord != null)
 		{
 			// Print out Pet attributes
@@ -3886,10 +3911,11 @@ VariableValue Raw : {valueRaw}
 
 			for (int i = 0; i < numSkills; i++)
 			{
-				if (skills[i] != null && !skills[i].ToLower().StartsWith("records"))
+				string recordID = skills[i];
+				if (recordID != null && !recordID.ToLower().StartsWith("records"))
 					continue;
 
-				DBRecordCollection skillRecord1 = Database.GetRecordFromFile(skills[i]);
+				DBRecordCollection skillRecord1 = Database.GetRecordFromFile(recordID);
 				DBRecordCollection record = null;
 				string skillClass = skillRecord1.GetString("Class", 0);
 
@@ -3899,13 +3925,11 @@ VariableValue Raw : {valueRaw}
 
 				string skillNameTag = null;
 				string skillName = null;
-				string recordID = null;
 				string buffSkillName = skillRecord1.GetString("buffSkillName", 0);
 
 				if (string.IsNullOrEmpty(buffSkillName))
 				{
 					record = skillRecord1;
-					recordID = skills[i];
 					skillNameTag = skillRecord.GetString("skillDisplayName", 0);
 					if (!string.IsNullOrWhiteSpace(skillNameTag))
 						TranslationService.TryTranslateXTag(skillNameTag, out skillName);
@@ -3947,7 +3971,7 @@ VariableValue Raw : {valueRaw}
 	/// <param name="labelTag">the label tag</param>
 	/// <param name="labelColor">the label color which gets modified here</param>
 	/// <returns>string containing the label.</returns>
-	private string GetLabelAndColorFromTag(Item itm, ItemAttributesData data, string recordId, ref string labelTag, ref TQColor? labelColor)
+	private string GetLabelAndColorFromTag(Item itm, ItemAttributesData data, RecordId recordId, ref string labelTag, ref TQColor? labelColor)
 	{
 		labelTag = ItemAttributeProvider.GetAttributeTextTag(data);
 		string label, TrailingNL = string.Empty;

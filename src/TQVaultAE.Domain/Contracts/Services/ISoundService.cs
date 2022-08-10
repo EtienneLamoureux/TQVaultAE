@@ -1,20 +1,25 @@
 ﻿using System.IO;
+using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Domain.Contracts.Services
 {
 	public interface ISoundService
 	{
 		/// <summary>
+		/// Reload all player according to configuration
+		/// </summary>
+		void InitAllPlayers();
+		/// <summary>
 		/// Load and Play game sound identified by <paramref name="resourceId"/>
 		/// </summary>
 		/// <param name="resourceId"></param>
-		void PlaySound(string resourceId);
+		void PlaySound(RecordId resourceId);
 		/// <summary>
 		/// Get game sound WAV data identified by <paramref name="resourceId"/>
 		/// </summary>
 		/// <param name="resourceId"></param>
 		/// <returns>Wav file content</returns>
-		byte[] GetSoundResource(string resourceId);
+		byte[] GetSoundResource(RecordId resourceId);
 		/// <summary>
 		/// Play a random predefined "Item Drop" sound
 		/// </summary>

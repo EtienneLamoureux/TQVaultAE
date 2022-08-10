@@ -16,6 +16,7 @@ namespace TQVaultAE.Data
 	using TQVaultAE.Data.Dto;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Logs;
+	using TQVaultAE.Domain.Helpers;
 
 	/// <summary>
 	/// Loads, decodes, encodes and saves a Titan Quest player file.
@@ -188,14 +189,14 @@ namespace TQVaultAE.Data
 					{
 						stackSize = i.StackSize,
 						seed = i.Seed,
-						baseName = i.BaseItemId,
-						prefixName = i.prefixID,
-						suffixName = i.suffixID,
-						relicName = i.relicID,
-						relicBonus = i.RelicBonusId,
+						baseName = i.BaseItemId.Raw,
+						prefixName = i.prefixID.Raw,
+						suffixName = i.suffixID.Raw,
+						relicName = i.relicID.Raw,
+						relicBonus = i.RelicBonusId.Raw,
 						var1 = i.Var1,
-						relicName2 = i.relic2ID,
-						relicBonus2 = i.RelicBonus2Id,
+						relicName2 = i.relic2ID.Raw,
+						relicBonus2 = i.RelicBonus2Id.Raw,
 						var2 = i.Var2,
 						pointX = i.PositionX,
 						pointY = i.PositionY,
@@ -325,8 +326,8 @@ namespace TQVaultAE.Data
 						endBlockCrap1 = this.TQData.EndBlockValue,
 						StackSize = s.stackSize,
 						// Atlantis
-						relic2ID = string.Empty,
-						RelicBonus2Id = string.Empty,
+						relic2ID = RecordId.Empty,
+						RelicBonus2Id = RecordId.Empty,
 						Var2 = Item.var2Default,
 					};
 

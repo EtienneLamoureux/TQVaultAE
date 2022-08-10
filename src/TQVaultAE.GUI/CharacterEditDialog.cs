@@ -7,6 +7,7 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Logs;
 	using System.Linq;
 	using TQVaultAE.Domain.Contracts.Services;
+	using TQVaultAE.Domain.Helpers;
 	using Microsoft.Extensions.Logging;
 
 	/// <summary>
@@ -208,7 +209,8 @@ namespace TQVaultAE.GUI
 			{
 				for (int i = 0; i < dbr.Length; i++)
 				{
-					var recId = dbr[i];
+					var rec = dbr[i];
+					var recId = rec.ToRecordId();
 					var relatedSkills = PlayerCollection.PlayerInfo.GetSkillsByBaseRecordName(recId);
 					var relatedPoints = relatedSkills.Sum(s => s.skillLevel);
 					var masteryInfo = this.Database.GetInfo(recId);

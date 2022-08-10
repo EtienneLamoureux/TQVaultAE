@@ -7,6 +7,8 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using NAudio.Wave;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Services.Win32
 {
@@ -20,32 +22,32 @@ namespace TQVaultAE.Services.Win32
 
 		#region Predefined sounds
 
-		private static readonly string[] SoundPoolMetalHitIds = new[] {
+		private static readonly RecordId[] SoundPoolMetalHitIds = new[] {
 			Enumerable.Range(1, 3).Select(i => $@"Sounds\ARMOR\ARMORHITPLATE0{i}.WAV"),
 			Enumerable.Range(1, 3).Select(i => $@"Sounds\SPELLS\DEFENSE\SHIELDBASHMETAL0{i}.WAV"),
 			Enumerable.Range(1, 3).Select(i => $@"Sounds\ARMOR\SHIELDBLOCKMETAL0{i}.WAV"),
 			Enumerable.Range(1, 3).Select(i => $@"Sounds\SPELLS\DEFENSE\SHIELDCHARGEHIT0{i}.WAV"),
-		}.SelectMany(a => a).ToArray();
+		}.SelectMany(a => a).Select(r => r.ToRecordId()).ToArray();
 
-		private static readonly string[] SoundPoolItemDropIds = new[] {
+		private static readonly RecordId[] SoundPoolItemDropIds = new[] {
 			@"Sounds\UI\UI_BAGCHANGE.WAV",
 			@"Sounds\UI\UI_GENERICCLICKBIG.WAV",
 			@"Sounds\UI\UI_GENERICCLICKSMALL.WAV",
-		};
+		}.Select(r => r.ToRecordId()).ToArray();
 
-		private static readonly string[] SoundPoolRelicDropIds = new[] {
+		private static readonly RecordId[] SoundPoolRelicDropIds = new[] {
 			@"Sounds\UI\UI_GEMCLICK.WAV",
 			@"Sounds\UI\UI_RELICSTACK.WAV",
 			@"Sounds\UI\UI_RELICCOMPLETE.WAV",
 			@"Sounds\UI\UI_RELICBINDTOITEM.WAV",
-		};
+		}.Select(r => r.ToRecordId()).ToArray();
 
-		private static readonly string[] SoundPoolVoiceIds = Enumerable.Range(1, 3)
+		private static readonly RecordId[] SoundPoolVoiceIds = Enumerable.Range(1, 3)
 			.Select(i => $@"Sounds\MONSTERS\GREECE\G_TELKINE\TELEKINEVOICE0{i}.WAV")
 			.Concat(new[] { @"Sounds\AMBIENCE\RANDOMEVENT\TYPHONLAUGHDISTANCE.WAV" })
-			.ToArray();
+			.Select(r => r.ToRecordId()).ToArray();
 
-		private static readonly string[] SoundPoolCancelIds = new[] {
+		private static readonly RecordId[] SoundPoolCancelIds = new[] {
 			//@"Sounds\UI\UI_MOUSEOVERSTONE.WAV",
 			@"Sounds\UI\UI_SKILLBUYBACK.WAV",
 			@"Sounds\UI\UI_ERRORMESSAGE.WAV",
@@ -53,9 +55,9 @@ namespace TQVaultAE.Services.Win32
 			@"Sounds\UI\UI_HOTSLOTRIGHTCLICK.WAV",
 			//@"Sounds\UI\UI_STONECLICK.WAV",
 			//@"Sounds\UI\UI_WEAPONSWAP.WAV",
-		};
+		}.Select(r => r.ToRecordId()).ToArray();
 
-		private const string SoundLevelUp = @"Sounds\UI\UI_LEVELUP.MP3";
+		private static readonly RecordId SoundLevelUp = @"Sounds\UI\UI_LEVELUP.MP3";
 
 		private static SoundPlayer[] SoundPoolMetalHit;
 		private static SoundPlayer[] SoundPoolItemDrop;
@@ -66,25 +68,29 @@ namespace TQVaultAE.Services.Win32
 		#endregion
 
 		// Cache
-		private static Dictionary<string, byte[]> SoundData = new();
-		private static Dictionary<string, (SoundPlayer Player, MemoryStream MS)> LoadedPlayers = new();
+		private static Dictionary<RecordId, byte[]> SoundData = new();
+		private static Dictionary<RecordId, (SoundPlayer Player, MemoryStream MS)> LoadedPlayers = new();
 
 		public SoundServiceWin(ILogger<SoundServiceWin> log, IDatabase database)
 		{
 			this.Log = log;
 			this.DataBase = database;
 
-			if (LoadedPlayers.Count == 0)
-			{
-				SoundPoolMetalHit = InitPlayers(SoundPoolMetalHitIds);
-				SoundPoolItemDrop = InitPlayers(SoundPoolItemDropIds);
-				SoundPoolRelicDrop = InitPlayers(SoundPoolRelicDropIds);
-				SoundPoolVoice = InitPlayers(SoundPoolVoiceIds);
-				SoundPoolCancel = InitPlayers(SoundPoolCancelIds);
-			}
+			InitAllPlayers();
 		}
 
-		private SoundPlayer[] InitPlayers(string[] list)
+		public void InitAllPlayers()
+		{
+			LoadedPlayers.Clear();
+
+			SoundPoolMetalHit = InitPlayers(SoundPoolMetalHitIds);
+			SoundPoolItemDrop = InitPlayers(SoundPoolItemDropIds);
+			SoundPoolRelicDrop = InitPlayers(SoundPoolRelicDropIds);
+			SoundPoolVoice = InitPlayers(SoundPoolVoiceIds);
+			SoundPoolCancel = InitPlayers(SoundPoolCancelIds);
+		}
+
+		private SoundPlayer[] InitPlayers(RecordId[] list)
 			=> list.Select(id => GetSoundPlayer(id)).Where(p => p is not null).ToArray();
 
 		public void ConvertMp3ToWav(Stream inMp3, Stream outWav)
@@ -95,9 +101,9 @@ namespace TQVaultAE.Services.Win32
 			WaveFileWriter.WriteWavFileToStream(outWav, pcm);
 		}
 
-		public byte[] GetSoundResource(string resourceId)
+		public byte[] GetSoundResource(RecordId resourceId)
 		{
-			if (!resourceId.ToUpper().Contains("SOUNDS"))
+			if (!resourceId.Normalized.Contains("SOUNDS"))
 				return null;// Not a sound
 
 			if (SoundData.TryGetValue(resourceId, out var data))
@@ -107,7 +113,7 @@ namespace TQVaultAE.Services.Win32
 
 			if (data is not null)
 			{
-				if (resourceId.ToUpper().EndsWith(".MP3"))
+				if (resourceId.Normalized.EndsWith(".MP3"))
 				{
 					using (var mp3 = new MemoryStream(data))
 					using (var wav = new MemoryStream())
@@ -123,12 +129,12 @@ namespace TQVaultAE.Services.Win32
 			return data;
 		}
 
-		private SoundPlayer GetSoundPlayer(string resourceId)
+		private SoundPlayer GetSoundPlayer(RecordId resourceId)
 		{
 			if (!Config.Settings.Default.EnableTQVaultSounds)
 				return null;
 
-			if (!resourceId.ToUpper().Contains("SOUNDS"))
+			if (!resourceId.Normalized.Contains("SOUNDS"))
 				return null;// Not a sound
 
 			if (LoadedPlayers.TryGetValue(resourceId, out var playerInstance))
@@ -158,7 +164,7 @@ namespace TQVaultAE.Services.Win32
 			return pool[playerIdx];
 		}
 
-		public void PlaySound(string resourceId)
+		public void PlaySound(RecordId resourceId)
 			=> this.GetSoundPlayer(resourceId)?.Play();
 		public void PlayLevelUp()
 			=> this.GetSoundPlayer(SoundLevelUp)?.Play();
