@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-    <!--
+  <!--
       Microsoft ResX Schema
 
       Version 2.0
@@ -59,65 +59,65 @@
               : using a System.ComponentModel.TypeConverter
               : and then encoded with base64 encoding.
       -->
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-        <xsd:element name="root" msdata:IsDataSet="true">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
             <xsd:complexType>
-                <xsd:choice maxOccurs="unbounded">
-                    <xsd:element name="metadata">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-                            </xsd:sequence>
-                            <xsd:attribute name="name" use="required" type="xsd:string" />
-                            <xsd:attribute name="type" type="xsd:string" />
-                            <xsd:attribute name="mimetype" type="xsd:string" />
-                            <xsd:attribute ref="xml:space" />
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="assembly">
-                        <xsd:complexType>
-                            <xsd:attribute name="alias" type="xsd:string" />
-                            <xsd:attribute name="name" type="xsd:string" />
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="data">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-                            <xsd:attribute ref="xml:space" />
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="resheader">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required" />
-                        </xsd:complexType>
-                    </xsd:element>
-                </xsd:choice>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
-        </xsd:element>
-    </xsd:schema>
-    <resheader name="resmimetype">
-        <value>text/microsoft-resx</value>
-    </resheader>
-    <resheader name="version">
-        <value>2.0</value>
-    </resheader>
-    <resheader name="reader">
-        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-    <resheader name="writer">
-        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-    <data name="AboutDescription" xml:space="preserve">
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutDescription" xml:space="preserve">
     <value>TQVault par bman654 (wickedsoul_@yahoo.com)
 Aide pour les stats d'items: SadYc(sadyc1@gmail.com)
 Contenu additionnel:  VillageIdiot (villij-idjit@sbcglobal.net)
@@ -130,287 +130,287 @@ Traduction en russe par Xelat
 Traduction en espagnol par Kurrus.
 </value>
   </data>
-    <data name="AboutText" xml:space="preserve">
+  <data name="AboutText" xml:space="preserve">
     <value>A propos de {0}</value>
   </data>
-    <data name="AboutVersion" xml:space="preserve">
+  <data name="AboutVersion" xml:space="preserve">
     <value>Version {0}</value>
   </data>
-    <data name="ARZExtractBtnExtract" xml:space="preserve">
+  <data name="ARZExtractBtnExtract" xml:space="preserve">
     <value>Extraire</value>
   </data>
-    <data name="ARZExtractCreateFolder" xml:space="preserve">
+  <data name="ARZExtractCreateFolder" xml:space="preserve">
     <value>{0} n'existe pas.  Voulez-vous le créer maintenant ?</value>
   </data>
-    <data name="ARZExtractCreateFolder2" xml:space="preserve">
+  <data name="ARZExtractCreateFolder2" xml:space="preserve">
     <value>Créer le dossier ?</value>
   </data>
-    <data name="ARZExtractCreateFolderIT" xml:space="preserve">
+  <data name="ARZExtractCreateFolderIT" xml:space="preserve">
     <value>{0} n'existe pas pour la database IT.  Voulez-vous le créer maintenant ?</value>
   </data>
-    <data name="ARZExtractDestination" xml:space="preserve">
+  <data name="ARZExtractDestination" xml:space="preserve">
     <value>Choisissez le dossier de destination pour les archives extraites de la database</value>
   </data>
-    <data name="ARZExtractFileDest" xml:space="preserve">
+  <data name="ARZExtractFileDest" xml:space="preserve">
     <value>Vous devez spécifier un dossier, pas un fichier !</value>
   </data>
-    <data name="ARZExtractLabel1" xml:space="preserve">
+  <data name="ARZExtractLabel1" xml:space="preserve">
     <value>Pour l'instant, il est impossible d'extraire toutes les archives de la database à la fois.  Il existe aussi un bug dans le Toolset qui détruit des valeurs en cas d'extraction une par une.  Avec cet outil, vous pouvez désormais extraire toutes les archives à la fois, et ce correctement.</value>
   </data>
-    <data name="ARZExtractLabel2" xml:space="preserve">
+  <data name="ARZExtractLabel2" xml:space="preserve">
     <value>Après l'extraction des archives, il suffit de copier celles que vous voulez réutiliser dans votre mod vers le dossier du mod.</value>
   </data>
-    <data name="ARZExtractLabel3" xml:space="preserve">
+  <data name="ARZExtractLabel3" xml:space="preserve">
     <value>Choisissez un dossier de destination :</value>
   </data>
-    <data name="ARZExtractLabel4" xml:space="preserve">
+  <data name="ARZExtractLabel4" xml:space="preserve">
     <value>Dossier de destination pour fichiers IT :</value>
   </data>
-    <data name="ARZExtractLabel5" xml:space="preserve">
+  <data name="ARZExtractLabel5" xml:space="preserve">
     <value>Si les dossiers de destination pour les databases de TQ et IT ne sont pas renseignés, ce sera par défaut le même dossier.  Les fichiers IT écraseront les fichiers TQ en cas de conflit bien que vous puissiez choisir des dossiers différents pour éviter d'écraser des fichiers.</value>
   </data>
-    <data name="ARZExtractText" xml:space="preserve">
+  <data name="ARZExtractText" xml:space="preserve">
     <value>Extraire database.arz</value>
   </data>
-    <data name="ARZExtractValidDest" xml:space="preserve">
+  <data name="ARZExtractValidDest" xml:space="preserve">
     <value>Entrez un dossier de destination valide.</value>
   </data>
-    <data name="ARZProgressCancelledText" xml:space="preserve">
+  <data name="ARZProgressCancelledText" xml:space="preserve">
     <value>Extraction annulée.</value>
   </data>
-    <data name="ARZProgressCompleteText" xml:space="preserve">
+  <data name="ARZProgressCompleteText" xml:space="preserve">
     <value>Extraction terminée.</value>
   </data>
-    <data name="ARZProgressFailedText" xml:space="preserve">
+  <data name="ARZProgressFailedText" xml:space="preserve">
     <value>Echec de l'extraction.</value>
   </data>
-    <data name="ARZProgressLabel" xml:space="preserve">
+  <data name="ARZProgressLabel" xml:space="preserve">
     <value>Extraction de {0} ...</value>
   </data>
-    <data name="ARZProgressLabel1" xml:space="preserve">
+  <data name="ARZProgressLabel1" xml:space="preserve">
     <value>Extraction</value>
   </data>
-    <data name="ARZProgressText" xml:space="preserve">
+  <data name="ARZProgressText" xml:space="preserve">
     <value>Extraction de database.arz ...</value>
   </data>
-    <data name="CmdlineUsage" xml:space="preserve">
+  <data name="CmdlineUsage" xml:space="preserve">
     <value>Erreur en analysant les paramètres de ligne de commande : {0}
 Modèle : TQVault [nom du joueur] [/mod:&lt;nom du mod&gt;]</value>
   </data>
-    <data name="DataDefaultPath" xml:space="preserve">
+  <data name="DataDefaultPath" xml:space="preserve">
     <value>Chemin d'accès du Vault par défaut</value>
   </data>
-    <data name="DataDefaultPathMsg" xml:space="preserve">
+  <data name="DataDefaultPathMsg" xml:space="preserve">
     <value>Le chemin d'accès du Vault n'a pas été configuré.
 Utilisation du chemin par défaut.
 Vérifiez le chemin d'accès grâce à la fenêtre de configuration.</value>
   </data>
-    <data name="DataLink" xml:space="preserve">
+  <data name="DataLink" xml:space="preserve">
     <value>Mettez à jour le chemin d'accès du Vault</value>
   </data>
-    <data name="DataLinkMsg" xml:space="preserve">
+  <data name="DataLinkMsg" xml:space="preserve">
     <value>Mettez à jour le chemin d'accès du Vault dans la
 fenêtre de configuration pour renvoyer le lien.</value>
   </data>
-    <data name="Form1BadLanguage" xml:space="preserve">
+  <data name="Form1BadLanguage" xml:space="preserve">
     <value>
 
 Ceci peut-être causé par une mauvaise configuration de la langue ou du chemin d'accès du jeu.
 
 Voulez-vous redémarrer TQVault ?</value>
   </data>
-    <data name="Form1bNext" xml:space="preserve">
+  <data name="Form1bNext" xml:space="preserve">
     <value>Ouvrir le coffre</value>
   </data>
-    <data name="Form1ErrorLoadingResources" xml:space="preserve">
+  <data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>Erreur en chargeant les ressources</value>
   </data>
-    <data name="Form1Label3" xml:space="preserve">
+  <data name="Form1Label3" xml:space="preserve">
     <value>Un lieu magique où vous pouvez entreposer les puissants artefacts dont vous aurez besoin pour sauver le monde contre les Titans.</value>
   </data>
-    <data name="Form1LblPleaseWait" xml:space="preserve">
+  <data name="Form1LblPleaseWait" xml:space="preserve">
     <value>Chargement des ressources du jeu ... Patientez</value>
   </data>
-    <data name="Form1Text" xml:space="preserve">
+  <data name="Form1Text" xml:space="preserve">
     <value>Coffre pour Objets de Titan Quest</value>
   </data>
-    <data name="GlobalAbout" xml:space="preserve">
+  <data name="GlobalAbout" xml:space="preserve">
     <value>Crédits</value>
   </data>
-    <data name="GlobalBrowse" xml:space="preserve">
+  <data name="GlobalBrowse" xml:space="preserve">
     <value>Parcourir …</value>
   </data>
-    <data name="GlobalCancel" xml:space="preserve">
+  <data name="GlobalCancel" xml:space="preserve">
     <value>Annuler</value>
   </data>
-    <data name="GlobalError" xml:space="preserve">
+  <data name="GlobalError" xml:space="preserve">
     <value>Erreur</value>
   </data>
-    <data name="GlobalExit" xml:space="preserve">
+  <data name="GlobalExit" xml:space="preserve">
     <value>Quitter</value>
   </data>
-    <data name="GlobalMenuBag" xml:space="preserve">
+  <data name="GlobalMenuBag" xml:space="preserve">
     <value>Sac #{0}</value>
     <comment>This entry must have the GlobalMenuBagDelimiter or it will break the item and bag move code.</comment>
   </data>
-    <data name="GlobalMenuBagDelimiter" xml:space="preserve">
+  <data name="GlobalMenuBagDelimiter" xml:space="preserve">
     <value>#</value>
     <comment>Used with GlobalMenuBag to signify bag number in menus.</comment>
   </data>
-    <data name="GlobalOK" xml:space="preserve">
+  <data name="GlobalOK" xml:space="preserve">
     <value>OK</value>
   </data>
-    <data name="GlobalTransferStash" xml:space="preserve">
+  <data name="GlobalTransferStash" xml:space="preserve">
     <value>Zone de transfert</value>
   </data>
-    <data name="GlobalTrash" xml:space="preserve">
+  <data name="GlobalTrash" xml:space="preserve">
     <value>Rebus</value>
   </data>
-    <data name="ItemIT" xml:space="preserve">
+  <data name="ItemIT" xml:space="preserve">
     <value>Objet Immortal Throne</value>
   </data>
-    <data name="ItemPropertiesCheckBoxLabelFilterExtraInfo" xml:space="preserve">
+  <data name="ItemPropertiesCheckBoxLabelFilterExtraInfo" xml:space="preserve">
     <value>Filtrer les infos détaillées</value>
   </data>
-    <data name="ItemPropertiesLabelPrefixProperties" xml:space="preserve">
+  <data name="ItemPropertiesLabelPrefixProperties" xml:space="preserve">
     <value>Propriétés du préfixe</value>
   </data>
-    <data name="ItemPropertiesLabelBaseItemProperties" xml:space="preserve">
+  <data name="ItemPropertiesLabelBaseItemProperties" xml:space="preserve">
     <value>Propriétés de l'objet de base</value>
   </data>
-    <data name="ItemPropertiesLabelSuffixProperties" xml:space="preserve">
+  <data name="ItemPropertiesLabelSuffixProperties" xml:space="preserve">
     <value>Propriétés du suffixe</value>
   </data>
-    <data name="ItemPropertiesText" xml:space="preserve">
+  <data name="ItemPropertiesText" xml:space="preserve">
     <value>Propriétés de l'objet</value>
   </data>
-    <data name="ItemQuest" xml:space="preserve">
+  <data name="ItemQuest" xml:space="preserve">
     <value>(Objet de quête)</value>
   </data>
-    <data name="ItemRelicBonus" xml:space="preserve">
+  <data name="ItemRelicBonus" xml:space="preserve">
     <value>(Bonus d'achèvement: {0})</value>
   </data>
-    <data name="ItemRelicCompleted" xml:space="preserve">
+  <data name="ItemRelicCompleted" xml:space="preserve">
     <value>(Complet)</value>
   </data>
-    <data name="ItemSeed" xml:space="preserve">
+  <data name="ItemSeed" xml:space="preserve">
     <value>N° aléatoire: {0} (0x{0:X8}) ({1:p3})</value>
   </data>
-    <data name="ItemWith" xml:space="preserve">
+  <data name="ItemWith" xml:space="preserve">
     <value>avec</value>
   </data>
-    <data name="MainForm2ndVault" xml:space="preserve">
+  <data name="MainForm2ndVault" xml:space="preserve">
     <value>2° coffre :</value>
   </data>
-    <data name="MainFormBtnConfigure" xml:space="preserve">
+  <data name="MainFormBtnConfigure" xml:space="preserve">
     <value>Configurer</value>
   </data>
-    <data name="MainFormBtnExtract" xml:space="preserve">
+  <data name="MainFormBtnExtract" xml:space="preserve">
     <value>Extraire database.arz ...</value>
   </data>
-    <data name="MainFormBtnPanelSelect" xml:space="preserve">
+  <data name="MainFormBtnPanelSelect" xml:space="preserve">
     <value>Voir coffre</value>
   </data>
-    <data name="MainFormBtnShowPlayer" xml:space="preserve">
+  <data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>Voir personnage</value>
   </data>
-    <data name="MainFormCustomMapLabel" xml:space="preserve">
+  <data name="MainFormCustomMapLabel" xml:space="preserve">
     <value>Quête personnalisée {0}</value>
   </data>
-    <data name="MainFormDatabaseError" xml:space="preserve">
+  <data name="MainFormDatabaseError" xml:space="preserve">
     <value>Erreur en extrayant la base de données</value>
   </data>
-    <data name="MainFormHoldingItem" xml:space="preserve">
+  <data name="MainFormHoldingItem" xml:space="preserve">
     <value>Vous êtes en train de manipuler un objet.
 Veuillez déposer l'objet avant de quitter.</value>
   </data>
-    <data name="MainFormHoldingItem2" xml:space="preserve">
+  <data name="MainFormHoldingItem2" xml:space="preserve">
     <value>Veuillez déposer l'objet.</value>
   </data>
-    <data name="MainFormLabel1" xml:space="preserve">
+  <data name="MainFormLabel1" xml:space="preserve">
     <value>Personnage :</value>
   </data>
-    <data name="MainFormLabel2" xml:space="preserve">
+  <data name="MainFormLabel2" xml:space="preserve">
     <value>Coffre :</value>
   </data>
-    <data name="MainFormLanguageChanged" xml:space="preserve">
+  <data name="MainFormLanguageChanged" xml:space="preserve">
     <value>Langue du jeu modifiée</value>
   </data>
-    <data name="MainFormLanguageChangedMsg" xml:space="preserve">
+  <data name="MainFormLanguageChangedMsg" xml:space="preserve">
     <value>La langue du jeu a été changée.
 Vous devez redémarrer TQVault pour en voir l'effet.
 Voulez-vous redémarrer TQVault maintenant ?</value>
   </data>
-    <data name="MainFormMaintainVault" xml:space="preserve">
+  <data name="MainFormMaintainVault" xml:space="preserve">
     <value>Gérer les fichiers de coffres ...</value>
   </data>
-    <data name="MainFormMapsChanged" xml:space="preserve">
+  <data name="MainFormMapsChanged" xml:space="preserve">
     <value>Configuration des quêtes personnalisées modifiée</value>
   </data>
-    <data name="MainFormMapsChangedMsg" xml:space="preserve">
+  <data name="MainFormMapsChangedMsg" xml:space="preserve">
     <value>La configuration des quêtes personnalisées a été changée.
 Vous devez redémarrer TQVault pour que cela fasse effet.
 Voulez-vous redémarrer TQVault maintenant ?</value>
   </data>
-    <data name="MainFormNoCharacters" xml:space="preserve">
+  <data name="MainFormNoCharacters" xml:space="preserve">
     <value>Aucun personnage TQ détecté</value>
   </data>
-    <data name="MainFormNoCustomChars" xml:space="preserve">
+  <data name="MainFormNoCustomChars" xml:space="preserve">
     <value>Aucun personnage de quête personnalisée détecté</value>
   </data>
-    <data name="MainFormNoItemQualityFound" xml:space="preserve">
+  <data name="MainFormNoItemQualityFound" xml:space="preserve">
     <value>Aucun objet de type '{0}' 
 et de qualité '{1}' trouvé.</value>
   </data>
-    <data name="MainFormNoItemsFound" xml:space="preserve">
+  <data name="MainFormNoItemsFound" xml:space="preserve">
     <value>Aucun objet avec '{0}' trouvé.</value>
   </data>
-    <data name="MainFormNoItemsFound2" xml:space="preserve">
+  <data name="MainFormNoItemsFound2" xml:space="preserve">
     <value>Aucun objet trouvé</value>
   </data>
-    <data name="MainFormNoItemTypesFound" xml:space="preserve">
+  <data name="MainFormNoItemTypesFound" xml:space="preserve">
     <value>Aucun objet de type '{0}' trouvé.</value>
   </data>
-    <data name="MainFormPathsChanged" xml:space="preserve">
+  <data name="MainFormPathsChanged" xml:space="preserve">
     <value>Chemins d'accès du jeu modifiés</value>
   </data>
-    <data name="MainFormPathsChangedMsg" xml:space="preserve">
+  <data name="MainFormPathsChangedMsg" xml:space="preserve">
     <value>Les chemins d'accès du jeu ont été changés.
 Vous devez redémarrer TQVault pour en voir l'effet.
 Voulez-vous redémarrer TQVault maintenant ?</value>
   </data>
-    <data name="MainFormPlayerReadError" xml:space="preserve">
+  <data name="MainFormPlayerReadError" xml:space="preserve">
     <value>Erreur en lisant le fichier du personnage</value>
   </data>
-    <data name="MainFormQuit" xml:space="preserve">
+  <data name="MainFormQuit" xml:space="preserve">
     <value>Etes-vous sûr de vouloir quitter l'application ?</value>
   </data>
-    <data name="MainFormReadError" xml:space="preserve">
+  <data name="MainFormReadError" xml:space="preserve">
     <value>Erreur en lisant {0}
 Etes-vous sûr qu'il s'agit d'un fichier valide ?
 {1}</value>
   </data>
-    <data name="MainFormSaveError" xml:space="preserve">
+  <data name="MainFormSaveError" xml:space="preserve">
     <value>Erreur en sauvegardant les données pour '{0}'</value>
   </data>
-    <data name="MainFormSelectCharacter" xml:space="preserve">
+  <data name="MainFormSelectCharacter" xml:space="preserve">
     <value>Sélectionnez un personnage</value>
   </data>
-    <data name="MainFormSelectVault" xml:space="preserve">
+  <data name="MainFormSelectVault" xml:space="preserve">
     <value>Sélectionnez un coffre</value>
   </data>
-    <data name="MainFormSettingsChanged" xml:space="preserve">
+  <data name="MainFormSettingsChanged" xml:space="preserve">
     <value>Configuration du jeu modifiée</value>
   </data>
-    <data name="MainFormSettingsChangedMsg" xml:space="preserve">
+  <data name="MainFormSettingsChangedMsg" xml:space="preserve">
     <value>La configuration du jeu a été changée.
 Vous devez redémarrer TQVault pour en voir l'effet.
 Voulez-vous redémarrer TQVault maintenant ?</value>
   </data>
-    <data name="MainFormStartVaultMon" xml:space="preserve">
+  <data name="MainFormStartVaultMon" xml:space="preserve">
     <value>Voulez-vous lancer TQVaultMon ?</value>
   </data>
-    <data name="MainFormStartVaultMonMsg" xml:space="preserve">
+  <data name="MainFormStartVaultMonMsg" xml:space="preserve">
     <value>Vous venez de modifier l'inventaire de certains de vos personnages.
 Titan Quest va le détecter, considérer que votre personnage est corrompu
 et ne permettra pas qu'il soit chargé.
@@ -423,21 +423,21 @@ Il est conseillé de démarrer TQVaultMon maintenant, puis de lancer Titan
 et de charger rapidement tous les personnages que vous venez de modifier.
 Voulez-vous démarrer TQVaultMon maintenant?</value>
   </data>
-    <data name="MainFormStashReadError" xml:space="preserve">
+  <data name="MainFormStashReadError" xml:space="preserve">
     <value>Erreur en lisant le fichier de la caravane</value>
   </data>
-    <data name="MainFormTrashItems" xml:space="preserve">
+  <data name="MainFormTrashItems" xml:space="preserve">
     <value>Il y a actuellement {0} objets au rebus.
 Si vous quittez l'application, ils seront DEFINITIVEMENT PERDUS.
 Voulez-vous vraiment vous débarrasser de ces objets?</value>
   </data>
-    <data name="MainFormUnableToStartVaultMon" xml:space="preserve">
+  <data name="MainFormUnableToStartVaultMon" xml:space="preserve">
     <value>Impossible de lancer TQVaultMon</value>
   </data>
-    <data name="MainFormVaultMonError" xml:space="preserve">
+  <data name="MainFormVaultMonError" xml:space="preserve">
     <value>Erreur en essayant de démarrer TQVaultMon</value>
   </data>
-    <data name="MainFormVaultMonMsg" xml:space="preserve">
+  <data name="MainFormVaultMonMsg" xml:space="preserve">
     <value>Il m'est impossible de voir si TQVaultMon fonctionnait.
 Il est probable que TQVaultMon ne fera pas effet.
 Comme vous avez modifié certains de vos personnages, TQ considérera qu'ils sont corrompus.
@@ -448,234 +448,234 @@ car je pourrais avoir une solution qui vous épargnera bien des tracas.
 Suit le message d'erreur
 </value>
   </data>
-    <data name="MaintenanceBadChars" xml:space="preserve">
+  <data name="MaintenanceBadChars" xml:space="preserve">
     <value>Vous avez utilisé des personnages non-valides.</value>
   </data>
-    <data name="MaintenanceBadName" xml:space="preserve">
+  <data name="MaintenanceBadName" xml:space="preserve">
     <value>Vous devez entrer un nom pour le nouveau coffre</value>
   </data>
-    <data name="MaintenanceCopy" xml:space="preserve">
+  <data name="MaintenanceCopy" xml:space="preserve">
     <value>Sélectionnez la source à copier dans la liste déroulante
 puis entrez le nom de la destination dans la fenêtre Cible ci-dessous.</value>
   </data>
-    <data name="MaintenanceDelete" xml:space="preserve">
+  <data name="MaintenanceDelete" xml:space="preserve">
     <value>Sélectionner le coffre à effacer dans la liste déroulante.</value>
   </data>
-    <data name="MaintenanceDuplicate" xml:space="preserve">
+  <data name="MaintenanceDuplicate" xml:space="preserve">
     <value>Copier le nom du coffre</value>
   </data>
-    <data name="MaintenanceExists" xml:space="preserve">
+  <data name="MaintenanceExists" xml:space="preserve">
     <value>Un coffre appelé {0} existe déjà.</value>
   </data>
-    <data name="MaintenanceGroup" xml:space="preserve">
+  <data name="MaintenanceGroup" xml:space="preserve">
     <value>Sélectionner la fonction</value>
   </data>
-    <data name="MaintenanceInstructions" xml:space="preserve">
+  <data name="MaintenanceInstructions" xml:space="preserve">
     <value>Instructions</value>
   </data>
-    <data name="MaintenanceInvalidName" xml:space="preserve">
+  <data name="MaintenanceInvalidName" xml:space="preserve">
     <value>Nom de coffre invalide</value>
   </data>
-    <data name="MaintenanceInvalidSourceName" xml:space="preserve">
+  <data name="MaintenanceInvalidSourceName" xml:space="preserve">
     <value>Nom de coffre source invalide</value>
   </data>
-    <data name="MaintenanceNew" xml:space="preserve">
+  <data name="MaintenanceNew" xml:space="preserve">
     <value>Entrez un nom pour votre nouveau coffre dans la fenêtre Cible ci-dessous.
 Vous ne pouvez pas utiliser les caractères suivants :
 </value>
   </data>
-    <data name="MaintenanceNewVault" xml:space="preserve">
+  <data name="MaintenanceNewVault" xml:space="preserve">
     <value>Nouveau coffre</value>
   </data>
-    <data name="MaintenanceNoCopyTarget" xml:space="preserve">
+  <data name="MaintenanceNoCopyTarget" xml:space="preserve">
     <value>Vous devez entrer un nouveau nom pour votre copie de coffre</value>
   </data>
-    <data name="MaintenanceRbCopy" xml:space="preserve">
+  <data name="MaintenanceRbCopy" xml:space="preserve">
     <value>Copier un coffre</value>
   </data>
-    <data name="MaintenanceRbDelete" xml:space="preserve">
+  <data name="MaintenanceRbDelete" xml:space="preserve">
     <value>Supprimer un coffre</value>
   </data>
-    <data name="MaintenanceRbNew" xml:space="preserve">
+  <data name="MaintenanceRbNew" xml:space="preserve">
     <value>Créer un coffre</value>
   </data>
-    <data name="MaintenanceRbRename" xml:space="preserve">
+  <data name="MaintenanceRbRename" xml:space="preserve">
     <value>Renommer un coffre</value>
   </data>
-    <data name="MaintenanceRename" xml:space="preserve">
+  <data name="MaintenanceRename" xml:space="preserve">
     <value>Sélectionnez le coffre à renommer dans la liste déroulante
 puis entrez le nouveau nom dans la fenêtre Cible ci-dessous.</value>
   </data>
-    <data name="MaintenanceSource" xml:space="preserve">
+  <data name="MaintenanceSource" xml:space="preserve">
     <value>Source</value>
   </data>
-    <data name="MaintenanceSourceNoExist" xml:space="preserve">
+  <data name="MaintenanceSourceNoExist" xml:space="preserve">
     <value>Le coffre source n'existe pas.</value>
   </data>
-    <data name="MaintenanceTarget" xml:space="preserve">
+  <data name="MaintenanceTarget" xml:space="preserve">
     <value>Cible</value>
   </data>
-    <data name="MaintenanceText" xml:space="preserve">
+  <data name="MaintenanceText" xml:space="preserve">
     <value>Gestion des coffres</value>
   </data>
-    <data name="PlayerOverwriteSack" xml:space="preserve">
+  <data name="PlayerOverwriteSack" xml:space="preserve">
     <value>Ecraser le contenu du sac</value>
   </data>
-    <data name="PlayerOverwriteSackMsg" xml:space="preserve">
+  <data name="PlayerOverwriteSackMsg" xml:space="preserve">
     <value>La destination n'est pas vierge.
 Etes-vous sûr de vouloir écraser son contenu ?</value>
   </data>
-    <data name="PlayerPanelEmpty" xml:space="preserve">
+  <data name="PlayerPanelEmpty" xml:space="preserve">
     <value>Vider le sac ?</value>
   </data>
-    <data name="PlayerPanelEmptyMsg" xml:space="preserve">
+  <data name="PlayerPanelEmptyMsg" xml:space="preserve">
     <value>Voulez-vous vraiment détruire tous les objets du sac ?</value>
   </data>
-    <data name="PlayerPanelMenuCopy" xml:space="preserve">
+  <data name="PlayerPanelMenuCopy" xml:space="preserve">
     <value>Copier le sac</value>
   </data>
-    <data name="PlayerPanelMenuEmpty" xml:space="preserve">
+  <data name="PlayerPanelMenuEmpty" xml:space="preserve">
     <value>Vider le sac</value>
   </data>
-    <data name="PlayerPanelMenuMerge" xml:space="preserve">
+  <data name="PlayerPanelMenuMerge" xml:space="preserve">
     <value>Fusionner le sac</value>
   </data>
-    <data name="PlayerPanelMenuMove" xml:space="preserve">
+  <data name="PlayerPanelMenuMove" xml:space="preserve">
     <value>Déplacer le sac</value>
   </data>
-    <data name="PlayerPanelNoPlayer" xml:space="preserve">
+  <data name="PlayerPanelNoPlayer" xml:space="preserve">
     <value>(Aucun personnage sélectionné)</value>
   </data>
-    <data name="PlayerPanelNoVault" xml:space="preserve">
+  <data name="PlayerPanelNoVault" xml:space="preserve">
     <value>(Aucun coffre sélectionné)</value>
   </data>
-    <data name="ResultsContainer" xml:space="preserve">
+  <data name="ResultsContainer" xml:space="preserve">
     <value>Emplacement</value>
   </data>
-    <data name="ResultsContainerEquip" xml:space="preserve">
+  <data name="ResultsContainerEquip" xml:space="preserve">
     <value>Equipement</value>
   </data>
-    <data name="ResultsContainerPlayer" xml:space="preserve">
+  <data name="ResultsContainerPlayer" xml:space="preserve">
     <value>Personnage</value>
   </data>
-    <data name="ResultsContainerStash" xml:space="preserve">
+  <data name="ResultsContainerStash" xml:space="preserve">
     <value>Caravane</value>
   </data>
-    <data name="ResultsContainerType" xml:space="preserve">
+  <data name="ResultsContainerType" xml:space="preserve">
     <value>Type d'emplacement</value>
   </data>
-    <data name="ResultsContainerVault" xml:space="preserve">
+  <data name="ResultsContainerVault" xml:space="preserve">
     <value>Coffre</value>
   </data>
-    <data name="ResultsItem" xml:space="preserve">
+  <data name="ResultsItem" xml:space="preserve">
     <value>Objet</value>
   </data>
-    <data name="ResultsQuality" xml:space="preserve">
+  <data name="ResultsQuality" xml:space="preserve">
     <value>Qualité</value>
   </data>
-    <data name="ResultsSack" xml:space="preserve">
+  <data name="ResultsSack" xml:space="preserve">
     <value>Sac</value>
   </data>
-    <data name="ResultsLevel" xml:space="preserve">
+  <data name="ResultsLevel" xml:space="preserve">
     <value>Level</value>
   </data>
-    <data name="ResultsText" xml:space="preserve">
+  <data name="ResultsText" xml:space="preserve">
     <value>{0} objets trouvés avec '{1}'</value>
   </data>
-    <data name="SackPanelAutoSort" xml:space="preserve">
+  <data name="SackPanelAutoSort" xml:space="preserve">
     <value>Veuillez déposer l'objet.</value>
   </data>
-    <data name="SackPanelAutoSortError" xml:space="preserve">
+  <data name="SackPanelAutoSortError" xml:space="preserve">
     <value>Erreur de tri automatique.</value>
   </data>
-    <data name="SackPanelAutoSortErrorMsg" xml:space="preserve">
+  <data name="SackPanelAutoSortErrorMsg" xml:space="preserve">
     <value>Une erreur a eu lieu lors du tri.
 Tous les objets n'ont pas été remis.</value>
   </data>
-    <data name="SackPanelAutoSortMsg" xml:space="preserve">
+  <data name="SackPanelAutoSortMsg" xml:space="preserve">
     <value>Vous êtes en train de manipuler un objet.
 Déposez l'objet quelque part avant de trier.</value>
   </data>
-    <data name="SackPanelDelete" xml:space="preserve">
+  <data name="SackPanelDelete" xml:space="preserve">
     <value>Supprimer l'objet</value>
   </data>
-    <data name="SackPanelDeleteMsg" xml:space="preserve">
+  <data name="SackPanelDeleteMsg" xml:space="preserve">
     <value>Cet objet va être DEFINITIVEMENT SUPPRIME !
 Voulez-vous vraiment supprimer cet objet ?</value>
   </data>
-    <data name="SackPanelDeleteMulti" xml:space="preserve">
+  <data name="SackPanelDeleteMulti" xml:space="preserve">
     <value>Supprimer plusieurs objets</value>
   </data>
-    <data name="SackPanelDeleteMultiMsg" xml:space="preserve">
+  <data name="SackPanelDeleteMultiMsg" xml:space="preserve">
     <value>Voulez-vous vraiment SUPPRIMER DEFINITIVEMENT les objets sélectionnés ?</value>
   </data>
-    <data name="SackPanelMenuBonus" xml:space="preserve">
+  <data name="SackPanelMenuBonus" xml:space="preserve">
     <value>Changer le bonus d'achèvement</value>
   </data>
-    <data name="SackPanelMenuCharm" xml:space="preserve">
+  <data name="SackPanelMenuCharm" xml:space="preserve">
     <value>Compléter le charme</value>
   </data>
-    <data name="SackPanelMenuFormulae" xml:space="preserve">
+  <data name="SackPanelMenuFormulae" xml:space="preserve">
     <value>Fabriquer l'artéfact</value>
   </data>
-    <data name="SackPanelMenuClear" xml:space="preserve">
+  <data name="SackPanelMenuClear" xml:space="preserve">
     <value>Annuler la sélection</value>
   </data>
-    <data name="SackPanelMenuCopy" xml:space="preserve">
+  <data name="SackPanelMenuCopy" xml:space="preserve">
     <value>Copier l'objet</value>
   </data>
-    <data name="SackPanelMenuDelete" xml:space="preserve">
+  <data name="SackPanelMenuDelete" xml:space="preserve">
     <value>Supprimer</value>
   </data>
-    <data name="SackPanelMenuDuplicate" xml:space="preserve">
+  <data name="SackPanelMenuDuplicate" xml:space="preserve">
     <value>Reproduire l'objet</value>
   </data>
-    <data name="SackPanelMenuMoveTo" xml:space="preserve">
+  <data name="SackPanelMenuMoveTo" xml:space="preserve">
     <value>Déplacer l'objet vers</value>
   </data>
-    <data name="SackPanelMenuPlayer" xml:space="preserve">
+  <data name="SackPanelMenuPlayer" xml:space="preserve">
     <value>Personnage</value>
   </data>
-    <data name="SackPanelMenuProperties" xml:space="preserve">
+  <data name="SackPanelMenuProperties" xml:space="preserve">
     <value>Propriétés</value>
   </data>
-    <data name="SackPanelMenuRelic" xml:space="preserve">
+  <data name="SackPanelMenuRelic" xml:space="preserve">
     <value>Compléter la relique</value>
   </data>
-    <data name="SackPanelMenuRemoveRelic" xml:space="preserve">
+  <data name="SackPanelMenuRemoveRelic" xml:space="preserve">
     <value>Retirer la relique</value>
   </data>
-    <data name="SackPanelMenuRemoveRelic2" xml:space="preserve">
+  <data name="SackPanelMenuRemoveRelic2" xml:space="preserve">
     <value>Retirer la 2eme relique</value>
   </data>
-    <data name="SackPanelMenuSeed" xml:space="preserve">
+  <data name="SackPanelMenuSeed" xml:space="preserve">
     <value>Changer le N° aléatoire ...</value>
   </data>
-    <data name="SackPanelMenuSet" xml:space="preserve">
+  <data name="SackPanelMenuSet" xml:space="preserve">
     <value>Créer les objets du set</value>
   </data>
-    <data name="SackPanelMenuSplit" xml:space="preserve">
+  <data name="SackPanelMenuSplit" xml:space="preserve">
     <value>Diviser</value>
   </data>
-    <data name="SackPanelMenuStash" xml:space="preserve">
+  <data name="SackPanelMenuStash" xml:space="preserve">
     <value>Caravane</value>
   </data>
-    <data name="SackPanelMenuTrash" xml:space="preserve">
+  <data name="SackPanelMenuTrash" xml:space="preserve">
     <value>Rebus</value>
   </data>
-    <data name="SackPanelMenuVault" xml:space="preserve">
+  <data name="SackPanelMenuVault" xml:space="preserve">
     <value>Coffre</value>
   </data>
-    <data name="SackPanelMenuVault2" xml:space="preserve">
+  <data name="SackPanelMenuVault2" xml:space="preserve">
     <value>2° coffre</value>
   </data>
-    <data name="SackPanelRemoveRelicMsg" xml:space="preserve">
+  <data name="SackPanelRemoveRelicMsg" xml:space="preserve">
     <value>Voulez-vous vraiment retirer la relique de cet objet ?</value>
   </data>
-    <data name="SeedBtnRandom" xml:space="preserve">
+  <data name="SeedBtnRandom" xml:space="preserve">
     <value>Au hasard</value>
   </data>
-    <data name="SeedLabel1" xml:space="preserve">
+  <data name="SeedLabel1" xml:space="preserve">
     <value>TQ utilise le N° aléatoire pour varier au hasard les stats
 des objets afin que deux objets ne soient pas identiques.
 On ignore la manière exacte dont le N° affecte vos stats
@@ -684,234 +684,234 @@ dans les stats de votre objet la prochaine fois que vous jouerez.
 
 Choisissez un nombre entre 1 et 32767</value>
   </data>
-    <data name="SeedRange" xml:space="preserve">
+  <data name="SeedRange" xml:space="preserve">
     <value>Le N° aléatoire doit être un nombre entier entre 1 et 32767</value>
   </data>
-    <data name="SeedText" xml:space="preserve">
+  <data name="SeedText" xml:space="preserve">
     <value>Changer le N° aléatoire</value>
   </data>
-    <data name="SettingsAllowCopy" xml:space="preserve">
+  <data name="SettingsAllowCopy" xml:space="preserve">
     <value>Autoriser la copie d'objets</value>
   </data>
-    <data name="SettingsAllowCopyTT" xml:space="preserve">
+  <data name="SettingsAllowCopyTT" xml:space="preserve">
     <value>Débloque la fonction Copier dans le menu contextuel.</value>
   </data>
-    <data name="SettingsAllowEdit" xml:space="preserve">
+  <data name="SettingsAllowEdit" xml:space="preserve">
     <value>Autoriser les fonctions d'édition d'objet</value>
   </data>
-    <data name="SettingsAllowEditTT" xml:space="preserve">
+  <data name="SettingsAllowEditTT" xml:space="preserve">
     <value>Débloque les fonctions d'édition dans le menu contextuel.
 Cela inclut la création et la modification d'objets.</value>
   </data>
-    <data name="SettingsAutoUpdate" xml:space="preserve">
+  <data name="SettingsAutoUpdate" xml:space="preserve">
     <value>Recherche automatique de mises à jour</value>
   </data>
-    <data name="SettingsAutoUpdateTT" xml:space="preserve">
+  <data name="SettingsAutoUpdateTT" xml:space="preserve">
     <value>Avec cette fonction, de nouvelles versions de TQVault
 seront automatiquement recherchées sur internet
 quand le programme démarre. Cela peut ralentir
 le démarrage si la connection internet est lente.</value>
   </data>
-    <data name="SettingsBrowseIT" xml:space="preserve">
+  <data name="SettingsBrowseIT" xml:space="preserve">
     <value>Sélectionnez le chemin d'accès pour les fichiers du jeu IT.</value>
   </data>
-    <data name="SettingsBrowseTQ" xml:space="preserve">
+  <data name="SettingsBrowseTQ" xml:space="preserve">
     <value>Sélectionnez le chemin d'accès pour les fichiers du jeu TQ.</value>
   </data>
-    <data name="SettingsBrowseVault" xml:space="preserve">
+  <data name="SettingsBrowseVault" xml:space="preserve">
     <value>Sélectionnez le chemin d'accès pour les fichiers TQVault.</value>
   </data>
-    <data name="SettingsDetectGamePath" xml:space="preserve">
+  <data name="SettingsDetectGamePath" xml:space="preserve">
     <value>Détection automatique des répertoires du jeu</value>
   </data>
-    <data name="SettingsDetectLanguage" xml:space="preserve">
+  <data name="SettingsDetectLanguage" xml:space="preserve">
     <value>Détection automatique de la langue</value>
   </data>
-    <data name="SettingsEnableMod" xml:space="preserve">
+  <data name="SettingsEnableMod" xml:space="preserve">
     <value>Autoriser les quêtes personnalisées</value>
   </data>
-    <data name="SettingsEnableModTT" xml:space="preserve">
+  <data name="SettingsEnableModTT" xml:space="preserve">
     <value>En cochant cette fonction, vous
 pourrez sélectionner des quêtes
 personnalisées avec le menu déroulant.</value>
   </data>
-    <data name="SettingsForceCheck" xml:space="preserve">
+  <data name="SettingsForceCheck" xml:space="preserve">
     <value>Vérifier maintenant</value>
   </data>
-    <data name="SettingsForceCheckTT" xml:space="preserve">
+  <data name="SettingsForceCheckTT" xml:space="preserve">
     <value>Vérifier manuellement s'il y a des mises à jour
 disponibles.</value>
   </data>
-    <data name="SettingsLabel1" xml:space="preserve">
+  <data name="SettingsLabel1" xml:space="preserve">
     <value>Chemin d'accès du Vault</value>
   </data>
-    <data name="SettingsLabel2" xml:space="preserve">
+  <data name="SettingsLabel2" xml:space="preserve">
     <value>Langue du jeu</value>
   </data>
-    <data name="SettingsLabel3" xml:space="preserve">
+  <data name="SettingsLabel3" xml:space="preserve">
     <value>Chemin d'accès du jeu TQ</value>
   </data>
-    <data name="SettingsLabel4" xml:space="preserve">
+  <data name="SettingsLabel4" xml:space="preserve">
     <value>Chemin d'accès du jeu IT</value>
   </data>
-    <data name="SettingsLabel5" xml:space="preserve">
+  <data name="SettingsLabel5" xml:space="preserve">
     <value>Quête personnalisée</value>
   </data>
-    <data name="SettingsLoadChar" xml:space="preserve">
+  <data name="SettingsLoadChar" xml:space="preserve">
     <value>Charger automatiquement le dernier personnage ouvert</value>
   </data>
-    <data name="SettingsLoadCharTT" xml:space="preserve">
+  <data name="SettingsLoadCharTT" xml:space="preserve">
     <value>Avec cette option, le dernier personnage ouvert à la 
 fermeture de TQVault sera automatiquement chargé.</value>
   </data>
-    <data name="SettingsLoadVault" xml:space="preserve">
+  <data name="SettingsLoadVault" xml:space="preserve">
     <value>Charger automatiquement le dernier coffre ouvert</value>
   </data>
-    <data name="SettingsLoadVaultTT" xml:space="preserve">
+  <data name="SettingsLoadVaultTT" xml:space="preserve">
     <value>Avec cette option, le dernier coffre ouvert à la 
 fermeture de TQVault sera automatiquement chargé.
 TQVault ouvrira automatiquement le Coffre principal
 si rien n'est choisi.</value>
   </data>
-    <data name="SettingsNoWarning" xml:space="preserve">
+  <data name="SettingsNoWarning" xml:space="preserve">
     <value>Passer les messages de confirmation</value>
   </data>
-    <data name="SettingsNoWarningTT" xml:space="preserve">
+  <data name="SettingsNoWarningTT" xml:space="preserve">
     <value>Avec cette option, les messages de confirmation ne
 seront plus affichés pour la suppression d'objets
 et le retrait de reliques ou s'il y a des objets au rebus
 quand TQVault est fermé.</value>
   </data>
-    <data name="SettingsPreLoad" xml:space="preserve">
+  <data name="SettingsPreLoad" xml:space="preserve">
     <value>Précharger tous les fichiers de coffre et de personnage</value>
   </data>
-    <data name="SettingsPreLoadTT" xml:space="preserve">
+  <data name="SettingsPreLoadTT" xml:space="preserve">
     <value>Avec cette option, tous les fichiers de personnage, de 
 caravane et de coffre seront automatiquement chargés 
 au démarrage.  Cela facilite la fonction Rechercher, 
 mais cela augmente le temps de démarrage.</value>
   </data>
-    <data name="SettingsReset" xml:space="preserve">
+  <data name="SettingsReset" xml:space="preserve">
     <value>Restaurer</value>
   </data>
-    <data name="SettingsResetTT" xml:space="preserve">
+  <data name="SettingsResetTT" xml:space="preserve">
     <value>Restaurera la dernière
 configuration sauvegardée.</value>
   </data>
-    <data name="SettingsSkipTitle" xml:space="preserve">
+  <data name="SettingsSkipTitle" xml:space="preserve">
     <value>Passer automatiquement l'écran d'accueil</value>
   </data>
-    <data name="SettingsSkipTitleTT" xml:space="preserve">
+  <data name="SettingsSkipTitleTT" xml:space="preserve">
     <value>Avec cette option, "Ouvrir le coffre" sera
 automatiquement activé sur l'écran d'accueil.</value>
   </data>
-    <data name="SettingsTitle" xml:space="preserve">
+  <data name="SettingsTitle" xml:space="preserve">
     <value>Configuration</value>
   </data>
-    <data name="StashNotFound" xml:space="preserve">
+  <data name="StashNotFound" xml:space="preserve">
     <value>Impossible de trouver le fichier caravane.</value>
   </data>
-    <data name="StashNotFoundMsg" xml:space="preserve">
+  <data name="StashNotFoundMsg" xml:space="preserve">
     <value>Le fichier caravane ne peut pas être trouvé.
 Allez voir le Conducteur de caravane dans le jeu pour créer le fichier.
 L'onglet Zone de stockage ne sera pas disponible pour ce personnage.</value>
   </data>
-    <data name="StashPanelBtn1" xml:space="preserve">
+  <data name="StashPanelBtn1" xml:space="preserve">
     <value>Equipement</value>
   </data>
-    <data name="StashPanelBtn2" xml:space="preserve">
+  <data name="StashPanelBtn2" xml:space="preserve">
     <value>Zone de transfert</value>
   </data>
-    <data name="StashPanelBtn3" xml:space="preserve">
+  <data name="StashPanelBtn3" xml:space="preserve">
     <value>Zone de stockage</value>
   </data>
-    <data name="StashPanelText" xml:space="preserve">
+  <data name="StashPanelText" xml:space="preserve">
     <value>Caravane</value>
   </data>
-    <data name="UpdateCompletion" xml:space="preserve">
+  <data name="UpdateCompletion" xml:space="preserve">
     <value>{0}    {1} % effectués.</value>
   </data>
-    <data name="UpdateCompletion2" xml:space="preserve">
+  <data name="UpdateCompletion2" xml:space="preserve">
     <value>{0}    0 % effectué.</value>
   </data>
-    <data name="UpdateCurrentVer" xml:space="preserve">
+  <data name="UpdateCurrentVer" xml:space="preserve">
     <value>Version actuelle : {0}</value>
   </data>
-    <data name="UpdateError" xml:space="preserve">
+  <data name="UpdateError" xml:space="preserve">
     <value>Impossible de commencer l'installation</value>
   </data>
-    <data name="UpdateErrorMsg" xml:space="preserve">
+  <data name="UpdateErrorMsg" xml:space="preserve">
     <value>Il y a eu un problème de téléchargement ou d'extraction.
 Téléchargez le dernier dossier d'installation complète et lancez-le manuellement.
 Cliquez sur OK pour quitter.</value>
   </data>
-    <data name="UpdateFullInstall" xml:space="preserve">
+  <data name="UpdateFullInstall" xml:space="preserve">
     <value>Une nouvelle version de TQVault a été trouvée, elle requiert une installation complète.</value>
   </data>
-    <data name="UpdateLatestVer" xml:space="preserve">
+  <data name="UpdateLatestVer" xml:space="preserve">
     <value>Dernière version : {0}</value>
   </data>
-    <data name="UpdateMinVer" xml:space="preserve">
+  <data name="UpdateMinVer" xml:space="preserve">
     <value>Version minimum : {0}</value>
   </data>
-    <data name="UpdateNewTQVault" xml:space="preserve">
+  <data name="UpdateNewTQVault" xml:space="preserve">
     <value>Une nouvelle version de TQVault a été trouvée.</value>
   </data>
-    <data name="UpdateNewUpdater" xml:space="preserve">
+  <data name="UpdateNewUpdater" xml:space="preserve">
     <value>Une nouvelle version du programme de mise à jour de TQVault a été trouvée.</value>
   </data>
-    <data name="UpdateNoUpdate" xml:space="preserve">
+  <data name="UpdateNoUpdate" xml:space="preserve">
     <value>Votre version est à jour.</value>
   </data>
-    <data name="UpdatePerform" xml:space="preserve">
+  <data name="UpdatePerform" xml:space="preserve">
     <value>Cliquez sur OK pour effectuer une mise à jour.</value>
   </data>
-    <data name="UpdatePerformBoth" xml:space="preserve">
+  <data name="UpdatePerformBoth" xml:space="preserve">
     <value>Cliquez sur OK pour effectuer les deux mises à jour.</value>
   </data>
-    <data name="UpdateRunInstall" xml:space="preserve">
+  <data name="UpdateRunInstall" xml:space="preserve">
     <value>Cliquez sur OK pour télécharger et lancer l'installeur.</value>
   </data>
-    <data name="UpdateStreamError" xml:space="preserve">
+  <data name="UpdateStreamError" xml:space="preserve">
     <value>Il y a eu une erreur lors de la connexion avec le serveur de mise à jour.
 La mise à jour ne peut pas être effectuée.</value>
   </data>
-    <data name="UpdateText" xml:space="preserve">
+  <data name="UpdateText" xml:space="preserve">
     <value>Mises à jour de TQVault</value>
   </data>
-    <data name="UpdateUpdaterNotFound" xml:space="preserve">
+  <data name="UpdateUpdaterNotFound" xml:space="preserve">
     <value>Le programme de mise à jour de TQVault n'a pas été trouvé ou le nom a changé.</value>
   </data>
-    <data name="VaultProgressText" xml:space="preserve">
+  <data name="VaultProgressText" xml:space="preserve">
     <value>Chargement des fichiers de coffre et de personnage ...</value>
   </data>
-    <data name="AUEnglishName" xml:space="preserve">
+  <data name="AUEnglishName" xml:space="preserve">
     <value>French</value>
     <comment>Do not Translate.  Used for AutoUpdate.
 Used to determine which language file to update.</comment>
   </data>
-    <data name="AUFileVersion" xml:space="preserve">
+  <data name="AUFileVersion" xml:space="preserve">
     <value>2</value>
     <comment>Do not Translate.  Used for AutoUpdate.
 Used to track changes in the translation file.</comment>
   </data>
-    <data name="VaultGroupBoxEmpty" xml:space="preserve">
+  <data name="VaultGroupBoxEmpty" xml:space="preserve">
     <value>&lt;Vide&gt;</value>
   </data>
-    <data name="MainFormDisableLoadAllFiles" xml:space="preserve">
+  <data name="MainFormDisableLoadAllFiles" xml:space="preserve">
     <value>Une erreur est survenue lors du dernier chargement de tous les fichiers.
 Voulez-vous désactiver le chargement de tous les fichiers?</value>
   </data>
-    <data name="MainFormDisableLoadAllFilesCaption" xml:space="preserve">
+  <data name="MainFormDisableLoadAllFilesCaption" xml:space="preserve">
     <value>Désactiver le chargement de tous les fichiers?</value>
   </data>
-    <data name="MainFormSearchButtonText" xml:space="preserve">
+  <data name="MainFormSearchButtonText" xml:space="preserve">
     <value>Chercher</value>
   </data>
-    <data name="SearchDialogCaption" xml:space="preserve">
+  <data name="SearchDialogCaption" xml:space="preserve">
     <value>Rechercher un article</value>
   </data>
-    <data name="SearchDialogText" xml:space="preserve">
+  <data name="SearchDialogText" xml:space="preserve">
     <value>Recherchez des éléments dans les fichiers chargés: coffres-forts, stash, inventaires.
 
 Vous pouvez combiner les options de recherche suivantes (toutes sont optionnelles):
@@ -923,538 +923,538 @@ Vous pouvez utiliser | dans un terme comme condition OU. '$épique | rare' renvo
 
 Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
   </data>
-    <data name="GlobalClose" xml:space="preserve">
+  <data name="GlobalClose" xml:space="preserve">
     <value>Sortir</value>
   </data>
-    <data name="GlobalMaximize" xml:space="preserve">
+  <data name="GlobalMaximize" xml:space="preserve">
     <value>Maximiser les</value>
   </data>
-    <data name="GlobalMinimize" xml:space="preserve">
+  <data name="GlobalMinimize" xml:space="preserve">
     <value>Minimiser les</value>
   </data>
-    <data name="GlobalMove" xml:space="preserve">
+  <data name="GlobalMove" xml:space="preserve">
     <value>Déplacez</value>
   </data>
-    <data name="GlobalRestore" xml:space="preserve">
+  <data name="GlobalRestore" xml:space="preserve">
     <value>Restaurer</value>
   </data>
-    <data name="GlobalSize" xml:space="preserve">
+  <data name="GlobalSize" xml:space="preserve">
     <value>Taille</value>
   </data>
-    <data name="ItemRagnarok" xml:space="preserve">
+  <data name="ItemRagnarok" xml:space="preserve">
     <value>Objet Ragnarök</value>
   </data>
-    <data name="ItemAtlantis" xml:space="preserve">
+  <data name="ItemAtlantis" xml:space="preserve">
     <value>Objet Atlantis</value>
   </data>
-    <data name="GlobalRelicVaultStash" xml:space="preserve">
+  <data name="GlobalRelicVaultStash" xml:space="preserve">
     <value>Chambre des reliques</value>
   </data>
-    <data name="SettingsAllowEditCE" xml:space="preserve">
+  <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Autorise l'édition des personnages</value>
   </data>
-    <data name="CEAttributePoints" xml:space="preserve">
+  <data name="CEAttributePoints" xml:space="preserve">
     <value>Points d'attributs</value>
   </data>
-    <data name="CEAttributes" xml:space="preserve">
+  <data name="CEAttributes" xml:space="preserve">
     <value>Attributs de base</value>
   </data>
-    <data name="CEDexterity" xml:space="preserve">
+  <data name="CEDexterity" xml:space="preserve">
     <value>Dextérité</value>
   </data>
-    <data name="CEDifficulty" xml:space="preserve">
+  <data name="CEDifficulty" xml:space="preserve">
     <value>Difficulté</value>
   </data>
-    <data name="CEEnableLeveling" xml:space="preserve">
+  <data name="CEEnableLeveling" xml:space="preserve">
     <value>Activer le nivellement</value>
   </data>
-    <data name="CEHealth" xml:space="preserve">
+  <data name="CEHealth" xml:space="preserve">
     <value>Santé</value>
   </data>
-    <data name="CEIntelligence" xml:space="preserve">
+  <data name="CEIntelligence" xml:space="preserve">
     <value>Intelligence</value>
   </data>
-    <data name="CELevel" xml:space="preserve">
+  <data name="CELevel" xml:space="preserve">
     <value>Niveau</value>
   </data>
-    <data name="CELeveling" xml:space="preserve">
+  <data name="CELeveling" xml:space="preserve">
     <value>Nivellement</value>
   </data>
-    <data name="CEMana" xml:space="preserve">
+  <data name="CEMana" xml:space="preserve">
     <value>Mana</value>
   </data>
-    <data name="CESkillPoints" xml:space="preserve">
+  <data name="CESkillPoints" xml:space="preserve">
     <value>Points de compétences</value>
   </data>
-    <data name="CEStrength" xml:space="preserve">
+  <data name="CEStrength" xml:space="preserve">
     <value>Force</value>
   </data>
-    <data name="CEXp" xml:space="preserve">
+  <data name="CEXp" xml:space="preserve">
     <value>XP</value>
   </data>
-    <data name="CharacterEditBtn" xml:space="preserve">
+  <data name="CharacterEditBtn" xml:space="preserve">
     <value>modifier</value>
   </data>
-    <data name="Masteries" xml:space="preserve">
+  <data name="Masteries" xml:space="preserve">
     <value>Maîtrises</value>
   </data>
-    <data name="CurrentLevel" xml:space="preserve">
+  <data name="CurrentLevel" xml:space="preserve">
     <value>Niveau</value>
   </data>
-    <data name="Class" xml:space="preserve">
+  <data name="Class" xml:space="preserve">
     <value>Classe</value>
   </data>
-    <data name="CurrentXP" xml:space="preserve">
+  <data name="CurrentXP" xml:space="preserve">
     <value>XP</value>
   </data>
-    <data name="DifficultyUnlocked" xml:space="preserve">
+  <data name="DifficultyUnlocked" xml:space="preserve">
     <value>Difficulté</value>
   </data>
-    <data name="Money" xml:space="preserve">
+  <data name="Money" xml:space="preserve">
     <value>Argent</value>
   </data>
-    <data name="SkillPoints" xml:space="preserve">
+  <data name="SkillPoints" xml:space="preserve">
     <value>Compétences</value>
   </data>
-    <data name="AttributesPoints" xml:space="preserve">
+  <data name="AttributesPoints" xml:space="preserve">
     <value>Points d'attributs</value>
   </data>
-    <data name="BaseStrength" xml:space="preserve">
+  <data name="BaseStrength" xml:space="preserve">
     <value>Base Str</value>
   </data>
-    <data name="BaseDexterity" xml:space="preserve">
+  <data name="BaseDexterity" xml:space="preserve">
     <value>Base Dex</value>
   </data>
-    <data name="BaseIntelligence" xml:space="preserve">
+  <data name="BaseIntelligence" xml:space="preserve">
     <value>Base Int</value>
   </data>
-    <data name="BaseHealth" xml:space="preserve">
+  <data name="BaseHealth" xml:space="preserve">
     <value>Santé de base</value>
   </data>
-    <data name="BaseMana" xml:space="preserve">
+  <data name="BaseMana" xml:space="preserve">
     <value>Mana de base</value>
   </data>
-    <data name="PlayTimeInSeconds" xml:space="preserve">
+  <data name="PlayTimeInSeconds" xml:space="preserve">
     <value>Temps joué</value>
   </data>
-    <data name="NumberOfDeaths" xml:space="preserve">
+  <data name="NumberOfDeaths" xml:space="preserve">
     <value>Nb de morts</value>
   </data>
-    <data name="NumberOfKills" xml:space="preserve">
+  <data name="NumberOfKills" xml:space="preserve">
     <value>Mises à mort</value>
   </data>
-    <data name="ExperienceFromKills" xml:space="preserve">
+  <data name="ExperienceFromKills" xml:space="preserve">
     <value>XP de Kills</value>
   </data>
-    <data name="HealthPotionsUsed" xml:space="preserve">
+  <data name="HealthPotionsUsed" xml:space="preserve">
     <value>Potions de santé utilisées</value>
   </data>
-    <data name="ManaPotionsUsed" xml:space="preserve">
+  <data name="ManaPotionsUsed" xml:space="preserve">
     <value>Potions de mana utilisées</value>
   </data>
-    <data name="MaxLevel" xml:space="preserve">
+  <data name="MaxLevel" xml:space="preserve">
     <value>Niveau maximum</value>
   </data>
-    <data name="NumHitsReceived" xml:space="preserve">
+  <data name="NumHitsReceived" xml:space="preserve">
     <value>Coups reçus</value>
   </data>
-    <data name="NumHitsInflicted" xml:space="preserve">
+  <data name="NumHitsInflicted" xml:space="preserve">
     <value>Coups donnés</value>
   </data>
-    <data name="GreatestDamageInflicted" xml:space="preserve">
+  <data name="GreatestDamageInflicted" xml:space="preserve">
     <value>Dégâts maximal</value>
   </data>
-    <data name="GreatestMonster" xml:space="preserve">
+  <data name="GreatestMonster" xml:space="preserve">
     <value>Monstre le plus fort</value>
   </data>
-    <data name="CriticalHitsInflicted" xml:space="preserve">
+  <data name="CriticalHitsInflicted" xml:space="preserve">
     <value>Coups critiques</value>
   </data>
-    <data name="CriticalHitsReceived" xml:space="preserve">
+  <data name="CriticalHitsReceived" xml:space="preserve">
     <value>Coups critiques</value>
   </data>
-    <data name="PlayerPanelMenuDisableAllTooltip" xml:space="preserve">
+  <data name="PlayerPanelMenuDisableAllTooltip" xml:space="preserve">
     <value>Désactiver toutes les infobulles</value>
   </data>
-    <data name="PlayerPanelMenuDisableTooltip" xml:space="preserve">
+  <data name="PlayerPanelMenuDisableTooltip" xml:space="preserve">
     <value>Désactiver l'infobulle</value>
   </data>
-    <data name="PlayerPanelMenuEnableTooltip" xml:space="preserve">
+  <data name="PlayerPanelMenuEnableTooltip" xml:space="preserve">
     <value>Activer l'infobulle</value>
   </data>
-    <data name="PlayerPanelMenuEnableAllTooltip" xml:space="preserve">
+  <data name="PlayerPanelMenuEnableAllTooltip" xml:space="preserve">
     <value>Activer toutes les infobulles</value>
   </data>
-    <data name="SettingEnableDetailedTooltipView" xml:space="preserve">
+  <data name="SettingEnableDetailedTooltipView" xml:space="preserve">
     <value>Activer la vue détaillée de l'infobulle</value>
   </data>
-    <data name="SettingEnableDetailedTooltipViewTT" xml:space="preserve">
+  <data name="SettingEnableDetailedTooltipViewTT" xml:space="preserve">
     <value>Divise l'affichage des attributs dans les catégories Prefix/Base/Suffix</value>
   </data>
-    <data name="SettingsPlayerReadonly" xml:space="preserve">
+  <data name="SettingsPlayerReadonly" xml:space="preserve">
     <value>Equipement du personnage en lecture seule</value>
   </data>
-    <data name="SettingsPlayerReadonlyTT" xml:space="preserve">
+  <data name="SettingsPlayerReadonlyTT" xml:space="preserve">
     <value>Évite la corruption de la sauvegarde qui se produit au hasard.
 Quand activé, l’équipement du personnage sera en lecture seule, vous ne serez pas en mesure de sélectionner ou de déplacer un élément.</value>
   </data>
-    <data name="SettingsItemBGColorOpacityLabel" xml:space="preserve">
+  <data name="SettingsItemBGColorOpacityLabel" xml:space="preserve">
     <value>Couleur de fond (Opacité) :</value>
   </data>
-    <data name="SettingsItemBGColorOpacityLabelTT" xml:space="preserve">
+  <data name="SettingsItemBGColorOpacityLabelTT" xml:space="preserve">
     <value>Opacité de la couleur de fond des objets</value>
   </data>
-    <data name="SettingsEnableItemRequirementRestriction" xml:space="preserve">
+  <data name="SettingsEnableItemRequirementRestriction" xml:space="preserve">
     <value>Active les restrictions liés aux exigences des objets</value>
   </data>
-    <data name="SettingsEnableItemRequirementRestrictionTT" xml:space="preserve">
+  <data name="SettingsEnableItemRequirementRestrictionTT" xml:space="preserve">
     <value>Affiche une couleur de fond rouge sur les objets lorsque le personnage sélectionné ne répond pas aux exigences.
 Vous ne serez également pas en mesure d'équiper l'objet sur ce personnage.</value>
   </data>
-    <data name="ResetMasteriesButton" xml:space="preserve">
+  <data name="ResetMasteriesButton" xml:space="preserve">
     <value>Réinit. Maîtrises</value>
   </data>
-    <data name="ResetAttributesButton" xml:space="preserve">
+  <data name="ResetAttributesButton" xml:space="preserve">
     <value>Réinit. Attributs</value>
   </data>
-    <data name="TextTag_tagRelic" xml:space="preserve">
+  <data name="TextTag_tagRelic" xml:space="preserve">
     <value>Relique</value>
     <comment>Substitute for missing tag for "Relic"</comment>
   </data>
-    <data name="TextTag_tagArtifact" xml:space="preserve">
+  <data name="TextTag_tagArtifact" xml:space="preserve">
     <value>Artéfact</value>
     <comment>Substitute for missing tag for "Artifact"</comment>
   </data>
-    <data name="SearchMatchingItemsTT" xml:space="preserve">
+  <data name="SearchMatchingItemsTT" xml:space="preserve">
     <value>{0} objets trouvés</value>
   </data>
-    <data name="SearchFiltersSelected" xml:space="preserve">
+  <data name="SearchFiltersSelected" xml:space="preserve">
     <value>{0} filtres sélectionnés</value>
   </data>
-    <data name="SearchTermRequired" xml:space="preserve">
+  <data name="SearchTermRequired" xml:space="preserve">
     <value>Certains filtres doivent être sélectionnés</value>
   </data>
-    <data name="SearchOperator" xml:space="preserve">
+  <data name="SearchOperator" xml:space="preserve">
     <value>Opérateur</value>
   </data>
-    <data name="SearchOperatorTitle" xml:space="preserve">
+  <data name="SearchOperatorTitle" xml:space="preserve">
     <value>Opérateur de recherche</value>
   </data>
-    <data name="SearchOperatorAnd" xml:space="preserve">
+  <data name="SearchOperatorAnd" xml:space="preserve">
     <value>Et</value>
   </data>
-    <data name="SearchOperatorOr" xml:space="preserve">
+  <data name="SearchOperatorOr" xml:space="preserve">
     <value>Ou</value>
   </data>
-    <data name="SearchOperatorDescOr" xml:space="preserve">
+  <data name="SearchOperatorDescOr" xml:space="preserve">
     <value>Trouve les objets ayant un filtre ou plus</value>
   </data>
-    <data name="SearchOperatorDescAnd" xml:space="preserve">
+  <data name="SearchOperatorDescAnd" xml:space="preserve">
     <value>Trouve les objets ayant tous les filtres</value>
   </data>
-    <data name="GlobalExpandAll" xml:space="preserve">
+  <data name="GlobalExpandAll" xml:space="preserve">
     <value>Ouvrir tout</value>
   </data>
-    <data name="GlobalCollapseAll" xml:space="preserve">
+  <data name="GlobalCollapseAll" xml:space="preserve">
     <value>Fermer tout</value>
   </data>
-    <data name="SearchReduceCategoriesDuringSelection" xml:space="preserve">
+  <data name="SearchReduceCategoriesDuringSelection" xml:space="preserve">
     <value>Réduit les catégories durant la sélection</value>
   </data>
-    <data name="SearchVisibleElementsPerCategory" xml:space="preserve">
+  <data name="SearchVisibleElementsPerCategory" xml:space="preserve">
     <value>Eléments visibles/catégorie</value>
   </data>
-    <data name="SearchQueries" xml:space="preserve">
+  <data name="SearchQueries" xml:space="preserve">
     <value>Requêtes</value>
   </data>
-    <data name="GlobalSave" xml:space="preserve">
+  <data name="GlobalSave" xml:space="preserve">
     <value>Sauvegarder</value>
   </data>
-    <data name="GlobalBaseAttribute" xml:space="preserve">
+  <data name="GlobalBaseAttribute" xml:space="preserve">
     <value>Attribut de Base</value>
   </data>
-    <data name="GlobalPrefix" xml:space="preserve">
+  <data name="GlobalPrefix" xml:space="preserve">
     <value>Préfixe</value>
   </data>
-    <data name="GlobalPrefixName" xml:space="preserve">
+  <data name="GlobalPrefixName" xml:space="preserve">
     <value>Nom Préfixe</value>
   </data>
-    <data name="GlobalSuffix" xml:space="preserve">
+  <data name="GlobalSuffix" xml:space="preserve">
     <value>Suffixe</value>
   </data>
-    <data name="GlobalSuffixName" xml:space="preserve">
+  <data name="GlobalSuffixName" xml:space="preserve">
     <value>Nom Suffixe</value>
   </data>
-    <data name="GlobalRarity" xml:space="preserve">
+  <data name="GlobalRarity" xml:space="preserve">
     <value>Rareté</value>
   </data>
-    <data name="SearchHavingCharm" xml:space="preserve">
+  <data name="SearchHavingCharm" xml:space="preserve">
     <value>Avec Charme</value>
   </data>
-    <data name="SearchHavingRelic" xml:space="preserve">
+  <data name="SearchHavingRelic" xml:space="preserve">
     <value>Avec Relique</value>
   </data>
-    <data name="SearchBuildingData" xml:space="preserve">
+  <data name="SearchBuildingData" xml:space="preserve">
     <value>Création des données</value>
   </data>
-    <data name="SearchEngineReady" xml:space="preserve">
+  <data name="SearchEngineReady" xml:space="preserve">
     <value>Le moteur de recherche est prêt</value>
   </data>
-    <data name="SearchItemCountIs" xml:space="preserve">
+  <data name="SearchItemCountIs" xml:space="preserve">
     <value>{0} objets trouvés</value>
   </data>
-    <data name="SearchTooManyResultToDisplay" xml:space="preserve">
+  <data name="SearchTooManyResultToDisplay" xml:space="preserve">
     <value>Il y a trop de résultats à afficher.{^N}Ajustez votre recherche.</value>
   </data>
-    <data name="SearchQueryNameMustBeSet" xml:space="preserve">
+  <data name="SearchQueryNameMustBeSet" xml:space="preserve">
     <value>Le nom de la requête doit être saisi.</value>
   </data>
-    <data name="SearchQueryNameAlreadyExist" xml:space="preserve">
+  <data name="SearchQueryNameAlreadyExist" xml:space="preserve">
     <value>Le nom de la requête existe déjà. Voulez vous l'écraser ?</value>
   </data>
-    <data name="GlobalDeleteConfirm" xml:space="preserve">
+  <data name="GlobalDeleteConfirm" xml:space="preserve">
     <value>Etes-vous sûr de vouloir supprimer "{0}" ?</value>
   </data>
-    <data name="SettingsEnableHotReload" xml:space="preserve">
+  <data name="SettingsEnableHotReload" xml:space="preserve">
     <value>Active le rechargement dynamique des sauvegardes</value>
   </data>
-    <data name="SettingsEnableHotReloadTT" xml:space="preserve">
+  <data name="SettingsEnableHotReloadTT" xml:space="preserve">
     <value>Les modifications des fichiers de sauvegarde du jeu (Player, Stash, Transfer Stash, Relic Stash) son visibles en temps réel dans TQVaultAE.
 Au cas ou vous auriez des modifications non sauvegardées dans TQVaultAE, les modifications dans le jeu l'emportent et les écrasent.
 Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les fichiers sauvegarde.
     </value>
   </data>
-    <data name="ItemEmbers" xml:space="preserve">
+  <data name="ItemEmbers" xml:space="preserve">
     <value>Objet Eternal Embers</value>
   </data>
-    <data name="MainFormHighlightLabelText" xml:space="preserve">
+  <data name="MainFormHighlightLabelText" xml:space="preserve">
     <value>Mettre en évidence les objets ayants :</value>
   </data>
-    <data name="DuplicateCharacter_SourceRequired" xml:space="preserve">
+  <data name="DuplicateCharacter_SourceRequired" xml:space="preserve">
     <value>Un personnage source doit être sélectionné.</value>
   </data>
-    <data name="DuplicateCharacter_ModalTitle" xml:space="preserve">
+  <data name="DuplicateCharacter_ModalTitle" xml:space="preserve">
     <value>Duplication de personnage</value>
   </data>
-    <data name="DuplicateCharacter_NewNameRequired" xml:space="preserve">
+  <data name="DuplicateCharacter_NewNameRequired" xml:space="preserve">
     <value>Saisisez le nom du nouveau personnage.</value>
   </data>
-    <data name="DuplicateCharacter_NewNameMustBeValid" xml:space="preserve">
+  <data name="DuplicateCharacter_NewNameMustBeValid" xml:space="preserve">
     <value>Le nouveau nom doit être valide !</value>
   </data>
-    <data name="DuplicateCharacter_Error" xml:space="preserve">
+  <data name="DuplicateCharacter_Error" xml:space="preserve">
     <value>Erreur durant la duplication du personnage.</value>
   </data>
-    <data name="DuplicateCharacter_ButtonText" xml:space="preserve">
+  <data name="DuplicateCharacter_ButtonText" xml:space="preserve">
     <value>Dupliquer</value>
   </data>
-    <data name="DuplicateCharacter_NewNameAlreadyUsed" xml:space="preserve">
+  <data name="DuplicateCharacter_NewNameAlreadyUsed" xml:space="preserve">
     <value>Ce nom est déjà utilisé !</value>
   </data>
-    <data name="SavedAtNotification" xml:space="preserve">
+  <data name="SavedAtNotification" xml:space="preserve">
     <value>Sauvegardé le {0:g}</value>
   </data>
-    <data name="PlayerPanelChangeIcon" xml:space="preserve">
+  <data name="PlayerPanelChangeIcon" xml:space="preserve">
     <value>Modifier l'icône</value>
   </data>
-    <data name="BagButtonSettingsTitle" xml:space="preserve">
+  <data name="BagButtonSettingsTitle" xml:space="preserve">
     <value>Editeur de bouton</value>
   </data>
-    <data name="BagButtonSettingsValidationCaption" xml:space="preserve">
+  <data name="BagButtonSettingsValidationCaption" xml:space="preserve">
     <value>Bag Button Validation</value>
   </data>
-    <data name="BagButtonSettingsValidationMessage" xml:space="preserve">
+  <data name="BagButtonSettingsValidationMessage" xml:space="preserve">
     <value>les icones "On" et "Off" sont requis.
 "Libellé" peut l'être aussi.</value>
   </data>
-    <data name="BagButtonSettingsUseDefault" xml:space="preserve">
+  <data name="BagButtonSettingsUseDefault" xml:space="preserve">
     <value>Par défaut</value>
   </data>
-    <data name="BagButtonSettingsCustomIcon" xml:space="preserve">
+  <data name="BagButtonSettingsCustomIcon" xml:space="preserve">
     <value>Icône personalisée</value>
   </data>
-    <data name="BagButtonSettingsButtonProperties" xml:space="preserve">
+  <data name="BagButtonSettingsButtonProperties" xml:space="preserve">
     <value>Propriétés</value>
   </data>
-    <data name="BagButtonSettingsSelectedButton" xml:space="preserve">
+  <data name="BagButtonSettingsSelectedButton" xml:space="preserve">
     <value>Bouton sélectionné :</value>
   </data>
-    <data name="BagButtonSettingsNumber" xml:space="preserve">
+  <data name="BagButtonSettingsNumber" xml:space="preserve">
     <value>Numéro</value>
   </data>
-    <data name="BagButtonSettingsLabel" xml:space="preserve">
+  <data name="BagButtonSettingsLabel" xml:space="preserve">
     <value>Libellé :</value>
   </data>
-    <data name="BagButtonSettingsSelectedPictures" xml:space="preserve">
+  <data name="BagButtonSettingsSelectedPictures" xml:space="preserve">
     <value>Images sélectionnées</value>
   </data>
-    <data name="BagButtonSettingsModeSimple" xml:space="preserve">
+  <data name="BagButtonSettingsModeSimple" xml:space="preserve">
     <value>Simple</value>
   </data>
-    <data name="BagButtonSettingsModeDetailed" xml:space="preserve">
+  <data name="BagButtonSettingsModeDetailed" xml:space="preserve">
     <value>Détaillé</value>
   </data>
-    <data name="BagButtonSettingsOffBitmap" xml:space="preserve">
+  <data name="BagButtonSettingsOffBitmap" xml:space="preserve">
     <value>Off</value>
   </data>
-    <data name="BagButtonSettingsOnBitmap" xml:space="preserve">
+  <data name="BagButtonSettingsOnBitmap" xml:space="preserve">
     <value>On</value>
   </data>
-    <data name="BagButtonSettingsOverBitmap" xml:space="preserve">
+  <data name="BagButtonSettingsOverBitmap" xml:space="preserve">
     <value>Over</value>
   </data>
-    <data name="BagButtonSettingsImageBitmap" xml:space="preserve">
+  <data name="BagButtonSettingsImageBitmap" xml:space="preserve">
     <value>Image</value>
   </data>
-    <data name="BagButtonSettingsAvailablePictures" xml:space="preserve">
+  <data name="BagButtonSettingsAvailablePictures" xml:space="preserve">
     <value>Images disponibles</value>
   </data>
-    <data name="BagButtonSettingsDragDropNotice" xml:space="preserve">
+  <data name="BagButtonSettingsDragDropNotice" xml:space="preserve">
     <value>Glisser-Déposer dans l'espace "Images sélectionnées" ou [Clic-Droit] pour une sélection automatique</value>
   </data>
-    <data name="GlobalJewellery" xml:space="preserve">
+  <data name="GlobalJewellery" xml:space="preserve">
     <value>Bijoux</value>
   </data>
-    <data name="GlobalButtons" xml:space="preserve">
+  <data name="GlobalButtons" xml:space="preserve">
     <value>Boutons</value>
   </data>
-    <data name="GlobalMiscellaneous" xml:space="preserve">
+  <data name="GlobalMiscellaneous" xml:space="preserve">
     <value>Divers</value>
   </data>
-    <data name="PlayerPanelCopyIcon" xml:space="preserve">
+  <data name="PlayerPanelCopyIcon" xml:space="preserve">
     <value>Copier la configuration de l'icône</value>
   </data>
-    <data name="PlayerPanelPasteIcon" xml:space="preserve">
+  <data name="PlayerPanelPasteIcon" xml:space="preserve">
     <value>Coller la configuration de l'icône</value>
   </data>
-    <data name="GlobalCopied" xml:space="preserve">
+  <data name="GlobalCopied" xml:space="preserve">
     <value>Copié !</value>
   </data>
-    <data name="GlobalPasted" xml:space="preserve">
+  <data name="GlobalPasted" xml:space="preserve">
     <value>Collé !</value>
   </data>
-    <data name="TextTag_tagDye" xml:space="preserve">
+  <data name="TextTag_tagDye" xml:space="preserve">
     <value>Teinture</value>
   </data>
-    <data name="HighlightFiltersZeroToIgnore" xml:space="preserve">
+  <data name="HighlightFiltersZeroToIgnore" xml:space="preserve">
     <value>Utilisez "0" pour ignorer le filtre</value>
   </data>
-    <data name="GlobalMin" xml:space="preserve">
+  <data name="GlobalMin" xml:space="preserve">
     <value>Min</value>
   </data>
-    <data name="GlobalMax" xml:space="preserve">
+  <data name="GlobalMax" xml:space="preserve">
     <value>Max</value>
   </data>
-    <data name="GlobalRequirements" xml:space="preserve">
+  <data name="GlobalRequirements" xml:space="preserve">
     <value>Prérequis</value>
   </data>
-    <data name="ForgeGodMode" xml:space="preserve">
+  <data name="ForgeGodMode" xml:space="preserve">
     <value>Mode Divin</value>
   </data>
-    <data name="ForgeGodModeTT" xml:space="preserve">
+  <data name="ForgeGodModeTT" xml:space="preserve">
     <value>Permet l'utilisation de tous les types de propriétés dans tous les emplacements</value>
   </data>
-    <data name="ForgeRelaxMode" xml:space="preserve">
+  <data name="ForgeRelaxMode" xml:space="preserve">
     <value>Mode Relaxe</value>
   </data>
-    <data name="ForgeRelaxModeTT" xml:space="preserve">
+  <data name="ForgeRelaxModeTT" xml:space="preserve">
     <value>Permet l'utilisation d'une seconde relique sans le suffixe "{0}" et la modification d'un objet Epique ou Légendaire</value>
   </data>
-    <data name="ForgeStrictMode" xml:space="preserve">
+  <data name="ForgeStrictMode" xml:space="preserve">
     <value>Mode Strict</value>
   </data>
-    <data name="ForgeStrictModeTT" xml:space="preserve">
+  <data name="ForgeStrictModeTT" xml:space="preserve">
     <value>Restreint la Forge aux contraintes du jeu avec un twist</value>
   </data>
-    <data name="ForgeGameMode" xml:space="preserve">
+  <data name="ForgeGameMode" xml:space="preserve">
     <value>Mode Jeu</value>
   </data>
-    <data name="ForgeGameModeTT" xml:space="preserve">
+  <data name="ForgeGameModeTT" xml:space="preserve">
     <value>Restreint la Forge aux contraintes du jeu</value>
   </data>
 
-    <data name="ForgeUseBase" xml:space="preserve">
+  <data name="ForgeUseBase" xml:space="preserve">
     <value>Utilise Base</value>
   </data>
-    <data name="ForgeUsePrefix" xml:space="preserve">
+  <data name="ForgeUsePrefix" xml:space="preserve">
     <value>Utilise Prefix</value>
   </data>
-    <data name="ForgeUseSuffix" xml:space="preserve">
+  <data name="ForgeUseSuffix" xml:space="preserve">
     <value>Utilise Suffix</value>
   </data>
-    <data name="ForgeUseRelic1" xml:space="preserve">
+  <data name="ForgeUseRelic1" xml:space="preserve">
     <value>Utilise Relic1</value>
   </data>
-    <data name="ForgeUseRelic2" xml:space="preserve">
+  <data name="ForgeUseRelic2" xml:space="preserve">
     <value>Utilise Relic2</value>
   </data>
-    <data name="ForgeMustSelectBaseItem" xml:space="preserve">
+  <data name="ForgeMustSelectBaseItem" xml:space="preserve">
     <value>Vous devez sélectionner un objet de base!</value>
   </data>
-    <data name="ForgeMustSelectItemToMerge" xml:space="preserve">
+  <data name="ForgeMustSelectItemToMerge" xml:space="preserve">
     <value>Vous devez sélectionner un objet à fusionner!</value>
   </data>
-    <data name="ForgeMustHavePrefixOutsideOfGodMode" xml:space="preserve">
+  <data name="ForgeMustHavePrefixOutsideOfGodMode" xml:space="preserve">
     <value>Vous devez sélectionner un objet avec préfix!</value>
   </data>
-    <data name="ForgeMustHaveSuffixOutsideOfGodMode" xml:space="preserve">
+  <data name="ForgeMustHaveSuffixOutsideOfGodMode" xml:space="preserve">
     <value>Vous devez sélectionner un objet avec suffix!</value>
   </data>
-    <data name="ForgeMustHaveRelicInRelaxMode" xml:space="preserve">
+  <data name="ForgeMustHaveRelicInRelaxMode" xml:space="preserve">
     <value>Vous devez sélectionner un objet avec relique ou une relique!</value>
   </data>
-    <data name="ForgeMustBeRelicInStrictMode" xml:space="preserve">
+  <data name="ForgeMustBeRelicInStrictMode" xml:space="preserve">
     <value>Vous devez sélectionner une relique!</value>
   </data>
-    <data name="ForgeMustSelectArmorOrWeaponOrJewellery" xml:space="preserve">
+  <data name="ForgeMustSelectArmorOrWeaponOrJewellery" xml:space="preserve">
     <value>Vous devez sélectionner une Armure/Arme/Bijou !</value>
   </data>
-    <data name="ForgeMustSelectRelicOrItemWithRelic" xml:space="preserve">
+  <data name="ForgeMustSelectRelicOrItemWithRelic" xml:space="preserve">
     <value>Vous devez sélectionner une relique or un objet en ayant une!</value>
   </data>
-    <data name="ForgeMustHaveTinkeredSuffix" xml:space="preserve">
+  <data name="ForgeMustHaveTinkeredSuffix" xml:space="preserve">
     <value>Vous devez sélectionner un suffix "{0}" !</value>
   </data>
-    <data name="ForgeNoEpicLegendaryAllowed" xml:space="preserve">
+  <data name="ForgeNoEpicLegendaryAllowed" xml:space="preserve">
     <value>les objets Epiques and Légendaires ne sont pas autorisés en mode strict !</value>
   </data>
-    <data name="ForgeMustSelectBaseItemFirst" xml:space="preserve">
+  <data name="ForgeMustSelectBaseItemFirst" xml:space="preserve">
     <value>Vous devez sélectionner un objet de base en premier!</value>
   </data>
-    <data name="ForgeCantUsePrefixSuffixBetterThanBase" xml:space="preserve">
+  <data name="ForgeCantUsePrefixSuffixBetterThanBase" xml:space="preserve">
     <value>Vous ne pouvez pas utiliser un Prefix/Suffix meilleur que l'objet de base!</value>
   </data>
-    <data name="ForgeCantUsePrefixSuffixOfAnotherGearType" xml:space="preserve">
+  <data name="ForgeCantUsePrefixSuffixOfAnotherGearType" xml:space="preserve">
     <value>Vous devez utiliser un Prefix/Suffix de même type que l'objet de base!</value>
   </data>
-    <data name="ForgeRelicNotAllowed" xml:space="preserve">
+  <data name="ForgeRelicNotAllowed" xml:space="preserve">
     <value>Cette relique n'est pas autorisée sur cet objet!</value>
   </data>
-    <data name="ForgeItemMustBeStoredFirst" xml:space="preserve">
+  <data name="ForgeItemMustBeStoredFirst" xml:space="preserve">
     <value>L'objet doit être stocké d'abord !</value>
   </data>
-    <data name="ForgeCantUsePrefixSuffixOfAnotherBaseItem" xml:space="preserve">
+  <data name="ForgeCantUsePrefixSuffixOfAnotherBaseItem" xml:space="preserve">
     <value>Vous devez utiliser un Prefix/Suffix de même base que l'objet de base!</value>
   </data>
-    <data name="ForgeCantUsePrefixSuffixHavingGreaterReqLevelThanBaseItem" xml:space="preserve">
+  <data name="ForgeCantUsePrefixSuffixHavingGreaterReqLevelThanBaseItem" xml:space="preserve">
     <value>le "niveau requis" de l'objet doit être inférieur à celui de l'objet de base!</value>
   </data>
-    <data name="GlobalHardcore" xml:space="preserve">
+  <data name="GlobalHardcore" xml:space="preserve">
     <value>Hardcore</value>
   </data>
-    <data name="ForgeHardcoreTT" xml:space="preserve">
+  <data name="ForgeHardcoreTT" xml:space="preserve">
     <value>Les matériaux sont détruits durant le processus</value>
   </data>
-	<data name="ExportBagCSVToClipboard" xml:space="preserve">
+  <data name="ExportBagCSVToClipboard" xml:space="preserve">
     <value>Exporter l'onglet dans le presse papier</value>
   </data>
-	<data name="ExportVaultCSVToClipboard" xml:space="preserve">
+  <data name="ExportVaultCSVToClipboard" xml:space="preserve">
     <value>Exporter le coffre dans le presse papier</value>
   </data>
-	<data name="CSVExportedToClipboardNotification" xml:space="preserve">
+  <data name="CSVExportedToClipboardNotification" xml:space="preserve">
     <value>CSV exporté vers le presse papier à {0:g}</value>
   </data>
-	<data name="SettingsCsvDelimiterLabel" xml:space="preserve">
+  <data name="SettingsCsvDelimiterLabel" xml:space="preserve">
     <value>Délimiteur CSV</value>
   </data>
   <data name="AffixesDisplayByName" xml:space="preserve">
@@ -1462,5 +1462,11 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   </data>
   <data name="AffixesDisplayByEffect" xml:space="preserve">
     <value>Affiche les affixes par effets</value>
+  </data>
+  <data name="SettingsEnableEpicLegendaryAffixes" xml:space="preserve">
+    <value>Autorise les affixes sur Épiques et Légendaires</value>
+  </data>
+  <data name="SettingsEnableEpicLegendaryAffixesTT" xml:space="preserve">
+    <value>Permet la sélection des affixes via le menu contextuel sur les objets Épiques et Légendaires</value>
   </data>
 </root>

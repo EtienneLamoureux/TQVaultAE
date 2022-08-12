@@ -143,5 +143,8 @@
     <Setting Name="CSVDelimiter" Type="System.String" Scope="User">
       <Value Profile="(Default)">Comma</Value>
     </Setting>
+    <Setting Name="EnableEpicLegendaryAffixes" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

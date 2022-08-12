@@ -143,8 +143,8 @@ public static class StringHelper
 	// Orderered by word length
 	static string PrettyFileNameRegExLowerCaseStartPattern = @"
 (?<Start>
-	intelligence|mobility|protection|impairment|elemental|offensive|defensive|dexterity|
-	cooldown|mastery|current|protect|defense|offense|reflect|
+	intelligence|protection|impairment|offensive|defensive|dexterity|elemental|
+	mobility|cooldown|mastery|current|protect|defense|offense|reflect|
 	damage|energy|pierce|guards|neidan|resist|health|poison|weapon|plants|hermes|sandal|
 	armor|chance|runes|dream|bleed|total|bonus|woods|multi|relic|light|attac|speed|reduc|block|equip|
 	clubs|sleep|metal|leech|regen|dodge|retal|
@@ -166,11 +166,11 @@ public static class StringHelper
 		filename = PrettyFileNameRegExNumber.Replace(filename, "(${number})");// Enclose Numbers
 
 		var filenameSplit1 = PrettyFileNameRegExTitleCaseStart
-			.Replace(filename, " ${TitleCaseStart}")// Add space on Title Case
+			.Replace(filename, ' ' + "${TitleCaseStart}")// Add space on Title Case
 				.Split(_Delim, StringSplitOptions.RemoveEmptyEntries);// Split on spaces
 
 		var filenameSplit2 = filenameSplit1.SelectMany(w => PrettyFileNameRegExLowerCaseStart
-			.Replace(w, " ${Start}") // Add space on word begining for non TitleCase words
+			.Replace(w, ' ' + "${Start}") // Add space on word begining for non TitleCase words
 				.Split(_Delim, StringSplitOptions.RemoveEmptyEntries)// Split on spaces
 			);
 

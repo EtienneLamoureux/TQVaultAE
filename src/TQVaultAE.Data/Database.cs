@@ -32,6 +32,7 @@ public class Database : IDatabase
 
 	#region Record Class Names
 
+	private const string RCLASS_LOOTRANDOMIZERTABLE = "LootRandomizerTable";
 	private const string RCLASS_LOOTRANDOMIZER = "LootRandomizer";
 	private const string RCLASS_LOOTITEMTABLE_FIXEDWEIGHT = "LootItemTable_FixedWeight";
 	private const string RCLASS_LOOTITEMTABLE_DYNWEIGHT = "LootItemTable_DynWeight";
@@ -103,8 +104,36 @@ public class Database : IDatabase
 		this.LoadDBFile();
 	}
 
-
 	#region Database Properties
+
+	ReadOnlyDictionary<RecordId, DBRecordCollection> _LootRandomizerTableList;
+	public ReadOnlyDictionary<RecordId, DBRecordCollection> AllLootRandomizerTable
+	{
+		get
+		{
+			if (_LootRandomizerTableList is null)
+				_LootRandomizerTableList = ReadAllLootRandomizerTable();
+
+			return _LootRandomizerTableList;
+		}
+	}
+
+	ReadOnlyCollection<LootRandomizerItem> _LootRandomizerList;
+	public ReadOnlyCollection<LootRandomizerItem> AllLootRandomizer
+	{
+		get
+		{
+			if (_LootRandomizerList is null)
+				_LootRandomizerList = ReadAllLootRandomizer();
+
+			return _LootRandomizerList;
+		}
+	}
+
+	/// <summary>
+	/// Mapping between gear type and Affixes LootTable
+	/// </summary>
+	//private static ReadOnlyDictionary<GearType, ReadOnlyCollection<AffixTableMapItem>> ItemAffixTableMap;
 
 	/// <summary>
 	/// Mapping between ItemId and Affixes LootTable
@@ -322,55 +351,81 @@ public class Database : IDatabase
 	}
 
 	/// <summary>
+	/// Extract all loot randomizer table (Affix effect infos)
+	/// </summary>
+	/// <returns></returns>
+	private ReadOnlyDictionary<RecordId, DBRecordCollection> ReadAllLootRandomizerTable()
+	{
+		// Load all available loot randomizer table
+		var lootRandomizerTableList = new[] { this.ArzFileMod, this.ArzFile }
+		.Where(db => db is not null)
+		.SelectMany(db =>
+			db.RecordInfo.Where(r => r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZERTABLE, noCase))
+		)
+		.Select(r =>
+		{
+			var DBRecords = GetRecordFromFile(r.Key);
+
+			if (DBRecords is null)
+				Log.LogError(@"Unknown {RCLASS_LOOTRANDOMIZERTABLE} record ""{RecordId}""", RCLASS_LOOTRANDOMIZERTABLE, r.Key);
+
+			return (r.Key, DBRecords);
+		}).ToDictionary(r => r.Key, r => r.DBRecords);
+
+		return new ReadOnlyDictionary<RecordId, DBRecordCollection>(lootRandomizerTableList);
+	}
+
+
+	/// <summary>
 	/// Extract all LootRandomizer
 	/// </summary>
 	/// <returns></returns>
-	public ReadOnlyCollection<LootRandomizerItem> ReadLootRandomizerList()
+	private ReadOnlyCollection<LootRandomizerItem> ReadAllLootRandomizer()
 	{
 		// Load all available loot randomizer
 		var lootRandomizerList = new[] { this.ArzFileMod, this.ArzFile }
-			.Where(db => db is not null)
-			.SelectMany(db =>
-				db.RecordInfo.Where(r => r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZER, noCase))
-			)
-			.Select(r =>
+		.Where(db => db is not null)
+		.SelectMany(db =>
+			db.RecordInfo.Where(r => r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZER, noCase))
+		)
+		.Select(r =>
+		{
+			var rec = GetRecordFromFile(r.Key);
+
+			if (rec is null)
 			{
-				var rec = GetRecordFromFile(r.Key);
+				Log.LogError(@"Unknown {RCLASS_LOOTRANDOMIZER} record ""{RecordId}""", RCLASS_LOOTRANDOMIZER, r.Key);
+				return LootRandomizerItem.Default(r.Key);
+			}
 
-				if (rec is null)
-				{
-					Log.LogError(@"Unknown {RCLASS_LOOTRANDOMIZER} record ""{RecordId}""", RCLASS_LOOTRANDOMIZER, r.Key);
-					return LootRandomizerItem.Default(r.Key);
-				}
+			string Tag = rec.GetString(Variable.KEY_LOOTRANDNAME, 0);
+			int Cost = rec.GetInt32(Variable.KEY_LOOTRANDCOST, 0);
+			int LevelRequirement = rec.GetInt32(Variable.KEY_LEVELREQ, 0);
+			string ItemClass = rec.GetString(Variable.KEY_ITEMCLASS, 0);
+			string FileDescription = rec.GetString(Variable.KEY_FILEDESC, 0);
 
-				string Tag = rec.GetString(Variable.KEY_LOOTRANDNAME, 0);
-				int Cost = rec.GetInt32(Variable.KEY_LOOTRANDCOST, 0);
-				int LevelRequirement = rec.GetInt32(Variable.KEY_LEVELREQ, 0);
-				string ItemClass = rec.GetString(Variable.KEY_ITEMCLASS, 0);
-				string FileDescription = rec.GetString(Variable.KEY_FILEDESC, 0);
+			var hasNoVisualData = string.IsNullOrWhiteSpace(Tag)
+				&& string.IsNullOrWhiteSpace(ItemClass)
+				&& string.IsNullOrWhiteSpace(FileDescription)
+				&& Cost == 0
+				&& LevelRequirement == 0;
 
-				var hasNoVisualData = string.IsNullOrWhiteSpace(Tag)
-					&& string.IsNullOrWhiteSpace(ItemClass)
-					&& string.IsNullOrWhiteSpace(FileDescription)
-					&& Cost == 0
-					&& LevelRequirement == 0;
+			if (hasNoVisualData)
+				return LootRandomizerItem.Default(r.Key);
 
-				if (hasNoVisualData)
-					return LootRandomizerItem.Default(r.Key);
+			var val = new LootRandomizerItem(
+				r.Key
+				, Tag
+				, Cost
+				, LevelRequirement
+				, ItemClass
+				, FileDescription
+				, r.Key.PrettyFileName
+			);
 
-				var val = new LootRandomizerItem(
-					r.Key
-					, Tag
-					, Cost
-					, LevelRequirement
-					, ItemClass
-					, FileDescription
-					, r.Key.PrettyFileName
-				);
-
-				return val;
-			})
-			.ToList().AsReadOnly();
+			return val;
+		})
+		.ToList().AsReadOnly();
 
 		return lootRandomizerList;
 	}

@@ -4421,6 +4421,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable Epic and Legendary affixes.
+        /// </summary>
+        public static string SettingsEnableEpicLegendaryAffixes {
+            get {
+                return ResourceManager.GetString("SettingsEnableEpicLegendaryAffixes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow affixes pickup on Epic and Legendary items.
+        /// </summary>
+        public static string SettingsEnableEpicLegendaryAffixesTT {
+            get {
+                return ResourceManager.GetString("SettingsEnableEpicLegendaryAffixesTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Allow Hot Reload Features.
         /// </summary>
         public static string SettingsEnableHotReload {

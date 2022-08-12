@@ -1044,6 +1044,7 @@ Debug Levels
 
 		string title = string.Empty;
 		string message = string.Empty;
+
 		if (settingsDialog.ShowDialog() == DialogResult.OK && settingsDialog.ConfigurationChanged)
 		{
 			if (settingsDialog.PlayerFilterChanged)

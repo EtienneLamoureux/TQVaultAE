@@ -60,6 +60,11 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	private bool allowItemEdit;
 
 	/// <summary>
+	/// Indicates that the <see cref="Config.Settings.EnableEpicLegendaryAffixes"/> setting has been changed
+	/// </summary>
+	public bool EnableEpicLegendaryAffixes;
+
+	/// <summary>
 	/// Indicates whether character editing is allowed
 	/// </summary>
 	private bool allowCharacterEdit;
@@ -247,7 +252,9 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.EnableItemRequirementRestrictionCheckBox.Font =
 		this.ItemBGColorOpacityLabel.Font =
 		this.scalingLabelCSVDelim.Font =
-		this.scalingComboBoxCSVDelim.Font = FontService.GetFontLight(11.25F);
+		this.scalingComboBoxCSVDelim.Font =
+		this.scalingCheckBoxEnableEpicLegendaryAffixes.Font =
+			FontService.GetFontLight(11.25F);
 		this.Font = FontService.GetFontLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
 
 		#endregion
@@ -291,6 +298,9 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.toolTip.SetToolTip(this.hotReloadCheckBox, Resources.SettingsEnableHotReloadTT);
 
 		this.scalingLabelCSVDelim.Text = Resources.SettingsCsvDelimiterLabel;
+
+		this.scalingCheckBoxEnableEpicLegendaryAffixes.Text = Resources.SettingsEnableEpicLegendaryAffixes;
+		this.toolTip.SetToolTip(this.scalingCheckBoxEnableEpicLegendaryAffixes, Resources.SettingsEnableEpicLegendaryAffixesTT);
 
 		this.cancelButton.Text = Resources.GlobalCancel;
 		this.okayButton.Text = Resources.GlobalOK;
@@ -420,6 +430,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.enableItemRequirementRestriction = Config.Settings.Default.EnableItemRequirementRestriction;
 		this.enableHotReload = Config.Settings.Default.EnableHotReload;
 		this.enableTQVaultSounds = Config.Settings.Default.EnableTQVaultSounds;
+		this.EnableEpicLegendaryAffixes = Config.Settings.Default.EnableEpicLegendaryAffixes;
 
 		// Force English since there was some issue with getting the proper language setting.
 		var gl = Database.GameLanguage;
@@ -490,6 +501,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.EnableItemRequirementRestrictionCheckBox.Checked = this.enableItemRequirementRestriction;
 		this.hotReloadCheckBox.Checked = this.enableHotReload;
 		this.scalingCheckBoxEnableSounds.Checked = this.enableTQVaultSounds;
+		this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked = this.EnableEpicLegendaryAffixes;
 
 		this.enableCustomMapsCheckBox.Checked = this.enableMods;
 
@@ -567,6 +579,9 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 			Config.Settings.Default.EnableHotReload = this.enableHotReload;
 			Config.Settings.Default.EnableTQVaultSounds = this.enableTQVaultSounds;
 
+			Config.Settings.Default.EnableEpicLegendaryAffixes =
+				this.scalingCheckBoxEnableEpicLegendaryAffixes.Enabled && this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked;
+
 			var delim = (ComboBoxItem<CsvDelimiter, char>)this.scalingComboBoxCSVDelim.SelectedItem;
 			Config.Settings.Default.CSVDelimiter = delim.ComboValue.ToString();
 		}
@@ -585,6 +600,8 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 			{
 				this.ConfigurationChanged = this.allowItemEdit = true;
 			}
+
+			this.scalingCheckBoxEnableEpicLegendaryAffixes.Enabled = true;
 		}
 		else
 		{
@@ -593,7 +610,10 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 				this.allowItemEdit = false;
 				this.ConfigurationChanged = true;
 			}
+
+			this.scalingCheckBoxEnableEpicLegendaryAffixes.Enabled = false;
 		}
+
 	}
 
 	/// <summary>
@@ -1024,6 +1044,20 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		{
 			this.enableHotReload = false;
 			this.ConfigurationChanged = this.EnableHotReloadChanged = this.UISettingChanged = true;// Force restart
+		}
+	}
+	private void scalingCheckBoxEnableEpicLegendaryAffixes_CheckedChanged(object sender, EventArgs e)
+	{
+		if (this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked && !this.EnableEpicLegendaryAffixes)
+		{
+			this.EnableEpicLegendaryAffixes = this.ConfigurationChanged = true;
+			return;
+		}
+
+		if (!this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked && this.EnableEpicLegendaryAffixes)
+		{
+			this.EnableEpicLegendaryAffixes = false;
+			this.ConfigurationChanged = true;
 		}
 	}
 

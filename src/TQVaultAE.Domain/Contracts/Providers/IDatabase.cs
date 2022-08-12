@@ -8,8 +8,12 @@ public interface IDatabase
 	/// <summary>
 	/// Return all loot randomizer (Affix effect infos)
 	/// </summary>
-	/// <returns></returns>
-	ReadOnlyCollection<LootRandomizerItem> ReadLootRandomizerList();
+	ReadOnlyCollection<LootRandomizerItem> AllLootRandomizer { get; }
+	/// <summary>
+	/// Return all loot randomizer table records (Affix effect infos)
+	/// </summary>
+	ReadOnlyDictionary<RecordId, DBRecordCollection> AllLootRandomizerTable { get; }
+
 	/// <summary>
 	/// Return all affixes loot table of <paramref name="itemId"/>
 	/// </summary>
