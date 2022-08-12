@@ -28,7 +28,7 @@ namespace TQVaultAE.Domain.Entities
 		[JsonIgnore]
 		public RecordId On
 		{
-			get => OnStr.ToRecordId();
+			get => OnStr;
 			set => OnStr = value?.Raw ?? string.Empty;
 		}
 
@@ -41,7 +41,7 @@ namespace TQVaultAE.Domain.Entities
 		[JsonIgnore]
 		public RecordId Off
 		{
-			get => OffStr.ToRecordId();
+			get => OffStr;
 			set => OffStr = value?.Raw ?? string.Empty;
 		}
 
@@ -54,7 +54,7 @@ namespace TQVaultAE.Domain.Entities
 		[JsonIgnore]
 		public RecordId Over
 		{
-			get => OverStr.ToRecordId();
+			get => OverStr;
 			set => OverStr = value?.Raw ?? string.Empty;
 		}
 	}

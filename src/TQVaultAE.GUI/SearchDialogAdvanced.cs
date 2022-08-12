@@ -1397,6 +1397,8 @@ public partial class SearchDialogAdvanced : VaultForm
 
 		scalingComboBoxQueryList.Items.RemoveAt(idx);
 		this._Queries.RemoveAt(idx);
+
+		SavePersonnalQueries();
 	}
 
 	private void scalingComboBoxQueryList_SelectedIndexChanged(object sender, EventArgs e)

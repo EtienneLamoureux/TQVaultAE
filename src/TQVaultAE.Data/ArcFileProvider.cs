@@ -86,7 +86,7 @@ namespace TQVaultAE.Data
 					this.ReadARCToC(file);
 
 				string dataID = string.Concat(Path.GetFileNameWithoutExtension(file.FileName), "\\", record.Raw);
-				byte[] data = this.GetData(file, dataID.ToRecordId());
+				byte[] data = this.GetData(file, dataID);
 				if (data == null)
 					return;
 
@@ -141,7 +141,7 @@ namespace TQVaultAE.Data
 			// First strip off the leading folder since it is just the ARC name
 			int firstPathDelim = dataId.Normalized.IndexOf('\\');
 			if (firstPathDelim != -1)
-				dataId = dataId.Normalized.Substring(firstPathDelim + 1).ToRecordId();
+				dataId = dataId.Normalized.Substring(firstPathDelim + 1);
 
 			// Now see if this file is in the toc.
 			ArcDirEntry directoryEntry;
@@ -239,7 +239,7 @@ namespace TQVaultAE.Data
 					RecordId dataID = string.Concat(
 						Path.GetFileNameWithoutExtension(file.FileName), "\\"
 						, dirEntry.FileName.Raw
-					).ToRecordId();
+					);
 
 					if (TQDebug.ArcFileDebugLevel > 1)
 					{
@@ -548,7 +548,7 @@ namespace TQVaultAE.Data
 								else
 									newfile = string.Format(CultureInfo.InvariantCulture, "Null File {0}", i);
 
-								records[i].FileName = newfile.ToRecordId();
+								records[i].FileName = newfile;
 
 								if (TQDebug.ArcFileDebugLevel > 2)
 									Log.LogDebug("Name {0:n0} = '{1}'", i, records[i].FileName);

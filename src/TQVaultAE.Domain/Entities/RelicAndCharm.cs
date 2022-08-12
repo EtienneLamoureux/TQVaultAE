@@ -3153,10 +3153,9 @@ public static class RelicAndCharmExtension
 		.Select(m =>
 		{
 			var idStr = m.AsString(EnumsNET.EnumFormat.Description);
-			var id = idStr.ToRecordId();
 			return new RelicAndCharmMapItem(
 				m.Value,
-				RecordId: id,
+				RecordId: idStr,
 				Types: m.Attributes.Get<GearTypeAttribute>().Type
 			);
 		}).ToList().AsReadOnly();

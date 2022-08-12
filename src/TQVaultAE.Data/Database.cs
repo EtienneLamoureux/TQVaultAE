@@ -384,48 +384,48 @@ public class Database : IDatabase
 	{
 		// Load all available loot randomizer
 		var lootRandomizerList = new[] { this.ArzFileMod, this.ArzFile }
-		.Where(db => db is not null)
-		.SelectMany(db =>
-			db.RecordInfo.Where(r => r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZER, noCase))
-		)
-		.Select(r =>
-		{
-			var rec = GetRecordFromFile(r.Key);
-
-			if (rec is null)
+			.Where(db => db is not null)
+			.SelectMany(db =>
+				db.RecordInfo.Where(r => r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZER, noCase))
+			)
+			.Select(r =>
 			{
-				Log.LogError(@"Unknown {RCLASS_LOOTRANDOMIZER} record ""{RecordId}""", RCLASS_LOOTRANDOMIZER, r.Key);
-				return LootRandomizerItem.Default(r.Key);
-			}
+				var rec = GetRecordFromFile(r.Key);
 
-			string Tag = rec.GetString(Variable.KEY_LOOTRANDNAME, 0);
-			int Cost = rec.GetInt32(Variable.KEY_LOOTRANDCOST, 0);
-			int LevelRequirement = rec.GetInt32(Variable.KEY_LEVELREQ, 0);
-			string ItemClass = rec.GetString(Variable.KEY_ITEMCLASS, 0);
-			string FileDescription = rec.GetString(Variable.KEY_FILEDESC, 0);
+				if (rec is null)
+				{
+					Log.LogError(@"Unknown {RCLASS_LOOTRANDOMIZER} record ""{RecordId}""", RCLASS_LOOTRANDOMIZER, r.Key);
+					return LootRandomizerItem.Default(r.Key);
+				}
 
-			var hasNoVisualData = string.IsNullOrWhiteSpace(Tag)
-				&& string.IsNullOrWhiteSpace(ItemClass)
-				&& string.IsNullOrWhiteSpace(FileDescription)
-				&& Cost == 0
-				&& LevelRequirement == 0;
+				string Tag = rec.GetString(Variable.KEY_LOOTRANDNAME, 0);
+				int Cost = rec.GetInt32(Variable.KEY_LOOTRANDCOST, 0);
+				int LevelRequirement = rec.GetInt32(Variable.KEY_LEVELREQ, 0);
+				string ItemClass = rec.GetString(Variable.KEY_ITEMCLASS, 0);
+				string FileDescription = rec.GetString(Variable.KEY_FILEDESC, 0);
 
-			if (hasNoVisualData)
-				return LootRandomizerItem.Default(r.Key);
+				var hasNoVisualData = string.IsNullOrWhiteSpace(Tag)
+					&& string.IsNullOrWhiteSpace(ItemClass)
+					&& string.IsNullOrWhiteSpace(FileDescription)
+					&& Cost == 0
+					&& LevelRequirement == 0;
 
-			var val = new LootRandomizerItem(
-				r.Key
-				, Tag
-				, Cost
-				, LevelRequirement
-				, ItemClass
-				, FileDescription
-				, r.Key.PrettyFileName
-			);
+				if (hasNoVisualData)
+					return LootRandomizerItem.Default(r.Key);
 
-			return val;
-		})
-		.ToList().AsReadOnly();
+				var val = new LootRandomizerItem(
+					r.Key
+					, Tag
+					, Cost
+					, LevelRequirement
+					, ItemClass
+					, FileDescription
+					, r.Key.PrettyFileName
+				);
+
+				return val;
+			})
+			.ToList().AsReadOnly();
 
 		return lootRandomizerList;
 	}
@@ -458,14 +458,14 @@ public class Database : IDatabase
 				{
 					case RCLASS_LOOTITEMTABLE_FIXEDWEIGHT:
 						foreach (var variable in rec)
-						{
+							{
 							if (variable.Name.StartsWith("lootName", noCase))
 							{
 								var lootName = variable.GetString(0);
 
 								if (!string.IsNullOrWhiteSpace(lootName))
 									lootNames.Add(lootName.ToRecordId());
-							}
+						}
 						}
 						break;
 					default: // LootItemTable_DynWeight
@@ -487,16 +487,14 @@ public class Database : IDatabase
 						{
 							var num = variable.Name.Substring(varname.Length);
 
-							var tableId = brokenTable.ToRecordId();
-
 							if (dico.Keys.Contains(num))
 							{// ValueTuple are not ref
 								var val = dico[num];
-								val.brokenRandomizerName = tableId;
+								val.brokenRandomizerName = brokenTable;
 								dico[num] = val;
 							}
 							else
-								dico.Add(num, (tableId, RecordId.Empty, RecordId.Empty));
+								dico.Add(num, (brokenTable, RecordId.Empty, RecordId.Empty));
 						}
 						continue;
 					}
@@ -509,16 +507,14 @@ public class Database : IDatabase
 						{
 							var num = variable.Name.Substring(varname.Length);
 
-							var tableId = prefixTable.ToRecordId();
-
 							if (dico.Keys.Contains(num))
 							{// ValueTuple are not ref
 								var val = dico[num];
-								val.prefixRandomizerName = tableId;
+								val.prefixRandomizerName = prefixTable;
 								dico[num] = val;
 							}
 							else
-								dico.Add(num, (RecordId.Empty, tableId, RecordId.Empty));
+								dico.Add(num, (RecordId.Empty, prefixTable, RecordId.Empty));
 						}
 						continue;
 					}
@@ -531,16 +527,14 @@ public class Database : IDatabase
 						{
 							var num = variable.Name.Substring(varname.Length);
 
-							var tableId = suffixTable.ToRecordId();
-
 							if (dico.Keys.Contains(num))
 							{// ValueTuple are not ref
 								var val = dico[num];
-								val.suffixRandomizerName = tableId;
+								val.suffixRandomizerName = suffixTable;
 								dico[num] = val;
 							}
 							else
-								dico.Add(num, (RecordId.Empty, RecordId.Empty, tableId));
+								dico.Add(num, (RecordId.Empty, RecordId.Empty, suffixTable));
 						}
 					}
 				}
@@ -701,7 +695,7 @@ public class Database : IDatabase
 						return null;
 
 					arcFileBase = resourceIdSplited[1];
-					key = resourceIdSplited.Skip(1).JoinString("\\").ToRecordId();
+					key = resourceIdSplited.Skip(1).JoinString("\\");
 				}
 
 				arcFileData = this.ReadARCFile(arcFile, key);
@@ -1155,7 +1149,7 @@ public class Database : IDatabase
 		if (TQDebug.DatabaseDebugLevel > 0)
 			Log.LogDebug("Database.ParseTextDB({0}, {1})", databaseFile, filename);
 
-		byte[] data = this.ReadARCFile(databaseFile, filename.ToRecordId());
+		byte[] data = this.ReadARCFile(databaseFile, filename);
 
 		if (data == null)
 		{

@@ -121,4 +121,7 @@ public class RecordId : IEquatable<RecordId>, IComparable, IComparable<RecordId>
 
 	#endregion
 
+	public static implicit operator string (RecordId recordId) => recordId.Raw;
+	public static implicit operator RecordId(string recordId) => Create(recordId);
+
 }

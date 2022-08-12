@@ -19,7 +19,7 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 	private readonly IDatabase Database;
 	private readonly ITranslationService TranslationService;
 
-	private Dictionary<RecordId, LootTableCollection> LootTableCache;
+	private Dictionary<RecordId, LootTableCollection> LootTableCache = new();
 
 	ReadOnlyDictionary<RecordId, LootTableCollection> _AllLootRandomizerTable;
 	public ReadOnlyDictionary<RecordId, LootTableCollection> AllLootRandomizerTable
@@ -158,7 +158,6 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 
 		return Data;
 	}
-
 
 	/// <summary>
 	/// Builds the table from the database using the passed table Id.

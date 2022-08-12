@@ -244,7 +244,7 @@ namespace TQVaultAE.Presentation
 			return bitmap;
 		}
 
-		static readonly RecordId LoadRelicOverlayBitmapId = "Items\\Relic\\ItemRelicOverlay.tex".ToRecordId();
+		static readonly RecordId LoadRelicOverlayBitmapId = "Items\\Relic\\ItemRelicOverlay.tex";
 		/// <summary>
 		/// Loads the relic overlay bitmap from the database.
 		/// </summary>

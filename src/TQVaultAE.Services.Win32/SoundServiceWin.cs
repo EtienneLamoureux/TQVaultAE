@@ -57,7 +57,7 @@ namespace TQVaultAE.Services.Win32
 			//@"Sounds\UI\UI_WEAPONSWAP.WAV",
 		}.Select(r => r.ToRecordId()).ToArray();
 
-		private static readonly RecordId SoundLevelUp = @"Sounds\UI\UI_LEVELUP.MP3".ToRecordId();
+		private static readonly RecordId SoundLevelUp = @"Sounds\UI\UI_LEVELUP.MP3";
 
 		private static SoundPlayer[] SoundPoolMetalHit;
 		private static SoundPlayer[] SoundPoolItemDrop;
@@ -80,15 +80,15 @@ namespace TQVaultAE.Services.Win32
 		}
 
 		public void InitAllPlayers()
-		{
+			{
 			LoadedPlayers.Clear();
 
-			SoundPoolMetalHit = InitPlayers(SoundPoolMetalHitIds);
-			SoundPoolItemDrop = InitPlayers(SoundPoolItemDropIds);
-			SoundPoolRelicDrop = InitPlayers(SoundPoolRelicDropIds);
-			SoundPoolVoice = InitPlayers(SoundPoolVoiceIds);
-			SoundPoolCancel = InitPlayers(SoundPoolCancelIds);
-		}
+				SoundPoolMetalHit = InitPlayers(SoundPoolMetalHitIds);
+				SoundPoolItemDrop = InitPlayers(SoundPoolItemDropIds);
+				SoundPoolRelicDrop = InitPlayers(SoundPoolRelicDropIds);
+				SoundPoolVoice = InitPlayers(SoundPoolVoiceIds);
+				SoundPoolCancel = InitPlayers(SoundPoolCancelIds);
+			}
 
 		private SoundPlayer[] InitPlayers(RecordId[] list)
 			=> list.Select(id => GetSoundPlayer(id)).Where(p => p is not null).ToArray();

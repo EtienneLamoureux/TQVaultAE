@@ -115,12 +115,12 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Gets the item bitmap
 		/// </summary>
-		public RecordId Bitmap => this.GetString(this.bitmapVar).ToRecordId();
+		public RecordId Bitmap => this.GetString(this.bitmapVar);
 
 		/// <summary>
 		/// Gets the item shard bitmap
 		/// </summary>
-		public RecordId ShardBitmap => this.GetString(this.shardBitmapVar).ToRecordId();
+		public RecordId ShardBitmap => this.GetString(this.shardBitmapVar);
 
 		/// <summary>
 		/// Gets the item class
