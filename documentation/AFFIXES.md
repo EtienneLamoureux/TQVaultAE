@@ -16,6 +16,7 @@ _**Note : "Item editing feature" must be enable in the settings.**_
 * [Broken items](#Broken)
 * [Affixes removal](#Remove)
 * [Affixes display mode](#DisplayMode)
+* [Affixes for Epic & Legendary](#Uniques)
 * [Artefact creation](#Formula)
 * [Artefact completion bonus change](#Artefact)
 * [Relic and charm completion](#RelicCompleteStack)
@@ -54,6 +55,15 @@ _**Note : "Item editing feature" must be enable in the settings.**_
 ### <a id="DisplayMode"></a>Affixes display mode
 
 ![Affixes removal](affixes/displaymode.png)
+
+---
+
+### <a id="Uniques"></a>Affixes for Epic & Legendary
+You can enable this feature in the settings.
+
+It try to suck all known Prefix/Suffix per gear type (e.g, all affixes for axe if the unique is an axe).
+
+![Artefact creation](affixes/uniques.png)
 
 ---
 

@@ -31,6 +31,7 @@ By using `/` as first char everything else is a standard [C# regular expression]
 
 Here's few examples.
 
+- `/rune|earth` : Everything with "rune" or "earth"
 - `/chance of .+%.+bleeding damage` : All chance of + percent bleeding damage
 - `/\+.+%.+(life|mana) leech` : Any + percentage of life or mana leech
 - `/\+.+%.+(cold|fire) damage` : Any + percentage of cold or fire leech

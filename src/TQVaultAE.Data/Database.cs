@@ -360,13 +360,16 @@ public class Database : IDatabase
 		var lootRandomizerTableList = new[] { this.ArzFileMod, this.ArzFile }
 		.Where(db => db is not null)
 		.SelectMany(db =>
-			db.RecordInfo.Where(r => r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZERTABLE, noCase))
+			db.RecordInfo.Where(r =>
+				r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZERTABLE, noCase)
+				&& !r.Key.IsOld // Remove old loot table
+			)
 		)
 		.Select(r =>
 		{
 			var DBRecords = GetRecordFromFile(r.Key);
 
-			if (DBRecords is null)
+			if (DBRecords is null && TQDebug.ItemDebugLevel > 0)
 				Log.LogError(@"Unknown {RCLASS_LOOTRANDOMIZERTABLE} record ""{RecordId}""", RCLASS_LOOTRANDOMIZERTABLE, r.Key);
 
 			return (r.Key, DBRecords);
@@ -458,14 +461,14 @@ public class Database : IDatabase
 				{
 					case RCLASS_LOOTITEMTABLE_FIXEDWEIGHT:
 						foreach (var variable in rec)
-							{
+						{
 							if (variable.Name.StartsWith("lootName", noCase))
 							{
 								var lootName = variable.GetString(0);
 
 								if (!string.IsNullOrWhiteSpace(lootName))
 									lootNames.Add(lootName.ToRecordId());
-						}
+							}
 						}
 						break;
 					default: // LootItemTable_DynWeight

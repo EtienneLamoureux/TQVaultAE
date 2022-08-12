@@ -13,7 +13,7 @@ public partial class HighlightFilters : UserControl
 {
 	public class ItemType : ItemValue<string> { }
 	public class ItemRarity : ItemValue<Rarity> { }
-	public class ItemOrigin : ItemValue<GameExtension> { }
+	public class ItemOrigin : ItemValue<GameDlc> { }
 
 	public class ItemValue<TValue>
 	{
@@ -83,24 +83,24 @@ public partial class HighlightFilters : UserControl
 		scalingCheckedListBoxOrigin.Items.Clear();// Remove design mode items
 		var list = new ItemOrigin[] {
 			new ItemOrigin{
-				Value = GameExtension.TitanQuest,
-				DisplayName = TranslationService.Translate(GameExtension.TitanQuest)
+				Value = GameDlc.TitanQuest,
+				DisplayName = TranslationService.Translate(GameDlc.TitanQuest)
 			},
 			new ItemOrigin{
-				Value = GameExtension.ImmortalThrone,
-				DisplayName = TranslationService.Translate(GameExtension.ImmortalThrone)
+				Value = GameDlc.ImmortalThrone,
+				DisplayName = TranslationService.Translate(GameDlc.ImmortalThrone)
 			},
 			new ItemOrigin{
-				Value = GameExtension.Ragnarok,
-				DisplayName = TranslationService.Translate(GameExtension.Ragnarok)
+				Value = GameDlc.Ragnarok,
+				DisplayName = TranslationService.Translate(GameDlc.Ragnarok)
 			},
 			new ItemOrigin{
-				Value = GameExtension.Atlantis,
-				DisplayName = TranslationService.Translate(GameExtension.Atlantis)
+				Value = GameDlc.Atlantis,
+				DisplayName = TranslationService.Translate(GameDlc.Atlantis)
 			},
 			new ItemOrigin{
-				Value = GameExtension.EternalEmbers,
-				DisplayName = TranslationService.Translate(GameExtension.EternalEmbers)
+				Value = GameDlc.EternalEmbers,
+				DisplayName = TranslationService.Translate(GameDlc.EternalEmbers)
 			},
 		};
 

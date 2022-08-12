@@ -9,7 +9,7 @@ public interface ITranslationService
 	/// </summary>
 	/// <param name="extension"></param>
 	/// <returns></returns>
-	string Translate(GameExtension extension);
+	string Translate(GameDlc extension);
 	/// <summary>
 	/// Gets the string name of a particular gear level
 	/// </summary>

@@ -5,8 +5,6 @@ namespace TQVaultAE.Domain.Contracts.Services;
 
 public interface IGamePathService
 {
-	GameExtension ResolveExtensionFromPath(RecordId pathOrRecordId);
-
 	/// <summary>
 	/// Parses filename to try to determine the base character name.
 	/// </summary>

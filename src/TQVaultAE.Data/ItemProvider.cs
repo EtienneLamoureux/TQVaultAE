@@ -189,59 +189,109 @@ public class ItemProvider : IItemProvider
 		this.GamePathService = gamePathService;
 	}
 
+	public ItemAffixes GetAllAvailableAffixes(GearType type)
+	{
+		if ((type & GearType.AllWearable) == GearType.Undefined) return null;
+
+		var affixmap = this.LootTableCollectionProvider.AllLootRandomizerTable
+			.Where(t =>
+				(t.Key.LootTableGearType & type) != GearType.Undefined
+				|| (t.Key.LootTableGearType & GearType.MonsterInfrequent) != GearType.Undefined // Always get Monster infrequent affixes
+				|| t.Key.IsTablesUnique // Always get loot table for uniques
+			);
+
+		Dictionary<GameDlc, ReadOnlyCollection<LootTableCollection>> Broken, Prefix, Suffix;
+
+		List<(GameDlc Dlc, LootTableCollection Table)> LBroken = new(), LPrefix = new(), LSuffix = new();
+
+		LootTableCollection table;
+		GameDlc dlc;
+		foreach (var map in affixmap)
+		{
+			if (!map.Key.IsEmpty && map.Key.IsBroken)
+			{
+				dlc = map.Key.Dlc;
+				table = map.Value;
+				if (table is not null) LBroken.Add((dlc, table));
+			}
+
+			if (!map.Key.IsEmpty && map.Key.IsPrefix)
+			{
+				dlc = map.Key.Dlc;
+				table = map.Value;
+				if (table is not null) LPrefix.Add((dlc, table));
+			}
+			if (!map.Key.IsEmpty && map.Key.IsSuffix)
+			{
+				dlc = map.Key.Dlc;
+				table = map.Value;
+				if (table is not null) LSuffix.Add((dlc, table));
+			}
+		}
+
+		Broken = LBroken.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
+			.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly());
+		Prefix = LPrefix.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
+			.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly());
+		Suffix = LSuffix.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
+			.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly());
+
+		return new ItemAffixes(
+			new ReadOnlyDictionary<GameDlc, ReadOnlyCollection<LootTableCollection>>(Broken)
+			, new ReadOnlyDictionary<GameDlc, ReadOnlyCollection<LootTableCollection>>(Prefix)
+			, new ReadOnlyDictionary<GameDlc, ReadOnlyCollection<LootTableCollection>>(Suffix)
+		);
+	}
 
 	public ItemAffixes GetItemAffixes(RecordId itemId)
 	{
 		return ItemAffixesCache.GetOrAddAtomic(itemId, k =>
+	{
+		var affixmap = this.Database.GetItemAffixTableMap(k);
+		if (affixmap is null || affixmap.All(a => a.IsEmpty)) return null;
+
+		Dictionary<GameDlc, ReadOnlyCollection<LootTableCollection>> Broken, Prefix, Suffix;
+
+		List<(GameDlc Dlc, LootTableCollection Table)> LBroken = new(), LPrefix = new(), LSuffix = new();
+
+		LootTableCollection table;
+		GameDlc dlc;
+		foreach (var map in affixmap)
 		{
-			var affixmap = this.Database.GetItemAffixTableMap(k);
-			if (affixmap is null || affixmap.All(a => a.IsEmpty)) return null;
-
-			Dictionary<GameExtension, ReadOnlyCollection<LootTableCollection>> Broken, Prefix, Suffix;
-
-			List<(GameExtension Dlc, LootTableCollection Table)>
-				LBroken = new List<(GameExtension, LootTableCollection)>(),
-				LPrefix = new List<(GameExtension, LootTableCollection)>(),
-				LSuffix = new List<(GameExtension, LootTableCollection)>();
-
-			LootTableCollection table;
-			GameExtension dlc;
-			foreach (var map in affixmap)
+			if (!map.BrokenTable.IsEmpty)
 			{
-				if (!map.BrokenTable.IsEmpty)
-				{
-					dlc = GamePathService.ResolveExtensionFromPath(map.BrokenTable);
-					table = this.LootTableCollectionProvider.LoadTable(map.BrokenTable);
-					if (table is not null) LBroken.Add((dlc, table));
-				}
-
-				if (!map.PrefixTable.IsEmpty)
-				{
-					dlc = GamePathService.ResolveExtensionFromPath(map.PrefixTable);
-					table = this.LootTableCollectionProvider.LoadTable(map.PrefixTable);
-					if (table is not null) LPrefix.Add((dlc, table));
-				}
-				if (!map.SuffixTable.IsEmpty)
-				{
-					dlc = GamePathService.ResolveExtensionFromPath(map.SuffixTable);
-					table = this.LootTableCollectionProvider.LoadTable(map.SuffixTable);
-					if (table is not null) LSuffix.Add((dlc, table));
-				}
+				dlc = map.BrokenTable.Dlc;
+				table = this.LootTableCollectionProvider.LoadTable(map.BrokenTable);
+				if (table is not null) LBroken.Add((dlc, table));
 			}
 
-			Broken = LBroken.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
-				.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly());
-			Prefix = LPrefix.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
-				.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly());
-			Suffix = LSuffix.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
-				.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly());
+			if (!map.PrefixTable.IsEmpty)
+			{
+				dlc = map.PrefixTable.Dlc;
+				table = this.LootTableCollectionProvider.LoadTable(map.PrefixTable);
+				if (table is not null) LPrefix.Add((dlc, table));
+			}
+			if (!map.SuffixTable.IsEmpty)
+			{
+				dlc = map.SuffixTable.Dlc;
+				table = this.LootTableCollectionProvider.LoadTable(map.SuffixTable);
+				if (table is not null) LSuffix.Add((dlc, table));
+			}
+		}
 
-			return new ItemAffixes(
-				new ReadOnlyDictionary<GameExtension, ReadOnlyCollection<LootTableCollection>>(Broken)
-				, new ReadOnlyDictionary<GameExtension, ReadOnlyCollection<LootTableCollection>>(Prefix)
-				, new ReadOnlyDictionary<GameExtension, ReadOnlyCollection<LootTableCollection>>(Suffix)
-			);
-		});
+		Broken = LBroken.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
+			.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly());
+		Prefix = LPrefix.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
+			.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly());
+		Suffix = LSuffix.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
+			.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly());
+
+		return new ItemAffixes(
+			new ReadOnlyDictionary<GameDlc, ReadOnlyCollection<LootTableCollection>>(Broken)
+			, new ReadOnlyDictionary<GameDlc, ReadOnlyCollection<LootTableCollection>>(Prefix)
+			, new ReadOnlyDictionary<GameDlc, ReadOnlyCollection<LootTableCollection>>(Suffix)
+		);
+	});
 	}
 
 	public bool InvalidateFriendlyNamesCache(params Item[] items)
@@ -868,36 +918,17 @@ public class ItemProvider : IItemProvider
 	public bool IsStatBonus(string key)
 		=> Array.IndexOf(statBonusTags, key.ToUpperInvariant()) != -1;
 
-	internal static ReadOnlyCollection<ItemClassMapItem<string>> ItemClassToRequirementEquationPrefixMap = new List<ItemClassMapItem<string>>
-		{
-			new (Item.ICLASS_HEAD, "head"),
-			new (Item.ICLASS_FOREARM, "forearm"),
-			new (Item.ICLASS_LOWERBODY, "lowerBody"),
-			new (Item.ICLASS_UPPERBODY, "upperBody"),
-			//new ("ARMORJEWELRY_BRACELET", "bracelet"),// TODO Does it exist ? ARMORJEWELRY_BRACELET
-			new (Item.ICLASS_RING, "ring"),
-			new (Item.ICLASS_AMULET, "amulet"),
-			new (Item.ICLASS_BOW, "bow"),
-			new (Item.ICLASS_SPEAR, "spear"),
-			new (Item.ICLASS_RANGEDONEHAND, "bow"),
-			new (Item.ICLASS_AXE, "axe"),
-			new (Item.ICLASS_SWORD, "sword"),
-			new (Item.ICLASS_MACE, "mace"),
-			new (Item.ICLASS_STAFF, "staff"),
-			new (Item.ICLASS_SHIELD, "shield"),
-		}.AsReadOnly();
-
 	/// <summary>
 	/// Gets s string containing the prefix of the item class for use in the requirements equation.
 	/// </summary>
 	/// <param name="itemClass">string containing the item class</param>
 	/// <returns>string containing the prefix of the item class for use in the requirements equation</returns>
-	private string GetRequirementEquationPrefix(string itemClass)
-	=> ItemClassToRequirementEquationPrefixMap
-			.Where(m => m.ItemClass.Equals(itemClass, noCase))
-		.Select(m => m.Value)
-		.FirstOrDefault() ?? "none";
-
+	public string GetRequirementEquationPrefix(string itemClass)
+		=> GearTypeExtension.GearTypeMap
+			.Where(m => m.Value.ICLASS.Equals(itemClass, noCase))
+			.Select(m => m.Value.RequirementEquationPrefix)
+			.Where(m => !string.IsNullOrWhiteSpace(m))
+			.FirstOrDefault() ?? "none";
 
 	/// <summary>
 	/// Gets whether or not the variable contains a value which we are filtering.
@@ -1230,9 +1261,9 @@ VariableValue Raw : {valueRaw}
 					var buffSkillName = skill.GetString("buffSkillName", 0);
 
 					if (buffSkillName == recordId)
-					// Use the level from the Base Item.
-					varNum = Math.Max(level, 1) - 1;
-			}
+						// Use the level from the Base Item.
+						varNum = Math.Max(level, 1) - 1;
+				}
 			}
 			else if (itemSkillName == recordId)
 				varNum = Math.Max(level, 1) - 1;
@@ -1345,10 +1376,10 @@ VariableValue Raw : {valueRaw}
 
 			res.ItemOrigin = itm.GameExtension switch
 			{
-				GameExtension.Atlantis => this.TranslationService.ItemAtlantis,
-				GameExtension.EternalEmbers => this.TranslationService.ItemEmbers,
-				GameExtension.Ragnarok => this.TranslationService.ItemRagnarok,
-				GameExtension.ImmortalThrone => this.TranslationService.ItemIT,
+				GameDlc.Atlantis => this.TranslationService.ItemAtlantis,
+				GameDlc.EternalEmbers => this.TranslationService.ItemEmbers,
+				GameDlc.Ragnarok => this.TranslationService.ItemRagnarok,
+				GameDlc.ImmortalThrone => this.TranslationService.ItemIT,
 				_ => null
 			};
 

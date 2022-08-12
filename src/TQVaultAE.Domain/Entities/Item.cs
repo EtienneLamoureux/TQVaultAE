@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using EnumsNET;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -512,7 +513,7 @@ public class Item
 	/// <summary>
 	/// Get a value indicating gear level from <see cref="Rarity.Broken"/> to <see cref="Rarity.Legendary"/>
 	/// </summary>
-	public Rarity GearLevel
+	public Rarity Rarity
 	{
 		get
 		{
@@ -983,28 +984,9 @@ public class Item
 	/// </summary>
 	/// <remarks>return <see cref="GearType.Undefined"/> if not a piece of gear</remarks>
 	public GearType GearType
-		=> ItemClassGearTypeMap
-			.Where(m => m.ItemClass.Equals(this.ItemClass, noCase))
-			.Select(m => m.Value).FirstOrDefault();
-
-	internal static ReadOnlyCollection<ItemClassMapItem<GearType>> ItemClassGearTypeMap = new List<ItemClassMapItem<GearType>>
-	{
-		new (ICLASS_AMULET, GearType.Amulet),
-		new (ICLASS_RING, GearType.Ring),
-		new (ICLASS_ARTIFACT, GearType.Artifact),
-		new (ICLASS_LOWERBODY, GearType.Leg),
-		new (ICLASS_FOREARM, GearType.Arm),
-		new (ICLASS_HEAD, GearType.Head),
-		new (ICLASS_UPPERBODY, GearType.Torso),
-		new (ICLASS_SHIELD, GearType.Shield),
-		new (ICLASS_AXE, GearType.Axe),
-		new (ICLASS_MACE, GearType.Mace),
-		new (ICLASS_SWORD, GearType.Sword),
-		new (ICLASS_BOW, GearType.Bow),
-		new (ICLASS_RANGEDONEHAND, GearType.Thrown),
-		new (ICLASS_STAFF, GearType.Staff),
-		new (ICLASS_SPEAR,GearType.Spear),
-	}.AsReadOnly();
+		=> GearTypeExtension.GearTypeMap
+			.Where(m => m.Value.ICLASS.Equals(this.ItemClass, noCase))
+			.Select(m => m.Key).FirstOrDefault();
 
 	#endregion
 
@@ -1116,15 +1098,15 @@ public class Item
 
 	#region GameExtension
 
-	public GameExtension GameExtension
+	public GameDlc GameExtension
 	{
 		get
 		{
-			if (this.IsImmortalThrone) return GameExtension.ImmortalThrone;
-			else if (this.IsRagnarok) return GameExtension.Ragnarok;
-			else if (this.IsAtlantis) return GameExtension.Atlantis;
-			else if (this.IsEmbers) return GameExtension.EternalEmbers;
-			else return GameExtension.TitanQuest;
+			if (this.IsImmortalThrone) return GameDlc.ImmortalThrone;
+			else if (this.IsRagnarok) return GameDlc.Ragnarok;
+			else if (this.IsAtlantis) return GameDlc.Atlantis;
+			else if (this.IsEmbers) return GameDlc.EternalEmbers;
+			else return GameDlc.TitanQuest;
 		}
 	}
 

@@ -221,7 +221,7 @@ namespace TQVaultAE.Domain.Entities
 					if (this.HighlightFilter.Rarity.Any())
 					{
 						availableItems = availableItems.Where(i =>
-							this.HighlightFilter.Rarity.Contains(i.Item.GearLevel)
+							this.HighlightFilter.Rarity.Contains(i.Item.Rarity)
 						);
 					}
 

@@ -18,7 +18,7 @@ namespace TQVaultAE.Domain.Entities
 		public List<Rarity> Rarity;
 		public int MaxLvl;
 		public int MinLvl;
-		public List<GameExtension> Origin;
+		public List<GameDlc> Origin;
 		public bool HavingPrefix;
 		public bool HavingSuffix;
 	}

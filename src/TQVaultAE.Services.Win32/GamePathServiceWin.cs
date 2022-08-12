@@ -739,18 +739,4 @@ Please select the game installation directory.");
 
 		return (path, isDLC);
 	}
-
-	public GameExtension ResolveExtensionFromPath(RecordId pathOrRecordId)
-	{
-		if (pathOrRecordId.Normalized.IndexOf(@"\XPACK4\") > -1)
-			return GameExtension.EternalEmbers;
-		else if (pathOrRecordId.Normalized.IndexOf(@"\XPACK3\") > -1)
-			return GameExtension.Atlantis;
-		else if (pathOrRecordId.Normalized.IndexOf(@"\XPACK2\") > -1)
-			return GameExtension.Ragnarok;
-		else if (pathOrRecordId.Normalized.IndexOf(@"\XPACK\") > -1)
-			return GameExtension.ImmortalThrone;
-
-		return GameExtension.TitanQuest;
-	}
 }

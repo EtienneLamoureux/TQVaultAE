@@ -16,7 +16,7 @@ public class TranslationService : ITranslationService
 		Database = database;
 	}
 
-	public string Translate(GameExtension extension)
+	public string Translate(GameDlc extension)
 		=> this.TranslateXTag(extension.GetTranslationTag());
 
 	public string Translate(ItemStyle itemStyle)

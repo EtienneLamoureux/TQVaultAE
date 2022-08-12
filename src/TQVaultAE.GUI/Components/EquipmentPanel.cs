@@ -6,7 +6,6 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using TQVaultAE.GUI.Models;
@@ -45,7 +44,6 @@ public class EquipmentPanel : SackPanel, IScalingControl
 		this.DefaultImage = null;
 	}
 
-
 	#region EquipmentPanel Properties
 
 	/// <summary>
@@ -54,7 +52,6 @@ public class EquipmentPanel : SackPanel, IScalingControl
 	public EventHandler<SackPanelEventArgs> OnEquipmentChanged { get; set; }
 
 	#endregion EquipmentPanel Properties
-
 
 	#region EquipmentPanel Public Methods
 

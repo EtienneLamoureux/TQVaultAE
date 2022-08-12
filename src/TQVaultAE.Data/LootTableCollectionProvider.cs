@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using TQVaultAE.Config;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
@@ -127,7 +127,7 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 		}
 
 		// Iterate the query to build the new unweighted table.
-		foreach (var kvp in dico.Where(k => k.Value.Weight > 0 && !k.Value.AffixId.IsEmpty))
+		foreach (var kvp in dico.Where(k => !(k.Value.Weight <= 0 || k.Value.AffixId.IsEmpty)))
 		{
 			var affix = kvp.Value.AffixId;
 
@@ -145,8 +145,9 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 
 			if (lootrandom is null)
 			{
-				Log.LogError(@"Unknown affix record ""{RecordId}"" from table ""{TableId}"""
-					, kvp.Key, tableId);
+				if (TQDebug.ItemDebugLevel > 0)
+					Log.LogError(@"Unknown affix record ""{RecordId}"" from table ""{TableId}"""
+						, affix, tableId);
 
 				lootrandom = LootRandomizerItem.Default(affix);
 			}

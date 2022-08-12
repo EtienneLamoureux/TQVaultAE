@@ -9,13 +9,26 @@ namespace TQVaultAE.Domain.Contracts.Providers;
 public interface IItemProvider
 {
 	/// <summary>
+	/// Gets s string containing the prefix of the item class for use in the requirements equation.
+	/// </summary>
+	/// <param name="itemClass">string containing the item class</param>
+	/// <returns>string containing the prefix of the item class for use in the requirements equation</returns>
+	string GetRequirementEquationPrefix(string itemClass);
+
+	/// <summary>
+	/// Find all affixes available for this item <paramref name="type"/>
+	/// </summary>
+	/// <param name="itemId"></param>
+	/// <returns><c>null</c> if <paramref name="type"/> is not wearable (can't have an affix)</returns>
+	ItemAffixes GetAllAvailableAffixes(GearType type);
+	/// <summary>
 	/// Gets the socketed charm/relic bonus loot table
 	/// </summary>
 	/// <param name="Item"></param>
 	/// <param name="RelicTable1"></param>
 	/// <param name="RelicTable2"></param>
 	/// <returns>Returns <c>false</c> if the item does not contain a charm/relic</returns>
-	public bool BonusTableSocketedRelic(Item Item, out LootTableCollection RelicTable1, out LootTableCollection RelicTable2);
+	bool BonusTableSocketedRelic(Item Item, out LootTableCollection RelicTable1, out LootTableCollection RelicTable2);
 	/// <summary>
 	/// Return all affixes for <paramref name="itemId"/>
 	/// </summary>

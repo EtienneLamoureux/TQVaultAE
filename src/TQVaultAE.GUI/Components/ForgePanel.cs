@@ -1232,8 +1232,8 @@ public partial class ForgePanel : UserControl
 			if (from == pictureBoxBaseItem
 				&& BaseItem is not null
 				&& (
-					((PrefixItem?.GearLevel ?? 0) > drgItm.GearLevel)
-					|| ((SuffixItem?.GearLevel ?? 0) > drgItm.GearLevel)
+					((PrefixItem?.Rarity ?? 0) > drgItm.Rarity)
+					|| ((SuffixItem?.Rarity ?? 0) > drgItm.Rarity)
 				)
 			)
 			{
@@ -1241,7 +1241,7 @@ public partial class ForgePanel : UserControl
 			}
 
 			if ((from == pictureBoxPrefix || from == pictureBoxSuffix)
-				&& (BaseItem.GearLevel < drgItm.GearLevel)
+				&& (BaseItem.Rarity < drgItm.Rarity)
 			)
 			{
 				return Notify(false);// Notify & Prevent Drop
@@ -1291,7 +1291,7 @@ public partial class ForgePanel : UserControl
 	private bool StrictModeNoEpicLegendaryItem(Item drgItm)
 	{
 		if ((IsStrictMode || IsGameMode)
-			&& (drgItm.GearLevel > Rarity.Rare)
+			&& (drgItm.Rarity > Rarity.Rare)
 		)
 		{
 			pictureBoxDragDrop.Visible = true;

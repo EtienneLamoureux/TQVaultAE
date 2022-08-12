@@ -31,14 +31,16 @@ namespace TQVaultAE.GUI.Components;
 public class SackPanel : Panel, IScalingControl
 {
 	private readonly ILogger Log = null;
+	private readonly ITranslationService TranslationService;
+	private VaultForm _VaultForm;
+
 	protected readonly IFontService FontService;
 	protected readonly IUIService UIService;
 	protected readonly IDatabase Database;
 	protected readonly IItemProvider ItemProvider;
 	protected readonly ITQDataService TQData;
-	private readonly ITranslationService TranslationService;
-	private readonly IGamePathService GamePathService;
 	protected readonly IServiceProvider ServiceProvider;
+
 	ItemStyle[] ItemStyleBackGroundColorEnable = new[] {
 			ItemStyle.Epic,
 			ItemStyle.Legendary,
@@ -138,7 +140,7 @@ public class SackPanel : Panel, IScalingControl
 	/// <summary>
 	/// Context menu strip
 	/// </summary>
-	private ContextMenuStrip contextMenu;
+	private ContextMenuStrip CustomContextMenu;
 
 	/// <summary>
 	/// Coordinates of the cell which the context menu applies
@@ -149,6 +151,7 @@ public class SackPanel : Panel, IScalingControl
 	/// Indicates whether the current sort should be vertical.
 	/// </summary>
 	private bool sortVertical;
+
 	private System.ComponentModel.IContainer components;
 
 	/// <summary>
@@ -167,20 +170,20 @@ public class SackPanel : Panel, IScalingControl
 	private void InitializeComponent()
 	{
 		this.components = new System.ComponentModel.Container();
-		this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+		this.CustomContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 		this.SuspendLayout();
 		// 
-		// contextMenu
+		// CustomContextMenu
 		// 
-		this.contextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-		this.contextMenu.Font = new System.Drawing.Font("Albertus MT", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.contextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-		this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
-		this.contextMenu.Name = "contextMenu";
-		this.contextMenu.Opacity = 0.8D;
-		this.contextMenu.ShowImageMargin = false;
-		this.contextMenu.Size = new System.Drawing.Size(36, 4);
-		this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
+		this.CustomContextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+		this.CustomContextMenu.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+		this.CustomContextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+		this.CustomContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+		this.CustomContextMenu.Name = "CustomContextMenu";
+		this.CustomContextMenu.Opacity = 0.8D;
+		this.CustomContextMenu.ShowImageMargin = false;
+		this.CustomContextMenu.Size = new System.Drawing.Size(36, 4);
+		this.CustomContextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
 		// 
 		// SackPanel
 		// 
@@ -215,7 +218,6 @@ public class SackPanel : Panel, IScalingControl
 		this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
 		this.TQData = this.ServiceProvider.GetService<ITQDataService>();
 		this.TranslationService = this.ServiceProvider.GetService<ITranslationService>();
-		this.GamePathService = this.ServiceProvider.GetService<IGamePathService>();
 		this.userContext = this.ServiceProvider.GetService<SessionContext>();
 
 		this.Log = this.ServiceProvider.GetService<ILogger<SackPanel>>();
@@ -257,8 +259,8 @@ public class SackPanel : Panel, IScalingControl
 			(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * sackHeight));
 		this.BackColor = Color.FromArgb(46, 41, 31);
 
-		this.contextMenu.Renderer = new CustomProfessionalRenderer();
-		this.contextMenu.Font = FontService.GetFont(9.0F * UIService.Scale);
+		this.CustomContextMenu.Renderer = new CustomProfessionalRenderer();
+		this.CustomContextMenu.Font = FontService.GetFont(9.0F * UIService.Scale);
 
 		// Da_FileServer: Enable double buffering to remove flickering.
 		this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
@@ -807,7 +809,7 @@ public class SackPanel : Panel, IScalingControl
 	{
 		this.borderPen.Width = Math.Max((4.0F * UIService.Scale), 1.0F);
 		this.numberFont = new Font(this.numberFont.Name, 10.0F * UIService.Scale, GraphicsUnit.Pixel);
-		this.contextMenu.Font = new Font(this.contextMenu.Font.Name, 9.0F * UIService.Scale);
+		this.CustomContextMenu.Font = new Font(this.CustomContextMenu.Font.Name, 9.0F * UIService.Scale);
 
 		this.Size = new Size(
 			(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * this.SackSize.Width),
@@ -1367,15 +1369,15 @@ public class SackPanel : Panel, IScalingControl
 				if (this.selectedItems != null)
 					singleSelectionFocused = focusedItem == (Item)this.selectedItems[0] && this.selectedItems.Count == 1;
 
-				this.contextMenu.Items.Clear();
+				this.CustomContextMenu.Items.Clear();
 
 				if (focusedItem != null)
 					this.contextMenuCellWithFocus = this.LastCellWithFocus;
 
 				if ((focusedItem != null || this.selectedItems != null) && !isEquipmentReadOnly)
 				{
-					this.contextMenu.Items.Add(Resources.SackPanelMenuDelete);
-					this.contextMenu.Items.Add("-");
+					this.CustomContextMenu.Items.Add(Resources.SackPanelMenuDelete);
+					this.CustomContextMenu.Items.Add("-");
 				}
 
 				if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused) && !isEquipmentReadOnly)
@@ -1383,22 +1385,22 @@ public class SackPanel : Panel, IScalingControl
 					if (Config.Settings.Default.AllowItemEdit)
 					{
 						if (focusedItem.HasRelicSlot1)
-							this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
+							this.CustomContextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
 
 						if (focusedItem.HasRelicSlot2)
-							this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic2);
+							this.CustomContextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic2);
 					}
 
 					if (focusedItem.DoesStack && focusedItem.Number > 1)
-						this.contextMenu.Items.Add(Resources.SackPanelMenuSplit);
+						this.CustomContextMenu.Items.Add(Resources.SackPanelMenuSplit);
 				}
 
 				if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
 				{
 					if (Config.Settings.Default.AllowItemCopy)
 					{
-						this.contextMenu.Items.Add(Resources.SackPanelMenuCopy);
-						this.contextMenu.Items.Add(Resources.SackPanelMenuDuplicate);
+						this.CustomContextMenu.Items.Add(Resources.SackPanelMenuCopy);
+						this.CustomContextMenu.Items.Add(Resources.SackPanelMenuDuplicate);
 					}
 				}
 
@@ -1442,7 +1444,7 @@ public class SackPanel : Panel, IScalingControl
 						from location in this.DragInfo.AllAutoMoveLocations
 						where location != this.AutoMoveLocation
 						select location
-				).Distinct();
+					).Distinct();
 
 					foreach (var choice in autoMoveChoices)
 					{
@@ -1456,22 +1458,22 @@ public class SackPanel : Panel, IScalingControl
 					{
 						var moveChoice = new ToolStripMenuItem(choice, null, MoveItemClicked, choice)
 						{
-							BackColor = this.contextMenu.BackColor,
-							Font = this.contextMenu.Font,
-							ForeColor = this.contextMenu.ForeColor,
+							BackColor = this.CustomContextMenu.BackColor,
+							Font = this.CustomContextMenu.Font,
+							ForeColor = this.CustomContextMenu.ForeColor,
 						};
 						moveChoices.Add(moveChoice);
 					}
 
 					var moveSubMenu = new ToolStripMenuItem(Resources.SackPanelMenuMoveTo, null, moveChoices.ToArray())
 					{
-						BackColor = this.contextMenu.BackColor,
-						Font = this.contextMenu.Font,
-						ForeColor = this.contextMenu.ForeColor,
+						BackColor = this.CustomContextMenu.BackColor,
+						Font = this.CustomContextMenu.Font,
+						ForeColor = this.CustomContextMenu.ForeColor,
 						DisplayStyle = ToolStripItemDisplayStyle.Text,
 					};
 
-					this.contextMenu.Items.Add(moveSubMenu);
+					this.CustomContextMenu.Items.Add(moveSubMenu);
 				}
 
 				if ((focusedItem != null && (this.selectedItems == null || singleSelectionFocused)) && !isEquipmentReadOnly)
@@ -1479,21 +1481,21 @@ public class SackPanel : Panel, IScalingControl
 					// Item Editing options
 					if (Config.Settings.Default.AllowItemEdit)
 					{
-						this.contextMenu.Items.Add(Resources.SackPanelMenuSeed);
+						this.CustomContextMenu.Items.Add(Resources.SackPanelMenuSeed);
 
 						// Add option to complete a charm or relic if
 						// not already completed.
 						if (focusedItem.IsRelic && !focusedItem.IsRelicComplete)
 						{
 							if (focusedItem.IsCharm)
-								this.contextMenu.Items.Add(Resources.SackPanelMenuCharm);
+								this.CustomContextMenu.Items.Add(Resources.SackPanelMenuCharm);
 							else
-								this.contextMenu.Items.Add(Resources.SackPanelMenuRelic);
+								this.CustomContextMenu.Items.Add(Resources.SackPanelMenuRelic);
 						}
 
 						// Add option to craft an artifact from formulae.
 						if (focusedItem.IsFormulae)
-							this.contextMenu.Items.Add(Resources.SackPanelMenuFormulae);
+							this.CustomContextMenu.Items.Add(Resources.SackPanelMenuFormulae);
 
 						AddPrefixSuffixMenuItems(focusedItem);
 
@@ -1507,15 +1509,15 @@ public class SackPanel : Panel, IScalingControl
 
 				if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
 				{
-					this.contextMenu.Items.Add("-");
-					this.contextMenu.Items.Add(Resources.SackPanelMenuProperties);
+					this.CustomContextMenu.Items.Add("-");
+					this.CustomContextMenu.Items.Add(Resources.SackPanelMenuProperties);
 				}
 
 				if (this.selectedItems != null && !isEquipmentReadOnly)
-					this.contextMenu.Items.Add(Resources.SackPanelMenuClear);
+					this.CustomContextMenu.Items.Add(Resources.SackPanelMenuClear);
 
-				if ((focusedItem != null || this.selectedItems != null) && this.contextMenu.Items.Count > 0)
-					this.contextMenu.Show(this, new Point(e.X, e.Y));
+				if ((focusedItem != null || this.selectedItems != null) && this.CustomContextMenu.Items.Count > 0)
+					this.CustomContextMenu.Show(this, new Point(e.X, e.Y));
 			}
 		}
 	}
@@ -1541,9 +1543,9 @@ public class SackPanel : Panel, IScalingControl
 				{
 					Text = this.TranslationService.TranslateXTag(info.DescriptionTag),
 					Name = setPiece,
-					BackColor = this.contextMenu.BackColor,
-					Font = this.contextMenu.Font,
-					ForeColor = this.contextMenu.ForeColor,
+					BackColor = this.CustomContextMenu.BackColor,
+					Font = this.CustomContextMenu.Font,
+					ForeColor = this.CustomContextMenu.ForeColor,
 					ToolTipText = setPiece,
 				};
 				choice.Click += NewSetItemClicked;
@@ -1553,13 +1555,13 @@ public class SackPanel : Panel, IScalingControl
 
 			var subMenu = new ToolStripMenuItem(Resources.SackPanelMenuSet, null, choices.OrderBy(i => i.Text).ToArray())
 			{
-				BackColor = this.contextMenu.BackColor,
-				Font = this.contextMenu.Font,
-				ForeColor = this.contextMenu.ForeColor,
+				BackColor = this.CustomContextMenu.BackColor,
+				Font = this.CustomContextMenu.Font,
+				ForeColor = this.CustomContextMenu.ForeColor,
 				DisplayStyle = ToolStripItemDisplayStyle.Text,
 			};
 
-			this.contextMenu.Items.Add(subMenu);
+			this.CustomContextMenu.Items.Add(subMenu);
 		}
 	}
 
@@ -1590,12 +1592,12 @@ public class SackPanel : Panel, IScalingControl
 						, tableitem.Key.PrettyFileName
 						, tableitem.Value.WeightPercent
 						, tableitem.Value.LootRandomizer.Translation
-						, GamePathService.ResolveExtensionFromPath(tableitem.Key).GetSuffix()
+						, tableitem.Key.Dlc.GetSuffix()
 					),
 					Name = tableitem.Key.Raw,
-					BackColor = this.contextMenu.BackColor,
-					Font = this.contextMenu.Font,
-					ForeColor = this.contextMenu.ForeColor,
+					BackColor = this.CustomContextMenu.BackColor,
+					Font = this.CustomContextMenu.Font,
+					ForeColor = this.CustomContextMenu.ForeColor,
 					ToolTipText = tableitem.Key.Raw,
 					Tag = isRelic1,
 				};
@@ -1614,13 +1616,13 @@ public class SackPanel : Panel, IScalingControl
 
 			var subMenu = new ToolStripMenuItem(menuText, null, choices.OrderBy(i => i.Text).ToArray())
 			{
-				BackColor = this.contextMenu.BackColor,
-				Font = this.contextMenu.Font,
-				ForeColor = this.contextMenu.ForeColor,
+				BackColor = this.CustomContextMenu.BackColor,
+				Font = this.CustomContextMenu.Font,
+				ForeColor = this.CustomContextMenu.ForeColor,
 				DisplayStyle = ToolStripItemDisplayStyle.Text,
 			};
 
-			this.contextMenu.Items.Add(subMenu);
+			this.CustomContextMenu.Items.Add(subMenu);
 		}
 	}
 
@@ -1644,12 +1646,12 @@ public class SackPanel : Panel, IScalingControl
 							, tableitem.Value.LootRandomizer.Translation
 							, tableitem.Key.PrettyFileName
 							, tableitem.Value.WeightPercent
-							, GamePathService.ResolveExtensionFromPath(tableitem.Key).GetSuffix()
+							, tableitem.Key.Dlc.GetSuffix()
 						),
 						Name = tableitem.Key.Raw,
-						BackColor = this.contextMenu.BackColor,
-						Font = this.contextMenu.Font,
-						ForeColor = this.contextMenu.ForeColor,
+						BackColor = this.CustomContextMenu.BackColor,
+						Font = this.CustomContextMenu.Font,
+						ForeColor = this.CustomContextMenu.ForeColor,
 						ToolTipText = tableitem.Key.Raw,
 					};
 					choice.Click += ChangeBonusItemClicked;
@@ -1667,33 +1669,77 @@ public class SackPanel : Panel, IScalingControl
 				var subMenu = new ToolStripMenuItem()
 				{
 					Text = Resources.SackPanelMenuBonus,
-					BackColor = this.contextMenu.BackColor,
-					Font = this.contextMenu.Font,
-					ForeColor = this.contextMenu.ForeColor,
+					BackColor = this.CustomContextMenu.BackColor,
+					Font = this.CustomContextMenu.Font,
+					ForeColor = this.CustomContextMenu.ForeColor,
 					DisplayStyle = ToolStripItemDisplayStyle.Text,
 				};
 
 				subMenu.DropDownItems.AddRange(choices.OrderBy(i => i.Text).ToArray());
 
-				this.contextMenu.Items.Add(subMenu);
+				this.CustomContextMenu.Items.Add(subMenu);
 			}
 		}
 	}
 
+	#region ContextMenuMouseWheel
+
+	bool _ContextMenuMouseWheelEnabled = false;
+
+	private void _VaultForm_GlobalMouseWheelUp(object sender, EventArgs e)
+	{
+		if (this.CustomContextMenu.Visible) // Only for context menu & sub menu because there isn't MouseWheel event at ToolStripMenuItem
+			SendKeys.SendWait("{UP}");
+	}
+
+	private void _VaultForm_GlobalMouseWheelDown(object sender, EventArgs e)
+	{
+		if (this.CustomContextMenu.Visible) // Only for context menu & sub menu because there isn't MouseWheel event at ToolStripMenuItem
+			SendKeys.SendWait("{DOWN}");
+	}
+
+	#endregion
+
 	private void AddPrefixSuffixMenuItems(Item focusedItem)
 	{
+		#region ContextMenuMouseWheel
+
+		// Link mouse wheel to menu for scrolling.
+		// Put here because i need the Form to be fully initalized and there is no Load() event here
+		if (!_ContextMenuMouseWheelEnabled)
+		{
+			this._VaultForm = this.FindForm() as VaultForm;
+			this._VaultForm.GlobalMouseWheelDown += _VaultForm_GlobalMouseWheelDown;
+			this._VaultForm.GlobalMouseWheelUp += _VaultForm_GlobalMouseWheelUp;
+			_ContextMenuMouseWheelEnabled = true;
+		}
+
+		#endregion
+
 		#region Add Prefix/Suffix pickup
 
 		if (focusedItem.IsArmor || focusedItem.IsWeaponShield || focusedItem.IsJewellery)
 		{
-			var affixes = this.ItemProvider.GetItemAffixes(focusedItem.BaseItemId);
+			ItemAffixes affixes;
+			if (Config.Settings.Default.EnableEpicLegendaryAffixes
+				&& (focusedItem.Rarity == Rarity.Epic || focusedItem.Rarity == Rarity.Legendary))
+			{
+				// Get all available affixes for an item type
+				affixes = this.ItemProvider.GetAllAvailableAffixes(focusedItem.GearType);
+			}
+			else
+			{
+				// Get affixes related to a specific item
+				affixes = this.ItemProvider.GetItemAffixes(focusedItem.BaseItemId);
+			}
+
 			if (affixes is not null)
 			{
-				this.contextMenu.Items.Add("-");
+				this.CustomContextMenu.Items.Add("-");
 
-				var fnt = this.contextMenu.Font;
-				var foreC = this.contextMenu.ForeColor;
-				var backC = this.contextMenu.BackColor;
+				var fnt = this.CustomContextMenu.Font;
+				var foreC = this.CustomContextMenu.ForeColor;
+				var backC = this.CustomContextMenu.BackColor;
 				var dispStl = ToolStripItemDisplayStyle.Text;
 				var tagSRemove = TranslationService.TranslateXTag("tagSRemove");
 
@@ -1719,16 +1765,16 @@ public class SackPanel : Panel, IScalingControl
 					} into flat
 					group flat by new { flat.TypeId, flat.AffixId } into grp
 					let f = grp.First()
-					let _AffixIdDlc = GamePathService.ResolveExtensionFromPath(grp.Key.AffixId)
+					let _AffixIdDlc = grp.Key.AffixId.Dlc
 					let _translation = f.LootRandomizer.Translation
 					let _WeightPercent = grp.Max(v => v.WeightPercent)
 					select
 					(
-						TypeId : grp.Key.TypeId,
+						TypeId: grp.Key.TypeId,
 						AffixId: grp.Key.AffixId,
-						AffixIdDlc : _AffixIdDlc,
-						Translation : _translation,
-						WeightPercent : _WeightPercent,
+						AffixIdDlc: _AffixIdDlc,
+						Translation: _translation,
+						WeightPercent: _WeightPercent,
 						FormatedText: string.Format("{0} : {1} ({2:p2}) {3}" // Default format for Order by affix name
 							, _translation
 							, grp.Key.AffixId.PrettyFileName
@@ -1757,7 +1803,7 @@ public class SackPanel : Panel, IScalingControl
 						ForeColor = foreC,
 						DisplayStyle = dispStl,
 					};
-					this.contextMenu.Items.Add(currentchoicesMenu);
+					this.CustomContextMenu.Items.Add(currentchoicesMenu);
 
 					BuildAffixesMenuItems(focusedItem.prefixID, currentchoicesMenu, ChangePrefixItemClicked
 						, curatedAffixes.Where(fp => fp.Key.TypeId == 0) // Broken
@@ -1778,7 +1824,7 @@ public class SackPanel : Panel, IScalingControl
 						ForeColor = foreC,
 						DisplayStyle = dispStl,
 					};
-					this.contextMenu.Items.Add(currentchoicesMenu);
+					this.CustomContextMenu.Items.Add(currentchoicesMenu);
 
 					BuildAffixesMenuItems(focusedItem.prefixID, currentchoicesMenu, ChangePrefixItemClicked
 						, curatedAffixes.Where(fp => fp.Key.TypeId == 1) // Prefix
@@ -1796,7 +1842,7 @@ public class SackPanel : Panel, IScalingControl
 						DisplayStyle = dispStl,
 					};
 					prefixMenu.Click += RemovePrefixItemClicked;
-					this.contextMenu.Items.Add(prefixMenu);
+					this.CustomContextMenu.Items.Add(prefixMenu);
 				}
 
 				#endregion
@@ -1813,7 +1859,7 @@ public class SackPanel : Panel, IScalingControl
 						ForeColor = foreC,
 						DisplayStyle = dispStl,
 					};
-					this.contextMenu.Items.Add(currentchoicesMenu);
+					this.CustomContextMenu.Items.Add(currentchoicesMenu);
 
 					BuildAffixesMenuItems(focusedItem.suffixID, currentchoicesMenu, ChangeSuffixItemClicked
 						, curatedAffixes.Where(fp => fp.Key.TypeId == 2) // Suffix
@@ -1831,7 +1877,7 @@ public class SackPanel : Panel, IScalingControl
 						DisplayStyle = dispStl,
 					};
 					suffixMenu.Click += RemoveSuffixItemClicked;
-					this.contextMenu.Items.Add(suffixMenu);
+					this.CustomContextMenu.Items.Add(suffixMenu);
 				}
 
 				#endregion
@@ -1849,7 +1895,7 @@ public class SackPanel : Panel, IScalingControl
 					DisplayStyle = dispStl,
 				};
 				swapDisplayMenuItem.Click += SwapAffixesDisplayModeClicked;
-				this.contextMenu.Items.Add(swapDisplayMenuItem);
+				this.CustomContextMenu.Items.Add(swapDisplayMenuItem);
 
 				#endregion
 			}
@@ -1857,6 +1903,9 @@ public class SackPanel : Panel, IScalingControl
 
 		#endregion
 	}
+
+
+
 
 	private void SwapAffixesDisplayModeClicked(object sender, EventArgs e)
 	{
@@ -1875,16 +1924,16 @@ public class SackPanel : Panel, IScalingControl
 		, EventHandler handler
 		, IEnumerable<IGrouping<
 			(int TypeId, string Translation)
-			, (int TypeId, RecordId AffixId, GameExtension AffixIdDlc
+			, (int TypeId, RecordId AffixId, GameDlc AffixIdDlc
 				, string Translation, float WeightPercent
 				, string FormatedText, LootRandomizerItem LootRandomizer
 			)>
 		> currentaffixGroup
 	)
 	{
-		var fnt = this.contextMenu.Font;
-		var foreC = this.contextMenu.ForeColor;
-		var backC = this.contextMenu.BackColor;
+		var fnt = this.CustomContextMenu.Font;
+		var foreC = this.CustomContextMenu.ForeColor;
+		var backC = this.CustomContextMenu.BackColor;
 		var dispStl = ToolStripItemDisplayStyle.Text;
 
 		if (_DisplayAffixesByEffect)// Group By Effect
@@ -1903,7 +1952,7 @@ public class SackPanel : Panel, IScalingControl
 					FormatedText: string.Format("{0} : ({1}) {2} ({3:p2}) {4}"
 						, effect
 						, av.AffixId.PrettyFileNameExploded.Number
-						, av.Translation 
+						, av.Translation
 						, av.WeightPercent
 						, av.AffixIdDlc.GetSuffix()
 					),
@@ -1954,7 +2003,7 @@ public class SackPanel : Panel, IScalingControl
 							// By Effect
 							? string.Format("({0}) {1} ({2:p2}) {3}"
 								, val.AffixId.PrettyFileNameExploded.Number
-								, val.Translation // Sub menu item display affix Name
+								, val.LootRandomizer.Translation // Sub menu item display affix Name
 								, val.WeightPercent
 								, val.AffixIdDlc.GetSuffix()
 							)

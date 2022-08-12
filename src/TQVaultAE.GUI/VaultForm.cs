@@ -11,6 +11,7 @@ namespace TQVaultAE.GUI
 	using System.ComponentModel;
 	using System.Drawing;
 	using System.Globalization;
+	using System.Runtime.InteropServices;
 	using System.Security.Permissions;
 	using System.Windows.Forms;
 	using System.Windows.Input;
@@ -387,7 +388,6 @@ namespace TQVaultAE.GUI
 			}
 		}
 
-
 		/// <summary>
 		/// Gets or sets a value indicating whether the Minimize button is displayed in the caption bar of the form.
 		/// </summary>
@@ -455,6 +455,15 @@ namespace TQVaultAE.GUI
 				}
 			}
 		}
+
+		#region Capture Mouse Wheel Event Globally
+
+		protected internal event EventHandler GlobalMouseWheelUp;
+		protected internal event EventHandler GlobalMouseWheelDown;
+		internal void RaiseGlobalMouseWheelDown() => GlobalMouseWheelDown?.Invoke(this, EventArgs.Empty);
+		internal void RaiseGlobalMouseWheelUp() => GlobalMouseWheelUp?.Invoke(this, EventArgs.Empty);
+
+		#endregion
 
 		/// <summary>
 		/// Processes a system event on the system menu.
