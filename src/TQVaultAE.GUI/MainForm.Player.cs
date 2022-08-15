@@ -71,7 +71,7 @@ public partial class MainForm
 		var characters = this.playerService.GetPlayerSaveList();
 
 		// Init FileWatcher
-		if (Config.Settings.Default.EnableHotReload)
+		if (Config.UserSettings.Default.EnableHotReload)
 		{
 			foreach (var ps in characters)
 			{

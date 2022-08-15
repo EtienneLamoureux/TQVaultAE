@@ -131,7 +131,7 @@ namespace TQVaultAE.Services.Win32
 
 		private SoundPlayer GetSoundPlayer(RecordId resourceId)
 		{
-			if (!Config.Settings.Default.EnableTQVaultSounds)
+			if (!Config.UserSettings.Default.EnableTQVaultSounds)
 				return null;
 
 			if (!resourceId.Normalized.Contains("SOUNDS"))
@@ -154,7 +154,7 @@ namespace TQVaultAE.Services.Win32
 
 		private static SoundPlayer GetRandomPlayer(SoundPlayer[] pool)
 		{
-			if (!Config.Settings.Default.EnableTQVaultSounds)
+			if (!Config.UserSettings.Default.EnableTQVaultSounds)
 				return null;
 
 			var rand = new Random(DateTime.Now.Millisecond);

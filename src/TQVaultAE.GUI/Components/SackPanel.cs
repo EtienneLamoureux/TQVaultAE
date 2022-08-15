@@ -470,7 +470,7 @@ public class SackPanel : Panel, IScalingControl
 	/// <summary>
 	/// Gets the alpha value from the user settings and applies any necessary clamping of the value.
 	/// </summary>
-	protected int UserAlpha => Config.Settings.Default.ItemBGColorOpacity > 127 ? 127 : Config.Settings.Default.ItemBGColorOpacity;
+	protected int UserAlpha => Config.UserSettings.Default.ItemBGColorOpacity > 127 ? 127 : Config.UserSettings.Default.ItemBGColorOpacity;
 
 	/// <summary>
 	/// Gets or sets the background image that is shown when there are no sacks to display.
@@ -1327,7 +1327,7 @@ public class SackPanel : Panel, IScalingControl
 		if (this.Sack == null)
 			return;
 
-		var isEquipmentReadOnly = (Config.Settings.Default.PlayerReadonly == true && this.SackType == SackType.Equipment);
+		var isEquipmentReadOnly = (Config.UserSettings.Default.PlayerReadonly == true && this.SackType == SackType.Equipment);
 
 		if (e.Button == MouseButtons.Left && !isEquipmentReadOnly)
 		{
@@ -1382,7 +1382,7 @@ public class SackPanel : Panel, IScalingControl
 
 				if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused) && !isEquipmentReadOnly)
 				{
-					if (Config.Settings.Default.AllowItemEdit)
+					if (Config.UserSettings.Default.AllowItemEdit)
 					{
 						if (focusedItem.HasRelicSlot1)
 							this.CustomContextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
@@ -1397,7 +1397,7 @@ public class SackPanel : Panel, IScalingControl
 
 				if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
 				{
-					if (Config.Settings.Default.AllowItemCopy)
+					if (Config.UserSettings.Default.AllowItemCopy)
 					{
 						this.CustomContextMenu.Items.Add(Resources.SackPanelMenuCopy);
 						this.CustomContextMenu.Items.Add(Resources.SackPanelMenuDuplicate);
@@ -1479,7 +1479,7 @@ public class SackPanel : Panel, IScalingControl
 				if ((focusedItem != null && (this.selectedItems == null || singleSelectionFocused)) && !isEquipmentReadOnly)
 				{
 					// Item Editing options
-					if (Config.Settings.Default.AllowItemEdit)
+					if (Config.UserSettings.Default.AllowItemEdit)
 					{
 						this.CustomContextMenu.Items.Add(Resources.SackPanelMenuSeed);
 
@@ -1721,7 +1721,7 @@ public class SackPanel : Panel, IScalingControl
 		if (focusedItem.IsArmor || focusedItem.IsWeaponShield || focusedItem.IsJewellery)
 		{
 			ItemAffixes affixes;
-			if (Config.Settings.Default.EnableEpicLegendaryAffixes
+			if (Config.UserSettings.Default.EnableEpicLegendaryAffixes
 				&& (focusedItem.Rarity == Rarity.Epic || focusedItem.Rarity == Rarity.Legendary))
 			{
 				// Get all available affixes for an item type
@@ -2372,7 +2372,7 @@ public class SackPanel : Panel, IScalingControl
 			}
 			// If we are showing the cannot equip background then 
 			// change to invalid color and adjust the alpha.
-			else if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
+			else if (Config.UserSettings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
 			{
 				backgroundColor = this.HighlightInvalidItemColor;
 
@@ -2616,7 +2616,7 @@ public class SackPanel : Panel, IScalingControl
 	{
 		if (focusedItem != null)
 		{
-			if (suppressMessage || Config.Settings.Default.SuppressWarnings || MessageBox.Show(
+			if (suppressMessage || Config.UserSettings.Default.SuppressWarnings || MessageBox.Show(
 				Resources.SackPanelDeleteMsg,
 				Resources.SackPanelDelete,
 				MessageBoxButtons.YesNo,
@@ -3055,7 +3055,7 @@ public class SackPanel : Panel, IScalingControl
 			{
 				if (this.selectedItems != null)
 				{
-					if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
+					if (Config.UserSettings.Default.SuppressWarnings || MessageBox.Show(
 						Resources.SackPanelDeleteMultiMsg,
 						Resources.SackPanelDeleteMulti,
 						MessageBoxButtons.YesNo,
@@ -3077,7 +3077,7 @@ public class SackPanel : Panel, IScalingControl
 			else if (selectedMenuItem == Resources.SackPanelMenuRemoveRelic
 				|| selectedMenuItem == Resources.SackPanelMenuRemoveRelic2)
 			{
-				if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
+				if (Config.UserSettings.Default.SuppressWarnings || MessageBox.Show(
 					Resources.SackPanelRemoveRelicMsg,
 					Resources.SackPanelMenuRemoveRelic,
 					MessageBoxButtons.YesNo,
@@ -3311,7 +3311,7 @@ public class SackPanel : Panel, IScalingControl
 		if (Sack == null)
 			return;
 
-		var isEquipmentReadOnly = (Config.Settings.Default.PlayerReadonly == true && SackType == SackType.Equipment);
+		var isEquipmentReadOnly = (Config.UserSettings.Default.PlayerReadonly == true && SackType == SackType.Equipment);
 		Item focusedItem = FindItem(LastCellWithFocus);
 
 		if ((focusedItem == null && selectedItems == null) || isEquipmentReadOnly)
@@ -3346,7 +3346,7 @@ public class SackPanel : Panel, IScalingControl
 		if (Sack == null)
 			return;
 
-		var isEquipmentReadOnly = (Config.Settings.Default.PlayerReadonly == true && SackType == SackType.Equipment);
+		var isEquipmentReadOnly = (Config.UserSettings.Default.PlayerReadonly == true && SackType == SackType.Equipment);
 		Item focusedItem = FindItem(LastCellWithFocus);
 		AutoMoveLocation destination = AutoMoveLocation.NotSet;
 
@@ -3528,7 +3528,7 @@ public class SackPanel : Panel, IScalingControl
 				this.Refresh();
 				e.Handled = true;
 			}
-			else if (e.KeyChar == 'c' && Config.Settings.Default.AllowItemCopy == true)
+			else if (e.KeyChar == 'c' && Config.UserSettings.Default.AllowItemCopy == true)
 			{
 				// Copy
 				Item focusedItem = this.FindItem(this.LastCellWithFocus);
@@ -3559,7 +3559,7 @@ public class SackPanel : Panel, IScalingControl
 					e.Handled = true;
 				}
 			}
-			else if (e.KeyChar == 'd' && Config.Settings.Default.AllowItemCopy == true)
+			else if (e.KeyChar == 'd' && Config.UserSettings.Default.AllowItemCopy == true)
 			{
 				// Duplicate
 				Item focusedItem = this.FindItem(this.LastCellWithFocus);

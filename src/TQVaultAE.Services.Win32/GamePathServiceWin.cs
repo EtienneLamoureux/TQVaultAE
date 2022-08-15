@@ -552,8 +552,8 @@ public class GamePathServiceWin : IGamePathService
 		string titanQuestGamePath = null;
 
 		// ForceGamePath precedence for dev on PC with partial installation
-		if (!string.IsNullOrEmpty(Config.Settings.Default.ForceGamePath))
-			titanQuestGamePath = Config.Settings.Default.ForceGamePath;
+		if (!string.IsNullOrEmpty(Config.UserSettings.Default.ForceGamePath))
+			titanQuestGamePath = Config.UserSettings.Default.ForceGamePath;
 
 		// We are either autodetecting or the path has not been set
 		//

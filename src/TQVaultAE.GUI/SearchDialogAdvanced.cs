@@ -1213,13 +1213,13 @@ public partial class SearchDialogAdvanced : VaultForm
 
 	private void SavePersonnalQueries()
 	{
-		Config.Settings.Default.SearchQueries = JsonConvert.SerializeObject(this._Queries);
-		Config.Settings.Default.Save();
+		Config.UserSettings.Default.SearchQueries = JsonConvert.SerializeObject(this._Queries);
+		Config.UserSettings.Default.Save();
 	}
 
 	private void LoadPersonnalQueries()
 	{
-		var save = Config.Settings.Default.SearchQueries;
+		var save = Config.UserSettings.Default.SearchQueries;
 		if (string.IsNullOrWhiteSpace(save))
 			return;
 

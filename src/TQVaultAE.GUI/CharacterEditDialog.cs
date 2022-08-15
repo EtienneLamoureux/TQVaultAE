@@ -111,7 +111,7 @@ namespace TQVaultAE.GUI
 
 		private void UpdatePlayerInfo(bool mustResetAttributes = false)
 		{
-			if (!Config.Settings.Default.AllowCharacterEdit) return;
+			if (!Config.UserSettings.Default.AllowCharacterEdit) return;
 			if (PlayerCollection.PlayerInfo == null) return;
 			try
 			{

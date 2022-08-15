@@ -94,8 +94,8 @@ public class Database : IDatabase
 	)
 	{
 		this.Log = log;
-		this.AutoDetectLanguage = Config.Settings.Default.AutoDetectLanguage;
-		this.TQLanguage = Config.Settings.Default.TQLanguage;
+		this.AutoDetectLanguage = Config.UserSettings.Default.AutoDetectLanguage;
+		this.TQLanguage = Config.UserSettings.Default.TQLanguage;
 		this.arcProv = arcFileProvider;
 		this.arzProv = arzFileProvider;
 		this.ItemAttributeProvider = itemAttributeProvider;

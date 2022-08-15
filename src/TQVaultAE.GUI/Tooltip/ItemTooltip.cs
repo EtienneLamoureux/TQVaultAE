@@ -95,7 +95,7 @@ namespace TQVaultAE.GUI.Tooltip
 				{
 					FocusedItem = focusedItem,
 					SackPanel = sackPanel,
-					EnableDetailedTooltipView = enableDetailedTooltipView ?? Config.Settings.Default.EnableDetailedTooltipView
+					EnableDetailedTooltipView = enableDetailedTooltipView ?? Config.UserSettings.Default.EnableDetailedTooltipView
 				};
 				ItemTooltipOpened.Add(focusedItem, _Current);
 				_Current.Show();
@@ -124,7 +124,7 @@ namespace TQVaultAE.GUI.Tooltip
 				{
 					FocusedItem = focusedItem,
 					ResultsDialog = resultsDialog,
-					EnableDetailedTooltipView = enableDetailedTooltipView ?? Config.Settings.Default.EnableDetailedTooltipView
+					EnableDetailedTooltipView = enableDetailedTooltipView ?? Config.UserSettings.Default.EnableDetailedTooltipView
 				};
 				ItemTooltipOpened.Add(focusedItem, _Current);
 				_Current.Show();
@@ -153,7 +153,7 @@ namespace TQVaultAE.GUI.Tooltip
 				{
 					FocusedItem = focusedItem,
 					PictureBox = picBox,
-					EnableDetailedTooltipView = enableDetailedTooltipView ?? Config.Settings.Default.EnableDetailedTooltipView
+					EnableDetailedTooltipView = enableDetailedTooltipView ?? Config.UserSettings.Default.EnableDetailedTooltipView
 				};
 				ItemTooltipOpened.Add(focusedItem, _Current);
 				_Current.Show();

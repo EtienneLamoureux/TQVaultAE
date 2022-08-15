@@ -316,7 +316,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		if (maps?.Any() ?? false)
 			this.mapListComboBox.Items.AddRange(maps);
 
-		if (!Config.Settings.Default.AllowCheats)
+		if (!Config.UserSettings.Default.AllowCheats)
 		{
 			this.allowItemEditCheckBox.Visible = false;
 			this.allowItemCopyCheckBox.Visible = false;
@@ -415,35 +415,35 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	/// </summary>
 	private void LoadSettings()
 	{
-		this.BaseFont = Config.Settings.Default.BaseFont;
+		this.BaseFont = Config.UserSettings.Default.BaseFont;
 
-		this.skipTitle = Config.Settings.Default.SkipTitle;
-		this.VaultPath = Config.Settings.Default.VaultPath;
-		this.allowItemCopy = Config.Settings.Default.AllowItemCopy;
-		this.allowItemEdit = Config.Settings.Default.AllowItemEdit;
-		this.allowCharacterEdit = Config.Settings.Default.AllowCharacterEdit;
-		this.loadLastCharacter = Config.Settings.Default.LoadLastCharacter;
-		this.loadLastVault = Config.Settings.Default.LoadLastVault;
-		this.detectLanguage = Config.Settings.Default.AutoDetectLanguage;
-		this.enableDetailedTooltipView = Config.Settings.Default.EnableDetailedTooltipView;
-		this.itemBGColorOpacity = Config.Settings.Default.ItemBGColorOpacity;
-		this.enableItemRequirementRestriction = Config.Settings.Default.EnableItemRequirementRestriction;
-		this.enableHotReload = Config.Settings.Default.EnableHotReload;
-		this.enableTQVaultSounds = Config.Settings.Default.EnableTQVaultSounds;
-		this.EnableEpicLegendaryAffixes = Config.Settings.Default.EnableEpicLegendaryAffixes;
+		this.skipTitle = Config.UserSettings.Default.SkipTitle;
+		this.VaultPath = Config.UserSettings.Default.VaultPath;
+		this.allowItemCopy = Config.UserSettings.Default.AllowItemCopy;
+		this.allowItemEdit = Config.UserSettings.Default.AllowItemEdit;
+		this.allowCharacterEdit = Config.UserSettings.Default.AllowCharacterEdit;
+		this.loadLastCharacter = Config.UserSettings.Default.LoadLastCharacter;
+		this.loadLastVault = Config.UserSettings.Default.LoadLastVault;
+		this.detectLanguage = Config.UserSettings.Default.AutoDetectLanguage;
+		this.enableDetailedTooltipView = Config.UserSettings.Default.EnableDetailedTooltipView;
+		this.itemBGColorOpacity = Config.UserSettings.Default.ItemBGColorOpacity;
+		this.enableItemRequirementRestriction = Config.UserSettings.Default.EnableItemRequirementRestriction;
+		this.enableHotReload = Config.UserSettings.Default.EnableHotReload;
+		this.enableTQVaultSounds = Config.UserSettings.Default.EnableTQVaultSounds;
+		this.EnableEpicLegendaryAffixes = Config.UserSettings.Default.EnableEpicLegendaryAffixes;
 
 		// Force English since there was some issue with getting the proper language setting.
 		var gl = Database.GameLanguage;
 		this.titanQuestLanguage = gl == null ? "English" : gl;
 
-		this.detectGamePath = Config.Settings.Default.AutoDetectGamePath;
+		this.detectGamePath = Config.UserSettings.Default.AutoDetectGamePath;
 		this.titanQuestPath = GamePathResolver.TQPath;
 		this.immortalThronePath = GamePathResolver.ImmortalThronePath;
-		this.enableMods = Config.Settings.Default.ModEnabled;
-		this.customMap = Config.Settings.Default.CustomMap;
-		this.loadAllFiles = Config.Settings.Default.LoadAllFiles;
-		this.suppressWarnings = Config.Settings.Default.SuppressWarnings;
-		this.playerReadonly = Config.Settings.Default.PlayerReadonly;
+		this.enableMods = Config.UserSettings.Default.ModEnabled;
+		this.customMap = Config.UserSettings.Default.CustomMap;
+		this.loadAllFiles = Config.UserSettings.Default.LoadAllFiles;
+		this.suppressWarnings = Config.UserSettings.Default.SuppressWarnings;
+		this.playerReadonly = Config.UserSettings.Default.PlayerReadonly;
 
 		this.settingsLoaded = true;
 		this.ConfigurationChanged = false;
@@ -542,7 +542,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 			}).ToArray();
 		this.scalingComboBoxCSVDelim.Items.AddRange(listItemDelim);
 		this.scalingComboBoxCSVDelim.SelectedItem = listItemDelim
-			.Where(i => i.ComboValue.ToString() == Config.Settings.Default.CSVDelimiter)
+			.Where(i => i.ComboValue.ToString() == Config.UserSettings.Default.CSVDelimiter)
 			.FirstOrDefault() ?? listItemDelim.First();
 	}
 
@@ -555,35 +555,35 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	{
 		if (this.ConfigurationChanged)
 		{
-			Config.Settings.Default.SkipTitle = this.skipTitle;
-			Config.Settings.Default.VaultPath = this.VaultPath;
-			Config.Settings.Default.AllowItemCopy = this.allowItemCopy;
-			Config.Settings.Default.AllowItemEdit = this.allowItemEdit;
-			Config.Settings.Default.AllowCharacterEdit = this.allowCharacterEdit;
-			Config.Settings.Default.LoadLastCharacter = this.loadLastCharacter;
-			Config.Settings.Default.LoadLastVault = this.loadLastVault;
-			Config.Settings.Default.AutoDetectLanguage = this.detectLanguage;
-			Config.Settings.Default.TQLanguage = this.titanQuestLanguage;
-			Config.Settings.Default.AutoDetectGamePath = this.detectGamePath;
-			Config.Settings.Default.TQITPath = this.immortalThronePath;
-			Config.Settings.Default.TQPath = this.titanQuestPath;
-			Config.Settings.Default.ModEnabled = this.enableMods;
-			Config.Settings.Default.CustomMap = this.customMap;
-			Config.Settings.Default.LoadAllFiles = this.loadAllFiles;
-			Config.Settings.Default.SuppressWarnings = this.suppressWarnings;
-			Config.Settings.Default.PlayerReadonly = this.playerReadonly;
-			Config.Settings.Default.BaseFont = this.BaseFont;
-			Config.Settings.Default.EnableDetailedTooltipView = this.enableDetailedTooltipView;
-			Config.Settings.Default.ItemBGColorOpacity = this.itemBGColorOpacity;
-			Config.Settings.Default.EnableItemRequirementRestriction = this.enableItemRequirementRestriction;
-			Config.Settings.Default.EnableHotReload = this.enableHotReload;
-			Config.Settings.Default.EnableTQVaultSounds = this.enableTQVaultSounds;
+			Config.UserSettings.Default.SkipTitle = this.skipTitle;
+			Config.UserSettings.Default.VaultPath = this.VaultPath;
+			Config.UserSettings.Default.AllowItemCopy = this.allowItemCopy;
+			Config.UserSettings.Default.AllowItemEdit = this.allowItemEdit;
+			Config.UserSettings.Default.AllowCharacterEdit = this.allowCharacterEdit;
+			Config.UserSettings.Default.LoadLastCharacter = this.loadLastCharacter;
+			Config.UserSettings.Default.LoadLastVault = this.loadLastVault;
+			Config.UserSettings.Default.AutoDetectLanguage = this.detectLanguage;
+			Config.UserSettings.Default.TQLanguage = this.titanQuestLanguage;
+			Config.UserSettings.Default.AutoDetectGamePath = this.detectGamePath;
+			Config.UserSettings.Default.TQITPath = this.immortalThronePath;
+			Config.UserSettings.Default.TQPath = this.titanQuestPath;
+			Config.UserSettings.Default.ModEnabled = this.enableMods;
+			Config.UserSettings.Default.CustomMap = this.customMap;
+			Config.UserSettings.Default.LoadAllFiles = this.loadAllFiles;
+			Config.UserSettings.Default.SuppressWarnings = this.suppressWarnings;
+			Config.UserSettings.Default.PlayerReadonly = this.playerReadonly;
+			Config.UserSettings.Default.BaseFont = this.BaseFont;
+			Config.UserSettings.Default.EnableDetailedTooltipView = this.enableDetailedTooltipView;
+			Config.UserSettings.Default.ItemBGColorOpacity = this.itemBGColorOpacity;
+			Config.UserSettings.Default.EnableItemRequirementRestriction = this.enableItemRequirementRestriction;
+			Config.UserSettings.Default.EnableHotReload = this.enableHotReload;
+			Config.UserSettings.Default.EnableTQVaultSounds = this.enableTQVaultSounds;
 
-			Config.Settings.Default.EnableEpicLegendaryAffixes =
+			Config.UserSettings.Default.EnableEpicLegendaryAffixes =
 				this.scalingCheckBoxEnableEpicLegendaryAffixes.Enabled && this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked;
 
 			var delim = (ComboBoxItem<CsvDelimiter, char>)this.scalingComboBoxCSVDelim.SelectedItem;
-			Config.Settings.Default.CSVDelimiter = delim.ComboValue.ToString();
+			Config.UserSettings.Default.CSVDelimiter = delim.ComboValue.ToString();
 		}
 	}
 
@@ -885,7 +885,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 			return;
 
 		var custommap = (this.mapListComboBox.SelectedItem as GamePathEntry)?.Path ?? string.Empty;
-		if (custommap != Config.Settings.Default.CustomMap)
+		if (custommap != Config.UserSettings.Default.CustomMap)
 		{
 			this.customMap = custommap;
 			this.ConfigurationChanged = this.CustomMapsChanged = true;
@@ -985,7 +985,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		if (font == null)
 			return;
 
-		if (font.Value != Config.Settings.Default.BaseFont)
+		if (font.Value != Config.UserSettings.Default.BaseFont)
 		{
 			this.BaseFont = font.Value;
 			this.ConfigurationChanged = this.UISettingChanged = true;// Force restart

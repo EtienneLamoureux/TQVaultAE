@@ -75,8 +75,8 @@ namespace ArzExplorer
 
 					if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
 					{
-						Settings.Default.ForceGamePath = fbd.SelectedPath;
-						Settings.Default.Save();
+						UserSettings.Default.ForceGamePath = fbd.SelectedPath;
+						UserSettings.Default.Save();
 						goto restart;
 					}
 					else goto exit;

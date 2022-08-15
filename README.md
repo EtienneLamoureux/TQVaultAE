@@ -92,12 +92,15 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 
 **Q. How to enable/disable the cheats (character edition, item edition, item copy)?**
 
-*A. Follow these steps:*
+*A1. __Easy way__:*
+- There is a dedicated checkbox in the tool settings window.
+
+*A2. __Hard way__, follow these steps:*
 1. *Navigate the the installation folder of TQVaultAE*
-2. *Open `TQVaultAE.exe.config` in a text editor (i.e. notepad, **not Microsoft Word**)*
-3. *Find the key `AllowCheats` and change the value to `True` or `False`*
-    - *`True` will allow you to toggle the cheats individually in the configuration menu*
-    - *`False` will disable the cheats completely and make it impossible to enable them in the configuration menu*
+2. *Open `UserConfig.xml` in a text editor (i.e. notepad, **not Microsoft Word**)*
+3. *Find the key `AllowCheats` and change the value to `1` or `0`*
+    - *`1` will allow you to toggle the cheats individually in the configuration menu*
+    - *`0` will disable the cheats completely and make it impossible to enable them in the configuration menu*
 
 **Q. Can TQVaultAE use my old vault files?**
 
@@ -107,35 +110,23 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 
 *A. Follow these steps:*
 1. *Navigate the the installation folder of TQVaultAE*
-2. *Open `TQVaultAE.exe.config` in a text editor (i.e. notepad, **not Microsoft Word**)*
+2. *Open `UserConfig.xml` in a text editor (i.e. notepad, **not Microsoft Word**)*
 3. *Replace the following sections:*
 
 ```xml
-<setting name="AutoDetectGamePath" serializeAs="String">
-    <value>True</value>
-</setting>
+<AutoDetectGamePath>1</AutoDetectGamePath>
 ...
-<setting name="TQITPath" serializeAs="String">
-    <value />
-</setting>
-<setting name="TQPath" serializeAs="String">
-    <value />
-</setting>
+<TQITPath />
+<TQPath />
 ```
 
 *by (replace the path to the correct one for your computer)*
 
 ```xml
-<setting name="AutoDetectGamePath" serializeAs="String">
-    <value>False</value>
-</setting>
+<AutoDetectGamePath>0</AutoDetectGamePath>
 ...
-<setting name="TQITPath" serializeAs="String">
-    <value>C:\examplePath\Titan Quest Anniversary Edition</value>
-</setting>
-<setting name="TQPath" serializeAs="String">
-    <value>C:\examplePath\Titan Quest Anniversary Edition</value>
-</setting>
+<TQITPath>C:\examplePath\Titan Quest Anniversary Edition</TQITPath>
+<TQPath>C:\examplePath\Titan Quest Anniversary Edition</TQPath>
 ```
 
 4. *Open TQVaultAE*
@@ -168,14 +159,6 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 
 *A. Yes*
 
-**Q. I have a problem not listed here. What can I do?**
-
-*A. There are several things you can do:*
-- *Close TQVaultAE and open it up again. It may fix your problem*
-- *Look up if your problem is featured in [our previously answered questions](https://github.com/EtienneLamoureux/TQVaultAE/issues?q=+is%3Aissue+label%3Aquestion+)*
-- *Look up if your problem is featured in [TQVault's documentation](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/documentation/TQVault%20common%20issues.pdf)*
-- *Create an issue in [our issue tracking board](https://github.com/EtienneLamoureux/TQVaultAE/issues)*
-
 **Q. How can i change my vault icons?**
 <br />
 <img src="./documentation/TQVaultAE_changeIcon.png" width="700" alt="Open the wizard" />
@@ -184,7 +167,15 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 
 **Q. How can adjust the volume?**
 
-*A. You can enable/Disable the sounds in the tool settings or adjust the volume via Windows Volume Mixer.*
+*A. You can enable/Disable the sounds in the tool settings window or adjust the volume via Windows Volume Mixer.*
+
+**Q. I have a problem not listed here. What can I do?**
+
+*A. There are several things you can do:*
+- *Close TQVaultAE and open it up again. It may fix your problem*
+- *Look up if your problem is featured in [our previously answered questions](https://github.com/EtienneLamoureux/TQVaultAE/issues?q=+is%3Aissue+label%3Aquestion+)*
+- *Look up if your problem is featured in [TQVault's documentation](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/documentation/TQVault%20common%20issues.pdf)*
+- *Create an issue in [our issue tracking board](https://github.com/EtienneLamoureux/TQVaultAE/issues)*
 
 ## Contributors
 This project could not go on without the continued volunteer contributions of the Titan Quest community. If you're thinking about contributing, please read our [contributing guidelines](/CONTRIBUTING.md).

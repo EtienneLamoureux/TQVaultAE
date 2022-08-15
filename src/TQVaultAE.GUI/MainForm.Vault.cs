@@ -106,9 +106,9 @@ public partial class MainForm
 		}
 
 		// See if we should load the last loaded vault
-		if (Config.Settings.Default.LoadLastVault)
+		if (Config.UserSettings.Default.LoadLastVault)
 		{
-			currentVault = Config.Settings.Default.LastVaultName;
+			currentVault = Config.UserSettings.Default.LastVaultName;
 
 			// Make sure there is something in the config file to load else load the Main Vault
 			// We do not want to create new here.

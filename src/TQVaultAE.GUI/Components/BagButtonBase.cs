@@ -239,10 +239,10 @@ namespace TQVaultAE.GUI.Components
 				{
 					switch (this.ButtonNumber)
 					{
-						case StashPanel.BAGID_EQUIPMENTPANEL when !Config.Settings.Default.DisableTooltipEquipment:
-						case StashPanel.BAGID_PLAYERSTASH when !Config.Settings.Default.DisableTooltipStash:
-						case StashPanel.BAGID_RELICVAULTSTASH when !Config.Settings.Default.DisableTooltipRelic:
-						case StashPanel.BAGID_TRANSFERSTASH when !Config.Settings.Default.DisableTooltipTransfer:
+						case StashPanel.BAGID_EQUIPMENTPANEL when !Config.UserSettings.Default.DisableTooltipEquipment:
+						case StashPanel.BAGID_PLAYERSTASH when !Config.UserSettings.Default.DisableTooltipStash:
+						case StashPanel.BAGID_RELICVAULTSTASH when !Config.UserSettings.Default.DisableTooltipRelic:
+						case StashPanel.BAGID_TRANSFERSTASH when !Config.UserSettings.Default.DisableTooltipTransfer:
 							BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
 							break;
 					}

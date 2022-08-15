@@ -541,7 +541,7 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 				// Only show Copy, Merge and Empty if something is in the bag.
 				if (!this.BagSackPanel.Sack.IsEmpty)
 				{
-					if (Config.Settings.Default.AllowItemCopy)
+					if (Config.UserSettings.Default.AllowItemCopy)
 					{
 						// Add the copy submenu
 						this.AddSubMenu(Resources.PlayerPanelMenuCopy, this.CopyBagClicked);
@@ -601,7 +601,7 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 
 	private (char charDelimiter, CsvDelimiter csvDelimiter) GetCSVDelimiter()
 	{
-		var delimStr = Config.Settings.Default.CSVDelimiter;
+		var delimStr = Config.UserSettings.Default.CSVDelimiter;
 
 		char delim = ',';
 
@@ -914,7 +914,7 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		string selectedItem = e.ClickedItem.Text;
 		if (selectedItem == Resources.PlayerPanelMenuEmpty)
 		{
-			if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
+			if (Config.UserSettings.Default.SuppressWarnings || MessageBox.Show(
 				Resources.PlayerPanelEmptyMsg,
 				Resources.PlayerPanelEmpty,
 				MessageBoxButtons.YesNo,
@@ -982,7 +982,7 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 
 			if (!this.Player.GetSack(destinationIndex + this.BagPanelOffset).IsEmpty)
 			{
-				if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
+				if (Config.UserSettings.Default.SuppressWarnings || MessageBox.Show(
 					Resources.PlayerOverwriteSackMsg,
 					Resources.PlayerOverwriteSack,
 					MessageBoxButtons.YesNo,

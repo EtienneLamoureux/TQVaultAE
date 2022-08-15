@@ -286,9 +286,9 @@ Debug Levels
 
 	private void AdjustMenuButtonVisibility()
 	{
-		this.forgeButton.Visible = Config.Settings.Default.AllowItemEdit;
-		this.duplicateButton.Visible = Config.Settings.Default.AllowCharacterEdit;
-		this.saveButton.Visible = Config.Settings.Default.EnableHotReload;
+		this.forgeButton.Visible = Config.UserSettings.Default.AllowItemEdit;
+		this.duplicateButton.Visible = Config.UserSettings.Default.AllowCharacterEdit;
+		this.saveButton.Visible = Config.UserSettings.Default.EnableHotReload;
 		// Get last position
 		var flowctr = this.flowLayoutPanelMenuButtons.Controls;
 		var lastctr = flowctr[flowctr.Count - 1];
@@ -370,7 +370,7 @@ Debug Levels
 		this.splashScreen.MaximumValue = 1;
 		this.splashScreen.FormClosed += new FormClosedEventHandler(this.SplashScreenClosed);
 
-		if (Config.Settings.Default.LoadAllFiles)
+		if (Config.UserSettings.Default.LoadAllFiles)
 			this.splashScreen.MaximumValue += LoadAllFilesTotal();
 
 		this.splashScreen.Show();
@@ -521,7 +521,7 @@ Debug Levels
 
 		this.ScaleOnResize = true;
 
-		UIService.Scale = Config.Settings.Default.Scale;
+		UIService.Scale = Config.UserSettings.Default.Scale;
 		this.Log.LogDebug("Config.Settings.Default.Scale changed to {0} !", UIService.Scale);
 
 		// Save the height / width ratio for resizing.
@@ -532,7 +532,7 @@ Debug Levels
 			Convert.ToInt32((float)this.Height * 0.4F));
 
 		this.OriginalFormSize = this.Size;
-		this.OriginalFormScale = Config.Settings.Default.Scale;
+		this.OriginalFormScale = Config.UserSettings.Default.Scale;
 
 		if (CurrentAutoScaleDimensions.Width != UIService.DESIGNDPI)
 		{
@@ -591,7 +591,7 @@ Debug Levels
 	{
 		// Check to see if we failed the last time we tried loading all of the files.
 		// If we did fail then turn it off and skip it.
-		if (!Config.Settings.Default.LoadAllFilesCompleted)
+		if (!Config.UserSettings.Default.LoadAllFilesCompleted)
 		{
 			if (MessageBox.Show(
 				Resources.MainFormDisableLoadAllFiles,
@@ -601,9 +601,9 @@ Debug Levels
 				MessageBoxDefaultButton.Button1,
 				RightToLeftOptions) == DialogResult.Yes)
 			{
-				Config.Settings.Default.LoadAllFilesCompleted = true;
-				Config.Settings.Default.LoadAllFiles = false;
-				Config.Settings.Default.Save();
+				Config.UserSettings.Default.LoadAllFilesCompleted = true;
+				Config.UserSettings.Default.LoadAllFiles = false;
+				Config.UserSettings.Default.Save();
 				return;
 			}
 		}
@@ -620,8 +620,8 @@ Debug Levels
 		if (total > 0)
 		{
 			// We were successful last time so we reset the flag for this attempt.
-			Config.Settings.Default.LoadAllFilesCompleted = false;
-			Config.Settings.Default.Save();
+			Config.UserSettings.Default.LoadAllFilesCompleted = false;
+			Config.UserSettings.Default.Save();
 		}
 		else
 			return;
@@ -700,8 +700,8 @@ Debug Levels
 			ts.Milliseconds / 10);
 
 		// We made it so set the flag to indicate we were successful.
-		Config.Settings.Default.LoadAllFilesCompleted = true;
-		Config.Settings.Default.Save();
+		Config.UserSettings.Default.LoadAllFilesCompleted = true;
+		Config.UserSettings.Default.Save();
 	}
 
 	/// <summary>
@@ -807,11 +807,11 @@ Debug Levels
 		else
 		{
 
-			if (!Config.Settings.Default.AllowCheats)
+			if (!Config.UserSettings.Default.AllowCheats)
 			{
-				Config.Settings.Default.AllowItemCopy = false;
-				Config.Settings.Default.AllowItemEdit = false;
-				Config.Settings.Default.AllowCharacterEdit = false;
+				Config.UserSettings.Default.AllowItemCopy = false;
+				Config.UserSettings.Default.AllowItemEdit = false;
+				Config.UserSettings.Default.AllowCharacterEdit = false;
 			}
 
 			CommandLineArgs args = new CommandLineArgs();
@@ -823,7 +823,7 @@ Debug Levels
 			this.resourcesLoaded = true;
 			this.backgroundWorkerLoadAllFiles.ReportProgress(1);
 
-			if (Config.Settings.Default.LoadAllFiles)
+			if (Config.UserSettings.Default.LoadAllFiles)
 				this.LoadAllFiles();
 
 			// Notify the form that the resources are loaded.
@@ -881,7 +881,7 @@ Debug Levels
 			this.LoadTransferStash();
 			this.LoadRelicVaultStash();
 
-			if (Config.Settings.Default.EnableHotReload)
+			if (Config.UserSettings.Default.EnableHotReload)
 			{
 				var relicPath = GamePathResolver.RelicVaultStashFileFullPath;
 				var transferPath = GamePathResolver.TransferStashFileFullPath;
@@ -898,10 +898,10 @@ Debug Levels
 			}
 
 			// Load last character here if selected
-			if (Config.Settings.Default.LoadLastCharacter)
+			if (Config.UserSettings.Default.LoadLastCharacter)
 			{
 				var lastPlayerSave = this.characterComboBox.Items.OfType<PlayerSave>()
-					.FirstOrDefault(ps => ps.Name == Config.Settings.Default.LastCharacterName);
+					.FirstOrDefault(ps => ps.Name == Config.UserSettings.Default.LastCharacterName);
 
 				if (lastPlayerSave != null)
 					this.characterComboBox.SelectedItem = lastPlayerSave;
@@ -910,9 +910,9 @@ Debug Levels
 			string currentVault = VaultService.MAINVAULT;
 
 			// See if we should load the last loaded vault
-			if (Config.Settings.Default.LoadLastVault)
+			if (Config.UserSettings.Default.LoadLastVault)
 			{
-				currentVault = Config.Settings.Default.LastVaultName;
+				currentVault = Config.UserSettings.Default.LastVaultName;
 
 				// Make sure there is something in the config file to load else load the Main Vault
 				// We do not want to create new here.
@@ -931,7 +931,7 @@ Debug Levels
 			CommandLineArgs args = new CommandLineArgs();
 
 			// Allows skipping of title screen with setting
-			if (args.IsAutomatic || Config.Settings.Default.SkipTitle == true)
+			if (args.IsAutomatic || Config.UserSettings.Default.SkipTitle == true)
 			{
 				string player = args.Player;
 				int index = this.characterComboBox.FindStringExact(player);
@@ -974,60 +974,60 @@ Debug Levels
 	private void SaveConfiguration()
 	{
 		// Update last loaded vault
-		if (Config.Settings.Default.LoadLastVault)
+		if (Config.UserSettings.Default.LoadLastVault)
 		{
 			// Changed by VillageIdiot
 			// Now check to see if the value is changed since the Main Vault would never auto load
-			if (this.vaultListComboBox.SelectedItem != null && this.vaultListComboBox.SelectedItem.ToString().ToUpperInvariant() != Config.Settings.Default.LastVaultName.ToUpperInvariant())
+			if (this.vaultListComboBox.SelectedItem != null && this.vaultListComboBox.SelectedItem.ToString().ToUpperInvariant() != Config.UserSettings.Default.LastVaultName.ToUpperInvariant())
 			{
-				Config.Settings.Default.LastVaultName = this.vaultListComboBox.SelectedItem.ToString();
+				Config.UserSettings.Default.LastVaultName = this.vaultListComboBox.SelectedItem.ToString();
 				this.configChanged = true;
 			}
 		}
 
 		// Update last loaded character
-		if (Config.Settings.Default.LoadLastCharacter)
+		if (Config.UserSettings.Default.LoadLastCharacter)
 		{
 			string name = this.characterComboBox.SelectedItem.ToString();
 			var ps = this.characterComboBox.SelectedItem as PlayerSave;
 
 			if (ps is not null) name = ps.Name;
 
-			if (name.ToUpperInvariant() != Config.Settings.Default.LastCharacterName.ToUpperInvariant())
+			if (name.ToUpperInvariant() != Config.UserSettings.Default.LastCharacterName.ToUpperInvariant())
 			{
 				// Clear the value if no character is selected
 				if (name == Resources.MainFormSelectCharacter)
 					name = string.Empty;
 
-				Config.Settings.Default.LastCharacterName = name;
+				Config.UserSettings.Default.LastCharacterName = name;
 
 				this.configChanged = true;
 			}
 		}
 
 		// Update custom map settings
-		if (Config.Settings.Default.ModEnabled)
+		if (Config.UserSettings.Default.ModEnabled)
 			this.configChanged = true;
 
 		// Clear out the key if we are autodetecting.
-		if (Config.Settings.Default.AutoDetectLanguage)
-			Config.Settings.Default.TQLanguage = string.Empty;
+		if (Config.UserSettings.Default.AutoDetectLanguage)
+			Config.UserSettings.Default.TQLanguage = string.Empty;
 
 		// Clear out the settings if auto detecting.
-		if (Config.Settings.Default.AutoDetectGamePath)
+		if (Config.UserSettings.Default.AutoDetectGamePath)
 		{
-			Config.Settings.Default.TQITPath = string.Empty;
-			Config.Settings.Default.TQPath = string.Empty;
+			Config.UserSettings.Default.TQITPath = string.Empty;
+			Config.UserSettings.Default.TQPath = string.Empty;
 		}
 
 		if (UIService.Scale != 1.0F)
 		{
-			Config.Settings.Default.Scale = UIService.Scale;
+			Config.UserSettings.Default.Scale = UIService.Scale;
 			this.configChanged = true;
 		}
 
 		if (this.configChanged)
-			Config.Settings.Default.Save();
+			Config.UserSettings.Default.Save();
 	}
 
 	/// <summary>

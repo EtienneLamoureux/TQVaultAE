@@ -71,8 +71,8 @@ public partial class MainForm
 		forgePanel.Dock = DockStyle.Left;
 		forgePanel.Visible = true;
 
-		this.lastEnableDetailedTooltipView = Config.Settings.Default.EnableDetailedTooltipView;
-		Config.Settings.Default.EnableDetailedTooltipView = true;
+		this.lastEnableDetailedTooltipView = Config.UserSettings.Default.EnableDetailedTooltipView;
+		Config.UserSettings.Default.EnableDetailedTooltipView = true;
 	}
 
 	private void ForgeActionForged()
@@ -104,7 +104,7 @@ public partial class MainForm
 		forgePanel.Dock = DockStyle.None;
 		forgePanel.Visible = false;
 
-		Config.Settings.Default.EnableDetailedTooltipView = this.lastEnableDetailedTooltipView;
+		Config.UserSettings.Default.EnableDetailedTooltipView = this.lastEnableDetailedTooltipView;
 
 		Refresh();
 	}

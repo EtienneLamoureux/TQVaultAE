@@ -1,3 +1,15 @@
 ﻿Developers note
 
 - Remember to report any configuration design changes to the configuration file of EXE (TQVaultAE.GUI)
+
+hguy - 2022-08-15 :
+Old user.config settings are in sub directories of "%USERPROFILE%\AppData\Local\titanquest.net_community".
+It was a pain for users and the source of too many misunderstanding during support, so i move all userSettings 
+into UserConfig.xml which is deployed with the executable.
+From now on, it's the dedicated file for all user level configuration.
+
+It is programmatically used in an exact similar way as the standard .NET class except we control the path.
+
+Examples:
+TQVaultAE.Config.UserSettings.Default.Scale = 1;
+TQVaultAE.Config.UserSettings.Default.Save();
