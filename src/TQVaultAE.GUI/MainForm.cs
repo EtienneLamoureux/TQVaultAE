@@ -608,11 +608,11 @@ Debug Levels
 			}
 		}
 
-		string[] vaults = GamePathResolver.GetVaultList();
+		string[] vaults = GamePathResolver.GetVaultList() ?? new string[] { };
 		var charactersIT = this.characterComboBox.Items.OfType<PlayerSave>().ToArray();
 
 		int numIT = charactersIT?.Length ?? 0;
-		int numVaults = vaults?.Length ?? 0;
+		int numVaults = vaults.Length;
 
 		// Since this takes a while, show a progress dialog box.
 		int total = numIT + numVaults - 1;
