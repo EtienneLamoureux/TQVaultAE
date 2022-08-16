@@ -47,7 +47,7 @@ namespace TQVaultAE.Presentation
 				let arcpath = GamePathService.ResolveArcFileName(filenameId)
 				where File.Exists(arcpath.ArcFileName)
 				let arcfile = Database.ReadARCFile(arcpath.ArcFileName)
-				from key in arcfile.DirectoryEntries.Keys.Cast<RecordId>()
+				from key in arcfile?.DirectoryEntries.Keys.Cast<RecordId>() ?? new RecordId[0]
 				select filename + '\\' + key.Normalized;
 
 			// Regex Match
@@ -77,11 +77,11 @@ namespace TQVaultAE.Presentation
 					, ovID
 					, resOver is null ? null : this.UIService.LoadBitmap(ovID, resOver)
 				)
-				where 
+				where
 				(// Square Only for Shields
 					iconinfo.Category == IconCategory.Shields
 					&& iconinfo.OffBitmap.Size.Width == iconinfo.OffBitmap.Size.Height
-				) 
+				)
 				// Everything else
 				|| iconinfo.Category != IconCategory.Shields
 				select iconinfo;

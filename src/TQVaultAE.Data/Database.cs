@@ -118,8 +118,8 @@ public class Database : IDatabase
 		}
 	}
 
-	ReadOnlyCollection<LootRandomizerItem> _LootRandomizerList;
-	public ReadOnlyCollection<LootRandomizerItem> AllLootRandomizer
+	ReadOnlyDictionary<RecordId, LootRandomizerItem> _LootRandomizerList;
+	public ReadOnlyDictionary<RecordId, LootRandomizerItem> AllLootRandomizer
 	{
 		get
 		{
@@ -357,23 +357,34 @@ public class Database : IDatabase
 	private ReadOnlyDictionary<RecordId, DBRecordCollection> ReadAllLootRandomizerTable()
 	{
 		// Load all available loot randomizer table
-		var lootRandomizerTableList = new[] { this.ArzFileMod, this.ArzFile }
-		.Where(db => db is not null)
+		var lootRandomizerTableList = new[] {
+			(Priority: 0, ArzFile: this.ArzFileMod),
+			(Priority: 1, ArzFile: this.ArzFile)
+		}
+		.Where(db => db.ArzFile is not null)
 		.SelectMany(db =>
-			db.RecordInfo.Where(r =>
+			db.ArzFile.RecordInfo.Where(r =>
 				r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZERTABLE, noCase)
 				&& !r.Key.IsOld // Remove old loot table
-			)
+			).Select(ri => (RecordInfo: ri, db.Priority))
 		)
 		.Select(r =>
 		{
-			var DBRecords = GetRecordFromFile(r.Key);
+			var DBRecords = GetRecordFromFile(r.RecordInfo.Key);
 
 			if (DBRecords is null && TQDebug.ItemDebugLevel > 0)
-				Log.LogError(@"Unknown {RCLASS_LOOTRANDOMIZERTABLE} record ""{RecordId}""", RCLASS_LOOTRANDOMIZERTABLE, r.Key);
+				Log.LogError(@"Unknown {RCLASS_LOOTRANDOMIZERTABLE} record ""{RecordId}""", RCLASS_LOOTRANDOMIZERTABLE, r.RecordInfo.Key);
 
-			return (r.Key, DBRecords);
-		}).ToDictionary(r => r.Key, r => r.DBRecords);
+			return (RecordInfoKey: r.RecordInfo.Key, DBRecords, r.Priority);
+		})
+		.GroupBy(r => r.RecordInfoKey)
+		.Select(grp =>
+			(
+				RecordInfoKey: grp.Key,
+				grp.OrderBy(v => v.Priority).First().DBRecords // Promote Mod records over base game
+			)
+		)
+		.ToDictionary(r => r.RecordInfoKey, r => r.DBRecords);
 
 		return new ReadOnlyDictionary<RecordId, DBRecordCollection>(lootRandomizerTableList);
 	}
@@ -383,22 +394,28 @@ public class Database : IDatabase
 	/// Extract all LootRandomizer
 	/// </summary>
 	/// <returns></returns>
-	private ReadOnlyCollection<LootRandomizerItem> ReadAllLootRandomizer()
+	private ReadOnlyDictionary<RecordId, LootRandomizerItem> ReadAllLootRandomizer()
 	{
 		// Load all available loot randomizer
-		var lootRandomizerList = new[] { this.ArzFileMod, this.ArzFile }
-			.Where(db => db is not null)
-			.SelectMany(db =>
-				db.RecordInfo.Where(r => r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZER, noCase))
-			)
-			.Select(r =>
+		var lootRandomizerList = new[] {
+			(Priority: 0, ArzFile: this.ArzFileMod),
+			(Priority: 1, ArzFile: this.ArzFile)
+		}
+		.Where(db => db.ArzFile is not null)
+		.SelectMany(db =>
+			db.ArzFile.RecordInfo.Where(r => r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZER, noCase))
+			.Select(ri => (RecordInfo: ri, db.Priority))
+		)
+		.Select(r =>
 			{
-				var rec = GetRecordFromFile(r.Key);
+				var rec = GetRecordFromFile(r.RecordInfo.Key);
+
+				var defVal = (RecordInfoKey: r.RecordInfo.Key, LootRandomizerItem: LootRandomizerItem.Default(r.RecordInfo.Key), r.Priority);
 
 				if (rec is null)
 				{
-					Log.LogError(@"Unknown {RCLASS_LOOTRANDOMIZER} record ""{RecordId}""", RCLASS_LOOTRANDOMIZER, r.Key);
-					return LootRandomizerItem.Default(r.Key);
+					Log.LogError(@"Unknown {RCLASS_LOOTRANDOMIZER} record ""{RecordId}""", RCLASS_LOOTRANDOMIZER, r.RecordInfo.Key);
+					return defVal;
 				}
 
 				string Tag = rec.GetString(Variable.KEY_LOOTRANDNAME, 0);
@@ -414,23 +431,31 @@ public class Database : IDatabase
 					&& LevelRequirement == 0;
 
 				if (hasNoVisualData)
-					return LootRandomizerItem.Default(r.Key);
+					return defVal;
 
 				var val = new LootRandomizerItem(
-					r.Key
+					r.RecordInfo.Key
 					, Tag
 					, Cost
 					, LevelRequirement
 					, ItemClass
 					, FileDescription
-					, r.Key.PrettyFileName
+					, r.RecordInfo.Key.PrettyFileName
 				);
 
-				return val;
-			})
-			.ToList().AsReadOnly();
+				return (RecordInfoKey: r.RecordInfo.Key, LootRandomizerItem: val, r.Priority);
+			}
+		)
+		.GroupBy(r => r.RecordInfoKey)
+		.Select(grp =>
+			(
+				RecordInfoKey: grp.Key,
+				grp.OrderBy(v => v.Priority).First().LootRandomizerItem // Promote Mod records over base game
+			)
+		)
+		.ToDictionary(r => r.RecordInfoKey, r => r.LootRandomizerItem);
 
-		return lootRandomizerList;
+		return new ReadOnlyDictionary<RecordId, LootRandomizerItem>(lootRandomizerList);
 	}
 
 	#region ItemAffixTableMap
@@ -803,6 +828,9 @@ public class Database : IDatabase
 
 			ArcFile arcFile = ReadARCFile(arcFileName);
 
+			if (arcFile is null)
+				return null;
+
 			// Now retrieve the data
 			byte[] ans = arcProv.GetData(arcFile, dataId);
 
@@ -826,9 +854,11 @@ public class Database : IDatabase
 	public ArcFile ReadARCFile(string arcFileName)
 	{
 		// See if we have this arcfile already and if not create it.
-
 		ArcFile arcFile = this.arcFiles.GetOrAddAtomic(arcFileName, k =>
 		{
+			if (!File.Exists(k))
+				return null;
+
 			var file = new ArcFile(k);
 			arcProv.ReadARCToC(file);// Heavy lifting in GetOrAddAtomic
 			return file;

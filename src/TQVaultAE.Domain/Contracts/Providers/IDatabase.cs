@@ -8,7 +8,7 @@ public interface IDatabase
 	/// <summary>
 	/// Return all loot randomizer (Affix effect infos)
 	/// </summary>
-	ReadOnlyCollection<LootRandomizerItem> AllLootRandomizer { get; }
+	ReadOnlyDictionary<RecordId, LootRandomizerItem> AllLootRandomizer { get; }
 	/// <summary>
 	/// Return all loot randomizer table records (Affix effect infos)
 	/// </summary>

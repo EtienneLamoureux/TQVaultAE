@@ -9,12 +9,12 @@ public interface ILootTableCollectionProvider
 	/// Return all loot randomizer table (Affix effect infos)
 	/// </summary>
 	ReadOnlyDictionary<RecordId, LootTableCollection> AllLootRandomizerTable { get; }
-	
+
 	/// <summary>
 	/// Return all loot randomizer (Affix effect infos)
 	/// </summary>
 	/// <returns></returns>
-	ReadOnlyCollection<LootRandomizerItem> AllLootRandomizerTranslated { get; }
+	ReadOnlyDictionary<RecordId, LootRandomizerItem> AllLootRandomizerTranslated { get; }
 
 	/// <summary>
 	/// Builds the table from the database using the passed table Id.

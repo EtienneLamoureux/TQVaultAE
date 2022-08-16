@@ -98,15 +98,27 @@ namespace TQVaultAE.Domain.Entities
 			if (hasSearch || hasFilter)
 			{
 				this.HighlightedItems.Clear();
-
+				
 				// Check for players
 				var sacksplayers = this.Players.Select(p => p.Value.Value)
-					.SelectMany(p => new[] { p.EquipmentSack }.Concat(p.Sacks))
-					.Where(s => s is not null && s.Count > 0);
+					.SelectMany(p => {
+						var retval = new List<SackCollection>();
+
+						if (p.EquipmentSack is not null)
+							retval.Add(p.EquipmentSack);
+
+						if (p.Sacks is not null)
+							retval.AddRange(p.Sacks);
+
+						return retval;
+					})
+					.Where(s => s.Count > 0);
+
 				// Check for Vaults
 				var sacksVault = this.Vaults.Select(p => p.Value.Value)
 					.SelectMany(p => p.Sacks)
 					.Where(s => s is not null && s.Count > 0);
+
 				// Check for Stash
 				var sacksStash = this.Stashes.Select(p => p.Value.Value)
 					.Select(p => p.Sack)

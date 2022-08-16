@@ -69,8 +69,10 @@ public interface ITranslationService
 	/// </summary>
 	/// <param name="xTagName"></param>
 	/// <param name="removeAllTQTags"></param>
+	/// <param name="doCleanup"></param>
+	/// <param name="doCleanupKeepLeadingColorTag"></param>
 	/// <returns></returns>
-	string TranslateXTag(string xTagName, bool removeAllTQTags = false);
+	string TranslateXTag(string xTagName, bool removeAllTQTags = false, bool doCleanup = false, bool doCleanupKeepLeadingColorTag = false);
 	/// <summary>
 	/// Translate character class to mastery
 	/// </summary>
@@ -82,6 +84,9 @@ public interface ITranslationService
 	/// </summary>
 	/// <param name="xTagName"></param>
 	/// <param name="translation"></param>
+	/// <param name="removeAllTQTags"></param>
+	/// <param name="doCleanup"></param>
+	/// <param name="doCleanupKeepLeadingColorTag"></param>
 	/// <returns></returns>
-	bool TryTranslateXTag(string xTagName, out string translation);
+	bool TryTranslateXTag(string xTagName, out string translation, bool removeAllTQTags = false, bool doCleanup = false, bool doCleanupKeepLeadingColorTag = false);
 }

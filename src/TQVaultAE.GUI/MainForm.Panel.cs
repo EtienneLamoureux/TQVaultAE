@@ -33,7 +33,12 @@ public partial class MainForm
 		if (GamePathResolver.IsCustom)
 		{
 			this.customMapText.Visible = true;
-			this.customMapText.Text = string.Format(CultureInfo.CurrentCulture, Resources.MainFormCustomMapLabel, Path.GetFileName(GamePathResolver.MapName));
+			this.customMapText.Text = string.Format(
+				GamePathResolver.MapName.ToUpper().Contains(@"\CUSTOMMAPS\") 
+					? "Legacy : " + Resources.MainFormCustomMapLabel
+					: "Steam : " + Resources.MainFormCustomMapLabel
+				, Path.GetFileName(GamePathResolver.MapName)
+			);
 		}
 
 		this.CreateVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function

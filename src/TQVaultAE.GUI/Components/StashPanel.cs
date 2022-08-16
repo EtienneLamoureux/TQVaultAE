@@ -282,7 +282,7 @@ namespace TQVaultAE.GUI.Components
 			if (this.Player?.PlayerInfo != null)
 			{
 				DisplayPlayerInfoLastName = this.Player.PlayerName;
-				var pclass = TranslationService.TranslateXTag(this.Player.PlayerInfo.Class) ?? string.Empty;
+				var pclass = TranslationService.TranslateXTag(this.Player.PlayerInfo.Class, true, true) ?? string.Empty;
 				var mclass = TranslationService.TranslateMastery(this.Player.PlayerInfo.Class) ?? string.Empty;
 				mclass = mclass == Resources.Masteries ? string.Empty : mclass;
 

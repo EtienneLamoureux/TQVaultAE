@@ -38,32 +38,34 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 		}
 	}
 
-	private ReadOnlyCollection<LootRandomizerItem> _AllLootRandomizerTranslated;
+	private ReadOnlyDictionary<RecordId, LootRandomizerItem> _AllLootRandomizerTranslated;
 	/// <summary>
 	/// Return all loot randomizer (Affix effect infos)
 	/// </summary>
 	/// <returns></returns>
-	public ReadOnlyCollection<LootRandomizerItem> AllLootRandomizerTranslated
+	public ReadOnlyDictionary<RecordId, LootRandomizerItem> AllLootRandomizerTranslated
 	{
 		get
 		{
 			if (_AllLootRandomizerTranslated is null)
 			{
-				_AllLootRandomizerTranslated = Database.AllLootRandomizer.Select(r =>
+				var dico = Database.AllLootRandomizer.Select(r =>
 				{
-					var translation = TranslationService.TranslateXTag(r.Tag).TQCleanup();// Get translation
+					var translation = TranslationService.TranslateXTag(r.Value.Tag).TQCleanup();// Get translation
 
 					if (string.IsNullOrWhiteSpace(translation))
-						translation = r.FileDescription.TQCleanup();
+						translation = r.Value.FileDescription.TQCleanup();
 
 					if (string.IsNullOrWhiteSpace(translation))
-						translation = r.Id.PrettyFileName;
+						translation = r.Key.PrettyFileName;
 
-					return r with
+					return r.Value with
 					{
 						Translation = translation,
 					};
-				}).ToList().AsReadOnly();
+				}).ToDictionary(v => v.Id);
+
+				_AllLootRandomizerTranslated = new ReadOnlyDictionary<RecordId, LootRandomizerItem>(dico);
 			}
 
 			return _AllLootRandomizerTranslated;
@@ -141,9 +143,7 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 			}
 
 			// get affix translations
-			var lootrandom = this.AllLootRandomizerTranslated.SingleOrDefault(lr => lr.Id == affix);
-
-			if (lootrandom is null)
+			if (!this.AllLootRandomizerTranslated.TryGetValue(affix, out var lootrandom))
 			{
 				if (TQDebug.ItemDebugLevel > 0)
 					Log.LogError(@"Unknown affix record ""{RecordId}"" from table ""{TableId}"""

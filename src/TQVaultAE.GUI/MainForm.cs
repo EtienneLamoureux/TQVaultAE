@@ -887,14 +887,20 @@ Debug Levels
 				var transferPath = GamePathResolver.TransferStashFileFullPath;
 
 				this.fileSystemWatcherRelicStash.EnableRaisingEvents = false;
-				this.fileSystemWatcherRelicStash.Path = Path.GetDirectoryName(relicPath);
-				this.fileSystemWatcherRelicStash.Filter = Path.GetFileName(relicPath);
-				this.fileSystemWatcherRelicStash.EnableRaisingEvents = true;
+				if (File.Exists(relicPath))
+				{
+					this.fileSystemWatcherRelicStash.Path = Path.GetDirectoryName(relicPath);
+					this.fileSystemWatcherRelicStash.Filter = Path.GetFileName(relicPath);
+					this.fileSystemWatcherRelicStash.EnableRaisingEvents = true;
+				}
 
 				this.fileSystemWatcherTransferStash.EnableRaisingEvents = false;
-				this.fileSystemWatcherTransferStash.Path = Path.GetDirectoryName(transferPath);
-				this.fileSystemWatcherTransferStash.Filter = Path.GetFileName(transferPath);
-				this.fileSystemWatcherTransferStash.EnableRaisingEvents = true;
+				if (File.Exists(transferPath))
+				{
+					this.fileSystemWatcherTransferStash.Path = Path.GetDirectoryName(transferPath);
+					this.fileSystemWatcherTransferStash.Filter = Path.GetFileName(transferPath);
+					this.fileSystemWatcherTransferStash.EnableRaisingEvents = true;
+				}
 			}
 
 			// Load last character here if selected
