@@ -13,6 +13,10 @@ namespace TQVaultAE.Domain.Entities
 	{
 		const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
 
+		public bool MustResetMasteries =>
+				this.MasteriesAllowed_OldValue.HasValue && this.MasteriesAllowed < this.MasteriesAllowed_OldValue
+				|| this.MasteriesResetRequiered;
+
 		public bool MasteriesResetRequiered { get; set; }
 
 		/// <summary>

@@ -66,6 +66,14 @@ namespace TQVaultAE.Data
 			pc.PlayerInfo.BaseMana = playerInfo.BaseMana;
 			pc.PlayerInfo.Money = playerInfo.Money;
 
+			if (pc.PlayerInfo.MustResetMasteries)
+			{
+				pc.PlayerInfo.Class = playerInfo.Class;
+				// Put back the new reduced skill list in place for serialization
+				pc.PlayerInfo.SkillRecordList.Clear();
+				pc.PlayerInfo.SkillRecordList.AddRange(playerInfo.SkillRecordList);
+			}
+
 			//commit the player changes to the raw file
 			Commit(pc);
 		}
@@ -101,11 +109,8 @@ namespace TQVaultAE.Data
 			var baseHealth = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseHealth, baseIntelligence.nextOffset);
 			var baseMana = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseMana, baseHealth.nextOffset);
 
-			if (pc.PlayerInfo.MasteriesAllowed_OldValue.HasValue && pc.PlayerInfo.MasteriesAllowed < pc.PlayerInfo.MasteriesAllowed_OldValue
-				|| pc.PlayerInfo.MasteriesResetRequiered)
+			if (pc.PlayerInfo.MustResetMasteries)
 			{
-				pc.PlayerInfo.ResetMasteries();
-
 				#region Override skill lines block after reset
 
 				// Find skill section boundaries
@@ -133,12 +138,6 @@ namespace TQVaultAE.Data
 				firstblock = TQData.ReadIntAfter(pc.rawData, "begin_block");
 				secondblock = TQData.ReadIntAfter(pc.rawData, "begin_block", firstblock.nextOffset);
 				TQData.WriteIntAfter(pc.rawData, "max", pc.PlayerInfo.SkillRecordList.Count, secondblock.nextOffset);
-
-				// Adjust "skillPoints"
-				var skillpointsToRestore = pc.PlayerInfo.ReleasedSkillPoints;
-
-				if (skillpointsToRestore > 0)
-					TQData.WriteIntAfter(pc.rawData, "skillPoints", pc.PlayerInfo.SkillPoints + skillpointsToRestore);
 
 				#endregion
 
@@ -313,11 +312,11 @@ namespace TQVaultAE.Data
 						ContainerType = SackType.Sack,
 						beginBlockCrap1 = this.TQData.BeginBlockValue,
 						beginBlockCrap2 = this.TQData.BeginBlockValue,
-						BaseItemId = s.baseName.ToRecordId(),
-						prefixID = s.prefixName.ToRecordId(),
-						suffixID = s.suffixName.ToRecordId(),
-						relicID = s.relicName.ToRecordId(),
-						RelicBonusId = s.relicBonus.ToRecordId(),
+						BaseItemId = s.baseName,
+						prefixID = s.prefixName,
+						suffixID = s.suffixName,
+						relicID = s.relicName,
+						RelicBonusId = s.relicBonus,
 						Seed = s.seed,
 						Var1 = s.var1,
 						endBlockCrap2 = this.TQData.EndBlockValue,
@@ -334,8 +333,8 @@ namespace TQVaultAE.Data
 					if (!string.IsNullOrWhiteSpace(s.relicName2))
 					{
 						itm.atlantis = true;
-						itm.relic2ID = s.relicName2.ToRecordId();
-						itm.RelicBonus2Id = s.relicBonus2.ToRecordId();
+						itm.relic2ID = s.relicName2;
+						itm.RelicBonus2Id = s.relicBonus2;
 						itm.Var2 = s.var2;
 					}
 

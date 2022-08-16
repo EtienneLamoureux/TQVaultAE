@@ -254,7 +254,7 @@ namespace TQVaultAE.GUI.Components
 			SortedList<string, int> statBonuses = new SortedList<string, int>();
 
 			foreach (SkillRecord skill in Player.PlayerInfo.SkillRecordList)
-				ItemProvider.GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(skill.skillName.ToRecordId()), skill.skillLevel);
+				ItemProvider.GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(skill.skillName), skill.skillLevel);
 
 
 			Player.ClearPlayerSkillBonuses();

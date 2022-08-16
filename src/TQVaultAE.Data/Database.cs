@@ -467,7 +467,7 @@ public class Database : IDatabase
 								var lootName = variable.GetString(0);
 
 								if (!string.IsNullOrWhiteSpace(lootName))
-									lootNames.Add(lootName.ToRecordId());
+									lootNames.Add(lootName);
 							}
 						}
 						break;

@@ -63,7 +63,7 @@ namespace TQVaultAE.Data
 			inReader.ReadInt32();
 
 			// Get the ID string
-			info.ID = arzFile.Getstring(info.IdStringIndex).ToRecordId();
+			info.ID = arzFile.Getstring(info.IdStringIndex);
 		}
 
 		/// <summary>

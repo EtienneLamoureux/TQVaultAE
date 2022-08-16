@@ -109,7 +109,7 @@ namespace TQVaultAE.GUI
 			UpdatePlayerInfo();
 		}
 
-		private void UpdatePlayerInfo(bool mustResetAttributes = false)
+		private void UpdatePlayerInfo(bool mustResetAttributes = false, bool masteriesResetRequired = false)
 		{
 			if (!Config.UserSettings.Default.AllowCharacterEdit) return;
 			if (PlayerCollection.PlayerInfo == null) return;
@@ -129,6 +129,7 @@ namespace TQVaultAE.GUI
 				playerInfo.Money = PlayerCollection.PlayerInfo.Money > 0 ? PlayerCollection.PlayerInfo.Money : 0;
 				playerInfo.DifficultyUnlocked = difficultlyComboBox.SelectedIndex;
 				playerInfo.SkillPoints = Convert.ToInt32(skillPointsNumericUpDown.Value);
+				playerInfo.SkillRecordList.AddRange(PlayerCollection.PlayerInfo.SkillRecordList);
 
 				playerInfo.AttributesPoints = Convert.ToInt32(attributeNumericUpDown.Value);
 				playerInfo.BaseStrength = Convert.ToInt32(strengthUpDown.Value);
@@ -154,7 +155,16 @@ namespace TQVaultAE.GUI
 					playerInfo.AttributesPoints += (PlayerCollection.PlayerInfo.BaseMana - PlayerLevel.MinMana) / PlayerLevel.HealthAndManaIncrementPerPoint;
 				}
 
-				playerInfo.MasteriesResetRequiered = this._MasteriesResetRequiered;
+				playerInfo.MasteriesResetRequiered = masteriesResetRequired;
+
+				if (playerInfo.MustResetMasteries)
+				{
+					playerInfo.ResetMasteries();
+
+					// Adjust "skillPoints"
+					playerInfo.SkillPoints += playerInfo.ReleasedSkillPoints;
+					playerInfo.Class = string.Empty;
+				}
 				UpdateMoneySituation(PlayerCollection.PlayerInfo, playerInfo);
 				PlayerCollectionProvider.CommitPlayerInfo(PlayerCollection, playerInfo);
 
@@ -168,7 +178,6 @@ namespace TQVaultAE.GUI
 		}
 
 		private bool _loaded = false;
-		private bool _MasteriesResetRequiered;
 
 		private struct TagData
 		{
@@ -378,13 +387,12 @@ namespace TQVaultAE.GUI
 
 		private void ResetMasteriesScalingButton_Click(object sender, EventArgs e)
 		{
-			if (!_MasteriesResetRequiered) _MasteriesResetRequiered = true;
-			UpdatePlayerInfo();
+			UpdatePlayerInfo(masteriesResetRequired: true);
 		}
 
 		private void ResetAttributesScalingButton_Click(object sender, EventArgs e)
 		{
-			UpdatePlayerInfo(true);
+			UpdatePlayerInfo(mustResetAttributes: true);
 		}
 	}
 }

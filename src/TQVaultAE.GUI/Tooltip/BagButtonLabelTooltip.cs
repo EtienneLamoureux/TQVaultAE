@@ -82,7 +82,7 @@ namespace TQVaultAE.GUI.Tooltip
 
 			this.scalingLabel.Font = fontService.GetFont(15F, GraphicsUnit.Point);
 
-			this.bgimg = this.UIService.LoadBitmap(@"INGAMEUI\HEALTHMANAOVERLAY01_NEW.TEX".ToRecordId());
+			this.bgimg = this.UIService.LoadBitmap(@"INGAMEUI\HEALTHMANAOVERLAY01_NEW.TEX");
 
 			this.Size = new Size(bgimg.Width, bgimg.Height);
 			this.BackgroundImage = bgimg;
