@@ -3147,7 +3147,7 @@ public static class RelicAndCharmExtension
 {
 	internal record RelicAndCharmMapItem(RelicAndCharm Value, RecordId RecordId, GearType Types);
 
-	internal static ReadOnlyCollection<RelicAndCharmMapItem> RelicAndCharmMap =
+	internal static readonly ReadOnlyCollection<RelicAndCharmMapItem> RelicAndCharmMap =
 		EnumsNET.Enums.GetValues<RelicAndCharm>()
 		.Select(v => EnumsNET.Enums.GetMember(v))
 		.Select(m =>

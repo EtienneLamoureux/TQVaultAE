@@ -99,14 +99,13 @@ namespace TQVaultAE.GUI
             this.ok.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ok.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ok.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
             this.ok.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ok.Image = ((System.Drawing.Image)(resources.GetObject("ok.Image")));
-            this.ok.Location = new System.Drawing.Point(540, 438);
-            this.ok.Margin = new System.Windows.Forms.Padding(4);
+            this.ok.Location = new System.Drawing.Point(432, 350);
             this.ok.Name = "ok";
             this.ok.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ok.OverBitmap")));
-            this.ok.Size = new System.Drawing.Size(171, 38);
+            this.ok.Size = new System.Drawing.Size(137, 30);
             this.ok.SizeToGraphic = false;
             this.ok.TabIndex = 13;
             this.ok.Text = "OK";
@@ -124,14 +123,13 @@ namespace TQVaultAE.GUI
             this.cancel.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancel.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
             this.cancel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancel.Image = ((System.Drawing.Image)(resources.GetObject("cancel.Image")));
-            this.cancel.Location = new System.Drawing.Point(722, 438);
-            this.cancel.Margin = new System.Windows.Forms.Padding(4);
+            this.cancel.Location = new System.Drawing.Point(578, 350);
             this.cancel.Name = "cancel";
             this.cancel.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("cancel.OverBitmap")));
-            this.cancel.Size = new System.Drawing.Size(171, 38);
+            this.cancel.Size = new System.Drawing.Size(137, 30);
             this.cancel.SizeToGraphic = false;
             this.cancel.TabIndex = 14;
             this.cancel.Text = "Cancel";
@@ -142,33 +140,30 @@ namespace TQVaultAE.GUI
             // 
             // strengthLabel
             // 
-            this.strengthLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.strengthLabel.Location = new System.Drawing.Point(8, 41);
-            this.strengthLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.strengthLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
+            this.strengthLabel.Location = new System.Drawing.Point(6, 33);
             this.strengthLabel.Name = "strengthLabel";
-            this.strengthLabel.Size = new System.Drawing.Size(128, 22);
+            this.strengthLabel.Size = new System.Drawing.Size(102, 18);
             this.strengthLabel.TabIndex = 5;
             this.strengthLabel.Text = "Strength";
             this.strengthLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // dexterityLabel
             // 
-            this.dexterityLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.dexterityLabel.Location = new System.Drawing.Point(11, 79);
-            this.dexterityLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.dexterityLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
+            this.dexterityLabel.Location = new System.Drawing.Point(9, 63);
             this.dexterityLabel.Name = "dexterityLabel";
-            this.dexterityLabel.Size = new System.Drawing.Size(124, 22);
+            this.dexterityLabel.Size = new System.Drawing.Size(99, 18);
             this.dexterityLabel.TabIndex = 7;
             this.dexterityLabel.Text = "Dexterity";
             this.dexterityLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // IntelligenceLabel
             // 
-            this.IntelligenceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.IntelligenceLabel.Location = new System.Drawing.Point(15, 116);
-            this.IntelligenceLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.IntelligenceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
+            this.IntelligenceLabel.Location = new System.Drawing.Point(12, 93);
             this.IntelligenceLabel.Name = "IntelligenceLabel";
-            this.IntelligenceLabel.Size = new System.Drawing.Size(120, 22);
+            this.IntelligenceLabel.Size = new System.Drawing.Size(96, 18);
             this.IntelligenceLabel.TabIndex = 9;
             this.IntelligenceLabel.Text = "Intelligence";
             this.IntelligenceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -176,11 +171,10 @@ namespace TQVaultAE.GUI
             // healthLabel
             // 
             this.healthLabel.CausesValidation = false;
-            this.healthLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.healthLabel.Location = new System.Drawing.Point(11, 154);
-            this.healthLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.healthLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
+            this.healthLabel.Location = new System.Drawing.Point(9, 123);
             this.healthLabel.Name = "healthLabel";
-            this.healthLabel.Size = new System.Drawing.Size(124, 22);
+            this.healthLabel.Size = new System.Drawing.Size(99, 18);
             this.healthLabel.TabIndex = 11;
             this.healthLabel.Text = "Health";
             this.healthLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -188,11 +182,10 @@ namespace TQVaultAE.GUI
             // manaLabel
             // 
             this.manaLabel.CausesValidation = false;
-            this.manaLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.manaLabel.Location = new System.Drawing.Point(15, 191);
-            this.manaLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.manaLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
+            this.manaLabel.Location = new System.Drawing.Point(12, 153);
             this.manaLabel.Name = "manaLabel";
-            this.manaLabel.Size = new System.Drawing.Size(120, 22);
+            this.manaLabel.Size = new System.Drawing.Size(96, 18);
             this.manaLabel.TabIndex = 13;
             this.manaLabel.Text = "Mana";
             this.manaLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -212,11 +205,9 @@ namespace TQVaultAE.GUI
             this.attribGroupBox.Controls.Add(this.strengthLabel);
             this.attribGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.attribGroupBox.ForeColor = System.Drawing.Color.Gold;
-            this.attribGroupBox.Location = new System.Drawing.Point(39, 35);
-            this.attribGroupBox.Margin = new System.Windows.Forms.Padding(4);
+            this.attribGroupBox.Location = new System.Drawing.Point(31, 28);
             this.attribGroupBox.Name = "attribGroupBox";
-            this.attribGroupBox.Padding = new System.Windows.Forms.Padding(4);
-            this.attribGroupBox.Size = new System.Drawing.Size(339, 265);
+            this.attribGroupBox.Size = new System.Drawing.Size(271, 212);
             this.attribGroupBox.TabIndex = 14;
             this.attribGroupBox.TabStop = false;
             this.attribGroupBox.Text = "Base Attributes";
@@ -229,8 +220,7 @@ namespace TQVaultAE.GUI
             0,
             0,
             0});
-            this.manacUpDown.Location = new System.Drawing.Point(142, 189);
-            this.manacUpDown.Margin = new System.Windows.Forms.Padding(4);
+            this.manacUpDown.Location = new System.Drawing.Point(114, 151);
             this.manacUpDown.Maximum = new decimal(new int[] {
             9996,
             0,
@@ -243,7 +233,7 @@ namespace TQVaultAE.GUI
             0});
             this.manacUpDown.Name = "manacUpDown";
             this.manacUpDown.ReadOnly = true;
-            this.manacUpDown.Size = new System.Drawing.Size(81, 28);
+            this.manacUpDown.Size = new System.Drawing.Size(65, 24);
             this.manacUpDown.TabIndex = 5;
             this.manacUpDown.Value = new decimal(new int[] {
             300,
@@ -260,8 +250,7 @@ namespace TQVaultAE.GUI
             0,
             0,
             0});
-            this.healthUpDown.Location = new System.Drawing.Point(142, 151);
-            this.healthUpDown.Margin = new System.Windows.Forms.Padding(4);
+            this.healthUpDown.Location = new System.Drawing.Point(114, 121);
             this.healthUpDown.Maximum = new decimal(new int[] {
             9996,
             0,
@@ -274,7 +263,7 @@ namespace TQVaultAE.GUI
             0});
             this.healthUpDown.Name = "healthUpDown";
             this.healthUpDown.ReadOnly = true;
-            this.healthUpDown.Size = new System.Drawing.Size(81, 28);
+            this.healthUpDown.Size = new System.Drawing.Size(65, 24);
             this.healthUpDown.TabIndex = 4;
             this.healthUpDown.Value = new decimal(new int[] {
             300,
@@ -291,8 +280,7 @@ namespace TQVaultAE.GUI
             0,
             0,
             0});
-            this.intelligenceUpDown.Location = new System.Drawing.Point(142, 114);
-            this.intelligenceUpDown.Margin = new System.Windows.Forms.Padding(4);
+            this.intelligenceUpDown.Location = new System.Drawing.Point(114, 91);
             this.intelligenceUpDown.Maximum = new decimal(new int[] {
             996,
             0,
@@ -305,7 +293,7 @@ namespace TQVaultAE.GUI
             0});
             this.intelligenceUpDown.Name = "intelligenceUpDown";
             this.intelligenceUpDown.ReadOnly = true;
-            this.intelligenceUpDown.Size = new System.Drawing.Size(81, 28);
+            this.intelligenceUpDown.Size = new System.Drawing.Size(65, 24);
             this.intelligenceUpDown.TabIndex = 3;
             this.intelligenceUpDown.Value = new decimal(new int[] {
             50,
@@ -322,8 +310,7 @@ namespace TQVaultAE.GUI
             0,
             0,
             0});
-            this.dexterityUpDown.Location = new System.Drawing.Point(142, 76);
-            this.dexterityUpDown.Margin = new System.Windows.Forms.Padding(4);
+            this.dexterityUpDown.Location = new System.Drawing.Point(114, 61);
             this.dexterityUpDown.Maximum = new decimal(new int[] {
             996,
             0,
@@ -336,7 +323,7 @@ namespace TQVaultAE.GUI
             0});
             this.dexterityUpDown.Name = "dexterityUpDown";
             this.dexterityUpDown.ReadOnly = true;
-            this.dexterityUpDown.Size = new System.Drawing.Size(81, 28);
+            this.dexterityUpDown.Size = new System.Drawing.Size(65, 24);
             this.dexterityUpDown.TabIndex = 2;
             this.dexterityUpDown.Value = new decimal(new int[] {
             50,
@@ -353,8 +340,7 @@ namespace TQVaultAE.GUI
             0,
             0,
             0});
-            this.strengthUpDown.Location = new System.Drawing.Point(142, 39);
-            this.strengthUpDown.Margin = new System.Windows.Forms.Padding(4);
+            this.strengthUpDown.Location = new System.Drawing.Point(114, 31);
             this.strengthUpDown.Maximum = new decimal(new int[] {
             996,
             0,
@@ -367,7 +353,7 @@ namespace TQVaultAE.GUI
             0});
             this.strengthUpDown.Name = "strengthUpDown";
             this.strengthUpDown.ReadOnly = true;
-            this.strengthUpDown.Size = new System.Drawing.Size(81, 28);
+            this.strengthUpDown.Size = new System.Drawing.Size(65, 24);
             this.strengthUpDown.TabIndex = 1;
             this.strengthUpDown.Value = new decimal(new int[] {
             50,
@@ -392,11 +378,9 @@ namespace TQVaultAE.GUI
             this.levelingGroupBox.Controls.Add(this.levelLabel);
             this.levelingGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.levelingGroupBox.ForeColor = System.Drawing.Color.Gold;
-            this.levelingGroupBox.Location = new System.Drawing.Point(411, 35);
-            this.levelingGroupBox.Margin = new System.Windows.Forms.Padding(4);
+            this.levelingGroupBox.Location = new System.Drawing.Point(329, 28);
             this.levelingGroupBox.Name = "levelingGroupBox";
-            this.levelingGroupBox.Padding = new System.Windows.Forms.Padding(4);
-            this.levelingGroupBox.Size = new System.Drawing.Size(482, 265);
+            this.levelingGroupBox.Size = new System.Drawing.Size(386, 212);
             this.levelingGroupBox.TabIndex = 15;
             this.levelingGroupBox.TabStop = false;
             this.levelingGroupBox.Text = "Leveling";
@@ -405,11 +389,10 @@ namespace TQVaultAE.GUI
             // 
             this.levelingCheckBox.AutoSize = true;
             this.levelingCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.levelingCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.levelingCheckBox.Location = new System.Drawing.Point(86, 224);
-            this.levelingCheckBox.Margin = new System.Windows.Forms.Padding(4);
+            this.levelingCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
+            this.levelingCheckBox.Location = new System.Drawing.Point(69, 179);
             this.levelingCheckBox.Name = "levelingCheckBox";
-            this.levelingCheckBox.Size = new System.Drawing.Size(168, 28);
+            this.levelingCheckBox.Size = new System.Drawing.Size(114, 19);
             this.levelingCheckBox.TabIndex = 12;
             this.levelingCheckBox.Text = "Enable Leveling";
             this.levelingCheckBox.UseVisualStyleBackColor = true;
@@ -418,12 +401,11 @@ namespace TQVaultAE.GUI
             // difficultyLabel
             // 
             this.difficultyLabel.BackColor = System.Drawing.Color.Transparent;
-            this.difficultyLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.difficultyLabel.Location = new System.Drawing.Point(19, 188);
-            this.difficultyLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.difficultyLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
+            this.difficultyLabel.Location = new System.Drawing.Point(15, 150);
             this.difficultyLabel.Name = "difficultyLabel";
             this.difficultyLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.difficultyLabel.Size = new System.Drawing.Size(204, 22);
+            this.difficultyLabel.Size = new System.Drawing.Size(163, 18);
             this.difficultyLabel.TabIndex = 15;
             this.difficultyLabel.Text = "Difficultly";
             this.difficultyLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -433,18 +415,17 @@ namespace TQVaultAE.GUI
             this.difficultlyComboBox.Enabled = false;
             this.difficultlyComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.difficultlyComboBox.FormattingEnabled = true;
-            this.difficultlyComboBox.Location = new System.Drawing.Point(230, 184);
-            this.difficultlyComboBox.Margin = new System.Windows.Forms.Padding(4);
+            this.difficultlyComboBox.Location = new System.Drawing.Point(184, 147);
             this.difficultlyComboBox.Name = "difficultlyComboBox";
-            this.difficultlyComboBox.Size = new System.Drawing.Size(199, 30);
+            this.difficultlyComboBox.Size = new System.Drawing.Size(160, 25);
             this.difficultlyComboBox.TabIndex = 11;
+            this.difficultlyComboBox.EnabledChanged += new System.EventHandler(this.difficultlyComboBox_EnabledChanged);
             // 
             // skillPointsNumericUpDown
             // 
             this.skillPointsNumericUpDown.Enabled = false;
             this.skillPointsNumericUpDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.skillPointsNumericUpDown.Location = new System.Drawing.Point(230, 146);
-            this.skillPointsNumericUpDown.Margin = new System.Windows.Forms.Padding(4);
+            this.skillPointsNumericUpDown.Location = new System.Drawing.Point(184, 117);
             this.skillPointsNumericUpDown.Maximum = new decimal(new int[] {
             286,
             0,
@@ -452,17 +433,16 @@ namespace TQVaultAE.GUI
             0});
             this.skillPointsNumericUpDown.Name = "skillPointsNumericUpDown";
             this.skillPointsNumericUpDown.ReadOnly = true;
-            this.skillPointsNumericUpDown.Size = new System.Drawing.Size(200, 28);
+            this.skillPointsNumericUpDown.Size = new System.Drawing.Size(160, 24);
             this.skillPointsNumericUpDown.TabIndex = 10;
             // 
             // skillPointsLabel
             // 
-            this.skillPointsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.skillPointsLabel.Location = new System.Drawing.Point(19, 149);
-            this.skillPointsLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.skillPointsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
+            this.skillPointsLabel.Location = new System.Drawing.Point(15, 119);
             this.skillPointsLabel.Name = "skillPointsLabel";
             this.skillPointsLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.skillPointsLabel.Size = new System.Drawing.Size(208, 22);
+            this.skillPointsLabel.Size = new System.Drawing.Size(166, 18);
             this.skillPointsLabel.TabIndex = 12;
             this.skillPointsLabel.Text = "Skill Points";
             this.skillPointsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -471,8 +451,7 @@ namespace TQVaultAE.GUI
             // 
             this.attributeNumericUpDown.Enabled = false;
             this.attributeNumericUpDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.attributeNumericUpDown.Location = new System.Drawing.Point(230, 109);
-            this.attributeNumericUpDown.Margin = new System.Windows.Forms.Padding(4);
+            this.attributeNumericUpDown.Location = new System.Drawing.Point(184, 87);
             this.attributeNumericUpDown.Maximum = new decimal(new int[] {
             186,
             0,
@@ -480,17 +459,16 @@ namespace TQVaultAE.GUI
             0});
             this.attributeNumericUpDown.Name = "attributeNumericUpDown";
             this.attributeNumericUpDown.ReadOnly = true;
-            this.attributeNumericUpDown.Size = new System.Drawing.Size(200, 28);
+            this.attributeNumericUpDown.Size = new System.Drawing.Size(160, 24);
             this.attributeNumericUpDown.TabIndex = 9;
             // 
             // attributeLabel
             // 
-            this.attributeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.attributeLabel.Location = new System.Drawing.Point(19, 111);
-            this.attributeLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.attributeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
+            this.attributeLabel.Location = new System.Drawing.Point(15, 89);
             this.attributeLabel.Name = "attributeLabel";
             this.attributeLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.attributeLabel.Size = new System.Drawing.Size(208, 22);
+            this.attributeLabel.Size = new System.Drawing.Size(166, 18);
             this.attributeLabel.TabIndex = 10;
             this.attributeLabel.Text = "Attribute Points";
             this.attributeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -499,22 +477,20 @@ namespace TQVaultAE.GUI
             // 
             this.xpTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.xpTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.xpTextBox.Location = new System.Drawing.Point(230, 71);
-            this.xpTextBox.Margin = new System.Windows.Forms.Padding(4);
+            this.xpTextBox.Location = new System.Drawing.Point(184, 57);
             this.xpTextBox.Name = "xpTextBox";
             this.xpTextBox.ReadOnly = true;
-            this.xpTextBox.Size = new System.Drawing.Size(200, 28);
+            this.xpTextBox.Size = new System.Drawing.Size(160, 24);
             this.xpTextBox.TabIndex = 8;
             this.xpTextBox.WordWrap = false;
             // 
             // xpLabel
             // 
-            this.xpLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.xpLabel.Location = new System.Drawing.Point(19, 74);
-            this.xpLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.xpLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
+            this.xpLabel.Location = new System.Drawing.Point(15, 59);
             this.xpLabel.Name = "xpLabel";
             this.xpLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.xpLabel.Size = new System.Drawing.Size(208, 22);
+            this.xpLabel.Size = new System.Drawing.Size(166, 18);
             this.xpLabel.TabIndex = 8;
             this.xpLabel.Text = "XP";
             this.xpLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -523,8 +499,7 @@ namespace TQVaultAE.GUI
             // 
             this.levelNumericUpDown.Enabled = false;
             this.levelNumericUpDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.levelNumericUpDown.Location = new System.Drawing.Point(230, 34);
-            this.levelNumericUpDown.Margin = new System.Windows.Forms.Padding(4);
+            this.levelNumericUpDown.Location = new System.Drawing.Point(184, 27);
             this.levelNumericUpDown.Maximum = new decimal(new int[] {
             84,
             0,
@@ -537,7 +512,7 @@ namespace TQVaultAE.GUI
             0});
             this.levelNumericUpDown.Name = "levelNumericUpDown";
             this.levelNumericUpDown.ReadOnly = true;
-            this.levelNumericUpDown.Size = new System.Drawing.Size(70, 28);
+            this.levelNumericUpDown.Size = new System.Drawing.Size(56, 24);
             this.levelNumericUpDown.TabIndex = 7;
             this.levelNumericUpDown.Value = new decimal(new int[] {
             1,
@@ -549,12 +524,11 @@ namespace TQVaultAE.GUI
             // levelLabel
             // 
             this.levelLabel.BackColor = System.Drawing.Color.Transparent;
-            this.levelLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.levelLabel.Location = new System.Drawing.Point(19, 36);
-            this.levelLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.levelLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
+            this.levelLabel.Location = new System.Drawing.Point(15, 29);
             this.levelLabel.Name = "levelLabel";
             this.levelLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.levelLabel.Size = new System.Drawing.Size(208, 22);
+            this.levelLabel.Size = new System.Drawing.Size(166, 18);
             this.levelLabel.TabIndex = 6;
             this.levelLabel.Text = "Level";
             this.levelLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -567,14 +541,13 @@ namespace TQVaultAE.GUI
             this.ResetMasteriesScalingButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ResetMasteriesScalingButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ResetMasteriesScalingButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ResetMasteriesScalingButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ResetMasteriesScalingButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
             this.ResetMasteriesScalingButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ResetMasteriesScalingButton.Image = ((System.Drawing.Image)(resources.GetObject("ResetMasteriesScalingButton.Image")));
-            this.ResetMasteriesScalingButton.Location = new System.Drawing.Point(39, 438);
-            this.ResetMasteriesScalingButton.Margin = new System.Windows.Forms.Padding(4);
+            this.ResetMasteriesScalingButton.Location = new System.Drawing.Point(31, 350);
             this.ResetMasteriesScalingButton.Name = "ResetMasteriesScalingButton";
             this.ResetMasteriesScalingButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetMasteriesScalingButton.OverBitmap")));
-            this.ResetMasteriesScalingButton.Size = new System.Drawing.Size(171, 38);
+            this.ResetMasteriesScalingButton.Size = new System.Drawing.Size(137, 30);
             this.ResetMasteriesScalingButton.SizeToGraphic = false;
             this.ResetMasteriesScalingButton.TabIndex = 16;
             this.ResetMasteriesScalingButton.Text = "Reset Masteries";
@@ -592,22 +565,19 @@ namespace TQVaultAE.GUI
             this.MasteriesGroupBox.Controls.Add(this.Mastery1NameScalingLabel);
             this.MasteriesGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MasteriesGroupBox.ForeColor = System.Drawing.Color.Gold;
-            this.MasteriesGroupBox.Location = new System.Drawing.Point(39, 308);
-            this.MasteriesGroupBox.Margin = new System.Windows.Forms.Padding(4);
+            this.MasteriesGroupBox.Location = new System.Drawing.Point(31, 246);
             this.MasteriesGroupBox.Name = "MasteriesGroupBox";
-            this.MasteriesGroupBox.Padding = new System.Windows.Forms.Padding(4);
-            this.MasteriesGroupBox.Size = new System.Drawing.Size(855, 110);
+            this.MasteriesGroupBox.Size = new System.Drawing.Size(684, 88);
             this.MasteriesGroupBox.TabIndex = 17;
             this.MasteriesGroupBox.TabStop = false;
             this.MasteriesGroupBox.Text = "Masteries";
             // 
             // Mastery2ValueScalingLabel
             // 
-            this.Mastery2ValueScalingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.Mastery2ValueScalingLabel.Location = new System.Drawing.Point(258, 69);
-            this.Mastery2ValueScalingLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.Mastery2ValueScalingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
+            this.Mastery2ValueScalingLabel.Location = new System.Drawing.Point(206, 55);
             this.Mastery2ValueScalingLabel.Name = "Mastery2ValueScalingLabel";
-            this.Mastery2ValueScalingLabel.Size = new System.Drawing.Size(545, 22);
+            this.Mastery2ValueScalingLabel.Size = new System.Drawing.Size(436, 18);
             this.Mastery2ValueScalingLabel.TabIndex = 21;
             this.Mastery2ValueScalingLabel.Tag = "{0} skills, {1} points";
             this.Mastery2ValueScalingLabel.Text = "{0} skills, {1} points";
@@ -615,11 +585,10 @@ namespace TQVaultAE.GUI
             // 
             // Mastery1ValueScalingLabel
             // 
-            this.Mastery1ValueScalingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.Mastery1ValueScalingLabel.Location = new System.Drawing.Point(258, 31);
-            this.Mastery1ValueScalingLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.Mastery1ValueScalingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
+            this.Mastery1ValueScalingLabel.Location = new System.Drawing.Point(206, 25);
             this.Mastery1ValueScalingLabel.Name = "Mastery1ValueScalingLabel";
-            this.Mastery1ValueScalingLabel.Size = new System.Drawing.Size(545, 22);
+            this.Mastery1ValueScalingLabel.Size = new System.Drawing.Size(436, 18);
             this.Mastery1ValueScalingLabel.TabIndex = 20;
             this.Mastery1ValueScalingLabel.Tag = "{0} skills, {1} points";
             this.Mastery1ValueScalingLabel.Text = "{0} skills, {1} points";
@@ -627,11 +596,10 @@ namespace TQVaultAE.GUI
             // 
             // Mastery2NameScalingLabel
             // 
-            this.Mastery2NameScalingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.Mastery2NameScalingLabel.Location = new System.Drawing.Point(8, 69);
-            this.Mastery2NameScalingLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.Mastery2NameScalingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
+            this.Mastery2NameScalingLabel.Location = new System.Drawing.Point(6, 55);
             this.Mastery2NameScalingLabel.Name = "Mastery2NameScalingLabel";
-            this.Mastery2NameScalingLabel.Size = new System.Drawing.Size(242, 22);
+            this.Mastery2NameScalingLabel.Size = new System.Drawing.Size(194, 18);
             this.Mastery2NameScalingLabel.TabIndex = 19;
             this.Mastery2NameScalingLabel.Tag = "{0} :";
             this.Mastery2NameScalingLabel.Text = "Defense :";
@@ -639,11 +607,10 @@ namespace TQVaultAE.GUI
             // 
             // Mastery1NameScalingLabel
             // 
-            this.Mastery1NameScalingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.Mastery1NameScalingLabel.Location = new System.Drawing.Point(8, 31);
-            this.Mastery1NameScalingLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.Mastery1NameScalingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
+            this.Mastery1NameScalingLabel.Location = new System.Drawing.Point(6, 25);
             this.Mastery1NameScalingLabel.Name = "Mastery1NameScalingLabel";
-            this.Mastery1NameScalingLabel.Size = new System.Drawing.Size(242, 22);
+            this.Mastery1NameScalingLabel.Size = new System.Drawing.Size(194, 18);
             this.Mastery1NameScalingLabel.TabIndex = 7;
             this.Mastery1NameScalingLabel.Tag = "{0} :";
             this.Mastery1NameScalingLabel.Text = "Warfare :";
@@ -657,14 +624,13 @@ namespace TQVaultAE.GUI
             this.ResetAttributesScalingButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ResetAttributesScalingButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ResetAttributesScalingButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ResetAttributesScalingButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ResetAttributesScalingButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
             this.ResetAttributesScalingButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ResetAttributesScalingButton.Image = ((System.Drawing.Image)(resources.GetObject("ResetAttributesScalingButton.Image")));
-            this.ResetAttributesScalingButton.Location = new System.Drawing.Point(236, 438);
-            this.ResetAttributesScalingButton.Margin = new System.Windows.Forms.Padding(4);
+            this.ResetAttributesScalingButton.Location = new System.Drawing.Point(189, 350);
             this.ResetAttributesScalingButton.Name = "ResetAttributesScalingButton";
             this.ResetAttributesScalingButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetAttributesScalingButton.OverBitmap")));
-            this.ResetAttributesScalingButton.Size = new System.Drawing.Size(171, 38);
+            this.ResetAttributesScalingButton.Size = new System.Drawing.Size(137, 30);
             this.ResetAttributesScalingButton.SizeToGraphic = false;
             this.ResetAttributesScalingButton.TabIndex = 18;
             this.ResetAttributesScalingButton.Text = "Reset Attributes";
@@ -675,10 +641,10 @@ namespace TQVaultAE.GUI
             // 
             // CharacterEditDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-            this.ClientSize = new System.Drawing.Size(932, 504);
+            this.ClientSize = new System.Drawing.Size(746, 403);
             this.Controls.Add(this.ResetAttributesScalingButton);
             this.Controls.Add(this.MasteriesGroupBox);
             this.Controls.Add(this.ResetMasteriesScalingButton);
@@ -690,7 +656,7 @@ namespace TQVaultAE.GUI
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.White;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Margin = new System.Windows.Forms.Padding(5);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "CharacterEditDialog";
