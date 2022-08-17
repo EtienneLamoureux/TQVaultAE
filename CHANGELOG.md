@@ -1,4 +1,15 @@
 # Changelog
+## 4.3.0
+### Features
+- New cheat: affixes edition
+- Add export vault to CSV file
+
+### Bugs
+- #455 Fix an issue where points are not refunded when resetting masteries and skills
+- #405 Fix missing access to difficulties after resetting attributes
+- #279 Fix error on startup when Pre-Load All is enabled
+- #243 Mark invalid completion bonuses
+
 ## 4.2.0
 ### Features
 - #452 Add a new, [more restrictive mode](/documentation/FORGE.md#GameMode) to the item forge
