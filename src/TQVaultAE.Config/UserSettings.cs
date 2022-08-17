@@ -120,6 +120,9 @@ public class UserSettings
 	[XmlElement(ElementName = "EnableEpicLegendaryAffixes")]
 	public bool EnableEpicLegendaryAffixes { get; set; } = false;
 
+	[XmlElement(ElementName = "DisableAutoStacking")]
+	public bool DisableAutoStacking { get; set; } = false;
+
 	#endregion
 
 

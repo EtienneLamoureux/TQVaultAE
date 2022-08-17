@@ -37,4 +37,5 @@
   <EnableTQVaultSounds>1</EnableTQVaultSounds>
   <CSVDelimiter>Comma</CSVDelimiter>
   <EnableEpicLegendaryAffixes>0</EnableEpicLegendaryAffixes>
+  <DisableAutoStacking>0</DisableAutoStacking>
 </UserSettings>

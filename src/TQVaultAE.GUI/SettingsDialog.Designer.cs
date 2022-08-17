@@ -205,6 +205,7 @@ namespace TQVaultAE.GUI
             this.EnableItemRequirementRestrictionCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.hotReloadCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.scalingCheckBoxEnableEpicLegendaryAffixes = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.scalingCheckBoxDisableAutoStacking = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.languageComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.languageLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.detectLanguageCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
@@ -451,7 +452,7 @@ namespace TQVaultAE.GUI
             // 
             this.suppressWarningsCheckBox.AutoSize = true;
             this.suppressWarningsCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.suppressWarningsCheckBox.Location = new System.Drawing.Point(497, 269);
+            this.suppressWarningsCheckBox.Location = new System.Drawing.Point(497, 296);
             this.suppressWarningsCheckBox.Name = "suppressWarningsCheckBox";
             this.suppressWarningsCheckBox.Size = new System.Drawing.Size(238, 22);
             this.suppressWarningsCheckBox.TabIndex = 30;
@@ -465,7 +466,7 @@ namespace TQVaultAE.GUI
             // 
             this.playerReadonlyCheckbox.AutoSize = true;
             this.playerReadonlyCheckbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.playerReadonlyCheckbox.Location = new System.Drawing.Point(497, 297);
+            this.playerReadonlyCheckbox.Location = new System.Drawing.Point(497, 324);
             this.playerReadonlyCheckbox.Name = "playerReadonlyCheckbox";
             this.playerReadonlyCheckbox.Size = new System.Drawing.Size(211, 22);
             this.playerReadonlyCheckbox.TabIndex = 33;
@@ -493,7 +494,7 @@ namespace TQVaultAE.GUI
             // 
             this.EnableDetailedTooltipViewCheckBox.AutoSize = true;
             this.EnableDetailedTooltipViewCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.EnableDetailedTooltipViewCheckBox.Location = new System.Drawing.Point(497, 325);
+            this.EnableDetailedTooltipViewCheckBox.Location = new System.Drawing.Point(497, 352);
             this.EnableDetailedTooltipViewCheckBox.Name = "EnableDetailedTooltipViewCheckBox";
             this.EnableDetailedTooltipViewCheckBox.Size = new System.Drawing.Size(213, 22);
             this.EnableDetailedTooltipViewCheckBox.TabIndex = 38;
@@ -506,7 +507,7 @@ namespace TQVaultAE.GUI
             // 
             this.ItemBGColorOpacityLabel.AutoSize = true;
             this.ItemBGColorOpacityLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.ItemBGColorOpacityLabel.Location = new System.Drawing.Point(497, 381);
+            this.ItemBGColorOpacityLabel.Location = new System.Drawing.Point(497, 408);
             this.ItemBGColorOpacityLabel.Name = "ItemBGColorOpacityLabel";
             this.ItemBGColorOpacityLabel.Size = new System.Drawing.Size(151, 18);
             this.ItemBGColorOpacityLabel.TabIndex = 40;
@@ -518,7 +519,7 @@ namespace TQVaultAE.GUI
             this.EnableItemRequirementRestrictionCheckBox.AutoSize = true;
             this.EnableItemRequirementRestrictionCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.EnableItemRequirementRestrictionCheckBox.ForeColor = System.Drawing.Color.Orange;
-            this.EnableItemRequirementRestrictionCheckBox.Location = new System.Drawing.Point(497, 412);
+            this.EnableItemRequirementRestrictionCheckBox.Location = new System.Drawing.Point(497, 439);
             this.EnableItemRequirementRestrictionCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.EnableItemRequirementRestrictionCheckBox.Name = "EnableItemRequirementRestrictionCheckBox";
             this.EnableItemRequirementRestrictionCheckBox.Size = new System.Drawing.Size(304, 22);
@@ -556,6 +557,19 @@ namespace TQVaultAE.GUI
             this.toolTip.SetToolTip(this.scalingCheckBoxEnableEpicLegendaryAffixes, "Allow affixes pickup on Epic and Legendary items");
             this.scalingCheckBoxEnableEpicLegendaryAffixes.UseVisualStyleBackColor = true;
             this.scalingCheckBoxEnableEpicLegendaryAffixes.CheckedChanged += new System.EventHandler(this.scalingCheckBoxEnableEpicLegendaryAffixes_CheckedChanged);
+            // 
+            // scalingCheckBoxDisableAutoStacking
+            // 
+            this.scalingCheckBoxDisableAutoStacking.AutoSize = true;
+            this.scalingCheckBoxDisableAutoStacking.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
+            this.scalingCheckBoxDisableAutoStacking.Location = new System.Drawing.Point(497, 267);
+            this.scalingCheckBoxDisableAutoStacking.Name = "scalingCheckBoxDisableAutoStacking";
+            this.scalingCheckBoxDisableAutoStacking.Size = new System.Drawing.Size(168, 22);
+            this.scalingCheckBoxDisableAutoStacking.TabIndex = 47;
+            this.scalingCheckBoxDisableAutoStacking.Text = "Disable auto stacking";
+            this.toolTip.SetToolTip(this.scalingCheckBoxDisableAutoStacking, "Disable auto stacking for relic, charms and potions");
+            this.scalingCheckBoxDisableAutoStacking.UseVisualStyleBackColor = true;
+            this.scalingCheckBoxDisableAutoStacking.CheckedChanged += new System.EventHandler(this.scalingCheckBoxDisableAutoStacking_CheckedChanged);
             // 
             // languageComboBox
             // 
@@ -633,7 +647,7 @@ namespace TQVaultAE.GUI
             // 
             this.detectGamePathsCheckBox.AutoSize = true;
             this.detectGamePathsCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.detectGamePathsCheckBox.Location = new System.Drawing.Point(231, 24);
+            this.detectGamePathsCheckBox.Location = new System.Drawing.Point(222, 24);
             this.detectGamePathsCheckBox.Name = "detectGamePathsCheckBox";
             this.detectGamePathsCheckBox.Size = new System.Drawing.Size(184, 22);
             this.detectGamePathsCheckBox.TabIndex = 22;
@@ -744,7 +758,7 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelButtons.Controls.Add(this.okayButton, 1, 0);
             this.tableLayoutPanelButtons.Controls.Add(this.cancelButton, 3, 0);
             this.tableLayoutPanelButtons.Controls.Add(this.resetButton, 4, 0);
-            this.tableLayoutPanelButtons.Location = new System.Drawing.Point(26, 438);
+            this.tableLayoutPanelButtons.Location = new System.Drawing.Point(26, 464);
             this.tableLayoutPanelButtons.Name = "tableLayoutPanelButtons";
             this.tableLayoutPanelButtons.RowCount = 1;
             this.tableLayoutPanelButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -753,7 +767,7 @@ namespace TQVaultAE.GUI
             // 
             // ItemBGColorOpacityTrackBar
             // 
-            this.ItemBGColorOpacityTrackBar.Location = new System.Drawing.Point(693, 380);
+            this.ItemBGColorOpacityTrackBar.Location = new System.Drawing.Point(693, 407);
             this.ItemBGColorOpacityTrackBar.Margin = new System.Windows.Forms.Padding(2);
             this.ItemBGColorOpacityTrackBar.Maximum = 255;
             this.ItemBGColorOpacityTrackBar.Name = "ItemBGColorOpacityTrackBar";
@@ -767,7 +781,7 @@ namespace TQVaultAE.GUI
             // 
             this.scalingCheckBoxEnableSounds.AutoSize = true;
             this.scalingCheckBoxEnableSounds.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.scalingCheckBoxEnableSounds.Location = new System.Drawing.Point(497, 353);
+            this.scalingCheckBoxEnableSounds.Location = new System.Drawing.Point(497, 380);
             this.scalingCheckBoxEnableSounds.Name = "scalingCheckBoxEnableSounds";
             this.scalingCheckBoxEnableSounds.Size = new System.Drawing.Size(184, 22);
             this.scalingCheckBoxEnableSounds.TabIndex = 43;
@@ -804,7 +818,8 @@ namespace TQVaultAE.GUI
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-            this.ClientSize = new System.Drawing.Size(922, 491);
+            this.ClientSize = new System.Drawing.Size(922, 517);
+            this.Controls.Add(this.scalingCheckBoxDisableAutoStacking);
             this.Controls.Add(this.scalingCheckBoxEnableEpicLegendaryAffixes);
             this.Controls.Add(this.scalingLabelCSVDelim);
             this.Controls.Add(this.scalingComboBoxCSVDelim);
@@ -894,6 +909,7 @@ namespace TQVaultAE.GUI
             this.Controls.SetChildIndex(this.scalingComboBoxCSVDelim, 0);
             this.Controls.SetChildIndex(this.scalingLabelCSVDelim, 0);
             this.Controls.SetChildIndex(this.scalingCheckBoxEnableEpicLegendaryAffixes, 0);
+            this.Controls.SetChildIndex(this.scalingCheckBoxDisableAutoStacking, 0);
             this.tableLayoutPanelButtons.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ItemBGColorOpacityTrackBar)).EndInit();
             this.ResumeLayout(false);
@@ -917,5 +933,6 @@ namespace TQVaultAE.GUI
         private ScalingLabel scalingLabelCSVDelim;
         private ScalingComboBox scalingComboBoxCSVDelim;
 		private ScalingCheckBox scalingCheckBoxEnableEpicLegendaryAffixes;
+		private ScalingCheckBox scalingCheckBoxDisableAutoStacking;
 	}
 }

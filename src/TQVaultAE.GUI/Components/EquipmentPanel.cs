@@ -356,93 +356,9 @@ public class EquipmentPanel : SackPanel, IScalingControl
 
 			// If we are a stackable and we have a stackable under us and we are the same type of stackable
 			// then just add to the stack instead of picking up the other stack
-			if (dragItem.DoesStack && itemUnderUs != null && itemUnderUs.DoesStack && dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId))
+			if (!(doStackPotions(dragItem, ref itemUnderUs) || doStackRelics(ref dragItem, ref itemUnderUs)))
 			{
-				itemUnderUs.StackSize += dragItem.StackSize;
-
-				// Added this so the tooltip would update with the correct number
-				itemUnderUs.IsModified = true;
-				this.Sack.IsModified = true;
-
-				// Get rid of ref to itemUnderUs so code below wont do anything with it.
-				itemUnderUs = null;
-
-				// we will just throw away the dragItem now.
-			}
-			else if (
-				dragItem.IsRelic && itemUnderUs != null && itemUnderUs.IsRelic
-				&& !itemUnderUs.IsRelicComplete && !dragItem.IsRelicComplete
-				&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
-			)
-			{
-				// Stack relics
-				// Save the original Relic number
-				int originalNumber = itemUnderUs.Number;
-				int adjustedNumber;
-
-				// Adjust the item in the sack
-				// This is limited to the completion level of the Relic
-				itemUnderUs.Number += dragItem.Number;
-
-				// Check if we completed the item
-				if (itemUnderUs.IsRelicComplete)
-				{
-					float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-					LootTableCollection table = ItemProvider.BonusTableRelicOrArtifact(itemUnderUs);
-
-					if (table != null && table.Length > 0)
-					{
-						int i = table.Length;
-						foreach (var e1 in table)
-						{
-							i--;
-							if (randPercent <= e1.Value.WeightPercent || i == 0)
-							{
-								itemUnderUs.RelicBonusId = e1.Key;
-								break;
-							}
-							else
-								randPercent -= e1.Value.WeightPercent;
-						}
-					}
-
-					ItemProvider.GetDBData(itemUnderUs);
-				}
-
-				itemUnderUs.IsModified = true;
-
-				// Just in case we have more relics than what we need to complete
-				// We then adjust the one we are holding
-				adjustedNumber = itemUnderUs.Number - originalNumber;
-				if (adjustedNumber != dragItem.Number)
-				{
-					dragItem.Number -= adjustedNumber;
-					dragItem.IsModified = true;
-
-					// Swap the items so the completed item stays in the
-					// sack and the remaining items are still being dragged
-					Item temp = itemUnderUs;
-					itemUnderUs = dragItem;
-					dragItem = temp;
-
-					// Drop the dragItem here
-					dragItem.Location = this.CellsUnderDragItem.Location;
-
-					// Now add the item to our sack
-					this.Sack.AddItem(dragItem);
-				}
-				else
-				{
-					this.Sack.IsModified = true;
-
-					// Get rid of ref to itemUnderUs so code below wont do anything with it.
-					itemUnderUs = null;
-
-					// we will just throw away the dragItem now.
-				}
-			}
-			else
-			{
+				// If not stackable
 				if (slot != -1)
 				{
 					int slotRH = ((slot + 1) / 2) * 2;

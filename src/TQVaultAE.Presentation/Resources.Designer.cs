@@ -4421,6 +4421,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disable auto stacking.
+        /// </summary>
+        public static string SettingsDisableAutoStacking {
+            get {
+                return ResourceManager.GetString("SettingsDisableAutoStacking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable auto stacking for relic, charms and potions.
+        /// </summary>
+        public static string SettingsDisableAutoStackingTT {
+            get {
+                return ResourceManager.GetString("SettingsDisableAutoStackingTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable Epic and Legendary affixes.
         /// </summary>
         public static string SettingsEnableEpicLegendaryAffixes {

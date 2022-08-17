@@ -1963,4 +1963,10 @@ You still have to close TQVaultAE to apply your changes.
   <data name="SettingsEnableEpicLegendaryAffixesTT" xml:space="preserve">
     <value>Allow affixes pickup on Epic and Legendary items</value>
   </data>
+  <data name="SettingsDisableAutoStacking" xml:space="preserve">
+    <value>Disable auto stacking</value>
+  </data>
+  <data name="SettingsDisableAutoStackingTT" xml:space="preserve">
+    <value>Disable auto stacking for relic, charms and potions</value>
+  </data>
 </root>

@@ -722,7 +722,7 @@ le démarrage si la connection internet est lente.</value>
     <value>Sélectionnez le chemin d'accès pour les fichiers TQVault.</value>
   </data>
   <data name="SettingsDetectGamePath" xml:space="preserve">
-    <value>Détection automatique des répertoires du jeu</value>
+    <value>Détection automatique des chemins</value>
   </data>
   <data name="SettingsDetectLanguage" xml:space="preserve">
     <value>Détection automatique de la langue</value>
@@ -1468,5 +1468,11 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   </data>
   <data name="SettingsEnableEpicLegendaryAffixesTT" xml:space="preserve">
     <value>Permet la sélection des affixes via le menu contextuel sur les objets Épiques et Légendaires</value>
+  </data>
+  <data name="SettingsDisableAutoStacking" xml:space="preserve">
+    <value>Désactive l'empilement des objets automatique</value>
+  </data>
+  <data name="SettingsDisableAutoStackingTT" xml:space="preserve">
+    <value>Désactive l'empilement automatique des reliques, charmes et potions</value>
   </data>
 </root>

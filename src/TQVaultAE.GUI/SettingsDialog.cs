@@ -30,12 +30,12 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	private bool loadLastVault;
 
 	/// <summary>
-	/// Indicates that the <see cref="Config.Settings.EnableTQVaultSounds"/> setting has been changed
+	/// Indicates that the <see cref="Config.UserSettings.EnableTQVaultSounds"/> setting has been changed
 	/// </summary>
 	public bool enableTQVaultSounds;
 
 	/// <summary>
-	/// Indicates that the <see cref="Config.Settings.EnableItemRequirementRestriction"/> setting has been changed
+	/// Indicates that the <see cref="Config.UserSettings.EnableItemRequirementRestriction"/> setting has been changed
 	/// </summary>
 	public bool enableItemRequirementRestriction;
 
@@ -60,7 +60,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	private bool allowItemEdit;
 
 	/// <summary>
-	/// Indicates that the <see cref="Config.Settings.EnableEpicLegendaryAffixes"/> setting has been changed
+	/// Indicates that the <see cref="Config.UserSettings.EnableEpicLegendaryAffixes"/> setting has been changed
 	/// </summary>
 	public bool EnableEpicLegendaryAffixes;
 
@@ -165,7 +165,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	public bool ItemBGColorOpacityChanged { get; private set; }
 
 	/// <summary>
-	/// Indicates that the <see cref="Config.Settings.EnableItemRequirementRestriction"/> setting has been changed
+	/// Indicates that the <see cref="Config.UserSettings.EnableItemRequirementRestriction"/> setting has been changed
 	/// </summary>
 	public bool EnableItemRequirementRestrictionChanged { get; private set; }
 
@@ -178,8 +178,9 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	/// Enale the hot reload feature
 	/// </summary>
 	private bool enableHotReload;
+
 	/// <summary>
-	/// Indicates that the <see cref="Config.Settings.EnableHotReload"/> setting has been changed
+	/// Indicates that the <see cref="Config.UserSettings.EnableHotReload"/> setting has been changed
 	/// </summary>
 	public bool EnableHotReloadChanged { get; private set; }
 
@@ -200,9 +201,18 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	public bool CustomMapsChanged { get; private set; }
 
 	/// <summary>
-	/// Indicates that the <see cref="Config.Settings.EnableTQVaultSounds"/> setting has been changed
+	/// Indicates that the <see cref="Config.UserSettings.EnableTQVaultSounds"/> setting has been changed
 	/// </summary>
 	public bool EnableTQVaultSoundsChanged { get; private set; }
+
+	/// <summary>
+	/// Disable auto stacking last value
+	/// </summary>
+	private bool disableAutoStacking;
+	/// <summary>
+	/// Indicates that the <see cref="Config.UserSettings.DisableAutoStacking"/> setting has been changed
+	/// </summary>
+	public bool DisableAutoStackingChanged { get; private set; }
 
 	/// <summary>
 	/// Initializes a new instance of the SettingsDialog class.
@@ -254,6 +264,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.scalingLabelCSVDelim.Font =
 		this.scalingComboBoxCSVDelim.Font =
 		this.scalingCheckBoxEnableEpicLegendaryAffixes.Font =
+		this.scalingCheckBoxDisableAutoStacking.Font =
 			FontService.GetFontLight(11.25F);
 		this.Font = FontService.GetFontLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
 
@@ -301,6 +312,9 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 
 		this.scalingCheckBoxEnableEpicLegendaryAffixes.Text = Resources.SettingsEnableEpicLegendaryAffixes;
 		this.toolTip.SetToolTip(this.scalingCheckBoxEnableEpicLegendaryAffixes, Resources.SettingsEnableEpicLegendaryAffixesTT);
+
+		this.scalingCheckBoxDisableAutoStacking.Text = Resources.SettingsDisableAutoStacking;
+		this.toolTip.SetToolTip(this.scalingCheckBoxDisableAutoStacking, Resources.SettingsDisableAutoStackingTT);
 
 		this.cancelButton.Text = Resources.GlobalCancel;
 		this.okayButton.Text = Resources.GlobalOK;
@@ -431,6 +445,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.enableHotReload = Config.UserSettings.Default.EnableHotReload;
 		this.enableTQVaultSounds = Config.UserSettings.Default.EnableTQVaultSounds;
 		this.EnableEpicLegendaryAffixes = Config.UserSettings.Default.EnableEpicLegendaryAffixes;
+		this.disableAutoStacking = Config.UserSettings.Default.DisableAutoStacking;
 
 		// Force English since there was some issue with getting the proper language setting.
 		var gl = Database.GameLanguage;
@@ -502,6 +517,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.hotReloadCheckBox.Checked = this.enableHotReload;
 		this.scalingCheckBoxEnableSounds.Checked = this.enableTQVaultSounds;
 		this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked = this.EnableEpicLegendaryAffixes;
+		this.scalingCheckBoxDisableAutoStacking.Checked = this.disableAutoStacking;
 
 		this.enableCustomMapsCheckBox.Checked = this.enableMods;
 
@@ -578,6 +594,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 			Config.UserSettings.Default.EnableItemRequirementRestriction = this.enableItemRequirementRestriction;
 			Config.UserSettings.Default.EnableHotReload = this.enableHotReload;
 			Config.UserSettings.Default.EnableTQVaultSounds = this.enableTQVaultSounds;
+			Config.UserSettings.Default.DisableAutoStacking = this.disableAutoStacking;
 
 			Config.UserSettings.Default.EnableEpicLegendaryAffixes =
 				this.scalingCheckBoxEnableEpicLegendaryAffixes.Enabled && this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked;
@@ -1081,5 +1098,22 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	private void scalingComboBoxCSVDelim_SelectedIndexChanged(object sender, EventArgs e)
 	{
 		this.ConfigurationChanged = true;
+	}
+
+	private void scalingCheckBoxDisableAutoStacking_CheckedChanged(object sender, EventArgs e)
+	{
+
+		if (this.scalingCheckBoxDisableAutoStacking.Checked)
+		{
+			if (!this.disableAutoStacking)
+				this.disableAutoStacking = this.ConfigurationChanged = this.DisableAutoStackingChanged = true;
+			return;
+		}
+
+		if (this.disableAutoStacking)
+		{
+			this.disableAutoStacking = false;
+			this.ConfigurationChanged = this.DisableAutoStackingChanged = true;
+		}
 	}
 }
