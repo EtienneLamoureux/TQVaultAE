@@ -10,6 +10,14 @@ public record LootRandomizerItem(
 	, string Translation
 )
 {
+	/// <summary>
+	/// Tells if this loot randomizer record is a fake and doesn't exist in the database.
+	/// Orphan reference in a loot table.
+	/// </summary>
+	public bool Unknown { get; init; }
+
+	public bool TranslationTagIsEmpty => string.IsNullOrWhiteSpace(this.Tag);
+
 	public static LootRandomizerItem Default(RecordId rawRecordId)
 	{
 		// Make a default based on RecordId

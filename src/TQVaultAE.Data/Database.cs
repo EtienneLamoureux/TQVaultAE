@@ -32,10 +32,10 @@ public class Database : IDatabase
 
 	#region Record Class Names
 
-	private const string RCLASS_LOOTRANDOMIZERTABLE = "LootRandomizerTable";
-	private const string RCLASS_LOOTRANDOMIZER = "LootRandomizer";
-	private const string RCLASS_LOOTITEMTABLE_FIXEDWEIGHT = "LootItemTable_FixedWeight";
-	private const string RCLASS_LOOTITEMTABLE_DYNWEIGHT = "LootItemTable_DynWeight";
+	internal const string RCLASS_LOOTRANDOMIZERTABLE = "LootRandomizerTable";
+	internal const string RCLASS_LOOTRANDOMIZER = "LootRandomizer";
+	internal const string RCLASS_LOOTITEMTABLE_FIXEDWEIGHT = "LootItemTable_FixedWeight";
+	internal const string RCLASS_LOOTITEMTABLE_DYNWEIGHT = "LootItemTable_DynWeight";
 
 	#endregion
 
@@ -130,10 +130,6 @@ public class Database : IDatabase
 		}
 	}
 
-	/// <summary>
-	/// Mapping between gear type and Affixes LootTable
-	/// </summary>
-	//private static ReadOnlyDictionary<GearType, ReadOnlyCollection<AffixTableMapItem>> ItemAffixTableMap;
 
 	/// <summary>
 	/// Mapping between ItemId and Affixes LootTable
@@ -372,9 +368,6 @@ public class Database : IDatabase
 		{
 			var DBRecords = GetRecordFromFile(r.RecordInfo.Key);
 
-			if (DBRecords is null && TQDebug.ItemDebugLevel > 0)
-				Log.LogError(@"Unknown {RCLASS_LOOTRANDOMIZERTABLE} record ""{RecordId}""", RCLASS_LOOTRANDOMIZERTABLE, r.RecordInfo.Key);
-
 			return (RecordInfoKey: r.RecordInfo.Key, DBRecords, r.Priority);
 		})
 		.GroupBy(r => r.RecordInfoKey)
@@ -410,28 +403,11 @@ public class Database : IDatabase
 			{
 				var rec = GetRecordFromFile(r.RecordInfo.Key);
 
-				var defVal = (RecordInfoKey: r.RecordInfo.Key, LootRandomizerItem: LootRandomizerItem.Default(r.RecordInfo.Key), r.Priority);
-
-				if (rec is null)
-				{
-					Log.LogError(@"Unknown {RCLASS_LOOTRANDOMIZER} record ""{RecordId}""", RCLASS_LOOTRANDOMIZER, r.RecordInfo.Key);
-					return defVal;
-				}
-
 				string Tag = rec.GetString(Variable.KEY_LOOTRANDNAME, 0);
 				int Cost = rec.GetInt32(Variable.KEY_LOOTRANDCOST, 0);
 				int LevelRequirement = rec.GetInt32(Variable.KEY_LEVELREQ, 0);
 				string ItemClass = rec.GetString(Variable.KEY_ITEMCLASS, 0);
 				string FileDescription = rec.GetString(Variable.KEY_FILEDESC, 0);
-
-				var hasNoVisualData = string.IsNullOrWhiteSpace(Tag)
-					&& string.IsNullOrWhiteSpace(ItemClass)
-					&& string.IsNullOrWhiteSpace(FileDescription)
-					&& Cost == 0
-					&& LevelRequirement == 0;
-
-				if (hasNoVisualData)
-					return defVal;
 
 				var val = new LootRandomizerItem(
 					r.RecordInfo.Key

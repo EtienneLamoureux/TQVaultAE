@@ -40,7 +40,8 @@ public class SackPanel : Panel, IScalingControl
 	protected readonly IItemProvider ItemProvider;
 	protected readonly ITQDataService TQData;
 	protected readonly IServiceProvider ServiceProvider;
-
+	private readonly Bitmap CustomContextMenuAffixUnknown;
+	private readonly Bitmap CustomContextMenuAffixUntranslated;
 	ItemStyle[] ItemStyleBackGroundColorEnable = new[] {
 			ItemStyle.Epic,
 			ItemStyle.Legendary,
@@ -261,6 +262,9 @@ public class SackPanel : Panel, IScalingControl
 
 		this.CustomContextMenu.Renderer = new CustomProfessionalRenderer();
 		this.CustomContextMenu.Font = FontService.GetFont(9.0F * UIService.Scale);
+
+		this.CustomContextMenuAffixUnknown = this.UIService.LoadBitmap(@"INGAMEUI\MAP\ICONS\ICONSMALLQUEST01.TEX");
+		this.CustomContextMenuAffixUntranslated = this.UIService.LoadBitmap(@"INGAMEUI\MAP\ICONS\ICONSMALLAREAOFINTEREST01.TEX");
 
 		// Da_FileServer: Enable double buffering to remove flickering.
 		this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
@@ -1600,8 +1604,20 @@ public class SackPanel : Panel, IScalingControl
 					ForeColor = this.CustomContextMenu.ForeColor,
 					ToolTipText = tableitem.Key.Raw,
 					Tag = isRelic1,
+					DisplayStyle = ToolStripItemDisplayStyle.ImageAndText
 				};
 				choice.Click += ChangeSocketedBonusItemClicked;
+
+				if (tableitem.Value.LootRandomizer.Unknown)
+				{
+					choice.Image = this.CustomContextMenuAffixUnknown;
+					choice.ToolTipText = "Unknown : " + choice.ToolTipText;
+				}
+				else if (tableitem.Value.LootRandomizer.TranslationTagIsEmpty)
+				{
+					choice.Image = this.CustomContextMenuAffixUntranslated;
+					choice.ToolTipText = "No Translation : " + choice.ToolTipText;
+				}
 
 				// make the currently selected bonus bold
 				var relicId = isRelic1 ? itm.RelicBonusId : itm.RelicBonus2Id;
@@ -1653,8 +1669,20 @@ public class SackPanel : Panel, IScalingControl
 						Font = this.CustomContextMenu.Font,
 						ForeColor = this.CustomContextMenu.ForeColor,
 						ToolTipText = tableitem.Key.Raw,
+						DisplayStyle= ToolStripItemDisplayStyle.ImageAndText,
 					};
 					choice.Click += ChangeBonusItemClicked;
+
+					if (tableitem.Value.LootRandomizer.Unknown)
+					{
+						choice.Image = this.CustomContextMenuAffixUnknown;
+						choice.ToolTipText = "Unknown : " + choice.ToolTipText;
+					}
+					else if (tableitem.Value.LootRandomizer.TranslationTagIsEmpty)
+					{
+						choice.Image = this.CustomContextMenuAffixUntranslated;
+						choice.ToolTipText = "No Translation : " + choice.ToolTipText;
+					}
 
 					// make the currently selected bonus bold
 					if (tableitem.Key == focusedItem.RelicBonusId)
@@ -1684,8 +1712,6 @@ public class SackPanel : Panel, IScalingControl
 
 	#region ContextMenuMouseWheel
 
-	bool _ContextMenuMouseWheelEnabled = false;
-
 	private void _VaultForm_GlobalMouseWheelUp(object sender, EventArgs e)
 	{
 		if (this.CustomContextMenu.Visible) // Only for context menu & sub menu because there isn't MouseWheel event at ToolStripMenuItem
@@ -1698,12 +1724,9 @@ public class SackPanel : Panel, IScalingControl
 			SendKeys.SendWait("{DOWN}");
 	}
 
-	#endregion
-
-	private void AddPrefixSuffixMenuItems(Item focusedItem)
+	bool _ContextMenuMouseWheelEnabled = false;
+	private void HookContextMenuMouseWheel()
 	{
-		#region ContextMenuMouseWheel
-
 		// Link mouse wheel to menu for scrolling.
 		// Put here because i need the Form to be fully initalized and there is no Load() event here
 		if (!_ContextMenuMouseWheelEnabled)
@@ -1713,8 +1736,13 @@ public class SackPanel : Panel, IScalingControl
 			this._VaultForm.GlobalMouseWheelUp += _VaultForm_GlobalMouseWheelUp;
 			_ContextMenuMouseWheelEnabled = true;
 		}
+	}
 
-		#endregion
+	#endregion
+
+	private void AddPrefixSuffixMenuItems(Item focusedItem)
+	{
+		HookContextMenuMouseWheel();
 
 		#region Add Prefix/Suffix pickup
 
@@ -1905,8 +1933,6 @@ public class SackPanel : Panel, IScalingControl
 	}
 
 
-
-
 	private void SwapAffixesDisplayModeClicked(object sender, EventArgs e)
 	{
 		_DisplayAffixesByEffect = !_DisplayAffixesByEffect;
@@ -1934,7 +1960,8 @@ public class SackPanel : Panel, IScalingControl
 		var fnt = this.CustomContextMenu.Font;
 		var foreC = this.CustomContextMenu.ForeColor;
 		var backC = this.CustomContextMenu.BackColor;
-		var dispStl = ToolStripItemDisplayStyle.Text;
+		var dispStl = ToolStripItemDisplayStyle.ImageAndText;
+
 
 		if (_DisplayAffixesByEffect)// Group By Effect
 		{
@@ -1997,6 +2024,17 @@ public class SackPanel : Panel, IScalingControl
 				};
 				choice.Click += handler;
 
+				if (val.LootRandomizer.Unknown)
+				{
+					choice.Image = this.CustomContextMenuAffixUnknown;
+					choice.ToolTipText = "Unknown : " + choice.ToolTipText;
+				}
+				else if (val.LootRandomizer.TranslationTagIsEmpty)
+				{
+					choice.Image = this.CustomContextMenuAffixUntranslated;
+					choice.ToolTipText = "No Translation : " + choice.ToolTipText;
+				}
+				
 				if (affixMenu is not null)
 				{
 					choice.Text = _DisplayAffixesByEffect

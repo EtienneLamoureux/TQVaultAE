@@ -16,6 +16,11 @@ namespace TQVaultAE.Config
 		private static int _ArcFileDebugLevel = Config.Settings.Default.ARCFileDebugLevel;
 
 		/// <summary>
+		/// Holds loot table debug enabled?
+		/// </summary>
+		private static bool _LootTableDebugEnabled = Config.Settings.Default.LootTableDebugEnabled;
+
+		/// <summary>
 		/// Holds the database debug level.
 		/// </summary>
 		private static int _DatabaseDebugLevel = Config.Settings.Default.DatabaseDebugLevel;
@@ -71,5 +76,13 @@ namespace TQVaultAE.Config
 			set => _ItemAttributesDebugLevel = value;
 		}
 
+		/// <summary>
+		/// Is loot table debug enabled?
+		/// </summary>
+		public static bool LootTableDebugEnabled
+		{
+			get => DebugEnabled ? _LootTableDebugEnabled : false;
+			set => _LootTableDebugEnabled = value;
+		}
 	}
 }

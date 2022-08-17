@@ -121,5 +121,14 @@ namespace TQVaultAE.Config {
                 return ((double)(this["FadeOutInterval"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LootTableDebugEnabled {
+            get {
+                return ((bool)(this["LootTableDebugEnabled"]));
+            }
+        }
     }
 }

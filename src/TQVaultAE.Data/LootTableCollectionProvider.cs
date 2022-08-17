@@ -51,7 +51,14 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 			{
 				var dico = Database.AllLootRandomizer.Select(r =>
 				{
-					var translation = TranslationService.TranslateXTag(r.Value.Tag).TQCleanup();// Get translation
+					string translation = null;
+
+					if (r.Value.TranslationTagIsEmpty)
+					{
+						if (TQDebug.LootTableDebugEnabled)
+							Log.LogWarning(@"{RCLASS_LOOTRANDOMIZER} record ""{RecordId}"" dont have translation tag!", Data.Database.RCLASS_LOOTRANDOMIZER, r.Key);
+					}
+					else translation = TranslationService.TranslateXTag(r.Value.Tag).TQCleanup();// Get translation
 
 					if (string.IsNullOrWhiteSpace(translation))
 						translation = r.Value.FileDescription.TQCleanup();
@@ -145,11 +152,11 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 			// get affix translations
 			if (!this.AllLootRandomizerTranslated.TryGetValue(affix, out var lootrandom))
 			{
-				if (TQDebug.ItemDebugLevel > 0)
+				if (TQDebug.LootTableDebugEnabled)
 					Log.LogError(@"Unknown affix record ""{RecordId}"" from table ""{TableId}"""
 						, affix, tableId);
 
-				lootrandom = LootRandomizerItem.Default(affix);
+				lootrandom = LootRandomizerItem.Default(affix) with { Unknown = true };
 			}
 
 			Data.Add(affix, (kvp.Value.Weight, lootrandom));
@@ -177,6 +184,11 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 			var Data = MakeTable(tableId, records);
 			value = new LootTableCollection(tableId, Data);
 			LootTableCache.Add(tableId, value);
+		}
+		else if (TQDebug.LootTableDebugEnabled)
+		{
+			Log.LogError(@"Unknown {RCLASS_LOOTRANDOMIZERTABLE} record ""{TableId}"""
+				, Data.Database.RCLASS_LOOTRANDOMIZERTABLE, tableId);
 		}
 
 		return value;

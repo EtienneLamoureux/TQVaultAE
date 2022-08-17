@@ -23,6 +23,7 @@ _**Note : "Item editing feature" must be enable in the settings.**_
 * [Relic and charm completion bonus change](#RelicCompletion)
 * [Relics removal](#RelicRemoval)
 * [Socketed relic and charm completion bonus change](#SocketedRelicCompletion)
+* [Missing records/translations](#MissingRecords)
 * [Item seed change](#Seed)
 * [Create missing set pieces](#MissingSetPiece)
 
@@ -100,6 +101,22 @@ It try to suck all known Prefix/Suffix per gear type (e.g, all affixes for axe i
 ### <a id="RelicRemoval"></a>Relics removal
 
 ![Relics removal](affixes/removerelic.png)
+
+
+---
+
+### <a id="MissingRecords"></a>Missing records & translations
+
+![Missing records](affixes/brokenrecord.png)
+
+![Missing translations](affixes/missingtranslation.png)
+
+if you want the full list of incomplete records, activate this settings in `TQVaultAE.exe.config`
+
+- DebugEnabled = True
+- LootTableDebugEnabled = True
+
+By using the feature, you will see something like [that](affixes/loottablelogs.png) in the log file of the tool (`./Logging` directory).
 
 ---
 

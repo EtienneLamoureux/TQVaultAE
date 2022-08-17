@@ -220,6 +220,7 @@ public partial class MainForm : VaultForm
 			Log.LogDebug(
 $@"Current TQVault Version: {this.currentVersion}
 Debug Levels
+{nameof(TQDebug.LootTableDebugEnabled)}: {TQDebug.LootTableDebugEnabled}
 {nameof(TQDebug.ArcFileDebugLevel)}: {TQDebug.ArcFileDebugLevel}
 {nameof(TQDebug.DatabaseDebugLevel)}: {TQDebug.DatabaseDebugLevel}
 {nameof(TQDebug.ItemAttributesDebugLevel)}: {TQDebug.ItemAttributesDebugLevel}
