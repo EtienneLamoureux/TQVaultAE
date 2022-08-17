@@ -14,8 +14,8 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Entities;
+	using TQVaultAE.Domain.Helpers;
 	using TQVaultAE.Presentation;
-	using System.Linq;
 
 	/// <summary>
 	/// Class for handling the stash panel ui functions
@@ -102,7 +102,6 @@ namespace TQVaultAE.GUI.Components
 
 		private readonly ITranslationService TranslationService;
 		private readonly IDatabase Database;
-		private readonly IItemProvider ItemProvider;
 
 		private System.ComponentModel.IContainer components;
 		private ContextMenuStrip buttonContextMenuStrip;
@@ -121,13 +120,13 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="dragInfo">ItemDragInfo instance</param>
 		/// <param name="panelSize">Size of the panel in cells</param>
 		/// <param name="tooltip">ToolTip instance</param>
-		public StashPanel(ItemDragInfo dragInfo, Size panelSize, IServiceProvider serviceProvider) : base(dragInfo, 4, panelSize, 0, AutoMoveLocation.Stash, serviceProvider)
+		public StashPanel(ItemDragInfo dragInfo, Size panelSize, IServiceProvider serviceProvider)
+			: base(dragInfo, 4, panelSize, 0, AutoMoveLocation.Stash, serviceProvider)
 		{
 			InitializeComponent();
 
 			this.TranslationService = this.ServiceProvider.GetService<ITranslationService>();
 			this.Database = this.ServiceProvider.GetService<IDatabase>();
-			this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
 
 			SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
@@ -213,7 +212,7 @@ namespace TQVaultAE.GUI.Components
 
 			this.toolStripMenuItemEnableTooltip.Text = Resources.PlayerPanelMenuEnableTooltip;
 			this.toolStripMenuItemDisableTooltip.Text = Resources.PlayerPanelMenuDisableTooltip;
-			
+
 			foreach (var bag in this.BagButtons)
 				bag.ContextMenuStrip = this.buttonContextMenuStrip;
 
@@ -283,7 +282,7 @@ namespace TQVaultAE.GUI.Components
 			if (this.Player?.PlayerInfo != null)
 			{
 				DisplayPlayerInfoLastName = this.Player.PlayerName;
-				var pclass = TranslationService.TranslateXTag(this.Player.PlayerInfo.Class) ?? string.Empty;
+				var pclass = TranslationService.TranslateXTag(this.Player.PlayerInfo.Class, true, true) ?? string.Empty;
 				var mclass = TranslationService.TranslateMastery(this.Player.PlayerInfo.Class) ?? string.Empty;
 				mclass = mclass == Resources.Masteries ? string.Empty : mclass;
 
@@ -346,7 +345,7 @@ namespace TQVaultAE.GUI.Components
 					Font = FontService.GetFontLight(11F),
 					Margin = new Padding(0, 0, 0, 5),
 					Padding = new Padding(10, 0, 10, 0),
-					Visible = Config.Settings.Default.AllowCharacterEdit,
+					Visible = Config.UserSettings.Default.AllowCharacterEdit,
 				};
 				editButton.FlatAppearance.BorderSize = 0;
 				editButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
@@ -936,16 +935,16 @@ namespace TQVaultAE.GUI.Components
 				switch (this.CurrentBag)
 				{
 					case BAGID_EQUIPMENTPANEL:
-						Config.Settings.Default.DisableTooltipEquipment = true;
+						Config.UserSettings.Default.DisableTooltipEquipment = true;
 						break;
 					case BAGID_PLAYERSTASH:
-						Config.Settings.Default.DisableTooltipStash = true;
+						Config.UserSettings.Default.DisableTooltipStash = true;
 						break;
 					case BAGID_RELICVAULTSTASH:
-						Config.Settings.Default.DisableTooltipRelic = true;
+						Config.UserSettings.Default.DisableTooltipRelic = true;
 						break;
 					case BAGID_TRANSFERSTASH:
-						Config.Settings.Default.DisableTooltipTransfer = true;
+						Config.UserSettings.Default.DisableTooltipTransfer = true;
 						break;
 				}
 			}
@@ -955,21 +954,21 @@ namespace TQVaultAE.GUI.Components
 				switch (this.CurrentBag)
 				{
 					case BAGID_EQUIPMENTPANEL:
-						Config.Settings.Default.DisableTooltipEquipment = false;
+						Config.UserSettings.Default.DisableTooltipEquipment = false;
 						break;
 					case BAGID_PLAYERSTASH:
-						Config.Settings.Default.DisableTooltipStash = false;
+						Config.UserSettings.Default.DisableTooltipStash = false;
 						break;
 					case BAGID_RELICVAULTSTASH:
-						Config.Settings.Default.DisableTooltipRelic = false;
+						Config.UserSettings.Default.DisableTooltipRelic = false;
 						break;
 					case BAGID_TRANSFERSTASH:
-						Config.Settings.Default.DisableTooltipTransfer = false;
+						Config.UserSettings.Default.DisableTooltipTransfer = false;
 						break;
 				}
 			}
 
-			Config.Settings.Default.Save();
+			Config.UserSettings.Default.Save();
 		}
 
 		private void buttonContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
@@ -992,16 +991,16 @@ namespace TQVaultAE.GUI.Components
 			switch (sourceButton.ButtonNumber)
 			{
 				case BAGID_EQUIPMENTPANEL:
-					SetMenuItemDisableTooltip(Config.Settings.Default.DisableTooltipEquipment);
+					SetMenuItemDisableTooltip(Config.UserSettings.Default.DisableTooltipEquipment);
 					break;
 				case BAGID_PLAYERSTASH:
-					SetMenuItemDisableTooltip(Config.Settings.Default.DisableTooltipStash);
+					SetMenuItemDisableTooltip(Config.UserSettings.Default.DisableTooltipStash);
 					break;
 				case BAGID_RELICVAULTSTASH:
-					SetMenuItemDisableTooltip(Config.Settings.Default.DisableTooltipRelic);
+					SetMenuItemDisableTooltip(Config.UserSettings.Default.DisableTooltipRelic);
 					break;
 				case BAGID_TRANSFERSTASH:
-					SetMenuItemDisableTooltip(Config.Settings.Default.DisableTooltipTransfer);
+					SetMenuItemDisableTooltip(Config.UserSettings.Default.DisableTooltipTransfer);
 					break;
 			}
 		}

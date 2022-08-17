@@ -16,12 +16,14 @@ _**Note : "Item editing feature" must be enable in the settings.**_
 * [Broken items](#Broken)
 * [Affixes removal](#Remove)
 * [Affixes display mode](#DisplayMode)
+* [Affixes for Epic & Legendary](#Uniques)
 * [Artefact creation](#Formula)
 * [Artefact completion bonus change](#Artefact)
 * [Relic and charm completion](#RelicCompleteStack)
 * [Relic and charm completion bonus change](#RelicCompletion)
 * [Relics removal](#RelicRemoval)
 * [Socketed relic and charm completion bonus change](#SocketedRelicCompletion)
+* [Missing records/translations](#MissingRecords)
 * [Item seed change](#Seed)
 * [Create missing set pieces](#MissingSetPiece)
 
@@ -54,6 +56,15 @@ _**Note : "Item editing feature" must be enable in the settings.**_
 ### <a id="DisplayMode"></a>Affixes display mode
 
 ![Affixes removal](affixes/displaymode.png)
+
+---
+
+### <a id="Uniques"></a>Affixes for Epic & Legendary
+You can enable this feature in the settings.
+
+It try to suck all known Prefix/Suffix per gear type (e.g, all affixes for axe if the unique is an axe).
+
+![Artefact creation](affixes/uniques.png)
 
 ---
 
@@ -90,6 +101,22 @@ _**Note : "Item editing feature" must be enable in the settings.**_
 ### <a id="RelicRemoval"></a>Relics removal
 
 ![Relics removal](affixes/removerelic.png)
+
+
+---
+
+### <a id="MissingRecords"></a>Missing records & translations
+
+![Missing records](affixes/brokenrecord.png)
+
+![Missing translations](affixes/missingtranslation.png)
+
+if you want the full list of incomplete records, activate this settings in `TQVaultAE.exe.config`
+
+- DebugEnabled = True
+- LootTableDebugEnabled = True
+
+By using the feature, you will see something like [that](affixes/loottablelogs.png) in the log file of the tool (`./Logging` directory).
 
 ---
 

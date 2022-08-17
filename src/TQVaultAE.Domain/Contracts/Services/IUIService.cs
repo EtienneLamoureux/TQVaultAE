@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Domain.Contracts.Services
 {
@@ -44,7 +45,7 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// </summary>
 		/// <param name="resourceId">Resource Id which we are looking up.</param>
 		/// <returns>Bitmap fetched from the database</returns>
-		Bitmap LoadBitmap(string resourceId);
+		Bitmap LoadBitmap(RecordId resourceId);
 
 		/// <summary>
 		/// Loads a bitmap from <paramref name="texData"/> with an identifier <paramref name="resourceId"/>
@@ -52,12 +53,40 @@ namespace TQVaultAE.Domain.Contracts.Services
 		/// <param name="resourceId">Resource Id which we are looking up.</param>
 		/// <param name="texData">raw DDS image data</param>
 		/// <returns>Bitmap converted from <paramref name="texData"/></returns>
-		Bitmap LoadBitmap(string resourceId, byte[] texData);
+		Bitmap LoadBitmap(RecordId resourceId, byte[] texData);
 
 		/// <summary>
 		/// Loads the relic overlay bitmap from the database.
 		/// </summary>
 		/// <returns>Relic overlay bitmap</returns>
 		Bitmap LoadRelicOverlayBitmap();
+
+		/// <summary>
+		/// Display notification to user
+		/// </summary>
+		/// <param name="message"></param>
+		/// <param name="color"></param>
+		void NotifyUser(string message, TQColor color = TQColor.Turquoise);
+
+		/// <summary>
+		/// Display notification to user
+		/// </summary>
+		/// <param name="message"></param>
+		/// <param name="color"></param>
+		void NotifyUser(string message, Color color);	
+
+		/// <summary>
+		/// Notification event
+		/// </summary>
+		event NotifyUserEventHandler NotifyUserEvent;
 	}
+
+	/// <summary>
+	/// Notification delegate
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="message"></param>
+	/// <param name="color"></param>
+	public delegate void NotifyUserEventHandler(object sender, string message, Color color);
+
 }

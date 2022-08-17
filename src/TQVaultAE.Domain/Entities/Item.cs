@@ -4,13 +4,13 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using EnumsNET;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.Domain.Entities;
@@ -59,22 +59,22 @@ public class Item
 	/// <summary>
 	/// Prefix database record ID
 	/// </summary>
-	public string prefixID;
+	public RecordId prefixID;
 
 	/// <summary>
 	/// Suffix database record ID
 	/// </summary>
-	public string suffixID;
+	public RecordId suffixID;
 
 	/// <summary>
 	/// Relic database record ID
 	/// </summary>
-	public string relicID;
+	public RecordId relicID;
 
 	/// <summary>
 	/// Relic database record ID
 	/// </summary>
-	public string relic2ID;
+	public RecordId relic2ID;
 
 	/// <summary>
 	/// Info structure for the base item
@@ -123,16 +123,16 @@ public class Item
 	#region Item Properties
 
 	public bool HasPrefix
-		=> !string.IsNullOrWhiteSpace(prefixID);
+		=> !RecordId.IsNullOrEmpty(prefixID);
 
 	public bool HasSuffix
-		=> !string.IsNullOrWhiteSpace(suffixID);
+		=> !RecordId.IsNullOrEmpty(suffixID);
 
 	/// <summary>
 	/// Gets the value indicating whether the item allows 2 relic socketing
 	/// </summary>
 	public bool AcceptExtraRelic
-		=> HasSuffix && suffixID.EndsWith("RARE_EXTRARELIC_01.DBR", noCase);
+		=> HasSuffix && suffixID.Normalized.EndsWith("RARE_EXTRARELIC_01.DBR");
 
 	/// <summary>
 	/// Tell if the item is modified
@@ -148,17 +148,17 @@ public class Item
 	/// <summary>
 	/// Gets the base item id
 	/// </summary>
-	public string BaseItemId { get; set; }
+	public RecordId BaseItemId { get; set; }
 
 	/// <summary>
 	/// Gets or sets the relic bonus id
 	/// </summary>
-	public string RelicBonusId { get; set; }
+	public RecordId RelicBonusId { get; set; }
 
 	/// <summary>
 	/// Gets or sets the relic bonus2 id
 	/// </summary>
-	public string RelicBonus2Id { get; set; }
+	public RecordId RelicBonus2Id { get; set; }
 
 	/// <summary>
 	/// Gets or sets the item seed
@@ -253,7 +253,7 @@ public class Item
 	/// <summary>
 	/// ResourceId related to <see cref="TexImage"/>
 	/// </summary>
-	public string TexImageResourceId { get; set; }
+	public RecordId TexImageResourceId { get; set; }
 
 	/// <summary>
 	/// Gets the item's width in cells
@@ -295,33 +295,36 @@ public class Item
 	/// Gets a value indicating whether or not the item comes from Immortal Throne expansion pack.
 	/// </summary>
 	public bool IsImmortalThrone
-		=> this.BaseItemId.IndexOf("XPACK\\", noCase) >= 0
-		|| this.prefixID != null && this.prefixID.IndexOf("XPACK\\", noCase) >= 0
-		|| this.suffixID != null && this.suffixID.IndexOf("XPACK\\", noCase) >= 0;
+		=> (this.BaseItemId.Normalized.IndexOf("XPACK\\") >= 0
+		|| this.prefixID != null && this.prefixID.Normalized.IndexOf("XPACK\\") >= 0
+		|| this.suffixID != null && this.suffixID.Normalized.IndexOf("XPACK\\") >= 0)
+		&& !IsRagnarok && !IsAtlantis && !IsEmbers;
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Ragnarok DLC.
 	/// </summary>
 	public bool IsRagnarok
-		=> this.BaseItemId.IndexOf("XPACK2\\", noCase) >= 0
-		|| this.prefixID != null && this.prefixID.IndexOf("XPACK2\\", noCase) >= 0
-		|| this.suffixID != null && this.suffixID.IndexOf("XPACK2\\", noCase) >= 0;
+		=> (this.BaseItemId.Normalized.IndexOf("XPACK2\\") >= 0
+		|| this.prefixID != null && this.prefixID.Normalized.IndexOf("XPACK2\\") >= 0
+		|| this.suffixID != null && this.suffixID.Normalized.IndexOf("XPACK2\\") >= 0)
+		&& !IsAtlantis && !IsEmbers;
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Atlantis DLC.
 	/// </summary>
 	public bool IsAtlantis
-		=> this.BaseItemId.IndexOf("XPACK3\\", noCase) >= 0
-		|| this.prefixID != null && this.prefixID.IndexOf("XPACK3\\", noCase) >= 0
-		|| this.suffixID != null && this.suffixID.IndexOf("XPACK3\\", noCase) >= 0;
+		=> (this.BaseItemId.Normalized.IndexOf("XPACK3\\") >= 0
+		|| this.prefixID != null && this.prefixID.Normalized.IndexOf("XPACK3\\") >= 0
+		|| this.suffixID != null && this.suffixID.Normalized.IndexOf("XPACK3\\") >= 0)
+		&& !IsEmbers;
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Eternal Embers DLC.
 	/// </summary>
 	public bool IsEmbers
-		=> this.BaseItemId.IndexOf("XPACK4\\", noCase) >= 0
-		|| this.prefixID != null && this.prefixID.IndexOf("XPACK4\\", noCase) >= 0
-		|| this.suffixID != null && this.suffixID.IndexOf("XPACK4\\", noCase) >= 0;
+		=> this.BaseItemId.Normalized.IndexOf("XPACK4\\") >= 0
+		|| this.prefixID != null && this.prefixID.Normalized.IndexOf("XPACK4\\") >= 0
+		|| this.suffixID != null && this.suffixID.Normalized.IndexOf("XPACK4\\") >= 0;
 
 
 	/// <summary>
@@ -334,7 +337,7 @@ public class Item
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_SCROLL, noCase);
 			else if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
-				&& (this.BaseItemId.IndexOf("\\SCROLLS\\", noCase) >= 0))
+				&& (this.BaseItemId.Normalized.IndexOf("\\SCROLLS\\") >= 0))
 				return true;
 
 			return false;
@@ -349,7 +352,7 @@ public class Item
 		get
 		{
 			if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
-				&& (this.BaseItemId.IndexOf("PARCHMENT", noCase) >= 0))
+				&& (this.BaseItemId.Normalized.IndexOf("PARCHMENT") >= 0))
 				return true;
 
 			return false;
@@ -366,7 +369,7 @@ public class Item
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_FORMULA, noCase);
 			else if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
-				&& (this.BaseItemId.IndexOf("\\ARCANEFORMULAE\\", noCase) >= 0))
+				&& (this.BaseItemId.Normalized.IndexOf("\\ARCANEFORMULAE\\") >= 0))
 				return true;
 
 			return false;
@@ -383,7 +386,7 @@ public class Item
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_ARTIFACT, noCase);
 			else if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
-				&& (!this.IsFormulae && this.BaseItemId.IndexOf("\\ARTIFACTS\\", noCase) >= 0))
+				&& (!this.IsFormulae && this.BaseItemId.Normalized.IndexOf("\\ARTIFACTS\\") >= 0))
 				return true;
 
 			return false;
@@ -497,10 +500,10 @@ public class Item
 			}
 			else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
 			{
-				if (this.BaseItemId.IndexOf(QUEST, noCase) >= 0)
+				if (this.BaseItemId.Normalized.IndexOf(QUEST) >= 0)
 					return true;
 			}
-			else if (this.BaseItemId.IndexOf(QUESTS, noCase) >= 0)
+			else if (this.BaseItemId.Normalized.IndexOf(QUESTS) >= 0)
 				return true;
 
 			return false;
@@ -508,26 +511,26 @@ public class Item
 	}
 
 	/// <summary>
-	/// Get a value indicating gear level from <see cref="GearLevel.Broken"/> to <see cref="GearLevel.Legendary"/>
+	/// Get a value indicating gear level from <see cref="Rarity.Broken"/> to <see cref="Rarity.Legendary"/>
 	/// </summary>
-	public GearLevel GearLevel
+	public Rarity Rarity
 	{
 		get
 		{
 			switch (ItemStyle)
 			{
 				case ItemStyle.Broken:
-					return GearLevel.Broken;
+					return Rarity.Broken;
 				case ItemStyle.Mundane:
-					return GearLevel.Mundane;
+					return Rarity.Mundane;
 				case ItemStyle.Common:
-					return GearLevel.Common;
+					return Rarity.Common;
 				case ItemStyle.Rare:
-					return GearLevel.Rare;
+					return Rarity.Rare;
 				case ItemStyle.Epic:
-					return GearLevel.Epic;
+					return Rarity.Epic;
 				case ItemStyle.Legendary:
-					return GearLevel.Legendary;
+					return Rarity.Legendary;
 				case ItemStyle.Quest:
 				case ItemStyle.Relic:
 				case ItemStyle.Potion:
@@ -536,7 +539,7 @@ public class Item
 				case ItemStyle.Formulae:
 				case ItemStyle.Artifact:
 				default:
-					return GearLevel.NoGear;
+					return Rarity.NoGear;
 			}
 		}
 	}
@@ -651,12 +654,12 @@ public class Item
 	/// <summary>
 	/// Gets a value indicating whether the item has an embedded relic.
 	/// </summary>
-	public bool HasRelicSlot1 => !this.IsRelic && this.relicID.Length > 0;
+	public bool HasRelicSlot1 => !this.IsRelic && !RecordId.IsNullOrEmpty(this.relicID);
 
 	/// <summary>
 	/// Gets a value indicating whether the item has a second embedded relic.
 	/// </summary>
-	public bool HasRelicSlot2 => !this.IsRelic && this.relic2ID.Length > 0;
+	public bool HasRelicSlot2 => !this.IsRelic && !RecordId.IsNullOrEmpty(this.relic2ID);
 
 	/// <summary>
 	/// Indicate that the item has an embedded relic.
@@ -677,7 +680,7 @@ public class Item
 					|| this.baseItemInfo.ItemClass.Equals(ICLASS_SCROLL_ETERNAL, noCase); //AMS: New EE Potions (Mystical Potions)
 			}
 
-			return this.BaseItemId.IndexOf("ONESHOT\\POTION", noCase) != -1;
+			return this.BaseItemId.Normalized.IndexOf("ONESHOT\\POTION") != -1;
 		}
 	}
 
@@ -691,9 +694,9 @@ public class Item
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_CHARM, noCase);
 			else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
-				return this.BaseItemId.IndexOf("ANIMALRELICS", noCase) != -1;
+				return this.BaseItemId.Normalized.IndexOf("ANIMALRELICS") != -1;
 			else
-				return (this.BaseItemId.IndexOf("\\CHARMS\\", noCase) != -1);
+				return (this.BaseItemId.Normalized.IndexOf("\\CHARMS\\") != -1);
 		}
 	}
 
@@ -707,9 +710,9 @@ public class Item
 			if (this.RelicInfo != null)
 				return this.RelicInfo.ItemClass.Equals(ICLASS_CHARM, noCase);
 			else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
-				return (this.RelicInfo?.ItemId.IndexOf("ANIMALRELICS", noCase) ?? -1) != -1;
+				return (this.RelicInfo?.ItemId.Normalized.IndexOf("ANIMALRELICS") ?? -1) != -1;
 			else
-				return (this.RelicInfo?.ItemId.IndexOf("\\CHARMS\\", noCase) ?? -1) != -1;
+				return (this.RelicInfo?.ItemId.Normalized.IndexOf("\\CHARMS\\") ?? -1) != -1;
 		}
 	}
 
@@ -723,9 +726,9 @@ public class Item
 			if (this.Relic2Info != null)
 				return this.Relic2Info.ItemClass.Equals(ICLASS_CHARM, noCase);
 			else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
-				return (this.Relic2Info?.ItemId.IndexOf("ANIMALRELICS", noCase) ?? -1) != -1;
+				return (this.Relic2Info?.ItemId.Normalized.IndexOf("ANIMALRELICS") ?? -1) != -1;
 			else
-				return (this.Relic2Info?.ItemId.IndexOf("\\CHARMS\\", noCase) ?? -1) != -1;
+				return (this.Relic2Info?.ItemId.Normalized.IndexOf("\\CHARMS\\") ?? -1) != -1;
 		}
 	}
 
@@ -742,12 +745,12 @@ public class Item
 					|| this.baseItemInfo.ItemClass.Equals(ICLASS_CHARM, noCase);
 			}
 			else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
-				return this.BaseItemId.IndexOf("RELICS", noCase) != -1;
+				return this.BaseItemId.Normalized.IndexOf("RELICS") != -1;
 			else
 			{
 				return (
-					(this.BaseItemId.IndexOf("\\RELICS\\", noCase) != -1)
-					|| (this.BaseItemId.IndexOf("\\CHARMS\\", noCase) != -1)
+					(this.BaseItemId.Normalized.IndexOf("\\RELICS\\") != -1)
+					|| (this.BaseItemId.Normalized.IndexOf("\\CHARMS\\") != -1)
 				);
 			}
 		}
@@ -840,10 +843,7 @@ public class Item
 	/// Get the tagName assigned to the <see cref="ItemClass"/>
 	/// </summary>
 	public static string GetClassTagName(string ItemClass)
-	{
-		var map = ItemClassToTagNameMap.Where(i => i.ItemClass.Equals(ItemClass, noCase)).Select(i => i.Value);
-		return map.Any() ? map.First() : ItemClass;
-	}
+		=> ItemClassToTagNameMap.Where(i => i.ItemClass.Equals(ItemClass, noCase)).Select(i => i.Value).FirstOrDefault() ?? ItemClass;
 
 	/// <summary>
 	/// Gets the item group.
@@ -857,10 +857,10 @@ public class Item
 				return 0;
 
 			var iclass = this.baseItemInfo.ItemClass;
-			var idx = ItemClassToTagNameMap.Select((val, index) => new { val, index })
+			return ItemClassToTagNameMap.Select((val, index) => new { val, index })
 				.Where(m => m.val.ItemClass.Equals(iclass, noCase))
-				.Select(m => m.index);
-			return idx.Any() ? idx.First() : 0;
+				.Select(m => m.index)
+				.FirstOrDefault();
 		}
 	}
 
@@ -883,40 +883,39 @@ public class Item
 	/// Creates an empty item
 	/// </summary>
 	/// <returns>Empty Item structure</returns>
-	public Item MakeEmptyItem()
-	{
-		Item newItem = new Item();
-		newItem.beginBlockCrap1 = this.beginBlockCrap1;
-		newItem.endBlockCrap1 = this.endBlockCrap1;
-		newItem.beginBlockCrap2 = this.beginBlockCrap2;
-		newItem.endBlockCrap2 = this.endBlockCrap2;
-		newItem.BaseItemId = string.Empty;
-		newItem.prefixID = string.Empty;
-		newItem.suffixID = string.Empty;
-		newItem.relicID = string.Empty;
-		newItem.relic2ID = string.Empty;
-		newItem.RelicBonusId = string.Empty;
-		newItem.RelicBonus2Id = string.Empty;
-		newItem.Seed = GenerateSeed();
-		newItem.Var1 = this.var1;
-		newItem.Var2 = var2Default;
-		newItem.PositionX = -1;
-		newItem.PositionY = -1;
-
-		return newItem;
-	}
+	public Item MakeEmptyItem() =>
+		new Item()
+		{
+			beginBlockCrap1 = this.beginBlockCrap1,
+			endBlockCrap1 = this.endBlockCrap1,
+			beginBlockCrap2 = this.beginBlockCrap2,
+			endBlockCrap2 = this.endBlockCrap2,
+			BaseItemId = RecordId.Empty,
+			prefixID = RecordId.Empty,
+			suffixID = RecordId.Empty,
+			relicID = RecordId.Empty,
+			relic2ID = RecordId.Empty,
+			RelicBonusId = RecordId.Empty,
+			RelicBonus2Id = RecordId.Empty,
+			Seed = GenerateSeed(),
+			Var1 = this.var1,
+			Var2 = var2Default,
+			PositionX = -1,
+			PositionY = -1,
+		};
 
 	/// <summary>
 	/// Makes a new item based on the passed item id string
 	/// </summary>
 	/// <param name="baseItemId">base item id of the new item</param>
 	/// <returns>Empty Item structure based on the passed item string</returns>
-	public Item MakeEmptyCopy(string baseItemId)
+	public Item MakeEmptyCopy(RecordId baseItemId)
 	{
-		if (string.IsNullOrEmpty(baseItemId))
-			throw new ArgumentNullException(baseItemId, "The base item ID cannot be NULL or Empty.");
+		if (RecordId.IsNullOrEmpty(baseItemId))
+			throw new ArgumentNullException(nameof(baseItemId), "The base item ID cannot be NULL or Empty.");
 
 		Item newItem = MakeEmptyItem();
+
 		newItem.BaseItemId = baseItemId;
 
 		return newItem;
@@ -985,28 +984,9 @@ public class Item
 	/// </summary>
 	/// <remarks>return <see cref="GearType.Undefined"/> if not a piece of gear</remarks>
 	public GearType GearType
-		=> ItemClassGearTypeMap
-			.Where(m => m.ItemClass.Equals(this.ItemClass, noCase))
-			.Select(m => m.Value).FirstOrDefault();
-
-	internal static ReadOnlyCollection<ItemClassMapItem<GearType>> ItemClassGearTypeMap = new List<ItemClassMapItem<GearType>>
-	{
-		new (ICLASS_AMULET, GearType.Amulet),
-		new (ICLASS_RING, GearType.Ring),
-		new (ICLASS_ARTIFACT, GearType.Artifact),
-		new (ICLASS_LOWERBODY, GearType.Leg),
-		new (ICLASS_FOREARM, GearType.Arm),
-		new (ICLASS_HEAD, GearType.Head),
-		new (ICLASS_UPPERBODY, GearType.Torso),
-		new (ICLASS_SHIELD, GearType.Shield),
-		new (ICLASS_AXE, GearType.Axe),
-		new (ICLASS_MACE, GearType.Mace),
-		new (ICLASS_SWORD, GearType.Sword),
-		new (ICLASS_BOW, GearType.Bow),
-		new (ICLASS_RANGEDONEHAND, GearType.Thrown),
-		new (ICLASS_STAFF, GearType.Staff),
-		new (ICLASS_SPEAR,GearType.Spear),
-	}.AsReadOnly();
+		=> GearTypeExtension.GearTypeMap
+			.Where(m => m.Value.ICLASS.Equals(this.ItemClass, noCase))
+			.Select(m => m.Key).FirstOrDefault();
 
 	#endregion
 
@@ -1017,7 +997,7 @@ public class Item
 	/// </summary>
 	/// <param name="relicBaseItemId"></param>
 	/// <returns></returns>
-	public bool IsRelicAllowed(string relicBaseItemId)
+	public bool IsRelicAllowed(RecordId relicBaseItemId)
 		=> IsRelicAllowed(this, relicBaseItemId);
 
 	/// <summary>
@@ -1056,7 +1036,7 @@ public class Item
 	/// <param name="item"></param>
 	/// <param name="relicBaseItemId"></param>
 	/// <returns></returns>
-	public static bool IsRelicAllowed(Item item, string relicBaseItemId)
+	public static bool IsRelicAllowed(Item item, RecordId relicBaseItemId)
 	{
 		var itemGearType = item.GearType;
 
@@ -1095,15 +1075,15 @@ public class Item
 	/// <param name="relicBaseItemId"></param>
 	/// <param name="types"></param>
 	/// <returns></returns>
-	public static bool TryGetAllowedGearTypes(string relicBaseItemId, out GearType types)
+	public static bool TryGetAllowedGearTypes(RecordId relicBaseItemId, out GearType types)
 	{
 		types = GearType.Undefined;
 
-		if (string.IsNullOrWhiteSpace(relicBaseItemId)) return false;
+		if (RecordId.IsNullOrEmpty(relicBaseItemId)) return false;
 
 		// Find GearType
 		var map = RelicAndCharmExtension.RelicAndCharmMap
-			.Where(m => m.FileName.Equals(Path.GetFileName(relicBaseItemId), noCase))
+			.Where(m => m.RecordId == relicBaseItemId)
 			.FirstOrDefault();
 
 		if (map.Value == RelicAndCharm.Unknown) return false;
@@ -1118,15 +1098,15 @@ public class Item
 
 	#region GameExtension
 
-	public GameExtension GameExtension
+	public GameDlc GameExtension
 	{
 		get
 		{
-			if (this.IsImmortalThrone) return GameExtension.ImmortalThrone;
-			else if (this.IsRagnarok) return GameExtension.Ragnarok;
-			else if (this.IsAtlantis) return GameExtension.Atlantis;
-			else if (this.IsEmbers) return GameExtension.EternalEmbers;
-			else return GameExtension.TitanQuest;
+			if (this.IsImmortalThrone) return GameDlc.ImmortalThrone;
+			else if (this.IsRagnarok) return GameDlc.Ragnarok;
+			else if (this.IsAtlantis) return GameDlc.Atlantis;
+			else if (this.IsEmbers) return GameDlc.EternalEmbers;
+			else return GameDlc.TitanQuest;
 		}
 	}
 
@@ -1144,4 +1124,27 @@ public class Item
 	}
 
 	#endregion
+
+	/// <summary>
+	/// Extract color from <paramref name="TQText"/> and fallback to default item color if none.
+	/// </summary>
+	/// <param name="TQText">text containing the color tag</param>
+	/// <returns><see cref="System.Drawing.Color"/> of the embedded color code</returns>
+	public Color ExtractTextColorOrItemColor(string TQText)
+	{
+		if (string.IsNullOrWhiteSpace(TQText))
+			// Use the standard color code for the item
+			return ItemStyle.Color();
+
+		// Look for a formatting tag in the beginning of the string
+		TQColor? colorCode = TQColorHelper.GetColorFromTaggedString(TQText);
+
+		// We didn't find a code so use the standard color code for the item
+		if (colorCode is null)
+			return ItemStyle.Color();
+
+		// We found something so lets try to find the code
+		return colorCode.Value.Color();
+	}
+
 }

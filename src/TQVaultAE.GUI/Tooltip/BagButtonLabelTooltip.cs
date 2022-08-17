@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components;
 
 namespace TQVaultAE.GUI.Tooltip

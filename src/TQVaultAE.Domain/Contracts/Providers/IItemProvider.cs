@@ -9,25 +9,38 @@ namespace TQVaultAE.Domain.Contracts.Providers;
 public interface IItemProvider
 {
 	/// <summary>
+	/// Gets s string containing the prefix of the item class for use in the requirements equation.
+	/// </summary>
+	/// <param name="itemClass">string containing the item class</param>
+	/// <returns>string containing the prefix of the item class for use in the requirements equation</returns>
+	string GetRequirementEquationPrefix(string itemClass);
+
+	/// <summary>
+	/// Find all affixes available for this item <paramref name="type"/>
+	/// </summary>
+	/// <param name="itemId"></param>
+	/// <returns><c>null</c> if <paramref name="type"/> is not wearable (can't have an affix)</returns>
+	ItemAffixes GetAllAvailableAffixes(GearType type);
+	/// <summary>
 	/// Gets the socketed charm/relic bonus loot table
 	/// </summary>
 	/// <param name="Item"></param>
 	/// <param name="RelicTable1"></param>
 	/// <param name="RelicTable2"></param>
 	/// <returns>Returns <c>false</c> if the item does not contain a charm/relic</returns>
-	public bool BonusTableSocketedRelic(Item Item, out LootTableCollection RelicTable1, out LootTableCollection RelicTable2);
+	bool BonusTableSocketedRelic(Item Item, out LootTableCollection RelicTable1, out LootTableCollection RelicTable2);
 	/// <summary>
 	/// Return all affixes for <paramref name="itemId"/>
 	/// </summary>
 	/// <param name="itemId"></param>
 	/// <returns></returns>
-	ItemAffixes GetItemAffixes(string itemId);
+	ItemAffixes GetItemAffixes(RecordId itemId);
 	/// <summary>
 	/// Gets the artifact/charm/relic bonus loot table
 	/// </summary>
 	/// <param name="itm"></param>
 	/// <returns>returns null if the item is not an artifact/charm/relic</returns>
-	LootTableCollection BonusTable(Item itm);
+	LootTableCollection BonusTableRelicOrArtifact(Item itm);
 	/// <summary>
 	/// Create an artifact from its formulae
 	/// </summary>
@@ -92,13 +105,29 @@ public interface IItemProvider
 	/// <param name="recordId">string of the record id</param>
 	/// <param name="varNum">Which variable we are using since there can be multiple values.</param>
 	/// <returns>int containing the pet skill level</returns>
-	int GetPetSkillLevel(Item itm, DBRecordCollection record, string recordId, int varNum);
+	int GetPetSkillLevel(Item itm, DBRecordCollection record, RecordId recordId, int varNum);
 	/// <summary>
 	/// Gets the item's requirements
 	/// </summary>
 	/// <returns>A string containing the items requirements</returns>
 	(string[] Requirements, SortedList<string, Variable> RequirementVariables) GetRequirements(Item itm);
 	SortedList<string, Variable> GetRequirementVariables(Item itm);
+
+	/// <summary>
+	/// Extract numerical requirements
+	/// </summary>
+	/// <param name="item"></param>
+	/// <returns></returns>
+	RequirementInfo GetRequirementInfo(Item item);
+
+	/// <summary>
+	/// Extract numerical requirements
+	/// </summary>
+	/// <param name="item"></param>
+	/// <param name="requirementVariables"></param>
+	/// <returns></returns>
+	RequirementInfo GetRequirementInfo(Item item, SortedList<string, Variable> requirementVariables);
+
 	SortedList<string, int> GetStatBonuses(Item item);
 	void GetStatBonusesFromRecord(SortedList<string, int> statBonuses, DBRecordCollection record, int statLevel = 0);
 	/// <summary>
@@ -114,7 +143,7 @@ public interface IItemProvider
 	/// <param name="recordId">string containing the record id</param>
 	/// <param name="varNum">variable number which we are looking up since there can be multiple values</param>
 	/// <returns>int containing the skill level</returns>
-	int GetTriggeredSkillLevel(Item itm, DBRecordCollection record, string recordId, int varNum);
+	int GetTriggeredSkillLevel(Item itm, DBRecordCollection record, RecordId recordId, int varNum);
 	/// <summary>
 	/// Parses an item from the save file format
 	/// </summary>

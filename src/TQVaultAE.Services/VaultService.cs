@@ -151,8 +151,8 @@ namespace TQVaultAE.Services
 		/// <param name="vaultPath">Path to the vault files</param>
 		public void UpdateVaultPath(string vaultPath)
 		{
-			Config.Settings.Default.VaultPath = vaultPath;
-			Config.Settings.Default.Save();
+			Config.UserSettings.Default.VaultPath = vaultPath;
+			Config.UserSettings.Default.Save();
 		}
 	}
 }

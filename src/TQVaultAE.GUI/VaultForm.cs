@@ -11,6 +11,7 @@ namespace TQVaultAE.GUI
 	using System.ComponentModel;
 	using System.Drawing;
 	using System.Globalization;
+	using System.Runtime.InteropServices;
 	using System.Security.Permissions;
 	using System.Windows.Forms;
 	using System.Windows.Input;
@@ -387,7 +388,6 @@ namespace TQVaultAE.GUI
 			}
 		}
 
-
 		/// <summary>
 		/// Gets or sets a value indicating whether the Minimize button is displayed in the caption bar of the form.
 		/// </summary>
@@ -456,6 +456,15 @@ namespace TQVaultAE.GUI
 			}
 		}
 
+		#region Capture Mouse Wheel Event Globally
+
+		protected internal event EventHandler GlobalMouseWheelUp;
+		protected internal event EventHandler GlobalMouseWheelDown;
+		internal void RaiseGlobalMouseWheelDown() => GlobalMouseWheelDown?.Invoke(this, EventArgs.Empty);
+		internal void RaiseGlobalMouseWheelUp() => GlobalMouseWheelUp?.Invoke(this, EventArgs.Empty);
+
+		#endregion
+
 		/// <summary>
 		/// Processes a system event on the system menu.
 		/// </summary>
@@ -503,8 +512,8 @@ namespace TQVaultAE.GUI
 				UIService.Scale = newDBScale;
 				this.Scale(new SizeF(scaleFactor, scaleFactor));
 
-				Config.Settings.Default.Scale = UIService.Scale;
-				Config.Settings.Default.Save();
+				Config.UserSettings.Default.Scale = UIService.Scale;
+				Config.UserSettings.Default.Save();
 			}
 			else if (scaleFactor == 1.0F)
 			{
@@ -524,8 +533,8 @@ namespace TQVaultAE.GUI
 					(float)NORMAL_FORMWIDTH / (float)this.Width);
 				this.Scale(size);
 
-				Config.Settings.Default.Scale = 1.0F;
-				Config.Settings.Default.Save();
+				Config.UserSettings.Default.Scale = 1.0F;
+				Config.UserSettings.Default.Save();
 			}
 			else
 			{
@@ -540,13 +549,13 @@ namespace TQVaultAE.GUI
 				UIService.Scale = scaleFactor;
 				this.Scale(new SizeF(scaling, scaling));
 
-				Config.Settings.Default.Scale = UIService.Scale;
-				Config.Settings.Default.Save();
+				Config.UserSettings.Default.Scale = UIService.Scale;
+				Config.UserSettings.Default.Save();
 			}
 
 			RefreshNormalizeBox();
 
-			this.Log.LogDebug("Config.Settings.Default.Scale changed to {0} !", Config.Settings.Default.Scale);
+			this.Log.LogDebug("Config.Settings.Default.Scale changed to {0} !", Config.UserSettings.Default.Scale);
 		}
 
 		/// <summary>
@@ -587,17 +596,17 @@ namespace TQVaultAE.GUI
 					, Convert.ToSingle(workingArea.Height) / Convert.ToSingle(NORMAL_FORMHEIGHT)
 				);
 
-				if (Config.Settings.Default.Scale > initialScale)
+				if (Config.UserSettings.Default.Scale > initialScale)
 				{
-					Config.Settings.Default.Scale = initialScale;
-					Config.Settings.Default.Save();
+					Config.UserSettings.Default.Scale = initialScale;
+					Config.UserSettings.Default.Save();
 				}
 			}
 
 			// Rescale from last saved value
 			var thisClientSize = new Size(
-				(int)Math.Round(NORMAL_FORMWIDTH * Config.Settings.Default.Scale)
-				, (int)Math.Round(NORMAL_FORMHEIGHT * Config.Settings.Default.Scale)
+				(int)Math.Round(NORMAL_FORMWIDTH * Config.UserSettings.Default.Scale)
+				, (int)Math.Round(NORMAL_FORMHEIGHT * Config.UserSettings.Default.Scale)
 			);
 
 			return thisClientSize;

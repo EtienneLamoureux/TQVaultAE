@@ -132,7 +132,7 @@ namespace TQVaultAE.GUI.Tooltip
 			{
 
 				var itemlist = ButtonSack.Sack
-					.Where(i => i.BaseItemId.Length != 0)// skip empty items
+					.Where(i => !RecordId.IsNullOrEmpty(i.BaseItemId))// skip empty items
 					.ToArray();
 				var friendlylist = itemlist
 					.Select(i => ItemProvider.GetFriendlyNames(i))
@@ -146,7 +146,7 @@ namespace TQVaultAE.GUI.Tooltip
 					.ToArray();
 
 				foreach (var item in friendlylist)
-					AddRow(item.FullName, item.Data.Item.GetColor(item.Data.BaseItemInfoDescription));
+					AddRow(item.FullName, item.Data.Item.ExtractTextColorOrItemColor(item.Data.BaseItemInfoDescription));
 
 			}
 

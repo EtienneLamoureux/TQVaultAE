@@ -16,7 +16,7 @@ public class TranslationService : ITranslationService
 		Database = database;
 	}
 
-	public string Translate(GameExtension extension)
+	public string Translate(GameDlc extension)
 		=> this.TranslateXTag(extension.GetTranslationTag());
 
 	public string Translate(ItemStyle itemStyle)
@@ -29,7 +29,7 @@ public class TranslationService : ITranslationService
 		return trans;
 	}
 
-	public string Translate(GearLevel level)
+	public string Translate(Rarity level)
 	{
 		var style = level.GetItemStyle();
 		if (style is null) return level.ToString();
@@ -46,17 +46,20 @@ public class TranslationService : ITranslationService
 
 	public string ItemSeed => Resources.ItemSeed;
 
-	public string TranslateXTag(string xTagName, bool removeAllTQTags = false)
+	public string TranslateXTag(string xTagName, bool removeAllTQTags = false, bool doCleanup = false, bool doCleanupKeepLeadingColorTag = false)
 	{
 		string resx = LookFortranslation(xTagName);
 
 		if (string.IsNullOrWhiteSpace(resx))
 			return xTagName;
-		else
-			return removeAllTQTags ? resx.RemoveAllTQTags() : resx;
+
+		resx = doCleanup ? resx.TQCleanup(doCleanupKeepLeadingColorTag) : resx;
+		resx = removeAllTQTags ? resx.RemoveAllTQTags() : resx;
+
+		return resx;
 	}
 
-	public bool TryTranslateXTag(string xTagName, out string translation)
+	public bool TryTranslateXTag(string xTagName, out string translation, bool removeAllTQTags = false, bool doCleanup = false, bool doCleanupKeepLeadingColorTag = false)
 	{
 		string resx = LookFortranslation(xTagName);
 
@@ -65,6 +68,9 @@ public class TranslationService : ITranslationService
 			translation = null;
 			return false;
 		}
+
+		resx = doCleanup ? resx.TQCleanup(doCleanupKeepLeadingColorTag) : resx;
+		resx = removeAllTQTags ? resx.RemoveAllTQTags() : resx;
 
 		translation = resx;
 		return true;

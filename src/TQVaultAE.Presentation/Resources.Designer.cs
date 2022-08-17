@@ -912,6 +912,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CSV exported to clipboard at {0:g}.
+        /// </summary>
+        public static string CSVExportedToClipboardNotification {
+            get {
+                return ResourceManager.GetString("CSVExportedToClipboardNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Level.
         /// </summary>
         public static string CurrentLevel {
@@ -1077,6 +1086,24 @@ namespace TQVaultAE.Presentation {
         public static string ExperienceFromKills {
             get {
                 return ResourceManager.GetString("ExperienceFromKills", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export bag to clipboard.
+        /// </summary>
+        public static string ExportBagCSVToClipboard {
+            get {
+                return ResourceManager.GetString("ExportBagCSVToClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export vault to clipboard.
+        /// </summary>
+        public static string ExportVaultCSVToClipboard {
+            get {
+                return ResourceManager.GetString("ExportVaultCSVToClipboard", resourceCulture);
             }
         }
         
@@ -4367,6 +4394,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CSV Delimiter.
+        /// </summary>
+        public static string SettingsCsvDelimiterLabel {
+            get {
+                return ResourceManager.GetString("SettingsCsvDelimiterLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto detect Game Paths.
         /// </summary>
         public static string SettingsDetectGamePath {
@@ -4381,6 +4417,24 @@ namespace TQVaultAE.Presentation {
         public static string SettingsDetectLanguage {
             get {
                 return ResourceManager.GetString("SettingsDetectLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Epic and Legendary affixes.
+        /// </summary>
+        public static string SettingsEnableEpicLegendaryAffixes {
+            get {
+                return ResourceManager.GetString("SettingsEnableEpicLegendaryAffixes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow affixes pickup on Epic and Legendary items.
+        /// </summary>
+        public static string SettingsEnableEpicLegendaryAffixesTT {
+            get {
+                return ResourceManager.GetString("SettingsEnableEpicLegendaryAffixesTT", resourceCulture);
             }
         }
         

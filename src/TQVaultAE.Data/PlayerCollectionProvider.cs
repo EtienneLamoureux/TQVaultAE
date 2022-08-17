@@ -16,6 +16,7 @@ namespace TQVaultAE.Data
 	using TQVaultAE.Data.Dto;
 	using TQVaultAE.Domain.Entities;
 	using TQVaultAE.Logs;
+	using TQVaultAE.Domain.Helpers;
 
 	/// <summary>
 	/// Loads, decodes, encodes and saves a Titan Quest player file.
@@ -65,6 +66,14 @@ namespace TQVaultAE.Data
 			pc.PlayerInfo.BaseMana = playerInfo.BaseMana;
 			pc.PlayerInfo.Money = playerInfo.Money;
 
+			if (pc.PlayerInfo.MustResetMasteries)
+			{
+				pc.PlayerInfo.Class = playerInfo.Class;
+				// Put back the new reduced skill list in place for serialization
+				pc.PlayerInfo.SkillRecordList.Clear();
+				pc.PlayerInfo.SkillRecordList.AddRange(playerInfo.SkillRecordList);
+			}
+
 			//commit the player changes to the raw file
 			Commit(pc);
 		}
@@ -100,11 +109,8 @@ namespace TQVaultAE.Data
 			var baseHealth = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseHealth, baseIntelligence.nextOffset);
 			var baseMana = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseMana, baseHealth.nextOffset);
 
-			if (pc.PlayerInfo.MasteriesAllowed_OldValue.HasValue && pc.PlayerInfo.MasteriesAllowed < pc.PlayerInfo.MasteriesAllowed_OldValue
-				|| pc.PlayerInfo.MasteriesResetRequiered)
+			if (pc.PlayerInfo.MustResetMasteries)
 			{
-				pc.PlayerInfo.ResetMasteries();
-
 				#region Override skill lines block after reset
 
 				// Find skill section boundaries
@@ -132,12 +138,6 @@ namespace TQVaultAE.Data
 				firstblock = TQData.ReadIntAfter(pc.rawData, "begin_block");
 				secondblock = TQData.ReadIntAfter(pc.rawData, "begin_block", firstblock.nextOffset);
 				TQData.WriteIntAfter(pc.rawData, "max", pc.PlayerInfo.SkillRecordList.Count, secondblock.nextOffset);
-
-				// Adjust "skillPoints"
-				var skillpointsToRestore = pc.PlayerInfo.ReleasedSkillPoints;
-
-				if (skillpointsToRestore > 0)
-					TQData.WriteIntAfter(pc.rawData, "skillPoints", pc.PlayerInfo.SkillPoints + skillpointsToRestore);
 
 				#endregion
 
@@ -188,14 +188,14 @@ namespace TQVaultAE.Data
 					{
 						stackSize = i.StackSize,
 						seed = i.Seed,
-						baseName = i.BaseItemId,
-						prefixName = i.prefixID,
-						suffixName = i.suffixID,
-						relicName = i.relicID,
-						relicBonus = i.RelicBonusId,
+						baseName = i.BaseItemId.Raw,
+						prefixName = i.prefixID.Raw,
+						suffixName = i.suffixID.Raw,
+						relicName = i.relicID.Raw,
+						relicBonus = i.RelicBonusId.Raw,
 						var1 = i.Var1,
-						relicName2 = i.relic2ID,
-						relicBonus2 = i.RelicBonus2Id,
+						relicName2 = i.relic2ID.Raw,
+						relicBonus2 = i.RelicBonus2Id.Raw,
 						var2 = i.Var2,
 						pointX = i.PositionX,
 						pointY = i.PositionY,
@@ -325,8 +325,8 @@ namespace TQVaultAE.Data
 						endBlockCrap1 = this.TQData.EndBlockValue,
 						StackSize = s.stackSize,
 						// Atlantis
-						relic2ID = string.Empty,
-						RelicBonus2Id = string.Empty,
+						relic2ID = RecordId.Empty,
+						RelicBonus2Id = RecordId.Empty,
 						Var2 = Item.var2Default,
 					};
 

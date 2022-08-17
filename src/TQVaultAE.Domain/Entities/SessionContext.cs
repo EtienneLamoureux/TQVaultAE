@@ -98,15 +98,27 @@ namespace TQVaultAE.Domain.Entities
 			if (hasSearch || hasFilter)
 			{
 				this.HighlightedItems.Clear();
-
+				
 				// Check for players
 				var sacksplayers = this.Players.Select(p => p.Value.Value)
-					.SelectMany(p => new[] { p.EquipmentSack }.Concat(p.Sacks))
-					.Where(s => s is not null && s.Count > 0);
+					.SelectMany(p => {
+						var retval = new List<SackCollection>();
+
+						if (p.EquipmentSack is not null)
+							retval.Add(p.EquipmentSack);
+
+						if (p.Sacks is not null)
+							retval.AddRange(p.Sacks);
+
+						return retval;
+					})
+					.Where(s => s.Count > 0);
+
 				// Check for Vaults
 				var sacksVault = this.Vaults.Select(p => p.Value.Value)
 					.SelectMany(p => p.Sacks)
 					.Where(s => s is not null && s.Count > 0);
+
 				// Check for Stash
 				var sacksStash = this.Stashes.Select(p => p.Value.Value)
 					.Select(p => p.Sack)
@@ -117,34 +129,17 @@ namespace TQVaultAE.Domain.Entities
 					{
 						var fnr = ItemProvider.GetFriendlyNames(i, FriendlyNamesExtraScopes.ItemFullDisplay);
 
-						int? Lvl = null, Str = null, Int = null, Dex = null;
-
-						if (fnr.RequirementVariables.TryGetValue(Variable.KEY_LEVELREQ, out var varLvl))
-							Lvl = varLvl.GetInt32(0);
-
-						if (fnr.RequirementVariables.TryGetValue(Variable.KEY_STRENGTH, out var varStr))
-							Str = varStr.GetInt32(0);
-
-						if (fnr.RequirementVariables.TryGetValue(Variable.KEY_DEXTERITY, out var varDex))
-							Dex = varDex.GetInt32(0);
-
-						if (fnr.RequirementVariables.TryGetValue(Variable.KEY_INTELLIGENCE, out var varIntel))
-							Int = varIntel.GetInt32(0);
-
 						return new
 						{
 							Item = i,
 							FriendlyNames = fnr,
-							Lvl,
-							Str,
-							Dex,
-							Int
+							Info = fnr.RequirementInfo,
 						};
 					}).AsQueryable();
 
 				if (hasSearch)
 				{
-					var (isRegex, _, regex, regexIsValid) = ToFriendlyNameResult.FulltextIsRegEx(this.HighlightSearch);
+					var (isRegex, _, regex, regexIsValid) = StringHelper.IsTQVaultSearchRegEx(this.HighlightSearch);
 
 					availableItems = availableItems.Where(i =>
 						isRegex && regexIsValid
@@ -161,32 +156,32 @@ namespace TQVaultAE.Domain.Entities
 						if (this.HighlightFilter.MinLvl != 0)
 						{
 							availableItems = availableItems.Where(i =>
-								!i.Lvl.HasValue // Item doesn't have requirement
-								|| i.Lvl >= this.HighlightFilter.MinLvl
+								!i.Info.Lvl.HasValue // Item doesn't have requirement
+								|| i.Info.Lvl >= this.HighlightFilter.MinLvl
 							);
 						}
 						// Min Dex
 						if (this.HighlightFilter.MinDex != 0)
 						{
 							availableItems = availableItems.Where(i =>
-								!i.Dex.HasValue
-								|| i.Dex >= this.HighlightFilter.MinDex
+								!i.Info.Dex.HasValue
+								|| i.Info.Dex >= this.HighlightFilter.MinDex
 							);
 						}
 						// Min Str
 						if (this.HighlightFilter.MinStr != 0)
 						{
 							availableItems = availableItems.Where(i =>
-								!i.Str.HasValue
-								|| i.Str >= this.HighlightFilter.MinStr
+								!i.Info.Str.HasValue
+								|| i.Info.Str >= this.HighlightFilter.MinStr
 							);
 						}
 						// Min Int
 						if (this.HighlightFilter.MinInt != 0)
 						{
 							availableItems = availableItems.Where(i =>
-								!i.Int.HasValue
-								|| i.Int >= this.HighlightFilter.MinInt
+								!i.Info.Int.HasValue
+								|| i.Info.Int >= this.HighlightFilter.MinInt
 							);
 						}
 					}
@@ -197,32 +192,32 @@ namespace TQVaultAE.Domain.Entities
 						if (this.HighlightFilter.MaxLvl != 0)
 						{
 							availableItems = availableItems.Where(i =>
-								!i.Lvl.HasValue // Item doesn't have requirement
-								|| i.Lvl <= this.HighlightFilter.MaxLvl
+								!i.Info.Lvl.HasValue // Item doesn't have requirement
+								|| i.Info.Lvl <= this.HighlightFilter.MaxLvl
 							);
 						}
 						// Max Dex
 						if (this.HighlightFilter.MaxDex != 0)
 						{
 							availableItems = availableItems.Where(i =>
-								!i.Dex.HasValue
-								|| i.Dex <= this.HighlightFilter.MaxDex
+								!i.Info.Dex.HasValue
+								|| i.Info.Dex <= this.HighlightFilter.MaxDex
 							);
 						}
 						// Max Str
 						if (this.HighlightFilter.MaxStr != 0)
 						{
 							availableItems = availableItems.Where(i =>
-								!i.Str.HasValue
-								|| i.Str <= this.HighlightFilter.MaxStr
+								!i.Info.Str.HasValue
+								|| i.Info.Str <= this.HighlightFilter.MaxStr
 							);
 						}
 						// Max Int
 						if (this.HighlightFilter.MaxInt != 0)
 						{
 							availableItems = availableItems.Where(i =>
-								!i.Int.HasValue
-								|| i.Int <= this.HighlightFilter.MaxInt
+								!i.Info.Int.HasValue
+								|| i.Info.Int <= this.HighlightFilter.MaxInt
 							);
 						}
 					}
@@ -238,7 +233,7 @@ namespace TQVaultAE.Domain.Entities
 					if (this.HighlightFilter.Rarity.Any())
 					{
 						availableItems = availableItems.Where(i =>
-							this.HighlightFilter.Rarity.Contains(i.Item.GearLevel)
+							this.HighlightFilter.Rarity.Contains(i.Item.Rarity)
 						);
 					}
 

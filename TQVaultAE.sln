@@ -11,7 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQVaultAE.GUI", "src\TQVaul
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{20915EFE-C25B-499E-9CB6-5888F29BC32F}"
 	ProjectSection(SolutionItems) = preProject
+		documentation\ADVANCEDSEARCH.md = documentation\ADVANCEDSEARCH.md
 		documentation\AFFIXES.md = documentation\AFFIXES.md
+		documentation\ARZEXPLORER.md = documentation\ARZEXPLORER.md
 		CHANGELOG.md = CHANGELOG.md
 		CONTRIBUTING.md = CONTRIBUTING.md
 		documentation\FORGE.md = documentation\FORGE.md
@@ -19,12 +21,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		src\IsExternalInit.cs = src\IsExternalInit.cs
 		src\MsBuildAL1073WarningWorkaround.config = src\MsBuildAL1073WarningWorkaround.config
 		README.md = README.md
+		documentation\SAVEFILEEXPLORER.md = documentation\SAVEFILEEXPLORER.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQ.SaveFilesExplorer", "src\TQSaveFilesExplorer\TQ.SaveFilesExplorer.csproj", "{C74E317C-9516-401B-88B5-29B2AE551013}"
-	ProjectSection(ProjectDependencies) = postProject
-		{F5582F3E-552C-4EDA-B4EE-3F4BD9B0A9CF} = {F5582F3E-552C-4EDA-B4EE-3F4BD9B0A9CF}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TQVaultAE.Data", "src\TQVaultAE.Data\TQVaultAE.Data.csproj", "{F0D211FA-6FE0-4AB6-AD33-65C1F3DFA895}"
 EndProject

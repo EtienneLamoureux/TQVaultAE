@@ -8,14 +8,18 @@ public interface IDatabase
 	/// <summary>
 	/// Return all loot randomizer (Affix effect infos)
 	/// </summary>
-	/// <returns></returns>
-	ReadOnlyCollection<LootRandomizerItem> ReadLootRandomizerList();
+	ReadOnlyDictionary<RecordId, LootRandomizerItem> AllLootRandomizer { get; }
+	/// <summary>
+	/// Return all loot randomizer table records (Affix effect infos)
+	/// </summary>
+	ReadOnlyDictionary<RecordId, DBRecordCollection> AllLootRandomizerTable { get; }
+
 	/// <summary>
 	/// Return all affixes loot table of <paramref name="itemId"/>
 	/// </summary>
 	/// <param name="itemId"></param>
 	/// <returns></returns>
-	ReadOnlyCollection<AffixTableMapItem> GetItemAffixTableMap(string itemId);
+	ReadOnlyCollection<AffixTableMapItem> GetItemAffixTableMap(RecordId itemId);
 	/// <summary>
 	/// Gets the instance of the Titan Quest Database ArzFile.
 	/// </summary>
@@ -63,7 +67,7 @@ public interface IDatabase
 	/// </summary>
 	/// <param name="itemId">Item ID which we are looking up.  Will be normalized internally.</param>
 	/// <returns>Returns Infor for item ID and NULL if not found.</returns>
-	Info GetInfo(string itemId);
+	Info GetInfo(RecordId itemId);
 	/// <summary>
 	/// Converts the item attribute to a name in the localized language
 	/// </summary>
@@ -81,14 +85,14 @@ public interface IDatabase
 	/// </remarks>
 	/// <param name="itemId">Item Id which we are looking up</param>
 	/// <returns>Returns the DBRecord for the item Id</returns>
-	DBRecordCollection GetRecordFromFile(string itemId);
+	DBRecordCollection GetRecordFromFile(RecordId itemId);
 	/// <summary>
 	/// Gets a resource from the database using the resource Id.
 	/// Modified by VillageIdiot to support loading resources from a custom map folder.
 	/// </summary>
 	/// <param name="resourceId">Resource which we are fetching</param>
 	/// <returns>Retruns a byte array of the resource.</returns>
-	byte[] LoadResource(string resourceId);
+	byte[] LoadResource(RecordId resourceId);
 	/// <summary>
 	/// Gets the formatted string for the variable attribute.
 	/// </summary>

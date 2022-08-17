@@ -22,7 +22,7 @@ namespace TQVaultAE.Presentation
 					// Code here won't run in Visual Studio designer but runtime 
 					if (FontLoader != null && _FONT_ALBERTUSMT is null)
 					{
-						var baseFont = Enums.Parse<FontFamilyList>(Config.Settings.Default.BaseFont ?? FontFamilyList.AlbertusMT.ToString());
+						var baseFont = Enums.Parse<FontFamilyList>(Config.UserSettings.Default.BaseFont ?? FontFamilyList.AlbertusMT.ToString());
 						switch (baseFont)
 						{
 							case FontFamilyList.AlbertusMT:
@@ -68,7 +68,7 @@ namespace TQVaultAE.Presentation
 					// Code here won't run in Visual Studio designer
 					if (FontLoader != null && _FONT_ALBERTUSMTLIGHT is null)
 					{
-						var baseFont = Enums.Parse<FontFamilyList>(Config.Settings.Default.BaseFont ?? FontFamilyList.AlbertusMT.ToString());
+						var baseFont = Enums.Parse<FontFamilyList>(Config.UserSettings.Default.BaseFont ?? FontFamilyList.AlbertusMT.ToString());
 						switch (baseFont)
 						{
 							case FontFamilyList.AlbertusMT:

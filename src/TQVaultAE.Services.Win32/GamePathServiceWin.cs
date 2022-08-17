@@ -552,8 +552,8 @@ public class GamePathServiceWin : IGamePathService
 		string titanQuestGamePath = null;
 
 		// ForceGamePath precedence for dev on PC with partial installation
-		if (!string.IsNullOrEmpty(Config.Settings.Default.ForceGamePath))
-			titanQuestGamePath = Config.Settings.Default.ForceGamePath;
+		if (!string.IsNullOrEmpty(Config.UserSettings.Default.ForceGamePath))
+			titanQuestGamePath = Config.UserSettings.Default.ForceGamePath;
 
 		// We are either autodetecting or the path has not been set
 		//
@@ -691,15 +691,15 @@ Please select the game installation directory.");
 		return newFolder;
 	}
 
+
 	/// <summary>
 	/// Return ARC filename from <paramref name="resourceIdOrPrefix"/>
 	/// </summary>
 	/// <param name="resourceIdOrPrefix"></param>
 	/// <returns></returns>
-	public (string ArcFileName, bool IsDLC) ResolveArcFileName(string resourceIdOrPrefix)
+	public (string ArcFileName, bool IsDLC) ResolveArcFileName(RecordId resourceIdOrPrefix)
 	{
-		resourceIdOrPrefix = TQData.NormalizeRecordPath(resourceIdOrPrefix);
-		var segments = resourceIdOrPrefix.Split('\\');
+		var segments = resourceIdOrPrefix.Normalized.Split('\\');
 
 		string path;
 		bool isDLC = true;
@@ -738,21 +738,5 @@ Please select the game installation directory.");
 		}
 
 		return (path, isDLC);
-	}
-
-	public GameExtension ResolveExtensionFromPath(string pathOrRecordId)
-	{
-		pathOrRecordId = TQData.NormalizeRecordPath(pathOrRecordId);
-
-		if (pathOrRecordId.IndexOf(@"\XPACK4\", noCase) > -1)
-			return GameExtension.EternalEmbers;
-		else if (pathOrRecordId.IndexOf(@"\XPACK3\", noCase) > -1)
-			return GameExtension.Atlantis;
-		else if (pathOrRecordId.IndexOf(@"\XPACK2\", noCase) > -1)
-			return GameExtension.Ragnarok;
-		else if (pathOrRecordId.IndexOf(@"\XPACK\", noCase) > -1)
-			return GameExtension.ImmortalThrone;
-
-		return GameExtension.TitanQuest;
 	}
 }

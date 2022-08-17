@@ -1,30 +1,34 @@
 ﻿namespace TQVaultAE.Domain.Entities;
 
 public record LootRandomizerItem(
-	string Id
+	RecordId Id
 	, string Tag
 	, int Cost
 	, int LevelRequirement
 	, string ItemClass
 	, string FileDescription
 	, string Translation
-	, string PrettyFileName
-	, string Effect
-	, string Number
 )
 {
-	static LootRandomizerItem _Empty = new LootRandomizerItem(
-			string.Empty
-			, string.Empty
-			, 0
-			, 0
-			, string.Empty
-			, string.Empty
-			, string.Empty
-			, string.Empty
-			, string.Empty
-			, string.Empty
-		);
+	/// <summary>
+	/// Tells if this loot randomizer record is a fake and doesn't exist in the database.
+	/// Orphan reference in a loot table.
+	/// </summary>
+	public bool Unknown { get; init; }
 
-	public static LootRandomizerItem Empty => _Empty;
+	public bool TranslationTagIsEmpty => string.IsNullOrWhiteSpace(this.Tag);
+
+	public static LootRandomizerItem Default(RecordId rawRecordId)
+	{
+		// Make a default based on RecordId
+		return new LootRandomizerItem(
+			rawRecordId
+			, string.Empty
+			, 0
+			, 0
+			, string.Empty
+			, string.Empty
+			, rawRecordId.PrettyFileName
+		);
+	}
 };

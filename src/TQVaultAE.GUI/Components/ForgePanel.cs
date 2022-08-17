@@ -43,7 +43,6 @@ public partial class ForgePanel : UserControl
 
 	internal Action CancelAction;
 	internal Action ForgeAction;
-	internal Action<string> NotifyAction;
 
 	private Item BaseItem;
 	private SackCollection BaseSack;
@@ -58,10 +57,10 @@ public partial class ForgePanel : UserControl
 
 	private ScalingRadioButton lastMode;
 
-	private const string SoundStricMode = @"Sounds\MONSTERS\GREECE\G_TELKINE\TELEKINEVOICE01.WAV";
-	private const string SoundRelaxMode = @"Sounds\MONSTERS\GREECE\G_TELKINE\TELEKINEVOICE02.WAV";
-	private const string SoundGameMode = @"Sounds\MONSTERS\GREECE\G_TELKINE\TELEKINEVOICE03.WAV";
-	private const string SoundGodMode = @"Sounds\AMBIENCE\RANDOMEVENT\TYPHONLAUGHDISTANCE.WAV";
+	private static RecordId SoundStricMode = @"Sounds\MONSTERS\GREECE\G_TELKINE\TELEKINEVOICE01.WAV";
+	private static RecordId SoundRelaxMode = @"Sounds\MONSTERS\GREECE\G_TELKINE\TELEKINEVOICE02.WAV";
+	private static RecordId SoundGameMode = @"Sounds\MONSTERS\GREECE\G_TELKINE\TELEKINEVOICE03.WAV";
+	private static RecordId SoundGodMode = @"Sounds\AMBIENCE\RANDOMEVENT\TYPHONLAUGHDISTANCE.WAV";
 
 	/// <summary>
 	/// Gets or sets the dragInfo instance of any items being dragged.
@@ -144,6 +143,13 @@ public partial class ForgePanel : UserControl
 		tableLayoutPanelForge.BackgroundImageLayout = ImageLayout.Stretch;
 		tableLayoutPanelForge.BackgroundImage = Resources.StashPanel;
 
+		scalingCheckBoxHardcore.Font =
+		scalingRadioButtonGame.Font =
+		scalingRadioButtonGod.Font =
+		scalingRadioButtonRelax.Font =
+		scalingRadioButtonStrict.Font =
+			FontService.GetFont(10F, FontStyle.Regular, UIService.Scale);
+
 		scalingLabelBaseItem.Font =
 		scalingLabelPrefix.Font =
 		scalingLabelRelic1.Font =
@@ -212,6 +218,14 @@ public partial class ForgePanel : UserControl
 		comboBoxRelic2.Visible =
 		comboBoxSuffix.Visible = false;
 	}
+
+	private void InvalidateItemCacheAll(params Item[] items)
+	{
+		ItemTooltip.InvalidateCache(items);
+		BagButtonTooltip.InvalidateCache(items);
+		ItemProvider.InvalidateFriendlyNamesCache(items);
+	}
+
 	private void HardcoreDeleteMaterialItems()
 	{
 		if (this.HardcoreMode)
@@ -219,25 +233,25 @@ public partial class ForgePanel : UserControl
 			if (PrefixSack is not null)
 			{
 				PrefixSack.RemoveItem(PrefixItem);
-				BagButtonTooltip.InvalidateCache(PrefixItem);
+				InvalidateItemCacheAll(PrefixItem);
 			}
 
 			if (SuffixSack is not null)
 			{
 				SuffixSack.RemoveItem(SuffixItem);
-				BagButtonTooltip.InvalidateCache(SuffixItem);
+				InvalidateItemCacheAll(SuffixItem);
 			}
 
 			if (Relic1Sack is not null)
 			{
 				Relic1Sack.RemoveItem(Relic1Item);
-				BagButtonTooltip.InvalidateCache(Relic1Item);
+				InvalidateItemCacheAll(Relic1Item);
 			}
 
 			if (Relic2Sack is not null)
 			{
 				Relic2Sack.RemoveItem(Relic2Item);
-				BagButtonTooltip.InvalidateCache(Relic2Item);
+				InvalidateItemCacheAll(Relic2Item);
 			}
 		}
 
@@ -740,7 +754,8 @@ public partial class ForgePanel : UserControl
 				return;
 			}
 			// Not good item class
-			if (NotifyAction is not null) NotifyAction(Resources.ForgeMustSelectArmorOrWeaponOrJewellery);
+			this.UIService.NotifyUser(Resources.ForgeMustSelectArmorOrWeaponOrJewellery, TQColor.Red);
+
 			SoundService.PlayRandomCancel();
 		}
 
@@ -768,7 +783,7 @@ public partial class ForgePanel : UserControl
 			if (!IsGodMode && !drgItm.HasPrefix)
 			{
 				pictureBoxDragDrop.Visible = true;
-				if (NotifyAction is not null) NotifyAction(Resources.ForgeMustHavePrefixOutsideOfGodMode);
+				this.UIService.NotifyUser(Resources.ForgeMustHavePrefixOutsideOfGodMode, TQColor.Red);
 				SoundService.PlayRandomCancel();
 				return;
 			}
@@ -788,7 +803,7 @@ public partial class ForgePanel : UserControl
 			}
 
 			// Not good item class
-			if (NotifyAction is not null) NotifyAction(Resources.ForgeMustSelectArmorOrWeaponOrJewellery);
+			this.UIService.NotifyUser(Resources.ForgeMustSelectArmorOrWeaponOrJewellery, TQColor.Red);
 			SoundService.PlayRandomCancel();
 		}
 
@@ -825,7 +840,7 @@ public partial class ForgePanel : UserControl
 			if (!IsGodMode && !drgItm.HasSuffix)
 			{
 				pictureBoxDragDrop.Visible = true;
-				if (NotifyAction is not null) NotifyAction(Resources.ForgeMustHaveSuffixOutsideOfGodMode);
+				this.UIService.NotifyUser(Resources.ForgeMustHaveSuffixOutsideOfGodMode, TQColor.Red);
 				SoundService.PlayRandomCancel();
 				return;
 			}
@@ -844,7 +859,7 @@ public partial class ForgePanel : UserControl
 				return;
 			}
 			// Not good item class
-			if (NotifyAction is not null) NotifyAction(Resources.ForgeMustSelectArmorOrWeaponOrJewellery);
+			this.UIService.NotifyUser(Resources.ForgeMustSelectArmorOrWeaponOrJewellery, TQColor.Red);
 			SoundService.PlayRandomCancel();
 		}
 
@@ -886,7 +901,8 @@ public partial class ForgePanel : UserControl
 				return;
 			}
 			// Not good item class
-			if (NotifyAction is not null) NotifyAction(Resources.ForgeMustSelectRelicOrItemWithRelic);
+			this.UIService.NotifyUser(Resources.ForgeMustSelectRelicOrItemWithRelic, TQColor.Red);
+
 			SoundService.PlayRandomCancel();
 		}
 
@@ -917,8 +933,7 @@ public partial class ForgePanel : UserControl
 			)
 			{
 				pictureBoxDragDrop.Visible = true;
-				if (NotifyAction is not null)
-					NotifyAction(string.Format(Resources.ForgeMustHaveTinkeredSuffix, OfTheTinkererTranslation));
+				this.UIService.NotifyUser(string.Format(Resources.ForgeMustHaveTinkeredSuffix, OfTheTinkererTranslation), TQColor.Red);
 				SoundService.PlayRandomCancel();
 				return;
 			}
@@ -945,7 +960,7 @@ public partial class ForgePanel : UserControl
 				return;
 			}
 			// Not good item class
-			if (NotifyAction is not null) NotifyAction(Resources.ForgeMustSelectRelicOrItemWithRelic);
+			this.UIService.NotifyUser(Resources.ForgeMustSelectRelicOrItemWithRelic, TQColor.Red);
 			SoundService.PlayRandomCancel();
 		}
 
@@ -960,8 +975,7 @@ public partial class ForgePanel : UserControl
 		// Happen when i copy an item without droping it in a sack first
 		if (DragInfo.Sack is null)
 		{
-			if (NotifyAction is not null)
-				NotifyAction(Resources.ForgeItemMustBeStoredFirst);
+			this.UIService.NotifyUser(Resources.ForgeItemMustBeStoredFirst, TQColor.Red);
 
 			SoundService.PlayRandomCancel();
 			return true;
@@ -985,7 +999,7 @@ public partial class ForgePanel : UserControl
 		)
 		{
 			pictureBoxDragDrop.Visible = true;
-			if (NotifyAction is not null) NotifyAction(Resources.ForgeRelicNotAllowed);
+			this.UIService.NotifyUser(Resources.ForgeRelicNotAllowed, TQColor.Red);
 			SoundService.PlayRandomCancel();
 			return true;
 		}
@@ -1005,7 +1019,7 @@ public partial class ForgePanel : UserControl
 		)
 		{
 			pictureBoxDragDrop.Visible = true;
-			if (NotifyAction is not null) NotifyAction(Resources.ForgeMustHaveRelicInRelaxMode);
+			this.UIService.NotifyUser(Resources.ForgeMustHaveRelicInRelaxMode, TQColor.Red);
 			SoundService.PlayRandomCancel();
 			return true;
 		}
@@ -1025,7 +1039,7 @@ public partial class ForgePanel : UserControl
 		)
 		{
 			pictureBoxDragDrop.Visible = true;
-			if (NotifyAction is not null) NotifyAction(Resources.ForgeMustBeRelicInStrictMode);
+			this.UIService.NotifyUser(Resources.ForgeMustBeRelicInStrictMode, TQColor.Red);
 			SoundService.PlayRandomCancel();
 			return true;
 		}
@@ -1062,8 +1076,7 @@ public partial class ForgePanel : UserControl
 			&& Relic1Item is null
 			&& Relic2Item is null)
 		{
-			if (NotifyAction is not null)
-				NotifyAction(Resources.ForgeMustSelectItemToMerge);
+			this.UIService.NotifyUser(Resources.ForgeMustSelectItemToMerge, TQColor.Red);
 
 			SoundService.PlayRandomCancel();
 			return true;
@@ -1077,8 +1090,7 @@ public partial class ForgePanel : UserControl
 		// Must select Base Item
 		if (BaseItem is null)
 		{
-			if (NotifyAction is not null)
-				NotifyAction(Resources.ForgeMustSelectBaseItem);
+			this.UIService.NotifyUser(Resources.ForgeMustSelectBaseItem, TQColor.Red);
 
 			SoundService.PlayRandomCancel();
 			return true;
@@ -1124,7 +1136,7 @@ public partial class ForgePanel : UserControl
 		bool Notify(bool reset)
 		{
 			pictureBoxDragDrop.Visible = true;
-			if (NotifyAction is not null) NotifyAction(Resources.ForgeCantUsePrefixSuffixHavingGreaterReqLevelThanBaseItem);
+			this.UIService.NotifyUser(Resources.ForgeCantUsePrefixSuffixHavingGreaterReqLevelThanBaseItem, TQColor.Red);
 			SoundService.PlayRandomCancel();
 			if (reset) ResetPrefixSuffix();
 			return true;
@@ -1135,8 +1147,8 @@ public partial class ForgePanel : UserControl
 	{
 		if (IsGameMode)
 		{
-			var baseId = string.IsNullOrWhiteSpace(BaseItem?.BaseItemId) ? "NoID" : BaseItem.BaseItemId;
-			var drgItmBaseId = string.IsNullOrWhiteSpace(drgItm?.BaseItemId) ? "NoID" : drgItm.BaseItemId;
+			var baseId = RecordId.IsNullOrEmpty(BaseItem?.BaseItemId) ? RecordId.Empty : BaseItem.BaseItemId;
+			var drgItmBaseId = RecordId.IsNullOrEmpty(drgItm?.BaseItemId) ? RecordId.Empty : drgItm.BaseItemId;
 
 			if (from == pictureBoxBaseItem
 				&& BaseItem is not null
@@ -1159,7 +1171,7 @@ public partial class ForgePanel : UserControl
 		bool Notify(bool reset)
 		{
 			pictureBoxDragDrop.Visible = true;
-			if (NotifyAction is not null) NotifyAction(Resources.ForgeCantUsePrefixSuffixOfAnotherBaseItem);
+			this.UIService.NotifyUser(Resources.ForgeCantUsePrefixSuffixOfAnotherBaseItem, TQColor.Red);
 			SoundService.PlayRandomCancel();
 			if (reset) ResetPrefixSuffix();
 			return true;
@@ -1200,7 +1212,7 @@ public partial class ForgePanel : UserControl
 		bool Notify(bool reset)
 		{
 			pictureBoxDragDrop.Visible = true;
-			if (NotifyAction is not null) NotifyAction(Resources.ForgeCantUsePrefixSuffixOfAnotherGearType);
+			this.UIService.NotifyUser(Resources.ForgeCantUsePrefixSuffixOfAnotherGearType, TQColor.Red);
 			SoundService.PlayRandomCancel();
 			if (reset) ResetPrefixSuffix();
 			return true;
@@ -1220,8 +1232,8 @@ public partial class ForgePanel : UserControl
 			if (from == pictureBoxBaseItem
 				&& BaseItem is not null
 				&& (
-					((PrefixItem?.GearLevel ?? 0) > drgItm.GearLevel)
-					|| ((SuffixItem?.GearLevel ?? 0) > drgItm.GearLevel)
+					((PrefixItem?.Rarity ?? 0) > drgItm.Rarity)
+					|| ((SuffixItem?.Rarity ?? 0) > drgItm.Rarity)
 				)
 			)
 			{
@@ -1229,7 +1241,7 @@ public partial class ForgePanel : UserControl
 			}
 
 			if ((from == pictureBoxPrefix || from == pictureBoxSuffix)
-				&& (BaseItem.GearLevel < drgItm.GearLevel)
+				&& (BaseItem.Rarity < drgItm.Rarity)
 			)
 			{
 				return Notify(false);// Notify & Prevent Drop
@@ -1241,7 +1253,7 @@ public partial class ForgePanel : UserControl
 		bool Notify(bool reset)
 		{
 			pictureBoxDragDrop.Visible = true;
-			if (NotifyAction is not null) NotifyAction(Resources.ForgeCantUsePrefixSuffixBetterThanBase);
+			this.UIService.NotifyUser(Resources.ForgeCantUsePrefixSuffixBetterThanBase, TQColor.Red);
 			SoundService.PlayRandomCancel();
 			if (reset) ResetPrefixSuffix();
 			return true;
@@ -1263,7 +1275,7 @@ public partial class ForgePanel : UserControl
 		if (BaseItem is null)
 		{
 			pictureBoxDragDrop.Visible = true;
-			if (NotifyAction is not null) NotifyAction(Resources.ForgeMustSelectBaseItemFirst);
+			this.UIService.NotifyUser(Resources.ForgeMustSelectBaseItemFirst, TQColor.Red);
 			SoundService.PlayRandomCancel();
 			return true;
 		}
@@ -1279,11 +1291,11 @@ public partial class ForgePanel : UserControl
 	private bool StrictModeNoEpicLegendaryItem(Item drgItm)
 	{
 		if ((IsStrictMode || IsGameMode)
-			&& (drgItm.GearLevel > GearLevel.Rare)
+			&& (drgItm.Rarity > Rarity.Rare)
 		)
 		{
 			pictureBoxDragDrop.Visible = true;
-			if (NotifyAction is not null) NotifyAction(Resources.ForgeNoEpicLegendaryAllowed);
+			this.UIService.NotifyUser(Resources.ForgeNoEpicLegendaryAllowed, TQColor.Red);
 			SoundService.PlayRandomCancel();
 			return true;
 		}

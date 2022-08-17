@@ -90,14 +90,6 @@ namespace TQVaultAE.Data
 		}
 
 		/// <summary>
-		/// Normalizes the record path to Upper Case Invariant Culture and replace backslashes with slashes.
-		/// </summary>
-		/// <param name="recordId">record path to be normalized</param>
-		/// <returns>normalized record path</returns>
-		public string NormalizeRecordPath(string recordId)
-			=> recordId.NormalizeRecordPath();
-
-		/// <summary>
 		/// Reads a string from the binary stream.
 		/// Expects an integer length value followed by the actual string of the stated length.
 		/// </summary>

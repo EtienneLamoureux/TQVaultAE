@@ -26,12 +26,14 @@ _**Note:** Leaving a value to 0 means "ignore"._
 ![Vault and Player](highlight_ui_extended.png)
 
 ## Regular expression
-By using '/' as first char everything else is a standard C# regular expression
 
-Here's few examples
-```
-"/chance of .+%.+bleeding damage" : All chance of + percent bleeding damage
-"/\+.+%.+(life|mana) leech" : Any + percentage of life or mana leech
-"/\+.+%.+(cold|fire) damage" : Any + percentage of cold or fire leech
-```
+By using `/` as first char everything else is a standard [C# regular expression](https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference).
+
+Here's few examples.
+
+- `/rune|earth` : Everything with "rune" or "earth"
+- `/chance of .+%.+bleeding damage` : All chance of + percent bleeding damage
+- `/\+.+%.+(life|mana) leech` : Any + percentage of life or mana leech
+- `/\+.+%.+(cold|fire) damage` : Any + percentage of cold or fire leech
+
 ![Regex](highlight_ui_regex.png)

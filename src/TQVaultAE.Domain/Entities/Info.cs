@@ -6,6 +6,7 @@
 namespace TQVaultAE.Domain.Entities
 {
 	using System;
+	using TQVaultAE.Domain.Helpers;
 
 	/// <summary>
 	/// Holds information on magical prefixes and suffixes
@@ -89,7 +90,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Gets the item ID
 		/// </summary>
-		public string ItemId => this.record.Id;
+		public RecordId ItemId => this.record.Id;
 
 		/// <summary>
 		/// Gets the item description tag
@@ -114,12 +115,12 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Gets the item bitmap
 		/// </summary>
-		public string Bitmap => this.GetString(this.bitmapVar);
+		public RecordId Bitmap => this.GetString(this.bitmapVar);
 
 		/// <summary>
 		/// Gets the item shard bitmap
 		/// </summary>
-		public string ShardBitmap => this.GetString(this.shardBitmapVar);
+		public RecordId ShardBitmap => this.GetString(this.shardBitmapVar);
 
 		/// <summary>
 		/// Gets the item class
