@@ -130,7 +130,8 @@ public class ItemProvider : IItemProvider
 			"CONTAGIONLIMIT",
 			"CONTAGIONMAXSPREAD",
 			"CONTAGIONRADIUS",
-			"NOHIGHLIGHTDEFAULTCOLORA" // AMS: New property on most EE items
+			"NOHIGHLIGHTDEFAULTCOLORA", // AMS: New property on most EE items
+			"FORCEIGNORERUNSPEEDCAPS" // hguy: New property on EE "Potion of Speed"
 		};
 
 	internal static readonly string[] requirementTags =
@@ -954,12 +955,12 @@ public class ItemProvider : IItemProvider
 
 				case VariableDataType.StringVar:
 					if ((
-							allowStrings
+						allowStrings
 						|| variable.Name.Equals("CHARACTERBASEATTACKSPEEDTAG", noCase)
 						|| variable.Name.Equals("ITEMSKILLNAME", noCase) // Added by VillageIdiot for Granted skills
 						|| variable.Name.Equals("SKILLNAME", noCase) // Added by VillageIdiot for scroll skills
 						|| variable.Name.Equals("PETBONUSNAME", noCase) // Added by VillageIdiot for pet bonuses
-							|| ItemAttributeProvider.IsReagent(variable.Name)
+						|| ItemAttributeProvider.IsReagent(variable.Name)
 						) && variable.GetString(i).Length > 0
 					)
 					{
@@ -1288,8 +1289,7 @@ VariableValue Raw : {valueRaw}
 		{
 			// Check to see if itm item creates a pet
 			var skillName = itm.baseItemInfo.GetString("skillName");
-			var skillNameId = skillName;
-			var petSkill = Database.GetRecordFromFile(skillNameId);
+			var petSkill = Database.GetRecordFromFile(skillName);
 
 			string petID = petSkill.GetString("spawnObjects", 0);
 			if (!string.IsNullOrWhiteSpace(petID))
@@ -1864,7 +1864,7 @@ VariableValue Raw : {valueRaw}
 		}
 
 		// First get a list of attributes, grouped by effect.
-		Dictionary<string, List<Variable>> attrByEffect = new Dictionary<string, List<Variable>>();
+		Dictionary<string, List<Variable>> attrByEffect = new();
 		if (record == null)
 		{
 			if (TQDebug.ItemDebugLevel > 0)
@@ -1875,11 +1875,11 @@ VariableValue Raw : {valueRaw}
 		}
 
 		if (TQDebug.ItemDebugLevel > 1)
-			Log.LogDebug(record.Id.Normalized);
+			Log.LogDebug(record.Id);
 
 		// Added by Village Idiot
 		// To keep track of groups so they are not counted twice
-		List<string> countedGroups = new List<string>();
+		List<string> countedGroups = new();
 
 		foreach (Variable variable in record)
 		{
@@ -3121,7 +3121,7 @@ VariableValue Raw : {valueRaw}
 	}
 
 	/// <summary>
-	/// Converts the item's offensice attributes to a string
+	/// Converts the item's offensive attributes to a string
 	/// </summary>
 	/// <param name="record">DBRecord of the database record</param>
 	/// <param name="attributeList">ArrayList containing the attribute list</param>
@@ -3634,7 +3634,7 @@ VariableValue Raw : {valueRaw}
 
 				// Added by VillageIdiot
 				// Another special case for skill description and effects of activated skills
-				if (normalizedFullAttribute == "ITEMSKILLNAME" || (itm.IsScroll && normalizedFullAttribute == "SKILLNAME"))
+				if (normalizedFullAttribute == "ITEMSKILLNAME" || ((itm.IsScroll || itm.IsPotion) && normalizedFullAttribute == "SKILLNAME"))
 					GetSkillDescriptionAndEffects(itm, record, results, variable, line);
 			}
 		}
@@ -3655,7 +3655,7 @@ VariableValue Raw : {valueRaw}
 		string autoController = record.GetString("itemSkillAutoController", 0);
 		string SkillDescriptionAndEffectsVar = variable.GetString(0);
 
-		if (!string.IsNullOrEmpty(autoController) || itm.IsScroll)
+		if (!string.IsNullOrEmpty(autoController) || itm.IsScroll || itm.IsPotion)
 		{
 			DBRecordCollection skillRecord = Database.GetRecordFromFile(SkillDescriptionAndEffectsVar);
 
@@ -3768,7 +3768,7 @@ VariableValue Raw : {valueRaw}
 
 				// Added by VillageIdiot
 				// Adjust for the flavor text of scrolls
-				if (skillRecord != null && !itm.IsScroll)
+				if (skillRecord != null && !itm.IsScroll && !itm.IsPotion)
 					results.Add(string.Empty);
 
 				// Added by VillageIdiot
