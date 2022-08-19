@@ -1399,10 +1399,10 @@ public class SackPanel : Panel, IScalingControl
 				{
 					if (Config.UserSettings.Default.AllowItemEdit)
 					{
-						if (focusedItem.HasRelicSlot1)
+						if (focusedItem.HasRelicOrCharmSlot1)
 							this.CustomContextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
 
-						if (focusedItem.HasRelicSlot2)
+						if (focusedItem.HasRelicOrCharmSlot2)
 							this.CustomContextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic2);
 					}
 
@@ -2532,7 +2532,7 @@ public class SackPanel : Panel, IScalingControl
 		graphics.DrawImage(ibmp, itemRect, 0, 0, ibmp.Width, ibmp.Height, GraphicsUnit.Pixel, imageAttributes);
 
 		// Add the relic overlay if this item has a relic in it.
-		if (item.HasRelicSlot1 || item.HasRelicSlot2)
+		if (item.HasRelicOrCharmSlot1 || item.HasRelicOrCharmSlot2)
 		{
 			Bitmap relicOverlay = UIService.LoadRelicOverlayBitmap();
 			if (relicOverlay != null)

@@ -645,19 +645,49 @@ public class Item
 	}
 
 	/// <summary>
-	/// Gets a value indicating whether the item has an embedded relic.
+	/// Gets a value indicating whether the item has an embedded charm in first slot.
 	/// </summary>
-	public bool HasRelicSlot1 => !this.IsRelicOrCharm && !RecordId.IsNullOrEmpty(this.relicID);
+	public bool HasCharmSlot1 => !this.IsRelicOrCharm && !RecordId.IsNullOrEmpty(this.relicID) && this.relicID.IsCharm;
 
 	/// <summary>
-	/// Gets a value indicating whether the item has a second embedded relic.
+	/// Gets a value indicating whether the item has an embedded charm in second slot.
 	/// </summary>
-	public bool HasRelicSlot2 => !this.IsRelicOrCharm && !RecordId.IsNullOrEmpty(this.relic2ID);
+	public bool HasCharmSlot2 => !this.IsRelicOrCharm && !RecordId.IsNullOrEmpty(this.relic2ID) && this.relic2ID.IsCharm;
 
 	/// <summary>
-	/// Indicate that the item has an embedded relic.
+	/// Gets a value indicating whether the item has an embedded relic only in first slot.
+	/// </summary>
+	public bool HasRelicSlot1 => !this.IsRelicOrCharm && !RecordId.IsNullOrEmpty(this.relicID) && this.relicID.IsRelic;
+
+	/// <summary>
+	/// Gets a value indicating whether the item has an embedded relic only in second slot.
+	/// </summary>
+	public bool HasRelicSlot2 => !this.IsRelicOrCharm && !RecordId.IsNullOrEmpty(this.relic2ID) && this.relic2ID.IsRelic;
+
+	/// <summary>
+	/// Gets a value indicating whether the item has an embedded relic or a charm.
+	/// </summary>
+	public bool HasRelicOrCharmSlot1 => HasCharmSlot1 || HasRelicSlot1;
+
+	/// <summary>
+	/// Gets a value indicating whether the item has a second embedded relic or a charm.
+	/// </summary>
+	public bool HasRelicOrCharmSlot2 => HasCharmSlot2 || HasRelicSlot2;
+
+	/// <summary>
+	/// Indicate that the item has an embedded relic or a charm.
+	/// </summary>
+	public bool HasRelicOrCharm => HasRelicOrCharmSlot1 | HasRelicOrCharmSlot2;
+
+	/// <summary>
+	/// Indicate that the item has an embedded relic in slot 1 or 2.
 	/// </summary>
 	public bool HasRelic => HasRelicSlot1 | HasRelicSlot2;
+
+	/// <summary>
+	/// Indicate that the item has an embedded charm in slot 1 or 2.
+	/// </summary>
+	public bool HasCharm => HasCharmSlot1 | HasCharmSlot2;
 
 	/// <summary>
 	/// Gets a value indicating whether the item is a potion.

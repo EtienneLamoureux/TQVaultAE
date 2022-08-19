@@ -359,9 +359,11 @@ public partial class HighlightFilters : UserControl
 			Origin = scalingCheckedListBoxOrigin.CheckedItems.OfType<ItemOrigin>().Select(x => x.Value).ToList(),
 			HavingPrefix = scalingCheckBoxHavingPrefix.Checked,
 			HavingSuffix = scalingCheckBoxHavingSuffix.Checked,
+			HavingRelic = scalingCheckBoxHavingRelic.Checked,
+			HavingCharm = scalingCheckBoxHavingCharm.Checked,
 		};
 
-		if (filter.MaxRequierement || filter.MinRequierement || filter.HavingPrefix || filter.HavingSuffix
+		if (filter.MaxRequierement || filter.MinRequierement || filter.HavingPrefix || filter.HavingSuffix || filter.HavingRelic || filter.HavingCharm
 			|| filter.ClassItem.Any() || filter.Rarity.Any() || filter.Origin.Any())
 		{
 			UserContext.HighlightFilter = filter;

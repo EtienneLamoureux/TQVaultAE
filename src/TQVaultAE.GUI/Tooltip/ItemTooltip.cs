@@ -270,7 +270,7 @@ namespace TQVaultAE.GUI.Tooltip
 			}
 
 			// Relic attributes after items attributes with delimiter
-			if (Data.Item.HasRelic)
+			if (Data.Item.HasRelicOrCharm)
 			{
 				if (Data.Relic1Attributes.Any())
 				{

@@ -724,7 +724,7 @@ public partial class ForgePanel : UserControl
 				if (Relic1Item is not null
 					&& (
 						(Relic1Item.IsRelicOrCharm && !drgItm.IsRelicAllowed(Relic1Item))
-						|| (Relic1Item.HasRelicSlot1 && !drgItm.IsRelicAllowed(Relic1Item.relicID))
+						|| (Relic1Item.HasRelicOrCharmSlot1 && !drgItm.IsRelicAllowed(Relic1Item.relicID))
 					)
 				)
 				{
@@ -733,7 +733,7 @@ public partial class ForgePanel : UserControl
 				if (Relic2Item is not null
 					&& (
 						(Relic2Item.IsRelicOrCharm && !drgItm.IsRelicAllowed(Relic2Item))
-						|| (Relic2Item.HasRelicSlot1 && !drgItm.IsRelicAllowed(Relic2Item.relicID))
+						|| (Relic2Item.HasRelicOrCharmSlot1 && !drgItm.IsRelicAllowed(Relic2Item.relicID))
 					)
 				)
 				{
@@ -883,9 +883,9 @@ public partial class ForgePanel : UserControl
 			if (
 				IsGodMode
 				|| (
-					(drgItm.IsWeaponShield && drgItm.HasRelicSlot1)
-					|| (drgItm.IsArmor && drgItm.HasRelicSlot1)
-					|| (drgItm.IsJewellery && drgItm.HasRelicSlot1)
+					(drgItm.IsWeaponShield && drgItm.HasRelicOrCharmSlot1)
+					|| (drgItm.IsArmor && drgItm.HasRelicOrCharmSlot1)
+					|| (drgItm.IsJewellery && drgItm.HasRelicOrCharmSlot1)
 					|| drgItm.IsRelicOrCharm
 				)
 			)
@@ -942,9 +942,9 @@ public partial class ForgePanel : UserControl
 			if (
 				IsGodMode
 				|| (
-					(drgItm.IsWeaponShield && drgItm.HasRelicSlot1)
-					|| (drgItm.IsArmor && drgItm.HasRelicSlot1)
-					|| (drgItm.IsJewellery && drgItm.HasRelicSlot1)
+					(drgItm.IsWeaponShield && drgItm.HasRelicOrCharmSlot1)
+					|| (drgItm.IsArmor && drgItm.HasRelicOrCharmSlot1)
+					|| (drgItm.IsJewellery && drgItm.HasRelicOrCharmSlot1)
 					|| drgItm.IsRelicOrCharm
 				)
 			)
@@ -994,7 +994,7 @@ public partial class ForgePanel : UserControl
 		if (!IsGodMode
 			&& (
 				(drgItm.IsRelicOrCharm && !BaseItem.IsRelicAllowed(drgItm))
-				|| (drgItm.HasRelicSlot1 && !BaseItem.IsRelicAllowed(drgItm.relicID))
+				|| (drgItm.HasRelicOrCharmSlot1 && !BaseItem.IsRelicAllowed(drgItm.relicID))
 			)
 		)
 		{
@@ -1015,7 +1015,7 @@ public partial class ForgePanel : UserControl
 	{
 		// Relax mode need item having relic
 		if (IsRelaxMode
-			&& !(drgItm.IsRelicOrCharm || drgItm.HasRelicSlot1)
+			&& !(drgItm.IsRelicOrCharm || drgItm.HasRelicOrCharmSlot1)
 		)
 		{
 			pictureBoxDragDrop.Visible = true;
@@ -1334,14 +1334,14 @@ public partial class ForgePanel : UserControl
 				Text = Resources.ForgeUseSuffix,
 			});
 
-		if (current.HasRelicSlot1)
+		if (current.HasRelicOrCharmSlot1)
 			comboBox.Items.Add(new ForgeComboItem
 			{
 				Value = ItemPropertyType.Relic1,
 				Text = Resources.ForgeUseRelic1,
 			});
 
-		if (current.HasRelicSlot2)
+		if (current.HasRelicOrCharmSlot2)
 			comboBox.Items.Add(new ForgeComboItem
 			{
 				Value = ItemPropertyType.Relic2,

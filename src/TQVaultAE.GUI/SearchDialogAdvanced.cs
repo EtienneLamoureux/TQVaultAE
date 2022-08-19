@@ -494,7 +494,7 @@ public partial class SearchDialogAdvanced : VaultForm
 		var WithRelic =
 			from id in ItemDatabase
 			let itm = id.FriendlyNames.Item
-			where itm.HasRelicSlot1 && !itm.IsRelic1Charm || itm.HasRelicSlot2 && !itm.IsRelic2Charm
+			where itm.HasRelicOrCharmSlot1 && !itm.IsRelic1Charm || itm.HasRelicOrCharmSlot2 && !itm.IsRelic2Charm
 			from reldesc in new[] { id.FriendlyNames.RelicInfo1Description, id.FriendlyNames.RelicInfo2Description }
 			where !string.IsNullOrWhiteSpace(reldesc)
 			let attClean = reldesc.RemoveAllTQTags().Trim()
@@ -525,7 +525,7 @@ public partial class SearchDialogAdvanced : VaultForm
 		var WithCharm =
 			from id in ItemDatabase
 			let itm = id.FriendlyNames.Item
-			where itm.HasRelicSlot1 && itm.IsRelic1Charm || itm.HasRelicSlot2 && itm.IsRelic2Charm
+			where itm.HasRelicOrCharmSlot1 && itm.IsRelic1Charm || itm.HasRelicOrCharmSlot2 && itm.IsRelic2Charm
 			from reldesc in new[] { id.FriendlyNames.RelicInfo1Description, id.FriendlyNames.RelicInfo2Description }
 			where !string.IsNullOrWhiteSpace(reldesc)
 			let attClean = reldesc.RemoveAllTQTags().Trim()

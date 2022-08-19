@@ -26,14 +26,14 @@ public class ToFriendlyNameResult
 						, ItemSeed
 						, ItemOrigin 
 						// Socketed Relic name
-						, Item.HasRelicSlot1 ? RelicInfo1Description : null
-						, Item.HasRelicSlot2 ? RelicInfo2Description : null
+						, Item.HasRelicOrCharmSlot1 ? RelicInfo1Description : null
+						, Item.HasRelicOrCharmSlot2 ? RelicInfo2Description : null
 						// Socketed Relic Completion label
-						, Item.HasRelicSlot1 ? RelicInfo1CompletionResolved : null
-						, Item.HasRelicSlot2 ? RelicInfo2CompletionResolved : null
+						, Item.HasRelicOrCharmSlot1 ? RelicInfo1CompletionResolved : null
+						, Item.HasRelicOrCharmSlot2 ? RelicInfo2CompletionResolved : null
 						// Socketed Relic Completion Bonus label
-						, Item.HasRelicSlot1 ? RelicInfo1CompletionBonusResolved : null
-						, Item.HasRelicSlot2 ? RelicInfo2CompletionBonusResolved : null
+						, Item.HasRelicOrCharmSlot1 ? RelicInfo1CompletionBonusResolved : null
+						, Item.HasRelicOrCharmSlot2 ? RelicInfo2CompletionBonusResolved : null
 					}
 					, AttributesAll
 					, FlavorText

@@ -314,8 +314,8 @@ public class ItemProvider : IItemProvider
 	public bool BonusTableSocketedRelic(Item Item, out LootTableCollection RelicTable1, out LootTableCollection RelicTable2)
 	{
 		RelicTable1 = RelicTable2 = null;
-		var hasCompleteRelic1 = Item.HasRelicSlot1 && Item.RelicInfo is not null && Item.IsRelicBonus1Complete;
-		var hasCompleteRelic2 = Item.HasRelicSlot2 && Item.Relic2Info is not null && Item.IsRelicBonus2Complete;
+		var hasCompleteRelic1 = Item.HasRelicOrCharmSlot1 && Item.RelicInfo is not null && Item.IsRelicBonus1Complete;
+		var hasCompleteRelic2 = Item.HasRelicOrCharmSlot2 && Item.Relic2Info is not null && Item.IsRelicBonus2Complete;
 
 		if (Item.baseItemInfo is null
 			|| (!hasCompleteRelic1 && !hasCompleteRelic2)
@@ -394,7 +394,7 @@ public class ItemProvider : IItemProvider
 	/// <returns>Returns the removed relic as a new Item</returns>
 	public Item RemoveRelic1(Item itm)
 	{
-		if (!itm.HasRelicSlot1)
+		if (!itm.HasRelicOrCharmSlot1)
 			return null;
 
 		Item newRelic = itm.MakeEmptyCopy(itm.relicID);
@@ -421,7 +421,7 @@ public class ItemProvider : IItemProvider
 	/// <returns>Returns the removed relic as a new Item</returns>
 	public Item RemoveRelic2(Item itm)
 	{
-		if (!itm.HasRelicSlot2)
+		if (!itm.HasRelicOrCharmSlot2)
 			return null;
 
 		Item newRelic = itm.MakeEmptyCopy(itm.relic2ID);
@@ -1400,7 +1400,7 @@ VariableValue Raw : {valueRaw}
 			#region Base Item translation
 
 			// Load common relic translations if item is relic related by any means
-			if (k.Item.IsRelicOrCharm || k.Item.HasRelicSlot1 || k.Item.HasRelicSlot2 || k.Item.RelicInfo != null || k.Item.Relic2Info != null)
+			if (k.Item.IsRelicOrCharm || k.Item.HasRelicOrCharmSlot1 || k.Item.HasRelicOrCharmSlot2 || k.Item.RelicInfo != null || k.Item.Relic2Info != null)
 			{
 				res.ItemWith = this.TranslationService.ItemWith;
 
@@ -1704,7 +1704,7 @@ VariableValue Raw : {valueRaw}
 				&& (k.Scope?.HasFlag(FriendlyNamesExtraScopes.RelicAttributes) ?? false)
 				&& (k.Item.IsArtifact // Artifact completion bonus
 					|| k.Item.IsRelicOrCharm // Relic completion bonus
-					|| k.Item.HasRelicSlot1
+					|| k.Item.HasRelicOrCharmSlot1
 				)
 			)
 			{
@@ -1719,7 +1719,7 @@ VariableValue Raw : {valueRaw}
 			}
 
 			// Show the Relic2 completion bonus.
-			if (k.Item.HasRelicSlot2 && k.Item.RelicBonus2Info != null && (k.Scope?.HasFlag(FriendlyNamesExtraScopes.Relic2Attributes) ?? false))
+			if (k.Item.HasRelicOrCharmSlot2 && k.Item.RelicBonus2Info != null && (k.Scope?.HasFlag(FriendlyNamesExtraScopes.Relic2Attributes) ?? false))
 			{
 				var tmp = new List<string>();
 				res.RelicBonus2InfoRecords = Database.GetRecordFromFile(k.Item.RelicBonus2Id);
@@ -3142,9 +3142,9 @@ VariableValue Raw : {valueRaw}
 		int variableNumber = 0;
 		if (itm.IsRelicOrCharm && recordId == itm.BaseItemId)
 			variableNumber = itm.Number - 1;
-		else if (itm.HasRelicSlot1 && recordId == itm.relicID)
+		else if (itm.HasRelicOrCharmSlot1 && recordId == itm.relicID)
 			variableNumber = Math.Max(itm.Var1, 1) - 1;
-		else if (itm.HasRelicSlot2 && recordId == itm.relic2ID)
+		else if (itm.HasRelicOrCharmSlot2 && recordId == itm.relic2ID)
 			variableNumber = Math.Max(itm.Var2, 1) - 1;
 
 		// Pet skills can also have multiple values so we attempt to decode it here

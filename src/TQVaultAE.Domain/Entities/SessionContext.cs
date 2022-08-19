@@ -249,6 +249,12 @@ namespace TQVaultAE.Domain.Entities
 
 					if (this.HighlightFilter.HavingSuffix)
 						availableItems = availableItems.Where(i => i.Item.HasSuffix);
+					
+					if (this.HighlightFilter.HavingRelic)
+						availableItems = availableItems.Where(i => i.Item.HasRelic);
+
+					if (this.HighlightFilter.HavingCharm)
+						availableItems = availableItems.Where(i => i.Item.HasCharm);
 				}
 
 				this.HighlightedItems.AddRange(availableItems.Select(i => i.Item));

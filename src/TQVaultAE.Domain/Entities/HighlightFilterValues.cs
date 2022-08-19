@@ -21,5 +21,7 @@ namespace TQVaultAE.Domain.Entities
 		public List<GameDlc> Origin;
 		public bool HavingPrefix;
 		public bool HavingSuffix;
+		public bool HavingRelic;
+		public bool HavingCharm;
 	}
 }

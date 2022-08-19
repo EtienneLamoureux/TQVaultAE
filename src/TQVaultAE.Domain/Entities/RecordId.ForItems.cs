@@ -16,7 +16,7 @@ public partial class RecordId
 		get
 		{
 			if (_IsRelic is null)
-				_IsRelic = (this.Dlc == GameDlc.TitanQuest && this.Normalized.Contains(@"RELICS")) // Is base game
+				_IsRelic = (this.Dlc == GameDlc.TitanQuest && this.Normalized.Contains(@"RELICS") && !IsCharm) // Is base game
 					|| this.Normalized.Contains(@"\RELICS\");// Is part of an extension
 			return _IsRelic.Value;
 		}
