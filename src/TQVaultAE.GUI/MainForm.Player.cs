@@ -68,7 +68,7 @@ public partial class MainForm
 		// Initialize the character combo-box
 		this.characterComboBox.Items.Clear();
 
-		var characters = this.playerService.GetPlayerSaveList();
+		var characters = this.playerService.GetPlayerSaveList() ?? new PlayerSave[0];
 
 		// Init FileWatcher
 		if (Config.UserSettings.Default.EnableHotReload)
@@ -80,7 +80,7 @@ public partial class MainForm
 			}
 		}
 
-		if (!(characters?.Any() ?? false))
+		if (!characters.Any())
 			this.characterComboBox.Items.Add(Resources.MainFormNoCharacters);
 		else
 		{
