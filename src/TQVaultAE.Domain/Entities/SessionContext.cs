@@ -240,7 +240,7 @@ namespace TQVaultAE.Domain.Entities
 					if (this.HighlightFilter.Origin.Any())
 					{
 						availableItems = availableItems.Where(i =>
-							this.HighlightFilter.Origin.Contains(i.Item.GameExtension)
+							this.HighlightFilter.Origin.Contains(i.Item.GameDlc)
 						);
 					}
 

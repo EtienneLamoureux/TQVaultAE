@@ -117,14 +117,14 @@ public class ToFriendlyNameResult
 	public string FullNameBagTooltip => new string[] {
 				PrefixInfoDescription
 				, BaseItemInfoQuality
-				, Item.IsRelic && !Item.IsCharm ? TQColor.Silver.ColorTag() : null // Make a color diff for Relic & Charm
+				, Item.IsRelicOrCharm && !Item.IsCharmOnly ? TQColor.Silver.ColorTag() : null // Make a color diff for Relic & Charm
 				, BaseItemInfoDescription
 				, Item.IsThrownWeapon ? null : BaseItemInfoStyle
 				, SuffixInfoDescription
 				, Item.DoesStack ? NumberFormat : null
-				, Item.IsRelic ? "- " + RelicBonusFormat : null
+				, Item.IsRelicOrCharm ? "- " + RelicBonusFormat : null
 				, Item.IsQuestItem ? this.ItemQuest : null
-				, Item.GameExtensionSuffix
+				, Item.GameDlcSuffix
 			}.RemoveEmptyAndSanitize()
 		.JoinWithoutStartingSpaces(" ");
 

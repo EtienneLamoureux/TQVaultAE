@@ -202,7 +202,7 @@ namespace TQVaultAE.GUI.Tooltip
 				AddRow(Data.ArtifactClass);
 
 			// Relic Completion
-			if (Data.Item.IsRelic)
+			if (Data.Item.IsRelicOrCharm)
 				AddRow(Data.RelicCompletionFormat, FocusedItem.ExtractTextColorOrItemColor(Data.BaseItemInfoDescription));
 
 			// Recipe Label
@@ -300,7 +300,7 @@ namespace TQVaultAE.GUI.Tooltip
 					foreach (var str in Data.RelicBonus1Attributes) AddRow(str);
 				}
 			}
-			else if (Data.Item.IsRelic)
+			else if (Data.Item.IsRelicOrCharm)
 			{
 				if (Data.RelicBonus1Attributes.Any())
 				{

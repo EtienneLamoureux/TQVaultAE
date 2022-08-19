@@ -773,7 +773,7 @@ public class SackPanel : Panel, IScalingControl
 	/// <param name="itemToCheck">Item the method is going to validate</param>
 	/// <returns></returns>
 	public bool IsItemValidForPlacement(Item itemToCheck)
-		=> this.sack.StashType != SackType.RelicVaultStash || itemToCheck.IsArtifact || itemToCheck.IsRelic || itemToCheck.IsFormulae || itemToCheck.IsCharm;
+		=> this.sack.StashType != SackType.RelicVaultStash || itemToCheck.IsArtifact || itemToCheck.IsRelicOrCharm || itemToCheck.IsFormulae;
 
 	/// <summary>
 	/// Cancels an item drag
@@ -1226,8 +1226,8 @@ public class SackPanel : Panel, IScalingControl
 
 	protected bool doStackRelics(ref Item dragItem, ref Item itemUnderUs)
 	{
-		bool doStackRelics = dragItem.IsRelic
-			&& itemUnderUs != null && itemUnderUs.IsRelic
+		bool doStackRelics = dragItem.IsRelicOrCharm
+			&& itemUnderUs != null && itemUnderUs.IsRelicOrCharm
 			&& !itemUnderUs.IsRelicComplete && !dragItem.IsRelicComplete
 			&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
 			&& !Config.UserSettings.Default.DisableAutoStacking;
@@ -1500,9 +1500,9 @@ public class SackPanel : Panel, IScalingControl
 
 						// Add option to complete a charm or relic if
 						// not already completed.
-						if (focusedItem.IsRelic && !focusedItem.IsRelicComplete)
+						if (focusedItem.IsRelicOrCharm && !focusedItem.IsRelicComplete)
 						{
-							if (focusedItem.IsCharm)
+							if (focusedItem.IsCharmOnly)
 								this.CustomContextMenu.Items.Add(Resources.SackPanelMenuCharm);
 							else
 								this.CustomContextMenu.Items.Add(Resources.SackPanelMenuRelic);
@@ -1657,7 +1657,7 @@ public class SackPanel : Panel, IScalingControl
 	{
 		// If the item is a completed relic/charm/artifact then
 		// add a menu of possible completion bonuses to choose from.
-		if ((focusedItem.IsRelic && focusedItem.IsRelicComplete)
+		if ((focusedItem.IsRelicOrCharm && focusedItem.IsRelicComplete)
 			|| focusedItem.IsArtifact
 		)
 		{

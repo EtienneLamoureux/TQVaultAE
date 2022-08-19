@@ -69,7 +69,7 @@ public class CsvRow
 			, fnr.Item.PositionY // @"PosY"
 
 			, fnr.Item.ItemClass //  @"ItemClass"
-			, fnr.Item.GameExtensionCode // @"ItemOrigin"
+			, fnr.Item.GameDlcCode // @"ItemOrigin"
 			, fnr.Item.Seed // @"ItemSeed"
 
 			, fnr.RequirementInfo.Lvl // @"RequireLvl"

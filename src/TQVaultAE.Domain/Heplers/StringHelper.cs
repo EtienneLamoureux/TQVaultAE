@@ -212,7 +212,7 @@ public static class StringHelper
 	}
 
 	/// <summary>
-	/// Normalizes the record path to Upper Case Invariant Culture and replace backslashes with slashes.
+	/// Normalizes the record path to Upper Case Invariant Culture and replace slashes with backslashes.
 	/// </summary>
 	/// <param name="recordId">record path to be normalized</param>
 	/// <returns>normalized record path</returns>

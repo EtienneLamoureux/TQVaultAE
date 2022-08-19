@@ -353,7 +353,7 @@ public class ItemProvider : IItemProvider
 			return null;
 
 		string lootTableID = null;
-		if (itm.IsRelic)
+		if (itm.IsRelicOrCharm)
 			lootTableID = itm.baseItemInfo.GetString("bonusTableName");
 		else if (itm.IsArtifact)
 		{
@@ -852,7 +852,7 @@ public class ItemProvider : IItemProvider
 		// Extract image raw data
 		if (itm.baseItemInfo != null)
 		{
-			if (itm.IsRelic && !itm.IsRelicComplete)
+			if (itm.IsRelicOrCharm && !itm.IsRelicComplete)
 			{
 				itm.TexImageResourceId = itm.baseItemInfo.ShardBitmap;
 				itm.TexImage = Database.LoadResource(itm.TexImageResourceId);
@@ -1374,7 +1374,7 @@ VariableValue Raw : {valueRaw}
 
 			res.ItemThrown = itm.IsThrownWeapon ? this.TranslationService.TranslateXTag("x2tagThrownWeapon") : null;
 
-			res.ItemOrigin = itm.GameExtension switch
+			res.ItemOrigin = itm.GameDlc switch
 			{
 				GameDlc.Atlantis => this.TranslationService.ItemAtlantis,
 				GameDlc.EternalEmbers => this.TranslationService.ItemEmbers,
@@ -1385,7 +1385,7 @@ VariableValue Raw : {valueRaw}
 
 			#region Prefix translation
 
-			if (!k.Item.IsRelic && !RecordId.IsNullOrEmpty(k.Item.prefixID))
+			if (!k.Item.IsRelicOrCharm && !RecordId.IsNullOrEmpty(k.Item.prefixID))
 			{
 				res.PrefixInfoDescription = k.Item.prefixID.Raw;
 				if (k.Item.prefixInfo != null)
@@ -1400,7 +1400,7 @@ VariableValue Raw : {valueRaw}
 			#region Base Item translation
 
 			// Load common relic translations if item is relic related by any means
-			if (k.Item.IsRelic || k.Item.HasRelicSlot1 || k.Item.HasRelicSlot2 || k.Item.RelicInfo != null || k.Item.Relic2Info != null)
+			if (k.Item.IsRelicOrCharm || k.Item.HasRelicSlot1 || k.Item.HasRelicSlot2 || k.Item.RelicInfo != null || k.Item.Relic2Info != null)
 			{
 				res.ItemWith = this.TranslationService.ItemWith;
 
@@ -1453,7 +1453,7 @@ VariableValue Raw : {valueRaw}
 				// style quality description
 				if (!string.IsNullOrEmpty(k.Item.baseItemInfo.StyleTag))
 				{
-					if (!k.Item.IsPotion && !k.Item.IsRelic && !k.Item.IsScroll && !k.Item.IsParchment && !k.Item.IsQuestItem)
+					if (!k.Item.IsPotion && !k.Item.IsRelicOrCharm && !k.Item.IsScroll && !k.Item.IsParchment && !k.Item.IsQuestItem)
 					{
 						if (!TranslationService.TryTranslateXTag(k.Item.baseItemInfo.StyleTag, out res.BaseItemInfoStyle))
 							res.BaseItemInfoStyle = k.Item.baseItemInfo.StyleTag;
@@ -1473,12 +1473,12 @@ VariableValue Raw : {valueRaw}
 
 				res.BaseItemInfoRecords = Database.GetRecordFromFile(k.Item.BaseItemId);
 
-				if (k.Item.IsRelic)
+				if (k.Item.IsRelicOrCharm)
 				{
 					// Add the number of charms in the set acquired.
 					if (k.Item.IsRelicComplete)
 					{
-						if (k.Item.IsCharm)
+						if (k.Item.IsCharmOnly)
 						{
 							res.RelicCompletionFormat = res.AnimalPartComplete;
 							res.RelicBonusTitle = res.AnimalPartCompleteBonus;
@@ -1506,7 +1506,7 @@ VariableValue Raw : {valueRaw}
 					}
 					else
 					{
-						if (k.Item.IsCharm)
+						if (k.Item.IsCharmOnly)
 						{
 							res.RelicClass = res.AnimalPart;
 							res.RelicPattern = res.AnimalPartRatio;
@@ -1567,7 +1567,7 @@ VariableValue Raw : {valueRaw}
 
 			#region Suffix translation
 
-			if (!k.Item.IsRelic && !RecordId.IsNullOrEmpty(k.Item.suffixID))
+			if (!k.Item.IsRelicOrCharm && !RecordId.IsNullOrEmpty(k.Item.suffixID))
 			{
 				if (k.Item.suffixInfo != null)
 				{
@@ -1585,7 +1585,7 @@ VariableValue Raw : {valueRaw}
 			#region flavor text
 
 			// Removed Scroll flavor text since it gets printed by the skill effect code
-			if ((k.Item.IsPotion || k.Item.IsRelic || k.Item.IsScroll || k.Item.IsParchment || k.Item.IsQuestItem) && !string.IsNullOrWhiteSpace(k.Item.baseItemInfo?.StyleTag))
+			if ((k.Item.IsPotion || k.Item.IsRelicOrCharm || k.Item.IsScroll || k.Item.IsParchment || k.Item.IsQuestItem) && !string.IsNullOrWhiteSpace(k.Item.baseItemInfo?.StyleTag))
 			{
 				if (TranslationService.TryTranslateXTag(k.Item.baseItemInfo.StyleTag, out var flavor))
 				{
@@ -1703,7 +1703,7 @@ VariableValue Raw : {valueRaw}
 			if (k.Item.RelicBonusInfo != null
 				&& (k.Scope?.HasFlag(FriendlyNamesExtraScopes.RelicAttributes) ?? false)
 				&& (k.Item.IsArtifact // Artifact completion bonus
-					|| k.Item.IsRelic // Relic completion bonus
+					|| k.Item.IsRelicOrCharm // Relic completion bonus
 					|| k.Item.HasRelicSlot1
 				)
 			)
@@ -3140,7 +3140,7 @@ VariableValue Raw : {valueRaw}
 		// If we are a relic, then sometimes there are multiple values per variable depending on how many pieces we have.
 		// Let's determine which variable we want in these cases.
 		int variableNumber = 0;
-		if (itm.IsRelic && recordId == itm.BaseItemId)
+		if (itm.IsRelicOrCharm && recordId == itm.BaseItemId)
 			variableNumber = itm.Number - 1;
 		else if (itm.HasRelicSlot1 && recordId == itm.relicID)
 			variableNumber = Math.Max(itm.Var1, 1) - 1;
@@ -3148,7 +3148,7 @@ VariableValue Raw : {valueRaw}
 			variableNumber = Math.Max(itm.Var2, 1) - 1;
 
 		// Pet skills can also have multiple values so we attempt to decode it here
-		if (itm.IsScroll || itm.IsRelic)
+		if (itm.IsScroll || itm.IsRelicOrCharm)
 			variableNumber = GetPetSkillLevel(itm, record, recordId, variableNumber);
 
 		// Triggered skills can have also multiple values so we need to decode it here
