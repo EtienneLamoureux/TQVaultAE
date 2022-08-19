@@ -146,7 +146,7 @@ public static class StringHelper
 	intelligence|protection|impairment|offensive|defensive|dexterity|elemental|
 	mobility|cooldown|mastery|current|protect|defense|offense|reflect|
 	damage|energy|pierce|guards|neidan|resist|health|poison|weapon|plants|hermes|sandal|
-	armor|chance|runes|dream|bleed|total|bonus|woods|multi|relic|light|attac|speed|reduc|block|equip|
+	armor|chance|[rR]unes|[dD]ream|bleed|total|bonus|woods|multi|relic|light|attac|speed|reduc|block|equip|
 	clubs|sleep|metal|leech|regen|dodge|retal|
 	cold|burn|life|fire|mana|stun|(?<!ext)rare|slow|wood|
 	req|int|(?<!h)all(?!owed)|dmg|(?<!con)str(?!uction)|atk|att|spd|run|dex|(?<=pierce)ret|
