@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CHANGELOG.md = CHANGELOG.md
 		CONTRIBUTING.md = CONTRIBUTING.md
 		documentation\FORGE.md = documentation\FORGE.md
+		documentation\GITBACKUP.md = documentation\GITBACKUP.md
 		documentation\HIGHLIGHT.md = documentation\HIGHLIGHT.md
 		src\IsExternalInit.cs = src\IsExternalInit.cs
 		src\MsBuildAL1073WarningWorkaround.config = src\MsBuildAL1073WarningWorkaround.config

@@ -19,7 +19,7 @@ Works with all expansions!
         - [Craft an artifact from its recipe](documentation/AFFIXES.md#Formula)
         - [Change item seed](documentation/AFFIXES.md#Seed)
         - [Create missing set pieces](documentation/AFFIXES.md#MissingSetPiece)
-        - [Craft custom items](/documentation/FORGE.md)
+        - [Craft custom items](documentation/FORGE.md)
         - [Change items affixes](documentation/AFFIXES.md)
         - Duplicate any item
     - Characters
@@ -27,8 +27,9 @@ Works with all expansions!
         - Unlock difficulties
         - Level up
 - QOL
+    - [Cloud saving](documentation/GITBACKUP.md)
     - Bulk item transfer (<kbd>CTRL</kbd>+click, right-click)
-    - [Highlight items](/documentation/HIGHLIGHT.md)
+    - [Highlight items](documentation/HIGHLIGHT.md)
     - Combine stacks (potions, relics and charms) by dropping them onto each other
     - Split potion stacks apart
     - Keyboard shortcuts
@@ -92,15 +93,7 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 
 **Q. How to enable/disable the cheats (character edition, item edition, item copy)?**
 
-*A1. __Easy way__:*
-- There is a dedicated checkbox in the tool settings window.
-
-*A2. __Hard way__, follow these steps:*
-1. *Navigate the the installation folder of TQVaultAE*
-2. *Open `UserConfig.xml` in a text editor (i.e. notepad, **not Microsoft Word**)*
-3. *Find the key `AllowCheats` and change the value to `1` or `0`*
-    - *`1` will allow you to toggle the cheats individually in the configuration menu*
-    - *`0` will disable the cheats completely and make it impossible to enable them in the configuration menu*
+*A. There is a dedicated checkbox in the tool settings window.*
 
 **Q. Can TQVaultAE use my old vault files?**
 

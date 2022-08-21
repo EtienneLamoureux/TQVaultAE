@@ -351,7 +351,7 @@ public partial class MainForm
 			try
 			{
 				// Duplicate File
-				newFolder = this.GamePathResolver.DuplicateCharacterFiles(ps.Folder, newname);
+				newFolder = this.GameFileService.DuplicateCharacterFiles(ps.Folder, newname);
 				this.playerService.AlterNameInPlayerFileSave(newname, newFolder);
 			}
 			catch (Exception ex)

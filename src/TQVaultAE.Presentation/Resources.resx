@@ -1939,7 +1939,7 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="ForgeHardcoreTT" xml:space="preserve">
     <value>Materials are destroyed in the process</value>
   </data>
-  	<data name="ExportBagCSVToClipboard" xml:space="preserve">
+	<data name="ExportBagCSVToClipboard" xml:space="preserve">
     <value>Export bag to clipboard</value>
   </data>
 	<data name="ExportVaultCSVToClipboard" xml:space="preserve">
@@ -1954,19 +1954,75 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="AffixesDisplayByName" xml:space="preserve">
     <value>Display affixes by name</value>
   </data>
-  <data name="AffixesDisplayByEffect" xml:space="preserve">
+	<data name="AffixesDisplayByEffect" xml:space="preserve">
     <value>Display affixes by effect</value>
   </data>
-  <data name="SettingsEnableEpicLegendaryAffixes" xml:space="preserve">
+	<data name="SettingsEnableEpicLegendaryAffixes" xml:space="preserve">
     <value>Enable Epic and Legendary affixes</value>
   </data>
-  <data name="SettingsEnableEpicLegendaryAffixesTT" xml:space="preserve">
+	<data name="SettingsEnableEpicLegendaryAffixesTT" xml:space="preserve">
     <value>Allow affixes pickup on Epic and Legendary items</value>
   </data>
-  <data name="SettingsDisableAutoStacking" xml:space="preserve">
+	<data name="SettingsDisableAutoStacking" xml:space="preserve">
     <value>Disable auto stacking</value>
   </data>
-  <data name="SettingsDisableAutoStackingTT" xml:space="preserve">
+	<data name="SettingsDisableAutoStackingTT" xml:space="preserve">
     <value>Disable auto stacking for relic, charms and potions</value>
   </data>
+	<data name="SettingsBrowseGitExe" xml:space="preserve">
+    <value>Please select the path for git.exe.</value>
+  </data>
+	<data name="GitError" xml:space="preserve">
+    <value>Git Error</value>
+  </data>
+	<data name="GitUnableToClone" xml:space="preserve">
+    <value>Git client is unable to clone "{0}"</value>
+  </data>
+	<data name="GlobalInformation" xml:space="preserve">
+    <value>Information</value>
+  </data>
+	<data name="GlobalWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+	<data name="GitCloneDoYouWantToReplaceLocalVault" xml:space="preserve">
+    <value>Do you want to replace your local vaults with git repository version?</value>
+  </data>
+	<data name="GlobalConfirm" xml:space="preserve">
+    <value>Are you sure?</value>
+  </data>
+	<data name="GitCloneDoYouWantToReplaceLocalCharacterSave" xml:space="preserve">
+    <value>Do you want to replace your local Titan Quest character save with git repository version?</value>
+  </data>
+	<data name="GitUnableToPush" xml:space="preserve">
+    <value>Git client is unable to push "{0}"</value>
+  </data>
+	<data name="GitUnableToPull" xml:space="preserve">
+    <value>Git client is unable to pull "{0}"</value>
+  </data>
+	<data name="UnableToExecute" xml:space="preserve">
+    <value>OS unable to execute "{0}"</value>
+  </data>
+
+	<data name="SettingsBackupPlayerSaves" xml:space="preserve">
+    <value>Backup player saves</value>
+  </data>
+	<data name="SettingsBackupPlayerSavesTT" xml:space="preserve">
+    <value>Include your character save files in the backup</value>
+  </data>
+	<data name="SettingsGitRepositoryUrl" xml:space="preserve">
+    <value>Git Repository Url : </value>
+  </data>
+	<data name="SettingsDisableLegacyBackup" xml:space="preserve">
+    <value>Disable legacy backup</value>
+  </data>
+	<data name="SettingsDisableLegacyBackupTT" xml:space="preserve">
+    <value>Optionaly disable the old backup system</value>
+  </data>
+	<data name="SettingsGitBackup" xml:space="preserve">
+    <value>Git Backup</value>
+  </data>
+	<data name="SettingsAllowCheats" xml:space="preserve">
+    <value>Allow Cheats</value>
+  </data>
+	
 </root>

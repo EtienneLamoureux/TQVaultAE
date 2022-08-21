@@ -8,7 +8,7 @@ namespace TQVaultAE.Config;
 public class UserSettings
 {
 	#region Properties
-
+	
 	[XmlElement(ElementName = "SkipTitle")]
 	public bool SkipTitle { get; set; } = true;
 
@@ -123,6 +123,18 @@ public class UserSettings
 	[XmlElement(ElementName = "DisableAutoStacking")]
 	public bool DisableAutoStacking { get; set; } = false;
 
+	[XmlElement(ElementName = "GitBackupEnabled")]
+	public bool GitBackupEnabled { get; set; } = true;
+
+	[XmlElement(ElementName = "GitBackupRepository")]
+	public string GitBackupRepository { get; set; } = string.Empty;
+
+	[XmlElement(ElementName = "DisableLegacyBackup")]
+	public bool DisableLegacyBackup { get; set; } = false;
+
+	[XmlElement(ElementName = "GitBackupPlayerSavesEnabled")]
+	public bool GitBackupPlayerSavesEnabled { get; set; } = false;
+	
 	#endregion
 
 

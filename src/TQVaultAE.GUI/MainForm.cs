@@ -28,6 +28,7 @@ using TQVaultAE.Domain.Results;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Domain.Helpers;
+using System.Threading;
 
 namespace TQVaultAE.GUI;
 
@@ -277,6 +278,29 @@ Debug Levels
 		this.CreatePanels();
 
 		this.UIService.NotifyUserEvent += UIService_NotifyUserEvent;
+		this.UIService.ShowMessageUserEvent += UIService_ShowMessageUserEvent;
+	}
+
+	private void UIService_ShowMessageUserEvent(object sender, ShowMessageUserEventHandlerEventArgs message)
+	{
+		var caption = message.Level switch
+		{
+			LogLevel.Error => Resources.GlobalError,
+			LogLevel.Warning => Resources.GlobalWarning,
+			_ => Resources.GlobalInformation,
+		};
+
+		var icon = message.Level switch
+		{
+			LogLevel.Error => MessageBoxIcon.Error,
+			LogLevel.Warning => MessageBoxIcon.Warning,
+			_ => MessageBoxIcon.Information,
+		};
+
+		var buttons = message.Buttons == ShowMessageButtons.OK ? MessageBoxButtons.OK : MessageBoxButtons.OKCancel;
+
+		// Propagate response to the caller
+		message.IsOK = MessageBox.Show(message.Message, caption, buttons, icon) == DialogResult.OK;
 	}
 
 	private void UIService_NotifyUserEvent(object sender, string message, Color color)
@@ -349,6 +373,8 @@ Debug Levels
 			// Added by VillageIdiot
 			this.SaveConfiguration();
 
+			this.GameFileService.GitAddCommitTagAndPush();
+
 			ok = true;
 		}
 		catch (IOException exception)
@@ -367,6 +393,10 @@ Debug Levels
 	/// <param name="e">EventArgs data</param>
 	private void MainFormLoad(object sender, EventArgs e)
 	{
+		// Sync git local repo first
+		if (Config.UserSettings.Default.GitBackupEnabled)
+			this.GameFileService.GitRepositorySetup();
+
 		this.splashScreen = this.ServiceProvider.GetService<SplashScreenForm>();
 		this.splashScreen.MaximumValue = 1;
 		this.splashScreen.FormClosed += new FormClosedEventHandler(this.SplashScreenClosed);
@@ -807,14 +837,6 @@ Debug Levels
 		}
 		else
 		{
-
-			if (!Config.UserSettings.Default.AllowCheats)
-			{
-				Config.UserSettings.Default.AllowItemCopy = false;
-				Config.UserSettings.Default.AllowItemEdit = false;
-				Config.UserSettings.Default.AllowCharacterEdit = false;
-			}
-
 			CommandLineArgs args = new CommandLineArgs();
 
 			// Check to see if we loaded something from the command line.
@@ -947,6 +969,7 @@ Debug Levels
 
 				this.splashScreen.CloseForm();
 			}
+
 		}
 		else
 		{
@@ -1111,6 +1134,7 @@ Debug Levels
 			this.configChanged = true;
 			this.SaveConfiguration();
 
+
 			AdjustMenuButtonVisibility();
 
 			if (result == DialogResult.Yes)
@@ -1120,7 +1144,6 @@ Debug Levels
 			}
 		}
 	}
-
 
 	#endregion
 

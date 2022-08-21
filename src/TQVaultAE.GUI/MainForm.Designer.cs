@@ -363,7 +363,7 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 5F));
             this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 17F));
+            this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 23F));
             this.tableLayoutPanelMain.Controls.Add(this.tableLayoutPanelHighlight, 0, 3);
             this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelRightPanels, 2, 1);
             this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelVaultSelector, 0, 0);
@@ -605,7 +605,7 @@ namespace TQVaultAE.GUI
             this.highlightFilters.BackColor = System.Drawing.Color.Transparent;
             this.highlightFilters.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("highlightFilters.BackgroundImage")));
             this.highlightFilters.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.highlightFilters.Location = new System.Drawing.Point(341, 291);
+            this.highlightFilters.Location = new System.Drawing.Point(15, 270);
             this.highlightFilters.Margin = new System.Windows.Forms.Padding(0);
             this.highlightFilters.Name = "highlightFilters";
             this.highlightFilters.Padding = new System.Windows.Forms.Padding(10);
@@ -687,5 +687,5 @@ namespace TQVaultAE.GUI
 		private ScalingButton forgeButton;
 		internal BufferedTableLayoutPanel tableLayoutPanelMain;
 		private HighlightFilters highlightFilters;
-	}
+    }
 }

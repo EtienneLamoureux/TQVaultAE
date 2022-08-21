@@ -204,7 +204,7 @@ namespace TQVaultAE.Data
 			};
 
 			using var sw = new StreamWriter(fileName, false, Encoding.UTF8);
-			new JsonSerializer().Serialize(sw, pcjson);
+			new JsonSerializer() { Formatting = Formatting.Indented }.Serialize(sw, pcjson);
 		}
 
 		/// <summary>

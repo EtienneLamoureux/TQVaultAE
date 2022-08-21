@@ -16,13 +16,15 @@ namespace TQVaultAE.Services
 		private readonly SessionContext userContext = null;
 		private readonly IStashProvider StashProvider;
 		private readonly IGamePathService GamePathResolver;
+		private readonly IGameFileService GameFileService;
 
-		public StashService(ILogger<StashService> log, SessionContext userContext, IStashProvider stashProvider, IGamePathService gamePathResolver)
+		public StashService(ILogger<StashService> log, SessionContext userContext, IStashProvider stashProvider, IGamePathService gamePathResolver, IGameFileService iGameFileService)
 		{
 			this.Log = log;
 			this.userContext = userContext;
 			this.StashProvider = stashProvider;
 			this.GamePathResolver = gamePathResolver;
+			this.GameFileService = iGameFileService;
 		}
 
 		/// <summary>
@@ -176,7 +178,10 @@ namespace TQVaultAE.Services
 				if (stash.IsModified)
 				{
 					stashOnError = stash;
-					GamePathResolver.BackupFile(stash.PlayerName, stashFile);
+					
+					if(!Config.UserSettings.Default.DisableLegacyBackup)
+						GameFileService.BackupFile(stash.PlayerName, stashFile);
+
 					StashProvider.Save(stash, stashFile);
 					stash.Saved();
 					saved++;

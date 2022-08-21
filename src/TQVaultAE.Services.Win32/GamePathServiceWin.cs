@@ -11,6 +11,9 @@ using TQVaultAE.Domain.Exceptions;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Presentation;
 using TQVaultAE.Domain.Entities;
+using System.Security.Policy;
+using LibGit2Sharp;
+using System.Reflection;
 
 namespace TQVaultAE.Services.Win32;
 
@@ -28,6 +31,8 @@ public class GamePathServiceWin : IGamePathService
 	public const string PLAYERSETTINGSFILENAME = "settings.txt";
 	public const string VAULTFILENAME_EXTENSION_OLD = ".vault";
 	public const string VAULTFILENAME_EXTENSION_JSON = ".vault.json";
+	public string VaultFileNameExtensionJson => VAULTFILENAME_EXTENSION_JSON;
+	public string VaultFileNameExtensionOld => VAULTFILENAME_EXTENSION_OLD;
 
 	private readonly ILogger Log;
 	private readonly ITQDataService TQData;
@@ -37,6 +42,27 @@ public class GamePathServiceWin : IGamePathService
 		this.Log = log;
 		this.TQData = tQDataService;
 	}
+
+	public const string LOCAL_GIT_REPOSITORY_DIRNAME = "LocalGitRepository";
+
+
+	string _ResolveTQVaultPath;
+	private string ResolveTQVaultPath
+	{
+		get
+		{
+			if (string.IsNullOrWhiteSpace(_ResolveTQVaultPath))
+			{
+				var currentPath = new System.Uri(Assembly.GetExecutingAssembly().EscapedCodeBase).LocalPath;
+				_ResolveTQVaultPath = Path.GetDirectoryName(currentPath);
+			}
+			return _ResolveTQVaultPath;
+		}
+	}
+
+	public string LocalGitRepositoryDirectory => Path.Combine(ResolveTQVaultPath, LOCAL_GIT_REPOSITORY_DIRNAME);
+	public string LocalGitRepositoryGitDir => Path.Combine(ResolveTQVaultPath, LOCAL_GIT_REPOSITORY_DIRNAME, @".git");
+	public bool LocalGitRepositoryGitDirExist => Directory.Exists(LocalGitRepositoryGitDir);
 
 	/// <summary>
 	/// Parses filename to try to determine the base character name.
@@ -231,41 +257,6 @@ public class GamePathServiceWin : IGamePathService
 	public bool IsCustom
 		=> !string.IsNullOrEmpty(MapName) && (MapName.Trim().ToUpperInvariant() != "MAIN");
 
-	/// <summary>
-	/// TQ has an annoying habit of throwing away your char in preference
-	/// for the Backup folder if it exists if it thinks your char is not valid.
-	/// We need to move that folder away so TQ won't find it.
-	/// </summary>
-	/// <param name="playerFile">Name of the player file to backup</param>
-	public void BackupStupidPlayerBackupFolder(string playerFile)
-	{
-		string playerFolder = Path.GetDirectoryName(playerFile);
-		string backupFolder = Path.Combine(playerFolder, "Backup");
-		if (Directory.Exists(backupFolder))
-		{
-			// we need to move it.
-			string newFolder = Path.Combine(playerFolder, "Backup-moved by TQVault");
-			if (Directory.Exists(newFolder))
-			{
-				try
-				{
-					// It already exists--we need to remove it
-					Directory.Delete(newFolder, true);
-				}
-				catch (Exception)
-				{
-					int fn = 1;
-					while (Directory.Exists(String.Format("{0}({1})", newFolder, fn)))
-					{
-						fn++;
-					}
-					newFolder = String.Format("{0}({1})", newFolder, fn);
-				}
-			}
-
-			Directory.Move(backupFolder, newFolder);
-		}
-	}
 
 
 	/// <summary>
@@ -304,42 +295,6 @@ public class GamePathServiceWin : IGamePathService
 			// try again
 			++uniqueID;
 		}
-	}
-
-	/// <summary>
-	/// Backs up the file to the backup folder.
-	/// </summary>
-	/// <param name="prefix">prefix of the backup file</param>
-	/// <param name="file">file name to backup</param>
-	/// <returns>Returns the name of the backup file, or NULL if file does not exist</returns>
-	public string BackupFile(string prefix, string file)
-	{
-		if (File.Exists(file))
-		{
-			// only backup if it exists!
-			string backupFile = ConvertFilePathToBackupPath(prefix, file);
-
-			File.Copy(file, backupFile);
-
-			// Added by VillageIdiot
-			// Backup the file pairs for the player stash files.
-			if (Path.GetFileName(file).ToUpperInvariant() == PLAYERSTASHFILENAMEB.ToUpperInvariant())
-			{
-				string dxgfile = Path.ChangeExtension(file, ".dxg");
-
-				if (File.Exists(dxgfile))
-				{
-					// only backup if it exists!
-					backupFile = ConvertFilePathToBackupPath(prefix, dxgfile);
-
-					File.Copy(dxgfile, backupFile);
-				}
-			}
-
-			return backupFile;
-		}
-		else
-			return null;
 	}
 
 	/// <summary>
@@ -657,40 +612,6 @@ Please select the game installation directory.");
 
 		return vaultname;
 	}
-
-	/// <summary>
-	/// Duplicate player save files
-	/// </summary>
-	/// <param name="playerSaveDirectory"></param>
-	/// <param name="newname"></param>
-	/// <returns>new directory path</returns>
-	public string DuplicateCharacterFiles(string playerSaveDirectory, string newname)
-	{
-		var baseFolder = Path.GetDirectoryName(playerSaveDirectory);
-		var newFolder = Path.Combine(baseFolder, $"_{newname}");
-		var newPlayerFile = Path.Combine(newFolder, PLAYERSAVEFILENAME);
-
-		var playerFile = Path.Combine(playerSaveDirectory, PLAYERSAVEFILENAME);
-		var stashFileB = Path.Combine(playerSaveDirectory, PLAYERSTASHFILENAMEB);
-		var stashFileG = Path.Combine(playerSaveDirectory, PLAYERSTASHFILENAMEG);
-		var settingsFile = Path.Combine(playerSaveDirectory, PLAYERSETTINGSFILENAME);
-
-		Directory.CreateDirectory(newFolder);
-		File.Copy(playerFile, newPlayerFile);
-		if (File.Exists(stashFileB)) File.Copy(stashFileB, Path.Combine(newFolder, PLAYERSTASHFILENAMEB));
-		if (File.Exists(stashFileG)) File.Copy(stashFileG, Path.Combine(newFolder, PLAYERSTASHFILENAMEG));
-		if (File.Exists(settingsFile)) File.Copy(settingsFile, Path.Combine(newFolder, PLAYERSETTINGSFILENAME));
-
-		// Copy Progression
-		// Easyest way of doing that (why VB has all the easy stuff?)
-		new Computer().FileSystem.CopyDirectory(
-			Path.Combine(playerSaveDirectory, "Levels_World_World01.map")
-			, Path.Combine(newFolder, "Levels_World_World01.map")
-		);
-
-		return newFolder;
-	}
-
 
 	/// <summary>
 	/// Return ARC filename from <paramref name="resourceIdOrPrefix"/>

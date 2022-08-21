@@ -139,7 +139,7 @@ public static class StringHelper
 
 	static char[] _Delim = new char[] { ' ' };
 	static Regex PrettyFileNameRegExNumber = new Regex(@"(?<number>\d+)", RegexOptions.Compiled);
-	static Regex PrettyFileNameRegExTitleCaseStart = new Regex(@"(?<TitleCaseStart>BOW|DA|OA|Mastery[A-Ha-h]|[A-Z][a-z]*)", RegexOptions.Compiled);
+	static Regex PrettyFileNameRegExTitleCaseStart = new Regex(@"(?<TitleCaseStart>BOW|DA|OA|XP|Mastery[A-Ha-h]|[A-Z][a-z]*)", RegexOptions.Compiled);
 	// Orderered by word length
 	static string PrettyFileNameRegExLowerCaseStartPattern = @"
 (?<Start>

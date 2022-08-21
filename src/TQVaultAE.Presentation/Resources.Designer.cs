@@ -1444,6 +1444,60 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you want to replace your local Titan Quest character save with git repository version?.
+        /// </summary>
+        public static string GitCloneDoYouWantToReplaceLocalCharacterSave {
+            get {
+                return ResourceManager.GetString("GitCloneDoYouWantToReplaceLocalCharacterSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to replace your local vaults with git repository version?.
+        /// </summary>
+        public static string GitCloneDoYouWantToReplaceLocalVault {
+            get {
+                return ResourceManager.GetString("GitCloneDoYouWantToReplaceLocalVault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Git Error.
+        /// </summary>
+        public static string GitError {
+            get {
+                return ResourceManager.GetString("GitError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Git client is unable to clone &quot;{0}&quot;.
+        /// </summary>
+        public static string GitUnableToClone {
+            get {
+                return ResourceManager.GetString("GitUnableToClone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Git client is unable to pull &quot;{0}&quot;.
+        /// </summary>
+        public static string GitUnableToPull {
+            get {
+                return ResourceManager.GetString("GitUnableToPull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Git client is unable to push &quot;{0}&quot;.
+        /// </summary>
+        public static string GitUnableToPush {
+            get {
+                return ResourceManager.GetString("GitUnableToPush", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
         public static string GlobalAbout {
@@ -1507,6 +1561,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure?.
+        /// </summary>
+        public static string GlobalConfirm {
+            get {
+                return ResourceManager.GetString("GlobalConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copied!.
         /// </summary>
         public static string GlobalCopied {
@@ -1557,6 +1620,15 @@ namespace TQVaultAE.Presentation {
         public static string GlobalHardcore {
             get {
                 return ResourceManager.GetString("GlobalHardcore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Information.
+        /// </summary>
+        public static string GlobalInformation {
+            get {
+                return ResourceManager.GetString("GlobalInformation", resourceCulture);
             }
         }
         
@@ -1809,6 +1881,15 @@ namespace TQVaultAE.Presentation {
         public static string GlobalVaults {
             get {
                 return ResourceManager.GetString("GlobalVaults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        public static string GlobalWarning {
+            get {
+                return ResourceManager.GetString("GlobalWarning", resourceCulture);
             }
         }
         
@@ -4300,6 +4381,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow Cheats.
+        /// </summary>
+        public static string SettingsAllowCheats {
+            get {
+                return ResourceManager.GetString("SettingsAllowCheats", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Allow Item Copying.
         /// </summary>
         public static string SettingsAllowCopy {
@@ -4363,6 +4453,33 @@ namespace TQVaultAE.Presentation {
         public static string SettingsAutoUpdateTT {
             get {
                 return ResourceManager.GetString("SettingsAutoUpdateTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup player saves.
+        /// </summary>
+        public static string SettingsBackupPlayerSaves {
+            get {
+                return ResourceManager.GetString("SettingsBackupPlayerSaves", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Include your character save files in the backup.
+        /// </summary>
+        public static string SettingsBackupPlayerSavesTT {
+            get {
+                return ResourceManager.GetString("SettingsBackupPlayerSavesTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select the path for git.exe..
+        /// </summary>
+        public static string SettingsBrowseGitExe {
+            get {
+                return ResourceManager.GetString("SettingsBrowseGitExe", resourceCulture);
             }
         }
         
@@ -4435,6 +4552,24 @@ namespace TQVaultAE.Presentation {
         public static string SettingsDisableAutoStackingTT {
             get {
                 return ResourceManager.GetString("SettingsDisableAutoStackingTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable legacy backup.
+        /// </summary>
+        public static string SettingsDisableLegacyBackup {
+            get {
+                return ResourceManager.GetString("SettingsDisableLegacyBackup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Optionaly disable the old backup system.
+        /// </summary>
+        public static string SettingsDisableLegacyBackupTT {
+            get {
+                return ResourceManager.GetString("SettingsDisableLegacyBackupTT", resourceCulture);
             }
         }
         
@@ -4532,6 +4667,24 @@ namespace TQVaultAE.Presentation {
         public static string SettingsForceCheckTT {
             get {
                 return ResourceManager.GetString("SettingsForceCheckTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Git Backup.
+        /// </summary>
+        public static string SettingsGitBackup {
+            get {
+                return ResourceManager.GetString("SettingsGitBackup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Git Repository Url : .
+        /// </summary>
+        public static string SettingsGitRepositoryUrl {
+            get {
+                return ResourceManager.GetString("SettingsGitRepositoryUrl", resourceCulture);
             }
         }
         
@@ -5148,6 +5301,15 @@ namespace TQVaultAE.Presentation {
             get {
                 object obj = ResourceManager.GetObject("TQVIcon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OS unable to execute &quot;{0}&quot;.
+        /// </summary>
+        public static string UnableToExecute {
+            get {
+                return ResourceManager.GetString("UnableToExecute", resourceCulture);
             }
         }
         

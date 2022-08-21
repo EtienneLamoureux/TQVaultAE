@@ -848,20 +848,19 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	/// <param name="menuCallback">handler for the submenu</param>
 	private void AddSubMenu(string menuText, EventHandler menuCallback)
 	{
-		ToolStripItem[] menuChoices = new ToolStripItem[this.BagButtons.Count - 1];
+		var menuChoices = new ToolStripItem[this.BagButtons.Count - 1];
 		for (int i = 0, j = 0; i < this.BagButtons.Count; ++i)
 		{
 			if (i != this.CurrentBag)
 			{
 				int val = i + 1;
-				menuChoices[j] = new ToolStripMenuItem(
-					string.Format(CultureInfo.CurrentCulture, Resources.GlobalMenuBag, val),
-					null,
-					menuCallback,
-					string.Format(CultureInfo.CurrentCulture, Resources.GlobalMenuBag, val));
-				menuChoices[j].BackColor = this.contextMenu.BackColor;
-				menuChoices[j].Font = this.contextMenu.Font;
-				menuChoices[j].ForeColor = this.contextMenu.ForeColor;
+				menuChoices[j] = new ToolStripMenuItem(string.Format(CultureInfo.CurrentCulture, Resources.GlobalMenuBag, val)
+					, null, menuCallback, string.Format(CultureInfo.CurrentCulture, Resources.GlobalMenuBag, val))
+				{
+					BackColor = this.contextMenu.BackColor,
+					Font = this.contextMenu.Font,
+					ForeColor = this.contextMenu.ForeColor,
+				};
 				++j;
 			}
 		}

@@ -15,6 +15,7 @@ namespace TQVaultAE.Services
 		private readonly ILogger Log = null;
 		private readonly SessionContext userContext = null;
 		private readonly IPlayerCollectionProvider PlayerCollectionProvider;
+		private readonly IGameFileService GameFileService;
 		private readonly IGamePathService GamePathResolver;
 		private readonly ITranslationService TranslationService;
 		private readonly ITQDataService TQDataService;
@@ -24,6 +25,7 @@ namespace TQVaultAE.Services
 			, SessionContext userContext
 			, IPlayerCollectionProvider playerCollectionProvider
 			, IStashProvider stashProvider
+			, IGameFileService iGameFileService
 			, IGamePathService gamePathResolver
 			, ITranslationService translationService
 			, ITQDataService tQDataService
@@ -32,6 +34,7 @@ namespace TQVaultAE.Services
 			this.Log = log;
 			this.userContext = userContext;
 			this.PlayerCollectionProvider = playerCollectionProvider;
+			this.GameFileService = iGameFileService;
 			this.GamePathResolver = gamePathResolver;
 			this.TranslationService = translationService;
 			this.TQDataService = tQDataService;
@@ -77,7 +80,7 @@ namespace TQVaultAE.Services
 				return addFactory(k);
 			};
 
-			var resultPlayer = fromFileWatcher 
+			var resultPlayer = fromFileWatcher
 				? this.userContext.Players.AddOrUpdateAtomic(result.PlayerFile, addFactory, updateFactory)
 				: this.userContext.Players.GetOrAddAtomic(result.PlayerFile, addFactory);
 
@@ -110,8 +113,11 @@ namespace TQVaultAE.Services
 				{
 					++numModified;
 					playerOnError = player;// if needed by caller
-					GamePathResolver.BackupFile(player.PlayerName, playerFile);
-					GamePathResolver.BackupStupidPlayerBackupFolder(playerFile);
+					if (!Config.UserSettings.Default.DisableLegacyBackup)
+					{
+						GameFileService.BackupFile(player.PlayerName, playerFile);
+						GameFileService.BackupStupidPlayerBackupFolder(playerFile);
+					}
 					PlayerCollectionProvider.Save(player, playerFile);
 					player.Saved();
 				}

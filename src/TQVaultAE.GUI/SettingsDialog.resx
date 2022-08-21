@@ -120,9 +120,6 @@
   <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>138, 17</value>
   </metadata>
-  <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>138, 17</value>
-  </metadata>
   <data name="vaultPathTextBox.ToolTip" xml:space="preserve">
     <value>Allows changing of the vault path.
 Changing this item will cause the vault list
@@ -4320,4 +4317,7 @@ TQVaultAE doesn't know the math requiered to compute accurately the real strengt
         7yQ6jvr/2Q==
 </value>
   </data>
+  <metadata name="openFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>391, 17</value>
+  </metadata>
 </root>

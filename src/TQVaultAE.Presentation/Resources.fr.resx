@@ -718,7 +718,7 @@ le démarrage si la connection internet est lente.</value>
   <data name="SettingsBrowseTQ" xml:space="preserve">
     <value>Sélectionnez le chemin d'accès pour les fichiers du jeu TQ.</value>
   </data>
-  <data name="SettingsBrowseVault" xml:space="preserve">
+	<data name="SettingsBrowseVault" xml:space="preserve">
     <value>Sélectionnez le chemin d'accès pour les fichiers TQVault.</value>
   </data>
   <data name="SettingsDetectGamePath" xml:space="preserve">
@@ -1475,4 +1475,48 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   <data name="SettingsDisableAutoStackingTT" xml:space="preserve">
     <value>Désactive l'empilement automatique des reliques, charmes et potions</value>
   </data>
+	<data name="SettingsBrowseGitExe" xml:space="preserve">
+    <value>Sélectionnez le chemin d'accès pour la commande git.exe</value>
+  </data>
+	<data name="GitCloneDoYouWantToReplaceLocalVault" xml:space="preserve">
+    <value>Voulez vous remplacer vos coffres locaux avec la version en provenance de git ?</value>
+  </data>
+	<data name="GlobalConfirm" xml:space="preserve">
+    <value>Etes vous sûr ?</value>
+  </data>
+	<data name="GitCloneDoYouWantToReplaceLocalCharacterSave" xml:space="preserve">
+    <value>Voulez vous remplacer vos sauvegardes de Titan Quest locales avec la version en provenance de git ?</value>
+  </data>
+	<data name="GitUnableToPush" xml:space="preserve">
+    <value>le client Git est incapable de push "{0}"</value>
+  </data>
+	<data name="GitUnableToPull" xml:space="preserve">
+    <value>le client Git est incapable de pull "{0}"</value>
+  </data>
+	<data name="UnableToExecute" xml:space="preserve">
+    <value>L'OS est incapable d'exécuter "{0}"</value>
+  </data>
+
+	<data name="SettingsBackupPlayerSaves" xml:space="preserve">
+    <value>Sauvegarde vos personnages</value>
+  </data>
+	<data name="SettingsBackupPlayerSavesTT" xml:space="preserve">
+    <value>Inclue les fichiers de personnage dans la sauvegarde Git</value>
+  </data>
+	<data name="SettingsGitRepositoryUrl" xml:space="preserve">
+    <value>Lien du dépôt Git : </value>
+  </data>
+	<data name="SettingsDisableLegacyBackup" xml:space="preserve">
+    <value>Désactive la sauvegarde historique</value>
+  </data>
+	<data name="SettingsDisableLegacyBackupTT" xml:space="preserve">
+    <value>Désactive optionnellement l'ancien système de sauvegarde</value>
+  </data>
+	<data name="SettingsGitBackup" xml:space="preserve">
+    <value>Git Backup</value>
+  </data>
+	<data name="SettingsAllowCheats" xml:space="preserve">
+    <value>Autorise la triche</value>
+  </data>
+
 </root>
