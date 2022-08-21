@@ -116,8 +116,8 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 ```xml
 <AutoDetectGamePath>1</AutoDetectGamePath>
 ...
-<TQITPath />
-<TQPath />
+<TQITPath></TQITPath>
+<TQPath></TQPath>
 ```
 
 *by (replace the path to the correct one for your computer)*
