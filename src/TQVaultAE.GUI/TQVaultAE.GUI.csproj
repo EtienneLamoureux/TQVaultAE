@@ -724,6 +724,7 @@ XCOPY "$(ProjectDir)bin\$(Platform)\$(ConfigurationName)" "$(SolutionDir)bin\$(C
 REM Clean output of unnecessary files
 DEL "$(SolutionDir)bin\$(ConfigurationName)\*.pdb"
 RMDIR "$(SolutionDir)bin\$(ConfigurationName)\Logging" /S /Q
+RMDIR "$(SolutionDir)bin\$(ConfigurationName)\LocalGitRepository" /S /Q
 		</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\MsBuildAL1073WarningWorkaround.config" />

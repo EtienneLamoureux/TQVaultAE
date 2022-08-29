@@ -194,8 +194,7 @@ public class GameFileService : IGameFileService
 
 			var RepoTQPath = Path.Combine(GamePathService.LocalGitRepositoryDirectory, GamePathService.SaveDirNameTQ, GamePathService.SaveDataDirName);
 			var RepoTQITPath = Path.Combine(GamePathService.LocalGitRepositoryDirectory, GamePathService.SaveDirNameTQIT, GamePathService.SaveDataDirName);
-			var RepoTQPathExists = Directory.Exists(RepoTQPath);
-			var RepoTQITPathExists = Directory.Exists(RepoTQITPath);
+			bool RepoTQPathExists = false, RepoTQITPathExists = false;
 
 			var TQPathSaveData = Path.Combine(GamePathService.SaveFolderTQ, GamePathService.SaveDataDirName);
 			var TQITPathSaveData = Path.Combine(GamePathService.SaveFolderTQIT, GamePathService.SaveDataDirName);
@@ -212,6 +211,10 @@ public class GameFileService : IGameFileService
 				// Untracked files will stay there, remote deleted tracked character will be deleted localy, remote updated will be localy updated here too.
 				if (GitPull())
 				{
+					// Are they here after pull
+					RepoTQPathExists = Directory.Exists(RepoTQPath);
+					RepoTQITPathExists = Directory.Exists(RepoTQITPath);
+
 					// Do you want to refresh your vault and local Save with last git save ?
 					if (vaultfiles.Any())
 					{
@@ -250,6 +253,10 @@ public class GameFileService : IGameFileService
 			var repoSuccess = GitClone();
 			if (repoSuccess)
 			{
+				// Are they here after Clone
+				RepoTQPathExists = Directory.Exists(RepoTQPath);
+				RepoTQITPathExists = Directory.Exists(RepoTQITPath);
+
 				overrideFiles = false;
 				if (vaultfiles.Any())
 				{

@@ -7,6 +7,7 @@ using Medallion.Shell;
 using System.Linq;
 using Microsoft.VisualBasic.Devices;
 using Microsoft.VisualBasic.MyServices;
+using System;
 
 namespace TQVaultAE.Services.Win32
 {
@@ -57,7 +58,15 @@ namespace TQVaultAE.Services.Win32
 
 					//			if Yes - Copy Repo files to My Games override file
 					//			if No - Copy Repo files to My Games ignore if existing file
-					FS.CopyDirectory(RepoTQPath, TQPathSaveData, overrideFiles);
+					try
+					{
+						FS.CopyDirectory(RepoTQPath, TQPathSaveData, overrideFiles);
+					}
+					catch (IOException ioex) when (ioex.Data.Count > 0 && !overrideFiles)
+					{
+						// Exception at the end of the directory merge when there is files colision and overrideFiles = false
+						// => Do nothing
+					}
 				}
 			}
 		}
@@ -209,6 +218,7 @@ namespace TQVaultAE.Services.Win32
 			}
 		}
 
+		// TODO No need to be so delicate. RMDIR is smart enough to take care respectfuly of the junction (no recursion)
 		private bool SafelyRemoveJunction(string commandDirStdOutput, string junctionPath)
 		{
 			// Is a junction already
