@@ -30,7 +30,7 @@ namespace TQVaultAE.Services.Win32
 			// check if it's a junction already
 			var LocalGitRepoDir = GamePathService.LocalGitRepositoryDirectory;
 			var SaveDataParent = Path.GetDirectoryName(RepoTQPath);
-			var dirfilter = Path.Combine(SaveDataParent, @$"*{SAVEDATA_DIRNAME}*");
+			var dirfilter = Path.Combine(SaveDataParent, @$"*{GamePathService.SaveDataDirName}*");
 			string errMess = string.Format(Resources.UnableToExecute, "DIR /A " + dirfilter);
 			var dir = Command.Run("CMD.EXE", "/C", "DIR", "/A", dirfilter);
 			if (HandleExecuteOut(dir, errMess, out var diroutStd, out var direrrStd))
@@ -68,10 +68,10 @@ namespace TQVaultAE.Services.Win32
 
 			// check if it's a junction already
 			var LocalGitRepoDir = GamePathService.LocalGitRepositoryDirectory;
-			var repoVaultFilesPath = Path.Combine(LocalGitRepoDir, VAULTFILES_REPO_DIRNAME);
+			var repoVaultFilesPath = Path.Combine(LocalGitRepoDir, GamePathService.VaultFilesDefaultDirName);
 			if (Directory.Exists(repoVaultFilesPath))
 			{
-				var dirfilter = Path.Combine(LocalGitRepoDir, @$"*{VAULTFILES_REPO_DIRNAME}*");
+				var dirfilter = Path.Combine(LocalGitRepoDir, @$"*{GamePathService.VaultFilesDefaultDirName}*");
 				string errMess = string.Format(Resources.UnableToExecute, "DIR /A " + dirfilter);
 				var dir = Command.Run("CMD.EXE", "/C", "DIR", "/A", dirfilter);
 				if (HandleExecuteOut(dir, errMess, out var diroutStd, out var direrrStd))
@@ -119,12 +119,12 @@ namespace TQVaultAE.Services.Win32
 		protected override bool RemoveRepoTQVaultData()
 		{
 			// check if it's a junction already
-			var dirfilter = Path.Combine(GamePathService.LocalGitRepositoryDirectory, @$"*{VAULTFILES_REPO_DIRNAME}*");
+			var dirfilter = Path.Combine(GamePathService.LocalGitRepositoryDirectory, @$"*{GamePathService.VaultFilesDefaultDirName}*");
 			string errMess = string.Format(Resources.UnableToExecute, "DIR /A " + dirfilter);
 			var dir = Command.Run("CMD.EXE", "/C", "DIR", "/A", dirfilter);
 			if (HandleExecuteOut(dir, errMess, out var diroutStd, out var direrrStd))
 			{
-				var saveDataPath = Path.Combine(GamePathService.LocalGitRepositoryDirectory, VAULTFILES_REPO_DIRNAME);
+				var saveDataPath = Path.Combine(GamePathService.LocalGitRepositoryDirectory, GamePathService.VaultFilesDefaultDirName);
 				return SafelyRemoveJunction(diroutStd.JoinString(" "), saveDataPath);
 			}
 			return false;
@@ -136,7 +136,7 @@ namespace TQVaultAE.Services.Win32
 		/// <returns></returns>
 		protected override bool LinkRepoTQVaultData()
 		{
-			var junctionPath = Path.Combine(GamePathService.LocalGitRepositoryDirectory, VAULTFILES_REPO_DIRNAME);
+			var junctionPath = Path.Combine(GamePathService.LocalGitRepositoryDirectory, GamePathService.VaultFilesDefaultDirName);
 			string sourcePath = GamePathService.TQVaultSaveFolder;
 			string errMess = string.Format(Resources.UnableToExecute, string.Format("MKLINK /J {0} {1}", junctionPath, GamePathService.TQVaultSaveFolder));
 
@@ -156,7 +156,7 @@ namespace TQVaultAE.Services.Win32
 
 			if (TQPathSaveDataExists)
 			{
-				var junctionPathParent = Path.Combine(GamePathService.LocalGitRepositoryDirectory, SAVE_DIRNAME_TQ);
+				var junctionPathParent = Path.Combine(GamePathService.LocalGitRepositoryDirectory, GamePathService.SaveDirNameTQ);
 				Directory.CreateDirectory(junctionPathParent);
 				string errMess = string.Format(Resources.UnableToExecute, string.Format("MKLINK /J {0} {1}", RepoTQPath, TQPathSaveData));
 				var mklink = Command.Run("CMD.EXE", "/C", "MKLINK", "/J", RepoTQPath, TQPathSaveData);
@@ -165,7 +165,7 @@ namespace TQVaultAE.Services.Win32
 
 			if (TQITPathSaveDataExists)
 			{
-				var junctionPathParent = Path.Combine(GamePathService.LocalGitRepositoryDirectory, SAVE_DIRNAME_TQIT);
+				var junctionPathParent = Path.Combine(GamePathService.LocalGitRepositoryDirectory, GamePathService.SaveDirNameTQIT);
 				Directory.CreateDirectory(junctionPathParent);
 				string errMess = string.Format(Resources.UnableToExecute, string.Format("MKLINK /J {0} {1}", RepoTQITPath, TQITPathSaveData));
 				var mklink = Command.Run("CMD.EXE", "/C", "MKLINK", "/J", RepoTQITPath, TQITPathSaveData);
@@ -183,12 +183,12 @@ namespace TQVaultAE.Services.Win32
 			bool TQSuccess = false, TQITSuccess = false;
 			if (RepoTQPathExists)
 			{
-				var TQPath = Path.Combine(GamePathService.LocalGitRepositoryDirectory, SAVE_DIRNAME_TQ);
+				var TQPath = Path.Combine(GamePathService.LocalGitRepositoryDirectory, GamePathService.SaveDirNameTQ);
 				TQSuccess = SafelyRemoveRepoSaveData(TQPath);
 			}
 			if (RepoTQITPathExists)
 			{
-				var TQITPath = Path.Combine(GamePathService.LocalGitRepositoryDirectory, SAVE_DIRNAME_TQIT);
+				var TQITPath = Path.Combine(GamePathService.LocalGitRepositoryDirectory, GamePathService.SaveDirNameTQIT);
 				TQITSuccess = SafelyRemoveRepoSaveData(TQITPath);
 			}
 			return TQSuccess || TQITSuccess;
@@ -196,12 +196,12 @@ namespace TQVaultAE.Services.Win32
 			bool SafelyRemoveRepoSaveData(string tqpath)
 			{
 				// check if it's a junction already
-				var dirfilter = Path.Combine(tqpath, @$"*{SAVEDATA_DIRNAME}*");
+				var dirfilter = Path.Combine(tqpath, @$"*{GamePathService.SaveDataDirName}*");
 				string errMess = string.Format(Resources.UnableToExecute, "DIR /A \"" + dirfilter + '"');
 				var dir = Command.Run("CMD.EXE", "/C", "DIR", "/A", dirfilter);
 				if (HandleExecuteOut(dir, errMess, out var diroutStd, out var direrrStd))
 				{
-					var junctionPath = Path.Combine(tqpath, SAVEDATA_DIRNAME);
+					var junctionPath = Path.Combine(tqpath, GamePathService.SaveDataDirName);
 
 					return SafelyRemoveJunction(diroutStd.JoinString(" "), junctionPath);
 				}

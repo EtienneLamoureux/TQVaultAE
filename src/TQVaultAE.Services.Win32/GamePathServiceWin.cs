@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.VisualBasic.Devices;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -11,8 +10,6 @@ using TQVaultAE.Domain.Exceptions;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Presentation;
 using TQVaultAE.Domain.Entities;
-using System.Security.Policy;
-using LibGit2Sharp;
 using System.Reflection;
 
 namespace TQVaultAE.Services.Win32;
@@ -23,14 +20,26 @@ namespace TQVaultAE.Services.Win32;
 public class GamePathServiceWin : IGamePathService
 {
 	private const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
-	public const string TRANSFERSTASHFILENAME = "winsys.dxb";
-	public const string RELICVAULTSTASHFILENAME = "miscsys.dxb";
-	public const string PLAYERSAVEFILENAME = "Player.chr";
-	public const string PLAYERSTASHFILENAMEB = "winsys.dxb";
-	public const string PLAYERSTASHFILENAMEG = "winsys.dxg";
-	public const string PLAYERSETTINGSFILENAME = "settings.txt";
-	public const string VAULTFILENAME_EXTENSION_OLD = ".vault";
-	public const string VAULTFILENAME_EXTENSION_JSON = ".vault.json";
+
+	internal const string LOCAL_GIT_REPOSITORY_DIRNAME = "LocalGitRepository";
+	internal const string VAULTFILES_DEFAULT_DIRNAME = @"TQVaultData";
+	internal const string SAVEDATA_DIRNAME = @"SaveData";
+	internal const string SAVE_DIRNAME_TQ = @"Titan Quest";
+	internal const string SAVE_DIRNAME_TQIT = @"Titan Quest - Immortal Throne";
+
+	public string VaultFilesDefaultDirName => VAULTFILES_DEFAULT_DIRNAME;
+	public string SaveDataDirName => SAVEDATA_DIRNAME;
+	public string SaveDirNameTQIT => SAVE_DIRNAME_TQIT;
+	public string SaveDirNameTQ => SAVE_DIRNAME_TQ;
+
+	internal const string TRANSFERSTASHFILENAME = "winsys.dxb";
+	internal const string RELICVAULTSTASHFILENAME = "miscsys.dxb";
+	internal const string PLAYERSAVEFILENAME = "Player.chr";
+	internal const string PLAYERSTASHFILENAMEB = "winsys.dxb";
+	internal const string PLAYERSTASHFILENAMEG = "winsys.dxg";
+	internal const string PLAYERSETTINGSFILENAME = "settings.txt";
+	internal const string VAULTFILENAME_EXTENSION_OLD = ".vault";
+	internal const string VAULTFILENAME_EXTENSION_JSON = ".vault.json";
 	public string VaultFileNameExtensionJson => VAULTFILENAME_EXTENSION_JSON;
 	public string VaultFileNameExtensionOld => VAULTFILENAME_EXTENSION_OLD;
 
@@ -42,9 +51,6 @@ public class GamePathServiceWin : IGamePathService
 		this.Log = log;
 		this.TQData = tQDataService;
 	}
-
-	public const string LOCAL_GIT_REPOSITORY_DIRNAME = "LocalGitRepository";
-
 
 	string _ResolveTQVaultPath;
 	private string ResolveTQVaultPath
@@ -105,38 +111,40 @@ public class GamePathServiceWin : IGamePathService
 	private string _VaultFolder;
 
 	/// <summary>
-	/// Gets the Immortal Throne Character save folder
+	/// Gets the Immortal Throne Character save folder.
+	/// Resolve as "%USERPROFILE%\Documents\My Games\Titan Quest - Immortal Throne".
 	/// </summary>
-	public string ImmortalThroneSaveFolder
-		=> Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", "Titan Quest - Immortal Throne");
+	public string SaveFolderTQIT
+		=> Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", SAVE_DIRNAME_TQIT);
 
 	/// <summary>
 	/// Gets the Titan Quest Character save folder.
+	/// Resolve as "%USERPROFILE%\Documents\My Games\Titan Quest".
 	/// </summary>
-	public string TQSaveFolder
-		=> Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", "Titan Quest");
+	public string SaveFolderTQ
+		=> Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", SAVE_DIRNAME_TQ);
 
 	/// <summary>
 	/// Gets the name of the game settings file.
 	/// </summary>
-	public string TQSettingsFile
-		=> Path.Combine(TQSaveFolder, "Settings", "options.txt");
+	public string SettingsFileTQ
+		=> Path.Combine(SaveFolderTQ, "Settings", "options.txt");
 
 	/// <summary>
 	/// Gets the name of the game settings file.
 	/// </summary>
-	public string ITSettingsFile
-		=> Path.Combine(ImmortalThroneSaveFolder, "Settings", "options.txt");
+	public string SettingsFileTQIT
+		=> Path.Combine(SaveFolderTQIT, "Settings", "options.txt");
 
 	/// <summary>
 	/// Gets or sets the Titan Quest game path.
 	/// </summary>
-	public string TQPath { get; set; }
+	public string GamePathTQ { get; set; }
 
 	/// <summary>
 	/// Gets or sets the Immortal Throne game path.
 	/// </summary>
-	public string ImmortalThronePath { get; set; }
+	public string GamePathTQIT { get; set; }
 
 	/// <summary>
 	/// Gets the filename for the game's transfer stash.
@@ -147,9 +155,9 @@ public class GamePathServiceWin : IGamePathService
 		get
 		{
 			if (IsCustom)
-				return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", Path.GetFileName(MapName), TRANSFERSTASHFILENAME);
+				return Path.Combine(SaveFolderTQIT, SAVEDATA_DIRNAME, "Sys", Path.GetFileName(MapName), TRANSFERSTASHFILENAME);
 
-			return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", TRANSFERSTASHFILENAME);
+			return Path.Combine(SaveFolderTQIT, SAVEDATA_DIRNAME, "Sys", TRANSFERSTASHFILENAME);
 		}
 	}
 
@@ -162,34 +170,36 @@ public class GamePathServiceWin : IGamePathService
 		get
 		{
 			if (IsCustom)
-				return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", Path.GetFileName(MapName), RELICVAULTSTASHFILENAME);
+				return Path.Combine(SaveFolderTQIT, SAVEDATA_DIRNAME, "Sys", Path.GetFileName(MapName), RELICVAULTSTASHFILENAME);
 
-			return Path.Combine(ImmortalThroneSaveFolder, "SaveData", "Sys", RELICVAULTSTASHFILENAME);
+			return Path.Combine(SaveFolderTQIT, SAVEDATA_DIRNAME, "Sys", RELICVAULTSTASHFILENAME);
 		}
 	}
 
 	/// <summary>
 	/// Gets the base character save folder.
-	/// Changed to support custom quest characters
+	/// Changed to support custom quest characters.
+	/// if <paramref name="IsTQIT"/> is <c>true</c> return an "Immortal Throne" path. Return an "Titan Quest" otherwise.
 	/// </summary>
 	/// <returns>path of the save folder</returns>
-	public string GetBaseCharacterFolder()
+	public string GetBaseCharacterFolder(bool IsTQIT)
 	{
 		string mapSaveFolder = "Main";
 
 		if (IsCustom)
 			mapSaveFolder = "User";
 
-		return Path.Combine(ImmortalThroneSaveFolder, "SaveData", mapSaveFolder);
+		var dir = IsTQIT
+			? Path.Combine(SaveFolderTQIT, SAVEDATA_DIRNAME, mapSaveFolder)
+			: Path.Combine(SaveFolderTQ, SAVEDATA_DIRNAME, mapSaveFolder);
+
+		return dir;
 	}
 
-	/// <summary>
-	/// Gets the full path to the player character file.
-	/// </summary>
-	/// <param name="characterName">name of the character</param>
-	/// <returns>full path to the character file.</returns>
-	public string GetPlayerFile(string characterName)
-		=> Path.Combine(GetBaseCharacterFolder(), string.Concat("_", characterName), PLAYERSAVEFILENAME);
+	public string GetPlayerFile(string characterName, bool IsTQIT)
+	{
+		return Path.Combine(GetBaseCharacterFolder(IsTQIT), string.Concat("_", characterName), PLAYERSAVEFILENAME);
+	}
 
 	/// <summary>
 	/// Gets the full path to the player's stash file.
@@ -197,7 +207,7 @@ public class GamePathServiceWin : IGamePathService
 	/// <param name="characterName">name of the character</param>
 	/// <returns>full path to the player stash file</returns>
 	public string GetPlayerStashFile(string characterName)
-		=> Path.Combine(GetBaseCharacterFolder(), string.Concat("_", characterName), PLAYERSTASHFILENAMEB);
+		=> Path.Combine(GetBaseCharacterFolder(true), string.Concat("_", characterName), PLAYERSTASHFILENAMEB);
 
 	/// <summary>
 	/// Gets a list of all of the character files in the save folder.
@@ -205,15 +215,19 @@ public class GamePathServiceWin : IGamePathService
 	/// <returns>List of character files in a string array</returns>
 	public string[] GetCharacterList()
 	{
+		string[] empty = new string[0];
 		try
 		{
 			// Get all folders that start with a '_'.
-			string[] folders = Directory.GetDirectories(GetBaseCharacterFolder(), "_*");
-			return !folders.Any() ? null : folders;
+			string[] folders = new[] {
+				Directory.GetDirectories(GetBaseCharacterFolder(false), "_*"),// From TQ 
+				Directory.GetDirectories(GetBaseCharacterFolder(true), "_*")// From TQIT
+			}.SelectMany(f => f).ToArray();
+			return !folders.Any() ? empty : folders;
 		}
 		catch (DirectoryNotFoundException)
 		{
-			return null;
+			return empty;
 		}
 	}
 
@@ -231,19 +245,19 @@ public class GamePathServiceWin : IGamePathService
 	/// Gets a value indicating whether Ragnarok DLC has been installed.
 	/// </summary>
 	public bool IsRagnarokInstalled
-		=> Directory.Exists(ImmortalThronePath + "\\Resources\\XPack2");
+		=> Directory.Exists(Path.Combine(GamePathTQIT, "Resources", "XPack2"));
 
 	/// <summary>
 	/// Gets a value indicating whether Atlantis DLC has been installed.
 	/// </summary>
 	public bool IsAtlantisInstalled
-		=> Directory.Exists(ImmortalThronePath + "\\Resources\\XPack3");
+		=> Directory.Exists(Path.Combine(GamePathTQIT, "Resources", "XPack3"));
 
 	/// <summary>
 	/// Gets a value indicating whether Eternal Embers DLC has been installed.
 	/// </summary>
 	public bool IsEmbersInstalled
-		=> Directory.Exists(ImmortalThronePath + "\\Resources\\XPack4");
+		=> Directory.Exists(Path.Combine(GamePathTQIT, "Resources", "XPack4"));
 
 	/// <summary>
 	/// Gets or sets the name of the custom map.
@@ -312,7 +326,7 @@ public class GamePathServiceWin : IGamePathService
 		{
 			if (string.IsNullOrEmpty(_VaultFolder))
 			{
-				string folderPath = Path.Combine(TQSaveFolder, "TQVaultData");
+				string folderPath = Path.Combine(SaveFolderTQ, VAULTFILES_DEFAULT_DIRNAME);
 
 				// Lets see if our path exists and create it if it does not
 				if (!Directory.Exists(folderPath))
@@ -396,6 +410,7 @@ public class GamePathServiceWin : IGamePathService
 	/// <returns>The list of all of the vault files in the save folder.</returns>
 	public string[] GetVaultList()
 	{
+		string[] empty = new string[0];
 		try
 		{
 			// Get all files that have a .vault extension.
@@ -403,7 +418,7 @@ public class GamePathServiceWin : IGamePathService
 			string[] filesJson = Directory.GetFiles(TQVaultSaveFolder, $"*{VAULTFILENAME_EXTENSION_JSON}");
 
 			if (!filesOld.Any() && !filesJson.Any())
-				return null;
+				return empty;
 
 			List<string> vaultList = new List<string>();
 
@@ -429,7 +444,7 @@ public class GamePathServiceWin : IGamePathService
 		}
 		catch (DirectoryNotFoundException)
 		{
-			return null;
+			return empty;
 		}
 	}
 
@@ -442,7 +457,7 @@ public class GamePathServiceWin : IGamePathService
 		try
 		{
 			// Get all folders in the Steam\steamapps\workshop\content directory.
-			string TQITFolder = ImmortalThronePath;
+			string TQITFolder = GamePathTQIT;
 			var steamworkshopRootDir = Regex.Replace(TQITFolder, @"(?i)^(?<SteamappsRoot>.+steamapps).*", @"${SteamappsRoot}\workshop\content\475150");
 
 			if (steamworkshopRootDir == TQITFolder)// regex failed ! This is not a steamapps path
@@ -478,7 +493,7 @@ public class GamePathServiceWin : IGamePathService
 		try
 		{
 			// Get all folders in the CustomMaps directory.
-			string saveFolder = ImmortalThroneSaveFolder;
+			string saveFolder = SaveFolderTQIT;
 
 			var mapFolders = Directory.GetDirectories(Path.Combine(saveFolder, "CustomMaps"), "*");
 
@@ -628,32 +643,32 @@ Please select the game installation directory.");
 		{
 			case "XPACK" when segments[1] != "SOUNDS":
 				// Comes from Immortal Throne
-				path = Path.Combine(ImmortalThronePath, "Resources", "XPack", segments[1] + ".arc");
+				path = Path.Combine(GamePathTQIT, "Resources", "XPack", segments[1] + ".arc");
 				break;
 			case "XPACK" when segments[1] == "SOUNDS": // Sounds file exception for IT
 													   // Comes from Immortal Throne
-				path = Path.Combine(ImmortalThronePath, "Resources", segments[1] + ".arc");
+				path = Path.Combine(GamePathTQIT, "Resources", segments[1] + ".arc");
 				break;
 			case "XPACK2":
 				// Comes from Ragnarok
-				path = Path.Combine(ImmortalThronePath, "Resources", "XPack2", segments[1] + ".arc");
+				path = Path.Combine(GamePathTQIT, "Resources", "XPack2", segments[1] + ".arc");
 				break;
 			case "XPACK3":
 				// Comes from Atlantis
-				path = Path.Combine(ImmortalThronePath, "Resources", "XPack3", segments[1] + ".arc");
+				path = Path.Combine(GamePathTQIT, "Resources", "XPack3", segments[1] + ".arc");
 				break;
 			case "XPACK4":
 				// Comes from Eternal Embers
-				path = Path.Combine(ImmortalThronePath, "Resources", "XPack4", segments[1] + ".arc");
+				path = Path.Combine(GamePathTQIT, "Resources", "XPack4", segments[1] + ".arc");
 				break;
 			case "SOUNDS":
 				// Regular Dialogs/Sounds/Music/PlayerSounds
-				path = Path.Combine(ImmortalThronePath, "Audio", segments[0] + ".arc");
+				path = Path.Combine(GamePathTQIT, "Audio", segments[0] + ".arc");
 				isDLC = false;
 				break;
 			default:
 				// Base game
-				path = Path.Combine(ImmortalThronePath, "Resources", segments[0] + ".arc");
+				path = Path.Combine(GamePathTQIT, "Resources", segments[0] + ".arc");
 				isDLC = false;
 				break;
 		}

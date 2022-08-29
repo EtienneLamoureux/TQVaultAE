@@ -55,7 +55,7 @@ public partial class MainForm
 		}
 		else
 		{
-			this.LoadPlayerAndStash(selectedSave);
+			this.LoadPlayerAndStashes(selectedSave);
 		}
 		this.Refresh();
 	}
@@ -68,7 +68,7 @@ public partial class MainForm
 		// Initialize the character combo-box
 		this.characterComboBox.Items.Clear();
 
-		var characters = this.playerService.GetPlayerSaveList() ?? new PlayerSave[0];
+		var characters = this.playerService.GetPlayerSaveList();
 
 		// Init FileWatcher
 		if (Config.UserSettings.Default.EnableHotReload)
@@ -215,18 +215,32 @@ public partial class MainForm
 	/// <param name="selectedSave">Player string from the drop down list.</param>
 	/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
 	/// <returns></returns>
-	private (LoadPlayerResult PlayerResult, LoadPlayerStashResult StashResult) LoadPlayerAndStash(PlayerSave selectedSave, bool fromFileWatcher = false)
+	private (LoadPlayerResult PlayerResult, LoadPlayerStashResult StashResult) LoadPlayerAndStashes(PlayerSave selectedSave, bool fromFileWatcher = false)
 	{
 		var result = LoadPlayer(selectedSave, fromFileWatcher);
 
 		var resultStash = this.LoadPlayerStash(selectedSave, fromFileWatcher);
+
+		if (selectedSave.IsImmortalThrone)
+		{
+			if (this.stashPanel.RelicVaultStash == null)
+				LoadRelicVaultStash();
+
+			if (this.stashPanel.TransferStash == null)
+				LoadTransferStash();
+		}
+		else // Titan Quest original
+		{
+			this.stashPanel.RelicVaultStash = null;
+			this.stashPanel.TransferStash = null;
+		}
 
 		return (result, resultStash);
 	}
 
 	private LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool fromFileWatcher)
 	{
-		var result = this.playerService.LoadPlayer(selectedSave, true, fromFileWatcher);
+		var result = this.playerService.LoadPlayer(selectedSave, fromFileWatcher);
 
 		// Get the player
 		try
@@ -259,6 +273,14 @@ public partial class MainForm
 	private LoadPlayerStashResult LoadPlayerStash(PlayerSave selectedSave, bool fromFileWatcher = false)
 	{
 		// Get the player's stash
+
+		// Only if it's IT, TQ doesn't have one
+		if (!selectedSave.IsImmortalThrone)
+		{
+			this.stashPanel.Stash = null;
+			return null;
+		}
+
 		var resultStash = this.stashService.LoadPlayerStash(selectedSave, fromFileWatcher);
 		try
 		{

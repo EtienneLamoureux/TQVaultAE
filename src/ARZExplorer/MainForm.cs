@@ -138,7 +138,7 @@ public partial class MainForm : Form
 		// If the registry fails then default to the save folder.
 		if (startPath.Length < 1)
 		{
-			startPath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games"), "Titan Quest");
+			startPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", GamePathService.SaveDirNameTQ);
 		}
 
 		openDialog.InitialDirectory = startPath;
@@ -373,7 +373,7 @@ public partial class MainForm : Form
 		saveFileDialog.FilterIndex = 1;
 		saveFileDialog.RestoreDirectory = true;
 		saveFileDialog.Title = "Save the Titan Quest File";
-		string startPath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games"), "Titan Quest");
+		string startPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", GamePathService.SaveDirNameTQ);
 		saveFileDialog.InitialDirectory = startPath;
 		saveFileDialog.FileName = Path.GetFileName(this.destFile);
 
@@ -418,7 +418,8 @@ public partial class MainForm : Form
 		{
 			browseDialog.Description = "Select the destination folder for the extracted database records";
 			browseDialog.ShowNewFolderButton = true;
-			string startPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", "Titan Quest");
+			string startPath = Path.Combine(
+				Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", GamePathService.SaveDirNameTQ);
 			browseDialog.SelectedPath = startPath;
 			DialogResult result = browseDialog.ShowDialog();
 

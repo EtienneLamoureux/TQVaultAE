@@ -20,10 +20,6 @@ namespace TQVaultAE.Services;
 public class GameFileService : IGameFileService
 {
 
-	protected const string VAULTFILES_REPO_DIRNAME = @"TQVaultData";
-	protected const string SAVEDATA_DIRNAME = @"SaveData";
-	protected const string SAVE_DIRNAME_TQ = @"Titan Quest";
-	protected const string SAVE_DIRNAME_TQIT = @"Titan Quest - Immortal Throne";
 
 	private const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
 	protected readonly ILogger Log;
@@ -196,18 +192,18 @@ public class GameFileService : IGameFileService
 
 			bool overrideFiles = false;
 
-			var RepoTQPath = Path.Combine(GamePathService.LocalGitRepositoryDirectory, SAVE_DIRNAME_TQ, SAVEDATA_DIRNAME);
-			var RepoTQITPath = Path.Combine(GamePathService.LocalGitRepositoryDirectory, SAVE_DIRNAME_TQIT, SAVEDATA_DIRNAME);
+			var RepoTQPath = Path.Combine(GamePathService.LocalGitRepositoryDirectory, GamePathService.SaveDirNameTQ, GamePathService.SaveDataDirName);
+			var RepoTQITPath = Path.Combine(GamePathService.LocalGitRepositoryDirectory, GamePathService.SaveDirNameTQIT, GamePathService.SaveDataDirName);
 			var RepoTQPathExists = Directory.Exists(RepoTQPath);
 			var RepoTQITPathExists = Directory.Exists(RepoTQITPath);
 
-			var TQPathSaveData = Path.Combine(GamePathService.TQSaveFolder, "..", SAVE_DIRNAME_TQ, SAVEDATA_DIRNAME);
-			var TQITPathSaveData = Path.Combine(GamePathService.TQSaveFolder, "..", SAVE_DIRNAME_TQIT, SAVEDATA_DIRNAME);
+			var TQPathSaveData = Path.Combine(GamePathService.SaveFolderTQ, GamePathService.SaveDataDirName);
+			var TQITPathSaveData = Path.Combine(GamePathService.SaveFolderTQIT, GamePathService.SaveDataDirName);
 			var TQPathSaveDataExists = Directory.Exists(TQPathSaveData);
 			var TQITPathSaveDataExists = Directory.Exists(TQITPathSaveData);
 
 			// does Vault Dir has any vault file ?
-			var vaultfiles = GamePathService.GetVaultList() ?? new string[0];
+			var vaultfiles = GamePathService.GetVaultList();
 
 			// Cloned already
 			if (GamePathService.LocalGitRepositoryGitDirExist)

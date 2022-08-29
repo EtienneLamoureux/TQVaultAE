@@ -52,6 +52,14 @@ public partial class MainForm
 	/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
 	private LoadTransferStashResult LoadTransferStash(bool fromFileWatcher = false)
 	{
+		// Only if it's IT, TQ doesn't have one
+		var selectedSave = this.characterComboBox.SelectedItem as PlayerSave;
+		if (selectedSave is not null && !selectedSave.IsImmortalThrone)
+		{
+			this.stashPanel.TransferStash = null;
+			return null;
+		}
+
 		var result = this.stashService.LoadTransferStash(fromFileWatcher);
 
 		// Get the transfer stash
@@ -89,6 +97,14 @@ public partial class MainForm
 	/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
 	private LoadRelicVaultStashResult LoadRelicVaultStash(bool fromFileWatcher = false)
 	{
+		// Only if it's IT, TQ doesn't have one
+		var selectedSave = this.characterComboBox.SelectedItem as PlayerSave;
+		if (selectedSave is not null && !selectedSave.IsImmortalThrone)
+		{
+			this.stashPanel.RelicVaultStash = null;
+			return null;
+		}
+
 		var result = this.stashService.LoadRelicVaultStash(fromFileWatcher);
 
 		// Get the relic vault stash

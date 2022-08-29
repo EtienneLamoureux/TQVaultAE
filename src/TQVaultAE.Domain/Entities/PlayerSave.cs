@@ -16,8 +16,9 @@ namespace TQVaultAE.Domain.Entities
 		public readonly string CustomMapName;
 		readonly ITranslationService Translate;
 		public PlayerInfo Info;
+		public readonly bool IsImmortalThrone;
 
-		public PlayerSave(string folder, bool isCustom, string customMap, ITranslationService translate)
+		public PlayerSave(string folder, bool isImmortalThrone, bool isCustom, string customMap, ITranslationService translate)
 		{
 			Folder = folder;
 			// Copy the names over without the '_' and strip out the path information.
@@ -26,6 +27,7 @@ namespace TQVaultAE.Domain.Entities
 			CustomMap = customMap;
 			CustomMapName = Path.GetFileName(customMap);
 			Translate = translate;
+			IsImmortalThrone = isImmortalThrone;
 		}
 
 		public void Dispose()
@@ -41,6 +43,7 @@ namespace TQVaultAE.Domain.Entities
 				, Info?.Class is null ? string.Empty : $", {Translate.TranslateXTag(Info.Class, true, true)}"
 				, !string.IsNullOrWhiteSpace(Info?.Class) && Info?.CurrentLevel != null ?  " -" : string.Empty
 				, Info?.CurrentLevel is null ? string.Empty : $" {Translate.TranslateXTag("tagMenuImport05")} : {Info.CurrentLevel}"
+				, IsImmortalThrone ? string.Empty : " (TQ)"
 				//, IsCustom ? $", IsCustom" : string.Empty // CustomMap is not specificaly related to this character
 			});
 		}

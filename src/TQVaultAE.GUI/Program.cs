@@ -207,21 +207,21 @@ namespace TQVaultAE.GUI
 		{
 			if (Config.UserSettings.Default.AutoDetectGamePath)
 			{
-				gamePathResolver.TQPath = gamePathResolver.ResolveGamePath();
-				gamePathResolver.ImmortalThronePath = gamePathResolver.ResolveGamePath();
+				gamePathResolver.GamePathTQ = gamePathResolver.ResolveGamePath();
+				gamePathResolver.GamePathTQIT = gamePathResolver.ResolveGamePath();
 			}
 			else
 			{
-				gamePathResolver.TQPath = Config.UserSettings.Default.TQPath;
-				gamePathResolver.ImmortalThronePath = Config.UserSettings.Default.TQITPath;
+				gamePathResolver.GamePathTQ = Config.UserSettings.Default.TQPath;
+				gamePathResolver.GamePathTQIT = Config.UserSettings.Default.TQITPath;
 			}
-			Log.LogInformation("Selected TQ path {0}", gamePathResolver.TQPath);
-			Log.LogInformation("Selected TQIT path {0}", gamePathResolver.ImmortalThronePath);
+			Log.LogInformation("Selected TQ path {0}", gamePathResolver.GamePathTQ);
+			Log.LogInformation("Selected TQIT path {0}", gamePathResolver.GamePathTQIT);
 
 			// Show a message that the default path is going to be used.
 			if (string.IsNullOrEmpty(Config.UserSettings.Default.VaultPath))
 			{
-				string folderPath = Path.Combine(gamePathResolver.TQSaveFolder, "TQVaultData");
+				string folderPath = Path.Combine(gamePathResolver.SaveFolderTQ, "TQVaultData");
 
 				// Check to see if we are still using a shortcut to specify the vault path and display a message
 				// to use the configuration UI if we are.

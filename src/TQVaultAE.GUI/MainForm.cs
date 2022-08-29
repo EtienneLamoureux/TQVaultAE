@@ -394,8 +394,7 @@ Debug Levels
 	private void MainFormLoad(object sender, EventArgs e)
 	{
 		// Sync git local repo first
-		if (Config.UserSettings.Default.GitBackupEnabled)
-			this.GameFileService.GitRepositorySetup();
+		this.GameFileService.GitRepositorySetup();
 
 		this.splashScreen = this.ServiceProvider.GetService<SplashScreenForm>();
 		this.splashScreen.MaximumValue = 1;
@@ -607,9 +606,9 @@ Debug Levels
 	/// <returns>Total number of files that LoadAllFiles() will load.</returns>
 	private int LoadAllFilesTotal()
 	{
-		int numIT = GamePathResolver.GetCharacterList()?.Count() ?? 0;
+		int numIT = GamePathResolver.GetCharacterList().Count();
 		numIT = numIT * 2;// Assuming that there is 1 stash file per character
-		int numVaults = GamePathResolver.GetVaultList()?.Count() ?? 0;
+		int numVaults = GamePathResolver.GetVaultList().Count();
 		return Math.Max(0, numIT + numVaults - 1);
 	}
 
@@ -639,7 +638,7 @@ Debug Levels
 			}
 		}
 
-		string[] vaults = GamePathResolver.GetVaultList() ?? new string[] { };
+		string[] vaults = GamePathResolver.GetVaultList();
 		var charactersIT = this.characterComboBox.Items.OfType<PlayerSave>().ToArray();
 
 		int numIT = charactersIT?.Length ?? 0;
@@ -668,7 +667,7 @@ Debug Levels
 		var lambdacharactersIT = charactersIT.Select(c => (Action)(() =>
 		{
 			// Get the player 
-			var result = this.playerService.LoadPlayer(c, true);
+			var result = this.playerService.LoadPlayer(c);
 			bagPlayer.Add(result);
 			this.backgroundWorkerLoadAllFiles.ReportProgress(1);
 		})).ToArray();

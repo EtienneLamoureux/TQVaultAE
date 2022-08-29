@@ -7,6 +7,7 @@ using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Results;
+using TQVaultAE.Domain.Search;
 
 namespace TQVaultAE.Services
 {
@@ -45,10 +46,9 @@ namespace TQVaultAE.Services
 		/// Loads a player using the drop down list.
 		/// </summary>
 		/// <param name="selectedSave">Item from the drop down list.</param>
-		/// <param name="isIT"></param>
 		/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
 		/// <returns></returns>
-		public LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool isIT = false, bool fromFileWatcher = false)
+		public LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool fromFileWatcher = false)
 		{
 			var result = new LoadPlayerResult();
 
@@ -56,12 +56,16 @@ namespace TQVaultAE.Services
 
 			#region Get the player
 
-			result.PlayerFile = GamePathResolver.GetPlayerFile(selectedSave.Name);
+			var pf = GamePathResolver.GetPlayerFile(selectedSave.Name, selectedSave.IsImmortalThrone);
+
+			var resultPC = new PlayerCollection(selectedSave.Name, pf);
+
+			resultPC.IsImmortalThrone = selectedSave.IsImmortalThrone;
+
+			result.PlayerFile = pf;
 
 			PlayerCollection addFactory(string k)
 			{
-				var resultPC = new PlayerCollection(selectedSave.Name, k);
-				resultPC.IsImmortalThrone = isIT;
 				try
 				{
 					PlayerCollectionProvider.LoadFile(resultPC);
@@ -134,8 +138,15 @@ namespace TQVaultAE.Services
 		{
 			string[] folders = this.GamePathResolver.GetCharacterList();
 
-			return (folders is null) ? null : folders
-				.Select(f => new PlayerSave(f, this.GamePathResolver.IsCustom, this.GamePathResolver.MapName, this.TranslationService))
+			return folders
+				.Select(f => 
+					new PlayerSave(f
+						, f.Contains(GamePathResolver.SaveDirNameTQIT) // Is TQIT
+						, this.GamePathResolver.IsCustom
+						, this.GamePathResolver.MapName
+						, this.TranslationService
+					)
+				)
 				.OrderBy(ps => ps.Name)
 				.ToArray();
 		}

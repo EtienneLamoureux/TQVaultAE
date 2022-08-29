@@ -533,8 +533,8 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.titanQuestLanguage = gl == null ? "English" : gl;
 
 		this.detectGamePath = Config.UserSettings.Default.AutoDetectGamePath;
-		this.titanQuestPath = GamePathResolver.TQPath;
-		this.immortalThronePath = GamePathResolver.ImmortalThronePath;
+		this.titanQuestPath = GamePathResolver.GamePathTQ;
+		this.immortalThronePath = GamePathResolver.GamePathTQIT;
 		this.enableMods = Config.UserSettings.Default.ModEnabled;
 		this.customMap = Config.UserSettings.Default.CustomMap;
 		this.loadAllFiles = Config.UserSettings.Default.LoadAllFiles;
