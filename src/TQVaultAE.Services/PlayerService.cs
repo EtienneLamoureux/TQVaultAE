@@ -139,9 +139,9 @@ namespace TQVaultAE.Services
 			string[] folders = this.GamePathResolver.GetCharacterList();
 
 			return folders
-				.Select(f => 
+				.Select(f =>
 					new PlayerSave(f
-						, f.Contains(GamePathResolver.SaveDirNameTQIT) // Is TQIT
+						, f.IndexOf(GamePathResolver.SaveDirNameTQIT, StringComparison.OrdinalIgnoreCase) > -1 // Is TQIT
 						, this.GamePathResolver.IsCustom
 						, this.GamePathResolver.MapName
 						, this.TranslationService

@@ -677,17 +677,17 @@ public class Item
 	/// <summary>
 	/// Indicate that the item has an embedded relic or a charm.
 	/// </summary>
-	public bool HasRelicOrCharm => HasRelicOrCharmSlot1 | HasRelicOrCharmSlot2;
+	public bool HasRelicOrCharm => HasRelicOrCharmSlot1 || HasRelicOrCharmSlot2;
 
 	/// <summary>
 	/// Indicate that the item has an embedded relic in slot 1 or 2.
 	/// </summary>
-	public bool HasRelic => HasRelicSlot1 | HasRelicSlot2;
+	public bool HasRelic => HasRelicSlot1 || HasRelicSlot2;
 
 	/// <summary>
 	/// Indicate that the item has an embedded charm in slot 1 or 2.
 	/// </summary>
-	public bool HasCharm => HasCharmSlot1 | HasCharmSlot2;
+	public bool HasCharm => HasCharmSlot1 || HasCharmSlot2;
 
 	/// <summary>
 	/// Gets a value indicating whether the item is a potion.

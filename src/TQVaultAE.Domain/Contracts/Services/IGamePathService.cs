@@ -133,11 +133,10 @@ public interface IGamePathService
 	/// <summary>
 	/// Gets the base character save folder.
 	/// Changed to support custom quest characters.
-	/// if <paramref name="TQPath"/> is <c>true</c> return an original "Titan Quest" path. Return an "Immortal Throne" otherwise.
+	/// if <paramref name="IsTQIT"/> is <c>true</c> return an "Immortal Throne" path. Return an "Titan Quest" otherwise.
 	/// </summary>
-	/// <param name="TQITPath">if <c>true</c> return an original "Titan Quest" path. Return an "Immortal Throne" path otherwise.</param>
 	/// <returns>path of the save folder</returns>
-	string GetBaseCharacterFolder(bool TQPath);
+	string GetBaseCharacterFolder(bool IsTQIT);
 	/// <summary>
 	/// Gets a list of all of the character files in the save folder.
 	/// </summary>
