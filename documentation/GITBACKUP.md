@@ -61,7 +61,7 @@ You can use a public git repository provider (Github, GitLab, etc...) or your ow
 1. You update your files from TQVault or the game.
 
 1. Every changes you made are pushed to the remote directory on closing.
-    1. For thoses who have a lot of saves, it may be long to push all the files in the remote location. The first time may be annoying.
+    1. For those who have a lot of saves, it may be long to push all the files in the remote location. The first time may be annoying.
     1. ***Taking a long time uploading 2GO via a DSL line is not a TQVault issue***.
     1. Beside that "first time" it should be fast.
 

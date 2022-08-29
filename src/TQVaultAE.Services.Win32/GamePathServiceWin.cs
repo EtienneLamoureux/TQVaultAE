@@ -215,20 +215,19 @@ public class GamePathServiceWin : IGamePathService
 	/// <returns>List of character files in a string array</returns>
 	public string[] GetCharacterList()
 	{
-		string[] empty = new string[0];
-		try
-		{
-			// Get all folders that start with a '_'.
-			string[] folders = new[] {
-				Directory.GetDirectories(GetBaseCharacterFolder(false), "_*"),// From TQ 
-				Directory.GetDirectories(GetBaseCharacterFolder(true), "_*")// From TQIT
-			}.SelectMany(f => f).ToArray();
-			return !folders.Any() ? empty : folders;
-		}
-		catch (DirectoryNotFoundException)
-		{
-			return empty;
-		}
+		List<string> dirs = new();
+
+		// Get all folders that start with a '_'.
+		var TQDir = GetBaseCharacterFolder(false);// From TQ 
+		var TQITDir = GetBaseCharacterFolder(true);// From TQIT
+
+		if (Directory.Exists(TQDir))
+			dirs.AddRange(Directory.GetDirectories(TQDir, "_*"));
+
+		if (Directory.Exists(TQITDir))
+			dirs.AddRange(Directory.GetDirectories(TQITDir, "_*"));
+
+		return dirs.ToArray();
 	}
 
 	/// <summary>

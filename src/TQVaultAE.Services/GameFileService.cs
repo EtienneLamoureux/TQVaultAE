@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.ComponentModel;
 using Medallion.Shell.Streams;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace TQVaultAE.Services;
 
@@ -375,12 +376,15 @@ public class GameFileService : IGameFileService
 		string errLog = string.Empty;
 		try
 		{
+			Task stdout = Task.CompletedTask, stderr = Task.CompletedTask, fullTask;
 			if (pipeOutputStandard)
 			{
-				cmd.StandardOutput.PipeToAsync(outputLines);
-				cmd.StandardError.PipeToAsync(errorLines);
+				stdout = cmd.StandardOutput.PipeToAsync(outputLines);
+				stderr = cmd.StandardError.PipeToAsync(errorLines);
 			}
-			cmd.Wait();
+
+			fullTask = Task.WhenAll(stdout, stderr, cmd.Task);
+			fullTask.Wait();
 
 			if (!cmd.Result.Success)
 				errLog = errorLines.JoinString(Environment.NewLine);
