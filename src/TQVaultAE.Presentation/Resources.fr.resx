@@ -1518,5 +1518,8 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="SettingsAllowCheats" xml:space="preserve">
     <value>Autorise la triche</value>
   </data>
+	<data name="GitUnableToFetch" xml:space="preserve">
+    <value>le client Git est incapable de fetch "{0}"</value>
+  </data>
 
 </root>

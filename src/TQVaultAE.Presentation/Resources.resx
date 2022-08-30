@@ -2024,5 +2024,8 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="SettingsAllowCheats" xml:space="preserve">
     <value>Allow Cheats</value>
   </data>
+	<data name="GitUnableToFetch" xml:space="preserve">
+    <value>Git client is unable to fetch "{0}"</value>
+  </data>
 	
 </root>

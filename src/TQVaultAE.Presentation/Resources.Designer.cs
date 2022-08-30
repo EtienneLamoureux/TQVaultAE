@@ -1480,6 +1480,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Git client is unable to fetch &quot;{0}&quot;.
+        /// </summary>
+        public static string GitUnableToFetch {
+            get {
+                return ResourceManager.GetString("GitUnableToFetch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Git client is unable to pull &quot;{0}&quot;.
         /// </summary>
         public static string GitUnableToPull {

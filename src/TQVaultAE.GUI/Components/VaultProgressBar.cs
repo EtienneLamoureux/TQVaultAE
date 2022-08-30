@@ -34,8 +34,11 @@ namespace TQVaultAE.GUI.Components
 		/// Holds the maximum value of the progress bar.
 		/// </summary>
 		private int maximum;
+
+		/// <summary>
+		/// Holds the title of the progress bar.
+		/// </summary>
 		private ScalingLabel scalingLabelTitle;
-		private int _value;
 
 		/// <summary>
 		/// Initializes a new instance of the VaultProgressBar class.
@@ -101,14 +104,7 @@ namespace TQVaultAE.GUI.Components
 		/// <summary>
 		/// Gets or sets the current value of the progress bar.
 		/// </summary>
-		public int Value
-		{
-			get => _value;
-			set
-			{
-				_value = value;
-			}
-		}
+		public int Value { get; set; }
 
 		public Color TitleBackColor { get => this.scalingLabelTitle.BackColor; internal set => this.scalingLabelTitle.BackColor = value; }
 		public Color TitleForeColor { get => this.scalingLabelTitle.ForeColor; internal set => this.scalingLabelTitle.ForeColor = value; }

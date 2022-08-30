@@ -20,9 +20,6 @@ namespace TQVaultAE.Services;
 /// </summary>
 public class GameFileService : IGameFileService
 {
-
-
-	private const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
 	protected readonly ILogger Log;
 	protected readonly IGamePathService GamePathService;
 	protected readonly IUIService UIService;
@@ -32,6 +29,25 @@ public class GameFileService : IGameFileService
 		this.Log = log;
 		this.GamePathService = iGamePathService;
 		this.UIService = iUIService;
+	}
+
+	public bool GitAmIBehind()
+	{
+		var repoUrl = Config.UserSettings.Default.GitBackupRepository;
+		string errMess = string.Format(Resources.GitUnableToFetch, repoUrl);
+		Action<Shell.Options> options = (opt) => opt.WorkingDirectory(GamePathService.LocalGitRepositoryDirectory);
+
+		var fetch = Command.Run("git", new[] { "fetch", "origin" }, options);
+		if (HandleExecuteOut(fetch, errMess, out var fetchoutStd, out var fetcherrStd))
+		{
+			var status = Command.Run("git", new[] { "status", "--ahead-behind" }, options);
+			if (HandleExecuteOut(status, errMess, out var statusoutStd, out var statuserrStd))
+			{
+				var output = statusoutStd.JoinString(" ");
+				return output.Contains("behind");
+			}
+		}
+		return false;
 	}
 
 	public bool GitClone()
@@ -208,41 +224,46 @@ public class GameFileService : IGameFileService
 			// Cloned already
 			if (GamePathService.LocalGitRepositoryGitDirExist)
 			{
-				// pull player save files changes from github 
-				// Untracked files will stay there, remote deleted tracked character will be deleted localy, remote updated will be localy updated here too.
-				if (GitPull())
+				// is there any remote commit i'm not aware of ?
+				// I do pull only if i'm behind
+				if (GitAmIBehind())
 				{
-					// Are they here after pull
-					RepoTQPathExists = Directory.Exists(RepoTQPath);
-					RepoTQITPathExists = Directory.Exists(RepoTQITPath);
-
-					// Do you want to refresh your vault and local Save with last git save ?
-					if (vaultfiles.Any())
+					// pull player save files changes from github 
+					// Untracked files will stay there, remote deleted tracked character will be deleted localy, remote updated will be localy updated here too.
+					if (GitPull())
 					{
-						overrideFiles = DoYouWantToReplaceLocalVault();
-					}
+						// Are they here after pull
+						RepoTQPathExists = Directory.Exists(RepoTQPath);
+						RepoTQITPathExists = Directory.Exists(RepoTQITPath);
 
-					// new remote vault files will be deployed, localy updated will be overrided if needed, else leave in place
-					CopyVaultFilesFromRepoToVaultData(overrideFiles);
-
-					if (Config.UserSettings.Default.GitBackupPlayerSavesEnabled)
-					{
-						//		Do you want to replace your local TQ character save with git repository version ? Are you sure ?
-						if (RepoTQPathExists || RepoTQITPathExists)
+						// Do you want to refresh your vault and local Save with last git save ?
+						if (vaultfiles.Any())
 						{
-							overrideFiles = DoYouWantToReplaceLocalCharacterSave();
+							overrideFiles = DoYouWantToReplaceLocalVault();
+						}
 
-							//			if Yes - Copy Repo Player files to local SaveData override file
-							//			if No - Copy Repo Player files to local SaveData ignore file
+						// new remote vault files will be deployed, localy updated will be overrided if needed, else leave in place
+						CopyVaultFilesFromRepoToVaultData(overrideFiles);
 
-							if (RepoTQPathExists)
+						if (Config.UserSettings.Default.GitBackupPlayerSavesEnabled)
+						{
+							//		Do you want to replace your local TQ character save with git repository version ? Are you sure ?
+							if (RepoTQPathExists || RepoTQITPathExists)
 							{
-								CopySaveDataFromRepoToMyGames(RepoTQPath, TQPathSaveData, overrideFiles);
-							}
+								overrideFiles = DoYouWantToReplaceLocalCharacterSave();
 
-							if (RepoTQITPathExists)
-							{
-								CopySaveDataFromRepoToMyGames(RepoTQITPath, TQITPathSaveData, overrideFiles);
+								//			if Yes - Copy Repo Player files to local SaveData override file
+								//			if No - Copy Repo Player files to local SaveData ignore file
+
+								if (RepoTQPathExists)
+								{
+									CopySaveDataFromRepoToMyGames(RepoTQPath, TQPathSaveData, overrideFiles);
+								}
+
+								if (RepoTQITPathExists)
+								{
+									CopySaveDataFromRepoToMyGames(RepoTQITPath, TQITPathSaveData, overrideFiles);
+								}
 							}
 						}
 					}

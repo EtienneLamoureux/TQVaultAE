@@ -47,7 +47,8 @@ You can use a public git repository provider (Github, GitLab, etc...) or your ow
 
 ![Git Backup Settings](gitbackup/settings.png)
 
-- ***Disable legacy backup*** : stops the existing local backup system in `$(TQVaultData)\Backups`
+- ***Disable legacy backup*** : stops the existing local backup system in `$(TQVaultData)\Backups`.
+    - This discret directory can contain a lot of files. So if you decide to check this box, you certainly can empty it first.
 - ***Backup player saves*** : this backup is optional, the main concern is vault files.
 - ***Git Repository Url*** : if you arrived here, you know what it is. If you don't google it.
 
@@ -65,8 +66,9 @@ You can use a public git repository provider (Github, GitLab, etc...) or your ow
     1. ***Taking a long time uploading 2GO via a DSL line is not a TQVault issue***.
     1. Beside that "first time" it should be fast.
 
-1. Reopening the tool will ask you if you want to restore your files from the last remote version. Most of the time you says `Cancel`.
-
+1. Reopening the tool will check if there is any change on the remote directory.
+    1. if none, TQVault is up to date.
+    1. if any, TQVault will ask you how do you want to handle conflicts if any. Most of the time you says `Cancel`, but if you switch from computer to computer often, it's a real question to ask.
 
 **For the vaults**
 
@@ -87,7 +89,7 @@ That's your new life for now, until a contributor make it smarter.
 Doing stuff like `git reset --hard` on your repo for fun will make you cry!
 
 if you think you misbehave, remember TQVault sync your changes on opening and closing.
-So if you did a mess, manually backup your local files before runing the tool again.
+So if you did a mess, manually backup your local files before running the tool again.
 
 We don't take responsibility. 
 
