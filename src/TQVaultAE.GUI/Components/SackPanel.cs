@@ -1144,8 +1144,24 @@ public class SackPanel : Panel, IScalingControl
 		{
 			Item dragItem = this.DragInfo.Item;
 
+			/*
+						if ((
+							this.SackType == SackType.Player
+							|| this.SackType == SackType.Equipment
+							|| this.SackType == SackType.Sack
+							) && IsCurrentPlayerReadOnly()
+						) return;
+			 */
+
 			if (!this.IsItemValidForPlacement(dragItem))
 				return;
+
+			if ((
+				this.SackType == SackType.Player
+				|| this.SackType == SackType.Equipment
+				|| this.SackType == SackType.Sack
+				) && !IsSuitableForCurrentPlayer(dragItem)
+			) return;
 
 			// Yes we can drop it here!
 			// First take the item that is under us
@@ -2375,12 +2391,40 @@ public class SackPanel : Panel, IScalingControl
 	/// </summary>
 	/// <param name="item">Item to check</param>
 	/// <returns>True if item is able to be equipped</returns>
-	protected virtual bool CanBeEquipped(Item item)
+	protected virtual bool PlayerMeetRequierements(Item item)
 	{
 		var reqs = this.ItemProvider.GetFriendlyNames(item, FriendlyNamesExtraScopes.Requirements).RequirementVariables;
 		var currPlayer = this.userContext.CurrentPlayer;
 		if (currPlayer != null && reqs != null && reqs.Any() && !currPlayer.IsPlayerMeetRequierements(reqs))
 			return false;
+
+		return true;
+	}
+	
+	/// <summary>
+	/// Indicates whether the current player file can be edited.
+	/// </summary>
+	/// <returns></returns>
+	protected virtual bool IsCurrentPlayerReadOnly()
+	{
+		var currPlayer = this.userContext.CurrentPlayer;
+		if (!(currPlayer?.IsImmortalThrone ?? false) // TODO for now TQ Original Player is read only but could be issue #268
+		) return true;
+
+		return false;
+	}
+	/// <summary>
+	/// Indicates whether the passed item is suitable for equipping.
+	/// e.g. an Immortal throne or greater item on a Titan Quest Original player.
+	/// </summary>
+	/// <param name="item"></param>
+	/// <returns></returns>
+	protected virtual bool IsSuitableForCurrentPlayer(Item item)
+	{
+		var currPlayer = this.userContext.CurrentPlayer;
+		if (!(currPlayer?.IsImmortalThrone ?? false) // Player is TQ Original
+			&& item.GameDlc != GameDlc.TitanQuest // Non base game item
+		) return false;
 
 		return true;
 	}
@@ -2421,7 +2465,10 @@ public class SackPanel : Panel, IScalingControl
 			}
 			// If we are showing the cannot equip background then 
 			// change to invalid color and adjust the alpha.
-			else if (Config.UserSettings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
+			else if (
+				(Config.UserSettings.Default.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(item))
+				|| !IsSuitableForCurrentPlayer(item)
+			)
 			{
 				backgroundColor = this.HighlightInvalidItemColor;
 

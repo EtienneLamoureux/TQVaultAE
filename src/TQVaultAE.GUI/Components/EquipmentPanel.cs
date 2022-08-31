@@ -329,8 +329,14 @@ public class EquipmentPanel : SackPanel, IScalingControl
 			if (slot == -1 || !this.CheckItemType(dragItem, slot))
 				return;
 
+			//if (IsCurrentPlayerReadOnly())
+			//	return;
+
+			if (!IsSuitableForCurrentPlayer(dragItem))
+				return;
+
 			// If the requirement setting is enabled check to see if the item can be equipped.
-			if (Config.UserSettings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(DragInfo.Item))
+			if (Config.UserSettings.Default.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(dragItem))
 				return;
 
 			// Yes we can drop it here!
@@ -756,7 +762,10 @@ public class EquipmentPanel : SackPanel, IScalingControl
 			}
 			// If we are showing the cannot equip background then 
 			// change to invalid color and adjust the alpha.
-			else if (Config.UserSettings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
+			else if (
+				(Config.UserSettings.Default.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(item))
+				|| !IsSuitableForCurrentPlayer(item)
+			)
 			{
 				backgroundColor = this.HighlightInvalidItemColor;
 
@@ -780,8 +789,10 @@ public class EquipmentPanel : SackPanel, IScalingControl
 					if (slot != -1 && this.CheckItemType(this.DragInfo.Item, slot))
 					{
 						backgroundColor = this.HighlightValidItemColor;
-						if (Config.UserSettings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(DragInfo.Item))
-							backgroundColor = this.HighlightInvalidItemColor;
+						if (
+							(Config.UserSettings.Default.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(DragInfo.Item))
+							|| !IsSuitableForCurrentPlayer(DragInfo.Item)
+						) backgroundColor = this.HighlightInvalidItemColor;
 					}
 				}
 			}
@@ -852,8 +863,9 @@ public class EquipmentPanel : SackPanel, IScalingControl
 					if (!this.CheckItemType(this.DragInfo.Item, slot)
 						|| (
 							Config.UserSettings.Default.EnableItemRequirementRestriction
-							&& !this.CanBeEquipped(DragInfo.Item)
+							&& !this.PlayerMeetRequierements(DragInfo.Item)
 						)
+						|| !IsSuitableForCurrentPlayer(DragInfo.Item)
 					)
 					{
 						backgroundColor = this.HighlightInvalidItemColor;

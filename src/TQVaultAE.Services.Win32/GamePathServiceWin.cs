@@ -221,8 +221,9 @@ public class GamePathServiceWin : IGamePathService
 		var TQDir = GetBaseCharacterFolder(false);// From TQ 
 		var TQITDir = GetBaseCharacterFolder(true);// From TQIT
 
-		if (Directory.Exists(TQDir))
-			dirs.AddRange(Directory.GetDirectories(TQDir, "_*"));
+		// TODO see https://github.com/EtienneLamoureux/TQVaultAE/pull/465#issuecomment-1232312739
+		//if (Directory.Exists(TQDir))
+		//	dirs.AddRange(Directory.GetDirectories(TQDir, "_*"));
 
 		if (Directory.Exists(TQITDir))
 			dirs.AddRange(Directory.GetDirectories(TQITDir, "_*"));
