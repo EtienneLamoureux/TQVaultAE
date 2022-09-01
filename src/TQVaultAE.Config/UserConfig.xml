@@ -42,4 +42,5 @@
 	<GitBackupRepository></GitBackupRepository>
 	<DisableLegacyBackup>0</DisableLegacyBackup>
 	<GitBackupPlayerSavesEnabled>0</GitBackupPlayerSavesEnabled>
+	<EnableOriginalTQSupport>0</EnableOriginalTQSupport>
 </UserSettings>

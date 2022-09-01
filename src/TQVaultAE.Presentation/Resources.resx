@@ -2027,5 +2027,13 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="GitUnableToFetch" xml:space="preserve">
     <value>Git client is unable to fetch "{0}"</value>
   </data>
-	
+	<data name="SettingsOriginalTQSupport" xml:space="preserve">
+    <value>TQ original support</value>
+  </data>
+	<data name="SettingsOriginalTQSupportTT" xml:space="preserve">
+    <value>Provide support for original Titan Quest (2006) character file</value>
+  </data>
+	<data name="SettingsHowToPlay" xml:space="preserve">
+    <value>How to play...</value>
+  </data>
 </root>

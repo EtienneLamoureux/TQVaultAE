@@ -186,6 +186,9 @@
     <Compile Include="BagButtonSettings.Designer.cs">
       <DependentUpon>BagButtonSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\CheckGroupBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MainForm.Forge.cs">
       <SubType>Form</SubType>
       <DependentUpon>MainForm.cs</DependentUpon>

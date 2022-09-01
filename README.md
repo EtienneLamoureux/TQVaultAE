@@ -26,6 +26,7 @@ Works with all expansions!
         - Redisribute attribute points
         - Unlock difficulties
         - Level up
+- [Support of Titan Quest 2006](documentation/TQORIGINAL.md)
 - QOL
     - [Cloud saving](documentation/GITBACKUP.md)
     - Bulk item transfer (<kbd>CTRL</kbd>+click, right-click)
@@ -158,7 +159,7 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 <br />
 <img src="./documentation/TQVaultAE_CustomIcon.png" width="700" alt="Customize your vault" />
 
-**Q. How can adjust the volume?**
+**Q. How can i adjust the volume?**
 
 *A. You can enable/Disable the sounds in the tool settings window or adjust the volume via Windows Volume Mixer.*
 

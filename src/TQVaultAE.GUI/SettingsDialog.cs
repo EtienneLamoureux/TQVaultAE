@@ -14,13 +14,11 @@ using EnumsNET;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Helpers;
-using System.Runtime.ConstrainedExecution;
 using System.Text.RegularExpressions;
-using System.IO;
-using log4net.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic.Logging;
+using System.Diagnostics;
+using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.GUI;
 
@@ -265,10 +263,20 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	/// enableBackupPlayerSaves last value
 	/// </summary>
 	private bool enableBackupPlayerSaves;
+
 	/// <summary>
 	/// Indicates that the <see cref="Config.UserSettings.GitBackupPlayerSavesEnabled"/> setting has been changed
 	/// </summary>
 	public bool EnableBackupPlayerSavesChanged { get; private set; }
+
+	/// <summary>
+	/// enableOriginalTQSupport last value
+	/// </summary>
+	private bool enableOriginalTQSupport;
+	/// <summary>
+	/// Indicates that the <see cref="Config.UserSettings.EnableOriginalTQSupport"/> setting has been changed
+	/// </summary>
+	public bool EnableOriginalTQSupportChanged { get; private set; }
 
 	private readonly ILogger<SettingsDialog> Log;
 
@@ -292,6 +300,8 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		//this.DrawCustomBorder = true;
 		//this.ResizeCustomAllowed = false;
 		//this.ScaleOnResize = false;
+
+		this.linkLabelTQOriginalSupport.LinkColor = TQColor.Aqua.Color();
 
 		#region Apply custom font
 
@@ -341,6 +351,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.scalingCheckBoxDisableAutoStacking.Font = font1125;
 
 		this.checkGroupBoxGitBackup.ProcessAllControls((ctr) => ctr.Font = font1125);
+		this.checkGroupBoxOriginalTQSupport.ProcessAllControls((ctr) => ctr.Font = font1125);
 
 		this.Font = font1125;
 
@@ -396,8 +407,13 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.scalingCheckBoxDisableLegacyBackup.Text = Resources.SettingsDisableLegacyBackup;
 		this.toolTip.SetToolTip(this.scalingCheckBoxDisableLegacyBackup, Resources.SettingsDisableLegacyBackupTT);
 		this.scalingLabelGitRepository.Text = Resources.SettingsGitRepositoryUrl;
+
 		this.scalingCheckBoxBackupPlayerSaves.Text = Resources.SettingsBackupPlayerSaves;
 		this.toolTip.SetToolTip(this.scalingCheckBoxBackupPlayerSaves, Resources.SettingsBackupPlayerSavesTT);
+
+		this.checkGroupBoxOriginalTQSupport.Text = Resources.SettingsOriginalTQSupport;
+		this.toolTip.SetToolTip(this.checkGroupBoxOriginalTQSupport, Resources.SettingsOriginalTQSupportTT);
+		this.linkLabelTQOriginalSupport.Text = Resources.SettingsHowToPlay;
 
 		this.cancelButton.Text = Resources.GlobalCancel;
 		this.okayButton.Text = Resources.GlobalOK;
@@ -527,7 +543,8 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.disableLegacyBackup = Config.UserSettings.Default.DisableLegacyBackup;
 		this.gitBackupRepository = Config.UserSettings.Default.GitBackupRepository;
 		this.enableBackupPlayerSaves = Config.UserSettings.Default.GitBackupPlayerSavesEnabled;
-
+		this.enableOriginalTQSupport = Config.UserSettings.Default.EnableOriginalTQSupport;
+		
 		// Force English since there was some issue with getting the proper language setting.
 		var gl = Database.GameLanguage;
 		this.titanQuestLanguage = gl == null ? "English" : gl;
@@ -606,7 +623,8 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.scalingCheckBoxDisableLegacyBackup.Checked = this.disableLegacyBackup;
 		this.scalingTextBoxGitRepository.Text = this.gitBackupRepository;
 		this.scalingCheckBoxBackupPlayerSaves.Checked = this.enableBackupPlayerSaves;
-
+		this.checkGroupBoxOriginalTQSupport.Checked = this.enableOriginalTQSupport;
+		
 
 		this.enableCustomMapsCheckBox.Checked = this.enableMods;
 
@@ -704,7 +722,8 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 			Config.UserSettings.Default.DisableLegacyBackup = this.disableLegacyBackup;
 			Config.UserSettings.Default.GitBackupRepository = this.gitBackupRepository;
 			Config.UserSettings.Default.GitBackupPlayerSavesEnabled = this.enableBackupPlayerSaves;
-
+			Config.UserSettings.Default.EnableOriginalTQSupport = this.enableOriginalTQSupport;
+			
 			Config.UserSettings.Default.EnableEpicLegendaryAffixes =
 				this.scalingCheckBoxEnableEpicLegendaryAffixes.Enabled && this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked;
 
@@ -1319,6 +1338,33 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		{
 			this.enableBackupPlayerSaves = false;
 			this.ConfigurationChanged = this.UISettingChanged = this.EnableBackupPlayerSavesChanged = true;
+		}
+	}
+
+	private void linkLabelTQOriginalSupport_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+	{
+		ProcessStartInfo psInfo = new ProcessStartInfo
+		{
+			FileName = Config.Settings.Default.TQOriginalHowtoUrl,
+			UseShellExecute = true
+		};
+		Process.Start(psInfo);
+	}
+
+	private void checkGroupBoxOriginalTQSupport_CheckedChanged(object sender, EventArgs e)
+	{
+		if (checkGroupBoxOriginalTQSupport.Checked)
+		{
+			if (!this.enableOriginalTQSupport)
+				this.enableOriginalTQSupport = this.ConfigurationChanged = this.UISettingChanged = this.EnableOriginalTQSupportChanged = true;
+			return;
+		}
+
+		// Unchecked
+		if (this.enableOriginalTQSupport)
+		{
+			this.enableOriginalTQSupport = false;
+			this.ConfigurationChanged = this.UISettingChanged = this.EnableOriginalTQSupportChanged = true;
 		}
 	}
 }

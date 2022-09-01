@@ -134,7 +134,10 @@ public class UserSettings
 
 	[XmlElement(ElementName = "GitBackupPlayerSavesEnabled")]
 	public bool GitBackupPlayerSavesEnabled { get; set; } = false;
-	
+
+	[XmlElement(ElementName = "EnableOriginalTQSupport")]
+	public bool EnableOriginalTQSupport { get; set; } = false;
+
 	#endregion
 
 

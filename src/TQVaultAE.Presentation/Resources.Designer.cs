@@ -4698,6 +4698,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to How to play....
+        /// </summary>
+        public static string SettingsHowToPlay {
+            get {
+                return ResourceManager.GetString("SettingsHowToPlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Item BG Alpha Color :.
         /// </summary>
         public static string SettingsItemBGColorOpacityLabel {
@@ -4818,6 +4827,24 @@ namespace TQVaultAE.Presentation {
         public static string SettingsNoWarningTT {
             get {
                 return ResourceManager.GetString("SettingsNoWarningTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TQ original support.
+        /// </summary>
+        public static string SettingsOriginalTQSupport {
+            get {
+                return ResourceManager.GetString("SettingsOriginalTQSupport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Provide support for original Titan Quest (2006) character file.
+        /// </summary>
+        public static string SettingsOriginalTQSupportTT {
+            get {
+                return ResourceManager.GetString("SettingsOriginalTQSupportTT", resourceCulture);
             }
         }
         

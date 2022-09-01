@@ -1521,5 +1521,13 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="GitUnableToFetch" xml:space="preserve">
     <value>le client Git est incapable de fetch "{0}"</value>
   </data>
-
+	<data name="SettingsOriginalTQSupport" xml:space="preserve">
+    <value>Support pour TQ original</value>
+  </data>
+	<data name="SettingsOriginalTQSupportTT" xml:space="preserve">
+    <value>Fournit le support pour la modification des sauvegardes de Titan Quest 2006.</value>
+  </data>
+	<data name="SettingsHowToPlay" xml:space="preserve">
+    <value>Comment jouer...</value>
+  </data>
 </root>

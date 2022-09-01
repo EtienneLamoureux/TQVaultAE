@@ -191,12 +191,15 @@ namespace TQVaultAE.GUI
             this.hotReloadCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.scalingCheckBoxEnableEpicLegendaryAffixes = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.scalingCheckBoxDisableAutoStacking = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.checkGroupBoxGitBackup = new UIToolbox.CheckGroupBox();
+            this.checkGroupBoxGitBackup = new TQVaultAE.GUI.Components.CheckGroupBox();
             this.bufferedFlowLayoutPanelGitBackup = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.scalingCheckBoxDisableLegacyBackup = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.scalingCheckBoxBackupPlayerSaves = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.scalingLabelGitRepository = new TQVaultAE.GUI.Components.ScalingLabel();
             this.scalingTextBoxGitRepository = new TQVaultAE.GUI.Components.ScalingTextBox();
+            this.checkGroupBoxOriginalTQSupport = new TQVaultAE.GUI.Components.CheckGroupBox();
+            this.bufferedFlowLayoutPanelTQOriginalSupport = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
+            this.linkLabelTQOriginalSupport = new System.Windows.Forms.LinkLabel();
             this.languageComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.languageLabel = new TQVaultAE.GUI.Components.ScalingLabel();
             this.titanQuestPathTextBox = new TQVaultAE.GUI.Components.ScalingTextBox();
@@ -216,17 +219,17 @@ namespace TQVaultAE.GUI
             this.scalingComboBoxCSVDelim = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.groupBoxGeneral = new System.Windows.Forms.GroupBox();
             this.bufferedFlowLayoutPanelGeneralSettings = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.checkGroupBoxAllowCheats = new UIToolbox.CheckGroupBox();
+            this.checkGroupBoxAllowCheats = new TQVaultAE.GUI.Components.CheckGroupBox();
             this.bufferedFlowLayoutPanelCheats = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.groupBoxGfxAndAudio = new System.Windows.Forms.GroupBox();
             this.bufferedFlowLayoutPanelGfxAndAudio = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.detectLanguageCheckBox = new UIToolbox.CheckGroupBox();
+            this.detectLanguageCheckBox = new TQVaultAE.GUI.Components.CheckGroupBox();
             this.bufferedFlowLayoutPanelLanguage = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.detectGamePathsCheckBox = new UIToolbox.CheckGroupBox();
+            this.detectGamePathsCheckBox = new TQVaultAE.GUI.Components.CheckGroupBox();
             this.bufferedFlowLayoutPanelAutoDetectGamePath = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.bufferedFlowLayoutPanelTQPath = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.bufferedFlowLayoutPanelTQITPath = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.enableCustomMapsCheckBox = new UIToolbox.CheckGroupBox();
+            this.enableCustomMapsCheckBox = new TQVaultAE.GUI.Components.CheckGroupBox();
             this.bufferedFlowLayoutPanelCustomMap = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.bufferedTableLayoutPanelSkeleton = new TQVaultAE.GUI.Components.BufferedTableLayoutPanel();
             this.bufferedFlowLayoutPanelSkeletonRight = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
@@ -236,6 +239,8 @@ namespace TQVaultAE.GUI
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.checkGroupBoxGitBackup.SuspendLayout();
             this.bufferedFlowLayoutPanelGitBackup.SuspendLayout();
+            this.checkGroupBoxOriginalTQSupport.SuspendLayout();
+            this.bufferedFlowLayoutPanelTQOriginalSupport.SuspendLayout();
             this.tableLayoutPanelButtons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ItemBGColorOpacityTrackBar)).BeginInit();
             this.groupBoxGeneral.SuspendLayout();
@@ -681,6 +686,45 @@ namespace TQVaultAE.GUI
             this.scalingTextBoxGitRepository.Size = new System.Drawing.Size(397, 24);
             this.scalingTextBoxGitRepository.TabIndex = 4;
             this.scalingTextBoxGitRepository.TextChanged += new System.EventHandler(this.scalingTextBoxGitRepository_TextChanged);
+            // 
+            // checkGroupBoxOriginalTQSupport
+            // 
+            this.checkGroupBoxOriginalTQSupport.Checked = false;
+            this.checkGroupBoxOriginalTQSupport.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
+            this.checkGroupBoxOriginalTQSupport.CheckState = System.Windows.Forms.CheckState.Unchecked;
+            this.checkGroupBoxOriginalTQSupport.Controls.Add(this.bufferedFlowLayoutPanelTQOriginalSupport);
+            this.checkGroupBoxOriginalTQSupport.ForeColor = System.Drawing.Color.Gold;
+            this.checkGroupBoxOriginalTQSupport.Location = new System.Drawing.Point(3, 206);
+            this.checkGroupBoxOriginalTQSupport.Name = "checkGroupBoxOriginalTQSupport";
+            this.checkGroupBoxOriginalTQSupport.Size = new System.Drawing.Size(316, 49);
+            this.checkGroupBoxOriginalTQSupport.TabIndex = 53;
+            this.checkGroupBoxOriginalTQSupport.TabStop = false;
+            this.checkGroupBoxOriginalTQSupport.Text = "TQ original support";
+            this.toolTip.SetToolTip(this.checkGroupBoxOriginalTQSupport, "Provide support for original Titan Quest character file editing");
+            this.checkGroupBoxOriginalTQSupport.CheckedChanged += new System.EventHandler(this.checkGroupBoxOriginalTQSupport_CheckedChanged);
+            // 
+            // bufferedFlowLayoutPanelTQOriginalSupport
+            // 
+            this.bufferedFlowLayoutPanelTQOriginalSupport.Controls.Add(this.linkLabelTQOriginalSupport);
+            this.bufferedFlowLayoutPanelTQOriginalSupport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bufferedFlowLayoutPanelTQOriginalSupport.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.bufferedFlowLayoutPanelTQOriginalSupport.ForeColor = System.Drawing.Color.White;
+            this.bufferedFlowLayoutPanelTQOriginalSupport.Location = new System.Drawing.Point(3, 20);
+            this.bufferedFlowLayoutPanelTQOriginalSupport.Name = "bufferedFlowLayoutPanelTQOriginalSupport";
+            this.bufferedFlowLayoutPanelTQOriginalSupport.Size = new System.Drawing.Size(310, 26);
+            this.bufferedFlowLayoutPanelTQOriginalSupport.TabIndex = 1;
+            // 
+            // linkLabelTQOriginalSupport
+            // 
+            this.linkLabelTQOriginalSupport.AutoSize = true;
+            this.linkLabelTQOriginalSupport.LinkColor = System.Drawing.Color.Magenta;
+            this.linkLabelTQOriginalSupport.Location = new System.Drawing.Point(3, 0);
+            this.linkLabelTQOriginalSupport.Name = "linkLabelTQOriginalSupport";
+            this.linkLabelTQOriginalSupport.Size = new System.Drawing.Size(98, 18);
+            this.linkLabelTQOriginalSupport.TabIndex = 54;
+            this.linkLabelTQOriginalSupport.TabStop = true;
+            this.linkLabelTQOriginalSupport.Text = "How to play...";
+            this.linkLabelTQOriginalSupport.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelTQOriginalSupport_LinkClicked);
             // 
             // languageComboBox
             // 
@@ -1130,6 +1174,7 @@ namespace TQVaultAE.GUI
             this.bufferedFlowLayoutPanelSkeletonRight.AutoSize = true;
             this.bufferedFlowLayoutPanelSkeletonRight.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.bufferedFlowLayoutPanelSkeletonRight.Controls.Add(this.groupBoxGfxAndAudio);
+            this.bufferedFlowLayoutPanelSkeletonRight.Controls.Add(this.checkGroupBoxOriginalTQSupport);
             this.bufferedFlowLayoutPanelSkeletonRight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.bufferedFlowLayoutPanelSkeletonRight.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.bufferedFlowLayoutPanelSkeletonRight.Location = new System.Drawing.Point(839, 3);
@@ -1209,6 +1254,10 @@ namespace TQVaultAE.GUI
             this.checkGroupBoxGitBackup.PerformLayout();
             this.bufferedFlowLayoutPanelGitBackup.ResumeLayout(false);
             this.bufferedFlowLayoutPanelGitBackup.PerformLayout();
+            this.checkGroupBoxOriginalTQSupport.ResumeLayout(false);
+            this.checkGroupBoxOriginalTQSupport.PerformLayout();
+            this.bufferedFlowLayoutPanelTQOriginalSupport.ResumeLayout(false);
+            this.bufferedFlowLayoutPanelTQOriginalSupport.PerformLayout();
             this.tableLayoutPanelButtons.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ItemBGColorOpacityTrackBar)).EndInit();
             this.groupBoxGeneral.ResumeLayout(false);
@@ -1271,24 +1320,24 @@ namespace TQVaultAE.GUI
         private ScalingComboBox scalingComboBoxCSVDelim;
 		private ScalingCheckBox scalingCheckBoxEnableEpicLegendaryAffixes;
 		private ScalingCheckBox scalingCheckBoxDisableAutoStacking;
-        private UIToolbox.CheckGroupBox checkGroupBoxGitBackup;
+        private TQVaultAE.GUI.Components.CheckGroupBox checkGroupBoxGitBackup;
         private ScalingCheckBox scalingCheckBoxDisableLegacyBackup;
         private ScalingTextBox scalingTextBoxGitRepository;
         private ScalingLabel scalingLabelGitRepository;
         private BufferedFlowLayoutPanel bufferedFlowLayoutPanelGitBackup;
         private System.Windows.Forms.GroupBox groupBoxGeneral;
         private BufferedFlowLayoutPanel bufferedFlowLayoutPanelGeneralSettings;
-        private UIToolbox.CheckGroupBox checkGroupBoxAllowCheats;
+        private TQVaultAE.GUI.Components.CheckGroupBox checkGroupBoxAllowCheats;
         private BufferedFlowLayoutPanel bufferedFlowLayoutPanelCheats;
         private System.Windows.Forms.GroupBox groupBoxGfxAndAudio;
         private BufferedFlowLayoutPanel bufferedFlowLayoutPanelGfxAndAudio;
-        private UIToolbox.CheckGroupBox detectLanguageCheckBox;
+        private TQVaultAE.GUI.Components.CheckGroupBox detectLanguageCheckBox;
         private BufferedFlowLayoutPanel bufferedFlowLayoutPanelLanguage;
-        private UIToolbox.CheckGroupBox detectGamePathsCheckBox;
+        private TQVaultAE.GUI.Components.CheckGroupBox detectGamePathsCheckBox;
         private BufferedFlowLayoutPanel bufferedFlowLayoutPanelAutoDetectGamePath;
         private BufferedFlowLayoutPanel bufferedFlowLayoutPanelTQPath;
         private BufferedFlowLayoutPanel bufferedFlowLayoutPanelTQITPath;
-        private UIToolbox.CheckGroupBox enableCustomMapsCheckBox;
+        private TQVaultAE.GUI.Components.CheckGroupBox enableCustomMapsCheckBox;
         private BufferedFlowLayoutPanel bufferedFlowLayoutPanelCustomMap;
         private BufferedTableLayoutPanel bufferedTableLayoutPanelSkeleton;
         private BufferedFlowLayoutPanel bufferedFlowLayoutPanelSkeletonRight;
@@ -1297,5 +1346,8 @@ namespace TQVaultAE.GUI
         private BufferedFlowLayoutPanel bufferedFlowLayoutPanelSkeletonCenter;
 		private System.Windows.Forms.OpenFileDialog openFileDialog;
         private ScalingCheckBox scalingCheckBoxBackupPlayerSaves;
+        private CheckGroupBox checkGroupBoxOriginalTQSupport;
+        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelTQOriginalSupport;
+        private System.Windows.Forms.LinkLabel linkLabelTQOriginalSupport;
     }
 }

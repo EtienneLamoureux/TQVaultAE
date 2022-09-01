@@ -21,6 +21,7 @@ using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Helpers;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic.Logging;
 
 namespace TQVaultAE.GUI.Components;
 
@@ -1476,6 +1477,23 @@ public class SackPanel : Panel, IScalingControl
 						where location != this.AutoMoveLocation
 						select location
 					).Distinct();
+
+					// TQ original save
+					if (this.userContext.CurrentPlayer is not null && !this.userContext.CurrentPlayer.IsImmortalThrone)
+					{
+						autoMoveChoices = autoMoveChoices.Where(loc =>
+							loc != AutoMoveLocation.Stash // There is no Stash on TQ original save
+							&& loc != AutoMoveLocation.Trash // TODO What is that ?
+						);
+
+						// You can't move TQIT+ items in Equipement, Sack and inventory
+						if (focusedItem.GameDlc != GameDlc.TitanQuest)
+						{
+							autoMoveChoices = autoMoveChoices.Where(loc =>
+								loc != AutoMoveLocation.Player
+							);
+						}
+					}
 
 					foreach (var choice in autoMoveChoices)
 					{
