@@ -544,7 +544,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.gitBackupRepository = Config.UserSettings.Default.GitBackupRepository;
 		this.enableBackupPlayerSaves = Config.UserSettings.Default.GitBackupPlayerSavesEnabled;
 		this.enableOriginalTQSupport = Config.UserSettings.Default.EnableOriginalTQSupport;
-		
+
 		// Force English since there was some issue with getting the proper language setting.
 		var gl = Database.GameLanguage;
 		this.titanQuestLanguage = gl == null ? "English" : gl;
@@ -624,7 +624,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.scalingTextBoxGitRepository.Text = this.gitBackupRepository;
 		this.scalingCheckBoxBackupPlayerSaves.Checked = this.enableBackupPlayerSaves;
 		this.checkGroupBoxOriginalTQSupport.Checked = this.enableOriginalTQSupport;
-		
+
 
 		this.enableCustomMapsCheckBox.Checked = this.enableMods;
 
@@ -686,7 +686,8 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		{
 			if (string.IsNullOrEmpty(gitBackupRepository) || !Regex.IsMatch(gitBackupRepository, gitUrlRegex))
 			{
-				this.UIService.ShowError("You must enter a valid Git Url.");
+				this.UIService.ShowError("You must enter a valid Git Url.", Buttons: Domain.Contracts.Services.ShowMessageButtons.OK);
+				this.DialogResult = DialogResult.None;
 				return;
 			}
 		}
@@ -723,13 +724,15 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 			Config.UserSettings.Default.GitBackupRepository = this.gitBackupRepository;
 			Config.UserSettings.Default.GitBackupPlayerSavesEnabled = this.enableBackupPlayerSaves;
 			Config.UserSettings.Default.EnableOriginalTQSupport = this.enableOriginalTQSupport;
-			
+
 			Config.UserSettings.Default.EnableEpicLegendaryAffixes =
 				this.scalingCheckBoxEnableEpicLegendaryAffixes.Enabled && this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked;
 
 			var delim = (ComboBoxItem<CsvDelimiter, char>)this.scalingComboBoxCSVDelim.SelectedItem;
 			Config.UserSettings.Default.CSVDelimiter = delim.ComboValue.ToString();
 		}
+
+		this.DialogResult = DialogResult.OK;
 	}
 
 	/// <summary>
