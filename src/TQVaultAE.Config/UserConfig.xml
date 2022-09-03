@@ -22,7 +22,7 @@
 	<LoadAllFilesCompleted>1</LoadAllFilesCompleted>
 	<PlayerReadonly>1</PlayerReadonly>
 	<AllowCharacterEdit>0</AllowCharacterEdit>
-	<AllowCheats>1</AllowCheats>
+	<AllowCheats>0</AllowCheats>
 	<ForceGamePath></ForceGamePath>
 	<BaseFont>AlbertusMT</BaseFont>
 	<EnableDetailedTooltipView>0</EnableDetailedTooltipView>
