@@ -3,11 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArzExplorer", "src\ARZExplorer\ArzExplorer.csproj", "{F5582F3E-552C-4EDA-B4EE-3F4BD9B0A9CF}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5A472C5B-BC7E-46EE-905E-93CCD53E8EAA} = {5A472C5B-BC7E-46EE-905E-93CCD53E8EAA}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQVaultAE.GUI", "src\TQVaultAE.GUI\TQVaultAE.GUI.csproj", "{5A472C5B-BC7E-46EE-905E-93CCD53E8EAA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C74E317C-9516-401B-88B5-29B2AE551013} = {C74E317C-9516-401B-88B5-29B2AE551013}
+		{F5582F3E-552C-4EDA-B4EE-3F4BD9B0A9CF} = {F5582F3E-552C-4EDA-B4EE-3F4BD9B0A9CF}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{20915EFE-C25B-499E-9CB6-5888F29BC32F}"
 	ProjectSection(SolutionItems) = preProject
@@ -21,9 +22,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		documentation\HIGHLIGHT.md = documentation\HIGHLIGHT.md
 		src\IsExternalInit.cs = src\IsExternalInit.cs
 		src\MsBuildAL1073WarningWorkaround.config = src\MsBuildAL1073WarningWorkaround.config
+		src\publishtobin.bat = src\publishtobin.bat
 		README.md = README.md
 		documentation\SAVEFILEEXPLORER.md = documentation\SAVEFILEEXPLORER.md
 		documentation\TQORIGINAL.md = documentation\TQORIGINAL.md
+		src\XCOPY_EXCLUDE.txt = src\XCOPY_EXCLUDE.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQ.SaveFilesExplorer", "src\TQSaveFilesExplorer\TQ.SaveFilesExplorer.csproj", "{C74E317C-9516-401B-88B5-29B2AE551013}"

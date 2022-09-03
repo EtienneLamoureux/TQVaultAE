@@ -722,13 +722,12 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>REM Copy Build
-XCOPY "$(ProjectDir)bin\$(Platform)\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /Y /S /I
-
-REM Clean output of unnecessary files
-DEL "$(SolutionDir)bin\$(ConfigurationName)\*.pdb"
-RMDIR "$(SolutionDir)bin\$(ConfigurationName)\Logging" /S /Q
-RMDIR "$(SolutionDir)bin\$(ConfigurationName)\LocalGitRepository" /S /Q
-		</PostBuildEvent>
+SET SOLDIR=$(SolutionDir)
+SET PLATFORM=$(Platform)
+SET CONFNAME=$(ConfigurationName)
+SET PROJDIR=$(ProjectDir)
+CALL "%25SOLDIR%25src\publishtobin.bat"
+</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\MsBuildAL1073WarningWorkaround.config" />
   <PropertyGroup>

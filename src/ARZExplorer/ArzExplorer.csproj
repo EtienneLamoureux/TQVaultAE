@@ -360,11 +360,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>XCOPY "$(ProjectDir)bin\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /y /s /i
-
-REM Clean output of unnecessary files
-DEL "$(SolutionDir)bin\$(ConfigurationName)\*.pdb"
-RMDIR "$(SolutionDir)bin\$(ConfigurationName)\Logging" /S /Q</PostBuildEvent>
+    <PostBuildEvent>REM Copy Build
+SET SOLDIR=$(SolutionDir)
+SET PLATFORM=.
+SET CONFNAME=$(ConfigurationName)
+SET PROJDIR=$(ProjectDir)
+CALL "%25SOLDIR%25src\publishtobin.bat"
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
