@@ -1574,28 +1574,28 @@ public class SackPanel : Panel, IScalingControl
 	private void AddItemSetMenuItems(Item focusedItem)
 	{
 		// If the item is a set item, then add a menu to create the rest of the set
-		string[] setItems = ItemProvider.GetSetItems(focusedItem, false);
-		if (setItems?.Any() ?? false)
+		var setItems = ItemProvider.GetSetItems(focusedItem);
+		if (setItems?.setMembers?.Any() ?? false)
 		{
 			var choices = new List<ToolStripItem>();
-			foreach (string setPiece in setItems)
+			foreach (var setPiece in setItems.setMembers)
 			{
 				// do not put the current item in the menu
-				var setPieceId = setPiece.ToRecordId();
+				var setPieceId = setPiece.Key.ToRecordId();
 				if (focusedItem.BaseItemId == setPieceId) continue;
 
 				// Get the name of the item
-				Info info = Database.GetInfo(setPieceId);
+				Info info = setPiece.Value;
 				if (info is null) continue;
 
 				var choice = new ToolStripMenuItem()
 				{
 					Text = this.TranslationService.TranslateXTag(info.DescriptionTag),
-					Name = setPiece,
+					Name = setPiece.Key,
 					BackColor = this.CustomContextMenu.BackColor,
 					Font = this.CustomContextMenu.Font,
 					ForeColor = this.CustomContextMenu.ForeColor,
-					ToolTipText = setPiece,
+					ToolTipText = setPiece.Key,
 				};
 				choice.Click += NewSetItemClicked;
 

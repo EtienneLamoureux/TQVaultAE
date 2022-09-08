@@ -255,6 +255,9 @@ namespace TQVaultAE.Domain.Entities
 
 					if (this.HighlightFilter.HavingCharm)
 						availableItems = availableItems.Where(i => i.Item.HasCharm);
+
+					if (this.HighlightFilter.IsSetItem)
+						availableItems = availableItems.Where(i => i.FriendlyNames.ItemSet != null);
 				}
 
 				this.HighlightedItems.AddRange(availableItems.Select(i => i.Item));

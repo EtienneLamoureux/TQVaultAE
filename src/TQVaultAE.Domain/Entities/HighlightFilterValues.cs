@@ -23,5 +23,6 @@ namespace TQVaultAE.Domain.Entities
 		public bool HavingSuffix;
 		public bool HavingRelic;
 		public bool HavingCharm;
+		public bool IsSetItem;
 	}
 }

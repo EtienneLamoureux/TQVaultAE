@@ -1530,4 +1530,13 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="SettingsHowToPlay" xml:space="preserve">
     <value>Comment jouer...</value>
   </data>
+	<data name="SearchHavingPrefix" xml:space="preserve">
+    <value>Avec Préfixe</value>
+  </data>
+	<data name="SearchHavingSuffix" xml:space="preserve">
+    <value>Avec Suffixe</value>
+  </data>
+	<data name="SearchSetItem" xml:space="preserve">
+    <value>Objet de Set</value>
+  </data>
 </root>

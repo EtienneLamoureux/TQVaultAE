@@ -37,7 +37,7 @@ public class ToFriendlyNameResult
 					}
 					, AttributesAll
 					, FlavorText
-					, ItemSet
+					, ItemSet.Translations.Select(si => si.Value).ToArray()
 					, Requirements
 				}.SelectMany(s => s).Where(s => !string.IsNullOrEmpty(s));
 		}
@@ -159,9 +159,9 @@ public class ToFriendlyNameResult
 	public string[] FlavorText = new string[] { };
 	public string[] Requirements = new string[] { };
 	public SortedList<string, Variable> RequirementVariables;
-		public RequirementInfo RequirementInfo;
+	public RequirementInfo RequirementInfo;
 	public string[] BaseAttributes = new string[] { };
-	public string[] ItemSet = new string[] { };
+	public SetItemInfo ItemSet;
 	public DBRecordCollection BaseItemInfoRecords;
 
 	#region Relic Common

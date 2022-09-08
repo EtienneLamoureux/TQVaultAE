@@ -70,12 +70,14 @@ public partial class HighlightFilters : UserControl
 		scalingLabelMinDex.Text = TranslationService.TranslateXTag("Dexterity");
 		scalingLabelMaxInt.Text =
 		scalingLabelMinInt.Text = TranslationService.TranslateXTag("Intelligence");
+		scalingCheckBoxHavingCharm.Text = Resources.SearchHavingCharm;
+		scalingCheckBoxHavingRelic.Text = Resources.SearchHavingRelic;
+		scalingCheckBoxHavingPrefix.Text = Resources.SearchHavingPrefix;
+		scalingCheckBoxHavingSuffix.Text = Resources.SearchHavingSuffix;
+		scalingCheckBoxSetItem.Text = Resources.SearchSetItem;
 		buttonReset.Text = TranslationService.TranslateXTag("tagSkillReset");
 		buttonApply.Text = TranslationService.TranslateXTag("tagMenuButton07");
 
-		//scalingCheckedListBoxTypes.Height = scalingCheckedListBoxTypes.PreferredHeight;
-		//scalingCheckedListBoxRarity.Height = scalingCheckedListBoxRarity.PreferredHeight;
-		//scalingCheckedListBoxOrigin.Height = scalingCheckedListBoxOrigin.PreferredHeight;
 	}
 
 	private void InitOrigin()
@@ -281,6 +283,9 @@ public partial class HighlightFilters : UserControl
 		ResetNumeric();
 		scalingCheckBoxMax.Checked =
 		scalingCheckBoxMin.Checked =
+		scalingCheckBoxSetItem.Checked =
+		scalingCheckBoxHavingCharm.Checked =
+		scalingCheckBoxHavingRelic.Checked =
 		scalingCheckBoxHavingPrefix.Checked =
 		scalingCheckBoxHavingSuffix.Checked = false;
 
@@ -361,9 +366,10 @@ public partial class HighlightFilters : UserControl
 			HavingSuffix = scalingCheckBoxHavingSuffix.Checked,
 			HavingRelic = scalingCheckBoxHavingRelic.Checked,
 			HavingCharm = scalingCheckBoxHavingCharm.Checked,
+			IsSetItem = scalingCheckBoxSetItem.Checked,
 		};
 
-		if (filter.MaxRequierement || filter.MinRequierement || filter.HavingPrefix || filter.HavingSuffix || filter.HavingRelic || filter.HavingCharm
+		if (filter.MaxRequierement || filter.MinRequierement || filter.HavingPrefix || filter.HavingSuffix || filter.HavingRelic || filter.HavingCharm || filter.IsSetItem
 			|| filter.ClassItem.Any() || filter.Rarity.Any() || filter.Origin.Any())
 		{
 			UserContext.HighlightFilter = filter;

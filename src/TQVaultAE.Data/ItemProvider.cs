@@ -13,6 +13,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
@@ -523,36 +524,33 @@ public class ItemProvider : IItemProvider
 	/// <summary>
 	/// Gets the itemID's of all the items in the set.
 	/// </summary>
-	/// <param name="includeName">Flag to include the set name in the returned array</param>
-	/// <returns>Returns a string array containing the remaining set items or null if the item is not part of a set.</returns>
-	public string[] GetSetItems(Item itm, bool includeName)
+	/// <returns>Returns <see cref="SetItemInfo"/> containing the remaining set items or null if the item is not part of a set.</returns>
+	public SetItemInfo GetSetItems(Item itm)
 	{
 		if (itm.baseItemInfo == null)
 			return null;
 
-		string setID = itm.baseItemInfo.GetString("itemSetName");
-		if (string.IsNullOrWhiteSpace(setID))
+		string itemSetName = itm.baseItemInfo.GetString("itemSetName");
+		if (string.IsNullOrWhiteSpace(itemSetName))
 			return null;
 
 		// Get the set record
-		DBRecordCollection setRecord = Database.GetRecordFromFile(setID);
-		if (setRecord == null)
+		DBRecordCollection setRecords = Database.GetRecordFromFile(itemSetName);
+		if (setRecords == null)
 			return null;
 
-		string[] ans = setRecord.GetAllStrings("setMembers");
-		if (ans == null || ans.Length == 0)
+		string[] setMembers = setRecords.GetAllStrings("setMembers");
+		if (setMembers == null || setMembers.Length == 0)
 			return null;
 
-		// Added by VillageIdiot to support set Name
-		if (includeName)
-		{
-			string[] setitems = new string[ans.Length + 1];
-			setitems[0] = setRecord.GetString("setName", 0);
-			ans.CopyTo(setitems, 1);
-			return setitems;
-		}
-		else
-			return ans;
+		var setName = setRecords.GetString("setName", 0);
+
+		var dico = new Dictionary<string, Info>();
+
+		foreach (var item in setMembers)
+			dico.Add(item, Database.GetInfo(item));
+
+		return new SetItemInfo(itemSetName, setName, dico, setRecords);
 	}
 
 
@@ -1662,7 +1660,7 @@ VariableValue Raw : {valueRaw}
 			}
 
 			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.ItemSet) ?? false)
-				res.ItemSet = GetItemSetString(k.Item);
+				res.ItemSet = GetItemSetTranslations(k.Item);
 
 			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.Requirements) ?? false)
 			{
@@ -1804,42 +1802,28 @@ VariableValue Raw : {valueRaw}
 	}
 
 	/// <summary>
-	/// Shows the items in a set for the set items
-	/// </summary>
+	/// Get the translations for this set item
+	/// </summary>-
 	/// <returns>string containing the set items</returns>
-	public string[] GetItemSetString(Item itm)
+	public SetItemInfo GetItemSetTranslations(Item itm)
 	{
-		List<string> results = new List<string>();
-		string[] setMembers = this.GetSetItems(itm, true);
+		var setMembers = this.GetSetItems(itm);
 		if (setMembers != null)
 		{
-			var isfirst = true;
-			foreach (string memb in setMembers)
+			var name = TranslationService.TranslateXTag(setMembers.setName);
+			setMembers.Translations.Add(setMembers.setName, $"{ItemStyle.Rare.TQColor().ColorTag()}{name}");
+
+			foreach (var memb in setMembers.setMembers)
 			{
-				string name = string.Empty;
+				name = "?? Missing database info ??";
 
-				// Changed by VillageIdiot
-				// The first entry is now the set name
-				if (isfirst)
-				{
-					name = TranslationService.TranslateXTag(memb);
-					results.Add($"{ItemStyle.Rare.TQColor().ColorTag()}{name}");
-					isfirst = false;
-				}
-				else
-				{
-					name = "?? Missing database info ??";
-					Info info = Database.GetInfo(memb);
+				if (memb.Value != null)
+					name = TranslationService.TranslateXTag(memb.Value.DescriptionTag);
 
-					if (info != null)
-						name = TranslationService.TranslateXTag(info.DescriptionTag);
-
-					results.Add($"{ItemStyle.Common.TQColor().ColorTag()}    {name}");
-				}
+				setMembers.Translations.Add(memb.Key, $"{ItemStyle.Common.TQColor().ColorTag()}    {name}");
 			}
 		}
-
-		return results.ToArray();
+		return setMembers;
 	}
 
 	/// <summary>

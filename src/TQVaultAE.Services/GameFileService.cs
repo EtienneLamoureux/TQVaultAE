@@ -378,7 +378,7 @@ public class GameFileService : IGameFileService
 			var repoUrl = Config.UserSettings.Default.GitBackupRepository;
 			string errMess = string.Format(Resources.GitUnableToPull, repoUrl);
 
-			var pull = Command.Run("git", new[] { "pull", repoUrl }, opt => { opt.WorkingDirectory(GamePathService.LocalGitRepositoryDirectory); });
+			var pull = Command.Run("git", new[] { "pull", "origin" }, opt => { opt.WorkingDirectory(GamePathService.LocalGitRepositoryDirectory); });
 			return HandleExecuteOut(pull, errMess, out var pulloutStd, out var pullerrStd);
 		}
 		return false;

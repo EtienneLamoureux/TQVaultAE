@@ -4186,11 +4186,29 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Having Prefix.
+        /// </summary>
+        public static string SearchHavingPrefix {
+            get {
+                return ResourceManager.GetString("SearchHavingPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Having Relic.
         /// </summary>
         public static string SearchHavingRelic {
             get {
                 return ResourceManager.GetString("SearchHavingRelic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Having Suffix.
+        /// </summary>
+        public static string SearchHavingSuffix {
+            get {
+                return ResourceManager.GetString("SearchHavingSuffix", resourceCulture);
             }
         }
         
@@ -4299,6 +4317,15 @@ namespace TQVaultAE.Presentation {
         public static string SearchReduceCategoriesDuringSelection {
             get {
                 return ResourceManager.GetString("SearchReduceCategoriesDuringSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Item.
+        /// </summary>
+        public static string SearchSetItem {
+            get {
+                return ResourceManager.GetString("SearchSetItem", resourceCulture);
             }
         }
         

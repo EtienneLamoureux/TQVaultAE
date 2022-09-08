@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SixLabors.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -329,10 +330,10 @@ namespace TQVaultAE.GUI.Tooltip
 				AddRow(this.TranslationService.ItemIT, TQColor.Green.Color());
 
 			// ItemSet
-			if (Data.ItemSet.Any())
+			if (Data.ItemSet?.setMembers.Any() ?? false)
 			{
 				AddRow(TOOLTIPDELIM);
-				foreach (var str in Data.ItemSet) AddRow(str);
+				foreach (var str in Data.ItemSet.Translations) AddRow(str.Value);
 			}
 
 			if (Data.Requirements.Any())

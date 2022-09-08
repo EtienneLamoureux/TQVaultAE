@@ -95,7 +95,7 @@ public interface IItemProvider
 	/// Shows the items in a set for the set items
 	/// </summary>
 	/// <returns>string containing the set items</returns>
-	string[] GetItemSetString(Item itm);
+	SetItemInfo GetItemSetTranslations(Item itm);
 	/// <summary>
 	/// Pet skills can also have multiple values so we attempt to decode it here
 	/// unfortunately the level is not in the skill record so we need to look up
@@ -133,9 +133,8 @@ public interface IItemProvider
 	/// <summary>
 	/// Gets the itemID's of all the items in the set.
 	/// </summary>
-	/// <param name="includeName">Flag to include the set name in the returned array</param>
-	/// <returns>Returns a string array containing the remaining set items or null if the item is not part of a set.</returns>
-	string[] GetSetItems(Item itm, bool includeName);
+	/// <returns>Returns <see cref="SetItemInfo"/> containing the remaining set items or null if the item is not part of a set.</returns>
+	SetItemInfo GetSetItems(Item itm);
 	/// <summary>
 	/// Gets the level of a triggered skill
 	/// </summary>

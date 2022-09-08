@@ -59,9 +59,10 @@
             this.bufferedFlowLayoutPanelPrefixSuffix = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.scalingCheckBoxHavingPrefix = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.scalingCheckBoxHavingSuffix = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.scalingCheckBoxHavingRelic = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.scalingCheckBoxHavingCharm = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.scalingCheckBoxSetItem = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.tableLayoutPanelHighlight.SuspendLayout();
             this.flowLayoutPanelMax.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxLvl)).BeginInit();
@@ -105,7 +106,7 @@
             this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanelHighlight.Size = new System.Drawing.Size(495, 371);
+            this.tableLayoutPanelHighlight.Size = new System.Drawing.Size(495, 391);
             this.tableLayoutPanelHighlight.TabIndex = 25;
             // 
             // flowLayoutPanelMax
@@ -471,7 +472,7 @@
             "Potion",
             "Equipment",
             "Dye"});
-            this.scalingCheckedListBoxTypes.Location = new System.Drawing.Point(3, 81);
+            this.scalingCheckedListBoxTypes.Location = new System.Drawing.Point(3, 101);
             this.scalingCheckedListBoxTypes.MultiColumn = true;
             this.scalingCheckedListBoxTypes.Name = "scalingCheckedListBoxTypes";
             this.scalingCheckedListBoxTypes.Size = new System.Drawing.Size(489, 150);
@@ -493,7 +494,7 @@
             "Rare",
             "Epic",
             "Legendary"});
-            this.scalingCheckedListBoxRarity.Location = new System.Drawing.Point(3, 237);
+            this.scalingCheckedListBoxRarity.Location = new System.Drawing.Point(3, 257);
             this.scalingCheckedListBoxRarity.MultiColumn = true;
             this.scalingCheckedListBoxRarity.Name = "scalingCheckedListBoxRarity";
             this.scalingCheckedListBoxRarity.Size = new System.Drawing.Size(489, 50);
@@ -514,7 +515,7 @@
             "Atlantis",
             "Ragnarök",
             "Eternal Embers"});
-            this.scalingCheckedListBoxOrigin.Location = new System.Drawing.Point(3, 293);
+            this.scalingCheckedListBoxOrigin.Location = new System.Drawing.Point(3, 313);
             this.scalingCheckedListBoxOrigin.MultiColumn = true;
             this.scalingCheckedListBoxOrigin.Name = "scalingCheckedListBoxOrigin";
             this.scalingCheckedListBoxOrigin.Size = new System.Drawing.Size(489, 50);
@@ -533,7 +534,7 @@
             this.buttonApply.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
             this.buttonApply.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.buttonApply.Image = ((System.Drawing.Image)(resources.GetObject("buttonApply.Image")));
-            this.buttonApply.Location = new System.Drawing.Point(420, 346);
+            this.buttonApply.Location = new System.Drawing.Point(420, 366);
             this.buttonApply.Margin = new System.Windows.Forms.Padding(0);
             this.buttonApply.Name = "buttonApply";
             this.buttonApply.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonApply.OverBitmap")));
@@ -558,7 +559,7 @@
             this.buttonReset.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
             this.buttonReset.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.buttonReset.Image = ((System.Drawing.Image)(resources.GetObject("buttonReset.Image")));
-            this.buttonReset.Location = new System.Drawing.Point(0, 346);
+            this.buttonReset.Location = new System.Drawing.Point(0, 366);
             this.buttonReset.Margin = new System.Windows.Forms.Padding(0);
             this.buttonReset.Name = "buttonReset";
             this.buttonReset.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonReset.OverBitmap")));
@@ -579,11 +580,12 @@
             this.bufferedFlowLayoutPanelPrefixSuffix.Controls.Add(this.scalingCheckBoxHavingSuffix);
             this.bufferedFlowLayoutPanelPrefixSuffix.Controls.Add(this.scalingCheckBoxHavingRelic);
             this.bufferedFlowLayoutPanelPrefixSuffix.Controls.Add(this.scalingCheckBoxHavingCharm);
+            this.bufferedFlowLayoutPanelPrefixSuffix.Controls.Add(this.scalingCheckBoxSetItem);
             this.bufferedFlowLayoutPanelPrefixSuffix.Dock = System.Windows.Forms.DockStyle.Fill;
             this.bufferedFlowLayoutPanelPrefixSuffix.Location = new System.Drawing.Point(0, 55);
             this.bufferedFlowLayoutPanelPrefixSuffix.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
             this.bufferedFlowLayoutPanelPrefixSuffix.Name = "bufferedFlowLayoutPanelPrefixSuffix";
-            this.bufferedFlowLayoutPanelPrefixSuffix.Size = new System.Drawing.Size(492, 20);
+            this.bufferedFlowLayoutPanelPrefixSuffix.Size = new System.Drawing.Size(492, 40);
             this.bufferedFlowLayoutPanelPrefixSuffix.TabIndex = 32;
             // 
             // scalingCheckBoxHavingPrefix
@@ -638,6 +640,19 @@
             this.scalingCheckBoxHavingCharm.Text = "Having Charm";
             this.scalingCheckBoxHavingCharm.UseVisualStyleBackColor = true;
             // 
+            // scalingCheckBoxSetItem
+            // 
+            this.scalingCheckBoxSetItem.AutoSize = true;
+            this.scalingCheckBoxSetItem.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.scalingCheckBoxSetItem.ForeColor = System.Drawing.Color.White;
+            this.scalingCheckBoxSetItem.Location = new System.Drawing.Point(3, 20);
+            this.scalingCheckBoxSetItem.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.scalingCheckBoxSetItem.Name = "scalingCheckBoxSetItem";
+            this.scalingCheckBoxSetItem.Size = new System.Drawing.Size(74, 20);
+            this.scalingCheckBoxSetItem.TabIndex = 4;
+            this.scalingCheckBoxSetItem.Text = "Set Item";
+            this.scalingCheckBoxSetItem.UseVisualStyleBackColor = true;
+            // 
             // HighlightFilters
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -650,7 +665,7 @@
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "HighlightFilters";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Size = new System.Drawing.Size(515, 391);
+            this.Size = new System.Drawing.Size(515, 411);
             this.tableLayoutPanelHighlight.ResumeLayout(false);
             this.tableLayoutPanelHighlight.PerformLayout();
             this.flowLayoutPanelMax.ResumeLayout(false);
@@ -706,5 +721,6 @@
         private ScalingCheckBox scalingCheckBoxHavingSuffix;
         private ScalingCheckBox scalingCheckBoxHavingRelic;
         private ScalingCheckBox scalingCheckBoxHavingCharm;
+        private ScalingCheckBox scalingCheckBoxSetItem;
     }
 }

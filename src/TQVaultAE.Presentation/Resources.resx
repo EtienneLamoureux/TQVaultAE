@@ -2036,4 +2036,13 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="SettingsHowToPlay" xml:space="preserve">
     <value>How to play...</value>
   </data>
+	<data name="SearchHavingPrefix" xml:space="preserve">
+    <value>Having Prefix</value>
+  </data>
+	<data name="SearchHavingSuffix" xml:space="preserve">
+    <value>Having Suffix</value>
+  </data>
+	<data name="SearchSetItem" xml:space="preserve">
+    <value>Set Item</value>
+  </data>
 </root>
