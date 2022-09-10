@@ -29,7 +29,6 @@
 	<ItemBGColorOpacity>15</ItemBGColorOpacity>
 	<EnableItemRequirementRestriction>0</EnableItemRequirementRestriction>
 	<EnableHotReload>0</EnableHotReload>
-	<SearchQueries></SearchQueries>
 	<DisableTooltipEquipment>0</DisableTooltipEquipment>
 	<DisableTooltipStash>0</DisableTooltipStash>
 	<DisableTooltipTransfer>0</DisableTooltipTransfer>

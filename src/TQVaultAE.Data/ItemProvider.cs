@@ -1467,7 +1467,7 @@ VariableValue Raw : {valueRaw}
 				if (!TranslationService.TryTranslateXTag(k.Item.baseItemInfo.DescriptionTag, out res.BaseItemInfoDescription))
 					res.BaseItemInfoDescription = k.Item.BaseItemId.Raw;
 
-				res.BaseItemInfoClass = TranslationService.TranslateXTag(k.Item.ItemClassTagName);
+				res.BaseItemInfoClass = TranslationService.TranslateXTag(k.Item.ItemClassTagName, removeAllTQTags: true);
 
 				res.BaseItemInfoRecords = Database.GetRecordFromFile(k.Item.BaseItemId);
 

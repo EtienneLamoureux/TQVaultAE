@@ -2045,4 +2045,7 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="SearchSetItem" xml:space="preserve">
     <value>Set Item</value>
   </data>
+	<data name="GlobalOrigin" xml:space="preserve">
+    <value>Origin</value>
+  </data>
 </root>

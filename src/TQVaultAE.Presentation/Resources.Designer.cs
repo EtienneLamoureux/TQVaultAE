@@ -1750,6 +1750,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Origin.
+        /// </summary>
+        public static string GlobalOrigin {
+            get {
+                return ResourceManager.GetString("GlobalOrigin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pasted!.
         /// </summary>
         public static string GlobalPasted {

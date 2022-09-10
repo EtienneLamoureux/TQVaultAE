@@ -255,6 +255,7 @@
     <Compile Include="Models\CommandLineArgs.cs" />
     <Compile Include="Models\CsvDelimiter.cs" />
     <Compile Include="Models\ItemDragInfo.cs" />
+    <Compile Include="Models\ItemValue.cs" />
     <Compile Include="Models\ResizeEventArgs.cs" />
     <Compile Include="Models\ResultChangedEventArgs.cs" />
     <Compile Include="Models\SackPanelEventArgs.cs" />
@@ -285,6 +286,7 @@
     <Compile Include="Components\PlayerPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Models\SearchDialogAdvanced\SearchQueries.cs" />
     <Compile Include="Models\SearchDialogAdvanced\SearchQuery.cs" />
     <Compile Include="Models\SearchDialogAdvanced\BoxItem.cs" />
     <Compile Include="Models\SearchDialogAdvanced\SearchOperator.cs" />

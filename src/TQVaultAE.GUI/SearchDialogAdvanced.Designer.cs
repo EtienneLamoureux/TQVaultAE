@@ -80,12 +80,18 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelInVaults = new System.Windows.Forms.FlowLayoutPanel();
             this.scalingLabelInVaults = new TQVaultAE.GUI.Components.ScalingLabel();
             this.scalingCheckedListBoxVaults = new TQVaultAE.GUI.Components.ScalingCheckedListBox();
+            this.flowLayoutPanelOrigin = new System.Windows.Forms.FlowLayoutPanel();
+            this.scalingLabelOrigin = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.scalingCheckedListBoxOrigin = new TQVaultAE.GUI.Components.ScalingCheckedListBox();
             this.flowLayoutPanelQuality = new System.Windows.Forms.FlowLayoutPanel();
             this.scalingLabelQuality = new TQVaultAE.GUI.Components.ScalingLabel();
             this.scalingCheckedListBoxQuality = new TQVaultAE.GUI.Components.ScalingCheckedListBox();
             this.flowLayoutPanelStyle = new System.Windows.Forms.FlowLayoutPanel();
             this.scalingLabelStyle = new TQVaultAE.GUI.Components.ScalingLabel();
             this.scalingCheckedListBoxStyle = new TQVaultAE.GUI.Components.ScalingCheckedListBox();
+            this.flowLayoutPanelSetItems = new System.Windows.Forms.FlowLayoutPanel();
+            this.scalingLabelSetItems = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.scalingCheckedListBoxSetItems = new TQVaultAE.GUI.Components.ScalingCheckedListBox();
             this.flowLayoutPanelWithCharm = new System.Windows.Forms.FlowLayoutPanel();
             this.scalingLabelWithCharm = new TQVaultAE.GUI.Components.ScalingLabel();
             this.scalingCheckedListBoxWithCharm = new TQVaultAE.GUI.Components.ScalingCheckedListBox();
@@ -109,6 +115,12 @@ namespace TQVaultAE.GUI
             this.scalingButtonQueryDelete = new TQVaultAE.GUI.Components.ScalingButton();
             this.tableLayoutPanelContent = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanelMainAutoScroll = new System.Windows.Forms.FlowLayoutPanel();
+            this.bufferedFlowLayoutPanelQuickFilters = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
+            this.scalingCheckBoxHavingPrefix = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.scalingCheckBoxHavingSuffix = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.scalingCheckBoxHavingRelic = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.scalingCheckBoxHavingCharm = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.scalingCheckBoxIsSetItem = new TQVaultAE.GUI.Components.ScalingCheckBox();
             this.flowLayoutPanelMisc = new System.Windows.Forms.FlowLayoutPanel();
             this.scalingLabelMaxVisibleElement = new TQVaultAE.GUI.Components.ScalingLabel();
             this.numericUpDownMaxElement = new System.Windows.Forms.NumericUpDown();
@@ -118,13 +130,39 @@ namespace TQVaultAE.GUI
             this.scalingLabelOperator = new TQVaultAE.GUI.Components.ScalingLabel();
             this.scalingComboBoxOperator = new TQVaultAE.GUI.Components.ScalingComboBox();
             this.scalingLabelFiltersSelected = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.scalingLabelFilterCategories = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.scalingTextBoxFilterCategories = new TQVaultAE.GUI.Components.ScalingTextBox();
+            this.bufferedFlowLayoutPanelRequierements = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
+            this.tableLayoutPanelRequierements = new System.Windows.Forms.TableLayoutPanel();
+            this.scalingCheckBoxMinReq = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.flowLayoutPanelMin = new System.Windows.Forms.FlowLayoutPanel();
+            this.scalingLabelMinLvl = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.numericUpDownMinLvl = new System.Windows.Forms.NumericUpDown();
+            this.scalingLabelMinStr = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.numericUpDownMinStr = new System.Windows.Forms.NumericUpDown();
+            this.scalingLabelMinDex = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.numericUpDownMinDex = new System.Windows.Forms.NumericUpDown();
+            this.scalingLabelMinInt = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.numericUpDownMinInt = new System.Windows.Forms.NumericUpDown();
+            this.scalingCheckBoxMaxReq = new TQVaultAE.GUI.Components.ScalingCheckBox();
+            this.flowLayoutPanelMax = new System.Windows.Forms.FlowLayoutPanel();
+            this.scalingLabelMaxLvl = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.numericUpDownMaxLvl = new System.Windows.Forms.NumericUpDown();
+            this.scalingLabelMaxStr = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.numericUpDownMaxStr = new System.Windows.Forms.NumericUpDown();
+            this.scalingLabelMaxDex = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.numericUpDownMaxDex = new System.Windows.Forms.NumericUpDown();
+            this.scalingLabelMaxInt = new TQVaultAE.GUI.Components.ScalingLabel();
+            this.numericUpDownMaxInt = new System.Windows.Forms.NumericUpDown();
             this.flowLayoutPanelLeftColumn = new System.Windows.Forms.FlowLayoutPanel();
             this.scalingButtonMenuCharacters = new TQVaultAE.GUI.Components.ScalingButton();
             this.scalingButtonMenuVaults = new TQVaultAE.GUI.Components.ScalingButton();
             this.scalingButtonMenuType = new TQVaultAE.GUI.Components.ScalingButton();
             this.scalingButtonMenuRarity = new TQVaultAE.GUI.Components.ScalingButton();
+            this.scalingButtonMenuOrigin = new TQVaultAE.GUI.Components.ScalingButton();
             this.scalingButtonMenuQuality = new TQVaultAE.GUI.Components.ScalingButton();
             this.scalingButtonMenuStyle = new TQVaultAE.GUI.Components.ScalingButton();
+            this.scalingButtonMenuSetItems = new TQVaultAE.GUI.Components.ScalingButton();
             this.scalingButtonMenuWithCharm = new TQVaultAE.GUI.Components.ScalingButton();
             this.scalingButtonMenuWithRelic = new TQVaultAE.GUI.Components.ScalingButton();
             this.scalingButtonMenuAttribute = new TQVaultAE.GUI.Components.ScalingButton();
@@ -135,8 +173,6 @@ namespace TQVaultAE.GUI
             this.scalingButtonMenuSuffixAttribute = new TQVaultAE.GUI.Components.ScalingButton();
             this.backgroundWorkerBuildDB = new System.ComponentModel.BackgroundWorker();
             this.typeAssistantSearchBox = new TQVaultAE.GUI.Components.TypeAssistant();
-            this.scalingLabelFilterCategories = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.scalingTextBoxFilterCategories = new TQVaultAE.GUI.Components.ScalingTextBox();
             this.typeAssistantFilterCategories = new TQVaultAE.GUI.Components.TypeAssistant();
             this.tableLayoutPanelBottom.SuspendLayout();
             this.scalingLabelProgressPanelAlignText.SuspendLayout();
@@ -149,8 +185,10 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelBaseAttributes.SuspendLayout();
             this.flowLayoutPanelMain.SuspendLayout();
             this.flowLayoutPanelInVaults.SuspendLayout();
+            this.flowLayoutPanelOrigin.SuspendLayout();
             this.flowLayoutPanelQuality.SuspendLayout();
             this.flowLayoutPanelStyle.SuspendLayout();
+            this.flowLayoutPanelSetItems.SuspendLayout();
             this.flowLayoutPanelWithCharm.SuspendLayout();
             this.flowLayoutPanelWithRelic.SuspendLayout();
             this.flowLayoutPanelPrefixName.SuspendLayout();
@@ -159,8 +197,21 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelQueries.SuspendLayout();
             this.tableLayoutPanelContent.SuspendLayout();
             this.flowLayoutPanelMainAutoScroll.SuspendLayout();
+            this.bufferedFlowLayoutPanelQuickFilters.SuspendLayout();
             this.flowLayoutPanelMisc.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxElement)).BeginInit();
+            this.bufferedFlowLayoutPanelRequierements.SuspendLayout();
+            this.tableLayoutPanelRequierements.SuspendLayout();
+            this.flowLayoutPanelMin.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinLvl)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinStr)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinDex)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinInt)).BeginInit();
+            this.flowLayoutPanelMax.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxLvl)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxStr)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxDex)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxInt)).BeginInit();
             this.flowLayoutPanelLeftColumn.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -189,7 +240,7 @@ namespace TQVaultAE.GUI
             this.applyButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.applyButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.applyButton.Image = ((System.Drawing.Image)(resources.GetObject("applyButton.Image")));
-            this.applyButton.Location = new System.Drawing.Point(35, 36);
+            this.applyButton.Location = new System.Drawing.Point(34, 40);
             this.applyButton.Name = "applyButton";
             this.applyButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("applyButton.OverBitmap")));
             this.applyButton.Size = new System.Drawing.Size(137, 30);
@@ -214,7 +265,7 @@ namespace TQVaultAE.GUI
             this.cancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.cancelButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancelButton.Image = ((System.Drawing.Image)(resources.GetObject("cancelButton.Image")));
-            this.cancelButton.Location = new System.Drawing.Point(1217, 36);
+            this.cancelButton.Location = new System.Drawing.Point(1206, 40);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("cancelButton.OverBitmap")));
             this.cancelButton.Size = new System.Drawing.Size(137, 30);
@@ -231,11 +282,11 @@ namespace TQVaultAE.GUI
             this.vaultProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.vaultProgressBar.BackColor = System.Drawing.Color.Transparent;
-            this.vaultProgressBar.Location = new System.Drawing.Point(211, 31);
+            this.vaultProgressBar.Location = new System.Drawing.Point(209, 39);
             this.vaultProgressBar.Maximum = 0;
             this.vaultProgressBar.Minimum = 0;
             this.vaultProgressBar.Name = "vaultProgressBar";
-            this.vaultProgressBar.Size = new System.Drawing.Size(967, 42);
+            this.vaultProgressBar.Size = new System.Drawing.Size(959, 42);
             this.vaultProgressBar.TabIndex = 4;
             this.vaultProgressBar.Value = 0;
             // 
@@ -248,7 +299,7 @@ namespace TQVaultAE.GUI
             this.scalingLabelProgress.ForeColor = System.Drawing.Color.DarkOrange;
             this.scalingLabelProgress.Location = new System.Drawing.Point(422, 1);
             this.scalingLabelProgress.Name = "scalingLabelProgress";
-            this.scalingLabelProgress.Size = new System.Drawing.Size(104, 17);
+            this.scalingLabelProgress.Size = new System.Drawing.Size(96, 17);
             this.scalingLabelProgress.TabIndex = 5;
             this.scalingLabelProgress.Text = "Building Data...";
             this.scalingLabelProgress.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -262,6 +313,7 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelBottom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanelBottom.ColumnCount = 3;
+            this.tableLayoutPanelContent.SetColumnSpan(this.tableLayoutPanelBottom, 3);
             this.tableLayoutPanelBottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.tableLayoutPanelBottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
             this.tableLayoutPanelBottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
@@ -269,21 +321,21 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelBottom.Controls.Add(this.applyButton, 0, 1);
             this.tableLayoutPanelBottom.Controls.Add(this.cancelButton, 2, 1);
             this.tableLayoutPanelBottom.Controls.Add(this.scalingLabelProgressPanelAlignText, 1, 0);
-            this.tableLayoutPanelBottom.Location = new System.Drawing.Point(12, 672);
+            this.tableLayoutPanelBottom.Location = new System.Drawing.Point(3, 748);
             this.tableLayoutPanelBottom.Name = "tableLayoutPanelBottom";
             this.tableLayoutPanelBottom.RowCount = 2;
             this.tableLayoutPanelBottom.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
-            this.tableLayoutPanelBottom.Size = new System.Drawing.Size(1391, 71);
+            this.tableLayoutPanelBottom.Size = new System.Drawing.Size(1379, 84);
             this.tableLayoutPanelBottom.TabIndex = 6;
             // 
             // scalingLabelProgressPanelAlignText
             // 
             this.scalingLabelProgressPanelAlignText.Controls.Add(this.scalingLabelProgress);
             this.scalingLabelProgressPanelAlignText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scalingLabelProgressPanelAlignText.Location = new System.Drawing.Point(211, 3);
+            this.scalingLabelProgressPanelAlignText.Location = new System.Drawing.Point(209, 3);
             this.scalingLabelProgressPanelAlignText.Name = "scalingLabelProgressPanelAlignText";
-            this.scalingLabelProgressPanelAlignText.Size = new System.Drawing.Size(967, 20);
+            this.scalingLabelProgressPanelAlignText.Size = new System.Drawing.Size(959, 20);
             this.scalingLabelProgressPanelAlignText.TabIndex = 6;
             this.scalingLabelProgressPanelAlignText.SizeChanged += new System.EventHandler(this.scalingLabelProgressPanelAlignText_SizeChanged);
             // 
@@ -384,7 +436,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelItemAttributes.Controls.Add(this.scalingLabelItemAttributes);
             this.flowLayoutPanelItemAttributes.Controls.Add(this.scalingCheckedListBoxItemAttributes);
             this.flowLayoutPanelItemAttributes.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelItemAttributes.Location = new System.Drawing.Point(693, 108);
+            this.flowLayoutPanelItemAttributes.Location = new System.Drawing.Point(3, 213);
             this.flowLayoutPanelItemAttributes.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelItemAttributes.Name = "flowLayoutPanelItemAttributes";
             this.flowLayoutPanelItemAttributes.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
@@ -487,7 +539,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelPrefixAttributes.Controls.Add(this.scalingLabelPrefixAttributes);
             this.flowLayoutPanelPrefixAttributes.Controls.Add(this.scalingCheckedListBoxPrefixAttributes);
             this.flowLayoutPanelPrefixAttributes.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelPrefixAttributes.Location = new System.Drawing.Point(3, 213);
+            this.flowLayoutPanelPrefixAttributes.Location = new System.Drawing.Point(463, 213);
             this.flowLayoutPanelPrefixAttributes.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelPrefixAttributes.Name = "flowLayoutPanelPrefixAttributes";
             this.flowLayoutPanelPrefixAttributes.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
@@ -538,12 +590,13 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelSuffixAttributes.Controls.Add(this.scalingLabelSuffixAttributes);
             this.flowLayoutPanelSuffixAttributes.Controls.Add(this.scalingCheckedListBoxSuffixAttributes);
             this.flowLayoutPanelSuffixAttributes.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelSuffixAttributes.Location = new System.Drawing.Point(693, 213);
+            this.flowLayoutPanelSuffixAttributes.Location = new System.Drawing.Point(3, 318);
             this.flowLayoutPanelSuffixAttributes.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelSuffixAttributes.Name = "flowLayoutPanelSuffixAttributes";
             this.flowLayoutPanelSuffixAttributes.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
             this.flowLayoutPanelSuffixAttributes.Size = new System.Drawing.Size(224, 99);
             this.flowLayoutPanelSuffixAttributes.TabIndex = 13;
+            this.flowLayoutPanelSuffixAttributes.WrapContents = false;
             // 
             // scalingLabelSuffixAttributes
             // 
@@ -589,7 +642,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelBaseAttributes.Controls.Add(this.scalingLabelBaseAttributes);
             this.flowLayoutPanelBaseAttributes.Controls.Add(this.scalingCheckedListBoxBaseAttributes);
             this.flowLayoutPanelBaseAttributes.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelBaseAttributes.Location = new System.Drawing.Point(233, 213);
+            this.flowLayoutPanelBaseAttributes.Location = new System.Drawing.Point(693, 213);
             this.flowLayoutPanelBaseAttributes.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelBaseAttributes.Name = "flowLayoutPanelBaseAttributes";
             this.flowLayoutPanelBaseAttributes.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
@@ -634,17 +687,15 @@ namespace TQVaultAE.GUI
             // 
             // flowLayoutPanelMain
             // 
-            this.flowLayoutPanelMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanelMain.AutoSize = true;
-            this.flowLayoutPanelMain.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelCharacters);
             this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelInVaults);
             this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelItemType);
             this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelRarity);
+            this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelOrigin);
             this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelQuality);
             this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelStyle);
+            this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelSetItems);
             this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelWithCharm);
             this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelWithRelic);
             this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelItemAttributes);
@@ -653,10 +704,11 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelBaseAttributes);
             this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelSuffixName);
             this.flowLayoutPanelMain.Controls.Add(this.flowLayoutPanelSuffixAttributes);
-            this.flowLayoutPanelMain.Location = new System.Drawing.Point(3, 3);
+            this.flowLayoutPanelMain.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanelMain.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanelMain.MinimumSize = new System.Drawing.Size(200, 100);
             this.flowLayoutPanelMain.Name = "flowLayoutPanelMain";
-            this.flowLayoutPanelMain.Size = new System.Drawing.Size(1150, 315);
+            this.flowLayoutPanelMain.Size = new System.Drawing.Size(1150, 420);
             this.flowLayoutPanelMain.TabIndex = 15;
             // 
             // flowLayoutPanelInVaults
@@ -710,6 +762,59 @@ namespace TQVaultAE.GUI
             this.scalingCheckedListBoxVaults.SelectedValueChanged += new System.EventHandler(this.scalingCheckedListBox_SelectedValueChanged);
             this.scalingCheckedListBoxVaults.MouseMove += new System.Windows.Forms.MouseEventHandler(this.scalingCheckedListBox_MouseMove);
             // 
+            // flowLayoutPanelOrigin
+            // 
+            this.flowLayoutPanelOrigin.AutoSize = true;
+            this.flowLayoutPanelOrigin.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanelOrigin.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.flowLayoutPanelOrigin.Controls.Add(this.scalingLabelOrigin);
+            this.flowLayoutPanelOrigin.Controls.Add(this.scalingCheckedListBoxOrigin);
+            this.flowLayoutPanelOrigin.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanelOrigin.Location = new System.Drawing.Point(923, 3);
+            this.flowLayoutPanelOrigin.MinimumSize = new System.Drawing.Size(50, 10);
+            this.flowLayoutPanelOrigin.Name = "flowLayoutPanelOrigin";
+            this.flowLayoutPanelOrigin.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
+            this.flowLayoutPanelOrigin.Size = new System.Drawing.Size(224, 99);
+            this.flowLayoutPanelOrigin.TabIndex = 22;
+            // 
+            // scalingLabelOrigin
+            // 
+            this.scalingLabelOrigin.AutoSize = true;
+            this.scalingLabelOrigin.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingLabelOrigin.ForeColor = System.Drawing.Color.Gold;
+            this.scalingLabelOrigin.Location = new System.Drawing.Point(4, 2);
+            this.scalingLabelOrigin.Name = "scalingLabelOrigin";
+            this.scalingLabelOrigin.Size = new System.Drawing.Size(40, 15);
+            this.scalingLabelOrigin.TabIndex = 0;
+            this.scalingLabelOrigin.Text = "Origin";
+            this.scalingLabelOrigin.UseMnemonic = false;
+            this.scalingLabelOrigin.MouseClick += new System.Windows.Forms.MouseEventHandler(this.scalingLabelCategory_MouseClick);
+            // 
+            // scalingCheckedListBoxOrigin
+            // 
+            this.scalingCheckedListBoxOrigin.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
+            this.scalingCheckedListBoxOrigin.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.scalingCheckedListBoxOrigin.CheckOnClick = true;
+            this.scalingCheckedListBoxOrigin.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingCheckedListBoxOrigin.ForeColor = System.Drawing.Color.White;
+            this.scalingCheckedListBoxOrigin.FormattingEnabled = true;
+            this.scalingCheckedListBoxOrigin.HorizontalScrollbar = true;
+            this.scalingCheckedListBoxOrigin.IntegralHeight = false;
+            this.scalingCheckedListBoxOrigin.Items.AddRange(new object[] {
+            "Titan Quest Original",
+            "Immortal Throne",
+            "Ragnarok",
+            "Atlantis",
+            "Eternal Embers"});
+            this.scalingCheckedListBoxOrigin.Location = new System.Drawing.Point(4, 17);
+            this.scalingCheckedListBoxOrigin.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.scalingCheckedListBoxOrigin.MultiColumn = true;
+            this.scalingCheckedListBoxOrigin.Name = "scalingCheckedListBoxOrigin";
+            this.scalingCheckedListBoxOrigin.Size = new System.Drawing.Size(215, 80);
+            this.scalingCheckedListBoxOrigin.TabIndex = 7;
+            this.scalingCheckedListBoxOrigin.SelectedValueChanged += new System.EventHandler(this.scalingCheckedListBox_SelectedValueChanged);
+            this.scalingCheckedListBoxOrigin.MouseMove += new System.Windows.Forms.MouseEventHandler(this.scalingCheckedListBox_MouseMove);
+            // 
             // flowLayoutPanelQuality
             // 
             this.flowLayoutPanelQuality.AutoSize = true;
@@ -718,7 +823,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelQuality.Controls.Add(this.scalingLabelQuality);
             this.flowLayoutPanelQuality.Controls.Add(this.scalingCheckedListBoxQuality);
             this.flowLayoutPanelQuality.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelQuality.Location = new System.Drawing.Point(923, 3);
+            this.flowLayoutPanelQuality.Location = new System.Drawing.Point(3, 108);
             this.flowLayoutPanelQuality.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelQuality.Name = "flowLayoutPanelQuality";
             this.flowLayoutPanelQuality.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
@@ -770,7 +875,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelStyle.Controls.Add(this.scalingLabelStyle);
             this.flowLayoutPanelStyle.Controls.Add(this.scalingCheckedListBoxStyle);
             this.flowLayoutPanelStyle.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelStyle.Location = new System.Drawing.Point(3, 108);
+            this.flowLayoutPanelStyle.Location = new System.Drawing.Point(233, 108);
             this.flowLayoutPanelStyle.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelStyle.Name = "flowLayoutPanelStyle";
             this.flowLayoutPanelStyle.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
@@ -814,6 +919,57 @@ namespace TQVaultAE.GUI
             this.scalingCheckedListBoxStyle.SelectedValueChanged += new System.EventHandler(this.scalingCheckedListBox_SelectedValueChanged);
             this.scalingCheckedListBoxStyle.MouseMove += new System.Windows.Forms.MouseEventHandler(this.scalingCheckedListBox_MouseMove);
             // 
+            // flowLayoutPanelSetItems
+            // 
+            this.flowLayoutPanelSetItems.AutoSize = true;
+            this.flowLayoutPanelSetItems.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanelSetItems.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.flowLayoutPanelSetItems.Controls.Add(this.scalingLabelSetItems);
+            this.flowLayoutPanelSetItems.Controls.Add(this.scalingCheckedListBoxSetItems);
+            this.flowLayoutPanelSetItems.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanelSetItems.Location = new System.Drawing.Point(463, 108);
+            this.flowLayoutPanelSetItems.MinimumSize = new System.Drawing.Size(50, 10);
+            this.flowLayoutPanelSetItems.Name = "flowLayoutPanelSetItems";
+            this.flowLayoutPanelSetItems.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
+            this.flowLayoutPanelSetItems.Size = new System.Drawing.Size(224, 99);
+            this.flowLayoutPanelSetItems.TabIndex = 23;
+            // 
+            // scalingLabelSetItems
+            // 
+            this.scalingLabelSetItems.AutoSize = true;
+            this.scalingLabelSetItems.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingLabelSetItems.ForeColor = System.Drawing.Color.Gold;
+            this.scalingLabelSetItems.Location = new System.Drawing.Point(4, 2);
+            this.scalingLabelSetItems.Name = "scalingLabelSetItems";
+            this.scalingLabelSetItems.Size = new System.Drawing.Size(31, 15);
+            this.scalingLabelSetItems.TabIndex = 0;
+            this.scalingLabelSetItems.Text = "Sets";
+            this.scalingLabelSetItems.UseMnemonic = false;
+            this.scalingLabelSetItems.MouseClick += new System.Windows.Forms.MouseEventHandler(this.scalingLabelCategory_MouseClick);
+            // 
+            // scalingCheckedListBoxSetItems
+            // 
+            this.scalingCheckedListBoxSetItems.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
+            this.scalingCheckedListBoxSetItems.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.scalingCheckedListBoxSetItems.CheckOnClick = true;
+            this.scalingCheckedListBoxSetItems.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingCheckedListBoxSetItems.ForeColor = System.Drawing.Color.White;
+            this.scalingCheckedListBoxSetItems.FormattingEnabled = true;
+            this.scalingCheckedListBoxSetItems.HorizontalScrollbar = true;
+            this.scalingCheckedListBoxSetItems.IntegralHeight = false;
+            this.scalingCheckedListBoxSetItems.Items.AddRange(new object[] {
+            "Set item 1",
+            "Set item 2",
+            "Set item 3"});
+            this.scalingCheckedListBoxSetItems.Location = new System.Drawing.Point(4, 17);
+            this.scalingCheckedListBoxSetItems.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.scalingCheckedListBoxSetItems.MultiColumn = true;
+            this.scalingCheckedListBoxSetItems.Name = "scalingCheckedListBoxSetItems";
+            this.scalingCheckedListBoxSetItems.Size = new System.Drawing.Size(215, 80);
+            this.scalingCheckedListBoxSetItems.TabIndex = 7;
+            this.scalingCheckedListBoxSetItems.SelectedValueChanged += new System.EventHandler(this.scalingCheckedListBox_SelectedValueChanged);
+            this.scalingCheckedListBoxSetItems.MouseMove += new System.Windows.Forms.MouseEventHandler(this.scalingCheckedListBox_MouseMove);
+            // 
             // flowLayoutPanelWithCharm
             // 
             this.flowLayoutPanelWithCharm.AutoSize = true;
@@ -822,7 +978,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelWithCharm.Controls.Add(this.scalingLabelWithCharm);
             this.flowLayoutPanelWithCharm.Controls.Add(this.scalingCheckedListBoxWithCharm);
             this.flowLayoutPanelWithCharm.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelWithCharm.Location = new System.Drawing.Point(233, 108);
+            this.flowLayoutPanelWithCharm.Location = new System.Drawing.Point(693, 108);
             this.flowLayoutPanelWithCharm.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelWithCharm.Name = "flowLayoutPanelWithCharm";
             this.flowLayoutPanelWithCharm.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
@@ -873,7 +1029,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelWithRelic.Controls.Add(this.scalingLabelWithRelic);
             this.flowLayoutPanelWithRelic.Controls.Add(this.scalingCheckedListBoxWithRelic);
             this.flowLayoutPanelWithRelic.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelWithRelic.Location = new System.Drawing.Point(463, 108);
+            this.flowLayoutPanelWithRelic.Location = new System.Drawing.Point(923, 108);
             this.flowLayoutPanelWithRelic.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelWithRelic.Name = "flowLayoutPanelWithRelic";
             this.flowLayoutPanelWithRelic.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
@@ -924,7 +1080,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelPrefixName.Controls.Add(this.scalingLabelPrefixName);
             this.flowLayoutPanelPrefixName.Controls.Add(this.scalingCheckedListBoxPrefixName);
             this.flowLayoutPanelPrefixName.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelPrefixName.Location = new System.Drawing.Point(923, 108);
+            this.flowLayoutPanelPrefixName.Location = new System.Drawing.Point(233, 213);
             this.flowLayoutPanelPrefixName.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelPrefixName.Name = "flowLayoutPanelPrefixName";
             this.flowLayoutPanelPrefixName.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
@@ -975,7 +1131,7 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelSuffixName.Controls.Add(this.scalingLabelSuffixName);
             this.flowLayoutPanelSuffixName.Controls.Add(this.scalingCheckedListBoxSuffixName);
             this.flowLayoutPanelSuffixName.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelSuffixName.Location = new System.Drawing.Point(463, 213);
+            this.flowLayoutPanelSuffixName.Location = new System.Drawing.Point(923, 213);
             this.flowLayoutPanelSuffixName.MinimumSize = new System.Drawing.Size(50, 10);
             this.flowLayoutPanelSuffixName.Name = "flowLayoutPanelSuffixName";
             this.flowLayoutPanelSuffixName.Padding = new System.Windows.Forms.Padding(1, 2, 0, 0);
@@ -1024,13 +1180,14 @@ namespace TQVaultAE.GUI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanelSearchTerm.AutoSize = true;
             this.flowLayoutPanelSearchTerm.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanelSearchTerm.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tableLayoutPanelContent.SetColumnSpan(this.flowLayoutPanelSearchTerm, 2);
             this.flowLayoutPanelSearchTerm.Controls.Add(this.scalingLabelSearchTerm);
             this.flowLayoutPanelSearchTerm.Controls.Add(this.scalingTextBoxSearchTerm);
             this.flowLayoutPanelSearchTerm.Controls.Add(this.scalingButtonReset);
             this.flowLayoutPanelSearchTerm.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanelSearchTerm.Name = "flowLayoutPanelSearchTerm";
-            this.flowLayoutPanelSearchTerm.Size = new System.Drawing.Size(689, 36);
+            this.flowLayoutPanelSearchTerm.Size = new System.Drawing.Size(753, 38);
             this.flowLayoutPanelSearchTerm.TabIndex = 16;
             // 
             // scalingLabelSearchTerm
@@ -1086,13 +1243,14 @@ namespace TQVaultAE.GUI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanelQueries.AutoSize = true;
             this.flowLayoutPanelQueries.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanelQueries.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.flowLayoutPanelQueries.Controls.Add(this.scalingLabelQueries);
             this.flowLayoutPanelQueries.Controls.Add(this.scalingComboBoxQueryList);
             this.flowLayoutPanelQueries.Controls.Add(this.scalingButtonQuerySave);
             this.flowLayoutPanelQueries.Controls.Add(this.scalingButtonQueryDelete);
-            this.flowLayoutPanelQueries.Location = new System.Drawing.Point(698, 3);
+            this.flowLayoutPanelQueries.Location = new System.Drawing.Point(762, 3);
             this.flowLayoutPanelQueries.Name = "flowLayoutPanelQueries";
-            this.flowLayoutPanelQueries.Size = new System.Drawing.Size(690, 36);
+            this.flowLayoutPanelQueries.Size = new System.Drawing.Size(620, 38);
             this.flowLayoutPanelQueries.TabIndex = 17;
             // 
             // scalingLabelQueries
@@ -1174,45 +1332,136 @@ namespace TQVaultAE.GUI
             // 
             // tableLayoutPanelContent
             // 
-            this.tableLayoutPanelContent.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanelContent.AutoSize = true;
+            this.tableLayoutPanelContent.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanelContent.ColumnCount = 3;
-            this.tableLayoutPanelContent.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanelContent.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanelContent.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelContent.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanelContent.Controls.Add(this.flowLayoutPanelMainAutoScroll, 1, 2);
+            this.tableLayoutPanelContent.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanelContent.Controls.Add(this.flowLayoutPanelMainAutoScroll, 1, 4);
+            this.tableLayoutPanelContent.Controls.Add(this.bufferedFlowLayoutPanelQuickFilters, 0, 3);
             this.tableLayoutPanelContent.Controls.Add(this.flowLayoutPanelSearchTerm, 0, 0);
             this.tableLayoutPanelContent.Controls.Add(this.flowLayoutPanelQueries, 2, 0);
             this.tableLayoutPanelContent.Controls.Add(this.flowLayoutPanelMisc, 0, 1);
-            this.tableLayoutPanelContent.Controls.Add(this.flowLayoutPanelLeftColumn, 0, 2);
-            this.tableLayoutPanelContent.Location = new System.Drawing.Point(12, 25);
+            this.tableLayoutPanelContent.Controls.Add(this.bufferedFlowLayoutPanelRequierements, 0, 2);
+            this.tableLayoutPanelContent.Controls.Add(this.flowLayoutPanelLeftColumn, 0, 4);
+            this.tableLayoutPanelContent.Controls.Add(this.tableLayoutPanelBottom, 0, 5);
+            this.tableLayoutPanelContent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanelContent.Location = new System.Drawing.Point(15, 25);
             this.tableLayoutPanelContent.Name = "tableLayoutPanelContent";
-            this.tableLayoutPanelContent.RowCount = 3;
+            this.tableLayoutPanelContent.RowCount = 6;
             this.tableLayoutPanelContent.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelContent.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelContent.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanelContent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanelContent.Size = new System.Drawing.Size(1391, 642);
+            this.tableLayoutPanelContent.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelContent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanelContent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 90F));
+            this.tableLayoutPanelContent.Size = new System.Drawing.Size(1385, 835);
             this.tableLayoutPanelContent.TabIndex = 18;
             // 
             // flowLayoutPanelMainAutoScroll
             // 
-            this.flowLayoutPanelMainAutoScroll.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanelMainAutoScroll.AutoScroll = true;
             this.tableLayoutPanelContent.SetColumnSpan(this.flowLayoutPanelMainAutoScroll, 2);
             this.flowLayoutPanelMainAutoScroll.Controls.Add(this.flowLayoutPanelMain);
-            this.flowLayoutPanelMainAutoScroll.Location = new System.Drawing.Point(142, 82);
+            this.flowLayoutPanelMainAutoScroll.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanelMainAutoScroll.Location = new System.Drawing.Point(134, 144);
+            this.flowLayoutPanelMainAutoScroll.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanelMainAutoScroll.Name = "flowLayoutPanelMainAutoScroll";
-            this.flowLayoutPanelMainAutoScroll.Size = new System.Drawing.Size(1246, 557);
+            this.flowLayoutPanelMainAutoScroll.Size = new System.Drawing.Size(1251, 601);
             this.flowLayoutPanelMainAutoScroll.TabIndex = 21;
+            // 
+            // bufferedFlowLayoutPanelQuickFilters
+            // 
+            this.bufferedFlowLayoutPanelQuickFilters.AutoSize = true;
+            this.bufferedFlowLayoutPanelQuickFilters.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tableLayoutPanelContent.SetColumnSpan(this.bufferedFlowLayoutPanelQuickFilters, 3);
+            this.bufferedFlowLayoutPanelQuickFilters.Controls.Add(this.scalingCheckBoxHavingPrefix);
+            this.bufferedFlowLayoutPanelQuickFilters.Controls.Add(this.scalingCheckBoxHavingSuffix);
+            this.bufferedFlowLayoutPanelQuickFilters.Controls.Add(this.scalingCheckBoxHavingRelic);
+            this.bufferedFlowLayoutPanelQuickFilters.Controls.Add(this.scalingCheckBoxHavingCharm);
+            this.bufferedFlowLayoutPanelQuickFilters.Controls.Add(this.scalingCheckBoxIsSetItem);
+            this.bufferedFlowLayoutPanelQuickFilters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bufferedFlowLayoutPanelQuickFilters.Location = new System.Drawing.Point(3, 120);
+            this.bufferedFlowLayoutPanelQuickFilters.Name = "bufferedFlowLayoutPanelQuickFilters";
+            this.bufferedFlowLayoutPanelQuickFilters.Size = new System.Drawing.Size(1379, 21);
+            this.bufferedFlowLayoutPanelQuickFilters.TabIndex = 32;
+            // 
+            // scalingCheckBoxHavingPrefix
+            // 
+            this.scalingCheckBoxHavingPrefix.AutoSize = true;
+            this.scalingCheckBoxHavingPrefix.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingCheckBoxHavingPrefix.ForeColor = System.Drawing.Color.Gold;
+            this.scalingCheckBoxHavingPrefix.Location = new System.Drawing.Point(3, 0);
+            this.scalingCheckBoxHavingPrefix.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.scalingCheckBoxHavingPrefix.Name = "scalingCheckBoxHavingPrefix";
+            this.scalingCheckBoxHavingPrefix.Size = new System.Drawing.Size(98, 19);
+            this.scalingCheckBoxHavingPrefix.TabIndex = 0;
+            this.scalingCheckBoxHavingPrefix.Text = "Having Prefix";
+            this.scalingCheckBoxHavingPrefix.UseVisualStyleBackColor = true;
+            this.scalingCheckBoxHavingPrefix.CheckedChanged += new System.EventHandler(this.scalingCheckBoxQuickFilters_CheckedChanged);
+            // 
+            // scalingCheckBoxHavingSuffix
+            // 
+            this.scalingCheckBoxHavingSuffix.AutoSize = true;
+            this.scalingCheckBoxHavingSuffix.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingCheckBoxHavingSuffix.ForeColor = System.Drawing.Color.Gold;
+            this.scalingCheckBoxHavingSuffix.Location = new System.Drawing.Point(107, 0);
+            this.scalingCheckBoxHavingSuffix.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.scalingCheckBoxHavingSuffix.Name = "scalingCheckBoxHavingSuffix";
+            this.scalingCheckBoxHavingSuffix.Size = new System.Drawing.Size(97, 19);
+            this.scalingCheckBoxHavingSuffix.TabIndex = 1;
+            this.scalingCheckBoxHavingSuffix.Text = "Having Suffix";
+            this.scalingCheckBoxHavingSuffix.UseVisualStyleBackColor = true;
+            this.scalingCheckBoxHavingSuffix.CheckedChanged += new System.EventHandler(this.scalingCheckBoxQuickFilters_CheckedChanged);
+            // 
+            // scalingCheckBoxHavingRelic
+            // 
+            this.scalingCheckBoxHavingRelic.AutoSize = true;
+            this.scalingCheckBoxHavingRelic.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingCheckBoxHavingRelic.ForeColor = System.Drawing.Color.Gold;
+            this.scalingCheckBoxHavingRelic.Location = new System.Drawing.Point(210, 0);
+            this.scalingCheckBoxHavingRelic.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.scalingCheckBoxHavingRelic.Name = "scalingCheckBoxHavingRelic";
+            this.scalingCheckBoxHavingRelic.Size = new System.Drawing.Size(95, 19);
+            this.scalingCheckBoxHavingRelic.TabIndex = 2;
+            this.scalingCheckBoxHavingRelic.Text = "Having Relic";
+            this.scalingCheckBoxHavingRelic.UseVisualStyleBackColor = true;
+            this.scalingCheckBoxHavingRelic.CheckedChanged += new System.EventHandler(this.scalingCheckBoxQuickFilters_CheckedChanged);
+            // 
+            // scalingCheckBoxHavingCharm
+            // 
+            this.scalingCheckBoxHavingCharm.AutoSize = true;
+            this.scalingCheckBoxHavingCharm.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingCheckBoxHavingCharm.ForeColor = System.Drawing.Color.Gold;
+            this.scalingCheckBoxHavingCharm.Location = new System.Drawing.Point(311, 0);
+            this.scalingCheckBoxHavingCharm.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.scalingCheckBoxHavingCharm.Name = "scalingCheckBoxHavingCharm";
+            this.scalingCheckBoxHavingCharm.Size = new System.Drawing.Size(104, 19);
+            this.scalingCheckBoxHavingCharm.TabIndex = 3;
+            this.scalingCheckBoxHavingCharm.Text = "Having Charm";
+            this.scalingCheckBoxHavingCharm.UseVisualStyleBackColor = true;
+            this.scalingCheckBoxHavingCharm.CheckedChanged += new System.EventHandler(this.scalingCheckBoxQuickFilters_CheckedChanged);
+            // 
+            // scalingCheckBoxIsSetItem
+            // 
+            this.scalingCheckBoxIsSetItem.AutoSize = true;
+            this.scalingCheckBoxIsSetItem.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingCheckBoxIsSetItem.ForeColor = System.Drawing.Color.Gold;
+            this.scalingCheckBoxIsSetItem.Location = new System.Drawing.Point(421, 0);
+            this.scalingCheckBoxIsSetItem.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.scalingCheckBoxIsSetItem.Name = "scalingCheckBoxIsSetItem";
+            this.scalingCheckBoxIsSetItem.Size = new System.Drawing.Size(71, 19);
+            this.scalingCheckBoxIsSetItem.TabIndex = 4;
+            this.scalingCheckBoxIsSetItem.Text = "Set Item";
+            this.scalingCheckBoxIsSetItem.UseVisualStyleBackColor = true;
+            this.scalingCheckBoxIsSetItem.CheckedChanged += new System.EventHandler(this.scalingCheckBoxQuickFilters_CheckedChanged);
             // 
             // flowLayoutPanelMisc
             // 
             this.flowLayoutPanelMisc.AutoSize = true;
             this.flowLayoutPanelMisc.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanelMisc.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tableLayoutPanelContent.SetColumnSpan(this.flowLayoutPanelMisc, 3);
             this.flowLayoutPanelMisc.Controls.Add(this.scalingLabelMaxVisibleElement);
             this.flowLayoutPanelMisc.Controls.Add(this.numericUpDownMaxElement);
@@ -1225,9 +1474,9 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelMisc.Controls.Add(this.scalingLabelFilterCategories);
             this.flowLayoutPanelMisc.Controls.Add(this.scalingTextBoxFilterCategories);
             this.flowLayoutPanelMisc.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanelMisc.Location = new System.Drawing.Point(3, 45);
+            this.flowLayoutPanelMisc.Location = new System.Drawing.Point(3, 47);
             this.flowLayoutPanelMisc.Name = "flowLayoutPanelMisc";
-            this.flowLayoutPanelMisc.Size = new System.Drawing.Size(1385, 31);
+            this.flowLayoutPanelMisc.Size = new System.Drawing.Size(1379, 33);
             this.flowLayoutPanelMisc.TabIndex = 18;
             // 
             // scalingLabelMaxVisibleElement
@@ -1246,6 +1495,7 @@ namespace TQVaultAE.GUI
             // numericUpDownMaxElement
             // 
             this.numericUpDownMaxElement.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.numericUpDownMaxElement.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.numericUpDownMaxElement.Location = new System.Drawing.Point(161, 3);
             this.numericUpDownMaxElement.Maximum = new decimal(new int[] {
             150,
@@ -1258,7 +1508,7 @@ namespace TQVaultAE.GUI
             0,
             0});
             this.numericUpDownMaxElement.Name = "numericUpDownMaxElement";
-            this.numericUpDownMaxElement.Size = new System.Drawing.Size(43, 21);
+            this.numericUpDownMaxElement.Size = new System.Drawing.Size(43, 20);
             this.numericUpDownMaxElement.TabIndex = 4;
             this.numericUpDownMaxElement.Value = new decimal(new int[] {
             5,
@@ -1356,19 +1606,416 @@ namespace TQVaultAE.GUI
             this.scalingLabelFiltersSelected.MouseEnter += new System.EventHandler(this.scalingLabelFiltersSelected_MouseEnter);
             this.scalingLabelFiltersSelected.MouseLeave += new System.EventHandler(this.scalingLabelFiltersSelected_MouseLeave);
             // 
+            // scalingLabelFilterCategories
+            // 
+            this.scalingLabelFilterCategories.AutoSize = true;
+            this.scalingLabelFilterCategories.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingLabelFilterCategories.ForeColor = System.Drawing.Color.Gold;
+            this.scalingLabelFilterCategories.Location = new System.Drawing.Point(855, 7);
+            this.scalingLabelFilterCategories.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
+            this.scalingLabelFilterCategories.Name = "scalingLabelFilterCategories";
+            this.scalingLabelFilterCategories.Size = new System.Drawing.Size(100, 15);
+            this.scalingLabelFilterCategories.TabIndex = 19;
+            this.scalingLabelFilterCategories.Text = "Filter categories :";
+            this.scalingLabelFilterCategories.UseMnemonic = false;
+            // 
+            // scalingTextBoxFilterCategories
+            // 
+            this.scalingTextBoxFilterCategories.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.scalingTextBoxFilterCategories.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingTextBoxFilterCategories.Location = new System.Drawing.Point(961, 3);
+            this.scalingTextBoxFilterCategories.Name = "scalingTextBoxFilterCategories";
+            this.scalingTextBoxFilterCategories.Size = new System.Drawing.Size(200, 21);
+            this.scalingTextBoxFilterCategories.TabIndex = 20;
+            this.scalingTextBoxFilterCategories.TextChanged += new System.EventHandler(this.scalingTextBoxFilterCategories_TextChanged);
+            // 
+            // bufferedFlowLayoutPanelRequierements
+            // 
+            this.bufferedFlowLayoutPanelRequierements.AutoSize = true;
+            this.bufferedFlowLayoutPanelRequierements.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tableLayoutPanelContent.SetColumnSpan(this.bufferedFlowLayoutPanelRequierements, 3);
+            this.bufferedFlowLayoutPanelRequierements.Controls.Add(this.tableLayoutPanelRequierements);
+            this.bufferedFlowLayoutPanelRequierements.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bufferedFlowLayoutPanelRequierements.Location = new System.Drawing.Point(3, 86);
+            this.bufferedFlowLayoutPanelRequierements.Name = "bufferedFlowLayoutPanelRequierements";
+            this.bufferedFlowLayoutPanelRequierements.Size = new System.Drawing.Size(1379, 28);
+            this.bufferedFlowLayoutPanelRequierements.TabIndex = 5;
+            // 
+            // tableLayoutPanelRequierements
+            // 
+            this.tableLayoutPanelRequierements.AutoSize = true;
+            this.tableLayoutPanelRequierements.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanelRequierements.BackColor = System.Drawing.Color.Transparent;
+            this.tableLayoutPanelRequierements.ColumnCount = 5;
+            this.tableLayoutPanelRequierements.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelRequierements.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanelRequierements.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanelRequierements.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelRequierements.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanelRequierements.Controls.Add(this.scalingCheckBoxMinReq, 0, 0);
+            this.tableLayoutPanelRequierements.Controls.Add(this.flowLayoutPanelMin, 1, 0);
+            this.tableLayoutPanelRequierements.Controls.Add(this.scalingCheckBoxMaxReq, 3, 0);
+            this.tableLayoutPanelRequierements.Controls.Add(this.flowLayoutPanelMax, 4, 0);
+            this.tableLayoutPanelRequierements.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanelRequierements.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanelRequierements.Name = "tableLayoutPanelRequierements";
+            this.tableLayoutPanelRequierements.RowCount = 1;
+            this.tableLayoutPanelRequierements.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelRequierements.Size = new System.Drawing.Size(1009, 26);
+            this.tableLayoutPanelRequierements.TabIndex = 25;
+            // 
+            // scalingCheckBoxMinReq
+            // 
+            this.scalingCheckBoxMinReq.AutoSize = true;
+            this.scalingCheckBoxMinReq.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingCheckBoxMinReq.ForeColor = System.Drawing.Color.Gold;
+            this.scalingCheckBoxMinReq.Location = new System.Drawing.Point(3, 3);
+            this.scalingCheckBoxMinReq.Name = "scalingCheckBoxMinReq";
+            this.scalingCheckBoxMinReq.Size = new System.Drawing.Size(135, 19);
+            this.scalingCheckBoxMinReq.TabIndex = 3;
+            this.scalingCheckBoxMinReq.Text = "Min Requierement :";
+            this.scalingCheckBoxMinReq.UseVisualStyleBackColor = true;
+            this.scalingCheckBoxMinReq.CheckedChanged += new System.EventHandler(this.scalingCheckBoxMinMaxReq_CheckedChanged);
+            // 
+            // flowLayoutPanelMin
+            // 
+            this.flowLayoutPanelMin.AutoSize = true;
+            this.flowLayoutPanelMin.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanelMin.Controls.Add(this.scalingLabelMinLvl);
+            this.flowLayoutPanelMin.Controls.Add(this.numericUpDownMinLvl);
+            this.flowLayoutPanelMin.Controls.Add(this.scalingLabelMinStr);
+            this.flowLayoutPanelMin.Controls.Add(this.numericUpDownMinStr);
+            this.flowLayoutPanelMin.Controls.Add(this.scalingLabelMinDex);
+            this.flowLayoutPanelMin.Controls.Add(this.numericUpDownMinDex);
+            this.flowLayoutPanelMin.Controls.Add(this.scalingLabelMinInt);
+            this.flowLayoutPanelMin.Controls.Add(this.numericUpDownMinInt);
+            this.flowLayoutPanelMin.Location = new System.Drawing.Point(144, 3);
+            this.flowLayoutPanelMin.Name = "flowLayoutPanelMin";
+            this.flowLayoutPanelMin.Size = new System.Drawing.Size(331, 20);
+            this.flowLayoutPanelMin.TabIndex = 4;
+            this.flowLayoutPanelMin.WrapContents = false;
+            // 
+            // scalingLabelMinLvl
+            // 
+            this.scalingLabelMinLvl.AutoSize = true;
+            this.scalingLabelMinLvl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingLabelMinLvl.ForeColor = System.Drawing.Color.Gold;
+            this.scalingLabelMinLvl.Location = new System.Drawing.Point(3, 0);
+            this.scalingLabelMinLvl.Name = "scalingLabelMinLvl";
+            this.scalingLabelMinLvl.Size = new System.Drawing.Size(42, 15);
+            this.scalingLabelMinLvl.TabIndex = 0;
+            this.scalingLabelMinLvl.Text = "Level :";
+            // 
+            // numericUpDownMinLvl
+            // 
+            this.numericUpDownMinLvl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.numericUpDownMinLvl.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.numericUpDownMinLvl.Location = new System.Drawing.Point(48, 0);
+            this.numericUpDownMinLvl.Margin = new System.Windows.Forms.Padding(0);
+            this.numericUpDownMinLvl.Name = "numericUpDownMinLvl";
+            this.numericUpDownMinLvl.Size = new System.Drawing.Size(44, 20);
+            this.numericUpDownMinLvl.TabIndex = 1;
+            this.numericUpDownMinLvl.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numericUpDownMinLvl.ValueChanged += new System.EventHandler(this.numericUpDownMinMax_ValueChanged);
+            // 
+            // scalingLabelMinStr
+            // 
+            this.scalingLabelMinStr.AutoSize = true;
+            this.scalingLabelMinStr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingLabelMinStr.ForeColor = System.Drawing.Color.Gold;
+            this.scalingLabelMinStr.Location = new System.Drawing.Point(95, 0);
+            this.scalingLabelMinStr.Name = "scalingLabelMinStr";
+            this.scalingLabelMinStr.Size = new System.Drawing.Size(28, 15);
+            this.scalingLabelMinStr.TabIndex = 2;
+            this.scalingLabelMinStr.Text = "Str :";
+            // 
+            // numericUpDownMinStr
+            // 
+            this.numericUpDownMinStr.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.numericUpDownMinStr.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.numericUpDownMinStr.Location = new System.Drawing.Point(126, 0);
+            this.numericUpDownMinStr.Margin = new System.Windows.Forms.Padding(0);
+            this.numericUpDownMinStr.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.numericUpDownMinStr.Name = "numericUpDownMinStr";
+            this.numericUpDownMinStr.Size = new System.Drawing.Size(44, 20);
+            this.numericUpDownMinStr.TabIndex = 3;
+            this.numericUpDownMinStr.Value = new decimal(new int[] {
+            9000,
+            0,
+            0,
+            0});
+            this.numericUpDownMinStr.ValueChanged += new System.EventHandler(this.numericUpDownMinMax_ValueChanged);
+            // 
+            // scalingLabelMinDex
+            // 
+            this.scalingLabelMinDex.AutoSize = true;
+            this.scalingLabelMinDex.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingLabelMinDex.ForeColor = System.Drawing.Color.Gold;
+            this.scalingLabelMinDex.Location = new System.Drawing.Point(173, 0);
+            this.scalingLabelMinDex.Name = "scalingLabelMinDex";
+            this.scalingLabelMinDex.Size = new System.Drawing.Size(35, 15);
+            this.scalingLabelMinDex.TabIndex = 4;
+            this.scalingLabelMinDex.Text = "Dex :";
+            // 
+            // numericUpDownMinDex
+            // 
+            this.numericUpDownMinDex.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.numericUpDownMinDex.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.numericUpDownMinDex.Location = new System.Drawing.Point(211, 0);
+            this.numericUpDownMinDex.Margin = new System.Windows.Forms.Padding(0);
+            this.numericUpDownMinDex.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.numericUpDownMinDex.Name = "numericUpDownMinDex";
+            this.numericUpDownMinDex.Size = new System.Drawing.Size(44, 20);
+            this.numericUpDownMinDex.TabIndex = 5;
+            this.numericUpDownMinDex.Value = new decimal(new int[] {
+            9000,
+            0,
+            0,
+            0});
+            this.numericUpDownMinDex.ValueChanged += new System.EventHandler(this.numericUpDownMinMax_ValueChanged);
+            // 
+            // scalingLabelMinInt
+            // 
+            this.scalingLabelMinInt.AutoSize = true;
+            this.scalingLabelMinInt.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingLabelMinInt.ForeColor = System.Drawing.Color.Gold;
+            this.scalingLabelMinInt.Location = new System.Drawing.Point(258, 0);
+            this.scalingLabelMinInt.Name = "scalingLabelMinInt";
+            this.scalingLabelMinInt.Size = new System.Drawing.Size(26, 15);
+            this.scalingLabelMinInt.TabIndex = 6;
+            this.scalingLabelMinInt.Text = "Int :";
+            // 
+            // numericUpDownMinInt
+            // 
+            this.numericUpDownMinInt.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.numericUpDownMinInt.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.numericUpDownMinInt.Location = new System.Drawing.Point(287, 0);
+            this.numericUpDownMinInt.Margin = new System.Windows.Forms.Padding(0);
+            this.numericUpDownMinInt.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.numericUpDownMinInt.Name = "numericUpDownMinInt";
+            this.numericUpDownMinInt.Size = new System.Drawing.Size(44, 20);
+            this.numericUpDownMinInt.TabIndex = 7;
+            this.numericUpDownMinInt.Value = new decimal(new int[] {
+            9000,
+            0,
+            0,
+            0});
+            this.numericUpDownMinInt.ValueChanged += new System.EventHandler(this.numericUpDownMinMax_ValueChanged);
+            // 
+            // scalingCheckBoxMaxReq
+            // 
+            this.scalingCheckBoxMaxReq.AutoSize = true;
+            this.scalingCheckBoxMaxReq.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingCheckBoxMaxReq.ForeColor = System.Drawing.Color.Gold;
+            this.scalingCheckBoxMaxReq.Location = new System.Drawing.Point(531, 3);
+            this.scalingCheckBoxMaxReq.Name = "scalingCheckBoxMaxReq";
+            this.scalingCheckBoxMaxReq.Size = new System.Drawing.Size(138, 19);
+            this.scalingCheckBoxMaxReq.TabIndex = 5;
+            this.scalingCheckBoxMaxReq.Text = "Max Requierement :";
+            this.scalingCheckBoxMaxReq.UseVisualStyleBackColor = true;
+            this.scalingCheckBoxMaxReq.CheckedChanged += new System.EventHandler(this.scalingCheckBoxMinMaxReq_CheckedChanged);
+            // 
+            // flowLayoutPanelMax
+            // 
+            this.flowLayoutPanelMax.AutoSize = true;
+            this.flowLayoutPanelMax.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanelMax.Controls.Add(this.scalingLabelMaxLvl);
+            this.flowLayoutPanelMax.Controls.Add(this.numericUpDownMaxLvl);
+            this.flowLayoutPanelMax.Controls.Add(this.scalingLabelMaxStr);
+            this.flowLayoutPanelMax.Controls.Add(this.numericUpDownMaxStr);
+            this.flowLayoutPanelMax.Controls.Add(this.scalingLabelMaxDex);
+            this.flowLayoutPanelMax.Controls.Add(this.numericUpDownMaxDex);
+            this.flowLayoutPanelMax.Controls.Add(this.scalingLabelMaxInt);
+            this.flowLayoutPanelMax.Controls.Add(this.numericUpDownMaxInt);
+            this.flowLayoutPanelMax.Location = new System.Drawing.Point(675, 3);
+            this.flowLayoutPanelMax.Name = "flowLayoutPanelMax";
+            this.flowLayoutPanelMax.Size = new System.Drawing.Size(331, 20);
+            this.flowLayoutPanelMax.TabIndex = 25;
+            this.flowLayoutPanelMax.WrapContents = false;
+            // 
+            // scalingLabelMaxLvl
+            // 
+            this.scalingLabelMaxLvl.AutoSize = true;
+            this.scalingLabelMaxLvl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingLabelMaxLvl.ForeColor = System.Drawing.Color.Gold;
+            this.scalingLabelMaxLvl.Location = new System.Drawing.Point(3, 0);
+            this.scalingLabelMaxLvl.Name = "scalingLabelMaxLvl";
+            this.scalingLabelMaxLvl.Size = new System.Drawing.Size(42, 15);
+            this.scalingLabelMaxLvl.TabIndex = 0;
+            this.scalingLabelMaxLvl.Text = "Level :";
+            // 
+            // numericUpDownMaxLvl
+            // 
+            this.numericUpDownMaxLvl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.numericUpDownMaxLvl.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.numericUpDownMaxLvl.Location = new System.Drawing.Point(48, 0);
+            this.numericUpDownMaxLvl.Margin = new System.Windows.Forms.Padding(0);
+            this.numericUpDownMaxLvl.Name = "numericUpDownMaxLvl";
+            this.numericUpDownMaxLvl.Size = new System.Drawing.Size(44, 20);
+            this.numericUpDownMaxLvl.TabIndex = 1;
+            this.numericUpDownMaxLvl.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numericUpDownMaxLvl.ValueChanged += new System.EventHandler(this.numericUpDownMinMax_ValueChanged);
+            // 
+            // scalingLabelMaxStr
+            // 
+            this.scalingLabelMaxStr.AutoSize = true;
+            this.scalingLabelMaxStr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingLabelMaxStr.ForeColor = System.Drawing.Color.Gold;
+            this.scalingLabelMaxStr.Location = new System.Drawing.Point(95, 0);
+            this.scalingLabelMaxStr.Name = "scalingLabelMaxStr";
+            this.scalingLabelMaxStr.Size = new System.Drawing.Size(28, 15);
+            this.scalingLabelMaxStr.TabIndex = 2;
+            this.scalingLabelMaxStr.Text = "Str :";
+            // 
+            // numericUpDownMaxStr
+            // 
+            this.numericUpDownMaxStr.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.numericUpDownMaxStr.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.numericUpDownMaxStr.Location = new System.Drawing.Point(126, 0);
+            this.numericUpDownMaxStr.Margin = new System.Windows.Forms.Padding(0);
+            this.numericUpDownMaxStr.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.numericUpDownMaxStr.Name = "numericUpDownMaxStr";
+            this.numericUpDownMaxStr.Size = new System.Drawing.Size(44, 20);
+            this.numericUpDownMaxStr.TabIndex = 3;
+            this.numericUpDownMaxStr.Value = new decimal(new int[] {
+            9000,
+            0,
+            0,
+            0});
+            this.numericUpDownMaxStr.ValueChanged += new System.EventHandler(this.numericUpDownMinMax_ValueChanged);
+            // 
+            // scalingLabelMaxDex
+            // 
+            this.scalingLabelMaxDex.AutoSize = true;
+            this.scalingLabelMaxDex.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingLabelMaxDex.ForeColor = System.Drawing.Color.Gold;
+            this.scalingLabelMaxDex.Location = new System.Drawing.Point(173, 0);
+            this.scalingLabelMaxDex.Name = "scalingLabelMaxDex";
+            this.scalingLabelMaxDex.Size = new System.Drawing.Size(35, 15);
+            this.scalingLabelMaxDex.TabIndex = 4;
+            this.scalingLabelMaxDex.Text = "Dex :";
+            // 
+            // numericUpDownMaxDex
+            // 
+            this.numericUpDownMaxDex.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.numericUpDownMaxDex.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.numericUpDownMaxDex.Location = new System.Drawing.Point(211, 0);
+            this.numericUpDownMaxDex.Margin = new System.Windows.Forms.Padding(0);
+            this.numericUpDownMaxDex.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.numericUpDownMaxDex.Name = "numericUpDownMaxDex";
+            this.numericUpDownMaxDex.Size = new System.Drawing.Size(44, 20);
+            this.numericUpDownMaxDex.TabIndex = 5;
+            this.numericUpDownMaxDex.Value = new decimal(new int[] {
+            9000,
+            0,
+            0,
+            0});
+            this.numericUpDownMaxDex.ValueChanged += new System.EventHandler(this.numericUpDownMinMax_ValueChanged);
+            // 
+            // scalingLabelMaxInt
+            // 
+            this.scalingLabelMaxInt.AutoSize = true;
+            this.scalingLabelMaxInt.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.scalingLabelMaxInt.ForeColor = System.Drawing.Color.Gold;
+            this.scalingLabelMaxInt.Location = new System.Drawing.Point(258, 0);
+            this.scalingLabelMaxInt.Name = "scalingLabelMaxInt";
+            this.scalingLabelMaxInt.Size = new System.Drawing.Size(26, 15);
+            this.scalingLabelMaxInt.TabIndex = 6;
+            this.scalingLabelMaxInt.Text = "Int :";
+            // 
+            // numericUpDownMaxInt
+            // 
+            this.numericUpDownMaxInt.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.numericUpDownMaxInt.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.numericUpDownMaxInt.Location = new System.Drawing.Point(287, 0);
+            this.numericUpDownMaxInt.Margin = new System.Windows.Forms.Padding(0);
+            this.numericUpDownMaxInt.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.numericUpDownMaxInt.Name = "numericUpDownMaxInt";
+            this.numericUpDownMaxInt.Size = new System.Drawing.Size(44, 20);
+            this.numericUpDownMaxInt.TabIndex = 7;
+            this.numericUpDownMaxInt.Value = new decimal(new int[] {
+            9000,
+            0,
+            0,
+            0});
+            this.numericUpDownMaxInt.ValueChanged += new System.EventHandler(this.numericUpDownMinMax_ValueChanged);
+            // 
             // flowLayoutPanelLeftColumn
             // 
-            this.flowLayoutPanelLeftColumn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanelLeftColumn.AutoSize = true;
-            this.flowLayoutPanelLeftColumn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanelLeftColumn.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.flowLayoutPanelLeftColumn.Controls.Add(this.scalingButtonMenuCharacters);
             this.flowLayoutPanelLeftColumn.Controls.Add(this.scalingButtonMenuVaults);
             this.flowLayoutPanelLeftColumn.Controls.Add(this.scalingButtonMenuType);
             this.flowLayoutPanelLeftColumn.Controls.Add(this.scalingButtonMenuRarity);
+            this.flowLayoutPanelLeftColumn.Controls.Add(this.scalingButtonMenuOrigin);
             this.flowLayoutPanelLeftColumn.Controls.Add(this.scalingButtonMenuQuality);
             this.flowLayoutPanelLeftColumn.Controls.Add(this.scalingButtonMenuStyle);
+            this.flowLayoutPanelLeftColumn.Controls.Add(this.scalingButtonMenuSetItems);
             this.flowLayoutPanelLeftColumn.Controls.Add(this.scalingButtonMenuWithCharm);
             this.flowLayoutPanelLeftColumn.Controls.Add(this.scalingButtonMenuWithRelic);
             this.flowLayoutPanelLeftColumn.Controls.Add(this.scalingButtonMenuAttribute);
@@ -1378,10 +2025,10 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelLeftColumn.Controls.Add(this.scalingButtonMenuSuffixName);
             this.flowLayoutPanelLeftColumn.Controls.Add(this.scalingButtonMenuSuffixAttribute);
             this.flowLayoutPanelLeftColumn.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelLeftColumn.Location = new System.Drawing.Point(3, 82);
-            this.flowLayoutPanelLeftColumn.MinimumSize = new System.Drawing.Size(100, 100);
+            this.flowLayoutPanelLeftColumn.Location = new System.Drawing.Point(3, 147);
+            this.flowLayoutPanelLeftColumn.MinimumSize = new System.Drawing.Size(128, 578);
             this.flowLayoutPanelLeftColumn.Name = "flowLayoutPanelLeftColumn";
-            this.flowLayoutPanelLeftColumn.Size = new System.Drawing.Size(133, 557);
+            this.flowLayoutPanelLeftColumn.Size = new System.Drawing.Size(128, 578);
             this.flowLayoutPanelLeftColumn.TabIndex = 19;
             // 
             // scalingButtonMenuCharacters
@@ -1476,6 +2123,29 @@ namespace TQVaultAE.GUI
             this.scalingButtonMenuRarity.UseVisualStyleBackColor = false;
             this.scalingButtonMenuRarity.Click += new System.EventHandler(this.scalingButtonMenu_Click);
             // 
+            // scalingButtonMenuOrigin
+            // 
+            this.scalingButtonMenuOrigin.BackColor = System.Drawing.Color.Transparent;
+            this.scalingButtonMenuOrigin.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuOrigin.DownBitmap")));
+            this.scalingButtonMenuOrigin.FlatAppearance.BorderSize = 0;
+            this.scalingButtonMenuOrigin.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.scalingButtonMenuOrigin.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.scalingButtonMenuOrigin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.scalingButtonMenuOrigin.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
+            this.scalingButtonMenuOrigin.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.scalingButtonMenuOrigin.Image = ((System.Drawing.Image)(resources.GetObject("scalingButtonMenuOrigin.Image")));
+            this.scalingButtonMenuOrigin.Location = new System.Drawing.Point(3, 147);
+            this.scalingButtonMenuOrigin.Name = "scalingButtonMenuOrigin";
+            this.scalingButtonMenuOrigin.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuOrigin.OverBitmap")));
+            this.scalingButtonMenuOrigin.Size = new System.Drawing.Size(120, 30);
+            this.scalingButtonMenuOrigin.SizeToGraphic = false;
+            this.scalingButtonMenuOrigin.TabIndex = 22;
+            this.scalingButtonMenuOrigin.Text = "Origin";
+            this.scalingButtonMenuOrigin.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuOrigin.UpBitmap")));
+            this.scalingButtonMenuOrigin.UseCustomGraphic = true;
+            this.scalingButtonMenuOrigin.UseVisualStyleBackColor = false;
+            this.scalingButtonMenuOrigin.Click += new System.EventHandler(this.scalingButtonMenu_Click);
+            // 
             // scalingButtonMenuQuality
             // 
             this.scalingButtonMenuQuality.BackColor = System.Drawing.Color.Transparent;
@@ -1487,7 +2157,7 @@ namespace TQVaultAE.GUI
             this.scalingButtonMenuQuality.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
             this.scalingButtonMenuQuality.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.scalingButtonMenuQuality.Image = ((System.Drawing.Image)(resources.GetObject("scalingButtonMenuQuality.Image")));
-            this.scalingButtonMenuQuality.Location = new System.Drawing.Point(3, 147);
+            this.scalingButtonMenuQuality.Location = new System.Drawing.Point(3, 183);
             this.scalingButtonMenuQuality.Name = "scalingButtonMenuQuality";
             this.scalingButtonMenuQuality.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuQuality.OverBitmap")));
             this.scalingButtonMenuQuality.Size = new System.Drawing.Size(120, 30);
@@ -1510,7 +2180,7 @@ namespace TQVaultAE.GUI
             this.scalingButtonMenuStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
             this.scalingButtonMenuStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.scalingButtonMenuStyle.Image = ((System.Drawing.Image)(resources.GetObject("scalingButtonMenuStyle.Image")));
-            this.scalingButtonMenuStyle.Location = new System.Drawing.Point(3, 183);
+            this.scalingButtonMenuStyle.Location = new System.Drawing.Point(3, 219);
             this.scalingButtonMenuStyle.Name = "scalingButtonMenuStyle";
             this.scalingButtonMenuStyle.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuStyle.OverBitmap")));
             this.scalingButtonMenuStyle.Size = new System.Drawing.Size(120, 30);
@@ -1521,6 +2191,29 @@ namespace TQVaultAE.GUI
             this.scalingButtonMenuStyle.UseCustomGraphic = true;
             this.scalingButtonMenuStyle.UseVisualStyleBackColor = false;
             this.scalingButtonMenuStyle.Click += new System.EventHandler(this.scalingButtonMenu_Click);
+            // 
+            // scalingButtonMenuSetItems
+            // 
+            this.scalingButtonMenuSetItems.BackColor = System.Drawing.Color.Transparent;
+            this.scalingButtonMenuSetItems.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuSetItems.DownBitmap")));
+            this.scalingButtonMenuSetItems.FlatAppearance.BorderSize = 0;
+            this.scalingButtonMenuSetItems.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.scalingButtonMenuSetItems.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.scalingButtonMenuSetItems.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.scalingButtonMenuSetItems.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
+            this.scalingButtonMenuSetItems.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
+            this.scalingButtonMenuSetItems.Image = ((System.Drawing.Image)(resources.GetObject("scalingButtonMenuSetItems.Image")));
+            this.scalingButtonMenuSetItems.Location = new System.Drawing.Point(3, 255);
+            this.scalingButtonMenuSetItems.Name = "scalingButtonMenuSetItems";
+            this.scalingButtonMenuSetItems.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuSetItems.OverBitmap")));
+            this.scalingButtonMenuSetItems.Size = new System.Drawing.Size(120, 30);
+            this.scalingButtonMenuSetItems.SizeToGraphic = false;
+            this.scalingButtonMenuSetItems.TabIndex = 23;
+            this.scalingButtonMenuSetItems.Text = "Sets";
+            this.scalingButtonMenuSetItems.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuSetItems.UpBitmap")));
+            this.scalingButtonMenuSetItems.UseCustomGraphic = true;
+            this.scalingButtonMenuSetItems.UseVisualStyleBackColor = false;
+            this.scalingButtonMenuSetItems.Click += new System.EventHandler(this.scalingButtonMenu_Click);
             // 
             // scalingButtonMenuWithCharm
             // 
@@ -1533,7 +2226,7 @@ namespace TQVaultAE.GUI
             this.scalingButtonMenuWithCharm.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
             this.scalingButtonMenuWithCharm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.scalingButtonMenuWithCharm.Image = ((System.Drawing.Image)(resources.GetObject("scalingButtonMenuWithCharm.Image")));
-            this.scalingButtonMenuWithCharm.Location = new System.Drawing.Point(3, 219);
+            this.scalingButtonMenuWithCharm.Location = new System.Drawing.Point(3, 291);
             this.scalingButtonMenuWithCharm.Name = "scalingButtonMenuWithCharm";
             this.scalingButtonMenuWithCharm.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuWithCharm.OverBitmap")));
             this.scalingButtonMenuWithCharm.Size = new System.Drawing.Size(120, 30);
@@ -1556,7 +2249,7 @@ namespace TQVaultAE.GUI
             this.scalingButtonMenuWithRelic.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
             this.scalingButtonMenuWithRelic.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.scalingButtonMenuWithRelic.Image = ((System.Drawing.Image)(resources.GetObject("scalingButtonMenuWithRelic.Image")));
-            this.scalingButtonMenuWithRelic.Location = new System.Drawing.Point(3, 255);
+            this.scalingButtonMenuWithRelic.Location = new System.Drawing.Point(3, 327);
             this.scalingButtonMenuWithRelic.Name = "scalingButtonMenuWithRelic";
             this.scalingButtonMenuWithRelic.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuWithRelic.OverBitmap")));
             this.scalingButtonMenuWithRelic.Size = new System.Drawing.Size(120, 30);
@@ -1579,7 +2272,7 @@ namespace TQVaultAE.GUI
             this.scalingButtonMenuAttribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
             this.scalingButtonMenuAttribute.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.scalingButtonMenuAttribute.Image = ((System.Drawing.Image)(resources.GetObject("scalingButtonMenuAttribute.Image")));
-            this.scalingButtonMenuAttribute.Location = new System.Drawing.Point(3, 291);
+            this.scalingButtonMenuAttribute.Location = new System.Drawing.Point(3, 363);
             this.scalingButtonMenuAttribute.Name = "scalingButtonMenuAttribute";
             this.scalingButtonMenuAttribute.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuAttribute.OverBitmap")));
             this.scalingButtonMenuAttribute.Size = new System.Drawing.Size(120, 30);
@@ -1602,7 +2295,7 @@ namespace TQVaultAE.GUI
             this.scalingButtonMenuPrefixName.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
             this.scalingButtonMenuPrefixName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.scalingButtonMenuPrefixName.Image = ((System.Drawing.Image)(resources.GetObject("scalingButtonMenuPrefixName.Image")));
-            this.scalingButtonMenuPrefixName.Location = new System.Drawing.Point(3, 327);
+            this.scalingButtonMenuPrefixName.Location = new System.Drawing.Point(3, 399);
             this.scalingButtonMenuPrefixName.Name = "scalingButtonMenuPrefixName";
             this.scalingButtonMenuPrefixName.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuPrefixName.OverBitmap")));
             this.scalingButtonMenuPrefixName.Size = new System.Drawing.Size(120, 30);
@@ -1625,7 +2318,7 @@ namespace TQVaultAE.GUI
             this.scalingButtonMenuPrefixAttribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
             this.scalingButtonMenuPrefixAttribute.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.scalingButtonMenuPrefixAttribute.Image = ((System.Drawing.Image)(resources.GetObject("scalingButtonMenuPrefixAttribute.Image")));
-            this.scalingButtonMenuPrefixAttribute.Location = new System.Drawing.Point(3, 363);
+            this.scalingButtonMenuPrefixAttribute.Location = new System.Drawing.Point(3, 435);
             this.scalingButtonMenuPrefixAttribute.Name = "scalingButtonMenuPrefixAttribute";
             this.scalingButtonMenuPrefixAttribute.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuPrefixAttribute.OverBitmap")));
             this.scalingButtonMenuPrefixAttribute.Size = new System.Drawing.Size(120, 30);
@@ -1648,7 +2341,7 @@ namespace TQVaultAE.GUI
             this.scalingButtonMenuBaseAttribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
             this.scalingButtonMenuBaseAttribute.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.scalingButtonMenuBaseAttribute.Image = ((System.Drawing.Image)(resources.GetObject("scalingButtonMenuBaseAttribute.Image")));
-            this.scalingButtonMenuBaseAttribute.Location = new System.Drawing.Point(3, 399);
+            this.scalingButtonMenuBaseAttribute.Location = new System.Drawing.Point(3, 471);
             this.scalingButtonMenuBaseAttribute.Name = "scalingButtonMenuBaseAttribute";
             this.scalingButtonMenuBaseAttribute.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuBaseAttribute.OverBitmap")));
             this.scalingButtonMenuBaseAttribute.Size = new System.Drawing.Size(120, 30);
@@ -1671,7 +2364,7 @@ namespace TQVaultAE.GUI
             this.scalingButtonMenuSuffixName.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
             this.scalingButtonMenuSuffixName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.scalingButtonMenuSuffixName.Image = ((System.Drawing.Image)(resources.GetObject("scalingButtonMenuSuffixName.Image")));
-            this.scalingButtonMenuSuffixName.Location = new System.Drawing.Point(3, 435);
+            this.scalingButtonMenuSuffixName.Location = new System.Drawing.Point(3, 507);
             this.scalingButtonMenuSuffixName.Name = "scalingButtonMenuSuffixName";
             this.scalingButtonMenuSuffixName.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuSuffixName.OverBitmap")));
             this.scalingButtonMenuSuffixName.Size = new System.Drawing.Size(120, 30);
@@ -1694,7 +2387,7 @@ namespace TQVaultAE.GUI
             this.scalingButtonMenuSuffixAttribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
             this.scalingButtonMenuSuffixAttribute.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.scalingButtonMenuSuffixAttribute.Image = ((System.Drawing.Image)(resources.GetObject("scalingButtonMenuSuffixAttribute.Image")));
-            this.scalingButtonMenuSuffixAttribute.Location = new System.Drawing.Point(3, 471);
+            this.scalingButtonMenuSuffixAttribute.Location = new System.Drawing.Point(3, 543);
             this.scalingButtonMenuSuffixAttribute.Name = "scalingButtonMenuSuffixAttribute";
             this.scalingButtonMenuSuffixAttribute.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("scalingButtonMenuSuffixAttribute.OverBitmap")));
             this.scalingButtonMenuSuffixAttribute.Size = new System.Drawing.Size(120, 30);
@@ -1717,29 +2410,6 @@ namespace TQVaultAE.GUI
             // 
             this.typeAssistantSearchBox.Idled += new System.EventHandler(this.scalingTextBoxSearchTerm_TextChanged_Idled);
             // 
-            // scalingLabelFilterCategories
-            // 
-            this.scalingLabelFilterCategories.AutoSize = true;
-            this.scalingLabelFilterCategories.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.scalingLabelFilterCategories.ForeColor = System.Drawing.Color.Gold;
-            this.scalingLabelFilterCategories.Location = new System.Drawing.Point(855, 7);
-            this.scalingLabelFilterCategories.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
-            this.scalingLabelFilterCategories.Name = "scalingLabelFilterCategories";
-            this.scalingLabelFilterCategories.Size = new System.Drawing.Size(100, 15);
-            this.scalingLabelFilterCategories.TabIndex = 19;
-            this.scalingLabelFilterCategories.Text = "Filter categories :";
-            this.scalingLabelFilterCategories.UseMnemonic = false;
-            // 
-            // scalingTextBoxFilterCategories
-            // 
-            this.scalingTextBoxFilterCategories.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.scalingTextBoxFilterCategories.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.scalingTextBoxFilterCategories.Location = new System.Drawing.Point(961, 3);
-            this.scalingTextBoxFilterCategories.Name = "scalingTextBoxFilterCategories";
-            this.scalingTextBoxFilterCategories.Size = new System.Drawing.Size(200, 21);
-            this.scalingTextBoxFilterCategories.TabIndex = 20;
-            this.scalingTextBoxFilterCategories.TextChanged += new System.EventHandler(this.scalingTextBoxFilterCategories_TextChanged);
-            // 
             // typeAssistantFilterCategories
             // 
             this.typeAssistantFilterCategories.Idled += new System.EventHandler(this.typeAssistantFilterCategories_Idled);
@@ -1751,9 +2421,8 @@ namespace TQVaultAE.GUI
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(1415, 755);
+            this.ClientSize = new System.Drawing.Size(1415, 870);
             this.Controls.Add(this.tableLayoutPanelContent);
-            this.Controls.Add(this.tableLayoutPanelBottom);
             this.DrawCustomBorder = true;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.White;
@@ -1761,6 +2430,7 @@ namespace TQVaultAE.GUI
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SearchDialogAdvanced";
+            this.Padding = new System.Windows.Forms.Padding(15, 25, 15, 10);
             this.ResizeCustomAllowed = true;
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
@@ -1770,7 +2440,6 @@ namespace TQVaultAE.GUI
             this.TopMost = true;
             this.Load += new System.EventHandler(this.SearchDialogAdvanced_Load);
             this.Shown += new System.EventHandler(this.SearchDialogShown);
-            this.Controls.SetChildIndex(this.tableLayoutPanelBottom, 0);
             this.Controls.SetChildIndex(this.tableLayoutPanelContent, 0);
             this.tableLayoutPanelBottom.ResumeLayout(false);
             this.scalingLabelProgressPanelAlignText.ResumeLayout(false);
@@ -1792,10 +2461,14 @@ namespace TQVaultAE.GUI
             this.flowLayoutPanelMain.PerformLayout();
             this.flowLayoutPanelInVaults.ResumeLayout(false);
             this.flowLayoutPanelInVaults.PerformLayout();
+            this.flowLayoutPanelOrigin.ResumeLayout(false);
+            this.flowLayoutPanelOrigin.PerformLayout();
             this.flowLayoutPanelQuality.ResumeLayout(false);
             this.flowLayoutPanelQuality.PerformLayout();
             this.flowLayoutPanelStyle.ResumeLayout(false);
             this.flowLayoutPanelStyle.PerformLayout();
+            this.flowLayoutPanelSetItems.ResumeLayout(false);
+            this.flowLayoutPanelSetItems.PerformLayout();
             this.flowLayoutPanelWithCharm.ResumeLayout(false);
             this.flowLayoutPanelWithCharm.PerformLayout();
             this.flowLayoutPanelWithRelic.ResumeLayout(false);
@@ -1812,11 +2485,30 @@ namespace TQVaultAE.GUI
             this.tableLayoutPanelContent.PerformLayout();
             this.flowLayoutPanelMainAutoScroll.ResumeLayout(false);
             this.flowLayoutPanelMainAutoScroll.PerformLayout();
+            this.bufferedFlowLayoutPanelQuickFilters.ResumeLayout(false);
+            this.bufferedFlowLayoutPanelQuickFilters.PerformLayout();
             this.flowLayoutPanelMisc.ResumeLayout(false);
             this.flowLayoutPanelMisc.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxElement)).EndInit();
+            this.bufferedFlowLayoutPanelRequierements.ResumeLayout(false);
+            this.bufferedFlowLayoutPanelRequierements.PerformLayout();
+            this.tableLayoutPanelRequierements.ResumeLayout(false);
+            this.tableLayoutPanelRequierements.PerformLayout();
+            this.flowLayoutPanelMin.ResumeLayout(false);
+            this.flowLayoutPanelMin.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinLvl)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinStr)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinDex)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinInt)).EndInit();
+            this.flowLayoutPanelMax.ResumeLayout(false);
+            this.flowLayoutPanelMax.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxLvl)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxStr)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxDex)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxInt)).EndInit();
             this.flowLayoutPanelLeftColumn.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 
@@ -1909,5 +2601,41 @@ namespace TQVaultAE.GUI
 		private ScalingLabel scalingLabelFilterCategories;
 		private ScalingTextBox scalingTextBoxFilterCategories;
 		private TypeAssistant typeAssistantFilterCategories;
-	}
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanelRequierements;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelMax;
+        private ScalingLabel scalingLabelMaxLvl;
+        private System.Windows.Forms.NumericUpDown numericUpDownMaxLvl;
+        private ScalingLabel scalingLabelMaxStr;
+        private System.Windows.Forms.NumericUpDown numericUpDownMaxStr;
+        private ScalingLabel scalingLabelMaxDex;
+        private System.Windows.Forms.NumericUpDown numericUpDownMaxDex;
+        private ScalingLabel scalingLabelMaxInt;
+        private System.Windows.Forms.NumericUpDown numericUpDownMaxInt;
+        private ScalingCheckBox scalingCheckBoxMaxReq;
+        private ScalingCheckBox scalingCheckBoxMinReq;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelMin;
+        private ScalingLabel scalingLabelMinLvl;
+        private System.Windows.Forms.NumericUpDown numericUpDownMinLvl;
+        private ScalingLabel scalingLabelMinStr;
+        private System.Windows.Forms.NumericUpDown numericUpDownMinStr;
+        private ScalingLabel scalingLabelMinDex;
+        private System.Windows.Forms.NumericUpDown numericUpDownMinDex;
+        private ScalingLabel scalingLabelMinInt;
+        private System.Windows.Forms.NumericUpDown numericUpDownMinInt;
+        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelQuickFilters;
+        private ScalingCheckBox scalingCheckBoxHavingPrefix;
+        private ScalingCheckBox scalingCheckBoxHavingSuffix;
+        private ScalingCheckBox scalingCheckBoxHavingRelic;
+        private ScalingCheckBox scalingCheckBoxHavingCharm;
+        private ScalingCheckBox scalingCheckBoxIsSetItem;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelOrigin;
+        private ScalingLabel scalingLabelOrigin;
+        private ScalingCheckedListBox scalingCheckedListBoxOrigin;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelSetItems;
+        private ScalingLabel scalingLabelSetItems;
+        private ScalingCheckedListBox scalingCheckedListBoxSetItems;
+        private ScalingButton scalingButtonMenuOrigin;
+        private ScalingButton scalingButtonMenuSetItems;
+        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelRequierements;
+    }
 }

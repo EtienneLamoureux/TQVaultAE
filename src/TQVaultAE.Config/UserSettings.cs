@@ -96,9 +96,6 @@ public class UserSettings
 	[XmlElement(ElementName = "EnableHotReload")]
 	public bool EnableHotReload { get; set; } = false;
 
-	[XmlElement(ElementName = "SearchQueries")]
-	public string SearchQueries { get; set; } = string.Empty;
-
 	[XmlElement(ElementName = "DisableTooltipEquipment")]
 	public bool DisableTooltipEquipment { get; set; } = false;
 

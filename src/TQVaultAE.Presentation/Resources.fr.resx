@@ -1539,4 +1539,7 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="SearchSetItem" xml:space="preserve">
     <value>Objet de Set</value>
   </data>
+	<data name="GlobalOrigin" xml:space="preserve">
+    <value>Origine</value>
+  </data>
 </root>

@@ -37,7 +37,7 @@ public class ToFriendlyNameResult
 					}
 					, AttributesAll
 					, FlavorText
-					, ItemSet.Translations.Select(si => si.Value).ToArray()
+					, ItemSet?.Translations.Select(si => si.Value).ToArray() ?? new string[0]
 					, Requirements
 				}.SelectMany(s => s).Where(s => !string.IsNullOrEmpty(s));
 		}

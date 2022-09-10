@@ -18,6 +18,10 @@ using TQVaultAE.GUI.Tooltip;
 using Newtonsoft.Json;
 using TQVaultAE.Domain.Results;
 using System.Text.RegularExpressions;
+using static TQVaultAE.GUI.Models.SearchDialogAdvanced.SearchQuery;
+using TQVaultAE.GUI.Models;
+using System.Reflection;
+using System.Xml.Linq;
 
 namespace TQVaultAE.GUI;
 
@@ -34,7 +38,7 @@ public partial class SearchDialogAdvanced : VaultForm
 	private readonly Bitmap ButtonImageDown;
 	private readonly (ScalingButton Button, FlowLayoutPanel Panel)[] _NavMap;
 	private readonly List<BoxItem> _SelectedFilters = new List<BoxItem>();
-	private readonly List<SearchQuery> _Queries = new List<SearchQuery>();
+
 	public Result[] QueryResults { get; private set; } = new Result[] { };
 	private bool scalingCheckBoxReduceDuringSelection_LastChecked;
 
@@ -64,7 +68,7 @@ public partial class SearchDialogAdvanced : VaultForm
 
 		this.ProcessAllControls(c =>
 		{
-			if (c is IScalingControl || c is NumericUpDown) c.Font = FontService.GetFont(9F);
+			if (c is IScalingControl) c.Font = FontService.GetFont(9F);
 		});
 
 		this.applyButton.Font = FontService.GetFontLight(12F);
@@ -137,6 +141,28 @@ public partial class SearchDialogAdvanced : VaultForm
 		this.scalingButtonMenuWithRelic.Text
 			= this.scalingLabelWithRelic.Text
 			= Resources.SearchHavingRelic;
+		this.scalingButtonMenuOrigin.Text
+			= this.scalingLabelOrigin.Text
+			= Resources.GlobalOrigin;
+		this.scalingButtonMenuSetItems.Text
+			= this.scalingLabelSetItems.Text
+			= Resources.SearchSetItem;
+
+		scalingCheckBoxMinReq.Text = $"{Resources.GlobalMin} {Resources.GlobalRequirements} :";
+		scalingCheckBoxMaxReq.Text = $"{Resources.GlobalMax} {Resources.GlobalRequirements} :";
+		scalingLabelMaxLvl.Text =
+		scalingLabelMinLvl.Text = TranslationService.TranslateXTag("tagMenuImport05");
+		scalingLabelMaxStr.Text =
+		scalingLabelMinStr.Text = TranslationService.TranslateXTag("Strength");
+		scalingLabelMaxDex.Text =
+		scalingLabelMinDex.Text = TranslationService.TranslateXTag("Dexterity");
+		scalingLabelMaxInt.Text =
+		scalingLabelMinInt.Text = TranslationService.TranslateXTag("Intelligence");
+		scalingCheckBoxHavingCharm.Text = Resources.SearchHavingCharm;
+		scalingCheckBoxHavingRelic.Text = Resources.SearchHavingRelic;
+		scalingCheckBoxHavingPrefix.Text = Resources.SearchHavingPrefix;
+		scalingCheckBoxHavingSuffix.Text = Resources.SearchHavingSuffix;
+		scalingCheckBoxIsSetItem.Text = Resources.SearchSetItem;
 
 		#endregion
 
@@ -158,6 +184,8 @@ public partial class SearchDialogAdvanced : VaultForm
 				(this.scalingButtonMenuWithCharm, this.flowLayoutPanelWithCharm),
 				(this.scalingButtonMenuWithRelic, this.flowLayoutPanelWithRelic),
 				(this.scalingButtonMenuQuality, this.flowLayoutPanelQuality),
+				(this.scalingButtonMenuOrigin, this.flowLayoutPanelOrigin),
+				(this.scalingButtonMenuSetItems, this.flowLayoutPanelSetItems),
 			};
 		}
 
@@ -169,7 +197,14 @@ public partial class SearchDialogAdvanced : VaultForm
 
 		// Remove design time fake elements
 		scalingComboBoxQueryList.Items.Clear();
+
 		CleanAllCheckBoxes();
+
+		// Set numerical to default
+		this.ProcessAllControls(c =>
+		{
+			if (c is NumericUpDown num && num != numericUpDownMaxElement) num.Value = 0;
+		});
 	}
 
 	private void CleanAllCheckBoxes()
@@ -410,7 +445,6 @@ public partial class SearchDialogAdvanced : VaultForm
 	private void backgroundWorkerBuildDB_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
 	{
 		SearchEngineReady();
-
 		LoadPersonnalQueries();
 	}
 
@@ -476,6 +510,8 @@ public partial class SearchDialogAdvanced : VaultForm
 		PopulateVaults();
 		PopulateWithCharm();
 		PopulateWithRelic();
+		PopulateOrigin();
+		PopulateSetItems();
 
 		PopulateItemAttributes();
 		PopulateBaseAttributes();
@@ -486,6 +522,73 @@ public partial class SearchDialogAdvanced : VaultForm
 		PopulateSuffixName();
 		PopulateSuffixAttributes();
 
+	}
+
+	private void PopulateSetItems()
+	{
+		var clb = scalingCheckedListBoxSetItems;
+		var setitems =
+			from id in ItemDatabase
+			let itm = id.FriendlyNames.Item
+			let set = id.FriendlyNames.ItemSet
+			where set is not null
+			let setName = set.Translations[set.setName].RemoveAllTQTags()
+			orderby setName
+			group id by setName into grp
+			select new BoxItem
+			{
+				DisplayValue = grp.Key,
+				MatchingResults = grp,
+				CheckedList = clb,
+				Category = clb.Parent.Controls.OfType<ScalingLabel>().First(),
+			};
+
+		PopulateInit(clb, setitems);
+	}
+
+	private void PopulateOrigin()
+	{
+		var clb = scalingCheckedListBoxOrigin;
+
+		var originList = new ItemOrigin[] {
+			new ItemOrigin{
+				Value = GameDlc.TitanQuest,
+				DisplayName = TranslationService.Translate(GameDlc.TitanQuest)
+			},
+			new ItemOrigin{
+				Value = GameDlc.ImmortalThrone,
+				DisplayName = TranslationService.Translate(GameDlc.ImmortalThrone)
+			},
+			new ItemOrigin{
+				Value = GameDlc.Ragnarok,
+				DisplayName = TranslationService.Translate(GameDlc.Ragnarok)
+			},
+			new ItemOrigin{
+				Value = GameDlc.Atlantis,
+				DisplayName = TranslationService.Translate(GameDlc.Atlantis)
+			},
+			new ItemOrigin{
+				Value = GameDlc.EternalEmbers,
+				DisplayName = TranslationService.Translate(GameDlc.EternalEmbers)
+			},
+		};
+
+		var originItems =
+			from id in ItemDatabase
+			let itm = id.FriendlyNames.Item
+			from org in originList
+			where itm.GameDlc == org.Value
+			orderby org.DisplayName
+			group id by org.DisplayName into grp
+			select new BoxItem
+			{
+				DisplayValue = grp.Key,
+				MatchingResults = grp,
+				CheckedList = clb,
+				Category = clb.Parent.Controls.OfType<ScalingLabel>().First(),
+			};
+
+		PopulateInit(clb, originItems);
 	}
 
 	private void PopulateWithRelic()
@@ -936,8 +1039,22 @@ public partial class SearchDialogAdvanced : VaultForm
 	private void scalingLabelFiltersSelected_MouseLeave(object sender, EventArgs e)
 		=> SearchFiltersTooltip.HideTooltip();
 
+	bool _Apply_SelectedFiltersDisabled = false;
 	private void Apply_SelectedFilters()
 	{
+		if (_Apply_SelectedFiltersDisabled)
+			return;
+
+		int MaxLvl = (int)numericUpDownMaxLvl.Value,
+			MaxDex = (int)numericUpDownMaxDex.Value,
+			MaxInt = (int)numericUpDownMaxInt.Value,
+			MaxStr = (int)numericUpDownMaxStr.Value,
+			MinLvl = (int)numericUpDownMinLvl.Value,
+			MinDex = (int)numericUpDownMinDex.Value,
+			MinInt = (int)numericUpDownMinInt.Value,
+			MinStr = (int)numericUpDownMinStr.Value;
+		bool MaxRequierement = scalingCheckBoxMaxReq.Checked, MinRequierement = scalingCheckBoxMinReq.Checked;
+
 		this.scalingLabelFiltersSelected.Text = string.Format(this.scalingLabelFiltersSelected.Tag.ToString(), _SelectedFilters.Count());
 
 		var query = ItemDatabase.AsQueryable();
@@ -951,6 +1068,77 @@ public partial class SearchDialogAdvanced : VaultForm
 		{
 			// OR Operator => Accumulate & Distinct
 			query = _SelectedFilters.AsQueryable().SelectMany(f => f.MatchingResults).Distinct();
+		}
+
+		// Apply Quick Filters
+		if (this.scalingCheckBoxHavingPrefix.Checked)
+			query = query.Where(i => i.FriendlyNames.Item.HasPrefix);
+
+		if (this.scalingCheckBoxHavingSuffix.Checked)
+			query = query.Where(i => i.FriendlyNames.Item.HasSuffix);
+
+		if (this.scalingCheckBoxHavingRelic.Checked)
+			query = query.Where(i => i.FriendlyNames.Item.HasRelic);
+
+		if (this.scalingCheckBoxHavingCharm.Checked)
+			query = query.Where(i => i.FriendlyNames.Item.HasCharm);
+
+		if (this.scalingCheckBoxIsSetItem.Checked)
+			query = query.Where(i => i.FriendlyNames.ItemSet != null);
+
+		// Apply Requirements
+		if (MinRequierement)
+		{
+			if (MinLvl > 0)
+				query = query.Where(x =>
+					!x.FriendlyNames.RequirementInfo.Lvl.HasValue // Item doesn't have requirement
+					|| x.FriendlyNames.RequirementInfo.Lvl >= MinLvl
+				);
+
+			if (MinStr > 0)
+				query = query.Where(x =>
+					!x.FriendlyNames.RequirementInfo.Str.HasValue
+					|| x.FriendlyNames.RequirementInfo.Str >= MinStr
+				);
+
+			if (MinDex > 0)
+				query = query.Where(x =>
+					!x.FriendlyNames.RequirementInfo.Dex.HasValue
+					|| x.FriendlyNames.RequirementInfo.Dex >= MinDex
+				);
+
+			if (MinInt > 0)
+				query = query.Where(x =>
+					!x.FriendlyNames.RequirementInfo.Int.HasValue
+					|| x.FriendlyNames.RequirementInfo.Int >= MinInt
+				);
+		}
+
+		if (MaxRequierement)
+		{
+			if (MaxLvl > 0)
+				query = query.Where(x =>
+					!x.FriendlyNames.RequirementInfo.Lvl.HasValue // Item doesn't have requirement
+					|| x.FriendlyNames.RequirementInfo.Lvl <= MaxLvl
+				);
+
+			if (MaxStr > 0)
+				query = query.Where(x =>
+					!x.FriendlyNames.RequirementInfo.Str.HasValue
+					|| x.FriendlyNames.RequirementInfo.Str <= MaxStr
+				);
+
+			if (MaxDex > 0)
+				query = query.Where(x =>
+					!x.FriendlyNames.RequirementInfo.Dex.HasValue
+					|| x.FriendlyNames.RequirementInfo.Dex <= MaxDex
+				);
+
+			if (MaxInt > 0)
+				query = query.Where(x =>
+					!x.FriendlyNames.RequirementInfo.Int.HasValue
+					|| x.FriendlyNames.RequirementInfo.Int <= MaxInt
+				);
 		}
 
 		this.QueryResults = query.ToArray();
@@ -1093,18 +1281,43 @@ public partial class SearchDialogAdvanced : VaultForm
 	private void ResetSelectedFilters()
 	{
 		this.scalingComboBoxQueryList.ResetText();
+		ResetQuickFilters();
+		ResetRequirements();
 		UncheckCategories(flowLayoutPanelMain);
 		TextBoxSearchTerm_UpdateText_Notrigger(string.Empty);
 		TextBoxSearchTerm_TextChanged_Logic();
 	}
 
+	internal void ResetQuickFilters()
+	{
+		scalingCheckBoxIsSetItem.Checked =
+		scalingCheckBoxHavingCharm.Checked =
+		scalingCheckBoxHavingRelic.Checked =
+		scalingCheckBoxHavingPrefix.Checked =
+		scalingCheckBoxHavingSuffix.Checked = false;
+	}
+
+	internal void ResetRequirements()
+	{
+		scalingCheckBoxMaxReq.Checked =
+		scalingCheckBoxMinReq.Checked = false;
+		numericUpDownMaxDex.Value =
+		numericUpDownMaxInt.Value =
+		numericUpDownMaxLvl.Value =
+		numericUpDownMaxStr.Value =
+		numericUpDownMinDex.Value =
+		numericUpDownMinInt.Value =
+		numericUpDownMinLvl.Value =
+		numericUpDownMinStr.Value = 0;
+	}
+
 	private void TextBoxSearchTerm_UpdateText_Notrigger(string newText)
 	{
-		this.scalingTextBoxSearchTerm.TextChanged -= new System.EventHandler(this.scalingTextBoxSearchTerm_TextChanged);
+		this.scalingTextBoxSearchTerm.TextChanged -= scalingTextBoxSearchTerm_TextChanged;
 
 		this.scalingTextBoxSearchTerm.Text = newText;
 
-		this.scalingTextBoxSearchTerm.TextChanged += new System.EventHandler(this.scalingTextBoxSearchTerm_TextChanged);
+		this.scalingTextBoxSearchTerm.TextChanged += scalingTextBoxSearchTerm_TextChanged;
 	}
 
 	private void scalingTextBoxSearchTerm_TextChanged(object sender, EventArgs e)
@@ -1213,75 +1426,69 @@ public partial class SearchDialogAdvanced : VaultForm
 
 	private void SavePersonnalQueries()
 	{
-		Config.UserSettings.Default.SearchQueries = JsonConvert.SerializeObject(this._Queries);
-		Config.UserSettings.Default.Save();
+		SearchQueries.Default.Save();
 	}
 
 	private void LoadPersonnalQueries()
 	{
-		var save = Config.UserSettings.Default.SearchQueries;
-		if (string.IsNullOrWhiteSpace(save))
+		if (!SearchQueries.Default.Any())
 			return;
 
-		var queries = JsonConvert.DeserializeObject<SearchQuery[]>(save);
-
 		// Try to retrieve actual instantiated BoxItems related to saved data.
-		if (queries.Any())
-		{
-			var matrix = (
-				from query in queries
-				from boxi in query.CheckedItems
-				select new
-				{
-					// Source
-					query,
-					query.QueryName,
-					boxiSave = boxi,
-					// Join
-					boxi.DisplayValue,
-					boxi.CategoryName,
-					boxi.CheckedListName,
-					found = new List<BoxItem>() // Late binding placeholder because anonymous types are immutable
-				}
-			).ToArray();
-
-			// Retrieve CheckBoxes
-			flowLayoutPanelMain.ProcessAllControls(c =>
+		var matrix = (
+			from query in SearchQueries.Default
+			from boxi in query.CheckedItems
+			select new
 			{
-				if (c is ScalingCheckedListBox lb)
-				{
-					var (_, tag) = lb.GetBoxTag();
+				// Source
+				query,
+				query.QueryName,
+				boxiSave = boxi,
+				// Join
+				boxi.DisplayValue,
+				boxi.CategoryName,
+				boxi.CheckedListName,
+				found = new List<BoxItem>() // Late binding placeholder because anonymous types are immutable
+			}
+		).ToList();
 
-					(
-						// Align Saved & Live BoxItems
-						from ds in tag.DataSource
-						join m in matrix on new { ds.CategoryName, ds.CheckedListName, ds.DisplayValue } equals new { m.CategoryName, m.CheckedListName, m.DisplayValue }
-						select new { boxiLive = ds, matrix = m }
-					).ToList().ForEach(r => r.matrix.found.Add(r.boxiLive));// Bind
-				}
-			});
+		// Retrieve CheckBoxes
+		flowLayoutPanelMain.ProcessAllControls(c =>
+		{
+			if (c is ScalingCheckedListBox lb)
+			{
+				var (_, tag) = lb.GetBoxTag();
 
-			// Make Search terms
-			(
-				from m in matrix
-				where m.CategoryName == scalingLabelSearchTerm.Name
-				select new { boxiLive = MakeSearchTermBoxItem(m.DisplayValue), matrix = m }
-			).ToList().ForEach(r => r.matrix.found.Add(r.boxiLive));// Bind
+				(
+					// Align Saved & Live BoxItems
+					from ds in tag.DataSource
+					join m in matrix on new { ds.CategoryName, ds.CheckedListName, ds.DisplayValue } equals new { m.CategoryName, m.CheckedListName, m.DisplayValue }
+					select new { boxiLive = ds, matrix = m }
+				).ToList().ForEach(r => r.matrix.found.Add(r.boxiLive));// Bind
+			}
+		});
 
-			// Make newList
-			var newList = (
-				from m in matrix
-				where m.found.Any() // Saved boxitems may not be retrieved if you have lost the items that carry the corresponding properties.
-				group m by m.QueryName into grp
-				select new SearchQuery
-				{
-					QueryName = grp.Key,
-					CheckedItems = grp.SelectMany(i => i.found).ToArray()
-				}
-			).ToList();
+		// Make Search terms
+		(
+			from m in matrix
+			where m.CategoryName == scalingLabelSearchTerm.Name // Unique to the search term
+			select new { boxiLive = MakeSearchTermBoxItem(m.DisplayValue), matrix = m }
+		).ToList().ForEach(r => r.matrix.found.Add(r.boxiLive));// Bind
 
-			SearchQueriesInit(newList);
-		}
+		// Renew list
+		(
+			from m in matrix
+			where m.found.Any() // Saved boxitems may not be retrieved if you have lost the items that carry the corresponding properties.
+			group m by m.QueryName into grp // Should have only one query per group
+			select grp
+		).ToList().ForEach(grp =>
+		{
+			var originalQueryInstance = grp.First().query;
+			//originalQueryInstance.QueryName = grp.Key;
+			originalQueryInstance.CheckedItems = grp.SelectMany(i => i.found).ToArray();
+		});
+
+		SearchQueriesInit();
 	}
 
 	private void scalingButtonQuerySave_Click(object sender, EventArgs e)
@@ -1321,7 +1528,7 @@ public partial class SearchDialogAdvanced : VaultForm
 		}
 
 		// Name conflict
-		foundIt = this._Queries.FirstOrDefault(q => q.QueryName.Equals(input, StringComparison.OrdinalIgnoreCase));
+		foundIt = SearchQueries.Default.FirstOrDefault(q => q.QueryName.Equals(input, StringComparison.OrdinalIgnoreCase));
 		if (foundIt != null)
 		{
 			overrideIt = MessageBox.Show(
@@ -1341,37 +1548,70 @@ public partial class SearchDialogAdvanced : VaultForm
 
 		if (overrideIt == DialogResult.Yes)
 		{
-			foundIt.QueryName = input;
-			foundIt.CheckedItems = this._SelectedFilters.ToArray();// i need a clone here so ToArray() do the job
+			UpdateQuery(input, foundIt);
+			SavePersonnalQueries();
 			scalingComboBoxQueryList.Refresh();
 			return;
 		}
 
 		// Add scenario
 		var newList = new IEnumerable<SearchQuery>[] {
-			this._Queries
-			, new[] { new SearchQuery {
-				QueryName = input,
-				CheckedItems = this._SelectedFilters.ToArray(),// i need a clone here so ToArray() do the job
-			} }
+			SearchQueries.Default
+			, new[] {
+				UpdateQuery(input, new SearchQuery())
+			}
 		}
 		.SelectMany(s => s)
 		.OrderBy(s => s.QueryName)
-		.ToArray();
+		.ToList();
 
-		SearchQueriesInit(newList);
+		SearchQueries.Default.Clear();
+		SearchQueries.Default.AddRange(newList);
+
+		SearchQueriesInit();
 
 		SavePersonnalQueries();
+
+		SearchQuery UpdateQuery(string input, SearchQuery foundIt)
+		{
+			foundIt.QueryName = input;
+			foundIt.CheckedItems = this._SelectedFilters.ToArray();// i need a clone here so ToArray() do the job
+
+			// Visible elements / category
+			foundIt.MaxElement = this.numericUpDownMaxElement.Value;
+			// Reduce categories
+			foundIt.Reduce = this.scalingCheckBoxReduceDuringSelection.Checked;
+			// Logical operator
+			foundIt.Logic = (SearchOperator)this.scalingComboBoxOperator.SelectedIndex;
+			// Add Category filter
+			foundIt.Filter = this.scalingTextBoxFilterCategories.Text;
+			// Add Display elements
+			foundIt.Visible = _NavMap.Select(m => new VisibilityItem(m.Button.Name, m.Panel.Visible)).ToList();
+			// Requierements
+			foundIt.MinRequirement = scalingCheckBoxMinReq.Checked;
+			foundIt.MaxRequirement = scalingCheckBoxMaxReq.Checked;
+			foundIt.MaxLvl = (int)numericUpDownMaxStr.Value;
+			foundIt.MaxStr = (int)numericUpDownMaxStr.Value;
+			foundIt.MaxDex = (int)numericUpDownMaxDex.Value;
+			foundIt.MaxInt = (int)numericUpDownMaxInt.Value;
+			foundIt.MinLvl = (int)numericUpDownMaxStr.Value;
+			foundIt.MinStr = (int)numericUpDownMinStr.Value;
+			foundIt.MinDex = (int)numericUpDownMinDex.Value;
+			foundIt.MinInt = (int)numericUpDownMinInt.Value;
+			foundIt.HavingPrefix = this.scalingCheckBoxHavingPrefix.Checked;
+			foundIt.HavingSuffix = this.scalingCheckBoxHavingSuffix.Checked;
+			foundIt.HavingRelic = this.scalingCheckBoxHavingRelic.Checked;
+			foundIt.HavingCharm = this.scalingCheckBoxHavingCharm.Checked;
+			foundIt.IsSetItem = this.scalingCheckBoxIsSetItem.Checked;
+			return foundIt;
+		}
 	}
 
-	private void SearchQueriesInit(IEnumerable<SearchQuery> newList)
+	private void SearchQueriesInit()
 	{
-		this._Queries.Clear();
-		this._Queries.AddRange(newList);
-
 		scalingComboBoxQueryList.BeginUpdate();
 		scalingComboBoxQueryList.Items.Clear();
-		scalingComboBoxQueryList.Items.AddRange(this._Queries.ToArray());
+		scalingComboBoxQueryList.Items.AddRange(SearchQueries.Default.ToArray());
 		scalingComboBoxQueryList.EndUpdate();
 	}
 
@@ -1396,7 +1636,7 @@ public partial class SearchDialogAdvanced : VaultForm
 
 
 		scalingComboBoxQueryList.Items.RemoveAt(idx);
-		this._Queries.RemoveAt(idx);
+		SearchQueries.Default.RemoveAt(idx);
 
 		SavePersonnalQueries();
 	}
@@ -1404,7 +1644,7 @@ public partial class SearchDialogAdvanced : VaultForm
 	private void scalingComboBoxQueryList_SelectedIndexChanged(object sender, EventArgs e)
 	{
 		var idx = scalingComboBoxQueryList.SelectedIndex;
-		Make_SelectedFilters(this._Queries[idx]);
+		Make_SelectedFilters(SearchQueries.Default[idx]);
 	}
 
 	private void Make_SelectedFilters(SearchQuery searchQuery)
@@ -1430,9 +1670,91 @@ public partial class SearchDialogAdvanced : VaultForm
 
 		MakeSearchTermBoxItem();
 
+		_Apply_SelectedFiltersDisabled = true;// Prevent filter before ui is fully init
+
+		(// Find category visibility differences and apply
+			from map in this._NavMap
+			join vis in searchQuery.Visible on map.Button.Name equals vis.Name
+			where map.Panel.Visible != vis.Visible
+			select map
+		).ToList().ForEach(map => map.Button.PerformClick());
+
+		// Requirements
+		this.numericUpDownMaxStr.Value = searchQuery.MaxStr;
+		this.numericUpDownMaxDex.Value = searchQuery.MaxDex;
+		this.numericUpDownMaxInt.Value = searchQuery.MaxInt;
+		this.numericUpDownMinStr.Value = searchQuery.MinStr;
+		this.numericUpDownMinDex.Value = searchQuery.MinDex;
+		this.numericUpDownMinInt.Value = searchQuery.MinInt;
+		this.numericUpDownMaxLvl.Value = searchQuery.MaxLvl;
+		this.numericUpDownMinLvl.Value = searchQuery.MinLvl;
+		this.scalingCheckBoxMinReq.Checked = searchQuery.MinRequirement;
+		this.scalingCheckBoxMaxReq.Checked = searchQuery.MaxRequirement;
+
+		// Quick Filters
+		this.scalingCheckBoxHavingPrefix.Checked = searchQuery.HavingPrefix;
+		this.scalingCheckBoxHavingSuffix.Checked = searchQuery.HavingSuffix;
+		this.scalingCheckBoxHavingRelic.Checked = searchQuery.HavingRelic;
+		this.scalingCheckBoxHavingCharm.Checked = searchQuery.HavingCharm;
+		this.scalingCheckBoxIsSetItem.Checked = searchQuery.IsSetItem;
+
+		// UI Behaviors
+		this.numericUpDownMaxElement.Value = searchQuery.MaxElement;
+		this.scalingComboBoxOperator.SelectedIndex = (int)searchQuery.Logic;
+		this.scalingTextBoxFilterCategories.Text = searchQuery.Filter;
+		this.scalingCheckBoxReduceDuringSelection.Checked = searchQuery.Reduce;
+
+		_Apply_SelectedFiltersDisabled = false;
+
 		this.Apply_SelectedFilters();
 	}
 
+	private void scalingCheckBoxMinMaxReq_CheckedChanged(object sender, EventArgs e)
+	{
+		Apply_SelectedFilters();
+	}
+
+	private void numericUpDownMinMax_ValueChanged(object sender, EventArgs e)
+	{
+		var num = sender as NumericUpDown;
+
+		// Avoid absurd range
+		if (num == numericUpDownMinLvl && numericUpDownMaxLvl.Value < num.Value)
+			numericUpDownMaxLvl.Value = num.Value;
+
+		else if (num == numericUpDownMaxLvl && numericUpDownMinLvl.Value > num.Value)
+			numericUpDownMinLvl.Value = num.Value;
+
+		else if (num == numericUpDownMinStr && numericUpDownMaxStr.Value < num.Value)
+			numericUpDownMaxStr.Value = num.Value;
+
+		else if (num == numericUpDownMaxStr && numericUpDownMinStr.Value > num.Value)
+			numericUpDownMinStr.Value = num.Value;
+
+		else if (num == numericUpDownMinDex && numericUpDownMaxDex.Value < num.Value)
+			numericUpDownMaxDex.Value = num.Value;
+
+		else if (num == numericUpDownMaxDex && numericUpDownMinDex.Value > num.Value)
+			numericUpDownMinDex.Value = num.Value;
+
+		else if (num == numericUpDownMinInt && numericUpDownMaxInt.Value < num.Value)
+			numericUpDownMaxInt.Value = num.Value;
+
+		else if (num == numericUpDownMaxInt && numericUpDownMinInt.Value > num.Value)
+			numericUpDownMinInt.Value = num.Value;
+
+		if (// No need to filter if corresponding checkbox is uncheck
+			(num.Name.Contains("Min") && !this.scalingCheckBoxMinReq.Checked)
+			|| (num.Name.Contains("Max") && !this.scalingCheckBoxMaxReq.Checked)
+		) return;
+
+		Apply_SelectedFilters();
+	}
+
+	private void scalingCheckBoxQuickFilters_CheckedChanged(object sender, EventArgs e)
+	{
+		Apply_SelectedFilters();
+	}
 }
 
 public static class SearchDialogAdvancedExtension
