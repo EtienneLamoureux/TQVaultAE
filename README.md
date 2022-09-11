@@ -11,16 +11,16 @@ Works with all expansions!
 ## Features
 - **Infinite bank space**
 - [Powerful search](documentation/ADVANCEDSEARCH.md)
-- Cheats
+- Cheats 
     - Items
-        - [Extract relic/charm from items at no cost, keeping both](documentation/AFFIXES.md#RelicRemoval)
-        - [Modify the relic/charm/artefact completion bonus](documentation/AFFIXES.md#RelicCompletion)
-        - [Complete relic/charm from a single piece](documentation/AFFIXES.md#RelicCompleteStack)
-        - [Craft an artifact from its recipe](documentation/AFFIXES.md#Formula)
-        - [Change item seed](documentation/AFFIXES.md#Seed)
-        - [Create missing set pieces](documentation/AFFIXES.md#MissingSetPiece)
+        - [Extract relic/charm from items at no cost, keeping both](documentation/AFFIXES.md#relics-removal)
+        - [Modify the relic/charm/artefact completion bonus](documentation/AFFIXES.md#relic-and-charm-completion-bonus-change)
+        - [Complete relic/charm from a single piece](documentation/AFFIXES.md#relic-and-charm-completion)
+        - [Craft an artifact from its recipe](documentation/AFFIXES.md#artefact-creation)
+        - [Change item seed](documentation/AFFIXES.md#item-seed-change)
+        - [Create missing set pieces](documentation/AFFIXES.md#create-missing-set-pieces)
         - [Craft custom items](documentation/FORGE.md)
-        - [Change items affixes](documentation/AFFIXES.md)
+        - [Change items affixes](documentation/AFFIXES.md#prefix-change)
         - Duplicate any item
     - Characters
         - Redisribute attribute points
