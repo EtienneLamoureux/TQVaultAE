@@ -1590,11 +1590,11 @@ public partial class SearchDialogAdvanced : VaultForm
 			// Requierements
 			foundIt.MinRequirement = scalingCheckBoxMinReq.Checked;
 			foundIt.MaxRequirement = scalingCheckBoxMaxReq.Checked;
-			foundIt.MaxLvl = (int)numericUpDownMaxStr.Value;
+			foundIt.MaxLvl = (int)numericUpDownMaxLvl.Value;
 			foundIt.MaxStr = (int)numericUpDownMaxStr.Value;
 			foundIt.MaxDex = (int)numericUpDownMaxDex.Value;
 			foundIt.MaxInt = (int)numericUpDownMaxInt.Value;
-			foundIt.MinLvl = (int)numericUpDownMaxStr.Value;
+			foundIt.MinLvl = (int)numericUpDownMinLvl.Value;
 			foundIt.MinStr = (int)numericUpDownMinStr.Value;
 			foundIt.MinDex = (int)numericUpDownMinDex.Value;
 			foundIt.MinInt = (int)numericUpDownMinInt.Value;
