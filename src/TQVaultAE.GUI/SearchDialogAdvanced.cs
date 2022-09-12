@@ -578,7 +578,7 @@ public partial class SearchDialogAdvanced : VaultForm
 			let itm = id.FriendlyNames.Item
 			from org in originList
 			where itm.GameDlc == org.Value
-			orderby org.DisplayName
+			orderby org.Value
 			group id by org.DisplayName into grp
 			select new BoxItem
 			{
@@ -1514,7 +1514,7 @@ public partial class SearchDialogAdvanced : VaultForm
 		}
 
 		// You must have filters
-		if (!this._SelectedFilters.Any())
+		if (!HaveFilters())
 		{
 			MessageBox.Show(
 				Resources.SearchTermRequired
@@ -1604,6 +1604,33 @@ public partial class SearchDialogAdvanced : VaultForm
 			foundIt.HavingCharm = this.scalingCheckBoxHavingCharm.Checked;
 			foundIt.IsSetItem = this.scalingCheckBoxIsSetItem.Checked;
 			return foundIt;
+		}
+
+		bool HaveFilters()
+		{
+			return this._SelectedFilters.Any()
+				|| (this.scalingCheckBoxMinReq.Checked
+					&& (
+						this.numericUpDownMinLvl.Value != 0
+						|| this.numericUpDownMinStr.Value != 0
+						|| this.numericUpDownMinDex.Value != 0
+						|| this.numericUpDownMinInt.Value != 0
+					)
+				)
+				|| (this.scalingCheckBoxMaxReq.Checked
+					&& (
+						this.numericUpDownMaxLvl.Value != 0
+						|| this.numericUpDownMaxStr.Value != 0
+						|| this.numericUpDownMaxDex.Value != 0
+						|| this.numericUpDownMaxInt.Value != 0
+					)
+				)
+				|| this.scalingCheckBoxHavingCharm.Checked
+				|| this.scalingCheckBoxHavingRelic.Checked
+				|| this.scalingCheckBoxHavingPrefix.Checked
+				|| this.scalingCheckBoxHavingSuffix.Checked
+				|| this.scalingCheckBoxIsSetItem.Checked
+				;
 		}
 	}
 
