@@ -64,7 +64,7 @@ public class ToFriendlyNameResult
 
 		foreach (var str in _FullText)
 		{
-			if (str.IndexOf(search, StringComparison.OrdinalIgnoreCase) > -1) return true;
+			if (str.ContainsIgnoreCase(search)) return true;
 		}
 
 		return false;

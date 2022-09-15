@@ -14,7 +14,15 @@ namespace TQVaultAE.Domain.Helpers;
 public static class StringHelper
 {
 	const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
+
 	public const string TQNewLineTag = @"{^N}";
+
+	public static bool Contains(this string input, string search, StringComparison comparison)
+		=> input.IndexOf(search, comparison) > -1;
+	
+	public static bool ContainsIgnoreCase(this string input, string search)
+		=> input.Contains(search, noCase);
+
 
 	#region Eval
 
@@ -205,7 +213,7 @@ public static class StringHelper
 					var x when x.Equals("MasteryH", noCase) => "Mastery Storm",
 					_ => title
 				};
-			}) 
+			})
 			.JoinString(" ");// Put it back together
 
 		return filename;

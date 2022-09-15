@@ -6,6 +6,7 @@ using System.Linq;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Domain.Search;
 
@@ -20,6 +21,7 @@ namespace TQVaultAE.Services
 		private readonly IGamePathService GamePathResolver;
 		private readonly ITranslationService TranslationService;
 		private readonly ITQDataService TQDataService;
+		private readonly ITagService TagService;
 
 		public PlayerService(
 			ILogger<PlayerService> log
@@ -30,6 +32,7 @@ namespace TQVaultAE.Services
 			, IGamePathService gamePathResolver
 			, ITranslationService translationService
 			, ITQDataService tQDataService
+			, ITagService tagService
 		)
 		{
 			this.Log = log;
@@ -39,6 +42,7 @@ namespace TQVaultAE.Services
 			this.GamePathResolver = gamePathResolver;
 			this.TranslationService = translationService;
 			this.TQDataService = tQDataService;
+			this.TagService = tagService;
 		}
 
 
@@ -56,7 +60,7 @@ namespace TQVaultAE.Services
 
 			#region Get the player
 
-			var pf = GamePathResolver.GetPlayerFile(selectedSave.Name, selectedSave.IsImmortalThrone);
+			var pf = GamePathResolver.GetPlayerFile(selectedSave.Name, selectedSave.IsImmortalThrone, selectedSave.IsArchived);
 
 			var resultPC = new PlayerCollection(selectedSave.Name, pf);
 
@@ -89,6 +93,8 @@ namespace TQVaultAE.Services
 				: this.userContext.Players.GetOrAddAtomic(result.PlayerFile, addFactory);
 
 			result.Player = resultPlayer;
+
+			this.TagService.LoadTags(selectedSave);
 
 			#endregion
 
@@ -141,7 +147,8 @@ namespace TQVaultAE.Services
 			return folders
 				.Select(f =>
 					new PlayerSave(f
-						, f.IndexOf(GamePathResolver.SaveDirNameTQIT, StringComparison.OrdinalIgnoreCase) > -1 // Is TQIT
+						, f.ContainsIgnoreCase(GamePathResolver.SaveDirNameTQIT)  // Is TQIT
+						, f.ContainsIgnoreCase(GamePathResolver.ArchiveDirName) // Is Archived
 						, this.GamePathResolver.IsCustom
 						, this.GamePathResolver.MapName
 						, this.TranslationService

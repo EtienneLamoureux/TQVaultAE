@@ -3,30 +3,29 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+using System.Resources;
+using System.Security.Permissions;
+using System.Threading;
+using System.Windows.Forms;
+using TQVaultAE.Data;
+using TQVaultAE.Domain.Contracts.Providers;
+using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Exceptions;
+using TQVaultAE.Logs;
+using TQVaultAE.Presentation;
+using TQVaultAE.Services;
+using TQVaultAE.Services.Win32;
+using Microsoft.Extensions.Logging;
+using TQVaultAE.GUI.Inputs.Filters;
+
 namespace TQVaultAE.GUI
 {
-	using Microsoft.Extensions.DependencyInjection;
-	using System;
-	using System.Globalization;
-	using System.IO;
-	using System.Reflection;
-	using System.Resources;
-	using System.Security.Permissions;
-	using System.Threading;
-	using System.Windows.Forms;
-	using TQVaultAE.Data;
-	using TQVaultAE.Domain.Contracts.Providers;
-	using TQVaultAE.Domain.Contracts.Services;
-	using TQVaultAE.Domain.Entities;
-	using TQVaultAE.Domain.Exceptions;
-	using TQVaultAE.Logs;
-	using TQVaultAE.Presentation;
-	using TQVaultAE.Services;
-	using TQVaultAE.Services.Win32;
-	using Microsoft.Extensions.Logging;
-	using Microsoft.VisualBasic.Logging;
-	using log4net;
-
 	/// <summary>
 	/// Main Program class
 	/// </summary>
@@ -105,6 +104,7 @@ namespace TQVaultAE.GUI
 				.AddTransient<IBitmapService, BitmapService>()
 				.AddSingleton<ISoundService, SoundServiceWin>()
 				.AddTransient<IGameFileService, GameFileServiceWin>()
+				.AddSingleton<ITagService, TagService>()
 				// Forms
 				.AddSingleton<MainForm>()
 				.AddTransient<AboutBox>()
@@ -146,9 +146,10 @@ namespace TQVaultAE.GUI
 				}
 
 				var mainform = Program.ServiceProvider.GetService<MainForm>();
-				var filter = new FormFilterMouseWheelGlobally(mainform);
-
-				Application.AddMessageFilter(filter);
+				var filterMouseWheel = new FormFilterMouseWheelGlobally(mainform);
+				var filterMouseButtons = new FormFilterMouseButtonGlobally(mainform);
+				Application.AddMessageFilter(filterMouseWheel);
+				Application.AddMessageFilter(filterMouseButtons);
 				Application.Run(mainform);
 			}
 			catch (Exception ex)
@@ -158,44 +159,6 @@ namespace TQVaultAE.GUI
 			}
 
 		exit:;
-		}
-
-		/// <summary>
-		/// Capture all mouse wheel event globally and trigger dedicated events
-		/// </summary>
-		public class FormFilterMouseWheelGlobally : IMessageFilter
-		{
-			// Inspired by https://www.appsloveworld.com/csharp/100/924/detect-mouse-wheel-on-a-button
-			// and https://www.programmerall.com/article/67001647661/
-
-			internal const int WM_MOUSEWHEEL = 0x020A;
-			internal const int WM_MOUSEHWHEEL = 0x020E;
-
-			private readonly VaultForm Form;
-
-			public FormFilterMouseWheelGlobally(VaultForm Form)
-			{
-				this.Form = Form;
-			}
-
-			public bool PreFilterMessage(ref Message m)
-			{
-				switch (m.Msg)
-				{
-					case WM_MOUSEWHEEL:
-					case WM_MOUSEHWHEEL:
-						var param = m.WParam.ToInt64();
-						var IsDown = ((int)param) < 0;
-
-						if (IsDown)
-							this.Form.RaiseGlobalMouseWheelDown();
-						else
-							this.Form.RaiseGlobalMouseWheelUp();
-						break;
-				}
-
-				return false;// Keep going
-			}
 		}
 
 		#region Init

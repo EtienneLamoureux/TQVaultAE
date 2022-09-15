@@ -189,6 +189,27 @@
     <Compile Include="Components\CheckGroupBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Components\CustomProfessionalRenderer.cs" />
+    <Compile Include="Components\ComboBoxCharacter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\ComboBoxCharacter.Designer.cs">
+      <DependentUpon>ComboBoxCharacter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ComboBoxCharacterDropDown.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\ComboBoxCharacterDropDown.Designer.cs">
+      <DependentUpon>ComboBoxCharacterDropDown.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ComboBoxCharacterItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\ComboBoxCharacterItem.Designer.cs">
+      <DependentUpon>ComboBoxCharacterItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Inputs\Filters\FormFilterMouseButtonGlobally.cs" />
+    <Compile Include="Inputs\Filters\FormFilterMouseWheelGlobally.cs" />
     <Compile Include="MainForm.Forge.cs">
       <SubType>Form</SubType>
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -380,6 +401,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Components\BagButtonBase.resx">
       <DependentUpon>BagButtonBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\ComboBoxCharacter.resx">
+      <DependentUpon>ComboBoxCharacter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\ComboBoxCharacterDropDown.resx">
+      <DependentUpon>ComboBoxCharacterDropDown.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\ComboBoxCharacterItem.resx">
+      <DependentUpon>ComboBoxCharacterItem.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Components\ForgePanel.resx">
       <DependentUpon>ForgePanel.cs</DependentUpon>

@@ -12,6 +12,7 @@ using System.ComponentModel;
 using Medallion.Shell.Streams;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Services;
 
@@ -453,14 +454,6 @@ public class GameFileService : IGameFileService
 		return overrideFiles;
 	}
 
-
-
-	/// <summary>
-	/// Backs up the file to the backup folder.
-	/// </summary>
-	/// <param name="prefix">prefix of the backup file</param>
-	/// <param name="file">file name to backup</param>
-	/// <returns>Returns the name of the backup file, or NULL if file does not exist</returns>
 	public string BackupFile(string prefix, string file)
 	{
 		if (File.Exists(file))
@@ -491,12 +484,6 @@ public class GameFileService : IGameFileService
 			return null;
 	}
 
-	/// <summary>
-	/// Duplicate player save files
-	/// </summary>
-	/// <param name="playerSaveDirectory"></param>
-	/// <param name="newname"></param>
-	/// <returns>new directory path</returns>
 	public string DuplicateCharacterFiles(string playerSaveDirectory, string newname)
 	{
 		var baseFolder = Path.GetDirectoryName(playerSaveDirectory);
@@ -524,12 +511,6 @@ public class GameFileService : IGameFileService
 		return newFolder;
 	}
 
-	/// <summary>
-	/// TQ has an annoying habit of throwing away your char in preference
-	/// for the Backup folder if it exists if it thinks your char is not valid.
-	/// We need to move that folder away so TQ won't find it.
-	/// </summary>
-	/// <param name="playerFile">Name of the player file to backup</param>
 	public void BackupStupidPlayerBackupFolder(string playerFile)
 	{
 		string playerFolder = Path.GetDirectoryName(playerFile);
@@ -558,5 +539,118 @@ public class GameFileService : IGameFileService
 
 			Directory.Move(backupFolder, newFolder);
 		}
+	}
+
+	public bool Archive(PlayerSave ps)
+	{
+		if (ps is null)
+			return false;
+
+		if (ps.IsArchived)// Double Check
+			return true;
+
+		// Disable filewatchers
+		ToggleFileWatchers(ps, false);
+
+		// Move directory
+		var oldFolder = ps.Folder;
+
+		// -- Prep arbo
+		var archDirNameTarget = this.GamePathService.GetBaseCharacterFolder(ps.IsImmortalThrone, true);
+		if (!Directory.Exists(archDirNameTarget))
+			Directory.CreateDirectory(archDirNameTarget);
+
+		var newFolder = GamePathService.ArchiveTogglePath(oldFolder);
+
+		Exception ex = null;
+		try
+		{
+			Directory.Move(oldFolder, newFolder);
+		}
+		catch (Exception exx)
+		{
+			ex = exx;
+			var errMess = "Error during move directory!";
+			this.Log.LogError(ex, errMess);
+			this.UIService.ShowError(errMess, ex, Buttons: ShowMessageButtons.OK);
+		}
+		finally
+		{
+			// Update PlayerSave
+			if (ex is null)
+			{
+				ps.IsArchived = true;
+				ps.Folder = newFolder;
+
+				if (ps.PlayerSaveWatcher is not null)
+					ps.PlayerSaveWatcher.Path = newFolder;
+
+				if (ps.PlayerStashWatcher is not null)
+					ps.PlayerStashWatcher.Path = newFolder;
+			}
+			// Restart filewatchers
+			ToggleFileWatchers(ps, true);
+		}
+
+		return ex is null;
+	}
+
+	static void ToggleFileWatchers(PlayerSave ps, bool enable)
+	{
+		if (ps.PlayerSaveWatcher is not null)
+			ps.PlayerSaveWatcher.EnableRaisingEvents = enable;
+
+		if (ps.PlayerStashWatcher is not null)
+			ps.PlayerStashWatcher.EnableRaisingEvents = enable;
+	}
+
+	public bool Unarchive(PlayerSave ps)
+	{
+		if (ps is null)
+			return false;
+
+		if (!ps.IsArchived)// Double Check
+			return true;
+
+		// Disable filewatchers
+		ToggleFileWatchers(ps, false);
+
+		// Move directory
+		var oldFolder = ps.Folder;// Should include archDirName
+
+		var newFolder = GamePathService.ArchiveTogglePath(oldFolder);
+
+		Exception ex = null;
+		try
+		{
+			Directory.Move(oldFolder, newFolder);
+		}
+		catch (Exception exx)
+		{
+			ex = exx;
+			var errMess = "Error during move directory!";
+			this.Log.LogError(ex, errMess);
+			this.UIService.ShowError(errMess, ex, Buttons: ShowMessageButtons.OK);
+		}
+		finally
+		{
+			// Update PlayerSave
+			if (ex is null)
+			{
+				ps.IsArchived = false;
+				ps.Folder = newFolder;
+
+				if (ps.PlayerSaveWatcher is not null)
+					ps.PlayerSaveWatcher.Path = newFolder;
+
+				if (ps.PlayerStashWatcher is not null)
+					ps.PlayerStashWatcher.Path = newFolder;
+			}
+
+			// Restart filewatchers
+			ToggleFileWatchers(ps, true);
+		}
+
+		return ex is null;
 	}
 }

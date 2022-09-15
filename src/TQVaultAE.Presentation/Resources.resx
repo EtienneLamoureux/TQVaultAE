@@ -2048,4 +2048,34 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="GlobalOrigin" xml:space="preserve">
     <value>Origin</value>
   </data>
+	<data name="GlobalTags" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+	<data name="GlobalArchived" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+	<data name="GlobalArchive" xml:space="preserve">
+    <value>Archive</value>
+  </data>
+	<data name="GlobalUnArchive" xml:space="preserve">
+    <value>Unarchive</value>
+  </data>
+	<data name="TagsAdd" xml:space="preserve">
+    <value>Add Tags</value>
+  </data>
+	<data name="GlobalRename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+	<data name="TagExists" xml:space="preserve">
+    <value>Tag exists already!</value>
+  </data>
+	<data name="TagMustBeDifferent" xml:space="preserve">
+    <value>Tag must be different!</value>
+  </data>
+	<data name="GlobalArchiveAll" xml:space="preserve">
+    <value>Archive all</value>
+  </data>
+	<data name="GlobalUnArchiveAll" xml:space="preserve">
+    <value>Unarchive all</value>
+  </data>
 </root>

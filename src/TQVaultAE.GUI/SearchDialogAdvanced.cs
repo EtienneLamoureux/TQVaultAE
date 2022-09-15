@@ -166,6 +166,8 @@ public partial class SearchDialogAdvanced : VaultForm
 
 		#endregion
 
+		this._SearchQueries = SearchQueries.Default(GamePathResolver);
+
 		// Mapping between nav button & content component
 		if (_NavMap is null)
 		{
@@ -1040,6 +1042,8 @@ public partial class SearchDialogAdvanced : VaultForm
 		=> SearchFiltersTooltip.HideTooltip();
 
 	bool _Apply_SelectedFiltersDisabled = false;
+	private SearchQueries _SearchQueries;
+
 	private void Apply_SelectedFilters()
 	{
 		if (_Apply_SelectedFiltersDisabled)
@@ -1200,7 +1204,7 @@ public partial class SearchDialogAdvanced : VaultForm
 		internal bool IsMatch(string attributeText)
 			=> (IsRegex && RegexIsValid)
 				? Regex.IsMatch(attributeText)
-				: attributeText.IndexOf(Search, StringComparison.OrdinalIgnoreCase) > -1;
+				: attributeText.ContainsIgnoreCase(Search);
 
 		internal bool AvoidDisplayAttribute(string attributeText)
 			=> HasFilterCategory && !IsMatch(attributeText);
@@ -1426,17 +1430,17 @@ public partial class SearchDialogAdvanced : VaultForm
 
 	private void SavePersonnalQueries()
 	{
-		SearchQueries.Default.Save();
+		this._SearchQueries.Save();
 	}
 
 	private void LoadPersonnalQueries()
 	{
-		if (!SearchQueries.Default.Any())
+		if (!this._SearchQueries.Any())
 			return;
 
 		// Try to retrieve actual instantiated BoxItems related to saved data.
 		var matrix = (
-			from query in SearchQueries.Default
+			from query in this._SearchQueries
 			from boxi in query.CheckedItems
 			select new
 			{
@@ -1528,7 +1532,7 @@ public partial class SearchDialogAdvanced : VaultForm
 		}
 
 		// Name conflict
-		foundIt = SearchQueries.Default.FirstOrDefault(q => q.QueryName.Equals(input, StringComparison.OrdinalIgnoreCase));
+		foundIt = this._SearchQueries.FirstOrDefault(q => q.QueryName.Equals(input, StringComparison.OrdinalIgnoreCase));
 		if (foundIt != null)
 		{
 			overrideIt = MessageBox.Show(
@@ -1556,7 +1560,7 @@ public partial class SearchDialogAdvanced : VaultForm
 
 		// Add scenario
 		var newList = new IEnumerable<SearchQuery>[] {
-			SearchQueries.Default
+			this._SearchQueries
 			, new[] {
 				UpdateQuery(input, new SearchQuery())
 			}
@@ -1565,8 +1569,8 @@ public partial class SearchDialogAdvanced : VaultForm
 		.OrderBy(s => s.QueryName)
 		.ToList();
 
-		SearchQueries.Default.Clear();
-		SearchQueries.Default.AddRange(newList);
+		this._SearchQueries.Clear();
+		this._SearchQueries.AddRange(newList);
 
 		SearchQueriesInit();
 
@@ -1638,7 +1642,7 @@ public partial class SearchDialogAdvanced : VaultForm
 	{
 		scalingComboBoxQueryList.BeginUpdate();
 		scalingComboBoxQueryList.Items.Clear();
-		scalingComboBoxQueryList.Items.AddRange(SearchQueries.Default.ToArray());
+		scalingComboBoxQueryList.Items.AddRange(this._SearchQueries.ToArray());
 		scalingComboBoxQueryList.EndUpdate();
 	}
 
@@ -1663,7 +1667,7 @@ public partial class SearchDialogAdvanced : VaultForm
 
 
 		scalingComboBoxQueryList.Items.RemoveAt(idx);
-		SearchQueries.Default.RemoveAt(idx);
+		this._SearchQueries.RemoveAt(idx);
 
 		SavePersonnalQueries();
 	}
@@ -1671,7 +1675,7 @@ public partial class SearchDialogAdvanced : VaultForm
 	private void scalingComboBoxQueryList_SelectedIndexChanged(object sender, EventArgs e)
 	{
 		var idx = scalingComboBoxQueryList.SelectedIndex;
-		Make_SelectedFilters(SearchQueries.Default[idx]);
+		Make_SelectedFilters(this._SearchQueries[idx]);
 	}
 
 	private void Make_SelectedFilters(SearchQuery searchQuery)

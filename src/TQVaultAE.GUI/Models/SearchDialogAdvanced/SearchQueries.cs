@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using TQVaultAE.Domain.Contracts.Services;
 
 namespace TQVaultAE.GUI.Models.SearchDialogAdvanced;
 
@@ -10,14 +11,15 @@ public class SearchQueries : List<SearchQuery>
 	#region Logic
 
 	static SearchQueries _Default;
+	static IGamePathService GamePathService;
 
-	public static SearchQueries Default
+	public static SearchQueries Default(IGamePathService gamePathService)
 	{
-		get
-		{
-			if (_Default is null) _Default = Read();
-			return _Default;
-		}
+		if(GamePathService is null) 
+			GamePathService = gamePathService;
+
+		if (_Default is null) _Default = Read();
+		return _Default;
 	}
 
 	public void Save()
@@ -28,12 +30,7 @@ public class SearchQueries : List<SearchQuery>
 	}
 
 	private static string ResolveSearchQueriesFilePath()
-	{
-		var currentPath = new System.Uri(Assembly.GetExecutingAssembly().EscapedCodeBase).LocalPath;
-		currentPath = Path.GetDirectoryName(currentPath);
-		var jsonPath = Path.Combine(currentPath, "SearchQueries.json");
-		return jsonPath;
-	}
+		=> Path.Combine(GamePathService.TQVaultConfigFolder, "SearchQueries.json");
 
 	public static SearchQueries Read()
 	{

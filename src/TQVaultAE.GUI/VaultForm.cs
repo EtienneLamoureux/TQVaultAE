@@ -18,6 +18,7 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.GUI.Components;
+	using TQVaultAE.GUI.Inputs;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Presentation;
 
@@ -464,6 +465,15 @@ namespace TQVaultAE.GUI
 		protected internal event EventHandler GlobalMouseWheelDown;
 		internal void RaiseGlobalMouseWheelDown() => GlobalMouseWheelDown?.Invoke(this, EventArgs.Empty);
 		internal void RaiseGlobalMouseWheelUp() => GlobalMouseWheelUp?.Invoke(this, EventArgs.Empty);
+
+		#endregion
+
+		#region Capture Mouse Button Event Globally
+
+		protected internal event EventHandler<Point> GlobalMouseButtonLeft;
+		protected internal event EventHandler<Point> GlobalMouseButtonRight;
+		internal void RaiseGlobalMouseButtonLeft(Point pt) => GlobalMouseButtonLeft?.Invoke(this, pt);
+		internal void RaiseGlobalMouseButtonRight(Point pt) => GlobalMouseButtonRight?.Invoke(this, pt);
 
 		#endregion
 
@@ -987,5 +997,6 @@ namespace TQVaultAE.GUI
 			this.WindowState = FormWindowState.Normal;
 			ScaleForm(1.0f, false);
 		}
+
 	}
 }

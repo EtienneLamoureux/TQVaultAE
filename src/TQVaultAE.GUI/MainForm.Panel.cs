@@ -23,8 +23,7 @@ public partial class MainForm
 
 		// Put the secondary vault list on top of the player list drop down
 		// since only one can be shown at a time.
-		this.secondaryVaultListComboBox.Enabled = false;
-		this.secondaryVaultListComboBox.Visible = false;
+		this.bufferedFlowLayoutPanelsecondaryVaultList.Visible = false;
 
 		this.GetPlayerList();
 
@@ -76,11 +75,12 @@ public partial class MainForm
 			this.secondaryVaultPanel.Enabled = true;
 			this.secondaryVaultPanel.Visible = true;
 			this.showVaulButton.Text = Resources.MainFormBtnShowPlayer;
-			this.characterComboBox.Enabled = false;
-			this.characterComboBox.Visible = false;
-			this.secondaryVaultListComboBox.Enabled = true;
-			this.secondaryVaultListComboBox.Visible = true;
-			this.characterLabel.Text = Resources.MainForm2ndVault;
+			this.comboBoxCharacter.Enabled = false;
+			this.comboBoxCharacter.Visible = false;
+
+			this.bufferedFlowLayoutPanelsecondaryVaultList.Visible = true;
+
+
 			this.lastStash = this.stashPanel.Stash;
 			this.lastBag = this.stashPanel.CurrentBag;
 			this.stashPanel.Player = null;
@@ -108,11 +108,11 @@ public partial class MainForm
 			this.playerPanel.Enabled = true;
 			this.playerPanel.Visible = true;
 			this.showVaulButton.Text = Resources.MainFormBtnPanelSelect;
-			this.characterComboBox.Enabled = true;
-			this.characterComboBox.Visible = true;
-			this.secondaryVaultListComboBox.Enabled = false;
-			this.secondaryVaultListComboBox.Visible = false;
-			this.characterLabel.Text = Resources.MainFormLabel1;
+			this.comboBoxCharacter.Enabled = true;
+			this.comboBoxCharacter.Visible = true;
+			
+			this.bufferedFlowLayoutPanelsecondaryVaultList.Visible = false;
+
 			this.stashPanel.Player = this.playerPanel.Player;
 			if (this.lastStash != null)
 			{

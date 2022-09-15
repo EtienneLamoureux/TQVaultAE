@@ -10,6 +10,7 @@ using TQVaultAE.Domain.Exceptions;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Presentation;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 using System.Reflection;
 
 namespace TQVaultAE.Services.Win32;
@@ -26,7 +27,9 @@ public class GamePathServiceWin : IGamePathService
 	internal const string SAVEDATA_DIRNAME = @"SaveData";
 	internal const string SAVE_DIRNAME_TQ = @"Titan Quest";
 	internal const string SAVE_DIRNAME_TQIT = @"Titan Quest - Immortal Throne";
+	internal const string ARCHIVE_DIRNAME = @"ArchivedCharacters";
 
+	public string ArchiveDirName => ARCHIVE_DIRNAME;
 	public string VaultFilesDefaultDirName => VAULTFILES_DEFAULT_DIRNAME;
 	public string SaveDataDirName => SAVEDATA_DIRNAME;
 	public string SaveDirNameTQIT => SAVE_DIRNAME_TQIT;
@@ -176,38 +179,62 @@ public class GamePathServiceWin : IGamePathService
 		}
 	}
 
-	/// <summary>
-	/// Gets the base character save folder.
-	/// Changed to support custom quest characters.
-	/// if <paramref name="IsTQIT"/> is <c>true</c> return an "Immortal Throne" path. Return an "Titan Quest" otherwise.
-	/// </summary>
-	/// <returns>path of the save folder</returns>
-	public string GetBaseCharacterFolder(bool IsTQIT)
+	public string GetBaseCharacterFolder(bool IsTQIT, bool isArchive)
+	{
+		return GetBaseCharacterFolder(IsTQIT, this.IsCustom, isArchive);
+	}
+
+	public string GetBaseCharacterFolder(bool IsTQIT, bool isCustomCharacter, bool isArchive)
 	{
 		string mapSaveFolder = "Main";
 
-		if (IsCustom)
+		if (isCustomCharacter)
 			mapSaveFolder = "User";
 
-		var dir = IsTQIT
-			? Path.Combine(SaveFolderTQIT, SAVEDATA_DIRNAME, mapSaveFolder)
-			: Path.Combine(SaveFolderTQ, SAVEDATA_DIRNAME, mapSaveFolder);
-
-		return dir;
+		if (IsTQIT)
+		{
+			if (isArchive)
+				return Path.Combine(SaveFolderTQIT, SAVEDATA_DIRNAME, mapSaveFolder, this.ArchiveDirName);
+			else
+				return Path.Combine(SaveFolderTQIT, SAVEDATA_DIRNAME, mapSaveFolder);
+		}
+		else
+		{
+			if (isArchive)
+				return Path.Combine(SaveFolderTQ, SAVEDATA_DIRNAME, mapSaveFolder, this.ArchiveDirName);
+			else
+				return Path.Combine(SaveFolderTQ, SAVEDATA_DIRNAME, mapSaveFolder);
+		}
 	}
 
-	public string GetPlayerFile(string characterName, bool IsTQIT)
+	public string ArchiveTogglePath(string oldFolder)
 	{
-		return Path.Combine(GetBaseCharacterFolder(IsTQIT), string.Concat("_", characterName), PLAYERSAVEFILENAME);
+		// Case insensitive replace
+		string newFolder;
+
+		if (oldFolder.ContainsIgnoreCase(this.ArchiveDirName))
+		{
+			newFolder = Regex.Replace(oldFolder, @$"\\Main\\{this.ArchiveDirName}\\_", @"\Main\_", RegexOptions.IgnoreCase);
+			newFolder = Regex.Replace(newFolder, @$"\\User\\{this.ArchiveDirName}\\_", @"\User\_", RegexOptions.IgnoreCase);// Cannot be both
+			return newFolder;
+		}
+
+		newFolder = Regex.Replace(oldFolder, @"\\Main\\_", @$"\Main\{this.ArchiveDirName}\_", RegexOptions.IgnoreCase);
+		newFolder = Regex.Replace(newFolder, @"\\User\\_", @$"\User\{this.ArchiveDirName}\_", RegexOptions.IgnoreCase);// Cannot be both
+
+		return newFolder;
 	}
+
+	public string GetPlayerFile(string characterName, bool IsTQIT, bool isArchive)
+		=> Path.Combine(GetBaseCharacterFolder(IsTQIT, isArchive), string.Concat("_", characterName), PLAYERSAVEFILENAME);
 
 	/// <summary>
 	/// Gets the full path to the player's stash file.
 	/// </summary>
 	/// <param name="characterName">name of the character</param>
 	/// <returns>full path to the player stash file</returns>
-	public string GetPlayerStashFile(string characterName)
-		=> Path.Combine(GetBaseCharacterFolder(true), string.Concat("_", characterName), PLAYERSTASHFILENAMEB);
+	public string GetPlayerStashFile(string characterName, bool isArchive)
+		=> Path.Combine(GetBaseCharacterFolder(true, isArchive), string.Concat("_", characterName), PLAYERSTASHFILENAMEB);
 
 	/// <summary>
 	/// Gets a list of all of the character files in the save folder.
@@ -218,14 +245,25 @@ public class GamePathServiceWin : IGamePathService
 		List<string> dirs = new();
 
 		// Get all folders that start with a '_'.
-		var TQDir = GetBaseCharacterFolder(false);// From TQ 
-		var TQITDir = GetBaseCharacterFolder(true);// From TQIT
+		var TQDir = GetBaseCharacterFolder(false, false);// From TQ 
+		var TQITDir = GetBaseCharacterFolder(true, false);// From TQIT
 
 		if (Config.UserSettings.Default.EnableOriginalTQSupport && Directory.Exists(TQDir))
 			dirs.AddRange(Directory.GetDirectories(TQDir, "_*"));
 
 		if (Directory.Exists(TQITDir))
 			dirs.AddRange(Directory.GetDirectories(TQITDir, "_*"));
+
+		// Archived
+		TQDir = GetBaseCharacterFolder(false, true);// From TQ 
+		TQITDir = GetBaseCharacterFolder(true, true);// From TQIT
+
+		if (Config.UserSettings.Default.EnableOriginalTQSupport && Directory.Exists(TQDir))
+			dirs.AddRange(Directory.GetDirectories(TQDir, "_*"));
+
+		if (Directory.Exists(TQITDir))
+			dirs.AddRange(Directory.GetDirectories(TQITDir, "_*"));
+
 
 		return dirs.ToArray();
 	}
@@ -353,6 +391,19 @@ public class GamePathServiceWin : IGamePathService
 		{
 			if (Directory.Exists(value))
 				_VaultFolder = value;
+		}
+	}
+
+	public string TQVaultConfigFolder
+	{
+		get
+		{
+			var path = Path.Combine(TQVaultSaveFolder, @"Config");
+
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(path);
+
+			return path;
 		}
 	}
 

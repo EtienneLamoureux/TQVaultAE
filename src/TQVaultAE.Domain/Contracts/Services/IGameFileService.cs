@@ -29,7 +29,6 @@ public interface IGameFileService
 	/// <param name="playerFile">Name of the player file to backup</param>
 	void BackupStupidPlayerBackupFolder(string playerFile);
 	
-
 	/// <summary>
 	/// Duplicate player save files
 	/// </summary>
@@ -38,4 +37,15 @@ public interface IGameFileService
 	/// <returns>new directory path</returns>
 	string DuplicateCharacterFiles(string playerSaveDirectory, string newname);
 
+	/// <summary>
+	/// Archive a character
+	/// </summary>
+	/// <param name="ps"></param>
+	bool Archive(PlayerSave ps);
+
+	/// <summary>
+	/// Unarchive a character
+	/// </summary>
+	/// <param name="ps"></param>
+	bool Unarchive(PlayerSave ps);
 }

@@ -41,7 +41,7 @@ namespace TQVaultAE.Services
 
 			#region Get the player's stash
 
-			result.StashFile = GamePathResolver.GetPlayerStashFile(selectedSave.Name);
+			result.StashFile = GamePathResolver.GetPlayerStashFile(selectedSave.Name, selectedSave.IsArchived);
 
 			Stash addStash(string k)
 			{

@@ -27,8 +27,6 @@ using System.Threading.Tasks;
 using TQVaultAE.Domain.Results;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Domain.Helpers;
-using System.Threading;
 
 namespace TQVaultAE.GUI;
 
@@ -39,6 +37,8 @@ public partial class MainForm : VaultForm
 {
 	private readonly ILogger Log = null;
 	private readonly ITranslationService TranslationService;
+
+	public ITagService TagService { get; }
 
 	#region	Fields
 
@@ -160,6 +160,7 @@ public partial class MainForm : VaultForm
 		, IVaultService vaultService
 		, IStashService stashService
 		, ITranslationService translationService
+		, ITagService tagService
 	) : base(serviceProvider)
 	{
 		this.userContext = sessionContext;
@@ -167,6 +168,7 @@ public partial class MainForm : VaultForm
 		this.vaultService = vaultService;
 		this.stashService = stashService;
 		this.TranslationService = translationService;
+		this.TagService = tagService;
 
 		Log = log;
 		Log.LogInformation("TQVaultAE Initialization !");
@@ -177,17 +179,15 @@ public partial class MainForm : VaultForm
 
 		this.exitButton.Font = FontService.GetFontLight(12F, UIService.Scale);
 		ScaleControl(this.UIService, this.exitButton);
-		this.characterComboBox.Font = FontService.GetFontLight(13F, UIService.Scale);
-		ScaleControl(this.UIService, this.characterComboBox, false);
-		this.characterLabel.Font = FontService.GetFontLight(11F, UIService.Scale);
-		ScaleControl(this.UIService, this.characterLabel, false);
+
+		ScaleControl(this.UIService, this.comboBoxCharacter, false);
 
 		this.NotificationText.Font = FontService.GetFontLight(11F, FontStyle.Bold, UIService.Scale);
 
 		this.vaultListComboBox.Font = FontService.GetFontLight(13F, UIService.Scale);
 		ScaleControl(this.UIService, this.vaultListComboBox, false);
-		this.vaultLabel.Font = FontService.GetFontLight(11F, UIService.Scale);
-		ScaleControl(this.UIService, this.vaultLabel, false);
+		this.secondaryVaultListComboBox.Font = FontService.GetFontLight(13F, UIService.Scale);
+		ScaleControl(this.UIService, this.secondaryVaultListComboBox, false);
 		this.configureButton.Font = FontService.GetFontLight(12F, UIService.Scale);
 		ScaleControl(this.UIService, this.configureButton);
 		this.customMapText.Font = FontService.GetFont(11.25F, UIService.Scale);
@@ -203,8 +203,7 @@ public partial class MainForm : VaultForm
 		this.searchButton.Font = FontService.GetFontLight(12F, UIService.Scale);
 		ScaleControl(this.UIService, this.searchButton);
 		ScaleControl(this.UIService, this.tableLayoutPanelMain);
-		this.duplicateButton.Font = FontService.GetFontLight(12F, UIService.Scale);
-		ScaleControl(this.UIService, this.duplicateButton);
+
 		this.saveButton.Font = FontService.GetFontLight(12F, UIService.Scale);
 		ScaleControl(this.UIService, this.saveButton);
 		this.forgeButton.Font = FontService.GetFontLight(12F, UIService.Scale);
@@ -242,6 +241,25 @@ Debug Levels
 
 		this.InitializeComponent();
 
+		this.vaultPictureBox.Image = Resources.Majestic_Chest_small;
+		this.vaultPictureBox.Size = Resources.Majestic_Chest_small.Size;
+		this.toolTip.SetToolTip(this.vaultPictureBox, Resources.MainFormLabel2);
+
+		this.pictureBoxSecondVault.Image = Resources.Majestic_Chest_small;
+		this.pictureBoxSecondVault.Size = Resources.Majestic_Chest_small.Size;
+		this.toolTip.SetToolTip(this.pictureBoxSecondVault, Resources.MainForm2ndVault);
+
+		this.comboBoxCharacter.Init(
+			this.UIService
+			, this.FontService
+			, this.TranslationService
+			, this.Database
+			, this.GameFileService
+			, this.GamePathResolver
+			, this.TagService
+			, () => DuplicateCharacter()
+		);
+
 		this.SetupFormSize();
 
 		// Changed to a global for versions in tqdebug
@@ -250,14 +268,11 @@ Debug Levels
 		this.Text = string.Format(CultureInfo.CurrentCulture, "{0} {1}", aname.Name, this.currentVersion);
 
 		// Setup localized strings.
-		this.characterLabel.Text = Resources.MainFormLabel1;
-		this.vaultLabel.Text = Resources.MainFormLabel2;
 		this.configureButton.Text = Resources.MainFormBtnConfigure;
 		this.exitButton.Text = Resources.GlobalExit;
 		this.showVaulButton.Text = Resources.MainFormBtnPanelSelect;
 		this.Icon = Resources.TQVIcon;
 		this.searchButton.Text = Resources.MainFormSearchButtonText;
-		this.duplicateButton.Text = Resources.DuplicateCharacter_ButtonText;
 		this.scalingLabelHighlight.Text = Resources.MainFormHighlightLabelText;
 
 		this.lastDragPoint.X = -1;
@@ -267,9 +282,13 @@ Debug Levels
 #endif
 		if (!this.DebugLayoutBorderVisible)
 		{
-			this.flowLayoutPanelRightComboBox.BorderStyle = BorderStyle.None;
-			this.flowLayoutPanelVaultSelector.BorderStyle = BorderStyle.None;
-			this.flowLayoutPanelRightPanels.BorderStyle = BorderStyle.None;
+			this.flowLayoutPanelRightComboBox.BorderStyle =
+			this.flowLayoutPanelVaultSelector.BorderStyle =
+			this.flowLayoutPanelRightPanels.BorderStyle =
+			this.bufferedFlowLayoutPanelsecondaryVaultList.BorderStyle =
+			this.pictureBoxSecondVault.BorderStyle =
+			this.vaultPictureBox.BorderStyle =
+			this.comboBoxCharacter.BorderStyle = BorderStyle.None;
 			this.tableLayoutPanelMain.CellBorderStyle = TableLayoutPanelCellBorderStyle.None;
 		}
 
@@ -312,7 +331,6 @@ Debug Levels
 	private void AdjustMenuButtonVisibility()
 	{
 		this.forgeButton.Visible = Config.UserSettings.Default.AllowItemEdit;
-		this.duplicateButton.Visible = Config.UserSettings.Default.AllowCharacterEdit;
 		this.saveButton.Visible = Config.UserSettings.Default.EnableHotReload;
 		// Get last position
 		var flowctr = this.flowLayoutPanelMenuButtons.Controls;
@@ -639,13 +657,10 @@ Debug Levels
 		}
 
 		string[] vaults = GamePathResolver.GetVaultList();
-		var charactersIT = this.characterComboBox.Items.OfType<PlayerSave>().ToArray();
-
-		int numIT = charactersIT?.Length ?? 0;
-		int numVaults = vaults.Length;
+		var charactersIT = this.comboBoxCharacter.Items.OfType<PlayerSave>().ToArray();
 
 		// Since this takes a while, show a progress dialog box.
-		int total = numIT + numVaults - 1;
+		int total = charactersIT.Length + vaults.Length - 1;
 
 		if (total > 0)
 		{
@@ -719,6 +734,7 @@ Debug Levels
 				}
 			});
 
+		this.comboBoxCharacter.RefreshItems();
 
 		stopWatch.Stop();
 		// Get the elapsed time as a TimeSpan value.
@@ -928,11 +944,11 @@ Debug Levels
 			// Load last character here if selected
 			if (Config.UserSettings.Default.LoadLastCharacter)
 			{
-				var lastPlayerSave = this.characterComboBox.Items.OfType<PlayerSave>()
+				var lastPlayerSave = this.comboBoxCharacter.Items.OfType<PlayerSave>()
 					.FirstOrDefault(ps => ps.Name == Config.UserSettings.Default.LastCharacterName);
 
 				if (lastPlayerSave != null)
-					this.characterComboBox.SelectedItem = lastPlayerSave;
+					this.comboBoxCharacter.SelectedItem = lastPlayerSave;
 			}
 
 			string currentVault = VaultService.MAINVAULT;
@@ -962,13 +978,12 @@ Debug Levels
 			if (args.IsAutomatic || Config.UserSettings.Default.SkipTitle == true)
 			{
 				string player = args.Player;
-				int index = this.characterComboBox.FindStringExact(player);
+				int index = this.comboBoxCharacter.FindString(player);
 				if (index != -1)
-					this.characterComboBox.SelectedIndex = index;
+					this.comboBoxCharacter.SelectedIndex = index;
 
 				this.splashScreen.CloseForm();
 			}
-
 		}
 		else
 		{
@@ -1017,8 +1032,8 @@ Debug Levels
 		// Update last loaded character
 		if (Config.UserSettings.Default.LoadLastCharacter)
 		{
-			string name = this.characterComboBox.SelectedItem.ToString();
-			var ps = this.characterComboBox.SelectedItem as PlayerSave;
+			string name = this.comboBoxCharacter.SelectedItem.ToString();
+			var ps = this.comboBoxCharacter.SelectedItem as PlayerSave;
 
 			if (ps is not null) name = ps.Name;
 
@@ -1078,7 +1093,7 @@ Debug Levels
 		{
 			if (settingsDialog.PlayerFilterChanged)
 			{
-				this.characterComboBox.SelectedItem = Resources.MainFormSelectCharacter;
+				this.comboBoxCharacter.SelectedItem = Resources.MainFormSelectCharacter;
 				if (this.playerPanel.Player != null)
 					this.playerPanel.Player = null;
 

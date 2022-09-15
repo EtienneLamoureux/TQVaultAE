@@ -53,7 +53,7 @@ public partial class MainForm
 	private LoadTransferStashResult LoadTransferStash(bool fromFileWatcher = false)
 	{
 		// Only if it's IT, TQ doesn't have one
-		var selectedSave = this.characterComboBox.SelectedItem as PlayerSave;
+		var selectedSave = this.comboBoxCharacter.SelectedItem as PlayerSave;
 		if (selectedSave is not null && !selectedSave.IsImmortalThrone)
 		{
 			this.stashPanel.TransferStash = null;
@@ -98,7 +98,7 @@ public partial class MainForm
 	private LoadRelicVaultStashResult LoadRelicVaultStash(bool fromFileWatcher = false)
 	{
 		// Only if it's IT, TQ doesn't have one
-		var selectedSave = this.characterComboBox.SelectedItem as PlayerSave;
+		var selectedSave = this.comboBoxCharacter.SelectedItem as PlayerSave;
 		if (selectedSave is not null && !selectedSave.IsImmortalThrone)
 		{
 			this.stashPanel.RelicVaultStash = null;

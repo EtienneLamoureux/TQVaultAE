@@ -7,6 +7,18 @@ namespace TQVaultAE.Domain.Contracts.Services;
 public interface IGamePathService
 {
 	/// <summary>
+	/// Toggle character directory path from active to inactive.
+	/// </summary>
+	/// <param name="oldPath"></param>
+	/// <returns></returns>
+	public string ArchiveTogglePath(string oldPath);
+
+	/// <summary>
+	/// Return the name of the directory used to store archived character saves "<c>ArchivedCharacters</c>".
+	/// </summary>
+	string ArchiveDirName { get; }
+
+	/// <summary>
 	/// The default name of the Vault save directory "TQVaultData"
 	/// </summary>
 	string VaultFilesDefaultDirName { get; }
@@ -112,6 +124,10 @@ public interface IGamePathService
 	/// </summary>
 	string TQVaultSaveFolder { get; set; }
 	/// <summary>
+	/// Gets the Config save folder inside <c>TQVaultData</c>.
+	/// </summary>
+	string TQVaultConfigFolder { get; }
+	/// <summary>
 	/// Gets the filename for the game's transfer stash.
 	/// Stash files for Mods all have their own subdirectory which is the same as the mod's custom map folder
 	/// </summary>
@@ -133,10 +149,22 @@ public interface IGamePathService
 	/// <summary>
 	/// Gets the base character save folder.
 	/// Changed to support custom quest characters.
-	/// if <paramref name="IsTQIT"/> is <c>true</c> return an "Immortal Throne" path. Return an "Titan Quest" otherwise.
+	/// Adjust it's path (Regular, CustomMap) by using <see cref="IsCustom"/> internaly.
 	/// </summary>
+	/// <param name="IsTQIT">if <c>true</c> return an "Immortal Throne" path. Return an "Titan Quest" otherwise.</param>
+	/// <param name="isArchive">if <c>true</c> return an Archive path.</param>
 	/// <returns>path of the save folder</returns>
-	string GetBaseCharacterFolder(bool IsTQIT);
+	string GetBaseCharacterFolder(bool IsTQIT, bool isArchive);
+	/// <summary>
+	/// Gets the base character save folder.
+	/// Changed to support custom quest characters.
+	/// </summary>
+	/// <param name="IsTQIT">if <c>true</c> return an "Immortal Throne" path. Return an "Titan Quest" otherwise.</param>
+	/// <param name="isCustomCharacter">if <c>true</c> return a CustomMap path. Return a regular path otherwise.</param>
+	/// <param name="isArchive">if <c>true</c> return an Archive path.</param>
+	/// <returns>path of the save folder</returns>
+	string GetBaseCharacterFolder(bool IsTQIT, bool isCustomCharacter, bool isArchive);
+
 	/// <summary>
 	/// Gets a list of all of the character files in the save folder.
 	/// </summary>
@@ -152,14 +180,16 @@ public interface IGamePathService
 	/// </summary>
 	/// <param name="characterName">name of the character</param>
 	/// <param name="IsTQIT"><c>true</c> for Immortal Throne file, <c>false</c> otherwise</param>
+	/// <param name="isArchive">if <c>true</c> return an Archive path.</param>
 	/// <returns>full path to the character file.</returns>
-	string GetPlayerFile(string characterName, bool IsTQIT);
+	string GetPlayerFile(string characterName, bool IsTQIT, bool isArchive);
 	/// <summary>
 	/// Gets the full path to the player's stash file.
 	/// </summary>
 	/// <param name="characterName">name of the character</param>
+	/// <param name="isArchive">if <c>true</c> return an Archive path.</param>
 	/// <returns>full path to the player stash file</returns>
-	string GetPlayerStashFile(string characterName);
+	string GetPlayerStashFile(string characterName, bool isArchive);
 	/// <summary>
 	/// Gets the file name and path for a vault.
 	/// </summary>
@@ -183,7 +213,6 @@ public interface IGamePathService
 	string PlayerStashFileNameB { get; }
 	string PlayerStashFileNameG { get; }
 	string PlayerSettingsFileName { get; }
-
 
 	/// <summary>
 	/// Return the vault name from <paramref name="vaultFilePath"/>

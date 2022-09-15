@@ -1516,6 +1516,33 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Archive.
+        /// </summary>
+        public static string GlobalArchive {
+            get {
+                return ResourceManager.GetString("GlobalArchive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Archive all.
+        /// </summary>
+        public static string GlobalArchiveAll {
+            get {
+                return ResourceManager.GetString("GlobalArchiveAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Archived.
+        /// </summary>
+        public static string GlobalArchived {
+            get {
+                return ResourceManager.GetString("GlobalArchived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Base Attribute.
         /// </summary>
         public static string GlobalBaseAttribute {
@@ -1804,6 +1831,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rename.
+        /// </summary>
+        public static string GlobalRename {
+            get {
+                return ResourceManager.GetString("GlobalRename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Requirements.
         /// </summary>
         public static string GlobalRequirements {
@@ -1867,6 +1903,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tags.
+        /// </summary>
+        public static string GlobalTags {
+            get {
+                return ResourceManager.GetString("GlobalTags", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Transfer Stash.
         /// </summary>
         public static string GlobalTransferStash {
@@ -1890,6 +1935,24 @@ namespace TQVaultAE.Presentation {
         public static string GlobalType {
             get {
                 return ResourceManager.GetString("GlobalType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unarchive.
+        /// </summary>
+        public static string GlobalUnArchive {
+            get {
+                return ResourceManager.GetString("GlobalUnArchive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unarchive all.
+        /// </summary>
+        public static string GlobalUnArchiveAll {
+            get {
+                return ResourceManager.GetString("GlobalUnArchiveAll", resourceCulture);
             }
         }
         
@@ -5082,6 +5145,33 @@ namespace TQVaultAE.Presentation {
             get {
                 object obj = ResourceManager.GetObject("StashTabUp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tag exists already!.
+        /// </summary>
+        public static string TagExists {
+            get {
+                return ResourceManager.GetString("TagExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tag must be different!.
+        /// </summary>
+        public static string TagMustBeDifferent {
+            get {
+                return ResourceManager.GetString("TagMustBeDifferent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Tags.
+        /// </summary>
+        public static string TagsAdd {
+            get {
+                return ResourceManager.GetString("TagsAdd", resourceCulture);
             }
         }
         

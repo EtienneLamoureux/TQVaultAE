@@ -562,7 +562,7 @@ namespace TQVaultAE.Data
 			pi.Modified = false;
 
 			var headerVersion = TQData.ReadIntAfter(pc.rawData, "headerVersion");
-			pi.HeaderVersion = headerVersion.valueAsInt;
+			pi.HeaderVersion = (PlayerFileHeaderVersion)headerVersion.valueAsInt;
 
 			var playerCharacterClass = TQData.ReadCStringAfter(pc.rawData, "playerCharacterClass");
 			pi.PlayerCharacterClass = playerCharacterClass.valueAsString;
