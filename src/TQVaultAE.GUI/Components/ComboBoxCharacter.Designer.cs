@@ -43,6 +43,8 @@
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripTextBoxRename = new System.Windows.Forms.ToolStripTextBox();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.archiveAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.unarchiveAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.bufferedTableLayoutPanelSkeleton = new TQVaultAE.GUI.Components.BufferedTableLayoutPanel();
@@ -50,8 +52,8 @@
             this.bufferedFlowLayoutPanelContent = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
             this.scalingLabelCharName = new TQVaultAE.GUI.Components.ScalingLabel();
             this.pictureBoxChar = new System.Windows.Forms.PictureBox();
-            this.archiveAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.unarchiveAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.archiveAllToolStripMenuItemGlobal = new System.Windows.Forms.ToolStripMenuItem();
+            this.unarchiveAllToolStripMenuItemGlobal = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip.SuspendLayout();
             this.bufferedTableLayoutPanelSkeleton.SuspendLayout();
             this.bufferedFlowLayoutPanelContent.SuspendLayout();
@@ -64,22 +66,24 @@
             this.duplicateToolStripMenuItem,
             this.duplicateSeparatorToolStripMenuItem,
             this.archiveToolStripMenuItem,
+            this.archiveAllToolStripMenuItemGlobal,
+            this.unarchiveAllToolStripMenuItemGlobal,
             this.ArchiveToolStripSeparator,
             this.tagsToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(125, 82);
+            this.contextMenuStrip.Size = new System.Drawing.Size(181, 148);
             // 
             // duplicateToolStripMenuItem
             // 
             this.duplicateToolStripMenuItem.Name = "duplicateToolStripMenuItem";
-            this.duplicateToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.duplicateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.duplicateToolStripMenuItem.Text = "Duplicate";
             this.duplicateToolStripMenuItem.Click += new System.EventHandler(this.duplicateToolStripMenuItem_Click);
             // 
             // duplicateSeparatorToolStripMenuItem
             // 
             this.duplicateSeparatorToolStripMenuItem.Name = "duplicateSeparatorToolStripMenuItem";
-            this.duplicateSeparatorToolStripMenuItem.Size = new System.Drawing.Size(121, 6);
+            this.duplicateSeparatorToolStripMenuItem.Size = new System.Drawing.Size(177, 6);
             // 
             // archiveToolStripMenuItem
             // 
@@ -87,14 +91,14 @@
             this.archiveToolStripMenuItem.CheckOnClick = true;
             this.archiveToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.archiveToolStripMenuItem.Name = "archiveToolStripMenuItem";
-            this.archiveToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.archiveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.archiveToolStripMenuItem.Text = "Archived";
             this.archiveToolStripMenuItem.CheckedChanged += new System.EventHandler(this.archiveToolStripMenuItem_CheckedChanged);
             // 
             // ArchiveToolStripSeparator
             // 
             this.ArchiveToolStripSeparator.Name = "ArchiveToolStripSeparator";
-            this.ArchiveToolStripSeparator.Size = new System.Drawing.Size(121, 6);
+            this.ArchiveToolStripSeparator.Size = new System.Drawing.Size(177, 6);
             // 
             // tagsToolStripMenuItem
             // 
@@ -103,7 +107,7 @@
             this.AddTagtoolStripSeparator,
             this.tagname1ToolStripMenuItem});
             this.tagsToolStripMenuItem.Name = "tagsToolStripMenuItem";
-            this.tagsToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.tagsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.tagsToolStripMenuItem.Text = "Tags";
             // 
             // addTagToolStripMenuItem
@@ -138,13 +142,13 @@
             this.archiveAllToolStripMenuItem,
             this.unarchiveAllToolStripMenuItem});
             this.tagname1ToolStripMenuItem.Name = "tagname1ToolStripMenuItem";
-            this.tagname1ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tagname1ToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.tagname1ToolStripMenuItem.Text = "tagname1";
             // 
             // colorToolStripMenuItem
             // 
             this.colorToolStripMenuItem.Name = "colorToolStripMenuItem";
-            this.colorToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.colorToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.colorToolStripMenuItem.Text = "Color";
             // 
             // renameToolStripMenuItem
@@ -152,7 +156,7 @@
             this.renameToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripTextBoxRename});
             this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.renameToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.renameToolStripMenuItem.Text = "Rename";
             // 
             // toolStripTextBoxRename
@@ -163,8 +167,20 @@
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
+            // 
+            // archiveAllToolStripMenuItem
+            // 
+            this.archiveAllToolStripMenuItem.Name = "archiveAllToolStripMenuItem";
+            this.archiveAllToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.archiveAllToolStripMenuItem.Text = "Archive all";
+            // 
+            // unarchiveAllToolStripMenuItem
+            // 
+            this.unarchiveAllToolStripMenuItem.Name = "unarchiveAllToolStripMenuItem";
+            this.unarchiveAllToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.unarchiveAllToolStripMenuItem.Text = "Unarchive all";
             // 
             // colorDialog
             // 
@@ -250,17 +266,19 @@
             this.pictureBoxChar.TabStop = false;
             this.pictureBoxChar.Click += new System.EventHandler(this.OpenDropDown_Click);
             // 
-            // archiveAllToolStripMenuItem
+            // archiveAllToolStripMenuItemGlobal
             // 
-            this.archiveAllToolStripMenuItem.Name = "archiveAllToolStripMenuItem";
-            this.archiveAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.archiveAllToolStripMenuItem.Text = "Archive all";
+            this.archiveAllToolStripMenuItemGlobal.Name = "archiveAllToolStripMenuItemGlobal";
+            this.archiveAllToolStripMenuItemGlobal.Size = new System.Drawing.Size(180, 22);
+            this.archiveAllToolStripMenuItemGlobal.Text = "Archive all";
+            this.archiveAllToolStripMenuItemGlobal.Click += new System.EventHandler(this.archiveAllToolStripMenuItemGlobal_Click);
             // 
-            // unarchiveAllToolStripMenuItem
+            // unarchiveAllToolStripMenuItemGlobal
             // 
-            this.unarchiveAllToolStripMenuItem.Name = "unarchiveAllToolStripMenuItem";
-            this.unarchiveAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.unarchiveAllToolStripMenuItem.Text = "Unarchive all";
+            this.unarchiveAllToolStripMenuItemGlobal.Name = "unarchiveAllToolStripMenuItemGlobal";
+            this.unarchiveAllToolStripMenuItemGlobal.Size = new System.Drawing.Size(180, 22);
+            this.unarchiveAllToolStripMenuItemGlobal.Text = "Unarchive all";
+            this.unarchiveAllToolStripMenuItemGlobal.Click += new System.EventHandler(this.unarchiveAllToolStripMenuItemGlobal_Click);
             // 
             // ComboBoxCharacter
             // 
@@ -308,5 +326,7 @@
 		private System.Windows.Forms.ToolStripMenuItem colorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem archiveAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem unarchiveAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem archiveAllToolStripMenuItemGlobal;
+        private System.Windows.Forms.ToolStripMenuItem unarchiveAllToolStripMenuItemGlobal;
     }
 }

@@ -196,13 +196,17 @@ public partial class ComboBoxCharacter : UserControl
 			this.addTagToolStripMenuItem.Text = Resources.TagsAdd;
 			this.deleteToolStripMenuItem.Text = TranslationService.TranslateXTag("tagMenuButton03");
 			this.renameToolStripMenuItem.Text = Resources.GlobalRename;
+			this.archiveAllToolStripMenuItemGlobal.Text =
 			this.archiveAllToolStripMenuItem.Text = Resources.GlobalArchiveAll;
+			this.unarchiveAllToolStripMenuItemGlobal.Text = 
 			this.unarchiveAllToolStripMenuItem.Text = Resources.GlobalUnArchiveAll;
 			this.renameToolStripMenuItem.Text = Resources.GlobalRename;
 			this.colorToolStripMenuItem.Text = TranslationService.TranslateXTag("x3tagGraphicOption02");
 
 			this.scalingLabelCharName.Font = FontService.GetFontLight(13F, UIService.Scale);
 
+			this.archiveAllToolStripMenuItemGlobal.Font =
+			this.unarchiveAllToolStripMenuItemGlobal.Font =
 			this.archiveAllToolStripMenuItem.Font =
 			this.unarchiveAllToolStripMenuItem.Font =
 			this.duplicateToolStripMenuItem.Font =
@@ -216,6 +220,8 @@ public partial class ComboBoxCharacter : UserControl
 			this.colorToolStripMenuItem.Font =
 			this.contextMenuStrip.Font = FontService.GetFontLight(this.contextMenuStrip.Font.Size);
 
+			this.archiveAllToolStripMenuItemGlobal.BackColor =
+			this.unarchiveAllToolStripMenuItemGlobal.BackColor =
 			this.archiveAllToolStripMenuItem.BackColor =
 			this.unarchiveAllToolStripMenuItem.BackColor =
 			this.duplicateToolStripMenuItem.BackColor =
@@ -229,6 +235,8 @@ public partial class ComboBoxCharacter : UserControl
 			this.colorToolStripMenuItem.BackColor =
 			this.contextMenuStrip.BackColor = Color.FromArgb(46, 41, 31);
 
+			this.archiveAllToolStripMenuItemGlobal.ForeColor =
+			this.unarchiveAllToolStripMenuItemGlobal.ForeColor =
 			this.archiveAllToolStripMenuItem.ForeColor =
 			this.unarchiveAllToolStripMenuItem.ForeColor =
 			this.duplicateToolStripMenuItem.ForeColor =
@@ -752,5 +760,41 @@ public partial class ComboBoxCharacter : UserControl
 			RefreshItem(ps);
 			RefreshContent();
 		}
+	}
+
+	private void archiveAllToolStripMenuItemGlobal_Click(object sender, EventArgs e)
+	{
+		if (this._DisableMenuTriggers)
+			return;
+
+		// Find Saves that are not archived
+		var activeSaves =
+			from ps in this.Items.OfType<PlayerSave>()
+			where !ps.IsArchived
+			select ps;
+
+		foreach (var activeSave in activeSaves) 
+			GameFileService.Archive(activeSave);
+
+		RefreshItems();
+		RefreshContent();
+	}
+
+	private void unarchiveAllToolStripMenuItemGlobal_Click(object sender, EventArgs e)
+	{
+		if (this._DisableMenuTriggers)
+			return;
+
+		// Find Saves that are archived
+		var archivedSaves =
+			from ps in this.Items.OfType<PlayerSave>()
+			where ps.IsArchived
+			select ps;
+
+		foreach (var save in archivedSaves)
+			GameFileService.Unarchive(save);
+
+		RefreshItems();
+		RefreshContent();
 	}
 }
