@@ -48,6 +48,7 @@ Works with all expansions!
         - <kbd>&#8595;</kbd> : Moves currently hightlighted item(s) to stash panel
         - <kbd>CTRL</kbd>+click : Activate multi selection
         - <kbd>SHIFT</kbd>+drag : Activate mouse lasso for multi selection
+- [Character management](documentation/CHARMANAGE.md)
 - Character backups
     - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
 - External tools
