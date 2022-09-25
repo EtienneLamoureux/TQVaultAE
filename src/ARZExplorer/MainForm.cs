@@ -38,6 +38,10 @@ public partial class MainForm : Form
 
 	private readonly Dictionary<string, ArFileInfo> ArFileOpened = new();
 
+	private readonly List<TreeNode> NavHistory = new();
+
+	private int NavHistoryIndex;
+
 	internal ArFileInfo SelectedFile;
 
 	/// <summary>
@@ -347,6 +351,12 @@ public partial class MainForm : Form
 	{
 		if (dicoNodes.TryGetValue(recordId, out var node))
 			this.treeViewTOC.SelectedNode = node;
+		else
+		{
+			// TODO auto load file
+			// Add TOC to treeview
+			// Navigate
+		}
 	}
 
 	/// <summary>
@@ -509,7 +519,9 @@ public partial class MainForm : Form
 					}
 					PopulateGridView(recordText);
 					ShowGridView(recordText.Count);
+					StackNavigation();
 				}
+
 				else if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
 				{
 					string extension = Path.GetExtension(this.SelectedFile.destFile).ToUpper();
@@ -534,6 +546,7 @@ public partial class MainForm : Form
 
 						this.textBoxDetails.Lines = recordText.ToArray();
 						ShowTextboxDetail(recordText.Count);
+						StackNavigation();
 					}
 					else if (extension == ".TEX")
 					{
@@ -545,7 +558,10 @@ public partial class MainForm : Form
 						Bitmap bitmap = BitmapService.LoadFromTexMemory(rawData, 0, rawData.Length);
 
 						if (bitmap != null)
+						{
 							ShowPictureBox(bitmap);
+							StackNavigation();
+						}
 					}
 				}
 				else
@@ -565,6 +581,16 @@ public partial class MainForm : Form
 			this.SelectedFile.destFile = null;
 			this.textBoxDetails.Lines = null;
 		}
+	}
+
+	bool _StackNavigationDisabled = false;
+	private void StackNavigation()
+	{
+		if (_StackNavigationDisabled)
+			return;
+
+		NavHistory.Insert(0, this.treeViewTOC.SelectedNode);
+		NavHistoryIndex = 0;
 	}
 
 	/// <summary>
@@ -651,5 +677,34 @@ public partial class MainForm : Form
 			NavigateTo(cell.Value.ToString());
 	}
 
+	private void toolStripButtonPrev_Click(object sender, EventArgs e)
+	{
+		_StackNavigationDisabled = true;
+		if (NavHistory.Count > 0)
+		{
+			NavHistoryIndex++;
+
+			if (NavHistoryIndex == NavHistory.Count)
+			{
+				NavHistoryIndex--;
+				return;
+			}
+
+			this.treeViewTOC.SelectedNode = NavHistory[NavHistoryIndex];
+		}
+
+		_StackNavigationDisabled = false;
+	}
+
+	private void toolStripButtonNext_Click(object sender, EventArgs e)
+	{
+		_StackNavigationDisabled = true;
+		if (NavHistoryIndex > 0)
+		{
+			NavHistoryIndex--;
+			this.treeViewTOC.SelectedNode = NavHistory[NavHistoryIndex];
+		}
+		_StackNavigationDisabled = false;
+	}
 }
 
