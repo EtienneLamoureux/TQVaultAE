@@ -636,7 +636,7 @@ public partial class MainForm : Form
 			if (node.Key != string.Empty)
 			{
 				var tag = node.Value.Tag as NodeTag;
-				tag.thisNode.Text = .Checked
+				tag.thisNode.Text = toolStripButtonCaps.Checked
 					? tag.TextU
 					: tag.Text;
 			}
