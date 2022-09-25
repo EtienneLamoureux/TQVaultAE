@@ -244,7 +244,7 @@ namespace ArzExplorer
             this.treeViewTOC.Name = "treeViewTOC";
             this.treeViewTOC.Size = new System.Drawing.Size(271, 343);
             this.treeViewTOC.TabIndex = 12;
-            this.treeViewTOC.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeView1_AfterSelect);
+            this.treeViewTOC.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeViewTOC_AfterSelect);
             // 
             // pictureBoxItem
             // 

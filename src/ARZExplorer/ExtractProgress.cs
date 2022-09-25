@@ -27,6 +27,7 @@ namespace ArzExplorer
 		/// Base extraction folder for database
 		/// </summary>
 		internal string BaseFolder;
+		private readonly MainForm MainForm;
 		private readonly IArcFileProvider arcProv;
 		private readonly IArzFileProvider arzProv;
 		private readonly IDBRecordCollectionProvider DBRecordCollectionProvider;
@@ -46,12 +47,15 @@ namespace ArzExplorer
 		/// </summary>
 		private bool cancel;
 
+
+
 		/// <summary>
 		/// Initializes a new instance of the ExtractProgress class.
 		/// </summary>
 		/// <param name="baseFolder">Base extraction folder for TQ database</param>
-		public ExtractProgress(IArcFileProvider arcFileProvider, IArzFileProvider arzFileProvider, IDBRecordCollectionProvider dBRecordCollectionProvider)
+		public ExtractProgress(MainForm mainForm, IArcFileProvider arcFileProvider, IArzFileProvider arzFileProvider, IDBRecordCollectionProvider dBRecordCollectionProvider)
 		{
+			this.MainForm = mainForm;
 			this.arcProv = arcFileProvider;
 			this.arzProv = arzFileProvider;
 			this.DBRecordCollectionProvider = dBRecordCollectionProvider;
@@ -78,20 +82,20 @@ namespace ArzExplorer
 			this.cancel = false;
 
 			// Setup the progress bar
-			if (MainForm.FileType == CompressedFileType.ArcFile)
+			if (this.MainForm.SelectedFile.FileType == CompressedFileType.ArcFile)
 			{
-				this.progressBar1.Maximum = MainForm.ARCFile.Count;
+				this.progressBar1.Maximum = this.MainForm.SelectedFile.ARCFile.Count;
 			}
 			else
 			{
-				this.progressBar1.Maximum = MainForm.ARZFile.Count;
+				this.progressBar1.Maximum = this.MainForm.SelectedFile.ARZFile.Count;
 			}
 
 			this.progressBar1.Value = 0;
 
 			// Create a thread to do the extraction
 			ThreadStart tstart;
-			if (MainForm.FileType == CompressedFileType.ArcFile)
+			if (this.MainForm.SelectedFile.FileType == CompressedFileType.ArcFile)
 			{
 				tstart = new ThreadStart(this.DoArcExtraction);
 			}
@@ -113,7 +117,7 @@ namespace ArzExplorer
 			try
 			{
 				bool canceled = false;
-				foreach (RecordId recordID in arzProv.GetKeyTable(MainForm.ARZFile))
+				foreach (RecordId recordID in arzProv.GetKeyTable(this.MainForm.SelectedFile.ARZFile))
 				{
 					if (canceled)
 						break;
@@ -123,7 +127,7 @@ namespace ArzExplorer
 					this.Invoke(new MethodInvoker(this.UpdateLabel));
 
 					// Write the record
-					var dbc = arzProv.GetRecordNotCached(MainForm.ARZFile, recordID);
+					var dbc = arzProv.GetRecordNotCached(this.MainForm.SelectedFile.ARZFile, recordID);
 					DBRecordCollectionProvider.Write(dbc, this.BaseFolder);
 
 					// Update progressbar
@@ -156,7 +160,7 @@ namespace ArzExplorer
 			{
 				bool canceled = false;
 
-				foreach (RecordId recordID in arcProv.GetKeyTable(MainForm.ARCFile))
+				foreach (RecordId recordID in arcProv.GetKeyTable(this.MainForm.SelectedFile.ARCFile))
 				{
 					if (canceled)
 						break;
@@ -166,7 +170,7 @@ namespace ArzExplorer
 					this.Invoke(new MethodInvoker(this.UpdateLabel));
 
 					// Write the record
-					arcProv.Write(MainForm.ARCFile, this.BaseFolder, recordID, recordID.Normalized);
+					arcProv.Write(this.MainForm.SelectedFile.ARCFile, this.BaseFolder, recordID, recordID.Normalized);
 
 					// Update progressbar
 					this.Invoke(new MethodInvoker(this.IncrementProgress));

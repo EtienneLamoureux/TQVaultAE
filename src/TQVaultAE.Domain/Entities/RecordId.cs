@@ -1,6 +1,10 @@
 ﻿using TQVaultAE.Domain.Helpers;
 using System;
 using System.IO;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace TQVaultAE.Domain.Entities;
 
@@ -110,6 +114,34 @@ public partial class RecordId : IEquatable<RecordId>, IComparable, IComparable<R
 				_PrettyFileNameExploded = PrettyFileName.ExplodePrettyFileName();
 
 			return _PrettyFileNameExploded;
+		}
+	}
+
+	#endregion
+
+	#region Tokens
+
+	ReadOnlyCollection<string> _Tokens;
+	public ReadOnlyCollection<string> TokensRaw
+	{
+		get
+		{
+			if (_Tokens is null)
+				_Tokens = this.Raw.Split(new[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries).ToList().AsReadOnly();
+
+			return _Tokens;
+		}
+	}
+	
+	ReadOnlyCollection<string> _TokensNormalized;
+	public ReadOnlyCollection<string> TokensNormalized
+	{
+		get
+		{
+			if (_TokensNormalized is null)
+				_TokensNormalized = this.TokensRaw.Select(t => t.ToUpper()).ToList().AsReadOnly();
+
+			return _TokensNormalized;
 		}
 	}
 

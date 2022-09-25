@@ -222,8 +222,7 @@ public static class StringHelper
 		string normalizedRecordId = recordId.ToUpperInvariant();
 
 		// replace any '/' with '\\'
-		normalizedRecordId = normalizedRecordId.Replace('/', '\\');
-		return normalizedRecordId;
+		return normalizedRecordId.Replace('/', '\\');
 	}
 
 	/// <summary>
