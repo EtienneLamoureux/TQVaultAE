@@ -3,14 +3,16 @@
 //     Copyright (c) Village Idiot. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using ArzExplorer.Models;
+using ArzExplorer.Properties;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -36,28 +38,12 @@ public partial class MainForm : Form
 	private readonly IBitmapService BitmapService;
 	private readonly IGamePathService GamePathService;
 
-	private readonly Dictionary<string, ArFileInfo> ArFileOpened = new();
-
-	private readonly List<TreeNode> NavHistory = new();
-
-	private int NavHistoryIndex;
-
-	internal ArFileInfo SelectedFile;
-
 	/// <summary>
 	/// Holds the initial size of the form.
 	/// </summary>
 	private Size initialSize;
 
-	/// <summary>
-	/// Holds the title text.  Used to display the current file.
-	/// </summary>
-	private string titleText;
-
-	/// <summary>
-	/// Treeview node database
-	/// </summary>
-	Dictionary<RecordId, TreeNode> dicoNodes = new();
+	#region MainForm
 
 	/// <summary>
 	/// Initializes a new instance of the Form1 class.
@@ -73,9 +59,6 @@ public partial class MainForm : Form
 	{
 		this.InitializeComponent();
 
-		Assembly a = Assembly.GetExecutingAssembly();
-		AssemblyName aname = a.GetName();
-
 		this.Log = log;
 		this.arcProv = arcFileProvider;
 		this.arzProv = arzFileProvider;
@@ -83,13 +66,101 @@ public partial class MainForm : Form
 		this.BitmapService = bitmapService;
 		this.GamePathService = gamePathService;
 
-		this.titleText = aname.Name;
+		Assembly a = Assembly.GetExecutingAssembly();
+		this.assemblyName = a.GetName();
+
 		this.selectedFileToolStripMenuItem.Enabled = false;
 		this.allFilesToolStripMenuItem.Enabled = false;
 		this.initialSize = this.Size;
 		this.toolStripStatusLabel.Text = string.Empty;
 	}
 
+	private void MainForm_Load(object sender, EventArgs e)
+	{
+		// Seek for all arc files
+		var arc = Directory.GetFiles(this.GamePathService.ImmortalThronePath, "*.arc", SearchOption.AllDirectories);
+		ArcFileList = arc.ToDictionary(
+			k => k.Replace(this.GamePathService.ImmortalThronePath + '\\', string.Empty).ToRecordId()
+		);
+	}
+
+	/// <summary>
+	/// Handler for clicking exit on the menu
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+		this.DialogResult = DialogResult.Cancel;
+		this.Close();
+	}
+
+	private void HideAllBox()
+	{
+		this.dataGridViewDetails.Visible = false;
+		this.textBoxDetails.Visible = false;
+		this.panelPicture.Visible = false;
+		this.toolStripStatusLabel.Text = string.Empty;
+	}
+
+	private void ShowPictureBox(Image bitmap)
+	{
+		this.dataGridViewDetails.Visible = false;
+		this.textBoxDetails.Visible = false;
+		this.panelPicture.Visible = true;
+		this.pictureBoxItem.Image = bitmap;
+		this.pictureBoxItem.Size = bitmap.Size;
+		this.toolStripStatusLabel.Text = string.Format("PixelFormat : {0}, Size : {1}", bitmap.PixelFormat, bitmap.Size);
+	}
+
+	private void ShowGridView(int Count)
+	{
+		this.dataGridViewDetails.Visible = true;
+		this.dataGridViewDetails.Dock = DockStyle.Fill;
+		this.textBoxDetails.Visible = false;
+		this.panelPicture.Visible = false;
+		this.toolStripStatusLabel.Text = string.Format("Record Count : {0}", Count);
+	}
+
+	private void ShowTextboxDetail(int Count)
+	{
+		this.dataGridViewDetails.Visible = false;
+		this.textBoxDetails.Visible = true;
+		this.textBoxDetails.Dock = DockStyle.Fill;
+		this.panelPicture.Visible = false;
+		this.toolStripStatusLabel.Text = string.Format("Line Count : {0}", Count);
+	}
+
+	#endregion
+
+	#region Open File
+
+	internal TQFileInfo SelectedFile;
+
+	/// <summary>
+	/// Resolve database file
+	/// </summary>
+	string DataBasePath => Path.Combine(this.GamePathService.ImmortalThronePath, @"Database\database.arz");
+
+	private readonly Dictionary<string, TQFileInfo> TQFileOpened = new();
+
+	/// <summary>
+	/// Found Arc Files
+	/// </summary>
+	Dictionary<RecordId, string> ArcFileList;
+
+	private void toolStripButtonLoadDataBase_Click(object sender, EventArgs e)
+	{
+		try
+		{
+			this.OpenFile(this.DataBasePath);
+		}
+		catch (Exception ex)
+		{
+			MessageBox.Show(ex.Message);
+			return;
+		}
+	}
 
 	/// <summary>
 	/// Opens a file and updates the tree view.
@@ -100,7 +171,11 @@ public partial class MainForm : Form
 		if (string.IsNullOrEmpty(filename))
 			return;
 
-		var fileInfo = new ArFileInfo();
+		// Already loaded
+		if (this.TQFileOpened.Any(kv => kv.Value.sourceFile == filename))
+			return;
+
+		var fileInfo = new TQFileInfo();
 
 		fileInfo.sourceFile = filename;
 
@@ -152,7 +227,7 @@ public partial class MainForm : Form
 		// so we just clear everything out.
 		if (fileInfo.FileType == CompressedFileType.Unknown)
 		{
-			this.Text = this.titleText;
+			this.Text = this.assemblyName.Name;
 			this.treeViewTOC.Nodes.Clear();
 			this.selectedFileToolStripMenuItem.Enabled = false;
 			this.allFilesToolStripMenuItem.Enabled = false;
@@ -165,90 +240,16 @@ public partial class MainForm : Form
 		this.allFilesToolStripMenuItem.Enabled = true;
 		this.hideZeroValuesToolStripMenuItem.Enabled = fileInfo.FileType == CompressedFileType.ArzFile;
 
-		this.Text = string.Format("{0} - {1}", this.titleText, fileInfo.sourceFile);
+		this.Text = string.Format("{0} - {1}", this.assemblyName.Name, fileInfo.sourceFile);
 
 		this.textBoxDetails.Lines = null;
 
 		this.toolStripStatusLabel.Text = string.Empty;
 
-		this.ArFileOpened.Add(fullSrcPath, fileInfo);
+		this.TQFileOpened.Add(fullSrcPath, fileInfo);
 		this.SelectedFile = fileInfo;
 
 		this.BuildTreeView();
-	}
-
-	/// <summary>
-	/// Builds the tree view.  Assumes the list is pre-sorted.
-	/// </summary>
-	private void BuildTreeView()
-	{
-		// Display a wait cursor while the TreeNodes are being created.
-		Cursor.Current = Cursors.WaitCursor;
-
-		this.treeViewTOC.BeginUpdate();
-		this.treeViewTOC.Nodes.Clear();
-		this.dicoNodes.Clear();
-
-		// Hold the nodes from the previous record.
-		// We save these so we do not need to search the treeview
-
-		RecordId[] dataRecords;
-
-		if (this.SelectedFile.FileType == CompressedFileType.ArzFile)
-			dataRecords = arzProv.GetKeyTable(this.SelectedFile.ARZFile);
-		else if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
-			dataRecords = arcProv.GetKeyTable(this.SelectedFile.ARCFile);
-		else
-			return;
-
-		// We failed so return.
-		if (dataRecords == null)
-			return;
-
-		TreeNode rootNode = new();
-		dicoNodes.Add(RecordId.Empty, rootNode);
-		for (int recIdx = 0; recIdx < dataRecords.Length; recIdx++)
-		{
-			var recordID = dataRecords[recIdx];
-			for (int tokIdx = 0; tokIdx < recordID.TokensRaw.Count; tokIdx++)
-			{
-				var token = recordID.TokensRaw[tokIdx];
-				var parent = recordID.TokensRaw.Take(tokIdx).JoinString("\\").ToRecordId();
-				var parentnode = dicoNodes[parent];
-				var currnodeKey = (parent.IsEmpty ? token : parent + '\\' + token).ToRecordId();
-
-				if (parentnode.Nodes.ContainsKey(currnodeKey))
-					continue;
-				else
-				{
-					var currentNode = new TreeNode()
-					{
-						Name = currnodeKey,
-						Text = token,
-					};
-					currentNode.Tag = new NodeTag
-					{
-						thisNode = currentNode,
-
-						Thread = recordID,
-						Key = currnodeKey,
-						RecIdx = recIdx,
-						TokIdx = tokIdx,
-
-						Text = token,
-					};
-					parentnode.Nodes.Add(currentNode);
-					dicoNodes.Add(currnodeKey, currentNode);
-				}
-			}
-		}
-
-		this.treeViewTOC.Nodes.Add(rootNode.Nodes[0]);
-
-		// Reset the cursor to the default for all controls.
-		Cursor.Current = Cursors.Default;
-
-		this.treeViewTOC.EndUpdate();
 	}
 
 	/// <summary>
@@ -264,12 +265,12 @@ public partial class MainForm : Form
 		openDialog.RestoreDirectory = true;
 
 		// Try to read the game path
-		string startPath = this.GamePathService.ResolveGamePath();
+		string startPath = this.GamePathService.ImmortalThronePath;
 
 		// If the registry fails then default to the save folder.
 		if (startPath.Length < 1)
 		{
-			startPath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games"), "Titan Quest");
+			startPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", "Titan Quest");
 		}
 
 		openDialog.InitialDirectory = startPath;
@@ -280,95 +281,45 @@ public partial class MainForm : Form
 		}
 	}
 
-	private void HideAllBox()
+	/// <summary>
+	/// Drag and drop handler
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">DragEventArgs data</param>
+	private void Form1_DragDrop(object sender, DragEventArgs e)
 	{
-		this.dataGridViewDetails.Visible = false;
-		this.textBoxDetails.Visible = false;
-		this.panelPicture.Visible = false;
-		this.toolStripStatusLabel.Text = string.Empty;
-	}
-
-	private void ShowPictureBox(Image bitmap)
-	{
-		this.dataGridViewDetails.Visible = false;
-		this.textBoxDetails.Visible = false;
-		this.panelPicture.Visible = true;
-		this.pictureBoxItem.Image = bitmap;
-		this.pictureBoxItem.Size = bitmap.Size;
-		this.toolStripStatusLabel.Text = string.Format("PixelFormat : {0}, Size : {1}", bitmap.PixelFormat, bitmap.Size);
-	}
-
-	private void ShowGridView(int Count)
-	{
-		this.dataGridViewDetails.Visible = true;
-		this.dataGridViewDetails.Dock = DockStyle.Fill;
-		this.textBoxDetails.Visible = false;
-		this.panelPicture.Visible = false;
-		this.toolStripStatusLabel.Text = string.Format("Record Count : {0}", Count);
-	}
-
-	private void ShowTextboxDetail(int Count)
-	{
-		this.dataGridViewDetails.Visible = false;
-		this.textBoxDetails.Visible = true;
-		this.textBoxDetails.Dock = DockStyle.Fill;
-		this.panelPicture.Visible = false;
-		this.toolStripStatusLabel.Text = string.Format("Line Count : {0}", Count);
-	}
-
-	static char[] PopulateGridView_splitChars = new[] { ',' };
-
-	static DataGridViewCellStyle PopulateGridView_hyperLinkCellStyle = new DataGridViewCellStyle
-	{
-		Font = new Font(FontFamily.GenericSansSerif, 8, FontStyle.Underline),
-		ForeColor = Color.Blue,
-	};
-
-	private void PopulateGridView(List<string> recordText)
-	{
-		var grd = dataGridViewDetails;
-		grd.Rows.Clear();
-
-		// Init data
-		foreach (string line in recordText)
+		// Handle FileDrop data.
+		if (e.Data.GetDataPresent(DataFormats.FileDrop))
 		{
-			string[] values = line.Split(PopulateGridView_splitChars, StringSplitOptions.RemoveEmptyEntries);
-			grd.Rows.Add(values);
-		}
-
-		// Apply link style
-		for (int i = 0; i < grd.RowCount; i++)
-		{
-			var cell = grd.Rows[i].Cells[1];
-			var val = cell.Value?.ToString() ?? string.Empty;
-
-			if (val.EndsWith(".DBR", noCase) || val.EndsWith(".TEX", noCase) || val.EndsWith(".TXT", noCase))
-				cell.Style = PopulateGridView_hyperLinkCellStyle;
-		}
-	}
-
-	private void NavigateTo(RecordId recordId)
-	{
-		if (dicoNodes.TryGetValue(recordId, out var node))
-			this.treeViewTOC.SelectedNode = node;
-		else
-		{
-			// TODO auto load file
-			// Add TOC to treeview
-			// Navigate
+			// Assign the file names to a string array, in
+			// case the user has selected multiple files.
+			string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+			try
+			{
+				this.OpenFile(files[0]);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+				return;
+			}
 		}
 	}
 
 	/// <summary>
-	/// Handler for clicking exit on the menu
+	/// Handler for entering the form with a drag item.  Changes the cursor.
 	/// </summary>
 	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+	/// <param name="e">DragEventArgs data</param>
+	private void Form1_DragEnter(object sender, DragEventArgs e)
 	{
-		this.DialogResult = DialogResult.Cancel;
-		this.Close();
+		// If the data is a file display the copy cursor.
+		e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
 	}
+
+	#endregion
+
+	#region Extract selected file
 
 	/// <summary>
 	/// Handler for clicking extract selected file.
@@ -410,6 +361,10 @@ public partial class MainForm : Form
 			}
 		}
 	}
+
+	#endregion
+
+	#region Extract all files
 
 	/// <summary>
 	/// Handler for clicking extract all files from the menu.
@@ -481,6 +436,10 @@ public partial class MainForm : Form
 		form.ShowDialog();
 	}
 
+	#endregion
+
+	#region About
+
 	/// <summary>
 	/// Handler for clicking Help->About
 	/// </summary>
@@ -492,6 +451,130 @@ public partial class MainForm : Form
 		d.ShowDialog();
 	}
 
+	#endregion
+
+	#region TreeViewTOC
+
+	NodeTag SelectedTag => this.treeViewTOC.SelectedNode.Tag as NodeTag;
+
+	/// <summary>
+	/// Treeview node database
+	/// </summary>
+	Dictionary<RecordId, TreeNode> dicoNodes = new();
+
+	/// <summary>
+	/// Builds the tree view.  Assumes the list is pre-sorted.
+	/// </summary>
+	private void BuildTreeView()
+	{
+		// Display a wait cursor while the TreeNodes are being created.
+		Cursor.Current = Cursors.WaitCursor;
+
+		this.treeViewTOC.BeginUpdate();
+		//this.treeViewTOC.Nodes.Clear();
+		//this.dicoNodes.Clear();
+
+		// Hold the nodes from the previous record.
+		// We save these so we do not need to search the treeview
+
+		RecordId[] dataRecords;
+
+		if (this.SelectedFile.FileType == CompressedFileType.ArzFile)
+			dataRecords = arzProv.GetKeyTable(this.SelectedFile.ARZFile);
+		else if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
+			dataRecords = arcProv.GetKeyTable(this.SelectedFile.ARCFile);
+		else
+			return;
+
+		// We failed so return.
+		if (dataRecords == null)
+			return;
+
+		TreeNode rootNode = new(), arcRootNode = null;
+		string arcPrefix = string.Empty;
+
+		if (dicoNodes.Any())
+			rootNode = dicoNodes[RecordId.Empty];// Get it back
+		else
+			dicoNodes.Add(RecordId.Empty, rootNode);// First time
+
+		if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
+		{
+			arcPrefix = Path.GetFileNameWithoutExtension(this.SelectedFile.sourceFile);
+			var arcPrefixId = arcPrefix.ToRecordId();
+			if (!dicoNodes.TryGetValue(arcPrefixId, out arcRootNode))
+			{
+				arcRootNode = new TreeNode()
+				{
+					Name = arcPrefix,
+					Text = arcPrefix,
+					ToolTipText = this.SelectedFile.sourceFile
+				};
+				arcRootNode.Tag = new NodeTag
+				{
+					thisNode = arcRootNode,
+					File = this.SelectedFile,
+
+					Thread = null,
+					Key = arcPrefix,
+					RecIdx = 0,
+					TokIdx = 0,
+
+					Text = arcPrefix,
+				};
+				dicoNodes.Add(arcPrefixId, arcRootNode);
+				rootNode.Nodes.Add(arcRootNode);
+			}
+		}
+
+		for (int recIdx = 0; recIdx < dataRecords.Length; recIdx++)
+		{
+			RecordId recordID = arcPrefix == string.Empty ? dataRecords[recIdx] : Path.Combine(arcPrefix, dataRecords[recIdx].Raw);
+
+			for (int tokIdx = 0; tokIdx < recordID.TokensRaw.Count; tokIdx++)
+			{
+				// Arz resolving
+				var token = recordID.TokensRaw[tokIdx];
+				var parent = recordID.TokensRaw.Take(tokIdx).JoinString("\\").ToRecordId();
+				var parentnode = dicoNodes[parent];
+				var currnodeKey = (parent.IsEmpty ? token : parent + '\\' + token).ToRecordId();
+
+				if (parentnode.Nodes.ContainsKey(currnodeKey))
+					continue;
+				else
+				{
+					var currentNode = new TreeNode()
+					{
+						Name = currnodeKey,
+						Text = token,
+						ToolTipText = this.SelectedFile.sourceFile
+					};
+					currentNode.Tag = new NodeTag
+					{
+						thisNode = currentNode,
+						File = this.SelectedFile,
+
+						Thread = recordID,
+						Key = currnodeKey,
+						RecIdx = recIdx,
+						TokIdx = tokIdx,
+
+						Text = token,
+					};
+					parentnode.Nodes.Add(currentNode);
+					dicoNodes.Add(currnodeKey, currentNode);
+				}
+			}
+		}
+
+		// Always add the newcomers
+		this.treeViewTOC.Nodes.Add(rootNode.Nodes[rootNode.Nodes.Count - 1]);
+
+		// Reset the cursor to the default for all controls.
+		Cursor.Current = Cursors.Default;
+
+		this.treeViewTOC.EndUpdate();
+	}
 	/// <summary>
 	/// Handler for clicking on a treeView item
 	/// </summary>
@@ -503,9 +586,12 @@ public partial class MainForm : Form
 		// otherwise this will be a directory.
 		if (this.treeViewTOC.SelectedNode.GetNodeCount(false) == 0)
 		{
+			this.SelectedFile = this.SelectedTag.File;
+
 			this.SelectedFile.destFile
 				= this.textBoxPath.Text
 				= this.treeViewTOC.SelectedNode.FullPath;
+
 			try
 			{
 				List<string> recordText = new List<string>();
@@ -525,7 +611,7 @@ public partial class MainForm : Form
 				else if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
 				{
 					string extension = Path.GetExtension(this.SelectedFile.destFile).ToUpper();
-					string arcDataPath = Path.Combine(Path.GetFileNameWithoutExtension(this.SelectedFile.ARCFile.FileName), this.SelectedFile.destFile);
+					string arcDataPath = this.SelectedFile.destFile;
 					var arcDataRecordId = arcDataPath.ToRecordId();
 					if (extension == ".TXT")
 					{
@@ -583,50 +669,39 @@ public partial class MainForm : Form
 		}
 	}
 
-	bool _StackNavigationDisabled = false;
-	private void StackNavigation()
-	{
-		if (_StackNavigationDisabled)
-			return;
+	#endregion
 
-		NavHistory.Insert(0, this.treeViewTOC.SelectedNode);
-		NavHistoryIndex = 0;
-	}
+	#region Griv View
 
-	/// <summary>
-	/// Drag and drop handler
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">DragEventArgs data</param>
-	private void Form1_DragDrop(object sender, DragEventArgs e)
+	static char[] PopulateGridView_splitChars = new[] { ',' };
+
+	static DataGridViewCellStyle PopulateGridView_hyperLinkCellStyle = new DataGridViewCellStyle
 	{
-		// Handle FileDrop data.
-		if (e.Data.GetDataPresent(DataFormats.FileDrop))
+		Font = new Font(FontFamily.GenericSansSerif, 8, FontStyle.Underline),
+		ForeColor = Color.Blue,
+	};
+
+	private void PopulateGridView(List<string> recordText)
+	{
+		var grd = dataGridViewDetails;
+		grd.Rows.Clear();
+
+		// Init data
+		foreach (string line in recordText)
 		{
-			// Assign the file names to a string array, in
-			// case the user has selected multiple files.
-			string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-			try
-			{
-				this.OpenFile(files[0]);
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.Message);
-				return;
-			}
+			string[] values = line.Split(PopulateGridView_splitChars, StringSplitOptions.RemoveEmptyEntries);
+			grd.Rows.Add(values);
 		}
-	}
 
-	/// <summary>
-	/// Handler for entering the form with a drag item.  Changes the cursor.
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">DragEventArgs data</param>
-	private void Form1_DragEnter(object sender, DragEventArgs e)
-	{
-		// If the data is a file display the copy cursor.
-		e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
+		// Apply link style
+		for (int i = 0; i < grd.RowCount; i++)
+		{
+			var cell = grd.Rows[i].Cells[1];
+			var val = cell.Value?.ToString() ?? string.Empty;
+
+			if (val.EndsWith(".DBR", noCase) || val.EndsWith(".TEX", noCase) || val.EndsWith(".TXT", noCase))
+				cell.Style = PopulateGridView_hyperLinkCellStyle;
+		}
 	}
 
 	private void hideZeroValuesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -644,6 +719,10 @@ public partial class MainForm : Form
 		}
 	}
 
+	#endregion
+
+	#region Clipboard
+
 	private void textBoxPath_MouseDoubleClick(object sender, MouseEventArgs e)
 	{
 		Clipboard.SetText(this.textBoxPath.Text);
@@ -654,8 +733,14 @@ public partial class MainForm : Form
 		Clipboard.SetText(this.textBoxDetails.Text);
 	}
 
+	#endregion
+
+	#region Caps Treeview
+
 	private void toolStripButtonCaps_CheckedChanged(object sender, EventArgs e)
 	{
+		toolStripButtonCaps.Image = toolStripButtonCaps.Checked ? Resources.CapsDown.ToBitmap() : Resources.CapsUP.ToBitmap();
+
 		this.treeViewTOC.BeginUpdate();
 		foreach (var node in this.dicoNodes)
 		{
@@ -670,41 +755,115 @@ public partial class MainForm : Form
 		this.treeViewTOC.EndUpdate();
 	}
 
+	#endregion
+
+	#region NavHistory
+
+	private readonly List<TreeNode> NavHistory = new();
+	private readonly AssemblyName assemblyName;
+	private int NavHistoryIndex;
+
+	bool _StackNavigationDisabled = false;
+
+	private void StackNavigation()
+	{
+		if (_StackNavigationDisabled)
+			return;
+
+		NavHistory.Add(this.treeViewTOC.SelectedNode);
+		NavHistoryIndex = NavHistory.Count - 1;
+	}
+
 	private void dataGridViewDetails_CellClick(object sender, DataGridViewCellEventArgs e)
 	{
 		var cell = dataGridViewDetails.Rows[e.RowIndex].Cells[e.ColumnIndex];
 		if (cell.Style == PopulateGridView_hyperLinkCellStyle)
-			NavigateTo(cell.Value.ToString());
+		{
+			var value = cell.Value.ToString();
+			var values = value.Split(';');
+			NavigateTo(values.First());
+		}
 	}
 
+	private void NavigateTo(RecordId recordId)
+	{
+		// Already loaded
+		if (dicoNodes.TryGetValue(recordId, out var node))
+		{
+			this.treeViewTOC.SelectedNode = node;
+			this.treeViewTOC.Focus();
+		}
+		else
+		{
+			// auto load file
+
+			// Resolve file name
+			string xPackVersion, fileToken, fileName, dicoKey;
+			if (recordId.Normalized.StartsWith("XPACK"))
+			{
+				xPackVersion = recordId.TokensNormalized[0];
+				fileToken = recordId.TokensNormalized[1];
+				fileName = $"{fileToken}.ARC";
+				dicoKey = @$"RESOURCES\{xPackVersion}\{fileName}";
+			}
+			else
+			{
+				xPackVersion = string.Empty;
+				fileToken = recordId.TokensNormalized[0];
+				fileName = $"{fileToken}.ARC";
+				dicoKey = @$"RESOURCES\{fileName}";
+			}
+
+			if (ArcFileList.TryGetValue(dicoKey, out var fullpath))
+			{
+				// Add TOC to treeview
+				this.OpenFile(fullpath);
+
+				// Navigate
+				var found = dicoNodes[recordId];
+				this.treeViewTOC.SelectedNode = found;
+				this.treeViewTOC.Focus();
+			}
+		}
+	}
 	private void toolStripButtonPrev_Click(object sender, EventArgs e)
 	{
 		_StackNavigationDisabled = true;
-		if (NavHistory.Count > 0)
+		if (NavHistory.Count > 0 && NavHistoryIndex > 0)
 		{
-			NavHistoryIndex++;
-
-			if (NavHistoryIndex == NavHistory.Count)
-			{
-				NavHistoryIndex--;
-				return;
-			}
-
-			this.treeViewTOC.SelectedNode = NavHistory[NavHistoryIndex];
+			NavHistoryIndex--;
+			NavHistoryGoto();
 		}
-
 		_StackNavigationDisabled = false;
+	}
+
+	private void NavHistoryGoto()
+	{
+		var tag = NavHistory[NavHistoryIndex].Tag as NodeTag;
+		this.SelectedFile = tag.File;
+		this.treeViewTOC.SelectedNode = NavHistory[NavHistoryIndex];
+		this.treeViewTOC.Focus();
 	}
 
 	private void toolStripButtonNext_Click(object sender, EventArgs e)
 	{
 		_StackNavigationDisabled = true;
-		if (NavHistoryIndex > 0)
+		if (NavHistoryIndex < NavHistory.Count - 1)
 		{
-			NavHistoryIndex--;
-			this.treeViewTOC.SelectedNode = NavHistory[NavHistoryIndex];
+			NavHistoryIndex++;
+
+			NavHistoryGoto();
 		}
 		_StackNavigationDisabled = false;
 	}
+
+	private void toolStripButtonClearHistory_Click(object sender, EventArgs e)
+	{
+		this.NavHistory.Clear();
+		this.NavHistoryIndex = -1;
+	}
+
+	#endregion
+
 }
 

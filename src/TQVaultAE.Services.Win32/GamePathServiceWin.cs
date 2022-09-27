@@ -573,30 +573,60 @@ public class GamePathServiceWin : IGamePathService
 		// Detection logic for a Steam install of the anniversary edition ~Malgardian
 		if (string.IsNullOrEmpty(titanQuestGamePath))
 		{
-			string steamTQPath = "\\SteamApps\\common\\Titan Quest Anniversary Edition";
+			string steamTQPath = "SteamApps\\common\\Titan Quest Anniversary Edition";
 
 			string[] registryPath = { "Software", "Valve", "Steam", "SteamPath" };
 			string steamPath = ReadRegistryKey(Microsoft.Win32.Registry.CurrentUser, registryPath).Replace("/", "\\");
 
-			if (Directory.Exists(steamPath + steamTQPath))
-				titanQuestGamePath = steamPath + steamTQPath;
+			string fullPath = Path.Combine(steamPath, steamTQPath);
+			if (Directory.Exists(fullPath))
+				titanQuestGamePath = fullPath;
 			else
 			{
 				//further looking for Steam library
 				//read libraryfolders.vdf
-				Regex vdfPathRegex = new Regex(@"""\d+""\t+""([^""]+)""");  // "2"		"D:\\games\\Steam"
 				var vdfFile = Path.Combine(steamPath, @"SteamApps\libraryfolders.vdf");
 				if (File.Exists(vdfFile))
 				{
 					string[] libFile = File.ReadAllLines(vdfFile);
 
+					// TODO Old file format ? Is it obsolete ?
+					Regex vdfPathRegex = new Regex(@"""\d+""\t+""([^""]+)""");  // "2"		"D:\\games\\Steam"
 					foreach (var line in libFile)
 					{
-						Match match = vdfPathRegex.Match(line.Trim());
-						if (match.Success && Directory.Exists(match.Groups[1] + steamTQPath))
+						if (vdfPathRegex.Match(line.Trim()) is { Success: true } match)
 						{
-							titanQuestGamePath = match.Groups[1] + steamTQPath;
-							break;
+							fullPath = Path.Combine(match.Groups[1].Value, steamTQPath);
+							if (Directory.Exists(fullPath))
+							{
+								titanQuestGamePath = fullPath;
+								break;
+							}
+						}
+					}
+
+					if (string.IsNullOrWhiteSpace(titanQuestGamePath))
+					{
+						// New File Format
+						var regExPath = new Regex(@"""path""\s+""(?<path>[^""]+)""");
+						var gameIdMarkup = @"""475150""";
+						steamPath = string.Empty;
+						foreach (var line in libFile)
+						{
+							// Match "path"
+							if (regExPath.Match(line) is { Success: true } match)
+								steamPath = match.Groups["path"].Value;
+
+							// Match gameId
+							if (line.Contains(gameIdMarkup))
+								break;
+						}
+
+						if (steamPath != string.Empty)
+						{
+							var fullpath = Path.Combine(steamPath, steamTQPath);
+							if (Directory.Exists(fullpath))
+								titanQuestGamePath = fullpath;
 						}
 					}
 				}

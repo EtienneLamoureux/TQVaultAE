@@ -141,7 +141,7 @@
     <Compile Include="AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArFileInfo.cs" />
+    <Compile Include="Models\ArFileInfo.cs" />
     <Compile Include="ExtractProgress.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -154,9 +154,16 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="NodeTag.cs" />
+    <Compile Include="Models\NodeTag.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Icons\LoadDatabase.ico" />
+    <Content Include="Icons\CapsUP.ico" />
+    <Content Include="Icons\CapsDown.ico" />
+    <Content Include="Icons\Prev.ico" />
+    <Content Include="Icons\Next.ico" />
+    <Content Include="Icons\ClearHistory.ico" />
+    <Content Include="Icons\icons.txt" />
     <EmbeddedResource Include="AboutBox.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AboutBox.cs</DependentUpon>
@@ -360,6 +367,7 @@
       <Version>4.3.0</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>XCOPY "$(ProjectDir)bin\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /y /s /i

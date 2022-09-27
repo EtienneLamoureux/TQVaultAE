@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
 using TQVaultAE.Domain.Entities;
 
-namespace ArzExplorer;
+namespace ArzExplorer.Models;
 
 internal class NodeTag
 {
@@ -12,4 +12,5 @@ internal class NodeTag
 	internal int TokIdx;
 	internal RecordId Key;
 	internal TreeNode thisNode;
+	internal TQFileInfo File;
 }

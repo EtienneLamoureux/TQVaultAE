@@ -205,7 +205,7 @@ namespace TQVaultAE.GUI
 			if (Config.UserSettings.Default.AutoDetectGamePath)
 			{
 				gamePathResolver.TQPath = gamePathResolver.ResolveGamePath();
-				gamePathResolver.ImmortalThronePath = gamePathResolver.ResolveGamePath();
+				gamePathResolver.ImmortalThronePath = gamePathResolver.TQPath;
 			}
 			else
 			{

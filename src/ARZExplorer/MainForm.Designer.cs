@@ -121,18 +121,21 @@ namespace ArzExplorer
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tableLayoutPanelSkeleton = new System.Windows.Forms.TableLayoutPanel();
-            this.flowLayoutPanelPath = new System.Windows.Forms.FlowLayoutPanel();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonPrev = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonNext = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonClearHistory = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonCaps = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabelSearch = new System.Windows.Forms.ToolStripLabel();
             this.toolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonClearHistory = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonLoadDataBase = new System.Windows.Forms.ToolStripButton();
+            this.flowLayoutPanelPath = new System.Windows.Forms.FlowLayoutPanel();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxItem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBrowser)).BeginInit();
@@ -143,8 +146,8 @@ namespace ArzExplorer
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDetails)).BeginInit();
             this.statusStrip.SuspendLayout();
             this.tableLayoutPanelSkeleton.SuspendLayout();
-            this.flowLayoutPanelPath.SuspendLayout();
             this.toolStrip.SuspendLayout();
+            this.flowLayoutPanelPath.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -431,16 +434,6 @@ namespace ArzExplorer
             this.tableLayoutPanelSkeleton.Size = new System.Drawing.Size(826, 429);
             this.tableLayoutPanelSkeleton.TabIndex = 19;
             // 
-            // flowLayoutPanelPath
-            // 
-            this.flowLayoutPanelPath.AutoSize = true;
-            this.flowLayoutPanelPath.Controls.Add(this.labelPath);
-            this.flowLayoutPanelPath.Controls.Add(this.textBoxPath);
-            this.flowLayoutPanelPath.Location = new System.Drawing.Point(3, 26);
-            this.flowLayoutPanelPath.Name = "flowLayoutPanelPath";
-            this.flowLayoutPanelPath.Size = new System.Drawing.Size(784, 26);
-            this.flowLayoutPanelPath.TabIndex = 0;
-            // 
             // toolStrip
             // 
             this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
@@ -452,13 +445,16 @@ namespace ArzExplorer
             this.toolStripButtonClearHistory,
             this.toolStripSeparator1,
             this.toolStripButtonCaps,
+            this.toolStripSeparator5,
+            this.toolStripButtonLoadDataBase,
             this.toolStripSeparator2,
             this.toolStripLabelSearch,
-            this.toolStripTextBox});
+            this.toolStripTextBox,
+            this.toolStripSeparator4});
             this.toolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(395, 23);
+            this.toolStrip.Size = new System.Drawing.Size(399, 23);
             this.toolStrip.TabIndex = 20;
             // 
             // toolStripButtonPrev
@@ -480,6 +476,21 @@ namespace ArzExplorer
             this.toolStripButtonNext.Size = new System.Drawing.Size(23, 20);
             this.toolStripButtonNext.Text = "Next";
             this.toolStripButtonNext.Click += new System.EventHandler(this.toolStripButtonNext_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 23);
+            // 
+            // toolStripButtonClearHistory
+            // 
+            this.toolStripButtonClearHistory.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonClearHistory.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonClearHistory.Image")));
+            this.toolStripButtonClearHistory.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonClearHistory.Name = "toolStripButtonClearHistory";
+            this.toolStripButtonClearHistory.Size = new System.Drawing.Size(23, 20);
+            this.toolStripButtonClearHistory.Text = "Clear History";
+            this.toolStripButtonClearHistory.Click += new System.EventHandler(this.toolStripButtonClearHistory_Click);
             // 
             // toolStripSeparator1
             // 
@@ -513,19 +524,35 @@ namespace ArzExplorer
             this.toolStripTextBox.Name = "toolStripTextBox";
             this.toolStripTextBox.Size = new System.Drawing.Size(200, 23);
             // 
-            // toolStripSeparator3
+            // toolStripSeparator4
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 23);
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 23);
             // 
-            // toolStripButtonClearHistory
+            // toolStripButtonLoadDataBase
             // 
-            this.toolStripButtonClearHistory.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonClearHistory.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonClearHistory.Image")));
-            this.toolStripButtonClearHistory.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonClearHistory.Name = "toolStripButtonClearHistory";
-            this.toolStripButtonClearHistory.Size = new System.Drawing.Size(23, 20);
-            this.toolStripButtonClearHistory.Text = "Clear History";
+            this.toolStripButtonLoadDataBase.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonLoadDataBase.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonLoadDataBase.Image")));
+            this.toolStripButtonLoadDataBase.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonLoadDataBase.Name = "toolStripButtonLoadDataBase";
+            this.toolStripButtonLoadDataBase.Size = new System.Drawing.Size(23, 20);
+            this.toolStripButtonLoadDataBase.Text = "Load Database";
+            this.toolStripButtonLoadDataBase.Click += new System.EventHandler(this.toolStripButtonLoadDataBase_Click);
+            // 
+            // flowLayoutPanelPath
+            // 
+            this.flowLayoutPanelPath.AutoSize = true;
+            this.flowLayoutPanelPath.Controls.Add(this.labelPath);
+            this.flowLayoutPanelPath.Controls.Add(this.textBoxPath);
+            this.flowLayoutPanelPath.Location = new System.Drawing.Point(3, 26);
+            this.flowLayoutPanelPath.Name = "flowLayoutPanelPath";
+            this.flowLayoutPanelPath.Size = new System.Drawing.Size(784, 26);
+            this.flowLayoutPanelPath.TabIndex = 0;
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 23);
             // 
             // MainForm
             // 
@@ -542,6 +569,7 @@ namespace ArzExplorer
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ARZ Explorer";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
             this.menuStrip.ResumeLayout(false);
@@ -559,10 +587,10 @@ namespace ArzExplorer
             this.statusStrip.PerformLayout();
             this.tableLayoutPanelSkeleton.ResumeLayout(false);
             this.tableLayoutPanelSkeleton.PerformLayout();
-            this.flowLayoutPanelPath.ResumeLayout(false);
-            this.flowLayoutPanelPath.PerformLayout();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
+            this.flowLayoutPanelPath.ResumeLayout(false);
+            this.flowLayoutPanelPath.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -595,6 +623,9 @@ namespace ArzExplorer
         private System.Windows.Forms.ToolStripTextBox toolStripTextBox;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton toolStripButtonClearHistory;
-    }
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripButton toolStripButtonLoadDataBase;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+	}
 }
 

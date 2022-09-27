@@ -1,8 +1,8 @@
 ﻿using TQVaultAE.Domain.Entities;
 
-namespace ArzExplorer;
+namespace ArzExplorer.Models;
 
-internal class ArFileInfo
+internal class TQFileInfo
 {
 
 	/// <summary>
