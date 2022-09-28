@@ -262,21 +262,21 @@ namespace ArzExplorer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Database {
+            get {
+                object obj = ResourceManager.GetObject("Database", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         internal static string GlobalCancel {
             get {
                 return ResourceManager.GetString("GlobalCancel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon LoadDatabase {
-            get {
-                object obj = ResourceManager.GetObject("LoadDatabase", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -296,6 +296,36 @@ namespace ArzExplorer.Properties {
         internal static System.Drawing.Icon Prev {
             get {
                 object obj = ResourceManager.GetObject("Prev", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon SearchAlt {
+            get {
+                object obj = ResourceManager.GetObject("SearchAlt", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon SearchNext {
+            get {
+                object obj = ResourceManager.GetObject("SearchNext", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon SearchPrev {
+            get {
+                object obj = ResourceManager.GetObject("SearchPrev", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

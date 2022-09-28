@@ -172,21 +172,21 @@ public partial class MainForm : Form
 			return;
 
 		// Already loaded
-		if (this.TQFileOpened.Any(kv => kv.Value.sourceFile == filename))
+		if (this.TQFileOpened.Any(kv => kv.Value.SourceFile == filename))
 			return;
 
 		var fileInfo = new TQFileInfo();
 
-		fileInfo.sourceFile = filename;
+		fileInfo.SourceFile = filename;
 
-		if (string.IsNullOrEmpty(fileInfo.sourceFile))
+		if (string.IsNullOrEmpty(fileInfo.SourceFile))
 		{
 			MessageBox.Show("You must enter a valid source file path.");
 			return;
 		}
 
 		// See if path exists and create it if necessary
-		string fullSrcPath = Path.GetFullPath(fileInfo.sourceFile);
+		string fullSrcPath = Path.GetFullPath(fileInfo.SourceFile);
 
 		if (!File.Exists(fullSrcPath))
 		{
@@ -196,7 +196,7 @@ public partial class MainForm : Form
 		}
 
 		// Try to read it as an ARC file since those have a header.
-		fileInfo.ARCFile = new ArcFile(fileInfo.sourceFile);
+		fileInfo.ARCFile = new ArcFile(fileInfo.SourceFile);
 		if (arcProv.Read(fileInfo.ARCFile))
 		{
 			fileInfo.FileType = CompressedFileType.ArcFile;
@@ -211,7 +211,7 @@ public partial class MainForm : Form
 		if (fileInfo.FileType == CompressedFileType.Unknown)
 		{
 			// Read our ARZ file into memory.
-			fileInfo.ARZFile = new ArzFile(fileInfo.sourceFile);
+			fileInfo.ARZFile = new ArzFile(fileInfo.SourceFile);
 			if (arzProv.Read(fileInfo.ARZFile))
 			{
 				fileInfo.FileType = CompressedFileType.ArzFile;
@@ -232,7 +232,7 @@ public partial class MainForm : Form
 			this.selectedFileToolStripMenuItem.Enabled = false;
 			this.allFilesToolStripMenuItem.Enabled = false;
 			this.textBoxDetails.Lines = null;
-			MessageBox.Show(string.Format("Error Reading {0}", fileInfo.sourceFile));
+			MessageBox.Show(string.Format("Error Reading {0}", fileInfo.SourceFile));
 			return;
 		}
 
@@ -240,7 +240,7 @@ public partial class MainForm : Form
 		this.allFilesToolStripMenuItem.Enabled = true;
 		this.hideZeroValuesToolStripMenuItem.Enabled = fileInfo.FileType == CompressedFileType.ArzFile;
 
-		this.Text = string.Format("{0} - {1}", this.assemblyName.Name, fileInfo.sourceFile);
+		UpdateTitle(fileInfo);
 
 		this.textBoxDetails.Lines = null;
 
@@ -252,6 +252,11 @@ public partial class MainForm : Form
 		this.BuildTreeView();
 	}
 
+	private void UpdateTitle(TQFileInfo fileInfo)
+	{
+		this.Text = string.Format("{0} - {1}", this.assemblyName.Name, fileInfo.SourceFile);
+	}
+
 	/// <summary>
 	/// Handler for clicking Open on the menu.  Opens a file.
 	/// </summary>
@@ -259,7 +264,7 @@ public partial class MainForm : Form
 	/// <param name="e">EventArgs data</param>
 	private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
 	{
-		OpenFileDialog openDialog = new OpenFileDialog();
+		using OpenFileDialog openDialog = new OpenFileDialog();
 		openDialog.Filter = "Compressed TQ files (*.arz;*.arc)|*.arz;*.arc|All files (*.*)|*.*";
 		openDialog.FilterIndex = 1;
 		openDialog.RestoreDirectory = true;
@@ -328,11 +333,11 @@ public partial class MainForm : Form
 	/// <param name="e">EventArgs data</param>
 	private void SelectedFileToolStripMenuItem_Click(object sender, EventArgs e)
 	{
-		if (string.IsNullOrEmpty(this.SelectedFile.destFile) || this.SelectedFile.FileType == CompressedFileType.Unknown)
+		if (string.IsNullOrEmpty(this.SelectedFile.DestFile) || this.SelectedFile.FileType == CompressedFileType.Unknown)
 			return;
 
 		string filename = null;
-		SaveFileDialog saveFileDialog = new SaveFileDialog();
+		using SaveFileDialog saveFileDialog = new SaveFileDialog();
 
 		saveFileDialog.Filter = "TQ files (*.txt;*.dbr;*.tex;*.msh;*.anm;*.fnt;*.qst;*.pfx;*.ssh)|*.txt;*.dbr;*.tex;*.msh;*.anm;*.fnt;*.qst;*.pfx;*.ssh|All files (*.*)|*.*";
 		saveFileDialog.FilterIndex = 1;
@@ -340,7 +345,7 @@ public partial class MainForm : Form
 		saveFileDialog.Title = "Save the Titan Quest File";
 		string startPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", "Titan Quest");
 		saveFileDialog.InitialDirectory = startPath;
-		saveFileDialog.FileName = Path.GetFileName(this.SelectedFile.destFile);
+		saveFileDialog.FileName = Path.GetFileName(this.SelectedFile.DestFile);
 
 		if (saveFileDialog.ShowDialog() == DialogResult.OK)
 		{
@@ -348,14 +353,14 @@ public partial class MainForm : Form
 
 			if (this.SelectedFile.FileType == CompressedFileType.ArzFile)
 			{
-				DBRecordCollectionProvider.Write(this.SelectedFile.record, Path.GetDirectoryName(filename), Path.GetFileName(filename));
+				DBRecordCollectionProvider.Write(this.SelectedFile.Records, Path.GetDirectoryName(filename), Path.GetFileName(filename));
 			}
 			else if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
 			{
 				arcProv.Write(
 					this.SelectedFile.ARCFile
 					, Path.GetDirectoryName(filename)
-					, this.SelectedFile.destFile
+					, this.SelectedFile.DestFile
 					, Path.GetFileName(filename)
 				);
 			}
@@ -395,21 +400,21 @@ public partial class MainForm : Form
 			if (result != DialogResult.OK)
 				return;
 
-			this.SelectedFile.destDirectory = browseDialog.SelectedPath;
+			this.SelectedFile.DestDirectory = browseDialog.SelectedPath;
 		}
 
 		string fullDestPath = null;
 
-		if (string.IsNullOrEmpty(this.SelectedFile.destDirectory))
+		if (string.IsNullOrEmpty(this.SelectedFile.DestDirectory))
 		{
 			MessageBox.Show("You must enter a valid destination folder.");
 			return;
 		}
 
 		// See if path exists and create it if necessary
-		if (!string.IsNullOrEmpty(this.SelectedFile.destDirectory))
+		if (!string.IsNullOrEmpty(this.SelectedFile.DestDirectory))
 		{
-			fullDestPath = Path.GetFullPath(this.SelectedFile.destDirectory);
+			fullDestPath = Path.GetFullPath(this.SelectedFile.DestDirectory);
 		}
 
 		if (File.Exists(fullDestPath))
@@ -471,11 +476,6 @@ public partial class MainForm : Form
 		Cursor.Current = Cursors.WaitCursor;
 
 		this.treeViewTOC.BeginUpdate();
-		//this.treeViewTOC.Nodes.Clear();
-		//this.dicoNodes.Clear();
-
-		// Hold the nodes from the previous record.
-		// We save these so we do not need to search the treeview
 
 		RecordId[] dataRecords;
 
@@ -500,30 +500,24 @@ public partial class MainForm : Form
 
 		if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
 		{
-			arcPrefix = Path.GetFileNameWithoutExtension(this.SelectedFile.sourceFile);
-			var arcPrefixId = arcPrefix.ToRecordId();
-			if (!dicoNodes.TryGetValue(arcPrefixId, out arcRootNode))
+			var tokens = this.SelectedFile.SourceFileId.TokensRaw;
+
+			// Node Xpack
+			var arcPrefixXpack = tokens[tokens.Count - 2];
+			if (!arcPrefixXpack.StartsWith("XPACK", StringComparison.OrdinalIgnoreCase))
+				arcPrefixXpack = string.Empty;
+
+			if (arcPrefixXpack != string.Empty)
+				GetRootNode(arcPrefixXpack, rootNode, out arcRootNode);
+
+			// Node File
+			arcPrefix = Path.GetFileNameWithoutExtension(tokens[tokens.Count - 1]);
+			if (arcPrefixXpack == string.Empty)
+				GetRootNode(arcPrefix, rootNode, out arcRootNode);
+			else
 			{
-				arcRootNode = new TreeNode()
-				{
-					Name = arcPrefix,
-					Text = arcPrefix,
-					ToolTipText = this.SelectedFile.sourceFile
-				};
-				arcRootNode.Tag = new NodeTag
-				{
-					thisNode = arcRootNode,
-					File = this.SelectedFile,
-
-					Thread = null,
-					Key = arcPrefix,
-					RecIdx = 0,
-					TokIdx = 0,
-
-					Text = arcPrefix,
-				};
-				dicoNodes.Add(arcPrefixId, arcRootNode);
-				rootNode.Nodes.Add(arcRootNode);
+				arcPrefix = arcPrefixXpack + '\\' + arcPrefix;
+				GetRootNode(arcPrefix, arcRootNode, out arcRootNode);
 			}
 		}
 
@@ -533,7 +527,6 @@ public partial class MainForm : Form
 
 			for (int tokIdx = 0; tokIdx < recordID.TokensRaw.Count; tokIdx++)
 			{
-				// Arz resolving
 				var token = recordID.TokensRaw[tokIdx];
 				var parent = recordID.TokensRaw.Take(tokIdx).JoinString("\\").ToRecordId();
 				var parentnode = dicoNodes[parent];
@@ -547,7 +540,7 @@ public partial class MainForm : Form
 					{
 						Name = currnodeKey,
 						Text = token,
-						ToolTipText = this.SelectedFile.sourceFile
+						ToolTipText = this.SelectedFile.SourceFile
 					};
 					currentNode.Tag = new NodeTag
 					{
@@ -575,6 +568,35 @@ public partial class MainForm : Form
 
 		this.treeViewTOC.EndUpdate();
 	}
+
+	void GetRootNode(string arcPrefix, TreeNode rootNode, out TreeNode arcRootNode)
+	{
+		var arcPrefixId = arcPrefix.ToRecordId();
+		if (!dicoNodes.TryGetValue(arcPrefixId, out arcRootNode))
+		{
+			arcRootNode = new TreeNode()
+			{
+				Name = arcPrefix,
+				Text = arcPrefixId.TokensRaw.Last(),
+				ToolTipText = this.SelectedFile.SourceFile
+			};
+			arcRootNode.Tag = new NodeTag
+			{
+				thisNode = arcRootNode,
+				File = this.SelectedFile,
+
+				Thread = null,
+				Key = arcPrefix,
+				RecIdx = 0,
+				TokIdx = 0,
+
+				Text = arcRootNode.Text,
+			};
+			dicoNodes.Add(arcPrefixId, arcRootNode);
+			rootNode.Nodes.Add(arcRootNode);
+		}
+	}
+
 	/// <summary>
 	/// Handler for clicking on a treeView item
 	/// </summary>
@@ -586,9 +608,13 @@ public partial class MainForm : Form
 		// otherwise this will be a directory.
 		if (this.treeViewTOC.SelectedNode.GetNodeCount(false) == 0)
 		{
-			this.SelectedFile = this.SelectedTag.File;
+			var tag = this.SelectedTag;
 
-			this.SelectedFile.destFile
+			this.SelectedFile = tag.File;
+
+			UpdateTitle(this.SelectedFile);
+
+			this.SelectedFile.DestFile
 				= this.textBoxPath.Text
 				= this.treeViewTOC.SelectedNode.FullPath;
 
@@ -597,8 +623,8 @@ public partial class MainForm : Form
 				List<string> recordText = new List<string>();
 				if (this.SelectedFile.FileType == CompressedFileType.ArzFile)
 				{
-					this.SelectedFile.record = arzProv.GetRecordNotCached(this.SelectedFile.ARZFile, this.SelectedFile.destFile);
-					foreach (Variable variable in this.SelectedFile.record)
+					this.SelectedFile.Records = arzProv.GetRecordNotCached(this.SelectedFile.ARZFile, this.SelectedFile.DestFile);
+					foreach (Variable variable in this.SelectedFile.Records)
 					{
 						if (variable.IsValueNonZero() || !hideZeroValuesToolStripMenuItem.Checked)
 							recordText.Add(variable.ToString());
@@ -610,42 +636,51 @@ public partial class MainForm : Form
 
 				else if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
 				{
-					string extension = Path.GetExtension(this.SelectedFile.destFile).ToUpper();
-					string arcDataPath = this.SelectedFile.destFile;
-					var arcDataRecordId = arcDataPath.ToRecordId();
+					string extension = Path.GetExtension(tag.Key.TokensNormalized.Last());
+					var arcDataRecordId = tag.Key;
+
+					if (tag.Key.Normalized.Contains("XPACK"))
+						arcDataRecordId = tag.Key.TokensRaw.Skip(1).JoinString("\\").ToRecordId();
+
 					if (extension == ".TXT")
 					{
-						byte[] rawData = arcProv.GetData(this.SelectedFile.ARCFile, arcDataRecordId);
-
-						if (rawData == null)
-							return;
-
-						// now read it like a text file
-						using (StreamReader reader = new StreamReader(new MemoryStream(rawData), Encoding.Default))
+						if (!tag.RecordText.Any())
 						{
-							string line;
-							while ((line = reader.ReadLine()) != null)
+							tag.RawData = arcProv.GetData(this.SelectedFile.ARCFile, arcDataRecordId);
+
+							if (tag.RawData == null)
+								return;
+
+							// now read it like a text file
+							using (StreamReader reader = new StreamReader(new MemoryStream(tag.RawData), Encoding.Default))
 							{
-								recordText.Add(line);
+								string line;
+								while ((line = reader.ReadLine()) != null)
+								{
+									tag.RecordText.Add(line);
+								}
 							}
 						}
 
-						this.textBoxDetails.Lines = recordText.ToArray();
-						ShowTextboxDetail(recordText.Count);
+						this.textBoxDetails.Lines = tag.RecordText.ToArray();
+						ShowTextboxDetail(tag.RecordText.Count);
 						StackNavigation();
 					}
 					else if (extension == ".TEX")
 					{
-						byte[] rawData = arcProv.GetData(this.SelectedFile.ARCFile, arcDataRecordId);
-
-						if (rawData == null)
-							return;
-
-						Bitmap bitmap = BitmapService.LoadFromTexMemory(rawData, 0, rawData.Length);
-
-						if (bitmap != null)
+						if (tag.Bitmap is null)
 						{
-							ShowPictureBox(bitmap);
+							tag.RawData = arcProv.GetData(this.SelectedFile.ARCFile, arcDataRecordId);
+
+							if (tag.RawData == null)
+								return;
+
+							tag.Bitmap = BitmapService.LoadFromTexMemory(tag.RawData, 0, tag.RawData.Length);
+						}
+
+						if (tag.Bitmap != null)
+						{
+							ShowPictureBox(tag.Bitmap);
 							StackNavigation();
 						}
 					}
@@ -653,7 +688,7 @@ public partial class MainForm : Form
 				else
 				{
 					HideAllBox();
-					this.SelectedFile.destFile = null;
+					this.SelectedFile.DestFile = null;
 					this.textBoxDetails.Lines = null;
 				}
 			}
@@ -664,7 +699,7 @@ public partial class MainForm : Form
 		}
 		else
 		{
-			this.SelectedFile.destFile = null;
+			this.SelectedFile.DestFile = null;
 			this.textBoxDetails.Lines = null;
 		}
 	}
@@ -706,10 +741,10 @@ public partial class MainForm : Form
 
 	private void hideZeroValuesToolStripMenuItem_Click(object sender, EventArgs e)
 	{
-		if (this.SelectedFile.record != null)
+		if (this.SelectedFile.Records != null)
 		{
 			List<string> recordText = new List<string>();
-			foreach (Variable variable in this.SelectedFile.record)
+			foreach (Variable variable in this.SelectedFile.Records)
 			{
 				if (variable.IsValueNonZero() || !hideZeroValuesToolStripMenuItem.Checked)
 					recordText.Add(variable.ToString());
@@ -820,9 +855,16 @@ public partial class MainForm : Form
 				this.OpenFile(fullpath);
 
 				// Navigate
-				var found = dicoNodes[recordId];
-				this.treeViewTOC.SelectedNode = found;
-				this.treeViewTOC.Focus();
+				if (dicoNodes.TryGetValue(recordId, out var found))
+				{
+					this.treeViewTOC.SelectedNode = found;
+					this.treeViewTOC.Focus();
+				}
+				else
+				{
+					// Database orphan ?
+					this.toolStripStatusLabel.Text = @$"Unable to find ""{recordId}""";
+				}
 			}
 		}
 	}
@@ -865,5 +907,59 @@ public partial class MainForm : Form
 
 	#endregion
 
+	private void toolStripButtonSearchPrev_Click(object sender, EventArgs e)
+	{
+
+	}
+
+	private void toolStripButtonSearchNext_Click(object sender, EventArgs e)
+	{
+
+	}
+
+	private void previousToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+
+	}
+
+	private void nextToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+
+	}
+
+	private void copyPathToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+
+	}
+
+	private void copyTXTToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+
+	}
+
+	private void copyDBRToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+
+	}
+
+	private void copyBitmapToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+
+	}
+
+	private void searchNextToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+
+	}
+
+	private void findPreviousToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+
+	}
+
+	private void capsToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+
+	}
 }
 

@@ -1,4 +1,5 @@
 ﻿using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 
 namespace ArzExplorer.Models;
 
@@ -23,22 +24,33 @@ internal class TQFileInfo
 	/// <summary>
 	/// Name of the source file
 	/// </summary>
-	internal string sourceFile;
+	internal string SourceFile;
+
+	RecordId _SourceFileId;
+	internal RecordId SourceFileId
+	{
+		get
+		{
+			if (_SourceFileId is null && !string.IsNullOrWhiteSpace(SourceFile))
+				_SourceFileId = SourceFile.ToRecordId();
+			return _SourceFileId;
+		}
+	}
 
 	/// <summary>
 	/// Destination directory path for extracted files.
 	/// </summary>
-	internal string destDirectory;
+	internal string DestDirectory;
 
 	/// <summary>
 	/// File name for a single extracted file.
 	/// </summary>
-	internal string destFile;
+	internal string DestFile;
 
 	/// <summary>
 	/// Holds the current record being viewed.
 	/// </summary>
-	internal DBRecordCollection record;
+	internal DBRecordCollection Records;
 
 }
 

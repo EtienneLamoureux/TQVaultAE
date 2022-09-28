@@ -93,19 +93,31 @@ namespace ArzExplorer
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle34 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle35 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle36 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.navigationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.previousToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.nextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyTXTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyDBRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyBitmapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.searchNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findPreviousToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extractToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.allFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideZeroValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.capsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.treeViewTOC = new System.Windows.Forms.TreeView();
@@ -128,14 +140,16 @@ namespace ArzExplorer
             this.toolStripButtonClearHistory = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonCaps = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonLoadDataBase = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabelSearch = new System.Windows.Forms.ToolStripLabel();
             this.toolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonLoadDataBase = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonSearchPrev = new System.Windows.Forms.ToolStripButton();
             this.flowLayoutPanelPath = new System.Windows.Forms.FlowLayoutPanel();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonSearchNext = new System.Windows.Forms.ToolStripButton();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxItem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBrowser)).BeginInit();
@@ -155,6 +169,9 @@ namespace ArzExplorer
             this.menuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.navigationToolStripMenuItem,
+            this.editToolStripMenuItem,
+            this.searchToolStripMenuItem,
             this.extractToolStripMenuItem,
             this.viewToolStripMenuItem,
             this.helpToolStripMenuItem});
@@ -193,6 +210,104 @@ namespace ArzExplorer
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
+            // navigationToolStripMenuItem
+            // 
+            this.navigationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.previousToolStripMenuItem,
+            this.nextToolStripMenuItem});
+            this.navigationToolStripMenuItem.Name = "navigationToolStripMenuItem";
+            this.navigationToolStripMenuItem.Size = new System.Drawing.Size(77, 20);
+            this.navigationToolStripMenuItem.Text = "&Navigation";
+            // 
+            // previousToolStripMenuItem
+            // 
+            this.previousToolStripMenuItem.Name = "previousToolStripMenuItem";
+            this.previousToolStripMenuItem.ShortcutKeyDisplayString = "";
+            this.previousToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
+            this.previousToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.previousToolStripMenuItem.Text = "&Previous";
+            this.previousToolStripMenuItem.Click += new System.EventHandler(this.previousToolStripMenuItem_Click);
+            // 
+            // nextToolStripMenuItem
+            // 
+            this.nextToolStripMenuItem.Name = "nextToolStripMenuItem";
+            this.nextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
+            this.nextToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.nextToolStripMenuItem.Text = "&Next";
+            this.nextToolStripMenuItem.Click += new System.EventHandler(this.nextToolStripMenuItem_Click);
+            // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyPathToolStripMenuItem,
+            this.copyTXTToolStripMenuItem,
+            this.copyDBRToolStripMenuItem,
+            this.copyBitmapToolStripMenuItem});
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+            this.editToolStripMenuItem.Text = "&Edit";
+            // 
+            // copyPathToolStripMenuItem
+            // 
+            this.copyPathToolStripMenuItem.Name = "copyPathToolStripMenuItem";
+            this.copyPathToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
+            | System.Windows.Forms.Keys.P)));
+            this.copyPathToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.copyPathToolStripMenuItem.Text = "Copy &Path";
+            this.copyPathToolStripMenuItem.Click += new System.EventHandler(this.copyPathToolStripMenuItem_Click);
+            // 
+            // copyTXTToolStripMenuItem
+            // 
+            this.copyTXTToolStripMenuItem.Name = "copyTXTToolStripMenuItem";
+            this.copyTXTToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
+            | System.Windows.Forms.Keys.T)));
+            this.copyTXTToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.copyTXTToolStripMenuItem.Text = "Copy .&txt";
+            this.copyTXTToolStripMenuItem.Click += new System.EventHandler(this.copyTXTToolStripMenuItem_Click);
+            // 
+            // copyDBRToolStripMenuItem
+            // 
+            this.copyDBRToolStripMenuItem.Name = "copyDBRToolStripMenuItem";
+            this.copyDBRToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
+            | System.Windows.Forms.Keys.D)));
+            this.copyDBRToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.copyDBRToolStripMenuItem.Text = "Copy .&dbr";
+            this.copyDBRToolStripMenuItem.Click += new System.EventHandler(this.copyDBRToolStripMenuItem_Click);
+            // 
+            // copyBitmapToolStripMenuItem
+            // 
+            this.copyBitmapToolStripMenuItem.Name = "copyBitmapToolStripMenuItem";
+            this.copyBitmapToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
+            | System.Windows.Forms.Keys.X)));
+            this.copyBitmapToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.copyBitmapToolStripMenuItem.Text = "Copy .te&x";
+            this.copyBitmapToolStripMenuItem.Click += new System.EventHandler(this.copyBitmapToolStripMenuItem_Click);
+            // 
+            // searchToolStripMenuItem
+            // 
+            this.searchToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.searchNextToolStripMenuItem,
+            this.findPreviousToolStripMenuItem});
+            this.searchToolStripMenuItem.Name = "searchToolStripMenuItem";
+            this.searchToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
+            this.searchToolStripMenuItem.Text = "&Search";
+            // 
+            // searchNextToolStripMenuItem
+            // 
+            this.searchNextToolStripMenuItem.Name = "searchNextToolStripMenuItem";
+            this.searchNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.searchNextToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.searchNextToolStripMenuItem.Text = "Find &Next";
+            this.searchNextToolStripMenuItem.Click += new System.EventHandler(this.searchNextToolStripMenuItem_Click);
+            // 
+            // findPreviousToolStripMenuItem
+            // 
+            this.findPreviousToolStripMenuItem.Name = "findPreviousToolStripMenuItem";
+            this.findPreviousToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F3)));
+            this.findPreviousToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.findPreviousToolStripMenuItem.Text = "Find &Previous";
+            this.findPreviousToolStripMenuItem.Click += new System.EventHandler(this.findPreviousToolStripMenuItem_Click);
+            // 
             // extractToolStripMenuItem
             // 
             this.extractToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
@@ -203,7 +318,7 @@ namespace ArzExplorer
             this.extractToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
             this.extractToolStripMenuItem.Name = "extractToolStripMenuItem";
             this.extractToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
-            this.extractToolStripMenuItem.Text = "&Extract";
+            this.extractToolStripMenuItem.Text = "E&xtract";
             // 
             // selectedFileToolStripMenuItem
             // 
@@ -224,7 +339,8 @@ namespace ArzExplorer
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.hideZeroValuesToolStripMenuItem});
+            this.hideZeroValuesToolStripMenuItem,
+            this.capsToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "&View";
@@ -239,6 +355,14 @@ namespace ArzExplorer
             this.hideZeroValuesToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.hideZeroValuesToolStripMenuItem.Text = "Hide &Zero Values";
             this.hideZeroValuesToolStripMenuItem.Click += new System.EventHandler(this.hideZeroValuesToolStripMenuItem_Click);
+            // 
+            // capsToolStripMenuItem
+            // 
+            this.capsToolStripMenuItem.CheckOnClick = true;
+            this.capsToolStripMenuItem.Name = "capsToolStripMenuItem";
+            this.capsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.capsToolStripMenuItem.Text = "&Caps";
+            this.capsToolStripMenuItem.Click += new System.EventHandler(this.capsToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -314,39 +438,39 @@ namespace ArzExplorer
             // dataGridViewDetails
             // 
             this.dataGridViewDetails.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewDetails.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle34.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle34.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle34.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle34.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle34.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle34.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle34.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewDetails.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle34;
             this.dataGridViewDetails.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewDetails.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Column1,
             this.Column2});
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewDetails.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle35.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle35.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle35.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle35.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle35.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle35.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle35.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewDetails.DefaultCellStyle = dataGridViewCellStyle35;
             this.dataGridViewDetails.Dock = System.Windows.Forms.DockStyle.Right;
             this.dataGridViewDetails.Location = new System.Drawing.Point(79, 0);
             this.dataGridViewDetails.MultiSelect = false;
             this.dataGridViewDetails.Name = "dataGridViewDetails";
             this.dataGridViewDetails.ReadOnly = true;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewDetails.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle36.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle36.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle36.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle36.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle36.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle36.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle36.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewDetails.RowHeadersDefaultCellStyle = dataGridViewCellStyle36;
             this.dataGridViewDetails.RowHeadersVisible = false;
             this.dataGridViewDetails.Size = new System.Drawing.Size(451, 237);
             this.dataGridViewDetails.TabIndex = 15;
@@ -450,11 +574,13 @@ namespace ArzExplorer
             this.toolStripSeparator2,
             this.toolStripLabelSearch,
             this.toolStripTextBox,
-            this.toolStripSeparator4});
+            this.toolStripSeparator4,
+            this.toolStripButtonSearchPrev,
+            this.toolStripButtonSearchNext});
             this.toolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(399, 23);
+            this.toolStrip.Size = new System.Drawing.Size(445, 23);
             this.toolStrip.TabIndex = 20;
             // 
             // toolStripButtonPrev
@@ -508,6 +634,21 @@ namespace ArzExplorer
             this.toolStripButtonCaps.Text = "Caps";
             this.toolStripButtonCaps.CheckedChanged += new System.EventHandler(this.toolStripButtonCaps_CheckedChanged);
             // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 23);
+            // 
+            // toolStripButtonLoadDataBase
+            // 
+            this.toolStripButtonLoadDataBase.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonLoadDataBase.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonLoadDataBase.Image")));
+            this.toolStripButtonLoadDataBase.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonLoadDataBase.Name = "toolStripButtonLoadDataBase";
+            this.toolStripButtonLoadDataBase.Size = new System.Drawing.Size(23, 20);
+            this.toolStripButtonLoadDataBase.Text = "Load Database";
+            this.toolStripButtonLoadDataBase.Click += new System.EventHandler(this.toolStripButtonLoadDataBase_Click);
+            // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
@@ -529,15 +670,15 @@ namespace ArzExplorer
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(6, 23);
             // 
-            // toolStripButtonLoadDataBase
+            // toolStripButtonSearchPrev
             // 
-            this.toolStripButtonLoadDataBase.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonLoadDataBase.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonLoadDataBase.Image")));
-            this.toolStripButtonLoadDataBase.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonLoadDataBase.Name = "toolStripButtonLoadDataBase";
-            this.toolStripButtonLoadDataBase.Size = new System.Drawing.Size(23, 20);
-            this.toolStripButtonLoadDataBase.Text = "Load Database";
-            this.toolStripButtonLoadDataBase.Click += new System.EventHandler(this.toolStripButtonLoadDataBase_Click);
+            this.toolStripButtonSearchPrev.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonSearchPrev.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonSearchPrev.Image")));
+            this.toolStripButtonSearchPrev.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonSearchPrev.Name = "toolStripButtonSearchPrev";
+            this.toolStripButtonSearchPrev.Size = new System.Drawing.Size(23, 20);
+            this.toolStripButtonSearchPrev.Text = "Search Prev";
+            this.toolStripButtonSearchPrev.Click += new System.EventHandler(this.toolStripButtonSearchPrev_Click);
             // 
             // flowLayoutPanelPath
             // 
@@ -549,10 +690,15 @@ namespace ArzExplorer
             this.flowLayoutPanelPath.Size = new System.Drawing.Size(784, 26);
             this.flowLayoutPanelPath.TabIndex = 0;
             // 
-            // toolStripSeparator5
+            // toolStripButtonSearchNext
             // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 23);
+            this.toolStripButtonSearchNext.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonSearchNext.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonSearchNext.Image")));
+            this.toolStripButtonSearchNext.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonSearchNext.Name = "toolStripButtonSearchNext";
+            this.toolStripButtonSearchNext.Size = new System.Drawing.Size(23, 20);
+            this.toolStripButtonSearchNext.Text = "Search Next";
+            this.toolStripButtonSearchNext.Click += new System.EventHandler(this.toolStripButtonSearchNext_Click);
             // 
             // MainForm
             // 
@@ -626,6 +772,20 @@ namespace ArzExplorer
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton toolStripButtonLoadDataBase;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+		private System.Windows.Forms.ToolStripMenuItem navigationToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem previousToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem nextToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem copyPathToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem copyTXTToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem copyDBRToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem copyBitmapToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem searchNextToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem findPreviousToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem capsToolStripMenuItem;
+		private System.Windows.Forms.ToolStripButton toolStripButtonSearchPrev;
+		private System.Windows.Forms.ToolStripButton toolStripButtonSearchNext;
 	}
 }
 

@@ -141,7 +141,7 @@
     <Compile Include="AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\ArFileInfo.cs" />
+    <Compile Include="Models\TQFileInfo.cs" />
     <Compile Include="ExtractProgress.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -157,7 +157,10 @@
     <Compile Include="Models\NodeTag.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Content Include="Icons\LoadDatabase.ico" />
+    <Content Include="Icons\SearchAlt.ico" />
+    <Content Include="Icons\SearchPrev.ico" />
+    <Content Include="Icons\Database.ico" />
+    <Content Include="Icons\SearchNext.ico" />
     <Content Include="Icons\CapsUP.ico" />
     <Content Include="Icons\CapsDown.ico" />
     <Content Include="Icons\Prev.ico" />
