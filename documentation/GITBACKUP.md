@@ -19,11 +19,24 @@ You can use a public git repository provider (Github, GitLab, etc...) or your ow
 ---
 
 ## Table of contents
-* [Setup](#Setup)
-* [Settings](#Settings)
-* [Workflow](#Workflow)
-* [DO NOT MESS WITH YOUR REPO](#DONOT)
-* [Recover an old version of a vault or a character save](#Recover)
+1. [BACKUP BEFORE DOING ANYTHING](#Backup)
+1. [Setup](#Setup)
+1. [Settings](#Settings)
+1. [Workflow](#Workflow)
+1. [DO NOT MESS WITH YOUR REPO](#DONOT)
+1. [Recover an old version of a vault or a character save](#Recover)
+
+---
+
+### <a id="Backup"></a>BACKUP BEFORE DOING ANYTHING
+It's a no-brainer! Before trying to use this feature, you **SHOULD** backup your precious files.
+Just in case something's going wrong!
+
+Here's the locations.
+
+- TQ Saves : `%USERPROFILE%\Documents\my games\Titan Quest`
+- TQIT Saves : `%USERPROFILE%\Documents\my games\Titan Quest - Immortal Throne`
+- TQVault Data : `Where you put it! (Default : %USERPROFILE%\Documents\my games\Titan Quest\TQVaultData)`
 
 ---
 
