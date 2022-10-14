@@ -934,7 +934,8 @@ public partial class MainForm : Form
 
 	private void copyTXTToolStripMenuItem_Click(object sender, EventArgs e)
 	{
-
+		Clipboard.SetText(this.textBoxPath.Text);
+		Clipboard.SetText(this.textBoxDetails.Text);
 	}
 
 	private void copyDBRToolStripMenuItem_Click(object sender, EventArgs e)
