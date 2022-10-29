@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SixLabors.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -202,7 +203,7 @@ namespace TQVaultAE.GUI.Tooltip
 				AddRow(Data.ArtifactClass);
 
 			// Relic Completion
-			if (Data.Item.IsRelic)
+			if (Data.Item.IsRelicOrCharm)
 				AddRow(Data.RelicCompletionFormat, FocusedItem.ExtractTextColorOrItemColor(Data.BaseItemInfoDescription));
 
 			// Recipe Label
@@ -270,7 +271,7 @@ namespace TQVaultAE.GUI.Tooltip
 			}
 
 			// Relic attributes after items attributes with delimiter
-			if (Data.Item.HasRelic)
+			if (Data.Item.HasRelicOrCharm)
 			{
 				if (Data.Relic1Attributes.Any())
 				{
@@ -300,7 +301,7 @@ namespace TQVaultAE.GUI.Tooltip
 					foreach (var str in Data.RelicBonus1Attributes) AddRow(str);
 				}
 			}
-			else if (Data.Item.IsRelic)
+			else if (Data.Item.IsRelicOrCharm)
 			{
 				if (Data.RelicBonus1Attributes.Any())
 				{
@@ -329,10 +330,10 @@ namespace TQVaultAE.GUI.Tooltip
 				AddRow(this.TranslationService.ItemIT, TQColor.Green.Color());
 
 			// ItemSet
-			if (Data.ItemSet.Any())
+			if (Data.ItemSet?.setMembers.Any() ?? false)
 			{
 				AddRow(TOOLTIPDELIM);
-				foreach (var str in Data.ItemSet) AddRow(str);
+				foreach (var str in Data.ItemSet.Translations) AddRow(str.Value);
 			}
 
 			if (Data.Requirements.Any())

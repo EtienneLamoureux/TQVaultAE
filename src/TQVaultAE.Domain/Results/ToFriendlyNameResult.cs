@@ -26,18 +26,18 @@ public class ToFriendlyNameResult
 						, ItemSeed
 						, ItemOrigin 
 						// Socketed Relic name
-						, Item.HasRelicSlot1 ? RelicInfo1Description : null
-						, Item.HasRelicSlot2 ? RelicInfo2Description : null
+						, Item.HasRelicOrCharmSlot1 ? RelicInfo1Description : null
+						, Item.HasRelicOrCharmSlot2 ? RelicInfo2Description : null
 						// Socketed Relic Completion label
-						, Item.HasRelicSlot1 ? RelicInfo1CompletionResolved : null
-						, Item.HasRelicSlot2 ? RelicInfo2CompletionResolved : null
+						, Item.HasRelicOrCharmSlot1 ? RelicInfo1CompletionResolved : null
+						, Item.HasRelicOrCharmSlot2 ? RelicInfo2CompletionResolved : null
 						// Socketed Relic Completion Bonus label
-						, Item.HasRelicSlot1 ? RelicInfo1CompletionBonusResolved : null
-						, Item.HasRelicSlot2 ? RelicInfo2CompletionBonusResolved : null
+						, Item.HasRelicOrCharmSlot1 ? RelicInfo1CompletionBonusResolved : null
+						, Item.HasRelicOrCharmSlot2 ? RelicInfo2CompletionBonusResolved : null
 					}
 					, AttributesAll
 					, FlavorText
-					, ItemSet
+					, ItemSet?.Translations.Select(si => si.Value).ToArray() ?? new string[0]
 					, Requirements
 				}.SelectMany(s => s).Where(s => !string.IsNullOrEmpty(s));
 		}
@@ -64,7 +64,7 @@ public class ToFriendlyNameResult
 
 		foreach (var str in _FullText)
 		{
-			if (str.IndexOf(search, StringComparison.OrdinalIgnoreCase) > -1) return true;
+			if (str.ContainsIgnoreCase(search)) return true;
 		}
 
 		return false;
@@ -117,14 +117,14 @@ public class ToFriendlyNameResult
 	public string FullNameBagTooltip => new string[] {
 				PrefixInfoDescription
 				, BaseItemInfoQuality
-				, Item.IsRelic && !Item.IsCharm ? TQColor.Silver.ColorTag() : null // Make a color diff for Relic & Charm
+				, Item.IsRelicOrCharm && !Item.IsCharmOnly ? TQColor.Silver.ColorTag() : null // Make a color diff for Relic & Charm
 				, BaseItemInfoDescription
 				, Item.IsThrownWeapon ? null : BaseItemInfoStyle
 				, SuffixInfoDescription
 				, Item.DoesStack ? NumberFormat : null
-				, Item.IsRelic ? "- " + RelicBonusFormat : null
+				, Item.IsRelicOrCharm ? "- " + RelicBonusFormat : null
 				, Item.IsQuestItem ? this.ItemQuest : null
-				, Item.GameExtensionSuffix
+				, Item.GameDlcSuffix
 			}.RemoveEmptyAndSanitize()
 		.JoinWithoutStartingSpaces(" ");
 
@@ -159,9 +159,9 @@ public class ToFriendlyNameResult
 	public string[] FlavorText = new string[] { };
 	public string[] Requirements = new string[] { };
 	public SortedList<string, Variable> RequirementVariables;
-		public RequirementInfo RequirementInfo;
+	public RequirementInfo RequirementInfo;
 	public string[] BaseAttributes = new string[] { };
-	public string[] ItemSet = new string[] { };
+	public SetItemInfo ItemSet;
 	public DBRecordCollection BaseItemInfoRecords;
 
 	#region Relic Common

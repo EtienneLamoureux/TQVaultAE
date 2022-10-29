@@ -319,7 +319,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// TQ, TQIT, TQITAE
 		/// </summary>
-		public int HeaderVersion { get; set; }
+		public PlayerFileHeaderVersion HeaderVersion { get; set; }
 
 		/// <summary>
 		/// Class name

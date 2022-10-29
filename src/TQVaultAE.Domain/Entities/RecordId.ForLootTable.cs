@@ -183,12 +183,12 @@ public partial class RecordId
 			if (_LootTableGearType is null)
 				_LootTableGearType = Path.GetFileName(this.Normalized) switch
 				{
-					var x when x.StartsWith(@"ARMSMAGE") | x.StartsWith(@"ARMMAGE") => GearType.Arm | GearType.ForMage,
-					var x when x.StartsWith(@"ARMSMELEE") | x.StartsWith(@"ARMMELEE") => GearType.Arm | GearType.ForMelee,
+					var x when x.StartsWith(@"ARMSMAGE") || x.StartsWith(@"ARMMAGE") => GearType.Arm | GearType.ForMage,
+					var x when x.StartsWith(@"ARMSMELEE") || x.StartsWith(@"ARMMELEE") => GearType.Arm | GearType.ForMelee,
 					var x when x.StartsWith(@"HEADMAGE") => GearType.Head | GearType.ForMage,
 					var x when x.StartsWith(@"HEADMELEE") => GearType.Head | GearType.ForMelee,
-					var x when x.StartsWith(@"LEGSMAGE") | x.StartsWith(@"LEGMAGE") => GearType.Leg | GearType.ForMage,
-					var x when x.StartsWith(@"LEGSMELEE") | x.StartsWith(@"LEGMELEE") => GearType.Leg | GearType.ForMelee,
+					var x when x.StartsWith(@"LEGSMAGE") || x.StartsWith(@"LEGMAGE") => GearType.Leg | GearType.ForMage,
+					var x when x.StartsWith(@"LEGSMELEE") || x.StartsWith(@"LEGMELEE") => GearType.Leg | GearType.ForMelee,
 					var x when x.StartsWith(@"TORSOMAGE") => GearType.Torso | GearType.ForMage,
 					var x when x.StartsWith(@"TORSOMELEE") => GearType.Torso | GearType.ForMelee,
 					var x when x.StartsWith(@"RING") => GearType.Ring,

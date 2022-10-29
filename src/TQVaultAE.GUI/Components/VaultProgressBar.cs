@@ -36,6 +36,11 @@ namespace TQVaultAE.GUI.Components
 		private int maximum;
 
 		/// <summary>
+		/// Holds the title of the progress bar.
+		/// </summary>
+		private ScalingLabel scalingLabelTitle;
+
+		/// <summary>
 		/// Initializes a new instance of the VaultProgressBar class.
 		/// </summary>
 		public VaultProgressBar()
@@ -44,6 +49,7 @@ namespace TQVaultAE.GUI.Components
 
 			this.Minimum = 0;
 			this.Maximum = 0;
+			this.Title = string.Empty;
 			this.Value = 0;
 			this.backgroundImage = Resources.ProgressBar;
 			this.Size = this.backgroundImage.Size;
@@ -54,11 +60,24 @@ namespace TQVaultAE.GUI.Components
 
 		private void InitializeComponent()
 		{
+			this.scalingLabelTitle = new TQVaultAE.GUI.Components.ScalingLabel();
 			this.SuspendLayout();
+			// 
+			// scalingLabelTitle
+			// 
+			this.scalingLabelTitle.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.scalingLabelTitle.ForeColor = System.Drawing.Color.Gold;
+			this.scalingLabelTitle.Location = new System.Drawing.Point(0, 0);
+			this.scalingLabelTitle.Name = "scalingLabelTitle";
+			this.scalingLabelTitle.Size = new System.Drawing.Size(150, 150);
+			this.scalingLabelTitle.TabIndex = 0;
+			this.scalingLabelTitle.Text = "Progressing...";
+			this.scalingLabelTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// VaultProgressBar
 			// 
 			this.BackColor = System.Drawing.Color.Transparent;
+			this.Controls.Add(this.scalingLabelTitle);
 			this.Name = "VaultProgressBar";
 			this.ResumeLayout(false);
 
@@ -86,6 +105,11 @@ namespace TQVaultAE.GUI.Components
 		/// Gets or sets the current value of the progress bar.
 		/// </summary>
 		public int Value { get; set; }
+
+		public Color TitleBackColor { get => this.scalingLabelTitle.BackColor; internal set => this.scalingLabelTitle.BackColor = value; }
+		public Color TitleForeColor { get => this.scalingLabelTitle.ForeColor; internal set => this.scalingLabelTitle.ForeColor = value; }
+		public Font TitleFont { get => this.scalingLabelTitle.Font; internal set => this.scalingLabelTitle.Font = value; }
+		public string Title { get => this.scalingLabelTitle.Text; internal set => this.scalingLabelTitle.Text = value; }
 
 		/// <summary>
 		/// Increments the progress bar by a specified value.

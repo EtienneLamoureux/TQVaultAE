@@ -304,8 +304,31 @@ namespace TQVaultAE.Presentation
 			NotifyUserEvent?.Invoke(this, message, color);
 		}
 
+		public ShowMessageUserEventHandlerEventArgs ShowError(string message, Exception exception = null, ShowMessageButtons buttons = ShowMessageButtons.OKCancel)
+		{
+			ShowMessageUserEventHandlerEventArgs mess = new() { Error = exception, Message = message, Level = LogLevel.Error, Buttons = buttons };
+			ShowMessageUserEvent?.Invoke(this, mess);
+			return mess;
+		}
+
+		public ShowMessageUserEventHandlerEventArgs ShowWarning(string message, Exception exception = null, ShowMessageButtons buttons = ShowMessageButtons.OKCancel)
+		{
+			ShowMessageUserEventHandlerEventArgs mess = new() { Error = exception, Message = message, Level = LogLevel.Warning, Buttons = buttons };
+			ShowMessageUserEvent?.Invoke(this, mess);
+			return mess;
+		}
+		public ShowMessageUserEventHandlerEventArgs ShowInfo(string message, ShowMessageButtons buttons = ShowMessageButtons.OK)
+		{
+			ShowMessageUserEventHandlerEventArgs mess = new() { Message = message, Level = LogLevel.Information, Buttons = buttons };
+			ShowMessageUserEvent?.Invoke(this, mess);
+			return mess;
+		}
+
 		public event NotifyUserEventHandler NotifyUserEvent;
 
+		public event ShowMessageUserEventHandler ShowMessageUserEvent;
+
 		#endregion
+
 	}
 }

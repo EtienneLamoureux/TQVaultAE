@@ -18,6 +18,8 @@ _**The first load can be long but reopening the form si fast.**_
 + [Display match during selection](#DispMatch)
 + [Reduce categories during selection](#Reduce)
 + [Logical operator](#AndOr)
++ [Requirement filters](#ReqFilters)
++ [Quick filters](#QuickFilters)
 + [Query persistance](#Query)
 + [Flexible visibility](#Flexible)
 + [Preview tooltip](#Preview)
@@ -98,9 +100,29 @@ This let you choose logical mode for item filtering.
 
 ---
 
+### <a id="ReqFilters"></a>Requirement filters
+You can setup a requirement range.
+
+![Requirement filters](advancedsearch/reqfilters.png)
+
+---
+
+### <a id="QuickFilters"></a>Quick filters
+You can narrow the results with these quick filters before being specific.
+
+![Quick filters](advancedsearch/quickfilters.png)
+
+---
+
 ### <a id="Query"></a>Query persistance
 You can save and reload a filter selection.
 Don't loose time when you track something complex.
+
+The save contains
+- Search term,
+- UI behaviors & visibility,
+- Requirement filters,
+- Quick filters
 
 ![Query persistance](advancedsearch/query.png)
 

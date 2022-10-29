@@ -21,6 +21,7 @@ using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Helpers;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic.Logging;
 
 namespace TQVaultAE.GUI.Components;
 
@@ -773,7 +774,7 @@ public class SackPanel : Panel, IScalingControl
 	/// <param name="itemToCheck">Item the method is going to validate</param>
 	/// <returns></returns>
 	public bool IsItemValidForPlacement(Item itemToCheck)
-		=> this.sack.StashType != SackType.RelicVaultStash || itemToCheck.IsArtifact || itemToCheck.IsRelic || itemToCheck.IsFormulae || itemToCheck.IsCharm;
+		=> this.sack.StashType != SackType.RelicVaultStash || itemToCheck.IsArtifact || itemToCheck.IsRelicOrCharm || itemToCheck.IsFormulae;
 
 	/// <summary>
 	/// Cancels an item drag
@@ -1144,8 +1145,24 @@ public class SackPanel : Panel, IScalingControl
 		{
 			Item dragItem = this.DragInfo.Item;
 
+			/*
+						if ((
+							this.SackType == SackType.Player
+							|| this.SackType == SackType.Equipment
+							|| this.SackType == SackType.Sack
+							) && IsCurrentPlayerReadOnly()
+						) return;
+			 */
+
 			if (!this.IsItemValidForPlacement(dragItem))
 				return;
+
+			if ((
+				this.SackType == SackType.Player
+				|| this.SackType == SackType.Equipment
+				|| this.SackType == SackType.Sack
+				) && !IsSuitableForCurrentPlayer(dragItem)
+			) return;
 
 			// Yes we can drop it here!
 			// First take the item that is under us
@@ -1170,101 +1187,10 @@ public class SackPanel : Panel, IScalingControl
 
 			// If we are a stackable and we have a stackable under us and we are the same type of stackable
 			// then just add to the stack instead of picking up the other stack
-			if (dragItem.DoesStack
-				&& itemUnderUs != null
-				&& itemUnderUs.DoesStack
-				&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
-			)
+
+			if (!(doStackPotions(dragItem, ref itemUnderUs) || doStackRelics(ref dragItem, ref itemUnderUs)))
 			{
-				itemUnderUs.StackSize += dragItem.StackSize;
-
-				this.InvalidateItemCacheAll(itemUnderUs, dragItem);
-
-				// Added this so the tooltip would update with the correct number
-				itemUnderUs.IsModified = true;
-				this.Sack.IsModified = true;
-
-				// Get rid of ref to itemUnderUs so code below wont do anything with it.
-				itemUnderUs = null;
-
-				// we will just throw away the dragItem now.
-			}
-			else if (dragItem.IsRelic
-				&& itemUnderUs != null
-				&& itemUnderUs.IsRelic
-				&& !itemUnderUs.IsRelicComplete
-				&& !dragItem.IsRelicComplete
-				&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
-			)
-			{
-				// Stack relics
-				// Save the original Relic number
-				int originalNumber = itemUnderUs.Number;
-
-				// Adjust the item in the sack
-				// This is limited to the completion level of the Relic
-				itemUnderUs.Number += dragItem.Number;
-
-				// Check if we completed the item
-				if (itemUnderUs.IsRelicComplete)
-				{
-					float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-					LootTableCollection table = ItemProvider.BonusTableRelicOrArtifact(itemUnderUs);
-
-					if (table != null && table.Length > 0)
-					{
-						int i = table.Length;
-						foreach (var e1 in table)
-						{
-							i--;
-							if (randPercent <= e1.Value.WeightPercent || i == 0)
-							{
-								itemUnderUs.RelicBonusId = e1.Key;
-								break;
-							}
-							else
-								randPercent -= e1.Value.WeightPercent;
-						}
-					}
-
-					ItemProvider.GetDBData(itemUnderUs);
-				}
-
-				itemUnderUs.IsModified = true;
-
-				this.InvalidateItemCacheAll(itemUnderUs, dragItem);
-
-				// Just in case we have more relics than what we need to complete
-				// We then adjust the one we are holding
-				int adjustedNumber = itemUnderUs.Number - originalNumber;
-				if (adjustedNumber != dragItem.Number)
-				{
-					dragItem.Number -= adjustedNumber;
-					dragItem.IsModified = true;
-
-					// Swap the items so the completed item stays in the
-					// sack and the remaining items are still being dragged
-					Item temp = itemUnderUs;
-					itemUnderUs = dragItem;
-					dragItem = temp;
-
-					// Drop the dragItem here
-					dragItem.Location = this.CellsUnderDragItem.Location;
-
-					// Now add the item to our sack
-					this.Sack.AddItem(dragItem);
-				}
-				else
-				{
-					this.Sack.IsModified = true;
-
-					// Get rid of ref to itemUnderUs so code below wont do anything with it.
-					itemUnderUs = null;
-					// we will just throw away the dragItem now.
-				}
-			}
-			else
-			{
+				// If not stackable
 				// Drop the dragItem here
 				dragItem.Location = this.CellsUnderDragItem.Location;
 
@@ -1313,6 +1239,108 @@ public class SackPanel : Panel, IScalingControl
 			BagButtonTooltip.InvalidateCache(this.Sack);
 
 		}
+	}
+
+	protected bool doStackRelics(ref Item dragItem, ref Item itemUnderUs)
+	{
+		bool doStackRelics = dragItem.IsRelicOrCharm
+			&& itemUnderUs != null && itemUnderUs.IsRelicOrCharm
+			&& !itemUnderUs.IsRelicComplete && !dragItem.IsRelicComplete
+			&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
+			&& !Config.UserSettings.Default.DisableAutoStacking;
+		if (doStackRelics)
+		{
+			// Stack relics
+			// Save the original Relic number
+			int originalNumber = itemUnderUs.Number;
+
+			// Adjust the item in the sack
+			// This is limited to the completion level of the Relic
+			itemUnderUs.Number += dragItem.Number;
+
+			// Check if we completed the item
+			if (itemUnderUs.IsRelicComplete)
+			{
+				float randPercent = (float)Item.GenerateSeed() / 0x7fff;
+				LootTableCollection table = ItemProvider.BonusTableRelicOrArtifact(itemUnderUs);
+
+				if (table != null && table.Length > 0)
+				{
+					int i = table.Length;
+					foreach (var e1 in table)
+					{
+						i--;
+						if (randPercent <= e1.Value.WeightPercent || i == 0)
+						{
+							itemUnderUs.RelicBonusId = e1.Key;
+							break;
+						}
+						else
+							randPercent -= e1.Value.WeightPercent;
+					}
+				}
+
+				ItemProvider.GetDBData(itemUnderUs);
+			}
+
+			itemUnderUs.IsModified = true;
+
+			this.InvalidateItemCacheAll(itemUnderUs, dragItem);
+
+			// Just in case we have more relics than what we need to complete
+			// We then adjust the one we are holding
+			int adjustedNumber = itemUnderUs.Number - originalNumber;
+			if (adjustedNumber != dragItem.Number)
+			{
+				dragItem.Number -= adjustedNumber;
+				dragItem.IsModified = true;
+
+				// Swap the items so the completed item stays in the
+				// sack and the remaining items are still being dragged
+				Item temp = itemUnderUs;
+				itemUnderUs = dragItem;
+				dragItem = temp;
+
+				// Drop the dragItem here
+				dragItem.Location = this.CellsUnderDragItem.Location;
+
+				// Now add the item to our sack
+				this.Sack.AddItem(dragItem);
+			}
+			else
+			{
+				this.Sack.IsModified = true;
+
+				// Get rid of ref to itemUnderUs so code below wont do anything with it.
+				itemUnderUs = null;
+				// we will just throw away the dragItem now.
+			}
+		}
+		return doStackRelics;
+	}
+
+	protected bool doStackPotions(Item dragItem, ref Item itemUnderUs)
+	{
+		bool doStackpotions = dragItem.DoesStack
+			&& itemUnderUs != null && itemUnderUs.DoesStack
+			&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
+			&& !Config.UserSettings.Default.DisableAutoStacking;
+		if (doStackpotions)
+		{
+			itemUnderUs.StackSize += dragItem.StackSize;
+
+			this.InvalidateItemCacheAll(itemUnderUs, dragItem);
+
+			// Added this so the tooltip would update with the correct number
+			itemUnderUs.IsModified = true;
+			this.Sack.IsModified = true;
+
+			// Get rid of ref to itemUnderUs so code below wont do anything with it.
+			itemUnderUs = null;
+
+			// we will just throw away the dragItem now.
+		}
+		return doStackpotions;
 	}
 
 	protected virtual void MouseUpCallback(object sender, MouseEventArgs e)
@@ -1388,10 +1416,10 @@ public class SackPanel : Panel, IScalingControl
 				{
 					if (Config.UserSettings.Default.AllowItemEdit)
 					{
-						if (focusedItem.HasRelicSlot1)
+						if (focusedItem.HasRelicOrCharmSlot1)
 							this.CustomContextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
 
-						if (focusedItem.HasRelicSlot2)
+						if (focusedItem.HasRelicOrCharmSlot2)
 							this.CustomContextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic2);
 					}
 
@@ -1450,6 +1478,23 @@ public class SackPanel : Panel, IScalingControl
 						select location
 					).Distinct();
 
+					// TQ original save
+					if (this.userContext.CurrentPlayer is not null && !this.userContext.CurrentPlayer.IsImmortalThrone)
+					{
+						autoMoveChoices = autoMoveChoices.Where(loc =>
+							loc != AutoMoveLocation.Stash // There is no Stash on TQ original save
+							&& loc != AutoMoveLocation.Trash // TODO What is that ?
+						);
+
+						// You can't move TQIT+ items in Equipement, Sack and inventory
+						if (focusedItem.GameDlc != GameDlc.TitanQuest)
+						{
+							autoMoveChoices = autoMoveChoices.Where(loc =>
+								loc != AutoMoveLocation.Player
+							);
+						}
+					}
+
 					foreach (var choice in autoMoveChoices)
 					{
 						string location = this.GetStringFromAutoMove(choice);
@@ -1489,9 +1534,9 @@ public class SackPanel : Panel, IScalingControl
 
 						// Add option to complete a charm or relic if
 						// not already completed.
-						if (focusedItem.IsRelic && !focusedItem.IsRelicComplete)
+						if (focusedItem.IsRelicOrCharm && !focusedItem.IsRelicComplete)
 						{
-							if (focusedItem.IsCharm)
+							if (focusedItem.IsCharmOnly)
 								this.CustomContextMenu.Items.Add(Resources.SackPanelMenuCharm);
 							else
 								this.CustomContextMenu.Items.Add(Resources.SackPanelMenuRelic);
@@ -1529,28 +1574,28 @@ public class SackPanel : Panel, IScalingControl
 	private void AddItemSetMenuItems(Item focusedItem)
 	{
 		// If the item is a set item, then add a menu to create the rest of the set
-		string[] setItems = ItemProvider.GetSetItems(focusedItem, false);
-		if (setItems?.Any() ?? false)
+		var setItems = ItemProvider.GetSetItems(focusedItem);
+		if (setItems?.setMembers?.Any() ?? false)
 		{
 			var choices = new List<ToolStripItem>();
-			foreach (string setPiece in setItems)
+			foreach (var setPiece in setItems.setMembers)
 			{
 				// do not put the current item in the menu
-				var setPieceId = setPiece.ToRecordId();
+				var setPieceId = setPiece.Key.ToRecordId();
 				if (focusedItem.BaseItemId == setPieceId) continue;
 
 				// Get the name of the item
-				Info info = Database.GetInfo(setPieceId);
+				Info info = setPiece.Value;
 				if (info is null) continue;
 
 				var choice = new ToolStripMenuItem()
 				{
 					Text = this.TranslationService.TranslateXTag(info.DescriptionTag),
-					Name = setPiece,
+					Name = setPiece.Key,
 					BackColor = this.CustomContextMenu.BackColor,
 					Font = this.CustomContextMenu.Font,
 					ForeColor = this.CustomContextMenu.ForeColor,
-					ToolTipText = setPiece,
+					ToolTipText = setPiece.Key,
 				};
 				choice.Click += NewSetItemClicked;
 
@@ -1646,7 +1691,7 @@ public class SackPanel : Panel, IScalingControl
 	{
 		// If the item is a completed relic/charm/artifact then
 		// add a menu of possible completion bonuses to choose from.
-		if ((focusedItem.IsRelic && focusedItem.IsRelicComplete)
+		if ((focusedItem.IsRelicOrCharm && focusedItem.IsRelicComplete)
 			|| focusedItem.IsArtifact
 		)
 		{
@@ -1669,7 +1714,7 @@ public class SackPanel : Panel, IScalingControl
 						Font = this.CustomContextMenu.Font,
 						ForeColor = this.CustomContextMenu.ForeColor,
 						ToolTipText = tableitem.Key.Raw,
-						DisplayStyle= ToolStripItemDisplayStyle.ImageAndText,
+						DisplayStyle = ToolStripItemDisplayStyle.ImageAndText,
 					};
 					choice.Click += ChangeBonusItemClicked;
 
@@ -2034,7 +2079,7 @@ public class SackPanel : Panel, IScalingControl
 					choice.Image = this.CustomContextMenuAffixUntranslated;
 					choice.ToolTipText = "No Translation : " + choice.ToolTipText;
 				}
-				
+
 				if (affixMenu is not null)
 				{
 					choice.Text = _DisplayAffixesByEffect
@@ -2364,12 +2409,40 @@ public class SackPanel : Panel, IScalingControl
 	/// </summary>
 	/// <param name="item">Item to check</param>
 	/// <returns>True if item is able to be equipped</returns>
-	protected virtual bool CanBeEquipped(Item item)
+	protected virtual bool PlayerMeetRequierements(Item item)
 	{
 		var reqs = this.ItemProvider.GetFriendlyNames(item, FriendlyNamesExtraScopes.Requirements).RequirementVariables;
 		var currPlayer = this.userContext.CurrentPlayer;
 		if (currPlayer != null && reqs != null && reqs.Any() && !currPlayer.IsPlayerMeetRequierements(reqs))
 			return false;
+
+		return true;
+	}
+	
+	/// <summary>
+	/// Indicates whether the current player file can be edited.
+	/// </summary>
+	/// <returns></returns>
+	protected virtual bool IsCurrentPlayerReadOnly()
+	{
+		var currPlayer = this.userContext.CurrentPlayer;
+		if (!(currPlayer?.IsImmortalThrone ?? false) // TODO for now TQ Original Player is read only but could be issue #268
+		) return true;
+
+		return false;
+	}
+	/// <summary>
+	/// Indicates whether the passed item is suitable for equipping.
+	/// e.g. an Immortal throne or greater item on a Titan Quest Original player.
+	/// </summary>
+	/// <param name="item"></param>
+	/// <returns></returns>
+	protected virtual bool IsSuitableForCurrentPlayer(Item item)
+	{
+		var currPlayer = this.userContext.CurrentPlayer;
+		if (!(currPlayer?.IsImmortalThrone ?? false) // Player is TQ Original
+			&& item.GameDlc != GameDlc.TitanQuest // Non base game item
+		) return false;
 
 		return true;
 	}
@@ -2410,7 +2483,10 @@ public class SackPanel : Panel, IScalingControl
 			}
 			// If we are showing the cannot equip background then 
 			// change to invalid color and adjust the alpha.
-			else if (Config.UserSettings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
+			else if (
+				(Config.UserSettings.Default.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(item))
+				|| !IsSuitableForCurrentPlayer(item)
+			)
 			{
 				backgroundColor = this.HighlightInvalidItemColor;
 
@@ -2521,7 +2597,7 @@ public class SackPanel : Panel, IScalingControl
 		graphics.DrawImage(ibmp, itemRect, 0, 0, ibmp.Width, ibmp.Height, GraphicsUnit.Pixel, imageAttributes);
 
 		// Add the relic overlay if this item has a relic in it.
-		if (item.HasRelicSlot1 || item.HasRelicSlot2)
+		if (item.HasRelicOrCharmSlot1 || item.HasRelicOrCharmSlot2)
 		{
 			Bitmap relicOverlay = UIService.LoadRelicOverlayBitmap();
 			if (relicOverlay != null)
@@ -3624,23 +3700,4 @@ public class SackPanel : Panel, IScalingControl
 
 	#endregion SackPanel Private Methods
 
-	/// <summary>
-	/// Class for rendering the context menu strip.
-	/// </summary>
-	protected class CustomProfessionalRenderer : ToolStripProfessionalRenderer
-	{
-		/// <summary>
-		/// Handler for rendering the contect meny strip.
-		/// </summary>
-		/// <param name="e">ToolStripItemTextRenderEventArgs data</param>
-		protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
-		{
-			if (e.Item.Selected)
-				e.TextColor = Color.Black;
-			else
-				e.TextColor = Color.FromArgb(200, 200, 200);
-
-			base.OnRenderItemText(e);
-		}
-	}
 }

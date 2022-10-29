@@ -13,6 +13,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
@@ -130,7 +131,8 @@ public class ItemProvider : IItemProvider
 			"CONTAGIONLIMIT",
 			"CONTAGIONMAXSPREAD",
 			"CONTAGIONRADIUS",
-			"NOHIGHLIGHTDEFAULTCOLORA" // AMS: New property on most EE items
+			"NOHIGHLIGHTDEFAULTCOLORA", // AMS: New property on most EE items
+			"FORCEIGNORERUNSPEEDCAPS" // hguy: New property on EE "Potion of Speed"
 		};
 
 	internal static readonly string[] requirementTags =
@@ -314,8 +316,8 @@ public class ItemProvider : IItemProvider
 	public bool BonusTableSocketedRelic(Item Item, out LootTableCollection RelicTable1, out LootTableCollection RelicTable2)
 	{
 		RelicTable1 = RelicTable2 = null;
-		var hasCompleteRelic1 = Item.HasRelicSlot1 && Item.RelicInfo is not null && Item.IsRelicBonus1Complete;
-		var hasCompleteRelic2 = Item.HasRelicSlot2 && Item.Relic2Info is not null && Item.IsRelicBonus2Complete;
+		var hasCompleteRelic1 = Item.HasRelicOrCharmSlot1 && Item.RelicInfo is not null && Item.IsRelicBonus1Complete;
+		var hasCompleteRelic2 = Item.HasRelicOrCharmSlot2 && Item.Relic2Info is not null && Item.IsRelicBonus2Complete;
 
 		if (Item.baseItemInfo is null
 			|| (!hasCompleteRelic1 && !hasCompleteRelic2)
@@ -353,7 +355,7 @@ public class ItemProvider : IItemProvider
 			return null;
 
 		string lootTableID = null;
-		if (itm.IsRelic)
+		if (itm.IsRelicOrCharm)
 			lootTableID = itm.baseItemInfo.GetString("bonusTableName");
 		else if (itm.IsArtifact)
 		{
@@ -394,7 +396,7 @@ public class ItemProvider : IItemProvider
 	/// <returns>Returns the removed relic as a new Item</returns>
 	public Item RemoveRelic1(Item itm)
 	{
-		if (!itm.HasRelicSlot1)
+		if (!itm.HasRelicOrCharmSlot1)
 			return null;
 
 		Item newRelic = itm.MakeEmptyCopy(itm.relicID);
@@ -421,7 +423,7 @@ public class ItemProvider : IItemProvider
 	/// <returns>Returns the removed relic as a new Item</returns>
 	public Item RemoveRelic2(Item itm)
 	{
-		if (!itm.HasRelicSlot2)
+		if (!itm.HasRelicOrCharmSlot2)
 			return null;
 
 		Item newRelic = itm.MakeEmptyCopy(itm.relic2ID);
@@ -522,36 +524,33 @@ public class ItemProvider : IItemProvider
 	/// <summary>
 	/// Gets the itemID's of all the items in the set.
 	/// </summary>
-	/// <param name="includeName">Flag to include the set name in the returned array</param>
-	/// <returns>Returns a string array containing the remaining set items or null if the item is not part of a set.</returns>
-	public string[] GetSetItems(Item itm, bool includeName)
+	/// <returns>Returns <see cref="SetItemInfo"/> containing the remaining set items or null if the item is not part of a set.</returns>
+	public SetItemInfo GetSetItems(Item itm)
 	{
 		if (itm.baseItemInfo == null)
 			return null;
 
-		string setID = itm.baseItemInfo.GetString("itemSetName");
-		if (string.IsNullOrWhiteSpace(setID))
+		string itemSetName = itm.baseItemInfo.GetString("itemSetName");
+		if (string.IsNullOrWhiteSpace(itemSetName))
 			return null;
 
 		// Get the set record
-		DBRecordCollection setRecord = Database.GetRecordFromFile(setID);
-		if (setRecord == null)
+		DBRecordCollection setRecords = Database.GetRecordFromFile(itemSetName);
+		if (setRecords == null)
 			return null;
 
-		string[] ans = setRecord.GetAllStrings("setMembers");
-		if (ans == null || ans.Length == 0)
+		string[] setMembers = setRecords.GetAllStrings("setMembers");
+		if (setMembers == null || setMembers.Length == 0)
 			return null;
 
-		// Added by VillageIdiot to support set Name
-		if (includeName)
-		{
-			string[] setitems = new string[ans.Length + 1];
-			setitems[0] = setRecord.GetString("setName", 0);
-			ans.CopyTo(setitems, 1);
-			return setitems;
-		}
-		else
-			return ans;
+		var setName = setRecords.GetString("setName", 0);
+
+		var dico = new Dictionary<string, Info>();
+
+		foreach (var item in setMembers)
+			dico.Add(item, Database.GetInfo(item));
+
+		return new SetItemInfo(itemSetName, setName, dico, setRecords);
 	}
 
 
@@ -852,7 +851,7 @@ public class ItemProvider : IItemProvider
 		// Extract image raw data
 		if (itm.baseItemInfo != null)
 		{
-			if (itm.IsRelic && !itm.IsRelicComplete)
+			if (itm.IsRelicOrCharm && !itm.IsRelicComplete)
 			{
 				itm.TexImageResourceId = itm.baseItemInfo.ShardBitmap;
 				itm.TexImage = Database.LoadResource(itm.TexImageResourceId);
@@ -954,12 +953,12 @@ public class ItemProvider : IItemProvider
 
 				case VariableDataType.StringVar:
 					if ((
-							allowStrings
+						allowStrings
 						|| variable.Name.Equals("CHARACTERBASEATTACKSPEEDTAG", noCase)
 						|| variable.Name.Equals("ITEMSKILLNAME", noCase) // Added by VillageIdiot for Granted skills
 						|| variable.Name.Equals("SKILLNAME", noCase) // Added by VillageIdiot for scroll skills
 						|| variable.Name.Equals("PETBONUSNAME", noCase) // Added by VillageIdiot for pet bonuses
-							|| ItemAttributeProvider.IsReagent(variable.Name)
+						|| ItemAttributeProvider.IsReagent(variable.Name)
 						) && variable.GetString(i).Length > 0
 					)
 					{
@@ -1288,8 +1287,7 @@ VariableValue Raw : {valueRaw}
 		{
 			// Check to see if itm item creates a pet
 			var skillName = itm.baseItemInfo.GetString("skillName");
-			var skillNameId = skillName;
-			var petSkill = Database.GetRecordFromFile(skillNameId);
+			var petSkill = Database.GetRecordFromFile(skillName);
 
 			string petID = petSkill.GetString("spawnObjects", 0);
 			if (!string.IsNullOrWhiteSpace(petID))
@@ -1374,7 +1372,7 @@ VariableValue Raw : {valueRaw}
 
 			res.ItemThrown = itm.IsThrownWeapon ? this.TranslationService.TranslateXTag("x2tagThrownWeapon") : null;
 
-			res.ItemOrigin = itm.GameExtension switch
+			res.ItemOrigin = itm.GameDlc switch
 			{
 				GameDlc.Atlantis => this.TranslationService.ItemAtlantis,
 				GameDlc.EternalEmbers => this.TranslationService.ItemEmbers,
@@ -1385,7 +1383,7 @@ VariableValue Raw : {valueRaw}
 
 			#region Prefix translation
 
-			if (!k.Item.IsRelic && !RecordId.IsNullOrEmpty(k.Item.prefixID))
+			if (!k.Item.IsRelicOrCharm && !RecordId.IsNullOrEmpty(k.Item.prefixID))
 			{
 				res.PrefixInfoDescription = k.Item.prefixID.Raw;
 				if (k.Item.prefixInfo != null)
@@ -1400,7 +1398,7 @@ VariableValue Raw : {valueRaw}
 			#region Base Item translation
 
 			// Load common relic translations if item is relic related by any means
-			if (k.Item.IsRelic || k.Item.HasRelicSlot1 || k.Item.HasRelicSlot2 || k.Item.RelicInfo != null || k.Item.Relic2Info != null)
+			if (k.Item.IsRelicOrCharm || k.Item.HasRelicOrCharmSlot1 || k.Item.HasRelicOrCharmSlot2 || k.Item.RelicInfo != null || k.Item.Relic2Info != null)
 			{
 				res.ItemWith = this.TranslationService.ItemWith;
 
@@ -1453,7 +1451,7 @@ VariableValue Raw : {valueRaw}
 				// style quality description
 				if (!string.IsNullOrEmpty(k.Item.baseItemInfo.StyleTag))
 				{
-					if (!k.Item.IsPotion && !k.Item.IsRelic && !k.Item.IsScroll && !k.Item.IsParchment && !k.Item.IsQuestItem)
+					if (!k.Item.IsPotion && !k.Item.IsRelicOrCharm && !k.Item.IsScroll && !k.Item.IsParchment && !k.Item.IsQuestItem)
 					{
 						if (!TranslationService.TryTranslateXTag(k.Item.baseItemInfo.StyleTag, out res.BaseItemInfoStyle))
 							res.BaseItemInfoStyle = k.Item.baseItemInfo.StyleTag;
@@ -1469,16 +1467,16 @@ VariableValue Raw : {valueRaw}
 				if (!TranslationService.TryTranslateXTag(k.Item.baseItemInfo.DescriptionTag, out res.BaseItemInfoDescription))
 					res.BaseItemInfoDescription = k.Item.BaseItemId.Raw;
 
-				res.BaseItemInfoClass = TranslationService.TranslateXTag(k.Item.ItemClassTagName);
+				res.BaseItemInfoClass = TranslationService.TranslateXTag(k.Item.ItemClassTagName, removeAllTQTags: true);
 
 				res.BaseItemInfoRecords = Database.GetRecordFromFile(k.Item.BaseItemId);
 
-				if (k.Item.IsRelic)
+				if (k.Item.IsRelicOrCharm)
 				{
 					// Add the number of charms in the set acquired.
 					if (k.Item.IsRelicComplete)
 					{
-						if (k.Item.IsCharm)
+						if (k.Item.IsCharmOnly)
 						{
 							res.RelicCompletionFormat = res.AnimalPartComplete;
 							res.RelicBonusTitle = res.AnimalPartCompleteBonus;
@@ -1506,7 +1504,7 @@ VariableValue Raw : {valueRaw}
 					}
 					else
 					{
-						if (k.Item.IsCharm)
+						if (k.Item.IsCharmOnly)
 						{
 							res.RelicClass = res.AnimalPart;
 							res.RelicPattern = res.AnimalPartRatio;
@@ -1567,7 +1565,7 @@ VariableValue Raw : {valueRaw}
 
 			#region Suffix translation
 
-			if (!k.Item.IsRelic && !RecordId.IsNullOrEmpty(k.Item.suffixID))
+			if (!k.Item.IsRelicOrCharm && !RecordId.IsNullOrEmpty(k.Item.suffixID))
 			{
 				if (k.Item.suffixInfo != null)
 				{
@@ -1585,7 +1583,7 @@ VariableValue Raw : {valueRaw}
 			#region flavor text
 
 			// Removed Scroll flavor text since it gets printed by the skill effect code
-			if ((k.Item.IsPotion || k.Item.IsRelic || k.Item.IsScroll || k.Item.IsParchment || k.Item.IsQuestItem) && !string.IsNullOrWhiteSpace(k.Item.baseItemInfo?.StyleTag))
+			if ((k.Item.IsPotion || k.Item.IsRelicOrCharm || k.Item.IsScroll || k.Item.IsParchment || k.Item.IsQuestItem) && !string.IsNullOrWhiteSpace(k.Item.baseItemInfo?.StyleTag))
 			{
 				if (TranslationService.TryTranslateXTag(k.Item.baseItemInfo.StyleTag, out var flavor))
 				{
@@ -1662,7 +1660,7 @@ VariableValue Raw : {valueRaw}
 			}
 
 			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.ItemSet) ?? false)
-				res.ItemSet = GetItemSetString(k.Item);
+				res.ItemSet = GetItemSetTranslations(k.Item);
 
 			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.Requirements) ?? false)
 			{
@@ -1703,8 +1701,8 @@ VariableValue Raw : {valueRaw}
 			if (k.Item.RelicBonusInfo != null
 				&& (k.Scope?.HasFlag(FriendlyNamesExtraScopes.RelicAttributes) ?? false)
 				&& (k.Item.IsArtifact // Artifact completion bonus
-					|| k.Item.IsRelic // Relic completion bonus
-					|| k.Item.HasRelicSlot1
+					|| k.Item.IsRelicOrCharm // Relic completion bonus
+					|| k.Item.HasRelicOrCharmSlot1
 				)
 			)
 			{
@@ -1719,7 +1717,7 @@ VariableValue Raw : {valueRaw}
 			}
 
 			// Show the Relic2 completion bonus.
-			if (k.Item.HasRelicSlot2 && k.Item.RelicBonus2Info != null && (k.Scope?.HasFlag(FriendlyNamesExtraScopes.Relic2Attributes) ?? false))
+			if (k.Item.HasRelicOrCharmSlot2 && k.Item.RelicBonus2Info != null && (k.Scope?.HasFlag(FriendlyNamesExtraScopes.Relic2Attributes) ?? false))
 			{
 				var tmp = new List<string>();
 				res.RelicBonus2InfoRecords = Database.GetRecordFromFile(k.Item.RelicBonus2Id);
@@ -1804,42 +1802,28 @@ VariableValue Raw : {valueRaw}
 	}
 
 	/// <summary>
-	/// Shows the items in a set for the set items
-	/// </summary>
+	/// Get the translations for this set item
+	/// </summary>-
 	/// <returns>string containing the set items</returns>
-	public string[] GetItemSetString(Item itm)
+	public SetItemInfo GetItemSetTranslations(Item itm)
 	{
-		List<string> results = new List<string>();
-		string[] setMembers = this.GetSetItems(itm, true);
+		var setMembers = this.GetSetItems(itm);
 		if (setMembers != null)
 		{
-			var isfirst = true;
-			foreach (string memb in setMembers)
+			var name = TranslationService.TranslateXTag(setMembers.setName);
+			setMembers.Translations.Add(setMembers.setName, $"{ItemStyle.Rare.TQColor().ColorTag()}{name}");
+
+			foreach (var memb in setMembers.setMembers)
 			{
-				string name = string.Empty;
+				name = "?? Missing database info ??";
 
-				// Changed by VillageIdiot
-				// The first entry is now the set name
-				if (isfirst)
-				{
-					name = TranslationService.TranslateXTag(memb);
-					results.Add($"{ItemStyle.Rare.TQColor().ColorTag()}{name}");
-					isfirst = false;
-				}
-				else
-				{
-					name = "?? Missing database info ??";
-					Info info = Database.GetInfo(memb);
+				if (memb.Value != null)
+					name = TranslationService.TranslateXTag(memb.Value.DescriptionTag);
 
-					if (info != null)
-						name = TranslationService.TranslateXTag(info.DescriptionTag);
-
-					results.Add($"{ItemStyle.Common.TQColor().ColorTag()}    {name}");
-				}
+				setMembers.Translations.Add(memb.Key, $"{ItemStyle.Common.TQColor().ColorTag()}    {name}");
 			}
 		}
-
-		return results.ToArray();
+		return setMembers;
 	}
 
 	/// <summary>
@@ -1864,7 +1848,7 @@ VariableValue Raw : {valueRaw}
 		}
 
 		// First get a list of attributes, grouped by effect.
-		Dictionary<string, List<Variable>> attrByEffect = new Dictionary<string, List<Variable>>();
+		Dictionary<string, List<Variable>> attrByEffect = new();
 		if (record == null)
 		{
 			if (TQDebug.ItemDebugLevel > 0)
@@ -1875,11 +1859,11 @@ VariableValue Raw : {valueRaw}
 		}
 
 		if (TQDebug.ItemDebugLevel > 1)
-			Log.LogDebug(record.Id.Normalized);
+			Log.LogDebug(record.Id);
 
 		// Added by Village Idiot
 		// To keep track of groups so they are not counted twice
-		List<string> countedGroups = new List<string>();
+		List<string> countedGroups = new();
 
 		foreach (Variable variable in record)
 		{
@@ -3121,7 +3105,7 @@ VariableValue Raw : {valueRaw}
 	}
 
 	/// <summary>
-	/// Converts the item's offensice attributes to a string
+	/// Converts the item's offensive attributes to a string
 	/// </summary>
 	/// <param name="record">DBRecord of the database record</param>
 	/// <param name="attributeList">ArrayList containing the attribute list</param>
@@ -3140,15 +3124,15 @@ VariableValue Raw : {valueRaw}
 		// If we are a relic, then sometimes there are multiple values per variable depending on how many pieces we have.
 		// Let's determine which variable we want in these cases.
 		int variableNumber = 0;
-		if (itm.IsRelic && recordId == itm.BaseItemId)
+		if (itm.IsRelicOrCharm && recordId == itm.BaseItemId)
 			variableNumber = itm.Number - 1;
-		else if (itm.HasRelicSlot1 && recordId == itm.relicID)
+		else if (itm.HasRelicOrCharmSlot1 && recordId == itm.relicID)
 			variableNumber = Math.Max(itm.Var1, 1) - 1;
-		else if (itm.HasRelicSlot2 && recordId == itm.relic2ID)
+		else if (itm.HasRelicOrCharmSlot2 && recordId == itm.relic2ID)
 			variableNumber = Math.Max(itm.Var2, 1) - 1;
 
 		// Pet skills can also have multiple values so we attempt to decode it here
-		if (itm.IsScroll || itm.IsRelic)
+		if (itm.IsScroll || itm.IsRelicOrCharm)
 			variableNumber = GetPetSkillLevel(itm, record, recordId, variableNumber);
 
 		// Triggered skills can have also multiple values so we need to decode it here
@@ -3634,7 +3618,7 @@ VariableValue Raw : {valueRaw}
 
 				// Added by VillageIdiot
 				// Another special case for skill description and effects of activated skills
-				if (normalizedFullAttribute == "ITEMSKILLNAME" || (itm.IsScroll && normalizedFullAttribute == "SKILLNAME"))
+				if (normalizedFullAttribute == "ITEMSKILLNAME" || ((itm.IsScroll || itm.IsPotion) && normalizedFullAttribute == "SKILLNAME"))
 					GetSkillDescriptionAndEffects(itm, record, results, variable, line);
 			}
 		}
@@ -3655,7 +3639,7 @@ VariableValue Raw : {valueRaw}
 		string autoController = record.GetString("itemSkillAutoController", 0);
 		string SkillDescriptionAndEffectsVar = variable.GetString(0);
 
-		if (!string.IsNullOrEmpty(autoController) || itm.IsScroll)
+		if (!string.IsNullOrEmpty(autoController) || itm.IsScroll || itm.IsPotion)
 		{
 			DBRecordCollection skillRecord = Database.GetRecordFromFile(SkillDescriptionAndEffectsVar);
 
@@ -3768,7 +3752,7 @@ VariableValue Raw : {valueRaw}
 
 				// Added by VillageIdiot
 				// Adjust for the flavor text of scrolls
-				if (skillRecord != null && !itm.IsScroll)
+				if (skillRecord != null && !itm.IsScroll && !itm.IsPotion)
 					results.Add(string.Empty);
 
 				// Added by VillageIdiot

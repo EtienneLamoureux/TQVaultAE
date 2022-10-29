@@ -1939,7 +1939,7 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="ForgeHardcoreTT" xml:space="preserve">
     <value>Materials are destroyed in the process</value>
   </data>
-  	<data name="ExportBagCSVToClipboard" xml:space="preserve">
+	<data name="ExportBagCSVToClipboard" xml:space="preserve">
     <value>Export bag to clipboard</value>
   </data>
 	<data name="ExportVaultCSVToClipboard" xml:space="preserve">
@@ -1954,13 +1954,128 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="AffixesDisplayByName" xml:space="preserve">
     <value>Display affixes by name</value>
   </data>
-  <data name="AffixesDisplayByEffect" xml:space="preserve">
+	<data name="AffixesDisplayByEffect" xml:space="preserve">
     <value>Display affixes by effect</value>
   </data>
-  <data name="SettingsEnableEpicLegendaryAffixes" xml:space="preserve">
+	<data name="SettingsEnableEpicLegendaryAffixes" xml:space="preserve">
     <value>Enable Epic and Legendary affixes</value>
   </data>
-  <data name="SettingsEnableEpicLegendaryAffixesTT" xml:space="preserve">
+	<data name="SettingsEnableEpicLegendaryAffixesTT" xml:space="preserve">
     <value>Allow affixes pickup on Epic and Legendary items</value>
+  </data>
+	<data name="SettingsDisableAutoStacking" xml:space="preserve">
+    <value>Disable auto stacking</value>
+  </data>
+	<data name="SettingsDisableAutoStackingTT" xml:space="preserve">
+    <value>Disable auto stacking for relic, charms and potions</value>
+  </data>
+	<data name="SettingsBrowseGitExe" xml:space="preserve">
+    <value>Please select the path for git.exe.</value>
+  </data>
+	<data name="GitError" xml:space="preserve">
+    <value>Git Error</value>
+  </data>
+	<data name="GitUnableToClone" xml:space="preserve">
+    <value>Git client is unable to clone "{0}"</value>
+  </data>
+	<data name="GlobalInformation" xml:space="preserve">
+    <value>Information</value>
+  </data>
+	<data name="GlobalWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+	<data name="GitCloneDoYouWantToReplaceLocalVault" xml:space="preserve">
+    <value>Do you want to replace your local vaults with git repository version?</value>
+  </data>
+	<data name="GlobalConfirm" xml:space="preserve">
+    <value>Are you sure?</value>
+  </data>
+	<data name="GitCloneDoYouWantToReplaceLocalCharacterSave" xml:space="preserve">
+    <value>Do you want to replace your local Titan Quest character save with git repository version?</value>
+  </data>
+	<data name="GitUnableToPush" xml:space="preserve">
+    <value>Git client is unable to push "{0}"</value>
+  </data>
+	<data name="GitUnableToPull" xml:space="preserve">
+    <value>Git client is unable to pull "{0}"</value>
+  </data>
+	<data name="UnableToExecute" xml:space="preserve">
+    <value>OS unable to execute "{0}"</value>
+  </data>
+
+	<data name="SettingsBackupPlayerSaves" xml:space="preserve">
+    <value>Backup player saves</value>
+  </data>
+	<data name="SettingsBackupPlayerSavesTT" xml:space="preserve">
+    <value>Include your character save files in the backup</value>
+  </data>
+	<data name="SettingsGitRepositoryUrl" xml:space="preserve">
+    <value>Git Repository Url : </value>
+  </data>
+	<data name="SettingsDisableLegacyBackup" xml:space="preserve">
+    <value>Disable legacy backup</value>
+  </data>
+	<data name="SettingsDisableLegacyBackupTT" xml:space="preserve">
+    <value>Optionaly disable the old backup system</value>
+  </data>
+	<data name="SettingsGitBackup" xml:space="preserve">
+    <value>Git Backup</value>
+  </data>
+	<data name="SettingsAllowCheats" xml:space="preserve">
+    <value>Allow Cheats</value>
+  </data>
+	<data name="GitUnableToFetch" xml:space="preserve">
+    <value>Git client is unable to fetch "{0}"</value>
+  </data>
+	<data name="SettingsOriginalTQSupport" xml:space="preserve">
+    <value>TQ original support</value>
+  </data>
+	<data name="SettingsOriginalTQSupportTT" xml:space="preserve">
+    <value>Provide support for original Titan Quest (2006) character file</value>
+  </data>
+	<data name="SettingsHowToPlay" xml:space="preserve">
+    <value>How to play...</value>
+  </data>
+	<data name="SearchHavingPrefix" xml:space="preserve">
+    <value>Having Prefix</value>
+  </data>
+	<data name="SearchHavingSuffix" xml:space="preserve">
+    <value>Having Suffix</value>
+  </data>
+	<data name="SearchSetItem" xml:space="preserve">
+    <value>Set Item</value>
+  </data>
+	<data name="GlobalOrigin" xml:space="preserve">
+    <value>Origin</value>
+  </data>
+	<data name="GlobalTags" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+	<data name="GlobalArchived" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+	<data name="GlobalArchive" xml:space="preserve">
+    <value>Archive</value>
+  </data>
+	<data name="GlobalUnArchive" xml:space="preserve">
+    <value>Unarchive</value>
+  </data>
+	<data name="TagsAdd" xml:space="preserve">
+    <value>Add Tags</value>
+  </data>
+	<data name="GlobalRename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+	<data name="TagExists" xml:space="preserve">
+    <value>Tag exists already!</value>
+  </data>
+	<data name="TagMustBeDifferent" xml:space="preserve">
+    <value>Tag must be different!</value>
+  </data>
+	<data name="GlobalArchiveAll" xml:space="preserve">
+    <value>Archive all</value>
+  </data>
+	<data name="GlobalUnArchiveAll" xml:space="preserve">
+    <value>Unarchive all</value>
   </data>
 </root>

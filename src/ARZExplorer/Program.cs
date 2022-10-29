@@ -64,8 +64,8 @@ namespace ArzExplorer
 
 			try
 			{
-				gamePathResolver.TQPath = gamePathResolver.ResolveGamePath();
-				gamePathResolver.ImmortalThronePath = gamePathResolver.ResolveGamePath();
+				gamePathResolver.GamePathTQ = gamePathResolver.ResolveGamePath();
+				gamePathResolver.GamePathTQIT = gamePathResolver.ResolveGamePath();
 			}
 			catch (ExGamePathNotFound ex)
 			{
