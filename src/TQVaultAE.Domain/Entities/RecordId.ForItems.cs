@@ -5,6 +5,153 @@ namespace TQVaultAE.Domain.Entities;
 public partial class RecordId
 {
 
+	#region IsRelic
+
+	bool? _IsRelic;
+	/// <summary>
+	/// This <see cref="RecordId"/> leads to a Relic content.
+	/// </summary>
+	public bool IsRelic
+	{
+		get
+		{
+			if (_IsRelic is null)
+				_IsRelic = (this.Dlc == GameDlc.TitanQuest && this.Normalized.Contains(@"RELICS") && !IsCharm) // Is base game
+					|| this.Normalized.Contains(@"\RELICS\");// Is part of an extension
+			return _IsRelic.Value;
+		}
+	}
+
+	#endregion
+
+	#region IsCharm
+
+	bool? _IsCharm;
+	/// <summary>
+	/// This <see cref="RecordId"/> leads to a Charm content.
+	/// </summary>
+	public bool IsCharm
+	{
+		get
+		{
+			if (_IsCharm is null)
+				_IsCharm = (this.Dlc == GameDlc.TitanQuest && this.Normalized.Contains(@"ANIMALRELICS")) // Is base game
+					|| this.Normalized.Contains(@"\CHARMS\");// Is part of an extension
+			return _IsCharm.Value;
+		}
+	}
+
+	#endregion
+
+	#region IsPotion
+
+	bool? _IsPotion;
+	/// <summary>
+	/// This <see cref="RecordId"/> leads to a Potion content.
+	/// </summary>
+	public bool IsPotion
+	{
+		get
+		{
+			if (_IsPotion is null)
+				_IsPotion = this.Normalized.Contains(@"ONESHOT\POTION");
+			return _IsPotion.Value;
+		}
+	}
+
+	#endregion
+
+	#region IsQuestItem
+
+	bool? _IsQuestItem;
+	/// <summary>
+	/// This <see cref="RecordId"/> leads to a Quest Item content.
+	/// </summary>
+	public bool IsQuestItem
+	{
+		get
+		{
+			if (_IsQuestItem is null)
+				_IsQuestItem = (this.Dlc == GameDlc.TitanQuest && this.Normalized.Contains(@"QUEST")) // Is base game
+					|| this.Normalized.Contains(@"QUESTS");// Is part of an extension
+			return _IsQuestItem.Value;
+		}
+	}
+
+	#endregion
+
+	#region IsArtifact
+
+	bool? _IsArtifact;
+	/// <summary>
+	/// This <see cref="RecordId"/> leads to an Artifact content.
+	/// </summary>
+	public bool IsArtifact
+	{
+		get
+		{
+			if (_IsArtifact is null)
+				_IsArtifact = !this.IsFormulae && this.Normalized.Contains(@"\ARTIFACTS\");
+			return _IsArtifact.Value;
+		}
+	}
+
+	#endregion
+
+	#region IsFormulae
+
+	bool? _IsFormulae;
+	/// <summary>
+	/// This <see cref="RecordId"/> leads to an Arcane Formulae content.
+	/// </summary>
+	public bool IsFormulae
+	{
+		get
+		{
+			if (_IsFormulae is null)
+				_IsFormulae = this.Normalized.Contains(@"\ARCANEFORMULAE\");
+			return _IsFormulae.Value;
+		}
+	}
+
+	#endregion
+
+	#region IsParchment
+
+	bool? _IsParchment;
+	/// <summary>
+	/// This <see cref="RecordId"/> leads to Parchment content.
+	/// </summary>
+	public bool IsParchment
+	{
+		get
+		{
+			if (_IsParchment is null)
+				_IsParchment = this.Normalized.Contains(@"PARCHMENT");
+			return _IsParchment.Value;
+		}
+	}
+
+	#endregion
+
+	#region IsScroll
+
+	bool? _IsScroll;
+	/// <summary>
+	/// This <see cref="RecordId"/> leads to Scroll content.
+	/// </summary>
+	public bool IsScroll
+	{
+		get
+		{
+			if (_IsScroll is null)
+				_IsScroll = this.Normalized.Contains(@"\SCROLLS\");
+			return _IsScroll.Value;
+		}
+	}
+
+	#endregion
+
 	#region IsItem
 
 	bool? _IsItem;

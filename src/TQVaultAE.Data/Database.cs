@@ -183,11 +183,11 @@ public class Database : IDatabase
 			{
 				try
 				{
-					string optionsFile = GamePathResolver.TQSettingsFile;
+					string optionsFile = GamePathResolver.SettingsFileTQ;
 					if (!File.Exists(optionsFile))
 					{
 						// Try IT Folder if there is no settings file in TQ Folder
-						optionsFile = GamePathResolver.ITSettingsFile;
+						optionsFile = GamePathResolver.SettingsFileTQIT;
 					}
 					if (File.Exists(optionsFile))
 					{
@@ -715,7 +715,7 @@ public class Database : IDatabase
 			// Also could be that it says xpack in the record but the file is in the root.
 			if (arcFileData == null)
 			{
-				rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack");
+				rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack");
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
 				arcFileData = this.ReadARCFile(arcFile, key);
 
@@ -726,7 +726,7 @@ public class Database : IDatabase
 			// Now, let's check if the item is in Ragnarok DLC
 			if (arcFileData == null && GamePathResolver.IsRagnarokInstalled)
 			{
-				rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack2");
+				rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack2");
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
 				arcFileData = this.ReadARCFile(arcFile, key);
 
@@ -736,7 +736,7 @@ public class Database : IDatabase
 
 			if (arcFileData == null && GamePathResolver.IsAtlantisInstalled)
 			{
-				rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack3");
+				rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack3");
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
 				arcFileData = this.ReadARCFile(arcFile, key);
 
@@ -746,7 +746,7 @@ public class Database : IDatabase
 
 			if (arcFileData == null && GamePathResolver.IsEmbersInstalled)
 			{
-				rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources", "XPack4");
+				rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack4");
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
 				arcFileData = this.ReadARCFile(arcFile, key);
 
@@ -761,7 +761,7 @@ public class Database : IDatabase
 				if (TQDebug.DatabaseDebugLevel > 1)
 					Log.LogDebug("Checking TQ Resources.");
 
-				rootFolder = GamePathResolver.TQPath;
+				rootFolder = GamePathResolver.GamePathTQ;
 				rootFolder = Path.Combine(rootFolder, "Resources");
 
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
@@ -858,10 +858,10 @@ public class Database : IDatabase
 		string rootFolder;
 		if (isImmortalThrone)
 		{
-			if (GamePathResolver.ImmortalThronePath.Contains("Anniversary"))
-				rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Text");
+			if (GamePathResolver.GamePathTQIT.Contains("Anniversary"))
+				rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Text");
 			else
-				rootFolder = Path.Combine(GamePathResolver.ImmortalThronePath, "Resources");
+				rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Resources");
 
 			if (TQDebug.DatabaseDebugLevel > 1)
 			{
@@ -872,7 +872,7 @@ public class Database : IDatabase
 		else
 		{
 			// from the original TQ folder
-			rootFolder = Path.Combine(GamePathResolver.TQPath, "Text");
+			rootFolder = Path.Combine(GamePathResolver.GamePathTQ, "Text");
 
 			if (TQDebug.DatabaseDebugLevel > 1)
 			{
@@ -1227,7 +1227,7 @@ public class Database : IDatabase
 			Log.LogDebug("Database.LoadARZFile()");
 
 		// from the original TQ folder
-		string file = Path.Combine(GamePathResolver.TQPath, "Database", "database.arz");
+		string file = Path.Combine(GamePathResolver.GamePathTQ, "Database", "database.arz");
 
 		if (TQDebug.DatabaseDebugLevel > 1)
 		{

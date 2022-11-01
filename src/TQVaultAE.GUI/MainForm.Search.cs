@@ -112,7 +112,7 @@ public partial class MainForm
 			}
 
 			// Update the selection list and load the character.				
-			this.characterComboBox.SelectedIndex = this.characterComboBox.FindString(selectedResult.ContainerName);
+			this.comboBoxCharacter.SelectedIndex = this.comboBoxCharacter.FindString(selectedResult.ContainerName);
 
 			// Bail if we are attempting to highlight something in the stash panel and the stash does not exist.
 			if ((this.stashPanel == null || this.stashPanel.SackPanel == null) && selectedResult.SackType != SackType.Player)

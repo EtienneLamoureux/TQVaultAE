@@ -64,8 +64,8 @@ public static class Program
 
 		try
 		{
-			gamePathResolver.TQPath = gamePathResolver.ResolveGamePath();
-			gamePathResolver.ImmortalThronePath = gamePathResolver.TQPath;
+			gamePathResolver.GamePathTQ = gamePathResolver.ResolveGamePath();
+			gamePathResolver.GamePathTQIT = gamePathResolver.ResolveGamePath();
 		}
 		catch (ExGamePathNotFound ex)
 		{

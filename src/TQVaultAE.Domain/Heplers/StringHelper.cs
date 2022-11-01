@@ -14,7 +14,15 @@ namespace TQVaultAE.Domain.Helpers;
 public static class StringHelper
 {
 	const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
+
 	public const string TQNewLineTag = @"{^N}";
+
+	public static bool Contains(this string input, string search, StringComparison comparison)
+		=> input.IndexOf(search, comparison) > -1;
+	
+	public static bool ContainsIgnoreCase(this string input, string search)
+		=> input.Contains(search, noCase);
+
 
 	#region Eval
 
@@ -139,14 +147,14 @@ public static class StringHelper
 
 	static char[] _Delim = new char[] { ' ' };
 	static Regex PrettyFileNameRegExNumber = new Regex(@"(?<number>\d+)", RegexOptions.Compiled);
-	static Regex PrettyFileNameRegExTitleCaseStart = new Regex(@"(?<TitleCaseStart>BOW|DA|OA|Mastery[A-Ha-h]|[A-Z][a-z]*)", RegexOptions.Compiled);
+	static Regex PrettyFileNameRegExTitleCaseStart = new Regex(@"(?<TitleCaseStart>BOW|DA|OA|XP|Mastery[A-Ha-h]|[A-Z][a-z]*)", RegexOptions.Compiled);
 	// Orderered by word length
 	static string PrettyFileNameRegExLowerCaseStartPattern = @"
 (?<Start>
 	intelligence|protection|impairment|offensive|defensive|dexterity|elemental|
 	mobility|cooldown|mastery|current|protect|defense|offense|reflect|
 	damage|energy|pierce|guards|neidan|resist|health|poison|weapon|plants|hermes|sandal|
-	armor|chance|runes|dream|bleed|total|bonus|woods|multi|relic|light|attac|speed|reduc|block|equip|
+	armor|chance|[rR]unes|[dD]ream|bleed|total|bonus|woods|multi|relic|light|attac|speed|reduc|block|equip|
 	clubs|sleep|metal|leech|regen|dodge|retal|
 	cold|burn|life|fire|mana|stun|(?<!ext)rare|slow|wood|
 	req|int|(?<!h)all(?!owed)|dmg|(?<!con)str(?!uction)|atk|att|spd|run|dex|(?<=pierce)ret|
@@ -205,14 +213,14 @@ public static class StringHelper
 					var x when x.Equals("MasteryH", noCase) => "Mastery Storm",
 					_ => title
 				};
-			}) 
+			})
 			.JoinString(" ");// Put it back together
 
 		return filename;
 	}
 
 	/// <summary>
-	/// Normalizes the record path to Upper Case Invariant Culture and replace backslashes with slashes.
+	/// Normalizes the record path to Upper Case Invariant Culture and replace slashes with backslashes.
 	/// </summary>
 	/// <param name="recordId">record path to be normalized</param>
 	/// <returns>normalized record path</returns>

@@ -240,7 +240,7 @@ namespace TQVaultAE.Domain.Entities
 					if (this.HighlightFilter.Origin.Any())
 					{
 						availableItems = availableItems.Where(i =>
-							this.HighlightFilter.Origin.Contains(i.Item.GameExtension)
+							this.HighlightFilter.Origin.Contains(i.Item.GameDlc)
 						);
 					}
 
@@ -249,6 +249,15 @@ namespace TQVaultAE.Domain.Entities
 
 					if (this.HighlightFilter.HavingSuffix)
 						availableItems = availableItems.Where(i => i.Item.HasSuffix);
+					
+					if (this.HighlightFilter.HavingRelic)
+						availableItems = availableItems.Where(i => i.Item.HasRelic);
+
+					if (this.HighlightFilter.HavingCharm)
+						availableItems = availableItems.Where(i => i.Item.HasCharm);
+
+					if (this.HighlightFilter.IsSetItem)
+						availableItems = availableItems.Where(i => i.FriendlyNames.ItemSet != null);
 				}
 
 				this.HighlightedItems.AddRange(availableItems.Select(i => i.Item));

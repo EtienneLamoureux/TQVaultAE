@@ -229,7 +229,7 @@ namespace TQVaultAE.GUI
 			string[] vaults = GamePathResolver.GetVaultList();
 
 			// Make sure we have something to add.
-			if (vaults != null && vaults.Length > 0)
+			if (vaults.Length > 0)
 			{
 				// Put Main Vault at the top of the list only if it exists.
 				if (Array.IndexOf(vaults, VaultService.MAINVAULT) != -1)

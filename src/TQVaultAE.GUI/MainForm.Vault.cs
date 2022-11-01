@@ -89,7 +89,7 @@ public partial class MainForm
 		if (this.secondaryVaultListComboBox.SelectedItem == null || this.secondaryVaultListComboBox.SelectedItem.ToString() != VaultService.MAINVAULT)
 			this.vaultListComboBox.Items.Add(VaultService.MAINVAULT);
 
-		if ((vaults?.Length ?? 0) > 0)
+		if (vaults.Length > 0)
 		{
 			// now add everything EXCEPT for main vault
 			foreach (string vault in vaults)

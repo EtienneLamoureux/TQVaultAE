@@ -11,24 +11,26 @@ Works with all expansions!
 ## Features
 - **Infinite bank space**
 - [Powerful search](documentation/ADVANCEDSEARCH.md)
-- Cheats
+- Cheats 
     - Items
-        - [Extract relic/charm from items at no cost, keeping both](documentation/AFFIXES.md#RelicRemoval)
-        - [Modify the relic/charm/artefact completion bonus](documentation/AFFIXES.md#RelicCompletion)
-        - [Complete relic/charm from a single piece](documentation/AFFIXES.md#RelicCompleteStack)
-        - [Craft an artifact from its recipe](documentation/AFFIXES.md#Formula)
-        - [Change item seed](documentation/AFFIXES.md#Seed)
-        - [Create missing set pieces](documentation/AFFIXES.md#MissingSetPiece)
-        - [Craft custom items](/documentation/FORGE.md)
-        - [Change items affixes](documentation/AFFIXES.md)
+        - [Extract relic/charm from items at no cost, keeping both](documentation/AFFIXES.md#relics-removal)
+        - [Modify the relic/charm/artefact completion bonus](documentation/AFFIXES.md#relic-and-charm-completion-bonus-change)
+        - [Complete relic/charm from a single piece](documentation/AFFIXES.md#relic-and-charm-completion)
+        - [Craft an artifact from its recipe](documentation/AFFIXES.md#artefact-creation)
+        - [Change item seed](documentation/AFFIXES.md#item-seed-change)
+        - [Create missing set pieces](documentation/AFFIXES.md#create-missing-set-pieces)
+        - [Craft custom items](documentation/FORGE.md)
+        - [Change items affixes](documentation/AFFIXES.md#prefix-change)
         - Duplicate any item
     - Characters
         - Redisribute attribute points
         - Unlock difficulties
         - Level up
+- [Support of Titan Quest 2006](documentation/TQORIGINAL.md)
 - QOL
+    - [Cloud saving](documentation/GITBACKUP.md)
     - Bulk item transfer (<kbd>CTRL</kbd>+click, right-click)
-    - [Highlight items](/documentation/HIGHLIGHT.md)
+    - [Highlight items](documentation/HIGHLIGHT.md)
     - Combine stacks (potions, relics and charms) by dropping them onto each other
     - Split potion stacks apart
     - Keyboard shortcuts
@@ -46,6 +48,7 @@ Works with all expansions!
         - <kbd>&#8595;</kbd> : Moves currently hightlighted item(s) to stash panel
         - <kbd>CTRL</kbd>+click : Activate multi selection
         - <kbd>SHIFT</kbd>+drag : Activate mouse lasso for multi selection
+- [Character management](documentation/CHARMANAGE.md)
 - Character backups
     - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
 - External tools
@@ -92,15 +95,7 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 
 **Q. How to enable/disable the cheats (character edition, item edition, item copy)?**
 
-*A1. __Easy way__:*
-- There is a dedicated checkbox in the tool settings window.
-
-*A2. __Hard way__, follow these steps:*
-1. *Navigate the the installation folder of TQVaultAE*
-2. *Open `UserConfig.xml` in a text editor (i.e. notepad, **not Microsoft Word**)*
-3. *Find the key `AllowCheats` and change the value to `1` or `0`*
-    - *`1` will allow you to toggle the cheats individually in the configuration menu*
-    - *`0` will disable the cheats completely and make it impossible to enable them in the configuration menu*
+*A. There is a dedicated checkbox in the tool settings window.*
 
 **Q. Can TQVaultAE use my old vault files?**
 
@@ -116,8 +111,8 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 ```xml
 <AutoDetectGamePath>1</AutoDetectGamePath>
 ...
-<TQITPath />
-<TQPath />
+<TQITPath></TQITPath>
+<TQPath></TQPath>
 ```
 
 *by (replace the path to the correct one for your computer)*
@@ -165,7 +160,7 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 <br />
 <img src="./documentation/TQVaultAE_CustomIcon.png" width="700" alt="Customize your vault" />
 
-**Q. How can adjust the volume?**
+**Q. How can i adjust the volume?**
 
 *A. You can enable/Disable the sounds in the tool settings window or adjust the volume via Windows Volume Mixer.*
 

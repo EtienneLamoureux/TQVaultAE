@@ -78,9 +78,9 @@ public partial class MainForm : Form
 	private void MainForm_Load(object sender, EventArgs e)
 	{
 		// Seek for all arc files
-		var arc = Directory.GetFiles(this.GamePathService.ImmortalThronePath, "*.arc", SearchOption.AllDirectories);
+		var arc = Directory.GetFiles(this.GamePathService.GamePathTQIT, "*.arc", SearchOption.AllDirectories);
 		ArcFileList = arc.ToDictionary(
-			k => k.Replace(this.GamePathService.ImmortalThronePath + '\\', string.Empty).ToRecordId()
+			k => k.Replace(this.GamePathService.GamePathTQIT + '\\', string.Empty).ToRecordId()
 		);
 	}
 
@@ -140,7 +140,7 @@ public partial class MainForm : Form
 	/// <summary>
 	/// Resolve database file
 	/// </summary>
-	string DataBasePath => Path.Combine(this.GamePathService.ImmortalThronePath, @"Database\database.arz");
+	string DataBasePath => Path.Combine(this.GamePathService.GamePathTQIT, @"Database\database.arz");
 
 	private readonly Dictionary<string, TQFileInfo> TQFileOpened = new();
 
@@ -270,7 +270,7 @@ public partial class MainForm : Form
 		openDialog.RestoreDirectory = true;
 
 		// Try to read the game path
-		string startPath = this.GamePathService.ImmortalThronePath;
+		string startPath = this.GamePathService.GamePathTQIT;
 
 		// If the registry fails then default to the save folder.
 		if (startPath.Length < 1)

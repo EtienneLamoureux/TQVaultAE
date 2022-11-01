@@ -18,6 +18,7 @@ namespace TQVaultAE.GUI
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.GUI.Components;
+	using TQVaultAE.GUI.Inputs;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Presentation;
 
@@ -122,14 +123,15 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private bool resizeCustomAllowed;
 
-		public IFontService FontService;
-		public IUIService UIService;
-		public IDatabase Database;
-		public IItemProvider ItemProvider;
-		public IPlayerCollectionProvider PlayerCollectionProvider;
-		public IGamePathService GamePathResolver;
-		public ISoundService SoundService;
-		public IServiceProvider ServiceProvider;
+		protected readonly IFontService FontService;
+		protected readonly IUIService UIService;
+		protected readonly IDatabase Database;
+		protected readonly IItemProvider ItemProvider;
+		protected readonly IPlayerCollectionProvider PlayerCollectionProvider;
+		protected readonly IGamePathService GamePathResolver;
+		protected readonly IGameFileService GameFileService;
+		protected readonly ISoundService SoundService;
+		internal readonly IServiceProvider ServiceProvider;
 
 
 #if DEBUG
@@ -150,6 +152,7 @@ namespace TQVaultAE.GUI
 				this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
 				this.PlayerCollectionProvider = this.ServiceProvider.GetService<IPlayerCollectionProvider>();
 				this.GamePathResolver = this.ServiceProvider.GetService<IGamePathService>();
+				this.GameFileService = this.ServiceProvider.GetService<IGameFileService>();
 				this.SoundService = this.ServiceProvider.GetService<ISoundService>();
 				this.titleFont = FontService.GetFontLight(9.5F);
 				this.Log = this.ServiceProvider.GetService<ILogger<VaultForm>>();
@@ -465,6 +468,15 @@ namespace TQVaultAE.GUI
 
 		#endregion
 
+		#region Capture Mouse Button Event Globally
+
+		protected internal event EventHandler<Point> GlobalMouseButtonLeft;
+		protected internal event EventHandler<Point> GlobalMouseButtonRight;
+		internal void RaiseGlobalMouseButtonLeft(Point pt) => GlobalMouseButtonLeft?.Invoke(this, pt);
+		internal void RaiseGlobalMouseButtonRight(Point pt) => GlobalMouseButtonRight?.Invoke(this, pt);
+
+		#endregion
+
 		/// <summary>
 		/// Processes a system event on the system menu.
 		/// </summary>
@@ -737,19 +749,21 @@ namespace TQVaultAE.GUI
 							// Copy the center 126 pixels from the top border which make up the background to the title text.
 							Rectangle srcRect = new Rectangle((Resources.BorderTop.Width / 2) - 61, 0, 126, Resources.BorderTop.Height);
 							Rectangle destRect = new Rectangle(
-								textRect.Left - Convert.ToInt32(6.0F * factor),
-								0,
-								textRect.Width + Convert.ToInt32(12.0F * factor),
-								topBorderRect.Height);
+								textRect.Left - Convert.ToInt32(6.0F * factor)
+								, 0
+								, textRect.Width + Convert.ToInt32(12.0F * factor)
+								, topBorderRect.Height
+							);
 							e.Graphics.DrawImage(Resources.BorderTop, destRect, srcRect, GraphicsUnit.Pixel);
 						}
 
 						TextRenderer.DrawText(
-							e.Graphics,
-							this.Text,
-							this.titleFont,
-							textRect,
-							this.TitleTextColor);
+							e.Graphics
+							, this.Text
+							, this.titleFont
+							, textRect
+							, this.TitleTextColor
+						);
 					}
 				}
 
@@ -983,5 +997,6 @@ namespace TQVaultAE.GUI
 			this.WindowState = FormWindowState.Normal;
 			ScaleForm(1.0f, false);
 		}
+
 	}
 }

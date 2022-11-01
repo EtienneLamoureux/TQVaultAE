@@ -37,12 +37,13 @@ namespace TQVaultAE.Data
 		private string[] otherEffects =
 		{
 			"characterBaseAttackSpeedTag",  // string text = TextTag(value)
-            "levelRequirement",             // integer level requirement text = Format(TextTag(MeetsRequirement), TextTag(LevelRequirement), (float) value)
-            "offensiveGlobalChance",        // float
-            "retaliationGlobalChance",      // float
-            "racialBonusPercentDamage",     // Added by VillageIdiot : float
-            "racialBonusAbsoluteDefense",   // Added by VillageIdiot : int
-            "itemSkillName"                 // Added by VillageIdiot : string text (dbr)
+			"levelRequirement",             // integer level requirement text = Format(TextTag(MeetsRequirement), TextTag(LevelRequirement), (float) value)
+			"offensiveGlobalChance",        // float
+			"retaliationGlobalChance",      // float
+			"racialBonusPercentDamage",     // Added by VillageIdiot : float
+			"racialBonusAbsoluteDefense",   // Added by VillageIdiot : int
+			"itemSkillName",                // Added by VillageIdiot : string text (dbr)
+			"skillName"						// Added by hgu : string text (dbr) for OneShot_Scroll_Eternal
         };
 
 		/// <summary>

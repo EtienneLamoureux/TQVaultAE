@@ -5,25 +5,13 @@ using System.Windows.Forms;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Helpers;
+using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Components;
 
 public partial class HighlightFilters : UserControl
 {
-	public class ItemType : ItemValue<string> { }
-	public class ItemRarity : ItemValue<Rarity> { }
-	public class ItemOrigin : ItemValue<GameDlc> { }
-
-	public class ItemValue<TValue>
-	{
-		public TValue Value { get; set; }
-		public string DisplayName { get; set; }
-		public override string ToString()
-			=> DisplayName;
-	}
-
-
 	private LinkLabel _link;
 	public SessionContext UserContext { get; internal set; }
 	public ITranslationService TranslationService { get; internal set; }
@@ -70,12 +58,14 @@ public partial class HighlightFilters : UserControl
 		scalingLabelMinDex.Text = TranslationService.TranslateXTag("Dexterity");
 		scalingLabelMaxInt.Text =
 		scalingLabelMinInt.Text = TranslationService.TranslateXTag("Intelligence");
+		scalingCheckBoxHavingCharm.Text = Resources.SearchHavingCharm;
+		scalingCheckBoxHavingRelic.Text = Resources.SearchHavingRelic;
+		scalingCheckBoxHavingPrefix.Text = Resources.SearchHavingPrefix;
+		scalingCheckBoxHavingSuffix.Text = Resources.SearchHavingSuffix;
+		scalingCheckBoxSetItem.Text = Resources.SearchSetItem;
 		buttonReset.Text = TranslationService.TranslateXTag("tagSkillReset");
 		buttonApply.Text = TranslationService.TranslateXTag("tagMenuButton07");
 
-		//scalingCheckedListBoxTypes.Height = scalingCheckedListBoxTypes.PreferredHeight;
-		//scalingCheckedListBoxRarity.Height = scalingCheckedListBoxRarity.PreferredHeight;
-		//scalingCheckedListBoxOrigin.Height = scalingCheckedListBoxOrigin.PreferredHeight;
 	}
 
 	private void InitOrigin()
@@ -281,6 +271,9 @@ public partial class HighlightFilters : UserControl
 		ResetNumeric();
 		scalingCheckBoxMax.Checked =
 		scalingCheckBoxMin.Checked =
+		scalingCheckBoxSetItem.Checked =
+		scalingCheckBoxHavingCharm.Checked =
+		scalingCheckBoxHavingRelic.Checked =
 		scalingCheckBoxHavingPrefix.Checked =
 		scalingCheckBoxHavingSuffix.Checked = false;
 
@@ -359,9 +352,12 @@ public partial class HighlightFilters : UserControl
 			Origin = scalingCheckedListBoxOrigin.CheckedItems.OfType<ItemOrigin>().Select(x => x.Value).ToList(),
 			HavingPrefix = scalingCheckBoxHavingPrefix.Checked,
 			HavingSuffix = scalingCheckBoxHavingSuffix.Checked,
+			HavingRelic = scalingCheckBoxHavingRelic.Checked,
+			HavingCharm = scalingCheckBoxHavingCharm.Checked,
+			IsSetItem = scalingCheckBoxSetItem.Checked,
 		};
 
-		if (filter.MaxRequierement || filter.MinRequierement || filter.HavingPrefix || filter.HavingSuffix
+		if (filter.MaxRequierement || filter.MinRequierement || filter.HavingPrefix || filter.HavingSuffix || filter.HavingRelic || filter.HavingCharm || filter.IsSetItem
 			|| filter.ClassItem.Any() || filter.Rarity.Any() || filter.Origin.Any())
 		{
 			UserContext.HighlightFilter = filter;

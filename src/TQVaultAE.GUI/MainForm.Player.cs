@@ -42,7 +42,7 @@ public partial class MainForm
 	private void CharacterComboBoxSelectedIndexChanged(object sender, EventArgs e)
 	{
 		// Hmm. We can load a character now!
-		var selected = this.characterComboBox.SelectedItem;
+		var selected = this.comboBoxCharacter.SelectedItem;
 		var selectedSave = selected as PlayerSave;
 		var selectedText = selected.ToString();
 
@@ -55,7 +55,7 @@ public partial class MainForm
 		}
 		else
 		{
-			this.LoadPlayerAndStash(selectedSave);
+			this.LoadPlayerAndStashes(selectedSave);
 		}
 		this.Refresh();
 	}
@@ -66,7 +66,7 @@ public partial class MainForm
 	private void GetPlayerList()
 	{
 		// Initialize the character combo-box
-		this.characterComboBox.Items.Clear();
+		this.comboBoxCharacter.Items.Clear();
 
 		var characters = this.playerService.GetPlayerSaveList();
 
@@ -80,16 +80,17 @@ public partial class MainForm
 			}
 		}
 
-		if (!(characters?.Any() ?? false))
-			this.characterComboBox.Items.Add(Resources.MainFormNoCharacters);
+		if (!characters.Any())
+			this.comboBoxCharacter.Items.Add(Resources.MainFormNoCharacters);
 		else
 		{
-			this.characterComboBox.Items.Add(Resources.MainFormSelectCharacter);
+			this.comboBoxCharacter.Items.Add(Resources.MainFormSelectCharacter);
 
-			this.characterComboBox.Items.AddRange(characters);
+			foreach (var chara in characters)
+				this.comboBoxCharacter.Items.Add(chara);
 		}
 
-		this.characterComboBox.SelectedIndex = 0;
+		this.comboBoxCharacter.SelectedIndex = 0;
 	}
 
 	// Called on FileSystemWatcher thread
@@ -103,7 +104,7 @@ public partial class MainForm
 		fw.EnableRaisingEvents = false;
 
 		// retrieve PlayerSave
-		var playerSave = this.characterComboBox.Items.OfType<PlayerSave>().FirstOrDefault(ps => ps.Folder == fw.Path);
+		var playerSave = this.comboBoxCharacter.Items.OfType<PlayerSave>().FirstOrDefault(ps => ps.Folder == fw.Path);
 
 	retryOnLock:
 		try
@@ -127,7 +128,7 @@ public partial class MainForm
 			this.Invoke((MethodInvoker)delegate
 			{
 				// if is current displayed character
-				if (this.characterComboBox.SelectedItem == playerSave)
+				if (this.comboBoxCharacter.SelectedItem == playerSave)
 				{
 					if (playerResult is not null)
 					{
@@ -215,18 +216,32 @@ public partial class MainForm
 	/// <param name="selectedSave">Player string from the drop down list.</param>
 	/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
 	/// <returns></returns>
-	private (LoadPlayerResult PlayerResult, LoadPlayerStashResult StashResult) LoadPlayerAndStash(PlayerSave selectedSave, bool fromFileWatcher = false)
+	private (LoadPlayerResult PlayerResult, LoadPlayerStashResult StashResult) LoadPlayerAndStashes(PlayerSave selectedSave, bool fromFileWatcher = false)
 	{
 		var result = LoadPlayer(selectedSave, fromFileWatcher);
 
 		var resultStash = this.LoadPlayerStash(selectedSave, fromFileWatcher);
+
+		if (selectedSave.IsImmortalThrone)
+		{
+			if (this.stashPanel.RelicVaultStash == null)
+				LoadRelicVaultStash();
+
+			if (this.stashPanel.TransferStash == null)
+				LoadTransferStash();
+		}
+		else // Titan Quest original
+		{
+			this.stashPanel.RelicVaultStash = null;
+			this.stashPanel.TransferStash = null;
+		}
 
 		return (result, resultStash);
 	}
 
 	private LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool fromFileWatcher)
 	{
-		var result = this.playerService.LoadPlayer(selectedSave, true, fromFileWatcher);
+		var result = this.playerService.LoadPlayer(selectedSave, fromFileWatcher);
 
 		// Get the player
 		try
@@ -243,6 +258,7 @@ public partial class MainForm
 				this.stashPanel.Player = result.Player;
 				this.stashPanel.CurrentBag = StashPanel.BAGID_EQUIPMENTPANEL;
 			}
+			this.comboBoxCharacter.RefreshItem(selectedSave);
 		}
 		catch (IOException exception)
 		{
@@ -250,7 +266,7 @@ public partial class MainForm
 			MessageBox.Show(msg, Resources.MainFormPlayerReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 			Log.LogError(exception, msg);
 			this.playerPanel.Player = null;
-			this.characterComboBox.SelectedIndex = 0;
+			this.comboBoxCharacter.SelectedIndex = 0;
 		}
 
 		return result;
@@ -259,6 +275,14 @@ public partial class MainForm
 	private LoadPlayerStashResult LoadPlayerStash(PlayerSave selectedSave, bool fromFileWatcher = false)
 	{
 		// Get the player's stash
+
+		// Only if it's IT, TQ doesn't have one
+		if (!selectedSave.IsImmortalThrone)
+		{
+			this.stashPanel.Stash = null;
+			return null;
+		}
+
 		var resultStash = this.stashService.LoadPlayerStash(selectedSave, fromFileWatcher);
 		try
 		{
@@ -323,7 +347,7 @@ public partial class MainForm
 	/// </summary>
 	private void DuplicateCharacter()
 	{
-		var ps = this.characterComboBox.SelectedItem as PlayerSave;
+		var ps = this.comboBoxCharacter.SelectedItem as PlayerSave;
 		if (ps is not null)
 		{
 
@@ -340,7 +364,7 @@ public partial class MainForm
 				goto askAgain;
 			}
 
-			var alreadyUsed = this.characterComboBox.Items.OfType<PlayerSave>().Any(ps => newname.Equals(ps.Name, StringComparison.OrdinalIgnoreCase));
+			var alreadyUsed = this.comboBoxCharacter.Items.OfType<PlayerSave>().Any(ps => newname.Equals(ps.Name, StringComparison.OrdinalIgnoreCase));
 			if (alreadyUsed)
 			{
 				MessageBox.Show(Resources.DuplicateCharacter_NewNameAlreadyUsed, Resources.DuplicateCharacter_ModalTitle, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
@@ -351,7 +375,7 @@ public partial class MainForm
 			try
 			{
 				// Duplicate File
-				newFolder = this.GamePathResolver.DuplicateCharacterFiles(ps.Folder, newname);
+				newFolder = this.GameFileService.DuplicateCharacterFiles(ps.Folder, newname);
 				this.playerService.AlterNameInPlayerFileSave(newname, newFolder);
 			}
 			catch (Exception ex)

@@ -8,7 +8,16 @@ public partial class MainForm
 {
 	private ForgePanel forgePanel;
 
-	private (bool configureButton, bool showVaulButton, bool searchButton, bool duplicateButton, bool saveButton, bool playerPanel, bool stashPanel, bool secondaryVaultPanel, bool flowLayoutPanelRightComboBox) lastVisibility;
+	private (
+		bool configureButton
+		, bool showVaulButton
+		, bool searchButton
+		, bool saveButton
+		, bool playerPanel
+		, bool stashPanel
+		, bool secondaryVaultPanel
+		, bool flowLayoutPanelRightComboBox
+	) lastVisibility;
 
 	private bool lastEnableDetailedTooltipView;
 
@@ -45,7 +54,6 @@ public partial class MainForm
 			configureButton: configureButton.Visible
 			, showVaulButton: showVaulButton.Visible
 			, searchButton: searchButton.Visible
-			, duplicateButton: duplicateButton.Visible
 			, saveButton: saveButton.Visible
 			, playerPanel: playerPanel.Visible
 			, stashPanel: stashPanel.Visible
@@ -57,7 +65,6 @@ public partial class MainForm
 		configureButton.Visible =
 		showVaulButton.Visible =
 		searchButton.Visible =
-		duplicateButton.Visible =
 		saveButton.Visible =
 
 		// Hide right panels
@@ -94,7 +101,6 @@ public partial class MainForm
 		configureButton.Visible = lastVisibility.configureButton;
 		showVaulButton.Visible = lastVisibility.showVaulButton;
 		searchButton.Visible = lastVisibility.searchButton;
-		duplicateButton.Visible = lastVisibility.duplicateButton;
 		saveButton.Visible = lastVisibility.saveButton;
 		flowLayoutPanelRightComboBox.Visible = lastVisibility.flowLayoutPanelRightComboBox;
 		playerPanel.Visible = lastVisibility.playerPanel;

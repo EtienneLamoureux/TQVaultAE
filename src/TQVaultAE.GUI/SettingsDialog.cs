@@ -13,6 +13,12 @@ using TQVaultAE.Presentation;
 using EnumsNET;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.GUI.Components;
+using TQVaultAE.GUI.Helpers;
+using System.Text.RegularExpressions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
+using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.GUI;
 
@@ -22,6 +28,8 @@ namespace TQVaultAE.GUI;
 /// </summary>
 internal partial class SettingsDialog : VaultForm, IScalingControl
 {
+	#region Properties & Fields
+
 	public string BaseFont { get; private set; }
 
 	/// <summary>
@@ -30,12 +38,12 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	private bool loadLastVault;
 
 	/// <summary>
-	/// Indicates that the <see cref="Config.Settings.EnableTQVaultSounds"/> setting has been changed
+	/// Indicates that the <see cref="Config.UserSettings.EnableTQVaultSounds"/> setting has been changed
 	/// </summary>
 	public bool enableTQVaultSounds;
 
 	/// <summary>
-	/// Indicates that the <see cref="Config.Settings.EnableItemRequirementRestriction"/> setting has been changed
+	/// Indicates that the <see cref="Config.UserSettings.EnableItemRequirementRestriction"/> setting has been changed
 	/// </summary>
 	public bool enableItemRequirementRestriction;
 
@@ -60,7 +68,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	private bool allowItemEdit;
 
 	/// <summary>
-	/// Indicates that the <see cref="Config.Settings.EnableEpicLegendaryAffixes"/> setting has been changed
+	/// Indicates that the <see cref="Config.UserSettings.EnableEpicLegendaryAffixes"/> setting has been changed
 	/// </summary>
 	public bool EnableEpicLegendaryAffixes;
 
@@ -165,7 +173,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	public bool ItemBGColorOpacityChanged { get; private set; }
 
 	/// <summary>
-	/// Indicates that the <see cref="Config.Settings.EnableItemRequirementRestriction"/> setting has been changed
+	/// Indicates that the <see cref="Config.UserSettings.EnableItemRequirementRestriction"/> setting has been changed
 	/// </summary>
 	public bool EnableItemRequirementRestrictionChanged { get; private set; }
 
@@ -178,8 +186,9 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	/// Enale the hot reload feature
 	/// </summary>
 	private bool enableHotReload;
+
 	/// <summary>
-	/// Indicates that the <see cref="Config.Settings.EnableHotReload"/> setting has been changed
+	/// Indicates that the <see cref="Config.UserSettings.EnableHotReload"/> setting has been changed
 	/// </summary>
 	public bool EnableHotReloadChanged { get; private set; }
 
@@ -200,9 +209,78 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	public bool CustomMapsChanged { get; private set; }
 
 	/// <summary>
-	/// Indicates that the <see cref="Config.Settings.EnableTQVaultSounds"/> setting has been changed
+	/// Indicates that the <see cref="Config.UserSettings.EnableTQVaultSounds"/> setting has been changed
 	/// </summary>
 	public bool EnableTQVaultSoundsChanged { get; private set; }
+
+	/// <summary>
+	/// Disable auto stacking last value
+	/// </summary>
+	private bool disableAutoStacking;
+
+	/// <summary>
+	/// Indicates that the <see cref="Config.UserSettings.DisableAutoStacking"/> setting has been changed
+	/// </summary>
+	public bool DisableAutoStackingChanged { get; private set; }
+
+	/// <summary>
+	/// AllowCheats last value
+	/// </summary>
+	private bool allowCheats;
+	/// <summary>
+	/// Indicates that the <see cref="Config.UserSettings.AllowCheats"/> setting has been changed
+	/// </summary>
+	public bool AllowCheatsChanged { get; private set; }
+
+	/// <summary>
+	/// enableGitBackup last value
+	/// </summary>
+	private bool enableGitBackup;
+	/// <summary>
+	/// Indicates that the <see cref="Config.UserSettings.GitBackupEnabled"/> setting has been changed
+	/// </summary>
+	public bool GitBackupEnabledChanged { get; private set; }
+
+	/// <summary>
+	/// gitBackupRepository last value
+	/// </summary>
+	private string gitBackupRepository;
+	/// <summary>
+	/// Indicates that the <see cref="Config.UserSettings.GitBackupRepository"/> setting has been changed
+	/// </summary>
+	public bool GitBackupRepositoryChanged { get; private set; }
+
+	/// <summary>
+	/// disableLegacyBackup last value
+	/// </summary>
+	private bool disableLegacyBackup;
+	/// <summary>
+	/// Indicates that the <see cref="Config.UserSettings.DisableLegacyBackup"/> setting has been changed
+	/// </summary>
+	public bool DisableLegacyBackupChanged { get; private set; }
+
+	/// <summary>
+	/// enableBackupPlayerSaves last value
+	/// </summary>
+	private bool enableBackupPlayerSaves;
+
+	/// <summary>
+	/// Indicates that the <see cref="Config.UserSettings.GitBackupPlayerSavesEnabled"/> setting has been changed
+	/// </summary>
+	public bool EnableBackupPlayerSavesChanged { get; private set; }
+
+	/// <summary>
+	/// enableOriginalTQSupport last value
+	/// </summary>
+	private bool enableOriginalTQSupport;
+	/// <summary>
+	/// Indicates that the <see cref="Config.UserSettings.EnableOriginalTQSupport"/> setting has been changed
+	/// </summary>
+	public bool EnableOriginalTQSupportChanged { get; private set; }
+
+	private readonly ILogger<SettingsDialog> Log;
+
+	#endregion
 
 	/// <summary>
 	/// Initializes a new instance of the SettingsDialog class.
@@ -211,16 +289,32 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	{
 		this.Owner = instance;
 
+		this.Log = instance.ServiceProvider.GetService<ILogger<SettingsDialog>>();
+
 		this.InitializeComponent();
 
+		this.SuspendLayout();
+
+		//this.ShowResizeBorders = false;
+		//this.NormalizeBox = false;
+		//this.DrawCustomBorder = true;
+		//this.ResizeCustomAllowed = false;
+		//this.ScaleOnResize = false;
+
+		this.linkLabelTQOriginalSupport.LinkColor = TQColor.Aqua.Color();
+
 		#region Apply custom font
+
+		var font12 = FontService.GetFontLight(12F);
+		var font1125 = FontService.GetFontLight(11.25F);
 
 		this.cancelButton.Font =
 		this.okayButton.Font =
 		this.resetButton.Font =
 		this.vaultPathBrowseButton.Font =
 		this.titanQuestPathBrowseButton.Font =
-		this.immortalThronePathBrowseButton.Font = FontService.GetFontLight(12F);
+		this.immortalThronePathBrowseButton.Font = font12;
+
 
 		this.hotReloadCheckBox.Font =
 		this.scalingCheckBoxEnableSounds.Font =
@@ -254,8 +348,12 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.scalingLabelCSVDelim.Font =
 		this.scalingComboBoxCSVDelim.Font =
 		this.scalingCheckBoxEnableEpicLegendaryAffixes.Font =
-			FontService.GetFontLight(11.25F);
-		this.Font = FontService.GetFontLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
+		this.scalingCheckBoxDisableAutoStacking.Font = font1125;
+
+		this.checkGroupBoxGitBackup.ProcessAllControls((ctr) => ctr.Font = font1125);
+		this.checkGroupBoxOriginalTQSupport.ProcessAllControls((ctr) => ctr.Font = font1125);
+
+		this.Font = font1125;
 
 		#endregion
 
@@ -302,12 +400,24 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.scalingCheckBoxEnableEpicLegendaryAffixes.Text = Resources.SettingsEnableEpicLegendaryAffixes;
 		this.toolTip.SetToolTip(this.scalingCheckBoxEnableEpicLegendaryAffixes, Resources.SettingsEnableEpicLegendaryAffixesTT);
 
+		this.scalingCheckBoxDisableAutoStacking.Text = Resources.SettingsDisableAutoStacking;
+		this.toolTip.SetToolTip(this.scalingCheckBoxDisableAutoStacking, Resources.SettingsDisableAutoStackingTT);
+
+		this.checkGroupBoxAllowCheats.Text = Resources.SettingsAllowCheats;
+		this.scalingCheckBoxDisableLegacyBackup.Text = Resources.SettingsDisableLegacyBackup;
+		this.toolTip.SetToolTip(this.scalingCheckBoxDisableLegacyBackup, Resources.SettingsDisableLegacyBackupTT);
+		this.scalingLabelGitRepository.Text = Resources.SettingsGitRepositoryUrl;
+
+		this.scalingCheckBoxBackupPlayerSaves.Text = Resources.SettingsBackupPlayerSaves;
+		this.toolTip.SetToolTip(this.scalingCheckBoxBackupPlayerSaves, Resources.SettingsBackupPlayerSavesTT);
+
+		this.checkGroupBoxOriginalTQSupport.Text = Resources.SettingsOriginalTQSupport;
+		this.toolTip.SetToolTip(this.checkGroupBoxOriginalTQSupport, Resources.SettingsOriginalTQSupportTT);
+		this.linkLabelTQOriginalSupport.Text = Resources.SettingsHowToPlay;
+
 		this.cancelButton.Text = Resources.GlobalCancel;
 		this.okayButton.Text = Resources.GlobalOK;
 		this.Text = Resources.SettingsTitle;
-
-		//this.NormalizeBox = false;
-		this.DrawCustomBorder = true;
 
 		this.mapListComboBox.Items.Clear();
 
@@ -316,12 +426,8 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		if (maps?.Any() ?? false)
 			this.mapListComboBox.Items.AddRange(maps);
 
-		if (!Config.UserSettings.Default.AllowCheats)
-		{
-			this.allowItemEditCheckBox.Visible = false;
-			this.allowItemCopyCheckBox.Visible = false;
-			this.characterEditCheckBox.Visible = false;
-		}
+		this.ResumeLayout(false);
+		this.PerformLayout();
 	}
 
 	/// <summary>
@@ -431,14 +537,21 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.enableHotReload = Config.UserSettings.Default.EnableHotReload;
 		this.enableTQVaultSounds = Config.UserSettings.Default.EnableTQVaultSounds;
 		this.EnableEpicLegendaryAffixes = Config.UserSettings.Default.EnableEpicLegendaryAffixes;
+		this.disableAutoStacking = Config.UserSettings.Default.DisableAutoStacking;
+		this.allowCheats = Config.UserSettings.Default.AllowCheats;
+		this.enableGitBackup = Config.UserSettings.Default.GitBackupEnabled;
+		this.disableLegacyBackup = Config.UserSettings.Default.DisableLegacyBackup;
+		this.gitBackupRepository = Config.UserSettings.Default.GitBackupRepository;
+		this.enableBackupPlayerSaves = Config.UserSettings.Default.GitBackupPlayerSavesEnabled;
+		this.enableOriginalTQSupport = Config.UserSettings.Default.EnableOriginalTQSupport;
 
 		// Force English since there was some issue with getting the proper language setting.
 		var gl = Database.GameLanguage;
 		this.titanQuestLanguage = gl == null ? "English" : gl;
 
 		this.detectGamePath = Config.UserSettings.Default.AutoDetectGamePath;
-		this.titanQuestPath = GamePathResolver.TQPath;
-		this.immortalThronePath = GamePathResolver.ImmortalThronePath;
+		this.titanQuestPath = GamePathResolver.GamePathTQ;
+		this.immortalThronePath = GamePathResolver.GamePathTQIT;
 		this.enableMods = Config.UserSettings.Default.ModEnabled;
 		this.customMap = Config.UserSettings.Default.CustomMap;
 		this.loadAllFiles = Config.UserSettings.Default.LoadAllFiles;
@@ -462,6 +575,8 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		// Check to see that we can update things
 		if (!this.settingsLoaded)
 			return;
+
+		this.SuspendLayout();
 
 		// Build language combo box
 		this.languageComboBox.Items.Clear();
@@ -502,6 +617,14 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.hotReloadCheckBox.Checked = this.enableHotReload;
 		this.scalingCheckBoxEnableSounds.Checked = this.enableTQVaultSounds;
 		this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked = this.EnableEpicLegendaryAffixes;
+		this.scalingCheckBoxDisableAutoStacking.Checked = this.disableAutoStacking;
+		this.checkGroupBoxAllowCheats.Checked = this.allowCheats;
+		this.checkGroupBoxGitBackup.Checked = this.enableGitBackup;
+		this.scalingCheckBoxDisableLegacyBackup.Checked = this.disableLegacyBackup;
+		this.scalingTextBoxGitRepository.Text = this.gitBackupRepository;
+		this.scalingCheckBoxBackupPlayerSaves.Checked = this.enableBackupPlayerSaves;
+		this.checkGroupBoxOriginalTQSupport.Checked = this.enableOriginalTQSupport;
+
 
 		this.enableCustomMapsCheckBox.Checked = this.enableMods;
 
@@ -544,7 +667,12 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.scalingComboBoxCSVDelim.SelectedItem = listItemDelim
 			.Where(i => i.ComboValue.ToString() == Config.UserSettings.Default.CSVDelimiter)
 			.FirstOrDefault() ?? listItemDelim.First();
+
+		this.ResumeLayout(false);
+		this.PerformLayout();
 	}
+
+	const string gitUrlRegex = @"((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?";
 
 	/// <summary>
 	/// Handler for clicking the OK button
@@ -553,6 +681,17 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	/// <param name="e">EventArgs data</param>
 	private void OkayButtonClick(object sender, EventArgs e)
 	{
+		// Validation
+		if (enableGitBackup)
+		{
+			if (string.IsNullOrEmpty(gitBackupRepository) || !Regex.IsMatch(gitBackupRepository, gitUrlRegex))
+			{
+				this.UIService.ShowError("You must enter a valid Git Url.", Buttons: Domain.Contracts.Services.ShowMessageButtons.OK);
+				this.DialogResult = DialogResult.None;
+				return;
+			}
+		}
+
 		if (this.ConfigurationChanged)
 		{
 			Config.UserSettings.Default.SkipTitle = this.skipTitle;
@@ -578,6 +717,13 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 			Config.UserSettings.Default.EnableItemRequirementRestriction = this.enableItemRequirementRestriction;
 			Config.UserSettings.Default.EnableHotReload = this.enableHotReload;
 			Config.UserSettings.Default.EnableTQVaultSounds = this.enableTQVaultSounds;
+			Config.UserSettings.Default.DisableAutoStacking = this.disableAutoStacking;
+			Config.UserSettings.Default.AllowCheats = this.allowCheats;
+			Config.UserSettings.Default.GitBackupEnabled = this.enableGitBackup;
+			Config.UserSettings.Default.DisableLegacyBackup = this.disableLegacyBackup;
+			Config.UserSettings.Default.GitBackupRepository = this.gitBackupRepository;
+			Config.UserSettings.Default.GitBackupPlayerSavesEnabled = this.enableBackupPlayerSaves;
+			Config.UserSettings.Default.EnableOriginalTQSupport = this.enableOriginalTQSupport;
 
 			Config.UserSettings.Default.EnableEpicLegendaryAffixes =
 				this.scalingCheckBoxEnableEpicLegendaryAffixes.Enabled && this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked;
@@ -585,6 +731,8 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 			var delim = (ComboBoxItem<CsvDelimiter, char>)this.scalingComboBoxCSVDelim.SelectedItem;
 			Config.UserSettings.Default.CSVDelimiter = delim.ComboValue.ToString();
 		}
+
+		this.DialogResult = DialogResult.OK;
 	}
 
 	/// <summary>
@@ -611,6 +759,7 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 				this.ConfigurationChanged = true;
 			}
 
+			this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked =
 			this.scalingCheckBoxEnableEpicLegendaryAffixes.Enabled = false;
 		}
 
@@ -1081,5 +1230,144 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	private void scalingComboBoxCSVDelim_SelectedIndexChanged(object sender, EventArgs e)
 	{
 		this.ConfigurationChanged = true;
+	}
+
+	private void scalingCheckBoxDisableAutoStacking_CheckedChanged(object sender, EventArgs e)
+	{
+
+		if (this.scalingCheckBoxDisableAutoStacking.Checked)
+		{
+			if (!this.disableAutoStacking)
+				this.disableAutoStacking = this.ConfigurationChanged = this.DisableAutoStackingChanged = true;
+			return;
+		}
+
+		if (this.disableAutoStacking)
+		{
+			this.disableAutoStacking = false;
+			this.ConfigurationChanged = this.DisableAutoStackingChanged = true;
+		}
+	}
+
+	private void SettingsDialog_Shown(object sender, EventArgs e)
+	{
+		//Adjust width to inner table
+		this.Width = this.bufferedTableLayoutPanelSkeleton.Location.X + this.bufferedTableLayoutPanelSkeleton.Width + this.Padding.Right + 5;
+	}
+
+	private void checkGroupBoxCheats_CheckedChanged(object sender, EventArgs e)
+	{
+
+		if (this.checkGroupBoxAllowCheats.Checked)
+		{
+			if (!this.allowCheats)
+				this.allowCheats = this.ConfigurationChanged = this.AllowCheatsChanged = true;
+
+			return;
+		}
+
+		// Unchecked
+		if (this.allowCheats)
+		{
+			this.allowCheats = false;
+			this.ConfigurationChanged = this.AllowCheatsChanged = true;
+		}
+
+		// Adjust content
+		this.characterEditCheckBox.Checked =
+		this.allowItemEditCheckBox.Checked =
+		this.allowItemCopyCheckBox.Checked = false;
+		//this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked = false;// Triggered by allowItemEditCheckBox
+	}
+
+	private void checkGroupBoxGitBackup_CheckedChanged(object sender, EventArgs e)
+	{
+		if (checkGroupBoxGitBackup.Checked)
+		{
+			if (!this.enableGitBackup)
+				this.enableGitBackup = this.ConfigurationChanged = this.UISettingChanged = this.GitBackupEnabledChanged = true;
+			return;
+		}
+
+		// Unchecked
+		if (this.enableGitBackup)
+		{
+			this.enableGitBackup = false;
+			this.ConfigurationChanged = this.UISettingChanged = this.GitBackupEnabledChanged = true;
+		}
+
+		this.scalingCheckBoxDisableLegacyBackup.Checked = false;// Restore legacy backup
+	}
+
+	private void scalingTextBoxGitRepository_TextChanged(object sender, EventArgs e)
+	{
+		// Changed
+		if (this.gitBackupRepository != scalingTextBoxGitRepository.Text)
+		{
+			this.gitBackupRepository = scalingTextBoxGitRepository.Text;
+			this.ConfigurationChanged = this.UISettingChanged = this.GitBackupRepositoryChanged = true;
+		}
+	}
+
+	private void scalingCheckBoxDisableLegacyBackup_CheckedChanged(object sender, EventArgs e)
+	{
+
+		if (scalingCheckBoxDisableLegacyBackup.Checked)
+		{
+			if (!this.disableLegacyBackup)
+				this.disableLegacyBackup = this.ConfigurationChanged = this.UISettingChanged = this.DisableLegacyBackupChanged = true;
+			return;
+		}
+
+		// Unchecked
+		if (this.disableLegacyBackup)
+		{
+			this.disableLegacyBackup = false;
+			this.ConfigurationChanged = this.UISettingChanged = this.DisableLegacyBackupChanged = true;
+		}
+	}
+
+	private void scalingCheckBoxBackupPlayerSaves_CheckedChanged(object sender, EventArgs e)
+	{
+		if (scalingCheckBoxBackupPlayerSaves.Checked)
+		{
+			if (!this.enableBackupPlayerSaves)
+				this.enableBackupPlayerSaves = this.ConfigurationChanged = this.UISettingChanged = this.EnableBackupPlayerSavesChanged = true;
+			return;
+		}
+
+		// Unchecked
+		if (this.enableBackupPlayerSaves)
+		{
+			this.enableBackupPlayerSaves = false;
+			this.ConfigurationChanged = this.UISettingChanged = this.EnableBackupPlayerSavesChanged = true;
+		}
+	}
+
+	private void linkLabelTQOriginalSupport_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+	{
+		ProcessStartInfo psInfo = new ProcessStartInfo
+		{
+			FileName = Config.Settings.Default.TQOriginalHowtoUrl,
+			UseShellExecute = true
+		};
+		Process.Start(psInfo);
+	}
+
+	private void checkGroupBoxOriginalTQSupport_CheckedChanged(object sender, EventArgs e)
+	{
+		if (checkGroupBoxOriginalTQSupport.Checked)
+		{
+			if (!this.enableOriginalTQSupport)
+				this.enableOriginalTQSupport = this.ConfigurationChanged = this.UISettingChanged = this.EnableOriginalTQSupportChanged = true;
+			return;
+		}
+
+		// Unchecked
+		if (this.enableOriginalTQSupport)
+		{
+			this.enableOriginalTQSupport = false;
+			this.ConfigurationChanged = this.UISettingChanged = this.EnableOriginalTQSupportChanged = true;
+		}
 	}
 }

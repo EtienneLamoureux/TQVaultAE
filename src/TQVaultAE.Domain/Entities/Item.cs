@@ -181,7 +181,7 @@ public class Item
 		{
 			// The "Power of Nerthus" relic is a special quest-reward relic with only 1 shard (it is always complete). 
 			// Since its database var1 value is 0, we hard-set it to 1.
-			if (IsRelic && var1 == 0)
+			if (IsRelicOrCharm && var1 == 0)
 				return 1;
 
 			return var1;
@@ -295,36 +295,36 @@ public class Item
 	/// Gets a value indicating whether or not the item comes from Immortal Throne expansion pack.
 	/// </summary>
 	public bool IsImmortalThrone
-		=> (this.BaseItemId.Normalized.IndexOf("XPACK\\") >= 0
-		|| this.prefixID != null && this.prefixID.Normalized.IndexOf("XPACK\\") >= 0
-		|| this.suffixID != null && this.suffixID.Normalized.IndexOf("XPACK\\") >= 0)
-		&& !IsRagnarok && !IsAtlantis && !IsEmbers;
+		=> (this.BaseItemId.Dlc == GameDlc.ImmortalThrone
+		|| (this.prefixID?.Dlc.Equals(GameDlc.ImmortalThrone) ?? false)
+		|| (this.suffixID?.Dlc.Equals(GameDlc.ImmortalThrone) ?? false)
+		) && !IsRagnarok && !IsAtlantis && !IsEmbers;
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Ragnarok DLC.
 	/// </summary>
 	public bool IsRagnarok
-		=> (this.BaseItemId.Normalized.IndexOf("XPACK2\\") >= 0
-		|| this.prefixID != null && this.prefixID.Normalized.IndexOf("XPACK2\\") >= 0
-		|| this.suffixID != null && this.suffixID.Normalized.IndexOf("XPACK2\\") >= 0)
-		&& !IsAtlantis && !IsEmbers;
+		=> (this.BaseItemId.Dlc == GameDlc.Ragnarok
+		|| (this.prefixID?.Dlc.Equals(GameDlc.Ragnarok) ?? false)
+		|| (this.suffixID?.Dlc.Equals(GameDlc.Ragnarok) ?? false)
+		) && !IsAtlantis && !IsEmbers;
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Atlantis DLC.
 	/// </summary>
 	public bool IsAtlantis
-		=> (this.BaseItemId.Normalized.IndexOf("XPACK3\\") >= 0
-		|| this.prefixID != null && this.prefixID.Normalized.IndexOf("XPACK3\\") >= 0
-		|| this.suffixID != null && this.suffixID.Normalized.IndexOf("XPACK3\\") >= 0)
-		&& !IsEmbers;
+		=> (this.BaseItemId.Dlc == GameDlc.Atlantis
+		|| (this.prefixID?.Dlc.Equals(GameDlc.Atlantis) ?? false)
+		|| (this.suffixID?.Dlc.Equals(GameDlc.Atlantis) ?? false)
+		) && !IsEmbers;
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Eternal Embers DLC.
 	/// </summary>
 	public bool IsEmbers
-		=> this.BaseItemId.Normalized.IndexOf("XPACK4\\") >= 0
-		|| this.prefixID != null && this.prefixID.Normalized.IndexOf("XPACK4\\") >= 0
-		|| this.suffixID != null && this.suffixID.Normalized.IndexOf("XPACK4\\") >= 0;
+		=> this.BaseItemId.Dlc == GameDlc.EternalEmbers
+		|| (this.prefixID?.Dlc.Equals(GameDlc.EternalEmbers) ?? false)
+		|| (this.suffixID?.Dlc.Equals(GameDlc.EternalEmbers) ?? false);
 
 
 	/// <summary>
@@ -336,9 +336,10 @@ public class Item
 		{
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_SCROLL, noCase);
-			else if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
-				&& (this.BaseItemId.Normalized.IndexOf("\\SCROLLS\\") >= 0))
-				return true;
+			else if (
+				(this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
+				&& this.BaseItemId.IsScroll
+			) return true;
 
 			return false;
 		}
@@ -352,7 +353,7 @@ public class Item
 		get
 		{
 			if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
-				&& (this.BaseItemId.Normalized.IndexOf("PARCHMENT") >= 0))
+				&& this.BaseItemId.IsParchment)
 				return true;
 
 			return false;
@@ -368,9 +369,10 @@ public class Item
 		{
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_FORMULA, noCase);
-			else if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
-				&& (this.BaseItemId.Normalized.IndexOf("\\ARCANEFORMULAE\\") >= 0))
-				return true;
+			else if (
+				(this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
+				&& this.BaseItemId.IsFormulae
+			) return true;
 
 			return false;
 		}
@@ -385,9 +387,10 @@ public class Item
 		{
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_ARTIFACT, noCase);
-			else if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
-				&& (!this.IsFormulae && this.BaseItemId.Normalized.IndexOf("\\ARTIFACTS\\") >= 0))
-				return true;
+			else if (
+				(this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
+				&& this.BaseItemId.IsArtifact
+			) return true;
 
 			return false;
 		}
@@ -482,9 +485,6 @@ public class Item
 		? this.baseItemInfo.ItemClass.StartsWith("WEAPON", noCase)
 		: false;
 
-	const string QUEST = "QUEST";
-	const string QUESTS = "QUESTS";
-
 	/// <summary>
 	/// Gets a value indicating whether the item is a quest item.
 	/// </summary>
@@ -494,16 +494,11 @@ public class Item
 		{
 			if (this.baseItemInfo != null)
 			{
-				if (this.baseItemInfo.ItemClassification.Equals(QUEST, noCase)
+				if (this.baseItemInfo.ItemClassification.Equals("QUEST", noCase)
 					|| this.baseItemInfo.ItemClass.Equals(ICLASS_QUESTITEM, noCase))
 					return true;
 			}
-			else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
-			{
-				if (this.BaseItemId.Normalized.IndexOf(QUEST) >= 0)
-					return true;
-			}
-			else if (this.BaseItemId.Normalized.IndexOf(QUESTS) >= 0)
+			else if (this.BaseItemId.IsQuestItem)
 				return true;
 
 			return false;
@@ -551,7 +546,7 @@ public class Item
 	{
 		get
 		{
-			if (this.prefixInfo != null && this.prefixInfo.ItemClassification.Equals("BROKEN", noCase))
+			if (this.prefixInfo?.ItemClassification.Equals("BROKEN", noCase) ?? false)
 				return ItemStyle.Broken;
 
 			if (this.IsArtifact)
@@ -566,7 +561,7 @@ public class Item
 			if (this.IsParchment)
 				return ItemStyle.Parchment;
 
-			if (this.IsRelic)
+			if (this.IsRelicOrCharm)
 				return ItemStyle.Relic;
 
 			if (this.IsPotion)
@@ -588,11 +583,9 @@ public class Item
 			}
 
 			// At this point baseItem indicates Common.  Let's check affixes
-			if (this.suffixInfo != null && this.suffixInfo.ItemClassification.Equals("RARE", noCase))
-				return ItemStyle.Rare;
-
-			if (this.prefixInfo != null && this.prefixInfo.ItemClassification.Equals("RARE", noCase))
-				return ItemStyle.Rare;
+			if ((this.suffixInfo?.ItemClassification.Equals("RARE", noCase) ?? false)
+				|| (this.prefixInfo?.ItemClassification.Equals("RARE", noCase) ?? false)
+			) return ItemStyle.Rare;
 
 			// Not rare.  If we have a suffix or prefix, then call it common, else mundane
 			if (this.suffixInfo != null || this.prefixInfo != null)
@@ -616,7 +609,7 @@ public class Item
 	/// <summary>
 	/// Gets a value indicating whether the item has a number attached.
 	/// </summary>
-	public bool HasNumber => this.DoesStack || (this.IsRelic && !this.IsRelicComplete);
+	public bool HasNumber => this.DoesStack || (this.IsRelicOrCharm && !this.IsRelicComplete);
 
 	/// <summary>
 	/// Gets or sets the number attached to the item.
@@ -628,7 +621,7 @@ public class Item
 			if (this.DoesStack)
 				return this.StackSize;
 
-			if (this.IsRelic)
+			if (this.IsRelicOrCharm)
 				return Math.Max(this.Var1, 1);
 
 			return 0;
@@ -640,7 +633,7 @@ public class Item
 			if (this.DoesStack)
 				this.StackSize = value;
 
-			else if (this.IsRelic)
+			else if (this.IsRelicOrCharm)
 			{
 				// Limit value to complete Relic level
 				if (value >= this.baseItemInfo.CompletedRelicLevel)
@@ -652,19 +645,49 @@ public class Item
 	}
 
 	/// <summary>
-	/// Gets a value indicating whether the item has an embedded relic.
+	/// Gets a value indicating whether the item has an embedded charm in first slot.
 	/// </summary>
-	public bool HasRelicSlot1 => !this.IsRelic && !RecordId.IsNullOrEmpty(this.relicID);
+	public bool HasCharmSlot1 => !this.IsRelicOrCharm && !RecordId.IsNullOrEmpty(this.relicID) && this.relicID.IsCharm;
 
 	/// <summary>
-	/// Gets a value indicating whether the item has a second embedded relic.
+	/// Gets a value indicating whether the item has an embedded charm in second slot.
 	/// </summary>
-	public bool HasRelicSlot2 => !this.IsRelic && !RecordId.IsNullOrEmpty(this.relic2ID);
+	public bool HasCharmSlot2 => !this.IsRelicOrCharm && !RecordId.IsNullOrEmpty(this.relic2ID) && this.relic2ID.IsCharm;
 
 	/// <summary>
-	/// Indicate that the item has an embedded relic.
+	/// Gets a value indicating whether the item has an embedded relic only in first slot.
 	/// </summary>
-	public bool HasRelic => HasRelicSlot1 | HasRelicSlot2;
+	public bool HasRelicSlot1 => !this.IsRelicOrCharm && !RecordId.IsNullOrEmpty(this.relicID) && this.relicID.IsRelic;
+
+	/// <summary>
+	/// Gets a value indicating whether the item has an embedded relic only in second slot.
+	/// </summary>
+	public bool HasRelicSlot2 => !this.IsRelicOrCharm && !RecordId.IsNullOrEmpty(this.relic2ID) && this.relic2ID.IsRelic;
+
+	/// <summary>
+	/// Gets a value indicating whether the item has an embedded relic or a charm.
+	/// </summary>
+	public bool HasRelicOrCharmSlot1 => HasCharmSlot1 || HasRelicSlot1;
+
+	/// <summary>
+	/// Gets a value indicating whether the item has a second embedded relic or a charm.
+	/// </summary>
+	public bool HasRelicOrCharmSlot2 => HasCharmSlot2 || HasRelicSlot2;
+
+	/// <summary>
+	/// Indicate that the item has an embedded relic or a charm.
+	/// </summary>
+	public bool HasRelicOrCharm => HasRelicOrCharmSlot1 || HasRelicOrCharmSlot2;
+
+	/// <summary>
+	/// Indicate that the item has an embedded relic in slot 1 or 2.
+	/// </summary>
+	public bool HasRelic => HasRelicSlot1 || HasRelicSlot2;
+
+	/// <summary>
+	/// Indicate that the item has an embedded charm in slot 1 or 2.
+	/// </summary>
+	public bool HasCharm => HasCharmSlot1 || HasCharmSlot2;
 
 	/// <summary>
 	/// Gets a value indicating whether the item is a potion.
@@ -674,29 +697,39 @@ public class Item
 		get
 		{
 			if (this.baseItemInfo != null)
-			{
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_POTIONHEALTH, noCase)
 					|| this.baseItemInfo.ItemClass.Equals(ICLASS_POTIONMANA, noCase)
 					|| this.baseItemInfo.ItemClass.Equals(ICLASS_SCROLL_ETERNAL, noCase); //AMS: New EE Potions (Mystical Potions)
-			}
 
-			return this.BaseItemId.Normalized.IndexOf("ONESHOT\\POTION") != -1;
+			return this.BaseItemId.IsPotion;
 		}
 	}
 
 	/// <summary>
 	/// Gets a value indicating whether the item is a charm and only a charm.
 	/// </summary>
-	public bool IsCharm
+	public bool IsCharmOnly
 	{
 		get
 		{
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_CHARM, noCase);
-			else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
-				return this.BaseItemId.Normalized.IndexOf("ANIMALRELICS") != -1;
-			else
-				return (this.BaseItemId.Normalized.IndexOf("\\CHARMS\\") != -1);
+
+			return this.BaseItemId.IsCharm;
+		}
+	}
+
+	/// <summary>
+	/// Gets a value indicating whether the item is a relic and only a relic.
+	/// </summary>
+	public bool IsRelicOnly
+	{
+		get
+		{
+			if (this.baseItemInfo != null)
+				return this.baseItemInfo.ItemClass.Equals(ICLASS_RELIC, noCase);
+
+			return this.BaseItemId.IsRelic;
 		}
 	}
 
@@ -709,10 +742,8 @@ public class Item
 		{
 			if (this.RelicInfo != null)
 				return this.RelicInfo.ItemClass.Equals(ICLASS_CHARM, noCase);
-			else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
-				return (this.RelicInfo?.ItemId.Normalized.IndexOf("ANIMALRELICS") ?? -1) != -1;
-			else
-				return (this.RelicInfo?.ItemId.Normalized.IndexOf("\\CHARMS\\") ?? -1) != -1;
+
+			return this.RelicInfo?.ItemId.IsCharm ?? false;
 		}
 	}
 
@@ -725,34 +756,23 @@ public class Item
 		{
 			if (this.Relic2Info != null)
 				return this.Relic2Info.ItemClass.Equals(ICLASS_CHARM, noCase);
-			else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
-				return (this.Relic2Info?.ItemId.Normalized.IndexOf("ANIMALRELICS") ?? -1) != -1;
-			else
-				return (this.Relic2Info?.ItemId.Normalized.IndexOf("\\CHARMS\\") ?? -1) != -1;
+
+			return this.Relic2Info?.ItemId.IsCharm ?? false;
 		}
 	}
 
 	/// <summary>
 	/// Gets a value indicating whether the item is a relic or a charm.
 	/// </summary>
-	public bool IsRelic
+	public bool IsRelicOrCharm
 	{
 		get
 		{
 			if (this.baseItemInfo != null)
-			{
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_RELIC, noCase)
 					|| this.baseItemInfo.ItemClass.Equals(ICLASS_CHARM, noCase);
-			}
-			else if (!this.IsImmortalThrone && !this.IsRagnarok && !this.IsAtlantis && !this.IsEmbers)
-				return this.BaseItemId.Normalized.IndexOf("RELICS") != -1;
-			else
-			{
-				return (
-					(this.BaseItemId.Normalized.IndexOf("\\RELICS\\") != -1)
-					|| (this.BaseItemId.Normalized.IndexOf("\\CHARMS\\") != -1)
-				);
-			}
+
+			return this.BaseItemId.IsRelic || this.BaseItemId.IsCharm;
 		}
 	}
 
@@ -1017,7 +1037,7 @@ public class Item
 	public static bool IsRelicAllowed(Item item, Item relicItem)
 	{
 		// relicItem a relic ?
-		if (!relicItem.IsRelic) throw new ArgumentException("Must be a relic or a charm!", nameof(relicItem));
+		if (!relicItem.IsRelicOrCharm) throw new ArgumentException("Must be a relic or a charm!", nameof(relicItem));
 
 		var itemGearType = item.GearType;
 
@@ -1064,7 +1084,7 @@ public class Item
 		types = GearType.Undefined;
 
 		// relicItem a relic ?
-		if (!relicItem.IsRelic) return false;
+		if (!relicItem.IsRelicOrCharm) return false;
 
 		return TryGetAllowedGearTypes(relicItem.BaseItemId, out types);
 	}
@@ -1096,9 +1116,9 @@ public class Item
 
 	#endregion
 
-	#region GameExtension
+	#region GameDlc
 
-	public GameDlc GameExtension
+	public GameDlc GameDlc
 	{
 		get
 		{
@@ -1110,15 +1130,15 @@ public class Item
 		}
 	}
 
-	public string GameExtensionCode
-		=> this.GameExtension.GetCode();
+	public string GameDlcCode
+		=> this.GameDlc.GetCode();
 
-	public string GameExtensionSuffix
+	public string GameDlcSuffix
 	{
 		get
 		{
 			string code;
-			if ((code = this.GameExtension.GetSuffix()) == string.Empty) return string.Empty;
+			if ((code = this.GameDlc.GetSuffix()) == string.Empty) return string.Empty;
 			return ItemStyle.Quest.TQColor().ColorTag() + code;
 		}
 	}
