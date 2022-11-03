@@ -93,9 +93,9 @@ namespace ArzExplorer
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle34 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle35 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle36 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -147,9 +147,9 @@ namespace ArzExplorer
             this.toolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonSearchPrev = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonSearchNext = new System.Windows.Forms.ToolStripButton();
             this.flowLayoutPanelPath = new System.Windows.Forms.FlowLayoutPanel();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.toolStripButtonSearchNext = new System.Windows.Forms.ToolStripButton();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxItem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerBrowser)).BeginInit();
@@ -224,7 +224,7 @@ namespace ArzExplorer
             this.previousToolStripMenuItem.Name = "previousToolStripMenuItem";
             this.previousToolStripMenuItem.ShortcutKeyDisplayString = "";
             this.previousToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.previousToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.previousToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.previousToolStripMenuItem.Text = "&Previous";
             this.previousToolStripMenuItem.Click += new System.EventHandler(this.previousToolStripMenuItem_Click);
             // 
@@ -232,7 +232,7 @@ namespace ArzExplorer
             // 
             this.nextToolStripMenuItem.Name = "nextToolStripMenuItem";
             this.nextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.nextToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.nextToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.nextToolStripMenuItem.Text = "&Next";
             this.nextToolStripMenuItem.Click += new System.EventHandler(this.nextToolStripMenuItem_Click);
             // 
@@ -360,7 +360,7 @@ namespace ArzExplorer
             // 
             this.capsToolStripMenuItem.CheckOnClick = true;
             this.capsToolStripMenuItem.Name = "capsToolStripMenuItem";
-            this.capsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.capsToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.capsToolStripMenuItem.Text = "&Caps";
             this.capsToolStripMenuItem.Click += new System.EventHandler(this.capsToolStripMenuItem_Click);
             // 
@@ -438,39 +438,40 @@ namespace ArzExplorer
             // dataGridViewDetails
             // 
             this.dataGridViewDetails.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            dataGridViewCellStyle34.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle34.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle34.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle34.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle34.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle34.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle34.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewDetails.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle34;
+            this.dataGridViewDetails.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewDetails.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridViewDetails.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewDetails.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Column1,
             this.Column2});
-            dataGridViewCellStyle35.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle35.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle35.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle35.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle35.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle35.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle35.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewDetails.DefaultCellStyle = dataGridViewCellStyle35;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewDetails.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridViewDetails.Dock = System.Windows.Forms.DockStyle.Right;
             this.dataGridViewDetails.Location = new System.Drawing.Point(79, 0);
             this.dataGridViewDetails.MultiSelect = false;
             this.dataGridViewDetails.Name = "dataGridViewDetails";
             this.dataGridViewDetails.ReadOnly = true;
-            dataGridViewCellStyle36.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle36.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle36.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle36.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle36.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle36.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle36.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewDetails.RowHeadersDefaultCellStyle = dataGridViewCellStyle36;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewDetails.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridViewDetails.RowHeadersVisible = false;
             this.dataGridViewDetails.Size = new System.Drawing.Size(451, 237);
             this.dataGridViewDetails.TabIndex = 15;
@@ -680,16 +681,6 @@ namespace ArzExplorer
             this.toolStripButtonSearchPrev.Text = "Search Prev";
             this.toolStripButtonSearchPrev.Click += new System.EventHandler(this.toolStripButtonSearchPrev_Click);
             // 
-            // flowLayoutPanelPath
-            // 
-            this.flowLayoutPanelPath.AutoSize = true;
-            this.flowLayoutPanelPath.Controls.Add(this.labelPath);
-            this.flowLayoutPanelPath.Controls.Add(this.textBoxPath);
-            this.flowLayoutPanelPath.Location = new System.Drawing.Point(3, 26);
-            this.flowLayoutPanelPath.Name = "flowLayoutPanelPath";
-            this.flowLayoutPanelPath.Size = new System.Drawing.Size(784, 26);
-            this.flowLayoutPanelPath.TabIndex = 0;
-            // 
             // toolStripButtonSearchNext
             // 
             this.toolStripButtonSearchNext.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -699,6 +690,16 @@ namespace ArzExplorer
             this.toolStripButtonSearchNext.Size = new System.Drawing.Size(23, 20);
             this.toolStripButtonSearchNext.Text = "Search Next";
             this.toolStripButtonSearchNext.Click += new System.EventHandler(this.toolStripButtonSearchNext_Click);
+            // 
+            // flowLayoutPanelPath
+            // 
+            this.flowLayoutPanelPath.AutoSize = true;
+            this.flowLayoutPanelPath.Controls.Add(this.labelPath);
+            this.flowLayoutPanelPath.Controls.Add(this.textBoxPath);
+            this.flowLayoutPanelPath.Location = new System.Drawing.Point(3, 26);
+            this.flowLayoutPanelPath.Name = "flowLayoutPanelPath";
+            this.flowLayoutPanelPath.Size = new System.Drawing.Size(784, 26);
+            this.flowLayoutPanelPath.TabIndex = 0;
             // 
             // MainForm
             // 

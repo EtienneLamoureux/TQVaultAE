@@ -474,99 +474,103 @@ public partial class MainForm : Form
 	{
 		// Display a wait cursor while the TreeNodes are being created.
 		Cursor.Current = Cursors.WaitCursor;
-
-		this.treeViewTOC.BeginUpdate();
-
-		RecordId[] dataRecords;
-
-		if (this.SelectedFile.FileType == CompressedFileType.ArzFile)
-			dataRecords = arzProv.GetKeyTable(this.SelectedFile.ARZFile);
-		else if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
-			dataRecords = arcProv.GetKeyTable(this.SelectedFile.ARCFile);
-		else
-			return;
-
-		// We failed so return.
-		if (dataRecords == null)
-			return;
-
-		TreeNode rootNode = new(), arcRootNode = null;
-		string arcPrefix = string.Empty;
-
-		if (dicoNodes.Any())
-			rootNode = dicoNodes[RecordId.Empty];// Get it back
-		else
-			dicoNodes.Add(RecordId.Empty, rootNode);// First time
-
-		if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
+		try
 		{
-			var tokens = this.SelectedFile.SourceFileId.TokensRaw;
+			this.treeViewTOC.BeginUpdate();
 
-			// Node Xpack
-			var arcPrefixXpack = tokens[tokens.Count - 2];
-			if (!arcPrefixXpack.StartsWith("XPACK", StringComparison.OrdinalIgnoreCase))
-				arcPrefixXpack = string.Empty;
+			RecordId[] dataRecords;
 
-			if (arcPrefixXpack != string.Empty)
-				GetRootNode(arcPrefixXpack, rootNode, out arcRootNode);
-
-			// Node File
-			arcPrefix = Path.GetFileNameWithoutExtension(tokens[tokens.Count - 1]);
-			if (arcPrefixXpack == string.Empty)
-				GetRootNode(arcPrefix, rootNode, out arcRootNode);
+			if (this.SelectedFile.FileType == CompressedFileType.ArzFile)
+				dataRecords = arzProv.GetKeyTable(this.SelectedFile.ARZFile);
+			else if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
+				dataRecords = arcProv.GetKeyTable(this.SelectedFile.ARCFile);
 			else
+				return;
+
+			// We failed so return.
+			if (dataRecords == null)
+				return;
+
+			TreeNode rootNode = new(), arcRootNode = null;
+			string arcPrefix = string.Empty;
+
+			if (dicoNodes.Any())
+				rootNode = dicoNodes[RecordId.Empty];// Get it back
+			else
+				dicoNodes.Add(RecordId.Empty, rootNode);// First time
+
+			if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
 			{
-				arcPrefix = arcPrefixXpack + '\\' + arcPrefix;
-				GetRootNode(arcPrefix, arcRootNode, out arcRootNode);
-			}
-		}
+				var tokens = this.SelectedFile.SourceFileId.TokensRaw;
 
-		for (int recIdx = 0; recIdx < dataRecords.Length; recIdx++)
-		{
-			RecordId recordID = arcPrefix == string.Empty ? dataRecords[recIdx] : Path.Combine(arcPrefix, dataRecords[recIdx].Raw);
+				// Node Xpack
+				var arcPrefixXpack = tokens[tokens.Count - 2];
+				if (!arcPrefixXpack.StartsWith("XPACK", StringComparison.OrdinalIgnoreCase))
+					arcPrefixXpack = string.Empty;
 
-			for (int tokIdx = 0; tokIdx < recordID.TokensRaw.Count; tokIdx++)
-			{
-				var token = recordID.TokensRaw[tokIdx];
-				var parent = recordID.TokensRaw.Take(tokIdx).JoinString("\\").ToRecordId();
-				var parentnode = dicoNodes[parent];
-				var currnodeKey = (parent.IsEmpty ? token : parent + '\\' + token).ToRecordId();
+				if (arcPrefixXpack != string.Empty)
+					GetRootNode(arcPrefixXpack, rootNode, out arcRootNode);
 
-				if (parentnode.Nodes.ContainsKey(currnodeKey))
-					continue;
+				// Node File
+				arcPrefix = Path.GetFileNameWithoutExtension(tokens[tokens.Count - 1]);
+				if (arcPrefixXpack == string.Empty)
+					GetRootNode(arcPrefix, rootNode, out arcRootNode);
 				else
 				{
-					var currentNode = new TreeNode()
-					{
-						Name = currnodeKey,
-						Text = token,
-						ToolTipText = this.SelectedFile.SourceFile
-					};
-					currentNode.Tag = new NodeTag
-					{
-						thisNode = currentNode,
-						File = this.SelectedFile,
-
-						Thread = recordID,
-						Key = currnodeKey,
-						RecIdx = recIdx,
-						TokIdx = tokIdx,
-
-						Text = token,
-					};
-					parentnode.Nodes.Add(currentNode);
-					dicoNodes.Add(currnodeKey, currentNode);
+					arcPrefix = arcPrefixXpack + '\\' + arcPrefix;
+					GetRootNode(arcPrefix, arcRootNode, out arcRootNode);
 				}
 			}
+
+			for (int recIdx = 0; recIdx < dataRecords.Length; recIdx++)
+			{
+				RecordId recordID = arcPrefix == string.Empty ? dataRecords[recIdx] : Path.Combine(arcPrefix, dataRecords[recIdx].Raw);
+
+				for (int tokIdx = 0; tokIdx < recordID.TokensRaw.Count; tokIdx++)
+				{
+					var token = recordID.TokensRaw[tokIdx];
+					var parent = recordID.TokensRaw.Take(tokIdx).JoinString("\\").ToRecordId();
+					var parentnode = dicoNodes[parent];
+					var currnodeKey = (parent.IsEmpty ? token : parent + '\\' + token).ToRecordId();
+
+					if (parentnode.Nodes.ContainsKey(currnodeKey))
+						continue;
+					else
+					{
+						var currentNode = new TreeNode()
+						{
+							Name = currnodeKey,
+							Text = token,
+							ToolTipText = this.SelectedFile.SourceFile
+						};
+						currentNode.Tag = new NodeTag
+						{
+							thisNode = currentNode,
+							File = this.SelectedFile,
+
+							Thread = recordID,
+							Key = currnodeKey,
+							RecIdx = recIdx,
+							TokIdx = tokIdx,
+
+							Text = token,
+						};
+						parentnode.Nodes.Add(currentNode);
+						dicoNodes.Add(currnodeKey, currentNode);
+					}
+				}
+			}
+
+			// Always add the newcomers
+			this.treeViewTOC.Nodes.Add(rootNode.Nodes[rootNode.Nodes.Count - 1]);
+
+			this.treeViewTOC.EndUpdate();
 		}
-
-		// Always add the newcomers
-		this.treeViewTOC.Nodes.Add(rootNode.Nodes[rootNode.Nodes.Count - 1]);
-
-		// Reset the cursor to the default for all controls.
-		Cursor.Current = Cursors.Default;
-
-		this.treeViewTOC.EndUpdate();
+		finally
+		{
+			// Reset the cursor to the default for all controls.
+			Cursor.Current = Cursors.Default;
+		}
 	}
 
 	void GetRootNode(string arcPrefix, TreeNode rootNode, out TreeNode arcRootNode)
@@ -760,10 +764,20 @@ public partial class MainForm : Form
 
 	private void textBoxPath_MouseDoubleClick(object sender, MouseEventArgs e)
 	{
+		CopyPath();
+	}
+
+	private void CopyPath()
+	{
 		Clipboard.SetText(this.textBoxPath.Text);
 	}
 
 	private void textBoxDetails_MouseDoubleClick(object sender, MouseEventArgs e)
+	{
+		CopyTXT();
+	}
+
+	private void CopyTXT()
 	{
 		Clipboard.SetText(this.textBoxDetails.Text);
 	}
@@ -811,6 +825,10 @@ public partial class MainForm : Form
 
 	private void dataGridViewDetails_CellClick(object sender, DataGridViewCellEventArgs e)
 	{
+		// IsHeader
+		if (e.RowIndex < 0 || e.ColumnIndex < 0)
+			return;
+
 		var cell = dataGridViewDetails.Rows[e.RowIndex].Cells[e.ColumnIndex];
 		if (cell.Style == PopulateGridView_hyperLinkCellStyle)
 		{
@@ -827,48 +845,52 @@ public partial class MainForm : Form
 		{
 			this.treeViewTOC.SelectedNode = node;
 			this.treeViewTOC.Focus();
+			return;
+		}
+
+		// auto load file
+
+		// Resolve file name
+		string xPackVersion, fileToken, fileName, dicoKey;
+		if (recordId.Normalized.StartsWith("XPACK"))
+		{
+			xPackVersion = recordId.TokensNormalized[0];
+			fileToken = recordId.TokensNormalized[1];
+			fileName = $"{fileToken}.ARC";
+			dicoKey = @$"RESOURCES\{xPackVersion}\{fileName}";
 		}
 		else
 		{
-			// auto load file
-
-			// Resolve file name
-			string xPackVersion, fileToken, fileName, dicoKey;
-			if (recordId.Normalized.StartsWith("XPACK"))
-			{
-				xPackVersion = recordId.TokensNormalized[0];
-				fileToken = recordId.TokensNormalized[1];
-				fileName = $"{fileToken}.ARC";
-				dicoKey = @$"RESOURCES\{xPackVersion}\{fileName}";
-			}
-			else
-			{
-				xPackVersion = string.Empty;
-				fileToken = recordId.TokensNormalized[0];
-				fileName = $"{fileToken}.ARC";
-				dicoKey = @$"RESOURCES\{fileName}";
-			}
-
-			if (ArcFileList.TryGetValue(dicoKey, out var fullpath))
-			{
-				// Add TOC to treeview
-				this.OpenFile(fullpath);
-
-				// Navigate
-				if (dicoNodes.TryGetValue(recordId, out var found))
-				{
-					this.treeViewTOC.SelectedNode = found;
-					this.treeViewTOC.Focus();
-				}
-				else
-				{
-					// Database orphan ?
-					this.toolStripStatusLabel.Text = @$"Unable to find ""{recordId}""";
-				}
-			}
+			xPackVersion = string.Empty;
+			fileToken = recordId.TokensNormalized[0];
+			fileName = $"{fileToken}.ARC";
+			dicoKey = @$"RESOURCES\{fileName}";
 		}
+
+		if (ArcFileList.TryGetValue(dicoKey, out var fullpath))
+		{
+			// Add TOC to treeview
+			this.OpenFile(fullpath);
+
+			// Navigate
+			if (dicoNodes.TryGetValue(recordId, out var found))
+			{
+				this.treeViewTOC.SelectedNode = found;
+				this.treeViewTOC.Focus();
+				return;
+			}
+
+			// Database orphan ?
+			this.toolStripStatusLabel.Text = @$"Unable to find ""{recordId}""";
+		}
+
 	}
 	private void toolStripButtonPrev_Click(object sender, EventArgs e)
+	{
+		GoPrev();
+	}
+
+	private void GoPrev()
 	{
 		_StackNavigationDisabled = true;
 		if (NavHistory.Count > 0 && NavHistoryIndex > 0)
@@ -888,6 +910,11 @@ public partial class MainForm : Form
 	}
 
 	private void toolStripButtonNext_Click(object sender, EventArgs e)
+	{
+		GoNext();
+	}
+
+	private void GoNext()
 	{
 		_StackNavigationDisabled = true;
 		if (NavHistoryIndex < NavHistory.Count - 1)
@@ -919,28 +946,47 @@ public partial class MainForm : Form
 
 	private void previousToolStripMenuItem_Click(object sender, EventArgs e)
 	{
-
+		GoPrev();
 	}
 
 	private void nextToolStripMenuItem_Click(object sender, EventArgs e)
 	{
-
+		GoNext();
 	}
 
 	private void copyPathToolStripMenuItem_Click(object sender, EventArgs e)
 	{
-
+		CopyPath();
 	}
 
 	private void copyTXTToolStripMenuItem_Click(object sender, EventArgs e)
 	{
-		Clipboard.SetText(this.textBoxPath.Text);
-		Clipboard.SetText(this.textBoxDetails.Text);
+		CopyTXT();
 	}
 
 	private void copyDBRToolStripMenuItem_Click(object sender, EventArgs e)
 	{
+		// DataGridView into Clipboard
+		DataGridViewCell currCell = null;
+		if (this.dataGridViewDetails.SelectedCells.Count > 0)
+			currCell = this.dataGridViewDetails.SelectedCells[0];
 
+		this.dataGridViewDetails.MultiSelect = true;
+
+		// Select all the cells
+		this.dataGridViewDetails.SelectAll();
+		
+		// Copy selected cells to DataObject
+		DataObject dataObject = this.dataGridViewDetails.GetClipboardContent();
+
+		// Get the text of the DataObject, and serialize it to a file
+		Clipboard.SetDataObject(dataObject);
+
+		// Restore normal state
+		this.dataGridViewDetails.MultiSelect = false;
+
+		if(currCell is not null)
+			currCell.Selected = true;
 	}
 
 	private void copyBitmapToolStripMenuItem_Click(object sender, EventArgs e)
