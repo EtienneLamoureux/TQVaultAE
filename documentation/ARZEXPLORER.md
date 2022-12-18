@@ -10,6 +10,7 @@ It is very useful for TQVaultAE contributors to be able to dig into these files 
 * [Executable](#Exec)
 * [UI](#UI)
     + [Data Panel](#DataPanel)
+    + [Toolbar](#Toolbar)
     + [Menu](#Menu)
 * [Main TQ Files](#MainFiles)
 * [Hidden features](#HiddenFeatures)
@@ -37,6 +38,10 @@ This panel adjust it's display to the type of data.
 
 #### Type Record (.dbr)
 
+You can navigate through **multiple files** by following links.
+
+**_The navigation panel load and merge all files dynamicaly._**
+
 ![TypeRecord](arzexplorer/typerecord.png)
 
 #### Type Image (.tex)
@@ -47,15 +52,33 @@ This panel adjust it's display to the type of data.
 
 ![TypeRecord](arzexplorer/typetext.png)
 
+#### Type Sound (.Wav/.Mp3)
+
+![TypeRecord](arzexplorer/typesound.png)
+
+---
+
+### <a id="Toolbar"></a>Toolbar
+
+![TypeRecord](arzexplorer/toolbar.png)
+
 ---
 
 ### <a id="Menu"></a>Menu
 
 - File/Open : Select and open an archive
 - File/Exit : Exit tool
+- Navigation/Previous : Navigate to previous item
+- Navigation/Next : Navigate to next item
+- Edit/Copy Path : Copy path to clipboard
+- Edit/Copy TXT : Copy text to clipboard
+- Edit/Copy DBR : Copy DBR record to clipboard
+- Edit/Copy TEX : Copy Image to clipboard
+- Edit/Copy Sound : Copy Audio to clipboard
 - Extract/Selected File : Unpack a selected archive directly to disk without displaying it.
 - Extract/All Files : Unpack the whole database directly to disk without displaying it.
 - View/Hide Zero Value : Enable/Disable the display of records holding value equal to zero (default value).
+- View/Caps : UpperCase/LowerCase the TOC.
 - Help/About : About window 
 
 ---

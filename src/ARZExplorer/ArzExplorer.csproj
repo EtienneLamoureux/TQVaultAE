@@ -141,6 +141,12 @@
     <Compile Include="AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\SimpleSoundPlayer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\SimpleSoundPlayer.Designer.cs">
+      <DependentUpon>SimpleSoundPlayer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\TQFileInfo.cs" />
     <Compile Include="ExtractProgress.cs">
       <SubType>Form</SubType>
@@ -157,6 +163,9 @@
     <Compile Include="Models\NodeTag.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Icons\Loop.png" />
+    <Content Include="Icons\Pause.png" />
+    <Content Include="Icons\Play.png" />
     <Content Include="Icons\SearchAlt.ico" />
     <Content Include="Icons\SearchPrev.ico" />
     <Content Include="Icons\Database.ico" />
@@ -167,9 +176,13 @@
     <Content Include="Icons\Next.ico" />
     <Content Include="Icons\ClearHistory.ico" />
     <Content Include="Icons\icons.txt" />
+    <Content Include="Icons\Stop.png" />
     <EmbeddedResource Include="AboutBox.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\SimpleSoundPlayer.resx">
+      <DependentUpon>SimpleSoundPlayer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ExtractProgress.resx">
       <DependentUpon>ExtractProgress.cs</DependentUpon>

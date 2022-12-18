@@ -7,12 +7,12 @@ using ArzExplorer.Models;
 using ArzExplorer.Properties;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -21,6 +21,7 @@ using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Logs;
+using TQVaultAE.Services.Win32;
 
 namespace ArzExplorer;
 
@@ -37,6 +38,7 @@ public partial class MainForm : Form
 	private readonly IDBRecordCollectionProvider DBRecordCollectionProvider;
 	private readonly IBitmapService BitmapService;
 	private readonly IGamePathService GamePathService;
+	private readonly SoundServiceWin SoundService;
 
 	/// <summary>
 	/// Holds the initial size of the form.
@@ -55,6 +57,7 @@ public partial class MainForm : Form
 		, IDBRecordCollectionProvider dBRecordCollectionProvider
 		, IBitmapService bitmapService
 		, IGamePathService gamePathService
+		, SoundServiceWin soundService
 	)
 	{
 		this.InitializeComponent();
@@ -65,7 +68,7 @@ public partial class MainForm : Form
 		this.DBRecordCollectionProvider = dBRecordCollectionProvider;
 		this.BitmapService = bitmapService;
 		this.GamePathService = gamePathService;
-
+		this.SoundService = soundService;
 		Assembly a = Assembly.GetExecutingAssembly();
 		this.assemblyName = a.GetName();
 
@@ -73,6 +76,16 @@ public partial class MainForm : Form
 		this.allFilesToolStripMenuItem.Enabled = false;
 		this.initialSize = this.Size;
 		this.toolStripStatusLabel.Text = string.Empty;
+
+		// Hide Features that are not ready yet
+		// - Menu > Search
+		this.searchToolStripMenuItem.Visible = false;
+		// - Toolbar > Search
+		this.toolStripButtonSearchNext.Visible =
+		this.toolStripButtonSearchPrev.Visible =
+		this.toolStripTextBox.Visible =
+		this.toolStripSeparator4.Visible =
+		this.toolStripLabelSearch.Visible = false;
 	}
 
 	private void MainForm_Load(object sender, EventArgs e)
@@ -97,14 +110,20 @@ public partial class MainForm : Form
 
 	private void HideAllBox()
 	{
-		this.dataGridViewDetails.Visible = false;
-		this.textBoxDetails.Visible = false;
+		StopSoundPlayer();
+
+		this.simpleSoundPlayer.Visible =
+		this.dataGridViewDetails.Visible =
+		this.textBoxDetails.Visible =
 		this.panelPicture.Visible = false;
 		this.toolStripStatusLabel.Text = string.Empty;
 	}
 
 	private void ShowPictureBox(Image bitmap)
 	{
+		StopSoundPlayer();
+
+		this.simpleSoundPlayer.Visible = false;
 		this.dataGridViewDetails.Visible = false;
 		this.textBoxDetails.Visible = false;
 		this.panelPicture.Visible = true;
@@ -113,17 +132,45 @@ public partial class MainForm : Form
 		this.toolStripStatusLabel.Text = string.Format("PixelFormat : {0}, Size : {1}", bitmap.PixelFormat, bitmap.Size);
 	}
 
+	private void ShowSoundPlayer(RecordId soundId, SoundPlayer soundPlayer, byte[] soundWavData)
+	{
+		StopSoundPlayer();
+
+		this.dataGridViewDetails.Visible = false;
+		this.textBoxDetails.Visible = false;
+		this.panelPicture.Visible = false;
+		this.toolStripStatusLabel.Text = string.Format("Sound Name : {0}", Path.GetFileName(soundId.Raw));
+
+		this.simpleSoundPlayer.Visible = true;
+		this.simpleSoundPlayer.Dock = DockStyle.Fill;
+		this.simpleSoundPlayer.CurrentSoundId = soundId;
+		this.simpleSoundPlayer.CurrentSoundWavData = soundWavData;
+		this.simpleSoundPlayer.CurrentSoundPlayer = soundPlayer;
+	}
+
 	private void ShowGridView(int Count)
 	{
+		StopSoundPlayer();
+
 		this.dataGridViewDetails.Visible = true;
 		this.dataGridViewDetails.Dock = DockStyle.Fill;
+		this.simpleSoundPlayer.Visible = false;
 		this.textBoxDetails.Visible = false;
 		this.panelPicture.Visible = false;
 		this.toolStripStatusLabel.Text = string.Format("Record Count : {0}", Count);
 	}
 
+	private void StopSoundPlayer()
+	{
+		if (this.simpleSoundPlayer.Visible)
+			this.simpleSoundPlayer.CurrentSoundPlayer?.Stop();
+	}
+
 	private void ShowTextboxDetail(int Count)
 	{
+		StopSoundPlayer();
+
+		this.simpleSoundPlayer.Visible = false;
 		this.dataGridViewDetails.Visible = false;
 		this.textBoxDetails.Visible = true;
 		this.textBoxDetails.Dock = DockStyle.Fill;
@@ -646,54 +693,78 @@ public partial class MainForm : Form
 					if (tag.Key.Normalized.Contains("XPACK"))
 						arcDataRecordId = tag.Key.TokensRaw.Skip(1).JoinString("\\").ToRecordId();
 
-					if (extension == ".TXT")
+					switch (extension)
 					{
-						if (!tag.RecordText.Any())
-						{
-							tag.RawData = arcProv.GetData(this.SelectedFile.ARCFile, arcDataRecordId);
-
-							if (tag.RawData == null)
-								return;
-
-							// now read it like a text file
-							using (StreamReader reader = new StreamReader(new MemoryStream(tag.RawData), Encoding.Default))
+						case ".TXT":
+							if (!tag.RecordText.Any())
 							{
-								string line;
-								while ((line = reader.ReadLine()) != null)
+								tag.RawData = arcProv.GetData(this.SelectedFile.ARCFile, arcDataRecordId);
+
+								if (tag.RawData == null)
+									return;
+
+								// now read it like a text file
+								using (StreamReader reader = new StreamReader(new MemoryStream(tag.RawData), Encoding.Default))
 								{
-									tag.RecordText.Add(line);
+									string line;
+									while ((line = reader.ReadLine()) != null)
+									{
+										tag.RecordText.Add(line);
+									}
 								}
 							}
-						}
 
-						this.textBoxDetails.Lines = tag.RecordText.ToArray();
-						ShowTextboxDetail(tag.RecordText.Count);
-						StackNavigation();
-					}
-					else if (extension == ".TEX")
-					{
-						if (tag.Bitmap is null)
-						{
-							tag.RawData = arcProv.GetData(this.SelectedFile.ARCFile, arcDataRecordId);
-
-							if (tag.RawData == null)
-								return;
-
-							tag.Bitmap = BitmapService.LoadFromTexMemory(tag.RawData, 0, tag.RawData.Length);
-						}
-
-						if (tag.Bitmap != null)
-						{
-							ShowPictureBox(tag.Bitmap);
+							this.textBoxDetails.Lines = tag.RecordText.ToArray();
+							ShowTextboxDetail(tag.RecordText.Count);
 							StackNavigation();
-						}
+							break;
+						case ".TEX":
+							if (tag.Bitmap is null)
+							{
+								tag.RawData = arcProv.GetData(this.SelectedFile.ARCFile, arcDataRecordId);
+
+								if (tag.RawData == null)
+									return;
+
+								tag.Bitmap = BitmapService.LoadFromTexMemory(tag.RawData, 0, tag.RawData.Length);
+							}
+
+							if (tag.Bitmap != null)
+							{
+								ShowPictureBox(tag.Bitmap);
+								StackNavigation();
+							}
+							break;
+						case ".MP3":
+						case ".WAV":
+							if (tag.SoundPlayer is null)
+							{
+								tag.RawData = arcProv.GetData(this.SelectedFile.ARCFile, arcDataRecordId);
+
+								if (tag.RawData == null)
+									return;
+
+								SoundService.SetSoundResource(arcDataRecordId, tag.RawData);
+								tag.SoundPlayer = SoundService.GetSoundPlayer(arcDataRecordId);
+							}
+
+							// Display SoundPlayer
+							if (tag.SoundPlayer != null)
+							{
+								ShowSoundPlayer(
+									arcDataRecordId
+									, tag.SoundPlayer
+									, SoundService.GetSoundResource(arcDataRecordId)
+								);
+								StackNavigation();
+							}
+							break;
+						default:
+							HideAllBox();
+							this.SelectedFile.DestFile = null;
+							this.textBoxDetails.Lines = null;
+							break;
 					}
-				}
-				else
-				{
-					HideAllBox();
-					this.SelectedFile.DestFile = null;
-					this.textBoxDetails.Lines = null;
 				}
 			}
 			catch (Exception ex)
@@ -738,8 +809,12 @@ public partial class MainForm : Form
 			var cell = grd.Rows[i].Cells[1];
 			var val = cell.Value?.ToString() ?? string.Empty;
 
-			if (val.EndsWith(".DBR", noCase) || val.EndsWith(".TEX", noCase) || val.EndsWith(".TXT", noCase))
-				cell.Style = PopulateGridView_hyperLinkCellStyle;
+			if (val.EndsWith(".DBR", noCase)
+				|| val.EndsWith(".TEX", noCase)
+				|| val.EndsWith(".TXT", noCase)
+				|| val.EndsWith(".WAV", noCase)
+				|| val.EndsWith(".MP3", noCase)
+			) cell.Style = PopulateGridView_hyperLinkCellStyle;
 		}
 	}
 
@@ -782,11 +857,65 @@ public partial class MainForm : Form
 		Clipboard.SetText(this.textBoxDetails.Text);
 	}
 
+	private void copyPathToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+		CopyPath();
+	}
+
+	private void copyTXTToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+		CopyTXT();
+	}
+
+	private void copyDBRToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+		// DataGridView into Clipboard
+		DataGridViewCell currCell = null;
+		if (this.dataGridViewDetails.SelectedCells.Count > 0)
+			currCell = this.dataGridViewDetails.SelectedCells[0];
+
+		this.dataGridViewDetails.MultiSelect = true;
+
+		// Select all the cells
+		this.dataGridViewDetails.SelectAll();
+
+		// Copy selected cells to DataObject
+		DataObject dataObject = this.dataGridViewDetails.GetClipboardContent();
+
+		// Get the text of the DataObject, and serialize it to a file
+		Clipboard.SetDataObject(dataObject);
+
+		// Restore normal state
+		this.dataGridViewDetails.MultiSelect = false;
+
+		if (currCell is not null)
+			currCell.Selected = true;
+	}
+
+	private void copyBitmapToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+		Clipboard.SetImage(this.pictureBoxItem.Image);
+	}
+
+	private void copySoundToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+		Clipboard.SetAudio(this.simpleSoundPlayer.CurrentSoundWavData);
+	}
+
 	#endregion
 
 	#region Caps Treeview
 
 	private void toolStripButtonCaps_CheckedChanged(object sender, EventArgs e)
+	{
+		TOCCapsToggle();
+	}
+	private void capsToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+		toolStripButtonCaps.Checked = !toolStripButtonCaps.Checked;
+	}
+
+	private void TOCCapsToggle()
 	{
 		toolStripButtonCaps.Image = toolStripButtonCaps.Checked ? Resources.CapsDown.ToBitmap() : Resources.CapsUP.ToBitmap();
 
@@ -859,6 +988,13 @@ public partial class MainForm : Form
 			fileName = $"{fileToken}.ARC";
 			dicoKey = @$"RESOURCES\{xPackVersion}\{fileName}";
 		}
+		else if (recordId.Normalized.EndsWith(".MP3") || recordId.Normalized.EndsWith(".WAV"))
+		{
+			xPackVersion = string.Empty;
+			fileToken = recordId.TokensNormalized[0];
+			fileName = $"{fileToken}.ARC";
+			dicoKey = @$"AUDIO\{fileName}";
+		}
 		else
 		{
 			xPackVersion = string.Empty;
@@ -885,6 +1021,17 @@ public partial class MainForm : Form
 		}
 
 	}
+
+	private void previousToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+		GoPrev();
+	}
+
+	private void nextToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+		GoNext();
+	}
+
 	private void toolStripButtonPrev_Click(object sender, EventArgs e)
 	{
 		GoPrev();
@@ -934,62 +1081,16 @@ public partial class MainForm : Form
 
 	#endregion
 
+	#region Search
+
+	// TODO ARZ Explorer Search stuff!
+
 	private void toolStripButtonSearchPrev_Click(object sender, EventArgs e)
 	{
 
 	}
 
 	private void toolStripButtonSearchNext_Click(object sender, EventArgs e)
-	{
-
-	}
-
-	private void previousToolStripMenuItem_Click(object sender, EventArgs e)
-	{
-		GoPrev();
-	}
-
-	private void nextToolStripMenuItem_Click(object sender, EventArgs e)
-	{
-		GoNext();
-	}
-
-	private void copyPathToolStripMenuItem_Click(object sender, EventArgs e)
-	{
-		CopyPath();
-	}
-
-	private void copyTXTToolStripMenuItem_Click(object sender, EventArgs e)
-	{
-		CopyTXT();
-	}
-
-	private void copyDBRToolStripMenuItem_Click(object sender, EventArgs e)
-	{
-		// DataGridView into Clipboard
-		DataGridViewCell currCell = null;
-		if (this.dataGridViewDetails.SelectedCells.Count > 0)
-			currCell = this.dataGridViewDetails.SelectedCells[0];
-
-		this.dataGridViewDetails.MultiSelect = true;
-
-		// Select all the cells
-		this.dataGridViewDetails.SelectAll();
-		
-		// Copy selected cells to DataObject
-		DataObject dataObject = this.dataGridViewDetails.GetClipboardContent();
-
-		// Get the text of the DataObject, and serialize it to a file
-		Clipboard.SetDataObject(dataObject);
-
-		// Restore normal state
-		this.dataGridViewDetails.MultiSelect = false;
-
-		if(currCell is not null)
-			currCell.Selected = true;
-	}
-
-	private void copyBitmapToolStripMenuItem_Click(object sender, EventArgs e)
 	{
 
 	}
@@ -1004,9 +1105,7 @@ public partial class MainForm : Form
 
 	}
 
-	private void capsToolStripMenuItem_Click(object sender, EventArgs e)
-	{
+	#endregion
 
-	}
 }
 

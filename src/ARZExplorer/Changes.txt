@@ -1,4 +1,14 @@
-v1.2.0.0 (hguy)
+v2.0.0.0 - 2022 (hguy)
+Added Table Of Content dynamic loading
+Allow navigation links from DBR records view to TXT, DBR, TEX, WAV & MP3
+Added Sound player for WAV & MP3
+Added toolbar icons
+Complete menu entries with shortcuts
+Added Basic navigation history (Prev/Next)
+Added OneClick database loading
+Added Copy to Clipboard for all types
+
+v1.2.0.0 - 2022 (hguy)
 Added Textbox displaying the file path inside the archive (double click copy the value into the clipboard).
 Added Statusbar displaying detailed informations about current selection.
 

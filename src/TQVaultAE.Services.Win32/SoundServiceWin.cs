@@ -80,15 +80,18 @@ namespace TQVaultAE.Services.Win32
 		}
 
 		public void InitAllPlayers()
-			{
+		{
 			LoadedPlayers.Clear();
 
-				SoundPoolMetalHit = InitPlayers(SoundPoolMetalHitIds);
-				SoundPoolItemDrop = InitPlayers(SoundPoolItemDropIds);
-				SoundPoolRelicDrop = InitPlayers(SoundPoolRelicDropIds);
-				SoundPoolVoice = InitPlayers(SoundPoolVoiceIds);
-				SoundPoolCancel = InitPlayers(SoundPoolCancelIds);
-			}
+			if (this.DataBase is null)
+				return;
+
+			SoundPoolMetalHit = InitPlayers(SoundPoolMetalHitIds);
+			SoundPoolItemDrop = InitPlayers(SoundPoolItemDropIds);
+			SoundPoolRelicDrop = InitPlayers(SoundPoolRelicDropIds);
+			SoundPoolVoice = InitPlayers(SoundPoolVoiceIds);
+			SoundPoolCancel = InitPlayers(SoundPoolCancelIds);
+		}
 
 		private SoundPlayer[] InitPlayers(RecordId[] list)
 			=> list.Select(id => GetSoundPlayer(id)).Where(p => p is not null).ToArray();
@@ -101,40 +104,58 @@ namespace TQVaultAE.Services.Win32
 			WaveFileWriter.WriteWavFileToStream(outWav, pcm);
 		}
 
+		public bool SetSoundResource(RecordId resourceId, byte[] resourceData)
+		{
+			if (!IsSoundRecordId(resourceId))
+				return false;// Not a sound
+
+			if (!(resourceData?.Any() ?? false))
+				return false;// Not a sound
+
+			if (resourceId.Normalized.EndsWith(".MP3"))
+			{
+				using (var mp3 = new MemoryStream(resourceData))
+				using (var wav = new MemoryStream())
+				{
+					ConvertMp3ToWav(mp3, wav);
+					resourceData = wav.ToArray();
+				}
+			}
+
+			SoundData[resourceId] = resourceData;
+			return true;
+		}
+
+		private static bool IsSoundRecordId(RecordId resourceId)
+		{
+			return resourceId.Normalized.Contains(".MP3") || resourceId.Normalized.Contains(".WAV");
+		}
+
 		public byte[] GetSoundResource(RecordId resourceId)
 		{
-			if (!resourceId.Normalized.Contains("SOUNDS"))
+			if (!IsSoundRecordId(resourceId))
 				return null;// Not a sound
 
 			if (SoundData.TryGetValue(resourceId, out var data))
 				return data;
 
+			if (DataBase is null)
+				return null;// No DB
+
 			data = DataBase.LoadResource(resourceId);
 
-			if (data is not null)
-			{
-				if (resourceId.Normalized.EndsWith(".MP3"))
-				{
-					using (var mp3 = new MemoryStream(data))
-					using (var wav = new MemoryStream())
-					{
-						ConvertMp3ToWav(mp3, wav);
-						data = wav.ToArray();
-					}
-				}
+			if (data is not null && this.SetSoundResource(resourceId, data))
+				return SoundData[resourceId];
 
-				SoundData.Add(resourceId, data);
-			}
-
-			return data;
+			return null;
 		}
 
-		private SoundPlayer GetSoundPlayer(RecordId resourceId)
+		public SoundPlayer GetSoundPlayer(RecordId resourceId)
 		{
 			if (!Config.UserSettings.Default.EnableTQVaultSounds)
 				return null;
 
-			if (!resourceId.Normalized.Contains("SOUNDS"))
+			if (!IsSoundRecordId(resourceId))
 				return null;// Not a sound
 
 			if (LoadedPlayers.TryGetValue(resourceId, out var playerInstance))

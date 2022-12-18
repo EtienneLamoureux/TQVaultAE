@@ -109,6 +109,7 @@ namespace ArzExplorer
             this.copyTXTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyDBRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyBitmapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copySoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findPreviousToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -123,6 +124,7 @@ namespace ArzExplorer
             this.treeViewTOC = new System.Windows.Forms.TreeView();
             this.pictureBoxItem = new System.Windows.Forms.PictureBox();
             this.splitContainerBrowser = new System.Windows.Forms.SplitContainer();
+            this.simpleSoundPlayer = new ArzExplorer.Components.SimpleSoundPlayer();
             this.panelPicture = new System.Windows.Forms.Panel();
             this.dataGridViewDetails = new System.Windows.Forms.DataGridView();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -242,7 +244,8 @@ namespace ArzExplorer
             this.copyPathToolStripMenuItem,
             this.copyTXTToolStripMenuItem,
             this.copyDBRToolStripMenuItem,
-            this.copyBitmapToolStripMenuItem});
+            this.copyBitmapToolStripMenuItem,
+            this.copySoundToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "&Edit";
@@ -252,7 +255,7 @@ namespace ArzExplorer
             this.copyPathToolStripMenuItem.Name = "copyPathToolStripMenuItem";
             this.copyPathToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
             | System.Windows.Forms.Keys.P)));
-            this.copyPathToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.copyPathToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.copyPathToolStripMenuItem.Text = "Copy &Path";
             this.copyPathToolStripMenuItem.Click += new System.EventHandler(this.copyPathToolStripMenuItem_Click);
             // 
@@ -261,7 +264,7 @@ namespace ArzExplorer
             this.copyTXTToolStripMenuItem.Name = "copyTXTToolStripMenuItem";
             this.copyTXTToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
             | System.Windows.Forms.Keys.T)));
-            this.copyTXTToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.copyTXTToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.copyTXTToolStripMenuItem.Text = "Copy .&txt";
             this.copyTXTToolStripMenuItem.Click += new System.EventHandler(this.copyTXTToolStripMenuItem_Click);
             // 
@@ -270,7 +273,7 @@ namespace ArzExplorer
             this.copyDBRToolStripMenuItem.Name = "copyDBRToolStripMenuItem";
             this.copyDBRToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
             | System.Windows.Forms.Keys.D)));
-            this.copyDBRToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.copyDBRToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.copyDBRToolStripMenuItem.Text = "Copy .&dbr";
             this.copyDBRToolStripMenuItem.Click += new System.EventHandler(this.copyDBRToolStripMenuItem_Click);
             // 
@@ -279,9 +282,18 @@ namespace ArzExplorer
             this.copyBitmapToolStripMenuItem.Name = "copyBitmapToolStripMenuItem";
             this.copyBitmapToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
             | System.Windows.Forms.Keys.X)));
-            this.copyBitmapToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.copyBitmapToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.copyBitmapToolStripMenuItem.Text = "Copy .te&x";
             this.copyBitmapToolStripMenuItem.Click += new System.EventHandler(this.copyBitmapToolStripMenuItem_Click);
+            // 
+            // copySoundToolStripMenuItem
+            // 
+            this.copySoundToolStripMenuItem.Name = "copySoundToolStripMenuItem";
+            this.copySoundToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
+            | System.Windows.Forms.Keys.S)));
+            this.copySoundToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.copySoundToolStripMenuItem.Text = "Copy Sound";
+            this.copySoundToolStripMenuItem.Click += new System.EventHandler(this.copySoundToolStripMenuItem_Click);
             // 
             // searchToolStripMenuItem
             // 
@@ -415,12 +427,27 @@ namespace ArzExplorer
             // 
             // splitContainerBrowser.Panel2
             // 
+            this.splitContainerBrowser.Panel2.Controls.Add(this.simpleSoundPlayer);
             this.splitContainerBrowser.Panel2.Controls.Add(this.panelPicture);
             this.splitContainerBrowser.Panel2.Controls.Add(this.dataGridViewDetails);
             this.splitContainerBrowser.Panel2.Controls.Add(this.textBoxDetails);
             this.splitContainerBrowser.Size = new System.Drawing.Size(820, 368);
             this.splitContainerBrowser.SplitterDistance = 286;
             this.splitContainerBrowser.TabIndex = 15;
+            // 
+            // simpleSoundPlayer
+            // 
+            this.simpleSoundPlayer.AutoSize = true;
+            this.simpleSoundPlayer.CurrentSoundId = null;
+            this.simpleSoundPlayer.CurrentSoundPlayer = null;
+            this.simpleSoundPlayer.CurrentSoundWavData = null;
+            this.simpleSoundPlayer.Dock = System.Windows.Forms.DockStyle.Top;
+            this.simpleSoundPlayer.Location = new System.Drawing.Point(53, 0);
+            this.simpleSoundPlayer.MinimumSize = new System.Drawing.Size(292, 28);
+            this.simpleSoundPlayer.Name = "simpleSoundPlayer";
+            this.simpleSoundPlayer.Size = new System.Drawing.Size(292, 28);
+            this.simpleSoundPlayer.TabIndex = 17;
+            this.simpleSoundPlayer.Visible = false;
             // 
             // panelPicture
             // 
@@ -460,7 +487,7 @@ namespace ArzExplorer
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridViewDetails.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridViewDetails.Dock = System.Windows.Forms.DockStyle.Right;
-            this.dataGridViewDetails.Location = new System.Drawing.Point(79, 0);
+            this.dataGridViewDetails.Location = new System.Drawing.Point(288, 0);
             this.dataGridViewDetails.MultiSelect = false;
             this.dataGridViewDetails.Name = "dataGridViewDetails";
             this.dataGridViewDetails.ReadOnly = true;
@@ -473,7 +500,7 @@ namespace ArzExplorer
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridViewDetails.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridViewDetails.RowHeadersVisible = false;
-            this.dataGridViewDetails.Size = new System.Drawing.Size(451, 237);
+            this.dataGridViewDetails.Size = new System.Drawing.Size(242, 237);
             this.dataGridViewDetails.TabIndex = 15;
             this.dataGridViewDetails.Visible = false;
             this.dataGridViewDetails.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewDetails_CellClick);
@@ -787,6 +814,8 @@ namespace ArzExplorer
 		private System.Windows.Forms.ToolStripMenuItem capsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripButton toolStripButtonSearchPrev;
 		private System.Windows.Forms.ToolStripButton toolStripButtonSearchNext;
+		private Components.SimpleSoundPlayer simpleSoundPlayer;
+		private System.Windows.Forms.ToolStripMenuItem copySoundToolStripMenuItem;
 	}
 }
 
