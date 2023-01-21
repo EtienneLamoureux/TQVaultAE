@@ -15,7 +15,14 @@ namespace TQVaultAE.Domain.Entities
 		public bool MinRequierement;
 		public bool MaxRequierement;
 		public List<string> ClassItem;
+		public List<Rarity> Rarity;
 		public int MaxLvl;
 		public int MinLvl;
+		public List<GameDlc> Origin;
+		public bool HavingPrefix;
+		public bool HavingSuffix;
+		public bool HavingRelic;
+		public bool HavingCharm;
+		public bool IsSetItem;
 	}
 }

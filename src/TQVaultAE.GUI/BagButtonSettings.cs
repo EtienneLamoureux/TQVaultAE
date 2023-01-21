@@ -32,7 +32,7 @@ namespace TQVaultAE.GUI
 		public readonly List<GroupBox> GroupBoxList;
 
 		// Remove duplicate
-		List<string> alreadyAddedPics = new List<string>();
+		List<RecordId> alreadyAddedPics = new();
 
 		// From Database
 		private ReadOnlyCollection<IconInfo> Pictures;
@@ -318,7 +318,7 @@ namespace TQVaultAE.GUI
 		{
 			var pb = picturebox as PictureBox;
 			var info = pb.Tag as IconInfo;
-			var resourceid = pb.Image.Tag.ToString();
+			var resourceid = pb.Image.Tag as RecordId;
 
 			if (this.radioButtonPictureSimple.Checked)
 			{
@@ -343,7 +343,7 @@ namespace TQVaultAE.GUI
 		}
 
 
-		private void AddPicture(IconInfo info, Bitmap bmp, string resourceId)
+		private void AddPicture(IconInfo info, Bitmap bmp, RecordId resourceId)
 		{
 			if (alreadyAddedPics.Contains(resourceId)) return;// Because an instance of IconInfo may contain resourceId multiple time
 
@@ -445,7 +445,7 @@ namespace TQVaultAE.GUI
 			if (this.scalingRadioButtonDefaultIcon.Checked
 				&& (sender == this.pictureBoxOff
 				|| sender == this.pictureBoxOn
-				|| sender == this.pictureBoxOver 
+				|| sender == this.pictureBoxOver
 				|| sender == this.pictureBoxSimple)
 			) return;
 
@@ -454,8 +454,8 @@ namespace TQVaultAE.GUI
 
 			if (picB.Image is null) return;
 
-			var picFilePath = picB.Image.Tag as string;
-			var picName = Path.GetFileNameWithoutExtension(picFilePath);
+			var picFilePath = picB.Image.Tag as RecordId;
+			var picName = Path.GetFileNameWithoutExtension(picFilePath.Raw);
 			picName = picName[0] + new string(picName.ToLower().Skip(1).ToArray());// Titlecase
 			var info = picB.Tag as IconInfo;
 
@@ -626,9 +626,9 @@ namespace TQVaultAE.GUI
 				{
 					DisplayMode = dispmode,
 					Label = this.scalingTextBoxLabel.Text.Trim(),
-					Off = this.pictureBoxOff.Image.Tag as string,
-					On = this.pictureBoxOn.Image.Tag as string,
-					Over = this.pictureBoxOver?.Image?.Tag as string,
+					Off = this.pictureBoxOff.Image.Tag as RecordId,
+					On = this.pictureBoxOn.Image.Tag as RecordId,
+					Over = this.pictureBoxOver?.Image?.Tag as RecordId,
 				};
 
 				this._CurrentBagButton.Sack.BagButtonIconInfo = save;

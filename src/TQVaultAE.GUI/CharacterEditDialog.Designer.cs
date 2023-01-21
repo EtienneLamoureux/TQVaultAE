@@ -102,7 +102,7 @@ namespace TQVaultAE.GUI
             this.ok.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ok.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ok.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
             this.ok.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ok.Image = ((System.Drawing.Image)(resources.GetObject("ok.Image")));
             this.ok.Location = new System.Drawing.Point(920, 363);
@@ -127,7 +127,7 @@ namespace TQVaultAE.GUI
             this.cancel.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancel.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
             this.cancel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.cancel.Image = ((System.Drawing.Image)(resources.GetObject("cancel.Image")));
             this.cancel.Location = new System.Drawing.Point(920, 408);
@@ -234,9 +234,10 @@ namespace TQVaultAE.GUI
             this.moneyTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.moneyTextBox.MaxLength = 9;
             this.moneyTextBox.Name = "moneyTextBox";
-            this.moneyTextBox.Size = new System.Drawing.Size(108, 28);
+            this.moneyTextBox.Size = new System.Drawing.Size(108, 24);
             this.moneyTextBox.TabIndex = 16;
             this.moneyTextBox.WordWrap = false;
+            this.moneyTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.moneyTextBox_KeyPress);
             // 
             // moneyLabel
             // 
@@ -259,7 +260,6 @@ namespace TQVaultAE.GUI
             0,
             0});
             this.manacUpDown.Location = new System.Drawing.Point(142, 189);
-            this.manacUpDown.Margin = new System.Windows.Forms.Padding(4);
             this.manacUpDown.Maximum = new decimal(new int[] {
             9996,
             0,
@@ -272,7 +272,7 @@ namespace TQVaultAE.GUI
             0});
             this.manacUpDown.Name = "manacUpDown";
             this.manacUpDown.ReadOnly = true;
-            this.manacUpDown.Size = new System.Drawing.Size(108, 28);
+            this.manacUpDown.Size = new System.Drawing.Size(108, 24);
             this.manacUpDown.TabIndex = 5;
             this.manacUpDown.Value = new decimal(new int[] {
             300,
@@ -303,7 +303,7 @@ namespace TQVaultAE.GUI
             0});
             this.healthUpDown.Name = "healthUpDown";
             this.healthUpDown.ReadOnly = true;
-            this.healthUpDown.Size = new System.Drawing.Size(108, 28);
+            this.healthUpDown.Size = new System.Drawing.Size(108, 24);
             this.healthUpDown.TabIndex = 4;
             this.healthUpDown.Value = new decimal(new int[] {
             300,
@@ -334,7 +334,7 @@ namespace TQVaultAE.GUI
             0});
             this.intelligenceUpDown.Name = "intelligenceUpDown";
             this.intelligenceUpDown.ReadOnly = true;
-            this.intelligenceUpDown.Size = new System.Drawing.Size(108, 28);
+            this.intelligenceUpDown.Size = new System.Drawing.Size(108, 24);
             this.intelligenceUpDown.TabIndex = 3;
             this.intelligenceUpDown.Value = new decimal(new int[] {
             50,
@@ -365,7 +365,7 @@ namespace TQVaultAE.GUI
             0});
             this.dexterityUpDown.Name = "dexterityUpDown";
             this.dexterityUpDown.ReadOnly = true;
-            this.dexterityUpDown.Size = new System.Drawing.Size(108, 28);
+            this.dexterityUpDown.Size = new System.Drawing.Size(108, 24);
             this.dexterityUpDown.TabIndex = 2;
             this.dexterityUpDown.Value = new decimal(new int[] {
             50,
@@ -396,7 +396,7 @@ namespace TQVaultAE.GUI
             0});
             this.strengthUpDown.Name = "strengthUpDown";
             this.strengthUpDown.ReadOnly = true;
-            this.strengthUpDown.Size = new System.Drawing.Size(108, 28);
+            this.strengthUpDown.Size = new System.Drawing.Size(108, 24);
             this.strengthUpDown.TabIndex = 1;
             this.strengthUpDown.Value = new decimal(new int[] {
             50,
@@ -438,7 +438,7 @@ namespace TQVaultAE.GUI
             this.levelingCheckBox.Location = new System.Drawing.Point(94, 224);
             this.levelingCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.levelingCheckBox.Name = "levelingCheckBox";
-            this.levelingCheckBox.Size = new System.Drawing.Size(168, 28);
+            this.levelingCheckBox.Size = new System.Drawing.Size(129, 22);
             this.levelingCheckBox.TabIndex = 12;
             this.levelingCheckBox.Text = "Enable Leveling";
             this.levelingCheckBox.UseVisualStyleBackColor = true;
@@ -465,7 +465,7 @@ namespace TQVaultAE.GUI
             this.difficultlyComboBox.Location = new System.Drawing.Point(230, 184);
             this.difficultlyComboBox.Margin = new System.Windows.Forms.Padding(4);
             this.difficultlyComboBox.Name = "difficultlyComboBox";
-            this.difficultlyComboBox.Size = new System.Drawing.Size(199, 30);
+            this.difficultlyComboBox.Size = new System.Drawing.Size(199, 25);
             this.difficultlyComboBox.TabIndex = 11;
             // 
             // skillPointsNumericUpDown
@@ -480,7 +480,7 @@ namespace TQVaultAE.GUI
             0,
             0});
             this.skillPointsNumericUpDown.Name = "skillPointsNumericUpDown";
-            this.skillPointsNumericUpDown.Size = new System.Drawing.Size(200, 28);
+            this.skillPointsNumericUpDown.Size = new System.Drawing.Size(200, 24);
             this.skillPointsNumericUpDown.TabIndex = 10;
             // 
             // skillPointsLabel
@@ -507,7 +507,7 @@ namespace TQVaultAE.GUI
             0,
             0});
             this.attributeNumericUpDown.Name = "attributeNumericUpDown";
-            this.attributeNumericUpDown.Size = new System.Drawing.Size(200, 28);
+            this.attributeNumericUpDown.Size = new System.Drawing.Size(200, 24);
             this.attributeNumericUpDown.TabIndex = 9;
             // 
             // attributeLabel
@@ -530,7 +530,7 @@ namespace TQVaultAE.GUI
             this.xpTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.xpTextBox.Name = "xpTextBox";
             this.xpTextBox.ReadOnly = true;
-            this.xpTextBox.Size = new System.Drawing.Size(200, 28);
+            this.xpTextBox.Size = new System.Drawing.Size(200, 24);
             this.xpTextBox.TabIndex = 8;
             this.xpTextBox.WordWrap = false;
             // 
@@ -564,7 +564,7 @@ namespace TQVaultAE.GUI
             0});
             this.levelNumericUpDown.Name = "levelNumericUpDown";
             this.levelNumericUpDown.ReadOnly = true;
-            this.levelNumericUpDown.Size = new System.Drawing.Size(70, 28);
+            this.levelNumericUpDown.Size = new System.Drawing.Size(70, 24);
             this.levelNumericUpDown.TabIndex = 7;
             this.levelNumericUpDown.Value = new decimal(new int[] {
             1,
@@ -726,7 +726,7 @@ namespace TQVaultAE.GUI
             // 
             // CharacterEditDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
             this.ClientSize = new System.Drawing.Size(1209, 475);

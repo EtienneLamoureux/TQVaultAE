@@ -34,7 +34,7 @@ namespace ArzExplorer
 		/// <summary>
 		/// ID for current records
 		/// </summary>
-		private string recordIdBeingProcessed;
+		private RecordId recordIdBeingProcessed;
 
 		/// <summary>
 		/// Holds any exception we have encountered
@@ -113,7 +113,7 @@ namespace ArzExplorer
 			try
 			{
 				bool canceled = false;
-				foreach (string recordID in arzProv.GetKeyTable(MainForm.ARZFile))
+				foreach (RecordId recordID in arzProv.GetKeyTable(MainForm.ARZFile))
 				{
 					if (canceled)
 						break;
@@ -156,7 +156,7 @@ namespace ArzExplorer
 			{
 				bool canceled = false;
 
-				foreach (string recordID in arcProv.GetKeyTable(MainForm.ARCFile))
+				foreach (RecordId recordID in arcProv.GetKeyTable(MainForm.ARCFile))
 				{
 					if (canceled)
 						break;
@@ -166,7 +166,7 @@ namespace ArzExplorer
 					this.Invoke(new MethodInvoker(this.UpdateLabel));
 
 					// Write the record
-					arcProv.Write(MainForm.ARCFile, this.BaseFolder, recordID, recordID);
+					arcProv.Write(MainForm.ARCFile, this.BaseFolder, recordID, recordID.Normalized);
 
 					// Update progressbar
 					this.Invoke(new MethodInvoker(this.IncrementProgress));

@@ -11,12 +11,14 @@ namespace TQVaultAE.GUI
 	using System.ComponentModel;
 	using System.Drawing;
 	using System.Globalization;
+	using System.Runtime.InteropServices;
 	using System.Security.Permissions;
 	using System.Windows.Forms;
 	using System.Windows.Input;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.GUI.Components;
+	using TQVaultAE.GUI.Inputs;
 	using TQVaultAE.GUI.Models;
 	using TQVaultAE.Presentation;
 
@@ -121,14 +123,15 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private bool resizeCustomAllowed;
 
-		public IFontService FontService;
-		public IUIService UIService;
-		public IDatabase Database;
-		public IItemProvider ItemProvider;
-		public IPlayerCollectionProvider PlayerCollectionProvider;
-		public IGamePathService GamePathResolver;
-		public ISoundService SoundService;
-		public IServiceProvider ServiceProvider;
+		protected readonly IFontService FontService;
+		protected readonly IUIService UIService;
+		protected readonly IDatabase Database;
+		protected readonly IItemProvider ItemProvider;
+		protected readonly IPlayerCollectionProvider PlayerCollectionProvider;
+		protected readonly IGamePathService GamePathResolver;
+		protected readonly IGameFileService GameFileService;
+		protected readonly ISoundService SoundService;
+		internal readonly IServiceProvider ServiceProvider;
 
 
 #if DEBUG
@@ -149,6 +152,7 @@ namespace TQVaultAE.GUI
 				this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
 				this.PlayerCollectionProvider = this.ServiceProvider.GetService<IPlayerCollectionProvider>();
 				this.GamePathResolver = this.ServiceProvider.GetService<IGamePathService>();
+				this.GameFileService = this.ServiceProvider.GetService<IGameFileService>();
 				this.SoundService = this.ServiceProvider.GetService<ISoundService>();
 				this.titleFont = FontService.GetFontLight(9.5F);
 				this.Log = this.ServiceProvider.GetService<ILogger<VaultForm>>();
@@ -387,7 +391,6 @@ namespace TQVaultAE.GUI
 			}
 		}
 
-
 		/// <summary>
 		/// Gets or sets a value indicating whether the Minimize button is displayed in the caption bar of the form.
 		/// </summary>
@@ -456,6 +459,24 @@ namespace TQVaultAE.GUI
 			}
 		}
 
+		#region Capture Mouse Wheel Event Globally
+
+		protected internal event EventHandler GlobalMouseWheelUp;
+		protected internal event EventHandler GlobalMouseWheelDown;
+		internal void RaiseGlobalMouseWheelDown() => GlobalMouseWheelDown?.Invoke(this, EventArgs.Empty);
+		internal void RaiseGlobalMouseWheelUp() => GlobalMouseWheelUp?.Invoke(this, EventArgs.Empty);
+
+		#endregion
+
+		#region Capture Mouse Button Event Globally
+
+		protected internal event EventHandler<Point> GlobalMouseButtonLeft;
+		protected internal event EventHandler<Point> GlobalMouseButtonRight;
+		internal void RaiseGlobalMouseButtonLeft(Point pt) => GlobalMouseButtonLeft?.Invoke(this, pt);
+		internal void RaiseGlobalMouseButtonRight(Point pt) => GlobalMouseButtonRight?.Invoke(this, pt);
+
+		#endregion
+
 		/// <summary>
 		/// Processes a system event on the system menu.
 		/// </summary>
@@ -503,8 +524,8 @@ namespace TQVaultAE.GUI
 				UIService.Scale = newDBScale;
 				this.Scale(new SizeF(scaleFactor, scaleFactor));
 
-				Config.Settings.Default.Scale = UIService.Scale;
-				Config.Settings.Default.Save();
+				Config.UserSettings.Default.Scale = UIService.Scale;
+				Config.UserSettings.Default.Save();
 			}
 			else if (scaleFactor == 1.0F)
 			{
@@ -524,8 +545,8 @@ namespace TQVaultAE.GUI
 					(float)NORMAL_FORMWIDTH / (float)this.Width);
 				this.Scale(size);
 
-				Config.Settings.Default.Scale = 1.0F;
-				Config.Settings.Default.Save();
+				Config.UserSettings.Default.Scale = 1.0F;
+				Config.UserSettings.Default.Save();
 			}
 			else
 			{
@@ -540,13 +561,13 @@ namespace TQVaultAE.GUI
 				UIService.Scale = scaleFactor;
 				this.Scale(new SizeF(scaling, scaling));
 
-				Config.Settings.Default.Scale = UIService.Scale;
-				Config.Settings.Default.Save();
+				Config.UserSettings.Default.Scale = UIService.Scale;
+				Config.UserSettings.Default.Save();
 			}
 
 			RefreshNormalizeBox();
 
-			this.Log.LogDebug("Config.Settings.Default.Scale changed to {0} !", Config.Settings.Default.Scale);
+			this.Log.LogDebug("Config.Settings.Default.Scale changed to {0} !", Config.UserSettings.Default.Scale);
 		}
 
 		/// <summary>
@@ -587,17 +608,17 @@ namespace TQVaultAE.GUI
 					, Convert.ToSingle(workingArea.Height) / Convert.ToSingle(NORMAL_FORMHEIGHT)
 				);
 
-				if (Config.Settings.Default.Scale > initialScale)
+				if (Config.UserSettings.Default.Scale > initialScale)
 				{
-					Config.Settings.Default.Scale = initialScale;
-					Config.Settings.Default.Save();
+					Config.UserSettings.Default.Scale = initialScale;
+					Config.UserSettings.Default.Save();
 				}
 			}
 
 			// Rescale from last saved value
 			var thisClientSize = new Size(
-				(int)Math.Round(NORMAL_FORMWIDTH * Config.Settings.Default.Scale)
-				, (int)Math.Round(NORMAL_FORMHEIGHT * Config.Settings.Default.Scale)
+				(int)Math.Round(NORMAL_FORMWIDTH * Config.UserSettings.Default.Scale)
+				, (int)Math.Round(NORMAL_FORMHEIGHT * Config.UserSettings.Default.Scale)
 			);
 
 			return thisClientSize;
@@ -728,19 +749,21 @@ namespace TQVaultAE.GUI
 							// Copy the center 126 pixels from the top border which make up the background to the title text.
 							Rectangle srcRect = new Rectangle((Resources.BorderTop.Width / 2) - 61, 0, 126, Resources.BorderTop.Height);
 							Rectangle destRect = new Rectangle(
-								textRect.Left - Convert.ToInt32(6.0F * factor),
-								0,
-								textRect.Width + Convert.ToInt32(12.0F * factor),
-								topBorderRect.Height);
+								textRect.Left - Convert.ToInt32(6.0F * factor)
+								, 0
+								, textRect.Width + Convert.ToInt32(12.0F * factor)
+								, topBorderRect.Height
+							);
 							e.Graphics.DrawImage(Resources.BorderTop, destRect, srcRect, GraphicsUnit.Pixel);
 						}
 
 						TextRenderer.DrawText(
-							e.Graphics,
-							this.Text,
-							this.titleFont,
-							textRect,
-							this.TitleTextColor);
+							e.Graphics
+							, this.Text
+							, this.titleFont
+							, textRect
+							, this.TitleTextColor
+						);
 					}
 				}
 
@@ -974,5 +997,6 @@ namespace TQVaultAE.GUI
 			this.WindowState = FormWindowState.Normal;
 			ScaleForm(1.0f, false);
 		}
+
 	}
 }

@@ -1,6 +1,6 @@
 # TQVaultAE
 [![Steam](https://img.shields.io/badge/steam-link-lightgrey.svg)](https://steamcommunity.com/sharedfiles/filedetails/?id=1136716167)
-[![Release](https://img.shields.io/badge/stable-4.1.0-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
+[![Release](https://img.shields.io/badge/stable-4.3.0-blue.svg)](https://github.com/EtienneLamoureux/TQVaultAE/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/LICENSE)
 
 TQVaultAE is an external tool for [Titan Quest Anniversary Edition](https://www.thqnordic.com/games/titan-quest) that allows you to store and search your items outside the game.
@@ -10,23 +10,27 @@ Works with all expansions!
 
 ## Features
 - **Infinite bank space**
-- Powerful search
-- Cheats
+- [Powerful search](documentation/ADVANCEDSEARCH.md)
+- Cheats 
     - Items
-        - Extract relic/charm from items at no cost, keeping both
-        - Modify the relic/charm/artefact completion bonus
-        - Complete relic/charm from a single piece
-        - Craft an artifact from its recipe
-        - Create missing set pieces
-        - [Craft custom items](/documentation/FORGE.md)
+        - [Extract relic/charm from items at no cost, keeping both](documentation/AFFIXES.md#relics-removal)
+        - [Modify the relic/charm/artefact completion bonus](documentation/AFFIXES.md#relic-and-charm-completion-bonus-change)
+        - [Complete relic/charm from a single piece](documentation/AFFIXES.md#relic-and-charm-completion)
+        - [Craft an artifact from its recipe](documentation/AFFIXES.md#artefact-creation)
+        - [Change item seed](documentation/AFFIXES.md#item-seed-change)
+        - [Create missing set pieces](documentation/AFFIXES.md#create-missing-set-pieces)
+        - [Craft custom items](documentation/FORGE.md)
+        - [Change items affixes](documentation/AFFIXES.md#prefix-change)
         - Duplicate any item
     - Characters
         - Redisribute attribute points
         - Unlock difficulties
         - Level up
+- [Support of Titan Quest 2006](documentation/TQORIGINAL.md)
 - QOL
+    - [Cloud saving](documentation/GITBACKUP.md)
     - Bulk item transfer (<kbd>CTRL</kbd>+click, right-click)
-    - [Highlight items](/documentation/HIGHLIGHT.md)
+    - [Highlight items](documentation/HIGHLIGHT.md)
     - Combine stacks (potions, relics and charms) by dropping them onto each other
     - Split potion stacks apart
     - Keyboard shortcuts
@@ -44,8 +48,12 @@ Works with all expansions!
         - <kbd>&#8595;</kbd> : Moves currently hightlighted item(s) to stash panel
         - <kbd>CTRL</kbd>+click : Activate multi selection
         - <kbd>SHIFT</kbd>+drag : Activate mouse lasso for multi selection
+- [Character management](documentation/CHARMANAGE.md)
 - Character backups
     - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
+- External tools
+    - [ARZ Explorer](documentation/ARZEXPLORER.md) : Game resource file exploration
+    - [Save File Explorer](documentation/SAVEFILEEXPLORER.md) : Game save file exploration
 
 ## Installation
 ### Installer
@@ -87,12 +95,7 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 
 **Q. How to enable/disable the cheats (character edition, item edition, item copy)?**
 
-*A. Follow these steps:*
-1. *Navigate the the installation folder of TQVaultAE*
-2. *Open `TQVaultAE.exe.config` in a text editor (i.e. notepad, **not Microsoft Word**)*
-3. *Find the key `AllowCheats` and change the value to `True` or `False`*
-    - *`True` will allow you to toggle the cheats individually in the configuration menu*
-    - *`False` will disable the cheats completely and make it impossible to enable them in the configuration menu*
+*A. There is a dedicated checkbox in the tool settings window.*
 
 **Q. Can TQVaultAE use my old vault files?**
 
@@ -102,35 +105,23 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 
 *A. Follow these steps:*
 1. *Navigate the the installation folder of TQVaultAE*
-2. *Open `TQVaultAE.exe.config` in a text editor (i.e. notepad, **not Microsoft Word**)*
+2. *Open `UserConfig.xml` in a text editor (i.e. notepad, **not Microsoft Word**)*
 3. *Replace the following sections:*
 
 ```xml
-<setting name="AutoDetectGamePath" serializeAs="String">
-    <value>True</value>
-</setting>
+<AutoDetectGamePath>1</AutoDetectGamePath>
 ...
-<setting name="TQITPath" serializeAs="String">
-    <value />
-</setting>
-<setting name="TQPath" serializeAs="String">
-    <value />
-</setting>
+<TQITPath></TQITPath>
+<TQPath></TQPath>
 ```
 
 *by (replace the path to the correct one for your computer)*
 
 ```xml
-<setting name="AutoDetectGamePath" serializeAs="String">
-    <value>False</value>
-</setting>
+<AutoDetectGamePath>0</AutoDetectGamePath>
 ...
-<setting name="TQITPath" serializeAs="String">
-    <value>C:\examplePath\Titan Quest Anniversary Edition</value>
-</setting>
-<setting name="TQPath" serializeAs="String">
-    <value>C:\examplePath\Titan Quest Anniversary Edition</value>
-</setting>
+<TQITPath>C:\examplePath\Titan Quest Anniversary Edition</TQITPath>
+<TQPath>C:\examplePath\Titan Quest Anniversary Edition</TQPath>
 ```
 
 4. *Open TQVaultAE*
@@ -163,6 +154,16 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 
 *A. Yes*
 
+**Q. How can i change my vault icons?**
+<br />
+<img src="./documentation/TQVaultAE_changeIcon.png" width="700" alt="Open the wizard" />
+<br />
+<img src="./documentation/TQVaultAE_CustomIcon.png" width="700" alt="Customize your vault" />
+
+**Q. How can i adjust the volume?**
+
+*A. You can enable/Disable the sounds in the tool settings window or adjust the volume via Windows Volume Mixer.*
+
 **Q. I have a problem not listed here. What can I do?**
 
 *A. There are several things you can do:*
@@ -170,16 +171,6 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 - *Look up if your problem is featured in [our previously answered questions](https://github.com/EtienneLamoureux/TQVaultAE/issues?q=+is%3Aissue+label%3Aquestion+)*
 - *Look up if your problem is featured in [TQVault's documentation](https://github.com/EtienneLamoureux/TQVaultAE/blob/master/documentation/TQVault%20common%20issues.pdf)*
 - *Create an issue in [our issue tracking board](https://github.com/EtienneLamoureux/TQVaultAE/issues)*
-
-**Q. How can i change my vault icons?**
-<br />
-<img src="./documentation/TQVaultAE_changeIcon.png" width="700" alt="Open the wizard" />
-<br />
-<img src="./documentation/TQVaultAE_CustomIcon.png" width="700" alt="Customize your vault" />
-
-**Q. How can adjust the volume?**
-
-*A. You can enable/Disable the sounds in the tool settings or adjust the volume via Windows Volume Mixer.*
 
 ## Contributors
 This project could not go on without the continued volunteer contributions of the Titan Quest community. If you're thinking about contributing, please read our [contributing guidelines](/CONTRIBUTING.md).

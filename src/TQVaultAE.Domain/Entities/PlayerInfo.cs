@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using EnumsNET;
@@ -12,6 +11,12 @@ namespace TQVaultAE.Domain.Entities
 	/// </summary>
 	public class PlayerInfo
 	{
+		const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
+
+		public bool MustResetMasteries =>
+				this.MasteriesAllowed_OldValue.HasValue && this.MasteriesAllowed < this.MasteriesAllowed_OldValue
+				|| this.MasteriesResetRequiered;
+
 		public bool MasteriesResetRequiered { get; set; }
 		public bool ResetMasteryAndKeepSkillsFlag { get; set; }
 
@@ -25,17 +30,17 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		public readonly List<SkillRecord> SkillRecordList = new List<SkillRecord>();
 
-		public bool MasteryDefensiveEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Defensive.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
-		public bool MasteryStormEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Storm.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
-		public bool MasteryEarthEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Earth.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
-		public bool MasteryNatureEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Nature.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
-		public bool MasteryDreamEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Dream.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
-		public bool MasteryRuneEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Rune.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
-		public bool MasteryWarfareEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Warfare.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
-		public bool MasteryHuntingEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Hunting.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
-		public bool MasteryStealthEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Stealth.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
-		public bool MasterySpiritEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Spirit.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
-		public bool MasteryNeidanEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Neidan.AsString(EnumFormat.Description), System.StringComparison.InvariantCultureIgnoreCase));
+		public bool MasteryDefensiveEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Defensive.AsString(EnumFormat.Description), noCase));
+		public bool MasteryStormEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Storm.AsString(EnumFormat.Description), noCase));
+		public bool MasteryEarthEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Earth.AsString(EnumFormat.Description), noCase));
+		public bool MasteryNatureEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Nature.AsString(EnumFormat.Description), noCase));
+		public bool MasteryDreamEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Dream.AsString(EnumFormat.Description), noCase));
+		public bool MasteryRuneEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Rune.AsString(EnumFormat.Description), noCase));
+		public bool MasteryWarfareEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Warfare.AsString(EnumFormat.Description), noCase));
+		public bool MasteryHuntingEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Hunting.AsString(EnumFormat.Description), noCase));
+		public bool MasteryStealthEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Stealth.AsString(EnumFormat.Description), noCase));
+		public bool MasterySpiritEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Spirit.AsString(EnumFormat.Description), noCase));
+		public bool MasteryNeidanEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Neidan.AsString(EnumFormat.Description), noCase));
 
 		public string[] ActiveMasteriesRecordNames
 		{
@@ -104,9 +109,10 @@ namespace TQVaultAE.Domain.Entities
 					// Remove all skills having the same base skill line (ex :  storm, earth, etc...)
 					this._SkillRecordListRemoved.AddRange(
 						this.SkillRecordList
-						.Where(sk => sk.skillName.StartsWith(recBase, StringComparison.InvariantCultureIgnoreCase))
+						.Where(sk => sk.skillName.StartsWith(recBase, noCase))
 					);
 				}
+
 				if (ResetMasteryAndKeepSkillsFlag)
 				{
 					var masterySkills = this._SkillRecordListRemoved.Where(sk => sk.skillName.EndsWith("Mastery.dbr", StringComparison.InvariantCultureIgnoreCase)).ToList();
@@ -201,12 +207,12 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		/// <param name="dbr"></param>
 		/// <returns></returns>
-		public IEnumerable<SkillRecord> GetSkillsByBaseRecordName(string dbr)
+		public IEnumerable<SkillRecord> GetSkillsByBaseRecordName(RecordId dbr)
 		{
-			var baseRec = Path.GetDirectoryName(dbr);
+			var baseRec = Path.GetDirectoryName(dbr.Normalized);
 			foreach (var sk in this.SkillRecordList)
 			{
-				if (sk.skillName.StartsWith(baseRec, StringComparison.InvariantCultureIgnoreCase))
+				if (sk.skillName.StartsWith(baseRec, noCase))
 					yield return sk;
 			}
 		}
@@ -323,7 +329,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// TQ, TQIT, TQITAE
 		/// </summary>
-		public int HeaderVersion { get; set; }
+		public PlayerFileHeaderVersion HeaderVersion { get; set; }
 
 		/// <summary>
 		/// Class name

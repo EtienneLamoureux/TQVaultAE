@@ -15,14 +15,16 @@ namespace TQVaultAE.Services
 		private readonly ILogger Log = null;
 		private readonly SessionContext userContext = null;
 		private readonly IGamePathService GamePathResolver;
+		private readonly IGameFileService GameFileService;
 		private readonly IPlayerCollectionProvider PlayerCollectionProvider;
 		public const string MAINVAULT = "Main Vault";
 
-		public VaultService(ILogger<StashService> log, SessionContext userContext, IPlayerCollectionProvider playerCollectionProvider, IGamePathService gamePathResolver)
+		public VaultService(ILogger<StashService> log, SessionContext userContext, IPlayerCollectionProvider playerCollectionProvider, IGamePathService gamePathResolver, IGameFileService iGameFileService)
 		{
 			this.Log = log;
 			this.userContext = userContext;
 			this.GamePathResolver = gamePathResolver;
+			this.GameFileService = iGameFileService;
 			this.PlayerCollectionProvider = playerCollectionProvider;
 		}
 
@@ -77,13 +79,15 @@ namespace TQVaultAE.Services
 				{
 					// backup the file
 					vaultOnError = vault;
-					GamePathResolver.BackupFile(vault.PlayerName, vaultFile);
+
+					if (!Config.UserSettings.Default.DisableLegacyBackup)
+						GameFileService.BackupFile(vault.PlayerName, vaultFile);
+
 					PlayerCollectionProvider.Save(vault, vaultFile);
 					vault.Saved();
 					saved++;
 				}
 			}
-
 			return saved;
 		}
 
@@ -151,8 +155,8 @@ namespace TQVaultAE.Services
 		/// <param name="vaultPath">Path to the vault files</param>
 		public void UpdateVaultPath(string vaultPath)
 		{
-			Config.Settings.Default.VaultPath = vaultPath;
-			Config.Settings.Default.Save();
+			Config.UserSettings.Default.VaultPath = vaultPath;
+			Config.UserSettings.Default.Save();
 		}
 	}
 }

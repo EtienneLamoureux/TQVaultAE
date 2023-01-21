@@ -121,8 +121,11 @@ namespace TQVaultAE.GUI
 			this.resultsDataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ResultsDataGridViewCellDoubleClick);
 			this.resultsDataGridView.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.ResultsDataGridViewCellMouseEnter);
 			this.resultsDataGridView.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.ResultsDataGridViewCellMouseLeave);
+			this.resultsDataGridView.CellClick += ResultsDataGridView_CellClick;
+
 			this.resultsDataGridView.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.ResultsDataGridViewRowEnter);
 			this.resultsDataGridView.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.ResultsDataGridViewRowLeave);
+
 			this.resultsDataGridView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ResultsDataGridViewKeyPress);
 			this.resultsDataGridView.MouseLeave += new System.EventHandler(this.ResultsDataGridViewMouseLeave);
 			// 

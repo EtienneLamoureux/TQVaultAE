@@ -51,11 +51,14 @@
             this.scalingRadioButtonGod = new TQVaultAE.GUI.Components.ScalingRadioButton();
             this.scalingRadioButtonRelax = new TQVaultAE.GUI.Components.ScalingRadioButton();
             this.scalingRadioButtonStrict = new TQVaultAE.GUI.Components.ScalingRadioButton();
+            this.scalingRadioButtonGame = new TQVaultAE.GUI.Components.ScalingRadioButton();
             this.comboBoxSuffix = new System.Windows.Forms.ComboBox();
             this.comboBoxPrefix = new System.Windows.Forms.ComboBox();
             this.comboBoxRelic1 = new System.Windows.Forms.ComboBox();
             this.comboBoxRelic2 = new System.Windows.Forms.ComboBox();
             this.ResetButton = new TQVaultAE.GUI.Components.ScalingButton();
+            this.flowLayoutPanelBottom = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
+            this.scalingCheckBoxHardcore = new TQVaultAE.GUI.Components.ScalingCheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDragDrop)).BeginInit();
             this.tableLayoutPanelForge.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRelic2)).BeginInit();
@@ -66,6 +69,7 @@
             this.flowLayoutPanelPropertiesLeft.SuspendLayout();
             this.flowLayoutPanel2PropertiesRight.SuspendLayout();
             this.flowLayoutPanelTop.SuspendLayout();
+            this.flowLayoutPanelBottom.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBoxDragDrop
@@ -109,6 +113,7 @@
             this.tableLayoutPanelForge.Controls.Add(this.comboBoxRelic1, 1, 6);
             this.tableLayoutPanelForge.Controls.Add(this.comboBoxRelic2, 4, 6);
             this.tableLayoutPanelForge.Controls.Add(this.ResetButton, 2, 7);
+            this.tableLayoutPanelForge.Controls.Add(this.flowLayoutPanelBottom, 2, 5);
             this.tableLayoutPanelForge.Location = new System.Drawing.Point(15, 15);
             this.tableLayoutPanelForge.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanelForge.Name = "tableLayoutPanelForge";
@@ -122,7 +127,7 @@
             this.tableLayoutPanelForge.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelForge.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelForge.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanelForge.Size = new System.Drawing.Size(430, 730);
+            this.tableLayoutPanelForge.Size = new System.Drawing.Size(432, 730);
             this.tableLayoutPanelForge.TabIndex = 0;
             // 
             // scalingLabelSuffix
@@ -130,7 +135,7 @@
             this.scalingLabelSuffix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.scalingLabelSuffix.Font = new System.Drawing.Font("Albertus MT", 9.75F, System.Drawing.FontStyle.Bold);
             this.scalingLabelSuffix.ForeColor = System.Drawing.Color.Gold;
-            this.scalingLabelSuffix.Location = new System.Drawing.Point(282, 20);
+            this.scalingLabelSuffix.Location = new System.Drawing.Point(284, 20);
             this.scalingLabelSuffix.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
             this.scalingLabelSuffix.Name = "scalingLabelSuffix";
             this.scalingLabelSuffix.Size = new System.Drawing.Size(128, 15);
@@ -162,7 +167,7 @@
             this.CancelButton.Font = new System.Drawing.Font("Albertus MT", 12F);
             this.CancelButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.CancelButton.Image = ((System.Drawing.Image)(resources.GetObject("CancelButton.Image")));
-            this.CancelButton.Location = new System.Drawing.Point(35, 670);
+            this.CancelButton.Location = new System.Drawing.Point(36, 670);
             this.CancelButton.Margin = new System.Windows.Forms.Padding(0, 10, 0, 10);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("CancelButton.OverBitmap")));
@@ -187,7 +192,7 @@
             this.ForgeButton.Font = new System.Drawing.Font("Albertus MT", 12F);
             this.ForgeButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ForgeButton.Image = ((System.Drawing.Image)(resources.GetObject("ForgeButton.Image")));
-            this.ForgeButton.Location = new System.Drawing.Point(294, 670);
+            this.ForgeButton.Location = new System.Drawing.Point(296, 670);
             this.ForgeButton.Margin = new System.Windows.Forms.Padding(0);
             this.ForgeButton.Name = "ForgeButton";
             this.ForgeButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ForgeButton.OverBitmap")));
@@ -205,7 +210,7 @@
             this.pictureBoxRelic2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBoxRelic2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
             this.pictureBoxRelic2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pictureBoxRelic2.Location = new System.Drawing.Point(282, 445);
+            this.pictureBoxRelic2.Location = new System.Drawing.Point(284, 445);
             this.pictureBoxRelic2.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.pictureBoxRelic2.Name = "pictureBoxRelic2";
             this.pictureBoxRelic2.Size = new System.Drawing.Size(128, 192);
@@ -220,7 +225,7 @@
             this.pictureBoxSuffix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBoxSuffix.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
             this.pictureBoxSuffix.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pictureBoxSuffix.Location = new System.Drawing.Point(282, 38);
+            this.pictureBoxSuffix.Location = new System.Drawing.Point(284, 38);
             this.pictureBoxSuffix.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.pictureBoxSuffix.Name = "pictureBoxSuffix";
             this.pictureBoxSuffix.Size = new System.Drawing.Size(128, 192);
@@ -263,7 +268,7 @@
             this.pictureBoxBaseItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
             this.pictureBoxBaseItem.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.tableLayoutPanelForge.SetColumnSpan(this.pictureBoxBaseItem, 2);
-            this.pictureBoxBaseItem.Location = new System.Drawing.Point(151, 253);
+            this.pictureBoxBaseItem.Location = new System.Drawing.Point(152, 253);
             this.pictureBoxBaseItem.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBoxBaseItem.Name = "pictureBoxBaseItem";
             this.pictureBoxBaseItem.Size = new System.Drawing.Size(128, 192);
@@ -282,7 +287,7 @@
             this.flowLayoutPanelPropertiesLeft.Location = new System.Drawing.Point(20, 253);
             this.flowLayoutPanelPropertiesLeft.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanelPropertiesLeft.Name = "flowLayoutPanelPropertiesLeft";
-            this.flowLayoutPanelPropertiesLeft.Size = new System.Drawing.Size(131, 192);
+            this.flowLayoutPanelPropertiesLeft.Size = new System.Drawing.Size(132, 192);
             this.flowLayoutPanelPropertiesLeft.TabIndex = 12;
             // 
             // scalingLabelRelic1
@@ -303,10 +308,10 @@
             this.flowLayoutPanel2PropertiesRight.Controls.Add(this.scalingLabelRelic2);
             this.flowLayoutPanel2PropertiesRight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel2PropertiesRight.FlowDirection = System.Windows.Forms.FlowDirection.BottomUp;
-            this.flowLayoutPanel2PropertiesRight.Location = new System.Drawing.Point(279, 253);
+            this.flowLayoutPanel2PropertiesRight.Location = new System.Drawing.Point(280, 253);
             this.flowLayoutPanel2PropertiesRight.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel2PropertiesRight.Name = "flowLayoutPanel2PropertiesRight";
-            this.flowLayoutPanel2PropertiesRight.Size = new System.Drawing.Size(131, 192);
+            this.flowLayoutPanel2PropertiesRight.Size = new System.Drawing.Size(132, 192);
             this.flowLayoutPanel2PropertiesRight.TabIndex = 13;
             // 
             // scalingLabelRelic2
@@ -330,9 +335,10 @@
             this.flowLayoutPanelTop.Controls.Add(this.scalingRadioButtonGod);
             this.flowLayoutPanelTop.Controls.Add(this.scalingRadioButtonRelax);
             this.flowLayoutPanelTop.Controls.Add(this.scalingRadioButtonStrict);
+            this.flowLayoutPanelTop.Controls.Add(this.scalingRadioButtonGame);
             this.flowLayoutPanelTop.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanelTop.FlowDirection = System.Windows.Forms.FlowDirection.BottomUp;
-            this.flowLayoutPanelTop.Location = new System.Drawing.Point(151, 38);
+            this.flowLayoutPanelTop.Location = new System.Drawing.Point(152, 38);
             this.flowLayoutPanelTop.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanelTop.Name = "flowLayoutPanelTop";
             this.flowLayoutPanelTop.Size = new System.Drawing.Size(128, 192);
@@ -382,7 +388,6 @@
             // scalingRadioButtonStrict
             // 
             this.scalingRadioButtonStrict.AutoSize = true;
-            this.scalingRadioButtonStrict.Checked = true;
             this.scalingRadioButtonStrict.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
             this.scalingRadioButtonStrict.ForeColor = System.Drawing.Color.Gold;
             this.scalingRadioButtonStrict.Location = new System.Drawing.Point(20, 78);
@@ -390,10 +395,25 @@
             this.scalingRadioButtonStrict.Name = "scalingRadioButtonStrict";
             this.scalingRadioButtonStrict.Size = new System.Drawing.Size(89, 19);
             this.scalingRadioButtonStrict.TabIndex = 3;
-            this.scalingRadioButtonStrict.TabStop = true;
             this.scalingRadioButtonStrict.Text = "Strict Mode";
             this.scalingRadioButtonStrict.UseVisualStyleBackColor = true;
             this.scalingRadioButtonStrict.Click += new System.EventHandler(this.ForgeMode_Clicked);
+            // 
+            // scalingRadioButtonGame
+            // 
+            this.scalingRadioButtonGame.AutoSize = true;
+            this.scalingRadioButtonGame.Checked = true;
+            this.scalingRadioButtonGame.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.scalingRadioButtonGame.ForeColor = System.Drawing.Color.Gold;
+            this.scalingRadioButtonGame.Location = new System.Drawing.Point(20, 53);
+            this.scalingRadioButtonGame.Margin = new System.Windows.Forms.Padding(20, 3, 3, 3);
+            this.scalingRadioButtonGame.Name = "scalingRadioButtonGame";
+            this.scalingRadioButtonGame.Size = new System.Drawing.Size(92, 19);
+            this.scalingRadioButtonGame.TabIndex = 6;
+            this.scalingRadioButtonGame.TabStop = true;
+            this.scalingRadioButtonGame.Text = "Game Mode";
+            this.scalingRadioButtonGame.UseVisualStyleBackColor = true;
+            this.scalingRadioButtonGame.Click += new System.EventHandler(this.ForgeMode_Clicked);
             // 
             // comboBoxSuffix
             // 
@@ -407,10 +427,10 @@
             "Use Suffix",
             "Use Relic1",
             "Use Relic2"});
-            this.comboBoxSuffix.Location = new System.Drawing.Point(279, 230);
+            this.comboBoxSuffix.Location = new System.Drawing.Point(280, 230);
             this.comboBoxSuffix.Margin = new System.Windows.Forms.Padding(0);
             this.comboBoxSuffix.Name = "comboBoxSuffix";
-            this.comboBoxSuffix.Size = new System.Drawing.Size(131, 23);
+            this.comboBoxSuffix.Size = new System.Drawing.Size(132, 23);
             this.comboBoxSuffix.TabIndex = 19;
             this.comboBoxSuffix.SelectedIndexChanged += new System.EventHandler(this.comboBox_SelectedIndexChanged);
             // 
@@ -429,7 +449,7 @@
             this.comboBoxPrefix.Location = new System.Drawing.Point(20, 230);
             this.comboBoxPrefix.Margin = new System.Windows.Forms.Padding(0);
             this.comboBoxPrefix.Name = "comboBoxPrefix";
-            this.comboBoxPrefix.Size = new System.Drawing.Size(131, 23);
+            this.comboBoxPrefix.Size = new System.Drawing.Size(132, 23);
             this.comboBoxPrefix.TabIndex = 20;
             this.comboBoxPrefix.SelectedIndexChanged += new System.EventHandler(this.comboBox_SelectedIndexChanged);
             // 
@@ -448,7 +468,7 @@
             this.comboBoxRelic1.Location = new System.Drawing.Point(20, 637);
             this.comboBoxRelic1.Margin = new System.Windows.Forms.Padding(0);
             this.comboBoxRelic1.Name = "comboBoxRelic1";
-            this.comboBoxRelic1.Size = new System.Drawing.Size(131, 23);
+            this.comboBoxRelic1.Size = new System.Drawing.Size(132, 23);
             this.comboBoxRelic1.TabIndex = 21;
             this.comboBoxRelic1.SelectedIndexChanged += new System.EventHandler(this.comboBox_SelectedIndexChanged);
             // 
@@ -464,10 +484,10 @@
             "Use Suffix",
             "Use Relic1",
             "Use Relic2"});
-            this.comboBoxRelic2.Location = new System.Drawing.Point(279, 637);
+            this.comboBoxRelic2.Location = new System.Drawing.Point(280, 637);
             this.comboBoxRelic2.Margin = new System.Windows.Forms.Padding(0);
             this.comboBoxRelic2.Name = "comboBoxRelic2";
-            this.comboBoxRelic2.Size = new System.Drawing.Size(131, 23);
+            this.comboBoxRelic2.Size = new System.Drawing.Size(132, 23);
             this.comboBoxRelic2.TabIndex = 22;
             this.comboBoxRelic2.SelectedIndexChanged += new System.EventHandler(this.comboBox_SelectedIndexChanged);
             // 
@@ -484,7 +504,7 @@
             this.ResetButton.Font = new System.Drawing.Font("Albertus MT", 12F);
             this.ResetButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
             this.ResetButton.Image = ((System.Drawing.Image)(resources.GetObject("ResetButton.Image")));
-            this.ResetButton.Location = new System.Drawing.Point(165, 670);
+            this.ResetButton.Location = new System.Drawing.Point(166, 670);
             this.ResetButton.Margin = new System.Windows.Forms.Padding(0, 10, 0, 10);
             this.ResetButton.Name = "ResetButton";
             this.ResetButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetButton.OverBitmap")));
@@ -496,6 +516,33 @@
             this.ResetButton.UseCustomGraphic = true;
             this.ResetButton.UseVisualStyleBackColor = false;
             this.ResetButton.Click += new System.EventHandler(this.scalingButtonReset_Click);
+            // 
+            // flowLayoutPanelBottom
+            // 
+            this.flowLayoutPanelBottom.AutoSize = true;
+            this.tableLayoutPanelForge.SetColumnSpan(this.flowLayoutPanelBottom, 2);
+            this.flowLayoutPanelBottom.Controls.Add(this.scalingCheckBoxHardcore);
+            this.flowLayoutPanelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanelBottom.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanelBottom.Location = new System.Drawing.Point(155, 448);
+            this.flowLayoutPanelBottom.Name = "flowLayoutPanelBottom";
+            this.flowLayoutPanelBottom.Size = new System.Drawing.Size(122, 186);
+            this.flowLayoutPanelBottom.TabIndex = 24;
+            // 
+            // scalingCheckBoxHardcore
+            // 
+            this.scalingCheckBoxHardcore.AutoSize = true;
+            this.scalingCheckBoxHardcore.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.scalingCheckBoxHardcore.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
+            this.scalingCheckBoxHardcore.ForeColor = System.Drawing.Color.Gold;
+            this.scalingCheckBoxHardcore.Location = new System.Drawing.Point(3, 3);
+            this.scalingCheckBoxHardcore.Name = "scalingCheckBoxHardcore";
+            this.scalingCheckBoxHardcore.Size = new System.Drawing.Size(76, 19);
+            this.scalingCheckBoxHardcore.TabIndex = 24;
+            this.scalingCheckBoxHardcore.Text = "Hardcore";
+            this.toolTip.SetToolTip(this.scalingCheckBoxHardcore, "Materials are destroyed in the process");
+            this.scalingCheckBoxHardcore.UseVisualStyleBackColor = true;
+            this.scalingCheckBoxHardcore.CheckedChanged += new System.EventHandler(this.scalingCheckBoxHardcore_CheckedChanged);
             // 
             // ForgePanel
             // 
@@ -523,6 +570,8 @@
             this.flowLayoutPanel2PropertiesRight.ResumeLayout(false);
             this.flowLayoutPanelTop.ResumeLayout(false);
             this.flowLayoutPanelTop.PerformLayout();
+            this.flowLayoutPanelBottom.ResumeLayout(false);
+            this.flowLayoutPanelBottom.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -556,5 +605,8 @@
 		private System.Windows.Forms.ComboBox comboBoxRelic2;
 		private System.Windows.Forms.PictureBox pictureBoxDragDrop;
 		private ScalingButton ResetButton;
-	}
+        private ScalingRadioButton scalingRadioButtonGame;
+        private BufferedFlowLayoutPanel flowLayoutPanelBottom;
+        private ScalingCheckBox scalingCheckBoxHardcore;
+    }
 }

@@ -62,9 +62,9 @@ namespace TQVaultAE.GUI.Components
 			if (info.DisplayMode != BagButtonDisplayMode.Default)
 			{
 				// Load custom
-				this.OnBitmap = string.IsNullOrWhiteSpace(info.On) ? null : UIService.LoadBitmap(info.On);
-				this.OffBitmap = string.IsNullOrWhiteSpace(info.Off) ? null : UIService.LoadBitmap(info.Off);
-				this.OverBitmap = string.IsNullOrWhiteSpace(info.Over) ? null : UIService.LoadBitmap(info.Over);
+				this.OnBitmap = RecordId.IsNullOrEmpty(info.On) ? null : UIService.LoadBitmap(info.On);
+				this.OffBitmap = RecordId.IsNullOrEmpty(info.Off) ? null : UIService.LoadBitmap(info.Off);
+				this.OverBitmap = RecordId.IsNullOrEmpty(info.Over) ? null : UIService.LoadBitmap(info.Over);
 
 				if (this.OnBitmap is not null && this.OffBitmap is not null) return;// Done
 
@@ -239,10 +239,10 @@ namespace TQVaultAE.GUI.Components
 				{
 					switch (this.ButtonNumber)
 					{
-						case StashPanel.BAGID_EQUIPMENTPANEL when !Config.Settings.Default.DisableTooltipEquipment:
-						case StashPanel.BAGID_PLAYERSTASH when !Config.Settings.Default.DisableTooltipStash:
-						case StashPanel.BAGID_RELICVAULTSTASH when !Config.Settings.Default.DisableTooltipRelic:
-						case StashPanel.BAGID_TRANSFERSTASH when !Config.Settings.Default.DisableTooltipTransfer:
+						case StashPanel.BAGID_EQUIPMENTPANEL when !Config.UserSettings.Default.DisableTooltipEquipment:
+						case StashPanel.BAGID_PLAYERSTASH when !Config.UserSettings.Default.DisableTooltipStash:
+						case StashPanel.BAGID_RELICVAULTSTASH when !Config.UserSettings.Default.DisableTooltipRelic:
+						case StashPanel.BAGID_TRANSFERSTASH when !Config.UserSettings.Default.DisableTooltipTransfer:
 							BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
 							break;
 					}

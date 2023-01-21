@@ -29,7 +29,7 @@
 		/// <summary>
 		/// Gets the string ID
 		/// </summary>
-		public string ID { get; set; }
+		public RecordId ID { get; set; }
 
 		/// <summary>
 		/// Gets the Record type.

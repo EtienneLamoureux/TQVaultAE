@@ -89,21 +89,6 @@ namespace TQVaultAE.Data
 		}
 
 		/// <summary>
-		/// Normalizes the record path to Upper Case Invariant Culture and replace backslashes with slashes.
-		/// </summary>
-		/// <param name="recordId">record path to be normalized</param>
-		/// <returns>normalized record path</returns>
-		public string NormalizeRecordPath(string recordId)
-		{
-			// uppercase it
-			string normalizedRecordId = recordId.ToUpperInvariant();
-
-			// replace any '/' with '\\'
-			normalizedRecordId = normalizedRecordId.Replace('/', '\\');
-			return normalizedRecordId;
-		}
-
-		/// <summary>
 		/// Reads a string from the binary stream.
 		/// Expects an integer length value followed by the actual string of the stated length.
 		/// </summary>
@@ -167,23 +152,40 @@ namespace TQVaultAE.Data
 			return found;
 		}
 
+		static byte[] Empty = new byte[0];
+
 		public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, float valueAsFloat) ReadFloatAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
 		{
 			var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
-			var value = new ArraySegment<byte>(playerFileContent, idx.nextOffset, sizeof(float)).ToArray();
+			byte[] value = Empty;
+
+			if (idx.indexOf == -1)// Not found
+				return (idx.indexOf, idx.nextOffset, idx.nextOffset, value, 0);
+
+			value = new ArraySegment<byte>(playerFileContent, idx.nextOffset, sizeof(float)).ToArray();
 			return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(float), value, BitConverter.ToSingle(value, 0));
 		}
 
 		public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) ReadIntAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
 		{
 			var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
-			var value = new ArraySegment<byte>(playerFileContent, idx.nextOffset, sizeof(int)).ToArray();
+			byte[] value = Empty;
+
+			if (idx.indexOf == -1)// Not found
+				return (idx.indexOf, idx.nextOffset, idx.nextOffset, value, 0);
+
+			value = new ArraySegment<byte>(playerFileContent, idx.nextOffset, sizeof(int)).ToArray();
 			return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int), value, BitConverter.ToInt32(value, 0));
 		}
 
 		public (int indexOf, int valueOffset, int nextOffset, int valueLen, byte[] valueAsByteArray, string valueAsString) ReadCStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
 		{
 			var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
+			byte[] value = Empty;
+
+			if (idx.indexOf == -1)// Not found
+				return (idx.indexOf, idx.nextOffset, idx.nextOffset, 0, Empty, "");
+
 			var len = BitConverter.ToInt32(new ArraySegment<byte>(playerFileContent, idx.nextOffset, sizeof(int)).ToArray(), 0);
 			var stringArray = new ArraySegment<byte>(playerFileContent, idx.nextOffset + sizeof(int), len).ToArray();
 			return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int) + len, len, stringArray, Encoding1252.GetString(stringArray));
@@ -192,6 +194,11 @@ namespace TQVaultAE.Data
 		public (int indexOf, int valueOffset, int nextOffset, int valueLen, byte[] valueAsByteArray, string valueAsString) ReadUnicodeStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
 		{
 			var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
+			byte[] value = Empty;
+
+			if (idx.indexOf == -1)// Not found
+				return (idx.indexOf, idx.nextOffset, idx.nextOffset, 0, Empty, "");
+
 			var len = BitConverter.ToInt32(new ArraySegment<byte>(playerFileContent, idx.nextOffset, sizeof(int)).ToArray(), 0);
 			var stringArray = new ArraySegment<byte>(playerFileContent, idx.nextOffset + sizeof(int), len * 2).ToArray();
 			return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int) + len * 2, len, stringArray, EncodingUnicode.GetString(stringArray));
@@ -203,7 +210,9 @@ namespace TQVaultAE.Data
 			byte[] keyWithLen = BitConverter.GetBytes(key.Length).Concat(Encoding1252.GetBytes(key)).ToArray();
 			var result = BinaryFindKey(dataSource, keyWithLen, offset);
 			// compensate the added length before returning the value
-			return (result.indexOf + sizeof(int), result.nextOffset);
+			return result.indexOf == -1 // not found
+				? (result.indexOf, offset)
+				: (result.indexOf + sizeof(int), result.nextOffset);
 		}
 
 		public (int indexOf, int nextOffset) BinaryFindKey(byte[] dataSource, byte[] key, int offset = 0)
@@ -221,7 +230,8 @@ namespace TQVaultAE.Data
 
 				}
 			}
-			i = -1;// Not found
+			// Not found
+			return (-1, 0);
 		found:
 			return (i, i + key.Length);
 		}
