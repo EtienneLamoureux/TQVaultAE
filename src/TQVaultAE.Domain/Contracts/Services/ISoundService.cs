@@ -6,6 +6,14 @@ namespace TQVaultAE.Domain.Contracts.Services
 	public interface ISoundService
 	{
 		/// <summary>
+		/// Set a sound in the pool of available sounds
+		/// </summary>
+		/// <param name="resourceId">record identifier ending with <c>.MP3</c> or <c>.WAV</c></param>
+		/// <param name="resourceData">resource data as MP3 or WAV binary content</param>
+		/// <returns></returns>
+		bool SetSoundResource(RecordId resourceId, byte[] resourceData);
+
+		/// <summary>
 		/// Reload all player according to configuration
 		/// </summary>
 		void InitAllPlayers();

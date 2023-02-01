@@ -15,7 +15,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("titanquest.net community")]
 [assembly: AssemblyProduct("ARZExplorer")]
-[assembly: AssemblyCopyright("Copyright ©  2009-2010 by VillageIdiot")]
+[assembly: AssemblyCopyright("Copyright ©  2009-2010 by VillageIdiot, v2.0 - 2022 by hguy")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,6 +33,6 @@ using System.Runtime.InteropServices;
 //      Minor Version
 //      Build Number
 //      Revision
-[assembly: AssemblyVersion("1.2.0.0")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]

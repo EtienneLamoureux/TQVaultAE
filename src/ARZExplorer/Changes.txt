@@ -1,13 +1,16 @@
-ARZExtract:
-v1.0.0.0
-Initial Release.
-Take the C# converted TQVault code and create a skeleton application.
+v2.0.0.0 - 2022 (hguy)
+Added Table Of Content dynamic loading
+Allow navigation links from DBR records view to TXT, DBR, TEX, WAV & MP3
+Added Sound player for WAV & MP3
+Added toolbar icons
+Complete menu entries with shortcuts
+Added Basic navigation history (Prev/Next)
+Added OneClick database loading
+Added Copy to Clipboard for all types
 
-ARZExplorer:
-v1.0.0.0
-Add Vorbis' fix for extended characters in the database.
-Remove the dialog based UI and create a menu based UI.
-Changed to mirror ARCExplorer and renamed to ARZExplorer.
+v1.2.0.0 - 2022 (hguy)
+Added Textbox displaying the file path inside the archive (double click copy the value into the clipboard).
+Added Statusbar displaying detailed informations about current selection.
 
 v1.0.1.0
 Added support for ARC files. 
@@ -15,6 +18,13 @@ Added support for ARC files.
 Added width resizing of panes.
 Added ability to drop files onto the main form.
 
-v1.2.0.0 (hguy)
-Added Textbox displaying the file path inside the archive (double click copy the value into the clipboard).
-Added Statusbar displaying detailed informations about current selection.
+ARZExplorer:
+v1.0.0.0
+Add Vorbis' fix for extended characters in the database.
+Remove the dialog based UI and create a menu based UI.
+Changed to mirror ARCExplorer and renamed to ARZExplorer.
+
+ARZExtract:
+v1.0.0.0
+Initial Release.
+Take the C# converted TQVault code and create a skeleton application.
