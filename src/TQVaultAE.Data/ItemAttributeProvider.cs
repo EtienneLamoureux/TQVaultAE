@@ -37,12 +37,13 @@ namespace TQVaultAE.Data
 		private string[] otherEffects =
 		{
 			"characterBaseAttackSpeedTag",  // string text = TextTag(value)
-            "levelRequirement",             // integer level requirement text = Format(TextTag(MeetsRequirement), TextTag(LevelRequirement), (float) value)
-            "offensiveGlobalChance",        // float
-            "retaliationGlobalChance",      // float
-            "racialBonusPercentDamage",     // Added by VillageIdiot : float
-            "racialBonusAbsoluteDefense",   // Added by VillageIdiot : int
-            "itemSkillName"                 // Added by VillageIdiot : string text (dbr)
+			"levelRequirement",             // integer level requirement text = Format(TextTag(MeetsRequirement), TextTag(LevelRequirement), (float) value)
+			"offensiveGlobalChance",        // float
+			"retaliationGlobalChance",      // float
+			"racialBonusPercentDamage",     // Added by VillageIdiot : float
+			"racialBonusAbsoluteDefense",   // Added by VillageIdiot : int
+			"itemSkillName",                // Added by VillageIdiot : string text (dbr)
+			"skillName"						// Added by hgu : string text (dbr) for OneShot_Scroll_Eternal
         };
 
 		/// <summary>
@@ -561,6 +562,7 @@ namespace TQVaultAE.Data
 			return attributeDictionary.TryGetValue(attribute.ToUpperInvariant(), out var value) ? value : null;
 		}
 
+		static Regex ConvertFormatRegEx = new Regex(@"%(?<precis>(?<sign>[+-])?\.(?<numDecimal>\d)?)?(?<alpha>[sdft])(?<formatNumber>\d)", RegexOptions.Compiled);
 		/// <summary>
 		/// Converts format string from TQ format to string.format
 		/// </summary>
@@ -608,16 +610,12 @@ namespace TQVaultAE.Data
 			}
 
 			// Escape TQMarking changing "{^.}" to "[^.]"
-			formatValue = Regex.Replace(formatValue
-				, TQColorHelper.RegExTQTag
+			formatValue = TQColorHelper.RegExTQTagInstance.Replace(formatValue
 				, @"[^${ColorId}]"
 			);
 
 			// Takes a TQ Format string and converts it to a .NET Format string using regex.
-			var newformat = Regex.Replace(formatValue
-				, @"%(?<precis>(?<sign>[+-])?\.(?<numDecimal>\d)?)?(?<alpha>[sdft])(?<formatNumber>\d)"
-				, new MatchEvaluator(replaceMatch)
-			);
+			var newformat = ConvertFormatRegEx.Replace(formatValue, replaceMatch);
 
 			// Remove residual irrelevant {} on some format
 			newformat = newformat.Split('{', '}').JoinString("");
@@ -626,8 +624,7 @@ namespace TQVaultAE.Data
 			newformat = newformat.Replace("[", "{").Replace("]", "}");
 
 			// Escape TQTags by doubling {}
-			newformat = Regex.Replace(newformat
-				, TQColorHelper.RegExTQTag
+			newformat = TQColorHelper.RegExTQTagInstance.Replace(newformat
 				, @"{${ColorTag}}"
 			);
 
@@ -841,7 +838,7 @@ namespace TQVaultAE.Data
 			if (effect.Equals("defensiveTotalSpeedChance", StringComparison.OrdinalIgnoreCase)
 				|| effect.Equals("defensiveAbsorption", StringComparison.OrdinalIgnoreCase))
 				return effect;
-			
+
 			// Check for specific strings.
 			switch (effect.ToUpperInvariant())
 			{

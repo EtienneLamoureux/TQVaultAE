@@ -162,19 +162,20 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper">
-      <Version>9.0.0</Version>
+      <Version>10.1.1</Version>
     </PackageReference>
     <PackageReference Include="Enums.NET">
-      <Version>3.0.3</Version>
+      <Version>4.0.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(ProjectDir)bin\$(ConfigurationName)" "$(SolutionDir)bin\$(ConfigurationName)" /y /s /i
-
-REM Clean output of unnecessary files
-DEL "$(SolutionDir)bin\$(ConfigurationName)\*.pdb"
-RMDIR "$(SolutionDir)bin\$(ConfigurationName)\Logging" /S /Q
+    <PostBuildEvent>REM Copy Build
+SET SOLDIR=$(SolutionDir)
+SET PLATFORM=.
+SET CONFNAME=$(ConfigurationName)
+SET PROJDIR=$(ProjectDir)
+CALL "%25SOLDIR%25src\publishtobin.bat"
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

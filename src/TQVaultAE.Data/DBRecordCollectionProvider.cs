@@ -18,7 +18,7 @@ namespace TQVaultAE.Data
 		public void Write(DBRecordCollection drc, string baseFolder, string fileName = null)
 		{
 			// construct the full path
-			string fullPath = Path.Combine(baseFolder, drc.Id);
+			string fullPath = Path.Combine(baseFolder, drc.Id.Normalized);
 			string destinationFolder = Path.GetDirectoryName(fullPath);
 
 			if (fileName != null)

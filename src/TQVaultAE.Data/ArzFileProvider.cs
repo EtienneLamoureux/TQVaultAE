@@ -39,12 +39,12 @@ namespace TQVaultAE.Data
 		/// Gets the list of keys from the recordInfo dictionary.
 		/// </summary>
 		/// <returns>string array holding the sorted list</returns>
-		public string[] GetKeyTable(ArzFile file)
+		public RecordId[] GetKeyTable(ArzFile file)
 		{
 			if (file.Keys == null || file.Keys.Length == 0)
 				this.BuildKeyTable(file);
 
-			return (string[])file.Keys.Clone();
+			return (RecordId[])file.Keys.Clone();
 		}
 
 		/// <summary>
@@ -128,11 +128,9 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="recordId">string ID of the record will be normalized internally</param>
 		/// <returns>DBRecord corresponding to the string ID.</returns>
-		public DBRecordCollection GetItem(ArzFile file, string recordId)
+		public DBRecordCollection GetItem(ArzFile file, RecordId recordId)
 		{
-			if (string.IsNullOrEmpty(recordId)) return null;
-
-			recordId = TQData.NormalizeRecordPath(recordId);
+			if (recordId is null) return null;
 
 			RecordInfo rawRecord;
 			if (file.RecordInfo.ContainsKey(recordId))
@@ -155,11 +153,8 @@ namespace TQVaultAE.Data
 		/// </remarks>
 		/// <param name="recordId">String ID of the record.  Will be normalized internally.</param>
 		/// <returns>Decompressed RecordInfo record</returns>
-		public DBRecordCollection GetRecordNotCached(ArzFile file, string recordId)
-		{
-			recordId = TQData.NormalizeRecordPath(recordId);
-			return infoProv.Decompress(file, file.RecordInfo[recordId]);
-		}
+		public DBRecordCollection GetRecordNotCached(ArzFile file, RecordId recordId)
+			=> infoProv.Decompress(file, file.RecordInfo[recordId]);
 
 		/// <summary>
 		/// Builds a list of the keys for this file.  Used to help build the tree structure.
@@ -170,8 +165,8 @@ namespace TQVaultAE.Data
 				return;
 
 			int index = 0;
-			file.Keys = new string[file.RecordInfo.Count];
-			foreach (string recordID in file.RecordInfo.Keys)
+			file.Keys = new RecordId[file.RecordInfo.Count];
+			foreach (RecordId recordID in file.RecordInfo.Keys)
 			{
 				file.Keys[index] = recordID;
 				index++;
@@ -232,10 +227,7 @@ namespace TQVaultAE.Data
 
 				infoProv.Decode(recordInfo, reader, 24, file); // 24 is the offset of where all record data begins
 
-				file.RecordInfo.Add(
-					TQData.NormalizeRecordPath(recordInfo.ID)
-					, recordInfo
-				);
+				file.RecordInfo.Add(recordInfo.ID, recordInfo);
 
 				// output this record
 				if (outStream != null)

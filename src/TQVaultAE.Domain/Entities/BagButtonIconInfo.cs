@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Domain.Entities
 {
@@ -17,20 +18,44 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		[JsonProperty("label")]
 		public string Label;
+
 		/// <summary>
 		/// BagButton On icon
 		/// </summary>
 		[JsonProperty("on")]
-		public string On;
+		public string OnStr;
+
+		[JsonIgnore]
+		public RecordId On
+		{
+			get => OnStr;
+			set => OnStr = value?.Raw ?? string.Empty;
+		}
+
 		/// <summary>
 		/// BagButton Off icon
 		/// </summary>
 		[JsonProperty("off")]
-		public string Off;
+		public string OffStr;
+
+		[JsonIgnore]
+		public RecordId Off
+		{
+			get => OffStr;
+			set => OffStr = value?.Raw ?? string.Empty;
+		}
+
 		/// <summary>
 		/// BagButton Over icon
 		/// </summary>
 		[JsonProperty("over")]
-		public string Over;
+		public string OverStr;
+
+		[JsonIgnore]
+		public RecordId Over
+		{
+			get => OverStr;
+			set => OverStr = value?.Raw ?? string.Empty;
+		}
 	}
 }

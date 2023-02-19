@@ -3,15 +3,13 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.GUI.Components
-{
+
 	using Microsoft.Extensions.DependencyInjection;
 	using System;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.Drawing;
 	using System.Globalization;
-	using System.IO;
 	using System.Linq;
 	using System.Windows.Forms;
 	using TQVaultAE.GUI.Models;
@@ -23,7 +21,10 @@ namespace TQVaultAE.GUI.Components
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Helpers;
 	using Microsoft.Extensions.Logging;
-	using System.Net.Http.Headers;
+using Microsoft.VisualBasic.Logging;
+
+namespace TQVaultAE.GUI.Components;
+
 
 	/// <summary>
 	/// Class for holding all of the UI functions of the sack panel.
@@ -31,13 +32,17 @@ namespace TQVaultAE.GUI.Components
 	public class SackPanel : Panel, IScalingControl
 	{
 		private readonly ILogger Log = null;
+	private readonly ITranslationService TranslationService;
+	private VaultForm _VaultForm;
+
 		protected readonly IFontService FontService;
 		protected readonly IUIService UIService;
 		protected readonly IDatabase Database;
 		protected readonly IItemProvider ItemProvider;
 		protected readonly ITQDataService TQData;
-		private readonly ITranslationService TranslationService;
 		protected readonly IServiceProvider ServiceProvider;
+	private readonly Bitmap CustomContextMenuAffixUnknown;
+	private readonly Bitmap CustomContextMenuAffixUntranslated;
 		ItemStyle[] ItemStyleBackGroundColorEnable = new[] {
 			ItemStyle.Epic,
 			ItemStyle.Legendary,
@@ -137,7 +142,7 @@ namespace TQVaultAE.GUI.Components
 		/// <summary>
 		/// Context menu strip
 		/// </summary>
-		private ContextMenuStrip contextMenu;
+	private ContextMenuStrip CustomContextMenu;
 
 		/// <summary>
 		/// Coordinates of the cell which the context menu applies
@@ -148,6 +153,7 @@ namespace TQVaultAE.GUI.Components
 		/// Indicates whether the current sort should be vertical.
 		/// </summary>
 		private bool sortVertical;
+
 		private System.ComponentModel.IContainer components;
 
 		/// <summary>
@@ -166,20 +172,20 @@ namespace TQVaultAE.GUI.Components
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+		this.CustomContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.SuspendLayout();
 			// 
-			// contextMenu
+		// CustomContextMenu
 			// 
-			this.contextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-			this.contextMenu.Font = new System.Drawing.Font("Albertus MT", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.contextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-			this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
-			this.contextMenu.Name = "contextMenu";
-			this.contextMenu.Opacity = 0.8D;
-			this.contextMenu.ShowImageMargin = false;
-			this.contextMenu.Size = new System.Drawing.Size(36, 4);
-			this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
+		this.CustomContextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+		this.CustomContextMenu.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+		this.CustomContextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+		this.CustomContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+		this.CustomContextMenu.Name = "CustomContextMenu";
+		this.CustomContextMenu.Opacity = 0.8D;
+		this.CustomContextMenu.ShowImageMargin = false;
+		this.CustomContextMenu.Size = new System.Drawing.Size(36, 4);
+		this.CustomContextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
 			// 
 			// SackPanel
 			// 
@@ -255,8 +261,11 @@ namespace TQVaultAE.GUI.Components
 				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * sackHeight));
 			this.BackColor = Color.FromArgb(46, 41, 31);
 
-			this.contextMenu.Renderer = new CustomProfessionalRenderer();
-			this.contextMenu.Font = FontService.GetFont(9.0F * UIService.Scale);
+		this.CustomContextMenu.Renderer = new CustomProfessionalRenderer();
+		this.CustomContextMenu.Font = FontService.GetFont(9.0F * UIService.Scale);
+
+		this.CustomContextMenuAffixUnknown = this.UIService.LoadBitmap(@"INGAMEUI\MAP\ICONS\ICONSMALLQUEST01.TEX");
+		this.CustomContextMenuAffixUntranslated = this.UIService.LoadBitmap(@"INGAMEUI\MAP\ICONS\ICONSMALLAREAOFINTEREST01.TEX");
 
 			// Da_FileServer: Enable double buffering to remove flickering.
 			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
@@ -466,7 +475,7 @@ namespace TQVaultAE.GUI.Components
 		/// <summary>
 		/// Gets the alpha value from the user settings and applies any necessary clamping of the value.
 		/// </summary>
-		protected int UserAlpha => Config.Settings.Default.ItemBGColorOpacity > 127 ? 127 : Config.Settings.Default.ItemBGColorOpacity;
+	protected int UserAlpha => Config.UserSettings.Default.ItemBGColorOpacity > 127 ? 127 : Config.UserSettings.Default.ItemBGColorOpacity;
 
 		/// <summary>
 		/// Gets or sets the background image that is shown when there are no sacks to display.
@@ -765,7 +774,7 @@ namespace TQVaultAE.GUI.Components
 		/// <param name="itemToCheck">Item the method is going to validate</param>
 		/// <returns></returns>
 		public bool IsItemValidForPlacement(Item itemToCheck)
-			=> this.sack.StashType != SackType.RelicVaultStash || itemToCheck.IsArtifact || itemToCheck.IsRelic || itemToCheck.IsFormulae || itemToCheck.IsCharm;
+		=> this.sack.StashType != SackType.RelicVaultStash || itemToCheck.IsArtifact || itemToCheck.IsRelicOrCharm || itemToCheck.IsFormulae;
 
 		/// <summary>
 		/// Cancels an item drag
@@ -805,7 +814,7 @@ namespace TQVaultAE.GUI.Components
 		{
 			this.borderPen.Width = Math.Max((4.0F * UIService.Scale), 1.0F);
 			this.numberFont = new Font(this.numberFont.Name, 10.0F * UIService.Scale, GraphicsUnit.Pixel);
-			this.contextMenu.Font = new Font(this.contextMenu.Font.Name, 9.0F * UIService.Scale);
+		this.CustomContextMenu.Font = new Font(this.CustomContextMenu.Font.Name, 9.0F * UIService.Scale);
 
 			this.Size = new Size(
 				(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * this.SackSize.Width),
@@ -865,7 +874,7 @@ namespace TQVaultAE.GUI.Components
 				int x = item.PositionX;
 				int y = item.PositionY;
 
-				if (string.IsNullOrEmpty(item.BaseItemId))
+			if (RecordId.IsNullOrEmpty(item.BaseItemId))
 					// Skip over empty items
 					continue;
 
@@ -1136,8 +1145,24 @@ namespace TQVaultAE.GUI.Components
 			{
 				Item dragItem = this.DragInfo.Item;
 
+			/*
+						if ((
+							this.SackType == SackType.Player
+							|| this.SackType == SackType.Equipment
+							|| this.SackType == SackType.Sack
+							) && IsCurrentPlayerReadOnly()
+						) return;
+			 */
+
 				if (!this.IsItemValidForPlacement(dragItem))
 					return;
+
+			if ((
+				this.SackType == SackType.Player
+				|| this.SackType == SackType.Equipment
+				|| this.SackType == SackType.Sack
+				) && !IsSuitableForCurrentPlayer(dragItem)
+			) return;
 
 				// Yes we can drop it here!
 				// First take the item that is under us
@@ -1162,32 +1187,68 @@ namespace TQVaultAE.GUI.Components
 
 				// If we are a stackable and we have a stackable under us and we are the same type of stackable
 				// then just add to the stack instead of picking up the other stack
-				if (dragItem.DoesStack
-					&& itemUnderUs != null
-					&& itemUnderUs.DoesStack
-					&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
-				)
+
+			if (!(doStackPotions(dragItem, ref itemUnderUs) || doStackRelics(ref dragItem, ref itemUnderUs)))
 				{
-					itemUnderUs.StackSize += dragItem.StackSize;
+				// If not stackable
+				// Drop the dragItem here
+				dragItem.Location = this.CellsUnderDragItem.Location;
+
+				// Now add the item to our sack
+				this.Sack.AddItem(dragItem);
+			}
+
+			// clear the "last drag" variables
+			this.LastDragLocation = InvalidDragLocation;
+			this.CellsUnderDragItem = InvalidDragRectangle;
+			this.ItemsUnderOldDragLocation.Clear();
+			this.ItemsUnderDragItem.Clear();
+
+			// Now mark itemUnderUs as picked up.
+			if (itemUnderUs != null && !RecordId.IsNullOrEmpty(itemUnderUs.BaseItemId))
+			{
+				// set our mouse offset to be the center of the item.
+				Point mouseOffset = new Point(
+					itemUnderUs.Width * UIService.HalfUnitSize,
+					itemUnderUs.Height * UIService.HalfUnitSize);
+				this.DragInfo.Set(this, this.Sack, itemUnderUs, mouseOffset);
+
+				// since we have dropped something in this location, we can no longer put this item here.
+				// mark its location as invalid to prevent that from happening.
+				itemUnderUs.Location = InvalidDragLocation;
+
+				// set the info to this item
+				this.OnNewItemHighlighted(this, new SackPanelEventArgs(this.Sack, itemUnderUs));
+			}
+
+			// clear the "last focus variables"
+			this.LastCellWithFocus = InvalidDragLocation;
+
+			// Clear any selections.
+			this.OnClearAllItemsSelected(this, new SackPanelEventArgs(null, null));
 
 					this.InvalidateItemCacheAll(itemUnderUs, dragItem);
 
-					// Added this so the tooltip would update with the correct number
-					itemUnderUs.IsModified = true;
-					this.Sack.IsModified = true;
+			// Repaint everything to clear up any graphical issues
+			this.Refresh();
 
-					// Get rid of ref to itemUnderUs so code below wont do anything with it.
-					itemUnderUs = null;
+			// and now do a MouseMove() to properly draw the new drag item and/or focus
+			this.MouseMoveCallback(sender, e);
 
-					// we will just throw away the dragItem now.
+			ItemTooltip.HideTooltip();
+			BagButtonTooltip.InvalidateCache(this.Sack);
+
 				}
-				else if (dragItem.IsRelic
-					&& itemUnderUs != null
-					&& itemUnderUs.IsRelic
-					&& !itemUnderUs.IsRelicComplete
-					&& !dragItem.IsRelicComplete
+	}
+
+	protected bool doStackRelics(ref Item dragItem, ref Item itemUnderUs)
+	{
+		bool doStackRelics = dragItem.IsRelicOrCharm
+			&& itemUnderUs != null && itemUnderUs.IsRelicOrCharm
+			&& !itemUnderUs.IsRelicComplete && !dragItem.IsRelicComplete
 					&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
-				)
+			&& !Config.UserSettings.Default.DisableAutoStacking;
+		if (doStackRelics)
 				{
 					// Stack relics
 					// Save the original Relic number
@@ -1201,21 +1262,21 @@ namespace TQVaultAE.GUI.Components
 					if (itemUnderUs.IsRelicComplete)
 					{
 						float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-						LootTableCollection table = ItemProvider.BonusTable(itemUnderUs);
+				LootTableCollection table = ItemProvider.BonusTableRelicOrArtifact(itemUnderUs);
 
 						if (table != null && table.Length > 0)
 						{
 							int i = table.Length;
-							foreach (KeyValuePair<string, float> e1 in table)
+					foreach (var e1 in table)
 							{
 								i--;
-								if (randPercent <= e1.Value || i == 0)
+						if (randPercent <= e1.Value.WeightPercent || i == 0)
 								{
 									itemUnderUs.RelicBonusId = e1.Key;
 									break;
 								}
 								else
-									randPercent -= e1.Value;
+							randPercent -= e1.Value.WeightPercent;
 							}
 						}
 
@@ -1255,56 +1316,31 @@ namespace TQVaultAE.GUI.Components
 						// we will just throw away the dragItem now.
 					}
 				}
-				else
-				{
-					// Drop the dragItem here
-					dragItem.Location = this.CellsUnderDragItem.Location;
-
-					// Now add the item to our sack
-					this.Sack.AddItem(dragItem);
+		return doStackRelics;
 				}
 
-				// clear the "last drag" variables
-				this.LastDragLocation = InvalidDragLocation;
-				this.CellsUnderDragItem = InvalidDragRectangle;
-				this.ItemsUnderOldDragLocation.Clear();
-				this.ItemsUnderDragItem.Clear();
-
-				// Now mark itemUnderUs as picked up.
-				if (itemUnderUs != null && !string.IsNullOrEmpty(itemUnderUs.BaseItemId))
+	protected bool doStackPotions(Item dragItem, ref Item itemUnderUs)
 				{
-					// set our mouse offset to be the center of the item.
-					Point mouseOffset = new Point(
-						itemUnderUs.Width * UIService.HalfUnitSize,
-						itemUnderUs.Height * UIService.HalfUnitSize);
-					this.DragInfo.Set(this, this.Sack, itemUnderUs, mouseOffset);
-
-					// since we have dropped something in this location, we can no longer put this item here.
-					// mark its location as invalid to prevent that from happening.
-					itemUnderUs.Location = InvalidDragLocation;
-
-					// set the info to this item
-					this.OnNewItemHighlighted(this, new SackPanelEventArgs(this.Sack, itemUnderUs));
-				}
-
-				// clear the "last focus variables"
-				this.LastCellWithFocus = InvalidDragLocation;
-
-				// Clear any selections.
-				this.OnClearAllItemsSelected(this, new SackPanelEventArgs(null, null));
+		bool doStackpotions = dragItem.DoesStack
+			&& itemUnderUs != null && itemUnderUs.DoesStack
+			&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
+			&& !Config.UserSettings.Default.DisableAutoStacking;
+		if (doStackpotions)
+		{
+			itemUnderUs.StackSize += dragItem.StackSize;
 
 				this.InvalidateItemCacheAll(itemUnderUs, dragItem);
 
-				// Repaint everything to clear up any graphical issues
-				this.Refresh();
+			// Added this so the tooltip would update with the correct number
+			itemUnderUs.IsModified = true;
+			this.Sack.IsModified = true;
 
-				// and now do a MouseMove() to properly draw the new drag item and/or focus
-				this.MouseMoveCallback(sender, e);
+			// Get rid of ref to itemUnderUs so code below wont do anything with it.
+			itemUnderUs = null;
 
-				ItemTooltip.HideTooltip();
-				BagButtonTooltip.InvalidateCache(this.Sack);
-
+			// we will just throw away the dragItem now.
 			}
+		return doStackpotions;
 		}
 
 		protected virtual void MouseUpCallback(object sender, MouseEventArgs e)
@@ -1323,7 +1359,7 @@ namespace TQVaultAE.GUI.Components
 			if (this.Sack == null)
 				return;
 
-			var isEquipmentReadOnly = (Config.Settings.Default.PlayerReadonly == true && this.SackType == SackType.Equipment);
+		var isEquipmentReadOnly = (Config.UserSettings.Default.PlayerReadonly == true && this.SackType == SackType.Equipment);
 
 			if (e.Button == MouseButtons.Left && !isEquipmentReadOnly)
 			{
@@ -1365,38 +1401,38 @@ namespace TQVaultAE.GUI.Components
 					if (this.selectedItems != null)
 						singleSelectionFocused = focusedItem == (Item)this.selectedItems[0] && this.selectedItems.Count == 1;
 
-					this.contextMenu.Items.Clear();
+				this.CustomContextMenu.Items.Clear();
 
 					if (focusedItem != null)
 						this.contextMenuCellWithFocus = this.LastCellWithFocus;
 
 					if ((focusedItem != null || this.selectedItems != null) && !isEquipmentReadOnly)
 					{
-						this.contextMenu.Items.Add(Resources.SackPanelMenuDelete);
-						this.contextMenu.Items.Add("-");
+					this.CustomContextMenu.Items.Add(Resources.SackPanelMenuDelete);
+					this.CustomContextMenu.Items.Add("-");
 					}
 
 					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused) && !isEquipmentReadOnly)
 					{
-						if (Config.Settings.Default.AllowItemEdit)
+					if (Config.UserSettings.Default.AllowItemEdit)
 						{
-							if (focusedItem.HasRelicSlot1)
-								this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
+						if (focusedItem.HasRelicOrCharmSlot1)
+							this.CustomContextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic);
 
-							if (focusedItem.HasRelicSlot2)
-								this.contextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic2);
+						if (focusedItem.HasRelicOrCharmSlot2)
+							this.CustomContextMenu.Items.Add(Resources.SackPanelMenuRemoveRelic2);
 						}
 
 						if (focusedItem.DoesStack && focusedItem.Number > 1)
-							this.contextMenu.Items.Add(Resources.SackPanelMenuSplit);
+						this.CustomContextMenu.Items.Add(Resources.SackPanelMenuSplit);
 					}
 
 					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
 					{
-						if (Config.Settings.Default.AllowItemCopy)
+					if (Config.UserSettings.Default.AllowItemCopy)
 						{
-							this.contextMenu.Items.Add(Resources.SackPanelMenuCopy);
-							this.contextMenu.Items.Add(Resources.SackPanelMenuDuplicate);
+						this.CustomContextMenu.Items.Add(Resources.SackPanelMenuCopy);
+						this.CustomContextMenu.Items.Add(Resources.SackPanelMenuDuplicate);
 						}
 					}
 
@@ -1439,8 +1475,25 @@ namespace TQVaultAE.GUI.Components
 						var autoMoveChoices = (
 							from location in this.DragInfo.AllAutoMoveLocations
 							where location != this.AutoMoveLocation
-							select location)
-							.Distinct();
+						select location
+					).Distinct();
+
+					// TQ original save
+					if (this.userContext.CurrentPlayer is not null && !this.userContext.CurrentPlayer.IsImmortalThrone)
+					{
+						autoMoveChoices = autoMoveChoices.Where(loc =>
+							loc != AutoMoveLocation.Stash // There is no Stash on TQ original save
+							&& loc != AutoMoveLocation.Trash // TODO What is that ?
+						);
+
+						// You can't move TQIT+ items in Equipement, Sack and inventory
+						if (focusedItem.GameDlc != GameDlc.TitanQuest)
+						{
+							autoMoveChoices = autoMoveChoices.Where(loc =>
+								loc != AutoMoveLocation.Player
+							);
+						}
+					}
 
 						foreach (var choice in autoMoveChoices)
 						{
@@ -1449,146 +1502,616 @@ namespace TQVaultAE.GUI.Components
 								choices.Add(location);
 						}
 
-						ToolStripItem[] moveChoices = new ToolStripItem[choices.Count];
-						EventHandler moveCallback = new EventHandler(this.MoveItemClicked);
-
-						for (int j = 0; j < choices.Count; ++j)
+					var moveChoices = new List<ToolStripItem>();
+					foreach (var choice in choices)
 						{
-							moveChoices[j] = new ToolStripMenuItem(choices[j], null, moveCallback, choices[j]);
-							moveChoices[j].BackColor = this.contextMenu.BackColor;
-							moveChoices[j].Font = this.contextMenu.Font;
-							moveChoices[j].ForeColor = this.contextMenu.ForeColor;
+						var moveChoice = new ToolStripMenuItem(choice, null, MoveItemClicked, choice)
+						{
+							BackColor = this.CustomContextMenu.BackColor,
+							Font = this.CustomContextMenu.Font,
+							ForeColor = this.CustomContextMenu.ForeColor,
+						};
+						moveChoices.Add(moveChoice);
 						}
 
-						ToolStripMenuItem moveSubMenu = new ToolStripMenuItem(Resources.SackPanelMenuMoveTo, null, moveChoices);
-						moveSubMenu.BackColor = this.contextMenu.BackColor;
-						moveSubMenu.Font = this.contextMenu.Font;
-						moveSubMenu.ForeColor = this.contextMenu.ForeColor;
-						moveSubMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
+					var moveSubMenu = new ToolStripMenuItem(Resources.SackPanelMenuMoveTo, null, moveChoices.ToArray())
+					{
+						BackColor = this.CustomContextMenu.BackColor,
+						Font = this.CustomContextMenu.Font,
+						ForeColor = this.CustomContextMenu.ForeColor,
+						DisplayStyle = ToolStripItemDisplayStyle.Text,
+					};
 
-						this.contextMenu.Items.Add(moveSubMenu);
+					this.CustomContextMenu.Items.Add(moveSubMenu);
 					}
 
 					if ((focusedItem != null && (this.selectedItems == null || singleSelectionFocused)) && !isEquipmentReadOnly)
 					{
 						// Item Editing options
-						if (Config.Settings.Default.AllowItemEdit)
+					if (Config.UserSettings.Default.AllowItemEdit)
 						{
-							this.contextMenu.Items.Add(Resources.SackPanelMenuSeed);
-							this.contextMenu.Items.Add(Resources.SackPanelMenuSeedForce);
+						this.CustomContextMenu.Items.Add(Resources.SackPanelMenuSeed);
 
 							// Add option to complete a charm or relic if
 							// not already completed.
-							if (focusedItem.IsRelic && !focusedItem.IsRelicComplete)
+						if (focusedItem.IsRelicOrCharm && !focusedItem.IsRelicComplete)
 							{
-								if (focusedItem.IsCharm)
-									this.contextMenu.Items.Add(Resources.SackPanelMenuCharm);
+							if (focusedItem.IsCharmOnly)
+								this.CustomContextMenu.Items.Add(Resources.SackPanelMenuCharm);
 								else
-									this.contextMenu.Items.Add(Resources.SackPanelMenuRelic);
+								this.CustomContextMenu.Items.Add(Resources.SackPanelMenuRelic);
 							}
 
 							// Add option to craft an artifact from formulae.
 							if (focusedItem.IsFormulae)
-								this.contextMenu.Items.Add(Resources.SackPanelMenuFormulae);
+							this.CustomContextMenu.Items.Add(Resources.SackPanelMenuFormulae);
 
-							// If the item is a completed relic/charm/artifact or contains such then
+						AddPrefixSuffixMenuItems(focusedItem);
+
+						AddSocketedItemCompletionBonusMenuItems(focusedItem);
+
+						AddRelicOrArticaftCompletionBonusMenuItems(focusedItem);
+
+						AddItemSetMenuItems(focusedItem);
+					}
+				}
+
+				if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
+				{
+					this.CustomContextMenu.Items.Add("-");
+					this.CustomContextMenu.Items.Add(Resources.SackPanelMenuProperties);
+				}
+
+				if (this.selectedItems != null && !isEquipmentReadOnly)
+					this.CustomContextMenu.Items.Add(Resources.SackPanelMenuClear);
+
+				if ((focusedItem != null || this.selectedItems != null) && this.CustomContextMenu.Items.Count > 0)
+					this.CustomContextMenu.Show(this, new Point(e.X, e.Y));
+			}
+		}
+	}
+
+	private void AddItemSetMenuItems(Item focusedItem)
+	{
+		// If the item is a set item, then add a menu to create the rest of the set
+		var setItems = ItemProvider.GetSetItems(focusedItem);
+		if (setItems?.setMembers?.Any() ?? false)
+		{
+			var choices = new List<ToolStripItem>();
+			foreach (var setPiece in setItems.setMembers)
+			{
+				// do not put the current item in the menu
+				var setPieceId = setPiece.Key.ToRecordId();
+				if (focusedItem.BaseItemId == setPieceId) continue;
+
+				// Get the name of the item
+				Info info = setPiece.Value;
+				if (info is null) continue;
+
+				var choice = new ToolStripMenuItem()
+				{
+					Text = this.TranslationService.TranslateXTag(info.DescriptionTag),
+					Name = setPiece.Key,
+					BackColor = this.CustomContextMenu.BackColor,
+					Font = this.CustomContextMenu.Font,
+					ForeColor = this.CustomContextMenu.ForeColor,
+					ToolTipText = setPiece.Key,
+				};
+				choice.Click += NewSetItemClicked;
+
+				choices.Add(choice);
+			}
+
+			var subMenu = new ToolStripMenuItem(Resources.SackPanelMenuSet, null, choices.OrderBy(i => i.Text).ToArray())
+			{
+				BackColor = this.CustomContextMenu.BackColor,
+				Font = this.CustomContextMenu.Font,
+				ForeColor = this.CustomContextMenu.ForeColor,
+				DisplayStyle = ToolStripItemDisplayStyle.Text,
+			};
+
+			this.CustomContextMenu.Items.Add(subMenu);
+		}
+	}
+
+	private void AddSocketedItemCompletionBonusMenuItems(Item focusedItem)
+	{
+		// If the item contains completed relic/charm 
 							// add a menu of possible completion bonuses to choose from.
-							if ((focusedItem.HasRelicSlot1 && focusedItem.RelicBonusInfo != null) ||
-								(focusedItem.IsRelic && focusedItem.IsRelicComplete) ||
-								(focusedItem.IsArtifact))
+		if (ItemProvider.BonusTableSocketedRelic(focusedItem, out var ltrel1, out var ltrel2))
 							{
-								LootTableCollection table = ItemProvider.BonusTable(focusedItem);
-								if (table != null && table.Length > 0)
+			var text = $"{Resources.SackPanelMenuBonus} {TranslationService.TranslateXTag("tagRelic")}";
+
+			if (ltrel1?.Any() ?? false)
+				BuildMenu(focusedItem, ltrel1, $"{text} 1", true);
+
+			if (ltrel2?.Any() ?? false)
+				BuildMenu(focusedItem, ltrel2, $"{text} 2", false);
+
+		}
+
+		void BuildMenu(Item itm, LootTableCollection table, string menuText, bool isRelic1)
+		{
+			var choices = new List<ToolStripItem>();
+			foreach (var tableitem in table)
+			{
+				var choice = new ToolStripMenuItem()
 								{
-									int numItems = table.Length;
-									ToolStripItem[] choices = new ToolStripItem[numItems];
-									EventHandler callback = new EventHandler(this.ChangeBonusItemClicked);
-									int i = 0;
-									foreach (KeyValuePair<string, float> e1 in table)
-									{
-										string fileBase = Path.GetFileNameWithoutExtension(e1.Key);
-										float weight = e1.Value;
-										string txt = string.Format(CultureInfo.CurrentCulture, "{0} ({1:p2})", fileBase, weight);
-										choices[i] = new ToolStripMenuItem(txt, null, callback, e1.Key);
-										choices[i].BackColor = this.contextMenu.BackColor;
-										choices[i].Font = this.contextMenu.Font;
-										choices[i].ForeColor = this.contextMenu.ForeColor;
-										choices[i].ToolTipText = e1.Key;
+					Text = string.Format("{2} : {0} ({1:p2}) {3}"
+						, tableitem.Key.PrettyFileName
+						, tableitem.Value.WeightPercent
+						, tableitem.Value.LootRandomizer.Translation
+						, tableitem.Key.Dlc.GetSuffix()
+					),
+					Name = tableitem.Key.Raw,
+					BackColor = this.CustomContextMenu.BackColor,
+					Font = this.CustomContextMenu.Font,
+					ForeColor = this.CustomContextMenu.ForeColor,
+					ToolTipText = tableitem.Key.Raw,
+					Tag = isRelic1,
+					DisplayStyle = ToolStripItemDisplayStyle.ImageAndText
+				};
+				choice.Click += ChangeSocketedBonusItemClicked;
+
+				if (tableitem.Value.LootRandomizer.Unknown)
+				{
+					choice.Image = this.CustomContextMenuAffixUnknown;
+					choice.ToolTipText = "Unknown : " + choice.ToolTipText;
+				}
+				else if (tableitem.Value.LootRandomizer.TranslationTagIsEmpty)
+				{
+					choice.Image = this.CustomContextMenuAffixUntranslated;
+					choice.ToolTipText = "No Translation : " + choice.ToolTipText;
+				}
 
 										// make the currently selected bonus bold
-										if (TQData.NormalizeRecordPath(e1.Key).Equals(TQData.NormalizeRecordPath(focusedItem.RelicBonusId)))
-											choices[i].Font = new Font(choices[i].Font, FontStyle.Bold);
+				var relicId = isRelic1 ? itm.RelicBonusId : itm.RelicBonus2Id;
+				if (tableitem.Key == relicId)
+				{
+					choice.Font = new Font(choice.Font, FontStyle.Bold);
+					choice.BackColor = ControlPaint.Dark(choice.BackColor);
+				}
 
-										++i;
+				choices.Add(choice);
 									}
 
-									// sort the array of choices alphabetically
-									Array.Sort(choices, CompareMenuChoices);
+			var subMenu = new ToolStripMenuItem(menuText, null, choices.OrderBy(i => i.Text).ToArray())
+			{
+				BackColor = this.CustomContextMenu.BackColor,
+				Font = this.CustomContextMenu.Font,
+				ForeColor = this.CustomContextMenu.ForeColor,
+				DisplayStyle = ToolStripItemDisplayStyle.Text,
+			};
 
-									ToolStripMenuItem subMenu = new ToolStripMenuItem(Resources.SackPanelMenuBonus, null, choices);
-									subMenu.BackColor = this.contextMenu.BackColor;
-									subMenu.Font = this.contextMenu.Font;
-									subMenu.ForeColor = this.contextMenu.ForeColor;
-									subMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			this.CustomContextMenu.Items.Add(subMenu);
+		}
+	}
 
-									this.contextMenu.Items.Add(subMenu);
+	private void AddRelicOrArticaftCompletionBonusMenuItems(Item focusedItem)
+	{
+		// If the item is a completed relic/charm/artifact then
+		// add a menu of possible completion bonuses to choose from.
+		if ((focusedItem.IsRelicOrCharm && focusedItem.IsRelicComplete)
+			|| focusedItem.IsArtifact
+		)
+		{
+			LootTableCollection table = ItemProvider.BonusTableRelicOrArtifact(focusedItem);
+			if (table?.Any() ?? false)
+			{
+				var choices = new List<ToolStripItem>();
+				foreach (var tableitem in table)
+				{
+					var choice = new ToolStripMenuItem()
+					{
+						Text = string.Format("{0} : {1} ({2:p2}) {3}"
+							, tableitem.Value.LootRandomizer.Translation
+							, tableitem.Key.PrettyFileName
+							, tableitem.Value.WeightPercent
+							, tableitem.Key.Dlc.GetSuffix()
+						),
+						Name = tableitem.Key.Raw,
+						BackColor = this.CustomContextMenu.BackColor,
+						Font = this.CustomContextMenu.Font,
+						ForeColor = this.CustomContextMenu.ForeColor,
+						ToolTipText = tableitem.Key.Raw,
+						DisplayStyle = ToolStripItemDisplayStyle.ImageAndText,
+					};
+					choice.Click += ChangeBonusItemClicked;
+
+					if (tableitem.Value.LootRandomizer.Unknown)
+					{
+						choice.Image = this.CustomContextMenuAffixUnknown;
+						choice.ToolTipText = "Unknown : " + choice.ToolTipText;
 								}
+					else if (tableitem.Value.LootRandomizer.TranslationTagIsEmpty)
+					{
+						choice.Image = this.CustomContextMenuAffixUntranslated;
+						choice.ToolTipText = "No Translation : " + choice.ToolTipText;
 							}
 
-							// If the item is a set item, then add a menu to create the rest of the set
-							string[] setItems = ItemProvider.GetSetItems(focusedItem, false);
-							if (setItems != null && setItems.Length > 1)
+					// make the currently selected bonus bold
+					if (tableitem.Key == focusedItem.RelicBonusId)
 							{
-								ToolStripItem[] choices = new ToolStripItem[setItems.Length - 1];
-								EventHandler callback = new EventHandler(this.NewSetItemClicked);
-								int i = 0;
-								foreach (string s in setItems)
+						choice.Font = new Font(choice.Font, FontStyle.Bold);
+						choice.BackColor = ControlPaint.Dark(choice.BackColor);
+					}
+
+					choices.Add(choice);
+				}
+
+				var subMenu = new ToolStripMenuItem()
 								{
-									// do not put the current item in the menu
-									if (TQData.NormalizeRecordPath(focusedItem.BaseItemId).Equals(TQData.NormalizeRecordPath(s)))
-										continue;
+					Text = Resources.SackPanelMenuBonus,
+					BackColor = this.CustomContextMenu.BackColor,
+					Font = this.CustomContextMenu.Font,
+					ForeColor = this.CustomContextMenu.ForeColor,
+					DisplayStyle = ToolStripItemDisplayStyle.Text,
+				};
 
-									// Get the name of the item
-									Info info = Database.GetInfo(s);
-									string name = Path.GetFileNameWithoutExtension(s);
-									if (info == null)
-										continue;
+				subMenu.DropDownItems.AddRange(choices.OrderBy(i => i.Text).ToArray());
 
-									name = this.TranslationService.TranslateXTag(info.DescriptionTag);
-									choices[i] = new ToolStripMenuItem(name, null, callback, s);
-									choices[i].BackColor = this.contextMenu.BackColor;
-									choices[i].Font = this.contextMenu.Font;
-									choices[i].ForeColor = this.contextMenu.ForeColor;
-									choices[i].ToolTipText = s;
+				this.CustomContextMenu.Items.Add(subMenu);
+			}
+		}
+	}
 
-									++i;
-								}
+	#region ContextMenuMouseWheel
 
-								// sort the array of choices alphabetically
-								Array.Sort(choices, CompareMenuChoices);
-
-								ToolStripMenuItem subMenu = new ToolStripMenuItem(Resources.SackPanelMenuSet, null, choices);
-								subMenu.BackColor = this.contextMenu.BackColor;
-								subMenu.Font = this.contextMenu.Font;
-								subMenu.ForeColor = this.contextMenu.ForeColor;
-								subMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
-
-								this.contextMenu.Items.Add(subMenu);
+	private void _VaultForm_GlobalMouseWheelUp(object sender, EventArgs e)
+	{
+		if (this.CustomContextMenu.Visible) // Only for context menu & sub menu because there isn't MouseWheel event at ToolStripMenuItem
+			SendKeys.SendWait("{UP}");
 							}
+
+	private void _VaultForm_GlobalMouseWheelDown(object sender, EventArgs e)
+	{
+		if (this.CustomContextMenu.Visible) // Only for context menu & sub menu because there isn't MouseWheel event at ToolStripMenuItem
+			SendKeys.SendWait("{DOWN}");
+	}
+
+	bool _ContextMenuMouseWheelEnabled = false;
+	private void HookContextMenuMouseWheel()
+	{
+		// Link mouse wheel to menu for scrolling.
+		// Put here because i need the Form to be fully initalized and there is no Load() event here
+		if (!_ContextMenuMouseWheelEnabled)
+		{
+			this._VaultForm = this.FindForm() as VaultForm;
+			this._VaultForm.GlobalMouseWheelDown += _VaultForm_GlobalMouseWheelDown;
+			this._VaultForm.GlobalMouseWheelUp += _VaultForm_GlobalMouseWheelUp;
+			_ContextMenuMouseWheelEnabled = true;
 						}
 					}
 
-					if (focusedItem != null && (this.selectedItems == null || singleSelectionFocused))
+	#endregion
+
+	private void AddPrefixSuffixMenuItems(Item focusedItem)
+	{
+		HookContextMenuMouseWheel();
+
+		#region Add Prefix/Suffix pickup
+
+		if (focusedItem.IsArmor || focusedItem.IsWeaponShield || focusedItem.IsJewellery)
 					{
-						this.contextMenu.Items.Add("-");
-						this.contextMenu.Items.Add(Resources.SackPanelMenuProperties);
+			ItemAffixes affixes;
+			if (Config.UserSettings.Default.EnableEpicLegendaryAffixes
+				&& (focusedItem.Rarity == Rarity.Epic || focusedItem.Rarity == Rarity.Legendary))
+			{
+				// Get all available affixes for an item type
+				affixes = this.ItemProvider.GetAllAvailableAffixes(focusedItem.GearType);
+			}
+			else
+			{
+				// Get affixes related to a specific item
+				affixes = this.ItemProvider.GetItemAffixes(focusedItem.BaseItemId);
 					}
 
-					if (this.selectedItems != null && !isEquipmentReadOnly)
-						this.contextMenu.Items.Add(Resources.SackPanelMenuClear);
+			if (affixes is not null)
+			{
+				this.CustomContextMenu.Items.Add("-");
 
-					if ((focusedItem != null || this.selectedItems != null) && this.contextMenu.Items.Count > 0)
-						this.contextMenu.Show(this, new Point(e.X, e.Y));
+				var fnt = this.CustomContextMenu.Font;
+				var foreC = this.CustomContextMenu.ForeColor;
+				var backC = this.CustomContextMenu.BackColor;
+				var dispStl = ToolStripItemDisplayStyle.Text;
+				var tagSRemove = TranslationService.TranslateXTag("tagSRemove");
+
+				#region curate all affixes at once
+
+				var AffixTypes = new[] { // UNPIVOT
+						(AffixTypeId: 0, AffixType: affixes.Broken),
+						(AffixTypeId: 1, AffixType: affixes.Prefix),
+						(AffixTypeId: 2, AffixType: affixes.Suffix)
+					};
+
+				var curatedAffixes =
+					from types in AffixTypes
+					from dlc in types.AffixType
+					from ltvalues in dlc.Value
+					from value in ltvalues
+					select new
+					{
+						TypeId = types.AffixTypeId,
+						AffixId = value.Key,
+						value.Value.WeightPercent,
+						value.Value.LootRandomizer
+					} into flat
+					group flat by new { flat.TypeId, flat.AffixId } into grp
+					let f = grp.First()
+					let _AffixIdDlc = grp.Key.AffixId.Dlc
+					let _translation = f.LootRandomizer.Translation
+					let _WeightPercent = grp.Max(v => v.WeightPercent)
+					select
+					(
+						TypeId: grp.Key.TypeId,
+						AffixId: grp.Key.AffixId,
+						AffixIdDlc: _AffixIdDlc,
+						Translation: _translation,
+						WeightPercent: _WeightPercent,
+						FormatedText: string.Format("{0} : {1} ({2:p2}) {3}" // Default format for Order by affix name
+							, _translation
+							, grp.Key.AffixId.PrettyFileName
+							, _WeightPercent
+							, _AffixIdDlc.GetSuffix()
+						),
+						f.LootRandomizer
+					) into flattenedAffix
+					group flattenedAffix by (flattenedAffix.TypeId, flattenedAffix.Translation) into grp2
+					orderby grp2.Key.TypeId, grp2.Key.Translation // Order by affix name
+					select grp2;
+
+				#endregion
+
+				ToolStripMenuItem currentchoicesMenu;
+
+				#region Broken
+
+				if (affixes.Broken.Count > 0)
+				{
+					currentchoicesMenu = new ToolStripMenuItem()
+					{
+						Text = TranslationService.TranslateXTag("tagTutorialTip05TextC"),// Broken
+						BackColor = backC,
+						Font = fnt,
+						ForeColor = foreC,
+						DisplayStyle = dispStl,
+					};
+					this.CustomContextMenu.Items.Add(currentchoicesMenu);
+
+					BuildAffixesMenuItems(focusedItem.prefixID, currentchoicesMenu, ChangePrefixItemClicked
+						, curatedAffixes.Where(fp => fp.Key.TypeId == 0) // Broken
+					);
+				}
+
+				#endregion
+
+				#region Prefix
+
+				if (affixes.Prefix.Count > 0)
+				{
+					currentchoicesMenu = new ToolStripMenuItem()
+					{
+						Text = Resources.GlobalPrefix,
+						BackColor = backC,
+						Font = fnt,
+						ForeColor = foreC,
+						DisplayStyle = dispStl,
+					};
+					this.CustomContextMenu.Items.Add(currentchoicesMenu);
+
+					BuildAffixesMenuItems(focusedItem.prefixID, currentchoicesMenu, ChangePrefixItemClicked
+						, curatedAffixes.Where(fp => fp.Key.TypeId == 1) // Prefix
+					);
+				}
+
+				if (focusedItem.HasPrefix)
+				{
+					var prefixMenu = new ToolStripMenuItem()
+					{
+						Text = $"{tagSRemove} {Resources.GlobalPrefix}",
+						BackColor = backC,
+						Font = fnt,
+						ForeColor = foreC,
+						DisplayStyle = dispStl,
+					};
+					prefixMenu.Click += RemovePrefixItemClicked;
+					this.CustomContextMenu.Items.Add(prefixMenu);
+				}
+
+				#endregion
+
+				#region Suffix
+
+				if (affixes.Suffix.Count > 0)
+				{
+					currentchoicesMenu = new ToolStripMenuItem()
+					{
+						Text = Resources.GlobalSuffix,
+						BackColor = backC,
+						Font = fnt,
+						ForeColor = foreC,
+						DisplayStyle = dispStl,
+					};
+					this.CustomContextMenu.Items.Add(currentchoicesMenu);
+
+					BuildAffixesMenuItems(focusedItem.suffixID, currentchoicesMenu, ChangeSuffixItemClicked
+						, curatedAffixes.Where(fp => fp.Key.TypeId == 2) // Suffix
+					);
+				}
+
+				if (focusedItem.HasSuffix)
+				{
+					var suffixMenu = new ToolStripMenuItem()
+					{
+						Text = $"{tagSRemove} {Resources.GlobalSuffix}",
+						BackColor = backC,
+						Font = fnt,
+						ForeColor = foreC,
+						DisplayStyle = dispStl,
+					};
+					suffixMenu.Click += RemoveSuffixItemClicked;
+					this.CustomContextMenu.Items.Add(suffixMenu);
+				}
+
+				#endregion
+
+				#region Swap Affixes Display by Effect/Name
+
+				var swapDisplayMenuItem = new ToolStripMenuItem()
+				{
+					Text = _DisplayAffixesByEffect
+						? Resources.AffixesDisplayByName
+						: Resources.AffixesDisplayByEffect,
+					BackColor = backC,
+					Font = fnt,
+					ForeColor = foreC,
+					DisplayStyle = dispStl,
+				};
+				swapDisplayMenuItem.Click += SwapAffixesDisplayModeClicked;
+				this.CustomContextMenu.Items.Add(swapDisplayMenuItem);
+
+				#endregion
+			}
+		}
+
+		#endregion
+	}
+
+
+	private void SwapAffixesDisplayModeClicked(object sender, EventArgs e)
+	{
+		_DisplayAffixesByEffect = !_DisplayAffixesByEffect;
+	}
+
+	/// <summary>
+	/// <c>false</c> Group By AffixName;
+	/// <c>true</c> Group By Effect 
+	/// </summary>
+	private static bool _DisplayAffixesByEffect = false;
+
+	private void BuildAffixesMenuItems(
+		RecordId currentSelectedAffix
+		, ToolStripMenuItem currentchoicesMenu
+		, EventHandler handler
+		, IEnumerable<IGrouping<
+			(int TypeId, string Translation)
+			, (int TypeId, RecordId AffixId, GameDlc AffixIdDlc
+				, string Translation, float WeightPercent
+				, string FormatedText, LootRandomizerItem LootRandomizer
+			)>
+		> currentaffixGroup
+	)
+	{
+		var fnt = this.CustomContextMenu.Font;
+		var foreC = this.CustomContextMenu.ForeColor;
+		var backC = this.CustomContextMenu.BackColor;
+		var dispStl = ToolStripItemDisplayStyle.ImageAndText;
+
+
+		if (_DisplayAffixesByEffect)// Group By Effect
+		{
+			currentaffixGroup =
+				from grp in currentaffixGroup
+				from av in grp
+				let effect = av.AffixId.PrettyFileNameExploded.Effect
+				select
+				(
+					av.TypeId,
+					av.AffixId,
+					av.AffixIdDlc,
+					Translation: effect,
+					av.WeightPercent,
+					FormatedText: string.Format("{0} : ({1}) {2} ({3:p2}) {4}"
+						, effect
+						, av.AffixId.PrettyFileNameExploded.Number
+						, av.Translation
+						, av.WeightPercent
+						, av.AffixIdDlc.GetSuffix()
+					),
+					av.LootRandomizer
+				) into flattenedAffix
+				orderby flattenedAffix.Translation, flattenedAffix.AffixId.PrettyFileNameExploded.Number
+				group flattenedAffix by (flattenedAffix.TypeId, flattenedAffix.Translation) into grp2
+				select grp2;
+		}
+
+		foreach (var grp in currentaffixGroup)
+		{
+
+			ToolStripMenuItem choicesMenu = currentchoicesMenu;// Default
+			ToolStripMenuItem affixMenu = null;
+			if (grp.Count() > 1)
+			{
+				// Multiple variant per affix
+				affixMenu = new ToolStripMenuItem()
+				{
+					Text = grp.Key.Translation,
+					BackColor = backC,
+					Font = fnt,
+					ForeColor = foreC,
+					DisplayStyle = dispStl,
+				};
+				choicesMenu.DropDownItems.Add(affixMenu);
+				choicesMenu = affixMenu; // Add a menu level
+			}
+
+			foreach (var val in grp)
+			{
+				var choice = new ToolStripMenuItem()
+				{
+					Text = val.FormatedText,
+					Name = val.AffixId.Raw,
+					ToolTipText = val.AffixId.Raw,
+					BackColor = backC,
+					Font = fnt,
+					ForeColor = foreC,
+					DisplayStyle = dispStl,
+				};
+				choice.Click += handler;
+
+				if (val.LootRandomizer.Unknown)
+				{
+					choice.Image = this.CustomContextMenuAffixUnknown;
+					choice.ToolTipText = "Unknown : " + choice.ToolTipText;
+				}
+				else if (val.LootRandomizer.TranslationTagIsEmpty)
+				{
+					choice.Image = this.CustomContextMenuAffixUntranslated;
+					choice.ToolTipText = "No Translation : " + choice.ToolTipText;
+				}
+
+				if (affixMenu is not null)
+				{
+					choice.Text = _DisplayAffixesByEffect
+							// By Effect
+							? string.Format("({0}) {1} ({2:p2}) {3}"
+								, val.AffixId.PrettyFileNameExploded.Number
+								, val.LootRandomizer.Translation // Sub menu item display affix Name
+								, val.WeightPercent
+								, val.AffixIdDlc.GetSuffix()
+							)
+							// By Name
+							: string.Format("({0}) {1} ({2:p2}) {3}"
+								, val.AffixId.PrettyFileNameExploded.Number
+								, val.AffixId.PrettyFileNameExploded.Effect // Sub menu item display affix Effect
+								, val.WeightPercent
+								, val.AffixIdDlc.GetSuffix()
+							);
+				}
+
+				// make the currently selected affix bold
+				if (val.AffixId == currentSelectedAffix)
+				{
+					choice.Font = new Font(choice.Font, FontStyle.Bold);
+					choice.BackColor = ControlPaint.Dark(choice.BackColor);
+					if (affixMenu is not null)
+					{
+						affixMenu.Font = choice.Font;
+						affixMenu.BackColor = choice.BackColor;
+					}
+				}
+
+				choicesMenu.DropDownItems.Add(choice);
 				}
 			}
 		}
@@ -1867,7 +2390,7 @@ namespace TQVaultAE.GUI.Components
 			foreach (Item item in this.Sack)
 			{
 				// Skip over empty and dragged items.
-				if (item != this.DragInfo.Item && !string.IsNullOrEmpty(item.BaseItemId))
+			if (item != this.DragInfo.Item && !RecordId.IsNullOrEmpty(item.BaseItemId))
 					this.DrawItem(e.Graphics, item);
 			}
 		}
@@ -1886,7 +2409,7 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		/// <param name="item">Item to check</param>
 		/// <returns>True if item is able to be equipped</returns>
-		protected virtual bool CanBeEquipped(Item item)
+	protected virtual bool PlayerMeetRequierements(Item item)
 		{
 			var reqs = this.ItemProvider.GetFriendlyNames(item, FriendlyNamesExtraScopes.Requirements).RequirementVariables;
 			var currPlayer = this.userContext.CurrentPlayer;
@@ -1897,6 +2420,34 @@ namespace TQVaultAE.GUI.Components
 		}
 
 		/// <summary>
+	/// Indicates whether the current player file can be edited.
+	/// </summary>
+	/// <returns></returns>
+	protected virtual bool IsCurrentPlayerReadOnly()
+	{
+		var currPlayer = this.userContext.CurrentPlayer;
+		if (!(currPlayer?.IsImmortalThrone ?? false) // TODO for now TQ Original Player is read only but could be issue #268
+		) return true;
+
+		return false;
+	}
+	/// <summary>
+	/// Indicates whether the passed item is suitable for equipping.
+	/// e.g. an Immortal throne or greater item on a Titan Quest Original player.
+	/// </summary>
+	/// <param name="item"></param>
+	/// <returns></returns>
+	protected virtual bool IsSuitableForCurrentPlayer(Item item)
+	{
+		var currPlayer = this.userContext.CurrentPlayer;
+		if (!(currPlayer?.IsImmortalThrone ?? false) // Player is TQ Original
+			&& item.GameDlc != GameDlc.TitanQuest // Non base game item
+		) return false;
+
+		return true;
+	}
+
+	/// <summary>
 		/// Indicates whether the item has a specific background color based on the ItemStyle.
 		/// </summary>
 		/// <param name="item">Item that needs needs a background color</param>
@@ -1932,7 +2483,10 @@ namespace TQVaultAE.GUI.Components
 				}
 				// If we are showing the cannot equip background then 
 				// change to invalid color and adjust the alpha.
-				else if (Config.Settings.Default.EnableItemRequirementRestriction && !this.CanBeEquipped(item))
+			else if (
+				(Config.UserSettings.Default.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(item))
+				|| !IsSuitableForCurrentPlayer(item)
+			)
 				{
 					backgroundColor = this.HighlightInvalidItemColor;
 
@@ -2043,7 +2597,7 @@ namespace TQVaultAE.GUI.Components
 			graphics.DrawImage(ibmp, itemRect, 0, 0, ibmp.Width, ibmp.Height, GraphicsUnit.Pixel, imageAttributes);
 
 			// Add the relic overlay if this item has a relic in it.
-			if (item.HasRelicSlot1)
+		if (item.HasRelicOrCharmSlot1 || item.HasRelicOrCharmSlot2)
 			{
 				Bitmap relicOverlay = UIService.LoadRelicOverlayBitmap();
 				if (relicOverlay != null)
@@ -2166,20 +2720,6 @@ namespace TQVaultAE.GUI.Components
 
 		#region SackPanel Private Methods
 
-		/// <summary>
-		/// Compares context menu choices.  Used for sorting the list.
-		/// </summary>
-		/// <param name="item1">First item to compare</param>
-		/// <param name="item2">Second item to compare</param>
-		/// <returns>-1 0 1 for item1 less than item2, equal, item1 greather than item2 respectively</returns>
-		private static int CompareMenuChoices(ToolStripItem item1, ToolStripItem item2)
-		{
-			int ans = string.Compare(item1.Text, item2.Text, StringComparison.OrdinalIgnoreCase);
-			if (ans == 0)
-				ans = string.Compare(item1.Name, item2.Name, StringComparison.OrdinalIgnoreCase);
-
-			return ans;
-		}
 
 		/// <summary>
 		/// Deletes the highlighted item
@@ -2190,7 +2730,7 @@ namespace TQVaultAE.GUI.Components
 		{
 			if (focusedItem != null)
 			{
-				if (suppressMessage || Config.Settings.Default.SuppressWarnings || MessageBox.Show(
+			if (suppressMessage || Config.UserSettings.Default.SuppressWarnings || MessageBox.Show(
 					Resources.SackPanelDeleteMsg,
 					Resources.SackPanelDelete,
 					MessageBoxButtons.YesNo,
@@ -2433,7 +2973,8 @@ namespace TQVaultAE.GUI.Components
 				if (item != null)
 				{
 					// Create the item
-					Item newItem = focusedItem.MakeEmptyCopy(item.Name);
+				var newId = item.Name.ToRecordId();
+				Item newItem = focusedItem.MakeEmptyCopy(newId);
 					ItemProvider.GetDBData(newItem);
 
 					// Set DragInfo to focused item.
@@ -2448,6 +2989,137 @@ namespace TQVaultAE.GUI.Components
 				}
 			}
 		}
+
+	private void RemoveSuffixItemClicked(object sender, EventArgs e)
+	{
+		Item focusedItem = this.FindItem(this.contextMenuCellWithFocus);
+		if (focusedItem is not null)
+		{
+			// change the item
+			focusedItem.suffixID = RecordId.Empty;
+			focusedItem.suffixInfo = null;
+			// mark the sack as modified also
+			this.Sack.IsModified = focusedItem.IsModified = true;
+			this.InvalidateItemCacheAll(focusedItem);
+		}
+	}
+
+	private void RemovePrefixItemClicked(object sender, EventArgs e)
+	{
+		Item focusedItem = this.FindItem(this.contextMenuCellWithFocus);
+		if (focusedItem is not null)
+		{
+			// change the item
+			focusedItem.prefixID = RecordId.Empty;
+			focusedItem.prefixInfo = null;
+			// mark the sack as modified also
+			this.Sack.IsModified = focusedItem.IsModified = true;
+			this.InvalidateItemCacheAll(focusedItem);
+		}
+	}
+
+	/// <summary>
+	/// Handler for changing suffix from the context menu
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private void ChangeSuffixItemClicked(object sender, EventArgs e)
+	{
+		Item focusedItem = this.FindItem(this.contextMenuCellWithFocus);
+		if (focusedItem is not null)
+		{
+			ToolStripMenuItem menuItem = sender as ToolStripMenuItem;
+			if (menuItem is not null)
+			{
+				string newAffix = menuItem.Name;
+				var newAffixId = newAffix.ToRecordId();
+
+				// See if the bonus is different
+				if (newAffixId != focusedItem.suffixID)
+				{
+					// change the item
+					focusedItem.suffixID = newAffixId;
+					focusedItem.suffixInfo = Database.GetInfo(newAffixId);
+					// mark the sack as modified also
+					this.Sack.IsModified = focusedItem.IsModified = true;
+					this.InvalidateItemCacheAll(focusedItem);
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// Handler for changing Prefix from the context menu
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private void ChangePrefixItemClicked(object sender, EventArgs e)
+	{
+		Item focusedItem = this.FindItem(this.contextMenuCellWithFocus);
+		if (focusedItem is not null)
+		{
+			ToolStripMenuItem menuItem = sender as ToolStripMenuItem;
+			if (menuItem is not null)
+			{
+				string newAffix = menuItem.Name;
+				var newAffixId = newAffix.ToRecordId();
+
+				// See if the bonus is different
+				if (newAffixId != focusedItem.prefixID)
+				{
+					// change the item
+					focusedItem.prefixID = newAffixId;
+					focusedItem.prefixInfo = Database.GetInfo(newAffixId);
+					// mark the sack as modified also
+					this.Sack.IsModified = focusedItem.IsModified = true;
+					this.InvalidateItemCacheAll(focusedItem);
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// Handler for selecting Change Bonus from the context menu
+	/// Changes a socketed item's completion bonus.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void ChangeSocketedBonusItemClicked(object sender, EventArgs e)
+	{
+		Item focusedItem = this.FindItem(this.contextMenuCellWithFocus);
+		if (focusedItem is not null)
+		{
+			ToolStripMenuItem menuItem = sender as ToolStripMenuItem;
+
+			var isRelic1 = (menuItem.Tag as bool?) ?? false;
+
+			if (menuItem is not null)
+			{
+				string newBonus = menuItem.Name;
+				var newBonusId = newBonus.ToRecordId();
+
+				// See if the bonus is different
+				var relicId = isRelic1 ? focusedItem.RelicBonusId : focusedItem.RelicBonus2Id;
+				if (newBonusId != relicId)
+				{
+					// change the item
+					if (isRelic1)
+					{
+						focusedItem.RelicBonusId = newBonusId;
+						focusedItem.RelicBonusInfo = Database.GetInfo(newBonusId);
+					}
+					else
+					{
+						focusedItem.RelicBonus2Id = newBonusId;
+						focusedItem.RelicBonus2Info = Database.GetInfo(newBonusId);
+					}
+					// mark the sack as modified also
+					this.Sack.IsModified = focusedItem.IsModified = true;
+					this.InvalidateItemCacheAll(focusedItem);
+				}
+			}
+		}
+	}
 
 		/// <summary>
 		/// Handler for selecting Change Bonus from the context menu
@@ -2464,13 +3136,14 @@ namespace TQVaultAE.GUI.Components
 				if (item != null)
 				{
 					string newBonus = item.Name;
+				var newBonusId = newBonus.ToRecordId();
 
 					// See if the bonus is different
-					if (!TQData.NormalizeRecordPath(newBonus).Equals(TQData.NormalizeRecordPath(focusedItem.RelicBonusId)))
+				if (newBonusId != focusedItem.RelicBonusId)
 					{
 						// change the item
-						focusedItem.RelicBonusId = newBonus;
-						focusedItem.RelicBonusInfo = Database.GetInfo(newBonus);
+					focusedItem.RelicBonusId = newBonusId;
+					focusedItem.RelicBonusInfo = Database.GetInfo(newBonusId);
 						focusedItem.IsModified = true;
 
 						// mark the sack as modified also
@@ -2496,7 +3169,7 @@ namespace TQVaultAE.GUI.Components
 				{
 					if (this.selectedItems != null)
 					{
-						if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
+					if (Config.UserSettings.Default.SuppressWarnings || MessageBox.Show(
 							Resources.SackPanelDeleteMultiMsg,
 							Resources.SackPanelDeleteMulti,
 							MessageBoxButtons.YesNo,
@@ -2515,9 +3188,10 @@ namespace TQVaultAE.GUI.Components
 						this.DeleteItem(focusedItem, false);
 					}
 				}
-				else if (selectedMenuItem == Resources.SackPanelMenuRemoveRelic || selectedMenuItem == Resources.SackPanelMenuRemoveRelic2)
+			else if (selectedMenuItem == Resources.SackPanelMenuRemoveRelic
+				|| selectedMenuItem == Resources.SackPanelMenuRemoveRelic2)
 				{
-					if (Config.Settings.Default.SuppressWarnings || MessageBox.Show(
+				if (Config.UserSettings.Default.SuppressWarnings || MessageBox.Show(
 						Resources.SackPanelRemoveRelicMsg,
 						Resources.SackPanelMenuRemoveRelic,
 						MessageBoxButtons.YesNo,
@@ -2535,9 +3209,8 @@ namespace TQVaultAE.GUI.Components
 
 						// Put relic in DragInfo
 						this.DragInfo.MarkModified(relic);
-						Refresh();
-
 						this.InvalidateItemCacheItemTooltip(focusedItem);
+					Refresh();
 					}
 				}
 				else if (selectedMenuItem == Resources.SackPanelMenuCopy)
@@ -2585,40 +3258,26 @@ namespace TQVaultAE.GUI.Components
 						this.InvalidateItemCacheItemTooltip(focusedItem);
 					}
 				}
-				else if (selectedMenuItem == Resources.SackPanelMenuSeedForce)
-				{
-					int origSeed = focusedItem.Seed;
-					focusedItem.Seed = Item.GenerateSeed();
-					focusedItem.IsModified = true;
-
-					// See if the seed was changed
-					if (focusedItem.Seed != origSeed)
-					{
-						// Tell the sack that it has been modified
-						this.Sack.IsModified = true;
-						this.InvalidateItemCacheItemTooltip(focusedItem);
-					}
-				}
 				else if (selectedMenuItem == Resources.SackPanelMenuCharm || selectedMenuItem == Resources.SackPanelMenuRelic)
 				{
 					focusedItem.Number = 10;
 
 					float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-					LootTableCollection table = ItemProvider.BonusTable(focusedItem);
+				LootTableCollection table = ItemProvider.BonusTableRelicOrArtifact(focusedItem);
 
 					if (table != null && table.Length > 0)
 					{
 						int i = table.Length;
-						foreach (KeyValuePair<string, float> e1 in table)
+					foreach (var e1 in table)
 						{
 							i--;
-							if (randPercent <= e1.Value || i == 0)
+						if (randPercent <= e1.Value.WeightPercent || i == 0)
 							{
 								focusedItem.RelicBonusId = e1.Key;
 								break;
 							}
 							else
-								randPercent -= e1.Value;
+							randPercent -= e1.Value.WeightPercent;
 						}
 					}
 
@@ -2639,15 +3298,15 @@ namespace TQVaultAE.GUI.Components
 
 					// generate bonus
 					float randPercent = (float)Item.GenerateSeed() / 0x7fff;
-					LootTableCollection table = ItemProvider.BonusTable(artifact);
+				LootTableCollection table = ItemProvider.BonusTableRelicOrArtifact(artifact);
 
 					if (table != null && table.Length > 0)
 					{
 						int i = table.Length;
-						foreach (KeyValuePair<string, float> e1 in table)
+					foreach (var e1 in table)
 						{
 							i--;
-							if (randPercent <= e1.Value || i == 0)
+						if (randPercent <= e1.Value.WeightPercent || i == 0)
 							{
 								artifact.RelicBonusId = e1.Key;
 								artifact.RelicBonusInfo = Database.GetInfo(e1.Key);
@@ -2655,7 +3314,7 @@ namespace TQVaultAE.GUI.Components
 								break;
 							}
 							else
-								randPercent -= e1.Value;
+							randPercent -= e1.Value.WeightPercent;
 						}
 					}
 
@@ -2766,7 +3425,7 @@ namespace TQVaultAE.GUI.Components
 			if (Sack == null)
 				return;
 
-			var isEquipmentReadOnly = (Config.Settings.Default.PlayerReadonly == true && SackType == SackType.Equipment);
+		var isEquipmentReadOnly = (Config.UserSettings.Default.PlayerReadonly == true && SackType == SackType.Equipment);
 			Item focusedItem = FindItem(LastCellWithFocus);
 
 			if ((focusedItem == null && selectedItems == null) || isEquipmentReadOnly)
@@ -2801,7 +3460,7 @@ namespace TQVaultAE.GUI.Components
 			if (Sack == null)
 				return;
 
-			var isEquipmentReadOnly = (Config.Settings.Default.PlayerReadonly == true && SackType == SackType.Equipment);
+		var isEquipmentReadOnly = (Config.UserSettings.Default.PlayerReadonly == true && SackType == SackType.Equipment);
 			Item focusedItem = FindItem(LastCellWithFocus);
 			AutoMoveLocation destination = AutoMoveLocation.NotSet;
 
@@ -2983,7 +3642,7 @@ namespace TQVaultAE.GUI.Components
 					this.Refresh();
 					e.Handled = true;
 				}
-				else if (e.KeyChar == 'c' && Config.Settings.Default.AllowItemCopy == true)
+			else if (e.KeyChar == 'c' && Config.UserSettings.Default.AllowItemCopy == true)
 				{
 					// Copy
 					Item focusedItem = this.FindItem(this.LastCellWithFocus);
@@ -3014,7 +3673,7 @@ namespace TQVaultAE.GUI.Components
 						e.Handled = true;
 					}
 				}
-				else if (e.KeyChar == 'd' && Config.Settings.Default.AllowItemCopy == true)
+			else if (e.KeyChar == 'd' && Config.UserSettings.Default.AllowItemCopy == true)
 				{
 					// Duplicate
 					Item focusedItem = this.FindItem(this.LastCellWithFocus);
@@ -3041,24 +3700,4 @@ namespace TQVaultAE.GUI.Components
 
 		#endregion SackPanel Private Methods
 
-		/// <summary>
-		/// Class for rendering the context menu strip.
-		/// </summary>
-		protected class CustomProfessionalRenderer : ToolStripProfessionalRenderer
-		{
-			/// <summary>
-			/// Handler for rendering the contect meny strip.
-			/// </summary>
-			/// <param name="e">ToolStripItemTextRenderEventArgs data</param>
-			protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
-			{
-				if (e.Item.Selected)
-					e.TextColor = Color.Black;
-				else
-					e.TextColor = Color.FromArgb(200, 200, 200);
-
-				base.OnRenderItemText(e);
-			}
-		}
-	}
 }

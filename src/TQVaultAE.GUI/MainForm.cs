@@ -3,1151 +3,1210 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.GUI
+
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+using System.Security.Permissions;
+using System.Windows.Forms;
+using TQVaultAE.GUI.Components;
+using TQVaultAE.GUI.Models;
+using TQVaultAE.Logs;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Presentation;
+using TQVaultAE.Config;
+using TQVaultAE.Services;
+using TQVaultAE.Domain.Contracts.Services;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using TQVaultAE.Domain.Results;
+using System.Collections.Concurrent;
+using Microsoft.Extensions.Logging;
+
+namespace TQVaultAE.GUI;
+
+/// <summary>
+/// Main Dialog class
+/// </summary>
+public partial class MainForm : VaultForm
 {
-	using Microsoft.Extensions.DependencyInjection;
-	using System;
-	using System.ComponentModel;
-	using System.Drawing;
-	using System.Globalization;
-	using System.IO;
-	using System.Reflection;
-	using System.Security.Permissions;
-	using System.Windows.Forms;
-	using TQVaultAE.GUI.Components;
-	using TQVaultAE.GUI.Models;
-	using TQVaultAE.Logs;
-	using TQVaultAE.Domain.Entities;
-	using TQVaultAE.Presentation;
-	using TQVaultAE.Config;
-	using TQVaultAE.Services;
-	using TQVaultAE.Domain.Contracts.Services;
-	using System.Diagnostics;
-	using System.Linq;
-	using System.Threading.Tasks;
-	using TQVaultAE.Domain.Results;
-	using System.Collections.Concurrent;
-	using Microsoft.Extensions.Logging;
+	private readonly ILogger Log = null;
+	private readonly ITranslationService TranslationService;
+
+	public ITagService TagService { get; }
+
+	#region	Fields
 
 	/// <summary>
-	/// Main Dialog class
+	/// Indicates whether the database resources have completed loading.
 	/// </summary>
-	public partial class MainForm : VaultForm
+	private bool resourcesLoaded;
+
+	/// <summary>
+	/// Indicates whether the entire load process has completed.
+	/// </summary>
+	private bool loadingComplete;
+
+	/// <summary>
+	/// Instance of the player panel control
+	/// </summary>
+	private PlayerPanel playerPanel;
+
+	/// <summary>
+	/// Holds the last sack that had mouse focus
+	/// Used for Automoving
+	/// </summary>
+	private SackCollection lastSackHighlighted;
+
+	/// <summary>
+	/// Holds the last sack panel that had mouse focus
+	/// Used for Automoving
+	/// /// </summary>
+	private SackPanel lastSackPanelHighlighted;
+
+	/// <summary>
+	/// Info for the current item being dragged by the mouse
+	/// </summary>
+	private ItemDragInfo DragInfo;
+
+	/// <summary>
+	/// Used for show/hide table panel layout borders during debug
+	/// </summary>
+	private bool DebugLayoutBorderVisible = false;
+
+	/// <summary>
+	/// Holds the coordinates of the last drag item
+	/// </summary>
+	private Point lastDragPoint;
+
+	/// <summary>
+	/// User current data context
+	/// </summary>
+	internal SessionContext userContext;
+
+	/// <summary>
+	/// Instance of the vault panel control
+	/// </summary>
+	private VaultPanel vaultPanel;
+
+	/// <summary>
+	/// Instance of the second vault panel control
+	/// This gets toggled with the player panel
+	/// </summary>
+	private VaultPanel secondaryVaultPanel;
+
+	/// <summary>
+	/// Instance of the stash panel control
+	/// </summary>
+	private StashPanel stashPanel;
+
+	/// <summary>
+	/// Holds that last stash that had focus
+	/// </summary>
+	private Stash lastStash;
+
+	/// <summary>
+	/// Bag number of the last bag with focus
+	/// </summary>
+	private int lastBag;
+
+	/// <summary>
+	/// Holds the current program version
+	/// </summary>
+	private string currentVersion;
+
+	/// <summary>
+	/// Signals that the configuration UI was loaded and the user changed something in there.
+	/// </summary>
+	private bool configChanged;
+
+	/// <summary>
+	/// Flag which holds whether we are showing the secondary vault panel or the player panel.
+	/// </summary>
+	private bool showSecondaryVault;
+
+	/// <summary>
+	/// Form for the splash screen.
+	/// </summary>
+	private SplashScreenForm splashScreen;
+
+	/// <summary>
+	/// Holds the opacity interval for fading the form.
+	/// </summary>
+	private double fadeInterval;
+
+	#endregion
+
+#if DEBUG
+	// For Design Mode
+	[PermissionSet(SecurityAction.LinkDemand, Unrestricted = true)]
+	public MainForm() => InitForm();
+#endif
+
+	/// <summary>
+	/// Initializes a new instance of the MainForm class.
+	/// </summary>
+	[PermissionSet(SecurityAction.LinkDemand, Unrestricted = true)]
+	public MainForm(
+		IServiceProvider serviceProvider
+		, ILogger<MainForm> log
+		, SessionContext sessionContext
+		, IPlayerService playerService
+		, IVaultService vaultService
+		, IStashService stashService
+		, ITranslationService translationService
+		, ITagService tagService
+	) : base(serviceProvider)
 	{
-		private readonly ILogger Log = null;
-		private readonly ITranslationService TranslationService;
+		this.userContext = sessionContext;
+		this.playerService = playerService;
+		this.vaultService = vaultService;
+		this.stashService = stashService;
+		this.TranslationService = translationService;
+		this.TagService = tagService;
 
-		#region	Fields
+		Log = log;
+		Log.LogInformation("TQVaultAE Initialization !");
 
-		/// <summary>
-		/// Indicates whether the database resources have completed loading.
-		/// </summary>
-		private bool resourcesLoaded;
+		InitForm();
 
-		/// <summary>
-		/// Indicates whether the entire load process has completed.
-		/// </summary>
-		private bool loadingComplete;
+		#region Apply custom font & scaling
 
-		/// <summary>
-		/// Instance of the player panel control
-		/// </summary>
-		private PlayerPanel playerPanel;
+		this.exitButton.Font = FontService.GetFontLight(12F, UIService.Scale);
+		ScaleControl(this.UIService, this.exitButton);
 
-		/// <summary>
-		/// Holds the last sack that had mouse focus
-		/// Used for Automoving
-		/// </summary>
-		private SackCollection lastSackHighlighted;
+		ScaleControl(this.UIService, this.comboBoxCharacter, false);
 
-		/// <summary>
-		/// Holds the last sack panel that had mouse focus
-		/// Used for Automoving
-		/// /// </summary>
-		private SackPanel lastSackPanelHighlighted;
+		this.NotificationText.Font = FontService.GetFontLight(11F, FontStyle.Bold, UIService.Scale);
 
-		/// <summary>
-		/// Info for the current item being dragged by the mouse
-		/// </summary>
-		private ItemDragInfo DragInfo;
+		this.vaultListComboBox.Font = FontService.GetFontLight(13F, UIService.Scale);
+		ScaleControl(this.UIService, this.vaultListComboBox, false);
+		this.secondaryVaultListComboBox.Font = FontService.GetFontLight(13F, UIService.Scale);
+		ScaleControl(this.UIService, this.secondaryVaultListComboBox, false);
+		this.configureButton.Font = FontService.GetFontLight(12F, UIService.Scale);
+		ScaleControl(this.UIService, this.configureButton);
+		this.customMapText.Font = FontService.GetFont(11.25F, UIService.Scale);
+		ScaleControl(this.UIService, this.customMapText, false);
+		this.showVaulButton.Font = FontService.GetFontLight(12F, UIService.Scale);
+		ScaleControl(this.UIService, this.showVaulButton);
+		this.secondaryVaultListComboBox.Font = FontService.GetFontLight(11F, UIService.Scale);
+		ScaleControl(this.UIService, this.secondaryVaultListComboBox, false);
+		this.aboutButton.Font = FontService.GetFontLight(8.25F, UIService.Scale);
+		ScaleControl(this.UIService, this.aboutButton);
+		this.titleLabel.Font = FontService.GetFontLight(24F, UIService.Scale);
+		ScaleControl(this.UIService, this.titleLabel);
+		this.searchButton.Font = FontService.GetFontLight(12F, UIService.Scale);
+		ScaleControl(this.UIService, this.searchButton);
+		ScaleControl(this.UIService, this.tableLayoutPanelMain);
 
-		/// <summary>
-		/// Used for show/hide table panel layout borders during debug
-		/// </summary>
-		private bool DebugLayoutBorderVisible = false;
+		this.saveButton.Font = FontService.GetFontLight(12F, UIService.Scale);
+		ScaleControl(this.UIService, this.saveButton);
+		this.forgeButton.Font = FontService.GetFontLight(12F, UIService.Scale);
+		ScaleControl(this.UIService, this.forgeButton);
 
-		/// <summary>
-		/// Holds the coordinates of the last drag item
-		/// </summary>
-		private Point lastDragPoint;
-
-		/// <summary>
-		/// User current data context
-		/// </summary>
-		internal SessionContext userContext;
-
-		/// <summary>
-		/// Instance of the vault panel control
-		/// </summary>
-		private VaultPanel vaultPanel;
-
-		/// <summary>
-		/// Instance of the second vault panel control
-		/// This gets toggled with the player panel
-		/// </summary>
-		private VaultPanel secondaryVaultPanel;
-
-		/// <summary>
-		/// Instance of the stash panel control
-		/// </summary>
-		private StashPanel stashPanel;
-
-		/// <summary>
-		/// Holds that last stash that had focus
-		/// </summary>
-		private Stash lastStash;
-
-		/// <summary>
-		/// Bag number of the last bag with focus
-		/// </summary>
-		private int lastBag;
-
-		/// <summary>
-		/// Holds the current program version
-		/// </summary>
-		private string currentVersion;
-
-		/// <summary>
-		/// Signals that the configuration UI was loaded and the user changed something in there.
-		/// </summary>
-		private bool configChanged;
-
-		/// <summary>
-		/// Flag which holds whether we are showing the secondary vault panel or the player panel.
-		/// </summary>
-		private bool showSecondaryVault;
-
-		/// <summary>
-		/// Form for the splash screen.
-		/// </summary>
-		private SplashScreenForm splashScreen;
-
-		/// <summary>
-		/// Holds the opacity interval for fading the form.
-		/// </summary>
-		private double fadeInterval;
+		this.scalingLabelHighlight.Font = FontService.GetFontLight(10F, UIService.Scale);
+		this.scalingTextBoxHighlight.Font = FontService.GetFontLight(10F, UIService.Scale);
 
 		#endregion
 
-#if DEBUG
-		// For Design Mode
-		[PermissionSet(SecurityAction.LinkDemand, Unrestricted = true)]
-		public MainForm() => InitForm();
-#endif
-
-		/// <summary>
-		/// Initializes a new instance of the MainForm class.
-		/// </summary>
-		[PermissionSet(SecurityAction.LinkDemand, Unrestricted = true)]
-		public MainForm(
-			IServiceProvider serviceProvider
-			, ILogger<MainForm> log
-			, SessionContext sessionContext
-			, IPlayerService playerService
-			, IVaultService vaultService
-			, IStashService stashService
-			, ITranslationService translationService
-		) : base(serviceProvider)
+		if (TQDebug.DebugEnabled)
 		{
-			this.userContext = sessionContext;
-			this.playerService = playerService;
-			this.vaultService = vaultService;
-			this.stashService = stashService;
-			this.TranslationService = translationService;
-
-			Log = log;
-			Log.LogInformation("TQVaultAE Initialization !");
-
-			InitForm();
-
-			#region Apply custom font & scaling
-
-			this.exitButton.Font = FontService.GetFontLight(12F, UIService.Scale);
-			ScaleControl(this.UIService, this.exitButton);
-			this.characterComboBox.Font = FontService.GetFontLight(13F, UIService.Scale);
-			ScaleControl(this.UIService, this.characterComboBox, false);
-			this.characterLabel.Font = FontService.GetFontLight(11F, UIService.Scale);
-			ScaleControl(this.UIService, this.characterLabel, false);
-
-			this.NotificationText.Font = FontService.GetFontLight(11F, FontStyle.Bold, UIService.Scale);
-
-			this.vaultListComboBox.Font = FontService.GetFontLight(13F, UIService.Scale);
-			ScaleControl(this.UIService, this.vaultListComboBox, false);
-			this.vaultLabel.Font = FontService.GetFontLight(11F, UIService.Scale);
-			ScaleControl(this.UIService, this.vaultLabel, false);
-			this.configureButton.Font = FontService.GetFontLight(12F, UIService.Scale);
-			ScaleControl(this.UIService, this.configureButton);
-			this.customMapText.Font = FontService.GetFont(11.25F, UIService.Scale);
-			ScaleControl(this.UIService, this.customMapText, false);
-			this.showVaulButton.Font = FontService.GetFontLight(12F, UIService.Scale);
-			ScaleControl(this.UIService, this.showVaulButton);
-			this.secondaryVaultListComboBox.Font = FontService.GetFontLight(11F, UIService.Scale);
-			ScaleControl(this.UIService, this.secondaryVaultListComboBox, false);
-			this.aboutButton.Font = FontService.GetFontLight(8.25F, UIService.Scale);
-			ScaleControl(this.UIService, this.aboutButton);
-			this.titleLabel.Font = FontService.GetFontLight(24F, UIService.Scale);
-			ScaleControl(this.UIService, this.titleLabel);
-			this.searchButton.Font = FontService.GetFontLight(12F, UIService.Scale);
-			ScaleControl(this.UIService, this.searchButton);
-			ScaleControl(this.UIService, this.tableLayoutPanelMain);
-			this.duplicateButton.Font = FontService.GetFontLight(12F, UIService.Scale);
-			ScaleControl(this.UIService, this.duplicateButton);
-			this.saveButton.Font = FontService.GetFontLight(12F, UIService.Scale);
-			ScaleControl(this.UIService, this.saveButton);
-			this.forgeButton.Font = FontService.GetFontLight(12F, UIService.Scale);
-			ScaleControl(this.UIService, this.forgeButton);
-
-			this.scalingLabelHighlight.Font = FontService.GetFontLight(10F, UIService.Scale);
-			this.scalingTextBoxHighlight.Font = FontService.GetFontLight(10F, UIService.Scale);
-
-			#endregion
-
-			if (TQDebug.DebugEnabled)
-			{
-				// Write this version into the debug file.
-				Log.LogDebug(
+			// Write this version into the debug file.
+			Log.LogDebug(
 $@"Current TQVault Version: {this.currentVersion}
 Debug Levels
+{nameof(TQDebug.LootTableDebugEnabled)}: {TQDebug.LootTableDebugEnabled}
 {nameof(TQDebug.ArcFileDebugLevel)}: {TQDebug.ArcFileDebugLevel}
 {nameof(TQDebug.DatabaseDebugLevel)}: {TQDebug.DatabaseDebugLevel}
 {nameof(TQDebug.ItemAttributesDebugLevel)}: {TQDebug.ItemAttributesDebugLevel}
 {nameof(TQDebug.ItemDebugLevel)}: {TQDebug.ItemDebugLevel}
 ");
-			}
-
-			// Process the mouse scroll wheel to cycle through the vaults.
-			this.MouseWheel += new MouseEventHandler(this.MainFormMouseWheel);
 		}
 
-		private void InitForm()
-		{
-			this.Enabled = false;
-			this.ShowInTaskbar = false;
-			this.Opacity = 0;
-			this.Hide();
+		// Process the mouse scroll wheel to cycle through the vaults.
+		this.MouseWheel += new MouseEventHandler(this.MainFormMouseWheel);
+	}
 
-			this.InitializeComponent();
+	private void InitForm()
+	{
+		this.Enabled = false;
+		this.ShowInTaskbar = false;
+		this.Opacity = 0;
+		this.Hide();
 
-			this.SetupFormSize();
+		this.InitializeComponent();
 
-			// Changed to a global for versions in tqdebug
-			AssemblyName aname = Assembly.GetExecutingAssembly().GetName();
-			this.currentVersion = aname.Version.ToString();
-			this.Text = string.Format(CultureInfo.CurrentCulture, "{0} {1}", aname.Name, this.currentVersion);
+		this.vaultPictureBox.Image = Resources.Majestic_Chest_small;
+		this.vaultPictureBox.Size = Resources.Majestic_Chest_small.Size;
+		this.toolTip.SetToolTip(this.vaultPictureBox, Resources.MainFormLabel2);
 
-			// Setup localized strings.
-			this.characterLabel.Text = Resources.MainFormLabel1;
-			this.vaultLabel.Text = Resources.MainFormLabel2;
-			this.configureButton.Text = Resources.MainFormBtnConfigure;
-			this.exitButton.Text = Resources.GlobalExit;
-			this.showVaulButton.Text = Resources.MainFormBtnPanelSelect;
-			this.Icon = Resources.TQVIcon;
-			this.searchButton.Text = Resources.MainFormSearchButtonText;
-			this.duplicateButton.Text = Resources.DuplicateCharacter_ButtonText;
-			this.scalingLabelHighlight.Text = Resources.MainFormHighlightLabelText;
+		this.pictureBoxSecondVault.Image = Resources.Majestic_Chest_small;
+		this.pictureBoxSecondVault.Size = Resources.Majestic_Chest_small.Size;
+		this.toolTip.SetToolTip(this.pictureBoxSecondVault, Resources.MainForm2ndVault);
 
-			this.lastDragPoint.X = -1;
-			this.DragInfo = new ItemDragInfo(this.UIService);
+		this.comboBoxCharacter.Init(
+			this.UIService
+			, this.FontService
+			, this.TranslationService
+			, this.Database
+			, this.GameFileService
+			, this.GamePathResolver
+			, this.TagService
+			, () => DuplicateCharacter()
+		);
+
+		this.SetupFormSize();
+
+		// Changed to a global for versions in tqdebug
+		AssemblyName aname = Assembly.GetExecutingAssembly().GetName();
+		this.currentVersion = aname.Version.ToString();
+		this.Text = string.Format(CultureInfo.CurrentCulture, "{0} {1}", aname.Name, this.currentVersion);
+
+		// Setup localized strings.
+		this.configureButton.Text = Resources.MainFormBtnConfigure;
+		this.exitButton.Text = Resources.GlobalExit;
+		this.showVaulButton.Text = Resources.MainFormBtnPanelSelect;
+		this.Icon = Resources.TQVIcon;
+		this.searchButton.Text = Resources.MainFormSearchButtonText;
+		this.scalingLabelHighlight.Text = Resources.MainFormHighlightLabelText;
+
+		this.lastDragPoint.X = -1;
+		this.DragInfo = new ItemDragInfo(this.UIService);
 #if DEBUG
-			this.DebugLayoutBorderVisible = false;// Set here what you want during debug
+		this.DebugLayoutBorderVisible = false;// Set here what you want during debug
 #endif
-			if (!this.DebugLayoutBorderVisible)
-			{
-				this.flowLayoutPanelRightComboBox.BorderStyle = BorderStyle.None;
-				this.flowLayoutPanelVaultSelector.BorderStyle = BorderStyle.None;
-				this.flowLayoutPanelRightPanels.BorderStyle = BorderStyle.None;
-				this.tableLayoutPanelMain.CellBorderStyle = TableLayoutPanelCellBorderStyle.None;
-			}
-
-			AdjustMenuButtonVisibility();
-
-			this.CreatePanels();
+		if (!this.DebugLayoutBorderVisible)
+		{
+			this.flowLayoutPanelRightComboBox.BorderStyle =
+			this.flowLayoutPanelVaultSelector.BorderStyle =
+			this.flowLayoutPanelRightPanels.BorderStyle =
+			this.bufferedFlowLayoutPanelsecondaryVaultList.BorderStyle =
+			this.pictureBoxSecondVault.BorderStyle =
+			this.vaultPictureBox.BorderStyle =
+			this.comboBoxCharacter.BorderStyle = BorderStyle.None;
+			this.tableLayoutPanelMain.CellBorderStyle = TableLayoutPanelCellBorderStyle.None;
 		}
 
-		private void AdjustMenuButtonVisibility()
+		AdjustMenuButtonVisibility();
+
+		this.CreatePanels();
+
+		this.UIService.NotifyUserEvent += UIService_NotifyUserEvent;
+		this.UIService.ShowMessageUserEvent += UIService_ShowMessageUserEvent;
+	}
+
+	private void UIService_ShowMessageUserEvent(object sender, ShowMessageUserEventHandlerEventArgs message)
+	{
+		var caption = message.Level switch
 		{
-			this.forgeButton.Visible = Config.Settings.Default.AllowItemEdit;
-			this.duplicateButton.Visible = Config.Settings.Default.AllowCharacterEdit;
-			this.saveButton.Visible = Config.Settings.Default.EnableHotReload;
-			// Get last position
-			var flowctr = this.flowLayoutPanelMenuButtons.Controls;
-			var lastctr = flowctr[flowctr.Count - 1];
-			var lastidx = flowctr.GetChildIndex(lastctr);
-			// Force "Exit" button in last position
-			flowctr.SetChildIndex(this.exitButton, lastidx + 1);
-		}
+			LogLevel.Error => Resources.GlobalError,
+			LogLevel.Warning => Resources.GlobalWarning,
+			_ => Resources.GlobalInformation,
+		};
 
-
-		#region Mainform Events
-
-		/// <summary>
-		/// Handler for the ResizeEnd event.  Used to scale the internal controls after the window has been resized.
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		protected override void ResizeEndCallback(object sender, EventArgs e)
-			// That override Look dumb but needed by Visual Studio WInform Designer
-			=> base.ResizeEndCallback(sender, e);
-
-		/// <summary>
-		/// Handler for the Resize event.  Used for handling the maximize and minimize functions.
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		protected override void ResizeBeginCallback(object sender, EventArgs e)
-			// That override Look dumb but needed by Visual Studio WInform Designer
-			=> base.ResizeBeginCallback(sender, e);
-
-		/// <summary>
-		/// Handler for closing the main form
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">CancelEventArgs data</param>
-		private void MainFormClosing(object sender, CancelEventArgs e)
-			=> e.Cancel = !this.DoCloseStuff();
-
-		/// <summary>
-		/// Shows things that you may want to know before a close.
-		/// Like holding an item
-		/// </summary>
-		/// <returns>TRUE if none of the conditions exist or the user selected to ignore the message</returns>
-		private bool DoCloseStuff()
+		var icon = message.Level switch
 		{
-			bool ok = false;
-			try
-			{
-				// Make sure we are not dragging anything
-				if (this.DragInfo.IsActive)
-				{
-					MessageBox.Show(Resources.MainFormHoldingItem, Resources.MainFormHoldingItem2, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-					return false;
-				}
+			LogLevel.Error => MessageBoxIcon.Error,
+			LogLevel.Warning => MessageBoxIcon.Warning,
+			_ => MessageBoxIcon.Information,
+		};
 
-				this.SaveAllModifiedFiles();
+		var buttons = message.Buttons == ShowMessageButtons.OK ? MessageBoxButtons.OK : MessageBoxButtons.OKCancel;
 
-				// Added by VillageIdiot
-				this.SaveConfiguration();
+		// Propagate response to the caller
+		message.IsOK = MessageBox.Show(message.Message, caption, buttons, icon) == DialogResult.OK;
+	}
 
-				ok = true;
-			}
-			catch (IOException exception)
-			{
-				Log.LogError(exception, "Save files failed !");
-				MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-			}
+	private void UIService_NotifyUserEvent(object sender, string message, Color color)
+	{
+		this.NotificationText.ForeColor = color;
+		this.NotificationText.Text = message;
+	}
 
-			return ok;
-		}
+	private void AdjustMenuButtonVisibility()
+	{
+		this.forgeButton.Visible = Config.UserSettings.Default.AllowItemEdit;
+		this.saveButton.Visible = Config.UserSettings.Default.EnableHotReload;
+		// Get last position
+		var flowctr = this.flowLayoutPanelMenuButtons.Controls;
+		var lastctr = flowctr[flowctr.Count - 1];
+		var lastidx = flowctr.GetChildIndex(lastctr);
+		// Force "Exit" button in last position
+		flowctr.SetChildIndex(this.exitButton, lastidx + 1);
+	}
 
-		/// <summary>
-		/// Handler for loading the main form
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void MainFormLoad(object sender, EventArgs e)
+
+	#region Mainform Events
+
+	/// <summary>
+	/// Handler for the ResizeEnd event.  Used to scale the internal controls after the window has been resized.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	protected override void ResizeEndCallback(object sender, EventArgs e)
+		// That override Look dumb but needed by Visual Studio WInform Designer
+		=> base.ResizeEndCallback(sender, e);
+
+	/// <summary>
+	/// Handler for the Resize event.  Used for handling the maximize and minimize functions.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	protected override void ResizeBeginCallback(object sender, EventArgs e)
+		// That override Look dumb but needed by Visual Studio WInform Designer
+		=> base.ResizeBeginCallback(sender, e);
+
+	/// <summary>
+	/// Handler for closing the main form
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">CancelEventArgs data</param>
+	private void MainFormClosing(object sender, CancelEventArgs e)
+		=> e.Cancel = !this.DoCloseStuff();
+
+	/// <summary>
+	/// Shows things that you may want to know before a close.
+	/// Like holding an item
+	/// </summary>
+	/// <returns>TRUE if none of the conditions exist or the user selected to ignore the message</returns>
+	private bool DoCloseStuff()
+	{
+		bool ok = false;
+		try
 		{
-			this.splashScreen = this.ServiceProvider.GetService<SplashScreenForm>();
-			this.splashScreen.MaximumValue = 1;
-			this.splashScreen.FormClosed += new FormClosedEventHandler(this.SplashScreenClosed);
-
-			if (Config.Settings.Default.LoadAllFiles)
-				this.splashScreen.MaximumValue += LoadAllFilesTotal();
-
-			this.splashScreen.Show();
-			this.splashScreen.Update();
-			this.splashScreen.BringToFront();
-
-			this.backgroundWorkerLoadAllFiles.RunWorkerAsync();
-		}
-
-		/// <summary>
-		/// Handler for key presses on the main form
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">KeyPressEventArgs data</param>
-		private void MainFormKeyPress(object sender, KeyPressEventArgs e)
-		{
-			// Don't handle this here since we handle key presses within each component.
-			////if (e.KeyChar != (char)27)
-			////e.Handled = true;
-		}
-
-		/// <summary>
-		/// Handler for showing the main form.
-		/// Used to switch focus to the search text box.
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void MainFormShown(object sender, EventArgs e)
-		{
-			this.scalingTextBoxHighlight.Dock = DockStyle.Fill;
-			this.scalingTextBoxHighlight.Focus();
-		}
-
-		/// <summary>
-		/// Handler for moving the mouse wheel.
-		/// Used to scroll through the vault list.
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">MouseEventArgs data</param>
-		private void MainFormMouseWheel(object sender, MouseEventArgs e)
-		{
-			// Force a single line regardless of the delta value.
-			int numberOfTextLinesToMove = ((e.Delta > 0) ? 1 : 0) - ((e.Delta < 0) ? 1 : 0);
-			if (numberOfTextLinesToMove != 0)
-			{
-				int vaultSelection = this.vaultListComboBox.SelectedIndex;
-				vaultSelection -= numberOfTextLinesToMove;
-				if (vaultSelection < 1)
-					vaultSelection = 1;
-
-				if (vaultSelection >= this.vaultListComboBox.Items.Count)
-					vaultSelection = this.vaultListComboBox.Items.Count - 1;
-
-				this.vaultListComboBox.SelectedIndex = vaultSelection;
-			}
-		}
-
-		/// <summary>
-		/// Key Handler for the main form.  Most keystrokes should be handled by the individual panels or the search text box.
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">KeyEventArgs data</param>
-		private void MainFormKeyDown(object sender, KeyEventArgs e)
-		{
-			if (e.KeyData == (Keys.Control | Keys.F))
-				this.ActivateSearchCallback(this, new SackPanelEventArgs(null, null));
-
-			if (e.KeyData == (Keys.Control | Keys.Add) || e.KeyData == (Keys.Control | Keys.Oemplus))
-				this.ResizeFormCallback(this, new ResizeEventArgs(0.1F));
-
-			if (e.KeyData == (Keys.Control | Keys.Subtract) || e.KeyData == (Keys.Control | Keys.OemMinus))
-				this.ResizeFormCallback(this, new ResizeEventArgs(-0.1F));
-
-			if (e.KeyData == (Keys.Control | Keys.Home))
-				this.ResizeFormCallback(this, new ResizeEventArgs(1.0F));
-		}
-
-		/// <summary>
-		/// Handles Timer ticks for fading in the main form.
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void FadeInTimerTick(object sender, EventArgs e)
-		{
-			if (this.Opacity < 1)
-				this.Opacity = Math.Min(1.0F, this.Opacity + this.fadeInterval);
-			else
-				this.fadeInTimer.Stop();
-		}
-
-		/// <summary>
-		/// Handler for the exit button.
-		/// Closes the main form
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void ExitButtonClick(object sender, EventArgs e) => this.Close();
-
-		#endregion
-
-		#region About
-
-		/// <summary>
-		/// Handler for clicking the about button.
-		/// Shows the about dialog box.
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void AboutButtonClick(object sender, EventArgs e)
-		{
-			AboutBox dlg = this.ServiceProvider.GetService<AboutBox>();
-			dlg.Scale(new SizeF(UIService.Scale, UIService.Scale));
-			dlg.ShowDialog();
-		}
-
-		#endregion
-
-		#region Scaling
-
-		/// <summary>
-		/// Scales the main form according to the scale factor.
-		/// </summary>
-		/// <param name="scaleFactor">Float which signifies the scale factor of the form.  This is an absolute from the original size unless useRelativeScaling is set to true.</param>
-		/// <param name="useRelativeScaling">Indicates whether the scale factor is relative.  Used to support a resize operation.</param>
-		protected override void ScaleForm(float scaleFactor, bool useRelativeScaling)
-		{
-			base.ScaleForm(scaleFactor, useRelativeScaling);
-
-			this.NotificationText.Text = string.Empty;
-
-			this.Invalidate();
-		}
-
-		/// <summary>
-		/// Sets the size of the main form along with scaling the internal controls for startup.
-		/// </summary>
-		private void SetupFormSize()
-		{
-			this.DrawCustomBorder = true;
-			this.ResizeCustomAllowed = true;
-			this.fadeInterval = Config.Settings.Default.FadeInInterval;
-
-			Rectangle workingArea = Screen.FromControl(this).WorkingArea;
-
-			this.ScaleOnResize = false;
-
-			this.ClientSize = InitialScaling(workingArea);
-
-			this.ScaleOnResize = true;
-
-			UIService.Scale = Config.Settings.Default.Scale;
-			this.Log.LogDebug("Config.Settings.Default.Scale changed to {0} !", UIService.Scale);
-
-			// Save the height / width ratio for resizing.
-			this.FormDesignRatio = (float)this.Height / (float)this.Width;
-			this.FormMaximumSize = new Size(this.Width * 2, this.Height * 2);
-			this.FormMinimumSize = new Size(
-				Convert.ToInt32((float)this.Width * 0.4F),
-				Convert.ToInt32((float)this.Height * 0.4F));
-
-			this.OriginalFormSize = this.Size;
-			this.OriginalFormScale = Config.Settings.Default.Scale;
-
-			if (CurrentAutoScaleDimensions.Width != UIService.DESIGNDPI)
-			{
-				// We do not need to scale the main form controls since autoscaling will handle it.
-				// Scale internally to 96 dpi for the drawing functions.
-				UIService.Scale = this.CurrentAutoScaleDimensions.Width / UIService.DESIGNDPI;
-				this.OriginalFormScale = UIService.Scale;
-			}
-
-			this.LastFormSize = this.Size;
-
-			// Set the maximized size but keep the aspect ratio.
-			if (Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio) < workingArea.Height)
-			{
-				this.MaximizedBounds = new Rectangle(0
-					, (workingArea.Height - Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio)) / 2
-					, workingArea.Width
-					, Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio)
-				);
-			}
-			else
-			{
-				this.MaximizedBounds = new Rectangle(
-					(workingArea.Width - Convert.ToInt32((float)workingArea.Height / this.FormDesignRatio)) / 2,
-					0,
-					Convert.ToInt32((float)workingArea.Height / this.FormDesignRatio),
-					workingArea.Height);
-			}
-			this.Location = new Point(workingArea.Left + Convert.ToInt16((workingArea.Width - this.ClientSize.Width) / 2), workingArea.Top + Convert.ToInt16((workingArea.Height - this.ClientSize.Height) / 2));
-		}
-
-
-		#endregion
-
-		#region Files
-
-
-		/// <summary>
-		/// Counts the number of files which LoadAllFiles will load.  Used to set the max value of the progress bar.
-		/// </summary>
-		/// <returns>Total number of files that LoadAllFiles() will load.</returns>
-		private int LoadAllFilesTotal()
-		{
-			int numIT = GamePathResolver.GetCharacterList()?.Count() ?? 0;
-			numIT = numIT * 2;// Assuming that there is 1 stash file per character
-			int numVaults = GamePathResolver.GetVaultList()?.Count() ?? 0;
-			return Math.Max(0, numIT + numVaults - 1);
-		}
-
-		/// <summary>
-		/// Loads all of the players, stashes, and vaults.
-		/// Shows a progress dialog.
-		/// Used for the searching function.
-		/// </summary>
-		private void LoadAllFiles()
-		{
-			// Check to see if we failed the last time we tried loading all of the files.
-			// If we did fail then turn it off and skip it.
-			if (!Config.Settings.Default.LoadAllFilesCompleted)
-			{
-				if (MessageBox.Show(
-					Resources.MainFormDisableLoadAllFiles,
-					Resources.MainFormDisableLoadAllFilesCaption,
-					MessageBoxButtons.YesNo,
-					MessageBoxIcon.Information,
-					MessageBoxDefaultButton.Button1,
-					RightToLeftOptions) == DialogResult.Yes)
-				{
-					Config.Settings.Default.LoadAllFilesCompleted = true;
-					Config.Settings.Default.LoadAllFiles = false;
-					Config.Settings.Default.Save();
-					return;
-				}
-			}
-
-			string[] vaults = GamePathResolver.GetVaultList();
-			var charactersIT = this.characterComboBox.Items.OfType<PlayerSave>().ToArray();
-
-			int numIT = charactersIT?.Length ?? 0;
-			int numVaults = vaults?.Length ?? 0;
-
-			// Since this takes a while, show a progress dialog box.
-			int total = numIT + numVaults - 1;
-
-			if (total > 0)
-			{
-				// We were successful last time so we reset the flag for this attempt.
-				Config.Settings.Default.LoadAllFilesCompleted = false;
-				Config.Settings.Default.Save();
-			}
-			else
-				return;
-
-			Stopwatch stopWatch = new Stopwatch();
-			stopWatch.Start();
-
-			// Load all of the Immortal Throne player files and stashes.
-			var bagPlayer = new ConcurrentBag<LoadPlayerResult>();
-			var bagPlayerStashes = new ConcurrentBag<LoadPlayerStashResult>();
-			var bagVault = new ConcurrentBag<LoadVaultResult>();
-
-			var lambdacharactersIT = charactersIT.Select(c => (Action)(() =>
-			{
-				// Get the player 
-				var result = this.playerService.LoadPlayer(c, true);
-				bagPlayer.Add(result);
-				this.backgroundWorkerLoadAllFiles.ReportProgress(1);
-			})).ToArray();
-
-			var lambdacharacterStashes = charactersIT.Select(c => (Action)(() =>
-			{
-				// Get the player's stash
-				var result = this.stashService.LoadPlayerStash(c);
-				bagPlayerStashes.Add(result);
-				this.backgroundWorkerLoadAllFiles.ReportProgress(1);
-			})).ToArray();
-
-			var lambdaVault = vaults.Select(c => (Action)(() =>
-			{
-				// Load all of the vaults.
-				var result = this.vaultService.LoadVault(c);
-				bagVault.Add(result);
-				this.backgroundWorkerLoadAllFiles.ReportProgress(1);
-			})).ToArray();
-
-			Parallel.Invoke(lambdacharactersIT.Concat(lambdacharacterStashes).Concat(lambdaVault).ToArray());// Parallel loading
-
-			// Dispay errors
-			bagPlayer.Where(p => p.Player.ArgumentException != null).ToList()
-				.ForEach(result =>
-				{
-					if (result.Player.ArgumentException != null)
-					{
-						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.PlayerFile, result.Player.ArgumentException.Message);
-						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-					}
-				});
-			bagPlayerStashes.Where(p => p.Stash.ArgumentException != null).ToList()
-				.ForEach(result =>
-				{
-					if (result.Stash.ArgumentException != null)
-					{
-						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.StashFile, result.Stash.ArgumentException.Message);
-						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-					}
-				});
-			bagVault.Where(p => p.ArgumentException != null).ToList()
-				.ForEach(result =>
-				{
-					if (result.ArgumentException != null)
-					{
-						string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.Filename, result.ArgumentException.Message);
-						MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-					}
-				});
-
-
-			stopWatch.Stop();
-			// Get the elapsed time as a TimeSpan value.
-			TimeSpan ts = stopWatch.Elapsed;
-
-			// Format and display the TimeSpan value.
-			Log.LogInformation("LoadTime {0:00}:{1:00}:{2:00}.{3:00}",
-				ts.Hours, ts.Minutes, ts.Seconds,
-				ts.Milliseconds / 10);
-
-			// We made it so set the flag to indicate we were successful.
-			Config.Settings.Default.LoadAllFilesCompleted = true;
-			Config.Settings.Default.Save();
-		}
-
-		/// <summary>
-		/// Attempts to save all modified files.
-		/// </summary>
-		/// <returns>true if players have been modified</returns>
-		private bool SaveAllModifiedFiles()
-		{
-			bool playersModified = this.SaveAllModifiedPlayers();
-			bool vaultsModified = this.SaveAllModifiedVaults();
-			bool stashesModified = this.SaveAllModifiedStashes();
-
-			// Notification Last Save
-			if (playersModified || vaultsModified || stashesModified)
-			{
-				var saved = string.Format(Resources.SavedAtNotification, DateTime.Now);
-				this.NotificationText.Text = saved;
-				this.toolTip.SetToolTip(this.saveButton, saved);
-			}
-
-			return playersModified;
-		}
-
-		#endregion
-
-		#region SplashScreen & Tooltip
-
-		/// <summary>
-		/// Handler for closing the splash screen
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">FormClosedEventArgs data</param>
-		private void SplashScreenClosed(object sender, FormClosedEventArgs e)
-		{
-			if (this.resourcesLoaded)
-			{
-				if (!this.loadingComplete)
-					this.backgroundWorkerLoadAllFiles.CancelAsync();
-
-				this.ShowMainForm();
-			}
-			else
-				Application.Exit();
-		}
-
-		/// <summary>
-		/// Starts the fade in of the main form.
-		/// </summary>
-		private void ShowMainForm()
-		{
-			this.fadeInTimer.Start();
-			this.ShowInTaskbar = true;
-			this.Enabled = true;
-			this.Show();
-			this.Activate();
-		}
-
-
-		/// <summary>
-		/// Tooltip callback
-		/// </summary>
-		/// <param name="windowHandle">handle of the main window form</param>
-		/// <returns>tooltip string</returns>
-		private void ToolTipCallback(int windowHandle)
-		{
-			this.vaultPanel.ToolTipCallback(windowHandle);
-			this.playerPanel.ToolTipCallback(windowHandle);
-			this.stashPanel.ToolTipCallback(windowHandle);
-			this.secondaryVaultPanel.ToolTipCallback(windowHandle);
-
-			// Changed by VillageIdiot
-			// If we are dragging something around, clear the tooltip and text box.
+			// Make sure we are not dragging anything
 			if (this.DragInfo.IsActive)
-				this.NotificationText.Text = string.Empty;
+			{
+				MessageBox.Show(Resources.MainFormHoldingItem, Resources.MainFormHoldingItem2, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+				return false;
+			}
+
+			this.SaveAllModifiedFiles();
+
+			// Added by VillageIdiot
+			this.SaveConfiguration();
+
+			this.GameFileService.GitAddCommitTagAndPush();
+
+			ok = true;
+		}
+		catch (IOException exception)
+		{
+			Log.LogError(exception, "Save files failed !");
+			MessageBox.Show(Log.FormatException(exception), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 		}
 
-		#endregion
+		return ok;
+	}
 
-		#region Game Resources
+	/// <summary>
+	/// Handler for loading the main form
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void MainFormLoad(object sender, EventArgs e)
+	{
+		// Sync git local repo first
+		this.GameFileService.GitRepositorySetup();
 
-		/// <summary>
-		/// Loads the resources.
-		/// </summary>
-		/// <param name="worker">Background worker</param>
-		/// <param name="e">DoWorkEventArgs data</param>
-		/// <returns>true when resource loading has completed successfully</returns>
-		private bool LoadResources(BackgroundWorker worker, DoWorkEventArgs e)
+		this.splashScreen = this.ServiceProvider.GetService<SplashScreenForm>();
+		this.splashScreen.MaximumValue = 1;
+		this.splashScreen.FormClosed += new FormClosedEventHandler(this.SplashScreenClosed);
+
+		if (Config.UserSettings.Default.LoadAllFiles)
+			this.splashScreen.MaximumValue += LoadAllFilesTotal();
+
+		this.splashScreen.Show();
+		this.splashScreen.Update();
+		this.splashScreen.BringToFront();
+
+		this.backgroundWorkerLoadAllFiles.RunWorkerAsync();
+	}
+
+	/// <summary>
+	/// Handler for key presses on the main form
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">KeyPressEventArgs data</param>
+	private void MainFormKeyPress(object sender, KeyPressEventArgs e)
+	{
+		// Don't handle this here since we handle key presses within each component.
+		////if (e.KeyChar != (char)27)
+		////e.Handled = true;
+	}
+
+	/// <summary>
+	/// Handler for showing the main form.
+	/// Used to switch focus to the search text box.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void MainFormShown(object sender, EventArgs e)
+	{
+		this.scalingTextBoxHighlight.Dock = DockStyle.Fill;
+		this.scalingTextBoxHighlight.Focus();
+	}
+
+	/// <summary>
+	/// Handler for moving the mouse wheel.
+	/// Used to scroll through the vault list.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">MouseEventArgs data</param>
+	private void MainFormMouseWheel(object sender, MouseEventArgs e)
+	{
+		// Force a single line regardless of the delta value.
+		int numberOfTextLinesToMove = ((e.Delta > 0) ? 1 : 0) - ((e.Delta < 0) ? 1 : 0);
+		if (numberOfTextLinesToMove != 0)
 		{
-			// Abort the operation if the user has canceled.
-			// Note that a call to CancelAsync may have set
-			// CancellationPending to true just after the
-			// last invocation of this method exits, so this
-			// code will not have the opportunity to set the
-			// DoWorkEventArgs.Cancel flag to true. This means
-			// that RunWorkerCompletedEventArgs.Cancelled will
-			// not be set to true in your RunWorkerCompleted
-			// event handler. This is a race condition.
-			if (worker.CancellationPending)
-			{
-				e.Cancel = true;
-				return this.resourcesLoaded;
-			}
-			else
-			{
+			int vaultSelection = this.vaultListComboBox.SelectedIndex;
+			vaultSelection -= numberOfTextLinesToMove;
+			if (vaultSelection < 1)
+				vaultSelection = 1;
 
-				if (!Config.Settings.Default.AllowCheats)
+			if (vaultSelection >= this.vaultListComboBox.Items.Count)
+				vaultSelection = this.vaultListComboBox.Items.Count - 1;
+
+			this.vaultListComboBox.SelectedIndex = vaultSelection;
+		}
+	}
+
+	/// <summary>
+	/// Key Handler for the main form.  Most keystrokes should be handled by the individual panels or the search text box.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">KeyEventArgs data</param>
+	private void MainFormKeyDown(object sender, KeyEventArgs e)
+	{
+		if (e.KeyData == (Keys.Control | Keys.F))
+			this.ActivateSearchCallback(this, new SackPanelEventArgs(null, null));
+
+		if (e.KeyData == (Keys.Control | Keys.Add) || e.KeyData == (Keys.Control | Keys.Oemplus))
+			this.ResizeFormCallback(this, new ResizeEventArgs(0.1F));
+
+		if (e.KeyData == (Keys.Control | Keys.Subtract) || e.KeyData == (Keys.Control | Keys.OemMinus))
+			this.ResizeFormCallback(this, new ResizeEventArgs(-0.1F));
+
+		if (e.KeyData == (Keys.Control | Keys.Home))
+			this.ResizeFormCallback(this, new ResizeEventArgs(1.0F));
+	}
+
+	/// <summary>
+	/// Handles Timer ticks for fading in the main form.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void FadeInTimerTick(object sender, EventArgs e)
+	{
+		if (this.Opacity < 1)
+			this.Opacity = Math.Min(1.0F, this.Opacity + this.fadeInterval);
+		else
+			this.fadeInTimer.Stop();
+	}
+
+	/// <summary>
+	/// Handler for the exit button.
+	/// Closes the main form
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void ExitButtonClick(object sender, EventArgs e) => this.Close();
+
+	#endregion
+
+	#region About
+
+	/// <summary>
+	/// Handler for clicking the about button.
+	/// Shows the about dialog box.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void AboutButtonClick(object sender, EventArgs e)
+	{
+		AboutBox dlg = this.ServiceProvider.GetService<AboutBox>();
+		dlg.Scale(new SizeF(UIService.Scale, UIService.Scale));
+		dlg.ShowDialog();
+	}
+
+	#endregion
+
+	#region Scaling
+
+	/// <summary>
+	/// Scales the main form according to the scale factor.
+	/// </summary>
+	/// <param name="scaleFactor">Float which signifies the scale factor of the form.  This is an absolute from the original size unless useRelativeScaling is set to true.</param>
+	/// <param name="useRelativeScaling">Indicates whether the scale factor is relative.  Used to support a resize operation.</param>
+	protected override void ScaleForm(float scaleFactor, bool useRelativeScaling)
+	{
+		base.ScaleForm(scaleFactor, useRelativeScaling);
+
+		this.NotificationText.Text = string.Empty;
+
+		this.Invalidate();
+	}
+
+	/// <summary>
+	/// Sets the size of the main form along with scaling the internal controls for startup.
+	/// </summary>
+	private void SetupFormSize()
+	{
+		this.DrawCustomBorder = true;
+		this.ResizeCustomAllowed = true;
+		this.fadeInterval = Config.Settings.Default.FadeInInterval;
+
+		Rectangle workingArea = Screen.FromControl(this).WorkingArea;
+
+		this.ScaleOnResize = false;
+
+		this.ClientSize = InitialScaling(workingArea);
+
+		this.ScaleOnResize = true;
+
+		UIService.Scale = Config.UserSettings.Default.Scale;
+		this.Log.LogDebug("Config.Settings.Default.Scale changed to {0} !", UIService.Scale);
+
+		// Save the height / width ratio for resizing.
+		this.FormDesignRatio = (float)this.Height / (float)this.Width;
+		this.FormMaximumSize = new Size(this.Width * 2, this.Height * 2);
+		this.FormMinimumSize = new Size(
+			Convert.ToInt32((float)this.Width * 0.4F),
+			Convert.ToInt32((float)this.Height * 0.4F));
+
+		this.OriginalFormSize = this.Size;
+		this.OriginalFormScale = Config.UserSettings.Default.Scale;
+
+		if (CurrentAutoScaleDimensions.Width != UIService.DESIGNDPI)
+		{
+			// We do not need to scale the main form controls since autoscaling will handle it.
+			// Scale internally to 96 dpi for the drawing functions.
+			UIService.Scale = this.CurrentAutoScaleDimensions.Width / UIService.DESIGNDPI;
+			this.OriginalFormScale = UIService.Scale;
+		}
+
+		this.LastFormSize = this.Size;
+
+		// Set the maximized size but keep the aspect ratio.
+		if (Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio) < workingArea.Height)
+		{
+			this.MaximizedBounds = new Rectangle(0
+				, (workingArea.Height - Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio)) / 2
+				, workingArea.Width
+				, Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio)
+			);
+		}
+		else
+		{
+			this.MaximizedBounds = new Rectangle(
+				(workingArea.Width - Convert.ToInt32((float)workingArea.Height / this.FormDesignRatio)) / 2,
+				0,
+				Convert.ToInt32((float)workingArea.Height / this.FormDesignRatio),
+				workingArea.Height);
+		}
+		this.Location = new Point(workingArea.Left + Convert.ToInt16((workingArea.Width - this.ClientSize.Width) / 2), workingArea.Top + Convert.ToInt16((workingArea.Height - this.ClientSize.Height) / 2));
+	}
+
+
+	#endregion
+
+	#region Files
+
+
+	/// <summary>
+	/// Counts the number of files which LoadAllFiles will load.  Used to set the max value of the progress bar.
+	/// </summary>
+	/// <returns>Total number of files that LoadAllFiles() will load.</returns>
+	private int LoadAllFilesTotal()
+	{
+		int numIT = GamePathResolver.GetCharacterList().Count();
+		numIT = numIT * 2;// Assuming that there is 1 stash file per character
+		int numVaults = GamePathResolver.GetVaultList().Count();
+		return Math.Max(0, numIT + numVaults - 1);
+	}
+
+	/// <summary>
+	/// Loads all of the players, stashes, and vaults.
+	/// Shows a progress dialog.
+	/// Used for the searching function.
+	/// </summary>
+	private void LoadAllFiles()
+	{
+		// Check to see if we failed the last time we tried loading all of the files.
+		// If we did fail then turn it off and skip it.
+		if (!Config.UserSettings.Default.LoadAllFilesCompleted)
+		{
+			if (MessageBox.Show(
+				Resources.MainFormDisableLoadAllFiles,
+				Resources.MainFormDisableLoadAllFilesCaption,
+				MessageBoxButtons.YesNo,
+				MessageBoxIcon.Information,
+				MessageBoxDefaultButton.Button1,
+				RightToLeftOptions) == DialogResult.Yes)
+			{
+				Config.UserSettings.Default.LoadAllFilesCompleted = true;
+				Config.UserSettings.Default.LoadAllFiles = false;
+				Config.UserSettings.Default.Save();
+				return;
+			}
+		}
+
+		string[] vaults = GamePathResolver.GetVaultList();
+		var charactersIT = this.comboBoxCharacter.Items.OfType<PlayerSave>().ToArray();
+
+		// Since this takes a while, show a progress dialog box.
+		int total = charactersIT.Length + vaults.Length - 1;
+
+		if (total > 0)
+		{
+			// We were successful last time so we reset the flag for this attempt.
+			Config.UserSettings.Default.LoadAllFilesCompleted = false;
+			Config.UserSettings.Default.Save();
+		}
+		else
+			return;
+
+		Stopwatch stopWatch = new Stopwatch();
+		stopWatch.Start();
+
+		// Load all of the Immortal Throne player files and stashes.
+		var bagPlayer = new ConcurrentBag<LoadPlayerResult>();
+		var bagPlayerStashes = new ConcurrentBag<LoadPlayerStashResult>();
+		var bagVault = new ConcurrentBag<LoadVaultResult>();
+
+		var lambdacharactersIT = charactersIT.Select(c => (Action)(() =>
+		{
+			// Get the player 
+			var result = this.playerService.LoadPlayer(c);
+			bagPlayer.Add(result);
+			this.backgroundWorkerLoadAllFiles.ReportProgress(1);
+		})).ToArray();
+
+		var lambdacharacterStashes = charactersIT.Select(c => (Action)(() =>
+		{
+			// Get the player's stash
+			var result = this.stashService.LoadPlayerStash(c);
+			bagPlayerStashes.Add(result);
+			this.backgroundWorkerLoadAllFiles.ReportProgress(1);
+		})).ToArray();
+
+		var lambdaVault = vaults.Select(c => (Action)(() =>
+		{
+			// Load all of the vaults.
+			var result = this.vaultService.LoadVault(c);
+			bagVault.Add(result);
+			this.backgroundWorkerLoadAllFiles.ReportProgress(1);
+		})).ToArray();
+
+		Parallel.Invoke(lambdacharactersIT.Concat(lambdacharacterStashes).Concat(lambdaVault).ToArray());// Parallel loading
+
+		// Dispay errors
+		bagPlayer.Where(p => p.Player.ArgumentException != null).ToList()
+			.ForEach(result =>
+			{
+				if (result.Player.ArgumentException != null)
 				{
-					Config.Settings.Default.AllowItemCopy = false;
-					Config.Settings.Default.AllowItemEdit = false;
-					Config.Settings.Default.AllowCharacterEdit = false;
+					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.PlayerFile, result.Player.ArgumentException.Message);
+					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 				}
-
-				CommandLineArgs args = new CommandLineArgs();
-
-				// Check to see if we loaded something from the command line.
-				if (args.HasMapName)
-					GamePathResolver.MapName = args.MapName;
-
-				this.resourcesLoaded = true;
-				this.backgroundWorkerLoadAllFiles.ReportProgress(1);
-
-				if (Config.Settings.Default.LoadAllFiles)
-					this.LoadAllFiles();
-
-				// Notify the form that the resources are loaded.
-				return true;
-			}
-		}
-
-		/// <summary>
-		/// Background worker call to load the resources.
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">DoWorkEventArgs data</param>
-		private void BackgroundWorkerLoadAllFiles_DoWork(object sender, DoWorkEventArgs e)
-		{
-			// Get the BackgroundWorker that raised this event.
-			BackgroundWorker worker = sender as BackgroundWorker;
-
-			// Assign the result of the resource loader
-			// to the Result property of the DoWorkEventArgs
-			// object. This is will be available to the
-			// RunWorkerCompleted eventhandler.
-			e.Result = this.LoadResources(worker, e);
-		}
-
-		/// <summary>
-		/// Background worker has finished
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">RunWorkerCompletedEventArgs data</param>
-		private void BackgroundWorkerLoadAllFiles_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			// First, handle the case where an exception was thrown.
-			if (e.Error != null)
+			});
+		bagPlayerStashes.Where(p => p.Stash.ArgumentException != null).ToList()
+			.ForEach(result =>
 			{
-				Log.LogError(e.Error, $"resourcesLoaded = {this.resourcesLoaded}");
-
-				if (MessageBox.Show(
-					string.Concat(e.Error.Message, Resources.Form1BadLanguage)
-					, Resources.Form1ErrorLoadingResources
-					, MessageBoxButtons.YesNo
-					, MessageBoxIcon.Exclamation
-					, MessageBoxDefaultButton.Button1
-					, RightToLeftOptions) == DialogResult.Yes
-				) Application.Restart();
-				else
-					Application.Exit();
-			}
-			else if (e.Cancelled && !this.resourcesLoaded)
-				Application.Exit();
-			else if (e.Result.Equals(true))
-			{
-				this.loadingComplete = true;
-				this.Enabled = true;
-
-				this.LoadTransferStash();
-				this.LoadRelicVaultStash();
-
-				if (Config.Settings.Default.EnableHotReload)
+				if (result.Stash.ArgumentException != null)
 				{
-					var relicPath = GamePathResolver.RelicVaultStashFileFullPath;
-					var transferPath = GamePathResolver.TransferStashFileFullPath;
+					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.StashFile, result.Stash.ArgumentException.Message);
+					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+				}
+			});
+		bagVault.Where(p => p.ArgumentException != null).ToList()
+			.ForEach(result =>
+			{
+				if (result.ArgumentException != null)
+				{
+					string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.Filename, result.ArgumentException.Message);
+					MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+				}
+			});
 
-					this.fileSystemWatcherRelicStash.EnableRaisingEvents = false;
+		this.comboBoxCharacter.RefreshItems();
+
+		stopWatch.Stop();
+		// Get the elapsed time as a TimeSpan value.
+		TimeSpan ts = stopWatch.Elapsed;
+
+		// Format and display the TimeSpan value.
+		Log.LogInformation("LoadTime {0:00}:{1:00}:{2:00}.{3:00}",
+			ts.Hours, ts.Minutes, ts.Seconds,
+			ts.Milliseconds / 10);
+
+		// We made it so set the flag to indicate we were successful.
+		Config.UserSettings.Default.LoadAllFilesCompleted = true;
+		Config.UserSettings.Default.Save();
+	}
+
+	/// <summary>
+	/// Attempts to save all modified files.
+	/// </summary>
+	/// <returns>true if players have been modified</returns>
+	private bool SaveAllModifiedFiles()
+	{
+		bool playersModified = this.SaveAllModifiedPlayers();
+		bool vaultsModified = this.SaveAllModifiedVaults();
+		bool stashesModified = this.SaveAllModifiedStashes();
+
+		// Notification Last Save
+		if (playersModified || vaultsModified || stashesModified)
+		{
+			var saved = string.Format(Resources.SavedAtNotification, DateTime.Now);
+			this.NotificationText.Text = saved;
+			this.toolTip.SetToolTip(this.saveButton, saved);
+		}
+
+		return playersModified;
+	}
+
+	#endregion
+
+	#region SplashScreen & Tooltip
+
+	/// <summary>
+	/// Handler for closing the splash screen
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">FormClosedEventArgs data</param>
+	private void SplashScreenClosed(object sender, FormClosedEventArgs e)
+	{
+		if (this.resourcesLoaded)
+		{
+			if (!this.loadingComplete)
+				this.backgroundWorkerLoadAllFiles.CancelAsync();
+
+			this.ShowMainForm();
+		}
+		else
+			Application.Exit();
+	}
+
+	/// <summary>
+	/// Starts the fade in of the main form.
+	/// </summary>
+	private void ShowMainForm()
+	{
+		this.fadeInTimer.Start();
+		this.ShowInTaskbar = true;
+		this.Enabled = true;
+		this.Show();
+		this.Activate();
+	}
+
+
+	/// <summary>
+	/// Tooltip callback
+	/// </summary>
+	/// <param name="windowHandle">handle of the main window form</param>
+	/// <returns>tooltip string</returns>
+	private void ToolTipCallback(int windowHandle)
+	{
+		this.vaultPanel.ToolTipCallback(windowHandle);
+		this.playerPanel.ToolTipCallback(windowHandle);
+		this.stashPanel.ToolTipCallback(windowHandle);
+		this.secondaryVaultPanel.ToolTipCallback(windowHandle);
+
+		// Changed by VillageIdiot
+		// If we are dragging something around, clear the tooltip and text box.
+		if (this.DragInfo.IsActive)
+			this.NotificationText.Text = string.Empty;
+	}
+
+	#endregion
+
+	#region Game Resources
+
+	/// <summary>
+	/// Loads the resources.
+	/// </summary>
+	/// <param name="worker">Background worker</param>
+	/// <param name="e">DoWorkEventArgs data</param>
+	/// <returns>true when resource loading has completed successfully</returns>
+	private bool LoadResources(BackgroundWorker worker, DoWorkEventArgs e)
+	{
+		// Abort the operation if the user has canceled.
+		// Note that a call to CancelAsync may have set
+		// CancellationPending to true just after the
+		// last invocation of this method exits, so this
+		// code will not have the opportunity to set the
+		// DoWorkEventArgs.Cancel flag to true. This means
+		// that RunWorkerCompletedEventArgs.Cancelled will
+		// not be set to true in your RunWorkerCompleted
+		// event handler. This is a race condition.
+		if (worker.CancellationPending)
+		{
+			e.Cancel = true;
+			return this.resourcesLoaded;
+		}
+		else
+		{
+			CommandLineArgs args = new CommandLineArgs();
+
+			// Check to see if we loaded something from the command line.
+			if (args.HasMapName)
+				GamePathResolver.MapName = args.MapName;
+
+			this.resourcesLoaded = true;
+			this.backgroundWorkerLoadAllFiles.ReportProgress(1);
+
+			if (Config.UserSettings.Default.LoadAllFiles)
+				this.LoadAllFiles();
+
+			// Notify the form that the resources are loaded.
+			return true;
+		}
+	}
+
+	/// <summary>
+	/// Background worker call to load the resources.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">DoWorkEventArgs data</param>
+	private void BackgroundWorkerLoadAllFiles_DoWork(object sender, DoWorkEventArgs e)
+	{
+		// Get the BackgroundWorker that raised this event.
+		BackgroundWorker worker = sender as BackgroundWorker;
+
+		// Assign the result of the resource loader
+		// to the Result property of the DoWorkEventArgs
+		// object. This is will be available to the
+		// RunWorkerCompleted eventhandler.
+		e.Result = this.LoadResources(worker, e);
+	}
+
+	/// <summary>
+	/// Background worker has finished
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">RunWorkerCompletedEventArgs data</param>
+	private void BackgroundWorkerLoadAllFiles_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+	{
+		// First, handle the case where an exception was thrown.
+		if (e.Error != null)
+		{
+			Log.LogError(e.Error, $"resourcesLoaded = {this.resourcesLoaded}");
+
+			if (MessageBox.Show(
+				string.Concat(e.Error.Message, Resources.Form1BadLanguage)
+				, Resources.Form1ErrorLoadingResources
+				, MessageBoxButtons.YesNo
+				, MessageBoxIcon.Exclamation
+				, MessageBoxDefaultButton.Button1
+				, RightToLeftOptions) == DialogResult.Yes
+			) Application.Restart();
+			else
+				Application.Exit();
+		}
+		else if (e.Cancelled && !this.resourcesLoaded)
+			Application.Exit();
+		else if (e.Result.Equals(true))
+		{
+			this.loadingComplete = true;
+			this.Enabled = true;
+
+			this.LoadTransferStash();
+			this.LoadRelicVaultStash();
+
+			if (Config.UserSettings.Default.EnableHotReload)
+			{
+				var relicPath = GamePathResolver.RelicVaultStashFileFullPath;
+				var transferPath = GamePathResolver.TransferStashFileFullPath;
+
+				this.fileSystemWatcherRelicStash.EnableRaisingEvents = false;
+				if (File.Exists(relicPath))
+				{
 					this.fileSystemWatcherRelicStash.Path = Path.GetDirectoryName(relicPath);
 					this.fileSystemWatcherRelicStash.Filter = Path.GetFileName(relicPath);
 					this.fileSystemWatcherRelicStash.EnableRaisingEvents = true;
+				}
 
-					this.fileSystemWatcherTransferStash.EnableRaisingEvents = false;
+				this.fileSystemWatcherTransferStash.EnableRaisingEvents = false;
+				if (File.Exists(transferPath))
+				{
 					this.fileSystemWatcherTransferStash.Path = Path.GetDirectoryName(transferPath);
 					this.fileSystemWatcherTransferStash.Filter = Path.GetFileName(transferPath);
 					this.fileSystemWatcherTransferStash.EnableRaisingEvents = true;
 				}
-
-				// Load last character here if selected
-				if (Config.Settings.Default.LoadLastCharacter)
-				{
-					var lastPlayerSave = this.characterComboBox.Items.OfType<PlayerSave>()
-						.FirstOrDefault(ps => ps.Name == Config.Settings.Default.LastCharacterName);
-
-					if (lastPlayerSave != null)
-						this.characterComboBox.SelectedItem = lastPlayerSave;
-				}
-
-				string currentVault = VaultService.MAINVAULT;
-
-				// See if we should load the last loaded vault
-				if (Config.Settings.Default.LoadLastVault)
-				{
-					currentVault = Config.Settings.Default.LastVaultName;
-
-					// Make sure there is something in the config file to load else load the Main Vault
-					// We do not want to create new here.
-					if (string.IsNullOrEmpty(currentVault) || !File.Exists(GamePathResolver.GetVaultFile(currentVault)))
-						currentVault = VaultService.MAINVAULT;
-				}
-
-				this.vaultListComboBox.SelectedItem = currentVault;
-
-				// Finally load Vault
-				this.LoadVault(currentVault, false);
-
-				this.splashScreen.UpdateText();
-				this.splashScreen.ShowMainForm = true;
-
-				CommandLineArgs args = new CommandLineArgs();
-
-				// Allows skipping of title screen with setting
-				if (args.IsAutomatic || Config.Settings.Default.SkipTitle == true)
-				{
-					string player = args.Player;
-					int index = this.characterComboBox.FindStringExact(player);
-					if (index != -1)
-						this.characterComboBox.SelectedIndex = index;
-
-					this.splashScreen.CloseForm();
-				}
 			}
-			else
+
+			// Load last character here if selected
+			if (Config.UserSettings.Default.LoadLastCharacter)
 			{
-				Log.LogError(e.Error, $"resourcesLoaded = {this.resourcesLoaded}");
-				// If for some reason the loading failed, but there was no error raised.
-				MessageBox.Show(
-					Resources.Form1ErrorLoadingResources,
-					Resources.Form1ErrorLoadingResources,
-					MessageBoxButtons.OK,
-					MessageBoxIcon.Exclamation,
-					MessageBoxDefaultButton.Button1,
-					RightToLeftOptions);
-				Application.Exit();
+				var lastPlayerSave = this.comboBoxCharacter.Items.OfType<PlayerSave>()
+					.FirstOrDefault(ps => ps.Name == Config.UserSettings.Default.LastCharacterName);
+
+				if (lastPlayerSave != null)
+					this.comboBoxCharacter.SelectedItem = lastPlayerSave;
+			}
+
+			string currentVault = VaultService.MAINVAULT;
+
+			// See if we should load the last loaded vault
+			if (Config.UserSettings.Default.LoadLastVault)
+			{
+				currentVault = Config.UserSettings.Default.LastVaultName;
+
+				// Make sure there is something in the config file to load else load the Main Vault
+				// We do not want to create new here.
+				if (string.IsNullOrEmpty(currentVault) || !File.Exists(GamePathResolver.GetVaultFile(currentVault)))
+					currentVault = VaultService.MAINVAULT;
+			}
+
+			this.vaultListComboBox.SelectedItem = currentVault;
+
+			// Finally load Vault
+			this.LoadVault(currentVault, false);
+
+			this.splashScreen.UpdateText();
+			this.splashScreen.ShowMainForm = true;
+
+			CommandLineArgs args = new CommandLineArgs();
+
+			// Allows skipping of title screen with setting
+			if (args.IsAutomatic || Config.UserSettings.Default.SkipTitle == true)
+			{
+				string player = args.Player;
+				int index = this.comboBoxCharacter.FindString(player);
+				if (index != -1)
+					this.comboBoxCharacter.SelectedIndex = index;
+
+				this.splashScreen.CloseForm();
 			}
 		}
-
-		/// <summary>
-		/// Handler for updating the splash screen progress bar.
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">ProgressChangedEventArgs data</param>
-		private void BackgroundWorkerLoadAllFiles_ProgressChanged(object sender, ProgressChangedEventArgs e)
-			=> this.splashScreen.IncrementValue();
-
-		#endregion
-
-		#region Settings Dialog
-
-		/// <summary>
-		/// Updates configuration settings
-		/// </summary>
-		private void SaveConfiguration()
+		else
 		{
-			// Update last loaded vault
-			if (Config.Settings.Default.LoadLastVault)
+			Log.LogError(e.Error, $"resourcesLoaded = {this.resourcesLoaded}");
+			// If for some reason the loading failed, but there was no error raised.
+			MessageBox.Show(
+				Resources.Form1ErrorLoadingResources,
+				Resources.Form1ErrorLoadingResources,
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Exclamation,
+				MessageBoxDefaultButton.Button1,
+				RightToLeftOptions);
+			Application.Exit();
+		}
+	}
+
+	/// <summary>
+	/// Handler for updating the splash screen progress bar.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">ProgressChangedEventArgs data</param>
+	private void BackgroundWorkerLoadAllFiles_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		=> this.splashScreen.IncrementValue();
+
+	#endregion
+
+	#region Settings Dialog
+
+	/// <summary>
+	/// Updates configuration settings
+	/// </summary>
+	private void SaveConfiguration()
+	{
+		// Update last loaded vault
+		if (Config.UserSettings.Default.LoadLastVault)
+		{
+			// Changed by VillageIdiot
+			// Now check to see if the value is changed since the Main Vault would never auto load
+			if (this.vaultListComboBox.SelectedItem != null && this.vaultListComboBox.SelectedItem.ToString().ToUpperInvariant() != Config.UserSettings.Default.LastVaultName.ToUpperInvariant())
 			{
-				// Changed by VillageIdiot
-				// Now check to see if the value is changed since the Main Vault would never auto load
-				if (this.vaultListComboBox.SelectedItem != null && this.vaultListComboBox.SelectedItem.ToString().ToUpperInvariant() != Config.Settings.Default.LastVaultName.ToUpperInvariant())
-				{
-					Config.Settings.Default.LastVaultName = this.vaultListComboBox.SelectedItem.ToString();
-					this.configChanged = true;
-				}
-			}
-
-			// Update last loaded character
-			if (Config.Settings.Default.LoadLastCharacter)
-			{
-				string name = this.characterComboBox.SelectedItem.ToString();
-				var ps = this.characterComboBox.SelectedItem as PlayerSave;
-
-				if (ps is not null) name = ps.Name;
-
-				if (name.ToUpperInvariant() != Config.Settings.Default.LastCharacterName.ToUpperInvariant())
-				{
-					// Clear the value if no character is selected
-					if (name == Resources.MainFormSelectCharacter)
-						name = string.Empty;
-
-					Config.Settings.Default.LastCharacterName = name;
-
-					this.configChanged = true;
-				}
-			}
-
-			// Update custom map settings
-			if (Config.Settings.Default.ModEnabled)
-				this.configChanged = true;
-
-			// Clear out the key if we are autodetecting.
-			if (Config.Settings.Default.AutoDetectLanguage)
-				Config.Settings.Default.TQLanguage = string.Empty;
-
-			// Clear out the settings if auto detecting.
-			if (Config.Settings.Default.AutoDetectGamePath)
-			{
-				Config.Settings.Default.TQITPath = string.Empty;
-				Config.Settings.Default.TQPath = string.Empty;
-			}
-
-			if (UIService.Scale != 1.0F)
-			{
-				Config.Settings.Default.Scale = UIService.Scale;
+				Config.UserSettings.Default.LastVaultName = this.vaultListComboBox.SelectedItem.ToString();
 				this.configChanged = true;
 			}
-
-			if (this.configChanged)
-				Config.Settings.Default.Save();
 		}
 
-		/// <summary>
-		/// Handler for clicking the configure button.
-		/// Shows the Settings Dialog.
-		/// </summary>
-		/// <param name="sender">sender object</param>
-		/// <param name="e">EventArgs data</param>
-		private void ConfigureButtonClick(object sender, EventArgs e)
+		// Update last loaded character
+		if (Config.UserSettings.Default.LoadLastCharacter)
 		{
-			SettingsDialog settingsDialog = this.ServiceProvider.GetService<SettingsDialog>();
-			DialogResult result = DialogResult.Cancel;
-			settingsDialog.Scale(new SizeF(UIService.Scale, UIService.Scale));
+			string name = this.comboBoxCharacter.SelectedItem.ToString();
+			var ps = this.comboBoxCharacter.SelectedItem as PlayerSave;
 
-			string title = string.Empty;
-			string message = string.Empty;
-			if (settingsDialog.ShowDialog() == DialogResult.OK && settingsDialog.ConfigurationChanged)
+			if (ps is not null) name = ps.Name;
+
+			if (name.ToUpperInvariant() != Config.UserSettings.Default.LastCharacterName.ToUpperInvariant())
 			{
-				if (settingsDialog.PlayerFilterChanged)
-				{
-					this.characterComboBox.SelectedItem = Resources.MainFormSelectCharacter;
-					if (this.playerPanel.Player != null)
-						this.playerPanel.Player = null;
+				// Clear the value if no character is selected
+				if (name == Resources.MainFormSelectCharacter)
+					name = string.Empty;
 
-					this.GetPlayerList();
-				}
-
-				if (settingsDialog.VaultPathChanged)
-				{
-					GamePathResolver.TQVaultSaveFolder = settingsDialog.VaultPath;
-					this.vaultService.UpdateVaultPath(settingsDialog.VaultPath);
-					this.GetVaultList(true);
-				}
-
-				if (settingsDialog.LanguageChanged || settingsDialog.GamePathChanged || settingsDialog.CustomMapsChanged || settingsDialog.UISettingChanged)
-				{
-					if ((settingsDialog.GamePathChanged && settingsDialog.LanguageChanged) || settingsDialog.UISettingChanged)
-					{
-						title = Resources.MainFormSettingsChanged;
-						message = Resources.MainFormSettingsChangedMsg;
-					}
-					else if (settingsDialog.GamePathChanged)
-					{
-						title = Resources.MainFormPathsChanged;
-						message = Resources.MainFormPathsChangedMsg;
-					}
-					else if (settingsDialog.CustomMapsChanged)
-					{
-						title = Resources.MainFormMapsChanged;
-						message = Resources.MainFormMapsChangedMsg;
-					}
-					else
-					{
-						title = Resources.MainFormLanguageChanged;
-						message = Resources.MainFormLanguageChangedMsg;
-					}
-
-					result = MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, RightToLeftOptions);
-				}
-
-				if (settingsDialog.ItemBGColorOpacityChanged || settingsDialog.EnableItemRequirementRestrictionChanged)
-					this.Refresh();
-
-				if (settingsDialog.EnableCharacterEditChanged)
-					stashPanel?.UpdatePlayerInfo();
+				Config.UserSettings.Default.LastCharacterName = name;
 
 				this.configChanged = true;
-				this.SaveConfiguration();
-
-				AdjustMenuButtonVisibility();
-
-				if (result == DialogResult.Yes)
-				{
-					if (this.DoCloseStuff())
-						Application.Restart();
-				}
 			}
 		}
 
+		// Update custom map settings
+		if (Config.UserSettings.Default.ModEnabled)
+			this.configChanged = true;
 
-		#endregion
+		// Clear out the key if we are autodetecting.
+		if (Config.UserSettings.Default.AutoDetectLanguage)
+			Config.UserSettings.Default.TQLanguage = string.Empty;
 
-		private void duplicateButton_Click(object sender, EventArgs e) => DuplicateCharacter();
-
-		private void saveButton_Click(object sender, EventArgs e) => this.SaveAllModifiedFiles();
-
-		#region HighlightItems
-
-		private void typeAssistant_Idled(object sender, EventArgs e)
+		// Clear out the settings if auto detecting.
+		if (Config.UserSettings.Default.AutoDetectGamePath)
 		{
-			var value = (scalingTextBoxHighlight.Text ?? string.Empty).Trim();
-
-			this.userContext.HighlightSearch = value;
-			this.userContext.FindHighlight();
-			this.Invoke(new MethodInvoker(this.Refresh));
+			Config.UserSettings.Default.TQITPath = string.Empty;
+			Config.UserSettings.Default.TQPath = string.Empty;
 		}
 
-
-		private void scalingTextBoxHighlight_TextChanged(object sender, EventArgs e)
+		if (UIService.Scale != 1.0F)
 		{
-			/// Wait for the end of typing by delaying the call to <see cref="typeAssistant_Idled"/>
-			this.typeAssistant.TextChanged();
+			Config.UserSettings.Default.Scale = UIService.Scale;
+			this.configChanged = true;
 		}
 
-		#endregion
+		if (this.configChanged)
+			Config.UserSettings.Default.Save();
+	}
 
-		private void scalingLabelHighlight_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+	/// <summary>
+	/// Handler for clicking the configure button.
+	/// Shows the Settings Dialog.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void ConfigureButtonClick(object sender, EventArgs e)
+	{
+		SettingsDialog settingsDialog = this.ServiceProvider.GetService<SettingsDialog>();
+		DialogResult result = DialogResult.Cancel;
+		settingsDialog.Scale(new SizeF(UIService.Scale, UIService.Scale));
+
+		string title = string.Empty;
+		string message = string.Empty;
+
+		if (settingsDialog.ShowDialog() == DialogResult.OK && settingsDialog.ConfigurationChanged)
 		{
-			var link = sender as LinkLabel;
-			if (highlightFilters.Visible)
+			if (settingsDialog.PlayerFilterChanged)
 			{
-				highlightFilters.Visible = false;
-				return;
+				this.comboBoxCharacter.SelectedItem = Resources.MainFormSelectCharacter;
+				if (this.playerPanel.Player != null)
+					this.playerPanel.Player = null;
+
+				this.GetPlayerList();
 			}
 
-			// Show it
-			if (highlightFilters.UserContext is null)
-			{ // First time
-				highlightFilters.UserContext = userContext;
-				highlightFilters.Link = link;
-				highlightFilters.TranslationService = TranslationService;
-				highlightFilters.ResetAll();
-				highlightFilters.InitTypeList();
+			if (settingsDialog.VaultPathChanged)
+			{
+				GamePathResolver.TQVaultSaveFolder = settingsDialog.VaultPath;
+				this.vaultService.UpdateVaultPath(settingsDialog.VaultPath);
+				this.GetVaultList(true);
 			}
 
-			highlightFilters.SendToBack();// To avoid flickering
-			highlightFilters.Visible = true;
-			highlightFilters.BringToFront();
+			if (settingsDialog.EnableTQVaultSoundsChanged)
+			{
+				var soundSrv = this.ServiceProvider.GetService<ISoundService>();
+				soundSrv.InitAllPlayers();
+			}
+
+			if (settingsDialog.LanguageChanged || settingsDialog.GamePathChanged || settingsDialog.CustomMapsChanged || settingsDialog.UISettingChanged)
+			{
+				if ((settingsDialog.GamePathChanged && settingsDialog.LanguageChanged) || settingsDialog.UISettingChanged)
+				{
+					title = Resources.MainFormSettingsChanged;
+					message = Resources.MainFormSettingsChangedMsg;
+				}
+				else if (settingsDialog.GamePathChanged)
+				{
+					title = Resources.MainFormPathsChanged;
+					message = Resources.MainFormPathsChangedMsg;
+				}
+				else if (settingsDialog.CustomMapsChanged)
+				{
+					title = Resources.MainFormMapsChanged;
+					message = Resources.MainFormMapsChangedMsg;
+				}
+				else
+				{
+					title = Resources.MainFormLanguageChanged;
+					message = Resources.MainFormLanguageChangedMsg;
+				}
+
+				result = MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, RightToLeftOptions);
+			}
+
+			if (settingsDialog.ItemBGColorOpacityChanged || settingsDialog.EnableItemRequirementRestrictionChanged)
+				this.Refresh();
+
+			if (settingsDialog.EnableCharacterEditChanged)
+				stashPanel?.UpdatePlayerInfo();
+
+			this.configChanged = true;
+			this.SaveConfiguration();
+
+
+			AdjustMenuButtonVisibility();
+
+			if (result == DialogResult.Yes)
+			{
+				if (this.DoCloseStuff())
+					Application.Restart();
+			}
+		}
+	}
+
+	#endregion
+
+	private void duplicateButton_Click(object sender, EventArgs e) => DuplicateCharacter();
+
+	private void saveButton_Click(object sender, EventArgs e) => this.SaveAllModifiedFiles();
+
+	#region HighlightItems
+
+	private void typeAssistant_Idled(object sender, EventArgs e)
+	{
+		var value = (scalingTextBoxHighlight.Text ?? string.Empty).Trim();
+
+		this.userContext.HighlightSearch = value;
+		this.userContext.FindHighlight();
+		this.Invoke(new MethodInvoker(this.Refresh));
+	}
+
+
+	private void scalingTextBoxHighlight_TextChanged(object sender, EventArgs e)
+	{
+		/// Wait for the end of typing by delaying the call to <see cref="typeAssistant_Idled"/>
+		this.typeAssistant.TextChanged();
+	}
+
+	#endregion
+
+	private void scalingLabelHighlight_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+	{
+		var link = sender as LinkLabel;
+		if (highlightFilters.Visible)
+		{
+			highlightFilters.Visible = false;
+			return;
 		}
 
+		// Show it
+		if (highlightFilters.UserContext is null)
+		{ // First time
+			highlightFilters.UserContext = userContext;
+			highlightFilters.TranslationService = TranslationService;
+			highlightFilters.FontService = FontService;
+			highlightFilters.ResetAll();
+			highlightFilters.InitializeFilters();
+			highlightFilters.Link = link;
+		}
 
+		highlightFilters.SendToBack();// To avoid flickering
+		highlightFilters.Visible = true;
+		highlightFilters.BringToFront();
 	}
 }

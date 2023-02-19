@@ -3,29 +3,29 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+using System.Resources;
+using System.Security.Permissions;
+using System.Threading;
+using System.Windows.Forms;
+using TQVaultAE.Data;
+using TQVaultAE.Domain.Contracts.Providers;
+using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Exceptions;
+using TQVaultAE.Logs;
+using TQVaultAE.Presentation;
+using TQVaultAE.Services;
+using TQVaultAE.Services.Win32;
+using Microsoft.Extensions.Logging;
+using TQVaultAE.GUI.Inputs.Filters;
+
 namespace TQVaultAE.GUI
 {
-	using Microsoft.Extensions.DependencyInjection;
-	using System;
-	using System.Globalization;
-	using System.IO;
-	using System.Reflection;
-	using System.Resources;
-	using System.Security.Permissions;
-	using System.Threading;
-	using System.Windows.Forms;
-	using TQVaultAE.Data;
-	using TQVaultAE.Domain.Contracts.Providers;
-	using TQVaultAE.Domain.Contracts.Services;
-	using TQVaultAE.Domain.Entities;
-	using TQVaultAE.Domain.Exceptions;
-	using TQVaultAE.Logs;
-	using TQVaultAE.Presentation;
-	using TQVaultAE.Services;
-	using TQVaultAE.Services.Win32;
-	using Microsoft.Extensions.Logging;
-	using System.Media;
-
 	/// <summary>
 	/// Main Program class
 	/// </summary>
@@ -84,7 +84,7 @@ namespace TQVaultAE.GUI
 				.AddTransient<IArzFileProvider, ArzFileProvider>()
 				.AddSingleton<IDatabase, Database>()
 				.AddSingleton<IItemProvider, ItemProvider>()
-				.AddTransient<ILootTableCollectionProvider, LootTableCollectionProvider>()
+				.AddSingleton<ILootTableCollectionProvider, LootTableCollectionProvider>()
 				.AddTransient<IStashProvider, StashProvider>()
 				.AddTransient<IPlayerCollectionProvider, PlayerCollectionProvider>()
 				.AddTransient<ISackCollectionProvider, SackCollectionProvider>()
@@ -103,6 +103,8 @@ namespace TQVaultAE.GUI
 				.AddSingleton<ITQDataService, TQDataService>()
 				.AddTransient<IBitmapService, BitmapService>()
 				.AddSingleton<ISoundService, SoundServiceWin>()
+				.AddTransient<IGameFileService, GameFileServiceWin>()
+				.AddSingleton<ITagService, TagService>()
 				// Forms
 				.AddSingleton<MainForm>()
 				.AddTransient<AboutBox>()
@@ -135,8 +137,8 @@ namespace TQVaultAE.GUI
 
 						if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
 						{
-							Config.Settings.Default.ForceGamePath = fbd.SelectedPath;
-							Config.Settings.Default.Save();
+							Config.UserSettings.Default.ForceGamePath = fbd.SelectedPath;
+							Config.UserSettings.Default.Save();
 							goto restart;
 						}
 						else goto exit;
@@ -144,6 +146,10 @@ namespace TQVaultAE.GUI
 				}
 
 				var mainform = Program.ServiceProvider.GetService<MainForm>();
+				var filterMouseWheel = new FormFilterMouseWheelGlobally(mainform);
+				var filterMouseButtons = new FormFilterMouseButtonGlobally(mainform);
+				Application.AddMessageFilter(filterMouseWheel);
+				Application.AddMessageFilter(filterMouseButtons);
 				Application.Run(mainform);
 			}
 			catch (Exception ex)
@@ -155,7 +161,6 @@ namespace TQVaultAE.GUI
 		exit:;
 		}
 
-
 		#region Init
 
 		/// <summary>
@@ -163,23 +168,23 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private static void SetupGamePaths(IGamePathService gamePathResolver)
 		{
-			if (Config.Settings.Default.AutoDetectGamePath)
+			if (Config.UserSettings.Default.AutoDetectGamePath)
 			{
-				gamePathResolver.TQPath = gamePathResolver.ResolveGamePath();
-				gamePathResolver.ImmortalThronePath = gamePathResolver.ResolveGamePath();
+				gamePathResolver.GamePathTQ = gamePathResolver.ResolveGamePath();
+				gamePathResolver.GamePathTQIT = gamePathResolver.ResolveGamePath();
 			}
 			else
 			{
-				gamePathResolver.TQPath = Config.Settings.Default.TQPath;
-				gamePathResolver.ImmortalThronePath = Config.Settings.Default.TQITPath;
+				gamePathResolver.GamePathTQ = Config.UserSettings.Default.TQPath;
+				gamePathResolver.GamePathTQIT = Config.UserSettings.Default.TQITPath;
 			}
-			Log.LogInformation("Selected TQ path {0}", gamePathResolver.TQPath);
-			Log.LogInformation("Selected TQIT path {0}", gamePathResolver.ImmortalThronePath);
+			Log.LogInformation("Selected TQ path {0}", gamePathResolver.GamePathTQ);
+			Log.LogInformation("Selected TQIT path {0}", gamePathResolver.GamePathTQIT);
 
 			// Show a message that the default path is going to be used.
-			if (string.IsNullOrEmpty(Config.Settings.Default.VaultPath))
+			if (string.IsNullOrEmpty(Config.UserSettings.Default.VaultPath))
 			{
-				string folderPath = Path.Combine(gamePathResolver.TQSaveFolder, "TQVaultData");
+				string folderPath = Path.Combine(gamePathResolver.SaveFolderTQ, "TQVaultData");
 
 				// Check to see if we are still using a shortcut to specify the vault path and display a message
 				// to use the configuration UI if we are.
@@ -193,7 +198,7 @@ namespace TQVaultAE.GUI
 				}
 			}
 
-			gamePathResolver.TQVaultSaveFolder = Config.Settings.Default.VaultPath;
+			gamePathResolver.TQVaultSaveFolder = Config.UserSettings.Default.VaultPath;
 		}
 
 		/// <summary>
@@ -207,9 +212,9 @@ namespace TQVaultAE.GUI
 			{
 				settingsCulture = Config.Settings.Default.UILanguage;
 			}
-			else if (!Config.Settings.Default.AutoDetectLanguage)
+			else if (!Config.UserSettings.Default.AutoDetectLanguage)
 			{
-				settingsCulture = Config.Settings.Default.TQLanguage;
+				settingsCulture = Config.UserSettings.Default.TQLanguage;
 			}
 
 			if (!string.IsNullOrEmpty(settingsCulture))
@@ -257,8 +262,8 @@ namespace TQVaultAE.GUI
 		{
 			// Set the map name.  Command line argument can override this setting in LoadResources().
 			string mapName = "main";
-			if (Config.Settings.Default.ModEnabled)
-				mapName = Config.Settings.Default.CustomMap;
+			if (Config.UserSettings.Default.ModEnabled)
+				mapName = Config.UserSettings.Default.CustomMap;
 
 			gamePathResolver.MapName = mapName;
 		}

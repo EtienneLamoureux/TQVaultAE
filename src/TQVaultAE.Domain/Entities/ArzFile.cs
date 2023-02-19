@@ -28,12 +28,12 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// RecordInfo keyed by their ID
 		/// </summary>
-		public Dictionary<string, RecordInfo> RecordInfo = new Dictionary<string, RecordInfo>();
+		public Dictionary<RecordId, RecordInfo> RecordInfo = new Dictionary<RecordId, RecordInfo>();
 
 		/// <summary>
 		/// Holds the keys for the recordInfo Dictionary
 		/// </summary>
-		public string[] Keys;
+		public RecordId[] Keys;
 
 		/// <summary>
 		/// Initializes a new instance of the ArzFile class.

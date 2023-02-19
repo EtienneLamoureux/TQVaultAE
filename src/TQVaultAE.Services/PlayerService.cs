@@ -6,7 +6,9 @@ using System.Linq;
 using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Results;
+using TQVaultAE.Domain.Search;
 
 namespace TQVaultAE.Services
 {
@@ -15,26 +17,32 @@ namespace TQVaultAE.Services
 		private readonly ILogger Log = null;
 		private readonly SessionContext userContext = null;
 		private readonly IPlayerCollectionProvider PlayerCollectionProvider;
+		private readonly IGameFileService GameFileService;
 		private readonly IGamePathService GamePathResolver;
 		private readonly ITranslationService TranslationService;
 		private readonly ITQDataService TQDataService;
+		private readonly ITagService TagService;
 
 		public PlayerService(
 			ILogger<PlayerService> log
 			, SessionContext userContext
 			, IPlayerCollectionProvider playerCollectionProvider
 			, IStashProvider stashProvider
+			, IGameFileService iGameFileService
 			, IGamePathService gamePathResolver
 			, ITranslationService translationService
 			, ITQDataService tQDataService
+			, ITagService tagService
 		)
 		{
 			this.Log = log;
 			this.userContext = userContext;
 			this.PlayerCollectionProvider = playerCollectionProvider;
+			this.GameFileService = iGameFileService;
 			this.GamePathResolver = gamePathResolver;
 			this.TranslationService = translationService;
 			this.TQDataService = tQDataService;
+			this.TagService = tagService;
 		}
 
 
@@ -42,10 +50,9 @@ namespace TQVaultAE.Services
 		/// Loads a player using the drop down list.
 		/// </summary>
 		/// <param name="selectedSave">Item from the drop down list.</param>
-		/// <param name="isIT"></param>
 		/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
 		/// <returns></returns>
-		public LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool isIT = false, bool fromFileWatcher = false)
+		public LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool fromFileWatcher = false)
 		{
 			var result = new LoadPlayerResult();
 
@@ -53,12 +60,16 @@ namespace TQVaultAE.Services
 
 			#region Get the player
 
-			result.PlayerFile = GamePathResolver.GetPlayerFile(selectedSave.Name);
+			var pf = GamePathResolver.GetPlayerFile(selectedSave.Name, selectedSave.IsImmortalThrone, selectedSave.IsArchived);
+
+			var resultPC = new PlayerCollection(selectedSave.Name, pf);
+
+			resultPC.IsImmortalThrone = selectedSave.IsImmortalThrone;
+
+			result.PlayerFile = pf;
 
 			PlayerCollection addFactory(string k)
 			{
-				var resultPC = new PlayerCollection(selectedSave.Name, k);
-				resultPC.IsImmortalThrone = isIT;
 				try
 				{
 					PlayerCollectionProvider.LoadFile(resultPC);
@@ -77,11 +88,13 @@ namespace TQVaultAE.Services
 				return addFactory(k);
 			};
 
-			var resultPlayer = fromFileWatcher 
+			var resultPlayer = fromFileWatcher
 				? this.userContext.Players.AddOrUpdateAtomic(result.PlayerFile, addFactory, updateFactory)
 				: this.userContext.Players.GetOrAddAtomic(result.PlayerFile, addFactory);
 
 			result.Player = resultPlayer;
+
+			this.TagService.LoadTags(selectedSave);
 
 			#endregion
 
@@ -110,8 +123,11 @@ namespace TQVaultAE.Services
 				{
 					++numModified;
 					playerOnError = player;// if needed by caller
-					GamePathResolver.BackupFile(player.PlayerName, playerFile);
-					GamePathResolver.BackupStupidPlayerBackupFolder(playerFile);
+					if (!Config.UserSettings.Default.DisableLegacyBackup)
+					{
+						GameFileService.BackupFile(player.PlayerName, playerFile);
+						GameFileService.BackupStupidPlayerBackupFolder(playerFile);
+					}
 					PlayerCollectionProvider.Save(player, playerFile);
 					player.Saved();
 				}
@@ -128,8 +144,16 @@ namespace TQVaultAE.Services
 		{
 			string[] folders = this.GamePathResolver.GetCharacterList();
 
-			return (folders is null) ? null : folders
-				.Select(f => new PlayerSave(f, this.GamePathResolver.IsCustom, this.GamePathResolver.MapName, this.TranslationService))
+			return folders
+				.Select(f =>
+					new PlayerSave(f
+						, f.ContainsIgnoreCase(GamePathResolver.SaveDirNameTQIT)  // Is TQIT
+						, f.ContainsIgnoreCase(GamePathResolver.ArchiveDirName) // Is Archived
+						, this.GamePathResolver.IsCustom
+						, this.GamePathResolver.MapName
+						, this.TranslationService
+					)
+				)
 				.OrderBy(ps => ps.Name)
 				.ToArray();
 		}

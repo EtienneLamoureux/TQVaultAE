@@ -26,7 +26,6 @@ namespace TQVaultAE.Data
 		private readonly ILogger Log;
 		private readonly IItemProvider ItemProvider;
 		private readonly ISackCollectionProvider SackCollectionProvider;
-		private readonly IGamePathService GamePathResolver;
 		private readonly ITQDataService TQData;
 
 		/// <summary>
@@ -39,12 +38,11 @@ namespace TQVaultAE.Data
 		/// </summary>
 		public byte[] endBlockPattern = { 0x09, 0x00, 0x00, 0x00, 0x65, 0x6E, 0x64, 0x5F, 0x62, 0x6C, 0x6F, 0x63, 0x6B };
 
-		public PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IItemProvider itemProvider, ISackCollectionProvider sackCollectionProvider, IGamePathService gamePathResolver, ITQDataService tQData)
+		public PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IItemProvider itemProvider, ISackCollectionProvider sackCollectionProvider, ITQDataService tQData)
 		{
 			this.Log = log;
 			this.ItemProvider = itemProvider;
 			this.SackCollectionProvider = sackCollectionProvider;
-			this.GamePathResolver = gamePathResolver;
 			this.TQData = tQData;
 		}
 
@@ -68,6 +66,14 @@ namespace TQVaultAE.Data
 			pc.PlayerInfo.BaseHealth = playerInfo.BaseHealth;
 			pc.PlayerInfo.BaseMana = playerInfo.BaseMana;
 			pc.PlayerInfo.Money = playerInfo.Money;
+
+			if (pc.PlayerInfo.MustResetMasteries)
+			{
+				pc.PlayerInfo.Class = playerInfo.Class;
+				// Put back the new reduced skill list in place for serialization
+				pc.PlayerInfo.SkillRecordList.Clear();
+				pc.PlayerInfo.SkillRecordList.AddRange(playerInfo.SkillRecordList);
+			}
 
 			//commit the player changes to the raw file
 			Commit(pc);
@@ -104,11 +110,8 @@ namespace TQVaultAE.Data
 			var baseHealth = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseHealth, baseIntelligence.nextOffset);
 			var baseMana = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseMana, baseHealth.nextOffset);
 
-			if (pc.PlayerInfo.MasteriesAllowed_OldValue.HasValue && pc.PlayerInfo.MasteriesAllowed < pc.PlayerInfo.MasteriesAllowed_OldValue
-				|| pc.PlayerInfo.MasteriesResetRequiered)
+			if (pc.PlayerInfo.MustResetMasteries)
 			{
-				pc.PlayerInfo.ResetMasteries();
-
 				#region Override skill lines block after reset
 
 				// Find skill section boundaries
@@ -136,12 +139,6 @@ namespace TQVaultAE.Data
 				firstblock = TQData.ReadIntAfter(pc.rawData, "begin_block");
 				secondblock = TQData.ReadIntAfter(pc.rawData, "begin_block", firstblock.nextOffset);
 				TQData.WriteIntAfter(pc.rawData, "max", pc.PlayerInfo.SkillRecordList.Count, secondblock.nextOffset);
-
-				// Adjust "skillPoints"
-				var skillpointsToRestore = pc.PlayerInfo.ReleasedSkillPoints;
-
-				if (skillpointsToRestore > 0)
-					TQData.WriteIntAfter(pc.rawData, "skillPoints", pc.PlayerInfo.SkillPoints + skillpointsToRestore);
 
 				#endregion
 
@@ -192,14 +189,14 @@ namespace TQVaultAE.Data
 					{
 						stackSize = i.StackSize,
 						seed = i.Seed,
-						baseName = i.BaseItemId,
-						prefixName = i.prefixID,
-						suffixName = i.suffixID,
-						relicName = i.relicID,
-						relicBonus = i.RelicBonusId,
+						baseName = i.BaseItemId.Raw,
+						prefixName = i.prefixID.Raw,
+						suffixName = i.suffixID.Raw,
+						relicName = i.relicID.Raw,
+						relicBonus = i.RelicBonusId.Raw,
 						var1 = i.Var1,
-						relicName2 = i.relic2ID,
-						relicBonus2 = i.RelicBonus2Id,
+						relicName2 = i.relic2ID.Raw,
+						relicBonus2 = i.RelicBonus2Id.Raw,
 						var2 = i.Var2,
 						pointX = i.PositionX,
 						pointY = i.PositionY,
@@ -208,7 +205,7 @@ namespace TQVaultAE.Data
 			};
 
 			using var sw = new StreamWriter(fileName, false, Encoding.UTF8);
-			new JsonSerializer().Serialize(sw, pcjson);
+			new JsonSerializer() { Formatting = Formatting.Indented }.Serialize(sw, pcjson);
 		}
 
 		/// <summary>
@@ -265,7 +262,7 @@ namespace TQVaultAE.Data
 		/// Attempts to load a player file
 		/// </summary>
 		/// <param name="pc"></param>
-		/// <param name="filePathToUse">if not <code>null</code>, use this file instead of <see cref="PlayerCollection.PlayerFile"/> </param>
+		/// <param name="filePathToUse">if not <c>null</c>, use this file instead of <see cref="PlayerCollection.PlayerFile"/> </param>
 		public void LoadFile(PlayerCollection pc, string filePathToUse = null)
 		{
 			try
@@ -329,8 +326,8 @@ namespace TQVaultAE.Data
 						endBlockCrap1 = this.TQData.EndBlockValue,
 						StackSize = s.stackSize,
 						// Atlantis
-						relic2ID = string.Empty,
-						RelicBonus2Id = string.Empty,
+						relic2ID = RecordId.Empty,
+						RelicBonus2Id = RecordId.Empty,
 						Var2 = Item.var2Default,
 					};
 
@@ -566,7 +563,7 @@ namespace TQVaultAE.Data
 			pi.Modified = false;
 
 			var headerVersion = TQData.ReadIntAfter(pc.rawData, "headerVersion");
-			pi.HeaderVersion = headerVersion.valueAsInt;
+			pi.HeaderVersion = (PlayerFileHeaderVersion)headerVersion.valueAsInt;
 
 			var playerCharacterClass = TQData.ReadCStringAfter(pc.rawData, "playerCharacterClass");
 			pi.PlayerCharacterClass = playerCharacterClass.valueAsString;

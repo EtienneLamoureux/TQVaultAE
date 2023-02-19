@@ -17,6 +17,7 @@ namespace TQVaultAE.Data
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
 	using TQVaultAE.Domain.Entities;
+	using TQVaultAE.Domain.Helpers;
 	using TQVaultAE.Logs;
 
 	/// <summary>
@@ -41,12 +42,12 @@ namespace TQVaultAE.Data
 		/// Gets the sorted list of directoryEntries.
 		/// </summary>
 		/// <returns>string array holding the sorted list</returns>
-		public string[] GetKeyTable(ArcFile file)
+		public RecordId[] GetKeyTable(ArcFile file)
 		{
 			if (file.Keys == null || file.Keys.Length == 0)
 				this.BuildKeyTable(file);
 
-			return (string[])file.Keys.Clone();
+			return (RecordId[])file.Keys.Clone();
 		}
 
 		#region ArcFile Public Methods
@@ -77,14 +78,14 @@ namespace TQVaultAE.Data
 		/// <param name="baseFolder">string holding the base folder path</param>
 		/// <param name="record">Record we are writing</param>
 		/// <param name="destinationFileName">Filename for the new file.</param>
-		public void Write(ArcFile file, string baseFolder, string record, string destinationFileName)
+		public void Write(ArcFile file, string baseFolder, RecordId record, string destinationFileName)
 		{
 			try
 			{
 				if (!file.FileHasBeenRead)
 					this.ReadARCToC(file);
 
-				string dataID = string.Concat(Path.GetFileNameWithoutExtension(file.FileName), "\\", record);
+				string dataID = string.Concat(Path.GetFileNameWithoutExtension(file.FileName), "\\", record.Raw);
 				byte[] data = this.GetData(file, dataID);
 				if (data == null)
 					return;
@@ -116,7 +117,7 @@ namespace TQVaultAE.Data
 		/// </summary>
 		/// <param name="dataId">The string ID for the data which we are retieving.</param>
 		/// <returns>Returns byte array of the data corresponding to the string ID.</returns>
-		public byte[] GetData(ArcFile file, string dataId)
+		public byte[] GetData(ArcFile file, RecordId dataId)
 		{
 			if (TQDebug.ArcFileDebugLevel > 0)
 				Log.LogDebug("ARCFile.GetData({0})", dataId);
@@ -133,16 +134,14 @@ namespace TQVaultAE.Data
 				return null;
 			}
 
-			// First normalize the filename
-			dataId = TQData.NormalizeRecordPath(dataId);
 			if (TQDebug.ArcFileDebugLevel > 1)
 				Log.LogDebug("Normalized dataID = {0}", dataId);
 
 			// Find our file in the toc.
 			// First strip off the leading folder since it is just the ARC name
-			int firstPathDelim = dataId.IndexOf('\\');
+			int firstPathDelim = dataId.Normalized.IndexOf('\\');
 			if (firstPathDelim != -1)
-				dataId = dataId.Substring(firstPathDelim + 1);
+				dataId = dataId.Normalized.Substring(firstPathDelim + 1);
 
 			// Now see if this file is in the toc.
 			ArcDirEntry directoryEntry;
@@ -237,7 +236,10 @@ namespace TQVaultAE.Data
 
 				foreach (ArcDirEntry dirEntry in file.DirectoryEntries.Values)
 				{
-					string dataID = string.Concat(Path.GetFileNameWithoutExtension(file.FileName), "\\", dirEntry.FileName);
+					RecordId dataID = string.Concat(
+						Path.GetFileNameWithoutExtension(file.FileName), "\\"
+						, dirEntry.FileName.Raw
+					);
 
 					if (TQDebug.ArcFileDebugLevel > 1)
 					{
@@ -291,8 +293,8 @@ namespace TQVaultAE.Data
 				return;
 
 			int index = 0;
-			file.Keys = new string[file.DirectoryEntries.Count];
-			foreach (string filename in file.DirectoryEntries.Keys)
+			file.Keys = new RecordId[file.DirectoryEntries.Count];
+			foreach (RecordId filename in file.DirectoryEntries.Keys)
 			{
 				file.Keys[index] = filename;
 				index++;
@@ -546,7 +548,7 @@ namespace TQVaultAE.Data
 								else
 									newfile = string.Format(CultureInfo.InvariantCulture, "Null File {0}", i);
 
-								records[i].FileName = TQData.NormalizeRecordPath(newfile);
+								records[i].FileName = newfile;
 
 								if (TQDebug.ArcFileDebugLevel > 2)
 									Log.LogDebug("Name {0:n0} = '{1}'", i, records[i].FileName);
@@ -554,7 +556,7 @@ namespace TQVaultAE.Data
 						}
 
 						// Now convert the array of records into a Dictionary.
-						Dictionary<string, ArcDirEntry> dictionary = new Dictionary<string, ArcDirEntry>(numEntries);
+						var dictionary = new Dictionary<RecordId, ArcDirEntry>(numEntries);
 
 						if (TQDebug.ArcFileDebugLevel > 1)
 							Log.LogDebug("Creating Dictionary");

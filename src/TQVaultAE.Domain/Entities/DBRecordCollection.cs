@@ -25,7 +25,7 @@ namespace TQVaultAE.Domain.Entities
 		/// </summary>
 		/// <param name="id">string: ID for this record.</param>
 		/// <param name="recordType">string: type for this record</param>
-		public DBRecordCollection(string id, string recordType)
+		public DBRecordCollection(RecordId id, string recordType)
 		{
 			this.Id = id;
 			this.RecordType = recordType;
@@ -35,7 +35,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Gets the ID for this record.
 		/// </summary>
-		public string Id { get; private set; }
+		public RecordId Id { get; private set; }
 
 		/// <summary>
 		/// Gets the RecordType

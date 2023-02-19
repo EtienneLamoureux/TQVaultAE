@@ -2,9 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TQVaultAE.Config" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="DebugEnabled" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="ARCFileDebugLevel" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">0</Value>
     </Setting>
@@ -35,110 +32,14 @@
     <Setting Name="FadeOutInterval" Type="System.Double" Scope="Application">
       <Value Profile="(Default)">0.2</Value>
     </Setting>
-    <Setting Name="SkipTitle" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="LoadLastVault" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="LoadLastCharacter" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="LastVaultName" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="LastCharacterName" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="AutoDetectLanguage" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="AutoDetectGamePath" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="TQLanguage" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="VaultPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="LoadAllFiles" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="SuppressWarnings" Type="System.Boolean" Scope="User">
+    <Setting Name="LootTableDebugEnabled" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="CheckForNewVersions" Type="System.Boolean" Scope="User">
+    <Setting Name="DebugEnabled" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AllowItemCopy" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="AllowItemEdit" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="TQITPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="TQPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ModEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="CustomMap" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="Scale" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
-    <Setting Name="LoadAllFilesCompleted" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="PlayerReadonly" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="AllowCharacterEdit" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="AllowCheats" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="ForceGamePath" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="BaseFont" Type="System.String" Scope="User">
-      <Value Profile="(Default)">AlbertusMT</Value>
-    </Setting>
-    <Setting Name="EnableDetailedTooltipView" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="ItemBGColorOpacity" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">15</Value>
-    </Setting>
-    <Setting Name="EnableItemRequirementRestriction" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="SearchQueries" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="EnableHotReload" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="DisableTooltipEquipment" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="DisableTooltipStash" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="DisableTooltipTransfer" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="DisableTooltipRelic" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="EnableTQVaultSounds" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+    <Setting Name="TQOriginalHowtoUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://github.com/EtienneLamoureux/TQVaultAE/blob/master/documentation/TQORIGINAL.md</Value>
     </Setting>
   </Settings>
 </SettingsFile>

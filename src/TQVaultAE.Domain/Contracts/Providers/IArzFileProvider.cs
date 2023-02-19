@@ -9,12 +9,12 @@ namespace TQVaultAE.Domain.Contracts.Providers
 		/// </summary>
 		/// <param name="recordId">string ID of the record will be normalized internally</param>
 		/// <returns>DBRecord corresponding to the string ID.</returns>
-		DBRecordCollection GetItem(ArzFile file, string recordId);
+		DBRecordCollection GetItem(ArzFile file, RecordId recordId);
 		/// <summary>
 		/// Gets the list of keys from the recordInfo dictionary.
 		/// </summary>
 		/// <returns>string array holding the sorted list</returns>
-		string[] GetKeyTable(ArzFile file);
+		RecordId[] GetKeyTable(ArzFile file);
 		/// <summary>
 		/// Gets a database record without adding it to the cache.
 		/// </summary>
@@ -26,7 +26,7 @@ namespace TQVaultAE.Domain.Contracts.Providers
 		/// </remarks>
 		/// <param name="recordId">String ID of the record.  Will be normalized internally.</param>
 		/// <returns>Decompressed RecordInfo record</returns>
-		DBRecordCollection GetRecordNotCached(ArzFile file, string recordId);
+		DBRecordCollection GetRecordNotCached(ArzFile file, RecordId recordId);
 		/// <summary>
 		/// Reads the ARZ file.
 		/// </summary>
