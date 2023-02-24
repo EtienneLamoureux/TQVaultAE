@@ -1531,7 +1531,8 @@ public class SackPanel : Panel, IScalingControl
 					if (Config.UserSettings.Default.AllowItemEdit)
 					{
 						this.CustomContextMenu.Items.Add(Resources.SackPanelMenuSeed);
-
+						this.CustomContextMenu.Items.Add(Resources.SackPanelMenuSeedForce);
+						
 						// Add option to complete a charm or relic if
 						// not already completed.
 						if (focusedItem.IsRelicOrCharm && !focusedItem.IsRelicComplete)
@@ -3249,6 +3250,20 @@ public class SackPanel : Panel, IScalingControl
 				dlg.SelectedItem = focusedItem;
 				int origSeed = focusedItem.Seed;
 				dlg.ShowDialog();
+
+				// See if the seed was changed
+				if (focusedItem.Seed != origSeed)
+				{
+					// Tell the sack that it has been modified
+					this.Sack.IsModified = true;
+					this.InvalidateItemCacheItemTooltip(focusedItem);
+				}
+			}
+			else if (selectedMenuItem == Resources.SackPanelMenuSeedForce)
+			{
+				int origSeed = focusedItem.Seed;
+				focusedItem.Seed = Item.GenerateSeed();
+				focusedItem.IsModified = true;
 
 				// See if the seed was changed
 				if (focusedItem.Seed != origSeed)
