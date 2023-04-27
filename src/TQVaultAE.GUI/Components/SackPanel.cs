@@ -753,7 +753,6 @@ public class SackPanel : Panel, IScalingControl
 			return;
 
 		Rectangle movedItemArea = new();
-		Collection<Item> blockingItems = new Collection<Item>();
 
 		// Look for other items in the way
 		foreach (Item item in this.selectedItems)
@@ -764,16 +763,13 @@ public class SackPanel : Panel, IScalingControl
 			foreach(Item blockingItem in this.FindAllItems(movedItemArea))
 			{
 				if (!this.selectedItems.Contains(blockingItem))
-					blockingItems.Add(blockingItem);
+					return;
 			}
 
 			// Check if we are still inside the area of the sack
 			if (movedItemArea.Top < 0 | movedItemArea.Left < 0 | movedItemArea.Bottom-1 >= this.SackSize.Height | movedItemArea.Right-1 >= this.SackSize.Width)
 				return;
 		}
-
-		if (blockingItems.Count > 0)
-			return;
 
 		// Move the items once we know nothing is in the way
 		foreach (Item item in this.selectedItems)
