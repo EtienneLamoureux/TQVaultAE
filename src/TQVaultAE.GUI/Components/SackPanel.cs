@@ -723,6 +723,70 @@ public class SackPanel : Panel, IScalingControl
 	}
 
 	/// <summary>
+	/// Moves selected items by one space in a direction, does not move any items if one of them can't move
+	/// </summary>
+	public void MoveSelectedItemsInSack(string direction)
+	{
+		// Set offsets for the movement direction
+		int offsetX = 0, offsetY = 0;
+		switch(direction)
+		{
+			case "up":		offsetY = -1;	break;
+			case "down":	offsetY = 1;	break;
+			case "left":	offsetX = -1;	break;
+			case "right":	offsetX = 1;	break;
+		}
+
+		// Disable feature in the equipment panel
+		if (this.SackType == SackType.Equipment)
+			return;
+
+		// Make sure we are not holding an item.
+		if (this.DragInfo.IsActive)
+			return;
+		
+		if (this.Sack == null || this.Sack.IsEmpty)
+			return;
+
+		// Make sure there we have items selected
+		if (this.selectedItems == null)
+			return;
+
+		Rectangle movedItemArea = new();
+		Collection<Item> blockingItems = new Collection<Item>();
+
+		// Look for other items in the way
+		foreach (Item item in this.selectedItems)
+		{
+			movedItemArea = new Rectangle(new Point(item.PositionX + offsetX, item.PositionY + offsetY), item.Size);
+
+			// Find items in the new location and add them to the list, if they aren't one of the selected items
+			foreach(Item blockingItem in this.FindAllItems(movedItemArea))
+			{
+				if (!this.selectedItems.Contains(blockingItem))
+					blockingItems.Add(blockingItem);
+			}
+
+			// Check if we are still inside the area of the sack
+			if (movedItemArea.Top < 0 | movedItemArea.Left < 0 | movedItemArea.Bottom-1 >= this.SackSize.Height | movedItemArea.Right-1 >= this.SackSize.Width)
+				return;
+		}
+
+		if (blockingItems.Count > 0)
+			return;
+
+		// Move the items once we know nothing is in the way
+		foreach (Item item in this.selectedItems)
+		{
+			item.PositionX += offsetX;
+			item.PositionY += offsetY;
+		}
+
+		// Redraw Sack
+		this.Refresh();
+	}
+
+	/// <summary>
 	/// Merges the items from two sacks into one sack
 	/// </summary>
 	/// <param name="destination">sack number where we are storing the combined sack</param>
@@ -3557,6 +3621,18 @@ public class SackPanel : Panel, IScalingControl
 
 		if (e.KeyData == (Keys.Control | Keys.A))
 			this.SelectAllItems();
+
+		if (e.KeyData == (Keys.Alt | Keys.W))
+			this.MoveSelectedItemsInSack("up");
+
+		if (e.KeyData == (Keys.Alt | Keys.A))
+			this.MoveSelectedItemsInSack("left");
+
+		if (e.KeyData == (Keys.Alt | Keys.S))
+			this.MoveSelectedItemsInSack("down");
+
+		if (e.KeyData == (Keys.Alt | Keys.D))
+			this.MoveSelectedItemsInSack("right");
 
 		if (e.KeyData == (Keys.Control | Keys.D))
 			this.OnClearAllItemsSelected(this, new SackPanelEventArgs(null, null));
