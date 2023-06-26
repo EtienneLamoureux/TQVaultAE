@@ -3139,6 +3139,77 @@ public enum RelicAndCharm
 	YAOGUAIHORN_X4_03,
 
 	#endregion
+
+	#region HCDUNGEON
+
+	/// <summary>
+	/// Epic Golden Scarab
+	/// </summary>
+	/// <remarks>
+	/// The sacred scarab of Kheprer, encased in 
+	/// pure gold. If found it can bestow a 
+	/// portion of his power.
+	/// Can enchant amulets and necklaces 
+	/// only.
+	/// </remarks>
+	[Description(@"RECORDS\ITEM\HCDUNGEON\05_X4_GOLDENSCARAB_E_CHARM.DBR")]
+	[GearType(GearType.Amulet)]
+	HCDUNGEON_CHARM_E_GOLDENSCARAB_X4_05,
+
+	/// <summary>
+	/// Essence of Order
+	/// </summary>
+	/// <remarks>
+	/// Focuses the power of Order to deliver a 
+	/// mighty blow against its enemies.
+	/// Can enhance arm armor only.
+	/// </remarks>
+	[Description(@"RECORDS\ITEM\HCDUNGEON\03_X4_ESSENCEOFORDER_CHARM.DBR")]
+	[GearType(GearType.Arm)]
+	HCDUNGEON_CHARM_ESSENCEOFORDER_X4_03,
+
+	/// <summary>
+	/// Legendary Golden Scarab
+	/// </summary>
+	/// <remarks>
+	/// The sacred scarab of Kheprer, encased in 
+	/// pure gold. If found it can bestow a 
+	/// portion of his power.
+	/// Can enchant amulets and necklaces 
+	/// only.
+	/// </remarks>
+	[Description(@"RECORDS\ITEM\HCDUNGEON\05_X4_GOLDENSCARAB_L_CHARM.DBR")]
+	[GearType(GearType.Amulet)]
+	HCDUNGEON_CHARM_L_GOLDENSCARAB_X4_05,
+
+	/// <summary>
+	/// Golden Scarab
+	/// </summary>
+	/// <remarks>
+	/// The sacred scarab of Kheprer, encased in 
+	/// pure gold. If found it can bestow a 
+	/// portion of his power.
+	/// Can enchant amulets and necklaces 
+	/// only.
+	/// </remarks>
+	[Description(@"RECORDS\ITEM\HCDUNGEON\05_X4_GOLDENSCARAB_N_CHARM.DBR")]
+	[GearType(GearType.Amulet)]
+	HCDUNGEON_CHARM_N_GOLDENSCARAB_X4_05,
+
+	/// <summary>
+	/// Essence of Chaos
+	/// </summary>
+	/// <remarks>
+	/// A shard of a mystical artefact capable 
+	/// of wielding the powers of Chaos itself. 
+	/// Can enchant head armor only.
+	/// </remarks>
+	[Description(@"RECORDS\ITEM\HCDUNGEON\03_X4_ESSENCEOFCHAOS.DBR")]
+	[GearType(GearType.Head)]
+	HCDUNGEON_ESSENCEOFCHAOS_X4_03,
+
+	#endregion
+
 }
 
 #region Related logic

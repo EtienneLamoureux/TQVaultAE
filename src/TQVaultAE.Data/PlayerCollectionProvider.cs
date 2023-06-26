@@ -345,18 +345,24 @@ namespace TQVaultAE.Data
 			}).ToArray();
 
 			/*
+
 #if DEBUG
 			// Generate RelicAndCharm Enum
-			if (path.Contains("Artefacts"))
+			if (path.Contains("Share"))
 			{
-				var str = pc.Sacks.Skip(8)
+				var str = pc.Sacks
+					//.Skip(8)
 					.SelectMany(s => s.items)
 					.Select(s =>
 					{
-						var Id = s.BaseItemId.ToUpper().Replace('/', '\\');
+						var Id = s.BaseItemId.Normalized;
 						var filename = Path.GetFileNameWithoutExtension(Id);
 						var filesplit = filename.Split('_');
 						var enumName = filesplit.Reverse().JoinString("_");
+
+						if (s.BaseItemId.TokensNormalized.Contains("HCDUNGEON"))
+							enumName = "HCDUNGEON_" + enumName;
+
 						return new
 						{
 							Item = s,
@@ -383,9 +389,12 @@ namespace TQVaultAE.Data
 {i.enumName},";
 					})
 					.JoinString("\n");
+
+				System.Diagnostics.Debug.WriteLine(str);
 			}
 
 #endif
+
 			*/
 		}
 
