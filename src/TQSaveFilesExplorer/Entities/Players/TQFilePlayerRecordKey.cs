@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace TQ.SaveFilesExplorer.Entities.Players
 {
@@ -346,7 +341,6 @@ namespace TQ.SaveFilesExplorer.Entities.Players
 		[TQFileDataType(TQVersion.TQ, TQFileDataType.Int)]
 		storedDefaultType,
 
-
 		[TQFileDataType(TQVersion.TQ_All, TQFileDataType.String1252)]
 		scrollName,
 
@@ -358,5 +352,25 @@ namespace TQ.SaveFilesExplorer.Entities.Players
 
 		[TQFileDataType(TQVersion.TQ_All, TQFileDataType.StringUTF16)]
 		defaultText,
+
+		[TQFileDataType(TQVersion.TQAE, TQFileDataType.Int)]
+		altMoney,
+
+		[TQFileDataType(TQVersion.TQAE, TQFileDataType.Int)]
+		hasSkillServices,
+
+		[TQFileDataType(TQVersion.TQAE, TQFileDataType.Int)]
+		version,
+
+		[TQFileDataType(TQVersion.TQAE, TQFileDataType.Int)]
+		boostedCharacterForX4,
+		
+		[TQFileDataType(TQVersion.TQAE, TQFileDataType.Int)]
+		[Description("tartarusDefeatedCount[i]")]
+		tartarusDefeatedCount,
+
+		[TQFileDataType(TQVersion.TQAE, TQFileDataType.String1252)]
+		buffSkillName,
+
 	}
 }
