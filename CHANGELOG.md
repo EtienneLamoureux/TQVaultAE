@@ -1,4 +1,20 @@
 # Changelog
+## 4.4.0
+### Features
+- #278 Add new option to disable Relic, Charm & Potion stacking
+- #442 Display the effects of the new Eternal Embers potions
+- #480 Add HC Dungeon relics
+- #471 Add Highlight "Set Item" filter
+- Add "Having Relic", "Having Charm" to Highlight
+- Add hotkeys to move selected items one square over (<kbd>ALT</kbd>+<kbd>W</kbd>/<kbd>A</kbd>/<kbd>S</kbd>/<kbd>D</kbd>)
+- Revamp ArzExplorer
+- Support latest update in Save File Explorer
+
+### Bugs
+- #287 Fix an error when no saves are found
+- #467 Fix an error when the game's path is not correct
+- Fix a crash due to bad game directory detection
+
 ## 4.3.0
 ### Features
 - New cheat: affixes edition
