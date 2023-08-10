@@ -11,55 +11,55 @@ _**Note : "Item editing feature" must be enable in the settings.**_
 ---
 
 ## Table of contents
-* [Prefix change](#Prefix)
-* [Suffix change](#Suffix)
-* [Broken items](#Broken)
-* [Affixes removal](#Remove)
-* [Affixes display mode](#DisplayMode)
-* [Affixes for Epic & Legendary](#Uniques)
-* [Artefact creation](#Formula)
-* [Artefact completion bonus change](#Artefact)
-* [Relic and charm completion](#RelicCompleteStack)
-* [Relic and charm completion bonus change](#RelicCompletion)
-* [Relics removal](#RelicRemoval)
-* [Socketed relic and charm completion bonus change](#SocketedRelicCompletion)
-* [Missing records/translations](#MissingRecords)
-* [Item seed change](#Seed)
-* [Create missing set pieces](#MissingSetPiece)
+* [Prefix change](#prefix-change)
+* [Suffix change](#suffix-change)
+* [Broken items](#broken-affix-when-available)
+* [Affixes removal](#affixes-removal)
+* [Affixes display mode](#affixes-display-mode)
+* [Affixes for Epic & Legendary](#affixes-for-epic--legendary)
+* [Artefact creation](#artefact-creation)
+* [Artefact completion bonus change](#artefact-completion-bonus-change)
+* [Relic and charm completion](#relic-and-charm-completion)
+* [Relic and charm completion bonus change](#relic-and-charm-completion-bonus-change)
+* [Socketed relic and charm completion bonus change](#socketed-relic-and-charm-completion-bonus-change)
+* [Relics removal](#relics-removal)
+* [Missing records/translations](#missing-records--translations)
+* [Item seed change](#item-seed-change)
+* [Create missing set pieces](#create-missing-set-pieces)
 
 ---
 
-### <a id="Prefix"></a>Prefix change
+### Prefix change
 
 ![Prefix change](affixes/prefix.png)
 
 ---
 
-### <a id="Suffix"></a>Suffix change
+### Suffix change
 
 ![Suffix change](affixes/suffix.png)
 
 ---
 
-### <a id="Broken"></a>Broken affix when available
+### Broken affix when available
 
 ![Broken affix when available](affixes/broken.png)
 
 ---
 
-### <a id="Remove"></a>Affixes removal
+### Affixes removal
 
 ![Affixes removal](affixes/removeaffixes.png)
 
 ---
 
-### <a id="DisplayMode"></a>Affixes display mode
+### Affixes display mode
 
 ![Affixes removal](affixes/displaymode.png)
 
 ---
 
-### <a id="Uniques"></a>Affixes for Epic & Legendary
+### Affixes for Epic & Legendary
 You can enable this feature in the settings.
 
 It try to suck all known Prefix/Suffix per gear type (e.g, all affixes for axe if the unique is an axe).
@@ -68,44 +68,44 @@ It try to suck all known Prefix/Suffix per gear type (e.g, all affixes for axe i
 
 ---
 
-### <a id="Formula"></a>Artefact creation
+### Artefact creation
 
 ![Artefact creation](affixes/artefactcreation.png)
 
 ---
 
-### <a id="Artefact"></a>Artefact completion bonus change
+### Artefact completion bonus change
 
 ![Artefact completion bonus change](affixes/artefactcompletion.png)
 
 ---
 
-### <a id="RelicCompleteStack"></a>Relic and charm completion
+### Relic and charm completion
 
 ![Relic and charm completion](affixes/reliccompletestack.png)
 
 ---
 
-### <a id="RelicCompletion"></a>Relic and charm completion bonus change
+### Relic and charm completion bonus change
 
 ![Relic and charm completion bonus change](affixes/reliccompletion.png)
 
 ---
 
-### <a id="SocketedRelicCompletion"></a>Socketed relic and charm completion bonus change
+### Socketed relic and charm completion bonus change
 
 ![Socketed relic and charm completion bonus change](affixes/socketedreliccompletion.png)
 
 ---
 
-### <a id="RelicRemoval"></a>Relics removal
+### Relics removal
 
 ![Relics removal](affixes/removerelic.png)
 
 
 ---
 
-### <a id="MissingRecords"></a>Missing records & translations
+### Missing records & translations
 
 ![Missing records](affixes/brokenrecord.png)
 
@@ -120,13 +120,13 @@ By using the feature, you will see something like [that](affixes/loottablelogs.p
 
 ---
 
-### <a id="Seed"></a>Item seed change
+### Item seed change
 
 | ![Open Seed form](affixes/seed1.png) | ![Change Seed](affixes/seed2.png)
 
 ---
 
-### <a id="MissingSetPiece"></a>Create missing set pieces
+### Create missing set pieces
 
 ![Create missing set pieces](affixes/missingset.png)
 
