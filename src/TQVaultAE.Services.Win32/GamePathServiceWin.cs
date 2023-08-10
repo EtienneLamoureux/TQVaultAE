@@ -446,6 +446,8 @@ public class GamePathServiceWin : IGamePathService
 
 	public string PlayerSettingsFileName => PLAYERSETTINGSFILENAME;
 
+	public bool GameInstallDirectoryIsITOrAE { get; private set; }
+
 	/// <summary>
 	/// Gets the file name and path for a vault.
 	/// </summary>
@@ -599,7 +601,8 @@ public class GamePathServiceWin : IGamePathService
 			string steamPath = ReadRegistryKey(Microsoft.Win32.Registry.CurrentUser, registryPath).Replace("/", "\\");
 
 			string fullPath = Path.Combine(steamPath, steamTQPath);
-			if (Directory.Exists(fullPath))
+			string fullPathExe = Path.Combine(fullPath, @"TQ.exe");
+			if (File.Exists(fullPathExe))
 				titanQuestGamePath = fullPath;
 			else
 			{
@@ -663,6 +666,8 @@ public class GamePathServiceWin : IGamePathService
 		if (string.IsNullOrEmpty(titanQuestGamePath))
 			throw new ExGamePathNotFound(@"Unable to locate Titan Quest installation directory.
 Please select the game installation directory.");
+
+		this.GameInstallDirectoryIsITOrAE = titanQuestGamePath.ContainsIgnoreCase("Anniversary") || titanQuestGamePath.ContainsIgnoreCase("Immortal");
 
 		return titanQuestGamePath;
 	}
