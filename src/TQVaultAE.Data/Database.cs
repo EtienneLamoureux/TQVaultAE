@@ -1051,7 +1051,7 @@ public class Database : IDatabase
 		if (TQDebug.DatabaseDebugLevel > 0)
 			Log.LogDebug("Database.LoadTextDB()");
 
-		string databaseFile = this.FigureDBFileToUse(false);
+		string databaseFile = this.FigureDBFileToUse(this.GamePathResolver.GameInstallDirectoryIsITOrAE);
 		if (TQDebug.DatabaseDebugLevel > 1)
 		{
 			Log.LogDebug("Find Titan Quest text file");
