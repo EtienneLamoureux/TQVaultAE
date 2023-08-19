@@ -12,7 +12,6 @@ internal class NodeTag
 	internal string Text;
 	internal string TextU => Text.ToUpper();
 
-	internal int RecIdx;
 	internal int TokIdx;
 	internal RecordId Key;
 	internal TreeNode thisNode;
