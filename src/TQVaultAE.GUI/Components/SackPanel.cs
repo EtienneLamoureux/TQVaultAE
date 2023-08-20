@@ -2500,7 +2500,8 @@ public class SackPanel : Panel, IScalingControl
 	protected virtual bool IsSuitableForCurrentPlayer(Item item)
 	{
 		var currPlayer = this.userContext.CurrentPlayer;
-		if (!(currPlayer?.IsImmortalThrone ?? false) // Player is TQ Original
+
+		if (currPlayer is not null && !currPlayer.IsImmortalThrone // Player is TQ Original
 			&& item.GameDlc != GameDlc.TitanQuest // Non base game item
 		) return false;
 
