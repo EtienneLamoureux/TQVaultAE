@@ -814,13 +814,13 @@ avance al programa por sí sola.</value>
 Por favor, visita al conductor de caravana para crearlo.
 La pestaña de almacén de caravana estará deshabilitada.</value>
   </data>
-  <data name="StashPanelBtn1" xml:space="preserve">
+  <data name="StashPanelBtnEquipment" xml:space="preserve">
     <value>Equipo</value>
   </data>
-  <data name="StashPanelBtn2" xml:space="preserve">
+  <data name="StashPanelBtnTransferArea" xml:space="preserve">
     <value>Almacén caravana (transfer.)</value>
   </data>
-  <data name="StashPanelBtn3" xml:space="preserve">
+  <data name="StashPanelBtnStorageArea" xml:space="preserve">
     <value>Almacén caravana</value>
   </data>
   <data name="StashPanelText" xml:space="preserve">

@@ -813,13 +813,13 @@ um den Titel-Screen zu Schließen.</value>
 Bitte besuchen Sie im Spiel den Karawanentreiber, um eine Stauraum-Datei zu erstellen.
 Der Stauraum ist für diesen Charakter nicht verfügbar.</value>
   </data>
-  <data name="StashPanelBtn1" xml:space="preserve">
+  <data name="StashPanelBtnEquipment" xml:space="preserve">
     <value>Ausrüstung</value>
   </data>
-  <data name="StashPanelBtn2" xml:space="preserve">
+  <data name="StashPanelBtnTransferArea" xml:space="preserve">
     <value>Übergabebereich</value>
   </data>
-  <data name="StashPanelBtn3" xml:space="preserve">
+  <data name="StashPanelBtnStorageArea" xml:space="preserve">
     <value>Stauraum</value>
   </data>
   <data name="StashPanelText" xml:space="preserve">

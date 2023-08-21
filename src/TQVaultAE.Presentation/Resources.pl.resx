@@ -806,13 +806,13 @@ klawisza Enter na ekranie tytułowym.</value>
 Odwiedź Karawanę w grze by stworzyć plik.
 Pole Okna Karawany będzie niedostępne dla tej postaci.</value>
   </data>
-  <data name="StashPanelBtn1" xml:space="preserve">
+  <data name="StashPanelBtnEquipment" xml:space="preserve">
     <value>Ekwipunek</value>
   </data>
-  <data name="StashPanelBtn2" xml:space="preserve">
+  <data name="StashPanelBtnTransferArea" xml:space="preserve">
     <value>Pole Transferu</value>
   </data>
-  <data name="StashPanelBtn3" xml:space="preserve">
+  <data name="StashPanelBtnStorageArea" xml:space="preserve">
     <value>Pole Karawany</value>
   </data>
   <data name="StashPanelText" xml:space="preserve">

@@ -819,13 +819,13 @@ TQVault关闭仍有物品在垃圾桶时将不会有提示信息。</value>
 请在游戏中找旅行商队来创建这个文件。
 该角色将会没有存储区域选项卡。</value>
   </data>
-    <data name="StashPanelBtn1" xml:space="preserve">
+    <data name="StashPanelBtnEquipment" xml:space="preserve">
     <value>装备</value>
   </data>
-    <data name="StashPanelBtn2" xml:space="preserve">
+    <data name="StashPanelBtnTransferArea" xml:space="preserve">
     <value>共享空间</value>
   </data>
-    <data name="StashPanelBtn3" xml:space="preserve">
+    <data name="StashPanelBtnStorageArea" xml:space="preserve">
     <value>存储空间</value>
   </data>
     <data name="StashPanelText" xml:space="preserve">
