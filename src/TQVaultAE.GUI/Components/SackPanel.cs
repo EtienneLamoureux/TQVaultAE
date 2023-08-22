@@ -723,6 +723,25 @@ public class SackPanel : Panel, IScalingControl
 	}
 
 	/// <summary>
+  /// Selects all highlighted items in the sack
+	/// </summary>
+	public void SelectAllHighlightedItems()
+	{
+		if (this.Sack != null && !this.Sack.IsEmpty)
+		{
+			if (this.selectedItems != null)
+				this.ClearSelection();
+
+			foreach (Item item in this.userContext.HighlightedItems)
+			{
+				if (this.Sack.Contains(item))
+					this.SelectItem(item);
+			}
+			this.Invalidate();
+		}
+	}
+
+  /// <summary>
 	/// Moves selected items by one space in a direction, does not move any items if one of them can't move
 	/// </summary>
 	public void MoveSelectedItemsInSack(string direction)
@@ -3617,6 +3636,9 @@ public class SackPanel : Panel, IScalingControl
 
 		if (e.KeyData == (Keys.Control | Keys.A))
 			this.SelectAllItems();
+
+		if (e.KeyData == (Keys.Control | Keys.S))
+			this.SelectAllHighlightedItems();
 
 		if (e.KeyData == (Keys.Alt | Keys.W))
 			this.MoveSelectedItemsInSack("up");
