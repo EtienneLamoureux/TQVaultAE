@@ -51,7 +51,7 @@ public partial class RecordId : IEquatable<RecordId>, IComparable, IComparable<R
 			if (_Dlc is null)
 				_Dlc = this.Normalized switch
 				{
-					var x when x.Contains(@"\XPACK4\") => GameDlc.EternalEmbers,
+					var x when x.Contains(@"\XPACK4\") || this.IsHardCoreDungeonEE => GameDlc.EternalEmbers,
 					var x when x.Contains(@"\XPACK3\") => GameDlc.Atlantis,
 					var x when x.Contains(@"\XPACK2\") => GameDlc.Ragnarok,
 					var x when x.Contains(@"\XPACK\") => GameDlc.ImmortalThrone,

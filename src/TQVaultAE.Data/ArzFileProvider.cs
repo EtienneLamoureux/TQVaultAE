@@ -7,7 +7,9 @@ namespace TQVaultAE.Data
 {
 	using Microsoft.Extensions.Logging;
 	using System;
+	using System.Collections.Generic;
 	using System.IO;
+	using System.Linq;
 	using TQVaultAE.Config;
 	using TQVaultAE.Domain.Contracts.Providers;
 	using TQVaultAE.Domain.Contracts.Services;
@@ -32,19 +34,6 @@ namespace TQVaultAE.Data
 			this.Log = log;
 			this.TQData = tQData;
 			this.infoProv = recordInfoProvider;
-		}
-
-
-		/// <summary>
-		/// Gets the list of keys from the recordInfo dictionary.
-		/// </summary>
-		/// <returns>string array holding the sorted list</returns>
-		public RecordId[] GetKeyTable(ArzFile file)
-		{
-			if (file.Keys == null || file.Keys.Length == 0)
-				this.BuildKeyTable(file);
-
-			return (RecordId[])file.Keys.Clone();
 		}
 
 		/// <summary>
@@ -155,25 +144,6 @@ namespace TQVaultAE.Data
 		/// <returns>Decompressed RecordInfo record</returns>
 		public DBRecordCollection GetRecordNotCached(ArzFile file, RecordId recordId)
 			=> infoProv.Decompress(file, file.RecordInfo[recordId]);
-
-		/// <summary>
-		/// Builds a list of the keys for this file.  Used to help build the tree structure.
-		/// </summary>
-		private void BuildKeyTable(ArzFile file)
-		{
-			if (file.RecordInfo == null || file.RecordInfo.Count == 0)
-				return;
-
-			int index = 0;
-			file.Keys = new RecordId[file.RecordInfo.Count];
-			foreach (RecordId recordID in file.RecordInfo.Keys)
-			{
-				file.Keys[index] = recordID;
-				index++;
-			}
-
-			Array.Sort(file.Keys);
-		}
 
 
 		/// <summary>

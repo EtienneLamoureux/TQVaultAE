@@ -38,18 +38,6 @@ namespace TQVaultAE.Data
 			this.TQData = tQData;
 		}
 
-		/// <summary>
-		/// Gets the sorted list of directoryEntries.
-		/// </summary>
-		/// <returns>string array holding the sorted list</returns>
-		public RecordId[] GetKeyTable(ArcFile file)
-		{
-			if (file.Keys == null || file.Keys.Length == 0)
-				this.BuildKeyTable(file);
-
-			return (RecordId[])file.Keys.Clone();
-		}
-
 		#region ArcFile Public Methods
 
 		/// <summary>
@@ -63,7 +51,7 @@ namespace TQVaultAE.Data
 				if (!file.FileHasBeenRead)
 					this.ReadARCToC(file);
 
-				return file.DirectoryEntries != null;
+				return file.DirectoryEntries.Any();
 			}
 			catch (IOException exception)
 			{
@@ -125,7 +113,7 @@ namespace TQVaultAE.Data
 			if (!file.FileHasBeenRead)
 				this.ReadARCToC(file);
 
-			if (file.DirectoryEntries == null)
+			if (!file.DirectoryEntries.Any())
 			{
 				if (TQDebug.ArcFileDebugLevel > 1)
 					Log.LogDebug("Error - Could not read {0}", file.FileName);
@@ -285,25 +273,6 @@ namespace TQVaultAE.Data
 		#region ArcFile Private Methods
 
 		/// <summary>
-		/// Builds a sorted list of entries in the directoryEntries dictionary.  Used to build a tree structure of the names.
-		/// </summary>
-		private void BuildKeyTable(ArcFile file)
-		{
-			if (file.DirectoryEntries == null || file.DirectoryEntries.Count == 0)
-				return;
-
-			int index = 0;
-			file.Keys = new RecordId[file.DirectoryEntries.Count];
-			foreach (RecordId filename in file.DirectoryEntries.Keys)
-			{
-				file.Keys[index] = filename;
-				index++;
-			}
-
-			Array.Sort(file.Keys);
-		}
-
-		/// <summary>
 		/// Read the table of contents of the ARC file
 		/// </summary>
 		public void ReadARCToC(ArcFile file)
@@ -348,13 +317,14 @@ namespace TQVaultAE.Data
 							Log.LogDebug("File Length={0}", arcFile.Length);
 
 						// check the file header
-						if (reader.ReadByte() != 0x41)
+						byte first;
+						if ((first = reader.ReadByte()) != 0x41)
 							return;
 
-						if (reader.ReadByte() != 0x52)
+						if ((first = reader.ReadByte()) != 0x52)
 							return;
 
-						if (reader.ReadByte() != 0x43)
+						if ((first = reader.ReadByte()) != 0x43)
 							return;
 
 						if (arcFile.Length < 0x21)

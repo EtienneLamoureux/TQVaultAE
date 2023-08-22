@@ -2519,7 +2519,8 @@ public class SackPanel : Panel, IScalingControl
 	protected virtual bool IsSuitableForCurrentPlayer(Item item)
 	{
 		var currPlayer = this.userContext.CurrentPlayer;
-		if (!(currPlayer?.IsImmortalThrone ?? false) // Player is TQ Original
+
+		if (currPlayer is not null && !currPlayer.IsImmortalThrone // Player is TQ Original
 			&& item.GameDlc != GameDlc.TitanQuest // Non base game item
 		) return false;
 
@@ -2563,8 +2564,11 @@ public class SackPanel : Panel, IScalingControl
 			// If we are showing the cannot equip background then 
 			// change to invalid color and adjust the alpha.
 			else if (
-				(Config.UserSettings.Default.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(item))
-				|| !IsSuitableForCurrentPlayer(item)
+				!this.SecondaryVaultShown
+				&& (
+					(Config.UserSettings.Default.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(item))
+					|| !IsSuitableForCurrentPlayer(item)
+				)
 			)
 			{
 				backgroundColor = this.HighlightInvalidItemColor;

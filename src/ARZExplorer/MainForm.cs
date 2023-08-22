@@ -525,12 +525,12 @@ public partial class MainForm : Form
 		{
 			this.treeViewTOC.BeginUpdate();
 
-			RecordId[] dataRecords;
+			IEnumerable<RecordId> dataRecords;
 
 			if (this.SelectedFile.FileType == CompressedFileType.ArzFile)
-				dataRecords = arzProv.GetKeyTable(this.SelectedFile.ARZFile);
+				dataRecords = this.SelectedFile.ARZFile.Keys;
 			else if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
-				dataRecords = arcProv.GetKeyTable(this.SelectedFile.ARCFile);
+				dataRecords = this.SelectedFile.ARCFile.Keys;
 			else
 				return;
 
@@ -569,9 +569,9 @@ public partial class MainForm : Form
 				}
 			}
 
-			for (int recIdx = 0; recIdx < dataRecords.Length; recIdx++)
+			foreach (var record in dataRecords)
 			{
-				RecordId recordID = arcPrefix == string.Empty ? dataRecords[recIdx] : Path.Combine(arcPrefix, dataRecords[recIdx].Raw);
+				RecordId recordID = arcPrefix == string.Empty ? record : Path.Combine(arcPrefix, record.Raw);
 
 				for (int tokIdx = 0; tokIdx < recordID.TokensRaw.Count; tokIdx++)
 				{
@@ -597,7 +597,6 @@ public partial class MainForm : Form
 
 							Thread = recordID,
 							Key = currnodeKey,
-							RecIdx = recIdx,
 							TokIdx = tokIdx,
 
 							Text = token,
@@ -638,7 +637,6 @@ public partial class MainForm : Form
 
 				Thread = null,
 				Key = arcPrefix,
-				RecIdx = 0,
 				TokIdx = 0,
 
 				Text = arcRootNode.Text,

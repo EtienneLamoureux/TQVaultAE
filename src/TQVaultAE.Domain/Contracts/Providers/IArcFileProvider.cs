@@ -1,4 +1,5 @@
-﻿using TQVaultAE.Domain.Entities;
+﻿using System.Collections.Generic;
+using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Domain.Contracts.Providers
 {
@@ -21,11 +22,7 @@ namespace TQVaultAE.Domain.Contracts.Providers
 		/// Read the table of contents of the ARC file
 		/// </summary>
 		void ReadARCToC(ArcFile file);
-		/// <summary>
-		/// Gets the sorted list of directoryEntries.
-		/// </summary>
-		/// <returns>string array holding the sorted list</returns>
-		RecordId[] GetKeyTable(ArcFile file);
+
 		/// <summary>
 		/// Reads the ARC file table of contents to determine if the file is readable.
 		/// </summary>

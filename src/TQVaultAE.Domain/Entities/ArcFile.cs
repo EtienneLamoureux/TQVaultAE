@@ -6,6 +6,7 @@
 namespace TQVaultAE.Domain.Entities
 {
 	using System.Collections.Generic;
+	using System.Linq;
 
 	/// <summary>
 	/// Reads and decodes a Titan Quest ARC file.
@@ -20,12 +21,12 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Dictionary of the directory entries.
 		/// </summary>
-		public Dictionary<RecordId, ArcDirEntry> DirectoryEntries;
+		public Dictionary<RecordId, ArcDirEntry> DirectoryEntries = new();
 
 		/// <summary>
-		/// Holds the keys for the directoryEntries dictionary.
+		/// Ordered keys for the directoryEntries dictionary.
 		/// </summary>
-		public RecordId[] Keys;
+		public IEnumerable<RecordId> Keys => this.DirectoryEntries.Keys.OrderBy(v => v);
 
 		/// <summary>
 		/// Initializes a new instance of the ArcFile class.
@@ -42,7 +43,7 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// Gets the number of Directory entries
 		/// </summary>
-		public int Count => this.DirectoryEntries?.Count ?? 0;
+		public int Count => this.DirectoryEntries.Count;
 
 	}
 }

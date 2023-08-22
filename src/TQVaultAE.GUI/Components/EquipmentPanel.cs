@@ -763,8 +763,11 @@ public class EquipmentPanel : SackPanel, IScalingControl
 			// If we are showing the cannot equip background then 
 			// change to invalid color and adjust the alpha.
 			else if (
-				(Config.UserSettings.Default.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(item))
-				|| !IsSuitableForCurrentPlayer(item)
+				!this.SecondaryVaultShown
+				&& (
+					(Config.UserSettings.Default.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(item))
+					|| !IsSuitableForCurrentPlayer(item)
+				)
 			)
 			{
 				backgroundColor = this.HighlightInvalidItemColor;

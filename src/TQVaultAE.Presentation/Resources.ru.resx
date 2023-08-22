@@ -811,13 +811,13 @@ Enter когда появляется экран приветствия.</value>
 тех пор вкладки, связанные с Погонщиком для этого персонажа 
 будут недоступны.</value>
   </data>
-  <data name="StashPanelBtn1" xml:space="preserve">
+  <data name="StashPanelBtnEquipment" xml:space="preserve">
     <value>Экипировка</value>
   </data>
-  <data name="StashPanelBtn2" xml:space="preserve">
+  <data name="StashPanelBtnTransferArea" xml:space="preserve">
     <value>Панель передачи</value>
   </data>
-  <data name="StashPanelBtn3" xml:space="preserve">
+  <data name="StashPanelBtnStorageArea" xml:space="preserve">
     <value>Склад</value>
   </data>
   <data name="StashPanelText" xml:space="preserve">

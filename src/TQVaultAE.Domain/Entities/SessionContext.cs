@@ -260,7 +260,7 @@ namespace TQVaultAE.Domain.Entities
 						availableItems = availableItems.Where(i => i.FriendlyNames.ItemSet != null);
 				}
 
-				this.HighlightedItems.AddRange(availableItems.Select(i => i.Item));
+				this.HighlightedItems.AddRange(availableItems.Select(i => i.Item).ToList());
 				return;
 			}
 			ResetHighlight();

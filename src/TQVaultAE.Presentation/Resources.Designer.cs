@@ -5085,27 +5085,27 @@ namespace TQVaultAE.Presentation {
         /// <summary>
         ///   Looks up a localized string similar to Equipment.
         /// </summary>
-        public static string StashPanelBtn1 {
+        public static string StashPanelBtnEquipment {
             get {
-                return ResourceManager.GetString("StashPanelBtn1", resourceCulture);
+                return ResourceManager.GetString("StashPanelBtnEquipment", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Transfer Area.
         /// </summary>
-        public static string StashPanelBtn2 {
+        public static string StashPanelBtnTransferArea {
             get {
-                return ResourceManager.GetString("StashPanelBtn2", resourceCulture);
+                return ResourceManager.GetString("StashPanelBtnTransferArea", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Storage Area.
         /// </summary>
-        public static string StashPanelBtn3 {
+        public static string StashPanelBtnStorageArea {
             get {
-                return ResourceManager.GetString("StashPanelBtn3", resourceCulture);
+                return ResourceManager.GetString("StashPanelBtnStorageArea", resourceCulture);
             }
         }
         

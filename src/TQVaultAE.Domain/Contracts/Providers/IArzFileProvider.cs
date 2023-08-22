@@ -1,4 +1,5 @@
-﻿using TQVaultAE.Domain.Entities;
+﻿using System.Collections.Generic;
+using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Domain.Contracts.Providers
 {
@@ -10,11 +11,7 @@ namespace TQVaultAE.Domain.Contracts.Providers
 		/// <param name="recordId">string ID of the record will be normalized internally</param>
 		/// <returns>DBRecord corresponding to the string ID.</returns>
 		DBRecordCollection GetItem(ArzFile file, RecordId recordId);
-		/// <summary>
-		/// Gets the list of keys from the recordInfo dictionary.
-		/// </summary>
-		/// <returns>string array holding the sorted list</returns>
-		RecordId[] GetKeyTable(ArzFile file);
+
 		/// <summary>
 		/// Gets a database record without adding it to the cache.
 		/// </summary>
