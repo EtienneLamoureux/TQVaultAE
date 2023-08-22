@@ -18,6 +18,7 @@ namespace TQVaultAE.Domain.Entities
 				|| this.MasteriesResetRequiered;
 
 		public bool MasteriesResetRequiered { get; set; }
+		public bool ResetMasteryAndKeepSkillsFlag { get; set; }
 
 		/// <summary>
 		/// Skills removed during <see cref="ResetMasteries"/>
@@ -111,7 +112,16 @@ namespace TQVaultAE.Domain.Entities
 						.Where(sk => sk.skillName.StartsWith(recBase, noCase))
 					);
 				}
-				this.SkillRecordList.RemoveAll(s => this._SkillRecordListRemoved.Contains(s));
+
+				if (ResetMasteryAndKeepSkillsFlag)
+				{
+					var masterySkills = this._SkillRecordListRemoved.Where(sk => sk.skillName.EndsWith("Mastery.dbr", StringComparison.InvariantCultureIgnoreCase)).ToList();
+					this.SkillRecordList.RemoveAll(s => masterySkills.Contains(s));
+				}
+				else
+				{
+					this.SkillRecordList.RemoveAll(s => this._SkillRecordListRemoved.Contains(s));
+				}
 				this.Modified = true;
 			}
 			return isActive;

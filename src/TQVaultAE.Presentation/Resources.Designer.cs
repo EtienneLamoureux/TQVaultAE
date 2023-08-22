@@ -19,7 +19,7 @@ namespace TQVaultAE.Presentation {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -834,6 +834,15 @@ namespace TQVaultAE.Presentation {
         public static string CEMana {
             get {
                 return ResourceManager.GetString("CEMana", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Money.
+        /// </summary>
+        public static string CEMoney {
+            get {
+                return ResourceManager.GetString("CEMoney", resourceCulture);
             }
         }
         
@@ -3786,11 +3795,20 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reset Masteries.
+        ///   Looks up a localized string similar to Reset Masteries + Skills.
         /// </summary>
         public static string ResetMasteriesButton {
             get {
                 return ResourceManager.GetString("ResetMasteriesButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset Only Masteries.
+        /// </summary>
+        public static string ResetOnlyMasteriesButton {
+            get {
+                return ResourceManager.GetString("ResetOnlyMasteriesButton", resourceCulture);
             }
         }
         
@@ -4121,6 +4139,15 @@ namespace TQVaultAE.Presentation {
         public static string SackPanelMenuSeed {
             get {
                 return ResourceManager.GetString("SackPanelMenuSeed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change Item Seed (Force).
+        /// </summary>
+        public static string SackPanelMenuSeedForce {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSeedForce", resourceCulture);
             }
         }
         

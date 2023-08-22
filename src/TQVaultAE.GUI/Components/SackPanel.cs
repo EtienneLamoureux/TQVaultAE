@@ -853,7 +853,7 @@ public class SackPanel : Panel, IScalingControl
 	/// <param name="itemToCheck">Item the method is going to validate</param>
 	/// <returns></returns>
 	public bool IsItemValidForPlacement(Item itemToCheck)
-		=> this.sack.StashType != SackType.RelicVaultStash || itemToCheck.IsArtifact || itemToCheck.IsRelicOrCharm || itemToCheck.IsFormulae;
+	=> this.sack.StashType != SackType.RelicVaultStash || itemToCheck.IsArtifact || itemToCheck.IsRelicOrCharm || itemToCheck.IsFormulae;
 
 	/// <summary>
 	/// Cancels an item drag
@@ -1325,7 +1325,7 @@ public class SackPanel : Panel, IScalingControl
 		bool doStackRelics = dragItem.IsRelicOrCharm
 			&& itemUnderUs != null && itemUnderUs.IsRelicOrCharm
 			&& !itemUnderUs.IsRelicComplete && !dragItem.IsRelicComplete
-			&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
+					&& dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId)
 			&& !Config.UserSettings.Default.DisableAutoStacking;
 		if (doStackRelics)
 		{
@@ -1555,7 +1555,7 @@ public class SackPanel : Panel, IScalingControl
 						from location in this.DragInfo.AllAutoMoveLocations
 						where location != this.AutoMoveLocation
 						select location
-					).Distinct();
+				).Distinct();
 
 					// TQ original save
 					if (this.userContext.CurrentPlayer is not null && !this.userContext.CurrentPlayer.IsImmortalThrone)
@@ -1610,6 +1610,7 @@ public class SackPanel : Panel, IScalingControl
 					if (Config.UserSettings.Default.AllowItemEdit)
 					{
 						this.CustomContextMenu.Items.Add(Resources.SackPanelMenuSeed);
+						this.CustomContextMenu.Items.Add(Resources.SackPanelMenuSeedForce);
 
 						// Add option to complete a charm or relic if
 						// not already completed.
@@ -2497,7 +2498,7 @@ public class SackPanel : Panel, IScalingControl
 
 		return true;
 	}
-	
+
 	/// <summary>
 	/// Indicates whether the current player file can be edited.
 	/// </summary>
@@ -2810,12 +2811,12 @@ public class SackPanel : Panel, IScalingControl
 		if (focusedItem != null)
 		{
 			if (suppressMessage || Config.UserSettings.Default.SuppressWarnings || MessageBox.Show(
-				Resources.SackPanelDeleteMsg,
-				Resources.SackPanelDelete,
-				MessageBoxButtons.YesNo,
-				MessageBoxIcon.Warning,
-				MessageBoxDefaultButton.Button1,
-				RightToLeftOptions) == DialogResult.Yes)
+					Resources.SackPanelDeleteMsg,
+					Resources.SackPanelDelete,
+					MessageBoxButtons.YesNo,
+					MessageBoxIcon.Warning,
+					MessageBoxDefaultButton.Button1,
+					RightToLeftOptions) == DialogResult.Yes)
 			{
 				// remove item
 				this.Sack.RemoveItem(focusedItem);
@@ -3249,12 +3250,12 @@ public class SackPanel : Panel, IScalingControl
 				if (this.selectedItems != null)
 				{
 					if (Config.UserSettings.Default.SuppressWarnings || MessageBox.Show(
-						Resources.SackPanelDeleteMultiMsg,
-						Resources.SackPanelDeleteMulti,
-						MessageBoxButtons.YesNo,
-						MessageBoxIcon.Warning,
-						MessageBoxDefaultButton.Button1,
-						RightToLeftOptions) == DialogResult.Yes)
+							Resources.SackPanelDeleteMultiMsg,
+							Resources.SackPanelDeleteMulti,
+							MessageBoxButtons.YesNo,
+							MessageBoxIcon.Warning,
+							MessageBoxDefaultButton.Button1,
+							RightToLeftOptions) == DialogResult.Yes)
 					{
 						foreach (Item sackSelectedItem in this.selectedItems)
 							this.DeleteItem(sackSelectedItem, true);
@@ -3271,12 +3272,12 @@ public class SackPanel : Panel, IScalingControl
 				|| selectedMenuItem == Resources.SackPanelMenuRemoveRelic2)
 			{
 				if (Config.UserSettings.Default.SuppressWarnings || MessageBox.Show(
-					Resources.SackPanelRemoveRelicMsg,
-					Resources.SackPanelMenuRemoveRelic,
-					MessageBoxButtons.YesNo,
-					MessageBoxIcon.Question,
-					MessageBoxDefaultButton.Button1,
-					RightToLeftOptions) == DialogResult.Yes)
+						Resources.SackPanelRemoveRelicMsg,
+						Resources.SackPanelMenuRemoveRelic,
+						MessageBoxButtons.YesNo,
+						MessageBoxIcon.Question,
+						MessageBoxDefaultButton.Button1,
+						RightToLeftOptions) == DialogResult.Yes)
 				{
 					// Set DragInfo to focused item.
 					this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
@@ -3328,6 +3329,20 @@ public class SackPanel : Panel, IScalingControl
 				dlg.SelectedItem = focusedItem;
 				int origSeed = focusedItem.Seed;
 				dlg.ShowDialog();
+
+				// See if the seed was changed
+				if (focusedItem.Seed != origSeed)
+				{
+					// Tell the sack that it has been modified
+					this.Sack.IsModified = true;
+					this.InvalidateItemCacheItemTooltip(focusedItem);
+				}
+			}
+			else if (selectedMenuItem == Resources.SackPanelMenuSeedForce)
+			{
+				int origSeed = focusedItem.Seed;
+				focusedItem.Seed = Item.GenerateSeed();
+				focusedItem.IsModified = true;
 
 				// See if the seed was changed
 				if (focusedItem.Seed != origSeed)

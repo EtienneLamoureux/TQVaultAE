@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TQVaultAE.Domain.Entities
 {
@@ -160,5 +161,6 @@ namespace TQVaultAE.Domain.Entities
 			}
 			throw new ArgumentOutOfRangeException("Level does not exist or is not supported");
 		}
+		
 	}
 }

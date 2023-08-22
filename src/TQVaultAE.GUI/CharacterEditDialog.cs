@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Windows.Input;
+
 namespace TQVaultAE.GUI
 {
 	using System;
@@ -26,6 +29,7 @@ namespace TQVaultAE.GUI
 
 		private readonly ILogger Log;
 		private readonly ITranslationService TranslationService;
+		private static readonly char[] acceptedNumericChars = "1234567890\b".ToCharArray();
 
 		internal PlayerCollection PlayerCollection { get; set; }
 
@@ -41,13 +45,14 @@ namespace TQVaultAE.GUI
 
 			#region Apply custom font
 
-			this.ResetMasteriesScalingButton.Font = 
+			this.ResetMasteriesScalingButton.Font =
 			this.ResetAttributesScalingButton.Font =
-			this.ok.Font = 
+			this.ResetOnlyMasteriesScalingButton.Font =
+			this.ok.Font =
 			this.cancel.Font = FontService.GetFontLight(12F);
 
 			this.Font = FontService.GetFontLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			
+
 			new[] {
 				this.attribGroupBox,
 				this.levelingGroupBox,
@@ -64,9 +69,15 @@ namespace TQVaultAE.GUI
 			this.cancel.Text = Resources.GlobalCancel;
 			this.ok.Text = Resources.GlobalOK;
 			this.ResetMasteriesScalingButton.Text = Resources.ResetMasteriesButton;
+			this.ResetOnlyMasteriesScalingButton.Text = Resources.ResetOnlyMasteriesButton;
 			this.ResetAttributesScalingButton.Text = Resources.ResetAttributesButton;
 		}
 
+		private void SetDifficultly()
+		{
+			var pd = PlayerCollection.PlayerInfo.DifficultyUnlocked;
+			difficultlyComboBox.SelectedIndex = Enumerable.Range(0, 2).Contains(pd) ? pd : 0;
+		}
 
 		/// <summary>
 		/// Cancel button handler
@@ -75,10 +86,6 @@ namespace TQVaultAE.GUI
 		/// <param name="e">EventArgs data</param>
 		private void CancelButton_Click(object sender, EventArgs e) => this.Close();
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="playerInfo"></param>
 		private void UpdateMoneySituation(PlayerInfo playerInfoSrc, PlayerInfo playerInfoDst)
 		{
 			if (playerInfoDst.DifficultyUnlocked != playerInfoSrc.DifficultyUnlocked)
@@ -110,6 +117,7 @@ namespace TQVaultAE.GUI
 		{
 			if (!Config.UserSettings.Default.AllowCharacterEdit) return;
 			if (PlayerCollection.PlayerInfo == null) return;
+
 			try
 			{
 				var playerInfo = new PlayerInfo();
@@ -123,11 +131,11 @@ namespace TQVaultAE.GUI
 					playerInfo.MasteriesAllowed = 2;
 
 				playerInfo.CurrentXP = int.Parse(xpTextBox.Text);
-				playerInfo.Money = PlayerCollection.PlayerInfo.Money > 0 ? PlayerCollection.PlayerInfo.Money : 0;
+				playerInfo.Money = Math.Max(0, Math.Abs(int.Parse(moneyTextBox.Text)));
 
 				if (difficultlyComboBox.Enabled)
 					playerInfo.DifficultyUnlocked = difficultlyComboBox.SelectedIndex;
-				else 
+				else
 					playerInfo.DifficultyUnlocked = PlayerCollection.PlayerInfo.DifficultyUnlocked;
 
 				playerInfo.SkillPoints = Convert.ToInt32(skillPointsNumericUpDown.Value);
@@ -158,6 +166,7 @@ namespace TQVaultAE.GUI
 				}
 
 				playerInfo.MasteriesResetRequiered = masteriesResetRequired;
+				playerInfo.ResetMasteryAndKeepSkillsFlag = this._OnlyMasteriesResetRequiered;
 
 				if (playerInfo.MustResetMasteries)
 				{
@@ -167,7 +176,9 @@ namespace TQVaultAE.GUI
 					playerInfo.SkillPoints += playerInfo.ReleasedSkillPoints;
 					playerInfo.Class = string.Empty;
 				}
+
 				UpdateMoneySituation(PlayerCollection.PlayerInfo, playerInfo);
+
 				PlayerCollectionProvider.CommitPlayerInfo(PlayerCollection, playerInfo);
 
 				this.Close();
@@ -180,6 +191,7 @@ namespace TQVaultAE.GUI
 		}
 
 		private bool _loaded = false;
+		private bool _OnlyMasteriesResetRequiered;
 
 		private struct TagData
 		{
@@ -199,6 +211,7 @@ namespace TQVaultAE.GUI
 			IntelligenceLabel.Text = Resources.CEIntelligence;
 			healthLabel.Text = Resources.CEHealth;
 			manaLabel.Text = Resources.CEMana;
+			moneyLabel.Text = Resources.CEMoney;
 			levelLabel.Text = Resources.CELevel;
 			xpLabel.Text = Resources.CEXp;
 			attributeLabel.Text = Resources.CEAttributePoints;
@@ -267,6 +280,8 @@ namespace TQVaultAE.GUI
 			manacUpDown.Value = PlayerCollection.PlayerInfo.BaseMana;
 			manacUpDown.Tag = attrHMTag;
 
+			moneyTextBox.Text = PlayerCollection.PlayerInfo.Money.ToString();
+
 			if (PlayerCollection.PlayerInfo.CurrentLevel > Convert.ToInt32(levelNumericUpDown.Maximum))
 				levelNumericUpDown.Maximum = PlayerCollection.PlayerInfo.CurrentLevel;
 
@@ -288,6 +303,8 @@ namespace TQVaultAE.GUI
 			difficultlyComboBox.Items.Add(new DifficultData { Text = TranslationService.TranslateDifficulty(0), Id = 0 });
 			difficultlyComboBox.Items.Add(new DifficultData { Text = TranslationService.TranslateDifficulty(1), Id = 1 });
 			difficultlyComboBox.Items.Add(new DifficultData { Text = TranslationService.TranslateDifficulty(2), Id = 2 });
+
+			SetDifficultly();
 
 			levelingCheckBox.Checked = false;
 
@@ -373,20 +390,21 @@ namespace TQVaultAE.GUI
 			if (sender == null) return;
 
 			var chkbx = (CheckBox)sender;
-			if (chkbx.Checked)
-			{
-				this.difficultlyComboBox.Enabled = true;
-				this.levelNumericUpDown.Enabled = true;
-			}
-			else
-			{
-				this.difficultlyComboBox.Enabled = false;
-				this.levelNumericUpDown.Enabled = false;
-			}
+
+			this.difficultlyComboBox.Enabled = chkbx.Checked;
+			this.levelNumericUpDown.Enabled = chkbx.Checked;
+			this.attributeNumericUpDown.Enabled = chkbx.Checked;
+			this.skillPointsNumericUpDown.Enabled = chkbx.Checked;
 		}
 
 		private void ResetMasteriesScalingButton_Click(object sender, EventArgs e)
 		{
+			UpdatePlayerInfo(masteriesResetRequired: true);
+		}
+
+		private void ResetOnlyMasteriesScalingButton_Click(object sender, EventArgs e)
+		{
+			if (!_OnlyMasteriesResetRequiered) _OnlyMasteriesResetRequiered = true;
 			UpdatePlayerInfo(masteriesResetRequired: true);
 		}
 
@@ -400,6 +418,12 @@ namespace TQVaultAE.GUI
 			// Init difficulty combo
 			if (levelingCheckBox.Checked && difficultlyComboBox.Enabled)
 				difficultlyComboBox.SelectedIndex = PlayerCollection.PlayerInfo.DifficultyUnlocked;
+		}
+
+		private void moneyTextBox_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			if (!acceptedNumericChars.Contains(e.KeyChar))
+				e.Handled = true;
 		}
 	}
 }
