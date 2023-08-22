@@ -642,13 +642,13 @@ Are you sure you want to delete this item?</value>
     <value>Clear Selection</value>
   </data>
 	<data name="SackPanelMenuCopy" xml:space="preserve">
-    <value>Copy Item</value>
+    <value>Copy Item (Randomized seed)</value>
   </data>
 	<data name="SackPanelMenuDelete" xml:space="preserve">
     <value>Delete</value>
   </data>
 	<data name="SackPanelMenuDuplicate" xml:space="preserve">
-    <value>Duplicate Item</value>
+    <value>Duplicate Item (Seed unchanged)</value>
   </data>
 	<data name="SackPanelMenuMoveTo" xml:space="preserve">
     <value>Move Item To</value>
@@ -2077,5 +2077,8 @@ You still have to close TQVaultAE to apply your changes.
   </data>
 	<data name="GlobalUnArchiveAll" xml:space="preserve">
     <value>Unarchive all</value>
+  </data>
+	<data name="SackPanelMenuSeedForce" xml:space="preserve">
+    <value>Change Item Seed (Force)</value>
   </data>
 </root>

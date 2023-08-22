@@ -4026,7 +4026,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Copy Item.
+        ///   Looks up a localized string similar to Copy Item (Randomized seed).
         /// </summary>
         public static string SackPanelMenuCopy {
             get {
@@ -4044,7 +4044,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Duplicate Item.
+        ///   Looks up a localized string similar to Duplicate Item (Seed unchanged).
         /// </summary>
         public static string SackPanelMenuDuplicate {
             get {
@@ -4121,6 +4121,15 @@ namespace TQVaultAE.Presentation {
         public static string SackPanelMenuSeed {
             get {
                 return ResourceManager.GetString("SackPanelMenuSeed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change Item Seed (Force).
+        /// </summary>
+        public static string SackPanelMenuSeedForce {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSeedForce", resourceCulture);
             }
         }
         

@@ -622,13 +622,13 @@ Voulez-vous vraiment supprimer cet objet ?</value>
     <value>Annuler la sélection</value>
   </data>
 	<data name="SackPanelMenuCopy" xml:space="preserve">
-    <value>Copier l'objet</value>
+    <value>Copier l'objet (Seed aléatoire)</value>
   </data>
 	<data name="SackPanelMenuDelete" xml:space="preserve">
     <value>Supprimer</value>
   </data>
 	<data name="SackPanelMenuDuplicate" xml:space="preserve">
-    <value>Reproduire l'objet</value>
+    <value>Reproduire l'objet (Seed identique)</value>
   </data>
 	<data name="SackPanelMenuMoveTo" xml:space="preserve">
     <value>Déplacer l'objet vers</value>
@@ -1571,5 +1571,8 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   </data>
 	<data name="GlobalUnArchiveAll" xml:space="preserve">
     <value>Désarchiver tout</value>
+  </data>
+	<data name="SackPanelMenuSeedForce" xml:space="preserve">
+    <value>Changer le N° aléatoire ... (Forcer)</value>
   </data>
 </root>
