@@ -63,6 +63,10 @@ public interface IGamePathService
 	string GetNameFromFile(string filename);
 
 	/// <summary>
+	/// <c>true</c> when <see cref="ResolveGamePath"/> found an IT or AE installation
+	/// </summary>
+	public bool GameInstallDirectoryIsITOrAE { get; }
+	/// <summary>
 	/// Gets or sets the Immortal Throne game path.
 	/// </summary>
 	string GamePathTQIT { get; set; }

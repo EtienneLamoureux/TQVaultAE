@@ -107,7 +107,7 @@ namespace TQ.SaveFilesExplorer
 			// Detecting local players saves 
 			List<ToolStripItem> items = new string[] { TQPath.SaveDirectoryTQIT, TQPath.SaveDirectoryTQ }
 				.Where(p => !string.IsNullOrWhiteSpace(p))
-				.SelectMany(p => Directory.GetDirectories(p))
+				.SelectMany(p => Directory.GetDirectories(p, "_*"))
 				.Select(d =>
 				{
 					var itm = new ToolStripMenuItem($"{(d.StartsWith(TQPath.SaveDirectoryTQIT) ? "TQIT" : "TQ")} : {Path.GetFileName(d)}") { Tag = d, };
