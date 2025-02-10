@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -112,6 +113,8 @@ public class GamePathServiceWin : IGamePathService
 	/// Name of the vault folder
 	/// </summary>
 	private string _VaultFolder;
+
+	public bool GamePathAreDifferent => GamePathTQIT != GamePathTQ;
 
 	/// <summary>
 	/// Gets the Immortal Throne Character save folder.
@@ -445,6 +448,8 @@ public class GamePathServiceWin : IGamePathService
 	public string PlayerStashFileNameG => PLAYERSTASHFILENAMEG;
 
 	public string PlayerSettingsFileName => PLAYERSETTINGSFILENAME;
+	
+	public GameType GameType { get; set; }
 
 	/// <summary>
 	/// Gets the file name and path for a vault.
@@ -599,7 +604,8 @@ public class GamePathServiceWin : IGamePathService
 			string steamPath = ReadRegistryKey(Microsoft.Win32.Registry.CurrentUser, registryPath).Replace("/", "\\");
 
 			string fullPath = Path.Combine(steamPath, steamTQPath);
-			if (Directory.Exists(fullPath))
+			string fullPathExe = Path.Combine(fullPath, @"TQ.exe");
+			if (File.Exists(fullPathExe))
 				titanQuestGamePath = fullPath;
 			else
 			{
@@ -616,7 +622,8 @@ public class GamePathServiceWin : IGamePathService
 					{
 						if (vdfPathRegex.Match(line.Trim()) is { Success: true } match)
 						{
-							fullPath = Path.Combine(match.Groups[1].Value, steamTQPath);
+							var vdfPathValue = match.Groups[1].Value.Replace(@"\\", @"\");
+							fullPath = Path.Combine(vdfPathValue, steamTQPath);
 							if (Directory.Exists(fullPath))
 							{
 								titanQuestGamePath = fullPath;
@@ -635,7 +642,7 @@ public class GamePathServiceWin : IGamePathService
 						{
 							// Match "path"
 							if (regExPath.Match(line) is { Success: true } match)
-								steamPath = match.Groups["path"].Value;
+								steamPath = match.Groups["path"].Value.Replace(@"\\", @"\");// Backslashes ares escaped in this file
 
 							// Match gameId
 							if (line.Contains(gameIdMarkup))

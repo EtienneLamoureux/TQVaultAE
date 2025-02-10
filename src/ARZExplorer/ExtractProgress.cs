@@ -117,7 +117,7 @@ namespace ArzExplorer
 			try
 			{
 				bool canceled = false;
-				foreach (RecordId recordID in arzProv.GetKeyTable(this.MainForm.SelectedFile.ARZFile))
+				foreach (RecordId recordID in this.MainForm.SelectedFile.ARZFile.Keys)
 				{
 					if (canceled)
 						break;
@@ -160,7 +160,7 @@ namespace ArzExplorer
 			{
 				bool canceled = false;
 
-				foreach (RecordId recordID in arcProv.GetKeyTable(this.MainForm.SelectedFile.ARCFile))
+				foreach (RecordId recordID in this.MainForm.SelectedFile.ARCFile.Keys)
 				{
 					if (canceled)
 						break;

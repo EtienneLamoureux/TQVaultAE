@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-	<!-- 
+  <!-- 
     Microsoft ResX Schema 
     
     Version 2.0
@@ -59,65 +59,65 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-		<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-		<xsd:element name="root" msdata:IsDataSet="true">
-			<xsd:complexType>
-				<xsd:choice maxOccurs="unbounded">
-					<xsd:element name="metadata">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" />
-							</xsd:sequence>
-							<xsd:attribute name="name" use="required" type="xsd:string" />
-							<xsd:attribute name="type" type="xsd:string" />
-							<xsd:attribute name="mimetype" type="xsd:string" />
-							<xsd:attribute ref="xml:space" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="assembly">
-						<xsd:complexType>
-							<xsd:attribute name="alias" type="xsd:string" />
-							<xsd:attribute name="name" type="xsd:string" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="data">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-							<xsd:attribute ref="xml:space" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="resheader">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" />
-						</xsd:complexType>
-					</xsd:element>
-				</xsd:choice>
-			</xsd:complexType>
-		</xsd:element>
-	</xsd:schema>
-	<resheader name="resmimetype">
-		<value>text/microsoft-resx</value>
-	</resheader>
-	<resheader name="version">
-		<value>2.0</value>
-	</resheader>
-	<resheader name="reader">
-		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<resheader name="writer">
-		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<data name="AboutDescription" xml:space="preserve">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutDescription" xml:space="preserve">
     <value>TQVault by bman654 (wickedsoul_@yahoo.com) 
 Help on Item Stats by SadYc (sadyc1@gmail.com)
 Additional features by 
@@ -131,287 +131,287 @@ Russian translation by Xelat.
 Spanish translation by Kurrus.
 </value>
   </data>
-	<data name="AboutText" xml:space="preserve">
+  <data name="AboutText" xml:space="preserve">
     <value>Про программу {0}</value>
   </data>
-	<data name="AboutVersion" xml:space="preserve">
+  <data name="AboutVersion" xml:space="preserve">
     <value>Версия {0}</value>
   </data>
-	<data name="ARZExtractBtnExtract" xml:space="preserve">
+  <data name="ARZExtractBtnExtract" xml:space="preserve">
     <value>Распаковать</value>
   </data>
-	<data name="ARZExtractCreateFolder" xml:space="preserve">
+  <data name="ARZExtractCreateFolder" xml:space="preserve">
     <value>{0} не существует. Хотите создать её сейчас?</value>
   </data>
-	<data name="ARZExtractCreateFolder2" xml:space="preserve">
+  <data name="ARZExtractCreateFolder2" xml:space="preserve">
     <value>Создать папку?</value>
   </data>
-	<data name="ARZExtractCreateFolderIT" xml:space="preserve">
+  <data name="ARZExtractCreateFolderIT" xml:space="preserve">
     <value>{0} не существует для базы данных IT. Хотите создать её сейчас?</value>
   </data>
-	<data name="ARZExtractDestination" xml:space="preserve">
+  <data name="ARZExtractDestination" xml:space="preserve">
     <value>Выберите конечную директорию для распакованных записей базы данных.</value>
   </data>
-	<data name="ARZExtractFileDest" xml:space="preserve">
+  <data name="ARZExtractFileDest" xml:space="preserve">
     <value>Вы должны указать не файл, а директорию!</value>
   </data>
-	<data name="ARZExtractLabel1" xml:space="preserve">
+  <data name="ARZExtractLabel1" xml:space="preserve">
     <value>В данный момент не существует способа распаковать все записи базы данных игры сразу. Так же сейчас существует баг в утилите игры Art Manager, который уничтожает значения в массивах когда вы извлекаете записи по одной. Используя эту утилиту вы можете распаковать все записи сразу и все записи будут распакованы корректно.</value>
   </data>
-	<data name="ARZExtractLabel2" xml:space="preserve">
+  <data name="ARZExtractLabel2" xml:space="preserve">
     <value>После того, как вы распакуете записи, просто скопируйте необходимые записи, которые вы хотите использовать в моде, в папку вашего мода.</value>
   </data>
-	<data name="ARZExtractLabel3" xml:space="preserve">
+  <data name="ARZExtractLabel3" xml:space="preserve">
     <value>Укажите конечную директорию:</value>
   </data>
-	<data name="ARZExtractLabel4" xml:space="preserve">
+  <data name="ARZExtractLabel4" xml:space="preserve">
     <value>Укажите конечную директорию для файлов базы данных IT:</value>
   </data>
-	<data name="ARZExtractLabel5" xml:space="preserve">
+  <data name="ARZExtractLabel5" xml:space="preserve">
     <value>Если не задан путь для распаковки базы данных TQ и IT, будет использована общая директория. Файлы IT перезапишут файлы TQ если будут конфликты, однако вы можете указать разные папки чтобы избежать перезаписи.</value>
   </data>
-	<data name="ARZExtractText" xml:space="preserve">
+  <data name="ARZExtractText" xml:space="preserve">
     <value>Распаковать database.arz</value>
   </data>
-	<data name="ARZExtractValidDest" xml:space="preserve">
+  <data name="ARZExtractValidDest" xml:space="preserve">
     <value>Вы должны указать существующую директорию назначения.</value>
   </data>
-	<data name="ARZProgressCancelledText" xml:space="preserve">
+  <data name="ARZProgressCancelledText" xml:space="preserve">
     <value>Распаковка отменена.</value>
   </data>
-	<data name="ARZProgressCompleteText" xml:space="preserve">
+  <data name="ARZProgressCompleteText" xml:space="preserve">
     <value>Распаковка завершена.</value>
   </data>
-	<data name="ARZProgressFailedText" xml:space="preserve">
+  <data name="ARZProgressFailedText" xml:space="preserve">
     <value>Распаковка не удалась.</value>
   </data>
-	<data name="ARZProgressLabel" xml:space="preserve">
+  <data name="ARZProgressLabel" xml:space="preserve">
     <value>Извлечение {0} ...</value>
   </data>
-	<data name="ARZProgressLabel1" xml:space="preserve">
+  <data name="ARZProgressLabel1" xml:space="preserve">
     <value>Распаковка</value>
   </data>
-	<data name="ARZProgressText" xml:space="preserve">
+  <data name="ARZProgressText" xml:space="preserve">
     <value>Распаковка database.arz...</value>
   </data>
-	<data name="CmdlineUsage" xml:space="preserve">
+  <data name="CmdlineUsage" xml:space="preserve">
     <value>Ошибка при обработке аргументов командной строки: {0}
 Применение: TQVault [player name] [/mod:&lt;mod name&gt;]</value>
   </data>
-	<data name="DataDefaultPath" xml:space="preserve">
+  <data name="DataDefaultPath" xml:space="preserve">
     <value>Стандартный путь к хранилищам</value>
   </data>
-	<data name="DataDefaultPathMsg" xml:space="preserve">
+  <data name="DataDefaultPathMsg" xml:space="preserve">
     <value>Путь к хранилищам не указан.
 Используются стандартные значения.
 Пожалуйста укажите путь к хранилищам в окне конфигурации.</value>
   </data>
-	<data name="DataLink" xml:space="preserve">
+  <data name="DataLink" xml:space="preserve">
     <value>Пожалуйста обновите путь к хранилищам</value>
   </data>
-	<data name="DataLinkMsg" xml:space="preserve">
+  <data name="DataLinkMsg" xml:space="preserve">
     <value>Пожалуйста обновите путь к хранилищам в конфигурации чтобы отображать ссылку.</value>
   </data>
-	<data name="Form1BadLanguage" xml:space="preserve">
+  <data name="Form1BadLanguage" xml:space="preserve">
     <value>Это может быть вызвано неверными настройками языка или пути к игре. Перезапустить TQVault?</value>
   </data>
-	<data name="Form1bNext" xml:space="preserve">
+  <data name="Form1bNext" xml:space="preserve">
     <value>Войти</value>
   </data>
-	<data name="Form1ErrorLoadingResources" xml:space="preserve">
+  <data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>Ошибка загрузки ресурсов</value>
   </data>
-	<data name="Form1Label3" xml:space="preserve">
+  <data name="Form1Label3" xml:space="preserve">
     <value>Волшебное место, где вы можете хранить ваши мощные артефакты, которые вам понадобятся для спасения мира от Титанов.</value>
   </data>
-	<data name="Form1LblPleaseWait" xml:space="preserve">
+  <data name="Form1LblPleaseWait" xml:space="preserve">
     <value>Загрузка игровых ресурсов. Пожалуйста подождите...</value>
   </data>
-	<data name="Form1Text" xml:space="preserve">
+  <data name="Form1Text" xml:space="preserve">
     <value>Хранилище предметов Titan Quest</value>
   </data>
-	<data name="GlobalAbout" xml:space="preserve">
+  <data name="GlobalAbout" xml:space="preserve">
     <value>Авторы</value>
   </data>
-	<data name="GlobalBrowse" xml:space="preserve">
+  <data name="GlobalBrowse" xml:space="preserve">
     <value>Обзор...</value>
   </data>
-	<data name="GlobalCancel" xml:space="preserve">
+  <data name="GlobalCancel" xml:space="preserve">
     <value>Отмена</value>
   </data>
-	<data name="GlobalError" xml:space="preserve">
+  <data name="GlobalError" xml:space="preserve">
     <value>Ошибка</value>
   </data>
-	<data name="GlobalExit" xml:space="preserve">
+  <data name="GlobalExit" xml:space="preserve">
     <value>Выход</value>
   </data>
-	<data name="GlobalMenuBag" xml:space="preserve">
+  <data name="GlobalMenuBag" xml:space="preserve">
     <value>Сумка #{0}</value>
     <comment>This entry must have the GlobalMenuBagDelimiter or it will break the item and bag move code.</comment>
   </data>
-	<data name="GlobalMenuBagDelimiter" xml:space="preserve">
+  <data name="GlobalMenuBagDelimiter" xml:space="preserve">
     <value>#</value>
     <comment>Used with GlobalMenuBag to signify bag number in menus.</comment>
   </data>
-	<data name="GlobalOK" xml:space="preserve">
+  <data name="GlobalOK" xml:space="preserve">
     <value>OK</value>
   </data>
-	<data name="GlobalTransferStash" xml:space="preserve">
+  <data name="GlobalTransferStash" xml:space="preserve">
     <value>Панель передачи</value>
   </data>
-	<data name="GlobalTrash" xml:space="preserve">
+  <data name="GlobalTrash" xml:space="preserve">
     <value>Корзина</value>
   </data>
-	<data name="ItemIT" xml:space="preserve">
+  <data name="ItemIT" xml:space="preserve">
     <value>Предмет Immortal Throne</value>
   </data>
-	<data name="ItemPropertiesCheckBoxLabelFilterExtraInfo" xml:space="preserve">
+  <data name="ItemPropertiesCheckBoxLabelFilterExtraInfo" xml:space="preserve">
     <value>Фильтровать дополнительную информацию</value>
   </data>
-	<data name="ItemPropertiesLabelPrefixProperties" xml:space="preserve">
+  <data name="ItemPropertiesLabelPrefixProperties" xml:space="preserve">
     <value>Свойства префикса</value>
   </data>
-	<data name="ItemPropertiesLabelBaseItemProperties" xml:space="preserve">
+  <data name="ItemPropertiesLabelBaseItemProperties" xml:space="preserve">
     <value>Базовые свойства предмета</value>
   </data>
-	<data name="ItemPropertiesLabelSuffixProperties" xml:space="preserve">
+  <data name="ItemPropertiesLabelSuffixProperties" xml:space="preserve">
     <value>Свойства суффикса</value>
   </data>
-	<data name="ItemPropertiesText" xml:space="preserve">
+  <data name="ItemPropertiesText" xml:space="preserve">
     <value>Свойства предмета</value>
   </data>
-	<data name="ItemQuest" xml:space="preserve">
+  <data name="ItemQuest" xml:space="preserve">
     <value>(Квестовый предмет)</value>
   </data>
-	<data name="ItemRelicBonus" xml:space="preserve">
+  <data name="ItemRelicBonus" xml:space="preserve">
     <value>(Сборный бонус: {0})</value>
   </data>
-	<data name="ItemRelicCompleted" xml:space="preserve">
+  <data name="ItemRelicCompleted" xml:space="preserve">
     <value>(Собрано)</value>
   </data>
-	<data name="ItemSeed" xml:space="preserve">
+  <data name="ItemSeed" xml:space="preserve">
     <value>Сид предмета: {0} (0x{0:X8}) ({1:p3})</value>
   </data>
-	<data name="ItemWith" xml:space="preserve">
+  <data name="ItemWith" xml:space="preserve">
     <value>с</value>
   </data>
-	<data name="MainForm2ndVault" xml:space="preserve">
+  <data name="MainForm2ndVault" xml:space="preserve">
     <value>2-е хранилище:</value>
   </data>
-	<data name="MainFormBtnConfigure" xml:space="preserve">
+  <data name="MainFormBtnConfigure" xml:space="preserve">
     <value>Настройки</value>
   </data>
-	<data name="MainFormBtnExtract" xml:space="preserve">
+  <data name="MainFormBtnExtract" xml:space="preserve">
     <value>Распаковать database.arz ...</value>
   </data>
-	<data name="MainFormBtnPanelSelect" xml:space="preserve">
+  <data name="MainFormBtnPanelSelect" xml:space="preserve">
     <value>Отображать хранилище</value>
   </data>
-	<data name="MainFormBtnShowPlayer" xml:space="preserve">
+  <data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>Отображать игрока</value>
   </data>
-	<data name="MainFormCustomMapLabel" xml:space="preserve">
+  <data name="MainFormCustomMapLabel" xml:space="preserve">
     <value>Пользовательская карта {0}</value>
   </data>
-	<data name="MainFormDatabaseError" xml:space="preserve">
+  <data name="MainFormDatabaseError" xml:space="preserve">
     <value>Ошибка распаковки базы данных</value>
   </data>
-	<data name="MainFormHoldingItem" xml:space="preserve">
+  <data name="MainFormHoldingItem" xml:space="preserve">
     <value>Вы сейчас удерживаете предмет.
 Положите его куда-нибудь перед выходом.</value>
   </data>
-	<data name="MainFormHoldingItem2" xml:space="preserve">
+  <data name="MainFormHoldingItem2" xml:space="preserve">
     <value>Пожалуйста положите предмет.</value>
   </data>
-	<data name="MainFormLabel1" xml:space="preserve">
+  <data name="MainFormLabel1" xml:space="preserve">
     <value>Персонаж:</value>
   </data>
-	<data name="MainFormLabel2" xml:space="preserve">
+  <data name="MainFormLabel2" xml:space="preserve">
     <value>Хранилище:</value>
   </data>
-	<data name="MainFormLanguageChanged" xml:space="preserve">
+  <data name="MainFormLanguageChanged" xml:space="preserve">
     <value>Язык игры изменён</value>
   </data>
-	<data name="MainFormLanguageChangedMsg" xml:space="preserve">
+  <data name="MainFormLanguageChangedMsg" xml:space="preserve">
     <value>Настройки языка игры были изменены.
 
 Необходимо перезапустить TQVault чтобы изменения вступили в силу.
 Хотите перезапустить TQVault сейчас?</value>
   </data>
-	<data name="MainFormMaintainVault" xml:space="preserve">
+  <data name="MainFormMaintainVault" xml:space="preserve">
     <value>Управление файлами хранилищ...</value>
   </data>
-	<data name="MainFormMapsChanged" xml:space="preserve">
+  <data name="MainFormMapsChanged" xml:space="preserve">
     <value>Настройки пользовательских карт изменены</value>
   </data>
-	<data name="MainFormMapsChangedMsg" xml:space="preserve">
+  <data name="MainFormMapsChangedMsg" xml:space="preserve">
     <value>Настройки пользовательских карт были изменены.
 
 Необходимо перезапустить TQVault чтобы изменения вступили в силу.
 Хотите перезапустить TQVault сейчас?</value>
   </data>
-	<data name="MainFormNoCharacters" xml:space="preserve">
+  <data name="MainFormNoCharacters" xml:space="preserve">
     <value>Не найдено персонажей TQ</value>
   </data>
-	<data name="MainFormNoCustomChars" xml:space="preserve">
+  <data name="MainFormNoCustomChars" xml:space="preserve">
     <value>Не обнаружено персонажей пользовательских карт</value>
   </data>
-	<data name="MainFormNoItemQualityFound" xml:space="preserve">
+  <data name="MainFormNoItemQualityFound" xml:space="preserve">
     <value>Не найдено предметов типа '{0}'
 и качества '{1}'.</value>
   </data>
-	<data name="MainFormNoItemsFound" xml:space="preserve">
+  <data name="MainFormNoItemsFound" xml:space="preserve">
     <value>Не найдено предметов по запросу '{0}'.</value>
   </data>
-	<data name="MainFormNoItemsFound2" xml:space="preserve">
+  <data name="MainFormNoItemsFound2" xml:space="preserve">
     <value>Предметов не найдено</value>
   </data>
-	<data name="MainFormNoItemTypesFound" xml:space="preserve">
+  <data name="MainFormNoItemTypesFound" xml:space="preserve">
     <value>Не найдено предметов типа '{0}'.</value>
   </data>
-	<data name="MainFormPathsChanged" xml:space="preserve">
+  <data name="MainFormPathsChanged" xml:space="preserve">
     <value>Путь к игре изменён</value>
   </data>
-	<data name="MainFormPathsChangedMsg" xml:space="preserve">
+  <data name="MainFormPathsChangedMsg" xml:space="preserve">
     <value>Путь к игре был изменён.
 
 Необходимо перезапустить TQVault чтобы изменения вступили в силу.
 Хотите перезапустить TQVault сейчас?</value>
   </data>
-	<data name="MainFormPlayerReadError" xml:space="preserve">
+  <data name="MainFormPlayerReadError" xml:space="preserve">
     <value>Ошибка чтения файла данных игрока</value>
   </data>
-	<data name="MainFormQuit" xml:space="preserve">
+  <data name="MainFormQuit" xml:space="preserve">
     <value>Вы действительно хотите выйти?</value>
   </data>
-	<data name="MainFormReadError" xml:space="preserve">
+  <data name="MainFormReadError" xml:space="preserve">
     <value>Ошибка чтения {0}
 Вы уверены что это правильный файл?
 
 {1}</value>
   </data>
-	<data name="MainFormSaveError" xml:space="preserve">
+  <data name="MainFormSaveError" xml:space="preserve">
     <value>Ошибка сохранения данных для '{0}'</value>
   </data>
-	<data name="MainFormSelectCharacter" xml:space="preserve">
+  <data name="MainFormSelectCharacter" xml:space="preserve">
     <value>Выберите персонажа</value>
   </data>
-	<data name="MainFormSelectVault" xml:space="preserve">
+  <data name="MainFormSelectVault" xml:space="preserve">
     <value>Выберите хранилище</value>
   </data>
-	<data name="MainFormSettingsChanged" xml:space="preserve">
+  <data name="MainFormSettingsChanged" xml:space="preserve">
     <value>Настройки игры изменены</value>
   </data>
-	<data name="MainFormSettingsChangedMsg" xml:space="preserve">
+  <data name="MainFormSettingsChangedMsg" xml:space="preserve">
     <value>Настройки игры успешно изменены.
 
 Необходимо перезапустить TQVault чтобы изменения вступили в силу.
 Хотите перезапустить TQVault сейчас?</value>
   </data>
-	<data name="MainFormStartVaultMon" xml:space="preserve">
+  <data name="MainFormStartVaultMon" xml:space="preserve">
     <value>Хотите запустить TQVaultMon?</value>
   </data>
-	<data name="MainFormStartVaultMonMsg" xml:space="preserve">
+  <data name="MainFormStartVaultMonMsg" xml:space="preserve">
     <value>Вы изменили инвентарь одного из ваших персонажей.
 Titan Quest увидит это, посчитает что ваш персонаж испорчен
 и не позволит вам загрузить его.
@@ -426,22 +426,22 @@ Titan Quest и загружать всех персонажей, которые 
 
 Хотите запустить TQVaultMon сейчас?</value>
   </data>
-	<data name="MainFormStashReadError" xml:space="preserve">
+  <data name="MainFormStashReadError" xml:space="preserve">
     <value>Ошибка чтения файла погонщика</value>
   </data>
-	<data name="MainFormTrashItems" xml:space="preserve">
+  <data name="MainFormTrashItems" xml:space="preserve">
     <value>В корзине находится {0} предметов.
 Если вы выйдете, эти предметы будут ПОТЕРЯНЫ НАВСЕГДА.
 
 Вы действительно хотите избавиться от этих предметов?</value>
   </data>
-	<data name="MainFormUnableToStartVaultMon" xml:space="preserve">
+  <data name="MainFormUnableToStartVaultMon" xml:space="preserve">
     <value>Невозможно запустить TQVaultMon</value>
   </data>
-	<data name="MainFormVaultMonError" xml:space="preserve">
+  <data name="MainFormVaultMonError" xml:space="preserve">
     <value>Ошибка при попытке запуска TQVaultMon</value>
   </data>
-	<data name="MainFormVaultMonMsg" xml:space="preserve">
+  <data name="MainFormVaultMonMsg" xml:space="preserve">
     <value>Мы не можем проверить запущен ли TQVaultMon.
 Скорее всего TQVaultMon не работает.
 Из-за того, что вы изменили одного из ваших персонажей, TQ будет считать что они 
@@ -453,231 +453,231 @@ Titan Quest и загружать всех персонажей, которые 
 Текст ошибки приведён ниже
 </value>
   </data>
-	<data name="MaintenanceBadChars" xml:space="preserve">
+  <data name="MaintenanceBadChars" xml:space="preserve">
     <value>Вы используете неподходящих персонажей.</value>
   </data>
-	<data name="MaintenanceBadName" xml:space="preserve">
+  <data name="MaintenanceBadName" xml:space="preserve">
     <value>Вы должны ввести название нового хранилища</value>
   </data>
-	<data name="MaintenanceCopy" xml:space="preserve">
+  <data name="MaintenanceCopy" xml:space="preserve">
     <value>Пожалуйста, выберите источник из выпадающего списка
  и затем введите новое имя в поле снизу.</value>
   </data>
-	<data name="MaintenanceDelete" xml:space="preserve">
+  <data name="MaintenanceDelete" xml:space="preserve">
     <value>Пожалуйста, выберите удаляемое хранилище из выпадающего списка.</value>
   </data>
-	<data name="MaintenanceDuplicate" xml:space="preserve">
+  <data name="MaintenanceDuplicate" xml:space="preserve">
     <value>Дубликировать название хранилища</value>
   </data>
-	<data name="MaintenanceExists" xml:space="preserve">
+  <data name="MaintenanceExists" xml:space="preserve">
     <value>Хранилище под названием {0} уже существует.</value>
   </data>
-	<data name="MaintenanceGroup" xml:space="preserve">
+  <data name="MaintenanceGroup" xml:space="preserve">
     <value>Выберите функцию</value>
   </data>
-	<data name="MaintenanceInstructions" xml:space="preserve">
+  <data name="MaintenanceInstructions" xml:space="preserve">
     <value>Инструкции</value>
   </data>
-	<data name="MaintenanceInvalidName" xml:space="preserve">
+  <data name="MaintenanceInvalidName" xml:space="preserve">
     <value>Недопустимое название хранилища</value>
   </data>
-	<data name="MaintenanceInvalidSourceName" xml:space="preserve">
+  <data name="MaintenanceInvalidSourceName" xml:space="preserve">
     <value>Недопустимое имя исходного хранилища</value>
   </data>
-	<data name="MaintenanceNew" xml:space="preserve">
+  <data name="MaintenanceNew" xml:space="preserve">
     <value>Пожалуйста, введите название для нового хранилища в поле ниже.
 
 Вы не можете использовать следующие символы:
 </value>
   </data>
-	<data name="MaintenanceNewVault" xml:space="preserve">
+  <data name="MaintenanceNewVault" xml:space="preserve">
     <value>Новое хранилище</value>
   </data>
-	<data name="MaintenanceNoCopyTarget" xml:space="preserve">
+  <data name="MaintenanceNoCopyTarget" xml:space="preserve">
     <value>Вы должны ввести новое название для копируемого хранилища</value>
   </data>
-	<data name="MaintenanceRbCopy" xml:space="preserve">
+  <data name="MaintenanceRbCopy" xml:space="preserve">
     <value>Копировать хранилище</value>
   </data>
-	<data name="MaintenanceRbDelete" xml:space="preserve">
+  <data name="MaintenanceRbDelete" xml:space="preserve">
     <value>Удалить хранилище</value>
   </data>
-	<data name="MaintenanceRbNew" xml:space="preserve">
+  <data name="MaintenanceRbNew" xml:space="preserve">
     <value>Создать новое хранилище</value>
   </data>
-	<data name="MaintenanceRbRename" xml:space="preserve">
+  <data name="MaintenanceRbRename" xml:space="preserve">
     <value>Переименовать хранилище</value>
   </data>
-	<data name="MaintenanceRename" xml:space="preserve">
+  <data name="MaintenanceRename" xml:space="preserve">
     <value>Пожалуйста, выберите хранилище, которое нужно переименовать и затем введите новое имя в поле ниже.</value>
   </data>
-	<data name="MaintenanceSource" xml:space="preserve">
+  <data name="MaintenanceSource" xml:space="preserve">
     <value>Источник</value>
   </data>
-	<data name="MaintenanceSourceNoExist" xml:space="preserve">
+  <data name="MaintenanceSourceNoExist" xml:space="preserve">
     <value>Указанного как источник хранилища не существует.</value>
   </data>
-	<data name="MaintenanceTarget" xml:space="preserve">
+  <data name="MaintenanceTarget" xml:space="preserve">
     <value>Цель</value>
   </data>
-	<data name="MaintenanceText" xml:space="preserve">
+  <data name="MaintenanceText" xml:space="preserve">
     <value>Управление хранилищами</value>
   </data>
-	<data name="PlayerOverwriteSack" xml:space="preserve">
+  <data name="PlayerOverwriteSack" xml:space="preserve">
     <value>Перезаписать сумку</value>
   </data>
-	<data name="PlayerOverwriteSackMsg" xml:space="preserve">
+  <data name="PlayerOverwriteSackMsg" xml:space="preserve">
     <value>Указанная сумка не пустая.
 Вы действительно хотите перезаписать её?</value>
   </data>
-	<data name="PlayerPanelEmpty" xml:space="preserve">
+  <data name="PlayerPanelEmpty" xml:space="preserve">
     <value>Очистить сумку?</value>
   </data>
-	<data name="PlayerPanelEmptyMsg" xml:space="preserve">
+  <data name="PlayerPanelEmptyMsg" xml:space="preserve">
     <value>Вы действительно хотите удалить все предметы в этой сумке?</value>
   </data>
-	<data name="PlayerPanelMenuCopy" xml:space="preserve">
+  <data name="PlayerPanelMenuCopy" xml:space="preserve">
     <value>Копировать сумку</value>
   </data>
-	<data name="PlayerPanelMenuEmpty" xml:space="preserve">
+  <data name="PlayerPanelMenuEmpty" xml:space="preserve">
     <value>Очистить сумку</value>
   </data>
-	<data name="PlayerPanelMenuMerge" xml:space="preserve">
+  <data name="PlayerPanelMenuMerge" xml:space="preserve">
     <value>Соединить сумку</value>
   </data>
-	<data name="PlayerPanelMenuMove" xml:space="preserve">
+  <data name="PlayerPanelMenuMove" xml:space="preserve">
     <value>Переместить сумку</value>
   </data>
-	<data name="PlayerPanelNoPlayer" xml:space="preserve">
+  <data name="PlayerPanelNoPlayer" xml:space="preserve">
     <value>(Персонаж не выбран)</value>
   </data>
-	<data name="PlayerPanelNoVault" xml:space="preserve">
+  <data name="PlayerPanelNoVault" xml:space="preserve">
     <value>(Хранилище не выбрано)</value>
   </data>
-	<data name="ResultsContainer" xml:space="preserve">
+  <data name="ResultsContainer" xml:space="preserve">
     <value>Контейнер</value>
   </data>
-	<data name="ResultsContainerEquip" xml:space="preserve">
+  <data name="ResultsContainerEquip" xml:space="preserve">
     <value>Снаряжение</value>
   </data>
-	<data name="ResultsContainerPlayer" xml:space="preserve">
+  <data name="ResultsContainerPlayer" xml:space="preserve">
     <value>Игрок</value>
   </data>
-	<data name="ResultsContainerStash" xml:space="preserve">
+  <data name="ResultsContainerStash" xml:space="preserve">
     <value>Сундук</value>
   </data>
-	<data name="ResultsContainerType" xml:space="preserve">
+  <data name="ResultsContainerType" xml:space="preserve">
     <value>Тип контейнера</value>
   </data>
-	<data name="ResultsContainerVault" xml:space="preserve">
+  <data name="ResultsContainerVault" xml:space="preserve">
     <value>Хранилище</value>
   </data>
-	<data name="ResultsItem" xml:space="preserve">
+  <data name="ResultsItem" xml:space="preserve">
     <value>Предмет</value>
   </data>
-	<data name="ResultsQuality" xml:space="preserve">
+  <data name="ResultsQuality" xml:space="preserve">
     <value>Качество</value>
   </data>
-	<data name="ResultsSack" xml:space="preserve">
+  <data name="ResultsSack" xml:space="preserve">
     <value>Сумка</value>
   </data>
-	<data name="ResultsLevel" xml:space="preserve">
+  <data name="ResultsLevel" xml:space="preserve">
     <value>Уровень</value>
   </data>
-	<data name="ResultsText" xml:space="preserve">
+  <data name="ResultsText" xml:space="preserve">
     <value>{0} предметов найдено по запросу '{1}'</value>
   </data>
-	<data name="SackPanelAutoSort" xml:space="preserve">
+  <data name="SackPanelAutoSort" xml:space="preserve">
     <value>Пожалуйста положите предмет.</value>
   </data>
-	<data name="SackPanelAutoSortError" xml:space="preserve">
+  <data name="SackPanelAutoSortError" xml:space="preserve">
     <value>Ошибка автоматической сортировки.</value>
   </data>
-	<data name="SackPanelAutoSortErrorMsg" xml:space="preserve">
+  <data name="SackPanelAutoSortErrorMsg" xml:space="preserve">
     <value>Произошла ошибка во время сортировки.
 Не все предметы отсортированы.</value>
   </data>
-	<data name="SackPanelAutoSortMsg" xml:space="preserve">
+  <data name="SackPanelAutoSortMsg" xml:space="preserve">
     <value>В данный момент вы удерживаете предмет.
 Пожалуйста, положите его куда-нибудь перед сортировкой.</value>
   </data>
-	<data name="SackPanelDelete" xml:space="preserve">
+  <data name="SackPanelDelete" xml:space="preserve">
     <value>Удалить предмет</value>
   </data>
-	<data name="SackPanelDeleteMsg" xml:space="preserve">
+  <data name="SackPanelDeleteMsg" xml:space="preserve">
     <value>Этот предмет будет УДАЛЁН НАВСЕГДА!
 Вы уверены что хотите удалить этот предмет?</value>
   </data>
-	<data name="SackPanelDeleteMulti" xml:space="preserve">
+  <data name="SackPanelDeleteMulti" xml:space="preserve">
     <value>Удалить несколько предметов</value>
   </data>
-	<data name="SackPanelDeleteMultiMsg" xml:space="preserve">
+  <data name="SackPanelDeleteMultiMsg" xml:space="preserve">
     <value>Вы уверены что хотите НАВСЕГДА УДАЛИТЬ выделенные предметы?</value>
   </data>
-	<data name="SackPanelMenuBonus" xml:space="preserve">
+  <data name="SackPanelMenuBonus" xml:space="preserve">
     <value>Изменить сборный бонус</value>
   </data>
-	<data name="SackPanelMenuCharm" xml:space="preserve">
+  <data name="SackPanelMenuCharm" xml:space="preserve">
     <value>Собрать талисман</value>
   </data>
-	<data name="SackPanelMenuFormulae" xml:space="preserve">
+  <data name="SackPanelMenuFormulae" xml:space="preserve">
     <value>Создать артефакт</value>
   </data>
-	<data name="SackPanelMenuClear" xml:space="preserve">
+  <data name="SackPanelMenuClear" xml:space="preserve">
     <value>Очистить выделение</value>
   </data>
-	<data name="SackPanelMenuCopy" xml:space="preserve">
+  <data name="SackPanelMenuCopy" xml:space="preserve">
     <value>Копировать предмет</value>
   </data>
-	<data name="SackPanelMenuDelete" xml:space="preserve">
+  <data name="SackPanelMenuDelete" xml:space="preserve">
     <value>Удалить</value>
   </data>
-	<data name="SackPanelMenuDuplicate" xml:space="preserve">
+  <data name="SackPanelMenuDuplicate" xml:space="preserve">
     <value>Создать дубликат</value>
   </data>
-	<data name="SackPanelMenuMoveTo" xml:space="preserve">
+  <data name="SackPanelMenuMoveTo" xml:space="preserve">
     <value>Преместить предмет в</value>
   </data>
-	<data name="SackPanelMenuPlayer" xml:space="preserve">
+  <data name="SackPanelMenuPlayer" xml:space="preserve">
     <value>Панель игрока</value>
   </data>
-	<data name="SackPanelMenuProperties" xml:space="preserve">
+  <data name="SackPanelMenuProperties" xml:space="preserve">
     <value>Свойства</value>
   </data>
-	<data name="SackPanelMenuRelic" xml:space="preserve">
+  <data name="SackPanelMenuRelic" xml:space="preserve">
     <value>Собрать реликвию</value>
   </data>
-	<data name="SackPanelMenuRemoveRelic" xml:space="preserve">
+  <data name="SackPanelMenuRemoveRelic" xml:space="preserve">
     <value>Убрать реликвию</value>
   </data>
-	<data name="SackPanelMenuSeed" xml:space="preserve">
+  <data name="SackPanelMenuSeed" xml:space="preserve">
     <value>Изменить сид предмета...</value>
   </data>
-	<data name="SackPanelMenuSet" xml:space="preserve">
+  <data name="SackPanelMenuSet" xml:space="preserve">
     <value>Создать части сета</value>
   </data>
-	<data name="SackPanelMenuSplit" xml:space="preserve">
+  <data name="SackPanelMenuSplit" xml:space="preserve">
     <value>Разделить</value>
   </data>
-	<data name="SackPanelMenuStash" xml:space="preserve">
+  <data name="SackPanelMenuStash" xml:space="preserve">
     <value>Панель сундука</value>
   </data>
-	<data name="SackPanelMenuTrash" xml:space="preserve">
+  <data name="SackPanelMenuTrash" xml:space="preserve">
     <value>Панель корзины</value>
   </data>
-	<data name="SackPanelMenuVault" xml:space="preserve">
+  <data name="SackPanelMenuVault" xml:space="preserve">
     <value>Панель хранилища</value>
   </data>
-	<data name="SackPanelMenuVault2" xml:space="preserve">
+  <data name="SackPanelMenuVault2" xml:space="preserve">
     <value>Дополнительное хранилище</value>
   </data>
-	<data name="SackPanelRemoveRelicMsg" xml:space="preserve">
+  <data name="SackPanelRemoveRelicMsg" xml:space="preserve">
     <value>Вы действительно хотите удалить реликвию из этого предмета?</value>
   </data>
-	<data name="SeedBtnRandom" xml:space="preserve">
+  <data name="SeedBtnRandom" xml:space="preserve">
     <value>Случайно</value>
   </data>
-	<data name="SeedLabel1" xml:space="preserve">
+  <data name="SeedLabel1" xml:space="preserve">
     <value>Titan Quest использует сид для генерации случайных значений аттрибутов
 ваших предметов, поэтому не существует двух абсолютно одинаковых предметов. В 
 данный момент точно не ясно, как именно сид влияет на аттрибуты предметов.
@@ -686,227 +686,227 @@ Titan Quest и загружать всех персонажей, которые 
 
 Выберите число между 1 и 32767</value>
   </data>
-	<data name="SeedRange" xml:space="preserve">
+  <data name="SeedRange" xml:space="preserve">
     <value>Сид должен быть целым числом от 1 до 32767</value>
   </data>
-	<data name="SeedText" xml:space="preserve">
+  <data name="SeedText" xml:space="preserve">
     <value>Изменить сид предмета</value>
   </data>
-	<data name="SettingsAllowCopy" xml:space="preserve">
+  <data name="SettingsAllowCopy" xml:space="preserve">
     <value>Разрешить копирование предметов</value>
   </data>
-	<data name="SettingsAllowCopyTT" xml:space="preserve">
+  <data name="SettingsAllowCopyTT" xml:space="preserve">
     <value>Включает опцию Копирования в контекстном меню предмета.</value>
   </data>
-	<data name="SettingsAllowEdit" xml:space="preserve">
+  <data name="SettingsAllowEdit" xml:space="preserve">
     <value>Разрешить редактирование предметов</value>
   </data>
-	<data name="SettingsAllowEditTT" xml:space="preserve">
+  <data name="SettingsAllowEditTT" xml:space="preserve">
     <value>Включает опции создания и изменения в контекстном меню предмета.
 Сюда входят создание артефактов, частей сетовых наборов и собирание реликвий.</value>
   </data>
-	<data name="SettingsAutoUpdate" xml:space="preserve">
+  <data name="SettingsAutoUpdate" xml:space="preserve">
     <value>Автоматически проверять обновления</value>
   </data>
-	<data name="SettingsAutoUpdateTT" xml:space="preserve">
+  <data name="SettingsAutoUpdateTT" xml:space="preserve">
     <value>Выбор этого пункта будет автоматически проверять наличие в сети
 новых версий TQVault когда программа запускается. Может сделать запуск более 
 долгим если у вас медленное подключение к Интернету.</value>
   </data>
-	<data name="SettingsBrowseIT" xml:space="preserve">
+  <data name="SettingsBrowseIT" xml:space="preserve">
     <value>Пожалуйста укажите путь для игровых файлов Immortal Throne.</value>
   </data>
-	<data name="SettingsBrowseTQ" xml:space="preserve">
+  <data name="SettingsBrowseTQ" xml:space="preserve">
     <value>Пожалуйста укажите путь для игровых файлов Titan Quest.</value>
   </data>
-	<data name="SettingsBrowseVault" xml:space="preserve">
+  <data name="SettingsBrowseVault" xml:space="preserve">
     <value>Пожалуйста укажите путь для файлов хранилищ TQVault.</value>
   </data>
-	<data name="SettingsDetectGamePath" xml:space="preserve">
+  <data name="SettingsDetectGamePath" xml:space="preserve">
     <value>Автоматически определять пути к игре</value>
   </data>
-	<data name="SettingsDetectLanguage" xml:space="preserve">
+  <data name="SettingsDetectLanguage" xml:space="preserve">
     <value>Автоматически определять язык</value>
   </data>
-	<data name="SettingsEnableMod" xml:space="preserve">
+  <data name="SettingsEnableMod" xml:space="preserve">
     <value>Разрешить пользовательские карты</value>
   </data>
-	<data name="SettingsEnableModTT" xml:space="preserve">
+  <data name="SettingsEnableModTT" xml:space="preserve">
     <value>Выбор этого пункта позволит программе видеть персонажей 
  из пользовательских карт. (требуется перезапуск)</value>
   </data>
-	<data name="SettingsForceCheck" xml:space="preserve">
+  <data name="SettingsForceCheck" xml:space="preserve">
     <value>Проверить</value>
   </data>
-	<data name="SettingsForceCheckTT" xml:space="preserve">
+  <data name="SettingsForceCheckTT" xml:space="preserve">
     <value>Вручную проверить есть ли обновления.</value>
   </data>
-	<data name="SettingsLabel1" xml:space="preserve">
+  <data name="SettingsLabel1" xml:space="preserve">
     <value>Путь к хранилищам</value>
   </data>
-	<data name="SettingsLabel2" xml:space="preserve">
+  <data name="SettingsLabel2" xml:space="preserve">
     <value>Язык игры</value>
   </data>
-	<data name="SettingsLabel3" xml:space="preserve">
+  <data name="SettingsLabel3" xml:space="preserve">
     <value>Путь к игре TQ</value>
   </data>
-	<data name="SettingsLabel4" xml:space="preserve">
+  <data name="SettingsLabel4" xml:space="preserve">
     <value>Путь к игре IT</value>
   </data>
-	<data name="SettingsLabel5" xml:space="preserve">
+  <data name="SettingsLabel5" xml:space="preserve">
     <value>Пользовательская карта</value>
   </data>
-	<data name="SettingsLoadChar" xml:space="preserve">
+  <data name="SettingsLoadChar" xml:space="preserve">
     <value>Автоматически загружать последнего открытого персонажа</value>
   </data>
-	<data name="SettingsLoadCharTT" xml:space="preserve">
+  <data name="SettingsLoadCharTT" xml:space="preserve">
     <value>Выбор этого пункта будет автоматически загружать последнего на момент
 закрытия TQVault персонажа.</value>
   </data>
-	<data name="SettingsLoadVault" xml:space="preserve">
+  <data name="SettingsLoadVault" xml:space="preserve">
     <value>Автоматически загружать последнее открытое хранилище</value>
   </data>
-	<data name="SettingsLoadVaultTT" xml:space="preserve">
+  <data name="SettingsLoadVaultTT" xml:space="preserve">
     <value>Выбор этого пункта будет автоматически загружать последнее на момент
 закрытия TQVault хранилище. Если ничего не было выбрано, откроется Главное хранилище.</value>
   </data>
-	<data name="SettingsNoWarning" xml:space="preserve">
+  <data name="SettingsNoWarning" xml:space="preserve">
     <value>Обход окон подтверждения</value>
   </data>
-	<data name="SettingsNoWarningTT" xml:space="preserve">
+  <data name="SettingsNoWarningTT" xml:space="preserve">
     <value>Если включено, окно о подтверждении действия больше не 
 будет появляться при удалении предмета, извлечении реликвии или при
 наличии предметов в корзине на момент закрытия TQVault.</value>
   </data>
-	<data name="SettingsPreLoad" xml:space="preserve">
+  <data name="SettingsPreLoad" xml:space="preserve">
     <value>Предзагрузка всех файлов хранилища и персонажа</value>
   </data>
-	<data name="SettingsPreLoadTT" xml:space="preserve">
+  <data name="SettingsPreLoadTT" xml:space="preserve">
     <value>Выбор этого пункта будет автоматически подгружать все
 доступные файлы персонажа, сундука и хранилища при запуске. Это
 облегчит поиск, но увеличит время запуска программы.</value>
   </data>
-	<data name="SettingsReset" xml:space="preserve">
+  <data name="SettingsReset" xml:space="preserve">
     <value>Сбросить</value>
   </data>
-	<data name="SettingsResetTT" xml:space="preserve">
+  <data name="SettingsResetTT" xml:space="preserve">
     <value>Сбрасывает конфигурацию до последней сохраненной.</value>
   </data>
-	<data name="SettingsSkipTitle" xml:space="preserve">
+  <data name="SettingsSkipTitle" xml:space="preserve">
     <value>Автоматически пропускать экран приветствия</value>
   </data>
-	<data name="SettingsSkipTitleTT" xml:space="preserve">
+  <data name="SettingsSkipTitleTT" xml:space="preserve">
     <value>Включение этого пунтка будет автоматически нажимать
 Enter когда появляется экран приветствия.</value>
   </data>
-	<data name="SettingsTitle" xml:space="preserve">
+  <data name="SettingsTitle" xml:space="preserve">
     <value>Настроить параметры</value>
   </data>
-	<data name="StashNotFound" xml:space="preserve">
+  <data name="StashNotFound" xml:space="preserve">
     <value>Файл сундука не найден.</value>
   </data>
-	<data name="StashNotFoundMsg" xml:space="preserve">
+  <data name="StashNotFoundMsg" xml:space="preserve">
     <value>Программа не обнаружила файл сундука у персонажа.
 Чтобы создать его, поговорите с любым Погонщиком в игре. До
 тех пор вкладки, связанные с Погонщиком для этого персонажа 
 будут недоступны.</value>
   </data>
-	<data name="StashPanelBtn1" xml:space="preserve">
+  <data name="StashPanelBtnEquipment" xml:space="preserve">
     <value>Экипировка</value>
   </data>
-	<data name="StashPanelBtn2" xml:space="preserve">
+  <data name="StashPanelBtnTransferArea" xml:space="preserve">
     <value>Панель передачи</value>
   </data>
-	<data name="StashPanelBtn3" xml:space="preserve">
+  <data name="StashPanelBtnStorageArea" xml:space="preserve">
     <value>Склад</value>
   </data>
-	<data name="StashPanelText" xml:space="preserve">
+  <data name="StashPanelText" xml:space="preserve">
     <value>Караван</value>
   </data>
-	<data name="UpdateCompletion" xml:space="preserve">
+  <data name="UpdateCompletion" xml:space="preserve">
     <value>{0}    {1} % завершено.</value>
   </data>
-	<data name="UpdateCompletion2" xml:space="preserve">
+  <data name="UpdateCompletion2" xml:space="preserve">
     <value>{0}    0 % завершено.</value>
   </data>
-	<data name="UpdateCurrentVer" xml:space="preserve">
+  <data name="UpdateCurrentVer" xml:space="preserve">
     <value>Текущая версия: {0}</value>
   </data>
-	<data name="UpdateError" xml:space="preserve">
+  <data name="UpdateError" xml:space="preserve">
     <value>Невозможно запустить установку</value>
   </data>
-	<data name="UpdateErrorMsg" xml:space="preserve">
+  <data name="UpdateErrorMsg" xml:space="preserve">
     <value>Возникла проблема во время скачивания или распаковки.
 Пожалуйста, скачайте последнюю версию полной установки и запустите её вручную.
 Нажмите OK для выхода.</value>
   </data>
-	<data name="UpdateFullInstall" xml:space="preserve">
+  <data name="UpdateFullInstall" xml:space="preserve">
     <value>Найдена более новая версия TQVault, потребуется полная установка.</value>
   </data>
-	<data name="UpdateLatestVer" xml:space="preserve">
+  <data name="UpdateLatestVer" xml:space="preserve">
     <value>Последняя версия: {0}</value>
   </data>
-	<data name="UpdateMinVer" xml:space="preserve">
+  <data name="UpdateMinVer" xml:space="preserve">
     <value>Минимальная версия: {0}</value>
   </data>
-	<data name="UpdateNewTQVault" xml:space="preserve">
+  <data name="UpdateNewTQVault" xml:space="preserve">
     <value>Найдена более новая версия TQVault.</value>
   </data>
-	<data name="UpdateNewUpdater" xml:space="preserve">
+  <data name="UpdateNewUpdater" xml:space="preserve">
     <value>Найдена более новая версия программы обновления TQVault.</value>
   </data>
-	<data name="UpdateNoUpdate" xml:space="preserve">
+  <data name="UpdateNoUpdate" xml:space="preserve">
     <value>Ваша версия самая последняя.</value>
   </data>
-	<data name="UpdatePerform" xml:space="preserve">
+  <data name="UpdatePerform" xml:space="preserve">
     <value>Нажмите OK для запуска обновления.</value>
   </data>
-	<data name="UpdatePerformBoth" xml:space="preserve">
+  <data name="UpdatePerformBoth" xml:space="preserve">
     <value>Нажмите OK для выполнения обоих обновлений.</value>
   </data>
-	<data name="UpdateRunInstall" xml:space="preserve">
+  <data name="UpdateRunInstall" xml:space="preserve">
     <value>Нажмите OK для скачивания и запуска установщика.</value>
   </data>
-	<data name="UpdateStreamError" xml:space="preserve">
+  <data name="UpdateStreamError" xml:space="preserve">
     <value>Возникла ошибка при подключении к серверу обновления.
 Обновление не может быть выполнено.</value>
   </data>
-	<data name="UpdateText" xml:space="preserve">
+  <data name="UpdateText" xml:space="preserve">
     <value>Обновления TQVault</value>
   </data>
-	<data name="UpdateUpdaterNotFound" xml:space="preserve">
+  <data name="UpdateUpdaterNotFound" xml:space="preserve">
     <value>Программа обновления TQVault не найдена, либо её имя было изменено.</value>
   </data>
-	<data name="VaultProgressText" xml:space="preserve">
+  <data name="VaultProgressText" xml:space="preserve">
     <value>Загрузка файлов игроков и хранилищ...</value>
   </data>
-	<data name="AUEnglishName" xml:space="preserve">
+  <data name="AUEnglishName" xml:space="preserve">
     <value>Russian</value>
     <comment>Do not Translate.  Used for AutoUpdate.
 Used to determine which language file to update.</comment>
   </data>
-	<data name="AUFileVersion" xml:space="preserve">
+  <data name="AUFileVersion" xml:space="preserve">
     <value>3</value>
     <comment>Do not Translate.  Used for AutoUpdate.
 Used to track changes in the translation file.</comment>
   </data>
-	<data name="VaultGroupBoxEmpty" xml:space="preserve">
+  <data name="VaultGroupBoxEmpty" xml:space="preserve">
     <value>&lt;Пусто&gt;</value>
   </data>
-	<data name="MainFormDisableLoadAllFiles" xml:space="preserve">
+  <data name="MainFormDisableLoadAllFiles" xml:space="preserve">
     <value>В прошлый раз при попытке подгрузки всех файлов возникла ошибка.
 Хотите ли отключить подгрузку всех файлов?</value>
   </data>
-	<data name="MainFormDisableLoadAllFilesCaption" xml:space="preserve">
+  <data name="MainFormDisableLoadAllFilesCaption" xml:space="preserve">
     <value>Отключить подгрузку всех файлов?</value>
   </data>
-	<data name="MainFormSearchButtonText" xml:space="preserve">
+  <data name="MainFormSearchButtonText" xml:space="preserve">
     <value>Поиск</value>
   </data>
-	<data name="SearchDialogCaption" xml:space="preserve">
+  <data name="SearchDialogCaption" xml:space="preserve">
     <value>Поиск предмета</value>
   </data>
-	<data name="SearchDialogText" xml:space="preserve">
+  <data name="SearchDialogText" xml:space="preserve">
     <value>Поиск предметов в загруженных файлах: хранилищах, сундуках, инвентарях.
 
 Вы можете комбинировать следующие параметры поиска:
@@ -918,180 +918,180 @@ Used to track changes in the translation file.</comment>
 
 Вот полный пример: 'арктическая &amp; инея @меч $редкий | эпический'</value>
   </data>
-	<data name="GlobalClose" xml:space="preserve">
+  <data name="GlobalClose" xml:space="preserve">
     <value>Закрыть</value>
   </data>
-	<data name="GlobalMaximize" xml:space="preserve">
+  <data name="GlobalMaximize" xml:space="preserve">
     <value>Максимизировать</value>
   </data>
-	<data name="GlobalMinimize" xml:space="preserve">
+  <data name="GlobalMinimize" xml:space="preserve">
     <value>Минимизировать</value>
   </data>
-	<data name="GlobalMove" xml:space="preserve">
+  <data name="GlobalMove" xml:space="preserve">
     <value>Переместить</value>
   </data>
-	<data name="GlobalRestore" xml:space="preserve">
+  <data name="GlobalRestore" xml:space="preserve">
     <value>Восстановить</value>
   </data>
-	<data name="GlobalSize" xml:space="preserve">
+  <data name="GlobalSize" xml:space="preserve">
     <value>Размер</value>
   </data>
-	<data name="SettingsPlayerReadonly" xml:space="preserve">
+  <data name="SettingsPlayerReadonly" xml:space="preserve">
     <value>Только чтение для надетых вещей</value>
   </data>
-	<data name="SettingsPlayerReadonlyTT" xml:space="preserve">
+  <data name="SettingsPlayerReadonlyTT" xml:space="preserve">
     <value>Позволяет избежать ошибок или поломок сохранения при изменении надетых вещей. Если включено, надетые предметы будут достпуны только для просмотра.</value>
   </data>
-	<data name="ItemRagnarok" xml:space="preserve">
+  <data name="ItemRagnarok" xml:space="preserve">
     <value>Предмет Ragnarök</value>
   </data>
-	<data name="ItemAtlantis" xml:space="preserve">
+  <data name="ItemAtlantis" xml:space="preserve">
     <value>Предмет Atlantis</value>
   </data>
-	<data name="GlobalRelicVaultStash" xml:space="preserve">
+  <data name="GlobalRelicVaultStash" xml:space="preserve">
     <value>Хранилище реликвий</value>
   </data>
-	<data name="SettingsAllowEditCE" xml:space="preserve">
+  <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Разрешить редактирование персонажа</value>
   </data>
-	<data name="CEAttributePoints" xml:space="preserve">
+  <data name="CEAttributePoints" xml:space="preserve">
     <value>Очки атрибутов</value>
   </data>
-	<data name="CEAttributes" xml:space="preserve">
+  <data name="CEAttributes" xml:space="preserve">
     <value>Базовые атрибуты</value>
   </data>
-	<data name="CEDexterity" xml:space="preserve">
+  <data name="CEDexterity" xml:space="preserve">
     <value>Ловкость</value>
   </data>
-	<data name="CEDifficulty" xml:space="preserve">
+  <data name="CEDifficulty" xml:space="preserve">
     <value>Сложность</value>
   </data>
-	<data name="CEEnableLeveling" xml:space="preserve">
+  <data name="CEEnableLeveling" xml:space="preserve">
     <value>Включить изменение уровня</value>
   </data>
-	<data name="CEHealth" xml:space="preserve">
+  <data name="CEHealth" xml:space="preserve">
     <value>Здоровье</value>
   </data>
-	<data name="CEIntelligence" xml:space="preserve">
+  <data name="CEIntelligence" xml:space="preserve">
     <value>Интеллект</value>
   </data>
-	<data name="CELevel" xml:space="preserve">
+  <data name="CELevel" xml:space="preserve">
     <value>Уровень</value>
   </data>
-	<data name="CELeveling" xml:space="preserve">
+  <data name="CELeveling" xml:space="preserve">
     <value>Изменение уровня</value>
   </data>
-	<data name="CEMana" xml:space="preserve">
+  <data name="CEMana" xml:space="preserve">
     <value>Энергия</value>
   </data>
-	<data name="CESkillPoints" xml:space="preserve">
+  <data name="CESkillPoints" xml:space="preserve">
     <value>Очки навыков</value>
   </data>
-	<data name="CEStrength" xml:space="preserve">
+  <data name="CEStrength" xml:space="preserve">
     <value>Сила</value>
   </data>
-	<data name="CEXp" xml:space="preserve">
+  <data name="CEXp" xml:space="preserve">
     <value>Опыт</value>
   </data>
-	<data name="CharacterEditBtn" xml:space="preserve">
+  <data name="CharacterEditBtn" xml:space="preserve">
     <value>Изменить</value>
   </data>
-	<data name="CurrentLevel" xml:space="preserve">
+  <data name="CurrentLevel" xml:space="preserve">
     <value>Уровень</value>
   </data>
-	<data name="Class" xml:space="preserve">
+  <data name="Class" xml:space="preserve">
     <value>Класс</value>
   </data>
-	<data name="CurrentXP" xml:space="preserve">
+  <data name="CurrentXP" xml:space="preserve">
     <value>Опыт</value>
   </data>
-	<data name="DifficultyUnlocked" xml:space="preserve">
+  <data name="DifficultyUnlocked" xml:space="preserve">
     <value>Сложность</value>
   </data>
-	<data name="Money" xml:space="preserve">
+  <data name="Money" xml:space="preserve">
     <value>Деньги</value>
   </data>
-	<data name="SkillPoints" xml:space="preserve">
+  <data name="SkillPoints" xml:space="preserve">
     <value>Очки навыков</value>
   </data>
-	<data name="AttributesPoints" xml:space="preserve">
+  <data name="AttributesPoints" xml:space="preserve">
     <value>Очки атрибутов</value>
   </data>
-	<data name="BaseStrength" xml:space="preserve">
+  <data name="BaseStrength" xml:space="preserve">
     <value>Базовая сила</value>
   </data>
-	<data name="BaseDexterity" xml:space="preserve">
+  <data name="BaseDexterity" xml:space="preserve">
     <value>Базовая ловкость</value>
   </data>
-	<data name="BaseIntelligence" xml:space="preserve">
+  <data name="BaseIntelligence" xml:space="preserve">
     <value>Базовый интеллект</value>
   </data>
-	<data name="BaseHealth" xml:space="preserve">
+  <data name="BaseHealth" xml:space="preserve">
     <value>Базовое здоровье</value>
   </data>
-	<data name="BaseMana" xml:space="preserve">
+  <data name="BaseMana" xml:space="preserve">
     <value>Базовая энергия</value>
   </data>
-	<data name="PlayTimeInSeconds" xml:space="preserve">
+  <data name="PlayTimeInSeconds" xml:space="preserve">
     <value>Время в игре</value>
   </data>
-	<data name="NumberOfDeaths" xml:space="preserve">
+  <data name="NumberOfDeaths" xml:space="preserve">
     <value>Смертей</value>
   </data>
-	<data name="NumberOfKills" xml:space="preserve">
+  <data name="NumberOfKills" xml:space="preserve">
     <value>Убийств</value>
   </data>
-	<data name="ExperienceFromKills" xml:space="preserve">
+  <data name="ExperienceFromKills" xml:space="preserve">
     <value>Опыт от убийств</value>
   </data>
-	<data name="HealthPotionsUsed" xml:space="preserve">
+  <data name="HealthPotionsUsed" xml:space="preserve">
     <value>Выпито снадобий здоровья</value>
   </data>
-	<data name="ManaPotionsUsed" xml:space="preserve">
+  <data name="ManaPotionsUsed" xml:space="preserve">
     <value>Выпито снадобий энергии</value>
   </data>
-	<data name="MaxLevel" xml:space="preserve">
+  <data name="MaxLevel" xml:space="preserve">
     <value>Максимальный уровень</value>
   </data>
-	<data name="NumHitsReceived" xml:space="preserve">
+  <data name="NumHitsReceived" xml:space="preserve">
     <value>Получено ударов</value>
   </data>
-	<data name="NumHitsInflicted" xml:space="preserve">
+  <data name="NumHitsInflicted" xml:space="preserve">
     <value>Нанесено ударов</value>
   </data>
-	<data name="GreatestDamageInflicted" xml:space="preserve">
+  <data name="GreatestDamageInflicted" xml:space="preserve">
     <value>Сильнейший нанесенный урон</value>
   </data>
-	<data name="GreatestMonster" xml:space="preserve">
+  <data name="GreatestMonster" xml:space="preserve">
     <value>Сильнейшее убитое существо</value>
   </data>
-	<data name="CriticalHitsInflicted" xml:space="preserve">
+  <data name="CriticalHitsInflicted" xml:space="preserve">
     <value>Нанесено критических ударов</value>
   </data>
-	<data name="CriticalHitsReceived" xml:space="preserve">
+  <data name="CriticalHitsReceived" xml:space="preserve">
     <value>Получено критических ударов</value>
   </data>
-	<data name="PlayerPanelMenuDisableAllTooltip" xml:space="preserve">
+  <data name="PlayerPanelMenuDisableAllTooltip" xml:space="preserve">
     <value>Отключить предпр. для всех</value>
   </data>
-	<data name="PlayerPanelMenuDisableTooltip" xml:space="preserve">
+  <data name="PlayerPanelMenuDisableTooltip" xml:space="preserve">
     <value>Отключить предпросмотр</value>
   </data>
-	<data name="PlayerPanelMenuEnableAllTooltip" xml:space="preserve">
+  <data name="PlayerPanelMenuEnableAllTooltip" xml:space="preserve">
     <value>Включить предпр. для всех</value>
   </data>
-	<data name="PlayerPanelMenuEnableTooltip" xml:space="preserve">
+  <data name="PlayerPanelMenuEnableTooltip" xml:space="preserve">
     <value>Включить предпросмотр</value>
   </data>
-	<data name="TextTag_tagRelic" xml:space="preserve">
+  <data name="TextTag_tagRelic" xml:space="preserve">
     <value>Реликвия</value>
     <comment>Substitute for missing tag for "Relic"</comment>
   </data>
-	<data name="TextTag_tagArtifact" xml:space="preserve">
+  <data name="TextTag_tagArtifact" xml:space="preserve">
     <value>Артефакт</value>
     <comment>Substitute for missing tag for "Artifact"</comment>
   </data>
-	<data name="ItemEmbers" xml:space="preserve">
+  <data name="ItemEmbers" xml:space="preserve">
     <value>Предмет Eternal Embers</value>
   </data>
 	<data name="SackPanelMenuSeedForce" xml:space="preserve">

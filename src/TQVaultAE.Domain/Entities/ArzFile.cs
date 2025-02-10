@@ -8,6 +8,7 @@ namespace TQVaultAE.Domain.Entities
 	using System;
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
+	using System.Linq;
 	using TQVaultAE.Domain.Helpers;
 
 	/// <summary>
@@ -28,12 +29,12 @@ namespace TQVaultAE.Domain.Entities
 		/// <summary>
 		/// RecordInfo keyed by their ID
 		/// </summary>
-		public Dictionary<RecordId, RecordInfo> RecordInfo = new Dictionary<RecordId, RecordInfo>();
+		public Dictionary<RecordId, RecordInfo> RecordInfo = new();
 
 		/// <summary>
-		/// Holds the keys for the recordInfo Dictionary
+		/// Ordered keys for the recordInfo Dictionary
 		/// </summary>
-		public RecordId[] Keys;
+		public IEnumerable<RecordId> Keys => this.RecordInfo.Keys.OrderBy(v => v);
 
 		/// <summary>
 		/// Initializes a new instance of the ArzFile class.

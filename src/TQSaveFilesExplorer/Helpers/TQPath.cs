@@ -26,7 +26,7 @@ namespace TQ.SaveFilesExplorer.Helpers
 			get
 			{
 				var p = SaveDirectoryTQITModded;
-				return p is null ? Array.Empty<string>() : Directory.GetDirectories(p);
+				return p is null ? Array.Empty<string>() : Directory.GetDirectories(p, "_*");
 			}
 		}
 

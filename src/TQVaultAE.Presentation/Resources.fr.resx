@@ -816,13 +816,13 @@ automatiquement activé sur l'écran d'accueil.</value>
 Allez voir le Conducteur de caravane dans le jeu pour créer le fichier.
 L'onglet Zone de stockage ne sera pas disponible pour ce personnage.</value>
   </data>
-	<data name="StashPanelBtn1" xml:space="preserve">
+	<data name="StashPanelBtnEquipment" xml:space="preserve">
     <value>Equipement</value>
   </data>
-	<data name="StashPanelBtn2" xml:space="preserve">
+	<data name="StashPanelBtnTransferArea" xml:space="preserve">
     <value>Zone de transfert</value>
   </data>
-	<data name="StashPanelBtn3" xml:space="preserve">
+	<data name="StashPanelBtnStorageArea" xml:space="preserve">
     <value>Zone de stockage</value>
   </data>
 	<data name="StashPanelText" xml:space="preserve">

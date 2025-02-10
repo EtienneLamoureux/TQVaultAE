@@ -355,7 +355,8 @@ public class Database : IDatabase
 		// Load all available loot randomizer table
 		var lootRandomizerTableList = new[] {
 			(Priority: 0, ArzFile: this.ArzFileMod),
-			(Priority: 1, ArzFile: this.ArzFile)
+			(Priority: 1, ArzFile: this.ArzFileIT != null && this.ArzFileIT != this.ArzFile ? this.ArzFileIT : null),
+			(Priority: 2, ArzFile: this.ArzFile)
 		}
 		.Where(db => db.ArzFile is not null)
 		.SelectMany(db =>
@@ -392,7 +393,8 @@ public class Database : IDatabase
 		// Load all available loot randomizer
 		var lootRandomizerList = new[] {
 			(Priority: 0, ArzFile: this.ArzFileMod),
-			(Priority: 1, ArzFile: this.ArzFile)
+			(Priority: 1, ArzFile: this.ArzFileIT != null && this.ArzFileIT != this.ArzFile ? this.ArzFileIT : null),
+			(Priority: 2, ArzFile: this.ArzFile)
 		}
 		.Where(db => db.ArzFile is not null)
 		.SelectMany(db =>
@@ -443,7 +445,12 @@ public class Database : IDatabase
 	private void BuildItemAffixTableMap()
 	{
 		// Load all available loot table
-		var data = new[] { this.ArzFileMod, this.ArzFile }
+		var data = new[]
+			{
+				this.ArzFileMod,
+				this.ArzFileIT != null && this.ArzFileIT != this.ArzFile ? this.ArzFileIT : null, 
+				this.ArzFile
+			}
 			.Where(db => db is not null)
 			.SelectMany(db => db.RecordInfo
 				.Where(r =>
@@ -702,13 +709,14 @@ public class Database : IDatabase
 					key = resourceIdSplited.Skip(1).JoinString("\\");
 				}
 
-				arcFileData = this.ReadARCFile(arcFile, key);
+				if (File.Exists(arcFile))
+					arcFileData = this.ReadARCFile(arcFile, key);
 
 				if (TQDebug.DatabaseDebugLevel > 0 && arcFileData is null)
 					Log.LogError(@"Resource not found ""{resourceId}"" into ""{arcFile}""", key, arcFile);
 			}
 
-			#region Fallback : It looks like we never go there
+			#region Fallback
 
 			// Added by VillageIdiot
 			// Maybe the arc file is in the XPack folder even though the record does not state it.
@@ -717,7 +725,9 @@ public class Database : IDatabase
 			{
 				rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack");
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
-				arcFileData = this.ReadARCFile(arcFile, key);
+
+				if (File.Exists(arcFile))
+					arcFileData = this.ReadARCFile(arcFile, key);
 
 				if (TQDebug.DatabaseDebugLevel > 1 && arcFileData is not null)
 					Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
@@ -728,7 +738,9 @@ public class Database : IDatabase
 			{
 				rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack2");
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
-				arcFileData = this.ReadARCFile(arcFile, key);
+
+				if (File.Exists(arcFile))
+					arcFileData = this.ReadARCFile(arcFile, key);
 
 				if (TQDebug.DatabaseDebugLevel > 1 && arcFileData is not null)
 					Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
@@ -738,7 +750,9 @@ public class Database : IDatabase
 			{
 				rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack3");
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
-				arcFileData = this.ReadARCFile(arcFile, key);
+
+				if (File.Exists(arcFile))
+					arcFileData = this.ReadARCFile(arcFile, key);
 
 				if (TQDebug.DatabaseDebugLevel > 1 && arcFileData is not null)
 					Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
@@ -748,7 +762,9 @@ public class Database : IDatabase
 			{
 				rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack4");
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
-				arcFileData = this.ReadARCFile(arcFile, key);
+
+				if (File.Exists(arcFile))
+					arcFileData = this.ReadARCFile(arcFile, key);
 
 				if (TQDebug.DatabaseDebugLevel > 1 && arcFileData is not null)
 					Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
@@ -765,7 +781,9 @@ public class Database : IDatabase
 				rootFolder = Path.Combine(rootFolder, "Resources");
 
 				arcFile = Path.Combine(rootFolder, Path.ChangeExtension(arcFileBase, ".arc"));
-				arcFileData = this.ReadARCFile(arcFile, key);
+
+				if (File.Exists(arcFile))
+					arcFileData = this.ReadARCFile(arcFile, key);
 
 				if (TQDebug.DatabaseDebugLevel > 0 && arcFileData is null)
 					Log.LogError(@"Resource unknown ""{resourceId}""", key);
@@ -850,46 +868,8 @@ public class Database : IDatabase
 	/// </summary>
 	/// <param name="isImmortalThrone">Signals whether we are looking for Immortal Throne files or vanilla Titan Quest files.</param>
 	/// <returns>Path to the text db file</returns>
-	private string FigureDBFileToUse(bool isImmortalThrone)
+	private string FigureDBFileToUse(string rootFolder)
 	{
-		if (TQDebug.DatabaseDebugLevel > 0)
-			Log.LogDebug("Database.FigureDBFileToUse({0})", isImmortalThrone);
-
-		string rootFolder;
-		if (isImmortalThrone)
-		{
-			if (GamePathResolver.GamePathTQIT.Contains("Anniversary"))
-				rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Text");
-			else
-				rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Resources");
-
-			if (TQDebug.DatabaseDebugLevel > 1)
-			{
-				Log.LogDebug("Detecting Immortal Throne text files");
-				Log.LogDebug("rootFolder = {0}", rootFolder);
-			}
-		}
-		else
-		{
-			// from the original TQ folder
-			rootFolder = Path.Combine(GamePathResolver.GamePathTQ, "Text");
-
-			if (TQDebug.DatabaseDebugLevel > 1)
-			{
-				Log.LogDebug("Detecting Titan Quest text files");
-				Log.LogDebug("rootFolder = {0}", rootFolder);
-			}
-		}
-
-		// make sure the damn directory exists
-		if (!Directory.Exists(rootFolder))
-		{
-			if (TQDebug.DatabaseDebugLevel > 0)
-				Log.LogDebug("Error - Root Folder does not exist");
-
-			return null; // silently fail
-		}
-
 		string baseFile = Path.Combine(rootFolder, "Text_");
 		string suffix = ".arc";
 
@@ -1051,72 +1031,92 @@ public class Database : IDatabase
 		if (TQDebug.DatabaseDebugLevel > 0)
 			Log.LogDebug("Database.LoadTextDB()");
 
-		string databaseFile = this.FigureDBFileToUse(false);
-		if (TQDebug.DatabaseDebugLevel > 1)
+		string rootFolder , databaseFile;
+		if (GamePathResolver.GameType == GameType.TQAE)
 		{
-			Log.LogDebug("Find Titan Quest text file");
-			Log.LogDebug("dbFile = {0}", databaseFile);
+			rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Text");
+			
+			if (!Directory.Exists(rootFolder))
+				return;
+
+			databaseFile = this.FigureDBFileToUse(rootFolder);
+
+			if(databaseFile is null)
+				return;
+
+			ParseTextBase(databaseFile);
+			ParseTextIT(databaseFile);
+		}
+		else if (GamePathResolver.GameType == GameType.TQIT)
+		{
+			// Text 
+			rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Text");
+			
+			if (!Directory.Exists(rootFolder))
+				return;
+
+			databaseFile = this.FigureDBFileToUse(rootFolder);
+
+			if (databaseFile is null)
+				return;
+			
+			ParseTextBase(databaseFile);
+
+			// Resources
+			rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Resources");
+
+			databaseFile = this.FigureDBFileToUse(rootFolder);
+
+			if (databaseFile is null)
+				return;
+
+			ParseTextIT(databaseFile);
+		}
+		else // TQ
+		{
+			// from the original TQ folder
+			rootFolder = Path.Combine(GamePathResolver.GamePathTQ, "Text");
+
+			if (!Directory.Exists(rootFolder))
+				return;
+
+			databaseFile = this.FigureDBFileToUse(rootFolder);
+
+			if (databaseFile is null)
+				return;
+
+			ParseTextBase(databaseFile);
 		}
 
-		if (!string.IsNullOrEmpty(databaseFile))
+		if (GamePathResolver.IsRagnarokInstalled)
 		{
-			string fileName = Path.GetFileNameWithoutExtension(databaseFile);
+			this.ParseTextDB(databaseFile, "text\\x2commonequipment.txt");
+			this.ParseTextDB(databaseFile, "text\\x2uniqueequipment.txt");
+			this.ParseTextDB(databaseFile, "text\\x2quest.txt");
+			this.ParseTextDB(databaseFile, "text\\x2ui.txt");
+			this.ParseTextDB(databaseFile, "text\\x2skills.txt");
+			this.ParseTextDB(databaseFile, "text\\x2monsters.txt"); // Added by VillageIdiot
+			this.ParseTextDB(databaseFile, "text\\x2menu.txt"); // Added by VillageIdiot
+			this.ParseTextDB(databaseFile, "text\\x2npc.txt"); // Added by VillageIdiot
 		}
 
-		if (databaseFile != null)
+		if (GamePathResolver.IsAtlantisInstalled)
 		{
-			// Try to suck what we want into memory and then parse it.
-			this.ParseTextDB(databaseFile, "text\\commonequipment.txt");
-			this.ParseTextDB(databaseFile, "text\\uniqueequipment.txt");
-			this.ParseTextDB(databaseFile, "text\\quest.txt");
-			this.ParseTextDB(databaseFile, "text\\ui.txt");
-			this.ParseTextDB(databaseFile, "text\\skills.txt");
-			this.ParseTextDB(databaseFile, "text\\monsters.txt"); // Added by VillageIdiot
-			this.ParseTextDB(databaseFile, "text\\menu.txt"); // Added by VillageIdiot
-			this.ParseTextDB(databaseFile, "text\\tutorial.txt");
+			this.ParseTextDB(databaseFile, "text\\x3basegame_nonvoiced.txt");
+			this.ParseTextDB(databaseFile, "text\\x3items_nonvoiced.txt");
+			this.ParseTextDB(databaseFile, "text\\x3mainquest_nonvoiced.txt");
+			this.ParseTextDB(databaseFile, "text\\x3misctags_nonvoiced.txt");
+			this.ParseTextDB(databaseFile, "text\\x3sidequests_nonvoiced.txt");
+		}
 
-			// Immortal Throne data
-			this.ParseTextDB(databaseFile, "text\\xcommonequipment.txt");
-			this.ParseTextDB(databaseFile, "text\\xuniqueequipment.txt");
-			this.ParseTextDB(databaseFile, "text\\xquest.txt");
-			this.ParseTextDB(databaseFile, "text\\xui.txt");
-			this.ParseTextDB(databaseFile, "text\\xskills.txt");
-			this.ParseTextDB(databaseFile, "text\\xmonsters.txt"); // Added by VillageIdiot
-			this.ParseTextDB(databaseFile, "text\\xmenu.txt"); // Added by VillageIdiot
-			this.ParseTextDB(databaseFile, "text\\xnpc.txt"); // Added by VillageIdiot
-			this.ParseTextDB(databaseFile, "text\\modstrings.txt"); // Added by VillageIdiot
-			this.ParseTextDB(databaseFile, "text\\xtutorial.txt"); // Added by hguy
-
-			if (GamePathResolver.IsRagnarokInstalled)
-			{
-				this.ParseTextDB(databaseFile, "text\\x2commonequipment.txt");
-				this.ParseTextDB(databaseFile, "text\\x2uniqueequipment.txt");
-				this.ParseTextDB(databaseFile, "text\\x2quest.txt");
-				this.ParseTextDB(databaseFile, "text\\x2ui.txt");
-				this.ParseTextDB(databaseFile, "text\\x2skills.txt");
-				this.ParseTextDB(databaseFile, "text\\x2monsters.txt"); // Added by VillageIdiot
-				this.ParseTextDB(databaseFile, "text\\x2menu.txt"); // Added by VillageIdiot
-				this.ParseTextDB(databaseFile, "text\\x2npc.txt"); // Added by VillageIdiot
-			}
-
-			if (GamePathResolver.IsAtlantisInstalled)
-			{
-				this.ParseTextDB(databaseFile, "text\\x3basegame_nonvoiced.txt");
-				this.ParseTextDB(databaseFile, "text\\x3items_nonvoiced.txt");
-				this.ParseTextDB(databaseFile, "text\\x3mainquest_nonvoiced.txt");
-				this.ParseTextDB(databaseFile, "text\\x3misctags_nonvoiced.txt");
-				this.ParseTextDB(databaseFile, "text\\x3sidequests_nonvoiced.txt");
-			}
-
-			if (GamePathResolver.IsEmbersInstalled)
-			{
-				this.ParseTextDB(databaseFile, "text\\x4basegame_nonvoiced.txt");
-				this.ParseTextDB(databaseFile, "text\\x4items_nonvoiced.txt");
-				this.ParseTextDB(databaseFile, "text\\x4mainquest_nonvoiced.txt");
-				this.ParseTextDB(databaseFile, "text\\x4misctags_nonvoiced.txt");
-				this.ParseTextDB(databaseFile, "text\\x4nametags_nonvoiced.txt");
-				this.ParseTextDB(databaseFile, "text\\x4sidequests_nonvoiced.txt");
-			}
+		if (GamePathResolver.IsEmbersInstalled)
+		{
+			this.ParseTextDB(databaseFile, "text\\x4basegame_nonvoiced.txt");
+			this.ParseTextDB(databaseFile, "text\\x4items_nonvoiced.txt");
+			this.ParseTextDB(databaseFile, "text\\x4mainquest_nonvoiced.txt");
+			this.ParseTextDB(databaseFile, "text\\x4misctags_nonvoiced.txt");
+			this.ParseTextDB(databaseFile, "text\\x4nametags_nonvoiced.txt");
+			this.ParseTextDB(databaseFile, "text\\x4sidequests_nonvoiced.txt");
 		}
 
 		// For loading custom map text database.
@@ -1145,6 +1145,33 @@ public class Database : IDatabase
 
 		if (TQDebug.DatabaseDebugLevel > 0)
 			Log.LogDebug("Exiting Database.LoadTextDB()");
+	}
+
+	private void ParseTextIT(string databaseFile)
+	{
+		this.ParseTextDB(databaseFile, "text\\xcommonequipment.txt");
+		this.ParseTextDB(databaseFile, "text\\xuniqueequipment.txt");
+		this.ParseTextDB(databaseFile, "text\\xquest.txt");
+		this.ParseTextDB(databaseFile, "text\\xui.txt");
+		this.ParseTextDB(databaseFile, "text\\xskills.txt");
+		this.ParseTextDB(databaseFile, "text\\xmonsters.txt"); // Added by VillageIdiot
+		this.ParseTextDB(databaseFile, "text\\xmenu.txt"); // Added by VillageIdiot
+		this.ParseTextDB(databaseFile, "text\\xnpc.txt"); // Added by VillageIdiot
+		this.ParseTextDB(databaseFile, "text\\modstrings.txt"); // Added by VillageIdiot
+		this.ParseTextDB(databaseFile, "text\\xtutorial.txt"); // Added by hguy
+	}
+
+	private void ParseTextBase(string databaseFile)
+	{
+		// Try to suck what we want into memory and then parse it.
+		this.ParseTextDB(databaseFile, "text\\commonequipment.txt");
+		this.ParseTextDB(databaseFile, "text\\uniqueequipment.txt");
+		this.ParseTextDB(databaseFile, "text\\quest.txt");
+		this.ParseTextDB(databaseFile, "text\\ui.txt");
+		this.ParseTextDB(databaseFile, "text\\skills.txt");
+		this.ParseTextDB(databaseFile, "text\\monsters.txt"); // Added by VillageIdiot
+		this.ParseTextDB(databaseFile, "text\\menu.txt"); // Added by VillageIdiot
+		this.ParseTextDB(databaseFile, "text\\tutorial.txt");
 	}
 
 	static Regex ParseTextDBRegEx = new Regex(@"^(?<Tag>\[\w+\])(?<Label>[^\\[]+)|^\[(?<Label>[^\]]+)\]$", RegexOptions.Compiled);
@@ -1229,17 +1256,31 @@ public class Database : IDatabase
 		// from the original TQ folder
 		string file = Path.Combine(GamePathResolver.GamePathTQ, "Database", "database.arz");
 
+		this.ArzFile = new ArzFile(file);
+		arzProv.Read(this.ArzFile);
+
 		if (TQDebug.DatabaseDebugLevel > 1)
 		{
 			Log.LogDebug("Load Titan Quest database arz file");
 			Log.LogDebug("file = {0}", file);
 		}
 
-		this.ArzFile = new ArzFile(file);
-		arzProv.Read(this.ArzFile);
+		this.ArzFileIT = this.ArzFile;
 
 		// now Immortal Throne expansion pack
-		this.ArzFileIT = this.ArzFile;
+		if (!string.IsNullOrWhiteSpace(GamePathResolver.GamePathTQIT) && GamePathResolver.GamePathAreDifferent)
+		{
+			file = Path.Combine(GamePathResolver.GamePathTQIT, "Database", "database.arz");
+
+			this.ArzFileIT = new ArzFile(file);
+			arzProv.Read(this.ArzFileIT);
+
+			if (TQDebug.DatabaseDebugLevel > 1)
+			{
+				Log.LogDebug("Load Titan Quest database arz file");
+				Log.LogDebug("file = {0}", file);
+			}
+		}
 
 		// Added to load a custom map database file.
 		if (GamePathResolver.IsCustom)
