@@ -63,13 +63,12 @@ public interface IGamePathService
 	string GetNameFromFile(string filename);
 
 	/// <summary>
-	/// <c>true</c> when <see cref="ResolveGamePath"/> found an IT or AE installation
-	/// </summary>
-	public bool GameInstallDirectoryIsITOrAE { get; }
-	/// <summary>
 	/// Gets or sets the Immortal Throne game path.
 	/// </summary>
 	string GamePathTQIT { get; set; }
+
+	bool GamePathAreDifferent { get; }
+
 	/// <summary>
 	/// Gets the Immortal Throne Character save folder.
 	/// Resolve as "%USERPROFILE%\Documents\My Games\Titan Quest - Immortal Throne".
@@ -217,6 +216,7 @@ public interface IGamePathService
 	string PlayerStashFileNameB { get; }
 	string PlayerStashFileNameG { get; }
 	string PlayerSettingsFileName { get; }
+	GameType GameType { get; set; }
 
 	/// <summary>
 	/// Return the vault name from <paramref name="vaultFilePath"/>
