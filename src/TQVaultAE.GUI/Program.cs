@@ -178,6 +178,18 @@ namespace TQVaultAE.GUI
 				gamePathResolver.GamePathTQ = Config.UserSettings.Default.TQPath;
 				gamePathResolver.GamePathTQIT = Config.UserSettings.Default.TQITPath;
 			}
+
+			var titanQuestGamePath = gamePathResolver.GamePathTQ;
+			if (!string.IsNullOrWhiteSpace(titanQuestGamePath))
+			{
+				DetectGameType();
+			}
+			titanQuestGamePath = gamePathResolver.GamePathTQIT;
+			if (!string.IsNullOrWhiteSpace(titanQuestGamePath))
+			{
+				DetectGameType();
+			}
+
 			Log.LogInformation("Selected TQ path {0}", gamePathResolver.GamePathTQ);
 			Log.LogInformation("Selected TQIT path {0}", gamePathResolver.GamePathTQIT);
 
@@ -199,6 +211,13 @@ namespace TQVaultAE.GUI
 			}
 
 			gamePathResolver.TQVaultSaveFolder = Config.UserSettings.Default.VaultPath;
+
+			void DetectGameType()
+			{
+				if (File.Exists(Path.Combine(titanQuestGamePath, "TQ.exe"))) gamePathResolver.GameType = GameType.TQAE;
+				else if (File.Exists(Path.Combine(titanQuestGamePath, "TQIT.exe"))) gamePathResolver.GameType = GameType.TQIT;
+				else gamePathResolver.GameType = GameType.TQ;
+			}
 		}
 
 		/// <summary>

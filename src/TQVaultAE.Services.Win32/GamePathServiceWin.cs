@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -112,6 +113,8 @@ public class GamePathServiceWin : IGamePathService
 	/// Name of the vault folder
 	/// </summary>
 	private string _VaultFolder;
+
+	public bool GamePathAreDifferent => GamePathTQIT != GamePathTQ;
 
 	/// <summary>
 	/// Gets the Immortal Throne Character save folder.
@@ -445,8 +448,8 @@ public class GamePathServiceWin : IGamePathService
 	public string PlayerStashFileNameG => PLAYERSTASHFILENAMEG;
 
 	public string PlayerSettingsFileName => PLAYERSETTINGSFILENAME;
-
-	public bool GameInstallDirectoryIsITOrAE { get; private set; }
+	
+	public GameType GameType { get; set; }
 
 	/// <summary>
 	/// Gets the file name and path for a vault.
@@ -666,8 +669,6 @@ public class GamePathServiceWin : IGamePathService
 		if (string.IsNullOrEmpty(titanQuestGamePath))
 			throw new ExGamePathNotFound(@"Unable to locate Titan Quest installation directory.
 Please select the game installation directory.");
-
-		this.GameInstallDirectoryIsITOrAE = titanQuestGamePath.ContainsIgnoreCase("Anniversary") || titanQuestGamePath.ContainsIgnoreCase("Immortal");
 
 		return titanQuestGamePath;
 	}
