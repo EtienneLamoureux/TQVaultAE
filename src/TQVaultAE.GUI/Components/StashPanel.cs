@@ -29,9 +29,9 @@ namespace TQVaultAE.GUI.Components
 		/// </summary>
 		private static string[] buttonNames =
 		{
-			Resources.StashPanelBtn1,
-			Resources.StashPanelBtn2,
-			Resources.StashPanelBtn3,
+			Resources.StashPanelBtnEquipment,
+			Resources.StashPanelBtnTransferArea,
+			Resources.StashPanelBtnStorageArea,
 			Resources.GlobalRelicVaultStash
 		};
 
@@ -263,7 +263,7 @@ namespace TQVaultAE.GUI.Components
 
 		private void DisplayPlayerInfo()
 		{
-			if (this.Player == null || !this.equipmentPanel.Visible || this.BagButtons[this.CurrentBag].ButtonText != Resources.StashPanelBtn1)
+			if (this.Player == null || !this.equipmentPanel.Visible || this.BagButtons[this.CurrentBag].ButtonText != Resources.StashPanelBtnEquipment)
 			{
 				this.PlayerPanel.Visible = false;
 				return;
@@ -544,7 +544,7 @@ namespace TQVaultAE.GUI.Components
 					if (this.currentBag == BAGID_EQUIPMENTPANEL)
 					{
 						// Equipment Panel
-						if (this.Player == null)
+						if (this.Player == null) 
 							this.equipmentPanel.Sack = null;
 						else
 							this.equipmentPanel.Sack = this.Player.EquipmentSack;

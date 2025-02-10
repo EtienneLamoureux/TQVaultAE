@@ -622,7 +622,8 @@ public class GamePathServiceWin : IGamePathService
 					{
 						if (vdfPathRegex.Match(line.Trim()) is { Success: true } match)
 						{
-							fullPath = Path.Combine(match.Groups[1].Value, steamTQPath);
+							var vdfPathValue = match.Groups[1].Value.Replace(@"\\", @"\");
+							fullPath = Path.Combine(vdfPathValue, steamTQPath);
 							if (Directory.Exists(fullPath))
 							{
 								titanQuestGamePath = fullPath;
@@ -641,7 +642,7 @@ public class GamePathServiceWin : IGamePathService
 						{
 							// Match "path"
 							if (regExPath.Match(line) is { Success: true } match)
-								steamPath = match.Groups["path"].Value;
+								steamPath = match.Groups["path"].Value.Replace(@"\\", @"\");// Backslashes ares escaped in this file
 
 							// Match gameId
 							if (line.Contains(gameIdMarkup))

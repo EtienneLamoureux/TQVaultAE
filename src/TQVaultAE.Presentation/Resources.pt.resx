@@ -834,13 +834,13 @@ avançe para o programa por si só.</value>
 Por favor, visite o condutor da Caravana no jogo para criar o arquivo.
 A guia área de armazenamento ficará indisponível para esse personagem.</value>
   </data>
-  <data name="StashPanelBtn1" xml:space="preserve">
+  <data name="StashPanelBtnEquipment" xml:space="preserve">
     <value>Equipamento</value>
   </data>
-  <data name="StashPanelBtn2" xml:space="preserve">
+  <data name="StashPanelBtnTransferArea" xml:space="preserve">
     <value>Área de Transferência</value>
   </data>
-  <data name="StashPanelBtn3" xml:space="preserve">
+  <data name="StashPanelBtnStorageArea" xml:space="preserve">
     <value>Área de Armazenamento</value>
   </data>
   <data name="StashPanelText" xml:space="preserve">

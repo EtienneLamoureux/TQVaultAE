@@ -1,11 +1,32 @@
 ﻿using System;
+using System.Linq;
 
 namespace TQVaultAE.Domain.Entities;
 
 public partial class RecordId
 {
 
+	#region IsHCDungeonEE
+
+	bool? _IsHardCoreDungeonEE;
+	/// <summary>
+	/// This <see cref="RecordId"/> leads to the EE Hardcore Dungeon.
+	/// </summary>
+	public bool IsHardCoreDungeonEE
+	{
+		get
+		{
+			if (_IsHardCoreDungeonEE is null)
+				_IsHardCoreDungeonEE = this.Normalized.Contains(@"\HCDUNGEON\");
+			return _IsHardCoreDungeonEE.Value;
+		}
+	}
+
+	#endregion
+
 	#region IsRelic
+
+	private readonly string[] HCDungeonRelic = new[] { "03_X4_ESSENCEOFORDER_CHARM", "03_X4_ESSENCEOFCHAOS" };
 
 	bool? _IsRelic;
 	/// <summary>
@@ -17,7 +38,8 @@ public partial class RecordId
 		{
 			if (_IsRelic is null)
 				_IsRelic = (this.Dlc == GameDlc.TitanQuest && this.Normalized.Contains(@"RELICS") && !IsCharm) // Is base game
-					|| this.Normalized.Contains(@"\RELICS\");// Is part of an extension
+					|| this.Normalized.Contains(@"\RELICS\")// Is part of an extension
+					|| (this.IsHardCoreDungeonEE && HCDungeonRelic.Any(n => this.Normalized.Contains(n)));// items that break the rule
 			return _IsRelic.Value;
 		}
 	}
@@ -36,7 +58,8 @@ public partial class RecordId
 		{
 			if (_IsCharm is null)
 				_IsCharm = (this.Dlc == GameDlc.TitanQuest && this.Normalized.Contains(@"ANIMALRELICS")) // Is base game
-					|| this.Normalized.Contains(@"\CHARMS\");// Is part of an extension
+					|| this.Normalized.Contains(@"\CHARMS\")// Is part of an extension
+					|| (this.IsHardCoreDungeonEE && this.Normalized.Contains(@"GOLDENSCARAB"));// items that break the rule
 			return _IsCharm.Value;
 		}
 	}
