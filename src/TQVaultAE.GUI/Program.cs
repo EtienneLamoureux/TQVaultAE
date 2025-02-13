@@ -180,15 +180,10 @@ namespace TQVaultAE.GUI
 			}
 
 			var titanQuestGamePath = gamePathResolver.GamePathTQ;
-			if (!string.IsNullOrWhiteSpace(titanQuestGamePath))
-			{
-				DetectGameType();
-			}
+			if (!string.IsNullOrWhiteSpace(titanQuestGamePath)) DetectGameType();
+
 			titanQuestGamePath = gamePathResolver.GamePathTQIT;
-			if (!string.IsNullOrWhiteSpace(titanQuestGamePath))
-			{
-				DetectGameType();
-			}
+			if (!string.IsNullOrWhiteSpace(titanQuestGamePath)) DetectGameType();
 
 			Log.LogInformation("Selected TQ path {0}", gamePathResolver.GamePathTQ);
 			Log.LogInformation("Selected TQIT path {0}", gamePathResolver.GamePathTQIT);

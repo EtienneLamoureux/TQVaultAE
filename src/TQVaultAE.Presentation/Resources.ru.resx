@@ -1094,4 +1094,7 @@ Used to track changes in the translation file.</comment>
   <data name="ItemEmbers" xml:space="preserve">
     <value>Предмет Eternal Embers</value>
   </data>
+	<data name="SackPanelMenuSeedForce" xml:space="preserve">
+    <value>Изменить семя элемента (принудительно)</value>
+  </data>
 </root>

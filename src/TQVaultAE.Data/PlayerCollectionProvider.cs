@@ -203,8 +203,7 @@ namespace TQVaultAE.Data
 				}).ToList()
 			};
 
-			using var sw = new StreamWriter(fileName, false, Encoding.UTF8);
-			new JsonSerializer() { Formatting = Formatting.Indented }.Serialize(sw, pcjson);
+			File.WriteAllText(fileName, JsonConvert.SerializeObject(pcjson, Formatting.Indented), Encoding.UTF8);
 		}
 
 		/// <summary>
@@ -287,8 +286,7 @@ namespace TQVaultAE.Data
 
 		private void ParseJsonData(PlayerCollection pc, string path)
 		{
-			using var jsonfile = new StreamReader(path, Encoding.UTF8);
-			var vaultDto = new JsonSerializer().Deserialize(jsonfile, typeof(VaultDto)) as VaultDto;
+			var vaultDto = JsonConvert.DeserializeObject<VaultDto>(File.ReadAllText(path, Encoding.UTF8));
 
 			pc.DisabledTooltipBagId = vaultDto.disabledtooltip ?? new();
 			pc.numberOfSacks = vaultDto.sacks.Count;
