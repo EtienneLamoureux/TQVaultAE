@@ -1049,18 +1049,34 @@ public class Database : IDatabase
 		}
 		else if (GamePathResolver.GameType == GameType.TQIT)
 		{
-			// Steam Version split text files in /Text and /Resources, Disk install with patches use only /Resources
+			/*
+			 * Steam Version split text files in /Text and /Resources,
+			 * Disk install with patches use only /Resources
+			 * Disk install without patches use TQ/Text and TQIT/Resources
+			 */
 
-			// Steam Version
 			rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Text");
-			var textDirExists = Directory.Exists(rootFolder);
+			var tqItTextDirExists = Directory.Exists(rootFolder);
 
-			if (textDirExists)
+			if (tqItTextDirExists) // Steam Version
 			{
 				databaseFile = this.FigureDBFileToUse(rootFolder);
 
 				if (databaseFile is not null)
 					ParseTextBase(databaseFile);
+			}
+			else
+			{
+				rootFolder = Path.Combine(GamePathResolver.GamePathTQ, "Text"); // Read text from TQ dir
+				var tqTextDirExists = Directory.Exists(rootFolder);
+
+				if (tqTextDirExists)
+				{
+					databaseFile = this.FigureDBFileToUse(rootFolder);
+
+					if (databaseFile is not null)
+						ParseTextBase(databaseFile);
+				}
 			}
 
 			// Resources
@@ -1071,7 +1087,7 @@ public class Database : IDatabase
 			if (databaseFile is null)
 				return;
 
-			if(!textDirExists) ParseTextBase(databaseFile);
+			ParseTextBase(databaseFile); // TQIT patched use only Resources for that
 			ParseTextIT(databaseFile);
 		}
 		else // TQ
@@ -1235,9 +1251,6 @@ public class Database : IDatabase
 
 				// If this field is already in the db, then replace it
 				string key = fields[0].Trim().ToUpperInvariant();
-
-				//if (!this.textDB.TryAdd(key, label))
-				//	Log.LogDebug(@"TextDB Overlap ! Try to override ""{key}"" = ""{oldvalue}"" with ""{newvalue}"" !", key, this.textDB[key], label);
 
 				this.textDB.AddOrUpdate(key, label, (k, v) => label);// Override with the new "label"
 			}
