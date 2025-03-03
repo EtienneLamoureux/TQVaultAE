@@ -448,7 +448,7 @@ public class Database : IDatabase
 		var data = new[]
 			{
 				this.ArzFileMod,
-				this.ArzFileIT != null && this.ArzFileIT != this.ArzFile ? this.ArzFileIT : null, 
+				this.ArzFileIT != null && this.ArzFileIT != this.ArzFile ? this.ArzFileIT : null,
 				this.ArzFile
 			}
 			.Where(db => db is not null)
@@ -1031,27 +1031,11 @@ public class Database : IDatabase
 		if (TQDebug.DatabaseDebugLevel > 0)
 			Log.LogDebug("Database.LoadTextDB()");
 
-		string rootFolder , databaseFile;
+		string rootFolder, databaseFile;
 		if (GamePathResolver.GameType == GameType.TQAE)
 		{
 			rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Text");
-			
-			if (!Directory.Exists(rootFolder))
-				return;
 
-			databaseFile = this.FigureDBFileToUse(rootFolder);
-
-			if(databaseFile is null)
-				return;
-
-			ParseTextBase(databaseFile);
-			ParseTextIT(databaseFile);
-		}
-		else if (GamePathResolver.GameType == GameType.TQIT)
-		{
-			// Text 
-			rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Text");
-			
 			if (!Directory.Exists(rootFolder))
 				return;
 
@@ -1059,8 +1043,41 @@ public class Database : IDatabase
 
 			if (databaseFile is null)
 				return;
-			
+
 			ParseTextBase(databaseFile);
+			ParseTextIT(databaseFile);
+		}
+		else if (GamePathResolver.GameType == GameType.TQIT)
+		{
+			/*
+			 * Steam Version split text files in /Text and /Resources,
+			 * Disk install with patches use only /Resources
+			 * Disk install without patches use TQ/Text and TQIT/Resources
+			 */
+
+			rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Text");
+			var tqItTextDirExists = Directory.Exists(rootFolder);
+
+			if (tqItTextDirExists) // Steam Version
+			{
+				databaseFile = this.FigureDBFileToUse(rootFolder);
+
+				if (databaseFile is not null)
+					ParseTextBase(databaseFile);
+			}
+			else
+			{
+				rootFolder = Path.Combine(GamePathResolver.GamePathTQ, "Text"); // Read text from TQ dir
+				var tqTextDirExists = Directory.Exists(rootFolder);
+
+				if (tqTextDirExists)
+				{
+					databaseFile = this.FigureDBFileToUse(rootFolder);
+
+					if (databaseFile is not null)
+						ParseTextBase(databaseFile);
+				}
+			}
 
 			// Resources
 			rootFolder = Path.Combine(GamePathResolver.GamePathTQIT, "Resources");
@@ -1070,6 +1087,7 @@ public class Database : IDatabase
 			if (databaseFile is null)
 				return;
 
+			ParseTextBase(databaseFile); // TQIT patched use only Resources for that
 			ParseTextIT(databaseFile);
 		}
 		else // TQ
@@ -1233,9 +1251,6 @@ public class Database : IDatabase
 
 				// If this field is already in the db, then replace it
 				string key = fields[0].Trim().ToUpperInvariant();
-
-				//if (!this.textDB.TryAdd(key, label))
-				//	Log.LogDebug(@"TextDB Overlap ! Try to override ""{key}"" = ""{oldvalue}"" with ""{newvalue}"" !", key, this.textDB[key], label);
 
 				this.textDB.AddOrUpdate(key, label, (k, v) => label);// Override with the new "label"
 			}
