@@ -34,15 +34,31 @@ public class RecordInfoProvider : IRecordInfoProvider
 	/// <param name="arzFile">ArzFile instance which we are operating.</param>
 	public void Decode(RecordInfo info, BinaryReader inReader, int baseOffset, ArzFile arzFile)
 	{
+		// Record Entry Format
+		// 0x0000 int32 stringEntryID (dbr filename)
+		// 0x0004 int32 string length
+		// 0x0008 string (record type)
+		// 0x00?? int32 offset
+		// 0x00?? int32 length in bytes
+		// 0x00?? int32 timestamp?
+		// 0x00?? int32 timestamp?
 		info.IdStringIndex = inReader.ReadInt32();
 		info.RecordType = TQData.ReadCString(inReader);
 		info.Offset = inReader.ReadInt32() + baseOffset;
 
+		// Compressed size
+		// We throw it away and just advance the offset in the file.
 		info.CompressedSize = inReader.ReadInt32();
 
-		inReader.ReadInt32();
+		// Crap1 - timestamp?
+		// We throw it away and just advance the offset in the file.
 		inReader.ReadInt32();
 
+		// Crap2 - timestamp?
+		// We throw it away and just advance the offset in the file.
+		inReader.ReadInt32();
+
+		// Get the ID string
 		info.ID = arzFile.Getstring(info.IdStringIndex);
 	}
 
@@ -57,6 +73,14 @@ public class RecordInfoProvider : IRecordInfoProvider
 	/// <param name="arzFile">ArzFile instance which we are operating.</param>
 	public void Decode(RecordInfo info, ReadOnlySpan<byte> data, ref int offset, int baseOffset, ArzFile arzFile)
 	{
+		// Record Entry Format
+		// 0x0000 int32 stringEntryID (dbr filename)
+		// 0x0004 int32 string length
+		// 0x0008 string (record type)
+		// 0x00?? int32 offset
+		// 0x00?? int32 length in bytes (compressed size)
+		// 0x00?? int32 timestamp?
+		// 0x00?? int32 timestamp?
 		info.IdStringIndex = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset));
 		offset += sizeof(int);
 
@@ -65,10 +89,12 @@ public class RecordInfoProvider : IRecordInfoProvider
 		info.Offset = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset)) + baseOffset;
 		offset += sizeof(int);
 
+		// Compressed size
 		info.CompressedSize = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset));
 		offset += sizeof(int);
 
-		// Skip 2 x int32 (total 8 bytes)
+		// Crap1 - timestamp? (We throw it away)
+		// Crap2 - timestamp? (We throw it away)
 		offset += sizeof(int) * 2;
 
 		info.ID = arzFile.Getstring(info.IdStringIndex);

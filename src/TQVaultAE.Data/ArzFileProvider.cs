@@ -43,6 +43,14 @@ public class ArzFileProvider : IArzFileProvider
 
 		try
 		{
+			// ARZ header file format
+			//
+			// 0x000000 int32
+			// 0x000004 int32 start of dbRecord table
+			// 0x000008 int32 size in bytes of dbRecord table
+			// 0x00000c int32 numEntries in dbRecord table
+			// 0x000010 int32 start of string table
+			// 0x000014 int32 size in bytes of string table
 			int[] header = new int[6];
 			for (int i = 0; i < 6; ++i)
 			{
