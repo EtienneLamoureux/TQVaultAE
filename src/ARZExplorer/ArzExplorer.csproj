@@ -5,10 +5,6 @@
 		<OutputType>WinExe</OutputType>
 		<RootNamespace>ArzExplorer</RootNamespace>
 		<AssemblyName>ARZExplorer</AssemblyName>
-		<Version>4.4.0.0</Version>
-		<LangVersion>latest</LangVersion>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 		<StartupObject>ArzExplorer.Program</StartupObject>
 		<Platforms>AnyCPU;x64;x86</Platforms>
@@ -23,6 +19,7 @@
 		<AssemblyCopyright>Copyright © 2009-2010 by VillageIdiot, v2.0 - 2022 by hguy</AssemblyCopyright>
 		<ComVisible>false</ComVisible>
 		<NeutralLanguage>en-US</NeutralLanguage>
+		<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -36,9 +33,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Enums.NET" Version="5.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="8.0.0" />
+		<PackageReference Include="Enums.NET" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -60,7 +60,7 @@ Single source of truth: `version-info.json`
 `Update-Version.ps1` script ensures consistency:
 
 1. Reads version from `version-info.json` (read-only, does not modify it)
-2. Updates ALL SDK-style .csproj files with SAME version
+2. Updates `Directory.Build.props` with SAME version (all projects inherit it)
 3. Does NOT modify `version-info.json` - it's the source of truth
 
 ### GitHub Actions Workflows
@@ -77,8 +77,8 @@ Version management is handled by **two separate workflows**:
 1. **Edit `version-info.json`**: Update Major/Minor/Build as needed
 2. **Push to `master`**: Commit and push the change
 3. **auto-version.yml triggers**: Detects `version-info.json` changed
-4. **Sync version**: Script reads `version-info.json` and syncs to all project files
-5. **Commit sync**: GitHub Actions commits synced files with `[skip ci]` to prevent infinite loops
+4. **Sync version**: Script reads `version-info.json` and syncs to `Directory.Build.props`
+5. **Commit sync**: GitHub Actions commits synced files (including `Directory.Build.props`) with `[skip ci]` to prevent infinite loops
 6. **Build**: Compiles release artifacts
 7. **Create tag**: Creates git tag (e.g., `4.4.1`)
 8. **Create ZIP archives**: Packages each application as `NAME-VERSION.zip`
@@ -102,49 +102,29 @@ git commit -m "chore: sync version from version-info.json [skip ci]"
 
 ### Files Updated by Sync
 
-Each sync modifies ALL these SDK-style project files:
+Each sync modifies the centralized version property:
 
 ```
-src/TQVaultAE.GUI/TQVaultAE.GUI.csproj
-src/TQSaveFilesExplorer/TQ.SaveFilesExplorer.csproj
-src/ARZExplorer/ArzExplorer.csproj
-src/TQVaultAE.Services.Win32/TQVaultAE.Services.Win32.csproj
-src/TQVaultAE.Domain/TQVaultAE.Domain.csproj
-src/TQVaultAE.Application/TQVaultAE.Application.csproj
-src/TQVaultAE.Services/TQVaultAE.Services.csproj
-src/TQVaultAE.Presentation/TQVaultAE.Presentation.csproj
-src/TQVaultAE.Data/TQVaultAE.Data.csproj
-src/TQVaultAE.Config/TQVaultAE.Config.csproj
-src/TQVaultAE.Logs/TQVaultAE.Logs.csproj
+Directory.Build.props
 ```
 
-All receive **identical version** from `version-info.json` on every sync.
+All projects inherit the **identical version** from `version-info.json` via `Directory.Build.props` on every sync. No individual `.csproj` files need version updates.
 
-**Note:** All projects now use SDK-style format with auto-generated assembly attributes. The old `Properties/AssemblyInfo.cs` files have been removed and their attributes moved into the `.csproj` files.
+**Note:** All projects now use SDK-style format with auto-generated assembly attributes. Common properties (`LangVersion`, `Nullable`, `ImplicitUsings`, `Version`) are centralized in `Directory.Build.props`, and package versions are centralized in `Directory.Packages.props`.
 
 ## Verification
 
 ### Before Build
 
 ```bash
-# Check Version in all SDK-style projects
-grep "<Version>" src/*/*.csproj
+# Check Version in centralized properties file
+grep "<Version" Directory.Build.props
 ```
 
-Expected output (all lines show same version):
+Expected output (single source of truth for all projects):
 ```
-# SDK-style csproj files (all projects)
-src/TQVaultAE.GUI/TQVaultAE.GUI.csproj:    <Version>4.4.1.0</Version>
-src/TQSaveFilesExplorer/TQ.SaveFilesExplorer.csproj:    <Version>4.4.1.0</Version>
-src/ARZExplorer/ArzExplorer.csproj:    <Version>4.4.1.0</Version>
-src/TQVaultAE.Services.Win32/TQVaultAE.Services.Win32.csproj:    <Version>4.4.1.0</Version>
-src/TQVaultAE.Domain/TQVaultAE.Domain.csproj:    <Version>4.4.1.0</Version>
-src/TQVaultAE.Application/TQVaultAE.Application.csproj:    <Version>4.4.1.0</Version>
-src/TQVaultAE.Services/TQVaultAE.Services.csproj:    <Version>4.4.1.0</Version>
-src/TQVaultAE.Presentation/TQVaultAE.Presentation.csproj:    <Version>4.4.1.0</Version>
-src/TQVaultAE.Data/TQVaultAE.Data.csproj:    <Version>4.4.1.0</Version>
-src/TQVaultAE.Config/TQVaultAE.Config.csproj:    <Version>4.4.1.0</Version>
-src/TQVaultAE.Logs/TQVaultAE.Logs.csproj:    <Version>4.4.1.0</Version>
+# Directory.Build.props (all projects inherit this version)
+    <Version Condition="'$(IsPackable)' != 'false'">4.4.1.0</Version>
 ```
 
 ### After Build
@@ -187,19 +167,19 @@ TQ.SaveFilesExplorer.exe: 4.4.0.0
 ```
 
 **Solution:**
-1. Run the version sync script to synchronize all files:
+1. Run the version sync script to synchronize the version:
    ```bash
    pwsh -File .github/scripts/Update-Version.ps1 -VersionType "Sync"
    ```
 2. Commit the changes:
    ```bash
-   git add -u
+   git add -A
    git commit -m "chore: sync version from version-info.json"
    git push
    ```
-3. Verify all files now show same version:
+3. Verify the centralized version is correct:
    ```bash
-   grep "<Version>" src/*/*.csproj
+   grep "<Version" Directory.Build.props
    ```
 
 ### Issue: Wildcard Version in Project Files
@@ -210,10 +190,10 @@ TQ.SaveFilesExplorer.exe: 4.4.0.0
 ```
 
 **Solution:**
-The sync script replaces wildcards with exact version. After running Update-Version.ps1 with `-VersionType "Sync"`, all csproj files should have:
+The sync script replaces wildcards with exact version. After running Update-Version.ps1 with `-VersionType "Sync"`, `Directory.Build.props` should have:
 
 ```xml
-<Version>4.4.1.0</Version>
+<Version Condition="'$(IsPackable)' != 'false'">4.4.1.0</Version>
 ```
 
 ### Issue: Workflow Not Triggering on Version Bump
@@ -259,7 +239,7 @@ The workflow now creates ZIP archives before release. Verify:
 3. **Use version-info.json** - Single source of truth (read-only for the sync script)
 4. **Test all executables** - Ensure they work at same version
 5. **Document version changes** - Keep release notes for all tools
-6. **Maintain synchronization** - All 10 project files must have identical versions
+6. **Maintain synchronization** - `Directory.Build.props` is the single source for all project versions
 7. **Use `[skip ci]`** - The workflow automatically includes this in sync commits
 8. **Two workflows**: Let `auto-version.yml` handle releases, `build-and-test.yml` handle PRs
 
@@ -283,7 +263,7 @@ git commit -m "chore: bump version to 4.5.0.0"
 git push origin master
 
 # Step 3: auto-version.yml workflow will automatically:
-# - Sync version to all project files
+# - Sync version to Directory.Build.props
 # - Build release artifacts
 # - Create git tag "4.5.0"
 # - Create ZIP archives

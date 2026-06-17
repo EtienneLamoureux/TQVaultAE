@@ -250,7 +250,7 @@ public class PathIOTests : IDisposable
 	public void Combine_WithWindowsStylePaths_HandlesCorrectly()
 	{
 		// Arrange
-		var path1 = "C:\\Users";
+		var path1 = """C:\Users""";
 		var path2 = "Documents";
 
 		// Act
@@ -264,7 +264,7 @@ public class PathIOTests : IDisposable
 	public void GetDirectoryName_WithMixedSeparators_HandlesCorrectly()
 	{
 		// Arrange - handle both Windows and Unix style
-		var mixedPath = "/home/user\\documents/file.txt";
+		var mixedPath = """/home/user\documents/file.txt""";
 
 		// Act
 		var result = _pathIO.GetDirectoryName(mixedPath);

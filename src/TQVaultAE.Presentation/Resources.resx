@@ -1939,6 +1939,9 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="ForgeHardcoreTT" xml:space="preserve">
     <value>Materials are destroyed in the process</value>
   </data>
+	<data name="ExportToCSV" xml:space="preserve">
+    <value>Export to CSV</value>
+  </data>
 	<data name="ExportBagCSVToClipboard" xml:space="preserve">
     <value>Export bag to clipboard</value>
   </data>
@@ -2080,5 +2083,95 @@ You still have to close TQVaultAE to apply your changes.
   </data>
 	<data name="SackPanelMenuSeedForce" xml:space="preserve">
     <value>Change Item Seed (Force)</value>
+  </data>
+	<data name="SackPanelMenuExportClipboard" xml:space="preserve">
+    <value>Share to Clipboard</value>
+  </data>
+	<data name="SackPanelMenuExportItemFile" xml:space="preserve">
+    <value>Share to File...</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabClipboard" xml:space="preserve">
+    <value>Share to Clipboard</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabFile" xml:space="preserve">
+    <value>Share to File...</value>
+  </data>
+	<data name="PlayerPanelMenuExportTab" xml:space="preserve">
+    <value>🔗 Share Tab</value>
+  </data>
+	<data name="SackPanelMenuExportItem" xml:space="preserve">
+    <value>🔗 Share Item</value>
+  </data>
+	<data name="SackPanelMenuExportItemPasteBin" xml:space="preserve">
+    <value>Share to PasteBin</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabPasteBin" xml:space="preserve">
+    <value>Share to PasteBin</value>
+  </data>
+  <data name="ExportVaultPasteBin" xml:space="preserve">
+    <value>Share Vault to PasteBin</value>
+  </data>
+  <data name="PlayerPanelMenuImportTabFile" xml:space="preserve">
+    <value>Import from File...</value>
+  </data>
+  <data name="GlobalNoVaultLoaded" xml:space="preserve">
+    <value>No vault is loaded.</value>
+  </data>
+  <data name="GlobalNoVaultImportTarget" xml:space="preserve">
+    <value>No vault is loaded to import into.</value>
+  </data>
+  <data name="GlobalNoActiveTabImport" xml:space="preserve">
+    <value>No active tab to import into.</value>
+  </data>
+  <data name="GlobalJsonFileFilter" xml:space="preserve">
+    <value>JSON files (*.json)|*.json</value>
+  </data>
+  <data name="ImportVaultReplaceButton" xml:space="preserve">
+    <value>Replace</value>
+  </data>
+  <data name="ImportVaultCreateNewButton" xml:space="preserve">
+    <value>Create New Vault</value>
+  </data>
+  <data name="ImportVaultHeading" xml:space="preserve">
+    <value>Import Vault</value>
+  </data>
+  <data name="ImportVaultWarning" xml:space="preserve">
+    <value>WARNING: This will erase all items in the current vault. Continue?</value>
+  </data>
+  <data name="ExportVaultFailFile" xml:space="preserve">
+    <value>Failed to export vault to file.</value>
+  </data>
+  <data name="ExportVaultFailClipboard" xml:space="preserve">
+    <value>Failed to export vault to clipboard.</value>
+  </data>
+  <data name="ExportVaultFailPasteBin" xml:space="preserve">
+    <value>Failed to export vault to PasteBin: {0}</value>
+  </data>
+  <data name="ImportFailFile" xml:space="preserve">
+    <value>Failed to import from file.</value>
+  </data>
+  <data name="ExportVaultSuccessFile" xml:space="preserve">
+    <value>Vault exported to {0}</value>
+  </data>
+  <data name="ExportVaultSuccessClipboard" xml:space="preserve">
+    <value>Vault exported to clipboard.</value>
+  </data>
+  <data name="ExportVaultSuccessPasteBin" xml:space="preserve">
+    <value>Vault exported to PasteBin: {0}</value>
+  </data>
+  <data name="ImportVaultDialogText" xml:space="preserve">
+    <value>Import vault &quot;{0}&quot;?</value>
+  </data>
+  <data name="ImportVaultSuccessCreate" xml:space="preserve">
+    <value>Created new vault &quot;{0}&quot; with imported data.</value>
+  </data>
+  <data name="ImportSuccessCount" xml:space="preserve">
+    <value>Imported {0} of {1} items.</value>
+  </data>
+  <data name="ImportVaultSuccess" xml:space="preserve">
+    <value>Imported {0} items into vault.</value>
+  </data>
+  <data name="ShareVaultTooltip" xml:space="preserve">
+    <value>🔗 Share Vault</value>
   </data>
 </root>

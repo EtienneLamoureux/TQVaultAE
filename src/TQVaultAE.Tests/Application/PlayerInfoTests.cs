@@ -292,9 +292,9 @@ public class PlayerInfoTests
 	public void ResetMasteries_WithActiveMasteries_ReturnsTrue()
 	{
 		// Arrange - Use actual mastery skill names
-		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = @"Records\Skills\Defensive\DefensiveMastery.dbr", skillLevel = 5 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Defensive\DefensiveMastery.dbr""", skillLevel = 5 });
 		_mockPathIO.Setup(p => p.GetDirectoryName(It.IsAny<string>()))
-			.Returns(@"RECORDS\SKILLS\DEFENSIVE");
+			.Returns("""RECORDS\SKILLS\DEFENSIVE""");
 
 		// Act
 		var result = _playerInfo.ResetMasteries();
@@ -308,9 +308,9 @@ public class PlayerInfoTests
 	{
 		// Arrange
 		_playerInfo.Modified = false;
-		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = @"Records\Skills\Defensive\DefensiveMastery.dbr", skillLevel = 5 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Defensive\DefensiveMastery.dbr""", skillLevel = 5 });
 		_mockPathIO.Setup(p => p.GetDirectoryName(It.IsAny<string>()))
-			.Returns(@"RECORDS\SKILLS\DEFENSIVE");
+			.Returns("""RECORDS\SKILLS\DEFENSIVE""");
 
 		// Act
 		_playerInfo.ResetMasteries();
@@ -325,10 +325,10 @@ public class PlayerInfoTests
 		// Arrange - This test verifies that ResetMasteries removes skills that start with the same base directory
 		// We need to ensure Masteries.Storm is detected, which requires the skill name to match the enum description
 		// The enum description for Storm is: "Records\Skills\Storm\StormMastery.dbr"
-		var masterySkill = @"Records\Skills\Storm\StormMastery.dbr";
+		var masterySkill = """Records\Skills\Storm\StormMastery.dbr""";
 		var skill1 = new SkillRecord { skillName = masterySkill, skillLevel = 3 };
-		var skill2 = new SkillRecord { skillName = @"Records\Skills\Storm\StormSkill1.dbr", skillLevel = 5 };
-		var skill3 = new SkillRecord { skillName = @"Records\Skills\Earth\EarthMastery.dbr", skillLevel = 2 };
+		var skill2 = new SkillRecord { skillName = """Records\Skills\Storm\StormSkill1.dbr""", skillLevel = 5 };
+		var skill3 = new SkillRecord { skillName = """Records\Skills\Earth\EarthMastery.dbr""", skillLevel = 2 };
 
 		_playerInfo.SkillRecordList.Add(skill1);
 		_playerInfo.SkillRecordList.Add(skill2);
@@ -336,9 +336,9 @@ public class PlayerInfoTests
 
 		// Mock returns base directory for any path
 		_mockPathIO.Setup(p => p.GetDirectoryName(It.Is<string>(s => s.Contains("STORM"))))
-			.Returns(@"RECORDS\SKILLS\STORM");
+			.Returns("""RECORDS\SKILLS\STORM""");
 		_mockPathIO.Setup(p => p.GetDirectoryName(It.Is<string>(s => s.Contains("EARTH"))))
-			.Returns(@"RECORDS\SKILLS\EARTH");
+			.Returns("""RECORDS\SKILLS\EARTH""");
 		_mockPathIO.Setup(p => p.GetDirectoryName(It.Is<string>(s => !s.Contains("STORM") && !s.Contains("EARTH"))))
 			.Returns(string.Empty);
 
@@ -356,14 +356,14 @@ public class PlayerInfoTests
 	public void ResetMasteries_TracksRemovedSkills()
 	{
 		// Arrange
-		var skill1 = new SkillRecord { skillName = @"Records\Skills\Storm\StormMastery.dbr", skillLevel = 3 };
-		var skill2 = new SkillRecord { skillName = @"Records\Skills\Storm\StormSkill1.dbr", skillLevel = 5 };
+		var skill1 = new SkillRecord { skillName = """Records\Skills\Storm\StormMastery.dbr""", skillLevel = 3 };
+		var skill2 = new SkillRecord { skillName = """Records\Skills\Storm\StormSkill1.dbr""", skillLevel = 5 };
 
 		_playerInfo.SkillRecordList.Add(skill1);
 		_playerInfo.SkillRecordList.Add(skill2);
 
 		_mockPathIO.Setup(p => p.GetDirectoryName(It.IsAny<string>()))
-			.Returns(@"RECORDS\SKILLS\STORM");
+			.Returns("""RECORDS\SKILLS\STORM""");
 
 		// Act
 		_playerInfo.ResetMasteries();
@@ -380,23 +380,23 @@ public class PlayerInfoTests
 	public void GetSkillsByBaseRecordName_ReturnsMatchingSkills()
 	{
 		// Arrange - Use actual skill paths
-		var skill1 = new SkillRecord { skillName = @"Records\Skills\Storm\StormSkill1.dbr", skillLevel = 1 };
-		var skill2 = new SkillRecord { skillName = @"Records\Skills\Storm\StormSkill2.dbr", skillLevel = 2 };
-		var skill3 = new SkillRecord { skillName = @"Records\Skills\Earth\EarthSkill1.dbr", skillLevel = 3 };
+		var skill1 = new SkillRecord { skillName = """Records\Skills\Storm\StormSkill1.dbr""", skillLevel = 1 };
+		var skill2 = new SkillRecord { skillName = """Records\Skills\Storm\StormSkill2.dbr""", skillLevel = 2 };
+		var skill3 = new SkillRecord { skillName = """Records\Skills\Earth\EarthSkill1.dbr""", skillLevel = 3 };
 
 		_playerInfo.SkillRecordList.Add(skill1);
 		_playerInfo.SkillRecordList.Add(skill2);
 		_playerInfo.SkillRecordList.Add(skill3);
 
 		// RecordId.Normalized returns uppercase paths, so match uppercase
-		_mockPathIO.Setup(p => p.GetDirectoryName(@"RECORDS\SKILLS\STORM\STORMSKILL1.DBR"))
-			.Returns(@"RECORDS\SKILLS\STORM");
-		_mockPathIO.Setup(p => p.GetDirectoryName(@"RECORDS\SKILLS\STORM\STORMSKILL2.DBR"))
-			.Returns(@"RECORDS\SKILLS\STORM");
-		_mockPathIO.Setup(p => p.GetDirectoryName(@"RECORDS\SKILLS\EARTH\EARTHSKILL1.DBR"))
-			.Returns(@"RECORDS\SKILLS\EARTH");
+		_mockPathIO.Setup(p => p.GetDirectoryName("""RECORDS\SKILLS\STORM\STORMSKILL1.DBR"""))
+			.Returns("""RECORDS\SKILLS\STORM""");
+		_mockPathIO.Setup(p => p.GetDirectoryName("""RECORDS\SKILLS\STORM\STORMSKILL2.DBR"""))
+			.Returns("""RECORDS\SKILLS\STORM""");
+		_mockPathIO.Setup(p => p.GetDirectoryName("""RECORDS\SKILLS\EARTH\EARTHSKILL1.DBR"""))
+			.Returns("""RECORDS\SKILLS\EARTH""");
 
-		var recordId = RecordId.Create(@"Records\Skills\Storm\StormSkill1.dbr");
+		var recordId = RecordId.Create("""Records\Skills\Storm\StormSkill1.dbr""");
 
 		// Act
 		var result = _playerInfo.GetSkillsByBaseRecordName(recordId).ToList();
@@ -411,17 +411,17 @@ public class PlayerInfoTests
 	public void GetSkillsByBaseRecordName_CaseInsensitive()
 	{
 		// Arrange
-		var skill1 = new SkillRecord { skillName = @"Records\Skills\Storm\Skill1.dbr", skillLevel = 1 };
-		var skill2 = new SkillRecord { skillName = @"Records\Skills\Storm\Skill2.dbr", skillLevel = 2 };
+		var skill1 = new SkillRecord { skillName = """Records\Skills\Storm\Skill1.dbr""", skillLevel = 1 };
+		var skill2 = new SkillRecord { skillName = """Records\Skills\Storm\Skill2.dbr""", skillLevel = 2 };
 
 		_playerInfo.SkillRecordList.Add(skill1);
 		_playerInfo.SkillRecordList.Add(skill2);
 
 		// RecordId.Normalized returns uppercase, skillName comparison is case-insensitive
 		_mockPathIO.Setup(p => p.GetDirectoryName(It.IsAny<string>()))
-			.Returns(@"RECORDS\SKILLS\STORM");
+			.Returns("""RECORDS\SKILLS\STORM""");
 
-		var recordId = RecordId.Create(@"Records\Skills\Storm\Skill1.dbr");
+		var recordId = RecordId.Create("""Records\Skills\Storm\Skill1.dbr""");
 
 		// Act
 		var result = _playerInfo.GetSkillsByBaseRecordName(recordId).ToList();
@@ -436,7 +436,7 @@ public class PlayerInfoTests
 		// Arrange
 		_playerInfo.SkillRecordList.Clear();
 
-		var recordId = RecordId.Create(@"Records\Skills\Storm\StormSkill1.dbr");
+		var recordId = RecordId.Create("""Records\Skills\Storm\StormSkill1.dbr""");
 
 		// Act
 		var result = _playerInfo.GetSkillsByBaseRecordName(recordId).ToList();
@@ -466,11 +466,11 @@ public class PlayerInfoTests
 	public void ReleasedSkillPoints_WithRemovedSkills_ReturnsSumOfLevels()
 	{
 		// Arrange - Add some removed skills first (need to go through ResetMasteries)
-		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = @"Records\Skills\Storm\StormMastery.dbr", skillLevel = 5 });
-		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = @"Records\Skills\Storm\StormSkill1.dbr", skillLevel = 3 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Storm\StormMastery.dbr""", skillLevel = 5 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Storm\StormSkill1.dbr""", skillLevel = 3 });
 
 		_mockPathIO.Setup(p => p.GetDirectoryName(It.IsAny<string>()))
-			.Returns(@"RECORDS\SKILLS\STORM");
+			.Returns("""RECORDS\SKILLS\STORM""");
 
 		// Act
 		_playerInfo.ResetMasteries();
@@ -487,7 +487,7 @@ public class PlayerInfoTests
 	public void MasteryDefensiveEnabled_WhenDefensiveSkillExists_ReturnsTrue()
 	{
 		// Arrange - Use actual defensive mastery path from Masteries enum description
-		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = @"Records\Skills\Defensive\DefensiveMastery.dbr", skillLevel = 1 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Defensive\DefensiveMastery.dbr""", skillLevel = 1 });
 
 		// Act
 		var result = _playerInfo.MasteryDefensiveEnabled;
@@ -513,8 +513,8 @@ public class PlayerInfoTests
 	public void ActiveMasteries_WhenMultipleMasteriesEnabled_ReturnsCombinedValue()
 	{
 		// Arrange - Use actual mastery paths
-		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = @"Records\Skills\Defensive\DefensiveMastery.dbr", skillLevel = 1 });
-		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = @"Records\Skills\Storm\StormMastery.dbr", skillLevel = 1 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Defensive\DefensiveMastery.dbr""", skillLevel = 1 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Storm\StormMastery.dbr""", skillLevel = 1 });
 
 		// Act
 		var result = _playerInfo.ActiveMasteries;
@@ -540,7 +540,7 @@ public class PlayerInfoTests
 	public void ActiveMasteriesRecordNames_ReturnsArrayOfMasteryNames()
 	{
 		// Arrange - Use actual defensive mastery path
-		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = @"Records\Skills\Defensive\DefensiveMastery.dbr", skillLevel = 1 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Defensive\DefensiveMastery.dbr""", skillLevel = 1 });
 
 		// Act
 		var result = _playerInfo.ActiveMasteriesRecordNames;

@@ -1547,4 +1547,94 @@ O personagem também não poderá equipar itens onde os requisitos não forem at
 	<data name="SackPanelMenuSeedForce" xml:space="preserve">
     <value>Alterar Semente do Item (Força)</value>
   </data>
+	<data name="SackPanelMenuExportItem" xml:space="preserve">
+    <value>🔗 Compartilhar item</value>
+  </data>
+	<data name="SackPanelMenuExportClipboard" xml:space="preserve">
+    <value>Compartilhar para área de transferência</value>
+  </data>
+	<data name="SackPanelMenuExportItemFile" xml:space="preserve">
+    <value>Compartilhar para arquivo...</value>
+  </data>
+	<data name="SackPanelMenuExportItemPasteBin" xml:space="preserve">
+    <value>Compartilhar no PasteBin</value>
+  </data>
+	<data name="PlayerPanelMenuExportTab" xml:space="preserve">
+    <value>🔗 Compartilhar guia</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabClipboard" xml:space="preserve">
+    <value>Compartilhar para área de transferência</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabFile" xml:space="preserve">
+    <value>Compartilhar para arquivo...</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabPasteBin" xml:space="preserve">
+    <value>Compartilhar no PasteBin</value>
+  </data>
+	<data name="PlayerPanelMenuImportTabFile" xml:space="preserve">
+    <value>Importar de arquivo...</value>
+  </data>
+	<data name="ExportVaultPasteBin" xml:space="preserve">
+    <value>Compartilhar baú no PasteBin</value>
+  </data>
+  <data name="GlobalNoVaultLoaded" xml:space="preserve">
+    <value>Nenhum baú carregado.</value>
+  </data>
+  <data name="GlobalNoVaultImportTarget" xml:space="preserve">
+    <value>Nenhum baú carregado para importar.</value>
+  </data>
+  <data name="GlobalNoActiveTabImport" xml:space="preserve">
+    <value>Nenhuma aba ativa para importar.</value>
+  </data>
+  <data name="GlobalJsonFileFilter" xml:space="preserve">
+    <value>Arquivos JSON (*.json)|*.json</value>
+  </data>
+  <data name="ImportVaultReplaceButton" xml:space="preserve">
+    <value>Substituir</value>
+  </data>
+  <data name="ImportVaultCreateNewButton" xml:space="preserve">
+    <value>Criar novo baú</value>
+  </data>
+  <data name="ImportVaultHeading" xml:space="preserve">
+    <value>Importar baú</value>
+  </data>
+  <data name="ImportVaultWarning" xml:space="preserve">
+    <value>AVISO: Isso apagará todos os itens do baú atual. Continuar?</value>
+  </data>
+  <data name="ExportVaultFailFile" xml:space="preserve">
+    <value>Falha ao exportar baú para arquivo.</value>
+  </data>
+  <data name="ExportVaultFailClipboard" xml:space="preserve">
+    <value>Falha ao exportar baú para a área de transferência.</value>
+  </data>
+  <data name="ExportVaultFailPasteBin" xml:space="preserve">
+    <value>Falha ao exportar baú para o PasteBin: {0}</value>
+  </data>
+  <data name="ImportFailFile" xml:space="preserve">
+    <value>Falha ao importar do arquivo.</value>
+  </data>
+  <data name="ExportVaultSuccessFile" xml:space="preserve">
+    <value>Baú exportado para {0}</value>
+  </data>
+  <data name="ExportVaultSuccessClipboard" xml:space="preserve">
+    <value>Baú exportado para a área de transferência.</value>
+  </data>
+  <data name="ExportVaultSuccessPasteBin" xml:space="preserve">
+    <value>Baú exportado para o PasteBin: {0}</value>
+  </data>
+  <data name="ImportVaultDialogText" xml:space="preserve">
+    <value>Importar baú &quot;{0}&quot;?</value>
+  </data>
+  <data name="ImportVaultSuccessCreate" xml:space="preserve">
+    <value>Novo baú &quot;{0}&quot; criado com dados importados.</value>
+  </data>
+  <data name="ImportSuccessCount" xml:space="preserve">
+    <value>{0} de {1} itens importados.</value>
+  </data>
+  <data name="ImportVaultSuccess" xml:space="preserve">
+    <value>{0} itens importados para o baú.</value>
+  </data>
+  <data name="ShareVaultTooltip" xml:space="preserve">
+    <value>🔗 Compartilhar baú</value>
+  </data>
 </root>

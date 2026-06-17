@@ -4,21 +4,17 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<InternalsVisibleTo>TQVaultAE.Tests</InternalsVisibleTo>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<Version>4.4.0.0</Version>
 		<Description>Data layer</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/EtienneLamoureux/TQVaultAE</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/EtienneLamoureux/TQVaultAE</RepositoryUrl>
 		<RepositoryType>Github</RepositoryType>
-		<LangVersion>latest</LangVersion>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Enums.NET" Version="5.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.5" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.5" />
+		<PackageReference Include="Enums.NET" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" />
 	</ItemGroup>
 
 	<ItemGroup>

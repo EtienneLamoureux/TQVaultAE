@@ -12,10 +12,10 @@ public static class TestingConditions
 	{
 		"/mnt/d/DATA/Titan Quest Anniversary Edition",
 		"/mnt/d/DATA/Titan Quest",
-		"D:\\DATA\\Titan Quest Anniversary Edition",
-		"D:\\Games\\Titan Quest Anniversary Edition",
-		@"d:\games\steam\SteamApps\common\Titan Quest Anniversary Edition",
-		"C:\\Games\\Titan Quest Anniversary Edition"
+		"""D:\DATA\Titan Quest Anniversary Edition""",
+		"""D:\Games\Titan Quest Anniversary Edition""",
+		"""d:\games\steam\SteamApps\common\Titan Quest Anniversary Edition""",
+		"""C:\Games\Titan Quest Anniversary Edition"""
 	};
 
 	// Cache for game path

@@ -5,10 +5,6 @@
 		<OutputType>Library</OutputType>
 		<RootNamespace>TQVaultAE.Services.Win32</RootNamespace>
 		<AssemblyName>TQVaultAE.Services.Win32</AssemblyName>
-		<Version>4.4.0.0</Version>
-		<LangVersion>latest</LangVersion>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 		<Platforms>AnyCPU;x64;x86</Platforms>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -30,10 +26,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Enums.NET" Version="5.0.0" />
-		<PackageReference Include="MedallionShell" Version="1.6.2" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.5" />
-		<PackageReference Include="NAudio" Version="2.3.0" />
+		<PackageReference Include="Enums.NET" />
+		<PackageReference Include="MedallionShell" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+		<PackageReference Include="NAudio" />
 	</ItemGroup>
 
 </Project>

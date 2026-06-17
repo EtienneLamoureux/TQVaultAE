@@ -56,6 +56,13 @@ dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj --no-build
 - Use `?` for nullable parameters
 - Initialize collections as empty rather than null
 
+### String Literals
+- Use C# raw string literals (`"""..."""`) for:
+  - JSON strings (replaces `\"` escaping)
+  - File paths (replaces `\\` or `@""` escaping)
+  - Multi-line strings with `\n`/`\t`
+- Keep regular `"..."` for short InlineData parameters and trivial single-word strings
+
 ### Async Patterns
 - Use `async`/`await` for I/O operations
 - Name async methods with `Async` suffix: `LoadPlayerAsync()`

@@ -110,9 +110,9 @@ public static partial class StringHelper
 		if (text.Length <= 64)
 		{
 			Span<char> buffer = stackalloc char[text.Length];
-				text.CopyTo(buffer);
-				buffer[0] = char.ToUpperInvariant(buffer[0]);
-				return new string(buffer);
+			text.CopyTo(buffer);
+			buffer[0] = char.ToUpperInvariant(buffer[0]);
+			return new string(buffer);
 		}
 
 		// For larger strings, allocate
@@ -191,7 +191,9 @@ public static partial class StringHelper
 		return TQColorHelper.RegExTQTagInstance().Replace(TQText, string.Empty);
 	}
 
-	static readonly Regex TQCleanupRegEx = new Regex(@"(?<Legit>[^/]*)(?<Comment>//.*)", RegexOptions.Compiled);
+	[GeneratedRegex(@"(?<Legit>[^/]*)(?<Comment>//.*)")]
+	private static partial Regex TQCleanupRegEx();
+
 	const string TQCleanupReplaceResultPattern = @"${Legit}";
 	/// <summary>
 	/// Remove Leading ColorTag + Trailing comment
@@ -209,7 +211,7 @@ public static partial class StringHelper
 			if (col.HasValue)
 				replaceTxt = col.Value.ColorTag() + TQCleanupReplaceResultPattern;
 		}
-		return TQCleanupRegEx.Replace(txt, replaceTxt).Trim();
+		return TQCleanupRegEx().Replace(txt, replaceTxt).Trim();
 	}
 
 	/// <summary>
@@ -231,7 +233,7 @@ public static partial class StringHelper
 	private static partial Regex PrettyFileNameRegExTitleCaseStart();
 	// Orderered by word length
 	// language=regex, IgnorePatternWhitespace
-	static string PrettyFileNameRegExLowerCaseStartPattern = @"
+	const string PrettyFileNameRegExLowerCaseStartPattern = @"
 (?<Start>
 	intelligence|protection|impairment|offensive|defensive|dexterity|elemental|
 	mobility|cooldown|mastery|current|protect|defense|offense|reflect|
@@ -243,7 +245,8 @@ public static partial class StringHelper
 	xp|(?<=chance)of|(?<!insec)to(?!rm)|(?<=(%|att))da|(?<=att)oa|
 	[\-\+]?%|(?<=(offense|resists|%da))x(?!(tra|alted))|&|[\-\+]
 )";
-	static readonly Regex PrettyFileNameRegExLowerCaseStart = new Regex(PrettyFileNameRegExLowerCaseStartPattern, RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace);
+	[GeneratedRegex(PrettyFileNameRegExLowerCaseStartPattern, RegexOptions.IgnorePatternWhitespace)]
+	private static partial Regex PrettyFileNameRegExLowerCaseStart();
 	/// <summary>
 	/// Preprare <paramref name="TQPath"/> for display
 	/// </summary>
@@ -259,7 +262,7 @@ public static partial class StringHelper
 			.Replace(filename, ' ' + "${TitleCaseStart}")// Add space on Title Case
 				.Split(_Delim, StringSplitOptions.RemoveEmptyEntries);// Split on spaces
 
-		var filenameSplit2 = filenameSplit1.SelectMany(w => PrettyFileNameRegExLowerCaseStart
+		var filenameSplit2 = filenameSplit1.SelectMany(w => PrettyFileNameRegExLowerCaseStart()
 			.Replace(w, ' ' + "${Start}") // Add space on word begining for non TitleCase words
 				.Split(_Delim, StringSplitOptions.RemoveEmptyEntries)// Split on spaces
 			);

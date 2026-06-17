@@ -1078,4 +1078,94 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
 	<data name="SackPanelMenuSeedForce" xml:space="preserve">
     <value>Cambiar semilla de artículo (Forzar)</value>
   </data>
+	<data name="SackPanelMenuExportItem" xml:space="preserve">
+    <value>🔗 Compartir objeto</value>
+  </data>
+	<data name="SackPanelMenuExportClipboard" xml:space="preserve">
+    <value>Compartir al portapapeles</value>
+  </data>
+	<data name="SackPanelMenuExportItemFile" xml:space="preserve">
+    <value>Compartir a archivo...</value>
+  </data>
+	<data name="SackPanelMenuExportItemPasteBin" xml:space="preserve">
+    <value>Compartir a PasteBin</value>
+  </data>
+	<data name="PlayerPanelMenuExportTab" xml:space="preserve">
+    <value>🔗 Compartir pestaña</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabClipboard" xml:space="preserve">
+    <value>Compartir al portapapeles</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabFile" xml:space="preserve">
+    <value>Compartir a archivo...</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabPasteBin" xml:space="preserve">
+    <value>Compartir a PasteBin</value>
+  </data>
+	<data name="PlayerPanelMenuImportTabFile" xml:space="preserve">
+    <value>Importar desde archivo...</value>
+  </data>
+	<data name="ExportVaultPasteBin" xml:space="preserve">
+    <value>Compartir cofre a PasteBin</value>
+  </data>
+  <data name="GlobalNoVaultLoaded" xml:space="preserve">
+    <value>No hay cofre cargado.</value>
+  </data>
+  <data name="GlobalNoVaultImportTarget" xml:space="preserve">
+    <value>No hay cofre cargado para importar.</value>
+  </data>
+  <data name="GlobalNoActiveTabImport" xml:space="preserve">
+    <value>No hay pestaña activa para importar.</value>
+  </data>
+  <data name="GlobalJsonFileFilter" xml:space="preserve">
+    <value>Archivos JSON (*.json)|*.json</value>
+  </data>
+  <data name="ImportVaultReplaceButton" xml:space="preserve">
+    <value>Reemplazar</value>
+  </data>
+  <data name="ImportVaultCreateNewButton" xml:space="preserve">
+    <value>Crear nuevo cofre</value>
+  </data>
+  <data name="ImportVaultHeading" xml:space="preserve">
+    <value>Importar cofre</value>
+  </data>
+  <data name="ImportVaultWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto borrará todos los objetos del cofre actual. ¿Continuar?</value>
+  </data>
+  <data name="ExportVaultFailFile" xml:space="preserve">
+    <value>Error al exportar cofre a archivo.</value>
+  </data>
+  <data name="ExportVaultFailClipboard" xml:space="preserve">
+    <value>Error al exportar cofre al portapapeles.</value>
+  </data>
+  <data name="ExportVaultFailPasteBin" xml:space="preserve">
+    <value>Error al exportar cofre a PasteBin: {0}</value>
+  </data>
+  <data name="ImportFailFile" xml:space="preserve">
+    <value>Error al importar desde archivo.</value>
+  </data>
+  <data name="ExportVaultSuccessFile" xml:space="preserve">
+    <value>Cofre exportado a {0}</value>
+  </data>
+  <data name="ExportVaultSuccessClipboard" xml:space="preserve">
+    <value>Cofre exportado al portapapeles.</value>
+  </data>
+  <data name="ExportVaultSuccessPasteBin" xml:space="preserve">
+    <value>Cofre exportado a PasteBin: {0}</value>
+  </data>
+  <data name="ImportVaultDialogText" xml:space="preserve">
+    <value>¿Importar cofre &quot;{0}&quot;?</value>
+  </data>
+  <data name="ImportVaultSuccessCreate" xml:space="preserve">
+    <value>Nuevo cofre &quot;{0}&quot; creado con datos importados.</value>
+  </data>
+  <data name="ImportSuccessCount" xml:space="preserve">
+    <value>{0} de {1} objetos importados.</value>
+  </data>
+  <data name="ImportVaultSuccess" xml:space="preserve">
+    <value>{0} objetos importados al cofre.</value>
+  </data>
+  <data name="ShareVaultTooltip" xml:space="preserve">
+    <value>🔗 Compartir cofre</value>
+  </data>
 </root>

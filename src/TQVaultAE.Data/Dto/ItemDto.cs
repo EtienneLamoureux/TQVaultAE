@@ -19,4 +19,6 @@ public class ItemDto
 	public int var2;
 	public int pointX;
 	public int pointY;
+	public int width;
+	public int height;
 }
