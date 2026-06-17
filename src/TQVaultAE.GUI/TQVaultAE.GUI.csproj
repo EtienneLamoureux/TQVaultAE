@@ -5,11 +5,7 @@
 		<OutputType>WinExe</OutputType>
 		<RootNamespace>TQVaultAE.GUI</RootNamespace>
 		<AssemblyName>TQVaultAE</AssemblyName>
-		<Version>4.4.0.0</Version>
 		<ApplicationIcon>app.ico</ApplicationIcon>
-		<LangVersion>latest</LangVersion>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 		<StartupObject>TQVaultAE.GUI.Program</StartupObject>
 		<Platforms>AnyCPU;x64;x86</Platforms>
@@ -24,6 +20,7 @@
 		<AssemblyCopyright>Copyright © 2006-2012 by Brandon Wallace</AssemblyCopyright>
 		<ComVisible>false</ComVisible>
 		<NeutralLanguage>en-US</NeutralLanguage>
+		<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
 	</PropertyGroup>
 
 
@@ -39,10 +36,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CheckGroupBox" Version="1.0.2" />
-		<PackageReference Include="Enums.NET" Version="5.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="8.0.0" />
+		<PackageReference Include="CheckGroupBox" />
+		<PackageReference Include="Enums.NET" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" />
 	</ItemGroup>
 
 	<ItemGroup>

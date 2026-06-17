@@ -275,6 +275,39 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 	/// </summary>
 	public bool EnableOriginalTQSupportChanged { get; private set; }
 
+	/// <summary>
+	/// PasteBin API Key
+	/// </summary>
+	private string pasteBinApiKey;
+
+	/// <summary>
+	/// PasteBin paste expiration
+	/// </summary>
+	private string pasteBinExpiration;
+
+	/// <summary>
+	/// Indicates that the PasteBin settings have been changed
+	/// </summary>
+	public bool PasteBinSettingsChanged { get; private set; }
+
+	private static readonly Dictionary<string, string> PasteBinExpirationOptions = new()
+	{
+		["10M"] = "10 Minutes",
+		["1H"] = "1 Hour",
+		["1D"] = "1 Day",
+		["1W"] = "1 Week",
+		["2W"] = "2 Weeks",
+		["1M"] = "1 Month",
+		["6M"] = "6 Months",
+		["1Y"] = "1 Year",
+		["N"] = "Never"
+	};
+
+	private sealed record PasteBinExpirationComboBoxItem(string Key, string Label)
+	{
+		public override string ToString() => this.Label;
+	}
+
 	private readonly ILogger<SettingsDialog> Log;
 
 	#endregion
@@ -288,6 +321,11 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.Log = instance.ServiceProvider.GetService<ILogger<SettingsDialog>>();
 
 		this.InitializeComponent();
+
+		foreach (var kvp in PasteBinExpirationOptions)
+		{
+			this.pasteBinExpirationComboBox.Items.Add(new PasteBinExpirationComboBoxItem(kvp.Key, kvp.Value));
+		}
 
 		this.SuspendLayout();
 
@@ -540,6 +578,8 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.gitBackupRepository = USettings.GitBackupRepository;
 		this.enableBackupPlayerSaves = USettings.GitBackupPlayerSavesEnabled;
 		this.enableOriginalTQSupport = USettings.EnableOriginalTQSupport;
+		this.pasteBinApiKey = USettings.PasteBinApiKey ?? string.Empty;
+		this.pasteBinExpiration = USettings.PasteBinExpiration ?? "1M";
 
 		// Force English since there was some issue with getting the proper language setting.
 		var gl = Database.GameLanguage;
@@ -620,6 +660,16 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		this.scalingTextBoxGitRepository.Text = this.gitBackupRepository;
 		this.scalingCheckBoxBackupPlayerSaves.Checked = this.enableBackupPlayerSaves;
 		this.checkGroupBoxOriginalTQSupport.Checked = this.enableOriginalTQSupport;
+
+		this.pasteBinApiKeyTextBox.Text = this.pasteBinApiKey;
+
+		PasteBinExpirationOptions.TryGetValue(this.pasteBinExpiration, out var expLabel);
+		if (expLabel != null)
+		{
+			this.pasteBinExpirationComboBox.SelectedItem = this.pasteBinExpirationComboBox.Items
+				.OfType<PasteBinExpirationComboBoxItem>()
+				.FirstOrDefault(i => i.Key == this.pasteBinExpiration);
+		}
 
 
 		this.enableCustomMapsCheckBox.Checked = this.enableMods;
@@ -721,6 +771,9 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 			USettings.GitBackupRepository = this.gitBackupRepository;
 			USettings.GitBackupPlayerSavesEnabled = this.enableBackupPlayerSaves;
 			USettings.EnableOriginalTQSupport = this.enableOriginalTQSupport;
+
+			USettings.PasteBinApiKey = this.pasteBinApiKey;
+			USettings.PasteBinExpiration = this.pasteBinExpiration;
 
 			USettings.EnableEpicLegendaryAffixes =
 				this.scalingCheckBoxEnableEpicLegendaryAffixes.Enabled && this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked;
@@ -1365,6 +1418,29 @@ internal partial class SettingsDialog : VaultForm, IScalingControl
 		{
 			this.enableOriginalTQSupport = false;
 			this.ConfigurationChanged = this.UISettingChanged = this.EnableOriginalTQSupportChanged = true;
+		}
+	}
+
+	private void PasteBinApiKeyTextBoxTextChanged(object? sender, EventArgs e)
+	{
+		string newValue = this.pasteBinApiKeyTextBox.Text ?? string.Empty;
+		if (newValue != this.pasteBinApiKey)
+		{
+			this.pasteBinApiKey = newValue;
+			this.ConfigurationChanged = this.PasteBinSettingsChanged = true;
+		}
+	}
+
+	private void PasteBinExpirationComboBoxSelectedIndexChanged(object? sender, EventArgs e)
+	{
+		if (this.pasteBinExpirationComboBox.SelectedItem is PasteBinExpirationComboBoxItem item)
+		{
+			string apiValue = item.Key;
+			if (apiValue != this.pasteBinExpiration)
+			{
+				this.pasteBinExpiration = apiValue;
+				this.ConfigurationChanged = this.PasteBinSettingsChanged = true;
+			}
 		}
 	}
 }

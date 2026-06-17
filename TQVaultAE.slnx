@@ -42,6 +42,7 @@
     <File Path="documentation/ARZEXPLORER.md" />
     <File Path="documentation/CHARMANAGE.md" />
     <File Path="documentation/FORGE.md" />
+    <File Path="documentation/IMPORT_EXPORT.md" />
     <File Path="documentation/SAVEFILEEXPLORER.md" />
     <File Path="documentation/TQORIGINAL.md" />
     <File Path="GITHUB_ACTIONS_BUILD_TEST.md" />

@@ -7,13 +7,13 @@ This document provides comprehensive steps for integrating GitHub Actions to bui
 | Workflow | Trigger | Configurations | Retention | Purpose |
 |-----------|----------|---------------|-----------|---------|
 | `auto-version.yml` | `master` push, `version-info.json` changed | Permanent (GitHub Releases) | Production release |
-| `build-and-test.yml` | `master` push, `src/**` changed | 3 days (artifacts) | Code verification |
-| `build-and-test.yml` | Pull request to `master`, `src/**` changed | 3 days (artifacts) | PR verification |
+| `build-and-test.yml` | `master` push, `src/**`, `Directory.Build.props`, or `Directory.Packages.props` changed | 3 days (artifacts) | Code verification |
+| `build-and-test.yml` | Pull request to `master`, `src/**`, `Directory.Build.props`, or `Directory.Packages.props` changed | 3 days (artifacts) | PR verification |
 
 ### Key Principles
 - **Two separate workflows**: One for releases, one for code verification
 - **Version triggers releases**: Editing `version-info.json` triggers `auto-version.yml` which creates a release
-- **Code changes trigger verification**: Changes to `src/**` trigger `build-and-test.yml` for PRs and merges
+- **Code changes trigger verification**: Changes to `src/**`, `Directory.Build.props`, or `Directory.Packages.props` trigger `build-and-test.yml` for PRs and merges
 - **Release builds only**: Debug builds for local development
 - **No infinite loops**: Version sync commit uses `[skip ci]` to prevent re-triggering
 
@@ -109,22 +109,29 @@ For detailed information about version management and consistency, see [VERSIONI
 This repository already includes the necessary GitHub Actions workflow files:
 
 ```
+Directory.Build.props          # Centralized MSBuild properties (Version, LangVersion, etc.)
+Directory.Packages.props       # Centralized NuGet package versions (CPM)
 .github/
   workflows/
-    auto-version.yml          # Handles version sync and releases
-    build-and-test.yml        # Handles code verification
+    auto-version.yml           # Handles version sync and releases
+    build-and-test.yml         # Handles code verification
   scripts/
-    Update-Version.ps1        # PowerShell script for version management
+    Update-Version.ps1         # PowerShell script for version management
 ```
 
 **Workflow Strategy:**
-- **auto-version.yml**: Triggers when `version-info.json` is pushed to `master`. Syncs version, builds, creates tags, and publishes releases with ZIP archives.
-- **build-and-test.yml**: Triggers on `master` pushes (with `src/**` changes) and PRs to `master`. Builds and tests for verification with 3-day artifact retention.
+- **auto-version.yml**: Triggers when `version-info.json` is pushed to `master`. Syncs version to `Directory.Build.props`, builds, creates tags, and publishes releases with ZIP archives.
+- **build-and-test.yml**: Triggers on `master` pushes (with `src/**`, `Directory.Build.props`, or `Directory.Packages.props` changes) and PRs to `master`. Builds and tests for verification with 3-day artifact retention.
 
 **Important**: Both workflows use a single solution file:
 - `TQVaultAE.slnx` - Modern .NET 10.0 SDK-style projects (all projects including .NET Framework 4.8 via TQ.SaveFilesExplorer)
 
 The Magick.NET-Q8-AnyCPU NuGet package includes all required native ImageMagick binaries, so no separate installation is needed.
+
+**Centralized Build Configuration:**
+- `Directory.Build.props` at repo root manages common MSBuild properties (`Version`, `LangVersion`, `Nullable`, `ImplicitUsings`) for all projects
+- `Directory.Packages.props` at repo root manages all NuGet package versions centrally via Central Package Management (CPM)
+- Individual `.csproj` files no longer specify `Version` or `PackageReference` versions
 
 #### Trigger Options
 
@@ -274,7 +281,7 @@ permissions:
 **Version Bump on Master Branch:**
 - On your fork, when you push `version-info.json` to `master`, `auto-version.yml` will:
   1. Read version from `version-info.json`
-  2. Sync version to all project files
+  2. Sync version to `Directory.Build.props` (centralized for all projects)
   3. Create a git tag (e.g., `4.5.0`)
   4. Push the changes back to your fork
   5. Create a GitHub Release on your fork with ZIP archives
@@ -330,7 +337,7 @@ jobs:
 **Version Increment on Master Branch:**
 - On your fork, when you push `version-info.json` to `master`, `auto-version.yml` will:
   1. Read the version from `version-info.json`
-  2. Sync version to all project files
+  2. Sync version to `Directory.Build.props` (centralized for all projects)
   3. Create a git tag (e.g., `4.5.0`)
   4. Push the changes back to your fork
   5. Create a GitHub Release on your fork with ZIP archives

@@ -1078,6 +1078,96 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
     <value>Przedmiot z Eternal Embers</value>
   </data>
 	<data name="SackPanelMenuSeedForce" xml:space="preserve">
-    <value>Zmień ziarno przedmiotu (siła)</value>
+    <value>Zmien ziarno przedmiotu (sila)</value>
+  </data>
+	<data name="SackPanelMenuExportItem" xml:space="preserve">
+    <value>🔗 Udostępnij przedmiot</value>
+  </data>
+	<data name="SackPanelMenuExportClipboard" xml:space="preserve">
+    <value>Udostępnij do schowka</value>
+  </data>
+	<data name="SackPanelMenuExportItemFile" xml:space="preserve">
+    <value>Udostępnij do pliku...</value>
+  </data>
+	<data name="SackPanelMenuExportItemPasteBin" xml:space="preserve">
+    <value>Udostępnij na PasteBin</value>
+  </data>
+	<data name="PlayerPanelMenuExportTab" xml:space="preserve">
+    <value>🔗 Udostępnij kartę</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabClipboard" xml:space="preserve">
+    <value>Udostępnij do schowka</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabFile" xml:space="preserve">
+    <value>Udostępnij do pliku...</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabPasteBin" xml:space="preserve">
+    <value>Udostępnij na PasteBin</value>
+  </data>
+	<data name="PlayerPanelMenuImportTabFile" xml:space="preserve">
+    <value>Importuj z pliku...</value>
+  </data>
+	<data name="ExportVaultPasteBin" xml:space="preserve">
+    <value>Udostępnij sejf na PasteBin</value>
+  </data>
+  <data name="GlobalNoVaultLoaded" xml:space="preserve">
+    <value>Nie załadowano skarbca.</value>
+  </data>
+  <data name="GlobalNoVaultImportTarget" xml:space="preserve">
+    <value>Nie załadowano skarbca do importu.</value>
+  </data>
+  <data name="GlobalNoActiveTabImport" xml:space="preserve">
+    <value>Brak aktywnej karty do importu.</value>
+  </data>
+  <data name="GlobalJsonFileFilter" xml:space="preserve">
+    <value>Pliki JSON (*.json)|*.json</value>
+  </data>
+  <data name="ImportVaultReplaceButton" xml:space="preserve">
+    <value>Zastąp</value>
+  </data>
+  <data name="ImportVaultCreateNewButton" xml:space="preserve">
+    <value>Utwórz nowy skarbiec</value>
+  </data>
+  <data name="ImportVaultHeading" xml:space="preserve">
+    <value>Importuj skarbiec</value>
+  </data>
+  <data name="ImportVaultWarning" xml:space="preserve">
+    <value>UWAGA: Spowoduje to usunięcie wszystkich przedmiotów z bieżącego skarbca. Kontynuować?</value>
+  </data>
+  <data name="ExportVaultFailFile" xml:space="preserve">
+    <value>Nie udało się wyeksportować skarbca do pliku.</value>
+  </data>
+  <data name="ExportVaultFailClipboard" xml:space="preserve">
+    <value>Nie udało się wyeksportować skarbca do schowka.</value>
+  </data>
+  <data name="ExportVaultFailPasteBin" xml:space="preserve">
+    <value>Nie udało się wyeksportować skarbca do PasteBin: {0}</value>
+  </data>
+  <data name="ImportFailFile" xml:space="preserve">
+    <value>Nie udało się zaimportować z pliku.</value>
+  </data>
+  <data name="ExportVaultSuccessFile" xml:space="preserve">
+    <value>Skarbiec wyeksportowany do {0}</value>
+  </data>
+  <data name="ExportVaultSuccessClipboard" xml:space="preserve">
+    <value>Skarbiec wyeksportowany do schowka.</value>
+  </data>
+  <data name="ExportVaultSuccessPasteBin" xml:space="preserve">
+    <value>Skarbiec wyeksportowany do PasteBin: {0}</value>
+  </data>
+  <data name="ImportVaultDialogText" xml:space="preserve">
+    <value>Importować skarbiec &quot;{0}&quot;?</value>
+  </data>
+  <data name="ImportVaultSuccessCreate" xml:space="preserve">
+    <value>Utworzono nowy skarbiec &quot;{0}&quot; z zaimportowanymi danymi.</value>
+  </data>
+  <data name="ImportSuccessCount" xml:space="preserve">
+    <value>Zaimportowano {0} z {1} przedmiotów.</value>
+  </data>
+  <data name="ImportVaultSuccess" xml:space="preserve">
+    <value>Zaimportowano {0} przedmiotów do skarbca.</value>
+  </data>
+  <data name="ShareVaultTooltip" xml:space="preserve">
+    <value>🔗 Udostępnij skarbiec</value>
   </data>
 </root>

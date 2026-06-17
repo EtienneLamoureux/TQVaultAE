@@ -242,6 +242,20 @@ public class VaultService : IVaultService
 		=> this.UserSettings.VaultPath = vaultPath;
 
 	/// <summary>
+	/// Saves a vault to disk and registers it in the session cache.
+	/// </summary>
+	/// <param name="vault">The vault to save.</param>
+	/// <param name="vaultName">Name of the vault.</param>
+	public void SaveVault(PlayerCollection vault, string vaultName)
+	{
+		var fileName = GamePathResolver.GetVaultFile(vaultName);
+		PlayerCollectionProvider.Save(vault, fileName);
+		vault.Saved();
+
+		userContext.Vaults.GetOrAddAtomic(fileName, _ => vault);
+	}
+
+	/// <summary>
 	/// Shows the vault maintenance dialog.
 	/// </summary>
 	public void ShowVaultMaintenance()

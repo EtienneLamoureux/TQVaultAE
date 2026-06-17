@@ -2,16 +2,11 @@
 
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<Version>4.4.0.0</Version>
-		<LangVersion>latest</LangVersion>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Enums.NET" Version="5.0.0" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.5" />
+		<PackageReference Include="Enums.NET" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" />
 	</ItemGroup>
 
 	<ItemGroup>

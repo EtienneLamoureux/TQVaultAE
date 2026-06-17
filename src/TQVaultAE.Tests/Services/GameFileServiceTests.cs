@@ -57,8 +57,8 @@ public class GameFileServiceTests
 	{
 		// Arrange
 		var prefix = "backup";
-		var file = @"C:\Test\player.txt";
-		var backupPath = @"C:\Test\backup_player.txt";
+		var file = """C:\Test\player.txt""";
+		var backupPath = """C:\Test\backup_player.txt""";
 
 		_mockFileIO.Setup(x => x.Exists(file)).Returns(true);
 		_mockGamePathService.Setup(x => x.ConvertFilePathToBackupPath(prefix, file)).Returns(backupPath);
@@ -78,7 +78,7 @@ public class GameFileServiceTests
 	{
 		// Arrange
 		var prefix = "backup";
-		var file = @"C:\Test\nonexistent.txt";
+		var file = """C:\Test\nonexistent.txt""";
 
 		_mockFileIO.Setup(x => x.Exists(file)).Returns(false);
 
@@ -96,10 +96,10 @@ public class GameFileServiceTests
 		// Arrange
 		var prefix = "backup";
 		// Use a file that is NOT already .dxg, so ChangeExtension produces a different file
-		var file = @"C:\Test\player stash";
-		var backupPath = @"C:\Test\backup_player stash";
-		var dxgFile = @"C:\Test\player stash.dxg";
-		var dxgBackupPath = @"C:\Test\backup_player stash.dxg";
+		var file = """C:\Test\player stash""";
+		var backupPath = """C:\Test\backup_player stash""";
+		var dxgFile = """C:\Test\player stash.dxg""";
+		var dxgBackupPath = """C:\Test\backup_player stash.dxg""";
 
 		_mockFileIO.Setup(x => x.Exists(file)).Returns(true);
 		_mockGamePathService.Setup(x => x.ConvertFilePathToBackupPath(prefix, file)).Returns(backupPath);
@@ -127,15 +127,15 @@ public class GameFileServiceTests
 	public void DuplicateCharacterFiles_CreatesNewFolderWithFiles()
 	{
 		// Arrange
-		var playerSaveDirectory = @"C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter";
+		var playerSaveDirectory = """C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter""";
 		var newname = "NewCharacter";
-		var baseFolder = @"C:\Test\MyGames\Titan Quest\SaveData";
-		var newFolder = @"C:\Test\MyGames\Titan Quest\SaveData\_NewCharacter";
-		var playerFile = @"C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter\player.chr";
-		var newPlayerFile = @"C:\Test\MyGames\Titan Quest\SaveData\_NewCharacter\player.chr";
-		var stashFileB = @"C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter\stash.dxg";
-		var stashFileG = @"C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter\stash.gsl";
-		var settingsFile = @"C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter\settings.txt";
+		var baseFolder = """C:\Test\MyGames\Titan Quest\SaveData""";
+		var newFolder = """C:\Test\MyGames\Titan Quest\SaveData\_NewCharacter""";
+		var playerFile = """C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter\player.chr""";
+		var newPlayerFile = """C:\Test\MyGames\Titan Quest\SaveData\_NewCharacter\player.chr""";
+		var stashFileB = """C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter\stash.dxg""";
+		var stashFileG = """C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter\stash.gsl""";
+		var settingsFile = """C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter\settings.txt""";
 
 		_mockPathIO.Setup(x => x.GetDirectoryName(playerSaveDirectory)).Returns(baseFolder);
 		_mockPathIO.Setup(x => x.Combine(baseFolder, "_NewCharacter")).Returns(newFolder);
@@ -174,11 +174,11 @@ public class GameFileServiceTests
 	public void DuplicateCharacterFiles_WithNoOptionalFiles_CopiesOnlyRequired()
 	{
 		// Arrange
-		var playerSaveDirectory = @"C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter";
+		var playerSaveDirectory = """C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter""";
 		var newname = "NewCharacter";
-		var baseFolder = @"C:\Test\MyGames\Titan Quest\SaveData";
-		var newFolder = @"C:\Test\MyGames\Titan Quest\SaveData\_NewCharacter";
-		var playerFile = @"C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter\player.chr";
+		var baseFolder = """C:\Test\MyGames\Titan Quest\SaveData""";
+		var newFolder = """C:\Test\MyGames\Titan Quest\SaveData\_NewCharacter""";
+		var playerFile = """C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter\player.chr""";
 
 		_mockPathIO.Setup(x => x.GetDirectoryName(playerSaveDirectory)).Returns(baseFolder);
 		_mockPathIO.Setup(x => x.Combine(baseFolder, "_NewCharacter")).Returns(newFolder);
@@ -210,8 +210,8 @@ public class GameFileServiceTests
 		// Arrange
 		var playerSave = CreateTestPlayerSave();
 		var oldFolder = playerSave.Folder;
-		var archiveDir = @"C:\Test\MyGames\Titan Quest\SaveData\ArchivedCharacters";
-		var newFolder = @"C:\Test\MyGames\Titan Quest\SaveData\ArchivedCharacters\_MyCharacter";
+		var archiveDir = """C:\Test\MyGames\Titan Quest\SaveData\ArchivedCharacters""";
+		var newFolder = """C:\Test\MyGames\Titan Quest\SaveData\ArchivedCharacters\_MyCharacter""";
 
 		_mockGamePathService.Setup(x => x.GetBaseCharacterFolder(false, true)).Returns(archiveDir);
 		_mockGamePathService.Setup(x => x.ArchiveTogglePath(oldFolder)).Returns(newFolder);
@@ -259,8 +259,8 @@ public class GameFileServiceTests
 		// Arrange
 		var playerSave = CreateTestPlayerSave();
 		var oldFolder = playerSave.Folder;
-		var archiveDir = @"C:\Test\MyGames\Titan Quest\SaveData\ArchivedCharacters";
-		var newFolder = @"C:\Test\MyGames\Titan Quest\SaveData\ArchivedCharacters\_MyCharacter";
+		var archiveDir = """C:\Test\MyGames\Titan Quest\SaveData\ArchivedCharacters""";
+		var newFolder = """C:\Test\MyGames\Titan Quest\SaveData\ArchivedCharacters\_MyCharacter""";
 
 		_mockGamePathService.Setup(x => x.GetBaseCharacterFolder(false, true)).Returns(archiveDir);
 		_mockGamePathService.Setup(x => x.ArchiveTogglePath(oldFolder)).Returns(newFolder);
@@ -287,7 +287,7 @@ public class GameFileServiceTests
 		var playerSave = CreateTestPlayerSave();
 		playerSave.IsArchived = true;
 		var oldFolder = playerSave.Folder;
-		var newFolder = @"C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter";
+		var newFolder = """C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter""";
 
 		_mockGamePathService.Setup(x => x.ArchiveTogglePath(oldFolder)).Returns(newFolder);
 		_mockDirectoryIO.Setup(x => x.Move(oldFolder, newFolder));
@@ -333,7 +333,7 @@ public class GameFileServiceTests
 		var playerSave = CreateTestPlayerSave();
 		playerSave.IsArchived = true;
 		var oldFolder = playerSave.Folder;
-		var newFolder = @"C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter";
+		var newFolder = """C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter""";
 
 		_mockGamePathService.Setup(x => x.ArchiveTogglePath(oldFolder)).Returns(newFolder);
 		_mockDirectoryIO.Setup(x => x.Move(oldFolder, newFolder)).Throws(new IOException("Move failed"));
@@ -506,7 +506,7 @@ public class GameFileServiceTests
 	{
 		// Need to provide proper pathIO setup for PlayerSave constructor
 		return new PlayerSave(
-			@"C:\Test\_MyCharacter", // folder with underscore prefix
+			"""C:\Test\_MyCharacter""", // folder with underscore prefix
 			false, // isImmortalThrone
 			false, // isArchived
 			false, // isCustom

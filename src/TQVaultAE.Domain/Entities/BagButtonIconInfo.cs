@@ -8,6 +8,7 @@ public class BagButtonIconInfo
 	/// BagButton display mode
 	/// </summary>
 	[JsonPropertyName("mode")]
+	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public BagButtonDisplayMode DisplayMode;
 	/// <summary>
 	/// BagButton Custom label 

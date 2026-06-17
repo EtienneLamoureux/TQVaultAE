@@ -32,6 +32,7 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	protected readonly IServiceProvider ServiceProvider;
 	protected readonly UserSettings USettings;
 	protected readonly IHighlightService HighlightService;
+	protected readonly IItemExchangeService ExchangeService;
 
 	/// <summary>
 	/// Gets the SackPanel instance
@@ -114,6 +115,7 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
 		this.USettings = this.ServiceProvider.GetService<UserSettings>();
 		this.HighlightService = this.ServiceProvider.GetService<IHighlightService>();
+		this.ExchangeService = this.ServiceProvider.GetService<IItemExchangeService>();
 
 		this.DragInfo = dragInfo;
 		this.AutoMoveLocation = autoMoveLocation;
@@ -583,8 +585,30 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 						}
 						// Export to CSV
 						this.contextMenu.Items.Add("-");
-						this.AddMenuItem(Resources.ExportBagCSVToClipboard, this.ExportBagCSVToClipboard);
-						this.AddMenuItem(Resources.ExportVaultCSVToClipboard, this.ExportVaultCSVToClipboard);
+						var csvBagItem = new ToolStripMenuItem(Resources.ExportBagCSVToClipboard, null, this.ExportBagCSVToClipboard)
+						{
+							BackColor = this.contextMenu.BackColor,
+							Font = this.contextMenu.Font,
+							ForeColor = this.contextMenu.ForeColor,
+						};
+						var csvVaultItem = new ToolStripMenuItem(Resources.ExportVaultCSVToClipboard, null, this.ExportVaultCSVToClipboard)
+						{
+							BackColor = this.contextMenu.BackColor,
+							Font = this.contextMenu.Font,
+							ForeColor = this.contextMenu.ForeColor,
+						};
+						var csvMenu = new ToolStripMenuItem(Resources.ExportToCSV, null, csvBagItem, csvVaultItem)
+						{
+							BackColor = this.contextMenu.BackColor,
+							Font = this.contextMenu.Font,
+							ForeColor = this.contextMenu.ForeColor,
+							DisplayStyle = ToolStripItemDisplayStyle.Text,
+						};
+						this.contextMenu.Items.Add(csvMenu);
+
+						// Export Tab (JSON)
+						this.contextMenu.Items.Add("-");
+						this.AddExportTabSubMenu();
 					}
 
 				}
@@ -597,6 +621,18 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 
 					if (this.userContext.IconInfoCopied)
 						this.contextMenu.Items.Add(Resources.PlayerPanelPasteIcon);
+
+					// Import from file
+					this.contextMenu.Items.Add("-");
+					var importFileItem = new ToolStripMenuItem(
+						Resources.PlayerPanelMenuImportTabFile, null,
+						this.ImportFromFileClicked)
+					{
+						BackColor = this.contextMenu.BackColor,
+						Font = this.contextMenu.Font,
+						ForeColor = this.contextMenu.ForeColor,
+					};
+					this.contextMenu.Items.Add(importFileItem);
 				}
 
 				this.contextMenu.Show(this.BagButtons[this.CurrentBag], new Point(e.X, e.Y));
@@ -686,6 +722,108 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 			if (item.Text == Resources.PlayerPanelMenuDisableTooltip)
 			{
 				this.Vault.DisabledTooltipBagId.Add(this.CurrentBag);
+			}
+		}
+	}
+
+	private void AddExportTabSubMenu()
+	{
+		var hasApiKey = this.ExchangeService?.HasPasteBinApiKey == true;
+
+		var clipboardItem = new ToolStripMenuItem(
+			Resources.PlayerPanelMenuExportTabClipboard, null,
+			this.ExportTabToClipboardClicked)
+		{
+			BackColor = this.contextMenu.BackColor,
+			Font = this.contextMenu.Font,
+			ForeColor = this.contextMenu.ForeColor,
+		};
+
+		var fileItem = new ToolStripMenuItem(
+			Resources.PlayerPanelMenuExportTabFile, null,
+			this.ExportTabToFileClicked)
+		{
+			BackColor = this.contextMenu.BackColor,
+			Font = this.contextMenu.Font,
+			ForeColor = this.contextMenu.ForeColor,
+		};
+
+		var pasteBinItem = new ToolStripMenuItem(
+			Resources.PlayerPanelMenuExportTabPasteBin, null,
+			this.ExportTabToPasteBinClicked)
+		{
+			BackColor = this.contextMenu.BackColor,
+			Font = this.contextMenu.Font,
+			ForeColor = this.contextMenu.ForeColor,
+			Enabled = hasApiKey
+		};
+
+		var exportTabMenu = new ToolStripMenuItem(
+			Resources.PlayerPanelMenuExportTab, null,
+			clipboardItem, fileItem, pasteBinItem)
+		{
+			BackColor = this.contextMenu.BackColor,
+			Font = this.contextMenu.Font,
+			ForeColor = this.contextMenu.ForeColor,
+			DisplayStyle = ToolStripItemDisplayStyle.Text,
+		};
+
+		this.contextMenu.Items.Add(exportTabMenu);
+	}
+
+	private void ExportTabToClipboardClicked(object sender, EventArgs e)
+	{
+		var exchangeService = this.ExchangeService;
+		if (exchangeService != null && this.BagSackPanel?.Sack != null)
+		{
+			var json = exchangeService.SerializeSackCollection(this.BagSackPanel.Sack, this.CurrentBag);
+			Clipboard.SetText(json);
+		}
+	}
+
+	private void ImportFromFileClicked(object sender, EventArgs e)
+	{
+		var mainForm = this.FindForm() as MainForm;
+		mainForm?.ImportFromFile();
+	}
+
+	private void ExportTabToFileClicked(object sender, EventArgs e)
+	{
+		var exchangeService = this.ExchangeService;
+		if (exchangeService != null && this.BagSackPanel?.Sack != null)
+		{
+			var json = exchangeService.SerializeSackCollection(this.BagSackPanel.Sack, this.CurrentBag);
+			using var dialog = new SaveFileDialog
+			{
+				Filter = "JSON files (*.json)|*.json",
+				DefaultExt = "json",
+				FileName = "tab_export.json"
+			};
+
+			if (dialog.ShowDialog() == DialogResult.OK)
+				File.WriteAllText(dialog.FileName, json);
+		}
+	}
+
+	private async void ExportTabToPasteBinClicked(object sender, EventArgs e)
+	{
+		var exchangeService = this.ExchangeService;
+		if (exchangeService != null && this.BagSackPanel?.Sack != null)
+		{
+			try
+			{
+				var json = exchangeService.SerializeSackCollection(this.BagSackPanel.Sack, this.CurrentBag);
+				var tabName = this.BagSackPanel.Sack.BagButtonIconInfo?.Label;
+				var pasteName = string.IsNullOrWhiteSpace(tabName)
+					? $"{this.Vault.PlayerName}/Tab {this.CurrentBag + 1}"
+					: $"{this.Vault.PlayerName}/{tabName}";
+				var url = await exchangeService.ExportToPasteBinAsync(json, pasteName);
+				Clipboard.SetText(url);
+				this.UIService.NotifyUser($"Tab exported to PasteBin: {url}");
+			}
+			catch (Exception ex)
+			{
+				this.UIService.ShowError($"Failed to export to PasteBin: {ex.Message}");
 			}
 		}
 	}

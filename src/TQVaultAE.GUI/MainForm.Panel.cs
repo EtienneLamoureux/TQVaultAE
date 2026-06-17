@@ -1,4 +1,4 @@
-using TQVaultAE.Application;
+﻿using TQVaultAE.Application;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
@@ -254,6 +254,7 @@ public partial class MainForm
 	/// <summary>
 	/// Resolves the destination panel and sack for auto-move operations.
 	/// </summary>
+	// This is a sack to sack move on the same panel.
 	private (VaultPanel Panel, SackPanel SackPanel, int SackNumber) GetAutoMoveDestination(SackPanel sourcePanel)
 	{
 		var sacNumber = this.DragInfo.DestIndex;
@@ -280,12 +281,15 @@ public partial class MainForm
 	/// <summary>
 	/// Handles auto-moving an item to the stash panel.
 	/// </summary>
+	// Special Case for moving to stash.
 	private void AutoMoveItemToStash()
 	{
 		if (!this.ValidateStashAvailability())
 			return;
 
+		// See if we have an open space to put the item.
 		Point location = this.stashPanel.SackPanel.FindOpenCells(this.DragInfo.Item.Width, this.DragInfo.Item.Height);
+		// We have no space in the sack so we cancel.
 		if (location.X == -1 || !this.stashPanel.SackPanel.IsItemValidForPlacement(this.DragInfo.Item))
 		{
 			this.DragInfo.Cancel();
@@ -308,23 +312,30 @@ public partial class MainForm
 	/// </summary>
 	private bool ValidateStashAvailability()
 	{
+		// Check if we are moving to the player's stash
 		if (this.stashPanel.CurrentBag == BagIdConstants.BAGID_PLAYERSTASH && this.stashPanel.Player == null)
 		{
+			// We have nowhere to send the item so cancel the move.
 			this.DragInfo.Cancel();
 			return false;
 		}
 
+		// Equipment Panel is active so switch to the transfer stash.
 		if (this.stashPanel.CurrentBag == BagIdConstants.BAGID_EQUIPMENTPANEL)
 			this.stashPanel.CurrentBag = BagIdConstants.BAGID_TRANSFERSTASH;
 
+		// Check the transfer stash
 		if (this.stashPanel.TransferStash == null && this.stashPanel.CurrentBag == BagIdConstants.BAGID_TRANSFERSTASH)
 		{
+			// We have nowhere to send the item so cancel the move.
 			this.DragInfo.Cancel();
 			return false;
 		}
 
+		// Check the relic vault stash
 		if (this.stashPanel.RelicVaultStash == null && this.stashPanel.CurrentBag == BagIdConstants.BAGID_RELICVAULTSTASH)
 		{
+			// We have nowhere to send the item so cancel the move.
 			this.DragInfo.Cancel();
 			return false;
 		}
@@ -342,6 +353,7 @@ public partial class MainForm
 
 		if (destinationPanel?.Player == null || destinationSack == null)
 		{
+			// We have nowhere to send the item so cancel the move.
 			this.DragInfo.Cancel();
 			return;
 		}
@@ -349,9 +361,11 @@ public partial class MainForm
 		SackCollection oldSack = destinationSackPanel.Sack;
 		destinationSackPanel.Sack = destinationSack;
 
+		// See if we have an open space to put the item.
 		Point location = destinationSackPanel.FindOpenCells(this.DragInfo.Item.Width, this.DragInfo.Item.Height);
 		int destination = this.GetDestinationIndex(destinationSackPanel, destinationPanel.CurrentBag, destSackNumber);
 
+		// We have no space in the sack so we cancel.
 		if (location.X == -1)
 		{
 			destinationSackPanel.Sack = oldSack;

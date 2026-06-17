@@ -1703,6 +1703,96 @@ Change this value to match program version when new keys are added.  Will trigge
     <value>tagMasteryBrief01-x4tagNeidan</value>
   </data>
 	<data name="SackPanelMenuSeedForce" xml:space="preserve">
-    <value>更改项目种子（力）</value>
+    <value>更改物品种子(强制)</value>
+  </data>
+	<data name="SackPanelMenuExportItem" xml:space="preserve">
+    <value>🔗 分享物品</value>
+  </data>
+	<data name="SackPanelMenuExportClipboard" xml:space="preserve">
+    <value>分享到剪贴板</value>
+  </data>
+	<data name="SackPanelMenuExportItemFile" xml:space="preserve">
+    <value>分享到文件...</value>
+  </data>
+	<data name="SackPanelMenuExportItemPasteBin" xml:space="preserve">
+    <value>分享到PasteBin</value>
+  </data>
+	<data name="PlayerPanelMenuExportTab" xml:space="preserve">
+    <value>🔗 分享标签页</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabClipboard" xml:space="preserve">
+    <value>分享到剪贴板</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabFile" xml:space="preserve">
+    <value>分享到文件...</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabPasteBin" xml:space="preserve">
+    <value>分享到PasteBin</value>
+  </data>
+	<data name="PlayerPanelMenuImportTabFile" xml:space="preserve">
+    <value>从文件导入...</value>
+  </data>
+	<data name="ExportVaultPasteBin" xml:space="preserve">
+    <value>分享仓库到PasteBin</value>
+  </data>
+  <data name="GlobalNoVaultLoaded" xml:space="preserve">
+    <value>未加载仓库。</value>
+  </data>
+  <data name="GlobalNoVaultImportTarget" xml:space="preserve">
+    <value>未加载用于导入的仓库。</value>
+  </data>
+  <data name="GlobalNoActiveTabImport" xml:space="preserve">
+    <value>没有可导入的活动标签页。</value>
+  </data>
+  <data name="GlobalJsonFileFilter" xml:space="preserve">
+    <value>JSON 文件 (*.json)|*.json</value>
+  </data>
+  <data name="ImportVaultReplaceButton" xml:space="preserve">
+    <value>替换</value>
+  </data>
+  <data name="ImportVaultCreateNewButton" xml:space="preserve">
+    <value>创建新仓库</value>
+  </data>
+  <data name="ImportVaultHeading" xml:space="preserve">
+    <value>导入仓库</value>
+  </data>
+  <data name="ImportVaultWarning" xml:space="preserve">
+    <value>警告：这将清除当前仓库中的所有物品。继续？</value>
+  </data>
+  <data name="ExportVaultFailFile" xml:space="preserve">
+    <value>导出仓库到文件失败。</value>
+  </data>
+  <data name="ExportVaultFailClipboard" xml:space="preserve">
+    <value>导出仓库到剪贴板失败。</value>
+  </data>
+  <data name="ExportVaultFailPasteBin" xml:space="preserve">
+    <value>导出仓库到 PasteBin 失败：{0}</value>
+  </data>
+  <data name="ImportFailFile" xml:space="preserve">
+    <value>从文件导入失败。</value>
+  </data>
+  <data name="ExportVaultSuccessFile" xml:space="preserve">
+    <value>仓库已导出到 {0}</value>
+  </data>
+  <data name="ExportVaultSuccessClipboard" xml:space="preserve">
+    <value>仓库已导出到剪贴板。</value>
+  </data>
+  <data name="ExportVaultSuccessPasteBin" xml:space="preserve">
+    <value>仓库已导出到 PasteBin：{0}</value>
+  </data>
+  <data name="ImportVaultDialogText" xml:space="preserve">
+    <value>导入仓库 &quot;{0}&quot;？</value>
+  </data>
+  <data name="ImportVaultSuccessCreate" xml:space="preserve">
+    <value>已创建新仓库 &quot;{0}&quot; 并导入数据。</value>
+  </data>
+  <data name="ImportSuccessCount" xml:space="preserve">
+    <value>已导入 {0}/{1} 件物品。</value>
+  </data>
+  <data name="ImportVaultSuccess" xml:space="preserve">
+    <value>已导入 {0} 件物品到仓库。</value>
+  </data>
+  <data name="ShareVaultTooltip" xml:space="preserve">
+    <value>🔗 分享仓库</value>
   </data>
 </root>

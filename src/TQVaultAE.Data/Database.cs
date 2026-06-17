@@ -169,6 +169,9 @@ public partial class Database : IDatabase
 	/// </summary>
 	public ArzFile ArzFileMod { get; private set; }
 
+	[GeneratedRegex(@"(?i)language\s*=\s*(""(?<Language>[^""]+)""|(?<Language>[^\r\n]*))[\r\n]")]
+	private static partial Regex GameLanguageRegEx();
+
 	/// <summary>
 	/// Gets the game language setting as a an English DisplayName.
 	/// </summary>
@@ -199,7 +202,7 @@ public partial class Database : IDatabase
 					if (this.FileIO.Exists(optionsFile))
 					{
 						var fileContent = this.FileIO.ReadAllText(optionsFile);
-						var match = Regex.Match(fileContent, @"(?i)language\s*=\s*(""(?<Language>[^""]+)""|(?<Language>[^\r\n]*))[\r\n]");
+						var match = GameLanguageRegEx().Match(fileContent);
 						if (match.Success)
 						{
 							this.gameLanguage = match.Groups["Language"].Value.ToUpperInvariant();

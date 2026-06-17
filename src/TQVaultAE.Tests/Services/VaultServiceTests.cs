@@ -64,8 +64,8 @@ public class VaultServiceTests
 	{
 		// Arrange
 		var vaultName = "TestVault";
-		var vaultFile = "C:\\Test\\Vaults\\TestVault.vault";
-		var oldFormatFile = "C:\\Test\\Vaults\\TestVault";
+		var vaultFile = """C:\Test\Vaults\TestVault.vault""";
+		var oldFormatFile = """C:\Test\Vaults\TestVault""";
 
 		_mockFileIO.Setup(x => x.Exists(oldFormatFile)).Returns(false);
 
@@ -89,12 +89,12 @@ public class VaultServiceTests
 	{
 		// Arrange
 		var vaultName = "TestVault";
-		var vaultFile = "C:\\Test\\Vaults\\TestVault.vault";
-		var oldFormatFile = "C:\\Test\\Vaults\\TestVault";
+		var vaultFile = """C:\Test\Vaults\TestVault.vault""";
+		var oldFormatFile = """C:\Test\Vaults\TestVault""";
 
-		_mockPathIO.Setup(x => x.GetDirectoryName(vaultFile)).Returns("C:\\Test\\Vaults");
+		_mockPathIO.Setup(x => x.GetDirectoryName(vaultFile)).Returns("""C:\Test\Vaults""");
 		_mockPathIO.Setup(x => x.GetFileNameWithoutExtension(vaultFile)).Returns("TestVault");
-		_mockPathIO.Setup(x => x.Combine("C:\\Test\\Vaults", "TestVault")).Returns(oldFormatFile);
+		_mockPathIO.Setup(x => x.Combine("""C:\Test\Vaults""", "TestVault")).Returns(oldFormatFile);
 		_mockFileIO.Setup(x => x.Exists(oldFormatFile)).Returns(true);
 		_mockPlayerCollectionProvider
 			.Setup(x => x.LoadFile(It.IsAny<PlayerCollection>(), oldFormatFile))
@@ -124,7 +124,7 @@ public class VaultServiceTests
 	public void SaveAllModifiedVaults_WithNoModifiedVaults_ReturnsZero()
 	{
 		// Arrange
-		var vault = new PlayerCollection("TestVault", "C:\\Test\\Vaults\\TestVault.vault")
+		var vault = new PlayerCollection("TestVault", """C:\Test\Vaults\TestVault.vault""")
 		{
 			IsVault = true
 		};
@@ -149,7 +149,7 @@ public class VaultServiceTests
 	public void SaveAllModifiedVaults_WithModifiedVaults_SavesSuccessfully()
 	{
 		// Arrange
-		var vault = new PlayerCollection("TestVault", "C:\\Test\\Vaults\\TestVault.vault")
+		var vault = new PlayerCollection("TestVault", """C:\Test\Vaults\TestVault.vault""")
 		{
 			IsVault = true
 		};
@@ -187,7 +187,7 @@ public class VaultServiceTests
 	public void SaveAllModifiedVaults_WithBackupEnabled_CallsBackupAndSave()
 	{
 		// Arrange
-		var vault = new PlayerCollection("TestVault", "C:\\Test\\Vaults\\TestVault.vault")
+		var vault = new PlayerCollection("TestVault", """C:\Test\Vaults\TestVault.vault""")
 		{
 			IsVault = true
 		};
@@ -221,7 +221,7 @@ public class VaultServiceTests
 	{
 		// Arrange
 		var vaultName = "TestVault";
-		var vaultFile = "C:\\Test\\Vaults\\TestVault.vault";
+		var vaultFile = """C:\Test\Vaults\TestVault.vault""";
 
 		_mockGamePathService.Setup(x => x.GetVaultFile(vaultName)).Returns(vaultFile);
 		_mockFileIO.Setup(x => x.Exists(vaultFile)).Returns(true);
@@ -246,11 +246,11 @@ public class VaultServiceTests
 	{
 		// Arrange
 		var vaultName = "TestVault";
-		var vaultFile = "C:\\Test\\Vaults\\TestVault.vault";
+		var vaultFile = """C:\Test\Vaults\TestVault.vault""";
 
 		_mockGamePathService.Setup(x => x.GetVaultFile(vaultName)).Returns(vaultFile);
 		_mockFileIO.Setup(x => x.Exists(vaultFile)).Returns(false);
-		_mockFileIO.Setup(x => x.Exists("C:\\Test\\Vaults\\TestVault")).Returns(false);
+		_mockFileIO.Setup(x => x.Exists("""C:\Test\Vaults\TestVault""")).Returns(false);
 
 		// Act
 		var result = _vaultService.LoadVault(vaultName);
@@ -273,7 +273,7 @@ public class VaultServiceTests
 	{
 		// Arrange
 		var vaultName = "TestVault";
-		var vaultFile = "C:\\Test\\Vaults\\TestVault.vault";
+		var vaultFile = """C:\Test\Vaults\TestVault.vault""";
 
 		_mockGamePathService.Setup(x => x.GetVaultFile(vaultName)).Returns(vaultFile);
 		_mockFileIO.Setup(x => x.Exists(vaultFile)).Returns(true);
@@ -297,11 +297,11 @@ public class VaultServiceTests
 	public void LoadVault_WithNullOrEmptyName_DoesNotThrow()
 	{
 		// Arrange - mock GetVaultFile to return a valid path even for null name
-		var vaultFile = "C:\\Test\\Vaults\\TestVault.vault";
+		var vaultFile = """C:\Test\Vaults\TestVault.vault""";
 		_mockGamePathService.Setup(x => x.GetVaultFile(null)).Returns(vaultFile);
 		_mockGamePathService.Setup(x => x.GetVaultFile("")).Returns(vaultFile);
 		_mockFileIO.Setup(x => x.Exists(vaultFile)).Returns(false);
-		_mockFileIO.Setup(x => x.Exists("C:\\Test\\Vaults\\TestVault")).Returns(false);
+		_mockFileIO.Setup(x => x.Exists("""C:\Test\Vaults\TestVault""")).Returns(false);
 
 		// Act & Assert
 		_vaultService.LoadVault(null).Should().NotBeNull();
@@ -316,7 +316,7 @@ public class VaultServiceTests
 	{
 		// Arrange
 		var vaultName = "TestVault";
-		var vaultFile = "C:\\Test\\Vaults\\TestVault.vault";
+		var vaultFile = """C:\Test\Vaults\TestVault.vault""";
 		var expectedException = new ArgumentException("Invalid file format");
 
 		_mockGamePathService.Setup(x => x.GetVaultFile(vaultName)).Returns(vaultFile);
@@ -340,7 +340,7 @@ public class VaultServiceTests
 	public void UpdateVaultPath_UpdatesConfiguration()
 	{
 		// Arrange
-		var vaultPath = "C:\\NewVaultPath";
+		var vaultPath = """C:\NewVaultPath""";
 		var originalPath = _userSettings.VaultPath;
 
 		try

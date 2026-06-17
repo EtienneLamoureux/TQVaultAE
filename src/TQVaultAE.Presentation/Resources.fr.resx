@@ -1575,4 +1575,94 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="SackPanelMenuSeedForce" xml:space="preserve">
     <value>Changer le N° aléatoire ... (Forcer)</value>
   </data>
+	<data name="SackPanelMenuExportItem" xml:space="preserve">
+    <value>🔗 Partager l'objet</value>
+  </data>
+	<data name="SackPanelMenuExportClipboard" xml:space="preserve">
+    <value>Partager dans le presse-papier</value>
+  </data>
+	<data name="SackPanelMenuExportItemFile" xml:space="preserve">
+    <value>Partager dans un fichier...</value>
+  </data>
+	<data name="SackPanelMenuExportItemPasteBin" xml:space="preserve">
+    <value>Partager sur PasteBin</value>
+  </data>
+	<data name="PlayerPanelMenuExportTab" xml:space="preserve">
+    <value>🔗 Partager l'onglet</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabClipboard" xml:space="preserve">
+    <value>Partager dans le presse-papier</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabFile" xml:space="preserve">
+    <value>Partager dans un fichier...</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabPasteBin" xml:space="preserve">
+    <value>Partager sur PasteBin</value>
+  </data>
+	<data name="PlayerPanelMenuImportTabFile" xml:space="preserve">
+    <value>Importer depuis un fichier...</value>
+  </data>
+	<data name="ExportVaultPasteBin" xml:space="preserve">
+    <value>Partager le coffre sur PasteBin</value>
+  </data>
+  <data name="GlobalNoVaultLoaded" xml:space="preserve">
+    <value>Aucun coffre chargé.</value>
+  </data>
+  <data name="GlobalNoVaultImportTarget" xml:space="preserve">
+    <value>Aucun coffre chargé pour l'importation.</value>
+  </data>
+  <data name="GlobalNoActiveTabImport" xml:space="preserve">
+    <value>Aucun onglet actif pour l'importation.</value>
+  </data>
+  <data name="GlobalJsonFileFilter" xml:space="preserve">
+    <value>Fichiers JSON (*.json)|*.json</value>
+  </data>
+  <data name="ImportVaultReplaceButton" xml:space="preserve">
+    <value>Remplacer</value>
+  </data>
+  <data name="ImportVaultCreateNewButton" xml:space="preserve">
+    <value>Créer un nouveau coffre</value>
+  </data>
+  <data name="ImportVaultHeading" xml:space="preserve">
+    <value>Importer le coffre</value>
+  </data>
+  <data name="ImportVaultWarning" xml:space="preserve">
+    <value>ATTENTION : Tous les objets du coffre actuel seront effacés. Continuer ?</value>
+  </data>
+  <data name="ExportVaultFailFile" xml:space="preserve">
+    <value>Échec de l'exportation du coffre vers le fichier.</value>
+  </data>
+  <data name="ExportVaultFailClipboard" xml:space="preserve">
+    <value>Échec de l'exportation du coffre vers le presse-papiers.</value>
+  </data>
+  <data name="ExportVaultFailPasteBin" xml:space="preserve">
+    <value>Échec de l'exportation du coffre vers PasteBin : {0}</value>
+  </data>
+  <data name="ImportFailFile" xml:space="preserve">
+    <value>Échec de l'importation depuis le fichier.</value>
+  </data>
+  <data name="ExportVaultSuccessFile" xml:space="preserve">
+    <value>Coffre exporté vers {0}</value>
+  </data>
+  <data name="ExportVaultSuccessClipboard" xml:space="preserve">
+    <value>Coffre exporté vers le presse-papiers.</value>
+  </data>
+  <data name="ExportVaultSuccessPasteBin" xml:space="preserve">
+    <value>Coffre exporté vers PasteBin : {0}</value>
+  </data>
+  <data name="ImportVaultDialogText" xml:space="preserve">
+    <value>Importer le coffre &quot;{0}&quot; ?</value>
+  </data>
+  <data name="ImportVaultSuccessCreate" xml:space="preserve">
+    <value>Nouveau coffre &quot;{0}&quot; créé avec les données importées.</value>
+  </data>
+  <data name="ImportSuccessCount" xml:space="preserve">
+    <value>{0} objets importés sur {1}.</value>
+  </data>
+  <data name="ImportVaultSuccess" xml:space="preserve">
+    <value>{0} objets importés dans le coffre.</value>
+  </data>
+  <data name="ShareVaultTooltip" xml:space="preserve">
+    <value>🔗 Partager le coffre</value>
+  </data>
 </root>

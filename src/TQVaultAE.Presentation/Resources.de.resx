@@ -1084,4 +1084,94 @@ Hier ist ein komplexes Beispiel: 'arctic &amp; frost @schwert $ episch | selten'
 	<data name="SackPanelMenuSeedForce" xml:space="preserve">
     <value>Item Seed ändern (Force)</value>
   </data>
+	<data name="SackPanelMenuExportItem" xml:space="preserve">
+    <value>🔗 Gegenstand teilen</value>
+  </data>
+	<data name="SackPanelMenuExportClipboard" xml:space="preserve">
+    <value>In die Zwischenablage</value>
+  </data>
+	<data name="SackPanelMenuExportItemFile" xml:space="preserve">
+    <value>In Datei...</value>
+  </data>
+	<data name="SackPanelMenuExportItemPasteBin" xml:space="preserve">
+    <value>Auf PasteBin</value>
+  </data>
+	<data name="PlayerPanelMenuExportTab" xml:space="preserve">
+    <value>🔗 Tab teilen</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabClipboard" xml:space="preserve">
+    <value>In die Zwischenablage</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabFile" xml:space="preserve">
+    <value>In Datei...</value>
+  </data>
+	<data name="PlayerPanelMenuExportTabPasteBin" xml:space="preserve">
+    <value>Auf PasteBin</value>
+  </data>
+	<data name="PlayerPanelMenuImportTabFile" xml:space="preserve">
+    <value>Aus Datei importieren...</value>
+  </data>
+	<data name="ExportVaultPasteBin" xml:space="preserve">
+    <value>Tresor auf PasteBin teilen</value>
+  </data>
+  <data name="GlobalNoVaultLoaded" xml:space="preserve">
+    <value>Kein Tresor geladen.</value>
+  </data>
+  <data name="GlobalNoVaultImportTarget" xml:space="preserve">
+    <value>Kein Tresor zum Importieren geladen.</value>
+  </data>
+  <data name="GlobalNoActiveTabImport" xml:space="preserve">
+    <value>Kein aktiver Tab zum Importieren.</value>
+  </data>
+  <data name="GlobalJsonFileFilter" xml:space="preserve">
+    <value>JSON-Dateien (*.json)|*.json</value>
+  </data>
+  <data name="ImportVaultReplaceButton" xml:space="preserve">
+    <value>Ersetzen</value>
+  </data>
+  <data name="ImportVaultCreateNewButton" xml:space="preserve">
+    <value>Neuen Tresor erstellen</value>
+  </data>
+  <data name="ImportVaultHeading" xml:space="preserve">
+    <value>Tresor importieren</value>
+  </data>
+  <data name="ImportVaultWarning" xml:space="preserve">
+    <value>WARNUNG: Alle Gegenstände im aktuellen Tresor werden gelöscht. Fortfahren?</value>
+  </data>
+  <data name="ExportVaultFailFile" xml:space="preserve">
+    <value>Fehler beim Exportieren des Tresors in Datei.</value>
+  </data>
+  <data name="ExportVaultFailClipboard" xml:space="preserve">
+    <value>Fehler beim Exportieren des Tresors in die Zwischenablage.</value>
+  </data>
+  <data name="ExportVaultFailPasteBin" xml:space="preserve">
+    <value>Fehler beim Exportieren des Tresors nach PasteBin: {0}</value>
+  </data>
+  <data name="ImportFailFile" xml:space="preserve">
+    <value>Fehler beim Importieren aus Datei.</value>
+  </data>
+  <data name="ExportVaultSuccessFile" xml:space="preserve">
+    <value>Tresor exportiert nach {0}</value>
+  </data>
+  <data name="ExportVaultSuccessClipboard" xml:space="preserve">
+    <value>Tresor in die Zwischenablage exportiert.</value>
+  </data>
+  <data name="ExportVaultSuccessPasteBin" xml:space="preserve">
+    <value>Tresor nach PasteBin exportiert: {0}</value>
+  </data>
+  <data name="ImportVaultDialogText" xml:space="preserve">
+    <value>Tresor &quot;{0}&quot; importieren?</value>
+  </data>
+  <data name="ImportVaultSuccessCreate" xml:space="preserve">
+    <value>Neuer Tresor &quot;{0}&quot; mit importierten Daten erstellt.</value>
+  </data>
+  <data name="ImportSuccessCount" xml:space="preserve">
+    <value>{0} von {1} Gegenständen importiert.</value>
+  </data>
+  <data name="ImportVaultSuccess" xml:space="preserve">
+    <value>{0} Gegenstände in Tresor importiert.</value>
+  </data>
+  <data name="ShareVaultTooltip" xml:space="preserve">
+    <value>🔗 Tresor teilen</value>
+  </data>
 </root>

@@ -37,46 +37,33 @@ $newVersion = "$($versionInfo.Major).$($versionInfo.Minor).$($versionInfo.Build)
 Write-Host "Syncing version: $newVersion"
 Write-Host ""
 
-$csprojFiles = @(
-    "$SolutionRoot\src\TQVaultAE.Domain\TQVaultAE.Domain.csproj",
-    "$SolutionRoot\src\TQVaultAE.Application\TQVaultAE.Application.csproj",
-    "$SolutionRoot\src\TQVaultAE.Services\TQVaultAE.Services.csproj",
-    "$SolutionRoot\src\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj",
-    "$SolutionRoot\src\TQVaultAE.Data\TQVaultAE.Data.csproj",
-    "$SolutionRoot\src\TQVaultAE.Config\TQVaultAE.Config.csproj",
-    "$SolutionRoot\src\TQVaultAE.Logs\TQVaultAE.Logs.csproj",
-    "$SolutionRoot\src\TQVaultAE.GUI\TQVaultAE.GUI.csproj",
-    "$SolutionRoot\src\TQSaveFilesExplorer\TQ.SaveFilesExplorer.csproj",
-    "$SolutionRoot\src\ARZExplorer\ArzExplorer.csproj",
-    "$SolutionRoot\src\TQVaultAE.Services.Win32\TQVaultAE.Services.Win32.csproj"
-)
+$buildPropsFile = "$SolutionRoot\Directory.Build.props"
 
-foreach ($file in $csprojFiles) {
-    if (Test-Path $file) {
-        $content = Get-Content $file -Raw -Encoding UTF8
+if (Test-Path $buildPropsFile) {
+    $content = Get-Content $buildPropsFile -Raw -Encoding UTF8
+    
+    $originalContent = $content
+    
+    if ($content -match '<Version[^>]*>.*</Version>') {
+        $content = $content -replace '<Version[^>]*>.*</Version>', ('<Version Condition="''$(IsPackable)'' != ''false''">' + $newVersion + '</Version>')
         
-        $originalContent = $content
-        
-        if ($content -match '<Version>.*</Version>') {
-            $content = $content -replace '<Version>.*</Version>', "<Version>$newVersion</Version>"
-            
-            if ($content -ne $originalContent) {
-                Set-Content -Path $file -Value $content -Encoding UTF8 -NoNewline
-                Write-Host "Updated: $file"
-            } else {
-                Write-Host "Skipped (no changes): $file"
-            }
+        if ($content -ne $originalContent) {
+            Set-Content -Path $buildPropsFile -Value $content -Encoding UTF8 -NoNewline
+            Write-Host "Updated: $buildPropsFile"
         } else {
-            Write-Host "Skipped (no <Version> tag): $file"
+            Write-Host "Skipped (no changes): $buildPropsFile"
         }
     } else {
-        Write-Host "File not found: $file"
+        Write-Host "Skipped (no <Version> tag): $buildPropsFile"
     }
+} else {
+    Write-Host "Error: Directory.Build.props not found at $buildPropsFile"
+    exit 1
 }
 
 Write-Host ""
 Write-Host "Version sync complete: $newVersion"
 Write-Host ""
 Write-Host "Files Updated:"
-Write-Host "- 11 SDK-style csproj files (3 EXE + 8 DLL projects)"
-Write-Host "- All projects now use SDK-style format with auto-generated assembly info"
+Write-Host "- 1 Directory.Build.props (version centralized for all projects)"
+Write-Host "- All projects inherit version from single source"

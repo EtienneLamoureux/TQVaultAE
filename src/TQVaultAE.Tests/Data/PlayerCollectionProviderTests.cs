@@ -223,7 +223,7 @@ public class PlayerCollectionProviderTests
 	{
 		// Arrange
 		var pc = new PlayerCollection("test", "vault.json");
-		var jsonContent = @"{""sacks"":[],""disabledtooltip"":[]}";
+		var jsonContent = """{"sacks":[],"disabledtooltip":[]}""";
 		_mockFileIO.Setup(x => x.ReadAllText("vault.json", It.IsAny<Encoding>()))
 			.Returns(jsonContent);
 

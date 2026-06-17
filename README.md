@@ -11,6 +11,7 @@ Works with all expansions!
 
 ## Features
 - **Infinite bank space**
+- [Share / Import items](documentation/IMPORT_EXPORT.md) — share items, tabs, and vaults via clipboard, `.json` files, or PasteBin URLs.
 - [Powerful search](documentation/ADVANCEDSEARCH.md)
 - Cheats 
     - Items
@@ -35,6 +36,8 @@ Works with all expansions!
     - Combine stacks (potions, relics and charms) by dropping them onto each other
     - Split potion stacks apart
     - Keyboard shortcuts
+        - <kbd>CTRL</kbd>+<kbd>C</kbd> : Export selected item(s) to clipboard
+        - <kbd>CTRL</kbd>+<kbd>V</kbd> : Import item(s) from clipboard or PasteBin URL
         - <kbd>CTRL</kbd>+<kbd>F</kbd>  : Open search form
         - <kbd>CTRL</kbd>+<kbd>+</kbd> : Increase vault size
         - <kbd>CTRL</kbd>+<kbd>-</kbd> : Reduce vault size

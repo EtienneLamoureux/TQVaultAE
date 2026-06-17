@@ -63,6 +63,13 @@ public interface IVaultService
 	void UpdateVaultPath(string vaultPath);
 
 	/// <summary>
+	/// Saves a vault to disk.
+	/// </summary>
+	/// <param name="vault">The vault to save.</param>
+	/// <param name="vaultName">Name of the vault.</param>
+	void SaveVault(PlayerCollection vault, string vaultName);
+
+	/// <summary>
 	/// Shows the vault maintenance dialog.
 	/// </summary>
 	void ShowVaultMaintenance();

@@ -166,1140 +166,1217 @@ namespace TQVaultAE.GUI
 		/// </summary>
 		private void InitializeComponent()
 		{
-            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsDialog));
-            this.allowItemEditCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.allowItemCopyCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.skipTitleCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.loadLastCharacterCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.loadLastVaultCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.vaultPathTextBox = new TQVaultAE.GUI.Components.ScalingTextBox();
-            this.vaultPathLabel = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.cancelButton = new TQVaultAE.GUI.Components.ScalingButton();
-            this.okayButton = new TQVaultAE.GUI.Components.ScalingButton();
-            this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.resetButton = new TQVaultAE.GUI.Components.ScalingButton();
-            this.vaultPathBrowseButton = new TQVaultAE.GUI.Components.ScalingButton();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.loadAllFilesCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.suppressWarningsCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.playerReadonlyCheckbox = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.characterEditCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.EnableDetailedTooltipViewCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.ItemBGColorOpacityLabel = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.EnableItemRequirementRestrictionCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.hotReloadCheckBox = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.scalingCheckBoxEnableEpicLegendaryAffixes = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.scalingCheckBoxDisableAutoStacking = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.checkGroupBoxGitBackup = new TQVaultAE.GUI.Components.CheckGroupBox();
-            this.bufferedFlowLayoutPanelGitBackup = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.scalingCheckBoxDisableLegacyBackup = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.scalingCheckBoxBackupPlayerSaves = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.scalingLabelGitRepository = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.scalingTextBoxGitRepository = new TQVaultAE.GUI.Components.ScalingTextBox();
-            this.checkGroupBoxOriginalTQSupport = new TQVaultAE.GUI.Components.CheckGroupBox();
-            this.bufferedFlowLayoutPanelTQOriginalSupport = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.linkLabelTQOriginalSupport = new System.Windows.Forms.LinkLabel();
-            this.languageComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
-            this.languageLabel = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.titanQuestPathTextBox = new TQVaultAE.GUI.Components.ScalingTextBox();
-            this.titanQuestPathLabel = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.immortalThronePathLabel = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.immortalThronePathTextBox = new TQVaultAE.GUI.Components.ScalingTextBox();
-            this.titanQuestPathBrowseButton = new TQVaultAE.GUI.Components.ScalingButton();
-            this.immortalThronePathBrowseButton = new TQVaultAE.GUI.Components.ScalingButton();
-            this.customMapLabel = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.mapListComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
-            this.baseFontLabel = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.baseFontComboBox = new TQVaultAE.GUI.Components.ScalingComboBox();
-            this.tableLayoutPanelButtons = new System.Windows.Forms.TableLayoutPanel();
-            this.ItemBGColorOpacityTrackBar = new System.Windows.Forms.TrackBar();
-            this.scalingCheckBoxEnableSounds = new TQVaultAE.GUI.Components.ScalingCheckBox();
-            this.scalingLabelCSVDelim = new TQVaultAE.GUI.Components.ScalingLabel();
-            this.scalingComboBoxCSVDelim = new TQVaultAE.GUI.Components.ScalingComboBox();
-            this.groupBoxGeneral = new System.Windows.Forms.GroupBox();
-            this.bufferedFlowLayoutPanelGeneralSettings = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.checkGroupBoxAllowCheats = new TQVaultAE.GUI.Components.CheckGroupBox();
-            this.bufferedFlowLayoutPanelCheats = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.groupBoxGfxAndAudio = new System.Windows.Forms.GroupBox();
-            this.bufferedFlowLayoutPanelGfxAndAudio = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.detectLanguageCheckBox = new TQVaultAE.GUI.Components.CheckGroupBox();
-            this.bufferedFlowLayoutPanelLanguage = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.detectGamePathsCheckBox = new TQVaultAE.GUI.Components.CheckGroupBox();
-            this.bufferedFlowLayoutPanelAutoDetectGamePath = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.bufferedFlowLayoutPanelTQPath = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.bufferedFlowLayoutPanelTQITPath = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.enableCustomMapsCheckBox = new TQVaultAE.GUI.Components.CheckGroupBox();
-            this.bufferedFlowLayoutPanelCustomMap = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.bufferedTableLayoutPanelSkeleton = new TQVaultAE.GUI.Components.BufferedTableLayoutPanel();
-            this.bufferedFlowLayoutPanelSkeletonRight = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.bufferedFlowLayoutPanelSkeletonLeft = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.bufferedFlowLayoutPanelVaultPath = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.bufferedFlowLayoutPanelSkeletonCenter = new TQVaultAE.GUI.Components.BufferedFlowLayoutPanel();
-            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.checkGroupBoxGitBackup.SuspendLayout();
-            this.bufferedFlowLayoutPanelGitBackup.SuspendLayout();
-            this.checkGroupBoxOriginalTQSupport.SuspendLayout();
-            this.bufferedFlowLayoutPanelTQOriginalSupport.SuspendLayout();
-            this.tableLayoutPanelButtons.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ItemBGColorOpacityTrackBar)).BeginInit();
-            this.groupBoxGeneral.SuspendLayout();
-            this.bufferedFlowLayoutPanelGeneralSettings.SuspendLayout();
-            this.checkGroupBoxAllowCheats.SuspendLayout();
-            this.bufferedFlowLayoutPanelCheats.SuspendLayout();
-            this.groupBoxGfxAndAudio.SuspendLayout();
-            this.bufferedFlowLayoutPanelGfxAndAudio.SuspendLayout();
-            this.detectLanguageCheckBox.SuspendLayout();
-            this.bufferedFlowLayoutPanelLanguage.SuspendLayout();
-            this.detectGamePathsCheckBox.SuspendLayout();
-            this.bufferedFlowLayoutPanelAutoDetectGamePath.SuspendLayout();
-            this.bufferedFlowLayoutPanelTQPath.SuspendLayout();
-            this.bufferedFlowLayoutPanelTQITPath.SuspendLayout();
-            this.enableCustomMapsCheckBox.SuspendLayout();
-            this.bufferedFlowLayoutPanelCustomMap.SuspendLayout();
-            this.bufferedTableLayoutPanelSkeleton.SuspendLayout();
-            this.bufferedFlowLayoutPanelSkeletonRight.SuspendLayout();
-            this.bufferedFlowLayoutPanelSkeletonLeft.SuspendLayout();
-            this.bufferedFlowLayoutPanelVaultPath.SuspendLayout();
-            this.bufferedFlowLayoutPanelSkeletonCenter.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // allowItemEditCheckBox
-            // 
-            this.allowItemEditCheckBox.AutoSize = true;
-            this.allowItemEditCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.allowItemEditCheckBox.ForeColor = System.Drawing.Color.White;
-            this.allowItemEditCheckBox.Location = new System.Drawing.Point(3, 59);
-            this.allowItemEditCheckBox.Name = "allowItemEditCheckBox";
-            this.allowItemEditCheckBox.Size = new System.Drawing.Size(204, 22);
-            this.allowItemEditCheckBox.TabIndex = 3;
-            this.allowItemEditCheckBox.Text = "Allow Item Editing Features";
-            this.toolTip.SetToolTip(this.allowItemEditCheckBox, "Turns on the editing features in the context menu.\r\nThese include item creation a" +
-        "nd modification.");
-            this.allowItemEditCheckBox.UseVisualStyleBackColor = true;
-            this.allowItemEditCheckBox.CheckedChanged += new System.EventHandler(this.AllowItemEditCheckBoxCheckedChanged);
-            // 
-            // allowItemCopyCheckBox
-            // 
-            this.allowItemCopyCheckBox.AutoSize = true;
-            this.allowItemCopyCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.allowItemCopyCheckBox.ForeColor = System.Drawing.Color.White;
-            this.allowItemCopyCheckBox.Location = new System.Drawing.Point(3, 31);
-            this.allowItemCopyCheckBox.Name = "allowItemCopyCheckBox";
-            this.allowItemCopyCheckBox.Size = new System.Drawing.Size(152, 22);
-            this.allowItemCopyCheckBox.TabIndex = 4;
-            this.allowItemCopyCheckBox.Text = "Allow Item Copying";
-            this.toolTip.SetToolTip(this.allowItemCopyCheckBox, "Enables copy selection in the context menu.");
-            this.allowItemCopyCheckBox.UseVisualStyleBackColor = true;
-            this.allowItemCopyCheckBox.CheckedChanged += new System.EventHandler(this.AllowItemCopyCheckBoxCheckedChanged);
-            // 
-            // skipTitleCheckBox
-            // 
-            this.skipTitleCheckBox.AutoSize = true;
-            this.skipTitleCheckBox.Checked = true;
-            this.skipTitleCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.skipTitleCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.skipTitleCheckBox.ForeColor = System.Drawing.Color.White;
-            this.skipTitleCheckBox.Location = new System.Drawing.Point(3, 3);
-            this.skipTitleCheckBox.Name = "skipTitleCheckBox";
-            this.skipTitleCheckBox.Size = new System.Drawing.Size(249, 22);
-            this.skipTitleCheckBox.TabIndex = 2;
-            this.skipTitleCheckBox.Text = "Automatically Bypass Title Screen";
-            this.toolTip.SetToolTip(this.skipTitleCheckBox, "Ticking this box will automatically hit\r\nthe Enter key on the title screen.");
-            this.skipTitleCheckBox.UseVisualStyleBackColor = true;
-            this.skipTitleCheckBox.CheckedChanged += new System.EventHandler(this.SkipTitleCheckBoxCheckedChanged);
-            // 
-            // loadLastCharacterCheckBox
-            // 
-            this.loadLastCharacterCheckBox.AutoSize = true;
-            this.loadLastCharacterCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.loadLastCharacterCheckBox.ForeColor = System.Drawing.Color.White;
-            this.loadLastCharacterCheckBox.Location = new System.Drawing.Point(3, 31);
-            this.loadLastCharacterCheckBox.Name = "loadLastCharacterCheckBox";
-            this.loadLastCharacterCheckBox.Size = new System.Drawing.Size(324, 22);
-            this.loadLastCharacterCheckBox.TabIndex = 5;
-            this.loadLastCharacterCheckBox.Text = "Automatically Load the last opened Character";
-            this.toolTip.SetToolTip(this.loadLastCharacterCheckBox, "Selecting this option will automatically load\r\nthe last open character when TQVau" +
-        "lt was closed.");
-            this.loadLastCharacterCheckBox.UseVisualStyleBackColor = true;
-            this.loadLastCharacterCheckBox.CheckedChanged += new System.EventHandler(this.LoadLastCharacterCheckBoxCheckedChanged);
-            // 
-            // loadLastVaultCheckBox
-            // 
-            this.loadLastVaultCheckBox.AutoSize = true;
-            this.loadLastVaultCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.loadLastVaultCheckBox.ForeColor = System.Drawing.Color.White;
-            this.loadLastVaultCheckBox.Location = new System.Drawing.Point(3, 59);
-            this.loadLastVaultCheckBox.Name = "loadLastVaultCheckBox";
-            this.loadLastVaultCheckBox.Size = new System.Drawing.Size(291, 22);
-            this.loadLastVaultCheckBox.TabIndex = 6;
-            this.loadLastVaultCheckBox.Text = "Automatically Load the last opened Vault";
-            this.toolTip.SetToolTip(this.loadLastVaultCheckBox, "Selecting this item will automatically load the\r\nlast opened vault when TQVault w" +
-        "as closed.\r\nTQVault will automatically open Main Vault\r\nif nothing is chosen.");
-            this.loadLastVaultCheckBox.UseVisualStyleBackColor = true;
-            this.loadLastVaultCheckBox.CheckedChanged += new System.EventHandler(this.LoadLastVaultCheckBoxCheckedChanged);
-            // 
-            // vaultPathTextBox
-            // 
-            this.vaultPathTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.vaultPathTextBox.Location = new System.Drawing.Point(3, 3);
-            this.vaultPathTextBox.Name = "vaultPathTextBox";
-            this.vaultPathTextBox.Size = new System.Drawing.Size(397, 24);
-            this.vaultPathTextBox.TabIndex = 0;
-            this.toolTip.SetToolTip(this.vaultPathTextBox, resources.GetString("vaultPathTextBox.ToolTip"));
-            this.vaultPathTextBox.Leave += new System.EventHandler(this.VaultPathTextBoxLeave);
-            // 
-            // vaultPathLabel
-            // 
-            this.vaultPathLabel.AutoSize = true;
-            this.vaultPathLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.vaultPathLabel.ForeColor = System.Drawing.Color.Gold;
-            this.vaultPathLabel.Location = new System.Drawing.Point(3, 0);
-            this.vaultPathLabel.Name = "vaultPathLabel";
-            this.vaultPathLabel.Size = new System.Drawing.Size(74, 18);
-            this.vaultPathLabel.TabIndex = 14;
-            this.vaultPathLabel.Text = "Vault Path";
-            // 
-            // cancelButton
-            // 
-            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cancelButton.BackColor = System.Drawing.Color.Transparent;
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("cancelButton.DownBitmap")));
-            this.cancelButton.FlatAppearance.BorderSize = 0;
-            this.cancelButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.cancelButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.cancelButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.cancelButton.Image = ((System.Drawing.Image)(resources.GetObject("cancelButton.Image")));
-            this.cancelButton.Location = new System.Drawing.Point(595, 3);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("cancelButton.OverBitmap")));
-            this.cancelButton.Size = new System.Drawing.Size(137, 30);
-            this.cancelButton.SizeToGraphic = false;
-            this.cancelButton.TabIndex = 13;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("cancelButton.UpBitmap")));
-            this.cancelButton.UseCustomGraphic = true;
-            this.cancelButton.UseVisualStyleBackColor = false;
-            // 
-            // okayButton
-            // 
-            this.okayButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okayButton.BackColor = System.Drawing.Color.Transparent;
-            this.okayButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okayButton.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("okayButton.DownBitmap")));
-            this.okayButton.FlatAppearance.BorderSize = 0;
-            this.okayButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.okayButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.okayButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.okayButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.okayButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.okayButton.Image = ((System.Drawing.Image)(resources.GetObject("okayButton.Image")));
-            this.okayButton.Location = new System.Drawing.Point(432, 3);
-            this.okayButton.Name = "okayButton";
-            this.okayButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("okayButton.OverBitmap")));
-            this.okayButton.Size = new System.Drawing.Size(137, 30);
-            this.okayButton.SizeToGraphic = false;
-            this.okayButton.TabIndex = 12;
-            this.okayButton.Text = "OK";
-            this.okayButton.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("okayButton.UpBitmap")));
-            this.okayButton.UseCustomGraphic = true;
-            this.okayButton.UseVisualStyleBackColor = false;
-            this.okayButton.Click += new System.EventHandler(this.OkayButtonClick);
-            // 
-            // folderBrowserDialog
-            // 
-            this.folderBrowserDialog.RootFolder = System.Environment.SpecialFolder.MyDocuments;
-            // 
-            // resetButton
-            // 
-            this.resetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.resetButton.BackColor = System.Drawing.Color.Transparent;
-            this.resetButton.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("resetButton.DownBitmap")));
-            this.resetButton.FlatAppearance.BorderSize = 0;
-            this.resetButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.resetButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.resetButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.resetButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.resetButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.resetButton.Image = ((System.Drawing.Image)(resources.GetObject("resetButton.Image")));
-            this.resetButton.Location = new System.Drawing.Point(1026, 3);
-            this.resetButton.Name = "resetButton";
-            this.resetButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("resetButton.OverBitmap")));
-            this.resetButton.Size = new System.Drawing.Size(137, 30);
-            this.resetButton.SizeToGraphic = false;
-            this.resetButton.TabIndex = 11;
-            this.resetButton.Text = "Reset";
-            this.toolTip.SetToolTip(this.resetButton, "Causes the configuration to Reset to the\r\nlast saved configuration.");
-            this.resetButton.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("resetButton.UpBitmap")));
-            this.resetButton.UseCustomGraphic = true;
-            this.resetButton.UseVisualStyleBackColor = false;
-            this.resetButton.Click += new System.EventHandler(this.ResetButtonClick);
-            // 
-            // vaultPathBrowseButton
-            // 
-            this.vaultPathBrowseButton.BackColor = System.Drawing.Color.Transparent;
-            this.vaultPathBrowseButton.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("vaultPathBrowseButton.DownBitmap")));
-            this.vaultPathBrowseButton.FlatAppearance.BorderSize = 0;
-            this.vaultPathBrowseButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.vaultPathBrowseButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.vaultPathBrowseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.vaultPathBrowseButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.vaultPathBrowseButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.vaultPathBrowseButton.Image = ((System.Drawing.Image)(resources.GetObject("vaultPathBrowseButton.Image")));
-            this.vaultPathBrowseButton.Location = new System.Drawing.Point(406, 0);
-            this.vaultPathBrowseButton.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
-            this.vaultPathBrowseButton.Name = "vaultPathBrowseButton";
-            this.vaultPathBrowseButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("vaultPathBrowseButton.OverBitmap")));
-            this.vaultPathBrowseButton.Size = new System.Drawing.Size(47, 30);
-            this.vaultPathBrowseButton.SizeToGraphic = false;
-            this.vaultPathBrowseButton.TabIndex = 1;
-            this.vaultPathBrowseButton.Text = "...";
-            this.vaultPathBrowseButton.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("vaultPathBrowseButton.UpBitmap")));
-            this.vaultPathBrowseButton.UseCustomGraphic = true;
-            this.vaultPathBrowseButton.UseVisualStyleBackColor = false;
-            this.vaultPathBrowseButton.Click += new System.EventHandler(this.VaultPathBrowseButtonClick);
-            // 
-            // loadAllFilesCheckBox
-            // 
-            this.loadAllFilesCheckBox.AutoSize = true;
-            this.loadAllFilesCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.loadAllFilesCheckBox.ForeColor = System.Drawing.Color.White;
-            this.loadAllFilesCheckBox.Location = new System.Drawing.Point(3, 87);
-            this.loadAllFilesCheckBox.Name = "loadAllFilesCheckBox";
-            this.loadAllFilesCheckBox.Size = new System.Drawing.Size(276, 22);
-            this.loadAllFilesCheckBox.TabIndex = 28;
-            this.loadAllFilesCheckBox.Text = "Pre-Load All Vault And Character Files";
-            this.toolTip.SetToolTip(this.loadAllFilesCheckBox, "Selecting this item will automatically load all\r\nof the available character, stas" +
-        "h and vault files\r\non startup.  This aids the search function, but\r\nincreases st" +
-        "artup time.");
-            this.loadAllFilesCheckBox.UseVisualStyleBackColor = true;
-            this.loadAllFilesCheckBox.CheckedChanged += new System.EventHandler(this.LoadAllFilesCheckBoxCheckedChanged);
-            // 
-            // suppressWarningsCheckBox
-            // 
-            this.suppressWarningsCheckBox.AutoSize = true;
-            this.suppressWarningsCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.suppressWarningsCheckBox.ForeColor = System.Drawing.Color.White;
-            this.suppressWarningsCheckBox.Location = new System.Drawing.Point(3, 141);
-            this.suppressWarningsCheckBox.Name = "suppressWarningsCheckBox";
-            this.suppressWarningsCheckBox.Size = new System.Drawing.Size(238, 22);
-            this.suppressWarningsCheckBox.TabIndex = 30;
-            this.suppressWarningsCheckBox.Text = "Bypass Confirmation Messages";
-            this.toolTip.SetToolTip(this.suppressWarningsCheckBox, "When enabled, confirmation messages will no\r\nlonger be shown for item deletion an" +
-        "d\r\nrelic removal or if there are items in the trash\r\nwhen TQVault is closed.");
-            this.suppressWarningsCheckBox.UseVisualStyleBackColor = true;
-            this.suppressWarningsCheckBox.CheckedChanged += new System.EventHandler(this.SuppressWarningsCheckBoxCheckedChanged);
-            // 
-            // playerReadonlyCheckbox
-            // 
-            this.playerReadonlyCheckbox.AutoSize = true;
-            this.playerReadonlyCheckbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.playerReadonlyCheckbox.ForeColor = System.Drawing.Color.White;
-            this.playerReadonlyCheckbox.Location = new System.Drawing.Point(3, 197);
-            this.playerReadonlyCheckbox.Name = "playerReadonlyCheckbox";
-            this.playerReadonlyCheckbox.Size = new System.Drawing.Size(211, 22);
-            this.playerReadonlyCheckbox.TabIndex = 33;
-            this.playerReadonlyCheckbox.Text = "Player Equipment ReadOnly";
-            this.toolTip.SetToolTip(this.playerReadonlyCheckbox, "Avoid save game corruption that occurs (randomly). When enabled, player equipment" +
-        " will be read-only,  you won\'t be able to select or move any item.");
-            this.playerReadonlyCheckbox.UseVisualStyleBackColor = true;
-            this.playerReadonlyCheckbox.CheckedChanged += new System.EventHandler(this.PlayerReadonlyCheckboxCheckedChanged);
-            // 
-            // characterEditCheckBox
-            // 
-            this.characterEditCheckBox.AutoSize = true;
-            this.characterEditCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.characterEditCheckBox.ForeColor = System.Drawing.Color.White;
-            this.characterEditCheckBox.Location = new System.Drawing.Point(3, 3);
-            this.characterEditCheckBox.Name = "characterEditCheckBox";
-            this.characterEditCheckBox.Size = new System.Drawing.Size(241, 22);
-            this.characterEditCheckBox.TabIndex = 34;
-            this.characterEditCheckBox.Text = "Allow Character Editing Features";
-            this.toolTip.SetToolTip(this.characterEditCheckBox, "Turns on the editing features in the context menu.\r\nThese include item creation a" +
-        "nd modification.");
-            this.characterEditCheckBox.UseVisualStyleBackColor = true;
-            this.characterEditCheckBox.CheckedChanged += new System.EventHandler(this.CharacterEditCheckBox_CheckedChanged);
-            // 
-            // EnableDetailedTooltipViewCheckBox
-            // 
-            this.EnableDetailedTooltipViewCheckBox.AutoSize = true;
-            this.EnableDetailedTooltipViewCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.EnableDetailedTooltipViewCheckBox.ForeColor = System.Drawing.Color.White;
-            this.EnableDetailedTooltipViewCheckBox.Location = new System.Drawing.Point(3, 169);
-            this.EnableDetailedTooltipViewCheckBox.Name = "EnableDetailedTooltipViewCheckBox";
-            this.EnableDetailedTooltipViewCheckBox.Size = new System.Drawing.Size(213, 22);
-            this.EnableDetailedTooltipViewCheckBox.TabIndex = 38;
-            this.EnableDetailedTooltipViewCheckBox.Text = "Enable Detailed Tooltip View";
-            this.toolTip.SetToolTip(this.EnableDetailedTooltipViewCheckBox, "Split tooltip attributes into Prefix/Base/Suffix categories");
-            this.EnableDetailedTooltipViewCheckBox.UseVisualStyleBackColor = true;
-            this.EnableDetailedTooltipViewCheckBox.CheckedChanged += new System.EventHandler(this.EnableDetailedTooltipViewCheckBox_CheckedChanged);
-            // 
-            // ItemBGColorOpacityLabel
-            // 
-            this.ItemBGColorOpacityLabel.AutoSize = true;
-            this.ItemBGColorOpacityLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.ItemBGColorOpacityLabel.ForeColor = System.Drawing.Color.White;
-            this.ItemBGColorOpacityLabel.Location = new System.Drawing.Point(3, 105);
-            this.ItemBGColorOpacityLabel.Name = "ItemBGColorOpacityLabel";
-            this.ItemBGColorOpacityLabel.Size = new System.Drawing.Size(151, 18);
-            this.ItemBGColorOpacityLabel.TabIndex = 40;
-            this.ItemBGColorOpacityLabel.Text = "Item BG Alpha Color :";
-            this.toolTip.SetToolTip(this.ItemBGColorOpacityLabel, "Item background color opacity level");
-            // 
-            // EnableItemRequirementRestrictionCheckBox
-            // 
-            this.EnableItemRequirementRestrictionCheckBox.AutoSize = true;
-            this.EnableItemRequirementRestrictionCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.EnableItemRequirementRestrictionCheckBox.ForeColor = System.Drawing.Color.Orange;
-            this.EnableItemRequirementRestrictionCheckBox.Location = new System.Drawing.Point(3, 80);
-            this.EnableItemRequirementRestrictionCheckBox.Name = "EnableItemRequirementRestrictionCheckBox";
-            this.EnableItemRequirementRestrictionCheckBox.Size = new System.Drawing.Size(304, 22);
-            this.EnableItemRequirementRestrictionCheckBox.TabIndex = 41;
-            this.EnableItemRequirementRestrictionCheckBox.Text = "Enable Character Requierement BG Color";
-            this.toolTip.SetToolTip(this.EnableItemRequirementRestrictionCheckBox, resources.GetString("EnableItemRequirementRestrictionCheckBox.ToolTip"));
-            this.EnableItemRequirementRestrictionCheckBox.UseVisualStyleBackColor = true;
-            this.EnableItemRequirementRestrictionCheckBox.CheckedChanged += new System.EventHandler(this.EnableItemRequirementRestrictionCheckBox_CheckedChanged);
-            // 
-            // hotReloadCheckBox
-            // 
-            this.hotReloadCheckBox.AutoSize = true;
-            this.hotReloadCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.hotReloadCheckBox.ForeColor = System.Drawing.Color.White;
-            this.hotReloadCheckBox.Location = new System.Drawing.Point(2, 114);
-            this.hotReloadCheckBox.Margin = new System.Windows.Forms.Padding(2);
-            this.hotReloadCheckBox.Name = "hotReloadCheckBox";
-            this.hotReloadCheckBox.Size = new System.Drawing.Size(203, 22);
-            this.hotReloadCheckBox.TabIndex = 42;
-            this.hotReloadCheckBox.Text = "Allow Hot Reload Features";
-            this.toolTip.SetToolTip(this.hotReloadCheckBox, "Turns on the editing features in the context menu.\r\nThese include item creation a" +
-        "nd modification.");
-            this.hotReloadCheckBox.UseVisualStyleBackColor = true;
-            this.hotReloadCheckBox.CheckedChanged += new System.EventHandler(this.hotReloadCheckBox_CheckedChanged);
-            // 
-            // scalingCheckBoxEnableEpicLegendaryAffixes
-            // 
-            this.scalingCheckBoxEnableEpicLegendaryAffixes.AutoSize = true;
-            this.scalingCheckBoxEnableEpicLegendaryAffixes.Enabled = false;
-            this.scalingCheckBoxEnableEpicLegendaryAffixes.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.scalingCheckBoxEnableEpicLegendaryAffixes.ForeColor = System.Drawing.Color.White;
-            this.scalingCheckBoxEnableEpicLegendaryAffixes.Location = new System.Drawing.Point(3, 87);
-            this.scalingCheckBoxEnableEpicLegendaryAffixes.Name = "scalingCheckBoxEnableEpicLegendaryAffixes";
-            this.scalingCheckBoxEnableEpicLegendaryAffixes.Size = new System.Drawing.Size(251, 22);
-            this.scalingCheckBoxEnableEpicLegendaryAffixes.TabIndex = 46;
-            this.scalingCheckBoxEnableEpicLegendaryAffixes.Text = "Enable Epic and Legendary affixes";
-            this.toolTip.SetToolTip(this.scalingCheckBoxEnableEpicLegendaryAffixes, "Allow affixes pickup on Epic and Legendary items");
-            this.scalingCheckBoxEnableEpicLegendaryAffixes.UseVisualStyleBackColor = true;
-            this.scalingCheckBoxEnableEpicLegendaryAffixes.CheckedChanged += new System.EventHandler(this.scalingCheckBoxEnableEpicLegendaryAffixes_CheckedChanged);
-            // 
-            // scalingCheckBoxDisableAutoStacking
-            // 
-            this.scalingCheckBoxDisableAutoStacking.AutoSize = true;
-            this.scalingCheckBoxDisableAutoStacking.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.scalingCheckBoxDisableAutoStacking.ForeColor = System.Drawing.Color.White;
-            this.scalingCheckBoxDisableAutoStacking.Location = new System.Drawing.Point(3, 225);
-            this.scalingCheckBoxDisableAutoStacking.Name = "scalingCheckBoxDisableAutoStacking";
-            this.scalingCheckBoxDisableAutoStacking.Size = new System.Drawing.Size(168, 22);
-            this.scalingCheckBoxDisableAutoStacking.TabIndex = 47;
-            this.scalingCheckBoxDisableAutoStacking.Text = "Disable auto stacking";
-            this.toolTip.SetToolTip(this.scalingCheckBoxDisableAutoStacking, "Disable auto stacking for relic, charms and potions");
-            this.scalingCheckBoxDisableAutoStacking.UseVisualStyleBackColor = true;
-            this.scalingCheckBoxDisableAutoStacking.CheckedChanged += new System.EventHandler(this.scalingCheckBoxDisableAutoStacking_CheckedChanged);
-            // 
-            // checkGroupBoxGitBackup
-            // 
-            this.checkGroupBoxGitBackup.AutoSize = true;
-            this.checkGroupBoxGitBackup.Checked = false;
-            this.checkGroupBoxGitBackup.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
-            this.checkGroupBoxGitBackup.CheckState = System.Windows.Forms.CheckState.Unchecked;
-            this.checkGroupBoxGitBackup.Controls.Add(this.bufferedFlowLayoutPanelGitBackup);
-            this.checkGroupBoxGitBackup.ForeColor = System.Drawing.Color.Gold;
-            this.checkGroupBoxGitBackup.Location = new System.Drawing.Point(3, 374);
-            this.checkGroupBoxGitBackup.Name = "checkGroupBoxGitBackup";
-            this.checkGroupBoxGitBackup.Size = new System.Drawing.Size(409, 127);
-            this.checkGroupBoxGitBackup.TabIndex = 48;
-            this.checkGroupBoxGitBackup.TabStop = false;
-            this.checkGroupBoxGitBackup.Text = "Git Backup";
-            this.toolTip.SetToolTip(this.checkGroupBoxGitBackup, "Enable a backup of your modified vaults & saves to a a git repository");
-            this.checkGroupBoxGitBackup.CheckedChanged += new System.EventHandler(this.checkGroupBoxGitBackup_CheckedChanged);
-            // 
-            // bufferedFlowLayoutPanelGitBackup
-            // 
-            this.bufferedFlowLayoutPanelGitBackup.AutoSize = true;
-            this.bufferedFlowLayoutPanelGitBackup.Controls.Add(this.scalingCheckBoxDisableLegacyBackup);
-            this.bufferedFlowLayoutPanelGitBackup.Controls.Add(this.scalingCheckBoxBackupPlayerSaves);
-            this.bufferedFlowLayoutPanelGitBackup.Controls.Add(this.scalingLabelGitRepository);
-            this.bufferedFlowLayoutPanelGitBackup.Controls.Add(this.scalingTextBoxGitRepository);
-            this.bufferedFlowLayoutPanelGitBackup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bufferedFlowLayoutPanelGitBackup.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.bufferedFlowLayoutPanelGitBackup.Location = new System.Drawing.Point(3, 20);
-            this.bufferedFlowLayoutPanelGitBackup.Name = "bufferedFlowLayoutPanelGitBackup";
-            this.bufferedFlowLayoutPanelGitBackup.Size = new System.Drawing.Size(403, 104);
-            this.bufferedFlowLayoutPanelGitBackup.TabIndex = 1;
-            // 
-            // scalingCheckBoxDisableLegacyBackup
-            // 
-            this.scalingCheckBoxDisableLegacyBackup.AutoSize = true;
-            this.scalingCheckBoxDisableLegacyBackup.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.scalingCheckBoxDisableLegacyBackup.ForeColor = System.Drawing.Color.White;
-            this.scalingCheckBoxDisableLegacyBackup.Location = new System.Drawing.Point(3, 3);
-            this.scalingCheckBoxDisableLegacyBackup.Name = "scalingCheckBoxDisableLegacyBackup";
-            this.scalingCheckBoxDisableLegacyBackup.Size = new System.Drawing.Size(174, 22);
-            this.scalingCheckBoxDisableLegacyBackup.TabIndex = 1;
-            this.scalingCheckBoxDisableLegacyBackup.Text = "Disable legacy backup";
-            this.toolTip.SetToolTip(this.scalingCheckBoxDisableLegacyBackup, "Optionaly disable the old backup system");
-            this.scalingCheckBoxDisableLegacyBackup.UseVisualStyleBackColor = true;
-            this.scalingCheckBoxDisableLegacyBackup.CheckedChanged += new System.EventHandler(this.scalingCheckBoxDisableLegacyBackup_CheckedChanged);
-            // 
-            // scalingCheckBoxBackupPlayerSaves
-            // 
-            this.scalingCheckBoxBackupPlayerSaves.AutoSize = true;
-            this.scalingCheckBoxBackupPlayerSaves.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.scalingCheckBoxBackupPlayerSaves.ForeColor = System.Drawing.Color.White;
-            this.scalingCheckBoxBackupPlayerSaves.Location = new System.Drawing.Point(3, 31);
-            this.scalingCheckBoxBackupPlayerSaves.Name = "scalingCheckBoxBackupPlayerSaves";
-            this.scalingCheckBoxBackupPlayerSaves.Size = new System.Drawing.Size(163, 22);
-            this.scalingCheckBoxBackupPlayerSaves.TabIndex = 6;
-            this.scalingCheckBoxBackupPlayerSaves.Text = "Backup player saves";
-            this.toolTip.SetToolTip(this.scalingCheckBoxBackupPlayerSaves, "Include your character save files in the backup");
-            this.scalingCheckBoxBackupPlayerSaves.UseVisualStyleBackColor = true;
-            this.scalingCheckBoxBackupPlayerSaves.CheckedChanged += new System.EventHandler(this.scalingCheckBoxBackupPlayerSaves_CheckedChanged);
-            // 
-            // scalingLabelGitRepository
-            // 
-            this.scalingLabelGitRepository.AutoSize = true;
-            this.scalingLabelGitRepository.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.scalingLabelGitRepository.ForeColor = System.Drawing.Color.White;
-            this.scalingLabelGitRepository.Location = new System.Drawing.Point(3, 56);
-            this.scalingLabelGitRepository.Name = "scalingLabelGitRepository";
-            this.scalingLabelGitRepository.Size = new System.Drawing.Size(138, 18);
-            this.scalingLabelGitRepository.TabIndex = 5;
-            this.scalingLabelGitRepository.Text = "Git Repository Url : ";
-            // 
-            // scalingTextBoxGitRepository
-            // 
-            this.scalingTextBoxGitRepository.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.scalingTextBoxGitRepository.Location = new System.Drawing.Point(3, 77);
-            this.scalingTextBoxGitRepository.Name = "scalingTextBoxGitRepository";
-            this.scalingTextBoxGitRepository.Size = new System.Drawing.Size(397, 24);
-            this.scalingTextBoxGitRepository.TabIndex = 4;
-            this.scalingTextBoxGitRepository.TextChanged += new System.EventHandler(this.scalingTextBoxGitRepository_TextChanged);
-            // 
-            // checkGroupBoxOriginalTQSupport
-            // 
-            this.checkGroupBoxOriginalTQSupport.Checked = false;
-            this.checkGroupBoxOriginalTQSupport.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
-            this.checkGroupBoxOriginalTQSupport.CheckState = System.Windows.Forms.CheckState.Unchecked;
-            this.checkGroupBoxOriginalTQSupport.Controls.Add(this.bufferedFlowLayoutPanelTQOriginalSupport);
-            this.checkGroupBoxOriginalTQSupport.ForeColor = System.Drawing.Color.Gold;
-            this.checkGroupBoxOriginalTQSupport.Location = new System.Drawing.Point(3, 206);
-            this.checkGroupBoxOriginalTQSupport.Name = "checkGroupBoxOriginalTQSupport";
-            this.checkGroupBoxOriginalTQSupport.Size = new System.Drawing.Size(316, 49);
-            this.checkGroupBoxOriginalTQSupport.TabIndex = 53;
-            this.checkGroupBoxOriginalTQSupport.TabStop = false;
-            this.checkGroupBoxOriginalTQSupport.Text = "TQ original support";
-            this.toolTip.SetToolTip(this.checkGroupBoxOriginalTQSupport, "Provide support for original Titan Quest character file editing");
-            this.checkGroupBoxOriginalTQSupport.CheckedChanged += new System.EventHandler(this.checkGroupBoxOriginalTQSupport_CheckedChanged);
-            // 
-            // bufferedFlowLayoutPanelTQOriginalSupport
-            // 
-            this.bufferedFlowLayoutPanelTQOriginalSupport.Controls.Add(this.linkLabelTQOriginalSupport);
-            this.bufferedFlowLayoutPanelTQOriginalSupport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bufferedFlowLayoutPanelTQOriginalSupport.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.bufferedFlowLayoutPanelTQOriginalSupport.ForeColor = System.Drawing.Color.White;
-            this.bufferedFlowLayoutPanelTQOriginalSupport.Location = new System.Drawing.Point(3, 20);
-            this.bufferedFlowLayoutPanelTQOriginalSupport.Name = "bufferedFlowLayoutPanelTQOriginalSupport";
-            this.bufferedFlowLayoutPanelTQOriginalSupport.Size = new System.Drawing.Size(310, 26);
-            this.bufferedFlowLayoutPanelTQOriginalSupport.TabIndex = 1;
-            // 
-            // linkLabelTQOriginalSupport
-            // 
-            this.linkLabelTQOriginalSupport.AutoSize = true;
-            this.linkLabelTQOriginalSupport.LinkColor = System.Drawing.Color.Magenta;
-            this.linkLabelTQOriginalSupport.Location = new System.Drawing.Point(3, 0);
-            this.linkLabelTQOriginalSupport.Name = "linkLabelTQOriginalSupport";
-            this.linkLabelTQOriginalSupport.Size = new System.Drawing.Size(98, 18);
-            this.linkLabelTQOriginalSupport.TabIndex = 54;
-            this.linkLabelTQOriginalSupport.TabStop = true;
-            this.linkLabelTQOriginalSupport.Text = "How to play...";
-            this.linkLabelTQOriginalSupport.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelTQOriginalSupport_LinkClicked);
-            // 
-            // languageComboBox
-            // 
-            this.languageComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.languageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.languageComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.languageComboBox.FormattingEnabled = true;
-            this.languageComboBox.Location = new System.Drawing.Point(3, 21);
-            this.languageComboBox.Name = "languageComboBox";
-            this.languageComboBox.Size = new System.Drawing.Size(397, 25);
-            this.languageComboBox.TabIndex = 15;
-            this.languageComboBox.SelectedIndexChanged += new System.EventHandler(this.LanguageComboBoxSelectedIndexChanged);
-            // 
-            // languageLabel
-            // 
-            this.languageLabel.AutoSize = true;
-            this.languageLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.languageLabel.ForeColor = System.Drawing.Color.White;
-            this.languageLabel.Location = new System.Drawing.Point(3, 0);
-            this.languageLabel.Name = "languageLabel";
-            this.languageLabel.Size = new System.Drawing.Size(117, 18);
-            this.languageLabel.TabIndex = 16;
-            this.languageLabel.Text = "Game Language";
-            // 
-            // titanQuestPathTextBox
-            // 
-            this.titanQuestPathTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.titanQuestPathTextBox.Location = new System.Drawing.Point(3, 3);
-            this.titanQuestPathTextBox.Name = "titanQuestPathTextBox";
-            this.titanQuestPathTextBox.Size = new System.Drawing.Size(397, 24);
-            this.titanQuestPathTextBox.TabIndex = 18;
-            this.titanQuestPathTextBox.Leave += new System.EventHandler(this.TitanQuestPathTextBoxLeave);
-            // 
-            // titanQuestPathLabel
-            // 
-            this.titanQuestPathLabel.AutoSize = true;
-            this.titanQuestPathLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.titanQuestPathLabel.ForeColor = System.Drawing.Color.White;
-            this.titanQuestPathLabel.Location = new System.Drawing.Point(3, 0);
-            this.titanQuestPathLabel.Name = "titanQuestPathLabel";
-            this.titanQuestPathLabel.Size = new System.Drawing.Size(108, 18);
-            this.titanQuestPathLabel.TabIndex = 19;
-            this.titanQuestPathLabel.Text = "TQ Game Path";
-            // 
-            // immortalThronePathLabel
-            // 
-            this.immortalThronePathLabel.AutoSize = true;
-            this.immortalThronePathLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.immortalThronePathLabel.ForeColor = System.Drawing.Color.White;
-            this.immortalThronePathLabel.Location = new System.Drawing.Point(3, 57);
-            this.immortalThronePathLabel.Name = "immortalThronePathLabel";
-            this.immortalThronePathLabel.Size = new System.Drawing.Size(99, 18);
-            this.immortalThronePathLabel.TabIndex = 20;
-            this.immortalThronePathLabel.Text = "IT Game Path";
-            // 
-            // immortalThronePathTextBox
-            // 
-            this.immortalThronePathTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.immortalThronePathTextBox.Location = new System.Drawing.Point(3, 3);
-            this.immortalThronePathTextBox.Name = "immortalThronePathTextBox";
-            this.immortalThronePathTextBox.Size = new System.Drawing.Size(397, 24);
-            this.immortalThronePathTextBox.TabIndex = 21;
-            this.immortalThronePathTextBox.Leave += new System.EventHandler(this.ImmortalThronePathTextBoxLeave);
-            // 
-            // titanQuestPathBrowseButton
-            // 
-            this.titanQuestPathBrowseButton.BackColor = System.Drawing.Color.Transparent;
-            this.titanQuestPathBrowseButton.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("titanQuestPathBrowseButton.DownBitmap")));
-            this.titanQuestPathBrowseButton.FlatAppearance.BorderSize = 0;
-            this.titanQuestPathBrowseButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.titanQuestPathBrowseButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.titanQuestPathBrowseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.titanQuestPathBrowseButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.titanQuestPathBrowseButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.titanQuestPathBrowseButton.Image = ((System.Drawing.Image)(resources.GetObject("titanQuestPathBrowseButton.Image")));
-            this.titanQuestPathBrowseButton.Location = new System.Drawing.Point(406, 0);
-            this.titanQuestPathBrowseButton.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
-            this.titanQuestPathBrowseButton.Name = "titanQuestPathBrowseButton";
-            this.titanQuestPathBrowseButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("titanQuestPathBrowseButton.OverBitmap")));
-            this.titanQuestPathBrowseButton.Size = new System.Drawing.Size(47, 30);
-            this.titanQuestPathBrowseButton.SizeToGraphic = false;
-            this.titanQuestPathBrowseButton.TabIndex = 23;
-            this.titanQuestPathBrowseButton.Text = "...";
-            this.titanQuestPathBrowseButton.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("titanQuestPathBrowseButton.UpBitmap")));
-            this.titanQuestPathBrowseButton.UseCustomGraphic = true;
-            this.titanQuestPathBrowseButton.UseVisualStyleBackColor = false;
-            this.titanQuestPathBrowseButton.Click += new System.EventHandler(this.TitanQuestPathBrowseButtonClick);
-            // 
-            // immortalThronePathBrowseButton
-            // 
-            this.immortalThronePathBrowseButton.BackColor = System.Drawing.Color.Transparent;
-            this.immortalThronePathBrowseButton.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("immortalThronePathBrowseButton.DownBitmap")));
-            this.immortalThronePathBrowseButton.FlatAppearance.BorderSize = 0;
-            this.immortalThronePathBrowseButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.immortalThronePathBrowseButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.immortalThronePathBrowseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.immortalThronePathBrowseButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.immortalThronePathBrowseButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-            this.immortalThronePathBrowseButton.Image = ((System.Drawing.Image)(resources.GetObject("immortalThronePathBrowseButton.Image")));
-            this.immortalThronePathBrowseButton.Location = new System.Drawing.Point(406, 0);
-            this.immortalThronePathBrowseButton.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
-            this.immortalThronePathBrowseButton.Name = "immortalThronePathBrowseButton";
-            this.immortalThronePathBrowseButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("immortalThronePathBrowseButton.OverBitmap")));
-            this.immortalThronePathBrowseButton.Size = new System.Drawing.Size(47, 30);
-            this.immortalThronePathBrowseButton.SizeToGraphic = false;
-            this.immortalThronePathBrowseButton.TabIndex = 24;
-            this.immortalThronePathBrowseButton.Text = "...";
-            this.immortalThronePathBrowseButton.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("immortalThronePathBrowseButton.UpBitmap")));
-            this.immortalThronePathBrowseButton.UseCustomGraphic = true;
-            this.immortalThronePathBrowseButton.UseVisualStyleBackColor = false;
-            this.immortalThronePathBrowseButton.Click += new System.EventHandler(this.ImmortalThronePathBrowseButtonClick);
-            // 
-            // customMapLabel
-            // 
-            this.customMapLabel.AutoSize = true;
-            this.customMapLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.customMapLabel.ForeColor = System.Drawing.Color.White;
-            this.customMapLabel.Location = new System.Drawing.Point(3, 0);
-            this.customMapLabel.Name = "customMapLabel";
-            this.customMapLabel.Size = new System.Drawing.Size(94, 18);
-            this.customMapLabel.TabIndex = 27;
-            this.customMapLabel.Text = "Custom Map";
-            // 
-            // mapListComboBox
-            // 
-            this.mapListComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.mapListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.mapListComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.mapListComboBox.FormattingEnabled = true;
-            this.mapListComboBox.Location = new System.Drawing.Point(3, 21);
-            this.mapListComboBox.Name = "mapListComboBox";
-            this.mapListComboBox.Size = new System.Drawing.Size(397, 25);
-            this.mapListComboBox.TabIndex = 26;
-            this.mapListComboBox.SelectedIndexChanged += new System.EventHandler(this.MapListComboBoxSelectedIndexChanged);
-            // 
-            // baseFontLabel
-            // 
-            this.baseFontLabel.AutoSize = true;
-            this.baseFontLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.baseFontLabel.ForeColor = System.Drawing.Color.White;
-            this.baseFontLabel.Location = new System.Drawing.Point(3, 0);
-            this.baseFontLabel.Name = "baseFontLabel";
-            this.baseFontLabel.Size = new System.Drawing.Size(38, 18);
-            this.baseFontLabel.TabIndex = 36;
-            this.baseFontLabel.Text = "Font";
-            // 
-            // baseFontComboBox
-            // 
-            this.baseFontComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.baseFontComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.baseFontComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.baseFontComboBox.FormattingEnabled = true;
-            this.baseFontComboBox.Location = new System.Drawing.Point(3, 21);
-            this.baseFontComboBox.Name = "baseFontComboBox";
-            this.baseFontComboBox.Size = new System.Drawing.Size(304, 25);
-            this.baseFontComboBox.TabIndex = 35;
-            this.baseFontComboBox.SelectedIndexChanged += new System.EventHandler(this.FontComboBoxBase_SelectedIndexChanged);
-            // 
-            // tableLayoutPanelButtons
-            // 
-            this.tableLayoutPanelButtons.AutoSize = true;
-            this.tableLayoutPanelButtons.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanelButtons.ColumnCount = 5;
-            this.bufferedTableLayoutPanelSkeleton.SetColumnSpan(this.tableLayoutPanelButtons, 5);
-            this.tableLayoutPanelButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanelButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanelButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanelButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanelButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanelButtons.Controls.Add(this.okayButton, 1, 0);
-            this.tableLayoutPanelButtons.Controls.Add(this.cancelButton, 3, 0);
-            this.tableLayoutPanelButtons.Controls.Add(this.resetButton, 4, 0);
-            this.tableLayoutPanelButtons.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanelButtons.Location = new System.Drawing.Point(3, 545);
-            this.tableLayoutPanelButtons.Name = "tableLayoutPanelButtons";
-            this.tableLayoutPanelButtons.RowCount = 1;
-            this.tableLayoutPanelButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelButtons.Size = new System.Drawing.Size(1166, 36);
-            this.tableLayoutPanelButtons.TabIndex = 37;
-            // 
-            // ItemBGColorOpacityTrackBar
-            // 
-            this.ItemBGColorOpacityTrackBar.Location = new System.Drawing.Point(3, 126);
-            this.ItemBGColorOpacityTrackBar.Maximum = 255;
-            this.ItemBGColorOpacityTrackBar.Name = "ItemBGColorOpacityTrackBar";
-            this.ItemBGColorOpacityTrackBar.Size = new System.Drawing.Size(304, 45);
-            this.ItemBGColorOpacityTrackBar.TabIndex = 39;
-            this.ItemBGColorOpacityTrackBar.TickFrequency = 5;
-            this.ItemBGColorOpacityTrackBar.Value = 15;
-            this.ItemBGColorOpacityTrackBar.Scroll += new System.EventHandler(this.ItemBGColorOpacityTrackBar_Scroll);
-            // 
-            // scalingCheckBoxEnableSounds
-            // 
-            this.scalingCheckBoxEnableSounds.AutoSize = true;
-            this.scalingCheckBoxEnableSounds.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.scalingCheckBoxEnableSounds.ForeColor = System.Drawing.Color.White;
-            this.scalingCheckBoxEnableSounds.Location = new System.Drawing.Point(3, 52);
-            this.scalingCheckBoxEnableSounds.Name = "scalingCheckBoxEnableSounds";
-            this.scalingCheckBoxEnableSounds.Size = new System.Drawing.Size(184, 22);
-            this.scalingCheckBoxEnableSounds.TabIndex = 43;
-            this.scalingCheckBoxEnableSounds.Text = "Enable TQVault Sounds";
-            this.scalingCheckBoxEnableSounds.UseVisualStyleBackColor = true;
-            this.scalingCheckBoxEnableSounds.CheckedChanged += new System.EventHandler(this.scalingCheckBoxEnableSounds_CheckedChanged);
-            // 
-            // scalingLabelCSVDelim
-            // 
-            this.scalingLabelCSVDelim.AutoSize = true;
-            this.scalingLabelCSVDelim.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.scalingLabelCSVDelim.ForeColor = System.Drawing.Color.White;
-            this.scalingLabelCSVDelim.Location = new System.Drawing.Point(3, 250);
-            this.scalingLabelCSVDelim.Name = "scalingLabelCSVDelim";
-            this.scalingLabelCSVDelim.Size = new System.Drawing.Size(96, 18);
-            this.scalingLabelCSVDelim.TabIndex = 45;
-            this.scalingLabelCSVDelim.Text = "Csv Delimiter";
-            // 
-            // scalingComboBoxCSVDelim
-            // 
-            this.scalingComboBoxCSVDelim.BackColor = System.Drawing.SystemColors.Window;
-            this.scalingComboBoxCSVDelim.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.scalingComboBoxCSVDelim.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.scalingComboBoxCSVDelim.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.scalingComboBoxCSVDelim.FormattingEnabled = true;
-            this.scalingComboBoxCSVDelim.Location = new System.Drawing.Point(3, 271);
-            this.scalingComboBoxCSVDelim.Name = "scalingComboBoxCSVDelim";
-            this.scalingComboBoxCSVDelim.Size = new System.Drawing.Size(324, 25);
-            this.scalingComboBoxCSVDelim.TabIndex = 44;
-            this.scalingComboBoxCSVDelim.SelectedIndexChanged += new System.EventHandler(this.scalingComboBoxCSVDelim_SelectedIndexChanged);
-            // 
-            // groupBoxGeneral
-            // 
-            this.groupBoxGeneral.AutoSize = true;
-            this.groupBoxGeneral.Controls.Add(this.bufferedFlowLayoutPanelGeneralSettings);
-            this.groupBoxGeneral.ForeColor = System.Drawing.Color.Gold;
-            this.groupBoxGeneral.Location = new System.Drawing.Point(3, 3);
-            this.groupBoxGeneral.Name = "groupBoxGeneral";
-            this.groupBoxGeneral.Size = new System.Drawing.Size(336, 322);
-            this.groupBoxGeneral.TabIndex = 49;
-            this.groupBoxGeneral.TabStop = false;
-            this.groupBoxGeneral.Text = "General Settings";
-            // 
-            // bufferedFlowLayoutPanelGeneralSettings
-            // 
-            this.bufferedFlowLayoutPanelGeneralSettings.AutoSize = true;
-            this.bufferedFlowLayoutPanelGeneralSettings.Controls.Add(this.skipTitleCheckBox);
-            this.bufferedFlowLayoutPanelGeneralSettings.Controls.Add(this.loadLastCharacterCheckBox);
-            this.bufferedFlowLayoutPanelGeneralSettings.Controls.Add(this.loadLastVaultCheckBox);
-            this.bufferedFlowLayoutPanelGeneralSettings.Controls.Add(this.loadAllFilesCheckBox);
-            this.bufferedFlowLayoutPanelGeneralSettings.Controls.Add(this.hotReloadCheckBox);
-            this.bufferedFlowLayoutPanelGeneralSettings.Controls.Add(this.suppressWarningsCheckBox);
-            this.bufferedFlowLayoutPanelGeneralSettings.Controls.Add(this.EnableDetailedTooltipViewCheckBox);
-            this.bufferedFlowLayoutPanelGeneralSettings.Controls.Add(this.playerReadonlyCheckbox);
-            this.bufferedFlowLayoutPanelGeneralSettings.Controls.Add(this.scalingCheckBoxDisableAutoStacking);
-            this.bufferedFlowLayoutPanelGeneralSettings.Controls.Add(this.scalingLabelCSVDelim);
-            this.bufferedFlowLayoutPanelGeneralSettings.Controls.Add(this.scalingComboBoxCSVDelim);
-            this.bufferedFlowLayoutPanelGeneralSettings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bufferedFlowLayoutPanelGeneralSettings.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.bufferedFlowLayoutPanelGeneralSettings.Location = new System.Drawing.Point(3, 20);
-            this.bufferedFlowLayoutPanelGeneralSettings.Name = "bufferedFlowLayoutPanelGeneralSettings";
-            this.bufferedFlowLayoutPanelGeneralSettings.Size = new System.Drawing.Size(330, 299);
-            this.bufferedFlowLayoutPanelGeneralSettings.TabIndex = 0;
-            // 
-            // checkGroupBoxAllowCheats
-            // 
-            this.checkGroupBoxAllowCheats.AutoSize = true;
-            this.checkGroupBoxAllowCheats.Checked = false;
-            this.checkGroupBoxAllowCheats.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
-            this.checkGroupBoxAllowCheats.CheckState = System.Windows.Forms.CheckState.Unchecked;
-            this.checkGroupBoxAllowCheats.Controls.Add(this.bufferedFlowLayoutPanelCheats);
-            this.checkGroupBoxAllowCheats.ForeColor = System.Drawing.Color.Gold;
-            this.checkGroupBoxAllowCheats.Location = new System.Drawing.Point(3, 331);
-            this.checkGroupBoxAllowCheats.Name = "checkGroupBoxAllowCheats";
-            this.checkGroupBoxAllowCheats.Size = new System.Drawing.Size(263, 135);
-            this.checkGroupBoxAllowCheats.TabIndex = 51;
-            this.checkGroupBoxAllowCheats.TabStop = false;
-            this.checkGroupBoxAllowCheats.Text = "Allow Cheats";
-            this.checkGroupBoxAllowCheats.CheckedChanged += new System.EventHandler(this.checkGroupBoxCheats_CheckedChanged);
-            // 
-            // bufferedFlowLayoutPanelCheats
-            // 
-            this.bufferedFlowLayoutPanelCheats.AutoSize = true;
-            this.bufferedFlowLayoutPanelCheats.Controls.Add(this.characterEditCheckBox);
-            this.bufferedFlowLayoutPanelCheats.Controls.Add(this.allowItemCopyCheckBox);
-            this.bufferedFlowLayoutPanelCheats.Controls.Add(this.allowItemEditCheckBox);
-            this.bufferedFlowLayoutPanelCheats.Controls.Add(this.scalingCheckBoxEnableEpicLegendaryAffixes);
-            this.bufferedFlowLayoutPanelCheats.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bufferedFlowLayoutPanelCheats.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.bufferedFlowLayoutPanelCheats.Location = new System.Drawing.Point(3, 20);
-            this.bufferedFlowLayoutPanelCheats.Name = "bufferedFlowLayoutPanelCheats";
-            this.bufferedFlowLayoutPanelCheats.Size = new System.Drawing.Size(257, 112);
-            this.bufferedFlowLayoutPanelCheats.TabIndex = 1;
-            // 
-            // groupBoxGfxAndAudio
-            // 
-            this.groupBoxGfxAndAudio.AutoSize = true;
-            this.groupBoxGfxAndAudio.Controls.Add(this.bufferedFlowLayoutPanelGfxAndAudio);
-            this.groupBoxGfxAndAudio.ForeColor = System.Drawing.Color.Gold;
-            this.groupBoxGfxAndAudio.Location = new System.Drawing.Point(3, 3);
-            this.groupBoxGfxAndAudio.Name = "groupBoxGfxAndAudio";
-            this.groupBoxGfxAndAudio.Size = new System.Drawing.Size(316, 197);
-            this.groupBoxGfxAndAudio.TabIndex = 52;
-            this.groupBoxGfxAndAudio.TabStop = false;
-            this.groupBoxGfxAndAudio.Text = "Gfx / Audio";
-            // 
-            // bufferedFlowLayoutPanelGfxAndAudio
-            // 
-            this.bufferedFlowLayoutPanelGfxAndAudio.AutoSize = true;
-            this.bufferedFlowLayoutPanelGfxAndAudio.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(this.baseFontLabel);
-            this.bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(this.baseFontComboBox);
-            this.bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(this.scalingCheckBoxEnableSounds);
-            this.bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(this.EnableItemRequirementRestrictionCheckBox);
-            this.bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(this.ItemBGColorOpacityLabel);
-            this.bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(this.ItemBGColorOpacityTrackBar);
-            this.bufferedFlowLayoutPanelGfxAndAudio.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bufferedFlowLayoutPanelGfxAndAudio.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.bufferedFlowLayoutPanelGfxAndAudio.Location = new System.Drawing.Point(3, 20);
-            this.bufferedFlowLayoutPanelGfxAndAudio.Name = "bufferedFlowLayoutPanelGfxAndAudio";
-            this.bufferedFlowLayoutPanelGfxAndAudio.Size = new System.Drawing.Size(310, 174);
-            this.bufferedFlowLayoutPanelGfxAndAudio.TabIndex = 0;
-            // 
-            // detectLanguageCheckBox
-            // 
-            this.detectLanguageCheckBox.AutoSize = true;
-            this.detectLanguageCheckBox.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Disable;
-            this.detectLanguageCheckBox.Controls.Add(this.bufferedFlowLayoutPanelLanguage);
-            this.detectLanguageCheckBox.ForeColor = System.Drawing.Color.Gold;
-            this.detectLanguageCheckBox.Location = new System.Drawing.Point(3, 296);
-            this.detectLanguageCheckBox.Name = "detectLanguageCheckBox";
-            this.detectLanguageCheckBox.Size = new System.Drawing.Size(409, 72);
-            this.detectLanguageCheckBox.TabIndex = 53;
-            this.detectLanguageCheckBox.TabStop = false;
-            this.detectLanguageCheckBox.Text = "Autodetect Language";
-            this.detectLanguageCheckBox.CheckedChanged += new System.EventHandler(this.DetectLanguageCheckBoxCheckedChanged);
-            // 
-            // bufferedFlowLayoutPanelLanguage
-            // 
-            this.bufferedFlowLayoutPanelLanguage.AutoSize = true;
-            this.bufferedFlowLayoutPanelLanguage.Controls.Add(this.languageLabel);
-            this.bufferedFlowLayoutPanelLanguage.Controls.Add(this.languageComboBox);
-            this.bufferedFlowLayoutPanelLanguage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bufferedFlowLayoutPanelLanguage.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.bufferedFlowLayoutPanelLanguage.Location = new System.Drawing.Point(3, 20);
-            this.bufferedFlowLayoutPanelLanguage.Name = "bufferedFlowLayoutPanelLanguage";
-            this.bufferedFlowLayoutPanelLanguage.Size = new System.Drawing.Size(403, 49);
-            this.bufferedFlowLayoutPanelLanguage.TabIndex = 1;
-            // 
-            // detectGamePathsCheckBox
-            // 
-            this.detectGamePathsCheckBox.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Disable;
-            this.detectGamePathsCheckBox.Controls.Add(this.bufferedFlowLayoutPanelAutoDetectGamePath);
-            this.detectGamePathsCheckBox.ForeColor = System.Drawing.Color.Gold;
-            this.detectGamePathsCheckBox.Location = new System.Drawing.Point(3, 60);
-            this.detectGamePathsCheckBox.Name = "detectGamePathsCheckBox";
-            this.detectGamePathsCheckBox.Size = new System.Drawing.Size(466, 141);
-            this.detectGamePathsCheckBox.TabIndex = 54;
-            this.detectGamePathsCheckBox.TabStop = false;
-            this.detectGamePathsCheckBox.Text = "Autodetect Game Paths";
-            this.detectGamePathsCheckBox.CheckedChanged += new System.EventHandler(this.DetectGamePathsCheckBoxCheckedChanged);
-            // 
-            // bufferedFlowLayoutPanelAutoDetectGamePath
-            // 
-            this.bufferedFlowLayoutPanelAutoDetectGamePath.Controls.Add(this.titanQuestPathLabel);
-            this.bufferedFlowLayoutPanelAutoDetectGamePath.Controls.Add(this.bufferedFlowLayoutPanelTQPath);
-            this.bufferedFlowLayoutPanelAutoDetectGamePath.Controls.Add(this.immortalThronePathLabel);
-            this.bufferedFlowLayoutPanelAutoDetectGamePath.Controls.Add(this.bufferedFlowLayoutPanelTQITPath);
-            this.bufferedFlowLayoutPanelAutoDetectGamePath.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bufferedFlowLayoutPanelAutoDetectGamePath.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.bufferedFlowLayoutPanelAutoDetectGamePath.Location = new System.Drawing.Point(3, 20);
-            this.bufferedFlowLayoutPanelAutoDetectGamePath.Name = "bufferedFlowLayoutPanelAutoDetectGamePath";
-            this.bufferedFlowLayoutPanelAutoDetectGamePath.Size = new System.Drawing.Size(460, 118);
-            this.bufferedFlowLayoutPanelAutoDetectGamePath.TabIndex = 1;
-            // 
-            // bufferedFlowLayoutPanelTQPath
-            // 
-            this.bufferedFlowLayoutPanelTQPath.AutoSize = true;
-            this.bufferedFlowLayoutPanelTQPath.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.bufferedFlowLayoutPanelTQPath.Controls.Add(this.titanQuestPathTextBox);
-            this.bufferedFlowLayoutPanelTQPath.Controls.Add(this.titanQuestPathBrowseButton);
-            this.bufferedFlowLayoutPanelTQPath.Location = new System.Drawing.Point(3, 21);
-            this.bufferedFlowLayoutPanelTQPath.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
-            this.bufferedFlowLayoutPanelTQPath.Name = "bufferedFlowLayoutPanelTQPath";
-            this.bufferedFlowLayoutPanelTQPath.Size = new System.Drawing.Size(456, 33);
-            this.bufferedFlowLayoutPanelTQPath.TabIndex = 55;
-            // 
-            // bufferedFlowLayoutPanelTQITPath
-            // 
-            this.bufferedFlowLayoutPanelTQITPath.AutoSize = true;
-            this.bufferedFlowLayoutPanelTQITPath.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.bufferedFlowLayoutPanelTQITPath.Controls.Add(this.immortalThronePathTextBox);
-            this.bufferedFlowLayoutPanelTQITPath.Controls.Add(this.immortalThronePathBrowseButton);
-            this.bufferedFlowLayoutPanelTQITPath.Location = new System.Drawing.Point(3, 78);
-            this.bufferedFlowLayoutPanelTQITPath.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
-            this.bufferedFlowLayoutPanelTQITPath.Name = "bufferedFlowLayoutPanelTQITPath";
-            this.bufferedFlowLayoutPanelTQITPath.Size = new System.Drawing.Size(456, 33);
-            this.bufferedFlowLayoutPanelTQITPath.TabIndex = 55;
-            // 
-            // enableCustomMapsCheckBox
-            // 
-            this.enableCustomMapsCheckBox.Checked = false;
-            this.enableCustomMapsCheckBox.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
-            this.enableCustomMapsCheckBox.CheckState = System.Windows.Forms.CheckState.Unchecked;
-            this.enableCustomMapsCheckBox.Controls.Add(this.bufferedFlowLayoutPanelCustomMap);
-            this.enableCustomMapsCheckBox.ForeColor = System.Drawing.Color.Gold;
-            this.enableCustomMapsCheckBox.Location = new System.Drawing.Point(3, 207);
-            this.enableCustomMapsCheckBox.Name = "enableCustomMapsCheckBox";
-            this.enableCustomMapsCheckBox.Size = new System.Drawing.Size(466, 83);
-            this.enableCustomMapsCheckBox.TabIndex = 55;
-            this.enableCustomMapsCheckBox.TabStop = false;
-            this.enableCustomMapsCheckBox.Text = "Enable Custom Maps";
-            this.enableCustomMapsCheckBox.CheckedChanged += new System.EventHandler(this.EnableCustomMapsCheckBoxCheckedChanged);
-            // 
-            // bufferedFlowLayoutPanelCustomMap
-            // 
-            this.bufferedFlowLayoutPanelCustomMap.Controls.Add(this.customMapLabel);
-            this.bufferedFlowLayoutPanelCustomMap.Controls.Add(this.mapListComboBox);
-            this.bufferedFlowLayoutPanelCustomMap.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bufferedFlowLayoutPanelCustomMap.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.bufferedFlowLayoutPanelCustomMap.Location = new System.Drawing.Point(3, 20);
-            this.bufferedFlowLayoutPanelCustomMap.Name = "bufferedFlowLayoutPanelCustomMap";
-            this.bufferedFlowLayoutPanelCustomMap.Size = new System.Drawing.Size(460, 60);
-            this.bufferedFlowLayoutPanelCustomMap.TabIndex = 1;
-            // 
-            // bufferedTableLayoutPanelSkeleton
-            // 
-            this.bufferedTableLayoutPanelSkeleton.AutoSize = true;
-            this.bufferedTableLayoutPanelSkeleton.ColumnCount = 5;
-            this.bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 5F));
-            this.bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 5F));
-            this.bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.bufferedTableLayoutPanelSkeleton.Controls.Add(this.bufferedFlowLayoutPanelSkeletonRight, 4, 0);
-            this.bufferedTableLayoutPanelSkeleton.Controls.Add(this.tableLayoutPanelButtons, 0, 1);
-            this.bufferedTableLayoutPanelSkeleton.Controls.Add(this.bufferedFlowLayoutPanelSkeletonLeft, 0, 0);
-            this.bufferedTableLayoutPanelSkeleton.Controls.Add(this.bufferedFlowLayoutPanelSkeletonCenter, 2, 0);
-            this.bufferedTableLayoutPanelSkeleton.Location = new System.Drawing.Point(10, 25);
-            this.bufferedTableLayoutPanelSkeleton.Margin = new System.Windows.Forms.Padding(0);
-            this.bufferedTableLayoutPanelSkeleton.Name = "bufferedTableLayoutPanelSkeleton";
-            this.bufferedTableLayoutPanelSkeleton.RowCount = 2;
-            this.bufferedTableLayoutPanelSkeleton.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.bufferedTableLayoutPanelSkeleton.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.bufferedTableLayoutPanelSkeleton.Size = new System.Drawing.Size(1172, 584);
-            this.bufferedTableLayoutPanelSkeleton.TabIndex = 56;
-            // 
-            // bufferedFlowLayoutPanelSkeletonRight
-            // 
-            this.bufferedFlowLayoutPanelSkeletonRight.AutoSize = true;
-            this.bufferedFlowLayoutPanelSkeletonRight.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.bufferedFlowLayoutPanelSkeletonRight.Controls.Add(this.groupBoxGfxAndAudio);
-            this.bufferedFlowLayoutPanelSkeletonRight.Controls.Add(this.checkGroupBoxOriginalTQSupport);
-            this.bufferedFlowLayoutPanelSkeletonRight.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bufferedFlowLayoutPanelSkeletonRight.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.bufferedFlowLayoutPanelSkeletonRight.Location = new System.Drawing.Point(839, 3);
-            this.bufferedFlowLayoutPanelSkeletonRight.Name = "bufferedFlowLayoutPanelSkeletonRight";
-            this.bufferedFlowLayoutPanelSkeletonRight.Size = new System.Drawing.Size(330, 536);
-            this.bufferedFlowLayoutPanelSkeletonRight.TabIndex = 2;
-            // 
-            // bufferedFlowLayoutPanelSkeletonLeft
-            // 
-            this.bufferedFlowLayoutPanelSkeletonLeft.AutoSize = true;
-            this.bufferedFlowLayoutPanelSkeletonLeft.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(this.vaultPathLabel);
-            this.bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(this.bufferedFlowLayoutPanelVaultPath);
-            this.bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(this.detectGamePathsCheckBox);
-            this.bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(this.enableCustomMapsCheckBox);
-            this.bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(this.detectLanguageCheckBox);
-            this.bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(this.checkGroupBoxGitBackup);
-            this.bufferedFlowLayoutPanelSkeletonLeft.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bufferedFlowLayoutPanelSkeletonLeft.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.bufferedFlowLayoutPanelSkeletonLeft.Location = new System.Drawing.Point(3, 3);
-            this.bufferedFlowLayoutPanelSkeletonLeft.Name = "bufferedFlowLayoutPanelSkeletonLeft";
-            this.bufferedFlowLayoutPanelSkeletonLeft.Size = new System.Drawing.Size(472, 536);
-            this.bufferedFlowLayoutPanelSkeletonLeft.TabIndex = 0;
-            // 
-            // bufferedFlowLayoutPanelVaultPath
-            // 
-            this.bufferedFlowLayoutPanelVaultPath.AutoSize = true;
-            this.bufferedFlowLayoutPanelVaultPath.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.bufferedFlowLayoutPanelVaultPath.Controls.Add(this.vaultPathTextBox);
-            this.bufferedFlowLayoutPanelVaultPath.Controls.Add(this.vaultPathBrowseButton);
-            this.bufferedFlowLayoutPanelVaultPath.Location = new System.Drawing.Point(3, 21);
-            this.bufferedFlowLayoutPanelVaultPath.Name = "bufferedFlowLayoutPanelVaultPath";
-            this.bufferedFlowLayoutPanelVaultPath.Size = new System.Drawing.Size(456, 33);
-            this.bufferedFlowLayoutPanelVaultPath.TabIndex = 57;
-            // 
-            // bufferedFlowLayoutPanelSkeletonCenter
-            // 
-            this.bufferedFlowLayoutPanelSkeletonCenter.AutoSize = true;
-            this.bufferedFlowLayoutPanelSkeletonCenter.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.bufferedFlowLayoutPanelSkeletonCenter.Controls.Add(this.groupBoxGeneral);
-            this.bufferedFlowLayoutPanelSkeletonCenter.Controls.Add(this.checkGroupBoxAllowCheats);
-            this.bufferedFlowLayoutPanelSkeletonCenter.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bufferedFlowLayoutPanelSkeletonCenter.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.bufferedFlowLayoutPanelSkeletonCenter.Location = new System.Drawing.Point(486, 3);
-            this.bufferedFlowLayoutPanelSkeletonCenter.Name = "bufferedFlowLayoutPanelSkeletonCenter";
-            this.bufferedFlowLayoutPanelSkeletonCenter.Size = new System.Drawing.Size(342, 536);
-            this.bufferedFlowLayoutPanelSkeletonCenter.TabIndex = 1;
-            // 
-            // SettingsDialog
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-            this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(1192, 618);
-            this.Controls.Add(this.bufferedTableLayoutPanelSkeleton);
-            this.DrawCustomBorder = true;
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ForeColor = System.Drawing.Color.White;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Margin = new System.Windows.Forms.Padding(4);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "SettingsDialog";
-            this.Padding = new System.Windows.Forms.Padding(5, 5, 5, 0);
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
-            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Configure Settings";
-            this.TopMost = true;
-            this.Load += new System.EventHandler(this.SettingsDialogLoad);
-            this.Shown += new System.EventHandler(this.SettingsDialog_Shown);
-            this.Controls.SetChildIndex(this.bufferedTableLayoutPanelSkeleton, 0);
-            this.checkGroupBoxGitBackup.ResumeLayout(false);
-            this.checkGroupBoxGitBackup.PerformLayout();
-            this.bufferedFlowLayoutPanelGitBackup.ResumeLayout(false);
-            this.bufferedFlowLayoutPanelGitBackup.PerformLayout();
-            this.checkGroupBoxOriginalTQSupport.ResumeLayout(false);
-            this.checkGroupBoxOriginalTQSupport.PerformLayout();
-            this.bufferedFlowLayoutPanelTQOriginalSupport.ResumeLayout(false);
-            this.bufferedFlowLayoutPanelTQOriginalSupport.PerformLayout();
-            this.tableLayoutPanelButtons.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ItemBGColorOpacityTrackBar)).EndInit();
-            this.groupBoxGeneral.ResumeLayout(false);
-            this.groupBoxGeneral.PerformLayout();
-            this.bufferedFlowLayoutPanelGeneralSettings.ResumeLayout(false);
-            this.bufferedFlowLayoutPanelGeneralSettings.PerformLayout();
-            this.checkGroupBoxAllowCheats.ResumeLayout(false);
-            this.checkGroupBoxAllowCheats.PerformLayout();
-            this.bufferedFlowLayoutPanelCheats.ResumeLayout(false);
-            this.bufferedFlowLayoutPanelCheats.PerformLayout();
-            this.groupBoxGfxAndAudio.ResumeLayout(false);
-            this.groupBoxGfxAndAudio.PerformLayout();
-            this.bufferedFlowLayoutPanelGfxAndAudio.ResumeLayout(false);
-            this.bufferedFlowLayoutPanelGfxAndAudio.PerformLayout();
-            this.detectLanguageCheckBox.ResumeLayout(false);
-            this.detectLanguageCheckBox.PerformLayout();
-            this.bufferedFlowLayoutPanelLanguage.ResumeLayout(false);
-            this.bufferedFlowLayoutPanelLanguage.PerformLayout();
-            this.detectGamePathsCheckBox.ResumeLayout(false);
-            this.detectGamePathsCheckBox.PerformLayout();
-            this.bufferedFlowLayoutPanelAutoDetectGamePath.ResumeLayout(false);
-            this.bufferedFlowLayoutPanelAutoDetectGamePath.PerformLayout();
-            this.bufferedFlowLayoutPanelTQPath.ResumeLayout(false);
-            this.bufferedFlowLayoutPanelTQPath.PerformLayout();
-            this.bufferedFlowLayoutPanelTQITPath.ResumeLayout(false);
-            this.bufferedFlowLayoutPanelTQITPath.PerformLayout();
-            this.enableCustomMapsCheckBox.ResumeLayout(false);
-            this.enableCustomMapsCheckBox.PerformLayout();
-            this.bufferedFlowLayoutPanelCustomMap.ResumeLayout(false);
-            this.bufferedFlowLayoutPanelCustomMap.PerformLayout();
-            this.bufferedTableLayoutPanelSkeleton.ResumeLayout(false);
-            this.bufferedTableLayoutPanelSkeleton.PerformLayout();
-            this.bufferedFlowLayoutPanelSkeletonRight.ResumeLayout(false);
-            this.bufferedFlowLayoutPanelSkeletonRight.PerformLayout();
-            this.bufferedFlowLayoutPanelSkeletonLeft.ResumeLayout(false);
-            this.bufferedFlowLayoutPanelSkeletonLeft.PerformLayout();
-            this.bufferedFlowLayoutPanelVaultPath.ResumeLayout(false);
-            this.bufferedFlowLayoutPanelVaultPath.PerformLayout();
-            this.bufferedFlowLayoutPanelSkeletonCenter.ResumeLayout(false);
-            this.bufferedFlowLayoutPanelSkeletonCenter.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+			components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsDialog));
+			allowItemEditCheckBox = new ScalingCheckBox();
+			allowItemCopyCheckBox = new ScalingCheckBox();
+			skipTitleCheckBox = new ScalingCheckBox();
+			loadLastCharacterCheckBox = new ScalingCheckBox();
+			loadLastVaultCheckBox = new ScalingCheckBox();
+			vaultPathTextBox = new ScalingTextBox();
+			vaultPathLabel = new ScalingLabel();
+			cancelButton = new ScalingButton();
+			okayButton = new ScalingButton();
+			folderBrowserDialog = new FolderBrowserDialog();
+			resetButton = new ScalingButton();
+			vaultPathBrowseButton = new ScalingButton();
+			toolTip = new ToolTip(components);
+			loadAllFilesCheckBox = new ScalingCheckBox();
+			suppressWarningsCheckBox = new ScalingCheckBox();
+			playerReadonlyCheckbox = new ScalingCheckBox();
+			characterEditCheckBox = new ScalingCheckBox();
+			EnableDetailedTooltipViewCheckBox = new ScalingCheckBox();
+			ItemBGColorOpacityLabel = new ScalingLabel();
+			EnableItemRequirementRestrictionCheckBox = new ScalingCheckBox();
+			hotReloadCheckBox = new ScalingCheckBox();
+			scalingCheckBoxEnableEpicLegendaryAffixes = new ScalingCheckBox();
+			scalingCheckBoxDisableAutoStacking = new ScalingCheckBox();
+			checkGroupBoxGitBackup = new CheckGroupBox();
+			bufferedFlowLayoutPanelGitBackup = new BufferedFlowLayoutPanel();
+			scalingCheckBoxDisableLegacyBackup = new ScalingCheckBox();
+			scalingCheckBoxBackupPlayerSaves = new ScalingCheckBox();
+			scalingLabelGitRepository = new ScalingLabel();
+			scalingTextBoxGitRepository = new ScalingTextBox();
+			checkGroupBoxOriginalTQSupport = new CheckGroupBox();
+			bufferedFlowLayoutPanelTQOriginalSupport = new BufferedFlowLayoutPanel();
+			linkLabelTQOriginalSupport = new LinkLabel();
+			languageComboBox = new ScalingComboBox();
+			languageLabel = new ScalingLabel();
+			titanQuestPathTextBox = new ScalingTextBox();
+			titanQuestPathLabel = new ScalingLabel();
+			immortalThronePathLabel = new ScalingLabel();
+			immortalThronePathTextBox = new ScalingTextBox();
+			titanQuestPathBrowseButton = new ScalingButton();
+			immortalThronePathBrowseButton = new ScalingButton();
+			customMapLabel = new ScalingLabel();
+			mapListComboBox = new ScalingComboBox();
+			baseFontLabel = new ScalingLabel();
+			baseFontComboBox = new ScalingComboBox();
+			tableLayoutPanelButtons = new TableLayoutPanel();
+			ItemBGColorOpacityTrackBar = new TrackBar();
+			scalingCheckBoxEnableSounds = new ScalingCheckBox();
+			scalingLabelCSVDelim = new ScalingLabel();
+			scalingComboBoxCSVDelim = new ScalingComboBox();
+			groupBoxGeneral = new GroupBox();
+			bufferedFlowLayoutPanelGeneralSettings = new BufferedFlowLayoutPanel();
+			checkGroupBoxAllowCheats = new CheckGroupBox();
+			bufferedFlowLayoutPanelCheats = new BufferedFlowLayoutPanel();
+			groupBoxGfxAndAudio = new GroupBox();
+			bufferedFlowLayoutPanelGfxAndAudio = new BufferedFlowLayoutPanel();
+			detectLanguageCheckBox = new CheckGroupBox();
+			bufferedFlowLayoutPanelLanguage = new BufferedFlowLayoutPanel();
+			detectGamePathsCheckBox = new CheckGroupBox();
+			bufferedFlowLayoutPanelAutoDetectGamePath = new BufferedFlowLayoutPanel();
+			bufferedFlowLayoutPanelTQPath = new BufferedFlowLayoutPanel();
+			bufferedFlowLayoutPanelTQITPath = new BufferedFlowLayoutPanel();
+			enableCustomMapsCheckBox = new CheckGroupBox();
+			bufferedFlowLayoutPanelCustomMap = new BufferedFlowLayoutPanel();
+			bufferedTableLayoutPanelSkeleton = new BufferedTableLayoutPanel();
+			bufferedFlowLayoutPanelSkeletonRight = new BufferedFlowLayoutPanel();
+			pasteBinGroupBox = new GroupBox();
+			pasteBinFlowPanel = new BufferedTableLayoutPanel();
+			pasteBinExpirationComboBox = new ScalingComboBox();
+			pasteBinApiKeyLabel = new ScalingLabel();
+			pasteBinApiKeyTextBox = new ScalingTextBox();
+			pasteBinExpirationLabel = new ScalingLabel();
+			bufferedFlowLayoutPanelSkeletonLeft = new BufferedFlowLayoutPanel();
+			bufferedFlowLayoutPanelVaultPath = new BufferedFlowLayoutPanel();
+			bufferedFlowLayoutPanelSkeletonCenter = new BufferedFlowLayoutPanel();
+			openFileDialog = new OpenFileDialog();
+			checkGroupBoxGitBackup.SuspendLayout();
+			bufferedFlowLayoutPanelGitBackup.SuspendLayout();
+			checkGroupBoxOriginalTQSupport.SuspendLayout();
+			bufferedFlowLayoutPanelTQOriginalSupport.SuspendLayout();
+			tableLayoutPanelButtons.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)ItemBGColorOpacityTrackBar).BeginInit();
+			groupBoxGeneral.SuspendLayout();
+			bufferedFlowLayoutPanelGeneralSettings.SuspendLayout();
+			checkGroupBoxAllowCheats.SuspendLayout();
+			bufferedFlowLayoutPanelCheats.SuspendLayout();
+			groupBoxGfxAndAudio.SuspendLayout();
+			bufferedFlowLayoutPanelGfxAndAudio.SuspendLayout();
+			detectLanguageCheckBox.SuspendLayout();
+			bufferedFlowLayoutPanelLanguage.SuspendLayout();
+			detectGamePathsCheckBox.SuspendLayout();
+			bufferedFlowLayoutPanelAutoDetectGamePath.SuspendLayout();
+			bufferedFlowLayoutPanelTQPath.SuspendLayout();
+			bufferedFlowLayoutPanelTQITPath.SuspendLayout();
+			enableCustomMapsCheckBox.SuspendLayout();
+			bufferedFlowLayoutPanelCustomMap.SuspendLayout();
+			bufferedTableLayoutPanelSkeleton.SuspendLayout();
+			bufferedFlowLayoutPanelSkeletonRight.SuspendLayout();
+			pasteBinGroupBox.SuspendLayout();
+			pasteBinFlowPanel.SuspendLayout();
+			bufferedFlowLayoutPanelSkeletonLeft.SuspendLayout();
+			bufferedFlowLayoutPanelVaultPath.SuspendLayout();
+			bufferedFlowLayoutPanelSkeletonCenter.SuspendLayout();
+			SuspendLayout();
+			// 
+			// allowItemEditCheckBox
+			// 
+			allowItemEditCheckBox.AutoSize = true;
+			allowItemEditCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			allowItemEditCheckBox.ForeColor = Color.White;
+			allowItemEditCheckBox.Location = new Point(3, 59);
+			allowItemEditCheckBox.Name = "allowItemEditCheckBox";
+			allowItemEditCheckBox.Size = new Size(204, 22);
+			allowItemEditCheckBox.TabIndex = 3;
+			allowItemEditCheckBox.Text = "Allow Item Editing Features";
+			toolTip.SetToolTip(allowItemEditCheckBox, "Turns on the editing features in the context menu.\r\nThese include item creation and modification.");
+			allowItemEditCheckBox.UseVisualStyleBackColor = true;
+			allowItemEditCheckBox.CheckedChanged += AllowItemEditCheckBoxCheckedChanged;
+			// 
+			// allowItemCopyCheckBox
+			// 
+			allowItemCopyCheckBox.AutoSize = true;
+			allowItemCopyCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			allowItemCopyCheckBox.ForeColor = Color.White;
+			allowItemCopyCheckBox.Location = new Point(3, 31);
+			allowItemCopyCheckBox.Name = "allowItemCopyCheckBox";
+			allowItemCopyCheckBox.Size = new Size(152, 22);
+			allowItemCopyCheckBox.TabIndex = 4;
+			allowItemCopyCheckBox.Text = "Allow Item Copying";
+			toolTip.SetToolTip(allowItemCopyCheckBox, "Enables copy selection in the context menu.");
+			allowItemCopyCheckBox.UseVisualStyleBackColor = true;
+			allowItemCopyCheckBox.CheckedChanged += AllowItemCopyCheckBoxCheckedChanged;
+			// 
+			// skipTitleCheckBox
+			// 
+			skipTitleCheckBox.AutoSize = true;
+			skipTitleCheckBox.Checked = true;
+			skipTitleCheckBox.CheckState = CheckState.Checked;
+			skipTitleCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			skipTitleCheckBox.ForeColor = Color.White;
+			skipTitleCheckBox.Location = new Point(3, 3);
+			skipTitleCheckBox.Name = "skipTitleCheckBox";
+			skipTitleCheckBox.Size = new Size(249, 22);
+			skipTitleCheckBox.TabIndex = 2;
+			skipTitleCheckBox.Text = "Automatically Bypass Title Screen";
+			toolTip.SetToolTip(skipTitleCheckBox, "Ticking this box will automatically hit\r\nthe Enter key on the title screen.");
+			skipTitleCheckBox.UseVisualStyleBackColor = true;
+			skipTitleCheckBox.CheckedChanged += SkipTitleCheckBoxCheckedChanged;
+			// 
+			// loadLastCharacterCheckBox
+			// 
+			loadLastCharacterCheckBox.AutoSize = true;
+			loadLastCharacterCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			loadLastCharacterCheckBox.ForeColor = Color.White;
+			loadLastCharacterCheckBox.Location = new Point(3, 31);
+			loadLastCharacterCheckBox.Name = "loadLastCharacterCheckBox";
+			loadLastCharacterCheckBox.Size = new Size(324, 22);
+			loadLastCharacterCheckBox.TabIndex = 5;
+			loadLastCharacterCheckBox.Text = "Automatically Load the last opened Character";
+			toolTip.SetToolTip(loadLastCharacterCheckBox, "Selecting this option will automatically load\r\nthe last open character when TQVault was closed.");
+			loadLastCharacterCheckBox.UseVisualStyleBackColor = true;
+			loadLastCharacterCheckBox.CheckedChanged += LoadLastCharacterCheckBoxCheckedChanged;
+			// 
+			// loadLastVaultCheckBox
+			// 
+			loadLastVaultCheckBox.AutoSize = true;
+			loadLastVaultCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			loadLastVaultCheckBox.ForeColor = Color.White;
+			loadLastVaultCheckBox.Location = new Point(3, 59);
+			loadLastVaultCheckBox.Name = "loadLastVaultCheckBox";
+			loadLastVaultCheckBox.Size = new Size(291, 22);
+			loadLastVaultCheckBox.TabIndex = 6;
+			loadLastVaultCheckBox.Text = "Automatically Load the last opened Vault";
+			toolTip.SetToolTip(loadLastVaultCheckBox, "Selecting this item will automatically load the\r\nlast opened vault when TQVault was closed.\r\nTQVault will automatically open Main Vault\r\nif nothing is chosen.");
+			loadLastVaultCheckBox.UseVisualStyleBackColor = true;
+			loadLastVaultCheckBox.CheckedChanged += LoadLastVaultCheckBoxCheckedChanged;
+			// 
+			// vaultPathTextBox
+			// 
+			vaultPathTextBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			vaultPathTextBox.Location = new Point(3, 3);
+			vaultPathTextBox.Name = "vaultPathTextBox";
+			vaultPathTextBox.Size = new Size(397, 24);
+			vaultPathTextBox.TabIndex = 0;
+			toolTip.SetToolTip(vaultPathTextBox, resources.GetString("vaultPathTextBox.ToolTip"));
+			vaultPathTextBox.Leave += VaultPathTextBoxLeave;
+			// 
+			// vaultPathLabel
+			// 
+			vaultPathLabel.AutoSize = true;
+			vaultPathLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
+			vaultPathLabel.ForeColor = Color.Gold;
+			vaultPathLabel.Location = new Point(3, 0);
+			vaultPathLabel.Name = "vaultPathLabel";
+			vaultPathLabel.Size = new Size(74, 18);
+			vaultPathLabel.TabIndex = 14;
+			vaultPathLabel.Text = "Vault Path";
+			// 
+			// cancelButton
+			// 
+			cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			cancelButton.BackColor = Color.Transparent;
+			cancelButton.DialogResult = DialogResult.Cancel;
+			cancelButton.DownBitmap = (Bitmap)resources.GetObject("cancelButton.DownBitmap");
+			cancelButton.FlatAppearance.BorderSize = 0;
+			cancelButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
+			cancelButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
+			cancelButton.FlatStyle = FlatStyle.Flat;
+			cancelButton.Font = new Font("Microsoft Sans Serif", 12F);
+			cancelButton.ForeColor = Color.FromArgb(51, 44, 28);
+			cancelButton.Image = (Image)resources.GetObject("cancelButton.Image");
+			cancelButton.Location = new Point(609, 3);
+			cancelButton.Name = "cancelButton";
+			cancelButton.OverBitmap = (Bitmap)resources.GetObject("cancelButton.OverBitmap");
+			cancelButton.Size = new Size(137, 30);
+			cancelButton.SizeToGraphic = false;
+			cancelButton.TabIndex = 13;
+			cancelButton.Text = "Cancel";
+			cancelButton.UpBitmap = (Bitmap)resources.GetObject("cancelButton.UpBitmap");
+			cancelButton.UseCustomGraphic = true;
+			cancelButton.UseVisualStyleBackColor = false;
+			// 
+			// okayButton
+			// 
+			okayButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			okayButton.BackColor = Color.Transparent;
+			okayButton.DialogResult = DialogResult.OK;
+			okayButton.DownBitmap = (Bitmap)resources.GetObject("okayButton.DownBitmap");
+			okayButton.FlatAppearance.BorderSize = 0;
+			okayButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
+			okayButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
+			okayButton.FlatStyle = FlatStyle.Flat;
+			okayButton.Font = new Font("Microsoft Sans Serif", 12F);
+			okayButton.ForeColor = Color.FromArgb(51, 44, 28);
+			okayButton.Image = (Image)resources.GetObject("okayButton.Image");
+			okayButton.Location = new Point(446, 3);
+			okayButton.Name = "okayButton";
+			okayButton.OverBitmap = (Bitmap)resources.GetObject("okayButton.OverBitmap");
+			okayButton.Size = new Size(137, 30);
+			okayButton.SizeToGraphic = false;
+			okayButton.TabIndex = 12;
+			okayButton.Text = "OK";
+			okayButton.UpBitmap = (Bitmap)resources.GetObject("okayButton.UpBitmap");
+			okayButton.UseCustomGraphic = true;
+			okayButton.UseVisualStyleBackColor = false;
+			okayButton.Click += OkayButtonClick;
+			// 
+			// folderBrowserDialog
+			// 
+			folderBrowserDialog.RootFolder = Environment.SpecialFolder.MyDocuments;
+			// 
+			// resetButton
+			// 
+			resetButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			resetButton.BackColor = Color.Transparent;
+			resetButton.DownBitmap = (Bitmap)resources.GetObject("resetButton.DownBitmap");
+			resetButton.FlatAppearance.BorderSize = 0;
+			resetButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
+			resetButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
+			resetButton.FlatStyle = FlatStyle.Flat;
+			resetButton.Font = new Font("Microsoft Sans Serif", 12F);
+			resetButton.ForeColor = Color.FromArgb(51, 44, 28);
+			resetButton.Image = (Image)resources.GetObject("resetButton.Image");
+			resetButton.Location = new Point(1052, 3);
+			resetButton.Name = "resetButton";
+			resetButton.OverBitmap = (Bitmap)resources.GetObject("resetButton.OverBitmap");
+			resetButton.Size = new Size(137, 30);
+			resetButton.SizeToGraphic = false;
+			resetButton.TabIndex = 11;
+			resetButton.Text = "Reset";
+			toolTip.SetToolTip(resetButton, "Causes the configuration to Reset to the\r\nlast saved configuration.");
+			resetButton.UpBitmap = (Bitmap)resources.GetObject("resetButton.UpBitmap");
+			resetButton.UseCustomGraphic = true;
+			resetButton.UseVisualStyleBackColor = false;
+			resetButton.Click += ResetButtonClick;
+			// 
+			// vaultPathBrowseButton
+			// 
+			vaultPathBrowseButton.BackColor = Color.Transparent;
+			vaultPathBrowseButton.DownBitmap = (Bitmap)resources.GetObject("vaultPathBrowseButton.DownBitmap");
+			vaultPathBrowseButton.FlatAppearance.BorderSize = 0;
+			vaultPathBrowseButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
+			vaultPathBrowseButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
+			vaultPathBrowseButton.FlatStyle = FlatStyle.Flat;
+			vaultPathBrowseButton.Font = new Font("Microsoft Sans Serif", 12F);
+			vaultPathBrowseButton.ForeColor = Color.FromArgb(51, 44, 28);
+			vaultPathBrowseButton.Image = (Image)resources.GetObject("vaultPathBrowseButton.Image");
+			vaultPathBrowseButton.Location = new Point(406, 0);
+			vaultPathBrowseButton.Margin = new Padding(3, 0, 3, 3);
+			vaultPathBrowseButton.Name = "vaultPathBrowseButton";
+			vaultPathBrowseButton.OverBitmap = (Bitmap)resources.GetObject("vaultPathBrowseButton.OverBitmap");
+			vaultPathBrowseButton.Size = new Size(47, 30);
+			vaultPathBrowseButton.SizeToGraphic = false;
+			vaultPathBrowseButton.TabIndex = 1;
+			vaultPathBrowseButton.Text = "...";
+			vaultPathBrowseButton.UpBitmap = (Bitmap)resources.GetObject("vaultPathBrowseButton.UpBitmap");
+			vaultPathBrowseButton.UseCustomGraphic = true;
+			vaultPathBrowseButton.UseVisualStyleBackColor = false;
+			vaultPathBrowseButton.Click += VaultPathBrowseButtonClick;
+			// 
+			// loadAllFilesCheckBox
+			// 
+			loadAllFilesCheckBox.AutoSize = true;
+			loadAllFilesCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			loadAllFilesCheckBox.ForeColor = Color.White;
+			loadAllFilesCheckBox.Location = new Point(3, 87);
+			loadAllFilesCheckBox.Name = "loadAllFilesCheckBox";
+			loadAllFilesCheckBox.Size = new Size(276, 22);
+			loadAllFilesCheckBox.TabIndex = 28;
+			loadAllFilesCheckBox.Text = "Pre-Load All Vault And Character Files";
+			toolTip.SetToolTip(loadAllFilesCheckBox, "Selecting this item will automatically load all\r\nof the available character, stash and vault files\r\non startup.  This aids the search function, but\r\nincreases startup time.");
+			loadAllFilesCheckBox.UseVisualStyleBackColor = true;
+			loadAllFilesCheckBox.CheckedChanged += LoadAllFilesCheckBoxCheckedChanged;
+			// 
+			// suppressWarningsCheckBox
+			// 
+			suppressWarningsCheckBox.AutoSize = true;
+			suppressWarningsCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			suppressWarningsCheckBox.ForeColor = Color.White;
+			suppressWarningsCheckBox.Location = new Point(3, 141);
+			suppressWarningsCheckBox.Name = "suppressWarningsCheckBox";
+			suppressWarningsCheckBox.Size = new Size(238, 22);
+			suppressWarningsCheckBox.TabIndex = 30;
+			suppressWarningsCheckBox.Text = "Bypass Confirmation Messages";
+			toolTip.SetToolTip(suppressWarningsCheckBox, "When enabled, confirmation messages will no\r\nlonger be shown for item deletion and\r\nrelic removal or if there are items in the trash\r\nwhen TQVault is closed.");
+			suppressWarningsCheckBox.UseVisualStyleBackColor = true;
+			suppressWarningsCheckBox.CheckedChanged += SuppressWarningsCheckBoxCheckedChanged;
+			// 
+			// playerReadonlyCheckbox
+			// 
+			playerReadonlyCheckbox.AutoSize = true;
+			playerReadonlyCheckbox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			playerReadonlyCheckbox.ForeColor = Color.White;
+			playerReadonlyCheckbox.Location = new Point(3, 197);
+			playerReadonlyCheckbox.Name = "playerReadonlyCheckbox";
+			playerReadonlyCheckbox.Size = new Size(211, 22);
+			playerReadonlyCheckbox.TabIndex = 33;
+			playerReadonlyCheckbox.Text = "Player Equipment ReadOnly";
+			toolTip.SetToolTip(playerReadonlyCheckbox, "Avoid save game corruption that occurs (randomly). When enabled, player equipment will be read-only,  you won't be able to select or move any item.");
+			playerReadonlyCheckbox.UseVisualStyleBackColor = true;
+			playerReadonlyCheckbox.CheckedChanged += PlayerReadonlyCheckboxCheckedChanged;
+			// 
+			// characterEditCheckBox
+			// 
+			characterEditCheckBox.AutoSize = true;
+			characterEditCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			characterEditCheckBox.ForeColor = Color.White;
+			characterEditCheckBox.Location = new Point(3, 3);
+			characterEditCheckBox.Name = "characterEditCheckBox";
+			characterEditCheckBox.Size = new Size(241, 22);
+			characterEditCheckBox.TabIndex = 34;
+			characterEditCheckBox.Text = "Allow Character Editing Features";
+			toolTip.SetToolTip(characterEditCheckBox, "Turns on the editing features in the context menu.\r\nThese include item creation and modification.");
+			characterEditCheckBox.UseVisualStyleBackColor = true;
+			characterEditCheckBox.CheckedChanged += CharacterEditCheckBox_CheckedChanged;
+			// 
+			// EnableDetailedTooltipViewCheckBox
+			// 
+			EnableDetailedTooltipViewCheckBox.AutoSize = true;
+			EnableDetailedTooltipViewCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			EnableDetailedTooltipViewCheckBox.ForeColor = Color.White;
+			EnableDetailedTooltipViewCheckBox.Location = new Point(3, 169);
+			EnableDetailedTooltipViewCheckBox.Name = "EnableDetailedTooltipViewCheckBox";
+			EnableDetailedTooltipViewCheckBox.Size = new Size(213, 22);
+			EnableDetailedTooltipViewCheckBox.TabIndex = 38;
+			EnableDetailedTooltipViewCheckBox.Text = "Enable Detailed Tooltip View";
+			toolTip.SetToolTip(EnableDetailedTooltipViewCheckBox, "Split tooltip attributes into Prefix/Base/Suffix categories");
+			EnableDetailedTooltipViewCheckBox.UseVisualStyleBackColor = true;
+			EnableDetailedTooltipViewCheckBox.CheckedChanged += EnableDetailedTooltipViewCheckBox_CheckedChanged;
+			// 
+			// ItemBGColorOpacityLabel
+			// 
+			ItemBGColorOpacityLabel.AutoSize = true;
+			ItemBGColorOpacityLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
+			ItemBGColorOpacityLabel.ForeColor = Color.White;
+			ItemBGColorOpacityLabel.Location = new Point(3, 105);
+			ItemBGColorOpacityLabel.Name = "ItemBGColorOpacityLabel";
+			ItemBGColorOpacityLabel.Size = new Size(151, 18);
+			ItemBGColorOpacityLabel.TabIndex = 40;
+			ItemBGColorOpacityLabel.Text = "Item BG Alpha Color :";
+			toolTip.SetToolTip(ItemBGColorOpacityLabel, "Item background color opacity level");
+			// 
+			// EnableItemRequirementRestrictionCheckBox
+			// 
+			EnableItemRequirementRestrictionCheckBox.AutoSize = true;
+			EnableItemRequirementRestrictionCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			EnableItemRequirementRestrictionCheckBox.ForeColor = Color.Orange;
+			EnableItemRequirementRestrictionCheckBox.Location = new Point(3, 80);
+			EnableItemRequirementRestrictionCheckBox.Name = "EnableItemRequirementRestrictionCheckBox";
+			EnableItemRequirementRestrictionCheckBox.Size = new Size(304, 22);
+			EnableItemRequirementRestrictionCheckBox.TabIndex = 41;
+			EnableItemRequirementRestrictionCheckBox.Text = "Enable Character Requierement BG Color";
+			toolTip.SetToolTip(EnableItemRequirementRestrictionCheckBox, resources.GetString("EnableItemRequirementRestrictionCheckBox.ToolTip"));
+			EnableItemRequirementRestrictionCheckBox.UseVisualStyleBackColor = true;
+			EnableItemRequirementRestrictionCheckBox.CheckedChanged += EnableItemRequirementRestrictionCheckBox_CheckedChanged;
+			// 
+			// hotReloadCheckBox
+			// 
+			hotReloadCheckBox.AutoSize = true;
+			hotReloadCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			hotReloadCheckBox.ForeColor = Color.White;
+			hotReloadCheckBox.Location = new Point(2, 114);
+			hotReloadCheckBox.Margin = new Padding(2);
+			hotReloadCheckBox.Name = "hotReloadCheckBox";
+			hotReloadCheckBox.Size = new Size(203, 22);
+			hotReloadCheckBox.TabIndex = 42;
+			hotReloadCheckBox.Text = "Allow Hot Reload Features";
+			toolTip.SetToolTip(hotReloadCheckBox, "Turns on the editing features in the context menu.\r\nThese include item creation and modification.");
+			hotReloadCheckBox.UseVisualStyleBackColor = true;
+			hotReloadCheckBox.CheckedChanged += hotReloadCheckBox_CheckedChanged;
+			// 
+			// scalingCheckBoxEnableEpicLegendaryAffixes
+			// 
+			scalingCheckBoxEnableEpicLegendaryAffixes.AutoSize = true;
+			scalingCheckBoxEnableEpicLegendaryAffixes.Enabled = false;
+			scalingCheckBoxEnableEpicLegendaryAffixes.Font = new Font("Microsoft Sans Serif", 11.25F);
+			scalingCheckBoxEnableEpicLegendaryAffixes.ForeColor = Color.White;
+			scalingCheckBoxEnableEpicLegendaryAffixes.Location = new Point(3, 87);
+			scalingCheckBoxEnableEpicLegendaryAffixes.Name = "scalingCheckBoxEnableEpicLegendaryAffixes";
+			scalingCheckBoxEnableEpicLegendaryAffixes.Size = new Size(251, 22);
+			scalingCheckBoxEnableEpicLegendaryAffixes.TabIndex = 46;
+			scalingCheckBoxEnableEpicLegendaryAffixes.Text = "Enable Epic and Legendary affixes";
+			toolTip.SetToolTip(scalingCheckBoxEnableEpicLegendaryAffixes, "Allow affixes pickup on Epic and Legendary items");
+			scalingCheckBoxEnableEpicLegendaryAffixes.UseVisualStyleBackColor = true;
+			scalingCheckBoxEnableEpicLegendaryAffixes.CheckedChanged += scalingCheckBoxEnableEpicLegendaryAffixes_CheckedChanged;
+			// 
+			// scalingCheckBoxDisableAutoStacking
+			// 
+			scalingCheckBoxDisableAutoStacking.AutoSize = true;
+			scalingCheckBoxDisableAutoStacking.Font = new Font("Microsoft Sans Serif", 11.25F);
+			scalingCheckBoxDisableAutoStacking.ForeColor = Color.White;
+			scalingCheckBoxDisableAutoStacking.Location = new Point(3, 225);
+			scalingCheckBoxDisableAutoStacking.Name = "scalingCheckBoxDisableAutoStacking";
+			scalingCheckBoxDisableAutoStacking.Size = new Size(168, 22);
+			scalingCheckBoxDisableAutoStacking.TabIndex = 47;
+			scalingCheckBoxDisableAutoStacking.Text = "Disable auto stacking";
+			toolTip.SetToolTip(scalingCheckBoxDisableAutoStacking, "Disable auto stacking for relic, charms and potions");
+			scalingCheckBoxDisableAutoStacking.UseVisualStyleBackColor = true;
+			scalingCheckBoxDisableAutoStacking.CheckedChanged += scalingCheckBoxDisableAutoStacking_CheckedChanged;
+			// 
+			// checkGroupBoxGitBackup
+			// 
+			checkGroupBoxGitBackup.AutoSize = true;
+			checkGroupBoxGitBackup.Checked = false;
+			checkGroupBoxGitBackup.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
+			checkGroupBoxGitBackup.CheckState = CheckState.Unchecked;
+			checkGroupBoxGitBackup.Controls.Add(bufferedFlowLayoutPanelGitBackup);
+			checkGroupBoxGitBackup.ForeColor = Color.Gold;
+			checkGroupBoxGitBackup.Location = new Point(3, 374);
+			checkGroupBoxGitBackup.Name = "checkGroupBoxGitBackup";
+			checkGroupBoxGitBackup.Size = new Size(409, 127);
+			checkGroupBoxGitBackup.TabIndex = 48;
+			checkGroupBoxGitBackup.TabStop = false;
+			checkGroupBoxGitBackup.Text = "Git Backup";
+			toolTip.SetToolTip(checkGroupBoxGitBackup, "Enable a backup of your modified vaults & saves to a a git repository");
+			checkGroupBoxGitBackup.CheckedChanged += checkGroupBoxGitBackup_CheckedChanged;
+			// 
+			// bufferedFlowLayoutPanelGitBackup
+			// 
+			bufferedFlowLayoutPanelGitBackup.AutoSize = true;
+			bufferedFlowLayoutPanelGitBackup.Controls.Add(scalingCheckBoxDisableLegacyBackup);
+			bufferedFlowLayoutPanelGitBackup.Controls.Add(scalingCheckBoxBackupPlayerSaves);
+			bufferedFlowLayoutPanelGitBackup.Controls.Add(scalingLabelGitRepository);
+			bufferedFlowLayoutPanelGitBackup.Controls.Add(scalingTextBoxGitRepository);
+			bufferedFlowLayoutPanelGitBackup.Dock = DockStyle.Fill;
+			bufferedFlowLayoutPanelGitBackup.FlowDirection = FlowDirection.TopDown;
+			bufferedFlowLayoutPanelGitBackup.Location = new Point(3, 20);
+			bufferedFlowLayoutPanelGitBackup.Name = "bufferedFlowLayoutPanelGitBackup";
+			bufferedFlowLayoutPanelGitBackup.Size = new Size(403, 104);
+			bufferedFlowLayoutPanelGitBackup.TabIndex = 1;
+			// 
+			// scalingCheckBoxDisableLegacyBackup
+			// 
+			scalingCheckBoxDisableLegacyBackup.AutoSize = true;
+			scalingCheckBoxDisableLegacyBackup.Font = new Font("Microsoft Sans Serif", 11.25F);
+			scalingCheckBoxDisableLegacyBackup.ForeColor = Color.White;
+			scalingCheckBoxDisableLegacyBackup.Location = new Point(3, 3);
+			scalingCheckBoxDisableLegacyBackup.Name = "scalingCheckBoxDisableLegacyBackup";
+			scalingCheckBoxDisableLegacyBackup.Size = new Size(174, 22);
+			scalingCheckBoxDisableLegacyBackup.TabIndex = 1;
+			scalingCheckBoxDisableLegacyBackup.Text = "Disable legacy backup";
+			toolTip.SetToolTip(scalingCheckBoxDisableLegacyBackup, "Optionaly disable the old backup system");
+			scalingCheckBoxDisableLegacyBackup.UseVisualStyleBackColor = true;
+			scalingCheckBoxDisableLegacyBackup.CheckedChanged += scalingCheckBoxDisableLegacyBackup_CheckedChanged;
+			// 
+			// scalingCheckBoxBackupPlayerSaves
+			// 
+			scalingCheckBoxBackupPlayerSaves.AutoSize = true;
+			scalingCheckBoxBackupPlayerSaves.Font = new Font("Microsoft Sans Serif", 11.25F);
+			scalingCheckBoxBackupPlayerSaves.ForeColor = Color.White;
+			scalingCheckBoxBackupPlayerSaves.Location = new Point(3, 31);
+			scalingCheckBoxBackupPlayerSaves.Name = "scalingCheckBoxBackupPlayerSaves";
+			scalingCheckBoxBackupPlayerSaves.Size = new Size(163, 22);
+			scalingCheckBoxBackupPlayerSaves.TabIndex = 6;
+			scalingCheckBoxBackupPlayerSaves.Text = "Backup player saves";
+			toolTip.SetToolTip(scalingCheckBoxBackupPlayerSaves, "Include your character save files in the backup");
+			scalingCheckBoxBackupPlayerSaves.UseVisualStyleBackColor = true;
+			scalingCheckBoxBackupPlayerSaves.CheckedChanged += scalingCheckBoxBackupPlayerSaves_CheckedChanged;
+			// 
+			// scalingLabelGitRepository
+			// 
+			scalingLabelGitRepository.AutoSize = true;
+			scalingLabelGitRepository.Font = new Font("Microsoft Sans Serif", 11.25F);
+			scalingLabelGitRepository.ForeColor = Color.White;
+			scalingLabelGitRepository.Location = new Point(3, 56);
+			scalingLabelGitRepository.Name = "scalingLabelGitRepository";
+			scalingLabelGitRepository.Size = new Size(138, 18);
+			scalingLabelGitRepository.TabIndex = 5;
+			scalingLabelGitRepository.Text = "Git Repository Url : ";
+			// 
+			// scalingTextBoxGitRepository
+			// 
+			scalingTextBoxGitRepository.Font = new Font("Microsoft Sans Serif", 11.25F);
+			scalingTextBoxGitRepository.Location = new Point(3, 77);
+			scalingTextBoxGitRepository.Name = "scalingTextBoxGitRepository";
+			scalingTextBoxGitRepository.Size = new Size(397, 24);
+			scalingTextBoxGitRepository.TabIndex = 4;
+			scalingTextBoxGitRepository.TextChanged += scalingTextBoxGitRepository_TextChanged;
+			// 
+			// checkGroupBoxOriginalTQSupport
+			// 
+			checkGroupBoxOriginalTQSupport.Checked = false;
+			checkGroupBoxOriginalTQSupport.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
+			checkGroupBoxOriginalTQSupport.CheckState = CheckState.Unchecked;
+			checkGroupBoxOriginalTQSupport.Controls.Add(bufferedFlowLayoutPanelTQOriginalSupport);
+			checkGroupBoxOriginalTQSupport.ForeColor = Color.Gold;
+			checkGroupBoxOriginalTQSupport.Location = new Point(3, 331);
+			checkGroupBoxOriginalTQSupport.Name = "checkGroupBoxOriginalTQSupport";
+			checkGroupBoxOriginalTQSupport.Size = new Size(316, 49);
+			checkGroupBoxOriginalTQSupport.TabIndex = 53;
+			checkGroupBoxOriginalTQSupport.TabStop = false;
+			checkGroupBoxOriginalTQSupport.Text = "TQ original support";
+			toolTip.SetToolTip(checkGroupBoxOriginalTQSupport, "Provide support for original Titan Quest character file editing");
+			checkGroupBoxOriginalTQSupport.CheckedChanged += checkGroupBoxOriginalTQSupport_CheckedChanged;
+			// 
+			// bufferedFlowLayoutPanelTQOriginalSupport
+			// 
+			bufferedFlowLayoutPanelTQOriginalSupport.Controls.Add(linkLabelTQOriginalSupport);
+			bufferedFlowLayoutPanelTQOriginalSupport.Dock = DockStyle.Fill;
+			bufferedFlowLayoutPanelTQOriginalSupport.FlowDirection = FlowDirection.TopDown;
+			bufferedFlowLayoutPanelTQOriginalSupport.ForeColor = Color.White;
+			bufferedFlowLayoutPanelTQOriginalSupport.Location = new Point(3, 20);
+			bufferedFlowLayoutPanelTQOriginalSupport.Name = "bufferedFlowLayoutPanelTQOriginalSupport";
+			bufferedFlowLayoutPanelTQOriginalSupport.Size = new Size(310, 26);
+			bufferedFlowLayoutPanelTQOriginalSupport.TabIndex = 1;
+			// 
+			// linkLabelTQOriginalSupport
+			// 
+			linkLabelTQOriginalSupport.AutoSize = true;
+			linkLabelTQOriginalSupport.LinkColor = Color.Magenta;
+			linkLabelTQOriginalSupport.Location = new Point(3, 0);
+			linkLabelTQOriginalSupport.Name = "linkLabelTQOriginalSupport";
+			linkLabelTQOriginalSupport.Size = new Size(98, 18);
+			linkLabelTQOriginalSupport.TabIndex = 54;
+			linkLabelTQOriginalSupport.TabStop = true;
+			linkLabelTQOriginalSupport.Text = "How to play...";
+			linkLabelTQOriginalSupport.LinkClicked += linkLabelTQOriginalSupport_LinkClicked;
+			// 
+			// languageComboBox
+			// 
+			languageComboBox.DrawMode = DrawMode.OwnerDrawFixed;
+			languageComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+			languageComboBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			languageComboBox.FormattingEnabled = true;
+			languageComboBox.Location = new Point(3, 21);
+			languageComboBox.Name = "languageComboBox";
+			languageComboBox.Size = new Size(397, 25);
+			languageComboBox.TabIndex = 15;
+			languageComboBox.SelectedIndexChanged += LanguageComboBoxSelectedIndexChanged;
+			// 
+			// languageLabel
+			// 
+			languageLabel.AutoSize = true;
+			languageLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
+			languageLabel.ForeColor = Color.White;
+			languageLabel.Location = new Point(3, 0);
+			languageLabel.Name = "languageLabel";
+			languageLabel.Size = new Size(117, 18);
+			languageLabel.TabIndex = 16;
+			languageLabel.Text = "Game Language";
+			// 
+			// titanQuestPathTextBox
+			// 
+			titanQuestPathTextBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			titanQuestPathTextBox.Location = new Point(3, 3);
+			titanQuestPathTextBox.Name = "titanQuestPathTextBox";
+			titanQuestPathTextBox.Size = new Size(397, 24);
+			titanQuestPathTextBox.TabIndex = 18;
+			titanQuestPathTextBox.Leave += TitanQuestPathTextBoxLeave;
+			// 
+			// titanQuestPathLabel
+			// 
+			titanQuestPathLabel.AutoSize = true;
+			titanQuestPathLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
+			titanQuestPathLabel.ForeColor = Color.White;
+			titanQuestPathLabel.Location = new Point(3, 0);
+			titanQuestPathLabel.Name = "titanQuestPathLabel";
+			titanQuestPathLabel.Size = new Size(108, 18);
+			titanQuestPathLabel.TabIndex = 19;
+			titanQuestPathLabel.Text = "TQ Game Path";
+			// 
+			// immortalThronePathLabel
+			// 
+			immortalThronePathLabel.AutoSize = true;
+			immortalThronePathLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
+			immortalThronePathLabel.ForeColor = Color.White;
+			immortalThronePathLabel.Location = new Point(3, 57);
+			immortalThronePathLabel.Name = "immortalThronePathLabel";
+			immortalThronePathLabel.Size = new Size(99, 18);
+			immortalThronePathLabel.TabIndex = 20;
+			immortalThronePathLabel.Text = "IT Game Path";
+			// 
+			// immortalThronePathTextBox
+			// 
+			immortalThronePathTextBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			immortalThronePathTextBox.Location = new Point(3, 3);
+			immortalThronePathTextBox.Name = "immortalThronePathTextBox";
+			immortalThronePathTextBox.Size = new Size(397, 24);
+			immortalThronePathTextBox.TabIndex = 21;
+			immortalThronePathTextBox.Leave += ImmortalThronePathTextBoxLeave;
+			// 
+			// titanQuestPathBrowseButton
+			// 
+			titanQuestPathBrowseButton.BackColor = Color.Transparent;
+			titanQuestPathBrowseButton.DownBitmap = (Bitmap)resources.GetObject("titanQuestPathBrowseButton.DownBitmap");
+			titanQuestPathBrowseButton.FlatAppearance.BorderSize = 0;
+			titanQuestPathBrowseButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
+			titanQuestPathBrowseButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
+			titanQuestPathBrowseButton.FlatStyle = FlatStyle.Flat;
+			titanQuestPathBrowseButton.Font = new Font("Microsoft Sans Serif", 12F);
+			titanQuestPathBrowseButton.ForeColor = Color.FromArgb(51, 44, 28);
+			titanQuestPathBrowseButton.Image = (Image)resources.GetObject("titanQuestPathBrowseButton.Image");
+			titanQuestPathBrowseButton.Location = new Point(406, 0);
+			titanQuestPathBrowseButton.Margin = new Padding(3, 0, 3, 3);
+			titanQuestPathBrowseButton.Name = "titanQuestPathBrowseButton";
+			titanQuestPathBrowseButton.OverBitmap = (Bitmap)resources.GetObject("titanQuestPathBrowseButton.OverBitmap");
+			titanQuestPathBrowseButton.Size = new Size(47, 30);
+			titanQuestPathBrowseButton.SizeToGraphic = false;
+			titanQuestPathBrowseButton.TabIndex = 23;
+			titanQuestPathBrowseButton.Text = "...";
+			titanQuestPathBrowseButton.UpBitmap = (Bitmap)resources.GetObject("titanQuestPathBrowseButton.UpBitmap");
+			titanQuestPathBrowseButton.UseCustomGraphic = true;
+			titanQuestPathBrowseButton.UseVisualStyleBackColor = false;
+			titanQuestPathBrowseButton.Click += TitanQuestPathBrowseButtonClick;
+			// 
+			// immortalThronePathBrowseButton
+			// 
+			immortalThronePathBrowseButton.BackColor = Color.Transparent;
+			immortalThronePathBrowseButton.DownBitmap = (Bitmap)resources.GetObject("immortalThronePathBrowseButton.DownBitmap");
+			immortalThronePathBrowseButton.FlatAppearance.BorderSize = 0;
+			immortalThronePathBrowseButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
+			immortalThronePathBrowseButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
+			immortalThronePathBrowseButton.FlatStyle = FlatStyle.Flat;
+			immortalThronePathBrowseButton.Font = new Font("Microsoft Sans Serif", 12F);
+			immortalThronePathBrowseButton.ForeColor = Color.FromArgb(51, 44, 28);
+			immortalThronePathBrowseButton.Image = (Image)resources.GetObject("immortalThronePathBrowseButton.Image");
+			immortalThronePathBrowseButton.Location = new Point(406, 0);
+			immortalThronePathBrowseButton.Margin = new Padding(3, 0, 3, 3);
+			immortalThronePathBrowseButton.Name = "immortalThronePathBrowseButton";
+			immortalThronePathBrowseButton.OverBitmap = (Bitmap)resources.GetObject("immortalThronePathBrowseButton.OverBitmap");
+			immortalThronePathBrowseButton.Size = new Size(47, 30);
+			immortalThronePathBrowseButton.SizeToGraphic = false;
+			immortalThronePathBrowseButton.TabIndex = 24;
+			immortalThronePathBrowseButton.Text = "...";
+			immortalThronePathBrowseButton.UpBitmap = (Bitmap)resources.GetObject("immortalThronePathBrowseButton.UpBitmap");
+			immortalThronePathBrowseButton.UseCustomGraphic = true;
+			immortalThronePathBrowseButton.UseVisualStyleBackColor = false;
+			immortalThronePathBrowseButton.Click += ImmortalThronePathBrowseButtonClick;
+			// 
+			// customMapLabel
+			// 
+			customMapLabel.AutoSize = true;
+			customMapLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
+			customMapLabel.ForeColor = Color.White;
+			customMapLabel.Location = new Point(3, 0);
+			customMapLabel.Name = "customMapLabel";
+			customMapLabel.Size = new Size(94, 18);
+			customMapLabel.TabIndex = 27;
+			customMapLabel.Text = "Custom Map";
+			// 
+			// mapListComboBox
+			// 
+			mapListComboBox.DrawMode = DrawMode.OwnerDrawFixed;
+			mapListComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+			mapListComboBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			mapListComboBox.FormattingEnabled = true;
+			mapListComboBox.Location = new Point(3, 21);
+			mapListComboBox.Name = "mapListComboBox";
+			mapListComboBox.Size = new Size(397, 25);
+			mapListComboBox.TabIndex = 26;
+			mapListComboBox.SelectedIndexChanged += MapListComboBoxSelectedIndexChanged;
+			// 
+			// baseFontLabel
+			// 
+			baseFontLabel.AutoSize = true;
+			baseFontLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
+			baseFontLabel.ForeColor = Color.White;
+			baseFontLabel.Location = new Point(3, 0);
+			baseFontLabel.Name = "baseFontLabel";
+			baseFontLabel.Size = new Size(38, 18);
+			baseFontLabel.TabIndex = 36;
+			baseFontLabel.Text = "Font";
+			// 
+			// baseFontComboBox
+			// 
+			baseFontComboBox.DrawMode = DrawMode.OwnerDrawFixed;
+			baseFontComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+			baseFontComboBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			baseFontComboBox.FormattingEnabled = true;
+			baseFontComboBox.Location = new Point(3, 21);
+			baseFontComboBox.Name = "baseFontComboBox";
+			baseFontComboBox.Size = new Size(304, 25);
+			baseFontComboBox.TabIndex = 35;
+			baseFontComboBox.SelectedIndexChanged += FontComboBoxBase_SelectedIndexChanged;
+			// 
+			// tableLayoutPanelButtons
+			// 
+			tableLayoutPanelButtons.AutoSize = true;
+			tableLayoutPanelButtons.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			tableLayoutPanelButtons.ColumnCount = 5;
+			bufferedTableLayoutPanelSkeleton.SetColumnSpan(tableLayoutPanelButtons, 5);
+			tableLayoutPanelButtons.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+			tableLayoutPanelButtons.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+			tableLayoutPanelButtons.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+			tableLayoutPanelButtons.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+			tableLayoutPanelButtons.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+			tableLayoutPanelButtons.Controls.Add(okayButton, 1, 0);
+			tableLayoutPanelButtons.Controls.Add(cancelButton, 3, 0);
+			tableLayoutPanelButtons.Controls.Add(resetButton, 4, 0);
+			tableLayoutPanelButtons.Dock = DockStyle.Fill;
+			tableLayoutPanelButtons.Location = new Point(3, 577);
+			tableLayoutPanelButtons.Name = "tableLayoutPanelButtons";
+			tableLayoutPanelButtons.RowCount = 1;
+			tableLayoutPanelButtons.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+			tableLayoutPanelButtons.Size = new Size(1192, 36);
+			tableLayoutPanelButtons.TabIndex = 37;
+			// 
+			// ItemBGColorOpacityTrackBar
+			// 
+			ItemBGColorOpacityTrackBar.Location = new Point(3, 126);
+			ItemBGColorOpacityTrackBar.Maximum = 255;
+			ItemBGColorOpacityTrackBar.Name = "ItemBGColorOpacityTrackBar";
+			ItemBGColorOpacityTrackBar.Size = new Size(304, 45);
+			ItemBGColorOpacityTrackBar.TabIndex = 39;
+			ItemBGColorOpacityTrackBar.TickFrequency = 5;
+			ItemBGColorOpacityTrackBar.Value = 15;
+			ItemBGColorOpacityTrackBar.Scroll += ItemBGColorOpacityTrackBar_Scroll;
+			// 
+			// scalingCheckBoxEnableSounds
+			// 
+			scalingCheckBoxEnableSounds.AutoSize = true;
+			scalingCheckBoxEnableSounds.Font = new Font("Microsoft Sans Serif", 11.25F);
+			scalingCheckBoxEnableSounds.ForeColor = Color.White;
+			scalingCheckBoxEnableSounds.Location = new Point(3, 52);
+			scalingCheckBoxEnableSounds.Name = "scalingCheckBoxEnableSounds";
+			scalingCheckBoxEnableSounds.Size = new Size(184, 22);
+			scalingCheckBoxEnableSounds.TabIndex = 43;
+			scalingCheckBoxEnableSounds.Text = "Enable TQVault Sounds";
+			scalingCheckBoxEnableSounds.UseVisualStyleBackColor = true;
+			scalingCheckBoxEnableSounds.CheckedChanged += scalingCheckBoxEnableSounds_CheckedChanged;
+			// 
+			// scalingLabelCSVDelim
+			// 
+			scalingLabelCSVDelim.AutoSize = true;
+			scalingLabelCSVDelim.Font = new Font("Microsoft Sans Serif", 11.25F);
+			scalingLabelCSVDelim.ForeColor = Color.White;
+			scalingLabelCSVDelim.Location = new Point(3, 250);
+			scalingLabelCSVDelim.Name = "scalingLabelCSVDelim";
+			scalingLabelCSVDelim.Size = new Size(96, 18);
+			scalingLabelCSVDelim.TabIndex = 45;
+			scalingLabelCSVDelim.Text = "Csv Delimiter";
+			// 
+			// scalingComboBoxCSVDelim
+			// 
+			scalingComboBoxCSVDelim.BackColor = SystemColors.Window;
+			scalingComboBoxCSVDelim.DrawMode = DrawMode.OwnerDrawFixed;
+			scalingComboBoxCSVDelim.DropDownStyle = ComboBoxStyle.DropDownList;
+			scalingComboBoxCSVDelim.Font = new Font("Microsoft Sans Serif", 11.25F);
+			scalingComboBoxCSVDelim.FormattingEnabled = true;
+			scalingComboBoxCSVDelim.Location = new Point(3, 271);
+			scalingComboBoxCSVDelim.Name = "scalingComboBoxCSVDelim";
+			scalingComboBoxCSVDelim.Size = new Size(324, 25);
+			scalingComboBoxCSVDelim.TabIndex = 44;
+			scalingComboBoxCSVDelim.SelectedIndexChanged += scalingComboBoxCSVDelim_SelectedIndexChanged;
+			// 
+			// groupBoxGeneral
+			// 
+			groupBoxGeneral.AutoSize = true;
+			groupBoxGeneral.Controls.Add(bufferedFlowLayoutPanelGeneralSettings);
+			groupBoxGeneral.ForeColor = Color.Gold;
+			groupBoxGeneral.Location = new Point(3, 3);
+			groupBoxGeneral.Name = "groupBoxGeneral";
+			groupBoxGeneral.Size = new Size(336, 322);
+			groupBoxGeneral.TabIndex = 49;
+			groupBoxGeneral.TabStop = false;
+			groupBoxGeneral.Text = "General Settings";
+			// 
+			// bufferedFlowLayoutPanelGeneralSettings
+			// 
+			bufferedFlowLayoutPanelGeneralSettings.AutoSize = true;
+			bufferedFlowLayoutPanelGeneralSettings.Controls.Add(skipTitleCheckBox);
+			bufferedFlowLayoutPanelGeneralSettings.Controls.Add(loadLastCharacterCheckBox);
+			bufferedFlowLayoutPanelGeneralSettings.Controls.Add(loadLastVaultCheckBox);
+			bufferedFlowLayoutPanelGeneralSettings.Controls.Add(loadAllFilesCheckBox);
+			bufferedFlowLayoutPanelGeneralSettings.Controls.Add(hotReloadCheckBox);
+			bufferedFlowLayoutPanelGeneralSettings.Controls.Add(suppressWarningsCheckBox);
+			bufferedFlowLayoutPanelGeneralSettings.Controls.Add(EnableDetailedTooltipViewCheckBox);
+			bufferedFlowLayoutPanelGeneralSettings.Controls.Add(playerReadonlyCheckbox);
+			bufferedFlowLayoutPanelGeneralSettings.Controls.Add(scalingCheckBoxDisableAutoStacking);
+			bufferedFlowLayoutPanelGeneralSettings.Controls.Add(scalingLabelCSVDelim);
+			bufferedFlowLayoutPanelGeneralSettings.Controls.Add(scalingComboBoxCSVDelim);
+			bufferedFlowLayoutPanelGeneralSettings.Dock = DockStyle.Fill;
+			bufferedFlowLayoutPanelGeneralSettings.FlowDirection = FlowDirection.TopDown;
+			bufferedFlowLayoutPanelGeneralSettings.Location = new Point(3, 20);
+			bufferedFlowLayoutPanelGeneralSettings.Name = "bufferedFlowLayoutPanelGeneralSettings";
+			bufferedFlowLayoutPanelGeneralSettings.Size = new Size(330, 299);
+			bufferedFlowLayoutPanelGeneralSettings.TabIndex = 0;
+			// 
+			// checkGroupBoxAllowCheats
+			// 
+			checkGroupBoxAllowCheats.AutoSize = true;
+			checkGroupBoxAllowCheats.Checked = false;
+			checkGroupBoxAllowCheats.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
+			checkGroupBoxAllowCheats.CheckState = CheckState.Unchecked;
+			checkGroupBoxAllowCheats.Controls.Add(bufferedFlowLayoutPanelCheats);
+			checkGroupBoxAllowCheats.ForeColor = Color.Gold;
+			checkGroupBoxAllowCheats.Location = new Point(3, 331);
+			checkGroupBoxAllowCheats.Name = "checkGroupBoxAllowCheats";
+			checkGroupBoxAllowCheats.Size = new Size(263, 135);
+			checkGroupBoxAllowCheats.TabIndex = 51;
+			checkGroupBoxAllowCheats.TabStop = false;
+			checkGroupBoxAllowCheats.Text = "Allow Cheats";
+			checkGroupBoxAllowCheats.CheckedChanged += checkGroupBoxCheats_CheckedChanged;
+			// 
+			// bufferedFlowLayoutPanelCheats
+			// 
+			bufferedFlowLayoutPanelCheats.AutoSize = true;
+			bufferedFlowLayoutPanelCheats.Controls.Add(characterEditCheckBox);
+			bufferedFlowLayoutPanelCheats.Controls.Add(allowItemCopyCheckBox);
+			bufferedFlowLayoutPanelCheats.Controls.Add(allowItemEditCheckBox);
+			bufferedFlowLayoutPanelCheats.Controls.Add(scalingCheckBoxEnableEpicLegendaryAffixes);
+			bufferedFlowLayoutPanelCheats.Dock = DockStyle.Fill;
+			bufferedFlowLayoutPanelCheats.FlowDirection = FlowDirection.TopDown;
+			bufferedFlowLayoutPanelCheats.Location = new Point(3, 20);
+			bufferedFlowLayoutPanelCheats.Name = "bufferedFlowLayoutPanelCheats";
+			bufferedFlowLayoutPanelCheats.Size = new Size(257, 112);
+			bufferedFlowLayoutPanelCheats.TabIndex = 1;
+			// 
+			// groupBoxGfxAndAudio
+			// 
+			groupBoxGfxAndAudio.AutoSize = true;
+			groupBoxGfxAndAudio.Controls.Add(bufferedFlowLayoutPanelGfxAndAudio);
+			groupBoxGfxAndAudio.ForeColor = Color.Gold;
+			groupBoxGfxAndAudio.Location = new Point(3, 3);
+			groupBoxGfxAndAudio.Name = "groupBoxGfxAndAudio";
+			groupBoxGfxAndAudio.Size = new Size(316, 197);
+			groupBoxGfxAndAudio.TabIndex = 52;
+			groupBoxGfxAndAudio.TabStop = false;
+			groupBoxGfxAndAudio.Text = "Gfx / Audio";
+			// 
+			// bufferedFlowLayoutPanelGfxAndAudio
+			// 
+			bufferedFlowLayoutPanelGfxAndAudio.AutoSize = true;
+			bufferedFlowLayoutPanelGfxAndAudio.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(baseFontLabel);
+			bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(baseFontComboBox);
+			bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(scalingCheckBoxEnableSounds);
+			bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(EnableItemRequirementRestrictionCheckBox);
+			bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(ItemBGColorOpacityLabel);
+			bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(ItemBGColorOpacityTrackBar);
+			bufferedFlowLayoutPanelGfxAndAudio.Dock = DockStyle.Fill;
+			bufferedFlowLayoutPanelGfxAndAudio.FlowDirection = FlowDirection.TopDown;
+			bufferedFlowLayoutPanelGfxAndAudio.Location = new Point(3, 20);
+			bufferedFlowLayoutPanelGfxAndAudio.Name = "bufferedFlowLayoutPanelGfxAndAudio";
+			bufferedFlowLayoutPanelGfxAndAudio.Size = new Size(310, 174);
+			bufferedFlowLayoutPanelGfxAndAudio.TabIndex = 0;
+			// 
+			// detectLanguageCheckBox
+			// 
+			detectLanguageCheckBox.AutoSize = true;
+			detectLanguageCheckBox.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Disable;
+			detectLanguageCheckBox.Controls.Add(bufferedFlowLayoutPanelLanguage);
+			detectLanguageCheckBox.ForeColor = Color.Gold;
+			detectLanguageCheckBox.Location = new Point(3, 296);
+			detectLanguageCheckBox.Name = "detectLanguageCheckBox";
+			detectLanguageCheckBox.Size = new Size(409, 72);
+			detectLanguageCheckBox.TabIndex = 53;
+			detectLanguageCheckBox.TabStop = false;
+			detectLanguageCheckBox.Text = "Autodetect Language";
+			detectLanguageCheckBox.CheckedChanged += DetectLanguageCheckBoxCheckedChanged;
+			// 
+			// bufferedFlowLayoutPanelLanguage
+			// 
+			bufferedFlowLayoutPanelLanguage.AutoSize = true;
+			bufferedFlowLayoutPanelLanguage.Controls.Add(languageLabel);
+			bufferedFlowLayoutPanelLanguage.Controls.Add(languageComboBox);
+			bufferedFlowLayoutPanelLanguage.Dock = DockStyle.Fill;
+			bufferedFlowLayoutPanelLanguage.FlowDirection = FlowDirection.TopDown;
+			bufferedFlowLayoutPanelLanguage.Location = new Point(3, 20);
+			bufferedFlowLayoutPanelLanguage.Name = "bufferedFlowLayoutPanelLanguage";
+			bufferedFlowLayoutPanelLanguage.Size = new Size(403, 49);
+			bufferedFlowLayoutPanelLanguage.TabIndex = 1;
+			// 
+			// detectGamePathsCheckBox
+			// 
+			detectGamePathsCheckBox.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Disable;
+			detectGamePathsCheckBox.Controls.Add(bufferedFlowLayoutPanelAutoDetectGamePath);
+			detectGamePathsCheckBox.ForeColor = Color.Gold;
+			detectGamePathsCheckBox.Location = new Point(3, 60);
+			detectGamePathsCheckBox.Name = "detectGamePathsCheckBox";
+			detectGamePathsCheckBox.Size = new Size(466, 141);
+			detectGamePathsCheckBox.TabIndex = 54;
+			detectGamePathsCheckBox.TabStop = false;
+			detectGamePathsCheckBox.Text = "Autodetect Game Paths";
+			detectGamePathsCheckBox.CheckedChanged += DetectGamePathsCheckBoxCheckedChanged;
+			// 
+			// bufferedFlowLayoutPanelAutoDetectGamePath
+			// 
+			bufferedFlowLayoutPanelAutoDetectGamePath.Controls.Add(titanQuestPathLabel);
+			bufferedFlowLayoutPanelAutoDetectGamePath.Controls.Add(bufferedFlowLayoutPanelTQPath);
+			bufferedFlowLayoutPanelAutoDetectGamePath.Controls.Add(immortalThronePathLabel);
+			bufferedFlowLayoutPanelAutoDetectGamePath.Controls.Add(bufferedFlowLayoutPanelTQITPath);
+			bufferedFlowLayoutPanelAutoDetectGamePath.Dock = DockStyle.Fill;
+			bufferedFlowLayoutPanelAutoDetectGamePath.FlowDirection = FlowDirection.TopDown;
+			bufferedFlowLayoutPanelAutoDetectGamePath.Location = new Point(3, 20);
+			bufferedFlowLayoutPanelAutoDetectGamePath.Name = "bufferedFlowLayoutPanelAutoDetectGamePath";
+			bufferedFlowLayoutPanelAutoDetectGamePath.Size = new Size(460, 118);
+			bufferedFlowLayoutPanelAutoDetectGamePath.TabIndex = 1;
+			// 
+			// bufferedFlowLayoutPanelTQPath
+			// 
+			bufferedFlowLayoutPanelTQPath.AutoSize = true;
+			bufferedFlowLayoutPanelTQPath.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			bufferedFlowLayoutPanelTQPath.Controls.Add(titanQuestPathTextBox);
+			bufferedFlowLayoutPanelTQPath.Controls.Add(titanQuestPathBrowseButton);
+			bufferedFlowLayoutPanelTQPath.Location = new Point(3, 21);
+			bufferedFlowLayoutPanelTQPath.Margin = new Padding(3, 3, 0, 3);
+			bufferedFlowLayoutPanelTQPath.Name = "bufferedFlowLayoutPanelTQPath";
+			bufferedFlowLayoutPanelTQPath.Size = new Size(456, 33);
+			bufferedFlowLayoutPanelTQPath.TabIndex = 55;
+			// 
+			// bufferedFlowLayoutPanelTQITPath
+			// 
+			bufferedFlowLayoutPanelTQITPath.AutoSize = true;
+			bufferedFlowLayoutPanelTQITPath.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			bufferedFlowLayoutPanelTQITPath.Controls.Add(immortalThronePathTextBox);
+			bufferedFlowLayoutPanelTQITPath.Controls.Add(immortalThronePathBrowseButton);
+			bufferedFlowLayoutPanelTQITPath.Location = new Point(3, 78);
+			bufferedFlowLayoutPanelTQITPath.Margin = new Padding(3, 3, 0, 3);
+			bufferedFlowLayoutPanelTQITPath.Name = "bufferedFlowLayoutPanelTQITPath";
+			bufferedFlowLayoutPanelTQITPath.Size = new Size(456, 33);
+			bufferedFlowLayoutPanelTQITPath.TabIndex = 55;
+			// 
+			// enableCustomMapsCheckBox
+			// 
+			enableCustomMapsCheckBox.Checked = false;
+			enableCustomMapsCheckBox.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
+			enableCustomMapsCheckBox.CheckState = CheckState.Unchecked;
+			enableCustomMapsCheckBox.Controls.Add(bufferedFlowLayoutPanelCustomMap);
+			enableCustomMapsCheckBox.ForeColor = Color.Gold;
+			enableCustomMapsCheckBox.Location = new Point(3, 207);
+			enableCustomMapsCheckBox.Name = "enableCustomMapsCheckBox";
+			enableCustomMapsCheckBox.Size = new Size(466, 83);
+			enableCustomMapsCheckBox.TabIndex = 55;
+			enableCustomMapsCheckBox.TabStop = false;
+			enableCustomMapsCheckBox.Text = "Enable Custom Maps";
+			enableCustomMapsCheckBox.CheckedChanged += EnableCustomMapsCheckBoxCheckedChanged;
+			// 
+			// bufferedFlowLayoutPanelCustomMap
+			// 
+			bufferedFlowLayoutPanelCustomMap.Controls.Add(customMapLabel);
+			bufferedFlowLayoutPanelCustomMap.Controls.Add(mapListComboBox);
+			bufferedFlowLayoutPanelCustomMap.Dock = DockStyle.Fill;
+			bufferedFlowLayoutPanelCustomMap.FlowDirection = FlowDirection.TopDown;
+			bufferedFlowLayoutPanelCustomMap.Location = new Point(3, 20);
+			bufferedFlowLayoutPanelCustomMap.Name = "bufferedFlowLayoutPanelCustomMap";
+			bufferedFlowLayoutPanelCustomMap.Size = new Size(460, 60);
+			bufferedFlowLayoutPanelCustomMap.TabIndex = 1;
+			// 
+			// bufferedTableLayoutPanelSkeleton
+			// 
+			bufferedTableLayoutPanelSkeleton.AutoSize = true;
+			bufferedTableLayoutPanelSkeleton.ColumnCount = 5;
+			bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new ColumnStyle());
+			bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
+			bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new ColumnStyle());
+			bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
+			bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new ColumnStyle());
+			bufferedTableLayoutPanelSkeleton.Controls.Add(bufferedFlowLayoutPanelSkeletonRight, 4, 0);
+			bufferedTableLayoutPanelSkeleton.Controls.Add(tableLayoutPanelButtons, 0, 1);
+			bufferedTableLayoutPanelSkeleton.Controls.Add(bufferedFlowLayoutPanelSkeletonLeft, 0, 0);
+			bufferedTableLayoutPanelSkeleton.Controls.Add(bufferedFlowLayoutPanelSkeletonCenter, 2, 0);
+			bufferedTableLayoutPanelSkeleton.Location = new Point(10, 25);
+			bufferedTableLayoutPanelSkeleton.Margin = new Padding(0);
+			bufferedTableLayoutPanelSkeleton.Name = "bufferedTableLayoutPanelSkeleton";
+			bufferedTableLayoutPanelSkeleton.RowCount = 2;
+			bufferedTableLayoutPanelSkeleton.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+			bufferedTableLayoutPanelSkeleton.RowStyles.Add(new RowStyle());
+			bufferedTableLayoutPanelSkeleton.Size = new Size(1198, 616);
+			bufferedTableLayoutPanelSkeleton.TabIndex = 56;
+			// 
+			// bufferedFlowLayoutPanelSkeletonRight
+			// 
+			bufferedFlowLayoutPanelSkeletonRight.AutoSize = true;
+			bufferedFlowLayoutPanelSkeletonRight.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			bufferedFlowLayoutPanelSkeletonRight.Controls.Add(groupBoxGfxAndAudio);
+			bufferedFlowLayoutPanelSkeletonRight.Controls.Add(pasteBinGroupBox);
+			bufferedFlowLayoutPanelSkeletonRight.Controls.Add(checkGroupBoxOriginalTQSupport);
+			bufferedFlowLayoutPanelSkeletonRight.Dock = DockStyle.Fill;
+			bufferedFlowLayoutPanelSkeletonRight.FlowDirection = FlowDirection.TopDown;
+			bufferedFlowLayoutPanelSkeletonRight.Location = new Point(839, 3);
+			bufferedFlowLayoutPanelSkeletonRight.Name = "bufferedFlowLayoutPanelSkeletonRight";
+			bufferedFlowLayoutPanelSkeletonRight.Size = new Size(356, 568);
+			bufferedFlowLayoutPanelSkeletonRight.TabIndex = 2;
+			// 
+			// pasteBinGroupBox
+			// 
+			pasteBinGroupBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			pasteBinGroupBox.Controls.Add(pasteBinFlowPanel);
+			pasteBinGroupBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			pasteBinGroupBox.ForeColor = Color.Gold;
+			pasteBinGroupBox.Location = new Point(3, 206);
+			pasteBinGroupBox.Name = "pasteBinGroupBox";
+			pasteBinGroupBox.Size = new Size(316, 119);
+			pasteBinGroupBox.TabIndex = 53;
+			pasteBinGroupBox.TabStop = false;
+			pasteBinGroupBox.Text = "PasteBin Integration";
+			// 
+			// pasteBinFlowPanel
+			// 
+			pasteBinFlowPanel.ColumnCount = 2;
+			pasteBinFlowPanel.ColumnStyles.Add(new ColumnStyle());
+			pasteBinFlowPanel.ColumnStyles.Add(new ColumnStyle());
+			pasteBinFlowPanel.Controls.Add(pasteBinExpirationComboBox, 1, 2);
+			pasteBinFlowPanel.Controls.Add(pasteBinApiKeyLabel, 0, 0);
+			pasteBinFlowPanel.Controls.Add(pasteBinApiKeyTextBox, 0, 1);
+			pasteBinFlowPanel.Controls.Add(pasteBinExpirationLabel, 0, 2);
+			pasteBinFlowPanel.Dock = DockStyle.Fill;
+			pasteBinFlowPanel.Location = new Point(3, 20);
+			pasteBinFlowPanel.Name = "pasteBinFlowPanel";
+			pasteBinFlowPanel.RowCount = 3;
+			pasteBinFlowPanel.RowStyles.Add(new RowStyle());
+			pasteBinFlowPanel.RowStyles.Add(new RowStyle());
+			pasteBinFlowPanel.RowStyles.Add(new RowStyle());
+			pasteBinFlowPanel.Size = new Size(310, 96);
+			pasteBinFlowPanel.TabIndex = 0;
+			// 
+			// pasteBinExpirationComboBox
+			// 
+			pasteBinExpirationComboBox.DrawMode = DrawMode.OwnerDrawFixed;
+			pasteBinExpirationComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+			pasteBinExpirationComboBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			pasteBinExpirationComboBox.Name = "pasteBinExpirationComboBox";
+			pasteBinExpirationComboBox.Size = new Size(150, 30);
+			pasteBinExpirationComboBox.TabIndex = 3;
+			pasteBinExpirationComboBox.SelectedIndexChanged += PasteBinExpirationComboBoxSelectedIndexChanged;
+			// 
+			// pasteBinApiKeyLabel
+			// 
+			pasteBinApiKeyLabel.AutoSize = true;
+			pasteBinFlowPanel.SetColumnSpan(pasteBinApiKeyLabel, 2);
+			pasteBinApiKeyLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
+			pasteBinApiKeyLabel.ForeColor = Color.White;
+			pasteBinApiKeyLabel.Location = new Point(3, 0);
+			pasteBinApiKeyLabel.Name = "pasteBinApiKeyLabel";
+			pasteBinApiKeyLabel.Size = new Size(126, 18);
+			pasteBinApiKeyLabel.TabIndex = 0;
+			pasteBinApiKeyLabel.Text = "PasteBin API Key:";
+			// 
+			// pasteBinApiKeyTextBox
+			// 
+			pasteBinFlowPanel.SetColumnSpan(pasteBinApiKeyTextBox, 2);
+			pasteBinApiKeyTextBox.Font = new Font("Microsoft Sans Serif", 11.25F);
+			pasteBinApiKeyTextBox.Location = new Point(3, 21);
+			pasteBinApiKeyTextBox.Name = "pasteBinApiKeyTextBox";
+			pasteBinApiKeyTextBox.Size = new Size(250, 24);
+			pasteBinApiKeyTextBox.TabIndex = 1;
+			pasteBinApiKeyTextBox.TextChanged += PasteBinApiKeyTextBoxTextChanged;
+			// 
+			// pasteBinExpirationLabel
+			// 
+			pasteBinExpirationLabel.AutoSize = true;
+			pasteBinExpirationLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
+			pasteBinExpirationLabel.ForeColor = Color.White;
+			pasteBinExpirationLabel.Location = new Point(3, 48);
+			pasteBinExpirationLabel.Name = "pasteBinExpirationLabel";
+			pasteBinExpirationLabel.Size = new Size(119, 18);
+			pasteBinExpirationLabel.TabIndex = 2;
+			pasteBinExpirationLabel.Text = "Paste Expiration:";
+			// 
+			// bufferedFlowLayoutPanelSkeletonLeft
+			// 
+			bufferedFlowLayoutPanelSkeletonLeft.AutoSize = true;
+			bufferedFlowLayoutPanelSkeletonLeft.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(vaultPathLabel);
+			bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(bufferedFlowLayoutPanelVaultPath);
+			bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(detectGamePathsCheckBox);
+			bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(enableCustomMapsCheckBox);
+			bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(detectLanguageCheckBox);
+			bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(checkGroupBoxGitBackup);
+			bufferedFlowLayoutPanelSkeletonLeft.Dock = DockStyle.Fill;
+			bufferedFlowLayoutPanelSkeletonLeft.FlowDirection = FlowDirection.TopDown;
+			bufferedFlowLayoutPanelSkeletonLeft.Location = new Point(3, 3);
+			bufferedFlowLayoutPanelSkeletonLeft.Name = "bufferedFlowLayoutPanelSkeletonLeft";
+			bufferedFlowLayoutPanelSkeletonLeft.Size = new Size(472, 568);
+			bufferedFlowLayoutPanelSkeletonLeft.TabIndex = 0;
+			// 
+			// bufferedFlowLayoutPanelVaultPath
+			// 
+			bufferedFlowLayoutPanelVaultPath.AutoSize = true;
+			bufferedFlowLayoutPanelVaultPath.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			bufferedFlowLayoutPanelVaultPath.Controls.Add(vaultPathTextBox);
+			bufferedFlowLayoutPanelVaultPath.Controls.Add(vaultPathBrowseButton);
+			bufferedFlowLayoutPanelVaultPath.Location = new Point(3, 21);
+			bufferedFlowLayoutPanelVaultPath.Name = "bufferedFlowLayoutPanelVaultPath";
+			bufferedFlowLayoutPanelVaultPath.Size = new Size(456, 33);
+			bufferedFlowLayoutPanelVaultPath.TabIndex = 57;
+			// 
+			// bufferedFlowLayoutPanelSkeletonCenter
+			// 
+			bufferedFlowLayoutPanelSkeletonCenter.AutoSize = true;
+			bufferedFlowLayoutPanelSkeletonCenter.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			bufferedFlowLayoutPanelSkeletonCenter.Controls.Add(groupBoxGeneral);
+			bufferedFlowLayoutPanelSkeletonCenter.Controls.Add(checkGroupBoxAllowCheats);
+			bufferedFlowLayoutPanelSkeletonCenter.Dock = DockStyle.Fill;
+			bufferedFlowLayoutPanelSkeletonCenter.FlowDirection = FlowDirection.TopDown;
+			bufferedFlowLayoutPanelSkeletonCenter.Location = new Point(486, 3);
+			bufferedFlowLayoutPanelSkeletonCenter.Name = "bufferedFlowLayoutPanelSkeletonCenter";
+			bufferedFlowLayoutPanelSkeletonCenter.Size = new Size(342, 568);
+			bufferedFlowLayoutPanelSkeletonCenter.TabIndex = 1;
+			// 
+			// SettingsDialog
+			// 
+			AutoScaleDimensions = new SizeF(96F, 96F);
+			AutoScaleMode = AutoScaleMode.Dpi;
+			AutoValidate = AutoValidate.EnablePreventFocusChange;
+			BackColor = Color.FromArgb(46, 31, 21);
+			CancelButton = cancelButton;
+			ClientSize = new Size(1222, 666);
+			Controls.Add(bufferedTableLayoutPanelSkeleton);
+			DrawCustomBorder = true;
+			Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+			ForeColor = Color.White;
+			FormBorderStyle = FormBorderStyle.None;
+			MaximizeBox = false;
+			MinimizeBox = false;
+			Name = "SettingsDialog";
+			Padding = new Padding(5, 5, 5, 0);
+			ShowIcon = false;
+			ShowInTaskbar = false;
+			SizeGripStyle = SizeGripStyle.Hide;
+			StartPosition = FormStartPosition.CenterParent;
+			Text = "Configure Settings";
+			TopMost = true;
+			Load += SettingsDialogLoad;
+			Shown += SettingsDialog_Shown;
+			Controls.SetChildIndex(bufferedTableLayoutPanelSkeleton, 0);
+			checkGroupBoxGitBackup.ResumeLayout(false);
+			checkGroupBoxGitBackup.PerformLayout();
+			bufferedFlowLayoutPanelGitBackup.ResumeLayout(false);
+			bufferedFlowLayoutPanelGitBackup.PerformLayout();
+			checkGroupBoxOriginalTQSupport.ResumeLayout(false);
+			checkGroupBoxOriginalTQSupport.PerformLayout();
+			bufferedFlowLayoutPanelTQOriginalSupport.ResumeLayout(false);
+			bufferedFlowLayoutPanelTQOriginalSupport.PerformLayout();
+			tableLayoutPanelButtons.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)ItemBGColorOpacityTrackBar).EndInit();
+			groupBoxGeneral.ResumeLayout(false);
+			groupBoxGeneral.PerformLayout();
+			bufferedFlowLayoutPanelGeneralSettings.ResumeLayout(false);
+			bufferedFlowLayoutPanelGeneralSettings.PerformLayout();
+			checkGroupBoxAllowCheats.ResumeLayout(false);
+			checkGroupBoxAllowCheats.PerformLayout();
+			bufferedFlowLayoutPanelCheats.ResumeLayout(false);
+			bufferedFlowLayoutPanelCheats.PerformLayout();
+			groupBoxGfxAndAudio.ResumeLayout(false);
+			groupBoxGfxAndAudio.PerformLayout();
+			bufferedFlowLayoutPanelGfxAndAudio.ResumeLayout(false);
+			bufferedFlowLayoutPanelGfxAndAudio.PerformLayout();
+			detectLanguageCheckBox.ResumeLayout(false);
+			detectLanguageCheckBox.PerformLayout();
+			bufferedFlowLayoutPanelLanguage.ResumeLayout(false);
+			bufferedFlowLayoutPanelLanguage.PerformLayout();
+			detectGamePathsCheckBox.ResumeLayout(false);
+			detectGamePathsCheckBox.PerformLayout();
+			bufferedFlowLayoutPanelAutoDetectGamePath.ResumeLayout(false);
+			bufferedFlowLayoutPanelAutoDetectGamePath.PerformLayout();
+			bufferedFlowLayoutPanelTQPath.ResumeLayout(false);
+			bufferedFlowLayoutPanelTQPath.PerformLayout();
+			bufferedFlowLayoutPanelTQITPath.ResumeLayout(false);
+			bufferedFlowLayoutPanelTQITPath.PerformLayout();
+			enableCustomMapsCheckBox.ResumeLayout(false);
+			enableCustomMapsCheckBox.PerformLayout();
+			bufferedFlowLayoutPanelCustomMap.ResumeLayout(false);
+			bufferedFlowLayoutPanelCustomMap.PerformLayout();
+			bufferedTableLayoutPanelSkeleton.ResumeLayout(false);
+			bufferedTableLayoutPanelSkeleton.PerformLayout();
+			bufferedFlowLayoutPanelSkeletonRight.ResumeLayout(false);
+			bufferedFlowLayoutPanelSkeletonRight.PerformLayout();
+			pasteBinGroupBox.ResumeLayout(false);
+			pasteBinFlowPanel.ResumeLayout(false);
+			pasteBinFlowPanel.PerformLayout();
+			bufferedFlowLayoutPanelSkeletonLeft.ResumeLayout(false);
+			bufferedFlowLayoutPanelSkeletonLeft.PerformLayout();
+			bufferedFlowLayoutPanelVaultPath.ResumeLayout(false);
+			bufferedFlowLayoutPanelVaultPath.PerformLayout();
+			bufferedFlowLayoutPanelSkeletonCenter.ResumeLayout(false);
+			bufferedFlowLayoutPanelSkeletonCenter.PerformLayout();
+			ResumeLayout(false);
+			PerformLayout();
 
 		}
 
@@ -1310,44 +1387,50 @@ namespace TQVaultAE.GUI
 		private ScalingLabel baseFontLabel;
 		private ScalingComboBox baseFontComboBox;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanelButtons;
-        private ScalingCheckBox EnableDetailedTooltipViewCheckBox;
+		private ScalingCheckBox EnableDetailedTooltipViewCheckBox;
 		private System.Windows.Forms.TrackBar ItemBGColorOpacityTrackBar;
 		private ScalingLabel ItemBGColorOpacityLabel;
 		private ScalingCheckBox EnableItemRequirementRestrictionCheckBox;
 		private ScalingCheckBox hotReloadCheckBox;
 		private ScalingCheckBox scalingCheckBoxEnableSounds;
-        private ScalingLabel scalingLabelCSVDelim;
-        private ScalingComboBox scalingComboBoxCSVDelim;
+		private ScalingLabel scalingLabelCSVDelim;
+		private ScalingComboBox scalingComboBoxCSVDelim;
 		private ScalingCheckBox scalingCheckBoxEnableEpicLegendaryAffixes;
 		private ScalingCheckBox scalingCheckBoxDisableAutoStacking;
-        private TQVaultAE.GUI.Components.CheckGroupBox checkGroupBoxGitBackup;
-        private ScalingCheckBox scalingCheckBoxDisableLegacyBackup;
-        private ScalingTextBox scalingTextBoxGitRepository;
-        private ScalingLabel scalingLabelGitRepository;
-        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelGitBackup;
-        private System.Windows.Forms.GroupBox groupBoxGeneral;
-        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelGeneralSettings;
-        private TQVaultAE.GUI.Components.CheckGroupBox checkGroupBoxAllowCheats;
-        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelCheats;
-        private System.Windows.Forms.GroupBox groupBoxGfxAndAudio;
-        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelGfxAndAudio;
-        private TQVaultAE.GUI.Components.CheckGroupBox detectLanguageCheckBox;
-        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelLanguage;
-        private TQVaultAE.GUI.Components.CheckGroupBox detectGamePathsCheckBox;
-        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelAutoDetectGamePath;
-        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelTQPath;
-        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelTQITPath;
-        private TQVaultAE.GUI.Components.CheckGroupBox enableCustomMapsCheckBox;
-        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelCustomMap;
-        private BufferedTableLayoutPanel bufferedTableLayoutPanelSkeleton;
-        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelSkeletonRight;
-        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelSkeletonLeft;
-        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelVaultPath;
-        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelSkeletonCenter;
+		private TQVaultAE.GUI.Components.CheckGroupBox checkGroupBoxGitBackup;
+		private ScalingCheckBox scalingCheckBoxDisableLegacyBackup;
+		private ScalingTextBox scalingTextBoxGitRepository;
+		private ScalingLabel scalingLabelGitRepository;
+		private BufferedFlowLayoutPanel bufferedFlowLayoutPanelGitBackup;
+		private System.Windows.Forms.GroupBox groupBoxGeneral;
+		private BufferedFlowLayoutPanel bufferedFlowLayoutPanelGeneralSettings;
+		private TQVaultAE.GUI.Components.CheckGroupBox checkGroupBoxAllowCheats;
+		private BufferedFlowLayoutPanel bufferedFlowLayoutPanelCheats;
+		private System.Windows.Forms.GroupBox groupBoxGfxAndAudio;
+		private BufferedFlowLayoutPanel bufferedFlowLayoutPanelGfxAndAudio;
+		private TQVaultAE.GUI.Components.CheckGroupBox detectLanguageCheckBox;
+		private BufferedFlowLayoutPanel bufferedFlowLayoutPanelLanguage;
+		private TQVaultAE.GUI.Components.CheckGroupBox detectGamePathsCheckBox;
+		private BufferedFlowLayoutPanel bufferedFlowLayoutPanelAutoDetectGamePath;
+		private BufferedFlowLayoutPanel bufferedFlowLayoutPanelTQPath;
+		private BufferedFlowLayoutPanel bufferedFlowLayoutPanelTQITPath;
+		private TQVaultAE.GUI.Components.CheckGroupBox enableCustomMapsCheckBox;
+		private BufferedFlowLayoutPanel bufferedFlowLayoutPanelCustomMap;
+		private BufferedTableLayoutPanel bufferedTableLayoutPanelSkeleton;
+		private BufferedFlowLayoutPanel bufferedFlowLayoutPanelSkeletonRight;
+		private BufferedFlowLayoutPanel bufferedFlowLayoutPanelSkeletonLeft;
+		private BufferedFlowLayoutPanel bufferedFlowLayoutPanelVaultPath;
+		private BufferedFlowLayoutPanel bufferedFlowLayoutPanelSkeletonCenter;
 		private System.Windows.Forms.OpenFileDialog openFileDialog;
-        private ScalingCheckBox scalingCheckBoxBackupPlayerSaves;
-        private CheckGroupBox checkGroupBoxOriginalTQSupport;
-        private BufferedFlowLayoutPanel bufferedFlowLayoutPanelTQOriginalSupport;
-        private System.Windows.Forms.LinkLabel linkLabelTQOriginalSupport;
-    }
+		private ScalingCheckBox scalingCheckBoxBackupPlayerSaves;
+		private CheckGroupBox checkGroupBoxOriginalTQSupport;
+		private BufferedFlowLayoutPanel bufferedFlowLayoutPanelTQOriginalSupport;
+		private System.Windows.Forms.LinkLabel linkLabelTQOriginalSupport;
+		private ScalingLabel pasteBinApiKeyLabel;
+		private ScalingTextBox pasteBinApiKeyTextBox;
+		private ScalingLabel pasteBinExpirationLabel;
+		private ScalingComboBox pasteBinExpirationComboBox;
+		private GroupBox pasteBinGroupBox;
+		private BufferedTableLayoutPanel pasteBinFlowPanel;
+	}
 }

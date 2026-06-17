@@ -128,7 +128,7 @@ public class RecordIdTests
 		var result = RecordId.Create("Records/Items/Sword");
 
 		// Assert - Case normalized to uppercase, slashes to backslashes
-		result.Normalized.Should().Be("RECORDS\\ITEMS\\SWORD");
+		result.Normalized.Should().Be("""RECORDS\ITEMS\SWORD""");
 	}
 
 	[Fact]

@@ -5,8 +5,7 @@
 		<OutputType>WinExe</OutputType>
 		<RootNamespace>TQ.SaveFilesExplorer</RootNamespace>
 		<AssemblyName>TQ.SaveFilesExplorer</AssemblyName>
-		<Version>4.4.0.0</Version>
-		<LangVersion>latest</LangVersion>
+		<Nullable>disable</Nullable>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 		<Platforms>AnyCPU;x64;x86</Platforms>
 		<UseWindowsForms>true</UseWindowsForms>
@@ -16,14 +15,15 @@
 		<AssemblyProduct>Titan Quest Save Files Explorer</AssemblyProduct>
 		<AssemblyCopyright>Copyright © 2019 by hguy</AssemblyCopyright>
 		<ComVisible>false</ComVisible>
+		<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Enums.NET" Version="5.0.0" />
-		<PackageReference Include="NAudio" Version="2.3.0" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.5" />
-		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
-		<PackageReference Include="System.Resources.Extensions" Version="10.0.5" />
+		<PackageReference Include="Enums.NET" />
+		<PackageReference Include="NAudio" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" />
+		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" />
+		<PackageReference Include="System.Resources.Extensions" />
 	</ItemGroup>
 
 	<ItemGroup>
