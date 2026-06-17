@@ -3,15 +3,14 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.Data;
 
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Globalization;
-using System.IO;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
+
+namespace TQVaultAE.Data;
 
 /// <summary>
 /// Class for handling the stash file
@@ -27,7 +26,7 @@ public class StashProvider : IStashProvider
 	/// <summary>
 	/// CRC32 hash table.  Used for calculating the file CRC
 	/// </summary>
-	private uint[] crc32Table =
+	public uint[] crc32Table =
 	{
 		0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
 		0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
@@ -210,22 +209,24 @@ public class StashProvider : IStashProvider
 	/// <returns>raw file data with the updated file name extension</returns>
 	private byte[] EncodeBackupFile(byte[] data)
 	{
+		// Use ReadOnlySpan for bounds-check elimination
+		var dataSpan = data.AsSpan();
 		// Find the length of the filename string.
 		// It's an Int32 starting at offset 52 in the file.
-		int offset = data[52] + (256 * data[53]) + (65536 * data[54]) + (16777216 * data[55]);
+		int offset = dataSpan[52] + (256 * dataSpan[53]) + (65536 * dataSpan[54]) + (16777216 * dataSpan[55]);
 
 		// Adjust for the location of the filename string - 1
 		// which is at offset 56.  Subtract 1 to get the last letter of the filename.
 		offset += 55;
 
 		// look for the 'b' in .dxb
-		if (data[offset] == 98 || data[offset] == 66)
+		if (dataSpan[offset] == 98 || dataSpan[offset] == 66)
 			// and change it to 'g'
-			data[offset] = Convert.ToByte(103, CultureInfo.InvariantCulture);
+			data[offset] = 103;
 
 		// zero out the checksum
 		for (int i = 0; i < 4; i++)
-			data[i] = Convert.ToByte(0, CultureInfo.InvariantCulture);
+			data[i] = 0;
 
 		return data;
 	}
@@ -235,29 +236,31 @@ public class StashProvider : IStashProvider
 	/// </summary>
 	/// <param name="data">raw file data we are calculating</param>
 	/// <returns>raw file data with the crc calculated and inserted into the proper field</returns>
-	private byte[] CalculateCRC(byte[] data)
+	public byte[] CalculateCRC(byte[] data)
 	{
-		using (BinaryReader reader = new BinaryReader(new MemoryStream(data, false)))
+		// Use ReadOnlySpan for bounds-check elimination
+		var dataSpan = data.AsSpan();
+		uint crc32Result = 0;
+		Span<byte> buffer = stackalloc byte[BUFFERSIZE];
+
+		int offset = 0;
+		while (offset < data.Length)
 		{
-			uint crc32Result = 0;
-			byte[] buffer = new byte[BUFFERSIZE];
-			int readSize = BUFFERSIZE;
+			// Copy chunk to stack buffer
+			int readSize = Math.Min(BUFFERSIZE, data.Length - offset);
+			dataSpan.Slice(offset, readSize).CopyTo(buffer);
 
-			int count = reader.Read(buffer, 0, readSize);
-			while (count > 0)
-			{
-				for (int i = 0; i < count; i++)
-					crc32Result = (crc32Result >> 8) ^ crc32Table[buffer[i] ^ (crc32Result & 0x000000FF)];
+			for (int i = 0; i < readSize; i++)
+				crc32Result = (crc32Result >> 8) ^ crc32Table[buffer[i] ^ (crc32Result & 0x000000FF)];
 
-				count = reader.Read(buffer, 0, readSize);
-			}
-
-			// Put the data into the stream
-			data[3] = Convert.ToByte((crc32Result & 0xFF000000) >> 24, CultureInfo.InvariantCulture);
-			data[2] = Convert.ToByte((crc32Result & 0x00FF0000) >> 16, CultureInfo.InvariantCulture);
-			data[1] = Convert.ToByte((crc32Result & 0x0000FF00) >> 8, CultureInfo.InvariantCulture);
-			data[0] = Convert.ToByte(crc32Result & 0x000000FF, CultureInfo.InvariantCulture);
+			offset += readSize;
 		}
+
+		// Put the CRC into the data (4 bytes at start)
+		data[3] = (byte)((crc32Result & 0xFF000000) >> 24);
+		data[2] = (byte)((crc32Result & 0x00FF0000) >> 16);
+		data[1] = (byte)((crc32Result & 0x0000FF00) >> 8);
+		data[0] = (byte)(crc32Result & 0x000000FF);
 
 		return data;
 	}
@@ -306,6 +309,7 @@ public class StashProvider : IStashProvider
 		sta.numberOfSacks = 1;
 		sta.Sack = new SackCollection();
 		sta.Sack.SackType = SackType.Stash;
+		sta.Sack.StashType = null;
 		sta.Sack.IsImmortalThrone = true;
 		SackCollectionProvider.Parse(sta.Sack, reader);
 

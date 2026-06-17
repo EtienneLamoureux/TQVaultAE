@@ -1,14 +1,11 @@
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
-using TQVaultAE.Domain.Results;
 using TQVaultAE.Config;
+using TQVaultAE.Application.Results;
 
 namespace TQVaultAE.Services;
 
@@ -16,7 +13,9 @@ public class PlayerService : IPlayerService
 {
 	private readonly ILogger Log;
 	private readonly SessionContext userContext;
+	private readonly IItemDatabaseService ItemDatabaseService;
 	private readonly IPlayerCollectionProvider PlayerCollectionProvider;
+	private readonly IStashService StashService;
 	private readonly IGameFileService GameFileService;
 	private readonly IGamePathService GamePathResolver;
 	private readonly ITranslationService TranslationService;
@@ -29,8 +28,9 @@ public class PlayerService : IPlayerService
 	public PlayerService(
 		ILogger<PlayerService> log
 		, SessionContext userContext
+		, IItemDatabaseService itemDatabaseService
 		, IPlayerCollectionProvider playerCollectionProvider
-		, IStashProvider stashProvider
+		, IStashService stashService
 		, IGameFileService iGameFileService
 		, IGamePathService gamePathResolver
 		, ITranslationService translationService
@@ -43,7 +43,9 @@ public class PlayerService : IPlayerService
 	{
 		this.Log = log;
 		this.userContext = userContext;
+		this.ItemDatabaseService = itemDatabaseService;
 		this.PlayerCollectionProvider = playerCollectionProvider;
+		this.StashService = stashService;
 		this.GameFileService = iGameFileService;
 		this.GamePathResolver = gamePathResolver;
 		this.TranslationService = translationService;
@@ -54,68 +56,110 @@ public class PlayerService : IPlayerService
 		this.UserSettings = userSettings;
 	}
 
-
 	/// <summary>
-	/// Loads a player using the drop down list.
+	/// Loads a player and their stash.
 	/// </summary>
-	/// <param name="selectedSave">Item from the drop down list.</param>
-	/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
-	/// <returns></returns>
-	public LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool fromFileWatcher = false)
+	/// <param name="selectedSave">Player save information.</param>
+	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
+	/// <returns>Player load result with player, stash, and error information.</returns>
+	public PlayerLoadResult LoadPlayer(PlayerSave selectedSave, bool fromFileWatcher = false)
 	{
-		var result = new LoadPlayerResult();
+		var result = new PlayerLoadResult();
 
-		if (string.IsNullOrWhiteSpace(selectedSave?.Name)) return result;
+		if (string.IsNullOrWhiteSpace(selectedSave?.Name))
+			return result;
 
-		#region Get the player
-
-		var pf = GamePathResolver.GetPlayerFile(selectedSave.Name, selectedSave.IsImmortalThrone, selectedSave.IsArchived);
-
-		var resultPC = new PlayerCollection(selectedSave.Name, pf);
-
-		resultPC.IsImmortalThrone = selectedSave.IsImmortalThrone;
-
-		result.PlayerFile = pf;
-
-		PlayerCollection addFactory(string k)
+		try
 		{
-			try
-			{
-				PlayerCollectionProvider.LoadFile(resultPC);
-				selectedSave.Info = resultPC.PlayerInfo;
-			}
-			catch (ArgumentException argumentException)
-			{
-				resultPC.ArgumentException = argumentException;
-			}
-			return resultPC;
-		}
-		;
+			#region Get the player
 
-		PlayerCollection updateFactory(string k, PlayerCollection oldValue)
+			var pf = GamePathResolver.GetPlayerFile(selectedSave.Name, selectedSave.IsImmortalThrone, selectedSave.IsArchived);
+
+			var resultPC = new PlayerCollection(selectedSave.Name, pf);
+
+			resultPC.IsImmortalThrone = selectedSave.IsImmortalThrone;
+
+			result.PlayerFile = pf;
+
+			PlayerCollection addFactory(string k)
+			{
+				try
+				{
+					PlayerCollectionProvider.LoadFile(resultPC);
+					selectedSave.Info = resultPC.PlayerInfo;
+
+					// Add player items to the search database
+					int sackNumber = -1;
+					foreach (var sack in resultPC)
+					{
+						sackNumber++;
+						if (sack == null)
+							continue;
+
+						foreach (var item in sack)
+							this.ItemDatabaseService.AddItemToDatabase(item, k, selectedSave.Name, sackNumber, SackType.Player);
+					}
+
+					// Add equipment items
+					if (resultPC.EquipmentSack != null)
+					{
+						foreach (var item in resultPC.EquipmentSack)
+							this.ItemDatabaseService.AddItemToDatabase(item, k, selectedSave.Name, 0, SackType.Equipment);
+					}
+				}
+				catch (ArgumentException argumentException)
+				{
+					resultPC.ArgumentException = argumentException;
+				}
+				return resultPC;
+			}
+
+			PlayerCollection updateFactory(string k, PlayerCollection oldValue)
+			{
+				// No check on oldValue
+				return addFactory(k);
+			}
+
+			var resultPlayer = fromFileWatcher
+				? this.userContext.Players.AddOrUpdateAtomic(result.PlayerFile, addFactory, updateFactory)
+				: this.userContext.Players.GetOrAddAtomic(result.PlayerFile, addFactory);
+
+			result.Player = resultPlayer;
+
+			this.TagService.LoadTags(selectedSave);
+
+			#endregion
+
+			// Load stash if not from file watcher
+			if (!fromFileWatcher)
+			{
+				var stashResult = StashService.LoadPlayerStash(selectedSave, fromFileWatcher);
+				result.PlayerStash = stashResult.Stash;
+				result.PlayerStashFile = stashResult.StashFile;
+			}
+		}
+		catch (Exception ex)
 		{
-			// No check on oldValue
-			return addFactory(k);
+			Log.LogError(ex, "Failed to load player {PlayerName}", selectedSave?.Name);
+			result.Error = ex;
 		}
-		;
-
-		var resultPlayer = fromFileWatcher
-			? this.userContext.Players.AddOrUpdateAtomic(result.PlayerFile, addFactory, updateFactory)
-			: this.userContext.Players.GetOrAddAtomic(result.PlayerFile, addFactory);
-
-		result.Player = resultPlayer;
-
-		this.TagService.LoadTags(selectedSave);
-
-		#endregion
 
 		return result;
 	}
 
 	/// <summary>
-	/// Attempts to save all modified player files
+	/// Loads a player stash.
 	/// </summary>
-	/// <param name="playerOnError"></param>
+	/// <param name="playerSave">Player save information.</param>
+	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
+	/// <returns>Stash load result.</returns>
+	public StashLoadResult LoadPlayerStash(PlayerSave playerSave, bool fromFileWatcher = false)
+		=> StashService.LoadPlayerStash(playerSave, fromFileWatcher);
+
+	/// <summary>
+	/// Attempts to save all modified player files.
+	/// </summary>
+	/// <param name="playerOnError">If save fails, this will contain the player that failed.</param>
 	/// <returns>True if there were any modified player files.</returns>
 	/// <exception cref="IOException">can happen during file save</exception>
 	public bool SaveAllModifiedPlayers(ref PlayerCollection playerOnError)
@@ -170,6 +214,13 @@ public class PlayerService : IPlayerService
 			.ToArray();
 	}
 
+	/// <summary>
+	/// Gets a list of all of the character files in the save folder.
+	/// </summary>
+	/// <returns>Read-only list of character files descriptor</returns>
+	public IReadOnlyList<PlayerSave> GetPlayerSaveListReadOnly()
+		=> GetPlayerSaveList();
+
 	public void AlterNameInPlayerFileSave(string newname, string saveFolder)
 	{
 		// Alter name in Player file
@@ -177,5 +228,60 @@ public class PlayerService : IPlayerService
 		var fileContent = this.FileIO.ReadAllBytes(newPlayerFile);
 		this.TQDataService.ReplaceUnicodeValueAfter(ref fileContent, "myPlayerName", newname);
 		this.FileIO.WriteAllBytes(newPlayerFile, fileContent);
+	}
+
+	/// <summary>
+	/// Creates a file watcher for the player file.
+	/// </summary>
+	/// <param name="playerSave">Player save information.</param>
+	/// <param name="onChanged">Action to call when the file changes.</param>
+	/// <returns>A FileSystemWatcher instance or null if the file path is invalid.</returns>
+	public FileSystemWatcher CreatePlayerFileWatcher(PlayerSave playerSave, Action<PlayerSave, bool> onChanged)
+	{
+		var playerFile = GamePathResolver.GetPlayerFile(playerSave.Name, playerSave.IsImmortalThrone, playerSave.IsArchived);
+		var directory = Path.GetDirectoryName(playerFile);
+		var fileName = Path.GetFileName(playerFile);
+
+		if (string.IsNullOrEmpty(directory) || string.IsNullOrEmpty(fileName))
+			return null;
+
+		var watcher = new FileSystemWatcher(directory, fileName)
+		{
+			NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size,
+			EnableRaisingEvents = true
+		};
+
+		watcher.Changed += (sender, e) =>
+		{
+			Log.LogInformation("Player file changed: {FileName}", e.FullPath);
+			onChanged?.Invoke(playerSave, true);
+		};
+
+		return watcher;
+	}
+
+	/// <summary>
+	/// Updates the player file path in the player collection cache after archiving/unarchiving.
+	/// </summary>
+	/// <param name="oldPath">The old file path of the player.</param>
+	/// <param name="newPath">The new file path of the player.</param>
+	public void UpdatePlayerFilePath(string oldPath, string newPath)
+	{
+		if (string.IsNullOrWhiteSpace(oldPath) || string.IsNullOrWhiteSpace(newPath))
+			return;
+
+		if (this.userContext.Players.TryGetValue(oldPath, out var lazyPlayer))
+		{
+			var player = lazyPlayer.Value;
+			if (player is not null)
+			{
+				// Remove from old key
+				this.userContext.Players.TryRemove(oldPath, out _);
+				// Update the player's file path
+				player.PlayerFile = newPath;
+				// Add with new key
+				this.userContext.Players.GetOrAddAtomic(newPath, _ => player);
+			}
+		}
 	}
 }

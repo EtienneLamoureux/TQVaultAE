@@ -26,6 +26,11 @@ namespace ArzExplorer
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
 
         /// <summary>
+        /// Generated Load All Files menu item
+        /// </summary>
+        private System.Windows.Forms.ToolStripMenuItem loadAllFilesToolStripMenuItem;
+
+        /// <summary>
         /// Generated Exit menu item
         /// </summary>
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
@@ -100,6 +105,7 @@ namespace ArzExplorer
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadAllFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.navigationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.previousToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -144,6 +150,7 @@ namespace ArzExplorer
             this.toolStripButtonCaps = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonLoadDataBase = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonLoadAllFiles = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabelSearch = new System.Windows.Forms.ToolStripLabel();
             this.toolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
@@ -188,6 +195,7 @@ namespace ArzExplorer
             this.fileToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
+            this.loadAllFilesToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fileToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -203,6 +211,14 @@ namespace ArzExplorer
             this.openToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItem_Click);
+            // 
+            // loadAllFilesToolStripMenuItem
+            // 
+            this.loadAllFilesToolStripMenuItem.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.loadAllFilesToolStripMenuItem.Name = "loadAllFilesToolStripMenuItem";
+            this.loadAllFilesToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.loadAllFilesToolStripMenuItem.Text = "Load All Files";
+            this.loadAllFilesToolStripMenuItem.Click += new System.EventHandler(this.LoadAllFilesToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
@@ -599,6 +615,7 @@ namespace ArzExplorer
             this.toolStripButtonCaps,
             this.toolStripSeparator5,
             this.toolStripButtonLoadDataBase,
+            this.toolStripButtonLoadAllFiles,
             this.toolStripSeparator2,
             this.toolStripLabelSearch,
             this.toolStripTextBox,
@@ -676,6 +693,16 @@ namespace ArzExplorer
             this.toolStripButtonLoadDataBase.Size = new System.Drawing.Size(23, 20);
             this.toolStripButtonLoadDataBase.Text = "Load Database";
             this.toolStripButtonLoadDataBase.Click += new System.EventHandler(this.toolStripButtonLoadDataBase_Click);
+            // 
+            // toolStripButtonLoadAllFiles
+            // 
+            this.toolStripButtonLoadAllFiles.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonLoadAllFiles.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonLoadDataBase.Image")));
+            this.toolStripButtonLoadAllFiles.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonLoadAllFiles.Name = "toolStripButtonLoadAllFiles";
+            this.toolStripButtonLoadAllFiles.Size = new System.Drawing.Size(23, 20);
+            this.toolStripButtonLoadAllFiles.Text = "Load All Files";
+            this.toolStripButtonLoadAllFiles.Click += new System.EventHandler(this.toolStripButtonLoadAllFiles_Click);
             // 
             // toolStripSeparator2
             // 
@@ -799,6 +826,7 @@ namespace ArzExplorer
         private System.Windows.Forms.ToolStripButton toolStripButtonClearHistory;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton toolStripButtonLoadDataBase;
+        private System.Windows.Forms.ToolStripButton toolStripButtonLoadAllFiles;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 		private System.Windows.Forms.ToolStripMenuItem navigationToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem previousToolStripMenuItem;

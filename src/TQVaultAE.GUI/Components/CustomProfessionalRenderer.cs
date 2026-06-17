@@ -1,7 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
-
-namespace TQVaultAE.GUI.Components;
+﻿namespace TQVaultAE.GUI.Components;
 
 /// <summary>
 /// Class for rendering the context menu strip.

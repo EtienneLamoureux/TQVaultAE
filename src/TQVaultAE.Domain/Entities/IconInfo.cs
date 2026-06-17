@@ -2,7 +2,7 @@
 
 namespace TQVaultAE.Domain.Entities;
 
-public record IconInfo(IconCategory Category, RecordId On, Bitmap OnBitmap, RecordId Off, Bitmap OffBitmap, RecordId Over, Bitmap OverBitmap)
+public record IconInfo(IconCategory Category, RecordId On, Bitmap? OnBitmap, RecordId Off, Bitmap? OffBitmap, RecordId Over, Bitmap? OverBitmap)
 {
 	/// <summary>
 	/// Tell if <see cref="Over"/> is a duplicate of <see cref="On"/> or <see cref="Off"/>
@@ -10,6 +10,11 @@ public record IconInfo(IconCategory Category, RecordId On, Bitmap OnBitmap, Reco
 	public bool IsOverSameAsOthers
 		=> Over == Off || Over == On;
 
+	public Bitmap? FirstDefined
+		=> OnBitmap ?? (OffBitmap ?? OverBitmap);
+
+	public bool IsEmpty
+		=> OnBitmap is null && OffBitmap is null && OverBitmap is null;
 
 	/// <summary>
 	/// Tell if <paramref name="resourceId"/> belong to this record

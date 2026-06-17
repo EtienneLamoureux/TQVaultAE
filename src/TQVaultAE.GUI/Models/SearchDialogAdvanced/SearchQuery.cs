@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using TQVaultAE.Domain.Entities;
+using TQVaultAE.Application.DTOs;
 
 namespace TQVaultAE.GUI.Models.SearchDialogAdvanced;
 

@@ -1,8 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Domain.Entities;
 

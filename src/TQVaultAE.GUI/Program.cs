@@ -4,18 +4,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Globalization;
-using System.IO;
 using System.Reflection;
 using System.Resources;
 using System.Security.Permissions;
 using System.Text.Json;
-using System.Threading;
-using System.Windows.Forms;
 using TQVaultAE.Data;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Exceptions;
 using TQVaultAE.Logs;
@@ -23,6 +17,9 @@ using TQVaultAE.Presentation;
 using TQVaultAE.Services;
 using TQVaultAE.Services.Win32;
 using Microsoft.Extensions.Logging;
+using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;
 using TQVaultAE.GUI.Inputs.Filters;
 using TQVaultAE.GUI.Models.SearchDialogAdvanced;
@@ -54,16 +51,16 @@ public static class Program
 		try
 		{
 			// Add the event handler for handling UI thread exceptions to the event.
-			Application.ThreadException += new ThreadExceptionEventHandler(MainForm_UIThreadException);
+			System.Windows.Forms.Application.ThreadException += new ThreadExceptionEventHandler(MainForm_UIThreadException);
 
 			// Set the unhandled exception mode to force all Windows Forms errors to go through our handler.
-			Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+			System.Windows.Forms.Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 
 			// Add the event handler for handling non-UI thread exceptions to the event.
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
+			System.Windows.Forms.Application.EnableVisualStyles();
+			System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
 
 			// Setup regular Microsoft.Extensions.Logging abstraction manualy
 			LoggerFactory = new LoggerFactory();
@@ -98,21 +95,31 @@ public static class Program
 				.AddTransient<ISackCollectionProvider, SackCollectionProvider>()
 				.AddSingleton<IItemAttributeProvider, ItemAttributeProvider>()
 				.AddTransient<IDBRecordCollectionProvider, DBRecordCollectionProvider>()
-				// Services
-				.AddTransient<IAddFontToOS, AddFontToOSWin>()
-				.AddSingleton<IGamePathService, GamePathServiceWin>()
-				.AddTransient<IPlayerService, PlayerService>()
-				.AddTransient<IStashService, StashService>()
-				.AddTransient<IVaultService, VaultService>()
-				.AddTransient<IFontService, FontService>()
-				.AddTransient<ITranslationService, TranslationService>()
-				.AddSingleton<IUIService, UIService>()
-				.AddSingleton<IIconService, IconService>()
-				.AddSingleton<ITQDataService, TQDataService>()
-				.AddTransient<IBitmapService, BitmapService>()
-				.AddSingleton<ISoundService, SoundServiceWin>()
-				.AddTransient<IGameFileService, GameFileServiceWin>()
-				.AddSingleton<ITagService, TagService>()
+			// Services
+			.AddTransient<IAddFontToOS, AddFontToOSWin>()
+			.AddSingleton<IGamePathService, GamePathServiceWin>()
+			.AddTransient<IPlayerService, PlayerService>()
+			.AddTransient<IStashService, StashService>()
+			.AddTransient<IVaultService, VaultService>()
+			.AddTransient<IFontService, FontService>()
+			.AddTransient<ITranslationService, TranslationService>()
+			.AddSingleton<IUIService, UIService>()
+			.AddSingleton<IIconService, IconService>()
+			.AddSingleton<ITQDataService, TQDataService>()
+			.AddTransient<IBitmapService, BitmapService>()
+			.AddSingleton<ISoundService, SoundServiceWin>()
+			.AddTransient<IGameFileService, GameFileServiceWin>()
+			.AddSingleton<ITagService, TagService>()
+			.AddTransient<IDecompressionService, DeflateDecompressionService>()
+
+			// Application Layer - Core Services
+			.AddSingleton<IItemMovementService, ItemMovementService>()
+			.AddSingleton<IHighlightService, HighlightService>()
+			.AddSingleton<IItemDatabaseService, ItemDatabaseService>()
+
+				// Performance: Memory-Mapped File Services
+				.AddSingleton<IFileDataService, MemoryMappedFileService>()
+
 				// Forms
 				.AddSingleton<MainForm>()
 				.AddTransient<AboutBox>()
@@ -154,12 +161,16 @@ public static class Program
 				}
 			}
 
+			// Initialize the Database AFTER game paths are configured
+			var database = ServiceProvider.GetService<IDatabase>();
+			database.LoadDBFile();
+
 			var mainform = Program.ServiceProvider.GetService<MainForm>();
 			var filterMouseWheel = new FormFilterMouseWheelGlobally(mainform);
 			var filterMouseButtons = new FormFilterMouseButtonGlobally(mainform);
-			Application.AddMessageFilter(filterMouseWheel);
-			Application.AddMessageFilter(filterMouseButtons);
-			Application.Run(mainform);
+			System.Windows.Forms.Application.AddMessageFilter(filterMouseWheel);
+			System.Windows.Forms.Application.AddMessageFilter(filterMouseButtons);
+			System.Windows.Forms.Application.Run(mainform);
 		}
 		catch (Exception ex)
 		{
@@ -337,14 +348,14 @@ public static class Program
 			}
 			finally
 			{
-				Application.Exit();
+				System.Windows.Forms.Application.Exit();
 			}
 		}
 
 		// Exits the program when the user clicks Abort.
 		if (result == DialogResult.Abort)
 		{
-			Application.Exit();
+			System.Windows.Forms.Application.Exit();
 		}
 	}
 
@@ -363,7 +374,7 @@ public static class Program
 		}
 		finally
 		{
-			Application.Exit();
+			System.Windows.Forms.Application.Exit();
 		}
 	}
 }

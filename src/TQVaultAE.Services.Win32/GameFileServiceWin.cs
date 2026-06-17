@@ -1,12 +1,8 @@
 using Microsoft.Extensions.Logging;
-using System.IO;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Presentation;
 using Medallion.Shell;
-using System.Linq;
-using Microsoft.VisualBasic.Devices;
-using Microsoft.VisualBasic.MyServices;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;
 
 namespace TQVaultAE.Services.Win32;
@@ -16,8 +12,6 @@ namespace TQVaultAE.Services.Win32;
 /// </summary>
 public class GameFileServiceWin : GameFileService
 {
-	private readonly FileSystemProxy FS;
-
 	public GameFileServiceWin(
 		ILogger<GameFileServiceWin> log
 		, IGamePathService iGamePathService
@@ -28,7 +22,31 @@ public class GameFileServiceWin : GameFileService
 		, UserSettings userSettings
 	) : base(log, iGamePathService, iUIService, fileIO, pathIO, directoryIO, userSettings)
 	{
-		FS = new Computer().FileSystem;
+	}
+
+	/// <summary>
+	/// Recursively copies a directory and its contents
+	/// </summary>
+	/// <param name="sourceDir">Source directory path</param>
+	/// <param name="destDir">Destination directory path</param>
+	/// <param name="overwrite">Whether to overwrite existing files</param>
+	private void CopyDirectory(string sourceDir, string destDir, bool overwrite)
+	{
+		if (!Directory.Exists(destDir))
+			Directory.CreateDirectory(destDir);
+
+		foreach (var file in Directory.GetFiles(sourceDir))
+		{
+			var destFile = Path.Combine(destDir, Path.GetFileName(file));
+			if (overwrite || !File.Exists(destFile))
+				File.Copy(file, destFile, overwrite);
+		}
+
+		foreach (var subDir in Directory.GetDirectories(sourceDir))
+		{
+			var destSubDir = Path.Combine(destDir, Path.GetFileName(subDir));
+			CopyDirectory(subDir, destSubDir, overwrite);
+		}
 	}
 
 	protected override void CopySaveDataFromRepoToMyGames(string RepoTQPath, string TQPathSaveData, bool overrideFiles)
@@ -67,7 +85,7 @@ public class GameFileServiceWin : GameFileService
 				//			if No - Copy Repo files to My Games ignore if existing file
 				try
 				{
-					FS.CopyDirectory(RepoTQPath, TQPathSaveData, overrideFiles);
+					CopyDirectory(RepoTQPath, TQPathSaveData, overrideFiles);
 				}
 				catch (IOException ioex) when (ioex.Data.Count > 0 && !overrideFiles)
 				{

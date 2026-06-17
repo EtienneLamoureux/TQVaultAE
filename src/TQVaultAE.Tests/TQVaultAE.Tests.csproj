@@ -8,12 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AwesomeAssertions" Version="9.3.0" />
-    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="AwesomeAssertions" Version="9.4.0" />
+    <PackageReference Include="coverlet.collector" Version="8.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Enums.NET" Version="5.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.2" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.5" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="10.0.5" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -22,9 +26,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TQVaultAE.Data\TQVaultAE.Data.csproj" />
     <ProjectReference Include="..\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
     <ProjectReference Include="..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
     <ProjectReference Include="..\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Data\Particles.arc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

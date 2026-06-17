@@ -4,18 +4,14 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Logs;
@@ -25,7 +21,7 @@ namespace TQVaultAE.Data;
 /// <summary>
 /// Reads a Titan Quest database file.
 /// </summary>
-public class Database : IDatabase
+public partial class Database : IDatabase
 {
 
 	private const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
@@ -50,38 +46,38 @@ public class Database : IDatabase
 	/// <summary>
 	/// Dictionary of all database info records
 	/// </summary>
-	private LazyConcurrentDictionary<RecordId, Info> infoDB = new();
+	protected readonly LazyConcurrentDictionary<RecordId, Info> infoDB = new();
 
 	/// <summary>
 	/// Dictionary of all text database entries
 	/// </summary>
-	private ConcurrentDictionary<string, string> textDB = new();
+	protected readonly ConcurrentDictionary<string, string> textDB = new();
 
 	/// <summary>
 	/// Dictionary of all associated arc files in the database.
 	/// </summary>
-	private LazyConcurrentDictionary<string, ArcFile> arcFiles = new();
+	protected readonly LazyConcurrentDictionary<string, ArcFile?> arcFiles = new();
 
 	/// <summary>
 	/// Dictionary of all records dataset loaded from the database.
 	/// </summary>
-	private LazyConcurrentDictionary<RecordId, byte[]> resourcesData = new();
+	protected readonly LazyConcurrentDictionary<RecordId, byte[]?> resourcesData = new();
 
 	/// <summary>
 	/// Dictionary of all record collections loaded from the database.
 	/// </summary>
-	private LazyConcurrentDictionary<RecordId, DBRecordCollection> dbRecordCollections = new();
+	protected readonly LazyConcurrentDictionary<RecordId, DBRecordCollection> dbRecordCollections = new();
 
 	/// <summary>
 	/// Game language to support setting language in UI
 	/// </summary>
-	private string gameLanguage;
+	protected string gameLanguage;
 
-	private readonly IArcFileProvider arcProv;
-	private readonly IArzFileProvider arzProv;
-	private readonly IItemAttributeProvider ItemAttributeProvider;
-	private readonly IGamePathService GamePathResolver;
-	private readonly ITQDataService TQData;
+	protected readonly IArcFileProvider arcProv;
+	protected readonly IArzFileProvider arzProv;
+	protected readonly IItemAttributeProvider ItemAttributeProvider;
+	protected readonly IGamePathService GamePathResolver;
+	protected readonly ITQDataService TQData;
 
 	#endregion Database Fields
 
@@ -113,7 +109,6 @@ public class Database : IDatabase
 		this.FileIO = fileIO;
 		this.DirectoryIO = directoryIO;
 		this.PathIO = pathIO;
-		this.LoadDBFile();
 	}
 
 	#region Database Properties
@@ -278,7 +273,7 @@ public class Database : IDatabase
 	/// <summary>
 	/// Gets the Infor for a specific item id.
 	/// </summary>
-	/// <param name="itemId">Item ID which we are looking up.  Will be normalized internally.</param>
+	/// <param name="itemId">Item ID which we are looking up.  Will be normalized privately.</param>
 	/// <returns>Returns Infor for item ID and NULL if not found.</returns>
 	public Info GetInfo(RecordId itemId)
 	{
@@ -298,7 +293,7 @@ public class Database : IDatabase
 
 	/// <summary>
 	/// Uses the text database to convert the tag to a name in the localized language.
-	/// The tag is normalized to upper case internally.
+	/// The tag is normalized to upper case privately.
 	/// </summary>
 	/// <param name="tagId">Tag to be looked up in the text database normalized to upper case.</param>
 	/// <returns>Returns localized string, empty string if it cannot find a string or "?ErrorName?" in case of uncaught exception.</returns>
@@ -351,7 +346,7 @@ public class Database : IDatabase
 	/// <summary>
 	/// Load our data from the db file.
 	/// </summary>
-	private void LoadDBFile()
+	public void LoadDBFile()
 	{
 		this.LoadTextDB();
 		this.LoadARZFile();
@@ -657,7 +652,7 @@ public class Database : IDatabase
 	/// </summary>
 	/// <param name="resourceId">Resource which we are fetching</param>
 	/// <returns>Retruns a byte array of the resource.</returns>
-	public byte[] LoadResource(RecordId resourceId)
+	public byte[]? LoadResource(RecordId resourceId)
 	{
 		if (RecordId.IsNullOrEmpty(resourceId))
 			return null;
@@ -668,7 +663,7 @@ public class Database : IDatabase
 		if (USettings.DatabaseDebugLevel > 1)
 			Log.LogDebug(" Normalized({0})", resourceId);
 
-		byte[] cachedArcFileData = this.resourcesData.GetOrAddAtomic(resourceId, key =>
+		byte[]? cachedArcFileData = this.resourcesData.GetOrAddAtomic(resourceId, key =>
 		{
 			var resourceIdSplited = key.Normalized.Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);// hguy : easier to understand than substring everywhere
 
@@ -681,7 +676,7 @@ public class Database : IDatabase
 
 			string arcFile; bool isDLC = false;
 			string rootFolder;
-			byte[] arcFileData = null;
+			byte[]? arcFileData = null;
 			string arcFileBase = resourceIdSplited.First();
 
 			if (USettings.DatabaseDebugLevel > 1)
@@ -857,10 +852,10 @@ public class Database : IDatabase
 	/// </summary>
 	/// <param name="arcFileName"></param>
 	/// <returns></returns>
-	public ArcFile ReadARCFile(string arcFileName)
+	public ArcFile? ReadARCFile(string arcFileName)
 	{
 		// See if we have this arcfile already and if not create it.
-		ArcFile arcFile = this.arcFiles.GetOrAddAtomic(arcFileName, k =>
+		ArcFile? arcFile = this.arcFiles.GetOrAddAtomic(arcFileName, k =>
 		{
 			if (!this.FileIO.Exists(k))
 				return null;
@@ -1204,7 +1199,8 @@ public class Database : IDatabase
 		this.ParseTextDB(databaseFile, "text\\tutorial.txt");
 	}
 
-	static Regex ParseTextDBRegEx = new Regex(@"^(?<Tag>\[\w+\])(?<Label>[^\\[]+)|^\[(?<Label>[^\]]+)\]$", RegexOptions.Compiled);
+	[GeneratedRegex(@"^(?<Tag>\[\w+\])(?<Label>[^\\[]+)|^\[(?<Label>[^\]]+)\]$")]
+	private static partial Regex ParseTextDBRegEx();
 	/// <summary>
 	/// Parses the text database to put the entries into a hash table.
 	/// </summary>
@@ -1258,7 +1254,7 @@ public class Database : IDatabase
 				// throw away all the metadata.
 
 				// hguy : one expression to rule them all 
-				if (ParseTextDBRegEx.Match(label) is { Success: true } match)
+				if (ParseTextDBRegEx().Match(label) is { Success: true } match)
 					label = match.Groups["Label"].Value.Trim();
 
 				// If this field is already in the db, then replace it

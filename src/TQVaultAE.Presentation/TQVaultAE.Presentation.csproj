@@ -1,27 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<LangVersion>latest</LangVersion>
 		<Version>4.4.0.0</Version>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 		<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
 	<ItemGroup>
-
 		<PackageReference Include="Enums.NET" Version="5.0.0" />
-
 		<PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.11.1" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.2" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.2" />
-		<PackageReference Include="System.Drawing.Common" Version="10.0.2" />
-		<PackageReference Include="System.Resources.Extensions" Version="10.0.2" />
-		<PackageReference Include="System.Text.Json" Version="10.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.5" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.5" />
+		<PackageReference Include="System.Drawing.Common" Version="10.0.5" />
+		<PackageReference Include="System.Resources.Extensions" Version="10.0.5" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\TQVaultAE.Application\TQVaultAE.Application.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Logs\TQVaultAE.Logs.csproj" />

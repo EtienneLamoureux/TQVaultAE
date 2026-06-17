@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Globalization;
 using System.Reflection;
 using System.Security;
 using System.Text;
-using System.Threading;
 
 namespace TQVaultAE.Logs
 {
@@ -253,7 +250,7 @@ namespace TQVaultAE.Logs
 					this.additionalInfo.Add("TimeStamp", DateTime.UtcNow.ToString(CultureInfo.CurrentCulture));
 					this.additionalInfo.Add("FullName", Assembly.GetExecutingAssembly().FullName);
 					this.additionalInfo.Add("AppDomainName", AppDomain.CurrentDomain.FriendlyName);
-					this.additionalInfo.Add("ThreadIdentity", Thread.CurrentPrincipal.Identity.Name);
+					this.additionalInfo.Add("ThreadIdentity", Thread.CurrentPrincipal?.Identity?.Name);
 				}
 				return this.additionalInfo;
 			}

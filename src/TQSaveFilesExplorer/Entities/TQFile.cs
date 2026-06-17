@@ -158,7 +158,7 @@ namespace TQ.SaveFilesExplorer.Entities
 			.ToList();
 
 			// Try read values
-			records.ForEach(r => r.ReadValue());
+			foreach (var r in records) r.ReadValue();
 
 			#endregion
 

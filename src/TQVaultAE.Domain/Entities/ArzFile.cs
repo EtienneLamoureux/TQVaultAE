@@ -5,11 +5,8 @@
 //-----------------------------------------------------------------------
 namespace TQVaultAE.Domain.Entities;
 
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using TQVaultAE.Domain.Helpers;
 
 /// <summary>
 /// Class for decoding Titan Quest ARZ files.

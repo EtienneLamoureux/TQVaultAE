@@ -1,8 +1,4 @@
-﻿using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-
-namespace TQVaultAE.GUI.Inputs.Filters;
+﻿namespace TQVaultAE.GUI.Inputs.Filters;
 /// <summary>
 /// Capture all mouse button event globally and trigger dedicated events
 /// </summary>

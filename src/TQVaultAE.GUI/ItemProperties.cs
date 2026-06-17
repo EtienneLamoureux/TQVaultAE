@@ -6,10 +6,11 @@
 namespace TQVaultAE.GUI;
 
 using System;
+using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Results;
-using TQVaultAE.GUI.Tooltip;
 using TQVaultAE.Presentation;
 using TQVaultAE.Domain.Helpers;
 
@@ -46,6 +47,18 @@ internal partial class ItemProperties : VaultForm
 		this.labelSuffixProperties.Font = FontService.GetFontLight(11.25F);
 		this.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
+		// Apply font to DataGridViews
+		var gridFont = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+		this.columnBaseItemProperty.DefaultCellStyle.Font = gridFont;
+		this.columnPrefixProperty.DefaultCellStyle.Font = gridFont;
+		this.columnSuffixProperty.DefaultCellStyle.Font = gridFont;
+
+		// Set row height
+		var rowHeight = (int)(gridFont.Height + 6);
+		this.dataGridViewBaseItemProperties.RowTemplate.Height = rowHeight;
+		this.dataGridViewPrefixProperties.RowTemplate.Height = rowHeight;
+		this.dataGridViewSuffixProperties.RowTemplate.Height = rowHeight;
+
 		#endregion
 
 		this.Text = Resources.ItemPropertiesText;
@@ -80,70 +93,94 @@ internal partial class ItemProperties : VaultForm
 		// Base Item Attributes
 		if (this.Data.BaseAttributes.Any())
 		{
-			this.flowLayoutBaseItemProperties.Controls.Clear();
+			this.dataGridViewBaseItemProperties.Rows.Clear();
 
 			if (!this.checkBoxFilterExtraInfo.Checked)
-				this.flowLayoutBaseItemProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService
-					, this.Data.BaseItemId.Normalized
-					, FGColor: ItemStyle.Relic.Color()));
-				
+				this.AddGridRow(this.dataGridViewBaseItemProperties, this.Data.BaseItemId.Normalized, ItemStyle.Relic.Color());
+
 			foreach (var prop in this.Data.BaseAttributes)
-				this.flowLayoutBaseItemProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService, prop));
-				
-			this.flowLayoutBaseItemProperties.Show();
+				this.AddGridRow(this.dataGridViewBaseItemProperties, prop);
+
+			this.dataGridViewBaseItemProperties.Show();
 			this.labelBaseItemProperties.Show();
 		}
 		else
 		{
-			this.flowLayoutBaseItemProperties.Hide();
+			this.dataGridViewBaseItemProperties.Hide();
 			this.labelBaseItemProperties.Hide();
 		}
 
 		// Prefix Attributes
 		if (this.Data.PrefixAttributes.Any())
 		{
-			this.flowLayoutPrefixProperties.Controls.Clear();
-				
+			this.dataGridViewPrefixProperties.Rows.Clear();
+
 			if (!this.checkBoxFilterExtraInfo.Checked)
-				this.flowLayoutPrefixProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService
-					, this.Data.PrefixInfoRecords.Id.Normalized
-					, FGColor: ItemStyle.Relic.Color())
-				);
-				
+				this.AddGridRow(this.dataGridViewPrefixProperties, this.Data.PrefixInfoRecords.Id.Normalized, ItemStyle.Relic.Color());
+
 			foreach (var prop in this.Data.PrefixAttributes)
-				this.flowLayoutPrefixProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService, prop));
-				
-			this.flowLayoutPrefixProperties.Show();
+				this.AddGridRow(this.dataGridViewPrefixProperties, prop);
+
+			this.dataGridViewPrefixProperties.Show();
 			this.labelPrefixProperties.Show();
 		}
 		else
 		{
-			this.flowLayoutPrefixProperties.Hide();
+			this.dataGridViewPrefixProperties.Hide();
 			this.labelPrefixProperties.Hide();
 		}
 
 		// Suffix Attributes
 		if (this.Data.SuffixAttributes.Any())
 		{
-			this.flowLayoutSuffixProperties.Controls.Clear();
-				
+			this.dataGridViewSuffixProperties.Rows.Clear();
+
 			if (!this.checkBoxFilterExtraInfo.Checked)
-				this.flowLayoutSuffixProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService
-					, this.Data.SuffixInfoRecords.Id.Normalized // TODO Prettyfied ?
-					, FGColor: ItemStyle.Relic.Color())
-				);
+				this.AddGridRow(this.dataGridViewSuffixProperties, this.Data.SuffixInfoRecords.Id.Normalized, ItemStyle.Relic.Color());
 
 			foreach (var prop in this.Data.SuffixAttributes)
-				this.flowLayoutSuffixProperties.Controls.Add(BaseTooltip.MakeRow(UIService, this.FontService, prop));
-				
-			this.flowLayoutSuffixProperties.Show();
+				this.AddGridRow(this.dataGridViewSuffixProperties, prop);
+
+			this.dataGridViewSuffixProperties.Show();
 			this.labelSuffixProperties.Show();
 		}
 		else
 		{
-			this.flowLayoutSuffixProperties.Hide();
+			this.dataGridViewSuffixProperties.Hide();
 			this.labelSuffixProperties.Hide();
 		}
+	}
+
+	/// <summary>
+	/// Adds a row to the specified DataGridView with the given property text.
+	/// Handles multi-colored text by extracting the color from tags.
+	/// </summary>
+	/// <param name="gridView">The DataGridView to add the row to.</param>
+	/// <param name="propertyText">The property text, possibly containing color tags.</param>
+	/// <param name="defaultColor">The default foreground color to use if no color tags are present.</param>
+	private void AddGridRow(DataGridView gridView, string propertyText, Color? defaultColor = null)
+	{
+		// Replace TQNewLine with regular newline for multi-line support
+		propertyText = propertyText.Replace(StringHelper.TQNewLineTag, "\n");
+
+		// Extract color from tag if present
+		Color fgColor = defaultColor ?? Color.White;
+		var tqColor = propertyText.GetColorFromTaggedString();
+		if (tqColor.HasValue)
+		{
+			fgColor = tqColor.Value.Color();
+			// Remove the color tag from the text
+			propertyText = propertyText.RemoveLeadingColorTag();
+		}
+
+		// Add row with the text value - the column's DefaultCellStyle provides the base styling
+		int rowIndex = gridView.Rows.Add(propertyText);
+
+		// Apply the foreground color to the cell
+		var cell = gridView.Rows[rowIndex].Cells[0];
+		cell.Style.ForeColor = fgColor;
+		cell.Style.SelectionForeColor = fgColor;
+		cell.Style.SelectionBackColor = Color.FromArgb(60, 45, 30);
 	}
 
 	/// <summary>

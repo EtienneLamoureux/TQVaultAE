@@ -188,7 +188,7 @@
             // 
             // bufferedTableLayoutPanelSkeleton
             // 
-            this.bufferedTableLayoutPanelSkeleton.AutoSize = true;
+            this.bufferedTableLayoutPanelSkeleton.AutoSize = false;
             this.bufferedTableLayoutPanelSkeleton.BackColor = System.Drawing.Color.Transparent;
             this.bufferedTableLayoutPanelSkeleton.ColumnCount = 3;
             this.bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));

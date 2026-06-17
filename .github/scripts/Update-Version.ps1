@@ -39,6 +39,7 @@ Write-Host ""
 
 $csprojFiles = @(
     "$SolutionRoot\src\TQVaultAE.Domain\TQVaultAE.Domain.csproj",
+    "$SolutionRoot\src\TQVaultAE.Application\TQVaultAE.Application.csproj",
     "$SolutionRoot\src\TQVaultAE.Services\TQVaultAE.Services.csproj",
     "$SolutionRoot\src\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj",
     "$SolutionRoot\src\TQVaultAE.Data\TQVaultAE.Data.csproj",
@@ -77,5 +78,5 @@ Write-Host ""
 Write-Host "Version sync complete: $newVersion"
 Write-Host ""
 Write-Host "Files Updated:"
-Write-Host "- 10 SDK-style csproj files (4 EXE + 6 DLL projects)"
+Write-Host "- 11 SDK-style csproj files (3 EXE + 8 DLL projects)"
 Write-Host "- All projects now use SDK-style format with auto-generated assembly info"

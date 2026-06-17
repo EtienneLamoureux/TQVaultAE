@@ -4,13 +4,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using EnumsNET;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
-using System.IO;
-using System.Linq;
 using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.Domain.Entities;
@@ -280,11 +275,10 @@ public class Item
 	/// </summary>
 	public int Bottom => this.Location.Y + this.Height;
 
-
 	/// <summary>
-	/// Gets or sets the item container type
+	/// Gets or sets the container location information for this item
 	/// </summary>
-	public SackType ContainerType { get; set; }
+	public ContainerPlace Place { get; set; } = new();
 
 	/// <summary>
 	/// Gets a value indicating whether the item is in an equipment weapon slot.
@@ -295,7 +289,7 @@ public class Item
 	/// Gets a value indicating whether or not the item comes from Immortal Throne expansion pack.
 	/// </summary>
 	public bool IsImmortalThrone
-		=> (this.BaseItemId.Dlc == GameDlc.ImmortalThrone
+		=> (this.BaseItemId?.Dlc == GameDlc.ImmortalThrone
 		|| (this.prefixID?.Dlc.Equals(GameDlc.ImmortalThrone) ?? false)
 		|| (this.suffixID?.Dlc.Equals(GameDlc.ImmortalThrone) ?? false)
 		) && !IsRagnarok && !IsAtlantis && !IsEmbers;
@@ -304,7 +298,7 @@ public class Item
 	/// Gets a value indicating whether or not the item comes from Ragnarok DLC.
 	/// </summary>
 	public bool IsRagnarok
-		=> (this.BaseItemId.Dlc == GameDlc.Ragnarok
+		=> (this.BaseItemId?.Dlc == GameDlc.Ragnarok
 		|| (this.prefixID?.Dlc.Equals(GameDlc.Ragnarok) ?? false)
 		|| (this.suffixID?.Dlc.Equals(GameDlc.Ragnarok) ?? false)
 		) && !IsAtlantis && !IsEmbers;
@@ -313,7 +307,7 @@ public class Item
 	/// Gets a value indicating whether or not the item comes from Atlantis DLC.
 	/// </summary>
 	public bool IsAtlantis
-		=> (this.BaseItemId.Dlc == GameDlc.Atlantis
+		=> (this.BaseItemId?.Dlc == GameDlc.Atlantis
 		|| (this.prefixID?.Dlc.Equals(GameDlc.Atlantis) ?? false)
 		|| (this.suffixID?.Dlc.Equals(GameDlc.Atlantis) ?? false)
 		) && !IsEmbers;
@@ -322,7 +316,7 @@ public class Item
 	/// Gets a value indicating whether or not the item comes from Eternal Embers DLC.
 	/// </summary>
 	public bool IsEmbers
-		=> this.BaseItemId.Dlc == GameDlc.EternalEmbers
+		=> this.BaseItemId?.Dlc == GameDlc.EternalEmbers
 		|| (this.prefixID?.Dlc.Equals(GameDlc.EternalEmbers) ?? false)
 		|| (this.suffixID?.Dlc.Equals(GameDlc.EternalEmbers) ?? false);
 
@@ -336,10 +330,10 @@ public class Item
 		{
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_SCROLL, noCase);
-			else if (
-				(this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
-				&& this.BaseItemId.IsScroll
-			) return true;
+			else if (this.BaseItemId is not null
+				&& (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
+				&& this.BaseItemId.IsScroll)
+				return true;
 
 			return false;
 		}
@@ -352,7 +346,8 @@ public class Item
 	{
 		get
 		{
-			if ((this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
+			if (this.BaseItemId is not null
+				&& (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
 				&& this.BaseItemId.IsParchment)
 				return true;
 
@@ -369,10 +364,10 @@ public class Item
 		{
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_FORMULA, noCase);
-			else if (
-				(this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
-				&& this.BaseItemId.IsFormulae
-			) return true;
+			else if (this.BaseItemId is not null
+				&& (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
+				&& this.BaseItemId.IsFormulae)
+				return true;
 
 			return false;
 		}
@@ -387,10 +382,10 @@ public class Item
 		{
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_ARTIFACT, noCase);
-			else if (
-				(this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
-				&& this.BaseItemId.IsArtifact
-			) return true;
+			else if (this.BaseItemId is not null
+				&& (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
+				&& this.BaseItemId.IsArtifact)
+				return true;
 
 			return false;
 		}
@@ -498,7 +493,7 @@ public class Item
 					|| this.baseItemInfo.ItemClass.Equals(ICLASS_QUESTITEM, noCase))
 					return true;
 			}
-			else if (this.BaseItemId.IsQuestItem)
+			else if (this.BaseItemId is not null && this.BaseItemId.IsQuestItem)
 				return true;
 
 			return false;
@@ -701,7 +696,7 @@ public class Item
 					|| this.baseItemInfo.ItemClass.Equals(ICLASS_POTIONMANA, noCase)
 					|| this.baseItemInfo.ItemClass.Equals(ICLASS_SCROLL_ETERNAL, noCase); //AMS: New EE Potions (Mystical Potions)
 
-			return this.BaseItemId.IsPotion;
+			return this.BaseItemId is not null && this.BaseItemId.IsPotion;
 		}
 	}
 
@@ -715,7 +710,7 @@ public class Item
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_CHARM, noCase);
 
-			return this.BaseItemId.IsCharm;
+			return this.BaseItemId is not null && this.BaseItemId.IsCharm;
 		}
 	}
 
@@ -729,7 +724,7 @@ public class Item
 			if (this.baseItemInfo != null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_RELIC, noCase);
 
-			return this.BaseItemId.IsRelic;
+			return this.BaseItemId is not null && this.BaseItemId.IsRelic;
 		}
 	}
 
@@ -772,7 +767,7 @@ public class Item
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_RELIC, noCase)
 					|| this.baseItemInfo.ItemClass.Equals(ICLASS_CHARM, noCase);
 
-			return this.BaseItemId.IsRelic || this.BaseItemId.IsCharm;
+			return this.BaseItemId is not null && (this.BaseItemId.IsRelic || this.BaseItemId.IsCharm);
 		}
 	}
 
@@ -1106,7 +1101,8 @@ public class Item
 			.Where(m => m.RecordId == relicBaseItemId)
 			.FirstOrDefault();
 
-		if (map.Value == RelicAndCharm.Unknown) return false;
+		// No match found or Unknown relic - return false
+		if (map is null || map.Value == RelicAndCharm.Unknown) return false;
 
 		// Found
 		types = map.Types;

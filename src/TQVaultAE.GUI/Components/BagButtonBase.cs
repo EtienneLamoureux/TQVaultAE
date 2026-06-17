@@ -4,14 +4,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Drawing;
-using System.Windows.Forms;
 using TQVaultAE.GUI.Tooltip;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
-using TQVaultAE.GUI.Helpers;
-using System.Linq;
+using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;
 
 namespace TQVaultAE.GUI.Components;
@@ -32,6 +28,7 @@ public class BagButtonBase : Panel
 	protected readonly IFontService FontService;
 	protected readonly IUIService UIService;
 	protected readonly IBitmapService BitmapService;
+	protected readonly IHighlightService HighlightService;
 	private readonly SessionContext userContext;
 	private readonly UserSettings USettings;
 	internal SackCollection Sack;
@@ -137,11 +134,12 @@ public class BagButtonBase : Panel
 		this.userContext = this.ServiceProvider.GetService<SessionContext>();
 		this.USettings = this.ServiceProvider.GetService<UserSettings>();
 		this.BitmapService = this.ServiceProvider.GetService<IBitmapService>();
+		this.HighlightService = this.ServiceProvider.GetService<IHighlightService>();
 
 		this.getToolTip = getToolTip;
 		this.ButtonNumber = bagNumber;
 
-		this.HighlightSearchItemBorder = new Pen(this.userContext.HighlightSearchItemBorderColor)
+		this.HighlightSearchItemBorder = new Pen(this.HighlightService.HighlightSearchItemBorderColor)
 		{
 			Width = 4,
 		};
@@ -245,10 +243,10 @@ public class BagButtonBase : Panel
 			{
 				switch (this.ButtonNumber)
 				{
-					case StashPanel.BAGID_EQUIPMENTPANEL when !this.USettings.DisableTooltipEquipment:
-					case StashPanel.BAGID_PLAYERSTASH when !this.USettings.DisableTooltipStash:
-					case StashPanel.BAGID_RELICVAULTSTASH when !this.USettings.DisableTooltipRelic:
-					case StashPanel.BAGID_TRANSFERSTASH when !this.USettings.DisableTooltipTransfer:
+					case BagIdConstants.BAGID_EQUIPMENTPANEL when !this.USettings.DisableTooltipEquipment:
+					case BagIdConstants.BAGID_PLAYERSTASH when !this.USettings.DisableTooltipStash:
+					case BagIdConstants.BAGID_RELICVAULTSTASH when !this.USettings.DisableTooltipRelic:
+					case BagIdConstants.BAGID_TRANSFERSTASH when !this.USettings.DisableTooltipTransfer:
 						BagButtonTooltip.ShowTooltip(this.ServiceProvider, this);
 						break;
 				}
@@ -288,7 +286,7 @@ public class BagButtonBase : Panel
 	protected virtual void PaintHighlightAreaUnderButton(PaintEventArgs e)
 	{
 		// Highlight search
-		using (SolidBrush brush = new SolidBrush(Color.FromArgb(127, this.userContext.HighlightSearchItemColor)))
+		using (SolidBrush brush = new SolidBrush(Color.FromArgb(127, this.HighlightService.HighlightSearchItemColor)))
 		{
 			e.Graphics.FillRectangle(brush, 0, 0, this.Width, this.Height);
 		}
@@ -321,8 +319,8 @@ public class BagButtonBase : Panel
 		bool highlight = false;
 		if (this is not AutoSortButton && this.Sack is not null)
 		{
-			highlight = this.userContext.HighlightedItems.Count > 0
-			            && this.userContext.HighlightedItems.Intersect(this.Sack.ToList()).Any();
+			highlight = this.HighlightService.HighlightedItems.Count > 0
+			            && this.HighlightService.HighlightedItems.Intersect(this.Sack.ToList()).Any();
 		}
 
 		if (highlight) PaintHighlightAreaUnderButton(e);

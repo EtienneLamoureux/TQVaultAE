@@ -1,17 +1,13 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Exceptions;
-using TQVaultAE.Domain.Results;
 using TQVaultAE.Presentation;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using System.Reflection;
+using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
 
 namespace TQVaultAE.Services.Win32;

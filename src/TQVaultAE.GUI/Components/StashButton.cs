@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using TQVaultAE.Presentation;
-using System;
 
 namespace TQVaultAE.GUI.Components;
 

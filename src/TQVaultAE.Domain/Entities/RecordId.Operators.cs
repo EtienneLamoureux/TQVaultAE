@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TQVaultAE.Domain.Entities;
+﻿namespace TQVaultAE.Domain.Entities;
 
 public partial class RecordId
 {

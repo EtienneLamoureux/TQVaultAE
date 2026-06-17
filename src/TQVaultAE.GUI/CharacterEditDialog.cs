@@ -1,3 +1,6 @@
+using TQVaultAE.Application;
+using TQVaultAE.Domain.Helpers;
+
 namespace TQVaultAE.GUI;
 
 using System;
@@ -6,10 +9,7 @@ using TQVaultAE.Domain.Entities;
 using TQVaultAE.Presentation;
 using TQVaultAE.Logs;
 using System.Linq;
-using TQVaultAE.Domain.Contracts.Services;
-using TQVaultAE.Domain.Helpers;
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Config;
 
 /// <summary>
 /// Dialog box class for the Item Seed Dialog

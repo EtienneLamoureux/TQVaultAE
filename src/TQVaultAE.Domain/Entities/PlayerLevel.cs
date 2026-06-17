@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace TQVaultAE.Domain.Entities;
+﻿namespace TQVaultAE.Domain.Entities;
 
 public class PlayerLevel
 {

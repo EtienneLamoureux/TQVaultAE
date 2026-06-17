@@ -125,6 +125,8 @@ public class Variable
 		return false;
 	}
 
+	private string? _toString = null;
+
 	/// <summary>
 	/// Converts the variable to a string.
 	/// Format is name,val1;val2;val3;val4;...;valn,
@@ -132,12 +134,15 @@ public class Variable
 	/// <returns>Returns converted string for the values including the variable name.</returns>
 	public override string ToString()
 	{
+		if (_toString is not null)
+			return _toString;
+
 		// First set our val format string based on the data type
 		string formatSpec = "{0}";
 		if (this.DataType == VariableDataType.Float)
 			formatSpec = "{0:f6}";
 
-		StringBuilder ans = new StringBuilder(64);
+		StringBuilder ans = new(64);
 		ans.Append(this.Name);
 		ans.Append(",");
 
@@ -150,7 +155,10 @@ public class Variable
 		}
 
 		ans.Append(",");
-		return ans.ToString();
+
+		_toString = ans.ToString();
+
+		return _toString;
 	}
 
 	/// <summary>

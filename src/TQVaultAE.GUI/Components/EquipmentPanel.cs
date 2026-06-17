@@ -5,9 +5,6 @@
 //-----------------------------------------------------------------------
 
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Drawing;
-using System.Windows.Forms;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Logs;
 using TQVaultAE.Domain.Entities;
@@ -67,7 +64,7 @@ public class EquipmentPanel : SackPanel, IScalingControl
 		base.CancelDrag(dragInfo);
 
 		// Check to see if we need to restore the shadow slot.
-		if (this.Sack == dragInfo.Sack && dragInfo.Item.Is2HWeapon)
+		if (this.Sack == dragInfo.SrcSack && dragInfo.Item.Is2HWeapon)
 		{
 			try
 			{
@@ -466,6 +463,12 @@ public class EquipmentPanel : SackPanel, IScalingControl
 					// so we always remove and insert.
 					this.Sack.RemoveAtItem(slot);
 					this.Sack.InsertItem(slot, dragItem);
+
+					// Update item location properties to reflect new position
+					this.UpdateItemLocation(dragItem);
+
+				// Register new items in the database (existing items are already tracked)
+				this.ItemDatabaseService.TryAddItemToDatabase(dragItem);
 				}
 			}
 
@@ -757,10 +760,10 @@ public class EquipmentPanel : SackPanel, IScalingControl
 
 			var highlight = false;
 			// Highlight search
-			if (this.userContext.HighlightedItems.Count > 0 && this.userContext.HighlightedItems.Contains(item))
+			if (this.HighlightService.HighlightedItems.Count > 0 && this.HighlightService.HighlightedItems.Contains(item))
 			{
 				highlight = true;
-				backgroundColor = this.userContext.HighlightSearchItemColor;
+				backgroundColor = this.HighlightService.HighlightSearchItemColor;
 				alpha = AdjustAlpha(alpha);
 			}
 			// If we are showing the cannot equip background then 

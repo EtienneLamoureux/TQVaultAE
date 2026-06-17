@@ -3,8 +3,8 @@
   // Should only be modified by the owner of the upstream repository.
   // Fork maintainers should not modify this file unless you intend to create
   // independent releases on your fork.
-  "Major": 4,
-  "Minor": 4,
+  "Major": 5,
+  "Minor": 0,
   "Build": 0,
   "Revision": 0
 }

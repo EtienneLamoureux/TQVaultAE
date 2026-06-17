@@ -1,19 +1,9 @@
-using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Application.Contracts.Services;
 
 namespace TQVaultAE.Services;
 
 public class PathIO : IPathIO
 {
-	public virtual string Combine(string path1, string path2)
-	{
-		return System.IO.Path.Combine(path1, path2);
-	}
-
-	public virtual string Combine(string path1, string path2, string path3)
-	{
-		return System.IO.Path.Combine(path1, path2, path3);
-	}
-
 	public virtual string Combine(params string[] paths)
 	{
 		return System.IO.Path.Combine(paths);

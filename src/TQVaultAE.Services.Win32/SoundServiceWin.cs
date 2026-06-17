@@ -1,12 +1,8 @@
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Domain.Contracts.Services;
-using TQVaultAE.Domain.Contracts.Providers;
-using System.Linq;
 using System.Media;
-using System.IO;
-using System;
-using System.Collections.Generic;
 using NAudio.Wave;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Config;

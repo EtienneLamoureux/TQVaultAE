@@ -1,12 +1,24 @@
-﻿using System;
-using System.Linq;
+﻿using System.Buffers.Binary;
 using System.Text;
 
 namespace TQVaultAE.Domain.Entities;
 
 public class SkillRecord
 {
-	internal static readonly Encoding Encoding1252 = Encoding.GetEncoding(1252);
+	/// <summary>
+	/// Lazy-initialized CP1252 encoding for Titan Quest file parsing.
+	/// Encoding.RegisterProvider is idempotent - safe to call multiple times.
+	/// </summary>
+	private static readonly Lazy<Encoding> _encoding1252 = new(static () =>
+	{
+		Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+		return Encoding.GetEncoding(1252);
+	});
+
+	/// <summary>
+	/// Gets the CP1252 (Windows-1252) encoding used for TQ file parsing.
+	/// </summary>
+	internal static Encoding Encoding1252 => _encoding1252.Value;
 
 	public string skillName { get; set; }
 	public int skillLevel { get; set; }
@@ -21,43 +33,88 @@ public class SkillRecord
 	/// <returns></returns>
 	public byte[] ToBinary(int beginBlockValue, int endBlockValue)
 	{
-		var array = new[] {
+		// Calculate lengths (character counts, NOT byte counts - the old implementation uses character length)
+		int skillNameLen = skillName.Length;
+		int beginBlockLen = "begin_block".Length;
+		int endBlockLen = "end_block".Length;
+		int skillNameKeyLen = nameof(skillName).Length;
+		int skillLevelKeyLen = nameof(skillLevel).Length;
+		int skillEnabledKeyLen = nameof(skillEnabled).Length;
+		int skillSubLevelKeyLen = nameof(skillSubLevel).Length;
+		int skillActiveKeyLen = nameof(skillActive).Length;
+		int skillTransitionKeyLen = nameof(skillTransition).Length;
 
-			BitConverter.GetBytes("begin_block".Length),
-			Encoding1252.GetBytes("begin_block"),
-			BitConverter.GetBytes(beginBlockValue),
+		// Each field: int(length) + string bytes + int(value for non-string fields)
+		// For string fields: int(keyLen) + key bytes + int(valueLen) + value bytes
+		// For int fields: int(keyLen) + key bytes + int(value)
+		int totalSize =
+			sizeof(int) + beginBlockLen + sizeof(int) +
+			sizeof(int) + skillNameKeyLen + sizeof(int) + skillNameLen +
+			sizeof(int) + skillLevelKeyLen + sizeof(int) +
+			sizeof(int) + skillEnabledKeyLen + sizeof(int) +
+			sizeof(int) + skillSubLevelKeyLen + sizeof(int) +
+			sizeof(int) + skillActiveKeyLen + sizeof(int) +
+			sizeof(int) + skillTransitionKeyLen + sizeof(int) +
+			sizeof(int) + endBlockLen + sizeof(int);
 
-			BitConverter.GetBytes(nameof(skillName).Length),
-			Encoding1252.GetBytes(nameof(skillName)),
-			BitConverter.GetBytes(skillName.Length),
-			Encoding1252.GetBytes(skillName),
+		var result = new byte[totalSize];
+		var span = result.AsSpan();
+		int offset = 0;
 
-			BitConverter.GetBytes(nameof(skillLevel).Length),
-			Encoding1252.GetBytes(nameof(skillLevel)),
-			BitConverter.GetBytes(skillLevel),
+		// begin_block
+		WriteInt32(ref span, ref offset, "begin_block".Length);
+		WriteString(ref span, ref offset, "begin_block");
+		WriteInt32(ref span, ref offset, beginBlockValue);
 
-			BitConverter.GetBytes(nameof(skillEnabled).Length),
-			Encoding1252.GetBytes(nameof(skillEnabled)),
-			BitConverter.GetBytes(skillEnabled),
+		// skillName
+		WriteInt32(ref span, ref offset, nameof(skillName).Length);
+		WriteString(ref span, ref offset, nameof(skillName));
+		WriteInt32(ref span, ref offset, skillName.Length);
+		WriteString(ref span, ref offset, skillName);
 
-			BitConverter.GetBytes(nameof(skillSubLevel).Length),
-			Encoding1252.GetBytes(nameof(skillSubLevel)),
-			BitConverter.GetBytes(skillSubLevel),
+		// skillLevel
+		WriteInt32(ref span, ref offset, nameof(skillLevel).Length);
+		WriteString(ref span, ref offset, nameof(skillLevel));
+		WriteInt32(ref span, ref offset, skillLevel);
 
-			BitConverter.GetBytes(nameof(skillActive).Length),
-			Encoding1252.GetBytes(nameof(skillActive)),
-			BitConverter.GetBytes(skillActive),
+		// skillEnabled
+		WriteInt32(ref span, ref offset, nameof(skillEnabled).Length);
+		WriteString(ref span, ref offset, nameof(skillEnabled));
+		WriteInt32(ref span, ref offset, skillEnabled);
 
-			BitConverter.GetBytes(nameof(skillTransition).Length),
-			Encoding1252.GetBytes(nameof(skillTransition)),
-			BitConverter.GetBytes(skillTransition),
+		// skillSubLevel
+		WriteInt32(ref span, ref offset, nameof(skillSubLevel).Length);
+		WriteString(ref span, ref offset, nameof(skillSubLevel));
+		WriteInt32(ref span, ref offset, skillSubLevel);
 
-			BitConverter.GetBytes("end_block".Length),
-			Encoding1252.GetBytes("end_block"),
-			BitConverter.GetBytes(endBlockValue),
+		// skillActive
+		WriteInt32(ref span, ref offset, nameof(skillActive).Length);
+		WriteString(ref span, ref offset, nameof(skillActive));
+		WriteInt32(ref span, ref offset, skillActive);
 
-		}.SelectMany(arr => arr).ToArray();
+		// skillTransition
+		WriteInt32(ref span, ref offset, nameof(skillTransition).Length);
+		WriteString(ref span, ref offset, nameof(skillTransition));
+		WriteInt32(ref span, ref offset, skillTransition);
 
-		return array;
+		// end_block
+		WriteInt32(ref span, ref offset, "end_block".Length);
+		WriteString(ref span, ref offset, "end_block");
+		WriteInt32(ref span, ref offset, endBlockValue);
+
+		return result;
+	}
+
+	private static void WriteInt32(ref Span<byte> span, ref int offset, int value)
+	{
+		BinaryPrimitives.WriteInt32LittleEndian(span.Slice(offset), value);
+		offset += sizeof(int);
+	}
+
+	private static void WriteString(ref Span<byte> span, ref int offset, string value)
+	{
+		var bytes = Encoding1252.GetBytes(value);
+		bytes.AsSpan().CopyTo(span.Slice(offset));
+		offset += bytes.Length;
 	}
 }

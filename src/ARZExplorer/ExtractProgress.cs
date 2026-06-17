@@ -3,6 +3,9 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+
+using TQVaultAE.Application.Contracts.Providers;
+
 namespace ArzExplorer;
 
 using ArzExplorer.Properties;
@@ -10,7 +13,6 @@ using System;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
-using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Entities;
 
 /// <summary>

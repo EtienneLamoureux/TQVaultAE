@@ -1,25 +1,22 @@
-using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.VisualBasic.Devices;
 using Medallion.Shell;
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Presentation;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Helpers;
 using System.ComponentModel;
+using System.IO.Compression;
 using Medallion.Shell.Streams;
-using System.Threading.Tasks;
-using TQVaultAE.Domain.Entities;
+using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Services;
 
 namespace TQVaultAE.Services;
 
 /// <summary>
 /// IGameFileService implementation
 /// </summary>
-public class GameFileService : IGameFileService
+public partial class GameFileService : IGameFileService
 {
 	protected readonly ILogger Log;
 	protected readonly IGamePathService GamePathService;
@@ -176,7 +173,7 @@ public class GameFileService : IGameFileService
 		if (e.ListChangedType == ListChangedType.ItemAdded)
 		{
 			var line = lst[e.NewIndex];
-			if (line is not null && PercentProgressRegEx.Match(line) is { Success: true } m)
+			if (line is not null && PercentProgressRegEx().Match(line) is { Success: true } m)
 			{
 				var num = m.Groups["Num"].Value;
 				Debug.WriteLine("Num : " + num);
@@ -200,7 +197,7 @@ public class GameFileService : IGameFileService
 			Writing objects: 100% (2172/2172), 38.08 MiB | 2.23 MiB/s, done.
 			remote: Resolving deltas: 100% (1886/1886), done.
 			*/
-			if (line is not null && PercentProgressRegEx.Match(line) is { Success: true } m)
+			if (line is not null && PercentProgressRegEx().Match(line) is { Success: true } m)
 			{
 				var percent = int.Parse(m.Groups["Num"].Value);
 				//UIService.ProgressBarReport("Git Push", percent);
@@ -208,7 +205,8 @@ public class GameFileService : IGameFileService
 		}
 	}
 
-	static Regex PercentProgressRegEx = new Regex(@"(?<Num>\d{1,3})%", RegexOptions.Compiled);
+	[GeneratedRegex(@"(?<Num>\d{1,3})%")]
+	private static partial Regex PercentProgressRegEx();
 
 	#endregion
 
@@ -254,7 +252,7 @@ public class GameFileService : IGameFileService
 					// new remote vault files will be deployed, localy updated will be overrided if needed, else leave in place
 					CopyVaultFilesFromRepoToVaultData(overrideFiles);
 
-	if (this.UserSettings.GitBackupPlayerSavesEnabled)
+					if (this.UserSettings.GitBackupPlayerSavesEnabled)
 					{
 						//		Do you want to replace your local TQ character save with git repository version ? Are you sure ?
 						if (RepoTQPathExists || RepoTQITPathExists)
@@ -381,7 +379,7 @@ public class GameFileService : IGameFileService
 
 	public bool GitPull()
 	{
-		if (!GamePathService.LocalGitRepositoryGitDirExist) 
+		if (!GamePathService.LocalGitRepositoryGitDirExist)
 			return false;
 
 		var repoUrl = this.UserSettings.GitBackupRepository;
@@ -507,25 +505,47 @@ public class GameFileService : IGameFileService
 		if (this.FileIO.Exists(stashFileG)) this.FileIO.Copy(stashFileG, this.PathIO.Combine(newFolder, GamePathService.PlayerStashFileNameG));
 		if (this.FileIO.Exists(settingsFile)) this.FileIO.Copy(settingsFile, this.PathIO.Combine(newFolder, GamePathService.PlayerSettingsFileName));
 
-		// Copy Progression
-		// Easyest way of doing that (why VB has all the easy stuff?)
-		new Computer().FileSystem.CopyDirectory(
-			this.PathIO.Combine(playerSaveDirectory, "Levels_World_World01.map")
-			, this.PathIO.Combine(newFolder, "Levels_World_World01.map")
-		);
+		// Copy Progression directory
+		var sourceProgressionDir = this.PathIO.Combine(playerSaveDirectory, "Levels_World_World01.map");
+		var destProgressionDir = this.PathIO.Combine(newFolder, "Levels_World_World01.map");
+		if (DirectoryIO.Exists(sourceProgressionDir))
+		{
+			CopyDirectoryRecursive(sourceProgressionDir, destProgressionDir);
+		}
 
 		return newFolder;
+	}
+
+	private void CopyDirectoryRecursive(string sourceDir, string destDir)
+	{
+		if (!DirectoryIO.Exists(destDir))
+			DirectoryIO.CreateDirectory(destDir);
+
+		foreach (var file in DirectoryIO.GetFiles(sourceDir))
+		{
+			var destFile = this.PathIO.Combine(destDir, this.PathIO.GetFileName(file));
+			this.FileIO.Copy(file, destFile, true);
+		}
+
+		foreach (var subDir in DirectoryIO.GetDirectories(sourceDir))
+		{
+			var destSubDir = this.PathIO.Combine(destDir, this.PathIO.GetFileName(subDir));
+			CopyDirectoryRecursive(subDir, destSubDir);
+		}
 	}
 
 	public void BackupStupidPlayerBackupFolder(string playerFile)
 	{
 		string playerFolder = this.PathIO.GetDirectoryName(playerFile);
 		string backupFolder = this.PathIO.Combine(playerFolder, "Backup");
-		if (DirectoryIO.Exists(backupFolder))
+		string newFolder = this.PathIO.Combine(playerFolder, "Backup-moved by TQVault");
+		var existsbackupFolder = DirectoryIO.Exists(backupFolder);
+		var existsnewFolder = DirectoryIO.Exists(newFolder);
+
+		if (existsbackupFolder)
 		{
 			// we need to move it.
-			string newFolder = this.PathIO.Combine(playerFolder, "Backup-moved by TQVault");
-			if (DirectoryIO.Exists(newFolder))
+			if (existsnewFolder)
 			{
 				try
 				{
@@ -535,15 +555,51 @@ public class GameFileService : IGameFileService
 				catch (Exception)
 				{
 					int fn = 1;
-					while (DirectoryIO.Exists(String.Format("{0}({1})", newFolder, fn)))
+					while (DirectoryIO.Exists(string.Format("{0}({1})", newFolder, fn)))
 					{
 						fn++;
 					}
-					newFolder = String.Format("{0}({1})", newFolder, fn);
+					newFolder = string.Format("{0}({1})", newFolder, fn);
 				}
 			}
 
 			DirectoryIO.Move(backupFolder, newFolder);
+		}
+
+		// Change TQVault moved backup to zip to avoid game reading it's content : https://github.com/EtienneLamoureux/TQVaultAE/issues/535
+		existsnewFolder = DirectoryIO.Exists(newFolder);
+		if (existsnewFolder)
+		{
+			var zipFile = $"{newFolder}.zip";
+			var zipAlreadyExists= FileIO.Exists(zipFile);
+
+			// Delete old zip file
+			if (zipAlreadyExists)
+			{
+				try
+				{
+					FileIO.Delete(zipFile);
+					zipAlreadyExists = false;
+				}
+				catch (Exception e)
+				{
+					this.Log.LogWarning(e, "Unable to delete {zipFile}", zipFile);
+				}
+			}
+			
+			// Create new one
+			if (!zipAlreadyExists)
+			{
+				try
+				{
+					ZipFile.CreateFromDirectory(newFolder, zipFile, CompressionLevel.Fastest, false);
+					DirectoryIO.Delete(newFolder, true);
+				}
+				catch (Exception e)
+				{
+					this.Log.LogWarning(e, "Unable to zip new {zipFile}", zipFile);
+				}
+			}
 		}
 	}
 

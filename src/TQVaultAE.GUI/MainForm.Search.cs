@@ -1,10 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
+using TQVaultAE.Application.Results;
 using TQVaultAE.Domain.Entities;
-using TQVaultAE.Domain.Search;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 
@@ -59,7 +55,7 @@ public partial class MainForm
 		}
 	}
 
-	private void DisplayResults(string searchString, IEnumerable<Result> results)
+	private void DisplayResults(string searchString, IEnumerable<SearchResult> results)
 	{
 		if (results is null || !results.Any())
 		{
@@ -90,7 +86,7 @@ public partial class MainForm
 	/// <param name="e">ResultChangedEventArgs data</param>
 	private void SelectResult(object sender, ResultChangedEventArgs e)
 	{
-		Result selectedResult = e.Result;
+		SearchResult selectedResult = e.Result;
 		if (selectedResult == null || selectedResult.FriendlyNames == null) return;
 
 		this.ClearAllItemsSelectedCallback(this, new SackPanelEventArgs(null, null));
@@ -102,7 +98,7 @@ public partial class MainForm
 			this.vaultPanel.CurrentBag = selectedResult.SackNumber;
 			this.vaultPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 		}
-		else if (selectedResult.SackType == SackType.Player || selectedResult.SackType == SackType.Equipment || selectedResult.SackType == SackType.Stash)
+		else if (selectedResult.SackType is SackType.Player or SackType.Equipment or SackType.Stash)
 		{
 			// Switch to the selected player
 			if (this.showSecondaryVault)
@@ -135,7 +131,7 @@ public partial class MainForm
 				this.stashPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 			}
 		}
-		else if ((selectedResult.SackType == SackType.TransferStash) || (selectedResult.SackType == SackType.RelicVaultStash))
+		else if (selectedResult.StashType.HasValue)
 		{
 			// Switch to the Stash bag
 			this.stashPanel.CurrentBag = selectedResult.SackNumber;

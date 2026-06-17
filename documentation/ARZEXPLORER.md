@@ -11,6 +11,7 @@ It is very useful for TQVaultAE contributors to be able to dig into these files 
 * [UI](#UI)
     + [Data Panel](#DataPanel)
     + [Toolbar](#Toolbar)
+    + [Search](#Search)
     + [Menu](#Menu)
 * [Main TQ Files](#MainFiles)
 * [Hidden features](#HiddenFeatures)
@@ -60,13 +61,38 @@ You can navigate through **multiple files** by following links.
 
 ### <a id="Toolbar"></a>Toolbar
 
+The toolbar contains the following buttons:
+
+- **Load Database** : Open the database.arz file
+- **Load All Files** : Load all ARZ and ARC files from the game directory
+- **Search** : Text box to enter search terms, with Previous/Next buttons to navigate through results
+
 ![TypeRecord](arzexplorer/toolbar.png)
+
+---
+
+### <a id="Search"></a>Search
+
+The search feature allows you to find records across all loaded files. It searches through:
+
+- Record keys/names
+- Record text content
+- Record variables (for ARZ files)
+
+**Usage:**
+1. Enter search text in the search box
+2. Press F3 or click "Find Next" to search forward
+3. Press Shift+F3 or click "Find Previous" to search backward
+4. Results wrap around when reaching the end of the list
+
+The status bar shows the search result location.
 
 ---
 
 ### <a id="Menu"></a>Menu
 
 - File/Open : Select and open an archive
+- File/Load All Files : Load all ARZ and ARC files from the game directory
 - File/Exit : Exit tool
 - Navigation/Previous : Navigate to previous item
 - Navigation/Next : Navigate to next item
@@ -75,6 +101,8 @@ You can navigate through **multiple files** by following links.
 - Edit/Copy DBR : Copy DBR record to clipboard
 - Edit/Copy TEX : Copy Image to clipboard
 - Edit/Copy Sound : Copy Audio to clipboard
+- Search/Find Next : Find next occurrence of search text (F3)
+- Search/Find Previous : Find previous occurrence of search text (Shift+F3)
 - Extract/Selected File : Unpack a selected archive directly to disk without displaying it.
 - Extract/All Files : Unpack the whole database directly to disk without displaying it.
 - View/Hide Zero Value : Enable/Disable the display of records holding value equal to zero (default value).

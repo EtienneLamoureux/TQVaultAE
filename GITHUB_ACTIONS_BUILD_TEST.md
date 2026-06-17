@@ -1,6 +1,6 @@
 # GitHub Actions Integration Guide: Build and Test for TQVaultAE Projects
 
-This document provides comprehensive steps for integrating GitHub Actions to build and test the TQVaultAE .NET Framework projects.
+This document provides comprehensive steps for integrating GitHub Actions to build and test the TQVaultAE .NET projects.
 
 ## Build Strategy
 
@@ -21,8 +21,7 @@ This document provides comprehensive steps for integrating GitHub Actions to bui
 
 - Repository: https://github.com/EtienneLamoureux/TQVaultAE
 - GitHub repository with Actions enabled
-- Windows runner support (required for .NET Framework)
-- ImageMagick.Q8: Required by Magick.NET package for DDS to PNG conversion (installed via winget)
+- Windows runner support (required for .NET 10.0 Windows)
 - **Personal Access Token (PAT)**: Required to bypass branch protection rules when pushing version changes (see setup below)
 
 ### Setting Up the Version Bump Token (PAT)
@@ -60,13 +59,28 @@ The workflow requires a Personal Access Token to push commits and create tags on
 
 ## Projects to Build
 
+### Executables
+
 | Project | Target Framework | Output Type | Path |
 |---------|-----------------|-------------|------|
-| TQVaultAE.GUI | .NET Framework 4.8 | WinExe | src/TQVaultAE.GUI/TQVaultAE.GUI.csproj |
+| TQVaultAE.GUI | .NET 10.0 Windows | WinExe | src/TQVaultAE.GUI/TQVaultAE.GUI.csproj |
+| ARZExplorer | .NET 10.0 Windows | WinExe | src/ARZExplorer/ArzExplorer.csproj |
 | TQ.SaveFilesExplorer | .NET Framework 4.8 | WinExe | src/TQSaveFilesExplorer/TQ.SaveFilesExplorer.csproj |
-| ARZExplorer | .NET Framework 4.8 | WinExe | src/ARZExplorer/ArzExplorer.csproj |
 
-## Test Projects
+### Libraries
+
+| Project | Target Framework | Path |
+|---------|-----------------|------|
+| TQVaultAE.Domain | .NET 10.0 | src/TQVaultAE.Domain/TQVaultAE.Domain.csproj |
+| TQVaultAE.Application | .NET 10.0 | src/TQVaultAE.Application/TQVaultAE.Application.csproj |
+| TQVaultAE.Services | .NET 10.0 | src/TQVaultAE.Services/TQVaultAE.Services.csproj |
+| TQVaultAE.Presentation | .NET 10.0 | src/TQVaultAE.Presentation/TQVaultAE.Presentation.csproj |
+| TQVaultAE.Data | .NET 10.0 | src/TQVaultAE.Data/TQVaultAE.Data.csproj |
+| TQVaultAE.Config | .NET 10.0 | src/TQVaultAE.Config/TQVaultAE.Config.csproj |
+| TQVaultAE.Logs | .NET 10.0 | src/TQVaultAE.Logs/TQVaultAE.Logs.csproj |
+| TQVaultAE.Services.Win32 | .NET 10.0 Windows | src/TQVaultAE.Services.Win32/TQVaultAE.Services.Win32.csproj |
+
+### Test Projects
 
 | Project | Path |
 |---------|------|
@@ -107,7 +121,10 @@ This repository already includes the necessary GitHub Actions workflow files:
 - **auto-version.yml**: Triggers when `version-info.json` is pushed to `master`. Syncs version, builds, creates tags, and publishes releases with ZIP archives.
 - **build-and-test.yml**: Triggers on `master` pushes (with `src/**` changes) and PRs to `master`. Builds and tests for verification with 3-day artifact retention.
 
-**Important**: Both workflows include an ImageMagick installation step using `winget install ImageMagick.Q8`. This is required by the Magick.NET-Q8-AnyCPU package for DDS to PNG conversion. The installation must occur **before** the build step.
+**Important**: Both workflows use a single solution file:
+- `TQVaultAE.slnx` - Modern .NET 10.0 SDK-style projects (all projects including .NET Framework 4.8 via TQ.SaveFilesExplorer)
+
+The Magick.NET-Q8-AnyCPU NuGet package includes all required native ImageMagick binaries, so no separate installation is needed.
 
 #### Trigger Options
 
@@ -136,38 +153,43 @@ on:
 
 #### Runner Options
 
-- `windows-latest`: Current Windows runner (recommended for .NET Framework)
+- `windows-latest`: Current Windows runner (recommended for .NET 10.0 Windows)
 - `windows-2022`: Specific Windows Server 2022 runner
-- `windows-2019`: Windows Server 2019 runner
 
-#### MSBuild Configuration Options
+#### dotnet CLI Configuration Options
 
 | Option | Description | Example |
 |--------|-------------|---------|
-| `/p:Configuration` | Build configuration (Release for distribution) | `/p:Configuration=Release` |
-| `/p:Platform` | Target platform | `/p:Platform="Any CPU"` or `/p:Platform=x86` |
-| `/m` | Enable parallel builds | `/m:4` for 4 parallel processes |
-| `/v` | Verbosity level | `/v:minimal`, `/v:normal`, `/v:detailed` |
+| `--configuration` | Build configuration (Release for distribution) | `--configuration=Release` |
+| `--no-restore` | Skip restore step (use with restore first) | `--no-restore` |
+| `--no-build` | Skip build step (use with build first) | `--no-build` |
+| `--verbosity` | Output verbosity | `--verbosity=minimal`, `normal`, `detailed` |
 
-**Note**: For local Debug builds, use `/p:Configuration=Debug` |
+**Example build command:**
+```bash
+dotnet restore TQVaultAE.slnx
+dotnet build TQVaultAE.slnx --configuration Release --no-restore
+```
+
+**Note**: For local Debug builds, use `--configuration=Debug`
 
 #### Test Options
 
 ```yaml
 # Run all tests (Release configuration for production CI/CD)
-dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj --configuration Release
+dotnet test TQVaultAE.slnx --configuration Release
 
 # Run specific test class
-dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj --filter "FullyQualifiedName~GameFileServiceTests"
+dotnet test TQVaultAE.slnx --filter "FullyQualifiedName~GameFileServiceTests"
 
 # Run specific test
-dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj --filter "FullyQualifiedName~GameFileServiceTests.GetGamePath_ReturnsExpected"
+dotnet test TQVaultAE.slnx --filter "FullyQualifiedName~GameFileServiceTests.GetGamePath_ReturnsExpected"
 
 # Run tests with coverage
-dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+dotnet test TQVaultAE.slnx --configuration Release --collect:"XPlat Code Coverage;Format=opencover"
 
 # Note: Use Debug configuration locally for debugging with full symbols
-dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj --configuration Debug
+dotnet test TQVaultAE.slnx --configuration Debug
 ```
 
 ## Advanced Workflow Features
@@ -188,17 +210,17 @@ dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj --configuration Debug
 ```yaml
 strategy:
   matrix:
-    platform: [AnyCPU, x86, x64]
+    configuration: [Debug, Release]
     
 runs-on: windows-latest
 
 steps:
   - name: Build Release
-    run: msbuild src/TQVaultAE.GUI/TQVaultAE.GUI.csproj /p:Configuration=Release /p:Platform=${{ matrix.platform }}
+    run: dotnet build TQVaultAE.slnx --configuration ${{ matrix.configuration }}
     if: github.ref == 'refs/heads/main'
 ```
 
-**Note**: Matrix builds multiply execution time. Use only when testing multiple platforms is necessary.
+**Note**: Matrix builds multiply execution time. Use only when testing multiple configurations is necessary.
 
 #### Caching Dependencies
 
@@ -407,8 +429,8 @@ git push origin --delete $(git tag -l)
 
 ## Best Practices
 
-1. **Use Windows runners**: Required for .NET Framework projects
-2. **Install ImageMagick**: Required by Magick.NET for image processing (install before build step)
+1. **Use Windows runners**: Required for .NET 10.0 Windows projects
+2. **Use .NET SDK commands**: Use `dotnet restore` and `dotnet build` for SDK-style projects
 3. **Release builds only**: Debug builds for local development only
 4. **Appropriate retention**: 3 days for PRs/features, permanent for main via GitHub Releases
 5. **Cache dependencies**: Speed up builds with NuGet caching
@@ -434,6 +456,6 @@ For detailed version information, see [VERSIONING.md](VERSIONING.md).
 ## Additional Resources
 
 - GitHub Actions Documentation: https://docs.github.com/en/actions
-- .NET Framework on GitHub Actions: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-- MSBuild Command Line Reference: https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-command-line-reference
+- .NET SDK on GitHub Actions: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+- dotnet CLI Reference: https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-build
 - xUnit Documentation: https://xunit.net/docs/getting-started/netcore/cmdline

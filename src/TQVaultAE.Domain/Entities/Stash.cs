@@ -3,7 +3,6 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
 
 namespace TQVaultAE.Domain.Entities;
 

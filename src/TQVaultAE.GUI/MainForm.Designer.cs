@@ -460,7 +460,7 @@ namespace TQVaultAE.GUI
             this.comboBoxCharacter.Name = "comboBoxCharacter";
             this.comboBoxCharacter.SelectedIndex = -1;
             this.comboBoxCharacter.SelectedItem = null;
-            this.comboBoxCharacter.Size = new System.Drawing.Size(504, 36);
+            this.comboBoxCharacter.Size = new System.Drawing.Size(504, 32);
             this.comboBoxCharacter.TabIndex = 16;
             this.comboBoxCharacter.SelectedIndexChanged += new System.EventHandler(this.CharacterComboBoxSelectedIndexChanged);
             // 

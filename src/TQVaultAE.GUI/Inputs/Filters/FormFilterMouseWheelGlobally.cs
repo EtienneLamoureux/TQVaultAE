@@ -1,6 +1,4 @@
-﻿using System.Windows.Forms;
-
-namespace TQVaultAE.GUI.Inputs.Filters;
+﻿namespace TQVaultAE.GUI.Inputs.Filters;
 
 /// <summary>
 /// Capture all mouse wheel event globally and trigger dedicated events

@@ -6,7 +6,6 @@
 namespace TQVaultAE.GUI.Models;
 
 using System;
-using TQVaultAE.Data;
 using TQVaultAE.Domain.Entities;
 
 /// <summary>

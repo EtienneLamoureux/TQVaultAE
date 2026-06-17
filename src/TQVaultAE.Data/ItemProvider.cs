@@ -3,29 +3,24 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.Data;
 
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using TQVaultAE.Config;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Results;
 
-
+namespace TQVaultAE.Data;
 
 /// <summary>
 /// Class for holding item information
 /// </summary>
-public class ItemProvider : IItemProvider
+public partial class ItemProvider : IItemProvider
 {
 	private const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
 
@@ -314,11 +309,11 @@ public class ItemProvider : IItemProvider
 	});
 	}
 
-	public bool InvalidateFriendlyNamesCache(params Item[] items)
+	public bool InvalidateFriendlyNamesCache(params IEnumerable<Item> items)
 	{
-		items = items.Where(i => i != null).ToArray();
+		items = items.Where(i => i != null).ToList();
 		var keylist = this.FriendlyNamesCache.Where(i => items.Contains(i.Key.Item)).Select(i => i.Key).ToList();
-		keylist.ForEach(k => this.FriendlyNamesCache.TryRemove(k, out var outVal));
+		foreach (var k in keylist) this.FriendlyNamesCache.TryRemove(k, out var outVal);
 		return keylist.Any();
 	}
 
@@ -583,10 +578,10 @@ public class ItemProvider : IItemProvider
 		int cy = itm.PositionY;
 		int cseed = itm.Seed;
 
-		if (itm.ContainerType != SackType.Sack && itm.ContainerType != SackType.Player)
+		if (itm.Place.SackType != SackType.Player)
 		{
 			// Equipment, Stashes, Vaults
-			if (itm.ContainerType == SackType.Stash)
+			if (itm.Place.SackType == SackType.Stash)
 			{
 				TQData.WriteCString(writer, "stackCount");
 				writer.Write(itemCount - 1);
@@ -631,7 +626,7 @@ public class ItemProvider : IItemProvider
 			TQData.WriteCString(writer, "end_block");
 			writer.Write(itm.endBlockCrap2);
 
-			if (itm.ContainerType == SackType.Stash)
+			if (itm.Place.SackType == SackType.Stash)
 			{
 				TQData.WriteCString(writer, "xOffset");
 				writer.Write(Convert.ToSingle(cx, CultureInfo.InvariantCulture));
@@ -721,12 +716,12 @@ public class ItemProvider : IItemProvider
 		try
 		{
 			string valueStr = string.Empty;
-			if (itm.ContainerType == SackType.Stash)
+			if (itm.Place.SackType == SackType.Stash)
 			{
 				TQData.ValidateNextString("stackCount", reader);
 				itm.beginBlockCrap1 = reader.ReadInt32();
 			}
-			else if (itm.ContainerType == SackType.Sack || itm.ContainerType == SackType.Player)
+			else if (itm.Place.SackType == SackType.Player)
 			{
 				TQData.ValidateNextString("begin_block", reader); // make sure we just read a new block
 				itm.beginBlockCrap1 = reader.ReadInt32();
@@ -781,7 +776,7 @@ public class ItemProvider : IItemProvider
 			TQData.ValidateNextString("end_block", reader);
 			itm.endBlockCrap2 = reader.ReadInt32();
 
-			if (itm.ContainerType == SackType.Stash)
+			if (itm.Place.SackType == SackType.Stash)
 			{
 				TQData.ValidateNextString("xOffset", reader);
 				itm.PositionX = Convert.ToInt32(reader.ReadSingle(), CultureInfo.InvariantCulture);
@@ -789,7 +784,7 @@ public class ItemProvider : IItemProvider
 				TQData.ValidateNextString("yOffset", reader);
 				itm.PositionY = Convert.ToInt32(reader.ReadSingle(), CultureInfo.InvariantCulture);
 			}
-			else if (itm.ContainerType == SackType.Equipment)
+			else if (itm.Place.SackType == SackType.Equipment)
 			{
 				// Initially set the coordinates to (0, 0)
 				itm.PositionX = 0;
@@ -809,7 +804,7 @@ public class ItemProvider : IItemProvider
 
 			GetDBData(itm);
 
-			if (itm.ContainerType == SackType.Stash)
+			if (itm.Place.SackType == SackType.Stash)
 				itm.StackSize = itm.beginBlockCrap1 + 1;
 			else
 				itm.StackSize = 1;
@@ -1083,7 +1078,7 @@ public class ItemProvider : IItemProvider
 			string key = variable.Name.Replace("Requirement", string.Empty);
 
 			// Upper-case the first char of key
-			key = string.Concat(key.Substring(0, 1).ToUpper(System.Globalization.CultureInfo.InvariantCulture), key.Substring(1));
+			key = key.AsSpan().ToFirstCharUpperCase();
 
 			// Level needs to be LevelRequirement bah
 			if (key.Equals("Level"))
@@ -2157,7 +2152,8 @@ VariableValue Raw : {valueRaw}
 		return color.HasValue ? $"{color?.ColorTag()}{amount}" : amount;
 	}
 
-	static Regex GetAmountSingleRegEx = new Regex(@"(?<Prefix>\{(\d):)(?<Sign>[+-])(?<Suffix>#([\d\.]+)})", RegexOptions.Compiled);
+	[GeneratedRegex(@"(?<Prefix>\{(\d):)(?<Sign>[+-])(?<Suffix>#([\d\.]+)})")]
+	private static partial Regex GetAmountSingleRegEx();
 	/// <summary>
 	/// Gets a formatted single amount
 	/// </summary>
@@ -2235,7 +2231,7 @@ VariableValue Raw : {valueRaw}
 
 				// Fix#246, double signed result on negative value Ex : string.Format("{0:+#0} d'intelligence", -10) by removing format sign.
 				// Fix "Dotted decimal mask" matching Ex : {0:#0.0} Health Regeneration per second
-				formatSpec = GetAmountSingleRegEx.Replace(formatSpec
+				formatSpec = GetAmountSingleRegEx().Replace(formatSpec
 					, (Match m) =>
 					{
 						var Prefix = m.Groups["Prefix"].Value;
@@ -2338,6 +2334,7 @@ VariableValue Raw : {valueRaw}
 		TQColor? color = null;
 		string formatSpec = null;
 
+		// Original: concatenating with substring (already optimized by compiler)
 		string tag = string.Concat("Damage", damageRatioData.FullAttribute.Substring(9, damageRatioData.FullAttribute.Length - 20), "Ratio");
 
 		if (!TranslationService.TryTranslateXTag(tag, out formatSpec))
@@ -2565,7 +2562,8 @@ VariableValue Raw : {valueRaw}
 						Log.LogDebug("missing racialBonusRace={0}", finalRace);
 				}
 
-				string formatTag = string.Concat(d.FullAttribute.Substring(0, 1).ToUpperInvariant(), d.FullAttribute.Substring(1));
+				// Optimized: use span-based ToFirstCharUpperCase
+				string formatTag = d.FullAttribute.AsSpan().ToFirstCharUpperCase();
 
 				if (!TranslationService.TryTranslateXTag(formatTag, out var formatSpec))
 					formatSpec = string.Concat(formatTag, " {0} {1}");
@@ -2647,7 +2645,8 @@ VariableValue Raw : {valueRaw}
 	/// <returns>formatted string with the + to mastery</returns>
 	private string GetAugmentMasteryLevel(DBRecordCollection record, Variable variable, ItemAttributesData attributeData, ref TQColor? font)
 	{
-		string augmentNumber = attributeData.FullAttribute.Substring(19, 1);
+		// Optimized: use span to get single char
+		string augmentNumber = attributeData.FullAttribute.AsSpan().Slice(19, 1).ToString();
 		string augmentMasteryName = string.Concat("augmentMasteryName", augmentNumber);
 		string augmentMasteryValue = record.GetString(augmentMasteryName, 0);
 
@@ -2703,7 +2702,8 @@ VariableValue Raw : {valueRaw}
 	/// <returns>formatted string containing + to skill</returns>
 	private string GetAugmentSkillLevel(DBRecordCollection record, Variable variable, ItemAttributesData attributeData, string line, ref TQColor? font)
 	{
-		string augmentSkillNumber = attributeData.FullAttribute.Substring(17, 1);
+		// Optimized: use span to get single char
+		string augmentSkillNumber = attributeData.FullAttribute.AsSpan().Slice(17, 1).ToString();
 		string skillRecordKey = string.Concat("augmentSkillName", augmentSkillNumber);
 		string skillRecordID = record.GetString(skillRecordKey, 0);
 
@@ -3560,9 +3560,9 @@ VariableValue Raw : {valueRaw}
 						displayDamageQualifierTitle = false;
 					}
 
-					// Show the damage type
-					string damageTag = attributeData.FullAttribute.Remove(attributeData.FullAttribute.Length - 15);
-					damageTag = string.Concat(damageTag.Substring(0, 1).ToUpperInvariant(), damageTag.Substring(1));
+					// Show the damage type - Optimized using span-based RemoveSuffix and ToFirstCharUpperCase
+					string damageTag = attributeData.FullAttribute.AsSpan().RemoveSuffix(15);
+					damageTag = damageTag.AsSpan().ToFirstCharUpperCase();
 					TranslationService.TryTranslateXTag(string.Concat("tagQualifyingDamage", damageTag), out var damageType);
 
 					if (!TranslationService.TryTranslateXTag("formatQualifyingDamage", out var formatSpec))

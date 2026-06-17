@@ -1,24 +1,16 @@
-﻿using System;
-using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Windows.Forms;
+﻿using System.Globalization;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
-using TQVaultAE.Logs;
-using TQVaultAE.Domain.Contracts.Services;
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Domain.Results;
-using System.Threading;
+using TQVaultAE.Application;
+using TQVaultAE.Application.Results;
 
 namespace TQVaultAE.GUI;
 
 public partial class MainForm
 {
-	private IStashService stashService = null;
-
 	/// <summary>
 	/// Creates the stash panel
 	/// </summary>
@@ -50,7 +42,7 @@ public partial class MainForm
 	/// Loads the transfer stash for immortal throne
 	/// </summary>
 	/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
-	private LoadTransferStashResult LoadTransferStash(bool fromFileWatcher = false)
+	private StashLoadResult LoadTransferStash(bool fromFileWatcher = false)
 	{
 		// Only if it's IT, TQ doesn't have one
 		var selectedSave = this.comboBoxCharacter.SelectedItem as PlayerSave;
@@ -67,13 +59,13 @@ public partial class MainForm
 		{
 			if (result.Stash.StashFound.HasValue && !result.Stash.StashFound.Value)
 			{
-				var msg = string.Concat(Resources.StashNotFoundMsg, "\n\nTransfer Stash\n\n", result.TransferStashFile);
+				var msg = string.Concat(Resources.StashNotFoundMsg, "\n\nTransfer Stash\n\n", result.StashFile);
 				MessageBox.Show(msg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 			}
 
 			if (result.Stash.ArgumentException != null)
 			{
-				string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.TransferStashFile, result.Stash.ArgumentException.Message);
+				string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.StashFile, result.Stash.ArgumentException.Message);
 				MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 			}
 
@@ -82,7 +74,7 @@ public partial class MainForm
 		}
 		catch (IOException exception)
 		{
-			string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, result.TransferStashFile, exception.ToString());
+			string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, result.StashFile, exception.ToString());
 			MessageBox.Show(msg, Resources.MainFormStashReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 			Log.LogError(exception, msg);
 			this.stashPanel.TransferStash = null;
@@ -95,7 +87,7 @@ public partial class MainForm
 	/// Loads the relic vault stash
 	/// </summary>
 	/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
-	private LoadRelicVaultStashResult LoadRelicVaultStash(bool fromFileWatcher = false)
+	private StashLoadResult LoadRelicVaultStash(bool fromFileWatcher = false)
 	{
 		// Only if it's IT, TQ doesn't have one
 		var selectedSave = this.comboBoxCharacter.SelectedItem as PlayerSave;
@@ -112,13 +104,13 @@ public partial class MainForm
 		{
 			if (result.Stash.StashFound.HasValue && !result.Stash.StashFound.Value)
 			{
-				var msg = string.Concat(Resources.StashNotFoundMsg, "\n\nRelic Stash\n\n", result.RelicVaultStashFile);
+				var msg = string.Concat(Resources.StashNotFoundMsg, "\n\nRelic Stash\n\n", result.StashFile);
 				MessageBox.Show(msg, Resources.StashNotFound, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 			}
 
 			if (result.Stash.ArgumentException != null)
 			{
-				string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.RelicVaultStashFile, result.Stash.ArgumentException.Message);
+				string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.StashFile, result.Stash.ArgumentException.Message);
 				MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 			}
 
@@ -127,7 +119,7 @@ public partial class MainForm
 		}
 		catch (IOException exception)
 		{
-			string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, result.RelicVaultStashFile, exception.ToString());
+			string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, result.StashFile, exception.ToString());
 			MessageBox.Show(msg, Resources.MainFormStashReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 
 			this.stashPanel.RelicVaultStash = null;
@@ -200,27 +192,8 @@ public partial class MainForm
 	/// </summary>
 	private bool SaveAllModifiedStashes()
 	{
-	retry:
-		int saved = 0;
+		// Use service with ref parameter
 		Stash stashOnError = null;
-		try
-		{
-			saved = this.stashService.SaveAllModifiedStashes(ref stashOnError);
-		}
-		catch (IOException exception)
-		{
-			string title = string.Format(CultureInfo.InvariantCulture, Resources.MainFormSaveError, stashOnError.PlayerName);
-			Log.LogError(exception, title);
-
-			switch (MessageBox.Show(Log.FormatException(exception), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
-			{
-				case DialogResult.Abort:
-					// rethrow the exception
-					throw;
-				case DialogResult.Retry:
-					goto retry;
-			}
-		}
-		return saved > 0;
+		return this.stashService.SaveAllModifiedStashes(ref stashOnError) > 0;
 	}
 }

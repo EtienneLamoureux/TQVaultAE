@@ -1,11 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Results;
@@ -55,7 +50,8 @@ public partial class ItemTooltip : BaseTooltip
 			.Where(c => items.Contains(c.Key.Item))
 			.Select(c => c.Key)
 			.ToList();
-		cacheentrytoremove.ForEach(c => ToImage.Remove(c));
+		foreach (var c in cacheentrytoremove)
+			ToImage.Remove(c);
 	}
 
 	// to avoid Mainform lost focus with this.TopMost = false
@@ -66,8 +62,10 @@ public partial class ItemTooltip : BaseTooltip
 		lock (ToImage)
 		{
 			var lst = ItemTooltipOpened.Where(f => f.Value.Visible).ToList();
-			lst.Select(f => f.Value).ToList().ForEach(form => form.Close());
-			lst.Select(f => f.Key).ToList().ForEach(key => ItemTooltipOpened.Remove(key));
+			foreach (var form in lst.Select(f => f.Value))
+				form.Close();
+			foreach (var key in lst.Select(f => f.Key))
+				ItemTooltipOpened.Remove(key);
 		}
 	}
 

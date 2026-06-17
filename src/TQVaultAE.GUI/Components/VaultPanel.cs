@@ -5,28 +5,25 @@
 //-----------------------------------------------------------------------
 
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Drawing;
 using System.Globalization;
-using System.Windows.Forms;
-using TQVaultAE.GUI.Models;
-using TQVaultAE.Domain.Entities;
-using TQVaultAE.Presentation;
-using TQVaultAE.GUI.Tooltip;
-using TQVaultAE.Domain.Contracts.Services;
-using System.Linq;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Results;
+using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Models;
+using TQVaultAE.GUI.Tooltip;
+using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Components;
 
 /// <summary>
 /// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.
 /// </summary>
-public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
+public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 {
 	protected readonly IFontService FontService;
 	protected readonly IUIService UIService;
@@ -34,6 +31,7 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	protected readonly IItemProvider ItemProvider;
 	protected readonly IServiceProvider ServiceProvider;
 	protected readonly UserSettings USettings;
+	protected readonly IHighlightService HighlightService;
 
 	/// <summary>
 	/// Gets the SackPanel instance
@@ -115,6 +113,7 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		this.userContext = this.ServiceProvider.GetService<SessionContext>();
 		this.ItemProvider = this.ServiceProvider.GetService<IItemProvider>();
 		this.USettings = this.ServiceProvider.GetService<UserSettings>();
+		this.HighlightService = this.ServiceProvider.GetService<IHighlightService>();
 
 		this.DragInfo = dragInfo;
 		this.AutoMoveLocation = autoMoveLocation;
@@ -299,6 +298,9 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 
 			this.player = value;
 
+			// Set container reference for the sack panel to track item locations
+			this.BagSackPanel.PlayerCollection = value;
+
 			this.UpdateText();
 
 			this.ApplyCustomButtonIcons();
@@ -371,7 +373,7 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		if (e.PropertyName == nameof(Player))
 		{
 			this.AssignSacks();
-			this.userContext.FindHighlight();
+			this.HighlightService.FindHighlight();
 		}
 	}
 
@@ -528,7 +530,7 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 			this.CurrentBag = bagID;
 			this.BagSackPanel.ClearSelectedItems();
 			this.BagSackPanel.Sack = this.Player.GetSack(this.CurrentBag + this.BagPanelOffset);
-			this.BagSackPanel.CurrentSack = this.CurrentBag;
+			this.BagSackPanel.CurrentSack = this.CurrentBag + this.BagPanelOffset;
 		}
 
 		if (e.Button == MouseButtons.Right)
@@ -852,19 +854,21 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	private void AddSubMenu(string menuText, EventHandler menuCallback)
 	{
 		var menuChoices = new ToolStripItem[this.BagButtons.Count - 1];
-		for (int i = 0, j = 0; i < this.BagButtons.Count; ++i)
+		int menuIndex = 0;
+		for (int i = 0; i < this.BagButtons.Count; i++)
 		{
 			if (i != this.CurrentBag)
 			{
 				int val = i + 1;
-				menuChoices[j] = new ToolStripMenuItem(string.Format(CultureInfo.CurrentCulture, Resources.GlobalMenuBag, val)
+				menuChoices[menuIndex] = new ToolStripMenuItem(string.Format(CultureInfo.CurrentCulture, Resources.GlobalMenuBag, val)
 					, null, menuCallback, string.Format(CultureInfo.CurrentCulture, Resources.GlobalMenuBag, val))
 				{
 					BackColor = this.contextMenu.BackColor,
 					Font = this.contextMenu.Font,
 					ForeColor = this.contextMenu.ForeColor,
+					Tag = new MenuItemTagBagIndex(i),
 				};
-				++j;
+				menuIndex++;
 			}
 		}
 
@@ -946,8 +950,25 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		if (selectedItem == Resources.PlayerPanelCopyIcon)
 		{
 			var button = this.BagButtons[this.CurrentBag];
+			var sourceInfo = button.Sack?.BagButtonIconInfo;
 
-			this.userContext.IconInfoCopy = button.Sack?.BagButtonIconInfo;
+			// Create a new instance (deep copy) to avoid shared reference issues
+			if (sourceInfo is not null)
+			{
+				this.userContext.IconInfoCopy = new BagButtonIconInfo
+				{
+					DisplayMode = sourceInfo.DisplayMode,
+					Label = sourceInfo.Label,
+					OnStr = sourceInfo.OnStr,
+					OffStr = sourceInfo.OffStr,
+					OverStr = sourceInfo.OverStr
+				};
+			}
+			else
+			{
+				this.userContext.IconInfoCopy = null;
+			}
+
 			MainForm frm = this.FindForm() as MainForm;
 			frm.NotificationText.Text = Resources.GlobalCopied;
 		}
@@ -955,12 +976,30 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		if (selectedItem == Resources.PlayerPanelPasteIcon)
 		{
 			var button = this.BagButtons[this.CurrentBag];
-			button.Sack.BagButtonIconInfo = this.userContext.IconInfoCopy;
+
+			// Create a new instance to avoid shared reference issues
+			var sourceInfo = this.userContext.IconInfoCopy;
+			if (sourceInfo is not null)
+			{
+				button.Sack.BagButtonIconInfo = new BagButtonIconInfo
+				{
+					DisplayMode = sourceInfo.DisplayMode,
+					Label = sourceInfo.Label,
+					OnStr = sourceInfo.OnStr,
+					OffStr = sourceInfo.OffStr,
+					OverStr = sourceInfo.OverStr
+				};
+			}
+			else
+			{
+				button.Sack.BagButtonIconInfo = null;
+			}
+
 			button.Sack.IsModified = true;
 			MainForm frm = this.FindForm() as MainForm;
 			frm.NotificationText.Text = Resources.GlobalPasted;
 			button.ApplyIconInfo(button.Sack);
-			Refresh();
+			button.Refresh();
 		}
 
 	}
@@ -1005,7 +1044,7 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 					this.BagButtons[destinationIndex].IsOn = true;
 					this.CurrentBag = destinationIndex;
 					this.BagSackPanel.Sack = this.Player.GetSack(this.CurrentBag + this.BagPanelOffset);
-					this.BagSackPanel.CurrentSack = this.CurrentBag;
+					this.BagSackPanel.CurrentSack = this.CurrentBag + this.BagPanelOffset;
 				}
 			}
 		}
@@ -1031,7 +1070,7 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 					this.BagButtons[destinationIndex].IsOn = true;
 					this.CurrentBag = destinationIndex;
 					this.BagSackPanel.Sack = this.Player.GetSack(this.CurrentBag + this.BagPanelOffset);
-					this.BagSackPanel.CurrentSack = this.CurrentBag;
+					this.BagSackPanel.CurrentSack = this.CurrentBag + this.BagPanelOffset;
 				}
 
 				ApplyCustomButtonIcons();
@@ -1065,7 +1104,7 @@ public class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 				this.BagButtons[destinationIndex].IsOn = true;
 				this.CurrentBag = destinationIndex;
 				this.BagSackPanel.Sack = this.Player.GetSack(this.CurrentBag + this.BagPanelOffset);
-				this.BagSackPanel.CurrentSack = this.CurrentBag;
+				this.BagSackPanel.CurrentSack = this.CurrentBag + this.BagPanelOffset;
 			}
 		}
 	}

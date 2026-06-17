@@ -3,16 +3,14 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.Data;
 
+using System.Buffers.Binary;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 
+namespace TQVaultAE.Data;
 
 /// <summary>
 /// Encodes and decodes a Titan Quest item sack from a player file.
@@ -63,7 +61,7 @@ public class SackCollectionProvider : ISackCollectionProvider
 		foreach (Item item in sc)
 		{
 			++slotNumber;
-			item.ContainerType = sc.SackType;
+			item.Place.SackType = sc.SackType;
 			int itemAttached = 0;
 			int alternate = 0;
 
@@ -173,7 +171,7 @@ public class SackCollectionProvider : ISackCollectionProvider
 				}
 
 				Item item = new Item();
-				item.ContainerType = sc.SackType;
+				item.Place.SackType = sc.SackType;
 				ItemProvider.Parse(item, reader);
 
 				// Stack sc item with the previous item if necessary
@@ -215,6 +213,79 @@ public class SackCollectionProvider : ISackCollectionProvider
 			Log.LogDebug(ex, "ValidateNextString fail !");
 			throw;
 		}
+	}
+
+	/// <summary>
+	/// Parses the header portion of sack data using ReadOnlySpan for zero-copy parsing.
+	/// Enables bounds-check elimination in high-frequency parsing paths.
+	/// </summary>
+	/// <param name="sc">SackCollection to populate</param>
+	/// <param name="data">ReadOnlySpan of binary data</param>
+	/// <param name="offset">Offset that will be advanced by the method</param>
+	/// <returns>Number of bytes consumed for header</returns>
+	public int ParseHeader(SackCollection sc, ReadOnlySpan<byte> data, ref int offset)
+	{
+		int startOffset = offset;
+
+		sc.IsModified = false;
+
+		if (sc.SackType == SackType.Stash)
+		{
+			// Stash format: "numItems" + int32
+			if (!TQData.ValidateNextString("numItems", data, ref offset))
+			{
+				Log.LogError("Expected 'numItems' tag at offset {Offset}", offset);
+				throw new ArgumentException("Expected 'numItems' tag");
+			}
+			sc.size = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset));
+			offset += sizeof(int);
+		}
+		else if (sc.SackType == SackType.Equipment)
+		{
+			// Equipment has fixed size based on game
+			if (sc.IsImmortalThrone)
+			{
+				sc.size = 12;
+				sc.slots = 12;
+			}
+			else
+			{
+				sc.size = 11;
+				sc.slots = 11;
+			}
+		}
+		else
+		{
+			// Regular sack format: "begin_block" + int32 + "tempBool" + int32 + "size" + int32
+			if (!TQData.ValidateNextString("begin_block", data, ref offset))
+			{
+				Log.LogError("Expected 'begin_block' tag at offset {Offset}", offset);
+				throw new ArgumentException("Expected 'begin_block' tag");
+			}
+
+			sc.beginBlockCrap = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset));
+			offset += sizeof(int);
+
+			if (!TQData.ValidateNextString("tempBool", data, ref offset))
+			{
+				Log.LogError("Expected 'tempBool' tag at offset {Offset}", offset);
+				throw new ArgumentException("Expected 'tempBool' tag");
+			}
+
+			sc.tempBool = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset));
+			offset += sizeof(int);
+
+			if (!TQData.ValidateNextString("size", data, ref offset))
+			{
+				Log.LogError("Expected 'size' tag at offset {Offset}", offset);
+				throw new ArgumentException("Expected 'size' tag");
+			}
+
+			sc.size = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset));
+			offset += sizeof(int);
+		}
+
+		return offset - startOffset;
 	}
 
 }

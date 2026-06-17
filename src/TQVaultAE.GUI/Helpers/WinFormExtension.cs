@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
-
-namespace TQVaultAE.GUI.Helpers;
+﻿namespace TQVaultAE.GUI.Helpers;
 
 public static class WinFormExtension
 {

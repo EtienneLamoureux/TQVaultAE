@@ -1,8 +1,4 @@
-﻿using TQVaultAE.Domain.Helpers;
-using System;
-using System.Drawing;
-using System.Globalization;
-using System.IO;
+using TQVaultAE.Application;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
@@ -33,7 +29,7 @@ public partial class MainForm
 		{
 			this.customMapText.Visible = true;
 			this.customMapText.Text = string.Format(
-				GamePathResolver.MapName.ToUpper().Contains(@"\CUSTOMMAPS\") 
+				GamePathResolver.MapName.ToUpper().Contains(@"\CUSTOMMAPS\")
 					? "Legacy : " + Resources.MainFormCustomMapLabel
 					: "Steam : " + Resources.MainFormCustomMapLabel
 				, this.PathIO.GetFileName(GamePathResolver.MapName)
@@ -85,10 +81,10 @@ public partial class MainForm
 			this.lastBag = this.stashPanel.CurrentBag;
 			this.stashPanel.Player = null;
 			this.stashPanel.Stash = null;
-			if (this.stashPanel.CurrentBag != StashPanel.BAGID_TRANSFERSTASH)
+			if (this.stashPanel.CurrentBag != BagIdConstants.BAGID_TRANSFERSTASH)
 			{
 				this.stashPanel.SackPanel.ClearSelectedItems();
-				this.stashPanel.CurrentBag = StashPanel.BAGID_TRANSFERSTASH;
+				this.stashPanel.CurrentBag = BagIdConstants.BAGID_TRANSFERSTASH;
 			}
 
 			this.vaultPanel.SackPanel.SecondaryVaultShown = true;
@@ -110,7 +106,7 @@ public partial class MainForm
 			this.showVaulButton.Text = Resources.MainFormBtnPanelSelect;
 			this.comboBoxCharacter.Enabled = true;
 			this.comboBoxCharacter.Visible = true;
-			
+
 			this.bufferedFlowLayoutPanelsecondaryVaultList.Visible = false;
 
 			this.stashPanel.Player = this.playerPanel.Player;
@@ -243,173 +239,147 @@ public partial class MainForm
 	{
 		SackPanel sackPanel = (SackPanel)sender;
 
-		// Make sure we have to move something.
-		if (this.DragInfo.IsAutoMoveActive)
+		if (!this.DragInfo.IsAutoMoveActive)
+			return;
+
+		if (this.DragInfo.AutoMoveDestination == AutoMoveLocation.Stash)
 		{
-			SackCollection oldSack = null;
-			VaultPanel destinationPlayerPanel = null;
-			int sackNumber = 0;
-
-			SackPanel destinationSackPanel = null;
-			if (this.DragInfo.AutoMove < AutoMoveLocation.Vault)
-			{
-				// This is a sack to sack move on the same panel.
-				destinationSackPanel = sackPanel;
-				switch (sackPanel.SackType)
-				{
-					case SackType.Vault:
-						if (sackPanel.IsSecondaryVault)
-							destinationPlayerPanel = this.secondaryVaultPanel;
-						else
-							destinationPlayerPanel = this.vaultPanel;
-						break;
-
-					default:
-						destinationPlayerPanel = this.playerPanel;
-						break;
-				}
-
-				sackNumber = (int)this.DragInfo.AutoMove;
-			}
-			else if (this.DragInfo.AutoMove == AutoMoveLocation.Vault)
-			{
-				// Vault
-				destinationPlayerPanel = this.vaultPanel;
-				destinationSackPanel = destinationPlayerPanel.SackPanel;
-				sackNumber = destinationPlayerPanel.CurrentBag;
-			}
-			else if (this.DragInfo.AutoMove == AutoMoveLocation.Player)
-			{
-				// Player
-				destinationPlayerPanel = this.playerPanel;
-				destinationSackPanel = ((PlayerPanel)destinationPlayerPanel).SackPanel;
-
-				// Main Player panel
-				sackNumber = 0;
-			}
-			else if (this.DragInfo.AutoMove == AutoMoveLocation.SecondaryVault)
-			{
-				// Secondary Vault
-				destinationPlayerPanel = this.secondaryVaultPanel;
-				destinationSackPanel = destinationPlayerPanel.SackPanel;
-				sackNumber = destinationPlayerPanel.CurrentBag;
-			}
-
-			// Special Case for moving to stash.
-			if (this.DragInfo.AutoMove == AutoMoveLocation.Stash)
-			{
-				// Check if we are moving to the player's stash
-				if (this.stashPanel.CurrentBag == StashPanel.BAGID_PLAYERSTASH && this.stashPanel.Player == null)
-				{
-					// We have nowhere to send the item so cancel the move.
-					this.DragInfo.Cancel();
-					return;
-				}
-
-				// Check for the equipment panel
-				if (this.stashPanel.CurrentBag == StashPanel.BAGID_EQUIPMENTPANEL)
-				{
-					// Equipment Panel is active so switch to the transfer stash.
-					this.stashPanel.CurrentBag = StashPanel.BAGID_TRANSFERSTASH;
-				}
-
-				// Check the transfer stash
-				if (this.stashPanel.TransferStash == null && this.stashPanel.CurrentBag == StashPanel.BAGID_TRANSFERSTASH)
-				{
-					// We have nowhere to send the item so cancel the move.
-					this.DragInfo.Cancel();
-					return;
-				}
-
-				// Check the relic vault stash
-				if (this.stashPanel.RelicVaultStash == null && this.stashPanel.CurrentBag == StashPanel.BAGID_RELICVAULTSTASH)
-				{
-					// We have nowhere to send the item so cancel the move.
-					this.DragInfo.Cancel();
-					return;
-				}
-
-				// See if we have an open space to put the item.
-				Point location = this.stashPanel.SackPanel.FindOpenCells(this.DragInfo.Item.Width, this.DragInfo.Item.Height);
-
-				// We have no space in the sack so we cancel.
-				if (location.X == -1)
-				{
-					this.DragInfo.Cancel();
-				}
-				else
-				{
-					Item dragItem = this.DragInfo.Item;
-
-					if (!this.stashPanel.SackPanel.IsItemValidForPlacement(dragItem))
-					{
-						this.DragInfo.Cancel();
-						return;
-					}
-
-					// Use the same method as if we used to mouse to pickup and place the item.
-					this.DragInfo.MarkPlaced();
-					dragItem.PositionX = location.X;
-					dragItem.PositionY = location.Y;
-					this.stashPanel.SackPanel.Sack.AddItem(dragItem);
-					this.lastSackPanelHighlighted.Invalidate();
-					this.stashPanel.Refresh();
-					BagButtonTooltip.InvalidateCache(this.stashPanel.SackPanel.Sack);
-				}
-			}
-			else
-			{
-				// The stash is not involved.
-				if (destinationPlayerPanel == null || destinationPlayerPanel.Player == null)
-				{
-					// We have nowhere to send the item so cancel the move.
-					this.DragInfo.Cancel();
-					return;
-				}
-
-				// Save the current sack.
-				oldSack = destinationSackPanel.Sack;
-
-				// Find the destination sack.
-				destinationSackPanel.Sack = destinationPlayerPanel.Player.GetSack(sackNumber);
-
-				// See if we have an open space to put the item.
-				Point location = destinationSackPanel.FindOpenCells(this.DragInfo.Item.Width, this.DragInfo.Item.Height);
-
-				// CurrentBag only returns the values for the bag panels and is zero based.  Main sack is not included.
-				int destination = destinationPlayerPanel.CurrentBag;
-
-				// We need to accout for the player panel offsets.
-				if (sackPanel.SackType == SackType.Sack)
-					destination++;
-				else if (sackPanel.SackType == SackType.Player)
-					destination = 0;
-
-				// We either have no space or are sending the item to the same sack so we cancel.
-				if (location.X == -1 || (int)this.DragInfo.AutoMove == destination)
-				{
-					destinationSackPanel.Sack = oldSack;
-					this.DragInfo.Cancel();
-				}
-				else
-				{
-					Item dragItem = this.DragInfo.Item;
-
-					// Use the same method as if we used to mouse to pickup and place the item.
-					this.DragInfo.MarkPlaced();
-					dragItem.PositionX = location.X;
-					dragItem.PositionY = location.Y;
-					destinationSackPanel.Sack.AddItem(dragItem);
-
-					// Set it back to the original sack so the display does not change.
-					var destsack = destinationSackPanel.Sack;
-					destinationSackPanel.Sack = oldSack;
-					sackPanel.Invalidate();
-					destinationPlayerPanel.Refresh();
-					BagButtonTooltip.InvalidateCache(destsack, oldSack);
-				}
-			}
+			this.AutoMoveItemToStash();
+			return;
 		}
+
+		this.AutoMoveItemToPanel(sackPanel);
+	}
+
+	/// <summary>
+	/// Resolves the destination panel and sack for auto-move operations.
+	/// </summary>
+	private (VaultPanel Panel, SackPanel SackPanel, int SackNumber) GetAutoMoveDestination(SackPanel sourcePanel)
+	{
+		var sacNumber = this.DragInfo.DestIndex;
+		if (sacNumber > -1)
+		{
+			VaultPanel panel = sourcePanel.SackType == SackType.Vault && sourcePanel.IsSecondaryVault
+				? this.secondaryVaultPanel
+				: sourcePanel.SackType == SackType.Vault
+					? this.vaultPanel
+					: this.playerPanel;
+
+			return (panel, sourcePanel, sacNumber);
+		}
+
+		return this.DragInfo.AutoMoveDestination switch
+		{
+			AutoMoveLocation.Vault => (this.vaultPanel, this.vaultPanel.SackPanel, this.vaultPanel.CurrentBag),
+			AutoMoveLocation.Player => (this.playerPanel, ((PlayerPanel)this.playerPanel).SackPanel, 0),
+			AutoMoveLocation.SecondaryVault => (this.secondaryVaultPanel, this.secondaryVaultPanel.SackPanel, this.secondaryVaultPanel.CurrentBag),
+			_ => (null, null, 0)
+		};
+	}
+
+	/// <summary>
+	/// Handles auto-moving an item to the stash panel.
+	/// </summary>
+	private void AutoMoveItemToStash()
+	{
+		if (!this.ValidateStashAvailability())
+			return;
+
+		Point location = this.stashPanel.SackPanel.FindOpenCells(this.DragInfo.Item.Width, this.DragInfo.Item.Height);
+		if (location.X == -1 || !this.stashPanel.SackPanel.IsItemValidForPlacement(this.DragInfo.Item))
+		{
+			this.DragInfo.Cancel();
+			return;
+		}
+
+		Item dragItem = this.DragInfo.Item;
+		this.DragInfo.MarkPlaced();
+		dragItem.PositionX = location.X;
+		dragItem.PositionY = location.Y;
+		this.stashPanel.SackPanel.Sack.AddItem(dragItem);
+		this.UpdateItemLocation(dragItem, this.stashPanel.Player, this.stashPanel.SackPanel.Sack.SackType, this.stashPanel.SackPanel.CurrentSack, this.stashPanel.SackPanel.Sack.StashType);
+		this.lastSackPanelHighlighted.Invalidate();
+		this.stashPanel.Refresh();
+		BagButtonTooltip.InvalidateCache(this.stashPanel.SackPanel.Sack);
+	}
+
+	/// <summary>
+	/// Validates that the target stash is available for item placement.
+	/// </summary>
+	private bool ValidateStashAvailability()
+	{
+		if (this.stashPanel.CurrentBag == BagIdConstants.BAGID_PLAYERSTASH && this.stashPanel.Player == null)
+		{
+			this.DragInfo.Cancel();
+			return false;
+		}
+
+		if (this.stashPanel.CurrentBag == BagIdConstants.BAGID_EQUIPMENTPANEL)
+			this.stashPanel.CurrentBag = BagIdConstants.BAGID_TRANSFERSTASH;
+
+		if (this.stashPanel.TransferStash == null && this.stashPanel.CurrentBag == BagIdConstants.BAGID_TRANSFERSTASH)
+		{
+			this.DragInfo.Cancel();
+			return false;
+		}
+
+		if (this.stashPanel.RelicVaultStash == null && this.stashPanel.CurrentBag == BagIdConstants.BAGID_RELICVAULTSTASH)
+		{
+			this.DragInfo.Cancel();
+			return false;
+		}
+
+		return true;
+	}
+
+	/// <summary>
+	/// Handles auto-moving an item to a non-stash panel.
+	/// </summary>
+	private void AutoMoveItemToPanel(SackPanel sourcePanel)
+	{
+		var (destinationPanel, destinationSackPanel, destSackNumber) = this.GetAutoMoveDestination(sourcePanel);
+		var destinationSack = destinationPanel.Player.GetSack(destSackNumber);
+
+		if (destinationPanel?.Player == null || destinationSack == null)
+		{
+			this.DragInfo.Cancel();
+			return;
+		}
+
+		SackCollection oldSack = destinationSackPanel.Sack;
+		destinationSackPanel.Sack = destinationSack;
+
+		Point location = destinationSackPanel.FindOpenCells(this.DragInfo.Item.Width, this.DragInfo.Item.Height);
+		int destination = this.GetDestinationIndex(destinationSackPanel, destinationPanel.CurrentBag, destSackNumber);
+
+		if (location.X == -1)
+		{
+			destinationSackPanel.Sack = oldSack;
+			this.DragInfo.Cancel();
+			return;
+		}
+
+		Item dragItem = this.DragInfo.Item;
+		this.DragInfo.MarkPlaced();
+		dragItem.PositionX = location.X;
+		dragItem.PositionY = location.Y;
+		destinationSackPanel.Sack.AddItem(dragItem);
+		this.UpdateItemLocation(dragItem, destinationPanel.Player, destinationSackPanel.SackType, destination, destinationSackPanel.Sack.StashType);
+		destinationSackPanel.Sack = oldSack;
+		sourcePanel.Invalidate();
+		destinationPanel.Refresh();
+		BagButtonTooltip.InvalidateCache(destinationSackPanel.Sack, oldSack);
+	}
+
+	/// <summary>
+	/// Calculates the destination index accounting for panel type offsets.
+	/// </summary>
+	private int GetDestinationIndex(SackPanel destinationSackPanel, int currentBag, int sackNumber)
+	{
+		if (destinationSackPanel.SackType is SackType.Vault or SackType.Player)
+			return sackNumber;
+
+		return currentBag;
 	}
 
 	/// <summary>
@@ -422,5 +392,44 @@ public partial class MainForm
 	{
 		this.showSecondaryVault = !this.showSecondaryVault;
 		this.UpdateTopPanel();
+	}
+
+	/// <summary>
+	/// Updates the item's location properties after it has been moved to a new container.
+	/// This ensures search results always reflect the current location.
+	/// </summary>
+	/// <param name="item">The item that was moved</param>
+	/// <param name="destinationPlayer">The destination PlayerCollection (vault/player/stash)</param>
+	/// <param name="destinationSackType"></param>
+	/// <param name="destinationSackNumber"></param>
+	private void UpdateItemLocation(Item item, PlayerCollection destinationPlayer, SackType destinationSackType, int destinationSackNumber, StashType? destinationStashType)
+	{
+		if (item == null || destinationPlayer == null)
+			return;
+
+		// Update the item's location properties to reflect its new home
+		item.Place.Path = destinationPlayer.PlayerFile;
+		item.Place.Name = this.GamePathResolver.GetNameFromFile(destinationPlayer.PlayerFile)
+			?? GamePathResolver.GetVaultNameFromPath(destinationPlayer.PlayerFile);
+
+		// Calculate sack number based on sack type
+		switch (destinationSackType)
+		{
+			case SackType.Equipment:
+				item.Place.SackNumber = BagIdConstants.BAGID_EQUIPMENTPANEL;
+				break;
+			case SackType.Stash:
+				item.Place.SackNumber = destinationStashType is not null ? (int)destinationStashType : destinationSackNumber;
+				break;
+			case SackType.Vault:
+			case SackType.Player:
+			default:
+				// For vaults and player sacks, use the current sack index
+				item.Place.SackNumber = destinationSackNumber;
+				break;
+		}
+
+		item.Place.SackType = destinationSackType;
+		item.Place.StashType = destinationStashType;
 	}
 }

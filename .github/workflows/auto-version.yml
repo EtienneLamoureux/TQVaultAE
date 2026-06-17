@@ -7,8 +7,8 @@ on:
       - 'version-info.json'
 
 env:
-  DOTNET_VERSION: "8.0.x"
-  SOLUTION_FILE: "TQVaultAE.sln"
+  DOTNET_VERSION: "10.0.x"
+  SOLUTION_FILE: "TQVaultAE.slnx"
 
 jobs:
   version-and-release:
@@ -35,25 +35,16 @@ jobs:
           git commit -m "chore: sync version from version-info.json [skip ci]" || echo "No changes to commit"
           git push || echo "Nothing to push"
 
-      - name: Setup MSBuild path
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v2
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Install ImageMagick
-        run: winget install ImageMagick.Q8 --accept-source-agreements --accept-package-agreements
-
-      - name: Restore NuGet packages
-        run: nuget restore ${{ env.SOLUTION_FILE }}
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_FILE }}
 
       - name: Build Release
-        run: msbuild ${{ env.SOLUTION_FILE }} /p:Configuration=Release /p:Platform="Any CPU" /m /v:minimal
+        run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore
 
       - name: Read version for tag
         id: version-tag
@@ -74,14 +65,14 @@ jobs:
         run: |
           $version = "${{ steps.version-tag.outputs.version }}"
           
-          # Create TQVaultAE.GUI archive (SDK-style output path)
-          Compress-Archive -Path "src/TQVaultAE.GUI/bin/Release/net48/*" -DestinationPath "TQVaultAE.GUI-$version.zip" -Force
+          # Create TQVaultAE.GUI archive (.NET 10.0 Windows)
+          Compress-Archive -Path "src/TQVaultAE.GUI/bin/Release/net10.0-windows/*" -DestinationPath "TQVaultAE.GUI-$version.zip" -Force
           
-          # Create TQSaveFilesExplorer archive (SDK-style output path)
+          # Create TQSaveFilesExplorer archive (.NET Framework 4.8)
           Compress-Archive -Path "src/TQSaveFilesExplorer/bin/Release/net48/*" -DestinationPath "TQSaveFilesExplorer-$version.zip" -Force
           
-          # Create ARZExplorer archive (SDK-style output path)
-          Compress-Archive -Path "src/ARZExplorer/bin/Release/net48/*" -DestinationPath "ARZExplorer-$version.zip" -Force
+          # Create ARZExplorer archive (.NET 10.0 Windows)
+          Compress-Archive -Path "src/ARZExplorer/bin/Release/net10.0-windows/*" -DestinationPath "ARZExplorer-$version.zip" -Force
           
           Write-Host "Created release archives:"
           Get-ChildItem *.zip
@@ -90,7 +81,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: TQVaultAE-GUI-Release
-          path: src/TQVaultAE.GUI/bin/Release/net48/
+          path: src/TQVaultAE.GUI/bin/Release/net10.0-windows/
           retention-days: 3
 
       - name: Upload TQ.SaveFilesExplorer artifacts (Release)
@@ -104,7 +95,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ARZExplorer-Release
-          path: src/ARZExplorer/bin/Release/net48/
+          path: src/ARZExplorer/bin/Release/net10.0-windows/
           retention-days: 3
 
       - name: Create GitHub Release

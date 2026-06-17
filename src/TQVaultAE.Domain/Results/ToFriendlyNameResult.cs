@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Domain.Results;
 
-public class ToFriendlyNameResult
+public partial class ToFriendlyNameResult
 {
 
 	IEnumerable<string> _FullText = null;
@@ -62,9 +59,28 @@ public class ToFriendlyNameResult
 
 		FulltextBuild();
 
+		// Use span-based comparison for better performance
+		var searchSpan = search.AsSpan();
 		foreach (var str in _FullText)
 		{
-			if (str.ContainsIgnoreCase(search)) return true;
+			if (str.AsSpan().Contains(searchSpan, StringComparison.OrdinalIgnoreCase)) return true;
+		}
+
+		return false;
+	}
+
+	/// <summary>
+	/// Optimized full-text search using ReadOnlySpan for bounds-check elimination.
+	/// </summary>
+	public bool FulltextIsMatchIndexOf(ReadOnlySpan<char> search)
+	{
+		if (search.IsEmpty) return false;
+
+		FulltextBuild();
+
+		foreach (var str in _FullText)
+		{
+			if (str.AsSpan().Contains(search, StringComparison.OrdinalIgnoreCase)) return true;
 		}
 
 		return false;
@@ -139,12 +155,13 @@ public class ToFriendlyNameResult
 	public RecordId BaseItemId;
 	public string BaseItemRarity;
 
-	static Regex BaseItemInfoClassRegEx = new Regex(@"[^\w\s']", RegexOptions.Compiled);
+	[GeneratedRegex(@"[^\w\s']")]
+	private static partial Regex BaseItemInfoClassRegEx();
 	string _BaseItemInfoClass;
 	public string BaseItemInfoClass
 	{
 		get => _BaseItemInfoClass;
-		set => _BaseItemInfoClass = BaseItemInfoClassRegEx.Replace((value ?? string.Empty), string.Empty);// Clean everything except few things;
+		set => _BaseItemInfoClass = BaseItemInfoClassRegEx().Replace((value ?? string.Empty), string.Empty);// Clean everything except few things;
 	}
 
 	public string BaseItemInfoStyle;

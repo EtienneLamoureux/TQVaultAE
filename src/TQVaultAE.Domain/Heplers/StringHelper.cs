@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Data;
-using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -11,7 +7,7 @@ using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Domain.Helpers;
 
-public static class StringHelper
+public static partial class StringHelper
 {
 	const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
 
@@ -19,9 +15,26 @@ public static class StringHelper
 
 	public static bool Contains(this string input, string search, StringComparison comparison)
 		=> input.IndexOf(search, comparison) > -1;
-	
+
+	/// <summary>
+	/// Checks if a string contains a substring using ordinal ignore case comparison.
+	/// Optimized overload for high-frequency search operations.
+	/// </summary>
 	public static bool ContainsIgnoreCase(this string input, string search)
+		=> input.AsSpan().Contains(search.AsSpan(), noCase);
+
+	/// <summary>
+	/// Checks if a ReadOnlySpan contains a substring using ordinal ignore case comparison.
+	/// Uses MemoryExtensions for efficient span-based searching.
+	/// </summary>
+	public static bool ContainsIgnoreCase(this ReadOnlySpan<char> input, ReadOnlySpan<char> search)
 		=> input.Contains(search, noCase);
+
+	/// <summary>
+	/// Checks if a Span contains a substring using ordinal ignore case comparison.
+	/// </summary>
+	public static bool ContainsIgnoreCase(this Span<char> input, ReadOnlySpan<char> search)
+		=> ((ReadOnlySpan<char>)input).Contains(search, noCase);
 
 
 	#region Eval
@@ -63,21 +76,20 @@ public static class StringHelper
 
 	public static string MakeMD5(this string input)
 	{
-		string hash;
-
 		using var md5Hash = MD5.Create();
 
 		// Convert the input string to a byte array and compute the hash.
 		byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
 
-		StringBuilder sBuilder = new StringBuilder();
+		// Pre-allocate StringBuilder with exact capacity
+		var sBuilder = new StringBuilder(data.Length * 2, data.Length * 2);
 
-		for (int i = 0; i < data.Length; i++)
-			sBuilder.Append(data[i].ToString("x2"));
+		// Use span-based hex conversion for better performance
+		var dataSpan = data.AsSpan();
+		for (int i = 0; i < dataSpan.Length; i++)
+			sBuilder.Append(dataSpan[i].ToString("x2"));
 
-		hash = sBuilder.ToString();
-
-		return hash;
+		return sBuilder.ToString();
 	}
 
 	public static string ToFirstCharUpperCase(this string text)
@@ -87,13 +99,80 @@ public static class StringHelper
 	}
 
 	/// <summary>
+	/// Converts the first character of a string to uppercase using ReadOnlySpan for efficiency.
+	/// </summary>
+	public static string ToFirstCharUpperCase(this ReadOnlySpan<char> text)
+	{
+		if (text.IsEmpty) return string.Empty;
+		if (text.Length == 1) return char.ToUpperInvariant(text[0]).ToString();
+
+		// Use stack allocation for small strings, heap for larger ones
+		if (text.Length <= 64)
+		{
+			Span<char> buffer = stackalloc char[text.Length];
+				text.CopyTo(buffer);
+				buffer[0] = char.ToUpperInvariant(buffer[0]);
+				return new string(buffer);
+		}
+
+		// For larger strings, allocate
+		var result = new char[text.Length];
+		text.CopyTo(result);
+		result[0] = char.ToUpperInvariant(result[0]);
+		return new string(result);
+	}
+
+	/// <summary>
+	/// Removes a suffix from the end of a string span and returns the result.
+	/// </summary>
+	public static string RemoveSuffix(this ReadOnlySpan<char> text, int suffixLength)
+	{
+		int resultLength = text.Length - suffixLength;
+		if (resultLength <= 0) return string.Empty;
+
+		var result = new char[resultLength];
+		text.Slice(0, resultLength).CopyTo(result);
+		return new string(result);
+	}
+
+	/// <summary>
+	/// Removes a suffix from the end of a string and returns the result.
+	/// </summary>
+	public static string RemoveSuffix(this string text, int suffixLength)
+		=> text.AsSpan().RemoveSuffix(suffixLength);
+
+	/// <summary>
+	/// Concatenates prefix with a sliced portion of the span.
+	/// </summary>
+	public static string ConcatSlice(ReadOnlySpan<char> prefix, ReadOnlySpan<char> span, int skipPrefixChars)
+	{
+		int suffixLength = span.Length - skipPrefixChars;
+		var result = new char[prefix.Length + suffixLength];
+		prefix.CopyTo(result);
+		span.Slice(skipPrefixChars).CopyTo(result.AsSpan(prefix.Length));
+		return new string(result);
+	}
+
+	/// <summary>
+	/// Concatenates prefix with a sliced portion of the span (with explicit length).
+	/// </summary>
+	public static string ConcatSlice(ReadOnlySpan<char> prefix, ReadOnlySpan<char> span, int skipPrefixChars, int suffixLength)
+	{
+		var result = new char[prefix.Length + suffixLength];
+		prefix.CopyTo(result);
+		span.Slice(skipPrefixChars, suffixLength).CopyTo(result.AsSpan(prefix.Length));
+		return new string(result);
+	}
+
+	/// <summary>
 	/// Indicate if <paramref name="TQText"/> contain a ColorTag only
 	/// </summary>
 	/// <param name="TQText"></param>
 	/// <returns></returns>
 	public static bool IsColorTagOnly(this string TQText) => IsColorTagOnlyExtended(TQText).Value;
 
-	static readonly Regex IsColorTagOnlyExtendedRegEx = new Regex(@"^" + TQColorHelper.RegExTQTag + @"$", RegexOptions.Compiled);
+	[GeneratedRegex(@"^" + TQColorHelper.RegExTQTag + @"$")]
+	private static partial Regex IsColorTagOnlyExtendedRegEx();
 	/// <summary>
 	/// Indicate if <paramref name="TQText"/> contain a ColorTag only
 	/// </summary>
@@ -102,14 +181,14 @@ public static class StringHelper
 	public static (bool Value, int Length) IsColorTagOnlyExtended(this string TQText)
 	{
 		if (string.IsNullOrWhiteSpace(TQText)) return (false, 0);
-		return (IsColorTagOnlyExtendedRegEx.IsMatch(TQText), TQText.Length);
+		return (IsColorTagOnlyExtendedRegEx().IsMatch(TQText), TQText.Length);
 	}
 
 
 	public static string RemoveAllTQTags(this string TQText)
 	{
 		if (string.IsNullOrWhiteSpace(TQText)) return TQText;
-		return TQColorHelper.RegExTQTagInstance.Replace(TQText, string.Empty);
+		return TQColorHelper.RegExTQTagInstance().Replace(TQText, string.Empty);
 	}
 
 	static readonly Regex TQCleanupRegEx = new Regex(@"(?<Legit>[^/]*)(?<Comment>//.*)", RegexOptions.Compiled);
@@ -146,8 +225,10 @@ public static class StringHelper
 	}
 
 	static char[] _Delim = new char[] { ' ' };
-	static readonly Regex PrettyFileNameRegExNumber = new Regex(@"(?<number>\d+)", RegexOptions.Compiled);
-	static readonly Regex PrettyFileNameRegExTitleCaseStart = new Regex(@"(?<TitleCaseStart>BOW|DA|OA|XP|Mastery[A-Ha-h]|[A-Z][a-z]*)", RegexOptions.Compiled);
+	[GeneratedRegex(@"(?<number>\d+)")]
+	private static partial Regex PrettyFileNameRegExNumber();
+	[GeneratedRegex(@"(?<TitleCaseStart>BOW|DA|OA|XP|Mastery[A-Ha-h]|[A-Z][a-z]*)")]
+	private static partial Regex PrettyFileNameRegExTitleCaseStart();
 	// Orderered by word length
 	// language=regex, IgnorePatternWhitespace
 	static string PrettyFileNameRegExLowerCaseStartPattern = @"
@@ -172,9 +253,9 @@ public static class StringHelper
 	{
 		if (TQPath is null) return null;
 		var filename = Path.GetFileNameWithoutExtension(TQPath).Replace('_', ' ');
-		filename = PrettyFileNameRegExNumber.Replace(filename, "(${number})");// Enclose Numbers
+		filename = PrettyFileNameRegExNumber().Replace(filename, "(${number})");// Enclose Numbers
 
-		var filenameSplit1 = PrettyFileNameRegExTitleCaseStart
+		var filenameSplit1 = PrettyFileNameRegExTitleCaseStart()
 			.Replace(filename, ' ' + "${TitleCaseStart}")// Add space on Title Case
 				.Split(_Delim, StringSplitOptions.RemoveEmptyEntries);// Split on spaces
 
@@ -254,13 +335,14 @@ public static class StringHelper
 	}
 
 	// language=regex, IgnorePatternWhitespace
-	static readonly Regex _ExplodePrettyFileName = new Regex(@"
+	[GeneratedRegex(@"
 [^\(]+\((?<Num1>\d+)\)(?<Effect>[^\(]+)\((?<Num>\d+)\) # match 'trash (0) effect (0)'
 |
 \((?<Num>\d+)\)(?<Effect>.+)  # match '(0) effect'
 |
 (?<Effect>[^\(]+)\((?<Num>\d+)\) # match 'effect (0)'
-", RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace);
+", RegexOptions.IgnorePatternWhitespace)]
+	private static partial Regex _ExplodePrettyFileName();
 
 	/// <summary>
 	/// Explode an already prettyfied file name
@@ -269,7 +351,7 @@ public static class StringHelper
 	/// <returns></returns>
 	public static (string PrettyFileName, string Effect, string Number, bool IsMatch) ExplodePrettyFileName(this string prettyFileName)
 	{
-		var m = _ExplodePrettyFileName.Match(prettyFileName);
+		var m = _ExplodePrettyFileName().Match(prettyFileName);
 
 		if (!m.Success)
 			return (prettyFileName, prettyFileName, string.Empty, false);
@@ -277,7 +359,8 @@ public static class StringHelper
 		return (prettyFileName, m.Groups["Effect"].Value.Trim(), m.Groups["Num"].Value, true);
 	}
 
-	static readonly Regex AllContiguousSpaceRegEx = new Regex(@"\s+", RegexOptions.Compiled);
+	[GeneratedRegex(@"\s+")]
+	private static partial Regex AllContiguousSpaceRegEx();
 
 	static readonly Regex InsertAfterColorPrefixRegEx = new Regex(TQColorHelper.RegExStartingColorTagOrEmpty + @"(?<Content>.+)", RegexOptions.Compiled);
 	/// <summary>
@@ -336,8 +419,9 @@ public static class StringHelper
 		return string.Join(delim, res.ToArray());
 	}
 
-	static readonly Regex SplitOnTQNewLineRegEx = new Regex(@"(?i)\{\^N}", RegexOptions.Compiled);
-	public static IEnumerable<string> SplitOnTQNewLine(this string TQText) => SplitOnTQNewLineRegEx.Split(TQText);
+	[GeneratedRegex(@"(?i)\{\^N}", RegexOptions.Compiled)]
+	private static partial Regex SplitOnTQNewLineRegEx();
+	public static IEnumerable<string> SplitOnTQNewLine(this string TQText) => SplitOnTQNewLineRegEx().Split(TQText);
 
 	/// <summary>
 	/// Wraps the words in a text description.
@@ -347,6 +431,7 @@ public static class StringHelper
 	/// <returns>List of wrapped text</returns>
 	public static Collection<string> WrapWords(string TQText, int Columns)
 	{
+		if (TQText is null) return new Collection<string>();
 		List<string> choppedLines = new List<string>();
 		// First split on NL tag
 		choppedLines.AddRange(SplitOnTQNewLine(TQText));
@@ -358,7 +443,7 @@ public static class StringHelper
 			if (t.Length > Columns)
 			{
 				// split on spaces
-				var batch = AllContiguousSpaceRegEx.Split(t);
+				var batch = AllContiguousSpaceRegEx().Split(t);
 				string line = string.Empty;
 				string currentColor = string.Empty;
 				List<string> res = new List<string>();

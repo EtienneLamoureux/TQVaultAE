@@ -1,6 +1,5 @@
-using System.Collections.Generic;
 using System.Text.Json;
-using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Application.Contracts.Services;
 
 namespace TQVaultAE.GUI.Models.SearchDialogAdvanced;
 

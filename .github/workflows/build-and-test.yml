@@ -12,8 +12,8 @@ on:
   workflow_dispatch:
 
 env:
-  DOTNET_VERSION: "8.0.x"
-  SOLUTION_FILE: "TQVaultAE.sln"
+  DOTNET_VERSION: "10.0.x"
+  SOLUTION_FILE: "TQVaultAE.slnx"
 
 jobs:
   build:
@@ -27,31 +27,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup MSBuild path
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v2
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Install ImageMagick
-        run: winget install ImageMagick.Q8 --accept-source-agreements --accept-package-agreements
-
-      - name: Restore NuGet packages
-        run: nuget restore ${{ env.SOLUTION_FILE }}
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_FILE }}
 
       - name: Build Release
-        run: msbuild ${{ env.SOLUTION_FILE }} /p:Configuration=Release /p:Platform="Any CPU" /m /v:minimal
+        run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore
 
       - name: Upload TQVaultAE.GUI artifacts (Release)
         uses: actions/upload-artifact@v4
         with:
           name: TQVaultAE-GUI-Release
-          path: src/TQVaultAE.GUI/bin/Release/net48/
+          path: src/TQVaultAE.GUI/bin/Release/net10.0-windows/
           retention-days: 3
 
       - name: Upload TQ.SaveFilesExplorer artifacts (Release)
@@ -65,7 +56,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ARZExplorer-Release
-          path: src/ARZExplorer/bin/Release/net48/
+          path: src/ARZExplorer/bin/Release/net10.0-windows/
           retention-days: 3
 
   test:
@@ -86,13 +77,13 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore dependencies
-        run: dotnet restore src/TQVaultAE.Tests/TQVaultAE.Tests.csproj
+        run: dotnet restore ${{ env.SOLUTION_FILE }}
 
       - name: Build test project
-        run: dotnet build src/TQVaultAE.Tests/TQVaultAE.Tests.csproj --configuration Release
+        run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore
 
       - name: Run tests
-        run: dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj --configuration Release --verbosity normal --no-build --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Release --verbosity normal --no-build --logger "trx;LogFileName=test-results.trx"
 
       - name: Upload test results
         uses: actions/upload-artifact@v4

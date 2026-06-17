@@ -6,7 +6,6 @@
 namespace TQVaultAE.Domain.Entities;
 
 using System;
-using TQVaultAE.Domain.Helpers;
 
 /// <summary>
 /// Holds information on magical prefixes and suffixes

@@ -1,44 +1,36 @@
-//-----------------------------------------------------------------------
-// <copyright file="ArcFile.cs" company="None">
-//     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
-namespace TQVaultAE.Data;
-
+using System.IO.MemoryMappedFiles;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
 using System.Text;
 using TQVaultAE.Config;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Logs;
 
-/// <summary>
-/// Reads and decodes a Titan Quest ARC file.
-/// </summary>
+namespace TQVaultAE.Data;
+
 public class ArcFileProvider : IArcFileProvider
 {
 	private readonly ILogger Log;
 	private readonly IPathIO PathIO;
 	private readonly IDirectoryIO DirectoryIO;
+	private readonly IFileDataService FileData;
+	private readonly IDecompressionService Decompression;
 	private readonly UserSettings USettings;
 
 	/// <summary>
 	/// Ctr
 	/// </summary>
 	/// <param name="fileName">File Name of the ARC file to be read.</param>
-	public ArcFileProvider(ILogger<ArcFileProvider> log, IPathIO pathIO, IDirectoryIO directoryIO, UserSettings uSettings)
+	public ArcFileProvider(ILogger<ArcFileProvider> log, IPathIO pathIO, IDirectoryIO directoryIO, UserSettings uSettings, IFileDataService fileData, IDecompressionService decompression)
 	{
 		this.Log = log;
 		this.PathIO = pathIO;
 		this.DirectoryIO = directoryIO;
+		this.FileData = fileData;
+		this.Decompression = decompression;
 		this.USettings = uSettings;
 	}
 
@@ -123,93 +115,59 @@ public class ArcFileProvider : IArcFileProvider
 			if (USettings.ARCFileDebugLevel > 1)
 				Log.LogDebug("Error - Could not read {0}", file.FileName);
 
-			// could not read the file
 			return null;
 		}
 
 		if (USettings.ARCFileDebugLevel > 1)
 			Log.LogDebug("Normalized dataID = {0}", dataId);
 
-		// Find our file in the toc.
-		// First strip off the leading folder since it is just the ARC name
 		int firstPathDelim = dataId.Normalized.IndexOf('\\');
 		if (firstPathDelim != -1)
 			dataId = dataId.Normalized.Substring(firstPathDelim + 1);
 
-		// Now see if this file is in the toc.
 		ArcDirEntry directoryEntry;
 
 		if (file.DirectoryEntries.ContainsKey(dataId))
 			directoryEntry = file.DirectoryEntries[dataId];
 		else
 		{
-			// record not found
 			if (USettings.ARCFileDebugLevel > 1)
 				Log.LogDebug("Error - {0} not found.", dataId);
 
 			return null;
 		}
 
-		// Now open the ARC file and read in the record.
-		using (FileStream arcFile = new FileStream(file.FileName, FileMode.Open, FileAccess.Read))
+		byte[] data = new byte[directoryEntry.RealSize];
+		int startPosition = 0;
+
+		if ((directoryEntry.StorageType == 1) && (directoryEntry.CompressedSize == directoryEntry.RealSize))
 		{
-			// Allocate memory for the uncompressed data
-			byte[] data = new byte[directoryEntry.RealSize];
-
-			// Now process each part of this record
-			int startPosition = 0;
-
-			// First see if the data was just stored without compression.
-			if ((directoryEntry.StorageType == 1) && (directoryEntry.CompressedSize == directoryEntry.RealSize))
+			if (USettings.ARCFileDebugLevel > 1)
 			{
-				if (USettings.ARCFileDebugLevel > 1)
-				{
-					Log.LogDebug("Offset={0}  Size={1}"
-						, directoryEntry.FileOffset
-						, directoryEntry.RealSize
-					);
-				}
-
-				arcFile.Seek(directoryEntry.FileOffset, SeekOrigin.Begin);
-				arcFile.Read(data, 0, directoryEntry.RealSize);
-			}
-			else
-			{
-				// The data was compressed so we attempt to decompress it.
-				foreach (ArcPartEntry partEntry in directoryEntry.Parts)
-				{
-					// seek to the part we want
-					arcFile.Seek(partEntry.FileOffset, SeekOrigin.Begin);
-
-					// Ignore the zlib compression method.
-					arcFile.ReadByte();
-
-					// Ignore the zlib compression flags.
-					arcFile.ReadByte();
-
-					// Create a deflate stream.
-					using (DeflateStream deflate = new DeflateStream(arcFile, CompressionMode.Decompress, true))
-					{
-						int bytesRead;
-						int partLength = 0;
-						while ((bytesRead = deflate.Read(data, startPosition, data.Length - startPosition)) > 0)
-						{
-							startPosition += bytesRead;
-							partLength += bytesRead;
-
-							// break out of the read loop if we have processed this part completely.
-							if (partLength >= partEntry.RealSize)
-								break;
-						}
-					}
-				}
+				Log.LogDebug("Offset={0}  Size={1}"
+					, directoryEntry.FileOffset
+					, directoryEntry.RealSize
+				);
 			}
 
-			if (USettings.ARCFileDebugLevel > 0)
-				Log.LogDebug("Exiting ARCFile.GetData()");
-
-			return data;
+			var rawData = this.FileData.GetReadOnlySpan(file.FileName, directoryEntry.FileOffset, directoryEntry.RealSize);
+			rawData.CopyTo(data);
 		}
+		else
+		{
+			foreach (ArcPartEntry partEntry in directoryEntry.Parts)
+			{
+				var compressedData = this.FileData.GetMemory(file.FileName, partEntry.FileOffset + 2, partEntry.CompressedSize - 2);
+				var decompressed = this.Decompression.DecompressZlib(compressedData);
+				Buffer.BlockCopy(decompressed, 0, data, startPosition, decompressed.Length);
+				startPosition += decompressed.Length;
+			}
+		}
+
+		if (USettings.ARCFileDebugLevel > 0)
+			Log.LogDebug("Exiting ARCFile.GetData()");
+
+		return data;
 	}
 
 	/// <summary>
@@ -281,7 +239,9 @@ public class ArcFileProvider : IArcFileProvider
 	/// <summary>
 	/// Read the table of contents of the ARC file
 	/// </summary>
-	public void ReadARCToC(ArcFile file)
+	public void ReadARCToC(ArcFile file) => ReadARCToC_NEW(file);
+
+	public void ReadARCToC_OLD(ArcFile file)
 	{
 		// Format of an ARC file
 		// 0x08 - 4 bytes = # of files
@@ -470,8 +430,7 @@ public class ArcFileProvider : IArcFileProvider
 
 					// Now read in the record names
 					arcFile.Seek(fileNamesOffset, SeekOrigin.Begin);
-					byte[] buffer = new byte[2048];
-					ASCIIEncoding ascii = new ASCIIEncoding();
+					Span<byte> buffer = stackalloc byte[2048];
 					for (i = 0; i < numEntries; ++i)
 					{
 						// only Active files have a filename entry
@@ -502,7 +461,7 @@ public class ArcFileProvider : IArcFileProvider
 									Log.LogDebug("ARCFile.ReadARCToC() Error - Buffer size of 2048 has been exceeded.");
 									if (USettings.ARCFileDebugLevel > 2)
 									{
-										var content = buffer.Select(b => string.Format(CultureInfo.InvariantCulture, "0x{0:X}", b)).ToArray();
+										var content = buffer.Slice(0, bufferSize).ToArray().Select(b => string.Format(CultureInfo.InvariantCulture, "0x{0:X}", b)).ToArray();
 										Log.LogDebug($"Buffer contents:{Environment.NewLine}{string.Join(string.Empty, content)}{Environment.NewLine}{string.Empty}");
 									}
 								}
@@ -516,10 +475,8 @@ public class ArcFileProvider : IArcFileProvider
 							string newfile;
 							if (bufferSize >= 1)
 							{
-								// Now convert the buffer to a string
-								char[] chars = new char[ascii.GetCharCount(buffer, 0, bufferSize - 1)];
-								ascii.GetChars(buffer, 0, bufferSize - 1, chars, 0);
-								newfile = new string(chars);
+								// Now convert the buffer to a string using stack-allocated span
+								newfile = Encoding.ASCII.GetString(buffer.Slice(0, bufferSize - 1));
 							}
 							else
 								newfile = string.Format(CultureInfo.InvariantCulture, "Null File {0}", i);
@@ -557,4 +514,311 @@ public class ArcFileProvider : IArcFileProvider
 	}
 
 	#endregion ArcFile Private Methods
+
+	/// <summary>
+	/// Read the table of contents of the ARC file using MemoryMappedFile and SpanHelper.
+	/// This is a modernized version that uses memory-mapped file access for efficient random access
+	/// and span-based binary parsing to reduce allocations.
+	/// </summary>
+	/// <param name="file">The ArcFile to read.</param>
+	/// <returns>True if the read was successful.</returns>
+	public bool ReadARCToC_NEW(ArcFile file)
+	{
+		/*
+		 * Format of an ARC file
+		 * 0x00-0x02: "ARC" header (0x41, 0x52, 0x43)
+		 * 0x08 - 4 bytes = # of files (numEntries)
+		 * 0x0C - 4 bytes = # of parts (numParts)
+		 * 0x18 - 4 bytes = offset to directory structure (tocOffset)
+		 *
+		 * Format of directory structure (at tocOffset):
+		 * Part entries: numParts * 12 bytes each:
+		 *   4-byte int = offset in file where this part begins
+		 *   4-byte int = size of compressed part
+		 *   4-byte int = size of uncompressed part
+		 *   These triplets repeat for each part in the arc file
+		 *
+		 * After the part triplets are a bunch of null-terminated strings
+		 * which are the sub filenames.
+		 *
+		 * Then file record entries: numEntries * 44 bytes each (seek from end of file):
+		 *   4-byte int = storageType (3 = compressed, 1 = non-compressed)
+		 *   4-byte int = offset in file where first part of this subfile begins
+		 *   4-byte int = compressed size of this file
+		 *   4-byte int = uncompressed size of this file
+		 *   4-byte crap (timestamp?)
+		 *   4-byte crap (timestamp?)
+		 *   4-byte crap (timestamp?)
+		 *   4-byte int = numParts this file uses
+		 *   4-byte int = part# of first part for this file (starting at 0)
+		 *   4-byte int = length of filename string
+		 *   4-byte int = offset in directory structure for filename
+		 *
+		 * Then at fileNamesOffset: null-terminated ASCII filenames
+		*/
+
+		file.FileHasBeenRead = true;
+
+		if (USettings.ARCFileDebugLevel > 0)
+			Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - Starting", file.FileName);
+
+		// Use MemoryMappedFile for efficient random access
+		using var mmf = MemoryMappedFile.CreateFromFile(file.FileName, FileMode.Open, null, 0, MemoryMappedFileAccess.Read);
+		using var accessor = mmf.CreateViewAccessor(0, 0, MemoryMappedFileAccess.Read);
+
+		// Use actual file size, not accessor.Capacity, to ensure consistent behavior across platforms
+		// accessor.Capacity may include memory-mapped metadata on some platforms
+		long fileLength = new FileInfo(file.FileName).Length;
+
+		if (USettings.ARCFileDebugLevel > 0)
+			Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - fileLength={1} (mmf capacity={2})", file.FileName, fileLength, accessor.Capacity);
+
+		// Validate minimum file length
+		if (fileLength < 0x21)
+		{
+			if (USettings.ARCFileDebugLevel > 0)
+				Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - FAIL: fileLength {1} < 0x21", file.FileName, fileLength);
+
+			return false;
+		}
+
+		// Read entire file header into span for efficient parsing
+		var headerSpan = new byte[0x21];
+		accessor.ReadArray(0, headerSpan, 0, headerSpan.Length);
+
+		// Check "ARC" header at bytes 0, 1, 2
+		if (headerSpan[0] != 0x41 || headerSpan[1] != 0x52 || headerSpan[2] != 0x43)
+		{
+			if (USettings.ARCFileDebugLevel > 0)
+				Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - FAIL: Invalid ARC header", file.FileName);
+
+			return false;
+		}
+
+		if (USettings.ARCFileDebugLevel > 0)
+			Log.LogDebug("File Length={0}", fileLength);
+
+		// Read header values using SpanHelper
+		int numEntries = SpanHelper.ReadInt32LittleEndian(headerSpan, 0x08);
+		int numParts = SpanHelper.ReadInt32LittleEndian(headerSpan, 0x0C);
+		int tocOffset = SpanHelper.ReadInt32LittleEndian(headerSpan, 0x18);
+
+		if (USettings.ARCFileDebugLevel > 0)
+		{
+			Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - numEntries={1}, numParts={2}, tocOffset={3}", file.FileName, numEntries, numParts, tocOffset);
+			Log.LogDebug("numEntries={0}, numParts={1}, tocOffset={2}", numEntries, numParts, tocOffset);
+		}
+
+		// Validate tocOffset - only needed if we have parts to read
+		// When numParts == 0, tocOffset can legitimately be at or past end of file
+		if (numParts > 0 && fileLength < tocOffset + 12)
+		{
+			if (USettings.ARCFileDebugLevel > 0)
+				Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - FAIL: fileLength {1} < tocOffset + 12 ({2})", file.FileName, fileLength, tocOffset + 12);
+
+			return false;
+		}
+
+		// Create arrays for parts and records
+		var parts = new ArcPartEntry[numParts];
+		var records = new ArcDirEntry[numEntries];
+
+		// Read part entries (12 bytes each: fileOffset, compressedSize, realSize)
+		// Read into a single span for the entire parts region
+		var partsRegionSize = numParts * 12;
+		var partsSpan = new byte[partsRegionSize];
+		accessor.ReadArray(tocOffset, partsSpan, 0, partsRegionSize);
+
+		if (USettings.ARCFileDebugLevel > 0)
+			Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - Read {1} parts, partsRegionSize={2}", file.FileName, numParts, partsRegionSize);
+
+		for (int i = 0; i < numParts; i++)
+		{
+			parts[i] = new ArcPartEntry();
+			var partEntry = SpanHelper.ReadArcPartEntry(partsSpan, i * 12);
+			parts[i].FileOffset = partEntry.FileOffset;
+			parts[i].CompressedSize = partEntry.CompressedSize;
+			parts[i].RealSize = partEntry.RealSize;
+
+			if (USettings.ARCFileDebugLevel > 2)
+				Log.LogDebug("parts[{0}]: fileOffset={1}, compressedSize={2}, realSize={3}", i, parts[i].FileOffset, parts[i].CompressedSize, parts[i].RealSize);
+		}
+
+		// Calculate fileNamesOffset (current position after reading parts)
+		int fileNamesOffset = tocOffset + (numParts * 12);
+
+		// Calculate where file record data starts (44 bytes per entry, from end)
+		int fileRecordOffsetBytes = 44 * numEntries;
+		long fileRecordStart = fileLength - fileRecordOffsetBytes;
+
+		if (USettings.ARCFileDebugLevel > 0)
+			Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - fileNamesOffset={1}, fileRecordOffsetBytes={2}, fileRecordStart={3}", file.FileName, fileNamesOffset, fileRecordOffsetBytes, fileRecordStart);
+
+		// Read all file records into a single span (only if there are entries and position is valid)
+		var recordsSpan = new byte[fileRecordOffsetBytes];
+		if (numEntries > 0 && fileRecordStart < fileLength)
+			accessor.ReadArray(fileRecordStart, recordsSpan, 0, fileRecordOffsetBytes);
+
+		// Read file record entries
+		for (int i = 0; i < numEntries; i++)
+		{
+			int baseOffset = i * 44;
+			records[i] = new ArcDirEntry();
+
+			var dirEntry = SpanHelper.ReadArcDirEntry(recordsSpan, baseOffset);
+
+			records[i].StorageType = dirEntry.StorageType;
+			records[i].FileOffset = dirEntry.FileOffset;
+			records[i].CompressedSize = dirEntry.CompressedSize;
+			records[i].RealSize = dirEntry.RealSize;
+
+			int numberOfParts = dirEntry.NumberOfParts;
+			int firstPart = dirEntry.FirstPart;
+
+			if (numberOfParts < 1)
+			{
+				records[i].Parts = null;
+
+				if (USettings.ARCFileDebugLevel > 2)
+					Log.LogDebug("File {0} is not compressed.", i);
+			}
+			else
+			{
+				// Validate that firstPart + numberOfParts is within bounds before allocating
+				// OLD algorithm doesn't bounds-check, so we need to be lenient to match its behavior
+				if (firstPart < 0 || firstPart + numberOfParts > numParts)
+				{
+					// Invalid part range - mark as inactive to match OLD behavior
+					Log.LogWarning("ARCFile.ReadARCToC_NEW({0}) - record[{1}] has invalid part range: firstPart={2}, numberOfParts={3}, numParts={4}",
+						file.FileName, i, firstPart, numberOfParts, numParts);
+
+					records[i].Parts = null;
+				}
+				else
+				{
+					records[i].Parts = new ArcPartEntry[numberOfParts];
+					// Link parts to this record
+					for (int ip = 0; ip < numberOfParts; ip++)
+					{
+						int partIndex = ip + firstPart;
+						records[i].Parts[ip] = parts[partIndex];
+					}
+				}
+			}
+
+			if (USettings.ARCFileDebugLevel > 2)
+			{
+				Log.LogDebug("record[{0}]: storageType={1}, offset={2}, compressedSize={3}, realSize={4}, numParts={5}, firstPart={6}",
+					i, dirEntry.StorageType, records[i].FileOffset, records[i].CompressedSize, records[i].RealSize, numberOfParts, firstPart);
+			}
+
+			// Log first 10 entries IsActive status
+			if (i < 10)
+			{
+				if (USettings.ARCFileDebugLevel > 2)
+				{
+					Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - Record[{1}]: storageType={2}, Parts={3}, IsActive={4}",
+						file.FileName, i, records[i].StorageType, records[i].Parts == null ? "null" : records[i].Parts.Length.ToString(), records[i].IsActive);
+				}
+			}
+		}
+
+		if (USettings.ARCFileDebugLevel > 0)
+			Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - Processed {1} records", file.FileName, numEntries);
+
+		// Read filenames region using efficient span parsing
+		// fileNamesOffset to fileRecordStart
+		int filenameRegionSize = (int)(fileRecordStart - fileNamesOffset);
+
+		if (USettings.ARCFileDebugLevel > 0)
+			Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - filenameRegionSize={1}, fileNamesOffset={2}, fileRecordStart={3}", file.FileName, filenameRegionSize, fileNamesOffset, fileRecordStart);
+
+		if (filenameRegionSize > 0 && fileNamesOffset >= 0 && fileNamesOffset < fileLength)
+		{
+			if (USettings.ARCFileDebugLevel > 1)
+				Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - Reading filename region at offset {1}, size {2}", file.FileName, fileNamesOffset, filenameRegionSize);
+
+			var filenameBuffer = new byte[filenameRegionSize];
+			accessor.ReadArray(fileNamesOffset, filenameBuffer, 0, filenameRegionSize);
+
+			// Log first 50 bytes of filename region for debugging
+			var firstBytes = BitConverter.ToString(filenameBuffer.Take(Math.Min(50, filenameBuffer.Length)).ToArray());
+
+			if (USettings.ARCFileDebugLevel > 1)
+				Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - First 50 filename bytes: {1}", file.FileName, firstBytes);
+
+			var filenameSpan = filenameBuffer.AsSpan();
+
+			int currentOffset = 0;
+			int activeEntriesFound = 0;
+			for (int i = 0; i < numEntries; i++)
+			{
+				// Only Active files have a filename entry
+				if (records[i].IsActive)
+				{
+					activeEntriesFound++;
+
+					if (USettings.ARCFileDebugLevel > 2)
+						Log.LogDebug("Reading entry name {0:n0}", i);
+
+					// Use SpanHelper for null-terminated string reading with 0x03 marker handling
+					string? filename = SpanHelper.ReadArcNullTerminatedString(filenameSpan, currentOffset, 2048, out int bytesConsumed);
+
+					if (filename is not null && filename.Length > 0)
+					{
+						records[i].FileName = filename;
+					}
+					else
+					{
+						// Inactive or null file - use placeholder
+						records[i].FileName = $"Null File {i}";
+
+						if (USettings.ARCFileDebugLevel > 2)
+							Log.LogWarning("ARCFile.ReadARCToC_NEW({0}) - Entry {1} got placeholder name (filename=null or empty, bytesConsumed={2})", file.FileName, i, bytesConsumed);
+					}
+
+					currentOffset += bytesConsumed;
+
+					if (USettings.ARCFileDebugLevel > 2)
+						Log.LogDebug("Name {0} = '{1}'", i, records[i].FileName);
+				}
+				else
+				{
+					if (USettings.ARCFileDebugLevel > 2)
+						Log.LogDebug("Entry {0} is inactive, skipping filename", i);
+				}
+			}
+
+			if (USettings.ARCFileDebugLevel > 1)
+				Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - Found {1} active entries during filename parsing", file.FileName, activeEntriesFound);
+		}
+		else
+		{
+			if (USettings.ARCFileDebugLevel > 1)
+				Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - SKIP filename region: filenameRegionSize={1}, fileNamesOffset={2}, fileLength={3}",
+					file.FileName, filenameRegionSize, fileNamesOffset, fileLength);
+		}
+
+		// Build dictionary from active records
+		var dictionary = new Dictionary<RecordId, ArcDirEntry>(numEntries);
+		int activeCount = 0;
+		for (int i = 0; i < numEntries; i++)
+		{
+			if (records[i].IsActive && records[i].FileName is not null)
+			{
+				dictionary.Add(records[i].FileName, records[i]);
+				activeCount++;
+			}
+		}
+
+		if (USettings.ARCFileDebugLevel > 0)
+			Log.LogDebug("ARCFile.ReadARCToC_NEW({0}) - Built dictionary with {1} active entries out of {2} total", file.FileName, activeCount, numEntries);
+
+		file.DirectoryEntries = dictionary;
+
+		if (USettings.ARCFileDebugLevel > 0)
+			Log.LogDebug("Exiting ARCFile.ReadARCToC_NEW()");
+
+		return true;
+	}
 }

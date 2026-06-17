@@ -1,23 +1,17 @@
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Drawing;
 using System.Globalization;
-using System.IO;
-using System.Windows.Forms;
-using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 using TQVaultAE.Logs;
 using TQVaultAE.Services;
-using TQVaultAE.Domain.Contracts.Services;
-using Microsoft.Extensions.Logging;
+using TQVaultAE.Application;
 
 namespace TQVaultAE.GUI;
 
 public partial class MainForm
 {
-	private IVaultService vaultService = null;
+	// Uses vaultService from MainForm.cs
 
 	/// <summary>
 	/// Creates the vault panel
@@ -175,6 +169,7 @@ public partial class MainForm
 		}
 		else
 		{
+			// Use service
 			var result = this.vaultService.LoadVault(vaultName);
 
 			if (result.ArgumentException != null)
@@ -342,28 +337,9 @@ public partial class MainForm
 	/// </summary>
 	private bool SaveAllModifiedVaults()
 	{
-	retry:
-		int saved = 0;
+		// Use service with ref parameter
 		PlayerCollection vaultOnError = null;
-		try
-		{
-			saved = this.vaultService.SaveAllModifiedVaults(ref vaultOnError);
-		}
-		catch (IOException exception)
-		{
-			string title = string.Format(CultureInfo.InvariantCulture, Resources.MainFormSaveError, vaultOnError.PlayerName);
-			Log.LogError(exception, title);
-			switch (MessageBox.Show(Log.FormatException(exception), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, RightToLeftOptions))
-			{
-				case DialogResult.Abort:
-					// rethrow the exception
-					throw;
-				case DialogResult.Retry:
-					// retry
-					goto retry;
-			}
-		}
-		return saved > 0;
+		return this.vaultService.SaveAllModifiedVaults(ref vaultOnError) > 0;
 	}
 
 	/// <summary>

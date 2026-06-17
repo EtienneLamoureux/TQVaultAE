@@ -3,13 +3,9 @@
 ## Build Commands
 
 ```bash
-# Build entire solution (modern slim format - Any CPU only)
+# Build solution (Any CPU)
 dotnet build TQVaultAE.slnx
 dotnet build TQVaultAE.slnx --configuration Release
-
-# Build with specific platform (use classic format)
-dotnet build TQVaultAE.sln --configuration Release -p:Platform=x64
-dotnet build TQVaultAE.sln --configuration Release -p:Platform=x86
 
 # Build specific project
 dotnet build src/TQVaultAE.GUI/TQVaultAE.GUI.csproj
@@ -18,9 +14,7 @@ dotnet build src/TQVaultAE.GUI/TQVaultAE.GUI.csproj
 dotnet restore
 ```
 
-**Solution Files:**
-- `TQVaultAE.slnx` - Modern slim format (XML, ~80% smaller, Any CPU builds only)
-- `TQVaultAE.sln` - Classic format (full platform support: AnyCPU/x64/x86)
+**Solution File:** `TQVaultAE.slnx` (modern .NET 10.0 SDK-style format)
 
 ## Test Commands
 
@@ -28,152 +22,114 @@ dotnet restore
 # Run all tests
 dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj
 
-# Run specific test class
-dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj --filter "FullyQualifiedName~TagServiceTests"
+# Run single test class
+dotnet test --filter "FullyQualifiedName~TagServiceTests"
 
 # Run single test method
-dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj --filter "FullyQualifiedName~TagServiceTests.AddTag_WithNewTagName_ReturnsTrue"
+dotnet test --filter "FullyQualifiedName~TagServiceTests.AddTag_WithNewTagName_ReturnsTrue"
 
 # Run with coverage
-dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+dotnet test --collect:"XPlat Code Coverage;Format=opencover"
+
+# Build before testing
+dotnet build src/TQVaultAE.Tests/TQVaultAE.Tests.csproj --configuration Debug
+dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj --no-build
 ```
 
 ## Code Style
 
 ### Formatting
-- **Indentation**: Tabs (see `.editorconfig`)
-- **Language**: C# 10.0 with file-scoped namespaces
-- **Braces**: Required, K&R style
-- **This**: Use `this.` prefix for instance members (e.g., `this.TagConfig`)
-- **Comments**: Minimize comments unless requested
+- **Indentation**: Tabs
+- **Braces**: K&R style (opening brace on same line)
+- **Namespaces**: File-scoped
+- **This Prefix**: Use `this.` for all instance members
 
-### Naming
-- **Classes/Interfaces**: PascalCase (`ItemService`, `IItemService`)
-- **Methods/Properties**: PascalCase (`GetItemById()`, `ItemName`)
-- **Variables**: camelCase (`itemCount`)
-- **Private fields**: camelCase with underscore (`_itemCount`)
-- **Constants**: PascalCase (`MaxItems`)
-- **Interfaces**: Prefix with `I`
+### Naming Conventions
+| Element | Convention | Example |
+|---------|------------|---------|
+| Classes/Interfaces | PascalCase | `ItemService`, `IItemService` |
+| Private fields | camelCase with underscore | `_itemCount` |
+| Interfaces | Prefix with `I` | `IFileIO` |
 
-### Import Ordering
-1. System namespaces
-2. Third-party libraries (Microsoft, Moq)
-3. Project namespaces (`TQVaultAE.Domain`)
+### Types & Nullable
+- Enable nullable reference types: `<Nullable>enable</Nullable>`
+- Use `?` for nullable parameters
+- Initialize collections as empty rather than null
 
-### File Structure
-```csharp
-using System;
-using Microsoft.Extensions.Logging;
-using TQVaultAE.Domain.Contracts.Services;
+### Async Patterns
+- Use `async`/`await` for I/O operations
+- Name async methods with `Async` suffix: `LoadPlayerAsync()`
+- Do not block on async code (avoid `.Result`, `.Wait()`)
 
-namespace TQVaultAE.Services;
-
-public class MyService : IMyService
-{
-    private readonly ILogger _logger;
-    private readonly IDataService _dataService;
-
-    public MyService(ILogger<MyService> logger, IDataService dataService)
-    {
-        this._logger = logger;
-        this._dataService = dataService;
-    }
-
-    public void DoWork()
-    {
-    }
-}
-```
+### Error Handling
+- Prefer Result types over exceptions for expected failures
+- Log exceptions with context: `Log.LogError(ex, "Failed to load {Name}", name)`
 
 ## Testing
 
 ### Framework
-- **xUnit** with **AwesomeAssertions** (fluent assertions)
-- **Moq** for mocking
+- **xUnit** for tests, **AwesomeAssertions** for assertions, **Moq** for mocking
 
-### Test Pattern
-```csharp
-using AwesomeAssertions;
-using Moq;
+### What is a Meaningful Test? ⚠️ IMPORTANT
 
-namespace TQVaultAE.Tests.Services;
+**AVOID trivial tests that add NO value:**
+- ❌ Property getter/setter without logic (`*_CanBeSet`)
+- ❌ Default value tests without behavior
+- ❌ Constructor verification (`new Class()`)
+- ❌ `x.Should().Be(y)` with constant values
 
-public class ServiceTests
-{
-    private readonly Mock<ILogger<Service>> _mockLogger;
-    private readonly Service _service;
+**WRITE meaningful tests that verify:**
+- ✅ Business logic and calculations
+- ✅ Error handling and edge cases
+- ✅ Interactions between components
+- ✅ State transitions and side effects
 
-    public ServiceTests()
-    {
-        _mockLogger = new Mock<ILogger<Service>>();
-        _service = new Service(_mockLogger.Object);
-    }
+**Rule:** If you can't answer "What bug would this test catch?" → DELETE it
 
-    [Fact]
-    public void Method_WithCondition_ReturnsExpected()
-    {
-        // Arrange
-        var input = "test";
-
-        // Act
-        var result = _service.Method(input);
-
-        // Assert
-        result.Should().Be("expected");
-        _mockLogger.Verify(x => x.LogInformation(It.IsAny<string>()), Times.Once);
-    }
-}
-```
+### Cross-Platform Testing
+- Use `Path.GetTempPath()` for paths
+- Mock `IPathIO` for path control
+- DirectoryNotFoundException handling differs on Linux
 
 ## Architecture
 
 ### Layer Dependencies
 ```
 GUI → Presentation → Services → Domain → Data
+     ↓
+Application (DTOs, Results, Search)
 ```
 
 ### Projects
-- **TQVaultAE.GUI**: Windows Forms executable (.NET Framework 4.8, SDK-style)
-- **ARZExplorer**: Windows Forms executable (.NET Framework 4.8, SDK-style)
-- **TQ.SaveFilesExplorer**: Windows Forms executable (.NET Framework 4.8, SDK-style)
-- **TQVaultAE.Domain**: Entities, contracts, interfaces (.NET Standard 2.0)
-- **TQVaultAE.Services**: Business logic (.NET Standard 2.0)
-- **TQVaultAE.Services.Win32**: Windows-specific services (.NET Framework 4.8, SDK-style)
-- **TQVaultAE.Data**: Data access (.NET Standard 2.0)
-- **TQVaultAE.Presentation**: Presentation layer (.NET Standard 2.0)
-- **TQVaultAE.Config**: Configuration (.NET Standard 2.0)
-- **TQVaultAE.Logs**: Logging (.NET Standard 2.0)
-- **TQVaultAE.Tests**: Unit tests (xUnit, .NET 10.0)
+| Project | Framework | Purpose |
+|---------|-----------|---------|
+| TQVaultAE.GUI | .NET 10.0 | Windows Forms UI |
+| TQVaultAE.Services | .NET 10.0 | Business logic |
+| TQVaultAE.Application | .NET 10.0 | DTOs, Results |
+| TQVaultAE.Data | .NET 10.0 | Data access |
+| TQVaultAE.Domain | .NET 10.0 | Entities |
+| TQVaultAE.Tests | .NET 10.0 | Unit tests |
 
-### Dependency Injection
-- Constructor injection for all services
-- Register in `src/TQVaultAE.GUI/Program.cs`
-- Use `IFileIO` and `IPathIO` abstractions for file operations (enables testing)
+### Key Abstractions (for DI)
+- `IFileIO` - File operations
+- `IPathIO` - Path operations
+- `IGamePathService` - Game path resolution
+- Register services in `src/TQVaultAE.GUI/Program.cs`
 
-## Version Management
-
-See [VERSIONING.md](VERSIONING.md) for details. Key points:
-- All 10 projects must share the same version (4 EXEs + 6 DLLs)
-- Source of truth: `version-info.json`
-- CI/CD auto-increments Minor version on `main` branch push
-- **Never** manually edit `.csproj` version fields - use the version sync script
-
-## Common Tasks
+## Adding New Code
 
 ### Adding a Service
-1. Create interface in `TQVaultAE.Domain/Contracts/Services/`
-2. Implement in `TQVaultAE.Services/`
+1. Create interface in `src/TQVaultAE.Application/contracts/Services/`
+2. Implement in `src/TQVaultAE.Services/`
 3. Use `IFileIO`/`IPathIO` for file operations
 4. Register in `Program.cs`
-5. Add tests in `TQVaultAE.Tests/Services/`
+5. Add tests with meaningful assertions
 
-## Dependencies
-- **System.Text.Json**: JSON serialization
-- **Microsoft.Extensions.Logging**: Logging
-- **Magick.NET-Q8-AnyCPU**: Image processing (requires ImageMagick)
-- **xUnit**: Testing
-- **Moq**: Mocking
-- **AwesomeAssertions**: Assertions
+### Adding a Test
+1. Create test class: `src/TQVaultAE.Tests/<Category>/<Name>Tests.cs`
+2. Mock all dependencies in constructor
+3. Follow Arrange-Act-Assert pattern
+4. Verify actual behavior, not property assignments
 
 ## Resources
 - GitHub: https://github.com/EtienneLamoureux/TQVaultAE

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace TQVaultAE.Data.Dto;
+﻿namespace TQVaultAE.Data.Dto;
 
 /// <summary>
 /// Vault data structure

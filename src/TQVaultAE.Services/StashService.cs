@@ -1,13 +1,11 @@
 using Microsoft.Extensions.Logging;
-using System;
-using System.IO;
-using System.Collections.Generic;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
-using TQVaultAE.Domain.Results;
 using TQVaultAE.Presentation;
 using TQVaultAE.Config;
+using TQVaultAE.Application.Results;
 
 namespace TQVaultAE.Services;
 
@@ -15,34 +13,42 @@ public class StashService : IStashService
 {
 	private readonly ILogger Log;
 	private readonly SessionContext userContext;
+	private readonly IItemDatabaseService ItemDatabaseService;
 	private readonly IStashProvider StashProvider;
 	private readonly IGamePathService GamePathResolver;
 	private readonly IGameFileService GameFileService;
 	private readonly UserSettings UserSettings;
 
-	public StashService(ILogger<StashService> log, SessionContext userContext, IStashProvider stashProvider, IGamePathService gamePathResolver, IGameFileService iGameFileService, UserSettings userSettings)
+	public StashService(
+		ILogger<StashService> log,
+		SessionContext userContext,
+		IItemDatabaseService itemDatabaseService,
+		IStashProvider stashProvider,
+		IGamePathService gamePathResolver,
+		IGameFileService iGameFileService,
+		UserSettings userSettings)
 	{
-		this.Log = log;
+		Log = log;
 		this.userContext = userContext;
-		this.StashProvider = stashProvider;
-		this.GamePathResolver = gamePathResolver;
-		this.GameFileService = iGameFileService;
-		this.UserSettings = userSettings;
+		this.ItemDatabaseService = itemDatabaseService;
+		StashProvider = stashProvider;
+		GamePathResolver = gamePathResolver;
+		GameFileService = iGameFileService;
+		UserSettings = userSettings;
 	}
 
 	/// <summary>
-	/// Loads a player stash using the drop down list.
+	/// Loads a player stash.
 	/// </summary>
-	/// <param name="selectedSave">Item from the drop down list.</param>
-	/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
-	/// <returns></returns>
-	public LoadPlayerStashResult LoadPlayerStash(PlayerSave selectedSave, bool fromFileWatcher = false)
+	/// <param name="selectedSave">Player save information.</param>
+	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
+	/// <returns>Stash load result.</returns>
+	public StashLoadResult LoadPlayerStash(PlayerSave selectedSave, bool fromFileWatcher = false)
 	{
-		var result = new LoadPlayerStashResult();
+		var result = new StashLoadResult();
 
-		if (string.IsNullOrWhiteSpace(selectedSave?.Name)) return result;
-
-		#region Get the player's stash
+		if (string.IsNullOrWhiteSpace(selectedSave?.Name))
+			return result;
 
 		result.StashFile = GamePathResolver.GetPlayerStashFile(selectedSave.Name, selectedSave.IsArchived);
 
@@ -52,6 +58,15 @@ public class StashService : IStashService
 			try
 			{
 				stash.StashFound = StashProvider.LoadFile(stash);
+				if (stash.StashFound ?? false)
+					stash.Sack.StashType = StashType.PlayerStash;
+
+				// Add stash items to the search database
+				if (stash.Sack != null)
+				{
+					foreach (var item in stash.Sack)
+						this.ItemDatabaseService.AddItemToDatabase(item, k, selectedSave.Name, BagIdConstants.BAGID_PLAYERSTASH, SackType.Stash, StashType.PlayerStash);
+				}
 			}
 			catch (ArgumentException argumentException)
 			{
@@ -67,31 +82,38 @@ public class StashService : IStashService
 		}
 
 		result.Stash = fromFileWatcher
-			? this.userContext.Stashes.AddOrUpdateAtomic(result.StashFile, addStash, updateStash)
-			: this.userContext.Stashes.GetOrAddAtomic(result.StashFile, addStash);
-
-		#endregion
+			? userContext.Stashes.AddOrUpdateAtomic(result.StashFile, addStash, updateStash)
+			: userContext.Stashes.GetOrAddAtomic(result.StashFile, addStash);
 
 		return result;
 	}
 
 	/// <summary>
-	/// Loads the transfer stash for immortal throne
+	/// Loads the transfer stash for immortal throne.
 	/// </summary>
-	/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
-	/// <returns></returns>
-	public LoadTransferStashResult LoadTransferStash(bool fromFileWatcher = false)
+	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
+	/// <returns>Stash load result.</returns>
+	public StashLoadResult LoadTransferStash(bool fromFileWatcher = false)
 	{
-		var result = new LoadTransferStashResult();
+		var result = new StashLoadResult();
 
-		result.TransferStashFile = GamePathResolver.TransferStashFileFullPath;
+		result.StashFile = GamePathResolver.TransferStashFileFullPath;
 
 		Stash addStash(string k)
 		{
-			var stash = new Stash(Resources.GlobalTransferStash, result.TransferStashFile);
+			var stash = new Stash(Resources.GlobalTransferStash, result.StashFile);
 			try
 			{
 				stash.StashFound = StashProvider.LoadFile(stash);
+				if (stash.StashFound ?? false)
+					stash.Sack.StashType = StashType.TransferStash;
+
+				// Add transfer stash items to the search database
+				if (stash.Sack != null)
+				{
+					foreach (var item in stash.Sack)
+						this.ItemDatabaseService.AddItemToDatabase(item, k, Resources.GlobalTransferStash, BagIdConstants.BAGID_TRANSFERSTASH, SackType.Stash, StashType.TransferStash);
+				}
 			}
 			catch (ArgumentException argumentException)
 			{
@@ -106,8 +128,8 @@ public class StashService : IStashService
 		}
 
 		var resultStash = fromFileWatcher
-			? this.userContext.Stashes.AddOrUpdateAtomic(result.TransferStashFile, addStash, updateStash)
-			: this.userContext.Stashes.GetOrAddAtomic(result.TransferStashFile, addStash);
+			? userContext.Stashes.AddOrUpdateAtomic(result.StashFile, addStash, updateStash)
+			: userContext.Stashes.GetOrAddAtomic(result.StashFile, addStash);
 
 		result.Stash = resultStash;
 		result.Stash.IsImmortalThrone = true;
@@ -115,17 +137,16 @@ public class StashService : IStashService
 		return result;
 	}
 
-
 	/// <summary>
-	/// Loads the relic vault stash
+	/// Loads the relic vault stash.
 	/// </summary>
-	/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
-	/// <returns></returns>
-	public LoadRelicVaultStashResult LoadRelicVaultStash(bool fromFileWatcher = false)
+	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
+	/// <returns>Stash load result.</returns>
+	public StashLoadResult LoadRelicVaultStash(bool fromFileWatcher = false)
 	{
-		var result = new LoadRelicVaultStashResult();
+		var result = new StashLoadResult();
 
-		result.RelicVaultStashFile = GamePathResolver.RelicVaultStashFileFullPath;
+		result.StashFile = GamePathResolver.RelicVaultStashFileFullPath;
 
 		Stash addStash(string k)
 		{
@@ -134,8 +155,15 @@ public class StashService : IStashService
 			try
 			{
 				stash.StashFound = StashProvider.LoadFile(stash);
-				if (stash.StashFound.Value)
-					stash.Sack.StashType = SackType.RelicVaultStash;
+				if (stash.StashFound ?? false)
+					stash.Sack.StashType = StashType.RelicVaultStash;
+
+				// Add relic vault stash items to the search database
+				if (stash.Sack != null)
+				{
+					foreach (var item in stash.Sack)
+						this.ItemDatabaseService.AddItemToDatabase(item, k, Resources.GlobalRelicVaultStash, BagIdConstants.BAGID_RELICVAULTSTASH, SackType.Stash, StashType.RelicVaultStash);
+				}
 			}
 			catch (ArgumentException argumentException)
 			{
@@ -152,8 +180,8 @@ public class StashService : IStashService
 
 		// Get the relic vault stash
 		var resultStash = fromFileWatcher
-			? this.userContext.Stashes.AddOrUpdateAtomic(result.RelicVaultStashFile, addStash, updateStash)
-			: this.userContext.Stashes.GetOrAddAtomic(result.RelicVaultStashFile, addStash);
+			? userContext.Stashes.AddOrUpdateAtomic(result.StashFile, addStash, updateStash)
+			: userContext.Stashes.GetOrAddAtomic(result.StashFile, addStash);
 
 		result.Stash = resultStash;
 		result.Stash.IsImmortalThrone = true;
@@ -164,14 +192,14 @@ public class StashService : IStashService
 	/// <summary>
 	/// Attempts to save all modified stash files.
 	/// </summary>
-	/// <param name="stashOnError"></param>
+	/// <param name="stashOnError">If save fails, this will contain the stash that failed.</param>
+	/// <returns>Number of stash saved.</returns>
 	/// <exception cref="IOException">can happen during file save</exception>
-	/// <returns>Number of stash saved</returns>
 	public int SaveAllModifiedStashes(ref Stash stashOnError)
 	{
 		// Save each stash as necessary
 		int saved = 0;
-		foreach (KeyValuePair<string, Lazy<Stash>> kvp in this.userContext.Stashes)
+		foreach (KeyValuePair<string, Lazy<Stash>> kvp in userContext.Stashes)
 		{
 			string stashFile = kvp.Key;
 			Stash stash = kvp.Value.Value;
@@ -182,7 +210,7 @@ public class StashService : IStashService
 			{
 				stashOnError = stash;
 
-				if (!this.UserSettings.DisableLegacyBackup)
+				if (!UserSettings.DisableLegacyBackup)
 					GameFileService.BackupFile(stash.PlayerName, stashFile);
 
 				StashProvider.Save(stash, stashFile);
@@ -193,4 +221,81 @@ public class StashService : IStashService
 		return saved;
 	}
 
+	/// <summary>
+	/// Creates a file watcher for the relic vault stash file.
+	/// </summary>
+	/// <param name="onChanged">Action to call when the file changes.</param>
+	/// <returns>A FileSystemWatcher instance or null if the file path is invalid.</returns>
+	public FileSystemWatcher CreateRelicStashFileWatcher(Action onChanged)
+	{
+		var stashFile = GamePathResolver.RelicVaultStashFileFullPath;
+
+		if (string.IsNullOrEmpty(stashFile))
+		{
+			Log.LogWarning("Relic vault stash file path is not configured");
+			return null;
+		}
+
+		var directory = Path.GetDirectoryName(stashFile);
+		var fileName = Path.GetFileName(stashFile);
+
+		if (string.IsNullOrEmpty(directory) || string.IsNullOrEmpty(fileName))
+		{
+			Log.LogWarning("Invalid relic vault stash file path: {Path}", stashFile);
+			return null;
+		}
+
+		var watcher = new FileSystemWatcher(directory, fileName)
+		{
+			NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size,
+			EnableRaisingEvents = true
+		};
+
+		watcher.Changed += (sender, e) =>
+		{
+			Log.LogInformation("Relic vault stash file changed: {FileName}", e.FullPath);
+			onChanged?.Invoke();
+		};
+
+		return watcher;
+	}
+
+	/// <summary>
+	/// Creates a file watcher for the transfer stash file.
+	/// </summary>
+	/// <param name="onChanged">Action to call when the file changes.</param>
+	/// <returns>A FileSystemWatcher instance or null if the file path is invalid.</returns>
+	public FileSystemWatcher CreateTransferStashFileWatcher(Action onChanged)
+	{
+		var stashFile = GamePathResolver.TransferStashFileFullPath;
+
+		if (string.IsNullOrEmpty(stashFile))
+		{
+			Log.LogWarning("Transfer stash file path is not configured");
+			return null;
+		}
+
+		var directory = Path.GetDirectoryName(stashFile);
+		var fileName = Path.GetFileName(stashFile);
+
+		if (string.IsNullOrEmpty(directory) || string.IsNullOrEmpty(fileName))
+		{
+			Log.LogWarning("Invalid transfer stash file path: {Path}", stashFile);
+			return null;
+		}
+
+		var watcher = new FileSystemWatcher(directory, fileName)
+		{
+			NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size,
+			EnableRaisingEvents = true
+		};
+
+		watcher.Changed += (sender, e) =>
+		{
+			Log.LogInformation("Transfer stash file changed: {FileName}", e.FullPath);
+			onChanged?.Invoke();
+		};
+
+		return watcher;
+	}
 }

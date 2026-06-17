@@ -1,27 +1,17 @@
-using Microsoft.VisualBasic;
-using System;
-using System.Drawing;
 using System.Globalization;
-using System.IO;
-using System.Windows.Forms;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 using TQVaultAE.Logs;
-using System.Linq;
-using TQVaultAE.Domain.Contracts.Services;
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Domain.Results;
-using System.Collections.Generic;
-using System.Threading;
+using TQVaultAE.Application;
+using TQVaultAE.Application.Results;
 
 namespace TQVaultAE.GUI;
 
 public partial class MainForm
 {
-	private IPlayerService playerService = null;
-
 	private IReadOnlyCollection<string> _watchedPlayerFiles = null;
 	private IEnumerable<string> WatchedPlayerFiles
 	{
@@ -110,14 +100,14 @@ public partial class MainForm
 		try
 		{
 			// Reload player file
-			LoadPlayerResult playerResult = null;
+			PlayerLoadResult playerResult = null;
 			if (e.Name.Equals(this.GamePathResolver.PlayerSaveFileName, StringComparison.OrdinalIgnoreCase))
 			{
 				Thread.Sleep(500);// Wait for content availability
 				playerResult = this.LoadPlayer(playerSave, true);
 			}
 
-			LoadPlayerStashResult stashResult = null;
+			StashLoadResult stashResult = null;
 			if (e.Name.Equals(this.GamePathResolver.PlayerStashFileNameB, StringComparison.OrdinalIgnoreCase))
 			{
 				Thread.Sleep(500);// Wait for content availability
@@ -201,7 +191,7 @@ public partial class MainForm
 		{
 			this.playerPanel.Player = null;
 			this.stashPanel.Player = null;
-			this.stashPanel.CurrentBag = StashPanel.BAGID_EQUIPMENTPANEL;
+			this.stashPanel.CurrentBag = BagIdConstants.BAGID_EQUIPMENTPANEL;
 
 			if (this.stashPanel.Stash != null)
 				this.stashPanel.Stash = null;
@@ -216,7 +206,7 @@ public partial class MainForm
 	/// <param name="selectedSave">Player string from the drop down list.</param>
 	/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
 	/// <returns></returns>
-	private (LoadPlayerResult PlayerResult, LoadPlayerStashResult StashResult) LoadPlayerAndStashes(PlayerSave selectedSave, bool fromFileWatcher = false)
+	private (PlayerLoadResult PlayerResult, StashLoadResult StashResult) LoadPlayerAndStashes(PlayerSave selectedSave, bool fromFileWatcher = false)
 	{
 		var result = LoadPlayer(selectedSave, fromFileWatcher);
 
@@ -239,42 +229,43 @@ public partial class MainForm
 		return (result, resultStash);
 	}
 
-	private LoadPlayerResult LoadPlayer(PlayerSave selectedSave, bool fromFileWatcher)
+	private PlayerLoadResult LoadPlayer(PlayerSave selectedSave, bool fromFileWatcher)
 	{
-		var result = this.playerService.LoadPlayer(selectedSave, fromFileWatcher);
+		// Use management service
+		var resultDTO = this.playerService.LoadPlayer(selectedSave, fromFileWatcher);
 
 		// Get the player
 		try
 		{
-			if (result.Player.ArgumentException != null)
+			if (resultDTO.Player?.ArgumentException != null)
 			{
-				string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.PlayerFile, result.Player.ArgumentException.Message);
+				string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, resultDTO.PlayerFile, resultDTO.Player.ArgumentException.Message);
 				MessageBox.Show(msg, Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 			}
 
 			if (!fromFileWatcher)
 			{
-				this.playerPanel.Player = result.Player;
-				this.stashPanel.Player = result.Player;
-				this.stashPanel.CurrentBag = StashPanel.BAGID_EQUIPMENTPANEL;
+				this.playerPanel.Player = resultDTO.Player;
+				this.stashPanel.Player = resultDTO.Player;
+				this.stashPanel.CurrentBag = BagIdConstants.BAGID_EQUIPMENTPANEL;
 			}
 			this.comboBoxCharacter.RefreshItem(selectedSave);
 		}
 		catch (IOException exception)
 		{
-			string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, result.PlayerFile, exception.ToString());
+			string msg = string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, resultDTO.PlayerFile, exception.ToString());
 			MessageBox.Show(msg, Resources.MainFormPlayerReadError, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, RightToLeftOptions);
 			Log.LogError(exception, msg);
 			this.playerPanel.Player = null;
 			this.comboBoxCharacter.SelectedIndex = 0;
 		}
 
-		return result;
+		return resultDTO;
 	}
 
-	private LoadPlayerStashResult LoadPlayerStash(PlayerSave selectedSave, bool fromFileWatcher = false)
+	private StashLoadResult LoadPlayerStash(PlayerSave selectedSave, bool fromFileWatcher = false)
 	{
-		// Get the player's stash
+		// Get the player's stash - use management service
 
 		// Only if it's IT, TQ doesn't have one
 		if (!selectedSave.IsImmortalThrone)
@@ -353,7 +344,7 @@ public partial class MainForm
 
 		askAgain:
 			// Ask for new name
-			var newname = Interaction.InputBox(Resources.DuplicateCharacter_NewNameRequired, Resources.DuplicateCharacter_ModalTitle, "NewName").Trim();
+			var newname = InputDialog.Show(Resources.DuplicateCharacter_NewNameRequired, Resources.DuplicateCharacter_ModalTitle, "NewName").Trim();
 			if (newname == string.Empty) return;// Cancel button
 
 			// validate new name
@@ -396,7 +387,7 @@ public partial class MainForm
 				return;
 			}
 
-			Application.Restart();
+			System.Windows.Forms.Application.Restart();
 			return;
 		}
 

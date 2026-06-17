@@ -3,6 +3,10 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
+
 namespace TQVaultAE.GUI;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -11,18 +15,12 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
-using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Windows.Forms;
-using System.Windows.Input;
 using TQVaultAE.Config;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.GUI.Components;
-using TQVaultAE.GUI.Inputs;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
-using TQVaultAE.Services;
 
 /// <summary>
 /// Abstract class used for constructing TQVault themed forms.

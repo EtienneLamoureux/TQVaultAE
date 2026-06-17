@@ -3,15 +3,12 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
+
 using TQVaultAE.GUI.Tooltip;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Presentation;
-using TQVaultAE.Domain.Search;
+using TQVaultAE.Application.Results;
 
 namespace TQVaultAE.GUI;
 
@@ -23,12 +20,12 @@ public partial class ResultsDialog : VaultForm
 	/// <summary>
 	/// List of all results
 	/// </summary>
-	private List<Result> resultsList;
+	private List<SearchResult> resultsList;
 
 	/// <summary>
 	/// User selected result from the list
 	/// </summary>
-	private Result selectedResult;
+	private SearchResult selectedResult;
 
 	/// <summary>
 	/// Search string passed from user
@@ -47,22 +44,22 @@ public partial class ResultsDialog : VaultForm
 		#region Apply custom font
 
 		this.resultsDataGridView.ColumnHeadersDefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.item.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.quality.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.containerName.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.containerType.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.level.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+		this.columnItem.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+		this.columnQuality.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+		this.columnContainerName.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+		this.columnContainerType.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+		this.columnLevel.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 		this.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
 		#endregion
 
-		this.resultsList = new List<Result>();
+		this.resultsList = new List<SearchResult>();
 
-		this.item.HeaderText = Resources.ResultsItem;
-		this.containerName.HeaderText = Resources.ResultsContainer;
-		this.containerType.HeaderText = Resources.ResultsContainerType;
-		this.quality.HeaderText = Resources.ResultsQuality;
-		this.level.HeaderText = Resources.ResultsLevel;
+		this.columnItem.HeaderText = Resources.ResultsItem;
+		this.columnContainerName.HeaderText = Resources.ResultsContainer;
+		this.columnContainerType.HeaderText = Resources.ResultsContainerType;
+		this.columnQuality.HeaderText = Resources.ResultsQuality;
+		this.columnLevel.HeaderText = Resources.ResultsLevel;
 
 		this.NormalizeBox = false;
 		this.DrawCustomBorder = true;
@@ -90,7 +87,7 @@ public partial class ResultsDialog : VaultForm
 	/// <summary>
 	/// Gets the list of results collection
 	/// </summary>
-	public List<Result> ResultsList => this.resultsList;
+	public List<SearchResult> ResultsList => this.resultsList;
 
 	/// <summary>
 	/// Sets the user search string
@@ -105,7 +102,7 @@ public partial class ResultsDialog : VaultForm
 	/// </summary>
 	/// <param name="containterType">SackType which we are looking up</param>
 	/// <returns>string containing the sack type</returns>
-	private static string GetContainerTypeString(SackType containterType)
+	private static string GetContainerTypeString(SackType containterType, StashType? stashType)
 	{
 		switch (containterType)
 		{
@@ -119,13 +116,12 @@ public partial class ResultsDialog : VaultForm
 				return Resources.ResultsContainerEquip;
 
 			case SackType.Stash:
-				return Resources.ResultsContainerStash;
-
-			case SackType.TransferStash:
-				return Resources.GlobalTransferStash;
-
-			case SackType.RelicVaultStash:
-				return Resources.GlobalRelicVaultStash;
+				return stashType switch
+				{
+					StashType.TransferStash => Resources.GlobalTransferStash,
+					StashType.RelicVaultStash => Resources.GlobalRelicVaultStash,
+					_ => Resources.ResultsContainerStash
+				};
 
 			default:
 				return "Unknown";
@@ -170,7 +166,7 @@ public partial class ResultsDialog : VaultForm
 	/// </summary>
 	/// <param name="selectedResult">Currently selected Result</param>
 	/// <returns>String containing the tool tip for the Result.</returns>
-	private void GetToolTip(Result selectedResult)
+	private void GetToolTip(SearchResult selectedResult)
 	{
 		if (selectedResult == null || selectedResult.FriendlyNames == null)
 			ItemTooltip.HideTooltip();
@@ -193,13 +189,14 @@ public partial class ResultsDialog : VaultForm
 
 		for (int i = 0; i < this.resultsList.Count; i++)
 		{
-			Result result = this.resultsList[i];
+			SearchResult result = this.resultsList[i];
 			// Add the result to the DataGridView
 			int currentRow = this.resultsDataGridView.Rows.Add(
 				result.ItemName
 				, result.ItemStyle
 				, result.ContainerName
-				, GetContainerTypeString(result.SackType)
+				, GetContainerTypeString(result.SackType, result.StashType)
+				, result.SackNumber
 				, result.RequiredLevel
 			);
 
@@ -264,7 +261,7 @@ public partial class ResultsDialog : VaultForm
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-	private void ResultsDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+	private void ResultsDataGridViewCellClick(object sender, DataGridViewCellEventArgs e)
 	{
 		// Ignore click on the header.
 		if (e.RowIndex < 0)

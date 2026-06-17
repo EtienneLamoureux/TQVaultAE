@@ -1,11 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Drawing;
-using System.Windows.Forms;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
-using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Helpers;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.GUI.Tooltip;
@@ -139,6 +135,10 @@ public partial class ForgePanel : UserControl, IScalingControl
 
 		BackgroundImageLayout = ImageLayout.Stretch;
 		BackgroundImage = Resources.caravan_bg;
+
+		// Reduce slightly the designed component to fit better the UI.
+		List<PictureBox> pictureBoxList = [pictureBoxBaseItem, pictureBoxPrefix, pictureBoxRelic1, pictureBoxRelic2, pictureBoxSuffix];
+		foreach (var pictureBox in pictureBoxList) pictureBox.Size = new Size(Convert.ToInt32(pictureBox.Size.Width * 0.9), Convert.ToInt32(pictureBox.Size.Height * 0.9));
 
 		tableLayoutPanelForge.BackgroundImageLayout = ImageLayout.Stretch;
 		tableLayoutPanelForge.BackgroundImage = Resources.StashPanel;
@@ -695,7 +695,7 @@ public partial class ForgePanel : UserControl, IScalingControl
 		) as PictureBox;
 
 		var drgItm = DragInfo.Item;
-		var drgSack = DragInfo.Sack;
+		var drgSack = DragInfo.SrcSack;
 
 		if (found == pictureBoxBaseItem)
 		{
@@ -980,7 +980,7 @@ public partial class ForgePanel : UserControl, IScalingControl
 	private bool ItemMustBeInsideASack()
 	{
 		// Happen when i copy an item without droping it in a sack first
-		if (DragInfo.Sack is null)
+		if (DragInfo.SrcSack is null)
 		{
 			this.UIService.NotifyUser(Resources.ForgeItemMustBeStoredFirst, TQColor.Red);
 

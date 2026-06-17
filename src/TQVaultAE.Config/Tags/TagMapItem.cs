@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace TQVaultAE.Config.Tags;
+﻿namespace TQVaultAE.Config.Tags;
 
 public class TagMapItem
 {

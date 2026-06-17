@@ -6,12 +6,11 @@
 
 using ImageMagick;
 using Microsoft.Extensions.Logging;
-using System;
+using System.Buffers.Binary;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.IO;
-using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Application.Contracts.Services;
 
 namespace TQVaultAE.Presentation;
 
@@ -57,11 +56,15 @@ public class BitmapService : IBitmapService
 			return null;
 		}
 
-		if (BitConverter.ToUInt32(data, offset) == 0x01584554)
+		// Read magic using ReadOnlySpan for bounds-check elimination
+		var dataSpan = new ReadOnlySpan<byte>(data);
+		uint magic = BinaryPrimitives.ReadUInt32LittleEndian(dataSpan.Slice(offset));
+
+		if (magic == 0x01584554)
 		{
 			newTextureOffsetAdd = 0;
 		}
-		else if (BitConverter.ToUInt32(data, offset) == 39339348)
+		else if (magic == 39339348)
 		{
 			newTextureOffsetAdd = 1;
 		}
@@ -77,13 +80,13 @@ public class BitmapService : IBitmapService
 		// We then create it from DDS memory starting at offset 12
 
 		// I assume this is the texture offset. (Just add 12 to make it a file offset.)
-		int textureOffset = BitConverter.ToInt32(data, offset + 4);
+		int textureOffset = BinaryPrimitives.ReadInt32LittleEndian(dataSpan.Slice(offset + 4));
 		System.Diagnostics.Debug.Assert(textureOffset == 0, "Texture Offset == 0");
 
 		if (textureOffset < 0 || textureOffset > (count - offset))
 			throw new InvalidDataException("TEX texture offset is invalid.");
 
-		int textureLength = BitConverter.ToInt32(data, offset + 8 + newTextureOffsetAdd);
+		int textureLength = BinaryPrimitives.ReadInt32LittleEndian(dataSpan.Slice(offset + 8 + newTextureOffsetAdd));
 		if (textureLength < 0 || textureLength > (count - offset - textureOffset))
 			throw new InvalidDataException("TEX texture length is invalid.");
 
@@ -111,23 +114,24 @@ public class BitmapService : IBitmapService
 		// realOffset + 4 + 72 + 24 = Blue Bitmask for A8R8G8B8 the blue mask would be 0x000000ff.
 		// realOffset + 4 + 72 + 28 = Alpha Bitmask for A8R8G8B8 the alpha mask would be 0xff000000.
 		// realOffset + 4 + 104     = DDS_HEADER Complexity of the surfaces stored.  Should always set at least 0x1000.
-		uint textureMagic = BitConverter.ToUInt32(data, realOffset);
+		uint textureMagic = BinaryPrimitives.ReadUInt32LittleEndian(dataSpan.Slice(realOffset));
 
 		// Check for both "DDS " and "DDSR".
 		if ((textureMagic == 0x52534444 || textureMagic == 0x20534444) && textureLength >= 128)
 		{
 			// Make sure the DDS header is "valid".
-			if (BitConverter.ToInt32(data, realOffset + 4) == 124 &&
-				BitConverter.ToInt32(data, realOffset + 76) == 32)
+			if (BinaryPrimitives.ReadInt32LittleEndian(dataSpan.Slice(realOffset + 4)) == 124 &&
+				BinaryPrimitives.ReadInt32LittleEndian(dataSpan.Slice(realOffset + 76)) == 32)
 			{
 				// Copy the texture data to a new buffer and fix the magic so it is a valid DDS texture.
-				byte[] ddsData = new byte[textureLength];
-				Buffer.BlockCopy(data, realOffset, ddsData, 0, textureLength);
+				// Using Span-based copy
+				var ddsData = new byte[textureLength];
+				dataSpan.Slice(realOffset, textureLength).CopyTo(ddsData);
 
 				// Change "DDSR" to "DDS "
 				ddsData[3] = 0x20;
 
-				int bitDepth = BitConverter.ToInt32(ddsData, 88);
+				int bitDepth = BinaryPrimitives.ReadInt32LittleEndian(ddsData.AsSpan().Slice(88));
 				if (bitDepth >= 24)
 				{
 					// Set the Red pixel mask

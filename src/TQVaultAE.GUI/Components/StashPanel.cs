@@ -3,6 +3,11 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+
+using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
+
 namespace TQVaultAE.GUI.Components;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -11,17 +16,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using TQVaultAE.GUI.Models;
-using TQVaultAE.Domain.Contracts.Services;
-using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Entities;
-using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Presentation;
-using TQVaultAE.Config;
 
 /// <summary>
 /// Class for handling the stash panel ui functions
 /// </summary>
-public class StashPanel : VaultPanel, IScalingControl
+public partial class StashPanel : VaultPanel, IScalingControl
 {
 	#region StashPanel Fields
 
@@ -217,6 +218,19 @@ public class StashPanel : VaultPanel, IScalingControl
 		foreach (var bag in this.BagButtons)
 			bag.ContextMenuStrip = this.buttonContextMenuStrip;
 
+	}
+
+	/// <summary>
+	/// Gets or sets the player instance
+	/// </summary>
+	public new PlayerCollection Player
+	{
+		get => base.Player;
+		set
+		{
+			base.Player = value;
+			this.equipmentPanel.PlayerCollection = value;
+		}
 	}
 
 	/// <summary>
@@ -510,11 +524,6 @@ public class StashPanel : VaultPanel, IScalingControl
 		set => this.stashBackground = value;
 	}
 
-	public const int BAGID_EQUIPMENTPANEL = 0;
-	public const int BAGID_TRANSFERSTASH = 1;
-	public const int BAGID_PLAYERSTASH = 2;
-	public const int BAGID_RELICVAULTSTASH = 3;
-
 	/// <summary>
 	/// Gets or sets the currently selected bag id
 	/// </summary>
@@ -528,10 +537,10 @@ public class StashPanel : VaultPanel, IScalingControl
 
 			// figure out the current bag to use
 			if (bagID < 0)
-				bagID = BAGID_EQUIPMENTPANEL;
+				bagID = BagIdConstants.BAGID_EQUIPMENTPANEL;
 
 			if (bagID >= 4)
-				bagID = BAGID_RELICVAULTSTASH;
+				bagID = BagIdConstants.BAGID_RELICVAULTSTASH;
 
 			if (bagID != this.currentBag)
 			{
@@ -542,7 +551,7 @@ public class StashPanel : VaultPanel, IScalingControl
 				BagButtonBase button = this.BagButtons[this.currentBag];
 				int buttonOffsetY = button.Location.Y + button.Size.Height;
 
-				if (this.currentBag == BAGID_EQUIPMENTPANEL)
+				if (this.currentBag == BagIdConstants.BAGID_EQUIPMENTPANEL)
 				{
 					// Equipment Panel
 					if (this.Player == null) 
@@ -556,13 +565,14 @@ public class StashPanel : VaultPanel, IScalingControl
 					this.BagSackPanel.Visible = false;
 					this.BagSackPanel.Enabled = false;
 				}
-				else if (this.currentBag == BAGID_TRANSFERSTASH)
-				{
-					// Transfer Stash
-					this.background = this.StashBackground;
-					this.BagSackPanel.Sack = this.transferStash.Sack;
-					this.BagSackPanel.SackType = SackType.Stash;
-					this.BagSackPanel.ResizeSackPanel(this.transferStash.Width, this.transferStash.Height);
+			else if (this.currentBag == BagIdConstants.BAGID_TRANSFERSTASH)
+			{
+				// Transfer Stash
+				this.background = this.StashBackground;
+				this.BagSackPanel.Sack = this.transferStash.Sack;
+				this.BagSackPanel.SackType = SackType.Stash;
+				this.transferStash.Sack.StashType = Domain.Entities.StashType.TransferStash;
+				this.BagSackPanel.ResizeSackPanel(this.transferStash.Width, this.transferStash.Height);
 
 					// Adjust location based on size.
 					int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.transferStash.Width) * UIService.HalfUnitSize);
@@ -574,13 +584,14 @@ public class StashPanel : VaultPanel, IScalingControl
 					this.BagSackPanel.Visible = true;
 					this.BagSackPanel.Enabled = true;
 				}
-				else if (this.currentBag == BAGID_PLAYERSTASH)
-				{
-					// Stash
-					this.background = this.StashBackground;
-					this.BagSackPanel.Sack = this.stash.Sack;
-					this.BagSackPanel.SackType = SackType.Stash;
-					this.BagSackPanel.ResizeSackPanel(this.stash.Width, this.stash.Height);
+			else if (this.currentBag == BagIdConstants.BAGID_PLAYERSTASH)
+			{
+				// Stash
+				this.background = this.StashBackground;
+				this.BagSackPanel.Sack = this.stash.Sack;
+				this.BagSackPanel.SackType = SackType.Stash;
+				this.stash.Sack.StashType = Domain.Entities.StashType.PlayerStash;
+				this.BagSackPanel.ResizeSackPanel(this.stash.Width, this.stash.Height);
 
 					// Adjust location based on size so it will be centered.
 					int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.stash.Width) * UIService.HalfUnitSize);
@@ -592,13 +603,14 @@ public class StashPanel : VaultPanel, IScalingControl
 					this.BagSackPanel.Visible = true;
 					this.BagSackPanel.Enabled = true;
 				}
-				else if (this.currentBag == BAGID_RELICVAULTSTASH)
-				{
-					// Relic Vault Stash
-					this.background = this.StashBackground;
-					this.BagSackPanel.Sack = this.relicVaultStash.Sack;
-					this.BagSackPanel.SackType = SackType.Stash;
-					this.BagSackPanel.ResizeSackPanel(this.relicVaultStash.Width, this.relicVaultStash.Height);
+			else if (this.currentBag == BagIdConstants.BAGID_RELICVAULTSTASH)
+			{
+				// Relic Vault Stash
+				this.background = this.StashBackground;
+				this.BagSackPanel.Sack = this.relicVaultStash.Sack;
+				this.BagSackPanel.SackType = SackType.Stash;
+				this.relicVaultStash.Sack.StashType = Domain.Entities.StashType.RelicVaultStash;
+				this.BagSackPanel.ResizeSackPanel(this.relicVaultStash.Width, this.relicVaultStash.Height);
 
 					// Adjust location based on size.
 					int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.relicVaultStash.Width) * UIService.HalfUnitSize);
@@ -696,10 +708,10 @@ public class StashPanel : VaultPanel, IScalingControl
 	{
 		// figure out the current bag to use
 		if (this.currentBag < 0)
-			this.currentBag = BAGID_EQUIPMENTPANEL;
+			this.currentBag = BagIdConstants.BAGID_EQUIPMENTPANEL;
 
 		if (this.currentBag >= 4)
-			this.currentBag = BAGID_RELICVAULTSTASH;
+			this.currentBag = BagIdConstants.BAGID_RELICVAULTSTASH;
 
 		#region hide/show bag buttons and assign initial bitmaps
 
@@ -723,7 +735,7 @@ public class StashPanel : VaultPanel, IScalingControl
 
 		#endregion
 
-		if (this.currentBag == BAGID_EQUIPMENTPANEL)
+		if (this.currentBag == BagIdConstants.BAGID_EQUIPMENTPANEL)
 		{
 			if (this.Player == null)
 				this.SackPanel.Sack = null;
@@ -734,7 +746,7 @@ public class StashPanel : VaultPanel, IScalingControl
 				GetSkillStatBonus();
 			}
 		}
-		else if (this.currentBag == BAGID_TRANSFERSTASH)
+		else if (this.currentBag == BagIdConstants.BAGID_TRANSFERSTASH)
 		{
 			// Assign the transfer stash
 			if ((this.transferStash == null) || (this.transferStash.NumberOfSacks < 1))
@@ -747,7 +759,7 @@ public class StashPanel : VaultPanel, IScalingControl
 					this.SackPanel.Sack = null;
 			}
 		}
-		else if (this.currentBag == BAGID_PLAYERSTASH)
+		else if (this.currentBag == BagIdConstants.BAGID_PLAYERSTASH)
 		{
 			if ((this.stash == null) || (this.stash.NumberOfSacks < 1))
 				this.SackPanel.Sack = null;
@@ -759,7 +771,7 @@ public class StashPanel : VaultPanel, IScalingControl
 					this.SackPanel.Sack = null;
 			}
 		}
-		else if (this.currentBag == BAGID_RELICVAULTSTASH)
+		else if (this.currentBag == BagIdConstants.BAGID_RELICVAULTSTASH)
 		{
 			// Assign the relic vault stash
 			if ((this.relicVaultStash == null) || (this.relicVaultStash.NumberOfSacks < 1))
@@ -779,10 +791,10 @@ public class StashPanel : VaultPanel, IScalingControl
 			var but = this.BagButtons[i];
 			switch (i)
 			{
-				case BAGID_EQUIPMENTPANEL: but.Sack = this.Player?.EquipmentSack; break;
-				case BAGID_PLAYERSTASH: but.Sack = this.stash?.Sack; break;
-				case BAGID_RELICVAULTSTASH: but.Sack = this.relicVaultStash?.Sack; break;
-				case BAGID_TRANSFERSTASH: but.Sack = this.transferStash?.Sack; break;
+				case BagIdConstants.BAGID_EQUIPMENTPANEL: but.Sack = this.Player?.EquipmentSack; break;
+				case BagIdConstants.BAGID_PLAYERSTASH: but.Sack = this.stash?.Sack; break;
+				case BagIdConstants.BAGID_RELICVAULTSTASH: but.Sack = this.relicVaultStash?.Sack; break;
+				case BagIdConstants.BAGID_TRANSFERSTASH: but.Sack = this.transferStash?.Sack; break;
 			}
 		}
 	}
@@ -800,10 +812,10 @@ public class StashPanel : VaultPanel, IScalingControl
 
 		// filter the bagID
 		if (bagID < 0)
-			bagID = BAGID_EQUIPMENTPANEL;
+			bagID = BagIdConstants.BAGID_EQUIPMENTPANEL;
 
 		if (bagID >= 4)
-			bagID = BAGID_RELICVAULTSTASH;
+			bagID = BagIdConstants.BAGID_RELICVAULTSTASH;
 
 		if (bagID != this.currentBag)
 		{
@@ -852,16 +864,16 @@ public class StashPanel : VaultPanel, IScalingControl
 		int bagID = button.ButtonNumber;
 		SackCollection sack;
 
-		if (bagID == BAGID_EQUIPMENTPANEL)
+		if (bagID == BagIdConstants.BAGID_EQUIPMENTPANEL)
 		{
 			if (this.Player == null)
 				sack = null;
 			else
 				sack = this.Player.EquipmentSack;
 		}
-		else if (bagID == BAGID_TRANSFERSTASH)
+		else if (bagID == BagIdConstants.BAGID_TRANSFERSTASH)
 			sack = this.transferStash.Sack;
-		else if (bagID == BAGID_PLAYERSTASH)
+		else if (bagID == BagIdConstants.BAGID_PLAYERSTASH)
 			sack = this.stash.Sack;
 		else
 			sack = this.relicVaultStash.Sack;
@@ -935,16 +947,16 @@ public class StashPanel : VaultPanel, IScalingControl
 		{
 			switch (this.CurrentBag)
 			{
-				case BAGID_EQUIPMENTPANEL:
+				case BagIdConstants.BAGID_EQUIPMENTPANEL:
 					this.USettings.DisableTooltipEquipment = true;
 					break;
-				case BAGID_PLAYERSTASH:
+				case BagIdConstants.BAGID_PLAYERSTASH:
 					this.USettings.DisableTooltipStash = true;
 					break;
-				case BAGID_RELICVAULTSTASH:
+				case BagIdConstants.BAGID_RELICVAULTSTASH:
 					this.USettings.DisableTooltipRelic = true;
 					break;
-				case BAGID_TRANSFERSTASH:
+				case BagIdConstants.BAGID_TRANSFERSTASH:
 					this.USettings.DisableTooltipTransfer = true;
 					break;
 			}
@@ -954,16 +966,16 @@ public class StashPanel : VaultPanel, IScalingControl
 		{
 			switch (this.CurrentBag)
 			{
-				case BAGID_EQUIPMENTPANEL:
+				case BagIdConstants.BAGID_EQUIPMENTPANEL:
 					this.USettings.DisableTooltipEquipment = false;
 					break;
-				case BAGID_PLAYERSTASH:
+				case BagIdConstants.BAGID_PLAYERSTASH:
 					this.USettings.DisableTooltipStash = false;
 					break;
-				case BAGID_RELICVAULTSTASH:
+				case BagIdConstants.BAGID_RELICVAULTSTASH:
 					this.USettings.DisableTooltipRelic = false;
 					break;
-				case BAGID_TRANSFERSTASH:
+				case BagIdConstants.BAGID_TRANSFERSTASH:
 					this.USettings.DisableTooltipTransfer = false;
 					break;
 			}
@@ -991,16 +1003,16 @@ public class StashPanel : VaultPanel, IScalingControl
 		// Adjust menu items display
 		switch (sourceButton.ButtonNumber)
 		{
-			case BAGID_EQUIPMENTPANEL:
+			case BagIdConstants.BAGID_EQUIPMENTPANEL:
 				SetMenuItemDisableTooltip(this.USettings.DisableTooltipEquipment);
 				break;
-			case BAGID_PLAYERSTASH:
+			case BagIdConstants.BAGID_PLAYERSTASH:
 				SetMenuItemDisableTooltip(this.USettings.DisableTooltipStash);
 				break;
-			case BAGID_RELICVAULTSTASH:
+			case BagIdConstants.BAGID_RELICVAULTSTASH:
 				SetMenuItemDisableTooltip(this.USettings.DisableTooltipRelic);
 				break;
-			case BAGID_TRANSFERSTASH:
+			case BagIdConstants.BAGID_TRANSFERSTASH:
 				SetMenuItemDisableTooltip(this.USettings.DisableTooltipTransfer);
 				break;
 		}

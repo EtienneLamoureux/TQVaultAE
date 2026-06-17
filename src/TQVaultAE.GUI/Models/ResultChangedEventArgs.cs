@@ -3,10 +3,11 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+
 namespace TQVaultAE.GUI.Models;
 
 using System;
-using TQVaultAE.Domain.Search;
+using TQVaultAE.Application.Results;
 
 /// <summary>
 /// Encapsulates the ResultsChanged event data
@@ -17,7 +18,7 @@ public class ResultChangedEventArgs : EventArgs
 	/// Initializes a new instance of the ResultChangedEventArgs class.
 	/// </summary>
 	/// <param name="result">Result data</param>
-	public ResultChangedEventArgs(Result result)
+	public ResultChangedEventArgs(SearchResult result)
 	{
 		this.Result = result;
 	}
@@ -25,5 +26,5 @@ public class ResultChangedEventArgs : EventArgs
 	/// <summary>
 	/// Gets the Result data.
 	/// </summary>
-	public Result Result { get; private set; }
+	public SearchResult Result { get; private set; }
 }

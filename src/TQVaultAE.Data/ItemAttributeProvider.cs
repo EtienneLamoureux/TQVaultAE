@@ -3,23 +3,20 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.Data;
 
+using TQVaultAE.Application.Contracts.Providers;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Text.RegularExpressions;
-using TQVaultAE.Domain.Contracts.Providers;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 
+namespace TQVaultAE.Data;
 
 /// <summary>
 /// Used to hold the Item Attributes
 /// </summary>
-public class ItemAttributeProvider : IItemAttributeProvider
+public partial class ItemAttributeProvider : IItemAttributeProvider
 {
 	private readonly ILogger Log;
 
@@ -562,7 +559,8 @@ public class ItemAttributeProvider : IItemAttributeProvider
 		return attributeDictionary.TryGetValue(attribute.ToUpperInvariant(), out var value) ? value : null;
 	}
 
-	static Regex ConvertFormatRegEx = new Regex(@"%(?<precis>(?<sign>[+-])?\.(?<numDecimal>\d)?)?(?<alpha>[sdft])(?<formatNumber>\d)", RegexOptions.Compiled);
+	[GeneratedRegex(@"%(?<precis>(?<sign>[+-])?\.(?<numDecimal>\d)?)?(?<alpha>[sdft])(?<formatNumber>\d)")]
+	private static partial Regex ConvertFormatRegEx();
 	/// <summary>
 	/// Converts format string from TQ format to string.format
 	/// </summary>
@@ -610,12 +608,12 @@ public class ItemAttributeProvider : IItemAttributeProvider
 		}
 
 		// Escape TQMarking changing "{^.}" to "[^.]"
-		formatValue = TQColorHelper.RegExTQTagInstance.Replace(formatValue
+		formatValue = TQColorHelper.RegExTQTagInstance().Replace(formatValue
 			, @"[^${ColorId}]"
 		);
 
 		// Takes a TQ Format string and converts it to a .NET Format string using regex.
-		var newformat = ConvertFormatRegEx.Replace(formatValue, replaceMatch);
+		var newformat = ConvertFormatRegEx().Replace(formatValue, replaceMatch);
 
 		// Remove residual irrelevant {} on some format
 		newformat = newformat.Split('{', '}').JoinString("");
@@ -624,7 +622,7 @@ public class ItemAttributeProvider : IItemAttributeProvider
 		newformat = newformat.Replace("[", "{").Replace("]", "}");
 
 		// Escape TQTags by doubling {}
-		newformat = TQColorHelper.RegExTQTagInstance.Replace(newformat
+		newformat = TQColorHelper.RegExTQTagInstance().Replace(newformat
 			, @"{${ColorTag}}"
 		);
 
@@ -820,11 +818,13 @@ public class ItemAttributeProvider : IItemAttributeProvider
 	/// <returns>modified effect text tag</returns>
 	private string GetShieldEffectTextTag(string effect)
 	{
-		if (effect.ToUpperInvariant() == "BLOCKRECOVERYTIME")
+		// Use pooled span to avoid multiple ToUpperInvariant allocations
+		using var upperSpan = SpanHelper.ToUpperSpan(effect);
+		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "BLOCKRECOVERYTIME"))
 			return "ShieldBlockRecoveryTime";
 
 		// Replace Defensive with Defense.
-		return string.Concat("Defense", effect.Substring(9));
+		return SpanHelper.ConcatWithSlice("Defense", effect.AsSpan(), 9);
 	}
 
 	/// <summary>
@@ -834,19 +834,22 @@ public class ItemAttributeProvider : IItemAttributeProvider
 	/// <returns>modified effect text tag</returns>
 	private string GetDefenseEffectTextTag(string effect)
 	{
+		// Use pooled span to avoid multiple ToUpperInvariant allocations
+		using var upperSpan = SpanHelper.ToUpperSpan(effect);
+
 		// database orphan tag with no substitute => return as is
-		if (effect.Equals("defensiveTotalSpeedChance", StringComparison.OrdinalIgnoreCase)
-		    || effect.Equals("defensiveAbsorption", StringComparison.OrdinalIgnoreCase))
+		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "defensiveTotalSpeedChance")
+		    || SpanHelper.EqualsIgnoreCase(upperSpan.Span, "defensiveAbsorption"))
 			return effect;
 
 		// Check for specific strings.
-		switch (effect.ToUpperInvariant())
+		switch (upperSpan.Span.ToString())
 		{
 			case "DEFENSIVEPROTECTION":
 				return "DefenseAbsorptionProtection";
 
 			case "DEFENSIVESLEEP":
-				return string.Concat("xtagDefense", effect.Substring(9));
+				return SpanHelper.ConcatWithSlice("xtagDefense", effect.AsSpan(), 9);
 
 			case "DEFENSIVETOTALSPEEDRESISTANCE":
 				return "xtagTotalSpeedResistance";
@@ -859,11 +862,11 @@ public class ItemAttributeProvider : IItemAttributeProvider
 		}
 
 		// Replace DefensiveSlow with Defense
-		if (effect.ToUpperInvariant().StartsWith("DEFENSIVESLOW", StringComparison.Ordinal))
-			return string.Concat("Defense", effect.Substring(13));
+		if (SpanHelper.StartsWithIgnoreCase(upperSpan.Span, "DEFENSIVESLOW"))
+			return SpanHelper.ConcatWithSlice("Defense", effect.AsSpan(), 13);
 
 		// Otherwise replace Defensive with Defense.
-		return string.Concat("Defense", effect.Substring(9));
+		return SpanHelper.ConcatWithSlice("Defense", effect.AsSpan(), 9);
 	}
 
 	/// <summary>
@@ -873,12 +876,15 @@ public class ItemAttributeProvider : IItemAttributeProvider
 	/// <returns>modified effect text tag</returns>
 	private string GetOffensiveEffectTextTag(string effect)
 	{
+		// Use pooled span to avoid multiple ToUpperInvariant allocations
+		using var upperSpan = SpanHelper.ToUpperSpan(effect);
+
 		// Check for a skill and return as-is.
-		if (effect.ToUpperInvariant().StartsWith("SKILL", StringComparison.Ordinal))
+		if (SpanHelper.StartsWithIgnoreCase(upperSpan.Span, "SKILL"))
 			return effect;
 
 		// Check for specific strings
-		switch (effect.ToUpperInvariant())
+		switch (upperSpan.Span.ToString())
 		{
 			case "OFFENSIVEPHYSICAL":
 			case "OFFENSIVEBASEPHYSICAL":
@@ -901,11 +907,11 @@ public class ItemAttributeProvider : IItemAttributeProvider
 		}
 
 		// Check for OffensiveBase and replace with Damage.
-		if (effect.ToUpperInvariant().StartsWith("OFFENSIVEBASE", StringComparison.Ordinal))
-			return string.Concat("Damage", effect.Substring(13));
+		if (SpanHelper.StartsWithIgnoreCase(upperSpan.Span, "OFFENSIVEBASE"))
+			return SpanHelper.ConcatWithSlice("Damage", effect.AsSpan(), 13);
 
 		// Otherwise replace Offensive with Damage.
-		return string.Concat("Damage", effect.Substring(9));
+		return SpanHelper.ConcatWithSlice("Damage", effect.AsSpan(), 9);
 	}
 
 	/// <summary>
@@ -915,8 +921,11 @@ public class ItemAttributeProvider : IItemAttributeProvider
 	/// <returns>modified effect text tag</returns>
 	private string GetOffensiveModifierEffectTextTag(string effect)
 	{
+		// Use pooled span to avoid multiple ToUpperInvariant allocations
+		using var upperSpan = SpanHelper.ToUpperSpan(effect);
+
 		// Check for specific strings.
-		switch (effect.ToUpperInvariant())
+		switch (upperSpan.Span.ToString())
 		{
 			case "OFFENSIVEMANABURNRATIOADDER":
 				return "DamageModifierManaBurn";
@@ -932,11 +941,13 @@ public class ItemAttributeProvider : IItemAttributeProvider
 		}
 
 		// Check for a skill and return as-is.
-		if (effect.ToUpperInvariant().StartsWith("SKILL", StringComparison.Ordinal))
+		if (SpanHelper.StartsWithIgnoreCase(upperSpan.Span, "SKILL"))
 			return effect;
 
 		// Just replace Offensive with DamageModifier and remove trailing modifier.
-		return string.Concat("DamageModifier", effect.Substring(9, effect.Length - (9 + 8)));
+		// "offensiveXXXModifier" -> "DamageModifierXXX" (skip 9 chars, keep (len-17) chars)
+		int suffixLength = effect.Length - 17;
+		return SpanHelper.ConcatWithSlice("DamageModifier", effect.AsSpan(), 9, suffixLength);
 	}
 
 	/// <summary>
@@ -946,7 +957,7 @@ public class ItemAttributeProvider : IItemAttributeProvider
 	/// <returns>modified effect text tag</returns>
 	private string GetOffensiveSlowEffectTextTag(string effect)
 		// Change offensiveSlow to DamageDuration.
-		=> string.Concat("DamageDuration", effect.Substring(13));
+		=> SpanHelper.ConcatWithSlice("DamageDuration", effect.AsSpan(), 13);
 
 	/// <summary>
 	/// Gets modifier offensive slow modifier effect text tag.  Normalized to UpperInvariant.
@@ -955,7 +966,7 @@ public class ItemAttributeProvider : IItemAttributeProvider
 	/// <returns>modified effect text tag</returns>
 	private string GetOffensiveSlowModifierEffectTextTag(string effect)
 		// Change offensiveSlow to DamageDurationModifier.
-		=> string.Concat("DamageDurationModifier", effect.Substring(13));
+		=> SpanHelper.ConcatWithSlice("DamageDurationModifier", effect.AsSpan(), 13);
 
 	/// <summary>
 	/// Gets modifier retaliation effect text tag.  Normalized to UpperInvariant.
@@ -973,7 +984,8 @@ public class ItemAttributeProvider : IItemAttributeProvider
 	/// <returns>modified effect text tag</returns>
 	private string GetRetaliationModifierEffectTextTag(string effect)
 		// Replace retaliation with RetaliationModifier and remove trailing Modifier.
-		=> string.Concat("RetaliationModifier", effect.Substring(11, effect.Length - (11 + 8)));
+		// "retaliationXXXModifier" -> "RetaliationModifierXXX" (skip 11 chars, keep (len-19) chars)
+		=> SpanHelper.ConcatWithSlice("RetaliationModifier", effect.AsSpan(), 11, effect.Length - 19);
 
 	/// <summary>
 	/// Gets modified retaliation slow effect text tag.  Normalized to UpperInvariant.
@@ -982,7 +994,7 @@ public class ItemAttributeProvider : IItemAttributeProvider
 	/// <returns>modified effect text tag</returns>
 	private string GetRetaliationSlowEffectTextTag(string effect)
 		// Replace retaliationSlow with RetaliationDuration.
-		=> string.Concat("RetaliationDuration", effect.Substring(15));
+		=> SpanHelper.ConcatWithSlice("RetaliationDuration", effect.AsSpan(), 15);
 
 	/// <summary>
 	/// Gets modified retaliation slow modifier effect text tag.  Normalized to UpperInvariant.
@@ -991,7 +1003,7 @@ public class ItemAttributeProvider : IItemAttributeProvider
 	/// <returns>modified effect text tag</returns>
 	private string GetRetaliationSlowModifierEffectTextTag(string effect)
 		// Replace retaliationSlow with RetaliationDurationModifier.
-		=> string.Concat("RetaliationDurationModifier", effect.Substring(15));
+		=> SpanHelper.ConcatWithSlice("RetaliationDurationModifier", effect.AsSpan(), 15);
 
 
 	string[] _GetSkillEffectTextTagUnchanged = new[] {
@@ -1007,26 +1019,29 @@ public class ItemAttributeProvider : IItemAttributeProvider
 	/// <returns>modified effect text tag</returns>
 	private string GetSkillEffectTextTag(string effect)
 	{
-		// Return effet as-is.
+		// Return effect as-is.
 		if (_GetSkillEffectTextTagUnchanged.Any(s => s.Equals(effect, StringComparison.OrdinalIgnoreCase)))
 			return effect;
 
-		// Misspeling
-		if (effect.Equals("skillChargeDuration", StringComparison.OrdinalIgnoreCase))
+		// Use pooled span to avoid multiple ToUpperInvariant allocations
+		using var upperSpan = SpanHelper.ToUpperSpan(effect);
+
+		// Misspelling
+		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "SKILLCHARGEDURATION"))
 			return "SkillChargeDurationMod";
-		if (effect.Equals("skillChargeLevel", StringComparison.OrdinalIgnoreCase))
+		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "SKILLCHARGELEVEL"))
 			return "SkillChargeDuration";
-		if (effect.Equals("piercingProjectile", StringComparison.OrdinalIgnoreCase))
+		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "PIERCINGPROJECTILE"))
 			return "ProjectilePiercingChance";
-		if (effect.Equals("refreshTime", StringComparison.OrdinalIgnoreCase))
+		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "REFRESHTIME"))
 			return "tagSkillRefreshTime";
 
 		// Strip off Projectile from the text tag.
-		if (effect.ToUpperInvariant().StartsWith("PROJECTILE", StringComparison.Ordinal))
-			return effect.Substring(10);
+		if (SpanHelper.StartsWithIgnoreCase(upperSpan.Span, "PROJECTILE"))
+			return SpanHelper.ConcatWithSlice("", effect.AsSpan(), 10);
 
 		// Otherwise strip off Skill from the tag.
-		return effect.Substring(5);
+		return SpanHelper.ConcatWithSlice("", effect.AsSpan(), 5);
 	}
 
 

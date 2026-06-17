@@ -9,13 +9,8 @@
     - Easier Git merges (no GUID conflicts)
     - Auto-discovers project dependencies
     
-    Limitations:
-    - Requires Visual Studio 2022 17.10+ or .NET 9 SDK+
-    - Limited platform configuration support in current dotnet CLI
-    
     Usage:
-    - For Any CPU builds: dotnet build TQVaultAE.slnx
-    - For x64/x86 builds: Use TQVaultAE.sln (classic format)
+    - Build: dotnet build TQVaultAE.slnx
   -->
   
   <!-- Executables -->
@@ -27,6 +22,7 @@
   <!-- Libraries -->
   <Project Path="src\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
   <Project Path="src\TQVaultAE.Services\TQVaultAE.Services.csproj" />
+  <Project Path="src\TQVaultAE.Application\TQVaultAE.Application.csproj" />
   <Project Path="src\TQVaultAE.Data\TQVaultAE.Data.csproj" />
   <Project Path="src\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj" />
   <Project Path="src\TQVaultAE.Config\TQVaultAE.Config.csproj" />
@@ -41,6 +37,13 @@
     <File Path="AGENTS.md" />
     <File Path="CHANGELOG.md" />
     <File Path="CONTRIBUTING.md" />
+    <File Path="documentation/ADVANCEDSEARCH.md" />
+    <File Path="documentation/AFFIXES.md" />
+    <File Path="documentation/ARZEXPLORER.md" />
+    <File Path="documentation/CHARMANAGE.md" />
+    <File Path="documentation/FORGE.md" />
+    <File Path="documentation/SAVEFILEEXPLORER.md" />
+    <File Path="documentation/TQORIGINAL.md" />
     <File Path="GITHUB_ACTIONS_BUILD_TEST.md" />
     <File Path="README.md" />
     <File Path="VERSIONING.md" />

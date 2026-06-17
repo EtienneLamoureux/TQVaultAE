@@ -20,10 +20,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="Enums.NET" Version="5.0.0" />
-		<PackageReference Include="NAudio" Version="2.2.1" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.2" />
+		<PackageReference Include="NAudio" Version="2.3.0" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.5" />
 		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
-		<PackageReference Include="System.Resources.Extensions" Version="10.0.2" />
+		<PackageReference Include="System.Resources.Extensions" Version="10.0.5" />
 	</ItemGroup>
 
 	<ItemGroup>

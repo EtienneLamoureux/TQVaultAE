@@ -5,12 +5,10 @@
 //-----------------------------------------------------------------------
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Windows.Forms;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;
 using TQVaultAE.Data;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Exceptions;
 using TQVaultAE.Presentation;
 using TQVaultAE.Services;
@@ -61,6 +59,8 @@ public static class Program
 		.AddSingleton<ITQDataService, TQDataService>()
 		.AddTransient<IBitmapService, BitmapService>()
 		.AddSingleton<IGamePathService, GamePathServiceWin>()
+		.AddTransient<IDecompressionService, DeflateDecompressionService>()
+		.AddSingleton<IFileDataService, MemoryMappedFileService>()
 		// Init SoundServiceWin without IDatabase
 		.AddSingleton<SoundServiceWin>(sp => new SoundServiceWin(sp.GetService<ILogger<SoundServiceWin>>(), null, sp.GetService<UserSettings>()))
 		// Forms

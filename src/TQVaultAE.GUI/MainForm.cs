@@ -5,28 +5,22 @@
 //-----------------------------------------------------------------------
 
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Reflection;
 using System.Security.Permissions;
-using System.Windows.Forms;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Logs;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Presentation;
-using TQVaultAE.Config;
 using TQVaultAE.Services;
-using TQVaultAE.Domain.Contracts.Services;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using TQVaultAE.Domain.Results;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
+using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Results;
 
 namespace TQVaultAE.GUI;
 
@@ -38,6 +32,13 @@ public partial class MainForm : VaultForm
 	private readonly ILogger Log = null;
 
 	public ITagService TagService { get; }
+
+	/// <summary>
+	/// Application layer services
+	/// </summary>
+	private readonly IPlayerService playerService;
+	private readonly IVaultService vaultService;
+	private readonly IStashService stashService;
 
 	#region	Fields
 
@@ -87,6 +88,11 @@ public partial class MainForm : VaultForm
 	/// User current data context
 	/// </summary>
 	internal SessionContext userContext;
+
+	/// <summary>
+	/// Highlight search service
+	/// </summary>
+	private IHighlightService HighlightService;
 
 	/// <summary>
 	/// Instance of the vault panel control
@@ -163,6 +169,7 @@ public partial class MainForm : VaultForm
 		) : base(serviceProvider)
 	{
 		this.userContext = sessionContext;
+		this.HighlightService = serviceProvider.GetService<IHighlightService>();
 		this.playerService = playerService;
 		this.vaultService = vaultService;
 		this.stashService = stashService;
@@ -255,6 +262,7 @@ Item Debug Level: {USettings.ItemDebugLevel}
 			, this.GameFileService
 			, this.GamePathResolver
 			, this.TagService
+			, this.playerService
 			, USettings
 			, () => DuplicateCharacter()
 		);
@@ -674,13 +682,13 @@ Item Debug Level: {USettings.ItemDebugLevel}
 		stopWatch.Start();
 
 		// Load all of the Immortal Throne player files and stashes.
-		var bagPlayer = new ConcurrentBag<LoadPlayerResult>();
-		var bagPlayerStashes = new ConcurrentBag<LoadPlayerStashResult>();
-		var bagVault = new ConcurrentBag<LoadVaultResult>();
+		var bagPlayer = new ConcurrentBag<PlayerLoadResult>();
+		var bagPlayerStashes = new ConcurrentBag<StashLoadResult>();
+		var bagVault = new ConcurrentBag<VaultLoadResult>();
 
 		var lambdacharactersIT = charactersIT.Select(c => (Action)(() =>
 		{
-			// Get the player 
+			// Get the player
 			var result = this.playerService.LoadPlayer(c);
 			bagPlayer.Add(result);
 			this.backgroundWorkerLoadAllFiles.ReportProgress(1);
@@ -789,7 +797,7 @@ Item Debug Level: {USettings.ItemDebugLevel}
 			this.ShowMainForm();
 		}
 		else
-			Application.Exit();
+			System.Windows.Forms.Application.Exit();
 	}
 
 	/// <summary>
@@ -904,12 +912,12 @@ Item Debug Level: {USettings.ItemDebugLevel}
 				, MessageBoxIcon.Exclamation
 				, MessageBoxDefaultButton.Button1
 				, RightToLeftOptions) == DialogResult.Yes
-			) Application.Restart();
+			) System.Windows.Forms.Application.Restart();
 			else
-				Application.Exit();
+				System.Windows.Forms.Application.Exit();
 		}
 		else if (e.Cancelled && !this.resourcesLoaded)
-			Application.Exit();
+			System.Windows.Forms.Application.Exit();
 		else if (e.Result.Equals(true))
 		{
 			this.loadingComplete = true;
@@ -995,7 +1003,7 @@ Item Debug Level: {USettings.ItemDebugLevel}
 				MessageBoxIcon.Exclamation,
 				MessageBoxDefaultButton.Button1,
 				RightToLeftOptions);
-			Application.Exit();
+			System.Windows.Forms.Application.Exit();
 		}
 	}
 
@@ -1153,7 +1161,7 @@ Item Debug Level: {USettings.ItemDebugLevel}
 			if (result == DialogResult.Yes)
 			{
 				if (this.DoCloseStuff())
-					Application.Restart();
+					System.Windows.Forms.Application.Restart();
 			}
 		}
 	}
@@ -1170,9 +1178,9 @@ Item Debug Level: {USettings.ItemDebugLevel}
 	{
 		var value = (scalingTextBoxHighlight.Text ?? string.Empty).Trim();
 
-		this.userContext.HighlightSearch = value;
-		this.userContext.FindHighlight();
-		this.Invoke(new MethodInvoker(this.Refresh));
+		this.HighlightService.HighlightSearch = value;
+		this.HighlightService.FindHighlight();
+		this.Invoke(new System.Windows.Forms.MethodInvoker(this.Refresh));
 	}
 
 
@@ -1199,6 +1207,7 @@ Item Debug Level: {USettings.ItemDebugLevel}
 			highlightFilters.UserContext = userContext;
 			highlightFilters.TranslationService = TranslationService;
 			highlightFilters.FontService = FontService;
+			highlightFilters.HighlightService = HighlightService;
 			highlightFilters.ResetAll();
 			highlightFilters.InitializeFilters();
 			highlightFilters.Link = link;

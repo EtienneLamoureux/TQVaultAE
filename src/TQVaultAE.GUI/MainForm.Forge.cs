@@ -1,5 +1,3 @@
-using System;
-using System.Windows.Forms;
 using TQVaultAE.GUI.Components;
 
 namespace TQVaultAE.GUI;

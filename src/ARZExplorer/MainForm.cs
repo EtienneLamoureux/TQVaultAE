@@ -7,17 +7,11 @@ using ArzExplorer.Models;
 using ArzExplorer.Properties;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Media;
 using System.Reflection;
 using System.Text;
-using System.Windows.Forms;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Logs;
@@ -40,10 +34,27 @@ public partial class MainForm : Form
 	private readonly IGamePathService GamePathService;
 	private readonly SoundServiceWin SoundService;
 
+	internal TreeView TreeViewToc => treeViewTOC;
+
 	/// <summary>
 	/// Holds the initial size of the form.
 	/// </summary>
 	private Size initialSize;
+
+	/// <summary>
+	/// Search state - last search text
+	/// </summary>
+	private string lastSearchText = string.Empty;
+
+	/// <summary>
+	/// Search state - last search position
+	/// </summary>
+	private int lastSearchPosition = -1;
+
+	/// <summary>
+	/// Search state - last file type searched
+	/// </summary>
+	private CompressedFileType? lastFileType;
 
 	#region MainForm
 
@@ -77,15 +88,8 @@ public partial class MainForm : Form
 		this.initialSize = this.Size;
 		this.toolStripStatusLabel.Text = string.Empty;
 
-		// Hide Features that are not ready yet
-		// - Menu > Search
-		this.searchToolStripMenuItem.Visible = false;
-		// - Toolbar > Search
-		this.toolStripButtonSearchNext.Visible =
-		this.toolStripButtonSearchPrev.Visible =
-		this.toolStripTextBox.Visible =
-		this.toolStripSeparator4.Visible =
-		this.toolStripLabelSearch.Visible = false;
+		// Enable Search menu
+		this.searchToolStripMenuItem.Visible = true;
 	}
 
 	private void MainForm_Load(object sender, EventArgs e)
@@ -200,6 +204,7 @@ public partial class MainForm : Form
 	{
 		try
 		{
+			using var scope = new TreeViewUpdateScope(this);
 			this.OpenFile(this.DataBasePath);
 		}
 		catch (Exception ex)
@@ -207,6 +212,11 @@ public partial class MainForm : Form
 			MessageBox.Show(ex.Message);
 			return;
 		}
+	}
+
+	private void toolStripButtonLoadAllFiles_Click(object sender, EventArgs e)
+	{
+		LoadAllFilesToolStripMenuItem_Click(sender, e);
 	}
 
 	/// <summary>
@@ -296,7 +306,7 @@ public partial class MainForm : Form
 		this.TQFileOpened.Add(fullSrcPath, fileInfo);
 		this.SelectedFile = fileInfo;
 
-		this.BuildTreeView();
+		this.BuildTreeView(fileInfo);
 	}
 
 	private void UpdateTitle(TQFileInfo fileInfo)
@@ -329,6 +339,7 @@ public partial class MainForm : Form
 		DialogResult result = openDialog.ShowDialog();
 		if (result == DialogResult.OK)
 		{
+			using var scope = new TreeViewUpdateScope(this);
 			this.OpenFile(openDialog.FileName);
 		}
 	}
@@ -348,6 +359,7 @@ public partial class MainForm : Form
 			string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 			try
 			{
+				using var scope = new TreeViewUpdateScope(this);
 				this.OpenFile(files[0]);
 			}
 			catch (Exception ex)
@@ -512,136 +524,147 @@ public partial class MainForm : Form
 	/// <summary>
 	/// Treeview node database
 	/// </summary>
-	Dictionary<RecordId, TreeNode> dicoNodes = new();
+	internal Dictionary<string, TreeNode> dicoNodes = new();
+
+	/// <summary>
+	/// reverse directory of RecordId => TreeNode.Name
+	/// </summary>
+	internal Dictionary<RecordId, List<string>> dicoReverseKeys = new();
 
 	/// <summary>
 	/// Builds the tree view.  Assumes the list is pre-sorted.
 	/// </summary>
-	private void BuildTreeView()
+	/// <param name="currentFileInfo"></param>
+	private void BuildTreeView(TQFileInfo currentFileInfo)
 	{
-		// Display a wait cursor while the TreeNodes are being created.
-		Cursor.Current = Cursors.WaitCursor;
-		try
+
+		List<RecordId> dataRecords;
+
+		if (currentFileInfo.FileType == CompressedFileType.ArzFile)
+			dataRecords = currentFileInfo.ARZFile.Keys.ToList();
+		else if (currentFileInfo.FileType == CompressedFileType.ArcFile)
+			dataRecords = currentFileInfo.ARCFile.Keys.ToList();
+		else
+			return;
+
+		// We failed so return.
+		if (dataRecords.Count == 0)
+			return;
+
+		// Track if this is the first file being loaded
+		bool isFirstFile = dicoNodes.Count == 0;
+
+		TreeNode arcRootNode = null, rootNode = new();
+
+		string arcPrefix = string.Empty;
+		var rootNodeKey = string.Empty;
+
+		if (isFirstFile)
+			dicoNodes.Add(rootNodeKey, rootNode);// First time
+		else
+			rootNode = dicoNodes[rootNodeKey];// Get it back
+
+		if (currentFileInfo.FileType == CompressedFileType.ArcFile)
 		{
-			this.treeViewTOC.BeginUpdate();
+			var tokens = currentFileInfo.SourceFileId.TokensRaw;
 
-			IEnumerable<RecordId> dataRecords;
+			// Node Xpack
+			var arcPrefixXpack = tokens[tokens.Count - 2];
+			if (!arcPrefixXpack.StartsWith("XPACK", StringComparison.OrdinalIgnoreCase))
+				arcPrefixXpack = string.Empty;
 
-			if (this.SelectedFile.FileType == CompressedFileType.ArzFile)
-				dataRecords = this.SelectedFile.ARZFile.Keys;
-			else if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
-				dataRecords = this.SelectedFile.ARCFile.Keys;
+			if (arcPrefixXpack != string.Empty)
+				GetRootNode(currentFileInfo, arcPrefixXpack, rootNode, out arcRootNode);
+
+			// Node File
+			arcPrefix = Path.GetFileNameWithoutExtension(tokens[tokens.Count - 1]);
+			if (arcPrefixXpack == string.Empty)
+				GetRootNode(currentFileInfo, arcPrefix, rootNode, out arcRootNode);
 			else
-				return;
-
-			// We failed so return.
-			if (dataRecords == null)
-				return;
-
-			TreeNode rootNode = new(), arcRootNode = null;
-			string arcPrefix = string.Empty;
-
-			if (dicoNodes.Any())
-				rootNode = dicoNodes[RecordId.Empty];// Get it back
-			else
-				dicoNodes.Add(RecordId.Empty, rootNode);// First time
-
-			if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
 			{
-				var tokens = this.SelectedFile.SourceFileId.TokensRaw;
+				arcPrefix = arcPrefixXpack + '\\' + arcPrefix;
+				GetRootNode(currentFileInfo, arcPrefix, arcRootNode, out arcRootNode);
+			}
+		}
 
-				// Node Xpack
-				var arcPrefixXpack = tokens[tokens.Count - 2];
-				if (!arcPrefixXpack.StartsWith("XPACK", StringComparison.OrdinalIgnoreCase))
-					arcPrefixXpack = string.Empty;
+		foreach (var record in dataRecords)
+		{
+			RecordId recordID = arcPrefix == string.Empty ? record : Path.Combine(arcPrefix, record.Raw);
 
-				if (arcPrefixXpack != string.Empty)
-					GetRootNode(arcPrefixXpack, rootNode, out arcRootNode);
+			for (int tokIdx = 0; tokIdx < recordID.TokensRaw.Count; tokIdx++)
+			{
+				var token = recordID.TokensRaw[tokIdx];
+				var parent = recordID.TokensRaw.Take(tokIdx).JoinString("\\").ToRecordId();
+				var parentKey = $"{currentFileInfo.SourceFileId};{parent}";
+				var parentnode = dicoNodes.TryGetValue(parentKey, out var node) ? node : rootNode;
+				var currnodeKey = (parent.IsEmpty ? token : parent + '\\' + token).ToRecordId();
+				var nodeKey = $"{currentFileInfo.SourceFileId};{currnodeKey}";
 
-				// Node File
-				arcPrefix = Path.GetFileNameWithoutExtension(tokens[tokens.Count - 1]);
-				if (arcPrefixXpack == string.Empty)
-					GetRootNode(arcPrefix, rootNode, out arcRootNode);
+				if (parentnode.Nodes.ContainsKey(nodeKey)) continue;
 				else
 				{
-					arcPrefix = arcPrefixXpack + '\\' + arcPrefix;
-					GetRootNode(arcPrefix, arcRootNode, out arcRootNode);
-				}
-			}
-
-			foreach (var record in dataRecords)
-			{
-				RecordId recordID = arcPrefix == string.Empty ? record : Path.Combine(arcPrefix, record.Raw);
-
-				for (int tokIdx = 0; tokIdx < recordID.TokensRaw.Count; tokIdx++)
-				{
-					var token = recordID.TokensRaw[tokIdx];
-					var parent = recordID.TokensRaw.Take(tokIdx).JoinString("\\").ToRecordId();
-					var parentnode = dicoNodes[parent];
-					var currnodeKey = (parent.IsEmpty ? token : parent + '\\' + token).ToRecordId();
-
-					if (parentnode.Nodes.ContainsKey(currnodeKey))
-						continue;
-					else
+					var currentNode = new TreeNode()
 					{
-						var currentNode = new TreeNode()
-						{
-							Name = currnodeKey,
-							Text = token,
-							ToolTipText = this.SelectedFile.SourceFile
-						};
-						currentNode.Tag = new NodeTag
-						{
-							thisNode = currentNode,
-							File = this.SelectedFile,
+						Name = $"{currentFileInfo.SourceFileId};{currnodeKey}",
+						Text = parent.IsEmpty
+							? $"{currentFileInfo.SourceFileId.TokensNormalized.Last()};{currnodeKey.Raw}"
+							: $"{currnodeKey.Raw}",
+						ToolTipText = currentFileInfo.SourceFile
+					};
+					currentNode.Tag = new NodeTag
+					{
+						thisNode = currentNode,
+						File = currentFileInfo,
 
-							Thread = recordID,
-							Key = currnodeKey,
-							TokIdx = tokIdx,
+						Thread = recordID,
+						Key = currnodeKey,
+						DictionaryKey = nodeKey,
+						TokIdx = tokIdx,
 
-							Text = token,
-						};
-						parentnode.Nodes.Add(currentNode);
-						dicoNodes.Add(currnodeKey, currentNode);
-					}
+						Text = currentNode.Text,
+					};
+					parentnode.Nodes.Add(currentNode);
+
+					dicoNodes.Add(nodeKey, currentNode);
+
+					if (dicoReverseKeys.TryGetValue(currnodeKey, out var reversekeys)) reversekeys.Add(currentNode.Name);
+					else dicoReverseKeys.Add(currnodeKey, [currentNode.Name]);
 				}
 			}
-
-			// Always add the newcomers
-			this.treeViewTOC.Nodes.Add(rootNode.Nodes[rootNode.Nodes.Count - 1]);
-
-			this.treeViewTOC.EndUpdate();
-		}
-		finally
-		{
-			// Reset the cursor to the default for all controls.
-			Cursor.Current = Cursors.Default;
 		}
 	}
 
-	void GetRootNode(string arcPrefix, TreeNode rootNode, out TreeNode arcRootNode)
+	void GetRootNode(TQFileInfo currentFileInfo, string arcPrefix, TreeNode rootNode, out TreeNode arcRootNode)
 	{
 		var arcPrefixId = arcPrefix.ToRecordId();
-		if (!dicoNodes.TryGetValue(arcPrefixId, out arcRootNode))
+		var nodeKey = $"{currentFileInfo.SourceFileId};{arcPrefixId}";
+		if (!dicoNodes.TryGetValue(nodeKey, out arcRootNode))
 		{
 			arcRootNode = new TreeNode()
 			{
-				Name = arcPrefix,
-				Text = arcPrefixId.TokensRaw.Last(),
-				ToolTipText = this.SelectedFile.SourceFile
+				Name = $"{currentFileInfo.SourceFileId};{arcPrefixId}",
+				Text = arcPrefixId.TokensNormalized.Count == 1
+					? $"{currentFileInfo.SourceFileId.TokensNormalized.Last()};{arcPrefix}"
+					: $"{arcPrefix}",
+				ToolTipText = currentFileInfo.SourceFile
 			};
 			arcRootNode.Tag = new NodeTag
 			{
 				thisNode = arcRootNode,
-				File = this.SelectedFile,
+				File = currentFileInfo,
 
 				Thread = null,
-				Key = arcPrefix,
+				Key = arcPrefixId,
+				DictionaryKey = nodeKey,
 				TokIdx = 0,
 
 				Text = arcRootNode.Text,
 			};
-			dicoNodes.Add(arcPrefixId, arcRootNode);
+			dicoNodes.Add(nodeKey, arcRootNode);
+
+			if (dicoReverseKeys.TryGetValue(arcPrefixId, out var reversekeys)) reversekeys.Add(arcRootNode.Name);
+			else dicoReverseKeys.Add(arcPrefixId, [arcRootNode.Name]);
+
 			rootNode.Nodes.Add(arcRootNode);
 		}
 	}
@@ -665,7 +688,7 @@ public partial class MainForm : Form
 
 			this.SelectedFile.DestFile
 				= this.textBoxPath.Text
-				= this.treeViewTOC.SelectedNode.FullPath;
+				= this.treeViewTOC.SelectedNode.Name.Split(';').Last();
 
 			try
 			{
@@ -801,7 +824,7 @@ public partial class MainForm : Form
 			grd.Rows.Add(values);
 		}
 
-		// Apply link style
+		// Apply link style and adjust hyperlink
 		for (int i = 0; i < grd.RowCount; i++)
 		{
 			var cell = grd.Rows[i].Cells[1];
@@ -812,7 +835,10 @@ public partial class MainForm : Form
 				|| val.EndsWith(".TXT", noCase)
 				|| val.EndsWith(".WAV", noCase)
 				|| val.EndsWith(".MP3", noCase)
-			) cell.Style = PopulateGridView_hyperLinkCellStyle;
+			   )
+			{
+				cell.Style = PopulateGridView_hyperLinkCellStyle;
+			}
 		}
 	}
 
@@ -960,25 +986,56 @@ public partial class MainForm : Form
 		if (cell.Style == PopulateGridView_hyperLinkCellStyle)
 		{
 			var value = cell.Value.ToString();
-			var values = value.Split(';');
-			NavigateTo(values.First());
+			NavigateTo(value);
 		}
 	}
 
-	private void NavigateTo(RecordId recordId)
+	private void NavigateTo(string dictionaryKey)
 	{
-		// Already loaded
-		if (dicoNodes.TryGetValue(recordId, out var node))
+		var dictionaryKeyId = dictionaryKey.ToRecordId();
+
+		#region Already loaded
+
+		if (dicoNodes.TryGetValue(dictionaryKey, out var node))
 		{
-			this.treeViewTOC.SelectedNode = node;
-			this.treeViewTOC.Focus();
+			SetFocus(node);
 			return;
 		}
 
-		// auto load file
+		if (dicoReverseKeys.TryGetValue(dictionaryKey, out var list))
+		{
+			var firstnode = dicoNodes[list.First()];
+			SetFocus(firstnode);// Best effort
+			return;
+		}
+
+		#endregion
+
+		// Try to extract RecordId after the semicolon
+		var parts = dictionaryKey.Split(';', 2);
+
+		RecordId recordId = parts.Length == 2 && !string.IsNullOrEmpty(parts[1])
+			? parts[1].ToRecordId()
+			: dictionaryKeyId;// Could not parse, try using the whole string as RecordId
+
+
+		// DBR references are usually prefixed by RECORDS
+		if (recordId.Normalized.EndsWith(".DBR") && !recordId.Normalized.StartsWith("RECORDS"))
+		{
+			var guessingId = RecordId.Create(Path.Combine("records", recordId.Raw));
+			if (dicoReverseKeys.TryGetValue(guessingId, out var guessinglist))
+			{
+				var firstnode = dicoNodes[guessinglist.First()];
+				SetFocus(firstnode);
+				return;
+			}
+		}
+
+		#region Auto load file
 
 		// Resolve file name
-		string xPackVersion, fileToken, fileName, dicoKey;
+		string xPackVersion, fileToken, fileName;
+		RecordId dicoKey;
 		if (recordId.Normalized.StartsWith("XPACK"))
 		{
 			xPackVersion = recordId.TokensNormalized[0];
@@ -1004,20 +1061,37 @@ public partial class MainForm : Form
 		if (ArcFileList.TryGetValue(dicoKey, out var fullpath))
 		{
 			// Add TOC to treeview
-			this.OpenFile(fullpath);
-
-			// Navigate
-			if (dicoNodes.TryGetValue(recordId, out var found))
+			using (var scope = new TreeViewUpdateScope(this))
 			{
-				this.treeViewTOC.SelectedNode = found;
-				this.treeViewTOC.Focus();
+				this.OpenFile(fullpath);
+			}
+
+			// Navigate - use the original dictionaryKey for lookup
+			if (dicoNodes.TryGetValue(dictionaryKeyId.Normalized, out var autoLoadFound))
+			{
+				SetFocus(autoLoadFound);
 				return;
 			}
 
-			// Database orphan ?
-			this.toolStripStatusLabel.Text = @$"Unable to find ""{recordId}""";
+			if (dicoReverseKeys.TryGetValue(dictionaryKeyId, out var autoLoadList))
+			{
+				var firstnode = dicoNodes[autoLoadList.First()];
+				SetFocus(firstnode);
+				return;
+			}
+
+			// Database orphan ? - extract RecordId from node if available
+			this.toolStripStatusLabel.Text = @$"Unable to find ""{dictionaryKeyId}""";
 		}
 
+		#endregion
+
+
+		void SetFocus(TreeNode? focusnode)
+		{
+			this.treeViewTOC.SelectedNode = focusnode;
+			this.treeViewTOC.Focus();
+		}
 	}
 
 	private void previousToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1081,26 +1155,292 @@ public partial class MainForm : Form
 
 	#region Search
 
-	// TODO ARZ Explorer Search stuff!
+	/// <summary>
+	/// Find next occurrence of search text
+	/// </summary>
+	private void FindNext()
+	{
+		// Validate search text
+		var searchText = this.toolStripTextBox.Text;
+		if (string.IsNullOrEmpty(searchText))
+		{
+			this.toolStripStatusLabel.Text = "empty text !";
+			return;
+		}
+
+		// Check if this is a new search
+		bool isNewSearch = this.lastSearchText != searchText;
+		if (isNewSearch)
+		{
+			this.lastSearchText = searchText;
+			this.lastSearchPosition = -1;
+		}
+
+		int startPos = this.lastSearchPosition + 1;
+		int count = this.dicoNodes.Count;
+
+		// First pass: search from lastSearchPosition + 1 to end
+		for (int i = startPos; i < count; i++)
+		{
+			var kvp = this.dicoNodes.ElementAt(i);
+			var node = kvp.Value;
+
+			// Skip root nodes (key is string.Empty)
+			if (kvp.Key == string.Empty)
+				continue;
+
+			if (SearchNode(node, searchText, i))
+				return;
+		}
+
+		// Second pass: search from beginning to lastSearchPosition (wrap around)
+		for (int i = 0; i < startPos; i++)
+		{
+			var kvp = this.dicoNodes.ElementAt(i);
+			var node = kvp.Value;
+
+			// Skip root nodes (key is string.Empty)
+			if (kvp.Key == string.Empty)
+				continue;
+
+			if (SearchNode(node, searchText, i))
+				return;
+		}
+
+		// Not found - show in status label and reset position
+		this.toolStripStatusLabel.Text = $"Not found: {searchText}";
+		this.lastSearchPosition = -1;
+	}
+
+	/// <summary>
+	/// Search a single node for the search text
+	/// </summary>
+	private bool SearchNode(TreeNode node, string searchText, int index)
+	{
+		// Extract key from node.Tag
+		if (node.Tag is not NodeTag tag)
+			return false;
+
+		var key = tag.Key;
+
+		// Search in record key/name
+		if (key.Normalized.Contains(searchText, noCase))
+		{
+			this.lastSearchPosition = index;
+			this.lastFileType = null;
+			NavigateTo(node.Name);
+			this.toolStripStatusLabel.Text = $"Found at: {key}";
+			return true;
+		}
+
+		// Search in tag.Text
+		if (tag.Text.Contains(searchText, noCase))
+		{
+			this.lastSearchPosition = index;
+			this.lastFileType = null;
+			NavigateTo(node.Name);
+			this.toolStripStatusLabel.Text = $"Found in: {key}";
+			return true;
+		}
+
+		// Search in tag.RecordText (List<string>)
+		if (tag.RecordText.Any(line => line.Contains(searchText, noCase)))
+		{
+			this.lastSearchPosition = index;
+			this.lastFileType = null;
+			NavigateTo(node.Name);
+			this.toolStripStatusLabel.Text = $"Found in: {key}";
+			return true;
+		}
+
+		// Search in record variables (ARZ files only)
+		var file = tag.File;
+		if (file?.FileType == CompressedFileType.ArzFile && file.ARZFile != null)
+		{
+			try
+			{
+				var records = this.arzProv.GetRecordNotCached(file.ARZFile, key.Normalized);
+				if (records != null)
+				{
+					foreach (Variable variable in records)
+					{
+						if (variable.ToString().Contains(searchText, noCase))
+						{
+							this.lastSearchPosition = index;
+							this.lastFileType = CompressedFileType.ArzFile;
+							NavigateTo(node.Name);
+							this.toolStripStatusLabel.Text = $"Found in: {key}";
+							return true;
+						}
+					}
+				}
+			}
+			catch (KeyNotFoundException)
+			{
+				// Record not found in ARZ file, skip
+			}
+		}
+
+		return false;
+	}
+
+	/// <summary>
+	/// Find previous occurrence of search text
+	/// </summary>
+	private void FindPrevious()
+	{
+		// Validate search text
+		var searchText = this.toolStripTextBox.Text;
+		if (string.IsNullOrEmpty(searchText))
+		{
+			this.toolStripStatusLabel.Text = "empty text !";
+			return;
+		}
+
+		// Check if this is a new search
+		bool isNewSearch = this.lastSearchText != searchText;
+		if (isNewSearch)
+		{
+			this.lastSearchText = searchText;
+			this.lastSearchPosition = this.dicoNodes.Count;
+		}
+
+		int startPos = this.lastSearchPosition - 1;
+		int count = this.dicoNodes.Count;
+
+		// First pass: search from lastSearchPosition - 1 down to 0
+		for (int i = startPos; i >= 0; i--)
+		{
+			var kvp = this.dicoNodes.ElementAt(i);
+			var node = kvp.Value;
+
+			// Skip root nodes (key is string.Empty)
+			if (kvp.Key == string.Empty)
+				continue;
+
+			if (SearchNode(node, searchText, i))
+				return;
+		}
+
+		// Second pass: search from Count - 1 down to lastSearchPosition (wrap around)
+		for (int i = count - 1; i > startPos; i--)
+		{
+			var kvp = this.dicoNodes.ElementAt(i);
+			var node = kvp.Value;
+
+			// Skip root nodes (key is string.Empty)
+			if (kvp.Key == string.Empty)
+				continue;
+
+			if (SearchNode(node, searchText, i))
+				return;
+		}
+
+		// Not found - show in status label and reset position
+		this.toolStripStatusLabel.Text = $"Not found: {searchText}";
+		this.lastSearchPosition = this.dicoNodes.Count;
+	}
+
+	/// <summary>
+	/// Process keyboard commands (F3 for Find Next, Shift+F3 for Find Previous)
+	/// </summary>
+	protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+	{
+		if (keyData == Keys.F3)
+		{
+			FindNext();
+			return true;
+		}
+		else if (keyData == (Keys.Shift | Keys.F3))
+		{
+			FindPrevious();
+			return true;
+		}
+
+		return base.ProcessCmdKey(ref msg, keyData);
+	}
 
 	private void toolStripButtonSearchPrev_Click(object sender, EventArgs e)
 	{
-
+		FindPrevious();
 	}
 
 	private void toolStripButtonSearchNext_Click(object sender, EventArgs e)
 	{
-
+		FindNext();
 	}
 
 	private void searchNextToolStripMenuItem_Click(object sender, EventArgs e)
 	{
-
+		FindNext();
 	}
 
 	private void findPreviousToolStripMenuItem_Click(object sender, EventArgs e)
 	{
+		FindPrevious();
+	}
 
+	private void buttonFindNext_Click(object sender, EventArgs e)
+	{
+		FindNext();
+	}
+
+	#endregion
+
+	#region Load All Files
+
+	/// <summary>
+	/// Load all ARZ and ARC files from the game directory
+	/// </summary>
+	private void LoadAllFilesToolStripMenuItem_Click(object sender, EventArgs e)
+	{
+		try
+		{
+			var gamePath = this.GamePathService.GamePathTQIT;
+			if (string.IsNullOrEmpty(gamePath))
+			{
+				MessageBox.Show("Game path not found.");
+				return;
+			}
+
+			// Scan for ARZ and ARC files
+			var arzFiles = Directory.GetFiles(gamePath, "*.arz", SearchOption.AllDirectories);
+			var arcFiles = Directory.GetFiles(gamePath, "*.arc", SearchOption.AllDirectories);
+			var allFiles = arzFiles.Concat(arcFiles).OrderBy(f => f).ToArray();
+
+			int loaded = 0;
+			int skipped = 0;
+			int failed = 0;
+
+			using var scope = new TreeViewUpdateScope(this);
+			foreach (var file in allFiles)
+			{
+				// Check if already loaded
+				if (this.TQFileOpened.Any(kv => kv.Value.SourceFile == file))
+				{
+					skipped++;
+					continue;
+				}
+
+				// Try to load the file - catch errors for individual files
+				try
+				{
+					this.OpenFile(file);
+					loaded++;
+				}
+				catch (Exception ex)
+				{
+					failed++;
+					this.Log.LogWarning(ex, "Failed to load file: {File}", file);
+				}
+			}
+
+			this.toolStripStatusLabel.Text = $"Loaded: {loaded}, Skipped: {skipped}, Failed: {failed}";
+		}
+		catch (Exception ex)
+		{
+			MessageBox.Show($"Error loading files: {ex.Message}");
+		}
 	}
 
 	#endregion

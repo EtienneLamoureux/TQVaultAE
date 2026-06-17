@@ -1,11 +1,7 @@
-using System;
 using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
-using TQVaultAE.Domain.Entities;
+using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Presentation;
 using TQVaultAE.Config;
@@ -25,6 +21,7 @@ public partial class ComboBoxCharacter : UserControl
 	private IGamePathService GamePathService;
 	private IGameFileService GameFileService;
 	private ITagService TagService;
+	private IPlayerService PlayerService;
 	private UserSettings USettings;
 	private Bitmap HUDCHARACTERBUTTONUP01;
 	private Bitmap HUDCHARACTERBUTTONOVER01;
@@ -80,6 +77,7 @@ public partial class ComboBoxCharacter : UserControl
 		get => _SelectedIndex;
 		set
 		{
+			if (_SelectedIndex == value) return;
 			if (Items.Count > 0 && value >= 0 && value < Items.Count)
 			{
 				_SelectedIndex = value;
@@ -156,6 +154,7 @@ public partial class ComboBoxCharacter : UserControl
 		, IGameFileService gameFileService
 		, IGamePathService gamePathService
 		, ITagService tagService
+		, IPlayerService playerService
 		, UserSettings userSettings
 		, Action duplicateCharacterAction
 	)
@@ -167,6 +166,7 @@ public partial class ComboBoxCharacter : UserControl
 		this.GamePathService = gamePathService;
 		this.GameFileService = gameFileService;
 		this.TagService = tagService;
+		this.PlayerService = playerService;
 		this.USettings = userSettings;
 		this.Form = this.FindForm() as VaultForm;
 		this.Form.GlobalMouseButtonLeft += Form_GlobalMouseButtonLeft;
@@ -184,6 +184,12 @@ public partial class ComboBoxCharacter : UserControl
 
 			this.pictureBoxChar.Image = HUDCHARACTERBUTTONUP01;
 			this.pictureBoxChar.Size = HUDCHARACTERBUTTONUP01.Size;
+			this.pictureBoxChar.Dock = DockStyle.Fill;
+			this.pictureBoxChar.SizeMode = PictureBoxSizeMode.Zoom;
+
+			// Set row height to match the actual bitmap height for proper alignment
+			var size = this.bufferedTableLayoutPanelSkeleton.Size;
+			this.bufferedTableLayoutPanelSkeleton.Size = new Size(size.Width, Math.Max(HUDCHARACTERBUTTONUP01.Height, HUDMENUSKILLBUTTONUP01.Height));
 
 			this.scalingButtonTools.Image = HUDMENUSKILLBUTTONUP01;
 			this.scalingButtonTools.Size = HUDMENUSKILLBUTTONUP01.Size;
@@ -199,7 +205,7 @@ public partial class ComboBoxCharacter : UserControl
 			this.renameToolStripMenuItem.Text = Resources.GlobalRename;
 			this.archiveAllToolStripMenuItemGlobal.Text =
 			this.archiveAllToolStripMenuItem.Text = Resources.GlobalArchiveAll;
-			this.unarchiveAllToolStripMenuItemGlobal.Text = 
+			this.unarchiveAllToolStripMenuItemGlobal.Text =
 			this.unarchiveAllToolStripMenuItem.Text = Resources.GlobalUnArchiveAll;
 			this.renameToolStripMenuItem.Text = Resources.GlobalRename;
 			this.colorToolStripMenuItem.Text = TranslationService.TranslateXTag("x3tagGraphicOption02");
@@ -645,11 +651,11 @@ public partial class ComboBoxCharacter : UserControl
 		// Find Saves having the tag that are archived
 		var taggedSaves =
 			from ps in this.Items.OfType<PlayerSave>()
-			where ps.Tags.ContainsKey(parentTagMenuItem.Text) && ps.IsArchived 
+			where ps.Tags.ContainsKey(parentTagMenuItem.Text) && ps.IsArchived
 			select ps;
 
 		foreach (var taggedSave in taggedSaves)
-			 this.GameFileService.Unarchive(taggedSave);
+			this.GameFileService.Unarchive(taggedSave);
 
 		RefreshItems();
 		RefreshContent();
@@ -667,7 +673,15 @@ public partial class ComboBoxCharacter : UserControl
 			select ps;
 
 		foreach (var taggedSave in taggedSaves)
-			this.GameFileService.Archive(taggedSave);
+		{
+			var oldPath = GamePathService.GetPlayerFile(taggedSave.Name, taggedSave.IsImmortalThrone, false);
+			var success = this.GameFileService.Archive(taggedSave);
+			if (success)
+			{
+				var newPath = GamePathService.GetPlayerFile(taggedSave.Name, taggedSave.IsImmortalThrone, true);
+				PlayerService.UpdatePlayerFilePath(oldPath, newPath);
+			}
+		}
 
 		RefreshItems();
 		RefreshContent();
@@ -750,14 +764,26 @@ public partial class ComboBoxCharacter : UserControl
 			// Archive it
 			if (archiveToolStripMenuItem.Checked)
 			{
-				GameFileService.Archive(ps);
+				var oldPath = GamePathService.GetPlayerFile(ps.Name, ps.IsImmortalThrone, false);
+				var success = GameFileService.Archive(ps);
+				if (success)
+				{
+					var newPath = GamePathService.GetPlayerFile(ps.Name, ps.IsImmortalThrone, true);
+					PlayerService.UpdatePlayerFilePath(oldPath, newPath);
+				}
 				RefreshItem(ps);
 				RefreshContent();
 				return;
 			}
 
 			// Unarchive it
-			GameFileService.Unarchive(ps);
+			var oldUnarchivePath = GamePathService.GetPlayerFile(ps.Name, ps.IsImmortalThrone, true);
+			var unarchiveSuccess = GameFileService.Unarchive(ps);
+			if (unarchiveSuccess)
+			{
+				var newUnarchivePath = GamePathService.GetPlayerFile(ps.Name, ps.IsImmortalThrone, false);
+				PlayerService.UpdatePlayerFilePath(oldUnarchivePath, newUnarchivePath);
+			}
 			RefreshItem(ps);
 			RefreshContent();
 		}
@@ -774,8 +800,16 @@ public partial class ComboBoxCharacter : UserControl
 			where !ps.IsArchived
 			select ps;
 
-		foreach (var activeSave in activeSaves) 
-			GameFileService.Archive(activeSave);
+		foreach (var activeSave in activeSaves)
+		{
+			var oldPath = GamePathService.GetPlayerFile(activeSave.Name, activeSave.IsImmortalThrone, false);
+			var success = GameFileService.Archive(activeSave);
+			if (success)
+			{
+				var newPath = GamePathService.GetPlayerFile(activeSave.Name, activeSave.IsImmortalThrone, true);
+				PlayerService.UpdatePlayerFilePath(oldPath, newPath);
+			}
+		}
 
 		RefreshItems();
 		RefreshContent();

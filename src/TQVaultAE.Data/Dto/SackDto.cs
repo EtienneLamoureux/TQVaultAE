@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using TQVaultAE.Domain.Entities;
+﻿using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Data.Dto;
 

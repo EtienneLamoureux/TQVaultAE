@@ -1,8 +1,5 @@
-﻿using System;
-using System.Drawing;
-using System.Drawing.Text;
-using System.Linq;
-using TQVaultAE.Domain.Contracts.Services;
+﻿using System.Drawing.Text;
+using TQVaultAE.Application.Contracts.Services;
 
 namespace TQVaultAE.Services.Win32;
 

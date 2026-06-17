@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TQVaultAE.Domain.Exceptions;
+﻿namespace TQVaultAE.Domain.Exceptions;
 
 /// <summary>
 /// Raised when game path is not found

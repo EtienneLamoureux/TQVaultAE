@@ -110,7 +110,7 @@ public class SackCollection : IEnumerable<Item>
 	public SackCollection()
 	{
 		this.items = new List<Item>();
-		this.SackType = SackType.Sack;
+		this.SackType = SackType.Player;
 	}
 
 	/// <summary>
@@ -142,7 +142,7 @@ public class SackCollection : IEnumerable<Item>
 	/// <summary>
 	/// Identifies the stash type.
 	/// </summary>
-	public SackType StashType { get; set; }
+	public StashType? StashType { get; set; }
 
 	/// <summary>
 	/// Gets or sets a value indicating whether this is from Immortal Throne
@@ -179,7 +179,7 @@ public class SackCollection : IEnumerable<Item>
 	/// <returns>Point of the upper left corner cell of the slot</returns>
 	public static Point GetWeaponLocationOffset(int weaponSlot)
 	{
-		if (weaponSlot < 0 || weaponSlot > NumberOfWeaponSlots)
+		if (weaponSlot < 0 || weaponSlot >= NumberOfWeaponSlots)
 		{
 			return Point.Empty;
 		}
@@ -194,7 +194,7 @@ public class SackCollection : IEnumerable<Item>
 	/// <returns>Size of the weapon slot</returns>
 	public static Size GetEquipmentLocationSize(int equipmentSlot)
 	{
-		if (equipmentSlot < 0 || equipmentSlot > equipmentLocationSizes.Length)
+		if (equipmentSlot < 0 || equipmentSlot >= equipmentLocationSizes.Length)
 		{
 			return Size.Empty;
 		}
@@ -209,7 +209,7 @@ public class SackCollection : IEnumerable<Item>
 	/// <returns>Point of the upper left cell of the slot.</returns>
 	public static Point GetEquipmentLocationOffset(int equipmentSlot)
 	{
-		if (equipmentSlot < 0 || equipmentSlot > equipmentLocationOffsets.Length)
+		if (equipmentSlot < 0 || equipmentSlot >= equipmentLocationOffsets.Length)
 		{
 			return Point.Empty;
 		}
@@ -224,7 +224,7 @@ public class SackCollection : IEnumerable<Item>
 	/// <returns>true if the slot is a weapon slot.</returns>
 	public static bool IsWeaponSlot(int equipmentSlot)
 	{
-		if (equipmentSlot < 0 || equipmentSlot > equipmentLocationOffsets.Length)
+		if (equipmentSlot < 0 || equipmentSlot >= equipmentLocationOffsets.Length)
 		{
 			return false;
 		}

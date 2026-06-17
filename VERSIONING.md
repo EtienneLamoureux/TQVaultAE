@@ -110,6 +110,7 @@ src/TQSaveFilesExplorer/TQ.SaveFilesExplorer.csproj
 src/ARZExplorer/ArzExplorer.csproj
 src/TQVaultAE.Services.Win32/TQVaultAE.Services.Win32.csproj
 src/TQVaultAE.Domain/TQVaultAE.Domain.csproj
+src/TQVaultAE.Application/TQVaultAE.Application.csproj
 src/TQVaultAE.Services/TQVaultAE.Services.csproj
 src/TQVaultAE.Presentation/TQVaultAE.Presentation.csproj
 src/TQVaultAE.Data/TQVaultAE.Data.csproj
@@ -138,6 +139,7 @@ src/TQSaveFilesExplorer/TQ.SaveFilesExplorer.csproj:    <Version>4.4.1.0</Versio
 src/ARZExplorer/ArzExplorer.csproj:    <Version>4.4.1.0</Version>
 src/TQVaultAE.Services.Win32/TQVaultAE.Services.Win32.csproj:    <Version>4.4.1.0</Version>
 src/TQVaultAE.Domain/TQVaultAE.Domain.csproj:    <Version>4.4.1.0</Version>
+src/TQVaultAE.Application/TQVaultAE.Application.csproj:    <Version>4.4.1.0</Version>
 src/TQVaultAE.Services/TQVaultAE.Services.csproj:    <Version>4.4.1.0</Version>
 src/TQVaultAE.Presentation/TQVaultAE.Presentation.csproj:    <Version>4.4.1.0</Version>
 src/TQVaultAE.Data/TQVaultAE.Data.csproj:    <Version>4.4.1.0</Version>
@@ -148,19 +150,22 @@ src/TQVaultAE.Logs/TQVaultAE.Logs.csproj:    <Version>4.4.1.0</Version>
 ### After Build
 
 ```powershell
-# Check compiled executables
-(Get-Item "src\TQVaultAE.GUI\bin\Release\net48\TQVaultAE.exe").VersionInfo.FileVersion
-(Get-Item "src\TQSaveFilesExplorer\bin\Release\net48\TQ.SaveFilesExplorer.exe").VersionInfo.FileVersion
-(Get-Item "src\ARZExplorer\bin\Release\net48\ARZExplorer.exe").VersionInfo.FileVersion
+# Check compiled executables (.NET 10.0 Windows)
+(Get-Item "src\TQVaultAE.GUI\bin\Release\net10.0-windows\TQVaultAE.exe").VersionInfo.FileVersion
+(Get-Item "src\ARZExplorer\bin\Release\net10.0-windows\ARZExplorer.exe").VersionInfo.FileVersion
 
-# Check compiled DLLs
-(Get-Item "src\TQVaultAE.Domain\bin\Release\netstandard2.0\TQVaultAE.Domain.dll").VersionInfo.FileVersion
-(Get-Item "src\TQVaultAE.Services\bin\Release\netstandard2.0\TQVaultAE.Services.dll").VersionInfo.FileVersion
-(Get-Item "src\TQVaultAE.Presentation\bin\Release\netstandard2.0\TQVaultAE.Presentation.dll").VersionInfo.FileVersion
-(Get-Item "src\TQVaultAE.Data\bin\Release\netstandard2.0\TQVaultAE.Data.dll").VersionInfo.FileVersion
-(Get-Item "src\TQVaultAE.Config\bin\Release\netstandard2.0\TQVaultAE.Config.dll").VersionInfo.FileVersion
-(Get-Item "src\TQVaultAE.Logs\bin\Release\netstandard2.0\TQVaultAE.Logs.dll").VersionInfo.FileVersion
-(Get-Item "src\TQVaultAE.Services.Win32\bin\Release\net48\TQVaultAE.Services.Win32.dll").VersionInfo.FileVersion
+# Check compiled executables (.NET Framework 4.8)
+(Get-Item "src\TQSaveFilesExplorer\bin\Release\net48\TQ.SaveFilesExplorer.exe").VersionInfo.FileVersion
+
+# Check compiled DLLs (.NET 10.0)
+(Get-Item "src\TQVaultAE.Domain\bin\Release\net10.0\TQVaultAE.Domain.dll").VersionInfo.FileVersion
+(Get-Item "src\TQVaultAE.Application\bin\Release\net10.0\TQVaultAE.Application.dll").VersionInfo.FileVersion
+(Get-Item "src\TQVaultAE.Services\bin\Release\net10.0\TQVaultAE.Services.dll").VersionInfo.FileVersion
+(Get-Item "src\TQVaultAE.Presentation\bin\Release\net10.0\TQVaultAE.Presentation.dll").VersionInfo.FileVersion
+(Get-Item "src\TQVaultAE.Data\bin\Release\net10.0\TQVaultAE.Data.dll").VersionInfo.FileVersion
+(Get-Item "src\TQVaultAE.Config\bin\Release\net10.0\TQVaultAE.Config.dll").VersionInfo.FileVersion
+(Get-Item "src\TQVaultAE.Logs\bin\Release\net10.0\TQVaultAE.Logs.dll").VersionInfo.FileVersion
+(Get-Item "src\TQVaultAE.Services.Win32\bin\Release\net10.0-windows\TQVaultAE.Services.Win32.dll").VersionInfo.FileVersion
 ```
 
 All should return: `4.4.1.0` (or current synchronized version)

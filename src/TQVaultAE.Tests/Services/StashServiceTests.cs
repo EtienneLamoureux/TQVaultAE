@@ -1,9 +1,10 @@
 using AwesomeAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Services;
 
@@ -16,10 +17,10 @@ public class StashServiceTests
 {
 	private readonly Mock<ILogger<StashService>> _mockLogger;
 	private readonly SessionContext _sessionContext;
+	private readonly Mock<IItemDatabaseService> _mockItemDatabaseService;
 	private readonly Mock<IStashProvider> _mockStashProvider;
 	private readonly Mock<IGamePathService> _mockGamePathService;
 	private readonly Mock<IGameFileService> _mockGameFileService;
-	private readonly Mock<IItemProvider> _mockItemProvider;
 	private readonly UserSettings _userSettings;
 	private readonly StashService _stashService;
 
@@ -29,18 +30,19 @@ public class StashServiceTests
 	public StashServiceTests()
 	{
 		_mockLogger = new Mock<ILogger<StashService>>();
+		_mockItemDatabaseService = new Mock<IItemDatabaseService>();
 		_mockStashProvider = new Mock<IStashProvider>();
 		_mockGamePathService = new Mock<IGamePathService>();
 		_mockGameFileService = new Mock<IGameFileService>();
-		_mockItemProvider = new Mock<IItemProvider>();
 		_userSettings = new UserSettings();
 
-		// Create real SessionContext with mocked dependencies
-		_sessionContext = new SessionContext(_mockItemProvider.Object);
+		// Create SessionContext - parameterless data holder
+		_sessionContext = new SessionContext();
 
 		_stashService = new StashService(
 			_mockLogger.Object,
 			_sessionContext,
+			_mockItemDatabaseService.Object,
 			_mockStashProvider.Object,
 			_mockGamePathService.Object,
 			_mockGameFileService.Object,
@@ -169,7 +171,7 @@ public class StashServiceTests
 
 		// Assert
 		result.Should().NotBeNull();
-		result.TransferStashFile.Should().Be(transferStashFile);
+		result.StashFile.Should().Be(transferStashFile);
 		result.Stash.Should().NotBeNull();
 		result.Stash.StashFound.Should().BeTrue();
 		result.Stash.IsImmortalThrone.Should().BeTrue();
@@ -215,11 +217,11 @@ public class StashServiceTests
 
 		// Assert
 		result.Should().NotBeNull();
-		result.RelicVaultStashFile.Should().Be(relicVaultStashFile);
+		result.StashFile.Should().Be(relicVaultStashFile);
 		result.Stash.Should().NotBeNull();
 		result.Stash.StashFound.Should().BeTrue();
 		result.Stash.IsImmortalThrone.Should().BeTrue();
-		result.Stash.Sack.StashType.Should().Be(SackType.RelicVaultStash);
+		result.Stash.Sack.StashType.Should().Be(StashType.RelicVaultStash);
 	}
 
 	/// <summary>
@@ -400,5 +402,239 @@ public class StashServiceTests
 		// Assert
 		result.Should().Be(0);
 		stashOnError.Should().BeNull();
+	}
+
+	/// <summary>
+	/// Test LoadTransferStash with fromFileWatcher updates existing stash
+	/// </summary>
+	[Fact]
+	public void LoadTransferStash_WithFromFileWatcherTrue_UpdatesExistingStash()
+	{
+		// Arrange
+		var transferStashFile = "C:\\Test\\Saves\\Sys\\winsys.dxb";
+
+		_mockGamePathService.Setup(x => x.TransferStashFileFullPath).Returns(transferStashFile);
+		_mockStashProvider.Setup(x => x.LoadFile(It.IsAny<Stash>())).Callback<Stash>(s => s.CreateEmptySack()).Returns(true);
+
+		// First load
+		var result1 = _stashService.LoadTransferStash(false);
+		var originalStash = result1.Stash;
+
+		// Second load with fromFileWatcher
+		var result2 = _stashService.LoadTransferStash(true);
+
+		// Assert
+		result2.Should().NotBeNull();
+		result2.Stash.Should().NotBeSameAs(originalStash);
+	}
+
+	/// <summary>
+	/// Test LoadRelicVaultStash with fromFileWatcher updates existing stash
+	/// </summary>
+	[Fact]
+	public void LoadRelicVaultStash_WithFromFileWatcherTrue_UpdatesExistingStash()
+	{
+		// Arrange
+		var relicVaultStashFile = "C:\\Test\\Saves\\Sys\\miscsys.dxb";
+
+		_mockGamePathService.Setup(x => x.RelicVaultStashFileFullPath).Returns(relicVaultStashFile);
+		_mockStashProvider.Setup(x => x.LoadFile(It.IsAny<Stash>())).Callback<Stash>(s => s.CreateEmptySack()).Returns(true);
+
+		// First load
+		var result1 = _stashService.LoadRelicVaultStash(false);
+		var originalStash = result1.Stash;
+
+		// Second load with fromFileWatcher
+		var result2 = _stashService.LoadRelicVaultStash(true);
+
+		// Assert
+		result2.Should().NotBeNull();
+		result2.Stash.Should().NotBeSameAs(originalStash);
+	}
+
+	/// <summary>
+	/// Test CreateRelicStashFileWatcher with null path returns null
+	/// </summary>
+	[Fact]
+	public void CreateRelicStashFileWatcher_WithNullPath_ReturnsNull()
+	{
+		// Arrange
+		_mockGamePathService.Setup(x => x.RelicVaultStashFileFullPath).Returns(string.Empty);
+
+		// Act
+		var result = _stashService.CreateRelicStashFileWatcher(() => { });
+
+		// Assert
+		result.Should().BeNull();
+	}
+
+	/// <summary>
+	/// Test CreateRelicStashFileWatcher with invalid path returns null
+	/// </summary>
+	[Fact]
+	public void CreateRelicStashFileWatcher_WithInvalidPath_ReturnsNull()
+	{
+		// Arrange - Use Unix root for cross-platform
+		_mockGamePathService.Setup(x => x.RelicVaultStashFileFullPath).Returns("/");
+
+		// Act
+		var result = _stashService.CreateRelicStashFileWatcher(() => { });
+
+		// Assert
+		result.Should().BeNull();
+	}
+
+	/// <summary>
+	/// Test CreateRelicStashFileWatcher with valid path creates watcher
+	/// </summary>
+	[Fact]
+	public void CreateRelicStashFileWatcher_WithValidPath_CreatesWatcher()
+	{
+		// Arrange - Use real temp directory
+		var tempDir = Path.Combine(Path.GetTempPath(), $"tqvault_stash_{Guid.NewGuid()}");
+		Directory.CreateDirectory(tempDir);
+		var stashFile = Path.Combine(tempDir, "miscsys.dxb");
+		File.WriteAllText(stashFile, "test");
+
+		_mockGamePathService.Setup(x => x.RelicVaultStashFileFullPath).Returns(stashFile);
+
+		FileSystemWatcher? watcher = null;
+		try
+		{
+			// Act
+			watcher = _stashService.CreateRelicStashFileWatcher(() => { });
+
+			// Assert
+			watcher.Should().NotBeNull();
+			watcher!.Path.Should().Be(tempDir);
+			watcher.Filter.Should().Be("miscsys.dxb");
+			watcher.EnableRaisingEvents.Should().BeTrue();
+		}
+		finally
+		{
+			// Cleanup
+			watcher?.Dispose();
+			if (Directory.Exists(tempDir))
+				Directory.Delete(tempDir, true);
+		}
+	}
+
+	/// <summary>
+	/// Test CreateTransferStashFileWatcher with null path returns null
+	/// </summary>
+	[Fact]
+	public void CreateTransferStashFileWatcher_WithNullPath_ReturnsNull()
+	{
+		// Arrange
+		_mockGamePathService.Setup(x => x.TransferStashFileFullPath).Returns(string.Empty);
+
+		// Act
+		var result = _stashService.CreateTransferStashFileWatcher(() => { });
+
+		// Assert
+		result.Should().BeNull();
+	}
+
+	/// <summary>
+	/// Test CreateTransferStashFileWatcher with invalid path returns null
+	/// </summary>
+	[Fact]
+	public void CreateTransferStashFileWatcher_WithInvalidPath_ReturnsNull()
+	{
+		// Arrange - Use Unix root for cross-platform
+		_mockGamePathService.Setup(x => x.TransferStashFileFullPath).Returns("/");
+
+		// Act
+		var result = _stashService.CreateTransferStashFileWatcher(() => { });
+
+		// Assert
+		result.Should().BeNull();
+	}
+
+	/// <summary>
+	/// Test CreateTransferStashFileWatcher with valid path creates watcher
+	/// </summary>
+	[Fact]
+	public void CreateTransferStashFileWatcher_WithValidPath_CreatesWatcher()
+	{
+		// Arrange - Use real temp directory
+		var tempDir = Path.Combine(Path.GetTempPath(), $"tqvault_transfer_{Guid.NewGuid()}");
+		Directory.CreateDirectory(tempDir);
+		var stashFile = Path.Combine(tempDir, "winsys.dxb");
+		File.WriteAllText(stashFile, "test");
+
+		_mockGamePathService.Setup(x => x.TransferStashFileFullPath).Returns(stashFile);
+
+		FileSystemWatcher? watcher = null;
+		try
+		{
+			// Act
+			watcher = _stashService.CreateTransferStashFileWatcher(() => { });
+
+			// Assert
+			watcher.Should().NotBeNull();
+			watcher!.Path.Should().Be(tempDir);
+			watcher.Filter.Should().Be("winsys.dxb");
+			watcher.EnableRaisingEvents.Should().BeTrue();
+		}
+		finally
+		{
+			// Cleanup
+			watcher?.Dispose();
+			if (Directory.Exists(tempDir))
+				Directory.Delete(tempDir, true);
+		}
+	}
+
+	/// <summary>
+	/// Test SaveAllModifiedStashes with exception during save
+	/// </summary>
+	[Fact]
+	public void SaveAllModifiedStashes_WithExceptionDuringSave_ThrowsException()
+	{
+		// Arrange
+		var stash = new Stash("TestPlayer", "C:\\Test\\Saves\\TestPlayer\\winsys.dxb")
+		{
+			IsImmortalThrone = true
+		};
+		stash.CreateEmptySack();
+		stash.Sack.IsModified = true;
+
+		_sessionContext.Stashes.GetOrAddAtomic("TestPlayer.dxb", _ => stash);
+
+		_mockStashProvider.Setup(x => x.Save(It.IsAny<Stash>(), It.IsAny<string>()))
+			.Throws(new IOException("Disk full"));
+
+		Stash? stashOnError = null;
+		_userSettings.DisableLegacyBackup = true;
+
+		// Act & Assert
+		var act = () => _stashService.SaveAllModifiedStashes(ref stashOnError);
+		act.Should().Throw<IOException>();
+	}
+
+	/// <summary>
+	/// Test LoadPlayerStash with archived player uses correct path
+	/// </summary>
+	[Fact]
+	public void LoadPlayerStash_WithArchivedPlayer_UsesArchivedPath()
+	{
+		// Arrange
+		var playerName = "TestPlayer";
+		var stashFile = "C:\\Test\\Saves\\TestPlayer\\winsys.dxb";
+		var mockPathIO = new Mock<IPathIO>();
+		var mockTranslationService = new Mock<ITranslationService>();
+		mockPathIO.Setup(x => x.GetFileName("C:\\Test\\Saves\\_TestPlayer")).Returns("_TestPlayer");
+		var playerSave = new PlayerSave("C:\\Test\\Saves\\_TestPlayer", false, true, false, "", mockTranslationService.Object, mockPathIO.Object); // IsArchived = true
+
+		_mockGamePathService.Setup(x => x.GetPlayerStashFile(playerName, true)).Returns(stashFile); // IsArchived = true
+		_mockStashProvider.Setup(x => x.LoadFile(It.IsAny<Stash>())).Callback<Stash>(s => s.CreateEmptySack()).Returns(true);
+
+		// Act
+		var result = _stashService.LoadPlayerStash(playerSave);
+
+		// Assert
+		result.Should().NotBeNull();
+		_mockGamePathService.Verify(x => x.GetPlayerStashFile(playerName, true), Times.Once);
 	}
 }

@@ -1,7 +1,7 @@
 using EnumsNET;
 using System.ComponentModel;
 using System.Drawing;
-using TQVaultAE.Domain.Contracts.Services;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;
 
 namespace TQVaultAE.Presentation;

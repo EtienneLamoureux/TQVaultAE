@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Media;
-using System.Windows.Forms;
+﻿using System.Media;
 using TQVaultAE.Domain.Entities;
 
 namespace ArzExplorer.Models;
@@ -14,6 +11,7 @@ internal class NodeTag
 
 	internal int TokIdx;
 	internal RecordId Key;
+	internal string DictionaryKey;
 	internal TreeNode thisNode;
 	internal TQFileInfo File;
 	internal byte[] RawData;

@@ -3,19 +3,18 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace TQVaultAE.Data;
 
+using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using Microsoft.Extensions.Logging;
-using System;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
-using TQVaultAE.Domain.Contracts.Providers;
-using TQVaultAE.Domain.Contracts.Services;
 using TQVaultAE.Data.Dto;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Logs;
+
+namespace TQVaultAE.Data;
 
 /// <summary>
 /// Loads, decodes, encodes and saves a Titan Quest player file.
@@ -125,19 +124,26 @@ public class PlayerCollectionProvider : IPlayerCollectionProvider
 			var end_block = TQData.ReadIntAfter(pc.rawData, "end_block", max.nextOffset);
 			var masteriesAllowed = TQData.ReadIntAfter(pc.rawData, "masteriesAllowed", max.nextOffset);// Boundary bottom
 
-			// Split file
-			var startfile = pc.rawData.Take(max.nextOffset).ToArray();
-			var endfile = pc.rawData.Skip(masteriesAllowed.indexOf - 4).ToArray(); // -4 include key name length
-
-			// make binary section
+			// Split file using Span-based slicing (single allocation)
 			var section = pc.PlayerInfo.SkillRecordList.SelectMany(s => s.ToBinary(secondblock.valueAsInt, end_block.valueAsInt)).ToArray();
+			int startLen = max.nextOffset;
+			int endLen = pc.rawData.Length - (masteriesAllowed.indexOf - 4);
+			int totalLen = startLen + section.Length + endLen;
+			var result = new byte[totalLen];
+			var resultSpan = result.AsSpan();
 
-			// put pieces back together
-			pc.rawData = new[] {
-				startfile,
-				section,
-				endfile,
-			}.SelectMany(a => a).ToArray();
+		// startfile
+		pc.rawData.AsSpan(0, startLen).CopyTo(resultSpan);
+		resultSpan = resultSpan.Slice(startLen);
+
+		// section
+		section.AsSpan().CopyTo(resultSpan);
+		resultSpan = resultSpan.Slice(section.Length);
+
+		// endfile
+		pc.rawData.AsSpan(masteriesAllowed.indexOf - 4).CopyTo(resultSpan);
+
+		pc.rawData = result;
 
 			// Adjust "max" value (need to find new offsets)
 			firstblock = TQData.ReadIntAfter(pc.rawData, "begin_block");
@@ -239,24 +245,32 @@ public class PlayerCollectionProvider : IPlayerCollectionProvider
 		var equipmentBlockEnd = TQData.BinaryFindEndBlockOf(pc.rawData, "useAlternate");
 		var equipmentBlockEndOffset = equipmentBlockEnd.nextOffset;
 
-		var ans = new[] {
-			// Begining of the file
-			pc.rawData.Take(itemBlockStartOffset).ToArray(),
+		// Build result using Span-based splicing (single allocation)
+		int totalLen = itemBlockStartOffset + rawItemData.Length + (equipmentBlockStartOffset - itemBlockEndOffset) + rawEquipmentData.Length + (pc.rawData.Length - equipmentBlockEndOffset);
+		var result = new byte[totalLen];
+		var resultSpan = result.AsSpan();
 
-			// new item segment
-			rawItemData,
+		// Beginning of the file
+		pc.rawData.AsSpan(0, itemBlockStartOffset).CopyTo(resultSpan);
+		resultSpan = resultSpan.Slice(itemBlockStartOffset);
 
-			// In between segment
-			new ArraySegment<byte>(pc.rawData, itemBlockEndOffset, equipmentBlockStartOffset - itemBlockEndOffset).ToArray(),
+		// New item segment
+		rawItemData.AsSpan().CopyTo(resultSpan);
+		resultSpan = resultSpan.Slice(rawItemData.Length);
 
-			// new equipment segment
-			rawEquipmentData,
+		// In between segment
+		int betweenLen = equipmentBlockStartOffset - itemBlockEndOffset;
+		pc.rawData.AsSpan(itemBlockEndOffset, betweenLen).CopyTo(resultSpan);
+		resultSpan = resultSpan.Slice(betweenLen);
 
-			// End of file
-			pc.rawData.Skip(equipmentBlockEndOffset).ToArray(),
-		}.SelectMany(b => b).ToArray();
+		// New equipment segment
+		rawEquipmentData.AsSpan().CopyTo(resultSpan);
+		resultSpan = resultSpan.Slice(rawEquipmentData.Length);
 
-		return ans;
+		// End of file
+		pc.rawData.AsSpan(equipmentBlockEndOffset).CopyTo(resultSpan);
+
+		return result;
 	}
 
 
@@ -300,7 +314,7 @@ public class PlayerCollectionProvider : IPlayerCollectionProvider
 
 		pc.Sacks = vaultDto.sacks.Select(s => new SackCollection()
 		{
-			SackType = SackType.Sack,
+			SackType = SackType.Player,
 			IsImmortalThrone = pc.IsImmortalThrone,
 			IsModified = false,
 			size = s.items.Count,
@@ -312,7 +326,7 @@ public class PlayerCollectionProvider : IPlayerCollectionProvider
 				var itm = new Item()
 				{
 					// General
-					ContainerType = SackType.Sack,
+					Place = new ContainerPlace { SackType = SackType.Player },
 					beginBlockCrap1 = this.TQData.BeginBlockValue,
 					beginBlockCrap2 = this.TQData.BeginBlockValue,
 					BaseItemId = s.baseName,
@@ -346,8 +360,9 @@ public class PlayerCollectionProvider : IPlayerCollectionProvider
 				return itm;
 			}).ToList()
 		}).ToArray();
+	}
 
-		/*
+	/*
 
 #if DEBUG
 		// Generate RelicAndCharm Enum
@@ -398,9 +413,7 @@ public class PlayerCollectionProvider : IPlayerCollectionProvider
 
 #endif
 
-		*/
-	}
-
+	*/
 
 	/// <summary>
 	/// Looks for the next begin_block or end_block.
@@ -408,16 +421,29 @@ public class PlayerCollectionProvider : IPlayerCollectionProvider
 	/// <param name="start">offset where we are starting our search</param>
 	/// <returns>Returns the index of the first char indicating the block delimiter or -1 if none is found.</returns>
 	public int FindNextBlockDelim(PlayerCollection pc, int start)
+		=> FindNextBlockDelim(pc.rawData.AsSpan(), start);
+
+	/// <summary>
+	/// Looks for the next begin_block or end_block using span-based search.
+	/// Optimized for bounds-check elimination.
+	/// </summary>
+	/// <param name="data">ReadOnlySpan of the raw binary data</param>
+	/// <param name="start">offset where we are starting our search</param>
+	/// <returns>Returns the index of the first char indicating the block delimiter or -1 if none is found.</returns>
+	public int FindNextBlockDelim(ReadOnlySpan<byte> data, int start)
 	{
+		ReadOnlySpan<byte> beginSpan = beginBlockPattern;
+		ReadOnlySpan<byte> endSpan = endBlockPattern;
+
 		int beginMatch = 0;
 		int endMatch = 0;
 
-		for (int i = start; i < pc.rawData.Length; ++i)
+		for (int i = start; i < data.Length; ++i)
 		{
-			if (pc.rawData[i] == beginBlockPattern[beginMatch])
+			if (data[i] == beginSpan[beginMatch])
 			{
 				++beginMatch;
-				if (beginMatch == beginBlockPattern.Length)
+				if (beginMatch == beginSpan.Length)
 					return i + 1 - beginMatch;
 			}
 			else if (beginMatch > 0)
@@ -425,14 +451,14 @@ public class PlayerCollectionProvider : IPlayerCollectionProvider
 				beginMatch = 0;
 
 				// Test again to see if we are starting a new match
-				if (pc.rawData[i] == beginBlockPattern[beginMatch])
+				if (data[i] == beginSpan[beginMatch])
 					++beginMatch;
 			}
 
-			if (pc.rawData[i] == endBlockPattern[endMatch])
+			if (data[i] == endSpan[endMatch])
 			{
 				++endMatch;
-				if (endMatch == endBlockPattern.Length)
+				if (endMatch == endSpan.Length)
 					return i + 1 - endMatch;
 			}
 			else if (endMatch > 0)
@@ -440,7 +466,7 @@ public class PlayerCollectionProvider : IPlayerCollectionProvider
 				endMatch = 0;
 
 				// Test again to see if we are starting a new match
-				if (pc.rawData[i] == endBlockPattern[endMatch])
+				if (data[i] == endSpan[endMatch])
 					++endMatch;
 			}
 		}
@@ -781,7 +807,7 @@ public class PlayerCollectionProvider : IPlayerCollectionProvider
 			for (int i = 0; i < pc.numberOfSacks; ++i)
 			{
 				pc.Sacks[i] = new SackCollection();
-				pc.Sacks[i].SackType = SackType.Sack;
+				pc.Sacks[i].SackType = SackType.Player;
 				pc.Sacks[i].IsImmortalThrone = pc.IsImmortalThrone;
 				SackCollectionProvider.Parse(pc.Sacks[i], reader);
 			}
