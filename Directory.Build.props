@@ -4,7 +4,7 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version Condition="'$(IsPackable)' != 'false'">4.4.0.0</Version>
+    <Version Condition="'$(IsPackable)' != 'false'">5.0.0.0</Version>
   </PropertyGroup>
 
 </Project>
