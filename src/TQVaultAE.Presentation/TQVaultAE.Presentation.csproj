@@ -13,7 +13,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Enums.NET" Version="5.0.0" />
-		<PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.11.1" />
+		<PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.13.1" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.5" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.5" />
 		<PackageReference Include="System.Drawing.Common" Version="10.0.5" />
