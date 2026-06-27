@@ -1,35 +1,4 @@
 <Solution>
-  <!-- 
-    Slim Solution File (Modern Format)
-    
-    This is the modern XML-based solution format introduced in Visual Studio 2022.
-    Benefits:
-    - Human-readable XML instead of custom format
-    - ~80% smaller file size
-    - Easier Git merges (no GUID conflicts)
-    - Auto-discovers project dependencies
-    
-    Usage:
-    - Build: dotnet build TQVaultAE.slnx
-  -->
-  
-  <!-- Executables -->
-  <Project Path="src\ARZExplorer\ArzExplorer.csproj" />
-  <Project Path="src\TQVaultAE.GUI\TQVaultAE.GUI.csproj" />
-  <Project Path="src\TQSaveFilesExplorer\TQ.SaveFilesExplorer.csproj" />
-  <Project Path="src\TQVaultAE.Services.Win32\TQVaultAE.Services.Win32.csproj" />
-  
-  <!-- Libraries -->
-  <Project Path="src\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
-  <Project Path="src\TQVaultAE.Services\TQVaultAE.Services.csproj" />
-  <Project Path="src\TQVaultAE.Application\TQVaultAE.Application.csproj" />
-  <Project Path="src\TQVaultAE.Data\TQVaultAE.Data.csproj" />
-  <Project Path="src\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj" />
-  <Project Path="src\TQVaultAE.Config\TQVaultAE.Config.csproj" />
-  <Project Path="src\TQVaultAE.Logs\TQVaultAE.Logs.csproj" />
-  
-  <!-- Tests -->
-  <Project Path="src\TQVaultAE.Tests\TQVaultAE.Tests.csproj" />
   
   <!-- Folders -->
   <Folder Name="/Solution Items/" Id="solution-items">
@@ -44,7 +13,10 @@
     <File Path="documentation/FORGE.md" />
     <File Path="documentation/IMPORT_EXPORT.md" />
     <File Path="documentation/SAVEFILEEXPLORER.md" />
+    <File Path="documentation/SHORTCUTS.md" />
     <File Path="documentation/TQORIGINAL.md" />
+    <File Path="documentation/TQVault common issues.md" />
+    <File Path="documentation/TroubleshootingAndFAQ.md" />
     <File Path="GITHUB_ACTIONS_BUILD_TEST.md" />
     <File Path="README.md" />
     <File Path="VERSIONING.md" />
@@ -57,4 +29,16 @@
     <File Path=".github\scripts\Update-Version.ps1" />
     <File Path="version-info.json" />
   </Folder>
+  <Project Path="src\ARZExplorer\ArzExplorer.csproj" />
+  <Project Path="src\TQSaveFilesExplorer\TQ.SaveFilesExplorer.csproj" />
+  <Project Path="src\TQVaultAE.Application\TQVaultAE.Application.csproj" />
+  <Project Path="src\TQVaultAE.Config\TQVaultAE.Config.csproj" />
+  <Project Path="src\TQVaultAE.Data\TQVaultAE.Data.csproj" />
+  <Project Path="src\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
+  <Project Path="src\TQVaultAE.GUI\TQVaultAE.GUI.csproj" />
+  <Project Path="src\TQVaultAE.Logs\TQVaultAE.Logs.csproj" />
+  <Project Path="src\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj" />
+  <Project Path="src\TQVaultAE.Services.Win32\TQVaultAE.Services.Win32.csproj" />
+  <Project Path="src\TQVaultAE.Services\TQVaultAE.Services.csproj" />
+  <Project Path="src\TQVaultAE.Tests\TQVaultAE.Tests.csproj" />
 </Solution>

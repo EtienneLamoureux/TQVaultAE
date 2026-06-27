@@ -29,7 +29,7 @@ _**Note:** The Forge doesn't move your objects, however, it changes the properti
 
 Forging or cancelling, return TQVault UI in it's previous state.
 
-![Forge screenshot](forge_ui.png)
+![Forge screenshot](forge/forge_ui.png)
 
 ---
 
@@ -37,7 +37,7 @@ Forging or cancelling, return TQVault UI in it's previous state.
 Some actions may be prohibited depending on the mode used.
 
 The Forge will emit a failure sound and display a message in the TQVaultAE notification area.
-![Forge screenshot](forge_ui_notifications.png)
+![Forge screenshot](forge/forge_ui_notifications.png)
 
 ---
 
@@ -46,7 +46,7 @@ During the forging process, the deposited items have their tooltip in detail
 mode and the tooltip of the base item displays the preview of the final result.
 
 _**Note:** Here's an example of a white item getting stronger._
-![Forge Preview Tooltip](forge_ui_preview.png)
+![Forge Preview Tooltip](forge/forge_ui_preview.png)
 
 ---
 
@@ -99,7 +99,7 @@ The UI change to let you peek & choose each property group you want to inherit.
 
 _**Note:** Here's an example of a useless quest item with offensive properties._
 <br />
-<img src="./forge_ui_godmode.png" width="750" alt="God Mode Example" />
+<img src="./forge/forge_ui_godmode.png" width="750" alt="God Mode Example" />
 <br />
 
 #### <a id="Hardcore"></a>*Hardcore*
