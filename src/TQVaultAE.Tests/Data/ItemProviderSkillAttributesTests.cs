@@ -203,7 +203,17 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 		this.CreateRecord(SkillId, "Skill_BuffSelfDuration", Str("skillDisplayName", "tagSkillTest"));
 		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSkillName", SkillId), Str("itemSkillAutoController", ControllerId));
 
-		this.BaseAttributes(item).Should().Contain($"{Epic}Test Skill ");
+		this.BaseAttributes(item).Should().Contain($"{Epic}Test Skill");
+	}
+
+	[Fact]
+	public void UnnamedGrantedSkill_WithAnActivation_ShowsTheActivationWithoutLeadingSpace()
+	{
+		this.CreateRecord(ControllerId, "ItemSkillAutoController", Str("triggerType", "LowHealth"));
+		this.CreateRecord(SkillId, "Skill_BuffSelfDuration");
+		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSkillName", SkillId), Str("itemSkillAutoController", ControllerId));
+
+		this.BaseAttributes(item).Should().ContainInConsecutiveOrder($"{Mundane}Grants Skill :", $"{Mundane}(Activated on low health)");
 	}
 
 	[Fact]
@@ -233,7 +243,7 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 			Str("skillDisplayName", "tagSkillTest"), Str("skillBaseDescription", "tagSkillTestDescription"), Ints("characterLife", 10));
 		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSkillName", SkillId));
 
-		this.BaseAttributes(item).Should().Equal(string.Empty, $"{Mundane}Grants Skill :", $"{Epic}Test Skill ");
+		this.BaseAttributes(item).Should().Equal(string.Empty, $"{Mundane}Grants Skill :", $"{Epic}Test Skill");
 	}
 
 	[Fact]
@@ -276,7 +286,7 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 		this.CreateRecord(SkillId, "Skill_BuffSelfDuration", Str("skillDisplayName", "tagNotTranslated"));
 		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSkillName", SkillId));
 
-		this.BaseAttributes(item).Should().Contain($"{Epic}skill ");
+		this.BaseAttributes(item).Should().Contain($"{Epic}skill");
 	}
 
 	[Fact]

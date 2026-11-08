@@ -34,7 +34,26 @@ public class ItemProviderAttributeAmountsTests : ItemProviderTextTestBase
 		var item = this.CreateItem("ArmorJewelry_Ring",
 			Float("offensiveSlowTotalSpeedMin", 30f), Float("offensiveSlowTotalSpeedDurationMin", 3f));
 
-		this.BaseAttributes(item).Should().Equal($"{Epic}30 % Slowed over 3.0 Seconds");
+		this.BaseAttributes(item).Should().Equal($"{Epic}30% Slowed over 3.0 Seconds");
+	}
+
+	[Fact]
+	public void PercentLabel_IsJoinedToTheAmount_AfterTheChance()
+	{
+		// The game shows "30% Slowed", not "30 % Slowed".
+		var item = this.CreateItem("ArmorJewelry_Ring",
+			Float("offensiveSlowTotalSpeedMin", 30f), Float("offensiveSlowTotalSpeedDurationMin", 3f), Float("offensiveSlowTotalSpeedChance", 20f));
+
+		this.BaseAttributes(item).Should().Equal($"{Epic}20.0% Chance of 30% Slowed over 3.0 Seconds");
+	}
+
+	[Fact]
+	public void PercentLabel_OfAnInstantEffect_IsJoinedToTheAmount()
+	{
+		this.Translations["DamageLifeLeech"] = "% of Attack damage converted to Health";
+		var item = this.CreateItem("ArmorJewelry_Ring", Float("offensiveLifeLeechMin", 15f));
+
+		this.BaseAttributes(item).Should().Equal($"{Epic}15% of Attack damage converted to Health");
 	}
 
 	[Fact]
@@ -43,7 +62,7 @@ public class ItemProviderAttributeAmountsTests : ItemProviderTextTestBase
 		var item = this.CreateItem("ArmorJewelry_Ring",
 			Float("offensiveSlowTotalSpeedMin", 20f), Float("offensiveSlowTotalSpeedMax", 30f), Float("offensiveSlowTotalSpeedDurationMin", 3f));
 
-		this.BaseAttributes(item).Should().Equal($"{Epic}20 ~ 30 % Slowed over 3.0 Seconds");
+		this.BaseAttributes(item).Should().Equal($"{Epic}20 ~ 30% Slowed over 3.0 Seconds");
 	}
 
 	[Fact]
@@ -117,7 +136,7 @@ public class ItemProviderAttributeAmountsTests : ItemProviderTextTestBase
 		var item = this.CreateItem("ArmorJewelry_Ring",
 			Float("offensiveManaBurnDrainMin", 10f), Float("offensiveManaBurnDrainMax", 20f), Float("offensiveManaBurnDamageRatio", 50f));
 
-		this.BaseAttributes(item).Should().Equal($"{Epic}10 ~ 20 % Energy Drain (50% of lost Energy as Damage)");
+		this.BaseAttributes(item).Should().Equal($"{Epic}10 ~ 20% Energy Drain (50% of lost Energy as Damage)");
 	}
 
 	[Fact]
@@ -127,7 +146,7 @@ public class ItemProviderAttributeAmountsTests : ItemProviderTextTestBase
 		var item = this.CreateItem("ArmorJewelry_Ring",
 			Float("offensiveManaBurnDrainMin", 10f), Float("offensiveManaBurnDamageRatio", 50f));
 
-		this.BaseAttributes(item).Should().Equal($"{Epic}10 % Energy Drain {Legendary}50.0% ?offensiveManaBurnDamageRatio?");
+		this.BaseAttributes(item).Should().Equal($"{Epic}10% Energy Drain {Legendary}50.0% ?offensiveManaBurnDamageRatio?");
 	}
 
 	[Fact]
