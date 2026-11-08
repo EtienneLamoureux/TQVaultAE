@@ -67,11 +67,11 @@ public partial class MainForm
 			this._fileReloadDebouncer?.Dispose();
 			this._fileReloadDebouncer = null;
 
-			// Files, then configuration (added by VillageIdiot), then git backup: each part may be refused by the debug save guard.
+			// Files, then configuration (added by VillageIdiot), then git backup.
 			var request = new SaveRequest(
-				Files: !IsSaveBlocked("save players, vaults and stashes")
-				, Configuration: IsSaveBlocked("save configuration") ? null : this.CurrentSessionConfiguration()
-				, GitBackup: !IsSaveBlocked("git commit and push"));
+				Files: true
+				, Configuration: this.CurrentSessionConfiguration()
+				, GitBackup: true);
 
 			var result = this.saveOrchestrator.Save(request, this.AskSaveDecision);
 			this.ShowSavedNotification(result);

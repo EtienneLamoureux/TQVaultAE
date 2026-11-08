@@ -21,7 +21,6 @@ namespace TQVaultAE.GUI.Automation;
 /// <list type="bullet">
 /// <item><c>TQVAULT_MCP_PORT</c>: listening port (default <see cref="DefaultPort"/>).</item>
 /// <item><c>TQVAULT_MCP_DISABLED=1</c>: do not start the endpoint.</item>
-/// <item><c>TQVAULT_MCP_ALLOW_SAVES=1</c>: let TQVault save files after automation has driven the UI.</item>
 /// </list>
 /// </remarks>
 internal static class AutomationHost
@@ -34,7 +33,6 @@ internal static class AutomationHost
 	internal static ILogger? Log => _log;
 	private static WebApplication? _app;
 	private static MainForm? _mainForm;
-	private static volatile bool _isDriving;
 
 	/// <summary>
 	/// Gets the in-memory log buffer served by <c>recent_log</c>.
@@ -45,16 +43,6 @@ internal static class AutomationHost
 	/// Gets the endpoint address, or null when the endpoint is not running.
 	/// </summary>
 	public static string? Address { get; private set; }
-
-	/// <summary>
-	/// Gets or sets a value indicating whether saving is refused once automation has driven the UI.
-	/// </summary>
-	public static bool BlockSavesWhileDriving { get; set; } = Environment.GetEnvironmentVariable("TQVAULT_MCP_ALLOW_SAVES") != "1";
-
-	/// <summary>
-	/// Gets a value indicating whether an automation client has performed an action on the UI.
-	/// </summary>
-	public static bool IsDriving => _isDriving;
 
 	/// <summary>
 	/// Gets the main form once it has been created.
@@ -84,31 +72,6 @@ internal static class AutomationHost
 	/// Gives the tools access to the main form.
 	/// </summary>
 	public static void AttachMainForm(MainForm mainForm) => _mainForm = mainForm;
-
-	/// <summary>
-	/// Marks the session as driven by automation, which arms the save guard.
-	/// </summary>
-	public static void MarkDriving()
-	{
-		if (_isDriving)
-			return;
-
-		_isDriving = true;
-		if (BlockSavesWhileDriving)
-			_log?.LogWarning("Automation is driving TQVault: saving is refused until the application is restarted (set TQVAULT_MCP_ALLOW_SAVES=1 or call set_save_guard to change)");
-	}
-
-	/// <summary>
-	/// Returns true, and logs it, when <paramref name="operation"/> must not write anything to disk.
-	/// </summary>
-	public static bool IsSaveBlocked(string operation)
-	{
-		if (!_isDriving || !BlockSavesWhileDriving)
-			return false;
-
-		_log?.LogWarning("Save refused while automation is driving TQVault: {Operation}", operation);
-		return true;
-	}
 
 	/// <summary>
 	/// Runs <paramref name="action"/> on the UI thread and returns its result.

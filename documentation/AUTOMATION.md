@@ -25,7 +25,6 @@ in existing code is inside `#if DEBUG`.
 |---|---|
 | `TQVAULT_MCP_PORT` | Listen on another port. |
 | `TQVAULT_MCP_DISABLED=1` | Do not start the endpoint. |
-| `TQVAULT_MCP_ALLOW_SAVES=1` | Turn the save guard off by default (see below). |
 
 ## Register it in Claude Code
 
@@ -57,7 +56,7 @@ Cells are grid coordinates, as reported by `get_state`.
 | `open_input_dialog(prompt?, title?, value?)` | Opens the text input dialog (used to name a duplicated character) modeless, to check its layout; close it with `close_dialog`. |
 | `open_bag_settings(panel)` | Opens the bag button settings (icon and label picker) for the current bag of a panel, like its "Change icon" menu entry. It waits for the game icons and reports how many loaded. The dialog is modal: capture it with `capture("Bag Button Settings")` and close it with `close_dialog`, using the Cancel button's text in the game language (for example "Annuler"). |
 | `highlight_filters(check?, uncheck?, apply?)` | Opens the highlight filters panel of the main window (the "Highlight items having" link), ticks and unticks its check boxes by text or name (`"Having Skill,Set Item"`), and applies the filters like its Apply button when `apply` is true. Returns the check boxes and how many items are highlighted. Untick them and apply again, or use the panel's Reset, to clear the highlight. |
-| `get_state(panel?)` | The selected vault and character, the available characters and vaults, `PlayerReadonly`, the save guard, the drag state, every panel (shown, sack type, bag, item count, modified). With `panel`, it adds the items of that panel's current sack: name, base name, record id, cell location and size. For `equipment` it also lists the slot rectangles. |
+| `get_state(panel?)` | The selected vault and character, the available characters and vaults, `PlayerReadonly`, the drag state, every panel (shown, sack type, bag, item count, modified). With `panel`, it adds the items of that panel's current sack: name, base name, record id, cell location and size. For `equipment` it also lists the slot rectangles. |
 | `owned_skill_items` | The owned items that grant a skill, from the search database (vaults, characters and stashes when *Load all files* is on): record ids, seed, vars, stack size, size in cells, location, and the skills with their level and the record that grants them. It writes nothing; its output is enough to write a vault file. |
 | `raw_tooltip_lines(items?, examples?)` | Scans every owned item and reports the tooltip lines still shown raw (`?name?`, `<unknown>`) in the granted skills, and with `items=true` in the item attributes too: grouped by raw name, with the count, where it appears and a sample line. |
 | `tooltip_text_dump(path?, views?, panel?, x?, y?, skip?, take?)` | Builds the item tooltip of every owned item (same scope as `raw_tooltip_lines`), or of the item on one panel cell, with the tooltip's own `FillToolTip`, without showing it and bypassing its image cache, and reads back the rows it created, in display order. `views` is a comma separated list of `classic`, `detailed` (detailed with the extras checked in the settings), `full` (detailed with every extra: in-game rolls, value ranges, granted skills, set piece counts) and `settings` (what a hover shows now); default `classic,full`. Each item has its location, record ids, vars, seed and stack size, and per view its rows: `kind` (`text`, `spacer`, `delimiter`, `range`, `icon`, `separator` between two skills of a column, `column` before the relic column or a skill column, with `text` = `relics` or `skills`), `text`, `color` (`#RRGGBB`), `bold`, `segments` for a line with several colors and `range` for the value on the right. Items are sorted by container, sack and cell, with no timestamp, so two dumps can be diffed. With `path`, the dump is written to that JSON file and the result is a summary (counts, rows, `unknownRows`, SHA-256); `skip` and `take` dump the owned items in batches. The relic column and the skill columns depend on the height of the main window's screen. |
@@ -67,11 +66,11 @@ Cells are grid coordinates, as reported by `get_state`.
 | `move_drag(panel, x, y)` | Hovers the dragged item so that its top-left corner lands on cell (x, y). The result reports the cells under the item. |
 | `drop_item(panel, x, y)` | Drops the dragged item with its top-left corner on cell (x, y). It reports whether the panel accepted the drop. |
 | `cancel_drag` | Returns the dragged item to where it was picked up, like a right click. |
-| `create_item(panel, baseItem, prefix?, suffix?, relic?, relicBonus?, relic2?, relicBonus2?, seed?)` | Builds an item in memory from database record ids and drags it, like the Duplicate menu entry; place it with `drop_item` (a created item cannot be cancelled back). It tests combinations no vault holds, for example a relic whose completion bonus grants a skill, or any record in any slot as the Forge allows in God mode. The save guard keeps it from being written. |
+| `create_item(panel, baseItem, prefix?, suffix?, relic?, relicBonus?, relic2?, relicBonus2?, seed?)` | Builds an item in memory from database record ids and drags it, like the Duplicate menu entry; place it with `drop_item` (a created item cannot be cancelled back). It tests combinations no vault holds, for example a relic whose completion bonus grants a skill, or any record in any slot as the Forge allows in God mode. It is saved with its vault or character like any item, so create it in a test file (see Safety). |
 | `hover_item(panel, x, y)` | Rests the virtual cursor on a cell without dragging. TQVault shows the item's tooltip and writes its name in the notification bar. The result gives the item, the notification text, the tooltips shown, and a PNG of the tooltip taken at once, since a tooltip can close by itself. |
 | `hover_end` | Moves the virtual cursor off the panel, which closes the tooltip. |
 | `context_menu(panel, x, y)` | Right-clicks a cell through the panel's mouse handlers and returns the context menu built for it: entry texts, `-` for separators, sub menus with their entries. The menu is closed without choosing anything. The current selection counts, as for a real right click. |
-| `zoom(step)` | Zooms the main window like its shortcuts: `in` (Ctrl +), `out` (Ctrl -), `reset` (Ctrl Home). Returns the zoom, the DPI factor, the scale (their product) and the client size. The zoom is written to `UserConfig.xml` like a user zoom (the save guard does not cover it), so end with `reset`. To compare with the 96 DPI layout on a high DPI screen, start the app with the environment variable `__COMPAT_LAYER=DPIUNAWARE`. |
+| `zoom(step)` | Zooms the main window like its shortcuts: `in` (Ctrl +), `out` (Ctrl -), `reset` (Ctrl Home). Returns the zoom, the DPI factor, the scale (their product) and the client size. The zoom is written to `UserConfig.xml` like a user zoom, so end with `reset`. To compare with the 96 DPI layout on a high DPI screen, start the app with the environment variable `__COMPAT_LAYER=DPIUNAWARE`. |
 | `move_window(x, y, form?)` | Moves the main window, or the open form whose title contains `form`, to a screen position, in virtual screen pixels (negative on a monitor left of the primary one), without resizing it, as a drag does. On a monitor of another DPI, Windows sends the DPI change and the window scales. Returns the monitors and the window's DPI, zoom, `dpiScale`, `systemDpiScale`, `scale` and `fontZoom`. Move it back to its monitor when done. |
 | `control_tree(form, depth)` | Lists the controls of an open form (the main window by default) with type, bounds, font and visibility, plus the form's DPI and the scale, zoom and DPI factor, to check layout and scaling. |
 | `capture(control)` | A PNG made with `Control.DrawToBitmap`, returned as an image and also saved under `%TEMP%`. Targets: a panel id, `<panel>.container` (the panel with its bag buttons), `main`, `tooltip` (the last tooltip shown), or part of a form title. It works when the window is behind other windows. |
@@ -83,8 +82,7 @@ Cells are grid coordinates, as reported by `get_state`.
 | `forge_drop(slot)` | Drops the dragged item on a forge slot. The rules of the current mode decide. A refusal is reported in `newMessages`, and the item stays dragged. |
 | `forge_select_part(slot, part)` | God mode: chooses which part of a material item is merged, like its combo box. |
 | `forge_drag_cursor` | Runs the drag cursor update of a mouse move over the forge while an item is dragged: whether the cursor was built from the item's bitmap (native `CreateIconIndirect`), its size and hot spot. |
-| `forge_reset` / `forge_cancel` / `forge_forge` | Like the Reset, Cancel and Forge buttons. `forge_forge` merges in memory only, since the save guard keeps it from being written, and reports the forged item and the sounds played. |
-| `set_save_guard(enabled)` | Turns the save guard on or off. |
+| `forge_reset` / `forge_cancel` / `forge_forge` | Like the Reset, Cancel and Forge buttons. `forge_forge` merges into the base item, which is saved with its vault or character like any change, and reports the forged item and the sounds played. |
 
 Every forge tool returns the forge state, with the `newMessages` and `sounds` that the call produced.
 
@@ -114,15 +112,15 @@ In Debug builds, `ISoundService` is wrapped by `RecordingSoundService`, which re
 
 - **`PlayerReadonly`**: when it is on (the default), `pick_item` and `drop_item` refuse the equipment panel,
   just as the panel ignores real clicks. Hovering it with `move_drag` is allowed.
-- **Save guard**: once any tool has driven the UI (selection, drag, dialog answer), TQVault refuses to:
-  - save players, vaults and stashes, including on exit;
-  - save its configuration on exit;
-  - duplicate a character or import a vault;
-  - git commit and push the vault folder on exit.
-
-  Each refused write is logged as `Save refused while automation is driving TQVault: ...`.
-  To allow saves, start the app with `TQVAULT_MCP_ALLOW_SAVES=1`, or call `set_save_guard(false)`.
-  Small UI preferences (window position, tooltip toggles) are still written to `UserConfig.xml`.
+- **Test files**: nothing stops automation from saving. TQVault saves like it does for a user: modified characters,
+  vaults and stashes on Save and on exit, its configuration, character duplication, vault import, and the git backup
+  when it is enabled. So automation works only on its own files, never on the user's:
+  - vaults named `claude-vault1`, `claude-vault2`, ... (create them as needed);
+  - characters named `claude-character1`, ..., made with the Duplicate Character feature from a real character
+    (the copy is a full save set: player file, stash and all);
+  - change nothing else: a real character or vault may be selected and read, but no item is moved, dropped,
+    created or forged in it. If one was changed by mistake, close the app without saving it (end the process).
+  With git backup enabled, the test files are committed and pushed with the others.
 
 ## Example session
 

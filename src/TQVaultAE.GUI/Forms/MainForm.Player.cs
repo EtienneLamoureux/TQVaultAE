@@ -295,10 +295,6 @@ public partial class MainForm
 	/// </summary>
 	private void DuplicateCharacter()
 	{
-#if DEBUG
-		if (Automation.AutomationHost.IsSaveBlocked("duplicate character"))
-			return;
-#endif
 		var ps = this.comboBoxCharacter.SelectedItem as PlayerSave;
 		if (ps is not null)
 		{

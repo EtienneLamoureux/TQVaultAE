@@ -12,7 +12,7 @@ namespace TQVaultAE.GUI.Automation;
 internal static partial class AutomationTools
 {
 	[McpServerTool(Name = "zoom", Destructive = true)]
-	[Description("Zooms the main window like its keyboard shortcuts: 'in' (Ctrl +, +10 %), 'out' (Ctrl -, -10 %) or 'reset' (Ctrl Home, 100 %). Returns the zoom, the DPI factor, the resulting scale and the client size. The zoom is saved to UserConfig.xml like a user zoom (the save guard does not cover it): end with 'reset'.")]
+	[Description("Zooms the main window like its keyboard shortcuts: 'in' (Ctrl +, +10 %), 'out' (Ctrl -, -10 %) or 'reset' (Ctrl Home, 100 %). Returns the zoom, the DPI factor, the resulting scale and the client size. The zoom is saved to UserConfig.xml like a user zoom: end with 'reset'.")]
 	public static string Zoom([Description("in, out or reset.")] string step)
 		=> AutomationHost.OnUi(main =>
 		{
@@ -24,7 +24,6 @@ internal static partial class AutomationTools
 				_ => throw new McpException("step must be in, out or reset."),
 			};
 
-			AutomationHost.MarkDriving();
 			main.AutomationZoom(delta);
 			var ui = main.Services.UIService;
 			return Serialize(new { zoom = ui.Zoom, dpiScale = ui.DpiScale, scale = ui.Scale, clientSize = new { main.ClientSize.Width, main.ClientSize.Height } });
@@ -82,7 +81,6 @@ internal static partial class AutomationTools
 			var type = FormTypes().FirstOrDefault(t => string.Equals(t.Name, name, StringComparison.OrdinalIgnoreCase))
 				?? throw new McpException($"Unknown form '{name}'. Forms: {string.Join(", ", FormTypes().Select(t => t.Name))}");
 
-			AutomationHost.MarkDriving();
 			var form = (Form)Program.ServiceProvider.GetRequiredService(type);
 
 			// A transient registration returns a new instance on each call.
@@ -138,7 +136,6 @@ internal static partial class AutomationTools
 		[Description("Text box content.")] string value = "NewName")
 		=> AutomationHost.OnUi(main =>
 		{
-			AutomationHost.MarkDriving();
 			var dialog = new Dialogs.InputDialog(prompt, title, value);
 			dialog.Show(main);
 			return Serialize(new { title = dialog.Text, size = new { dialog.Width, dialog.Height }, deviceDpi = dialog.DeviceDpi });
@@ -154,7 +151,6 @@ internal static partial class AutomationTools
 			var container = AutomationPanels.Resolve(form, panel).Container
 				?? throw new McpException($"Panel '{panel}' has no bag buttons.");
 
-			AutomationHost.MarkDriving();
 			var dialog = form.Services.Forms.Create<Dialogs.BagButtonSettings>();
 			dialog.CurrentBagButton = container.BagButtons[container.CurrentBag];
 
@@ -184,7 +180,6 @@ internal static partial class AutomationTools
 		[Description("true to apply the filters like the Apply button.")] bool apply = false)
 		=> AutomationHost.OnUi(main =>
 		{
-			AutomationHost.MarkDriving();
 			var panel = main.AutomationShowHighlightFilters();
 			var boxes = panel.AutomationCheckBoxes;
 
@@ -226,7 +221,6 @@ internal static partial class AutomationTools
 
 		AutomationHost.OnUi(main =>
 		{
-			AutomationHost.MarkDriving();
 			// Without the size: Location would send the old size too, over the one the DPI change gives.
 			NativeWindows.MoveTo(Target(main).Handle, x, y);
 			return 0;

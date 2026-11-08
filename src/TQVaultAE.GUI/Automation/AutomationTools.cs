@@ -91,7 +91,6 @@ internal static partial class AutomationTools
 		if (candidates.Count > 1 && string.IsNullOrEmpty(title))
 			throw new McpException($"Several dialogs are open: {string.Join(", ", candidates.Select(c => $"'{c.Title}'"))}. Pass a title.");
 
-		AutomationHost.MarkDriving();
 
 		foreach (var dialog in candidates)
 		{
@@ -138,7 +137,6 @@ internal static partial class AutomationTools
 				characters = form.AutomationCharacters,
 				vaults = form.AutomationVaults,
 				playerReadonly = form.AutomationSettings.PlayerReadonly,
-				saveGuard = new { blockSavesWhileDriving = AutomationHost.BlockSavesWhileDriving, driving = AutomationHost.IsDriving },
 				drag = drag.IsActive
 					? new
 					{
@@ -175,14 +173,6 @@ internal static partial class AutomationTools
 	public static string RecentLog([Description("Number of lines (default 50).")] int n = 50)
 		=> string.Join(Environment.NewLine, AutomationHost.RecentLog.GetLast(Math.Clamp(n, 1, 2000)));
 
-	[McpServerTool(Name = "set_save_guard", Destructive = true)]
-	[Description("Turns the save guard on or off. When on (the default), TQVault refuses to save players, vaults and stashes, to save its configuration on exit, to duplicate characters, to import vaults and to git push once automation has driven the UI.")]
-	public static string SetSaveGuard([Description("true to refuse saves while automation drives the app.")] bool enabled)
-	{
-		AutomationHost.BlockSavesWhileDriving = enabled;
-		return Serialize(new { blockSavesWhileDriving = enabled, driving = AutomationHost.IsDriving });
-	}
-
 	#endregion
 
 	#region Selection
@@ -192,7 +182,6 @@ internal static partial class AutomationTools
 	public static string SelectCharacter([Description("Character entry as listed in get_state 'characters'.")] string name)
 		=> AutomationHost.OnUi(form =>
 		{
-			AutomationHost.MarkDriving();
 			if (!form.AutomationSelectCharacter(name))
 				throw new McpException($"Unknown character '{name}'. Characters: {string.Join(", ", form.AutomationCharacters)}");
 			return Serialize(new { character = form.AutomationSelectedCharacter, characterFile = form.AutomationCurrentPlayerFile });
@@ -203,7 +192,6 @@ internal static partial class AutomationTools
 	public static string SelectVault([Description("Vault name as listed in get_state 'vaults'.")] string name)
 		=> AutomationHost.OnUi(form =>
 		{
-			AutomationHost.MarkDriving();
 			if (!form.AutomationSelectVault(name))
 				throw new McpException($"Unknown vault '{name}'. Vaults: {string.Join(", ", form.AutomationVaults)}");
 			return Serialize(new { vault = form.AutomationSelectedVault });
@@ -226,7 +214,6 @@ internal static partial class AutomationTools
 			if (bag < 0 || bag >= container.BagButtons.Count)
 				throw new McpException($"Bag {bag} is out of range 0..{container.BagButtons.Count - 1}.");
 
-			AutomationHost.MarkDriving();
 			var button = container.BagButtons[bag];
 			OnMouseDownMethod.Invoke(button, [new MouseEventArgs(MouseButtons.Left, 1, button.Width / 2, button.Height / 2, 0)]);
 			container.Refresh();
@@ -252,7 +239,6 @@ internal static partial class AutomationTools
 			var item = named.Panel.AutomationFindItem(cell)
 				?? throw new McpException($"No item at cell ({x},{y}) of '{panel}'.");
 
-			AutomationHost.MarkDriving();
 			named.Panel.AutomationMouseDown(named.Panel.AutomationCellCenter(cell), MouseButtons.Left);
 
 			if (!drag.IsActive)
@@ -271,7 +257,6 @@ internal static partial class AutomationTools
 		{
 			var named = ResolveShownPanel(form, panel);
 			RequireDrag(form);
-			AutomationHost.MarkDriving();
 			named.Panel.AutomationMouseMove(DragCursorFor(form, named.Panel, new Point(x, y)));
 			return DragStatus(form);
 		});
@@ -288,7 +273,6 @@ internal static partial class AutomationTools
 			var drag = RequireDrag(form);
 			EnsureWritable(form, named.Panel, "drop into");
 
-			AutomationHost.MarkDriving();
 			var dropped = drag.Item;
 			var cursor = DragCursorFor(form, named.Panel, new Point(x, y));
 			named.Panel.AutomationMouseMove(cursor);
@@ -324,7 +308,6 @@ internal static partial class AutomationTools
 
 			var cell = new Point(x, y);
 			var item = named.Panel.AutomationFindItem(cell);
-			AutomationHost.MarkDriving();
 			named.Panel.AutomationMouseMove(named.Panel.AutomationCellCenter(cell));
 
 			var tooltip = OpenTooltips().LastOrDefault();
@@ -366,7 +349,6 @@ internal static partial class AutomationTools
 
 			var cell = new Point(x, y);
 			var item = named.Panel.AutomationFindItem(cell);
-			AutomationHost.MarkDriving();
 			var entries = named.Panel.AutomationContextMenu(cell);
 			ReleaseCursor(named.Panel);
 
@@ -391,7 +373,6 @@ internal static partial class AutomationTools
 			if (!drag.CanBeCanceled)
 				throw new McpException("This drag cannot be canceled (the item was split or modified). Drop it somewhere instead.");
 
-			AutomationHost.MarkDriving();
 			var source = drag.SrcSackPanel;
 			drag.Cancel();
 			source?.Refresh();

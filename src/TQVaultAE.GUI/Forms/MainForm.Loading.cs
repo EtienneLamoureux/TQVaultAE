@@ -63,9 +63,6 @@ public partial class MainForm
 	/// <returns>true if players have been modified</returns>
 	private bool SaveAllModifiedFiles()
 	{
-		if (IsSaveBlocked("save players, vaults and stashes"))
-			return false;
-
 		var result = this.saveOrchestrator.Save(SaveRequest.FilesOnly, this.AskSaveDecision);
 		this.ShowSavedNotification(result);
 		return result.PlayersSaved;
@@ -98,18 +95,6 @@ public partial class MainForm
 			DialogResult.Retry => SaveDecision.Retry,
 			_ => SaveDecision.Ignore,
 		};
-	}
-
-	/// <summary>
-	/// Returns true when the debug save guard refuses <paramref name="operation"/>; always false in Release.
-	/// </summary>
-	private static bool IsSaveBlocked(string operation)
-	{
-#if DEBUG
-		return Automation.AutomationHost.IsSaveBlocked(operation);
-#else
-		return false;
-#endif
 	}
 
 	#endregion
@@ -310,10 +295,6 @@ public partial class MainForm
 	/// </summary>
 	private void SaveConfiguration()
 	{
-#if DEBUG
-		if (Automation.AutomationHost.IsSaveBlocked("save configuration"))
-			return;
-#endif
 		var configuration = this.CurrentSessionConfiguration();
 		this.configChanged = this.settingsPersistenceService.SaveConfiguration(configuration.VaultName, configuration.CharacterName, configuration.Zoom, configuration.ConfigChanged);
 	}

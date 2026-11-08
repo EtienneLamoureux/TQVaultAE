@@ -20,7 +20,6 @@ internal static partial class AutomationTools
 	public static string ForgeShow([Description("true to show the forge, false to hide it.")] bool show = true)
 		=> AutomationHost.OnUi(form =>
 		{
-			AutomationHost.MarkDriving();
 			var sounds = RecordingSoundService.LastSequence;
 			form.AutomationShowForge(show);
 			return ForgeStatus(form, sounds, int.MaxValue);
@@ -81,7 +80,7 @@ internal static partial class AutomationTools
 	public static string ForgeReset() => OnForge((form, forge) => forge.AutomationReset());
 
 	[McpServerTool(Name = "forge_forge", Destructive = true)]
-	[Description("Forges, like the Forge button: merges the selected parts into the base item (in memory; the save guard keeps it from being written) and closes the forge. In God mode it plays the level-up MP3, converted by NAudio. 'forgedItem' is the base item after the merge, 'sounds' what was played.")]
+	[Description("Forges, like the Forge button: merges the selected parts into the base item (in memory, saved with the vault or character like any change) and closes the forge. In God mode it plays the level-up MP3, converted by NAudio. 'forgedItem' is the base item after the merge, 'sounds' what was played.")]
 	public static string ForgeForge()
 		=> AutomationHost.OnUi(form =>
 		{
@@ -90,7 +89,6 @@ internal static partial class AutomationTools
 			var sounds = RecordingSoundService.LastSequence;
 			var messages = forge.AutomationMessages.Count;
 
-			AutomationHost.MarkDriving();
 			forge.AutomationForge();
 
 			var status = System.Text.Json.JsonDocument.Parse(ForgeStatus(form, sounds, messages)).RootElement;
@@ -148,7 +146,6 @@ internal static partial class AutomationTools
 			var sounds = RecordingSoundService.LastSequence;
 			var messages = forge.AutomationMessages.Count;
 
-			AutomationHost.MarkDriving();
 			action(form, forge);
 			return ForgeStatus(form, sounds, messages);
 		});

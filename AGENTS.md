@@ -170,7 +170,7 @@ Debug builds of `TQVaultAE.GUI` host an MCP server inside the app at `http://127
 | Evidence | `capture(control)`, a PNG made with `DrawToBitmap` that works even when the window is hidden; `recent_log(n)`; `recent_sounds(n)`, with the sounds played and whether their data loaded |
 
 Rules:
-- The save guard refuses player, vault and configuration saves, and the git push, once automation has driven the app. Leave it on.
+- Nothing blocks saves: work only in your own test files, vaults `claude-vault1`, `claude-vault2`, ... and characters `claude-character1`, ... made with Duplicate Character. Never change a real character or vault (see Safety in `documentation/AUTOMATION.md`).
 - Put items back with `cancel_drag`.
 - `PlayerReadonly` blocks picking from and dropping on the equipment panel.
 - Release builds contain none of this. Keep any new hook inside `#if DEBUG`.

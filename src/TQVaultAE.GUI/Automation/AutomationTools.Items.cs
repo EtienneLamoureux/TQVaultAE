@@ -11,7 +11,7 @@ namespace TQVaultAE.GUI.Automation;
 internal static partial class AutomationTools
 {
 	[McpServerTool(Name = "create_item", Destructive = true)]
-	[Description("Creates an item in memory from database records (base item, affixes, relics) and drags it over a panel, like the Duplicate menu entry: place it with drop_item. It exists only in memory: the save guard keeps it from being written. Useful to test combinations no vault holds, e.g. an affix that grants a skill.")]
+	[Description("Creates an item in memory from database records (base item, affixes, relics) and drags it over a panel, like the Duplicate menu entry: place it with drop_item. It is saved with its vault or character like any item: use claude-* test files. Useful to test combinations no vault holds, e.g. an affix that grants a skill.")]
 	public static string CreateItem(
 		[Description("Panel the drag starts from, e.g. vault.")] string panel,
 		[Description("""Base item record, e.g. records\item\equipmentamulet\u_n_moonclaw.dbr.""")] string baseItem,
@@ -59,7 +59,6 @@ internal static partial class AutomationTools
 			// The item size in cells comes from its bitmap.
 			Program.ServiceProvider.GetRequiredService<IUIService>().GetBitmap(item);
 
-			AutomationHost.MarkDriving();
 
 			// A modified drag has no source cell: like Duplicate, it can only be dropped.
 			drag.Set(named.Panel, sack, item, new Point(1, 1));
