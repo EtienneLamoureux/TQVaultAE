@@ -180,6 +180,8 @@ Rules:
 
 Full reference: `documentation/AUTOMATION.md`.
 
+ARZExplorer has its own Debug endpoint at `http://127.0.0.1:47020/mcp` (`ARZExplorer.exe --headless`, message boxes recorded by `dialogs`): see "ARZExplorer endpoint" in `documentation/AUTOMATION.md`.
+
 ## Resources
 - Game file formats (ARC, ARZ, text, TEX, item stat jitter): `documentation/tq-file-formats.md`
 - DB CLI (`tqdb`) usage: `documentation/DBCLI.md`

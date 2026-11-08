@@ -33,12 +33,26 @@ public static class Program
 	[STAThread]
 	public static void Main()
 	{
+#if DEBUG
+		// --headless: start again on a hidden desktop and leave (see Automation\Headless.cs).
+		if (Automation.Headless.IsRequested() && !Automation.Headless.TryAttach())
+		{
+			var headlessError = Automation.Headless.StartOnHiddenDesktop();
+			if (headlessError is not null)
+				Console.Error.WriteLine($"Headless mode: ARZExplorer could not start on a hidden desktop: {headlessError}");
+			return;
+		}
+#endif
+
 		Application.EnableVisualStyles();
 		Application.SetCompatibleTextRenderingDefault(false);
 
 		// Setup regular Microsoft.Extensions.Logging abstraction manualy
 		ILoggerFactory loggerFactory = new LoggerFactory();
 		loggerFactory.AddLog4Net();
+#if DEBUG
+		Automation.AutomationHost.Start(loggerFactory);
+#endif
 
 	restart:;
 		// Configure DI
@@ -94,6 +108,9 @@ public static class Program
 		}
 
 		var mainform = Program.ServiceProvider.GetRequiredService<MainForm>();
+#if DEBUG
+		Automation.AutomationHost.AttachMainForm(mainform);
+#endif
 		Application.Run(mainform);
 
 	exit:;

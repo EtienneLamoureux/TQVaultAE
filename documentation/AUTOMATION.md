@@ -212,3 +212,30 @@ Use `cancel_drag` to put it back untouched.
 - `capture("equipment")` shows the item grid only. Use `equipment.container` to include the stash tabs.
 - The real mouse still works while automation drives the app. Moving it over the panels during a drag
   repaints them, but the virtual cursor keeps deciding where the dragged item is drawn and dropped.
+
+## ARZExplorer endpoint (`arzexplorer` MCP)
+
+Debug builds of `ARZExplorer` host their own MCP server, built the same way (`src/ARZExplorer/Automation/`), at
+`http://127.0.0.1:47020/mcp` (`ARZEXPLORER_MCP_PORT` to change it, `ARZEXPLORER_MCP_DISABLED=1` to turn it off).
+Release builds contain none of it.
+
+- `ARZExplorer.exe --headless` runs it on a hidden desktop, like TQVault. ARZExplorer calls `MessageBox.Show` directly,
+  so every message box and file dialog there is cancelled as soon as it opens and recorded with its caption and text:
+  read them with `dialogs`.
+- Stop it with `exit`, or kill your own process id.
+
+| Tool | Does |
+|---|---|
+| `get_state` | Title, opened files, node count, top tree nodes, selected node, path box, status bar, shown view (picture, grid, text, sound), picture size. Fails within 5 s when the UI thread is blocked. |
+| `open_file(path)` | Opens an ARC or ARZ file as the Open menu does. |
+| `list_items`, `click_item(name)` | Menu items, and a click on one (`loadAllFilesToolStripMenuItem`...). |
+| `find_nodes(contains, max)` | Keys of the leaf nodes containing a text (`.tex`, `U_E_LYPIKOURI`). |
+| `select_node(key)` | Selects a node as a click does: record grid, text, picture or sound. |
+| `grid_links`, `click_grid_cell(row, column)` | The link cells of a DBR record grid, and a click on one (navigates, loading the archive it needs). |
+| `decode_tex(key)` | Reads and decodes a TEX off the UI thread, with timings: tells a decoder problem from a UI one. |
+| `capture` | PNG of the window (`DrawToBitmap`). |
+| `dialogs(clear)` | Headless state and the dialogs cancelled there. |
+
+The UI tools take a timeout and report "blocked (hang)" instead of waiting forever. The call still runs once the UI
+thread is free, so poll `get_state` to see when it does.
+

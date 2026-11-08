@@ -42,6 +42,21 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" />
 	</ItemGroup>
 
+	<!-- Debug-only MCP automation endpoint (Automation\), see documentation/AUTOMATION.md -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<!-- The ASP.NET Core shared framework already carries Microsoft.Extensions.*; keep the explicit references for Release. -->
+		<NoWarn>$(NoWarn);NU1510</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="ModelContextProtocol.AspNetCore" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)' != 'Debug'">
+		<Compile Remove="Automation\**" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<Content Include="..\TQVaultAE.Config\UserConfig.xml" Link="UserConfig.xml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
