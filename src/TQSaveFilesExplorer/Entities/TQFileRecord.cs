@@ -48,6 +48,14 @@ public class TQFileRecord
 		get => RegExMatch is null ? ValueStart : RegExMatch.Index;
 	}
 
+	/// <summary>
+	/// Offset of the last byte of the key, or of the value for the records without key (<see cref="IsKeyValue"/>).
+	/// </summary>
+	public int KeyEnd
+	{
+		get => this.IsKeyValue ? this.ValueEnd : this.ValueStart - 1;
+	}
+
 	public int ValueStart { get; set; }
 	public int ValueEnd { get; set; }
 

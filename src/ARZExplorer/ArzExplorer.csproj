@@ -33,6 +33,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="TQVaultAE.Tests.Win32" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Enums.NET" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" />

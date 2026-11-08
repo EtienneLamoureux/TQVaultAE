@@ -37,7 +37,7 @@ public partial class MainForm : Form
 
 	private void LoadFilesFromDirectory(string path)
 	{
-		var tqfiles = Directory.GetFiles(path).Where(p => TQFile.Ext_All.Contains(Path.GetExtension(p).ToLowerInvariant())).ToArray();
+		var tqfiles = Directory.GetFiles(path).Where(TQFile.IsSaveFile).ToArray();
 
 		foreach (var file in tqfiles)
 		{
@@ -52,7 +52,7 @@ public partial class MainForm : Form
 		DialogResult result = this.openFileDialogMain.ShowDialog();
 		if (result == DialogResult.OK)
 		{
-			var tqfiles = this.openFileDialogMain.FileNames.Where(p => TQFile.Ext_All.Contains(Path.GetExtension(p))).ToArray();
+			var tqfiles = this.openFileDialogMain.FileNames.Where(TQFile.IsSaveFile).ToArray();
 
 			foreach (var file in tqfiles)
 			{
