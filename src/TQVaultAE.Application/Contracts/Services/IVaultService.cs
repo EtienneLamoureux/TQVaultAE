@@ -67,13 +67,13 @@ public interface IVaultService
 	void ChangeBagTooltip(PlayerCollection vault, BagTooltipChange change, int bag, int bagCount);
 
 	/// <summary>
-	/// Builds the CSV export of a vault, or of one of its bags: a header line, then one line per item.
+	/// Builds the CSV export of a vault, or of one of its bags: a header line, then one line per item, separated by the
+	/// CSV delimiter of the settings.
 	/// </summary>
 	/// <param name="vault">The vault.</param>
 	/// <param name="bagIndex">Index of the bag to export; the whole vault when null.</param>
-	/// <param name="delimiter">The CSV delimiter.</param>
 	/// <returns>The CSV text, lines separated by <see cref="Environment.NewLine"/>.</returns>
-	string BuildCsvExport(PlayerCollection vault, int? bagIndex, char delimiter);
+	string BuildCsvExport(PlayerCollection vault, int? bagIndex);
 
 	/// <summary>
 	/// Checks a vault maintenance request before it runs.

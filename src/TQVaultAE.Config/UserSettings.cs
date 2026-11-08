@@ -142,6 +142,12 @@ public class UserSettings
 	[XmlElement(ElementName = nameof(CSVDelimiter))]
 	public string CSVDelimiter { get; set; } = "Comma";
 
+	/// <summary>
+	/// The character of <see cref="CSVDelimiter"/>, a comma when the saved value is unknown.
+	/// </summary>
+	[XmlIgnore]
+	public char CsvDelimiterChar => CsvDelimiters.Parse(this.CSVDelimiter).ToChar();
+
 	[XmlElement(ElementName = nameof(EnableEpicLegendaryAffixes))]
 	public bool EnableEpicLegendaryAffixes { get; set; } = false;
 

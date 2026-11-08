@@ -206,6 +206,17 @@ internal static partial class AutomationTools
 			return Serialize(new { vault, path });
 		});
 
+	[McpServerTool(Name = "export_csv")]
+	[Description("Writes the CSV export of the vault shown, or of one of its bags, to a file, like the vault context menu's 'Export CSV' entries without the clipboard. Uses the CSV delimiter of the settings.")]
+	public static string ExportCsv(
+		[Description("Path of the CSV file to write.")] string path,
+		[Description("Zero-based index of the bag to export; omit for the whole vault.")] int? bag = null)
+		=> AutomationHost.OnUi(form =>
+		{
+			var vault = form.AutomationExportCsv(path, bag) ?? throw new McpException("No vault is shown.");
+			return Serialize(new { vault, bag, path });
+		});
+
 	[McpServerTool(Name = "import_file", Destructive = true)]
 	[Description("Imports an exported JSON file like the vault menu's 'Import from file' without its file dialog: items go into the current tab; a whole vault asks to replace the vault shown or import it as a new vault (answer with queue_dialog_answers: Yes replaces, No creates a new vault, Cancel). The vault shown must be a test vault ('claude-...'), since it may be replaced. Queue the answers first: the import waits for its boxes.")]
 	public static string ImportFile([Description("Path of the exported JSON file.")] string path)

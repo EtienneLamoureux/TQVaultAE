@@ -704,13 +704,14 @@ public class VaultServiceTests
 	[Fact]
 	public void BuildCsvExport_WholeVault_NumbersRowsAcrossBagsWithOneBasedBagIds()
 	{
+		_userSettings.CSVDelimiter = "Semicolon";
 		var vault = CreateVaultWithItemInBag(bags: 3, filledBag: 2);
 		vault.GetSack(0)!.AddItem(new Item());
 		_mockItemProvider
 			.Setup(x => x.GetFriendlyNames(It.IsAny<Item>(), FriendlyNamesExtraScopes.Requirements, true))
 			.Returns<Item, FriendlyNamesExtraScopes?, bool>((item, _, _) => new ToFriendlyNameResult(item));
 
-		var lines = _vaultService.BuildCsvExport(vault, null, ';').Split(Environment.NewLine);
+		var lines = _vaultService.BuildCsvExport(vault, null).Split(Environment.NewLine);
 
 		lines.Should().HaveCount(3);
 		lines[0].Should().StartWith("Row;Vault;BagId;");
@@ -727,10 +728,25 @@ public class VaultServiceTests
 			.Setup(x => x.GetFriendlyNames(It.IsAny<Item>(), FriendlyNamesExtraScopes.Requirements, true))
 			.Returns<Item, FriendlyNamesExtraScopes?, bool>((item, _, _) => new ToFriendlyNameResult(item));
 
-		var lines = _vaultService.BuildCsvExport(vault, 2, ',').Split(Environment.NewLine);
+		var lines = _vaultService.BuildCsvExport(vault, 2).Split(Environment.NewLine);
 
 		lines.Should().HaveCount(2);
 		lines[1].Should().StartWith("0,Gear,3,");
+	}
+
+	[Fact]
+	public void BuildCsvExport_UnknownDelimiterSetting_UsesComma()
+	{
+		_userSettings.CSVDelimiter = "Space";
+		var vault = CreateVaultWithItemInBag(bags: 1, filledBag: 0);
+		_mockItemProvider
+			.Setup(x => x.GetFriendlyNames(It.IsAny<Item>(), FriendlyNamesExtraScopes.Requirements, true))
+			.Returns<Item, FriendlyNamesExtraScopes?, bool>((item, _, _) => new ToFriendlyNameResult(item));
+
+		var lines = _vaultService.BuildCsvExport(vault, null).Split(Environment.NewLine);
+
+		lines[0].Should().StartWith("Row,Vault,BagId,");
+		lines[1].Should().StartWith("0,Gear,1,");
 	}
 
 	/// <summary>

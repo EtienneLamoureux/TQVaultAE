@@ -328,15 +328,9 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		// Build language combo box
 		this.languageComboBox.Items.Clear();
 
-		// Read the languages from the config file
-		ComboBoxItem[] languages = USettings.GameLanguages.Split(',').Select(iso =>
-		{
-			CultureInfo ci = new CultureInfo(iso.ToUpperInvariant(), true);
-			return new ComboBoxItem() { Value = ci.EnglishName, DisplayName = ci.DisplayName };// to keep EnglishName as baseline value
-		}).OrderBy(cb => cb.DisplayName).ToArray();
-
-		// Reading failed so we default to English
-		if (languages.Length == 0) languages = [new ComboBoxItem() { Value = "English", DisplayName = "English" }];
+		// The languages of the config file, English names as values; English alone when none is valid.
+		ComboBoxItem[] languages = [.. SettingsChoices.GameLanguages(USettings.GameLanguages)
+			.Select(choice => new ComboBoxItem() { Value = choice.Value, DisplayName = choice.DisplayName })];
 
 		this.languageComboBox.Items.AddRange(languages);
 
@@ -413,23 +407,17 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 
 		// Build CsvDelim combo box
 		this.scalingComboBoxCSVDelim.Items.Clear();
-		var listItemDelim = Enums.GetMembers<CsvDelimiter>()
-			.Select(m =>
+		ComboBoxItem<CsvDelimiter, char>[] listItemDelim = [.. SettingsChoices.CsvDelimiters()
+			.Select(choice => new ComboBoxItem<CsvDelimiter, char>()
 			{
-				var name = m.AsString(EnumFormat.Name);
-				// Each delimiter has its character as description.
-				var desc = m.AsString(EnumFormat.Description)!;
-				return new ComboBoxItem<CsvDelimiter, char>()
-				{
-					ComboValue = m.Value,
-					Value = desc.First(),
-					DisplayName = $"{name} ({desc})"
-				};
-			}).ToArray();
+				ComboValue = choice.Value,
+				Value = choice.Value.ToChar(),
+				DisplayName = choice.DisplayName
+			})];
 		this.scalingComboBoxCSVDelim.Items.AddRange(listItemDelim);
-		this.scalingComboBoxCSVDelim.SelectedItem = listItemDelim
-			.Where(i => i.ComboValue.ToString() == USettings.CSVDelimiter)
-			.FirstOrDefault() ?? listItemDelim.First();
+		// The edited value, read the way the export reads it (an unknown value is a comma).
+		var delimiter = CsvDelimiters.Parse(values.CSVDelimiter);
+		this.scalingComboBoxCSVDelim.SelectedItem = listItemDelim.First(i => i.ComboValue == delimiter);
 
 		this.ResumeLayout(false);
 		this.PerformLayout();
