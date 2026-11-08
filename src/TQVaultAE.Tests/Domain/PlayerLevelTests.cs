@@ -89,4 +89,19 @@ public class PlayerLevelTests
 		ok.Should().BeTrue();
 		pool.Should().Be(0);
 	}
+
+	[Theory]
+	[InlineData(1, 1)]
+	[InlineData(2, 622)]
+	[InlineData(41, 11410987)]
+	public void LevelStartXp_IsOnePointAboveTheMinimumOfTheLevel(int level, int expected)
+		=> PlayerLevel.LevelStartXp(level).Should().Be(expected);
+
+	[Fact]
+	public void LevelStartXp_UnsupportedLevel_Throws()
+	{
+		var act = () => PlayerLevel.LevelStartXp(86);
+
+		act.Should().Throw<ArgumentOutOfRangeException>();
+	}
 }

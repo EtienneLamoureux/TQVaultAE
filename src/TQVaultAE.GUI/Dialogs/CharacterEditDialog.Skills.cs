@@ -245,14 +245,14 @@ internal sealed partial class CharacterEditDialog
 		var values = new[] { this.Mastery1ValueScalingLabel, this.Mastery2ValueScalingLabel };
 		for (int i = 0; i < names.Length; i++)
 		{
-			var tree = i < skills.Slots.Count ? skills.Slots[i] : null;
-			names[i].Visible = values[i].Visible = tree is not null;
-			if (tree is null)
+			var summary = i < skills.Slots.Count ? skills.GetMasterySummary(i) : null;
+			names[i].Visible = values[i].Visible = summary is not null;
+			if (summary is null)
 				continue;
 
-			var learned = tree.Skills.Count(s => skills.GetLevel(s.Id) > 0) + 1;
+			var tree = summary.Mastery;
 			names[i].Text = string.Format(names[i].Tag?.ToString() ?? "{0}", this.TranslateTag(tree.NameTag, tree.Mastery.ToString()));
-			values[i].Text = string.Format(values[i].Tag?.ToString() ?? "{0} ({1})", learned, skills.GetPointsSpent(i));
+			values[i].Text = string.Format(values[i].Tag?.ToString() ?? "{0} ({1})", summary.SkillCount, summary.PointsSpent);
 		}
 	}
 

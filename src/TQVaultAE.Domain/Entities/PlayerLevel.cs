@@ -159,6 +159,13 @@ public class PlayerLevel
 	}
 
 	/// <summary>
+	/// The experience a character gets when its level is set: one point above the minimum of the level, so the game
+	/// keeps it at that level.
+	/// </summary>
+	/// <exception cref="ArgumentOutOfRangeException">The level is not supported.</exception>
+	public static int LevelStartXp(int level) => GetLevelMinXP(level) + 1;
+
+	/// <summary>
 	/// Money the character gets at least when it unlocks Epic.
 	/// </summary>
 	public static int EpicMoneyFloor => 5000000;

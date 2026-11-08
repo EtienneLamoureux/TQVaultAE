@@ -97,6 +97,16 @@ public sealed class CharacterSkillEditor
 	/// <summary>The points spent in the mastery of a slot and its skills.</summary>
 	public int GetPointsSpent(int slot) => this._slots[slot] is { } tree ? Ids(tree).Sum(this.GetLevel) : 0;
 
+	/// <summary>
+	/// The summary of the mastery of a slot: the mastery, its number of skills with points (the mastery counts as one)
+	/// and the points spent in them.
+	/// </summary>
+	/// <returns><see langword="null"/> for an empty slot.</returns>
+	public MasterySummary? GetMasterySummary(int slot)
+		=> this._slots[slot] is { } tree
+			? new MasterySummary(tree, tree.Skills.Count(s => this.GetLevel(s.Id) > 0) + 1, this.GetPointsSpent(slot))
+			: null;
+
 	/// <summary>True when a skill can take points: its tier is open and its parent skill has a point.</summary>
 	public bool IsUnlocked(int slot, MasterySkill skill)
 		=> this.GetMasteryLevel(slot) >= skill.RequiredMasteryLevel
