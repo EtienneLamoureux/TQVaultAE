@@ -3,6 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using System.Globalization;
 using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -176,7 +177,17 @@ internal static class AutomationHost
 	/// <summary>
 	/// Gives the tools access to the main form.
 	/// </summary>
-	public static void AttachMainForm(MainForm mainForm) => _mainForm = mainForm;
+	public static void AttachMainForm(MainForm mainForm)
+	{
+		_mainForm = mainForm;
+
+		// Called on the UI thread, after the UI language is set.
+		_uiCulture = CultureInfo.CurrentUICulture;
+		_culture = CultureInfo.CurrentCulture;
+	}
+
+	private static CultureInfo? _uiCulture;
+	private static CultureInfo? _culture;
 
 	/// <summary>
 	/// Runs <paramref name="action"/> on the UI thread and returns its result.
@@ -190,7 +201,18 @@ internal static class AutomationHost
 		if (!form.InvokeRequired)
 			return action(form);
 
-		return (T)form.Invoke(() => action(form))!;
+		// Control.Invoke runs the delegate in the caller's ExecutionContext, and the culture flows with it: without
+		// this, forms and texts made by a tool would take the request thread's culture instead of the UI language.
+		return (T)form.Invoke(() =>
+		{
+			if (_uiCulture is not null && _culture is not null)
+			{
+				CultureInfo.CurrentUICulture = _uiCulture;
+				CultureInfo.CurrentCulture = _culture;
+			}
+
+			return action(form);
+		})!;
 	}
 
 	private static async Task StartServerAsync(int port)

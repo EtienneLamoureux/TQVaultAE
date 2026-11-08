@@ -25,6 +25,11 @@ public class ScalingButton : Button, IScalingControl
 	private Font? baseFont;
 
 	/// <summary>
+	/// Set while the button changes its own font to fit its text, so that change is not taken as a new base font.
+	/// </summary>
+	private bool fittingFont;
+
+	/// <summary>
 	/// Used to indicate that the custom button graphic is being used.
 	/// </summary>
 	private bool useCustomGraphic;
@@ -250,7 +255,7 @@ public class ScalingButton : Button, IScalingControl
 		if (!ZoomScope.IsZooming)
 		{
 			this.baseFont = null;
-			this.Font = this.GetScaledButtonTextFont(this.Font, Convert.ToInt32((float)this.Width * factor.Width));
+			this.SetFittedFont(this.GetScaledButtonTextFont(this.Font, Convert.ToInt32((float)this.Width * factor.Width)));
 			if (this.Image is not null)
 				this.Image = this.UpBitmap;
 
@@ -267,7 +272,7 @@ public class ScalingButton : Button, IScalingControl
 			this.baseFont = this.Font;
 
 		this.baseFont = ZoomScope.ScaleFont(this.baseFont, factor.Height);
-		this.Font = this.GetScaledButtonTextFont(this.baseFont, Convert.ToInt32((float)this.Width * factor.Width));
+		this.SetFittedFont(this.GetScaledButtonTextFont(this.baseFont, Convert.ToInt32((float)this.Width * factor.Width)));
 
 		// Reset the image to the original size.  Assume that we are resizing and that this button is not under the mouse.
 		if (this.Image is not null)
@@ -386,7 +391,52 @@ public class ScalingButton : Button, IScalingControl
 		if (this.baseFont.FontFamily != this.Font.FontFamily)
 			this.baseFont = this.Font;
 
-		this.Font = this.GetScaledButtonTextFont(this.baseFont, this.Width);
+		this.SetFittedFont(this.GetScaledButtonTextFont(this.baseFont, this.Width));
+	}
+
+	/// <summary>
+	/// A font set from outside (a form applying the game font after the text, DPI scaling) is the new base font, and
+	/// the text has to fit again: a translation longer than the English text was otherwise drawn too big and cut.
+	/// </summary>
+	protected override void OnFontChanged(EventArgs e)
+	{
+		base.OnFontChanged(e);
+		if (this.fittingFont)
+			return;
+
+		this.baseFont = this.Font;
+		this.SetFittedFont(this.GetScaledButtonTextFont(this.baseFont, this.Width));
+	}
+
+	/// <summary>
+	/// Fits the text again when the button is resized (layout, DPI scaling).
+	/// </summary>
+	protected override void OnSizeChanged(EventArgs e)
+	{
+		base.OnSizeChanged(e);
+		if (this.fittingFont || this.baseFont is null)
+			return;
+
+		this.SetFittedFont(this.GetScaledButtonTextFont(this.baseFont, this.Width));
+	}
+
+	/// <summary>
+	/// Sets a font made to fit the text, without taking it as the base font.
+	/// </summary>
+	private void SetFittedFont(Font? font)
+	{
+		if (font is null || font.Equals(this.Font))
+			return;
+
+		this.fittingFont = true;
+		try
+		{
+			this.Font = font;
+		}
+		finally
+		{
+			this.fittingFont = false;
+		}
 	}
 
 	/// <summary>

@@ -53,6 +53,8 @@ internal sealed partial class ItemSeedDialog : VaultForm
 		this.ButtonRandom.Text = Resources.SeedBtnRandom;
 		this.ButtonOk.Text = Resources.GlobalOK;
 
+		// The English text has its own line breaks; longer translations wrap within the dialog instead of being cut.
+		this.labelInfos.MaximumSize = new System.Drawing.Size(this.ClientSize.Width - (2 * this.labelInfos.Left), 0);
 	}
 
 	/// <summary>

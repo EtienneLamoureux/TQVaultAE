@@ -160,7 +160,7 @@ Debug builds of `TQVaultAE.GUI` host an MCP server inside the app at `http://127
 |---|---|
 | Dialog controls | `control_values(form)`, `set_control(form, control, value)`, `click_control(form, control)`, `open_character_editor`, `tag_box` / `list_tags` |
 | Message boxes | `queue_dialog_answers(answers)` answers the next boxes without showing them; `dialog_answers` lists them, and with `--headless` also the boxes that took their default answer and the native dialogs cancelled; `close_dialog` for the others |
-| Windows and dialogs | `list_windows`, `close_dialog` (for example "Default Vault Path" → OK), `list_forms`, `open_form(name, show?)` to create any registered form or dialog, `open_bag_settings(panel)` for the bag icon picker |
+| Windows and dialogs | `list_windows`, `close_dialog` (for example "Default Vault Path" → OK), `list_forms`, `open_form(name, show?)` to create any registered form or dialog, `open_item_dialog(panel, x, y, dialog)` for an item's Properties or Seed dialog, `open_bag_settings(panel)` for the bag icon picker |
 | Read the state from the app's models | `get_state(panel?)`, which returns characters, vaults, panels and items with their cells; `owned_skill_items` for every owned item that grants a skill; `raw_tooltip_lines` for the tooltip lines still shown raw; `tooltip_text_dump(path, views)` for the rows of every item tooltip as rendered (text, color, bold, kind), written to a JSON file to diff; `item_properties_dump(path)` for the sections of the Item Properties dialog of every item |
 | Navigation | `select_character`, `select_vault`, `select_bag` |
 | Test files | `create_vault(name)` and `duplicate_character(name)`, which only accept names starting with `claude-`; `save_files` like the Save button (answer its error box with `close_dialog` from another call); `export_vault(path)` and `import_file(path)` (into a `claude-` vault) without the file dialogs |
@@ -168,7 +168,7 @@ Debug builds of `TQVaultAE.GUI` host an MCP server inside the app at `http://127
 | Item tooltips | `hover_item(panel, x, y)`, which returns the tooltip as a PNG; `hover_end` |
 | Context menus | `context_menu(panel, x, y)`, which returns the entries of the right-click menu and closes it |
 | Highlight | `highlight_filters(check, uncheck, apply)` ticks the highlight filter check boxes and applies them |
-| Layout and scaling | `zoom(step)` (in, out, reset); `control_tree(form, depth)` for control bounds and fonts; `move_window(x, y, form?)` to move the window or a dialog to a monitor of another DPI |
+| Layout and scaling | `zoom(step)` (in, out, reset); `control_tree(form, depth)` for control bounds and fonts; `text_fit(form)` for text cut by its control (check each UI language); `move_window(x, y, form?)` to move the window or a dialog to a monitor of another DPI |
 | Forge | `forge_show`, `forge_state`, `forge_set_mode`, `forge_set_hardcore`, `forge_drop(slot)`, `forge_select_part`, `forge_drag_cursor`, `forge_reset`, `forge_forge`, `forge_cancel` |
 | Evidence | `capture(control)`, a PNG made with `DrawToBitmap` that works even when the window is hidden; `recent_log(n)`; `recent_sounds(n)`, with the sounds played and whether their data loaded |
 

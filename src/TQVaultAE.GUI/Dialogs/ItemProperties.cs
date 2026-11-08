@@ -78,7 +78,23 @@ internal sealed partial class ItemProperties : VaultForm
 	/// </summary>
 	/// <param name="sender">sender object</param>
 	/// <param name="e">EventArgs data</param>
-	private void ItemProperties_Load(object? sender, EventArgs e) => this.LoadProperties();
+	private void ItemProperties_Load(object? sender, EventArgs e)
+	{
+		this.AlignFilterCheckBox();
+		this.LoadProperties();
+	}
+
+	/// <summary>
+	/// Right-aligns the filter check box with the suffix grid, and keeps the item name left of it: a translated label
+	/// longer than "Filter Extra Info" ran past the right edge of the dialog.
+	/// </summary>
+	private void AlignFilterCheckBox()
+	{
+		var box = this.checkBoxFilterExtraInfo;
+		box.Left = Math.Max(this.labelItemName.Left, this.dataGridViewSuffixProperties.Right - box.PreferredSize.Width);
+		if (this.labelItemName.Right > box.Left - box.Margin.Left)
+			this.labelItemName.Width = Math.Max(0, box.Left - box.Margin.Left - this.labelItemName.Left);
+	}
 
 	/// <summary>
 	/// Loads the item properties

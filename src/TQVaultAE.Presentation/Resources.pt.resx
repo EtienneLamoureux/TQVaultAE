@@ -305,7 +305,7 @@ Deseja reiniciar o TQVault?</value>
     <value>(Completo/a)</value>
   </data>
   <data name="ItemSeed" xml:space="preserve">
-    <value>Semente: {0} (0x {0: X8}) ({1: p3})</value>
+    <value>Semente: {0} (0x{0:X8}) ({1:p3})</value>
   </data>
   <data name="ItemWith" xml:space="preserve">
     <value>Com</value>
