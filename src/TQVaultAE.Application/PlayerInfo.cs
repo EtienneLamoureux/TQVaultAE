@@ -306,6 +306,13 @@ public class PlayerInfo
 	/// </summary>
 	public int Money { get; set; }
 
+	/// <summary>
+	/// Electrum, the second currency of the Eternal Embers expansion (save key <c>altMoney</c>, right after <c>money</c>);
+	/// <see langword="null"/> when the save has no such key (a character never saved by a game with Eternal Embers).
+	/// Read only: never written back to the save.
+	/// </summary>
+	public int? Electrum { get; set; }
+
 	int _MasteriesAllowed = 0;
 	/// <summary>
 	/// Nbr of masteries unlocked

@@ -1004,6 +1004,9 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
   <data name="Money" xml:space="preserve">
     <value>Dinero</value>
   </data>
+  <data name="Electrum" xml:space="preserve">
+    <value>Electrum</value>
+  </data>
   <data name="SkillPoints" xml:space="preserve">
     <value>Habilidades</value>
   </data>

@@ -570,12 +570,20 @@ internal static partial class AutomationTools
 	#region Capture
 
 	[McpServerTool(Name = "capture", ReadOnly = true)]
-	[Description("Renders a control to PNG with Control.DrawToBitmap, so it works when the window is hidden behind others. Target: a panel id (vault, player, equipment...), '<panel>.container' for the panel with its bag buttons, 'main' for the main window, or part of a form title.")]
+	[Description("Renders a control to PNG with Control.DrawToBitmap, so it works when the window is hidden behind others. Target: a panel id (vault, player, equipment...), '<panel>.container' for the panel with its bag buttons, 'main' for the main window, 'playerInfo' for the stash panel with the player information labels (which DrawToBitmap leaves out) drawn over it, or part of a form title.")]
 	public static IEnumerable<ContentBlock> Capture(
 		[Description("What to capture.")] string control = "main")
 	{
 		var (png, size) = AutomationHost.OnUi(form =>
 		{
+			if (string.Equals(control, "playerInfo", StringComparison.OrdinalIgnoreCase))
+			{
+				using var withPlayerInfo = RenderStashWithPlayerInfo(form);
+				using var pngStream = new MemoryStream();
+				withPlayerInfo.Save(pngStream, ImageFormat.Png);
+				return (pngStream.ToArray(), withPlayerInfo.Size);
+			}
+
 			var target = ResolveCaptureTarget(form, control);
 			if (target.Width <= 0 || target.Height <= 0)
 				throw new McpException($"'{control}' has no size (is it shown?).");

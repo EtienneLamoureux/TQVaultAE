@@ -312,6 +312,9 @@ public class PlayerCollectionProviderTests
 			.Returns((indexOf: 20, valueOffset: 24, nextOffset: 32, valueLen: 4, valueAsByteArray: [], valueAsString: "ClassConqueror"));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "money", It.IsAny<int>()))
 			.Returns((indexOf: 32, valueOffset: 36, nextOffset: 40, valueAsByteArray: [], valueAsInt: 1000));
+		// An "altMoney" found further in the file, not right after "money": not the Electrum.
+		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "altMoney", It.IsAny<int>()))
+			.Returns((indexOf: 500, valueOffset: 504, nextOffset: 508, valueAsByteArray: [], valueAsInt: 77));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "masteriesAllowed", It.IsAny<int>()))
 			.Returns((indexOf: 40, valueOffset: 44, nextOffset: 48, valueAsByteArray: [], valueAsInt: 2));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "temp", It.IsAny<int>()))
@@ -377,6 +380,7 @@ public class PlayerCollectionProviderTests
 		result.CurrentLevel.Should().Be(10);
 		result.CurrentXP.Should().Be(5000);
 		result.Money.Should().Be(1000);
+		result.Electrum.Should().BeNull();
 	}
 
 	[Fact]

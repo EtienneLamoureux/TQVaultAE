@@ -1055,6 +1055,9 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
 	<data name="Money" xml:space="preserve">
     <value>Argent</value>
   </data>
+	<data name="Electrum" xml:space="preserve">
+    <value>Électrum</value>
+  </data>
 	<data name="SkillPoints" xml:space="preserve">
     <value>Compétences</value>
   </data>

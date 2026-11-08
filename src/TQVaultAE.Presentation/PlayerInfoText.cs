@@ -25,7 +25,7 @@ public static class PlayerInfoText
 	/// </summary>
 	/// <param name="info">The player information.</param>
 	/// <param name="translations">Translates the class, the mastery and the difficulty.</param>
-	/// <returns>The lines keyed by label.</returns>
+	/// <returns>The lines keyed by label. The Electrum line is left out when the save has no Electrum.</returns>
 	public static IReadOnlyDictionary<string, string> BuildLines(PlayerInfo info, ITranslationService translations)
 	{
 		var pclass = translations.TranslateXTag(info.Class ?? string.Empty, true, true) ?? string.Empty;
@@ -33,31 +33,42 @@ public static class PlayerInfoText
 		// No mastery found: the translation falls back to the label itself, shown as nothing.
 		mclass = mclass == Resources.Masteries ? string.Empty : mclass;
 
-		return new Dictionary<string, string>
+		(string Label, string? Value)[] lines =
+		[
+			(Resources.CurrentLevel, info.CurrentLevel.ToString()),
+			(Resources.Class, pclass),
+			(Resources.Masteries, mclass),
+			(Resources.CurrentXP, info.CurrentXP.ToString()),
+			(Resources.DifficultyUnlocked, translations.TranslateDifficulty(info.DifficultyUnlocked) ?? "unknown"),
+			(Resources.Money, info.Money.ToString()),
+			// A character without Eternal Embers has no Electrum at all: no line rather than a misleading 0.
+			(Resources.Electrum, info.Electrum?.ToString()),
+			(Resources.SkillPoints, info.SkillPoints.ToString()),
+			(Resources.AttributesPoints, info.AttributesPoints.ToString()),
+			(Resources.CEStrength, info.CalculatedStrength.ToString()),
+			(Resources.CEDexterity, info.CalculatedDexterity.ToString()),
+			(Resources.CEIntelligence, info.CalculatedIntelligence.ToString()),
+			(Resources.CEHealth, info.CalculatedHealth.ToString()),
+			(Resources.CEMana, info.CalculatedMana.ToString()),
+			(Resources.PlayTimeInSeconds, info.PlayTimeInSeconds.ToString()),
+			(Resources.NumberOfDeaths, info.NumberOfDeaths.ToString()),
+			(Resources.NumberOfKills, info.NumberOfKills.ToString()),
+			(Resources.ExperienceFromKills, info.ExperienceFromKills.ToString()),
+			(Resources.HealthPotionsUsed, info.HealthPotionsUsed.ToString()),
+			(Resources.ManaPotionsUsed, info.ManaPotionsUsed.ToString()),
+			(Resources.NumHitsReceived, info.NumHitsReceived.ToString()),
+			(Resources.NumHitsInflicted, info.NumHitsInflicted.ToString()),
+			(Resources.CriticalHitsInflicted, info.CriticalHitsInflicted.ToString()),
+			(Resources.CriticalHitsReceived, info.CriticalHitsReceived.ToString()),
+		];
+
+		var result = new Dictionary<string, string>(lines.Length);
+		foreach (var (label, value) in lines)
 		{
-			[Resources.CurrentLevel] = info.CurrentLevel.ToString(),
-			[Resources.Class] = pclass,
-			[Resources.Masteries] = mclass,
-			[Resources.CurrentXP] = info.CurrentXP.ToString(),
-			[Resources.DifficultyUnlocked] = translations.TranslateDifficulty(info.DifficultyUnlocked) ?? "unknown",
-			[Resources.Money] = info.Money.ToString(),
-			[Resources.SkillPoints] = info.SkillPoints.ToString(),
-			[Resources.AttributesPoints] = info.AttributesPoints.ToString(),
-			[Resources.CEStrength] = info.CalculatedStrength.ToString(),
-			[Resources.CEDexterity] = info.CalculatedDexterity.ToString(),
-			[Resources.CEIntelligence] = info.CalculatedIntelligence.ToString(),
-			[Resources.CEHealth] = info.CalculatedHealth.ToString(),
-			[Resources.CEMana] = info.CalculatedMana.ToString(),
-			[Resources.PlayTimeInSeconds] = info.PlayTimeInSeconds.ToString(),
-			[Resources.NumberOfDeaths] = info.NumberOfDeaths.ToString(),
-			[Resources.NumberOfKills] = info.NumberOfKills.ToString(),
-			[Resources.ExperienceFromKills] = info.ExperienceFromKills.ToString(),
-			[Resources.HealthPotionsUsed] = info.HealthPotionsUsed.ToString(),
-			[Resources.ManaPotionsUsed] = info.ManaPotionsUsed.ToString(),
-			[Resources.NumHitsReceived] = info.NumHitsReceived.ToString(),
-			[Resources.NumHitsInflicted] = info.NumHitsInflicted.ToString(),
-			[Resources.CriticalHitsInflicted] = info.CriticalHitsInflicted.ToString(),
-			[Resources.CriticalHitsReceived] = info.CriticalHitsReceived.ToString(),
-		};
+			if (value is not null)
+				result[label] = value;
+		}
+
+		return result;
 	}
 }

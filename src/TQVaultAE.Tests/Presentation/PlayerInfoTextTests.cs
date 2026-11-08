@@ -65,6 +65,32 @@ public class PlayerInfoTextTests
 	}
 
 	[Fact]
+	public void BuildLines_WithElectrum_ShowsItRightAfterTheMoney()
+	{
+		this._info.Electrum = 83433;
+
+		var lines = PlayerInfoText.BuildLines(this._info, this._translations.Object);
+
+		lines[Resources.Electrum].Should().Be("83433");
+		var keys = lines.Keys.ToList();
+		keys.IndexOf(Resources.Electrum).Should().Be(keys.IndexOf(Resources.Money) + 1);
+		keys.IndexOf(Resources.SkillPoints).Should().Be(keys.IndexOf(Resources.Electrum) + 1);
+	}
+
+	[Fact]
+	public void BuildLines_WithoutElectrum_LeavesTheLineOutAndKeepsTheOrder()
+	{
+		this._info.Electrum = null;
+
+		var lines = PlayerInfoText.BuildLines(this._info, this._translations.Object);
+
+		lines.Should().NotContainKey(Resources.Electrum);
+		var keys = lines.Keys.ToList();
+		keys.IndexOf(Resources.SkillPoints).Should().Be(keys.IndexOf(Resources.Money) + 1);
+		keys.Last().Should().Be(Resources.CriticalHitsReceived);
+	}
+
+	[Fact]
 	public void BuildLines_StartsWithTheLevelAndClass()
 	{
 		var lines = PlayerInfoText.BuildLines(this._info, this._translations.Object);

@@ -1011,6 +1011,9 @@ Used to track changes in the translation file.</comment>
   <data name="Money" xml:space="preserve">
     <value>Деньги</value>
   </data>
+  <data name="Electrum" xml:space="preserve">
+    <value>Электрум</value>
+  </data>
   <data name="SkillPoints" xml:space="preserve">
     <value>Очки навыков</value>
   </data>

@@ -333,4 +333,53 @@ internal static partial class AutomationTools
 	}
 
 	#endregion
+
+	#region Player information panel
+
+	[McpServerTool(Name = "player_info", ReadOnly = true)]
+	[Description("Reads the player information panel shown next to the equipment (stash bag 0) as displayed: one row per line, its label and its value, in display order. Empty when no character is selected or another stash tab is shown.")]
+	public static string PlayerInfo()
+		=> AutomationHost.OnUi(form =>
+		{
+			var table = (form.AutomationStashPanel ?? throw new McpException("No stash panel.")).AutomationPlayerInfoPanel;
+			var rows = PlayerInfoLabels(table)
+				.GroupBy(l => table.GetPositionFromControl(l).Row)
+				.OrderBy(g => g.Key)
+				.Select(g => new
+				{
+					label = g.FirstOrDefault(l => table.GetPositionFromControl(l).Column == 0)?.Text,
+					value = g.FirstOrDefault(l => table.GetPositionFromControl(l).Column == 1)?.Text,
+				})
+				.ToList();
+			return Serialize(new { visible = table.Visible, rows });
+		});
+
+	/// <summary>The labels of the player information panel (the Edit button left out).</summary>
+	private static IEnumerable<Label> PlayerInfoLabels(TableLayoutPanel table) => table.Controls.OfType<Label>();
+
+	/// <summary>
+	/// Renders the stash panel with the player information labels drawn over it, one by one: <see cref="Control.DrawToBitmap"/>
+	/// of the panel leaves these labels out.
+	/// </summary>
+	private static Bitmap RenderStashWithPlayerInfo(Forms.MainForm form)
+	{
+		var stash = form.AutomationStashPanel ?? throw new McpException("No stash panel.");
+		var table = stash.AutomationPlayerInfoPanel;
+		if (!table.Visible)
+			throw new McpException("The player information panel is not shown: select a character and stash bag 0 (equipment).");
+
+		var bitmap = new Bitmap(stash.Width, stash.Height);
+		stash.DrawToBitmap(bitmap, new Rectangle(Point.Empty, stash.Size));
+		using var graphics = Graphics.FromImage(bitmap);
+		foreach (var label in PlayerInfoLabels(table).Where(l => l.Visible && l.Width > 0 && l.Height > 0))
+		{
+			var at = stash.PointToClient(label.Parent!.PointToScreen(label.Location));
+			TextRenderer.DrawText(graphics, label.Text, label.Font, new Rectangle(at, label.Size), label.ForeColor,
+				TextFormatFlags.NoPadding | (label.TextAlign == ContentAlignment.TopRight ? TextFormatFlags.Right : TextFormatFlags.Left));
+		}
+
+		return bitmap;
+	}
+
+	#endregion
 }
