@@ -204,11 +204,16 @@ public class GamePathServiceWinTests
 	[Theory]
 	[InlineData("""Items\EquipmentHelm\x.tex""", """Resources\Items.arc""", false)]
 	[InlineData("""XPack\Items\x.tex""", """Resources\XPack\Items.arc""", true)]
-	[InlineData("""XPack\Sounds\x.wav""", """Resources\Sounds.arc""", true)]
 	[InlineData("""XPack2\Items\x.tex""", """Resources\XPack2\Items.arc""", true)]
 	[InlineData("""XPack3\Items\x.tex""", """Resources\XPack3\Items.arc""", true)]
 	[InlineData("""XPack4\Item\x.tex""", """Resources\XPack4\Item.arc""", true)]
-	[InlineData("""Sounds\x.wav""", """Audio\SOUNDS.arc""", false)]
+	[InlineData("""XPack2\Dialog\Caravan\x.mp3""", """Resources\XPack2\Dialog.arc""", true)]
+	[InlineData("""Sounds\UI\UI_BAGCHANGE.WAV""", """Audio\Sounds.arc""", false)]
+	[InlineData("""Dialog\Greece\Athens_Bodyguard_A1.mp3""", """Audio\Dialog.arc""", false)]
+	[InlineData("""PlayerSounds\PCFemaleBowVox01.wav""", """Audio\PlayerSounds.arc""", false)]
+	[InlineData("""Music\Bosses\EgyptBossGenericLoop01.wav""", """Audio\Music.arc""", false)]
+	// Immortal Throne sounds are in Resources\Sounds.arc, under "xpack/"
+	[InlineData("""Sounds\XPack\Ambient\Elysium\ambloop_elysium_day.mp3""", """Resources\Sounds.arc""", false)]
 	public void ResolveArcFileName_MapsTheFirstSegmentToTheArchive(string resourceId, string archive, bool isDlc)
 	{
 		this._service.GamePathTQIT = SteamGame;

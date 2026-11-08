@@ -653,45 +653,6 @@ Please select the game installation directory.");
 	/// <param name="resourceIdOrPrefix"></param>
 	/// <returns></returns>
 	public (string ArcFileName, bool IsDLC) ResolveArcFileName(RecordId resourceIdOrPrefix)
-	{
-		var segments = resourceIdOrPrefix.Normalized.Split('\\');
-
-		string path;
-		bool isDLC = true;
-		switch (segments.First())
-		{
-			case "XPACK" when segments[1] != "SOUNDS":
-				// Comes from Immortal Throne
-				path = this.PathIO.Combine(GamePathTQIT, "Resources", "XPack", segments[1] + ".arc");
-				break;
-			case "XPACK" when segments[1] == "SOUNDS": // Sounds file exception for IT
-													   // Comes from Immortal Throne
-				path = this.PathIO.Combine(GamePathTQIT, "Resources", segments[1] + ".arc");
-				break;
-			case "XPACK2":
-				// Comes from Ragnarok
-				path = this.PathIO.Combine(GamePathTQIT, "Resources", "XPack2", segments[1] + ".arc");
-				break;
-			case "XPACK3":
-				// Comes from Atlantis
-				path = this.PathIO.Combine(GamePathTQIT, "Resources", "XPack3", segments[1] + ".arc");
-				break;
-			case "XPACK4":
-				// Comes from Eternal Embers
-				path = this.PathIO.Combine(GamePathTQIT, "Resources", "XPack4", segments[1] + ".arc");
-				break;
-			case "SOUNDS":
-				// Regular Dialogs/Sounds/Music/PlayerSounds
-				path = this.PathIO.Combine(GamePathTQIT, "Audio", segments[0] + ".arc");
-				isDLC = false;
-				break;
-			default:
-				// Base game
-				path = this.PathIO.Combine(GamePathTQIT, "Resources", segments[0] + ".arc");
-				isDLC = false;
-				break;
-		}
-
-		return (path, isDLC);
-	}
+		=> (this.PathIO.Combine([GamePathTQIT, .. GameArchives.ArcFileSegments(resourceIdOrPrefix)])
+			, GameArchives.IsExpansionResource(resourceIdOrPrefix));
 }
