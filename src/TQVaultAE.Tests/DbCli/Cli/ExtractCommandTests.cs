@@ -159,6 +159,17 @@ public sealed class ExtractCommandTests : IDisposable
 		Directory.GetFiles(this._game.Out, "*", SearchOption.AllDirectories).Should().Equal(this._game.OutPath("hit.mp3"));
 	}
 
+	[Fact]
+	public void Extract_FlatWithTheSameNameInSeveralArchives_WritesOnlyTheLastArchivesEntry()
+	{
+		// Resources/Items and Resources/XPack/Items both hold sword/a01.tex; parallel writers to one path race.
+		var (code, error) = this._game.Run("extract", "--path", "sword/a01.tex", "--flat", "--parallel", "8", "--out", this._game.Out);
+
+		code.Should().Be(0, error);
+		File.ReadAllBytes(this._game.OutPath("""sword\a01.tex""")).Should().Equal(FakeGameInstall.TextureAXPack);
+		error.Should().Contain("1 file(s) written").And.Contain("--flat: 1 entry replaced by a later archive with the same name.");
+	}
+
 	[Theory]
 	[InlineData("../evil.mp3", "escapes the output folder")]
 	[InlineData("/rooted.mp3", "Rooted entry name")]

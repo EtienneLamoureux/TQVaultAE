@@ -256,7 +256,7 @@ Copy archive entries to a folder. Same selectors as `files`.
 | `--frames first\|all` | Animated textures with `--convert`: first frame (default) or every frame as `name_frameN.ext`. |
 | `--verify` | Check Adler-32 checksums. |
 | `--parallel <N>` | Concurrent extractions (default `--threads`). |
-| `--flat` | `<out>/<name>` instead of `<out>/<archive>/<name>` (same names from different archives overwrite each other). |
+| `--flat` | `<out>/<name>` instead of `<out>/<archive>/<name>`. When several archives hold the same name, only the entry of the last archive in path order is written (expansions such as `Resources/XPack*` win over the base game). |
 | `--skip-existing` | Keep existing files of the same size (raw copies). |
 
 Raw copies are the native form of every non-texture asset (`.mp3`, `.wav`, `.msh`, `.anm`, `.fnt`, `.pfx`...). Paths are `<out>/<archive key>/<entry name>`; names are sanitized (`..` and rooted names rejected, characters invalid on Windows replaced by `_`, accented letters kept). Progress is shown on stderr, a summary at the end; the exit code is 1 when any entry failed.
