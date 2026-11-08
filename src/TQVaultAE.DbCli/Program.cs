@@ -65,6 +65,11 @@ internal static class Program
 
 		if (parsed.Command is null || parsed.Command == HelpSpec.Name) {
 			var topic = parsed.Positionals.Count > 0 ? commands.FirstOrDefault(c => string.Equals(c.Spec.Name, parsed.Positionals[0], StringComparison.OrdinalIgnoreCase)) : null;
+			if (topic is null && parsed.Positionals.Count > 0) {
+				error.WriteLine($"{Tool}: Unknown command '{parsed.Positionals[0]}'.{ArgParser.Suggest(parsed.Positionals[0], commands.Select(c => c.Spec.Name))}");
+				error.WriteLine($"Run '{Tool} --help' for usage.");
+				return ExitCodes.Usage;
+			}
 			Console.Out.Write(topic is null ? ArgParser.Overview(Tool, specs, GlobalOptions) : ArgParser.Help(Tool, topic.Spec, GlobalOptions));
 			return parsed.Command is null && !parsed.HelpRequested ? ExitCodes.Usage : ExitCodes.Ok;
 		}
