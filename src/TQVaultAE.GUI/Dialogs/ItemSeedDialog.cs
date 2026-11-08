@@ -74,6 +74,11 @@ internal sealed partial class ItemSeedDialog : VaultForm
 	}
 
 	/// <summary>
+	/// Gets the valid seed accepted with OK, or <see langword="null"/> when the dialog was cancelled.
+	/// </summary>
+	public int? NewSeed { get; private set; }
+
+	/// <summary>
 	/// Handler for the random button
 	/// </summary>
 	/// <param name="sender">sender object</param>
@@ -104,8 +109,7 @@ internal sealed partial class ItemSeedDialog : VaultForm
 		// Get the seed value in the textbox
 		if (int.TryParse(this.itemSeedBox.Text, NumberStyles.Integer, CultureInfo.CurrentCulture, out int newSeed) && Item.IsValidSeed(newSeed))
 		{
-			this.selectedItem.Seed = newSeed;
-			this.selectedItem.IsModified = true;
+			this.NewSeed = newSeed;
 			this.Close();
 		}
 		else

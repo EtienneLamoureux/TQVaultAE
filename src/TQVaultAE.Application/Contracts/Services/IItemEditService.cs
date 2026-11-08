@@ -91,4 +91,12 @@ public interface IItemEditService
 	/// <param name="item">The item to change.</param>
 	/// <returns><see langword="true"/> when the seed changed (the sack is then marked as modified).</returns>
 	bool ForceSeed(SackCollection sack, Item item);
+
+	/// <summary>Gives <paramref name="item"/> the seed typed in the seed dialog.</summary>
+	/// <param name="sack">The sack holding the item.</param>
+	/// <param name="item">The item to change.</param>
+	/// <param name="seed">The new seed.</param>
+	/// <returns><see langword="true"/> when the seed changed (the item and the sack are then marked as modified);
+	/// <see langword="false"/> when it is the same seed or not a valid one (see <see cref="Item.IsValidSeed"/>).</returns>
+	bool SetSeed(SackCollection sack, Item item, int seed);
 }

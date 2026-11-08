@@ -129,7 +129,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "open_item_dialog", Destructive = true)]
-	[Description("Opens the Properties or Seed dialog of an item, like its context menu entries, but modeless over the main window, to check its layout with control_tree, text_fit and capture. Close it with close_dialog and its Cancel/OK button: the Seed dialog's OK changes the item's seed, so close it with Cancel.")]
+	[Description("Opens the Properties or Seed dialog of an item, like its context menu entries, but modeless over the main window, to check its layout with control_tree, text_fit and capture. Close it with close_dialog and its Cancel/OK button: the Seed dialog's OK only validates the typed seed (the context menu entry then applies it), so it leaves the item unchanged here.")]
 	public static string OpenItemDialog(
 		[Description("Panel id.")] string panel,
 		[Description("Cell column of the item.")] int x,
