@@ -99,10 +99,9 @@ public partial class MainForm
 
 		this.ClearAllItemsSelectedCallback(this, new SackPanelEventArgs(null, null));
 
-		// The transfer and relic stashes are shared by every character: no character to switch to.
-		bool sharedStash = selectedResult.StashType is StashType.TransferStash or StashType.RelicVaultStash;
+		var location = SearchResultNavigation.Resolve(selectedResult);
 
-		if (selectedResult.SackType == SackType.Vault)
+		if (location.Panel == ResultPanelKind.Vault)
 		{
 			// Switch to the selected vault
 			this.vaultListComboBox.SelectedItem = selectedResult.ContainerName;
@@ -111,10 +110,12 @@ public partial class MainForm
 			if (!string.Equals(this.vaultPanel.Player?.PlayerName, selectedResult.ContainerName, StringComparison.OrdinalIgnoreCase))
 				return;
 
-			this.vaultPanel.CurrentBag = selectedResult.SackNumber;
-			this.vaultPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
+			this.vaultPanel.CurrentBag = location.Bag;
+			this.vaultPanel.SackPanel.SelectItem(location.Cell);
+			return;
 		}
-		else if (!sharedStash && selectedResult.SackType is SackType.Player or SackType.Equipment or SackType.Stash)
+
+		if (location.NeedsCharacter)
 		{
 			// The character by its exact name: a prefix search would pick "HeroB Two" for "HeroB".
 			var save = this.comboBoxCharacter.Items.OfType<PlayerSave>()
@@ -122,53 +123,56 @@ public partial class MainForm
 			if (save is null)
 				return;
 
-			// Switch to the selected player
-			if (this.showSecondaryVault)
-			{
-				this.showSecondaryVault = !this.showSecondaryVault;
-				this.UpdateTopPanel();
-			}
+			this.LeaveSecondaryVault();
 
 			// Update the selection list and load the character.
 			this.comboBoxCharacter.SelectedItem = save;
-
-			// Bail if we are attempting to highlight something in the stash panel and the stash does not exist.
-			if (this.stashPanel.SackPanel is null && selectedResult.SackType != SackType.Player)
-				return;
-
-			if (selectedResult.SackType == SackType.Player)
-			{
-				// Highlight the item if it's in the player inventory.
-				if (selectedResult.SackNumber == 0)
-					this.playerPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
-				else
-				{
-					this.playerPanel.CurrentBag = selectedResult.SackNumber - 1;
-					this.playerPanel.BagSackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
-				}
-			}
-			else
-			{
-				this.stashPanel.CurrentBag = selectedResult.SackNumber;
-				this.stashPanel.SackPanel?.SelectItem(selectedResult.FriendlyNames.Item.Location);
-			}
 		}
-		else if (sharedStash)
+		else if (location.Panel == ResultPanelKind.SharedStash)
 		{
 			// Bail when no character is loaded: there is no stash panel then.
 			if (this.stashPanel.SackPanel is null)
 				return;
 
 			// The player panel shows the stashes: leave the secondary vault.
-			if (this.showSecondaryVault)
-			{
-				this.showSecondaryVault = !this.showSecondaryVault;
-				this.UpdateTopPanel();
-			}
+			this.LeaveSecondaryVault();
+		}
+		else
+		{
+			return;
+		}
 
-			// Switch to the Stash bag
-			this.stashPanel.CurrentBag = selectedResult.SackNumber;
-			this.stashPanel.SackPanel?.SelectItem(selectedResult.FriendlyNames.Item.Location);
+		switch (location.Panel)
+		{
+			case ResultPanelKind.PlayerMainSack:
+				this.playerPanel.SackPanel.SelectItem(location.Cell);
+				break;
+
+			case ResultPanelKind.PlayerBag:
+				this.playerPanel.CurrentBag = location.Bag;
+				this.playerPanel.BagSackPanel.SelectItem(location.Cell);
+				break;
+
+			default:
+				// Bail if we are attempting to highlight something in the stash panel and the stash does not exist.
+				if (this.stashPanel.SackPanel is null)
+					return;
+
+				this.stashPanel.CurrentBag = location.Bag;
+				this.stashPanel.SackPanel?.SelectItem(location.Cell);
+				break;
+		}
+	}
+
+	/// <summary>
+	/// Shows the player panel again when the secondary vault is shown in its place.
+	/// </summary>
+	private void LeaveSecondaryVault()
+	{
+		if (this.showSecondaryVault)
+		{
+			this.showSecondaryVault = !this.showSecondaryVault;
+			this.UpdateTopPanel();
 		}
 	}
 
