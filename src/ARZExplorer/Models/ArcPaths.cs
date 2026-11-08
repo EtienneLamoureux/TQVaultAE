@@ -42,24 +42,10 @@ internal static class ArcPaths
 	/// ARC file, relative to the game folder, that holds a resource referenced by the database.
 	/// </summary>
 	/// <param name="resourceId">Resource path as the database references it, like <c>XPack\Items\x.tex</c>.</param>
+	/// <remarks>Shared with TQVault: <see cref="GameArchives.ArcFileOf"/>.</remarks>
 	internal static RecordId ArcFileOf(RecordId resourceId)
-	{
-		var tokens = resourceId.TokensNormalized;
-		if (IsExpansionToken(tokens[0]) && tokens.Count > 1)
-			return $@"RESOURCES\{tokens[0]}\{tokens[1]}.ARC";
+		=> GameArchives.ArcFileOf(resourceId);
 
-		// Sounds of the base game are in the Audio folder, those of Immortal Throne in Resources\Sounds.arc under "xpack/"
-		var normalized = resourceId.Normalized;
-		var isSound = normalized.EndsWith(".MP3", StringComparison.Ordinal) || normalized.EndsWith(".WAV", StringComparison.Ordinal);
-		if (isSound && !(tokens.Count > 1 && IsExpansionToken(tokens[1])))
-			return $@"AUDIO\{tokens[0]}.ARC";
-
-		return $@"RESOURCES\{tokens[0]}.ARC";
-	}
-
-	/// <summary>
-	/// Expansion folders are named <c>XPack</c>, <c>XPack2</c>, ...
-	/// </summary>
 	private static bool IsExpansionToken(string token)
-		=> token.StartsWith("XPACK", StringComparison.OrdinalIgnoreCase);
+		=> GameArchives.IsExpansionToken(token);
 }

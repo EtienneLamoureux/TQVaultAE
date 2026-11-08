@@ -29,6 +29,7 @@ public class DatabaseLoadingTests
 	private readonly HashSet<string> _files = new(StringComparer.OrdinalIgnoreCase);
 	private readonly HashSet<string> _directories = new(StringComparer.OrdinalIgnoreCase);
 	private readonly Dictionary<string, string> _fileContents = new(StringComparer.OrdinalIgnoreCase);
+	private readonly Dictionary<string, byte[]> _looseFiles = new(StringComparer.OrdinalIgnoreCase);
 	private readonly Dictionary<(string Arc, string Entry), byte[]> _arcEntries = [];
 	private readonly Dictionary<(string Arz, string Id), DBRecordCollection> _arzRecords = [];
 	private readonly List<string> _arzRead = [];
@@ -44,6 +45,7 @@ public class DatabaseLoadingTests
 	{
 		this._fileIO.Setup(f => f.Exists(It.IsAny<string>())).Returns<string>(this._files.Contains);
 		this._fileIO.Setup(f => f.ReadAllText(It.IsAny<string>())).Returns<string>(p => this._fileContents[p]);
+		this._fileIO.Setup(f => f.ReadAllBytes(It.IsAny<string>())).Returns<string>(p => this._looseFiles[p]);
 		this._directoryIO.Setup(d => d.Exists(It.IsAny<string>())).Returns<string>(this._directories.Contains);
 		this._directoryIO.Setup(d => d.GetFiles(It.IsAny<string>(), It.IsAny<string>())).Returns(Array.Empty<string>());
 
@@ -109,6 +111,13 @@ public class DatabaseLoadingTests
 	}
 
 	private void AddArz(string arzFile) => this._files.Add(arzFile);
+
+	/// <summary>A file of a mod shipped unpacked (resource folders instead of archives).</summary>
+	private void AddLooseFile(string file, byte[] data)
+	{
+		this._files.Add(file);
+		this._looseFiles[file] = data;
+	}
 
 	private DBRecordCollection AddRecord(string arzFile, string id)
 	{
@@ -237,6 +246,61 @@ public class DatabaseLoadingTests
 	}
 
 	[Fact]
+	public void LoadDBFile_CustomMapWithTextInTheGameLanguage_PrefersItOverTextArc()
+	{
+		// Diablo 2 Lilith ships text.arc and text_de/en/es/fr.arc.
+		this.UseAnniversaryEdition();
+		this.UseCustomMap();
+		this._settings.TQLanguage = "French";
+		this.AddArcEntry(Path.Combine(ModFolder, "resources", "text.arc"), "modstrings.txt", "tagModOnly=English mod text");
+		this.AddArcEntry(Path.Combine(ModFolder, "resources", "text_fr.arc"), "modstrings.txt", "tagModOnly=Texte du mod");
+		var db = this.CreateDatabase();
+
+		db.LoadDBFile();
+
+		db.GetFriendlyName("tagModOnly").Should().Be("Texte du mod");
+	}
+
+	[Fact]
+	public void LoadDBFile_CustomMapWithoutTextInTheGameLanguage_FallsBackToTextArc()
+	{
+		this.UseAnniversaryEdition();
+		this.UseCustomMap();
+		this._settings.TQLanguage = "French";
+		this.AddArcEntry(Path.Combine(ModFolder, "resources", "text.arc"), "modstrings.txt", "tagModOnly=English mod text");
+		this.AddArcEntry(Path.Combine(ModFolder, "resources", "text_de.arc"), "modstrings.txt", "tagModOnly=Modtext");
+		var db = this.CreateDatabase();
+
+		db.LoadDBFile();
+
+		db.GetFriendlyName("tagModOnly").Should().Be("English mod text");
+	}
+
+	[Fact]
+	public void LoadDBFile_ModShippedUnpacked_ReadsTheLooseModStrings()
+	{
+		// "Masteries x10" ships resources\text\ModStrings.txt instead of resources\text.arc.
+		this.UseAnniversaryEdition();
+		this.UseCustomMap();
+		this.AddLooseFile(Path.Combine(ModFolder, "resources", "text", "ModStrings.txt"), Encoding.ASCII.GetBytes("tagModOnly=Loose mod text\r\n"));
+		var db = this.CreateDatabase();
+
+		db.LoadDBFile();
+
+		db.GetFriendlyName("tagModOnly").Should().Be("Loose mod text");
+	}
+
+	[Theory]
+	[InlineData("French", "FR")]
+	[InlineData("english", "EN")]
+	[InlineData("Czech", "CZ")]
+	[InlineData("Portuguese", "BR")]
+	[InlineData("Chinese", "CH")]
+	[InlineData("Klingon", null)]
+	public void GameLanguageFileCode_UsesTheGameCodes(string language, string? code)
+		=> Database.GameLanguageFileCode(language).Should().Be(code);
+
+	[Fact]
 	public void LoadDBFile_DiscImmortalThroneWithoutTextFolder_ReadsTheBaseTextFromTheTitanQuestFolder()
 	{
 		// Unpatched disc install: TQ\Text holds the base game text and TQIT\Resources the Immortal Throne one.
@@ -301,6 +365,49 @@ public class DatabaseLoadingTests
 		var db = this.CreateDatabase();
 
 		db.LoadResource("""XPack2\quests\x2sq17_giesela.qst""").Should().Equal(3);
+	}
+
+	[Fact]
+	public void LoadResource_LegacyCustomMapExpansionFolder_ReadsItLikeTheGame()
+	{
+		// Diablo 2 Lilith ships resources\xpack\item.arc, laid out like the game's Resources\XPack folder.
+		this.UseAnniversaryEdition();
+		this.UseCustomMap();
+		var gameArc = Path.Combine(GameAE, "Resources", "XPack", "Item.arc");
+		this._gamePath.Setup(g => g.ResolveArcFileName(It.IsAny<RecordId>())).Returns((gameArc, true));
+		this.AddArcEntry(gameArc, """equipmentweapons\shield\u_shield80afx.tex""", [1]);
+		this.AddArcEntry(Path.Combine(ModFolder, "resources", "xpack", "item.arc"), """equipmentweapons\shield\u_shield80afx.tex""", [5]);
+		var db = this.CreateDatabase();
+
+		db.LoadResource("""XPack\Item\equipmentweapons\shield\u_shield80afx.tex""").Should().Equal(5);
+	}
+
+	[Fact]
+	public void LoadResource_ModShippedUnpacked_ReadsTheLooseFile()
+	{
+		// "Masteries x10" ships resources\textures\... folders instead of resources\textures.arc.
+		this.UseAnniversaryEdition();
+		this.UseCustomMap();
+		this._gamePath.Setup(g => g.ResolveArcFileName(It.IsAny<RecordId>()))
+			.Returns((Path.Combine(GameAE, "Resources", "textures.arc"), false));
+		this.AddLooseFile(Path.Combine(ModFolder, "resources", "textures", "alchemybuttons", "alchbuttonup01.tex"), [6]);
+		var db = this.CreateDatabase();
+
+		db.LoadResource("""textures\alchemybuttons\alchbuttonup01.tex""").Should().Equal(6);
+	}
+
+	[Fact]
+	public void LoadResource_ModArchiveAndLooseFile_PrefersTheArchive()
+	{
+		this.UseAnniversaryEdition();
+		this.UseCustomMap();
+		this._gamePath.Setup(g => g.ResolveArcFileName(It.IsAny<RecordId>()))
+			.Returns((Path.Combine(GameAE, "Resources", "textures.arc"), false));
+		this.AddArcEntry(Path.Combine(ModFolder, "resources", "textures.arc"), """alchemybuttons\alchbuttonup01.tex""", [7]);
+		this.AddLooseFile(Path.Combine(ModFolder, "resources", "textures", "alchemybuttons", "alchbuttonup01.tex"), [6]);
+		var db = this.CreateDatabase();
+
+		db.LoadResource("""textures\alchemybuttons\alchbuttonup01.tex""").Should().Equal(7);
 	}
 
 	[Fact]
