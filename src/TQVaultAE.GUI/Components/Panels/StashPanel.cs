@@ -7,6 +7,7 @@
 using System.Diagnostics.CodeAnalysis;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Results;
 using TQVaultAE.GUI.Components.Buttons;
 using TQVaultAE.GUI.Components.Layout;
 using TQVaultAE.GUI.Components.Scaling;
@@ -397,78 +398,28 @@ public partial class StashPanel : VaultPanel, IScalingControl
 				BagButtonBase button = this.BagButtons[this.currentBag];
 				int buttonOffsetY = button.Location.Y + button.Size.Height;
 
-				if (this.currentBag == BagIdConstants.BAGID_EQUIPMENTPANEL)
+				StashBag? bag = this.Services.StashService.GetBag(this.currentBag, this.Player, this.transferStash, this.stash, this.relicVaultStash);
+				if (bag is { IsEquipment: true })
 				{
-					// Equipment Panel
-					if (this.Player is null) 
-						this.equipmentPanel.Sack = null;
-					else
-						this.equipmentPanel.Sack = this.Player.EquipmentSack;
-
+					this.equipmentPanel.Sack = bag.Sack;
 					this.background = this.EquipmentBackground;
 					this.equipmentPanel.Visible = true;
 					this.equipmentPanel.Enabled = true;
 					this.BagSackPanel.Visible = false;
 					this.BagSackPanel.Enabled = false;
 				}
-			else if (this.currentBag == BagIdConstants.BAGID_TRANSFERSTASH && this.transferStash is not null)
-			{
-				// Transfer Stash
-				this.background = this.StashBackground;
-				this.BagSackPanel.Sack = this.transferStash.Sack;
-				this.BagSackPanel.SackType = SackType.Stash;
-				if (this.transferStash.Sack is not null)
-					this.transferStash.Sack.StashType = Domain.Entities.StashType.TransferStash;
-				this.BagSackPanel.ResizeSackPanel(this.transferStash.Width, this.transferStash.Height);
+				else if (bag is not null)
+				{
+					this.background = this.StashBackground;
+					this.BagSackPanel.Sack = bag.Sack;
+					this.BagSackPanel.SackType = SackType.Stash;
+					this.BagSackPanel.ResizeSackPanel(bag.Width, bag.Height);
 
-					// Adjust location based on size.
-					int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.transferStash.Width) * UIService.HalfUnitSize);
-					int offsetY = Math.Max(0, (this.maxPanelSize.Height - this.transferStash.Height) * UIService.HalfUnitSize);
-
-					// SetLocation, so a zoom keeps the centering (ScaleControl places the sack from that origin).
-					this.BagSackPanel.SetLocation(new Point(BorderPad + offsetX, buttonOffsetY + offsetY));
-					this.equipmentPanel.Visible = false;
-					this.equipmentPanel.Enabled = false;
-					this.BagSackPanel.Visible = true;
-					this.BagSackPanel.Enabled = true;
-				}
-			else if (this.currentBag == BagIdConstants.BAGID_PLAYERSTASH && this.stash is not null)
-			{
-				// Stash
-				this.background = this.StashBackground;
-				this.BagSackPanel.Sack = this.stash.Sack;
-				this.BagSackPanel.SackType = SackType.Stash;
-				if (this.stash.Sack is not null)
-					this.stash.Sack.StashType = Domain.Entities.StashType.PlayerStash;
-				this.BagSackPanel.ResizeSackPanel(this.stash.Width, this.stash.Height);
-
-					// Adjust location based on size so it will be centered.
-					int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.stash.Width) * UIService.HalfUnitSize);
-					int offsetY = Math.Max(0, (this.maxPanelSize.Height - Math.Max(15, this.stash.Height)) * UIService.HalfUnitSize);
-
-					// SetLocation, so a zoom keeps the centering (ScaleControl places the sack from that origin).
-					this.BagSackPanel.SetLocation(new Point(BorderPad + offsetX, buttonOffsetY + offsetY));
-					this.equipmentPanel.Visible = false;
-					this.equipmentPanel.Enabled = false;
-					this.BagSackPanel.Visible = true;
-					this.BagSackPanel.Enabled = true;
-				}
-			else if (this.currentBag == BagIdConstants.BAGID_RELICVAULTSTASH && this.relicVaultStash is not null)
-			{
-				// Relic Vault Stash
-				this.background = this.StashBackground;
-				this.BagSackPanel.Sack = this.relicVaultStash.Sack;
-				this.BagSackPanel.SackType = SackType.Stash;
-				if (this.relicVaultStash.Sack is not null)
-					this.relicVaultStash.Sack.StashType = Domain.Entities.StashType.RelicVaultStash;
-				this.BagSackPanel.ResizeSackPanel(this.relicVaultStash.Width, this.relicVaultStash.Height);
-
-					// Adjust location based on size.
-					int offsetX = Math.Max(0, (this.maxPanelSize.Width - this.relicVaultStash.Width) * UIService.HalfUnitSize);
-					int offsetY = Math.Max(0, (this.maxPanelSize.Height - this.relicVaultStash.Height) * UIService.HalfUnitSize);
-
-					// SetLocation, so a zoom keeps the centering (ScaleControl places the sack from that origin).
-					this.BagSackPanel.SetLocation(new Point(BorderPad + offsetX, buttonOffsetY + offsetY));
+					// Center the sack in the panel. SetLocation, so a zoom keeps the centering (ScaleControl places the sack from that origin).
+					var (marginX, marginY) = bag.CenteringMargin(this.maxPanelSize.Width, this.maxPanelSize.Height);
+					this.BagSackPanel.SetLocation(new Point(
+						BorderPad + (marginX * UIService.HalfUnitSize),
+						buttonOffsetY + (marginY * UIService.HalfUnitSize)));
 					this.equipmentPanel.Visible = false;
 					this.equipmentPanel.Enabled = false;
 					this.BagSackPanel.Visible = true;

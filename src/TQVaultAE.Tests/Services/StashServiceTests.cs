@@ -4,6 +4,7 @@ using Moq;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Services;
@@ -543,6 +544,85 @@ public class StashServiceTests
 		_stashService.GetBagSack(BagIdConstants.BAGID_PLAYERSTASH, null, null, emptyStash, null).Should().BeNull();
 		_stashService.GetBagSack(BagIdConstants.BAGID_TRANSFERSTASH, null, null, emptyStash, null).Should().BeNull();
 		_stashService.GetBagSack(BagIdConstants.BAGID_EQUIPMENTPANEL, null, null, emptyStash, null).Should().BeNull();
+	}
+
+	private static Stash CreateStashWithSack(string name, int width, int height)
+	{
+		var stash = CreateStashWithSack(name);
+		stash.Width = width;
+		stash.Height = height;
+		return stash;
+	}
+
+	[Fact]
+	public void GetBag_StashBags_GiveTheirSackAndSize()
+	{
+		var transfer = CreateStashWithSack("transfer", 8, 16);
+		var stash = CreateStashWithSack("stash", 10, 18);
+		var relic = CreateStashWithSack("relic", 12, 14);
+
+		this._stashService.GetBag(BagIdConstants.BAGID_TRANSFERSTASH, null, transfer, stash, relic)
+			.Should().Be(new StashBag(BagIdConstants.BAGID_TRANSFERSTASH, transfer.Sack, 8, 16, 16));
+		this._stashService.GetBag(BagIdConstants.BAGID_PLAYERSTASH, null, transfer, stash, relic)
+			.Should().Be(new StashBag(BagIdConstants.BAGID_PLAYERSTASH, stash.Sack, 10, 18, 18));
+		this._stashService.GetBag(BagIdConstants.BAGID_RELICVAULTSTASH, null, transfer, stash, relic)
+			.Should().Be(new StashBag(BagIdConstants.BAGID_RELICVAULTSTASH, relic.Sack, 12, 14, 14));
+	}
+
+	[Fact]
+	public void GetBag_SmallPlayerStash_IsCenteredAsIfFifteenCellsHigh()
+	{
+		var smallStash = CreateStashWithSack("stash", 10, 5);
+		var smallTransfer = CreateStashWithSack("transfer", 10, 5);
+
+		var stashBag = this._stashService.GetBag(BagIdConstants.BAGID_PLAYERSTASH, null, null, smallStash, null)!;
+		var transferBag = this._stashService.GetBag(BagIdConstants.BAGID_TRANSFERSTASH, null, smallTransfer, null, null)!;
+
+		stashBag.Height.Should().Be(5);
+		stashBag.CenteringHeight.Should().Be(15);
+		stashBag.CenteringMargin(18, 20).Should().Be((8, 5));
+		transferBag.CenteringMargin(18, 20).Should().Be((8, 15));
+	}
+
+	[Fact]
+	public void GetBag_StashNotLoaded_GivesNull()
+	{
+		var stash = CreateStashWithSack("stash", 10, 18);
+
+		this._stashService.GetBag(BagIdConstants.BAGID_TRANSFERSTASH, null, null, stash, null).Should().BeNull();
+		this._stashService.GetBag(BagIdConstants.BAGID_RELICVAULTSTASH, null, null, stash, null).Should().BeNull();
+	}
+
+	[Fact]
+	public void GetBag_Equipment_IsDescribedEvenWithoutCharacter()
+	{
+		var player = new PlayerCollection("Hero", """C:\Saves\_Hero\Player.chr""") { EquipmentSack = new SackCollection() };
+
+		var withPlayer = this._stashService.GetBag(BagIdConstants.BAGID_EQUIPMENTPANEL, player, null, null, null)!;
+		var withoutPlayer = this._stashService.GetBag(BagIdConstants.BAGID_EQUIPMENTPANEL, null, null, null, null)!;
+
+		withPlayer.IsEquipment.Should().BeTrue();
+		withPlayer.Sack.Should().BeSameAs(player.EquipmentSack);
+		withoutPlayer.IsEquipment.Should().BeTrue();
+		withoutPlayer.Sack.Should().BeNull();
+	}
+
+	[Theory]
+	[InlineData(-3, BagIdConstants.BAGID_EQUIPMENTPANEL)]
+	[InlineData(9, BagIdConstants.BAGID_RELICVAULTSTASH)]
+	public void GetBag_OutOfRangeId_DescribesTheClampedBag(int bagId, int expected)
+	{
+		var relic = CreateStashWithSack("relic", 12, 14);
+
+		this._stashService.GetBag(bagId, null, null, null, relic)!.BagId.Should().Be(expected);
+	}
+
+	[Fact]
+	public void CenteringMargin_SackLargerThanPanel_IsZero()
+	{
+		var bag = new StashBag(BagIdConstants.BAGID_TRANSFERSTASH, null, 20, 25, 25);
+
+		bag.CenteringMargin(18, 20).Should().Be((0, 0));
 	}
 
 	/// <summary>

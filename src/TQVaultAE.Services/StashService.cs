@@ -212,4 +212,27 @@ public class StashService(
 			_ => SackOf(relicVaultStash),
 		};
 	}
+
+	/// <summary>
+	/// The player stash is centered as if it were at least this many cells high.
+	/// </summary>
+	private const int PlayerStashMinCenteringHeight = 15;
+
+	/// <inheritdoc />
+	public StashBag? GetBag(int bagId, PlayerCollection? player, Stash? transferStash, Stash? playerStash, Stash? relicVaultStash)
+	{
+		static StashBag? BagOf(int id, Stash? stash, int minCenteringHeight = 0)
+			=> stash is null
+				? null
+				: new StashBag(id, stash.Sack, stash.Width, stash.Height, Math.Max(minCenteringHeight, stash.Height));
+
+		int id = this.ClampBagId(bagId);
+		return id switch
+		{
+			BagIdConstants.BAGID_EQUIPMENTPANEL => new StashBag(id, player?.EquipmentSack, 0, 0, 0),
+			BagIdConstants.BAGID_TRANSFERSTASH => BagOf(id, transferStash),
+			BagIdConstants.BAGID_PLAYERSTASH => BagOf(id, playerStash, PlayerStashMinCenteringHeight),
+			_ => BagOf(id, relicVaultStash),
+		};
+	}
 }

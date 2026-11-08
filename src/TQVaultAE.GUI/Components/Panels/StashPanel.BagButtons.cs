@@ -81,22 +81,11 @@ public partial class StashPanel
 	{
 		BagButtonBase? button = (BagButtonBase)sender!;
 
-		int bagID = button.ButtonNumber;
-
-		// filter the bagID
-		if (bagID < 0)
-			bagID = BagIdConstants.BAGID_EQUIPMENTPANEL;
-
-		if (bagID >= 4)
-			bagID = BagIdConstants.BAGID_RELICVAULTSTASH;
+		int bagID = this.Services.StashService.ClampBagId(button.ButtonNumber);
 
 		if (bagID != this.currentBag)
 		{
-			// turn off the current bag and turn on the new bag
-			this.BagButtons[this.currentBag].IsOn = false;
-			this.BagButtons[bagID].IsOn = true;
-
-			// set the current bag to the selected bag
+			// The setter turns the buttons off and on.
 			this.CurrentBag = bagID;
 			this.SackPanel.ClearSelectedItems();
 		}

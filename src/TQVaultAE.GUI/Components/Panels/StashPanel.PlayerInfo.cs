@@ -37,7 +37,7 @@ public partial class StashPanel
 
 	private void DisplayPlayerInfo()
 	{
-		if (this.Player is null || !this.equipmentPanel.Visible || this.BagButtons[this.CurrentBag].ButtonText != Resources.StashPanelBtnEquipment)
+		if (this.Player is null || !this.equipmentPanel.Visible || this.CurrentBag != BagIdConstants.BAGID_EQUIPMENTPANEL)
 		{
 			this.PlayerPanel.Visible = false;
 			return;
