@@ -43,6 +43,11 @@ no window, no taskbar button and no focus change while an agent drives it throug
   "Windows Forms Error" box too.
 - Native dialogs (folder browser, open/save file, color picker, the vault import task dialog) are cancelled as soon
   as they open, and listed by `dialog_answers` under `cancelledNativeDialogs`.
+- Fatal errors: a "Windows Forms Error" before the main form has loaded takes Abort (TQVault quits) instead of Ignore.
+  When startup fails (the global error box of `Program.Main`), the box is listed under `unanswered`, the endpoint
+  stays up 10 s so `dialog_answers` and `recent_log` can report it, then the process exits with code 1.
+  Without `--headless` that box is no longer a `DefaultDesktopOnly` box in Debug, so `list_windows` and
+  `close_dialog` see it, and the process also exits 10 s after it is answered.
 - Nothing can be seen or clicked by hand. To stop it, use the Exit button (`click_control("TQVaultAE", "exitButton")`),
   which saves like a normal exit, or end the process.
 - Use another port (`TQVAULT_MCP_PORT`) when a visible Debug instance already listens on 47017.

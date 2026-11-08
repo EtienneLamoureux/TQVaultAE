@@ -89,7 +89,8 @@ internal static class AutomationHost
 	/// in <see cref="UnansweredDialogs"/>.
 	/// </summary>
 	/// <returns>Whether the box is answered without being shown.</returns>
-	public static bool TryTakeDialogAnswer(string caption, string message, MessageBoxButtons buttons, out DialogResult answer)
+	/// <param name="headlessAnswer">The answer to take in headless mode without a queued one, instead of <see cref="HeadlessAnswer"/>.</param>
+	public static bool TryTakeDialogAnswer(string caption, string message, MessageBoxButtons buttons, out DialogResult answer, DialogResult? headlessAnswer = null)
 	{
 		var shortMessage = message.Length > 120 ? message[..120] + "..." : message;
 		if (_dialogAnswers.TryPeek(out var next) && ButtonsOf(buttons).Contains(next) && _dialogAnswers.TryDequeue(out answer))
@@ -102,10 +103,28 @@ internal static class AutomationHost
 		if (!Headless.Enabled)
 			return false;
 
-		answer = HeadlessAnswer(buttons);
+		answer = headlessAnswer ?? HeadlessAnswer(buttons);
 		_dialogUnanswered.Enqueue($"{DateTime.Now:HH:mm:ss} {caption} ({buttons}): {shortMessage} -> {answer}");
 		_log?.LogWarning("Headless: message box \"{Caption}\" ({Buttons}) had no queued answer, took {Answer}: {Message}", caption, buttons, answer, message);
 		return true;
+	}
+
+	/// <summary>Seconds the endpoint stays up after a fatal error, so that dialog_answers and recent_log can report it.</summary>
+	private const int FatalErrorGraceSeconds = 10;
+
+	/// <summary>
+	/// Ends the process after the fatal error box of <c>Program.Main</c>: when the endpoint runs, it first stays up
+	/// <see cref="FatalErrorGraceSeconds"/> seconds so the error can be read (<c>dialog_answers</c>, <c>recent_log</c>).
+	/// Exits even when threads are left, so that nothing lingers.
+	/// </summary>
+	public static void ExitAfterFatalError()
+	{
+		if (_app is not null)
+		{
+			_log?.LogWarning("Fatal error: TQVault exits in {Seconds} s", FatalErrorGraceSeconds);
+			Thread.Sleep(TimeSpan.FromSeconds(FatalErrorGraceSeconds));
+		}
+		Environment.Exit(1);
 	}
 
 	/// <summary>

@@ -237,7 +237,14 @@ public static class Program
 		catch (Exception ex)
 		{
 			Log.LogError(ex, "TQVault failed to start or stopped on an unhandled error");
+#if DEBUG
+			// DefaultDesktopOnly boxes are shown by Windows, out of the process' windows: list_windows and close_dialog
+			// could not see this one.
+			ShowMessageBox(Log.FormatException(ex), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxService.ReadingOptions);
+			TQVaultAE.GUI.Automation.AutomationHost.ExitAfterFatalError();
+#else
 			ShowMessageBox(Log.FormatException(ex), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxOptions.DefaultDesktopOnly);
+#endif
 		}
 
 	exit:;
@@ -248,11 +255,12 @@ public static class Program
 	/// <summary>
 	/// Shows a message box outside the message box service (startup, fatal errors), with its first button as default.
 	/// </summary>
-	private static DialogResult ShowMessageBox(string message, string caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxOptions options)
+	/// <param name="headlessAnswer">Debug: the answer in headless mode when none is queued, instead of the one that changes nothing.</param>
+	private static DialogResult ShowMessageBox(string message, string caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxOptions options, DialogResult? headlessAnswer = null)
 	{
 #if DEBUG
 		// Queued automation answers, and never a box in headless mode.
-		if (TQVaultAE.GUI.Automation.AutomationHost.TryTakeDialogAnswer(caption, message, buttons, out var automated))
+		if (TQVaultAE.GUI.Automation.AutomationHost.TryTakeDialogAnswer(caption, message, buttons, out var automated, headlessAnswer))
 		{
 			Log?.LogInformation("Message box \"{Caption}\" answered {Answer} by automation", caption, automated);
 			return automated;
@@ -337,7 +345,13 @@ public static class Program
 		try
 		{
 			Log.LogError(t.Exception, "UI Thread Exception");
-			result = ShowMessageBox(Log.FormatException(t.Exception), "Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, rightToLeft);
+			DialogResult? headlessAnswer = null;
+#if DEBUG
+			// Headless: an error before the main form has loaded leaves nothing usable, so quit rather than ignore it.
+			if (TQVaultAE.GUI.Automation.AutomationHost.MainForm?.AutomationLoadingComplete != true)
+				headlessAnswer = DialogResult.Abort;
+#endif
+			result = ShowMessageBox(Log.FormatException(t.Exception), "Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, rightToLeft, headlessAnswer);
 		}
 		catch
 		{
