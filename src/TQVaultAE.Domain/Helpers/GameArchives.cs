@@ -44,6 +44,33 @@ public static class GameArchives
 		=> string.Join('\\', ArcFileSegments(resourceId));
 
 	/// <summary>
+	/// ARC files that may hold a resource, relative to the game folder, in the order to try them: <see cref="ArcFileOf"/>,
+	/// then the archive of the same name in the expansion folders and in <c>Resources</c>, as TQVault's resource loader
+	/// falls back. The Eternal Embers drop sounds (<c>Sounds\item\embers*.mp3</c>) are in <c>Resources\Sounds.arc</c>,
+	/// not in <c>Audio\Sounds.arc</c>.
+	/// </summary>
+	public static IEnumerable<string> ArcFileCandidates(RecordId resourceId)
+	{
+		var first = ArcFileOf(resourceId);
+		yield return first;
+
+		var name = resourceId.TokensRaw[IsExpansionResource(resourceId) ? 1 : 0] + ".arc";
+		string[] fallbacks =
+		[
+			string.Join('\\', ResourcesFolder, "XPack", name),
+			string.Join('\\', ResourcesFolder, "XPack2", name),
+			string.Join('\\', ResourcesFolder, "XPack3", name),
+			string.Join('\\', ResourcesFolder, "XPack4", name),
+			string.Join('\\', ResourcesFolder, name),
+		];
+		foreach (var fallback in fallbacks)
+		{
+			if (!string.Equals(fallback, first, StringComparison.OrdinalIgnoreCase))
+				yield return fallback;
+		}
+	}
+
+	/// <summary>
 	/// The resource is in an expansion folder (<c>XPack\Items\x.tex</c>): its entry in the ARC file starts after the
 	/// expansion and archive names, not after the archive name only.
 	/// </summary>

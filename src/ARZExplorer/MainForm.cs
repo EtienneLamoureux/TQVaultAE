@@ -805,6 +805,20 @@ public partial class MainForm : Form
 		foreach (string line in recordText)
 		{
 			string[] values = line.Split(PopulateGridView_splitChars, StringSplitOptions.RemoveEmptyEntries);
+
+			// A variable holding several links (loot tables, sound lists) gets one row per value, so each one can be
+			// clicked: joined with ';' in one cell, a click could only reach one of them.
+			if (values.Length > 1 && values[1].Contains(';'))
+			{
+				var parts = values[1].Split(';');
+				if (parts.Any(IsGridLink))
+				{
+					for (int i = 0; i < parts.Length; i++)
+						grd.Rows.Add(i == 0 ? values[0] : string.Empty, parts[i]);
+					continue;
+				}
+			}
+
 			grd.Rows.Add(values);
 		}
 
@@ -812,19 +826,18 @@ public partial class MainForm : Form
 		for (int i = 0; i < grd.RowCount; i++)
 		{
 			var cell = grd.Rows[i].Cells[1];
-			var val = cell.Value?.ToString() ?? string.Empty;
-
-			if (val.EndsWith(".DBR", noCase)
-				|| val.EndsWith(".TEX", noCase)
-				|| val.EndsWith(".TXT", noCase)
-				|| val.EndsWith(".WAV", noCase)
-				|| val.EndsWith(".MP3", noCase)
-			   )
-			{
+			if (IsGridLink(cell.Value?.ToString() ?? string.Empty))
 				cell.Style = PopulateGridView_hyperLinkCellStyle;
-			}
 		}
 	}
+
+	/// <summary>Whether a record value names a record or a resource the grid can navigate to.</summary>
+	internal static bool IsGridLink(string value)
+		=> value.EndsWith(".DBR", noCase)
+			|| value.EndsWith(".TEX", noCase)
+			|| value.EndsWith(".TXT", noCase)
+			|| value.EndsWith(".WAV", noCase)
+			|| value.EndsWith(".MP3", noCase);
 
 	private void hideZeroValuesToolStripMenuItem_Click(object sender, EventArgs e)
 	{
@@ -980,85 +993,74 @@ public partial class MainForm : Form
 
 	private void NavigateTo(string dictionaryKey)
 	{
-		var dictionaryKeyId = dictionaryKey.ToRecordId();
-
-		#region Already loaded
-
-		if (dicoNodes.TryGetValue(dictionaryKey, out var node))
+		var node = this.ResolveLink(dictionaryKey, openArchives: true);
+		if (node is null)
 		{
-			SetFocus(node);
+			// Not in the game files: the database references a record or resource that does not exist.
+			this.toolStripStatusLabel.Text = @$"Unable to find ""{dictionaryKey}""";
 			return;
 		}
 
-		if (dicoReverseKeys.TryGetValue(dictionaryKey, out var list))
-		{
-			var firstnode = dicoNodes[list.First()];
-			SetFocus(firstnode);// Best effort
-			return;
-		}
+		this.treeViewTOC.SelectedNode = node;
+		this.treeViewTOC.Focus();
+	}
 
-		#endregion
+	/// <summary>
+	/// Finds the node of a record or resource a record value references: among the loaded files, else in the archives
+	/// the game searches for it (<see cref="GameArchives.ArcFileCandidates"/>), opened when <paramref name="openArchives"/>.
+	/// </summary>
+	/// <param name="value">A tree key (<c>file;key</c>) or a value as the database writes it.</param>
+	/// <returns>The node, or null when the game files do not hold it.</returns>
+	internal TreeNode? ResolveLink(string value, bool openArchives)
+	{
+		// A few records write their paths with '/' (Sounds/monsters/...): the tree keys use '\'.
+		value = value.Replace('/', '\\');
 
-		// Try to extract RecordId after the semicolon
-		var parts = dictionaryKey.Split(';', 2);
+		if (this.dicoNodes.TryGetValue(value, out var node))
+			return node;
 
-		RecordId recordId = parts.Length == 2 && !string.IsNullOrEmpty(parts[1])
-			? parts[1].ToRecordId()
-			: dictionaryKeyId;// Could not parse, try using the whole string as RecordId
+		var valueId = value.ToRecordId();
+		if (this.dicoReverseKeys.TryGetValue(valueId, out var list))
+			return this.dicoNodes[list[0]];
 
+		// A tree key: the record id after the semicolon.
+		var parts = value.Split(';', 2);
+		RecordId recordId = parts.Length == 2 && !string.IsNullOrEmpty(parts[1]) ? parts[1].ToRecordId() : valueId;
+		if (recordId.IsEmpty)
+			return null;
 
 		// DBR references are usually prefixed by RECORDS
-		if (recordId.Normalized.EndsWith(".DBR", StringComparison.Ordinal) && !recordId.Normalized.StartsWith("RECORDS", StringComparison.Ordinal))
+		if (recordId.Normalized.EndsWith(".DBR", StringComparison.Ordinal) && !recordId.Normalized.StartsWith("RECORDS", StringComparison.Ordinal)
+			&& this.dicoReverseKeys.TryGetValue(RecordId.Create(Path.Combine("records", recordId.Raw)), out var guessed))
+			return this.dicoNodes[guessed[0]];
+
+		// The archive the resource maps to, then the archives of the same name the game also searches.
+		foreach (var arcFile in GameArchives.ArcFileCandidates(recordId))
 		{
-			var guessingId = RecordId.Create(Path.Combine("records", recordId.Raw));
-			if (dicoReverseKeys.TryGetValue(guessingId, out var guessinglist))
+			if (!this.ArcFileList.TryGetValue(arcFile, out var fullpath))
+				continue;
+
+			if (openArchives)
 			{
-				var firstnode = dicoNodes[guessinglist.First()];
-				SetFocus(firstnode);
-				return;
-			}
-		}
-
-		#region Auto load file
-
-		// Resolve file name
-		if (recordId.IsEmpty)
-			return;
-
-		if (ArcFileList.TryGetValue(ArcPaths.ArcFileOf(recordId), out var fullpath))
-		{
-			// Add TOC to treeview
-			using (var scope = new TreeViewUpdateScope(this))
-			{
+				using var scope = new TreeViewUpdateScope(this);
 				this.OpenFile(fullpath);
 			}
 
-			// Navigate - use the original dictionaryKey for lookup
-			if (dicoNodes.TryGetValue(dictionaryKeyId.Normalized, out var autoLoadFound))
-			{
-				SetFocus(autoLoadFound);
-				return;
-			}
+			if (this.dicoReverseKeys.TryGetValue(valueId, out var found))
+				return this.dicoNodes[found[0]];
 
-			if (dicoReverseKeys.TryGetValue(dictionaryKeyId, out var autoLoadList))
+			// The same entry in a fallback archive, under that archive's tree prefix: the game finds
+			// XPack3\Items\x.tex in XPack2\Items.arc when only that one holds it.
+			var fileId = fullpath.ToRecordId();
+			var entryKey = RecordId.Create(ArcPaths.TreePrefix(fileId) + '\\' + ArcPaths.EntryId(recordId).Raw);
+			if (this.dicoReverseKeys.TryGetValue(entryKey, out var inArchive))
 			{
-				var firstnode = dicoNodes[autoLoadList.First()];
-				SetFocus(firstnode);
-				return;
+				var name = inArchive.FirstOrDefault(n => n.StartsWith(fileId.Normalized + ';', StringComparison.Ordinal)) ?? inArchive[0];
+				return this.dicoNodes[name];
 			}
-
-			// Database orphan ? - extract RecordId from node if available
-			this.toolStripStatusLabel.Text = @$"Unable to find ""{dictionaryKeyId}""";
 		}
 
-		#endregion
-
-
-		void SetFocus(TreeNode? focusnode)
-		{
-			this.treeViewTOC.SelectedNode = focusnode;
-			this.treeViewTOC.Focus();
-		}
+		return null;
 	}
 
 	private void previousToolStripMenuItem_Click(object sender, EventArgs e)
