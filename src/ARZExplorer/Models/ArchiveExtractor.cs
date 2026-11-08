@@ -58,10 +58,16 @@ public sealed class ArchiveExtractor(IArcFileProvider arcProvider, IArzFileProvi
 
 				onEntry(recordId);
 
+				// Files keep the names stored in the archive, not the upper case ids
+				var relativePath = recordId.Raw.Replace('/', Path.DirectorySeparatorChar);
 				if (file.FileType == CompressedFileType.ArcFile)
-					this._arcProvider.Write(file.Arc, baseFolder, recordId, recordId.Normalized);
+					this._arcProvider.Write(file.Arc, baseFolder, recordId, relativePath);
 				else
-					this._recordWriter.Write(this._arzProvider.GetRecordNotCached(file.Arz, recordId), baseFolder);
+					this._recordWriter.Write(
+						this._arzProvider.GetRecordNotCached(file.Arz, recordId)
+						, Path.Combine(baseFolder, Path.GetDirectoryName(relativePath) ?? string.Empty)
+						, Path.GetFileName(relativePath)
+					);
 
 				extracted++;
 				onWritten();

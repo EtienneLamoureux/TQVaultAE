@@ -68,6 +68,12 @@ public sealed class ArchiveExtractorTests : IDisposable
 
 	private string Output(string relativePath) => Path.Combine(this._folder, "out", relativePath);
 
+	/// <summary>
+	/// Paths of the files written under a folder, with their case on disk.
+	/// </summary>
+	private static string[] FilesUnder(string folder)
+		=> [.. Directory.GetFiles(folder, "*", SearchOption.AllDirectories).Select(f => Path.GetRelativePath(folder, f)).Order(StringComparer.Ordinal)];
+
 	[Fact]
 	public void ExtractOne_EntryOfAnArc_WritesItsContent()
 	{
@@ -102,9 +108,9 @@ public sealed class ArchiveExtractorTests : IDisposable
 	}
 
 	[Fact]
-	public void ExtractAll_Arc_WritesEveryEntryUnderItsFolders()
+	public void ExtractAll_Arc_WritesEveryEntryUnderItsNameInTheArchive()
 	{
-		var file = this.OpenArc("UI.arc", Stored("caravan/autosort.tex", Bytes("a")), Compressed("frame.tex", Bytes("b")));
+		var file = this.OpenArc("UI.arc", Stored("caravan/AutoSort.tex", Bytes("a")), Compressed("frame.tex", Bytes("b")));
 		List<RecordId> reported = [];
 		int written = 0;
 
@@ -113,22 +119,24 @@ public sealed class ArchiveExtractorTests : IDisposable
 		result.Should().Be(new ExtractionResult(ExtractionOutcome.Completed, 2));
 		reported.Should().HaveCount(2);
 		written.Should().Be(2);
-		File.ReadAllBytes(this.Output("""all\CARAVAN\AUTOSORT.TEX""")).Should().Equal(Bytes("a"));
-		File.ReadAllBytes(this.Output("""all\FRAME.TEX""")).Should().Equal(Bytes("b"));
+		FilesUnder(this.Output("all")).Should().Equal("""caravan\AutoSort.tex""", "frame.tex");
+		File.ReadAllBytes(this.Output("""all\caravan\AutoSort.tex""")).Should().Equal(Bytes("a"));
+		File.ReadAllBytes(this.Output("""all\frame.tex""")).Should().Equal(Bytes("b"));
 	}
 
 	[Fact]
-	public void ExtractAll_Arz_WritesEveryRecordUnderItsFolders()
+	public void ExtractAll_Arz_WritesEveryRecordUnderItsNameInTheDatabase()
 	{
 		var file = this.OpenArz(
-			new ArzRec("""records\item\ring01.dbr""", "ArmorJewelry_Ring", 0, new ArzVar(Int, "itemLevel", [42])),
+			new ArzRec("""records\item\Ring01.dbr""", "ArmorJewelry_Ring", 0, new ArzVar(Int, "itemLevel", [42])),
 			new ArzRec("""records\item\amulet01.dbr""", "ArmorJewelry_Amulet", 0, new ArzVar(Int, "itemLevel", [7])));
 
 		var result = this._extractor.ExtractAll(file, this.Output("db"), _ => { }, () => { }, CancellationToken.None);
 
 		result.Outcome.Should().Be(ExtractionOutcome.Completed);
-		File.ReadAllLines(this.Output("""db\RECORDS\ITEM\AMULET01.DBR""")).Should().Contain("itemLevel,7,");
-		File.ReadAllLines(this.Output("""db\RECORDS\ITEM\RING01.DBR""")).Should().Contain("itemLevel,42,");
+		FilesUnder(this.Output("db")).Should().Equal("""records\item\Ring01.dbr""", """records\item\amulet01.dbr""");
+		File.ReadAllLines(this.Output("""db\records\item\amulet01.dbr""")).Should().Contain("itemLevel,7,");
+		File.ReadAllLines(this.Output("""db\records\item\Ring01.dbr""")).Should().Contain("itemLevel,42,");
 	}
 
 	[Fact]
@@ -140,7 +148,7 @@ public sealed class ArchiveExtractorTests : IDisposable
 		var result = this._extractor.ExtractAll(file, this.Output("all"), _ => { }, cancellation.Cancel, cancellation.Token);
 
 		result.Should().Be(new ExtractionResult(ExtractionOutcome.Cancelled, 1));
-		File.Exists(this.Output("""all\B.TEX""")).Should().BeFalse();
+		FilesUnder(this.Output("all")).Should().Equal("a.tex");
 	}
 
 	[Fact]
