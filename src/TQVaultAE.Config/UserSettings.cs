@@ -148,8 +148,11 @@ public class UserSettings
 	[XmlElement(ElementName = nameof(DisableAutoStacking))]
 	public bool DisableAutoStacking { get; set; } = false;
 
+	/// <summary>
+	/// Backs the saves up to a git repository. Opt-in: off by default, as in the shipped template.
+	/// </summary>
 	[XmlElement(ElementName = nameof(GitBackupEnabled))]
-	public bool GitBackupEnabled { get; set; } = true;
+	public bool GitBackupEnabled { get; set; } = false;
 
 	[XmlElement(ElementName = nameof(GitBackupRepository))]
 	public string GitBackupRepository { get; set; } = string.Empty;
