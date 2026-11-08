@@ -145,6 +145,16 @@ public partial class SackPanel
 	}
 
 	/// <summary>
+	/// Rests the virtual cursor on a cell, then presses a character key there through the regular key handler, after
+	/// the calling tool has returned (Backspace asks for a confirmation).
+	/// </summary>
+	internal void AutomationKeyPress(Point cell, char key)
+	{
+		this.AutomationMouseMove(this.AutomationCellCenter(cell));
+		this.BeginInvoke(() => this.KeyPressCallback(this, new KeyPressEventArgs(key)));
+	}
+
+	/// <summary>
 	/// Ctrl-clicks a cell like a user holding Ctrl, which adds the item there to the selection (or removes it).
 	/// </summary>
 	internal void AutomationCtrlClick(Point cell)

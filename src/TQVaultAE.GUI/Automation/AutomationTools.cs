@@ -458,6 +458,28 @@ internal static partial class AutomationTools
 			return Serialize(new { panel = named.Id, item = DescribeItem(item, null), clicked });
 		});
 
+	[McpServerTool(Name = "press_key", Destructive = true)]
+	[Description("Rests the cursor on a cell of a panel and presses a key there like the user: 'c' copies, 'd' duplicates, 'backspace' deletes the item under the cursor (with its confirmation: queue the answer first), 'escape' cancels a drag. Runs after the call returns; follow with get_state or dialog_answers.")]
+	public static string PressKey(
+		[Description("Panel id.")] string panel,
+		[Description("Cell column.")] int x,
+		[Description("Cell row.")] int y,
+		[Description("A character, or 'backspace' / 'escape'.")] string key)
+		=> AutomationHost.OnUi(form =>
+		{
+			var named = ResolveShownPanel(form, panel);
+			char c = key.ToLowerInvariant() switch
+			{
+				"backspace" => '\b',
+				"escape" => (char)27,
+				_ when key.Length == 1 => key[0],
+				_ => throw new McpException($"Unknown key '{key}'. Use one character, 'backspace' or 'escape'."),
+			};
+			var item = named.Panel.AutomationFindItem(new Point(x, y));
+			named.Panel.AutomationKeyPress(new Point(x, y), c);
+			return Serialize(new { panel = named.Id, item = DescribeItem(item, null), key });
+		});
+
 	[McpServerTool(Name = "select_items", Destructive = true)]
 	[Description("Ctrl-clicks cells of a panel like a user holding Ctrl, which adds each item to the selection (a selected item is removed). Returns the selected items. A plain pick_item or the 'Clear Selection' entry clears it.")]
 	public static string SelectItems(

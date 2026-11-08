@@ -43,7 +43,7 @@ internal static partial class AutomationTools
 				"detailed" => ItemTooltip.ViewOf(settings, true),
 				"full" => ItemTooltipView.Detailed | ItemTooltipView.InGameRolls | ItemTooltipView.ValueRanges
 					| ItemTooltipView.GrantedSkills | ItemTooltipView.SetPieceCounts,
-				_ => ItemTooltip.ViewOf(settings),
+				_ => ItemTooltip.ViewOf(form.Services),
 			});
 
 			List<(Item Item, object Location)> targets;
