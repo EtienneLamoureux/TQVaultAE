@@ -155,12 +155,12 @@ public sealed class UserSettingsTests : IDisposable
 	}
 
 	[Fact]
-	public void Template_ReadsAsTheDefaults_ExceptGitBackupEnabled()
+	public void Template_ReadsAsTheDefaults()
 	{
 		var template = UserSettings.Read(TemplatePath);
 
-		template.Should().BeEquivalentTo(new UserSettings(), o => o.Excluding(s => s.GitBackupEnabled));
-		template.GitBackupEnabled.Should().BeFalse("the shipped template turns the git backup off");
+		template.Should().BeEquivalentTo(new UserSettings(), "a fresh install and a missing file must start alike");
+		template.GitBackupEnabled.Should().BeFalse("the git backup is opt-in");
 		template.VaultPath.Should().BeEmpty("an empty vault path makes the startup ask for one");
 	}
 
@@ -230,7 +230,7 @@ public sealed class UserSettingsTests : IDisposable
 		// Settings added since keep their default.
 		settings.ShowInGameValues.Should().BeTrue();
 		settings.TooltipShowSetPieceCounts.Should().BeTrue();
-		settings.GitBackupEnabled.Should().BeTrue();
+		settings.GitBackupEnabled.Should().BeFalse("the git backup is opt-in, also for files older than the setting");
 		settings.GitBackupRepository.Should().BeEmpty();
 		settings.PasteBinExpiration.Should().Be(UserSettings.DefaultPasteBinExpiration);
 		settings.GameLanguages.Should().Be("de,en,es,fr,it,pl,ru,cs,zh");
