@@ -13,10 +13,10 @@
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<NoWarn>$(NoWarn);WFO1000</NoWarn>
 		<AssemblyTitle>Titan Quest Save Files Explorer</AssemblyTitle>
-		<AssemblyDescription>Tool for exploring Titan Quest's save files.</AssemblyDescription>
-		<AssemblyCompany>titanquest.net community</AssemblyCompany>
-		<AssemblyProduct>Titan Quest Save Files Explorer</AssemblyProduct>
-		<AssemblyCopyright>Copyright © 2019 by hguy</AssemblyCopyright>
+		<Description>Tool for exploring Titan Quest's save files.</Description>
+		<Company>titanquest.net community</Company>
+		<Product>Titan Quest Save Files Explorer</Product>
+		<Copyright>Copyright © 2019 by hguy</Copyright>
 		<ComVisible>false</ComVisible>
 		<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
 	</PropertyGroup>

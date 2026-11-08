@@ -11,9 +11,9 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<AssemblyTitle>TQVaultAE.Services.Win32</AssemblyTitle>
-		<AssemblyCompany>titanquest.net community</AssemblyCompany>
-		<AssemblyProduct>TQVaultAE.Services.Win32</AssemblyProduct>
-		<AssemblyCopyright>Copyright © 2019</AssemblyCopyright>
+		<Company>titanquest.net community</Company>
+		<Product>TQVaultAE.Services.Win32</Product>
+		<Copyright>Copyright © 2019</Copyright>
 		<ComVisible>false</ComVisible>
 	</PropertyGroup>
 

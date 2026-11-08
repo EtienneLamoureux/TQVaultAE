@@ -13,10 +13,10 @@
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<NoWarn>$(NoWarn);WFO1000</NoWarn>
 		<AssemblyTitle>ARZExplorer</AssemblyTitle>
-		<AssemblyDescription>Tool for extracting Titan Quest's ARZ and ARC files.</AssemblyDescription>
-		<AssemblyCompany>titanquest.net community</AssemblyCompany>
-		<AssemblyProduct>ARZExplorer</AssemblyProduct>
-		<AssemblyCopyright>Copyright © 2009-2010 by VillageIdiot, v2.0 - 2022 by hguy</AssemblyCopyright>
+		<Description>Tool for extracting Titan Quest's ARZ and ARC files.</Description>
+		<Company>titanquest.net community</Company>
+		<Product>ARZExplorer</Product>
+		<Copyright>Copyright © 2009-2010 by VillageIdiot, v2.0 - 2022 by hguy</Copyright>
 		<ComVisible>false</ComVisible>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
