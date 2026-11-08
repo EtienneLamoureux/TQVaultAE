@@ -1,5 +1,7 @@
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Forge;
+using TQVaultAE.GUI.Tooltips;
+using TQVaultAE.GUI.Components.Scaling;
 
 namespace TQVaultAE.GUI.Components.Panels;
 
@@ -38,16 +40,25 @@ public partial class ForgePanel
 			this.automationMessages.RemoveAt(0);
 	}
 
-	/// <summary>Selects a mode like a click on its radio button, including the selection reset on a stricter mode.</summary>
-	internal void AutomationSetMode(ForgeMode mode)
-	{
-		var radio = mode switch
+	/// <summary>The card shown when the mouse rests on the radio button of <paramref name="mode"/>, with its rendering.</summary>
+	internal (RichToolTip.Card Card, Bitmap Image)? AutomationModeCard(ForgeMode mode)
+		=> this.modeToolTip?.AutomationCard(this.ModeRadio(mode)) is { } card
+			? (card, this.modeToolTip.AutomationRender(card))
+			: null;
+
+	private ScalingRadioButton ModeRadio(ForgeMode mode)
+		=> mode switch
 		{
 			ForgeMode.God => this.scalingRadioButtonGod,
 			ForgeMode.Relax => this.scalingRadioButtonRelax,
 			ForgeMode.Strict => this.scalingRadioButtonStrict,
 			_ => this.scalingRadioButtonGame,
 		};
+
+	/// <summary>Selects a mode like a click on its radio button, including the selection reset on a stricter mode.</summary>
+	internal void AutomationSetMode(ForgeMode mode)
+	{
+		var radio = this.ModeRadio(mode);
 		radio.Checked = true;
 		this.ForgeMode_Clicked(radio, EventArgs.Empty);
 	}

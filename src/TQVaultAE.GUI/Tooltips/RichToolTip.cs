@@ -4,7 +4,7 @@ namespace TQVaultAE.GUI.Tooltips;
 /// Tool tip drawn as a card: a coloured title, a summary, then sections of lines marked as allowed (✔) or restricted (✖).
 /// </summary>
 /// <remarks>Used by the Forge to spell out what each mode allows.</remarks>
-internal sealed class RichToolTip : IDisposable
+internal sealed partial class RichToolTip : IDisposable
 {
 	/// <summary>One line of a section: something allowed, or a restriction.</summary>
 	public sealed record Line(string Text, bool Allowed);

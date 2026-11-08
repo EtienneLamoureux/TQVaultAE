@@ -138,6 +138,7 @@ Cells are grid coordinates, as reported by `get_state`.
 | `forge_show(show)` | Shows or hides the forge, like the Forge button. Items for the forge are picked from the `vault` panel with `pick_item`. |
 | `forge_state` | Mode, hardcore, the item in each slot (`Base`, `Prefix`, `Suffix`, `Relic1`, `Relic2`) with the parts it offers in God mode, the preview of the forged item, and the messages shown to the user. |
 | `forge_set_mode(mode)` / `forge_set_hardcore(enabled)` | Like the mode radio buttons (`Game`, `Strict`, `Relax`, `God`) and the Hardcore box. A stricter mode clears the slots, as in the app. |
+| `forge_mode_card(mode)` | The card shown when the mouse rests on a mode radio button (`Game`, `Strict`, `Relax`, `God`): title, summary, sections with their lines (`+` allowed, `-` restricted) and footer, with a PNG of the card drawn as the tool tip draws it. Read only; the forge must have been shown once. |
 | `forge_drop(slot)` | Drops the dragged item on a forge slot. The rules of the current mode decide. A refusal is reported in `newMessages`, and the item stays dragged. |
 | `forge_select_part(slot, part)` | God mode: chooses which part of a material item is merged, like its combo box. |
 | `forge_drag_cursor` | Runs the drag cursor update of a mouse move over the forge while an item is dragged: whether the cursor was built from the item's bitmap (native `CreateIconIndirect`), its size and hot spot. |

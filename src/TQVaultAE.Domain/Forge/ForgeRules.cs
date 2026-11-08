@@ -98,6 +98,28 @@ public sealed class ForgeRules
 	public ForgeRules(Func<Item, int> levelRequirement)
 		=> this._levelRequirement = levelRequirement;
 
+	/// <summary>What <paramref name="mode"/> allows and requires: the checks <see cref="CheckDrop"/> applies.</summary>
+	public static ForgeCapabilities Capabilities(ForgeMode mode)
+	{
+		bool strict = mode is ForgeMode.Strict or ForgeMode.Game;
+		bool game = mode == ForgeMode.Game;
+		bool god = mode == ForgeMode.God;
+
+		return new(
+			GearOnly: !god,
+			EpicLegendaryAllowed: !strict,
+			AffixFromSameBaseItem: game,
+			AffixLevelNotAboveBase: game,
+			AffixFromSameGearType: strict,
+			AffixNotRarerThanBase: strict,
+			AffixMustBePresent: !god,
+			AnyPartOfMaterial: god,
+			RelicSource: god ? ForgeRelicSource.Anything : strict ? ForgeRelicSource.RelicOrCharm : ForgeRelicSource.RelicOrSocketedGear,
+			RelicMustFitBase: !god,
+			SecondRelicNeedsTinkerer: strict,
+			StricterModeExists: Enum.GetValues<ForgeMode>().Any(other => IsDowngrade(mode, other)));
+	}
+
 	/// <summary>Checks dropping <paramref name="dragged"/> on <paramref name="slot"/>.</summary>
 	public ForgeDecision CheckDrop(ForgeMode mode, ForgeSlot slot, Item dragged, ForgeSelection current)
 	{
@@ -117,9 +139,7 @@ public sealed class ForgeRules
 		ForgeDecision Refuse(ForgeMessage reason) => new(false, reason, warnings, cleared);
 		ForgeDecision Accept() => new(true, null, warnings, cleared);
 
-		bool strict = mode is ForgeMode.Strict or ForgeMode.Game;
-		bool game = mode == ForgeMode.Game;
-		bool god = mode == ForgeMode.God;
+		var can = Capabilities(mode);
 		bool gear = dragged.IsWeaponShield || dragged.IsArmor || dragged.IsJewellery;
 
 		switch (slot)
@@ -128,29 +148,29 @@ public sealed class ForgeRules
 			{
 				var baseItem = state.Base;
 
-				if (game && baseItem is not null && dragged.BaseItemId != baseItem.BaseItemId)
+				if (can.AffixFromSameBaseItem && baseItem is not null && dragged.BaseItemId != baseItem.BaseItemId)
 					WarnAndClearAffixes(ForgeMessage.PrefixSuffixOfAnotherBaseItem);
 
-				if (game && baseItem is not null && this._levelRequirement(dragged) > this._levelRequirement(baseItem))
+				if (can.AffixLevelNotAboveBase && baseItem is not null && this._levelRequirement(dragged) > this._levelRequirement(baseItem))
 					WarnAndClearAffixes(ForgeMessage.PrefixSuffixHigherLevelRequirement);
 
-				if (strict && dragged.Rarity > Rarity.Rare)
+				if (!can.EpicLegendaryAllowed && dragged.Rarity > Rarity.Rare)
 					return Refuse(ForgeMessage.NoEpicLegendary);
 
-				if (strict && baseItem is not null && ClassOf(dragged) != ClassOf(baseItem))
+				if (can.AffixFromSameGearType && baseItem is not null && ClassOf(dragged) != ClassOf(baseItem))
 					WarnAndClearAffixes(ForgeMessage.PrefixSuffixOfAnotherGearType);
 
-				if (strict && baseItem is not null
+				if (can.AffixNotRarerThanBase && baseItem is not null
 					&& ((state.Prefix?.Rarity ?? 0) > dragged.Rarity || (state.Suffix?.Rarity ?? 0) > dragged.Rarity))
 					WarnAndClearAffixes(ForgeMessage.PrefixSuffixBetterThanBase);
 
 				// A second relic needs a "Tinkerer" suffix, from the new base item when there is no suffix item.
-				if (strict && state.Relic2 is not null && state.Suffix is not null
+				if (can.SecondRelicNeedsTinkerer && state.Relic2 is not null && state.Suffix is not null
 					&& !state.Suffix.AcceptExtraRelic && dragged.AcceptExtraRelic)
 					Clear(ForgeSlot.Relic2);
 
 				// Relics that the new base item cannot hold
-				if (!god)
+				if (can.RelicMustFitBase)
 				{
 					if (RelicDoesNotFit(dragged, state.Relic1))
 						Clear(ForgeSlot.Relic1);
@@ -158,7 +178,7 @@ public sealed class ForgeRules
 						Clear(ForgeSlot.Relic2);
 				}
 
-				return gear || god ? Accept() : Refuse(ForgeMessage.MustSelectArmorOrWeaponOrJewellery);
+				return gear || !can.GearOnly ? Accept() : Refuse(ForgeMessage.MustSelectArmorOrWeaponOrJewellery);
 			}
 
 			case ForgeSlot.Prefix:
@@ -168,37 +188,37 @@ public sealed class ForgeRules
 				if (baseItem is null)
 					return Refuse(ForgeMessage.MustSelectBaseItemFirst);
 
-				if (game && dragged.BaseItemId != baseItem.BaseItemId)
+				if (can.AffixFromSameBaseItem && dragged.BaseItemId != baseItem.BaseItemId)
 					return Refuse(ForgeMessage.PrefixSuffixOfAnotherBaseItem);
 
-				if (game && this._levelRequirement(dragged) > this._levelRequirement(baseItem))
+				if (can.AffixLevelNotAboveBase && this._levelRequirement(dragged) > this._levelRequirement(baseItem))
 					return Refuse(ForgeMessage.PrefixSuffixHigherLevelRequirement);
 
-				if (strict && dragged.Rarity > Rarity.Rare)
+				if (!can.EpicLegendaryAllowed && dragged.Rarity > Rarity.Rare)
 					return Refuse(ForgeMessage.NoEpicLegendary);
 
-				if (strict && ClassOf(dragged) != ClassOf(baseItem))
+				if (can.AffixFromSameGearType && ClassOf(dragged) != ClassOf(baseItem))
 					return Refuse(ForgeMessage.PrefixSuffixOfAnotherGearType);
 
-				if (strict && baseItem.Rarity < dragged.Rarity)
+				if (can.AffixNotRarerThanBase && baseItem.Rarity < dragged.Rarity)
 					return Refuse(ForgeMessage.PrefixSuffixBetterThanBase);
 
 				if (slot == ForgeSlot.Prefix)
 				{
-					if (!god && !dragged.HasPrefix)
+					if (can.AffixMustBePresent && !dragged.HasPrefix)
 						return Refuse(ForgeMessage.MustHavePrefix);
 				}
 				else
 				{
 					// A suffix that is not "of the Tinkerer" cannot keep a second relic.
-					if (strict && state.Relic2 is not null && !dragged.AcceptExtraRelic)
+					if (can.SecondRelicNeedsTinkerer && state.Relic2 is not null && !dragged.AcceptExtraRelic)
 						Clear(ForgeSlot.Relic2);
 
-					if (!god && !dragged.HasSuffix)
+					if (can.AffixMustBePresent && !dragged.HasSuffix)
 						return Refuse(ForgeMessage.MustHaveSuffix);
 				}
 
-				return gear || god ? Accept() : Refuse(ForgeMessage.MustSelectArmorOrWeaponOrJewellery);
+				return gear || !can.GearOnly ? Accept() : Refuse(ForgeMessage.MustSelectArmorOrWeaponOrJewellery);
 			}
 
 			case ForgeSlot.Relic1:
@@ -208,21 +228,21 @@ public sealed class ForgeRules
 				if (baseItem is null)
 					return Refuse(ForgeMessage.MustSelectBaseItemFirst);
 
-				if (strict && !dragged.IsRelicOrCharm)
+				if (can.RelicSource == ForgeRelicSource.RelicOrCharm && !dragged.IsRelicOrCharm)
 					return Refuse(ForgeMessage.MustBeRelic);
 
-				if (mode == ForgeMode.Relax && !(dragged.IsRelicOrCharm || dragged.HasRelicOrCharmSlot1))
+				if (can.RelicSource == ForgeRelicSource.RelicOrSocketedGear && !(dragged.IsRelicOrCharm || dragged.HasRelicOrCharmSlot1))
 					return Refuse(ForgeMessage.MustHaveRelic);
 
-				if (!god && RelicDoesNotFit(baseItem, dragged))
+				if (can.RelicMustFitBase && RelicDoesNotFit(baseItem, dragged))
 					return Refuse(ForgeMessage.RelicNotAllowed);
 
-				if (slot == ForgeSlot.Relic2 && strict
+				if (slot == ForgeSlot.Relic2 && can.SecondRelicNeedsTinkerer
 					&& !((state.Suffix is null && baseItem.AcceptExtraRelic) || (state.Suffix?.AcceptExtraRelic ?? false)))
 					return Refuse(ForgeMessage.MustHaveTinkeredSuffix);
 
 				bool holdsRelic = (gear && dragged.HasRelicOrCharmSlot1) || dragged.IsRelicOrCharm;
-				return god || holdsRelic ? Accept() : Refuse(ForgeMessage.MustSelectRelicOrItemWithRelic);
+				return can.RelicSource == ForgeRelicSource.Anything || holdsRelic ? Accept() : Refuse(ForgeMessage.MustSelectRelicOrItemWithRelic);
 			}
 
 			default:
