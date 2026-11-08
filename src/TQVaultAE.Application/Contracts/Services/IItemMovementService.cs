@@ -59,15 +59,36 @@ public interface IItemMovementService
     ItemMoveResult MoveItem(Item item, SackCollection sourceSack, SackCollection destinationSack, Point destinationPosition);
     
     /// <summary>
-    /// Updates item location metadata after a move.
+    /// Builds the place of a sack of a container, as the search shows it.
     /// </summary>
-    /// <param name="item">The item that was moved.</param>
-    /// <param name="destinationPlayer">The destination player collection.</param>
-    /// <param name="destinationSackType">The destination sack type.</param>
-    /// <param name="destinationSackNumber">The destination sack number.</param>
-    /// <param name="destinationStashType">The destination stash type (if applicable).</param>
-    /// <param name="containerName">The display name of the container.</param>
-    void UpdateItemLocation(Item item, PlayerCollection destinationPlayer, SackType destinationSackType, int destinationSackNumber, StashType? destinationStashType = null, string? containerName = null);
+    /// <remarks>
+    /// The name is <see cref="PlayerCollection.PlayerName"/>, the name the search database is built with: the character,
+    /// the vault, or the transfer and relic vault stash names.
+    /// An equipment sack is <see cref="BagIdConstants.BAGID_EQUIPMENTPANEL"/> and a stash sack its stash type.
+    /// </remarks>
+    /// <param name="container">The character, vault or stash.</param>
+    /// <param name="sackType">The sack type.</param>
+    /// <param name="sackNumber">The sack number, used for vault and player sacks, and for a stash without stash type.</param>
+    /// <param name="stashType">The stash type, for a stash.</param>
+    ContainerPlace PlaceIn(PlayerCollection container, SackType sackType, int sackNumber, StashType? stashType = null);
+
+    /// <summary>
+    /// Places an item in the first free cells of a sack, the way the auto-move does.
+    /// </summary>
+    /// <remarks>
+    /// The item itself is ignored when looking for free cells, so it can still be in its source sack.
+    /// Nothing changes when the item is not allowed in the sack (relic vault stash) or does not fit.
+    /// </remarks>
+    /// <param name="item">The item to place.</param>
+    /// <param name="sack">The destination sack.</param>
+    /// <param name="sackSize">Size of the sack in cells.</param>
+    /// <param name="place">The place the item gets, see <see cref="PlaceIn"/>.</param>
+    /// <param name="beforePlacing">
+    /// Runs once free cells are found, before the item gets its new position: the drag takes the item out of its
+    /// source sack there, and an equipped item is found by its position.
+    /// </param>
+    /// <returns><see langword="false"/> when the item was not placed.</returns>
+    bool TryPlace(Item item, SackCollection sack, Size sackSize, ContainerPlace place, Action? beforePlacing = null);
 
     /// <summary>
     /// Sorts the items of a sack by size, the largest first, packing them row by row or column by column.

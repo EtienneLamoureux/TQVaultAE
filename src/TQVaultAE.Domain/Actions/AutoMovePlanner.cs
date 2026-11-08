@@ -11,6 +11,13 @@ namespace TQVaultAE.Domain.Actions;
 public sealed record AutoMovePlan(IReadOnlyList<Item> Items, AutoMoveLocation Destination, int DestIndex);
 
 /// <summary>
+/// The stash bag an auto-move to the stash panel goes to.
+/// </summary>
+/// <param name="Bag">The bag to show and place the item in (a <c>BAGID_*</c> constant).</param>
+/// <param name="IsAvailable"><see langword="false"/> when that stash is not loaded: the move is cancelled.</param>
+public readonly record struct StashMoveTarget(int Bag, bool IsAvailable);
+
+/// <summary>
 /// Plans the moves of the "Move to" menu, of the quick move keys and of a bag merge.
 /// </summary>
 /// <remarks>
@@ -43,6 +50,31 @@ public static class AutoMovePlanner
 			: focusedItem is not null ? [focusedItem] : [];
 
 		return new AutoMovePlan(items, destination, destIndex);
+	}
+
+	/// <summary>
+	/// Where an auto-move to the stash panel puts the item: the stash shown, or the transfer stash when the equipment
+	/// is shown (an item cannot be auto-equipped).
+	/// </summary>
+	/// <param name="currentBag">The bag shown by the stash panel (a <c>BAGID_*</c> constant).</param>
+	/// <param name="hasPlayerStash">The character's stash is loaded.</param>
+	/// <param name="hasTransferStash">The transfer stash is loaded.</param>
+	/// <param name="hasRelicVaultStash">The relic vault stash is loaded.</param>
+	public static StashMoveTarget StashTarget(int currentBag, bool hasPlayerStash, bool hasTransferStash, bool hasRelicVaultStash)
+	{
+		int bag = currentBag == BagIdConstants.BAGID_EQUIPMENTPANEL
+			? BagIdConstants.BAGID_TRANSFERSTASH
+			: currentBag;
+
+		bool isAvailable = bag switch
+		{
+			BagIdConstants.BAGID_PLAYERSTASH => hasPlayerStash,
+			BagIdConstants.BAGID_TRANSFERSTASH => hasTransferStash,
+			BagIdConstants.BAGID_RELICVAULTSTASH => hasRelicVaultStash,
+			_ => true,
+		};
+
+		return new StashMoveTarget(bag, isAvailable);
 	}
 
 	/// <summary>

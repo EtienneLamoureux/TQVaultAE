@@ -289,66 +289,40 @@ public partial class MainForm
 	// Special Case for moving to stash.
 	private void AutoMoveItemToStash()
 	{
-		if (!this.ValidateStashAvailability())
+		var target = AutoMovePlanner.StashTarget(
+			this.stashPanel.CurrentBag
+			, this.stashPanel.Player is not null
+			, this.stashPanel.TransferStash is not null
+			, this.stashPanel.RelicVaultStash is not null);
+
+		// The equipment is shown: show the transfer stash instead.
+		if (target.Bag != this.stashPanel.CurrentBag)
+			this.stashPanel.CurrentBag = target.Bag;
+
+		if (!target.IsAvailable)
+		{
+			// We have nowhere to send the item so cancel the move.
+			this.DragInfo.Cancel();
 			return;
+		}
 
 		if (this.DragInfo.Item is not { } dragItem)
 			return;
 
-		// See if we have an open space to put the item.
-		Point location = this.stashPanel.SackPanel.FindOpenCells(dragItem.Width, dragItem.Height);
-		// We have no space in the sack so we cancel.
-		if (location.X == -1 || !this.stashPanel.SackPanel.IsItemValidForPlacement(dragItem))
+		var stashSackPanel = this.stashPanel.SackPanel;
+		var stashSack = stashSackPanel.ShownSack;
+		var place = this.Services.ItemMovementService.PlaceIn(this.stashPanel.ShownPlayer, stashSack.SackType, stashSackPanel.CurrentSack, stashSack.StashType);
+
+		// No room, or an item the relic vault does not take: the item goes back.
+		if (!this.Services.ItemMovementService.TryPlace(dragItem, stashSack, stashSackPanel.SackSize, place, this.DragInfo.MarkPlaced))
 		{
 			this.DragInfo.Cancel();
 			return;
 		}
 
-		this.DragInfo.MarkPlaced();
-		dragItem.PositionX = location.X;
-		dragItem.PositionY = location.Y;
-		var stashSack = this.stashPanel.SackPanel.ShownSack;
-		stashSack.AddItem(dragItem);
-		this.UpdateItemLocation(dragItem, this.stashPanel.ShownPlayer, stashSack.SackType, this.stashPanel.SackPanel.CurrentSack, stashSack.StashType);
 		this.lastSackPanelHighlighted?.Invalidate();
 		this.stashPanel.Refresh();
-		BagButtonTooltip.InvalidateCache(this.stashPanel.SackPanel.Sack);
-	}
-
-	/// <summary>
-	/// Validates that the target stash is available for item placement.
-	/// </summary>
-	private bool ValidateStashAvailability()
-	{
-		// Check if we are moving to the player's stash
-		if (this.stashPanel.CurrentBag == BagIdConstants.BAGID_PLAYERSTASH && this.stashPanel.Player is null)
-		{
-			// We have nowhere to send the item so cancel the move.
-			this.DragInfo.Cancel();
-			return false;
-		}
-
-		// Equipment Panel is active so switch to the transfer stash.
-		if (this.stashPanel.CurrentBag == BagIdConstants.BAGID_EQUIPMENTPANEL)
-			this.stashPanel.CurrentBag = BagIdConstants.BAGID_TRANSFERSTASH;
-
-		// Check the transfer stash
-		if (this.stashPanel.TransferStash is null && this.stashPanel.CurrentBag == BagIdConstants.BAGID_TRANSFERSTASH)
-		{
-			// We have nowhere to send the item so cancel the move.
-			this.DragInfo.Cancel();
-			return false;
-		}
-
-		// Check the relic vault stash
-		if (this.stashPanel.RelicVaultStash is null && this.stashPanel.CurrentBag == BagIdConstants.BAGID_RELICVAULTSTASH)
-		{
-			// We have nowhere to send the item so cancel the move.
-			this.DragInfo.Cancel();
-			return false;
-		}
-
-		return true;
+		BagButtonTooltip.InvalidateCache(stashSack);
 	}
 
 	/// <summary>
@@ -366,34 +340,22 @@ public partial class MainForm
 			return;
 		}
 
-		SackCollection? oldSack = destinationSackPanel.Sack;
-		destinationSackPanel.Sack = destinationSack;
-
-		// See if we have an open space to put the item.
-		if (this.DragInfo.Item is not { } movedItem)
+		if (this.DragInfo.Item is not { } dragItem)
 			return;
 
-		Point location = destinationSackPanel.FindOpenCells(movedItem.Width, movedItem.Height);
 		int destination = this.GetDestinationIndex(destinationSackPanel, destinationPanel.CurrentBag, destSackNumber);
+		var place = this.Services.ItemMovementService.PlaceIn(destinationPanel.Player, destinationSackPanel.SackType, destination, destinationSack.StashType);
 
 		// We have no space in the sack so we cancel.
-		if (location.X == -1)
+		if (!this.Services.ItemMovementService.TryPlace(dragItem, destinationSack, destinationSackPanel.SackSize, place, this.DragInfo.MarkPlaced))
 		{
-			destinationSackPanel.Sack = oldSack;
 			this.DragInfo.Cancel();
 			return;
 		}
 
-		Item dragItem = this.DragInfo.Item;
-		this.DragInfo.MarkPlaced();
-		dragItem.PositionX = location.X;
-		dragItem.PositionY = location.Y;
-		destinationSackPanel.Sack.AddItem(dragItem);
-		this.UpdateItemLocation(dragItem, destinationPanel.Player, destinationSackPanel.SackType, destination, destinationSackPanel.Sack.StashType);
-		destinationSackPanel.Sack = oldSack;
 		sourcePanel.Invalidate();
 		destinationPanel.Refresh();
-		BagButtonTooltip.InvalidateCache(destinationSackPanel.Sack, oldSack);
+		BagButtonTooltip.InvalidateCache(destinationSack, destinationSackPanel.Sack);
 	}
 
 	/// <summary>
@@ -417,26 +379,5 @@ public partial class MainForm
 	{
 		this.showSecondaryVault = !this.showSecondaryVault;
 		this.UpdateTopPanel();
-	}
-
-	/// <summary>
-	/// Updates the item's location properties after it has been moved to a new container.
-	/// This ensures search results always reflect the current location.
-	/// </summary>
-	/// <param name="item">The item that was moved</param>
-	/// <param name="destinationPlayer">The destination PlayerCollection (vault/player/stash)</param>
-	/// <param name="destinationSackType"></param>
-	/// <param name="destinationSackNumber"></param>
-	private void UpdateItemLocation(Item item, PlayerCollection destinationPlayer, SackType destinationSackType, int destinationSackNumber, StashType? destinationStashType)
-	{
-		if (item is null || destinationPlayer is null)
-			return;
-
-		// The container name comes from the file name (character or vault), not from PlayerName
-		string containerName = this.GamePathResolver.GetNameFromFile(destinationPlayer.PlayerFile)
-			?? GamePathResolver.GetVaultNameFromPath(destinationPlayer.PlayerFile)
-			?? string.Empty;
-
-		this.Services.ItemMovementService.UpdateItemLocation(item, destinationPlayer, destinationSackType, destinationSackNumber, destinationStashType, containerName);
 	}
 }

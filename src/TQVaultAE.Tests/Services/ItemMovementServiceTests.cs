@@ -307,85 +307,6 @@ public class ItemMovementServiceTests
 		destSack.Count.Should().Be(1);
 	}
 
-	/// <summary>
-	/// Test UpdateItemLocation with null item does nothing
-	/// </summary>
-	[Fact]
-	public void UpdateItemLocation_WithNullItem_DoesNothing()
-	{
-		// Arrange
-		var player = new PlayerCollection("TestPlayer", "/path/to/player");
-
-		// Act & Assert - should not throw
-		_service.UpdateItemLocation(null!, player, SackType.Player, 0);
-	}
-
-	/// <summary>
-	/// Test UpdateItemLocation with null player does nothing
-	/// </summary>
-	[Fact]
-	public void UpdateItemLocation_WithNullPlayer_DoesNothing()
-	{
-		// Arrange
-		var item = CreateItem("Item1", 0, 0, 1, 1);
-
-		// Act & Assert - should not throw
-		_service.UpdateItemLocation(item, null!, SackType.Player, 0);
-	}
-
-	/// <summary>
-	/// Test UpdateItemLocation updates equipment sack type correctly
-	/// </summary>
-	[Fact]
-	public void UpdateItemLocation_EquipmentSack_UpdatesSackNumber()
-	{
-		// Arrange
-		var item = CreateItem("Item1", 0, 0, 1, 1);
-		var player = new PlayerCollection("TestPlayer", "/path/to/player");
-
-		// Act
-		_service.UpdateItemLocation(item, player, SackType.Equipment, 5);
-
-		// Assert - Equipment panel always uses BAGID_EQUIPMENTPANEL (0)
-		item.Place.SackNumber.Should().Be(0);
-		item.Place.SackType.Should().Be(SackType.Equipment);
-	}
-
-	/// <summary>
-	/// Test UpdateItemLocation updates vault sack type correctly
-	/// </summary>
-	[Fact]
-	public void UpdateItemLocation_VaultSack_UpdatesCorrectly()
-	{
-		// Arrange
-		var item = CreateItem("Item1", 0, 0, 1, 1);
-		var player = new PlayerCollection("Vault1", "/path/to/vault") { IsVault = true };
-
-		// Act
-		_service.UpdateItemLocation(item, player, SackType.Vault, 3);
-
-		// Assert
-		item.Place.SackNumber.Should().Be(3);
-		item.Place.SackType.Should().Be(SackType.Vault);
-	}
-
-	/// <summary>
-	/// Test UpdateItemLocation with custom container name
-	/// </summary>
-	[Fact]
-	public void UpdateItemLocation_WithContainerName_UsesCustomName()
-	{
-		// Arrange
-		var item = CreateItem("Item1", 0, 0, 1, 1);
-		var player = new PlayerCollection("TestPlayer", "/path/to/player");
-
-		// Act
-		_service.UpdateItemLocation(item, player, SackType.Player, 0, null, "Custom Name");
-
-		// Assert
-		item.Place.Name.Should().Be("Custom Name");
-	}
-
 	[Fact]
 	public void FindItem_CellCoveredByItem_ReturnsIt()
 	{
@@ -433,27 +354,168 @@ public class ItemMovementServiceTests
 	}
 
 	[Fact]
-	public void UpdateItemLocation_StashWithStashType_UsesStashTypeAsSackNumber()
+	public void PlaceIn_Equipment_UsesTheEquipmentBag()
 	{
-		var item = CreateItem("Item1", 0, 0, 1, 1);
-		var player = new PlayerCollection("Stash", "/path/to/stash");
+		var player = new PlayerCollection("HeroB", "/saves/_HeroB/Player.chr");
 
-		_service.UpdateItemLocation(item, player, SackType.Stash, 3, StashType.RelicVaultStash, "Relic");
+		var place = _service.PlaceIn(player, SackType.Equipment, 5);
 
-		item.Place.SackNumber.Should().Be((int)StashType.RelicVaultStash);
-		item.Place.StashType.Should().Be(StashType.RelicVaultStash);
-		item.Place.Path.Should().Be("/path/to/stash");
+		place.SackNumber.Should().Be(BagIdConstants.BAGID_EQUIPMENTPANEL);
+		place.SackType.Should().Be(SackType.Equipment);
+	}
+
+	[Theory]
+	[InlineData(SackType.Vault, 3)]
+	[InlineData(SackType.Player, 2)]
+	public void PlaceIn_VaultOrPlayerSack_UsesTheSackNumber(SackType sackType, int sackNumber)
+	{
+		var container = new PlayerCollection("Main", "/vaults/Main.vault.json");
+
+		var place = _service.PlaceIn(container, sackType, sackNumber);
+
+		place.SackNumber.Should().Be(sackNumber);
+		place.SackType.Should().Be(sackType);
+		place.StashType.Should().BeNull();
 	}
 
 	[Fact]
-	public void UpdateItemLocation_StashWithoutStashType_UsesSackNumber()
+	public void PlaceIn_StashWithStashType_UsesTheStashTypeAsSackNumber()
 	{
-		var item = CreateItem("Item1", 0, 0, 1, 1);
-		var player = new PlayerCollection("Stash", "/path/to/stash");
+		var player = new PlayerCollection("HeroB", "/saves/_HeroB/Player.chr");
 
-		_service.UpdateItemLocation(item, player, SackType.Stash, 3);
+		var place = _service.PlaceIn(player, SackType.Stash, 7, StashType.RelicVaultStash);
 
-		item.Place.SackNumber.Should().Be(3);
+		place.SackNumber.Should().Be((int)StashType.RelicVaultStash);
+		place.StashType.Should().Be(StashType.RelicVaultStash);
+	}
+
+	[Fact]
+	public void PlaceIn_StashWithoutStashType_UsesTheSackNumber()
+	{
+		var player = new PlayerCollection("HeroB", "/saves/_HeroB/Player.chr");
+
+		_service.PlaceIn(player, SackType.Stash, 3).SackNumber.Should().Be(3);
+	}
+
+	[Fact]
+	public void PlaceIn_NameIsThePlayerName_AsTheSearchDatabaseHasIt()
+	{
+		// A vault file in a folder starting with '_' would pass for a character folder when named from the path.
+		var vault = new PlayerCollection("Main", """/_vaults/Main.vault.json""") { IsVault = true };
+
+		var place = _service.PlaceIn(vault, SackType.Vault, 0);
+
+		place.Name.Should().Be("Main");
+		place.Path.Should().Be("""/_vaults/Main.vault.json""");
+	}
+
+	[Fact]
+	public void TryPlace_FreeCells_PlacesTheItemAtTheFirstColumnGap()
+	{
+		var sack = new SackCollection();
+		sack.AddItem(CreateItem("Blocker", 0, 0, 1, 3));
+		var item = CreateItem("Moved", 7, 7, 1, 2);
+		var place = new ContainerPlace { Path = "/vaults/Main.vault.json", Name = "Main", SackNumber = 4, SackType = SackType.Vault };
+
+		bool placed = _service.TryPlace(item, sack, new Size(3, 3), place);
+
+		placed.Should().BeTrue();
+		item.Location.Should().Be(new Point(1, 0));
+		sack.Should().Contain(item);
+		item.Place.Should().Be(place);
+		item.Place.Should().NotBeSameAs(place, "the item keeps its place instance, shared with its search result");
+	}
+
+	[Fact]
+	public void TryPlace_NoRoom_LeavesEverythingAsItWas()
+	{
+		var sack = new SackCollection();
+		sack.AddItem(CreateItem("Blocker", 0, 0, 2, 1));
+		sack.IsModified = false;
+		var item = CreateItem("Moved", 7, 7, 1, 2);
+		item.Place.Name = "Source";
+		bool called = false;
+
+		bool placed = _service.TryPlace(item, sack, new Size(2, 2), new ContainerPlace { Name = "Dest" }, () => called = true);
+
+		placed.Should().BeFalse();
+		called.Should().BeFalse("the drag must stay active so it can be cancelled");
+		item.Location.Should().Be(new Point(7, 7));
+		item.Place.Name.Should().Be("Source");
+		sack.Should().NotContain(item);
+		sack.IsModified.Should().BeFalse();
+	}
+
+	[Fact]
+	public void TryPlace_RelicVaultStash_RefusesOtherItems()
+	{
+		var sack = new SackCollection { StashType = StashType.RelicVaultStash };
+		var sword = CreateItem("records/item/equipmentweapon/sword/sword01.dbr", 0, 0, 1, 1);
+
+		_service.TryPlace(sword, sack, new Size(5, 5), new ContainerPlace()).Should().BeFalse();
+		sack.Should().BeEmpty();
+	}
+
+	[Fact]
+	public void TryPlace_RelicVaultStash_TakesRelics()
+	{
+		var sack = new SackCollection { StashType = StashType.RelicVaultStash };
+		var relic = CreateItem("records/xpack/items/relics/relic01.dbr", 0, 0, 1, 1);
+
+		_service.TryPlace(relic, sack, new Size(5, 5), new ContainerPlace()).Should().BeTrue();
+		sack.Should().Contain(relic);
+	}
+
+	[Fact]
+	public void TryPlace_BeforePlacing_SeesTheOldPosition()
+	{
+		// An equipped item is taken out of its slot by its position: the callback must run before the item moves.
+		var sack = new SackCollection();
+		var item = CreateItem("Moved", 4, 2, 1, 1);
+		Point? seen = null;
+		bool inSack = true;
+
+		_service.TryPlace(item, sack, new Size(3, 3), new ContainerPlace(), () =>
+		{
+			seen = item.Location;
+			inSack = sack.Contains(item);
+		}).Should().BeTrue();
+
+		seen.Should().Be(new Point(4, 2));
+		inSack.Should().BeFalse();
+		item.Location.Should().Be(new Point(0, 0));
+	}
+
+	[Fact]
+	public void TryPlace_ItemStillInTheSack_DoesNotBlockItself()
+	{
+		// A 2x2 sack with the item in it: other free cells exist only if the item does not count.
+		var sack = new SackCollection();
+		var item = CreateItem("Moved", 0, 0, 2, 2);
+		sack.AddItem(item);
+
+		_service.TryPlace(item, sack, new Size(2, 2), new ContainerPlace(), () => sack.RemoveItem(item)).Should().BeTrue();
+
+		sack.Count.Should().Be(1);
+		item.Location.Should().Be(new Point(0, 0));
+	}
+
+	[Fact]
+	public void TryPlace_StackableItem_IsPlacedAsANewEntryWithoutMerging()
+	{
+		// The auto-move never stacks: a potion goes to free cells even next to the same potion.
+		var sack = new SackCollection();
+		var potion = CreateItem("records/item/potions/potion01.dbr", 0, 0, 1, 1);
+		potion.StackSize = 3;
+		sack.AddItem(potion);
+		var moved = CreateItem("records/item/potions/potion01.dbr", 9, 9, 1, 1);
+		moved.StackSize = 2;
+
+		_service.TryPlace(moved, sack, new Size(2, 1), new ContainerPlace()).Should().BeTrue();
+
+		sack.Count.Should().Be(2);
+		potion.StackSize.Should().Be(3);
+		moved.Location.Should().Be(new Point(1, 0));
 	}
 
 	/// <summary>

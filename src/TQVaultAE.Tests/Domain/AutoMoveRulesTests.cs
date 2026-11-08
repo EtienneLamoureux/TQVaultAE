@@ -165,5 +165,20 @@ public class AutoMoveRulesTests
 		AutoMoveLocation requested, AutoMoveLocation here, bool secondaryVaultShown, AutoMoveLocation expected)
 		=> AutoMovePlanner.QuickMoveDestination(requested, here, secondaryVaultShown).Should().Be(expected);
 
+	[Theory]
+	// The equipment cannot take an auto-moved item: the transfer stash does.
+	[InlineData(BagIdConstants.BAGID_EQUIPMENTPANEL, true, true, true, BagIdConstants.BAGID_TRANSFERSTASH, true)]
+	[InlineData(BagIdConstants.BAGID_EQUIPMENTPANEL, true, false, true, BagIdConstants.BAGID_TRANSFERSTASH, false)]
+	[InlineData(BagIdConstants.BAGID_PLAYERSTASH, true, false, false, BagIdConstants.BAGID_PLAYERSTASH, true)]
+	[InlineData(BagIdConstants.BAGID_PLAYERSTASH, false, true, true, BagIdConstants.BAGID_PLAYERSTASH, false)]
+	[InlineData(BagIdConstants.BAGID_TRANSFERSTASH, false, true, false, BagIdConstants.BAGID_TRANSFERSTASH, true)]
+	[InlineData(BagIdConstants.BAGID_TRANSFERSTASH, true, false, true, BagIdConstants.BAGID_TRANSFERSTASH, false)]
+	[InlineData(BagIdConstants.BAGID_RELICVAULTSTASH, false, false, true, BagIdConstants.BAGID_RELICVAULTSTASH, true)]
+	[InlineData(BagIdConstants.BAGID_RELICVAULTSTASH, true, true, false, BagIdConstants.BAGID_RELICVAULTSTASH, false)]
+	public void StashTarget_ShownStash_MustBeLoaded(
+		int currentBag, bool hasPlayerStash, bool hasTransferStash, bool hasRelicVaultStash, int expectedBag, bool expectedAvailable)
+		=> AutoMovePlanner.StashTarget(currentBag, hasPlayerStash, hasTransferStash, hasRelicVaultStash)
+			.Should().Be(new StashMoveTarget(expectedBag, expectedAvailable));
+
 	#endregion
 }
