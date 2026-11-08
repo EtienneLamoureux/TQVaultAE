@@ -3,6 +3,7 @@ using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Infrastructure;
+using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32.Contracts;
 
 namespace TQVaultAE.GUI.Components.Character;
@@ -106,19 +107,9 @@ public partial class ComboBoxCharacterItem : UserControl
 				: TranslationService.TranslateXTag(ps.Info.Class, true, true);
 
 			// Masteries
-			this.scalingLabelMasteries.Text = string.Empty;
-			List<string> masteryNames = [];
-			var dbr = ps.Info?.ActiveMasteriesRecordNames;
-			if (dbr is { Length: > 0 })
-			{
-				foreach (var recId in dbr)
-				{
-					var masteryName = this.TranslationService.TranslateXTag(this.CharacterEditService.GetMasteryDescriptionTag(recId));
-					masteryNames.Add(masteryName);
-				}
-				this.scalingLabelMasteries.Text = masteryNames.JoinString(" + ");
+			this.scalingLabelMasteries.Text = PlayerInfoText.MasteryNames(ps.Info, this.CharacterEditService, this.TranslationService);
+			if (ps.Info?.ActiveMasteriesRecordNames is { Length: > 0 })
 				this.bufferedFlowLayoutPanelSubTitle.Visible = this.scalingLabelMasteries.Visible = true;
-			}
 
 			// Mod
 			// TODO - How to link a character Save with a mod ?

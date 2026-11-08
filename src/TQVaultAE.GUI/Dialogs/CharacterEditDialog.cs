@@ -246,8 +246,7 @@ internal sealed partial class CharacterEditDialog : VaultForm
 			var level = Convert.ToInt32(upDown.Value);
 			this._previousValues[upDown] = level;
 
-			var xp = PlayerLevel.GetLevelMinXP(level);
-			xpTextBox.Text = string.Format("{0}", (xp + 1));
+			xpTextBox.Text = PlayerLevel.LevelStartXp(level).ToString();
 
 			var (attr, skills) = PlayerLevel.GetLevelChangePoints(prevLvl, level);
 

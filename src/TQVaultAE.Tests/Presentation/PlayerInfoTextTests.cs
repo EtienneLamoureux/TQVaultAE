@@ -1,7 +1,10 @@
 using AwesomeAssertions;
+using EnumsNET;
 using Moq;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.Tests.Presentation;
@@ -67,5 +70,32 @@ public class PlayerInfoTextTests
 		var lines = PlayerInfoText.BuildLines(this._info, this._translations.Object);
 
 		lines.Keys.Take(3).Should().Equal(Resources.CurrentLevel, Resources.Class, Resources.Masteries);
+	}
+
+	[Fact]
+	public void MasteryNames_JoinsTheTranslatedNamesInTheOrderOfTheMasteries()
+	{
+		var info = new PlayerInfo(new Mock<IPathIO>().Object);
+		// Chosen Earth first: the drop down still lists Defense first.
+		info.SkillRecordList.Add(new SkillRecord { skillName = Masteries.Earth.AsString(EnumFormat.Description)!, skillLevel = 1 });
+		info.SkillRecordList.Add(new SkillRecord { skillName = Masteries.Defensive.AsString(EnumFormat.Description)!, skillLevel = 1 });
+		var characterEdit = new Mock<ICharacterEditService>();
+		characterEdit.Setup(x => x.GetMasteryDescriptionTag(It.IsAny<RecordId>()))
+			.Returns((RecordId id) => id.Raw.Contains("Earth") ? "tagEarth" : "tagDefense");
+		this._translations.Setup(x => x.TranslateXTag("tagEarth", false, false, false)).Returns("Earth Mastery");
+		this._translations.Setup(x => x.TranslateXTag("tagDefense", false, false, false)).Returns("Defense Mastery");
+
+		var names = PlayerInfoText.MasteryNames(info, characterEdit.Object, this._translations.Object);
+
+		names.Should().Be("Defense Mastery + Earth Mastery");
+	}
+
+	[Fact]
+	public void MasteryNames_NoMasteryOrNoSave_IsEmpty()
+	{
+		var characterEdit = new Mock<ICharacterEditService>();
+
+		PlayerInfoText.MasteryNames(this._info, characterEdit.Object, this._translations.Object).Should().BeEmpty();
+		PlayerInfoText.MasteryNames(null, characterEdit.Object, this._translations.Object).Should().BeEmpty();
 	}
 }

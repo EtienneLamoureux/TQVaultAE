@@ -268,4 +268,29 @@ public class CharacterSkillEditorTests
 		editor.SetMasteryLevel(0, 40).Should().Be(40);
 		editor.AvailablePoints.Should().Be(20);
 	}
+
+	[Fact]
+	public void GetMasterySummary_CountsTheSkillsWithPointsAndTheMasteryAndSumsTheirPoints()
+	{
+		var editor = Editor(StormCharacter());
+
+		var summary = editor.GetMasterySummary(0);
+
+		// Storm 10, Ice Shard 5, Velocity 3, Squall 2.
+		summary.Should().Be(new MasterySummary(Storm, 4, 20));
+	}
+
+	[Fact]
+	public void GetMasterySummary_FollowsTheEdits()
+	{
+		var editor = Editor(StormCharacter());
+
+		editor.SetSkillLevel(0, Squall, 0);
+
+		editor.GetMasterySummary(0).Should().Be(new MasterySummary(Storm, 3, 18));
+	}
+
+	[Fact]
+	public void GetMasterySummary_EmptySlot_IsNull()
+		=> Editor(StormCharacter()).GetMasterySummary(1).Should().BeNull();
 }

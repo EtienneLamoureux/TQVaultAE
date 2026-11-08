@@ -9,6 +9,18 @@ namespace TQVaultAE.Presentation;
 public static class PlayerInfoText
 {
 	/// <summary>
+	/// The masteries of a character for the character drop down: their translated names joined by " + ", in the order
+	/// of <see cref="Domain.Entities.Masteries"/>.
+	/// </summary>
+	/// <param name="info">The player information; <see langword="null"/> when the save is not loaded.</param>
+	/// <param name="characterEdit">Gives the name tag of a mastery.</param>
+	/// <param name="translations">Translates the name tags.</param>
+	/// <returns>An empty text when the character has no mastery.</returns>
+	public static string MasteryNames(PlayerInfo? info, ICharacterEditService characterEdit, ITranslationService translations)
+		=> string.Join(" + ", (info?.ActiveMasteriesRecordNames ?? [])
+			.Select(recId => translations.TranslateXTag(characterEdit.GetMasteryDescriptionTag(recId))));
+
+	/// <summary>
 	/// Builds the lines of the player information panel: a localized label and its value, in display order.
 	/// </summary>
 	/// <param name="info">The player information.</param>
