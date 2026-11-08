@@ -153,13 +153,13 @@ Keep `System.Drawing` (except `Color`, `Point`, `Size`, `Rectangle`) and other W
 Debug builds of `TQVaultAE.GUI` host an MCP server inside the app at `http://127.0.0.1:47017/mcp`. It is registered for Claude Code in `.mcp.json`. Use it to check UI changes on the running app, instead of screenshots and real mouse clicks.
 
 1. Build Debug: `dotnet build TQVaultAE.slnx`.
-2. Run `src/TQVaultAE.GUI/bin/Debug/net10.0-windows/TQVaultAE.exe`.
+2. Run `src/TQVaultAE.GUI/bin/Debug/net10.0-windows/TQVaultAE.exe`. Prefer `TQVaultAE.exe --headless`: it runs on a hidden desktop, so no window, taskbar button or focus change reaches the user. Message boxes then take their default answer (Cancel/No/Ignore/OK) unless one is queued, and native file/folder dialogs are cancelled. Add `TQVAULT_MCP_PORT=47018` when another Debug instance already uses 47017. See "Headless mode" in `documentation/AUTOMATION.md`.
 3. Use the `mcp__tqvault__*` tools:
 
 | Purpose | Tools |
 |---|---|
 | Dialog controls | `control_values(form)`, `set_control(form, control, value)`, `click_control(form, control)`, `open_character_editor`, `tag_box` / `list_tags` |
-| Message boxes | `queue_dialog_answers(answers)` answers the next boxes without showing them (`dialog_answers` lists them); `close_dialog` for the others |
+| Message boxes | `queue_dialog_answers(answers)` answers the next boxes without showing them; `dialog_answers` lists them, and with `--headless` also the boxes that took their default answer and the native dialogs cancelled; `close_dialog` for the others |
 | Windows and dialogs | `list_windows`, `close_dialog` (for example "Default Vault Path" → OK), `list_forms`, `open_form(name, show?)` to create any registered form or dialog, `open_bag_settings(panel)` for the bag icon picker |
 | Read the state from the app's models | `get_state(panel?)`, which returns characters, vaults, panels and items with their cells; `owned_skill_items` for every owned item that grants a skill; `raw_tooltip_lines` for the tooltip lines still shown raw; `tooltip_text_dump(path, views)` for the rows of every item tooltip as rendered (text, color, bold, kind), written to a JSON file to diff |
 | Navigation | `select_character`, `select_vault`, `select_bag` |

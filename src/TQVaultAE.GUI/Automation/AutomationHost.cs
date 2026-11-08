@@ -52,6 +52,7 @@ internal static class AutomationHost
 
 	private static readonly System.Collections.Concurrent.ConcurrentQueue<DialogResult> _dialogAnswers = new();
 	private static readonly System.Collections.Concurrent.ConcurrentQueue<string> _dialogAnswered = new();
+	private static readonly System.Collections.Concurrent.ConcurrentQueue<string> _dialogUnanswered = new();
 
 	/// <summary>
 	/// Queues answers for the next message boxes shown through the message box service.
@@ -67,6 +68,8 @@ internal static class AutomationHost
 	{
 		_dialogAnswers.Clear();
 		_dialogAnswered.Clear();
+		_dialogUnanswered.Clear();
+		Headless.ClearCancelled();
 	}
 
 	/// <summary>Gets the answers not used yet.</summary>
@@ -75,19 +78,68 @@ internal static class AutomationHost
 	/// <summary>Gets the boxes answered from the queue, oldest first.</summary>
 	public static IReadOnlyList<string> AnsweredDialogs => [.. _dialogAnswered];
 
+	/// <summary>Gets the boxes that found no queued answer in headless mode and took their default answer, oldest first.</summary>
+	public static IReadOnlyList<string> UnansweredDialogs => [.. _dialogUnanswered];
+
 	/// <summary>
 	/// Takes the next queued answer when it is one of <paramref name="buttons"/>; an OK-only box takes only an OK answer,
 	/// so an unexpected message does not use up the answer meant for a question.
 	/// </summary>
+	/// In headless mode a box is never shown: without a queued answer it takes <see cref="HeadlessAnswer"/>, which is recorded
+	/// in <see cref="UnansweredDialogs"/>.
+	/// </summary>
 	/// <returns>Whether the box is answered without being shown.</returns>
-	public static bool TryTakeDialogAnswer(string caption, string message, MessageBoxButtons buttons, out DialogResult answer)
+	/// <param name="headlessAnswer">The answer to take in headless mode without a queued one, instead of <see cref="HeadlessAnswer"/>.</param>
+	public static bool TryTakeDialogAnswer(string caption, string message, MessageBoxButtons buttons, out DialogResult answer, DialogResult? headlessAnswer = null)
 	{
+		var shortMessage = message.Length > 120 ? message[..120] + "..." : message;
+		if (_dialogAnswers.TryPeek(out var next) && ButtonsOf(buttons).Contains(next) && _dialogAnswers.TryDequeue(out answer))
+		{
+			_dialogAnswered.Enqueue($"{caption}: {shortMessage} -> {answer}");
+			return true;
+		}
+
 		answer = DialogResult.None;
-		if (!_dialogAnswers.TryPeek(out var next) || !ButtonsOf(buttons).Contains(next) || !_dialogAnswers.TryDequeue(out answer))
+		if (!Headless.Enabled)
 			return false;
 
-		_dialogAnswered.Enqueue($"{caption}: {(message.Length > 120 ? message[..120] + "..." : message)} -> {answer}");
+		answer = headlessAnswer ?? HeadlessAnswer(buttons);
+		_dialogUnanswered.Enqueue($"{DateTime.Now:HH:mm:ss} {caption} ({buttons}): {shortMessage} -> {answer}");
+		_log?.LogWarning("Headless: message box \"{Caption}\" ({Buttons}) had no queued answer, took {Answer}: {Message}", caption, buttons, answer, message);
 		return true;
+	}
+
+	/// <summary>Seconds the endpoint stays up after a fatal error, so that dialog_answers and recent_log can report it.</summary>
+	private const int FatalErrorGraceSeconds = 10;
+
+	/// <summary>
+	/// Ends the process after the fatal error box of <c>Program.Main</c>: when the endpoint runs, it first stays up
+	/// <see cref="FatalErrorGraceSeconds"/> seconds so the error can be read (<c>dialog_answers</c>, <c>recent_log</c>).
+	/// Exits even when threads are left, so that nothing lingers.
+	/// </summary>
+	public static void ExitAfterFatalError()
+	{
+		if (_app is not null)
+		{
+			_log?.LogWarning("Fatal error: TQVault exits in {Seconds} s", FatalErrorGraceSeconds);
+			Thread.Sleep(TimeSpan.FromSeconds(FatalErrorGraceSeconds));
+		}
+		Environment.Exit(1);
+	}
+
+	/// <summary>
+	/// The answer of a box nobody answered in headless mode: the one that changes nothing (Cancel, No, Ignore, OK),
+	/// not the default button, which is the first one (Yes) for the service's boxes.
+	/// </summary>
+	internal static DialogResult HeadlessAnswer(MessageBoxButtons buttons)
+	{
+		var available = ButtonsOf(buttons);
+		foreach (var safe in (DialogResult[])[DialogResult.Cancel, DialogResult.No, DialogResult.Ignore, DialogResult.OK])
+		{
+			if (available.Contains(safe))
+				return safe;
+		}
+		return available.Length > 0 ? available[0] : DialogResult.Cancel;
 	}
 
 	private static DialogResult[] ButtonsOf(MessageBoxButtons buttons) => buttons switch

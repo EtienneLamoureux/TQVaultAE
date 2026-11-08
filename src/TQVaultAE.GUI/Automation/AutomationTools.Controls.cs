@@ -109,7 +109,7 @@ internal static partial class AutomationTools
 
 
 	[McpServerTool(Name = "queue_dialog_answers", Destructive = true)]
-	[Description("Queues answers for the next message boxes (comma separated: OK, Cancel, Yes, No, Abort, Retry, Ignore), so they are answered at once without being shown and nothing waits for a click. A box takes the next answer only when it is one of its buttons; an OK-only box takes only an OK answer, so an unexpected message keeps the answer meant for a question. 'clear' empties the queue and the record. Covers the boxes of the message box service (questions, warnings, errors, save errors); the startup notices and the vault import dialog still need close_dialog.")]
+	[Description("Queues answers for the next message boxes (comma separated: OK, Cancel, Yes, No, Abort, Retry, Ignore), so they are answered at once without being shown and nothing waits for a click. A box takes the next answer only when it is one of its buttons; an OK-only box takes only an OK answer, so an unexpected message keeps the answer meant for a question. 'clear' empties the queue and the record. Covers every message box, the startup notices included; the vault import task dialog still needs close_dialog. In headless mode a box without a queued answer is not shown either: it takes Cancel, No, Ignore or OK and is listed by dialog_answers.")]
 	public static string QueueDialogAnswers([Description("Answers in order, e.g. 'Cancel,No', or 'clear'.")] string answers)
 	{
 		if (string.Equals(answers.Trim(), "clear", StringComparison.OrdinalIgnoreCase))
@@ -128,11 +128,14 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "dialog_answers", ReadOnly = true)]
-	[Description("Lists the message boxes answered from the queue (caption, message, answer) and the answers not used yet.")]
+	[Description("Lists the message boxes answered from the queue (caption, message, answer), the answers not used yet and, in headless mode, the boxes that found no queued answer (with the answer they took) and the native dialogs (file, folder, color, task dialogs) cancelled because nobody could see them.")]
 	public static string DialogAnswers()
 		=> Serialize(new
 		{
+			headless = Headless.Enabled,
 			answered = AutomationHost.AnsweredDialogs,
+			unanswered = AutomationHost.UnansweredDialogs,
+			cancelledNativeDialogs = Headless.CancelledNativeDialogs,
 			pending = AutomationHost.PendingDialogAnswers.Select(a => a.ToString()).ToList(),
 		});
 
