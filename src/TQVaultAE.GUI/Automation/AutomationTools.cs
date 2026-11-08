@@ -157,7 +157,7 @@ internal static partial class AutomationTools
 					type = p.Panel.GetType().Name,
 					sackType = p.Panel.SackType.ToString(),
 					hasSack = p.Panel.Sack is not null,
-					currentBag = p.Container?.CurrentBag,
+					currentBag = p.Container?.ShownBag(),
 					bagCount = p.Container?.BagButtons?.Count,
 					gridSize = new { width = p.Panel.SackSize.Width, height = p.Panel.SackSize.Height },
 					itemCount = p.Panel.Sack?.Count(i => !RecordId.IsNullOrEmpty(i.BaseItemId)),
@@ -299,7 +299,7 @@ internal static partial class AutomationTools
 			var button = container.BagButtons[bag];
 			OnMouseDownMethod.Invoke(button, [new MouseEventArgs(MouseButtons.Left, 1, button.Width / 2, button.Height / 2, 0)]);
 			container.Refresh();
-			return Serialize(new { panel, currentBag = container.CurrentBag });
+			return Serialize(new { panel, currentBag = container.ShownBag() });
 		});
 
 	[McpServerTool(Name = "pick_item", Destructive = true)]

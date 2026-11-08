@@ -85,4 +85,11 @@ internal static class AutomationPanels
 	/// Gets a value indicating whether the control and all its parents are visible.
 	/// </summary>
 	public static bool IsShown(Control control) => control.Visible && control.FindForm() is not null;
+
+	/// <summary>
+	/// Gets the bag a panel shows. <see cref="StashPanel"/> hides <see cref="VaultPanel.CurrentBag"/> with its own
+	/// (<c>new</c>, not an override), so reading it through a <see cref="VaultPanel"/> reference always gave 0.
+	/// </summary>
+	public static int ShownBag(this VaultPanel container)
+		=> container is StashPanel stash ? stash.CurrentBag : container.CurrentBag;
 }

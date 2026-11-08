@@ -186,7 +186,7 @@ internal static partial class AutomationTools
 			try
 			{
 				var (entries, clicked) = container.AutomationBagMenu(bag, path?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
-				return Serialize(new { panel, bag, currentBag = container.CurrentBag, entries, clicked, icons = container.AutomationBagIcons });
+				return Serialize(new { panel, bag, currentBag = container.ShownBag(), entries, clicked, icons = container.AutomationBagIcons });
 			}
 			catch (InvalidOperationException ex)
 			{
@@ -224,7 +224,7 @@ internal static partial class AutomationTools
 				?? throw new McpException($"Panel '{panel}' has no bag buttons.");
 
 			var dialog = form.Services.Forms.Create<Dialogs.BagButtonSettings>();
-			dialog.CurrentBagButton = container.BagButtons[container.CurrentBag];
+			dialog.CurrentBagButton = container.BagButtons[container.ShownBag()];
 
 			// ShowDialog runs its own message loop: start it after this call returns.
 			form.BeginInvoke(() => dialog.ShowDialog(form));
