@@ -81,4 +81,16 @@ public interface IStashService
 	/// <param name="relicVaultStash">The relic vault stash.</param>
 	/// <returns>The sack; null when the bag has nothing to show (no character, or a stash without sacks).</returns>
 	SackCollection? GetBagSack(int bagId, PlayerCollection? player, Stash? transferStash, Stash? playerStash, Stash? relicVaultStash);
+
+	/// <summary>
+	/// Describes what a stash panel bag shows when it is selected: its sack and the size used to lay it out.
+	/// </summary>
+	/// <param name="bagId">The bag id (see <see cref="BagIdConstants"/>), clamped like <see cref="ClampBagId"/>.</param>
+	/// <param name="player">The character, for the equipment panel.</param>
+	/// <param name="transferStash">The transfer stash (caravan).</param>
+	/// <param name="playerStash">The character's stash.</param>
+	/// <param name="relicVaultStash">The relic vault stash.</param>
+	/// <returns>The bag; null for a stash bag whose stash is not loaded. The equipment panel is always described,
+	/// with a null sack when there is no character.</returns>
+	StashBag? GetBag(int bagId, PlayerCollection? player, Stash? transferStash, Stash? playerStash, Stash? relicVaultStash);
 }
