@@ -187,8 +187,10 @@ public class VaultService(
 	}
 
 	/// <inheritdoc />
-	public string BuildCsvExport(PlayerCollection vault, int? bagIndex, char delimiter)
+	public string BuildCsvExport(PlayerCollection vault, int? bagIndex)
 	{
+		var delimiter = this.UserSettings.CsvDelimiterChar;
+
 		IEnumerable<(Item Item, int BagId)> items = bagIndex is int index
 			? (vault.GetSack(index) ?? []).Select(item => (item, index + 1))
 			: (vault.Sacks ?? []).SelectMany((sack, idx) => sack.Select(item => (item, idx + 1)));

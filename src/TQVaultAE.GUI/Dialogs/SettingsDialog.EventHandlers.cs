@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using EnumsNET;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Config;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Forms;

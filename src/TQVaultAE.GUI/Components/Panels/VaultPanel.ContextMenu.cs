@@ -28,19 +28,12 @@ namespace TQVaultAE.GUI.Components.Panels;
 
 public partial class VaultPanel
 {
-	private (char charDelimiter, CsvDelimiter csvDelimiter) GetCSVDelimiter()
-	{
-		var delimStr = this.USettings.CSVDelimiter;
-
-		char delim = ',';
-
-		if (!EnumsNET.Enums.TryParse<CsvDelimiter>(delimStr, out var delimEnum))
-			delimEnum = CsvDelimiter.Comma;
-
-		delim = (EnumsNET.Enums.AsString(delimEnum, EnumsNET.EnumFormat.Description) ?? ",").First();
-
-		return (delim, delimEnum);
-	}
+	/// <summary>
+	/// Builds the CSV export of the shown vault, or of one of its bags, with the delimiter of the settings.
+	/// </summary>
+	/// <param name="bagIndex">Index of the bag to export; the whole vault when null.</param>
+	internal string BuildCsvExport(int? bagIndex)
+		=> this.Services.VaultService.BuildCsvExport(this.ShownVault, bagIndex);
 
 	private void ExportVaultCSVToClipboard(object? sender, EventArgs e)
 		=> this.ExportCSVToClipboard(null);
@@ -54,11 +47,7 @@ public partial class VaultPanel
 	/// <param name="bagIndex">Index of the bag to export; the whole vault when null.</param>
 	private void ExportCSVToClipboard(int? bagIndex)
 	{
-		var (delim, _) = GetCSVDelimiter();
-
-		var export = this.Services.VaultService.BuildCsvExport(this.ShownVault, bagIndex, delim);
-
-		Clipboard.SetText(export, TextDataFormat.UnicodeText);
+		Clipboard.SetText(this.BuildCsvExport(bagIndex), TextDataFormat.UnicodeText);
 
 		this.UIService.NotifyUser(string.Format(Resources.CSVExportedToClipboardNotification, DateTime.Now));
 	}
