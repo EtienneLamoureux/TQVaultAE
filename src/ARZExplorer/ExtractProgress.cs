@@ -3,26 +3,22 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using ArzExplorer.Models;
+using ArzExplorer.Properties;
+using System.Globalization;
+using TQVaultAE.Domain.Entities;
 
 namespace ArzExplorer;
 
-using ArzExplorer.Models;
-using ArzExplorer.Properties;
-using System;
-using System.Globalization;
-using System.Threading;
-using System.Windows.Forms;
-using TQVaultAE.Domain.Entities;
-
 /// <summary>
-/// ARZ file extraction progress dialog
+/// Progress dialog of Extract All Files: extracts the selected file on a worker thread.
 /// </summary>
 internal sealed partial class ExtractProgress : Form
 {
 	/// <summary>
 	/// MessageBoxOptions for right to left reading.
 	/// </summary>
-	private static MessageBoxOptions rightToLeftOptions = (MessageBoxOptions)0;
+	private readonly MessageBoxOptions _rightToLeftOptions;
 
 	/// <summary>
 	/// Base extraction folder for database
@@ -34,17 +30,18 @@ internal sealed partial class ExtractProgress : Form
 	/// <summary>
 	/// Stops the extraction
 	/// </summary>
-	private readonly CancellationTokenSource cancellation = new();
+	private readonly CancellationTokenSource _cancellation = new();
 
 	/// <summary>
 	/// How the extraction ended
 	/// </summary>
-	private ExtractionResult? result;
+	private ExtractionResult? _result;
 
 	/// <summary>
 	/// Initializes a new instance of the ExtractProgress class.
 	/// </summary>
-	/// <param name="baseFolder">Base extraction folder for TQ database</param>
+	/// <param name="mainForm">The main window, whose selected file is extracted.</param>
+	/// <param name="extractor">Writes the records or entries.</param>
 	public ExtractProgress(MainForm mainForm, ArchiveExtractor extractor)
 	{
 		this.MainForm = mainForm;
@@ -57,9 +54,7 @@ internal sealed partial class ExtractProgress : Form
 
 		// Set options for Right to Left reading.
 		if (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)
-		{
-			rightToLeftOptions = MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading;
-		}
+			this._rightToLeftOptions = MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading;
 	}
 
 	/// <summary>
@@ -78,10 +73,10 @@ internal sealed partial class ExtractProgress : Form
 		// Extract on a worker thread. A failure comes back in the result:
 		// an exception thrown on that thread would end the application.
 		var baseFolder = this.BaseFolder;
-		var token = this.cancellation.Token;
+		var token = this._cancellation.Token;
 		Task.Run(() =>
 		{
-			this.result = this.Extractor.ExtractAll(
+			this._result = this.Extractor.ExtractAll(
 				file
 				, baseFolder
 				, recordId => this.Invoke(() => this.UpdateLabel(recordId))
@@ -89,7 +84,7 @@ internal sealed partial class ExtractProgress : Form
 				, token
 			);
 
-			if (this.result.Outcome == ExtractionOutcome.Failed)
+			if (this._result.Outcome == ExtractionOutcome.Failed)
 				this.Invoke(this.ExtractFailed);
 			else
 				this.Invoke(this.ExtractComplete);
@@ -103,13 +98,7 @@ internal sealed partial class ExtractProgress : Form
 	{
 		this.DialogResult = DialogResult.Abort;
 
-		MessageBox.Show(
-			this.result?.Error?.ToString() ?? string.Empty,
-			Resources.ARZProgressFailedText,
-			MessageBoxButtons.OK,
-			MessageBoxIcon.Error,
-			MessageBoxDefaultButton.Button1,
-			rightToLeftOptions);
+		this.ShowMessage(this._result?.Error?.ToString() ?? string.Empty, Resources.ARZProgressFailedText, MessageBoxIcon.Error);
 
 		this.Close();
 	}
@@ -119,33 +108,25 @@ internal sealed partial class ExtractProgress : Form
 	/// </summary>
 	private void ExtractComplete()
 	{
-		if (this.result?.Outcome == ExtractionOutcome.Cancelled)
+		if (this._result?.Outcome == ExtractionOutcome.Cancelled)
 		{
-			MessageBox.Show(
-				Resources.ARZProgressCancelledText,
-				string.Empty,
-				MessageBoxButtons.OK,
-				MessageBoxIcon.None,
-				MessageBoxDefaultButton.Button1,
-				rightToLeftOptions);
-
+			this.ShowMessage(Resources.ARZProgressCancelledText, string.Empty, MessageBoxIcon.None);
 			this.DialogResult = DialogResult.Cancel;
 		}
 		else
 		{
-			MessageBox.Show(
-				Resources.ARZProgressCompleteText,
-				string.Empty,
-				MessageBoxButtons.OK,
-				MessageBoxIcon.None,
-				MessageBoxDefaultButton.Button1,
-				rightToLeftOptions);
-
+			this.ShowMessage(Resources.ARZProgressCompleteText, string.Empty, MessageBoxIcon.None);
 			this.DialogResult = DialogResult.OK;
 		}
 
 		this.Close();
 	}
+
+	/// <summary>
+	/// Shows an OK message box, right to left when the UI culture reads that way.
+	/// </summary>
+	private void ShowMessage(string text, string caption, MessageBoxIcon icon)
+		=> MessageBox.Show(text, caption, MessageBoxButtons.OK, icon, MessageBoxDefaultButton.Button1, this._rightToLeftOptions);
 
 	/// <summary>
 	/// Increment the progress bar.
@@ -171,6 +152,6 @@ internal sealed partial class ExtractProgress : Form
 	/// <param name="e">EventArgs data</param>
 	private void CancelButtonClick(object sender, EventArgs e)
 	{
-		this.cancellation.Cancel();
+		this._cancellation.Cancel();
 	}
 }
