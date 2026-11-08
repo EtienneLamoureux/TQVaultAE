@@ -471,6 +471,8 @@ public class VaultServiceTests
 		deleted.Should().BeTrue();
 		_mockFileIO.Verify(x => x.Delete(vaultFile), Times.Once);
 		_sessionContext.Vaults.ContainsKey(vaultFile).Should().BeFalse();
+		// Searches must not find the items of the deleted vault any more.
+		_mockItemDatabaseService.Verify(x => x.RemoveContainerFromDatabase(vaultFile), Times.Once);
 	}
 
 	[Fact]
@@ -504,6 +506,8 @@ public class VaultServiceTests
 		_mockFileIO.Verify(x => x.Move(oldFile, newFile), Times.Once);
 		_sessionContext.Vaults.ContainsKey(oldFile).Should().BeFalse();
 		_sessionContext.Vaults.ContainsKey(newFile).Should().BeFalse();
+		// The items found under the old name go; they come back under the new one when it is loaded.
+		_mockItemDatabaseService.Verify(x => x.RemoveContainerFromDatabase(oldFile), Times.Once);
 	}
 
 	[Theory]

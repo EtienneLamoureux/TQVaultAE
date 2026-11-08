@@ -208,6 +208,26 @@ public class ItemDatabaseServiceTests
 	}
 
 	[Fact]
+	public void RemoveContainerFromDatabase_RemovesOnlyTheItemsOfThatFile()
+	{
+		// Arrange: two items in a vault about to be deleted (path case differs), one in another vault
+		var gone1 = CreateTestItem();
+		var gone2 = CreateTestItem();
+		var kept = CreateTestItem();
+		_service.AddItemToDatabase(gone1, """C:\Vaults\Gear.vault.json""", "Gear", 0, SackType.Vault);
+		_service.AddItemToDatabase(gone2, """C:\VAULTS\gear.vault.json""", "Gear", 3, SackType.Vault);
+		_service.AddItemToDatabase(kept, """C:\Vaults\Rings.vault.json""", "Rings", 0, SackType.Vault);
+
+		// Act
+		_service.RemoveContainerFromDatabase("""C:\Vaults\Gear.vault.json""");
+
+		// Assert
+		_service.ItemDatabase.Select(r => r.Item).Should().Equal(kept);
+		// A removed item can be indexed again, for example when the renamed vault is loaded.
+		_service.TryAddItemToDatabase(gone1).Should().BeTrue();
+	}
+
+	[Fact]
 	public void RemoveItemFromDatabase_WithNonExistingItem_DoesNotChangeDatabase()
 	{
 		// Arrange

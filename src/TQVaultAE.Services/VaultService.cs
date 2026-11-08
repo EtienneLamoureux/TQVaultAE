@@ -260,6 +260,7 @@ public class VaultService(
 		}
 
 		this.userContext.Vaults.TryRemove(fileName, out _);
+		this.ItemDatabaseService.RemoveContainerFromDatabase(fileName);
 		return deleted;
 	}
 
@@ -277,6 +278,9 @@ public class VaultService(
 		this.userContext.Vaults.TryRemove(oldFileName, out _);
 		// The Main Vault, or a vault created but never saved, may sit in the cache under the new name.
 		this.userContext.Vaults.TryRemove(newFileName, out _);
+		// The search finds the items again under the new name once the renamed vault is loaded.
+		this.ItemDatabaseService.RemoveContainerFromDatabase(oldFileName);
+		this.ItemDatabaseService.RemoveContainerFromDatabase(newFileName);
 		return true;
 	}
 
