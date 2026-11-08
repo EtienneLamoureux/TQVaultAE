@@ -202,6 +202,12 @@ public class PlayerService(
 				)
 			)
 			.OrderBy(ps => ps.Name)
+			.Select(ps =>
+			{
+				// Tags come with the list, so displaying a save does not read the tag configuration.
+				this.TagService.LoadTags(ps);
+				return ps;
+			})
 			.ToArray();
 	}
 
@@ -303,6 +309,35 @@ public class PlayerService(
 
 	/// <inheritdoc/>
 	public bool Unarchive(PlayerSave ps) => this.MoveSave(ps, archive: false);
+
+	/// <inheritdoc/>
+	public ArchiveChangeResult SetArchived(IEnumerable<PlayerSave> saves, bool archive, string? tag)
+	{
+		// Pick the saves first: moving one changes its IsArchived.
+		var toMove = saves
+			.Where(ps => ps.IsArchived != archive && (tag is null || ps.Tags.ContainsKey(tag)))
+			.ToList();
+
+		List<PlayerSave> changed = [];
+		List<PlayerSave> failed = [];
+		foreach (var ps in toMove)
+		{
+			bool moved;
+			try
+			{
+				moved = this.MoveSave(ps, archive);
+			}
+			catch (Exception ex)
+			{
+				this.Log.LogError(ex, "Failed to {Action} the character {Name}", archive ? "archive" : "unarchive", ps.Name);
+				moved = false;
+			}
+
+			(moved ? changed : failed).Add(ps);
+		}
+
+		return new ArchiveChangeResult(changed, failed);
+	}
 
 	/// <summary>
 	/// Archives or unarchives a save, then moves the loaded player from its old file path to the new one, so the player

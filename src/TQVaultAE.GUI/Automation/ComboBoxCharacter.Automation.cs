@@ -27,4 +27,30 @@ public partial class ComboBoxCharacter
 		this.archiveToolStripMenuItem.Checked = archived;
 		return (ps.Name, ps.IsArchived, ps.Folder);
 	}
+
+	/// <summary>
+	/// Clicks "Archive all" (or "Unarchive all") in the menu of a tag, which moves the save folders of the characters
+	/// having that tag. Only test tags (names starting with <c>claude-</c>) whose characters are all test characters.
+	/// </summary>
+	/// <returns>The characters having the tag, and whether each one is archived now.</returns>
+	internal IReadOnlyList<(string Name, bool IsArchived, string Folder)> AutomationSetArchivedByTag(string tag, bool archived)
+	{
+		if (!tag.StartsWith("claude-", StringComparison.OrdinalIgnoreCase))
+			throw new InvalidOperationException($"'{tag}' is not a test tag: only tags starting with 'claude-' may be used.");
+
+		var tagged = this.Items.OfType<PlayerSave>().Where(ps => ps.Tags.ContainsKey(tag)).ToList();
+		var real = tagged.Where(ps => !ps.Name.StartsWith("claude-", StringComparison.OrdinalIgnoreCase)).Select(ps => ps.Name).ToList();
+		if (real.Count != 0)
+			throw new InvalidOperationException($"The tag '{tag}' is on characters that are not test characters: {string.Join(", ", real)}.");
+
+		this.RefreshMenuTagList();
+		var tagItem = this.tagsToolStripMenuItem.DropDownItems.OfType<ToolStripMenuItem>()
+			.FirstOrDefault(i => i.Text == tag && (i.Name?.StartsWith(TAGKEY, StringComparison.Ordinal) ?? false))
+			?? throw new InvalidOperationException($"No tag '{tag}' in the menu.");
+		var entryPrefix = archived ? "tagArchiveAllItem" : "tagUnArchiveAllItem";
+		var entry = tagItem.DropDownItems.OfType<ToolStripMenuItem>().First(i => i.Name?.StartsWith(entryPrefix, StringComparison.Ordinal) ?? false);
+		entry.PerformClick();
+
+		return tagged.Select(ps => (ps.Name, ps.IsArchived, ps.Folder)).ToList();
+	}
 }

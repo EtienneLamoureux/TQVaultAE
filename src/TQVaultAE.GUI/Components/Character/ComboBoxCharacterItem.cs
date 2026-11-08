@@ -124,8 +124,6 @@ public partial class ComboBoxCharacterItem : UserControl
 
 			this.ClearTagList();
 
-			this.TagService.LoadTags(ps);
-
 			if (ps.Tags.Count != 0)
 			{
 				// refresh assigned tag list
