@@ -65,32 +65,16 @@ public partial class VaultPanel
 
 	private void DisableTooltipClicked(object? sender, EventArgs e)
 	{
-		ToolStripMenuItem? item = (ToolStripMenuItem)sender!;
+		// The entry carries its action (AddTooltipMenuItem), not compared by its translated text.
+		if ((sender as ToolStripItem)?.Tag is TQVaultAE.Application.DTOs.BagTooltipChange change)
+			this.Services.VaultService.ChangeBagTooltip(this.ShownVault, change, this.CurrentBag, this.BagButtons.Count);
+	}
 
-		if (item is not null)
-		{
-			if (item.Text == Resources.PlayerPanelMenuEnableAllTooltip)
-			{
-				this.ShownVault.DisabledTooltipBagId.Clear();
-			}
-
-			if (item.Text == Resources.PlayerPanelMenuDisableAllTooltip)
-			{
-				var all = this.BagButtons.Select(b => b.ButtonNumber).ToArray();
-				this.ShownVault.DisabledTooltipBagId.Clear();
-				this.ShownVault.DisabledTooltipBagId.AddRange(all);
-			}
-
-			if (item.Text == Resources.PlayerPanelMenuEnableTooltip)
-			{
-				this.ShownVault.DisabledTooltipBagId.Remove(this.CurrentBag);
-			}
-
-			if (item.Text == Resources.PlayerPanelMenuDisableTooltip)
-			{
-				this.ShownVault.DisabledTooltipBagId.Add(this.CurrentBag);
-			}
-		}
+	/// <summary>Adds a bag tooltip entry that does <paramref name="change"/>.</summary>
+	private void AddTooltipMenuItem(string menuText, TQVaultAE.Application.DTOs.BagTooltipChange change)
+	{
+		this.AddMenuItem(menuText, this.DisableTooltipClicked);
+		this.contextMenu.Items[^1].Tag = change;
 	}
 
 	private void AddExportTabSubMenu()
@@ -261,7 +245,7 @@ public partial class VaultPanel
 		{
 			if (this.USettings.SuppressWarnings || this.Services.MessageBoxes.Confirm(Resources.PlayerPanelEmptyMsg, Resources.PlayerPanelEmpty))
 			{
-				this.BagSackPanel.ShownSack.EmptySack();
+				this.Services.VaultService.EmptyBag(this.BagSackPanel.ShownSack);
 				this.BagSackPanel.Refresh();
 				BagButtonTooltip.InvalidateCache(this.BagSackPanel.Sack);
 			}
@@ -344,6 +328,10 @@ public partial class VaultPanel
 				{
 					return;
 				}
+
+				// The overwritten items leave the search too.
+				if (this.ShownPlayer.GetSack(destinationIndex) is { } overwritten)
+					this.Services.VaultService.EmptyBag(overwritten);
 			}
 
 			if (this.ShownPlayer.CopySack(this.CurrentBag, destinationIndex))

@@ -232,6 +232,44 @@ public class VaultService(
 	}
 
 	/// <inheritdoc />
+	public void EmptyBag(SackCollection sack)
+	{
+		foreach (var item in sack.ToList())
+			this.ItemDatabaseService.RemoveItemFromDatabase(item);
+
+		sack.EmptySack();
+	}
+
+	/// <inheritdoc />
+	public void ChangeBagTooltip(PlayerCollection vault, BagTooltipChange change, int bag, int bagCount)
+	{
+		var disabled = vault.DisabledTooltipBagId;
+		var before = disabled.Order().ToList();
+
+		switch (change)
+		{
+			case BagTooltipChange.Enable:
+				disabled.RemoveAll(id => id == bag);
+				break;
+			case BagTooltipChange.Disable:
+				if (!disabled.Contains(bag))
+					disabled.Add(bag);
+				break;
+			case BagTooltipChange.EnableAll:
+				disabled.Clear();
+				break;
+			case BagTooltipChange.DisableAll:
+				disabled.Clear();
+				disabled.AddRange(Enumerable.Range(0, bagCount));
+				break;
+		}
+
+		// Saved with the vault: without this the change was lost unless something else was saved.
+		if (!disabled.Order().SequenceEqual(before) && vault.Sacks is { Length: > 0 } sacks)
+			sacks[0].IsModified = true;
+	}
+
+	/// <inheritdoc />
 	public bool CopyVault(string sourceName, string targetName)
 	{
 		var sourceFileName = this.GamePathResolver.GetVaultFile(sourceName);

@@ -1,5 +1,6 @@
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Application.Contracts.Services;
 
@@ -47,6 +48,23 @@ public interface IVaultService
 	/// <param name="destination">Index of the destination bag.</param>
 	/// <returns>Whether the transfer can run and whether it would overwrite items.</returns>
 	BagTransferCheck CheckBagTransfer(PlayerCollection vault, int source, int destination);
+
+	/// <summary>
+	/// Empties a bag ("Empty Bag", or a bag about to be overwritten by "Copy Bag"): its items are removed and
+	/// dropped from the search database, so searches no longer find them.
+	/// </summary>
+	/// <param name="sack">The bag to empty.</param>
+	void EmptyBag(SackCollection sack);
+
+	/// <summary>
+	/// Shows or hides the tooltip of a vault bag, or of every bag. The list is saved in the vault file, so the vault is
+	/// marked modified when it changes.
+	/// </summary>
+	/// <param name="vault">The vault.</param>
+	/// <param name="change">What the menu entry does.</param>
+	/// <param name="bag">The bag of <see cref="BagTooltipChange.Enable"/> and <see cref="BagTooltipChange.Disable"/>.</param>
+	/// <param name="bagCount">The number of bag buttons, for <see cref="BagTooltipChange.DisableAll"/>.</param>
+	void ChangeBagTooltip(PlayerCollection vault, BagTooltipChange change, int bag, int bagCount);
 
 	/// <summary>
 	/// Builds the CSV export of a vault, or of one of its bags: a header line, then one line per item.
