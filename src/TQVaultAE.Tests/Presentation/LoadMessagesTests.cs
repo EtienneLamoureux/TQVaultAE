@@ -1,5 +1,7 @@
 using AwesomeAssertions;
+using Moq;
 using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Presentation;
@@ -65,6 +67,28 @@ public class LoadMessagesTests
 		LoadMessages.ForStash(found, "x").Should().BeEmpty();
 		LoadMessages.ForStash(unknown, "x").Should().BeEmpty();
 		LoadMessages.ForStash(none, "x").Should().BeEmpty();
+	}
+
+	[Fact]
+	public void ForPlayerStash_NotFound_NamesTheCharacter()
+	{
+		var pathIO = new Mock<IPathIO>();
+		pathIO.Setup(x => x.GetFileName("""C:\saves\_Hero""")).Returns("_Hero");
+		var save = new PlayerSave("""C:\saves\_Hero""", true, false, false, "", new Mock<ITranslationService>().Object, pathIO.Object);
+		var result = new StashLoadResult { Stash = new Stash("Hero", StashFile) { StashFound = false }, StashFile = StashFile };
+
+		var message = LoadMessages.ForPlayerStash(result, save).Should().ContainSingle().Subject;
+
+		message.Text.Should().Be($"{Resources.StashNotFoundMsg}\n\nCharacter : {save}");
+	}
+
+	[Fact]
+	public void ForSharedStashes_NotFound_NameTheStashAndItsFile()
+	{
+		var result = new StashLoadResult { Stash = new Stash("Shared", StashFile) { StashFound = false }, StashFile = StashFile };
+
+		LoadMessages.ForTransferStash(result).Single().Text.Should().Be($"{Resources.StashNotFoundMsg}\n\nTransfer Stash\n\n{StashFile}");
+		LoadMessages.ForRelicVaultStash(result).Single().Text.Should().Be($"{Resources.StashNotFoundMsg}\n\nRelic Stash\n\n{StashFile}");
 	}
 
 	[Fact]

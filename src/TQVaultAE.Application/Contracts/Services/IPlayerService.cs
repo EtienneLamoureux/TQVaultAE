@@ -23,6 +23,17 @@ public interface IPlayerService
 	StashLoadResult LoadPlayerStash(PlayerSave playerSave, bool fromFileWatcher = false);
 
 	/// <summary>
+	/// Loads what a character selection shows: the character, then for an Immortal Throne character
+	/// its stash and, when asked, the relic vault and transfer stashes.
+	/// A Titan Quest original character has none of these stashes.
+	/// </summary>
+	/// <param name="selectedSave">The selected character.</param>
+	/// <param name="loadTransferStash">Load the transfer stash (it is not loaded yet).</param>
+	/// <param name="loadRelicVaultStash">Load the relic vault stash (it is not loaded yet).</param>
+	/// <returns>The loads, each with what is needed for its messages.</returns>
+	CharacterSessionLoadResult LoadCharacterSession(PlayerSave selectedSave, bool loadTransferStash, bool loadRelicVaultStash);
+
+	/// <summary>
 	/// Gets the loaded players that have unsaved changes, with their file.
 	/// </summary>
 	IReadOnlyList<(string File, PlayerCollection Player)> GetModifiedPlayers();

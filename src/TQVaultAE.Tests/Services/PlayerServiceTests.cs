@@ -112,6 +112,47 @@ public class PlayerServiceTests
 		result.PlayerFile.Should().BeNull();
 	}
 
+	[Fact]
+	public void LoadCharacterSession_TitanQuestOriginalCharacter_HasNoStashesAndLoadsNoSharedStash()
+	{
+		var playerSave = CreatePlayerSave("/Test/_");
+		this._mockStashService.Setup(x => x.LoadCharacterStash(playerSave, false)).Returns((StashLoadResult?)null);
+
+		var session = this._playerService.LoadCharacterSession(playerSave, loadTransferStash: true, loadRelicVaultStash: true);
+
+		session.HasStashes.Should().BeFalse();
+		session.PlayerStash.Should().BeNull();
+		session.TransferStash.Should().BeNull();
+		session.RelicVaultStash.Should().BeNull();
+		this._mockStashService.Verify(x => x.LoadTransferStashFor(It.IsAny<PlayerSave?>(), It.IsAny<bool>()), Times.Never);
+		this._mockStashService.Verify(x => x.LoadRelicVaultStashFor(It.IsAny<PlayerSave?>(), It.IsAny<bool>()), Times.Never);
+	}
+
+	[Theory]
+	[InlineData(true, true)]
+	[InlineData(true, false)]
+	[InlineData(false, true)]
+	[InlineData(false, false)]
+	public void LoadCharacterSession_ImmortalThroneCharacter_LoadsItsStashAndTheSharedStashesAskedFor(bool loadTransfer, bool loadRelic)
+	{
+		var playerSave = CreatePlayerSave("/Test/_", isIT: true);
+		var playerStash = StashLoadResult.Empty();
+		var transfer = StashLoadResult.Empty();
+		var relic = StashLoadResult.Empty();
+		this._mockStashService.Setup(x => x.LoadCharacterStash(playerSave, false)).Returns(playerStash);
+		this._mockStashService.Setup(x => x.LoadTransferStashFor(playerSave, false)).Returns(transfer);
+		this._mockStashService.Setup(x => x.LoadRelicVaultStashFor(playerSave, false)).Returns(relic);
+
+		var session = this._playerService.LoadCharacterSession(playerSave, loadTransfer, loadRelic);
+
+		session.HasStashes.Should().BeTrue();
+		session.PlayerStash.Should().BeSameAs(playerStash);
+		session.TransferStash.Should().BeSameAs(loadTransfer ? transfer : null);
+		session.RelicVaultStash.Should().BeSameAs(loadRelic ? relic : null);
+		this._mockStashService.Verify(x => x.LoadTransferStashFor(playerSave, false), loadTransfer ? Times.Once() : Times.Never());
+		this._mockStashService.Verify(x => x.LoadRelicVaultStashFor(playerSave, false), loadRelic ? Times.Once() : Times.Never());
+	}
+
 	/// <summary>
 	/// Test LoadPlayer method with empty/whitespace PlayerSave name
 	/// </summary>
