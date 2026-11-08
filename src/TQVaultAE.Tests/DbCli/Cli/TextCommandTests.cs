@@ -20,10 +20,8 @@ public sealed class TextCommandTests : IDisposable
 	[Fact]
 	public void Text_ExactKey_IsLookedUpIgnoringCase()
 	{
-		var lines = this.Lines("--key", "TAGSWORDA");
-
-		lines.Should().HaveCount(2);
-		lines[1].Split('\t')[1].Should().Be("Alpha Blade");
+		// The tag column spells the tag as the game does, like a wildcard search.
+		this.Lines("--key", "TAGSWORDA").Should().Equal("tag\ttext", "tagSwordA\tAlpha Blade");
 	}
 
 	[Fact]

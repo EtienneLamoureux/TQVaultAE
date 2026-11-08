@@ -49,6 +49,14 @@ internal sealed class TextCommand : ICommand
 		return hits;
 	}
 
+	/// <summary>The tag as stored in the text files (the lookup ignores case).</summary>
+	private static string GameSpelling(ITextDatabase text, string tag) {
+		foreach (var key in text.Entries.Keys)
+			if (string.Equals(key, tag, StringComparison.OrdinalIgnoreCase))
+				return key;
+		return tag;
+	}
+
 	private static bool AnyMatch(IReadOnlyList<Pattern> patterns, string value) {
 		foreach (var p in patterns)
 			if (p.IsMatch(value))
@@ -65,10 +73,10 @@ internal sealed class TextCommand : ICommand
 		var format = Formats.Resolve(args.Get("format"), outPath, OutputFormat.Tsv, OutputFormat.Json, OutputFormat.Jsonl, OutputFormat.Tsv);
 		var text = context.Text(args.Get("lang") ?? "EN");
 
-		// Exact single key: direct lookup.
+		// Exact single key: direct lookup; the tag is written as the game spells it, not as typed.
 		List<KeyValuePair<string, string>> hits;
 		if (keys.Count == 1 && keys[0].Literal is { } literal && values.Count == 0)
-			hits = text.Resolve(literal) is { } t ? [new(literal, t)] : [];
+			hits = text.Resolve(literal) is { } t ? [new(GameSpelling(text, literal), t)] : [];
 		else
 			hits = Search(text, keys, values);
 

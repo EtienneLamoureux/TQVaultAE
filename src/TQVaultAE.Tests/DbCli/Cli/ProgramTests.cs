@@ -65,6 +65,16 @@ public sealed class ProgramTests : IDisposable
 	}
 
 	[Fact]
+	public void Run_HelpOfUnknownCommand_IsUsageErrorWithSuggestion()
+	{
+		var (code, output, error) = RunCapturingOut("help", "recrods");
+
+		code.Should().Be(2);
+		output.Should().BeEmpty();
+		error.Should().Contain("Unknown command 'recrods'.").And.Contain("records").And.Contain("Run 'tqdb --help' for usage.");
+	}
+
+	[Fact]
 	public void Run_Version_PrintsToolAndVersion()
 	{
 		var (code, output, _) = RunCapturingOut("--version");

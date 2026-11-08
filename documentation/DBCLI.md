@@ -223,7 +223,7 @@ Search localization tags (`Text\Text_XX.arc`): tag code <-> display text.
 | `-v, --value <glob\|/re/>` | Text (`"*hooked*"`). |
 | `-l, --lang <code>` | Default `EN`. |
 | `--limit`, `--count` | As for `records`. |
-| `--format json\|jsonl\|tsv` | Default `tsv`. Columns `tag`, `text`; sorted by tag. |
+| `--format json\|jsonl\|tsv` | Default `tsv`. Columns `tag`, `text`; sorted by tag. The `tag` column spells the tag as the game does, whatever the case given to `--key`. |
 
 ```
 tqdb text --value "*of the hunt*" --lang FR
@@ -291,7 +291,7 @@ Output goes to stdout unless `--out` is given; messages go to stderr, so `tqdb r
 |---|---|
 | 0 | Success (also when nothing matched). |
 | 1 | Runtime failure (corrupt file, I/O error, an entry failed to extract). |
-| 2 | Usage error (unknown option, bad value, invalid pattern or `--where`). |
+| 2 | Usage error (unknown command or option, also in `tqdb help <command>`; bad value, invalid pattern or `--where`). |
 | 3 | Not found (game install, record id, text language). |
 | 130 | Cancelled (Ctrl+C). |
 
