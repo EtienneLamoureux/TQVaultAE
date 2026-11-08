@@ -19,18 +19,12 @@ public class SettingsChoicesTests
 	[Fact]
 	public void GameLanguages_GivesEnglishNamesSortedByDisplayName()
 	{
-		var previous = CultureInfo.CurrentUICulture;
-		CultureInfo.CurrentUICulture = new CultureInfo("en-US");
-		try
-		{
-			var choices = SettingsChoices.GameLanguages("fr,de,en");
+		var choices = SettingsChoices.GameLanguages("fr,de,en");
 
-			choices.Select(c => c.Value).Should().Equal("English", "French", "German");
-		}
-		finally
-		{
-			CultureInfo.CurrentUICulture = previous;
-		}
+		// The display names follow the UI language, so the test does not change the culture (shared by the tests).
+		choices.Select(c => c.Value).Should().BeEquivalentTo("English", "French", "German");
+		choices.Select(c => c.DisplayName).Should().BeInAscendingOrder(StringComparer.CurrentCulture);
+		choices.Should().Contain(c => c.Value == "French" && c.DisplayName == new CultureInfo("fr").DisplayName);
 	}
 
 	[Fact]
