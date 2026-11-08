@@ -218,24 +218,20 @@ public partial class MainForm : Form
 	/// Opens a file and updates the tree view.
 	/// </summary>
 	/// <param name="filename">Name of the file we want to open.</param>
-	private void OpenFile(string filename)
+	/// <param name="quiet">Report an unreadable or empty file in the return value only, without a message box (Load All Files).</param>
+	/// <returns>Whether the file is open (or was already).</returns>
+	private bool OpenFile(string filename, bool quiet = false)
 	{
 		if (string.IsNullOrEmpty(filename))
-			return;
+			return false;
 
 		// Already loaded
 		if (this.TQFileOpened.Any(kv => kv.Value.SourceFile == filename))
-			return;
+			return true;
 
 		var fileInfo = new TQFileInfo();
 
 		fileInfo.SourceFile = filename;
-
-		if (string.IsNullOrEmpty(fileInfo.SourceFile))
-		{
-			MessageBox.Show("You must enter a valid source file path.");
-			return;
-		}
 
 		// See if path exists and create it if necessary
 		string fullSrcPath = Path.GetFullPath(fileInfo.SourceFile);
@@ -243,8 +239,9 @@ public partial class MainForm : Form
 		if (!File.Exists(fullSrcPath))
 		{
 			// they did not give us a file
-			MessageBox.Show("You must specify a file!");
-			return;
+			if (!quiet)
+				MessageBox.Show("You must specify a file!");
+			return false;
 		}
 
 		// Try to read it as an ARC file since those have a header.
@@ -257,6 +254,15 @@ public partial class MainForm : Form
 		{
 			fileInfo.ARCFile = null;
 			fileInfo.FileType = CompressedFileType.Unknown;
+
+			// An ARC without entries (the game ships XPack4\Underground.arc empty) is not an ARZ either.
+			if (HasArcHeader(fullSrcPath))
+			{
+				this.toolStripStatusLabel.Text = $"{Path.GetFileName(fullSrcPath)} contains no files.";
+				if (!quiet)
+					MessageBox.Show($"{fullSrcPath} contains no files.");
+				return false;
+			}
 		}
 
 		// Try reading the file as an ARZ file.
@@ -275,17 +281,12 @@ public partial class MainForm : Form
 			}
 		}
 
-		// We failed reading the file
-		// so we just clear everything out.
+		// We failed reading the file: it added nothing, the files already open stay as they are.
 		if (fileInfo.FileType == CompressedFileType.Unknown)
 		{
-			this.Text = this.assemblyName.Name;
-			this.treeViewTOC.Nodes.Clear();
-			this.selectedFileToolStripMenuItem.Enabled = false;
-			this.allFilesToolStripMenuItem.Enabled = false;
-			this.textBoxDetails.Lines = null;
-			MessageBox.Show(string.Format("Error Reading {0}", fileInfo.SourceFile));
-			return;
+			if (!quiet)
+				MessageBox.Show(string.Format("Error Reading {0}", fileInfo.SourceFile));
+			return false;
 		}
 
 		this.selectedFileToolStripMenuItem.Enabled = true;
@@ -302,6 +303,22 @@ public partial class MainForm : Form
 		this.SelectedFile = fileInfo;
 
 		this.BuildTreeView(fileInfo);
+		return true;
+	}
+
+	/// <summary>Whether the file starts with the "ARC" magic of an ARC archive.</summary>
+	internal static bool HasArcHeader(string path)
+	{
+		try
+		{
+			using var stream = File.OpenRead(path);
+			Span<byte> magic = stackalloc byte[4];
+			return stream.ReadAtLeast(magic, magic.Length, throwOnEndOfStream: false) == magic.Length && magic.SequenceEqual("ARC\0"u8);
+		}
+		catch (IOException)
+		{
+			return false;
+		}
 	}
 
 	private void UpdateTitle(TQFileInfo fileInfo)
@@ -1308,8 +1325,14 @@ public partial class MainForm : Form
 				// Try to load the file - catch errors for individual files
 				try
 				{
-					this.OpenFile(file);
-					loaded++;
+					// Quiet: one message box per unreadable or empty file would stop the loop each time.
+					if (this.OpenFile(file, quiet: true))
+						loaded++;
+					else
+					{
+						failed++;
+						this.Log.LogWarning("Failed to load file: {File}", file);
+					}
 				}
 				catch (Exception ex)
 				{
