@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Form1.cs" company="VillageIdiot">
+// <copyright file="MainForm.cs" company="VillageIdiot">
 //     Copyright (c) Village Idiot. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -20,41 +20,37 @@ using TQVaultAE.Services.Win32;
 namespace ArzExplorer;
 
 /// <summary>
-/// Main Form for ArzExplorer
+/// Main window: the tree of the opened ARZ and ARC files and the view of the selected record or entry.
 /// </summary>
 public partial class MainForm : Form
 {
-	const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
+	private const StringComparison NoCase = StringComparison.OrdinalIgnoreCase;
 
 	private readonly ILogger Log;
-	private readonly IArcFileProvider arcProv;
-	private readonly IArzFileProvider arzProv;
+	private readonly IArcFileProvider ArcProvider;
+	private readonly IArzFileProvider ArzProvider;
 	private readonly ArchiveExtractor Extractor;
 	private readonly IBitmapService BitmapService;
 	private readonly IGamePathService GamePathService;
 	private readonly SoundServiceWin SoundService;
+	private readonly AssemblyName _assemblyName;
 
-	internal TreeView TreeViewToc => treeViewTOC;
-
-	/// <summary>
-	/// Holds the initial size of the form.
-	/// </summary>
-	private Size initialSize;
+	internal TreeView TreeViewToc => this.treeViewTOC;
 
 	/// <summary>
 	/// Search state - last search text
 	/// </summary>
-	private string lastSearchText = string.Empty;
+	private string _lastSearchText = string.Empty;
 
 	/// <summary>
 	/// Search state - last search position
 	/// </summary>
-	private int lastSearchPosition = -1;
+	private int _lastSearchPosition = -1;
 
 	#region MainForm
 
 	/// <summary>
-	/// Initializes a new instance of the Form1 class.
+	/// Initializes a new instance of the MainForm class.
 	/// </summary>
 	public MainForm(
 		ILogger<MainForm> log
@@ -69,18 +65,16 @@ public partial class MainForm : Form
 		this.InitializeComponent();
 
 		this.Log = log;
-		this.arcProv = arcFileProvider;
-		this.arzProv = arzFileProvider;
+		this.ArcProvider = arcFileProvider;
+		this.ArzProvider = arzFileProvider;
 		this.Extractor = extractor;
 		this.BitmapService = bitmapService;
 		this.GamePathService = gamePathService;
 		this.SoundService = soundService;
-		Assembly a = Assembly.GetExecutingAssembly();
-		this.assemblyName = a.GetName();
+		this._assemblyName = Assembly.GetExecutingAssembly().GetName();
 
 		this.selectedFileToolStripMenuItem.Enabled = false;
 		this.allFilesToolStripMenuItem.Enabled = false;
-		this.initialSize = this.Size;
 		this.toolStripStatusLabel.Text = string.Empty;
 
 		// Enable Search menu
@@ -91,7 +85,7 @@ public partial class MainForm : Form
 	{
 		// Seek for all arc files
 		var arc = Directory.GetFiles(this.GamePathService.GamePathTQIT, "*.arc", SearchOption.AllDirectories);
-		ArcFileList = arc.ToDictionary(
+		this._arcFiles = arc.ToDictionary(
 			k => k.Replace(this.GamePathService.GamePathTQIT + '\\', string.Empty).ToRecordId()
 		);
 	}
@@ -107,56 +101,45 @@ public partial class MainForm : Form
 		this.Close();
 	}
 
-	private void HideAllBox()
+	/// <summary>
+	/// Shows one detail view (or none) and hides the others, stopping the sound being played.
+	/// </summary>
+	/// <param name="view">The view to show, or null to hide them all.</param>
+	/// <param name="status">Text of the status bar.</param>
+	private void ShowView(Control? view, string status)
 	{
-		StopSoundPlayer();
+		this.StopSoundPlayer();
 
-		this.simpleSoundPlayer.Visible =
-		this.dataGridViewDetails.Visible =
-		this.textBoxDetails.Visible =
-		this.panelPicture.Visible = false;
-		this.toolStripStatusLabel.Text = string.Empty;
+		this.simpleSoundPlayer.Visible = view == this.simpleSoundPlayer;
+		this.dataGridViewDetails.Visible = view == this.dataGridViewDetails;
+		this.textBoxDetails.Visible = view == this.textBoxDetails;
+		this.panelPicture.Visible = view == this.panelPicture;
+		this.toolStripStatusLabel.Text = status;
 	}
+
+	private void HideAllBox() => this.ShowView(null, string.Empty);
 
 	private void ShowPictureBox(Image bitmap)
 	{
-		StopSoundPlayer();
-
-		this.simpleSoundPlayer.Visible = false;
-		this.dataGridViewDetails.Visible = false;
-		this.textBoxDetails.Visible = false;
-		this.panelPicture.Visible = true;
+		this.ShowView(this.panelPicture, $"PixelFormat : {bitmap.PixelFormat}, Size : {bitmap.Size}");
 		this.pictureBoxItem.Image = bitmap;
 		this.pictureBoxItem.Size = bitmap.Size;
-		this.toolStripStatusLabel.Text = string.Format("PixelFormat : {0}, Size : {1}", bitmap.PixelFormat, bitmap.Size);
 	}
 
 	private void ShowSoundPlayer(RecordId soundId, SoundPlayer soundPlayer, byte[]? soundWavData)
 	{
-		StopSoundPlayer();
+		this.ShowView(this.simpleSoundPlayer, $"Sound Name : {Path.GetFileName(soundId.Raw)}");
 
-		this.dataGridViewDetails.Visible = false;
-		this.textBoxDetails.Visible = false;
-		this.panelPicture.Visible = false;
-		this.toolStripStatusLabel.Text = string.Format("Sound Name : {0}", Path.GetFileName(soundId.Raw));
-
-		this.simpleSoundPlayer.Visible = true;
 		this.simpleSoundPlayer.Dock = DockStyle.Fill;
 		this.simpleSoundPlayer.CurrentSoundId = soundId;
 		this.simpleSoundPlayer.CurrentSoundWavData = soundWavData;
 		this.simpleSoundPlayer.CurrentSoundPlayer = soundPlayer;
 	}
 
-	private void ShowGridView(int Count)
+	private void ShowGridView(int count)
 	{
-		StopSoundPlayer();
-
-		this.dataGridViewDetails.Visible = true;
+		this.ShowView(this.dataGridViewDetails, $"Record Count : {count}");
 		this.dataGridViewDetails.Dock = DockStyle.Fill;
-		this.simpleSoundPlayer.Visible = false;
-		this.textBoxDetails.Visible = false;
-		this.panelPicture.Visible = false;
-		this.toolStripStatusLabel.Text = string.Format("Record Count : {0}", Count);
 	}
 
 	private void StopSoundPlayer()
@@ -165,16 +148,10 @@ public partial class MainForm : Form
 			this.simpleSoundPlayer.CurrentSoundPlayer?.Stop();
 	}
 
-	private void ShowTextboxDetail(int Count)
+	private void ShowTextboxDetail(int count)
 	{
-		StopSoundPlayer();
-
-		this.simpleSoundPlayer.Visible = false;
-		this.dataGridViewDetails.Visible = false;
-		this.textBoxDetails.Visible = true;
+		this.ShowView(this.textBoxDetails, $"Line Count : {count}");
 		this.textBoxDetails.Dock = DockStyle.Fill;
-		this.panelPicture.Visible = false;
-		this.toolStripStatusLabel.Text = string.Format("Line Count : {0}", Count);
 	}
 
 	#endregion
@@ -186,14 +163,22 @@ public partial class MainForm : Form
 	/// <summary>
 	/// Resolve database file
 	/// </summary>
-	string DataBasePath => Path.Combine(this.GamePathService.GamePathTQIT, @"Database\database.arz");
-
-	private readonly Dictionary<string, TQFileInfo> TQFileOpened = [];
+	private string DataBasePath => Path.Combine(this.GamePathService.GamePathTQIT, "Database", "database.arz");
 
 	/// <summary>
-	/// Found Arc Files
+	/// Folder the file dialogs start in: the game's save folder.
 	/// </summary>
-	Dictionary<RecordId, string> ArcFileList = [];
+	private static string SaveFolder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", "Titan Quest");
+
+	/// <summary>
+	/// Opened files, by full path.
+	/// </summary>
+	private readonly Dictionary<string, TQFileInfo> _openedFiles = [];
+
+	/// <summary>
+	/// ARC files of the game folder, by path relative to it.
+	/// </summary>
+	private Dictionary<RecordId, string> _arcFiles = [];
 
 	private void toolStripButtonLoadDataBase_Click(object sender, EventArgs e)
 	{
@@ -205,14 +190,12 @@ public partial class MainForm : Form
 		catch (Exception ex)
 		{
 			MessageBox.Show(ex.Message);
-			return;
 		}
 	}
 
-	private void toolStripButtonLoadAllFiles_Click(object sender, EventArgs e)
-	{
-		LoadAllFilesToolStripMenuItem_Click(sender, e);
-	}
+	/// <summary>Whether <paramref name="filename"/> is already open.</summary>
+	private bool IsOpen(string filename)
+		=> this._openedFiles.Values.Any(file => file.SourceFile == filename);
 
 	/// <summary>
 	/// Opens a file and updates the tree view.
@@ -226,14 +209,11 @@ public partial class MainForm : Form
 			return false;
 
 		// Already loaded
-		if (this.TQFileOpened.Any(kv => kv.Value.SourceFile == filename))
+		if (this.IsOpen(filename))
 			return true;
 
-		var fileInfo = new TQFileInfo();
+		var fileInfo = new TQFileInfo { SourceFile = filename };
 
-		fileInfo.SourceFile = filename;
-
-		// See if path exists and create it if necessary
 		string fullSrcPath = Path.GetFullPath(fileInfo.SourceFile);
 
 		if (!File.Exists(fullSrcPath))
@@ -246,7 +226,7 @@ public partial class MainForm : Form
 
 		// Try to read it as an ARC file since those have a header.
 		fileInfo.ARCFile = new ArcFile(fileInfo.SourceFile);
-		if (arcProv.Read(fileInfo.ARCFile))
+		if (this.ArcProvider.Read(fileInfo.ARCFile))
 		{
 			fileInfo.FileType = CompressedFileType.ArcFile;
 		}
@@ -270,7 +250,7 @@ public partial class MainForm : Form
 		{
 			// Read our ARZ file into memory.
 			fileInfo.ARZFile = new ArzFile(fileInfo.SourceFile);
-			if (arzProv.Read(fileInfo.ARZFile))
+			if (this.ArzProvider.Read(fileInfo.ARZFile))
 			{
 				fileInfo.FileType = CompressedFileType.ArzFile;
 			}
@@ -285,7 +265,7 @@ public partial class MainForm : Form
 		if (fileInfo.FileType == CompressedFileType.Unknown)
 		{
 			if (!quiet)
-				MessageBox.Show(string.Format("Error Reading {0}", fileInfo.SourceFile));
+				MessageBox.Show($"Error Reading {fileInfo.SourceFile}");
 			return false;
 		}
 
@@ -293,13 +273,13 @@ public partial class MainForm : Form
 		this.allFilesToolStripMenuItem.Enabled = true;
 		this.hideZeroValuesToolStripMenuItem.Enabled = fileInfo.FileType == CompressedFileType.ArzFile;
 
-		UpdateTitle(fileInfo);
+		this.UpdateTitle(fileInfo);
 
 		this.textBoxDetails.Lines = null;
 
 		this.toolStripStatusLabel.Text = string.Empty;
 
-		this.TQFileOpened.Add(fullSrcPath, fileInfo);
+		this._openedFiles.Add(fullSrcPath, fileInfo);
 		this.SelectedFile = fileInfo;
 
 		this.BuildTreeView(fileInfo);
@@ -323,7 +303,7 @@ public partial class MainForm : Form
 
 	private void UpdateTitle(TQFileInfo fileInfo)
 	{
-		this.Text = string.Format("{0} - {1}", this.assemblyName.Name, fileInfo.SourceFile);
+		this.Text = $"{this._assemblyName.Name} - {fileInfo.SourceFile}";
 	}
 
 	/// <summary>
@@ -333,23 +313,20 @@ public partial class MainForm : Form
 	/// <param name="e">EventArgs data</param>
 	private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
 	{
-		using OpenFileDialog openDialog = new OpenFileDialog();
-		openDialog.Filter = "Compressed TQ files (*.arz;*.arc)|*.arz;*.arc|All files (*.*)|*.*";
-		openDialog.FilterIndex = 1;
-		openDialog.RestoreDirectory = true;
-
-		// Try to read the game path
+		// The game folder, else the save folder.
 		string startPath = this.GamePathService.GamePathTQIT;
+		if (startPath.Length == 0)
+			startPath = SaveFolder;
 
-		// If the registry fails then default to the save folder.
-		if (startPath.Length < 1)
+		using var openDialog = new OpenFileDialog
 		{
-			startPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", "Titan Quest");
-		}
+			Filter = "Compressed TQ files (*.arz;*.arc)|*.arz;*.arc|All files (*.*)|*.*",
+			FilterIndex = 1,
+			RestoreDirectory = true,
+			InitialDirectory = startPath,
+		};
 
-		openDialog.InitialDirectory = startPath;
-		DialogResult result = openDialog.ShowDialog();
-		if (result == DialogResult.OK)
+		if (openDialog.ShowDialog() == DialogResult.OK)
 		{
 			using var scope = new TreeViewUpdateScope(this);
 			this.OpenFile(openDialog.FileName);
@@ -363,11 +340,9 @@ public partial class MainForm : Form
 	/// <param name="e">DragEventArgs data</param>
 	private void Form1_DragDrop(object sender, DragEventArgs e)
 	{
-		// Handle FileDrop data.
+		// Only the first file when the user dropped several.
 		if (e.Data?.GetData(DataFormats.FileDrop) is string[] { Length: > 0 } files)
 		{
-			// Assign the file names to a string array, in
-			// case the user has selected multiple files.
 			try
 			{
 				using var scope = new TreeViewUpdateScope(this);
@@ -376,7 +351,6 @@ public partial class MainForm : Form
 			catch (Exception ex)
 			{
 				MessageBox.Show(ex.Message);
-				return;
 			}
 		}
 	}
@@ -389,7 +363,7 @@ public partial class MainForm : Form
 	private void Form1_DragEnter(object sender, DragEventArgs e)
 	{
 		// If the data is a file display the copy cursor.
-		e.Effect = (e.Data?.GetDataPresent(DataFormats.FileDrop) ?? false) ? DragDropEffects.Copy : DragDropEffects.None;
+		e.Effect = e.Data?.GetDataPresent(DataFormats.FileDrop) == true ? DragDropEffects.Copy : DragDropEffects.None;
 	}
 
 	#endregion
@@ -406,22 +380,18 @@ public partial class MainForm : Form
 		if (string.IsNullOrEmpty(this.SelectedFile.DestFile) || this.SelectedFile.FileType == CompressedFileType.Unknown)
 			return;
 
-		string? filename = null;
-		using SaveFileDialog saveFileDialog = new SaveFileDialog();
-
-		saveFileDialog.Filter = "TQ files (*.txt;*.dbr;*.tex;*.msh;*.anm;*.fnt;*.qst;*.pfx;*.ssh)|*.txt;*.dbr;*.tex;*.msh;*.anm;*.fnt;*.qst;*.pfx;*.ssh|All files (*.*)|*.*";
-		saveFileDialog.FilterIndex = 1;
-		saveFileDialog.RestoreDirectory = true;
-		saveFileDialog.Title = "Save the Titan Quest File";
-		string startPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", "Titan Quest");
-		saveFileDialog.InitialDirectory = startPath;
-		saveFileDialog.FileName = Path.GetFileName(this.SelectedFile.DestFile);
+		using var saveFileDialog = new SaveFileDialog
+		{
+			Filter = "TQ files (*.txt;*.dbr;*.tex;*.msh;*.anm;*.fnt;*.qst;*.pfx;*.ssh)|*.txt;*.dbr;*.tex;*.msh;*.anm;*.fnt;*.qst;*.pfx;*.ssh|All files (*.*)|*.*",
+			FilterIndex = 1,
+			RestoreDirectory = true,
+			Title = "Save the Titan Quest File",
+			InitialDirectory = SaveFolder,
+			FileName = Path.GetFileName(this.SelectedFile.DestFile),
+		};
 
 		if (saveFileDialog.ShowDialog() == DialogResult.OK)
-		{
-			filename = saveFileDialog.FileName;
-			this.ExtractSelectedTo(filename);
-		}
+			this.ExtractSelectedTo(saveFileDialog.FileName);
 	}
 
 	/// <summary>Writes the selected record or entry to <paramref name="filename"/>.</summary>
@@ -455,19 +425,17 @@ public partial class MainForm : Form
 			return;
 		}
 
-		using (FolderBrowserDialog browseDialog = new FolderBrowserDialog())
+		using var browseDialog = new FolderBrowserDialog
 		{
-			browseDialog.Description = "Select the destination folder for the extracted database records";
-			browseDialog.ShowNewFolderButton = true;
-			string startPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", "Titan Quest");
-			browseDialog.SelectedPath = startPath;
-			DialogResult result = browseDialog.ShowDialog();
+			Description = "Select the destination folder for the extracted database records",
+			ShowNewFolderButton = true,
+			SelectedPath = SaveFolder,
+		};
 
-			if (result != DialogResult.OK)
-				return;
+		if (browseDialog.ShowDialog() != DialogResult.OK)
+			return;
 
-			this.ExtractAllTo(browseDialog.SelectedPath);
-		}
+		this.ExtractAllTo(browseDialog.SelectedPath);
 	}
 
 	/// <summary>
@@ -483,7 +451,6 @@ public partial class MainForm : Form
 			return;
 		}
 
-		// See if path exists and create it if necessary
 		var fullDestPath = Path.GetFullPath(folder);
 
 		if (File.Exists(fullDestPath))
@@ -496,16 +463,15 @@ public partial class MainForm : Form
 		if (!Directory.Exists(fullDestPath))
 		{
 			// see if they want to create it
-			string q = string.Format("{0} does not exist.  Would you like to create it now?", fullDestPath);
+			var question = $"{fullDestPath} does not exist.  Would you like to create it now?";
 
-			if (MessageBox.Show(q, "Create folder?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+			if (MessageBox.Show(question, "Create folder?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
 				return;
 
 			Directory.CreateDirectory(fullDestPath);
 		}
 
-
-		var form = Program.ServiceProvider.GetRequiredService<ExtractProgress>();
+		using var form = Program.ServiceProvider.GetRequiredService<ExtractProgress>();
 		form.BaseFolder = fullDestPath;
 		form.ShowDialog();
 	}
@@ -521,153 +487,134 @@ public partial class MainForm : Form
 	/// <param name="e">EventArgs data</param>
 	private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
 	{
-		AboutBox d = new AboutBox();
-		d.ShowDialog();
+		using var about = new AboutBox();
+		about.ShowDialog();
 	}
 
 	#endregion
 
 	#region TreeViewTOC
 
-	NodeTag? SelectedTag => this.treeViewTOC.SelectedNode?.Tag as NodeTag;
+	/// <summary>
+	/// Every tree node by key (<see cref="NodeKey"/>); the root node, which holds the top nodes, has the empty key.
+	/// </summary>
+	internal Dictionary<string, TreeNode> NodesByKey = [];
 
 	/// <summary>
-	/// Treeview node database
+	/// Keys of the tree nodes of a record or entry id, one per file that holds it.
 	/// </summary>
-	internal Dictionary<string, TreeNode> dicoNodes = [];
+	internal Dictionary<RecordId, List<string>> NodeKeysByRecordId = [];
+
+	/// <summary>Key of a tree node: the id of its file, then its record or entry id, separated by ';'.</summary>
+	private static string NodeKey(TQFileInfo file, RecordId id) => $"{file.SourceFileId};{id}";
+
+	/// <summary>The record or entry id of a tree node key (<see cref="NodeKey"/>): what follows the last ';'.</summary>
+	internal static string EntryOf(string nodeKey) => nodeKey[(nodeKey.LastIndexOf(';') + 1)..];
 
 	/// <summary>
-	/// reverse directory of RecordId => TreeNode.Name
+	/// Adds the nodes of the records or entries of a newly opened file to the tree.
 	/// </summary>
-	internal Dictionary<RecordId, List<string>> dicoReverseKeys = [];
-
-	/// <summary>
-	/// Builds the tree view.  Assumes the list is pre-sorted.
-	/// </summary>
-	/// <param name="currentFileInfo"></param>
-	private void BuildTreeView(TQFileInfo currentFileInfo)
+	private void BuildTreeView(TQFileInfo file)
 	{
-
-		List<RecordId> dataRecords;
-
-		if (currentFileInfo.FileType == CompressedFileType.ArzFile)
-			dataRecords = currentFileInfo.Arz.Keys.ToList();
-		else if (currentFileInfo.FileType == CompressedFileType.ArcFile)
-			dataRecords = currentFileInfo.Arc.Keys.ToList();
-		else
-			return;
+		List<RecordId> dataRecords = file.FileType switch
+		{
+			CompressedFileType.ArzFile => [.. file.Arz.Keys],
+			CompressedFileType.ArcFile => [.. file.Arc.Keys],
+			_ => [],
+		};
 
 		// We failed so return.
 		if (dataRecords.Count == 0)
 			return;
 
-		// Track if this is the first file being loaded
-		bool isFirstFile = dicoNodes.Count == 0;
-
-		TreeNode rootNode = new();
+		// The first file creates the root node, the others add to it.
+		if (!this.NodesByKey.TryGetValue(string.Empty, out var rootNode))
+		{
+			rootNode = new TreeNode();
+			this.NodesByKey.Add(string.Empty, rootNode);
+		}
 
 		string arcPrefix = string.Empty;
-		var rootNodeKey = string.Empty;
-
-		if (isFirstFile)
-			dicoNodes.Add(rootNodeKey, rootNode);// First time
-		else
-			rootNode = dicoNodes[rootNodeKey];// Get it back
-
-		if (currentFileInfo.FileType == CompressedFileType.ArcFile)
+		if (file.FileType == CompressedFileType.ArcFile)
 		{
 			// Node of the expansion folder, then node of the file
-			arcPrefix = ArcPaths.TreePrefix(currentFileInfo.SourceFileId);
+			arcPrefix = ArcPaths.TreePrefix(file.SourceFileId);
 			var fileParentNode = rootNode;
 			var separator = arcPrefix.IndexOf('\\');
 			if (separator >= 0)
-				GetRootNode(currentFileInfo, arcPrefix[..separator], rootNode, out fileParentNode);
+				fileParentNode = this.GetArcFolderNode(file, arcPrefix[..separator], rootNode);
 
-			GetRootNode(currentFileInfo, arcPrefix, fileParentNode, out _);
+			this.GetArcFolderNode(file, arcPrefix, fileParentNode);
 		}
 
 		foreach (var record in dataRecords)
 		{
-			RecordId recordID = arcPrefix == string.Empty ? record : Path.Combine(arcPrefix, record.Raw);
+			RecordId recordId = arcPrefix.Length == 0 ? record : Path.Combine(arcPrefix, record.Raw);
+			var tokens = recordId.TokensRaw;
 
-			for (int tokIdx = 0; tokIdx < recordID.TokensRaw.Count; tokIdx++)
+			for (int tokIdx = 0; tokIdx < tokens.Count; tokIdx++)
 			{
-				var token = recordID.TokensRaw[tokIdx];
-				var parent = recordID.TokensRaw.Take(tokIdx).JoinString("\\").ToRecordId();
-				var parentKey = $"{currentFileInfo.SourceFileId};{parent}";
-				var parentnode = dicoNodes.TryGetValue(parentKey, out var node) ? node : rootNode;
-				var currnodeKey = (parent.IsEmpty ? token : parent + '\\' + token).ToRecordId();
-				var nodeKey = $"{currentFileInfo.SourceFileId};{currnodeKey}";
+				var token = tokens[tokIdx];
+				var parent = tokens.Take(tokIdx).JoinString("\\").ToRecordId();
+				var parentNode = this.NodesByKey.TryGetValue(NodeKey(file, parent), out var node) ? node : rootNode;
+				var key = (parent.IsEmpty ? token : parent + '\\' + token).ToRecordId();
+				var nodeKey = NodeKey(file, key);
 
-				if (parentnode.Nodes.ContainsKey(nodeKey)) continue;
-				else
-				{
-					var currentNode = new TreeNode()
-					{
-						Name = $"{currentFileInfo.SourceFileId};{currnodeKey}",
-						Text = parent.IsEmpty
-							? $"{currentFileInfo.SourceFileId.TokensNormalized.Last()};{currnodeKey.Raw}"
-							: $"{currnodeKey.Raw}",
-						ToolTipText = currentFileInfo.SourceFile
-					};
-					currentNode.Tag = new NodeTag
-					{
-						thisNode = currentNode,
-						File = currentFileInfo,
+				if (parentNode.Nodes.ContainsKey(nodeKey))
+					continue;
 
-						Thread = recordID,
-						Key = currnodeKey,
-						DictionaryKey = nodeKey,
-						TokIdx = tokIdx,
-
-						Text = currentNode.Text,
-					};
-					parentnode.Nodes.Add(currentNode);
-
-					dicoNodes.Add(nodeKey, currentNode);
-
-					if (dicoReverseKeys.TryGetValue(currnodeKey, out var reversekeys)) reversekeys.Add(currentNode.Name);
-					else dicoReverseKeys.Add(currnodeKey, [currentNode.Name]);
-				}
+				var text = parent.IsEmpty
+					? $"{file.SourceFileId.TokensNormalized.Last()};{key.Raw}"
+					: key.Raw;
+				this.AddNode(parentNode, file, nodeKey, key, text);
 			}
 		}
 	}
 
-	void GetRootNode(TQFileInfo currentFileInfo, string arcPrefix, TreeNode rootNode, out TreeNode arcRootNode)
+	/// <summary>
+	/// The node of an ARC file or of its expansion folder, created under <paramref name="parent"/> the first time.
+	/// </summary>
+	private TreeNode GetArcFolderNode(TQFileInfo file, string arcPrefix, TreeNode parent)
 	{
-		var arcPrefixId = arcPrefix.ToRecordId();
-		var nodeKey = $"{currentFileInfo.SourceFileId};{arcPrefixId}";
-		if (!dicoNodes.TryGetValue(nodeKey, out var existingNode))
+		var key = arcPrefix.ToRecordId();
+		var nodeKey = NodeKey(file, key);
+		if (this.NodesByKey.TryGetValue(nodeKey, out var existingNode))
+			return existingNode;
+
+		var text = key.TokensNormalized.Count == 1
+			? $"{file.SourceFileId.TokensNormalized.Last()};{arcPrefix}"
+			: arcPrefix;
+		return this.AddNode(parent, file, nodeKey, key, text);
+	}
+
+	/// <summary>
+	/// Creates a tagged node under <paramref name="parent"/> and indexes it by key and by record id.
+	/// </summary>
+	private TreeNode AddNode(TreeNode parent, TQFileInfo file, string nodeKey, RecordId key, string text)
+	{
+		var node = new TreeNode
 		{
-			arcRootNode = new TreeNode()
-			{
-				Name = $"{currentFileInfo.SourceFileId};{arcPrefixId}",
-				Text = arcPrefixId.TokensNormalized.Count == 1
-					? $"{currentFileInfo.SourceFileId.TokensNormalized.Last()};{arcPrefix}"
-					: $"{arcPrefix}",
-				ToolTipText = currentFileInfo.SourceFile
-			};
-			arcRootNode.Tag = new NodeTag
-			{
-				thisNode = arcRootNode,
-				File = currentFileInfo,
+			Name = nodeKey,
+			Text = text,
+			ToolTipText = file.SourceFile,
+		};
+		node.Tag = new NodeTag
+		{
+			Node = node,
+			File = file,
+			Key = key,
+			Text = text,
+		};
+		parent.Nodes.Add(node);
 
-				Thread = null,
-				Key = arcPrefixId,
-				DictionaryKey = nodeKey,
-				TokIdx = 0,
+		this.NodesByKey.Add(nodeKey, node);
 
-				Text = arcRootNode.Text,
-			};
-			dicoNodes.Add(nodeKey, arcRootNode);
-
-			if (dicoReverseKeys.TryGetValue(arcPrefixId, out var reversekeys)) reversekeys.Add(arcRootNode.Name);
-			else dicoReverseKeys.Add(arcPrefixId, [arcRootNode.Name]);
-
-			rootNode.Nodes.Add(arcRootNode);
-		}
+		if (this.NodeKeysByRecordId.TryGetValue(key, out var nodeKeys))
+			nodeKeys.Add(nodeKey);
 		else
-			arcRootNode = existingNode;
+			this.NodeKeysByRecordId.Add(key, [nodeKey]);
+
+		return node;
 	}
 
 	/// <summary>
@@ -677,143 +624,155 @@ public partial class MainForm : Form
 	/// <param name="e">TreeViewEventArgs data</param>
 	private void TreeViewTOC_AfterSelect(object sender, TreeViewEventArgs e)
 	{
-		// Make sure we have selected the last child
-		// otherwise this will be a directory.
-		if (this.treeViewTOC.SelectedNode?.GetNodeCount(false) == 0)
-		{
-			if (this.SelectedTag is not { } tag)
-				return;
-
-			this.SelectedFile = tag.File;
-
-			UpdateTitle(this.SelectedFile);
-
-			this.SelectedFile.DestFile
-				= this.textBoxPath.Text
-				= this.treeViewTOC.SelectedNode.Name.Split(';').Last();
-
-			try
-			{
-				List<string> recordText = [];
-				if (this.SelectedFile.FileType == CompressedFileType.ArzFile)
-				{
-					this.SelectedFile.Records = arzProv.GetRecordNotCached(this.SelectedFile.Arz, this.SelectedFile.DestFile);
-					foreach (Variable variable in this.SelectedFile.Records)
-					{
-						if (variable.IsValueNonZero() || !hideZeroValuesToolStripMenuItem.Checked)
-							recordText.Add(variable.ToString());
-					}
-					PopulateGridView(recordText);
-					ShowGridView(recordText.Count);
-					StackNavigation();
-				}
-
-				else if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
-				{
-					string extension = Path.GetExtension(tag.Key.TokensNormalized.Last());
-					var arcDataRecordId = ArcPaths.DataId(tag.Key);
-
-					switch (extension)
-					{
-						case ".TXT":
-							if (tag.RecordText.Count == 0)
-							{
-								tag.RawData = arcProv.GetData(this.SelectedFile.Arc, arcDataRecordId);
-
-								if (tag.RawData is null)
-									return;
-
-								// UTF-16 with a BOM, or cp1252 without one, like the game.
-								foreach (var line in TextDatabaseFactory.DecodeText(tag.RawData).AsSpan().EnumerateLines())
-									tag.RecordText.Add(line.ToString());
-							}
-
-							this.textBoxDetails.Lines = tag.RecordText.ToArray();
-							ShowTextboxDetail(tag.RecordText.Count);
-							StackNavigation();
-							break;
-						case ".TEX":
-							if (tag.Bitmap is null)
-							{
-								tag.RawData = arcProv.GetData(this.SelectedFile.Arc, arcDataRecordId);
-
-								if (tag.RawData is null)
-									return;
-
-								tag.Bitmap = BitmapService.LoadFromTexMemory(tag.RawData, 0, tag.RawData.Length);
-							}
-
-							if (tag.Bitmap is not null)
-							{
-								ShowPictureBox(tag.Bitmap);
-								StackNavigation();
-							}
-							break;
-						case ".MP3":
-						case ".WAV":
-							if (tag.SoundPlayer is null)
-							{
-								tag.RawData = arcProv.GetData(this.SelectedFile.Arc, arcDataRecordId);
-
-								if (tag.RawData is null)
-									return;
-
-								SoundService.SetSoundResource(arcDataRecordId, tag.RawData);
-								tag.SoundPlayer = SoundService.GetSoundPlayer(arcDataRecordId);
-							}
-
-							// Display SoundPlayer
-							if (tag.SoundPlayer is not null)
-							{
-								ShowSoundPlayer(
-									arcDataRecordId
-									, tag.SoundPlayer
-									, SoundService.GetSoundResource(arcDataRecordId)
-								);
-								StackNavigation();
-							}
-							break;
-						default:
-							// No viewer for this type, but Extract Selected File still writes it
-							HideAllBox();
-							this.textBoxDetails.Lines = null;
-							break;
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				this.Log.LogError(ex, "Failed to show the entry {Entry} of {File}", this.SelectedFile.DestFile, this.SelectedFile.SourceFile);
-			}
-		}
-		else
+		// Only a leaf shows something: a node with children is a directory.
+		if (this.treeViewTOC.SelectedNode is not { } selectedNode || selectedNode.GetNodeCount(false) != 0)
 		{
 			this.SelectedFile.DestFile = null;
 			this.textBoxDetails.Lines = null;
+			return;
+		}
+
+		if (selectedNode.Tag is not NodeTag tag)
+			return;
+
+		this.SelectedFile = tag.File;
+
+		this.UpdateTitle(this.SelectedFile);
+
+		this.SelectedFile.DestFile
+			= this.textBoxPath.Text
+			= EntryOf(selectedNode.Name);
+
+		try
+		{
+			if (this.SelectedFile.FileType == CompressedFileType.ArzFile)
+			{
+				this.SelectedFile.Records = this.ArzProvider.GetRecordNotCached(this.SelectedFile.Arz, this.SelectedFile.DestFile);
+				var recordText = this.RecordLines(this.SelectedFile.Records);
+				this.PopulateGridView(recordText);
+				this.ShowGridView(recordText.Count);
+				this.StackNavigation();
+			}
+			else if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
+			{
+				this.ShowArcEntry(tag);
+			}
+		}
+		catch (Exception ex)
+		{
+			this.Log.LogError(ex, "Failed to show the entry {Entry} of {File}", this.SelectedFile.DestFile, this.SelectedFile.SourceFile);
+		}
+	}
+
+	/// <summary>
+	/// Shows an ARC entry in the view of its type, reading it the first time; the node keeps what it read.
+	/// </summary>
+	private void ShowArcEntry(NodeTag tag)
+	{
+		string extension = Path.GetExtension(tag.Key.TokensNormalized.Last());
+		var arcDataRecordId = ArcPaths.DataId(tag.Key);
+
+		switch (extension)
+		{
+			case ".TXT":
+				if (tag.RecordText.Count == 0)
+				{
+					if (this.ArcProvider.GetData(this.SelectedFile.Arc, arcDataRecordId) is not { } rawText)
+						return;
+
+					// UTF-16 with a BOM, or cp1252 without one, like the game.
+					foreach (var line in TextDatabaseFactory.DecodeText(rawText).AsSpan().EnumerateLines())
+						tag.RecordText.Add(line.ToString());
+				}
+
+				this.textBoxDetails.Lines = [.. tag.RecordText];
+				this.ShowTextboxDetail(tag.RecordText.Count);
+				this.StackNavigation();
+				break;
+			case ".TEX":
+				if (tag.Bitmap is null)
+				{
+					if (this.ArcProvider.GetData(this.SelectedFile.Arc, arcDataRecordId) is not { } rawTexture)
+						return;
+
+					tag.Bitmap = this.BitmapService.LoadFromTexMemory(rawTexture, 0, rawTexture.Length);
+				}
+
+				if (tag.Bitmap is not null)
+				{
+					this.ShowPictureBox(tag.Bitmap);
+					this.StackNavigation();
+				}
+				break;
+			case ".MP3":
+			case ".WAV":
+				if (tag.SoundPlayer is null)
+				{
+					if (this.ArcProvider.GetData(this.SelectedFile.Arc, arcDataRecordId) is not { } rawSound)
+						return;
+
+					this.SoundService.SetSoundResource(arcDataRecordId, rawSound);
+					tag.SoundPlayer = this.SoundService.GetSoundPlayer(arcDataRecordId);
+				}
+
+				// Display SoundPlayer
+				if (tag.SoundPlayer is not null)
+				{
+					this.ShowSoundPlayer(
+						arcDataRecordId
+						, tag.SoundPlayer
+						, this.SoundService.GetSoundResource(arcDataRecordId)
+					);
+					this.StackNavigation();
+				}
+				break;
+			default:
+				// No viewer for this type, but Extract Selected File still writes it
+				this.HideAllBox();
+				this.textBoxDetails.Lines = null;
+				break;
 		}
 	}
 
 	#endregion
 
-	#region Griv View
+	#region Grid View
 
-	static char[] PopulateGridView_splitChars = [','];
-
-	static DataGridViewCellStyle PopulateGridView_hyperLinkCellStyle = new DataGridViewCellStyle
+	private static readonly DataGridViewCellStyle LinkCellStyle = new()
 	{
 		Font = new Font(FontFamily.GenericSansSerif, 8, FontStyle.Underline),
 		ForeColor = Color.Blue,
 	};
 
+	/// <summary>
+	/// The lines of a record shown in the grid: every variable, or only the non-zero ones with Hide Zero Values.
+	/// </summary>
+	private List<string> RecordLines(DBRecordCollection records)
+	{
+		var hideZeroValues = this.hideZeroValuesToolStripMenuItem.Checked;
+		List<string> recordText = [];
+		foreach (Variable variable in records)
+		{
+			if (variable.IsValueNonZero() || !hideZeroValues)
+				recordText.Add(variable.ToString());
+		}
+
+		return recordText;
+	}
+
+	/// <summary>
+	/// Splits a record line into its grid cells: the variable name, then its values joined by ';'.
+	/// </summary>
+	internal static string[] GridCells(string line) => line.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
 	private void PopulateGridView(List<string> recordText)
 	{
-		var grd = dataGridViewDetails;
-		grd.Rows.Clear();
+		var grid = this.dataGridViewDetails;
+		grid.Rows.Clear();
 
-		// Init data
 		foreach (string line in recordText)
 		{
-			string[] values = line.Split(PopulateGridView_splitChars, StringSplitOptions.RemoveEmptyEntries);
+			string[] values = GridCells(line);
 
 			// A variable holding several links (loot tables, sound lists) gets one row per value, so each one can be
 			// clicked: joined with ';' in one cell, a click could only reach one of them.
@@ -823,83 +782,59 @@ public partial class MainForm : Form
 				if (parts.Any(IsGridLink))
 				{
 					for (int i = 0; i < parts.Length; i++)
-						grd.Rows.Add(i == 0 ? values[0] : string.Empty, parts[i]);
+						grid.Rows.Add(i == 0 ? values[0] : string.Empty, parts[i]);
 					continue;
 				}
 			}
 
-			grd.Rows.Add(values);
+			grid.Rows.Add(values);
 		}
 
 		// Apply link style and adjust hyperlink
-		for (int i = 0; i < grd.RowCount; i++)
+		for (int i = 0; i < grid.RowCount; i++)
 		{
-			var cell = grd.Rows[i].Cells[1];
+			var cell = grid.Rows[i].Cells[1];
 			if (IsGridLink(cell.Value?.ToString() ?? string.Empty))
-				cell.Style = PopulateGridView_hyperLinkCellStyle;
+				cell.Style = LinkCellStyle;
 		}
 	}
 
 	/// <summary>Whether a record value names a record or a resource the grid can navigate to.</summary>
 	internal static bool IsGridLink(string value)
-		=> value.EndsWith(".DBR", noCase)
-			|| value.EndsWith(".TEX", noCase)
-			|| value.EndsWith(".TXT", noCase)
-			|| value.EndsWith(".WAV", noCase)
-			|| value.EndsWith(".MP3", noCase);
+		=> value.EndsWith(".DBR", NoCase)
+			|| value.EndsWith(".TEX", NoCase)
+			|| value.EndsWith(".TXT", NoCase)
+			|| value.EndsWith(".WAV", NoCase)
+			|| value.EndsWith(".MP3", NoCase);
 
 	private void hideZeroValuesToolStripMenuItem_Click(object sender, EventArgs e)
 	{
-		if (this.SelectedFile.Records is not null)
-		{
-			List<string> recordText = [];
-			foreach (Variable variable in this.SelectedFile.Records)
-			{
-				if (variable.IsValueNonZero() || !hideZeroValuesToolStripMenuItem.Checked)
-					recordText.Add(variable.ToString());
-			}
+		if (this.SelectedFile.Records is null)
+			return;
 
-			PopulateGridView(recordText);
+		var recordText = this.RecordLines(this.SelectedFile.Records);
+		this.PopulateGridView(recordText);
 
-			// The count of the record shown; another view (picture, text) stays as it is.
-			if (this.dataGridViewDetails.Visible)
-				ShowGridView(recordText.Count);
-		}
+		// The count of the record shown; another view (picture, text) stays as it is.
+		if (this.dataGridViewDetails.Visible)
+			this.ShowGridView(recordText.Count);
 	}
 
 	#endregion
 
 	#region Clipboard
 
-	private void textBoxPath_MouseDoubleClick(object sender, MouseEventArgs e)
-	{
-		CopyPath();
-	}
+	private void textBoxPath_MouseDoubleClick(object sender, MouseEventArgs e) => this.CopyPath();
 
-	private void CopyPath()
-	{
-		Clipboard.SetText(this.textBoxPath.Text);
-	}
+	private void copyPathToolStripMenuItem_Click(object sender, EventArgs e) => this.CopyPath();
 
-	private void textBoxDetails_MouseDoubleClick(object sender, MouseEventArgs e)
-	{
-		CopyTXT();
-	}
+	private void CopyPath() => Clipboard.SetText(this.textBoxPath.Text);
 
-	private void CopyTXT()
-	{
-		Clipboard.SetText(this.textBoxDetails.Text);
-	}
+	private void textBoxDetails_MouseDoubleClick(object sender, MouseEventArgs e) => this.CopyText();
 
-	private void copyPathToolStripMenuItem_Click(object sender, EventArgs e)
-	{
-		CopyPath();
-	}
+	private void copyTXTToolStripMenuItem_Click(object sender, EventArgs e) => this.CopyText();
 
-	private void copyTXTToolStripMenuItem_Click(object sender, EventArgs e)
-	{
-		CopyTXT();
-	}
+	private void CopyText() => Clipboard.SetText(this.textBoxDetails.Text);
 
 	private void copyDBRToolStripMenuItem_Click(object sender, EventArgs e)
 	{
@@ -943,29 +878,24 @@ public partial class MainForm : Form
 
 	#region Caps Treeview
 
-	private void toolStripButtonCaps_CheckedChanged(object sender, EventArgs e)
-	{
-		TOCCapsToggle();
-	}
+	private void toolStripButtonCaps_CheckedChanged(object sender, EventArgs e) => this.ToggleTocCaps();
+
 	private void capsToolStripMenuItem_Click(object sender, EventArgs e)
 	{
-		toolStripButtonCaps.Checked = !toolStripButtonCaps.Checked;
+		this.toolStripButtonCaps.Checked = !this.toolStripButtonCaps.Checked;
 	}
 
-	private void TOCCapsToggle()
+	private void ToggleTocCaps()
 	{
-		toolStripButtonCaps.Image = toolStripButtonCaps.Checked ? Resources.CapsDown.ToBitmap() : Resources.CapsUP.ToBitmap();
+		var caps = this.toolStripButtonCaps.Checked;
+		this.toolStripButtonCaps.Image = caps ? Resources.CapsDown.ToBitmap() : Resources.CapsUP.ToBitmap();
 
 		this.treeViewTOC.BeginUpdate();
-		foreach (var node in this.dicoNodes)
+		foreach (var (key, node) in this.NodesByKey)
 		{
 			// The root node (empty key) has no tag, every other node holds its NodeTag
-			if (node.Key != string.Empty && node.Value.Tag is NodeTag tag)
-			{
-				tag.thisNode.Text = toolStripButtonCaps.Checked
-					? tag.TextU
-					: tag.Text;
-			}
+			if (key.Length != 0 && node.Tag is NodeTag tag)
+				tag.Node.Text = caps ? tag.TextU : tag.Text;
 		}
 		this.treeViewTOC.EndUpdate();
 	}
@@ -974,20 +904,18 @@ public partial class MainForm : Form
 
 	#region NavHistory
 
-	private readonly List<TreeNode> NavHistory = [];
-	private readonly AssemblyName assemblyName;
-	private int NavHistoryIndex;
-
-	bool _StackNavigationDisabled = false;
+	private readonly List<TreeNode> _navHistory = [];
+	private int _navHistoryIndex;
+	private bool _stackNavigationDisabled;
 
 	private void StackNavigation()
 	{
-		if (_StackNavigationDisabled)
+		if (this._stackNavigationDisabled)
 			return;
 
 		if (this.treeViewTOC.SelectedNode is not null)
-			NavHistory.Add(this.treeViewTOC.SelectedNode);
-		NavHistoryIndex = NavHistory.Count - 1;
+			this._navHistory.Add(this.treeViewTOC.SelectedNode);
+		this._navHistoryIndex = this._navHistory.Count - 1;
 	}
 
 	private void dataGridViewDetails_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -996,12 +924,9 @@ public partial class MainForm : Form
 		if (e.RowIndex < 0 || e.ColumnIndex < 0)
 			return;
 
-		var cell = dataGridViewDetails.Rows[e.RowIndex].Cells[e.ColumnIndex];
-		if (cell.Style == PopulateGridView_hyperLinkCellStyle)
-		{
-			var value = cell.Value?.ToString() ?? string.Empty;
-			NavigateTo(value);
-		}
+		var cell = this.dataGridViewDetails.Rows[e.RowIndex].Cells[e.ColumnIndex];
+		if (cell.Style == LinkCellStyle)
+			this.NavigateTo(cell.Value?.ToString() ?? string.Empty);
 	}
 
 	private void NavigateTo(string dictionaryKey)
@@ -1029,12 +954,12 @@ public partial class MainForm : Form
 		// A few records write their paths with '/' (Sounds/monsters/...): the tree keys use '\'.
 		value = value.Replace('/', '\\');
 
-		if (this.dicoNodes.TryGetValue(value, out var node))
+		if (this.NodesByKey.TryGetValue(value, out var node))
 			return node;
 
 		var valueId = value.ToRecordId();
-		if (this.dicoReverseKeys.TryGetValue(valueId, out var list))
-			return this.dicoNodes[list[0]];
+		if (this.NodeKeysByRecordId.TryGetValue(valueId, out var list))
+			return this.NodesByKey[list[0]];
 
 		// A tree key: the record id after the semicolon.
 		var parts = value.Split(';', 2);
@@ -1044,13 +969,13 @@ public partial class MainForm : Form
 
 		// DBR references are usually prefixed by RECORDS
 		if (recordId.Normalized.EndsWith(".DBR", StringComparison.Ordinal) && !recordId.Normalized.StartsWith("RECORDS", StringComparison.Ordinal)
-			&& this.dicoReverseKeys.TryGetValue(RecordId.Create(Path.Combine("records", recordId.Raw)), out var guessed))
-			return this.dicoNodes[guessed[0]];
+			&& this.NodeKeysByRecordId.TryGetValue(RecordId.Create(Path.Combine("records", recordId.Raw)), out var guessed))
+			return this.NodesByKey[guessed[0]];
 
 		// The archive the resource maps to, then the archives of the same name the game also searches.
 		foreach (var arcFile in GameArchives.ArcFileCandidates(recordId))
 		{
-			if (!this.ArcFileList.TryGetValue(arcFile, out var fullpath))
+			if (!this._arcFiles.TryGetValue(arcFile, out var fullpath))
 				continue;
 
 			if (openArchives)
@@ -1059,95 +984,80 @@ public partial class MainForm : Form
 				this.OpenFile(fullpath);
 			}
 
-			if (this.dicoReverseKeys.TryGetValue(valueId, out var found))
-				return this.dicoNodes[found[0]];
+			if (this.NodeKeysByRecordId.TryGetValue(valueId, out var found))
+				return this.NodesByKey[found[0]];
 
 			// The same entry in a fallback archive, under that archive's tree prefix: the game finds
 			// XPack3\Items\x.tex in XPack2\Items.arc when only that one holds it.
 			var fileId = fullpath.ToRecordId();
 			var entryKey = RecordId.Create(ArcPaths.TreePrefix(fileId) + '\\' + ArcPaths.EntryId(recordId).Raw);
-			if (this.dicoReverseKeys.TryGetValue(entryKey, out var inArchive))
+			if (this.NodeKeysByRecordId.TryGetValue(entryKey, out var inArchive))
 			{
 				var name = inArchive.FirstOrDefault(n => n.StartsWith(fileId.Normalized + ';', StringComparison.Ordinal)) ?? inArchive[0];
-				return this.dicoNodes[name];
+				return this.NodesByKey[name];
 			}
 		}
 
 		return null;
 	}
 
-	private void previousToolStripMenuItem_Click(object sender, EventArgs e)
-	{
-		GoPrev();
-	}
+	private void GoPrevious_Click(object sender, EventArgs e) => this.GoPrevious();
 
-	private void nextToolStripMenuItem_Click(object sender, EventArgs e)
-	{
-		GoNext();
-	}
+	private void GoNext_Click(object sender, EventArgs e) => this.GoNext();
 
-	private void toolStripButtonPrev_Click(object sender, EventArgs e)
+	private void GoPrevious()
 	{
-		GoPrev();
-	}
-
-	private void GoPrev()
-	{
-		_StackNavigationDisabled = true;
-		if (NavHistory.Count > 0 && NavHistoryIndex > 0)
+		if (this._navHistory.Count > 0 && this._navHistoryIndex > 0)
 		{
-			NavHistoryIndex--;
-			NavHistoryGoto();
+			this._navHistoryIndex--;
+			this.NavHistoryGoto();
 		}
-		_StackNavigationDisabled = false;
-	}
-
-	private void NavHistoryGoto()
-	{
-		// Only tagged nodes are shown in the tree, so only they get into the history
-		if (NavHistory[NavHistoryIndex].Tag is not NodeTag tag) return;
-
-		this.SelectedFile = tag.File;
-		this.treeViewTOC.SelectedNode = NavHistory[NavHistoryIndex];
-		this.treeViewTOC.Focus();
-	}
-
-	private void toolStripButtonNext_Click(object sender, EventArgs e)
-	{
-		GoNext();
 	}
 
 	private void GoNext()
 	{
-		_StackNavigationDisabled = true;
-		if (NavHistoryIndex < NavHistory.Count - 1)
+		if (this._navHistoryIndex < this._navHistory.Count - 1)
 		{
-			NavHistoryIndex++;
-
-			NavHistoryGoto();
+			this._navHistoryIndex++;
+			this.NavHistoryGoto();
 		}
-		_StackNavigationDisabled = false;
+	}
+
+	/// <summary>
+	/// Selects the history entry at the current index, without stacking it again.
+	/// </summary>
+	private void NavHistoryGoto()
+	{
+		// Only tagged nodes are shown in the tree, so only they get into the history
+		if (this._navHistory[this._navHistoryIndex].Tag is not NodeTag tag)
+			return;
+
+		this._stackNavigationDisabled = true;
+		try
+		{
+			this.SelectedFile = tag.File;
+			this.treeViewTOC.SelectedNode = this._navHistory[this._navHistoryIndex];
+			this.treeViewTOC.Focus();
+		}
+		finally
+		{
+			this._stackNavigationDisabled = false;
+		}
 	}
 
 	private void toolStripButtonClearHistory_Click(object sender, EventArgs e)
 	{
-		this.NavHistory.Clear();
-		this.NavHistoryIndex = -1;
+		this._navHistory.Clear();
+		this._navHistoryIndex = -1;
 	}
 
 	#endregion
 
 	#region Search
 
-	/// <summary>
-	/// Find next occurrence of search text
-	/// </summary>
-	private void FindNext() => this.Find(forward: true);
+	private void FindNext_Click(object sender, EventArgs e) => this.Find(forward: true);
 
-	/// <summary>
-	/// Find previous occurrence of search text
-	/// </summary>
-	private void FindPrevious() => this.Find(forward: false);
+	private void FindPrevious_Click(object sender, EventArgs e) => this.Find(forward: false);
 
 	/// <summary>
 	/// Find the next or previous node matching the search text, wrapping around
@@ -1163,19 +1073,19 @@ public partial class MainForm : Form
 		}
 
 		// Snapshot the nodes once: ElementAt on the dictionary walks it from the start every time
-		var nodes = this.dicoNodes.ToArray();
+		var nodes = this.NodesByKey.ToArray();
 		int startFromEnd = forward ? -1 : nodes.Length;
 
 		// Check if this is a new search
-		if (this.lastSearchText != searchText)
+		if (this._lastSearchText != searchText)
 		{
-			this.lastSearchText = searchText;
-			this.lastSearchPosition = startFromEnd;
+			this._lastSearchText = searchText;
+			this._lastSearchPosition = startFromEnd;
 		}
 
 		// The first match in search order, looked for a block of nodes at a time, each block checked in parallel:
 		// checking the records one by one took seconds on the UI thread (12 s for a text found nowhere).
-		var order = SearchOrder.Indices(nodes.Length, this.lastSearchPosition, forward).ToArray();
+		var order = SearchOrder.Indices(nodes.Length, this._lastSearchPosition, forward).ToArray();
 		const int blockSize = 1024;
 		for (int start = 0; start < order.Length; start += blockSize)
 		{
@@ -1188,15 +1098,15 @@ public partial class MainForm : Form
 				continue;
 
 			var (key, node) = nodes[block[first]];
-			this.lastSearchPosition = block[first];
-			NavigateTo(key);
-			this.toolStripStatusLabel.Text = $"{matches[first]}: {((NodeTag)node.Tag!).Key}";
+			this._lastSearchPosition = block[first];
+			this.NavigateTo(key);
+			this.toolStripStatusLabel.Text = $"{matches[first]}: {(node.Tag as NodeTag)?.Key}";
 			return;
 		}
 
 		// Not found - show in status label and reset position
 		this.toolStripStatusLabel.Text = $"Not found: {searchText}";
-		this.lastSearchPosition = startFromEnd;
+		this._lastSearchPosition = startFromEnd;
 	}
 
 	/// <summary>
@@ -1210,10 +1120,10 @@ public partial class MainForm : Form
 			return null;
 
 		var key = tag.Key;
-		if (key.Normalized.Contains(searchText, noCase))
+		if (key.Normalized.Contains(searchText, NoCase))
 			return "Found at";
 
-		if (tag.Text.Contains(searchText, noCase) || tag.RecordText.Any(line => line.Contains(searchText, noCase)))
+		if (tag.Text.Contains(searchText, NoCase) || tag.RecordText.Any(line => line.Contains(searchText, NoCase)))
 			return "Found in";
 
 		// Search in record variables (ARZ files only)
@@ -1223,7 +1133,7 @@ public partial class MainForm : Form
 
 		try
 		{
-			foreach (Variable variable in this.arzProv.GetRecordNotCached(file.ARZFile, key.Normalized))
+			foreach (Variable variable in this.ArzProvider.GetRecordNotCached(file.ARZFile, key.Normalized))
 			{
 				if (variable.TextContains(searchText))
 					return "Found in";
@@ -1242,43 +1152,17 @@ public partial class MainForm : Form
 	/// </summary>
 	protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 	{
-		if (keyData == Keys.F3)
+		switch (keyData)
 		{
-			FindNext();
-			return true;
+			case Keys.F3:
+				this.Find(forward: true);
+				return true;
+			case Keys.Shift | Keys.F3:
+				this.Find(forward: false);
+				return true;
+			default:
+				return base.ProcessCmdKey(ref msg, keyData);
 		}
-		else if (keyData == (Keys.Shift | Keys.F3))
-		{
-			FindPrevious();
-			return true;
-		}
-
-		return base.ProcessCmdKey(ref msg, keyData);
-	}
-
-	private void toolStripButtonSearchPrev_Click(object sender, EventArgs e)
-	{
-		FindPrevious();
-	}
-
-	private void toolStripButtonSearchNext_Click(object sender, EventArgs e)
-	{
-		FindNext();
-	}
-
-	private void searchNextToolStripMenuItem_Click(object sender, EventArgs e)
-	{
-		FindNext();
-	}
-
-	private void findPreviousToolStripMenuItem_Click(object sender, EventArgs e)
-	{
-		FindPrevious();
-	}
-
-	private void buttonFindNext_Click(object sender, EventArgs e)
-	{
-		FindNext();
 	}
 
 	#endregion
@@ -1288,7 +1172,7 @@ public partial class MainForm : Form
 	/// <summary>
 	/// Load all ARZ and ARC files from the game directory
 	/// </summary>
-	private void LoadAllFilesToolStripMenuItem_Click(object sender, EventArgs e)
+	private void LoadAllFiles_Click(object sender, EventArgs e)
 	{
 		try
 		{
@@ -1311,8 +1195,7 @@ public partial class MainForm : Form
 			using var scope = new TreeViewUpdateScope(this);
 			foreach (var file in allFiles)
 			{
-				// Check if already loaded
-				if (this.TQFileOpened.Any(kv => kv.Value.SourceFile == file))
+				if (this.IsOpen(file))
 				{
 					skipped++;
 					continue;
@@ -1323,7 +1206,9 @@ public partial class MainForm : Form
 				{
 					// Quiet: one message box per unreadable or empty file would stop the loop each time.
 					if (this.OpenFile(file, quiet: true))
+					{
 						loaded++;
+					}
 					else
 					{
 						failed++;

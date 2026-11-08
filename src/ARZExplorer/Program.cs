@@ -11,9 +11,9 @@ using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;
 using TQVaultAE.Data;
 using TQVaultAE.Domain.Exceptions;
-using TQVaultAE.Presentation.Win32.Contracts;
-using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation;
+using TQVaultAE.Presentation.Win32;
+using TQVaultAE.Presentation.Win32.Contracts;
 using TQVaultAE.Services;
 using TQVaultAE.Services.Win32;
 
@@ -24,7 +24,7 @@ namespace ArzExplorer;
 /// </summary>
 public static class Program
 {
-	// Set first thing in Main, before any form is created.
+	// Set in Main before any form is created.
 	internal static IServiceProvider ServiceProvider = null!;
 
 	/// <summary>
@@ -47,16 +47,67 @@ public static class Program
 		Application.EnableVisualStyles();
 		Application.SetCompatibleTextRenderingDefault(false);
 
-		// Setup regular Microsoft.Extensions.Logging abstraction manualy
+		// Setup regular Microsoft.Extensions.Logging abstraction manually
 		ILoggerFactory loggerFactory = new LoggerFactory();
 		loggerFactory.AddLog4Net();
 #if DEBUG
 		Automation.AutomationHost.Start(loggerFactory);
 #endif
 
-	restart:;
-		// Configure DI
-		var scol = new ServiceCollection()
+		// A game folder picked by the user is saved in the settings, then everything is set up again with it.
+		while (StartServices(loggerFactory) is { } gamePathError)
+		{
+			if (!AskGamePath(gamePathError))
+				return;
+		}
+
+		var mainform = Program.ServiceProvider.GetRequiredService<MainForm>();
+#if DEBUG
+		Automation.AutomationHost.AttachMainForm(mainform);
+#endif
+		Application.Run(mainform);
+	}
+
+	/// <summary>
+	/// Builds the services, then resolves the game path.
+	/// </summary>
+	/// <returns>Why the game was not found, or null when it was.</returns>
+	private static string? StartServices(ILoggerFactory loggerFactory)
+	{
+		Program.ServiceProvider = ConfigureServices(loggerFactory).BuildServiceProvider();
+
+		var gamePathResolver = Program.ServiceProvider.GetRequiredService<IGamePathService>();
+		try
+		{
+			gamePathResolver.GamePathTQ = gamePathResolver.ResolveGamePath();
+			gamePathResolver.GamePathTQIT = gamePathResolver.ResolveGamePath();
+			return null;
+		}
+		catch (ExGamePathNotFound ex)
+		{
+			return ex.Message;
+		}
+	}
+
+	/// <summary>
+	/// Asks the user for the game folder and saves it in the settings.
+	/// </summary>
+	/// <param name="reason">Why the game was not found, shown in the dialog.</param>
+	/// <returns>Whether the user picked a folder.</returns>
+	private static bool AskGamePath(string reason)
+	{
+		using var fbd = new FolderBrowserDialog { Description = reason, ShowNewFolderButton = false };
+		if (fbd.ShowDialog() != DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath))
+			return false;
+
+		var userSettings = Program.ServiceProvider.GetRequiredService<UserSettings>();
+		userSettings.ForceGamePath = fbd.SelectedPath;
+		userSettings.Save();
+		return true;
+	}
+
+	private static IServiceCollection ConfigureServices(ILoggerFactory loggerFactory)
+		=> new ServiceCollection()
 		// Logs
 		.AddSingleton(loggerFactory)// Register factory
 		.AddSingleton(typeof(ILogger<>), typeof(Logger<>))
@@ -65,7 +116,7 @@ public static class Program
 		.AddTransient<IPathIO, PathIO>()
 		.AddTransient<IDirectoryIO, DirectoryIO>()
 		// Config
-		.AddSingleton<UserSettings>(sp => UserSettings.Read())
+		.AddSingleton<UserSettings>(_ => UserSettings.Read())
 		// Providers
 		.AddTransient<IArcFileProvider, ArcFileProvider>()
 		.AddTransient<IArzFileProvider, ArzFileProvider>()
@@ -80,39 +131,4 @@ public static class Program
 		.AddTransient<ArchiveExtractor>()
 		.AddSingleton<MainForm>()
 		.AddTransient<ExtractProgress>();
-
-		Program.ServiceProvider = scol.BuildServiceProvider();
-
-		var gamePathResolver = Program.ServiceProvider.GetRequiredService<IGamePathService>();
-		var userSettings = Program.ServiceProvider.GetRequiredService<UserSettings>();
-
-		try
-		{
-			gamePathResolver.GamePathTQ = gamePathResolver.ResolveGamePath();
-			gamePathResolver.GamePathTQIT = gamePathResolver.ResolveGamePath();
-		}
-		catch (ExGamePathNotFound ex)
-		{
-			using (var fbd = new FolderBrowserDialog() { Description = ex.Message, ShowNewFolderButton = false })
-			{
-				DialogResult result = fbd.ShowDialog();
-
-				if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
-				{
-					userSettings.ForceGamePath = fbd.SelectedPath;
-					userSettings.Save();
-					goto restart;
-				}
-				else goto exit;
-			}
-		}
-
-		var mainform = Program.ServiceProvider.GetRequiredService<MainForm>();
-#if DEBUG
-		Automation.AutomationHost.AttachMainForm(mainform);
-#endif
-		Application.Run(mainform);
-
-	exit:;
-	}
 }

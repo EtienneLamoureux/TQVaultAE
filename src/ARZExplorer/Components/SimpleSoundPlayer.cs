@@ -3,42 +3,58 @@ using TQVaultAE.Domain.Entities;
 
 namespace ArzExplorer.Components;
 
+/// <summary>
+/// Play, loop and stop buttons for the selected sound entry.
+/// </summary>
 public partial class SimpleSoundPlayer : UserControl
 {
-	private RecordId? _CurrentSoundId;
-	private SoundPlayer? _CurrentSoundPlayer;
+	private RecordId? _currentSoundId;
+	private SoundPlayer? _currentSoundPlayer;
 
+	/// <summary>
+	/// Player of the shown sound; setting it stops the previous one and plays the new one.
+	/// </summary>
 	public SoundPlayer? CurrentSoundPlayer
 	{
-		get => _CurrentSoundPlayer;
+		get => this._currentSoundPlayer;
 		set
 		{
-			_CurrentSoundPlayer?.Stop();
+			this._currentSoundPlayer?.Stop();
 
-			_CurrentSoundPlayer = value;
+			this._currentSoundPlayer = value;
 
-			buttonPlay.PerformClick();
+			this.buttonPlay.PerformClick();
 		}
 	}
+
+	/// <summary>
+	/// Id of the shown sound; its file name is shown in the label.
+	/// </summary>
 	public RecordId? CurrentSoundId
 	{
-		get => _CurrentSoundId;
+		get => this._currentSoundId;
 		set
 		{
-			_CurrentSoundId = value;
+			this._currentSoundId = value;
 
-			if (_CurrentSoundId is not null)
-				this.labelFileName.Text = Path.GetFileName(_CurrentSoundId);
+			if (this._currentSoundId is not null)
+				this.labelFileName.Text = Path.GetFileName(this._currentSoundId);
 		}
 	}
 
+	/// <summary>
+	/// WAV data of the shown sound, for Copy Sound.
+	/// </summary>
 	public byte[]? CurrentSoundWavData { get; set; }
 
+	/// <summary>
+	/// Whether the loop button is down.
+	/// </summary>
 	public bool MustLoop => this.buttonLoop.BackColor == SystemColors.ActiveCaption;
 
 	public SimpleSoundPlayer()
 	{
-		InitializeComponent();
+		this.InitializeComponent();
 	}
 
 	private void SimpleSoundPlayer_Load(object sender, EventArgs e)
@@ -52,24 +68,21 @@ public partial class SimpleSoundPlayer : UserControl
 
 	private void buttonPlay_Click(object sender, EventArgs e)
 	{
-		if (MustLoop) CurrentSoundPlayer?.PlayLooping();
-		else CurrentSoundPlayer?.Play();
+		if (this.MustLoop)
+			this.CurrentSoundPlayer?.PlayLooping();
+		else
+			this.CurrentSoundPlayer?.Play();
 	}
 
 	private void buttonLoop_Click(object sender, EventArgs e)
 	{
-		this.buttonLoop.BackColor = this.buttonLoop.BackColor == SystemColors.ActiveCaption
+		this.buttonLoop.BackColor = this.MustLoop
 			? SystemColors.Control
 			: SystemColors.ActiveCaption;
 	}
 
-	private void buttonPause_Click(object sender, EventArgs e)
-	{
-		CurrentSoundPlayer?.Stop();// Freeze/Resume ??
-	}
+	// SoundPlayer cannot pause: the hidden Pause button stops.
+	private void buttonPause_Click(object sender, EventArgs e) => this.CurrentSoundPlayer?.Stop();
 
-	private void buttonStop_Click(object sender, EventArgs e)
-	{
-		CurrentSoundPlayer?.Stop();
-	}
+	private void buttonStop_Click(object sender, EventArgs e) => this.CurrentSoundPlayer?.Stop();
 }

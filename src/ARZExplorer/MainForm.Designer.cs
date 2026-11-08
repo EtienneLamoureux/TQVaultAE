@@ -218,7 +218,7 @@ public partial class MainForm
         this.loadAllFilesToolStripMenuItem.Name = "loadAllFilesToolStripMenuItem";
         this.loadAllFilesToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
         this.loadAllFilesToolStripMenuItem.Text = "Load All Files";
-        this.loadAllFilesToolStripMenuItem.Click += new System.EventHandler(this.LoadAllFilesToolStripMenuItem_Click);
+        this.loadAllFilesToolStripMenuItem.Click += new System.EventHandler(this.LoadAllFiles_Click);
         // 
         // exitToolStripMenuItem
         // 
@@ -244,7 +244,7 @@ public partial class MainForm
         this.previousToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
         this.previousToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
         this.previousToolStripMenuItem.Text = "&Previous";
-        this.previousToolStripMenuItem.Click += new System.EventHandler(this.previousToolStripMenuItem_Click);
+        this.previousToolStripMenuItem.Click += new System.EventHandler(this.GoPrevious_Click);
         // 
         // nextToolStripMenuItem
         // 
@@ -252,7 +252,7 @@ public partial class MainForm
         this.nextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
         this.nextToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
         this.nextToolStripMenuItem.Text = "&Next";
-        this.nextToolStripMenuItem.Click += new System.EventHandler(this.nextToolStripMenuItem_Click);
+        this.nextToolStripMenuItem.Click += new System.EventHandler(this.GoNext_Click);
         // 
         // editToolStripMenuItem
         // 
@@ -326,7 +326,7 @@ public partial class MainForm
         this.searchNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
         this.searchNextToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
         this.searchNextToolStripMenuItem.Text = "Find &Next";
-        this.searchNextToolStripMenuItem.Click += new System.EventHandler(this.searchNextToolStripMenuItem_Click);
+        this.searchNextToolStripMenuItem.Click += new System.EventHandler(this.FindNext_Click);
         // 
         // findPreviousToolStripMenuItem
         // 
@@ -334,7 +334,7 @@ public partial class MainForm
         this.findPreviousToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F3)));
         this.findPreviousToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
         this.findPreviousToolStripMenuItem.Text = "Find &Previous";
-        this.findPreviousToolStripMenuItem.Click += new System.EventHandler(this.findPreviousToolStripMenuItem_Click);
+        this.findPreviousToolStripMenuItem.Click += new System.EventHandler(this.FindPrevious_Click);
         // 
         // extractToolStripMenuItem
         // 
@@ -636,7 +636,7 @@ public partial class MainForm
         this.toolStripButtonPrev.Name = "toolStripButtonPrev";
         this.toolStripButtonPrev.Size = new System.Drawing.Size(23, 20);
         this.toolStripButtonPrev.Text = "Prev";
-        this.toolStripButtonPrev.Click += new System.EventHandler(this.toolStripButtonPrev_Click);
+        this.toolStripButtonPrev.Click += new System.EventHandler(this.GoPrevious_Click);
         // 
         // toolStripButtonNext
         // 
@@ -646,7 +646,7 @@ public partial class MainForm
         this.toolStripButtonNext.Name = "toolStripButtonNext";
         this.toolStripButtonNext.Size = new System.Drawing.Size(23, 20);
         this.toolStripButtonNext.Text = "Next";
-        this.toolStripButtonNext.Click += new System.EventHandler(this.toolStripButtonNext_Click);
+        this.toolStripButtonNext.Click += new System.EventHandler(this.GoNext_Click);
         // 
         // toolStripSeparator3
         // 
@@ -702,7 +702,7 @@ public partial class MainForm
         this.toolStripButtonLoadAllFiles.Name = "toolStripButtonLoadAllFiles";
         this.toolStripButtonLoadAllFiles.Size = new System.Drawing.Size(23, 20);
         this.toolStripButtonLoadAllFiles.Text = "Load All Files";
-        this.toolStripButtonLoadAllFiles.Click += new System.EventHandler(this.toolStripButtonLoadAllFiles_Click);
+        this.toolStripButtonLoadAllFiles.Click += new System.EventHandler(this.LoadAllFiles_Click);
         // 
         // toolStripSeparator2
         // 
@@ -733,7 +733,7 @@ public partial class MainForm
         this.toolStripButtonSearchPrev.Name = "toolStripButtonSearchPrev";
         this.toolStripButtonSearchPrev.Size = new System.Drawing.Size(23, 20);
         this.toolStripButtonSearchPrev.Text = "Search Prev";
-        this.toolStripButtonSearchPrev.Click += new System.EventHandler(this.toolStripButtonSearchPrev_Click);
+        this.toolStripButtonSearchPrev.Click += new System.EventHandler(this.FindPrevious_Click);
         // 
         // toolStripButtonSearchNext
         // 
@@ -743,7 +743,7 @@ public partial class MainForm
         this.toolStripButtonSearchNext.Name = "toolStripButtonSearchNext";
         this.toolStripButtonSearchNext.Size = new System.Drawing.Size(23, 20);
         this.toolStripButtonSearchNext.Text = "Search Next";
-        this.toolStripButtonSearchNext.Click += new System.EventHandler(this.toolStripButtonSearchNext_Click);
+        this.toolStripButtonSearchNext.Click += new System.EventHandler(this.FindNext_Click);
         // 
         // flowLayoutPanelPath
         // 

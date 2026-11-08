@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Text.Json;
 using ModelContextProtocol;
@@ -86,7 +87,7 @@ internal static class AutomationTools
 		[Description("Every record or entry of the selected file.")] bool all = false,
 		[Description("Seconds to wait for the UI thread.")] int timeoutSeconds = 900)
 	{
-		var watch = System.Diagnostics.Stopwatch.StartNew();
+		var watch = Stopwatch.StartNew();
 		AutomationHost.OnUi(form =>
 		{
 			if (all)
