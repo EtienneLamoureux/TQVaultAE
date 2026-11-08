@@ -261,7 +261,8 @@ public partial class ItemProvider
 			else
 				font = ItemStyle.Mundane.TQColor();
 
-			line = Format("{0} {1}", skillName, activationText);
+			// Name and activation text, without a dangling space when one of them is empty.
+			line = string.Join(' ', new[] { skillName, activationText }.Where(s => !string.IsNullOrEmpty(s)));
 		}
 
 		return line;

@@ -542,7 +542,13 @@ public partial class ItemProvider
 			strarray[numberOfStrings++] = amount;
 
 		if (!string.IsNullOrEmpty(label))
-			strarray[numberOfStrings++] = label;
+		{
+			// A label starting with "%" ("% Slowed", "% Energy Drain"...) completes the amount: the game shows "30% Slowed".
+			if (!string.IsNullOrEmpty(amount) && label.RemoveLeadingColorTag().StartsWith('%'))
+				strarray[numberOfStrings - 1] = string.Concat(amount, label);
+			else
+				strarray[numberOfStrings++] = label;
+		}
 
 		if (!string.IsNullOrEmpty(duration))
 			strarray[numberOfStrings++] = duration;
