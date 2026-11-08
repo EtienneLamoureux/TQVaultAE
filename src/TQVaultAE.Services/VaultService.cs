@@ -224,7 +224,8 @@ public class VaultService(
 			if (target!.IndexOfAny(this.PathIO.GetInvalidFileNameChars()) != -1)
 				return VaultMaintenanceError.InvalidCharacters;
 
-			if (Exists(target))
+			// Renaming a vault only by case ("gear" → "Gear") is allowed: the name in use is its own.
+			if (Exists(target) && !(action == VaultMaintenance.Rename && IsCaseOnlyChange(source, target)))
 				return VaultMaintenanceError.DuplicateName;
 		}
 
@@ -308,7 +309,9 @@ public class VaultService(
 		var oldFileName = this.GamePathResolver.GetVaultFile(oldName);
 		var newFileName = this.GamePathResolver.GetVaultFile(newName);
 
-		if (!this.FileIO.Exists(oldFileName) || this.FileIO.Exists(newFileName))
+		// File names ignore case on Windows: for a rename only by case, the "existing" target is the source itself.
+		var caseOnly = IsCaseOnlyChange(oldFileName, newFileName);
+		if (!this.FileIO.Exists(oldFileName) || (!caseOnly && this.FileIO.Exists(newFileName)))
 			return false;
 
 		this.FileIO.Move(oldFileName, newFileName);
@@ -321,6 +324,14 @@ public class VaultService(
 		this.ItemDatabaseService.RemoveContainerFromDatabase(newFileName);
 		return true;
 	}
+
+	/// <summary>
+	/// Whether two names differ only by the case of their letters.
+	/// </summary>
+	private static bool IsCaseOnlyChange(string? before, string? after)
+		=> before is not null && after is not null
+			&& before.Equals(after, StringComparison.OrdinalIgnoreCase)
+			&& !before.Equals(after, StringComparison.Ordinal);
 
 	/// <summary>
 	/// Updates VaultPath key from the configuration UI.

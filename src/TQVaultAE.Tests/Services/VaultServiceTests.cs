@@ -407,6 +407,11 @@ public class VaultServiceTests
 	[InlineData(VaultMaintenance.Rename, null, "Rings", VaultMaintenanceError.SourceMissing)]
 	[InlineData(VaultMaintenance.Rename, "Gear", "Main Vault", VaultMaintenanceError.DuplicateName)]
 	[InlineData(VaultMaintenance.Rename, "Gear", "Rings", VaultMaintenanceError.None)]
+	[InlineData(VaultMaintenance.Rename, "Gear", "gear", VaultMaintenanceError.None)]
+	[InlineData(VaultMaintenance.Rename, "gear", "GEAR", VaultMaintenanceError.None)]
+	[InlineData(VaultMaintenance.Rename, "Gear", "Gear", VaultMaintenanceError.DuplicateName)]
+	[InlineData(VaultMaintenance.Rename, "Main Vault", "gear", VaultMaintenanceError.DuplicateName)]
+	[InlineData(VaultMaintenance.Copy, "Gear", "gear", VaultMaintenanceError.DuplicateName)]
 	[InlineData(VaultMaintenance.Delete, "Missing", null, VaultMaintenanceError.SourceMissing)]
 	[InlineData(VaultMaintenance.Delete, "Gear", null, VaultMaintenanceError.None)]
 	public void ValidateMaintenance_ReturnsFirstProblem(VaultMaintenance action, string? source, string? target, VaultMaintenanceError expected)
@@ -561,6 +566,21 @@ public class VaultServiceTests
 		_sessionContext.Vaults.ContainsKey(newFile).Should().BeFalse();
 		// The items found under the old name go; they come back under the new one when it is loaded.
 		_mockItemDatabaseService.Verify(x => x.RemoveContainerFromDatabase(oldFile), Times.Once);
+	}
+
+	[Fact]
+	public void RenameVault_OnlyByCase_MovesTheFileAlthoughTheTargetNameExists()
+	{
+		// File names ignore case on Windows: "gear.vault.json" exists as soon as "Gear.vault.json" does.
+		var (oldFile, newFile) = SetupVaultFiles("Gear", "gear");
+		_mockFileIO.Setup(x => x.Exists(It.IsAny<string>())).Returns(true);
+		_sessionContext.Vaults.GetOrAddAtomic(oldFile, _ => new PlayerCollection("Gear", oldFile));
+
+		var renamed = _vaultService.RenameVault("Gear", "gear");
+
+		renamed.Should().BeTrue();
+		_mockFileIO.Verify(x => x.Move(oldFile, newFile), Times.Once);
+		_sessionContext.Vaults.ContainsKey(oldFile).Should().BeFalse();
 	}
 
 	[Theory]
