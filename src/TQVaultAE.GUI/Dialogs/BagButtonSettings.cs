@@ -320,6 +320,7 @@ public partial class BagButtonSettings : VaultForm
 		if (info.DisplayMode == BagButtonDisplayMode.Default)
 			this.scalingRadioButtonDefaultIcon.Checked = true;
 
+		this.SyncOptionsEnabled();
 		this.ShowSelection();
 
 		Cell? CellOf(RecordId? id)
@@ -676,6 +677,19 @@ public partial class BagButtonSettings : VaultForm
 				this.scalingCheckBoxNumber.Checked = false;
 		}
 
+		this.SyncOptionsEnabled();
 		this.ShowSelection();
+	}
+
+	/// <summary>
+	/// The default icon always shows the bag number and never a label: Number and Label only apply to a custom icon,
+	/// and the label box only when Label is ticked (else its text was dropped on Apply).
+	/// </summary>
+	private void SyncOptionsEnabled()
+	{
+		bool custom = !this.scalingRadioButtonDefaultIcon.Checked;
+		this.scalingCheckBoxNumber.Enabled = custom;
+		this.scalingCheckBoxLabel.Enabled = custom;
+		this.scalingTextBoxLabel.Enabled = custom && this.scalingCheckBoxLabel.Checked;
 	}
 }
