@@ -30,7 +30,7 @@ internal sealed class ExtractCommand : ICommand
 			new("frames", null, "mode", "Animated textures with --convert: first (default) | all (name_frameN)."),
 			new("verify", null, null, "Verify Adler-32 checksums while extracting."),
 			new("parallel", null, "N", "Concurrent extractions (default --threads)."),
-			new("flat", null, null, "Write <out>/<name> instead of <out>/<archive>/<name>."),
+			new("flat", null, null, "Write <out>/<name> instead of <out>/<archive>/<name>; for a name in several archives, the last archive wins."),
 			new("skip-existing", null, null, "Do not overwrite files that already exist (raw copies with the same size)."),
 		],
 		[],
@@ -56,13 +56,10 @@ internal sealed class ExtractCommand : ICommand
 		var selection = FilesCommand.BuildSelection(args);
 
 		var work = new List<(string Key, ArcEntry Entry)>();
-		long totalBytes = 0;
 		foreach (var (key, archive) in FilesCommand.OpenSelected(context, selection)) {
 			foreach (var e in archive.Entries) {
-				if (!selection.MatchesEntry(e))
-					continue;
-				work.Add((key, e));
-				totalBytes += e.Size;
+				if (selection.MatchesEntry(e))
+					work.Add((key, e));
 			}
 		}
 
@@ -70,6 +67,22 @@ internal sealed class ExtractCommand : ICommand
 			context.Info("No entry matched.");
 			return ExitCodes.Ok;
 		}
+
+		int replaced = 0;
+		if (flat) {
+			// Same name in several archives: one target file. Keep the last archive's entry (archives are in path order,
+			// so XPack, XPack2... win over the base game) instead of letting parallel writers race on the file.
+			var lastByName = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+			for (int i = 0; i < work.Count; i++)
+				lastByName[work[i].Entry.Name.Replace('\\', '/')] = i;
+			replaced = work.Count - lastByName.Count;
+			if (replaced > 0)
+				work = [.. lastByName.Values.Order().Select(i => work[i])];
+		}
+
+		long totalBytes = work.Sum(w => w.Entry.Size);
+		if (replaced > 0)
+			context.Info($"--flat: {replaced} entr{(replaced == 1 ? "y" : "ies")} replaced by a later archive with the same name.");
 
 		Directory.CreateDirectory(outDir);
 		var stats = new Stats();
