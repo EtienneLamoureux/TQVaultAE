@@ -71,7 +71,7 @@ public abstract class ItemProviderTextTestBase
 		mockTranslation.Setup(t => t.TranslateXTag(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
 			.Returns((string tag, bool _, bool _, bool _) => this.Translations.GetValueOrDefault(tag ?? string.Empty, tag ?? string.Empty));
 
-		this.MockDatabase.Setup(d => d.VariableToStringNice(It.IsAny<Variable>())).Returns((Variable v) => v.ToStringValue());
+		this.MockDatabase.Setup(d => d.VariableToStringNice(It.IsAny<Variable>())).Returns((Variable v) => $"?{v.Name}?: {v.ToStringValue()}");
 
 		var mockPath = new Mock<IPathIO>();
 		mockPath.Setup(p => p.GetFileNameWithoutExtension(It.IsAny<string>())).Returns((string path) => Path.GetFileNameWithoutExtension(path.Replace('\\', '/')));

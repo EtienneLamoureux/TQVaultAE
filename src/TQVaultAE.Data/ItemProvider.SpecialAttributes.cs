@@ -33,7 +33,8 @@ public partial class ItemProvider
 
 			if (!TranslationService.TryTranslateXTag(tag, out var formatSpec))
 			{
-				formatSpec = string.Format(CultureInfo.CurrentCulture, "{0:f1}% ?{0}?", tag);
+				// The chance stays a placeholder: formatting the tag into "{0:f1}% ?{0}?" lost the value.
+				formatSpec = string.Concat("{0:f1}% ?", tag, "?");
 				font = ItemStyle.Legendary.TQColor();
 			}
 			else
