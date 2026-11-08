@@ -67,6 +67,28 @@ public interface IVaultService
 	void ChangeBagTooltip(PlayerCollection vault, BagTooltipChange change, int bag, int bagCount);
 
 	/// <summary>
+	/// Remembers the bag selected in a vault panel, so the panel shows it again when the vault is reopened. Each vault
+	/// keeps one bag for the main vault panel and one for the secondary vault panel; they are saved in the vault file,
+	/// so the vault is marked modified when the bag changes.
+	/// </summary>
+	/// <param name="vault">The vault shown in the panel.</param>
+	/// <param name="secondary">True for the secondary vault panel, false for the main vault panel.</param>
+	/// <param name="bag">The selected bag index.</param>
+	/// <returns>True when the remembered bag changed.</returns>
+	bool RememberSelectedBag(PlayerCollection vault, bool secondary, int bag);
+
+	/// <summary>
+	/// Picks the bag a vault panel shows once it gets a vault: the bag remembered for that panel (see
+	/// <see cref="RememberSelectedBag"/>) when there is one, else the bag the panel already showed, kept within the bags.
+	/// </summary>
+	/// <param name="vault">The vault shown in the panel; null for a panel that remembers nothing (a character panel).</param>
+	/// <param name="secondary">True for the secondary vault panel, false for the main vault panel.</param>
+	/// <param name="currentBag">The bag the panel showed before.</param>
+	/// <param name="count">The number of bags the panel shows.</param>
+	/// <returns>A bag index from 0 to <paramref name="count"/> - 1; 0 or more when there are no bags.</returns>
+	int ResolveInitialBag(PlayerCollection? vault, bool secondary, int currentBag, int count);
+
+	/// <summary>
 	/// Builds the CSV export of a vault, or of one of its bags: a header line, then one line per item.
 	/// </summary>
 	/// <param name="vault">The vault.</param>

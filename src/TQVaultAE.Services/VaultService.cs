@@ -271,6 +271,37 @@ public class VaultService(
 	}
 
 	/// <inheritdoc />
+	public bool RememberSelectedBag(PlayerCollection vault, bool secondary, int bag)
+	{
+		if ((secondary ? vault.currentlyFocusedSackNumber : vault.currentlySelectedSackNumber) == bag)
+			return false;
+
+		if (secondary)
+			vault.currentlyFocusedSackNumber = bag;
+		else
+			vault.currentlySelectedSackNumber = bag;
+
+		// Saved with the vault.
+		if (vault.Sacks is { Length: > 0 } sacks)
+			sacks[0].IsModified = true;
+
+		return true;
+	}
+
+	/// <inheritdoc />
+	public int ResolveInitialBag(PlayerCollection? vault, bool secondary, int currentBag, int count)
+	{
+		int remembered = vault is null
+			? -1
+			: secondary ? vault.currentlyFocusedSackNumber : vault.currentlySelectedSackNumber;
+
+		// -1: nothing remembered yet.
+		int bag = remembered > -1 ? remembered : currentBag;
+
+		return count > 0 ? Math.Clamp(bag, 0, count - 1) : Math.Max(bag, 0);
+	}
+
+	/// <inheritdoc />
 	public bool CopyVault(string sourceName, string targetName)
 	{
 		var sourceFileName = this.GamePathResolver.GetVaultFile(sourceName);
