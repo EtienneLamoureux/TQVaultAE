@@ -112,6 +112,17 @@ public readonly record struct MoveDestination(
 /// </summary>
 public static class ItemActionRules
 {
+	/// <summary>
+	/// Indicates whether the items of a sack of that type cannot change: with the <c>PlayerReadonly</c> setting on, the
+	/// equipment of the player cannot be picked from, dropped on, moved or deleted. The player sacks and the other
+	/// panels stay editable. This is the <see cref="ItemActionContext.ReadOnly"/> of a sack.
+	/// </summary>
+	/// <param name="sackType">The type of the sack.</param>
+	/// <param name="playerReadonly">The <c>PlayerReadonly</c> user setting.</param>
+	/// <returns><see langword="true"/> when the sack cannot change.</returns>
+	public static bool IsReadOnly(SackType sackType, bool playerReadonly)
+		=> playerReadonly && sackType == SackType.Equipment;
+
 	/// <summary>The actions available in <paramref name="context"/>.</summary>
 	public static ItemActions Available(in ItemActionContext context)
 	{

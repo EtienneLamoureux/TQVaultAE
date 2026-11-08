@@ -116,9 +116,6 @@ public partial class EquipmentPanel
 			if (slot == -1 || !EquipmentRules.CanEquip(this.ShownSack, dragItem, slot))
 				return;
 
-			//if (IsCurrentPlayerReadOnly())
-			//	return;
-
 			if (!IsSuitableForCurrentPlayer(dragItem))
 				return;
 

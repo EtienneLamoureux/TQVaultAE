@@ -134,7 +134,7 @@ A second sweep after lot 10 (2026-11-08) found these. Line numbers are from that
 | L11 | `VaultPanel.ContextMenu.cs:31-43`, `Models/CsvDelimiter.cs`, `SettingsDialog.cs:414-432` | `CsvDelimiter` and its parsing in the GUI; the settings dialog reads the saved value, not the one edited | `CsvDelimiter` in Config/Application; `VaultService.BuildCsvExport` reads the setting | low | to do |
 | L12 | `MainForm.Search.cs:94-147` | Search result → panel and bag index arithmetic; unreachable `StashType` branch | `SearchResultNavigation.Resolve` | low-med | done `de72e4b` (checked in the app: vault, player main sack and bags, equipment, own, transfer and relic stashes) |
 | L13 | `ForgePanel.cs:230-289` | Mode cards hard-code what each forge mode allows | `ForgeRules.Capabilities(mode)` | low | to do |
-| L14 | `SackPanel.cs:572-579`, `SackPanel.Input.cs:44`, `SackPanel.SackManagement.cs:98, 131`, `DragDrop.cs:111-117`, `EquipmentPanel.DragDrop.cs:119` | Read-only rule computed 3 times; `IsCurrentPlayerReadOnly` used only by commented-out code | One rule (`ItemActionRules` context or `PlayerService.IsSackReadOnly`); dead code removed | low | to do |
+| L14 | `SackPanel.cs:572-579`, `SackPanel.Input.cs:44`, `SackPanel.SackManagement.cs:98, 131`, `DragDrop.cs:111-117`, `EquipmentPanel.DragDrop.cs:119` | Read-only rule computed 3 times; `IsCurrentPlayerReadOnly` used only by commented-out code | One rule (`ItemActionRules` context or `PlayerService.IsSackReadOnly`); dead code removed | low | done `20543e6` |
 
 ## What stays in the GUI
 
