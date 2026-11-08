@@ -242,10 +242,16 @@ public class UserSettings
 
 	#region Logic
 
-	public void Save()
-	{
-		string xmlPath = ResolveUserSettingsFilePath();
+	/// <summary>
+	/// Saves the settings to the <c>UserConfig.xml</c> next to the application.
+	/// </summary>
+	public void Save() => this.Save(ResolveUserSettingsFilePath());
 
+	/// <summary>
+	/// Saves the settings to <paramref name="xmlPath"/>, replacing the file.
+	/// </summary>
+	public void Save(string xmlPath)
+	{
 		XmlSerializer serializer = new XmlSerializer(typeof(UserSettings));
 		using var stream = new FileStream(xmlPath, FileMode.Create);
 		serializer.Serialize(stream, this);
@@ -256,10 +262,17 @@ public class UserSettings
 		return Path.Combine(AppContext.BaseDirectory, "UserConfig.xml");
 	}
 
-	public static UserSettings Read()
-	{
-		string xmlPath = ResolveUserSettingsFilePath();
+	/// <summary>
+	/// Reads the <c>UserConfig.xml</c> next to the application, or the defaults when there is none.
+	/// </summary>
+	public static UserSettings Read() => Read(ResolveUserSettingsFilePath());
 
+	/// <summary>
+	/// Reads the settings from <paramref name="xmlPath"/>, or the defaults when the file does not exist.
+	/// Settings missing from the file keep their default.
+	/// </summary>
+	public static UserSettings Read(string xmlPath)
+	{
 		if (File.Exists(xmlPath))
 			return ParseSettings(File.ReadAllText(xmlPath));
 

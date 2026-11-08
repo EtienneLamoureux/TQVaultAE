@@ -28,6 +28,8 @@
     <None Include="Data\Particles.arc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <!-- The UserConfig.xml template shipped with the app, under another name so that UserSettings.Read() does not find it. -->
+    <None Include="..\TQVaultAE.Config\UserConfig.xml" Link="Config\UserConfig.template.xml" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
