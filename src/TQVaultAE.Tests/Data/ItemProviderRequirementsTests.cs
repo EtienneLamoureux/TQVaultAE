@@ -288,6 +288,37 @@ public class ItemProviderRequirementsTests : ItemProviderTextTestBase
 		item.TexImageResourceId.Should().Be(RecordId.Create("DefaultBitmap"));
 	}
 
+	[Fact]
+	public void GetDBData_TakesTheSizeInCellsFromThePictureHeaders()
+	{
+		this.CreateRecord("""records\test\sword.dbr""", "WeaponMelee_Sword", Str("bitmap", """items\sword.tex"""));
+		this.MockDatabase.Setup(d => d.GetTextureSize(RecordId.Create("""items\sword.tex"""))).Returns((64, 128));
+		var item = new Item { BaseItemId = RecordId.Create("""records\test\sword.dbr""") };
+
+		this.Provider.GetDBData(item);
+
+		item.Width.Should().Be(2);
+		item.Height.Should().Be(4);
+	}
+
+	[Fact]
+	public void GetDBData_WithAnUnreadablePicture_IsOneCell()
+	{
+		var item = new Item { BaseItemId = RecordId.Create("""records\test\unknown.dbr""") };
+
+		this.Provider.GetDBData(item);
+
+		item.Width.Should().Be(1);
+		item.Height.Should().Be(1);
+	}
+
+	[Theory]
+	[InlineData(32, 32, 1, 1)]
+	[InlineData(64, 96, 2, 3)]
+	[InlineData(16, 16, 1, 1)]
+	public void CellSize_DividesThePixelsByTheCellSize(int width, int height, int cellsWide, int cellsHigh)
+		=> TQVaultAE.Data.ItemProvider.CellSize((width, height)).Should().Be((cellsWide, cellsHigh));
+
 	#endregion
 
 	private void AddPrefix(Item item, params Variable[] attributes)

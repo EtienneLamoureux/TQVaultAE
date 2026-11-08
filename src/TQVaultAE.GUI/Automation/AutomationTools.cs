@@ -470,7 +470,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "export_items")]
-	[Description("Right-clicks a cell of a panel, then runs the item menu's 'Export to file' without its file dialog: the selection (select_items) when there is one, else the item under the cursor. Returns false in 'exported' when there was nothing to export. Never touches the clipboard or PasteBin.")]
+	[Description("Right-clicks a cell of a panel, then runs the item menu's 'Share Item > Share to File...' without its file dialog: the selection (select_items) when there is one, else the item under the cursor. Returns false in 'exported' when there was nothing to export. Never touches the clipboard or PasteBin.")]
 	public static string ExportItems(
 		[Description("Panel id.")] string panel,
 		[Description("Cell column.")] int x,
