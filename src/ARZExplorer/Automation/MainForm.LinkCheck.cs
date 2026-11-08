@@ -22,7 +22,7 @@ public partial class MainForm
 	/// </summary>
 	internal object AutomationCheckLinks(string? contains, int maxRecords, int examplesPerKind, bool render)
 	{
-		var database = this.TQFileOpened.Values.FirstOrDefault(f => f.FileType == CompressedFileType.ArzFile)
+		var database = this._openedFiles.Values.FirstOrDefault(f => f.FileType == CompressedFileType.ArzFile)
 			?? throw new InvalidOperationException("Open the database first (Load All Files opens it with every archive).");
 
 		var watch = Stopwatch.StartNew();
@@ -31,9 +31,9 @@ public partial class MainForm
 		int records = 0, links = 0, resolved = 0, multiValueCells = 0, unstyled = 0;
 
 		// File name -> node keys of every loaded leaf, to tell a missing file from one under another path.
-		var fileNames = new Lazy<ILookup<string, string>>(() => this.dicoNodes
+		var fileNames = new Lazy<ILookup<string, string>>(() => this.NodesByKey
 			.Where(kv => kv.Value.Nodes.Count == 0)
-			.ToLookup(kv => Path.GetFileName(kv.Key.Split(';').Last()), kv => kv.Key, StringComparer.OrdinalIgnoreCase));
+			.ToLookup(kv => Path.GetFileName(EntryOf(kv.Key)), kv => kv.Key, StringComparer.OrdinalIgnoreCase));
 
 		var ids = database.Arz.Keys
 			.Where(id => string.IsNullOrEmpty(contains) || id.Normalized.Contains(contains, StringComparison.OrdinalIgnoreCase))
@@ -46,7 +46,7 @@ public partial class MainForm
 			DBRecordCollection record;
 			try
 			{
-				record = this.arzProv.GetRecordNotCached(database.Arz, id);
+				record = this.ArzProvider.GetRecordNotCached(database.Arz, id);
 			}
 			catch (Exception ex)
 			{
@@ -57,7 +57,7 @@ public partial class MainForm
 			foreach (Variable variable in record)
 			{
 				// Same split as PopulateGridView: name, then all the values joined by ';' in one cell.
-				var cells = variable.ToString().Split(PopulateGridView_splitChars, StringSplitOptions.RemoveEmptyEntries);
+				var cells = GridCells(variable.ToString());
 				if (cells.Length < 2)
 					continue;
 
@@ -78,7 +78,7 @@ public partial class MainForm
 					var key = this.ResolveLinkKey(value);
 					if (key is null)
 					{
-						problems.Enqueue(this.ClassifyUnresolved(id.Raw, variable.Name, value, fileNames.Value));
+						problems.Enqueue(ClassifyUnresolved(id.Raw, variable.Name, value, fileNames.Value));
 						continue;
 					}
 
@@ -86,7 +86,7 @@ public partial class MainForm
 					targets.TryAdd(key, (id.Raw, variable.Name));
 
 					// With only the database loaded, the click opens the candidate archives in turn: one must hold the target.
-					if (!value.EndsWith(".DBR", StringComparison.OrdinalIgnoreCase) && this.dicoNodes[key].Tag is NodeTag tag
+					if (!value.EndsWith(".DBR", StringComparison.OrdinalIgnoreCase) && this.NodesByKey[key].Tag is NodeTag tag
 						&& !this.AutoLoadArchives(value).Contains(tag.File.SourceFile, StringComparer.OrdinalIgnoreCase))
 					{
 						problems.Enqueue(new("auto-load cannot reach the archive", id.Raw, variable.Name, value
@@ -134,7 +134,7 @@ public partial class MainForm
 	private string? ResolveLinkKey(string value) => this.ResolveLink(value, openArchives: false)?.Name;
 
 	/// <summary>Why a link resolves to nothing: a file under another path, or a file missing from the game.</summary>
-	private LinkProblem ClassifyUnresolved(string record, string variable, string value, ILookup<string, string> fileNames)
+	private static LinkProblem ClassifyUnresolved(string record, string variable, string value, ILookup<string, string> fileNames)
 	{
 		var sameName = fileNames[Path.GetFileName(value.Replace('/', '\\'))].Take(3).ToArray();
 		return sameName.Length > 0
@@ -145,7 +145,7 @@ public partial class MainForm
 	/// <summary>The archives a click opens in turn to find <paramref name="value"/>, as <see cref="NavigateTo"/> does.</summary>
 	private string[] AutoLoadArchives(string value)
 		=> [.. GameArchives.ArcFileCandidates(value.Replace('/', '\\').ToRecordId())
-			.Select(arcFile => this.ArcFileList.TryGetValue(arcFile, out var path) ? path : null)
+			.Select(arcFile => this._arcFiles.TryGetValue(arcFile, out var path) ? path : null)
 			.OfType<string>()];
 
 	/// <summary>Loads a target as its view does; returns the problem, or null when it shows.</summary>
@@ -153,16 +153,16 @@ public partial class MainForm
 	{
 		try
 		{
-			if (this.dicoNodes[nodeKey].Tag is not NodeTag tag)
+			if (this.NodesByKey[nodeKey].Tag is not NodeTag tag)
 				return "node without tag";
 
 			if (tag.File.FileType == CompressedFileType.ArzFile)
 			{
-				var record = this.arzProv.GetRecordNotCached(tag.File.Arz, nodeKey.Split(';').Last());
+				var record = this.ArzProvider.GetRecordNotCached(tag.File.Arz, EntryOf(nodeKey));
 				return record.Count == 0 ? "empty record" : null;
 			}
 
-			var data = this.arcProv.GetData(tag.File.Arc, ArcPaths.DataId(tag.Key));
+			var data = this.ArcProvider.GetData(tag.File.Arc, ArcPaths.DataId(tag.Key));
 			if (data is null)
 				return "no data in the archive";
 

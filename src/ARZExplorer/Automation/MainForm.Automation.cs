@@ -13,8 +13,8 @@ public partial class MainForm
 	internal object AutomationState() => new
 	{
 		title = this.Text,
-		files = this.TQFileOpened.Keys.ToArray(),
-		nodeCount = this.dicoNodes.Count,
+		files = this._openedFiles.Keys.ToArray(),
+		nodeCount = this.NodesByKey.Count,
 		topNodes = this.treeViewTOC.Nodes.Cast<TreeNode>().Select(n => $"{n.Text} ({n.Nodes.Count})").ToArray(),
 		selectedNode = this.treeViewTOC.SelectedNode?.Name,
 		path = this.textBoxPath.Text,
@@ -41,7 +41,7 @@ public partial class MainForm
 
 	/// <summary>The keys of the leaf nodes whose key contains <paramref name="contains"/>.</summary>
 	internal string[] AutomationFindNodes(string contains, int max)
-		=> [.. this.dicoNodes
+		=> [.. this.NodesByKey
 			.Where(kv => kv.Value.Nodes.Count == 0 && kv.Key.Contains(contains, StringComparison.OrdinalIgnoreCase))
 			.Select(kv => kv.Key)
 			.Take(max)];
@@ -49,7 +49,7 @@ public partial class MainForm
 	/// <summary>Selects a node as a click in the tree does.</summary>
 	internal void AutomationSelectNode(string key)
 	{
-		if (!this.dicoNodes.TryGetValue(key, out var node))
+		if (!this.NodesByKey.TryGetValue(key, out var node))
 			throw new ArgumentException($"No node '{key}'.", nameof(key));
 
 		this.treeViewTOC.SelectedNode = node;
@@ -58,7 +58,7 @@ public partial class MainForm
 	/// <summary>Every menu and toolbar item, by name.</summary>
 	private IEnumerable<ToolStripItem> AutomationItems()
 	{
-		IEnumerable<ToolStripItem> Walk(ToolStripItemCollection items)
+		static IEnumerable<ToolStripItem> Walk(ToolStripItemCollection items)
 		{
 			foreach (ToolStripItem item in items)
 			{
@@ -70,7 +70,7 @@ public partial class MainForm
 		}
 
 		// The menu and the toolbar sit in panels: walk every control.
-		IEnumerable<Control> All(Control parent)
+		static IEnumerable<Control> All(Control parent)
 		{
 			foreach (Control child in parent.Controls)
 			{
@@ -97,7 +97,7 @@ public partial class MainForm
 	internal long AutomationSearch(string text, bool forward)
 	{
 		this.toolStripTextBox.Text = text;
-		var watch = System.Diagnostics.Stopwatch.StartNew();
+		var watch = Stopwatch.StartNew();
 		this.Find(forward);
 		return watch.ElapsedMilliseconds;
 	}
@@ -130,7 +130,7 @@ public partial class MainForm
 	internal object[] AutomationGridLinks()
 		=> [.. this.dataGridViewDetails.Rows.Cast<DataGridViewRow>()
 			.SelectMany(row => row.Cells.Cast<DataGridViewCell>())
-			.Where(cell => cell.Style == PopulateGridView_hyperLinkCellStyle)
+			.Where(cell => cell.Style == LinkCellStyle)
 			.Select(cell => (object)new { row = cell.RowIndex, column = cell.ColumnIndex, value = cell.Value?.ToString() })];
 
 	/// <summary>Clicks a cell of the record grid as the mouse does (a link cell navigates to its target).</summary>
@@ -140,7 +140,7 @@ public partial class MainForm
 	/// <summary>The archive and entry id of an ARC node, to read it off the UI thread.</summary>
 	internal (ArcFile Arc, RecordId Id) AutomationArcEntry(string key)
 	{
-		if (!this.dicoNodes.TryGetValue(key, out var node) || node.Tag is not NodeTag tag)
+		if (!this.NodesByKey.TryGetValue(key, out var node) || node.Tag is not NodeTag tag)
 			throw new ArgumentException($"No node '{key}'.", nameof(key));
 		if (tag.File.FileType != CompressedFileType.ArcFile)
 			throw new ArgumentException($"'{key}' is not in an ARC file.", nameof(key));
@@ -152,7 +152,7 @@ public partial class MainForm
 	internal object AutomationDecodeTex(ArcFile arc, RecordId id)
 	{
 		var watch = Stopwatch.StartNew();
-		var data = this.arcProv.GetData(arc, id);
+		var data = this.ArcProvider.GetData(arc, id);
 		var readMs = watch.ElapsedMilliseconds;
 		if (data is null)
 			return new { found = false, readMs };
