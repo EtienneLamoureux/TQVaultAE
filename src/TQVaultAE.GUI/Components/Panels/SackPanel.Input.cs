@@ -41,9 +41,7 @@ public partial class SackPanel
 		if (this.Sack is null)
 			return;
 
-		var isEquipmentReadOnly = (USettings.PlayerReadonly == true && this.SackType == SackType.Equipment);
-
-		if (e.Button == MouseButtons.Left && !isEquipmentReadOnly)
+		if (e.Button == MouseButtons.Left && !this.ItemsReadOnly)
 		{
 			if (!this.DragInfo.IsActive)
 			{
@@ -69,7 +67,7 @@ public partial class SackPanel
 		}
 		else if (e.Button == MouseButtons.Right)
 		{
-			if (this.DragInfo.IsActive && this.DragInfo.CanBeCanceled && !isEquipmentReadOnly)
+			if (this.DragInfo.IsActive && this.DragInfo.CanBeCanceled && !this.ItemsReadOnly)
 			{
 				this.DragInfo.Cancel();
 
@@ -149,7 +147,7 @@ public partial class SackPanel
 			focusedItem
 			, selectionCount
 			, singleSelectionFocused
-			, ReadOnly: USettings.PlayerReadonly == true && this.SackType == SackType.Equipment
+			, ReadOnly: this.ItemsReadOnly
 			, USettings.AllowItemEdit
 			, USettings.AllowItemCopy);
 

@@ -566,17 +566,10 @@ public partial class SackPanel : Panel, IScalingControl
 		=> this.Services.PlayerService.CurrentPlayerMeetsRequirements(item);
 
 	/// <summary>
-	/// Indicates whether the current player file can be edited.
+	/// Indicates whether the items of this sack cannot change: the equipment of a read-only player.
 	/// </summary>
-	/// <returns></returns>
-	protected virtual bool IsCurrentPlayerReadOnly()
-	{
-		var currPlayer = this.userContext.CurrentPlayer;
-		if (!(currPlayer?.IsImmortalThrone ?? false) // TODO for now TQ Original Player is read only but could be issue #268
-		) return true;
+	public bool ItemsReadOnly => ItemActionRules.IsReadOnly(this.SackType, this.USettings.PlayerReadonly);
 
-		return false;
-	}
 	/// <summary>
 	/// Indicates whether the passed item is suitable for equipping.
 	/// e.g. an Immortal throne or greater item on a Titan Quest Original player.

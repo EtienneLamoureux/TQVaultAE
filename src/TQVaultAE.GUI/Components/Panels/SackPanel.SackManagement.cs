@@ -95,10 +95,9 @@ public partial class SackPanel : Panel, IScalingControl
 		if (Sack is null)
 			return;
 
-		var isEquipmentReadOnly = (USettings.PlayerReadonly == true && SackType == SackType.Equipment);
 		Item? focusedItem = FindItem(LastCellWithFocus);
 
-		if ((focusedItem is null && selectedItems is null) || isEquipmentReadOnly)
+		if ((focusedItem is null && selectedItems is null) || this.ItemsReadOnly)
 			return;
 
 		if (MaxSacks > 1 && sackNumber < MaxSacks)
@@ -128,10 +127,9 @@ public partial class SackPanel : Panel, IScalingControl
 		if (Sack is null)
 			return;
 
-		var isEquipmentReadOnly = (USettings.PlayerReadonly == true && SackType == SackType.Equipment);
 		Item? focusedItem = FindItem(LastCellWithFocus);
 
-		if ((focusedItem is null && selectedItems is null) || isEquipmentReadOnly)
+		if ((focusedItem is null && selectedItems is null) || this.ItemsReadOnly)
 			return;
 
 		var destination = AutoMovePlanner.QuickMoveDestination(location, this.AutoMoveLocation, this.SecondaryVaultShown);

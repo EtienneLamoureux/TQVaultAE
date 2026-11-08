@@ -108,15 +108,6 @@ public partial class SackPanel
 			if (this.DragInfo.Item is not { } dragItem)
 				return;
 
-			/*
-						if ((
-							this.SackType == SackType.Player
-							|| this.SackType == SackType.Equipment
-							|| this.SackType == SackType.Player
-							) && IsCurrentPlayerReadOnly()
-						) return;
-			 */
-
 			// The only item under us, if any
 			Item? itemUnderUs = null;
 			if (this.ItemsUnderDragItem.Count == 1)

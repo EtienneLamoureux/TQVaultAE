@@ -37,6 +37,16 @@ public class ItemActionRulesTests
 	public void IsSuitableFor_OriginalPlayerOnlyTakesBaseGameItems(string baseItemId, bool immortalThronePlayer, bool expected)
 		=> ItemActionRules.IsSuitableFor(new Item { BaseItemId = RecordId.Create(baseItemId) }, immortalThronePlayer).Should().Be(expected);
 
+	[Theory]
+	[InlineData(SackType.Equipment, true, true)]
+	[InlineData(SackType.Equipment, false, false)]
+	[InlineData(SackType.Player, true, false)]
+	[InlineData(SackType.Trash, true, false)]
+	[InlineData(SackType.Stash, true, false)]
+	[InlineData(SackType.Vault, true, false)]
+	public void IsReadOnly_PlayerReadonlyLocksTheEquipmentOnly(SackType sackType, bool playerReadonly, bool expected)
+		=> ItemActionRules.IsReadOnly(sackType, playerReadonly).Should().Be(expected);
+
 	private static ItemActions Key(char key, Item? item, bool readOnly = false, bool allowCopy = true, int selectionCount = 0)
 		=> ItemActionRules.KeyAction(key, new ItemActionContext(item, selectionCount, false, readOnly, AllowItemEdit: true, allowCopy));
 

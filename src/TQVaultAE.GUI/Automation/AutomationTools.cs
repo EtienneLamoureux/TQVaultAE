@@ -587,7 +587,7 @@ internal static partial class AutomationTools
 	/// </summary>
 	private static void EnsureWritable(MainForm form, SackPanel panel, string action)
 	{
-		if (form.AutomationSettings.PlayerReadonly && panel.SackType == SackType.Equipment)
+		if (panel.ItemsReadOnly)
 			throw new McpException($"Cannot {action} the equipment panel: the PlayerReadonly setting is on.");
 	}
 
