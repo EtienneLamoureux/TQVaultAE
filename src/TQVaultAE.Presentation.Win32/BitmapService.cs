@@ -75,25 +75,18 @@ public class BitmapService : IBitmapService
 		}
 
 		// We need to convert from TEX to DDS format as follows:
-		// The 1st 12 bytes of a TEX file is crap.  We want to throw it away
-		// We need to change bytes 13,14,15,16 to: 0x44 0x44 0x53 0x20
-		// We then create it from DDS memory starting at offset 12
-
-		// I assume this is the texture offset. (Just add 12 to make it a file offset.)
-		int textureOffset = BinaryPrimitives.ReadInt32LittleEndian(dataSpan.Slice(offset + 4));
-		System.Diagnostics.Debug.Assert(textureOffset == 0, "Texture Offset == 0");
-
-		if (textureOffset < 0 || textureOffset > (count - offset))
-			throw new InvalidDataException("TEX texture offset is invalid.");
-
-		int textureLength = BinaryPrimitives.ReadInt32LittleEndian(dataSpan.Slice(offset + 8 + newTextureOffsetAdd));
-		if (textureLength < 0 || textureLength > (count - offset - textureOffset))
+		// TEX header: 'TEX' + version (1 or 2), u32 frames per second (non-zero for animated textures),
+		// one extra flag byte for version 2, then a sequence of frames, each a u32 length followed by a DDS image.
+		// We only decode the first frame. We need to change the DDS magic bytes to: 0x44 0x44 0x53 0x20
+		int frameHeaderOffset = 8 + newTextureOffsetAdd;
+		int textureLength = BinaryPrimitives.ReadInt32LittleEndian(dataSpan.Slice(offset + frameHeaderOffset));
+		if (textureLength < 0 || textureLength > (count - frameHeaderOffset - 4))
 			throw new InvalidDataException("TEX texture length is invalid.");
 
 		if (textureLength < 4)
 			throw new InvalidDataException("Cannot read TEX texture image magic.");
 
-		int realOffset = offset + textureOffset + 12 + newTextureOffsetAdd;
+		int realOffset = offset + frameHeaderOffset + 4;
 
 		// realOffset + 0           = DDSmagic "DDS " or "DDSR"
 		//                            Following DDSmagic we have the DDS_HEADER structure.
