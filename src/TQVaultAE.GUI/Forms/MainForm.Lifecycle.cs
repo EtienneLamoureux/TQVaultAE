@@ -114,17 +114,10 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// Syncs the git repository, shows the splash screen and loads the resources.
+	/// Shows the splash screen and loads the resources (the git backup is synced when the form is created).
 	/// </summary>
 	private async Task StartLoadingAsync()
 	{
-		// Sync git local repo first
-		this.GameFileService.GitRepositorySetup();
-
-		// The vault list was built with the form, before the sync: list the vaults the clone or pull brought.
-		if (USettings.GitBackupEnabled)
-			this.GetVaultList(false);
-
 		this.splashScreen = this.Services.Forms.Create<SplashScreenForm>();
 		this.splashScreen.MaximumValue = 1;
 		this.splashScreen.FormClosed += new FormClosedEventHandler(this.SplashScreenClosed);

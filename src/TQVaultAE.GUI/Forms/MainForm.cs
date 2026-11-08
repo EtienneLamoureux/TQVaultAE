@@ -321,12 +321,17 @@ Item Debug Level: {ItemDebugLevel}
 
 		AdjustMenuButtonVisibility();
 
+		// Wired first: the git sync below can ask questions.
+		this.UIService.NotifyUserEvent += UIService_NotifyUserEvent;
+		this.UIService.ShowMessageUserEvent += UIService_ShowMessageUserEvent;
+
+		// Sync the git backup before the panels list the characters and vaults, so the ones a clone or pull brings
+		// are listed.
+		this.GameFileService.GitRepositorySetup();
+
 		this.CreatePanels();
 
 		SetupVaultExportButton();
-
-		this.UIService.NotifyUserEvent += UIService_NotifyUserEvent;
-		this.UIService.ShowMessageUserEvent += UIService_ShowMessageUserEvent;
 	}
 
 	private void UIService_ShowMessageUserEvent(object? sender, ShowMessageUserEventHandlerEventArgs message)
