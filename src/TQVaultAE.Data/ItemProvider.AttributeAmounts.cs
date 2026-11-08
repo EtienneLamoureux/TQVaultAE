@@ -410,15 +410,14 @@ public partial class ItemProvider
 			formatSpec = "?{%.1f0}% Chance of?";
 			color = ItemStyle.Legendary.TQColor();
 		}
-		else
-		{
-			if (USettings.ItemDebugLevel > 2)
-				Log.LogDebug("Item.formatspec (chance) = {FormatSpec}", formatSpec);
 
-			formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-		}
+		if (USettings.ItemDebugLevel > 2)
+			Log.LogDebug("Item.formatspec (chance) = {FormatSpec}", formatSpec);
 
-		modifierChance = this.Format(formatSpec, modifierChanceVar[Math.Min(modifierChanceVar.NumberOfValues - 1, varNum)]);
+		// The fallback is in the game's format too: string.Format would throw on "{%.1f0}".
+		formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
+
+		modifierChance =this.Format(formatSpec, modifierChanceVar[Math.Min(modifierChanceVar.NumberOfValues - 1, varNum)]);
 
 		return $"{color?.ColorTag()}{modifierChance}";
 	}
