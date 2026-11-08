@@ -3,6 +3,8 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using TQVaultAE.Application;
+using TQVaultAE.Application.DTOs;
 using TQVaultAE.Config;
 using TQVaultAE.GUI.Components.Panels;
 using TQVaultAE.GUI.Components;
@@ -97,5 +99,46 @@ public partial class MainForm
 		if (!this.highlightFilters.Visible)
 			this.scalingLabelHighlight_LinkClicked(this.scalingLabelHighlight, new LinkLabelLinkClickedEventArgs(this.scalingLabelHighlight.Links[0]));
 		return this.highlightFilters;
+	}
+
+
+	/// <summary>
+	/// Creates a vault like the New action of the vault maintenance dialog: adds it to the list, selects and loads it.
+	/// </summary>
+	/// <returns>Why the name is refused, or <see cref="VaultMaintenanceError.None"/>.</returns>
+	internal VaultMaintenanceError AutomationCreateVault(string name)
+	{
+		var error = this.vaultService.ValidateMaintenance(VaultMaintenance.New, null, name, this.AutomationVaults);
+		if (error != VaultMaintenanceError.None)
+			return error;
+
+		this.vaultListComboBox.Items.Add(name);
+		this.vaultListComboBox.SelectedItem = name;
+		this.LoadVault(name, false);
+		return VaultMaintenanceError.None;
+	}
+
+	/// <summary>
+	/// Duplicates the selected character like the Duplicate Character menu entry, with <paramref name="newName"/>
+	/// instead of the name dialog. On success, TQVault restarts shortly after, as it does for a user.
+	/// </summary>
+	/// <returns>An error message, or null on success.</returns>
+	internal string? AutomationDuplicateCharacter(string newName)
+	{
+		if (this.comboBoxCharacter.SelectedItem is not PlayerSave ps)
+			return "No character is selected.";
+
+		var existingNames = this.comboBoxCharacter.Items.OfType<PlayerSave>().Select(save => save.Name).ToList();
+		var nameError = this.playerService.ValidateNewCharacterName(ps, newName, existingNames);
+		if (nameError != CharacterNameError.None)
+			return $"Name refused: {nameError}.";
+
+		var result = this.playerService.DuplicateCharacter(ps, newName);
+		if (!result.IsSuccess)
+			return result.Error?.Message ?? "The duplication failed.";
+
+		// Restart after the tool has answered.
+		_ = Task.Delay(500).ContinueWith(_ => this.BeginInvoke(System.Windows.Forms.Application.Restart), TaskScheduler.Default);
+		return null;
 	}
 }

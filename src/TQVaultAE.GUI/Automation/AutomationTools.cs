@@ -13,6 +13,7 @@ using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
@@ -90,7 +91,6 @@ internal static partial class AutomationTools
 
 		if (candidates.Count > 1 && string.IsNullOrEmpty(title))
 			throw new McpException($"Several dialogs are open: {string.Join(", ", candidates.Select(c => $"'{c.Title}'"))}. Pass a title.");
-
 
 		foreach (var dialog in candidates)
 		{
@@ -196,6 +196,43 @@ internal static partial class AutomationTools
 				throw new McpException($"Unknown vault '{name}'. Vaults: {string.Join(", ", form.AutomationVaults)}");
 			return Serialize(new { vault = form.AutomationSelectedVault });
 		});
+
+	/// <summary>Automation creates and duplicates only its own test files (see Safety in AUTOMATION.md).</summary>
+	private const string TestFilePrefix = "claude-";
+
+	private static void RequireTestName(string name)
+	{
+		if (!name.StartsWith(TestFilePrefix, StringComparison.OrdinalIgnoreCase))
+			throw new McpException($"Test files only: the name must start with '{TestFilePrefix}', e.g. '{TestFilePrefix}vault1'.");
+	}
+
+	[McpServerTool(Name = "create_vault", Destructive = true)]
+	[Description("Creates a test vault like the New action of 'Maintain Vault Files...', then selects and loads it. The name must start with 'claude-' (e.g. claude-vault1): automation works only in its own test files. The file is written when the vault is saved.")]
+	public static string CreateVault([Description("New vault name, starting with 'claude-'.")] string name)
+	{
+		RequireTestName(name);
+		return AutomationHost.OnUi(form =>
+		{
+			var error = form.AutomationCreateVault(name);
+			if (error != VaultMaintenanceError.None)
+				throw new McpException($"Vault name '{name}' refused: {error}.");
+			return Serialize(new { vault = form.AutomationSelectedVault });
+		});
+	}
+
+	[McpServerTool(Name = "duplicate_character", Destructive = true)]
+	[Description("Duplicates the selected character like the 'Duplicate Character' menu entry (a full save set: player file, stash and all), with the given name instead of the name dialog. The name must start with 'claude-' (e.g. claude-character1). On success TQVault restarts, as it does for a user: wait until get_state answers with loadingComplete, then select the copy.")]
+	public static string DuplicateCharacter([Description("Name of the copy, starting with 'claude-'.")] string name)
+	{
+		RequireTestName(name);
+		return AutomationHost.OnUi(form =>
+		{
+			var error = form.AutomationDuplicateCharacter(name);
+			if (error is not null)
+				throw new McpException(error);
+			return Serialize(new { duplicated = form.AutomationSelectedCharacter, newName = name, restarting = true });
+		});
+	}
 
 	#endregion
 

@@ -90,35 +90,50 @@ internal static class AutomationHost
 
 	private static async Task StartServerAsync(int port)
 	{
-		try
+		// After Application.Restart (character duplication), the new process starts while the old one still holds
+		// the port for a moment: retry for a few seconds before giving up.
+		const int attempts = 20;
+		for (int attempt = 1; ; attempt++)
 		{
-			var builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
+			WebApplication? app = null;
+			try
 			{
-				ContentRootPath = AppContext.BaseDirectory,
-				Args = [],
-			});
+				var builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
+				{
+					ContentRootPath = AppContext.BaseDirectory,
+					Args = [],
+				});
 
-			builder.WebHost.ConfigureKestrel(options => options.Listen(IPAddress.Loopback, port));
-			builder.Logging.ClearProviders();
-			builder.Logging.SetMinimumLevel(LogLevel.Warning);
-			builder.Logging.AddProvider(RecentLog);
+				builder.WebHost.ConfigureKestrel(options => options.Listen(IPAddress.Loopback, port));
+				builder.Logging.ClearProviders();
+				builder.Logging.SetMinimumLevel(LogLevel.Warning);
+				builder.Logging.AddProvider(RecentLog);
 
-			builder.Services
-				.AddMcpServer(options => options.ServerInfo = new() { Name = "tqvault", Version = "1.0.0" })
-				.WithHttpTransport(options => options.Stateless = true)
-				.WithTools([typeof(AutomationTools)]);
+				builder.Services
+					.AddMcpServer(options => options.ServerInfo = new() { Name = "tqvault", Version = "1.0.0" })
+					.WithHttpTransport(options => options.Stateless = true)
+					.WithTools([typeof(AutomationTools)]);
 
-			var app = builder.Build();
-			app.MapMcp("/mcp");
+				app = builder.Build();
+				app.MapMcp("/mcp");
 
-			await app.StartAsync().ConfigureAwait(false);
-			_app = app;
-			Address = $"http://127.0.0.1:{port}/mcp";
-			_log?.LogInformation("Automation MCP endpoint listening on {Address}", Address);
-		}
-		catch (Exception ex)
-		{
-			_log?.LogError(ex, "Failed to start the automation MCP endpoint on port {Port}", port);
+				await app.StartAsync().ConfigureAwait(false);
+				_app = app;
+				Address = $"http://127.0.0.1:{port}/mcp";
+				_log?.LogInformation("Automation MCP endpoint listening on {Address}", Address);
+				return;
+			}
+			catch (IOException ex) when (ex.InnerException is Microsoft.AspNetCore.Connections.AddressInUseException && attempt < attempts)
+			{
+				if (app is not null)
+					await app.DisposeAsync().ConfigureAwait(false);
+				await Task.Delay(500).ConfigureAwait(false);
+			}
+			catch (Exception ex)
+			{
+				_log?.LogError(ex, "Failed to start the automation MCP endpoint on port {Port}", port);
+				return;
+			}
 		}
 	}
 }
