@@ -1261,6 +1261,9 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
 	<data name="Money" xml:space="preserve">
     <value>Money</value>
   </data>
+	<data name="Electrum" xml:space="preserve">
+    <value>Electrum</value>
+  </data>
 	<data name="SkillPoints" xml:space="preserve">
     <value>Skill Points</value>
   </data>

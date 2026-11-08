@@ -1203,6 +1203,9 @@ Change this value to match program version when new keys are added.  Will trigge
     <data name="Money" xml:space="preserve">
     <value>金钱</value>
   </data>
+    <data name="Electrum" xml:space="preserve">
+    <value>金银合金</value>
+  </data>
     <data name="SkillPoints" xml:space="preserve">
     <value>技能点</value>
   </data>

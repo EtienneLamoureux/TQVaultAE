@@ -329,6 +329,61 @@ public sealed class SaveRoundTripTests : IDisposable
 		info.GreatestMonsterKilledLifeAndMana.Should().Be(50400);
 	}
 
+	/// <summary>The <c>altMoney</c> record of the fixture: its key (with length) and its value, right after <c>money</c>.</summary>
+	private static readonly byte[] AltMoneyRecord = [8, 0, 0, 0, .. "altMoney"u8, 0xE9, 0x45, 0x01, 0x00];
+
+	[Fact]
+	public void ReadPlayerInfo_EternalEmbersSave_ReadsTheElectrumAfterTheMoney()
+	{
+		var info = this._fixtures.LoadPlayer().PlayerInfo!;
+
+		info.Money.Should().Be(25937713);
+		info.Electrum.Should().Be(83433);
+	}
+
+	[Fact]
+	public void ReadPlayerInfo_SaveWithoutAltMoney_HasNoElectrumAndReadsTheRest()
+	{
+		// A character saved before Eternal Embers: the same file without the "altMoney" record.
+		var original = File.ReadAllBytes(SaveFixtures.PlayerChr);
+		var at = original.AsSpan().IndexOf(AltMoneyRecord);
+		at.Should().BePositive();
+		original.AsSpan(at + AltMoneyRecord.Length).IndexOf("altMoney"u8).Should().Be(-1, "the fixture has one altMoney");
+		byte[] withoutAltMoney = [.. original.AsSpan(0, at), .. original.AsSpan(at + AltMoneyRecord.Length)];
+		var expected = this._fixtures.LoadPlayer().PlayerInfo!;
+
+		var info = this._fixtures.Reload(withoutAltMoney).PlayerInfo!;
+
+		info.Electrum.Should().BeNull();
+		info.Should().BeEquivalentTo(expected, o => o
+			.Including(p => p.Money).Including(p => p.MasteriesAllowed).Including(p => p.CurrentLevel)
+			.Including(p => p.CurrentXP).Including(p => p.SkillPoints).Including(p => p.NumberOfKills));
+	}
+
+	[Fact]
+	public void CommitPlayerInfo_ChangedMoney_KeepsTheElectrumBytes()
+	{
+		var pc = this._fixtures.LoadPlayer();
+		var info = pc.PlayerInfo!;
+		var changed = new PlayerInfo(new TQVaultAE.Services.PathIO())
+		{
+			CurrentLevel = info.CurrentLevel,
+			MasteriesAllowed = info.MasteriesAllowed,
+			CurrentXP = info.CurrentXP,
+			DifficultyUnlocked = info.DifficultyUnlocked,
+			Money = 42,
+			// Electrum left unset (null): it is never written back.
+		};
+
+		this._fixtures.PlayerProvider.CommitPlayerInfo(pc, changed);
+		var encoded = this._fixtures.PlayerProvider.Encode(pc);
+
+		encoded.AsSpan().IndexOf(AltMoneyRecord).Should().BePositive();
+		var reread = this._fixtures.Reload(encoded).PlayerInfo!;
+		reread.Money.Should().Be(42);
+		reread.Electrum.Should().Be(83433);
+	}
+
 	#endregion
 
 	#region Stash (winsys.dxb / winsys.dxg)

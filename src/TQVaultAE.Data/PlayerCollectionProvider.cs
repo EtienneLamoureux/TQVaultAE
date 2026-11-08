@@ -560,6 +560,13 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 		var money = TQData.ReadIntAfter(pc.rawData, "money", playerClassTag.nextOffset);
 		pi.Money = money.valueAsInt;
 
+		// Eternal Embers adds "altMoney" (Electrum) right after "money"; older saves don't have it. Only accept the key at
+		// that place, so a later "altMoney" elsewhere in the file can't be taken for it.
+		var electrum = TQData.ReadIntAfter(pc.rawData, "altMoney", money.nextOffset);
+		pi.Electrum = money.indexOf != -1 && electrum.indexOf == money.nextOffset + sizeof(int)
+			? electrum.valueAsInt
+			: null;
+
 		var masteriesAllowed = TQData.ReadIntAfter(pc.rawData, "masteriesAllowed", money.nextOffset);
 		pi.MasteriesAllowed = masteriesAllowed.valueAsInt;
 

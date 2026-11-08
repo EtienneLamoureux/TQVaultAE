@@ -1218,6 +1218,9 @@ Quando ativado, o equipamento do personagem será somente leitura, você não po
   <data name="Money" xml:space="preserve">
     <value>Dinheiro</value>
   </data>
+  <data name="Electrum" xml:space="preserve">
+    <value>Electrum</value>
+  </data>
   <data name="SkillPoints" xml:space="preserve">
     <value>Pontos de habilidade</value>
   </data>

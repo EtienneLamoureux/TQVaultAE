@@ -3523,6 +3523,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Electrum.
+        /// </summary>
+        public static string Electrum {
+            get {
+                return ResourceManager.GetString("Electrum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deaths.
         /// </summary>
         public static string NumberOfDeaths {

@@ -1006,6 +1006,9 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   <data name="Money" xml:space="preserve">
     <value>pieniądze</value>
   </data>
+  <data name="Electrum" xml:space="preserve">
+    <value>Elektrum</value>
+  </data>
   <data name="SkillPoints" xml:space="preserve">
     <value>umiejętności</value>
   </data>
