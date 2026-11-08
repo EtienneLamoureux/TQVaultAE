@@ -192,12 +192,13 @@ public partial class Database : IDatabase
 			{
 				try
 				{
-					string optionsFile = GamePathResolver.SettingsFileTQ;
+					// Immortal Throne and the Anniversary Edition write their settings in the Immortal Throne folder:
+					// a Titan Quest one is left by the original game and may give another language.
+					var (optionsFile, otherOptionsFile) = GamePathResolver.GameType == GameType.TQ
+						? (GamePathResolver.SettingsFileTQ, GamePathResolver.SettingsFileTQIT)
+						: (GamePathResolver.SettingsFileTQIT, GamePathResolver.SettingsFileTQ);
 					if (!this.FileIO.Exists(optionsFile))
-					{
-						// Try IT Folder if there is no settings file in TQ Folder
-						optionsFile = GamePathResolver.SettingsFileTQIT;
-					}
+						optionsFile = otherOptionsFile;
 					if (this.FileIO.Exists(optionsFile))
 					{
 						var fileContent = this.FileIO.ReadAllText(optionsFile);
