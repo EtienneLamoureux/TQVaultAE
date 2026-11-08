@@ -8,6 +8,7 @@ using TQVaultAE.Config;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Services;
 using TQVaultAE.Application.DTOs;
+using TQVaultAE.Application.Results;
 using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.Tests.Services;
@@ -478,6 +479,42 @@ public class VaultServiceTests
 		_sessionContext.Vaults.ContainsKey(vaultFile).Should().BeFalse();
 		// Searches must not find the items of the deleted vault any more.
 		_mockItemDatabaseService.Verify(x => x.RemoveContainerFromDatabase(vaultFile), Times.Once);
+	}
+
+	[Fact]
+	public void DeleteVault_OnAFixedDrive_MovesTheFileToTheRecycleBin()
+	{
+		var vaultFile = """C:\Vaults\Gear.vault.json""";
+		_mockGamePathService.Setup(x => x.GetVaultFile("Gear")).Returns(vaultFile);
+		_mockFileIO.Setup(x => x.Exists(vaultFile)).Returns(true);
+		_mockFileIO.Setup(x => x.CanMoveToRecycleBin(vaultFile)).Returns(true);
+
+		var deleted = _vaultService.DeleteVault("Gear");
+
+		deleted.Should().BeTrue();
+		_mockFileIO.Verify(x => x.MoveToRecycleBin(vaultFile), Times.Once);
+		_mockFileIO.Verify(x => x.Delete(It.IsAny<string>()), Times.Never);
+	}
+
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void GetDeleteInfo_CountsTheItemsAndTheBagsHoldingThem(bool recycleBin)
+	{
+		var vaultFile = """C:\Vaults\Gear.vault.json""";
+		_mockGamePathService.Setup(x => x.GetVaultFile("Gear")).Returns(vaultFile);
+		_mockFileIO.Setup(x => x.CanMoveToRecycleBin(vaultFile)).Returns(recycleBin);
+		var vault = new PlayerCollection("Gear", vaultFile) { IsVault = true };
+		vault.CreateEmptySacks(4);
+		var sacks = vault.Sacks!;
+		sacks[0].AddItem(new Item { BaseItemId = RecordId.Create("records/item/ring.dbr") });
+		sacks[0].AddItem(new Item { BaseItemId = RecordId.Create("records/item/amulet.dbr") });
+		sacks[2].AddItem(new Item { BaseItemId = RecordId.Create("records/item/sword.dbr") });
+		_sessionContext.Vaults.GetOrAddAtomic(vaultFile, _ => vault);
+
+		var info = _vaultService.GetDeleteInfo("Gear");
+
+		info.Should().Be(new VaultDeleteInfo(ItemCount: 3, BagCount: 2, ToRecycleBin: recycleBin));
 	}
 
 	[Fact]

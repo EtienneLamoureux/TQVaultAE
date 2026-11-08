@@ -1821,4 +1821,34 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
     <value>Lancé à l'emplacement de l'ennemi tué</value>
     <comment>TQVault text: a skill cast on a kill (skillCastName) appears at the slain enemy (skillCastOnTargetLocation)</comment>
   </data>
+	<data name="VaultDelete" xml:space="preserve">
+    <value>Supprimer le coffre</value>
+  </data>
+	<data name="VaultDeleteMsg" xml:space="preserve">
+    <value>Supprimer le coffre « {0} » ?</value>
+  </data>
+	<data name="VaultDeleteContents" xml:space="preserve">
+    <value>Il contient {0} dans {1}.</value>
+  </data>
+	<data name="VaultDeleteItem" xml:space="preserve">
+    <value>{0} objet</value>
+  </data>
+	<data name="VaultDeleteItems" xml:space="preserve">
+    <value>{0} objets</value>
+  </data>
+	<data name="VaultDeleteBag" xml:space="preserve">
+    <value>{0} sac</value>
+  </data>
+	<data name="VaultDeleteBags" xml:space="preserve">
+    <value>{0} sacs</value>
+  </data>
+	<data name="VaultDeleteEmpty" xml:space="preserve">
+    <value>Il est vide.</value>
+  </data>
+	<data name="VaultDeleteRecycleBin" xml:space="preserve">
+    <value>Le fichier sera placé dans la Corbeille, d’où vous pourrez le restaurer.</value>
+  </data>
+	<data name="VaultDeletePermanent" xml:space="preserve">
+    <value>Cette action est irréversible.</value>
+  </data>
 </root>

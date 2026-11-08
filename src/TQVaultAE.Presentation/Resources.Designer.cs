@@ -5901,5 +5901,94 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("SearchItemSkills", resourceCulture);
             }
         }
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Vault.
+        /// </summary>
+        public static string VaultDelete {
+            get {
+                return ResourceManager.GetString("VaultDelete", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Delete the vault "{0}"?.
+        /// </summary>
+        public static string VaultDeleteMsg {
+            get {
+                return ResourceManager.GetString("VaultDeleteMsg", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to It contains {0} in {1}..
+        /// </summary>
+        public static string VaultDeleteContents {
+            get {
+                return ResourceManager.GetString("VaultDeleteContents", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} item.
+        /// </summary>
+        public static string VaultDeleteItem {
+            get {
+                return ResourceManager.GetString("VaultDeleteItem", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} items.
+        /// </summary>
+        public static string VaultDeleteItems {
+            get {
+                return ResourceManager.GetString("VaultDeleteItems", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} bag.
+        /// </summary>
+        public static string VaultDeleteBag {
+            get {
+                return ResourceManager.GetString("VaultDeleteBag", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} bags.
+        /// </summary>
+        public static string VaultDeleteBags {
+            get {
+                return ResourceManager.GetString("VaultDeleteBags", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to It is empty..
+        /// </summary>
+        public static string VaultDeleteEmpty {
+            get {
+                return ResourceManager.GetString("VaultDeleteEmpty", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The file will be moved to the Recycle Bin, where you can restore it..
+        /// </summary>
+        public static string VaultDeleteRecycleBin {
+            get {
+                return ResourceManager.GetString("VaultDeleteRecycleBin", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to This cannot be undone..
+        /// </summary>
+        public static string VaultDeletePermanent {
+            get {
+                return ResourceManager.GetString("VaultDeletePermanent", resourceCulture);
+            }
+        }
     }
 }

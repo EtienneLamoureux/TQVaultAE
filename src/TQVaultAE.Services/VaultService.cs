@@ -287,6 +287,15 @@ public class VaultService(
 	}
 
 	/// <inheritdoc />
+	public VaultDeleteInfo GetDeleteInfo(string vaultName)
+	{
+		var sacks = this.LoadVault(vaultName).Vault?.Sacks ?? [];
+		var filled = sacks.Where(sack => sack is not null && sack.Count > 0).ToList();
+		var fileName = this.GamePathResolver.GetVaultFile(vaultName);
+		return new VaultDeleteInfo(filled.Sum(sack => sack.Count), filled.Count, this.FileIO.CanMoveToRecycleBin(fileName));
+	}
+
+	/// <inheritdoc />
 	public bool DeleteVault(string vaultName)
 	{
 		var fileName = this.GamePathResolver.GetVaultFile(vaultName);
@@ -294,7 +303,12 @@ public class VaultService(
 
 		if (this.FileIO.Exists(fileName))
 		{
-			this.FileIO.Delete(fileName);
+			// The user can restore a vault from the Recycle Bin; where there is none, the file is deleted for good,
+			// which the confirmation said.
+			if (this.FileIO.CanMoveToRecycleBin(fileName))
+				this.FileIO.MoveToRecycleBin(fileName);
+			else
+				this.FileIO.Delete(fileName);
 			deleted = true;
 		}
 

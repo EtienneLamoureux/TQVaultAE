@@ -94,7 +94,15 @@ public interface IVaultService
 	bool CopyVault(string sourceName, string targetName);
 
 	/// <summary>
-	/// Deletes a vault file when it exists and drops it from the session cache.
+	/// What deleting a vault would remove, for the confirmation: its items, the bags holding them, and whether the file
+	/// can go to the Recycle Bin.
+	/// </summary>
+	/// <param name="vaultName">Name of the vault.</param>
+	VaultDeleteInfo GetDeleteInfo(string vaultName);
+
+	/// <summary>
+	/// Deletes a vault file when it exists, to the Recycle Bin when it can (see <see cref="GetDeleteInfo"/>), and drops it
+	/// from the session cache and the search.
 	/// </summary>
 	/// <param name="vaultName">Name of the vault to delete.</param>
 	/// <returns>True if a file was deleted.</returns>

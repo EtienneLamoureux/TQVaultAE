@@ -2193,4 +2193,34 @@ You still have to close TQVaultAE to apply your changes.
     <value>Cast where the enemy was slain</value>
     <comment>TQVault text: a skill cast on a kill (skillCastName) appears at the slain enemy (skillCastOnTargetLocation)</comment>
   </data>
+	<data name="VaultDelete" xml:space="preserve">
+    <value>Delete Vault</value>
+  </data>
+	<data name="VaultDeleteMsg" xml:space="preserve">
+    <value>Delete the vault "{0}"?</value>
+  </data>
+	<data name="VaultDeleteContents" xml:space="preserve">
+    <value>It contains {0} in {1}.</value>
+  </data>
+	<data name="VaultDeleteItem" xml:space="preserve">
+    <value>{0} item</value>
+  </data>
+	<data name="VaultDeleteItems" xml:space="preserve">
+    <value>{0} items</value>
+  </data>
+	<data name="VaultDeleteBag" xml:space="preserve">
+    <value>{0} bag</value>
+  </data>
+	<data name="VaultDeleteBags" xml:space="preserve">
+    <value>{0} bags</value>
+  </data>
+	<data name="VaultDeleteEmpty" xml:space="preserve">
+    <value>It is empty.</value>
+  </data>
+	<data name="VaultDeleteRecycleBin" xml:space="preserve">
+    <value>The file will be moved to the Recycle Bin, where you can restore it.</value>
+  </data>
+	<data name="VaultDeletePermanent" xml:space="preserve">
+    <value>This cannot be undone.</value>
+  </data>
 </root>

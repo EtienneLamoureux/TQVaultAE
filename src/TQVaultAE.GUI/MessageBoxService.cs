@@ -22,8 +22,9 @@ public interface IMessageBoxService
 	void ShowException(Exception exception, string? caption = null, MessageBoxIcon icon = MessageBoxIcon.Warning);
 
 	/// <summary>Asks a Yes / No question.</summary>
+	/// <param name="defaultNo">No is the default button, for a question whose Yes cannot easily be undone.</param>
 	/// <returns><see langword="true"/> when the user answered Yes.</returns>
-	bool Confirm(string message, string caption, MessageBoxIcon icon = MessageBoxIcon.Question);
+	bool Confirm(string message, string caption, MessageBoxIcon icon = MessageBoxIcon.Question, bool defaultNo = false);
 
 	/// <summary>Shows <paramref name="message"/> with any <paramref name="buttons"/>.</summary>
 	/// <returns>The button the user pressed.</returns>
@@ -52,13 +53,13 @@ public sealed class MessageBoxService : IMessageBoxService
 	public void ShowException(Exception exception, string? caption = null, MessageBoxIcon icon = MessageBoxIcon.Warning)
 		=> this.Show(null, this._log.FormatException(exception), caption ?? Resources.GlobalError, MessageBoxButtons.OK, icon);
 
-	public bool Confirm(string message, string caption, MessageBoxIcon icon = MessageBoxIcon.Question)
-		=> this.Show(null, message, caption, MessageBoxButtons.YesNo, icon) == DialogResult.Yes;
+	public bool Confirm(string message, string caption, MessageBoxIcon icon = MessageBoxIcon.Question, bool defaultNo = false)
+		=> this.Show(null, message, caption, MessageBoxButtons.YesNo, icon, defaultNo ? MessageBoxDefaultButton.Button2 : MessageBoxDefaultButton.Button1) == DialogResult.Yes;
 
 	public DialogResult Ask(string message, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
 		=> this.Show(null, message, caption, buttons, icon);
 
-	private DialogResult Show(IWin32Window? owner, string message, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
+	private DialogResult Show(IWin32Window? owner, string message, string caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1)
 	{
 		this._log.LogInformation("Message box \"{Caption}\" ({Buttons}): {Message}", caption, buttons, message);
 
@@ -72,8 +73,8 @@ public sealed class MessageBoxService : IMessageBoxService
 #endif
 
 		var answer = owner is null
-			? MessageBox.Show(message, caption, buttons, icon, MessageBoxDefaultButton.Button1, ReadingOptions)
-			: MessageBox.Show(owner, message, caption, buttons, icon, MessageBoxDefaultButton.Button1, ReadingOptions);
+			? MessageBox.Show(message, caption, buttons, icon, defaultButton, ReadingOptions)
+			: MessageBox.Show(owner, message, caption, buttons, icon, defaultButton, ReadingOptions);
 
 		if (buttons != MessageBoxButtons.OK)
 			this._log.LogInformation("Message box \"{Caption}\" answered {Answer}", caption, answer);

@@ -186,6 +186,19 @@ public partial class MainForm
 			.Distinct(StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>
+	/// Asks before deleting a vault: its name, its items and bags, and whether the file goes to the Recycle Bin.
+	/// No is the default button. "Suppress warnings" skips the question, as for the other deletions.
+	/// </summary>
+	/// <returns>Whether to delete the vault.</returns>
+	private bool ConfirmVaultDelete(string vaultName)
+		=> this.USettings.SuppressWarnings
+			|| this.Services.MessageBoxes.Confirm(
+				VaultDeleteText.Build(vaultName, this.vaultService.GetDeleteInfo(vaultName)),
+				Resources.VaultDelete,
+				MessageBoxIcon.Warning,
+				defaultNo: true);
+
+	/// <summary>
 	/// Method for the maintain vault files dialog
 	/// </summary>
 	private void MaintainVaultFilesDialog()
@@ -204,9 +217,13 @@ public partial class MainForm
 				string? oldName = dlg.Source;
 				bool handled = false;
 
+				// Deleting a vault asks first, with what it holds and whether the file can be restored.
+				bool deleteConfirmed = dlg.Action != VaultMaintenance.Delete || oldName is null || this.ConfirmVaultDelete(oldName);
+
 				// A vault deleted or renamed while the secondary panel shows it: clear that panel first, else
 				// it would load the vault again under its old name, as a new empty vault saved on the next change.
 				if (dlg.Action is VaultMaintenance.Delete or VaultMaintenance.Rename
+					&& deleteConfirmed
 					&& oldName is not null
 					&& oldName.Equals(this.secondaryVaultPanel.Player?.PlayerName, StringComparison.OrdinalIgnoreCase)
 					&& this.secondaryVaultListComboBox.Items.Count > 0)
@@ -245,7 +262,7 @@ public partial class MainForm
 						handled = true;
 					}
 				}
-				else if (dlg.Action == VaultMaintenance.Delete && oldName is not null)
+				else if (dlg.Action == VaultMaintenance.Delete && oldName is not null && deleteConfirmed)
 				{
 					// Make sure we save all modifications first.
 					this.SaveAllModifiedFiles();
