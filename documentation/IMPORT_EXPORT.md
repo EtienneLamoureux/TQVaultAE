@@ -30,10 +30,12 @@ You can export items at four levels:
 
 | Scope | How to trigger | Behavior |
 |-------|---------------|----------|
-| **Single item** | Right-click an item → `Share to` → `Export Item` | Exports the selected item with all its properties (seed, affixes, relic sockets, stack size, position, etc.). |
-| **Multi-select** | **Ctrl+LeftClick** to select multiple items → Right-click → `Share to` | Exports all selected items as a single `MultiSelect`-scoped JSON payload. |
-| **Vault tab** | Right-click a **tab button** (BagButton) → `Share Tab` | Exports all items within that tab, preserving their positions, grid layout, and bag icon info. |
-| **Full vault** | Click the **button** next to the vault combo box → `Share Vault` | Exports all tabs and all their contents, including the vault name. |
+| **Single item** | Right-click an item → `🔗 Share Item` | Exports the item under the cursor with all its properties (seed, affixes, relic sockets, stack size, position, size, etc.) as an `Item`-scoped JSON payload. |
+| **Multi-select** | **Ctrl+LeftClick** to select items → Right-click → `🔗 Share Item` | Exports all selected items as a single `MultiSelect`-scoped JSON payload. A selection of **one** item exports as a single item (`Item` scope). |
+| **Vault tab** | Right-click a **tab button** (BagButton) → `🔗 Share Tab` | Exports all items within that tab, preserving their positions, grid layout, and bag icon info. |
+| **Full vault** | Click the **`...` button** next to the vault combo box | Exports all tabs and all their contents, including the vault name. |
+
+When a selection exists, `🔗 Share Item` exports the selection, whichever item you right-click. The menu and **Ctrl+C** give the same format: one item is an `Item` export, several are a `MultiSelect` export.
 
 ---
 
@@ -43,28 +45,46 @@ Every scope supports three transport channels.
 
 #### <a id="clipboard"></a>Clipboard Export
 
-- **Single / multi-select items:** Select items in the grid and press **Ctrl+C**.
-- **Tab:** Right-click a tab button → `Share Tab` → `Copy to Clipboard`.
-- **Vault:** Click the vault export button → `Share Vault to Clipboard`.
+- **Single / multi-select items:** Right-click an item → `🔗 Share Item` → `Share to Clipboard`, or select items in the grid and press **Ctrl+C**.
+- **Tab:** Right-click a tab button → `🔗 Share Tab` → `Share to Clipboard`.
+- **Vault:** Click the `...` button → `Share to Clipboard`.
 
 The export data is serialized as JSON and placed on your clipboard. 
 You can paste this directly into a text editor, chat, another bag, or another TQVaultAE instance.
 
 #### <a id="file-export"></a>File Export (.json)
 
-- **Single / multi-select items:** Right-click an item → `Share to` → `Save to File...`.
-- **Tab:** Right-click a tab button → `Share Tab` → `Save to File...`.
-- **Vault:** Vault export button → `Share Vault to File`.
+- **Single / multi-select items:** Right-click an item → `🔗 Share Item` → `Share to File...`.
+- **Tab:** Right-click a tab button → `🔗 Share Tab` → `Share to File...`.
+- **Vault:** Click the `...` button → `Share to File...`.
 
-A Save File dialog opens. The file is saved as **raw JSON**, so you can inspect or edit it in any text editor before importing.
+A Save File dialog opens. The file is written where you choose in that dialog, as **raw JSON**, so you can inspect or edit it in any text editor before importing.
+
+The dialog suggests a file name:
+
+| Export | Suggested file name |
+|--------|---------------------|
+| One item (or a selection of one item) | `item_export.json` |
+| Several selected items | `items_export.json` |
+| Tab | `tab_export.json` |
+| Vault | `<vault name>.json` |
 
 #### <a id="pastebin-export"></a>PasteBin Export
 
-- **Single / multi-select items:** Right-click an item → `Share to` → `Share to PasteBin`.
-- **Tab:** Right-click a tab button → `Share Tab` → `Share to PasteBin`.
-- **Vault:** Vault export button → `Share Vault to PasteBin`.
+- **Single / multi-select items:** Right-click an item → `🔗 Share Item` → `Share to PasteBin`.
+- **Tab:** Right-click a tab button → `🔗 Share Tab` → `Share to PasteBin`.
+- **Vault:** Click the `...` button → `Share to PasteBin`.
 
 The data is uploaded to PasteBin as an **Unlisted** paste (accessible via direct URL but not published on the public feed). The resulting PasteBin URL is automatically copied to your clipboard.
+
+The paste is named after what it holds:
+
+| Export | Paste name |
+|--------|------------|
+| One item (or a selection of one item) | The item's full name (untitled if it has none) |
+| Several selected items | `Multi-item export` |
+| Tab | `<vault name>/<tab label>`, or `<vault name>/Tab <n>` when the tab has no label |
+| Vault | `<vault name>` |
 
 **Note:** PasteBin export menu items are **disabled (greyed out)** until you configure a PasteBin API key in Settings (see [below](#api-key)).
 
@@ -122,6 +142,8 @@ For **Tab** exports, the original bag button icon (label, icon set, display mode
 
 When importing items into a target vault tab, TQVaultAE attempts placement in this order:
 
+The size of each item in cells comes from its picture in the game files, not from the `width` and `height` of the file, so files written with a missing or zero size still import correctly.
+
 1. Try the item's **original position** (PositionX, PositionY from the export).
 2. If the original cell is occupied or out of bounds, search for the **first available open cell** in the tab's grid.
 3. If no open cell exists in that tab, the item is **skipped**.
@@ -146,7 +168,8 @@ All exports use a JSON envelope with the following structure:
 - **`scope`** — Identifies the export type.
 - **`data`** — Scope-specific payload:
   - `Item`: Single `ItemDto` object (includes `stackSize`, `seed`, `baseName`, `prefixName`, `suffixName`, `relicName`, `relicBonus`, `var1`, `relicName2`, `relicBonus2`, `var2`, `pointX`, `pointY`, `width`, `height`).
-  - `MultiSelect`: Array of `ItemDto` objects.
+  - `width` and `height` are the item size in cells (one cell per 32 pixels of its picture). Older versions could write `0` for items whose picture had not been drawn yet; imports ignore them.
+  - `MultiSelect`: Array of `ItemDto` objects (two or more: one selected item is exported as `Item`).
   - `Tab`: Array of `ItemDto` objects plus `sackNumber` and optional `iconInfo` (bag button label, display mode, icon RecordIds).
   - `Vault`: Array of sack arrays plus vault `name`.
 

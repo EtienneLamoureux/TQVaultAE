@@ -163,9 +163,25 @@ public partial class ItemProvider
 			itm.TexImageResourceId = "DefaultBitmap";
 		}
 
+		// The size in cells comes from the picture, read from the texture headers so that it is known before the item is drawn.
+		(itm.Width, itm.Height) = CellSize(Database.GetTextureSize(itm.TexImageResourceId));
+
 		if (USettings.ItemDebugLevel > 0)
 			Log.LogDebug("Exiting Item.GetDBData ()");
 	}
+	/// <summary>
+	/// Pixels of one inventory cell in the item pictures.
+	/// </summary>
+	private const int CellPixels = 32;
+
+	/// <summary>
+	/// Converts the size of an item picture into cells, rounded like the drawn bitmap; 1 x 1 when the picture is unknown.
+	/// </summary>
+	internal static (int Width, int Height) CellSize((int Width, int Height)? pixels)
+		=> pixels is { } px
+			? (Math.Max(1, (int)Math.Round(px.Width / (double)CellPixels)), Math.Max(1, (int)Math.Round(px.Height / (double)CellPixels)))
+			: (1, 1);
+
 	/// <summary>
 	/// Gets the level of a triggered skill
 	/// </summary>

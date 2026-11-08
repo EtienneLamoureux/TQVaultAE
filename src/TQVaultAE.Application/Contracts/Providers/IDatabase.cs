@@ -94,6 +94,12 @@ public interface IDatabase
 	/// <param name="resourceId">Resource which we are fetching</param>
 	/// <returns>Retruns a byte array of the resource.</returns>
 	byte[]? LoadResource(RecordId resourceId);
+
+	/// <summary>
+	/// Gets the size in pixels of a texture resource, read from its headers. Only the size is cached, not the texture data.
+	/// </summary>
+	/// <returns><see langword="null"/> when the resource is missing or is not a texture.</returns>
+	(int Width, int Height)? GetTextureSize(RecordId resourceId);
 	/// <summary>
 	/// Gets the formatted string for the variable attribute.
 	/// </summary>

@@ -434,6 +434,36 @@ public class DatabaseLoadingTests
 		this._arcProvider.Verify(a => a.ReadARCToC(It.IsAny<ArcFile>()), Times.Never);
 	}
 
+	[Fact]
+	public void GetTextureSize_ReadsTheHeaders_AndKeepsOnlyTheSize()
+	{
+		this.UseAnniversaryEdition();
+		var gameArc = Path.Combine(GameAE, "Resources", "Items.arc");
+		this._gamePath.Setup(g => g.ResolveArcFileName(It.IsAny<RecordId>())).Returns((gameArc, false));
+		this.AddArcEntry(gameArc, """EquipmentRing\UIBitmaps\ring.tex""", TexHeaderTests.Tex(version: 1, width: 64, height: 96));
+		var db = this.CreateDatabase();
+		RecordId id = """Items\EquipmentRing\UIBitmaps\ring.tex""";
+
+		db.GetTextureSize(id).Should().Be((64, 96));
+		db.GetTextureSize(id).Should().Be((64, 96));
+		db.LoadResource(id).Should().NotBeNull();
+
+		// One read for the size (then cached), one for the data: the size lookup does not keep the texture data.
+		this._arcProvider.Verify(a => a.GetData(It.IsAny<ArcFile>(), It.IsAny<RecordId>()), Times.Exactly(2));
+	}
+
+	[Fact]
+	public void GetTextureSize_OfAMissingResource_ReturnsNull()
+	{
+		this.UseAnniversaryEdition();
+		this._gamePath.Setup(g => g.ResolveArcFileName(It.IsAny<RecordId>()))
+			.Returns((Path.Combine(GameAE, "Resources", "Items.arc"), false));
+		var db = this.CreateDatabase();
+
+		db.GetTextureSize("""Items\missing.tex""").Should().BeNull();
+		db.GetTextureSize("DefaultBitmap").Should().BeNull();
+	}
+
 	#endregion
 
 	#region Game language from the game settings

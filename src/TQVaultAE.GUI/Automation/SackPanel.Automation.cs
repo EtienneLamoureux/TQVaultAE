@@ -216,7 +216,7 @@ public partial class SackPanel
 	}
 
 	/// <summary>
-	/// Right-clicks a cell like the user, closes the menu, then runs the item menu's "Export to file" without its file dialog:
+	/// Right-clicks a cell like the user, closes the menu, then runs the item menu's "Share to File..." without its file dialog:
 	/// the selection when there is one, else the item under the cursor.
 	/// </summary>
 	/// <returns><see langword="false"/> when there was nothing to export.</returns>

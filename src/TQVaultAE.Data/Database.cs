@@ -61,6 +61,7 @@ public partial class Database : IDatabase
 	/// Dictionary of all records dataset loaded from the database.
 	/// </summary>
 	protected readonly LazyConcurrentDictionary<RecordId, byte[]?> resourcesData = new();
+	private readonly LazyConcurrentDictionary<RecordId, (int Width, int Height)?> textureSizes = new();
 
 	/// <summary>
 	/// Dictionary of all record collections loaded from the database.
@@ -664,145 +665,166 @@ public partial class Database : IDatabase
 		if (USettings.DatabaseDebugLevel > 1)
 			Log.LogDebug(" Normalized({ResourceId})", resourceId);
 
-		byte[]? cachedArcFileData = this.resourcesData.GetOrAddAtomic(resourceId, key =>
-		{
-			var resourceIdSplited = key.Normalized.Split('\\', StringSplitOptions.RemoveEmptyEntries);// hguy : easier to understand than substring everywhere
-
-			// not a proper resourceID.
-			if (resourceIdSplited.Length == 1)
-				return null;
-
-			// First we need to figure out the correct file to
-			// open, by grabbing it off the front of the resourceID
-
-			string arcFile; bool isDLC = false;
-			string rootFolder;
-			byte[]? arcFileData = null;
-			string arcFileBase = resourceIdSplited.First();
-
-			if (USettings.DatabaseDebugLevel > 1)
-				Log.LogDebug("arcFileBase = {ArcFileBase}", arcFileBase);
-
-			// Added by VillageIdiot
-			// Check's mod folder for's image resource.
-			if (GamePathResolver.IsCustom)
-			{
-				if (USettings.DatabaseDebugLevel > 1)
-					Log.LogDebug("Checking Custom Resources.");
-
-				arcFileData = this.ReadCustomMapResource(key);
-
-				if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
-					Log.LogDebug(@"Custom resource found ""{resourceId}""", key);
-			}
-
-			// We either didn't load the resource or didn't find what we were looking for so check the normal game resources.
-			if (arcFileData is null)
-			{
-				// See if this guy is from Immortal Throne expansion pack.
-				if (USettings.DatabaseDebugLevel > 1)
-					Log.LogDebug("Checking IT Resources.");
-
-				(arcFile, isDLC) = this.GamePathResolver.ResolveArcFileName(key);
-				if (isDLC)
-				{
-					// not a proper resourceID.
-					if (resourceIdSplited.Length == 2)
-						return null;
-
-					arcFileBase = resourceIdSplited[1];
-					key = resourceIdSplited.Skip(1).JoinString("\\");
-				}
-
-				if (this.FileIO.Exists(arcFile))
-					arcFileData = this.ReadARCFile(arcFile, key);
-
-				if (USettings.DatabaseDebugLevel > 0 && arcFileData is null)
-					Log.LogError(@"Resource not found ""{resourceId}"" into ""{arcFile}""", key, arcFile);
-			}
-
-			#region Fallback
-
-			// Added by VillageIdiot
-			// Maybe the arc file is in the XPack folder even though the record does not state it.
-			// Also could be that it says xpack in the record but the file is in the root.
-			if (arcFileData is null)
-			{
-				rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack");
-				arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-
-				if (this.FileIO.Exists(arcFile))
-					arcFileData = this.ReadARCFile(arcFile, key);
-
-				if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
-					Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
-			}
-
-			// Now, let's check if the item is in Ragnarok DLC
-			if (arcFileData is null && GamePathResolver.IsRagnarokInstalled)
-			{
-				rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack2");
-				arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-
-				if (this.FileIO.Exists(arcFile))
-					arcFileData = this.ReadARCFile(arcFile, key);
-
-				if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
-					Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
-			}
-
-			if (arcFileData is null && GamePathResolver.IsAtlantisInstalled)
-			{
-				rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack3");
-				arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-
-				if (this.FileIO.Exists(arcFile))
-					arcFileData = this.ReadARCFile(arcFile, key);
-
-				if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
-					Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
-			}
-
-			if (arcFileData is null && GamePathResolver.IsEmbersInstalled)
-			{
-				rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack4");
-				arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-
-				if (this.FileIO.Exists(arcFile))
-					arcFileData = this.ReadARCFile(arcFile, key);
-
-				if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
-					Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
-			}
-
-			if (arcFileData is null)
-			{
-				// We are either vanilla TQ or have not found our resource yet.
-				// from the original TQ folder
-				if (USettings.DatabaseDebugLevel > 1)
-					Log.LogDebug("Checking TQ Resources.");
-
-				rootFolder = GamePathResolver.GamePathTQ;
-				rootFolder = this.PathIO.Combine(rootFolder, "Resources");
-
-				arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-
-				if (this.FileIO.Exists(arcFile))
-					arcFileData = this.ReadARCFile(arcFile, key);
-
-				if (USettings.DatabaseDebugLevel > 0 && arcFileData is null)
-					Log.LogError(@"Resource unknown ""{resourceId}""", key);
-			}
-
-			#endregion
-
-			return arcFileData;
-		});
+		byte[]? cachedArcFileData = this.resourcesData.GetOrAddAtomic(resourceId, this.ReadResource);
 
 		if (USettings.DatabaseDebugLevel > 0)
 			Log.LogDebug("Exiting Database.LoadResource()");
 
 		return cachedArcFileData;
+	}
+
+	/// <inheritdoc/>
+	public (int Width, int Height)? GetTextureSize(RecordId resourceId)
+	{
+		if (RecordId.IsNullOrEmpty(resourceId))
+			return null;
+
+		// Only the size is kept: the texture data is cached when the picture is drawn (LoadResource).
+		return this.textureSizes.GetOrAddAtomic(resourceId, key =>
+		{
+			var data = this.resourcesData.TryGetValue(key, out var cached) ? cached.Value : this.ReadResource(key);
+			return data is not null && TexHeader.TryReadSize(data, out int width, out int height)
+				? (width, height)
+				: null;
+		});
+	}
+
+	/// <summary>
+	/// Reads a resource from the game files or the custom map folder, without caching it.
+	/// </summary>
+	private byte[]? ReadResource(RecordId key)
+	{
+		var resourceIdSplited = key.Normalized.Split('\\', StringSplitOptions.RemoveEmptyEntries);// hguy : easier to understand than substring everywhere
+
+		// not a proper resourceID.
+		if (resourceIdSplited.Length == 1)
+			return null;
+
+		// First we need to figure out the correct file to
+		// open, by grabbing it off the front of the resourceID
+
+		string arcFile; bool isDLC = false;
+		string rootFolder;
+		byte[]? arcFileData = null;
+		string arcFileBase = resourceIdSplited.First();
+
+		if (USettings.DatabaseDebugLevel > 1)
+			Log.LogDebug("arcFileBase = {ArcFileBase}", arcFileBase);
+
+		// Added by VillageIdiot
+		// Check's mod folder for's image resource.
+		if (GamePathResolver.IsCustom)
+		{
+			if (USettings.DatabaseDebugLevel > 1)
+				Log.LogDebug("Checking Custom Resources.");
+
+			arcFileData = this.ReadCustomMapResource(key);
+
+			if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
+				Log.LogDebug(@"Custom resource found ""{resourceId}""", key);
+		}
+
+		// We either didn't load the resource or didn't find what we were looking for so check the normal game resources.
+		if (arcFileData is null)
+		{
+			// See if this guy is from Immortal Throne expansion pack.
+			if (USettings.DatabaseDebugLevel > 1)
+				Log.LogDebug("Checking IT Resources.");
+
+			(arcFile, isDLC) = this.GamePathResolver.ResolveArcFileName(key);
+			if (isDLC)
+			{
+				// not a proper resourceID.
+				if (resourceIdSplited.Length == 2)
+					return null;
+
+				arcFileBase = resourceIdSplited[1];
+				key = resourceIdSplited.Skip(1).JoinString("\\");
+			}
+
+			if (this.FileIO.Exists(arcFile))
+				arcFileData = this.ReadARCFile(arcFile, key);
+
+			if (USettings.DatabaseDebugLevel > 0 && arcFileData is null)
+				Log.LogError(@"Resource not found ""{resourceId}"" into ""{arcFile}""", key, arcFile);
+		}
+
+		#region Fallback
+
+		// Added by VillageIdiot
+		// Maybe the arc file is in the XPack folder even though the record does not state it.
+		// Also could be that it says xpack in the record but the file is in the root.
+		if (arcFileData is null)
+		{
+			rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack");
+			arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
+
+			if (this.FileIO.Exists(arcFile))
+				arcFileData = this.ReadARCFile(arcFile, key);
+
+			if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
+				Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
+		}
+
+		// Now, let's check if the item is in Ragnarok DLC
+		if (arcFileData is null && GamePathResolver.IsRagnarokInstalled)
+		{
+			rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack2");
+			arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
+
+			if (this.FileIO.Exists(arcFile))
+				arcFileData = this.ReadARCFile(arcFile, key);
+
+			if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
+				Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
+		}
+
+		if (arcFileData is null && GamePathResolver.IsAtlantisInstalled)
+		{
+			rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack3");
+			arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
+
+			if (this.FileIO.Exists(arcFile))
+				arcFileData = this.ReadARCFile(arcFile, key);
+
+			if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
+				Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
+		}
+
+		if (arcFileData is null && GamePathResolver.IsEmbersInstalled)
+		{
+			rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack4");
+			arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
+
+			if (this.FileIO.Exists(arcFile))
+				arcFileData = this.ReadARCFile(arcFile, key);
+
+			if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
+				Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
+		}
+
+		if (arcFileData is null)
+		{
+			// We are either vanilla TQ or have not found our resource yet.
+			// from the original TQ folder
+			if (USettings.DatabaseDebugLevel > 1)
+				Log.LogDebug("Checking TQ Resources.");
+
+			rootFolder = GamePathResolver.GamePathTQ;
+			rootFolder = this.PathIO.Combine(rootFolder, "Resources");
+
+			arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
+
+			if (this.FileIO.Exists(arcFile))
+				arcFileData = this.ReadARCFile(arcFile, key);
+
+			if (USettings.DatabaseDebugLevel > 0 && arcFileData is null)
+				Log.LogError(@"Resource unknown ""{resourceId}""", key);
+		}
+
+		#endregion
+
+		return arcFileData;
 	}
 
 

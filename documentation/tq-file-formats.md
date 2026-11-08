@@ -266,6 +266,8 @@ A `.tex` wraps one or more DirectDraw Surface frames. All 25,278 files in the ga
 
 `BitmapService.LoadFromTexMemory` and `TexConverter` (DbCli) both apply these fix-ups.
 
+**Item size.** An item takes one inventory cell per 32 pixels of its picture. `TexHeader.TryReadSize` reads the size from the DDS header (height at byte 12, width at byte 16 after the magic) without decoding, so `ItemProvider.GetDBData` knows the size of every item when it is loaded, before its picture is drawn.
+
 ---
 
 ## <a id="OtherAssets"></a>Other asset formats
