@@ -131,7 +131,7 @@ internal partial class VaultMaintenanceDialog
         this.instructionsLabel.Font = new System.Drawing.Font("Albertus MT Light", 11F);
         this.instructionsLabel.Location = new System.Drawing.Point(12, 178);
         this.instructionsLabel.Name = "instructionsLabel";
-        this.instructionsLabel.Size = new System.Drawing.Size(440, 74);
+        this.instructionsLabel.Size = new System.Drawing.Size(440, 94);
         this.instructionsLabel.TabIndex = 1;
         this.instructionsLabel.Text = "Instructions";
         // 

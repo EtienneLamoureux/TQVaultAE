@@ -144,7 +144,7 @@ internal partial class CharacterEditDialog
         this.strengthLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
         this.strengthLabel.Location = new System.Drawing.Point(6, 33);
         this.strengthLabel.Name = "strengthLabel";
-        this.strengthLabel.Size = new System.Drawing.Size(102, 18);
+        this.strengthLabel.Size = new System.Drawing.Size(122, 18);
         this.strengthLabel.TabIndex = 5;
         this.strengthLabel.Text = "Strength";
         this.strengthLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -154,7 +154,7 @@ internal partial class CharacterEditDialog
         this.dexterityLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
         this.dexterityLabel.Location = new System.Drawing.Point(9, 63);
         this.dexterityLabel.Name = "dexterityLabel";
-        this.dexterityLabel.Size = new System.Drawing.Size(99, 18);
+        this.dexterityLabel.Size = new System.Drawing.Size(119, 18);
         this.dexterityLabel.TabIndex = 7;
         this.dexterityLabel.Text = "Dexterity";
         this.dexterityLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -164,7 +164,7 @@ internal partial class CharacterEditDialog
         this.IntelligenceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
         this.IntelligenceLabel.Location = new System.Drawing.Point(12, 93);
         this.IntelligenceLabel.Name = "IntelligenceLabel";
-        this.IntelligenceLabel.Size = new System.Drawing.Size(96, 18);
+        this.IntelligenceLabel.Size = new System.Drawing.Size(116, 18);
         this.IntelligenceLabel.TabIndex = 9;
         this.IntelligenceLabel.Text = "Intelligence";
         this.IntelligenceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -175,7 +175,7 @@ internal partial class CharacterEditDialog
         this.healthLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
         this.healthLabel.Location = new System.Drawing.Point(9, 123);
         this.healthLabel.Name = "healthLabel";
-        this.healthLabel.Size = new System.Drawing.Size(99, 18);
+        this.healthLabel.Size = new System.Drawing.Size(119, 18);
         this.healthLabel.TabIndex = 11;
         this.healthLabel.Text = "Health";
         this.healthLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -186,7 +186,7 @@ internal partial class CharacterEditDialog
         this.manaLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
         this.manaLabel.Location = new System.Drawing.Point(12, 153);
         this.manaLabel.Name = "manaLabel";
-        this.manaLabel.Size = new System.Drawing.Size(96, 18);
+        this.manaLabel.Size = new System.Drawing.Size(116, 18);
         this.manaLabel.TabIndex = 13;
         this.manaLabel.Text = "Mana";
         this.manaLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -221,7 +221,7 @@ internal partial class CharacterEditDialog
         0,
         0,
         0});
-        this.manacUpDown.Location = new System.Drawing.Point(114, 151);
+        this.manacUpDown.Location = new System.Drawing.Point(134, 151);
         this.manacUpDown.Maximum = new decimal(new int[] {
         9996,
         0,
@@ -251,7 +251,7 @@ internal partial class CharacterEditDialog
         0,
         0,
         0});
-        this.healthUpDown.Location = new System.Drawing.Point(114, 121);
+        this.healthUpDown.Location = new System.Drawing.Point(134, 121);
         this.healthUpDown.Maximum = new decimal(new int[] {
         9996,
         0,
@@ -281,7 +281,7 @@ internal partial class CharacterEditDialog
         0,
         0,
         0});
-        this.intelligenceUpDown.Location = new System.Drawing.Point(114, 91);
+        this.intelligenceUpDown.Location = new System.Drawing.Point(134, 91);
         this.intelligenceUpDown.Maximum = new decimal(new int[] {
         996,
         0,
@@ -311,7 +311,7 @@ internal partial class CharacterEditDialog
         0,
         0,
         0});
-        this.dexterityUpDown.Location = new System.Drawing.Point(114, 61);
+        this.dexterityUpDown.Location = new System.Drawing.Point(134, 61);
         this.dexterityUpDown.Maximum = new decimal(new int[] {
         996,
         0,
@@ -341,7 +341,7 @@ internal partial class CharacterEditDialog
         0,
         0,
         0});
-        this.strengthUpDown.Location = new System.Drawing.Point(114, 31);
+        this.strengthUpDown.Location = new System.Drawing.Point(134, 31);
         this.strengthUpDown.Maximum = new decimal(new int[] {
         996,
         0,

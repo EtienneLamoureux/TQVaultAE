@@ -67,6 +67,11 @@ public partial class SearchDialogAdvanced : VaultForm
 
 		this.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
 
+		// The 17 category buttons, with the designer's 3 px margins, need more height than the column gets,
+		// so the last one ("Suffix") wrapped into a second column, out of sight.
+		foreach (Control button in this.flowLayoutPanelLeftColumn.Controls)
+			button.Margin = new Padding(button.Margin.Left, 1, button.Margin.Right, 1);
+
 		#endregion
 
 		#region Load localized strings
