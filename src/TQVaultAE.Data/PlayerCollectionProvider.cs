@@ -625,7 +625,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 		pi.GreatestMonsterKilledLevel = greatestMonsterKilledLevel.valueAsInt;
 
 		var greatestMonsterKilledLifeAndMana = TQData.ReadIntAfter(pc.rawData, "(*greatestMonsterKilledLifeAndMana)[i]", greatestMonsterKilledLevel.nextOffset);
-		pi.GreatestMonsterKilledLifeAndMana = greatestMonsterKilledLevel.valueAsInt;
+		pi.GreatestMonsterKilledLifeAndMana = greatestMonsterKilledLifeAndMana.valueAsInt;
 
 		var greatestMonsterKilledName2 = TQData.ReadUnicodeStringAfter(pc.rawData, "(*greatestMonsterKilledName)[i]", greatestMonsterKilledLifeAndMana.nextOffset);
 

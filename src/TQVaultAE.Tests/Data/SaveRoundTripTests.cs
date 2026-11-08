@@ -317,6 +317,18 @@ public sealed class SaveRoundTripTests : IDisposable
 		StatesOf(reloaded).Should().BeEquivalentTo(StatesOf(pc), o => o.WithStrictOrdering(), "the items after the skills are not touched");
 	}
 
+	[Fact]
+	public void ReadPlayerInfo_GreatestMonsterKilled_ReadsItsLifeAndManaNotItsLevel()
+	{
+		var pc = this._fixtures.LoadPlayer();
+
+		var info = pc.PlayerInfo!;
+
+		info.GreatestMonster.Should().Be("{^r}Nidhoggr ~ Tormentor of the Dead");
+		info.GreatestMonsterKilledLevel.Should().Be(48);
+		info.GreatestMonsterKilledLifeAndMana.Should().Be(50400);
+	}
+
 	#endregion
 
 	#region Stash (winsys.dxb / winsys.dxg)
