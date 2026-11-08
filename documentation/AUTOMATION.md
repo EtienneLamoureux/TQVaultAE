@@ -26,6 +26,33 @@ in existing code is inside `#if DEBUG`.
 | `TQVAULT_MCP_PORT` | Listen on another port. |
 | `TQVAULT_MCP_DISABLED=1` | Do not start the endpoint. |
 
+## Headless mode (`--headless`)
+
+`TQVaultAE.exe --headless` (Debug builds only) runs TQVault on a hidden Win32 desktop of its own, so the user sees
+no window, no taskbar button and no focus change while an agent drives it through the endpoint.
+
+- The process started with the switch creates the desktop, starts TQVault again on it and exits once that instance
+  is idle: one `TQVaultAE.exe` is left, and the endpoint comes up as usual (wait for it, about 5 s).
+  An instance restarted by Duplicate Character stays on the hidden desktop.
+- Every window is still created, shown, laid out and painted at its normal place on the primary monitor, with that
+  monitor's DPI: `capture`, `hover_item`, `control_tree`, `open_form`, the forge and every other tool work as usual.
+  `list_windows` gives the desktop name as `headless`.
+- Message boxes are never shown. A queued answer (`queue_dialog_answers`) is used first; without one, the box takes
+  the answer that changes nothing (Cancel, else No, else Ignore, else OK), which is logged and listed by
+  `dialog_answers` under `unanswered`. This covers the startup notices, the startup git sync questions and the
+  "Windows Forms Error" box too.
+- Native dialogs (folder browser, open/save file, color picker, the vault import task dialog) are cancelled as soon
+  as they open, and listed by `dialog_answers` under `cancelledNativeDialogs`.
+- Nothing can be seen or clicked by hand. To stop it, use the Exit button (`click_control("TQVaultAE", "exitButton")`),
+  which saves like a normal exit, or end the process.
+- Use another port (`TQVAULT_MCP_PORT`) when a visible Debug instance already listens on 47017.
+
+```bash
+TQVAULT_MCP_PORT=47018 src/TQVaultAE.GUI/bin/Debug/net10.0-windows/TQVaultAE.exe --headless
+```
+
+Release builds ignore the switch: the code is in the Debug-only `Automation/` folder, and the call is in `#if DEBUG`.
+
 ## Register it in Claude Code
 
 The repository's `.mcp.json` already registers it as `tqvault`. Follow these steps:
@@ -74,7 +101,7 @@ Cells are grid coordinates, as reported by `get_state`.
 | `click_control(form, control)` | Clicks a button of an open form (`''` for the main window) after the call returns, since it may open a modal dialog. `configureButton` opens the settings from the main window, so its OK runs the restart rules. |
 | `open_character_editor` | Opens the character editor of the selected character, like the Edit button of the stash panel; read and change it with `control_values`/`set_control` (form `CharacterEditDialog`), close it with `close_dialog`. |
 | `tag_box(box, text, tag?)` | Types into the add or rename tag box of the character menu and presses Enter; `delete` removes a test tag. Names must start with `claude-`. `list_tags` lists the tags and those of the selected character. |
-| `queue_dialog_answers(answers)` | Queues answers (`OK`, `Cancel`, `Yes`, `No`, `Abort`, `Retry`, `Ignore`, comma separated) for the next message boxes, which are then answered at once without being shown, so nothing waits for a click (startup git sync, confirmations, save errors). A box takes the next answer only when it is one of its buttons; an OK-only box takes only `OK`. `clear` empties the queue. `dialog_answers` lists the boxes answered and the answers left. The startup notices and the vault import dialog are not covered: use `close_dialog`. |
+| `queue_dialog_answers(answers)` | Queues answers (`OK`, `Cancel`, `Yes`, `No`, `Abort`, `Retry`, `Ignore`, comma separated) for the next message boxes, which are then answered at once without being shown, so nothing waits for a click (startup git sync, confirmations, save errors). A box takes the next answer only when it is one of its buttons; an OK-only box takes only `OK`. `clear` empties the queue. `dialog_answers` lists the boxes answered and the answers left and, in headless mode, the boxes that took their default answer and the native dialogs cancelled. The startup notices are covered; the vault import task dialog is not (use `close_dialog`, or headless mode, which cancels it). |
 | `create_item(panel, baseItem, prefix?, suffix?, relic?, relicBonus?, relic2?, relicBonus2?, seed?)` | Builds an item in memory from database record ids and drags it, like the Duplicate menu entry; place it with `drop_item` (a created item cannot be cancelled back). It tests combinations no vault holds, for example a relic whose completion bonus grants a skill, or any record in any slot as the Forge allows in God mode. It is saved with its vault or character like any item, so create it in a test file (see Safety). |
 | `hover_item(panel, x, y)` | Rests the virtual cursor on a cell without dragging. TQVault shows the item's tooltip and writes its name in the notification bar. The result gives the item, the notification text, the tooltips shown, and a PNG of the tooltip taken at once, since a tooltip can close by itself. |
 | `hover_end` | Moves the virtual cursor off the panel, which closes the tooltip. |

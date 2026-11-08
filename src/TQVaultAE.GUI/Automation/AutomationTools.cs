@@ -72,7 +72,7 @@ internal static partial class AutomationTools
 			};
 		});
 
-		return Serialize(new { endpoint = AutomationHost.Address, windows });
+		return Serialize(new { endpoint = AutomationHost.Address, headless = Headless.DesktopName, windows });
 	}
 
 	[McpServerTool(Name = "close_dialog", Destructive = true)]

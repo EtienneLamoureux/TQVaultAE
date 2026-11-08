@@ -53,6 +53,8 @@ public static class Program
 	[STAThread]
 	public static void Main()
 	{
+		var commandLine = Environment.GetCommandLineArgs();
+
 		try
 		{
 			// Add the event handler for handling UI thread exceptions to the event.
@@ -77,6 +79,25 @@ public static class Program
 			Log = LoggerFactory.CreateLogger(typeof(Program));// Make static level logger
 
 #if DEBUG
+			// --headless: TQVault runs on a hidden desktop, driven through the automation endpoint. See documentation/AUTOMATION.md
+			if (TQVaultAE.GUI.Automation.Headless.IsRequested(commandLine))
+			{
+				if (!TQVaultAE.GUI.Automation.Headless.TryAttach())
+				{
+					// This process only starts the instance that runs on the hidden desktop.
+					var headlessError = TQVaultAE.GUI.Automation.Headless.StartOnHiddenDesktop();
+					if (headlessError is not null)
+					{
+						Log.LogError("Headless mode: TQVault could not start on a hidden desktop: {Error}", headlessError);
+						Environment.ExitCode = 1;
+					}
+					return;
+				}
+
+				commandLine = TQVaultAE.GUI.Automation.Headless.WithoutSwitch(commandLine);
+				Log.LogInformation("Headless mode: running on the hidden desktop {Desktop}", TQVaultAE.GUI.Automation.Headless.DesktopName);
+			}
+
 			// In-app MCP automation endpoint, started early so that startup dialogs can be answered. See documentation/AUTOMATION.md
 			LoggerFactory.AddProvider(TQVaultAE.GUI.Automation.AutomationHost.RecentLog);
 			TQVaultAE.GUI.Automation.AutomationHost.Start(LoggerFactory);
@@ -143,7 +164,7 @@ public static class Program
 		.AddSingleton<HttpClient>()
 		.AddSingleton<ISettingsPersistenceService, SettingsPersistenceService>()
 		.AddSingleton<IStartupService, StartupService>()
-		.AddSingleton(new CommandLineArgs(Environment.GetCommandLineArgs()))
+		.AddSingleton(new CommandLineArgs(commandLine))
 		.AddTransient<ILoadAllService, LoadAllService>()
 		.AddSingleton<IItemEditService, ItemEditService>()
 		.AddSingleton<IItemStackingService, ItemStackingService>()
@@ -216,13 +237,29 @@ public static class Program
 		catch (Exception ex)
 		{
 			Log.LogError(ex, "TQVault failed to start or stopped on an unhandled error");
-			MessageBox.Show(Log.FormatException(ex), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+			ShowMessageBox(Log.FormatException(ex), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxOptions.DefaultDesktopOnly);
 		}
 
 	exit:;
 	}
 
 	#region Init
+
+	/// <summary>
+	/// Shows a message box outside the message box service (startup, fatal errors), with its first button as default.
+	/// </summary>
+	private static DialogResult ShowMessageBox(string message, string caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxOptions options)
+	{
+#if DEBUG
+		// Queued automation answers, and never a box in headless mode.
+		if (TQVaultAE.GUI.Automation.AutomationHost.TryTakeDialogAnswer(caption, message, buttons, out var automated))
+		{
+			Log?.LogInformation("Message box \"{Caption}\" answered {Answer} by automation", caption, automated);
+			return automated;
+		}
+#endif
+		return MessageBox.Show(message, caption, buttons, icon, MessageBoxDefaultButton.Button1, options);
+	}
 
 	/// <summary>
 	/// Shows the message about the vault folder chosen while the game paths were set up.
@@ -233,10 +270,10 @@ public static class Program
 		{
 			case StartupNotice.LegacyVaultShortcut:
 				// The vault path is still given by a shortcut: tell to use the configuration UI.
-				MessageBox.Show(Resources.DataLinkMsg, Resources.DataLink, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxService.ReadingOptions);
+				ShowMessageBox(Resources.DataLinkMsg, Resources.DataLink, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxService.ReadingOptions);
 				break;
 			case StartupNotice.DefaultVaultPath:
-				MessageBox.Show(Resources.DataDefaultPathMsg, Resources.DataDefaultPath, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxService.ReadingOptions);
+				ShowMessageBox(Resources.DataDefaultPathMsg, Resources.DataDefaultPath, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxService.ReadingOptions);
 				break;
 		}
 	}
@@ -300,14 +337,14 @@ public static class Program
 		try
 		{
 			Log.LogError(t.Exception, "UI Thread Exception");
-			result = MessageBox.Show(Log.FormatException(t.Exception), "Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
+			result = ShowMessageBox(Log.FormatException(t.Exception), "Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, rightToLeft);
 		}
 		catch
 		{
 			try
 			{
 				Log.LogCritical(t.Exception, "Fatal Windows Forms Error");
-				MessageBox.Show(Log.FormatException(t.Exception), "Fatal Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
+				ShowMessageBox(Log.FormatException(t.Exception), "Fatal Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, rightToLeft);
 			}
 			finally
 			{
