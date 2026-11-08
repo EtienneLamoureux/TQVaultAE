@@ -128,6 +128,38 @@ internal static partial class AutomationTools
 			return Serialize(report);
 		});
 
+	[McpServerTool(Name = "open_item_dialog", Destructive = true)]
+	[Description("Opens the Properties or Seed dialog of an item, like its context menu entries, but modeless over the main window, to check its layout with control_tree, text_fit and capture. Close it with close_dialog and its Cancel/OK button: the Seed dialog's OK changes the item's seed, so close it with Cancel.")]
+	public static string OpenItemDialog(
+		[Description("Panel id.")] string panel,
+		[Description("Cell column of the item.")] int x,
+		[Description("Cell row of the item.")] int y,
+		[Description("properties or seed.")] string dialog = "properties")
+		=> AutomationHost.OnUi(main =>
+		{
+			var named = ResolveShownPanel(main, panel);
+			var item = named.Panel.AutomationFindItem(new Point(x, y))
+				?? throw new McpException($"No item at {x},{y} in '{named.Id}'.");
+
+			Form form = dialog.ToLowerInvariant() switch
+			{
+				"properties" => main.Services.Forms.Create<Dialogs.ItemProperties>().With(d => d.Item = item),
+				"seed" => main.Services.Forms.Create<Dialogs.ItemSeedDialog>().With(d => d.SelectedItem = item),
+				_ => throw new McpException("dialog must be properties or seed."),
+			};
+
+			// Shown after this call returns, so a Load handler opening a message box cannot block the endpoint.
+			main.BeginInvoke(() => form.Show(main));
+			return Serialize(new { dialog = form.GetType().Name, item = item.ToString() });
+		});
+
+	private static T With<T>(this T form, Action<T> set)
+		where T : Form
+	{
+		set(form);
+		return form;
+	}
+
 	[McpServerTool(Name = "open_input_dialog", Destructive = true)]
 	[Description("Opens the text input dialog (InputDialog, used to name a duplicated character) modeless over the main window, to check its layout with capture and close it with close_dialog (button Cancel or OK).")]
 	public static string OpenInputDialog(
