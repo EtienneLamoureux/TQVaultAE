@@ -327,26 +327,23 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 				this.BagSackPanel.Sack = this.ShownPlayer.GetSack(this.currentBag + this.BagPanelOffset);
 				this.BagSackPanel.CurrentSack = this.currentBag;
 
-				// persistance of currentbag
-				if (this.Vault is not null)
-				{
-					if (this.AutoMoveLocation == AutoMoveLocation.Vault && this.Vault.currentlySelectedSackNumber != this.currentBag)
-					{
-						this.Vault.currentlySelectedSackNumber = this.currentBag;
-						if (this.Vault.Sacks is { Length: > 0 } vaultSacks)
-							vaultSacks[0].IsModified = true;
-					}
-
-					if (this.AutoMoveLocation == AutoMoveLocation.SecondaryVault && this.Vault.currentlyFocusedSackNumber != this.currentBag)
-					{
-						this.Vault.currentlyFocusedSackNumber = this.currentBag;
-						if (this.Vault.Sacks is { Length: > 0 } vaultSacks)
-							vaultSacks[0].IsModified = true;
-					}
-				}
+				if (this.Vault is not null && this.IsSecondaryVaultPanel is bool secondary)
+					this.Services.VaultService.RememberSelectedBag(this.Vault, secondary, this.currentBag);
 			}
 		}
 	}
+
+	/// <summary>
+	/// Gets which vault panel this is, for the bag each vault remembers per panel:
+	/// false for the main vault panel, true for the secondary one, null for the other panels.
+	/// </summary>
+	private bool? IsSecondaryVaultPanel
+		=> this.AutoMoveLocation switch
+		{
+			AutoMoveLocation.Vault => false,
+			AutoMoveLocation.SecondaryVault => true,
+			_ => null,
+		};
 
 	#endregion VaultPanel Properties
 
@@ -423,28 +420,12 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		{
 			this.UnhideAutoSortButtons();
 
-			// figure out the current bag to use
-			if (this.CurrentBag < 0)
-			{
-				this.CurrentBag = 0;
-			}
-
 			int numberOfBags = this.Player.NumberOfSacks - this.BagPanelOffset;
 
-			if ((numberOfBags > 0) && (this.CurrentBag >= numberOfBags))
-			{
-				this.CurrentBag = this.Player.NumberOfSacks - 1;
-			}
-
-			// Use saved bagId
-			if (this.Vault is not null)
-			{
-				if (this.AutoMoveLocation == AutoMoveLocation.Vault && this.Vault.currentlySelectedSackNumber > -1)
-					this.CurrentBag = this.Vault.currentlySelectedSackNumber;
-
-				if (this.AutoMoveLocation == AutoMoveLocation.SecondaryVault && this.Vault.currentlyFocusedSackNumber > -1)
-					this.CurrentBag = this.Vault.currentlyFocusedSackNumber;
-			}
+			// The bag saved in the vault for this panel, else the current one.
+			var secondary = this.IsSecondaryVaultPanel;
+			this.CurrentBag = this.Services.VaultService.ResolveInitialBag(
+				secondary is null ? null : this.Vault, secondary ?? false, this.CurrentBag, numberOfBags);
 
 			// hide/show bag buttons and assign initial bitmaps
 			int index = 0;

@@ -570,6 +570,74 @@ public class VaultServiceTests
 		vault.IsModified.Should().BeFalse();
 	}
 
+	private static PlayerCollection VaultWithRememberedBags(int main, int secondary)
+	{
+		var vault = VaultWithBags();
+		vault.currentlySelectedSackNumber = main;
+		vault.currentlyFocusedSackNumber = secondary;
+		return vault;
+	}
+
+	[Theory]
+	[InlineData(false, 7, 3)]
+	[InlineData(true, 1, 7)]
+	public void RememberSelectedBag_WritesThePanelBagOnlyAndMarksTheVaultModified(bool secondary, int expectedMain, int expectedSecondary)
+	{
+		var vault = VaultWithRememberedBags(main: 1, secondary: 3);
+
+		var changed = _vaultService.RememberSelectedBag(vault, secondary, 7);
+
+		changed.Should().BeTrue();
+		vault.currentlySelectedSackNumber.Should().Be(expectedMain);
+		vault.currentlyFocusedSackNumber.Should().Be(expectedSecondary);
+		// The bags are saved in the vault file: the change must make the vault savable.
+		vault.IsModified.Should().BeTrue();
+	}
+
+	[Theory]
+	[InlineData(false, 1)]
+	[InlineData(true, 3)]
+	public void RememberSelectedBag_SameBag_VaultStaysUnmodified(bool secondary, int bag)
+	{
+		var vault = VaultWithRememberedBags(main: 1, secondary: 3);
+
+		var changed = _vaultService.RememberSelectedBag(vault, secondary, bag);
+
+		changed.Should().BeFalse();
+		vault.IsModified.Should().BeFalse();
+	}
+
+	[Theory]
+	// The bag remembered for the panel wins over the bag shown before.
+	[InlineData(false, 4, 9, 2, 12, 4)]
+	[InlineData(true, 4, 9, 2, 12, 9)]
+	// Nothing remembered (-1): the panel keeps its bag.
+	[InlineData(false, -1, 9, 2, 12, 2)]
+	[InlineData(true, 4, -1, 2, 12, 2)]
+	// The bag shown before is kept within the bags.
+	[InlineData(false, -1, -1, 11, 3, 2)]
+	[InlineData(false, -1, -1, -5, 3, 0)]
+	// A remembered bag beyond the bags (a damaged file) is kept within them too.
+	[InlineData(false, 20, -1, 0, 12, 11)]
+	// No bags: never below 0.
+	[InlineData(false, -1, -1, -2, 0, 0)]
+	public void ResolveInitialBag_PicksTheRememberedBagElseTheCurrentOneWithinTheBags(bool secondary, int rememberedMain, int rememberedSecondary, int currentBag, int count, int expected)
+	{
+		var vault = VaultWithRememberedBags(rememberedMain, rememberedSecondary);
+
+		var bag = _vaultService.ResolveInitialBag(vault, secondary, currentBag, count);
+
+		bag.Should().Be(expected);
+		vault.IsModified.Should().BeFalse();
+	}
+
+	[Fact]
+	public void ResolveInitialBag_WithoutVault_KeepsTheCurrentBagWithinTheBags()
+	{
+		_vaultService.ResolveInitialBag(null, false, 2, 4).Should().Be(2);
+		_vaultService.ResolveInitialBag(null, false, 6, 4).Should().Be(3);
+	}
+
 	[Fact]
 	public void DeleteVault_WhenFileMissing_OnlyDropsFromCache()
 	{
