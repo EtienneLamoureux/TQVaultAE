@@ -738,6 +738,42 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Gear.
+        /// </summary>
+        public static string CESkillGear {
+            get {
+                return ResourceManager.GetString("CESkillGear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to +{0} to {1} (equipment).
+        /// </summary>
+        public static string CEGearBonusSkill {
+            get {
+                return ResourceManager.GetString("CEGearBonusSkill", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to +{0} to all skills of {1} (equipment).
+        /// </summary>
+        public static string CEGearBonusMastery {
+            get {
+                return ResourceManager.GetString("CEGearBonusMastery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to +{0} to all skills (equipment).
+        /// </summary>
+        public static string CEGearBonusAll {
+            get {
+                return ResourceManager.GetString("CEGearBonusAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Strength.
         /// </summary>
         public static string CEStrength {

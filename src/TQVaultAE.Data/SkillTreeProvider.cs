@@ -133,16 +133,20 @@ public class SkillTreeProvider(IDatabase database) : ISkillTreeProvider
 
 	private MasterySkill ToMasterySkill(DBRecordCollection record, SkillButton button, RecordId? parentId)
 	{
-		// Skills that only cast a buff or a pet skill take their name, description and icon from it.
+		// Skills that only cast a buff or a pet skill take their name, description and icon from it; a pet modifier
+		// casts a pet skill that casts a buff, so the links are followed until a record has a name.
 		var shown = record;
-		foreach (var link in new[] { "buffSkillName", "petSkillName" })
+		for (int depth = 0; depth < 3 && shown.GetString("skillDisplayName", 0).Length == 0; depth++)
 		{
-			var linkedId = record.GetString(link, 0).ToRecordId();
-			if (!RecordId.IsNullOrEmpty(linkedId) && this._database.GetRecordFromFile(linkedId) is { } linked)
-			{
-				shown = linked;
+			var linked = new[] { "buffSkillName", "petSkillName" }
+				.Select(link => shown.GetString(link, 0).ToRecordId())
+				.Where(id => !RecordId.IsNullOrEmpty(id))
+				.Select(id => this._database.GetRecordFromFile(id))
+				.FirstOrDefault(r => r is not null);
+			if (linked is null)
 				break;
-			}
+
+			shown = linked;
 		}
 
 		string First(string variable)

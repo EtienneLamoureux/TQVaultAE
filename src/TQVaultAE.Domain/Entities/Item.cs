@@ -281,6 +281,12 @@ public class Item
 	public bool IsInWeaponSlot => this.PositionX == WeaponSlotIndicator;
 
 	/// <summary>
+	/// Gets a value indicating whether the item is a weapon of the second weapon set (rows 2 and 3 of the weapon
+	/// slots), whose bonuses do not count.
+	/// </summary>
+	public bool IsInSecondaryWeaponSlot => this.IsInWeaponSlot && (this.PositionY == 2 || this.PositionY == 3);
+
+	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Immortal Throne expansion pack.
 	/// </summary>
 	public bool IsImmortalThrone

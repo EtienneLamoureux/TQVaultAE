@@ -335,7 +335,7 @@ public class PlayerService(
 				continue;
 
 			// Skip weapons in the secondary slots.
-			if (item.IsInWeaponSlot && (item.PositionY == 2 || item.PositionY == 3))
+			if (item.IsInSecondaryWeaponSlot)
 				continue;
 
 			player.UpdatePlayerGearBonuses(this.ItemProvider.GetStatBonuses(item));

@@ -1016,6 +1016,18 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
 	<data name="CESkillMax" xml:space="preserve">
     <value>Max</value>
   </data>
+	<data name="CESkillGear" xml:space="preserve">
+    <value>Équip.</value>
+  </data>
+	<data name="CEGearBonusSkill" xml:space="preserve">
+    <value>+{0} à {1} (équipement)</value>
+  </data>
+	<data name="CEGearBonusMastery" xml:space="preserve">
+    <value>+{0} à toutes les compétences de {1} (équipement)</value>
+  </data>
+	<data name="CEGearBonusAll" xml:space="preserve">
+    <value>+{0} à toutes les compétences (équipement)</value>
+  </data>
 	<data name="CEStrength" xml:space="preserve">
     <value>Force</value>
   </data>
