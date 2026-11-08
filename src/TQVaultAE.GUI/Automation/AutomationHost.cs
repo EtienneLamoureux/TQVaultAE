@@ -49,6 +49,59 @@ internal static class AutomationHost
 	/// </summary>
 	public static MainForm? MainForm => _mainForm;
 
+
+	private static readonly System.Collections.Concurrent.ConcurrentQueue<DialogResult> _dialogAnswers = new();
+	private static readonly System.Collections.Concurrent.ConcurrentQueue<string> _dialogAnswered = new();
+
+	/// <summary>
+	/// Queues answers for the next message boxes shown through the message box service.
+	/// </summary>
+	public static void QueueDialogAnswers(IEnumerable<DialogResult> answers)
+	{
+		foreach (var answer in answers)
+			_dialogAnswers.Enqueue(answer);
+	}
+
+	/// <summary>Removes the answers not used yet and the record of the answered boxes.</summary>
+	public static void ClearDialogAnswers()
+	{
+		_dialogAnswers.Clear();
+		_dialogAnswered.Clear();
+	}
+
+	/// <summary>Gets the answers not used yet.</summary>
+	public static IReadOnlyList<DialogResult> PendingDialogAnswers => [.. _dialogAnswers];
+
+	/// <summary>Gets the boxes answered from the queue, oldest first.</summary>
+	public static IReadOnlyList<string> AnsweredDialogs => [.. _dialogAnswered];
+
+	/// <summary>
+	/// Takes the next queued answer when it is one of <paramref name="buttons"/>; an OK-only box takes only an OK answer,
+	/// so an unexpected message does not use up the answer meant for a question.
+	/// </summary>
+	/// <returns>Whether the box is answered without being shown.</returns>
+	public static bool TryTakeDialogAnswer(string caption, string message, MessageBoxButtons buttons, out DialogResult answer)
+	{
+		answer = DialogResult.None;
+		if (!_dialogAnswers.TryPeek(out var next) || !ButtonsOf(buttons).Contains(next) || !_dialogAnswers.TryDequeue(out answer))
+			return false;
+
+		_dialogAnswered.Enqueue($"{caption}: {(message.Length > 120 ? message[..120] + "..." : message)} -> {answer}");
+		return true;
+	}
+
+	private static DialogResult[] ButtonsOf(MessageBoxButtons buttons) => buttons switch
+	{
+		MessageBoxButtons.OK => [DialogResult.OK],
+		MessageBoxButtons.OKCancel => [DialogResult.OK, DialogResult.Cancel],
+		MessageBoxButtons.AbortRetryIgnore => [DialogResult.Abort, DialogResult.Retry, DialogResult.Ignore],
+		MessageBoxButtons.YesNoCancel => [DialogResult.Yes, DialogResult.No, DialogResult.Cancel],
+		MessageBoxButtons.YesNo => [DialogResult.Yes, DialogResult.No],
+		MessageBoxButtons.RetryCancel => [DialogResult.Retry, DialogResult.Cancel],
+		MessageBoxButtons.CancelTryContinue => [DialogResult.Cancel, DialogResult.TryAgain, DialogResult.Continue],
+		_ => [],
+	};
+
 	/// <summary>
 	/// Starts the endpoint in the background. Safe to call before the main form exists,
 	/// so that startup dialogs can already be listed and answered.

@@ -107,6 +107,35 @@ internal static partial class AutomationTools
 			return Serialize(new { form = target.Text, clicked = c.Name });
 		});
 
+
+	[McpServerTool(Name = "queue_dialog_answers", Destructive = true)]
+	[Description("Queues answers for the next message boxes (comma separated: OK, Cancel, Yes, No, Abort, Retry, Ignore), so they are answered at once without being shown and nothing waits for a click. A box takes the next answer only when it is one of its buttons; an OK-only box takes only an OK answer, so an unexpected message keeps the answer meant for a question. 'clear' empties the queue and the record. Covers the boxes of the message box service (questions, warnings, errors, save errors); the startup notices and the vault import dialog still need close_dialog.")]
+	public static string QueueDialogAnswers([Description("Answers in order, e.g. 'Cancel,No', or 'clear'.")] string answers)
+	{
+		if (string.Equals(answers.Trim(), "clear", StringComparison.OrdinalIgnoreCase))
+			AutomationHost.ClearDialogAnswers();
+		else
+		{
+			var parsed = answers.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+				.Select(a => Enum.TryParse<DialogResult>(a, true, out var r) && r != DialogResult.None
+					? r
+					: throw new McpException($"Unknown answer '{a}'. Use OK, Cancel, Yes, No, Abort, Retry or Ignore."))
+				.ToList();
+			AutomationHost.QueueDialogAnswers(parsed);
+		}
+
+		return DialogAnswers();
+	}
+
+	[McpServerTool(Name = "dialog_answers", ReadOnly = true)]
+	[Description("Lists the message boxes answered from the queue (caption, message, answer) and the answers not used yet.")]
+	public static string DialogAnswers()
+		=> Serialize(new
+		{
+			answered = AutomationHost.AnsweredDialogs,
+			pending = AutomationHost.PendingDialogAnswers.Select(a => a.ToString()).ToList(),
+		});
+
 	private static Form FindOpenForm(string form)
 		=> System.Windows.Forms.Application.OpenForms.Cast<Form>().LastOrDefault(f => f.Visible
 			&& (f.Text.Contains(form, StringComparison.OrdinalIgnoreCase) || string.Equals(f.GetType().Name, form, StringComparison.OrdinalIgnoreCase)))

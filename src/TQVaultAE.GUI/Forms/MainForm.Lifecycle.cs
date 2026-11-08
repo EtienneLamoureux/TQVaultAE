@@ -121,6 +121,10 @@ public partial class MainForm
 		// Sync git local repo first
 		this.GameFileService.GitRepositorySetup();
 
+		// The vault list was built with the form, before the sync: list the vaults the clone or pull brought.
+		if (USettings.GitBackupEnabled)
+			this.GetVaultList(false);
+
 		this.splashScreen = this.Services.Forms.Create<SplashScreenForm>();
 		this.splashScreen.MaximumValue = 1;
 		this.splashScreen.FormClosed += new FormClosedEventHandler(this.SplashScreenClosed);
