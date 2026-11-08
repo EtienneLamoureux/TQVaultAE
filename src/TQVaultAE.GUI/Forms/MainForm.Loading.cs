@@ -260,7 +260,7 @@ public partial class MainForm
 		var selection = StartupSelection.Resolve(
 			USettings
 			, characters.Select(ps => ps.Name)
-			, vaultName => FileIO.Exists(GamePathResolver.GetVaultFile(vaultName))
+			, this.vaultService.VaultExists
 			, this.commandLineArgs);
 
 		// Load last character here if selected

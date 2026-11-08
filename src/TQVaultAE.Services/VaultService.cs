@@ -355,6 +355,26 @@ public class VaultService(
 	public void UpdateVaultPath(string vaultPath)
 		=> this.UserSettings.VaultPath = vaultPath;
 
+	/// <inheritdoc/>
+	public string[] GetVaultList()
+	{
+		var vaults = this.GamePathResolver.GetVaultList();
+
+		// Reading the list may have set the vault folder to its default: keep the setting in step.
+		if (this.GamePathResolver.VaultFolderChanged)
+			this.UpdateVaultPath(this.GamePathResolver.TQVaultSaveFolder);
+
+		return vaults;
+	}
+
+	/// <inheritdoc/>
+	public bool VaultExists(string vaultName)
+		=> this.FileIO.Exists(this.GamePathResolver.GetVaultFile(vaultName));
+
+	/// <inheritdoc/>
+	public string ResolveVaultToLoad(string currentVault)
+		=> StartupSelection.ResolveVault(this.UserSettings, currentVault, this.VaultExists);
+
 	/// <summary>
 	/// Saves a vault to disk and registers it in the session cache.
 	/// </summary>

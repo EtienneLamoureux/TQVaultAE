@@ -137,6 +137,25 @@ public interface IVaultService
 	void UpdateVaultPath(string vaultPath);
 
 	/// <summary>
+	/// Gets the names of the vault files. When the vault folder fell back to its default while being read,
+	/// the VaultPath setting is updated to it.
+	/// </summary>
+	string[] GetVaultList();
+
+	/// <summary>
+	/// Tells whether the file of a vault exists.
+	/// </summary>
+	/// <param name="vaultName">Name of the vault.</param>
+	bool VaultExists(string vaultName);
+
+	/// <summary>
+	/// Chooses the vault to load in the main panel: the last vault when "load last vault" is on (the Main Vault when
+	/// it is not set or its file is missing), else <paramref name="currentVault"/>.
+	/// </summary>
+	/// <param name="currentVault">The vault to keep when the last vault is not loaded.</param>
+	string ResolveVaultToLoad(string currentVault);
+
+	/// <summary>
 	/// Saves a vault to disk.
 	/// </summary>
 	/// <param name="vault">The vault to save.</param>

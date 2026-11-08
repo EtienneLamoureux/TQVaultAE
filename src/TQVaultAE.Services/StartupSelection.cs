@@ -26,18 +26,28 @@ public sealed record StartupSelection(string? CharacterName, string VaultName, b
 		if (settings.LoadLastCharacter && characterNames.Contains(settings.LastCharacterName, StringComparer.Ordinal))
 			characterName = settings.LastCharacterName;
 
-		string vaultName = VaultService.MAINVAULT;
-		if (settings.LoadLastVault)
-		{
-			vaultName = settings.LastVaultName;
-
-			// Do not create a vault here: load the Main Vault instead.
-			if (string.IsNullOrEmpty(vaultName) || !vaultExists(vaultName))
-				vaultName = VaultService.MAINVAULT;
-		}
+		string vaultName = ResolveVault(settings, VaultService.MAINVAULT, vaultExists);
 
 		var skipTitle = args.IsAutomatic || settings.SkipTitle;
 
 		return new StartupSelection(characterName, vaultName, skipTitle, skipTitle ? args.Player ?? string.Empty : string.Empty);
+	}
+
+	/// <summary>
+	/// Chooses the vault to load in the main panel: with "load last vault" on, the last vault, or the Main Vault when it
+	/// is not set or its file is missing (no vault is created here); with it off, <paramref name="currentVault"/>.
+	/// </summary>
+	/// <param name="settings">The user settings.</param>
+	/// <param name="currentVault">The vault to keep when the last vault is not loaded.</param>
+	/// <param name="vaultExists">Tells whether the file of a vault exists.</param>
+	public static string ResolveVault(UserSettings settings, string currentVault, Func<string, bool> vaultExists)
+	{
+		if (!settings.LoadLastVault)
+			return currentVault;
+
+		string lastVault = settings.LastVaultName;
+		return string.IsNullOrEmpty(lastVault) || !vaultExists(lastVault)
+			? VaultService.MAINVAULT
+			: lastVault;
 	}
 }

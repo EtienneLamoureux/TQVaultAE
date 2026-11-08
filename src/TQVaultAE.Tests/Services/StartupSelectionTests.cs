@@ -99,4 +99,26 @@ public class StartupSelectionTests
 		selection.SkipTitle.Should().BeTrue();
 		selection.AutomaticPlayer.Should().BeEmpty();
 	}
+
+	[Fact]
+	public void ResolveVault_LoadLastVaultOff_KeepsTheCurrentVaultWithoutCheckingFiles()
+	{
+		this._settings.LoadLastVault = false;
+		var checkedFiles = new List<string>();
+
+		var vault = StartupSelection.ResolveVault(this._settings, "Potions", name => { checkedFiles.Add(name); return true; });
+
+		vault.Should().Be("Potions");
+		checkedFiles.Should().BeEmpty();
+	}
+
+	[Theory]
+	[InlineData(true, "Rings")]
+	[InlineData(false, VaultService.MAINVAULT)]
+	public void ResolveVault_LoadLastVaultOn_ReplacesTheCurrentVaultByTheLastOneWhenItsFileExists(bool exists, string expected)
+	{
+		var vault = StartupSelection.ResolveVault(this._settings, "Potions", name => name == "Rings" && exists);
+
+		vault.Should().Be(expected);
+	}
 }
