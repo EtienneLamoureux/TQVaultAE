@@ -205,6 +205,25 @@ internal static partial class AutomationTools
 			}
 		});
 
+	[McpServerTool(Name = "tag_archive_all", Destructive = true)]
+	[Description("Clicks 'Archive all' (archived=true) or 'Unarchive all' in the menu of a tag, like a user: TQVault moves the save folders of the characters having that tag. Only test tags starting with 'claude-' whose characters are all claude-* test characters. Returns those characters with their state and folder.")]
+	public static string TagArchiveAll(
+		[Description("The test tag.")] string tag,
+		[Description("true to archive, false to unarchive.")] bool archived)
+		=> AutomationHost.OnUi(form =>
+		{
+			try
+			{
+				var characters = form.AutomationCharacterCombo.AutomationSetArchivedByTag(tag, archived)
+					.Select(c => new { name = c.Name, isArchived = c.IsArchived, folder = c.Folder });
+				return Serialize(new { tag, characters });
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
+		});
+
 	[McpServerTool(Name = "open_character_editor", Destructive = true)]
 	[Description("Opens the character editor of the selected character, like the Edit button of the stash panel. It is modal: read and change it with control_values and set_control (form 'CharacterEditDialog'), then close it with close_dialog (OK applies the changes in memory; save_files writes them). Work only on claude-* test characters.")]
 	public static string OpenCharacterEditor()
@@ -217,10 +236,10 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "tag_box", Destructive = true)]
-	[Description("Types into a tag box of the character drop down's context menu and presses Enter, like a user: box 'add' (new tag, assigned to the selected character) or 'rename' (renames the tag 'tag'). A refused name shows an error box (answer it with close_dialog). Box 'delete' removes the test tag 'text' without asking. Names must start with 'claude-'. Read the tags with list_tags.")]
+	[Description("Types into a tag box of the character drop down's context menu and presses Enter, like a user: box 'add' (new tag, assigned to the selected character) or 'rename' (renames the tag 'tag'). A refused name shows an error box (answer it with close_dialog). Box 'delete' removes the test tag 'text' without asking; 'assign' and 'unassign' tick or untick the tag 'text' for the selected test character. Names must start with 'claude-'. Read the tags with list_tags.")]
 	public static string TagBox(
-		[Description("add, rename or delete.")] string box,
-		[Description("The text typed (add, rename) or the tag to delete.")] string text,
+		[Description("add, rename, delete, assign or unassign.")] string box,
+		[Description("The text typed (add, rename) or the tag to delete, assign or unassign.")] string text,
 		[Description("For rename: the tag being renamed.")] string? tag = null)
 		=> AutomationHost.OnUi(form =>
 		{
@@ -264,8 +283,26 @@ internal static partial class AutomationTools
 					comboType.GetMethod("RefreshMenuTagList", Private)!.Invoke(combo, null);
 					break;
 				}
+				case "assign":
+				case "unassign":
+				{
+					if (!isTestName(text))
+						throw new McpException($"Test tags only: the name must start with '{TestFilePrefix}'.");
+					if (combo.SelectedItem is not PlayerSave ps || !ps.Name.StartsWith(TestFilePrefix, StringComparison.OrdinalIgnoreCase))
+						throw new McpException($"Select a test character (name starting with '{TestFilePrefix}') first.");
+					var tags = (ToolStripMenuItem)comboType.GetField("tagsToolStripMenuItem", Private)!.GetValue(combo)!;
+					var tagItem = tags.DropDownItems.OfType<ToolStripMenuItem>()
+						.FirstOrDefault(i => i.Text == text && (i.Name?.StartsWith(ComboBoxCharacter.TAGKEY, StringComparison.Ordinal) ?? false))
+						?? throw new McpException($"No tag '{text}' in the menu.");
+					// Like a click on the tag entry: its CheckedChanged handler assigns or unassigns the tag.
+					// The menu was just rebuilt unticked, so tick it first to be able to untick it.
+					tagItem.Checked = true;
+					if (box.Equals("unassign", StringComparison.OrdinalIgnoreCase))
+						tagItem.Checked = false;
+					break;
+				}
 				default:
-					throw new McpException("box must be add, rename or delete.");
+					throw new McpException("box must be add, rename, delete, assign or unassign.");
 			}
 
 			return Serialize(new { box, text, tag, sent = true });

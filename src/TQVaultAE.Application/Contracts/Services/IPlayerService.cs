@@ -91,6 +91,16 @@ public interface IPlayerService
 	bool Unarchive(PlayerSave ps);
 
 	/// <summary>
+	/// Archives (or unarchives) every save of <paramref name="saves"/> not yet in that state, as <see cref="Archive"/>
+	/// and <see cref="Unarchive"/> do one by one. With <paramref name="tag"/>, only the saves having that tag.
+	/// </summary>
+	/// <param name="saves">The known characters.</param>
+	/// <param name="archive"><see langword="true"/> to archive, <see langword="false"/> to unarchive.</param>
+	/// <param name="tag">The tag the saves must have, or <see langword="null"/> for all of them.</param>
+	/// <returns>The saves moved and the ones that could not be.</returns>
+	ArchiveChangeResult SetArchived(IEnumerable<PlayerSave> saves, bool archive, string? tag);
+
+	/// <summary>
 	/// Indicates whether the current player meets the requirements (level, strength, dexterity, intelligence) of
 	/// <paramref name="item"/>. Without a current player, or for an item without requirements, it does.
 	/// </summary>

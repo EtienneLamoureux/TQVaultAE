@@ -490,6 +490,118 @@ public class PlayerServiceTests
 	}
 
 	/// <summary>
+	/// Creates a save named after <paramref name="name"/>, with its player file paths and the given tags.
+	/// </summary>
+	private PlayerSave CreateArchivableSave(string name, bool isArchived, params string[] tags)
+	{
+		var save = CreatePlayerSave($"/Test/Players/_{name}", isArchived: isArchived);
+		foreach (var tag in tags)
+			save.Tags.Add(tag, System.Drawing.Color.Red);
+
+		_mockGamePathService.Setup(x => x.GetPlayerFile(name, false, false)).Returns($"/Test/Players/_{name}/Player.chr");
+		_mockGamePathService.Setup(x => x.GetPlayerFile(name, false, true)).Returns($"/Test/Players/Archived/_{name}/Player.chr");
+		return save;
+	}
+
+	[Fact]
+	public void SetArchived_WithTag_ArchivesOnlyTheActiveSavesHavingTheTag()
+	{
+		// Arrange
+		var taggedActive = CreateArchivableSave("TaggedActive", isArchived: false, "Done");
+		var taggedArchived = CreateArchivableSave("TaggedArchived", isArchived: true, "Done");
+		var otherTag = CreateArchivableSave("OtherTag", isArchived: false, "Main");
+		var untagged = CreateArchivableSave("Untagged", isArchived: false);
+		_mockGameFileService.Setup(x => x.Archive(It.IsAny<PlayerSave>())).Returns(true);
+
+		// Act
+		var result = _playerService.SetArchived([taggedActive, taggedArchived, otherTag, untagged], archive: true, "Done");
+
+		// Assert
+		result.Changed.Should().Equal(taggedActive);
+		result.Failed.Should().BeEmpty();
+		_mockGameFileService.Verify(x => x.Archive(It.IsAny<PlayerSave>()), Times.Once);
+		_mockGameFileService.Verify(x => x.Unarchive(It.IsAny<PlayerSave>()), Times.Never);
+	}
+
+	[Fact]
+	public void SetArchived_WithoutTag_UnarchivesEveryArchivedSave()
+	{
+		// Arrange
+		var archivedTagged = CreateArchivableSave("ArchivedTagged", isArchived: true, "Done");
+		var archivedUntagged = CreateArchivableSave("ArchivedUntagged", isArchived: true);
+		var active = CreateArchivableSave("Active", isArchived: false);
+		_mockGameFileService.Setup(x => x.Unarchive(It.IsAny<PlayerSave>())).Returns(true);
+
+		// Act
+		var result = _playerService.SetArchived([archivedTagged, archivedUntagged, active], archive: false, tag: null);
+
+		// Assert
+		result.Changed.Should().Equal(archivedTagged, archivedUntagged);
+		result.AnyChanged.Should().BeTrue();
+		_mockGameFileService.Verify(x => x.Unarchive(active), Times.Never);
+		_mockGameFileService.Verify(x => x.Archive(It.IsAny<PlayerSave>()), Times.Never);
+	}
+
+	[Fact]
+	public void SetArchived_WhenAMoveFailsOrThrows_ReportsItAndMovesTheOthers()
+	{
+		// Arrange
+		var refused = CreateArchivableSave("Refused", isArchived: false);
+		var throwing = CreateArchivableSave("Throwing", isArchived: false);
+		var moved = CreateArchivableSave("Moved", isArchived: false);
+		_mockGameFileService.Setup(x => x.Archive(refused)).Returns(false);
+		_mockGameFileService.Setup(x => x.Archive(throwing)).Throws(new IOException("locked"));
+		_mockGameFileService.Setup(x => x.Archive(moved)).Returns(true);
+		var movedActivePath = "/Test/Players/_Moved/Player.chr";
+		_sessionContext.Players.TryAdd(movedActivePath, new Lazy<PlayerCollection>(() => new PlayerCollection("Moved", movedActivePath)));
+
+		// Act
+		var result = _playerService.SetArchived([refused, throwing, moved], archive: true, tag: null);
+
+		// Assert - the moved save is keyed by its new path, as one by one
+		result.Changed.Should().Equal(moved);
+		result.Failed.Should().Equal(refused, throwing);
+		_sessionContext.Players.Should().ContainKey("/Test/Players/Archived/_Moved/Player.chr");
+		_sessionContext.Players.Should().NotContainKey(movedActivePath);
+	}
+
+	[Fact]
+	public void SetArchived_WhenNothingMatches_ChangesNothing()
+	{
+		// Arrange
+		var archived = CreateArchivableSave("Archived", isArchived: true, "Done");
+
+		// Act
+		var result = _playerService.SetArchived([archived], archive: true, "Done");
+
+		// Assert
+		result.AnyChanged.Should().BeFalse();
+		result.Failed.Should().BeEmpty();
+		_mockGameFileService.Verify(x => x.Archive(It.IsAny<PlayerSave>()), Times.Never);
+	}
+
+	[Fact]
+	public void GetPlayerSaveList_LoadsTheTagsOfEverySave()
+	{
+		// Arrange
+		var characterFolders = new[] { "/Test/_PlayerA", "/Test/_PlayerB" };
+		_mockGamePathService.Setup(x => x.GetCharacterList()).Returns(characterFolders);
+		_mockGamePathService.Setup(x => x.SaveDirNameTQIT).Returns("Titan Quest - Immortal Throne");
+		_mockGamePathService.Setup(x => x.ArchiveDirName).Returns("ArchivedCharacters");
+		_mockGamePathService.Setup(x => x.MapName).Returns("");
+		_mockPathIO.Setup(x => x.GetFileName("/Test/_PlayerA")).Returns("_PlayerA");
+		_mockPathIO.Setup(x => x.GetFileName("/Test/_PlayerB")).Returns("_PlayerB");
+		_mockTagService.Setup(x => x.LoadTags(It.IsAny<PlayerSave>()))
+			.Callback<PlayerSave>(ps => ps.Tags[ps.Name] = System.Drawing.Color.Blue);
+
+		// Act
+		var result = _playerService.GetPlayerSaveList();
+
+		// Assert - displaying a save no longer loads its tags, so the list must
+		result.Should().AllSatisfy(ps => ps.Tags.Should().ContainKey(ps.Name));
+	}
+
+	/// <summary>
 	/// Test LoadPlayer with fromFileWatcher updates existing player
 	/// </summary>
 	[Fact]

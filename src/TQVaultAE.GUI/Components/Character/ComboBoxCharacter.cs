@@ -374,6 +374,17 @@ public partial class ComboBoxCharacter : UserControl
 			uctr.RefreshContent();
 	}
 
+	/// <summary>
+	/// Reloads the tags of every listed character after a tag was renamed, recolored or deleted, then refreshes the list.
+	/// </summary>
+	private void ReloadTagsAndRefreshItems()
+	{
+		foreach (var ps in this.Items.OfType<PlayerSave>())
+			this.TagService.LoadTags(ps);
+
+		RefreshItems();
+	}
+
 	internal void RefreshItem(PlayerSave selectedSave)
 	{
 		var item = this.DropDown.Items.First(i => i.Item == selectedSave);
@@ -571,7 +582,7 @@ public partial class ComboBoxCharacter : UserControl
 				this.TagService.UpdateTag(tagName, tagName, col.R, col.G, col.B);
 
 				this.RefreshMenuTagList();
-				this.RefreshItems();
+				this.ReloadTagsAndRefreshItems();
 				this.RefreshContent();
 			}
 		}
@@ -628,7 +639,7 @@ public partial class ComboBoxCharacter : UserControl
 			var col = this.TagService.Tags[oldTagName];
 			this.TagService.UpdateTag(oldTagName, newTagName, col.R, col.G, col.B);
 
-			RefreshItems();
+			this.ReloadTagsAndRefreshItems();
 
 			ClearInputAndCollapse(textBox);
 			RefreshMenuTagList();
@@ -672,7 +683,7 @@ public partial class ComboBoxCharacter : UserControl
 		{
 			this.TagService.DeleteTag(tagName);
 
-			RefreshItems();
+			this.ReloadTagsAndRefreshItems();
 			RefreshMenuTagList();
 			RefreshContent();
 		}
@@ -681,34 +692,23 @@ public partial class ComboBoxCharacter : UserControl
 	private void TagUnArchiveAllItem_Click(object? sender, EventArgs e)
 	{
 		var unArchiveAllMenuItem = (ToolStripMenuItem)sender!;
-		var tagName = unArchiveAllMenuItem.OwnerItem?.Text ?? string.Empty;
-
-		// Find Saves having the tag that are archived
-		var taggedSaves =
-			from ps in this.Items.OfType<PlayerSave>()
-			where ps.Tags.ContainsKey(tagName) && ps.IsArchived
-			select ps;
-
-		foreach (var taggedSave in taggedSaves)
-			this.PlayerService.Unarchive(taggedSave);
-
-		RefreshItems();
-		RefreshContent();
+		this.SetArchived(archive: false, unArchiveAllMenuItem.OwnerItem?.Text ?? string.Empty);
 	}
 
 	private void TagArchiveAllItem_Click(object? sender, EventArgs e)
 	{
 		var archiveAllMenuItem = (ToolStripMenuItem)sender!;
-		var tagName = archiveAllMenuItem.OwnerItem?.Text ?? string.Empty;
+		this.SetArchived(archive: true, archiveAllMenuItem.OwnerItem?.Text ?? string.Empty);
+	}
 
-		// Find Saves having the tag that are not archived
-		var taggedSaves =
-			from ps in this.Items.OfType<PlayerSave>()
-			where ps.Tags.ContainsKey(tagName) && !ps.IsArchived
-			select ps;
-
-		foreach (var taggedSave in taggedSaves)
-			this.PlayerService.Archive(taggedSave);
+	/// <summary>
+	/// Archives or unarchives the listed characters (only those having <paramref name="tag"/>, when given), then refreshes the list.
+	/// </summary>
+	private void SetArchived(bool archive, string? tag)
+	{
+		var result = this.PlayerService.SetArchived(this.Items.OfType<PlayerSave>(), archive, tag);
+		if (!result.AnyChanged)
+			return;
 
 		RefreshItems();
 		RefreshContent();
@@ -791,17 +791,7 @@ public partial class ComboBoxCharacter : UserControl
 		if (this._DisableMenuTriggers)
 			return;
 
-		// Find Saves that are not archived
-		var activeSaves =
-			from ps in this.Items.OfType<PlayerSave>()
-			where !ps.IsArchived
-			select ps;
-
-		foreach (var activeSave in activeSaves)
-			this.PlayerService.Archive(activeSave);
-
-		RefreshItems();
-		RefreshContent();
+		this.SetArchived(archive: true, tag: null);
 	}
 
 	private void unarchiveAllToolStripMenuItemGlobal_Click(object? sender, EventArgs e)
@@ -809,16 +799,7 @@ public partial class ComboBoxCharacter : UserControl
 		if (this._DisableMenuTriggers)
 			return;
 
-		// Find Saves that are archived
-		var archivedSaves =
-			from ps in this.Items.OfType<PlayerSave>()
-			where ps.IsArchived
-			select ps;
-
-		foreach (var save in archivedSaves)
-			this.PlayerService.Unarchive(save);
-
-		RefreshItems();
-		RefreshContent();
+		this.SetArchived(archive: false, tag: null);
 	}
 }
+
