@@ -108,21 +108,21 @@ public partial class VaultPanel
 
 						if (this.Vault.DisabledTooltipBagId.Contains(bagID))
 						{
-							this.AddMenuItem(Resources.PlayerPanelMenuEnableTooltip, this.DisableTooltipClicked);
+							this.AddTooltipMenuItem(Resources.PlayerPanelMenuEnableTooltip, TQVaultAE.Application.DTOs.BagTooltipChange.Enable);
 						}
 						else
 						{
-							this.AddMenuItem(Resources.PlayerPanelMenuDisableTooltip, this.DisableTooltipClicked);
+							this.AddTooltipMenuItem(Resources.PlayerPanelMenuDisableTooltip, TQVaultAE.Application.DTOs.BagTooltipChange.Disable);
 						}
 
 						if (this.Vault.DisabledTooltipBagId.Count < this.BagButtons.Count)
 						{
-							this.AddMenuItem(Resources.PlayerPanelMenuDisableAllTooltip, this.DisableTooltipClicked);
+							this.AddTooltipMenuItem(Resources.PlayerPanelMenuDisableAllTooltip, TQVaultAE.Application.DTOs.BagTooltipChange.DisableAll);
 						}
 
 						if (this.Vault.DisabledTooltipBagId.Count != 0)
 						{
-							this.AddMenuItem(Resources.PlayerPanelMenuEnableAllTooltip, this.DisableTooltipClicked);
+							this.AddTooltipMenuItem(Resources.PlayerPanelMenuEnableAllTooltip, TQVaultAE.Application.DTOs.BagTooltipChange.EnableAll);
 						}
 						// Export to CSV
 						this.contextMenu.Items.Add("-");

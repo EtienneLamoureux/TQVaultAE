@@ -80,6 +80,7 @@ public readonly record struct ItemActionContext(
 /// <param name="SecondaryVaultShown">The secondary vault replaces the player and stash panels.</param>
 /// <param name="PlayerIsImmortalThrone">Whether the current player is an Immortal Throne save; <see langword="null"/> without a player.</param>
 /// <param name="Item">Item under the cursor, or <see langword="null"/> for a selection alone.</param>
+/// <param name="CurrentSack">The sack shown, left out of the bags; -1 to use the sack of <paramref name="Item"/>.</param>
 public readonly record struct MoveContext(
 	AutoMoveLocation Here
 	, SackType SackType
@@ -89,6 +90,7 @@ public readonly record struct MoveContext(
 	, bool SecondaryVaultShown
 	, bool? PlayerIsImmortalThrone
 	, Item? Item
+	, int CurrentSack = -1
 );
 
 /// <summary>
@@ -159,6 +161,28 @@ public static class ItemActionRules
 	}
 
 	/// <summary>
+	/// The action of a key pressed over a sack, when <paramref name="context"/> allows it, as its context menu would:
+	/// <c>c</c> copies, <c>d</c> duplicates and Backspace deletes the item under the cursor. The keys act on that item
+	/// alone, never on the selection.
+	/// </summary>
+	/// <returns>The action to run, or <see cref="ItemActions.None"/>.</returns>
+	public static ItemActions KeyAction(char key, in ItemActionContext context)
+	{
+		if (context.Item is null)
+			return ItemActions.None;
+
+		var action = key switch
+		{
+			'c' => ItemActions.Copy,
+			'd' => ItemActions.Duplicate,
+			'\b' => ItemActions.Delete,
+			_ => ItemActions.None,
+		};
+
+		return action & Available(context with { SelectionCount = 0, ItemIsTheSelection = false });
+	}
+
+	/// <summary>
 	/// Indicates whether <paramref name="item"/> can be equipped by a player of that game:
 	/// a Titan Quest original player only takes the items of the base game.
 	/// </summary>
@@ -197,7 +221,9 @@ public static class ItemActionRules
 		if (context.MaxSacks > 1)
 		{
 			// Vault bags are shown from 1, the player sacks from 0 since sack #0 is the main player sack.
-			int bagOffset = item?.Place.SackType == SackType.Vault ? 1 : 0;
+			// From the sack, not the item: a selection right-clicked on an empty cell has no item under the cursor.
+			int bagOffset = context.SackType == SackType.Vault ? 1 : 0;
+			int? currentSack = context.CurrentSack >= 0 ? context.CurrentSack : item?.Place.SackNumber;
 
 			for (int i = 0; i < context.MaxSacks; ++i)
 			{
@@ -206,7 +232,7 @@ public static class ItemActionRules
 				if (context.SackType == SackType.Player && !mainPlayerSack && i >= context.PlayerSackCount)
 					continue;
 
-				if (i != item?.Place.SackNumber)
+				if (i != currentSack)
 					destinations.Add(new MoveDestination(context.Here, i, i + bagOffset, mainPlayerSack));
 			}
 		}

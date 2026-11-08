@@ -126,7 +126,7 @@ public partial class ItemTooltip : BaseTooltip
 				, focusedItem)
 			{
 				SackPanel = sackPanel,
-				View = ViewOf(userSettings, enableDetailedTooltipView),
+				View = ViewOf(services, enableDetailedTooltipView),
 				ShowInGameValues = userSettings.ShowInGameValues,
 				ItemDatabase = services.ItemDatabaseService,
 			};
@@ -159,7 +159,7 @@ public partial class ItemTooltip : BaseTooltip
 				, focusedItem)
 			{
 				ResultsDialog = resultsDialog,
-				View = ViewOf(userSettings, enableDetailedTooltipView),
+				View = ViewOf(services, enableDetailedTooltipView),
 				ShowInGameValues = userSettings.ShowInGameValues,
 				ItemDatabase = services.ItemDatabaseService,
 			};
@@ -192,7 +192,7 @@ public partial class ItemTooltip : BaseTooltip
 				, focusedItem)
 			{
 				PictureBox = picBox,
-				View = ViewOf(userSettings, enableDetailedTooltipView),
+				View = ViewOf(services, enableDetailedTooltipView),
 				ShowInGameValues = userSettings.ShowInGameValues,
 				ItemDatabase = services.ItemDatabaseService,
 			};
@@ -210,6 +210,12 @@ public partial class ItemTooltip : BaseTooltip
 	/// <param name="enableDetailedTooltipView">Forces the detailed display on or off, whatever the settings.</param>
 	internal static ItemTooltipView ViewOf(UserSettings settings, bool? enableDetailedTooltipView = null)
 		=> ItemTooltipContentBuilder.ViewOf(settings, enableDetailedTooltipView);
+
+	/// <summary>
+	/// The display a tooltip shows now: the settings, or the detailed display while the session forces it (the forge).
+	/// </summary>
+	internal static ItemTooltipView ViewOf(GuiServices services, bool? enableDetailedTooltipView = null)
+		=> ItemTooltipContentBuilder.ViewOf(services.Settings, enableDetailedTooltipView, services.Session.ForceDetailedTooltipView);
 
 	/// <summary>
 	/// Init the tooltip content.

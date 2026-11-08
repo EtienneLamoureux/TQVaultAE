@@ -94,6 +94,17 @@ public class ItemDatabaseService(
     }
 
     /// <inheritdoc/>
+    public void RemoveContainerFromDatabase(string containerPath)
+    {
+        if (string.IsNullOrEmpty(containerPath))
+            return;
+
+        var items = this.ItemDatabase;
+        if (items.Any(r => string.Equals(r.Item.Place.Path, containerPath, StringComparison.OrdinalIgnoreCase)))
+            this._database = Database.Of(items.Where(r => !string.Equals(r.Item.Place.Path, containerPath, StringComparison.OrdinalIgnoreCase)));
+    }
+
+    /// <inheritdoc/>
     public void ClearItemDatabase()
         => this._database = Database.Of([]);
 

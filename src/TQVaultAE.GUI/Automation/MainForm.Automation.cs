@@ -62,7 +62,11 @@ public partial class MainForm
 		if (item is null)
 			return false;
 
-		this.vaultListComboBox.SelectedItem = item;
+		// The first entry opens the modal maintenance dialog: select it after the calling tool has returned.
+		if (this.vaultListComboBox.Items.IndexOf(item) == 0)
+			this.BeginInvoke(() => this.vaultListComboBox.SelectedItem = item);
+		else
+			this.vaultListComboBox.SelectedItem = item;
 		return true;
 	}
 

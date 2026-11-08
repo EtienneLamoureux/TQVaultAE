@@ -1,4 +1,5 @@
-﻿﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using TQVaultAE.Application;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Dialogs;
@@ -98,15 +99,29 @@ public partial class MainForm
 
 		this.ClearAllItemsSelectedCallback(this, new SackPanelEventArgs(null, null));
 
+		// The transfer and relic stashes are shared by every character: no character to switch to.
+		bool sharedStash = selectedResult.StashType is StashType.TransferStash or StashType.RelicVaultStash;
+
 		if (selectedResult.SackType == SackType.Vault)
 		{
 			// Switch to the selected vault
 			this.vaultListComboBox.SelectedItem = selectedResult.ContainerName;
+
+			// A vault no longer listed (deleted, or open in the secondary panel): do not select a cell of another vault.
+			if (!string.Equals(this.vaultPanel.Player?.PlayerName, selectedResult.ContainerName, StringComparison.OrdinalIgnoreCase))
+				return;
+
 			this.vaultPanel.CurrentBag = selectedResult.SackNumber;
 			this.vaultPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
 		}
-		else if (selectedResult.SackType is SackType.Player or SackType.Equipment or SackType.Stash)
+		else if (!sharedStash && selectedResult.SackType is SackType.Player or SackType.Equipment or SackType.Stash)
 		{
+			// The character by its exact name: a prefix search would pick "HeroB Two" for "HeroB".
+			var save = this.comboBoxCharacter.Items.OfType<PlayerSave>()
+				.FirstOrDefault(ps => string.Equals(ps.Name, selectedResult.ContainerName, StringComparison.OrdinalIgnoreCase));
+			if (save is null)
+				return;
+
 			// Switch to the selected player
 			if (this.showSecondaryVault)
 			{
@@ -114,8 +129,8 @@ public partial class MainForm
 				this.UpdateTopPanel();
 			}
 
-			// Update the selection list and load the character.				
-			this.comboBoxCharacter.SelectedIndex = this.comboBoxCharacter.FindString(selectedResult.ContainerName);
+			// Update the selection list and load the character.
+			this.comboBoxCharacter.SelectedItem = save;
 
 			// Bail if we are attempting to highlight something in the stash panel and the stash does not exist.
 			if (this.stashPanel.SackPanel is null && selectedResult.SackType != SackType.Player)
@@ -138,11 +153,22 @@ public partial class MainForm
 				this.stashPanel.SackPanel?.SelectItem(selectedResult.FriendlyNames.Item.Location);
 			}
 		}
-		else if (selectedResult.StashType.HasValue)
+		else if (sharedStash)
 		{
+			// Bail when no character is loaded: there is no stash panel then.
+			if (this.stashPanel.SackPanel is null)
+				return;
+
+			// The player panel shows the stashes: leave the secondary vault.
+			if (this.showSecondaryVault)
+			{
+				this.showSecondaryVault = !this.showSecondaryVault;
+				this.UpdateTopPanel();
+			}
+
 			// Switch to the Stash bag
 			this.stashPanel.CurrentBag = selectedResult.SackNumber;
-			this.stashPanel.SackPanel.SelectItem(selectedResult.FriendlyNames.Item.Location);
+			this.stashPanel.SackPanel?.SelectItem(selectedResult.FriendlyNames.Item.Location);
 		}
 	}
 

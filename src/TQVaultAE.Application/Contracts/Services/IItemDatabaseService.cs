@@ -31,6 +31,13 @@ public interface IItemDatabaseService
     void RemoveItemFromDatabase(Item item);
 
     /// <summary>
+    /// Removes every item of a container file (a deleted or renamed vault) from the search database,
+    /// so searches no longer find items in a container that is gone.
+    /// </summary>
+    /// <param name="containerPath">The container file, as given to <see cref="AddItemToDatabase"/>.</param>
+    void RemoveContainerFromDatabase(string containerPath);
+
+    /// <summary>
     /// Clears all items from the search database.
     /// </summary>
     void ClearItemDatabase();

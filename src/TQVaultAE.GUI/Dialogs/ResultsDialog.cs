@@ -163,6 +163,36 @@ public partial class ResultsDialog : VaultForm
 			? Resources.SearchDialogCaption
 			: string.Format(Resources.ResultsText, this.resultsList.Count, this.searchString);
 
+		// Size the columns and rows once, after the rows are added: with AllCells, every row added resized them all
+		// (minutes for a few thousand results).
+		var grid = this.resultsDataGridView;
+		var columnModes = grid.Columns.Cast<DataGridViewColumn>().Select(column => column.AutoSizeMode).ToArray();
+		var gridColumnsMode = grid.AutoSizeColumnsMode;
+		var gridRowsMode = grid.AutoSizeRowsMode;
+		grid.SuspendLayout();
+		grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+		grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+		foreach (DataGridViewColumn column in grid.Columns)
+			column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+		try
+		{
+			this.AddResultRows();
+		}
+		finally
+		{
+			grid.AutoSizeColumnsMode = gridColumnsMode;
+			for (int c = 0; c < columnModes.Length; c++)
+				grid.Columns[c].AutoSizeMode = columnModes[c];
+			grid.AutoSizeRowsMode = gridRowsMode;
+			grid.ResumeLayout();
+		}
+	}
+
+	/// <summary>
+	/// Adds a row per result, colored like the item.
+	/// </summary>
+	private void AddResultRows()
+	{
 		for (int i = 0; i < this.resultsList.Count; i++)
 		{
 			SearchResult result = this.resultsList[i];

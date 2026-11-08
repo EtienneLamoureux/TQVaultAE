@@ -15,7 +15,50 @@ namespace TQVaultAE.GUI.Components.Panels;
 /// so the regular pick / drag / drop logic runs without touching the real mouse.
 /// </summary>
 /// <summary>A context menu entry read by <see cref="SackPanel.AutomationContextMenu"/>.</summary>
-internal sealed record AutomationMenuEntry(string Text, IReadOnlyList<AutomationMenuEntry>? Items);
+internal sealed record AutomationMenuEntry(string Text, IReadOnlyList<AutomationMenuEntry>? Items, bool? Enabled = null, bool? Bold = null);
+
+/// <summary>Reads and clicks the context menus built by the panels.</summary>
+internal static class AutomationMenus
+{
+	/// <summary>The entries, <c>-</c> for separators, with the entries of their sub menus.</summary>
+	internal static IReadOnlyList<AutomationMenuEntry> Describe(ToolStripItemCollection items)
+		=> items.Cast<ToolStripItem>()
+			.Select(i => new AutomationMenuEntry(
+				i is ToolStripSeparator ? "-" : i.Text ?? string.Empty
+				, i is ToolStripMenuItem { HasDropDownItems: true } menu ? Describe(menu.DropDownItems) : null
+				, i.Enabled ? null : false
+				, i is ToolStripMenuItem { Font.Bold: true } ? true : null))
+			.ToList();
+
+	/// <summary>
+	/// Finds the entry of <paramref name="menu"/> by its path of texts (exact text first, else the first containing it)
+	/// and clicks it once the calling tool has returned, through <paramref name="owner"/>'s message loop.
+	/// </summary>
+	/// <returns>The text of the entry to be clicked.</returns>
+	internal static string ClickLater(Control owner, ToolStrip menu, IReadOnlyList<string> path)
+	{
+		ToolStripItemCollection items = menu.Items;
+		ToolStripItem? entry = null;
+		foreach (var text in path)
+		{
+			entry = items.Cast<ToolStripItem>().FirstOrDefault(i => string.Equals(i.Text, text, StringComparison.OrdinalIgnoreCase))
+				?? items.Cast<ToolStripItem>().FirstOrDefault(i => i.Text?.Contains(text, StringComparison.OrdinalIgnoreCase) == true)
+				?? throw new InvalidOperationException($"No entry '{text}'. Entries: {string.Join(" | ", items.Cast<ToolStripItem>().Select(i => i.Text))}");
+			items = (entry as ToolStripMenuItem)?.DropDownItems ?? new ToolStripItemCollection(menu, []);
+		}
+
+		if (entry is null)
+			throw new InvalidOperationException("Empty menu path.");
+		if (!entry.Enabled)
+			throw new InvalidOperationException($"'{entry.Text}' is disabled: a user could not click it.");
+		if (entry is ToolStripMenuItem { HasDropDownItems: true } parent)
+			throw new InvalidOperationException($"'{entry.Text}' opens a sub menu: add one of its entries to the path ({string.Join(" | ", parent.DropDownItems.Cast<ToolStripItem>().Select(i => i.Text))}).");
+
+		var clicked = entry;
+		owner.BeginInvoke(clicked.PerformClick);
+		return clicked.Text ?? string.Empty;
+	}
+}
 
 public partial class SackPanel
 {
@@ -74,20 +117,61 @@ public partial class SackPanel
 		this.AutomationMouseDown(this.AutomationCellCenter(cell), MouseButtons.Right);
 		try
 		{
-			return Describe(this.CustomContextMenu.Items);
+			return AutomationMenus.Describe(this.CustomContextMenu.Items);
 		}
 		finally
 		{
 			this.CustomContextMenu.Close();
 		}
-
-		static IReadOnlyList<AutomationMenuEntry> Describe(ToolStripItemCollection items)
-			=> items.Cast<ToolStripItem>()
-				.Select(i => new AutomationMenuEntry(
-					i is ToolStripSeparator ? "-" : i.Text ?? string.Empty
-					, i is ToolStripMenuItem { HasDropDownItems: true } menu ? Describe(menu.DropDownItems) : null))
-				.ToList();
 	}
+
+	/// <summary>
+	/// Right-clicks a cell through the regular mouse handlers, closes the menu they built and then, after the calling
+	/// tool has returned (an entry may open a modal dialog), clicks the entry found by <paramref name="path"/>.
+	/// </summary>
+	/// <param name="path">Entry texts from the top level down, for example <c>["Move To", "Bag 2"]</c>.</param>
+	/// <returns>The text of the entry clicked.</returns>
+	internal string AutomationClickContextMenu(Point cell, IReadOnlyList<string> path)
+	{
+		this.AutomationMouseDown(this.AutomationCellCenter(cell), MouseButtons.Right);
+		try
+		{
+			return AutomationMenus.ClickLater(this, this.CustomContextMenu, path);
+		}
+		finally
+		{
+			this.CustomContextMenu.Close();
+		}
+	}
+
+	/// <summary>
+	/// Rests the virtual cursor on a cell, then presses a character key there through the regular key handler, after
+	/// the calling tool has returned (Backspace asks for a confirmation).
+	/// </summary>
+	internal void AutomationKeyPress(Point cell, char key)
+	{
+		this.AutomationMouseMove(this.AutomationCellCenter(cell));
+		this.BeginInvoke(() => this.KeyPressCallback(this, new KeyPressEventArgs(key)));
+	}
+
+	/// <summary>
+	/// Ctrl-clicks a cell like a user holding Ctrl, which adds the item there to the selection (or removes it).
+	/// </summary>
+	internal void AutomationCtrlClick(Point cell)
+	{
+		this.controlKeyDown = true;
+		try
+		{
+			this.AutomationMouseDown(this.AutomationCellCenter(cell), MouseButtons.Left);
+		}
+		finally
+		{
+			this.controlKeyDown = false;
+		}
+	}
+
+	/// <summary>The items selected in this panel, in selection order.</summary>
+	internal IReadOnlyList<Item> AutomationSelectedItems => this.selectedItems ?? [];
 
 	/// <summary>
 	/// Simulates the virtual cursor leaving this panel.

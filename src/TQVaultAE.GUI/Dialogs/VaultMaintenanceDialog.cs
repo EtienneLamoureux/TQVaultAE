@@ -48,6 +48,10 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 	/// </summary>
 	private readonly IVaultService vaultService;
 
+	/// <summary>
+	/// The main window, whose new vaults not saved yet have no file but take their name.
+	/// </summary>
+	private readonly MainForm mainForm;
 
 	/// <summary>
 	/// Initializes a new instance of the VaultMaintenanceDialog class.
@@ -55,6 +59,7 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 	public VaultMaintenanceDialog(MainForm instance, IVaultService vaultService) : base(instance.Services)
 	{
 		this.Owner = instance;
+		this.mainForm = instance;
 		this.vaultService = vaultService;
 
 		this.InitializeComponent();
@@ -221,7 +226,9 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 		string? target = needsTarget ? this.targetTextBox.Text.Trim() : null;
 		string? source = needsSource ? this.vaultListComboBox.SelectedItemText() : null;
 
-		var existingVaults = this.vaultListComboBox.Items.Cast<object>().Select(item => item.ToString() ?? string.Empty);
+		// The vault files, and the new vaults of the main window not saved yet: their name is taken too.
+		var existingVaults = this.vaultListComboBox.Items.Cast<object>().Select(item => item.ToString() ?? string.Empty)
+			.Concat(this.mainForm.KnownVaultNames);
 		var error = this.vaultService.ValidateMaintenance(this.action, source, target, existingVaults);
 
 		switch (error)

@@ -173,6 +173,19 @@ public partial class MainForm
 	}
 
 	/// <summary>
+	/// Gets the vaults the main window knows: those of both drop downs and both vault panels,
+	/// new vaults not saved yet included (they have no file).
+	/// </summary>
+	internal IEnumerable<string> KnownVaultNames
+		=> this.vaultListComboBox.Items.Cast<object>().Skip(1)
+			.Concat(this.secondaryVaultListComboBox.Items.Cast<object>().Skip(1))
+			.Select(item => item.ToString() ?? string.Empty)
+			.Append(this.vaultPanel.Player?.PlayerName ?? string.Empty)
+			.Append(this.secondaryVaultPanel.Player?.PlayerName ?? string.Empty)
+			.Where(name => name.Length > 0)
+			.Distinct(StringComparer.OrdinalIgnoreCase);
+
+	/// <summary>
 	/// Method for the maintain vault files dialog
 	/// </summary>
 	private void MaintainVaultFilesDialog()
@@ -190,6 +203,16 @@ public partial class MainForm
 				string? newName = dlg.Target;
 				string? oldName = dlg.Source;
 				bool handled = false;
+
+				// A vault deleted or renamed while the secondary panel shows it: clear that panel first, else
+				// it would load the vault again under its old name, as a new empty vault saved on the next change.
+				if (dlg.Action is VaultMaintenance.Delete or VaultMaintenance.Rename
+					&& oldName is not null
+					&& oldName.Equals(this.secondaryVaultPanel.Player?.PlayerName, StringComparison.OrdinalIgnoreCase)
+					&& this.secondaryVaultListComboBox.Items.Count > 0)
+				{
+					this.secondaryVaultListComboBox.SelectedIndex = 0;
+				}
 
 				// Create a new vault?
 				if (dlg.Action == VaultMaintenance.New && newName is not null)

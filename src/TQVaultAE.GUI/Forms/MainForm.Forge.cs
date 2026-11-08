@@ -18,8 +18,6 @@ public partial class MainForm
 		, bool flowLayoutPanelRightComboBox
 	) lastVisibility;
 
-	private bool lastEnableDetailedTooltipView;
-
 	private ForgePanel CreateForgePanel()
 	{
 		forgePanel = new ForgePanel(DragInfo, Services);
@@ -77,8 +75,9 @@ public partial class MainForm
 		forgePanel.Dock = DockStyle.Left;
 		forgePanel.Visible = true;
 
-		this.lastEnableDetailedTooltipView = base.USettings.EnableDetailedTooltipView;
-		base.USettings.EnableDetailedTooltipView = true;
+		// Detailed tooltips while the forge is open, as session state: the setting itself is not changed, so closing the
+		// app with the forge open cannot save the forced value.
+		this.userContext.ForceDetailedTooltipView = true;
 	}
 
 	private void ForgeActionForged()
@@ -109,7 +108,7 @@ public partial class MainForm
 		forgePanel.Dock = DockStyle.None;
 		forgePanel.Visible = false;
 
-		base.USettings.EnableDetailedTooltipView = this.lastEnableDetailedTooltipView;
+		this.userContext.ForceDetailedTooltipView = false;
 
 		Refresh();
 	}

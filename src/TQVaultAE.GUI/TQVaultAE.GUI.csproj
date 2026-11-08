@@ -14,10 +14,10 @@
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<NoWarn>$(NoWarn);WFO1000</NoWarn>
 		<AssemblyTitle>TQVaultAE</AssemblyTitle>
-		<AssemblyDescription>Extra bank space for Titan Quest Anniversary Edition</AssemblyDescription>
-		<AssemblyCompany>titanquest.net community</AssemblyCompany>
-		<AssemblyProduct>TQVaultAE</AssemblyProduct>
-		<AssemblyCopyright>Copyright © 2006-2012 by Brandon Wallace</AssemblyCopyright>
+		<Description>Extra bank space for Titan Quest Anniversary Edition</Description>
+		<Company>titanquest.net community</Company>
+		<Product>TQVaultAE</Product>
+		<Copyright>Copyright © 2006-2012 by Brandon Wallace</Copyright>
 		<ComVisible>false</ComVisible>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>

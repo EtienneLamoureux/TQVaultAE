@@ -96,9 +96,11 @@ public class ItemTooltipContentBuilder
 	/// </summary>
 	/// <param name="settings">User settings.</param>
 	/// <param name="enableDetailedTooltipView">Forces the detailed display on or off, whatever the settings.</param>
-	public static ItemTooltipView ViewOf(UserSettings settings, bool? enableDetailedTooltipView = null)
+	/// <param name="sessionForcesDetailed">The session shows the detailed display for now (the forge is open), without
+	/// changing the setting.</param>
+	public static ItemTooltipView ViewOf(UserSettings settings, bool? enableDetailedTooltipView = null, bool sessionForcesDetailed = false)
 	{
-		if (!(enableDetailedTooltipView ?? settings.EnableDetailedTooltipView))
+		if (!(enableDetailedTooltipView ?? (sessionForcesDetailed || settings.EnableDetailedTooltipView)))
 			return ItemTooltipView.Classic;
 
 		var view = ItemTooltipView.Detailed;

@@ -416,6 +416,33 @@ public partial class SackPanel
 	}
 
 	/// <summary>
+	/// Runs Copy, Duplicate or Delete on the item under the cursor alone, for the context menu and the keys
+	/// (see <see cref="ItemActionRules.KeyAction"/>): a copy is picked up, a delete asks first.
+	/// </summary>
+	private void RunFocusedItemAction(ItemActions action, Item focusedItem)
+	{
+		if (action == ItemActions.Delete)
+		{
+			this.DeleteItem(focusedItem, false);
+		}
+		else if (action is ItemActions.Copy or ItemActions.Duplicate)
+		{
+			// Set DragInfo to focused item.
+			this.DragInfo.Set(this, this.ShownSack, focusedItem, new Point(1, 1));
+
+			// copy the item
+			Item newItem = action == ItemActions.Copy
+				? this.Services.ItemEditService.Copy(focusedItem)
+				: this.Services.ItemEditService.Duplicate(focusedItem);
+
+			// now drag it
+			this.DragInfo.MarkModified(newItem);
+		}
+
+		this.Refresh();
+	}
+
+	/// <summary>
 	/// Handler for clicking an item on the context menu
 	/// </summary>
 	/// <param name="sender">sender object</param>
@@ -480,17 +507,7 @@ public partial class SackPanel
 			}
 			else if (action is ItemActions.Copy or ItemActions.Duplicate)
 			{
-				// Set DragInfo to focused item.
-				this.DragInfo.Set(this, this.ShownSack, focusedItem, new Point(1, 1));
-
-				// copy the item
-				Item newItem = action == ItemActions.Copy
-					? this.Services.ItemEditService.Copy(focusedItem)
-					: this.Services.ItemEditService.Duplicate(focusedItem);
-
-				// now drag it
-				this.DragInfo.MarkModified(newItem);
-				Refresh();
+				this.RunFocusedItemAction(action, focusedItem);
 			}
 			else if (action == ItemActions.Properties)
 			{
@@ -532,7 +549,11 @@ public partial class SackPanel
 				// create artifact
 				Item? artifact = this.Services.ItemEditService.CraftArtifact(focusedItem);
 				if (artifact is null)
+				{
+					// Nothing crafted: do not leave the formula picked up.
+					this.DragInfo.Cancel();
 					return;
+				}
 
 				// Put artifact in DragInfo
 				this.DragInfo.MarkModified(artifact);
@@ -552,6 +573,9 @@ public partial class SackPanel
 				// Put the item in DragInfo
 				if (newItem is not null)
 					this.DragInfo.MarkModified(newItem);
+				else
+					// Nothing split off: do not leave the stack picked up.
+					this.DragInfo.Cancel();
 
 				InvalidateItemCacheItemTooltip(focusedItem);
 

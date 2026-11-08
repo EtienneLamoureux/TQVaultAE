@@ -471,6 +471,61 @@ public class VaultServiceTests
 		deleted.Should().BeTrue();
 		_mockFileIO.Verify(x => x.Delete(vaultFile), Times.Once);
 		_sessionContext.Vaults.ContainsKey(vaultFile).Should().BeFalse();
+		// Searches must not find the items of the deleted vault any more.
+		_mockItemDatabaseService.Verify(x => x.RemoveContainerFromDatabase(vaultFile), Times.Once);
+	}
+
+	[Fact]
+	public void EmptyBag_RemovesTheItemsAndDropsThemFromTheSearch()
+	{
+		var sack = new SackCollection();
+		var ring = new Item { BaseItemId = RecordId.Create("records/item/ring.dbr") };
+		var sword = new Item { BaseItemId = RecordId.Create("records/item/sword.dbr") };
+		sack.AddItem(ring);
+		sack.AddItem(sword);
+
+		_vaultService.EmptyBag(sack);
+
+		sack.IsEmpty.Should().BeTrue();
+		sack.IsModified.Should().BeTrue();
+		_mockItemDatabaseService.Verify(x => x.RemoveItemFromDatabase(ring), Times.Once);
+		_mockItemDatabaseService.Verify(x => x.RemoveItemFromDatabase(sword), Times.Once);
+	}
+
+	private static PlayerCollection VaultWithBags(params int[] disabledTooltips)
+	{
+		var vault = new PlayerCollection("Gear", """C:\Vaults\Gear.vault.json""") { Sacks = [new SackCollection(), new SackCollection()] };
+		vault.DisabledTooltipBagId.AddRange(disabledTooltips);
+		foreach (var sack in vault.Sacks)
+			sack.IsModified = false;
+		return vault;
+	}
+
+	[Theory]
+	[InlineData(BagTooltipChange.Disable, new int[0], new[] { 2 })]
+	[InlineData(BagTooltipChange.Enable, new[] { 2, 5 }, new[] { 5 })]
+	[InlineData(BagTooltipChange.EnableAll, new[] { 2, 5 }, new int[0])]
+	[InlineData(BagTooltipChange.DisableAll, new[] { 2 }, new[] { 0, 1, 2, 3 })]
+	public void ChangeBagTooltip_ChangesTheListAndMarksTheVaultModified(BagTooltipChange change, int[] before, int[] after)
+	{
+		var vault = VaultWithBags(before);
+
+		_vaultService.ChangeBagTooltip(vault, change, bag: 2, bagCount: 4);
+
+		vault.DisabledTooltipBagId.Should().BeEquivalentTo(after);
+		// The list is saved in the vault file: the change must make the vault savable.
+		vault.IsModified.Should().BeTrue();
+	}
+
+	[Fact]
+	public void ChangeBagTooltip_NothingChanges_VaultStaysUnmodified()
+	{
+		var vault = VaultWithBags(2);
+
+		_vaultService.ChangeBagTooltip(vault, BagTooltipChange.Disable, bag: 2, bagCount: 4);
+
+		vault.DisabledTooltipBagId.Should().Equal(2);
+		vault.IsModified.Should().BeFalse();
 	}
 
 	[Fact]
@@ -504,6 +559,8 @@ public class VaultServiceTests
 		_mockFileIO.Verify(x => x.Move(oldFile, newFile), Times.Once);
 		_sessionContext.Vaults.ContainsKey(oldFile).Should().BeFalse();
 		_sessionContext.Vaults.ContainsKey(newFile).Should().BeFalse();
+		// The items found under the old name go; they come back under the new one when it is loaded.
+		_mockItemDatabaseService.Verify(x => x.RemoveContainerFromDatabase(oldFile), Times.Once);
 	}
 
 	[Theory]

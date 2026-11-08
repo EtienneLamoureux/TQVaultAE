@@ -188,7 +188,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "select_vault", Destructive = true)]
-	[Description("Selects a vault in the main vault drop down, which loads it. Names are listed by get_state.")]
+	[Description("Selects a vault in the main vault drop down, which loads it. Names are listed by get_state. The first entry ('Maintain Vault Files...') opens the modal maintenance dialog after this call returns: drive it with control_values, set_control and click_control (form 'VaultMaintenanceDialog').")]
 	public static string SelectVault([Description("Vault name as listed in get_state 'vaults'.")] string name)
 		=> AutomationHost.OnUi(form =>
 		{
@@ -424,6 +424,83 @@ internal static partial class AutomationTools
 			ReleaseCursor(named.Panel);
 
 			return Serialize(new { panel = named.Id, item = item is null ? null : DescribeItem(item, null), entries });
+		});
+
+	[McpServerTool(Name = "context_menu_click", Destructive = true)]
+	[Description("Right-clicks a cell like context_menu, then clicks the entry found by its path of texts (' > ' between levels, e.g. 'Move To > Bag 2'; an exact text first, else the first entry containing it). The click runs after this call returns, since an entry may open a modal dialog (properties, seed, delete confirmation): follow with list_windows, dialog_answers or get_state.")]
+	public static string ContextMenuClick(
+		[Description("Panel id.")] string panel,
+		[Description("Cell column.")] int x,
+		[Description("Cell row.")] int y,
+		[Description("Entry texts from the top level down, separated by ' > '.")] string path)
+		=> AutomationHost.OnUi(form =>
+		{
+			var named = ResolveShownPanel(form, panel);
+			if (form.AutomationDragInfo.IsActive)
+				throw new McpException("An item is being dragged: a right click would cancel it. Use cancel_drag first.");
+
+			var cell = new Point(x, y);
+			var item = named.Panel.AutomationFindItem(cell);
+			string clicked;
+			try
+			{
+				clicked = named.Panel.AutomationClickContextMenu(cell, path.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
+			finally
+			{
+				ReleaseCursor(named.Panel);
+			}
+
+			return Serialize(new { panel = named.Id, item = DescribeItem(item, null), clicked });
+		});
+
+	[McpServerTool(Name = "press_key", Destructive = true)]
+	[Description("Rests the cursor on a cell of a panel and presses a key there like the user: 'c' copies, 'd' duplicates, 'backspace' deletes the item under the cursor (with its confirmation: queue the answer first), 'escape' cancels a drag. Runs after the call returns; follow with get_state or dialog_answers.")]
+	public static string PressKey(
+		[Description("Panel id.")] string panel,
+		[Description("Cell column.")] int x,
+		[Description("Cell row.")] int y,
+		[Description("A character, or 'backspace' / 'escape'.")] string key)
+		=> AutomationHost.OnUi(form =>
+		{
+			var named = ResolveShownPanel(form, panel);
+			char c = key.ToLowerInvariant() switch
+			{
+				"backspace" => '\b',
+				"escape" => (char)27,
+				_ when key.Length == 1 => key[0],
+				_ => throw new McpException($"Unknown key '{key}'. Use one character, 'backspace' or 'escape'."),
+			};
+			var item = named.Panel.AutomationFindItem(new Point(x, y));
+			named.Panel.AutomationKeyPress(new Point(x, y), c);
+			return Serialize(new { panel = named.Id, item = DescribeItem(item, null), key });
+		});
+
+	[McpServerTool(Name = "select_items", Destructive = true)]
+	[Description("Ctrl-clicks cells of a panel like a user holding Ctrl, which adds each item to the selection (a selected item is removed). Returns the selected items. A plain pick_item or the 'Clear Selection' entry clears it.")]
+	public static string SelectItems(
+		[Description("Panel id.")] string panel,
+		[Description("Cells as 'x,y;x,y'.")] string cells)
+		=> AutomationHost.OnUi(form =>
+		{
+			var named = ResolveShownPanel(form, panel);
+			if (form.AutomationDragInfo.IsActive)
+				throw new McpException("An item is being dragged. Use cancel_drag first.");
+
+			foreach (var pair in cells.Split(';', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+			{
+				var xy = pair.Split(',', StringSplitOptions.TrimEntries);
+				if (xy.Length != 2 || !int.TryParse(xy[0], out int cx) || !int.TryParse(xy[1], out int cy))
+					throw new McpException($"Bad cell '{pair}', expected 'x,y'.");
+				named.Panel.AutomationCtrlClick(new Point(cx, cy));
+			}
+
+			ReleaseCursor(named.Panel);
+			return Serialize(new { panel = named.Id, selected = named.Panel.AutomationSelectedItems.Select(i => DescribeItem(i, null)).ToList() });
 		});
 
 	[McpServerTool(Name = "hover_end", Destructive = true)]

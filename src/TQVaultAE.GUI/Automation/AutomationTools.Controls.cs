@@ -30,7 +30,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "set_control", Destructive = true)]
-	[Description("Sets the value of a control of an open form or dialog, like a user would, so its own events run (CheckedChanged, ValueChanged, SelectedIndexChanged...). Value: true/false for check boxes, radio buttons and check group boxes; a number for numeric boxes; the item text or index for combo boxes; the text for text boxes (then Validating, Validated and Leave are raised, as when the user leaves the box). Returns the values of the form's input controls afterwards. Changes made in a dialog are applied by its OK button (close_dialog).")]
+	[Description("Sets the value of a control of an open form or dialog, like a user would, so its own events run (CheckedChanged, ValueChanged, SelectedIndexChanged...). Value: true/false for check boxes, radio buttons and check group boxes; a number for numeric boxes; the item text or '#index' for combo boxes (any text for an editable one); the text for text boxes (then Validating, Validated and Leave are raised, as when the user leaves the box). Returns the values of the form's input controls afterwards. Changes made in a dialog are applied by its OK button (close_dialog).")]
 	public static string SetControl(
 		[Description("Part of the form title or its type name (case-insensitive).")] string form,
 		[Description("Control name, as listed by control_values.")] string control,
@@ -62,6 +62,15 @@ internal static partial class AutomationTools
 						}
 					}
 
+					// An editable combo box takes any text, as typed.
+					if (index < 0 && combo.DropDownStyle != ComboBoxStyle.DropDownList && !value.StartsWith('#'))
+					{
+						combo.Text = value;
+						break;
+					}
+
+					if (index < 0 && value.StartsWith('#'))
+						value = value[1..];
 					if (index < 0 && !int.TryParse(value, out index))
 						throw new McpException($"No item '{value}' in '{c.Name}'. Items: {string.Join(", ", combo.Items.Cast<object>().Select(combo.GetItemText))}");
 					combo.SelectedIndex = index;
@@ -161,7 +170,7 @@ internal static partial class AutomationTools
 	private static object? ValueOf(Control c) => c switch
 	{
 		NumericUpDown number => number.Value,
-		ComboBox combo => combo.SelectedItem is null ? null : combo.GetItemText(combo.SelectedItem),
+		ComboBox combo => combo.SelectedItem is not null ? combo.GetItemText(combo.SelectedItem) : combo.DropDownStyle != ComboBoxStyle.DropDownList && combo.Text.Length > 0 ? combo.Text : null,
 		TextBoxBase text => text.Text,
 		Label label => label.Text,
 		_ => c.GetType().GetProperty("Checked", typeof(bool))?.GetValue(c) ?? c.Text,
@@ -179,6 +188,22 @@ internal static partial class AutomationTools
 	#endregion
 
 	#region Character editor and tags
+
+	[McpServerTool(Name = "archive_character", Destructive = true)]
+	[Description("Ticks (archived=true) or unticks the 'Archived' entry of the character menu for the selected character, like a click: TQVault moves its save folder to or from the archive folder. Only test characters whose name starts with 'claude-'; the 'Archive all' entries are not driven, since they move every character.")]
+	public static string ArchiveCharacter([Description("true to archive, false to unarchive.")] bool archived)
+		=> AutomationHost.OnUi(form =>
+		{
+			try
+			{
+				var (name, isArchived, folder) = form.AutomationCharacterCombo.AutomationSetArchived(archived);
+				return Serialize(new { name, isArchived, folder, selected = form.AutomationSelectedCharacter, characterFile = form.AutomationCurrentPlayerFile });
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
+		});
 
 	[McpServerTool(Name = "open_character_editor", Destructive = true)]
 	[Description("Opens the character editor of the selected character, like the Edit button of the stash panel. It is modal: read and change it with control_values and set_control (form 'CharacterEditDialog'), then close it with close_dialog (OK applies the changes in memory; save_files writes them). Work only on claude-* test characters.")]

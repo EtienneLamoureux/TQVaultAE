@@ -173,6 +173,46 @@ internal static partial class AutomationTools
 			return Serialize(new { title = dialog.Text, size = new { dialog.Width, dialog.Height }, deviceDpi = dialog.DeviceDpi });
 		});
 
+	[McpServerTool(Name = "bag_menu", Destructive = true)]
+	[Description("Right-clicks a bag button of a panel like the user (it selects that bag) and returns the bag context menu (move, copy, merge, empty, tooltips, CSV and JSON export, change, copy and paste icon, import), then closes it. With path (' > ' between levels, e.g. 'Copy Bag > Bag 3' or 'Change Icon'), clicks that entry after this call returns, since it may open a dialog or a confirmation. Only vault bags have this menu. Also returns the icon settings of every bag.")]
+	public static string BagMenu(
+		[Description("Panel id with bag buttons: vault, secondaryVault, playerBag or stash.")] string panel,
+		[Description("Zero-based bag button index.")] int bag,
+		[Description("Entry to click, texts separated by ' > '; empty to only read the menu.")] string? path = null)
+		=> AutomationHost.OnUi(form =>
+		{
+			var container = AutomationPanels.Resolve(form, panel).Container
+				?? throw new McpException($"Panel '{panel}' has no bag buttons.");
+			try
+			{
+				var (entries, clicked) = container.AutomationBagMenu(bag, path?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+				return Serialize(new { panel, bag, currentBag = container.CurrentBag, entries, clicked, icons = container.AutomationBagIcons });
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
+		});
+
+	[McpServerTool(Name = "bag_settings_pick_icon", Destructive = true)]
+	[Description("In the open bag button settings dialog, right-clicks an icon of a tab's grid like the user, which picks its pictures (predefined selection) and switches to Custom icon. Then read the dialog with control_values and apply it with click_control('Bag Button Settings', 'applyButton').")]
+	public static string BagSettingsPickIcon(
+		[Description("Tab: Skills, Relics, Artifacts, Jewellery, Scrolls, Potions, Buttons, Misc, Helmets, Shields, Armbands, Greaves.")] string tab,
+		[Description("Zero-based icon index in that grid.")] int index = 0)
+		=> AutomationHost.OnUi(_ =>
+		{
+			var dialog = System.Windows.Forms.Application.OpenForms.OfType<Dialogs.BagButtonSettings>().FirstOrDefault(f => f.Visible)
+				?? throw new McpException("The bag button settings are not open.");
+			try
+			{
+				return Serialize(new { picked = dialog.AutomationPickIcon(tab, index) });
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
+		});
+
 	[McpServerTool(Name = "open_bag_settings", Destructive = true)]
 	[Description("Opens the bag button settings (icon and label picker) for the current bag of a panel, like its 'Change icon' context menu entry. The dialog is modal: capture it with capture('Bag Button Settings') and close it with close_dialog('Bag Button Settings', 'Cancel'). The game icons load in the background after startup, so 'iconsLoaded' may be false right after launch.")]
 	public static async Task<string> OpenBagSettings(

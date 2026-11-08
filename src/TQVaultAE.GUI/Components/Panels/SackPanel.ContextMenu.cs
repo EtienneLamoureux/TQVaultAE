@@ -31,7 +31,8 @@ public partial class SackPanel
 			, this.DragInfo.AllAutoMoveLocations
 			, this.SecondaryVaultShown
 			, this.userContext.CurrentPlayer?.IsImmortalThrone
-			, focusedItem));
+			, focusedItem
+			, this.CurrentSack));
 
 		var moveChoices = new List<ToolStripItem>();
 		foreach (var destination in destinations)
