@@ -3,10 +3,10 @@ using TQVaultAE.Presentation;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Helpers;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO.Compression;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Services.GitBackup;
 
 namespace TQVaultAE.Services;
 
@@ -24,36 +24,13 @@ public partial class GameFileService(ILogger<GameFileService> log, IGamePathServ
 
 	protected readonly UserSettings UserSettings = userSettings;
 
-	public bool GitAmIBehind()
+	public void GitRepositorySetup()
 	{
-		var repoUrl = this.UserSettings.GitBackupRepository;
-		string errMess = string.Format(Resources.GitUnableToFetch, repoUrl);
+		if (!this.UserSettings.GitBackupEnabled)
+			return;
 
-		var fetch = this.RunGitInRepository("fetch", "origin");
-		if (HandleExecuteOut(fetch, errMess, out var fetchoutStd, out var fetcherrStd))
-		{
-			var status = this.RunGitInRepository("status", "--ahead-behind");
-			if (HandleExecuteOut(status, errMess, out var statusoutStd, out var statuserrStd))
-			{
-				var output = statusoutStd.JoinString(" ");
-				return output.Contains("behind");
-			}
-		}
-		return false;
-	}
-
-	public bool GitClone()
-	{
-		var repoUrl = this.UserSettings.GitBackupRepository;
-		string errMess = string.Format(Resources.GitUnableToClone, repoUrl);
-		DirectoryIO.CreateDirectory(GamePathService.LocalGitRepositoryDirectory);
-
-		var clone = ShellCommand.Run("git"
-			, new[] { "clone", repoUrl, GamePathService.LocalGitRepositoryDirectory }
-			, GamePathService.LocalGitRepositoryDirectory
-		);
-
-		return HandleExecuteOut(clone, errMess, out var outStd, out var errStd);
+		var sync = this.CreateGitBackupSync();
+		this.RunGitBackup(sync.IsCloned ? Resources.GitUnableToPull : Resources.GitUnableToClone, sync.Synchronize);
 	}
 
 	public bool GitAddCommitTagAndPush()
@@ -61,411 +38,65 @@ public partial class GameFileService(ILogger<GameFileService> log, IGamePathServ
 		if (!this.UserSettings.GitBackupEnabled || !GamePathService.LocalGitRepositoryGitDirExist)
 			return false;
 
+		var pushed = false;
+		this.RunGitBackup(Resources.GitUnableToPush, () => pushed = this.CreateGitBackupSync().CommitAndPush());
+		return pushed;
+	}
+
+	/// <summary>
+	/// The folders the git backup holds: the vault files (and their Config folder, not the legacy Backups folder),
+	/// and the two SaveData folders when character saves are backed up too.
+	/// </summary>
+	private GitBackupSync CreateGitBackupSync()
+	{
+		var jsonExtension = GamePathService.VaultFileNameExtensionJson;
+		var oldExtension = GamePathService.VaultFileNameExtensionOld;
+		bool IsVaultFile(string relative)
+			=> (!relative.Contains('/')
+				&& (relative.EndsWith(jsonExtension, StringComparison.OrdinalIgnoreCase) || relative.EndsWith(oldExtension, StringComparison.OrdinalIgnoreCase)))
+			|| relative.StartsWith("Config/", StringComparison.OrdinalIgnoreCase);
+
+		var folders = new List<GitBackupFolder>
+		{
+			new(GamePathService.VaultFilesDefaultDirName, GamePathService.TQVaultSaveFolder, IsVaultFile),
+		};
+		if (this.UserSettings.GitBackupPlayerSavesEnabled)
+		{
+			var saveData = GamePathService.SaveDataDirName;
+			folders.Add(new($"{GamePathService.SaveDirNameTQ}/{saveData}", this.PathIO.Combine(GamePathService.SaveFolderTQ, saveData), _ => true));
+			folders.Add(new($"{GamePathService.SaveDirNameTQIT}/{saveData}", this.PathIO.Combine(GamePathService.SaveFolderTQIT, saveData), _ => true));
+		}
+
+		return new GitBackupSync(this.Log, GamePathService.LocalGitRepositoryDirectory, this.UserSettings.GitBackupRepository, folders);
+	}
+
+	/// <summary>
+	/// Runs a git backup step and shows what went wrong, so that a backup problem never stops the app.
+	/// </summary>
+	/// <param name="defaultMessage">Format of the message, with the repository URL as argument, when the failing step is not known.</param>
+	private void RunGitBackup(string defaultMessage, Action step)
+	{
 		var repoUrl = this.UserSettings.GitBackupRepository;
-		string errMess = string.Format(Resources.GitUnableToPush, repoUrl);
-
-		ShellCommand? status, stageAll, commit, tagVersion, tagLatest, push, pushTags;
-		status = stageAll = commit = tagVersion = tagLatest = push = pushTags = null;
-
 		try
 		{
-			/*
-				 * Reporting synchronously via event starts good but break at some point, job is done though.
-				 * 
-				 * IProgress : Should be the new way of reporting progress. 
-				 * It report progress on time and is not blocking, but the Form is delaying result processing and flush them all AFTER the job. 
-				 * 
-				 * BackgroundWorker.ReportProgress() : should work for Winform 
-				 * but Command.Wait() inside BackgroundWorker.DoWork() simply brutaly kill the app, like a BSOD for app. LOL
-				 * 
-				 * I really tried.
-				 * hguy
-				 */
-
-			// Is there anything new to commit ?
-			status = this.RunGitInRepository("status", "-suall");
-			var statusSuccess = HandleExecuteOut(status, errMess, out var statusoutStd, out var statuserrStd);
-			if (statusSuccess && statusoutStd.Count > 0)
-			{
-				stageAll = this.RunGitInRepository("stage", "*");
-				if (HandleExecuteOut(stageAll, errMess, out var stageAlloutStd, out var stageAllerrStd))
-				{
-					commit = this.RunGitInRepository("commit", "-m", @"TQVaultAE update!");
-					if (HandleExecuteOut(commit, errMess, out var commitoutStd, out var commiterrStd))
-					{
-						var tag = DateTime.Now.ToString("yy.MM.dd.HHmmss");// Use date for versioning
-
-						tagVersion = this.RunGitInRepository("tag", tag);
-						if (HandleExecuteOut(tagVersion, errMess, out var tagVersionoutStd, out var tagVersionerrStd))
-						{
-							tagLatest = this.RunGitInRepository("tag", "-f", "latest");
-							if (HandleExecuteOut(tagLatest, errMess, out var tagLatestoutStd, out var tagLatesterrStd))
-							{
-								using (push = this.RunGitInRepository("push", "-v", "--progress")) // You need "--progress" to capture percentage in StandardError
-								{
-									if (HandleExecuteOut(push, errMess, out var pushoutStd, out var pusherrStd))
-									{
-										pushTags = this.RunGitInRepository("push", "origin", "latest", "-f");
-										if (HandleExecuteOut(pushTags, errMess, out var pushTagsoutStd, out var pushTagserrStd))
-										{
-											pushTags = this.RunGitInRepository("push", "origin", tag);
-											return HandleExecuteOut(pushTags, errMess, out pushTagsoutStd, out pushTagserrStd);
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+			step();
 		}
 		catch (Exception ex)
 		{
-			errMess += Environment.NewLine + ex.Message;
+			var format = ex switch
+			{
+				GitCommandException { Command: "clone" } => Resources.GitUnableToClone,
+				GitCommandException { Command: "fetch" } => Resources.GitUnableToFetch,
+				GitCommandException { Command: "push" } => Resources.GitUnableToPush,
+				_ => defaultMessage,
+			};
+			var detail = ex is Win32Exception
+				? $"git: {ex.Message}" // git is not installed, or not on the PATH.
+				: ex.Message;
+			var errMess = string.Format(format, repoUrl) + Environment.NewLine + detail;
 			this.Log.LogError(ex, "{Message}", errMess);
 			this.UserNotifier.ShowError(errMess, Buttons: ShowMessageButtons.OK);
 		}
-		return false;
-	}
-
-	public void GitRepositorySetup()
-	{
-		if (!this.UserSettings.GitBackupEnabled) return;
-
-		bool overrideFiles = false;
-
-		var RepoTQPath = this.PathIO.Combine(GamePathService.LocalGitRepositoryDirectory, GamePathService.SaveDirNameTQ, GamePathService.SaveDataDirName);
-		var RepoTQITPath = this.PathIO.Combine(GamePathService.LocalGitRepositoryDirectory, GamePathService.SaveDirNameTQIT, GamePathService.SaveDataDirName);
-		bool RepoTQPathExists = false, RepoTQITPathExists = false;
-
-		var TQPathSaveData = this.PathIO.Combine(GamePathService.SaveFolderTQ, GamePathService.SaveDataDirName);
-		var TQITPathSaveData = this.PathIO.Combine(GamePathService.SaveFolderTQIT, GamePathService.SaveDataDirName);
-		var TQPathSaveDataExists = DirectoryIO.Exists(TQPathSaveData);
-		var TQITPathSaveDataExists = DirectoryIO.Exists(TQITPathSaveData);
-
-		// does Vault Dir has any vault file ?
-		var vaultfiles = GamePathService.GetVaultList();
-
-		// Cloned already
-		if (GamePathService.LocalGitRepositoryGitDirExist)
-		{
-			// is there any remote commit i'm not aware of ?
-			// I do pull only if i'm behind
-			if (GitAmIBehind())
-			{
-				// pull player save files changes from github 
-				// Untracked files will stay there, remote deleted tracked character will be deleted localy, remote updated will be localy updated here too.
-				if (GitPull())
-				{
-					// Are they here after pull
-					RepoTQPathExists = DirectoryIO.Exists(RepoTQPath);
-					RepoTQITPathExists = DirectoryIO.Exists(RepoTQITPath);
-
-					// Do you want to refresh your vault and local Save with last git save ?
-					if (vaultfiles.Length != 0)
-					{
-						overrideFiles = DoYouWantToReplaceLocalVault();
-					}
-
-					// new remote vault files will be deployed, localy updated will be overrided if needed, else leave in place
-					CopyVaultFilesFromRepoToVaultData(overrideFiles);
-
-					if (this.UserSettings.GitBackupPlayerSavesEnabled)
-					{
-						//		Do you want to replace your local TQ character save with git repository version ? Are you sure ?
-						if (RepoTQPathExists || RepoTQITPathExists)
-						{
-							overrideFiles = DoYouWantToReplaceLocalCharacterSave();
-
-							//			if Yes - Copy Repo Player files to local SaveData override file
-							//			if No - Copy Repo Player files to local SaveData ignore file
-
-							if (RepoTQPathExists)
-							{
-								CopySaveDataFromRepoToMyGames(RepoTQPath, TQPathSaveData, overrideFiles);
-							}
-
-							if (RepoTQITPathExists)
-							{
-								CopySaveDataFromRepoToMyGames(RepoTQITPath, TQITPathSaveData, overrideFiles);
-							}
-						}
-					}
-				}
-			}
-			return;
-		}
-
-		// clone it
-		var repoSuccess = GitClone();
-		if (repoSuccess)
-		{
-			// Are they here after Clone
-			RepoTQPathExists = DirectoryIO.Exists(RepoTQPath);
-			RepoTQITPathExists = DirectoryIO.Exists(RepoTQITPath);
-
-			overrideFiles = false;
-			if (vaultfiles.Length != 0)
-			{
-				overrideFiles = DoYouWantToReplaceLocalVault();
-			}
-			CopyVaultFilesFromRepoToVaultData(overrideFiles);
-
-			// Now Local vault files are refreshed from git repo
-
-			//		Remove $Repo TQVaultData
-			//			$Repo\TQVaultData
-			this.RemoveRepoTQVaultData();
-
-			//		Make Junction into $Repo for the TQVault directory
-			this.LinkRepoTQVaultData();
-
-			if (this.UserSettings.GitBackupPlayerSavesEnabled)
-			{
-				//		Do you want to replace your local TQ character save with git repository version ? Are you sure ?
-				if (RepoTQPathExists || RepoTQITPathExists)
-				{
-					overrideFiles = DoYouWantToReplaceLocalCharacterSave();
-
-					//			if Yes - Copy Repo Player files to local SaveData override file
-					//			if No - Copy Repo Player files to local SaveData ignore file
-
-					if (RepoTQPathExists)
-					{
-						CopySaveDataFromRepoToMyGames(RepoTQPath, TQPathSaveData, overrideFiles);
-					}
-
-					if (RepoTQITPathExists)
-					{
-						CopySaveDataFromRepoToMyGames(RepoTQITPath, TQITPathSaveData, overrideFiles);
-					}
-				}
-
-				// Now Local game directories are refreshed from git repo
-
-				// Clean repo and put inside NTFS Junctions to local game directories.
-				// to make sure that git automaticaly sees the changes, save disk space and file copy time
-
-				//		Remove $Repo SaveData 
-				//			$Repo\Titan Quest\SaveData
-				//			$Repo\Titan Quest - Immortal Throne\SaveData
-				this.RemoveRepoSaveData(RepoTQPathExists, RepoTQITPathExists);
-
-				//		Make Junction into $Repo for the 2 SaveData directories
-				this.LinkRepoSaveData(
-					TQPathSaveData, TQPathSaveDataExists, RepoTQPath
-					, TQITPathSaveData, TQITPathSaveDataExists, RepoTQITPath
-				);
-			}
-		}
-	}
-
-
-	#region This is specific to OS FileSystem
-
-	protected virtual void CopyVaultFilesFromRepoToVaultData(bool overrideFiles)
-	{
-		throw new NotImplementedException();
-	}
-
-	protected virtual void CopySaveDataFromRepoToMyGames(string repoTQPath, string tQPathSaveData, bool overrideFiles)
-	{
-		throw new NotImplementedException();
-	}
-
-	protected virtual bool RemoveRepoSaveData(bool repoTQPathExists, bool repoTQITPathExists)
-	{
-		throw new NotImplementedException();
-	}
-
-	protected virtual bool LinkRepoSaveData(string tQPathSaveData, bool tQPathSaveDataExists, string repoTQPath, string tQITPathSaveData, bool tQITPathSaveDataExists, string repoTQITPath)
-	{
-		throw new NotImplementedException();
-	}
-
-	protected virtual bool LinkRepoTQVaultData()
-	{
-		throw new NotImplementedException();
-	}
-
-	protected virtual bool RemoveRepoTQVaultData()
-	{
-		throw new NotImplementedException();
-	}
-
-	#endregion
-
-	public bool GitPull()
-	{
-		if (!GamePathService.LocalGitRepositoryGitDirExist)
-			return false;
-
-		var repoUrl = this.UserSettings.GitBackupRepository;
-		string errMess = string.Format(Resources.GitUnableToPull, repoUrl);
-
-		var pull = this.RunGitInRepository("pull", "origin");
-		return HandleExecuteOut(pull, errMess, out var pulloutStd, out var pullerrStd);
-	}
-
-	/// <summary>
-	/// Starts git in the local backup repository.
-	/// </summary>
-	private ShellCommand RunGitInRepository(params string[] arguments)
-		=> ShellCommand.Run("git", arguments, this.GamePathService.LocalGitRepositoryDirectory);
-
-	/// <summary>
-	/// An external command started by <see cref="Run"/>: it runs hidden, and its standard output and error are read
-	/// asynchronously from the start, so the process never blocks on a full pipe.
-	/// </summary>
-	protected sealed class ShellCommand : IDisposable
-	{
-		private readonly Process _process;
-		private readonly List<string> _outputLines = [];
-		private readonly List<string> _errorLines = [];
-
-		private ShellCommand(Process process)
-		{
-			this._process = process;
-		}
-
-		/// <summary>
-		/// Starts <paramref name="fileName"/> with <paramref name="arguments"/>, each one quoted as needed.
-		/// </summary>
-		/// <param name="workingDirectory">The working directory, or <c>null</c> for the current one.</param>
-		/// <exception cref="System.ComponentModel.Win32Exception">The program cannot be started.</exception>
-		public static ShellCommand Run(string fileName, IEnumerable<string> arguments, string? workingDirectory = null)
-		{
-			var startInfo = new ProcessStartInfo(fileName)
-			{
-				UseShellExecute = false,
-				CreateNoWindow = true,
-				RedirectStandardInput = true,
-				RedirectStandardOutput = true,
-				RedirectStandardError = true,
-			};
-			foreach (var argument in arguments)
-				startInfo.ArgumentList.Add(argument);
-			if (workingDirectory is not null)
-				startInfo.WorkingDirectory = workingDirectory;
-
-			var process = new Process { StartInfo = startInfo };
-			var command = new ShellCommand(process);
-			// Each stream raises its events one at a time, and each one fills its own list.
-			process.OutputDataReceived += (_, e) => { if (e.Data is not null) command._outputLines.Add(e.Data); };
-			process.ErrorDataReceived += (_, e) => { if (e.Data is not null) command._errorLines.Add(e.Data); };
-			try
-			{
-				process.Start();
-			}
-			catch
-			{
-				process.Dispose();
-				throw;
-			}
-			process.BeginOutputReadLine();
-			process.BeginErrorReadLine();
-			return command;
-		}
-
-		/// <summary>
-		/// Blocks until the process has exited and both streams are read to the end, then releases the process.
-		/// </summary>
-		/// <param name="outputLines">Receives the standard output lines, unless <c>null</c>.</param>
-		/// <param name="errorLines">Receives the standard error lines, unless <c>null</c>.</param>
-		/// <returns>The exit code.</returns>
-		public int WaitForExit(ICollection<string>? outputLines, ICollection<string>? errorLines)
-		{
-			try
-			{
-				// Without a timeout, WaitForExit also waits for the end of the redirected streams.
-				this._process.WaitForExit();
-
-				if (outputLines is not null)
-				{
-					foreach (var line in this._outputLines)
-						outputLines.Add(line);
-				}
-
-				if (errorLines is not null)
-				{
-					foreach (var line in this._errorLines)
-						errorLines.Add(line);
-				}
-
-				return this._process.ExitCode;
-			}
-			finally
-			{
-				this._process.Dispose();
-			}
-		}
-
-		public void Dispose() => this._process.Dispose();
-	}
-
-	protected bool HandleExecuteOut(ShellCommand cmd, string errMess, out BindingList<string> outputLines, out BindingList<string> errorLines, bool pipeOutputStandard = true)
-	{
-		outputLines = [];
-		errorLines = [];
-
-		return HandleExecuteRef(cmd, errMess, ref outputLines, ref errorLines, pipeOutputStandard);
-	}
-
-	protected bool HandleExecuteRef(ShellCommand cmd, string errMess, ref BindingList<string> outputLines, ref BindingList<string> errorLines, bool pipeOutputStandard = true)
-	{
-		string errLog = string.Empty;
-		try
-		{
-			// Deliberately synchronous: callers (e.g. the push on app close) must finish before continuing.
-			var exitCode = pipeOutputStandard
-				? cmd.WaitForExit(outputLines, errorLines)
-				: cmd.WaitForExit(null, null);
-
-			var success = exitCode == 0;
-			if (!success)
-				errLog = errorLines.JoinString(Environment.NewLine);
-
-			return success;
-		}
-		catch (Exception ex)
-		{
-			this.Log.LogError(ex, "{Message}", errMess);
-			errLog = ex.Message;
-		}
-		finally
-		{
-			if (errLog != string.Empty)
-			{
-				errMess += Environment.NewLine + errLog;
-				this.Log.LogError("{Message}", errMess);
-				this.UserNotifier.ShowError(errMess, Buttons: ShowMessageButtons.OK);
-			}
-		}
-		return false;
-	}
-
-	public bool DoYouWantToReplaceLocalCharacterSave()
-	{
-		bool replaceAnswerOk = false, sureAnswer = true, overrideFiles = false;
-		replaceAnswerOk = UserNotifier.ShowWarning(Resources.GitCloneDoYouWantToReplaceLocalCharacterSave).IsOK;
-		sureAnswer = true;
-		if (replaceAnswerOk)
-			sureAnswer = UserNotifier.ShowWarning(Resources.GlobalConfirm).IsOK;
-
-		overrideFiles = replaceAnswerOk && sureAnswer;
-		return overrideFiles;
-	}
-
-	public bool DoYouWantToReplaceLocalVault()
-	{
-		bool replaceAnswerOk = false, sureAnswer = true, overrideFiles = false;
-		replaceAnswerOk = UserNotifier.ShowWarning(Resources.GitCloneDoYouWantToReplaceLocalVault).IsOK;
-		sureAnswer = true;
-		if (replaceAnswerOk)
-			sureAnswer = UserNotifier.ShowWarning(Resources.GlobalConfirm).IsOK;
-
-		overrideFiles = replaceAnswerOk && sureAnswer;
-		return overrideFiles;
 	}
 
 	public string? BackupFile(string prefix, string file)

@@ -129,7 +129,7 @@ public static class Program
 #else
 			.AddSingleton<ISoundService, SoundServiceWin>()
 #endif
-			.AddTransient<IGameFileService, GameFileServiceWin>()
+			.AddTransient<IGameFileService, GameFileService>()
 			.AddSingleton<ITagService, TagService>()
 
 		// Application Layer - Core Services
