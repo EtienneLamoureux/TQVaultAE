@@ -254,4 +254,18 @@ public class CharacterSkillEditorTests
 
 		editor.BuildSkillRecords().Should().Equal(records[0], records[5]);
 	}
+
+	[Fact]
+	public void SetMastery_QuestRewardPointsAboveTheLevelAmount_AreAllGivenBack()
+	{
+		// Quests give skill points: the saved unspent points plus the spent ones are the total, whatever the level.
+		var editor = Editor(StormCharacter(), points: 40);
+
+		editor.SetMastery(0, null);
+
+		editor.AvailablePoints.Should().Be(40 + 20);
+		editor.SetMastery(0, Masteries.Storm).Should().BeTrue();
+		editor.SetMasteryLevel(0, 40).Should().Be(40);
+		editor.AvailablePoints.Should().Be(20);
+	}
 }

@@ -1057,6 +1057,18 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
 	<data name="CESkillMax" xml:space="preserve">
     <value>Max</value>
   </data>
+	<data name="CESkillGear" xml:space="preserve">
+    <value>Gear</value>
+  </data>
+	<data name="CEGearBonusSkill" xml:space="preserve">
+    <value>+{0} to {1} (equipment)</value>
+  </data>
+	<data name="CEGearBonusMastery" xml:space="preserve">
+    <value>+{0} to all skills of {1} (equipment)</value>
+  </data>
+	<data name="CEGearBonusAll" xml:space="preserve">
+    <value>+{0} to all skills (equipment)</value>
+  </data>
 	<data name="CEStrength" xml:space="preserve">
     <value>Strength</value>
   </data>

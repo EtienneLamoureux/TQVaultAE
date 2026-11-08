@@ -126,6 +126,12 @@ public interface IItemProvider
 	RequirementInfo GetRequirementInfo(Item item, SortedList<string, Variable> requirementVariables);
 
 	SortedList<string, int> GetStatBonuses(Item item);
+
+	/// <summary>
+	/// Gets the skill levels an item adds (to a skill, to the skills of a mastery, to all skills): from its base
+	/// record, its affixes, its relics at their number of pieces and their completion bonuses.
+	/// </summary>
+	IReadOnlyList<SkillAugment> GetSkillAugments(Item item);
 	void GetStatBonusesFromRecord(SortedList<string, int> statBonuses, DBRecordCollection? record, int statLevel = 0);
 	/// <summary>
 	/// Gets the itemID's of all the items in the set.

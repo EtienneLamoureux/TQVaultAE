@@ -36,7 +36,7 @@ public sealed class CharacterSkillsRoundTripTests : IDisposable
 		[
 			new MasterySkill(IceShard, "", "", "", 12, 1, null),
 		]));
-		this._service = new CharacterEditService(new PathIO(), this._fixtures.PlayerProvider, this._fixtures.Database.Object, trees.Object);
+		this._service = new CharacterEditService(new PathIO(), this._fixtures.PlayerProvider, this._fixtures.Database.Object, trees.Object, this._fixtures.ItemProvider);
 	}
 
 	public void Dispose() => this._fixtures.Dispose();
@@ -126,5 +126,24 @@ public sealed class CharacterSkillsRoundTripTests : IDisposable
 		reread.PlayerInfo!.SkillPoints.Should().Be(10);
 		reread.PlayerInfo.Class.Should().BeEmpty();
 		reread.Select(s => s.Count).Should().Equal(sacks, "the items after the skills are not touched");
+	}
+
+	[Fact]
+	public void Apply_MasteryRemoved_GivesBackEveryPointIncludingQuestRewards()
+	{
+		var pc = this._fixtures.LoadPlayer();
+		var info = pc.PlayerInfo!;
+		// Quests gave 300 more unspent points, beyond the 3 per level the level gives.
+		info.SkillPoints += 300;
+		var spent = info.SkillRecordList.Sum(s => s.skillLevel);
+		(info.SkillPoints + spent).Should().BeGreaterThan(PlayerLevel.GetLevelChangePoints(1, info.CurrentLevel).SkillPoints);
+		// The tree of this test has the mastery (40), Onslaught (8) and Ignore Pain (6).
+		var total = info.SkillPoints + 40 + 8 + 6;
+
+		this.Apply(pc, e => e.SetMastery(0, null).Should().BeTrue());
+		var reread = this._fixtures.Reload(this._fixtures.PlayerProvider.Encode(pc));
+
+		reread.PlayerInfo!.SkillPoints.Should().Be(total);
+		Skills(reread).Select(s => s.Name).Should().NotContain([WarfareMastery.Raw, Onslaught.Raw, IgnorePain.Raw]);
 	}
 }

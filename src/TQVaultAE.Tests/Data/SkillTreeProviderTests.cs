@@ -142,4 +142,25 @@ public class SkillTreeProviderTests
 	[InlineData(500, 1)]
 	public void FromButtonY_PaneRow_GivesTheTier(int y, int tier)
 		=> SkillTiers.FromButtonY(y).Should().Be(tier);
+
+	[Fact]
+	public void GetMasteryTree_PetModifier_TakesItsNameFromTheBuffItsPetSkillCasts()
+	{
+		this.AddStormPane();
+		const string Triumph = """Records\Skills\Storm\StormWisp_PetModifier_Triumph.dbr""";
+		const string PetSkill = """Records\Skills\Storm\StormWisp_PetSkill_TriumphBuffRadius.dbr""";
+		const string Buff = """records\skills\storm\stormwisp_petskill_triumph.dbr""";
+		var buttons = this._records[Pane.ToRecordId()].GetAllStrings("tabSkillButtons")!;
+		this.Add(Pane, ("tabSkillButtons", buttons.Append("""records\ui\button9.dbr""").ToArray()));
+		this.AddButton(9, Triumph, 228, 93);
+		this.Add(Triumph, ("Class", "SkillSecondary_PetModifier"), ("petSkillName", PetSkill));
+		this.Add(PetSkill, ("Class", "Skill_BuffRadius"), ("buffSkillName", Buff));
+		this.Add(Buff, ("Class", "SkillBuff_Passive"), ("skillDisplayName", "tagSkillName064"), ("skillMaxLevel", 6));
+
+		var triumph = new SkillTreeProvider(this._database.Object).GetMasteryTree(Masteries.Storm)!.Skills.Single(s => s.Id.Raw == Triumph);
+
+		triumph.NameTag.Should().Be("tagSkillName064");
+		triumph.MaxLevel.Should().Be(6);
+		triumph.ParentId.Should().Be(IceShard.ToRecordId());
+	}
 }

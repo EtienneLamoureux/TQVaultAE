@@ -19,11 +19,15 @@ internal sealed partial class CharacterEditDialog
 	private const int ColumnMinus = 3;
 	private const int ColumnLevel = 4;
 	private const int ColumnPlus = 5;
-	private const int ColumnMax = 6;
+	private const int ColumnGear = 6;
+	private const int ColumnMax = 7;
 
 	private static readonly Color LockedColor = Color.Gray;
 
 	private CharacterSkillEditor? _skills;
+
+	/// <summary>The skill bonuses of the equipped items.</summary>
+	private IReadOnlyList<SkillAugment> _gearAugments = [];
 
 	private readonly List<SkillTab> _skillTabs = [];
 
@@ -64,6 +68,7 @@ internal sealed partial class CharacterEditDialog
 	{
 		this.SkillsGroupBox.Text = Resources.CESkills;
 		this._skills = this.Services.CharacterEditService.CreateSkillEditor(this.Info);
+		this._gearAugments = this.Services.CharacterEditService.GetGearSkillAugments(this.PlayerCollection);
 
 		var choices = new List<MasteryChoice> { new(null, Resources.CEMasteryNone) };
 		foreach (var tree in this._skills.KnownMasteries)
@@ -158,6 +163,7 @@ internal sealed partial class CharacterEditDialog
 			new DataGridViewButtonColumn { Text = "-", UseColumnTextForButtonValue = true, Width = narrow, FlatStyle = FlatStyle.Flat },
 			new DataGridViewTextBoxColumn { HeaderText = Resources.CESkillLevel, Width = (int)Math.Round(50 * this.UIService.Scale) },
 			new DataGridViewButtonColumn { Text = "+", UseColumnTextForButtonValue = true, Width = narrow, FlatStyle = FlatStyle.Flat },
+			new DataGridViewTextBoxColumn { HeaderText = Resources.CESkillGear, AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, ReadOnly = true },
 			new DataGridViewTextBoxColumn { HeaderText = Resources.CESkillMax, AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, ReadOnly = true });
 
 		foreach (DataGridViewColumn column in grid.Columns)
@@ -264,9 +270,28 @@ internal sealed partial class CharacterEditDialog
 			row.Cells[ColumnName].Value = this.TranslateTag(skill.NameTag, skill.Id.PrettyFileName);
 			row.Cells[ColumnRequires].Value = skill.RequiredMasteryLevel;
 			row.Cells[ColumnMax].Value = skill.MaxLevel;
+
+			// The levels the equipped items add come on top of the points spent; the cap is on the points only.
+			var bonus = SkillBonus.For(this._gearAugments, tree, skill.Id);
+			row.Cells[ColumnGear].Value = bonus.Total > 0 ? $"+{bonus.Total}" : string.Empty;
+			row.Cells[ColumnGear].Style.ForeColor = Color.LightSkyBlue;
 			row.Tag = skill;
-			row.Cells[ColumnIcon].ToolTipText = row.Cells[ColumnName].ToolTipText = this.TranslateTag(skill.DescriptionTag);
+			var tip = string.Join(Environment.NewLine, new[] { this.TranslateTag(skill.DescriptionTag) }
+				.Concat(this.GearBonusLines(tree, skill, bonus))
+				.Where(l => l.Length != 0));
+			row.Cells[ColumnIcon].ToolTipText = row.Cells[ColumnName].ToolTipText = row.Cells[ColumnGear].ToolTipText = tip;
 		}
+	}
+
+	/// <summary>The gear bonus lines of a skill tooltip: "+N to the skill", "+N to all skills of the mastery", "+N to all skills".</summary>
+	private IEnumerable<string> GearBonusLines(MasteryTree tree, MasterySkill skill, SkillBonus bonus)
+	{
+		if (bonus.Skill != 0)
+			yield return string.Format(Resources.CEGearBonusSkill, bonus.Skill, this.TranslateTag(skill.NameTag, skill.Id.PrettyFileName));
+		if (bonus.Mastery != 0)
+			yield return string.Format(Resources.CEGearBonusMastery, bonus.Mastery, this.TranslateTag(tree.NameTag, tree.Mastery.ToString()));
+		if (bonus.All != 0)
+			yield return string.Format(Resources.CEGearBonusAll, bonus.All);
 	}
 
 	/// <summary>Shows the level of each skill, and greys out the locked ones.</summary>

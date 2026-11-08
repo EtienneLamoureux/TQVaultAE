@@ -41,4 +41,9 @@ public interface ICharacterEditService
 	/// Starts editing the masteries and skills of a character, with the skills of each mastery from the game database.
 	/// </summary>
 	CharacterSkillEditor CreateSkillEditor(PlayerInfo info);
+
+	/// <summary>
+	/// Gets the skill bonuses of the items the character wears, except the weapons of the second weapon set.
+	/// </summary>
+	IReadOnlyList<SkillAugment> GetGearSkillAugments(PlayerCollection player);
 }
