@@ -225,12 +225,28 @@ public partial class SearchDialogAdvanced : VaultForm
 	/// <param name="e">EventArgs data</param>
 	private void ApplyButtonClicked(object? sender, EventArgs e)
 	{
+		// The search text is applied a second after the last key: text typed just before the click is applied now,
+		// else the search would run with the previous text.
+		string typed = this.scalingTextBoxSearchTerm.Text.Trim();
+		string applied = (this.scalingTextBoxSearchTerm.Tag as BoxItem)?.DisplayValue ?? string.Empty;
+		if (!string.Equals(typed, applied, StringComparison.Ordinal))
+		{
+			this.MakeSearchTermBoxItem();
+			this.Sync_SelectedFilters();
+		}
+
 		if (SelectedFilters.Count == 0)
 		{
 			scalingLabelProgress.Text = $"{Resources.SearchTermRequired} - {string.Format(Resources.SearchItemCountIs, this.ItemDatabaseService.ItemDatabase.Count)}";
 			return;
 		}
-		;
+
+		// Nothing matches: stay open so the filters can be changed (the main window shows no result window then).
+		if (this.QueryResults.Length == 0)
+		{
+			scalingLabelProgress.Text = $"{Resources.MainFormNoItemsFound2} - {string.Format(Resources.SearchItemCountIs, 0)}";
+			return;
+		}
 
 		this.DialogResult = DialogResult.OK;
 		this.Close();

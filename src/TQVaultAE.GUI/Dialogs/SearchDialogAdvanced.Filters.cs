@@ -219,7 +219,11 @@ public partial class SearchDialogAdvanced
 			}
 		).ToArray();
 
-		scalingLabelProgress.Text = $"{string.Format(Resources.SearchItemCountIs, QueryResults.Length)}";
+		// No filter (after Reset or unticking the last one): the count of every item, as when the dialog opened,
+		// rather than 0.
+		scalingLabelProgress.Text = this.SelectedFilters.Count == 0
+			? string.Format(Resources.SearchItemCountIs, this.ItemDatabaseService.ItemDatabase.Count)
+			: string.Format(Resources.SearchItemCountIs, QueryResults.Length);
 
 		ApplyCategoriesReducer();
 	}
