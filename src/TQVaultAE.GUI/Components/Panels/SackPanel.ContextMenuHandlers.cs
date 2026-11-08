@@ -181,26 +181,24 @@ public partial class SackPanel
 		}
 	}
 
+	/// <summary>
+	/// Gets the items the export entries act on: the selection when there is one, else the item under the context menu.
+	/// </summary>
+	private List<Item> ItemsToExport()
+	{
+		if (this.selectedItems is not null)
+			return this.selectedItems;
+
+		return this.FindItem(this.contextMenuCellWithFocus) is { } focusedItem ? [focusedItem] : [];
+	}
+
 	private void ExportItemToClipboardClicked(object? sender, EventArgs e)
 	{
 		try
 		{
-			if (this.ExchangeService is null)
-				return;
-
-			if (this.selectedItems is not null)
-			{
-				var json = this.ExchangeService.SerializeItems(this.selectedItems);
+			var json = this.ExchangeService?.SerializeSelection(this.ItemsToExport());
+			if (json is not null)
 				Clipboard.SetText(json);
-				return;
-			}
-
-			Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
-			if (focusedItem is null)
-				return;
-
-			var jsonItem = this.ExchangeService.SerializeItem(focusedItem);
-			Clipboard.SetText(jsonItem);
 		}
 		catch (Exception ex)
 		{
@@ -208,43 +206,37 @@ public partial class SackPanel
 		}
 	}
 
+	/// <summary>
+	/// Writes the export of <see cref="ItemsToExport"/> to a file.
+	/// </summary>
+	/// <returns><see langword="false"/> when there was nothing to export.</returns>
+	private bool ExportItemsToFile(string path)
+	{
+		var json = this.ExchangeService?.SerializeSelection(this.ItemsToExport());
+		if (json is null)
+			return false;
+
+		this.ExchangeService!.ExportToFile(json, path);
+		return true;
+	}
+
 	private void ExportItemToFileClicked(object? sender, EventArgs e)
 	{
 		try
 		{
-			if (this.ExchangeService is null)
+			var items = this.ItemsToExport();
+			if (this.ExchangeService is null || items.Count == 0)
 				return;
 
-			if (this.selectedItems is not null)
-			{
-				var json = this.ExchangeService.SerializeItems(this.selectedItems);
-				using var dialog = new SaveFileDialog
-				{
-					Filter = "JSON files (*.json)|*.json",
-					DefaultExt = "json",
-					FileName = "items_export.json"
-				};
-
-				if (dialog.ShowDialog() == DialogResult.OK)
-					File.WriteAllText(dialog.FileName, json);
-
-				return;
-			}
-
-			Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
-			if (focusedItem is null)
-				return;
-
-			var jsonItem = this.ExchangeService.SerializeItem(focusedItem);
-			using var singleDialog = new SaveFileDialog
+			using var dialog = new SaveFileDialog
 			{
 				Filter = "JSON files (*.json)|*.json",
 				DefaultExt = "json",
-				FileName = "item_export.json"
+				FileName = items.Count == 1 ? "item_export.json" : "items_export.json"
 			};
 
-			if (singleDialog.ShowDialog() == DialogResult.OK)
-				File.WriteAllText(singleDialog.FileName, jsonItem);
+			if (dialog.ShowDialog() == DialogResult.OK)
+				this.ExportItemsToFile(dialog.FileName);
 		}
 		catch (Exception ex)
 		{
@@ -256,25 +248,15 @@ public partial class SackPanel
 	{
 		try
 		{
-			if (this.ExchangeService is null)
+			var items = this.ItemsToExport();
+			if (this.ExchangeService is null || items.Count == 0)
 				return;
 
-			if (this.selectedItems is not null)
-			{
-				var json = this.ExchangeService.SerializeItems(this.selectedItems);
-				var url = await this.ExchangeService.ExportToPasteBinAsync(json, "Multi-item export");
-				Clipboard.SetText(url);
-				this.UIService.NotifyUser($"Items exported to PasteBin: {url}");
-				return;
-			}
-
-			Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
-			if (focusedItem is null)
-				return;
-
-			var urlItem = await this.ExchangeService.ExportItemToPasteBinAsync(focusedItem);
-			Clipboard.SetText(urlItem);
-			this.UIService.NotifyUser($"Item exported to PasteBin: {urlItem}");
+			var url = await this.ExchangeService.ExportSelectionToPasteBinAsync(items);
+			Clipboard.SetText(url);
+			this.UIService.NotifyUser(items.Count == 1
+				? $"Item exported to PasteBin: {url}"
+				: $"Items exported to PasteBin: {url}");
 		}
 		catch (Exception ex)
 		{

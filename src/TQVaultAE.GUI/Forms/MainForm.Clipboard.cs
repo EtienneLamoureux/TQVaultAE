@@ -16,16 +16,9 @@ public partial class MainForm
 
 		try
 		{
-			if (selectedItems.Count == 1)
-			{
-				var json = this.itemExchangeService.SerializeItem(selectedItems[0]);
+			var json = this.itemExchangeService.SerializeSelection(selectedItems);
+			if (json is not null)
 				Clipboard.SetText(json);
-			}
-			else
-			{
-				var json = this.itemExchangeService.SerializeItems(selectedItems);
-				Clipboard.SetText(json);
-			}
 		}
 		catch (Exception ex)
 		{
