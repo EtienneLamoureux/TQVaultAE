@@ -40,73 +40,61 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// Loads the transfer stash for immortal throne
+	/// Loads and shows the transfer and relic vault stashes, unless the selected character is a Titan Quest original one.
 	/// </summary>
-	/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
-	private StashLoadResult? LoadTransferStash(bool fromFileWatcher = false)
+	private void LoadSharedStashes()
 	{
-		// Only if it's IT, TQ doesn't have one
 		var selectedSave = this.comboBoxCharacter.SelectedItem as PlayerSave;
-		if (selectedSave is not null && !selectedSave.IsImmortalThrone)
-		{
-			this.stashPanel.TransferStash = null;
-			return null;
-		}
-
-		var result = this.stashService.LoadTransferStash(fromFileWatcher);
-
-		// Get the transfer stash
-		try
-		{
-			this.ShowLoadMessages(LoadMessages.ForStash(result, $"Transfer Stash\n\n{result.StashFile}"));
-
-			if (!fromFileWatcher)
-				this.stashPanel.TransferStash = result.Stash;
-		}
-		catch (IOException exception)
-		{
-			string msg = LoadMessages.ReadError(result.StashFile, exception);
-			this.Services.MessageBoxes.Inform(msg, Resources.MainFormStashReadError, MessageBoxIcon.Error);
-			Log.LogError(exception, "{Message}", msg);
-			this.stashPanel.TransferStash = null;
-		}
-
-		return result;
+		this.ShowTransferStash(this.stashService.LoadTransferStashFor(selectedSave), false);
+		this.ShowRelicVaultStash(this.stashService.LoadRelicVaultStashFor(selectedSave), false);
 	}
 
 	/// <summary>
-	/// Loads the relic vault stash
+	/// Shows the loaded transfer stash: its messages, then the stash in the panel (unless reloaded by the file watcher).
 	/// </summary>
-	/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
-	private StashLoadResult? LoadRelicVaultStash(bool fromFileWatcher = false)
+	/// <param name="result">The load; null when the character has no transfer stash, which clears the panel.</param>
+	private void ShowTransferStash(StashLoadResult? result, bool fromFileWatcher)
 	{
-		// Only if it's IT, TQ doesn't have one
-		var selectedSave = this.comboBoxCharacter.SelectedItem as PlayerSave;
-		if (selectedSave is not null && !selectedSave.IsImmortalThrone)
+		if (result is null)
+		{
+			this.stashPanel.TransferStash = null;
+			return;
+		}
+
+		this.ShowLoaded(
+			LoadMessages.ForTransferStash(result)
+			, result.StashFile
+			, Resources.MainFormStashReadError
+			, () =>
+			{
+				if (!fromFileWatcher)
+					this.stashPanel.TransferStash = result.Stash;
+			}
+			, () => this.stashPanel.TransferStash = null);
+	}
+
+	/// <summary>
+	/// Shows the loaded relic vault stash: its messages, then the stash in the panel (unless reloaded by the file watcher).
+	/// </summary>
+	/// <param name="result">The load; null when the character has no relic vault stash, which clears the panel.</param>
+	private void ShowRelicVaultStash(StashLoadResult? result, bool fromFileWatcher)
+	{
+		if (result is null)
 		{
 			this.stashPanel.RelicVaultStash = null;
-			return null;
+			return;
 		}
 
-		var result = this.stashService.LoadRelicVaultStash(fromFileWatcher);
-
-		// Get the relic vault stash
-		try
-		{
-			this.ShowLoadMessages(LoadMessages.ForStash(result, $"Relic Stash\n\n{result.StashFile}"));
-
-			if (!fromFileWatcher)
-				this.stashPanel.RelicVaultStash = result.Stash;
-		}
-		catch (IOException exception)
-		{
-			string msg = LoadMessages.ReadError(result.StashFile, exception);
-			this.Services.MessageBoxes.Inform(msg, Resources.MainFormStashReadError, MessageBoxIcon.Error);
-
-			this.stashPanel.RelicVaultStash = null;
-		}
-
-		return result;
+		this.ShowLoaded(
+			LoadMessages.ForRelicVaultStash(result)
+			, result.StashFile
+			, Resources.MainFormStashReadError
+			, () =>
+			{
+				if (!fromFileWatcher)
+					this.stashPanel.RelicVaultStash = result.Stash;
+			}
+			, () => this.stashPanel.RelicVaultStash = null);
 	}
 
 	// Raised on the UI thread (SynchronizingObject = this)
@@ -116,7 +104,8 @@ public partial class MainForm
 
 		this.FileReloadDebouncer.Schedule(e.FullPath, () =>
 		{
-			var stashResult = LoadRelicVaultStash(true);
+			var stashResult = this.stashService.LoadRelicVaultStashFor(this.comboBoxCharacter.SelectedItem as PlayerSave, true);
+			this.ShowRelicVaultStash(stashResult, true);
 			if (stashResult is not null)
 				this.stashPanel.RelicVaultStash = stashResult.Stash;
 		});
@@ -129,7 +118,8 @@ public partial class MainForm
 
 		this.FileReloadDebouncer.Schedule(e.FullPath, () =>
 		{
-			var stashResult = LoadTransferStash(true);
+			var stashResult = this.stashService.LoadTransferStashFor(this.comboBoxCharacter.SelectedItem as PlayerSave, true);
+			this.ShowTransferStash(stashResult, true);
 			if (stashResult is not null)
 				this.stashPanel.TransferStash = stashResult.Stash;
 		});

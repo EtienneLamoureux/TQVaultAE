@@ -1,5 +1,6 @@
 using System.Globalization;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application;
 
 namespace TQVaultAE.Presentation;
 
@@ -49,6 +50,31 @@ public static class LoadMessages
 
 		return messages;
 	}
+
+	/// <summary>
+	/// Gets the messages for the load of a character's stash.
+	/// </summary>
+	/// <param name="result">The load result.</param>
+	/// <param name="character">The character.</param>
+	/// <returns>The messages in the order to show them.</returns>
+	public static IReadOnlyList<LoadMessage> ForPlayerStash(StashLoadResult result, PlayerSave character)
+		=> ForStash(result, $"Character : {character}");
+
+	/// <summary>
+	/// Gets the messages for the load of the transfer stash.
+	/// </summary>
+	/// <param name="result">The load result.</param>
+	/// <returns>The messages in the order to show them.</returns>
+	public static IReadOnlyList<LoadMessage> ForTransferStash(StashLoadResult result)
+		=> ForStash(result, $"Transfer Stash\n\n{result.StashFile}");
+
+	/// <summary>
+	/// Gets the messages for the load of the relic vault stash.
+	/// </summary>
+	/// <param name="result">The load result.</param>
+	/// <returns>The messages in the order to show them.</returns>
+	public static IReadOnlyList<LoadMessage> ForRelicVaultStash(StashLoadResult result)
+		=> ForStash(result, $"Relic Stash\n\n{result.StashFile}");
 
 	/// <summary>
 	/// Gets the message shown when a file cannot be read.

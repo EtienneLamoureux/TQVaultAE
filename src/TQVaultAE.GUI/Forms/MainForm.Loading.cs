@@ -231,8 +231,7 @@ public partial class MainForm
 		_ = this.Services.ItemDatabaseService.WarmUpAsync()
 			.ContinueWith(_ => iconService.GetIconDatabaseAsync(), TaskScheduler.Default);
 
-		this.LoadTransferStash();
-		this.LoadRelicVaultStash();
+		this.LoadSharedStashes();
 
 		if (USettings.EnableHotReload)
 		{

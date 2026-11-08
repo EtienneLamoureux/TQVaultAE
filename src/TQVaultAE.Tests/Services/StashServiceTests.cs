@@ -154,6 +154,60 @@ public class StashServiceTests
 		result2.StashFile.Should().Be(stashFile);
 	}
 
+	private static PlayerSave CreateSave(bool isImmortalThrone)
+	{
+		var mockPathIO = new Mock<IPathIO>();
+		mockPathIO.Setup(x => x.GetFileName("""C:\Test\Saves\_TestPlayer""")).Returns("_TestPlayer");
+		return new PlayerSave("""C:\Test\Saves\_TestPlayer""", isImmortalThrone, false, false, "", new Mock<ITranslationService>().Object, mockPathIO.Object);
+	}
+
+	[Fact]
+	public void SharedStashLoads_TitanQuestOriginalCharacter_LoadNothing()
+	{
+		var save = CreateSave(isImmortalThrone: false);
+
+		this._stashService.LoadCharacterStash(save).Should().BeNull();
+		this._stashService.LoadTransferStashFor(save).Should().BeNull();
+		this._stashService.LoadRelicVaultStashFor(save).Should().BeNull();
+
+		this._mockStashProvider.Verify(x => x.LoadFile(It.IsAny<Stash>()), Times.Never);
+		this._sessionContext.Stashes.Should().BeEmpty();
+	}
+
+	[Fact]
+	public void LoadCharacterStash_ImmortalThroneCharacter_LoadsItsStash()
+	{
+		var stashFile = """C:\Test\Saves\TestPlayer\winsys.dxb""";
+		this._mockGamePathService.Setup(x => x.GetPlayerStashFile("TestPlayer", false)).Returns(stashFile);
+		this._mockStashProvider.Setup(x => x.LoadFile(It.IsAny<Stash>())).Returns(true);
+
+		var result = this._stashService.LoadCharacterStash(CreateSave(isImmortalThrone: true));
+
+		result.Should().NotBeNull();
+		result!.StashFile.Should().Be(stashFile);
+		result.Stash.Should().NotBeNull();
+	}
+
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void SharedStashLoads_ImmortalThroneOrNoCharacter_LoadTheSharedFiles(bool withCharacter)
+	{
+		var transferFile = """C:\Test\Saves\Sys\winsys.dxb""";
+		var relicFile = """C:\Test\Saves\Sys\miscsys.dxb""";
+		this._mockGamePathService.Setup(x => x.TransferStashFileFullPath).Returns(transferFile);
+		this._mockGamePathService.Setup(x => x.RelicVaultStashFileFullPath).Returns(relicFile);
+		this._mockStashProvider.Setup(x => x.LoadFile(It.IsAny<Stash>())).Returns(true);
+		var save = withCharacter ? CreateSave(isImmortalThrone: true) : null;
+
+		var transfer = this._stashService.LoadTransferStashFor(save);
+		var relic = this._stashService.LoadRelicVaultStashFor(save);
+
+		transfer!.StashFile.Should().Be(transferFile);
+		relic!.StashFile.Should().Be(relicFile);
+		this._sessionContext.Stashes.Keys.Should().BeEquivalentTo([transferFile, relicFile]);
+	}
+
 	/// <summary>
 	/// Test LoadTransferStash loads transfer stash successfully
 	/// </summary>

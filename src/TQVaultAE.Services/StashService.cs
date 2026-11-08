@@ -127,6 +127,24 @@ public class StashService(
 	}
 
 	/// <summary>
+	/// A Titan Quest original character has no player, transfer or relic vault stash.
+	/// </summary>
+	private static bool HasStashes(PlayerSave? selectedSave)
+		=> selectedSave is null || selectedSave.IsImmortalThrone;
+
+	/// <inheritdoc/>
+	public StashLoadResult? LoadCharacterStash(PlayerSave selectedSave, bool fromFileWatcher = false)
+		=> HasStashes(selectedSave) ? this.LoadPlayerStash(selectedSave, fromFileWatcher) : null;
+
+	/// <inheritdoc/>
+	public StashLoadResult? LoadTransferStashFor(PlayerSave? selectedSave, bool fromFileWatcher = false)
+		=> HasStashes(selectedSave) ? this.LoadTransferStash(fromFileWatcher) : null;
+
+	/// <inheritdoc/>
+	public StashLoadResult? LoadRelicVaultStashFor(PlayerSave? selectedSave, bool fromFileWatcher = false)
+		=> HasStashes(selectedSave) ? this.LoadRelicVaultStash(fromFileWatcher) : null;
+
+	/// <summary>
 	/// Loads the relic vault stash.
 	/// </summary>
 	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>

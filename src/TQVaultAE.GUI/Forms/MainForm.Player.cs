@@ -112,11 +112,17 @@ public partial class MainForm
 			// Reload player file
 			PlayerLoadResult? playerResult = null;
 			if (string.Equals(fileName, this.GamePathResolver.PlayerSaveFileName, StringComparison.OrdinalIgnoreCase))
-				playerResult = this.LoadPlayer(playerSave, true);
+			{
+				playerResult = this.playerService.LoadPlayer(playerSave, true);
+				this.ShowPlayer(playerSave, playerResult, true);
+			}
 
 			StashLoadResult? stashResult = null;
 			if (string.Equals(fileName, this.GamePathResolver.PlayerStashFileNameB, StringComparison.OrdinalIgnoreCase))
-				stashResult = this.LoadPlayerStash(playerSave, true);
+			{
+				stashResult = this.stashService.LoadCharacterStash(playerSave, true);
+				this.ShowPlayerStash(playerSave, stashResult, true);
+			}
 
 			// Refresh if is current displayed character
 			if (this.comboBoxCharacter.SelectedItem == playerSave)
@@ -191,94 +197,103 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// Loads a player using the drop down list.
-	/// Assumes designators are appended to character name.
-	/// Changed by VillageIdiot to a separate function.
+	/// Loads a player using the drop down list, with its stash and the shared stashes not loaded yet.
 	/// </summary>
-	/// <param name="selectedSave">Player string from the drop down list.</param>
-	/// <param name="fromFileWatcher">When <code>true</code> called from <see cref="FileSystemWatcher.Changed"/></param>
-	/// <returns></returns>
-	private (PlayerLoadResult PlayerResult, StashLoadResult? StashResult) LoadPlayerAndStashes(PlayerSave selectedSave, bool fromFileWatcher = false)
+	/// <param name="selectedSave">Player from the drop down list.</param>
+	private void LoadPlayerAndStashes(PlayerSave selectedSave)
 	{
-		var result = LoadPlayer(selectedSave, fromFileWatcher);
+		var session = this.playerService.LoadCharacterSession(
+			selectedSave
+			, loadTransferStash: this.stashPanel.TransferStash is null
+			, loadRelicVaultStash: this.stashPanel.RelicVaultStash is null);
 
-		var resultStash = this.LoadPlayerStash(selectedSave, fromFileWatcher);
+		this.ShowPlayer(selectedSave, session.Player, false);
+		this.ShowPlayerStash(selectedSave, session.PlayerStash, false);
 
-		if (selectedSave.IsImmortalThrone)
-		{
-			if (this.stashPanel.RelicVaultStash is null)
-				LoadRelicVaultStash();
-
-			if (this.stashPanel.TransferStash is null)
-				LoadTransferStash();
-		}
-		else // Titan Quest original
+		if (!session.HasStashes)
 		{
 			this.stashPanel.RelicVaultStash = null;
 			this.stashPanel.TransferStash = null;
+			return;
 		}
 
-		return (result, resultStash);
+		if (session.RelicVaultStash is not null)
+			this.ShowRelicVaultStash(session.RelicVaultStash, false);
+
+		if (session.TransferStash is not null)
+			this.ShowTransferStash(session.TransferStash, false);
 	}
 
-	private PlayerLoadResult LoadPlayer(PlayerSave selectedSave, bool fromFileWatcher)
-	{
-		// Use management service
-		var resultDTO = this.playerService.LoadPlayer(selectedSave, fromFileWatcher);
-
-		// Get the player
-		try
-		{
-			this.ShowLoadMessages(LoadMessages.ForPlayer(resultDTO));
-
-			if (!fromFileWatcher)
+	/// <summary>
+	/// Shows a loaded player: its messages, then the player in the panels (unless reloaded by the file watcher).
+	/// </summary>
+	private void ShowPlayer(PlayerSave selectedSave, PlayerLoadResult result, bool fromFileWatcher)
+		=> this.ShowLoaded(
+			LoadMessages.ForPlayer(result)
+			, result.PlayerFile
+			, Resources.MainFormPlayerReadError
+			, () =>
 			{
-				this.playerPanel.Player = resultDTO.Player;
-				this.stashPanel.Player = resultDTO.Player;
-				this.stashPanel.CurrentBag = BagIdConstants.BAGID_EQUIPMENTPANEL;
+				if (!fromFileWatcher)
+				{
+					this.playerPanel.Player = result.Player;
+					this.stashPanel.Player = result.Player;
+					this.stashPanel.CurrentBag = BagIdConstants.BAGID_EQUIPMENTPANEL;
+				}
+				this.comboBoxCharacter.RefreshItem(selectedSave);
 			}
-			this.comboBoxCharacter.RefreshItem(selectedSave);
-		}
-		catch (IOException exception)
+			, () =>
+			{
+				this.playerPanel.Player = null;
+				this.comboBoxCharacter.SelectedIndex = 0;
+			});
+
+	/// <summary>
+	/// Shows a loaded character stash: its messages, then the stash in the panel (unless reloaded by the file watcher).
+	/// </summary>
+	/// <param name="result">The load; null when the character has no stash, which clears the panel.</param>
+	private void ShowPlayerStash(PlayerSave selectedSave, StashLoadResult? result, bool fromFileWatcher)
+	{
+		if (result is null)
 		{
-			string msg = LoadMessages.ReadError(resultDTO.PlayerFile, exception);
-			this.Services.MessageBoxes.Inform(msg, Resources.MainFormPlayerReadError, MessageBoxIcon.Error);
-			Log.LogError(exception, "{Message}", msg);
-			this.playerPanel.Player = null;
-			this.comboBoxCharacter.SelectedIndex = 0;
+			this.stashPanel.Stash = null;
+			return;
 		}
 
-		return resultDTO;
+		this.ShowLoaded(
+			LoadMessages.ForPlayerStash(result, selectedSave)
+			, result.StashFile
+			, Resources.MainFormStashReadError
+			, () =>
+			{
+				if (!fromFileWatcher)
+					this.stashPanel.Stash = result.Stash;
+			}
+			, () => this.stashPanel.Stash = null);
 	}
 
-	private StashLoadResult? LoadPlayerStash(PlayerSave selectedSave, bool fromFileWatcher = false)
+	/// <summary>
+	/// Shows the messages of a load, then its result. A read error is shown and logged, then <paramref name="onReadError"/> runs.
+	/// </summary>
+	/// <param name="messages">The messages of the load.</param>
+	/// <param name="file">The file loaded, for the read error.</param>
+	/// <param name="readErrorCaption">The caption of the read error.</param>
+	/// <param name="show">Shows the result.</param>
+	/// <param name="onReadError">Clears what could not be shown.</param>
+	private void ShowLoaded(IReadOnlyList<LoadMessage> messages, string? file, string readErrorCaption, Action show, Action onReadError)
 	{
-		// Get the player's stash - use management service
-
-		// Only if it's IT, TQ doesn't have one
-		if (!selectedSave.IsImmortalThrone)
-		{
-			this.stashPanel.Stash = null;
-			return null;
-		}
-
-		var resultStash = this.stashService.LoadPlayerStash(selectedSave, fromFileWatcher);
 		try
 		{
-			// Throw a message if the stash is not present or unreadable.
-			this.ShowLoadMessages(LoadMessages.ForStash(resultStash, $"Character : {selectedSave}"));
-
-			if (!fromFileWatcher) this.stashPanel.Stash = resultStash.Stash;
+			this.ShowLoadMessages(messages);
+			show();
 		}
 		catch (IOException exception)
 		{
-			string msg = LoadMessages.ReadError(resultStash.StashFile, exception);
-			this.Services.MessageBoxes.Inform(msg, Resources.MainFormStashReadError, MessageBoxIcon.Error);
+			string msg = LoadMessages.ReadError(file, exception);
+			this.Services.MessageBoxes.Inform(msg, readErrorCaption, MessageBoxIcon.Error);
 			Log.LogError(exception, "{Message}", msg);
-			this.stashPanel.Stash = null;
+			onReadError();
 		}
-
-		return resultStash;
 	}
 
 	/// <summary>

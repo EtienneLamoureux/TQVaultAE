@@ -148,6 +148,22 @@ public class PlayerService(
 		=> StashService.LoadPlayerStash(playerSave, fromFileWatcher);
 
 	/// <inheritdoc/>
+	public CharacterSessionLoadResult LoadCharacterSession(PlayerSave selectedSave, bool loadTransferStash, bool loadRelicVaultStash)
+	{
+		var player = this.LoadPlayer(selectedSave);
+
+		var playerStash = this.StashService.LoadCharacterStash(selectedSave);
+		if (playerStash is null)
+			return new CharacterSessionLoadResult(player, null, null, null);
+
+		// Relic vault first, as it always was
+		var relicVaultStash = loadRelicVaultStash ? this.StashService.LoadRelicVaultStashFor(selectedSave) : null;
+		var transferStash = loadTransferStash ? this.StashService.LoadTransferStashFor(selectedSave) : null;
+
+		return new CharacterSessionLoadResult(player, playerStash, transferStash, relicVaultStash);
+	}
+
+	/// <inheritdoc/>
 	public IReadOnlyList<(string File, PlayerCollection Player)> GetModifiedPlayers()
 		=> [.. this.userContext.Players
 			.Select(kvp => (File: kvp.Key, Player: kvp.Value.Value))

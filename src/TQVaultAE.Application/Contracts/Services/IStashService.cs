@@ -28,6 +28,30 @@ public interface IStashService
 	StashLoadResult LoadTransferStash(bool fromFileWatcher = false);
 
 	/// <summary>
+	/// Loads the stash of a character, which only an Immortal Throne character has.
+	/// </summary>
+	/// <param name="selectedSave">The character.</param>
+	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
+	/// <returns>Stash load result; null for a Titan Quest original character.</returns>
+	StashLoadResult? LoadCharacterStash(PlayerSave selectedSave, bool fromFileWatcher = false);
+
+	/// <summary>
+	/// Loads the transfer stash for the selected character, unless it is a Titan Quest original character.
+	/// </summary>
+	/// <param name="selectedSave">The selected character; null when none is selected.</param>
+	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
+	/// <returns>Stash load result; null for a Titan Quest original character.</returns>
+	StashLoadResult? LoadTransferStashFor(PlayerSave? selectedSave, bool fromFileWatcher = false);
+
+	/// <summary>
+	/// Loads the relic vault stash for the selected character, unless it is a Titan Quest original character.
+	/// </summary>
+	/// <param name="selectedSave">The selected character; null when none is selected.</param>
+	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
+	/// <returns>Stash load result; null for a Titan Quest original character.</returns>
+	StashLoadResult? LoadRelicVaultStashFor(PlayerSave? selectedSave, bool fromFileWatcher = false);
+
+	/// <summary>
 	/// Gets the loaded stashes that have unsaved changes, with their file.
 	/// </summary>
 	IReadOnlyList<(string File, Stash Stash)> GetModifiedStashes();
