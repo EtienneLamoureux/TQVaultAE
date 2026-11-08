@@ -126,6 +126,7 @@ public static class Program
 				.AddSingleton<ILootTableCollectionProvider, LootTableCollectionProvider>()
 				.AddTransient<IStashProvider, StashProvider>()
 				.AddTransient<IPlayerCollectionProvider, PlayerCollectionProvider>()
+				.AddSingleton<ISkillTreeProvider, SkillTreeProvider>()
 				.AddTransient<ISackCollectionProvider, SackCollectionProvider>()
 				.AddSingleton<IItemAttributeProvider, ItemAttributeProvider>()
 				.AddTransient<IDBRecordCollectionProvider, DBRecordCollectionProvider>()

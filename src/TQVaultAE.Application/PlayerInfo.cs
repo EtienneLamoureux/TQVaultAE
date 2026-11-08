@@ -19,6 +19,16 @@ public class PlayerInfo
 	public bool MasteriesResetRequiered { get; set; }
 
 	/// <summary>
+	/// True when the skill list was edited: <see cref="SkillRecordList"/> is written back to the save.
+	/// </summary>
+	public bool SkillsChanged { get; set; }
+
+	/// <summary>
+	/// True when the masteries were changed: the class tag is cleared and the game sets it again.
+	/// </summary>
+	public bool MasteriesChanged { get; set; }
+
+	/// <summary>
 	/// Skills removed during <see cref="ResetMasteries"/>
 	/// </summary>
 	List<SkillRecord> _SkillRecordListRemoved = [];

@@ -1,3 +1,5 @@
+using TQVaultAE.Domain.Entities;
+
 namespace TQVaultAE.Application.DTOs;
 
 /// <summary>
@@ -15,6 +17,8 @@ namespace TQVaultAE.Application.DTOs;
 /// <param name="Mana">The base mana.</param>
 /// <param name="ResetAttributes">Puts the base attributes back to their minimum and gives back the points invested.</param>
 /// <param name="ResetMasteries">Removes the masteries and gives back their skill points.</param>
+/// <param name="SkillRecords">The edited skill list (<see cref="CharacterSkillEditor.BuildSkillRecords"/>), or <see langword="null"/> to keep the character's one.</param>
+/// <param name="MasteriesChanged">True when <paramref name="SkillRecords"/> has other masteries, which clears the class.</param>
 public sealed record CharacterEditRequest(
 	int Level
 	, string? XpText
@@ -27,4 +31,6 @@ public sealed record CharacterEditRequest(
 	, int Health
 	, int Mana
 	, bool ResetAttributes = false
-	, bool ResetMasteries = false);
+	, bool ResetMasteries = false
+	, IReadOnlyList<SkillRecord>? SkillRecords = null
+	, bool MasteriesChanged = false);

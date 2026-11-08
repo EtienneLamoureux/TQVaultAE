@@ -18,6 +18,7 @@ public interface ICharacterEditService
 	/// <item>A reset of the attributes puts them back to their minimum and adds the points invested to the pool of
 	/// <paramref name="source"/>.</item>
 	/// <item>A reset of the masteries removes their skills and gives back their skill points.</item>
+	/// <item>An edited skill list replaces the skills of <paramref name="source"/>; other masteries clear the class.</item>
 	/// <item>Unlocking another difficulty raises the money to 5M for Epic, 7.5M for Legendary.</item>
 	/// </list>
 	/// </remarks>
@@ -35,4 +36,9 @@ public interface ICharacterEditService
 	/// <param name="masteryId">The mastery record.</param>
 	/// <returns>The tag, or an empty string when the record is unknown.</returns>
 	string GetMasteryDescriptionTag(RecordId masteryId);
+
+	/// <summary>
+	/// Starts editing the masteries and skills of a character, with the skills of each mastery from the game database.
+	/// </summary>
+	CharacterSkillEditor CreateSkillEditor(PlayerInfo info);
 }
