@@ -8,6 +8,7 @@ using TQVaultAE.Application.DTOs;
 using TQVaultAE.Config;
 using TQVaultAE.GUI.Components.Panels;
 using TQVaultAE.GUI.Components;
+using TQVaultAE.GUI.Components.Character;
 using TQVaultAE.GUI.Models;
 
 namespace TQVaultAE.GUI.Forms;
@@ -148,4 +149,19 @@ public partial class MainForm
 	/// (the Abort/Retry/Ignore box). Returns whether characters were saved.
 	/// </summary>
 	internal bool AutomationSaveFiles() => this.SaveAllModifiedFiles();
+
+
+	/// <summary>The character drop down, whose context menu holds the tag boxes.</summary>
+	internal ComboBoxCharacter AutomationCharacterCombo => this.comboBoxCharacter;
+
+	/// <summary>
+	/// Opens the character editor like the Edit button of the stash panel, after the calling tool has returned
+	/// (the editor is modal).
+	/// </summary>
+	internal void AutomationOpenCharacterEditor()
+	{
+		var edit = typeof(StashPanel).GetMethod("EditButton_Click", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+			?? throw new InvalidOperationException("StashPanel.EditButton_Click not found");
+		this.BeginInvoke(() => edit.Invoke(this.stashPanel, [this.stashPanel, EventArgs.Empty]));
+	}
 }
