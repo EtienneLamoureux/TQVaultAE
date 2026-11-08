@@ -234,6 +234,20 @@ internal static partial class AutomationTools
 		});
 	}
 
+
+	[McpServerTool(Name = "save_files", Destructive = true)]
+	[Description("Saves the modified characters, vaults and stashes like the Save button. A file error shows the Abort/Retry/Ignore box: this call then waits until the box is answered, so answer it from another call with close_dialog (button Abort, Retry or Ignore). Work only in claude-* test files. Returns whether characters were saved and the panels still modified; see recent_log for the save's log lines.")]
+	public static string SaveFiles()
+		=> AutomationHost.OnUi(form =>
+		{
+			var playersSaved = form.AutomationSaveFiles();
+			return Serialize(new
+			{
+				playersSaved,
+				stillModified = AutomationPanels.List(form).Where(p => p.Panel.Sack?.IsModified == true).Select(p => p.Id).ToList(),
+			});
+		});
+
 	#endregion
 
 	#region Drag & drop

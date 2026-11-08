@@ -141,4 +141,11 @@ public partial class MainForm
 		_ = Task.Delay(500).ContinueWith(_ => this.BeginInvoke(System.Windows.Forms.Application.Restart), TaskScheduler.Default);
 		return null;
 	}
+
+
+	/// <summary>
+	/// Saves the modified characters, vaults and stashes like the Save button, file errors included
+	/// (the Abort/Retry/Ignore box). Returns whether characters were saved.
+	/// </summary>
+	internal bool AutomationSaveFiles() => this.SaveAllModifiedFiles();
 }
