@@ -395,6 +395,26 @@ public class ItemTooltipContentBuilderTests
 		=> ItemTooltipContentBuilder.ViewOf(new UserSettings { EnableDetailedTooltipView = false }).Should().Be(ItemTooltipView.Classic);
 
 	[Fact]
+	public void ViewOf_SessionForcesDetailed_ShowsItWithoutTheSetting_ExplicitChoiceWins()
+	{
+		// The forge forces the detailed display for the session; the setting stays off, so a save cannot keep it.
+		var settings = new UserSettings
+		{
+			EnableDetailedTooltipView = false,
+			TooltipShowInGameRolls = false,
+			TooltipShowValueRanges = true,
+			TooltipShowGrantedSkills = false,
+			TooltipShowSetPieceCounts = false,
+		};
+
+		ItemTooltipContentBuilder.ViewOf(settings, sessionForcesDetailed: true)
+			.Should().Be(ItemTooltipView.Detailed | ItemTooltipView.ValueRanges);
+		ItemTooltipContentBuilder.ViewOf(settings, enableDetailedTooltipView: false, sessionForcesDetailed: true)
+			.Should().Be(ItemTooltipView.Classic);
+		settings.EnableDetailedTooltipView.Should().BeFalse();
+	}
+
+	[Fact]
 	public void ViewOf_Detailed_AddsTheCheckedExtras()
 	{
 		var settings = new UserSettings

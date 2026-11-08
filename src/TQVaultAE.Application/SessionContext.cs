@@ -15,6 +15,12 @@ public class SessionContext
 	/// </summary>
 	public PlayerCollection? CurrentPlayer { get; set; }
 
+	/// <summary>
+	/// The item tooltips show the detailed display for now (while the forge is open), whatever the setting, which is
+	/// not changed so that a settings save cannot keep it.
+	/// </summary>
+	public bool ForceDetailedTooltipView { get; set; }
+
 	private BagButtonIconInfo? iconInfoCopy;
 	/// <summary>
 	/// Last icon info copied
