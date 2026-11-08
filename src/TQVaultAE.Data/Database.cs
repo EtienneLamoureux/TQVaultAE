@@ -690,13 +690,10 @@ public partial class Database : IDatabase
 				if (USettings.DatabaseDebugLevel > 1)
 					Log.LogDebug("Checking Custom Resources.");
 
-				rootFolder = this.PathIO.Combine(GamePathResolver.MapName, "resources");
-
-				arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-				arcFileData = this.ReadARCFile(arcFile, key);
+				arcFileData = this.ReadCustomMapResource(key);
 
 				if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
-					Log.LogDebug(@"Custom resource found ""{resourceId}"" into ""{arcFile}""", key, arcFile);
+					Log.LogDebug(@"Custom resource found ""{resourceId}""", key);
 			}
 
 			// We either didn't load the resource or didn't find what we were looking for so check the normal game resources.
@@ -897,42 +894,7 @@ public partial class Database : IDatabase
 
 		if (gameLanguage is not null)
 		{
-			// Try this method of getting the culture
-			if (USettings.DatabaseDebugLevel > 2)
-				Log.LogDebug("Try looking up cultureID");
-
-			foreach (CultureInfo cultureInfo in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
-			{
-				if (USettings.DatabaseDebugLevel > 2)
-					Log.LogDebug("Trying {EnglishName}", cultureInfo.EnglishName.ToUpperInvariant());
-
-				if (string.Equals(cultureInfo.EnglishName, gameLanguage, StringComparison.OrdinalIgnoreCase) || string.Equals(cultureInfo.DisplayName, gameLanguage, StringComparison.OrdinalIgnoreCase))
-				{
-					cultureID = cultureInfo.TwoLetterISOLanguageName;
-					break;
-				}
-			}
-
-			// Titan Quest doesn't use the ISO language code for some languages
-			// Added null check to fix exception when there is no culture found.
-			if (cultureID is not null)
-			{
-				if (cultureID.Equals("CS", StringComparison.OrdinalIgnoreCase))
-				{
-					// Force Czech to use CZ instead of CS for the 2 letter code.
-					cultureID = "CZ";
-				}
-				else if (cultureID.Equals("PT", StringComparison.OrdinalIgnoreCase))
-				{
-					// Force brazilian portuguese to use BR instead of PT
-					cultureID = "BR";
-				}
-				else if (cultureID.Equals("ZH", StringComparison.OrdinalIgnoreCase))
-				{
-					// Force chinese to use CH instead of ZH
-					cultureID = "CH";
-				}
-			}
+			cultureID = GameLanguageFileCode(gameLanguage);
 
 			if (USettings.DatabaseDebugLevel > 1)
 				Log.LogDebug("cultureID = {CultureID}", cultureID);
@@ -1029,6 +991,90 @@ public partial class Database : IDatabase
 		}
 
 		return null;
+	}
+
+	/// <summary>
+	/// Code of a game language in the text file names (<c>Text_FR.arc</c>): the ISO code, except CZ for Czech, BR for
+	/// Portuguese and CH for Chinese.
+	/// </summary>
+	/// <param name="gameLanguage">English or native name of the language, as in the game settings.</param>
+	/// <returns>The upper case code, or null for an unknown language.</returns>
+	internal static string? GameLanguageFileCode(string gameLanguage)
+	{
+		foreach (CultureInfo cultureInfo in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
+		{
+			if (string.Equals(cultureInfo.EnglishName, gameLanguage, StringComparison.OrdinalIgnoreCase)
+				|| string.Equals(cultureInfo.DisplayName, gameLanguage, StringComparison.OrdinalIgnoreCase))
+			{
+				return cultureInfo.TwoLetterISOLanguageName.ToUpperInvariant() switch
+				{
+					"CS" => "CZ",
+					"PT" => "BR",
+					"ZH" => "CH",
+					var code => code,
+				};
+			}
+		}
+
+		return null;
+	}
+
+	/// <summary>
+	/// Loads the strings of a custom map: <c>resources\text_xx.arc</c> in the game language, else
+	/// <c>resources\text.arc</c>, else the loose <c>resources\text\modstrings.txt</c> of a mod shipped unpacked.
+	/// </summary>
+	private void LoadCustomMapText()
+	{
+		string resources = this.PathIO.Combine(GamePathResolver.MapName, "resources");
+		string? code = this.GameLanguage is { } language ? GameLanguageFileCode(language) : null;
+		string[] archives = code is null ? ["text.arc"] : [$"text_{code}.arc", "text.arc"];
+
+		foreach (var archive in archives)
+		{
+			string databaseFile = this.PathIO.Combine(resources, archive);
+			if (!this.FileIO.Exists(databaseFile))
+				continue;
+
+			if (USettings.DatabaseDebugLevel > 1)
+				Log.LogDebug("Custom map text file {DatabaseFile}", databaseFile);
+
+			this.ParseTextDB(databaseFile, "text\\modstrings.txt");
+			return;
+		}
+
+		string looseFile = this.PathIO.Combine(resources, "text", "modstrings.txt");
+		if (this.FileIO.Exists(looseFile))
+			this.ParseTextData(this.FileIO.ReadAllBytes(looseFile));
+	}
+
+	/// <summary>
+	/// Reads a resource of the custom map, in one of the layouts mods use, in this order:
+	/// <list type="bullet">
+	/// <item>the archive named after the first segment: <c>resources\Items.arc</c> for <c>Items\x.tex</c>,
+	/// <c>resources\XPack2.arc</c> for <c>XPack2\Quests\x.qst</c> (entry <c>Quests\x.qst</c>);</item>
+	/// <item>the game's expansion layout: <c>resources\xpack\Item.arc</c> for <c>XPack\Item\x.tex</c> (entry <c>x.tex</c>);</item>
+	/// <item>a loose file, for a mod shipped unpacked: <c>resources\Items\x.tex</c>.</item>
+	/// </list>
+	/// </summary>
+	/// <returns>The data, or null when the custom map does not have the resource.</returns>
+	private byte[]? ReadCustomMapResource(RecordId resourceId)
+	{
+		var tokens = resourceId.TokensRaw;
+		string resources = this.PathIO.Combine(GamePathResolver.MapName, "resources");
+
+		byte[]? data = this.ReadARCFile(this.PathIO.Combine(resources, tokens[0] + ".arc"), resourceId);
+
+		if (data is null && GameArchives.IsExpansionResource(resourceId) && tokens.Count > 2)
+			data = this.ReadARCFile(this.PathIO.Combine(resources, tokens[0], tokens[1] + ".arc"), tokens.Skip(1).JoinString("\\"));
+
+		if (data is null)
+		{
+			string looseFile = this.PathIO.Combine([resources, .. tokens]);
+			if (this.FileIO.Exists(looseFile))
+				data = this.FileIO.ReadAllBytes(looseFile);
+		}
+
+		return data;
 	}
 
 	/// <summary>
@@ -1150,18 +1196,7 @@ public partial class Database : IDatabase
 
 		// For loading custom map text database.
 		if (GamePathResolver.IsCustom)
-		{
-			databaseFile = this.PathIO.Combine(GamePathResolver.MapName, "resources", "text.arc");
-
-			if (USettings.DatabaseDebugLevel > 1)
-			{
-				Log.LogDebug("Find Custom Map text file");
-				Log.LogDebug("dbFile = {DatabaseFile}", databaseFile);
-			}
-
-			if (databaseFile is not null)
-				this.ParseTextDB(databaseFile, "text\\modstrings.txt");
-		}
+			this.LoadCustomMapText();
 
 		// Added this check to see if anything was loaded.
 		if (textDB.IsEmpty)
@@ -1226,6 +1261,14 @@ public partial class Database : IDatabase
 			return;
 		}
 
+		this.ParseTextData(data);
+	}
+
+	/// <summary>
+	/// Puts the entries of a text file into the text database.
+	/// </summary>
+	private void ParseTextData(byte[] data)
+	{
 		// The game files are UTF-16 with a BOM, but some (x2 quests, mod strings) are cp1252 without one.
 		foreach (var (tag, text) in TextDatabaseFactory.ReadEntries(data))
 		{
