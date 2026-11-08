@@ -29,7 +29,7 @@ public partial class MainForm : Form
 	private readonly ILogger Log;
 	private readonly IArcFileProvider arcProv;
 	private readonly IArzFileProvider arzProv;
-	private readonly IDBRecordCollectionProvider DBRecordCollectionProvider;
+	private readonly ArchiveExtractor Extractor;
 	private readonly IBitmapService BitmapService;
 	private readonly IGamePathService GamePathService;
 	private readonly SoundServiceWin SoundService;
@@ -60,7 +60,7 @@ public partial class MainForm : Form
 		ILogger<MainForm> log
 		, IArcFileProvider arcFileProvider
 		, IArzFileProvider arzFileProvider
-		, IDBRecordCollectionProvider dBRecordCollectionProvider
+		, ArchiveExtractor extractor
 		, IBitmapService bitmapService
 		, IGamePathService gamePathService
 		, SoundServiceWin soundService
@@ -71,7 +71,7 @@ public partial class MainForm : Form
 		this.Log = log;
 		this.arcProv = arcFileProvider;
 		this.arzProv = arzFileProvider;
-		this.DBRecordCollectionProvider = dBRecordCollectionProvider;
+		this.Extractor = extractor;
 		this.BitmapService = bitmapService;
 		this.GamePathService = gamePathService;
 		this.SoundService = soundService;
@@ -403,21 +403,7 @@ public partial class MainForm : Form
 		if (saveFileDialog.ShowDialog() == DialogResult.OK)
 		{
 			filename = saveFileDialog.FileName;
-
-			if (this.SelectedFile.FileType == CompressedFileType.ArzFile)
-			{
-				if (this.SelectedFile.Records is not null)
-					DBRecordCollectionProvider.Write(this.SelectedFile.Records, Path.GetDirectoryName(filename) ?? string.Empty, Path.GetFileName(filename));
-			}
-			else if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
-			{
-				arcProv.Write(
-					this.SelectedFile.Arc
-					, Path.GetDirectoryName(filename) ?? string.Empty
-					, this.SelectedFile.DestFile
-					, Path.GetFileName(filename)
-				);
-			}
+			this.Extractor.ExtractOne(this.SelectedFile, this.SelectedFile.DestFile, filename);
 		}
 	}
 
@@ -552,7 +538,7 @@ public partial class MainForm : Form
 		// Track if this is the first file being loaded
 		bool isFirstFile = dicoNodes.Count == 0;
 
-		TreeNode? arcRootNode = null, rootNode = new();
+		TreeNode rootNode = new();
 
 		string arcPrefix = string.Empty;
 		var rootNodeKey = string.Empty;
@@ -564,25 +550,14 @@ public partial class MainForm : Form
 
 		if (currentFileInfo.FileType == CompressedFileType.ArcFile)
 		{
-			var tokens = currentFileInfo.SourceFileId.TokensRaw;
+			// Node of the expansion folder, then node of the file
+			arcPrefix = ArcPaths.TreePrefix(currentFileInfo.SourceFileId);
+			var fileParentNode = rootNode;
+			var separator = arcPrefix.IndexOf('\\');
+			if (separator >= 0)
+				GetRootNode(currentFileInfo, arcPrefix[..separator], rootNode, out fileParentNode);
 
-			// Node Xpack
-			var arcPrefixXpack = tokens[tokens.Count - 2];
-			if (!arcPrefixXpack.StartsWith("XPACK", StringComparison.OrdinalIgnoreCase))
-				arcPrefixXpack = string.Empty;
-
-			if (arcPrefixXpack != string.Empty)
-				GetRootNode(currentFileInfo, arcPrefixXpack, rootNode, out arcRootNode);
-
-			// Node File
-			arcPrefix = Path.GetFileNameWithoutExtension(tokens[tokens.Count - 1]);
-			if (arcPrefixXpack == string.Empty)
-				GetRootNode(currentFileInfo, arcPrefix, rootNode, out arcRootNode);
-			else
-			{
-				arcPrefix = arcPrefixXpack + '\\' + arcPrefix;
-				GetRootNode(currentFileInfo, arcPrefix, arcRootNode ?? rootNode, out arcRootNode);
-			}
+			GetRootNode(currentFileInfo, arcPrefix, fileParentNode, out _);
 		}
 
 		foreach (var record in dataRecords)
@@ -710,10 +685,7 @@ public partial class MainForm : Form
 				else if (this.SelectedFile.FileType == CompressedFileType.ArcFile)
 				{
 					string extension = Path.GetExtension(tag.Key.TokensNormalized.Last());
-					var arcDataRecordId = tag.Key;
-
-					if (tag.Key.Normalized.Contains("XPACK"))
-						arcDataRecordId = tag.Key.TokensRaw.Skip(1).JoinString("\\").ToRecordId();
+					var arcDataRecordId = ArcPaths.DataId(tag.Key);
 
 					switch (extension)
 					{
@@ -776,8 +748,8 @@ public partial class MainForm : Form
 							}
 							break;
 						default:
+							// No viewer for this type, but Extract Selected File still writes it
 							HideAllBox();
-							this.SelectedFile.DestFile = null;
 							this.textBoxDetails.Lines = null;
 							break;
 					}
@@ -1033,31 +1005,10 @@ public partial class MainForm : Form
 		#region Auto load file
 
 		// Resolve file name
-		string xPackVersion, fileToken, fileName;
-		RecordId dicoKey;
-		if (recordId.Normalized.StartsWith("XPACK", StringComparison.Ordinal))
-		{
-			xPackVersion = recordId.TokensNormalized[0];
-			fileToken = recordId.TokensNormalized[1];
-			fileName = $"{fileToken}.ARC";
-			dicoKey = @$"RESOURCES\{xPackVersion}\{fileName}";
-		}
-		else if (recordId.Normalized.EndsWith(".MP3", StringComparison.Ordinal) || recordId.Normalized.EndsWith(".WAV", StringComparison.Ordinal))
-		{
-			xPackVersion = string.Empty;
-			fileToken = recordId.TokensNormalized[0];
-			fileName = $"{fileToken}.ARC";
-			dicoKey = @$"AUDIO\{fileName}";
-		}
-		else
-		{
-			xPackVersion = string.Empty;
-			fileToken = recordId.TokensNormalized[0];
-			fileName = $"{fileToken}.ARC";
-			dicoKey = @$"RESOURCES\{fileName}";
-		}
+		if (recordId.IsEmpty)
+			return;
 
-		if (ArcFileList.TryGetValue(dicoKey, out var fullpath))
+		if (ArcFileList.TryGetValue(ArcPaths.ArcFileOf(recordId), out var fullpath))
 		{
 			// Add TOC to treeview
 			using (var scope = new TreeViewUpdateScope(this))
@@ -1159,7 +1110,17 @@ public partial class MainForm : Form
 	/// <summary>
 	/// Find next occurrence of search text
 	/// </summary>
-	private void FindNext()
+	private void FindNext() => this.Find(forward: true);
+
+	/// <summary>
+	/// Find previous occurrence of search text
+	/// </summary>
+	private void FindPrevious() => this.Find(forward: false);
+
+	/// <summary>
+	/// Find the next or previous node matching the search text, wrapping around
+	/// </summary>
+	private void Find(bool forward)
 	{
 		// Validate search text
 		var searchText = this.toolStripTextBox.Text;
@@ -1169,48 +1130,30 @@ public partial class MainForm : Form
 			return;
 		}
 
+		// Snapshot the nodes once: ElementAt on the dictionary walks it from the start every time
+		var nodes = this.dicoNodes.ToArray();
+		int startFromEnd = forward ? -1 : nodes.Length;
+
 		// Check if this is a new search
-		bool isNewSearch = this.lastSearchText != searchText;
-		if (isNewSearch)
+		if (this.lastSearchText != searchText)
 		{
 			this.lastSearchText = searchText;
-			this.lastSearchPosition = -1;
+			this.lastSearchPosition = startFromEnd;
 		}
 
-		int startPos = this.lastSearchPosition + 1;
-		int count = this.dicoNodes.Count;
-
-		// First pass: search from lastSearchPosition + 1 to end
-		for (int i = startPos; i < count; i++)
+		foreach (int i in SearchOrder.Indices(nodes.Length, this.lastSearchPosition, forward))
 		{
-			var kvp = this.dicoNodes.ElementAt(i);
-			var node = kvp.Value;
-
 			// Skip root nodes (key is string.Empty)
-			if (kvp.Key == string.Empty)
+			if (nodes[i].Key == string.Empty)
 				continue;
 
-			if (SearchNode(node, searchText, i))
-				return;
-		}
-
-		// Second pass: search from beginning to lastSearchPosition (wrap around)
-		for (int i = 0; i < startPos; i++)
-		{
-			var kvp = this.dicoNodes.ElementAt(i);
-			var node = kvp.Value;
-
-			// Skip root nodes (key is string.Empty)
-			if (kvp.Key == string.Empty)
-				continue;
-
-			if (SearchNode(node, searchText, i))
+			if (SearchNode(nodes[i].Value, searchText, i))
 				return;
 		}
 
 		// Not found - show in status label and reset position
 		this.toolStripStatusLabel.Text = $"Not found: {searchText}";
-		this.lastSearchPosition = -1;
+		this.lastSearchPosition = startFromEnd;
 	}
 
 	/// <summary>
@@ -1279,63 +1222,6 @@ public partial class MainForm : Form
 		}
 
 		return false;
-	}
-
-	/// <summary>
-	/// Find previous occurrence of search text
-	/// </summary>
-	private void FindPrevious()
-	{
-		// Validate search text
-		var searchText = this.toolStripTextBox.Text;
-		if (string.IsNullOrEmpty(searchText))
-		{
-			this.toolStripStatusLabel.Text = "empty text !";
-			return;
-		}
-
-		// Check if this is a new search
-		bool isNewSearch = this.lastSearchText != searchText;
-		if (isNewSearch)
-		{
-			this.lastSearchText = searchText;
-			this.lastSearchPosition = this.dicoNodes.Count;
-		}
-
-		int startPos = this.lastSearchPosition - 1;
-		int count = this.dicoNodes.Count;
-
-		// First pass: search from lastSearchPosition - 1 down to 0
-		for (int i = startPos; i >= 0; i--)
-		{
-			var kvp = this.dicoNodes.ElementAt(i);
-			var node = kvp.Value;
-
-			// Skip root nodes (key is string.Empty)
-			if (kvp.Key == string.Empty)
-				continue;
-
-			if (SearchNode(node, searchText, i))
-				return;
-		}
-
-		// Second pass: search from Count - 1 down to lastSearchPosition (wrap around)
-		for (int i = count - 1; i > startPos; i--)
-		{
-			var kvp = this.dicoNodes.ElementAt(i);
-			var node = kvp.Value;
-
-			// Skip root nodes (key is string.Empty)
-			if (kvp.Key == string.Empty)
-				continue;
-
-			if (SearchNode(node, searchText, i))
-				return;
-		}
-
-		// Not found - show in status label and reset position
-		this.toolStripStatusLabel.Text = $"Not found: {searchText}";
-		this.lastSearchPosition = this.dicoNodes.Count;
 	}
 
 	/// <summary>

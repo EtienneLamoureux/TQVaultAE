@@ -17,6 +17,13 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\TQVaultAE.Presentation.Win32\TQVaultAE.Presentation.Win32.csproj" />
+		<ProjectReference Include="..\ARZExplorer\ArzExplorer.csproj" />
+		<ProjectReference Include="..\TQSaveFilesExplorer\TQ.SaveFilesExplorer.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Synthetic .arz/.arc builders shared with TQVaultAE.Tests. -->
+		<Compile Include="..\TQVaultAE.Tests\DbCli\DbCliFixtures.cs" Link="Fixtures\DbCliFixtures.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
