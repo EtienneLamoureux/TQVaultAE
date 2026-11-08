@@ -702,6 +702,7 @@ internal static partial class AutomationTools
 			width = item.Width,
 			height = item.Height,
 			quantity = item.DoesStack ? item.Number : (int?)null,
+			seed = item.Seed,
 			equipmentSlot = sack?.SackType == SackType.Equipment ? EquipmentRules.FindSlot(sack, item) : (int?)null,
 		};
 	}

@@ -519,16 +519,10 @@ public partial class SackPanel
 			{
 				var dlg = this.Services.Forms.Create<ItemSeedDialog>();
 				dlg.SelectedItem = focusedItem;
-				int origSeed = focusedItem.Seed;
 				dlg.ShowDialog();
 
-				// See if the seed was changed
-				if (focusedItem.Seed != origSeed)
-				{
-					// Tell the sack that it has been modified
-					this.ShownSack.IsModified = true;
+				if (dlg.NewSeed is int seed && this.Services.ItemEditService.SetSeed(this.ShownSack, focusedItem, seed))
 					this.InvalidateItemCacheItemTooltip(focusedItem);
-				}
 			}
 			else if (action == ItemActions.ForceSeed)
 			{

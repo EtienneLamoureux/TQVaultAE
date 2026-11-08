@@ -160,6 +160,17 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider) : I
 		return true;
 	}
 
+	/// <inheritdoc/>
+	public bool SetSeed(SackCollection sack, Item item, int seed)
+	{
+		if (!Item.IsValidSeed(seed) || item.Seed == seed)
+			return false;
+
+		item.Seed = seed;
+		MarkModified(sack, item);
+		return true;
+	}
+
 	/// <summary>Rolls a completion bonus from the bonus table of a relic, charm or artifact.</summary>
 	private RecordId? RollBonus(Item item)
 	{

@@ -337,6 +337,36 @@ public class ItemEditServiceTests
 		sword.IsModified.Should().BeTrue();
 	}
 
+	[Fact]
+	public void SetSeed_WithANewValidSeed_ChangesItAndMarksTheItemAndTheSack()
+	{
+		var sword = MakeItem("records/sword.dbr", "WeaponMelee_Sword");
+		sword.Seed = 1234;
+
+		this._service.SetSeed(this._sack, sword, Item.MaxSeed).Should().BeTrue();
+
+		sword.Seed.Should().Be(Item.MaxSeed);
+		sword.IsModified.Should().BeTrue();
+		this._sack.IsModified.Should().BeTrue();
+	}
+
+	[Theory]
+	[InlineData(1234)]
+	[InlineData(0)]
+	[InlineData(-5)]
+	[InlineData(Item.MaxSeed + 1)]
+	public void SetSeed_WithTheSameOrAnInvalidSeed_ChangesNothing(int seed)
+	{
+		var sword = MakeItem("records/sword.dbr", "WeaponMelee_Sword");
+		sword.Seed = 1234;
+
+		this._service.SetSeed(this._sack, sword, seed).Should().BeFalse();
+
+		sword.Seed.Should().Be(1234);
+		sword.IsModified.Should().BeFalse();
+		this._sack.IsModified.Should().BeFalse();
+	}
+
 	#endregion
 
 	[Fact]
