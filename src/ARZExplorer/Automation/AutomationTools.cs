@@ -96,6 +96,30 @@ internal static class AutomationTools
 		return GetState();
 	}
 
+	[McpServerTool(Name = "check_links", ReadOnly = true)]
+	[Description("Checks every link of the database records (load the database and the archives first, e.g. click_item loadAllFilesToolStripMenuItem): the grid's link detection, NavigateTo's resolution, the archive a click opens with only the database loaded, and (render=true) the loading each view does for every distinct target (record, texture decoded, text, sound data). Returns counts, problems by kind with examples, and writes every problem to the JSON file 'path' when given. Do not use the window while it runs.")]
+	public static string CheckLinks(
+		[Description("Only the records whose id contains this text; empty for all.")] string? contains = null,
+		[Description("Maximum number of records; 0 for all.")] int maxRecords = 0,
+		[Description("Examples per kind of problem.")] int examples = 5,
+		[Description("Also load every distinct target as its view does.")] bool render = true,
+		[Description("JSON file for the full report; empty for none.")] string? path = null,
+		[Description("Seconds before giving up.")] int timeoutSeconds = 1800)
+	{
+		var form = AutomationHost.OnUi(f => f, TimeSpan.FromSeconds(5));
+		var task = Task.Run(() => form.AutomationCheckLinks(contains, maxRecords, examples, render));
+		if (!task.Wait(TimeSpan.FromSeconds(timeoutSeconds)))
+			throw new McpException($"The check did not finish within {timeoutSeconds} s.");
+
+		var report = Json(task.Result);
+		if (!string.IsNullOrEmpty(path))
+			File.WriteAllText(path, report);
+
+		// The full list goes to the file only.
+		using var doc = JsonDocument.Parse(report);
+		return Json(doc.RootElement.EnumerateObject().Where(p => p.Name != "all").ToDictionary(p => p.Name, p => p.Value.Clone()));
+	}
+
 	[McpServerTool(Name = "decode_tex", ReadOnly = true)]
 	[Description("Reads a TEX entry of an ARC node and decodes it with the BitmapService off the UI thread, timing the read and the decoding: tells a slow or failing decoder from a UI problem.")]
 	public static string DecodeTex(

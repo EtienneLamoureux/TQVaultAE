@@ -232,6 +232,7 @@ Release builds contain none of it.
 | `find_nodes(contains, max)` | Keys of the leaf nodes containing a text (`.tex`, `U_E_LYPIKOURI`). |
 | `select_node(key)` | Selects a node as a click does: record grid, text, picture or sound. |
 | `grid_links`, `click_grid_cell(row, column)` | The link cells of a DBR record grid, and a click on one (navigates, loading the archive it needs). |
+| `check_links(contains, maxRecords, render, path)` | Every link of the database records (load everything first: `click_item("loadAllFilesToolStripMenuItem")`): the grid's link detection, `NavigateTo`'s resolution, the archives a click opens with only the database loaded, and the loading of every distinct target (record, texture decoded, text, sound data). Problems by kind with examples, the full list in the JSON file `path`. About 90 s for the whole database. |
 | `decode_tex(key)` | Reads and decodes a TEX off the UI thread, with timings: tells a decoder problem from a UI one. |
 | `capture` | PNG of the window (`DrawToBitmap`). |
 | `dialogs(clear)` | Headless state and the dialogs cancelled there. |
