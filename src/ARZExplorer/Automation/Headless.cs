@@ -34,6 +34,9 @@ internal static partial class Headless
 	/// <summary>Gets a value indicating whether ARZExplorer runs on its hidden desktop.</summary>
 	public static bool Enabled { get; private set; }
 
+	/// <summary>Gets a value indicating whether the sounds of the headless instance are muted.</summary>
+	public static bool Muted { get; private set; }
+
 	/// <summary>Gets the name of the hidden desktop, or null.</summary>
 	public static string? DesktopName { get; private set; }
 
@@ -60,6 +63,9 @@ internal static partial class Headless
 		Enabled = true;
 		_cbtProc = CbtProc;
 		_cbtHook = SetWindowsHookEx(WH_CBT, _cbtProc, IntPtr.Zero, GetCurrentThreadId());
+
+		// Sounds play through the normal code path, silently: the hidden desktop hides windows, not audio.
+		Muted = waveOutSetVolume(IntPtr.Zero, 0) == 0; // MMSYSERR_NOERROR
 		return true;
 	}
 
@@ -212,6 +218,10 @@ internal static partial class Headless
 
 	[LibraryImport("user32.dll")]
 	private static partial IntPtr GetDlgItem(IntPtr dialog, int id);
+
+	/// <summary>Sets the volume of this process' wave output (SoundPlayer); 0 mutes it.</summary>
+	[LibraryImport("winmm.dll")]
+	private static partial uint waveOutSetVolume(IntPtr device, uint volume);
 
 	[LibraryImport("user32.dll", EntryPoint = "GetClassNameW", StringMarshalling = StringMarshalling.Utf16)]
 	private static partial int GetClassName(IntPtr hWnd, [Out] char[] lpClassName, int nMaxCount);

@@ -89,7 +89,7 @@ internal static class AutomationHost
 			builder.Services
 				.AddMcpServer(options => options.ServerInfo = new() { Name = "arzexplorer", Version = "1.0.0" })
 				.WithHttpTransport(options => options.Stateless = true)
-				.WithTools([typeof(AutomationTools)]);
+				.WithTools([typeof(AutomationTools), typeof(FeatureTools)]);
 
 			var app = builder.Build();
 			app.MapMcp("/mcp");

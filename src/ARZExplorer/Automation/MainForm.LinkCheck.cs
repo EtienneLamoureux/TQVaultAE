@@ -174,10 +174,24 @@ public partial class MainForm
 				case ".TXT":
 					return TextDatabaseFactory.DecodeText(data).Length == 0 ? "empty text" : null;
 				case ".WAV":
-					return data.AsSpan().StartsWith("RIFF"u8) ? null : "not a RIFF wave";
 				case ".MP3":
-					return data.AsSpan().StartsWith("ID3"u8) || (data.Length > 1 && data[0] == 0xFF && (data[1] & 0xE0) == 0xE0)
-						? null : "not an MP3 stream";
+					// As the sound view: an MP3 is converted to a wave (SoundServiceWin), then loaded by a SoundPlayer,
+					// which reads and checks the wave data without playing it.
+					using (var wave = new MemoryStream())
+					{
+						if (nodeKey.EndsWith(".MP3", StringComparison.OrdinalIgnoreCase))
+						{
+							using var mp3 = new MemoryStream(data);
+							this.SoundService.ConvertMp3ToWav(mp3, wave);
+						}
+						else
+							wave.Write(data);
+
+						wave.Position = 0;
+						using var player = new System.Media.SoundPlayer(wave);
+						player.Load();
+						return player.IsLoadCompleted ? null : "sound not loaded";
+					}
 				default:
 					return null;
 			}

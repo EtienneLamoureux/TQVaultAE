@@ -221,7 +221,8 @@ Release builds contain none of it.
 
 - `ARZExplorer.exe --headless` runs it on a hidden desktop, like TQVault. ARZExplorer calls `MessageBox.Show` directly,
   so every message box and file dialog there is cancelled as soon as it opens and recorded with its caption and text:
-  read them with `dialogs`.
+  read them with `dialogs`. Its audio volume is set to 0 (`dialogs` reports `muted`): sounds play through the normal
+  code path without reaching the speakers.
 - Stop it with `exit`, or kill your own process id.
 
 | Tool | Does |
@@ -235,9 +236,12 @@ Release builds contain none of it.
 | `find_nodes(contains, max)` | Keys of the leaf nodes containing a text (`.tex`, `U_E_LYPIKOURI`). |
 | `select_node(key)` | Selects a node as a click does: record grid, text, picture or sound. |
 | `grid_links`, `click_grid_cell(row, column)` | The link cells of a DBR record grid, and a click on one (navigates, loading the archive it needs). |
-| `check_links(contains, maxRecords, render, path)` | Every link of the database records (load everything first: `click_item("loadAllFilesToolStripMenuItem")`): the grid's link detection, `NavigateTo`'s resolution, the archives a click opens with only the database loaded, and the loading of every distinct target (record, texture decoded, text, sound data). Problems by kind with examples, the full list in the JSON file `path`. About 90 s for the whole database. |
+| `check_links(contains, maxRecords, render, path)` | Every link of the database records (load everything first: `click_item("loadAllFilesToolStripMenuItem")`): the grid's link detection, `NavigateTo`'s resolution, the archives a click opens with only the database loaded, and the loading of every distinct target (record, texture decoded, text, sound converted and loaded by a SoundPlayer as the sound view does). Problems by kind with examples, the full list in the JSON file `path`. About 4 min for the whole database. |
 | `decode_tex(key)` | Reads and decodes a TEX off the UI thread, with timings: tells a decoder problem from a UI one. |
 | `capture` | PNG of the window (`DrawToBitmap`). |
+| `about` | Help > About without blocking: its texts and a PNG, then closes it. |
+| `drop_files(paths)` | Drops files on the window through its DragEnter and DragDrop handlers, as Explorer does. |
+| `sound_player(action)` | The sound player of a .wav or .mp3 entry: `state`, or a click on `play`, `loop`, `pause`, `stop`; the sound is then loaded, which checks its wave data. |
 | `dialogs(clear)` | Headless state and the dialogs cancelled there. |
 
 The UI tools take a timeout and report "blocked (hang)" instead of waiting forever. The call still runs once the UI

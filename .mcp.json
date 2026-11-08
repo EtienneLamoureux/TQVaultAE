@@ -3,6 +3,10 @@
     "tqvault": {
       "type": "http",
       "url": "http://127.0.0.1:47017/mcp"
+    },
+    "arzexplorer": {
+      "type": "http",
+      "url": "http://127.0.0.1:47020/mcp"
     }
   }
 }
