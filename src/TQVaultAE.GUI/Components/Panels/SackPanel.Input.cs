@@ -82,13 +82,7 @@ public partial class SackPanel
 				int selectionCount = this.selectedItems?.Count ?? 0;
 				bool singleSelectionFocused = selectionCount == 1 && focusedItem == this.selectedItems![0];
 
-				var actions = ItemActionRules.Available(new ItemActionContext(
-					focusedItem
-					, selectionCount
-					, singleSelectionFocused
-					, isEquipmentReadOnly
-					, USettings.AllowItemEdit
-					, USettings.AllowItemCopy));
+				var actions = ItemActionRules.Available(this.ActionContext(focusedItem, selectionCount, singleSelectionFocused));
 
 				this.CustomContextMenu.Items.Clear();
 
@@ -145,6 +139,19 @@ public partial class SackPanel
 			}
 		}
 	}
+
+	/// <summary>
+	/// What the item actions of this sack may do, for the context menu and the keys: the equipment of a read-only
+	/// player cannot change.
+	/// </summary>
+	private ItemActionContext ActionContext(Item? focusedItem, int selectionCount, bool singleSelectionFocused)
+		=> new(
+			focusedItem
+			, selectionCount
+			, singleSelectionFocused
+			, ReadOnly: USettings.PlayerReadonly == true && this.SackType == SackType.Equipment
+			, USettings.AllowItemEdit
+			, USettings.AllowItemCopy);
 
 	/// <summary>
 	/// Changes the background of the item under the mouse so that it appears highlighted
@@ -338,53 +345,16 @@ public partial class SackPanel
 				this.Refresh();
 				e.Handled = true;
 			}
-			else if (e.KeyChar == 'c' && USettings.AllowItemCopy == true)
+			else if (!this.DragInfo.IsActive)
 			{
-				// Copy
+				// c copies, d duplicates, Backspace deletes the item under the cursor, by the context menu's rules
+				// (nothing is deleted from the equipment of a read-only player). Not while an item is dragged: it
+				// would replace the dragged item.
 				Item? focusedItem = this.FindItem(this.LastCellWithFocus);
-
-				if (focusedItem is not null)
+				var action = ItemActionRules.KeyAction(e.KeyChar, this.ActionContext(focusedItem, 0, false));
+				if (action != ItemActions.None)
 				{
-					// Set DragInfo to focused item.
-					this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
-
-					// copy the item
-					Item newItem = focusedItem.Duplicate(false);
-
-					// now drag it
-					this.DragInfo.MarkModified(newItem);
-					this.Refresh();
-					e.Handled = true;
-				}
-			}
-			else if (e.KeyChar == (char)8)
-			{
-				// Delete
-				Item? focusedItem = this.FindItem(this.LastCellWithFocus);
-
-				if (focusedItem is not null)
-				{
-					this.DeleteItem(focusedItem, false);
-					this.Refresh();
-					e.Handled = true;
-				}
-			}
-			else if (e.KeyChar == 'd' && USettings.AllowItemCopy == true)
-			{
-				// Duplicate
-				Item? focusedItem = this.FindItem(this.LastCellWithFocus);
-
-				if (focusedItem is not null)
-				{
-					// Set DragInfo to focused item.
-					this.DragInfo.Set(this, this.Sack, focusedItem, new Point(1, 1));
-
-					// duplicate the item
-					Item newItem = focusedItem.Duplicate(true);
-
-					// now drag it
-					this.DragInfo.MarkModified(newItem);
-					this.Refresh();
+					this.RunFocusedItemAction(action, focusedItem!);
 					e.Handled = true;
 				}
 			}

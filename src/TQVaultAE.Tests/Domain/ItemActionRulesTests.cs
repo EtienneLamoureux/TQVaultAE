@@ -37,6 +37,39 @@ public class ItemActionRulesTests
 	public void IsSuitableFor_OriginalPlayerOnlyTakesBaseGameItems(string baseItemId, bool immortalThronePlayer, bool expected)
 		=> ItemActionRules.IsSuitableFor(new Item { BaseItemId = RecordId.Create(baseItemId) }, immortalThronePlayer).Should().Be(expected);
 
+	private static ItemActions Key(char key, Item? item, bool readOnly = false, bool allowCopy = true, int selectionCount = 0)
+		=> ItemActionRules.KeyAction(key, new ItemActionContext(item, selectionCount, false, readOnly, AllowItemEdit: true, allowCopy));
+
+	[Theory]
+	[InlineData('c', ItemActions.Copy)]
+	[InlineData('d', ItemActions.Duplicate)]
+	[InlineData('\b', ItemActions.Delete)]
+	[InlineData('x', ItemActions.None)]
+	public void KeyAction_MapsTheKeysToTheirAction(char key, ItemActions expected)
+		=> Key(key, Sword()).Should().Be(expected);
+
+	[Fact]
+	public void KeyAction_ReadOnlyEquipment_BackspaceDoesNotDelete_CopyStillWorks()
+	{
+		Key('\b', Sword(), readOnly: true).Should().Be(ItemActions.None);
+		Key('c', Sword(), readOnly: true).Should().Be(ItemActions.Copy);
+	}
+
+	[Fact]
+	public void KeyAction_CopyDisabled_NoCopyNorDuplicate()
+	{
+		Key('c', Sword(), allowCopy: false).Should().Be(ItemActions.None);
+		Key('d', Sword(), allowCopy: false).Should().Be(ItemActions.None);
+	}
+
+	[Fact]
+	public void KeyAction_ActsOnTheItemUnderTheCursor_NotOnTheSelection()
+	{
+		// Copy is not offered for a selection, but the key copies the item under the cursor.
+		Key('c', Sword(), selectionCount: 3).Should().Be(ItemActions.Copy);
+		Key('\b', null, selectionCount: 3).Should().Be(ItemActions.None);
+	}
+
 	[Fact]
 	public void Available_NothingUnderCursorNorSelected_OffersNothing()
 		=> For(null).Should().Be(ItemActions.None);

@@ -161,6 +161,28 @@ public static class ItemActionRules
 	}
 
 	/// <summary>
+	/// The action of a key pressed over a sack, when <paramref name="context"/> allows it, as its context menu would:
+	/// <c>c</c> copies, <c>d</c> duplicates and Backspace deletes the item under the cursor. The keys act on that item
+	/// alone, never on the selection.
+	/// </summary>
+	/// <returns>The action to run, or <see cref="ItemActions.None"/>.</returns>
+	public static ItemActions KeyAction(char key, in ItemActionContext context)
+	{
+		if (context.Item is null)
+			return ItemActions.None;
+
+		var action = key switch
+		{
+			'c' => ItemActions.Copy,
+			'd' => ItemActions.Duplicate,
+			'\b' => ItemActions.Delete,
+			_ => ItemActions.None,
+		};
+
+		return action & Available(context with { SelectionCount = 0, ItemIsTheSelection = false });
+	}
+
+	/// <summary>
 	/// Indicates whether <paramref name="item"/> can be equipped by a player of that game:
 	/// a Titan Quest original player only takes the items of the base game.
 	/// </summary>
