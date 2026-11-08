@@ -744,4 +744,33 @@ public class VaultServiceTests
 
 		return modified.Count;
 	}
+
+	[Theory]
+	[InlineData(true, """D:\Vaults""")]
+	[InlineData(false, """C:\Mine""")]
+	public void GetVaultList_UpdatesTheVaultPathOnlyWhenTheFolderFellBackToItsDefault(bool folderChanged, string expectedPath)
+	{
+		this._userSettings.VaultPath = """C:\Mine""";
+		this._mockGamePathService.Setup(g => g.GetVaultList()).Returns(["Main Vault", "Rings"]);
+		this._mockGamePathService.SetupGet(g => g.VaultFolderChanged).Returns(folderChanged);
+		this._mockGamePathService.SetupGet(g => g.TQVaultSaveFolder).Returns("""D:\Vaults""");
+
+		var vaults = this._vaultService.GetVaultList();
+
+		vaults.Should().Equal("Main Vault", "Rings");
+		this._userSettings.VaultPath.Should().Be(expectedPath);
+	}
+
+	[Theory]
+	[InlineData(true, "Rings")]
+	[InlineData(false, VaultService.MAINVAULT)]
+	public void ResolveVaultToLoad_LoadLastVault_ChecksTheVaultFile(bool fileExists, string expected)
+	{
+		this._userSettings.LoadLastVault = true;
+		this._userSettings.LastVaultName = "Rings";
+		this._mockGamePathService.Setup(g => g.GetVaultFile("Rings")).Returns("""C:\Vaults\Rings.vault""");
+		this._mockFileIO.Setup(f => f.Exists("""C:\Vaults\Rings.vault""")).Returns(fileExists);
+
+		this._vaultService.ResolveVaultToLoad("Potions").Should().Be(expected);
+	}
 }

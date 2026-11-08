@@ -68,12 +68,7 @@ public partial class MainForm
 	/// <param name="loadVault">Indicates whether the list will also load the last vault selected.</param>
 	private void GetVaultList(bool loadVault)
 	{
-		string[] vaults = GamePathResolver.GetVaultList();
-
-		// Added by VillageIdiot
-		// See if the Vault path was set during GetVaultList and update the key accordingly
-		if (GamePathResolver.VaultFolderChanged)
-			this.vaultService.UpdateVaultPath(GamePathResolver.TQVaultSaveFolder);
+		string[] vaults = this.vaultService.GetVaultList();
 
 		// There was something already selected so we will save it.
 		string? currentVault = (this.vaultListComboBox.Items.Count > 0) ? this.vaultListComboBox.SelectedItemText() : VaultService.MAINVAULT;
@@ -89,16 +84,8 @@ public partial class MainForm
 		var choices = this.vaultService.BuildVaultChoices(vaults, Resources.MainFormMaintainVault, secondaryVault);
 		this.vaultListComboBox.Items.AddRange(choices.ToArray<object>());
 
-		// See if we should load the last loaded vault
-		if (base.USettings.LoadLastVault)
-		{
-			currentVault = base.USettings.LastVaultName;
-
-			// Make sure there is something in the config file to load else load the Main Vault
-			// We do not want to create new here.
-			if (string.IsNullOrEmpty(currentVault) || !FileIO.Exists(GamePathResolver.GetVaultFile(currentVault)))
-				currentVault = VaultService.MAINVAULT;
-		}
+		// The last loaded vault when it is set to load, else the one already selected.
+		currentVault = this.vaultService.ResolveVaultToLoad(currentVault ?? VaultService.MAINVAULT);
 
 		if (loadVault)
 		{
@@ -205,6 +192,8 @@ public partial class MainForm
 	{
 		try
 		{
+			// Saves all modifications first: the dialog and the delete confirmation are modal, so nothing changes until
+			// the vault is copied, deleted or renamed below.
 			this.SaveAllModifiedFiles();
 
 			var dlg = this.Services.Forms.Create<VaultMaintenanceDialog>();
@@ -246,9 +235,6 @@ public partial class MainForm
 				}
 				else if (dlg.Action == VaultMaintenance.Copy && newName is not null && oldName is not null)
 				{
-					// Make sure we save all modifications first.
-					this.SaveAllModifiedFiles();
-
 					if (this.vaultService.CopyVault(oldName, newName))
 					{
 						// Add the new name to the list
@@ -264,9 +250,6 @@ public partial class MainForm
 				}
 				else if (dlg.Action == VaultMaintenance.Delete && oldName is not null && deleteConfirmed)
 				{
-					// Make sure we save all modifications first.
-					this.SaveAllModifiedFiles();
-
 					this.vaultService.DeleteVault(oldName);
 
 					// Remove the deleted file from the list.
@@ -279,9 +262,6 @@ public partial class MainForm
 				}
 				else if (dlg.Action == VaultMaintenance.Rename && newName is not null && oldName is not null)
 				{
-					// Make sure we save all modifications first.
-					this.SaveAllModifiedFiles();
-
 					if (this.vaultService.RenameVault(oldName, newName))
 					{
 						// Get rid of the old name from the list
