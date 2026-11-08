@@ -87,6 +87,9 @@ public partial class ForgePanel : UserControl, IScalingControl
 		: IsStrictMode ? ForgeMode.Strict
 		: ForgeMode.Game;
 
+	/// <summary>What the current mode allows.</summary>
+	private ForgeCapabilities Capabilities => ForgeRules.Capabilities(this.Mode);
+
 	private readonly string OfTheTinkererTranslation;
 
 	private readonly Color PictureBoxBaseColor = Color.FromArgb(32 * 7, 46, 41, 31);
@@ -101,7 +104,7 @@ public partial class ForgePanel : UserControl, IScalingControl
 		get
 		{
 			if (Selection.Base is null) return null;
-			return _PreviewItem ??= this.Services.ForgeService.Preview(Selection, IsGodMode, GodPart);
+			return _PreviewItem ??= this.Services.ForgeService.Preview(Selection, this.Capabilities.AnyPartOfMaterial, GodPart);
 		}
 	}
 
@@ -235,57 +238,22 @@ public partial class ForgePanel : UserControl, IScalingControl
 			FontService.GetFont(10F, FontStyle.Bold, UIService.FontZoom),
 			UIService.Scale);
 
-		static RichToolTip.Line Allow(string text) => new(text, true);
-		static RichToolTip.Line Limit(string text) => new(text, false);
-		RichToolTip.Section Base(params RichToolTip.Line[] lines) => new(Resources.ForgeCapSectionBase, lines);
-		RichToolTip.Section Affixes(params RichToolTip.Line[] lines) => new(Resources.ForgeCapSectionAffixes, lines);
-		RichToolTip.Section Relics(params RichToolTip.Line[] lines) => new(Resources.ForgeCapSectionRelics, lines);
-		var tinkerer = string.Format(Resources.ForgeCapSecondRelicTinkerer, OfTheTinkererTranslation);
-
-		this.modeToolTip.Set(scalingRadioButtonGame, new RichToolTip.Card(
-			Resources.ForgeGameMode, scalingRadioButtonGame.ForeColor, Resources.ForgeGameModeTT,
-			[
-				Base(Limit(Resources.ForgeCapBaseGear), Limit(Resources.ForgeCapNoEpicLegendary)),
-				Affixes(
-					Limit(Resources.ForgeCapSameBaseItem),
-					Limit(Resources.ForgeCapLevelRequirement),
-					Limit(Resources.ForgeCapSameGearType),
-					Limit(Resources.ForgeCapNotRarerThanBase),
-					Limit(Resources.ForgeCapNoEpicLegendary),
-					Limit(Resources.ForgeCapNeedsAffix)),
-				Relics(Limit(Resources.ForgeCapRelicOnly), Limit(Resources.ForgeCapRelicGear), Limit(tinkerer)),
-			]));
-
-		this.modeToolTip.Set(scalingRadioButtonStrict, new RichToolTip.Card(
-			Resources.ForgeStrictMode, scalingRadioButtonStrict.ForeColor, Resources.ForgeStrictModeTT,
-			[
-				Base(Limit(Resources.ForgeCapBaseGear), Limit(Resources.ForgeCapNoEpicLegendary)),
-				Affixes(
-					Limit(Resources.ForgeCapSameGearType),
-					Limit(Resources.ForgeCapNotRarerThanBase),
-					Limit(Resources.ForgeCapNoEpicLegendary),
-					Limit(Resources.ForgeCapNeedsAffix)),
-				Relics(Limit(Resources.ForgeCapRelicOnly), Limit(Resources.ForgeCapRelicGear), Limit(tinkerer)),
-			],
-			Resources.ForgeCapResetOnStricter));
-
-		this.modeToolTip.Set(scalingRadioButtonRelax, new RichToolTip.Card(
-			Resources.ForgeRelaxMode, scalingRadioButtonRelax.ForeColor, string.Format(Resources.ForgeRelaxModeTT, OfTheTinkererTranslation),
-			[
-				Base(Limit(Resources.ForgeCapBaseGear), Allow(Resources.ForgeCapEpicLegendary)),
-				Affixes(Allow(Resources.ForgeCapAnyGearType), Allow(Resources.ForgeCapEpicLegendary), Limit(Resources.ForgeCapNeedsAffix)),
-				Relics(Allow(Resources.ForgeCapRelicOrSocketed), Limit(Resources.ForgeCapRelicGear), Allow(Resources.ForgeCapSecondRelicFree)),
-			],
-			Resources.ForgeCapResetOnStricter));
-
-		this.modeToolTip.Set(scalingRadioButtonGod, new RichToolTip.Card(
-			Resources.ForgeGodMode, scalingRadioButtonGod.ForeColor, Resources.ForgeGodModeTT,
-			[
-				Base(Allow(Resources.ForgeCapAnyItem)),
-				Affixes(Allow(Resources.ForgeCapAnyPart)),
-				Relics(Allow(Resources.ForgeCapAnyRelicSlot), Allow(Resources.ForgeCapSecondRelicFree)),
-			],
-			Resources.ForgeCapResetOnStricter));
+		foreach (var (radio, mode) in new[]
+		{
+			(scalingRadioButtonGame, ForgeMode.Game),
+			(scalingRadioButtonStrict, ForgeMode.Strict),
+			(scalingRadioButtonRelax, ForgeMode.Relax),
+			(scalingRadioButtonGod, ForgeMode.God),
+		})
+		{
+			var card = ForgeModeCardText.Build(mode, OfTheTinkererTranslation);
+			this.modeToolTip.Set(radio, new RichToolTip.Card(
+				card.Title,
+				radio.ForeColor,
+				card.Summary,
+				card.Sections.Select(s => new RichToolTip.Section(s.Title, s.Lines.Select(l => new RichToolTip.Line(l.Text, l.Allowed)).ToList())).ToList(),
+				card.Footer));
+		}
 	}
 
 	#region Backgrounds
@@ -507,7 +475,7 @@ public partial class ForgePanel : UserControl, IScalingControl
 
 	private void ForgeItem()
 	{
-		var result = this.Services.ForgeService.Forge(Rules, Selection, Sacks, IsGodMode, GodPart, this.HardcoreMode);
+		var result = this.Services.ForgeService.Forge(Rules, Selection, Sacks, this.Capabilities.AnyPartOfMaterial, GodPart, this.HardcoreMode);
 		if (result.Problem is { } problem)
 		{
 			Notify(problem);
@@ -609,7 +577,7 @@ public partial class ForgePanel : UserControl, IScalingControl
 		if (ForgeRules.IsDowngrade(lastMode, mode))
 			ResetSelection();
 
-		if (mode == ForgeMode.God)
+		if (ForgeRules.Capabilities(mode).AnyPartOfMaterial)
 			ShowGodModeRows();
 		else
 			HideGodModeRows();

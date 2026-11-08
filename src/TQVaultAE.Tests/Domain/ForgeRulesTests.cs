@@ -216,6 +216,112 @@ public class ForgeRulesTests
 			.Accepted.Should().BeTrue();
 	}
 
+	#region Capabilities: each one is what CheckDrop enforces
+
+	public static TheoryData<ForgeMode> AllModes => [.. Enum.GetValues<ForgeMode>()];
+
+	[Theory]
+	[InlineData(ForgeMode.Game, false)]
+	[InlineData(ForgeMode.Strict, true)]
+	[InlineData(ForgeMode.Relax, true)]
+	[InlineData(ForgeMode.God, true)]
+	public void Capabilities_StricterModeExists_ExceptForTheStrictestMode(ForgeMode mode, bool expected)
+		=> ForgeRules.Capabilities(mode).StricterModeExists.Should().Be(expected);
+
+	[Theory]
+	[MemberData(nameof(AllModes))]
+	public void Capabilities_GearOnly_MatchesWhetherARelicCanBeTheBaseItem(ForgeMode mode)
+		=> this._rules.CheckDrop(mode, ForgeSlot.Base, Relic(ShieldRelic), With()).Accepted
+			.Should().Be(!ForgeRules.Capabilities(mode).GearOnly);
+
+	[Theory]
+	[MemberData(nameof(AllModes))]
+	public void Capabilities_EpicLegendaryAllowed_MatchesTheBaseAndAffixChecks(ForgeMode mode)
+	{
+		var allowed = ForgeRules.Capabilities(mode).EpicLegendaryAllowed;
+		var epicBase = SwordItem(classification: "EPIC");
+
+		this._rules.CheckDrop(mode, ForgeSlot.Base, SwordItem(classification: "EPIC"), With()).Accepted.Should().Be(allowed);
+		this._rules.CheckDrop(mode, ForgeSlot.Prefix, SwordItem(classification: "EPIC"), With(epicBase)).Accepted.Should().Be(allowed);
+	}
+
+	[Theory]
+	[MemberData(nameof(AllModes))]
+	public void Capabilities_AffixFromSameBaseItem_MatchesThePrefixCheck(ForgeMode mode)
+		=> this._rules.CheckDrop(mode, ForgeSlot.Prefix, SwordItem(@"records\item\sword02.dbr"), With(SwordItem())).Rejection
+			.Should().Be(ForgeRules.Capabilities(mode).AffixFromSameBaseItem ? ForgeMessage.PrefixSuffixOfAnotherBaseItem : null);
+
+	[Theory]
+	[MemberData(nameof(AllModes))]
+	public void Capabilities_AffixLevelNotAboveBase_MatchesThePrefixCheck(ForgeMode mode)
+	{
+		var stronger = SwordItem();
+		this._levels[stronger] = 20;
+
+		this._rules.CheckDrop(mode, ForgeSlot.Prefix, stronger, With(SwordItem())).Rejection
+			.Should().Be(ForgeRules.Capabilities(mode).AffixLevelNotAboveBase ? ForgeMessage.PrefixSuffixHigherLevelRequirement : null);
+	}
+
+	[Theory]
+	[MemberData(nameof(AllModes))]
+	public void Capabilities_AffixFromSameGearType_MatchesThePrefixCheck(ForgeMode mode)
+	{
+		// Same record as the base item, so that only the gear type differs
+		var shield = Make(Shield, @"records\item\sword01.dbr", prefix: @"records\prefix\p01.dbr");
+
+		this._rules.CheckDrop(mode, ForgeSlot.Prefix, shield, With(SwordItem())).Rejection
+			.Should().Be(ForgeRules.Capabilities(mode).AffixFromSameGearType ? ForgeMessage.PrefixSuffixOfAnotherGearType : null);
+	}
+
+	[Theory]
+	[MemberData(nameof(AllModes))]
+	public void Capabilities_AffixNotRarerThanBase_MatchesThePrefixCheck(ForgeMode mode)
+		=> this._rules.CheckDrop(mode, ForgeSlot.Prefix, SwordItem(classification: "RARE"), With(SwordItem())).Rejection
+			.Should().Be(ForgeRules.Capabilities(mode).AffixNotRarerThanBase ? ForgeMessage.PrefixSuffixBetterThanBase : null);
+
+	[Theory]
+	[MemberData(nameof(AllModes))]
+	public void Capabilities_AffixMustBePresent_MatchesThePrefixAndSuffixChecks(ForgeMode mode)
+	{
+		var required = ForgeRules.Capabilities(mode).AffixMustBePresent;
+		var plain = SwordItem(prefix: null, suffix: null);
+
+		this._rules.CheckDrop(mode, ForgeSlot.Prefix, plain, With(SwordItem())).Rejection
+			.Should().Be(required ? ForgeMessage.MustHavePrefix : null);
+		this._rules.CheckDrop(mode, ForgeSlot.Suffix, plain, With(SwordItem())).Rejection
+			.Should().Be(required ? ForgeMessage.MustHaveSuffix : null);
+	}
+
+	[Theory]
+	[MemberData(nameof(AllModes))]
+	public void Capabilities_RelicSource_MatchesWhatTheRelicSlotAccepts(ForgeMode mode)
+	{
+		var source = ForgeRules.Capabilities(mode).RelicSource;
+		var current = With(Make(Shield, @"records\item\shield01.dbr"));
+		var socketed = Make(Shield, @"records\item\shield02.dbr");
+		socketed.relicID = ShieldRelic;
+
+		this._rules.CheckDrop(mode, ForgeSlot.Relic1, Relic(ShieldRelic), current).Accepted.Should().BeTrue();
+		this._rules.CheckDrop(mode, ForgeSlot.Relic1, socketed, current).Accepted
+			.Should().Be(source != ForgeRelicSource.RelicOrCharm);
+		this._rules.CheckDrop(mode, ForgeSlot.Relic1, SwordItem(), current).Accepted
+			.Should().Be(source == ForgeRelicSource.Anything);
+	}
+
+	[Theory]
+	[MemberData(nameof(AllModes))]
+	public void Capabilities_RelicMustFitBase_MatchesTheRelicCheck(ForgeMode mode)
+		=> this._rules.CheckDrop(mode, ForgeSlot.Relic1, Relic(ShieldRelic), With(SwordItem())).Rejection
+			.Should().Be(ForgeRules.Capabilities(mode).RelicMustFitBase ? ForgeMessage.RelicNotAllowed : null);
+
+	[Theory]
+	[MemberData(nameof(AllModes))]
+	public void Capabilities_SecondRelicNeedsTinkerer_MatchesTheSecondRelicCheck(ForgeMode mode)
+		=> this._rules.CheckDrop(mode, ForgeSlot.Relic2, Relic(ShieldRelic), With(Make(Shield, @"records\item\shield01.dbr"))).Rejection
+			.Should().Be(ForgeRules.Capabilities(mode).SecondRelicNeedsTinkerer ? ForgeMessage.MustHaveTinkeredSuffix : null);
+
+	#endregion
+
 	[Fact]
 	public void CheckForge_NeedsBaseAndAnotherItem()
 	{

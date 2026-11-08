@@ -169,7 +169,7 @@ Debug builds of `TQVaultAE.GUI` host an MCP server inside the app at `http://127
 | Context menus | `context_menu(panel, x, y)`, which returns the entries of the right-click menu and closes it; `context_menu_click(panel, x, y, path)` clicks one (`Move Item To > Bag #3`); `select_items(panel, cells)` Ctrl-clicks a selection; `press_key(panel, x, y, key)` for the c, d and Backspace keys; `bag_menu(panel, bag, path?)` for the bag buttons, `bag_settings_pick_icon` in the icon picker |
 | Highlight | `highlight_filters(check, uncheck, apply)` ticks the highlight filter check boxes and applies them |
 | Layout and scaling | `zoom(step)` (in, out, reset); `control_tree(form, depth)` for control bounds and fonts; `text_fit(form)` for text cut by its control (check each UI language); `move_window(x, y, form?)` to move the window or a dialog to a monitor of another DPI |
-| Forge | `forge_show`, `forge_state`, `forge_set_mode`, `forge_set_hardcore`, `forge_drop(slot)`, `forge_select_part`, `forge_drag_cursor`, `forge_reset`, `forge_forge`, `forge_cancel` |
+| Forge | `forge_show`, `forge_state`, `forge_set_mode`, `forge_mode_card(mode)` (the text and PNG of a mode card), `forge_set_hardcore`, `forge_drop(slot)`, `forge_select_part`, `forge_drag_cursor`, `forge_reset`, `forge_forge`, `forge_cancel` |
 | Evidence | `capture(control)`, a PNG made with `DrawToBitmap` that works even when the window is hidden; `recent_log(n)`; `recent_sounds(n)`, with the sounds played and whether their data loaded |
 
 Rules:

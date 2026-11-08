@@ -1,5 +1,7 @@
 using System.ComponentModel;
+using System.Drawing.Imaging;
 using ModelContextProtocol;
+using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using TQVaultAE.Domain.Forge;
 using TQVaultAE.GUI.Components.Panels;
@@ -39,6 +41,38 @@ internal static partial class AutomationTools
 				throw new McpException($"Unknown mode '{mode}'. Modes: {string.Join(", ", Enum.GetNames<ForgeMode>())}");
 			forge.AutomationSetMode(value);
 		});
+
+	[McpServerTool(Name = "forge_mode_card", ReadOnly = true)]
+	[Description("Returns the card shown when the mouse rests on a forge mode radio button (Game, Strict, Relax or God): its title, summary, sections with their lines (allowed or restricted) and footer, with a PNG of the card drawn as the tool tip draws it. Nothing is changed.")]
+	public static IEnumerable<ContentBlock> ForgeModeCard([Description("Game, Strict, Relax or God.")] string mode)
+	{
+		var (json, png) = AutomationHost.OnUi(form =>
+		{
+			if (!Enum.TryParse<ForgeMode>(mode, true, out var value))
+				throw new McpException($"Unknown mode '{mode}'. Modes: {string.Join(", ", Enum.GetNames<ForgeMode>())}");
+			var forge = form.AutomationForgePanel ?? throw new McpException("The forge is not created yet. Use forge_show first.");
+			var (card, image) = forge.AutomationModeCard(value) ?? throw new McpException("The mode cards are not set yet.");
+			using (image)
+			using (var stream = new MemoryStream())
+			{
+				image.Save(stream, ImageFormat.Png);
+				return (Serialize(new
+				{
+					mode = value.ToString(),
+					card.Title,
+					card.Summary,
+					sections = card.Sections.Select(s => new
+					{
+						s.Title,
+						lines = s.Lines.Select(l => (l.Allowed ? "+ " : "- ") + l.Text).ToList(),
+					}).ToList(),
+					card.Footer,
+				}), stream.ToArray());
+			}
+		});
+
+		return [new TextContentBlock { Text = json }, ImageContentBlock.FromBytes(png, "image/png")];
+	}
 
 	[McpServerTool(Name = "forge_set_hardcore", Destructive = true)]
 	[Description("Checks or unchecks the Hardcore box: in hardcore, forging consumes the material items.")]
