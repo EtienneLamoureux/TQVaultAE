@@ -115,6 +115,27 @@ Risk: low (pure code, few callers), med (state or threading), high (core drag an
 | T7 | `ForgePanel.cs:484-686` | Forge commit, consuming materials, reset on mode downgrade | `ForgeService`, `ForgeRules.IsDowngrade` | low-med | done `4f861e0`; preview item `e1fba5c` |
 | T8 | `HighlightFilters.cs:195-385` | Building the filter values, "any filter active" | `HighlightFilterValues.IsEmpty`, `HighlightService` | low | done `9f42903` |
 
+### Second sweep (lot 11)
+
+A second sweep after lot 10 (2026-11-08) found these. Line numbers are from that day.
+
+| # | Where | What | Target | Risk | Status |
+|---|---|---|---|---|---|
+| L1 | `MainForm.Player.cs:201-282`, `MainForm.Stash.cs:46-110`, `MainForm.Loading.cs:234-235` | 4 nearly identical character load wrappers, each with the rule "a TQ original character has no player, transfer or relic stash"; the relic stash one does not log its error | `PlayerService`/`StashService.LoadCharacterSession` returning one result | med | to do |
+| L2 | `MainForm.Panel.cs:263-408, 436-438` | Auto-move re-implements placement (stash availability, free cells, add, location) and builds the container name from the file name, unlike `SackPanel.PlaceHere` | `ItemMovementService.TryPlace`, stash rule in `AutoMovePlanner` | med-high | to do |
+| L3 | `VaultPanel.cs:315-349, 427-447` | `CurrentBag` setter writes the selected bag into the vault and marks it modified; `AssignSacks` clamps and restores the bag | `VaultService.RememberSelectedBag` / `ResolveInitialBag` | low-med | to do |
+| L4 | `StashPanel.cs:382-481`, `StashPanel.BagButtons.cs:86-91`, `StashPanel.PlayerInfo.cs:40` | 3 copied bag setters re-set `StashType`; a copy of `StashService.ClampBagId`; equipment bag found by comparing translated text | `StashService` bag descriptor; compare the bag id | low | to do |
+| L5 | `MainForm.Vault.cs:75-101` | Copy of the `StartupSelection` vault rule; `VaultFolderChanged` updates the path from the UI | `StartupSelection` / `VaultService.ResolveVaultToLoad` | low | to do |
+| L6 | `ComboBoxCharacter.cs:681-823`, `ComboBoxCharacterItem.cs:136` | Archive/unarchive all, globally and per tag: 4 copies of the selection and loop; tags loaded in the display refresh | `PlayerService.SetArchived(saves, archive, tag)`; tags loaded with the list | low | to do |
+| L7 | `BagButtonSettings.cs:268-292, 382-391, 561-621` | Bag icon validation, building `BagButtonIconInfo`, simple-mode rule, icon cell de-duplication; marks the sack modified when nothing changed | `BagButtonIconInfo.Create` + `Validate` | low | to do |
+| L8 | `CharacterEditDialog.cs:165-182, 263-264`, `ComboBoxCharacterItem.cs:108-121` | Mastery summary computed twice; "XP = level minimum + 1" rule in the dialog | `CharacterEditService` / `PlayerInfoText`; `PlayerLevel.LevelStartXp` | low | to do |
+| L9 | `SackPanel.ContextMenuHandlers.cs:501-515`, `ItemSeedDialog.cs:100-113` | The seed dialog sets the seed and `IsModified`; the panel compares old and new seed | `ItemEditService.SetSeed` | low | to do |
+| L10 | `SackPanel.ContextMenuHandlers.cs:184-284`, `MainForm.Clipboard.cs:11-34`, `VaultPanel.ContextMenu.cs:141-191` | Single item vs selection serialization in 4 handlers; `File.WriteAllText` in the GUI; PasteBin tab name built in the panel | `ItemExchangeService.SerializeSelection` / `ExportToFile` / `ExportTabToPasteBinAsync` | low | to do |
+| L11 | `VaultPanel.ContextMenu.cs:31-43`, `Models/CsvDelimiter.cs`, `SettingsDialog.cs:414-432` | `CsvDelimiter` and its parsing in the GUI; the settings dialog reads the saved value, not the one edited | `CsvDelimiter` in Config/Application; `VaultService.BuildCsvExport` reads the setting | low | to do |
+| L12 | `MainForm.Search.cs:94-147` | Search result → panel and bag index arithmetic; unreachable `StashType` branch | `SearchResultNavigation.Resolve` | low-med | to do |
+| L13 | `ForgePanel.cs:230-289` | Mode cards hard-code what each forge mode allows | `ForgeRules.Capabilities(mode)` | low | to do |
+| L14 | `SackPanel.cs:572-579`, `SackPanel.Input.cs:44`, `SackPanel.SackManagement.cs:98, 131`, `DragDrop.cs:111-117`, `EquipmentPanel.DragDrop.cs:119` | Read-only rule computed 3 times; `IsCurrentPlayerReadOnly` used only by commented-out code | One rule (`ItemActionRules` context or `PlayerService.IsSackReadOnly`); dead code removed | low | to do |
+
 ## What stays in the GUI
 
 `IItemProvider` is the last Data provider in `GuiServices`. Its uses read or cache the display text of an item, deep in the
@@ -147,3 +168,4 @@ Each lot is one commit (or a few), with unit tests on the moved code, and is che
 8. **Settings and character edit**: S5, S8. Done.
 9. **Item tooltip content**: T5. Done.
 10. **Last**: I8 swap, I9 drop rules; then remove the Data providers from `GuiServices`. Done (`IItemProvider` kept).
+11. **Second sweep**: L1-L14, one worktree session each, merged one by one.
