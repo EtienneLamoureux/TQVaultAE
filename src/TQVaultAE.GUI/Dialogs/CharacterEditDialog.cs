@@ -55,7 +55,8 @@ internal sealed partial class CharacterEditDialog : VaultForm
 		new[] {
 				this.attribGroupBox,
 				this.levelingGroupBox,
-				this.MasteriesGroupBox
+				this.MasteriesGroupBox,
+				this.SkillsGroupBox
 			}.SelectMany(gb => gb.Controls.OfType<Control>(), (gb, child) => (gb, child))
 			.ToList()
 			.ForEach(tup => tup.gb.Font = tup.child.Font = FontService.GetFontLight(11F));
@@ -107,7 +108,9 @@ internal sealed partial class CharacterEditDialog : VaultForm
 				, Health: Convert.ToInt32(healthUpDown.Value)
 				, Mana: Convert.ToInt32(manacUpDown.Value)
 				, ResetAttributes: mustResetAttributes
-				, ResetMasteries: masteriesResetRequired);
+				, ResetMasteries: masteriesResetRequired
+				, SkillRecords: this._skills?.Changed == true ? this._skills.BuildSkillRecords() : null
+				, MasteriesChanged: this._skills?.MasteriesChanged == true);
 
 			this.Services.CharacterEditService.Apply(PlayerCollection, request);
 
@@ -162,25 +165,6 @@ internal sealed partial class CharacterEditDialog : VaultForm
 				= this.Mastery2NameScalingLabel.Visible
 					= this.Mastery2ValueScalingLabel.Visible = false;
 
-		var dbr = Info.ActiveMasteriesRecordNames;
-		if (dbr.Length != 0)
-		{
-			for (int i = 0; i < dbr.Length; i++)
-			{
-				var rec = dbr[i];
-				var recId = rec.ToRecordId();
-				var relatedSkills = Info.GetSkillsByBaseRecordName(recId);
-				var relatedPoints = relatedSkills.Sum(s => s.skillLevel);
-				var masteryName = this.TranslationService.TranslateXTag(this.Services.CharacterEditService.GetMasteryDescriptionTag(recId));
-				var label = this.Controls.Find($"Mastery{i + 1}NameScalingLabel", true).First();
-				label.Text = string.Format(label.Tag?.ToString() ?? "{0}", masteryName);
-				label.Visible = true;
-				var value = this.Controls.Find($"Mastery{i + 1}ValueScalingLabel", true).First();
-				value.Text = string.Format(value.Tag?.ToString() ?? "{0} ({1})", relatedSkills.Count(), relatedPoints);
-				value.Visible = true;
-			}
-		}
-
 		if (Info.BaseStrength > Convert.ToInt32(strengthUpDown.Maximum))
 			strengthUpDown.Maximum = Info.BaseStrength;
 
@@ -229,6 +213,8 @@ internal sealed partial class CharacterEditDialog : VaultForm
 			skillPointsNumericUpDown.Maximum = Info.SkillPoints;
 
 		skillPointsNumericUpDown.Value = Info.SkillPoints;
+
+		this.InitSkills();
 
 		difficultlyComboBox.Items.Clear();
 		difficultlyComboBox.Items.Add(new DifficultData { Text = TranslationService.TranslateDifficulty(0), Id = 0 });

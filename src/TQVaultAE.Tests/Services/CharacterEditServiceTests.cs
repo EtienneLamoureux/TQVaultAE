@@ -20,7 +20,7 @@ public class CharacterEditServiceTests
 	{
 		this._pathIO.Setup(p => p.GetDirectoryName(It.IsAny<string>()))
 			.Returns((string path) => path.Substring(0, path.LastIndexOf('\\')));
-		this._service = new CharacterEditService(this._pathIO.Object, this._provider.Object, this._database.Object);
+		this._service = new CharacterEditService(this._pathIO.Object, this._provider.Object, this._database.Object, new Mock<ISkillTreeProvider>().Object);
 	}
 
 	private PlayerInfo NewSource()
@@ -205,5 +205,43 @@ public class CharacterEditServiceTests
 
 		applied.Should().BeFalse();
 		this._provider.Verify(p => p.CommitPlayerInfo(It.IsAny<PlayerCollection>(), It.IsAny<PlayerInfo>()), Times.Never);
+	}
+
+	[Fact]
+	public void BuildPlayerInfo_EditedSkills_ReplaceTheSkillListAndKeepTheClass()
+	{
+		var source = this.NewSource();
+		List<SkillRecord> edited = [new SkillRecord { skillName = """Records\Skills\Storm\StormMastery.dbr""", skillLevel = 8 }];
+
+		var result = this._service.BuildPlayerInfo(source, RequestFrom(source) with { SkillRecords = edited });
+
+		result.SkillRecordList.Should().Equal(edited);
+		result.SkillsChanged.Should().BeTrue();
+		result.MasteriesChanged.Should().BeFalse();
+		result.Class.Should().Be("tagCClass01");
+	}
+
+	[Fact]
+	public void BuildPlayerInfo_EditedMasteries_ClearTheClass()
+	{
+		var source = this.NewSource();
+
+		var result = this._service.BuildPlayerInfo(source, RequestFrom(source) with { SkillRecords = [], MasteriesChanged = true });
+
+		result.MasteriesChanged.Should().BeTrue();
+		result.Class.Should().BeEmpty();
+	}
+
+	[Fact]
+	public void BuildPlayerInfo_ResetMasteriesWithEditedSkills_ResetsTheSavedSkills()
+	{
+		var source = this.NewSource();
+		List<SkillRecord> edited = [new SkillRecord { skillName = """Records\Skills\Storm\StormMastery.dbr""", skillLevel = 8 }];
+
+		var result = this._service.BuildPlayerInfo(source, RequestFrom(source) with { SkillRecords = edited, ResetMasteries = true });
+
+		result.SkillRecordList.Should().BeEmpty();
+		result.SkillPoints.Should().Be(3 + 4 + 6, "the reset gives back the points of the saved skills");
+		result.SkillsChanged.Should().BeFalse();
 	}
 }

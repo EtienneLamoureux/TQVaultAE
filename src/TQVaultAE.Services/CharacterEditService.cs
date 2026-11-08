@@ -9,11 +9,16 @@ namespace TQVaultAE.Services;
 /// <summary>
 /// Applies the character edit dialog to a character: level, experience, difficulty, attributes and masteries.
 /// </summary>
-public class CharacterEditService(IPathIO pathIO, IPlayerCollectionProvider playerCollectionProvider, IDatabase database) : ICharacterEditService
+public class CharacterEditService(IPathIO pathIO, IPlayerCollectionProvider playerCollectionProvider, IDatabase database, ISkillTreeProvider skillTreeProvider) : ICharacterEditService
 {
 	private readonly IPathIO _pathIO = pathIO;
 	private readonly IPlayerCollectionProvider _playerCollectionProvider = playerCollectionProvider;
 	private readonly IDatabase _database = database;
+	private readonly ISkillTreeProvider _skillTreeProvider = skillTreeProvider;
+
+	/// <inheritdoc/>
+	public CharacterSkillEditor CreateSkillEditor(PlayerInfo info)
+		=> new(info.SkillRecordList, info.MasteriesAllowed, info.SkillPoints, this._skillTreeProvider.GetMasteryTree);
 
 	/// <inheritdoc/>
 	public string GetMasteryDescriptionTag(RecordId masteryId)
@@ -36,8 +41,18 @@ public class CharacterEditService(IPathIO pathIO, IPlayerCollectionProvider play
 			BaseIntelligence = request.Intelligence,
 			BaseHealth = request.Health,
 			BaseMana = request.Mana,
+			Class = source.Class,
 		};
-		playerInfo.SkillRecordList.AddRange(source.SkillRecordList);
+		if (request.SkillRecords is not null && !request.ResetMasteries)
+		{
+			playerInfo.SkillRecordList.AddRange(request.SkillRecords);
+			playerInfo.SkillsChanged = true;
+			playerInfo.MasteriesChanged = request.MasteriesChanged;
+			if (request.MasteriesChanged)
+				playerInfo.Class = string.Empty;
+		}
+		else
+			playerInfo.SkillRecordList.AddRange(source.SkillRecordList);
 
 		if (request.ResetAttributes)
 		{

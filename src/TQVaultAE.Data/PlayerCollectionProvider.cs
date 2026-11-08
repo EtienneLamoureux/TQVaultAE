@@ -57,7 +57,10 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 		pc.PlayerInfo.BaseMana = playerInfo.BaseMana;
 		pc.PlayerInfo.Money = playerInfo.Money;
 
-		if (pc.PlayerInfo.MustResetMasteries)
+		pc.PlayerInfo.SkillsChanged |= playerInfo.SkillsChanged;
+		pc.PlayerInfo.MasteriesChanged |= playerInfo.MasteriesChanged;
+
+		if (pc.PlayerInfo.MustResetMasteries || playerInfo.SkillsChanged)
 		{
 			pc.PlayerInfo.Class = playerInfo.Class;
 			// Put back the new reduced skill list in place for serialization
@@ -103,9 +106,9 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 		var baseHealth = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseHealth, baseIntelligence.nextOffset);
 		var baseMana = TQData.WriteFloatAfter(pc.rawData, "temp", pc.PlayerInfo.BaseMana, baseHealth.nextOffset);
 
-		if (pc.PlayerInfo.MustResetMasteries)
+		if (pc.PlayerInfo.MustResetMasteries || pc.PlayerInfo.SkillsChanged)
 		{
-			#region Override skill lines block after reset
+			#region Override skill lines block after reset or edit
 
 			// Find skill section boundaries
 			var firstblock = TQData.ReadIntAfter(pc.rawData, "begin_block");
@@ -144,7 +147,8 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 
 			#region Reset Class tag
 
-			TQData.RemoveCStringValueAfter(ref pc.rawData, "playerClassTag");
+			if (pc.PlayerInfo.MustResetMasteries || pc.PlayerInfo.MasteriesChanged)
+				TQData.RemoveCStringValueAfter(ref pc.rawData, "playerClassTag");
 
 			#endregion
 

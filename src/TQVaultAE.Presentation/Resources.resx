@@ -1030,6 +1030,33 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
 	<data name="CESkillPoints" xml:space="preserve">
     <value>Skill Points</value>
   </data>
+	<data name="CESkills" xml:space="preserve">
+    <value>Skills</value>
+  </data>
+	<data name="CEMasteryNone" xml:space="preserve">
+    <value>(None)</value>
+  </data>
+	<data name="CEMasteryLevel" xml:space="preserve">
+    <value>Mastery level</value>
+  </data>
+	<data name="CEMasteryPointsSpent" xml:space="preserve">
+    <value>Points spent: {0}</value>
+  </data>
+	<data name="CEMasterySlot" xml:space="preserve">
+    <value>Mastery {0}</value>
+  </data>
+	<data name="CESkillName" xml:space="preserve">
+    <value>Skill</value>
+  </data>
+	<data name="CESkillRequires" xml:space="preserve">
+    <value>Requires</value>
+  </data>
+	<data name="CESkillLevel" xml:space="preserve">
+    <value>Level</value>
+  </data>
+	<data name="CESkillMax" xml:space="preserve">
+    <value>Max</value>
+  </data>
 	<data name="CEStrength" xml:space="preserve">
     <value>Strength</value>
   </data>
