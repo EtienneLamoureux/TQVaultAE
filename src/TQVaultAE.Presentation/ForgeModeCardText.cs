@@ -38,6 +38,8 @@ public static class ForgeModeCardText
 			affixLines.Add(Allow(Resources.ForgeCapAnyPart));
 		else
 		{
+			if (can.GearOnly)
+				affixLines.Add(Limit(Resources.ForgeCapBaseGear));
 			if (can.AffixFromSameBaseItem)
 				affixLines.Add(Limit(Resources.ForgeCapSameBaseItem));
 			if (can.AffixLevelNotAboveBase)

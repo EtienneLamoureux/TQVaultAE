@@ -1756,7 +1756,7 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
     <value>Reliques et charmes uniquement</value>
   </data>
 	<data name="ForgeCapRelicOrSocketed" xml:space="preserve">
-    <value>Reliques, charmes, ou un objet portant une relique sertie</value>
+    <value>Reliques, charmes, ou une arme, un bouclier, une armure ou un bijou portant une relique sertie</value>
   </data>
 	<data name="ForgeCapRelicGear" xml:space="preserve">
     <value>Doit être autorisée sur le type de l'objet de base</value>

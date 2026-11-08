@@ -1212,7 +1212,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Relics, charms, or an item with a socketed relic.
+        ///   Looks up a localized string similar to Relics, charms, or a weapon, shield, armor or jewellery with a socketed relic.
         /// </summary>
         public static string ForgeCapRelicOrSocketed {
             get {
