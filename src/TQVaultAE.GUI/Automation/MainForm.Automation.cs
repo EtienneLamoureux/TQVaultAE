@@ -66,6 +66,25 @@ public partial class MainForm
 		return true;
 	}
 
+	/// <summary>
+	/// Exports the vault shown to a JSON file, like "Export to file" without its file dialog.
+	/// </summary>
+	/// <returns>The name of the exported vault, or null when no vault is shown.</returns>
+	internal string? AutomationExportVault(string fileName)
+	{
+		var vault = this.vaultPanel.Player;
+		if (vault is null)
+			return null;
+
+		this.itemExchangeService.ExportVaultToFile(vault, fileName);
+		return vault.PlayerName;
+	}
+
+	/// <summary>
+	/// Imports an exported file, like "Import from file" without its file dialog.
+	/// </summary>
+	internal void AutomationImportFile(string fileName) => this.ImportFile(fileName);
+
 	internal string? AutomationCurrentPlayerFile => this.userContext?.CurrentPlayer?.PlayerFile;
 
 	internal bool AutomationLoadingComplete => this.loadingComplete;

@@ -197,6 +197,26 @@ internal static partial class AutomationTools
 			return Serialize(new { vault = form.AutomationSelectedVault });
 		});
 
+	[McpServerTool(Name = "export_vault")]
+	[Description("Exports the vault shown to a JSON file, like the vault menu's 'Export to file' without its file dialog.")]
+	public static string ExportVault([Description("Path of the JSON file to write.")] string path)
+		=> AutomationHost.OnUi(form =>
+		{
+			var vault = form.AutomationExportVault(path) ?? throw new McpException("No vault is shown.");
+			return Serialize(new { vault, path });
+		});
+
+	[McpServerTool(Name = "import_file", Destructive = true)]
+	[Description("Imports an exported JSON file like the vault menu's 'Import from file' without its file dialog: items go into the current tab; a whole vault asks to replace the vault shown or import it as a new vault (answer with queue_dialog_answers: Yes replaces, No creates a new vault, Cancel). The vault shown must be a test vault ('claude-...'), since it may be replaced. Queue the answers first: the import waits for its boxes.")]
+	public static string ImportFile([Description("Path of the exported JSON file.")] string path)
+		=> AutomationHost.OnUi(form =>
+		{
+			var shown = form.AutomationSelectedVault ?? string.Empty;
+			RequireTestName(shown);
+			form.AutomationImportFile(path);
+			return Serialize(new { vault = form.AutomationSelectedVault, vaults = form.AutomationVaults });
+		});
+
 	/// <summary>Automation creates and duplicates only its own test files (see Safety in AUTOMATION.md).</summary>
 	private const string TestFilePrefix = "claude-";
 

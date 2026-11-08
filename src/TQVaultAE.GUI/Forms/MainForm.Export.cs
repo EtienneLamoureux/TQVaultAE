@@ -188,9 +188,17 @@ public partial class MainForm
 		if (dialog.ShowDialog() != DialogResult.OK)
 			return;
 
+		this.ImportFile(dialog.FileName);
+	}
+
+	/// <summary>
+	/// Imports an exported file: items into the current tab, or a whole vault (replace or new vault, asked).
+	/// </summary>
+	internal void ImportFile(string fileName)
+	{
 		try
 		{
-			var result = this.itemExchangeService.ImportFromFile(dialog.FileName);
+			var result = this.itemExchangeService.ImportFromFile(fileName);
 			this.HandleImportResult(result);
 		}
 		catch (Exception ex)
@@ -265,7 +273,19 @@ public partial class MainForm
 			Buttons = { replaceButton, createButton, TaskDialogButton.Cancel }
 		};
 
-		var result = TaskDialog.ShowDialog(page);
+		TaskDialogButton result;
+#if DEBUG
+		// Automation answers this dialog like a message box: Yes replaces, No creates a new vault, Cancel cancels.
+		if (TQVaultAE.GUI.Automation.AutomationHost.TryTakeDialogAnswer(page.Heading, page.Text, MessageBoxButtons.YesNoCancel, out var automated))
+			result = automated switch
+			{
+				DialogResult.Yes => replaceButton,
+				DialogResult.No => createButton,
+				_ => TaskDialogButton.Cancel,
+			};
+		else
+#endif
+			result = TaskDialog.ShowDialog(page);
 
 		if (result == TaskDialogButton.Cancel)
 			return;

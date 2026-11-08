@@ -163,7 +163,7 @@ Debug builds of `TQVaultAE.GUI` host an MCP server inside the app at `http://127
 | Windows and dialogs | `list_windows`, `close_dialog` (for example "Default Vault Path" → OK), `list_forms`, `open_form(name, show?)` to create any registered form or dialog, `open_bag_settings(panel)` for the bag icon picker |
 | Read the state from the app's models | `get_state(panel?)`, which returns characters, vaults, panels and items with their cells; `owned_skill_items` for every owned item that grants a skill; `raw_tooltip_lines` for the tooltip lines still shown raw; `tooltip_text_dump(path, views)` for the rows of every item tooltip as rendered (text, color, bold, kind), written to a JSON file to diff |
 | Navigation | `select_character`, `select_vault`, `select_bag` |
-| Test files | `create_vault(name)` and `duplicate_character(name)`, which only accept names starting with `claude-`; `save_files` like the Save button (answer its error box with `close_dialog` from another call) |
+| Test files | `create_vault(name)` and `duplicate_character(name)`, which only accept names starting with `claude-`; `save_files` like the Save button (answer its error box with `close_dialog` from another call); `export_vault(path)` and `import_file(path)` (into a `claude-` vault) without the file dialogs |
 | Drag and drop through the panels' own handlers | `pick_item`, `move_drag`, `drop_item`, `cancel_drag`; `create_item` drags a new item built from record ids |
 | Item tooltips | `hover_item(panel, x, y)`, which returns the tooltip as a PNG; `hover_end` |
 | Context menus | `context_menu(panel, x, y)`, which returns the entries of the right-click menu and closes it |
