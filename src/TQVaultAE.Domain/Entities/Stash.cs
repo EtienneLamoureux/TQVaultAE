@@ -123,6 +123,12 @@ public class Stash
 	}
 
 	/// <summary>
+	/// Gets the name the stash was loaded with, without the Immortal Throne suffix of <see cref="PlayerName"/>:
+	/// the character for its own stash, else the transfer or relic vault stash name. The search shows it.
+	/// </summary>
+	public string Name => this.playerName;
+
+	/// <summary>
 	/// Gets the stash file name
 	/// </summary>
 	public string StashFile { get; private set; }

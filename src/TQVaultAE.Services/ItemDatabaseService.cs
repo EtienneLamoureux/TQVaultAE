@@ -181,7 +181,7 @@ public class ItemDatabaseService(
             }
 
             foreach (var item in stash.Sack)
-                this.AddItemToDatabase(item, kvp.Key, stash.PlayerName, sackNumber, SackType.Stash, stashType);
+                this.AddItemToDatabase(item, kvp.Key, stash.Name, sackNumber, SackType.Stash, stashType);
         }
 
         this._log.LogInformation("Item database rebuilt with {Count} items", this.ItemDatabase.Count);

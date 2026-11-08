@@ -146,6 +146,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		this.equipmentPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
 		this.equipmentPanel.OnResizeForm += new EventHandler<ResizeEventArgs>(this.ResizeFormCallback);
 		this.equipmentPanel.OnEquipmentChanged += new EventHandler<SackPanelEventArgs>(this.EquipmentChangedCallback);
+		this.BagSackPanel.ShownStash = () => this.ShownStash;
 
 		this.Text = Resources.StashPanelText;
 		this.NoPlayerString = Resources.StashPanelText;
@@ -288,6 +289,17 @@ public partial class StashPanel : VaultPanel, IScalingControl
 			this.AssignSacks();
 		}
 	}
+
+	/// <summary>
+	/// Gets the stash of the selected bag, null for the equipment.
+	/// </summary>
+	internal Stash? ShownStash => this.currentBag switch
+	{
+		BagIdConstants.BAGID_PLAYERSTASH => this.stash,
+		BagIdConstants.BAGID_TRANSFERSTASH => this.transferStash,
+		BagIdConstants.BAGID_RELICVAULTSTASH => this.relicVaultStash,
+		_ => null,
+	};
 
 	/// <summary>
 	/// Gets or sets the transfer stash instance

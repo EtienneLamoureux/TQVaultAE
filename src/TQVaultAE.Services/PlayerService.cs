@@ -108,6 +108,8 @@ public class PlayerService(
 			PlayerCollection updateFactory(string k, PlayerCollection oldValue)
 			{
 				// No check on oldValue
+				// The reloaded items replace those of the old file in the search.
+				this.ItemDatabaseService.RemoveContainerFromDatabase(k);
 				return addFactory(k);
 			}
 
