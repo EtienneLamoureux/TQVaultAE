@@ -339,11 +339,15 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					Var2 = Item.var2Default,
 				};
 
-				if (!string.IsNullOrWhiteSpace(s.relicName2))
+				// The json has no atlantis flag: the game also writes the second relic fields empty, with a var2 to keep,
+				// so an item has them whenever they hold anything but the defaults of an item without them.
+				if (!string.IsNullOrWhiteSpace(s.relicName2)
+					|| !string.IsNullOrWhiteSpace(s.relicBonus2)
+					|| s.var2 != Item.var2Default)
 				{
 					itm.atlantis = true;
-					itm.relic2ID = s.relicName2;
-					itm.RelicBonus2Id = s.relicBonus2;
+					itm.relic2ID = s.relicName2 ?? string.Empty;
+					itm.RelicBonus2Id = s.relicBonus2 ?? string.Empty;
 					itm.Var2 = s.var2;
 				}
 

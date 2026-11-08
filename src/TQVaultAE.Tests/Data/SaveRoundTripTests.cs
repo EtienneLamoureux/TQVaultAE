@@ -482,5 +482,56 @@ public sealed class SaveRoundTripTests : IDisposable
 		StatesOf(this._fixtures.LoadVault(jsonPath)).Should().BeEquivalentTo(StatesOf(vault), o => o.WithStrictOrdering());
 	}
 
+	/// <summary>The bytes of an item written in a character's sack.</summary>
+	private byte[] EncodeInSack(Item item)
+	{
+		using var stream = new MemoryStream();
+		using (var writer = new BinaryWriter(stream))
+		{
+			item.Place.SackType = SackType.Player;
+			this._fixtures.ItemProvider.Encode(item, writer);
+		}
+
+		return stream.ToArray();
+	}
+
+	/// <summary>
+	/// An item of the character goes to a JSON vault, is saved, reloaded and put back in the character:
+	/// nothing it holds is lost, even the second relic fields written empty by the game.
+	/// </summary>
+	[Theory]
+	[InlineData(-1, 6)] // ring: prefix, suffix, relic and bonus, empty second relic, var2 2023419968
+	[InlineData(-1, 5)] // ring: empty second relic, var2 0
+	[InlineData(1, 6)] // shield in a sack: empty second relic, var2 1065353216
+	[InlineData(0, 0)] // helmet saved without the second relic fields
+	public void CharacterItem_ThroughJsonVaultAndBack_KeepsAllItsValuesAndBytes(int sackNumber, int index)
+	{
+		var pc = this._fixtures.LoadPlayer();
+		var sack = sackNumber == -1 ? pc.EquipmentSack! : pc.Sacks![sackNumber];
+		var item = sack.GetItem(index);
+		EquipmentRules.TakeOut(sack, item);
+		item.PositionX = 2;
+		item.PositionY = 1;
+		var original = StateOf(item);
+		// The json keeps no block marker values: an item read from a vault gets the default ones.
+		var withDefaultMarkers = item.Clone();
+		withDefaultMarkers.beginBlockCrap1 = withDefaultMarkers.beginBlockCrap2 = this._fixtures.TQData.BeginBlockValue;
+		withDefaultMarkers.endBlockCrap1 = withDefaultMarkers.endBlockCrap2 = this._fixtures.TQData.EndBlockValue;
+		var originalBytes = this.EncodeInSack(withDefaultMarkers);
+		var vault = this._fixtures.LoadVault(SaveFixtures.VaultJson);
+		vault.Sacks![3].AddItem(item);
+		var vaultPath = this._fixtures.TempFile("claude-vault1.vault.json");
+		this._fixtures.PlayerProvider.Save(vault, vaultPath);
+
+		var fromVault = this._fixtures.LoadVault(vaultPath).Sacks![3].Single();
+		pc.Sacks![2].AddItem(fromVault);
+		var reloaded = this._fixtures.Reload(this._fixtures.PlayerProvider.Encode(pc)).Sacks![2].Single();
+
+		StateOf(fromVault).Should().Be(original);
+		StateOf(reloaded).Should().Be(original);
+		RecordId.RawOf(reloaded.relic2ID).Should().BeEmpty();
+		this.EncodeInSack(reloaded).Should().Equal(originalBytes);
+	}
+
 	#endregion
 }
