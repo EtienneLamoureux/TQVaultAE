@@ -2124,7 +2124,7 @@ You still have to close TQVaultAE to apply your changes.
     <value>Relics and charms only</value>
   </data>
 	<data name="ForgeCapRelicOrSocketed" xml:space="preserve">
-    <value>Relics, charms, or an item with a socketed relic</value>
+    <value>Relics, charms, or a weapon, shield, armor or jewellery with a socketed relic</value>
   </data>
 	<data name="ForgeCapRelicGear" xml:space="preserve">
     <value>Must be allowed on the base item gear</value>
