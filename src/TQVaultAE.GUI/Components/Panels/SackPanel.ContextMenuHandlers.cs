@@ -532,7 +532,11 @@ public partial class SackPanel
 				// create artifact
 				Item? artifact = this.Services.ItemEditService.CraftArtifact(focusedItem);
 				if (artifact is null)
+				{
+					// Nothing crafted: do not leave the formula picked up.
+					this.DragInfo.Cancel();
 					return;
+				}
 
 				// Put artifact in DragInfo
 				this.DragInfo.MarkModified(artifact);
@@ -552,6 +556,9 @@ public partial class SackPanel
 				// Put the item in DragInfo
 				if (newItem is not null)
 					this.DragInfo.MarkModified(newItem);
+				else
+					// Nothing split off: do not leave the stack picked up.
+					this.DragInfo.Cancel();
 
 				InvalidateItemCacheItemTooltip(focusedItem);
 

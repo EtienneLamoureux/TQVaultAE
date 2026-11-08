@@ -55,6 +55,18 @@ public class AutoMoveRulesTests
 	}
 
 	[Fact]
+	public void MoveDestinations_SelectionOnEmptyCell_SkipsTheShownBagAndShowsVaultNumbersFromOne()
+	{
+		// A selection right-clicked on an empty cell: no item under the cursor, bag 2 shown.
+		var destinations = ItemActionRules.MoveDestinations(new MoveContext(
+			AutoMoveLocation.Vault, SackType.Vault, 3, 0, [], false, true, null, CurrentSack: 1));
+
+		destinations.Should().Equal(
+			new MoveDestination(AutoMoveLocation.Vault, 0, 1)
+			, new MoveDestination(AutoMoveLocation.Vault, 2, 3));
+	}
+
+	[Fact]
 	public void MoveDestinations_PlayerSacks_MainSackFirstAndOnlyTheSacksThePlayerHas()
 	{
 		var destinations = Destinations(AutoMoveLocation.Player, SackType.Player, maxSacks: 5, playerSackCount: 3
