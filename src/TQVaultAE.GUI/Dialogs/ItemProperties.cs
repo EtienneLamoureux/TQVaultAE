@@ -14,7 +14,6 @@ using System.Windows.Forms;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Presentation;
-using TQVaultAE.Domain.Helpers;
 
 /// <summary>
 /// Form for the item properties display
@@ -28,10 +27,9 @@ internal sealed partial class ItemProperties : VaultForm
 	public Item Item { get; set; } = null!;
 
 	/// <summary>
-	/// Item human readable data
+	/// The label and grid of each property section, by <see cref="ItemPropertySectionKind"/>.
 	/// </summary>
-	// Read from Item when the dialog loads.
-	private ToFriendlyNameResult Data = null!;
+	private readonly (Label Label, DataGridView Grid, DataGridViewColumn Column)[] sectionControls;
 
 	/// <summary>
 	/// Initializes a new instance of the ItemProperties class.
@@ -42,34 +40,33 @@ internal sealed partial class ItemProperties : VaultForm
 
 		this.InitializeComponent();
 
+		this.sectionControls =
+		[
+			(this.labelBaseItemProperties, this.dataGridViewBaseItemProperties, this.columnBaseItemProperty),
+			(this.labelPrefixProperties, this.dataGridViewPrefixProperties, this.columnPrefixProperty),
+			(this.labelSuffixProperties, this.dataGridViewSuffixProperties, this.columnSuffixProperty),
+		];
+
 		#region Apply custom font
 
 		this.ButtonOK.Font = FontService.GetFontLight(12F);
-		this.labelPrefixProperties.Font = FontService.GetFontLight(11.25F);
-		this.labelBaseItemProperties.Font = FontService.GetFontLight(11.25F);
 		this.checkBoxFilterExtraInfo.Font = FontService.GetFontLight(11.25F);
-		this.labelSuffixProperties.Font = FontService.GetFontLight(11.25F);
 		this.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
 		// Apply font to DataGridViews
 		var gridFont = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.columnBaseItemProperty.DefaultCellStyle.Font = gridFont;
-		this.columnPrefixProperty.DefaultCellStyle.Font = gridFont;
-		this.columnSuffixProperty.DefaultCellStyle.Font = gridFont;
-
-		// Set row height
 		var rowHeight = (int)(gridFont.Height + 6);
-		this.dataGridViewBaseItemProperties.RowTemplate.Height = rowHeight;
-		this.dataGridViewPrefixProperties.RowTemplate.Height = rowHeight;
-		this.dataGridViewSuffixProperties.RowTemplate.Height = rowHeight;
+		foreach (var (label, grid, column) in this.sectionControls)
+		{
+			label.Font = FontService.GetFontLight(11.25F);
+			column.DefaultCellStyle.Font = gridFont;
+			grid.RowTemplate.Height = rowHeight;
+		}
 
 		#endregion
 
 		this.Text = Resources.ItemPropertiesText;
 		this.ButtonOK.Text = Resources.GlobalOK;
-		this.labelPrefixProperties.Text = Resources.ItemPropertiesLabelPrefixProperties;
-		this.labelBaseItemProperties.Text = Resources.ItemPropertiesLabelBaseItemProperties;
-		this.labelSuffixProperties.Text = Resources.ItemPropertiesLabelSuffixProperties;
 		this.checkBoxFilterExtraInfo.Text = Resources.ItemPropertiesCheckBoxLabelFilterExtraInfo;
 
 		this.NormalizeBox = false;
@@ -88,97 +85,45 @@ internal sealed partial class ItemProperties : VaultForm
 	/// </summary>
 	private void LoadProperties()
 	{
-		this.Data = ItemProvider.GetFriendlyNames(this.Item, FriendlyNamesExtraScopes.ItemFullDisplay, this.checkBoxFilterExtraInfo.Checked);
+		var filterExtra = this.checkBoxFilterExtraInfo.Checked;
+		var content = ItemPropertiesContent.Build(
+			ItemProvider.GetFriendlyNames(this.Item, FriendlyNamesExtraScopes.ItemFullDisplay, filterExtra), filterExtra);
 
-		// ItemName
-		this.labelItemName.ForeColor = this.Data.Item.ExtractTextColorOrItemColor(Data.BaseItemInfoDescription);
-		this.labelItemName.Text = this.Data.FullNameClean;
+		this.labelItemName.ForeColor = content.NameColor;
+		this.labelItemName.Text = content.Name;
 
-		// Base Item Attributes
-		if (this.Data.BaseAttributes.Length != 0)
+		foreach (var section in content.Sections)
 		{
-			this.dataGridViewBaseItemProperties.Rows.Clear();
+			var (label, grid, _) = this.sectionControls[(int)section.Kind];
+			label.Text = section.Title;
 
-			if (!this.checkBoxFilterExtraInfo.Checked)
-				this.AddGridRow(this.dataGridViewBaseItemProperties, this.Data.BaseItemId.Normalized, ItemStyle.Relic.Color());
+			if (!section.Visible)
+			{
+				grid.Hide();
+				label.Hide();
+				continue;
+			}
 
-			foreach (var prop in this.Data.BaseAttributes)
-				this.AddGridRow(this.dataGridViewBaseItemProperties, prop);
+			grid.Rows.Clear();
+			foreach (var row in section.Rows)
+				AddGridRow(grid, row);
 
-			this.dataGridViewBaseItemProperties.Show();
-			this.labelBaseItemProperties.Show();
-		}
-		else
-		{
-			this.dataGridViewBaseItemProperties.Hide();
-			this.labelBaseItemProperties.Hide();
-		}
-
-		// Prefix Attributes
-		if (this.Data.PrefixAttributes.Length != 0)
-		{
-			this.dataGridViewPrefixProperties.Rows.Clear();
-
-			if (!this.checkBoxFilterExtraInfo.Checked)
-				this.AddGridRow(this.dataGridViewPrefixProperties, (this.Data.PrefixInfoRecords?.Id.Normalized ?? string.Empty), ItemStyle.Relic.Color());
-
-			foreach (var prop in this.Data.PrefixAttributes)
-				this.AddGridRow(this.dataGridViewPrefixProperties, prop);
-
-			this.dataGridViewPrefixProperties.Show();
-			this.labelPrefixProperties.Show();
-		}
-		else
-		{
-			this.dataGridViewPrefixProperties.Hide();
-			this.labelPrefixProperties.Hide();
-		}
-
-		// Suffix Attributes
-		if (this.Data.SuffixAttributes.Length != 0)
-		{
-			this.dataGridViewSuffixProperties.Rows.Clear();
-
-			if (!this.checkBoxFilterExtraInfo.Checked)
-				this.AddGridRow(this.dataGridViewSuffixProperties, (this.Data.SuffixInfoRecords?.Id.Normalized ?? string.Empty), ItemStyle.Relic.Color());
-
-			foreach (var prop in this.Data.SuffixAttributes)
-				this.AddGridRow(this.dataGridViewSuffixProperties, prop);
-
-			this.dataGridViewSuffixProperties.Show();
-			this.labelSuffixProperties.Show();
-		}
-		else
-		{
-			this.dataGridViewSuffixProperties.Hide();
-			this.labelSuffixProperties.Hide();
+			grid.Show();
+			label.Show();
 		}
 	}
 
 	/// <summary>
-	/// Adds a row to the specified DataGridView with the given property text.
-	/// Handles multi-colored text by extracting the color from tags.
+	/// Adds <paramref name="row"/> to <paramref name="gridView"/> in its color.
 	/// </summary>
-	/// <param name="gridView">The DataGridView to add the row to.</param>
-	/// <param name="propertyText">The property text, possibly containing color tags.</param>
-	/// <param name="defaultColor">The default foreground color to use if no color tags are present.</param>
-	private void AddGridRow(DataGridView gridView, string propertyText, Color? defaultColor = null)
+	private static void AddGridRow(DataGridView gridView, ItemPropertyRow row)
 	{
-		// Replace TQNewLine with regular newline for multi-line support
-		propertyText = propertyText.Replace(StringHelper.TQNewLineTag, "\n");
+		// The column's DefaultCellStyle provides the base styling
+		int rowIndex = gridView.Rows.Add(row.Text);
 
-		// Extract color from tag if present, and remove the tag from the text
-		var (tqColor, untaggedText) = propertyText.SplitLeadingColorTag();
-		Color fgColor = tqColor?.Color() ?? defaultColor ?? Color.White;
-		propertyText = untaggedText;
-
-		// Add row with the text value - the column's DefaultCellStyle provides the base styling
-		int rowIndex = gridView.Rows.Add(propertyText);
-
-		// Apply the foreground color to the cell
 		var cell = gridView.Rows[rowIndex].Cells[0];
-		cell.Style.ForeColor = fgColor;
-		cell.Style.SelectionForeColor = fgColor;
+		cell.Style.ForeColor = row.Color;
+		cell.Style.SelectionForeColor = row.Color;
 		cell.Style.SelectionBackColor = Color.FromArgb(60, 45, 30);
 	}
 
