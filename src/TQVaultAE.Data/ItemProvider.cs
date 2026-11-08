@@ -118,7 +118,8 @@ public partial class ItemProvider : IItemProvider
 			// A null format throws ArgumentNullException, reported below like a bad format.
 			return string.Format(CultureInfo.CurrentCulture, formatSpec!, parameter1, parameter2, parameter3);
 		}
-		catch (ArgumentException)
+		// A malformed format (often a translation) shows this one line raw instead of failing the whole item text.
+		catch (Exception ex) when (ex is ArgumentException or FormatException)
 		{
 			string parameters = string.Format(
 				CultureInfo.InvariantCulture,
@@ -129,7 +130,7 @@ public partial class ItemProvider : IItemProvider
 
 			string error = string.Concat("FormatErr(\"", formatSpec, parameters);
 
-			Log.LogDebug("{Message}", error);
+			Log.LogWarning(ex, "Failed to format an item text line: {Message}", error);
 
 			return error;
 		}

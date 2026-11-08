@@ -190,13 +190,21 @@ public class ItemProviderTests
 	}
 
 	[Fact]
-	public void Format_WithInvalidFormatSpecifier_ThrowsFormatException()
+	public void Format_WithInvalidFormatSpecifier_ReturnsTheRawLine_InsteadOfThrowing()
 	{
-		// Arrange - format with invalid format specifier that throws FormatException (not ArgumentException)
-		var formatSpec = "{0} {1} {999}";
+		// A malformed translation must only spoil its own line, not the whole item text.
+		var result = _provider.Format("{0} {1} {999}", "test", null);
 
-		// Act & Assert - this should throw FormatException since only ArgumentException is caught
-		Assert.Throws<FormatException>(() => _provider.Format(formatSpec, "test", null));
+		result.Should().Be("""FormatErr("{0} {1} {999}", 'test', 'NULL', 'NULL'>""");
+	}
+
+	[Fact]
+	public void Format_WithGameFormatSyntax_ReturnsTheRawLine_InsteadOfThrowing()
+	{
+		// An unconverted game format, like "{%.1f0}", is not a valid .NET format.
+		var result = _provider.Format("{%.1f0}% Chance of", 12.5f);
+
+		result.Should().StartWith("""FormatErr("{%.1f0}% Chance of", '""");
 	}
 
 	#endregion

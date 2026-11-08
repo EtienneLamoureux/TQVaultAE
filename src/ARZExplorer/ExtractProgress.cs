@@ -4,10 +4,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using TQVaultAE.Application.Contracts.Providers;
-
 namespace ArzExplorer;
 
+using ArzExplorer.Models;
 using ArzExplorer.Properties;
 using System;
 using System.Globalization;
@@ -30,37 +29,26 @@ internal sealed partial class ExtractProgress : Form
 	/// </summary>
 	internal string BaseFolder = string.Empty;
 	private readonly MainForm MainForm;
-	private readonly IArcFileProvider arcProv;
-	private readonly IArzFileProvider arzProv;
-	private readonly IDBRecordCollectionProvider DBRecordCollectionProvider;
+	private readonly ArchiveExtractor Extractor;
 
 	/// <summary>
-	/// ID for current records
+	/// Stops the extraction
 	/// </summary>
-	private RecordId? recordIdBeingProcessed;
+	private readonly CancellationTokenSource cancellation = new();
 
 	/// <summary>
-	/// Holds any exception we have encountered
+	/// How the extraction ended
 	/// </summary>
-	private Exception? exception;
-
-	/// <summary>
-	/// Holds cancel status
-	/// </summary>
-	private bool cancel;
-
-
+	private ExtractionResult? result;
 
 	/// <summary>
 	/// Initializes a new instance of the ExtractProgress class.
 	/// </summary>
 	/// <param name="baseFolder">Base extraction folder for TQ database</param>
-	public ExtractProgress(MainForm mainForm, IArcFileProvider arcFileProvider, IArzFileProvider arzFileProvider, IDBRecordCollectionProvider dBRecordCollectionProvider)
+	public ExtractProgress(MainForm mainForm, ArchiveExtractor extractor)
 	{
 		this.MainForm = mainForm;
-		this.arcProv = arcFileProvider;
-		this.arzProv = arzFileProvider;
-		this.DBRecordCollectionProvider = dBRecordCollectionProvider;
+		this.Extractor = extractor;
 		this.InitializeComponent();
 
 		this.Text = Resources.ARZProgressText;
@@ -81,118 +69,31 @@ internal sealed partial class ExtractProgress : Form
 	/// <param name="e">EventArgs data</param>
 	private void ARZExtractProgressDlg_Load(object sender, EventArgs e)
 	{
-		this.cancel = false;
+		var file = this.MainForm.SelectedFile;
 
 		// Setup the progress bar
-		if (this.MainForm.SelectedFile.FileType == CompressedFileType.ArcFile)
-		{
-			this.progressBar1.Maximum = this.MainForm.SelectedFile.Arc.Count;
-		}
-		else
-		{
-			this.progressBar1.Maximum = this.MainForm.SelectedFile.Arz.Count;
-		}
-
+		this.progressBar1.Maximum = ArchiveExtractor.Count(file);
 		this.progressBar1.Value = 0;
 
-		// Create a thread to do the extraction
-		ThreadStart tstart;
-		if (this.MainForm.SelectedFile.FileType == CompressedFileType.ArcFile)
+		// Extract on a worker thread. A failure comes back in the result:
+		// an exception thrown on that thread would end the application.
+		var baseFolder = this.BaseFolder;
+		var token = this.cancellation.Token;
+		Task.Run(() =>
 		{
-			tstart = new ThreadStart(this.DoArcExtraction);
-		}
-		else
-		{
-			tstart = new ThreadStart(this.DoArzExtraction);
-		}
+			this.result = this.Extractor.ExtractAll(
+				file
+				, baseFolder
+				, recordId => this.Invoke(() => this.UpdateLabel(recordId))
+				, () => this.Invoke(this.IncrementProgress)
+				, token
+			);
 
-		Thread t = new Thread(tstart);
-		t.Priority = ThreadPriority.Normal;
-		t.Start();
-	}
-
-	/// <summary>
-	/// Performs the extraction of an ARZ file.
-	/// </summary>
-	private void DoArzExtraction()
-	{
-		try
-		{
-			bool canceled = false;
-			foreach (RecordId recordID in this.MainForm.SelectedFile.Arz.Keys)
-			{
-				if (canceled)
-					break;
-
-				// update label with recordID
-				this.recordIdBeingProcessed = recordID;
-				this.Invoke(new MethodInvoker(this.UpdateLabel));
-
-				// Write the record
-				var dbc = arzProv.GetRecordNotCached(this.MainForm.SelectedFile.Arz, recordID);
-				DBRecordCollectionProvider.Write(dbc, this.BaseFolder);
-
-				// Update progressbar
-				this.Invoke(new MethodInvoker(this.IncrementProgress));
-
-				// see if we need to cancel
-				Monitor.Enter(this);
-				canceled = this.cancel;
-				Monitor.Exit(this);
-			}
-
-			// notify complete.
-			this.Invoke(new MethodInvoker(this.ExtractComplete));
-		}
-		catch (Exception err)
-		{
-			// notify failure
-			this.exception = err;
-			this.Invoke(new MethodInvoker(this.ExtractFailed));
-			throw;
-		}
-	}
-
-	/// <summary>
-	/// Performs the extraction of an ARC file.
-	/// </summary>
-	private void DoArcExtraction()
-	{
-		try
-		{
-			bool canceled = false;
-
-			foreach (RecordId recordID in this.MainForm.SelectedFile.Arc.Keys)
-			{
-				if (canceled)
-					break;
-
-				// update label with recordID
-				this.recordIdBeingProcessed = recordID;
-				this.Invoke(new MethodInvoker(this.UpdateLabel));
-
-				// Write the record
-				arcProv.Write(this.MainForm.SelectedFile.Arc, this.BaseFolder, recordID, recordID.Normalized);
-
-				// Update progressbar
-				this.Invoke(new MethodInvoker(this.IncrementProgress));
-
-				// see if we need to cancel
-				Monitor.Enter(this);
-				canceled = this.cancel;
-				Monitor.Exit(this);
-			}
-
-			// notify complete.
-			this.Invoke(new MethodInvoker(this.ExtractComplete));
-		}
-		catch (Exception err)
-		{
-			// notify failure
-			this.exception = err;
-			this.Invoke(new MethodInvoker(this.ExtractFailed));
-			throw;
-		}
+			if (this.result.Outcome == ExtractionOutcome.Failed)
+				this.Invoke(this.ExtractFailed);
+			else
+				this.Invoke(this.ExtractComplete);
+		});
 	}
 
 	/// <summary>
@@ -203,7 +104,7 @@ internal sealed partial class ExtractProgress : Form
 		this.DialogResult = DialogResult.Abort;
 
 		MessageBox.Show(
-			this.exception?.ToString() ?? string.Empty,
+			this.result?.Error?.ToString() ?? string.Empty,
 			Resources.ARZProgressFailedText,
 			MessageBoxButtons.OK,
 			MessageBoxIcon.Error,
@@ -218,7 +119,7 @@ internal sealed partial class ExtractProgress : Form
 	/// </summary>
 	private void ExtractComplete()
 	{
-		if (this.cancel)
+		if (this.result?.Outcome == ExtractionOutcome.Cancelled)
 		{
 			MessageBox.Show(
 				Resources.ARZProgressCancelledText,
@@ -258,9 +159,9 @@ internal sealed partial class ExtractProgress : Form
 	/// <summary>
 	/// Update the current file name on the display.
 	/// </summary>
-	private void UpdateLabel()
+	private void UpdateLabel(RecordId recordId)
 	{
-		this.label1.Text = string.Format(CultureInfo.CurrentCulture, Resources.ARZProgressLabel, this.recordIdBeingProcessed);
+		this.label1.Text = string.Format(CultureInfo.CurrentCulture, Resources.ARZProgressLabel, recordId);
 	}
 
 	/// <summary>
@@ -270,8 +171,6 @@ internal sealed partial class ExtractProgress : Form
 	/// <param name="e">EventArgs data</param>
 	private void CancelButtonClick(object sender, EventArgs e)
 	{
-		Monitor.Enter(this);
-		this.cancel = true;
-		Monitor.Exit(this);
+		this.cancellation.Cancel();
 	}
 }

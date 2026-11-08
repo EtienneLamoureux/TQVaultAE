@@ -21,7 +21,7 @@ has a status: **done**, **partial** (what is left is noted) or **left**. What re
 `IUIService`, and the services `ItemMovementService`, `ItemStackingService`, `ItemDropService`, `ItemEditService`,
 `AffixCatalogService`, `ItemExchangeService`, `VaultService`, `StashService`, `PlayerService`, `ForgeService`,
 `HighlightService`, `SaveOrchestrator`, `LoadAllService`, `StartupService`, `SettingsPersistenceService`, `SettingsEditor`,
-`SearchCategoryService`, `SearchQueryService`, `CharacterEditService`, with `ItemTooltipContentBuilder`, `PlayerInfoText` and the
+`SearchCategoryService`, `SearchQueryService`, `CharacterEditService`, with `ItemTooltipContentBuilder`, `ItemPropertiesContent`, `PlayerInfoText` and the
 container label helpers in Presentation.
 
 ## Cross-cutting findings
@@ -111,7 +111,7 @@ Risk: low (pure code, few callers), med (state or threading), high (core drag an
 | T3 | `SearchDialogAdvanced.Queries.cs`, `Models/Search/SearchQueries.cs` | Saved queries: validation, JSON storage in the GUI, `BoxItem` holding controls | `SearchQueryService` + DTO in Application | med | done `5f703e6` |
 | T4 | `ResultsDialog.cs:107-131`, `FoundResultsTooltip.cs:135-145`, `BagButtonTooltip.cs:128-140` | Container labels, "N x name" summary (2 copies) | Presentation helpers | low | done `56c6d39` |
 | T5 | `ItemTooltip.cs:17-452`, `ItemTooltip.GrantedSkills.cs:95-277` | Which lines the item tooltip shows and in what order | `ItemTooltipContentBuilder` (Presentation) returning lines; the GUI renders | med-high | done `4a6cf0c` (checked with `tooltip_text_dump`, `cc28db1`) |
-| T6 | `BaseTooltip.cs:92-124`, `ItemProperties.cs:89-178` | Color tag splitting (2 copies), property sections (3 copies) | `TQColorHelper.SplitColorSegments` (Domain) | low | partial: color tag splitting done `07b7e86`; left: the base/prefix/suffix property sections of `ItemProperties` are still three similar blocks |
+| T6 | `BaseTooltip.cs:92-124`, `ItemProperties.cs:89-178` | Color tag splitting (2 copies), property sections (3 copies) | `TQColorHelper.SplitColorSegments` (Domain), `ItemPropertiesContent` (Presentation) | low | done: color tag splitting `07b7e86`; property sections built once by `ItemPropertiesContent.Build` (rows, colors, visibility), the dialog loops over them (checked with `item_properties_dump` on 9367 items, both filter states: identical) |
 | T7 | `ForgePanel.cs:484-686` | Forge commit, consuming materials, reset on mode downgrade | `ForgeService`, `ForgeRules.IsDowngrade` | low-med | done `4f861e0`; preview item `e1fba5c` |
 | T8 | `HighlightFilters.cs:195-385` | Building the filter values, "any filter active" | `HighlightFilterValues.IsEmpty`, `HighlightService` | low | done `9f42903` |
 
@@ -138,7 +138,7 @@ Each lot is one commit (or a few), with unit tests on the moved code, and is che
 `tqvault` MCP.
 
 1. **Bugs** found above, each with a test where the code allows it. Done.
-2. **Quick wins, low risk**: I1, I3, I6, T4, T6, V5, V6, S6. Done (T6 partial).
+2. **Quick wins, low risk**: I1, I3, I6, T4, T6, V5, V6, S6. Done.
 3. **Vaults and characters**: V1, V2, V3, V4, V7. Done.
 4. **Item editing and moves**: I5, I7, I10, T7, T8, I2, I4. Done.
 5. **Import/export and startup**: S7, S2, S4, S3. Done.

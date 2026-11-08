@@ -3,6 +3,7 @@
 //     Copyright (c) Village Idiot. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using ArzExplorer.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Application.Contracts.Providers;
@@ -62,6 +63,7 @@ public static class Program
 		// Init SoundServiceWin without IDatabase
 		.AddSingleton<SoundServiceWin>(sp => new SoundServiceWin(sp.GetRequiredService<ILogger<SoundServiceWin>>(), null, sp.GetRequiredService<UserSettings>()))
 		// Forms
+		.AddTransient<ArchiveExtractor>()
 		.AddSingleton<MainForm>()
 		.AddTransient<ExtractProgress>();
 
@@ -95,33 +97,5 @@ public static class Program
 		Application.Run(mainform);
 
 	exit:;
-	}
-
-
-	/// <summary>
-	/// Reads a value from the registry
-	/// </summary>
-	/// <param name="key">registry hive to be read</param>
-	/// <param name="path">path of the value to be read</param>
-	/// <returns>string value of the key and value that was read or empty string if there was a problem.</returns>
-	internal static string ReadRegistryKey(Microsoft.Win32.RegistryKey key, string[] path)
-	{
-		// The last item in the path array is the actual value name.
-		int valueKey = path.Length - 1;
-
-		// All other values in the path are keys which will need to be navigated.
-		int lastSubKey = path.Length - 2;
-
-		for (int i = 0; i <= lastSubKey; ++i)
-		{
-			var subKey = key.OpenSubKey(path[i]);
-			if (subKey is null)
-			{
-				return string.Empty;
-			}
-			key = subKey;
-		}
-
-		return key.GetValue(path[valueKey]) as string ?? string.Empty;
 	}
 }

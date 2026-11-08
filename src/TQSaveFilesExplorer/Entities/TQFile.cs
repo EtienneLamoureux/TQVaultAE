@@ -24,6 +24,12 @@ public partial class TQFile
 	/// </summary>
 	public static string[] Ext_All { get => [Ext_Player, Ext_SharedStashBackup, Ext_SharedStash]; }
 
+	/// <summary>
+	/// Tells whether the file has the extension of a TQ save file, in any case.
+	/// </summary>
+	public static bool IsSaveFile(string path)
+		=> Ext_All.Contains(System.IO.Path.GetExtension(path), StringComparer.OrdinalIgnoreCase);
+
 
 	public byte[] Content { get; private set; }
 	public string Path { get; private set; }
