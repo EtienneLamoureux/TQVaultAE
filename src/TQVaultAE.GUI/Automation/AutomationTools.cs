@@ -458,6 +458,32 @@ internal static partial class AutomationTools
 			return Serialize(new { panel = named.Id, item = DescribeItem(item, null), clicked });
 		});
 
+	[McpServerTool(Name = "export_items")]
+	[Description("Right-clicks a cell of a panel, then runs the item menu's 'Export to file' without its file dialog: the selection (select_items) when there is one, else the item under the cursor. Returns false in 'exported' when there was nothing to export. Never touches the clipboard or PasteBin.")]
+	public static string ExportItems(
+		[Description("Panel id.")] string panel,
+		[Description("Cell column.")] int x,
+		[Description("Cell row.")] int y,
+		[Description("Path of the JSON file to write.")] string path)
+		=> AutomationHost.OnUi(form =>
+		{
+			var named = ResolveShownPanel(form, panel);
+			if (form.AutomationDragInfo.IsActive)
+				throw new McpException("An item is being dragged: a right click would cancel it. Use cancel_drag first.");
+
+			bool exported;
+			try
+			{
+				exported = named.Panel.AutomationExportItemsToFile(new Point(x, y), path);
+			}
+			finally
+			{
+				ReleaseCursor(named.Panel);
+			}
+
+			return Serialize(new { panel = named.Id, exported, path });
+		});
+
 	[McpServerTool(Name = "press_key", Destructive = true)]
 	[Description("Rests the cursor on a cell of a panel and presses a key there like the user: 'c' copies, 'd' duplicates, 'backspace' deletes the item under the cursor (with its confirmation: queue the answer first), 'escape' cancels a drag. Runs after the call returns; follow with get_state or dialog_answers.")]
 	public static string PressKey(

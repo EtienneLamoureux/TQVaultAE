@@ -214,4 +214,15 @@ public partial class SackPanel
 
 		VirtualCursor.Set(this, clientLocation);
 	}
+
+	/// <summary>
+	/// Right-clicks a cell like the user, closes the menu, then runs the item menu's "Export to file" without its file dialog:
+	/// the selection when there is one, else the item under the cursor.
+	/// </summary>
+	/// <returns><see langword="false"/> when there was nothing to export.</returns>
+	internal bool AutomationExportItemsToFile(Point cell, string path)
+	{
+		this.AutomationContextMenu(cell);
+		return this.ExportItemsToFile(path);
+	}
 }

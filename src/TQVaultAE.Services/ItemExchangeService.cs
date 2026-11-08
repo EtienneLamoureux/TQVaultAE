@@ -297,7 +297,41 @@ public class ItemExchangeService(
 		=> this.ImportFromJson(this._fileIO.ReadAllText(path));
 
 	public void ExportVaultToFile(PlayerCollection vault, string path)
-		=> this._fileIO.WriteAllText(path, this.SerializePlayerCollection(vault));
+		=> this.ExportToFile(this.SerializePlayerCollection(vault), path);
+
+	/// <inheritdoc/>
+	public string? SerializeSelection(IReadOnlyList<Item> items)
+		=> items.Count switch
+		{
+			0 => null,
+			1 => this.SerializeItem(items[0]),
+			_ => this.SerializeItems(items),
+		};
+
+	/// <inheritdoc/>
+	public void ExportToFile(string json, string path)
+		=> this._fileIO.WriteAllText(path, json);
+
+	/// <inheritdoc/>
+	public Task<string> ExportSelectionToPasteBinAsync(IReadOnlyList<Item> items)
+		=> items.Count == 1
+			? this.ExportItemToPasteBinAsync(items[0])
+			: this.ExportToPasteBinAsync(this.SerializeItems(items), "Multi-item export");
+
+	/// <inheritdoc/>
+	public string BuildTabPasteName(string vaultName, SackCollection sack, int sackNumber)
+	{
+		var tabName = sack.BagButtonIconInfo?.Label;
+		return string.IsNullOrWhiteSpace(tabName)
+			? $"{vaultName}/Tab {sackNumber + 1}"
+			: $"{vaultName}/{tabName}";
+	}
+
+	/// <inheritdoc/>
+	public Task<string> ExportTabToPasteBinAsync(string vaultName, SackCollection sack, int sackNumber)
+		=> this.ExportToPasteBinAsync(
+			this.SerializeSackCollection(sack, sackNumber)
+			, this.BuildTabPasteName(vaultName, sack, sackNumber));
 
 	public int PlaceImportedItems(SackCollection sack, ImportResult importResult, int sackWidth, int sackHeight)
 	{

@@ -146,7 +146,7 @@ public partial class VaultPanel
 			};
 
 			if (dialog.ShowDialog() == DialogResult.OK)
-				File.WriteAllText(dialog.FileName, json);
+				exchangeService.ExportToFile(json, dialog.FileName);
 		}
 	}
 
@@ -157,12 +157,7 @@ public partial class VaultPanel
 		{
 			try
 			{
-				var json = exchangeService.SerializeSackCollection(this.BagSackPanel.Sack, this.CurrentBag);
-				var tabName = this.BagSackPanel.Sack.BagButtonIconInfo?.Label;
-				var pasteName = string.IsNullOrWhiteSpace(tabName)
-					? $"{this.ShownVault.PlayerName}/Tab {this.CurrentBag + 1}"
-					: $"{this.ShownVault.PlayerName}/{tabName}";
-				var url = await exchangeService.ExportToPasteBinAsync(json, pasteName);
+				var url = await exchangeService.ExportTabToPasteBinAsync(this.ShownVault.PlayerName, this.BagSackPanel.Sack, this.CurrentBag);
 				Clipboard.SetText(url);
 				this.UIService.NotifyUser($"Tab exported to PasteBin: {url}");
 			}

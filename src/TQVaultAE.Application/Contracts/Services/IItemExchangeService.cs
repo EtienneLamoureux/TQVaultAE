@@ -37,6 +37,41 @@ public interface IItemExchangeService
 	void ExportVaultToFile(PlayerCollection vault, string path);
 
 	/// <summary>
+	/// Serializes the items a user acts on: one item as an item export, several as a multi-select export.
+	/// </summary>
+	/// <returns>The export JSON, <see langword="null"/> when there is no item.</returns>
+	string? SerializeSelection(IReadOnlyList<Item> items);
+
+	/// <summary>
+	/// Writes an export JSON to a file.
+	/// </summary>
+	void ExportToFile(string json, string path);
+
+	/// <summary>
+	/// Exports the items a user acts on to PasteBin: one item like <see cref="ExportItemToPasteBinAsync"/>,
+	/// several as a multi-select export.
+	/// </summary>
+	/// <returns>The URL of the paste.</returns>
+	Task<string> ExportSelectionToPasteBinAsync(IReadOnlyList<Item> items);
+
+	/// <summary>
+	/// Builds the PasteBin name of a tab export: the vault name, then the tab label or <c>Tab n</c> (1-based) when it has none.
+	/// </summary>
+	/// <param name="vaultName">Name of the vault or character the tab belongs to.</param>
+	/// <param name="sack">The tab.</param>
+	/// <param name="sackNumber">0-based number of the tab, as exported.</param>
+	string BuildTabPasteName(string vaultName, SackCollection sack, int sackNumber);
+
+	/// <summary>
+	/// Exports a tab to PasteBin, the paste named by <see cref="BuildTabPasteName"/>.
+	/// </summary>
+	/// <param name="vaultName">Name of the vault or character the tab belongs to.</param>
+	/// <param name="sack">The tab.</param>
+	/// <param name="sackNumber">0-based number of the tab, as exported.</param>
+	/// <returns>The URL of the paste.</returns>
+	Task<string> ExportTabToPasteBinAsync(string vaultName, SackCollection sack, int sackNumber);
+
+	/// <summary>
 	/// Places the items of an item, multi-select or tab import into a sack.
 	/// Each item keeps its exported position when those cells are free, else it takes the first open cells;
 	/// an item that does not fit is skipped. A tab import also gives its icon to the sack.
