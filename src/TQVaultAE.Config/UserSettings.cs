@@ -242,10 +242,16 @@ public class UserSettings
 
 	#region Logic
 
-	public void Save()
-	{
-		string xmlPath = ResolveUserSettingsFilePath();
+	/// <summary>
+	/// Saves the settings to the <c>UserConfig.xml</c> next to the application.
+	/// </summary>
+	public void Save() => this.Save(ResolveUserSettingsFilePath());
 
+	/// <summary>
+	/// Saves the settings to <paramref name="xmlPath"/>, replacing the file.
+	/// </summary>
+	public void Save(string xmlPath)
+	{
 		XmlSerializer serializer = new XmlSerializer(typeof(UserSettings));
 		using var stream = new FileStream(xmlPath, FileMode.Create);
 		serializer.Serialize(stream, this);
@@ -256,14 +262,25 @@ public class UserSettings
 		return Path.Combine(AppContext.BaseDirectory, "UserConfig.xml");
 	}
 
-	public static UserSettings Read()
+	/// <summary>
+	/// Reads the <c>UserConfig.xml</c> next to the application, or the defaults when there is none.
+	/// </summary>
+	public static UserSettings Read() => Read(ResolveUserSettingsFilePath());
+
+	/// <summary>
+	/// Reads the settings from <paramref name="xmlPath"/>, or the defaults when the file does not exist.
+	/// Settings missing from the file keep their default. An empty file, as an interrupted save leaves it, gives the defaults too.
+	/// </summary>
+	public static UserSettings Read(string xmlPath)
 	{
-		string xmlPath = ResolveUserSettingsFilePath();
+		if (!File.Exists(xmlPath))
+			return new UserSettings();
 
-		if (File.Exists(xmlPath))
-			return ParseSettings(File.ReadAllText(xmlPath));
+		var xmlData = File.ReadAllText(xmlPath);
+		if (string.IsNullOrWhiteSpace(xmlData))
+			return new UserSettings();
 
-		return new UserSettings();// Default
+		return ParseSettings(xmlData);
 	}
 
 	public static UserSettings ParseSettings(string xmlData)
