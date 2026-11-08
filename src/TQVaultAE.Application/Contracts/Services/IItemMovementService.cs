@@ -73,6 +73,17 @@ public interface IItemMovementService
     ContainerPlace PlaceIn(PlayerCollection container, SackType sackType, int sackNumber, StashType? stashType = null);
 
     /// <summary>
+    /// Builds the place of an item in a stash, the same place the stash load gives its items.
+    /// </summary>
+    /// <remarks>
+    /// The container is the stash file and its name ("Transfer Stash", "Relic Vault", or the character for its own stash),
+    /// so a reload of the stash finds the item by its file and the character reload leaves it alone.
+    /// </remarks>
+    /// <param name="stash">The stash.</param>
+    /// <param name="stashType">The kind of stash, also its sack number.</param>
+    ContainerPlace PlaceIn(Stash stash, StashType stashType);
+
+    /// <summary>
     /// Places an item in the first free cells of a sack, the way the auto-move does.
     /// </summary>
     /// <remarks>

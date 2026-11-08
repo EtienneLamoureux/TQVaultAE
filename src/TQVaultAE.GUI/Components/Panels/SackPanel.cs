@@ -424,6 +424,11 @@ public partial class SackPanel : Panel, IScalingControl
 	public PlayerCollection? PlayerCollection { get; set; }
 
 	/// <summary>
+	/// Gets the stash of the shown sack, for the sack panel of the stash panel: its items belong to the stash file.
+	/// </summary>
+	public Func<Stash?>? ShownStash { get; set; }
+
+	/// <summary>
 	/// Sack shown by the panel, for the actions that need one (context menu, drag and drop).
 	/// </summary>
 	internal SackCollection ShownSack => this.Sack

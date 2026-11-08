@@ -311,7 +311,8 @@ public partial class MainForm
 
 		var stashSackPanel = this.stashPanel.SackPanel;
 		var stashSack = stashSackPanel.ShownSack;
-		var place = this.Services.ItemMovementService.PlaceIn(this.stashPanel.ShownPlayer, stashSack.SackType, stashSackPanel.CurrentSack, stashSack.StashType);
+		// The same place as a drop on the stash: the stash file.
+		var place = stashSackPanel.PlaceHere();
 
 		// No room, or an item the relic vault does not take: the item goes back.
 		if (!this.Services.ItemMovementService.TryPlace(dragItem, stashSack, stashSackPanel.SackSize, place, this.DragInfo.MarkPlaced))

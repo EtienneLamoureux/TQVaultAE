@@ -147,6 +147,17 @@ public class ItemMovementService(ILogger<ItemMovementService> log) : IItemMoveme
         };
 
     /// <inheritdoc/>
+    public ContainerPlace PlaceIn(Stash stash, StashType stashType)
+        => new()
+        {
+            Path = stash.StashFile,
+            Name = stash.Name,
+            SackType = SackType.Stash,
+            StashType = stashType,
+            SackNumber = (int)stashType,
+        };
+
+    /// <inheritdoc/>
     public bool TryPlace(Item item, SackCollection sack, Size sackSize, ContainerPlace place, Action? beforePlacing = null)
     {
         if (!this.IsItemValidForStashType(item, sack.StashType))

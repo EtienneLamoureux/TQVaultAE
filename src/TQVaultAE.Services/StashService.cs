@@ -67,6 +67,8 @@ public class StashService(
 		Stash updateStash(string k, Stash oldValue)
 		{
 			// no logic with oldValue
+			// The reloaded items replace those of the old file in the search.
+			this.ItemDatabaseService.RemoveContainerFromDatabase(k);
 			return addStash(k);
 		}
 
@@ -113,6 +115,8 @@ public class StashService(
 
 		Stash updateStash(string k, Stash oldValue)
 		{
+			// The reloaded items replace those of the old file in the search.
+			this.ItemDatabaseService.RemoveContainerFromDatabase(k);
 			return addStash(k);
 		}
 
@@ -182,6 +186,8 @@ public class StashService(
 
 		Stash updateStash(string k, Stash oldValue)
 		{
+			// The reloaded items replace those of the old file in the search.
+			this.ItemDatabaseService.RemoveContainerFromDatabase(k);
 			return addStash(k);
 		}
 
