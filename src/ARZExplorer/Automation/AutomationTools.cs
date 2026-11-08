@@ -63,6 +63,41 @@ internal static class AutomationTools
 		return GetState();
 	}
 
+	[McpServerTool(Name = "search", Destructive = false)]
+	[Description("Types the text in the search box and runs Find Next (forward) or Find Previous, as the toolbar or F3 does: it selects the next node whose key, text or record values contain the text. Returns the time it took and get_state (the status bar says where it was found).")]
+	public static string Search(
+		[Description("Text to find.")] string text,
+		[Description("Find Next when true, Find Previous when false.")] bool forward = true,
+		[Description("Seconds to wait for the UI thread.")] int timeoutSeconds = 300)
+	{
+		var ms = AutomationHost.OnUi(form => form.AutomationSearch(text, forward), TimeSpan.FromSeconds(timeoutSeconds));
+		return $"{ms} ms\n{GetState()}";
+	}
+
+	[McpServerTool(Name = "clipboard", ReadOnly = true)]
+	[Description("What the clipboard holds after a Copy menu item: text (start, length, lines), image size, audio length.")]
+	public static string ReadClipboard()
+		=> Json(AutomationHost.OnUi(form => form.AutomationClipboard(), TimeSpan.FromSeconds(5)));
+
+	[McpServerTool(Name = "extract", Destructive = true)]
+	[Description("Extract menu without its file dialogs: all=false writes the selected record or entry to the file 'path' (Extract > Selected File), all=true writes every record or entry of the selected file under the folder 'path' with the progress dialog (Extract > All Files). Write only under a temporary folder.")]
+	public static string Extract(
+		[Description("Destination file (all=false) or folder (all=true).")] string path,
+		[Description("Every record or entry of the selected file.")] bool all = false,
+		[Description("Seconds to wait for the UI thread.")] int timeoutSeconds = 900)
+	{
+		var watch = System.Diagnostics.Stopwatch.StartNew();
+		AutomationHost.OnUi(form =>
+		{
+			if (all)
+				form.ExtractAllTo(path);
+			else
+				form.ExtractSelectedTo(path);
+			return true;
+		}, TimeSpan.FromSeconds(timeoutSeconds));
+		return $"{watch.ElapsedMilliseconds} ms";
+	}
+
 	[McpServerTool(Name = "find_nodes", ReadOnly = true)]
 	[Description("Lists the keys of the leaf nodes (files and records) whose key contains the text, e.g. '.tex' or 'items\\\\'. Keys are '<file id>;<entry>'.")]
 	public static string FindNodes(

@@ -19,6 +19,7 @@ public partial class MainForm
 		selectedNode = this.treeViewTOC.SelectedNode?.Name,
 		path = this.textBoxPath.Text,
 		status = this.toolStripStatusLabel.Text,
+		gridRows = this.dataGridViewDetails.RowCount,
 		shown = new
 		{
 			picture = this.panelPicture.Visible,
@@ -68,12 +69,54 @@ public partial class MainForm
 			}
 		}
 
-		return this.Controls.OfType<ToolStrip>().SelectMany(strip => Walk(strip.Items));
+		// The menu and the toolbar sit in panels: walk every control.
+		IEnumerable<Control> All(Control parent)
+		{
+			foreach (Control child in parent.Controls)
+			{
+				yield return child;
+				foreach (var nested in All(child))
+					yield return nested;
+			}
+		}
+
+		return All(this).OfType<ToolStrip>().SelectMany(strip => Walk(strip.Items));
 	}
 
-	/// <summary>The menu and toolbar items: name, text, enabled.</summary>
+	/// <summary>The menu and toolbar items: name, text, enabled, checked.</summary>
 	internal object[] AutomationListItems()
-		=> [.. this.AutomationItems().Where(i => !string.IsNullOrEmpty(i.Name)).Select(i => (object)new { i.Name, i.Text, i.Enabled })];
+		=> [.. this.AutomationItems().Where(i => !string.IsNullOrEmpty(i.Name)).Select(i => (object)new
+		{
+			i.Name,
+			i.Text,
+			i.Enabled,
+			Checked = i switch { ToolStripMenuItem m => m.Checked, ToolStripButton b => b.Checked, _ => (bool?)null },
+		})];
+
+	/// <summary>Types in the search box and runs Find Next or Find Previous; returns the milliseconds it took.</summary>
+	internal long AutomationSearch(string text, bool forward)
+	{
+		this.toolStripTextBox.Text = text;
+		var watch = System.Diagnostics.Stopwatch.StartNew();
+		this.Find(forward);
+		return watch.ElapsedMilliseconds;
+	}
+
+	/// <summary>What the clipboard holds: text (start and length), image size, audio length.</summary>
+	internal object AutomationClipboard()
+	{
+		var text = Clipboard.ContainsText() ? Clipboard.GetText() : null;
+		using var image = Clipboard.ContainsImage() ? Clipboard.GetImage() : null;
+		using var audio = Clipboard.ContainsAudio() ? Clipboard.GetAudioStream() : null;
+		return new
+		{
+			text = text is null ? null : text.Length > 300 ? text[..300] + "..." : text,
+			textLength = text?.Length,
+			textLines = text?.Split('\n').Length,
+			image = image is null ? null : $"{image.Width}x{image.Height}",
+			audioBytes = audio?.Length,
+		};
+	}
 
 	/// <summary>Clicks a menu or toolbar item by name.</summary>
 	internal void AutomationClickItem(string name)

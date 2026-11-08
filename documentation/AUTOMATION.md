@@ -228,7 +228,10 @@ Release builds contain none of it.
 |---|---|
 | `get_state` | Title, opened files, node count, top tree nodes, selected node, path box, status bar, shown view (picture, grid, text, sound), picture size. Fails within 5 s when the UI thread is blocked. |
 | `open_file(path)` | Opens an ARC or ARZ file as the Open menu does. |
-| `list_items`, `click_item(name)` | Menu items, and a click on one (`loadAllFilesToolStripMenuItem`...). |
+| `list_items`, `click_item(name)` | Menu and toolbar items (name, text, enabled, checked), and a click on one (`toolStripButtonLoadDataBase`, `loadAllFilesToolStripMenuItem`, `toolStripButtonCaps`, `copyDBRToolStripMenuItem`...). |
+| `search(text, forward)` | Types in the search box and runs Find Next or Find Previous (toolbar, F3); returns the time it took. |
+| `clipboard` | What a Copy menu item put on the clipboard: text (start, length, lines), image size, audio length. |
+| `extract(path, all)` | Extract > Selected File (`all=false`, to the file `path`) or Extract > All Files (`all=true`, under the folder `path`) without the file dialogs. Write under a temporary folder. |
 | `find_nodes(contains, max)` | Keys of the leaf nodes containing a text (`.tex`, `U_E_LYPIKOURI`). |
 | `select_node(key)` | Selects a node as a click does: record grid, text, picture or sound. |
 | `grid_links`, `click_grid_cell(row, column)` | The link cells of a DBR record grid, and a click on one (navigates, loading the archive it needs). |
