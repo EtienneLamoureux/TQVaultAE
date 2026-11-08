@@ -90,6 +90,20 @@ public sealed class UserSettingsTests : IDisposable
 		File.Exists(this._xmlPath).Should().BeFalse("reading must not create the file");
 	}
 
+	[Theory]
+	[InlineData("")]
+	[InlineData("   \r\n")]
+	[InlineData("\uFEFF")]
+	public void Read_EmptyFile_ReturnsDefaults(string content)
+	{
+		// What an interrupted save leaves: Save truncates the file before writing it.
+		File.WriteAllText(this._xmlPath, content, new UTF8Encoding(false));
+
+		var settings = UserSettings.Read(this._xmlPath);
+
+		settings.Should().BeEquivalentTo(new UserSettings());
+	}
+
 	[Fact]
 	public void SaveThenRead_KeepsEverySetting()
 	{

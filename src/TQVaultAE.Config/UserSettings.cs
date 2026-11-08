@@ -269,14 +269,18 @@ public class UserSettings
 
 	/// <summary>
 	/// Reads the settings from <paramref name="xmlPath"/>, or the defaults when the file does not exist.
-	/// Settings missing from the file keep their default.
+	/// Settings missing from the file keep their default. An empty file, as an interrupted save leaves it, gives the defaults too.
 	/// </summary>
 	public static UserSettings Read(string xmlPath)
 	{
-		if (File.Exists(xmlPath))
-			return ParseSettings(File.ReadAllText(xmlPath));
+		if (!File.Exists(xmlPath))
+			return new UserSettings();
 
-		return new UserSettings();// Default
+		var xmlData = File.ReadAllText(xmlPath);
+		if (string.IsNullOrWhiteSpace(xmlData))
+			return new UserSettings();
+
+		return ParseSettings(xmlData);
 	}
 
 	public static UserSettings ParseSettings(string xmlData)
