@@ -161,6 +161,43 @@ public class Variable
 		return _toString;
 	}
 
+	/// <summary>Characters a value formatted by <see cref="ToString"/> can hold, NaN and infinity aside.</summary>
+	private static readonly System.Buffers.SearchValues<char> NumberChars = System.Buffers.SearchValues.Create("0123456789.-");
+
+	/// <summary>
+	/// Whether <see cref="ToString"/> contains <paramref name="text"/>, ignoring case, without building that string:
+	/// the name and each value are checked on their own, and numbers are formatted only when the text could appear in
+	/// one. A text holding a separator (',' or ';') may span two parts: it is looked up in <see cref="ToString"/>.
+	/// </summary>
+	/// <remarks>Searching every record of the database built the text of every variable: half the search time.</remarks>
+	public bool TextContains(string text)
+	{
+		if (_toString is not null || text.AsSpan().IndexOfAny(',', ';') >= 0)
+			return this.ToString().Contains(text, StringComparison.OrdinalIgnoreCase);
+
+		if (this.Name.Contains(text, StringComparison.OrdinalIgnoreCase))
+			return true;
+
+		bool numberLike = text.AsSpan().IndexOfAnyExcept(NumberChars) < 0;
+		string formatSpec = this.DataType == VariableDataType.Float ? "{0:f6}" : "{0}";
+		for (int i = 0; i < this.NumberOfValues; ++i)
+		{
+			var value = this.values[i];
+			if (value is string s)
+			{
+				if (s.Contains(text, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+			else if (numberLike || value is float f && !float.IsFinite(f))
+			{
+				if (string.Format(CultureInfo.InvariantCulture, formatSpec, value).Contains(text, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+		}
+
+		return false;
+	}
+
 	/// <summary>
 	/// Indicate that some values are not equals default(type). Meaning there is something to display.
 	/// </summary>

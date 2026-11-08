@@ -420,8 +420,17 @@ public partial class MainForm : Form
 		if (saveFileDialog.ShowDialog() == DialogResult.OK)
 		{
 			filename = saveFileDialog.FileName;
-			this.Extractor.ExtractOne(this.SelectedFile, this.SelectedFile.DestFile, filename);
+			this.ExtractSelectedTo(filename);
 		}
+	}
+
+	/// <summary>Writes the selected record or entry to <paramref name="filename"/>.</summary>
+	internal void ExtractSelectedTo(string filename)
+	{
+		if (string.IsNullOrEmpty(this.SelectedFile.DestFile) || this.SelectedFile.FileType == CompressedFileType.Unknown)
+			return;
+
+		this.Extractor.ExtractOne(this.SelectedFile, this.SelectedFile.DestFile, filename);
 	}
 
 	#endregion
@@ -457,25 +466,25 @@ public partial class MainForm : Form
 			if (result != DialogResult.OK)
 				return;
 
-			this.SelectedFile.DestDirectory = browseDialog.SelectedPath;
+			this.ExtractAllTo(browseDialog.SelectedPath);
 		}
+	}
 
-		string? fullDestPath = null;
-
-		if (string.IsNullOrEmpty(this.SelectedFile.DestDirectory))
+	/// <summary>
+	/// Writes every record or entry of the selected file under <paramref name="folder"/>, with the progress dialog;
+	/// asks before creating a missing folder.
+	/// </summary>
+	internal void ExtractAllTo(string folder)
+	{
+		this.SelectedFile.DestDirectory = folder;
+		if (string.IsNullOrEmpty(folder))
 		{
 			MessageBox.Show("You must enter a valid destination folder.");
 			return;
 		}
 
 		// See if path exists and create it if necessary
-		if (!string.IsNullOrEmpty(this.SelectedFile.DestDirectory))
-		{
-			fullDestPath = Path.GetFullPath(this.SelectedFile.DestDirectory);
-		}
-
-		if (fullDestPath is null)
-			return;
+		var fullDestPath = Path.GetFullPath(folder);
 
 		if (File.Exists(fullDestPath))
 		{
@@ -851,6 +860,10 @@ public partial class MainForm : Form
 			}
 
 			PopulateGridView(recordText);
+
+			// The count of the record shown; another view (picture, text) stays as it is.
+			if (this.dataGridViewDetails.Visible)
+				ShowGridView(recordText.Count);
 		}
 	}
 
@@ -1160,14 +1173,25 @@ public partial class MainForm : Form
 			this.lastSearchPosition = startFromEnd;
 		}
 
-		foreach (int i in SearchOrder.Indices(nodes.Length, this.lastSearchPosition, forward))
+		// The first match in search order, looked for a block of nodes at a time, each block checked in parallel:
+		// checking the records one by one took seconds on the UI thread (12 s for a text found nowhere).
+		var order = SearchOrder.Indices(nodes.Length, this.lastSearchPosition, forward).ToArray();
+		const int blockSize = 1024;
+		for (int start = 0; start < order.Length; start += blockSize)
 		{
-			// Skip root nodes (key is string.Empty)
-			if (nodes[i].Key == string.Empty)
+			var block = order.AsSpan(start, Math.Min(blockSize, order.Length - start)).ToArray();
+			var matches = new string?[block.Length];
+			Parallel.For(0, block.Length, k => matches[k] = this.SearchMatch(nodes[block[k]], searchText));
+
+			int first = Array.FindIndex(matches, match => match is not null);
+			if (first < 0)
 				continue;
 
-			if (SearchNode(nodes[i].Value, searchText, i))
-				return;
+			var (key, node) = nodes[block[first]];
+			this.lastSearchPosition = block[first];
+			NavigateTo(key);
+			this.toolStripStatusLabel.Text = $"{matches[first]}: {((NodeTag)node.Tag!).Key}";
+			return;
 		}
 
 		// Not found - show in status label and reset position
@@ -1176,71 +1200,41 @@ public partial class MainForm : Form
 	}
 
 	/// <summary>
-	/// Search a single node for the search text
+	/// Whether a node holds the search text: "Found at" when its key does, "Found in" when its text, the text shown for
+	/// it or its record values do; null otherwise. Reads only, so the nodes can be checked in parallel.
 	/// </summary>
-	private bool SearchNode(TreeNode node, string searchText, int index)
+	private string? SearchMatch(KeyValuePair<string, TreeNode> node, string searchText)
 	{
-		// Extract key from node.Tag
-		if (node.Tag is not NodeTag tag)
-			return false;
+		// Skip the root node (key is string.Empty)
+		if (node.Key.Length == 0 || node.Value.Tag is not NodeTag tag)
+			return null;
 
 		var key = tag.Key;
-
-		// Search in record key/name
 		if (key.Normalized.Contains(searchText, noCase))
-		{
-			this.lastSearchPosition = index;
-			NavigateTo(node.Name);
-			this.toolStripStatusLabel.Text = $"Found at: {key}";
-			return true;
-		}
+			return "Found at";
 
-		// Search in tag.Text
-		if (tag.Text.Contains(searchText, noCase))
-		{
-			this.lastSearchPosition = index;
-			NavigateTo(node.Name);
-			this.toolStripStatusLabel.Text = $"Found in: {key}";
-			return true;
-		}
-
-		// Search in tag.RecordText (List<string>)
-		if (tag.RecordText.Any(line => line.Contains(searchText, noCase)))
-		{
-			this.lastSearchPosition = index;
-			NavigateTo(node.Name);
-			this.toolStripStatusLabel.Text = $"Found in: {key}";
-			return true;
-		}
+		if (tag.Text.Contains(searchText, noCase) || tag.RecordText.Any(line => line.Contains(searchText, noCase)))
+			return "Found in";
 
 		// Search in record variables (ARZ files only)
 		var file = tag.File;
-		if (file?.FileType == CompressedFileType.ArzFile && file.ARZFile is not null)
+		if (file.FileType != CompressedFileType.ArzFile || file.ARZFile is null)
+			return null;
+
+		try
 		{
-			try
+			foreach (Variable variable in this.arzProv.GetRecordNotCached(file.ARZFile, key.Normalized))
 			{
-				var records = this.arzProv.GetRecordNotCached(file.ARZFile, key.Normalized);
-				if (records is not null)
-				{
-					foreach (Variable variable in records)
-					{
-						if (variable.ToString().Contains(searchText, noCase))
-						{
-							this.lastSearchPosition = index;
-							NavigateTo(node.Name);
-							this.toolStripStatusLabel.Text = $"Found in: {key}";
-							return true;
-						}
-					}
-				}
-			}
-			catch (KeyNotFoundException)
-			{
-				// Record not found in ARZ file, skip
+				if (variable.TextContains(searchText))
+					return "Found in";
 			}
 		}
+		catch (KeyNotFoundException)
+		{
+			// Record not found in ARZ file, skip
+		}
 
-		return false;
+		return null;
 	}
 
 	/// <summary>
