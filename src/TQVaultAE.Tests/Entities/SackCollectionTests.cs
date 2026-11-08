@@ -368,4 +368,56 @@ public class SackCollectionTests
 	/// </summary>
 	private static Point SackEquipmentLocationOffset(int slot) 
 		=> SackCollection.GetEquipmentLocationOffset(slot);
+
+	#region ChangeBagButtonIconInfo Tests
+
+	private static BagButtonIconInfo CustomIcon(string label = "Rings")
+		=> BagButtonIconInfo.Create(BagButtonDisplayMode.CustomIcon | BagButtonDisplayMode.Label, label, "on.tex", "off.tex", null);
+
+	[Fact]
+	public void ChangeBagButtonIconInfo_SameIcon_LeavesTheSackUnmodified()
+	{
+		var sack = new SackCollection { BagButtonIconInfo = CustomIcon() };
+
+		sack.ChangeBagButtonIconInfo(CustomIcon()).Should().BeFalse();
+
+		sack.IsModified.Should().BeFalse();
+	}
+
+	[Fact]
+	public void ChangeBagButtonIconInfo_DefaultToDefault_LeavesTheSackUnmodified()
+	{
+		var sack = new SackCollection();
+
+		sack.ChangeBagButtonIconInfo(null).Should().BeFalse();
+		sack.ChangeBagButtonIconInfo(new BagButtonIconInfo { DisplayMode = BagButtonDisplayMode.Default }).Should().BeFalse();
+
+		sack.IsModified.Should().BeFalse();
+		sack.BagButtonIconInfo.Should().BeNull();
+	}
+
+	[Fact]
+	public void ChangeBagButtonIconInfo_NewIcon_StoresItAndMarksTheSackModified()
+	{
+		var sack = new SackCollection { BagButtonIconInfo = CustomIcon() };
+		var info = CustomIcon("Potions");
+
+		sack.ChangeBagButtonIconInfo(info).Should().BeTrue();
+
+		sack.IsModified.Should().BeTrue();
+		sack.BagButtonIconInfo.Should().BeSameAs(info);
+	}
+
+	[Fact]
+	public void ChangeBagButtonIconInfo_BackToDefault_ClearsTheIcon()
+	{
+		var sack = new SackCollection { BagButtonIconInfo = CustomIcon() };
+
+		sack.ChangeBagButtonIconInfo(new BagButtonIconInfo { DisplayMode = BagButtonDisplayMode.Default }).Should().BeTrue();
+
+		sack.IsModified.Should().BeTrue();
+		sack.BagButtonIconInfo.Should().BeNull();
+	}
+
+	#endregion
 }

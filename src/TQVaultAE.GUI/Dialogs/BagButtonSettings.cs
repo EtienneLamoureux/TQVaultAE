@@ -264,27 +264,16 @@ public partial class BagButtonSettings : VaultForm
 	/// <summary>
 	/// Puts each picture of each icon in the grid of its category, once.
 	/// </summary>
-	/// <remarks>An icon may use the same resource for several states, and several icons the same resource.</remarks>
 	private void FillGrids()
 	{
 		var cells = this.GridByCategory.Keys.ToDictionary(category => category, _ => new List<Cell>());
 
-		foreach (var info in this.Pictures)
+		foreach (var (info, id) in IconInfo.DistinctPictures(this.Pictures))
 		{
-			Add(info.Off, info.HasOff);
-			Add(info.On, info.HasOn);
-			Add(info.Over, info.HasOver);
-
-			void Add(RecordId? id, bool exists)
-			{
-				if (RecordId.IsNullOrEmpty(id) || !exists || this.CellById.ContainsKey(id!))
-					return;
-
-				var cell = new Cell(info, id!);
-				this.CellById.Add(id!, cell);
-				if (cells.TryGetValue(info.Category, out var list))
-					list.Add(cell);
-			}
+			var cell = new Cell(info, id);
+			this.CellById.Add(id, cell);
+			if (cells.TryGetValue(info.Category, out var list))
+				list.Add(cell);
 		}
 
 		foreach (var (category, grid) in this.GridByCategory)
@@ -382,13 +371,13 @@ public partial class BagButtonSettings : VaultForm
 
 	private void CherryPickIconSimpleMode(IconInfo info)
 	{
-		this.SelectedOff = PictureOf(info.Off, info.HasOff);
-		this.SelectedOn = PictureOf(info.On, info.HasOn);// May be missing on rare exception (TEX Filename rule not consitent)
-		// Apply only if different
-		this.SelectedOver = info.IsOverSameAsOthers ? null : PictureOf(info.Over, info.HasOver);
+		var (on, off, over) = info.SimpleModePictures;
+		this.SelectedOn = CellOf(on);
+		this.SelectedOff = CellOf(off);
+		this.SelectedOver = CellOf(over);
 
-		Cell? PictureOf(RecordId? id, bool exists)
-			=> RecordId.IsNullOrEmpty(id) || !exists ? null : new Cell(info, id!);
+		Cell? CellOf(RecordId? id)
+			=> id is null ? null : new Cell(info, id);
 	}
 
 	#region Magnifier
@@ -561,11 +550,12 @@ public partial class BagButtonSettings : VaultForm
 
 	private void applyButton_Click(object? sender, EventArgs e)
 	{
-		var dispmode = GetDisplayMode();
+		var mode = BagButtonIconInfo.DisplayModeOf(this.scalingRadioButtonDefaultIcon.Checked
+			, this.scalingCheckBoxNumber.Checked, this.scalingCheckBoxLabel.Checked);
+		var info = BagButtonIconInfo.Create(mode, this.scalingTextBoxLabel.Text
+			, this.SelectedOn?.Id, this.SelectedOff?.Id, this.SelectedOver?.Id);
 
-		// Validation
-		if ((dispmode != BagButtonDisplayMode.Default && (this.SelectedOff is null || this.SelectedOn is null))
-		    || (dispmode.HasFlag(BagButtonDisplayMode.Label) && string.IsNullOrWhiteSpace(this.scalingTextBoxLabel.Text)))
+		if (!info.Validate())
 		{
 			this.Services.MessageBoxes.Inform(Resources.BagButtonSettingsValidationMessage, Resources.BagButtonSettingsValidationCaption, MessageBoxIcon.Error);
 
@@ -573,52 +563,23 @@ public partial class BagButtonSettings : VaultForm
 			return;
 		}
 
-		if (this._CurrentBagButton.Sack is not null)
-			this._CurrentBagButton.Sack.IsModified = true;
-
-		if (dispmode == BagButtonDisplayMode.Default)
+		if (mode == BagButtonDisplayMode.Default)
 		{
 			// Reset to default settings
 			this._CurrentBagButton.OnBitmap = Images.inventorybagup01;
 			this._CurrentBagButton.OffBitmap = Images.inventorybagdown01;
 			this._CurrentBagButton.OverBitmap = Images.inventorybagover01;
 
-			if (this._CurrentBagButton.Sack is not null)
-				this._CurrentBagButton.Sack.BagButtonIconInfo = null;
+			this._CurrentBagButton.Sack?.ChangeBagButtonIconInfo(null);
 		}
 		else
 		{
-			// New settings
-			var save = new BagButtonIconInfo()
-			{
-				DisplayMode = dispmode,
-				Label = this.scalingTextBoxLabel.Text.Trim(),
-				Off = this.SelectedOff!.Id,
-				On = this.SelectedOn!.Id,
-				Over = this.SelectedOver?.Id ?? RecordId.Empty,
-			};
-
-			if (this._CurrentBagButton.Sack is not null)
-				this._CurrentBagButton.Sack.BagButtonIconInfo = save;
+			this._CurrentBagButton.Sack?.ChangeBagButtonIconInfo(info);
 			this._CurrentBagButton.ApplyIconInfo(this._CurrentBagButton.Sack);
-
 		}
 
 		this.DialogResult = DialogResult.OK;
 		this.Close();
-	}
-
-	private BagButtonDisplayMode GetDisplayMode()
-	{
-		var val = BagButtonDisplayMode.Default;
-
-		if (this.scalingRadioButtonDefaultIcon.Checked) return val;
-
-		if (this.scalingRadioButtonCustomIcon.Checked) val |= BagButtonDisplayMode.CustomIcon;
-		if (this.scalingCheckBoxLabel.Checked) val |= BagButtonDisplayMode.Label;
-		if (this.scalingCheckBoxNumber.Checked) val |= BagButtonDisplayMode.Number;
-
-		return val;
 	}
 
 	private void cancelButton_Click(object? sender, EventArgs e)

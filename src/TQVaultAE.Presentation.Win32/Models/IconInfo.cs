@@ -39,6 +39,37 @@ public sealed record IconInfo(IconCategory Category, RecordId On, RecordId Off, 
 		=> !this.HasOn && !this.HasOff && !this.HasOver;
 
 	/// <summary>
+	/// Pictures the bag button takes when this icon is picked as a whole (simple mode, right click): a picture
+	/// missing from the game archives is <see langword="null"/>, and so is Over when it repeats On or Off.
+	/// </summary>
+	public (RecordId? On, RecordId? Off, RecordId? Over) SimpleModePictures
+		=> (
+			PictureOf(this.On, this.HasOn),// May be missing on rare exception (TEX Filename rule not consistent)
+			PictureOf(this.Off, this.HasOff),
+			this.IsOverSameAsOthers ? null : PictureOf(this.Over, this.HasOver)
+		);
+
+	private static RecordId? PictureOf(RecordId? id, bool exists)
+		=> RecordId.IsNullOrEmpty(id) || !exists ? null : id;
+
+	/// <summary>
+	/// Each picture of <paramref name="icons"/> once, with the first icon that has it, in Off, On, Over order.
+	/// </summary>
+	/// <remarks>An icon may use the same resource for several states, and several icons the same resource.</remarks>
+	public static IEnumerable<(IconInfo Icon, RecordId Id)> DistinctPictures(IEnumerable<IconInfo> icons)
+	{
+		var seen = new HashSet<RecordId>();
+		foreach (var icon in icons)
+		{
+			foreach (var (id, exists) in new[] { (icon.Off, icon.HasOff), (icon.On, icon.HasOn), (icon.Over, icon.HasOver) })
+			{
+				if (PictureOf(id, exists) is { } picture && seen.Add(picture))
+					yield return (icon, picture);
+			}
+		}
+	}
+
+	/// <summary>
 	/// Tell if <paramref name="resourceId"/> belong to this record
 	/// </summary>
 	/// <param name="resourceId"></param>

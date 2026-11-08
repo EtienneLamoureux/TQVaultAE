@@ -173,6 +173,21 @@ public class SackCollection : IEnumerable<Item>
 	public BagButtonIconInfo? BagButtonIconInfo { get; set; }
 
 	/// <summary>
+	/// Sets the bag button icon (<see langword="null"/> or the default mode for the default icon) and marks the sack
+	/// modified, only when it shows a different button than the current one.
+	/// </summary>
+	/// <returns><see langword="true"/> when the icon changed.</returns>
+	public bool ChangeBagButtonIconInfo(BagButtonIconInfo? info)
+	{
+		if (BagButtonIconInfo.AreSame(this.BagButtonIconInfo, info))
+			return false;
+
+		this.BagButtonIconInfo = BagButtonIconInfo.IsDefault(info) ? null : info;
+		this.IsModified = true;
+		return true;
+	}
+
+	/// <summary>
 	/// Gets offset of the weapon slot
 	/// </summary>
 	/// <param name="weaponSlot">weapon slot number we are looking for</param>
