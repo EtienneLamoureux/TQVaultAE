@@ -280,21 +280,10 @@ public partial class VaultPanel
 
 			// Paste a copy, so pasting on several bags does not share one instance.
 			var sourceInfo = this.userContext.IconInfoCopy;
-			if (sourceInfo is not null)
-			{
-				if (button.Sack is null)
-					return;
+			if (sourceInfo is not null && button.Sack is null)
+				return;
 
-				button.Sack.BagButtonIconInfo = sourceInfo.Clone();
-			}
-			else
-			{
-				if (button.Sack is not null)
-					button.Sack.BagButtonIconInfo = null;
-			}
-
-			if (button.Sack is not null)
-				button.Sack.IsModified = true;
+			button.Sack?.ChangeBagButtonIconInfo(sourceInfo?.Clone());
 			if (this.FindForm() is MainForm frm)
 				frm.NotificationText.Text = Resources.GlobalPasted;
 			button.ApplyIconInfo(button.Sack);
