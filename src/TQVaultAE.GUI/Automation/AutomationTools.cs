@@ -730,6 +730,15 @@ internal static partial class AutomationTools
 			quantity = item.DoesStack ? item.Number : (int?)null,
 			seed = item.Seed,
 			equipmentSlot = sack?.SackType == SackType.Equipment ? EquipmentRules.FindSlot(sack, item) : (int?)null,
+			// Where the search shows the item (its search result reads this place).
+			place = new
+			{
+				containerName = item.Place.Name,
+				container = item.Place.Path,
+				sackType = item.Place.SackType.ToString(),
+				sackNumber = item.Place.SackNumber,
+				stashType = item.Place.StashType?.ToString(),
+			},
 		};
 	}
 

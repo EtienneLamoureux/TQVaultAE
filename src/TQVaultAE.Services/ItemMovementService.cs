@@ -26,6 +26,10 @@ public class ItemMovementService(ILogger<ItemMovementService> log) : IItemMoveme
     /// <param name="sackHeight">Height of the sack in cells.</param>
     /// <returns>Point with coordinates for the upper left cell, or (-1, -1) if no space.</returns>
     public Point FindOpenCells(SackCollection sack, int itemWidth, int itemHeight, int sackWidth, int sackHeight)
+        => this.FindOpenCells(sack, itemWidth, itemHeight, sackWidth, sackHeight, null);
+
+    /// <summary>Finds open cells, <paramref name="ignoredItem"/> not counting as taking any.</summary>
+    private Point FindOpenCells(SackCollection sack, int itemWidth, int itemHeight, int sackWidth, int sackHeight, Item? ignoredItem)
     {
         if (sack is null || itemWidth <= 0 || itemHeight <= 0 || sackWidth <= 0 || sackHeight <= 0)
             return new Point(-1, -1);
@@ -35,7 +39,7 @@ public class ItemMovementService(ILogger<ItemMovementService> log) : IItemMoveme
         {
             for (int y = 0; y < sackHeight; ++y)
             {
-                var foundItems = FindAllItems(sack, new Rectangle(x, y, itemWidth, itemHeight));
+                var foundItems = FindAllItems(sack, new Rectangle(x, y, itemWidth, itemHeight), ignoredItem);
                 
                 if ((foundItems is null || foundItems.Count == 0) && itemWidth + x <= sackWidth)
                 {
@@ -126,42 +130,43 @@ public class ItemMovementService(ILogger<ItemMovementService> log) : IItemMoveme
         return ItemMoveResult.Succeeded(item, destinationSack, destinationPosition);
     }
 
-    /// <summary>
-    /// Updates item location metadata after a move.
-    /// This ensures search results always reflect the current location.
-    /// </summary>
-    public void UpdateItemLocation(Item item, PlayerCollection destinationPlayer, SackType destinationSackType, 
-        int destinationSackNumber, StashType? destinationStashType = null, string? containerName = null)
-    {
-        if (item is null || destinationPlayer is null)
-            return;
-
-        // Update the item's location properties to reflect its new home
-        item.Place.Path = destinationPlayer.PlayerFile;
-        item.Place.Name = containerName ?? destinationPlayer.PlayerName;
-
-        // Calculate sack number based on sack type
-        switch (destinationSackType)
+    /// <inheritdoc/>
+    public ContainerPlace PlaceIn(PlayerCollection container, SackType sackType, int sackNumber, StashType? stashType = null)
+        => new()
         {
-            case SackType.Equipment:
-                item.Place.SackNumber = BagIdConstants.BAGID_EQUIPMENTPANEL;
-                break;
-            case SackType.Stash:
-                item.Place.SackNumber = destinationStashType.HasValue ? (int)destinationStashType : destinationSackNumber;
-                break;
-            case SackType.Vault:
-            case SackType.Player:
-            default:
-                // For vaults and player sacks, use the current sack index
-                item.Place.SackNumber = destinationSackNumber;
-                break;
-        }
+            Path = container.PlayerFile,
+            Name = container.PlayerName,
+            SackType = sackType,
+            StashType = stashType,
+            SackNumber = sackType switch
+            {
+                SackType.Equipment => BagIdConstants.BAGID_EQUIPMENTPANEL,
+                SackType.Stash when stashType.HasValue => (int)stashType.Value,
+                _ => sackNumber,
+            },
+        };
 
-        item.Place.SackType = destinationSackType;
-        item.Place.StashType = destinationStashType;
+    /// <inheritdoc/>
+    public bool TryPlace(Item item, SackCollection sack, Size sackSize, ContainerPlace place, Action? beforePlacing = null)
+    {
+        if (!this.IsItemValidForStashType(item, sack.StashType))
+            return false;
 
-        this._log.LogDebug("Updated item location: Path={Path}, SackType={SackType}, SackNumber={SackNumber}, StashType={StashType}",
-            item.Place.Path, destinationSackType, item.Place.SackNumber, destinationStashType);
+        Point location = this.FindOpenCells(sack, item.Width, item.Height, sackSize.Width, sackSize.Height, item);
+        if (location.X < 0)
+            return false;
+
+        beforePlacing?.Invoke();
+
+        item.PositionX = location.X;
+        item.PositionY = location.Y;
+        sack.AddItem(item);
+        item.Place.CopyFrom(place);
+
+        this._log.LogDebug("Placed item {ItemId} in {Name} sack {SackNumber} at ({X}, {Y})",
+            item.BaseItemId, place.Name, place.SackNumber, location.X, location.Y);
+
+        return true;
     }
 
     /// <inheritdoc/>
@@ -276,7 +281,7 @@ public class ItemMovementService(ILogger<ItemMovementService> log) : IItemMoveme
     /// Find all items that are at least partially within the cell rectangle.
     /// Extracted from SackPanel.FindAllItems().
     /// </summary>
-    private System.Collections.ObjectModel.Collection<Item>? FindAllItems(SackCollection sack, Rectangle cellRectangle)
+    private System.Collections.ObjectModel.Collection<Item>? FindAllItems(SackCollection sack, Rectangle cellRectangle, Item? ignoredItem = null)
     {
         var items = new System.Collections.ObjectModel.Collection<Item>();
         int minX = cellRectangle.X;
@@ -288,7 +293,7 @@ public class ItemMovementService(ILogger<ItemMovementService> log) : IItemMoveme
         {
             for (int y = minY; y < maxY; ++y)
             {
-                var item = FindItem(sack, new Point(x, y));
+                var item = FindItem(sack, new Point(x, y), ignoredItem);
 
                 if (item is not null)
                 {
