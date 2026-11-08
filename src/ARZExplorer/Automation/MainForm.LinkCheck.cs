@@ -87,7 +87,7 @@ public partial class MainForm
 
 					// With only the database loaded, the click opens the candidate archives in turn: one must hold the target.
 					if (!value.EndsWith(".DBR", StringComparison.OrdinalIgnoreCase) && this.NodesByKey[key].Tag is NodeTag tag
-						&& !this.AutoLoadArchives(value).Contains(tag.File.SourceFile, StringComparer.OrdinalIgnoreCase))
+						&& !this.AutoLoadArchives(value).Select(Path.GetFullPath).Contains(Path.GetFullPath(tag.File.SourceFile), StringComparer.OrdinalIgnoreCase))
 					{
 						problems.Enqueue(new("auto-load cannot reach the archive", id.Raw, variable.Name, value
 							, $"tries {string.Join(" | ", this.AutoLoadArchives(value))}, target in {tag.File.SourceFile}"));

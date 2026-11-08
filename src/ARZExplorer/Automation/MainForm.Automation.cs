@@ -105,6 +105,22 @@ public partial class MainForm
 	/// <summary>What the clipboard holds: text (start and length), image size, audio length.</summary>
 	internal object AutomationClipboard()
 	{
+		// Another program (clipboard history, a clipboard manager) can hold the clipboard for a moment: retry.
+		for (int attempt = 1; ; attempt++)
+		{
+			try
+			{
+				return this.ReadClipboard();
+			}
+			catch (System.Runtime.InteropServices.ExternalException) when (attempt < 20)
+			{
+				Thread.Sleep(100);
+			}
+		}
+	}
+
+	private object ReadClipboard()
+	{
 		var text = Clipboard.ContainsText() ? Clipboard.GetText() : null;
 		using var image = Clipboard.ContainsImage() ? Clipboard.GetImage() : null;
 		using var audio = Clipboard.ContainsAudio() ? Clipboard.GetAudioStream() : null;

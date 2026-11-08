@@ -171,9 +171,10 @@ public partial class MainForm : Form
 	private static string SaveFolder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", "Titan Quest");
 
 	/// <summary>
-	/// Opened files, by full path.
+	/// Opened files, by full path, whatever its case: the game folder from the registry (<c>e:\games\...</c>) and the
+	/// path of the Open dialog (<c>E:\GAMES\...</c>) name the same file.
 	/// </summary>
-	private readonly Dictionary<string, TQFileInfo> _openedFiles = [];
+	private readonly Dictionary<string, TQFileInfo> _openedFiles = new(StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>
 	/// ARC files of the game folder, by path relative to it.
@@ -193,9 +194,12 @@ public partial class MainForm : Form
 		}
 	}
 
-	/// <summary>Whether <paramref name="filename"/> is already open.</summary>
+	/// <summary>
+	/// Whether <paramref name="filename"/> is already open, however its path is written ('/' or '\', any case):
+	/// opening it twice would add its entries to the tree again.
+	/// </summary>
 	private bool IsOpen(string filename)
-		=> this._openedFiles.Values.Any(file => file.SourceFile == filename);
+		=> this._openedFiles.ContainsKey(Path.GetFullPath(filename));
 
 	/// <summary>
 	/// Opens a file and updates the tree view.
