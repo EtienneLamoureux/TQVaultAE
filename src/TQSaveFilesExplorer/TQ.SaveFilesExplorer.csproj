@@ -22,6 +22,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="TQVaultAE.Tests.Win32" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Enums.NET" />
 	</ItemGroup>
 

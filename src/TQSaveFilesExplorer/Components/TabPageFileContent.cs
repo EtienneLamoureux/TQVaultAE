@@ -250,7 +250,7 @@ private bool _DisplayDataDecimal = true;
 
 	private void Display_labelOffset(TQFileRecord k)
 	{
-		var end = k.KeyName == TQFileRecord.unknown_segment ? k.ValueEnd : k.ValueStart - 1;
+		var end = k.KeyEnd;
 		this.labelKeyOffset.Text = string.Format(TagFormat(this.labelKeyOffset)
 			, _DisplayDataDecimal ? $"{k.KeyIndex}" : $"0x{k.KeyIndex:X8}"
 			, _DisplayDataDecimal ? $"{end}" : $"0x{end:X8}"
