@@ -213,7 +213,7 @@ public static class Program
 
 					if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
 					{
-						userSettings.ForceGamePath = fbd.SelectedPath;
+						startupService.ApplyChosenGamePath(fbd.SelectedPath);
 						userSettings.Save();
 						goto restart;
 					}
