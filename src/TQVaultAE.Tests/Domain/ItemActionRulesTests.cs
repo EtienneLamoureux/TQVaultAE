@@ -100,7 +100,7 @@ public class ItemActionRulesTests
 	[Fact]
 	public void Available_SeveralSelected_OffersOnlyTheGroupActions()
 		=> For(Sword(), selectionCount: 3, allowEdit: true, allowCopy: true)
-			.Should().Be(GroupActions | ItemActions.ClearSelection);
+			.Should().Be(GroupActions | ItemActions.ClearSelection | ItemActions.Compare);
 
 	[Fact]
 	public void Available_SelectionOfTheItemAlone_ActsOnTheItem()
@@ -109,7 +109,30 @@ public class ItemActionRulesTests
 
 	[Fact]
 	public void Available_SelectionWithoutItemUnderCursor_OffersTheGroupActions()
-		=> For(null, selectionCount: 2).Should().Be(GroupActions | ItemActions.ClearSelection);
+		=> For(null, selectionCount: 2).Should().Be(GroupActions | ItemActions.ClearSelection | ItemActions.Compare);
+
+	[Theory]
+	[InlineData(0, false)]
+	[InlineData(1, false)]
+	[InlineData(2, true)]
+	[InlineData(5, true)]
+	public void Available_Compare_NeedsTwoSelectedItems(int selectionCount, bool canCompare)
+		=> For(Sword(), selectionCount, itemIsTheSelection: selectionCount == 1).HasFlag(ItemActions.Compare).Should().Be(canCompare);
+
+	[Fact]
+	public void Available_Compare_AlsoInAReadOnlySack()
+		=> For(null, selectionCount: 2, readOnly: true).Should().Be(ItemActions.Compare);
+
+	[Fact]
+	public void ComparedItems_TheFirstTwoSelected_LaterOnesIgnored()
+	{
+		Item a = Sword(), b = Sword(), c = Sword();
+
+		ItemActionRules.ComparedItems([a, b, c]).Should().Be((a, b));
+		ItemActionRules.ComparedItems([b, a]).Should().Be((b, a), "the order of selection decides which item is first");
+		ItemActionRules.ComparedItems([a]).Should().BeNull();
+		ItemActionRules.ComparedItems(null).Should().BeNull();
+	}
 
 	[Theory]
 	[InlineData(true, false, ItemActions.RemoveRelic)]
