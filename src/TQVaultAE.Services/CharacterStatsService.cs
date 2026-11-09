@@ -101,8 +101,28 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 			BaseManaRegen = Value(player, "characterManaRegen", defaults.BaseManaRegen),
 			BaseRunSpeed = Value(player, "characterRunSpeed", defaults.BaseRunSpeed),
 			BaseAttackSpeed = Value(player, "characterAttackSpeed", defaults.BaseAttackSpeed),
+			HandHitDamageMin = Value(player, "handHitDamageMin", defaults.HandHitDamageMin),
+			HandHitDamageMax = Value(player, "handHitDamageMax", defaults.HandHitDamageMax),
+			CombatEquations = Equations(combat),
 			BaseCastSpeed = Value(player, "characterSpellCastSpeed", defaults.BaseCastSpeed),
 		};
+	}
+
+	/// <inheritdoc/>
+	public OffenseGear GetOffenseGear(IEnumerable<Item> equipment, bool useAlternate)
+	{
+		var worn = equipment.Where(item => !item.IsInInactiveWeaponSlot(useAlternate)).ToList();
+		var weapons = worn
+			.Where(item => item.IsInWeaponSlot && !item.ItemClass.Equals("WeaponArmor_Shield", StringComparison.OrdinalIgnoreCase))
+			.Select(this._itemProvider.GetAttributeSums)
+			.ToList();
+
+		var other = new AttributeSum();
+		foreach (var item in worn.Where(item => !item.IsInWeaponSlot))
+			other.Add(this._itemProvider.GetAttributeSums(item));
+
+		other.Add(this._itemProvider.GetSetBonuses(worn));
+		return new OffenseGear(weapons, other);
 	}
 
 	/// <inheritdoc/>
@@ -166,6 +186,23 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 		}
 
 		return numbers;
+	}
+
+	/// <summary>The string fields of a record whose name ends with <c>Equation</c>.</summary>
+	private static Dictionary<string, string> Equations(DBRecordCollection? record)
+	{
+		var equations = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		if (record is null)
+			return equations;
+
+		foreach (var variable in record)
+		{
+			if (variable.DataType == VariableDataType.StringVar && variable.NumberOfValues > 0
+				&& variable.Name.EndsWith("Equation", StringComparison.OrdinalIgnoreCase))
+				equations[variable.Name] = variable.GetString(0);
+		}
+
+		return equations;
 	}
 
 	private static string Text(DBRecordCollection? record, string name, string fallback)

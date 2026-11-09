@@ -113,6 +113,81 @@ public class CharacterOffenseCalculatorTests
 		speed.Should().BeApproximately(350 * 2, 1e-6);
 	}
 
+	private static OffenseInput Input(IReadOnlyList<AttributeSum> weapons, AttributeSum? other = null, AttributeSum? skills = null,
+		double strength = 0, double dexterity = 0, double intelligence = 0, double attackSpeed = 100)
+	{
+		var all = new AttributeSum();
+		foreach (var weapon in weapons)
+			all.Add(weapon);
+		if (other is not null)
+			all.Add(other);
+
+		return new OffenseInput(new OffenseGear(weapons, other ?? new AttributeSum()), all, skills ?? new AttributeSum(),
+			strength, dexterity, intelligence, 50, attackSpeed, Balance);
+	}
+
+	[Fact]
+	public void Damage_WeaponPhysical_UsesTheWeaponEquation()
+	{
+		// (100 × (500/500 + 1)) + 500 × 0.04 = 220.
+		var values = CharacterOffenseCalculator.Damage(Input([Sum(("offensivePhysicalAverage", 100))], strength: 500));
+
+		values.Should().Be(new OffenseValues(220, 0, 220, 220));
+	}
+
+	[Fact]
+	public void Damage_PierceRatio_MovesAShareOfThePhysicalToPierce()
+	{
+		// 100 physical, 40 % pierce ratio, +50 % pierce: 60 + 40 × 1.5 (no attribute: equations keep the value).
+		var weapon = Sum(("offensivePhysicalAverage", 100), ("offensivePierceRatioAverage", 40), ("offensivePierceModifier", 50));
+
+		CharacterOffenseCalculator.Damage(Input([weapon])).AverageDamage.Should().Be(120);
+	}
+
+	[Fact]
+	public void Damage_BareHands_UseTheHandHitsAndTheNonWeaponEquation()
+		=> CharacterOffenseCalculator.Damage(Input([], strength: 650)).AverageDamage.Should().Be(6, "(2 + 4) / 2 × (650/650 + 1)");
+
+	[Fact]
+	public void Damage_Elemental_AddsItsTheElementalAndTheTotalModifiers_ThenTheIntelligenceEquation()
+	{
+		// 100 fire × (1 + (20 + 10 + 10) / 100) = 140; × (0/650 + 1) + 0.
+		var ring = Sum(("offensiveFireAverage", 100), ("offensiveFireModifier", 20), ("offensiveElementalModifier", 10), ("offensiveTotalDamageModifier", 10));
+
+		var values = CharacterOffenseCalculator.Damage(Input([Sum(("offensivePhysicalAverage", 10))], other: ring));
+
+		values.AverageDamage.Should().Be(10 * 11 / 10 + 140);
+		values.WeaponDamage.Should().Be(10, "the weapon part keeps only the weapon's own modifiers");
+	}
+
+	[Fact]
+	public void Damage_OverTime_AddsItsPerSecondValueOnce()
+	{
+		// 30 burn per second, +100 % burn, intelligence 500: 60 × (500/500 + 1).
+		var skills = Sum(("offensiveSlowFireAverage", 30), ("offensiveSlowFireModifier", 100), ("offensiveSlowFireDurationAverage", 5));
+
+		var values = CharacterOffenseCalculator.Damage(Input([], skills: skills, intelligence: 500));
+
+		values.AddedDamage.Should().Be(120 + 3, "the burn, then the hand hits (3)");
+	}
+
+	[Fact]
+	public void Damage_BonusPhysical_CountsAsIs()
+		=> CharacterOffenseCalculator.Damage(Input([], other: Sum(("offensiveBonusPhysicalAverage", 46), ("offensivePhysicalModifier", 100)))).AverageDamage
+			.Should().Be(46 + 6, "the bonus is not scaled; the hand hits are");
+
+	[Fact]
+	public void Damage_DualWield_IsHalfOfBothHands()
+	{
+		var values = CharacterOffenseCalculator.Damage(Input([Sum(("offensivePhysicalAverage", 100)), Sum(("offensivePhysicalAverage", 50))]));
+
+		values.AverageDamage.Should().Be(75);
+	}
+
+	[Fact]
+	public void Damage_Dps_IsTheAverageDamageTimesTheAttackSpeed_Truncated()
+		=> CharacterOffenseCalculator.Damage(Input([Sum(("offensivePhysicalAverage", 99))], attackSpeed: 234.4)).Dps.Should().Be(232);
+
 	[Fact]
 	public void AttackSpeed_StanceWithoutAnimation_KeepsTheRatioAtOne()
 		=> CharacterOffenseCalculator.AttackSpeed(Sum(("characterBaseAttackSpeed", 0.37)), WeaponStance.Thrown, Balance, 0, Unarmed, 0)

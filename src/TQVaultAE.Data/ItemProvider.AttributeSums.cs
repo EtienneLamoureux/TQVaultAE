@@ -7,6 +7,9 @@ public partial class ItemProvider
 {
 	private const string RacialBonusRace = "racialBonusRace";
 
+	/// <summary>The suffix of the middle of a Min/Max range: <c>offensiveFireMin/Max</c> give <c>offensiveFireAverage</c>.</summary>
+	public const string AverageSuffix = "Average";
+
 	/// <inheritdoc/>
 	public AttributeSum GetAttributeSums(Item item)
 	{
@@ -81,7 +84,18 @@ public partial class ItemProvider
 			if (variable.NumberOfValues == 0 || variable.DataType is not (VariableDataType.Integer or VariableDataType.Float))
 				continue;
 
-			sum.Add(variable.Name, ValueAt(variable, level) * ChanceMultiplier(record, variable.Name, level));
+			double chance = ChanceMultiplier(record, variable.Name, level);
+			sum.Add(variable.Name, ValueAt(variable, level) * chance);
+
+			// A range counts at its middle in the window (the display accumulator's random generator): the max is
+			// min + max(0, max - min), so a missing or lower max is the min. Kept per record as <base>Average.
+			if (variable.Name.EndsWith("Min", StringComparison.OrdinalIgnoreCase))
+			{
+				var baseName = variable.Name[..^3];
+				double min = ValueAt(variable, level);
+				double max = Math.Max(min, ValueAt(record[baseName + "Max"], level));
+				sum.Add(baseName + AverageSuffix, (min + max) / 2 * chance);
+			}
 		}
 
 		if (record.GetAllStrings(RacialBonusRace) is { Length: > 0 } races)

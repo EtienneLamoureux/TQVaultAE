@@ -29,6 +29,12 @@ public interface ICharacterStatsService
 	/// </summary>
 	GameBalance GetGameBalance();
 
+	/// <summary>
+	/// The gear as the attack damage reads it: each weapon in hand (not shields) on its own, and the other items with the
+	/// item sets, whose flat damage adds to every attack.
+	/// </summary>
+	OffenseGear GetOffenseGear(IEnumerable<Item> equipment, bool useAlternate);
+
 	/// <summary>The stance for the weapons in hand (not the set not in hand).</summary>
 	WeaponStance GetWeaponStance(IEnumerable<Item> equipment, bool useAlternate);
 

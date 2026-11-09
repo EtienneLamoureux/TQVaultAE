@@ -151,16 +151,42 @@ public class CharacterStatsServiceTests
 		durations.Should().NotContainKey(WeaponStance.Bow);
 	}
 
+	private static Item Weapon(string itemClass, int row, int x = Item.WeaponSlotIndicator)
+	{
+		var record = new DBRecordCollection($"""records\item\{itemClass}{x}{row}.dbr""".ToRecordId(), itemClass);
+		record.Set(Text("Class", itemClass));
+		return new Item { PositionX = x, PositionY = row, baseItemInfo = new Info(record) };
+	}
+
+	[Fact]
+	public void GetOffenseGear_WeaponsInHandApart_ShieldAndOtherSetLeftOut()
+	{
+		var sword = Weapon("WeaponMelee_Sword", 0);
+		var shield = Weapon("WeaponArmor_Shield", 1);
+		var spare = Weapon("WeaponMelee_Axe", 2);
+		var ring = Weapon("ArmorJewelry_Ring", 0, x: 3);
+		this._items.Setup(p => p.GetAttributeSums(It.IsAny<Item>())).Returns((Item item) =>
+		{
+			var sum = new AttributeSum();
+			sum.Add(item.ItemClass, 1);
+			return sum;
+		});
+		this._items.Setup(p => p.GetSetBonuses(It.IsAny<IEnumerable<Item>>())).Returns(() =>
+		{
+			var sum = new AttributeSum();
+			sum.Add("set", 1);
+			return sum;
+		});
+
+		var gear = this._service.GetOffenseGear([sword, shield, spare, ring], useAlternate: false);
+
+		gear.Weapons.Should().ContainSingle().Which["WeaponMelee_Sword"].Should().Be(1);
+		gear.Other.Values.Keys.Should().BeEquivalentTo(["ArmorJewelry_Ring", "set"]);
+	}
+
 	[Fact]
 	public void GetWeaponStance_OnlyTheSetInHandCounts()
 	{
-		static Item Weapon(string itemClass, int row)
-		{
-			var record = new DBRecordCollection($"""records\item\{itemClass}{row}.dbr""".ToRecordId(), itemClass);
-			record.Set(Text("Class", itemClass));
-			return new Item { PositionX = Item.WeaponSlotIndicator, PositionY = row, baseItemInfo = new Info(record) };
-		}
-
 		Item[] equipment = [Weapon("WeaponMelee_Sword", 0), Weapon("WeaponArmor_Shield", 1), Weapon("WeaponHunting_Bow", 2)];
 
 		this._service.GetWeaponStance(equipment, useAlternate: false).Should().Be(WeaponStance.OneHanded);

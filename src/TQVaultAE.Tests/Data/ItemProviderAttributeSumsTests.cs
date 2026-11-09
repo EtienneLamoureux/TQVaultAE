@@ -89,6 +89,17 @@ public class ItemProviderAttributeSumsTests
 		sum["offensiveSlowFireDurationMin"].Should().Be(3);
 	}
 
+	[Fact]
+	public void AddAttributesFromRecord_Ranges_AddTheirMiddlePerRecord()
+	{
+		// A missing or lower max is the min; the chance scales the middle too.
+		var sum = Sum(Record(("offensiveFireMin", [10F]), ("offensiveFireMax", [20F])));
+		ItemProvider.AddAttributesFromRecord(sum, Record(("offensiveFireMin", [5F])), 1);
+		ItemProvider.AddAttributesFromRecord(sum, Record(("offensiveFireMin", [8F]), ("offensiveFireMax", [2F]), ("offensiveFireChance", [50F])), 1);
+
+		sum["offensiveFireAverage"].Should().Be(15 + 5 + 4);
+	}
+
 	[Theory]
 	[InlineData(0F, 30)]
 	[InlineData(100F, 30)]
