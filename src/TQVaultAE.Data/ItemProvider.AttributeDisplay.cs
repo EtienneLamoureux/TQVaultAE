@@ -30,7 +30,7 @@ public partial class ItemProvider
 	/// <param name="lineSlots">Receives, for each line added to <paramref name="results"/>, where the game lists its attribute group.</param>
 	private void GetAttributesFromRecord(Item itm, DBRecordCollection? record, bool filtering, RecordId recordId, List<string> results, bool convertStrings = true
 		, IReadOnlyDictionary<string, ValueRange>? valueRanges = null, List<string?>? lineRanges = null, int? skillLevelIndex = null
-		, List<GameAttributeSlot>? lineSlots = null)
+		, List<GameAttributeSlot>? lineSlots = null, IReadOnlySet<string>? hiddenVariables = null)
 	{
 		if (USettings.ItemDebugLevel > 0)
 		{
@@ -66,6 +66,9 @@ public partial class ItemProvider
 
 
 			if (this.FilterValue(variable, !filtering))
+				continue;
+
+			if (hiddenVariables?.Contains(variable.Name) == true)
 				continue;
 
 			if (filtering && this.FilterKey(variable.Name))

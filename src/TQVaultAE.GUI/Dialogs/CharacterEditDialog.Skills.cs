@@ -125,9 +125,13 @@ internal sealed partial class CharacterEditDialog
 		return new SkillPaneSkillView(level, bonus, state, masteryLevel >= skill.RequiredMasteryLevel);
 	}
 
-	private static readonly Color TipText = Color.FromArgb(205, 200, 185);
-	private static readonly Color TipLevel = Color.FromArgb(250, 235, 90);
-	private static readonly Color TipRefused = Color.FromArgb(255, 64, 56);
+	// Colours read on the game's skill window.
+	private static readonly Color TipText = Color.FromArgb(245, 243, 236);
+	private static readonly Color TipLevel = Color.FromArgb(240, 238, 115);
+	private static readonly Color TipNext = Color.FromArgb(165, 164, 158);
+	private static readonly Color TipAbility = Color.FromArgb(70, 175, 255);
+	private static readonly Color TipCanAdd = Color.FromArgb(100, 230, 90);
+	private static readonly Color TipRefused = Color.FromArgb(235, 24, 18);
 	private static readonly Color TipGear = Color.FromArgb(120, 200, 255);
 	private static readonly Color TipHint = Color.FromArgb(150, 148, 135);
 
@@ -178,14 +182,29 @@ internal sealed partial class CharacterEditDialog
 			return [];
 
 		var lines = new List<GameTooltipLine>();
+		IReadOnlyList<string> currentEffects = [];
+
+		// The item tooltips colour the effects as an epic item; the skill window writes them plain, keeping only the
+		// colours inside a line (recharge time in aqua).
+		IEnumerable<string> Effects(RecordId id, int level)
+			=> this.Services.CharacterEditService.DescribeSkill(id, level)?.Attributes.Select(a => a.RemoveLeadingColorTag()) ?? [];
+
 		void Level(string tag, string fallback, RecordId id, int level)
 		{
 			lines.Add(GameTooltipLine.Blank);
 			lines.Add(new GameTooltipLine(this.GameText(tag, fallback, level), TipLevel));
-			if (this.Services.CharacterEditService.DescribeSkill(id, level) is { } described)
-				// The item tooltips colour the effects as an epic item; the skill window writes them plain, keeping only the
-				// colours inside a line (recharge time in aqua).
-				lines.AddRange(described.Attributes.Select(a => new GameTooltipLine(a.RemoveLeadingColorTag(), TipText)));
+			currentEffects = SkillTooltipLayout.CurrentEffects(Effects(id, level));
+			var abilities = SkillTooltipLayout.AbilitiesStart(currentEffects);
+			lines.AddRange(currentEffects.Select((e, i) => new GameTooltipLine(e, i < abilities ? TipText : TipAbility)));
+		}
+
+		// The next level is a line type of its own, in grey, with only what it changes.
+		void NextLevel(string tag, string fallback, RecordId id, int level)
+		{
+			lines.Add(GameTooltipLine.Blank);
+			lines.Add(new GameTooltipLine(this.GameText(tag, fallback, level), TipLevel));
+			lines.AddRange(SkillTooltipLayout.NextEffects([.. currentEffects], Effects(id, level))
+				.Select(e => new GameTooltipLine(e, TipNext)));
 		}
 
 		var masteryLevel = skills.GetMasteryLevel(tab.Slot);
@@ -196,7 +215,7 @@ internal sealed partial class CharacterEditDialog
 			if (masteryLevel > 0)
 				Level("tagCurrentLevel", "Current Level : {%d0}", tree.Id, masteryLevel);
 			if (masteryLevel < tree.MaxLevel)
-				Level("tagNextLevel", "Next Level : {%d0}", tree.Id, masteryLevel + 1);
+				NextLevel("tagNextLevel", "Next Level : {%d0}", tree.Id, masteryLevel + 1);
 			this.Requirements(lines, masteryLevel < tree.MaxLevel, []);
 			lines.Add(GameTooltipLine.Blank);
 			lines.Add(new GameTooltipLine(Resources.CESkillPaneHint, TipHint));
@@ -213,7 +232,7 @@ internal sealed partial class CharacterEditDialog
 		if (current > 0)
 			Level("tagCurrentLevel", "Current Level : {%d0}", skill.Id, current);
 		if (points < skill.MaxLevel)
-			Level("tagNextLevel", "Next Level : {%d0}", skill.Id, current + 1);
+			NextLevel("tagNextLevel", "Next Level : {%d0}", skill.Id, current + 1);
 
 		var refused = new List<string>();
 		if (masteryLevel < skill.RequiredMasteryLevel)
@@ -258,7 +277,7 @@ internal sealed partial class CharacterEditDialog
 		else if (this._skills!.AvailablePoints <= 0)
 			lines.Add(new GameTooltipLine(this.GameText("NoSkillPointsToAdd", "No skill points to add."), TipRefused));
 		else
-			lines.Add(new GameTooltipLine(this.GameText("PressToAddUnusedSkillPoints", "Press to add unused skill points."), Color.White));
+			lines.Add(new GameTooltipLine(this.GameText("PressToAddUnusedSkillPoints", "Press to add unused skill points."), TipCanAdd));
 	}
 
 	/// <summary>Shows the state of the editor in every page and in the skill points box.</summary>

@@ -1,3 +1,4 @@
+using System.Globalization;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Results;
@@ -88,19 +89,42 @@ public partial class ItemProvider
 		return string.IsNullOrEmpty(shown.GetString("skillDisplayName", 0)) ? null : shown;
 	}
 
+	/// <summary>
+	/// What the game's skill window leaves out of a skill's effects: the projectile mechanics (speed, reach, spread), the
+	/// time a charge level lasts and the "can't be dispelled" flag.
+	/// </summary>
+	private static readonly HashSet<string> SkillWindowHiddenVariables = new(StringComparer.OrdinalIgnoreCase)
+	{
+		"headVelocity", "tailVelocity", "maxDistance", "projectileLaunchRotation", "skillChargeDuration", "notDispelable",
+	};
+
 	/// <inheritdoc/>
 	public GrantedSkill? GetSkillAtLevel(RecordId skillId, int level)
-		=> this.GetGrantedSkill(new Item(), skillId, Math.Max(1, level), null);
+		=> this.GetGrantedSkill(new Item(), skillId, Math.Max(1, level), null, skillWindow: true);
 
 	/// <summary>
 	/// Describes one granted skill at a level: name, icon, activation, description and effects.
 	/// A buff skill (<c>buffSkillName</c>) takes its name, icon, description and effects from its buff record.
 	/// </summary>
+	/// <param name="skillWindow">
+	/// True for the skill window's tool tip: a summon also shows its own parameters (recharge, energy cost...), and what
+	/// the skill window hides (<see cref="SkillWindowHiddenVariables"/>) is left out.
+	/// </param>
 	/// <returns><see langword="null"/> when the skill record is missing or has no name, like the game's hidden helper skills.</returns>
-	private GrantedSkill? GetGrantedSkill(Item itm, RecordId skillId, int level, string? autoController)
+	private GrantedSkill? GetGrantedSkill(Item itm, RecordId skillId, int level, string? autoController, bool skillWindow = false)
 	{
+		var hidden = skillWindow ? SkillWindowHiddenVariables : null;
 		if (Database.GetRecordFromFile(skillId) is not { } skillRecord)
 			return null;
+
+		// A pet upgrade (e.g. the Core Dweller's "Inner Fire") only names the skill it gives the pet (petSkillName).
+		if (skillRecord.GetString("Class", 0).Equals("SkillSecondary_PetModifier", noCase)
+			&& skillRecord.GetString("petSkillName", 0).ToRecordId() is { } petSkillId && !RecordId.IsNullOrEmpty(petSkillId)
+			&& Database.GetRecordFromFile(petSkillId) is { } petSkill)
+		{
+			skillId = petSkillId;
+			skillRecord = petSkill;
+		}
 
 		var buffId = skillRecord.GetString("buffSkillName", 0).ToRecordId();
 		var buffRecord = RecordId.IsNullOrEmpty(buffId) ? null : Database.GetRecordFromFile(buffId);
@@ -128,12 +152,30 @@ public partial class ItemProvider
 		// Effects at the granted level: the skill's own parameters (energy cost, cooldown, radius...), then the buff's.
 		var attributes = new List<string>();
 		if (skillRecord.GetString("Class", 0).Equals("SKILL_SPAWNPET", noCase))
-			this.ConvertPetStats(itm, skillRecord, attributes);
+		{
+			if (skillWindow)
+			{
+				this.GetAttributesFromRecord(itm, skillRecord, true, skillId, attributes, skillLevelIndex: level - 1, hiddenVariables: hidden);
+
+				// "Extra Life Time 12 Seconds" (SpawnObjectsTimeToLive), before the summon's attributes.
+				float timeToLive = ValueAtLevel(skillRecord["spawnObjectsTimeToLive"], level);
+				if (timeToLive > 0 && TranslationService.TryTranslateXTag("SpawnObjectsTimeToLive", out var lifeTime))
+										// The game's text has no value index ("{%.0f}"), unlike the others ("{%.0f0}").
+					attributes.Add(Format(ItemAttributeProvider.ConvertFormat(lifeTime.Replace("{%.0f}", "{%.0f0}", StringComparison.Ordinal)), timeToLive));
+			}
+
+			this.ConvertPetStats(itm, skillRecord, attributes, level, hidden);
+		}
 		else
 		{
-			this.GetAttributesFromRecord(itm, skillRecord, true, skillId, attributes, skillLevelIndex: level - 1);
+			// "5% Chance of Activating" of a skill triggered by hits (onHitActivationChance), which item tool tips leave out.
+			float activationChance = skillWindow ? ValueAtLevel(skillRecord["onHitActivationChance"], level) : 0F;
+			if (activationChance > 0 && TranslationService.TryTranslateXTag("SkillActivationChance", out var activationText))
+				attributes.Add($"{activationChance.ToString("0.#", CultureInfo.CurrentCulture)}% {activationText}");
+
+			this.GetAttributesFromRecord(itm, skillRecord, true, skillId, attributes, skillLevelIndex: level - 1, hiddenVariables: hidden);
 			if (buffRecord is not null)
-				this.GetAttributesFromRecord(itm, buffRecord, true, buffId, attributes, skillLevelIndex: level - 1);
+				this.GetAttributesFromRecord(itm, buffRecord, true, buffId, attributes, skillLevelIndex: level - 1, hiddenVariables: hidden);
 		}
 
 		// A skill that only casts another one (skillCastName, e.g. "Potion Blast" casts "Shadow Surge" on a potion):

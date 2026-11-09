@@ -36,8 +36,16 @@ public partial class ItemProvider
 	/// </summary>
 	/// <param name="skillRecord">DBRecord of the skill</param>
 	/// <param name="results">List containing the results</param>
-	private void ConvertPetStats(Item itm, DBRecordCollection skillRecord, List<string> results)
+	/// <param name="level">The skill level: the pet record (<c>spawnObjects</c>) and its life time are given per level.</param>
+	/// <param name="hiddenVariables">
+	/// Variables of the pet's skills that are not shown; given for the skill window, which also leaves out the pet skills
+	/// at level 0 (those that a pet upgrade gives, such as the Battle Standard's "Triumph").
+	/// </param>
+	private void ConvertPetStats(Item itm, DBRecordCollection skillRecord, List<string> results, int level = 1
+		, IReadOnlySet<string>? hiddenVariables = null)
 	{
+		int levelIndex(string name) => skillRecord[name] is { NumberOfValues: > 0 } v ? Math.Clamp(level - 1, 0, v.NumberOfValues - 1) : 0;
+
 		string formatSpec, petLine;
 		int summonLimit = skillRecord.GetInt32("petLimit", 0);
 		if (summonLimit > 1)
@@ -52,7 +60,7 @@ public partial class ItemProvider
 			results.Add(value);
 			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(value);
 		}
-		var skillRecordspawnObjects = skillRecord.GetString("spawnObjects", 0);
+		var skillRecordspawnObjects = skillRecord.GetString("spawnObjects", levelIndex("spawnObjects"));
 		DBRecordCollection? petRecord = Database.GetRecordFromFile(skillRecordspawnObjects);
 		if (petRecord is not null)
 		{
@@ -72,7 +80,7 @@ public partial class ItemProvider
 			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 
 			// Time to live: 0 is a permanent pet, which has no life time line.
-			float timeToLive = skillRecord.GetSingle("spawnObjectsTimeToLive", 0);
+			float timeToLive = skillRecord.GetSingle("spawnObjectsTimeToLive", levelIndex("spawnObjectsTimeToLive"));
 			if (timeToLive > 0)
 			{
 				if (!TranslationService.TryTranslateXTag("tagSkillPetTimeToLive", out formatSpec))
@@ -175,6 +183,9 @@ public partial class ItemProvider
 
 				skills[numSkills] = petskillName;
 				petskillLevel = petRecord.GetInt32(string.Concat("skillLevel", i), 0);
+				if (petskillLevel < 1 && hiddenVariables is not null)
+					continue;
+
 				if (petskillLevel < 1)
 					petskillLevel = 1;
 
@@ -229,7 +240,8 @@ public partial class ItemProvider
 				results.Add(valueStr);
 				itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 
-				GetAttributesFromRecord(itm, record, true, recordID, results);
+				// The pet's skill at the level the pet record gives it.
+				GetAttributesFromRecord(itm, record, true, recordID, results, skillLevelIndex: skillLevels[i] - 1, hiddenVariables: hiddenVariables);
 				results.Add(string.Empty);
 			}
 		}

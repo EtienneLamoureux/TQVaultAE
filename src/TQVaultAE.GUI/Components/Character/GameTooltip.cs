@@ -22,9 +22,14 @@ internal sealed record GameTooltipLine(string Text, Color Color, bool Title = fa
 /// </summary>
 internal sealed partial class GameTooltip : IDisposable
 {
-	private static readonly Color Background = Color.FromArgb(8, 8, 6);
-	private static readonly Color OuterBorder = Color.FromArgb(196, 160, 82);
-	private static readonly Color InnerBorder = Color.FromArgb(92, 74, 38);
+	// Read on the game's skill window: a light gold line with a dark gold one inside, on a very dark brown (the game's box
+	// is a little translucent; this one is opaque, with the colour the box takes over the marble).
+	private static readonly Color Background = Color.FromArgb(28, 26, 20);
+	private static readonly Color OuterBorder = Color.FromArgb(205, 185, 140);
+	private static readonly Color InnerBorder = Color.FromArgb(80, 66, 28);
+
+	// The aqua of the recharge line as the skill window shows it, softer than the item tool tips' pure cyan.
+	private static readonly Color SkillWindowAqua = Color.FromArgb(170, 235, 215);
 
 	private const TextFormatFlags Flags = TextFormatFlags.NoPrefix | TextFormatFlags.NoPadding | TextFormatFlags.SingleLine;
 
@@ -116,7 +121,7 @@ internal sealed partial class GameTooltip : IDisposable
 		using (var outer = new Pen(OuterBorder))
 			g.DrawRectangle(outer, new Rectangle(bounds.X, bounds.Y, bounds.Width - 1, bounds.Height - 1));
 		using (var inner = new Pen(InnerBorder))
-			g.DrawRectangle(inner, new Rectangle(bounds.X + 2, bounds.Y + 2, bounds.Width - 5, bounds.Height - 5));
+			g.DrawRectangle(inner, new Rectangle(bounds.X + 1, bounds.Y + 1, bounds.Width - 3, bounds.Height - 3));
 
 		this.Layout(g);
 	}
@@ -192,7 +197,7 @@ internal sealed partial class GameTooltip : IDisposable
 				yield return (text[start..tag.Index], current);
 
 			var code = char.ToUpperInvariant((tag.Groups["a"].Success ? tag.Groups["a"] : tag.Groups["b"]).Value[0]);
-			current = TQColorHelper.GetColorFromTagIdentifier(code).Color();
+			current = code == 'A' ? SkillWindowAqua : TQColorHelper.GetColorFromTagIdentifier(code).Color();
 			start = tag.Index + tag.Length;
 		}
 
