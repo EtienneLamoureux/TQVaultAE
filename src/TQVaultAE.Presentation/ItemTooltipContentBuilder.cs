@@ -95,6 +95,9 @@ public class ItemTooltipContentBuilder
 	/// <summary>Color of the warning of an incomplete item.</summary>
 	public static readonly TQColor IncompleteColor = TQColor.Orange;
 
+	/// <summary>Color of the line naming the mod an item is linked to.</summary>
+	public static readonly TQColor ModColor = TQColor.Turquoise;
+
 	private readonly ITranslationService _translationService;
 
 	public ItemTooltipContentBuilder(ITranslationService translationService)
@@ -148,6 +151,10 @@ public class ItemTooltipContentBuilder
 
 		// Fullname
 		lines.Add(TooltipLine.Of(data.FullName, nameColor, bold: true));
+
+		// The mod the item is linked to
+		if (item.Mod is { } mod)
+			lines.Add(TooltipLine.Of(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.ItemModLine, mod), ModColor));
 
 		// Records the loaded game data lacks (a mod not linked, or not installed)
 		AddIncomplete(lines, item);

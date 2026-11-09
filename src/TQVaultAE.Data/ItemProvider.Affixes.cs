@@ -126,6 +126,7 @@ public partial class ItemProvider
 	/// <returns>Returns <c>false</c> if the item does not contain a charm/relic</returns>
 	public bool BonusTableSocketedRelic(Item Item, out LootTableCollection? RelicTable1, out LootTableCollection? RelicTable2)
 	{
+		using var modScope = this.ModScope(Item);
 		RelicTable1 = RelicTable2 = null;
 		var hasCompleteRelic1 = Item.HasRelicOrCharmSlot1 && Item.RelicInfo is not null && Item.IsRelicBonus1Complete;
 		var hasCompleteRelic2 = Item.HasRelicOrCharmSlot2 && Item.Relic2Info is not null && Item.IsRelicBonus2Complete;
@@ -162,6 +163,7 @@ public partial class ItemProvider
 	/// <returns>returns null if the item is not an artifact/charm/relic</returns>
 	public LootTableCollection? BonusTableRelicOrArtifact(Item itm)
 	{
+		using var modScope = this.ModScope(itm);
 		if (itm.baseItemInfo is null)
 			return null;
 
@@ -205,6 +207,7 @@ public partial class ItemProvider
 	/// <returns>Returns the removed relic as a new Item</returns>
 	public Item? RemoveRelic1(Item itm)
 	{
+		using var modScope = this.ModScope(itm);
 		if (!itm.HasSocketedSlot1)
 			return null;
 
@@ -212,6 +215,7 @@ public partial class ItemProvider
 		newRelic.RelicBonusId = itm.RelicBonusId;
 		newRelic.RelicBonusInfo = itm.RelicBonusInfo;
 		newRelic.Var1 = itm.Var1;
+		newRelic.Mod = itm.Mod;
 		GetDBData(newRelic);
 
 		// Now clear out our relic data
@@ -232,6 +236,7 @@ public partial class ItemProvider
 	/// <returns>Returns the removed relic as a new Item</returns>
 	public Item? RemoveRelic2(Item itm)
 	{
+		using var modScope = this.ModScope(itm);
 		if (!itm.HasSocketedSlot2)
 			return null;
 
@@ -239,6 +244,7 @@ public partial class ItemProvider
 		newRelic.RelicBonusId = itm.RelicBonus2Id;
 		newRelic.RelicBonusInfo = itm.RelicBonus2Info;
 		newRelic.Var1 = itm.Var2;
+		newRelic.Mod = itm.Mod;
 		GetDBData(newRelic);
 
 		// Now clear out our relic data
@@ -259,10 +265,12 @@ public partial class ItemProvider
 	/// <returns>A new artifact</returns>
 	public Item? CraftArtifact(Item itm)
 	{
+		using var modScope = this.ModScope(itm);
 		if (itm.IsFormulae && itm.baseItemInfo is not null)
 		{
 			string artifactname = itm.baseItemInfo.GetString("artifactName");
 			Item newArtifact = itm.MakeEmptyCopy(artifactname);
+			newArtifact.Mod = itm.Mod;
 			GetDBData(newArtifact);
 
 			itm.IsModified = true;

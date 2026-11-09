@@ -27,6 +27,9 @@ public partial class MainForm
 
 	internal string? AutomationSelectedVault => this.vaultListComboBox?.SelectedItem?.ToString();
 
+	/// <summary>The mod the shown vault is linked to; null for none.</summary>
+	internal string? AutomationSelectedVaultMod => this.vaultPanel?.Vault?.Mod;
+
 	internal string? AutomationSelectedSecondaryVault
 		=> this.showSecondaryVault ? this.secondaryVaultListComboBox?.SelectedItem?.ToString() : null;
 

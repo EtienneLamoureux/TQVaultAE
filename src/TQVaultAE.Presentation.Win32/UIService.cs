@@ -40,6 +40,11 @@ public class UIService : IUIService, IGameDataCache
 	private Bitmap? _DefaultBitmap;
 
 	/// <summary>
+	/// Gives an item linked to a mod its mod's database; null in tests that do not need it.
+	/// </summary>
+	private readonly IItemModService? ItemMods;
+
+	/// <summary>
 	/// Pixels per design pixel: <see cref="Zoom"/> times <see cref="DpiScale"/>.
 	/// </summary>
 	private float _Scale = 1.00F;
@@ -135,8 +140,9 @@ public class UIService : IUIService, IGameDataCache
 	/// <inheritdoc/>
 	public float FontZoom => this._Scale / this.SystemDpiScale;
 
-	public UIService(ILogger<UIService> log, IDatabase database, IBitmapService bitmapService, UserSettings uSettings)
+	public UIService(ILogger<UIService> log, IDatabase database, IBitmapService bitmapService, UserSettings uSettings, IItemModService? itemMods = null)
 	{
+		this.ItemMods = itemMods;
 		this.Log = log;
 		this.Database = database;
 		this.BitmapService = bitmapService;
@@ -340,6 +346,8 @@ public class UIService : IUIService, IGameDataCache
 	/// </summary>
 	public Bitmap? GetBitmap(Item itm)
 	{
+		// The picture of an item linked to a mod comes from that mod's files.
+		using var modScope = this.ItemMods?.Scope(itm) ?? NoScope.Instance;
 		Bitmap? bmp = null;
 		if (!RecordId.IsNullOrEmpty(itm.TexImageResourceId))
 		{

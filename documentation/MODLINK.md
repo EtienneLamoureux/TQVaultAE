@@ -54,6 +54,36 @@ changes.
 
 *Load all files* at startup only reads the characters of the startup map; the others are read when selected.
 
+## Items and vaults linked to a mod
+
+An item can be linked to a mod: its records then resolve in that mod's database (mod data first, then the base game's),
+whatever map is active, for its picture, its size, its names and its tooltip. The tooltip names it under the item's name:
+*Mod : shadowchampions*. The link follows the item inside TQVault (moves, copies, relics taken out, crafted artifacts) and
+is saved in the vault files.
+
+- **From a linked character:** when a character linked to an installed mod is loaded, its items that the base game does
+  not know (equipment, bags, its stash, the mod's transfer stash and relic vault) are linked to that mod at once. The
+  character files cannot keep the link: it is set again each time, and moving such an item to a vault keeps it.
+- **By hand:** the item menu has *Modded*, the base game and the installed mods, the current one checked. A link to a mod
+  that is not installed stays listed, disabled.
+- **A whole vault:** the bag button menu of a vault has *Modded vault*. Its items without a mod of their own (or of the
+  vault's previous mod) follow it and resolve with that mod's data first, then the base game's; items linked to another
+  mod keep theirs.
+
+In the vault file, the vault's mod is `"mod"` at the top, and an item has its own `"mod"` only when it differs from the
+vault's:
+
+```json
+{
+  "mod": "shadowchampions",
+  "sacks": [ { "items": [ { "baseName": "records\\customitems\\mi\\e_centurionlance.dbr" },
+                          { "baseName": "...", "mod": "Lilith" } ] } ]
+}
+```
+
+An item linked to a mod that is not installed resolves with the active map's data, and shows incomplete when that data
+lacks its records.
+
 ## Incomplete items
 
 An item that names records the loaded game data lacks (its base item, an affix, a relic or charm, or a relic bonus of a

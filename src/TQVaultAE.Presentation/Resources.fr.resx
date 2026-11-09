@@ -1874,6 +1874,15 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="CharacterModNotInstalled" xml:space="preserve">
     <value>Non installé</value>
   </data>
+	<data name="ItemModLine" xml:space="preserve">
+    <value>Mod : {0}</value>
+  </data>
+	<data name="ItemModNone" xml:space="preserve">
+    <value>Aucun (jeu de base)</value>
+  </data>
+	<data name="VaultModded" xml:space="preserve">
+    <value>Coffre moddé</value>
+  </data>
 	<data name="ModLinkBaseGameData" xml:space="preserve">
     <value>les données du jeu de base</value>
   </data>

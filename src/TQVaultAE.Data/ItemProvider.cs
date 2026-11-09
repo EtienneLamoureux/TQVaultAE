@@ -33,6 +33,16 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 	private readonly ITranslationService TranslationService;
 	private readonly IPathIO PathIO;
 	private readonly UserSettings USettings;
+
+	/// <summary>
+	/// Gives an item linked to a mod its mod's database; null in tests that do not need it.
+	/// </summary>
+	private readonly IItemModService? ItemMods;
+
+	/// <summary>
+	/// The database of the item's mod for the current thread, until disposed.
+	/// </summary>
+	private IDisposable ModScope(Item? itm) => this.ItemMods?.Scope(itm) ?? NoScope.Instance;
 	private readonly LazyConcurrentDictionary<(Item Item, FriendlyNamesExtraScopes? Scope, bool FilterExtra), ToFriendlyNameResult> FriendlyNamesCache = new LazyConcurrentDictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult>();
 	private readonly LazyConcurrentDictionary<RecordId, ItemAffixes?> ItemAffixesCache = new();
 	private volatile bool _cachedShowInGameValues;
@@ -53,8 +63,10 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 			, ITQDataService tQData
 			, ITranslationService translationService, IPathIO pathIO
 			, UserSettings uSettings
+			, IItemModService? itemMods = null
 		)
 	{
+		this.ItemMods = itemMods;
 		this.Log = log;
 		this.Database = database;
 		this.LootTableCollectionProvider = lootTableCollectionProvider;
@@ -163,6 +175,7 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 	/// <returns>An object containing the item name and attributes</returns>
 	public ToFriendlyNameResult GetFriendlyNames(Item itm, FriendlyNamesExtraScopes? scopes = null, bool filterExtra = true)
 	{
+		using var modScope = this.ModScope(itm);
 		// Cached results depend on the in-game values setting: drop them when it changes.
 		if (this.USettings.ShowInGameValues != this._cachedShowInGameValues) {
 			this.FriendlyNamesCache.Clear();

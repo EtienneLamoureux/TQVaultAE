@@ -180,6 +180,7 @@ public static class Program
 		.AddSingleton<ISearchQueryService, SearchQueryService>()
 		.AddSingleton<ICharacterEditService, CharacterEditService>()
 		.AddSingleton<IModLinkService, ModLinkService>()
+		.AddSingleton<IItemModService, ItemModService>()
 		.AddSingleton<IGameMapService, GameMapService>()
 		// Caches of game data, emptied when the active custom map changes
 		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<IItemProvider>())

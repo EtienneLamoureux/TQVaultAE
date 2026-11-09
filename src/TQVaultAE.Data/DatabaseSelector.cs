@@ -12,7 +12,7 @@ namespace TQVaultAE.Data;
 /// </summary>
 /// <param name="log">Logger.</param>
 /// <param name="createDatabase">Creates a database, not loaded yet.</param>
-public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Database> createDatabase) : IDatabase, IDatabaseMaps
+public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Database> createDatabase) : IDatabase, IDatabaseMaps, IDisposable
 {
 	private readonly ILogger Log = log;
 	private readonly Func<Database> CreateDatabase = createDatabase;
@@ -20,6 +20,11 @@ public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Databas
 	private readonly Lock _lock = new();
 
 	private Database? _active;
+
+	/// <summary>
+	/// The database a <see cref="Use"/> scope gives the current thread.
+	/// </summary>
+	private readonly ThreadLocal<Database?> _scoped = new();
 	private bool? _autoDetectLanguage;
 	private string? _tqLanguage;
 
@@ -30,6 +35,9 @@ public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Databas
 	{
 		get
 		{
+			if (this._scoped.Value is { } scoped)
+				return scoped;
+
 			if (this._active is null)
 			{
 				lock (this._lock)
@@ -43,7 +51,7 @@ public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Databas
 	#region IDatabaseMaps
 
 	/// <inheritdoc/>
-	public string ActiveMapFolder => this.Active.CustomMapFolder ?? string.Empty;
+	public string ActiveMapFolder => (this._active ?? this.Active).CustomMapFolder ?? string.Empty;
 
 	/// <inheritdoc/>
 	public IReadOnlyCollection<string> LoadedMapFolders
@@ -65,18 +73,55 @@ public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Databas
 			if (this._active is not null && this._databases.TryGetValue(key, out var loaded) && ReferenceEquals(loaded, this._active))
 				return false;
 
-			if (!this._databases.TryGetValue(key, out var database))
-			{
-				database = this.CreateDatabase();
-				database.CustomMapFolder = key;
-				this.ApplyLanguage(database);
-				this.Log.LogInformation("Loading the game database for {Map}", key.Length == 0 ? "the base game" : key);
-				database.LoadDBFile();
-				this._databases[key] = database;
-			}
-
-			this._active = database;
+			this._active = this.GetOrLoad(key);
 			return true;
+		}
+	}
+
+	/// <inheritdoc/>
+	public IDisposable Use(string? mapFolder)
+	{
+		Database database;
+		lock (this._lock)
+			database = this.GetOrLoad(Normalize(mapFolder));
+
+		var previous = this._scoped.Value;
+		this._scoped.Value = database;
+		return new ScopedDatabase(this, previous);
+	}
+
+	/// <summary>
+	/// The database of a map, loaded the first time. Call under the lock.
+	/// </summary>
+	private Database GetOrLoad(string key)
+	{
+		if (!this._databases.TryGetValue(key, out var database))
+		{
+			database = this.CreateDatabase();
+			database.CustomMapFolder = key;
+			this.ApplyLanguage(database);
+			this.Log.LogInformation("Loading the game database for {Map}", key.Length == 0 ? "the base game" : key);
+			database.LoadDBFile();
+			this._databases[key] = database;
+		}
+
+		return database;
+	}
+
+	/// <inheritdoc/>
+	public void Dispose() => this._scoped.Dispose();
+
+	private sealed class ScopedDatabase(DatabaseSelector owner, Database? previous) : IDisposable
+	{
+		private bool _disposed;
+
+		public void Dispose()
+		{
+			if (this._disposed)
+				return;
+
+			this._disposed = true;
+			owner._scoped.Value = previous;
 		}
 	}
 

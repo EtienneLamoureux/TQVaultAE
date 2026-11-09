@@ -131,6 +131,7 @@ internal static partial class AutomationTools
 				endpoint = AutomationHost.Address,
 				loadingComplete = form.AutomationLoadingComplete,
 				vault = form.AutomationSelectedVault,
+				vaultMod = form.AutomationSelectedVaultMod,
 				secondaryVault = form.AutomationSelectedSecondaryVault,
 				character = form.AutomationSelectedCharacter,
 				characterFile = form.AutomationCurrentPlayerFile,
@@ -747,6 +748,7 @@ internal static partial class AutomationTools
 			baseName,
 			baseItemId = item.BaseItemId.ToString(),
 			// Records the loaded game data lacks (a mod not loaded): the tooltip shows the item incomplete.
+			mod = item.Mod,
 			missingRecords = item.IsIncomplete ? item.MissingRecords.Select(m => new { role = m.Role.ToString(), id = m.Id.Raw }) : null,
 			x = item.PositionX,
 			y = item.PositionY,

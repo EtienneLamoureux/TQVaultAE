@@ -29,8 +29,10 @@ public class PlayerService(
 	, IItemProvider itemProvider
 	, IDatabase database
 	, IGameMapService gameMapService
+	, IItemModService? itemModService = null
 ) : IPlayerService
 {
+	private readonly IItemModService? ItemModService = itemModService;
 	private readonly ILogger Log = log;
 	private readonly SessionContext userContext = userContext;
 	private readonly IItemDatabaseService ItemDatabaseService = itemDatabaseService;
@@ -174,7 +176,37 @@ public class PlayerService(
 		var relicVaultStash = loadRelicVaultStash ? this.StashService.LoadRelicVaultStashFor(selectedSave) : null;
 		var transferStash = loadTransferStash ? this.StashService.LoadTransferStashFor(selectedSave) : null;
 
+		this.AdoptCharacterMod(selectedSave, player, playerStash, transferStash, relicVaultStash);
+
 		return new CharacterSessionLoadResult(player, playerStash, transferStash, relicVaultStash);
+	}
+
+	/// <summary>
+	/// Links the mod items of a character linked to an installed mod (records the base game does not have) to that mod,
+	/// so that they keep its data when moved to a vault.
+	/// </summary>
+	private void AdoptCharacterMod(PlayerSave save, PlayerLoadResult player, params StashLoadResult?[] stashes)
+	{
+		if (this.ItemModService is null || this.GameMapService.ModOf(save) is not { State: CharacterModState.Linked, Mod: { } mod })
+			return;
+
+		var items = new List<Item>();
+		if (player.Player is { } pc)
+		{
+			items.AddRange(pc.Where(s => s is not null).SelectMany(s => s));
+			if (pc.EquipmentSack is not null)
+				items.AddRange(pc.EquipmentSack);
+		}
+
+		foreach (var stash in stashes)
+		{
+			if (stash?.Stash?.Sack is { } sack)
+				items.AddRange(sack);
+		}
+
+		int linked = this.ItemModService.AdoptMod(items, mod.Name);
+		if (linked != 0)
+			this.Log.LogInformation("{Count} items of {Player} linked to the mod {Mod}", linked, save.Name, mod.Name);
 	}
 
 	/// <inheritdoc/>

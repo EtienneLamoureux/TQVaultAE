@@ -2245,6 +2245,15 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="CharacterModNotInstalled" xml:space="preserve">
     <value>Not installed</value>
   </data>
+	<data name="ItemModLine" xml:space="preserve">
+    <value>Mod : {0}</value>
+  </data>
+	<data name="ItemModNone" xml:space="preserve">
+    <value>None (base game)</value>
+  </data>
+	<data name="VaultModded" xml:space="preserve">
+    <value>Modded vault</value>
+  </data>
 	<data name="ModLinkBaseGameData" xml:space="preserve">
     <value>the base game data</value>
   </data>

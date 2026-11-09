@@ -99,4 +99,18 @@ public interface IItemEditService
 	/// <returns><see langword="true"/> when the seed changed (the item and the sack are then marked as modified);
 	/// <see langword="false"/> when it is the same seed or not a valid one (see <see cref="Item.IsValidSeed"/>).</returns>
 	bool SetSeed(SackCollection sack, Item item, int seed);
+
+	/// <summary>Links <paramref name="item"/> to a mod, or to none, and reads it again with that mod's data.</summary>
+	/// <param name="sack">The sack holding the item.</param>
+	/// <param name="item">The item to change.</param>
+	/// <param name="modName">The mod's name (<c>InstalledMod.Name</c>); null for the base game.</param>
+	/// <returns><see langword="true"/> when the link changed (the item and the sack are then marked as modified).</returns>
+	bool ChangeMod(SackCollection sack, Item item, string? modName);
+
+	/// <summary>Links a vault to a mod, or to none: its items without a mod of their own, or of the vault's previous mod,
+	/// follow it and are read again with that mod's data.</summary>
+	/// <param name="vault">The vault.</param>
+	/// <param name="modName">The mod's name (<c>InstalledMod.Name</c>); null for the base game.</param>
+	/// <returns>The items read again; empty when the link did not change.</returns>
+	IReadOnlyList<Item> ChangeVaultMod(PlayerCollection vault, string? modName);
 }

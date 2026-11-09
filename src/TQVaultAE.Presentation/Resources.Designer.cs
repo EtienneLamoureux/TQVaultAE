@@ -6131,6 +6131,33 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mod : {0}.
+        /// </summary>
+        public static string ItemModLine {
+            get {
+                return ResourceManager.GetString("ItemModLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None (base game).
+        /// </summary>
+        public static string ItemModNone {
+            get {
+                return ResourceManager.GetString("ItemModNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modded vault.
+        /// </summary>
+        public static string VaultModded {
+            get {
+                return ResourceManager.GetString("VaultModded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Incomplete item: mod not linked or not installed..
         /// </summary>
         public static string ItemIncomplete {

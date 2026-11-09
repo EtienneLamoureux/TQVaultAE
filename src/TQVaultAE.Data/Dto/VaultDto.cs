@@ -25,4 +25,10 @@ public class VaultDto
 	/// List of vault tabs
 	/// </summary>
 	public List<SackDto> sacks { get; set; } = [];
+
+	/// <summary>
+	/// The mod the vault is linked to (<c>PlayerCollection.Mod</c>); absent for a vault of base game items.
+	/// </summary>
+	[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+	public string? mod { get; set; }
 }

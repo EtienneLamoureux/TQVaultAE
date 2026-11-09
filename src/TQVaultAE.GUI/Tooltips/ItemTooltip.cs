@@ -33,6 +33,9 @@ public partial class ItemTooltip : BaseTooltip
 	internal PictureBox? PictureBox { get; set; }
 
 
+	/// <summary>Gives an item linked to a mod its mod's data while the tooltip is built.</summary>
+	internal IItemModService? ItemModService { get; init; }
+
 	/// <summary>Text of the item, set by <see cref="FillToolTip"/>.</summary>
 	internal ToFriendlyNameResult? Data { get; private set; }
 
@@ -129,6 +132,7 @@ public partial class ItemTooltip : BaseTooltip
 				View = ViewOf(services, enableDetailedTooltipView),
 				ShowInGameValues = userSettings.ShowInGameValues,
 				ItemDatabase = services.ItemDatabaseService,
+				ItemModService = services.ItemModService,
 			};
 			ItemTooltipOpened.Add(focusedItem, _Current);
 			_Current.Show();
@@ -162,6 +166,7 @@ public partial class ItemTooltip : BaseTooltip
 				View = ViewOf(services, enableDetailedTooltipView),
 				ShowInGameValues = userSettings.ShowInGameValues,
 				ItemDatabase = services.ItemDatabaseService,
+				ItemModService = services.ItemModService,
 			};
 			ItemTooltipOpened.Add(focusedItem, _Current);
 			_Current.Show();
@@ -195,6 +200,7 @@ public partial class ItemTooltip : BaseTooltip
 				View = ViewOf(services, enableDetailedTooltipView),
 				ShowInGameValues = userSettings.ShowInGameValues,
 				ItemDatabase = services.ItemDatabaseService,
+				ItemModService = services.ItemModService,
 			};
 			ItemTooltipOpened.Add(focusedItem, _Current);
 			_Current.Show();
@@ -222,6 +228,9 @@ public partial class ItemTooltip : BaseTooltip
 	/// </summary>
 	public void FillToolTip()
 	{
+		// An item linked to a mod is described with that mod's data.
+		using var modScope = this.ItemModService?.Scope(this.FocusedItem) ?? NoScope.Instance;
+
 		// How many of each set piece are loaded now: part of the cache key, since it changes with the loaded items.
 		IReadOnlyDictionary<RecordId, int>? setCounts = null;
 		if (this.View.HasFlag(ItemTooltipView.SetPieceCounts) && this.ItemDatabase is not null

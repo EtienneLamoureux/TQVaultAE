@@ -22,4 +22,11 @@ public interface IDatabaseMaps
 	/// <param name="mapFolder">The custom map folder; null or empty for the base game.</param>
 	/// <returns>True when the active database changed.</returns>
 	bool Activate(string? mapFolder);
+
+	/// <summary>
+	/// Makes the database of a custom map answer for the current thread until the result is disposed, loading it the
+	/// first time: an item linked to a mod is read and shown with its mod's data whatever the active map is. Scopes nest.
+	/// </summary>
+	/// <param name="mapFolder">The custom map folder; null or empty for the base game.</param>
+	IDisposable Use(string? mapFolder);
 }

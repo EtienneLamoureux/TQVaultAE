@@ -241,6 +241,13 @@ public class Item
 	public Info? RelicBonus2Info { get; set; }
 
 	/// <summary>
+	/// The mod the item belongs to (the mod's folder name, as in a character's link file): its records resolve in that
+	/// mod's database, mod data first and then the base game's, whatever the active map is. Null for a base game item.
+	/// Kept by copies and saved in the vault files.
+	/// </summary>
+	public string? Mod { get; set; }
+
+	/// <summary>
 	/// The records the item names that the loaded game data does not have (once read with <c>GetDBData</c>): typically
 	/// those of a mod whose data is not loaded. The item is then shown incomplete.
 	/// </summary>

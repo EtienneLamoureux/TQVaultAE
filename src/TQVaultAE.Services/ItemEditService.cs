@@ -1,3 +1,4 @@
+using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
@@ -7,17 +8,22 @@ namespace TQVaultAE.Services;
 /// <summary>
 /// The item edits offered by the sack context menu: affixes, completion bonuses, relics, seed, copies.
 /// </summary>
-public class ItemEditService(IDatabase database, IItemProvider itemProvider) : IItemEditService
+public class ItemEditService(IDatabase database, IItemProvider itemProvider, IItemModService? itemMods = null) : IItemEditService
 {
 	/// <summary>Shards given by the "complete relic" entry; the item caps it to its completion level.</summary>
 	private const int CompleteRelicNumber = 10;
 
 	private readonly IDatabase _database = database;
 	private readonly IItemProvider _itemProvider = itemProvider;
+	private readonly IItemModService? _itemMods = itemMods;
+
+	/// <summary>The database of the item's mod for the current thread, until disposed.</summary>
+	private IDisposable ModScope(Item item) => this._itemMods?.Scope(item) ?? NoScope.Instance;
 
 	/// <inheritdoc/>
 	public bool ChangePrefix(SackCollection sack, Item item, RecordId affixId)
 	{
+		using var modScope = this.ModScope(item);
 		if (affixId == item.prefixID)
 			return false;
 
@@ -30,6 +36,7 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider) : I
 	/// <inheritdoc/>
 	public bool ChangeSuffix(SackCollection sack, Item item, RecordId affixId)
 	{
+		using var modScope = this.ModScope(item);
 		if (affixId == item.suffixID)
 			return false;
 
@@ -58,6 +65,7 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider) : I
 	/// <inheritdoc/>
 	public bool ChangeCompletionBonus(SackCollection sack, Item item, RecordId bonusId, bool secondRelic = false)
 	{
+		using var modScope = this.ModScope(item);
 		var currentId = secondRelic ? item.RelicBonus2Id : item.RelicBonusId;
 		if (bonusId == currentId)
 			return false;
@@ -101,6 +109,7 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider) : I
 		RecordId? bonusId = this.RollBonus(artifact);
 		if (bonusId is not null)
 		{
+			using var modScope = this.ModScope(artifact);
 			artifact.RelicBonusId = bonusId;
 			artifact.RelicBonusInfo = this._database.GetInfo(bonusId);
 			artifact.IsModified = true;
@@ -169,6 +178,49 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider) : I
 		item.Seed = seed;
 		MarkModified(sack, item);
 		return true;
+	}
+
+	/// <inheritdoc/>
+	public bool ChangeMod(SackCollection sack, Item item, string? modName)
+	{
+		string? mod = string.IsNullOrWhiteSpace(modName) ? null : modName;
+		if (string.Equals(item.Mod, mod, StringComparison.OrdinalIgnoreCase))
+			return false;
+
+		item.Mod = mod;
+		this._itemProvider.GetDBData(item);
+		MarkModified(sack, item);
+		return true;
+	}
+
+	/// <inheritdoc/>
+	public IReadOnlyList<Item> ChangeVaultMod(PlayerCollection vault, string? modName)
+	{
+		string? mod = string.IsNullOrWhiteSpace(modName) ? null : modName;
+		string? previous = vault.Mod;
+		if (string.Equals(previous, mod, StringComparison.OrdinalIgnoreCase))
+			return [];
+
+		vault.Mod = mod;
+		var changed = new List<Item>();
+		foreach (var sack in vault)
+		{
+			if (sack is null)
+				continue;
+
+			// The items of the vault's mod follow it; the items linked to another mod keep theirs.
+			foreach (var item in sack.Where(i => i.Mod is null || string.Equals(i.Mod, previous, StringComparison.OrdinalIgnoreCase)))
+			{
+				item.Mod = mod;
+				this._itemProvider.GetDBData(item);
+				item.IsModified = true;
+				changed.Add(item);
+			}
+
+			sack.IsModified = true;
+		}
+
+		return changed;
 	}
 
 	/// <summary>Rolls a completion bonus from the bonus table of a relic, charm or artifact.</summary>

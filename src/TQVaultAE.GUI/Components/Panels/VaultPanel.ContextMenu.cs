@@ -222,6 +222,23 @@ public partial class VaultPanel
 	/// </summary>
 	/// <param name="sender">semder object</param>
 	/// <param name="e">ToolStripItemClickedEventArgs data</param>
+	/// <summary>
+	/// Links the vault to a mod, or to none: its items without a mod of their own are read again with that mod's data.
+	/// </summary>
+	internal void ChangeVaultMod(string? mod)
+	{
+		var changed = this.Services.ItemEditService.ChangeVaultMod(this.ShownVault, mod);
+		if (changed.Count == 0)
+			return;
+
+		var items = changed.ToArray();
+		ItemTooltip.HideTooltip();
+		ItemTooltip.InvalidateCache(items);
+		BagButtonTooltip.InvalidateCache(items);
+		this.Services.ItemProvider.InvalidateFriendlyNamesCache(items);
+		this.BagSackPanel.Refresh();
+	}
+
 	private void ContextMenuItemClicked(object? sender, ToolStripItemClickedEventArgs e)
 	{
 		string? selectedItem = e.ClickedItem?.Text;

@@ -383,4 +383,53 @@ public class ItemEditServiceTests
 		member.beginBlockCrap1.Should().Be(7);
 		this._itemProvider.Verify(p => p.GetDBData(member), Times.Once);
 	}
+	[Fact]
+	public void ChangeMod_LinksTheItemAndReadsItAgain()
+	{
+		var item = MakeItem("records/ring.dbr", "ArmorJewelry_Ring");
+
+		this._service.ChangeMod(this._sack, item, "shadowchampions").Should().BeTrue();
+
+		item.Mod.Should().Be("shadowchampions");
+		item.IsModified.Should().BeTrue();
+		this._sack.IsModified.Should().BeTrue();
+		this._itemProvider.Verify(p => p.GetDBData(item), Times.Once);
+	}
+
+	[Fact]
+	public void ChangeMod_SameMod_ChangesNothing()
+	{
+		var item = MakeItem("records/ring.dbr", "ArmorJewelry_Ring");
+		item.Mod = "shadowchampions";
+
+		this._service.ChangeMod(this._sack, item, "ShadowChampions").Should().BeFalse();
+
+		this._sack.IsModified.Should().BeFalse();
+		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
+	}
+
+	[Fact]
+	public void ChangeVaultMod_ItemsOfTheVaultFollow_ItemsOfAnotherModKeepTheirs()
+	{
+		var vault = new TQVaultAE.Application.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
+		var sack = new SackCollection();
+		var plain = MakeItem("records/a.dbr", "ArmorJewelry_Ring");
+		var ofVault = MakeItem("records/b.dbr", "ArmorJewelry_Ring");
+		ofVault.Mod = "Lilith";
+		var other = MakeItem("records/c.dbr", "ArmorJewelry_Ring");
+		other.Mod = "Masteries";
+		sack.AddItem(plain);
+		sack.AddItem(ofVault);
+		sack.AddItem(other);
+		vault.Sacks = [sack];
+
+		var changed = this._service.ChangeVaultMod(vault, "shadowchampions");
+
+		vault.Mod.Should().Be("shadowchampions");
+		changed.Should().BeEquivalentTo([plain, ofVault]);
+		plain.Mod.Should().Be("shadowchampions");
+		ofVault.Mod.Should().Be("shadowchampions");
+		other.Mod.Should().Be("Masteries");
+		vault.IsModified.Should().BeTrue();
+	}
 }

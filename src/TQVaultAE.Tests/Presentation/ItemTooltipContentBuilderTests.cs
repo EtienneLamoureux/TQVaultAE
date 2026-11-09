@@ -82,6 +82,22 @@ public class ItemTooltipContentBuilderTests
 	}
 
 	[Fact]
+	public void Build_ItemLinkedToAMod_NamesItsModUnderTheName()
+	{
+		var data = Sword();
+		data.Item.Mod = "shadowchampions";
+
+		var lines = this._builder.Build(data, ItemTooltipView.Classic).Lines;
+
+		lines[1].Text.Should().Be(string.Format(TQVaultAE.Presentation.Resources.ItemModLine, "shadowchampions"));
+		lines[1].Color.Should().Be(ItemTooltipContentBuilder.ModColor);
+	}
+
+	[Fact]
+	public void Build_BaseGameItem_NamesNoMod()
+		=> this._builder.Build(Sword(), Full).Lines.Should().NotContain(l => l.Text == string.Format(TQVaultAE.Presentation.Resources.ItemModLine, string.Empty));
+
+	[Fact]
 	public void Build_CompleteItem_HasNoWarning()
 		=> this._builder.Build(Sword(), Full).Lines.Should().NotContain(l => l.Kind == TooltipLineKind.Warning);
 
