@@ -870,7 +870,7 @@ public partial class ItemProvider
 	private string? GetLabelAndColorFromTag(Item itm, ItemAttributesData data, RecordId recordId, ref string? labelTag, ref TQColor? labelColor)
 	{
 		labelTag = ItemAttributeProvider.GetAttributeTextTag(data);
-		string label, TrailingNL = string.Empty;
+		string label;
 
 		if (string.IsNullOrEmpty(labelTag))
 		{
@@ -888,11 +888,8 @@ public partial class ItemProvider
 			}
 			else
 			{
-				// regular armor attribute is not magical
+				// regular armor attribute is not magical; the Classic order puts a blank line after the base stats
 				labelColor = ItemStyle.Mundane.TQColor();
-				// Add trailing '\n' + space for regular armor pieces to force empty row in tooltip (only if is first attribute)
-				if ((itm.CurrentFriendlyNameResult?.TmpAttrib.Count ?? 0) == 0)
-					TrailingNL = StringHelper.TQNewLineTag + ' ';
 			}
 		}
 
@@ -902,7 +899,7 @@ public partial class ItemProvider
 			labelColor = ItemStyle.Legendary.TQColor();
 		}
 
-		return $"{label}{TrailingNL}";
+		return label;
 	}
 
 	/// <summary>
