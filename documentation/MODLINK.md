@@ -1,5 +1,7 @@
 # Modded characters and their mod
 
+_The user guide, with screenshots, is [MODS.md](MODS.md); this page holds the technical details._
+
 Titan Quest keeps custom map (mod) characters in `SaveData\User\_<name>`, apart from the main campaign ones in
 `SaveData\Main`, but nothing in their save files names the mod they were played with. TQVault lists both kinds of
 characters together and loads each one with its own mod's data, in the same session. The link of a character to its mod
