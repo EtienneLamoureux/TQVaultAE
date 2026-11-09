@@ -445,4 +445,17 @@ public class ItemExchangeServiceTests
 		target.Sacks![0].Select(i => (i.Mod, i.ModFromVault)).Should().Equal(
 			("shadowchampions", true), ("shadowchampions", false), ("Lilith", false));
 	}
+
+	[Fact]
+	public void ImportVaultInto_ExportWithoutMod_KeepsTheTargetsLink()
+	{
+		var sack = new SackCollection { SackType = SackType.Vault };
+		sack.AddItem(new Item { BaseItemId = "records/item/ring.dbr" });
+		var source = new TQVaultAE.Application.PlayerCollection("Source", "source.json") { IsVault = true, Sacks = [sack] };
+		var target = new TQVaultAE.Application.PlayerCollection("Target", "target.json") { IsVault = true, Mod = "shadowchampions", Sacks = [new SackCollection()] };
+
+		_service.ImportVaultInto(target, _service.ImportFromJson(_service.SerializePlayerCollection(source)));
+
+		target.Mod.Should().Be("shadowchampions");
+	}
 }

@@ -329,6 +329,27 @@ public partial class SackPanel : Panel, IScalingControl
 	private bool FitsWhereItLies(Item item) => Fits(this.ShownSack, this.SackSize, item);
 
 	/// <summary>
+	/// Moves an item of a sack to the first free spot of its grid (rows first) where it fits.
+	/// </summary>
+	/// <returns>True when moved; false when there is no room, the item staying where it was.</returns>
+	internal static bool MoveToFreeSpot(SackCollection sack, Size sackSize, Item item)
+	{
+		var (x0, y0) = (item.PositionX, item.PositionY);
+		for (int y = 0; y + item.Height <= sackSize.Height; y++)
+		{
+			for (int x = 0; x + item.Width <= sackSize.Width; x++)
+			{
+				(item.PositionX, item.PositionY) = (x, y);
+				if (Fits(sack, sackSize, item))
+					return true;
+			}
+		}
+
+		(item.PositionX, item.PositionY) = (x0, y0);
+		return false;
+	}
+
+	/// <summary>
 	/// True when an item of a sack lies inside its grid without overlapping another item of the sack.
 	/// </summary>
 	internal static bool Fits(SackCollection sack, Size sackSize, Item item)

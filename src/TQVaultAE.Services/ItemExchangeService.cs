@@ -199,8 +199,9 @@ public class ItemExchangeService(
 		if (vault is null || importData?.SackItems is null)
 			return;
 
-		// The vault's content and link are those imported.
-		vault.Mod = importData.VaultMod;
+		// The vault's link comes with an export that has one; else the vault keeps its own, which the items follow.
+		if (importData.VaultMod is not null)
+			vault.Mod = importData.VaultMod;
 
 		// Clear all tabs
 		for (int i = 0; i < vault.NumberOfSacks; i++)

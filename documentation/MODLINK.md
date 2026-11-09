@@ -81,7 +81,10 @@ when it changes; items with their own link keep it. An incomplete item gets the 
 mod resolves all its missing records:
 
 - when the vault is linked to the mod (or to another mod), for the items already in it;
-- when the item is put in a vault linked to the mod: dropped, moved with *Move Item To*, imported from a file or pasted. Read with the mod's data, the item may take its real size
+- when the item is put in a vault linked to the mod: dropped, moved with *Move Item To*, imported from a file or pasted
+  (also when a whole vault export replaces a linked vault: without a mod of its own, the export keeps the vault's link).
+  Once resolved, the item takes its real size: an item that was not dropped by hand and no longer fits where it lies
+  moves to the first free spot of the bag. Read with the mod's data, the item may take its real size
   (a one-cell incomplete item becomes a 1x5 lance): when it would then overlap another item or leave the grid, it is
   left as it was dropped, incomplete and without a link.
 

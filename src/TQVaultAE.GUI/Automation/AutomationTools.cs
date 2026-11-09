@@ -229,6 +229,21 @@ internal static partial class AutomationTools
 			return Serialize(new { vault = form.AutomationSelectedVault, vaults = form.AutomationVaults });
 		});
 
+	[McpServerTool(Name = "import_text", Destructive = true)]
+	[Description("Pastes text like Ctrl+V with the clipboard holding it, without touching the clipboard: exported JSON (an item, items, a tab or a vault, as copied by 'Share to Clipboard') or a PasteBin link. Items go into the current tab of the vault shown; a whole vault asks to replace the vault shown or import it as a new vault (queue_dialog_answers first: Yes replaces, No creates a new vault, Cancel). Give the text, or the path of a file holding it. The vault shown must be a test vault ('claude-...').")]
+	public static string ImportText(
+		[Description("Text to paste; empty to read it from path.")] string? text = null,
+		[Description("File holding the text to paste, when text is empty.")] string? path = null)
+		=> AutomationHost.OnUi(form =>
+		{
+			RequireTestName(form.AutomationSelectedVault ?? string.Empty);
+			string content = !string.IsNullOrEmpty(text) ? text
+				: !string.IsNullOrEmpty(path) ? File.ReadAllText(path)
+				: throw new McpException("Give the text to paste, or the path of a file holding it.");
+			string? error = form.AutomationImportText(content);
+			return Serialize(new { vault = form.AutomationSelectedVault, vaultMod = form.AutomationSelectedVaultMod, error });
+		});
+
 	/// <summary>Automation creates and duplicates only its own test files (see Safety in AUTOMATION.md).</summary>
 	private const string TestFilePrefix = "claude-";
 

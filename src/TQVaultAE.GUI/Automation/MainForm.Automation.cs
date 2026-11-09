@@ -118,6 +118,19 @@ public partial class MainForm
 	/// </summary>
 	internal void AutomationImportFile(string fileName) => this.ImportFile(fileName);
 
+	/// <summary>
+	/// Imports text like a paste (Ctrl+V) of the clipboard holding it, without touching the clipboard: the same parsing
+	/// (exported JSON, or a PasteBin link) and the same placement as <see cref="HandleClipboardImportAsync"/>.
+	/// </summary>
+	/// <returns>The import's error, or null when it succeeded.</returns>
+	internal string? AutomationImportText(string text)
+	{
+		// Off the UI thread, as the paste awaits it: a PasteBin link is downloaded.
+		var result = Task.Run(() => this.itemExchangeService.ImportFromTextAsync(text)).GetAwaiter().GetResult();
+		this.HandleImportResult(result);
+		return result.Success ? null : result.ErrorMessage;
+	}
+
 	internal string? AutomationCurrentPlayerFile => this.userContext?.CurrentPlayer?.PlayerFile;
 
 	internal bool AutomationLoadingComplete => this.loadingComplete;
