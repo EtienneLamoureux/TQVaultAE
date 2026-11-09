@@ -22,6 +22,12 @@ internal sealed class GameTabControl : Control
 	/// </summary>
 	public static readonly Rectangle FrameSource = new(25, 20, 951, 595);
 
+	/// <summary>
+	/// Top row of the inner border in the texture. The texture's marble strip above it (with its own tab shapes and
+	/// cracks) is not drawn: the tabs stand on the dialog's background there.
+	/// </summary>
+	private const int InnerBorderTop = 55;
+
 	/// <summary>Width of the frame drawn.</summary>
 	public static int FrameWidth => FrameSource.Width;
 
@@ -62,8 +68,10 @@ internal sealed class GameTabControl : Control
 	public GameTabControl(IUIService uiService)
 	{
 		this._uiService = uiService;
-		this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.ResizeRedraw, true);
-		this.BackColor = Color.Black;
+		this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.ResizeRedraw | ControlStyles.SupportsTransparentBackColor, true);
+
+		// Transparent: the strip of the tabs shows the dialog's background.
+		this.BackColor = Color.Transparent;
 		this.FrameScale = 1F;
 	}
 
@@ -193,7 +201,9 @@ internal sealed class GameTabControl : Control
 		g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
 		var frame = this._uiService.LoadBitmap(FrameTexture.ToRecordId());
-		g.DrawImage(frame, new Rectangle(0, 0, this.Width, this.Height), FrameSource, GraphicsUnit.Pixel);
+		var strip = InnerBorderTop - FrameSource.Y;
+		g.DrawImage(frame, new Rectangle(0, this.Scaled(strip), this.Width, this.Height - this.Scaled(strip)),
+			new Rectangle(FrameSource.X, InnerBorderTop, FrameSource.Width, FrameSource.Height - strip), GraphicsUnit.Pixel);
 
 		var tab = this._uiService.LoadBitmap(TabTexture.ToRecordId());
 		using var center = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center, Trimming = StringTrimming.EllipsisCharacter, FormatFlags = StringFormatFlags.NoWrap };
