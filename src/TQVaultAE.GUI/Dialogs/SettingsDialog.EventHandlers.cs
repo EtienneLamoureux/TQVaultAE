@@ -236,31 +236,6 @@ internal partial class SettingsDialog
 	}
 
 	/// <summary>
-	/// Handler for clicking enable custom maps
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void EnableCustomMapsCheckBoxCheckedChanged(object? sender, EventArgs e)
-	{
-		// Turning the mods off resets the custom map.
-		this.editor.SetModEnabled(this.enableCustomMapsCheckBox.Checked);
-		this.mapListComboBox.Enabled = this.enableCustomMapsCheckBox.Checked;
-	}
-
-	/// <summary>
-	/// Handler for changing the selected custom map
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void MapListComboBoxSelectedIndexChanged(object? sender, EventArgs e)
-	{
-		if (!this.settingsLoaded)
-			return;
-
-		this.editor.Current.CustomMap = (this.mapListComboBox.SelectedItem as GamePathEntry)?.Path ?? string.Empty;
-	}
-
-	/// <summary>
 	/// Handler for clicking the load all files check box
 	/// </summary>
 	/// <param name="sender">sender object</param>

@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.DTOs;
 
 namespace TQVaultAE.Application;
 
@@ -14,8 +15,36 @@ public sealed class PlayerSave : IDisposable
 	public readonly string Name;
 	public bool IsArchived;
 	public readonly bool IsCustom;
-	public readonly string CustomMap;
-	public readonly string CustomMapName;
+	/// <summary>
+	/// The custom map (mod) folder the character is played with; empty for none.
+	/// </summary>
+	public string CustomMap { get; set; }
+
+	/// <summary>
+	/// The custom map's folder name.
+	/// </summary>
+	public string CustomMapName => string.IsNullOrEmpty(this.CustomMap) ? string.Empty : this.PathIO.GetFileName(this.CustomMap);
+
+	/// <summary>
+	/// For a custom map character, the label of its mod in the character list (its linked mod, or that it has none).
+	/// </summary>
+	public string? ModLabel { get; set; }
+
+	/// <summary>
+	/// How the character relates to the installed mods, set with <see cref="ModLabel"/>.
+	/// </summary>
+	public CharacterModState ModState { get; set; }
+
+	/// <summary>
+	/// The name of the character's mod: its linked mod, installed or not; null when it has none.
+	/// </summary>
+	public string? ModName { get; set; }
+
+	/// <summary>
+	/// The class name, translated when the character was read, with its own map's text: a mod can rename the classes,
+	/// and the active map may be another character's. Used while the class is still <c>Tag</c>.
+	/// </summary>
+	public (string Tag, string Text)? ClassLabel { get; set; }
 	readonly ITranslationService Translate;
 	private readonly IPathIO PathIO;
 	public PlayerInfo? Info;
@@ -30,7 +59,6 @@ public sealed class PlayerSave : IDisposable
 		Name = PathIO.GetFileName(folder).Substring(1);
 		IsCustom = isCustom;
 		CustomMap = customMap;
-		CustomMapName = PathIO.GetFileName(customMap);
 		IsImmortalThrone = isImmortalThrone;
 		IsArchived = isArchived;
 	}
@@ -45,11 +73,11 @@ public sealed class PlayerSave : IDisposable
 	{
 		return string.Join(string.Empty, new[] {
 			Info is null ? Name : $"{Name}"
-			, Info?.Class is null ? string.Empty : $", {Translate.TranslateXTag(Info.Class, true, true)}"
+			, Info?.Class is null ? string.Empty : $", {(ClassLabel is { } label && label.Tag == Info.Class ? label.Text : Translate.TranslateXTag(Info.Class, true, true))}"
 			, !string.IsNullOrWhiteSpace(Info?.Class) && Info?.CurrentLevel is not null ?  " -" : string.Empty
 			, Info?.CurrentLevel is null ? string.Empty : $" {Translate.TranslateXTag("tagMenuImport05")} : {Info.CurrentLevel}"
 			, IsImmortalThrone ? string.Empty : " (TQ)"
-			//, IsCustom ? $", IsCustom" : string.Empty // CustomMap is not specificaly related to this character
+			, IsCustom && !string.IsNullOrEmpty(ModLabel) ? $" [{ModLabel}]" : string.Empty
 		});
 	}
 }

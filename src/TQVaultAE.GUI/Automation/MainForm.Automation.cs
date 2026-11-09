@@ -27,6 +27,28 @@ public partial class MainForm
 
 	internal string? AutomationSelectedVault => this.vaultListComboBox?.SelectedItem?.ToString();
 
+	/// <summary>
+	/// Reads the menu of the vault tools button (next to the vault list) as it opens; with <paramref name="path"/>,
+	/// clicks that entry after the calling tool has returned.
+	/// </summary>
+	internal (IReadOnlyList<AutomationMenuEntry> Entries, string? Clicked) AutomationVaultMenu(IReadOnlyList<string>? path)
+	{
+		this.RefreshVaultModMenu();
+		var entries = AutomationMenus.Describe(this.vaultExportContextMenu.Items);
+		string? clicked = path is { Count: > 0 } ? AutomationMenus.ClickLater(this, this.vaultExportContextMenu, path) : null;
+		return (entries, clicked);
+	}
+
+	/// <summary>Draws the menu of the vault tools button as it opens, with the sub menus along <paramref name="open"/>.</summary>
+	internal Bitmap AutomationRenderVaultMenu(IReadOnlyList<string> open)
+	{
+		this.RefreshVaultModMenu();
+		return AutomationMenus.Render(this.vaultExportContextMenu, open);
+	}
+
+	/// <summary>The mod the shown vault is linked to; null for none.</summary>
+	internal string? AutomationSelectedVaultMod => this.vaultPanel?.Vault?.Mod;
+
 	internal string? AutomationSelectedSecondaryVault
 		=> this.showSecondaryVault ? this.secondaryVaultListComboBox?.SelectedItem?.ToString() : null;
 
@@ -102,6 +124,19 @@ public partial class MainForm
 	/// Imports an exported file, like "Import from file" without its file dialog.
 	/// </summary>
 	internal void AutomationImportFile(string fileName) => this.ImportFile(fileName);
+
+	/// <summary>
+	/// Imports text like a paste (Ctrl+V) of the clipboard holding it, without touching the clipboard: the same parsing
+	/// (exported JSON, or a PasteBin link) and the same placement as <see cref="HandleClipboardImportAsync"/>.
+	/// </summary>
+	/// <returns>The import's error, or null when it succeeded.</returns>
+	internal string? AutomationImportText(string text)
+	{
+		// Off the UI thread, as the paste awaits it: a PasteBin link is downloaded.
+		var result = Task.Run(() => this.itemExchangeService.ImportFromTextAsync(text)).GetAwaiter().GetResult();
+		this.HandleImportResult(result);
+		return result.Success ? null : result.ErrorMessage;
+	}
 
 	internal string? AutomationCurrentPlayerFile => this.userContext?.CurrentPlayer?.PlayerFile;
 

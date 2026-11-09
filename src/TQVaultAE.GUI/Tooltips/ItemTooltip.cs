@@ -33,6 +33,9 @@ public partial class ItemTooltip : BaseTooltip
 	internal PictureBox? PictureBox { get; set; }
 
 
+	/// <summary>Gives an item linked to a mod its mod's data while the tooltip is built.</summary>
+	internal IItemModService? ItemModService { get; init; }
+
 	/// <summary>Text of the item, set by <see cref="FillToolTip"/>.</summary>
 	internal ToFriendlyNameResult? Data { get; private set; }
 
@@ -129,6 +132,7 @@ public partial class ItemTooltip : BaseTooltip
 				View = ViewOf(services, enableDetailedTooltipView),
 				ShowInGameValues = userSettings.ShowInGameValues,
 				ItemDatabase = services.ItemDatabaseService,
+				ItemModService = services.ItemModService,
 			};
 			ItemTooltipOpened.Add(focusedItem, _Current);
 			_Current.Show();
@@ -162,6 +166,7 @@ public partial class ItemTooltip : BaseTooltip
 				View = ViewOf(services, enableDetailedTooltipView),
 				ShowInGameValues = userSettings.ShowInGameValues,
 				ItemDatabase = services.ItemDatabaseService,
+				ItemModService = services.ItemModService,
 			};
 			ItemTooltipOpened.Add(focusedItem, _Current);
 			_Current.Show();
@@ -195,6 +200,7 @@ public partial class ItemTooltip : BaseTooltip
 				View = ViewOf(services, enableDetailedTooltipView),
 				ShowInGameValues = userSettings.ShowInGameValues,
 				ItemDatabase = services.ItemDatabaseService,
+				ItemModService = services.ItemModService,
 			};
 			ItemTooltipOpened.Add(focusedItem, _Current);
 			_Current.Show();
@@ -222,6 +228,9 @@ public partial class ItemTooltip : BaseTooltip
 	/// </summary>
 	public void FillToolTip()
 	{
+		// An item linked to a mod is described with that mod's data.
+		using var modScope = this.ItemModService?.Scope(this.FocusedItem) ?? NoScope.Instance;
+
 		// How many of each set piece are loaded now: part of the cache key, since it changes with the loaded items.
 		IReadOnlyDictionary<RecordId, int>? setCounts = null;
 		if (this.View.HasFlag(ItemTooltipView.SetPieceCounts) && this.ItemDatabase is not null
@@ -317,6 +326,9 @@ public partial class ItemTooltip : BaseTooltip
 			case TooltipLineKind.Range:
 				this.flowLayoutPanelFriendlyNames.Controls.Add(this.MakeRangeRow(line.Text, line.Range ?? string.Empty));
 				break;
+			case TooltipLineKind.Warning:
+				this.flowLayoutPanelFriendlyNames.Controls.Add(this.MakeWarningRow(line.Text, line.Color?.Color()));
+				break;
 			default:
 				AddRow(line.Text, line.Color?.Color(), style: line.Bold ? FontStyle.Bold : FontStyle.Regular);
 				break;
@@ -350,6 +362,42 @@ public partial class ItemTooltip : BaseTooltip
 		row.Controls.Add(left);
 		row.Controls.Add(right);
 		this.rangeRows.Add((row, left, right));
+		return row;
+	}
+
+	/// <summary>The warning icon of an incomplete item, drawn once.</summary>
+	private static readonly Lazy<Bitmap> WarningIcon = new(() => SystemIcons.GetStockIcon(StockIconId.Warning, StockIconOptions.Default).ToBitmap());
+
+	/// <summary>
+	/// A row with a warning icon, as high as the text, then the text.
+	/// </summary>
+	private FlowLayoutPanel MakeWarningRow(string text, Color? color)
+	{
+		var bg = this.flowLayoutPanelFriendlyNames.BackColor;
+		var label = MakeRow(this.UIService, this.FontService, text, color, BGColor: bg)
+			?? MakeSingleColorLabel(this.UIService, this.FontService, text, color, 10F, FontStyle.Bold, bg);
+		var size = Math.Max(label.PreferredSize.Height, (int)(16 * this.UIService.Scale));
+
+		var row = new FlowLayoutPanel()
+		{
+			AutoSize = true,
+			AutoSizeMode = AutoSizeMode.GrowAndShrink,
+			BackColor = bg,
+			FlowDirection = FlowDirection.LeftToRight,
+			WrapContents = false,
+			Margin = new Padding(0),
+			Padding = new Padding(0),
+		};
+		row.Controls.Add(new PictureBox()
+		{
+			Image = WarningIcon.Value,
+			SizeMode = PictureBoxSizeMode.Zoom,
+			Size = new Size(size, size),
+			BackColor = bg,
+			Margin = new Padding(0, 0, (int)(4 * this.UIService.Scale), 0),
+		});
+		label.Margin = new Padding(0);
+		row.Controls.Add(label);
 		return row;
 	}
 

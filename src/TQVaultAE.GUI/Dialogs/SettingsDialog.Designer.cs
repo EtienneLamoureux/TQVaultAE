@@ -124,12 +124,10 @@ internal partial class SettingsDialog
 	/// <summary>
 	/// Label for map list combo box
 	/// </summary>
-	private ScalingLabel customMapLabel;
 
 	/// <summary>
 	/// Combo box for listing the available custom maps
 	/// </summary>
-	private ScalingComboBox mapListComboBox;
 
 	/// <summary>
 	/// Check box to load all available data files on startup
@@ -216,8 +214,6 @@ internal partial class SettingsDialog
 		immortalThronePathTextBox = new ScalingTextBox();
 		titanQuestPathBrowseButton = new ScalingButton();
 		immortalThronePathBrowseButton = new ScalingButton();
-		customMapLabel = new ScalingLabel();
-		mapListComboBox = new ScalingComboBox();
 		baseFontLabel = new ScalingLabel();
 		baseFontComboBox = new ScalingComboBox();
 		tableLayoutPanelButtons = new TableLayoutPanel();
@@ -237,8 +233,6 @@ internal partial class SettingsDialog
 		bufferedFlowLayoutPanelAutoDetectGamePath = new BufferedFlowLayoutPanel();
 		bufferedFlowLayoutPanelTQPath = new BufferedFlowLayoutPanel();
 		bufferedFlowLayoutPanelTQITPath = new BufferedFlowLayoutPanel();
-		enableCustomMapsCheckBox = new CheckGroupBox();
-		bufferedFlowLayoutPanelCustomMap = new BufferedFlowLayoutPanel();
 		bufferedTableLayoutPanelSkeleton = new BufferedTableLayoutPanel();
 		bufferedFlowLayoutPanelSkeletonRight = new BufferedFlowLayoutPanel();
 		pasteBinGroupBox = new GroupBox();
@@ -271,8 +265,6 @@ internal partial class SettingsDialog
 		bufferedFlowLayoutPanelAutoDetectGamePath.SuspendLayout();
 		bufferedFlowLayoutPanelTQPath.SuspendLayout();
 		bufferedFlowLayoutPanelTQITPath.SuspendLayout();
-		enableCustomMapsCheckBox.SuspendLayout();
-		bufferedFlowLayoutPanelCustomMap.SuspendLayout();
 		bufferedTableLayoutPanelSkeleton.SuspendLayout();
 		bufferedFlowLayoutPanelSkeletonRight.SuspendLayout();
 		pasteBinGroupBox.SuspendLayout();
@@ -921,29 +913,6 @@ internal partial class SettingsDialog
 		immortalThronePathBrowseButton.UseVisualStyleBackColor = false;
 		immortalThronePathBrowseButton.Click += ImmortalThronePathBrowseButtonClick;
 		// 
-		// customMapLabel
-		// 
-		customMapLabel.AutoSize = true;
-		customMapLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
-		customMapLabel.ForeColor = Color.White;
-		customMapLabel.Location = new Point(3, 0);
-		customMapLabel.Name = "customMapLabel";
-		customMapLabel.Size = new Size(94, 18);
-		customMapLabel.TabIndex = 27;
-		customMapLabel.Text = "Custom Map";
-		// 
-		// mapListComboBox
-		// 
-		mapListComboBox.DrawMode = DrawMode.OwnerDrawFixed;
-		mapListComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-		mapListComboBox.Font = new Font("Microsoft Sans Serif", 11.25F);
-		mapListComboBox.FormattingEnabled = true;
-		mapListComboBox.Location = new Point(3, 21);
-		mapListComboBox.Name = "mapListComboBox";
-		mapListComboBox.Size = new Size(397, 25);
-		mapListComboBox.TabIndex = 26;
-		mapListComboBox.SelectedIndexChanged += MapListComboBoxSelectedIndexChanged;
-		// 
 		// baseFontLabel
 		// 
 		baseFontLabel.AutoSize = true;
@@ -1212,32 +1181,6 @@ internal partial class SettingsDialog
 		bufferedFlowLayoutPanelTQITPath.TabIndex = 55;
 		bufferedFlowLayoutPanelTQITPath.WrapContents = false;
 		// 
-		// enableCustomMapsCheckBox
-		// 
-		enableCustomMapsCheckBox.Checked = false;
-		enableCustomMapsCheckBox.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
-		enableCustomMapsCheckBox.CheckState = CheckState.Unchecked;
-		enableCustomMapsCheckBox.Controls.Add(bufferedFlowLayoutPanelCustomMap);
-		enableCustomMapsCheckBox.ForeColor = Color.Gold;
-		enableCustomMapsCheckBox.Location = new Point(3, 207);
-		enableCustomMapsCheckBox.Name = "enableCustomMapsCheckBox";
-		enableCustomMapsCheckBox.Size = new Size(466, 83);
-		enableCustomMapsCheckBox.TabIndex = 55;
-		enableCustomMapsCheckBox.TabStop = false;
-		enableCustomMapsCheckBox.Text = "Enable Custom Maps";
-		enableCustomMapsCheckBox.CheckedChanged += EnableCustomMapsCheckBoxCheckedChanged;
-		// 
-		// bufferedFlowLayoutPanelCustomMap
-		// 
-		bufferedFlowLayoutPanelCustomMap.Controls.Add(customMapLabel);
-		bufferedFlowLayoutPanelCustomMap.Controls.Add(mapListComboBox);
-		bufferedFlowLayoutPanelCustomMap.Dock = DockStyle.Fill;
-		bufferedFlowLayoutPanelCustomMap.FlowDirection = FlowDirection.TopDown;
-		bufferedFlowLayoutPanelCustomMap.Location = new Point(3, 20);
-		bufferedFlowLayoutPanelCustomMap.Name = "bufferedFlowLayoutPanelCustomMap";
-		bufferedFlowLayoutPanelCustomMap.Size = new Size(460, 60);
-		bufferedFlowLayoutPanelCustomMap.TabIndex = 1;
-		// 
 		// bufferedTableLayoutPanelSkeleton
 		// 
 		bufferedTableLayoutPanelSkeleton.AutoSize = true;
@@ -1357,7 +1300,6 @@ internal partial class SettingsDialog
 		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(vaultPathLabel);
 		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(bufferedFlowLayoutPanelVaultPath);
 		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(detectGamePathsCheckBox);
-		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(enableCustomMapsCheckBox);
 		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(detectLanguageCheckBox);
 		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(checkGroupBoxGitBackup);
 		bufferedFlowLayoutPanelSkeletonLeft.Dock = DockStyle.Fill;
@@ -1455,10 +1397,6 @@ internal partial class SettingsDialog
 		bufferedFlowLayoutPanelTQPath.PerformLayout();
 		bufferedFlowLayoutPanelTQITPath.ResumeLayout(false);
 		bufferedFlowLayoutPanelTQITPath.PerformLayout();
-		enableCustomMapsCheckBox.ResumeLayout(false);
-		enableCustomMapsCheckBox.PerformLayout();
-		bufferedFlowLayoutPanelCustomMap.ResumeLayout(false);
-		bufferedFlowLayoutPanelCustomMap.PerformLayout();
 		bufferedTableLayoutPanelSkeleton.ResumeLayout(false);
 		bufferedTableLayoutPanelSkeleton.PerformLayout();
 		bufferedFlowLayoutPanelSkeletonRight.ResumeLayout(false);
@@ -1517,8 +1455,6 @@ internal partial class SettingsDialog
 	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelAutoDetectGamePath;
 	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelTQPath;
 	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelTQITPath;
-	private TQVaultAE.GUI.Components.CheckGroupBox enableCustomMapsCheckBox;
-	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelCustomMap;
 	private BufferedTableLayoutPanel bufferedTableLayoutPanelSkeleton;
 	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelSkeletonRight;
 	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelSkeletonLeft;

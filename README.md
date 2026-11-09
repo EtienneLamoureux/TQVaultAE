@@ -37,6 +37,7 @@ Works with all expansions!
     - Split potion stacks apart
     - [Many keyboard shortcuts](documentation/SHORTCUTS.md)
 - [Character management](documentation/CHARMANAGE.md)
+- [Mods (custom maps)](documentation/MODS.md) — modded characters, items and vaults shown with their own mod's data, next to the regular ones.
 - Character backups
     - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backup`
 - External tools

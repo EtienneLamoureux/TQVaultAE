@@ -131,6 +131,7 @@ internal static partial class AutomationTools
 				endpoint = AutomationHost.Address,
 				loadingComplete = form.AutomationLoadingComplete,
 				vault = form.AutomationSelectedVault,
+				vaultMod = form.AutomationSelectedVaultMod,
 				secondaryVault = form.AutomationSelectedSecondaryVault,
 				character = form.AutomationSelectedCharacter,
 				characterFile = form.AutomationCurrentPlayerFile,
@@ -226,6 +227,21 @@ internal static partial class AutomationTools
 			RequireTestName(shown);
 			form.AutomationImportFile(path);
 			return Serialize(new { vault = form.AutomationSelectedVault, vaults = form.AutomationVaults });
+		});
+
+	[McpServerTool(Name = "import_text", Destructive = true)]
+	[Description("Pastes text like Ctrl+V with the clipboard holding it, without touching the clipboard: exported JSON (an item, items, a tab or a vault, as copied by 'Share to Clipboard') or a PasteBin link. Items go into the current tab of the vault shown; a whole vault asks to replace the vault shown or import it as a new vault (queue_dialog_answers first: Yes replaces, No creates a new vault, Cancel). Give the text, or the path of a file holding it. The vault shown must be a test vault ('claude-...').")]
+	public static string ImportText(
+		[Description("Text to paste; empty to read it from path.")] string? text = null,
+		[Description("File holding the text to paste, when text is empty.")] string? path = null)
+		=> AutomationHost.OnUi(form =>
+		{
+			RequireTestName(form.AutomationSelectedVault ?? string.Empty);
+			string content = !string.IsNullOrEmpty(text) ? text
+				: !string.IsNullOrEmpty(path) ? File.ReadAllText(path)
+				: throw new McpException("Give the text to paste, or the path of a file holding it.");
+			string? error = form.AutomationImportText(content);
+			return Serialize(new { vault = form.AutomationSelectedVault, vaultMod = form.AutomationSelectedVaultMod, error });
 		});
 
 	/// <summary>Automation creates and duplicates only its own test files (see Safety in AUTOMATION.md).</summary>
@@ -605,6 +621,41 @@ internal static partial class AutomationTools
 		];
 	}
 
+	[McpServerTool(Name = "capture_menu", ReadOnly = true)]
+	[Description("Opens a menu like the user and renders it to PNG with the sub menus opened along 'open' (' > ' between levels, e.g. 'Modded'), drawn to the right level with their entry, then closes it without choosing anything. Target: 'vaultTools' for the vault tools button next to the vault list, or a panel id with x and y for the right-click menu of that cell.")]
+	public static IEnumerable<ContentBlock> CaptureMenu(
+		[Description("'vaultTools', or a panel id.")] string target,
+		[Description("Cell column, for a panel.")] int x = 0,
+		[Description("Cell row, for a panel.")] int y = 0,
+		[Description("Sub menus to open, texts separated by ' > '; empty for the menu alone.")] string? open = null)
+	{
+		var path = open?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) ?? [];
+		var (png, size) = AutomationHost.OnUi(form =>
+		{
+			try
+			{
+				using var bitmap = string.Equals(target, "vaultTools", StringComparison.OrdinalIgnoreCase)
+					? form.AutomationRenderVaultMenu(path)
+					: AutomationPanels.Resolve(form, target).Panel.AutomationRenderContextMenu(new Point(x, y), path);
+				using var stream = new MemoryStream();
+				bitmap.Save(stream, ImageFormat.Png);
+				return (stream.ToArray(), bitmap.Size);
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
+		});
+
+		var file = Path.Combine(Path.GetTempPath(), $"tqvault-menu-{target}-{DateTime.Now:yyyyMMdd-HHmmss-fff}.png");
+		File.WriteAllBytes(file, png);
+		return
+		[
+			ImageContentBlock.FromBytes(png, "image/png"),
+			new TextContentBlock { Text = $"menu {target}: {size.Width}x{size.Height} px, saved to {file}" },
+		];
+	}
+
 	#endregion
 
 	#region Helpers
@@ -688,6 +739,10 @@ internal static partial class AutomationTools
 				?? throw new McpException($"Panel '{id}' has no container.");
 		}
 
+		const string characterList = "characterList";
+		if (control.StartsWith(characterList, StringComparison.OrdinalIgnoreCase))
+			return form.AutomationCharacterCombo.AutomationOpenDropDown(control[characterList.Length..].TrimStart(':'));
+
 		if (string.Equals(control, "tooltip", StringComparison.OrdinalIgnoreCase))
 			return OpenTooltips().LastOrDefault()
 				?? throw new McpException("No tooltip is shown. Use hover_item first.");
@@ -702,7 +757,7 @@ internal static partial class AutomationTools
 				return open;
 		}
 
-		throw new McpException($"Unknown capture target '{control}'. Use 'main', 'tooltip', a panel id ({string.Join(", ", AutomationPanels.List(form).Select(p => p.Id))}), '<panel>.container' or a form title.");
+		throw new McpException($"Unknown capture target '{control}'. Use 'main', 'tooltip', 'characterList[:name]', a panel id ({string.Join(", ", AutomationPanels.List(form).Select(p => p.Id))}), '<panel>.container' or a form title.");
 	}
 
 	private static string ItemName(Item item)
@@ -742,6 +797,10 @@ internal static partial class AutomationTools
 			name,
 			baseName,
 			baseItemId = item.BaseItemId.ToString(),
+			// Records the loaded game data lacks (a mod not loaded): the tooltip shows the item incomplete.
+			mod = item.Mod,
+			modFromVault = item.Mod is null ? (bool?)null : item.ModFromVault,
+			missingRecords = item.IsIncomplete ? item.MissingRecords.Select(m => new { role = m.Role.ToString(), id = m.Id.Raw }) : null,
 			x = item.PositionX,
 			y = item.PositionY,
 			width = item.Width,

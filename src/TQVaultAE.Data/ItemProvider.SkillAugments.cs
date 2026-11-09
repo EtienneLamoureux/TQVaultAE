@@ -12,6 +12,7 @@ public partial class ItemProvider
 	/// <inheritdoc/>
 	public IReadOnlyList<SkillAugment> GetSkillAugments(Item item)
 	{
+		using var modScope = this.ModScope(item);
 		var augments = new List<SkillAugment>();
 
 		// The item and its affixes, then each relic or charm at its number of pieces, and its completion bonus.

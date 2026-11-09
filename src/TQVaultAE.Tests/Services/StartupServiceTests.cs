@@ -238,17 +238,4 @@ public class StartupServiceTests
 	{
 		StartupService.FindNeutralCultureName("Klingon").Should().BeNull();
 	}
-
-	[Theory]
-	[InlineData(true, "Atlantis", "Atlantis")]
-	[InlineData(false, "Atlantis", "main")]
-	public void SetupMapName_CustomMapOnlyWhenModsAreEnabled(bool modEnabled, string customMap, string expected)
-	{
-		this._settings.ModEnabled = modEnabled;
-		this._settings.CustomMap = customMap;
-
-		this._service.SetupMapName();
-
-		this._gamePath.Object.MapName.Should().Be(expected);
-	}
 }

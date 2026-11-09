@@ -164,6 +164,14 @@ public class ItemExchangeService(
 							foreach (var itemDto in sackDto.Items)
 							{
 								var item = itemDto.ToItem();
+
+								// An item without a link of its own follows the vault's, and is read with its mod's data.
+								if (item.Mod is null && !string.IsNullOrWhiteSpace(dto.Mod))
+								{
+									item.Mod = dto.Mod;
+									item.ModFromVault = true;
+								}
+
 								_itemProvider?.GetDBData(item);
 								itemList.Add(item);
 							}
@@ -173,7 +181,7 @@ public class ItemExchangeService(
 								sackIconInfo[sackDto.SackNumber] = sackDto.IconInfo;
 						}
 
-						return ImportResult.SucceededVault(dto.Name, sackItems, sackIconInfo);
+						return ImportResult.SucceededVault(dto.Name, sackItems, sackIconInfo, string.IsNullOrWhiteSpace(dto.Mod) ? null : dto.Mod);
 					}
 
 				default:
@@ -190,6 +198,10 @@ public class ItemExchangeService(
 	{
 		if (vault is null || importData?.SackItems is null)
 			return;
+
+		// The vault's link comes with an export that has one; else the vault keeps its own, which the items follow.
+		if (importData.VaultMod is not null)
+			vault.Mod = importData.VaultMod;
 
 		// Clear all tabs
 		for (int i = 0; i < vault.NumberOfSacks; i++)

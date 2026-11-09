@@ -14,6 +14,7 @@ public partial class ItemProvider
 
 	public SortedList<string, Variable> GetRequirementVariables(Item itm)
 	{
+		using var modScope = this.ModScope(itm);
 		// Ordinal: the keys are attribute names, and the default culture-aware comparer was a visible cost of the search warm-up.
 		var RequirementVariables = new SortedList<string, Variable>(StringComparer.Ordinal);
 		if (itm.baseItemInfo is not null)
@@ -51,6 +52,7 @@ public partial class ItemProvider
 	/// <returns>Sorted List containing all of the stat bonuses</returns>
 	public SortedList<string, int> GetStatBonuses(Item item)
 	{
+		using var modScope = this.ModScope(item);
 		var statBonuses = new SortedList<string, int>();
 
 		if (item.baseItemInfo is not null)
@@ -77,6 +79,7 @@ public partial class ItemProvider
 	/// <returns>Returns <see cref="SetItemInfo"/> containing the remaining set items or null if the item is not part of a set.</returns>
 	public SetItemInfo? GetSetItems(Item itm)
 	{
+		using var modScope = this.ModScope(itm);
 		if (itm.baseItemInfo is null)
 			return null;
 
@@ -111,6 +114,7 @@ public partial class ItemProvider
 	/// </summary>
 	public void GetDBData(Item itm)
 	{
+		using var modScope = this.ModScope(itm);
 		if (USettings.ItemDebugLevel > 0)
 			Log.LogDebug("Item.GetDBData ()   baseItemID = {BaseItemId}", itm.BaseItemId);
 
@@ -284,6 +288,7 @@ public partial class ItemProvider
 	/// <returns></returns>
 	public RequirementInfo GetRequirementInfo(Item item, SortedList<string, Variable> requirementVariables)
 	{
+		using var modScope = this.ModScope(item);
 		var info = new RequirementInfo();
 		info.Item = item;
 
@@ -308,6 +313,7 @@ public partial class ItemProvider
 	/// <returns>string containing the set items</returns>
 	public SetItemInfo? GetItemSetTranslations(Item itm)
 	{
+		using var modScope = this.ModScope(itm);
 		var setMembers = this.GetSetItems(itm);
 		if (setMembers is not null)
 		{
@@ -333,6 +339,7 @@ public partial class ItemProvider
 	/// <returns>A string containing the items requirements</returns>
 	public (string[] Requirements, SortedList<string, Variable> RequirementVariables) GetRequirements(Item itm)
 	{
+		using var modScope = this.ModScope(itm);
 		SortedList<string, Variable> requirementVariables = GetRequirementVariables(itm);
 
 		// Get the format string to use to list a requirement

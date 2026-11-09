@@ -55,8 +55,10 @@ public sealed class GuiServices
 		, ISearchQueryService searchQueryService
 		, ICharacterEditService characterEditService
 		, ISettingsPersistenceService settingsPersistence
+		, IItemModService itemModService
 	)
 	{
+		this.ItemModService = itemModService;
 		this._loggerFactory = loggerFactory;
 		this.Forms = forms;
 		this.Settings = settings;
@@ -102,6 +104,11 @@ public sealed class GuiServices
 	public ITranslationService TranslationService { get; }
 	public IBitmapService BitmapService { get; }
 	public ISoundService SoundService { get; }
+
+	/// <summary>
+	/// The mod an item is linked to: its data scope and the installed mods.
+	/// </summary>
+	public IItemModService ItemModService { get; }
 
 	/// <summary>
 	/// Item display texts and their cache, for the tooltips, the item properties dialog and the panels.

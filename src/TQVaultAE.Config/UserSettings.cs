@@ -56,12 +56,6 @@ public class UserSettings
 	[XmlElement(ElementName = nameof(TQPath))]
 	public string TQPath { get; set; } = string.Empty;
 
-	[XmlElement(ElementName = nameof(ModEnabled))]
-	public bool ModEnabled { get; set; } = false;
-
-	[XmlElement(ElementName = nameof(CustomMap))]
-	public string CustomMap { get; set; } = string.Empty;
-
 	[XmlElement(ElementName = nameof(Scale))]
 	public float Scale { get; set; } = 1;
 

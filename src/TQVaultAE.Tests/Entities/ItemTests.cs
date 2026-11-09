@@ -159,4 +159,45 @@ public class ItemTests
 	}
 
 	#endregion
+
+	#region MissingRecords
+
+	private static Info InfoOf(string id)
+		=> new(new DBRecordCollection(RecordId.Create(id), "ItemRelic"));
+
+	[Fact]
+	public void MissingRecords_EveryRecordFound_IsEmpty()
+	{
+		var item = new Item
+		{
+			BaseItemId = RecordId.Create("records/item/sword.dbr"),
+			baseItemInfo = InfoOf("records/item/sword.dbr"),
+			prefixID = RecordId.Create("records/prefix.dbr"),
+			prefixInfo = InfoOf("records/prefix.dbr"),
+		};
+
+		item.MissingRecords.Should().BeEmpty();
+		item.IsIncomplete.Should().BeFalse();
+	}
+
+	[Fact]
+	public void MissingRecords_ListsEachNamedRecordWithoutInfo_InOrder()
+	{
+		var item = new Item
+		{
+			BaseItemId = RecordId.Create("records/mod/sword.dbr"),
+			prefixID = RecordId.Create("records/prefix.dbr"),
+			prefixInfo = InfoOf("records/prefix.dbr"),
+			suffixID = RecordId.Create("records/mod/suffix.dbr"),
+			relic2ID = RecordId.Create("records/mod/charm.dbr"),
+		};
+
+		item.MissingRecords.Should().Equal(
+			(ItemRecordRole.BaseItem, item.BaseItemId),
+			(ItemRecordRole.Suffix, item.suffixID),
+			(ItemRecordRole.Relic, item.relic2ID));
+		item.IsIncomplete.Should().BeTrue();
+	}
+
+	#endregion
 }

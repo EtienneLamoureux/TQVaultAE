@@ -262,7 +262,7 @@ public partial class GameFileService(ILogger<GameFileService> log, IGamePathServ
 		var oldFolder = ps.Folder;
 
 		// -- Prep arbo
-		var archDirNameTarget = this.GamePathService.GetBaseCharacterFolder(ps.IsImmortalThrone, true);
+		var archDirNameTarget = this.GamePathService.GetBaseCharacterFolder(ps.IsImmortalThrone, ps.IsCustom, true);
 		if (!DirectoryIO.Exists(archDirNameTarget))
 			DirectoryIO.CreateDirectory(archDirNameTarget);
 

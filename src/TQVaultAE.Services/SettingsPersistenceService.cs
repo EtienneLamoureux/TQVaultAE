@@ -50,10 +50,6 @@ public class SettingsPersistenceService(UserSettings userSettings, IDatabase dat
 			changed = true;
 		}
 
-		// Custom map settings
-		if (settings.ModEnabled)
-			changed = true;
-
 		// Auto detected values are found again on each start.
 		if (settings.AutoDetectLanguage)
 			settings.TQLanguage = string.Empty;

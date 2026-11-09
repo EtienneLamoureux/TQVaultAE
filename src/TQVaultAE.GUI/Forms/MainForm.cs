@@ -46,6 +46,11 @@ public partial class MainForm : VaultForm
 
 	private readonly ISaveOrchestrator saveOrchestrator;
 
+	/// <summary>
+	/// The custom map (mod) whose data the session uses now.
+	/// </summary>
+	private readonly IGameMapService gameMapService;
+
 	#region	Fields
 
 	/// <summary>
@@ -177,6 +182,7 @@ public partial class MainForm : VaultForm
 			, CommandLineArgs commandLineArgs
 			, ILoadAllService loadAllService
 			, ISaveOrchestrator saveOrchestrator
+			, IGameMapService gameMapService
 		) : base(services)
 	{
 		this.userContext = sessionContext;
@@ -190,6 +196,8 @@ public partial class MainForm : VaultForm
 		this.commandLineArgs = commandLineArgs;
 		this.loadAllService = loadAllService;
 		this.saveOrchestrator = saveOrchestrator;
+		this.gameMapService = gameMapService;
+		this.gameMapService.ActiveMapChanged += this.GameMapService_ActiveMapChanged;
 
 		Log = log;
 		Log.LogInformation("TQVaultAE Initialization !");
@@ -211,8 +219,6 @@ public partial class MainForm : VaultForm
 		ScaleControl(this.UIService, this.secondaryVaultListComboBox, false);
 		this.configureButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
 		ScaleControl(this.UIService, this.configureButton);
-		this.customMapText.Font = FontService.GetFont(11.25F, UIService.FontZoom);
-		ScaleControl(this.UIService, this.customMapText, false);
 		this.showVaulButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
 		ScaleControl(this.UIService, this.showVaulButton);
 		this.aboutButton.Font = FontService.GetFontLight(8.25F, UIService.FontZoom);
@@ -285,6 +291,7 @@ Item Debug Level: {ItemDebugLevel}
 			, this.playerService
 			, USettings
 			, () => DuplicateCharacter()
+			, this.OpenModLinkDialog
 		);
 
 		this.SetupFormSize();

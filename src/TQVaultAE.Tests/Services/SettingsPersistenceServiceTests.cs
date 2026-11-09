@@ -14,7 +14,6 @@ public class SettingsPersistenceServiceTests
 			LastVaultName = "Main Vault",
 			LoadLastCharacter = true,
 			LastCharacterName = "Hero",
-			ModEnabled = false,
 			AutoDetectLanguage = false,
 			AutoDetectGamePath = false,
 			TQLanguage = "EN",
@@ -98,26 +97,15 @@ public class SettingsPersistenceServiceTests
 		settings.Scale.Should().Be(1.25F);
 	}
 
-	[Fact]
-	public void ApplySessionState_CustomMapOn_AlwaysAsksASave()
-	{
-		var settings = NewSettings();
-		settings.ModEnabled = true;
-
-		SettingsPersistenceService.ApplySessionState(settings, null, null, 1.0F).Should().BeTrue();
-	}
-
 	[Theory]
-	[InlineData(false, false, false, false, RestartReason.None)]
-	[InlineData(true, true, false, false, RestartReason.Settings)]
-	[InlineData(false, false, false, true, RestartReason.Settings)]
-	[InlineData(true, false, true, true, RestartReason.Settings)]
-	[InlineData(false, true, true, false, RestartReason.GamePath)]
-	[InlineData(false, true, false, false, RestartReason.GamePath)]
-	[InlineData(true, false, true, false, RestartReason.CustomMaps)]
-	[InlineData(true, false, false, false, RestartReason.Language)]
-	public void RestartRule_Evaluate_PicksTheMessageOfTheChange(bool language, bool gamePath, bool customMaps, bool uiSetting, RestartReason expected)
+	[InlineData(false, false, false, RestartReason.None)]
+	[InlineData(true, true, false, RestartReason.Settings)]
+	[InlineData(false, false, true, RestartReason.Settings)]
+	[InlineData(true, false, true, RestartReason.Settings)]
+	[InlineData(false, true, false, RestartReason.GamePath)]
+	[InlineData(true, false, false, RestartReason.Language)]
+	public void RestartRule_Evaluate_PicksTheMessageOfTheChange(bool language, bool gamePath, bool uiSetting, RestartReason expected)
 	{
-		RestartRule.Evaluate(language, gamePath, customMaps, uiSetting).Should().Be(expected);
+		RestartRule.Evaluate(language, gamePath, uiSetting).Should().Be(expected);
 	}
 }

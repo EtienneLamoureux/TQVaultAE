@@ -222,6 +222,47 @@ public partial class VaultPanel
 	/// </summary>
 	/// <param name="sender">semder object</param>
 	/// <param name="e">ToolStripItemClickedEventArgs data</param>
+	/// <summary>
+	/// Links the vault to a mod, or to none: its items without a mod of their own are read again with that mod's data.
+	/// </summary>
+	internal void ChangeVaultMod(string? mod)
+	{
+		var changed = this.Services.ItemEditService.ChangeVaultMod(this.ShownVault, mod);
+		if (changed.Count == 0)
+			return;
+
+		var items = changed.ToArray();
+		ItemTooltip.HideTooltip();
+		ItemTooltip.InvalidateCache(items);
+		BagButtonTooltip.InvalidateCache(items);
+		this.Services.ItemProvider.InvalidateFriendlyNamesCache(items);
+		this.BagSackPanel.Refresh();
+	}
+
+	/// <summary>
+	/// Items put in the vault without a drop (Move To, import, paste) follow its link like dropped ones: those without a
+	/// link of their own are read again with the vault's mod, and get it as their own link when it resolves them. An
+	/// item that no longer fits where it lies once resolved (it takes its real size) moves to a free spot of the bag;
+	/// without one, it is left as it was.
+	/// </summary>
+	/// <param name="sack">The vault bag holding the items.</param>
+	/// <param name="items">The items just put there.</param>
+	internal void AdoptVaultMod(SackCollection sack, IEnumerable<Item> items)
+	{
+		if (this.Vault?.Mod is not { } mod)
+			return;
+
+		var changed = items.Where(item => this.Services.ItemEditService.AdoptContainerMod(
+			item, mod, i => SackPanel.Fits(sack, this.BagSackPanel.SackSize, i)
+				|| SackPanel.MoveToFreeSpot(sack, this.BagSackPanel.SackSize, i))).ToArray();
+		if (changed.Length == 0)
+			return;
+
+		ItemTooltip.InvalidateCache(changed);
+		BagButtonTooltip.InvalidateCache(changed);
+		this.Services.ItemProvider.InvalidateFriendlyNamesCache(changed);
+	}
+
 	private void ContextMenuItemClicked(object? sender, ToolStripItemClickedEventArgs e)
 	{
 		string? selectedItem = e.ClickedItem?.Text;

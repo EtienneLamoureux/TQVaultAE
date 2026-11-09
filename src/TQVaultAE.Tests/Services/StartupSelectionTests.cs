@@ -92,15 +92,6 @@ public class StartupSelectionTests
 	}
 
 	[Fact]
-	public void Resolve_CommandLineMapOnly_SkipsTheTitle()
-	{
-		var selection = StartupSelection.Resolve(this._settings, Characters, _ => true, new CommandLineArgs(["TQVaultAE.exe", "/mod:Atlantis"]));
-
-		selection.SkipTitle.Should().BeTrue();
-		selection.AutomaticPlayer.Should().BeEmpty();
-	}
-
-	[Fact]
 	public void ResolveVault_LoadLastVaultOff_KeepsTheCurrentVaultWithoutCheckingFiles()
 	{
 		this._settings.LoadLastVault = false;

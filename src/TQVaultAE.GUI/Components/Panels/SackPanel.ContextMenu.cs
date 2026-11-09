@@ -11,6 +11,7 @@ using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Forms;
+using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Components.Panels;
@@ -454,6 +455,29 @@ public partial class SackPanel
 		#endregion
 	}
 
+
+	/// <summary>
+	/// Adds the Modded submenu: links the item to an installed mod, or to none.
+	/// </summary>
+	private void AddModMenuItems(Item focusedItem)
+	{
+		this.CustomContextMenu.Items.Add("-");
+		this.CustomContextMenu.Items.Add(ModMenu.Create(this.CustomContextMenu, Resources.CharacterModded
+			, this.Services.ItemModService.InstalledMods, focusedItem.Mod, this.ChangeModItemClicked
+			, () => this.Services.ItemModService.Suggest([focusedItem])));
+	}
+
+	private void ChangeModItemClicked(string? mod)
+	{
+		Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
+		if (focusedItem is null || !this.Services.ItemEditService.ChangeMod(this.ShownSack, focusedItem, mod))
+			return;
+
+		ItemTooltip.HideTooltip();
+		this.InvalidateItemCacheAll(focusedItem);
+		BagButtonTooltip.InvalidateCache(this.ShownSack);
+		this.Refresh();
+	}
 
 	private void SwapAffixesDisplayModeClicked(object? sender, EventArgs e)
 	{

@@ -2310,15 +2310,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} Custom Map.
-        /// </summary>
-        public static string MainFormCustomMapLabel {
-            get {
-                return ResourceManager.GetString("MainFormCustomMapLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Error extracting database.
         /// </summary>
         public static string MainFormDatabaseError {
@@ -2419,27 +2410,6 @@ namespace TQVaultAE.Presentation {
         public static string MainFormMaintainVault {
             get {
                 return ResourceManager.GetString("MainFormMaintainVault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Custom Maps Setting Changed.
-        /// </summary>
-        public static string MainFormMapsChanged {
-            get {
-                return ResourceManager.GetString("MainFormMapsChanged", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Custom Maps setting has been changed.
-        ///
-        ///You will need to restart TQVault for it take effect.
-        ///Would you like to restart TQVault now?.
-        /// </summary>
-        public static string MainFormMapsChangedMsg {
-            get {
-                return ResourceManager.GetString("MainFormMapsChangedMsg", resourceCulture);
             }
         }
         
@@ -4721,26 +4691,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable Custom Maps.
-        /// </summary>
-        public static string SettingsEnableMod {
-            get {
-                return ResourceManager.GetString("SettingsEnableMod", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Selecting this item will 
-        ///enable the drop down
-        ///to select custom maps..
-        /// </summary>
-        public static string SettingsEnableModTT {
-            get {
-                return ResourceManager.GetString("SettingsEnableModTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Check Now.
         /// </summary>
         public static string SettingsForceCheck {
@@ -4846,15 +4796,6 @@ namespace TQVaultAE.Presentation {
         public static string SettingsLabel4 {
             get {
                 return ResourceManager.GetString("SettingsLabel4", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Custom Map.
-        /// </summary>
-        public static string SettingsLabel5 {
-            get {
-                return ResourceManager.GetString("SettingsLabel5", resourceCulture);
             }
         }
         
@@ -5997,6 +5938,339 @@ namespace TQVaultAE.Presentation {
         public static string VaultDeletePermanent {
             get {
                 return ResourceManager.GetString("VaultDeletePermanent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mod link....
+        /// </summary>
+        public static string ModLinkMenu {
+            get {
+                return ResourceManager.GetString("ModLinkMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mod link.
+        /// </summary>
+        public static string ModLinkDialogTitle {
+            get {
+                return ResourceManager.GetString("ModLinkDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Character: {0}.
+        /// </summary>
+        public static string ModLinkCharacter {
+            get {
+                return ResourceManager.GetString("ModLinkCharacter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Installed mods:.
+        /// </summary>
+        public static string ModLinkInstalledMods {
+            get {
+                return ResourceManager.GetString("ModLinkInstalledMods", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No mod is installed..
+        /// </summary>
+        public static string ModLinkNoMods {
+            get {
+                return ResourceManager.GetString("ModLinkNoMods", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Link.
+        /// </summary>
+        public static string ModLinkLink {
+            get {
+                return ResourceManager.GetString("ModLinkLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unlink.
+        /// </summary>
+        public static string ModLinkUnlink {
+            get {
+                return ResourceManager.GetString("ModLinkUnlink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suggest.
+        /// </summary>
+        public static string ModLinkSuggest {
+            get {
+                return ResourceManager.GetString("ModLinkSuggest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to no mod.
+        /// </summary>
+        public static string ModLinkUnlinkedLabel {
+            get {
+                return ResourceManager.GetString("ModLinkUnlinkedLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}, not installed.
+        /// </summary>
+        public static string ModLinkMissingLabel {
+            get {
+                return ResourceManager.GetString("ModLinkMissingLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to the base game data.
+        /// </summary>
+        public static string ModLinkBaseGameData {
+            get {
+                return ResourceManager.GetString("ModLinkBaseGameData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Main campaign character: it always uses the base game data..
+        /// </summary>
+        public static string ModLinkStateBaseGame {
+            get {
+                return ResourceManager.GetString("ModLinkStateBaseGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Linked to {0}..
+        /// </summary>
+        public static string ModLinkStateLinked {
+            get {
+                return ResourceManager.GetString("ModLinkStateLinked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Linked to {0}, which is not installed: it is loaded with {1}..
+        /// </summary>
+        public static string ModLinkStateMissing {
+            get {
+                return ResourceManager.GetString("ModLinkStateMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not linked: it is loaded with {0}..
+        /// </summary>
+        public static string ModLinkStateUnlinked {
+            get {
+                return ResourceManager.GetString("ModLinkStateUnlinked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suggested: {0} ({1} of the {2} records this character uses that the base game lacks)..
+        /// </summary>
+        public static string ModLinkSuggestion {
+            get {
+                return ResourceManager.GetString("ModLinkSuggestion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Several mods match as well: {0}..
+        /// </summary>
+        public static string ModLinkSuggestionTie {
+            get {
+                return ResourceManager.GetString("ModLinkSuggestionTie", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modded.
+        /// </summary>
+        public static string CharacterModded {
+            get {
+                return ResourceManager.GetString("CharacterModded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Linked.
+        /// </summary>
+        public static string CharacterModLinked {
+            get {
+                return ResourceManager.GetString("CharacterModLinked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not linked.
+        /// </summary>
+        public static string CharacterModNotLinked {
+            get {
+                return ResourceManager.GetString("CharacterModNotLinked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not installed.
+        /// </summary>
+        public static string CharacterModNotInstalled {
+            get {
+                return ResourceManager.GetString("CharacterModNotInstalled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mod : {0}.
+        /// </summary>
+        public static string ItemModLine {
+            get {
+                return ResourceManager.GetString("ItemModLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None (base game).
+        /// </summary>
+        public static string ItemModNone {
+            get {
+                return ResourceManager.GetString("ItemModNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modded vault.
+        /// </summary>
+        public static string VaultModded {
+            get {
+                return ResourceManager.GetString("VaultModded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (suggested).
+        /// </summary>
+        public static string ModSuggestedHint {
+            get {
+                return ResourceManager.GetString("ModSuggestedHint", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to (suggested {0}/{1}).
+        /// </summary>
+        public static string ModSuggestedPartialHint {
+            get {
+                return ResourceManager.GetString("ModSuggestedPartialHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Has {0} of the {1} records the base game lacks..
+        /// </summary>
+        public static string ModSuggestedDetail {
+            get {
+                return ResourceManager.GetString("ModSuggestedDetail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Incomplete item: mod not linked or not installed..
+        /// </summary>
+        public static string ItemIncomplete {
+            get {
+                return ResourceManager.GetString("ItemIncomplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Base item.
+        /// </summary>
+        public static string ItemIncompleteBaseItem {
+            get {
+                return ResourceManager.GetString("ItemIncompleteBaseItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prefix.
+        /// </summary>
+        public static string ItemIncompletePrefix {
+            get {
+                return ResourceManager.GetString("ItemIncompletePrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suffix.
+        /// </summary>
+        public static string ItemIncompleteSuffix {
+            get {
+                return ResourceManager.GetString("ItemIncompleteSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Relic or charm.
+        /// </summary>
+        public static string ItemIncompleteRelic {
+            get {
+                return ResourceManager.GetString("ItemIncompleteRelic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Relic bonus.
+        /// </summary>
+        public static string ItemIncompleteRelicBonus {
+            get {
+                return ResourceManager.GetString("ItemIncompleteRelicBonus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No installed mod has the {0} records this character uses that the base game lacks..
+        /// </summary>
+        public static string ModLinkSuggestionNone {
+            get {
+                return ResourceManager.GetString("ModLinkSuggestionNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This character only uses base game records: its mod cannot be told from its data..
+        /// </summary>
+        public static string ModLinkSuggestionBaseOnly {
+            get {
+                return ResourceManager.GetString("ModLinkSuggestionBaseOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The mod link could not be saved..
+        /// </summary>
+        public static string ModLinkSaveError {
+            get {
+                return ResourceManager.GetString("ModLinkSaveError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mod data: {0}.
+        /// </summary>
+        public static string ModLinkActiveMap {
+            get {
+                return ResourceManager.GetString("ModLinkActiveMap", resourceCulture);
             }
         }
     }

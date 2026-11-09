@@ -87,6 +87,12 @@ public class PlayerCollection : IEnumerable<SackCollection>
 	public bool IsVault { get; set; }
 
 	/// <summary>
+	/// For a vault, the mod it is linked to (the mod's folder name): its items that have no mod of their own resolve with
+	/// that mod's data first, then the base game's. Null for a vault of base game items.
+	/// </summary>
+	public string? Mod { get; set; }
+
+	/// <summary>
 	/// Gets or sets a value indicating whether this file is an immortal throne file
 	/// </summary>
 	public bool IsImmortalThrone { get; set; }

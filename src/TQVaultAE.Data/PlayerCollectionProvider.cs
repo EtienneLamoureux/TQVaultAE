@@ -186,6 +186,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 			disabledtooltip = pc.DisabledTooltipBagId,
 			currentlyFocusedSackNumber = pc.currentlyFocusedSackNumber,
 			currentlySelectedSackNumber = pc.currentlySelectedSackNumber,
+			mod = pc.Mod,
 			sacks = pc.Select(sack => new SackDto()
 			{
 				iconinfo = sack.BagButtonIconInfo,
@@ -204,6 +205,8 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					var2 = i.Var2,
 					pointX = i.PositionX,
 					pointY = i.PositionY,
+					// An item following the vault's link has no link of its own to write.
+					mod = i.ModFromVault && string.Equals(i.Mod, pc.Mod, StringComparison.OrdinalIgnoreCase) ? null : i.Mod,
 				}).ToList()
 			}).ToList()
 		};
@@ -307,6 +310,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 		pc.numberOfSacks = vaultDto.sacks.Count;
 		pc.currentlyFocusedSackNumber = vaultDto.currentlyFocusedSackNumber;
 		pc.currentlySelectedSackNumber = vaultDto.currentlySelectedSackNumber;
+		pc.Mod = string.IsNullOrWhiteSpace(vaultDto.mod) ? null : vaultDto.mod;
 
 		pc.Sacks = vaultDto.sacks.Select(s => new SackCollection()
 		{
@@ -337,6 +341,9 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					PositionY = s.pointY,
 					endBlockCrap1 = this.TQData.EndBlockValue,
 					StackSize = s.stackSize,
+					// Its own mod, else the vault's: resolved with that mod's data first, then the base game's.
+					Mod = string.IsNullOrWhiteSpace(s.mod) ? pc.Mod : s.mod,
+					ModFromVault = string.IsNullOrWhiteSpace(s.mod) && pc.Mod is not null,
 					// Atlantis
 					relic2ID = RecordId.Empty,
 					RelicBonus2Id = RecordId.Empty,

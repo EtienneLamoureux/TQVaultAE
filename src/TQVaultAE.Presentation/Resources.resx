@@ -324,9 +324,6 @@ Would you like to restart TQVault?</value>
 	<data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>Show Player</value>
   </data>
-	<data name="MainFormCustomMapLabel" xml:space="preserve">
-    <value>{0} Custom Map</value>
-  </data>
 	<data name="MainFormDatabaseError" xml:space="preserve">
     <value>Error extracting database</value>
   </data>
@@ -354,15 +351,6 @@ Would you like to restart TQVault now?</value>
   </data>
 	<data name="MainFormMaintainVault" xml:space="preserve">
     <value>Maintain Vault Files...</value>
-  </data>
-	<data name="MainFormMapsChanged" xml:space="preserve">
-    <value>Custom Maps Setting Changed</value>
-  </data>
-	<data name="MainFormMapsChangedMsg" xml:space="preserve">
-    <value>The Custom Maps setting has been changed.
-
-You will need to restart TQVault for it take effect.
-Would you like to restart TQVault now?</value>
   </data>
 	<data name="MainFormNoCharacters" xml:space="preserve">
     <value>No TQ characters detected</value>
@@ -750,14 +738,6 @@ take longer if the network connection is slow.</value>
 	<data name="SettingsDetectLanguage" xml:space="preserve">
     <value>Auto detect Language</value>
   </data>
-	<data name="SettingsEnableMod" xml:space="preserve">
-    <value>Enable Custom Maps</value>
-  </data>
-	<data name="SettingsEnableModTT" xml:space="preserve">
-    <value>Selecting this item will 
-enable the drop down
-to select custom maps.</value>
-  </data>
 	<data name="SettingsForceCheck" xml:space="preserve">
     <value>Check Now</value>
   </data>
@@ -776,9 +756,6 @@ available.</value>
   </data>
 	<data name="SettingsLabel4" xml:space="preserve">
     <value>IT Game Path</value>
-  </data>
-	<data name="SettingsLabel5" xml:space="preserve">
-    <value>Custom Map</value>
   </data>
 	<data name="SettingsLoadChar" xml:space="preserve">
     <value>Automatically Load the last opened Character</value>
@@ -2225,5 +2202,116 @@ You still have to close TQVaultAE to apply your changes.
   </data>
 	<data name="VaultDeletePermanent" xml:space="preserve">
     <value>This cannot be undone.</value>
+  </data>
+	<data name="ModLinkMenu" xml:space="preserve">
+    <value>Mod link...</value>
+  </data>
+	<data name="ModLinkDialogTitle" xml:space="preserve">
+    <value>Mod link</value>
+  </data>
+	<data name="ModLinkCharacter" xml:space="preserve">
+    <value>Character: {0}</value>
+  </data>
+	<data name="ModLinkInstalledMods" xml:space="preserve">
+    <value>Installed mods:</value>
+  </data>
+	<data name="ModLinkNoMods" xml:space="preserve">
+    <value>No mod is installed.</value>
+  </data>
+	<data name="ModLinkLink" xml:space="preserve">
+    <value>Link</value>
+  </data>
+	<data name="ModLinkUnlink" xml:space="preserve">
+    <value>Unlink</value>
+  </data>
+	<data name="ModLinkSuggest" xml:space="preserve">
+    <value>Suggest</value>
+  </data>
+	<data name="ModLinkUnlinkedLabel" xml:space="preserve">
+    <value>no mod</value>
+  </data>
+	<data name="ModLinkMissingLabel" xml:space="preserve">
+    <value>{0}, not installed</value>
+  </data>
+	<data name="CharacterModded" xml:space="preserve">
+    <value>Modded</value>
+  </data>
+	<data name="CharacterModLinked" xml:space="preserve">
+    <value>Linked</value>
+  </data>
+	<data name="CharacterModNotLinked" xml:space="preserve">
+    <value>Not linked</value>
+  </data>
+	<data name="CharacterModNotInstalled" xml:space="preserve">
+    <value>Not installed</value>
+  </data>
+	<data name="ItemModLine" xml:space="preserve">
+    <value>Mod : {0}</value>
+  </data>
+	<data name="ItemModNone" xml:space="preserve">
+    <value>None (base game)</value>
+  </data>
+	<data name="VaultModded" xml:space="preserve">
+    <value>Modded vault</value>
+  </data>
+	<data name="ModSuggestedHint" xml:space="preserve">
+    <value>(suggested)</value>
+  </data>
+	<data name="ModSuggestedPartialHint" xml:space="preserve">
+    <value>(suggested {0}/{1})</value>
+  </data>
+	<data name="ModSuggestedDetail" xml:space="preserve">
+    <value>Has {0} of the {1} records the base game lacks.</value>
+  </data>
+	<data name="ModLinkBaseGameData" xml:space="preserve">
+    <value>the base game data</value>
+  </data>
+	<data name="ModLinkStateBaseGame" xml:space="preserve">
+    <value>Main campaign character: it always uses the base game data.</value>
+  </data>
+	<data name="ModLinkStateLinked" xml:space="preserve">
+    <value>Linked to {0}.</value>
+  </data>
+	<data name="ModLinkStateMissing" xml:space="preserve">
+    <value>Linked to {0}, which is not installed: it is loaded with {1}.</value>
+  </data>
+	<data name="ModLinkStateUnlinked" xml:space="preserve">
+    <value>Not linked: it is loaded with {0}.</value>
+  </data>
+	<data name="ModLinkSuggestion" xml:space="preserve">
+    <value>Suggested: {0} ({1} of the {2} records this character uses that the base game lacks).</value>
+  </data>
+	<data name="ModLinkSuggestionTie" xml:space="preserve">
+    <value>Several mods match as well: {0}.</value>
+  </data>
+	<data name="ModLinkSuggestionNone" xml:space="preserve">
+    <value>No installed mod has the {0} records this character uses that the base game lacks.</value>
+  </data>
+	<data name="ModLinkSuggestionBaseOnly" xml:space="preserve">
+    <value>This character only uses base game records: its mod cannot be told from its data.</value>
+  </data>
+	<data name="ModLinkSaveError" xml:space="preserve">
+    <value>The mod link could not be saved.</value>
+  </data>
+	<data name="ModLinkActiveMap" xml:space="preserve">
+    <value>Mod data: {0}</value>
+  </data>
+	<data name="ItemIncomplete" xml:space="preserve">
+    <value>Incomplete item: mod not linked or not installed.</value>
+  </data>
+	<data name="ItemIncompleteBaseItem" xml:space="preserve">
+    <value>Base item</value>
+  </data>
+	<data name="ItemIncompletePrefix" xml:space="preserve">
+    <value>Prefix</value>
+  </data>
+	<data name="ItemIncompleteSuffix" xml:space="preserve">
+    <value>Suffix</value>
+  </data>
+	<data name="ItemIncompleteRelic" xml:space="preserve">
+    <value>Relic or charm</value>
+  </data>
+	<data name="ItemIncompleteRelicBonus" xml:space="preserve">
+    <value>Relic bonus</value>
   </data>
 </root>

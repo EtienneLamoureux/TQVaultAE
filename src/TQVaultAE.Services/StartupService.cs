@@ -150,10 +150,4 @@ public class StartupService(
 
 		return GameType.TQ;
 	}
-
-	public void SetupMapName()
-	{
-		// The command line can override this in MainForm.LoadResources.
-		this._gamePathService.MapName = this._userSettings.ModEnabled ? this._userSettings.CustomMap : "main";
-	}
 }

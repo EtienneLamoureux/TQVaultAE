@@ -25,19 +25,6 @@ public partial class MainForm
 
 		this.GetPlayerList();
 
-		// Added support for custom map character list
-		this.customMapText.Visible = false;
-		if (GamePathResolver.IsCustom)
-		{
-			this.customMapText.Visible = true;
-			this.customMapText.Text = string.Format(
-				GamePathResolver.MapName.Contains(@"\CUSTOMMAPS\", StringComparison.OrdinalIgnoreCase)
-					? "Legacy : " + Resources.MainFormCustomMapLabel
-					: "Steam : " + Resources.MainFormCustomMapLabel
-				, this.PathIO.GetFileName(GamePathResolver.MapName)
-			);
-		}
-
 		this.CreateVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function
 		this.CreateSecondaryVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function
 		this.secondaryVaultPanel.Enabled = false;
@@ -353,6 +340,9 @@ public partial class MainForm
 			this.DragInfo.Cancel();
 			return;
 		}
+
+		// Moved to a vault linked to a mod: the item follows its link like a dropped one.
+		destinationPanel.AdoptVaultMod(destinationSack, [dragItem]);
 
 		sourcePanel.Invalidate();
 		destinationPanel.Refresh();

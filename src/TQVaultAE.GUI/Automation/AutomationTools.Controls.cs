@@ -30,7 +30,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "set_control", Destructive = true)]
-	[Description("Sets the value of a control of an open form or dialog, like a user would, so its own events run (CheckedChanged, ValueChanged, SelectedIndexChanged...). Value: true/false for check boxes, radio buttons and check group boxes; a number for numeric boxes; the item text or '#index' for combo boxes (any text for an editable one); the text for text boxes (then Validating, Validated and Leave are raised, as when the user leaves the box). Returns the values of the form's input controls afterwards. Changes made in a dialog are applied by its OK button (close_dialog).")]
+	[Description("Sets the value of a control of an open form or dialog, like a user would, so its own events run (CheckedChanged, ValueChanged, SelectedIndexChanged...). Value: true/false for check boxes, radio buttons and check group boxes; a number for numeric boxes; the item text or '#index' for combo boxes (any text for an editable one) and list boxes; the text for text boxes (then Validating, Validated and Leave are raised, as when the user leaves the box). Returns the values of the form's input controls afterwards. Changes made in a dialog are applied by its OK button (close_dialog).")]
 	public static string SetControl(
 		[Description("Part of the form title or its type name (case-insensitive).")] string form,
 		[Description("Control name, as listed by control_values.")] string control,
@@ -74,6 +74,21 @@ internal static partial class AutomationTools
 					if (index < 0 && !int.TryParse(value, out index))
 						throw new McpException($"No item '{value}' in '{c.Name}'. Items: {string.Join(", ", combo.Items.Cast<object>().Select(combo.GetItemText))}");
 					combo.SelectedIndex = index;
+					break;
+				case ListBox list:
+					int row = -1;
+					for (int i = 0; i < list.Items.Count; i++)
+					{
+						if (string.Equals(list.GetItemText(list.Items[i]), value, StringComparison.OrdinalIgnoreCase))
+						{
+							row = i;
+							break;
+						}
+					}
+
+					if (row < 0 && !(value.StartsWith('#') && int.TryParse(value[1..], out row)))
+						throw new McpException($"No item '{value}' in '{c.Name}'. Items: {string.Join(", ", list.Items.Cast<object>().Select(list.GetItemText))}");
+					list.SelectedIndex = row;
 					break;
 				case TextBoxBase text:
 					text.Text = value;
@@ -164,13 +179,14 @@ internal static partial class AutomationTools
 	}
 
 	private static bool IsInputControl(Control c)
-		=> c is NumericUpDown or ComboBox or TextBoxBase or CheckBox or RadioButton
+		=> c is NumericUpDown or ComboBox or ListBox or TextBoxBase or CheckBox or RadioButton
 		|| c.GetType().GetProperty("Checked", typeof(bool)) is not null;
 
 	private static object? ValueOf(Control c) => c switch
 	{
 		NumericUpDown number => number.Value,
 		ComboBox combo => combo.SelectedItem is not null ? combo.GetItemText(combo.SelectedItem) : combo.DropDownStyle != ComboBoxStyle.DropDownList && combo.Text.Length > 0 ? combo.Text : null,
+		ListBox list => list.SelectedItem is not null ? list.GetItemText(list.SelectedItem) : null,
 		TextBoxBase text => text.Text,
 		Label label => label.Text,
 		_ => c.GetType().GetProperty("Checked", typeof(bool))?.GetValue(c) ?? c.Text,

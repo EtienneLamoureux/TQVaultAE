@@ -15,20 +15,33 @@ namespace TQVaultAE.GUI.Components.Panels;
 /// so the regular pick / drag / drop logic runs without touching the real mouse.
 /// </summary>
 /// <summary>A context menu entry read by <see cref="SackPanel.AutomationContextMenu"/>.</summary>
-internal sealed record AutomationMenuEntry(string Text, IReadOnlyList<AutomationMenuEntry>? Items, bool? Enabled = null, bool? Bold = null);
+internal sealed record AutomationMenuEntry(string Text, IReadOnlyList<AutomationMenuEntry>? Items, bool? Enabled = null, bool? Bold = null
+	, bool? Checked = null, string? Hint = null);
 
 /// <summary>Reads and clicks the context menus built by the panels.</summary>
 internal static class AutomationMenus
 {
 	/// <summary>The entries, <c>-</c> for separators, with the entries of their sub menus.</summary>
+	/// <remarks>A sub menu raises its opening event first, as when the user opens it: some fill their entries then.</remarks>
 	internal static IReadOnlyList<AutomationMenuEntry> Describe(ToolStripItemCollection items)
 		=> items.Cast<ToolStripItem>()
 			.Select(i => new AutomationMenuEntry(
 				i is ToolStripSeparator ? "-" : i.Text ?? string.Empty
-				, i is ToolStripMenuItem { HasDropDownItems: true } menu ? Describe(menu.DropDownItems) : null
+				, i is ToolStripMenuItem { HasDropDownItems: true } menu ? Describe(Opened(menu).DropDownItems) : null
 				, i.Enabled ? null : false
-				, i is ToolStripMenuItem { Font.Bold: true } ? true : null))
+				, i is ToolStripMenuItem { Font.Bold: true } ? true : null
+				, i is ToolStripMenuItem { Checked: true } ? true : null
+				, i is ToolStripMenuItem { ShowShortcutKeys: true, ShortcutKeyDisplayString: { Length: > 0 } hint } ? hint : null))
 			.ToList();
+
+	/// <summary>Raises the opening event of a sub menu (<c>DropDownOpening</c>) without showing it.</summary>
+	private static ToolStripMenuItem Opened(ToolStripMenuItem menu)
+	{
+		typeof(ToolStripDropDownItem)
+			.GetMethod("OnDropDownShow", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+			?.Invoke(menu, [EventArgs.Empty]);
+		return menu;
+	}
 
 	/// <summary>
 	/// Finds the entry of <paramref name="menu"/> by its path of texts (exact text first, else the first containing it)
@@ -57,6 +70,64 @@ internal static class AutomationMenus
 		var clicked = entry;
 		owner.BeginInvoke(clicked.PerformClick);
 		return clicked.Text ?? string.Empty;
+	}
+
+	/// <summary>
+	/// Draws a menu and the sub menus opened along <paramref name="open"/>, as the user sees them: each drop down is
+	/// shown, drawn, and the menu closed at the end. The sub menus are drawn to the right, level with their entry.
+	/// </summary>
+	internal static Bitmap Render(ContextMenuStrip menu, IReadOnlyList<string> open)
+	{
+		var parts = new List<(Bitmap Image, int Y)>();
+		try
+		{
+			if (!menu.Visible)
+				menu.Show(Point.Empty);
+			parts.Add((Draw(menu), 0));
+
+			ToolStripDropDown current = menu;
+			int top = 0;
+			foreach (var text in open)
+			{
+				var items = current.Items.Cast<ToolStripItem>().ToList();
+				var entry = items.FirstOrDefault(i => string.Equals(i.Text, text, StringComparison.OrdinalIgnoreCase))
+					?? items.FirstOrDefault(i => i.Text?.Contains(text, StringComparison.OrdinalIgnoreCase) == true);
+				if (entry is not ToolStripMenuItem { HasDropDownItems: true } parent)
+					throw new InvalidOperationException($"No sub menu '{text}'. Entries: {string.Join(" | ", items.Select(i => i.Text))}");
+
+				top += parent.Bounds.Y;
+				parent.ShowDropDown();
+				parts.Add((Draw(parent.DropDown), top));
+				current = parent.DropDown;
+			}
+
+			int width = parts.Sum(p => p.Image.Width);
+			int height = parts.Max(p => p.Y + p.Image.Height);
+			var result = new Bitmap(width, height);
+			using var g = Graphics.FromImage(result);
+			g.Clear(Color.Transparent);
+			int x = 0;
+			foreach (var (image, y) in parts)
+			{
+				g.DrawImage(image, x, y);
+				x += image.Width;
+			}
+
+			return result;
+		}
+		finally
+		{
+			menu.Close();
+			foreach (var (image, _) in parts)
+				image.Dispose();
+		}
+	}
+
+	private static Bitmap Draw(Control control)
+	{
+		var bitmap = new Bitmap(control.Width, control.Height);
+		control.DrawToBitmap(bitmap, new Rectangle(Point.Empty, control.Size));
+		return bitmap;
 	}
 }
 
@@ -106,6 +177,16 @@ public partial class SackPanel
 		this.MouseDownCallback(this, args);
 		this.MouseUpCallback(this, args);
 		this.AutomationPaintNow();
+	}
+
+	/// <summary>
+	/// Right-clicks a cell through the regular mouse handlers and draws the context menu they built, with the sub menus
+	/// opened along <paramref name="open"/>; the menu is closed after.
+	/// </summary>
+	internal Bitmap AutomationRenderContextMenu(Point cell, IReadOnlyList<string> open)
+	{
+		this.AutomationMouseDown(this.AutomationCellCenter(cell), MouseButtons.Right);
+		return AutomationMenus.Render(this.CustomContextMenu, open);
 	}
 
 	/// <summary>

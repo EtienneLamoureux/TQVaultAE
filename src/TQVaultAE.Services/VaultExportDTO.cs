@@ -14,6 +14,13 @@ public class VaultExportDTO
 	[JsonPropertyName("sacks")]
 	public IReadOnlyList<SackExportDTO> Sacks { get; set; } = [];
 
+	/// <summary>
+	/// The mod the vault is linked to; absent for a vault of base game items.
+	/// </summary>
+	[JsonPropertyName("mod")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? Mod { get; set; }
+
 	public static VaultExportDTO FromPlayerCollection(PlayerCollection vault)
 	{
 		var sacks = new List<SackExportDTO>();
@@ -28,7 +35,14 @@ public class VaultExportDTO
 
 			var items = new List<ItemDto>();
 			foreach (var item in sack)
-				items.Add(ItemDtoExtensions.FromItem(item));
+			{
+				// As in the vault file: an item following the vault's link has no link of its own to write.
+				var dto = ItemDtoExtensions.FromItem(item);
+				if (item.ModFromVault && string.Equals(item.Mod, vault.Mod, System.StringComparison.OrdinalIgnoreCase))
+					dto.mod = null;
+
+				items.Add(dto);
+			}
 
 			sacks.Add(new SackExportDTO
 			{
@@ -41,7 +55,8 @@ public class VaultExportDTO
 		return new VaultExportDTO
 		{
 			Name = vault.PlayerName,
-			Sacks = sacks
+			Sacks = sacks,
+			Mod = vault.Mod,
 		};
 	}
 }

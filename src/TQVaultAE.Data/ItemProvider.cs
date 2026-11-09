@@ -21,7 +21,7 @@ namespace TQVaultAE.Data;
 /// <summary>
 /// Class for holding item information
 /// </summary>
-public partial class ItemProvider : IItemProvider
+public partial class ItemProvider : IItemProvider, IGameDataCache
 {
 	private const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
 
@@ -33,9 +33,26 @@ public partial class ItemProvider : IItemProvider
 	private readonly ITranslationService TranslationService;
 	private readonly IPathIO PathIO;
 	private readonly UserSettings USettings;
+
+	/// <summary>
+	/// Gives an item linked to a mod its mod's database; null in tests that do not need it.
+	/// </summary>
+	private readonly IItemModService? ItemMods;
+
+	/// <summary>
+	/// The database of the item's mod for the current thread, until disposed.
+	/// </summary>
+	private IDisposable ModScope(Item? itm) => this.ItemMods?.Scope(itm) ?? NoScope.Instance;
 	private readonly LazyConcurrentDictionary<(Item Item, FriendlyNamesExtraScopes? Scope, bool FilterExtra), ToFriendlyNameResult> FriendlyNamesCache = new LazyConcurrentDictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult>();
 	private readonly LazyConcurrentDictionary<RecordId, ItemAffixes?> ItemAffixesCache = new();
 	private volatile bool _cachedShowInGameValues;
+
+	/// <inheritdoc/>
+	public void ClearGameDataCache()
+	{
+		this.FriendlyNamesCache.Clear();
+		this.ItemAffixesCache.Clear();
+	}
 
 
 	public ItemProvider(
@@ -46,8 +63,10 @@ public partial class ItemProvider : IItemProvider
 			, ITQDataService tQData
 			, ITranslationService translationService, IPathIO pathIO
 			, UserSettings uSettings
+			, IItemModService? itemMods = null
 		)
 	{
+		this.ItemMods = itemMods;
 		this.Log = log;
 		this.Database = database;
 		this.LootTableCollectionProvider = lootTableCollectionProvider;
@@ -156,6 +175,7 @@ public partial class ItemProvider : IItemProvider
 	/// <returns>An object containing the item name and attributes</returns>
 	public ToFriendlyNameResult GetFriendlyNames(Item itm, FriendlyNamesExtraScopes? scopes = null, bool filterExtra = true)
 	{
+		using var modScope = this.ModScope(itm);
 		// Cached results depend on the in-game values setting: drop them when it changes.
 		if (this.USettings.ShowInGameValues != this._cachedShowInGameValues) {
 			this.FriendlyNamesCache.Clear();
@@ -193,7 +213,8 @@ public partial class ItemProvider : IItemProvider
 
 			if (!k.Item.IsRelicOrCharm && !RecordId.IsNullOrEmpty(k.Item.prefixID))
 			{
-				res.PrefixInfoDescription = k.Item.prefixID.Raw;
+				// A record the loaded data lacks (a mod not loaded): its file name, the item is shown incomplete.
+				res.PrefixInfoDescription = k.Item.prefixID.PrettyFileName;
 				if (k.Item.prefixInfo is not null)
 				{
 					if (TranslationService.TryTranslateXTag(k.Item.prefixInfo.DescriptionTag, out var desc))
@@ -368,6 +389,11 @@ public partial class ItemProvider : IItemProvider
 						res.NumberFormat = string.Format(CultureInfo.CurrentCulture, "({0:n0})", k.Item.Number);
 				}
 			}
+			else if (!RecordId.IsNullOrEmpty(k.Item.BaseItemId))
+			{
+				// A base record the loaded data lacks: its file name rather than no name at all.
+				res.BaseItemInfoDescription = k.Item.BaseItemId.PrettyFileName;
+			}
 
 			#endregion
 
@@ -383,7 +409,7 @@ public partial class ItemProvider : IItemProvider
 								: k.Item.suffixID.Raw;
 				}
 				else
-					res.SuffixInfoDescription = k.Item.suffixID.Raw;
+					res.SuffixInfoDescription = k.Item.suffixID.PrettyFileName;
 			}
 
 			#endregion

@@ -16,8 +16,6 @@
 	<AllowItemEdit>0</AllowItemEdit>
 	<TQITPath></TQITPath>
 	<TQPath></TQPath>
-	<ModEnabled>0</ModEnabled>
-	<CustomMap></CustomMap>
 	<Scale>1</Scale>
 	<LoadAllFilesCompleted>1</LoadAllFilesCompleted>
 	<PlayerReadonly>1</PlayerReadonly>

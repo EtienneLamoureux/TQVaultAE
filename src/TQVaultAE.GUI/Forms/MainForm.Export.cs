@@ -22,6 +22,33 @@ public partial class MainForm
 	private ScalingButton vaultExportButton = null!; // Created while the form loads.
 	private ContextMenuStrip vaultExportContextMenu = null!; // Created while the form loads.
 
+	/// <summary>Position of the "Modded vault" submenu in <see cref="vaultExportContextMenu"/>.</summary>
+	private int vaultModMenuIndex;
+
+	/// <summary>The "Modded vault" submenu shown now; null before the menu first opens.</summary>
+	private ToolStripMenuItem? vaultModMenu;
+
+	/// <summary>
+	/// Rebuilds the "Modded vault" submenu for the vault shown: the base game and the installed mods, its mod checked.
+	/// </summary>
+	private void RefreshVaultModMenu()
+	{
+		if (this.vaultModMenu is not null)
+			this.vaultExportContextMenu.Items.Remove(this.vaultModMenu);
+
+		var vault = this.vaultPanel.Vault;
+		this.vaultModMenu = ModMenu.Create(this.vaultExportContextMenu, Resources.VaultModded
+			, this.Services.ItemModService.InstalledMods, vault?.Mod, mod =>
+			{
+				this.vaultPanel.ChangeVaultMod(mod);
+				this.vaultListComboBox.Invalidate();
+				this.secondaryVaultListComboBox.Invalidate();
+			}
+			, vault is null ? null : () => this.Services.ItemModService.Suggest(vault.SelectMany(sack => sack)));
+		this.vaultModMenu.Enabled = vault is not null;
+		this.vaultExportContextMenu.Items.Insert(this.vaultModMenuIndex, this.vaultModMenu);
+	}
+
 	private void SetupVaultExportButton()
 	{
 		var up = default(Bitmap);
@@ -73,6 +100,11 @@ public partial class MainForm
 		};
 
 		vaultExportContextMenu.Items.Add(Resources.MainFormMaintainVault, null, (s, e) => this.MaintainVaultFilesDialog());
+
+		// The vault's mod: built when the menu opens, for the vault shown then.
+		vaultExportContextMenu.Items.Add("-");
+		vaultModMenuIndex = vaultExportContextMenu.Items.Count;
+		vaultExportContextMenu.Opening += (s, e) => this.RefreshVaultModMenu();
 
 		vaultExportContextMenu.Items.Add("-");
 		vaultExportContextMenu.Items.Add(Resources.PlayerPanelMenuExportTabFile, null, ExportVaultToFileClicked);
@@ -241,7 +273,11 @@ public partial class MainForm
 			return;
 		}
 
+		var before = sack.ToHashSet();
 		var imported = this.itemExchangeService.PlaceImportedItems(sack, importResult, sackPanel.SackSize.Width, sackPanel.SackSize.Height);
+
+		// Into a vault linked to a mod: the imported items follow its link like dropped ones.
+		this.vaultPanel.AdoptVaultMod(sack, sack.Where(item => !before.Contains(item)));
 
 		if (importResult.Scope == ExportScope.Tab && importResult.TabIconInfo is not null)
 		{
@@ -314,6 +350,11 @@ public partial class MainForm
 		}
 
 		this.itemExchangeService.ImportVaultInto(targetVault, importResult);
+
+		// Into a vault linked to a mod: the imported items follow its link like dropped ones.
+		foreach (var sack in targetVault)
+			this.vaultPanel.AdoptVaultMod(sack, [.. sack]);
+
 		this.vaultPanel.Refresh();
 
 		if (importResult.SackIconInfo is not null)

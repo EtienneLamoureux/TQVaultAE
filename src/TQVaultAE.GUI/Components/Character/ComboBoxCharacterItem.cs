@@ -1,5 +1,6 @@
 ﻿﻿using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Infrastructure;
@@ -32,6 +33,7 @@ public partial class ComboBoxCharacterItem : UserControl
 
 		this.scalingLabelTags.Text = $"{Presentation.Resources.GlobalTags} : ";
 		this.scalingLabelArchived.Text = Presentation.Resources.GlobalArchived;
+		this.scalingLabelModded.Text = Presentation.Resources.CharacterModded;
 
 		this.ProcessAllControls(ctr =>
 		{
@@ -72,11 +74,14 @@ public partial class ComboBoxCharacterItem : UserControl
 		this.scalingLabelTags.Font =
 			this.scalingLabelMasteries.Font =
 				this.scalingLabelModName.Font =
+					this.scalingLabelModded.Font =
+					this.scalingLabelModState.Font =
 					this.scalingLabelArchived.Font = FontService.GetFontLight(this.scalingLabelArchived.Font.Size);
 
 		this.scalingLabelArchived.Visible =
 			this.bufferedFlowLayoutPanelTags.Visible =
 				this.bufferedFlowLayoutPanelSubTitle.Visible =
+					this.bufferedFlowLayoutPanelMod.Visible =
 					this.scalingLabelModName.Visible =
 						this.scalingLabelArchived.Visible = false;
 
@@ -111,8 +116,7 @@ public partial class ComboBoxCharacterItem : UserControl
 			if (ps.Info?.ActiveMasteriesRecordNames is { Length: > 0 })
 				this.bufferedFlowLayoutPanelSubTitle.Visible = this.scalingLabelMasteries.Visible = true;
 
-			// Mod
-			// TODO - How to link a character Save with a mod ?
+			this.RefreshMod(ps);
 
 			#region Tags
 
@@ -155,7 +159,30 @@ public partial class ComboBoxCharacterItem : UserControl
 			this.scalingLabelPlayerHeader.Text =
 				this.scalingLabelLevel.Text =
 					this.scalingLabelCLassName.Text = string.Empty;
+			this.bufferedFlowLayoutPanelMod.Visible = this.scalingLabelModName.Visible = false;
 		}
+	}
+
+	/// <summary>
+	/// Marks a custom map character as modded: its mod beside its name, and the Modded tag with the link state on the
+	/// tags line.
+	/// </summary>
+	private void RefreshMod(PlayerSave ps)
+	{
+		var state = ps.IsCustom ? ps.ModState : CharacterModState.BaseGame;
+		this.bufferedFlowLayoutPanelMod.Visible = state != CharacterModState.BaseGame;
+		this.scalingLabelModName.Visible = state != CharacterModState.BaseGame && !string.IsNullOrEmpty(ps.ModName);
+		if (state == CharacterModState.BaseGame)
+			return;
+
+		this.scalingLabelModName.Text = $"[{ps.ModName}]";
+
+		(this.scalingLabelModState.Text, this.scalingLabelModState.BackColor) = state switch
+		{
+			CharacterModState.Linked => (Presentation.Resources.CharacterModLinked, Color.LightGreen),
+			CharacterModState.LinkedModMissing => (Presentation.Resources.CharacterModNotInstalled, Color.LightSalmon),
+			_ => (Presentation.Resources.CharacterModNotLinked, Color.Khaki),
+		};
 	}
 
 	private void ClearTagList()

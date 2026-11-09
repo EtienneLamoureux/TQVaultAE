@@ -173,6 +173,12 @@ public interface IGamePathService
 	/// <returns>List of character files in a string array</returns>
 	string[] GetCharacterList();
 	/// <summary>
+	/// True for a custom map character's save folder (<c>SaveData\User\_name</c>, archived or not), false for a main
+	/// campaign one (<c>SaveData\Main\_name</c>).
+	/// </summary>
+	/// <param name="characterFolder">The character's save folder.</param>
+	bool IsCustomCharacterFolder(string characterFolder);
+	/// <summary>
 	/// Return all known custom map directories
 	/// </summary>
 	/// <returns>List of custom maps in a string array</returns>
