@@ -1,0 +1,201 @@
+using System.Text.Json;
+using Microsoft.Extensions.Logging;
+using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.DTOs;
+using TQVaultAE.Application.Results;
+using TQVaultAE.Domain.Helpers;
+using TQVaultAE.GameFiles;
+
+namespace TQVaultAE.Services;
+
+/// <inheritdoc cref="IModLinkService"/>
+public class ModLinkService(
+	ILogger<ModLinkService> log
+	, IGamePathService gamePathService
+	, IFileIO fileIO
+	, IPathIO pathIO
+) : IModLinkService
+{
+	private static readonly JsonSerializerOptions JsonOptions = new()
+	{
+		PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+		PropertyNameCaseInsensitive = true,
+		WriteIndented = true,
+	};
+
+	private readonly ILogger Log = log;
+	private readonly IGamePathService GamePathService = gamePathService;
+	private readonly IFileIO FileIO = fileIO;
+	private readonly IPathIO PathIO = pathIO;
+
+	private IReadOnlyList<InstalledMod>? _installedMods;
+
+	/// <inheritdoc/>
+	public IReadOnlyList<InstalledMod> GetInstalledMods(bool refresh = false)
+	{
+		if (this._installedMods is null || refresh)
+			this._installedMods = [.. this.GamePathService.GetCustomMapList()
+				.Select(entry => new InstalledMod(
+					this.PathIO.GetFileName(Path.TrimEndingDirectorySeparator(entry.Path))
+					, entry.Path
+					, entry.DisplayName?.StartsWith("SteamWorkshop", StringComparison.OrdinalIgnoreCase) ?? false
+						? ModSource.SteamWorkshop
+						: ModSource.Legacy))];
+
+		return this._installedMods;
+	}
+
+	private string LinkFile(string saveFolder) => this.PathIO.Combine(saveFolder, IModLinkService.LinkFileName);
+
+	/// <inheritdoc/>
+	public ModLinkFile? ReadLink(string saveFolder)
+	{
+		string file = this.LinkFile(saveFolder);
+		if (!this.FileIO.Exists(file))
+			return null;
+
+		try
+		{
+			var link = JsonSerializer.Deserialize<ModLinkFile>(this.FileIO.ReadAllText(file), JsonOptions);
+			return string.IsNullOrWhiteSpace(link?.Mod) ? null : link;
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
+		{
+			this.Log.LogError(ex, "Failed to read the mod link {File}", file);
+			return null;
+		}
+	}
+
+	/// <inheritdoc/>
+	public CharacterMod Resolve(string saveFolder, bool isCustomCharacter)
+	{
+		if (!isCustomCharacter)
+			return CharacterMod.BaseGame;
+
+		var link = this.ReadLink(saveFolder);
+		if (link is null)
+			return CharacterMod.Unlinked;
+
+		var mods = this.GetInstalledMods();
+		var mod = mods.FirstOrDefault(m => link.Folder is not null && this.SameFolder(m.Folder, link.Folder))
+			?? mods.FirstOrDefault(m => m.Name.Equals(link.Mod, StringComparison.OrdinalIgnoreCase));
+
+		return mod is null
+			? new CharacterMod(CharacterModState.LinkedModMissing, null, link)
+			: new CharacterMod(CharacterModState.Linked, mod, link);
+	}
+
+	private bool SameFolder(string a, string b)
+		=> string.Equals(Path.TrimEndingDirectorySeparator(a), Path.TrimEndingDirectorySeparator(b), StringComparison.OrdinalIgnoreCase);
+
+	/// <inheritdoc/>
+	public ModLinkResult Link(string saveFolder, InstalledMod installedMod)
+	{
+		var link = new ModLinkFile
+		{
+			Mod = installedMod.Name,
+			Folder = installedMod.Folder,
+			LinkedUtc = DateTime.UtcNow,
+		};
+
+		try
+		{
+			this.FileIO.WriteAllText(this.LinkFile(saveFolder), JsonSerializer.Serialize(link, JsonOptions));
+			return ModLinkResult.Succeeded;
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+		{
+			this.Log.LogError(ex, "Failed to link {SaveFolder} to the mod {Mod}", saveFolder, installedMod.Name);
+			return ModLinkResult.Failed(ex);
+		}
+	}
+
+	/// <inheritdoc/>
+	public ModLinkResult Unlink(string saveFolder)
+	{
+		string file = this.LinkFile(saveFolder);
+		try
+		{
+			if (this.FileIO.Exists(file))
+				this.FileIO.Delete(file);
+			return ModLinkResult.Succeeded;
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+		{
+			this.Log.LogError(ex, "Failed to unlink {SaveFolder}", saveFolder);
+			return ModLinkResult.Failed(ex);
+		}
+	}
+
+	/// <inheritdoc/>
+	public ModSuggestion Suggest(string saveFolder)
+	{
+		var records = new HashSet<string>(StringComparer.Ordinal);
+		foreach (var name in new[] { this.GamePathService.PlayerSaveFileName, this.GamePathService.PlayerStashFileNameB })
+		{
+			string file = this.PathIO.Combine(saveFolder, name);
+			if (this.FileIO.Exists(file))
+				records.UnionWith(SaveRecordScanner.ReadRecordIds(this.FileIO.ReadAllBytes(file)));
+		}
+
+		var modOnly = this.WithoutBaseGameRecords(records);
+		if (modOnly.Count == 0)
+			return new ModSuggestion(0, []);
+
+		var matches = new List<ModMatch>();
+		foreach (var mod in this.GetInstalledMods())
+		{
+			string? database = this.ModDatabaseFile(mod);
+			if (database is null)
+				continue;
+
+			int matched = CountFound(database, modOnly);
+			if (matched > 0)
+				matches.Add(new ModMatch(mod, matched));
+		}
+
+		return new ModSuggestion(modOnly.Count, [.. matches.OrderByDescending(m => m.Matched).ThenBy(m => m.Mod.Name, StringComparer.OrdinalIgnoreCase)]);
+	}
+
+	/// <summary>
+	/// The database of a mod: <c>database\&lt;mod name&gt;.arz</c>, as the game reads it.
+	/// </summary>
+	private string? ModDatabaseFile(InstalledMod mod)
+	{
+		string file = this.PathIO.Combine(mod.Folder, "database", $"{mod.Name}.arz");
+		return this.FileIO.Exists(file) ? file : null;
+	}
+
+	private List<string> WithoutBaseGameRecords(IReadOnlySet<string> records)
+	{
+		var databases = new[] { this.GamePathService.GamePathTQIT, this.GamePathService.GamePathTQ }
+			.Where(p => !string.IsNullOrWhiteSpace(p))
+			.Select(p => this.PathIO.Combine(p, "Database", "database.arz"))
+			.Distinct(StringComparer.OrdinalIgnoreCase)
+			.Where(this.FileIO.Exists)
+			.ToList();
+
+		var remaining = records.ToList();
+		foreach (var database in databases)
+		{
+			using var arz = ArzDatabaseFactory.Open(database);
+			remaining.RemoveAll(id => arz.Find(id) is not null);
+		}
+
+		return remaining;
+	}
+
+	private int CountFound(string database, List<string> records)
+	{
+		try
+		{
+			using var arz = ArzDatabaseFactory.Open(database);
+			return records.Count(id => arz.Find(id) is not null);
+		}
+		catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException)
+		{
+			this.Log.LogError(ex, "Failed to read the mod database {Database}", database);
+			return 0;
+		}
+	}
+}
