@@ -33,6 +33,7 @@ Works with all expansions!
     - [Cloud saving](documentation/GITBACKUP.md)
     - Bulk item transfer
     - [Highlight items](documentation/HIGHLIGHT.md)
+    - [Compare two items](documentation/ITEMCOMPARE.md)
     - Combine stacks (potions, relics and charms) by dropping them onto each other
     - Split potion stacks apart
     - [Many keyboard shortcuts](documentation/SHORTCUTS.md)
