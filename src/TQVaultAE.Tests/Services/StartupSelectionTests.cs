@@ -7,13 +7,13 @@ namespace TQVaultAE.Tests.Services;
 
 public class StartupSelectionTests
 {
-	private static readonly string[] Characters = ["Hero", "Villain"];
+	private static readonly string[] Characters = ["IT/Main/Hero", "IT/Main/Villain"];
 	private static readonly CommandLineArgs NoArgs = new(["TQVaultAE.exe"]);
 
 	private readonly UserSettings _settings = new()
 	{
 		LoadLastCharacter = true,
-		LastCharacterName = "Villain",
+		LastCharacterName = "IT/Main/Villain",
 		LoadLastVault = true,
 		LastVaultName = "Rings",
 		SkipTitle = false,
@@ -24,7 +24,7 @@ public class StartupSelectionTests
 	{
 		var selection = StartupSelection.Resolve(this._settings, Characters, _ => true, NoArgs);
 
-		selection.CharacterName.Should().Be("Villain");
+		selection.CharacterKey.Should().Be("IT/Main/Villain");
 		selection.VaultName.Should().Be("Rings");
 		selection.SkipTitle.Should().BeFalse();
 	}
@@ -32,12 +32,35 @@ public class StartupSelectionTests
 	[Fact]
 	public void Resolve_LastCharacterGone_KeepsTheSelection()
 	{
-		this._settings.LastCharacterName = "villain";
+		this._settings.LastCharacterName = "IT/Main/villain";
 
 		var selection = StartupSelection.Resolve(this._settings, Characters, _ => true, NoArgs);
 
-		selection.CharacterName.Should().BeNull();
+		selection.CharacterKey.Should().BeNull();
 	}
+
+	[Theory]
+	[InlineData("IT/Main/HeroA")]
+	[InlineData("IT/User/HeroA")]
+	public void ResolveCharacter_Homonyms_SelectsTheSavedOneWhateverTheListOrder(string saved)
+	{
+		string[] list = ["IT/User/HeroA", "IT/Main/HeroA"];
+
+		StartupSelection.ResolveCharacter(saved, list).Should().Be(saved);
+		StartupSelection.ResolveCharacter(saved, [.. list.Reverse()]).Should().Be(saved);
+	}
+
+	[Theory]
+	[InlineData(new[] { "IT/User/HeroA", "TQ/Main/HeroA", "IT/Main/HeroA" }, "IT/Main/HeroA")]
+	[InlineData(new[] { "IT/User/HeroA", "TQ/Main/HeroA" }, "TQ/Main/HeroA")]
+	[InlineData(new[] { "IT/User/HeroA", "IT/Main/HeroB" }, "IT/User/HeroA")]
+	[InlineData(new[] { "IT/Main/HeroB" }, null)]
+	public void ResolveCharacter_NameFromAnOlderVersion_PrefersMainThenTitanQuestThenCustom(string[] list, string? expected)
+		=> StartupSelection.ResolveCharacter("HeroA", list).Should().Be(expected);
+
+	[Fact]
+	public void ResolveCharacter_NoLastCharacter_SelectsNone()
+		=> StartupSelection.ResolveCharacter(string.Empty, Characters).Should().BeNull();
 
 	[Fact]
 	public void Resolve_AutoLoadOff_SelectsNoCharacterAndTheMainVault()
@@ -47,7 +70,7 @@ public class StartupSelectionTests
 
 		var selection = StartupSelection.Resolve(this._settings, Characters, _ => true, NoArgs);
 
-		selection.CharacterName.Should().BeNull();
+		selection.CharacterKey.Should().BeNull();
 		selection.VaultName.Should().Be(VaultService.MAINVAULT);
 	}
 

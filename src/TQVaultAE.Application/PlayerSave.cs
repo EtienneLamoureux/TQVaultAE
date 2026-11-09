@@ -63,6 +63,19 @@ public sealed class PlayerSave : IDisposable
 		IsArchived = isArchived;
 	}
 
+	/// <summary>
+	/// Identifies the character without ambiguity: the game, the kind of save (main campaign or custom map), then the
+	/// name, e.g. <c>IT/Main/HeroA</c> and <c>IT/User/HeroA</c> for two characters both named HeroA. Archiving does not
+	/// change it.
+	/// </summary>
+	public string Key => MakeKey(this.IsImmortalThrone, this.IsCustom, this.Name);
+
+	/// <summary>
+	/// Builds a <see cref="Key"/>. A character name cannot hold a <c>/</c> (it is a folder name).
+	/// </summary>
+	public static string MakeKey(bool isImmortalThrone, bool isCustom, string name)
+		=> $"{(isImmortalThrone ? "IT" : "TQ")}/{(isCustom ? "User" : "Main")}/{name}";
+
 	public void Dispose()
 	{
 		if (PlayerSaveWatcher is not null)

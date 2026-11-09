@@ -239,13 +239,13 @@ public partial class MainForm
 		var characters = this.comboBoxCharacter.Items.OfType<PlayerSave>().ToArray();
 		var selection = StartupSelection.Resolve(
 			USettings
-			, characters.Select(ps => ps.Name)
+			, characters.Select(ps => ps.Key)
 			, this.vaultService.VaultExists
 			, this.commandLineArgs);
 
 		// Load last character here if selected
-		if (selection.CharacterName is not null)
-			this.comboBoxCharacter.SelectedItem = characters.First(ps => ps.Name == selection.CharacterName);
+		if (selection.CharacterKey is not null)
+			this.comboBoxCharacter.SelectedItem = characters.First(ps => ps.Key == selection.CharacterKey);
 
 		this.vaultListComboBox.SelectedItem = selection.VaultName;
 
@@ -258,8 +258,10 @@ public partial class MainForm
 		// Allows skipping of title screen with setting
 		if (selection.SkipTitle)
 		{
-			int index = this.comboBoxCharacter.FindString(selection.AutomaticPlayer);
-			if (index != -1)
+			// The command line player is a character key (IT/User/HeroA) or the start of a name in the list.
+			if (characters.FirstOrDefault(ps => ps.Key.Equals(selection.AutomaticPlayer, StringComparison.OrdinalIgnoreCase)) is { } player)
+				this.comboBoxCharacter.SelectedItem = player;
+			else if (this.comboBoxCharacter.FindString(selection.AutomaticPlayer) is var index and not -1)
 				this.comboBoxCharacter.SelectedIndex = index;
 
 			this.splashScreen.CloseForm();
@@ -286,8 +288,9 @@ public partial class MainForm
 	{
 		string? vaultName = this.vaultListComboBox.SelectedItem is not null ? this.vaultListComboBox.SelectedItemText() : null;
 
+		// The key, not the name: a main campaign and a custom map character can have the same name.
 		string? characterName = this.comboBoxCharacter.SelectedItem is PlayerSave ps
-			? ps.Name
+			? ps.Key
 			: this.comboBoxCharacter.SelectedItem?.ToString();
 
 		// No character is selected
