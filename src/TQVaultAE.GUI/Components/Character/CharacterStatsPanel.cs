@@ -68,8 +68,34 @@ internal sealed record CharacterPanelView
 internal sealed partial class CharacterStatsPanel : Control
 {
 	private const string WindowTexture = """XPack2\UI\Character\CharacterWindow01.tex""";
-	private static readonly Rectangle PanelSource = new(394, 30, CharacterPanelLayout.Width, CharacterPanelLayout.Height);
+	/// <summary>
+	/// The panel in the window texture, with its whole gold border: the record's 251x390 box (at 394,30) stops short of
+	/// the right border (x 644 to 649) and the bottom one (rows 418 to 423).
+	/// </summary>
+	private static readonly Rectangle PanelSource = new(394, 30, 256, 394);
+
+	/// <summary>
+	/// Rows of the panel in the window texture taken by its tab row (19), and the width of its three tabs (199): the
+	/// marble of the window right of the tabs is not drawn, the page shows there.
+	/// </summary>
+	private const int TabRowHeight = 19;
+	private const int TabRowWidth = 199;
+
+	/// <summary>The gold bar under the character in the window texture; its pieces are cut out of it.</summary>
 	private static readonly Rectangle GoldSource = new(100, 436, 296, 30);
+
+	/// <summary>The gold pile left of the gold box, cut out of the window's marble by its colour.</summary>
+	private static readonly Rectangle GoldIconSource = new(100, 437, 34, 26);
+
+	/// <summary>A sample of the window's plain marble next to the gold pile, the colour taken out around the pile.</summary>
+	private static readonly Rectangle MarbleSample = new(60, 437, 35, 26);
+
+	/// <summary>The Electrum coin left of its box, cut out round.</summary>
+	private static readonly Rectangle CoinSource = new(259, 438, 24, 24);
+
+	/// <summary>The black number boxes with their gold outline (gold, then Electrum).</summary>
+	private static readonly Rectangle GoldBoxSource = new(136, 440, 106, 22);
+	private static readonly Rectangle ElectrumBoxSource = new(288, 440, 106, 22);
 
 	/// <summary>Top of the gold bar, under the panel.</summary>
 	private const int GoldTop = CharacterPanelLayout.Height + 6;
@@ -187,10 +213,18 @@ internal sealed partial class CharacterStatsPanel : Control
 
 	private Rectangle ScaledRect(Rectangle r) => new(this.Scaled(r.X), this.Scaled(r.Y), this.Scaled(r.Width), this.Scaled(r.Height));
 
+	/// <summary>The gold pile and the Electrum coin cut out of the window texture, made once.</summary>
+	private Bitmap? _goldIcon;
+	private Bitmap? _coin;
+
 	protected override void Dispose(bool disposing)
 	{
 		if (disposing)
+		{
 			this._toolTip.Dispose();
+			this._goldIcon?.Dispose();
+			this._coin?.Dispose();
+		}
 
 		base.Dispose(disposing);
 	}
@@ -290,8 +324,19 @@ internal sealed partial class CharacterStatsPanel : Control
 		g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
 		var window = this.Picture(WindowTexture);
-		g.DrawImage(window, this.ScaledRect(new Rectangle(0, 0, PanelSource.Width, PanelSource.Height)), PanelSource, GraphicsUnit.Pixel);
-		g.DrawImage(window, this.ScaledRect(new Rectangle(0, GoldTop, GoldSource.Width, GoldSource.Height)), GoldSource, GraphicsUnit.Pixel);
+		// The panel: its three tabs, then its body under the tab row.
+		g.DrawImage(window, this.ScaledRect(new Rectangle(0, 0, TabRowWidth, TabRowHeight)),
+			new Rectangle(PanelSource.X, PanelSource.Y, TabRowWidth, TabRowHeight), GraphicsUnit.Pixel);
+		g.DrawImage(window, this.ScaledRect(new Rectangle(0, TabRowHeight, PanelSource.Width, PanelSource.Height - TabRowHeight)),
+			new Rectangle(PanelSource.X, PanelSource.Y + TabRowHeight, PanelSource.Width, PanelSource.Height - TabRowHeight), GraphicsUnit.Pixel);
+
+		// The gold bar, piece by piece at their places in the window, without the window's marble between them.
+		this._goldIcon ??= CutByColor(window, GoldIconSource, MarbleSample);
+		this._coin ??= CutRound(window, CoinSource);
+		g.DrawImage(this._goldIcon, this.GoldPiece(GoldIconSource));
+		g.DrawImage(window, this.GoldPiece(GoldBoxSource), GoldBoxSource, GraphicsUnit.Pixel);
+		g.DrawImage(this._coin, this.GoldPiece(CoinSource));
+		g.DrawImage(window, this.GoldPiece(ElectrumBoxSource), ElectrumBoxSource, GraphicsUnit.Pixel);
 
 		if (this.View?.Invoke() is not { } view)
 			return;
@@ -318,6 +363,54 @@ internal sealed partial class CharacterStatsPanel : Control
 		// The gold bar: gold in yellow, Electrum in grey, centred in their boxes (characterGoldNumber...).
 		this.DrawText(g, view.Money, this.NumberFont, Yellow, new Rectangle(38, GoldTop + 6, 102, 20), StringAlignment.Center);
 		this.DrawText(g, view.Electrum, this.NumberFont, Grey, new Rectangle(190, GoldTop + 6, 102, 20), StringAlignment.Center);
+	}
+
+	/// <summary>Where a piece of the window's gold bar goes on screen: at its place in the bar, under the panel.</summary>
+	private Rectangle GoldPiece(Rectangle source)
+		=> this.ScaledRect(new Rectangle(source.X - GoldSource.X, GoldTop + source.Y - GoldSource.Y, source.Width, source.Height));
+
+	/// <summary>
+	/// A piece of a texture with the colour of a sample area taken out: close colours become transparent, a band of
+	/// colours further away fades in, the rest stays (the gold pile keeps its shape, the marble around it goes).
+	/// </summary>
+	private static Bitmap CutByColor(Bitmap texture, Rectangle piece, Rectangle sample)
+	{
+		long r = 0, gr = 0, b = 0;
+		for (int y = sample.Top; y < sample.Bottom; y++)
+			for (int x = sample.Left; x < sample.Right; x++)
+			{
+				var c = texture.GetPixel(x, y);
+				r += c.R;
+				gr += c.G;
+				b += c.B;
+			}
+
+		var count = sample.Width * sample.Height;
+		var reference = (R: r / (double)count, G: gr / (double)count, B: b / (double)count);
+		var result = new Bitmap(piece.Width, piece.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+		for (int y = 0; y < piece.Height; y++)
+			for (int x = 0; x < piece.Width; x++)
+			{
+				var c = texture.GetPixel(piece.X + x, piece.Y + y);
+				var distance = Math.Sqrt(Math.Pow(c.R - reference.R, 2) + Math.Pow(c.G - reference.G, 2) + Math.Pow(c.B - reference.B, 2));
+				var alpha = (int)Math.Clamp((distance - 38) / 32 * 255, 0, 255);
+				result.SetPixel(x, y, Color.FromArgb(alpha * c.A / 255, c));
+			}
+
+		return result;
+	}
+
+	/// <summary>A round piece of a texture: the disc inscribed in the area, transparent outside it.</summary>
+	private static Bitmap CutRound(Bitmap texture, Rectangle piece)
+	{
+		var result = new Bitmap(piece.Width, piece.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+		using var g = Graphics.FromImage(result);
+		using var disc = new GraphicsPath();
+		disc.AddEllipse(1, 1, piece.Width - 2, piece.Height - 2);
+		g.SmoothingMode = SmoothingMode.AntiAlias;
+		g.SetClip(disc);
+		g.DrawImage(texture, new Rectangle(0, 0, piece.Width, piece.Height), piece, GraphicsUnit.Pixel);
+		return result;
 	}
 
 	private void PaintTab1(Graphics g, CharacterPanelView view)
