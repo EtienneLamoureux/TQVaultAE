@@ -7,34 +7,38 @@ using TQVaultAE.Presentation.Win32.Contracts;
 namespace TQVaultAE.GUI.Components.Character;
 
 /// <summary>
-/// Tabs drawn as the game's skill window: its marble frame (<c>SelectedSkillBackground01</c>, 1001x637), a leather tab
-/// per page along the top (192x34, one every 225 pixels from x 25, as the window's two mastery tabs) and the page in
-/// the black area of the frame, where the game draws a mastery pane (919x540 at 41,65). Each page can also show a few
-/// controls on the marble strip right of the tabs. Sizes are in pixels of the game window, times <see cref="FrameScale"/>.
+/// Tabs drawn as the game's skill window: its frame (<c>SelectedSkillBackground01</c>, 1001x637) cut down to its inner
+/// border (the dialog has its own outer border and title), a leather tab per page on the marble strip above it (192x34,
+/// one every 225 pixels, as the window's two mastery tabs) and the page in the black area of the frame, where the game
+/// draws a mastery pane. Each page can also show a few controls on the marble strip right of the tabs. Sizes are in
+/// pixels of the game texture, times <see cref="FrameScale"/>; positions are relative to the part of it drawn.
 /// </summary>
 internal sealed class GameTabControl : Control
 {
-	/// <summary>Width of the frame texture.</summary>
-	public const int FrameWidth = 1001;
-
 	/// <summary>
-	/// Rows of the frame texture left out at the top: its title strip and close button, which the dialog has already.
+	/// The part of the frame texture drawn: from the outer edge of its inner border (x 25 to 975, bottom row 614), and from
+	/// under its title strip (row 20) to keep the marble strip of the tabs. Its outer border, title and close button are
+	/// left out: the dialog has its own.
 	/// </summary>
-	public const int TopCrop = 20;
+	public static readonly Rectangle FrameSource = new(25, 20, 951, 595);
 
-	/// <summary>Height of the frame drawn: the texture (637) without its title strip.</summary>
-	public const int FrameHeight = 637 - TopCrop;
+	/// <summary>Width of the frame drawn.</summary>
+	public static int FrameWidth => FrameSource.Width;
+
+	/// <summary>Height of the frame drawn.</summary>
+	public static int FrameHeight => FrameSource.Height;
 
 	/// <summary>The black area of the frame, where a page goes: the place of the mastery pane in the game (41,65).</summary>
-	public static readonly Rectangle PageArea = new(41, 65 - TopCrop, 919, 540);
+	public static readonly Rectangle PageArea = new(41 - FrameSource.X, 65 - FrameSource.Y, 919, 540);
 
-	/// <summary>The marble strip right of the tabs, where a page may show its controls.</summary>
-	public static readonly Rectangle HeaderArea = new(700, 24 - TopCrop, 255, 34);
+	/// <summary>The marble strip right of the tabs, where a page may show its controls (up to the frame's right edge).</summary>
+	public static readonly Rectangle HeaderArea = new(700 - FrameSource.X, 24 - FrameSource.Y, 975 - 700, 30);
 
 	private const string FrameTexture = """InGameUI\Skills\SelectedSkillBackground01.tex""";
 	private const string TabTexture = """InGameUI\Skills\SkillTab01.tex""";
-	private const int TabLeft = 25;
-	private const int TabTop = 26 - TopCrop;
+	/// <summary>The first tab, at x 25 and y 26 in the texture: at the left edge of the part drawn.</summary>
+	private const int TabLeft = 0;
+	private const int TabTop = 6;
 	private const int TabWidth = 192;
 	private const int TabHeight = 34;
 	private const int TabStep = 225;
@@ -189,12 +193,7 @@ internal sealed class GameTabControl : Control
 		g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
 		var frame = this._uiService.LoadBitmap(FrameTexture.ToRecordId());
-		g.DrawImage(frame, new Rectangle(0, 0, this.Width, this.Height), new Rectangle(0, TopCrop, FrameWidth, FrameHeight), GraphicsUnit.Pixel);
-
-		// The bottom of the frame's close button reaches below the title strip: marble from its left covers it.
-		var corner = new Rectangle(FrameWidth - 30, TopCrop, 30, 10);
-		g.DrawImage(frame, new Rectangle(this.Scaled(corner.X), 0, this.Width - this.Scaled(corner.X), this.Scaled(corner.Height)),
-			new Rectangle(corner.X - corner.Width, corner.Y, corner.Width, corner.Height), GraphicsUnit.Pixel);
+		g.DrawImage(frame, new Rectangle(0, 0, this.Width, this.Height), FrameSource, GraphicsUnit.Pixel);
 
 		var tab = this._uiService.LoadBitmap(TabTexture.ToRecordId());
 		using var center = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center, Trimming = StringTrimming.EllipsisCharacter, FormatFlags = StringFormatFlags.NoWrap };
