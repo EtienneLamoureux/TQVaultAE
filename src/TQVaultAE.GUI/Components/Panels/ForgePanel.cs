@@ -20,7 +20,7 @@ namespace TQVaultAE.GUI.Components.Panels;
 /// While an item is dragged over the panel it is shown as the mouse cursor (<see cref="ItemDragCursor"/>), so moving
 /// the mouse repaints nothing; clicking a slot drops it there.
 /// </remarks>
-public partial class ForgePanel : UserControl, IScalingControl
+public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
 {
 	#region Internal Types
 
@@ -225,6 +225,19 @@ public partial class ForgePanel : UserControl, IScalingControl
 		c.MouseMove += Forge_MouseMove;
 		c.MouseLeave += Forge_MouseLeave;
 		c.Click += Forge_Click;
+	}
+
+	/// <summary>
+	/// The base font changed: the mode tooltips, drawn with fonts of their own, are made again in it.
+	/// </summary>
+	void IFontRebasing.RebaseFonts(IFontService fontService)
+	{
+		var previous = this.modeToolTip;
+		if (previous is null)
+			return;
+
+		this.SetModeToolTips();
+		previous.Dispose();
 	}
 
 	/// <summary>

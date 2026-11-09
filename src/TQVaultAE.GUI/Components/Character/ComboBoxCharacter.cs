@@ -4,6 +4,7 @@ using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components.Rendering;
+using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Forms;
 using TQVaultAE.Presentation.Win32.Contracts;
 using TQVaultAE.Presentation;
@@ -11,7 +12,7 @@ using TQVaultAE.Config;
 
 namespace TQVaultAE.GUI.Components.Character;
 
-public partial class ComboBoxCharacter : UserControl
+public partial class ComboBoxCharacter : UserControl, IFontRebasing
 {
 	internal const string TAGKEY = "TagItem_";
 
@@ -581,6 +582,12 @@ public partial class ComboBoxCharacter : UserControl
 	}
 
 	#endregion
+
+	/// <summary>
+	/// The base font changed: the tools menu it shows itself, outside the controls, takes it.
+	/// </summary>
+	void IFontRebasing.RebaseFonts(IFontService fontService)
+		=> FontRebaser.RebaseMenu(this.contextMenuStrip, fontService);
 
 	private void ScalingButtonTools_Click(object? sender, EventArgs e)
 	{

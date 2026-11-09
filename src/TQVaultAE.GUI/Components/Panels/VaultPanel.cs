@@ -25,7 +25,7 @@ namespace TQVaultAE.GUI.Components.Panels;
 /// <summary>
 /// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.
 /// </summary>
-public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
+public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl, IFontRebasing
 {
 	protected readonly IFontService FontService;
 	protected readonly IUIService UIService;
@@ -472,6 +472,12 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		var mainForm = this.FindForm() as MainForm;
 		mainForm?.ImportFromFile();
 	}
+
+	/// <summary>
+	/// The base font changed: the menu it shows itself, outside the controls, takes it.
+	/// </summary>
+	void IFontRebasing.RebaseFonts(IFontService fontService)
+		=> FontRebaser.RebaseMenu(this.contextMenu, fontService);
 
 	/// <summary>
 	/// Override of ScaleControl which supports font scaling.

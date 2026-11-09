@@ -42,6 +42,10 @@ public partial class VaultForm
 		if (disposing && (this.components != null))
 			this.components.Dispose();
 
+		// Null in the designer, where the runtime constructor doesn't run.
+		if (disposing && this.FontService is not null)
+			this.FontService.FontChanged -= this.FontService_FontChanged;
+
 		// Child controls are disposed by base.Dispose, and a transparent child repaints the form while it goes.
 		// The border bitmaps must still be alive at that point, so they are released afterwards.
 		base.Dispose(disposing);
