@@ -519,4 +519,74 @@ public class DatabaseLoadingTests
 	}
 
 	#endregion
+
+	#region One database per map
+
+	private DatabaseSelector CreateSelector()
+		=> new(new Mock<ILogger<DatabaseSelector>>().Object, this.CreateDatabase);
+
+	[Fact]
+	public void Selector_SwitchingMaps_EachMapAnswersWithItsOwnRecords()
+	{
+		this.UseAnniversaryEdition();
+		var gameArz = Path.Combine(GameAE, "Database", "database.arz");
+		var modArz = Path.Combine(ModFolder, "database", "shadowchampions.arz");
+		this.AddArz(modArz);
+		var fromGame = this.AddRecord(gameArz, """records\item\overridden.dbr""");
+		var fromMod = this.AddRecord(modArz, """records\item\overridden.dbr""");
+		this.AddRecord(modArz, """records\customitems\modonly.dbr""");
+		var selector = this.CreateSelector();
+		selector.LoadDBFile(); // the base game, as set at startup
+
+		selector.GetRecordFromFile("""records\customitems\modonly.dbr""").Should().BeNull();
+		selector.Activate(ModFolder).Should().BeTrue();
+		selector.GetRecordFromFile("""records\item\overridden.dbr""").Should().BeSameAs(fromMod);
+		selector.GetRecordFromFile("""records\customitems\modonly.dbr""").Should().NotBeNull();
+		selector.Activate("main").Should().BeTrue();
+		selector.GetRecordFromFile("""records\item\overridden.dbr""").Should().BeSameAs(fromGame);
+		selector.GetRecordFromFile("""records\customitems\modonly.dbr""").Should().BeNull();
+	}
+
+	[Fact]
+	public void Selector_GoingBackToAMap_KeepsItsDatabaseLoaded()
+	{
+		this.UseAnniversaryEdition();
+		var gameArz = Path.Combine(GameAE, "Database", "database.arz");
+		var modArz = Path.Combine(ModFolder, "database", "shadowchampions.arz");
+		this.AddArz(modArz);
+		var selector = this.CreateSelector();
+		selector.LoadDBFile();
+
+		selector.Activate(ModFolder);
+		selector.Activate(string.Empty);
+		selector.Activate(ModFolder + Path.DirectorySeparatorChar).Should().BeTrue();
+		selector.Activate(ModFolder).Should().BeFalse();
+
+		// The game database once for each map, the mod's once.
+		this._arzRead.Should().Equal(gameArz, gameArz, modArz);
+		selector.LoadedMapFolders.Should().BeEquivalentTo([string.Empty, ModFolder]);
+		selector.ActiveMapFolder.Should().Be(ModFolder);
+	}
+
+	[Fact]
+	public void Database_LoadedForAMod_KeepsItsModWhenTheSessionMapChanges()
+	{
+		this.UseAnniversaryEdition();
+		this.UseCustomMap();
+		var id = """Items\EquipmentRing\UIBitmaps\ring.tex""";
+		var gameArc = Path.Combine(GameAE, "Resources", "Items.arc");
+		this._gamePath.Setup(g => g.ResolveArcFileName(It.IsAny<RecordId>())).Returns((gameArc, false));
+		this.AddArcEntry(gameArc, """EquipmentRing\UIBitmaps\ring.tex""", [1]);
+		this.AddArcEntry(Path.Combine(ModFolder, "resources", "Items.arc"), """EquipmentRing\UIBitmaps\ring.tex""", [2]);
+		var db = this.CreateDatabase();
+		db.LoadDBFile();
+
+		// Another character's map becomes the session's: this database still reads its own mod.
+		this._gamePath.SetupGet(g => g.IsCustom).Returns(false);
+		this._gamePath.SetupGet(g => g.MapName).Returns("main");
+
+		db.LoadResource(id).Should().Equal(2);
+	}
+
+	#endregion
 }
