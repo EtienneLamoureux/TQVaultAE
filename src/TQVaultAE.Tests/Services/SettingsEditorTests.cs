@@ -209,14 +209,16 @@ public class SettingsEditorTests
 	}
 
 	[Fact]
-	public void FontChanged_NeedsRestartForSettings()
+	public void FontChanged_AppliesWithoutRestart()
 	{
 		var editor = NewEditor();
 
 		editor.Current.BaseFont = "Arial";
 
-		editor.UISettingChanged.Should().BeTrue();
-		editor.RestartReason.Should().Be(RestartReason.Settings);
+		editor.BaseFontChanged.Should().BeTrue();
+		editor.ConfigurationChanged.Should().BeTrue();
+		editor.UISettingChanged.Should().BeFalse();
+		editor.RestartReason.Should().Be(RestartReason.None);
 	}
 
 	[Fact]

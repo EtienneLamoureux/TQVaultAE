@@ -139,11 +139,15 @@ public sealed class SettingsEditor
 		|| !string.Equals(this.Current.TQITPath, this.Original.TQITPath, StringComparison.OrdinalIgnoreCase);
 
 	/// <summary>
-	/// A setting read once at startup changed: the font, the hot reload, the backups or the original game support.
+	/// The base font changed: the windows take it at once, without a restart.
+	/// </summary>
+	public bool BaseFontChanged => this.Current.BaseFont != this.Original.BaseFont;
+
+	/// <summary>
+	/// A setting read once at startup changed: the hot reload, the backups or the original game support.
 	/// </summary>
 	public bool UISettingChanged
-		=> this.Current.BaseFont != this.Original.BaseFont
-		|| this.Current.EnableHotReload != this.Original.EnableHotReload
+		=> this.Current.EnableHotReload != this.Original.EnableHotReload
 		|| this.Current.GitBackupEnabled != this.Original.GitBackupEnabled
 		|| this.Current.GitBackupRepository != this.Original.GitBackupRepository
 		|| this.Current.DisableLegacyBackup != this.Original.DisableLegacyBackup

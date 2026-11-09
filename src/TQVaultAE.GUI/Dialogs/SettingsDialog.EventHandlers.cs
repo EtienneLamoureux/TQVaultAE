@@ -82,7 +82,13 @@ internal partial class SettingsDialog
 		}
 
 		if (this.ConfigurationChanged)
+		{
 			this.editor.ApplyTo(USettings);
+
+			// The windows take the new font now, no restart needed.
+			if (this.editor.BaseFontChanged)
+				this.FontService.Reload();
+		}
 
 		this.DialogResult = DialogResult.OK;
 	}
@@ -260,7 +266,7 @@ internal partial class SettingsDialog
 	private void FontComboBoxBase_SelectedIndexChanged(object? sender, EventArgs e)
 	{
 		if (this.baseFontComboBox.SelectedItem is ComboBoxItem font)
-			this.editor.Current.BaseFont = font.Value;// Force restart
+			this.editor.Current.BaseFont = font.Value;
 	}
 
 	private void checkGroupBoxTooltipEnhanced_CheckedChanged(object? sender, EventArgs e)
