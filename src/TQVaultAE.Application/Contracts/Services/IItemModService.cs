@@ -37,6 +37,12 @@ public interface IItemModService
 	/// </summary>
 	/// <returns>Number of items linked.</returns>
 	int AdoptMod(IEnumerable<Item> items, string modName);
+
+	/// <summary>
+	/// Suggests the mod of items (one item, or a vault's items) from the records they name that the base game does not
+	/// have, like the Suggest button of the mod link dialog.
+	/// </summary>
+	ModSuggestion Suggest(IEnumerable<Item> items);
 }
 
 /// <summary>

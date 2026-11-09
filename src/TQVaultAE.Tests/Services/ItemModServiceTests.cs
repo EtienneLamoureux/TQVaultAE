@@ -82,6 +82,21 @@ public class ItemModServiceTests
 	}
 
 	[Fact]
+	public void Suggest_AsksAboutEveryRecordTheItemsName()
+	{
+		IEnumerable<string>? asked = null;
+		var suggestion = new ModSuggestion(1, [new ModMatch(Shadow, 1)]);
+		this._links.Setup(l => l.SuggestFor(It.IsAny<IEnumerable<string>>()))
+			.Callback<IEnumerable<string>>(r => asked = r.ToList()).Returns(suggestion);
+		var item = ItemOf(ModRecord);
+		item.prefixID = RecordId.Create(@"records\customaffix\p.dbr");
+
+		this._service.Suggest([item, ItemOf(BaseRecord)]).Should().BeSameAs(suggestion);
+
+		asked.Should().Equal(ModRecord.Raw, item.prefixID.Raw, BaseRecord.Raw);
+	}
+
+	[Fact]
 	public void Clone_KeepsTheMod()
 	{
 		ItemOf(ModRecord, Shadow.Name).Clone().Mod.Should().Be(Shadow.Name);

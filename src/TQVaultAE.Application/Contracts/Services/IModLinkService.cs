@@ -50,4 +50,11 @@ public interface IModLinkService
 	/// </summary>
 	/// <param name="saveFolder">The character's save folder.</param>
 	ModSuggestion Suggest(string saveFolder);
+
+	/// <summary>
+	/// Suggests the mod of some records (an item's, a vault's): the installed mods having those the base game does not
+	/// have. What each record was found in is kept for the session, so asking again is instant.
+	/// </summary>
+	/// <param name="records">Record ids, as saved (<c>records\...\x.dbr</c>).</param>
+	ModSuggestion SuggestFor(IEnumerable<string> records);
 }

@@ -1883,6 +1883,12 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="VaultModded" xml:space="preserve">
     <value>Coffre moddé</value>
   </data>
+	<data name="ModSuggestedHint" xml:space="preserve">
+    <value>suggéré</value>
+  </data>
+	<data name="ModSuggestedDetail" xml:space="preserve">
+    <value>A {0} des {1} enregistrements absents du jeu de base.</value>
+  </data>
 	<data name="ModLinkBaseGameData" xml:space="preserve">
     <value>les données du jeu de base</value>
   </data>

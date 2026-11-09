@@ -66,7 +66,13 @@ is saved in the vault files.
   character files cannot keep the link: it is set again each time, and moving such an item to a vault keeps it.
 - **By hand:** the item menu has *Modded*, the base game and the installed mods, the current one checked. A link to a mod
   that is not installed stays listed, disabled.
-- **A whole vault:** the vault tools button next to the vault list has *Modded vault*, for the vault shown. Its items without a mod of their own (or of the
+- **Suggested mods:** when the *Modded* submenu opens, each installed mod having records of the item that the base
+  game lacks is marked *suggested* on the right (with how many when it has only some of them), like the dialog's
+  Suggest button. A record found in several mods marks each of them. Where each record was found is kept for the
+  session.
+- **A whole vault:** the vault tools button next to the vault list has *Modded vault*, for the vault shown, with the
+  same hints for the records of all its items. A linked vault shows its mod after its name in the vault lists:
+  *Main Vault [shadowchampions]*. Its items without a mod of their own (or of the
   vault's previous mod) follow it and resolve with that mod's data first, then the base game's; items linked to another
   mod keep theirs.
 

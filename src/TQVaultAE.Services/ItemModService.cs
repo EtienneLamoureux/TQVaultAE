@@ -52,6 +52,10 @@ public class ItemModService(IDatabaseMaps maps, IDatabase database, IModLinkServ
 		return linked;
 	}
 
+	/// <inheritdoc/>
+	public ModSuggestion Suggest(IEnumerable<Item> items)
+		=> this.ModLinks.SuggestFor(items.SelectMany(RecordsOf).Select(id => id.Raw));
+
 	private static IEnumerable<RecordId> RecordsOf(Item item)
 		=> new[] { item.BaseItemId, item.prefixID, item.suffixID, item.relicID, item.RelicBonusId, item.relic2ID, item.RelicBonus2Id }
 			.Where(id => !RecordId.IsNullOrEmpty(id))!;

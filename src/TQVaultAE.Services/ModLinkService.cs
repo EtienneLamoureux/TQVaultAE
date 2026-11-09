@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Application.Contracts.Services;
@@ -30,9 +31,18 @@ public class ModLinkService(
 
 	private IReadOnlyList<InstalledMod>? _installedMods;
 
+	/// <summary>
+	/// What each record asked about was found in: null for the base game, else the names of the installed mods having
+	/// it (possibly none).
+	/// </summary>
+	private readonly ConcurrentDictionary<string, string[]?> _recordSources = new(StringComparer.OrdinalIgnoreCase);
+
 	/// <inheritdoc/>
 	public IReadOnlyList<InstalledMod> GetInstalledMods(bool refresh = false)
 	{
+		if (refresh)
+			this._recordSources.Clear();
+
 		if (this._installedMods is null || refresh)
 			this._installedMods = [.. this.GamePathService.GetCustomMapList()
 				.Select(entry => new InstalledMod(
@@ -138,23 +148,54 @@ public class ModLinkService(
 				records.UnionWith(SaveRecordScanner.ReadRecordIds(this.FileIO.ReadAllBytes(file)));
 		}
 
-		var modOnly = this.WithoutBaseGameRecords(records);
+		return this.SuggestFor(records);
+	}
+
+	/// <inheritdoc/>
+	public ModSuggestion SuggestFor(IEnumerable<string> records)
+	{
+		var distinct = records.Where(r => !string.IsNullOrWhiteSpace(r)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+		this.LookUp(distinct.Where(r => !this._recordSources.ContainsKey(r)).ToList());
+
+		var modOnly = distinct.Where(r => this._recordSources.TryGetValue(r, out var mods) && mods is not null).ToList();
 		if (modOnly.Count == 0)
 			return new ModSuggestion(0, []);
 
-		var matches = new List<ModMatch>();
+		var matches = this.GetInstalledMods()
+			.Select(mod => new ModMatch(mod, modOnly.Count(r => this._recordSources[r]!.Contains(mod.Name, StringComparer.OrdinalIgnoreCase))))
+			.Where(m => m.Matched > 0);
+
+		return new ModSuggestion(modOnly.Count, [.. matches.OrderByDescending(m => m.Matched).ThenBy(m => m.Mod.Name, StringComparer.OrdinalIgnoreCase)]);
+	}
+
+	/// <summary>
+	/// Finds where records come from: the base game, else the installed mods having them. Each database is opened once.
+	/// </summary>
+	private void LookUp(List<string> records)
+	{
+		if (records.Count == 0)
+			return;
+
+		var modOnly = this.WithoutBaseGameRecords(records.ToHashSet(StringComparer.OrdinalIgnoreCase));
+		foreach (var record in records.Except(modOnly, StringComparer.OrdinalIgnoreCase))
+			this._recordSources[record] = null;
+
+		if (modOnly.Count == 0)
+			return;
+
+		var found = modOnly.ToDictionary(r => r, _ => new List<string>(), StringComparer.OrdinalIgnoreCase);
 		foreach (var mod in this.GetInstalledMods())
 		{
 			string? database = this.ModDatabaseFile(mod);
 			if (database is null)
 				continue;
 
-			int matched = CountFound(database, modOnly);
-			if (matched > 0)
-				matches.Add(new ModMatch(mod, matched));
+			foreach (var record in this.Found(database, modOnly))
+				found[record].Add(mod.Name);
 		}
 
-		return new ModSuggestion(modOnly.Count, [.. matches.OrderByDescending(m => m.Matched).ThenBy(m => m.Mod.Name, StringComparer.OrdinalIgnoreCase)]);
+		foreach (var (record, mods) in found)
+			this._recordSources[record] = [.. mods];
 	}
 
 	/// <summary>
@@ -185,17 +226,17 @@ public class ModLinkService(
 		return remaining;
 	}
 
-	private int CountFound(string database, List<string> records)
+	private List<string> Found(string database, List<string> records)
 	{
 		try
 		{
 			using var arz = ArzDatabaseFactory.Open(database);
-			return records.Count(id => arz.Find(id) is not null);
+			return [.. records.Where(id => arz.Find(id) is not null)];
 		}
 		catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException)
 		{
 			this.Log.LogError(ex, "Failed to read the mod database {Database}", database);
-			return 0;
+			return [];
 		}
 	}
 }

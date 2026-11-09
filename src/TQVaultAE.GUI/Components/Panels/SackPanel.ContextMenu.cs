@@ -463,7 +463,8 @@ public partial class SackPanel
 	{
 		this.CustomContextMenu.Items.Add("-");
 		this.CustomContextMenu.Items.Add(ModMenu.Create(this.CustomContextMenu, Resources.CharacterModded
-			, this.Services.ItemModService.InstalledMods, focusedItem.Mod, this.ChangeModItemClicked));
+			, this.Services.ItemModService.InstalledMods, focusedItem.Mod, this.ChangeModItemClicked
+			, () => this.Services.ItemModService.Suggest([focusedItem])));
 	}
 
 	private void ChangeModItemClicked(string? mod)

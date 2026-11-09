@@ -38,7 +38,13 @@ public partial class MainForm
 
 		var vault = this.vaultPanel.Vault;
 		this.vaultModMenu = ModMenu.Create(this.vaultExportContextMenu, Resources.VaultModded
-			, this.Services.ItemModService.InstalledMods, vault?.Mod, mod => this.vaultPanel.ChangeVaultMod(mod));
+			, this.Services.ItemModService.InstalledMods, vault?.Mod, mod =>
+			{
+				this.vaultPanel.ChangeVaultMod(mod);
+				this.vaultListComboBox.Invalidate();
+				this.secondaryVaultListComboBox.Invalidate();
+			}
+			, vault is null ? null : () => this.Services.ItemModService.Suggest(vault.SelectMany(sack => sack)));
 		this.vaultModMenu.Enabled = vault is not null;
 		this.vaultExportContextMenu.Items.Insert(this.vaultModMenuIndex, this.vaultModMenu);
 	}

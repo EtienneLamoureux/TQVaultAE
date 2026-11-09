@@ -17,9 +17,25 @@ internal static class ModMenu
 	/// <param name="mods">The installed mods.</param>
 	/// <param name="current">The current mod's name; null for the base game.</param>
 	/// <param name="pick">Called with the chosen mod's name, null for the base game.</param>
-	public static ToolStripMenuItem Create(ToolStrip owner, string text, IReadOnlyList<InstalledMod> mods, string? current, Action<string?> pick)
+	/// <param name="suggest">The mod suggestion for the items concerned, read when the submenu opens; null for none.</param>
+	public static ToolStripMenuItem Create(ToolStrip owner, string text, IReadOnlyList<InstalledMod> mods, string? current, Action<string?> pick
+		, Func<ModSuggestion>? suggest = null)
 	{
 		var menu = Styled(owner, text);
+
+		// The suggestion reads the mods' databases: only when the submenu opens, once.
+		if (suggest is not null)
+		{
+			bool hinted = false;
+			menu.DropDownOpening += (_, _) =>
+			{
+				if (hinted)
+					return;
+
+				hinted = true;
+				Hint(menu, suggest());
+			};
+		}
 
 		var none = Styled(owner, Resources.ItemModNone);
 		none.Checked = current is null;
@@ -48,6 +64,28 @@ internal static class ModMenu
 		}
 
 		return menu;
+	}
+
+	/// <summary>
+	/// Marks every mod having records the base game lacks with a hint on the right: a record found in several mods
+	/// hints each of them. A mod having only some of the records shows how many.
+	/// </summary>
+	private static void Hint(ToolStripMenuItem menu, ModSuggestion suggestion)
+	{
+		foreach (var match in suggestion.Matches)
+		{
+			var entry = menu.DropDownItems.OfType<ToolStripMenuItem>()
+				.FirstOrDefault(i => string.Equals(i.Text, match.Mod.Name, StringComparison.OrdinalIgnoreCase));
+			if (entry is null)
+				continue;
+
+			entry.ShortcutKeyDisplayString = match.Matched == suggestion.ModOnlyRecords
+				? Resources.ModSuggestedHint
+				: $"{Resources.ModSuggestedHint} ({match.Matched}/{suggestion.ModOnlyRecords})";
+			entry.ShowShortcutKeys = true;
+			entry.ToolTipText = $"{match.Mod.DisplayName}{Environment.NewLine}"
+				+ string.Format(CultureInfo.CurrentCulture, Resources.ModSuggestedDetail, match.Matched, suggestion.ModOnlyRecords);
+		}
 	}
 
 	private static ToolStripMenuItem Styled(ToolStrip owner, string text)

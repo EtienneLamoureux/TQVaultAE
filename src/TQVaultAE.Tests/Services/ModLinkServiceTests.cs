@@ -254,5 +254,36 @@ public sealed class ModLinkServiceTests : IDisposable
 		File.Exists(this.LinkFile).Should().BeFalse();
 	}
 
+	[Fact]
+	public void SuggestFor_ListsEveryModHavingTheRecords_BestFirst()
+	{
+		this.WriteGameDatabase("""records\item\ring.dbr""");
+		this.AddWorkshopMod("890319896", "Lilith", """records\customitems\sword.dbr""");
+		this.AddWorkshopMod("1", "Diablo 2 Lilith", """records\customitems\sword.dbr""", """records\customitems\shield.dbr""");
+
+		var suggestion = this._service.SuggestFor(["""records\item\ring.dbr""", """records\customitems\sword.dbr""", """RECORDS\CUSTOMITEMS\SHIELD.DBR"""]);
+
+		suggestion.ModOnlyRecords.Should().Be(2);
+		suggestion.Matches.Select(m => (m.Mod.Name, m.Matched)).Should().Equal(("Diablo 2 Lilith", 2), ("Lilith", 1));
+	}
+
+	[Fact]
+	public void SuggestFor_RemembersWhereRecordsWereFound_UntilTheModsAreReadAgain()
+	{
+		this.WriteGameDatabase("""records\item\ring.dbr""");
+		this.AddWorkshopMod("1", "Masteries", """records\customitems\sword.dbr""");
+		string[] records = ["""records\customitems\sword.dbr"""];
+		this._service.SuggestFor(records).Best!.Mod.Name.Should().Be("Masteries");
+
+		// Without its database, the mod is still remembered as having the record...
+		foreach (var arz in Directory.GetFiles(this._root, "Masteries.arz", SearchOption.AllDirectories))
+			File.Delete(arz);
+		this._service.SuggestFor(records).Best!.Mod.Name.Should().Be("Masteries");
+
+		// ...until the installed mods are read again.
+		this._service.GetInstalledMods(refresh: true);
+		this._service.SuggestFor(records).Matches.Should().BeEmpty();
+	}
+
 	#endregion
 }

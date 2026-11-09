@@ -6158,6 +6158,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to suggested.
+        /// </summary>
+        public static string ModSuggestedHint {
+            get {
+                return ResourceManager.GetString("ModSuggestedHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Has {0} of the {1} records the base game lacks..
+        /// </summary>
+        public static string ModSuggestedDetail {
+            get {
+                return ResourceManager.GetString("ModSuggestedDetail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Incomplete item: mod not linked or not installed..
         /// </summary>
         public static string ItemIncomplete {

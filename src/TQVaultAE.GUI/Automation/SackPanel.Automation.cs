@@ -15,20 +15,33 @@ namespace TQVaultAE.GUI.Components.Panels;
 /// so the regular pick / drag / drop logic runs without touching the real mouse.
 /// </summary>
 /// <summary>A context menu entry read by <see cref="SackPanel.AutomationContextMenu"/>.</summary>
-internal sealed record AutomationMenuEntry(string Text, IReadOnlyList<AutomationMenuEntry>? Items, bool? Enabled = null, bool? Bold = null);
+internal sealed record AutomationMenuEntry(string Text, IReadOnlyList<AutomationMenuEntry>? Items, bool? Enabled = null, bool? Bold = null
+	, bool? Checked = null, string? Hint = null);
 
 /// <summary>Reads and clicks the context menus built by the panels.</summary>
 internal static class AutomationMenus
 {
 	/// <summary>The entries, <c>-</c> for separators, with the entries of their sub menus.</summary>
+	/// <remarks>A sub menu raises its opening event first, as when the user opens it: some fill their entries then.</remarks>
 	internal static IReadOnlyList<AutomationMenuEntry> Describe(ToolStripItemCollection items)
 		=> items.Cast<ToolStripItem>()
 			.Select(i => new AutomationMenuEntry(
 				i is ToolStripSeparator ? "-" : i.Text ?? string.Empty
-				, i is ToolStripMenuItem { HasDropDownItems: true } menu ? Describe(menu.DropDownItems) : null
+				, i is ToolStripMenuItem { HasDropDownItems: true } menu ? Describe(Opened(menu).DropDownItems) : null
 				, i.Enabled ? null : false
-				, i is ToolStripMenuItem { Font.Bold: true } ? true : null))
+				, i is ToolStripMenuItem { Font.Bold: true } ? true : null
+				, i is ToolStripMenuItem { Checked: true } ? true : null
+				, i is ToolStripMenuItem { ShowShortcutKeys: true, ShortcutKeyDisplayString: { Length: > 0 } hint } ? hint : null))
 			.ToList();
+
+	/// <summary>Raises the opening event of a sub menu (<c>DropDownOpening</c>) without showing it.</summary>
+	private static ToolStripMenuItem Opened(ToolStripMenuItem menu)
+	{
+		typeof(ToolStripDropDownItem)
+			.GetMethod("OnDropDownShow", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+			?.Invoke(menu, [EventArgs.Empty]);
+		return menu;
+	}
 
 	/// <summary>
 	/// Finds the entry of <paramref name="menu"/> by its path of texts (exact text first, else the first containing it)
