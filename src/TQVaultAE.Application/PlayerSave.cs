@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.DTOs;
 
 namespace TQVaultAE.Application;
 
@@ -28,6 +29,16 @@ public sealed class PlayerSave : IDisposable
 	/// For a custom map character, the label of its mod in the character list (its linked mod, or that it has none).
 	/// </summary>
 	public string? ModLabel { get; set; }
+
+	/// <summary>
+	/// How the character relates to the installed mods, set with <see cref="ModLabel"/>.
+	/// </summary>
+	public CharacterModState ModState { get; set; }
+
+	/// <summary>
+	/// The name of the character's mod: its linked mod, installed or not; null when it has none.
+	/// </summary>
+	public string? ModName { get; set; }
 
 	/// <summary>
 	/// The class name, translated when the character was read, with its own map's text: a mod can rename the classes,

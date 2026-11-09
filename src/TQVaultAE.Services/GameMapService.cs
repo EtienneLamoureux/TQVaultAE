@@ -92,6 +92,8 @@ public class GameMapService(
 	{
 		var mod = this.ModOf(save);
 		save.CustomMap = MapFor(mod);
+		save.ModState = mod.State;
+		save.ModName = mod.Mod?.Name ?? mod.Link?.Mod;
 		save.ModLabel = mod.State switch
 		{
 			CharacterModState.Linked => mod.Mod!.Name,

@@ -1862,6 +1862,18 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="ModLinkMissingLabel" xml:space="preserve">
     <value>{0}, non installé</value>
   </data>
+	<data name="CharacterModded" xml:space="preserve">
+    <value>Moddé</value>
+  </data>
+	<data name="CharacterModLinked" xml:space="preserve">
+    <value>Lié</value>
+  </data>
+	<data name="CharacterModNotLinked" xml:space="preserve">
+    <value>Non lié</value>
+  </data>
+	<data name="CharacterModNotInstalled" xml:space="preserve">
+    <value>Non installé</value>
+  </data>
 	<data name="ModLinkBaseGameData" xml:space="preserve">
     <value>les données du jeu de base</value>
   </data>
@@ -1896,7 +1908,7 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
     <value>Données du mod : {0}</value>
   </data>
 	<data name="ItemIncomplete" xml:space="preserve">
-    <value>Objet incomplet : les données de jeu chargées n'ont pas certains de ses enregistrements (mod non lié ou non installé).</value>
+    <value>Objet incomplet : mod non lié ou non installé.</value>
   </data>
 	<data name="ItemIncompleteBaseItem" xml:space="preserve">
     <value>Objet de base</value>

@@ -53,4 +53,26 @@ public partial class ComboBoxCharacter
 
 		return tagged.Select(ps => (ps.Name, ps.IsArchived, ps.Folder)).ToList();
 	}
+
+	/// <summary>
+	/// Opens the character list like a click on its button, scrolled to a character.
+	/// </summary>
+	/// <param name="name">The character to scroll to; empty for the selected one.</param>
+	/// <returns>The open list.</returns>
+	internal Control AutomationOpenDropDown(string? name)
+	{
+		if (this.DropDownLoc is null)
+			AdjustLocation();
+		if (!this.DropDown.Visible)
+			DropDownOpen();
+
+		if (!string.IsNullOrEmpty(name))
+		{
+			var item = this.DropDown.Items.FirstOrDefault(i => i.Item is PlayerSave ps && string.Equals(ps.Name, name, StringComparison.OrdinalIgnoreCase))
+				?? throw new InvalidOperationException($"No character '{name}' in the list.");
+			this.DropDown.ScrollControlIntoView(item);
+		}
+
+		return this.DropDown;
+	}
 }

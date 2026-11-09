@@ -6095,7 +6095,43 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Incomplete item: the loaded game data lacks some of its records (a mod not linked or not installed)..
+        ///   Looks up a localized string similar to Modded.
+        /// </summary>
+        public static string CharacterModded {
+            get {
+                return ResourceManager.GetString("CharacterModded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Linked.
+        /// </summary>
+        public static string CharacterModLinked {
+            get {
+                return ResourceManager.GetString("CharacterModLinked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not linked.
+        /// </summary>
+        public static string CharacterModNotLinked {
+            get {
+                return ResourceManager.GetString("CharacterModNotLinked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not installed.
+        /// </summary>
+        public static string CharacterModNotInstalled {
+            get {
+                return ResourceManager.GetString("CharacterModNotInstalled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Incomplete item: mod not linked or not installed..
         /// </summary>
         public static string ItemIncomplete {
             get {

@@ -27,6 +27,9 @@ Workshop items) and links the character to one, or removes its link. The choice 
 - `folder` is where the mod was when linked, preferred while it exists.
 - The game never writes a file with this name; it is copied with the character (*Duplicate*, archive).
 
+In the character list, a custom map character shows a *Modded* tag on its second line, followed by its mod's name and
+the link state: *Linked* (green), *Not installed* (red, the linked mod is gone) or *Not linked* (yellow).
+
 ## Suggest
 
 *Suggest* reads the record ids that `Player.chr` and the character's `winsys.dxb` use, keeps those the base game

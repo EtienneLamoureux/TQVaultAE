@@ -2233,6 +2233,18 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="ModLinkMissingLabel" xml:space="preserve">
     <value>{0}, not installed</value>
   </data>
+	<data name="CharacterModded" xml:space="preserve">
+    <value>Modded</value>
+  </data>
+	<data name="CharacterModLinked" xml:space="preserve">
+    <value>Linked</value>
+  </data>
+	<data name="CharacterModNotLinked" xml:space="preserve">
+    <value>Not linked</value>
+  </data>
+	<data name="CharacterModNotInstalled" xml:space="preserve">
+    <value>Not installed</value>
+  </data>
 	<data name="ModLinkBaseGameData" xml:space="preserve">
     <value>the base game data</value>
   </data>
@@ -2267,7 +2279,7 @@ You still have to close TQVaultAE to apply your changes.
     <value>Mod data: {0}</value>
   </data>
 	<data name="ItemIncomplete" xml:space="preserve">
-    <value>Incomplete item: the loaded game data lacks some of its records (a mod not linked or not installed).</value>
+    <value>Incomplete item: mod not linked or not installed.</value>
   </data>
 	<data name="ItemIncompleteBaseItem" xml:space="preserve">
     <value>Base item</value>

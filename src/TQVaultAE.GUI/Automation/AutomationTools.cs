@@ -688,6 +688,10 @@ internal static partial class AutomationTools
 				?? throw new McpException($"Panel '{id}' has no container.");
 		}
 
+		const string characterList = "characterList";
+		if (control.StartsWith(characterList, StringComparison.OrdinalIgnoreCase))
+			return form.AutomationCharacterCombo.AutomationOpenDropDown(control[characterList.Length..].TrimStart(':'));
+
 		if (string.Equals(control, "tooltip", StringComparison.OrdinalIgnoreCase))
 			return OpenTooltips().LastOrDefault()
 				?? throw new McpException("No tooltip is shown. Use hover_item first.");
@@ -702,7 +706,7 @@ internal static partial class AutomationTools
 				return open;
 		}
 
-		throw new McpException($"Unknown capture target '{control}'. Use 'main', 'tooltip', a panel id ({string.Join(", ", AutomationPanels.List(form).Select(p => p.Id))}), '<panel>.container' or a form title.");
+		throw new McpException($"Unknown capture target '{control}'. Use 'main', 'tooltip', 'characterList[:name]', a panel id ({string.Join(", ", AutomationPanels.List(form).Select(p => p.Id))}), '<panel>.container' or a form title.");
 	}
 
 	private static string ItemName(Item item)
