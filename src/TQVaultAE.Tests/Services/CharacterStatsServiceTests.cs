@@ -96,6 +96,32 @@ public class CharacterStatsServiceTests
 	}
 
 	[Fact]
+	public void GetGameBalance_ReadsCapsPenaltiesAndEquationsFromTheRecordsTheEngineNames()
+	{
+		var engine = Class("""records\xpack\game\gameengine.dbr""".ToRecordId(), "");
+		engine.Set(Text("defaultCombatManagerRecord", """Records\Game\CombatEquations.dbr"""));
+		engine.Set(Text("playerAttributePak", """Records\Game\PlayerGameBalanceAttributes.dbr"""));
+		engine.Set(new Variable("playerDefenseCap", VariableDataType.Float, 1) { [0] = 75F });
+		var combat = Class("""Records\Game\CombatEquations.dbr""".ToRecordId(), "");
+		combat.Set(Text("offensiveAbilityEquation", "offensiveAbilityDV * 2"));
+		var pak = Class("""Records\Game\PlayerGameBalanceAttributes.dbr""".ToRecordId(), "AttributePak");
+		var fire = new Variable("defensiveFire", VariableDataType.Integer, 18);
+		for (int i = 0; i < 18; i++)
+			fire[i] = i < 6 ? 0 : i < 12 ? -40 : -100;
+		pak.Set(fire);
+
+		var balance = this._service.GetGameBalance();
+
+		balance.EngineValue("playerDefenseCap", 0).Should().Be(75);
+		balance.Penalty("defensiveFire", 1).Should().Be(-40);
+		balance.OffensiveAbilityEquation.Should().Be("offensiveAbilityDV * 2");
+		balance.DefensiveAbilityEquation.Should().Contain("defensiveAbilityDV", "a missing equation keeps the game's");
+		balance.BaseRunSpeed.Should().Be(1.33, "a missing player template keeps the game's values");
+	}
+
+	private static Variable Text(string name, string value) => new(name, VariableDataType.StringVar, 1) { [0] = value };
+
+	[Fact]
 	public void GetSkillAttributes_SkillWithoutPoint_IsSkipped()
 	{
 		var sum = this._service.GetSkillAttributes([Skill(Toughness, 0)], [new(SkillAugmentKind.All, null, 3)], [Defense], includeBuffs: true);

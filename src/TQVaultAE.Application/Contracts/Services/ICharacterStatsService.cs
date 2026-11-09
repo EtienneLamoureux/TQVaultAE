@@ -21,4 +21,10 @@ public interface ICharacterStatsService
 	/// <param name="augments">The skill levels the equipped items add.</param>
 	/// <param name="trees">The masteries of the character, for the mastery bonuses and the modifiers' parents.</param>
 	AttributeSum GetSkillAttributes(IEnumerable<SkillRecord> skills, IReadOnlyList<SkillAugment> augments, IReadOnlyList<MasteryTree> trees, bool includeBuffs);
+
+	/// <summary>
+	/// Reads the game's caps, difficulty penalties, equations and player base values from the database (once); a missing
+	/// record keeps the values of the original game.
+	/// </summary>
+	GameBalance GetGameBalance();
 }
