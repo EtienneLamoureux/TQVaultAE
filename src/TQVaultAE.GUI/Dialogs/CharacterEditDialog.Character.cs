@@ -103,6 +103,7 @@ internal sealed partial class CharacterEditDialog
 		this.ResetMasteriesScalingButton.Location = new Point(buttonX, this.ResetAttributesScalingButton.Bottom + (int)Math.Round(16 * scale));
 
 		this._tabs.AddPage(Resources.CECharacter, page);
+		page.Paint += (_, e) => this.DrawPaneEdge(e.Graphics, page.ClientSize);
 		this.AddMedallion(page, scale);
 
 		this._stats.AttributeClicked += (_, click) => this.CharacterAttribute_Clicked(click.Attribute, click.Step, click.ToEnd);
@@ -142,6 +143,35 @@ internal sealed partial class CharacterEditDialog
 		};
 		page.Controls.Add(picture);
 		this.FormClosed += (_, _) => medallion.Dispose();
+	}
+
+	/// <summary>The mastery selection background (919x540, the size of a page), whose edge every pane has.</summary>
+	private const string PaneEdgeTexture = """InGameUI\Skills\SkillsBackground01.tex""";
+
+	/// <summary>Width of the pane edge: a gold line, a black line and the shadow inside them.</summary>
+	private const int PaneEdge = 6;
+
+	/// <summary>
+	/// The thin edge of the mastery panes, a gold and a black line with a shadow inside, drawn around the Character page
+	/// from the four sides of a pane background (its middle is not drawn).
+	/// </summary>
+	private void DrawPaneEdge(Graphics g, Size page)
+	{
+		var texture = this.UIService.LoadBitmap(PaneEdgeTexture.ToRecordId());
+		float sx = page.Width / (float)texture.Width, sy = page.Height / (float)texture.Height;
+		g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+		g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+		foreach (var side in new[]
+		{
+			new Rectangle(0, 0, texture.Width, PaneEdge),
+			new Rectangle(0, texture.Height - PaneEdge, texture.Width, PaneEdge),
+			new Rectangle(0, 0, PaneEdge, texture.Height),
+			new Rectangle(texture.Width - PaneEdge, 0, PaneEdge, texture.Height),
+		})
+		{
+			var target = RectangleF.FromLTRB(side.Left * sx, side.Top * sy, side.Right * sx, side.Bottom * sy);
+			g.DrawImage(texture, target, side, GraphicsUnit.Pixel);
+		}
 	}
 
 	/// <summary>Rows at the top of <see cref="Images.MainForm_NewBackground"/> taken by its dark band, left out.</summary>
