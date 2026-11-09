@@ -17,7 +17,6 @@ internal sealed partial class CharacterStatsPanel
 			scale = this.PanelScale,
 			size = new { this.Width, this.Height },
 			view,
-			editors = this.Tab1Controls.Select(c => new { c.Name, c.Visible, c.Enabled, c.Text }).ToList(),
 		};
 	}
 

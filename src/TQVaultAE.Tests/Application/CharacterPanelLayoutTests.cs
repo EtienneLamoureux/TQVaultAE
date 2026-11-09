@@ -32,6 +32,13 @@ public class CharacterPanelLayoutTests
 		CharacterPanelLayout.FormatGameText("{%d2} missing", 1).Should().Be("{%d2} missing");
 	}
 
+	[Theory]
+	[InlineData(45, "+45% Fire Damage")]
+	[InlineData(0, "+0% Fire Damage")]
+	[InlineData(-10, "-10% Fire Damage")]
+	public void FormatGameText_PlusFlag_WritesTheSignOfPositiveValues(long value, string expected)
+		=> CharacterPanelLayout.FormatGameText("{%+.0f0}% Fire Damage", value).Should().Be(expected);
+
 	[Fact]
 	public void ColorRuns_SplitsAtColourCodes()
 		=> CharacterPanelLayout.ColorRuns("{^y}2{^w} Points Available").Should().Equal(

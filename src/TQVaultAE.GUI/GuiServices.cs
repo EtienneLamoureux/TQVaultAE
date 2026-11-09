@@ -54,6 +54,7 @@ public sealed class GuiServices
 		, ISearchCategoryService searchCategoryService
 		, ISearchQueryService searchQueryService
 		, ICharacterEditService characterEditService
+		, ICharacterStatsService characterStatsService
 		, ISettingsPersistenceService settingsPersistence
 	)
 	{
@@ -89,6 +90,7 @@ public sealed class GuiServices
 		this.SearchCategoryService = searchCategoryService;
 		this.SearchQueryService = searchQueryService;
 		this.CharacterEditService = characterEditService;
+		this.CharacterStatsService = characterStatsService;
 		this.SettingsPersistence = settingsPersistence;
 	}
 
@@ -156,6 +158,9 @@ public sealed class GuiServices
 
 	/// <summary>Character edits: level, experience, difficulty, attributes and masteries.</summary>
 	public ICharacterEditService CharacterEditService { get; }
+
+	/// <summary>The sums and game values behind the character window statistics.</summary>
+	public ICharacterStatsService CharacterStatsService { get; }
 
 	/// <summary>Session state saved in the user settings, and the language of the installed game.</summary>
 	public ISettingsPersistenceService SettingsPersistence { get; }

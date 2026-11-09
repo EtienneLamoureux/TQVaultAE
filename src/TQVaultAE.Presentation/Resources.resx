@@ -1054,6 +1054,21 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
 	<data name="CEComputedInGame" xml:space="preserve">
     <value>The game computes these values while playing: they are not in the save.</value>
   </data>
+	<data name="CEStatistics" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
+	<data name="CEIncludeBuffs" xml:space="preserve">
+    <value>Include buffs</value>
+  </data>
+	<data name="CEStatisticsDifficultyToolTip" xml:space="preserve">
+    <value>The difficulty played: Epic and Legendary lower the resistances (-40 / -100, as read in the game data).</value>
+  </data>
+	<data name="CEIncludeBuffsToolTip" xml:space="preserve">
+    <value>Counts the auras and buffs of the skills as if they were active; else only the passive skills count.</value>
+  </data>
+	<data name="CEDurationBonus" xml:space="preserve">
+    <value>{0}% Duration</value>
+  </data>
 	<data name="CEGearBonusSkill" xml:space="preserve">
     <value>+{0} to {1} (equipment)</value>
   </data>

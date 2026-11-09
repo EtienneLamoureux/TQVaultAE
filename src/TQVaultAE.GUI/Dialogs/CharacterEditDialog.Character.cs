@@ -19,7 +19,20 @@ internal sealed partial class CharacterEditDialog
 {
 	private GameTabControl _tabs = null!;
 	private CharacterStatsPanel _stats = null!;
+	private CharacterSidePanel _side = null!;
 	private readonly List<Font> _ownedFonts = [];
+
+	/// <summary>The difficulty the statistics are computed for, Normal to Legendary.</summary>
+	private ComboBox _statsDifficulty = null!;
+
+	/// <summary>Whether the auras and buffs count in the statistics.</summary>
+	private CheckBox _includeBuffs = null!;
+
+	private readonly ToolTip _statsToolTip = new() { AutoPopDelay = 30000, InitialDelay = 300 };
+
+	/// <summary>The sums of the equipped items (they do not change in the dialog) and of the skills, by skill state.</summary>
+	private AttributeSum? _gearSum;
+	private (string Key, AttributeSum Sum)? _skillSum;
 
 	/// <summary>The attribute boxes in the game's order: Health, Energy, Strength, Intelligence, Dexterity.</summary>
 	private NumericUpDown[] AttributeBoxes => [this.healthUpDown, this.manacUpDown, this.strengthUpDown, this.intelligenceUpDown, this.dexterityUpDown];
@@ -64,6 +77,7 @@ internal sealed partial class CharacterEditDialog
 			TitleFont = this.FontService.GetFontLight(16F * panelScale, FontStyle.Bold, GraphicsUnit.Pixel),
 			TabFont = this.FontService.GetFontLight(15F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel),
 			NumberFont = this.OwnedFont(new Font("Arial", 13F * panelScale, FontStyle.Bold, GraphicsUnit.Pixel)),
+			ResistanceFont = this.OwnedFont(new Font("Arial", 14F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel)),
 		};
 		page.Controls.Add(this._stats);
 
@@ -71,36 +85,53 @@ internal sealed partial class CharacterEditDialog
 		foreach (var box in this.AttributeBoxes.Append(this.attributeNumericUpDown))
 			box.Visible = false;
 
+		// The leveling editors, the masteries and the statistics options, right of the panel where the game window has
+		// none: the game draws defense and offense where the editor had them.
+		this._side = new CharacterSidePanel(this.UIService)
+		{
+			Name = "CharacterSidePanel",
+			PanelScale = panelScale,
+			Location = new Point(this._stats.Right + (int)Math.Round(40 * scale), this._stats.Top),
+			View = this.SideView,
+			TextFont = this._stats.TextFont,
+			TitleFont = this._stats.TitleFont,
+			NumberFont = this._stats.NumberFont,
+		};
+		page.Controls.Add(this._side);
+
 		var editorFont = this.OwnedFont(new Font("Arial", 12F * panelScale, FontStyle.Bold, GraphicsUnit.Pixel));
 		var editors = this.LevelingEditors;
 		for (int row = 0; row < editors.Length; row++)
 		{
 			var editor = editors[row];
-			editor.Parent = this._stats;
-			editor.Bounds = this._stats.LevelingRow(row);
-			editor.Font = editorFont;
-			editor.BackColor = Color.FromArgb(24, 24, 24);
-			editor.ForeColor = Color.White;
-			this._stats.Tab1Controls.Add(editor);
-			if (editor is CheckBox check)
-			{
-				check.Text = string.Empty;
-				check.BackColor = Color.Black;
-				check.AutoSize = true;
-			}
+			this.PlaceSideEditor(editor, this._side.EditorRow(row), editorFont);
 
 			// A disabled box ignores its colours: it is hidden and the panel writes its value, as the game writes numbers.
 			editor.EnabledChanged += (_, _) => this.ShowLevelingEditor(editor);
-			editor.TextChanged += (_, _) => this._stats.Invalidate();
+			editor.TextChanged += (_, _) => this._side.Invalidate();
 			this.ShowLevelingEditor(editor);
 		}
 
-		// The reset buttons, right of the panel.
-		var buttonX = this._stats.Right + (int)Math.Round(40 * scale);
+		this._statsDifficulty = new ComboBox { Name = "StatsDifficultyComboBox", DropDownStyle = ComboBoxStyle.DropDownList, FlatStyle = FlatStyle.Flat };
+		for (int difficulty = 0; difficulty < 3; difficulty++)
+			this._statsDifficulty.Items.Add(this.TranslationService.TranslateDifficulty(difficulty) ?? difficulty.ToString(CultureInfo.CurrentCulture));
+		this._statsDifficulty.SelectedIndex = Math.Clamp(this.Info.DifficultyUnlocked, 0, 2);
+		this.PlaceSideEditor(this._statsDifficulty, this._side.StatisticsRow(0), editorFont);
+		this._statsDifficulty.SelectedIndexChanged += (_, _) => this._stats.Invalidate();
+
+		this._includeBuffs = new CheckBox { Name = "StatsIncludeBuffsCheckBox" };
+		this.PlaceSideEditor(this._includeBuffs, this._side.StatisticsRow(1), editorFont);
+		this._includeBuffs.CheckedChanged += (_, _) => this._stats.Invalidate();
+
+		this._statsToolTip.SetToolTip(this._statsDifficulty, Resources.CEStatisticsDifficultyToolTip);
+		this._statsToolTip.SetToolTip(this._includeBuffs, Resources.CEIncludeBuffsToolTip);
+
+		// The reset buttons under the side panel.
+		var buttonX = this._side.Left;
 		this.ResetAttributesScalingButton.Parent = page;
-		this.ResetAttributesScalingButton.Location = new Point(buttonX, this._stats.Top + (int)Math.Round(60 * scale));
+		this.ResetAttributesScalingButton.Location = new Point(buttonX, this._side.Bottom + (int)Math.Round(16 * scale));
 		this.ResetMasteriesScalingButton.Parent = page;
-		this.ResetMasteriesScalingButton.Location = new Point(buttonX, this.ResetAttributesScalingButton.Bottom + (int)Math.Round(16 * scale));
+		this.ResetMasteriesScalingButton.Location = new Point(this.ResetAttributesScalingButton.Right + (int)Math.Round(16 * scale), this.ResetAttributesScalingButton.Top);
 
 		this._tabs.AddPage(Resources.CECharacter, page);
 		page.BackgroundImage = this.RenderPageBackground(page.ClientSize);
@@ -115,7 +146,25 @@ internal sealed partial class CharacterEditDialog
 		{
 			foreach (var font in this._ownedFonts)
 				font.Dispose();
+			this._statsToolTip.Dispose();
 		};
+	}
+
+	/// <summary>Puts an editor on the side panel, at its row, in the panel's colours.</summary>
+	private void PlaceSideEditor(Control editor, Rectangle bounds, Font font)
+	{
+		editor.Parent = this._side;
+		editor.Bounds = bounds;
+		editor.Font = font;
+		editor.BackColor = Color.FromArgb(24, 24, 24);
+		editor.ForeColor = Color.White;
+		this._side.Editors.Add(editor);
+		if (editor is CheckBox check)
+		{
+			check.Text = string.Empty;
+			check.BackColor = Color.Black;
+			check.AutoSize = true;
+		}
 	}
 
 	/// <summary>
@@ -130,6 +179,13 @@ internal sealed partial class CharacterEditDialog
 			this.ResetMasteriesScalingButton.Bottom + (int)Math.Round(30 * scale),
 			page.Width - (int)Math.Round(24 * scale),
 			page.Height - (int)Math.Round(24 * scale));
+		if (area.Width < medallion.Width / 2 || area.Height < medallion.Height / 2)
+		{
+			// No room left under the side panel and the reset buttons.
+			medallion.Dispose();
+			return;
+		}
+
 		var zoom = Math.Min(2F * scale, Math.Min(area.Width / (float)medallion.Width, area.Height / (float)medallion.Height));
 		var size = new Size((int)Math.Round(medallion.Width * zoom), (int)Math.Round(medallion.Height * zoom));
 		var picture = new PictureBox
@@ -189,11 +245,11 @@ internal sealed partial class CharacterEditDialog
 		return font;
 	}
 
-	/// <summary>Shows a leveling editor only while it can be changed and tab I is shown.</summary>
+	/// <summary>Shows a leveling editor only while it can be changed; the side panel writes the value of the others.</summary>
 	private void ShowLevelingEditor(Control editor)
 	{
-		editor.Visible = editor.Enabled && this._stats.Tab == 0;
-		this._stats.Invalidate();
+		editor.Visible = editor.Enabled;
+		this._side.Invalidate();
 	}
 
 	/// <summary>Sizes the dialog around the frame, with OK and Cancel under it.</summary>
@@ -251,6 +307,35 @@ internal sealed partial class CharacterEditDialog
 				Attribute(3, "tagCIntelligence", Resources.CEIntelligence, (gear?.IntelligenceBonus ?? 0) + (skill?.IntelligenceBonus ?? 0), (gear?.IntelligenceModifier ?? 0) + (skill?.IntelligenceModifier ?? 0), Color.White),
 				Attribute(4, "tagCDexterity", Resources.CEDexterity, (gear?.DexterityBonus ?? 0) + (skill?.DexterityBonus ?? 0), (gear?.DexterityModifier ?? 0) + (skill?.DexterityModifier ?? 0), Color.White),
 			],
+			Stats = this.StatsView(),
+			GreatestMonsterTitle = Game("tagCHighestMonster", "Greatest Monster Killed"),
+			GreatestMonster = this.TranslateTag(info.GreatestMonster, info.GreatestMonster),
+			GreatestMonsterLevel = info.GreatestMonsterKilledLevel == 0 ? string.Empty
+				: CharacterPanelLayout.FormatGameText(Game("tagCLevel", "Level : {%d0}"), info.GreatestMonsterKilledLevel),
+			Statistics =
+			[
+				(Game("tagCMonsterKills", "Monsters Killed"), info.NumberOfKills.ToString("N0", culture)),
+				(Game("tagCHighestDamage", "Greatest Damage Dealt"), info.GreatestDamageInflicted.ToString("N0", culture)),
+				(Game("tagCTime", "Elapsed Time"), CharacterPanelLayout.PlayTime(Game("tagCTimeNumber", "{%d0}:{%d1}:{%d2}"), info.PlayTimeInSeconds)),
+				(Game("tagCDeaths", "Total Deaths"), info.NumberOfDeaths.ToString("N0", culture)),
+			],
+			TabNames = [Game("tagCPrimaryStats", "I"), Game("tagCSecondaryStats", "II"), Game("x4tagCThirdStats", "III")],
+			Money = info.Money.ToString("N0", culture),
+			Electrum = info.Electrum?.ToString("N0", culture) ?? string.Empty,
+		};
+	}
+
+	/// <summary>What the side panel shows: the leveling rows, the masteries and the statistics options.</summary>
+	private CharacterSideView SideView()
+	{
+		var info = this.Info;
+		var culture = CultureInfo.CurrentCulture;
+		var level = Convert.ToInt32(this.levelNumericUpDown.Value);
+		var xp = long.TryParse(this.xpTextBox.Text, NumberStyles.Integer, culture, out var xpValue) ? xpValue : 0;
+		var skills = this._skills;
+
+		return new CharacterSideView
+		{
 			LevelingTitle = Resources.CELeveling,
 			LevelingLabels =
 			[
@@ -274,21 +359,8 @@ internal sealed partial class CharacterEditDialog
 				.OfType<MasterySummary>()
 				.Select(s => (this.TranslateTag(s.Mastery.NameTag, s.Mastery.Mastery.ToString()),
 					string.Format(culture, Resources.CEMasterySummary, s.SkillCount, s.PointsSpent)))],
-			GreatestMonsterTitle = Game("tagCHighestMonster", "Greatest Monster Killed"),
-			GreatestMonster = this.TranslateTag(info.GreatestMonster, info.GreatestMonster),
-			GreatestMonsterLevel = info.GreatestMonsterKilledLevel == 0 ? string.Empty
-				: CharacterPanelLayout.FormatGameText(Game("tagCLevel", "Level : {%d0}"), info.GreatestMonsterKilledLevel),
-			Statistics =
-			[
-				(Game("tagCMonsterKills", "Monsters Killed"), info.NumberOfKills.ToString("N0", culture)),
-				(Game("tagCHighestDamage", "Greatest Damage Dealt"), info.GreatestDamageInflicted.ToString("N0", culture)),
-				(Game("tagCTime", "Elapsed Time"), CharacterPanelLayout.PlayTime(Game("tagCTimeNumber", "{%d0}:{%d1}:{%d2}"), info.PlayTimeInSeconds)),
-				(Game("tagCDeaths", "Total Deaths"), info.NumberOfDeaths.ToString("N0", culture)),
-			],
-			ComputedInGame = Resources.CEComputedInGame,
-			TabNames = [Game("tagCPrimaryStats", "I"), Game("tagCSecondaryStats", "II"), Game("x4tagCThirdStats", "III")],
-			Money = info.Money.ToString("N0", culture),
-			Electrum = info.Electrum?.ToString("N0", culture) ?? string.Empty,
+			StatisticsTitle = Resources.CEStatistics,
+			StatisticsLabels = [Resources.CEDifficulty, Resources.CEIncludeBuffs],
 		};
 	}
 

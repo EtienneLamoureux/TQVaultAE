@@ -718,6 +718,51 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("CEComputedInGame", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Statistics.
+        /// </summary>
+        public static string CEStatistics {
+            get {
+                return ResourceManager.GetString("CEStatistics", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Include buffs.
+        /// </summary>
+        public static string CEIncludeBuffs {
+            get {
+                return ResourceManager.GetString("CEIncludeBuffs", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The difficulty played: Epic and Legendary lower the resistan.
+        /// </summary>
+        public static string CEStatisticsDifficultyToolTip {
+            get {
+                return ResourceManager.GetString("CEStatisticsDifficultyToolTip", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Counts the auras and buffs of the skills as if they were act.
+        /// </summary>
+        public static string CEIncludeBuffsToolTip {
+            get {
+                return ResourceManager.GetString("CEIncludeBuffsToolTip", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0}% Duration.
+        /// </summary>
+        public static string CEDurationBonus {
+            get {
+                return ResourceManager.GetString("CEDurationBonus", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Requires mastery level {0}.

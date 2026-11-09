@@ -11,6 +11,45 @@ namespace TQVaultAE.GUI.Components.Character;
 /// <summary>An attribute row of tab I: its label, the total shown, its colour and its tool tip.</summary>
 internal sealed record CharacterAttributeView(string Label, string Value, Color Color, string ToolTip);
 
+/// <summary>An icon of the panel (a resistance, a damage kind, a monster race) with the number drawn on it and its tool tip.</summary>
+internal sealed record StatIconView(string Icon, string Value, string ToolTip);
+
+/// <summary>A row of the panel: grey label, white value, tool tip.</summary>
+internal sealed record StatRowView(string Label, string Value, string ToolTip);
+
+/// <summary>The values TQVault computes like the game (tab I defense, tab II, top of tab III), ready to draw.</summary>
+internal sealed record CharacterStatsView
+{
+	public string DefenseTitle { get; init; } = string.Empty;
+	public StatRowView Armor { get; init; } = new(string.Empty, string.Empty, string.Empty);
+
+	/// <summary>Tab I fire, cold, lightning, pierce, vitality, poison, bleeding, physical; tab II slow, trap, energy, disruption, stun, freeze, sleep, petrify.</summary>
+	public IReadOnlyList<StatIconView> Resistances { get; init; } = [];
+
+	public string OffenseTitle { get; init; } = string.Empty;
+
+	/// <summary>Average damage, attack speed, DPS: only the game computes them.</summary>
+	public IReadOnlyList<StatRowView> Offense { get; init; } = [];
+
+	public string SecondaryTitle { get; init; } = string.Empty;
+
+	/// <summary>Health and energy regeneration, energy cost and recharge reduction, cast and run speed, offensive and defensive ability, dodge, deflect, block.</summary>
+	public IReadOnlyList<StatRowView> Tab2Rows { get; init; } = [];
+
+	public string DamageTitle { get; init; } = string.Empty;
+
+	/// <summary>Physical, pierce, bleeding, poison, pets, fire, cold, lightning, vitality, life leech: icons with their bonuses as tool tips.</summary>
+	public IReadOnlyList<StatIconView> Damages { get; init; } = [];
+
+	/// <summary>Weapon damage as health, weapon base as elemental.</summary>
+	public IReadOnlyList<StatRowView> Tab3Rows { get; init; } = [];
+
+	public string RaceTitle { get; init; } = string.Empty;
+
+	/// <summary>The 12 monster races, icons with their bonuses as tool tips.</summary>
+	public IReadOnlyList<StatIconView> Races { get; init; } = [];
+}
+
 /// <summary>What the statistics panel shows, given by the dialog.</summary>
 internal sealed record CharacterPanelView
 {
@@ -33,25 +72,14 @@ internal sealed record CharacterPanelView
 	public bool CanUndo { get; init; }
 	public string UndoText { get; init; } = string.Empty;
 
-	public string LevelingTitle { get; init; } = string.Empty;
-
-	/// <summary>The labels of the leveling rows, whose editors the dialog places with <see cref="CharacterStatsPanel.LevelingRow"/>.</summary>
-	public IReadOnlyList<string> LevelingLabels { get; init; } = [];
-
-	/// <summary>The values of the leveling rows whose editor is hidden (not editable now), written as the game writes numbers.</summary>
-	public IReadOnlyList<string> LevelingValues { get; init; } = [];
-
-	public string MasteriesTitle { get; init; } = string.Empty;
-	public IReadOnlyList<(string Name, string Value)> Masteries { get; init; } = [];
+	/// <summary>The values computed like the game.</summary>
+	public CharacterStatsView Stats { get; init; } = new();
 
 	/// <summary>Tab III: the statistics lines of the save, label and value.</summary>
 	public IReadOnlyList<(string Label, string Value)> Statistics { get; init; } = [];
 	public string GreatestMonsterTitle { get; init; } = string.Empty;
 	public string GreatestMonster { get; init; } = string.Empty;
 	public string GreatestMonsterLevel { get; init; } = string.Empty;
-
-	/// <summary>Shown where the game draws values it computes while playing (tab II, top of tab III).</summary>
-	public string ComputedInGame { get; init; } = string.Empty;
 
 	public IReadOnlyList<string> TabNames { get; init; } = ["I", "II", "III"];
 	public string Money { get; init; } = string.Empty;
@@ -63,8 +91,9 @@ internal sealed record CharacterPanelView
 /// cut from <c>CharacterWindow01</c>) and the gold and Electrum bar under the character (its pieces cut from the same
 /// window), at the positions of the <c>CharStatsTab1..3</c> records. Tab I shows the name, class, level, experience and the attributes
 /// with their "+" buttons (left click spends a point, right click takes it back, Shift all of them or back to the start),
-/// and the editor's leveling rows where the game shows defense and offense, which only the game computes. Tab III shows
-/// the statistics of the save. Sizes are in pixels of the game window times <see cref="PanelScale"/>.
+/// the combined armor and the resistances; tab II the secondary resistances and the other values; tab III the damage
+/// and race bonuses (icons with tool tips, as the game's rollovers) and the statistics of the save. Damage, attack speed
+/// and DPS stay computed in game. Sizes are in pixels of the game window times <see cref="PanelScale"/>.
 /// </summary>
 internal sealed partial class CharacterStatsPanel : Control
 {
@@ -115,6 +144,26 @@ internal sealed partial class CharacterStatsPanel : Control
 	/// <summary>Top of each attribute row, Health first (<c>tab1LifeText</c>...).</summary>
 	private static readonly int[] AttributeY = [89, 105, 121, 137, 153];
 
+	/// <summary>Resistance icons: left of each column, top of each row of tab I (fire...) then of tab II (slow...).</summary>
+	private static readonly int[] ResistanceX = [15, 75, 135, 195];
+	private static readonly int[] Tab1ResistanceY = [232, 267];
+	private static readonly int[] Tab2ResistanceY = [55, 90];
+
+	/// <summary>The game draws the number in a 40x16 box 9 pixels right and 11 down from the 24x24 icon, right-aligned (<c>resistanceFireNumber</c>).</summary>
+	private static readonly Size ResistanceNumberOffset = new(9, 11);
+
+	/// <summary>Damage icons of tab III: 5 per row every 50 pixels; race icons: 6 per row every 40 pixels.</summary>
+	private static readonly int[] DamageY = [55, 90];
+	private static readonly int[] RaceY = [198, 234];
+
+	/// <summary>The rows of tab II (<c>lifeRegenText</c>... <c>blockPercentText</c>).</summary>
+	private static readonly int[] Tab2RowY = [138, 157, 182, 200, 226, 244, 281, 299, 325, 343, 369];
+
+	private static readonly int[] OffenseY = [333, 348, 363];
+	private static readonly int[] Tab3RowY = [126, 144];
+
+	/// <summary>NumberStandard_Green: pure green.</summary>
+	private static readonly Color Green = Color.FromArgb(0, 255, 0);
 	private static readonly Color Grey = Color.FromArgb(200, 200, 190);
 	private static readonly Color Yellow = Color.FromArgb(255, 210, 60);
 	private static readonly Color Orange = Color.FromArgb(240, 160, 40);
@@ -149,15 +198,15 @@ internal sealed partial class CharacterStatsPanel : Control
 	/// <summary>Raised when another tab (I, II, III) is shown.</summary>
 	public event EventHandler? TabChanged;
 
-	/// <summary>Controls shown on tab I only (the leveling editors).</summary>
-	public List<Control> Tab1Controls { get; } = [];
-
 	public Font? NameFont { get; set; }
 	public Font? ClassFont { get; set; }
 	public Font? TextFont { get; set; }
 	public Font? TitleFont { get; set; }
 	public Font? NumberFont { get; set; }
 	public Font? TabFont { get; set; }
+
+	/// <summary>The resistance numbers: Arial 14, not bold (<c>NumberStandard_Green</c>).</summary>
+	public Font? ResistanceFont { get; set; }
 
 	/// <summary>The tab shown: 0 for I, 1 for II, 2 for III.</summary>
 	public int Tab
@@ -169,10 +218,6 @@ internal sealed partial class CharacterStatsPanel : Control
 				return;
 
 			this._tab = value;
-			// An editor shows on tab I while it can be changed; else the panel writes its value.
-			foreach (var control in this.Tab1Controls)
-				control.Visible = value == 0 && control.Enabled;
-
 			this.Invalidate();
 			this.TabChanged?.Invoke(this, EventArgs.Empty);
 		}
@@ -189,13 +234,6 @@ internal sealed partial class CharacterStatsPanel : Control
 			this.Size = new Size(this.Scaled(Math.Max(CharacterPanelLayout.Width, GoldBarWidth)), this.Scaled(GoldTop + GoldBarHeight));
 		}
 	}
-
-	/// <summary>
-	/// The place of the editor of a leveling row on screen: right part of the row, where the game writes the numbers
-	/// (x 150 to 243), rows every 20 pixels under the "Leveling" title.
-	/// </summary>
-	public Rectangle LevelingRow(int row)
-		=> this.ScaledRect(new Rectangle(140, 204 + row * 20, 103, 18));
 
 	/// <summary>The "+" button of an attribute on screen.</summary>
 	public Rectangle PlusBounds(int attribute) => this.ScaledRect(new Rectangle(15, AttributeY[attribute] + 3, 12, 12));
@@ -282,12 +320,12 @@ internal sealed partial class CharacterStatsPanel : Control
 
 		this.Cursor = plus >= 0 || undo || Enumerable.Range(0, 3).Any(t => this.TabBounds(t).Contains(e.Location)) ? Cursors.Hand : Cursors.Default;
 
-		// The attribute rows tell their base value and bonuses.
+		// The attribute rows tell their base value and bonuses; icons and rows their meaning, as the game's rollovers.
 		var text = string.Empty;
-		if (this._tab == 0 && this.View?.Invoke() is { } view)
-			for (int i = 0; i < view.Attributes.Count && i < AttributeY.Length; i++)
-				if (this.ScaledRect(new Rectangle(15, AttributeY[i], 228, 16)).Contains(e.Location))
-					text = view.Attributes[i].ToolTip;
+		if (this.View?.Invoke() is { } view)
+			foreach (var (area, tip) in this.ToolTipAreas(view))
+				if (this.ScaledRect(area).Contains(e.Location))
+					text = tip;
 
 		if (text != this._toolTipText)
 		{
@@ -338,7 +376,7 @@ internal sealed partial class CharacterStatsPanel : Control
 				this.PaintTab1(g, view);
 				break;
 			case 1:
-				this.DrawText(g, view.ComputedInGame, this.TextFont, Grey, new Rectangle(15, 150, 228, 60), StringAlignment.Center, wrap: true);
+				this.PaintTab2(g, view.Stats);
 				break;
 			default:
 				this.PaintTab3(g, view);
@@ -381,26 +419,101 @@ internal sealed partial class CharacterStatsPanel : Control
 			this.DrawText(g, row.Value, this.NumberFont, row.Color, new Rectangle(150, AttributeY[i], 93, 16), StringAlignment.Far);
 		}
 
+		// Defense (tagCDefense at 15,187): combined armor, then the resistance icons with their numbers.
+		var stats = view.Stats;
 		this.Bar(g, 178);
-		this.DrawText(g, view.LevelingTitle, this.TitleFont, Color.White, new Rectangle(15, 185, 228, 18), StringAlignment.Near);
-		for (int i = 0; i < view.LevelingLabels.Count; i++)
-		{
-			this.DrawText(g, view.LevelingLabels[i], this.TextFont, Grey, new Rectangle(15, 205 + i * 20, 125, 16), StringAlignment.Near);
-			if (i < view.LevelingValues.Count)
-				this.DrawText(g, view.LevelingValues[i], this.NumberFont, Color.White, new Rectangle(140, 205 + i * 20, 103, 16), StringAlignment.Far);
-		}
+		this.DrawText(g, stats.DefenseTitle, this.TitleFont, Color.White, new Rectangle(15, 187, 228, 18), StringAlignment.Near);
+		this.Row(g, stats.Armor.Label, stats.Armor.Value, 206);
+		this.ResistanceIcons(g, stats.Resistances.Take(8), Tab1ResistanceY);
 
-		this.Bar(g, 312);
-		this.DrawText(g, view.MasteriesTitle, this.TitleFont, Color.White, new Rectangle(15, 319, 228, 18), StringAlignment.Near);
-		for (int i = 0; i < view.Masteries.Count; i++)
+		// Offense (tagCOffense at 15,314): only the game computes damage, attack speed and DPS.
+		this.Bar(g, 303);
+		this.DrawText(g, stats.OffenseTitle, this.TitleFont, Color.White, new Rectangle(15, 314, 228, 18), StringAlignment.Near);
+		for (int i = 0; i < stats.Offense.Count && i < OffenseY.Length; i++)
+			this.Row(g, stats.Offense[i].Label, stats.Offense[i].Value, OffenseY[i]);
+	}
+
+	private void PaintTab2(Graphics g, CharacterStatsView stats)
+	{
+		this.DrawText(g, stats.SecondaryTitle, this.TitleFont, Color.White, new Rectangle(15, 31, 228, 18), StringAlignment.Near);
+		this.ResistanceIcons(g, stats.Resistances.Skip(8), Tab2ResistanceY);
+		this.Bar(g, 126);
+		this.Bar(g, 270);
+		for (int i = 0; i < stats.Tab2Rows.Count && i < Tab2RowY.Length; i++)
+			this.Row(g, stats.Tab2Rows[i].Label, stats.Tab2Rows[i].Value, Tab2RowY[i]);
+	}
+
+	/// <summary>Four resistance icons per row, the green number on each (<c>NumberStandard_Green</c>).</summary>
+	private void ResistanceIcons(Graphics g, IEnumerable<StatIconView> icons, int[] rows)
+	{
+		foreach (var (at, icon) in IconPlaces(rows.Length * ResistanceX.Length, ResistanceX.Length, 60, rows).Zip(icons))
 		{
-			this.Row(g, view.Masteries[i].Name, view.Masteries[i].Value, 340 + i * 18, this.TextFont);
+			this.Icon(g, icon.Icon, at);
+			this.DrawText(g, icon.Value, this.ResistanceFont ?? this.NumberFont, Green, new Rectangle(at.X + ResistanceNumberOffset.Width, at.Y + ResistanceNumberOffset.Height, 40, 16), StringAlignment.Far);
+		}
+	}
+
+	/// <summary>An icon at its size in the game window.</summary>
+	private void Icon(Graphics g, string texture, Point at)
+	{
+		if (string.IsNullOrEmpty(texture))
+			return;
+
+		var icon = this.Picture(texture);
+		g.DrawImage(icon, this.ScaledRect(new Rectangle(at.X, at.Y, icon.Width, icon.Height)));
+	}
+
+	/// <summary>The places of the icons of a list: <paramref name="perRow"/> per row every <paramref name="step"/> pixels from x 15.</summary>
+	private static IEnumerable<Point> IconPlaces(int count, int perRow, int step, int[] rows)
+		=> Enumerable.Range(0, Math.Min(count, perRow * rows.Length)).Select(i => new Point(15 + i % perRow * step, rows[i / perRow]));
+
+	/// <summary>The areas with a tool tip on the tab shown, in game pixels.</summary>
+	private IEnumerable<(Rectangle Area, string ToolTip)> ToolTipAreas(CharacterPanelView view)
+	{
+		var stats = view.Stats;
+		switch (this._tab)
+		{
+			case 0:
+				for (int i = 0; i < view.Attributes.Count && i < AttributeY.Length; i++)
+					yield return (new Rectangle(15, AttributeY[i], 228, 16), view.Attributes[i].ToolTip);
+				yield return (new Rectangle(15, 206, 228, 16), stats.Armor.ToolTip);
+				foreach (var (place, icon) in IconPlaces(8, 4, 60, Tab1ResistanceY).Zip(stats.Resistances))
+					yield return (new Rectangle(place, new Size(50, 32)), icon.ToolTip);
+				for (int i = 0; i < stats.Offense.Count && i < OffenseY.Length; i++)
+					yield return (new Rectangle(15, OffenseY[i], 228, 15), stats.Offense[i].ToolTip);
+				break;
+			case 1:
+				foreach (var (place, icon) in IconPlaces(8, 4, 60, Tab2ResistanceY).Zip(stats.Resistances.Skip(8)))
+					yield return (new Rectangle(place, new Size(50, 32)), icon.ToolTip);
+				for (int i = 0; i < stats.Tab2Rows.Count && i < Tab2RowY.Length; i++)
+					yield return (new Rectangle(15, Tab2RowY[i], 228, 16), stats.Tab2Rows[i].ToolTip);
+				break;
+			default:
+				foreach (var (place, icon) in IconPlaces(stats.Damages.Count, 5, 50, DamageY).Zip(stats.Damages))
+					yield return (new Rectangle(place, new Size(40, 32)), icon.ToolTip);
+				for (int i = 0; i < stats.Tab3Rows.Count && i < Tab3RowY.Length; i++)
+					yield return (new Rectangle(15, Tab3RowY[i], 228, 16), stats.Tab3Rows[i].ToolTip);
+				foreach (var (place, icon) in IconPlaces(stats.Races.Count, 6, 40, RaceY).Zip(stats.Races))
+					yield return (new Rectangle(place, new Size(36, 34)), icon.ToolTip);
+				break;
 		}
 	}
 
 	private void PaintTab3(Graphics g, CharacterPanelView view)
 	{
-		this.DrawText(g, view.ComputedInGame, this.TextFont, Grey, new Rectangle(15, 110, 228, 60), StringAlignment.Center, wrap: true);
+		// Damage & Duration Bonuses and Monster Race Bonuses: icons, their values in tool tips as the game's rollovers.
+		var stats = view.Stats;
+		this.DrawText(g, stats.DamageTitle, this.TitleFont, Color.White, new Rectangle(15, 31, 228, 18), StringAlignment.Near);
+		foreach (var (place, icon) in IconPlaces(stats.Damages.Count, 5, 50, DamageY).Zip(stats.Damages))
+			this.Icon(g, icon.Icon, place);
+		for (int i = 0; i < stats.Tab3Rows.Count && i < Tab3RowY.Length; i++)
+			this.Row(g, stats.Tab3Rows[i].Label, stats.Tab3Rows[i].Value, Tab3RowY[i]);
+
+		this.Bar(g, 165);
+		this.DrawText(g, stats.RaceTitle, this.TitleFont, Color.White, new Rectangle(15, 174, 228, 18), StringAlignment.Near);
+		foreach (var (place, icon) in IconPlaces(stats.Races.Count, 6, 40, RaceY).Zip(stats.Races))
+			this.Icon(g, icon.Icon, place);
+
 		this.Bar(g, 268);
 		// The monster's name keeps its colour codes (a hero's name is coloured); its level goes on the title row.
 		this.Row(g, view.GreatestMonsterTitle, view.GreatestMonsterLevel, 277);

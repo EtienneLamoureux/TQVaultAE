@@ -37,7 +37,8 @@ public static partial class CharacterPanelLayout
 
 	/// <summary>
 	/// Fills a game text format: <c>{%d0}</c>, <c>{%t1}</c>... (any printf format, by index) with the values;
-	/// <c>%t</c> is a number with thousands separators.
+	/// <c>%t</c> is a number with thousands separators, the <c>+</c> flag (<c>{%+.0f0}</c>) writes the sign of
+	/// positive values.
 	/// </summary>
 	public static string FormatGameText(string format, params long[] values)
 		=> GameFormatRegex().Replace(format, m =>
@@ -46,9 +47,10 @@ public static partial class CharacterPanelLayout
 			if (index >= values.Length)
 				return m.Value;
 
-			return m.Groups["type"].Value == "t"
+			var text = m.Groups["type"].Value == "t"
 				? values[index].ToString("N0", CultureInfo.CurrentCulture)
 				: values[index].ToString(CultureInfo.CurrentCulture);
+			return m.Value.StartsWith("{%+", StringComparison.Ordinal) && values[index] >= 0 ? "+" + text : text;
 		});
 
 	/// <summary>Splits a game text at its colour codes (<c>{^y}</c>, <c>{^w}</c>...); other tags are removed.</summary>

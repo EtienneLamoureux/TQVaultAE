@@ -12,7 +12,7 @@ internal static partial class AutomationTools
 	#region Character panel
 
 	[McpServerTool(Name = "character_panel", ReadOnly = true)]
-	[Description("In the open character editor, shows the Character page and reads its statistics panel (drawn like the game's character window) on tab 1, 2 or 3: name, class, level and XP lines, points line, attribute rows (label, value, tool tip), whether the + buttons show, leveling rows and values, masteries, tab III statistics, gold and Electrum, and the leveling editors (visible, enabled, text). With capture=true the panel is also returned as a PNG (saved under %TEMP%).")]
+	[Description("In the open character editor, shows the Character page and reads its statistics panel (drawn like the game's character window) on tab 1, 2 or 3: name, class, level and XP lines, points line, attribute rows (label, value, tool tip), whether the + buttons show, leveling rows and values, tab III statistics, gold and Electrum, the values computed like the game (armor, resistances, tab II rows, tab III damage and race bonuses with their tool tips), and the side panel beside it (leveling rows, masteries, the statistics options Difficulty and Include buffs, and their editors: visible, enabled, text). With capture=true the panel is also returned as a PNG (saved under %TEMP%).")]
 	public static IEnumerable<ContentBlock> CharacterPanel(
 		[Description("Tab of the panel: 1 (I), 2 (II) or 3 (III).")] int tab = 1,
 		[Description("true to return a PNG of the panel too.")] bool capture = false)
@@ -21,7 +21,8 @@ internal static partial class AutomationTools
 		{
 			var panel = ShowCharacterPanel();
 			panel.Tab = Math.Clamp(tab, 1, 3) - 1;
-			var state = Serialize(panel.AutomationState());
+			var side = AllControls(FindOpenForm("CharacterEditDialog")).OfType<CharacterSidePanel>().FirstOrDefault();
+			var state = Serialize(new { stats = panel.AutomationState(), side = side?.AutomationState() });
 			if (!capture)
 				return (state, (byte[]?)null);
 
@@ -77,6 +78,17 @@ internal static partial class AutomationTools
 				throw new McpException("No + button there: the panel shows none while no attribute point is left.");
 
 			return Serialize(panel.AutomationState());
+		});
+
+	[McpServerTool(Name = "character_stat_sources", ReadOnly = true)]
+	[Description("In the open character editor, returns the sums behind the statistics the Character page computes like the game: the variables of the equipped items and item sets (gear), of the skills that count (skills: passives, masteries, modifiers of counted skills, buffs when 'Include buffs' is ticked), both at their level, and the racial bonuses; plus the difficulty and buffs options. 'filter' keeps the variables whose name contains it (e.g. 'defensive').")]
+	public static string CharacterStatSources(
+		[Description("Part of the variable names to keep; empty for all.")] string filter = "")
+		=> AutomationHost.OnUi(_ =>
+		{
+			var form = FindOpenForm("CharacterEditDialog") as Dialogs.CharacterEditDialog
+				?? throw new McpException("No character editor open.");
+			return Serialize(form.AutomationStatSources(filter));
 		});
 
 	/// <summary>Shows the Character page of the open character editor and returns its statistics panel.</summary>
