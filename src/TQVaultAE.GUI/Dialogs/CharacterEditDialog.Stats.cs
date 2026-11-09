@@ -88,10 +88,42 @@ internal sealed partial class CharacterEditDialog
 			Attribute(2), Attribute(4), Attribute(3), this._gearSum, this._skillSum.Value.Sum, difficulty, service.GetGameBalance()));
 	}
 
+	/// <summary>
+	/// Tab I's offense for the current state of the editor: attack speed from the stance in hand and its animations, the
+	/// average damage and DPS (after <see cref="ComputeStats"/>, which keeps the sums up to date).
+	/// </summary>
+	private (double AttackSpeed, OffenseValues Values) ComputeOffense()
+	{
+		var service = this.Services.CharacterStatsService;
+		var equipment = this.PlayerCollection.EquipmentSack as IEnumerable<Item> ?? [];
+		bool useAlternate = this.PlayerCollection.UseAlternate;
+		this._offenseGear ??= service.GetOffenseGear(equipment, useAlternate);
+		this._stance ??= service.GetWeaponStance(equipment, useAlternate);
+
+		var balance = service.GetGameBalance();
+		var gear = this._gearSum ?? new AttributeSum();
+		var skills = this._skillSum?.Sum ?? new AttributeSum();
+		var all = new AttributeSum();
+		all.Add(gear);
+		all.Add(skills);
+
+		var durations = service.GetAttackAnimationDurations(this.Info.IsFemale);
+		var difficulty = this._statsDifficulty?.SelectedIndex is >= 0 and var selected ? selected : Math.Clamp(this.Info.DifficultyUnlocked, 0, 2);
+		var attackSpeed = CharacterOffenseCalculator.AttackSpeed(all, this._stance.Value, balance, difficulty,
+			durations.GetValueOrDefault(WeaponStance.Unarmed), durations.GetValueOrDefault(this._stance.Value));
+
+		double Total(int box, string field) => CharacterStatsCalculator.Total(Convert.ToInt32(this.AttributeBoxes[box].Value), all, field);
+		var values = CharacterOffenseCalculator.Damage(new OffenseInput(this._offenseGear, gear, skills,
+			Total(2, "characterStrength"), Total(4, "characterDexterity"), Total(3, "characterIntelligence"),
+			Convert.ToInt32(this.levelNumericUpDown.Value), attackSpeed, balance));
+		return (attackSpeed, values);
+	}
+
 	/// <summary>What the panel shows of the computed statistics, with the game's texts.</summary>
 	private CharacterStatsView StatsView()
 	{
 		var stats = this.ComputeStats();
+		var (attackSpeed, offense) = this.ComputeOffense();
 		var culture = CultureInfo.CurrentCulture;
 		string Game(string tag, string fallback) => string.IsNullOrEmpty(tag) ? fallback : this.TranslateTag(tag, fallback);
 		string Percent(int value) => value.ToString(culture) + "%";
@@ -110,9 +142,10 @@ internal sealed partial class CharacterEditDialog
 			OffenseTitle = Game("tagCOffense", "Offense"),
 			Offense =
 			[
-				Row("tagCTotalDamage", "Average Damage", "-", computedInGame),
-				Row("tagCAttackSpeed", "Attack Speed", "-", computedInGame),
-				Row("tagCDPS", "Damage Per Second (DPS)", "-", computedInGame),
+				Row("tagCTotalDamage", "Average Damage", offense.AverageDamage.ToString(culture),
+					string.Format(culture, Resources.CEOffenseDamageToolTip, offense.WeaponDamage, offense.AddedDamage) + Environment.NewLine + Resources.CEOffenseUnverified),
+				Row("tagCAttackSpeed", "Attack Speed", Percent(CharacterStatsCalculator.Round(attackSpeed)), Resources.CEOffenseUnverified),
+				Row("tagCDPS", "Damage Per Second (DPS)", offense.Dps.ToString(culture), Resources.CEOffenseUnverified),
 			],
 			SecondaryTitle = Game("tagCSecondaryResist", "Secondary Resistances:"),
 			Tab2Rows =

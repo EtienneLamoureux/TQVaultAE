@@ -34,6 +34,10 @@ internal sealed partial class CharacterEditDialog
 	private AttributeSum? _gearSum;
 	private (string Key, AttributeSum Sum)? _skillSum;
 
+	/// <summary>The weapons in hand and the other items for the attack damage, and the stance (they do not change in the dialog).</summary>
+	private OffenseGear? _offenseGear;
+	private WeaponStance? _stance;
+
 	/// <summary>The attribute boxes in the game's order: Health, Energy, Strength, Intelligence, Dexterity.</summary>
 	private NumericUpDown[] AttributeBoxes => [this.healthUpDown, this.manacUpDown, this.strengthUpDown, this.intelligenceUpDown, this.dexterityUpDown];
 

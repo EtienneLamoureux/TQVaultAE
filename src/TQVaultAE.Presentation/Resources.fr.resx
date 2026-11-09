@@ -1028,6 +1028,12 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
 	<data name="CEDurationBonus" xml:space="preserve">
     <value>{0} % de durée</value>
   </data>
+	<data name="CEOffenseDamageToolTip" xml:space="preserve">
+    <value>Arme {0}, ajouté par l’équipement et les compétences {1}.</value>
+  </data>
+	<data name="CEOffenseUnverified" xml:space="preserve">
+    <value>Calculé avec les formules des fichiers du jeu ; pas encore comparé au jeu.</value>
+  </data>
 	<data name="CEGearBonusSkill" xml:space="preserve">
     <value>+{0} à {1} (équipement)</value>
   </data>

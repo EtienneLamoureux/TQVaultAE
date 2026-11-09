@@ -763,6 +763,24 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("CEDurationBonus", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Weapon {0}, added by the gear and the skills {1}..
+        /// </summary>
+        public static string CEOffenseDamageToolTip {
+            get {
+                return ResourceManager.GetString("CEOffenseDamageToolTip", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Computed with the formulas of the game files; not yet compar.
+        /// </summary>
+        public static string CEOffenseUnverified {
+            get {
+                return ResourceManager.GetString("CEOffenseUnverified", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Requires mastery level {0}.

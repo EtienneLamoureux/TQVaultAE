@@ -1069,6 +1069,12 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
 	<data name="CEDurationBonus" xml:space="preserve">
     <value>{0}% Duration</value>
   </data>
+	<data name="CEOffenseDamageToolTip" xml:space="preserve">
+    <value>Weapon {0}, added by the gear and the skills {1}.</value>
+  </data>
+	<data name="CEOffenseUnverified" xml:space="preserve">
+    <value>Computed with the formulas of the game files; not yet compared with the game.</value>
+  </data>
 	<data name="CEGearBonusSkill" xml:space="preserve">
     <value>+{0} to {1} (equipment)</value>
   </data>
