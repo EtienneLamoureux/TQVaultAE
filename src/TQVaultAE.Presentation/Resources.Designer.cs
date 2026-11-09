@@ -558,15 +558,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Attribute Points.
-        /// </summary>
-        public static string CEAttributePoints {
-            get {
-                return ResourceManager.GetString("CEAttributePoints", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Base Attributes.
         /// </summary>
         public static string CEAttributes {
@@ -675,15 +666,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Points spent: {0}.
-        /// </summary>
-        public static string CEMasteryPointsSpent {
-            get {
-                return ResourceManager.GetString("CEMasteryPointsSpent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Mastery {0}.
         /// </summary>
         public static string CEMasterySlot {
@@ -707,6 +689,33 @@ namespace TQVaultAE.Presentation {
         public static string CESkillPaneHint {
             get {
                 return ResourceManager.GetString("CESkillPaneHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Base {0}, {1:+0;-0;+0} from equipment and skills. Left click.
+        /// </summary>
+        public static string CEAttributeToolTip {
+            get {
+                return ResourceManager.GetString("CEAttributeToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} skills, {1} points.
+        /// </summary>
+        public static string CEMasterySummary {
+            get {
+                return ResourceManager.GetString("CEMasterySummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The game computes these values while playing: they are not i.
+        /// </summary>
+        public static string CEComputedInGame {
+            get {
+                return ResourceManager.GetString("CEComputedInGame", resourceCulture);
             }
         }
         

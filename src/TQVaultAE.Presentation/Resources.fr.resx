@@ -956,9 +956,6 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
 	<data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Autorise l'édition des personnages</value>
   </data>
-	<data name="CEAttributePoints" xml:space="preserve">
-    <value>Points d'attributs</value>
-  </data>
 	<data name="CEAttributes" xml:space="preserve">
     <value>Attributs de base</value>
   </data>
@@ -995,9 +992,6 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
 	<data name="CEMasteryLevel" xml:space="preserve">
     <value>Niveau de maîtrise</value>
   </data>
-	<data name="CEMasteryPointsSpent" xml:space="preserve">
-    <value>Points dépensés : {0}</value>
-  </data>
 	<data name="CEMasterySlot" xml:space="preserve">
     <value>Maîtrise {0}</value>
   </data>
@@ -1009,6 +1003,15 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
   </data>
 	<data name="CESkillRequiresMastery" xml:space="preserve">
     <value>Requiert le niveau de maîtrise {0}</value>
+  </data>
+	<data name="CEAttributeToolTip" xml:space="preserve">
+    <value>Base {0}, {1:+0;-0;+0} des équipements et compétences. Clic gauche sur + : dépense un point, clic droit : le reprend ; avec Maj : tous les points, ou retour au départ.</value>
+  </data>
+	<data name="CEMasterySummary" xml:space="preserve">
+    <value>{0} compétences, {1} points</value>
+  </data>
+	<data name="CEComputedInGame" xml:space="preserve">
+    <value>Le jeu calcule ces valeurs en cours de partie : elles ne sont pas dans la sauvegarde.</value>
   </data>
 	<data name="CEGearBonusSkill" xml:space="preserve">
     <value>+{0} à {1} (équipement)</value>

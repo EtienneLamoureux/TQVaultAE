@@ -997,9 +997,6 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
 	<data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Allow Character Editing Features</value>
   </data>
-	<data name="CEAttributePoints" xml:space="preserve">
-    <value>Attribute Points</value>
-  </data>
 	<data name="CEAttributes" xml:space="preserve">
     <value>Base Attributes</value>
   </data>
@@ -1036,9 +1033,6 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
 	<data name="CEMasteryLevel" xml:space="preserve">
     <value>Mastery level</value>
   </data>
-	<data name="CEMasteryPointsSpent" xml:space="preserve">
-    <value>Points spent: {0}</value>
-  </data>
 	<data name="CEMasterySlot" xml:space="preserve">
     <value>Mastery {0}</value>
   </data>
@@ -1050,6 +1044,15 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
   </data>
 	<data name="CESkillRequiresMastery" xml:space="preserve">
     <value>Requires mastery level {0}</value>
+  </data>
+	<data name="CEAttributeToolTip" xml:space="preserve">
+    <value>Base {0}, {1:+0;-0;+0} from equipment and skills. Left click on + spends a point, right click takes it back; with Shift: all the points, or back to the start.</value>
+  </data>
+	<data name="CEMasterySummary" xml:space="preserve">
+    <value>{0} skills, {1} points</value>
+  </data>
+	<data name="CEComputedInGame" xml:space="preserve">
+    <value>The game computes these values while playing: they are not in the save.</value>
   </data>
 	<data name="CEGearBonusSkill" xml:space="preserve">
     <value>+{0} to {1} (equipment)</value>

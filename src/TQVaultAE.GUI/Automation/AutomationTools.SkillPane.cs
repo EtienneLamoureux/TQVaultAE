@@ -83,22 +83,28 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(_ =>
 		{
 			var target = FindOpenForm(form);
-			var controls = AllControls(target).OfType<TabControl>().ToList();
-			var pages = controls.SelectMany(t => t.TabPages.Cast<TabPage>().Select((p, i) => (Tabs: t, Page: p, Index: i))).ToList();
-			var found = (int.TryParse(tab, out var index) ? pages.FirstOrDefault(p => p.Index == index) : default);
-			if (found.Page is null)
-				found = pages.FirstOrDefault(p => string.Equals(p.Page.Name, tab, StringComparison.OrdinalIgnoreCase)
-					|| p.Page.Text.Contains(tab, StringComparison.OrdinalIgnoreCase));
-			if (found.Page is null)
-				throw new McpException($"No page '{tab}' in '{target.Text}'. Pages: {string.Join(", ", pages.Select(p => $"'{p.Page.Text}'"))}");
 
-			found.Tabs.SelectedTab = found.Page;
-			return Serialize(controls.Select(t => new
-			{
-				tabControl = t.Name,
-				selected = t.SelectedTab?.Text,
-				pages = t.TabPages.Cast<TabPage>().Select(p => new { p.Name, p.Text }).ToList(),
-			}).ToList());
+			// Pages of WinForms tab controls and of the game-styled frame of the character editor.
+			var pages = new List<(string Owner, string Name, string Text, int Index, Action Select, Func<bool> Selected)>();
+			foreach (var tabs in AllControls(target).OfType<TabControl>())
+				foreach (var (page, i) in tabs.TabPages.Cast<TabPage>().Select((p, i) => (p, i)))
+					pages.Add((tabs.Name, page.Name, page.Text, i, () => tabs.SelectedTab = page, () => tabs.SelectedTab == page));
+			foreach (var frame in AllControls(target).OfType<GameTabControl>())
+				for (int i = 0; i < frame.Pages.Count; i++)
+				{
+					var index = i;
+					pages.Add((frame.Name, frame.Pages[i].Content.Name, frame.Pages[i].Text, i, () => frame.SelectedIndex = index, () => frame.SelectedIndex == index));
+				}
+
+			var found = int.TryParse(tab, out var number) ? pages.FirstOrDefault(p => p.Index == number) : default;
+			if (found.Select is null)
+				found = pages.FirstOrDefault(p => string.Equals(p.Name, tab, StringComparison.OrdinalIgnoreCase)
+					|| p.Text.Contains(tab, StringComparison.OrdinalIgnoreCase));
+			if (found.Select is null)
+				throw new McpException($"No page '{tab}' in '{target.Text}'. Pages: {string.Join(", ", pages.Select(p => $"'{p.Text}'"))}");
+
+			found.Select();
+			return Serialize(pages.Select(p => new { owner = p.Owner, name = p.Name, text = p.Text, selected = p.Selected() }).ToList());
 		});
 
 	/// <summary>Selects the page of a mastery slot in the open character editor and returns its pane.</summary>
@@ -108,8 +114,8 @@ internal static partial class AutomationTools
 		var name = $"SkillsMastery{slot}Pane";
 		var pane = AllControls(form).OfType<SkillPaneControl>().FirstOrDefault(p => p.Name == name)
 			?? throw new McpException($"No skill pane for slot {slot}.");
-		if (AllControls(form).OfType<TabControl>().FirstOrDefault(t => t.TabPages.Cast<TabPage>().Any(p => p.Contains(pane))) is { } tabs)
-			tabs.SelectedTab = tabs.TabPages.Cast<TabPage>().First(p => p.Contains(pane));
+		if (AllControls(form).OfType<GameTabControl>().FirstOrDefault() is { } frame)
+			frame.SelectedIndex = frame.Pages.Select((p, i) => (p, i)).First(x => x.p.Content.Contains(pane)).i;
 
 		return pane;
 	}

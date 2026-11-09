@@ -947,9 +947,6 @@ He aquí un ejemplo complejo: 'glacial &amp; hielo @espada $raro'</value>
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Permitir características de edición de caracteres</value>
   </data>
-  <data name="CEAttributePoints" xml:space="preserve">
-    <value>Puntos de atributo</value>
-  </data>
   <data name="CEAttributes" xml:space="preserve">
     <value>Atributos básicos</value>
   </data>

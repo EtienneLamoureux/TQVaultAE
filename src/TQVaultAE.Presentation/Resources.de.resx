@@ -953,9 +953,6 @@ Hier ist ein komplexes Beispiel: 'arctic &amp; frost @schwert $ episch | selten'
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Zeichenbearbeitungsfunktionen zulassen</value>
   </data>
-  <data name="CEAttributePoints" xml:space="preserve">
-    <value>Attributpunkte</value>
-  </data>
   <data name="CEAttributes" xml:space="preserve">
     <value>Basisattribute</value>
   </data>

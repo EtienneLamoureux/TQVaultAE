@@ -978,9 +978,6 @@ Change this value to match program version when new keys are added.  Will trigge
     <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>允许角色编辑功能</value>
   </data>
-    <data name="CEAttributePoints" xml:space="preserve">
-    <value>属性点</value>
-  </data>
     <data name="CEAttributes" xml:space="preserve">
     <value>基础属性</value>
   </data>

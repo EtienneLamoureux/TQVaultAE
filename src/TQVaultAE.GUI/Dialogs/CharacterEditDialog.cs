@@ -51,14 +51,7 @@ internal sealed partial class CharacterEditDialog : VaultForm
 					this.cancel.Font = FontService.GetFontLight(12F);
 
 		this.Font = FontService.GetFontLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			
-		new[] {
-				this.attribGroupBox,
-				this.levelingGroupBox,
-				this.MasteriesGroupBox,
-			}.SelectMany(gb => gb.Controls.OfType<Control>(), (gb, child) => (gb, child))
-			.ToList()
-			.ForEach(tup => tup.gb.Font = tup.child.Font = FontService.GetFontLight(11F));
+
 
 		#endregion
 
@@ -142,27 +135,7 @@ internal sealed partial class CharacterEditDialog : VaultForm
 	/// <param name="e">EventArgs data</param>
 	private void CharacterEditDlg_Load(object? sender, EventArgs e)
 	{
-
-		strengthLabel.Text = Resources.CEStrength;
-		dexterityLabel.Text = Resources.CEDexterity;
-		IntelligenceLabel.Text = Resources.CEIntelligence;
-		healthLabel.Text = Resources.CEHealth;
-		manaLabel.Text = Resources.CEMana;
-		levelLabel.Text = Resources.CELevel;
-		xpLabel.Text = Resources.CEXp;
-		attributeLabel.Text = Resources.CEAttributePoints;
-		skillPointsLabel.Text = Resources.CESkillPoints;
-		levelingCheckBox.Text = Resources.CEEnableLeveling;
-		levelingGroupBox.Text = Resources.CELeveling;
-		attribGroupBox.Text = Resources.CEAttributes;
-		difficultyLabel.Text = Resources.CEDifficulty;
-
-		this.MasteriesGroupBox.Text = Resources.Masteries;
-
-		this.Mastery1NameScalingLabel.Visible
-			= this.Mastery1ValueScalingLabel.Visible
-				= this.Mastery2NameScalingLabel.Visible
-					= this.Mastery2ValueScalingLabel.Visible = false;
+		this.InitCharacterPage();
 
 		if (Info.BaseStrength > Convert.ToInt32(strengthUpDown.Maximum))
 			strengthUpDown.Maximum = Info.BaseStrength;
@@ -231,6 +204,8 @@ internal sealed partial class CharacterEditDialog : VaultForm
 		foreach (var upDown in new[] { strengthUpDown, dexterityUpDown, intelligenceUpDown, healthUpDown, manacUpDown, levelNumericUpDown })
 			this._previousValues[upDown] = Convert.ToInt32(upDown.Value);
 
+		this._startAttributes = [.. this.AttributeBoxes.Select(b => Convert.ToInt32(b.Value))];
+		this.FitToFrame();
 		_loaded = true;
 	}
 

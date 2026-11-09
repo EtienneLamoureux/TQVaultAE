@@ -21,6 +21,9 @@ internal sealed partial class CharacterEditDialog
 
 	private readonly List<SkillTab> _skillTabs = [];
 
+	/// <summary>The tool tips of the mastery level boxes.</summary>
+	private readonly ToolTip _headerToolTip = new();
+
 	/// <summary>True while the dialog writes the points left of the editor into the skill points box.</summary>
 	private bool _syncingSkillPoints;
 
@@ -28,10 +31,11 @@ internal sealed partial class CharacterEditDialog
 	private sealed class SkillTab
 	{
 		public required int Slot { get; init; }
-		public required TabPage Page { get; init; }
+
+		/// <summary>The index of its page in the frame.</summary>
+		public required int PageIndex { get; init; }
 		public required ComboBox Mastery { get; init; }
 		public required NumericUpDown Level { get; init; }
-		public required Label Points { get; init; }
 		public required SkillPaneControl Pane { get; init; }
 
 		/// <summary>True while the dialog fills the controls, so their events are not user changes.</summary>
@@ -47,7 +51,6 @@ internal sealed partial class CharacterEditDialog
 	/// <summary>Builds a page per mastery slot of the character, after the Character page.</summary>
 	private void InitSkills()
 	{
-		this.CharacterTabPage.Text = Resources.CECharacter;
 		this._skills = this.Services.CharacterEditService.CreateSkillEditor(this.Info);
 		this._gearAugments = this.Services.CharacterEditService.GetGearSkillAugments(this.PlayerCollection);
 
@@ -61,7 +64,6 @@ internal sealed partial class CharacterEditDialog
 		this.skillPointsNumericUpDown.ValueChanged += this.SkillPointsNumericUpDown_ValueChanged;
 
 		this.RefreshSkills();
-		this.FitToSkillPanes();
 	}
 
 	private string TranslateTag(string? tag, string fallback = "")
@@ -71,17 +73,16 @@ internal sealed partial class CharacterEditDialog
 
 	private SkillTab CreateSkillTab(int slot, List<MasteryChoice> choices)
 	{
-		var page = new TabPage { BackColor = this.BackColor, UseVisualStyleBackColor = false, ForeColor = Color.White, Padding = new Padding(4), Name = $"SkillsMastery{slot + 1}Page" };
 		var font = this.FontService.GetFontLight(11F);
 
 		var mastery = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = this.LogicalToDeviceUnits(170), Name = $"SkillsMastery{slot + 1}ComboBox", Font = font };
 		mastery.Items.AddRange([.. choices]);
-		var levelLabel = new Label { Text = Resources.CEMasteryLevel, AutoSize = true, Margin = new Padding(6, 8, 2, 0), Font = font };
 		var level = new NumericUpDown { Minimum = 0, Maximum = 40, Width = this.LogicalToDeviceUnits(55), Name = $"SkillsMastery{slot + 1}LevelUpDown", Font = font };
-		var points = new Label { AutoSize = true, Margin = new Padding(6, 8, 2, 0), Name = $"SkillsMastery{slot + 1}PointsLabel", Font = font };
 
-		var header = new FlowLayoutPanel { Dock = DockStyle.Top, AutoSize = true, WrapContents = false, Name = $"SkillsMastery{slot + 1}Header" };
-		header.Controls.AddRange([mastery, levelLabel, level, points]);
+		// The mastery and its level go on the marble strip right of the tabs, as the game's Undo button.
+		var header = new FlowLayoutPanel { AutoSize = true, WrapContents = false, BackColor = Color.Transparent, Name = $"SkillsMastery{slot + 1}Header" };
+		header.Controls.AddRange([mastery, level]);
+		this._headerToolTip.SetToolTip(level, Resources.CEMasteryLevel);
 
 		var pane = new SkillPaneControl(this.UIService)
 		{
@@ -91,16 +92,15 @@ internal sealed partial class CharacterEditDialog
 			NumberFont = this.FontService.GetFontLight(12F, FontStyle.Regular, GraphicsUnit.Pixel),
 			TextFont = this.FontService.GetFontLight(15F, FontStyle.Regular, GraphicsUnit.Pixel),
 			DescriptionFont = this.FontService.GetFontLight(13F, FontStyle.Regular, GraphicsUnit.Pixel),
-			Location = new Point(page.Padding.Left, 0),
+			Location = Point.Empty,
 		};
-		var paneHost = new Panel { Dock = DockStyle.Fill, Name = $"SkillsMastery{slot + 1}PaneHost" };
+		var paneHost = new Panel { BackColor = Color.Black, Name = $"SkillsMastery{slot + 1}Page" };
 		paneHost.Controls.Add(pane);
 
-		page.Controls.Add(paneHost);
-		page.Controls.Add(header);
-		this.EditorTabControl.TabPages.Add(page);
+		var pageIndex = this._tabs.Pages.Count;
+		this._tabs.AddPage(string.Format(Resources.CEMasterySlot, slot + 1), paneHost, header);
 
-		var tab = new SkillTab { Slot = slot, Page = page, Mastery = mastery, Level = level, Points = points, Pane = pane };
+		var tab = new SkillTab { Slot = slot, PageIndex = pageIndex, Mastery = mastery, Level = level, Pane = pane };
 		pane.SkillView = skill => this.SkillView(tab, skill);
 		pane.ToolTipText = skill => this.SkillToolTip(tab, skill);
 
@@ -109,25 +109,6 @@ internal sealed partial class CharacterEditDialog
 		pane.ButtonClicked += (_, click) => this.SkillPane_ButtonClicked(tab, click);
 
 		return tab;
-	}
-
-	/// <summary>Sizes the tabs and the dialog so that a mastery page shows its whole pane, and the Character page its boxes.</summary>
-	private void FitToSkillPanes()
-	{
-		if (this._skillTabs.Count == 0)
-			return;
-
-		var tab = this._skillTabs[0];
-		var header = tab.Page.Controls.OfType<FlowLayoutPanel>().First();
-		var needed = new Size(
-			Math.Max(tab.Pane.Width, header.PreferredSize.Width) + tab.Page.Padding.Horizontal,
-			header.PreferredSize.Height + tab.Pane.Height + tab.Page.Padding.Vertical);
-		var character = this.CharacterTabPage.Controls.Cast<Control>()
-			.Aggregate(Size.Empty, (size, c) => new Size(Math.Max(size.Width, c.Right), Math.Max(size.Height, c.Bottom)))
-			+ this.CharacterTabPage.Padding.Size;
-		needed = new Size(Math.Max(needed.Width, character.Width), Math.Max(needed.Height, character.Height));
-		var page = this.EditorTabControl.DisplayRectangle.Size;
-		this.ClientSize += needed - page;
 	}
 
 	/// <summary>What the pane shows of a skill: its level, the levels of the equipped items, its border.</summary>
@@ -181,7 +162,7 @@ internal sealed partial class CharacterEditDialog
 			try
 			{
 				var tree = skills.Slots[tab.Slot];
-				tab.Page.Text = tree is null ? string.Format(Resources.CEMasterySlot, tab.Slot + 1) : this.TranslateTag(tree.NameTag, tree.Mastery.ToString());
+				this._tabs.SetPageText(tab.PageIndex, tree is null ? string.Format(Resources.CEMasterySlot, tab.Slot + 1) : this.TranslateTag(tree.NameTag, tree.Mastery.ToString()));
 				tab.Mastery.SelectedItem = tab.Mastery.Items.Cast<MasteryChoice>().First(c => c.Mastery == tree?.Mastery);
 
 				var masteryLevel = skills.GetMasteryLevel(tab.Slot);
@@ -189,7 +170,6 @@ internal sealed partial class CharacterEditDialog
 				tab.Level.Minimum = tree is null ? 0 : 1;
 				tab.Level.Maximum = Math.Max(tree?.MaxLevel ?? 0, masteryLevel);
 				tab.Level.Value = masteryLevel;
-				tab.Points.Text = string.Format(Resources.CEMasteryPointsSpent, skills.GetPointsSpent(tab.Slot));
 
 				tab.Pane.Tree = tree;
 				tab.Pane.MasteryLevel = masteryLevel;
@@ -202,7 +182,7 @@ internal sealed partial class CharacterEditDialog
 			}
 		}
 
-		this.RefreshMasterySummary();
+		this._stats.Invalidate();
 
 		this._syncingSkillPoints = true;
 		try
@@ -215,25 +195,6 @@ internal sealed partial class CharacterEditDialog
 		finally
 		{
 			this._syncingSkillPoints = false;
-		}
-	}
-
-	/// <summary>Shows each mastery with its skills that have points and the points spent, in the Masteries box.</summary>
-	private void RefreshMasterySummary()
-	{
-		var skills = this._skills!;
-		var names = new[] { this.Mastery1NameScalingLabel, this.Mastery2NameScalingLabel };
-		var values = new[] { this.Mastery1ValueScalingLabel, this.Mastery2ValueScalingLabel };
-		for (int i = 0; i < names.Length; i++)
-		{
-			var summary = i < skills.Slots.Count ? skills.GetMasterySummary(i) : null;
-			names[i].Visible = values[i].Visible = summary is not null;
-			if (summary is null)
-				continue;
-
-			var tree = summary.Mastery;
-			names[i].Text = string.Format(names[i].Tag?.ToString() ?? "{0}", this.TranslateTag(tree.NameTag, tree.Mastery.ToString()));
-			values[i].Text = string.Format(values[i].Tag?.ToString() ?? "{0} ({1})", summary.SkillCount, summary.PointsSpent);
 		}
 	}
 
