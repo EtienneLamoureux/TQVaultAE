@@ -166,10 +166,14 @@ internal sealed partial class GameTooltip : IDisposable
 	{
 		var rows = new List<List<(string, Color)>> { new() };
 		int x = 0;
+		bool pendingSpace = false;
 		foreach (var (text, color) in runs)
 		{
-			foreach (var word in WordRegex().Matches(text).Select(m => m.Value))
+			foreach (var match in WordRegex().Matches(text).Select(m => m.Value))
 			{
+				// A space before a colour change ("enemies. {^y}Assign") belongs to the next word.
+				var word = pendingSpace && !char.IsWhiteSpace(match[0]) ? " " + match : match;
+				pendingSpace = false;
 				var width = TextRenderer.MeasureText(word, font, Size.Empty, Flags).Width;
 				if (x + width > this._maxWidth && x > 0 && word.Trim().Length != 0)
 				{
@@ -181,6 +185,8 @@ internal sealed partial class GameTooltip : IDisposable
 				rows[^1].Add((piece, color));
 				x += TextRenderer.MeasureText(piece, font, Size.Empty, Flags).Width;
 			}
+
+			pendingSpace = text.Length != 0 && char.IsWhiteSpace(text[^1]);
 		}
 
 		return rows;

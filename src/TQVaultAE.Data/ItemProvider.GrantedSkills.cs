@@ -91,12 +91,12 @@ public partial class ItemProvider
 
 	/// <summary>
 	/// What the game's skill window leaves out of a skill's effects: the projectile mechanics (speed, reach, spread), the
-	/// time a charge level lasts, the pierce ratio and the "can't be dispelled" flag.
+	/// time a charge level lasts, the pierce ratio, the "can't be dispelled" and "special animation" flags.
 	/// </summary>
 	private static readonly HashSet<string> SkillWindowHiddenVariables = new(StringComparer.OrdinalIgnoreCase)
 	{
 		"headVelocity", "tailVelocity", "maxDistance", "projectileLaunchRotation", "skillChargeDuration", "notDispelable",
-		"offensivePierceRatioMin", "offensivePierceRatioMax", "offensivePierceRatio",
+		"offensivePierceRatioMin", "offensivePierceRatioMax", "offensivePierceRatio", "alwaysUseSpecialAnimation",
 	};
 
 	/// <inheritdoc/>

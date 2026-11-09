@@ -71,6 +71,18 @@ internal sealed partial class CharacterEditDialog
 			? fallback
 			: this.TranslationService.TranslateXTag(tag, removeAllTQTags: true) is { Length: > 0 } text ? text : fallback;
 
+	/// <summary>
+	/// A description as the skill window writes it: with its colours ("{^y}Assign this skill to your left mouse button."),
+	/// without the other tags.
+	/// </summary>
+	private string GameDescription(string? tag)
+	{
+		if (string.IsNullOrEmpty(tag) || this.TranslationService.TranslateXTag(tag) is not { Length: > 0 } text)
+			return string.Empty;
+
+		return text.Replace("{^n}", string.Empty, StringComparison.OrdinalIgnoreCase);
+	}
+
 	private SkillTab CreateSkillTab(int slot, List<MasteryChoice> choices)
 	{
 		var font = this.FontService.GetFontLight(11F);
@@ -217,7 +229,7 @@ internal sealed partial class CharacterEditDialog
 		if (skill is null)
 		{
 			lines.Add(new GameTooltipLine(this.TranslateTag(tree.NameTag, tree.Mastery.ToString()), Color.White, Title: true));
-			lines.Add(new GameTooltipLine(this.TranslateTag(tree.DescriptionTag), TipText));
+			lines.Add(new GameTooltipLine(this.GameDescription(tree.DescriptionTag), TipText));
 			if (masteryLevel > 0)
 				Level("tagCurrentLevel", "Current Level : {%d0}", tree.Id, masteryLevel);
 			if (masteryLevel < tree.MaxLevel)
@@ -241,7 +253,7 @@ internal sealed partial class CharacterEditDialog
 		// them even beyond the ultimate level (Call of the Wild 15 + 6: the wolves dodge as at +6).
 		petSkillBonus = points > 0 ? bonus.Total : 0;
 		lines.Add(new GameTooltipLine(this.TranslateTag(skill.NameTag, skill.Id.PrettyFileName), Color.White, Title: true));
-		lines.Add(new GameTooltipLine(this.TranslateTag(skill.DescriptionTag), TipText));
+		lines.Add(new GameTooltipLine(this.GameDescription(skill.DescriptionTag), TipText));
 		if (current > 0)
 			Level("tagCurrentLevel", "Current Level : {%d0}", skill.Id, current);
 		if (belowMax)
