@@ -161,6 +161,12 @@ public interface IItemProvider
 	/// </summary>
 	IReadOnlyList<string> GetGrantedSkillNames(Item itm);
 	/// <summary>
+	/// Describes a skill at a level as the item tooltips describe a granted skill: name, icon, description and its effects
+	/// at that level (a buff skill takes them from its buff record, a pet skill from its pet).
+	/// </summary>
+	/// <returns><see langword="null"/> when the record is missing or has no name.</returns>
+	GrantedSkill? GetSkillAtLevel(RecordId skillId, int level);
+	/// <summary>
 	/// Gets the level of a triggered skill
 	/// </summary>
 	/// <param name="record">DBRecord for the triggered skill</param>

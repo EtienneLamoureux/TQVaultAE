@@ -35,7 +35,6 @@ internal sealed partial class SkillPaneControl : Control
 	private static readonly Color NoPointColor = Color.FromArgb(255, 96, 32);
 
 	private readonly IUIService _uiService;
-	private readonly ToolTip _toolTip = new() { AutoPopDelay = 30000, InitialDelay = 300, ReshowDelay = 100 };
 	private object? _hovered;
 	private float _paneScale = 1F;
 
@@ -63,7 +62,10 @@ internal sealed partial class SkillPaneControl : Control
 	public Func<string, string> Translate { get; set; } = tag => tag;
 
 	/// <summary>The tool tip text of a skill, or of the mastery for <see langword="null"/>.</summary>
-	public Func<MasterySkill?, string>? ToolTipText { get; set; }
+	public Func<MasterySkill?, IReadOnlyList<GameTooltipLine>>? ToolTipLines { get; set; }
+
+	/// <summary>The game-style tool tip that shows <see cref="ToolTipLines"/> over the hovered button.</summary>
+	public GameTooltip? Tooltip { get; set; }
 
 	/// <summary>The font of the level texts and milestones, in pane pixels.</summary>
 	public Font? NumberFont { get; set; }
@@ -86,14 +88,6 @@ internal sealed partial class SkillPaneControl : Control
 			this._paneScale = value;
 			this.Size = new Size((int)Math.Round(SkillPaneLayout.Width * value), (int)Math.Round(SkillPaneLayout.Height * value));
 		}
-	}
-
-	protected override void Dispose(bool disposing)
-	{
-		if (disposing)
-			this._toolTip.Dispose();
-
-		base.Dispose(disposing);
 	}
 
 	/// <summary>The skill (or the mastery, as the tree) under a point of the control, or <see langword="null"/>.</summary>
@@ -144,20 +138,23 @@ internal sealed partial class SkillPaneControl : Control
 
 		this._hovered = hovered;
 		this.Cursor = hovered is null ? Cursors.Default : Cursors.Hand;
-		var text = hovered switch
+		var lines = hovered switch
 		{
-			MasteryTree => this.ToolTipText?.Invoke(null),
-			MasterySkill skill => this.ToolTipText?.Invoke(skill),
+			MasteryTree => this.ToolTipLines?.Invoke(null),
+			MasterySkill skill => this.ToolTipLines?.Invoke(skill),
 			_ => null,
 		};
-		this._toolTip.SetToolTip(this, text ?? string.Empty);
+		if (lines is { Count: > 0 })
+			this.Tooltip?.Show(this, lines);
+		else
+			this.Tooltip?.Hide();
 	}
 
 	protected override void OnMouseLeave(EventArgs e)
 	{
 		base.OnMouseLeave(e);
 		this._hovered = null;
-		this._toolTip.SetToolTip(this, string.Empty);
+		this.Tooltip?.Hide();
 	}
 
 	/// <summary>Shows the tool tip again after the dialog changed what it says.</summary>

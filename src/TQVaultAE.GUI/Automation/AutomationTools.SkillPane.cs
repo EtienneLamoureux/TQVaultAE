@@ -75,6 +75,43 @@ internal static partial class AutomationTools
 			return Serialize(new { clicked = hit is MasterySkill s ? s.Id.Raw : "mastery", state = pane.AutomationState() });
 		});
 
+	[McpServerTool(Name = "skill_tooltip", ReadOnly = true)]
+	[Description("In the open character editor, renders the game-style tool tip of a skill (or of the mastery button with 'mastery') of a mastery slot's pane, as it shows on hover: its lines (text, colour) and a PNG (saved under %TEMP%).")]
+	public static IEnumerable<ContentBlock> SkillTooltip(
+		[Description("Mastery slot, from 1.")] int slot,
+		[Description("The skill: its record id, part of its name, or 'mastery'.")] string skill)
+	{
+		var (text, png) = AutomationHost.OnUi(_ =>
+		{
+			var pane = ShowSkillPane(slot);
+			MasterySkill? target = null;
+			if (!string.Equals(skill, "mastery", StringComparison.OrdinalIgnoreCase))
+			{
+				var skills = pane.Tree?.Skills ?? throw new McpException($"Slot {slot} has no mastery.");
+				target = skills.FirstOrDefault(s => string.Equals(s.Id.Raw, skill, StringComparison.OrdinalIgnoreCase))
+					?? skills.FirstOrDefault(s => pane.Translate(s.NameTag).Contains(skill, StringComparison.OrdinalIgnoreCase))
+					?? throw new McpException($"No skill '{skill}' in slot {slot}.");
+			}
+
+			var lines = pane.ToolTipLines?.Invoke(target) ?? [];
+			var tooltip = pane.Tooltip ?? throw new McpException("The pane has no tool tip.");
+			using var bitmap = tooltip.Render(lines);
+			using var stream = new MemoryStream();
+			bitmap.Save(stream, ImageFormat.Png);
+			var text = Serialize(lines.Select(l => new { text = l.Text, color = l.Color.IsEmpty ? null : $"#{l.Color.R:X2}{l.Color.G:X2}{l.Color.B:X2}", title = l.Title }).ToList());
+			return (text, stream.ToArray());
+		});
+
+		var path = Path.Combine(Path.GetTempPath(), $"tqvault-capture-skilltooltip-{DateTime.Now:yyyyMMdd-HHmmss-fff}.png");
+		File.WriteAllBytes(path, png);
+		return
+		[
+			new TextContentBlock { Text = text },
+			ImageContentBlock.FromBytes(png, "image/png"),
+			new TextContentBlock { Text = $"saved to {path}" },
+		];
+	}
+
 	[McpServerTool(Name = "select_tab")]
 	[Description("Selects a page of a tab control of an open form, like a click on its tab (for example the Character page or a mastery page of the character editor), so that capture shows it. Returns the pages of the tab controls of the form.")]
 	public static string SelectTab(

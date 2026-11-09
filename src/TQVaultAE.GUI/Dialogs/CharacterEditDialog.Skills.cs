@@ -102,7 +102,8 @@ internal sealed partial class CharacterEditDialog
 
 		var tab = new SkillTab { Slot = slot, PageIndex = pageIndex, Mastery = mastery, Level = level, Pane = pane };
 		pane.SkillView = skill => this.SkillView(tab, skill);
-		pane.ToolTipText = skill => this.SkillToolTip(tab, skill);
+		pane.ToolTipLines = skill => this.SkillToolTip(tab, skill);
+		pane.Tooltip = this.SkillTooltipWindow();
 
 		mastery.SelectedIndexChanged += (_, _) => this.SkillMastery_Changed(tab);
 		level.ValueChanged += (_, _) => this.SkillMasteryLevel_Changed(tab);
@@ -124,30 +125,140 @@ internal sealed partial class CharacterEditDialog
 		return new SkillPaneSkillView(level, bonus, state, masteryLevel >= skill.RequiredMasteryLevel);
 	}
 
-	/// <summary>The tool tip of a skill: name, tier requirement, description and gear bonus lines; or the mastery's.</summary>
-	private string SkillToolTip(SkillTab tab, MasterySkill? skill)
+	private static readonly Color TipText = Color.FromArgb(205, 200, 185);
+	private static readonly Color TipLevel = Color.FromArgb(250, 235, 90);
+	private static readonly Color TipRefused = Color.FromArgb(255, 64, 56);
+	private static readonly Color TipGear = Color.FromArgb(120, 200, 255);
+	private static readonly Color TipHint = Color.FromArgb(150, 148, 135);
+
+	/// <summary>The game-style tool tip of the skill panes, shared by the pages.</summary>
+	private GameTooltip? _skillTooltip;
+
+	private GameTooltip SkillTooltipWindow()
 	{
-		if (this._skills?.Slots[tab.Slot] is not { } tree)
-			return string.Empty;
+		if (this._skillTooltip is null)
+		{
+			var scale = this.DeviceDpi / 96F;
+			this._skillTooltip = new GameTooltip(
+				this.FontService.GetFontLight(17F * scale, FontStyle.Bold, GraphicsUnit.Pixel),
+				this.FontService.GetFontLight(15F * scale, FontStyle.Regular, GraphicsUnit.Pixel),
+				scale);
+			var tooltip = this._skillTooltip;
+			this.FormClosed += (_, _) => tooltip.Dispose();
+		}
 
+		return this._skillTooltip;
+	}
+
+	[System.Text.RegularExpressions.GeneratedRegex("""\{%[^}]*?([0-9])\}""")]
+	private static partial System.Text.RegularExpressions.Regex GameValueRegex();
+
+	/// <summary>A game text with its values: <c>{%d0}</c>, <c>{%s1}</c>... (any printf format, by index).</summary>
+	private string GameText(string tag, string fallback, params object[] values)
+	{
+		var format = this.TranslationService.TranslateXTag(tag) is { Length: > 0 } text ? text : fallback;
+		return GameValueRegex().Replace(format, m =>
+		{
+			var index = m.Groups[1].Value[0] - '0';
+			return index < values.Length
+				? Convert.ToString(values[index], System.Globalization.CultureInfo.CurrentCulture) ?? string.Empty
+				: m.Value;
+		});
+	}
+
+	/// <summary>
+	/// The tool tip of a skill as the game's skill window shows it (<c>the game</c>, the
+	/// <c>the game</c> parts): name, description, the current level with its effects, the next level
+	/// with its effects, then what stops a point (in red) or the invitation to add one; then the levels the equipment
+	/// adds and how to click. The mastery button shows the mastery the same way.
+	/// </summary>
+	private List<GameTooltipLine> SkillToolTip(SkillTab tab, MasterySkill? skill)
+	{
+		if (this._skills is not { } skills || skills.Slots[tab.Slot] is not { } tree)
+			return [];
+
+		var lines = new List<GameTooltipLine>();
+		void Level(string tag, string fallback, RecordId id, int level)
+		{
+			lines.Add(GameTooltipLine.Blank);
+			lines.Add(new GameTooltipLine(this.GameText(tag, fallback, level), TipLevel));
+			if (this.Services.CharacterEditService.DescribeSkill(id, level) is { } described)
+				// The item tooltips colour the effects as an epic item; the skill window writes them plain, keeping only the
+				// colours inside a line (recharge time in aqua).
+				lines.AddRange(described.Attributes.Select(a => new GameTooltipLine(a.RemoveLeadingColorTag(), TipText)));
+		}
+
+		var masteryLevel = skills.GetMasteryLevel(tab.Slot);
 		if (skill is null)
-			return string.Join(Environment.NewLine, new[]
-			{
-				this.TranslateTag(tree.NameTag, tree.Mastery.ToString()),
-				this.TranslateTag(tree.DescriptionTag),
-				Resources.CESkillPaneHint,
-			}.Where(l => l.Length != 0));
+		{
+			lines.Add(new GameTooltipLine(this.TranslateTag(tree.NameTag, tree.Mastery.ToString()), Color.White, Title: true));
+			lines.Add(new GameTooltipLine(this.TranslateTag(tree.DescriptionTag), TipText));
+			if (masteryLevel > 0)
+				Level("tagCurrentLevel", "Current Level : {%d0}", tree.Id, masteryLevel);
+			if (masteryLevel < tree.MaxLevel)
+				Level("tagNextLevel", "Next Level : {%d0}", tree.Id, masteryLevel + 1);
+			this.Requirements(lines, masteryLevel < tree.MaxLevel, []);
+			lines.Add(GameTooltipLine.Blank);
+			lines.Add(new GameTooltipLine(Resources.CESkillPaneHint, TipHint));
+			return lines;
+		}
 
+		var points = skills.GetLevel(skill.Id);
 		var bonus = SkillBonus.For(this._gearAugments, tree, skill.Id);
-		return string.Join(Environment.NewLine, new[]
-			{
-				this.TranslateTag(skill.NameTag, skill.Id.PrettyFileName),
-				string.Format(Resources.CESkillRequiresMastery, skill.RequiredMasteryLevel),
-				this.TranslateTag(skill.DescriptionTag),
-			}
-			.Concat(this.GearBonusLines(tree, skill, bonus))
-			.Append(Resources.CESkillPaneHint)
-			.Where(l => l.Length != 0));
+
+		// The game counts the levels of the equipment once the skill has a point.
+		var current = points > 0 ? points + bonus.Total : 0;
+		lines.Add(new GameTooltipLine(this.TranslateTag(skill.NameTag, skill.Id.PrettyFileName), Color.White, Title: true));
+		lines.Add(new GameTooltipLine(this.TranslateTag(skill.DescriptionTag), TipText));
+		if (current > 0)
+			Level("tagCurrentLevel", "Current Level : {%d0}", skill.Id, current);
+		if (points < skill.MaxLevel)
+			Level("tagNextLevel", "Next Level : {%d0}", skill.Id, current + 1);
+
+		var refused = new List<string>();
+		if (masteryLevel < skill.RequiredMasteryLevel)
+		{
+			var missing = skill.RequiredMasteryLevel - masteryLevel;
+			var mastery = this.TranslateTag(tree.NameTag, tree.Mastery.ToString());
+			refused.Add(missing == 1
+				? this.GameText("tagSkillReq01Singular", "This skill requires {%d0} additional skill point in {%s1}.", missing, mastery)
+				: this.GameText("tagSkillReq01", "This skill requires {%d0} additional skill points in {%s1}.", missing, mastery));
+		}
+
+		if (skill.ParentId is { } parentId && skills.GetLevel(parentId) == 0
+			&& tree.Skills.FirstOrDefault(s => s.Id == parentId) is { } parent)
+			refused.Add(this.GameText("tagSkillReq03", "This skill requires the {%s1} skill.", 1, this.TranslateTag(parent.NameTag, parent.Id.PrettyFileName)));
+
+		this.Requirements(lines, points < skill.MaxLevel, refused);
+
+		var gear = this.GearBonusLines(tree, skill, bonus).ToList();
+		if (gear.Count != 0)
+		{
+			lines.Add(GameTooltipLine.Blank);
+			lines.AddRange(gear.Select(g => new GameTooltipLine(g, TipGear)));
+		}
+
+		lines.Add(GameTooltipLine.Blank);
+		lines.Add(new GameTooltipLine(Resources.CESkillPaneHint, TipHint));
+		return lines;
+	}
+
+	/// <summary>
+	/// The last part of the game's skill tool tip: what stops a point, in red; else "No skill points to add." when none is
+	/// left, or "Press to add unused skill points." when a point can be spent.
+	/// </summary>
+	private void Requirements(List<GameTooltipLine> lines, bool belowMax, List<string> refused)
+	{
+		if (refused.Count == 0 && !belowMax)
+			return;
+
+		lines.Add(GameTooltipLine.Blank);
+		if (refused.Count != 0)
+			lines.AddRange(refused.Select(r => new GameTooltipLine(r, TipRefused)));
+		else if (this._skills!.AvailablePoints <= 0)
+			lines.Add(new GameTooltipLine(this.GameText("NoSkillPointsToAdd", "No skill points to add."), TipRefused));
+		else
+			lines.Add(new GameTooltipLine(this.GameText("PressToAddUnusedSkillPoints", "Press to add unused skill points."), Color.White));
 	}
 
 	/// <summary>Shows the state of the editor in every page and in the skill points box.</summary>

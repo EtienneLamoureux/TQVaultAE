@@ -3,6 +3,7 @@ using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.Services;
 
@@ -29,6 +30,10 @@ public class CharacterEditService(IPathIO pathIO, IPlayerCollectionProvider play
 	/// <inheritdoc/>
 	public CharacterSkillEditor CreateSkillEditor(PlayerInfo info)
 		=> new(info.SkillRecordList, info.MasteriesAllowed, info.SkillPoints, this._skillTreeProvider.GetMasteryTree);
+
+	/// <inheritdoc/>
+	public GrantedSkill? DescribeSkill(RecordId skillId, int level)
+		=> this._itemProvider.GetSkillAtLevel(skillId, level);
 
 	/// <inheritdoc/>
 	public string GetMasteryDescriptionTag(RecordId masteryId)

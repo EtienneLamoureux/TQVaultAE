@@ -88,6 +88,10 @@ public partial class ItemProvider
 		return string.IsNullOrEmpty(shown.GetString("skillDisplayName", 0)) ? null : shown;
 	}
 
+	/// <inheritdoc/>
+	public GrantedSkill? GetSkillAtLevel(RecordId skillId, int level)
+		=> this.GetGrantedSkill(new Item(), skillId, Math.Max(1, level), null);
+
 	/// <summary>
 	/// Describes one granted skill at a level: name, icon, activation, description and effects.
 	/// A buff skill (<c>buffSkillName</c>) takes its name, icon, description and effects from its buff record.

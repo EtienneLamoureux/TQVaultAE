@@ -42,7 +42,7 @@ internal sealed partial class SkillPaneControl
 					state = view?.State.ToString(),
 					icon = view is { TierOpen: false } && button is { LockedIcon.Length: > 0 } ? button.LockedIcon : skill.Icon,
 					connectors = button is null || view is null ? 0 : SkillPaneLayout.Connectors(button, view.Level > 0).Count(),
-					toolTip = this.ToolTipText?.Invoke(skill),
+					toolTip = this.ToolTipLines?.Invoke(skill) is { } lines ? string.Join(Environment.NewLine, lines.Select(l => l.Text)) : null,
 				};
 			}).ToList(),
 		};
