@@ -49,3 +49,13 @@ immediate. A character read with another map's database (before it was linked) i
 changes.
 
 *Load all files* at startup only reads the characters of the startup map; the others are read when selected.
+
+## Incomplete items
+
+An item that names records the loaded game data lacks (its base item, an affix, a relic or charm, or a relic bonus of a
+mod whose data is not loaded: the character is not linked, its mod is not installed, or the item sits in a vault shown
+with another map's data) is shown incomplete:
+
+- its tooltip has a warning line with an icon under its name, then the missing records, one per line;
+- a missing name part (base item, prefix, suffix) shows the record's file name;
+- without its base item record it has no picture: the grid shows a "?" in one cell, so it stays visible and can be moved.

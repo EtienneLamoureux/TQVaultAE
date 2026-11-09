@@ -742,6 +742,8 @@ internal static partial class AutomationTools
 			name,
 			baseName,
 			baseItemId = item.BaseItemId.ToString(),
+			// Records the loaded game data lacks (a mod not loaded): the tooltip shows the item incomplete.
+			missingRecords = item.IsIncomplete ? item.MissingRecords.Select(m => new { role = m.Role.ToString(), id = m.Id.Raw }) : null,
 			x = item.PositionX,
 			y = item.PositionY,
 			width = item.Width,

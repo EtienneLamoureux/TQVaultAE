@@ -341,6 +341,11 @@ public class UIService : IUIService, IGameDataCache
 
 			itm.Width = 1;
 			itm.Height = 1;
+
+			// An item whose base record the loaded data lacks (a mod not loaded) has no picture: the "?" one in a single
+			// cell keeps it visible, so it can be found, moved and its tooltip read.
+			if (itm.baseItemInfo is null && !RecordId.IsNullOrEmpty(itm.BaseItemId))
+				bmp = this.DefaultBitmap;
 		}
 		return bmp;
 	}

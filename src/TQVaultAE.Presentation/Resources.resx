@@ -2266,4 +2266,22 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="ModLinkActiveMap" xml:space="preserve">
     <value>Mod data: {0}</value>
   </data>
+	<data name="ItemIncomplete" xml:space="preserve">
+    <value>Incomplete item: the loaded game data lacks some of its records (a mod not linked or not installed).</value>
+  </data>
+	<data name="ItemIncompleteBaseItem" xml:space="preserve">
+    <value>Base item</value>
+  </data>
+	<data name="ItemIncompletePrefix" xml:space="preserve">
+    <value>Prefix</value>
+  </data>
+	<data name="ItemIncompleteSuffix" xml:space="preserve">
+    <value>Suffix</value>
+  </data>
+	<data name="ItemIncompleteRelic" xml:space="preserve">
+    <value>Relic or charm</value>
+  </data>
+	<data name="ItemIncompleteRelicBonus" xml:space="preserve">
+    <value>Relic bonus</value>
+  </data>
 </root>

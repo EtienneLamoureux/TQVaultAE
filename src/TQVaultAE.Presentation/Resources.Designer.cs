@@ -6095,6 +6095,60 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Incomplete item: the loaded game data lacks some of its records (a mod not linked or not installed)..
+        /// </summary>
+        public static string ItemIncomplete {
+            get {
+                return ResourceManager.GetString("ItemIncomplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Base item.
+        /// </summary>
+        public static string ItemIncompleteBaseItem {
+            get {
+                return ResourceManager.GetString("ItemIncompleteBaseItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prefix.
+        /// </summary>
+        public static string ItemIncompletePrefix {
+            get {
+                return ResourceManager.GetString("ItemIncompletePrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suffix.
+        /// </summary>
+        public static string ItemIncompleteSuffix {
+            get {
+                return ResourceManager.GetString("ItemIncompleteSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Relic or charm.
+        /// </summary>
+        public static string ItemIncompleteRelic {
+            get {
+                return ResourceManager.GetString("ItemIncompleteRelic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Relic bonus.
+        /// </summary>
+        public static string ItemIncompleteRelicBonus {
+            get {
+                return ResourceManager.GetString("ItemIncompleteRelicBonus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No installed mod has the {0} records this character uses that the base game lacks..
         /// </summary>
         public static string ModLinkSuggestionNone {

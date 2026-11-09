@@ -1895,4 +1895,22 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="ModLinkActiveMap" xml:space="preserve">
     <value>Données du mod : {0}</value>
   </data>
+	<data name="ItemIncomplete" xml:space="preserve">
+    <value>Objet incomplet : les données de jeu chargées n'ont pas certains de ses enregistrements (mod non lié ou non installé).</value>
+  </data>
+	<data name="ItemIncompleteBaseItem" xml:space="preserve">
+    <value>Objet de base</value>
+  </data>
+	<data name="ItemIncompletePrefix" xml:space="preserve">
+    <value>Préfixe</value>
+  </data>
+	<data name="ItemIncompleteSuffix" xml:space="preserve">
+    <value>Suffixe</value>
+  </data>
+	<data name="ItemIncompleteRelic" xml:space="preserve">
+    <value>Relique ou charme</value>
+  </data>
+	<data name="ItemIncompleteRelicBonus" xml:space="preserve">
+    <value>Bonus de relique</value>
+  </data>
 </root>

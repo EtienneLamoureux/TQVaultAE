@@ -200,7 +200,8 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 
 			if (!k.Item.IsRelicOrCharm && !RecordId.IsNullOrEmpty(k.Item.prefixID))
 			{
-				res.PrefixInfoDescription = k.Item.prefixID.Raw;
+				// A record the loaded data lacks (a mod not loaded): its file name, the item is shown incomplete.
+				res.PrefixInfoDescription = k.Item.prefixID.PrettyFileName;
 				if (k.Item.prefixInfo is not null)
 				{
 					if (TranslationService.TryTranslateXTag(k.Item.prefixInfo.DescriptionTag, out var desc))
@@ -375,6 +376,11 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 						res.NumberFormat = string.Format(CultureInfo.CurrentCulture, "({0:n0})", k.Item.Number);
 				}
 			}
+			else if (!RecordId.IsNullOrEmpty(k.Item.BaseItemId))
+			{
+				// A base record the loaded data lacks: its file name rather than no name at all.
+				res.BaseItemInfoDescription = k.Item.BaseItemId.PrettyFileName;
+			}
 
 			#endregion
 
@@ -390,7 +396,7 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 								: k.Item.suffixID.Raw;
 				}
 				else
-					res.SuffixInfoDescription = k.Item.suffixID.Raw;
+					res.SuffixInfoDescription = k.Item.suffixID.PrettyFileName;
 			}
 
 			#endregion
