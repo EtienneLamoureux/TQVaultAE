@@ -75,17 +75,6 @@ public sealed class SettingsEditor
 	}
 
 	/// <summary>
-	/// Turning off the mods resets the custom map.
-	/// </summary>
-	public void SetModEnabled(bool value)
-	{
-		if (this.Current.ModEnabled && !value)
-			this.Current.CustomMap = string.Empty;
-
-		this.Current.ModEnabled = value;
-	}
-
-	/// <summary>
 	/// Sets the vault path, trimmed; a change of case only is ignored.
 	/// </summary>
 	/// <returns>true when the path changed.</returns>
@@ -149,10 +138,6 @@ public sealed class SettingsEditor
 		|| !string.Equals(this.Current.TQPath, this.Original.TQPath, StringComparison.OrdinalIgnoreCase)
 		|| !string.Equals(this.Current.TQITPath, this.Original.TQITPath, StringComparison.OrdinalIgnoreCase);
 
-	public bool CustomMapsChanged
-		=> this.Current.ModEnabled != this.Original.ModEnabled
-		|| this.Current.CustomMap != this.Original.CustomMap;
-
 	/// <summary>
 	/// A setting read once at startup changed: the font, the hot reload, the backups or the original game support.
 	/// </summary>
@@ -178,7 +163,7 @@ public sealed class SettingsEditor
 	/// Why the changes need a restart, if they do.
 	/// </summary>
 	public RestartReason RestartReason
-		=> RestartRule.Evaluate(this.LanguageChanged, this.GamePathChanged, this.CustomMapsChanged, this.UISettingChanged);
+		=> RestartRule.Evaluate(this.LanguageChanged, this.GamePathChanged, this.UISettingChanged);
 
 	#endregion
 

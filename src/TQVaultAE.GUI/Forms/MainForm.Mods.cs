@@ -26,35 +26,15 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// After a switch of map: the label, the watchers of the shared stash files (one set per map) and the panels, whose
-	/// pictures and texts now come from the new map's data.
+	/// After a switch of map: the watchers of the shared stash files (one set per map) and the panels, whose pictures and
+	/// texts now come from the new map's data.
 	/// </summary>
 	private void GameMapService_ActiveMapChanged(object? sender, EventArgs e)
 	{
-		this.UpdateCustomMapText();
-
 		if (this.loadingComplete)
 			this.WatchSharedStashFiles();
 
 		this.Invalidate(true);
-	}
-
-	/// <summary>
-	/// Shows the active custom map (mod) above the character list, hidden for the base game.
-	/// </summary>
-	private void UpdateCustomMapText()
-	{
-		string map = this.gameMapService.ActiveMap;
-		this.customMapText.Visible = map.Length > 0;
-		if (map.Length == 0)
-			return;
-
-		this.customMapText.Text = string.Format(
-			map.Contains(@"\CUSTOMMAPS\", StringComparison.OrdinalIgnoreCase)
-				? "Legacy : " + Resources.MainFormCustomMapLabel
-				: "Steam : " + Resources.MainFormCustomMapLabel
-			, this.PathIO.GetFileName(map)
-		);
 	}
 
 	/// <summary>
@@ -102,9 +82,11 @@ public partial class MainForm
 		if (!changed)
 			return;
 
-		this.comboBoxCharacter.RefreshItem(save);
 		if (this.comboBoxCharacter.SelectedItem == save)
 			this.LoadPlayerAndStashes(save);
+
+		// After the load: the class name may come from the new mod's text.
+		this.comboBoxCharacter.RefreshItem(save);
 
 		this.Refresh();
 	}

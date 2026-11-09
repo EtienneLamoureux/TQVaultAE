@@ -2310,15 +2310,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} Custom Map.
-        /// </summary>
-        public static string MainFormCustomMapLabel {
-            get {
-                return ResourceManager.GetString("MainFormCustomMapLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Error extracting database.
         /// </summary>
         public static string MainFormDatabaseError {
@@ -2419,27 +2410,6 @@ namespace TQVaultAE.Presentation {
         public static string MainFormMaintainVault {
             get {
                 return ResourceManager.GetString("MainFormMaintainVault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Custom Maps Setting Changed.
-        /// </summary>
-        public static string MainFormMapsChanged {
-            get {
-                return ResourceManager.GetString("MainFormMapsChanged", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Custom Maps setting has been changed.
-        ///
-        ///You will need to restart TQVault for it take effect.
-        ///Would you like to restart TQVault now?.
-        /// </summary>
-        public static string MainFormMapsChangedMsg {
-            get {
-                return ResourceManager.GetString("MainFormMapsChangedMsg", resourceCulture);
             }
         }
         
@@ -4721,26 +4691,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable Custom Maps.
-        /// </summary>
-        public static string SettingsEnableMod {
-            get {
-                return ResourceManager.GetString("SettingsEnableMod", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Selecting this item will 
-        ///enable the drop down
-        ///to select custom maps..
-        /// </summary>
-        public static string SettingsEnableModTT {
-            get {
-                return ResourceManager.GetString("SettingsEnableModTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Check Now.
         /// </summary>
         public static string SettingsForceCheck {
@@ -4846,15 +4796,6 @@ namespace TQVaultAE.Presentation {
         public static string SettingsLabel4 {
             get {
                 return ResourceManager.GetString("SettingsLabel4", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Custom Map.
-        /// </summary>
-        public static string SettingsLabel5 {
-            get {
-                return ResourceManager.GetString("SettingsLabel5", resourceCulture);
             }
         }
         

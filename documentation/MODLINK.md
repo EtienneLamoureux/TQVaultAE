@@ -2,7 +2,8 @@
 
 Titan Quest keeps custom map (mod) characters in `SaveData\User\_<name>`, apart from the main campaign ones in
 `SaveData\Main`, but nothing in their save files names the mod they were played with. TQVault lists both kinds of
-characters together and loads each one with its own mod's data, in the same session.
+characters together and loads each one with its own mod's data, in the same session. The link of a character to its mod
+is the only way to choose a mod: there is no mod setting nor `/mod:` command-line argument any more.
 
 ## The link file
 
@@ -39,7 +40,7 @@ apart: the dialog says so.
 |---|---|
 | Main campaign (`SaveData\Main`) | the base game |
 | Custom map, linked to an installed mod | that mod |
-| Custom map, not linked, or linked to a mod not installed | the custom map of the command line (`/mod:`), else the one chosen in the settings when mods are enabled, else the base game |
+| Custom map, not linked, or linked to a mod not installed | the base game |
 
 Selecting a character makes its map the active one: its database and archives, and its shared stash files
 (`SaveData\Sys\<mod>\winsys.dxb` and `miscsys.dxb`, or `SaveData\Sys\` for the base game). Each map's database is read

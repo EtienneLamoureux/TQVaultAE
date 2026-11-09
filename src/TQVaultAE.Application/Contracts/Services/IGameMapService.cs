@@ -26,19 +26,12 @@ public interface IGameMapService
 	string ActiveMap { get; }
 
 	/// <summary>
-	/// The custom map used for custom map characters without a link: the map given on the command line, else the one
-	/// chosen in the settings when mods are enabled; empty for none.
-	/// </summary>
-	string DefaultCustomMap { get; }
-
-	/// <summary>
 	/// Raised after the active map changed.
 	/// </summary>
 	event EventHandler? ActiveMapChanged;
 
 	/// <summary>
-	/// The custom map a character is played with: none for a main campaign character, its linked mod when installed,
-	/// else <see cref="DefaultCustomMap"/>.
+	/// The custom map a character is played with: its linked mod when installed, else none (the base game data).
 	/// </summary>
 	string MapFor(PlayerSave save);
 

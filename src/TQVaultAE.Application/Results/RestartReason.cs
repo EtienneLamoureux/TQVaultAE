@@ -14,9 +14,6 @@ public enum RestartReason
 	/// <summary>The game path changed.</summary>
 	GamePath,
 
-	/// <summary>The custom map changed.</summary>
-	CustomMaps,
-
 	/// <summary>The language changed.</summary>
 	Language,
 }
@@ -29,9 +26,9 @@ public static class RestartRule
 	/// <summary>
 	/// Gets the reason to restart for the changed settings.
 	/// </summary>
-	public static RestartReason Evaluate(bool languageChanged, bool gamePathChanged, bool customMapsChanged, bool uiSettingChanged)
+	public static RestartReason Evaluate(bool languageChanged, bool gamePathChanged, bool uiSettingChanged)
 	{
-		if (!languageChanged && !gamePathChanged && !customMapsChanged && !uiSettingChanged)
+		if (!languageChanged && !gamePathChanged && !uiSettingChanged)
 			return RestartReason.None;
 
 		if ((gamePathChanged && languageChanged) || uiSettingChanged)
@@ -39,9 +36,6 @@ public static class RestartRule
 
 		if (gamePathChanged)
 			return RestartReason.GamePath;
-
-		if (customMapsChanged)
-			return RestartReason.CustomMaps;
 
 		return RestartReason.Language;
 	}

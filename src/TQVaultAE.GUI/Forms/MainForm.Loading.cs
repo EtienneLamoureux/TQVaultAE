@@ -209,10 +209,6 @@ public partial class MainForm
 		var args = this.commandLineArgs;
 		args.ThrowIfInvalid();
 
-		// Check to see if we loaded something from the command line.
-		if (args.HasMapName)
-			GamePathResolver.MapName = args.MapName ?? string.Empty;
-
 		this.resourcesLoaded = true;
 		progress.Report(1);
 
@@ -337,7 +333,6 @@ public partial class MainForm
 				{
 					RestartReason.Settings => (Resources.MainFormSettingsChanged, Resources.MainFormSettingsChangedMsg),
 					RestartReason.GamePath => (Resources.MainFormPathsChanged, Resources.MainFormPathsChangedMsg),
-					RestartReason.CustomMaps => (Resources.MainFormMapsChanged, Resources.MainFormMapsChangedMsg),
 					_ => (Resources.MainFormLanguageChanged, Resources.MainFormLanguageChangedMsg),
 				};
 

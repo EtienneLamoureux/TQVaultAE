@@ -310,9 +310,6 @@ Spanish translation by Kurrus.
   <data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>Отображать игрока</value>
   </data>
-  <data name="MainFormCustomMapLabel" xml:space="preserve">
-    <value>Пользовательская карта {0}</value>
-  </data>
   <data name="MainFormDatabaseError" xml:space="preserve">
     <value>Ошибка распаковки базы данных</value>
   </data>
@@ -340,15 +337,6 @@ Spanish translation by Kurrus.
   </data>
   <data name="MainFormMaintainVault" xml:space="preserve">
     <value>Управление файлами хранилищ...</value>
-  </data>
-  <data name="MainFormMapsChanged" xml:space="preserve">
-    <value>Настройки пользовательских карт изменены</value>
-  </data>
-  <data name="MainFormMapsChangedMsg" xml:space="preserve">
-    <value>Настройки пользовательских карт были изменены.
-
-Необходимо перезапустить TQVault чтобы изменения вступили в силу.
-Хотите перезапустить TQVault сейчас?</value>
   </data>
   <data name="MainFormNoCharacters" xml:space="preserve">
     <value>Не найдено персонажей TQ</value>
@@ -728,13 +716,6 @@ Titan Quest и загружать всех персонажей, которые 
   <data name="SettingsDetectLanguage" xml:space="preserve">
     <value>Автоматически определять язык</value>
   </data>
-  <data name="SettingsEnableMod" xml:space="preserve">
-    <value>Разрешить пользовательские карты</value>
-  </data>
-  <data name="SettingsEnableModTT" xml:space="preserve">
-    <value>Выбор этого пункта позволит программе видеть персонажей 
- из пользовательских карт. (требуется перезапуск)</value>
-  </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Проверить</value>
   </data>
@@ -752,9 +733,6 @@ Titan Quest и загружать всех персонажей, которые 
   </data>
   <data name="SettingsLabel4" xml:space="preserve">
     <value>Путь к игре IT</value>
-  </data>
-  <data name="SettingsLabel5" xml:space="preserve">
-    <value>Пользовательская карта</value>
   </data>
   <data name="SettingsLoadChar" xml:space="preserve">
     <value>Автоматически загружать последнего открытого персонажа</value>

@@ -314,9 +314,6 @@ Voulez-vous redémarrer TQVault ?</value>
 	<data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>Voir personnage</value>
   </data>
-	<data name="MainFormCustomMapLabel" xml:space="preserve">
-    <value>Quête personnalisée {0}</value>
-  </data>
 	<data name="MainFormDatabaseError" xml:space="preserve">
     <value>Erreur en extrayant la base de données</value>
   </data>
@@ -343,14 +340,6 @@ Voulez-vous redémarrer TQVault maintenant ?</value>
   </data>
 	<data name="MainFormMaintainVault" xml:space="preserve">
     <value>Gérer les fichiers de coffres ...</value>
-  </data>
-	<data name="MainFormMapsChanged" xml:space="preserve">
-    <value>Configuration des quêtes personnalisées modifiée</value>
-  </data>
-	<data name="MainFormMapsChangedMsg" xml:space="preserve">
-    <value>La configuration des quêtes personnalisées a été changée.
-Vous devez redémarrer TQVault pour que cela fasse effet.
-Voulez-vous redémarrer TQVault maintenant ?</value>
   </data>
 	<data name="MainFormNoCharacters" xml:space="preserve">
     <value>Aucun personnage TQ détecté</value>
@@ -730,14 +719,6 @@ le démarrage si la connection internet est lente.</value>
 	<data name="SettingsDetectLanguage" xml:space="preserve">
     <value>Détection automatique de la langue</value>
   </data>
-	<data name="SettingsEnableMod" xml:space="preserve">
-    <value>Autoriser les quêtes personnalisées</value>
-  </data>
-	<data name="SettingsEnableModTT" xml:space="preserve">
-    <value>En cochant cette fonction, vous
-pourrez sélectionner des quêtes
-personnalisées avec le menu déroulant.</value>
-  </data>
 	<data name="SettingsForceCheck" xml:space="preserve">
     <value>Vérifier maintenant</value>
   </data>
@@ -756,9 +737,6 @@ disponibles.</value>
   </data>
 	<data name="SettingsLabel4" xml:space="preserve">
     <value>Chemin d'accès du jeu IT</value>
-  </data>
-	<data name="SettingsLabel5" xml:space="preserve">
-    <value>Quête personnalisée</value>
   </data>
 	<data name="SettingsLoadChar" xml:space="preserve">
     <value>Charger automatiquement le dernier personnage ouvert</value>

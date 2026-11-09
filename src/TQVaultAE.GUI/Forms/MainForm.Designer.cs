@@ -38,7 +38,6 @@ public partial class MainForm
 	/// <summary>
 	/// Windows Form Custom Map Text Label
 	/// </summary>
-	private ScalingLabel customMapText;
 
 	/// <summary>
 	/// Windows Form Panel Selection Button
@@ -103,7 +102,6 @@ public partial class MainForm
         this.NotificationText = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.vaultListComboBox = new TQVaultAE.GUI.Components.Scaling.ScalingComboBox();
         this.configureButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
-        this.customMapText = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.showVaulButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.aboutButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.titleLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
@@ -220,19 +218,6 @@ public partial class MainForm
         this.configureButton.UseCustomGraphic = true;
         this.configureButton.UseVisualStyleBackColor = false;
         this.configureButton.Click += new System.EventHandler(this.ConfigureButtonClick);
-        // 
-        // customMapText
-        // 
-        this.customMapText.BackColor = System.Drawing.Color.Gold;
-        this.customMapText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-        this.customMapText.Dock = System.Windows.Forms.DockStyle.Right;
-        this.customMapText.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-        this.customMapText.ForeColor = System.Drawing.Color.Black;
-        this.customMapText.Location = new System.Drawing.Point(216, 104);
-        this.customMapText.Name = "customMapText";
-        this.customMapText.Size = new System.Drawing.Size(380, 23);
-        this.customMapText.TabIndex = 11;
-        this.customMapText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
         // 
         // showVaulButton
         // 
@@ -357,7 +342,6 @@ public partial class MainForm
         this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelRightPanels, 2, 1);
         this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelVaultSelector, 0, 0);
         this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelRightComboBox, 2, 0);
-        this.tableLayoutPanelMain.Controls.Add(this.customMapText, 0, 2);
         this.tableLayoutPanelMain.Controls.Add(this.itemTextPanel, 0, 4);
         this.tableLayoutPanelMain.Location = new System.Drawing.Point(15, 60);
         this.tableLayoutPanelMain.Margin = new System.Windows.Forms.Padding(0);

@@ -13,57 +13,35 @@ public class CommandLineArgsTests
 		var args = new CommandLineArgs([Exe]);
 
 		args.IsAutomatic.Should().BeFalse();
-		args.HasMapName.Should().BeFalse();
 		args.Error.Should().BeNull();
 	}
 
 	[Fact]
-	public void PlayerOnly_IsAutomaticWithoutMap()
+	public void Player_IsAutomatic()
 	{
 		var args = new CommandLineArgs([Exe, "Hero"]);
 
 		args.Player.Should().Be("Hero");
-		args.MapName.Should().BeNull();
 		args.IsAutomatic.Should().BeTrue();
 	}
 
 	[Fact]
-	public void ModOnly_TakesTheMapNameWhateverTheCase()
+	public void ModArgument_IsAnError_SinceTheModComesFromTheCharacterLink()
 	{
 		var args = new CommandLineArgs([Exe, " /Mod:Atlantis "]);
 
-		args.MapName.Should().Be("Atlantis");
 		args.Player.Should().BeNull();
-		args.HasMapName.Should().BeTrue();
-		args.IsAutomatic.Should().BeTrue();
+		args.Error.Should().Contain("Unknown argument");
+		var act = args.ThrowIfInvalid;
+		act.Should().Throw<ArgumentException>().WithMessage("*Unknown argument*");
 	}
 
 	[Theory]
 	[InlineData("Hero", "/mod:Atlantis")]
-	[InlineData("/mod:Atlantis", "Hero")]
-	public void PlayerAndMod_InAnyOrder(string first, string second)
+	[InlineData("Hero", "Villain")]
+	public void TwoArguments_IsAnError(string first, string second)
 	{
 		var args = new CommandLineArgs([Exe, first, second]);
-
-		args.Player.Should().Be("Hero");
-		args.MapName.Should().Be("Atlantis");
-		args.Error.Should().BeNull();
-	}
-
-	[Fact]
-	public void TwoArgumentsWithoutMod_IsAnError()
-	{
-		var args = new CommandLineArgs([Exe, "Hero", "Villain"]);
-
-		args.Error.Should().Contain("Unknown arguments");
-		var act = args.ThrowIfInvalid;
-		act.Should().Throw<ArgumentException>().WithMessage("*Unknown arguments*");
-	}
-
-	[Fact]
-	public void TooManyArguments_IsAnError()
-	{
-		var args = new CommandLineArgs([Exe, "a", "b", "c"]);
 
 		args.Error.Should().Contain("Too many arguments");
 	}

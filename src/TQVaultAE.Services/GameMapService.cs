@@ -4,7 +4,6 @@ using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
-using TQVaultAE.Config;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.Services;
@@ -15,8 +14,6 @@ public class GameMapService(
 	, IDatabaseMaps databaseMaps
 	, IGamePathService gamePathService
 	, IModLinkService modLinkService
-	, UserSettings userSettings
-	, CommandLineArgs commandLineArgs
 	, IEnumerable<IGameDataCache> gameDataCaches
 ) : IGameMapService
 {
@@ -24,8 +21,6 @@ public class GameMapService(
 	private readonly IDatabaseMaps DatabaseMaps = databaseMaps;
 	private readonly IGamePathService GamePathService = gamePathService;
 	private readonly IModLinkService ModLinkService = modLinkService;
-	private readonly UserSettings USettings = userSettings;
-	private readonly CommandLineArgs CommandLineArgs = commandLineArgs;
 	private readonly IReadOnlyList<IGameDataCache> GameDataCaches = [.. gameDataCaches];
 
 	/// <summary>
@@ -40,25 +35,18 @@ public class GameMapService(
 	public string ActiveMap => GameMaps.Normalize(this.DatabaseMaps.ActiveMapFolder);
 
 	/// <inheritdoc/>
-	public string DefaultCustomMap
-		=> GameMaps.Normalize(this.CommandLineArgs.HasMapName
-			? this.CommandLineArgs.MapName
-			: this.USettings.ModEnabled ? this.USettings.CustomMap : null);
-
-	/// <inheritdoc/>
 	public CharacterMod ModOf(PlayerSave save)
 		=> this.ModLinkService.Resolve(save.Folder, save.IsCustom);
 
 	/// <inheritdoc/>
 	public string MapFor(PlayerSave save)
-		=> this.MapFor(this.ModOf(save));
+		=> MapFor(this.ModOf(save));
 
-	private string MapFor(CharacterMod mod) => mod.State switch
-	{
-		CharacterModState.BaseGame => string.Empty,
-		CharacterModState.Linked => GameMaps.Normalize(mod.Mod!.Folder),
-		_ => this.DefaultCustomMap,
-	};
+	/// <summary>
+	/// Only a link to an installed mod gives a custom map: the other characters use the base game data.
+	/// </summary>
+	private static string MapFor(CharacterMod mod)
+		=> mod.State == CharacterModState.Linked ? GameMaps.Normalize(mod.Mod!.Folder) : string.Empty;
 
 	/// <inheritdoc/>
 	public bool UsesActiveMap(PlayerSave save)
@@ -103,7 +91,7 @@ public class GameMapService(
 	public void Refresh(PlayerSave save)
 	{
 		var mod = this.ModOf(save);
-		save.CustomMap = this.MapFor(mod);
+		save.CustomMap = MapFor(mod);
 		save.ModLabel = mod.State switch
 		{
 			CharacterModState.Linked => mod.Mod!.Name,

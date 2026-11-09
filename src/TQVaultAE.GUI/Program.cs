@@ -216,7 +216,6 @@ public static class Program
 				ManageCulture();
 				SetUILanguage(startupService.ResolveUICultureName());
 				ShowStartupNotice(startupService.SetupGamePaths());
-				startupService.SetupMapName();
 			}
 			catch (ExGamePathNotFound ex)
 			{

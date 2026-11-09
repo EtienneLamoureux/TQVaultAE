@@ -407,6 +407,10 @@ public partial class ComboBoxCharacter : UserControl
 	{
 		var item = this.DropDown.Items.First(i => i.Item == selectedSave);
 		item.RefreshContent();
+
+		// The text shown for the selection too (its mod label, its class).
+		if (this.SelectedItem == selectedSave)
+			this.RefreshContent();
 	}
 
 	private void RefreshMenuTagList()

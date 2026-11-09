@@ -324,9 +324,6 @@ Would you like to restart TQVault?</value>
 	<data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>Show Player</value>
   </data>
-	<data name="MainFormCustomMapLabel" xml:space="preserve">
-    <value>{0} Custom Map</value>
-  </data>
 	<data name="MainFormDatabaseError" xml:space="preserve">
     <value>Error extracting database</value>
   </data>
@@ -354,15 +351,6 @@ Would you like to restart TQVault now?</value>
   </data>
 	<data name="MainFormMaintainVault" xml:space="preserve">
     <value>Maintain Vault Files...</value>
-  </data>
-	<data name="MainFormMapsChanged" xml:space="preserve">
-    <value>Custom Maps Setting Changed</value>
-  </data>
-	<data name="MainFormMapsChangedMsg" xml:space="preserve">
-    <value>The Custom Maps setting has been changed.
-
-You will need to restart TQVault for it take effect.
-Would you like to restart TQVault now?</value>
   </data>
 	<data name="MainFormNoCharacters" xml:space="preserve">
     <value>No TQ characters detected</value>
@@ -750,14 +738,6 @@ take longer if the network connection is slow.</value>
 	<data name="SettingsDetectLanguage" xml:space="preserve">
     <value>Auto detect Language</value>
   </data>
-	<data name="SettingsEnableMod" xml:space="preserve">
-    <value>Enable Custom Maps</value>
-  </data>
-	<data name="SettingsEnableModTT" xml:space="preserve">
-    <value>Selecting this item will 
-enable the drop down
-to select custom maps.</value>
-  </data>
 	<data name="SettingsForceCheck" xml:space="preserve">
     <value>Check Now</value>
   </data>
@@ -776,9 +756,6 @@ available.</value>
   </data>
 	<data name="SettingsLabel4" xml:space="preserve">
     <value>IT Game Path</value>
-  </data>
-	<data name="SettingsLabel5" xml:space="preserve">
-    <value>Custom Map</value>
   </data>
 	<data name="SettingsLoadChar" xml:space="preserve">
     <value>Automatically Load the last opened Character</value>

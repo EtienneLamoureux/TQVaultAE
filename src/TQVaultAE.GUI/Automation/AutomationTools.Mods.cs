@@ -14,7 +14,7 @@ internal static partial class AutomationTools
 	#region Mod link
 
 	[McpServerTool(Name = "mod_state", ReadOnly = true)]
-	[Description("The custom map (mod) data of the session: the active map, the maps whose database is loaded, the map of unlinked custom map characters, the active map's transfer stash and relic vault files, the installed mods, and for each listed character whether it is a custom map one, its link state, its mod and the map it is loaded with. Reads the link files, changes nothing.")]
+	[Description("The custom map (mod) data of the session: the active map, the maps whose database is loaded, the active map's transfer stash and relic vault files, the installed mods, and for each listed character whether it is a custom map one, its link state, its mod and the map it is loaded with. Reads the link files, changes nothing.")]
 	public static string ModState()
 		=> AutomationHost.OnUi(form =>
 		{
@@ -24,7 +24,6 @@ internal static partial class AutomationTools
 			{
 				activeMap = maps.ActiveMap,
 				loadedMaps = Program.ServiceProvider.GetRequiredService<IDatabaseMaps>().LoadedMapFolders,
-				defaultCustomMap = maps.DefaultCustomMap,
 				transferStash = Program.ServiceProvider.GetRequiredService<IGamePathService>().TransferStashFileFullPath,
 				relicVault = Program.ServiceProvider.GetRequiredService<IGamePathService>().RelicVaultStashFileFullPath,
 				installedMods = links.GetInstalledMods().Select(m => new { m.Name, m.Folder, source = m.Source.ToString() }),

@@ -169,9 +169,8 @@ public class ModLinkDialog : Form
 		var save = this._save!;
 		var mod = this.GameMapService.ModOf(save);
 
-		string loadedWith = string.IsNullOrEmpty(this.GameMapService.DefaultCustomMap)
-			? Resources.ModLinkBaseGameData
-			: Path.GetFileName(this.GameMapService.DefaultCustomMap);
+		// Without a link to an installed mod, a character is loaded with the base game data.
+		string loadedWith = Resources.ModLinkBaseGameData;
 
 		this.labelState.Text = mod.State switch
 		{

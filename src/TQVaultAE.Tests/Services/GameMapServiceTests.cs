@@ -5,7 +5,6 @@ using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
-using TQVaultAE.Config;
 using TQVaultAE.Services;
 
 namespace TQVaultAE.Tests.Services;
@@ -22,7 +21,6 @@ public class GameMapServiceTests
 	private readonly Mock<IGamePathService> _gamePath = new();
 	private readonly Mock<IModLinkService> _links = new();
 	private readonly Mock<IGameDataCache> _cache = new();
-	private readonly UserSettings _settings = new();
 	private string _active = string.Empty;
 
 	public GameMapServiceTests()
@@ -40,9 +38,9 @@ public class GameMapServiceTests
 		this._links.Setup(l => l.Resolve(It.IsAny<string>(), true)).Returns(CharacterMod.Unlinked);
 	}
 
-	private GameMapService CreateService(params string[] commandLine)
+	private GameMapService CreateService()
 		=> new(new Mock<ILogger<GameMapService>>().Object, this._maps.Object, this._gamePath.Object, this._links.Object
-			, this._settings, new CommandLineArgs(["TQVaultAE.exe", .. commandLine]), [this._cache.Object]);
+			, [this._cache.Object]);
 
 	private static PlayerSave Save(string name, bool isCustom)
 	{
@@ -57,38 +55,30 @@ public class GameMapServiceTests
 			, new InstalledMod(Path.GetFileName(modFolder), modFolder, ModSource.SteamWorkshop), new ModLinkFile { Mod = Path.GetFileName(modFolder) }));
 
 	[Fact]
-	public void MapFor_MainCampaignCharacter_IsTheBaseGameEvenWhenModsAreEnabled()
-	{
-		this._settings.ModEnabled = true;
-		this._settings.CustomMap = Shadow;
-
-		this.CreateService().MapFor(Save("HeroD", isCustom: false)).Should().BeEmpty();
-	}
+	public void MapFor_MainCampaignCharacter_IsTheBaseGame()
+		=> this.CreateService().MapFor(Save("HeroD", isCustom: false)).Should().BeEmpty();
 
 	[Fact]
-	public void MapFor_LinkedCharacter_IsItsModWhateverTheSettings()
+	public void MapFor_LinkedCharacter_IsItsMod()
 	{
-		this._settings.ModEnabled = true;
-		this._settings.CustomMap = Masteries;
 		var heroA = Save("HeroA", isCustom: true);
 		this.LinkTo(heroA, Shadow);
 
 		this.CreateService().MapFor(heroA).Should().Be(Shadow);
 	}
 
-	[Theory]
-	[InlineData(false, false, "")]
-	[InlineData(true, false, "settings")]
-	[InlineData(true, true, "command line")]
-	[InlineData(false, true, "command line")]
-	public void MapFor_UnlinkedCharacter_IsTheCommandLineMapElseTheSettingsOne(bool modEnabled, bool onCommandLine, string expected)
-	{
-		this._settings.ModEnabled = modEnabled;
-		this._settings.CustomMap = Masteries;
-		string[] commandLine = onCommandLine ? [$"/mod:{Shadow}"] : [];
-		var expectedMap = expected switch { "settings" => Masteries, "command line" => Shadow, _ => string.Empty };
+	[Fact]
+	public void MapFor_UnlinkedCharacter_IsTheBaseGame()
+		=> this.CreateService().MapFor(Save("HeroB", isCustom: true)).Should().BeEmpty();
 
-		this.CreateService(commandLine).MapFor(Save("HeroB", isCustom: true)).Should().Be(expectedMap);
+	[Fact]
+	public void MapFor_CharacterLinkedToAModNotInstalled_IsTheBaseGame()
+	{
+		var heroB = Save("HeroB", isCustom: true);
+		this._links.Setup(l => l.Resolve(heroB.Folder, true)).Returns(new CharacterMod(CharacterModState.LinkedModMissing
+			, null, new ModLinkFile { Mod = Path.GetFileName(Masteries) }));
+
+		this.CreateService().MapFor(heroB).Should().BeEmpty();
 	}
 
 	[Fact]

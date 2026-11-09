@@ -315,9 +315,6 @@ Chcesz zrestartować TQVault?</value>
   <data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>Pokaż Gracza</value>
   </data>
-  <data name="MainFormCustomMapLabel" xml:space="preserve">
-    <value>{0} Własna Mapa</value>
-  </data>
   <data name="MainFormDatabaseError" xml:space="preserve">
     <value>Błąd przy rozpakowywaniu bazy danych</value>
   </data>
@@ -344,14 +341,6 @@ Zrestartować teraz TQVault?</value>
   </data>
   <data name="MainFormMaintainVault" xml:space="preserve">
     <value>Otrzymywanie Plików Skarbca…</value>
-  </data>
-  <data name="MainFormMapsChanged" xml:space="preserve">
-    <value>Ustawienia Własnych Map Zmienione</value>
-  </data>
-  <data name="MainFormMapsChangedMsg" xml:space="preserve">
-    <value>Ustawienia Własnej Mapy zostały zmienione.
-Efekty pojawią się po ponownym uruchomieniu TQVault.
-Zrestartować teraz TQVault?</value>
   </data>
   <data name="MainFormNoCharacters" xml:space="preserve">
     <value>Nie wykryto żadnych postaci TQ</value>
@@ -720,14 +709,6 @@ może nastąpić dłuższy start programu.</value>
   <data name="SettingsDetectLanguage" xml:space="preserve">
     <value>Autowykrywanie Języka</value>
   </data>
-  <data name="SettingsEnableMod" xml:space="preserve">
-    <value>Włącz Własne Mapy</value>
-  </data>
-  <data name="SettingsEnableModTT" xml:space="preserve">
-    <value>Wybranie tego przedmiotu 
-włączy upuszczanie w
-wybranych własnych mapach.</value>
-  </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Sprawdź Teraz</value>
   </data>
@@ -746,9 +727,6 @@ aktualizacje.</value>
   </data>
   <data name="SettingsLabel4" xml:space="preserve">
     <value>Adres Gry IT</value>
-  </data>
-  <data name="SettingsLabel5" xml:space="preserve">
-    <value>Własna Mapa</value>
   </data>
   <data name="SettingsLoadChar" xml:space="preserve">
     <value>Automatycznie Ładuje ostatnio otwieraną Postać</value>

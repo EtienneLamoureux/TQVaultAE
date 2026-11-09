@@ -25,9 +25,6 @@ public partial class MainForm
 
 		this.GetPlayerList();
 
-		// The custom map (mod) whose data is used now
-		this.UpdateCustomMapText();
-
 		this.CreateVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function
 		this.CreateSecondaryVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function
 		this.secondaryVaultPanel.Enabled = false;
