@@ -11,7 +11,7 @@ using TQVaultAE.Presentation.Win32.Contracts;
 
 namespace TQVaultAE.Presentation.Win32;
 
-public class UIService : IUIService
+public class UIService : IUIService, IGameDataCache
 {
 	private readonly ILogger Log;
 	private readonly IDatabase Database;
@@ -27,6 +27,12 @@ public class UIService : IUIService
 	/// Dictionary of all bitmaps in the database.
 	/// </summary>
 	private LazyConcurrentDictionary<RecordId, Bitmap> _Bitmaps = new();
+
+	/// <summary>
+	/// Forgets the bitmaps read so far, without disposing them (controls may still show them): the next ones come from
+	/// the active map's archives.
+	/// </summary>
+	public void ClearGameDataCache() => this._Bitmaps = new();
 
 	/// <summary>
 	/// Default bitmap when one cannot be found in the database.

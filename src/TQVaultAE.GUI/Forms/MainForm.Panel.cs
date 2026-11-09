@@ -25,18 +25,8 @@ public partial class MainForm
 
 		this.GetPlayerList();
 
-		// Added support for custom map character list
-		this.customMapText.Visible = false;
-		if (GamePathResolver.IsCustom)
-		{
-			this.customMapText.Visible = true;
-			this.customMapText.Text = string.Format(
-				GamePathResolver.MapName.Contains(@"\CUSTOMMAPS\", StringComparison.OrdinalIgnoreCase)
-					? "Legacy : " + Resources.MainFormCustomMapLabel
-					: "Steam : " + Resources.MainFormCustomMapLabel
-				, this.PathIO.GetFileName(GamePathResolver.MapName)
-			);
-		}
+		// The custom map (mod) whose data is used now
+		this.UpdateCustomMapText();
 
 		this.CreateVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function
 		this.CreateSecondaryVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function

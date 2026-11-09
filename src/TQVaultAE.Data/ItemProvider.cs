@@ -21,7 +21,7 @@ namespace TQVaultAE.Data;
 /// <summary>
 /// Class for holding item information
 /// </summary>
-public partial class ItemProvider : IItemProvider
+public partial class ItemProvider : IItemProvider, IGameDataCache
 {
 	private const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
 
@@ -36,6 +36,13 @@ public partial class ItemProvider : IItemProvider
 	private readonly LazyConcurrentDictionary<(Item Item, FriendlyNamesExtraScopes? Scope, bool FilterExtra), ToFriendlyNameResult> FriendlyNamesCache = new LazyConcurrentDictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult>();
 	private readonly LazyConcurrentDictionary<RecordId, ItemAffixes?> ItemAffixesCache = new();
 	private volatile bool _cachedShowInGameValues;
+
+	/// <inheritdoc/>
+	public void ClearGameDataCache()
+	{
+		this.FriendlyNamesCache.Clear();
+		this.ItemAffixesCache.Clear();
+	}
 
 
 	public ItemProvider(

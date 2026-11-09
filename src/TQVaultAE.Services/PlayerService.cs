@@ -28,6 +28,7 @@ public class PlayerService(
 	, IDirectoryIO directoryIO
 	, IItemProvider itemProvider
 	, IDatabase database
+	, IGameMapService gameMapService
 ) : IPlayerService
 {
 	private readonly ILogger Log = log;
@@ -46,6 +47,7 @@ public class PlayerService(
 	private readonly IDirectoryIO DirectoryIO = directoryIO;
 	private readonly IItemProvider ItemProvider = itemProvider;
 	private readonly IDatabase Database = database;
+	private readonly IGameMapService GameMapService = gameMapService;
 
 	/// <summary>
 	/// Loads a player and their stash.
@@ -64,7 +66,8 @@ public class PlayerService(
 		{
 			#region Get the player
 
-			var pf = GamePathResolver.GetPlayerFile(selectedSave.Name, selectedSave.IsImmortalThrone, selectedSave.IsArchived);
+			// From the save's own folder: main campaign and custom map characters are listed together.
+			var pf = this.PathIO.Combine(selectedSave.Folder, this.GamePathResolver.PlayerSaveFileName);
 
 			var resultPC = new PlayerCollection(selectedSave.Name, pf);
 
@@ -78,6 +81,10 @@ public class PlayerService(
 				{
 					PlayerCollectionProvider.LoadFile(resultPC);
 					selectedSave.Info = resultPC.PlayerInfo;
+					selectedSave.ClassLabel = resultPC.PlayerInfo?.Class is { } playerClass
+						? (playerClass, this.TranslationService.TranslateXTag(playerClass, true, true))
+						: null;
+					this.GameMapService.MarkLoaded(selectedSave);
 
 					// Add player items to the search database
 					int sackNumber = -1;
@@ -152,9 +159,14 @@ public class PlayerService(
 	/// <inheritdoc/>
 	public CharacterSessionLoadResult LoadCharacterSession(PlayerSave selectedSave, bool loadTransferStash, bool loadRelicVaultStash)
 	{
-		var player = this.LoadPlayer(selectedSave);
+		// Read again a character read with another map's database, unless it has changes to save.
+		string playerFile = this.PathIO.Combine(selectedSave.Folder, this.GamePathResolver.PlayerSaveFileName);
+		bool reload = this.GameMapService.LoadedWithOtherMap(selectedSave)
+			&& !(this.userContext.Players.TryGetValue(playerFile, out var loaded) && loaded.IsValueCreated && loaded.Value.IsModified);
 
-		var playerStash = this.StashService.LoadCharacterStash(selectedSave);
+		var player = this.LoadPlayer(selectedSave, reload);
+
+		var playerStash = this.StashService.LoadCharacterStash(selectedSave, reload);
 		if (playerStash is null)
 			return new CharacterSessionLoadResult(player, null, null, null);
 
@@ -197,8 +209,8 @@ public class PlayerService(
 				new PlayerSave(f
 					, f.ContainsIgnoreCase(GamePathResolver.SaveDirNameTQIT)  // Is TQIT
 					, f.ContainsIgnoreCase(GamePathResolver.ArchiveDirName) // Is Archived
-					, this.GamePathResolver.IsCustom
-					, this.GamePathResolver.MapName
+					, this.GamePathResolver.IsCustomCharacterFolder(f)
+					, string.Empty
 					, this.TranslationService
 					, this.PathIO
 				)
@@ -208,6 +220,8 @@ public class PlayerService(
 			{
 				// Tags come with the list, so displaying a save does not read the tag configuration.
 				this.TagService.LoadTags(ps);
+				// The mod comes with the list too: its label and the map it is loaded with.
+				this.GameMapService.Refresh(ps);
 				return ps;
 			})
 			.ToArray();
@@ -347,10 +361,10 @@ public class PlayerService(
 	/// </summary>
 	private bool MoveSave(PlayerSave ps, bool archive)
 	{
-		var oldPath = this.GamePathResolver.GetPlayerFile(ps.Name, ps.IsImmortalThrone, !archive);
+		var oldPath = this.PathIO.Combine(ps.Folder, this.GamePathResolver.PlayerSaveFileName);
 		bool moved = archive ? this.GameFileService.Archive(ps) : this.GameFileService.Unarchive(ps);
 		if (moved)
-			this.UpdatePlayerFilePath(oldPath, this.GamePathResolver.GetPlayerFile(ps.Name, ps.IsImmortalThrone, archive));
+			this.UpdatePlayerFilePath(oldPath, this.PathIO.Combine(ps.Folder, this.GamePathResolver.PlayerSaveFileName));
 
 		return moved;
 	}

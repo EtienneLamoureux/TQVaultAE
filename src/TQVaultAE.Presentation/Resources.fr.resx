@@ -1854,4 +1854,67 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="VaultDeletePermanent" xml:space="preserve">
     <value>Cette action est irréversible.</value>
   </data>
+	<data name="ModLinkMenu" xml:space="preserve">
+    <value>Lien avec un mod...</value>
+  </data>
+	<data name="ModLinkDialogTitle" xml:space="preserve">
+    <value>Lien avec un mod</value>
+  </data>
+	<data name="ModLinkCharacter" xml:space="preserve">
+    <value>Personnage : {0}</value>
+  </data>
+	<data name="ModLinkInstalledMods" xml:space="preserve">
+    <value>Mods installés :</value>
+  </data>
+	<data name="ModLinkNoMods" xml:space="preserve">
+    <value>Aucun mod n'est installé.</value>
+  </data>
+	<data name="ModLinkLink" xml:space="preserve">
+    <value>Lier</value>
+  </data>
+	<data name="ModLinkUnlink" xml:space="preserve">
+    <value>Délier</value>
+  </data>
+	<data name="ModLinkSuggest" xml:space="preserve">
+    <value>Suggérer</value>
+  </data>
+	<data name="ModLinkUnlinkedLabel" xml:space="preserve">
+    <value>sans mod</value>
+  </data>
+	<data name="ModLinkMissingLabel" xml:space="preserve">
+    <value>{0}, non installé</value>
+  </data>
+	<data name="ModLinkBaseGameData" xml:space="preserve">
+    <value>les données du jeu de base</value>
+  </data>
+	<data name="ModLinkStateBaseGame" xml:space="preserve">
+    <value>Personnage de la campagne principale : il utilise toujours les données du jeu de base.</value>
+  </data>
+	<data name="ModLinkStateLinked" xml:space="preserve">
+    <value>Lié à {0}.</value>
+  </data>
+	<data name="ModLinkStateMissing" xml:space="preserve">
+    <value>Lié à {0}, qui n'est pas installé : il est chargé avec {1}.</value>
+  </data>
+	<data name="ModLinkStateUnlinked" xml:space="preserve">
+    <value>Non lié : il est chargé avec {0}.</value>
+  </data>
+	<data name="ModLinkSuggestion" xml:space="preserve">
+    <value>Suggestion : {0} ({1} des {2} enregistrements de ce personnage absents du jeu de base).</value>
+  </data>
+	<data name="ModLinkSuggestionTie" xml:space="preserve">
+    <value>Plusieurs mods correspondent autant : {0}.</value>
+  </data>
+	<data name="ModLinkSuggestionNone" xml:space="preserve">
+    <value>Aucun mod installé n'a les {0} enregistrements de ce personnage absents du jeu de base.</value>
+  </data>
+	<data name="ModLinkSuggestionBaseOnly" xml:space="preserve">
+    <value>Ce personnage n'utilise que des enregistrements du jeu de base : son mod ne peut pas être déduit de ses données.</value>
+  </data>
+	<data name="ModLinkSaveError" xml:space="preserve">
+    <value>Le lien avec le mod n'a pas pu être enregistré.</value>
+  </data>
+	<data name="ModLinkActiveMap" xml:space="preserve">
+    <value>Données du mod : {0}</value>
+  </data>
 </root>

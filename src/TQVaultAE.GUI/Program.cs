@@ -121,7 +121,12 @@ public static class Program
 				// Providers
 				.AddTransient<IArcFileProvider, ArcFileProvider>()
 				.AddTransient<IArzFileProvider, ArzFileProvider>()
-				.AddSingleton<IDatabase, Database>()
+				// One database per custom map (mod), the active one answering as IDatabase
+				.AddTransient<Database>()
+				.AddSingleton<Func<Database>>(sp => () => sp.GetRequiredService<Database>())
+				.AddSingleton<DatabaseSelector>()
+				.AddSingleton<IDatabase>(sp => sp.GetRequiredService<DatabaseSelector>())
+				.AddSingleton<IDatabaseMaps>(sp => sp.GetRequiredService<DatabaseSelector>())
 				.AddSingleton<IItemProvider, ItemProvider>()
 				.AddSingleton<ILootTableCollectionProvider, LootTableCollectionProvider>()
 				.AddTransient<IStashProvider, StashProvider>()
@@ -174,6 +179,13 @@ public static class Program
 		.AddSingleton<ISearchCategoryService, SearchCategoryService>()
 		.AddSingleton<ISearchQueryService, SearchQueryService>()
 		.AddSingleton<ICharacterEditService, CharacterEditService>()
+		.AddSingleton<IModLinkService, ModLinkService>()
+		.AddSingleton<IGameMapService, GameMapService>()
+		// Caches of game data, emptied when the active custom map changes
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<IItemProvider>())
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<ILootTableCollectionProvider>())
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<ISkillTreeProvider>())
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<IUIService>())
 
 				// GUI: services passed to forms and controls, and the only way to create forms
 				.AddSingleton<GuiServices>()
@@ -187,6 +199,7 @@ public static class Program
 				.AddTransient<CharacterEditDialog>()
 				.AddTransient<ItemProperties>()
 				.AddTransient<ItemSeedDialog>()
+				.AddTransient<ModLinkDialog>()
 				.AddTransient<ResultsDialog>()
 				.AddTransient<SearchDialogAdvanced>()
 				.AddTransient<SettingsDialog>()

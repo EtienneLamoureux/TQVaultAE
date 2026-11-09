@@ -247,28 +247,34 @@ public partial class GamePathServiceWin(ILogger<GamePathServiceWin> log, ITQData
 	{
 		List<string> dirs = [];
 
-		// Get all folders that start with a '_'.
-		var TQDir = GetBaseCharacterFolder(false, false);// From TQ 
-		var TQITDir = GetBaseCharacterFolder(true, false);// From TQIT
+		// Main campaign and custom map characters together: each one is loaded with its own map's data.
+		foreach (bool isArchive in new[] { false, true })
+		{
+			foreach (bool isCustomCharacter in new[] { false, true })
+			{
+				// Get all folders that start with a '_'.
+				var TQDir = GetBaseCharacterFolder(false, isCustomCharacter, isArchive);// From TQ
+				var TQITDir = GetBaseCharacterFolder(true, isCustomCharacter, isArchive);// From TQIT
 
-		if (this.USettings.EnableOriginalTQSupport && DirectoryIO.Exists(TQDir))
-			dirs.AddRange(DirectoryIO.GetDirectories(TQDir, "_*"));
+				if (this.USettings.EnableOriginalTQSupport && DirectoryIO.Exists(TQDir))
+					dirs.AddRange(DirectoryIO.GetDirectories(TQDir, "_*"));
 
-		if (DirectoryIO.Exists(TQITDir))
-			dirs.AddRange(DirectoryIO.GetDirectories(TQITDir, "_*"));
-
-		// Archived
-		TQDir = GetBaseCharacterFolder(false, true);// From TQ 
-		TQITDir = GetBaseCharacterFolder(true, true);// From TQIT
-
-		if (this.USettings.EnableOriginalTQSupport && DirectoryIO.Exists(TQDir))
-			dirs.AddRange(DirectoryIO.GetDirectories(TQDir, "_*"));
-
-		if (DirectoryIO.Exists(TQITDir))
-			dirs.AddRange(DirectoryIO.GetDirectories(TQITDir, "_*"));
-
+				if (DirectoryIO.Exists(TQITDir))
+					dirs.AddRange(DirectoryIO.GetDirectories(TQITDir, "_*"));
+			}
+		}
 
 		return dirs.ToArray();
+	}
+
+	/// <inheritdoc/>
+	public bool IsCustomCharacterFolder(string characterFolder)
+	{
+		string parent = this.PathIO.GetDirectoryName(Path.TrimEndingDirectorySeparator(characterFolder));
+		if (this.PathIO.GetFileName(parent).Equals(this.ArchiveDirName, noCase))
+			parent = this.PathIO.GetDirectoryName(parent);
+
+		return this.PathIO.GetFileName(parent).Equals("User", noCase);
 	}
 
 	/// <summary>

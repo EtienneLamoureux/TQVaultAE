@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 
@@ -9,13 +10,16 @@ namespace TQVaultAE.Data;
 /// Reads the masteries and their skills from the panes of the game's skill window (<c>SkillPaneCtrl</c> records):
 /// each pane lists its skill buttons, whose row gives the tier of the skill.
 /// </summary>
-public class SkillTreeProvider(IDatabase database) : ISkillTreeProvider
+public class SkillTreeProvider(IDatabase database) : ISkillTreeProvider, IGameDataCache
 {
 	private const StringComparison NoCase = StringComparison.OrdinalIgnoreCase;
 
 	private readonly IDatabase _database = database;
 
 	private readonly ConcurrentDictionary<Masteries, MasteryTree?> _trees = new();
+
+	/// <inheritdoc/>
+	public void ClearGameDataCache() => this._trees.Clear();
 
 	/// <summary>
 	/// The pane records of each mastery, the latest expansion first: Atlantis added two skills to each pane of the

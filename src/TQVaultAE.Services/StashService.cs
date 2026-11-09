@@ -39,7 +39,8 @@ public class StashService(
 		if (string.IsNullOrWhiteSpace(selectedSave?.Name))
 			return result;
 
-		result.StashFile = GamePathResolver.GetPlayerStashFile(selectedSave.Name, selectedSave.IsArchived);
+		// From the save's own folder: main campaign and custom map characters are listed together.
+		result.StashFile = Path.Combine(selectedSave.Folder, GamePathResolver.PlayerStashFileNameB);
 
 		Stash addStash(string k)
 		{
