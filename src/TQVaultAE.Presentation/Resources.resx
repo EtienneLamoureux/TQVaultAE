@@ -2255,7 +2255,10 @@ You still have to close TQVaultAE to apply your changes.
     <value>Modded vault</value>
   </data>
 	<data name="ModSuggestedHint" xml:space="preserve">
-    <value>suggested</value>
+    <value>(suggested)</value>
+  </data>
+	<data name="ModSuggestedPartialHint" xml:space="preserve">
+    <value>(suggested {0}/{1})</value>
   </data>
 	<data name="ModSuggestedDetail" xml:space="preserve">
     <value>Has {0} of the {1} records the base game lacks.</value>

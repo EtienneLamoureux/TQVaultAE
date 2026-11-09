@@ -1884,7 +1884,10 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
     <value>Coffre moddé</value>
   </data>
 	<data name="ModSuggestedHint" xml:space="preserve">
-    <value>suggéré</value>
+    <value>(suggéré)</value>
+  </data>
+	<data name="ModSuggestedPartialHint" xml:space="preserve">
+    <value>(suggéré {0}/{1})</value>
   </data>
 	<data name="ModSuggestedDetail" xml:space="preserve">
     <value>A {0} des {1} enregistrements absents du jeu de base.</value>

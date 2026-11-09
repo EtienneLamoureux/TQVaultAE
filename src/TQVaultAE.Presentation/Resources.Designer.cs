@@ -6158,11 +6158,20 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to suggested.
+        ///   Looks up a localized string similar to (suggested).
         /// </summary>
         public static string ModSuggestedHint {
             get {
                 return ResourceManager.GetString("ModSuggestedHint", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to (suggested {0}/{1}).
+        /// </summary>
+        public static string ModSuggestedPartialHint {
+            get {
+                return ResourceManager.GetString("ModSuggestedPartialHint", resourceCulture);
             }
         }
         

@@ -81,7 +81,7 @@ internal static class ModMenu
 
 			entry.ShortcutKeyDisplayString = match.Matched == suggestion.ModOnlyRecords
 				? Resources.ModSuggestedHint
-				: $"{Resources.ModSuggestedHint} ({match.Matched}/{suggestion.ModOnlyRecords})";
+				: string.Format(CultureInfo.CurrentCulture, Resources.ModSuggestedPartialHint, match.Matched, suggestion.ModOnlyRecords);
 			entry.ShowShortcutKeys = true;
 			entry.ToolTipText = $"{match.Mod.DisplayName}{Environment.NewLine}"
 				+ string.Format(CultureInfo.CurrentCulture, Resources.ModSuggestedDetail, match.Matched, suggestion.ModOnlyRecords);

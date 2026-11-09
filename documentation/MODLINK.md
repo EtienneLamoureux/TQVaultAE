@@ -67,7 +67,7 @@ is saved in the vault files.
 - **By hand:** the item menu has *Modded*, the base game and the installed mods, the current one checked. A link to a mod
   that is not installed stays listed, disabled.
 - **Suggested mods:** when the *Modded* submenu opens, each installed mod having records of the item that the base
-  game lacks is marked *suggested* on the right (with how many when it has only some of them), like the dialog's
+  game lacks is marked *(suggested)* on the right (*(suggested 1/3)* when it has only some of them), like the dialog's
   Suggest button. A record found in several mods marks each of them. Where each record was found is kept for the
   session.
 - **A whole vault:** the vault tools button next to the vault list has *Modded vault*, for the vault shown, with the
