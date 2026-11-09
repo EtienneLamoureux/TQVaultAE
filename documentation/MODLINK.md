@@ -81,7 +81,7 @@ when it changes; items with their own link keep it. An incomplete item gets the 
 mod resolves all its missing records:
 
 - when the vault is linked to the mod (or to another mod), for the items already in it;
-- when the item is dropped into a vault linked to the mod. Read with the mod's data, the item may take its real size
+- when the item is put in a vault linked to the mod: dropped, moved with *Move Item To*, imported from a file or pasted. Read with the mod's data, the item may take its real size
   (a one-cell incomplete item becomes a 1x5 lance): when it would then overlap another item or leave the grid, it is
   left as it was dropped, incomplete and without a link.
 
@@ -97,6 +97,9 @@ own:
                           { "baseName": "...", "mod": "Lilith" } ] } ]
 }
 ```
+
+Exports keep the links: an item or tab export writes each item's mod; a vault export writes the vault's mod and each
+item's own link, and importing it (as a new vault, or replacing the vault shown) brings both back.
 
 An item linked to a mod that is not installed resolves with the active map's data, and shows incomplete when that data
 lacks its records.

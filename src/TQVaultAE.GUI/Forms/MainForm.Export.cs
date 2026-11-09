@@ -273,7 +273,11 @@ public partial class MainForm
 			return;
 		}
 
+		var before = sack.ToHashSet();
 		var imported = this.itemExchangeService.PlaceImportedItems(sack, importResult, sackPanel.SackSize.Width, sackPanel.SackSize.Height);
+
+		// Into a vault linked to a mod: the imported items follow its link like dropped ones.
+		this.vaultPanel.AdoptVaultMod(sack, sack.Where(item => !before.Contains(item)));
 
 		if (importResult.Scope == ExportScope.Tab && importResult.TabIconInfo is not null)
 		{
@@ -346,6 +350,11 @@ public partial class MainForm
 		}
 
 		this.itemExchangeService.ImportVaultInto(targetVault, importResult);
+
+		// Into a vault linked to a mod: the imported items follow its link like dropped ones.
+		foreach (var sack in targetVault)
+			this.vaultPanel.AdoptVaultMod(sack, [.. sack]);
+
 		this.vaultPanel.Refresh();
 
 		if (importResult.SackIconInfo is not null)

@@ -341,6 +341,9 @@ public partial class MainForm
 			return;
 		}
 
+		// Moved to a vault linked to a mod: the item follows its link like a dropped one.
+		destinationPanel.AdoptVaultMod(destinationSack, [dragItem]);
+
 		sourcePanel.Invalidate();
 		destinationPanel.Refresh();
 		BagButtonTooltip.InvalidateCache(destinationSack, destinationSackPanel.Sack);

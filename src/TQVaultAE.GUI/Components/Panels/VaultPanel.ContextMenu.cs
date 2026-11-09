@@ -239,6 +239,27 @@ public partial class VaultPanel
 		this.BagSackPanel.Refresh();
 	}
 
+	/// <summary>
+	/// Items put in the vault without a drop (Move To, import, paste) follow its link like dropped ones: those without a
+	/// link of their own are read again with the vault's mod, and get it as their own link when it resolves them.
+	/// </summary>
+	/// <param name="sack">The vault bag holding the items.</param>
+	/// <param name="items">The items just put there.</param>
+	internal void AdoptVaultMod(SackCollection sack, IEnumerable<Item> items)
+	{
+		if (this.Vault?.Mod is not { } mod)
+			return;
+
+		var changed = items.Where(item => this.Services.ItemEditService.AdoptContainerMod(
+			item, mod, i => SackPanel.Fits(sack, this.BagSackPanel.SackSize, i))).ToArray();
+		if (changed.Length == 0)
+			return;
+
+		ItemTooltip.InvalidateCache(changed);
+		BagButtonTooltip.InvalidateCache(changed);
+		this.Services.ItemProvider.InvalidateFriendlyNamesCache(changed);
+	}
+
 	private void ContextMenuItemClicked(object? sender, ToolStripItemClickedEventArgs e)
 	{
 		string? selectedItem = e.ClickedItem?.Text;

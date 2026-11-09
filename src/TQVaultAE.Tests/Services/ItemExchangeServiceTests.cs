@@ -414,4 +414,35 @@ public class ItemExchangeServiceTests
 
 		result.Success.Should().BeFalse();
 	}
+
+	[Fact]
+	public void SerializeItem_KeepsTheItemsMod_AndImportGivesItAsItsOwnLink()
+	{
+		var item = new Item { BaseItemId = "records/customitems/lance.dbr", Mod = "shadowchampions", ModFromVault = true };
+
+		var result = _service.ImportFromJson(_service.SerializeItem(item));
+
+		(result.Item!.Mod, result.Item.ModFromVault).Should().Be(("shadowchampions", false));
+	}
+
+	[Fact]
+	public void SerializePlayerCollection_ModdedVault_RoundTripsTheVaultsLinkAndTheItemsOwnLinks()
+	{
+		var sack = new SackCollection { SackType = SackType.Vault };
+		sack.AddItem(new Item { BaseItemId = "records/item/ring.dbr", Mod = "shadowchampions", ModFromVault = true });
+		sack.AddItem(new Item { BaseItemId = "records/customitems/lance.dbr", Mod = "shadowchampions" });
+		sack.AddItem(new Item { BaseItemId = "records/lilith/sword.dbr", Mod = "Lilith" });
+		var vault = new TQVaultAE.Application.PlayerCollection("Vault", "vault.json") { IsVault = true, Mod = "shadowchampions", Sacks = [sack] };
+
+		var json = _service.SerializePlayerCollection(vault);
+		var result = _service.ImportFromJson(json);
+		var target = new TQVaultAE.Application.PlayerCollection("Target", "target.json") { IsVault = true, Sacks = [new SackCollection()] };
+		_service.ImportVaultInto(target, result);
+
+		JsonDocument.Parse(json).RootElement.GetProperty("data").GetProperty("mod").GetString().Should().Be("shadowchampions");
+		result.VaultMod.Should().Be("shadowchampions");
+		target.Mod.Should().Be("shadowchampions");
+		target.Sacks![0].Select(i => (i.Mod, i.ModFromVault)).Should().Equal(
+			("shadowchampions", true), ("shadowchampions", false), ("Lilith", false));
+	}
 }
