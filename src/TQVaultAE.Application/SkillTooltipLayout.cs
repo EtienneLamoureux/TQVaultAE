@@ -14,9 +14,19 @@ public static class SkillTooltipLayout
 		=> line.StartsWith("^a", StringComparison.OrdinalIgnoreCase)
 		|| line.StartsWith("{^a}", StringComparison.OrdinalIgnoreCase);
 
-	/// <summary>The effects of the current level: the recharge first, then the others in their order.</summary>
+	/// <summary>
+	/// The effects of the current level: the skill's recharge first, then the others in their order. A summon's own
+	/// skills keep their recharge in their block, after the first heading.
+	/// </summary>
 	public static IReadOnlyList<string> CurrentEffects(IEnumerable<string> effects)
-		=> [.. effects.OrderBy(line => IsRecharge(line) ? 0 : 1)];
+	{
+		var lines = effects.ToList();
+		var head = lines.FindIndex(IsHeading);
+		if (head < 0)
+			head = lines.Count;
+
+		return [.. lines.Take(head).OrderBy(line => IsRecharge(line) ? 0 : 1), .. lines.Skip(head)];
+	}
 
 	/// <summary>
 	/// The effects of the next level: the recharge first, then only what the next level changes. A line that the current

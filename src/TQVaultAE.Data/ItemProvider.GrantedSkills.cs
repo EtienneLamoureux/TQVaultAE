@@ -91,11 +91,12 @@ public partial class ItemProvider
 
 	/// <summary>
 	/// What the game's skill window leaves out of a skill's effects: the projectile mechanics (speed, reach, spread), the
-	/// time a charge level lasts and the "can't be dispelled" flag.
+	/// time a charge level lasts, the pierce ratio and the "can't be dispelled" flag.
 	/// </summary>
 	private static readonly HashSet<string> SkillWindowHiddenVariables = new(StringComparer.OrdinalIgnoreCase)
 	{
 		"headVelocity", "tailVelocity", "maxDistance", "projectileLaunchRotation", "skillChargeDuration", "notDispelable",
+		"offensivePierceRatioMin", "offensivePierceRatioMax", "offensivePierceRatio",
 	};
 
 	/// <inheritdoc/>
@@ -152,7 +153,8 @@ public partial class ItemProvider
 
 		// Effects at the granted level: the skill's own parameters (energy cost, cooldown, radius...), then the buff's.
 		var attributes = new List<string>();
-		if (skillRecord.GetString("Class", 0).Equals("SKILL_SPAWNPET", noCase))
+		// Summons: Skill_SpawnPet, and the projectiles that place one (Skill_AttackProjectileSpawnPet: Lay Trap, Sylvan Nymph).
+		if (skillRecord.GetString("Class", 0).EndsWith("SpawnPet", StringComparison.OrdinalIgnoreCase))
 		{
 			if (skillWindow)
 			{

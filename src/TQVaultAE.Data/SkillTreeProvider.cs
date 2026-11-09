@@ -212,6 +212,10 @@ public class SkillTreeProvider(IDatabase database) : ISkillTreeProvider
 		if (maxLevel == 0)
 			maxLevel = shown.GetInt32("skillMaxLevel", 0);
 
+		var ultimateLevel = record.GetInt32("skillUltimateLevel", 0);
+		if (ultimateLevel == 0)
+			ultimateLevel = shown.GetInt32("skillUltimateLevel", 0);
+
 		return new MasterySkill(
 			button.Id
 			, First("skillDisplayName")
@@ -221,6 +225,7 @@ public class SkillTreeProvider(IDatabase database) : ISkillTreeProvider
 			, SkillTiers.FromButtonY(button.Y)
 			, parentId)
 		{
+			UltimateLevel = ultimateLevel,
 			Button = new SkillPaneButton(
 				button.X
 				, button.Y

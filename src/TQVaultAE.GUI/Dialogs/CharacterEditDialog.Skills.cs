@@ -120,6 +120,11 @@ internal sealed partial class CharacterEditDialog
 		var level = skills.GetLevel(skill.Id);
 		var masteryLevel = skills.GetMasteryLevel(tab.Slot);
 		var bonus = tree is null ? 0 : SkillBonus.For(this._gearAugments, tree, skill.Id).Total;
+
+		// The game writes the level up to the ultimate one: Call of the Wild 15 + 6 reads "20 / 16".
+		if (skill.UltimateLevel > 0)
+			bonus = Math.Min(bonus, Math.Max(0, skill.UltimateLevel - level));
+
 		var parentHasPoints = skill.ParentId is null || skills.GetLevel(skill.ParentId) > 0;
 		var state = SkillPaneLayout.State(level, skill.MaxLevel, masteryLevel, skill.RequiredMasteryLevel, parentHasPoints, skills.AvailablePoints);
 		return new SkillPaneSkillView(level, bonus, state, masteryLevel >= skill.RequiredMasteryLevel);
@@ -227,15 +232,19 @@ internal sealed partial class CharacterEditDialog
 		var bonus = SkillBonus.For(this._gearAugments, tree, skill.Id);
 
 		// The game counts the levels of the equipment once the skill has a point.
-		var current = points > 0 ? points + bonus.Total : 0;
+		var current = skill.EffectiveLevel(points, bonus.Total);
 
-		// The equipment's levels also raise a summon's own skills (Battle Standard 11/10 shows its level 12 buff).
+		// No next level once the skill is at its ultimate level with the equipment (Maul 11 + 8 stops at 16).
+		var belowMax = points < skill.MaxLevel && (skill.UltimateLevel == 0 || current < skill.UltimateLevel);
+
+		// The equipment's levels also raise a summon's own skills (Battle Standard 11/10 shows its level 12 buff), all of
+		// them even beyond the ultimate level (Call of the Wild 15 + 6: the wolves dodge as at +6).
 		petSkillBonus = points > 0 ? bonus.Total : 0;
 		lines.Add(new GameTooltipLine(this.TranslateTag(skill.NameTag, skill.Id.PrettyFileName), Color.White, Title: true));
 		lines.Add(new GameTooltipLine(this.TranslateTag(skill.DescriptionTag), TipText));
 		if (current > 0)
 			Level("tagCurrentLevel", "Current Level : {%d0}", skill.Id, current);
-		if (points < skill.MaxLevel)
+		if (belowMax)
 			NextLevel("tagNextLevel", "Next Level : {%d0}", skill.Id, current + 1);
 
 		var refused = new List<string>();
@@ -252,7 +261,7 @@ internal sealed partial class CharacterEditDialog
 			&& tree.Skills.FirstOrDefault(s => s.Id == parentId) is { } parent)
 			refused.Add(this.GameText("tagSkillReq03", "This skill requires the {%s1} skill.", 1, this.TranslateTag(parent.NameTag, parent.Id.PrettyFileName)));
 
-		this.Requirements(lines, points < skill.MaxLevel, refused);
+		this.Requirements(lines, belowMax, refused);
 
 		var gear = this.GearBonusLines(tree, skill, bonus).ToList();
 		if (gear.Count != 0)

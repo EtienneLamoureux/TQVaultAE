@@ -48,6 +48,11 @@ public class SkillTooltipLayoutTests
 			"75 Energy Reserved");
 
 	[Fact]
+	public void CurrentEffects_LeaveASummonsSkillRechargeInItsBlock()
+		=> SkillTooltipLayout.CurrentEffects(["210 Energy Cost", "^a60.0 Second(s) Recharge", "Nightmare Abilities:", "Distort Reality", "^a12.0 Second(s) Recharge"])
+			.Should().Equal("^a60.0 Second(s) Recharge", "210 Energy Cost", "Nightmare Abilities:", "Distort Reality", "^a12.0 Second(s) Recharge");
+
+	[Fact]
 	public void NextEffects_ShowTheRechargeAndOnlyWhatChanges()
 		=> SkillTooltipLayout.NextEffects(Level5, Level6).Should().Equal(
 			"^a4.0 Second(s) Recharge",

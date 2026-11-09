@@ -100,6 +100,24 @@ public sealed record MasterySkill(
 
 	/// <summary>Its button in the pane, or <see langword="null"/> when unknown.</summary>
 	public SkillPaneButton? Button { get; init; }
+
+	/// <summary>
+	/// The highest level the skill reaches with the equipment's bonuses (<c>skillUltimateLevel</c>); 0 when unknown.
+	/// </summary>
+	public int UltimateLevel { get; init; }
+
+	/// <summary>
+	/// The level the game uses: the points plus the equipment's levels once the skill has a point, up to
+	/// <see cref="UltimateLevel"/> (Maul 11 + 8 is used at 16).
+	/// </summary>
+	public int EffectiveLevel(int points, int bonus)
+	{
+		if (points <= 0)
+			return 0;
+
+		var level = points + Math.Max(0, bonus);
+		return this.UltimateLevel > 0 ? Math.Min(level, this.UltimateLevel) : level;
+	}
 }
 
 /// <summary>

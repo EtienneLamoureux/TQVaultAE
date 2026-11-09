@@ -48,7 +48,7 @@ public partial class ItemProvider
 		int levelIndex(string name) => skillRecord[name] is { NumberOfValues: > 0 } v ? Math.Clamp(level - 1, 0, v.NumberOfValues - 1) : 0;
 
 		string formatSpec, petLine;
-		int summonLimit = skillRecord.GetInt32("petLimit", 0);
+		int summonLimit = skillRecord.GetInt32("petLimit", levelIndex("petLimit"));
 		if (summonLimit > 1)
 		{
 			if (!TranslationService.TryTranslateXTag("SkillPetLimit", out formatSpec))
@@ -137,11 +137,11 @@ public partial class ItemProvider
 			results.Add(valueStr);
 			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 
-			// Show Physical Damage
+			// Show Physical Damage; the skill window leaves it out (its pets show their "Basic Attack" skill instead).
 			value = petRecord.GetSingle("handHitDamageMin", 0);
 			float value2 = petRecord.GetSingle("handHitDamageMax", 0);
 
-			if (value > 1.0F || value2 > 2.0F)
+			if ((value > 1.0F || value2 > 2.0F) && hiddenVariables is null)
 			{
 				if (value2 == 0.0F || value == value2)
 				{
@@ -206,12 +206,13 @@ public partial class ItemProvider
 				DBRecordCollection? record = null;
 				string skillClass = skillRecord1?.GetString("Class", 0) ?? string.Empty;
 
-				// Skip passive skills
-				if (skillClass.Equals("SKILL_PASSIVE", noCase))
+				// Skip passive skills, which the skill window shows (the wolves' "Dodge Attacks").
+				if (skillClass.Equals("SKILL_PASSIVE", noCase) && hiddenVariables is null)
 					continue;
 
 				string? skillNameTag = null;
 				string? skillName = null;
+				bool skillWindow = hiddenVariables is not null;
 				string buffSkillName = skillRecord1?.GetString("buffSkillName", 0) ?? string.Empty;
 
 				if (string.IsNullOrEmpty(buffSkillName))
@@ -234,6 +235,12 @@ public partial class ItemProvider
 							TranslationService.TryTranslateXTag(skillNameTag, out skillName);
 					}
 				}
+
+				// The skill window shows only the pet skills marked for it (isPetDisplayable, on the skill or its buff), not
+				// its innate armor and resistances or its death skill.
+				if (skillWindow && (string.IsNullOrWhiteSpace(skillName)
+					|| (skillRecord1?.GetInt32("isPetDisplayable", 0) != 1 && record?.GetInt32("isPetDisplayable", 0) != 1)))
+					continue;
 
 				if (string.IsNullOrWhiteSpace(skillName))
 					valueStr = $"{ItemStyle.Legendary.TQColor().ColorTag()}{skillNameTag}";
