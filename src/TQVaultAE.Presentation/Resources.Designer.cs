@@ -2202,6 +2202,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No difference.
+        /// </summary>
+        public static string ItemComparisonNoDifference {
+            get {
+                return ResourceManager.GetString("ItemComparisonNoDifference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Item Comparison.
+        /// </summary>
+        public static string ItemComparisonText {
+            get {
+                return ResourceManager.GetString("ItemComparisonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Item Properties.
         /// </summary>
         public static string ItemPropertiesText {
@@ -3976,6 +3994,15 @@ namespace TQVaultAE.Presentation {
         public static string SackPanelMenuClear {
             get {
                 return ResourceManager.GetString("SackPanelMenuClear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compare.
+        /// </summary>
+        public static string SackPanelMenuCompare {
+            get {
+                return ResourceManager.GetString("SackPanelMenuCompare", resourceCulture);
             }
         }
         

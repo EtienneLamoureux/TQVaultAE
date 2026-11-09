@@ -291,6 +291,12 @@ Would you like to restart TQVault?</value>
 	<data name="ItemPropertiesLabelSuffixProperties" xml:space="preserve">
     <value>Suffix Properties</value>
   </data>
+	<data name="ItemComparisonNoDifference" xml:space="preserve">
+    <value>No difference</value>
+  </data>
+	<data name="ItemComparisonText" xml:space="preserve">
+    <value>Item Comparison</value>
+  </data>
 	<data name="ItemPropertiesText" xml:space="preserve">
     <value>Item Properties</value>
   </data>
@@ -640,6 +646,9 @@ Are you sure you want to delete this item?</value>
   </data>
 	<data name="SackPanelMenuClear" xml:space="preserve">
     <value>Clear Selection</value>
+  </data>
+	<data name="SackPanelMenuCompare" xml:space="preserve">
+    <value>Compare</value>
   </data>
 	<data name="SackPanelMenuCopy" xml:space="preserve">
     <value>Copy Item (Randomized seed)</value>
