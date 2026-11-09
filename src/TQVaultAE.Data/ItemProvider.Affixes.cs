@@ -216,6 +216,7 @@ public partial class ItemProvider
 		newRelic.RelicBonusInfo = itm.RelicBonusInfo;
 		newRelic.Var1 = itm.Var1;
 		newRelic.Mod = itm.Mod;
+		newRelic.ModFromVault = itm.ModFromVault;
 		GetDBData(newRelic);
 
 		// Now clear out our relic data
@@ -245,6 +246,7 @@ public partial class ItemProvider
 		newRelic.RelicBonusInfo = itm.RelicBonus2Info;
 		newRelic.Var1 = itm.Var2;
 		newRelic.Mod = itm.Mod;
+		newRelic.ModFromVault = itm.ModFromVault;
 		GetDBData(newRelic);
 
 		// Now clear out our relic data
@@ -271,6 +273,7 @@ public partial class ItemProvider
 			string artifactname = itm.baseItemInfo.GetString("artifactName");
 			Item newArtifact = itm.MakeEmptyCopy(artifactname);
 			newArtifact.Mod = itm.Mod;
+			newArtifact.ModFromVault = itm.ModFromVault;
 			GetDBData(newArtifact);
 
 			itm.IsModified = true;

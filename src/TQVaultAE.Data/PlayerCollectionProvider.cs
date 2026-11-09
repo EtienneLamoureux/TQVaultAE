@@ -205,8 +205,8 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					var2 = i.Var2,
 					pointX = i.PositionX,
 					pointY = i.PositionY,
-					// An item of the vault's mod follows the vault's link.
-					mod = string.Equals(i.Mod, pc.Mod, StringComparison.OrdinalIgnoreCase) ? null : i.Mod,
+					// An item following the vault's link has no link of its own to write.
+					mod = i.ModFromVault && string.Equals(i.Mod, pc.Mod, StringComparison.OrdinalIgnoreCase) ? null : i.Mod,
 				}).ToList()
 			}).ToList()
 		};
@@ -343,6 +343,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					StackSize = s.stackSize,
 					// Its own mod, else the vault's: resolved with that mod's data first, then the base game's.
 					Mod = string.IsNullOrWhiteSpace(s.mod) ? pc.Mod : s.mod,
+					ModFromVault = string.IsNullOrWhiteSpace(s.mod) && pc.Mod is not null,
 					// Atlantis
 					relic2ID = RecordId.Empty,
 					RelicBonus2Id = RecordId.Empty,

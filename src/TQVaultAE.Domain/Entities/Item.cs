@@ -248,6 +248,12 @@ public class Item
 	public string? Mod { get; set; }
 
 	/// <summary>
+	/// True when <see cref="Mod"/> is the link of the vault holding the item rather than the item's own: the item
+	/// follows the vault's link when it changes, and the vault file does not repeat it for the item.
+	/// </summary>
+	public bool ModFromVault { get; set; }
+
+	/// <summary>
 	/// The records the item names that the loaded game data does not have (once read with <c>GetDBData</c>): typically
 	/// those of a mod whose data is not loaded. The item is then shown incomplete.
 	/// </summary>

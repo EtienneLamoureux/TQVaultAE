@@ -184,10 +184,12 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 	public bool ChangeMod(SackCollection sack, Item item, string? modName)
 	{
 		string? mod = string.IsNullOrWhiteSpace(modName) ? null : modName;
-		if (string.Equals(item.Mod, mod, StringComparison.OrdinalIgnoreCase))
+		if (string.Equals(item.Mod, mod, StringComparison.OrdinalIgnoreCase) && !item.ModFromVault)
 			return false;
 
+		// Chosen for the item: its own link from now on.
 		item.Mod = mod;
+		item.ModFromVault = false;
 		this._itemProvider.GetDBData(item);
 		MarkModified(sack, item);
 		return true;
@@ -208,11 +210,20 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 			if (sack is null)
 				continue;
 
-			// The items of the vault's mod follow it; the items linked to another mod keep theirs.
-			foreach (var item in sack.Where(i => i.Mod is null || string.Equals(i.Mod, previous, StringComparison.OrdinalIgnoreCase)))
+			// The items following the vault's link, or without a link, follow the new one; the items having their own
+			// link keep it.
+			foreach (var item in sack.Where(i => i.Mod is null || i.ModFromVault))
 			{
+				bool wasIncomplete = item.IsIncomplete;
 				item.Mod = mod;
+				item.ModFromVault = mod is not null;
 				this._itemProvider.GetDBData(item);
+
+				// An item whose missing records the mod all resolves belongs to that mod: it gets its own link, which it
+				// keeps when the vault's link changes or when it leaves the vault.
+				if (mod is not null && wasIncomplete && !item.IsIncomplete)
+					item.ModFromVault = false;
+
 				item.IsModified = true;
 				changed.Add(item);
 			}
@@ -221,6 +232,37 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 		}
 
 		return changed;
+	}
+
+	/// <inheritdoc/>
+	public bool AdoptContainerMod(Item item, string? containerMod, Func<Item, bool> fits)
+	{
+		// Only an item without a link of its own follows the vault's.
+		if (string.IsNullOrWhiteSpace(containerMod) || (item.Mod is not null && !item.ModFromVault)
+			|| (item.ModFromVault && string.Equals(item.Mod, containerMod, StringComparison.OrdinalIgnoreCase)))
+			return false;
+
+		var (previousMod, previousFromVault) = (item.Mod, item.ModFromVault);
+		bool wasIncomplete = item.IsIncomplete;
+
+		item.Mod = containerMod;
+		item.ModFromVault = true;
+		this._itemProvider.GetDBData(item);
+
+		// Read with the mod's data, the item may get its real size: it must still fit where it was dropped.
+		if (!fits(item))
+		{
+			(item.Mod, item.ModFromVault) = (previousMod, previousFromVault);
+			this._itemProvider.GetDBData(item);
+			return false;
+		}
+
+		// The vault's mod resolves all its missing records: the item belongs to that mod.
+		if (wasIncomplete && !item.IsIncomplete)
+			item.ModFromVault = false;
+
+		item.IsModified = true;
+		return true;
 	}
 
 	/// <summary>Rolls a completion bonus from the bonus table of a relic, charm or artifact.</summary>

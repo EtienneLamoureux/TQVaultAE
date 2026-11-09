@@ -409,17 +409,21 @@ public class ItemEditServiceTests
 	}
 
 	[Fact]
-	public void ChangeVaultMod_ItemsOfTheVaultFollow_ItemsOfAnotherModKeepTheirs()
+	public void ChangeVaultMod_ItemsOfTheVaultFollow_ItemsWithTheirOwnLinkKeepIt()
 	{
 		var vault = new TQVaultAE.Application.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
 		var sack = new SackCollection();
 		var plain = MakeItem("records/a.dbr", "ArmorJewelry_Ring");
 		var ofVault = MakeItem("records/b.dbr", "ArmorJewelry_Ring");
 		ofVault.Mod = "Lilith";
+		ofVault.ModFromVault = true;
+		var own = MakeItem("records/d.dbr", "ArmorJewelry_Ring");
+		own.Mod = "Lilith";
 		var other = MakeItem("records/c.dbr", "ArmorJewelry_Ring");
 		other.Mod = "Masteries";
 		sack.AddItem(plain);
 		sack.AddItem(ofVault);
+		sack.AddItem(own);
 		sack.AddItem(other);
 		vault.Sacks = [sack];
 
@@ -427,9 +431,108 @@ public class ItemEditServiceTests
 
 		vault.Mod.Should().Be("shadowchampions");
 		changed.Should().BeEquivalentTo([plain, ofVault]);
-		plain.Mod.Should().Be("shadowchampions");
-		ofVault.Mod.Should().Be("shadowchampions");
+		(plain.Mod, plain.ModFromVault).Should().Be(("shadowchampions", true));
+		(ofVault.Mod, ofVault.ModFromVault).Should().Be(("shadowchampions", true));
+		own.Mod.Should().Be("Lilith");
 		other.Mod.Should().Be("Masteries");
 		vault.IsModified.Should().BeTrue();
+	}
+
+	[Fact]
+	public void ChangeVaultMod_ItemsTheModCompletes_GetItAsTheirOwnLink()
+	{
+		// The mod has the lance; nothing has the unknown sword.
+		var lance = RecordId.Create("records/customitems/lance.dbr");
+		var sword = RecordId.Create("records/unknown/sword.dbr");
+		this._itemProvider.Setup(p => p.GetDBData(It.IsAny<Item>())).Callback<Item>(i =>
+			i.baseItemInfo = i.Mod == "shadowchampions" && i.BaseItemId == lance ? MakeInfo(lance.Raw, "WeaponMelee_Spear") : null);
+		var vault = new TQVaultAE.Application.PlayerCollection("vault", "vault.json") { IsVault = true };
+		var sack = new SackCollection();
+		var resolved = new Item { BaseItemId = lance };
+		var stillMissing = new Item { BaseItemId = sword };
+		var baseGame = MakeItem("records/a.dbr", "ArmorJewelry_Ring");
+		this._itemProvider.Setup(p => p.GetDBData(baseGame)).Callback<Item>(i => i.baseItemInfo = MakeInfo("records/a.dbr", "ArmorJewelry_Ring"));
+		sack.AddItem(resolved);
+		sack.AddItem(stillMissing);
+		sack.AddItem(baseGame);
+		vault.Sacks = [sack];
+
+		this._service.ChangeVaultMod(vault, "shadowchampions");
+
+		(resolved.Mod, resolved.ModFromVault).Should().Be(("shadowchampions", false));
+		(stillMissing.Mod, stillMissing.ModFromVault).Should().Be(("shadowchampions", true));
+		(baseGame.Mod, baseGame.ModFromVault).Should().Be(("shadowchampions", true));
+
+		// Unlinking the vault: the resolved item keeps its mod, the others follow.
+		this._service.ChangeVaultMod(vault, null);
+
+		resolved.Mod.Should().Be("shadowchampions");
+		stillMissing.Mod.Should().BeNull();
+		baseGame.Mod.Should().BeNull();
+	}
+
+	/// <summary>The mod has the lance; nothing has the unknown sword.</summary>
+	private void ModHasTheLance(RecordId lance)
+		=> this._itemProvider.Setup(p => p.GetDBData(It.IsAny<Item>())).Callback<Item>(i =>
+			i.baseItemInfo = i.Mod == "shadowchampions" && i.BaseItemId == lance ? MakeInfo(lance.Raw, "WeaponMelee_Spear") : null);
+
+	[Fact]
+	public void AdoptContainerMod_UnresolvedItemTheVaultsModResolves_GetsItAsItsOwnLink()
+	{
+		var lance = RecordId.Create("records/customitems/lance.dbr");
+		this.ModHasTheLance(lance);
+		var item = new Item { BaseItemId = lance };
+
+		this._service.AdoptContainerMod(item, "shadowchampions", _ => true).Should().BeTrue();
+
+		(item.Mod, item.ModFromVault).Should().Be(("shadowchampions", false));
+	}
+
+	[Fact]
+	public void AdoptContainerMod_ItemStillUnresolved_FollowsTheVault()
+	{
+		this.ModHasTheLance(RecordId.Create("records/customitems/lance.dbr"));
+		var item = new Item { BaseItemId = RecordId.Create("records/unknown/sword.dbr") };
+
+		this._service.AdoptContainerMod(item, "shadowchampions", _ => true).Should().BeTrue();
+
+		(item.Mod, item.ModFromVault).Should().Be(("shadowchampions", true));
+	}
+
+	[Fact]
+	public void AdoptContainerMod_ResolvedItemNoLongerFits_IsLeftAsItWas()
+	{
+		var lance = RecordId.Create("records/customitems/lance.dbr");
+		this.ModHasTheLance(lance);
+		var item = new Item { BaseItemId = lance };
+
+		this._service.AdoptContainerMod(item, "shadowchampions", _ => false).Should().BeFalse();
+
+		(item.Mod, item.ModFromVault).Should().Be(((string?)null, false));
+		item.IsIncomplete.Should().BeTrue();
+	}
+
+	[Fact]
+	public void AdoptContainerMod_ItemWithItsOwnLink_KeepsIt()
+	{
+		var item = MakeItem("records/ring.dbr", "ArmorJewelry_Ring");
+		item.Mod = "Lilith";
+
+		this._service.AdoptContainerMod(item, "shadowchampions", _ => true).Should().BeFalse();
+
+		item.Mod.Should().Be("Lilith");
+		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
+	}
+
+	[Fact]
+	public void ChangeMod_ItemFollowingTheVault_GetsItsOwnLink()
+	{
+		var item = MakeItem("records/ring.dbr", "ArmorJewelry_Ring");
+		item.Mod = "shadowchampions";
+		item.ModFromVault = true;
+
+		this._service.ChangeMod(this._sack, item, "shadowchampions").Should().BeTrue();
+
+		item.ModFromVault.Should().BeFalse();
 	}
 }
