@@ -82,6 +82,7 @@ public partial class ComboBoxCharacterItem : UserControl
 			this.bufferedFlowLayoutPanelTags.Visible =
 				this.bufferedFlowLayoutPanelSubTitle.Visible =
 					this.bufferedFlowLayoutPanelMod.Visible =
+					this.scalingLabelModName.Visible =
 						this.scalingLabelArchived.Visible = false;
 
 		this.scalingLabelCharName.Text =
@@ -158,22 +159,23 @@ public partial class ComboBoxCharacterItem : UserControl
 			this.scalingLabelPlayerHeader.Text =
 				this.scalingLabelLevel.Text =
 					this.scalingLabelCLassName.Text = string.Empty;
-			this.bufferedFlowLayoutPanelMod.Visible = false;
+			this.bufferedFlowLayoutPanelMod.Visible = this.scalingLabelModName.Visible = false;
 		}
 	}
 
 	/// <summary>
-	/// Marks a custom map character as modded, with its mod and whether the link to it works.
+	/// Marks a custom map character as modded: its mod beside its name, and the Modded tag with the link state on the
+	/// tags line.
 	/// </summary>
 	private void RefreshMod(PlayerSave ps)
 	{
 		var state = ps.IsCustom ? ps.ModState : CharacterModState.BaseGame;
 		this.bufferedFlowLayoutPanelMod.Visible = state != CharacterModState.BaseGame;
+		this.scalingLabelModName.Visible = state != CharacterModState.BaseGame && !string.IsNullOrEmpty(ps.ModName);
 		if (state == CharacterModState.BaseGame)
 			return;
 
-		this.scalingLabelModName.Text = ps.ModName ?? string.Empty;
-		this.scalingLabelModName.Visible = !string.IsNullOrEmpty(ps.ModName);
+		this.scalingLabelModName.Text = $"[{ps.ModName}]";
 
 		(this.scalingLabelModState.Text, this.scalingLabelModState.BackColor) = state switch
 		{
