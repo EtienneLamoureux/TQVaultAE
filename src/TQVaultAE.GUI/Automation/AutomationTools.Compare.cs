@@ -48,9 +48,12 @@ internal static partial class AutomationTools
 					return recorder.Rows;
 				});
 
-				// The whole table at its size, beyond what the dialog shows without scrolling.
-				using var bitmap = new Bitmap(table.Width, table.Height);
-				table.DrawToBitmap(bitmap, new Rectangle(Point.Empty, table.Size));
+				// The whole dialog with its border when it shows all the content; else the whole table at its size,
+				// beyond what the dialog shows without scrolling.
+				Control captured = table.Parent is ScrollableControl scroll
+					&& table.Width <= scroll.ClientSize.Width && table.Height <= scroll.ClientSize.Height ? dialog : table;
+				using var bitmap = new Bitmap(captured.Width, captured.Height);
+				captured.DrawToBitmap(bitmap, new Rectangle(Point.Empty, captured.Size));
 				using var stream = new MemoryStream();
 				bitmap.Save(stream, ImageFormat.Png);
 
@@ -62,7 +65,7 @@ internal static partial class AutomationTools
 					contentSize = new { table.Width, table.Height },
 					columns,
 				});
-				return (result, stream.ToArray(), table.Size);
+				return (result, stream.ToArray(), captured.Size);
 			}
 			finally
 			{
