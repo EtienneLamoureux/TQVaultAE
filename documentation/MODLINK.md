@@ -62,4 +62,4 @@ with another map's data) is shown incomplete:
 
 - its tooltip has a warning line with an icon under its name, then the missing records, one per line;
 - a missing name part (base item, prefix, suffix) shows the record's file name;
-- without its base item record it has no picture: the grid shows a "?" in one cell, so it stays visible and can be moved.
+- without its base item record it has no picture: the grid shows a warning tile in one cell, so it stays visible and can be moved.
