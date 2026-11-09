@@ -296,31 +296,13 @@ public partial class ItemTooltip : BaseTooltip
 		ToImage.Add(key, raster, Data);
 	}
 
-	private void AddRow(string? friendlyName = TOOLTIPSPACER, Color? FGColor = null, float fontSize = 10F, FontStyle style = FontStyle.Regular, Color? BGColor = null)
-	{
-		Control? row = MakeRow(this.UIService, this.FontService, friendlyName, FGColor, fontSize, style, BGColor: this.flowLayoutPanelFriendlyNames.BackColor);
-
-		this.flowLayoutPanelFriendlyNames.Controls.Add(row);
-	}
-
 	/// <summary>Adds the row of a line built by <see cref="ItemTooltipContentBuilder"/>.</summary>
 	private void AddLine(TooltipLine line)
 	{
-		switch (line.Kind)
-		{
-			case TooltipLineKind.Spacer:
-				AddRow(TOOLTIPSPACER);
-				break;
-			case TooltipLineKind.Delimiter:
-				AddRow(TOOLTIPDELIM);
-				break;
-			case TooltipLineKind.Range:
-				this.flowLayoutPanelFriendlyNames.Controls.Add(this.MakeRangeRow(line.Text, line.Range ?? string.Empty));
-				break;
-			default:
-				AddRow(line.Text, line.Color?.Color(), style: line.Bold ? FontStyle.Bold : FontStyle.Regular);
-				break;
-		}
+		if (line.Kind == TooltipLineKind.Range)
+			this.flowLayoutPanelFriendlyNames.Controls.Add(this.MakeRangeRow(line.Text, line.Range ?? string.Empty));
+		else
+			this.flowLayoutPanelFriendlyNames.Controls.Add(MakeLineRow(this.UIService, this.FontService, line, this.flowLayoutPanelFriendlyNames.BackColor));
 	}
 
 	/// <summary>

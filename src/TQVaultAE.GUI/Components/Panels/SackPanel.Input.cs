@@ -129,6 +129,12 @@ public partial class SackPanel
 					this.AddActionMenuItem(Resources.SackPanelMenuProperties, ItemActions.Properties);
 				}
 
+				if (actions.HasFlag(ItemActions.Compare))
+				{
+					this.CustomContextMenu.Items.Add("-");
+					this.AddActionMenuItem(Resources.SackPanelMenuCompare, ItemActions.Compare);
+				}
+
 				if (actions.HasFlag(ItemActions.ClearSelection))
 					this.AddActionMenuItem(Resources.SackPanelMenuClear, ItemActions.ClearSelection);
 

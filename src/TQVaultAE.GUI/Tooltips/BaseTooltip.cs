@@ -2,6 +2,7 @@
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
+using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32.Contracts;
 
 namespace TQVaultAE.GUI.Tooltips;
@@ -122,6 +123,19 @@ public class BaseTooltip : Form
 
 		return row;
 	}
+
+	/// <summary>
+	/// The row of a tooltip line built in Presentation: text, spacer or delimiter. A range line is drawn as its text followed
+	/// by its range; the item tooltip aligns ranges itself.
+	/// </summary>
+	internal static Control? MakeLineRow(IUIService uiService, IFontService fontService, TooltipLine line, Color? BGColor = null)
+		=> line.Kind switch
+		{
+			TooltipLineKind.Spacer => MakeRow(uiService, fontService, TOOLTIPSPACER, BGColor: BGColor),
+			TooltipLineKind.Delimiter => MakeRow(uiService, fontService, TOOLTIPDELIM, BGColor: BGColor),
+			TooltipLineKind.Range => MakeRow(uiService, fontService, $"{line.Text}  {line.Range}", line.Color?.Color(), style: line.Bold ? FontStyle.Bold : FontStyle.Regular, BGColor: BGColor),
+			_ => MakeRow(uiService, fontService, line.Text, line.Color?.Color(), style: line.Bold ? FontStyle.Bold : FontStyle.Regular, BGColor: BGColor),
+		};
 
 	internal static Label MakeSingleColorLabel(IUIService uiService, IFontService fontService, string friendlyName, Color? FGColor, float fontSize, FontStyle style, Color? BGColor = null)
 	{

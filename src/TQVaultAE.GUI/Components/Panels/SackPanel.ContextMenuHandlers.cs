@@ -458,6 +458,17 @@ public partial class SackPanel
 				this.ClearSelection();
 				Refresh();
 			}
+			else if (action == ItemActions.Compare)
+			{
+				// The first two selected items; the others are ignored. Works from an empty cell too.
+				if (ItemActionRules.ComparedItems(this.selectedItems) is { } pair)
+				{
+					using var dlg = this.Services.Forms.Create<ItemComparisonDialog>();
+					dlg.First = pair.First;
+					dlg.Second = pair.Second;
+					dlg.ShowDialog();
+				}
+			}
 			else if (focusedItem is null)
 			{
 				// The other entries apply to the focused item.
