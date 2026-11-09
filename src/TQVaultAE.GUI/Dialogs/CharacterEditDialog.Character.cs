@@ -48,7 +48,7 @@ internal sealed partial class CharacterEditDialog
 		this.Controls.Add(this._tabs);
 
 		// The page shows the dialog's marble rather than the black of the frame, where the game draws its mastery panes.
-		var page = new Panel { Name = "CharacterPage", BackgroundImage = this.BackgroundImage, BackgroundImageLayout = ImageLayout.Stretch };
+		var page = new BufferedPanel { Name = "CharacterPage", BackgroundImageLayout = ImageLayout.None };
 
 		// The panel at 1.24 times the game size fills the height of the page with the gold bar under it.
 		var panelScale = scale * 1.24F;
@@ -103,7 +103,7 @@ internal sealed partial class CharacterEditDialog
 		this.ResetMasteriesScalingButton.Location = new Point(buttonX, this.ResetAttributesScalingButton.Bottom + (int)Math.Round(16 * scale));
 
 		this._tabs.AddPage(Resources.CECharacter, page);
-		page.Paint += (_, e) => this.DrawPaneEdge(e.Graphics, page.ClientSize);
+		page.BackgroundImage = this.RenderPageBackground(page.ClientSize);
 		this.AddMedallion(page, scale);
 
 		this._stats.AttributeClicked += (_, click) => this.CharacterAttribute_Clicked(click.Attribute, click.Step, click.ToEnd);
@@ -145,16 +145,26 @@ internal sealed partial class CharacterEditDialog
 		this.FormClosed += (_, _) => medallion.Dispose();
 	}
 
-	/// <summary>The thin edge of the mastery panes (a gold and a black line with a shadow inside), transparent inside.</summary>
-	private Bitmap? _paneEdge;
-
-	/// <summary>Draws the edge of the mastery panes around the Character page, stretched to the page.</summary>
-	private void DrawPaneEdge(Graphics g, Size page)
+	/// <summary>
+	/// The background of the Character page, made once at its size: the dialog's marble, with the thin edge of the
+	/// mastery panes (a gold and a black line with a shadow inside) around it. A picture at the page's size is copied as
+	/// is when the page repaints, where stretching both at every paint made switching to the page flicker.
+	/// </summary>
+	private Bitmap RenderPageBackground(Size page)
 	{
-		this._paneEdge ??= Images.CharacterEditorPaneEdge;
-		g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-		g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
-		g.DrawImage(this._paneEdge, new Rectangle(Point.Empty, page));
+		var background = new Bitmap(Math.Max(1, page.Width), Math.Max(1, page.Height));
+		using (var g = Graphics.FromImage(background))
+		using (var edge = Images.CharacterEditorPaneEdge)
+		{
+			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+			g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+			if (this.BackgroundImage is { } marble)
+				g.DrawImage(marble, new Rectangle(Point.Empty, page));
+			g.DrawImage(edge, new Rectangle(Point.Empty, page));
+		}
+
+		this.FormClosed += (_, _) => background.Dispose();
+		return background;
 	}
 
 	/// <summary>
@@ -169,7 +179,6 @@ internal sealed partial class CharacterEditDialog
 		this.FormClosed += (_, _) =>
 		{
 			marble.Dispose();
-			this._paneEdge?.Dispose();
 		};
 	}
 
@@ -223,7 +232,9 @@ internal sealed partial class CharacterEditDialog
 		return new CharacterPanelView
 		{
 			Name = this.PlayerCollection.PlayerName,
-			ClassName = this.TranslationService.TranslateXTag(info.Class ?? string.Empty, true, true) ?? string.Empty,
+			// The class goes with the masteries: a change of masteries clears it when it is applied, as the game sets it again.
+			ClassName = skills?.MasteriesChanged == true ? string.Empty
+				: this.TranslationService.TranslateXTag(info.Class ?? string.Empty, true, true) ?? string.Empty,
 			LevelText = CharacterPanelLayout.FormatGameText(Game("tagCLevel", "Level : {%d0}"), level),
 			XpText = CharacterPanelLayout.FormatGameText(Game("xtagCXP", "XP : {%t0}"), xp),
 			AttributesTitle = Game("tagCAttributes", Resources.CEAttributes),

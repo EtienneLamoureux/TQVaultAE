@@ -150,6 +150,16 @@ public sealed class CharacterSkillEditor
 	}
 
 	/// <summary>
+	/// Empties every mastery slot: the points of the masteries and of their skills are given back. The class of the
+	/// character goes with them (<see cref="MasteriesChanged"/>).
+	/// </summary>
+	public void ResetMasteries()
+	{
+		for (int slot = 0; slot < this._slots.Length; slot++)
+			this.SetMastery(slot, null);
+	}
+
+	/// <summary>
 	/// Sets the level of the mastery of a slot, between 1 and its highest level and within the points left. Lowering it
 	/// resets the skills of the tiers it closes.
 	/// </summary>

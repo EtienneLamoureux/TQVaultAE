@@ -205,6 +205,24 @@ public class CharacterSkillEditorTests
 	}
 
 	[Fact]
+	public void ResetMasteries_EmptiesEverySlotAndGivesBackAllTheirPoints()
+	{
+		var records = StormCharacter();
+		records.Insert(1, Skill(EarthMastery.Raw, 3));
+		records.Insert(2, Skill(HeatShield.Raw, 2));
+		var editor = Editor(records, points: 1);
+
+		editor.ResetMasteries();
+
+		editor.Slots.Should().HaveCount(2).And.OnlyContain(slot => slot == null);
+		editor.AvailablePoints.Should().Be(1 + 5 + 20);
+		editor.MasteriesChanged.Should().BeTrue();
+		editor.BuildSkillRecords().Select(r => r.skillName).Should().Equal(
+			"""Records/Skills/Default/DefaultWeaponAttack.dbr""",
+			"""Records\Quests\Rewards\JG10 - Chirons Reward NORMAL.dbr""");
+	}
+
+	[Fact]
 	public void BuildSkillRecords_NoChange_GivesBackTheSameRecordsInTheSameOrder()
 	{
 		var records = StormCharacter();

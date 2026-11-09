@@ -92,16 +92,38 @@ internal sealed class GameTabControl : Control
 			if (value < 0 || value >= this._pages.Count || value == this._selectedIndex)
 				return;
 
+			// The new page shows before the old one hides, so that the black of the frame never shows between them; only the
+			// tabs repaint, the page area is the pages'.
 			this._selectedIndex = value;
+			this.SetPageVisible(this._pages[value], true);
 			for (int i = 0; i < this._pages.Count; i++)
-			{
-				this._pages[i].Content.Visible = i == value;
-				if (this._pages[i].Header is { } header)
-					header.Visible = i == value;
-			}
+				if (i != value)
+					this.SetPageVisible(this._pages[i], false);
 
-			this.Invalidate();
+			this.Invalidate(new Rectangle(0, 0, this.Width, this.Scaled(StripHeight + 10)));
 			this.SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
+		}
+	}
+
+	private void SetPageVisible(GamePage page, bool visible)
+	{
+		page.Content.Visible = visible;
+		if (page.Header is { } header)
+			header.Visible = visible;
+	}
+
+	/// <summary>
+	/// The frame and its pages are painted in one pass (<c>WS_EX_COMPOSITED</c>): a page with transparent parts no longer
+	/// shows the frame's black under it for a moment when it appears.
+	/// </summary>
+	protected override CreateParams CreateParams
+	{
+		get
+		{
+			const int WS_EX_COMPOSITED = 0x02000000;
+			var parameters = base.CreateParams;
+			parameters.ExStyle |= WS_EX_COMPOSITED;
+			return parameters;
 		}
 	}
 
