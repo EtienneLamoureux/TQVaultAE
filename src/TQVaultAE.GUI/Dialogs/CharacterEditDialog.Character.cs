@@ -38,7 +38,7 @@ internal sealed partial class CharacterEditDialog
 	{
 		var scale = this.GameScale;
 		this.UseMarbleBackground();
-		this._tabs = new GameTabControl(this.UIService)
+		this._tabs = new GameTabControl
 		{
 			Name = "EditorTabs",
 			FrameScale = scale,
@@ -145,54 +145,32 @@ internal sealed partial class CharacterEditDialog
 		this.FormClosed += (_, _) => medallion.Dispose();
 	}
 
-	/// <summary>The mastery selection background (919x540, the size of a page), whose edge every pane has.</summary>
-	private const string PaneEdgeTexture = """InGameUI\Skills\SkillsBackground01.tex""";
+	/// <summary>The thin edge of the mastery panes (a gold and a black line with a shadow inside), transparent inside.</summary>
+	private Bitmap? _paneEdge;
 
-	/// <summary>Width of the pane edge: a gold line, a black line and the shadow inside them.</summary>
-	private const int PaneEdge = 6;
-
-	/// <summary>
-	/// The thin edge of the mastery panes, a gold and a black line with a shadow inside, drawn around the Character page
-	/// from the four sides of a pane background (its middle is not drawn).
-	/// </summary>
+	/// <summary>Draws the edge of the mastery panes around the Character page, stretched to the page.</summary>
 	private void DrawPaneEdge(Graphics g, Size page)
 	{
-		var texture = this.UIService.LoadBitmap(PaneEdgeTexture.ToRecordId());
-		float sx = page.Width / (float)texture.Width, sy = page.Height / (float)texture.Height;
+		this._paneEdge ??= Images.CharacterEditorPaneEdge;
 		g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 		g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
-		foreach (var side in new[]
-		{
-			new Rectangle(0, 0, texture.Width, PaneEdge),
-			new Rectangle(0, texture.Height - PaneEdge, texture.Width, PaneEdge),
-			new Rectangle(0, 0, PaneEdge, texture.Height),
-			new Rectangle(texture.Width - PaneEdge, 0, PaneEdge, texture.Height),
-		})
-		{
-			var target = RectangleF.FromLTRB(side.Left * sx, side.Top * sy, side.Right * sx, side.Bottom * sy);
-			g.DrawImage(texture, target, side, GraphicsUnit.Pixel);
-		}
+		g.DrawImage(this._paneEdge, new Rectangle(Point.Empty, page));
 	}
 
-	/// <summary>Rows at the top of <see cref="Images.MainForm_NewBackground"/> taken by its dark band, left out.</summary>
-	private const int MarbleTop = 60;
-
-	/// <summary>Width of the black border around <see cref="Images.MainForm_NewBackground"/>, left out.</summary>
-	private const int MarbleBorder = 6;
-
 	/// <summary>
-	/// The dialog's background: the plain marble of TQVault's own background picture (without its dark top band and
-	/// its border), stretched to the dialog, around the game frame and under OK and Cancel.
+	/// The dialog's background: the plain marble of TQVault's own background picture
+	/// (<see cref="Images.CharacterEditorMarble"/>), stretched to the dialog, around the game frame and under OK and Cancel.
 	/// </summary>
 	private void UseMarbleBackground()
 	{
-		using var source = Images.MainForm_NewBackground;
-		var marble = source.Clone(
-			new Rectangle(MarbleBorder, MarbleTop, source.Width - 2 * MarbleBorder, source.Height - MarbleTop - MarbleBorder),
-			source.PixelFormat);
+		var marble = Images.CharacterEditorMarble;
 		this.BackgroundImage = marble;
 		this.BackgroundImageLayout = ImageLayout.Stretch;
-		this.FormClosed += (_, _) => marble.Dispose();
+		this.FormClosed += (_, _) =>
+		{
+			marble.Dispose();
+			this._paneEdge?.Dispose();
+		};
 	}
 
 	/// <summary>A font the dialog made itself, disposed with it (never one of the font service's, which are shared).</summary>

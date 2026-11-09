@@ -1,48 +1,35 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using TQVaultAE.Domain.Helpers;
-using TQVaultAE.Presentation.Win32.Contracts;
+using TQVaultAE.Presentation.Win32;
 
 namespace TQVaultAE.GUI.Components.Character;
 
 /// <summary>
-/// Tabs drawn as the game's skill window: its frame (<c>SelectedSkillBackground01</c>, 1001x637) cut down to its inner
-/// border (the dialog has its own outer border and title), a leather tab per page on the marble strip above it (192x34,
-/// one every 225 pixels, as the window's two mastery tabs) and the page in the black area of the frame, where the game
-/// draws a mastery pane. Each page can also show a few controls on the marble strip right of the tabs. Sizes are in
-/// pixels of the game texture, times <see cref="FrameScale"/>; positions are relative to the part of it drawn.
+/// Tabs drawn as the game's skill window: a leather tab per page (<see cref="Images.CharacterEditorTab"/>, 192x34, one
+/// every 225 pixels as the window's two mastery tabs) on a transparent strip, where the dialog's background shows, and
+/// under it the window's frame cut down to its inner border (<see cref="Images.CharacterEditorFrame"/>, 951x560, from
+/// <c>SelectedSkillBackground01</c>); the page goes in the black area of the frame, where the game draws a mastery pane.
+/// Each page can also show a few controls on the strip right of the tabs. Sizes are in pixels of the game texture,
+/// times <see cref="FrameScale"/>.
 /// </summary>
 internal sealed class GameTabControl : Control
 {
-	/// <summary>
-	/// The part of the frame texture drawn: from the outer edge of its inner border (x 25 to 975, bottom row 614), and from
-	/// under its title strip (row 20) to keep the marble strip of the tabs. Its outer border, title and close button are
-	/// left out: the dialog has its own.
-	/// </summary>
-	public static readonly Rectangle FrameSource = new(25, 20, 951, 595);
+	/// <summary>Height of the strip of the tabs above the frame.</summary>
+	private const int StripHeight = 35;
 
-	/// <summary>
-	/// Top row of the inner border in the texture. The texture's marble strip above it (with its own tab shapes and
-	/// cracks) is not drawn: the tabs stand on the dialog's background there.
-	/// </summary>
-	private const int InnerBorderTop = 55;
+	/// <summary>Width of the frame.</summary>
+	public const int FrameWidth = 951;
 
-	/// <summary>Width of the frame drawn.</summary>
-	public static int FrameWidth => FrameSource.Width;
+	/// <summary>Height of the strip and the frame.</summary>
+	public const int FrameHeight = StripHeight + 560;
 
-	/// <summary>Height of the frame drawn.</summary>
-	public static int FrameHeight => FrameSource.Height;
+	/// <summary>The black area of the frame, where a page goes: the place of the mastery pane in the game window.</summary>
+	public static readonly Rectangle PageArea = new(16, StripHeight + 10, 919, 540);
 
-	/// <summary>The black area of the frame, where a page goes: the place of the mastery pane in the game (41,65).</summary>
-	public static readonly Rectangle PageArea = new(41 - FrameSource.X, 65 - FrameSource.Y, 919, 540);
+	/// <summary>The strip right of the tabs, where a page may show its controls (up to the frame's right edge).</summary>
+	public static readonly Rectangle HeaderArea = new(675, 4, 275, 30);
 
-	/// <summary>The marble strip right of the tabs, where a page may show its controls (up to the frame's right edge).</summary>
-	public static readonly Rectangle HeaderArea = new(700 - FrameSource.X, 24 - FrameSource.Y, 975 - 700, 30);
-
-	private const string FrameTexture = """InGameUI\Skills\SelectedSkillBackground01.tex""";
-	private const string TabTexture = """InGameUI\Skills\SkillTab01.tex""";
-	/// <summary>The first tab, at x 25 and y 26 in the texture: at the left edge of the part drawn.</summary>
 	private const int TabLeft = 0;
 	private const int TabTop = 6;
 	private const int TabWidth = 192;
@@ -52,12 +39,13 @@ internal sealed class GameTabControl : Control
 	private static readonly Color ActiveText = Color.White;
 	private static readonly Color InactiveText = Color.FromArgb(150, 150, 140);
 
-	private readonly IUIService _uiService;
+	private readonly Bitmap _frame = Images.CharacterEditorFrame;
+	private readonly Bitmap _tab = Images.CharacterEditorTab;
 	private readonly List<GamePage> _pages = [];
 	private float _frameScale = 1F;
 	private int _selectedIndex = -1;
 
-	/// <summary>A page: its tab text, its content and the controls of the marble strip.</summary>
+	/// <summary>A page: its tab text, its content and the controls of the strip.</summary>
 	internal sealed class GamePage
 	{
 		public required Control Content { get; init; }
@@ -65,9 +53,8 @@ internal sealed class GameTabControl : Control
 		public string Text { get; set; } = string.Empty;
 	}
 
-	public GameTabControl(IUIService uiService)
+	public GameTabControl()
 	{
-		this._uiService = uiService;
 		this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.ResizeRedraw | ControlStyles.SupportsTransparentBackColor, true);
 
 		// Transparent: the strip of the tabs shows the dialog's background.
@@ -121,7 +108,7 @@ internal sealed class GameTabControl : Control
 	/// <summary>The size of the page area on screen.</summary>
 	public Size PageSize => new(this.Scaled(PageArea.Width), this.Scaled(PageArea.Height));
 
-	/// <summary>Adds a page: its content fills the black area of the frame, its header goes on the marble strip.</summary>
+	/// <summary>Adds a page: its content fills the black area of the frame, its header goes on the strip.</summary>
 	public GamePage AddPage(string text, Control content, Control? header = null)
 	{
 		var page = new GamePage { Text = text, Content = content, Header = header };
@@ -159,6 +146,17 @@ internal sealed class GameTabControl : Control
 
 	private int Scaled(int value) => (int)Math.Round(value * this._frameScale);
 
+	protected override void Dispose(bool disposing)
+	{
+		if (disposing)
+		{
+			this._frame.Dispose();
+			this._tab.Dispose();
+		}
+
+		base.Dispose(disposing);
+	}
+
 	private void LayoutPages()
 	{
 		var area = new Rectangle(this.Scaled(PageArea.X), this.Scaled(PageArea.Y), this.Scaled(PageArea.Width), this.Scaled(PageArea.Height));
@@ -167,7 +165,7 @@ internal sealed class GameTabControl : Control
 			page.Content.Bounds = area;
 			if (page.Header is { } header)
 			{
-				// Right-aligned on the marble strip, centred on its height.
+				// Right-aligned on the strip, centred on its height.
 				var strip = new Rectangle(this.Scaled(HeaderArea.X), this.Scaled(HeaderArea.Y), this.Scaled(HeaderArea.Width), this.Scaled(HeaderArea.Height));
 				var size = header.PreferredSize;
 				header.Size = size;
@@ -200,21 +198,17 @@ internal sealed class GameTabControl : Control
 		g.PixelOffsetMode = PixelOffsetMode.Half;
 		g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
-		var frame = this._uiService.LoadBitmap(FrameTexture.ToRecordId());
-		var strip = InnerBorderTop - FrameSource.Y;
-		g.DrawImage(frame, new Rectangle(0, this.Scaled(strip), this.Width, this.Height - this.Scaled(strip)),
-			new Rectangle(FrameSource.X, InnerBorderTop, FrameSource.Width, FrameSource.Height - strip), GraphicsUnit.Pixel);
+		var strip = this.Scaled(StripHeight);
+		g.DrawImage(this._frame, new Rectangle(0, strip, this.Width, this.Height - strip));
 
-		var tab = this._uiService.LoadBitmap(TabTexture.ToRecordId());
 		using var center = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center, Trimming = StringTrimming.EllipsisCharacter, FormatFlags = StringFormatFlags.NoWrap };
 		for (int i = 0; i < this._pages.Count; i++)
 		{
 			var bounds = this.TabBounds(i);
 			var active = i == this._selectedIndex;
 
-			// The frame has two tabs of its own; the leather is drawn again so that every tab looks the same, and the
-			// tabs of the hidden pages are darkened as the game greys their text.
-			g.DrawImage(tab, bounds);
+			// The tabs of the hidden pages are darkened, as the game greys their text.
+			g.DrawImage(this._tab, bounds);
 			if (!active)
 			{
 				using var shade = new SolidBrush(Color.FromArgb(90, 0, 0, 0));
