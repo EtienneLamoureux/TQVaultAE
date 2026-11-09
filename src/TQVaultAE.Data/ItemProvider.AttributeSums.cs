@@ -81,7 +81,7 @@ public partial class ItemProvider
 			if (variable.NumberOfValues == 0 || variable.DataType is not (VariableDataType.Integer or VariableDataType.Float))
 				continue;
 
-			sum.Add(variable.Name, ValueAt(variable, level));
+			sum.Add(variable.Name, ValueAt(variable, level) * ChanceMultiplier(record, variable.Name, level));
 		}
 
 		if (record.GetAllStrings(RacialBonusRace) is { Length: > 0 } races)
@@ -93,6 +93,28 @@ public partial class ItemProvider
 			foreach (var race in races.Where(r => !string.IsNullOrWhiteSpace(r)).Distinct(StringComparer.OrdinalIgnoreCase))
 				sum.AddRace(race, bonus);
 		}
+	}
+
+	/// <summary>
+	/// What a chance-based bonus counts in the character window: the game's display accumulator always lets the chance
+	/// pass and scales the value by chance / 100 (<c>the game</c>), 1 when the
+	/// chance is 0 or 100 and more. <c>defensiveFire</c> goes with <c>defensiveFireChance</c>,
+	/// <c>defensiveFireModifier</c> with <c>defensiveFireModifierChance</c>, <c>offensiveBonusPhysicalMin/Max</c> with
+	/// <c>offensiveBonusPhysicalChance</c>; durations are not scaled.
+	/// </summary>
+	internal static double ChanceMultiplier(DBRecordCollection record, string name, int level)
+	{
+		if (name.EndsWith("Chance", StringComparison.OrdinalIgnoreCase)
+			|| name.EndsWith("DurationMin", StringComparison.OrdinalIgnoreCase)
+			|| name.EndsWith("DurationMax", StringComparison.OrdinalIgnoreCase))
+			return 1;
+
+		var chance = record[name + "Chance"];
+		if (chance is null && (name.EndsWith("Min", StringComparison.OrdinalIgnoreCase) || name.EndsWith("Max", StringComparison.OrdinalIgnoreCase)))
+			chance = record[string.Concat(name.AsSpan(0, name.Length - 3), "Chance")];
+
+		double percent = ValueAt(chance, level);
+		return percent is > 0 and < 100 ? percent / 100 : 1;
 	}
 
 	private static double ValueAt(Variable? variable, int level)
