@@ -1,0 +1,105 @@
+using AwesomeAssertions;
+using Moq;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
+using TQVaultAE.Services;
+
+namespace TQVaultAE.Tests.Services;
+
+public class CharacterStatsServiceTests
+{
+	private static readonly RecordId DefenseMastery = """Records\Skills\Defensive\DefensiveMastery.dbr""".ToRecordId();
+	private static readonly RecordId Toughness = """Records\Skills\Defensive\Toughness.dbr""".ToRecordId();
+	private static readonly RecordId ToughnessModifier = """Records\Skills\Defensive\Toughness_Mod.dbr""".ToRecordId();
+	private static readonly RecordId Aura = """Records\Skills\Defensive\Aura.dbr""".ToRecordId();
+	private static readonly RecordId AuraBuff = """Records\Skills\Defensive\Aura_Buff.dbr""".ToRecordId();
+	private static readonly RecordId AuraModifier = """Records\Skills\Defensive\Aura_Mod.dbr""".ToRecordId();
+	private static readonly RecordId Attack = """Records\Skills\Defensive\Attack.dbr""".ToRecordId();
+
+	private static readonly MasteryTree Defense = new(Masteries.Defensive, DefenseMastery, "tagDefense", "", "", 40,
+	[
+		new MasterySkill(Toughness, "", "", "", 10, 1, null),
+		new MasterySkill(ToughnessModifier, "", "", "", 10, 2, Toughness),
+		new MasterySkill(Aura, "", "", "", 10, 1, null),
+		new MasterySkill(AuraModifier, "", "", "", 10, 2, Aura),
+		new MasterySkill(Attack, "", "", "", 10, 1, null),
+	]);
+
+	private readonly Mock<IDatabase> _database = new();
+	private readonly Mock<IItemProvider> _items = new();
+	private readonly CharacterStatsService _service;
+
+	public CharacterStatsServiceTests()
+	{
+		Class(DefenseMastery, "Skill_Mastery");
+		Class(Toughness, "Skill_Passive");
+		Class(ToughnessModifier, "Skill_Modifier");
+		var aura = Class(Aura, "Skill_BuffRadiusToggled");
+		var buffName = new Variable("buffSkillName", VariableDataType.StringVar, 1) { [0] = AuraBuff.Raw };
+		aura.Set(buffName);
+		Class(AuraModifier, "Skill_Modifier");
+		Class(Attack, "Skill_AttackWeapon");
+
+		// Each record's sum tells which record was read and at which level.
+		this._items
+			.Setup(p => p.GetRecordAttributes(It.IsAny<RecordId?>(), It.IsAny<int>()))
+			.Returns((RecordId? id, int level) =>
+			{
+				var sum = new AttributeSum();
+				sum.Add(id!.Raw, level);
+				return sum;
+			});
+
+		this._service = new CharacterStatsService(this._database.Object, this._items.Object);
+	}
+
+	private DBRecordCollection Class(RecordId id, string recordClass)
+	{
+		var record = new DBRecordCollection(id, recordClass);
+		this._database.Setup(d => d.GetRecordFromFile(id)).Returns(record);
+		return record;
+	}
+
+	private static SkillRecord Skill(RecordId id, int level) => new() { skillName = id.Raw, skillLevel = level, skillEnabled = 1 };
+
+	private static SkillRecord[] AllSkills =>
+	[
+		Skill(DefenseMastery, 20), Skill(Toughness, 4), Skill(ToughnessModifier, 2),
+		Skill(Aura, 3), Skill(AuraModifier, 1), Skill(Attack, 5),
+	];
+
+	[Fact]
+	public void GetSkillAttributes_WithoutBuffs_CountsMasteryPassivesAndTheirModifiers()
+	{
+		SkillAugment[] augments = [new(SkillAugmentKind.Mastery, DefenseMastery, 1)];
+
+		var sum = this._service.GetSkillAttributes(AllSkills, augments, [Defense], includeBuffs: false);
+
+		sum.Values.Should().BeEquivalentTo(new Dictionary<string, double>
+		{
+			[DefenseMastery.Raw] = 20,
+			[Toughness.Raw] = 5,
+			[ToughnessModifier.Raw] = 3,
+		});
+	}
+
+	[Fact]
+	public void GetSkillAttributes_WithBuffs_ReadsTheBuffRecordAndTheBuffModifiers()
+	{
+		var sum = this._service.GetSkillAttributes(AllSkills, [], [Defense], includeBuffs: true);
+
+		sum[AuraBuff.Raw].Should().Be(3, "an aura's bonuses are in the buff it casts");
+		sum[Aura.Raw].Should().Be(0);
+		sum[AuraModifier.Raw].Should().Be(1);
+		sum[Attack.Raw].Should().Be(0, "an attack's bonuses go to its hits");
+	}
+
+	[Fact]
+	public void GetSkillAttributes_SkillWithoutPoint_IsSkipped()
+	{
+		var sum = this._service.GetSkillAttributes([Skill(Toughness, 0)], [new(SkillAugmentKind.All, null, 3)], [Defense], includeBuffs: true);
+
+		sum.Values.Should().BeEmpty();
+	}
+}

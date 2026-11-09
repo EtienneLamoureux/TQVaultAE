@@ -134,6 +134,19 @@ public interface IItemProvider
 	IReadOnlyList<SkillAugment> GetSkillAugments(Item item);
 	void GetStatBonusesFromRecord(SortedList<string, int> statBonuses, DBRecordCollection? record, int statLevel = 0);
 	/// <summary>
+	/// Sums every numeric variable of an item, as the game collects it for the character window: its base record, its
+	/// affixes, its relics or charms at their number of pieces and their completion bonuses.
+	/// </summary>
+	AttributeSum GetAttributeSums(Item item);
+
+	/// <summary>
+	/// Sums the bonuses of the item sets worn: each set record read at the number of its pieces among the items.
+	/// </summary>
+	AttributeSum GetSetBonuses(IEnumerable<Item> equipped);
+
+	/// <summary>Sums the numeric variables of one record at a level (arrays read at level - 1, the last value past their end).</summary>
+	AttributeSum GetRecordAttributes(RecordId? recordId, int level);
+	/// <summary>
 	/// Gets the itemID's of all the items in the set.
 	/// </summary>
 	/// <returns>Returns <see cref="SetItemInfo"/> containing the remaining set items or null if the item is not part of a set.</returns>

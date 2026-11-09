@@ -174,6 +174,7 @@ public static class Program
 		.AddSingleton<ISearchCategoryService, SearchCategoryService>()
 		.AddSingleton<ISearchQueryService, SearchQueryService>()
 		.AddSingleton<ICharacterEditService, CharacterEditService>()
+		.AddSingleton<ICharacterStatsService, CharacterStatsService>()
 
 				// GUI: services passed to forms and controls, and the only way to create forms
 				.AddSingleton<GuiServices>()
