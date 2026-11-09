@@ -39,6 +39,13 @@ public partial class MainForm
 		return (entries, clicked);
 	}
 
+	/// <summary>Draws the menu of the vault tools button as it opens, with the sub menus along <paramref name="open"/>.</summary>
+	internal Bitmap AutomationRenderVaultMenu(IReadOnlyList<string> open)
+	{
+		this.RefreshVaultModMenu();
+		return AutomationMenus.Render(this.vaultExportContextMenu, open);
+	}
+
 	/// <summary>The mod the shown vault is linked to; null for none.</summary>
 	internal string? AutomationSelectedVaultMod => this.vaultPanel?.Vault?.Mod;
 

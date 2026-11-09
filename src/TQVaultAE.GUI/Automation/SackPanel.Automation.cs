@@ -71,6 +71,64 @@ internal static class AutomationMenus
 		owner.BeginInvoke(clicked.PerformClick);
 		return clicked.Text ?? string.Empty;
 	}
+
+	/// <summary>
+	/// Draws a menu and the sub menus opened along <paramref name="open"/>, as the user sees them: each drop down is
+	/// shown, drawn, and the menu closed at the end. The sub menus are drawn to the right, level with their entry.
+	/// </summary>
+	internal static Bitmap Render(ContextMenuStrip menu, IReadOnlyList<string> open)
+	{
+		var parts = new List<(Bitmap Image, int Y)>();
+		try
+		{
+			if (!menu.Visible)
+				menu.Show(Point.Empty);
+			parts.Add((Draw(menu), 0));
+
+			ToolStripDropDown current = menu;
+			int top = 0;
+			foreach (var text in open)
+			{
+				var items = current.Items.Cast<ToolStripItem>().ToList();
+				var entry = items.FirstOrDefault(i => string.Equals(i.Text, text, StringComparison.OrdinalIgnoreCase))
+					?? items.FirstOrDefault(i => i.Text?.Contains(text, StringComparison.OrdinalIgnoreCase) == true);
+				if (entry is not ToolStripMenuItem { HasDropDownItems: true } parent)
+					throw new InvalidOperationException($"No sub menu '{text}'. Entries: {string.Join(" | ", items.Select(i => i.Text))}");
+
+				top += parent.Bounds.Y;
+				parent.ShowDropDown();
+				parts.Add((Draw(parent.DropDown), top));
+				current = parent.DropDown;
+			}
+
+			int width = parts.Sum(p => p.Image.Width);
+			int height = parts.Max(p => p.Y + p.Image.Height);
+			var result = new Bitmap(width, height);
+			using var g = Graphics.FromImage(result);
+			g.Clear(Color.Transparent);
+			int x = 0;
+			foreach (var (image, y) in parts)
+			{
+				g.DrawImage(image, x, y);
+				x += image.Width;
+			}
+
+			return result;
+		}
+		finally
+		{
+			menu.Close();
+			foreach (var (image, _) in parts)
+				image.Dispose();
+		}
+	}
+
+	private static Bitmap Draw(Control control)
+	{
+		var bitmap = new Bitmap(control.Width, control.Height);
+		control.DrawToBitmap(bitmap, new Rectangle(Point.Empty, control.Size));
+		return bitmap;
+	}
 }
 
 public partial class SackPanel
@@ -119,6 +177,16 @@ public partial class SackPanel
 		this.MouseDownCallback(this, args);
 		this.MouseUpCallback(this, args);
 		this.AutomationPaintNow();
+	}
+
+	/// <summary>
+	/// Right-clicks a cell through the regular mouse handlers and draws the context menu they built, with the sub menus
+	/// opened along <paramref name="open"/>; the menu is closed after.
+	/// </summary>
+	internal Bitmap AutomationRenderContextMenu(Point cell, IReadOnlyList<string> open)
+	{
+		this.AutomationMouseDown(this.AutomationCellCenter(cell), MouseButtons.Right);
+		return AutomationMenus.Render(this.CustomContextMenu, open);
 	}
 
 	/// <summary>

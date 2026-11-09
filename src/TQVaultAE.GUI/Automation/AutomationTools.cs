@@ -621,6 +621,41 @@ internal static partial class AutomationTools
 		];
 	}
 
+	[McpServerTool(Name = "capture_menu", ReadOnly = true)]
+	[Description("Opens a menu like the user and renders it to PNG with the sub menus opened along 'open' (' > ' between levels, e.g. 'Modded'), drawn to the right level with their entry, then closes it without choosing anything. Target: 'vaultTools' for the vault tools button next to the vault list, or a panel id with x and y for the right-click menu of that cell.")]
+	public static IEnumerable<ContentBlock> CaptureMenu(
+		[Description("'vaultTools', or a panel id.")] string target,
+		[Description("Cell column, for a panel.")] int x = 0,
+		[Description("Cell row, for a panel.")] int y = 0,
+		[Description("Sub menus to open, texts separated by ' > '; empty for the menu alone.")] string? open = null)
+	{
+		var path = open?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) ?? [];
+		var (png, size) = AutomationHost.OnUi(form =>
+		{
+			try
+			{
+				using var bitmap = string.Equals(target, "vaultTools", StringComparison.OrdinalIgnoreCase)
+					? form.AutomationRenderVaultMenu(path)
+					: AutomationPanels.Resolve(form, target).Panel.AutomationRenderContextMenu(new Point(x, y), path);
+				using var stream = new MemoryStream();
+				bitmap.Save(stream, ImageFormat.Png);
+				return (stream.ToArray(), bitmap.Size);
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
+		});
+
+		var file = Path.Combine(Path.GetTempPath(), $"tqvault-menu-{target}-{DateTime.Now:yyyyMMdd-HHmmss-fff}.png");
+		File.WriteAllBytes(file, png);
+		return
+		[
+			ImageContentBlock.FromBytes(png, "image/png"),
+			new TextContentBlock { Text = $"menu {target}: {size.Width}x{size.Height} px, saved to {file}" },
+		];
+	}
+
 	#endregion
 
 	#region Helpers
