@@ -201,6 +201,12 @@ public class ItemTooltipContentBuilder
 		{
 			// Classic display: base, prefix and suffix lines in the game's order.
 			var attributes = data.ClassicAttributes ?? [.. data.BaseAttributes, .. data.PrefixAttributes, .. data.SuffixAttributes];
+
+			// Rings and amulets have no base stats: a blank line separates their bonuses from the name, as the base
+			// stats of the other items are separated from theirs.
+			if (item.IsJewellery && attributes.Length != 0 && attributes[0].Length != 0 && lines[^1].Kind != TooltipLineKind.Spacer)
+				lines.Add(TooltipLine.Spacer);
+
 			lines.AddRange(attributes.Select(s => TooltipLine.Of(s)));
 		}
 

@@ -93,6 +93,34 @@ public class ItemTooltipContentBuilderTests
 		lines[1].Color.Should().Be(ItemTooltipContentBuilder.ModColor);
 	}
 
+	[Theory]
+	[InlineData(Item.ICLASS_RING)]
+	[InlineData(Item.ICLASS_AMULET)]
+	public void Build_Classic_Jewellery_BlankLineBetweenNameAndBonuses(string itemClass)
+	{
+		var data = new ToFriendlyNameResult(ItemOf("""records\item\equipmentring\c01_ring01.dbr""", itemClass))
+		{
+			BaseItemInfoDescription = "Copper Band",
+			ClassicAttributes = ["+3 Dexterity", "10% Fire Resistance"],
+		};
+
+		var shape = Shape(this._builder.Build(data, ItemTooltipView.Classic)).Take(4);
+
+		shape.Should().Equal((TooltipLineKind.Text, data.FullName), (TooltipLineKind.Spacer, string.Empty)
+			, (TooltipLineKind.Text, "+3 Dexterity"), (TooltipLineKind.Text, "10% Fire Resistance"));
+	}
+
+	[Fact]
+	public void Build_Classic_NotJewellery_NoBlankLineUnderTheName()
+	{
+		var data = Sword();
+		data.ClassicAttributes = ["base 1", "", "prefix 1"];
+
+		var lines = this._builder.Build(data, ItemTooltipView.Classic).Lines;
+
+		lines[1].Text.Should().Be("base 1");
+	}
+
 	[Fact]
 	public void Build_BaseGameItem_NamesNoMod()
 		=> this._builder.Build(Sword(), Full).Lines.Should().NotContain(l => l.Text == string.Format(TQVaultAE.Presentation.Resources.ItemModLine, string.Empty));
