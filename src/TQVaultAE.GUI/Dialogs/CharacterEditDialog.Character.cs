@@ -47,7 +47,8 @@ internal sealed partial class CharacterEditDialog
 		};
 		this.Controls.Add(this._tabs);
 
-		var page = new Panel { Name = "CharacterPage", BackColor = Color.Black };
+		// The page shows the dialog's marble rather than the black of the frame, where the game draws its mastery panes.
+		var page = new Panel { Name = "CharacterPage", BackgroundImage = this.BackgroundImage, BackgroundImageLayout = ImageLayout.Stretch };
 
 		// The panel at 1.24 times the game size fills the height of the page with the gold bar under it.
 		var panelScale = scale * 1.24F;
@@ -102,6 +103,7 @@ internal sealed partial class CharacterEditDialog
 		this.ResetMasteriesScalingButton.Location = new Point(buttonX, this.ResetAttributesScalingButton.Bottom + (int)Math.Round(16 * scale));
 
 		this._tabs.AddPage(Resources.CECharacter, page);
+		this.AddMedallion(page, scale);
 
 		this._stats.AttributeClicked += (_, click) => this.CharacterAttribute_Clicked(click.Attribute, click.Step, click.ToEnd);
 		this._stats.UndoClicked += (_, _) => this.CharacterAttributes_Undo();
@@ -113,6 +115,33 @@ internal sealed partial class CharacterEditDialog
 			foreach (var font in this._ownedFonts)
 				font.Dispose();
 		};
+	}
+
+	/// <summary>
+	/// TQVault's medallion picture (<see cref="Images.tqmedallion"/>) in the free part of the Character page, right of the
+	/// statistics panel and under the reset buttons, at most twice its size so that it stays sharp.
+	/// </summary>
+	private void AddMedallion(Panel page, float scale)
+	{
+		var medallion = Images.tqmedallion;
+		var area = Rectangle.FromLTRB(
+			this._stats.Right + (int)Math.Round(40 * scale),
+			this.ResetMasteriesScalingButton.Bottom + (int)Math.Round(30 * scale),
+			page.Width - (int)Math.Round(24 * scale),
+			page.Height - (int)Math.Round(24 * scale));
+		var zoom = Math.Min(2F * scale, Math.Min(area.Width / (float)medallion.Width, area.Height / (float)medallion.Height));
+		var size = new Size((int)Math.Round(medallion.Width * zoom), (int)Math.Round(medallion.Height * zoom));
+		var picture = new PictureBox
+		{
+			Name = "CharacterMedallion",
+			Image = medallion,
+			SizeMode = PictureBoxSizeMode.Zoom,
+			BackColor = Color.Transparent,
+			Size = size,
+			Location = new Point(area.X + (area.Width - size.Width) / 2, area.Y + (area.Height - size.Height) / 2),
+		};
+		page.Controls.Add(picture);
+		this.FormClosed += (_, _) => medallion.Dispose();
 	}
 
 	/// <summary>Rows at the top of <see cref="Images.MainForm_NewBackground"/> taken by its dark band, left out.</summary>

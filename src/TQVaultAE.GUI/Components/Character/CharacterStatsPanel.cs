@@ -110,8 +110,10 @@ internal sealed partial class CharacterStatsPanel : Control
 	public CharacterStatsPanel(IUIService uiService)
 	{
 		this._uiService = uiService;
-		this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.ResizeRedraw, true);
-		this.BackColor = Color.Black;
+		this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.ResizeRedraw | ControlStyles.SupportsTransparentBackColor, true);
+
+		// Transparent: the gold bar is wider than the panel, and the page shows beside the panel.
+		this.BackColor = Color.Transparent;
 		this.PanelScale = 1F;
 	}
 
@@ -283,7 +285,6 @@ internal sealed partial class CharacterStatsPanel : Control
 	protected override void OnPaint(PaintEventArgs e)
 	{
 		var g = e.Graphics;
-		g.Clear(this.BackColor);
 		g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 		g.PixelOffsetMode = PixelOffsetMode.Half;
 		g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
