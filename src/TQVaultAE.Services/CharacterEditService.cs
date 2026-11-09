@@ -32,8 +32,8 @@ public class CharacterEditService(IPathIO pathIO, IPlayerCollectionProvider play
 		=> new(info.SkillRecordList, info.MasteriesAllowed, info.SkillPoints, this._skillTreeProvider.GetMasteryTree);
 
 	/// <inheritdoc/>
-	public GrantedSkill? DescribeSkill(RecordId skillId, int level, int petSkillBonus = 0)
-		=> this._itemProvider.GetSkillAtLevel(skillId, level, petSkillBonus);
+	public GrantedSkill? DescribeSkill(RecordId skillId, int level, SkillWindowContext? context = null)
+		=> this._itemProvider.GetSkillAtLevel(skillId, level, context);
 
 	/// <inheritdoc/>
 	public string GetMasteryDescriptionTag(RecordId masteryId)

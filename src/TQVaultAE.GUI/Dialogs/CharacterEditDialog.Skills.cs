@@ -203,9 +203,17 @@ internal sealed partial class CharacterEditDialog
 
 		// The item tooltips colour the effects as an epic item; the skill window writes them plain, keeping only the
 		// colours inside a line (recharge time in aqua).
-		int petSkillBonus = 0;
+		var context = SkillWindowContext.None;
+		HashSet<string> modified = [];
 		IEnumerable<string> Effects(RecordId id, int level)
-			=> this.Services.CharacterEditService.DescribeSkill(id, level, petSkillBonus)?.Attributes.Select(a => a.RemoveLeadingColorTag()) ?? [];
+		{
+			if (this.Services.CharacterEditService.DescribeSkill(id, level, context) is not { } described)
+				return [];
+
+			var effects = described.Attributes.Select(a => a.RemoveLeadingColorTag()).ToList();
+			modified = [.. described.ModifiedLines.Where(i => i < effects.Count).Select(i => effects[i])];
+			return effects;
+		}
 
 		void Level(string tag, string fallback, RecordId id, int level)
 		{
@@ -221,7 +229,8 @@ internal sealed partial class CharacterEditDialog
 		{
 			lines.Add(GameTooltipLine.Blank);
 			lines.Add(new GameTooltipLine(this.GameText(tag, fallback, level), TipLevel));
-			lines.AddRange(SkillTooltipLayout.NextEffects([.. currentEffects], Effects(id, level))
+			var next = Effects(id, level).ToList();
+			lines.AddRange(SkillTooltipLayout.NextEffects([.. currentEffects], next, modified)
 				.Select(e => new GameTooltipLine(e, TipNext)));
 		}
 
@@ -251,7 +260,7 @@ internal sealed partial class CharacterEditDialog
 
 		// The equipment's levels also raise a summon's own skills (Battle Standard 11/10 shows its level 12 buff), all of
 		// them even beyond the ultimate level (Call of the Wild 15 + 6: the wolves dodge as at +6).
-		petSkillBonus = points > 0 ? bonus.Total : 0;
+		context = this.SkillContext(tree, skill, points > 0 ? bonus.Total : 0);
 		lines.Add(new GameTooltipLine(this.TranslateTag(skill.NameTag, skill.Id.PrettyFileName), Color.White, Title: true));
 		lines.Add(new GameTooltipLine(this.GameDescription(skill.DescriptionTag), TipText));
 		if (current > 0)
@@ -285,6 +294,26 @@ internal sealed partial class CharacterEditDialog
 		lines.Add(GameTooltipLine.Blank);
 		lines.Add(new GameTooltipLine(Resources.CESkillPaneHint, TipHint));
 		return lines;
+	}
+
+	/// <summary>
+	/// What the character adds to a skill in the skill window: the equipment's levels for a summon's skills, the skill's
+	/// modifiers that have points (Resilience lowers Adrenaline's recharge, Flush Out adds to Study Prey's energy cost)
+	/// and the character's recharge reduction with its cap, for the difficulty of the statistics.
+	/// </summary>
+	private SkillWindowContext SkillContext(MasteryTree tree, MasterySkill skill, int petSkillBonus)
+	{
+		var skills = this._skills!;
+		var modifiers = tree.Skills
+			.Where(child => child.ParentId is { } parent && parent.Equals(skill.Id) && skills.GetLevel(child.Id) > 0)
+			.Select(child => new SkillModifierLevel(child.Id,
+				child.EffectiveLevel(skills.GetLevel(child.Id), SkillBonus.For(this._gearAugments, tree, child.Id).Total)))
+			.ToList();
+
+		var stats = this.ComputeStats();
+		var difficulty = this._statsDifficulty?.SelectedIndex is >= 0 and var selected ? selected : Math.Clamp(this.Info.DifficultyUnlocked, 0, 2);
+		var cap = this.Services.CharacterStatsService.GetGameBalance().EngineValue("playerCooldownReductionCap", difficulty);
+		return new SkillWindowContext(petSkillBonus, modifiers, stats.CooldownReduction, cap);
 	}
 
 	/// <summary>

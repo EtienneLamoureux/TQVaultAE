@@ -22,4 +22,11 @@ public sealed record GrantedSkill(
 	string? Activation,
 	string[] Description,
 	string[] Attributes
-);
+)
+{
+	/// <summary>
+	/// Indexes in <see cref="Attributes"/> of the lines the character's modifiers changed (the skill window's energy cost
+	/// raised by Flush Out), which the skill window repeats at the next level even when they do not change there.
+	/// </summary>
+	public IReadOnlyList<int> ModifiedLines { get; init; } = [];
+}

@@ -164,9 +164,9 @@ public interface IItemProvider
 	/// Describes a skill at a level as the item tooltips describe a granted skill: name, icon, description and its effects
 	/// at that level (a buff skill takes them from its buff record, a pet skill from its pet).
 	/// </summary>
-	/// <param name="petSkillBonus">Levels the equipment adds to the skill, which the game also adds to a summon's skills.</param>
+	/// <param name="context">What the character adds to the skill's own values (modifiers, recharge reduction...).</param>
 	/// <returns><see langword="null"/> when the record is missing or has no name.</returns>
-	GrantedSkill? GetSkillAtLevel(RecordId skillId, int level, int petSkillBonus = 0);
+	GrantedSkill? GetSkillAtLevel(RecordId skillId, int level, SkillWindowContext? context = null);
 	/// <summary>
 	/// Gets the level of a triggered skill
 	/// </summary>

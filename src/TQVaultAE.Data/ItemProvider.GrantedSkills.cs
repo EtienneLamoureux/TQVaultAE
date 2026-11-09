@@ -1,3 +1,4 @@
+using TQVaultAE.Application;
 using System.Globalization;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
@@ -100,22 +101,89 @@ public partial class ItemProvider
 	};
 
 	/// <inheritdoc/>
-	public GrantedSkill? GetSkillAtLevel(RecordId skillId, int level, int petSkillBonus = 0)
-		=> this.GetGrantedSkill(new Item(), skillId, Math.Max(1, level), null, skillWindow: true, petSkillBonus);
+	public GrantedSkill? GetSkillAtLevel(RecordId skillId, int level, SkillWindowContext? context = null)
+		=> this.GetGrantedSkill(new Item(), skillId, Math.Max(1, level), null, context ?? SkillWindowContext.None);
+
+	/// <summary>
+	/// The skill window's own hidden variables plus the recharge and energy cost, which
+	/// <see cref="AddSkillWindowCosts"/> writes with the character's modifiers.
+	/// </summary>
+	private static readonly HashSet<string> SkillWindowOwnHiddenVariables = new(SkillWindowHiddenVariables, StringComparer.OrdinalIgnoreCase)
+	{
+		"skillCooldownTime", "skillManaCost",
+	};
+
+	/// <summary>
+	/// The recharge and energy cost lines of the skill window: the skill's values plus what its modifiers with points add,
+	/// the recharge lowered by the character's and the modifiers' reduction (<see cref="SkillTooltipLayout.Recharge"/>).
+	/// The energy cost is written without the reductions, as the game does.
+	/// </summary>
+	/// <remarks>A buff skill may keep them in its buff record (Study Prey).</remarks>
+	/// <returns>The indexes of the lines the modifiers changed.</returns>
+	private List<int> AddSkillWindowCosts(DBRecordCollection skillRecord, DBRecordCollection? buffRecord, int level, SkillWindowContext context
+		, List<string> attributes)
+	{
+		var modified = new List<int>();
+		float Own(string variable)
+		{
+			var value = ValueAtLevel(skillRecord[variable], level);
+			return value != 0 || buffRecord is null ? value : ValueAtLevel(buffRecord[variable], level);
+		}
+
+		float cooldown = Own("skillCooldownTime");
+		float manaCost = Own("skillManaCost");
+
+		// Like the other effect lines, a leading colour that the tool tip drops, keeping the recharge's own aqua.
+		var plain = ItemStyle.Mundane.TQColor().ColorTag();
+		float seconds = 0, reduction = 0, addedManaCost = 0;
+		foreach (var modifier in context.Modifiers)
+		{
+			if (Database.GetRecordFromFile(modifier.Id) is not { } record)
+				continue;
+
+			seconds += ValueAtLevel(record["skillCooldownTime"], modifier.Level);
+			reduction += ValueAtLevel(record["skillCooldownReduction"], modifier.Level);
+			addedManaCost += ValueAtLevel(record["skillManaCost"], modifier.Level);
+		}
+
+		manaCost += addedManaCost;
+		if (cooldown > 0)
+		{
+			if (seconds != 0 || reduction != 0)
+				modified.Add(attributes.Count);
+
+			var recharge = SkillTooltipLayout.Recharge(cooldown, seconds, context.CooldownReduction + reduction, context.CooldownReductionCap);
+			var format = TranslationService.TryTranslateXTag("CooldownTime", out var text) ? text : "^a{%.1f0} Second(s) Recharge";
+			attributes.Add(plain + Format(ItemAttributeProvider.ConvertFormat(format), recharge));
+		}
+
+		if (manaCost > 0)
+		{
+			if (addedManaCost != 0)
+				modified.Add(attributes.Count);
+
+			var label = TranslationService.TryTranslateXTag("ManaCost", out var text) ? text : "Energy Cost";
+			attributes.Add($"{plain}{manaCost.ToString("0.#", CultureInfo.CurrentCulture)} {label}");
+		}
+
+		return modified;
+	}
 
 	/// <summary>
 	/// Describes one granted skill at a level: name, icon, activation, description and effects.
 	/// A buff skill (<c>buffSkillName</c>) takes its name, icon, description and effects from its buff record.
 	/// </summary>
-	/// <param name="skillWindow">
-	/// True for the skill window's tool tip: a summon also shows its own parameters (recharge, energy cost...), and what
-	/// the skill window hides (<see cref="SkillWindowHiddenVariables"/>) is left out.
+	/// <param name="context">
+	/// The character's values for the skill window's tool tip; <see langword="null"/> for an item's granted skill. With
+	/// it, a summon also shows its own parameters (recharge, energy cost...), the recharge and energy cost take the
+	/// modifiers into account, and what the skill window hides (<see cref="SkillWindowHiddenVariables"/>) is left out.
 	/// </param>
 	/// <returns><see langword="null"/> when the skill record is missing or has no name, like the game's hidden helper skills.</returns>
-	private GrantedSkill? GetGrantedSkill(Item itm, RecordId skillId, int level, string? autoController, bool skillWindow = false
-		, int petSkillBonus = 0)
+	private GrantedSkill? GetGrantedSkill(Item itm, RecordId skillId, int level, string? autoController, SkillWindowContext? context = null)
 	{
+		bool skillWindow = context is not null;
 		var hidden = skillWindow ? SkillWindowHiddenVariables : null;
+		var ownHidden = skillWindow ? SkillWindowOwnHiddenVariables : null;
 		if (Database.GetRecordFromFile(skillId) is not { } skillRecord)
 			return null;
 
@@ -152,22 +220,25 @@ public partial class ItemProvider
 		var activation = this.GetSkillActivationText(autoController);
 
 		// Effects at the granted level: the skill's own parameters (energy cost, cooldown, radius...), then the buff's.
+		// The skill window writes the recharge and energy cost itself, with the character's modifiers.
 		var attributes = new List<string>();
+		var modifiedLines = context is null ? [] : this.AddSkillWindowCosts(skillRecord, buffRecord, level, context, attributes);
+
 		// Summons: Skill_SpawnPet, and the projectiles that place one (Skill_AttackProjectileSpawnPet: Lay Trap, Sylvan Nymph).
 		if (skillRecord.GetString("Class", 0).EndsWith("SpawnPet", StringComparison.OrdinalIgnoreCase))
 		{
 			if (skillWindow)
 			{
-				this.GetAttributesFromRecord(itm, skillRecord, true, skillId, attributes, skillLevelIndex: level - 1, hiddenVariables: hidden);
+				this.GetAttributesFromRecord(itm, skillRecord, true, skillId, attributes, skillLevelIndex: level - 1, hiddenVariables: ownHidden);
 
-				// "Extra Life Time 12 Seconds" (SpawnObjectsTimeToLive), before the summon's attributes.
+				// "Extra Life Time 12 Seconds" (SpawnObjectsTimeToLive), before the summon's attributes; the game's text has
+				// no value index ("{%.0f}"), unlike the others ("{%.0f0}").
 				float timeToLive = ValueAtLevel(skillRecord["spawnObjectsTimeToLive"], level);
 				if (timeToLive > 0 && TranslationService.TryTranslateXTag("SpawnObjectsTimeToLive", out var lifeTime))
-										// The game's text has no value index ("{%.0f}"), unlike the others ("{%.0f0}").
 					attributes.Add(Format(ItemAttributeProvider.ConvertFormat(lifeTime.Replace("{%.0f}", "{%.0f0}", StringComparison.Ordinal)), timeToLive));
 			}
 
-			this.ConvertPetStats(itm, skillRecord, attributes, level, hidden, petSkillBonus);
+			this.ConvertPetStats(itm, skillRecord, attributes, level, hidden, context?.PetSkillBonus ?? 0);
 		}
 		else
 		{
@@ -176,9 +247,9 @@ public partial class ItemProvider
 			if (activationChance > 0 && TranslationService.TryTranslateXTag("SkillActivationChance", out var activationText))
 				attributes.Add($"{activationChance.ToString("0.#", CultureInfo.CurrentCulture)}% {activationText}");
 
-			this.GetAttributesFromRecord(itm, skillRecord, true, skillId, attributes, skillLevelIndex: level - 1, hiddenVariables: hidden);
+			this.GetAttributesFromRecord(itm, skillRecord, true, skillId, attributes, skillLevelIndex: level - 1, hiddenVariables: ownHidden);
 			if (buffRecord is not null)
-				this.GetAttributesFromRecord(itm, buffRecord, true, buffId, attributes, skillLevelIndex: level - 1, hiddenVariables: hidden);
+				this.GetAttributesFromRecord(itm, buffRecord, true, buffId, attributes, skillLevelIndex: level - 1, hiddenVariables: ownHidden);
 		}
 
 		// A skill that only casts another one (skillCastName, e.g. "Potion Blast" casts "Shadow Surge" on a potion):
@@ -195,7 +266,11 @@ public partial class ItemProvider
 			string.IsNullOrEmpty(activation) ? null : activation,
 			description,
 			TrimEmptyLines(attributes)
-		);
+		)
+		{
+			// The cost lines come first, so trimming the blank lines does not move them.
+			ModifiedLines = modifiedLines,
+		};
 	}
 
 	/// <summary>

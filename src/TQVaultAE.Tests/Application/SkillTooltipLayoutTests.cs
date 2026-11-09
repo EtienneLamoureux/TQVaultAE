@@ -61,6 +61,14 @@ public class SkillTooltipLayoutTests
 			"+52% Burn Damage");
 
 	[Fact]
+	public void NextEffects_RepeatALineTheModifiersChanged()
+		=> SkillTooltipLayout.NextEffects(
+			["^a8.0 Second(s) Recharge", "45 Energy Cost", "8.0 Second Duration", "-34% Physical Resistance"],
+			["^a8.0 Second(s) Recharge", "45 Energy Cost", "8.0 Second Duration", "-38% Physical Resistance"],
+			["45 Energy Cost"])
+			.Should().Equal("^a8.0 Second(s) Recharge", "45 Energy Cost", "-38% Physical Resistance");
+
+	[Fact]
 	public void NextEffects_ShowEverythingUnderAHeading()
 	{
 		// Circle of Power, levels 1 and 2: the summon's blocks come back whole, unchanged lines included.
@@ -82,6 +90,15 @@ public class SkillTooltipLayoutTests
 			"Circle of Power Attributes:", "Life Time 12.0 Seconds", "225 Health", "",
 			"Circle of Power Abilities:", "12.0 Second Duration", "+100% Life Leech");
 	}
+
+	[Theory]
+	[InlineData(30, 0, 38, 80, 18.6)] // Adrenaline with Resilience 2
+	[InlineData(12, -3, 0, 80, 9)] // Lay Trap with Rapid Construction 3
+	[InlineData(60, 0, 11, 80, 53.4)] // Summon Nightmare with 11% recharge reduction from gear
+	[InlineData(60, 0, 95, 80, 12)] // capped at 80%
+	[InlineData(2, -5, 0, 80, 0)] // never below 0
+	public void Recharge_AddsTheModifiersSeconds_ThenTheCappedReduction(double cooldown, double seconds, double reduction, double cap, double expected)
+		=> SkillTooltipLayout.Recharge(cooldown, seconds, reduction, cap).Should().BeApproximately(expected, 1e-9);
 
 	[Fact]
 	public void AbilitiesStart_IsAfterTheSecondHeading()

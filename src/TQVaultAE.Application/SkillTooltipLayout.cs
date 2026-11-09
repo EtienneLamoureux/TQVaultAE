@@ -34,14 +34,23 @@ public static class SkillTooltipLayout
 	/// From the first heading on (a summon's "Totem Attributes:", "Totem Abilities:"), every line is shown again.
 	/// With no current level, every effect is shown.
 	/// </summary>
-	public static IReadOnlyList<string> NextEffects(IReadOnlyCollection<string> current, IEnumerable<string> next)
+	/// <param name="current">The current level's effects.</param>
+	/// <param name="next">The next level's effects.</param>
+	/// <param name="modified">
+	/// Next level lines the character's modifiers changed (Study Prey's energy cost with Flush Out), shown even when the
+	/// current level has the same line.
+	/// </param>
+	public static IReadOnlyList<string> NextEffects(IReadOnlyCollection<string> current, IEnumerable<string> next
+		, IReadOnlyCollection<string>? modified = null)
 	{
 		var shown = new List<string>();
 		bool inBlock = false;
 		foreach (var line in CurrentEffects(next))
 		{
 			inBlock |= IsHeading(line);
-			if (inBlock ? (line.Length != 0 || shown.Count != 0) : IsRecharge(line) || (line.Length != 0 && !current.Contains(line)))
+			if (inBlock
+				? line.Length != 0 || shown.Count != 0
+				: IsRecharge(line) || (line.Length != 0 && (!current.Contains(line) || modified?.Contains(line) == true)))
 				shown.Add(line);
 		}
 
@@ -62,6 +71,17 @@ public static class SkillTooltipLayout
 		}
 
 		return effects.Count;
+	}
+
+	/// <summary>
+	/// The recharge the skill window shows (<c>the game</c>): the skill's cooldown plus the seconds its
+	/// modifiers add (Rapid Construction -3 s), times one minus the recharge reduction (the character's, plus the
+	/// modifiers' such as Resilience), capped at <c>playerCooldownReductionCap</c>; never below 0.
+	/// </summary>
+	public static double Recharge(double cooldown, double modifierSeconds, double reductionPercent, double reductionCap)
+	{
+		var reduction = Math.Clamp(reductionPercent, 0, Math.Max(0, reductionCap));
+		return Math.Max(0, (cooldown + modifierSeconds) * (1 - reduction / 100));
 	}
 
 	/// <summary>True for a heading line, such as "Circle of Power Attributes:".</summary>
