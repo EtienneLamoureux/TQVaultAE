@@ -27,6 +27,18 @@ public partial class MainForm
 
 	internal string? AutomationSelectedVault => this.vaultListComboBox?.SelectedItem?.ToString();
 
+	/// <summary>
+	/// Reads the menu of the vault tools button (next to the vault list) as it opens; with <paramref name="path"/>,
+	/// clicks that entry after the calling tool has returned.
+	/// </summary>
+	internal (IReadOnlyList<AutomationMenuEntry> Entries, string? Clicked) AutomationVaultMenu(IReadOnlyList<string>? path)
+	{
+		this.RefreshVaultModMenu();
+		var entries = AutomationMenus.Describe(this.vaultExportContextMenu.Items);
+		string? clicked = path is { Count: > 0 } ? AutomationMenus.ClickLater(this, this.vaultExportContextMenu, path) : null;
+		return (entries, clicked);
+	}
+
 	/// <summary>The mod the shown vault is linked to; null for none.</summary>
 	internal string? AutomationSelectedVaultMod => this.vaultPanel?.Vault?.Mod;
 

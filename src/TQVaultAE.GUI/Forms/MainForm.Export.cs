@@ -22,6 +22,27 @@ public partial class MainForm
 	private ScalingButton vaultExportButton = null!; // Created while the form loads.
 	private ContextMenuStrip vaultExportContextMenu = null!; // Created while the form loads.
 
+	/// <summary>Position of the "Modded vault" submenu in <see cref="vaultExportContextMenu"/>.</summary>
+	private int vaultModMenuIndex;
+
+	/// <summary>The "Modded vault" submenu shown now; null before the menu first opens.</summary>
+	private ToolStripMenuItem? vaultModMenu;
+
+	/// <summary>
+	/// Rebuilds the "Modded vault" submenu for the vault shown: the base game and the installed mods, its mod checked.
+	/// </summary>
+	private void RefreshVaultModMenu()
+	{
+		if (this.vaultModMenu is not null)
+			this.vaultExportContextMenu.Items.Remove(this.vaultModMenu);
+
+		var vault = this.vaultPanel.Vault;
+		this.vaultModMenu = ModMenu.Create(this.vaultExportContextMenu, Resources.VaultModded
+			, this.Services.ItemModService.InstalledMods, vault?.Mod, mod => this.vaultPanel.ChangeVaultMod(mod));
+		this.vaultModMenu.Enabled = vault is not null;
+		this.vaultExportContextMenu.Items.Insert(this.vaultModMenuIndex, this.vaultModMenu);
+	}
+
 	private void SetupVaultExportButton()
 	{
 		var up = default(Bitmap);
@@ -73,6 +94,11 @@ public partial class MainForm
 		};
 
 		vaultExportContextMenu.Items.Add(Resources.MainFormMaintainVault, null, (s, e) => this.MaintainVaultFilesDialog());
+
+		// The vault's mod: built when the menu opens, for the vault shown then.
+		vaultExportContextMenu.Items.Add("-");
+		vaultModMenuIndex = vaultExportContextMenu.Items.Count;
+		vaultExportContextMenu.Opening += (s, e) => this.RefreshVaultModMenu();
 
 		vaultExportContextMenu.Items.Add("-");
 		vaultExportContextMenu.Items.Add(Resources.PlayerPanelMenuExportTabFile, null, ExportVaultToFileClicked);

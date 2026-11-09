@@ -157,10 +157,6 @@ public partial class VaultPanel
 				if (this.Vault is not null)
 				{
 					this.contextMenu.Items.Add("-");
-					this.contextMenu.Items.Add(ModMenu.Create(this.contextMenu, Resources.VaultModded
-						, this.Services.ItemModService.InstalledMods, this.Vault.Mod, this.ChangeVaultMod));
-
-					this.contextMenu.Items.Add("-");
 					this.contextMenu.Items.Add(Resources.PlayerPanelChangeIcon);
 					this.contextMenu.Items.Add(Resources.PlayerPanelCopyIcon);
 

@@ -194,6 +194,23 @@ internal static partial class AutomationTools
 			}
 		});
 
+	[McpServerTool(Name = "vault_menu", Destructive = true)]
+	[Description("Returns the menu of the vault tools button next to the vault list (maintain vault files, Modded vault, share, import) as it opens for the shown vault. With path (' > ' between levels, e.g. 'Modded vault > shadowchampions'), clicks that entry after this call returns, since it may open a dialog.")]
+	public static string VaultMenu(
+		[Description("Entry to click, texts separated by ' > '; empty to only read the menu.")] string? path = null)
+		=> AutomationHost.OnUi(form =>
+		{
+			try
+			{
+				var (entries, clicked) = form.AutomationVaultMenu(path?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+				return Serialize(new { vault = form.AutomationSelectedVault, vaultMod = form.AutomationSelectedVaultMod, entries, clicked });
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
+		});
+
 	[McpServerTool(Name = "bag_settings_pick_icon", Destructive = true)]
 	[Description("In the open bag button settings dialog, right-clicks an icon of a tab's grid like the user, which picks its pictures (predefined selection) and switches to Custom icon. Then read the dialog with control_values and apply it with click_control('Bag Button Settings', 'applyButton').")]
 	public static string BagSettingsPickIcon(
