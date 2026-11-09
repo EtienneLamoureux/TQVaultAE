@@ -28,4 +28,13 @@ public interface ICharacterStatsService
 	/// record keeps the values of the original game.
 	/// </summary>
 	GameBalance GetGameBalance();
+
+	/// <summary>The stance for the weapons in hand (not the set not in hand).</summary>
+	WeaponStance GetWeaponStance(IEnumerable<Item> equipment, bool useAlternate);
+
+	/// <summary>
+	/// The mean attack animation duration of each stance, in seconds, from the male or female player template and the
+	/// <c>.anm</c> files of the game (read once per template); a stance without animation is left out.
+	/// </summary>
+	IReadOnlyDictionary<WeaponStance, double> GetAttackAnimationDurations(bool female);
 }

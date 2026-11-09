@@ -559,6 +559,9 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 		var playerClassTag = TQData.ReadCStringAfter(pc.rawData, "playerClassTag");
 		pi.Class = playerClassTag.valueAsString;
 
+		var playerTexture = TQData.ReadCStringAfter(pc.rawData, "playerTexture");
+		pi.PlayerTexture = playerTexture.valueAsString ?? string.Empty;
+
 		var money = TQData.ReadIntAfter(pc.rawData, "money", playerClassTag.nextOffset);
 		pi.Money = money.valueAsInt;
 

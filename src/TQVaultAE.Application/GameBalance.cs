@@ -31,6 +31,9 @@ public sealed record GameBalance
 	/// <summary>The player template's <c>characterRunSpeed</c>.</summary>
 	public double BaseRunSpeed { get; init; } = 1.33;
 
+	/// <summary>The player template's <c>characterAttackSpeed</c>: attacks per second without weapon.</summary>
+	public double BaseAttackSpeed { get; init; } = 0.74;
+
 	/// <summary>The player template's <c>characterSpellCastSpeed</c>.</summary>
 	public double BaseCastSpeed { get; init; } = 2.8;
 

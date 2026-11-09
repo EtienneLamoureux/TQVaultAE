@@ -17,7 +17,14 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 
 	private readonly IDatabase _database = database;
 	private readonly IItemProvider _itemProvider = itemProvider;
+	private const string FemalePlayerTemplate = """records\xpack\creatures\pc\femalepc01.dbr""";
+
+	/// <summary>The player templates list up to 3 attack animations per stance.</summary>
+	private const int MaxAttackAnimations = 3;
+
 	private GameBalance? _balance;
+	private Dictionary<WeaponStance, double>? _maleAnimations;
+	private Dictionary<WeaponStance, double>? _femaleAnimations;
 
 	/// <inheritdoc/>
 	public AttributeSum GetGearAttributes(IEnumerable<Item> equipment, bool useAlternate)
@@ -93,8 +100,50 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 			BaseLifeRegen = Value(player, "characterLifeRegen", defaults.BaseLifeRegen),
 			BaseManaRegen = Value(player, "characterManaRegen", defaults.BaseManaRegen),
 			BaseRunSpeed = Value(player, "characterRunSpeed", defaults.BaseRunSpeed),
+			BaseAttackSpeed = Value(player, "characterAttackSpeed", defaults.BaseAttackSpeed),
 			BaseCastSpeed = Value(player, "characterSpellCastSpeed", defaults.BaseCastSpeed),
 		};
+	}
+
+	/// <inheritdoc/>
+	public WeaponStance GetWeaponStance(IEnumerable<Item> equipment, bool useAlternate)
+		=> WeaponStances.FromWeapons(equipment
+			.Where(item => item.IsInWeaponSlot && !item.IsInInactiveWeaponSlot(useAlternate))
+			.Select(item => item.ItemClass));
+
+	/// <inheritdoc/>
+	public IReadOnlyDictionary<WeaponStance, double> GetAttackAnimationDurations(bool female)
+	{
+		var cache = female ? this._femaleAnimations : this._maleAnimations;
+		if (cache is not null)
+			return cache;
+
+		var template = this.Record(female ? FemalePlayerTemplate : PlayerTemplate);
+		var durations = new Dictionary<WeaponStance, double>();
+		foreach (var stance in Enum.GetValues<WeaponStance>())
+		{
+			var prefix = WeaponStances.RecordPrefix(stance);
+			var animations = new List<(int Frames, int FrameRate, double Speed)>();
+			for (int n = 1; n <= MaxAttackAnimations; n++)
+			{
+				var file = template?.GetString($"{prefix}AttackAnim{n}", 0);
+				if (string.IsNullOrEmpty(file) || this._database.LoadResource(file.ToRecordId()) is not { } data
+					|| WeaponStances.ReadAnimationHeader(data) is not { } header)
+					continue;
+
+				animations.Add((header.Frames, header.FrameRate, Value(template, $"{prefix}AttackAnimSpeed{n}", 1)));
+			}
+
+			if (WeaponStances.MeanDuration(animations) is var mean and > 0)
+				durations[stance] = mean;
+		}
+
+		if (female)
+			this._femaleAnimations = durations;
+		else
+			this._maleAnimations = durations;
+
+		return durations;
 	}
 
 	private DBRecordCollection? Record(string? id)

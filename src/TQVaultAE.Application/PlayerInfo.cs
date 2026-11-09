@@ -342,6 +342,16 @@ public class PlayerInfo
 	/// </summary>
 	public string PlayerCharacterClass { get; set; } = string.Empty;
 
+	/// <summary>
+	/// The texture of the character's body (<c>playerTexture</c>, e.g. <c>Creatures\pc\male\malepc01_white.tex</c>):
+	/// it tells the player template, male or female.
+	/// </summary>
+	public string PlayerTexture { get; set; } = string.Empty;
+
+	/// <summary>True when the character uses the female template (its texture is under <c>pc\female</c>).</summary>
+	public bool IsFemale => this.PlayerTexture.Contains("""\female\""", StringComparison.OrdinalIgnoreCase)
+		|| this.PlayerTexture.Contains("/female/", StringComparison.OrdinalIgnoreCase);
+
 	public int GreatestMonsterKilledLevel { get; set; }
 
 	public int GreatestMonsterKilledLifeAndMana { get; set; }
