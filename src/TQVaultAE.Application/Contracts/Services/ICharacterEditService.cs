@@ -51,6 +51,7 @@ public interface ICharacterEditService
 	/// <summary>
 	/// A skill at a level as the game's skill window describes it: name, description and its effects at that level.
 	/// </summary>
+	/// <param name="petSkillBonus">Levels the equipment adds to the skill, which the game also adds to a summon's skills.</param>
 	/// <returns><see langword="null"/> when the game has no such skill.</returns>
-	GrantedSkill? DescribeSkill(RecordId skillId, int level);
+	GrantedSkill? DescribeSkill(RecordId skillId, int level, int petSkillBonus = 0);
 }

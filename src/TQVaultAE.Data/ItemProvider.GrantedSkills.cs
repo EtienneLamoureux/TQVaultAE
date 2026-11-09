@@ -99,8 +99,8 @@ public partial class ItemProvider
 	};
 
 	/// <inheritdoc/>
-	public GrantedSkill? GetSkillAtLevel(RecordId skillId, int level)
-		=> this.GetGrantedSkill(new Item(), skillId, Math.Max(1, level), null, skillWindow: true);
+	public GrantedSkill? GetSkillAtLevel(RecordId skillId, int level, int petSkillBonus = 0)
+		=> this.GetGrantedSkill(new Item(), skillId, Math.Max(1, level), null, skillWindow: true, petSkillBonus);
 
 	/// <summary>
 	/// Describes one granted skill at a level: name, icon, activation, description and effects.
@@ -111,7 +111,8 @@ public partial class ItemProvider
 	/// the skill window hides (<see cref="SkillWindowHiddenVariables"/>) is left out.
 	/// </param>
 	/// <returns><see langword="null"/> when the skill record is missing or has no name, like the game's hidden helper skills.</returns>
-	private GrantedSkill? GetGrantedSkill(Item itm, RecordId skillId, int level, string? autoController, bool skillWindow = false)
+	private GrantedSkill? GetGrantedSkill(Item itm, RecordId skillId, int level, string? autoController, bool skillWindow = false
+		, int petSkillBonus = 0)
 	{
 		var hidden = skillWindow ? SkillWindowHiddenVariables : null;
 		if (Database.GetRecordFromFile(skillId) is not { } skillRecord)
@@ -164,7 +165,7 @@ public partial class ItemProvider
 					attributes.Add(Format(ItemAttributeProvider.ConvertFormat(lifeTime.Replace("{%.0f}", "{%.0f0}", StringComparison.Ordinal)), timeToLive));
 			}
 
-			this.ConvertPetStats(itm, skillRecord, attributes, level, hidden);
+			this.ConvertPetStats(itm, skillRecord, attributes, level, hidden, petSkillBonus);
 		}
 		else
 		{

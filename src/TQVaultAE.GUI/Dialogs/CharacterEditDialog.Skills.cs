@@ -186,8 +186,9 @@ internal sealed partial class CharacterEditDialog
 
 		// The item tooltips colour the effects as an epic item; the skill window writes them plain, keeping only the
 		// colours inside a line (recharge time in aqua).
+		int petSkillBonus = 0;
 		IEnumerable<string> Effects(RecordId id, int level)
-			=> this.Services.CharacterEditService.DescribeSkill(id, level)?.Attributes.Select(a => a.RemoveLeadingColorTag()) ?? [];
+			=> this.Services.CharacterEditService.DescribeSkill(id, level, petSkillBonus)?.Attributes.Select(a => a.RemoveLeadingColorTag()) ?? [];
 
 		void Level(string tag, string fallback, RecordId id, int level)
 		{
@@ -227,6 +228,9 @@ internal sealed partial class CharacterEditDialog
 
 		// The game counts the levels of the equipment once the skill has a point.
 		var current = points > 0 ? points + bonus.Total : 0;
+
+		// The equipment's levels also raise a summon's own skills (Battle Standard 11/10 shows its level 12 buff).
+		petSkillBonus = points > 0 ? bonus.Total : 0;
 		lines.Add(new GameTooltipLine(this.TranslateTag(skill.NameTag, skill.Id.PrettyFileName), Color.White, Title: true));
 		lines.Add(new GameTooltipLine(this.TranslateTag(skill.DescriptionTag), TipText));
 		if (current > 0)

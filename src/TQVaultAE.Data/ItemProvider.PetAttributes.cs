@@ -41,8 +41,9 @@ public partial class ItemProvider
 	/// Variables of the pet's skills that are not shown; given for the skill window, which also leaves out the pet skills
 	/// at level 0 (those that a pet upgrade gives, such as the Battle Standard's "Triumph").
 	/// </param>
+	/// <param name="petSkillBonus">Levels added to the pet's skills (the equipment's bonus to the summoning skill).</param>
 	private void ConvertPetStats(Item itm, DBRecordCollection skillRecord, List<string> results, int level = 1
-		, IReadOnlySet<string>? hiddenVariables = null)
+		, IReadOnlySet<string>? hiddenVariables = null, int petSkillBonus = 0)
 	{
 		int levelIndex(string name) => skillRecord[name] is { NumberOfValues: > 0 } v ? Math.Clamp(level - 1, 0, v.NumberOfValues - 1) : 0;
 
@@ -188,6 +189,8 @@ public partial class ItemProvider
 
 				if (petskillLevel < 1)
 					petskillLevel = 1;
+				else
+					petskillLevel += petSkillBonus;
 
 				skillLevels[numSkills] = petskillLevel;
 				numSkills++;
@@ -242,6 +245,14 @@ public partial class ItemProvider
 
 				// The pet's skill at the level the pet record gives it.
 				GetAttributesFromRecord(itm, record, true, recordID, results, skillLevelIndex: skillLevels[i] - 1, hiddenVariables: hiddenVariables);
+
+				// "+1 to all Skills" of a pet's buff (allSkillEnhancement), which item tool tips leave out.
+				if (hiddenVariables is not null && record?["allSkillEnhancement"] is { NumberOfValues: > 0 } allSkills
+					&& allSkills.GetInt32(Math.Clamp(skillLevels[i] - 1, 0, allSkills.NumberOfValues - 1)) is var all and > 0
+					&& TranslationService.TryTranslateXTag("ItemAllSkillIncrement", out var allSkillsText))
+				{
+					results.Add(Format(ItemAttributeProvider.ConvertFormat(allSkillsText), all));
+				}
 				results.Add(string.Empty);
 			}
 		}
