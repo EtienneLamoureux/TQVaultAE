@@ -6,6 +6,7 @@ using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components.Character;
 using TQVaultAE.Presentation;
+using TQVaultAE.Presentation.Win32;
 
 namespace TQVaultAE.GUI.Dialogs;
 
@@ -36,12 +37,13 @@ internal sealed partial class CharacterEditDialog
 	private void InitCharacterPage()
 	{
 		var scale = this.GameScale;
+		this.UseMarbleBackground();
 		this._tabs = new GameTabControl(this.UIService)
 		{
 			Name = "EditorTabs",
 			FrameScale = scale,
 			Location = new Point(this.LogicalToDeviceUnits(14), this.LogicalToDeviceUnits(26)),
-			TabFont = this.OwnedFont(this.FontService.GetFontLight(16F * scale, FontStyle.Regular, GraphicsUnit.Pixel)),
+			TabFont = this.FontService.GetFontLight(16F * scale, FontStyle.Regular, GraphicsUnit.Pixel),
 		};
 		this.Controls.Add(this._tabs);
 
@@ -113,6 +115,28 @@ internal sealed partial class CharacterEditDialog
 		};
 	}
 
+	/// <summary>Rows at the top of <see cref="Images.MainForm_NewBackground"/> taken by its dark band, left out.</summary>
+	private const int MarbleTop = 60;
+
+	/// <summary>Width of the black border around <see cref="Images.MainForm_NewBackground"/>, left out.</summary>
+	private const int MarbleBorder = 6;
+
+	/// <summary>
+	/// The dialog's background: the plain marble of TQVault's own background picture (without its dark top band and
+	/// its border), stretched to the dialog, around the game frame and under OK and Cancel.
+	/// </summary>
+	private void UseMarbleBackground()
+	{
+		using var source = Images.MainForm_NewBackground;
+		var marble = source.Clone(
+			new Rectangle(MarbleBorder, MarbleTop, source.Width - 2 * MarbleBorder, source.Height - MarbleTop - MarbleBorder),
+			source.PixelFormat);
+		this.BackgroundImage = marble;
+		this.BackgroundImageLayout = ImageLayout.Stretch;
+		this.FormClosed += (_, _) => marble.Dispose();
+	}
+
+	/// <summary>A font the dialog made itself, disposed with it (never one of the font service's, which are shared).</summary>
 	private Font OwnedFont(Font font)
 	{
 		this._ownedFonts.Add(font);
