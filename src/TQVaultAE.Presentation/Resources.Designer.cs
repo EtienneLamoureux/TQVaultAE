@@ -657,15 +657,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Skills.
-        /// </summary>
-        public static string CESkills {
-            get {
-                return ResourceManager.GetString("CESkills", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to (None).
         /// </summary>
         public static string CEMasteryNone {
@@ -702,47 +693,29 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Skill.
+        ///   Looks up a localized string similar to Character.
         /// </summary>
-        public static string CESkillName {
+        public static string CECharacter {
             get {
-                return ResourceManager.GetString("CESkillName", resourceCulture);
+                return ResourceManager.GetString("CECharacter", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Requires.
+        ///   Looks up a localized string similar to Left click: +1 point, right click: -1. With Shift: to the highest or lowest level.
         /// </summary>
-        public static string CESkillRequires {
+        public static string CESkillPaneHint {
             get {
-                return ResourceManager.GetString("CESkillRequires", resourceCulture);
+                return ResourceManager.GetString("CESkillPaneHint", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Level.
+        ///   Looks up a localized string similar to Requires mastery level {0}.
         /// </summary>
-        public static string CESkillLevel {
+        public static string CESkillRequiresMastery {
             get {
-                return ResourceManager.GetString("CESkillLevel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Max.
-        /// </summary>
-        public static string CESkillMax {
-            get {
-                return ResourceManager.GetString("CESkillMax", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Gear.
-        /// </summary>
-        public static string CESkillGear {
-            get {
-                return ResourceManager.GetString("CESkillGear", resourceCulture);
+                return ResourceManager.GetString("CESkillRequiresMastery", resourceCulture);
             }
         }
         

@@ -2,37 +2,24 @@ using System.Drawing;
 using System.Windows.Forms;
 using TQVaultAE.Application;
 using TQVaultAE.Domain.Entities;
-using TQVaultAE.Domain.Helpers;
+using TQVaultAE.GUI.Components.Character;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Dialogs;
 
 /// <summary>
-/// The skills tab of the character edit dialog: one page per mastery slot, with the mastery and the skills of its pane.
-/// The rules are in <see cref="CharacterSkillEditor"/>; this part only shows its state and passes the user's changes.
+/// The mastery pages of the character edit dialog: one page per mastery slot, with the mastery, its level and its pane
+/// drawn as the game's skill window. The rules are in <see cref="CharacterSkillEditor"/>; this part only shows its state
+/// and passes the user's changes.
 /// </summary>
 internal sealed partial class CharacterEditDialog
 {
-	private const int ColumnIcon = 0;
-	private const int ColumnName = 1;
-	private const int ColumnRequires = 2;
-	private const int ColumnMinus = 3;
-	private const int ColumnLevel = 4;
-	private const int ColumnPlus = 5;
-	private const int ColumnGear = 6;
-	private const int ColumnMax = 7;
-
-	private static readonly Color LockedColor = Color.Gray;
-
 	private CharacterSkillEditor? _skills;
 
 	/// <summary>The skill bonuses of the equipped items.</summary>
 	private IReadOnlyList<SkillAugment> _gearAugments = [];
 
 	private readonly List<SkillTab> _skillTabs = [];
-
-	/// <summary>Icons at the size of the grid, made once per resource.</summary>
-	private readonly Dictionary<string, Bitmap> _skillIcons = new(StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>True while the dialog writes the points left of the editor into the skill points box.</summary>
 	private bool _syncingSkillPoints;
@@ -42,14 +29,10 @@ internal sealed partial class CharacterEditDialog
 	{
 		public required int Slot { get; init; }
 		public required TabPage Page { get; init; }
-		public required PictureBox Icon { get; init; }
 		public required ComboBox Mastery { get; init; }
 		public required NumericUpDown Level { get; init; }
 		public required Label Points { get; init; }
-		public required DataGridView Grid { get; init; }
-
-		/// <summary>The mastery whose skills are in the grid.</summary>
-		public MasteryTree? Tree { get; set; }
+		public required SkillPaneControl Pane { get; init; }
 
 		/// <summary>True while the dialog fills the controls, so their events are not user changes.</summary>
 		public bool Updating { get; set; }
@@ -61,12 +44,10 @@ internal sealed partial class CharacterEditDialog
 		public override string ToString() => this.Text;
 	}
 
-	private int SkillIconSize => (int)Math.Round(32 * this.UIService.Scale);
-
-	/// <summary>Builds a page per mastery slot of the character.</summary>
+	/// <summary>Builds a page per mastery slot of the character, after the Character page.</summary>
 	private void InitSkills()
 	{
-		this.SkillsGroupBox.Text = Resources.CESkills;
+		this.CharacterTabPage.Text = Resources.CECharacter;
 		this._skills = this.Services.CharacterEditService.CreateSkillEditor(this.Info);
 		this._gearAugments = this.Services.CharacterEditService.GetGearSkillAugments(this.PlayerCollection);
 
@@ -78,13 +59,9 @@ internal sealed partial class CharacterEditDialog
 			this._skillTabs.Add(this.CreateSkillTab(slot, choices));
 
 		this.skillPointsNumericUpDown.ValueChanged += this.SkillPointsNumericUpDown_ValueChanged;
-		this.FormClosed += (_, _) =>
-		{
-			foreach (var icon in this._skillIcons.Values)
-				icon.Dispose();
-		};
 
 		this.RefreshSkills();
+		this.FitToSkillPanes();
 	}
 
 	private string TranslateTag(string? tag, string fallback = "")
@@ -94,97 +71,102 @@ internal sealed partial class CharacterEditDialog
 
 	private SkillTab CreateSkillTab(int slot, List<MasteryChoice> choices)
 	{
-		var page = new TabPage { BackColor = this.BackColor, ForeColor = Color.White, Padding = new Padding(4) };
+		var page = new TabPage { BackColor = this.BackColor, UseVisualStyleBackColor = false, ForeColor = Color.White, Padding = new Padding(4), Name = $"SkillsMastery{slot + 1}Page" };
+		var font = this.FontService.GetFontLight(11F);
 
-		var icon = new PictureBox { Size = new Size(this.SkillIconSize, this.SkillIconSize), SizeMode = PictureBoxSizeMode.Zoom, Margin = new Padding(2) };
-		var mastery = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = (int)Math.Round(170 * this.UIService.Scale), Name = $"SkillsMastery{slot + 1}ComboBox" };
+		var mastery = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = this.LogicalToDeviceUnits(170), Name = $"SkillsMastery{slot + 1}ComboBox", Font = font };
 		mastery.Items.AddRange([.. choices]);
-		var levelLabel = new Label { Text = Resources.CEMasteryLevel, AutoSize = true, Margin = new Padding(6, 8, 2, 0) };
-		var level = new NumericUpDown { Minimum = 0, Maximum = 40, Width = (int)Math.Round(55 * this.UIService.Scale), Name = $"SkillsMastery{slot + 1}LevelUpDown" };
-		var points = new Label { AutoSize = true, Margin = new Padding(6, 8, 2, 0), Name = $"SkillsMastery{slot + 1}PointsLabel" };
+		var levelLabel = new Label { Text = Resources.CEMasteryLevel, AutoSize = true, Margin = new Padding(6, 8, 2, 0), Font = font };
+		var level = new NumericUpDown { Minimum = 0, Maximum = 40, Width = this.LogicalToDeviceUnits(55), Name = $"SkillsMastery{slot + 1}LevelUpDown", Font = font };
+		var points = new Label { AutoSize = true, Margin = new Padding(6, 8, 2, 0), Name = $"SkillsMastery{slot + 1}PointsLabel", Font = font };
 
-		var header = new FlowLayoutPanel { Dock = DockStyle.Top, AutoSize = true, WrapContents = true };
-		header.Controls.AddRange([icon, mastery, levelLabel, level, points]);
+		var header = new FlowLayoutPanel { Dock = DockStyle.Top, AutoSize = true, WrapContents = false, Name = $"SkillsMastery{slot + 1}Header" };
+		header.Controls.AddRange([mastery, levelLabel, level, points]);
 
-		var grid = this.CreateSkillGrid(slot);
+		var pane = new SkillPaneControl(this.UIService)
+		{
+			Name = $"SkillsMastery{slot + 1}Pane",
+			PaneScale = this.DeviceDpi / 96F,
+			Translate = tag => this.TranslateTag(tag, tag),
+			NumberFont = this.FontService.GetFontLight(12F, FontStyle.Regular, GraphicsUnit.Pixel),
+			TextFont = this.FontService.GetFontLight(15F, FontStyle.Regular, GraphicsUnit.Pixel),
+			DescriptionFont = this.FontService.GetFontLight(13F, FontStyle.Regular, GraphicsUnit.Pixel),
+			Location = new Point(page.Padding.Left, 0),
+		};
+		var paneHost = new Panel { Dock = DockStyle.Fill, Name = $"SkillsMastery{slot + 1}PaneHost" };
+		paneHost.Controls.Add(pane);
 
-		page.Controls.Add(grid);
+		page.Controls.Add(paneHost);
 		page.Controls.Add(header);
-		this.SkillsTabControl.TabPages.Add(page);
+		this.EditorTabControl.TabPages.Add(page);
 
-		var tab = new SkillTab { Slot = slot, Page = page, Icon = icon, Mastery = mastery, Level = level, Points = points, Grid = grid };
+		var tab = new SkillTab { Slot = slot, Page = page, Mastery = mastery, Level = level, Points = points, Pane = pane };
+		pane.SkillView = skill => this.SkillView(tab, skill);
+		pane.ToolTipText = skill => this.SkillToolTip(tab, skill);
 
 		mastery.SelectedIndexChanged += (_, _) => this.SkillMastery_Changed(tab);
 		level.ValueChanged += (_, _) => this.SkillMasteryLevel_Changed(tab);
-		grid.CellContentClick += (_, e) => this.SkillGrid_CellContentClick(tab, e);
-		grid.CellEndEdit += (_, e) => this.SkillGrid_CellEndEdit(tab, e);
+		pane.ButtonClicked += (_, click) => this.SkillPane_ButtonClicked(tab, click);
 
 		return tab;
 	}
 
-	private DataGridView CreateSkillGrid(int slot)
+	/// <summary>Sizes the tabs and the dialog so that a mastery page shows its whole pane, and the Character page its boxes.</summary>
+	private void FitToSkillPanes()
 	{
-		var back = this.BackColor;
-		var grid = new DataGridView
-		{
-			Name = $"SkillsMastery{slot + 1}Grid",
-			Dock = DockStyle.Fill,
-			AllowUserToAddRows = false,
-			AllowUserToDeleteRows = false,
-			AllowUserToResizeRows = false,
-			AllowUserToOrderColumns = false,
-			RowHeadersVisible = false,
-			MultiSelect = false,
-			SelectionMode = DataGridViewSelectionMode.CellSelect,
-			BackgroundColor = back,
-			BorderStyle = BorderStyle.None,
-			GridColor = Color.FromArgb(90, 70, 40),
-			EnableHeadersVisualStyles = false,
-			ShowCellToolTips = true,
-			ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize,
-			AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None,
-			EditMode = DataGridViewEditMode.EditOnKeystrokeOrF2,
-		};
-		grid.DefaultCellStyle.BackColor = back;
-		grid.DefaultCellStyle.ForeColor = Color.White;
-		grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(90, 70, 40);
-		grid.DefaultCellStyle.SelectionForeColor = Color.White;
-		grid.ColumnHeadersDefaultCellStyle.BackColor = back;
-		grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.Gold;
-		grid.RowTemplate.Height = this.SkillIconSize + 4;
+		if (this._skillTabs.Count == 0)
+			return;
 
-		var narrow = (int)Math.Round(28 * this.UIService.Scale);
-		var icon = new DataGridViewImageColumn { Width = this.SkillIconSize + 6, ImageLayout = DataGridViewImageCellLayout.Zoom, ReadOnly = true };
-		icon.DefaultCellStyle.NullValue = null;
-		grid.Columns.AddRange(
-			icon,
-			new DataGridViewTextBoxColumn { HeaderText = Resources.CESkillName, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, ReadOnly = true },
-			new DataGridViewTextBoxColumn { HeaderText = Resources.CESkillRequires, AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, ReadOnly = true },
-			new DataGridViewButtonColumn { Text = "-", UseColumnTextForButtonValue = true, Width = narrow, FlatStyle = FlatStyle.Flat },
-			new DataGridViewTextBoxColumn { HeaderText = Resources.CESkillLevel, Width = (int)Math.Round(50 * this.UIService.Scale) },
-			new DataGridViewButtonColumn { Text = "+", UseColumnTextForButtonValue = true, Width = narrow, FlatStyle = FlatStyle.Flat },
-			new DataGridViewTextBoxColumn { HeaderText = Resources.CESkillGear, AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, ReadOnly = true },
-			new DataGridViewTextBoxColumn { HeaderText = Resources.CESkillMax, AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, ReadOnly = true });
-
-		foreach (DataGridViewColumn column in grid.Columns)
-			column.SortMode = DataGridViewColumnSortMode.NotSortable;
-
-		return grid;
+		var tab = this._skillTabs[0];
+		var header = tab.Page.Controls.OfType<FlowLayoutPanel>().First();
+		var needed = new Size(
+			Math.Max(tab.Pane.Width, header.PreferredSize.Width) + tab.Page.Padding.Horizontal,
+			header.PreferredSize.Height + tab.Pane.Height + tab.Page.Padding.Vertical);
+		var character = this.CharacterTabPage.Controls.Cast<Control>()
+			.Aggregate(Size.Empty, (size, c) => new Size(Math.Max(size.Width, c.Right), Math.Max(size.Height, c.Bottom)))
+			+ this.CharacterTabPage.Padding.Size;
+		needed = new Size(Math.Max(needed.Width, character.Width), Math.Max(needed.Height, character.Height));
+		var page = this.EditorTabControl.DisplayRectangle.Size;
+		this.ClientSize += needed - page;
 	}
 
-	private Bitmap? SkillIcon(string resource)
+	/// <summary>What the pane shows of a skill: its level, the levels of the equipped items, its border.</summary>
+	private SkillPaneSkillView SkillView(SkillTab tab, MasterySkill skill)
 	{
-		if (string.IsNullOrEmpty(resource))
-			return null;
+		var skills = this._skills!;
+		var tree = skills.Slots[tab.Slot];
+		var level = skills.GetLevel(skill.Id);
+		var masteryLevel = skills.GetMasteryLevel(tab.Slot);
+		var bonus = tree is null ? 0 : SkillBonus.For(this._gearAugments, tree, skill.Id).Total;
+		var parentHasPoints = skill.ParentId is null || skills.GetLevel(skill.ParentId) > 0;
+		var state = SkillPaneLayout.State(level, skill.MaxLevel, masteryLevel, skill.RequiredMasteryLevel, parentHasPoints, skills.AvailablePoints);
+		return new SkillPaneSkillView(level, bonus, state, masteryLevel >= skill.RequiredMasteryLevel);
+	}
 
-		if (!this._skillIcons.TryGetValue(resource, out var icon))
-		{
-			var source = this.UIService.LoadBitmap(resource.ToRecordId());
-			icon = new Bitmap(source, new Size(this.SkillIconSize, this.SkillIconSize));
-			this._skillIcons[resource] = icon;
-		}
+	/// <summary>The tool tip of a skill: name, tier requirement, description and gear bonus lines; or the mastery's.</summary>
+	private string SkillToolTip(SkillTab tab, MasterySkill? skill)
+	{
+		if (this._skills?.Slots[tab.Slot] is not { } tree)
+			return string.Empty;
 
-		return icon;
+		if (skill is null)
+			return string.Join(Environment.NewLine, new[]
+			{
+				this.TranslateTag(tree.NameTag, tree.Mastery.ToString()),
+				this.TranslateTag(tree.DescriptionTag),
+				Resources.CESkillPaneHint,
+			}.Where(l => l.Length != 0));
+
+		var bonus = SkillBonus.For(this._gearAugments, tree, skill.Id);
+		return string.Join(Environment.NewLine, new[]
+			{
+				this.TranslateTag(skill.NameTag, skill.Id.PrettyFileName),
+				string.Format(Resources.CESkillRequiresMastery, skill.RequiredMasteryLevel),
+				this.TranslateTag(skill.DescriptionTag),
+			}
+			.Concat(this.GearBonusLines(tree, skill, bonus))
+			.Append(Resources.CESkillPaneHint)
+			.Where(l => l.Length != 0));
 	}
 
 	/// <summary>Shows the state of the editor in every page and in the skill points box.</summary>
@@ -200,7 +182,6 @@ internal sealed partial class CharacterEditDialog
 			{
 				var tree = skills.Slots[tab.Slot];
 				tab.Page.Text = tree is null ? string.Format(Resources.CEMasterySlot, tab.Slot + 1) : this.TranslateTag(tree.NameTag, tree.Mastery.ToString());
-				tab.Icon.Image = tree is null ? null : this.SkillIcon(tree.Icon);
 				tab.Mastery.SelectedItem = tab.Mastery.Items.Cast<MasteryChoice>().First(c => c.Mastery == tree?.Mastery);
 
 				var masteryLevel = skills.GetMasteryLevel(tab.Slot);
@@ -210,10 +191,10 @@ internal sealed partial class CharacterEditDialog
 				tab.Level.Value = masteryLevel;
 				tab.Points.Text = string.Format(Resources.CEMasteryPointsSpent, skills.GetPointsSpent(tab.Slot));
 
-				if (!ReferenceEquals(tab.Tree, tree))
-					this.FillSkillGrid(tab, tree);
-
-				this.RefreshSkillRows(tab);
+				tab.Pane.Tree = tree;
+				tab.Pane.MasteryLevel = masteryLevel;
+				tab.Pane.AvailablePoints = skills.AvailablePoints;
+				tab.Pane.Invalidate();
 			}
 			finally
 			{
@@ -256,33 +237,6 @@ internal sealed partial class CharacterEditDialog
 		}
 	}
 
-	private void FillSkillGrid(SkillTab tab, MasteryTree? tree)
-	{
-		tab.Tree = tree;
-		tab.Grid.Rows.Clear();
-		if (tree is null)
-			return;
-
-		foreach (var skill in tree.Skills)
-		{
-			var row = tab.Grid.Rows[tab.Grid.Rows.Add()];
-			row.Cells[ColumnIcon].Value = this.SkillIcon(skill.Icon);
-			row.Cells[ColumnName].Value = this.TranslateTag(skill.NameTag, skill.Id.PrettyFileName);
-			row.Cells[ColumnRequires].Value = skill.RequiredMasteryLevel;
-			row.Cells[ColumnMax].Value = skill.MaxLevel;
-
-			// The levels the equipped items add come on top of the points spent; the cap is on the points only.
-			var bonus = SkillBonus.For(this._gearAugments, tree, skill.Id);
-			row.Cells[ColumnGear].Value = bonus.Total > 0 ? $"+{bonus.Total}" : string.Empty;
-			row.Cells[ColumnGear].Style.ForeColor = Color.LightSkyBlue;
-			row.Tag = skill;
-			var tip = string.Join(Environment.NewLine, new[] { this.TranslateTag(skill.DescriptionTag) }
-				.Concat(this.GearBonusLines(tree, skill, bonus))
-				.Where(l => l.Length != 0));
-			row.Cells[ColumnIcon].ToolTipText = row.Cells[ColumnName].ToolTipText = row.Cells[ColumnGear].ToolTipText = tip;
-		}
-	}
-
 	/// <summary>The gear bonus lines of a skill tooltip: "+N to the skill", "+N to all skills of the mastery", "+N to all skills".</summary>
 	private IEnumerable<string> GearBonusLines(MasteryTree tree, MasterySkill skill, SkillBonus bonus)
 	{
@@ -292,26 +246,6 @@ internal sealed partial class CharacterEditDialog
 			yield return string.Format(Resources.CEGearBonusMastery, bonus.Mastery, this.TranslateTag(tree.NameTag, tree.Mastery.ToString()));
 		if (bonus.All != 0)
 			yield return string.Format(Resources.CEGearBonusAll, bonus.All);
-	}
-
-	/// <summary>Shows the level of each skill, and greys out the locked ones.</summary>
-	private void RefreshSkillRows(SkillTab tab)
-	{
-		if (this._skills is not { } skills)
-			return;
-
-		foreach (DataGridViewRow row in tab.Grid.Rows)
-		{
-			if (row.Tag is not MasterySkill skill)
-				continue;
-
-			if (!row.Cells[ColumnLevel].IsInEditMode)
-				row.Cells[ColumnLevel].Value = skills.GetLevel(skill.Id);
-
-			var color = skills.IsUnlocked(tab.Slot, skill) ? Color.White : LockedColor;
-			row.DefaultCellStyle.ForeColor = color;
-			row.DefaultCellStyle.SelectionForeColor = color;
-		}
 	}
 
 	private void SkillMastery_Changed(SkillTab tab)
@@ -333,35 +267,30 @@ internal sealed partial class CharacterEditDialog
 		this.RefreshSkills();
 	}
 
-	private void SkillGrid_CellContentClick(SkillTab tab, DataGridViewCellEventArgs e)
+	/// <summary>
+	/// A click on the pane: left raises the skill or the mastery by one, right lowers it; with Shift up to the highest
+	/// level (within the points left) or down to the lowest. The editor applies its rules (tier, parent, points).
+	/// </summary>
+	private void SkillPane_ButtonClicked(SkillTab tab, SkillPaneClick click)
 	{
-		if (this._skills is null || e.RowIndex < 0 || tab.Grid.Rows[e.RowIndex].Tag is not MasterySkill skill)
+		if (this._skills is not { } skills || skills.Slots[tab.Slot] is not { } tree)
 			return;
 
-		int step = e.ColumnIndex switch
+		if (click.Skill is null)
 		{
-			ColumnMinus => -1,
-			ColumnPlus => 1,
-			_ => 0,
-		};
-		if (step == 0)
-			return;
+			var current = skills.GetMasteryLevel(tab.Slot);
+			var level = click.ToEnd ? (click.Step > 0 ? tree.MaxLevel : 1) : current + click.Step;
+			skills.SetMasteryLevel(tab.Slot, level);
+		}
+		else
+		{
+			var current = skills.GetLevel(click.Skill.Id);
+			var level = click.ToEnd ? (click.Step > 0 ? click.Skill.MaxLevel : 0) : current + click.Step;
+			skills.SetSkillLevel(tab.Slot, click.Skill.Id, level);
+		}
 
-		this._skills.SetSkillLevel(tab.Slot, skill.Id, this._skills.GetLevel(skill.Id) + step);
 		this.RefreshSkills();
-	}
-
-	private void SkillGrid_CellEndEdit(SkillTab tab, DataGridViewCellEventArgs e)
-	{
-		if (this._skills is null || e.ColumnIndex != ColumnLevel || e.RowIndex < 0 || tab.Grid.Rows[e.RowIndex].Tag is not MasterySkill skill)
-			return;
-
-		var text = Convert.ToString(tab.Grid.Rows[e.RowIndex].Cells[ColumnLevel].Value);
-		if (int.TryParse(text, out var level))
-			this._skills.SetSkillLevel(tab.Slot, skill.Id, level);
-
-		// The grid is still ending the edit: refresh once it is done.
-		this.BeginInvoke(this.RefreshSkills);
+		tab.Pane.RefreshToolTip();
 	}
 
 	private void SkillPointsNumericUpDown_ValueChanged(object? sender, EventArgs e)
@@ -370,5 +299,6 @@ internal sealed partial class CharacterEditDialog
 			return;
 
 		this._skills.AvailablePoints = Convert.ToInt32(this.skillPointsNumericUpDown.Value);
+		this.RefreshSkills();
 	}
 }

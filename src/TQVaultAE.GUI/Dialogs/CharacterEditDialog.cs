@@ -56,7 +56,6 @@ internal sealed partial class CharacterEditDialog : VaultForm
 				this.attribGroupBox,
 				this.levelingGroupBox,
 				this.MasteriesGroupBox,
-				this.SkillsGroupBox
 			}.SelectMany(gb => gb.Controls.OfType<Control>(), (gb, child) => (gb, child))
 			.ToList()
 			.ForEach(tup => tup.gb.Font = tup.child.Font = FontService.GetFontLight(11F));

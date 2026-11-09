@@ -989,9 +989,6 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
 	<data name="CESkillPoints" xml:space="preserve">
     <value>Points de compétences</value>
   </data>
-	<data name="CESkills" xml:space="preserve">
-    <value>Compétences</value>
-  </data>
 	<data name="CEMasteryNone" xml:space="preserve">
     <value>(Aucune)</value>
   </data>
@@ -1004,20 +1001,14 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
 	<data name="CEMasterySlot" xml:space="preserve">
     <value>Maîtrise {0}</value>
   </data>
-	<data name="CESkillName" xml:space="preserve">
-    <value>Compétence</value>
+	<data name="CECharacter" xml:space="preserve">
+    <value>Personnage</value>
   </data>
-	<data name="CESkillRequires" xml:space="preserve">
-    <value>Requiert</value>
+	<data name="CESkillPaneHint" xml:space="preserve">
+    <value>Clic gauche : +1 point, clic droit : -1. Avec Maj : au niveau le plus haut ou le plus bas.</value>
   </data>
-	<data name="CESkillLevel" xml:space="preserve">
-    <value>Niveau</value>
-  </data>
-	<data name="CESkillMax" xml:space="preserve">
-    <value>Max</value>
-  </data>
-	<data name="CESkillGear" xml:space="preserve">
-    <value>Équip.</value>
+	<data name="CESkillRequiresMastery" xml:space="preserve">
+    <value>Requiert le niveau de maîtrise {0}</value>
   </data>
 	<data name="CEGearBonusSkill" xml:space="preserve">
     <value>+{0} à {1} (équipement)</value>

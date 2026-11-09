@@ -10,7 +10,7 @@ internal static partial class AutomationTools
 	#region Grids
 
 	[McpServerTool(Name = "grid_values", ReadOnly = true)]
-	[Description("Reads a DataGridView of an open form (for example the skill grids of the character editor, SkillsMastery1Grid): its column headers and, per row, the text of each cell (images as 'image'), the row text color and the tool tip of the cells. Visible or not: the grids of the other tab pages are read too.")]
+	[Description("Reads a DataGridView of an open form (for example the search results): its column headers and, per row, the text of each cell (images as 'image'), the row text color and the tool tip of the cells. Visible or not: the grids of the other tab pages are read too.")]
 	public static string GridValues(
 		[Description("Part of the form title or its type name (case-insensitive).")] string form,
 		[Description("Grid name, as listed by control_tree.")] string grid)

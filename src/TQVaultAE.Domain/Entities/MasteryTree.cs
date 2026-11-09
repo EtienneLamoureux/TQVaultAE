@@ -19,10 +19,62 @@ public sealed record MasteryTree(
 	, int MaxLevel
 	, IReadOnlyList<MasterySkill> Skills)
 {
+	/// <summary>The pictures of the pane, to draw it as the game does, or <see langword="null"/> when unknown.</summary>
+	public SkillPaneArt? Pane { get; init; }
+
 	/// <summary>Tells whether a skill record is this mastery or one of its skills.</summary>
 	public bool Contains(RecordId skillId)
 		=> this.Id == skillId || this.Skills.Any(s => s.Id == skillId);
 }
+
+/// <summary>
+/// The pictures of a mastery pane of the game's skill window (<c>SkillPaneCtrl</c> record, PC variant), positions in
+/// pixels of the pane.
+/// </summary>
+/// <param name="Background">The pane background (<c>skillPaneBaseBitmap</c>).</param>
+/// <param name="Picture">The mastery picture in the circle (<c>skillPaneMasteryBitmap</c>).</param>
+/// <param name="PictureX">Left of the picture.</param>
+/// <param name="PictureY">Top of the picture.</param>
+/// <param name="Bar">The full mastery bar (<c>masteryBar</c>'s <c>bitmapFullName</c>).</param>
+/// <param name="BarX">Left of the bar.</param>
+/// <param name="BarY">Top of the bar.</param>
+/// <param name="PeekThroughRed">Red of the colour shown through the tier lines reached (<c>peekThroughColorRed</c>), 0 to 255.</param>
+/// <param name="PeekThroughGreen">Green of that colour, 0 to 255.</param>
+/// <param name="PeekThroughBlue">Blue of that colour, 0 to 255.</param>
+/// <param name="DescriptionTag">The tag of the mastery text in the description box (<c>skillPaneDescriptionTag</c>).</param>
+/// <param name="MasteryButtonX">Left of the mastery button.</param>
+/// <param name="MasteryButtonY">Top of the mastery button.</param>
+public sealed record SkillPaneArt(
+	string Background
+	, string Picture
+	, int PictureX
+	, int PictureY
+	, string Bar
+	, int BarX
+	, int BarY
+	, int PeekThroughRed
+	, int PeekThroughGreen
+	, int PeekThroughBlue
+	, string DescriptionTag
+	, int MasteryButtonX
+	, int MasteryButtonY);
+
+/// <summary>
+/// The button of a skill in its mastery pane (<c>SkillButton</c> record) and the pictures the pane draws for it.
+/// </summary>
+/// <param name="X">Left of the 40x40 button border in the pane.</param>
+/// <param name="Y">Top of the button border.</param>
+/// <param name="IsCircular">True for a round border (modifiers), false for a square one.</param>
+/// <param name="LockedIcon">The icon shown while the tier is closed (<c>skillDownBitmapName</c>), or an empty string.</param>
+/// <param name="ConnectionOn">The connector pieces drawn up the column when the skill has points, from the bottom.</param>
+/// <param name="ConnectionOff">The connector pieces drawn when it has none.</param>
+public sealed record SkillPaneButton(
+	int X
+	, int Y
+	, bool IsCircular
+	, string LockedIcon
+	, IReadOnlyList<string> ConnectionOn
+	, IReadOnlyList<string> ConnectionOff);
 
 /// <summary>
 /// A skill of a mastery pane.
@@ -45,6 +97,9 @@ public sealed record MasterySkill(
 {
 	/// <summary>The mastery level that unlocks the skill.</summary>
 	public int RequiredMasteryLevel => SkillTiers.RequiredMasteryLevel(this.Tier);
+
+	/// <summary>Its button in the pane, or <see langword="null"/> when unknown.</summary>
+	public SkillPaneButton? Button { get; init; }
 }
 
 /// <summary>
@@ -54,6 +109,9 @@ public static class SkillTiers
 {
 	/// <summary>Mastery level that unlocks each tier, from tier 1. Tier 7 came with Atlantis.</summary>
 	private static readonly int[] _requiredLevels = [1, 4, 10, 16, 24, 32, 40];
+
+	/// <summary>The mastery level that unlocks each tier, from tier 1.</summary>
+	public static IReadOnlyList<int> RequiredLevels => _requiredLevels;
 
 	/// <summary>Vertical position of the buttons of the bottom row (tier 1) in the skill pane.</summary>
 	public const int BottomRowY = 403;

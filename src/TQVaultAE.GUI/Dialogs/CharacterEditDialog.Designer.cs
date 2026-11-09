@@ -48,8 +48,8 @@ internal partial class CharacterEditDialog
 	{
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CharacterEditDialog));
         this.ok = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
-        this.SkillsGroupBox = new System.Windows.Forms.GroupBox();
-        this.SkillsTabControl = new System.Windows.Forms.TabControl();
+        this.EditorTabControl = new System.Windows.Forms.TabControl();
+        this.CharacterTabPage = new System.Windows.Forms.TabPage();
         this.cancel = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.strengthLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.dexterityLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
@@ -91,7 +91,8 @@ internal partial class CharacterEditDialog
         ((System.ComponentModel.ISupportInitialize)(this.skillPointsNumericUpDown)).BeginInit();
         ((System.ComponentModel.ISupportInitialize)(this.attributeNumericUpDown)).BeginInit();
         ((System.ComponentModel.ISupportInitialize)(this.levelNumericUpDown)).BeginInit();
-        this.SkillsGroupBox.SuspendLayout();
+        this.EditorTabControl.SuspendLayout();
+        this.CharacterTabPage.SuspendLayout();
         this.MasteriesGroupBox.SuspendLayout();
         this.SuspendLayout();
         // 
@@ -106,7 +107,8 @@ internal partial class CharacterEditDialog
         this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
         this.ok.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ok.Image = ((System.Drawing.Image)(resources.GetObject("ok.Image")));
-        this.ok.Location = new System.Drawing.Point(968, 450);
+        this.ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+        this.ok.Location = new System.Drawing.Point(699, 665);
         this.ok.Name = "ok";
         this.ok.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ok.OverBitmap")));
         this.ok.Size = new System.Drawing.Size(137, 30);
@@ -130,7 +132,8 @@ internal partial class CharacterEditDialog
         this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
         this.cancel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.cancel.Image = ((System.Drawing.Image)(resources.GetObject("cancel.Image")));
-        this.cancel.Location = new System.Drawing.Point(1113, 450);
+        this.cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+        this.cancel.Location = new System.Drawing.Point(844, 665);
         this.cancel.Name = "cancel";
         this.cancel.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("cancel.OverBitmap")));
         this.cancel.Size = new System.Drawing.Size(137, 30);
@@ -209,7 +212,7 @@ internal partial class CharacterEditDialog
         this.attribGroupBox.Controls.Add(this.strengthLabel);
         this.attribGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.attribGroupBox.ForeColor = System.Drawing.Color.Gold;
-        this.attribGroupBox.Location = new System.Drawing.Point(31, 28);
+        this.attribGroupBox.Location = new System.Drawing.Point(8, 8);
         this.attribGroupBox.Name = "attribGroupBox";
         this.attribGroupBox.Size = new System.Drawing.Size(271, 212);
         this.attribGroupBox.TabIndex = 14;
@@ -382,7 +385,7 @@ internal partial class CharacterEditDialog
         this.levelingGroupBox.Controls.Add(this.levelLabel);
         this.levelingGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.levelingGroupBox.ForeColor = System.Drawing.Color.Gold;
-        this.levelingGroupBox.Location = new System.Drawing.Point(329, 28);
+        this.levelingGroupBox.Location = new System.Drawing.Point(306, 8);
         this.levelingGroupBox.Name = "levelingGroupBox";
         this.levelingGroupBox.Size = new System.Drawing.Size(386, 212);
         this.levelingGroupBox.TabIndex = 15;
@@ -548,7 +551,7 @@ internal partial class CharacterEditDialog
         this.ResetMasteriesScalingButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
         this.ResetMasteriesScalingButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ResetMasteriesScalingButton.Image = ((System.Drawing.Image)(resources.GetObject("ResetMasteriesScalingButton.Image")));
-        this.ResetMasteriesScalingButton.Location = new System.Drawing.Point(31, 450);
+        this.ResetMasteriesScalingButton.Location = new System.Drawing.Point(8, 330);
         this.ResetMasteriesScalingButton.Name = "ResetMasteriesScalingButton";
         this.ResetMasteriesScalingButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetMasteriesScalingButton.OverBitmap")));
         this.ResetMasteriesScalingButton.Size = new System.Drawing.Size(137, 30);
@@ -560,25 +563,31 @@ internal partial class CharacterEditDialog
         this.ResetMasteriesScalingButton.UseVisualStyleBackColor = false;
         this.ResetMasteriesScalingButton.Click += new System.EventHandler(this.ResetMasteriesScalingButton_Click);
         // 
-        // SkillsGroupBox
+        // EditorTabControl
         // 
-        this.SkillsGroupBox.BackColor = System.Drawing.Color.Transparent;
-        this.SkillsGroupBox.Controls.Add(this.SkillsTabControl);
-        this.SkillsGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.SkillsGroupBox.ForeColor = System.Drawing.Color.Gold;
-        this.SkillsGroupBox.Location = new System.Drawing.Point(735, 28);
-        this.SkillsGroupBox.Name = "SkillsGroupBox";
-        this.SkillsGroupBox.Padding = new System.Windows.Forms.Padding(6);
-        this.SkillsGroupBox.Size = new System.Drawing.Size(515, 406);
-        this.SkillsGroupBox.TabIndex = 19;
-        this.SkillsGroupBox.TabStop = false;
-        this.SkillsGroupBox.Text = "Skills";
+        this.EditorTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+        this.EditorTabControl.Controls.Add(this.CharacterTabPage);
+        this.EditorTabControl.Location = new System.Drawing.Point(31, 28);
+        this.EditorTabControl.Name = "EditorTabControl";
+        this.EditorTabControl.SelectedIndex = 0;
+        this.EditorTabControl.Size = new System.Drawing.Size(950, 625);
+        this.EditorTabControl.TabIndex = 0;
         // 
-        // SkillsTabControl
+        // CharacterTabPage
         // 
-        this.SkillsTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-        this.SkillsTabControl.Name = "SkillsTabControl";
-        this.SkillsTabControl.TabIndex = 0;
+        this.CharacterTabPage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
+        this.CharacterTabPage.Controls.Add(this.attribGroupBox);
+        this.CharacterTabPage.Controls.Add(this.levelingGroupBox);
+        this.CharacterTabPage.Controls.Add(this.MasteriesGroupBox);
+        this.CharacterTabPage.Controls.Add(this.ResetMasteriesScalingButton);
+        this.CharacterTabPage.Controls.Add(this.ResetAttributesScalingButton);
+        this.CharacterTabPage.Name = "CharacterTabPage";
+        this.CharacterTabPage.Padding = new System.Windows.Forms.Padding(4);
+        this.CharacterTabPage.TabIndex = 0;
+        this.CharacterTabPage.Text = "Character";
+        this.CharacterTabPage.UseVisualStyleBackColor = false;
         // 
         // MasteriesGroupBox
         // 
@@ -589,7 +598,7 @@ internal partial class CharacterEditDialog
         this.MasteriesGroupBox.Controls.Add(this.Mastery1NameScalingLabel);
         this.MasteriesGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.MasteriesGroupBox.ForeColor = System.Drawing.Color.Gold;
-        this.MasteriesGroupBox.Location = new System.Drawing.Point(31, 246);
+        this.MasteriesGroupBox.Location = new System.Drawing.Point(8, 226);
         this.MasteriesGroupBox.Name = "MasteriesGroupBox";
         this.MasteriesGroupBox.Size = new System.Drawing.Size(684, 88);
         this.MasteriesGroupBox.TabIndex = 17;
@@ -651,7 +660,7 @@ internal partial class CharacterEditDialog
         this.ResetAttributesScalingButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
         this.ResetAttributesScalingButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ResetAttributesScalingButton.Image = ((System.Drawing.Image)(resources.GetObject("ResetAttributesScalingButton.Image")));
-        this.ResetAttributesScalingButton.Location = new System.Drawing.Point(189, 450);
+        this.ResetAttributesScalingButton.Location = new System.Drawing.Point(166, 330);
         this.ResetAttributesScalingButton.Name = "ResetAttributesScalingButton";
         this.ResetAttributesScalingButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetAttributesScalingButton.OverBitmap")));
         this.ResetAttributesScalingButton.Size = new System.Drawing.Size(137, 30);
@@ -668,13 +677,8 @@ internal partial class CharacterEditDialog
         this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
         this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-        this.ClientSize = new System.Drawing.Size(1276, 500);
-        this.Controls.Add(this.SkillsGroupBox);
-        this.Controls.Add(this.ResetAttributesScalingButton);
-        this.Controls.Add(this.MasteriesGroupBox);
-        this.Controls.Add(this.ResetMasteriesScalingButton);
-        this.Controls.Add(this.levelingGroupBox);
-        this.Controls.Add(this.attribGroupBox);
+        this.ClientSize = new System.Drawing.Size(1010, 710);
+        this.Controls.Add(this.EditorTabControl);
         this.Controls.Add(this.cancel);
         this.Controls.Add(this.ok);
         this.DrawCustomBorder = true;
@@ -693,12 +697,7 @@ internal partial class CharacterEditDialog
         this.Load += new System.EventHandler(this.CharacterEditDlg_Load);
         this.Controls.SetChildIndex(this.ok, 0);
         this.Controls.SetChildIndex(this.cancel, 0);
-        this.Controls.SetChildIndex(this.attribGroupBox, 0);
-        this.Controls.SetChildIndex(this.levelingGroupBox, 0);
-        this.Controls.SetChildIndex(this.ResetMasteriesScalingButton, 0);
-        this.Controls.SetChildIndex(this.MasteriesGroupBox, 0);
-        this.Controls.SetChildIndex(this.ResetAttributesScalingButton, 0);
-        this.Controls.SetChildIndex(this.SkillsGroupBox, 0);
+        this.Controls.SetChildIndex(this.EditorTabControl, 0);
         this.attribGroupBox.ResumeLayout(false);
         ((System.ComponentModel.ISupportInitialize)(this.manacUpDown)).EndInit();
         ((System.ComponentModel.ISupportInitialize)(this.healthUpDown)).EndInit();
@@ -711,7 +710,8 @@ internal partial class CharacterEditDialog
         ((System.ComponentModel.ISupportInitialize)(this.attributeNumericUpDown)).EndInit();
         ((System.ComponentModel.ISupportInitialize)(this.levelNumericUpDown)).EndInit();
         this.MasteriesGroupBox.ResumeLayout(false);
-        this.SkillsGroupBox.ResumeLayout(false);
+        this.CharacterTabPage.ResumeLayout(false);
+        this.EditorTabControl.ResumeLayout(false);
         this.ResumeLayout(false);
 
 	}
@@ -748,6 +748,6 @@ internal partial class CharacterEditDialog
 	private ScalingLabel Mastery2NameScalingLabel;
 	private ScalingLabel Mastery1NameScalingLabel;
 	private ScalingButton ResetAttributesScalingButton;
-	private System.Windows.Forms.GroupBox SkillsGroupBox;
-	private System.Windows.Forms.TabControl SkillsTabControl;
+	private System.Windows.Forms.TabControl EditorTabControl;
+	private System.Windows.Forms.TabPage CharacterTabPage;
 }

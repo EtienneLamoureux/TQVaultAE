@@ -52,23 +52,31 @@ public class SkillTreeProvider(IDatabase database) : ISkillTreeProvider
 		if (!PaneRecords.TryGetValue(mastery, out var panes))
 			return null;
 
-		var pane = panes
-			.Select(p => this._database.GetRecordFromFile(p.ToRecordId()))
-			.FirstOrDefault(r => r is not null);
+		var (pane, paneIndex) = panes
+			.Select((p, i) => (Record: this._database.GetRecordFromFile(p.ToRecordId()), Index: i))
+			.FirstOrDefault(r => r.Record is not null);
 		var buttonIds = pane?.GetAllStrings("tabSkillButtons");
-		if (buttonIds is null)
+		if (pane is null || buttonIds is null)
 			return null;
+
+		// The game draws the Atlantis connectors when the Atlantis expansion is there, which its pane tells.
+		var atlantis = panes[paneIndex].Contains("""\xpack3\""", NoCase);
 
 		var buttons = buttonIds
 			.Where(b => !string.IsNullOrWhiteSpace(b))
 			.Select(b => this._database.GetRecordFromFile(b.ToRecordId()))
 			.OfType<DBRecordCollection>()
-			.Select(b => (Skill: b.GetString("skillName", 0).ToRecordId(), X: b.GetInt32("bitmapPositionX", 0), Y: b.GetInt32("bitmapPositionY", 0)))
+			.Select(b => (
+				Skill: b.GetString("skillName", 0).ToRecordId()
+				, X: b.GetInt32("bitmapPositionX", 0)
+				, Y: b.GetInt32("bitmapPositionY", 0)
+				, IsCircular: b.GetInt32("isCircular", 0) != 0))
 			.Where(b => !RecordId.IsNullOrEmpty(b.Skill))
 			.ToList();
 
 		DBRecordCollection? masteryRecord = null;
 		RecordId? masteryId = null;
+		(int X, int Y) masteryButton = (0, 0);
 		var skills = new List<(SkillButton Button, DBRecordCollection Record)>();
 		foreach (var button in buttons)
 		{
@@ -78,11 +86,15 @@ public class SkillTreeProvider(IDatabase database) : ISkillTreeProvider
 			if (record.GetString("Class", 0).Equals("Skill_Mastery", NoCase))
 			{
 				// The id as the pane spells it, the game's casing, is what a new skill entry of the save gets.
-				masteryId ??= button.Skill;
-				masteryRecord ??= record;
+				if (masteryId is null)
+				{
+					masteryId = button.Skill;
+					masteryRecord = record;
+					masteryButton = (button.X, button.Y);
+				}
 			}
 			else
-				skills.Add((new SkillButton(button.Skill, button.X, button.Y, IsModifier(record)), record));
+				skills.Add((new SkillButton(button.Skill, button.X, button.Y, IsModifier(record)) { IsCircular = button.IsCircular }, record));
 		}
 
 		if (masteryRecord is null || masteryId is null)
@@ -90,7 +102,7 @@ public class SkillTreeProvider(IDatabase database) : ISkillTreeProvider
 
 		var buttonsOnly = skills.Select(s => s.Button).ToList();
 		var masterySkills = skills
-			.Select(s => this.ToMasterySkill(s.Record, s.Button, FindParent(s.Button, buttonsOnly)))
+			.Select(s => this.ToMasterySkill(s.Record, s.Button, FindParent(s.Button, buttonsOnly), atlantis))
 			.OrderBy(s => s.Tier)
 			.ThenBy(s => buttonsOnly.First(b => b.Id == s.Id).X)
 			.ToList();
@@ -102,11 +114,52 @@ public class SkillTreeProvider(IDatabase database) : ISkillTreeProvider
 			, masteryRecord.GetString("skillBaseDescription", 0)
 			, masteryRecord.GetString("skillUpBitmapName", 0)
 			, masteryRecord.GetInt32("skillMaxLevel", 0)
-			, masterySkills);
+			, masterySkills)
+		{
+			Pane = this.ReadPaneArt(pane, masteryButton),
+		};
+	}
+
+	/// <summary>
+	/// The pictures of a pane: background, mastery picture and bar (PC variant, the first of each
+	/// <c>BitmapUIAware</c> record), and the colour shown through the tier lines reached.
+	/// </summary>
+	private SkillPaneArt? ReadPaneArt(DBRecordCollection pane, (int X, int Y) masteryButton)
+	{
+		DBRecordCollection? Linked(string variable)
+			=> pane.GetString(variable, 0) is { Length: > 0 } id ? this._database.GetRecordFromFile(id.ToRecordId()) : null;
+
+		var background = Linked("skillPaneBaseBitmap");
+		if (background is null)
+			return null;
+
+		var picture = Linked("skillPaneMasteryBitmap");
+		var bar = Linked("masteryBar");
+
+		static int Channel(float value) => (int)Math.Round(Math.Clamp(value, 0F, 1F) * 255);
+
+		return new SkillPaneArt(
+			background.GetString("bitmapNames", 0)
+			, picture?.GetString("bitmapNames", 0) ?? string.Empty
+			, picture?.GetInt32("bitmapPositionsX", 0) ?? 0
+			, picture?.GetInt32("bitmapPositionsY", 0) ?? 0
+			, bar?.GetString("bitmapFullName", 0) ?? string.Empty
+			, bar?.GetInt32("bitmapPositionX", 0) ?? 0
+			, bar?.GetInt32("bitmapPositionY", 0) ?? 0
+			, Channel(pane.GetSingle("peekThroughColorRed", 0))
+			, Channel(pane.GetSingle("peekThroughColorGreen", 0))
+			, Channel(pane.GetSingle("peekThroughColorBlue", 0))
+			, pane.GetString("skillPaneDescriptionTag", 0)
+			, masteryButton.X
+			, masteryButton.Y);
 	}
 
 	/// <summary>A skill button of a pane.</summary>
-	internal sealed record SkillButton(RecordId Id, int X, int Y, bool IsModifier);
+	internal sealed record SkillButton(RecordId Id, int X, int Y, bool IsModifier)
+	{
+		/// <summary>True for a round border.</summary>
+		public bool IsCircular { get; init; }
+	}
 
 	/// <summary>
 	/// A modifier skill improves the skill it is connected to: <c>Skill_Modifier</c>, <c>Skill_ProjectileModifier</c>
@@ -131,7 +184,7 @@ public class SkillTreeProvider(IDatabase database) : ISkillTreeProvider
 				.OrderBy(b => b.Y)
 				.FirstOrDefault()?.Id;
 
-	private MasterySkill ToMasterySkill(DBRecordCollection record, SkillButton button, RecordId? parentId)
+	private MasterySkill ToMasterySkill(DBRecordCollection record, SkillButton button, RecordId? parentId, bool atlantis)
 	{
 		// Skills that only cast a buff or a pet skill take their name, description and icon from it; a pet modifier
 		// casts a pet skill that casts a buff, so the links are followed until a record has a name.
@@ -166,6 +219,27 @@ public class SkillTreeProvider(IDatabase database) : ISkillTreeProvider
 			, First("skillUpBitmapName")
 			, maxLevel
 			, SkillTiers.FromButtonY(button.Y)
-			, parentId);
+			, parentId)
+		{
+			Button = new SkillPaneButton(
+				button.X
+				, button.Y
+				, button.IsCircular
+				, First("skillDownBitmapName")
+				, Connection(record, "skillConnectionOn", "skillConnectionAtlantisOn", atlantis)
+				, Connection(record, "skillConnectionOff", "skillConnectionAtlantisOff", atlantis)),
+		};
+	}
+
+	/// <summary>
+	/// The connector pieces of a skill, from the bottom: the Atlantis list when the expansion is there and the skill
+	/// has one, else the original list.
+	/// </summary>
+	internal static IReadOnlyList<string> Connection(DBRecordCollection record, string variable, string atlantisVariable, bool atlantis)
+	{
+		static string[] Pieces(string[]? values) => values?.Where(v => !string.IsNullOrWhiteSpace(v)).ToArray() ?? [];
+
+		var pieces = atlantis ? Pieces(record.GetAllStrings(atlantisVariable)) : [];
+		return pieces.Length != 0 ? pieces : Pieces(record.GetAllStrings(variable));
 	}
 }
