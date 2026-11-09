@@ -70,7 +70,7 @@ internal sealed partial class CharacterEditDialog
 	private CharacterStats ComputeStats()
 	{
 		var service = this.Services.CharacterStatsService;
-		this._gearSum ??= service.GetGearAttributes(this.PlayerCollection.EquipmentSack as IEnumerable<Item> ?? []);
+		this._gearSum ??= service.GetGearAttributes(this.PlayerCollection.EquipmentSack as IEnumerable<Item> ?? [], this.PlayerCollection.UseAlternate);
 
 		// The skills as the editor has them now; their sum is kept until a point or the buffs option changes.
 		var records = this._skills?.BuildSkillRecords() ?? this.Info.SkillRecordList;

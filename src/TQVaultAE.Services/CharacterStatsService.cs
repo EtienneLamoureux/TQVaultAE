@@ -20,9 +20,9 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 	private GameBalance? _balance;
 
 	/// <inheritdoc/>
-	public AttributeSum GetGearAttributes(IEnumerable<Item> equipment)
+	public AttributeSum GetGearAttributes(IEnumerable<Item> equipment, bool useAlternate)
 	{
-		var worn = equipment.Where(item => !item.IsInSecondaryWeaponSlot).ToList();
+		var worn = equipment.Where(item => !item.IsInInactiveWeaponSlot(useAlternate)).ToList();
 		var sum = new AttributeSum();
 		foreach (var item in worn)
 			sum.Add(this._itemProvider.GetAttributeSums(item));

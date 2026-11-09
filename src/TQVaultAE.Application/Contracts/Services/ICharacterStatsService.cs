@@ -9,9 +9,10 @@ namespace TQVaultAE.Application.Contracts.Services;
 public interface ICharacterStatsService
 {
 	/// <summary>
-	/// Sums the equipped items (not the weapons of the other weapon set) and the bonuses of the item sets they make.
+	/// Sums the equipped items (not the weapons of the set not in hand) and the bonuses of the item sets they make.
 	/// </summary>
-	AttributeSum GetGearAttributes(IEnumerable<Item> equipment);
+	/// <param name="useAlternate">True when the second weapon set is in hand (<see cref="PlayerCollection.UseAlternate"/>).</param>
+	AttributeSum GetGearAttributes(IEnumerable<Item> equipment, bool useAlternate);
 
 	/// <summary>
 	/// Sums the skills: the passive ones (and masteries) always, the buffs when <paramref name="includeBuffs"/>, the
