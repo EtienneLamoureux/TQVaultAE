@@ -183,6 +183,19 @@ public class CharacterOffenseCalculatorTests
 	}
 
 	[Fact]
+	public void Damage_Staff_CountsItsBaseElementalDamage_AndEnergyLeech()
+	{
+		// A character's Draining Stout Staff of Fire in the game: 16 fire of the staff, +10 % fire, 6 fire, 24 energy leech
+		// over 3 seconds, 259 Int, level 22, 74 %: 59, DPS 43.
+		var staff = Sum(("offensiveBaseFireAverage", 16), ("offensiveFireAverage", 6), ("offensiveFireModifier", 10),
+			("offensiveSlowManaLeachAverage", 8), ("offensiveSlowManaLeachDurationAverage", 3));
+		var values = CharacterOffenseCalculator.Damage(Input([staff], strength: 50, dexterity: 154, intelligence: 259, attackSpeed: 74.14) with { Level = 22 });
+
+		values.AverageDamage.Should().Be(59);
+		values.Dps.Should().Be(43);
+	}
+
+	[Fact]
 	public void Damage_WeaponPhysical_UsesTheWeaponEquation()
 	{
 		// (100 × (500/500 + 1)) + 500 × 0.04 = 220.

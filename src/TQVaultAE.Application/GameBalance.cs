@@ -51,6 +51,7 @@ public sealed record GameBalance
 		["physicalDurationDamageEquation"] = "physicalDamageDV * ((intelligenceDV / 500) +1)",
 		["poisonDurationDamageEquation"] = "poisonDamageDV * ((dexterityDV / 500) + 1)",
 		["lifeLeachDurationDamageEquation"] = "lifeLeachDamageDV  * (1 + (characterLevelDV / 40))",
+		["manaLeachDurationDamageEquation"] = "manaLeachDamageDV  * (1 + (characterLevelDV / 40))",
 	};
 
 	/// <summary>A damage equation by its field name.</summary>

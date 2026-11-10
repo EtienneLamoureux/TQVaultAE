@@ -160,7 +160,14 @@ public static class CharacterOffenseCalculator
 		damage += flat["offensiveBonusPhysical" + Avg];
 		damage += Equation("pierceNonWeaponDamageEquation", Scale(flat["offensivePierce" + Avg], modifiers["offensivePierceModifier"] + total), "pierceDamageDV");
 		foreach (var element in (string[])["Fire", "Cold", "Lightning"])
+		{
+			// A staff's own damage (offensiveBase*) is an entry apart, with the element's modifiers: a character's Stout Staff
+			// (16 base fire, 6 fire, +10 % fire, 8 energy leech per second, 259 Int, level 22) shows 59 in the game,
+			// 31.09 + 15.70 + 12.40.
+			damage += Equation("elementalDamageEquation", Scale(flat[$"offensiveBase{element}{Avg}"], modifiers[$"offensive{element}Modifier"] + elemental + total), "elementalDamageDV");
 			damage += Equation("elementalDamageEquation", Scale(flat[$"offensive{element}{Avg}"], modifiers[$"offensive{element}Modifier"] + elemental + total), "elementalDamageDV");
+		}
+
 		damage += Scale(flat["offensiveLife" + Avg], modifiers["offensiveLifeModifier"] + total);
 		damage += Equation("poisonDamageEquation", Scale(flat["offensivePoison" + Avg], modifiers["offensivePoisonModifier"] + total), "poisonDamageDV");
 
@@ -174,6 +181,7 @@ public static class CharacterOffenseCalculator
 			("Lightning", "elementalDurationDamageEquation", "elementalDamageDV", true),
 			("Physical", "physicalDurationDamageEquation", "physicalDamageDV", false),
 			("LifeLeach", "lifeLeachDurationDamageEquation", "lifeLeachDamageDV", false),
+			("ManaLeach", "manaLeachDurationDamageEquation", "manaLeachDamageDV", false),
 		];
 		foreach (var (kind, equation, variable, isElemental) in overTime)
 		{
