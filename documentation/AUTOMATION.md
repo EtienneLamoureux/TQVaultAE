@@ -199,7 +199,7 @@ In Debug builds, `ISoundService` is wrapped by `RecordingSoundService`, which re
 
 ```text
 get_state()                                  -> characters, vaults, panels
-select_character("Warfare, Guerrier - Niveau : 67")
+select_character("claude-character2, Warrior - Level : 67")
 select_bag("stash", 0)                       -> equipment panel shown
 get_state("player")                          -> helmet at x=0, y=0, 2x2
 pick_item("player", 0, 0)                    -> dragging, cellsUnderItem (0,0 2x2)
