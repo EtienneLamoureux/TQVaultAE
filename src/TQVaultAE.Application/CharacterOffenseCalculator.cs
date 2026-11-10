@@ -129,14 +129,17 @@ public static class CharacterOffenseCalculator
 
 		double damage = 0;
 
-		// Base physical: the weapon's (weapon equation, pierce ratio), or the hand hits (non-weapon equation).
+		// Base physical: the weapon's (weapon equation, pierce ratio), or the hand hits (non-weapon equation). The pierce
+		// ratio takes its share of the physical result, and the pierce equation runs on that share of the raw damage:
+		// A character's Copper Knife (4-8, 15 % pierce, +5 % total damage, 71.5 Str, 60 Dex) shows 11 in the game,
+		// 10.06 × 0.85 + 2.79, where the pierce share of the physical result (3.37) gave 12.
 		if (weapon is not null)
 		{
-			double physical = Equation("physicalDamageEquation", Scale(weapon["offensivePhysical" + Avg], modifiers["offensivePhysicalModifier"] + total), "physicalDamageDV");
-			double ratio = Math.Clamp(weapon["offensivePierceRatio" + Avg] * (1 + modifiers["offensivePierceRatioModifier"] / 100), 0, 100);
-			double pierce = ratio / 100 * physical;
-			damage += physical - pierce;
-			damage += Equation("pierceDamageEquation", Scale(pierce, modifiers["offensivePierceModifier"] + total), "pierceDamageDV");
+			double raw = weapon["offensivePhysical" + Avg];
+			double physical = Equation("physicalDamageEquation", Scale(raw, modifiers["offensivePhysicalModifier"] + total), "physicalDamageDV");
+			double ratio = Math.Clamp(weapon["offensivePierceRatio" + Avg] * (1 + modifiers["offensivePierceRatioModifier"] / 100), 0, 100) / 100;
+			damage += physical * (1 - ratio);
+			damage += Equation("pierceDamageEquation", Scale(raw * ratio, modifiers["offensivePierceModifier"] + total), "pierceDamageDV");
 		}
 		else
 		{

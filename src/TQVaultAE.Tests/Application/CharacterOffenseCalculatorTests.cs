@@ -137,6 +137,18 @@ public class CharacterOffenseCalculatorTests
 	}
 
 	[Fact]
+	public void Damage_PierceShare_RunsThePierceEquationOnTheRawDamage()
+	{
+		// A character's Copper Knife in the game: 4-8, 15 % pierce, +5 % total damage, 71.5 Str, 60 Dex: 11, DPS 11 at 106 %.
+		var knife = Sum(("offensivePhysicalAverage", 6), ("offensivePierceRatioAverage", 15));
+		var values = CharacterOffenseCalculator.Damage(Input([knife], skills: Sum(("offensiveTotalDamageModifier", 5)),
+			strength: 71.5, dexterity: 60, attackSpeed: 106));
+
+		values.AverageDamage.Should().Be(11);
+		values.Dps.Should().Be(11);
+	}
+
+	[Fact]
 	public void Damage_WeaponPhysical_UsesTheWeaponEquation()
 	{
 		// (100 × (500/500 + 1)) + 500 × 0.04 = 220.
