@@ -76,7 +76,8 @@ public static class CharacterOffenseCalculator
 	/// <item>per hand: the weapon's damage with every item's and skill's flat damage and % modifiers, each damage range at
 	/// its middle, through the game's equations; the weapon part (the weapon with its own modifiers) and the added part;</item>
 	/// <item>dual wield: half of both hands; no weapon: the template's hand hits, through the weapon equation;</item>
-	/// <item>shown = round(weapon part) + round(added part); DPS = trunc(shown × attack speed / 100).</item>
+	/// <item>shown = trunc(weapon part) + trunc(added part); DPS = trunc(shown × attack speed / 100). Truncated, as five
+	/// in-game readings need: a character's Copper Knife 11.58 + 0.42 shows 11, where rounding gave 12.</item>
 	/// </list>
 	/// </summary>
 	public static OffenseValues Damage(OffenseInput input)
@@ -104,8 +105,8 @@ public static class CharacterOffenseCalculator
 
 		weaponPart /= weapons.Count;
 		total /= weapons.Count;
-		int weaponShown = (int)Math.Round(weaponPart, MidpointRounding.ToEven);
-		int added = (int)Math.Round(Math.Max(0, total - weaponPart), MidpointRounding.ToEven);
+		int weaponShown = (int)Math.Truncate(weaponPart);
+		int added = (int)Math.Truncate(Math.Max(0, total - weaponPart));
 		int shown = weaponShown + added;
 		int dps = (int)Math.Max(0, Math.Truncate(shown * input.AttackSpeed / 100));
 		return new OffenseValues(weaponShown, added, shown, dps);
@@ -134,8 +135,7 @@ public static class CharacterOffenseCalculator
 
 		// Base physical: the weapon's (weapon equation, pierce ratio), or the hand hits (non-weapon equation). The pierce
 		// ratio takes its share of the physical result, which goes through the pierce equation: a character's Iron Sudis
-		// (17-31, 30 % pierce, 99 Str, 115 Dex) shows 44 in the game. A character's Copper Knife (4-8, 15 %) gives 12 where
-		// the game shows 11: its damage may be rolled from the item seed (not checked).
+		// (17-31, 30 % pierce, 99 Str, 115 Dex) shows 44 in the game, another character's Copper Knife (4-8, 15 %, 50 Str/Dex) 10.
 		if (weapon is not null)
 		{
 			double physical = Equation("physicalDamageEquation", Scale(weapon["offensivePhysical" + Avg], modifiers["offensivePhysicalModifier"] + total), "physicalDamageDV");

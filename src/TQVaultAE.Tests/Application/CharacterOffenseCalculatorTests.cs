@@ -147,6 +147,19 @@ public class CharacterOffenseCalculatorTests
 		values.Dps.Should().Be(31);
 	}
 
+	// In the game: a character's Copper Knife (50 Str/Dex) 10, another's (71.5 Str, 60 Dex, +5 % total damage) 11 from
+	// 11.58 of the weapon and 0.42 added: each part is truncated.
+	[Theory]
+	[InlineData(50, 50, 0, 10)]
+	[InlineData(71.5, 60, 5, 11)]
+	public void Damage_EachPart_IsTruncated(double strength, double dexterity, double totalDamage, int expected)
+	{
+		var knife = Sum(("offensivePhysicalAverage", 6), ("offensivePierceRatioAverage", 15));
+
+		CharacterOffenseCalculator.Damage(Input([knife], skills: Sum(("offensiveTotalDamageModifier", totalDamage)), strength: strength, dexterity: dexterity))
+			.AverageDamage.Should().Be(expected);
+	}
+
 	[Fact]
 	public void Damage_WeaponPhysical_UsesTheWeaponEquation()
 	{
