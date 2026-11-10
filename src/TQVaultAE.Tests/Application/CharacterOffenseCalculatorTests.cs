@@ -73,21 +73,20 @@ public class CharacterOffenseCalculatorTests
 		return sum;
 	}
 
-	private const double Unarmed = 1.2667;
-	private const double OneHanded = 0.8333;
+	private const double Unarmed = 19 / 30.0; // the templates' unarmed attacks: 21 and 17 frames at 30 fps
 
 	[Fact]
 	public void AttackSpeed_Unarmed_IsAHundred()
-		=> CharacterOffenseCalculator.AttackSpeed(Sum(), WeaponStance.Unarmed, Balance, 0, Unarmed, Unarmed).Should().BeApproximately(100, 1e-9);
+		=> CharacterOffenseCalculator.AttackSpeed(Sum(), WeaponStance.Unarmed, Balance, 0, Unarmed).Should().BeApproximately(100, 1e-9);
 
-	[Fact]
-	public void AttackSpeed_Sword_AddsItsBaseSpeed_AndTheAnimationRatio()
-	{
-		// (0.74 + 0.4) / 0.74 × (1.2667 / 0.8333) × 100.
-		var speed = CharacterOffenseCalculator.AttackSpeed(Sum(("characterBaseAttackSpeed", 0.4)), WeaponStance.OneHanded, Balance, 0, Unarmed, OneHanded);
-
-		speed.Should().BeApproximately(1.14 / 0.74 * (Unarmed / OneHanded) * 100, 1e-6);
-	}
+	// In the game: Copper Knife (0.5) 106 %, Copper Hand Axe (0.35) 93 %, Iron Sudis spear (0.1) 72 %.
+	[Theory]
+	[InlineData(WeaponStance.OneHanded, 0.5, 106)]
+	[InlineData(WeaponStance.OneHanded, 0.35, 93)]
+	[InlineData(WeaponStance.Spear, 0.1, 72)]
+	public void AttackSpeed_Weapon_AddsItsBaseSpeed_TimesTheUnarmedAttackLength(WeaponStance stance, double weapon, int expected)
+		=> CharacterStatsCalculator.Round(CharacterOffenseCalculator.AttackSpeed(Sum(("characterBaseAttackSpeed", weapon)), stance, Balance, 0, Unarmed))
+			.Should().Be(expected);
 
 	[Fact]
 	public void AttackSpeed_Modifiers_ScaleTheCharacterPartOnly()
@@ -95,20 +94,20 @@ public class CharacterOffenseCalculatorTests
 		// 0.74 × 1.3 + 0.4, same animation.
 		var speed = CharacterOffenseCalculator.AttackSpeed(
 			Sum(("characterBaseAttackSpeed", 0.4), ("characterAttackSpeedModifier", 20), ("characterTotalSpeedModifier", 10)),
-			WeaponStance.OneHanded, Balance, 0, 1, 1);
+			WeaponStance.OneHanded, Balance, 0, 1);
 
 		speed.Should().BeApproximately((0.74 * 1.3 + 0.4) / 0.74 * 100, 1e-6);
 	}
 
 	[Fact]
 	public void AttackSpeed_DualWield_HalvesTheWeaponsBaseSpeed()
-		=> CharacterOffenseCalculator.AttackSpeed(Sum(("characterBaseAttackSpeed", 0.8)), WeaponStance.DualWield, Balance, 0, 1, 1)
+		=> CharacterOffenseCalculator.AttackSpeed(Sum(("characterBaseAttackSpeed", 0.8)), WeaponStance.DualWield, Balance, 0, 1)
 			.Should().BeApproximately((0.74 + 0.4) / 0.74 * 100, 1e-6);
 
 	[Fact]
 	public void AttackSpeed_IsCappedInAttacksPerSecond_BeforeTheAnimationRatio()
 	{
-		var speed = CharacterOffenseCalculator.AttackSpeed(Sum(("characterAttackSpeedModifier", 500)), WeaponStance.Unarmed, Balance, 0, 2, 1);
+		var speed = CharacterOffenseCalculator.AttackSpeed(Sum(("characterAttackSpeedModifier", 500)), WeaponStance.OneHanded, Balance, 0, 2);
 
 		speed.Should().BeApproximately(350 * 2, 1e-6);
 	}
@@ -137,15 +136,15 @@ public class CharacterOffenseCalculatorTests
 	}
 
 	[Fact]
-	public void Damage_PierceShare_RunsThePierceEquationOnTheRawDamage()
+	public void Damage_PierceShare_OfThePhysicalResult_GoesThroughThePierceEquation()
 	{
-		// A character's Copper Knife in the game: 4-8, 15 % pierce, +5 % total damage, 71.5 Str, 60 Dex: 11, DPS 11 at 106 %.
-		var knife = Sum(("offensivePhysicalAverage", 6), ("offensivePierceRatioAverage", 15));
-		var values = CharacterOffenseCalculator.Damage(Input([knife], skills: Sum(("offensiveTotalDamageModifier", 5)),
-			strength: 71.5, dexterity: 60, attackSpeed: 106));
+		// A character's Iron Sudis in the game: 17-31 physical, 30 % pierce, 2-8 lightning, 99 Str, 115 Dex, 50 Int, 72 %:
+		// 44, DPS 31.
+		var spear = Sum(("offensivePhysicalAverage", 24), ("offensivePierceRatioAverage", 30), ("offensiveLightningAverage", 5));
+		var values = CharacterOffenseCalculator.Damage(Input([spear], strength: 99, dexterity: 115, intelligence: 50, attackSpeed: 72));
 
-		values.AverageDamage.Should().Be(11);
-		values.Dps.Should().Be(11);
+		values.AverageDamage.Should().Be(44);
+		values.Dps.Should().Be(31);
 	}
 
 	[Fact]
@@ -207,7 +206,7 @@ public class CharacterOffenseCalculatorTests
 		=> CharacterOffenseCalculator.Damage(Input([Sum(("offensivePhysicalAverage", 99))], attackSpeed: 234.4)).Dps.Should().Be(232);
 
 	[Fact]
-	public void AttackSpeed_StanceWithoutAnimation_KeepsTheRatioAtOne()
-		=> CharacterOffenseCalculator.AttackSpeed(Sum(("characterBaseAttackSpeed", 0.37)), WeaponStance.Thrown, Balance, 0, Unarmed, 0)
+	public void AttackSpeed_UnknownUnarmedLength_KeepsTheFactorAtOne()
+		=> CharacterOffenseCalculator.AttackSpeed(Sum(("characterBaseAttackSpeed", 0.37)), WeaponStance.Thrown, Balance, 0, 0)
 			.Should().BeApproximately(150, 1e-6);
 }

@@ -129,7 +129,7 @@ internal sealed partial class CharacterEditDialog
 		var durations = service.GetAttackAnimationDurations(this.Info.IsFemale);
 		var difficulty = this._statsDifficulty?.SelectedIndex is >= 0 and var selected ? selected : Math.Clamp(this.Info.DifficultyUnlocked, 0, 2);
 		var attackSpeed = CharacterOffenseCalculator.AttackSpeed(all, this._stance.Value, balance, difficulty,
-			durations.GetValueOrDefault(WeaponStance.Unarmed), durations.GetValueOrDefault(this._stance.Value));
+			durations.GetValueOrDefault(WeaponStance.Unarmed));
 
 		double Total(int box, string field) => CharacterStatsCalculator.Total(Convert.ToInt32(this.AttributeBoxes[box].Value), all, field);
 		var values = CharacterOffenseCalculator.Damage(new OffenseInput(this._offenseGear, gear, skills,

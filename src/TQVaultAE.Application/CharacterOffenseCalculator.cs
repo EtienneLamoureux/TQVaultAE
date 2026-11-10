@@ -27,18 +27,21 @@ public static class CharacterOffenseCalculator
 {
 	/// <summary>
 	/// The attack speed shown, in % (the game <c>the game</c>):
-	/// attacks per second / template speed × (unarmed attack duration / stance attack duration) × 100.
+	/// attacks per second / template speed × 100, times the weapon factor when a weapon is in hand.
 	/// <list type="bullet">
 	/// <item>attacks per second = (template speed + flat) × (1 + (attack speed % + total speed %) / 100) + the weapons'
 	/// <c>characterBaseAttackSpeed</c> (halved when dual wielding), between <c>playerAttackSpeedCapMin/Max</c> % of the
 	/// template speed (<c>the game</c>); the total speed % is assumed to count, as for the other speeds;</item>
-	/// <item>the durations are the stances' mean attack animation durations; a missing one counts as the same.</item>
+	/// <item>the weapon factor is the mean length of the template's unarmed attack animations in seconds (frames / frame
+	/// rate, without their template speed), 19/30 for both templates. The binary divides the unarmed set's attack
+	/// duration by the current set's, but with the files' values that gives 1.52, where three in-game readings need
+	/// 0.633 whatever the stance: Copper Knife 106 %, Copper Hand Axe 93 % (one-handed, male), Iron Sudis 72 % (spear,
+	/// female). An empirical fit: the bow, whose animations differ, is not checked.</item>
 	/// </list>
 	/// </summary>
 	/// <param name="all">The gear (weapons in hand) and skill sums.</param>
-	/// <param name="unarmedDuration">Mean attack animation duration without weapon, in seconds.</param>
-	/// <param name="stanceDuration">Mean attack animation duration of the stance, in seconds.</param>
-	public static double AttackSpeed(AttributeSum all, WeaponStance stance, GameBalance balance, int difficulty, double unarmedDuration, double stanceDuration)
+	/// <param name="unarmedAttackSeconds">Mean length of the unarmed attack animations, in seconds; 0 when unknown.</param>
+	public static double AttackSpeed(AttributeSum all, WeaponStance stance, GameBalance balance, int difficulty, double unarmedAttackSeconds)
 	{
 		ArgumentNullException.ThrowIfNull(all);
 		ArgumentNullException.ThrowIfNull(balance);
@@ -59,7 +62,7 @@ public static class CharacterOffenseCalculator
 			perSecond = Math.Min(perSecond, capMax / 100 * template);
 		perSecond = Math.Max(perSecond, capMin / 100 * template);
 
-		double animation = unarmedDuration > 0 && stanceDuration > 0 ? unarmedDuration / stanceDuration : 1;
+		double animation = stance == WeaponStance.Unarmed || unarmedAttackSeconds <= 0 ? 1 : unarmedAttackSeconds;
 		return perSecond / template * animation * 100;
 	}
 
@@ -130,16 +133,16 @@ public static class CharacterOffenseCalculator
 		double damage = 0;
 
 		// Base physical: the weapon's (weapon equation, pierce ratio), or the hand hits (non-weapon equation). The pierce
-		// ratio takes its share of the physical result, and the pierce equation runs on that share of the raw damage:
-		// A character's Copper Knife (4-8, 15 % pierce, +5 % total damage, 71.5 Str, 60 Dex) shows 11 in the game,
-		// 10.06 × 0.85 + 2.79, where the pierce share of the physical result (3.37) gave 12.
+		// ratio takes its share of the physical result, which goes through the pierce equation: a character's Iron Sudis
+		// (17-31, 30 % pierce, 99 Str, 115 Dex) shows 44 in the game. A character's Copper Knife (4-8, 15 %) gives 12 where
+		// the game shows 11: its damage may be rolled from the item seed (not checked).
 		if (weapon is not null)
 		{
-			double raw = weapon["offensivePhysical" + Avg];
-			double physical = Equation("physicalDamageEquation", Scale(raw, modifiers["offensivePhysicalModifier"] + total), "physicalDamageDV");
-			double ratio = Math.Clamp(weapon["offensivePierceRatio" + Avg] * (1 + modifiers["offensivePierceRatioModifier"] / 100), 0, 100) / 100;
-			damage += physical * (1 - ratio);
-			damage += Equation("pierceDamageEquation", Scale(raw * ratio, modifiers["offensivePierceModifier"] + total), "pierceDamageDV");
+			double physical = Equation("physicalDamageEquation", Scale(weapon["offensivePhysical" + Avg], modifiers["offensivePhysicalModifier"] + total), "physicalDamageDV");
+			double ratio = Math.Clamp(weapon["offensivePierceRatio" + Avg] * (1 + modifiers["offensivePierceRatioModifier"] / 100), 0, 100);
+			double pierce = ratio / 100 * physical;
+			damage += physical - pierce;
+			damage += Equation("pierceDamageEquation", Scale(pierce, modifiers["offensivePierceModifier"] + total), "pierceDamageDV");
 		}
 		else
 		{

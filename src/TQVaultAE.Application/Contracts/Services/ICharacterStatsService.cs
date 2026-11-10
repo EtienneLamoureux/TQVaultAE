@@ -39,8 +39,9 @@ public interface ICharacterStatsService
 	WeaponStance GetWeaponStance(IEnumerable<Item> equipment, bool useAlternate);
 
 	/// <summary>
-	/// The mean attack animation duration of each stance, in seconds, from the male or female player template and the
-	/// <c>.anm</c> files of the game (read once per template); a stance without animation is left out.
+	/// The mean attack animation length of each stance, in seconds (frames / frame rate, without the template speed), from
+	/// the male or female player template and the <c>.anm</c> files of the game (read once per template); a stance
+	/// without animation is left out.
 	/// </summary>
 	IReadOnlyDictionary<WeaponStance, double> GetAttackAnimationDurations(bool female);
 }

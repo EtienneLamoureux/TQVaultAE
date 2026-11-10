@@ -153,7 +153,8 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 					|| WeaponStances.ReadAnimationHeader(data) is not { } header)
 					continue;
 
-				animations.Add((header.Frames, header.FrameRate, Value(template, $"{prefix}AttackAnimSpeed{n}", 1)));
+				// The length in the file: the attack speed's weapon factor does not use the template speed.
+				animations.Add((header.Frames, header.FrameRate, 1));
 			}
 
 			if (WeaponStances.MeanDuration(animations) is var mean and > 0)
