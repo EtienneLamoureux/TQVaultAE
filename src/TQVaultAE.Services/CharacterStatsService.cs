@@ -19,6 +19,8 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 	private readonly IItemProvider _itemProvider = itemProvider;
 	private const string FemalePlayerTemplate = """records\xpack\creatures\pc\femalepc01.dbr""";
 
+	private const string AnimationTableName = "charAnimationTableName";
+
 	/// <summary>The player templates list up to 3 attack animations per stance.</summary>
 	private const int MaxAttackAnimations = 3;
 
@@ -140,7 +142,12 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 		if (cache is not null)
 			return cache;
 
+		// The game loads a character's animations from the table its record names (charAnimationTableName, for the
+		// players records\creature\pc\anm\anm_*.dbr), whose attack animations and speeds differ from the record's own.
 		var template = this.Record(female ? FemalePlayerTemplate : PlayerTemplate);
+		if (this.Record(template?.GetString(AnimationTableName, 0)) is { } table)
+			template = table;
+
 		var durations = new Dictionary<WeaponStance, double>();
 		foreach (var stance in Enum.GetValues<WeaponStance>())
 		{
@@ -153,8 +160,7 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 					|| WeaponStances.ReadAnimationHeader(data) is not { } header)
 					continue;
 
-				// The length in the file: the attack speed's weapon factor does not use the template speed.
-				animations.Add((header.Frames, header.FrameRate, 1));
+				animations.Add((header.Frames, header.FrameRate, Value(template, $"{prefix}AttackAnimSpeed{n}", 1)));
 			}
 
 			if (WeaponStances.MeanDuration(animations) is var mean and > 0)

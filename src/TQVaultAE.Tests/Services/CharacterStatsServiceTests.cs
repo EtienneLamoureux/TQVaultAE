@@ -132,9 +132,12 @@ public class CharacterStatsServiceTests
 	}
 
 	[Fact]
-	public void GetAttackAnimationDurations_ReadsTheTemplateAnimationLengths()
+	public void GetAttackAnimationDurations_ReadsTheAnimationTableOfTheTemplate()
 	{
-		var template = Class("""records\xpack\creatures\pc\femalepc01.dbr""".ToRecordId(), "Player");
+		var player = Class("""records\xpack\creatures\pc\femalepc01.dbr""".ToRecordId(), "Player");
+		player.Set(Text("charAnimationTableName", """Records\Creature\PC\ANM\ANM_FemalePC.dbr"""));
+		player.Set(Text("unarmedAttackAnim1", """Creatures\PC\Female\ANM\C.anm"""));
+		var template = Class("""Records\Creature\PC\ANM\ANM_FemalePC.dbr""".ToRecordId(), "CharAnimationTable");
 		template.Set(Text("unarmedAttackAnim1", """Creatures\PC\Female\ANM\A.anm"""));
 		template.Set(Text("unarmedAttackAnim2", """Creatures\PC\Female\ANM\B.anm"""));
 		template.Set(new Variable("unarmedAttackAnimSpeed1", VariableDataType.Float, 1) { [0] = 0.5F });
@@ -146,8 +149,8 @@ public class CharacterStatsServiceTests
 
 		var durations = this._service.GetAttackAnimationDurations(female: true);
 
-		durations[WeaponStance.Unarmed].Should().BeApproximately(19 / 30.0, 1e-6, "the template speed (0.5) is left out");
-		durations[WeaponStance.OneHanded].Should().BeApproximately(25 / 30.0, 1e-6);
+		durations[WeaponStance.Unarmed].Should().BeApproximately((21 + 17) / 2.0 / 30 / 0.5, 1e-6, "the table's animations and speeds count");
+		durations[WeaponStance.OneHanded].Should().BeApproximately(25 / 30.0, 1e-6, "a missing speed is 1");
 		durations.Should().NotContainKey(WeaponStance.Bow);
 	}
 

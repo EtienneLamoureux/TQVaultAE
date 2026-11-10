@@ -27,26 +27,23 @@ public static class CharacterOffenseCalculator
 {
 	/// <summary>
 	/// The attack speed shown, in % (the game <c>the game</c>):
-	/// attacks per second / template speed × 100, times the weapon factor when a weapon is in hand.
+	/// attacks per second / template speed × (unarmed attack duration / stance attack duration) × 100.
 	/// <list type="bullet">
 	/// <item>attacks per second = (template speed + flat + the weapons' <c>characterBaseAttackSpeed</c>, halved when dual
 	/// wielding) × (1 + (attack speed % + total speed %) / 100), between <c>playerAttackSpeedCapMin/Max</c> % of the
 	/// template speed (<c>the game</c>); the total speed % is assumed to count, as for the other speeds.
 	/// The % scales the weapons' speed too, as two in-game readings need: Copper Shamshir (0.45) with +33 % shows 135 %,
 	/// Alexandrian Broadsword (0.5) with +16 % 123 %, where scaling the template speed only gave 123 % and 116 %;</item>
-	/// <item>the weapon factor is the mean length of the template's unarmed attack animations in seconds (frames / frame
-	/// rate, without their template speed), 19/30 for both templates. The binary divides the unarmed set's attack
-	/// duration by the current set's, but with the files' values that gives 1.52, where three in-game readings need
-	/// 0.633 whatever the stance: Copper Knife 106 %, Copper Hand Axe 93 % (one-handed, male), Iron Sudis 72 % (spear,
-	/// female), Shamshir 135 % and Broadsword 123 % (one-handed, male), the bow 72 % (female). An empirical fit;</item>
-	/// <item>dual wield: the weapon factor times 0.9, fitted on one reading: a character's Shamshir and Broadsword with +33 %
-	/// show 124 %, where the one-handed factor gives 138 % (the binary takes the ratio of two hand-state animation sets,
-	/// <c>Character+0x1160</c> / <c>+0x1180</c>, not matched to the files' values yet).</item>
+	/// <item>the durations are the stances' mean attack animation durations, from the player's animation table; a
+	/// missing one counts as the same. With the game's files: unarmed 0.528 s, one-handed, spear and bow 0.833 s (factor
+	/// 0.633), dual wield 0.926 s (factor 0.57). In the game: Copper Knife 106 %, Copper Hand Axe 93 %, Shamshir 135 %,
+	/// Broadsword 123 % (one-handed), Iron Sudis and a bow 72 %, Shamshir and Broadsword dual wielded 124 %.</item>
 	/// </list>
 	/// </summary>
 	/// <param name="all">The gear (weapons in hand) and skill sums.</param>
-	/// <param name="unarmedAttackSeconds">Mean length of the unarmed attack animations, in seconds; 0 when unknown.</param>
-	public static double AttackSpeed(AttributeSum all, WeaponStance stance, GameBalance balance, int difficulty, double unarmedAttackSeconds)
+	/// <param name="unarmedDuration">Mean attack animation duration without weapon, in seconds.</param>
+	/// <param name="stanceDuration">Mean attack animation duration of the stance, in seconds.</param>
+	public static double AttackSpeed(AttributeSum all, WeaponStance stance, GameBalance balance, int difficulty, double unarmedDuration, double stanceDuration)
 	{
 		ArgumentNullException.ThrowIfNull(all);
 		ArgumentNullException.ThrowIfNull(balance);
@@ -67,15 +64,9 @@ public static class CharacterOffenseCalculator
 			perSecond = Math.Min(perSecond, capMax / 100 * template);
 		perSecond = Math.Max(perSecond, capMin / 100 * template);
 
-		double animation = stance == WeaponStance.Unarmed || unarmedAttackSeconds <= 0 ? 1 : unarmedAttackSeconds;
-		if (stance == WeaponStance.DualWield)
-			animation *= DualWieldFactor;
-
+		double animation = stance != WeaponStance.Unarmed && unarmedDuration > 0 && stanceDuration > 0 ? unarmedDuration / stanceDuration : 1;
 		return perSecond / template * animation * 100;
 	}
-
-	/// <summary>The dual wield share of the weapon factor, fitted on one in-game reading (see <see cref="AttackSpeed"/>).</summary>
-	private const double DualWieldFactor = 0.9;
 
 	private const string Avg = "Average";
 	private const string TotalDamageModifier = "offensiveTotalDamageModifier";
