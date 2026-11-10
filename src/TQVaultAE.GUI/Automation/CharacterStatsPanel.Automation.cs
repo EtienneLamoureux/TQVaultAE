@@ -7,6 +7,12 @@ namespace TQVaultAE.GUI.Components.Character;
 internal sealed partial class CharacterStatsPanel
 {
 	/// <summary>What the panel draws.</summary>
+	/// <summary>The rollovers of the tab shown, in the order of the areas: their lines as the game tool tip shows them.</summary>
+	internal IReadOnlyList<IReadOnlyList<GameTooltipLine>> AutomationToolTips()
+		=> this.View?.Invoke() is { } view
+			? [.. this.ToolTipAreas(view).Where(a => a.ToolTip.Length != 0).Select(a => (IReadOnlyList<GameTooltipLine>)ToolTipLines(a.ToolTip, a.Titled))]
+			: [];
+
 	internal object AutomationState()
 	{
 		var view = this.View?.Invoke();

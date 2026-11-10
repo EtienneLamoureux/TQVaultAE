@@ -756,15 +756,6 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to {0}% Duration.
-        /// </summary>
-        public static string CEDurationBonus {
-            get {
-                return ResourceManager.GetString("CEDurationBonus", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Requires mastery level {0}.
         /// </summary>
         public static string CESkillRequiresMastery {

@@ -1025,9 +1025,6 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
 	<data name="CEIncludeBuffsToolTip" xml:space="preserve">
     <value>Compte les auras et les buffs des compétences comme s’ils étaient actifs ; sinon seules les compétences passives comptent.</value>
   </data>
-	<data name="CEDurationBonus" xml:space="preserve">
-    <value>{0} % de durée</value>
-  </data>
 	<data name="CEGearBonusSkill" xml:space="preserve">
     <value>+{0} à {1} (équipement)</value>
   </data>

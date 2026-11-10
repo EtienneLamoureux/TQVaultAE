@@ -79,6 +79,7 @@ internal sealed partial class CharacterEditDialog
 			NumberFont = this.OwnedFont(new Font("Arial", 13F * panelScale, FontStyle.Bold, GraphicsUnit.Pixel)),
 			ResistanceFont = this.OwnedFont(new Font("Arial", 14F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel)),
 		};
+		this._stats.Tooltip = this.SkillTooltipWindow();
 		page.Controls.Add(this._stats);
 
 		// The attribute boxes stay the model of the attributes (their events count the points); the panel shows them.

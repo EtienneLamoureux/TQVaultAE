@@ -1066,9 +1066,6 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
 	<data name="CEIncludeBuffsToolTip" xml:space="preserve">
     <value>Counts the auras and buffs of the skills as if they were active; else only the passive skills count.</value>
   </data>
-	<data name="CEDurationBonus" xml:space="preserve">
-    <value>{0}% Duration</value>
-  </data>
 	<data name="CEGearBonusSkill" xml:space="preserve">
     <value>+{0} to {1} (equipment)</value>
   </data>

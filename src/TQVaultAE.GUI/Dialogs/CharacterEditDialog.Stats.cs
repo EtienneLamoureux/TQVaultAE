@@ -130,22 +130,30 @@ internal sealed partial class CharacterEditDialog
 				Row("tagCBlockPercent", "Block Chance", Percent(stats.Block)),
 			],
 			DamageTitle = Game("x4tagCDamageStats2", "Damage & Duration Bonuses"),
+			// As the game's rollover: one block per damage, its name then its bonus; the damage over time "with +n%
+			// Improved Duration". A blank line starts a block, whose first line is its title.
 			Damages = [.. DamageIcons.Select(d =>
 			{
-				var lines = new List<string> { Game(d.Tag, d.Damage.ToString()) };
+				var name = Game(d.Tag, d.Damage.ToString());
 				if (!stats.DamageBonuses.TryGetValue(d.Damage, out var bonus))
-					lines.Add(computedInGame);
-				else
+					return new StatIconView(d.Icon, string.Empty, string.Join(Environment.NewLine, name, computedInGame));
+
+				var lines = new List<string>();
+				if (d.DamageTag is not null)
+					lines.AddRange([name, Signed(d.DamageTag, "{%+.0f0}%", bonus.Damage)]);
+
+				if (d.DurationDamageTag is not null)
 				{
-					if (d.DamageTag is not null)
-						lines.Add(Signed(d.DamageTag, "{%+.0f0}%", bonus.Damage));
-					if (d.DurationDamageTag is not null)
-						lines.Add(Signed(d.DurationDamageTag, "{%+.0f0}%", bonus.DurationDamage));
-					if (d.DurationDamageTag is not null)
-						lines.Add(string.Format(culture, Resources.CEDurationBonus, (bonus.Duration >= 0 ? "+" : string.Empty) + bonus.Duration.ToString(culture)));
+					if (lines.Count != 0)
+						lines.Add(string.Empty);
+
+					var over = d.DurationDamageTag.Replace("DamageDurationModifier", "DamageDuration", StringComparison.Ordinal);
+					lines.Add(d.DamageTag is null ? name : Game(over, name));
+					lines.Add(Signed(d.DurationDamageTag, "{%+.0f0}%", bonus.DurationDamage) + "  "
+						+ Signed("ImprovedTimeFormat", "with {%+.0f0}% Improved Duration", bonus.Duration));
 				}
 
-				return new StatIconView(d.Icon, string.Empty, string.Join(Environment.NewLine, lines));
+				return new StatIconView(d.Icon, string.Empty, string.Join(Environment.NewLine, lines.Count == 0 ? [name] : lines));
 			})],
 			Tab3Rows =
 			[
