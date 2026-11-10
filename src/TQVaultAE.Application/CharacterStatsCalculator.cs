@@ -54,6 +54,15 @@ public sealed record CharacterStats
 	public int PhysicalToElemental { get; init; }
 	public required IReadOnlyDictionary<StatDamage, DamageBonus> DamageBonuses { get; init; }
 	public required IReadOnlyDictionary<StatRace, RacialBonus> RaceBonuses { get; init; }
+
+	/// <summary>Strength with the bonuses of gear and skills, as the damage equations use it.</summary>
+	public double Strength { get; init; }
+
+	/// <summary>Dexterity with the bonuses of gear and skills.</summary>
+	public double Dexterity { get; init; }
+
+	/// <summary>Intelligence with the bonuses of gear and skills.</summary>
+	public double Intelligence { get; init; }
 }
 
 /// <summary>
@@ -130,6 +139,9 @@ public static class CharacterStatsCalculator
 
 		return new CharacterStats
 		{
+			Strength = Total(input.Strength, all, "characterStrength"),
+			Dexterity = dexterity,
+			Intelligence = intelligence,
 			Resistances = Enum.GetValues<StatResistance>().ToDictionary(r => r, r => Round(Resistance(r, all, balance, difficulty))),
 			CombinedArmor = CombinedArmor(input.Gear, input.Skills),
 			LifeRegen = GameEquation.Evaluate(balance.LifeRegenEquation, new Dictionary<string, double>

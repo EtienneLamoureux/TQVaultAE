@@ -49,6 +49,23 @@ internal sealed partial class CharacterEditDialog
 		(StatDamage.LifeLeech, """InGameUI\characterscreen\lifeleachicon01.tex""", "DamageDurationLifeLeach", null, "DamageDurationModifierLifeLeach"),
 	];
 
+	/// <summary>
+	/// The equations of a damage's direct and over time parts (<c>combatequations.dbr</c>) and their damage variable, for
+	/// the "Global Multiplier" lines; vitality uses the elemental ones.
+	/// </summary>
+	private static readonly Dictionary<StatDamage, ((string Equation, string Variable)? Direct, (string Equation, string Variable)? OverTime)> DamageEquations = new()
+	{
+		[StatDamage.Physical] = (("physicalDamageEquation", "physicalDamageDV"), ("physicalDurationDamageEquation", "physicalDamageDV")),
+		[StatDamage.Pierce] = (("pierceDamageEquation", "pierceDamageDV"), null),
+		[StatDamage.Bleeding] = (null, ("bleedingDurationDamageEquation", "bleedingDamageDV")),
+		[StatDamage.Poison] = (null, ("poisonDurationDamageEquation", "poisonDamageDV")),
+		[StatDamage.Fire] = (("elementalDamageEquation", "elementalDamageDV"), ("elementalDurationDamageEquation", "elementalDamageDV")),
+		[StatDamage.Cold] = (("elementalDamageEquation", "elementalDamageDV"), ("elementalDurationDamageEquation", "elementalDamageDV")),
+		[StatDamage.Lightning] = (("elementalDamageEquation", "elementalDamageDV"), ("elementalDurationDamageEquation", "elementalDamageDV")),
+		[StatDamage.Vitality] = (("elementalDamageEquation", "elementalDamageDV"), ("elementalDurationDamageEquation", "elementalDamageDV")),
+		[StatDamage.LifeLeech] = (null, ("lifeLeachDurationDamageEquation", "lifeLeachDamageDV")),
+	};
+
 	/// <summary>Race icons of tab III and the tags of the race names (plural), in the order of <see cref="StatRace"/>.</summary>
 	private static readonly (string Icon, string Tag, string Fallback)[] RaceIcons =
 	[
@@ -125,6 +142,7 @@ internal sealed partial class CharacterEditDialog
 		var stats = this.ComputeStats();
 		var (attackSpeed, offense) = this.ComputeOffense();
 		var culture = CultureInfo.CurrentCulture;
+		var balance = this.Services.CharacterStatsService.GetGameBalance();
 		string Game(string tag, string fallback) => string.IsNullOrEmpty(tag) ? fallback : this.TranslateTag(tag, fallback);
 		string Percent(int value) => value.ToString(culture) + "%";
 		string Signed(string tag, string fallback, int value) => CharacterPanelLayout.FormatGameText(Game(tag, fallback), value);
@@ -172,8 +190,27 @@ internal sealed partial class CharacterEditDialog
 					return new StatIconView(d.Icon, string.Empty, string.Join(Environment.NewLine, name, computedInGame));
 
 				var lines = new List<string>();
+				var equations = DamageEquations.GetValueOrDefault(d.Damage);
+				void Multiplier((string Equation, string Variable)? equation)
+				{
+					if (equation is not { } e
+						|| DamageMultiplier.Of(balance.DamageEquation(e.Equation), e.Variable, stats.Strength, stats.Dexterity, stats.Intelligence, this.Info.CurrentLevel) is not { } multiplier)
+						return;
+
+					var (tag, fallback) = multiplier.Attribute switch
+					{
+						MultiplierAttribute.Dexterity => ("x4tagCAttribBonusDex", "*{%.2f0} Global Multiplier (Dex)"),
+						MultiplierAttribute.Intelligence => ("x4tagCAttribBonusInt", "*{%.2f0} Global Multiplier (Int)"),
+						_ => ("x4tagCAttribBonusLvl", "*{%.2f0} Global Multiplier (Lvl)"),
+					};
+					lines.Add(Game(tag, fallback).Replace("{%.2f0}", multiplier.Value.ToString("0.00", culture), StringComparison.Ordinal));
+				}
+
 				if (d.DamageTag is not null)
+				{
 					lines.AddRange([name, Signed(d.DamageTag, "{%+.0f0}%", bonus.Damage)]);
+					Multiplier(equations.Direct);
+				}
 
 				if (d.DurationDamageTag is not null)
 				{
@@ -184,6 +221,7 @@ internal sealed partial class CharacterEditDialog
 					lines.Add(d.DamageTag is null ? name : Game(over, name));
 					lines.Add(Signed(d.DurationDamageTag, "{%+.0f0}%", bonus.DurationDamage) + "  "
 						+ Signed("ImprovedTimeFormat", "with {%+.0f0}% Improved Duration", bonus.Duration));
+					Multiplier(equations.OverTime);
 				}
 
 				return new StatIconView(d.Icon, string.Empty, string.Join(Environment.NewLine, lines.Count == 0 ? [name] : lines));
