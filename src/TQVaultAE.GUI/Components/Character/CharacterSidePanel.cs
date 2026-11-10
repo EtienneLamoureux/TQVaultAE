@@ -1,7 +1,9 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 using TQVaultAE.Domain.Helpers;
+using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation.Win32.Contracts;
 
 namespace TQVaultAE.GUI.Components.Character;
@@ -44,7 +46,14 @@ internal sealed partial class CharacterSidePanel : Control
 
 	private static readonly Color Grey = Color.FromArgb(200, 200, 190);
 
+	/// <summary>The frame of the statistics panel's picture: its gold border (5 pixels) around the black, under the tabs.</summary>
+	private static readonly Rectangle FrameSource = new(0, 19, 255, 375);
+
+	/// <summary>The corners of the frame kept as they are; the edges and the black between them are stretched.</summary>
+	private const int FrameCorner = 12;
+
 	private readonly IUIService _uiService;
+	private readonly Bitmap _frame = Images.CharacterStatsPanel;
 	private float _panelScale = 1F;
 
 	public CharacterSidePanel(IUIService uiService)
@@ -88,6 +97,41 @@ internal sealed partial class CharacterSidePanel : Control
 
 	private Rectangle ScaledRect(Rectangle r) => new(this.Scaled(r.X), this.Scaled(r.Y), this.Scaled(r.Width), this.Scaled(r.Height));
 
+	protected override void Dispose(bool disposing)
+	{
+		if (disposing)
+			this._frame.Dispose();
+
+		base.Dispose(disposing);
+	}
+
+	/// <summary>
+	/// The frame of the statistics panel stretched to this panel as nine pieces: the corners at their size, the edges
+	/// stretched along, the black inside stretched to fill.
+	/// </summary>
+	private void DrawFrame(Graphics g)
+	{
+		int c = FrameCorner;
+		var s = FrameSource;
+		int[] sx = [s.Left, s.Left + c, s.Right - c, s.Right];
+		int[] sy = [s.Top, s.Top + c, s.Bottom - c, s.Bottom];
+		int dc = this.Scaled(c);
+		int[] dx = [0, dc, this.Width - dc, this.Width];
+		int[] dy = [0, dc, this.Height - dc, this.Height];
+
+		// Tiled edges keep the bicubic filter from blending in the pixels outside each piece.
+		using var attributes = new ImageAttributes();
+		attributes.SetWrapMode(WrapMode.TileFlipXY);
+		for (int row = 0; row < 3; row++)
+		{
+			for (int column = 0; column < 3; column++)
+			{
+				var target = Rectangle.FromLTRB(dx[column], dy[row], dx[column + 1], dy[row + 1]);
+				g.DrawImage(this._frame, target, sx[column], sy[row], sx[column + 1] - sx[column], sy[row + 1] - sy[row], GraphicsUnit.Pixel, attributes);
+			}
+		}
+	}
+
 	protected override void OnPaint(PaintEventArgs e)
 	{
 		var g = e.Graphics;
@@ -95,11 +139,8 @@ internal sealed partial class CharacterSidePanel : Control
 		g.PixelOffsetMode = PixelOffsetMode.Half;
 		g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
-		// A dark box like the game window's black, on the page's marble.
-		using (var back = new SolidBrush(Color.FromArgb(200, 0, 0, 0)))
-			g.FillRectangle(back, this.ClientRectangle);
-		using (var border = new Pen(Color.FromArgb(150, 120, 80), Math.Max(1F, this._panelScale)))
-			g.DrawRectangle(border, new Rectangle(0, 0, this.Width - 1, this.Height - 1));
+		// The statistics panel's frame: its textured gold border and its black.
+		this.DrawFrame(g);
 
 		if (this.View?.Invoke() is not { } view)
 			return;
