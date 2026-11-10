@@ -792,15 +792,6 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Computed with the formulas of the game files; not yet compar.
-        /// </summary>
-        public static string CEOffenseUnverified {
-            get {
-                return ResourceManager.GetString("CEOffenseUnverified", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Requires mastery level {0}.
         /// </summary>
         public static string CESkillRequiresMastery {

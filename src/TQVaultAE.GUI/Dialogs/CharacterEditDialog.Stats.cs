@@ -238,9 +238,9 @@ internal sealed partial class CharacterEditDialog
 			Offense =
 			[
 				Row("tagCTotalDamage", "Average Damage", offense.AverageDamage.ToString(culture),
-					string.Format(culture, Resources.CEOffenseDamageToolTip, offense.WeaponDamage, offense.AddedDamage) + Environment.NewLine + Resources.CEOffenseUnverified),
-				Row("tagCAttackSpeed", "Attack Speed", Percent(CharacterStatsCalculator.Round(attackSpeed)), Resources.CEOffenseUnverified),
-				Row("tagCDPS", "Damage Per Second (DPS)", offense.Dps.ToString(culture), Resources.CEOffenseUnverified),
+					string.Format(culture, Resources.CEOffenseDamageToolTip, offense.WeaponDamage, offense.AddedDamage)),
+				Row("tagCAttackSpeed", "Attack Speed", Percent(CharacterStatsCalculator.Round(attackSpeed))),
+				Row("tagCDPS", "Damage Per Second (DPS)", offense.Dps.ToString(culture)),
 			],
 			SecondaryTitle = Game("tagCSecondaryResist", "Secondary Resistances:"),
 			Tab2Rows =
