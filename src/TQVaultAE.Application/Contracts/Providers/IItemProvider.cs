@@ -135,7 +135,8 @@ public interface IItemProvider
 	void GetStatBonusesFromRecord(SortedList<string, int> statBonuses, DBRecordCollection? record, int statLevel = 0);
 	/// <summary>
 	/// Sums every numeric variable of an item, as the game collects it for the character window: its base record, its
-	/// affixes, its relics or charms at their number of pieces and their completion bonuses.
+	/// affixes (with the values the game rolls from the item seed), its relics or charms at their number of pieces and
+	/// their completion bonuses.
 	/// </summary>
 	AttributeSum GetAttributeSums(Item item);
 

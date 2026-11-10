@@ -16,23 +16,24 @@ public partial class ItemProvider
 	{
 		var sum = new AttributeSum();
 
-		// The item and its affixes, then each relic or charm at its number of pieces, and its completion bonus.
-		(RecordId? Id, int Level)[] sources =
+		// The item and its affixes with the values the game rolled from the item seed (issue #552), then each relic or
+		// charm at its number of pieces, and its completion bonus (relics never roll).
+		DBRecordCollection? Read(RecordId? id) => RecordId.IsNullOrEmpty(id) ? null : Database.GetRecordFromFile(id);
+		var baseRecord = Read(item.BaseItemId);
+		var rolled = this.RollInGameValues(item, baseRecord);
+		(DBRecordCollection? Record, int Level)[] sources =
 		[
-			(item.BaseItemId, 1),
-			(item.prefixID, 1),
-			(item.suffixID, 1),
-			(item.relicID, item.Var1),
-			(item.RelicBonusId, 1),
-			(item.relic2ID, item.Var2),
-			(item.RelicBonus2Id, 1),
+			(rolled?.Base ?? baseRecord, 1),
+			(rolled is null ? Read(item.prefixID) : rolled.Prefix, 1),
+			(rolled is null ? Read(item.suffixID) : rolled.Suffix, 1),
+			(Read(item.relicID), item.Var1),
+			(Read(item.RelicBonusId), 1),
+			(Read(item.relic2ID), item.Var2),
+			(Read(item.RelicBonus2Id), 1),
 		];
 
-		foreach (var (id, level) in sources)
-		{
-			if (!RecordId.IsNullOrEmpty(id))
-				AddAttributesFromRecord(sum, Database.GetRecordFromFile(id), level, this.PetBonusRecord);
-		}
+		foreach (var (record, level) in sources)
+			AddAttributesFromRecord(sum, record, level, this.PetBonusRecord);
 
 		return sum;
 	}
