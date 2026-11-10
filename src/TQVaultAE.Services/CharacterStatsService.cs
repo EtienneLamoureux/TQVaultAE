@@ -113,7 +113,9 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 	{
 		var worn = equipment.Where(item => !item.IsInInactiveWeaponSlot(useAlternate)).ToList();
 		var weapons = worn
-			.Where(item => item.IsInWeaponSlot && !item.ItemClass.Equals("WeaponArmor_Shield", StringComparison.OrdinalIgnoreCase))
+			// An empty weapon slot can be saved as an item without record: it is no weapon (bare hands then).
+			.Where(item => item.IsInWeaponSlot && !string.IsNullOrEmpty(item.ItemClass)
+				&& !item.ItemClass.Equals("WeaponArmor_Shield", StringComparison.OrdinalIgnoreCase))
 			.Select(this._itemProvider.GetAttributeSums)
 			.ToList();
 

@@ -7,6 +7,12 @@ namespace TQVaultAE.Domain.Entities;
 /// </summary>
 public sealed class AttributeSum
 {
+	/// <summary>
+	/// The prefix of the variables of the pet bonus records (<c>petBonusName</c>) summed with the records that name them:
+	/// <c>pet:offensivePhysicalModifier</c> is the pets' physical damage bonus.
+	/// </summary>
+	public const string PetBonusPrefix = "pet:";
+
 	private readonly Dictionary<string, double> _values = new(StringComparer.OrdinalIgnoreCase);
 	private readonly Dictionary<string, RacialBonus> _races = new(StringComparer.OrdinalIgnoreCase);
 

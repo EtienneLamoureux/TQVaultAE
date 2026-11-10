@@ -7,10 +7,13 @@ namespace TQVaultAE.Tests.Application;
 public class CharacterPanelLayoutTests
 {
 	[Theory]
-	[InlineData(50, 0, 0F, 50)]
-	[InlineData(50, 10, 0F, 60)]
-	[InlineData(300, 20, 10F, 352)]
-	public void AttributeTotal_AddsFlatBonusesThenPercentages(int baseValue, int flat, float percent, int expected)
+	[InlineData(50, 0, 0, 50)]
+	[InlineData(50, 10, 0, 60)]
+	[InlineData(300, 20, 10, 352)]
+	[InlineData(58, 13.5, 0, 71)] // A character's strength in the game: truncated, not rounded
+	[InlineData(50, 5.75, 0, 55)]
+	[InlineData(10, -20, 0, 0)]
+	public void AttributeTotal_AddsFlatBonusesThenPercentages_Truncated(int baseValue, double flat, double percent, int expected)
 		=> CharacterPanelLayout.AttributeTotal(baseValue, flat, percent).Should().Be(expected);
 
 	[Theory]

@@ -23,10 +23,10 @@ public static partial class CharacterPanelLayout
 
 	/// <summary>
 	/// An attribute as the game shows it: the base value plus the flat bonuses of gear and skills, times the percentage
-	/// bonuses, rounded (as <see cref="PlayerInfo"/> computes it for the saved base).
+	/// bonuses, truncated (58 + 13.5 strength shows 71 in the game).
 	/// </summary>
-	public static int AttributeTotal(int baseValue, int flatBonus, float percentBonus)
-		=> Convert.ToInt32((baseValue + flatBonus) * (100F + percentBonus) / 100F);
+	public static int AttributeTotal(int baseValue, double flatBonus, double percentBonus)
+		=> (int)Math.Max(0, (baseValue + flatBonus) * (100 + percentBonus) / 100);
 
 	/// <summary>
 	/// The elapsed time line, <c>tagCTimeNumber</c> ("{%d0}:{%d1}:{%d2}"): days, hours and minutes of play, as

@@ -13,6 +13,9 @@ public enum StatResistance
 public enum StatDamage
 {
 	Physical, Pierce, Bleeding, Poison, Pet, Fire, Cold, Lightning, Vitality, LifeLeech,
+
+	/// <summary>Energy leech: no icon of its own, the game shows it under life leech.</summary>
+	ManaLeech,
 }
 
 /// <summary>The monster races of tab III's "Monster Race Bonuses", in the game's order of the icons.</summary>
@@ -34,6 +37,12 @@ public sealed record CharacterStatsInput(int Strength, int Dexterity, int Intell
 /// <summary>A damage bonus of tab III: the damage %, and for the damage over time its damage % and duration %.</summary>
 public readonly record struct DamageBonus(int Damage, int DurationDamage, int Duration);
 
+/// <summary>
+/// Tab III's Pet Bonuses (TQ.exe): the damage % and the flat damage the pet bonus records of the gear and the skills give
+/// the pets, for physical, elemental and vitality damage.
+/// </summary>
+public readonly record struct PetDamageBonus(int PhysicalPercent, int ElementalPercent, int VitalityPercent, int Physical, int Elemental, int Vitality);
+
 /// <summary>The values of the character window that the calculator computes, rounded as the game shows them.</summary>
 public sealed record CharacterStats
 {
@@ -54,6 +63,7 @@ public sealed record CharacterStats
 	public int PhysicalToElemental { get; init; }
 	public required IReadOnlyDictionary<StatDamage, DamageBonus> DamageBonuses { get; init; }
 	public required IReadOnlyDictionary<StatRace, RacialBonus> RaceBonuses { get; init; }
+	public PetDamageBonus PetBonuses { get; init; }
 
 	/// <summary>Strength with the bonuses of gear and skills, as the damage equations use it.</summary>
 	public double Strength { get; init; }
@@ -106,6 +116,7 @@ public static class CharacterStatsCalculator
 		[StatDamage.Lightning] = ("offensiveLightningModifier", "offensiveSlowLightningModifier", "offensiveSlowLightningDurationModifier", true),
 		[StatDamage.Vitality] = ("offensiveLifeModifier", "offensiveSlowLifeModifier", "offensiveSlowLifeDurationModifier", false),
 		[StatDamage.LifeLeech] = (null, "offensiveSlowLifeLeachModifier", "offensiveSlowLifeLeachDurationModifier", false),
+		[StatDamage.ManaLeech] = (null, "offensiveSlowManaLeachModifier", "offensiveSlowManaLeachDurationModifier", false),
 	};
 
 	/// <summary>The race names of the records (<c>racialBonusRace</c>) each icon stands for.</summary>
@@ -171,6 +182,7 @@ public static class CharacterStatsCalculator
 			PhysicalToElemental = 0,
 			DamageBonuses = Enum.GetValues<StatDamage>().Where(DamageFields.ContainsKey).ToDictionary(d => d, d => Damage(d, all)),
 			RaceBonuses = Enum.GetValues<StatRace>().ToDictionary(r => r, r => Race(r, all)),
+			PetBonuses = PetBonuses(all),
 		};
 	}
 
@@ -258,6 +270,18 @@ public static class CharacterStatsCalculator
 			direct is null ? 0 : Round(sum[direct] + common),
 			overTime is null ? 0 : Round(sum[overTime] + common),
 			duration is null ? 0 : Round(sum[duration]));
+	}
+
+	/// <summary>
+	/// The pets' damage bonuses: the sums of the pet bonus records (<see cref="AttributeSum.PetBonusPrefix"/>), each type
+	/// on its own (no total damage % added, unlike the character's lines); flat damages at the middle of their range.
+	/// </summary>
+	private static PetDamageBonus PetBonuses(AttributeSum sum)
+	{
+		double Pet(string field) => sum[AttributeSum.PetBonusPrefix + field];
+		return new PetDamageBonus(
+			Round(Pet("offensivePhysicalModifier")), Round(Pet("offensiveElementalModifier")), Round(Pet("offensiveLifeModifier")),
+			Round(Pet("offensivePhysicalAverage")), Round(Pet("offensiveElementalAverage")), Round(Pet("offensiveLifeAverage")));
 	}
 
 	/// <summary>The racial bonuses of every race name an icon stands for; the defense % capped as the game caps it.</summary>

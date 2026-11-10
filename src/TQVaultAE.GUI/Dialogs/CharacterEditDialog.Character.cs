@@ -276,12 +276,15 @@ internal sealed partial class CharacterEditDialog
 		var culture = CultureInfo.CurrentCulture;
 		string Game(string tag, string fallback) => this.TranslateTag(tag, fallback);
 
-		var gear = info.GearBonus;
-		var skill = info.SkillBonus;
-		CharacterAttributeView Attribute(int index, string tag, string label, int flat, float percent, Color color)
+		// The bonuses as the statistics sum them, unrounded: the game adds 13.5 strength of a mastery as is.
+		this.ComputeStats();
+		var bonuses = new AttributeSum();
+		bonuses.Add(this._gearSum ?? new AttributeSum());
+		bonuses.Add(this._skillSum?.Sum ?? new AttributeSum());
+		CharacterAttributeView Attribute(int index, string tag, string label, string field, Color color)
 		{
 			var value = Convert.ToInt32(this.AttributeBoxes[index].Value);
-			var total = CharacterPanelLayout.AttributeTotal(value, flat, percent);
+			var total = CharacterPanelLayout.AttributeTotal(value, bonuses[field], bonuses[field + "Modifier"]);
 			var shown = index < 2 ? $"{total} / {total}" : total.ToString(culture);
 			var tip = string.Format(culture, Resources.CEAttributeToolTip, value, total - value);
 			return new CharacterAttributeView(Game(tag, label), shown, color, tip);
@@ -308,11 +311,11 @@ internal sealed partial class CharacterEditDialog
 			UndoText = Game("tagSkillUndo", "Undo"),
 			Attributes =
 			[
-				Attribute(0, "tagCHealth", Resources.CEHealth, (gear?.HealthBonus ?? 0) + (skill?.HealthBonus ?? 0), (gear?.HealthModifier ?? 0) + (skill?.HealthModifier ?? 0), Color.FromArgb(255, 40, 40)),
-				Attribute(1, "tagCEnergy", Resources.CEMana, (gear?.ManaBonus ?? 0) + (skill?.ManaBonus ?? 0), (gear?.ManaModifier ?? 0) + (skill?.ManaModifier ?? 0), Color.FromArgb(90, 90, 255)),
-				Attribute(2, "tagCStrength", Resources.CEStrength, (gear?.StrengthBonus ?? 0) + (skill?.StrengthBonus ?? 0), (gear?.StrengthModifier ?? 0) + (skill?.StrengthModifier ?? 0), Color.White),
-				Attribute(3, "tagCIntelligence", Resources.CEIntelligence, (gear?.IntelligenceBonus ?? 0) + (skill?.IntelligenceBonus ?? 0), (gear?.IntelligenceModifier ?? 0) + (skill?.IntelligenceModifier ?? 0), Color.White),
-				Attribute(4, "tagCDexterity", Resources.CEDexterity, (gear?.DexterityBonus ?? 0) + (skill?.DexterityBonus ?? 0), (gear?.DexterityModifier ?? 0) + (skill?.DexterityModifier ?? 0), Color.White),
+				Attribute(0, "tagCHealth", Resources.CEHealth, "characterLife", Color.FromArgb(255, 40, 40)),
+				Attribute(1, "tagCEnergy", Resources.CEMana, "characterMana", Color.FromArgb(90, 90, 255)),
+				Attribute(2, "tagCStrength", Resources.CEStrength, "characterStrength", Color.White),
+				Attribute(3, "tagCIntelligence", Resources.CEIntelligence, "characterIntelligence", Color.White),
+				Attribute(4, "tagCDexterity", Resources.CEDexterity, "characterDexterity", Color.White),
 			],
 			Stats = this.StatsView(),
 			GreatestMonsterTitle = Game("tagCHighestMonster", "Greatest Monster Killed"),

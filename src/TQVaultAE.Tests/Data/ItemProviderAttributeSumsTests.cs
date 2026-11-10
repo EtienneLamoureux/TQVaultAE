@@ -100,6 +100,20 @@ public class ItemProviderAttributeSumsTests
 		sum["offensiveFireAverage"].Should().Be(15 + 5 + 4);
 	}
 
+	[Fact]
+	public void AddAttributesFromRecord_PetBonusRecord_IsAddedUnderThePrefix_AtTheSameLevel()
+	{
+		var pet = Record(("offensivePhysicalModifier", [10F, 20F, 30F]), ("offensiveLifeMin", [5F]));
+		var sum = new AttributeSum();
+		ItemProvider.AddAttributesFromRecord(sum, Record(("characterStrength", [4]), ("petBonusName", ["records/pet.dbr"])), 2,
+			id => id == "records/pet.dbr" ? pet : null);
+
+		sum["characterStrength"].Should().Be(4);
+		sum[AttributeSum.PetBonusPrefix + "offensivePhysicalModifier"].Should().Be(20);
+		sum[AttributeSum.PetBonusPrefix + "offensiveLifeAverage"].Should().Be(5);
+		sum["offensivePhysicalModifier"].Should().Be(0);
+	}
+
 	[Theory]
 	[InlineData(0F, 30)]
 	[InlineData(100F, 30)]

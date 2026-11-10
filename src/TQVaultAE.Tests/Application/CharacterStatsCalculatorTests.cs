@@ -153,6 +153,21 @@ public class CharacterStatsCalculatorTests
 	}
 
 	[Fact]
+	public void ManaLeech_AddsTheTotalDamage_AsLifeLeech()
+		=> Compute(Sum(("offensiveTotalDamageModifier", 5), ("offensiveSlowManaLeachModifier", 10), ("offensiveSlowManaLeachDurationModifier", 20)))
+			.DamageBonuses[StatDamage.ManaLeech].Should().Be(new DamageBonus(0, 15, 20));
+
+	[Fact]
+	public void PetBonuses_AreThePetRecordsSums_WithoutTheCharactersTotalDamage()
+	{
+		var p = AttributeSum.PetBonusPrefix;
+		var stats = Compute(Sum(("offensiveTotalDamageModifier", 10), (p + "offensivePhysicalModifier", 12), (p + "offensiveElementalModifier", 8),
+			(p + "offensiveLifeModifier", 4.5), (p + "offensivePhysicalAverage", 7), (p + "offensiveElementalAverage", 3), (p + "offensiveLifeAverage", 2)));
+
+		stats.PetBonuses.Should().Be(new PetDamageBonus(12, 8, 5, 7, 3, 2));
+	}
+
+	[Fact]
 	public void LifeLeech_IsTheAttackDamageConvertedToHealth()
 		=> Compute(Sum(("offensiveLifeLeechMin", 12))).AttackDamageToHealth.Should().Be(12);
 

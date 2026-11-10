@@ -178,7 +178,8 @@ public class CharacterStatsServiceTests
 			return sum;
 		});
 
-		var gear = this._service.GetOffenseGear([sword, shield, spare, ring], useAlternate: false);
+		var empty = new Item { PositionX = Item.WeaponSlotIndicator, PositionY = 1 }; // an empty slot saved as an item
+		var gear = this._service.GetOffenseGear([sword, shield, spare, ring, empty], useAlternate: false);
 
 		gear.Weapons.Should().ContainSingle().Which["WeaponMelee_Sword"].Should().Be(1);
 		gear.Other.Values.Keys.Should().BeEquivalentTo(["ArmorJewelry_Ring", "set"]);

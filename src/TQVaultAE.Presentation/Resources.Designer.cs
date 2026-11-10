@@ -747,15 +747,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The game computes these values while playing: they are not i.
-        /// </summary>
-        public static string CEComputedInGame {
-            get {
-                return ResourceManager.GetString("CEComputedInGame", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Statistics.
         /// </summary>
         public static string CEStatistics {

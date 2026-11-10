@@ -127,6 +127,16 @@ public class CharacterOffenseCalculatorTests
 	}
 
 	[Fact]
+	public void Damage_BareHands_HitAsAWeapon()
+	{
+		// A character in the game: hands 2-4, +5% total damage, strength 71.5, no weapon: 3.15 × 1.143 + 2.86 = 6.46, shows 6.
+		var values = CharacterOffenseCalculator.Damage(Input([], skills: Sum(("offensiveTotalDamageModifier", 5)), strength: 71.5)
+			with { Balance = Balance with { HandHitDamageMin = 2, HandHitDamageMax = 4 } });
+
+		values.Should().Be(new OffenseValues(0, 6, 6, 6));
+	}
+
+	[Fact]
 	public void Damage_WeaponPhysical_UsesTheWeaponEquation()
 	{
 		// (100 × (500/500 + 1)) + 500 × 0.04 = 220.
@@ -143,10 +153,6 @@ public class CharacterOffenseCalculatorTests
 
 		CharacterOffenseCalculator.Damage(Input([weapon])).AverageDamage.Should().Be(120);
 	}
-
-	[Fact]
-	public void Damage_BareHands_UseTheHandHitsAndTheNonWeaponEquation()
-		=> CharacterOffenseCalculator.Damage(Input([], strength: 650)).AverageDamage.Should().Be(6, "(2 + 4) / 2 × (650/650 + 1)");
 
 	[Fact]
 	public void Damage_Elemental_AddsItsTheElementalAndTheTotalModifiers_ThenTheIntelligenceEquation()

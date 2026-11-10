@@ -72,7 +72,7 @@ public static class CharacterOffenseCalculator
 	/// <list type="bullet">
 	/// <item>per hand: the weapon's damage with every item's and skill's flat damage and % modifiers, each damage range at
 	/// its middle, through the game's equations; the weapon part (the weapon with its own modifiers) and the added part;</item>
-	/// <item>dual wield: half of both hands; no weapon: the template's hand hits;</item>
+	/// <item>dual wield: half of both hands; no weapon: the template's hand hits, through the weapon equation;</item>
 	/// <item>shown = round(weapon part) + round(added part); DPS = trunc(shown × attack speed / 100).</item>
 	/// </list>
 	/// </summary>
@@ -140,8 +140,10 @@ public static class CharacterOffenseCalculator
 		}
 		else
 		{
+			// The hands hit as a weapon: a character (strength 71.5, +5% total damage, no weapon) shows 6 in the game, the
+			// weapon equation's 3.15 × (1 + 71.5 / 500) + 71.5 × 0.04 = 6.46, where the non-weapon one gives 3.5.
 			double hands = (balance.HandHitDamageMin + Math.Max(balance.HandHitDamageMin, balance.HandHitDamageMax)) / 2;
-			damage += Equation("physicalNonWeaponDamageEquation", Scale(hands, modifiers["offensivePhysicalModifier"] + total), "physicalDamageDV");
+			damage += Equation("physicalDamageEquation", Scale(hands, modifiers["offensivePhysicalModifier"] + total), "physicalDamageDV");
 		}
 
 		// Flat damage of the other items and the skills (and the weapon's other damage).

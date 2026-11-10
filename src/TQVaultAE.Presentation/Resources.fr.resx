@@ -1022,9 +1022,6 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
 	<data name="CEMasteryPoints" xml:space="preserve">
     <value>{0} points</value>
   </data>
-	<data name="CEComputedInGame" xml:space="preserve">
-    <value>Le jeu calcule ces valeurs en cours de partie : elles ne sont pas dans la sauvegarde.</value>
-  </data>
 	<data name="CEStatistics" xml:space="preserve">
     <value>Statistiques</value>
   </data>

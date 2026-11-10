@@ -6,6 +6,7 @@ namespace TQVaultAE.Data;
 public partial class ItemProvider
 {
 	private const string RacialBonusRace = "racialBonusRace";
+	private const string PetBonusName = "petBonusName";
 
 	/// <summary>The suffix of the middle of a Min/Max range: <c>offensiveFireMin/Max</c> give <c>offensiveFireAverage</c>.</summary>
 	public const string AverageSuffix = "Average";
@@ -30,7 +31,7 @@ public partial class ItemProvider
 		foreach (var (id, level) in sources)
 		{
 			if (!RecordId.IsNullOrEmpty(id))
-				AddAttributesFromRecord(sum, Database.GetRecordFromFile(id), level);
+				AddAttributesFromRecord(sum, Database.GetRecordFromFile(id), level, this.PetBonusRecord);
 		}
 
 		return sum;
@@ -52,7 +53,7 @@ public partial class ItemProvider
 		foreach (var set in pieces)
 		{
 			int worn = set.Select(p => p.Item).Distinct().Count();
-			AddAttributesFromRecord(sum, Database.GetRecordFromFile(set.Key.ToRecordId()), worn);
+			AddAttributesFromRecord(sum, Database.GetRecordFromFile(set.Key.ToRecordId()), worn, this.PetBonusRecord);
 		}
 
 		return sum;
@@ -63,7 +64,7 @@ public partial class ItemProvider
 	{
 		var sum = new AttributeSum();
 		if (!RecordId.IsNullOrEmpty(recordId))
-			AddAttributesFromRecord(sum, Database.GetRecordFromFile(recordId), level);
+			AddAttributesFromRecord(sum, Database.GetRecordFromFile(recordId), level, this.PetBonusRecord);
 
 		return sum;
 	}
@@ -74,7 +75,12 @@ public partial class ItemProvider
 	/// at level 12 with a single value keeps that value, a relic with 3 pieces reads the third one.
 	/// </summary>
 	/// <param name="level">The skill level, the number of relic pieces, the number of set pieces; 1 for an item.</param>
-	internal static void AddAttributesFromRecord(AttributeSum sum, DBRecordCollection? record, int level)
+	/// <param name="petBonus">
+	/// Reads the pet bonus record a record names (<c>petBonusName</c>): its variables are added at the same level, under
+	/// <see cref="AttributeSum.PetBonusPrefix"/>, as the game's Pet Bonuses rollover sums them (TQ.exe, items, relics at
+	/// their completion, active skills at their level). Null to leave pet bonuses out.
+	/// </param>
+	internal static void AddAttributesFromRecord(AttributeSum sum, DBRecordCollection? record, int level, Func<string, DBRecordCollection?>? petBonus = null)
 	{
 		if (record is null)
 			return;
@@ -107,7 +113,17 @@ public partial class ItemProvider
 			foreach (var race in races.Where(r => !string.IsNullOrWhiteSpace(r)).Distinct(StringComparer.OrdinalIgnoreCase))
 				sum.AddRace(race, bonus);
 		}
+
+		if (petBonus is not null && record.GetString(PetBonusName, 0) is { Length: > 0 } petBonusId)
+		{
+			var pets = new AttributeSum();
+			AddAttributesFromRecord(pets, petBonus(petBonusId), level);
+			foreach (var (name, value) in pets.Values)
+				sum.Add(AttributeSum.PetBonusPrefix + name, value);
+		}
 	}
+
+	private DBRecordCollection? PetBonusRecord(string id) => Database.GetRecordFromFile(id.ToRecordId());
 
 	/// <summary>
 	/// What a chance-based bonus counts in the character window: the game's display accumulator always lets the chance

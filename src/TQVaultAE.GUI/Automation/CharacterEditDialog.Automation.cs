@@ -5,7 +5,8 @@ internal sealed partial class CharacterEditDialog
 {
 	/// <summary>
 	/// The sums behind the computed statistics: the equipped items and sets, the skills that count (with the buffs
-	/// option as set), their non-zero variables whose name contains <paramref name="filter"/>, and the racial bonuses.
+	/// option as set), their non-zero variables whose name contains <paramref name="filter"/>, and the racial bonuses;
+	/// tab I's offense with its inputs (stance, each weapon in hand, the other items, the hand damage).
 	/// </summary>
 	internal object AutomationStatSources(string filter)
 	{
@@ -25,6 +26,15 @@ internal sealed partial class CharacterEditDialog
 			includeBuffs = this._includeBuffs.Checked,
 			gear = Values(this._gearSum),
 			skills = Values(this._skillSum?.Sum),
+			offense = this.ComputeOffense() is var (speed, values) ? new
+			{
+				attackSpeed = speed,
+				values,
+				stance = this._stance?.ToString(),
+				weapons = this._offenseGear?.Weapons.Select(w => Values(w)).ToArray(),
+				other = Values(this._offenseGear?.Other),
+				hands = new { this.Services.CharacterStatsService.GetGameBalance().HandHitDamageMin, this.Services.CharacterStatsService.GetGameBalance().HandHitDamageMax },
+			} : null,
 		};
 	}
 }

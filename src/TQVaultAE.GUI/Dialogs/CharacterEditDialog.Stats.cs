@@ -64,6 +64,7 @@ internal sealed partial class CharacterEditDialog
 		[StatDamage.Lightning] = (("elementalDamageEquation", "elementalDamageDV"), ("elementalDurationDamageEquation", "elementalDamageDV")),
 		[StatDamage.Vitality] = (("elementalDamageEquation", "elementalDamageDV"), ("elementalDurationDamageEquation", "elementalDamageDV")),
 		[StatDamage.LifeLeech] = (null, ("lifeLeachDurationDamageEquation", "lifeLeachDamageDV")),
+		[StatDamage.ManaLeech] = (null, ("manaLeachDurationDamageEquation", "manaLeachDamageDV")),
 	};
 
 	/// <summary>Race icons of tab III and the tags of the race names (plural), in the order of <see cref="StatRace"/>.</summary>
@@ -148,7 +149,65 @@ internal sealed partial class CharacterEditDialog
 		string Signed(string tag, string fallback, int value) => CharacterPanelLayout.FormatGameText(Game(tag, fallback), value);
 		StatRowView Row(string tag, string fallback, string value, string toolTip = "") => new(Game(tag, fallback), value, toolTip);
 
-		var computedInGame = Resources.CEComputedInGame;
+		// A damage's rollover block: its name, its bonus and its Global Multiplier, then the damage over time's name, its
+		// bonus "with +n% Improved Duration" and its multiplier.
+		List<string> DamageLines(StatDamage damage, string? damageTag, string? durationDamageTag, string name)
+		{
+			var lines = new List<string>();
+			var bonus = stats.DamageBonuses.GetValueOrDefault(damage);
+			var equations = DamageEquations.GetValueOrDefault(damage);
+			void Multiplier((string Equation, string Variable)? equation)
+			{
+				if (equation is not { } e
+					|| DamageMultiplier.Of(balance.DamageEquation(e.Equation), e.Variable, stats.Strength, stats.Dexterity, stats.Intelligence, this.Info.CurrentLevel) is not { } multiplier)
+					return;
+
+				var (tag, fallback) = multiplier.Attribute switch
+				{
+					MultiplierAttribute.Dexterity => ("x4tagCAttribBonusDex", "*{%.2f0} Global Multiplier (Dex)"),
+					MultiplierAttribute.Intelligence => ("x4tagCAttribBonusInt", "*{%.2f0} Global Multiplier (Int)"),
+					_ => ("x4tagCAttribBonusLvl", "*{%.2f0} Global Multiplier (Lvl)"),
+				};
+				lines.Add(Game(tag, fallback).Replace("{%.2f0}", multiplier.Value.ToString("0.00", culture), StringComparison.Ordinal));
+			}
+
+			if (damageTag is not null)
+			{
+				lines.AddRange([name, Signed(damageTag, "{%+.0f0}%", bonus.Damage)]);
+				Multiplier(equations.Direct);
+			}
+
+			if (durationDamageTag is not null)
+			{
+				if (lines.Count != 0)
+					lines.Add(string.Empty);
+
+				var over = durationDamageTag.Replace("DamageDurationModifier", "DamageDuration", StringComparison.Ordinal);
+				lines.Add(damageTag is null ? name : Game(over, name));
+				lines.Add(Signed(durationDamageTag, "{%+.0f0}%", bonus.DurationDamage) + "  "
+					+ Signed("ImprovedTimeFormat", "with {%+.0f0}% Improved Duration", bonus.Duration));
+				Multiplier(equations.OverTime);
+			}
+
+			return lines;
+		}
+
+		// The Pet Bonuses rollover: the pets' damage % for physical, elemental and vitality, then their flat damages, with
+		// the same texts without the sign and the % ("0 Physical Damage").
+		IEnumerable<string> PetLines(PetDamageBonus pet)
+		{
+			(string Tag, string Fallback, int Percent, int Flat)[] kinds =
+			[
+				("DamageModifierPhysical", "{%+.0f0}% Physical Damage", pet.PhysicalPercent, pet.Physical),
+				("DamageModifierElemental", "{%+.0f0}% Elemental Damages", pet.ElementalPercent, pet.Elemental),
+				("DamageModifierLife", "{%+.0f0}% Vitality Damage", pet.VitalityPercent, pet.Vitality),
+			];
+			foreach (var kind in kinds)
+				yield return Signed(kind.Tag, kind.Fallback, kind.Percent);
+			foreach (var kind in kinds)
+				yield return CharacterPanelLayout.FormatGameText(Game(kind.Tag, kind.Fallback).Replace("{%+.0f0}%", "{%.0f0}", StringComparison.Ordinal), kind.Flat);
+		}
+
 		return new CharacterStatsView
 		{
 			DefenseTitle = Game("tagCDefense", "Defense"),
@@ -186,43 +245,14 @@ internal sealed partial class CharacterEditDialog
 			Damages = [.. DamageIcons.Select(d =>
 			{
 				var name = Game(d.Tag, d.Damage.ToString());
-				if (!stats.DamageBonuses.TryGetValue(d.Damage, out var bonus))
-					return new StatIconView(d.Icon, string.Empty, string.Join(Environment.NewLine, name, computedInGame));
+				if (d.Damage == StatDamage.Pet)
+					return new StatIconView(d.Icon, string.Empty, string.Join(Environment.NewLine, [name, .. PetLines(stats.PetBonuses)]));
 
-				var lines = new List<string>();
-				var equations = DamageEquations.GetValueOrDefault(d.Damage);
-				void Multiplier((string Equation, string Variable)? equation)
-				{
-					if (equation is not { } e
-						|| DamageMultiplier.Of(balance.DamageEquation(e.Equation), e.Variable, stats.Strength, stats.Dexterity, stats.Intelligence, this.Info.CurrentLevel) is not { } multiplier)
-						return;
+				var lines = DamageLines(d.Damage, d.DamageTag, d.DurationDamageTag, name);
 
-					var (tag, fallback) = multiplier.Attribute switch
-					{
-						MultiplierAttribute.Dexterity => ("x4tagCAttribBonusDex", "*{%.2f0} Global Multiplier (Dex)"),
-						MultiplierAttribute.Intelligence => ("x4tagCAttribBonusInt", "*{%.2f0} Global Multiplier (Int)"),
-						_ => ("x4tagCAttribBonusLvl", "*{%.2f0} Global Multiplier (Lvl)"),
-					};
-					lines.Add(Game(tag, fallback).Replace("{%.2f0}", multiplier.Value.ToString("0.00", culture), StringComparison.Ordinal));
-				}
-
-				if (d.DamageTag is not null)
-				{
-					lines.AddRange([name, Signed(d.DamageTag, "{%+.0f0}%", bonus.Damage)]);
-					Multiplier(equations.Direct);
-				}
-
-				if (d.DurationDamageTag is not null)
-				{
-					if (lines.Count != 0)
-						lines.Add(string.Empty);
-
-					var over = d.DurationDamageTag.Replace("DamageDurationModifier", "DamageDuration", StringComparison.Ordinal);
-					lines.Add(d.DamageTag is null ? name : Game(over, name));
-					lines.Add(Signed(d.DurationDamageTag, "{%+.0f0}%", bonus.DurationDamage) + "  "
-						+ Signed("ImprovedTimeFormat", "with {%+.0f0}% Improved Duration", bonus.Duration));
-					Multiplier(equations.OverTime);
-				}
+				// The game shows energy leech under life leech, as a second block.
+				if (d.Damage == StatDamage.LifeLeech)
+					lines.AddRange([string.Empty, .. DamageLines(StatDamage.ManaLeech, null, "DamageDurationModifierManaLeach", Game("DamageDurationManaLeach", "Energy Leech"))]);
 
 				return new StatIconView(d.Icon, string.Empty, string.Join(Environment.NewLine, lines.Count == 0 ? [name] : lines));
 			})],
