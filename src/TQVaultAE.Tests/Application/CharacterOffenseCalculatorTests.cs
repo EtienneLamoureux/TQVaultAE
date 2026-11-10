@@ -89,20 +89,31 @@ public class CharacterOffenseCalculatorTests
 			.Should().Be(expected);
 
 	[Fact]
-	public void AttackSpeed_Modifiers_ScaleTheCharacterPartOnly()
+	public void AttackSpeed_Modifiers_ScaleTheTemplateAndWeaponSpeeds()
 	{
-		// 0.74 × 1.3 + 0.4, same animation.
+		// (0.74 + 0.4) × 1.3, same animation.
 		var speed = CharacterOffenseCalculator.AttackSpeed(
 			Sum(("characterBaseAttackSpeed", 0.4), ("characterAttackSpeedModifier", 20), ("characterTotalSpeedModifier", 10)),
 			WeaponStance.OneHanded, Balance, 0, 1);
 
-		speed.Should().BeApproximately((0.74 * 1.3 + 0.4) / 0.74 * 100, 1e-6);
+		speed.Should().BeApproximately((0.74 + 0.4) * 1.3 / 0.74 * 100, 1e-6);
 	}
 
+	// In the game, a male character: Copper Shamshir (0.45) with +17 % (its own) and +16 % (Weapon Training) 135 %, the
+	// Alexandrian Broadsword (0.5) with +16 % 123 %, both dual wielded with +33 % 124 %.
+	[Theory]
+	[InlineData(WeaponStance.OneHanded, 0.45, 33, 135)]
+	[InlineData(WeaponStance.OneHanded, 0.5, 16, 123)]
+	[InlineData(WeaponStance.DualWield, 0.95, 33, 124)]
+	public void AttackSpeed_WithAttackSpeedBonus_MatchesTheGame(WeaponStance stance, double weapons, double modifier, int expected)
+		=> CharacterStatsCalculator.Round(CharacterOffenseCalculator.AttackSpeed(
+				Sum(("characterBaseAttackSpeed", weapons), ("characterAttackSpeedModifier", modifier)), stance, Balance, 0, Unarmed))
+			.Should().Be(expected);
+
 	[Fact]
-	public void AttackSpeed_DualWield_HalvesTheWeaponsBaseSpeed()
+	public void AttackSpeed_DualWield_HalvesTheWeaponsBaseSpeed_AndTakesNineTenthsOfTheFactor()
 		=> CharacterOffenseCalculator.AttackSpeed(Sum(("characterBaseAttackSpeed", 0.8)), WeaponStance.DualWield, Balance, 0, 1)
-			.Should().BeApproximately((0.74 + 0.4) / 0.74 * 100, 1e-6);
+			.Should().BeApproximately((0.74 + 0.4) / 0.74 * 0.9 * 100, 1e-6);
 
 	[Fact]
 	public void AttackSpeed_IsCappedInAttacksPerSecond_BeforeTheAnimationRatio()
