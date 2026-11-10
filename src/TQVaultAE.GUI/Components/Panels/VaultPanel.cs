@@ -141,6 +141,7 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		this.BagPanelOffset = 0; // bag panel starts with bag #0
 		this.BagSackPanel = new SackPanel(panelSize.Width, panelSize.Height, this.DragInfo, autoMoveLocation, this.Services);
 		this.BagSackPanel.ContainerMod = () => this.Vault?.Mod;
+		this.BagSackPanel.HoldsVault = () => this.Vault is not null;
 		this.BagSackPanel.SetLocation(new Point(autosortOffset + BorderPad, this.Size.Height - (this.BagSackPanel.Size.Height + BorderPad)));
 		this.BagSackPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 		this.BagSackPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);

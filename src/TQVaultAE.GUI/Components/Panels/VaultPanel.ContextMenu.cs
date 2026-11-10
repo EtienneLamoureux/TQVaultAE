@@ -240,21 +240,21 @@ public partial class VaultPanel
 	}
 
 	/// <summary>
-	/// Items put in the vault without a drop (Move To, import, paste) follow its link like dropped ones: those without a
-	/// link of their own are read again with the vault's mod, and get it as their own link when it resolves them. An
-	/// item that no longer fits where it lies once resolved (it takes its real size) moves to a free spot of the bag;
-	/// without one, it is left as it was.
+	/// Items put in the panel without a drop (Move To, import, paste) take the data of their new place like dropped
+	/// ones. In a vault, those without a link of their own are read again with the vault's mod, and get it as their
+	/// own link when it resolves them, or with the base game when the vault has no link; on a character, with the
+	/// active map. An item that no longer fits where it lies once read again (it takes its real size) moves to a free
+	/// spot of the bag; without one, it is left as it was.
 	/// </summary>
-	/// <param name="sack">The vault bag holding the items.</param>
+	/// <param name="sack">The bag holding the items.</param>
 	/// <param name="items">The items just put there.</param>
-	internal void AdoptVaultMod(SackCollection sack, IEnumerable<Item> items)
+	/// <param name="sackSize">The size of that bag in cells; the bag panel's by default.</param>
+	internal void AdoptVaultMod(SackCollection sack, IEnumerable<Item> items, Size? sackSize = null)
 	{
-		if (this.Vault?.Mod is not { } mod)
-			return;
-
-		var changed = items.Where(item => this.Services.ItemEditService.AdoptContainerMod(
-			item, mod, i => SackPanel.Fits(sack, this.BagSackPanel.SackSize, i)
-				|| SackPanel.MoveToFreeSpot(sack, this.BagSackPanel.SackSize, i))).ToArray();
+		var size = sackSize ?? this.BagSackPanel.SackSize;
+		var changed = items.Where(item => this.Services.ItemEditService.SettleIn(
+			item, this.Vault is not null, this.Vault?.Mod, i => SackPanel.Fits(sack, size, i)
+				|| SackPanel.MoveToFreeSpot(sack, size, i))).ToArray();
 		if (changed.Length == 0)
 			return;
 

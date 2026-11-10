@@ -156,6 +156,10 @@ public partial class EquipmentPanel
 
 				// Register new items in the database (existing items are already tracked)
 				this.ItemDatabaseService.TryAddItemToDatabase(dragItem);
+
+				// Out of a vault, an item without a link follows the character's map.
+				if (this.Services.ItemEditService.SettleIn(dragItem, false, null, _ => true))
+					this.InvalidateItemCacheAll(dragItem);
 			}
 
 			// clear the "last drag" variables

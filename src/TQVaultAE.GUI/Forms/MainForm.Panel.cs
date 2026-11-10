@@ -308,6 +308,9 @@ public partial class MainForm
 			return;
 		}
 
+		// Out of a vault, an item without a link follows the character's map.
+		this.stashPanel.AdoptVaultMod(stashSack, [dragItem], stashSackPanel.SackSize);
+
 		this.lastSackPanelHighlighted?.Invalidate();
 		this.stashPanel.Refresh();
 		BagButtonTooltip.InvalidateCache(stashSack);
@@ -341,8 +344,8 @@ public partial class MainForm
 			return;
 		}
 
-		// Moved to a vault linked to a mod: the item follows its link like a dropped one.
-		destinationPanel.AdoptVaultMod(destinationSack, [dragItem]);
+		// Like a dropped item, it takes the data of its new place (the vault's mod or the base game, or the character's map).
+		destinationPanel.AdoptVaultMod(destinationSack, [dragItem], destinationSackPanel.SackSize);
 
 		sourcePanel.Invalidate();
 		destinationPanel.Refresh();

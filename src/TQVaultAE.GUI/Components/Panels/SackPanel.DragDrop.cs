@@ -143,9 +143,13 @@ public partial class SackPanel
 			dragItem = drop.DroppedItem;
 			itemUnderUs = drop.ItemUnderUs;
 
-			// In a vault linked to a mod, an item without a link of its own follows the vault's.
-			if (!drop.Stacked && this.ContainerMod?.Invoke() is { } containerMod)
-				this.Services.ItemEditService.AdoptContainerMod(dragItem, containerMod, this.FitsWhereItLies);
+			// The item takes the data of its new place: in a vault, the vault's mod or else the base game; on a
+			// character, the active map when it has no link of its own.
+			if (!drop.Stacked && this.Services.ItemEditService.SettleIn(
+				dragItem, this.HoldsVault?.Invoke() ?? false, this.ContainerMod?.Invoke(), this.FitsWhereItLies))
+			{
+				this.InvalidateItemCacheAll(dragItem);
+			}
 
 			// clear the "last drag" variables
 			this.LastDragLocation = InvalidDragLocation;

@@ -254,6 +254,13 @@ public class Item
 	public bool ModFromVault { get; set; }
 
 	/// <summary>
+	/// True while a vault holds the item. Without a mod link (or with the link of a mod that is not installed), a vault
+	/// item is read with the base game data, whatever the active map is; an item a character carries follows the
+	/// active map. Kept by copies; set when the item is put in a vault or taken to a character.
+	/// </summary>
+	public bool InVault { get; set; }
+
+	/// <summary>
 	/// The records the item names that the loaded game data does not have (once read with <c>GetDBData</c>): typically
 	/// those of a mod whose data is not loaded. The item is then shown incomplete.
 	/// </summary>

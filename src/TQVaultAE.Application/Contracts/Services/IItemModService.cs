@@ -22,7 +22,8 @@ public interface IItemModService
 
 	/// <summary>
 	/// Makes the database of an item's mod answer for the current thread until disposed, so that reading, drawing and
-	/// describing the item use its mod's data. Does nothing for an item without a mod or whose mod is not installed.
+	/// describing the item use its mod's data. An item without a mod, or whose mod is not installed, gets the base game's
+	/// database when a vault holds it (<see cref="Item.InVault"/>); else nothing is done: it follows the active map.
 	/// </summary>
 	IDisposable Scope(Item? item);
 

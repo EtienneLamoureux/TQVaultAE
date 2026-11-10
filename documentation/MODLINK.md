@@ -106,8 +106,16 @@ own:
 Exports keep the links: an item or tab export writes each item's mod; a vault export writes the vault's mod and each
 item's own link, and importing it (as a new vault, or replacing the vault shown) brings both back.
 
-An item linked to a mod that is not installed resolves with the active map's data, and shows incomplete when that data
-lacks its records.
+An item without any link (its own or its vault's), or linked to a mod that is not installed, resolves by where it is:
+
+| Where | Data used |
+|---|---|
+| In a vault | the base game, whatever character is selected |
+| On a character (equipment, bags, stashes) | the active map: the selected character's |
+
+It shows incomplete when that data lacks its records. So *Modded > None (base game)* on a vault item of a mod gives the
+incomplete item back, even while a character of that mod is selected. Moving an item between a vault and a character
+reads it again with the data of its new place.
 
 ## Incomplete items
 

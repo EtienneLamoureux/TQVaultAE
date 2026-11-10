@@ -324,6 +324,12 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	public Func<string?>? ContainerMod { get; set; }
 
 	/// <summary>
+	/// Whether the panel shows a vault's bag: an item put here without any link is read with the base game data.
+	/// Null (not a vault) for the panels of a character.
+	/// </summary>
+	public Func<bool>? HoldsVault { get; set; }
+
+	/// <summary>
 	/// True when an item lies inside the grid without overlapping another item.
 	/// </summary>
 	private bool FitsWhereItLies(Item item) => Fits(this.ShownSack, this.SackSize, item);
@@ -637,7 +643,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 
 	#endregion SackPanel Protected Methods
 
-	private void InvalidateItemCacheAll(params Item?[] items)
+	protected void InvalidateItemCacheAll(params Item?[] items)
 	{
 		ItemTooltip.InvalidateCache(items);
 		BagButtonTooltip.InvalidateCache(items);

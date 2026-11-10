@@ -525,6 +525,69 @@ public class ItemEditServiceTests
 	}
 
 	[Fact]
+	public void SettleIn_ItemPutInAVaultWithoutLink_IsReadAgainAsAVaultItem()
+	{
+		var item = new Item { BaseItemId = RecordId.Create("records/customitems/lance.dbr") };
+		var readInVault = new List<bool>();
+		this._itemProvider.Setup(p => p.GetDBData(item)).Callback<Item>(i => readInVault.Add(i.InVault));
+
+		this._service.SettleIn(item, inVault: true, vaultMod: null, _ => true).Should().BeTrue();
+
+		item.InVault.Should().BeTrue();
+		item.Mod.Should().BeNull();
+		item.IsModified.Should().BeFalse();
+		readInVault.Should().Equal(true);
+	}
+
+	[Fact]
+	public void SettleIn_ItemAlreadyThere_IsNotReadAgain()
+	{
+		var item = new Item { BaseItemId = RecordId.Create("records/ring.dbr"), InVault = true };
+
+		this._service.SettleIn(item, inVault: true, vaultMod: null, _ => true).Should().BeFalse();
+
+		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
+	}
+
+	[Fact]
+	public void SettleIn_ItemPutInAVaultLinkedToAMod_FollowsTheVault()
+	{
+		var lance = RecordId.Create("records/customitems/lance.dbr");
+		this.ModHasTheLance(lance);
+		var item = new Item { BaseItemId = lance };
+
+		this._service.SettleIn(item, inVault: true, vaultMod: "shadowchampions", _ => true).Should().BeTrue();
+
+		(item.InVault, item.Mod, item.ModFromVault).Should().Be((true, "shadowchampions", false));
+	}
+
+	[Fact]
+	public void SettleIn_ItemTakenToACharacter_IsReadAgainOutOfTheVault()
+	{
+		var item = new Item { BaseItemId = RecordId.Create("records/customitems/lance.dbr"), InVault = true };
+		var readInVault = new List<bool>();
+		this._itemProvider.Setup(p => p.GetDBData(item)).Callback<Item>(i => readInVault.Add(i.InVault));
+
+		this._service.SettleIn(item, inVault: false, vaultMod: null, _ => true).Should().BeTrue();
+
+		item.InVault.Should().BeFalse();
+		readInVault.Should().Equal(false);
+	}
+
+	[Fact]
+	public void SettleIn_ItemTakenToACharacterNoLongerFits_IsLeftAsItWas()
+	{
+		var item = new Item { BaseItemId = RecordId.Create("records/customitems/lance.dbr"), InVault = true };
+		var readInVault = new List<bool>();
+		this._itemProvider.Setup(p => p.GetDBData(item)).Callback<Item>(i => readInVault.Add(i.InVault));
+
+		this._service.SettleIn(item, inVault: false, vaultMod: null, _ => false).Should().BeFalse();
+
+		item.InVault.Should().BeTrue();
+		readInVault.Should().Equal(false, true);
+	}
+
+	[Fact]
 	public void ChangeMod_ItemFollowingTheVault_GetsItsOwnLink()
 	{
 		var item = MakeItem("records/ring.dbr", "ArmorJewelry_Ring");

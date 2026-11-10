@@ -344,6 +344,8 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					// Its own mod, else the vault's: resolved with that mod's data first, then the base game's.
 					Mod = string.IsNullOrWhiteSpace(s.mod) ? pc.Mod : s.mod,
 					ModFromVault = string.IsNullOrWhiteSpace(s.mod) && pc.Mod is not null,
+					// Without any link, a vault item is read with the base game data.
+					InVault = true,
 					// Atlantis
 					relic2ID = RecordId.Empty,
 					RelicBonus2Id = RecordId.Empty,

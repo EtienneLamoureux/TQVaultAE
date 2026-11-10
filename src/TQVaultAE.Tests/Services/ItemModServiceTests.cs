@@ -51,6 +51,39 @@ public class ItemModServiceTests
 	}
 
 	[Fact]
+	public void Scope_VaultItemWithoutMod_UsesTheBaseGameWhateverTheActiveMap()
+	{
+		var item = ItemOf(ModRecord);
+		item.InVault = true;
+
+		using var scope = this._service.Scope(item);
+
+		this._scopes.Should().Equal(string.Empty);
+	}
+
+	[Fact]
+	public void Scope_VaultItemOfAModNotInstalled_UsesTheBaseGame()
+	{
+		var item = ItemOf(ModRecord, "Lilith");
+		item.InVault = true;
+
+		using var scope = this._service.Scope(item);
+
+		this._scopes.Should().Equal(string.Empty);
+	}
+
+	[Fact]
+	public void Scope_VaultItemOfAnInstalledMod_UsesThatModsDatabase()
+	{
+		var item = ItemOf(ModRecord, "shadowchampions");
+		item.InVault = true;
+
+		using var scope = this._service.Scope(item);
+
+		this._scopes.Should().Equal(Shadow.Folder);
+	}
+
+	[Fact]
 	public void Scope_ItemOfAnInstalledMod_UsesThatModsDatabase()
 	{
 		using var scope = this._service.Scope(ItemOf(ModRecord, "SHADOWCHAMPIONS"));

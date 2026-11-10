@@ -265,6 +265,30 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 		return true;
 	}
 
+	/// <inheritdoc/>
+	public bool SettleIn(Item item, bool inVault, string? vaultMod, Func<Item, bool> fits)
+	{
+		bool moved = item.InVault != inVault;
+		if (moved)
+		{
+			// Between a vault and a character, an item without a link changes data: base game in a vault, the active
+			// map on a character.
+			item.InVault = inVault;
+			this._itemProvider.GetDBData(item);
+
+			// Read with a character's map, the item may get its real size: it must still fit where it was put.
+			if (!inVault && !fits(item))
+			{
+				item.InVault = true;
+				this._itemProvider.GetDBData(item);
+				moved = false;
+			}
+		}
+
+		bool adopted = inVault && this.AdoptContainerMod(item, vaultMod, fits);
+		return moved || adopted;
+	}
+
 	/// <summary>Rolls a completion bonus from the bonus table of a relic, charm or artifact.</summary>
 	private RecordId? RollBonus(Item item)
 	{

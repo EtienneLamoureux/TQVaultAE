@@ -27,7 +27,10 @@ public class ItemModService(IDatabaseMaps maps, IDatabase database, IModLinkServ
 	public IDisposable Scope(Item? item)
 		=> item?.Mod is { } name && this.Find(name) is { } mod
 			? this.Maps.Use(mod.Folder)
-			: NoScope.Instance;
+			// In a vault, no link means the base game, not the selected character's map.
+			: item is { InVault: true }
+				? this.Maps.Use(string.Empty)
+				: NoScope.Instance;
 
 	/// <inheritdoc/>
 	public bool IsModOnly(Item item)

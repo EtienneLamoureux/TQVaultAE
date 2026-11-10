@@ -33,6 +33,7 @@ An item whose records the loaded data lacks says so in its tooltip. Without its 
 
 ### <a id="ItemLink"></a>Link an item
 A linked item is read with its mod's data (then the base game's), whatever character is shown. Its tooltip names the mod.
+In a vault, an item without a link is read with the base game's data, whatever character is shown.
 
 ![Tooltip of an item linked to a mod](mods/item-tooltip-mod.png)
 

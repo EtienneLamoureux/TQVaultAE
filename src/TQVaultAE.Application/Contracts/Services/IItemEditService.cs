@@ -122,4 +122,15 @@ public interface IItemEditService
 	/// left as it was.</param>
 	/// <returns><see langword="true"/> when the item now follows or has the vault's mod.</returns>
 	bool AdoptContainerMod(Item item, string? containerMod, Func<Item, bool> fits);
+
+	/// <summary>An item just put in a vault or on a character (sacks, equipment, stashes) is read with the data of
+	/// its new place: in a vault, the vault's mod (<see cref="AdoptContainerMod"/>) or, without any link, the base
+	/// game; on a character, the active map when it has no link.</summary>
+	/// <param name="item">The item just placed.</param>
+	/// <param name="inVault">Whether a vault now holds it.</param>
+	/// <param name="vaultMod">The mod of that vault; null for none or for a character.</param>
+	/// <param name="fits">Whether the item, read again (its size may change), still fits where it lies; when not, it is
+	/// left as it was.</param>
+	/// <returns><see langword="true"/> when the item was read again with other data.</returns>
+	bool SettleIn(Item item, bool inVault, string? vaultMod, Func<Item, bool> fits);
 }
