@@ -488,7 +488,8 @@ internal sealed partial class CharacterStatsPanel : Control
 
 	/// <summary>
 	/// The lines of a rollover: an icon's text is made of blocks split by blank lines, each with its title first (the
-	/// damage bonuses: "Cold Damage", then "Frostburn Damage"); a row's text has no title.
+	/// damage bonuses: "Cold Damage", then "Frostburn Damage"), never cut; a row's text has no title and wraps (the
+	/// editor's own sentences).
 	/// </summary>
 	internal static List<GameTooltipLine> ToolTipLines(string text, bool titled)
 	{
@@ -503,7 +504,7 @@ internal sealed partial class CharacterStatsPanel : Control
 				continue;
 			}
 
-			lines.Add(new GameTooltipLine(line, blockStart ? Color.White : ToolTipText, Title: blockStart));
+			lines.Add(new GameTooltipLine(line, blockStart ? Color.White : ToolTipText, Title: blockStart, Wrap: !titled));
 			blockStart = false;
 		}
 

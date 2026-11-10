@@ -2,6 +2,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using TQVaultAE.Application;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components.Character;
 using TQVaultAE.Presentation;
 
@@ -163,7 +164,8 @@ internal sealed partial class CharacterEditDialog
 			this._skillTooltip = new GameTooltip(
 				this.FontService.GetFontLight(17F * scale, FontStyle.Bold, GraphicsUnit.Pixel),
 				this.FontService.GetFontLight(15F * scale, FontStyle.Regular, GraphicsUnit.Pixel),
-				scale);
+				scale,
+				GameTooltipFrame.Load(id => this.UIService.LoadBitmap(id.ToRecordId()) is var piece && ReferenceEquals(piece, this.UIService.DefaultBitmap) ? null : piece));
 			var tooltip = this._skillTooltip;
 			this.FormClosed += (_, _) => tooltip.Dispose();
 		}
@@ -238,14 +240,14 @@ internal sealed partial class CharacterEditDialog
 		if (skill is null)
 		{
 			lines.Add(new GameTooltipLine(this.TranslateTag(tree.NameTag, tree.Mastery.ToString()), Color.White, Title: true));
-			lines.Add(new GameTooltipLine(this.GameDescription(tree.DescriptionTag), TipText));
+			lines.Add(new GameTooltipLine(this.GameDescription(tree.DescriptionTag), TipText, Wrap: true));
 			if (masteryLevel > 0)
 				Level("tagCurrentLevel", "Current Level : {%d0}", tree.Id, masteryLevel);
 			if (masteryLevel < tree.MaxLevel)
 				NextLevel("tagNextLevel", "Next Level : {%d0}", tree.Id, masteryLevel + 1);
 			this.Requirements(lines, masteryLevel < tree.MaxLevel, []);
 			lines.Add(GameTooltipLine.Blank);
-			lines.Add(new GameTooltipLine(Resources.CESkillPaneHint, TipHint));
+			lines.Add(new GameTooltipLine(Resources.CESkillPaneHint, TipHint, Wrap: true));
 			return lines;
 		}
 
@@ -262,7 +264,7 @@ internal sealed partial class CharacterEditDialog
 		// them even beyond the ultimate level (Call of the Wild 15 + 6: the wolves dodge as at +6).
 		context = this.SkillContext(tree, skill, points > 0 ? bonus.Total : 0);
 		lines.Add(new GameTooltipLine(this.TranslateTag(skill.NameTag, skill.Id.PrettyFileName), Color.White, Title: true));
-		lines.Add(new GameTooltipLine(this.GameDescription(skill.DescriptionTag), TipText));
+		lines.Add(new GameTooltipLine(this.GameDescription(skill.DescriptionTag), TipText, Wrap: true));
 		if (current > 0)
 			Level("tagCurrentLevel", "Current Level : {%d0}", skill.Id, current);
 		if (belowMax)
@@ -292,7 +294,7 @@ internal sealed partial class CharacterEditDialog
 		}
 
 		lines.Add(GameTooltipLine.Blank);
-		lines.Add(new GameTooltipLine(Resources.CESkillPaneHint, TipHint));
+		lines.Add(new GameTooltipLine(Resources.CESkillPaneHint, TipHint, Wrap: true));
 		return lines;
 	}
 
