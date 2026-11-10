@@ -70,6 +70,48 @@ public class ItemProviderAttributeSumsTests
 	}
 
 	[Fact]
+	public void AddAttributesFromRecord_ChanceBonuses_CountValueTimesChance()
+	{
+		// The window counts a chance-based bonus at its expected value; durations are not scaled.
+		var record = Record(
+			("defensiveFire", [40]), ("defensiveFireChance", [25F]),
+			("defensiveColdModifier", [20]), ("defensiveColdModifierChance", [50F]),
+			("offensiveBonusPhysicalMin", [100]), ("offensiveBonusPhysicalMax", [300]), ("offensiveBonusPhysicalChance", [23F]),
+			("offensiveSlowFireMin", [10]), ("offensiveSlowFireDurationMin", [3]), ("offensiveSlowFireChance", [50F]));
+
+		var sum = Sum(record);
+
+		sum["defensiveFire"].Should().Be(10);
+		sum["defensiveColdModifier"].Should().Be(10);
+		sum["offensiveBonusPhysicalMin"].Should().BeApproximately(23, 1e-9);
+		sum["offensiveBonusPhysicalMax"].Should().BeApproximately(69, 1e-9);
+		sum["offensiveSlowFireMin"].Should().Be(5);
+		sum["offensiveSlowFireDurationMin"].Should().Be(3);
+	}
+
+	[Fact]
+	public void AddAttributesFromRecord_Ranges_AddTheirMiddlePerRecord()
+	{
+		// A missing or lower max is the min; the chance scales the middle too.
+		var sum = Sum(Record(("offensiveFireMin", [10F]), ("offensiveFireMax", [20F])));
+		ItemProvider.AddAttributesFromRecord(sum, Record(("offensiveFireMin", [5F])), 1);
+		ItemProvider.AddAttributesFromRecord(sum, Record(("offensiveFireMin", [8F]), ("offensiveFireMax", [2F]), ("offensiveFireChance", [50F])), 1);
+
+		sum["offensiveFireAverage"].Should().Be(15 + 5 + 4);
+	}
+
+	[Theory]
+	[InlineData(0F, 30)]
+	[InlineData(100F, 30)]
+	[InlineData(150F, 30)]
+	public void AddAttributesFromRecord_ChanceZeroOrFull_CountsTheWholeValue(float chance, double expected)
+		=> Sum(Record(("defensivePoison", [30]), ("defensivePoisonChance", [chance])))["defensivePoison"].Should().Be(expected);
+
+	[Fact]
+	public void AddAttributesFromRecord_ChanceArray_IsReadAtTheLevel()
+		=> Sum(Record(("defensiveStun", [20, 40]), ("defensiveStunChance", [10F, 50F])), 2)["defensiveStun"].Should().Be(20);
+
+	[Fact]
 	public void AddAttributesFromRecord_RacialBonus_GoesToEachRaceOfTheRecord()
 	{
 		var record = Record(

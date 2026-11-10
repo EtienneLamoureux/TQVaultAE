@@ -97,6 +97,12 @@ public class PlayerCollection : IEnumerable<SackCollection>
 	public SackCollection? EquipmentSack { get; set; }
 
 	/// <summary>
+	/// Gets or sets whether the second weapon set (rows 2 and 3 of the weapon slots) is the one in hand: the save's
+	/// <c>useAlternate</c> (<c>EquipmentCtrl</c>). Read only: the save keeps its own value.
+	/// </summary>
+	public bool UseAlternate { get; set; }
+
+	/// <summary>
 	/// Holds playerInfo
 	/// </summary>
 	public PlayerInfo? PlayerInfo { get; set; }

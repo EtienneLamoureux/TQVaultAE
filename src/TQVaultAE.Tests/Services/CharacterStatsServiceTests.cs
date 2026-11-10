@@ -1,5 +1,6 @@
 using AwesomeAssertions;
 using Moq;
+using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
@@ -120,6 +121,77 @@ public class CharacterStatsServiceTests
 	}
 
 	private static Variable Text(string name, string value) => new(name, VariableDataType.StringVar, 1) { [0] = value };
+
+	private static byte[] Animation(int frames, int frameRate = 30)
+	{
+		var data = new byte[32];
+		"ANM\u0002"u8.CopyTo(data);
+		BitConverter.GetBytes(frames).CopyTo(data, 8);
+		BitConverter.GetBytes(frameRate).CopyTo(data, 12);
+		return data;
+	}
+
+	[Fact]
+	public void GetAttackAnimationDurations_ReadsTheTemplateAnimationsAndSpeeds()
+	{
+		var template = Class("""records\xpack\creatures\pc\femalepc01.dbr""".ToRecordId(), "Player");
+		template.Set(Text("unarmedAttackAnim1", """Creatures\PC\Female\ANM\A.anm"""));
+		template.Set(Text("unarmedAttackAnim2", """Creatures\PC\Female\ANM\B.anm"""));
+		template.Set(new Variable("unarmedAttackAnimSpeed1", VariableDataType.Float, 1) { [0] = 0.5F });
+		template.Set(new Variable("unarmedAttackAnimSpeed2", VariableDataType.Float, 1) { [0] = 0.5F });
+		template.Set(Text("sHandedAttackAnim1", """Creatures\PC\Female\ANM\C.anm"""));
+		this._database.Setup(d => d.LoadResource("""Creatures\PC\Female\ANM\A.anm""".ToRecordId())).Returns(Animation(21));
+		this._database.Setup(d => d.LoadResource("""Creatures\PC\Female\ANM\B.anm""".ToRecordId())).Returns(Animation(17));
+		this._database.Setup(d => d.LoadResource("""Creatures\PC\Female\ANM\C.anm""".ToRecordId())).Returns(Animation(25));
+
+		var durations = this._service.GetAttackAnimationDurations(female: true);
+
+		durations[WeaponStance.Unarmed].Should().BeApproximately((1.4 + 17 / 15.0) / 2, 1e-6);
+		durations[WeaponStance.OneHanded].Should().BeApproximately(25 / 30.0, 1e-6, "a missing speed is 1");
+		durations.Should().NotContainKey(WeaponStance.Bow);
+	}
+
+	private static Item Weapon(string itemClass, int row, int x = Item.WeaponSlotIndicator)
+	{
+		var record = new DBRecordCollection($"""records\item\{itemClass}{x}{row}.dbr""".ToRecordId(), itemClass);
+		record.Set(Text("Class", itemClass));
+		return new Item { PositionX = x, PositionY = row, baseItemInfo = new Info(record) };
+	}
+
+	[Fact]
+	public void GetOffenseGear_WeaponsInHandApart_ShieldAndOtherSetLeftOut()
+	{
+		var sword = Weapon("WeaponMelee_Sword", 0);
+		var shield = Weapon("WeaponArmor_Shield", 1);
+		var spare = Weapon("WeaponMelee_Axe", 2);
+		var ring = Weapon("ArmorJewelry_Ring", 0, x: 3);
+		this._items.Setup(p => p.GetAttributeSums(It.IsAny<Item>())).Returns((Item item) =>
+		{
+			var sum = new AttributeSum();
+			sum.Add(item.ItemClass, 1);
+			return sum;
+		});
+		this._items.Setup(p => p.GetSetBonuses(It.IsAny<IEnumerable<Item>>())).Returns(() =>
+		{
+			var sum = new AttributeSum();
+			sum.Add("set", 1);
+			return sum;
+		});
+
+		var gear = this._service.GetOffenseGear([sword, shield, spare, ring], useAlternate: false);
+
+		gear.Weapons.Should().ContainSingle().Which["WeaponMelee_Sword"].Should().Be(1);
+		gear.Other.Values.Keys.Should().BeEquivalentTo(["ArmorJewelry_Ring", "set"]);
+	}
+
+	[Fact]
+	public void GetWeaponStance_OnlyTheSetInHandCounts()
+	{
+		Item[] equipment = [Weapon("WeaponMelee_Sword", 0), Weapon("WeaponArmor_Shield", 1), Weapon("WeaponHunting_Bow", 2)];
+
+		this._service.GetWeaponStance(equipment, useAlternate: false).Should().Be(WeaponStance.OneHanded);
+		this._service.GetWeaponStance(equipment, useAlternate: true).Should().Be(WeaponStance.Bow);
+	}
 
 	[Fact]
 	public void GetSkillAttributes_SkillWithoutPoint_IsSkipped()

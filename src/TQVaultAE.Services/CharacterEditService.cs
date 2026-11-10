@@ -23,7 +23,7 @@ public class CharacterEditService(IPathIO pathIO, IPlayerCollectionProvider play
 		=> player.EquipmentSack is not { } equipment
 			? []
 			: equipment
-				.Where(item => !item.IsInSecondaryWeaponSlot)
+				.Where(item => !item.IsInInactiveWeaponSlot(player.UseAlternate))
 				.SelectMany(this._itemProvider.GetSkillAugments)
 				.ToList();
 

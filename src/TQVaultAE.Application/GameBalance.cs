@@ -31,6 +31,41 @@ public sealed record GameBalance
 	/// <summary>The player template's <c>characterRunSpeed</c>.</summary>
 	public double BaseRunSpeed { get; init; } = 1.33;
 
+	/// <summary>
+	/// The damage equations of <c>combatequations.dbr</c> by field name (<c>physicalDamageEquation</c>...); a missing one
+	/// keeps the original game's (<see cref="DamageEquation"/>).
+	/// </summary>
+	public IReadOnlyDictionary<string, string> CombatEquations { get; init; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+	/// <summary>The original game's damage equations, used when the record lacks one.</summary>
+	private static readonly Dictionary<string, string> DefaultDamageEquations = new(StringComparer.OrdinalIgnoreCase)
+	{
+		["physicalDamageEquation"] = "(physicalDamageDV * ((strengthDV/500)+1)) + (strengthDV*0.04)",
+		["physicalNonWeaponDamageEquation"] = "physicalDamageDV * ((strengthDV/650)+1)",
+		["pierceDamageEquation"] = "(((pierceDamageDV / ((strengthDV/500)+1)) * ((strengthDV/2000)+1)) * ((dexterityDV/400)+1)) + (dexterityDV*0.03)",
+		["pierceNonWeaponDamageEquation"] = "pierceDamageDV * ((dexterityDV/1000) +1)",
+		["elementalDamageEquation"] = "(elementalDamageDV * ((intelligenceDV / 650) + 1)) + (intelligenceDV*0.025)",
+		["poisonDamageEquation"] = "poisonDamageDV * ((dexterityDV / 500) + 1)",
+		["bleedingDurationDamageEquation"] = "bleedingDamageDV * ((dexterityDV / 500) + 1)",
+		["elementalDurationDamageEquation"] = "elementalDamageDV * ((intelligenceDV / 500) + 1)",
+		["physicalDurationDamageEquation"] = "physicalDamageDV * ((intelligenceDV / 500) +1)",
+		["poisonDurationDamageEquation"] = "poisonDamageDV * ((dexterityDV / 500) + 1)",
+		["lifeLeachDurationDamageEquation"] = "lifeLeachDamageDV  * (1 + (characterLevelDV / 40))",
+	};
+
+	/// <summary>A damage equation by its field name.</summary>
+	public string DamageEquation(string name)
+		=> this.CombatEquations.TryGetValue(name, out var equation) && !string.IsNullOrWhiteSpace(equation)
+			? equation
+			: DefaultDamageEquations.GetValueOrDefault(name, "0");
+
+	/// <summary>The player template's <c>handHitDamageMin</c> and <c>handHitDamageMax</c>: the damage without weapon.</summary>
+	public double HandHitDamageMin { get; init; } = 2;
+	public double HandHitDamageMax { get; init; } = 4;
+
+	/// <summary>The player template's <c>characterAttackSpeed</c>: attacks per second without weapon.</summary>
+	public double BaseAttackSpeed { get; init; } = 0.74;
+
 	/// <summary>The player template's <c>characterSpellCastSpeed</c>.</summary>
 	public double BaseCastSpeed { get; init; } = 2.8;
 

@@ -7,6 +7,9 @@ public partial class ItemProvider
 {
 	private const string RacialBonusRace = "racialBonusRace";
 
+	/// <summary>The suffix of the middle of a Min/Max range: <c>offensiveFireMin/Max</c> give <c>offensiveFireAverage</c>.</summary>
+	public const string AverageSuffix = "Average";
+
 	/// <inheritdoc/>
 	public AttributeSum GetAttributeSums(Item item)
 	{
@@ -81,7 +84,18 @@ public partial class ItemProvider
 			if (variable.NumberOfValues == 0 || variable.DataType is not (VariableDataType.Integer or VariableDataType.Float))
 				continue;
 
-			sum.Add(variable.Name, ValueAt(variable, level));
+			double chance = ChanceMultiplier(record, variable.Name, level);
+			sum.Add(variable.Name, ValueAt(variable, level) * chance);
+
+			// A range counts at its middle in the window (the display accumulator's random generator): the max is
+			// min + max(0, max - min), so a missing or lower max is the min. Kept per record as <base>Average.
+			if (variable.Name.EndsWith("Min", StringComparison.OrdinalIgnoreCase))
+			{
+				var baseName = variable.Name[..^3];
+				double min = ValueAt(variable, level);
+				double max = Math.Max(min, ValueAt(record[baseName + "Max"], level));
+				sum.Add(baseName + AverageSuffix, (min + max) / 2 * chance);
+			}
 		}
 
 		if (record.GetAllStrings(RacialBonusRace) is { Length: > 0 } races)
@@ -93,6 +107,28 @@ public partial class ItemProvider
 			foreach (var race in races.Where(r => !string.IsNullOrWhiteSpace(r)).Distinct(StringComparer.OrdinalIgnoreCase))
 				sum.AddRace(race, bonus);
 		}
+	}
+
+	/// <summary>
+	/// What a chance-based bonus counts in the character window: the game's display accumulator always lets the chance
+	/// pass and scales the value by chance / 100 (<c>the game</c>), 1 when the
+	/// chance is 0 or 100 and more. <c>defensiveFire</c> goes with <c>defensiveFireChance</c>,
+	/// <c>defensiveFireModifier</c> with <c>defensiveFireModifierChance</c>, <c>offensiveBonusPhysicalMin/Max</c> with
+	/// <c>offensiveBonusPhysicalChance</c>; durations are not scaled.
+	/// </summary>
+	internal static double ChanceMultiplier(DBRecordCollection record, string name, int level)
+	{
+		if (name.EndsWith("Chance", StringComparison.OrdinalIgnoreCase)
+			|| name.EndsWith("DurationMin", StringComparison.OrdinalIgnoreCase)
+			|| name.EndsWith("DurationMax", StringComparison.OrdinalIgnoreCase))
+			return 1;
+
+		var chance = record[name + "Chance"];
+		if (chance is null && (name.EndsWith("Min", StringComparison.OrdinalIgnoreCase) || name.EndsWith("Max", StringComparison.OrdinalIgnoreCase)))
+			chance = record[string.Concat(name.AsSpan(0, name.Length - 3), "Chance")];
+
+		double percent = ValueAt(chance, level);
+		return percent is > 0 and < 100 ? percent / 100 : 1;
 	}
 
 	private static double ValueAt(Variable? variable, int level)

@@ -9,9 +9,10 @@ namespace TQVaultAE.Application.Contracts.Services;
 public interface ICharacterStatsService
 {
 	/// <summary>
-	/// Sums the equipped items (not the weapons of the other weapon set) and the bonuses of the item sets they make.
+	/// Sums the equipped items (not the weapons of the set not in hand) and the bonuses of the item sets they make.
 	/// </summary>
-	AttributeSum GetGearAttributes(IEnumerable<Item> equipment);
+	/// <param name="useAlternate">True when the second weapon set is in hand (<see cref="PlayerCollection.UseAlternate"/>).</param>
+	AttributeSum GetGearAttributes(IEnumerable<Item> equipment, bool useAlternate);
 
 	/// <summary>
 	/// Sums the skills: the passive ones (and masteries) always, the buffs when <paramref name="includeBuffs"/>, the
@@ -27,4 +28,19 @@ public interface ICharacterStatsService
 	/// record keeps the values of the original game.
 	/// </summary>
 	GameBalance GetGameBalance();
+
+	/// <summary>
+	/// The gear as the attack damage reads it: each weapon in hand (not shields) on its own, and the other items with the
+	/// item sets, whose flat damage adds to every attack.
+	/// </summary>
+	OffenseGear GetOffenseGear(IEnumerable<Item> equipment, bool useAlternate);
+
+	/// <summary>The stance for the weapons in hand (not the set not in hand).</summary>
+	WeaponStance GetWeaponStance(IEnumerable<Item> equipment, bool useAlternate);
+
+	/// <summary>
+	/// The mean attack animation duration of each stance, in seconds, from the male or female player template and the
+	/// <c>.anm</c> files of the game (read once per template); a stance without animation is left out.
+	/// </summary>
+	IReadOnlyDictionary<WeaponStance, double> GetAttackAnimationDurations(bool female);
 }

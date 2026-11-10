@@ -387,8 +387,8 @@ public class PlayerService(
 			if (item == ignored)
 				continue;
 
-			// Skip weapons in the secondary slots.
-			if (item.IsInSecondaryWeaponSlot)
+			// Skip the weapons of the set not in hand.
+			if (item.IsInInactiveWeaponSlot(player.UseAlternate))
 				continue;
 
 			player.UpdatePlayerGearBonuses(this.ItemProvider.GetStatBonuses(item));
