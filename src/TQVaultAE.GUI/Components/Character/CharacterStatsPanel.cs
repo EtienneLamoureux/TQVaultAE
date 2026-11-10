@@ -149,8 +149,12 @@ internal sealed partial class CharacterStatsPanel : Control
 	private static readonly int[] Tab1ResistanceY = [232, 267];
 	private static readonly int[] Tab2ResistanceY = [55, 90];
 
-	/// <summary>The game draws the number in a 40x16 box 9 pixels right and 11 down from the 24x24 icon, right-aligned (<c>resistanceFireNumber</c>).</summary>
-	private static readonly Size ResistanceNumberOffset = new(9, 11);
+	/// <summary>
+	/// Where the game writes the number of a 24x24 resistance icon: left-aligned from 21 pixels right of the icon, 11 down,
+	/// so it only touches the icon's edge ("0%" and "-50%" start at the same place in the game's window, unlike the
+	/// right-aligned 40x16 box of <c>resistanceFireNumber</c> starting 9 pixels in).
+	/// </summary>
+	private static readonly Size ResistanceNumberOffset = new(21, 11);
 
 	/// <summary>Damage icons of tab III: 5 per row every 50 pixels; race icons: 6 per row every 40 pixels.</summary>
 	private static readonly int[] DamageY = [55, 90];
@@ -449,7 +453,7 @@ internal sealed partial class CharacterStatsPanel : Control
 		foreach (var (at, icon) in IconPlaces(rows.Length * ResistanceX.Length, ResistanceX.Length, 60, rows).Zip(icons))
 		{
 			this.Icon(g, icon.Icon, at);
-			this.DrawText(g, icon.Value, this.ResistanceFont ?? this.NumberFont, Green, new Rectangle(at.X + ResistanceNumberOffset.Width, at.Y + ResistanceNumberOffset.Height, 40, 16), StringAlignment.Far);
+			this.DrawText(g, icon.Value, this.ResistanceFont ?? this.NumberFont, Green, new Rectangle(at.X + ResistanceNumberOffset.Width, at.Y + ResistanceNumberOffset.Height, 40, 16), StringAlignment.Near);
 		}
 	}
 
