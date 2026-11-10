@@ -96,7 +96,8 @@ internal sealed partial class CharacterEditDialog
 		{
 			Name = "CharacterSidePanel",
 			PanelScale = panelScale,
-			Location = new Point(this._stats.Right + (int)Math.Round(40 * scale), this._stats.Top),
+			// Its top on the statistics panel's frame, under the tab strip (the frame's gold line is 20 pixels down).
+			Location = new Point(this._stats.Right + (int)Math.Round(40 * scale), this._stats.Top + (int)Math.Round(CharacterPanelLayout.FrameTop * panelScale)),
 			View = this.SideView,
 			TextFont = this._stats.TextFont,
 			TitleFont = this._stats.TitleFont,
@@ -174,7 +175,8 @@ internal sealed partial class CharacterEditDialog
 
 	/// <summary>
 	/// TQVault's medallion picture (<see cref="Images.tqmedallion"/>) in the free part of the Character page, right of the
-	/// statistics panel and under the reset buttons, at most twice its size so that it stays sharp.
+	/// statistics panel and under the reset buttons, against the right margin, at most twice its size so that it stays
+	/// sharp.
 	/// </summary>
 	private void AddMedallion(Panel page, float scale)
 	{
@@ -200,7 +202,8 @@ internal sealed partial class CharacterEditDialog
 			SizeMode = PictureBoxSizeMode.Zoom,
 			BackColor = Color.Transparent,
 			Size = size,
-			Location = new Point(area.X + (area.Width - size.Width) / 2, area.Y + (area.Height - size.Height) / 2),
+			// Against the right margin, centred in the height left.
+			Location = new Point(area.Right - size.Width, area.Y + (area.Height - size.Height) / 2),
 		};
 		page.Controls.Add(picture);
 		this.FormClosed += (_, _) => medallion.Dispose();

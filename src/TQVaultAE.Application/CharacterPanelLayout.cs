@@ -18,6 +18,9 @@ public static partial class CharacterPanelLayout
 	/// <summary>Height of the statistics panel.</summary>
 	public const int Height = 390;
 
+	/// <summary>Where the panel's gold frame starts, under the tab strip.</summary>
+	public const int FrameTop = 20;
+
 	/// <summary>
 	/// An attribute as the game shows it: the base value plus the flat bonuses of gear and skills, times the percentage
 	/// bonuses, rounded (as <see cref="PlayerInfo"/> computes it for the saved base).
