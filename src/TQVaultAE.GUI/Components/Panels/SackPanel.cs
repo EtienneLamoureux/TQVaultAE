@@ -27,7 +27,7 @@ namespace TQVaultAE.GUI.Components.Panels;
 /// <summary>
 /// Class for holding all of the UI functions of the sack panel.
 /// </summary>
-public partial class SackPanel : Panel, IScalingControl
+public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 {
 	private readonly ILogger Log;
 	private readonly ITranslationService TranslationService;
@@ -586,6 +586,12 @@ public partial class SackPanel : Panel, IScalingControl
 
 		return alpha;
 	}
+
+	/// <summary>
+	/// The base font changed: the menu it shows itself, outside the controls, takes it.
+	/// </summary>
+	void IFontRebasing.RebaseFonts(IFontService fontService)
+		=> FontRebaser.RebaseMenu(this.CustomContextMenu, fontService);
 
 	/// <summary>
 	/// Override of ScaleControl which supports scaling of the fonts and internal items.

@@ -51,15 +51,7 @@ internal sealed partial class CharacterEditDialog : VaultForm
 					this.cancel.Font = FontService.GetFontLight(12F);
 
 		this.Font = FontService.GetFontLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			
-		new[] {
-				this.attribGroupBox,
-				this.levelingGroupBox,
-				this.MasteriesGroupBox,
-				this.SkillsGroupBox
-			}.SelectMany(gb => gb.Controls.OfType<Control>(), (gb, child) => (gb, child))
-			.ToList()
-			.ForEach(tup => tup.gb.Font = tup.child.Font = FontService.GetFontLight(11F));
+
 
 		#endregion
 
@@ -90,7 +82,7 @@ internal sealed partial class CharacterEditDialog : VaultForm
 		UpdatePlayerInfo();
 	}
 
-	private void UpdatePlayerInfo(bool mustResetAttributes = false, bool masteriesResetRequired = false)
+	private void UpdatePlayerInfo()
 	{
 		if (!USettings.AllowCharacterEdit) return;
 		if (PlayerCollection.PlayerInfo is null) return;
@@ -107,8 +99,6 @@ internal sealed partial class CharacterEditDialog : VaultForm
 				, Intelligence: Convert.ToInt32(intelligenceUpDown.Value)
 				, Health: Convert.ToInt32(healthUpDown.Value)
 				, Mana: Convert.ToInt32(manacUpDown.Value)
-				, ResetAttributes: mustResetAttributes
-				, ResetMasteries: masteriesResetRequired
 				, SkillRecords: this._skills?.Changed == true ? this._skills.BuildSkillRecords() : null
 				, MasteriesChanged: this._skills?.MasteriesChanged == true);
 
@@ -143,27 +133,7 @@ internal sealed partial class CharacterEditDialog : VaultForm
 	/// <param name="e">EventArgs data</param>
 	private void CharacterEditDlg_Load(object? sender, EventArgs e)
 	{
-
-		strengthLabel.Text = Resources.CEStrength;
-		dexterityLabel.Text = Resources.CEDexterity;
-		IntelligenceLabel.Text = Resources.CEIntelligence;
-		healthLabel.Text = Resources.CEHealth;
-		manaLabel.Text = Resources.CEMana;
-		levelLabel.Text = Resources.CELevel;
-		xpLabel.Text = Resources.CEXp;
-		attributeLabel.Text = Resources.CEAttributePoints;
-		skillPointsLabel.Text = Resources.CESkillPoints;
-		levelingCheckBox.Text = Resources.CEEnableLeveling;
-		levelingGroupBox.Text = Resources.CELeveling;
-		attribGroupBox.Text = Resources.CEAttributes;
-		difficultyLabel.Text = Resources.CEDifficulty;
-
-		this.MasteriesGroupBox.Text = Resources.Masteries;
-
-		this.Mastery1NameScalingLabel.Visible
-			= this.Mastery1ValueScalingLabel.Visible
-				= this.Mastery2NameScalingLabel.Visible
-					= this.Mastery2ValueScalingLabel.Visible = false;
+		this.InitCharacterPage();
 
 		if (Info.BaseStrength > Convert.ToInt32(strengthUpDown.Maximum))
 			strengthUpDown.Maximum = Info.BaseStrength;
@@ -232,6 +202,8 @@ internal sealed partial class CharacterEditDialog : VaultForm
 		foreach (var upDown in new[] { strengthUpDown, dexterityUpDown, intelligenceUpDown, healthUpDown, manacUpDown, levelNumericUpDown })
 			this._previousValues[upDown] = Convert.ToInt32(upDown.Value);
 
+		this._startAttributes = [.. this.AttributeBoxes.Select(b => Convert.ToInt32(b.Value))];
+		this.FitToFrame();
 		_loaded = true;
 	}
 
@@ -318,14 +290,40 @@ internal sealed partial class CharacterEditDialog : VaultForm
 		}
 	}
 
+	/// <summary>
+	/// Reset Masteries: every mastery slot is emptied in the editor and its skill points given back. Like any other edit
+	/// it is applied by OK, and Cancel drops it.
+	/// </summary>
 	private void ResetMasteriesScalingButton_Click(object? sender, EventArgs e)
 	{
-		UpdatePlayerInfo(masteriesResetRequired: true);
+		if (this._skills is null)
+			return;
+
+		this._skills.ResetMasteries();
+		this.RefreshSkills();
 	}
 
+	/// <summary>
+	/// Reset Attributes: every attribute goes back to its minimum in the editor, its points back to the pool (the
+	/// attribute boxes count them, as for a change by hand). Applied by OK, dropped by Cancel.
+	/// </summary>
 	private void ResetAttributesScalingButton_Click(object? sender, EventArgs e)
 	{
-		UpdatePlayerInfo(mustResetAttributes: true);
+		var pool = Convert.ToInt32(this.attributeNumericUpDown.Value) + PlayerLevel.GetInvestedAttributePoints(
+			Convert.ToInt32(this.strengthUpDown.Value), Convert.ToInt32(this.dexterityUpDown.Value), Convert.ToInt32(this.intelligenceUpDown.Value),
+			Convert.ToInt32(this.healthUpDown.Value), Convert.ToInt32(this.manacUpDown.Value));
+		if (pool > this.attributeNumericUpDown.Maximum)
+			this.attributeNumericUpDown.Maximum = pool;
+
+		foreach (var (box, minimum) in new[]
+		{
+			(this.strengthUpDown, PlayerLevel.MinStrength),
+			(this.dexterityUpDown, PlayerLevel.MinDexterity),
+			(this.intelligenceUpDown, PlayerLevel.MinIntelligence),
+			(this.healthUpDown, PlayerLevel.MinHealth),
+			(this.manacUpDown, PlayerLevel.MinMana),
+		})
+			box.Value = Math.Clamp(minimum, box.Minimum, box.Maximum);
 	}
 
 	private void difficultlyComboBox_EnabledChanged(object? sender, EventArgs e)

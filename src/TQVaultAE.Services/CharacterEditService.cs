@@ -3,6 +3,7 @@ using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.Services;
 
@@ -22,13 +23,17 @@ public class CharacterEditService(IPathIO pathIO, IPlayerCollectionProvider play
 		=> player.EquipmentSack is not { } equipment
 			? []
 			: equipment
-				.Where(item => !item.IsInSecondaryWeaponSlot)
+				.Where(item => !item.IsInInactiveWeaponSlot(player.UseAlternate))
 				.SelectMany(this._itemProvider.GetSkillAugments)
 				.ToList();
 
 	/// <inheritdoc/>
 	public CharacterSkillEditor CreateSkillEditor(PlayerInfo info)
 		=> new(info.SkillRecordList, info.MasteriesAllowed, info.SkillPoints, this._skillTreeProvider.GetMasteryTree);
+
+	/// <inheritdoc/>
+	public GrantedSkill? DescribeSkill(RecordId skillId, int level, SkillWindowContext? context = null)
+		=> this._itemProvider.GetSkillAtLevel(skillId, level, context);
 
 	/// <inheritdoc/>
 	public string GetMasteryDescriptionTag(RecordId masteryId)

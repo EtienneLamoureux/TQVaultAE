@@ -487,6 +487,8 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					}
 					else if (blockName.Equals("USEALTERNATE", StringComparison.Ordinal))
 					{
+						// Which weapon set is in hand: 1 for the second one.
+						pc.UseAlternate = currentOffset + 4 <= pc.rawData.Length && BitConverter.ToInt32(pc.rawData, currentOffset) != 0;
 						currentOffset += 4;
 						equipmentOffset = currentOffset; // skip value for useAlternate
 						foundEquipment = true;
@@ -563,6 +565,9 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 
 		var playerClassTag = TQData.ReadCStringAfter(pc.rawData, "playerClassTag");
 		pi.Class = playerClassTag.valueAsString;
+
+		var playerTexture = TQData.ReadCStringAfter(pc.rawData, "playerTexture");
+		pi.PlayerTexture = playerTexture.valueAsString ?? string.Empty;
 
 		var money = TQData.ReadIntAfter(pc.rawData, "money", playerClassTag.nextOffset);
 		pi.Money = money.valueAsInt;

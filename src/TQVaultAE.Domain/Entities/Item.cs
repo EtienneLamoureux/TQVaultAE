@@ -325,10 +325,11 @@ public class Item
 	public bool IsInWeaponSlot => this.PositionX == WeaponSlotIndicator;
 
 	/// <summary>
-	/// Gets a value indicating whether the item is a weapon of the second weapon set (rows 2 and 3 of the weapon
-	/// slots), whose bonuses do not count.
+	/// Tells whether the item is a weapon of the set not in hand, whose bonuses do not count: rows 2 and 3 of the weapon
+	/// slots, or rows 0 and 1 when the second set is in hand (the save's <c>useAlternate</c>).
 	/// </summary>
-	public bool IsInSecondaryWeaponSlot => this.IsInWeaponSlot && (this.PositionY == 2 || this.PositionY == 3);
+	public bool IsInInactiveWeaponSlot(bool useAlternate)
+		=> this.IsInWeaponSlot && (useAlternate ? this.PositionY is 0 or 1 : this.PositionY is 2 or 3);
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Immortal Throne expansion pack.

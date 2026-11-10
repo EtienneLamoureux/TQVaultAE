@@ -33,7 +33,13 @@ public class SkillTreeProviderTests
 		foreach (var (name, value) in vars)
 		{
 			object[] values = value is string[] strings ? strings : [value];
-			var variable = new Variable(name, value is int ? VariableDataType.Integer : VariableDataType.StringVar, values.Length);
+			var type = value switch
+			{
+				int => VariableDataType.Integer,
+				float => VariableDataType.Float,
+				_ => VariableDataType.StringVar,
+			};
+			var variable = new Variable(name, type, values.Length);
 			for (int i = 0; i < values.Length; i++)
 				variable[i] = values[i];
 			record.Set(variable);
@@ -162,5 +168,74 @@ public class SkillTreeProviderTests
 		triumph.NameTag.Should().Be("tagSkillName064");
 		triumph.MaxLevel.Should().Be(6);
 		triumph.ParentId.Should().Be(IceShard.ToRecordId());
+	}
+
+	[Fact]
+	public void GetMasteryTree_PaneArt_ReadsThePcPicturesAndThePeekThroughColour()
+	{
+		this.AddStormPaneArt();
+
+		var pane = new SkillTreeProvider(this._database.Object).GetMasteryTree(Masteries.Storm)!.Pane;
+
+		pane.Should().Be(new SkillPaneArt(
+			"""InGameUI\Skills\StormSkillBackground01.tex"""
+			, """InGameUI\Skills\StormPanel01.tex"""
+			, 718
+			, 31
+			, """InGameUI\Skills\StormSkillBar01.tex"""
+			, 47
+			, 26
+			, 0
+			, 51
+			, 255
+			, "tagMasteryDescription04"
+			, 29
+			, 459));
+	}
+
+	[Fact]
+	public void GetMasteryTree_Buttons_KeepTheirPlaceBorderLockedIconAndConnectors()
+	{
+		this.AddStormPaneArt();
+		this.Add("""records\ui\button3.dbr""", ("skillName", Velocity), ("bitmapPositionX", 228), ("bitmapPositionY", 279), ("isCircular", 1));
+		this.Add(IceShard, ("Class", "Skill_AttackProjectileBurst"), ("skillDisplayName", "tagSkillName022"), ("skillMaxLevel", 12),
+			("skillDownBitmapName", """InGameUI\Icons\Skills\Storm\IceShardDown01.tex"""),
+			("skillConnectionOn", new[] { "BottomOn", "TopOn" }), ("skillConnectionOff", new[] { "BottomOff", "TopOff" }),
+			("skillConnectionAtlantisOn", new[] { "BottomOn", "MiddleOn", "TopOn" }), ("skillConnectionAtlantisOff", new[] { "BottomOff", "MiddleOff", "TopOff" }));
+
+		var skills = new SkillTreeProvider(this._database.Object).GetMasteryTree(Masteries.Storm)!.Skills.ToDictionary(s => s.Id.Raw);
+
+		var iceShard = skills[IceShard].Button!;
+		(iceShard.X, iceShard.Y, iceShard.IsCircular, iceShard.LockedIcon).Should().Be((228, 403, false, """InGameUI\Icons\Skills\Storm\IceShardDown01.tex"""));
+		iceShard.ConnectionOn.Should().Equal(["BottomOn", "MiddleOn", "TopOn"], "the Atlantis pane draws the Atlantis connectors");
+		iceShard.ConnectionOff.Should().Equal("BottomOff", "MiddleOff", "TopOff");
+		skills[Velocity].Button!.IsCircular.Should().BeTrue();
+		skills[Velocity].Button!.ConnectionOn.Should().BeEmpty();
+	}
+
+	[Fact]
+	public void Connection_WithoutAtlantis_UsesTheOriginalPieces()
+	{
+		this.Add(IceShard, ("skillConnectionOn", new[] { "BottomOn", "TopOn" }), ("skillConnectionAtlantisOn", new[] { "BottomOn", "MiddleOn", "TopOn" }));
+		var record = this._records[IceShard.ToRecordId()];
+
+		SkillTreeProvider.Connection(record, "skillConnectionOn", "skillConnectionAtlantisOn", atlantis: false).Should().Equal("BottomOn", "TopOn");
+		SkillTreeProvider.Connection(record, "skillConnectionOff", "skillConnectionAtlantisOff", atlantis: true).Should().BeEmpty();
+	}
+
+	/// <summary>The Storm pane with its background, mastery picture, bar and colour records.</summary>
+	private void AddStormPaneArt()
+	{
+		this.AddStormPane();
+		var buttons = this._records[Pane.ToRecordId()].GetAllStrings("tabSkillButtons")!;
+		this.Add(Pane, ("tabSkillButtons", buttons), ("skillPaneBaseBitmap", """records\ui\background.dbr"""),
+			("skillPaneMasteryBitmap", """records\ui\picture.dbr"""), ("masteryBar", """records\ui\bar.dbr"""),
+			("peekThroughColorRed", 0F), ("peekThroughColorGreen", 0.2F), ("peekThroughColorBlue", 1F),
+			("skillPaneDescriptionTag", "tagMasteryDescription04"));
+		this.Add("""records\ui\background.dbr""", ("bitmapNames", new[] { """InGameUI\Skills\StormSkillBackground01.tex""", """InGameUI\Controller\Skills\StormSkillBackground01.tex""" }),
+			("bitmapPositionsX", 0), ("bitmapPositionsY", 0));
+		this.Add("""records\ui\picture.dbr""", ("bitmapNames", new[] { """InGameUI\Skills\StormPanel01.tex""", """InGameUI\Skills\StormPanel01.tex""" }),
+			("bitmapPositionsX", 718), ("bitmapPositionsY", 31));
+		this.Add("""records\ui\bar.dbr""", ("bitmapFullName", """InGameUI\Skills\StormSkillBar01.tex"""), ("bitmapPositionX", 47), ("bitmapPositionY", 26));
 	}
 }

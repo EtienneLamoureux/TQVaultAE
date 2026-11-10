@@ -513,6 +513,86 @@ namespace TQVaultAE.Presentation.Win32 {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap CharacterEditorFrame {
+            get {
+                object obj = ResourceManager.GetObject("CharacterEditorFrame", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CharacterEditorTab {
+            get {
+                object obj = ResourceManager.GetObject("CharacterEditorTab", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CharacterEditorPaneEdge {
+            get {
+                object obj = ResourceManager.GetObject("CharacterEditorPaneEdge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CharacterStatsPanel {
+            get {
+                object obj = ResourceManager.GetObject("CharacterStatsPanel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CharacterGoldPile {
+            get {
+                object obj = ResourceManager.GetObject("CharacterGoldPile", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CharacterElectrumCoin {
+            get {
+                object obj = ResourceManager.GetObject("CharacterElectrumCoin", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CharacterNumberBox {
+            get {
+                object obj = ResourceManager.GetObject("CharacterNumberBox", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CharacterEditorMarble {
+            get {
+                object obj = ResourceManager.GetObject("CharacterEditorMarble", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap tqmedallion {
             get {
                 object obj = ResourceManager.GetObject("tqmedallion", resourceCulture);

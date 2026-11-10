@@ -36,10 +36,19 @@ public partial class ItemProvider
 	/// </summary>
 	/// <param name="skillRecord">DBRecord of the skill</param>
 	/// <param name="results">List containing the results</param>
-	private void ConvertPetStats(Item itm, DBRecordCollection skillRecord, List<string> results)
+	/// <param name="level">The skill level: the pet record (<c>spawnObjects</c>) and its life time are given per level.</param>
+	/// <param name="hiddenVariables">
+	/// Variables of the pet's skills that are not shown; given for the skill window, which also leaves out the pet skills
+	/// at level 0 (those that a pet upgrade gives, such as the Battle Standard's "Triumph").
+	/// </param>
+	/// <param name="petSkillBonus">Levels added to the pet's skills (the equipment's bonus to the summoning skill).</param>
+	private void ConvertPetStats(Item itm, DBRecordCollection skillRecord, List<string> results, int level = 1
+		, IReadOnlySet<string>? hiddenVariables = null, int petSkillBonus = 0)
 	{
+		int levelIndex(string name) => skillRecord[name] is { NumberOfValues: > 0 } v ? Math.Clamp(level - 1, 0, v.NumberOfValues - 1) : 0;
+
 		string formatSpec, petLine;
-		int summonLimit = skillRecord.GetInt32("petLimit", 0);
+		int summonLimit = skillRecord.GetInt32("petLimit", levelIndex("petLimit"));
 		if (summonLimit > 1)
 		{
 			if (!TranslationService.TryTranslateXTag("SkillPetLimit", out formatSpec))
@@ -52,7 +61,7 @@ public partial class ItemProvider
 			results.Add(value);
 			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(value);
 		}
-		var skillRecordspawnObjects = skillRecord.GetString("spawnObjects", 0);
+		var skillRecordspawnObjects = skillRecord.GetString("spawnObjects", levelIndex("spawnObjects"));
 		DBRecordCollection? petRecord = Database.GetRecordFromFile(skillRecordspawnObjects);
 		if (petRecord is not null)
 		{
@@ -72,7 +81,7 @@ public partial class ItemProvider
 			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 
 			// Time to live: 0 is a permanent pet, which has no life time line.
-			float timeToLive = skillRecord.GetSingle("spawnObjectsTimeToLive", 0);
+			float timeToLive = skillRecord.GetSingle("spawnObjectsTimeToLive", levelIndex("spawnObjectsTimeToLive"));
 			if (timeToLive > 0)
 			{
 				if (!TranslationService.TryTranslateXTag("tagSkillPetTimeToLive", out formatSpec))
@@ -128,11 +137,11 @@ public partial class ItemProvider
 			results.Add(valueStr);
 			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 
-			// Show Physical Damage
+			// Show Physical Damage; the skill window leaves it out (its pets show their "Basic Attack" skill instead).
 			value = petRecord.GetSingle("handHitDamageMin", 0);
 			float value2 = petRecord.GetSingle("handHitDamageMax", 0);
 
-			if (value > 1.0F || value2 > 2.0F)
+			if ((value > 1.0F || value2 > 2.0F) && hiddenVariables is null)
 			{
 				if (value2 == 0.0F || value == value2)
 				{
@@ -175,8 +184,13 @@ public partial class ItemProvider
 
 				skills[numSkills] = petskillName;
 				petskillLevel = petRecord.GetInt32(string.Concat("skillLevel", i), 0);
+				if (petskillLevel < 1 && hiddenVariables is not null)
+					continue;
+
 				if (petskillLevel < 1)
 					petskillLevel = 1;
+				else
+					petskillLevel += petSkillBonus;
 
 				skillLevels[numSkills] = petskillLevel;
 				numSkills++;
@@ -192,12 +206,13 @@ public partial class ItemProvider
 				DBRecordCollection? record = null;
 				string skillClass = skillRecord1?.GetString("Class", 0) ?? string.Empty;
 
-				// Skip passive skills
-				if (skillClass.Equals("SKILL_PASSIVE", noCase))
+				// Skip passive skills, which the skill window shows (the wolves' "Dodge Attacks").
+				if (skillClass.Equals("SKILL_PASSIVE", noCase) && hiddenVariables is null)
 					continue;
 
 				string? skillNameTag = null;
 				string? skillName = null;
+				bool skillWindow = hiddenVariables is not null;
 				string buffSkillName = skillRecord1?.GetString("buffSkillName", 0) ?? string.Empty;
 
 				if (string.IsNullOrEmpty(buffSkillName))
@@ -221,6 +236,12 @@ public partial class ItemProvider
 					}
 				}
 
+				// The skill window shows only the pet skills marked for it (isPetDisplayable, on the skill or its buff), not
+				// its innate armor and resistances or its death skill.
+				if (skillWindow && (string.IsNullOrWhiteSpace(skillName)
+					|| (skillRecord1?.GetInt32("isPetDisplayable", 0) != 1 && record?.GetInt32("isPetDisplayable", 0) != 1)))
+					continue;
+
 				if (string.IsNullOrWhiteSpace(skillName))
 					valueStr = $"{ItemStyle.Legendary.TQColor().ColorTag()}{skillNameTag}";
 				else
@@ -229,7 +250,16 @@ public partial class ItemProvider
 				results.Add(valueStr);
 				itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 
-				GetAttributesFromRecord(itm, record, true, recordID, results);
+				// The pet's skill at the level the pet record gives it.
+				GetAttributesFromRecord(itm, record, true, recordID, results, skillLevelIndex: skillLevels[i] - 1, hiddenVariables: hiddenVariables);
+
+				// "+1 to all Skills" of a pet's buff (allSkillEnhancement), which item tool tips leave out.
+				if (hiddenVariables is not null && record?["allSkillEnhancement"] is { NumberOfValues: > 0 } allSkills
+					&& allSkills.GetInt32(Math.Clamp(skillLevels[i] - 1, 0, allSkills.NumberOfValues - 1)) is var all and > 0
+					&& TranslationService.TryTranslateXTag("ItemAllSkillIncrement", out var allSkillsText))
+				{
+					results.Add(Format(ItemAttributeProvider.ConvertFormat(allSkillsText), all));
+				}
 				results.Add(string.Empty);
 			}
 		}

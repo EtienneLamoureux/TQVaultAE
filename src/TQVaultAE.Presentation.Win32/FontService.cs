@@ -2,6 +2,7 @@ using EnumsNET;
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;
 using TQVaultAE.Presentation.Win32.Contracts;
@@ -17,98 +18,83 @@ public class FontService : IFontService
 	const string ALBERTUSMT_NAME = "Albertus MT";
 	const string ALBERTUSMTLIGHT_NAME = "Albertus MT Light";
 
-	private FontFamily? _FONT_ALBERTUSMT = null;
-	private FontFamily FONT_ALBERTUSMT
+	/// <summary>Raised by <see cref="Reload"/>, once the fonts use the family of <see cref="UserSettings.BaseFont"/>.</summary>
+	public event EventHandler? FontChanged;
+
+	/// <summary>The families of the base font in use, read from <see cref="UserSettings.BaseFont"/> on first use.</summary>
+	private (FontFamily Regular, FontFamily Light)? _families;
+
+	/// <summary>
+	/// The families already made, one pair per base font: switching back to a base font reuses them, so the game font is
+	/// added to the process once. Never disposed: the fonts made from them may still be on screen.
+	/// </summary>
+	private readonly Dictionary<FontFamilyList, (FontFamily Regular, FontFamily Light)> _familiesByBaseFont = [];
+
+	/// <summary>
+	/// Names of the families used before the last <see cref="Reload"/>, with whether it was the light one: a font of these
+	/// families is one of the service's, maybe grown by a zoom, that <see cref="Rebase"/> moves to the new family.
+	/// </summary>
+	private readonly ConcurrentDictionary<string, bool> _retiredFamilies = new(StringComparer.OrdinalIgnoreCase);
+
+	/// <summary>Whether each font the service made is a light one, which a family name shared by both can't tell.</summary>
+	private readonly ConditionalWeakTable<Font, StrongBox<bool>> _origins = [];
+
+	private (FontFamily Regular, FontFamily Light) Families
 	{
 		get
 		{
+			if (this._families is { } families)
+				return families;
+
 			if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
 			{
-				// Code here won't run in Visual Studio designer but runtime 
-				if (FontLoader is not null && _FONT_ALBERTUSMT is null)
+				// Code here won't run in Visual Studio designer but runtime
+				if (this.FontLoader is null)
+					return (FontFamily.GenericSansSerif, FontFamily.GenericSansSerif);
+
+				var baseFont = Enums.Parse<FontFamilyList>(this.USettings.BaseFont ?? FontFamilyList.AlbertusMT.ToString());
+				if (!this._familiesByBaseFont.TryGetValue(baseFont, out families))
 				{
-					var baseFont = Enums.Parse<FontFamilyList>(USettings.BaseFont ?? FontFamilyList.AlbertusMT.ToString());
-					switch (baseFont)
-					{
-						case FontFamilyList.AlbertusMT:
-							_FONT_ALBERTUSMT = FontLoader.AddFontToOS(ALBERTUSMT_NAME, Resources.AlbertusMT);
-							break;
-						case FontFamilyList.Arial:
-						case FontFamilyList.Verdana:
-							_FONT_ALBERTUSMT = new FontFamily(baseFont.ToString());
-							break;
-						case FontFamilyList.TimesNewRoman:
-							_FONT_ALBERTUSMT = new FontFamily(baseFont.AsString(EnumFormat.Description) ?? baseFont.ToString());
-							break;
-					}
+					families = (this.CreateFamily(baseFont, light: false), this.CreateFamily(baseFont, light: true));
+					this._familiesByBaseFont[baseFont] = families;
 				}
 			}
 			else
 			{
 				// Design time
-				if (_FONT_ALBERTUSMT is null)
-				{
-					try
-					{
-						_FONT_ALBERTUSMT = new FontFamily(ALBERTUSMT_NAME);
-					}
-					catch
-					{ // fallback to Safe font
-						_FONT_ALBERTUSMT = new FontFamily("Arial");
-					}
-				}
+				families = (CreateDesignFamily(ALBERTUSMT_NAME), CreateDesignFamily(ALBERTUSMTLIGHT_NAME));
 			}
-			// The font could not be created: let GDI+ pick a safe one rather than fail.
-			return _FONT_ALBERTUSMT ?? FontFamily.GenericSansSerif;
+
+			this._families = families;
+			return families;
 		}
 	}
 
-	private FontFamily? _FONT_ALBERTUSMTLIGHT = null;
-
-	private FontFamily FONT_ALBERTUSMTLIGHT
+	private FontFamily CreateFamily(FontFamilyList baseFont, bool light)
 	{
-		get
+		FontFamily? family = baseFont switch
 		{
-			if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
-			{
-				// Code here won't run in Visual Studio designer
-				if (FontLoader is not null && _FONT_ALBERTUSMTLIGHT is null)
-				{
-					var baseFont = Enums.Parse<FontFamilyList>(USettings.BaseFont ?? FontFamilyList.AlbertusMT.ToString());
-					switch (baseFont)
-					{
-						case FontFamilyList.AlbertusMT:
-							_FONT_ALBERTUSMTLIGHT = FontLoader.AddFontToOS(ALBERTUSMTLIGHT_NAME, Resources.AlbertusMTLight);// Runtime
-							break;
-						case FontFamilyList.Arial:
-						case FontFamilyList.Verdana:
-							_FONT_ALBERTUSMTLIGHT = new FontFamily(baseFont.ToString());
-							break;
-						case FontFamilyList.TimesNewRoman:
-							_FONT_ALBERTUSMTLIGHT = new FontFamily(baseFont.AsString(EnumFormat.Description) ?? baseFont.ToString());
-							break;
-					}
-				}
+			FontFamilyList.AlbertusMT => light
+				? this.FontLoader.AddFontToOS(ALBERTUSMTLIGHT_NAME, Resources.AlbertusMTLight)
+				: this.FontLoader.AddFontToOS(ALBERTUSMT_NAME, Resources.AlbertusMT),
+			FontFamilyList.Arial or FontFamilyList.Verdana => new FontFamily(baseFont.ToString()),
+			FontFamilyList.TimesNewRoman => new FontFamily(baseFont.AsString(EnumFormat.Description) ?? baseFont.ToString()),
+			_ => null,
+		};
 
-			}
-			else
-			{
-				// Design time
-				if (_FONT_ALBERTUSMTLIGHT is null)
-				{
-					try
-					{
-						_FONT_ALBERTUSMTLIGHT = new FontFamily(ALBERTUSMTLIGHT_NAME);
-					}
-					catch
-					{ // fallback to Safe font
-						_FONT_ALBERTUSMTLIGHT = new FontFamily("Arial");
-					}
-				}
-			}
+		// The font could not be created: let GDI+ pick a safe one rather than fail.
+		return family ?? FontFamily.GenericSansSerif;
+	}
 
-			// The font could not be created: let GDI+ pick a safe one rather than fail.
-			return _FONT_ALBERTUSMTLIGHT ?? FontFamily.GenericSansSerif;
+	private static FontFamily CreateDesignFamily(string name)
+	{
+		try
+		{
+			return new FontFamily(name);
+		}
+		catch (ArgumentException)
+		{ // fallback to Safe font
+			return new FontFamily("Arial");
 		}
 	}
 
@@ -128,7 +114,13 @@ public class FontService : IFontService
 	private readonly ConcurrentDictionary<(bool Light, float Size, FontStyle Style, GraphicsUnit Unit, byte CharSet), Font> _fonts = new();
 
 	private Font Get(bool light, float fontSize, FontStyle fontStyle = FontStyle.Regular, GraphicsUnit unit = GraphicsUnit.Point, byte charSet = DefaultCharSet)
-		=> this._fonts.GetOrAdd((light, fontSize, fontStyle, unit, charSet), key => new Font(key.Light ? this.FONT_ALBERTUSMTLIGHT : this.FONT_ALBERTUSMT, key.Size, key.Style, key.Unit, key.CharSet));
+		=> this._fonts.GetOrAdd((light, fontSize, fontStyle, unit, charSet), key =>
+		{
+			var families = this.Families;
+			var font = new Font(key.Light ? families.Light : families.Regular, key.Size, key.Style, key.Unit, key.CharSet);
+			this._origins.AddOrUpdate(font, new StrongBox<bool>(key.Light));
+			return font;
+		});
 
 	public Font GetFont(float fontSize, FontStyle fontStyle, GraphicsUnit unit)
 		=> this.Get(false, fontSize, fontStyle, unit);
@@ -171,6 +163,61 @@ public class FontService : IFontService
 		if (font.Style == style)
 			return font;
 
-		return this._styled.GetOrAdd((font.FontFamily.Name, font.Size, style, font.Unit, font.GdiCharSet), _ => new Font(font, style));
+		return this._styled.GetOrAdd((font.FontFamily.Name, font.Size, style, font.Unit, font.GdiCharSet), _ =>
+		{
+			var styled = new Font(font, style);
+			if (this._origins.TryGetValue(font, out var light))
+				this._origins.AddOrUpdate(styled, new StrongBox<bool>(light.Value));
+			return styled;
+		});
+	}
+
+	/// <inheritdoc/>
+	public void Reload()
+	{
+		var previous = this._families;
+		this._families = null;
+
+		// Dropped, not disposed: the controls built with them keep showing them until they take the new ones.
+		this._fonts.Clear();
+		this._styled.Clear();
+
+		if (previous is { } old)
+		{
+			// The light one last: a family name shared by both (a system font) is mostly used light. The fallback family
+			// is left out: it is the default font of the controls the service never set.
+			string fallback = FontFamily.GenericSansSerif.Name;
+			if (!string.Equals(old.Regular.Name, fallback, StringComparison.OrdinalIgnoreCase))
+				this._retiredFamilies[old.Regular.Name] = false;
+			if (!string.Equals(old.Light.Name, fallback, StringComparison.OrdinalIgnoreCase))
+				this._retiredFamilies[old.Light.Name] = true;
+		}
+
+		// Reads the setting again; a family back in use is no longer retired.
+		var current = this.Families;
+		this._retiredFamilies.TryRemove(current.Regular.Name, out _);
+		this._retiredFamilies.TryRemove(current.Light.Name, out _);
+
+		this.FontChanged?.Invoke(this, EventArgs.Empty);
+	}
+
+	/// <inheritdoc/>
+	public Font Rebase(Font font)
+	{
+		ArgumentNullException.ThrowIfNull(font);
+
+		var current = this.Families;
+		string family = font.FontFamily.Name;
+		bool light;
+		if (this._origins.TryGetValue(font, out var origin))
+			light = origin.Value;
+		else if (!this._retiredFamilies.TryGetValue(family, out light))
+			return font; // Not one of the service's fonts.
+
+		// Already in the base font in use.
+		if (string.Equals(family, (light ? current.Light : current.Regular).Name, StringComparison.OrdinalIgnoreCase))
+			return font;
+
+		return this.Get(light, font.Size, font.Style, font.Unit, font.GdiCharSet);
 	}
 }

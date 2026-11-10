@@ -1,5 +1,6 @@
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.Application.Contracts.Services;
 
@@ -46,4 +47,11 @@ public interface ICharacterEditService
 	/// Gets the skill bonuses of the items the character wears, except the weapons of the second weapon set.
 	/// </summary>
 	IReadOnlyList<SkillAugment> GetGearSkillAugments(PlayerCollection player);
+
+	/// <summary>
+	/// A skill at a level as the game's skill window describes it: name, description and its effects at that level.
+	/// </summary>
+	/// <param name="context">What the character adds to the skill's own values (modifiers, recharge reduction...).</param>
+	/// <returns><see langword="null"/> when the game has no such skill.</returns>
+	GrantedSkill? DescribeSkill(RecordId skillId, int level, SkillWindowContext? context = null);
 }

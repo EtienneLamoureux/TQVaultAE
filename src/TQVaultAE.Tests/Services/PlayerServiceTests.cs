@@ -960,6 +960,22 @@ public class PlayerServiceTests
 	}
 
 	[Fact]
+	public void UpdateGearStatBonuses_SecondSetInHand_SkipsTheFirstSet()
+	{
+		var player = PlayerWith();
+		player.UseAlternate = true;
+		var first = new Item { PositionX = Item.WeaponSlotIndicator, PositionY = 0 };
+		var second = new Item { PositionX = Item.WeaponSlotIndicator, PositionY = 2 };
+		_mockItemProvider.Setup(x => x.GetStatBonuses(It.IsAny<Item>()))
+			.Returns(() => new SortedList<string, int> { ["CHARACTERSTRENGTH"] = 1 });
+
+		_playerService.UpdateGearStatBonuses(player, [first, second]);
+
+		_mockItemProvider.Verify(x => x.GetStatBonuses(first), Times.Never);
+		_mockItemProvider.Verify(x => x.GetStatBonuses(second), Times.Once);
+	}
+
+	[Fact]
 	public void UpdateSkillStatBonuses_SumsTheBonusesOfEverySkillAtItsLevel()
 	{
 		var player = PlayerWith();

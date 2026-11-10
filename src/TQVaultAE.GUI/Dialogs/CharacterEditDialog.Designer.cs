@@ -48,51 +48,28 @@ internal partial class CharacterEditDialog
 	{
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CharacterEditDialog));
         this.ok = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
-        this.SkillsGroupBox = new System.Windows.Forms.GroupBox();
-        this.SkillsTabControl = new System.Windows.Forms.TabControl();
         this.cancel = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
-        this.strengthLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
-        this.dexterityLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
-        this.IntelligenceLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
-        this.healthLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
-        this.manaLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
-        this.attribGroupBox = new System.Windows.Forms.GroupBox();
         this.manacUpDown = new System.Windows.Forms.NumericUpDown();
         this.healthUpDown = new System.Windows.Forms.NumericUpDown();
         this.intelligenceUpDown = new System.Windows.Forms.NumericUpDown();
         this.dexterityUpDown = new System.Windows.Forms.NumericUpDown();
         this.strengthUpDown = new System.Windows.Forms.NumericUpDown();
-        this.levelingGroupBox = new System.Windows.Forms.GroupBox();
         this.levelingCheckBox = new TQVaultAE.GUI.Components.Scaling.ScalingCheckBox();
-        this.difficultyLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.difficultlyComboBox = new System.Windows.Forms.ComboBox();
         this.skillPointsNumericUpDown = new System.Windows.Forms.NumericUpDown();
-        this.skillPointsLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.attributeNumericUpDown = new System.Windows.Forms.NumericUpDown();
-        this.attributeLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.xpTextBox = new System.Windows.Forms.TextBox();
-        this.xpLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.levelNumericUpDown = new System.Windows.Forms.NumericUpDown();
-        this.levelLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.ResetMasteriesScalingButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
-        this.MasteriesGroupBox = new System.Windows.Forms.GroupBox();
-        this.Mastery2ValueScalingLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
-        this.Mastery1ValueScalingLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
-        this.Mastery2NameScalingLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
-        this.Mastery1NameScalingLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.ResetAttributesScalingButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
-        this.attribGroupBox.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)(this.manacUpDown)).BeginInit();
         ((System.ComponentModel.ISupportInitialize)(this.healthUpDown)).BeginInit();
         ((System.ComponentModel.ISupportInitialize)(this.intelligenceUpDown)).BeginInit();
         ((System.ComponentModel.ISupportInitialize)(this.dexterityUpDown)).BeginInit();
         ((System.ComponentModel.ISupportInitialize)(this.strengthUpDown)).BeginInit();
-        this.levelingGroupBox.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)(this.skillPointsNumericUpDown)).BeginInit();
         ((System.ComponentModel.ISupportInitialize)(this.attributeNumericUpDown)).BeginInit();
         ((System.ComponentModel.ISupportInitialize)(this.levelNumericUpDown)).BeginInit();
-        this.SkillsGroupBox.SuspendLayout();
-        this.MasteriesGroupBox.SuspendLayout();
         this.SuspendLayout();
         // 
         // ok
@@ -106,7 +83,8 @@ internal partial class CharacterEditDialog
         this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
         this.ok.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ok.Image = ((System.Drawing.Image)(resources.GetObject("ok.Image")));
-        this.ok.Location = new System.Drawing.Point(968, 450);
+        this.ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+        this.ok.Location = new System.Drawing.Point(699, 665);
         this.ok.Name = "ok";
         this.ok.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ok.OverBitmap")));
         this.ok.Size = new System.Drawing.Size(137, 30);
@@ -130,7 +108,8 @@ internal partial class CharacterEditDialog
         this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
         this.cancel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.cancel.Image = ((System.Drawing.Image)(resources.GetObject("cancel.Image")));
-        this.cancel.Location = new System.Drawing.Point(1113, 450);
+        this.cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+        this.cancel.Location = new System.Drawing.Point(844, 665);
         this.cancel.Name = "cancel";
         this.cancel.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("cancel.OverBitmap")));
         this.cancel.Size = new System.Drawing.Size(137, 30);
@@ -141,80 +120,11 @@ internal partial class CharacterEditDialog
         this.cancel.UseCustomGraphic = true;
         this.cancel.UseVisualStyleBackColor = false;
         this.cancel.Click += new System.EventHandler(this.CancelButton_Click);
-        // 
-        // strengthLabel
-        // 
-        this.strengthLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
-        this.strengthLabel.Location = new System.Drawing.Point(6, 33);
-        this.strengthLabel.Name = "strengthLabel";
-        this.strengthLabel.Size = new System.Drawing.Size(122, 18);
-        this.strengthLabel.TabIndex = 5;
-        this.strengthLabel.Text = "Strength";
-        this.strengthLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-        // 
-        // dexterityLabel
-        // 
-        this.dexterityLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
-        this.dexterityLabel.Location = new System.Drawing.Point(9, 63);
-        this.dexterityLabel.Name = "dexterityLabel";
-        this.dexterityLabel.Size = new System.Drawing.Size(119, 18);
-        this.dexterityLabel.TabIndex = 7;
-        this.dexterityLabel.Text = "Dexterity";
-        this.dexterityLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-        // 
-        // IntelligenceLabel
-        // 
-        this.IntelligenceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
-        this.IntelligenceLabel.Location = new System.Drawing.Point(12, 93);
-        this.IntelligenceLabel.Name = "IntelligenceLabel";
-        this.IntelligenceLabel.Size = new System.Drawing.Size(116, 18);
-        this.IntelligenceLabel.TabIndex = 9;
-        this.IntelligenceLabel.Text = "Intelligence";
-        this.IntelligenceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-        // 
-        // healthLabel
-        // 
-        this.healthLabel.CausesValidation = false;
-        this.healthLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
-        this.healthLabel.Location = new System.Drawing.Point(9, 123);
-        this.healthLabel.Name = "healthLabel";
-        this.healthLabel.Size = new System.Drawing.Size(119, 18);
-        this.healthLabel.TabIndex = 11;
-        this.healthLabel.Text = "Health";
-        this.healthLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-        // 
-        // manaLabel
-        // 
-        this.manaLabel.CausesValidation = false;
-        this.manaLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
-        this.manaLabel.Location = new System.Drawing.Point(12, 153);
-        this.manaLabel.Name = "manaLabel";
-        this.manaLabel.Size = new System.Drawing.Size(116, 18);
-        this.manaLabel.TabIndex = 13;
-        this.manaLabel.Text = "Mana";
-        this.manaLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-        // 
-        // attribGroupBox
-        // 
-        this.attribGroupBox.BackColor = System.Drawing.Color.Transparent;
-        this.attribGroupBox.Controls.Add(this.manacUpDown);
-        this.attribGroupBox.Controls.Add(this.healthUpDown);
-        this.attribGroupBox.Controls.Add(this.intelligenceUpDown);
-        this.attribGroupBox.Controls.Add(this.dexterityUpDown);
-        this.attribGroupBox.Controls.Add(this.strengthUpDown);
-        this.attribGroupBox.Controls.Add(this.manaLabel);
-        this.attribGroupBox.Controls.Add(this.healthLabel);
-        this.attribGroupBox.Controls.Add(this.IntelligenceLabel);
-        this.attribGroupBox.Controls.Add(this.dexterityLabel);
-        this.attribGroupBox.Controls.Add(this.strengthLabel);
-        this.attribGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.attribGroupBox.ForeColor = System.Drawing.Color.Gold;
-        this.attribGroupBox.Location = new System.Drawing.Point(31, 28);
-        this.attribGroupBox.Name = "attribGroupBox";
-        this.attribGroupBox.Size = new System.Drawing.Size(271, 212);
-        this.attribGroupBox.TabIndex = 14;
-        this.attribGroupBox.TabStop = false;
-        this.attribGroupBox.Text = "Base Attributes";
+        this.Controls.Add(this.manacUpDown);
+        this.Controls.Add(this.healthUpDown);
+        this.Controls.Add(this.intelligenceUpDown);
+        this.Controls.Add(this.dexterityUpDown);
+        this.Controls.Add(this.strengthUpDown);
         // 
         // manacUpDown
         // 
@@ -365,29 +275,12 @@ internal partial class CharacterEditDialog
         0,
         0});
         this.strengthUpDown.ValueChanged += new System.EventHandler(this.StatsUpDown_ValueChanged);
-        // 
-        // levelingGroupBox
-        // 
-        this.levelingGroupBox.BackColor = System.Drawing.Color.Transparent;
-        this.levelingGroupBox.Controls.Add(this.levelingCheckBox);
-        this.levelingGroupBox.Controls.Add(this.difficultyLabel);
-        this.levelingGroupBox.Controls.Add(this.difficultlyComboBox);
-        this.levelingGroupBox.Controls.Add(this.skillPointsNumericUpDown);
-        this.levelingGroupBox.Controls.Add(this.skillPointsLabel);
-        this.levelingGroupBox.Controls.Add(this.attributeNumericUpDown);
-        this.levelingGroupBox.Controls.Add(this.attributeLabel);
-        this.levelingGroupBox.Controls.Add(this.xpTextBox);
-        this.levelingGroupBox.Controls.Add(this.xpLabel);
-        this.levelingGroupBox.Controls.Add(this.levelNumericUpDown);
-        this.levelingGroupBox.Controls.Add(this.levelLabel);
-        this.levelingGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.levelingGroupBox.ForeColor = System.Drawing.Color.Gold;
-        this.levelingGroupBox.Location = new System.Drawing.Point(329, 28);
-        this.levelingGroupBox.Name = "levelingGroupBox";
-        this.levelingGroupBox.Size = new System.Drawing.Size(386, 212);
-        this.levelingGroupBox.TabIndex = 15;
-        this.levelingGroupBox.TabStop = false;
-        this.levelingGroupBox.Text = "Leveling";
+        this.Controls.Add(this.levelingCheckBox);
+        this.Controls.Add(this.difficultlyComboBox);
+        this.Controls.Add(this.skillPointsNumericUpDown);
+        this.Controls.Add(this.attributeNumericUpDown);
+        this.Controls.Add(this.xpTextBox);
+        this.Controls.Add(this.levelNumericUpDown);
         // 
         // levelingCheckBox
         // 
@@ -401,18 +294,6 @@ internal partial class CharacterEditDialog
         this.levelingCheckBox.Text = "Enable Leveling";
         this.levelingCheckBox.UseVisualStyleBackColor = true;
         this.levelingCheckBox.CheckedChanged += new System.EventHandler(this.LevelingCheckBox_CheckedChanged);
-        // 
-        // difficultyLabel
-        // 
-        this.difficultyLabel.BackColor = System.Drawing.Color.Transparent;
-        this.difficultyLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
-        this.difficultyLabel.Location = new System.Drawing.Point(15, 150);
-        this.difficultyLabel.Name = "difficultyLabel";
-        this.difficultyLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-        this.difficultyLabel.Size = new System.Drawing.Size(163, 18);
-        this.difficultyLabel.TabIndex = 15;
-        this.difficultyLabel.Text = "Difficultly";
-        this.difficultyLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
         // 
         // difficultlyComboBox
         // 
@@ -440,17 +321,6 @@ internal partial class CharacterEditDialog
         this.skillPointsNumericUpDown.Size = new System.Drawing.Size(160, 24);
         this.skillPointsNumericUpDown.TabIndex = 10;
         // 
-        // skillPointsLabel
-        // 
-        this.skillPointsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
-        this.skillPointsLabel.Location = new System.Drawing.Point(15, 119);
-        this.skillPointsLabel.Name = "skillPointsLabel";
-        this.skillPointsLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-        this.skillPointsLabel.Size = new System.Drawing.Size(166, 18);
-        this.skillPointsLabel.TabIndex = 12;
-        this.skillPointsLabel.Text = "Skill Points";
-        this.skillPointsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-        // 
         // attributeNumericUpDown
         // 
         this.attributeNumericUpDown.Enabled = false;
@@ -466,17 +336,6 @@ internal partial class CharacterEditDialog
         this.attributeNumericUpDown.Size = new System.Drawing.Size(160, 24);
         this.attributeNumericUpDown.TabIndex = 9;
         // 
-        // attributeLabel
-        // 
-        this.attributeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
-        this.attributeLabel.Location = new System.Drawing.Point(15, 89);
-        this.attributeLabel.Name = "attributeLabel";
-        this.attributeLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-        this.attributeLabel.Size = new System.Drawing.Size(166, 18);
-        this.attributeLabel.TabIndex = 10;
-        this.attributeLabel.Text = "Attribute Points";
-        this.attributeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-        // 
         // xpTextBox
         // 
         this.xpTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -487,17 +346,6 @@ internal partial class CharacterEditDialog
         this.xpTextBox.Size = new System.Drawing.Size(160, 24);
         this.xpTextBox.TabIndex = 8;
         this.xpTextBox.WordWrap = false;
-        // 
-        // xpLabel
-        // 
-        this.xpLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
-        this.xpLabel.Location = new System.Drawing.Point(15, 59);
-        this.xpLabel.Name = "xpLabel";
-        this.xpLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-        this.xpLabel.Size = new System.Drawing.Size(166, 18);
-        this.xpLabel.TabIndex = 8;
-        this.xpLabel.Text = "XP";
-        this.xpLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
         // 
         // levelNumericUpDown
         // 
@@ -525,18 +373,6 @@ internal partial class CharacterEditDialog
         0});
         this.levelNumericUpDown.ValueChanged += new System.EventHandler(this.LevelNumericUpDown_ValueChanged);
         // 
-        // levelLabel
-        // 
-        this.levelLabel.BackColor = System.Drawing.Color.Transparent;
-        this.levelLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
-        this.levelLabel.Location = new System.Drawing.Point(15, 29);
-        this.levelLabel.Name = "levelLabel";
-        this.levelLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-        this.levelLabel.Size = new System.Drawing.Size(166, 18);
-        this.levelLabel.TabIndex = 6;
-        this.levelLabel.Text = "Level";
-        this.levelLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-        // 
         // ResetMasteriesScalingButton
         // 
         this.ResetMasteriesScalingButton.BackColor = System.Drawing.Color.Transparent;
@@ -548,7 +384,7 @@ internal partial class CharacterEditDialog
         this.ResetMasteriesScalingButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
         this.ResetMasteriesScalingButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ResetMasteriesScalingButton.Image = ((System.Drawing.Image)(resources.GetObject("ResetMasteriesScalingButton.Image")));
-        this.ResetMasteriesScalingButton.Location = new System.Drawing.Point(31, 450);
+        this.ResetMasteriesScalingButton.Location = new System.Drawing.Point(8, 330);
         this.ResetMasteriesScalingButton.Name = "ResetMasteriesScalingButton";
         this.ResetMasteriesScalingButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetMasteriesScalingButton.OverBitmap")));
         this.ResetMasteriesScalingButton.Size = new System.Drawing.Size(137, 30);
@@ -559,86 +395,8 @@ internal partial class CharacterEditDialog
         this.ResetMasteriesScalingButton.UseCustomGraphic = true;
         this.ResetMasteriesScalingButton.UseVisualStyleBackColor = false;
         this.ResetMasteriesScalingButton.Click += new System.EventHandler(this.ResetMasteriesScalingButton_Click);
-        // 
-        // SkillsGroupBox
-        // 
-        this.SkillsGroupBox.BackColor = System.Drawing.Color.Transparent;
-        this.SkillsGroupBox.Controls.Add(this.SkillsTabControl);
-        this.SkillsGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.SkillsGroupBox.ForeColor = System.Drawing.Color.Gold;
-        this.SkillsGroupBox.Location = new System.Drawing.Point(735, 28);
-        this.SkillsGroupBox.Name = "SkillsGroupBox";
-        this.SkillsGroupBox.Padding = new System.Windows.Forms.Padding(6);
-        this.SkillsGroupBox.Size = new System.Drawing.Size(515, 406);
-        this.SkillsGroupBox.TabIndex = 19;
-        this.SkillsGroupBox.TabStop = false;
-        this.SkillsGroupBox.Text = "Skills";
-        // 
-        // SkillsTabControl
-        // 
-        this.SkillsTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-        this.SkillsTabControl.Name = "SkillsTabControl";
-        this.SkillsTabControl.TabIndex = 0;
-        // 
-        // MasteriesGroupBox
-        // 
-        this.MasteriesGroupBox.BackColor = System.Drawing.Color.Transparent;
-        this.MasteriesGroupBox.Controls.Add(this.Mastery2ValueScalingLabel);
-        this.MasteriesGroupBox.Controls.Add(this.Mastery1ValueScalingLabel);
-        this.MasteriesGroupBox.Controls.Add(this.Mastery2NameScalingLabel);
-        this.MasteriesGroupBox.Controls.Add(this.Mastery1NameScalingLabel);
-        this.MasteriesGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.MasteriesGroupBox.ForeColor = System.Drawing.Color.Gold;
-        this.MasteriesGroupBox.Location = new System.Drawing.Point(31, 246);
-        this.MasteriesGroupBox.Name = "MasteriesGroupBox";
-        this.MasteriesGroupBox.Size = new System.Drawing.Size(684, 88);
-        this.MasteriesGroupBox.TabIndex = 17;
-        this.MasteriesGroupBox.TabStop = false;
-        this.MasteriesGroupBox.Text = "Masteries";
-        // 
-        // Mastery2ValueScalingLabel
-        // 
-        this.Mastery2ValueScalingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
-        this.Mastery2ValueScalingLabel.Location = new System.Drawing.Point(206, 55);
-        this.Mastery2ValueScalingLabel.Name = "Mastery2ValueScalingLabel";
-        this.Mastery2ValueScalingLabel.Size = new System.Drawing.Size(436, 18);
-        this.Mastery2ValueScalingLabel.TabIndex = 21;
-        this.Mastery2ValueScalingLabel.Tag = "{0} skills, {1} points";
-        this.Mastery2ValueScalingLabel.Text = "{0} skills, {1} points";
-        this.Mastery2ValueScalingLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-        // 
-        // Mastery1ValueScalingLabel
-        // 
-        this.Mastery1ValueScalingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
-        this.Mastery1ValueScalingLabel.Location = new System.Drawing.Point(206, 25);
-        this.Mastery1ValueScalingLabel.Name = "Mastery1ValueScalingLabel";
-        this.Mastery1ValueScalingLabel.Size = new System.Drawing.Size(436, 18);
-        this.Mastery1ValueScalingLabel.TabIndex = 20;
-        this.Mastery1ValueScalingLabel.Tag = "{0} skills, {1} points";
-        this.Mastery1ValueScalingLabel.Text = "{0} skills, {1} points";
-        this.Mastery1ValueScalingLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-        // 
-        // Mastery2NameScalingLabel
-        // 
-        this.Mastery2NameScalingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
-        this.Mastery2NameScalingLabel.Location = new System.Drawing.Point(6, 55);
-        this.Mastery2NameScalingLabel.Name = "Mastery2NameScalingLabel";
-        this.Mastery2NameScalingLabel.Size = new System.Drawing.Size(194, 18);
-        this.Mastery2NameScalingLabel.TabIndex = 19;
-        this.Mastery2NameScalingLabel.Tag = "{0} :";
-        this.Mastery2NameScalingLabel.Text = "Defense :";
-        this.Mastery2NameScalingLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-        // 
-        // Mastery1NameScalingLabel
-        // 
-        this.Mastery1NameScalingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
-        this.Mastery1NameScalingLabel.Location = new System.Drawing.Point(6, 25);
-        this.Mastery1NameScalingLabel.Name = "Mastery1NameScalingLabel";
-        this.Mastery1NameScalingLabel.Size = new System.Drawing.Size(194, 18);
-        this.Mastery1NameScalingLabel.TabIndex = 7;
-        this.Mastery1NameScalingLabel.Tag = "{0} :";
-        this.Mastery1NameScalingLabel.Text = "Warfare :";
-        this.Mastery1NameScalingLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+        this.Controls.Add(this.ResetMasteriesScalingButton);
+        this.Controls.Add(this.ResetAttributesScalingButton);
         // 
         // ResetAttributesScalingButton
         // 
@@ -651,7 +409,7 @@ internal partial class CharacterEditDialog
         this.ResetAttributesScalingButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
         this.ResetAttributesScalingButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ResetAttributesScalingButton.Image = ((System.Drawing.Image)(resources.GetObject("ResetAttributesScalingButton.Image")));
-        this.ResetAttributesScalingButton.Location = new System.Drawing.Point(189, 450);
+        this.ResetAttributesScalingButton.Location = new System.Drawing.Point(166, 330);
         this.ResetAttributesScalingButton.Name = "ResetAttributesScalingButton";
         this.ResetAttributesScalingButton.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ResetAttributesScalingButton.OverBitmap")));
         this.ResetAttributesScalingButton.Size = new System.Drawing.Size(137, 30);
@@ -668,13 +426,7 @@ internal partial class CharacterEditDialog
         this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
         this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-        this.ClientSize = new System.Drawing.Size(1276, 500);
-        this.Controls.Add(this.SkillsGroupBox);
-        this.Controls.Add(this.ResetAttributesScalingButton);
-        this.Controls.Add(this.MasteriesGroupBox);
-        this.Controls.Add(this.ResetMasteriesScalingButton);
-        this.Controls.Add(this.levelingGroupBox);
-        this.Controls.Add(this.attribGroupBox);
+        this.ClientSize = new System.Drawing.Size(1010, 710);
         this.Controls.Add(this.cancel);
         this.Controls.Add(this.ok);
         this.DrawCustomBorder = true;
@@ -693,61 +445,31 @@ internal partial class CharacterEditDialog
         this.Load += new System.EventHandler(this.CharacterEditDlg_Load);
         this.Controls.SetChildIndex(this.ok, 0);
         this.Controls.SetChildIndex(this.cancel, 0);
-        this.Controls.SetChildIndex(this.attribGroupBox, 0);
-        this.Controls.SetChildIndex(this.levelingGroupBox, 0);
-        this.Controls.SetChildIndex(this.ResetMasteriesScalingButton, 0);
-        this.Controls.SetChildIndex(this.MasteriesGroupBox, 0);
-        this.Controls.SetChildIndex(this.ResetAttributesScalingButton, 0);
-        this.Controls.SetChildIndex(this.SkillsGroupBox, 0);
-        this.attribGroupBox.ResumeLayout(false);
         ((System.ComponentModel.ISupportInitialize)(this.manacUpDown)).EndInit();
         ((System.ComponentModel.ISupportInitialize)(this.healthUpDown)).EndInit();
         ((System.ComponentModel.ISupportInitialize)(this.intelligenceUpDown)).EndInit();
         ((System.ComponentModel.ISupportInitialize)(this.dexterityUpDown)).EndInit();
         ((System.ComponentModel.ISupportInitialize)(this.strengthUpDown)).EndInit();
-        this.levelingGroupBox.ResumeLayout(false);
-        this.levelingGroupBox.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)(this.skillPointsNumericUpDown)).EndInit();
         ((System.ComponentModel.ISupportInitialize)(this.attributeNumericUpDown)).EndInit();
         ((System.ComponentModel.ISupportInitialize)(this.levelNumericUpDown)).EndInit();
-        this.MasteriesGroupBox.ResumeLayout(false);
-        this.SkillsGroupBox.ResumeLayout(false);
         this.ResumeLayout(false);
 
 	}
 
 	#endregion
 
-	private ScalingLabel strengthLabel;
-	private ScalingLabel dexterityLabel;
-	private ScalingLabel IntelligenceLabel;
-	private ScalingLabel healthLabel;
-	private ScalingLabel manaLabel;
-	private System.Windows.Forms.GroupBox attribGroupBox;
 	private System.Windows.Forms.NumericUpDown manacUpDown;
 	private System.Windows.Forms.NumericUpDown healthUpDown;
 	private System.Windows.Forms.NumericUpDown intelligenceUpDown;
 	private System.Windows.Forms.NumericUpDown dexterityUpDown;
 	private System.Windows.Forms.NumericUpDown strengthUpDown;
-	private System.Windows.Forms.GroupBox levelingGroupBox;
 	private System.Windows.Forms.TextBox xpTextBox;
-	private ScalingLabel xpLabel;
 	private System.Windows.Forms.NumericUpDown levelNumericUpDown;
-	private ScalingLabel levelLabel;
 	private System.Windows.Forms.NumericUpDown attributeNumericUpDown;
-	private ScalingLabel attributeLabel;
 	private System.Windows.Forms.NumericUpDown skillPointsNumericUpDown;
-	private ScalingLabel skillPointsLabel;
-	private ScalingLabel difficultyLabel;
 	private System.Windows.Forms.ComboBox difficultlyComboBox;
 	private ScalingCheckBox levelingCheckBox;
 	private ScalingButton ResetMasteriesScalingButton;
-	private System.Windows.Forms.GroupBox MasteriesGroupBox;
-	private ScalingLabel Mastery2ValueScalingLabel;
-	private ScalingLabel Mastery1ValueScalingLabel;
-	private ScalingLabel Mastery2NameScalingLabel;
-	private ScalingLabel Mastery1NameScalingLabel;
 	private ScalingButton ResetAttributesScalingButton;
-	private System.Windows.Forms.GroupBox SkillsGroupBox;
-	private System.Windows.Forms.TabControl SkillsTabControl;
 }

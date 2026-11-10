@@ -1047,8 +1047,9 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 		// Misspelling
 		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "SKILLCHARGEDURATION"))
 			return "SkillChargeDurationMod";
+		// The number of charge levels: "7 Charge Levels" (the game's SkillChargeMax).
 		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "SKILLCHARGELEVEL"))
-			return "SkillChargeDuration";
+			return "SkillChargeMax";
 		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "PIERCINGPROJECTILE"))
 			return "ProjectilePiercingChance";
 		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "REFRESHTIME"))

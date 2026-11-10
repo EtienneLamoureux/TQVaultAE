@@ -558,15 +558,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Attribute Points.
-        /// </summary>
-        public static string CEAttributePoints {
-            get {
-                return ResourceManager.GetString("CEAttributePoints", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Base Attributes.
         /// </summary>
         public static string CEAttributes {
@@ -657,15 +648,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Skills.
-        /// </summary>
-        public static string CESkills {
-            get {
-                return ResourceManager.GetString("CESkills", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to (None).
         /// </summary>
         public static string CEMasteryNone {
@@ -684,15 +666,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Points spent: {0}.
-        /// </summary>
-        public static string CEMasteryPointsSpent {
-            get {
-                return ResourceManager.GetString("CEMasteryPointsSpent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Mastery {0}.
         /// </summary>
         public static string CEMasterySlot {
@@ -702,47 +675,128 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Skill.
+        ///   Looks up a localized string similar to Character.
         /// </summary>
-        public static string CESkillName {
+        public static string CECharacter {
             get {
-                return ResourceManager.GetString("CESkillName", resourceCulture);
+                return ResourceManager.GetString("CECharacter", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Requires.
+        ///   Looks up a localized string similar to Left click: +1 point, right click: -1. With Shift: to the highest or lowest level.
         /// </summary>
-        public static string CESkillRequires {
+        public static string CESkillPaneHint {
             get {
-                return ResourceManager.GetString("CESkillRequires", resourceCulture);
+                return ResourceManager.GetString("CESkillPaneHint", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Level.
+        ///   Looks up a localized string similar to Base {0}, {1:+0;-0;+0} from equipment and skills. Left click.
         /// </summary>
-        public static string CESkillLevel {
+        public static string CEAttributeToolTip {
             get {
-                return ResourceManager.GetString("CESkillLevel", resourceCulture);
+                return ResourceManager.GetString("CEAttributeToolTip", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Max.
+        ///   Looks up a localized string similar to {0} point.
         /// </summary>
-        public static string CESkillMax {
+        public static string CEMasteryPoint {
             get {
-                return ResourceManager.GetString("CESkillMax", resourceCulture);
+                return ResourceManager.GetString("CEMasteryPoint", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Gear.
+        ///   Looks up a localized string similar to {0} points.
         /// </summary>
-        public static string CESkillGear {
+        public static string CEMasteryPoints {
             get {
-                return ResourceManager.GetString("CESkillGear", resourceCulture);
+                return ResourceManager.GetString("CEMasteryPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} skill.
+        /// </summary>
+        public static string CEMasterySkill {
+            get {
+                return ResourceManager.GetString("CEMasterySkill", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} skills.
+        /// </summary>
+        public static string CEMasterySkills {
+            get {
+                return ResourceManager.GetString("CEMasterySkills", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}, {1}.
+        /// </summary>
+        public static string CEMasterySummary {
+            get {
+                return ResourceManager.GetString("CEMasterySummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Statistics.
+        /// </summary>
+        public static string CEStatistics {
+            get {
+                return ResourceManager.GetString("CEStatistics", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Include buffs.
+        /// </summary>
+        public static string CEIncludeBuffs {
+            get {
+                return ResourceManager.GetString("CEIncludeBuffs", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The difficulty played: Epic and Legendary lower the resistan.
+        /// </summary>
+        public static string CEStatisticsDifficultyToolTip {
+            get {
+                return ResourceManager.GetString("CEStatisticsDifficultyToolTip", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Counts the auras and buffs of the skills as if they were act.
+        /// </summary>
+        public static string CEIncludeBuffsToolTip {
+            get {
+                return ResourceManager.GetString("CEIncludeBuffsToolTip", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Weapon {0}, added by the gear and the skills {1}..
+        /// </summary>
+        public static string CEOffenseDamageToolTip {
+            get {
+                return ResourceManager.GetString("CEOffenseDamageToolTip", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Requires mastery level {0}.
+        /// </summary>
+        public static string CESkillRequiresMastery {
+            get {
+                return ResourceManager.GetString("CESkillRequiresMastery", resourceCulture);
             }
         }
         

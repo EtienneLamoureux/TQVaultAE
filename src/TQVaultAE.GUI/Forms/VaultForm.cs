@@ -166,6 +166,48 @@ public partial class VaultForm : Form, IScalingControl
 		this.USettings = this.Services.Settings;
 
 		InitForm();
+
+		this.FontService.FontChanged += this.FontService_FontChanged;
+	}
+
+	/// <summary>
+	/// The base font changed in the settings: the window and its controls take it, keeping their sizes, so no restart
+	/// is needed.
+	/// </summary>
+	private void FontService_FontChanged(object? sender, EventArgs e)
+	{
+		if (this.IsDisposed || this.Disposing)
+			return;
+
+		if (this.InvokeRequired)
+		{
+			this.BeginInvoke(() => this.FontService_FontChanged(sender, e));
+			return;
+		}
+
+		this.OnBaseFontChanged();
+	}
+
+	/// <summary>
+	/// Moves the window's fonts to the base font in use (<see cref="IFontService.Rebase"/>), then lays it out and paints it
+	/// again. A window keeping fonts outside its controls overrides it and calls the base.
+	/// </summary>
+	protected virtual void OnBaseFontChanged()
+	{
+		if (this.titleFont is not null)
+		{
+			// Its own copy, like the one the constructor makes: the service's fonts are shared.
+			var rebased = this.FontService.Rebase(this.titleFont);
+			if (!ReferenceEquals(rebased, this.titleFont))
+			{
+				var previous = this.titleFont;
+				this.titleFont = (Font)rebased.Clone();
+				previous.Dispose();
+			}
+		}
+
+		FontRebaser.Apply(this, this.FontService);
+		this.Invalidate(true);
 	}
 
 	[MemberNotNull(nameof(bottomBorder), nameof(bottomLeftCorner), nameof(bottomRightCorner), nameof(sideBorder), nameof(systemMenu), nameof(topBorder))]

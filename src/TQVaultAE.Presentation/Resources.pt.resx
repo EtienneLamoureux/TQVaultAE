@@ -970,9 +970,6 @@ Quando ativado, o equipamento do personagem será somente leitura, você não po
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Permitir recursos de edição de personagens</value>
   </data>
-  <data name="CEAttributePoints" xml:space="preserve">
-    <value>Pontos de atributos</value>
-  </data>
   <data name="CEAttributes" xml:space="preserve">
     <value>Atributos básicos</value>
   </data>

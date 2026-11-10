@@ -927,9 +927,6 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Zezwalaj na funkcje edycji znaków</value>
   </data>
-  <data name="CEAttributePoints" xml:space="preserve">
-    <value>Punkty atrybutów</value>
-  </data>
   <data name="CEAttributes" xml:space="preserve">
     <value>Atrybuty podstawowe</value>
   </data>

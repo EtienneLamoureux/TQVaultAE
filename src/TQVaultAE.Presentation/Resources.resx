@@ -983,9 +983,6 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
 	<data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Allow Character Editing Features</value>
   </data>
-	<data name="CEAttributePoints" xml:space="preserve">
-    <value>Attribute Points</value>
-  </data>
 	<data name="CEAttributes" xml:space="preserve">
     <value>Base Attributes</value>
   </data>
@@ -1016,35 +1013,56 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
 	<data name="CESkillPoints" xml:space="preserve">
     <value>Skill Points</value>
   </data>
-	<data name="CESkills" xml:space="preserve">
-    <value>Skills</value>
-  </data>
 	<data name="CEMasteryNone" xml:space="preserve">
     <value>(None)</value>
   </data>
 	<data name="CEMasteryLevel" xml:space="preserve">
     <value>Mastery level</value>
   </data>
-	<data name="CEMasteryPointsSpent" xml:space="preserve">
-    <value>Points spent: {0}</value>
-  </data>
 	<data name="CEMasterySlot" xml:space="preserve">
     <value>Mastery {0}</value>
   </data>
-	<data name="CESkillName" xml:space="preserve">
-    <value>Skill</value>
+	<data name="CECharacter" xml:space="preserve">
+    <value>Character</value>
   </data>
-	<data name="CESkillRequires" xml:space="preserve">
-    <value>Requires</value>
+	<data name="CESkillPaneHint" xml:space="preserve">
+    <value>Left click: +1 point, right click: -1. With Shift: to the highest or lowest level.</value>
   </data>
-	<data name="CESkillLevel" xml:space="preserve">
-    <value>Level</value>
+	<data name="CESkillRequiresMastery" xml:space="preserve">
+    <value>Requires mastery level {0}</value>
   </data>
-	<data name="CESkillMax" xml:space="preserve">
-    <value>Max</value>
+	<data name="CEAttributeToolTip" xml:space="preserve">
+    <value>Base {0}, {1:+0;-0;+0} from equipment and skills. Left click on + spends a point, right click takes it back; with Shift: all the points, or back to the start.</value>
   </data>
-	<data name="CESkillGear" xml:space="preserve">
-    <value>Gear</value>
+	<data name="CEMasterySummary" xml:space="preserve">
+    <value>{0}, {1}</value>
+  </data>
+	<data name="CEMasterySkill" xml:space="preserve">
+    <value>{0} skill</value>
+  </data>
+	<data name="CEMasterySkills" xml:space="preserve">
+    <value>{0} skills</value>
+  </data>
+	<data name="CEMasteryPoint" xml:space="preserve">
+    <value>{0} point</value>
+  </data>
+	<data name="CEMasteryPoints" xml:space="preserve">
+    <value>{0} points</value>
+  </data>
+	<data name="CEStatistics" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
+	<data name="CEIncludeBuffs" xml:space="preserve">
+    <value>Include buffs</value>
+  </data>
+	<data name="CEStatisticsDifficultyToolTip" xml:space="preserve">
+    <value>The difficulty played: Epic and Legendary lower the resistances (-40 / -100, as read in the game data).</value>
+  </data>
+	<data name="CEIncludeBuffsToolTip" xml:space="preserve">
+    <value>Counts the auras and buffs of the skills as if they were active; else only the passive skills count.</value>
+  </data>
+	<data name="CEOffenseDamageToolTip" xml:space="preserve">
+    <value>Weapon {0}, added by the gear and the skills {1}.</value>
   </data>
 	<data name="CEGearBonusSkill" xml:space="preserve">
     <value>+{0} to {1} (equipment)</value>
