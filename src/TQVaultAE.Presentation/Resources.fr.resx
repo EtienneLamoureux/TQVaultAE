@@ -1008,7 +1008,19 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
     <value>Base {0}, {1:+0;-0;+0} des équipements et compétences. Clic gauche sur + : dépense un point, clic droit : le reprend ; avec Maj : tous les points, ou retour au départ.</value>
   </data>
 	<data name="CEMasterySummary" xml:space="preserve">
-    <value>{0} compétences, {1} points</value>
+    <value>{0}, {1}</value>
+  </data>
+	<data name="CEMasterySkill" xml:space="preserve">
+    <value>{0} compétence</value>
+  </data>
+	<data name="CEMasterySkills" xml:space="preserve">
+    <value>{0} compétences</value>
+  </data>
+	<data name="CEMasteryPoint" xml:space="preserve">
+    <value>{0} point</value>
+  </data>
+	<data name="CEMasteryPoints" xml:space="preserve">
+    <value>{0} points</value>
   </data>
 	<data name="CEComputedInGame" xml:space="preserve">
     <value>Le jeu calcule ces valeurs en cours de partie : elles ne sont pas dans la sauvegarde.</value>

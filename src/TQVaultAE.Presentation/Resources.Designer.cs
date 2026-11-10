@@ -702,7 +702,43 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} skills, {1} points.
+        ///   Looks up a localized string similar to {0} point.
+        /// </summary>
+        public static string CEMasteryPoint {
+            get {
+                return ResourceManager.GetString("CEMasteryPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} points.
+        /// </summary>
+        public static string CEMasteryPoints {
+            get {
+                return ResourceManager.GetString("CEMasteryPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} skill.
+        /// </summary>
+        public static string CEMasterySkill {
+            get {
+                return ResourceManager.GetString("CEMasterySkill", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} skills.
+        /// </summary>
+        public static string CEMasterySkills {
+            get {
+                return ResourceManager.GetString("CEMasterySkills", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}, {1}.
         /// </summary>
         public static string CEMasterySummary {
             get {

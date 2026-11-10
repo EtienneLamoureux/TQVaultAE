@@ -40,7 +40,8 @@ internal sealed partial class CharacterSidePanel : Control
 	/// <summary>Top of the titles and first rows of the three parts, rows every 20 pixels.</summary>
 	private const int LevelingTop = 6;
 	private const int MasteriesTop = 134;
-	private const int StatisticsTop = 200;
+	/// <summary>Two lines per mastery (its name, then what it has), two masteries at most.</summary>
+	private const int StatisticsTop = MasteriesTop + 20 + 4 * 18 + 12;
 	private const int RowHeight = 20;
 	private const int PanelHeight = StatisticsTop + 26 + 2 * RowHeight + 6;
 
@@ -156,13 +157,12 @@ internal sealed partial class CharacterSidePanel : Control
 
 		this.Bar(g, MasteriesTop - 8);
 		this.DrawText(g, view.MasteriesTitle, this.TitleFont, Color.White, new Rectangle(15, MasteriesTop, 228, 18), StringAlignment.Near);
+		// The name on its own line, whole in any language; what the mastery has under it, indented.
 		for (int i = 0; i < view.Masteries.Count; i++)
 		{
-			int y = MasteriesTop + 20 + i * 18;
-			var valueWidth = string.IsNullOrEmpty(view.Masteries[i].Value) ? 0
-				: (int)Math.Ceiling(g.MeasureString(view.Masteries[i].Value, this.TextFont ?? this.Font).Width / this._panelScale) + 4;
-			this.DrawText(g, view.Masteries[i].Value, this.TextFont, Color.White, new Rectangle(243 - valueWidth, y, valueWidth, 16), StringAlignment.Far);
-			this.DrawText(g, view.Masteries[i].Name, this.TextFont, Grey, new Rectangle(15, y, 228 - valueWidth, 16), StringAlignment.Near);
+			int y = MasteriesTop + 20 + i * 2 * 18;
+			this.DrawText(g, view.Masteries[i].Name, this.TextFont, Grey, new Rectangle(15, y, 228, 16), StringAlignment.Near);
+			this.DrawText(g, view.Masteries[i].Value, this.TextFont, Color.White, new Rectangle(30, y + 18, 213, 16), StringAlignment.Near);
 		}
 
 		this.Bar(g, StatisticsTop - 8);

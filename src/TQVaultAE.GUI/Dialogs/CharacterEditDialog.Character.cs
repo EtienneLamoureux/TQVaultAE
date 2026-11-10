@@ -174,21 +174,20 @@ internal sealed partial class CharacterEditDialog
 	}
 
 	/// <summary>
-	/// TQVault's medallion picture (<see cref="Images.tqmedallion"/>) in the free part of the Character page, right of the
-	/// statistics panel and under the reset buttons, against the right margin, at most twice its size so that it stays
-	/// sharp.
+	/// TQVault's medallion picture (<see cref="Images.tqmedallion"/>) in the free column of the Character page, right of
+	/// the side panel, at most twice its size so that it stays sharp.
 	/// </summary>
 	private void AddMedallion(Panel page, float scale)
 	{
 		var medallion = Images.tqmedallion;
 		var area = Rectangle.FromLTRB(
-			this._stats.Right + (int)Math.Round(40 * scale),
-			this.ResetMasteriesScalingButton.Bottom + (int)Math.Round(30 * scale),
+			this._side.Right + (int)Math.Round(24 * scale),
+			this._side.Top,
 			page.Width - (int)Math.Round(24 * scale),
 			page.Height - (int)Math.Round(24 * scale));
 		if (area.Width < medallion.Width / 2 || area.Height < medallion.Height / 2)
 		{
-			// No room left under the side panel and the reset buttons.
+			// No room left right of the side panel.
 			medallion.Dispose();
 			return;
 		}
@@ -202,8 +201,8 @@ internal sealed partial class CharacterEditDialog
 			SizeMode = PictureBoxSizeMode.Zoom,
 			BackColor = Color.Transparent,
 			Size = size,
-			// Against the right margin, centred in the height left.
-			Location = new Point(area.Right - size.Width, area.Y + (area.Height - size.Height) / 2),
+			// Centred in the column right of the side panel.
+			Location = new Point(area.X + (area.Width - size.Width) / 2, area.Y + (area.Height - size.Height) / 2),
 		};
 		page.Controls.Add(picture);
 		this.FormClosed += (_, _) => medallion.Dispose();
@@ -366,7 +365,9 @@ internal sealed partial class CharacterEditDialog
 				.Select(skills.GetMasterySummary)
 				.OfType<MasterySummary>()
 				.Select(s => (this.TranslateTag(s.Mastery.NameTag, s.Mastery.Mastery.ToString()),
-					string.Format(culture, Resources.CEMasterySummary, s.SkillCount, s.PointsSpent)))],
+					string.Format(culture, Resources.CEMasterySummary,
+						string.Format(culture, s.SkillCount == 1 ? Resources.CEMasterySkill : Resources.CEMasterySkills, s.SkillCount),
+						string.Format(culture, s.PointsSpent == 1 ? Resources.CEMasteryPoint : Resources.CEMasteryPoints, s.PointsSpent))))],
 			StatisticsTitle = Resources.CEStatistics,
 			StatisticsLabels = [Resources.CEDifficulty, Resources.CEIncludeBuffs],
 		};

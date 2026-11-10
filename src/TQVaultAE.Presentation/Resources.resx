@@ -1049,7 +1049,19 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
     <value>Base {0}, {1:+0;-0;+0} from equipment and skills. Left click on + spends a point, right click takes it back; with Shift: all the points, or back to the start.</value>
   </data>
 	<data name="CEMasterySummary" xml:space="preserve">
-    <value>{0} skills, {1} points</value>
+    <value>{0}, {1}</value>
+  </data>
+	<data name="CEMasterySkill" xml:space="preserve">
+    <value>{0} skill</value>
+  </data>
+	<data name="CEMasterySkills" xml:space="preserve">
+    <value>{0} skills</value>
+  </data>
+	<data name="CEMasteryPoint" xml:space="preserve">
+    <value>{0} point</value>
+  </data>
+	<data name="CEMasteryPoints" xml:space="preserve">
+    <value>{0} points</value>
   </data>
 	<data name="CEComputedInGame" xml:space="preserve">
     <value>The game computes these values while playing: they are not in the save.</value>
