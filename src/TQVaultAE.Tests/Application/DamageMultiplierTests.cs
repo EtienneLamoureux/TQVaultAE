@@ -32,4 +32,13 @@ public class DamageMultiplierTests
 	[InlineData("0", "physicalDamageDV")]
 	public void StrengthOrNoAttribute_HasNone(string equation, string variable)
 		=> DamageMultiplier.Of(equation, variable, 300, 230, 182, 40).Should().BeNull();
+
+	// A character in the game (71.5 Strength, 60 Dexterity): Weapon 1.14 and Spell 1.11 (Str), Weapon 1.15 and Spell 1.06 (Dex).
+	[Theory]
+	[InlineData("(physicalDamageDV * ((strengthDV/500)+1)) + (strengthDV*0.04)", "physicalDamageDV", "strengthDV", 71.5, 1.143)]
+	[InlineData("physicalDamageDV * ((strengthDV/650)+1)", "physicalDamageDV", "strengthDV", 71.5, 1.11)]
+	[InlineData("(((pierceDamageDV / ((strengthDV/500)+1)) * ((strengthDV/2000)+1)) * ((dexterityDV/400)+1)) + (dexterityDV*0.03)", "pierceDamageDV", "dexterityDV", 60, 1.15)]
+	[InlineData("pierceDamageDV * ((dexterityDV/1000) +1)", "pierceDamageDV", "dexterityDV", 60, 1.06)]
+	public void Slope_CountsTheOneAttribute_WithoutTheFlatPart(string equation, string variable, string attribute, double value, double expected)
+		=> DamageMultiplier.Slope(equation, variable, attribute, value).Should().BeApproximately(expected, 1e-3);
 }

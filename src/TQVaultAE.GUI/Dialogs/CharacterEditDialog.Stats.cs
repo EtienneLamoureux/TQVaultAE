@@ -37,7 +37,8 @@ internal sealed partial class CharacterEditDialog
 	/// <summary>Damage icons of tab III, the tag of their name, and the tags of their damage % and damage over time % lines.</summary>
 	private static readonly (StatDamage Damage, string Icon, string Tag, string? DamageTag, string? DurationDamageTag)[] DamageIcons =
 	[
-		(StatDamage.Physical, """XPack2\ingameui\characterscreen\resistances\physicalicon01.tex""", "DamagePhysical", "DamageModifierPhysical", "DamageDurationModifierPhysical"),
+		// The game's physical rollover has no damage over time block.
+		(StatDamage.Physical, """XPack2\ingameui\characterscreen\resistances\physicalicon01.tex""", "DamagePhysical", "DamageModifierPhysical", null),
 		(StatDamage.Pierce, """InGameUI\CharacterScreen\Resistances\PiercingIcon01.tex""", "DamagePierce", "DamageModifierPierce", null),
 		(StatDamage.Bleeding, """InGameUI\CharacterScreen\Resistances\BleedingIcon01.tex""", "DamageDurationBleeding", null, "DamageDurationModifierBleeding"),
 		(StatDamage.Poison, """InGameUI\CharacterScreen\Resistances\PoisonIcon01.tex""", "DamageDurationPoison", null, "DamageDurationModifierPoison"),
@@ -171,10 +172,27 @@ internal sealed partial class CharacterEditDialog
 				lines.Add(Game(tag, fallback).Replace("{%.2f0}", multiplier.Value.ToString("0.00", culture), StringComparison.Ordinal));
 			}
 
+			// Physical and pierce scale with Strength or Dexterity differently with a weapon and without: the game shows
+			// both slopes, each with that attribute alone.
+			void WeaponAndSpell(string weaponEquation, string spellEquation, string variable, string attribute, double value, string suffix)
+			{
+				foreach (var (equation, kind, fallback) in (ReadOnlySpan<(string, string, string)>)[(weaponEquation, "_W", "Weapon"), (spellEquation, "_S", "Spell")])
+				{
+					var slope = DamageMultiplier.Slope(balance.DamageEquation(equation), variable, attribute, value);
+					lines.Add(Game($"x4tagCAttribBonus{suffix}{kind}", $"*{{%.2f0}} {fallback} Multiplier ({suffix})")
+						.Replace("{%.2f0}", slope.ToString("0.00", culture), StringComparison.Ordinal));
+				}
+			}
+
 			if (damageTag is not null)
 			{
 				lines.AddRange([name, Signed(damageTag, "{%+.0f0}%", bonus.Damage)]);
-				Multiplier(equations.Direct);
+				if (damage == StatDamage.Physical)
+					WeaponAndSpell("physicalDamageEquation", "physicalNonWeaponDamageEquation", "physicalDamageDV", "strengthDV", stats.Strength, "Str");
+				else if (damage == StatDamage.Pierce)
+					WeaponAndSpell("pierceDamageEquation", "pierceNonWeaponDamageEquation", "pierceDamageDV", "dexterityDV", stats.Dexterity, "Dex");
+				else
+					Multiplier(equations.Direct);
 			}
 
 			if (durationDamageTag is not null)

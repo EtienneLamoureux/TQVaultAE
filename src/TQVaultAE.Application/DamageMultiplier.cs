@@ -59,4 +59,28 @@ public static class DamageMultiplier
 		var value = At(1) - At(0);
 		return value > 0 ? new GlobalMultiplier(value, used[0].Attribute) : null;
 	}
+
+	/// <summary>
+	/// The "*1.14 Weapon Multiplier (Str)" and "*1.11 Spell Multiplier (Str)" lines of the physical and pierce rollovers:
+	/// the slope of an equation with one attribute at its value and the others at 0 (the pierce weapon equation at 60
+	/// Dexterity gives 1.15, its Strength part left out).
+	/// </summary>
+	/// <param name="equation">The equation, such as <c>physicalDamageEquation</c>'s.</param>
+	/// <param name="damageVariable">The damage variable in it, such as <c>physicalDamageDV</c>.</param>
+	/// <param name="attributeVariable">The attribute variable, such as <c>strengthDV</c>.</param>
+	/// <param name="attribute">The attribute's value.</param>
+	public static double Slope(string equation, string damageVariable, string attributeVariable, double attribute)
+	{
+		double At(double damage) => GameEquation.Evaluate(equation, new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase)
+		{
+			[damageVariable] = damage,
+			["strengthDV"] = 0,
+			["dexterityDV"] = 0,
+			["intelligenceDV"] = 0,
+			["characterLevelDV"] = 0,
+			[attributeVariable] = attribute,
+		});
+
+		return At(1) - At(0);
+	}
 }

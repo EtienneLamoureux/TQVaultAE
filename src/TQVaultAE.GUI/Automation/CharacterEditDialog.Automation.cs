@@ -31,6 +31,8 @@ internal sealed partial class CharacterEditDialog
 				attackSpeed = speed,
 				values,
 				stance = this._stance?.ToString(),
+				female = this.Info.IsFemale,
+				durations = this.Services.CharacterStatsService.GetAttackAnimationDurations(this.Info.IsFemale).ToDictionary(d => d.Key.ToString(), d => d.Value),
 				weapons = this._offenseGear?.Weapons.Select(w => Values(w)).ToArray(),
 				other = Values(this._offenseGear?.Other),
 				hands = new { this.Services.CharacterStatsService.GetGameBalance().HandHitDamageMin, this.Services.CharacterStatsService.GetGameBalance().HandHitDamageMax },
