@@ -24,7 +24,9 @@ Works with all expansions!
         - [Craft custom items](documentation/FORGE.md)
         - [Change items affixes](documentation/AFFIXES.md#prefix-change)
         - Duplicate any item
-    - Characters
+    - [Characters](documentation/CHAREDIT.md)
+        - Read the character window statistics (resistances, damage, DPS, ...)
+        - Edit masteries and skills in the game's skill window
         - Redisribute attribute points
         - Unlock difficulties
         - Level up
