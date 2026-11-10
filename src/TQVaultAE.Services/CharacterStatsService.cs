@@ -7,7 +7,7 @@ using TQVaultAE.Domain.Helpers;
 namespace TQVaultAE.Services;
 
 /// <inheritdoc/>
-public class CharacterStatsService(IDatabase database, IItemProvider itemProvider) : ICharacterStatsService
+public class CharacterStatsService(IDatabase database, IItemProvider itemProvider) : ICharacterStatsService, IGameDataCache
 {
 	private const string BuffSkillName = "buffSkillName";
 	private const string GameEngine = """records\xpack\game\gameengine.dbr""";
@@ -27,6 +27,14 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 	private GameBalance? _balance;
 	private Dictionary<WeaponStance, double>? _maleAnimations;
 	private Dictionary<WeaponStance, double>? _femaleAnimations;
+
+	/// <summary>The caps, equations and animations are the active map's: a mod can change them.</summary>
+	public void ClearGameDataCache()
+	{
+		this._balance = null;
+		this._maleAnimations = null;
+		this._femaleAnimations = null;
+	}
 
 	/// <inheritdoc/>
 	public AttributeSum GetGearAttributes(IEnumerable<Item> equipment, bool useAlternate)

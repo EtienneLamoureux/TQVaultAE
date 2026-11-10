@@ -34,7 +34,11 @@ partial class ComboBoxCharacterItem
         this.bufferedTableLayoutPanelGrid = new TQVaultAE.GUI.Components.Layout.BufferedTableLayoutPanel();
         this.bufferedFlowLayoutPanelSubTitle = new TQVaultAE.GUI.Components.Layout.BufferedFlowLayoutPanel();
         this.scalingLabelMasteries = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
+        this.bufferedFlowLayoutPanelName = new TQVaultAE.GUI.Components.Layout.BufferedFlowLayoutPanel();
+        this.bufferedFlowLayoutPanelMod = new TQVaultAE.GUI.Components.Layout.BufferedFlowLayoutPanel();
+        this.scalingLabelModded = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.scalingLabelModName = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
+        this.scalingLabelModState = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.bufferedFlowLayoutPanelTags = new TQVaultAE.GUI.Components.Layout.BufferedFlowLayoutPanel();
         this.scalingLabelTags = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.scalingLabelArchived = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
@@ -44,6 +48,8 @@ partial class ComboBoxCharacterItem
         this.scalingLabelPlayerHeader = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.bufferedTableLayoutPanelGrid.SuspendLayout();
         this.bufferedFlowLayoutPanelSubTitle.SuspendLayout();
+        this.bufferedFlowLayoutPanelName.SuspendLayout();
+        this.bufferedFlowLayoutPanelMod.SuspendLayout();
         this.bufferedFlowLayoutPanelTags.SuspendLayout();
         this.SuspendLayout();
         // 
@@ -57,8 +63,9 @@ partial class ComboBoxCharacterItem
         this.bufferedTableLayoutPanelGrid.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
         this.bufferedTableLayoutPanelGrid.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
         this.bufferedTableLayoutPanelGrid.Controls.Add(this.bufferedFlowLayoutPanelSubTitle, 0, 1);
+        this.bufferedTableLayoutPanelGrid.Controls.Add(this.bufferedFlowLayoutPanelMod, 1, 2);
         this.bufferedTableLayoutPanelGrid.Controls.Add(this.bufferedFlowLayoutPanelTags, 0, 2);
-        this.bufferedTableLayoutPanelGrid.Controls.Add(this.scalingLabelCharName, 0, 0);
+        this.bufferedTableLayoutPanelGrid.Controls.Add(this.bufferedFlowLayoutPanelName, 0, 0);
         this.bufferedTableLayoutPanelGrid.Controls.Add(this.scalingLabelCLassName, 1, 0);
         this.bufferedTableLayoutPanelGrid.Controls.Add(this.scalingLabelLevel, 2, 0);
         this.bufferedTableLayoutPanelGrid.Controls.Add(this.scalingLabelPlayerHeader, 3, 0);
@@ -80,13 +87,39 @@ partial class ComboBoxCharacterItem
         this.bufferedFlowLayoutPanelSubTitle.BackColor = System.Drawing.Color.Transparent;
         this.bufferedTableLayoutPanelGrid.SetColumnSpan(this.bufferedFlowLayoutPanelSubTitle, 4);
         this.bufferedFlowLayoutPanelSubTitle.Controls.Add(this.scalingLabelMasteries);
-        this.bufferedFlowLayoutPanelSubTitle.Controls.Add(this.scalingLabelModName);
         this.bufferedFlowLayoutPanelSubTitle.Dock = System.Windows.Forms.DockStyle.Fill;
         this.bufferedFlowLayoutPanelSubTitle.Location = new System.Drawing.Point(3, 25);
         this.bufferedFlowLayoutPanelSubTitle.Margin = new System.Windows.Forms.Padding(0);
         this.bufferedFlowLayoutPanelSubTitle.Name = "bufferedFlowLayoutPanelSubTitle";
         this.bufferedFlowLayoutPanelSubTitle.Size = new System.Drawing.Size(359, 16);
         this.bufferedFlowLayoutPanelSubTitle.TabIndex = 4;
+        //
+        // bufferedFlowLayoutPanelMod
+        //
+        this.bufferedFlowLayoutPanelMod.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+        this.bufferedFlowLayoutPanelMod.AutoSize = true;
+        this.bufferedFlowLayoutPanelMod.BackColor = System.Drawing.Color.Transparent;
+        this.bufferedTableLayoutPanelGrid.SetColumnSpan(this.bufferedFlowLayoutPanelMod, 3);
+        this.bufferedFlowLayoutPanelMod.Controls.Add(this.scalingLabelModded);
+        this.bufferedFlowLayoutPanelMod.Controls.Add(this.scalingLabelModState);
+        this.bufferedFlowLayoutPanelMod.Location = new System.Drawing.Point(224, 41);
+        this.bufferedFlowLayoutPanelMod.Margin = new System.Windows.Forms.Padding(0);
+        this.bufferedFlowLayoutPanelMod.Name = "bufferedFlowLayoutPanelMod";
+        this.bufferedFlowLayoutPanelMod.Size = new System.Drawing.Size(99, 16);
+        this.bufferedFlowLayoutPanelMod.TabIndex = 6;
+        this.bufferedFlowLayoutPanelMod.WrapContents = false;
+        //
+        // scalingLabelModded
+        //
+        this.scalingLabelModded.AutoSize = true;
+        this.scalingLabelModded.BackColor = System.Drawing.Color.Plum;
+        this.scalingLabelModded.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.25F);
+        this.scalingLabelModded.Location = new System.Drawing.Point(0, 0);
+        this.scalingLabelModded.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
+        this.scalingLabelModded.Name = "scalingLabelModded";
+        this.scalingLabelModded.Size = new System.Drawing.Size(51, 16);
+        this.scalingLabelModded.TabIndex = 0;
+        this.scalingLabelModded.Text = "Modded";
         // 
         // scalingLabelMasteries
         // 
@@ -105,25 +138,39 @@ partial class ComboBoxCharacterItem
         this.scalingLabelModName.AutoSize = true;
         this.scalingLabelModName.BackColor = System.Drawing.Color.Transparent;
         this.scalingLabelModName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.25F);
-        this.scalingLabelModName.Location = new System.Drawing.Point(174, 0);
+        this.scalingLabelModName.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+        this.scalingLabelModName.Location = new System.Drawing.Point(224, 4);
+        this.scalingLabelModName.Margin = new System.Windows.Forms.Padding(3, 0, 0, 2);
         this.scalingLabelModName.Name = "scalingLabelModName";
-        this.scalingLabelModName.Size = new System.Drawing.Size(101, 16);
-        this.scalingLabelModName.TabIndex = 4;
-        this.scalingLabelModName.Text = "Mod : Soulvizier";
+        this.scalingLabelModName.Size = new System.Drawing.Size(60, 16);
+        this.scalingLabelModName.TabIndex = 1;
+        this.scalingLabelModName.Text = "[Soulvizier]";
+        //
+        // scalingLabelModState
+        //
+        this.scalingLabelModState.AutoSize = true;
+        this.scalingLabelModState.BackColor = System.Drawing.Color.LightGreen;
+        this.scalingLabelModState.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.25F);
+        this.scalingLabelModState.Location = new System.Drawing.Point(117, 0);
+        this.scalingLabelModState.Margin = new System.Windows.Forms.Padding(0);
+        this.scalingLabelModState.Name = "scalingLabelModState";
+        this.scalingLabelModState.Size = new System.Drawing.Size(45, 16);
+        this.scalingLabelModState.TabIndex = 2;
+        this.scalingLabelModState.Text = "Linked";
         // 
         // bufferedFlowLayoutPanelTags
         // 
         this.bufferedFlowLayoutPanelTags.AutoSize = true;
         this.bufferedFlowLayoutPanelTags.BackColor = System.Drawing.Color.Transparent;
-        this.bufferedTableLayoutPanelGrid.SetColumnSpan(this.bufferedFlowLayoutPanelTags, 4);
         this.bufferedFlowLayoutPanelTags.Controls.Add(this.scalingLabelTags);
         this.bufferedFlowLayoutPanelTags.Controls.Add(this.scalingLabelArchived);
         this.bufferedFlowLayoutPanelTags.Dock = System.Windows.Forms.DockStyle.Fill;
         this.bufferedFlowLayoutPanelTags.Location = new System.Drawing.Point(3, 41);
         this.bufferedFlowLayoutPanelTags.Margin = new System.Windows.Forms.Padding(0);
         this.bufferedFlowLayoutPanelTags.Name = "bufferedFlowLayoutPanelTags";
-        this.bufferedFlowLayoutPanelTags.Size = new System.Drawing.Size(359, 16);
+        this.bufferedFlowLayoutPanelTags.Size = new System.Drawing.Size(221, 16);
         this.bufferedFlowLayoutPanelTags.TabIndex = 3;
+        this.bufferedFlowLayoutPanelTags.WrapContents = false;
         // 
         // scalingLabelTags
         // 
@@ -148,12 +195,26 @@ partial class ComboBoxCharacterItem
         this.scalingLabelArchived.TabIndex = 5;
         this.scalingLabelArchived.Text = "Archived";
         // 
+        // bufferedFlowLayoutPanelName
+        // 
+        this.bufferedFlowLayoutPanelName.AutoSize = true;
+        this.bufferedFlowLayoutPanelName.BackColor = System.Drawing.Color.Transparent;
+        this.bufferedFlowLayoutPanelName.Controls.Add(this.scalingLabelCharName);
+        this.bufferedFlowLayoutPanelName.Controls.Add(this.scalingLabelModName);
+        this.bufferedFlowLayoutPanelName.Dock = System.Windows.Forms.DockStyle.Fill;
+        this.bufferedFlowLayoutPanelName.Location = new System.Drawing.Point(3, 3);
+        this.bufferedFlowLayoutPanelName.Margin = new System.Windows.Forms.Padding(0);
+        this.bufferedFlowLayoutPanelName.Name = "bufferedFlowLayoutPanelName";
+        this.bufferedFlowLayoutPanelName.Size = new System.Drawing.Size(221, 22);
+        this.bufferedFlowLayoutPanelName.TabIndex = 7;
+        this.bufferedFlowLayoutPanelName.WrapContents = false;
+        // 
         // scalingLabelCharName
         // 
         this.scalingLabelCharName.AutoSize = true;
         this.scalingLabelCharName.BackColor = System.Drawing.Color.Transparent;
         this.scalingLabelCharName.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
-        this.scalingLabelCharName.Location = new System.Drawing.Point(3, 3);
+        this.scalingLabelCharName.Location = new System.Drawing.Point(0, 0);
         this.scalingLabelCharName.Margin = new System.Windows.Forms.Padding(0);
         this.scalingLabelCharName.Name = "scalingLabelCharName";
         this.scalingLabelCharName.Size = new System.Drawing.Size(221, 22);
@@ -211,6 +272,10 @@ partial class ComboBoxCharacterItem
         this.bufferedTableLayoutPanelGrid.PerformLayout();
         this.bufferedFlowLayoutPanelSubTitle.ResumeLayout(false);
         this.bufferedFlowLayoutPanelSubTitle.PerformLayout();
+        this.bufferedFlowLayoutPanelName.ResumeLayout(false);
+        this.bufferedFlowLayoutPanelName.PerformLayout();
+        this.bufferedFlowLayoutPanelMod.ResumeLayout(false);
+        this.bufferedFlowLayoutPanelMod.PerformLayout();
         this.bufferedFlowLayoutPanelTags.ResumeLayout(false);
         this.bufferedFlowLayoutPanelTags.PerformLayout();
         this.ResumeLayout(false);
@@ -229,6 +294,10 @@ partial class ComboBoxCharacterItem
     private ScalingLabel scalingLabelModName;
     private ScalingLabel scalingLabelArchived;
     private BufferedFlowLayoutPanel bufferedFlowLayoutPanelSubTitle;
+    private BufferedFlowLayoutPanel bufferedFlowLayoutPanelMod;
+    private BufferedFlowLayoutPanel bufferedFlowLayoutPanelName;
+    private ScalingLabel scalingLabelModded;
+    private ScalingLabel scalingLabelModState;
     private ScalingLabel scalingLabelLevel;
     private ScalingLabel scalingLabelMasteries;
 }

@@ -35,6 +35,7 @@ public class PlayerServiceTests
 	private readonly Mock<IDirectoryIO> _mockDirectoryIO;
 	private readonly Mock<IItemProvider> _mockItemProvider;
 	private readonly Mock<IDatabase> _mockDatabase;
+	private readonly Mock<IGameMapService> _mockGameMapService = new();
 	private readonly PlayerService _playerService;
 
 	/// <summary>
@@ -68,11 +69,12 @@ public class PlayerServiceTests
 		_mockTagService = new Mock<ITagService>();
 		_mockStashService = new Mock<IStashService>();
 		_mockFileIO = new Mock<FileIO>();
-		_mockPathIO = new Mock<PathIO>();
+		_mockPathIO = new Mock<PathIO> { CallBase = true };
 		_userSettings = new UserSettings();
 		_mockDirectoryIO = new Mock<IDirectoryIO>();
 		_mockItemProvider = new Mock<IItemProvider>();
 		_mockDatabase = new Mock<IDatabase>();
+		_mockGamePathService.Setup(x => x.PlayerSaveFileName).Returns("Player.chr");
 
 		// Create SessionContext - parameterless data holder
 		_sessionContext = new SessionContext();
@@ -93,7 +95,8 @@ public class PlayerServiceTests
 			_userSettings,
 			_mockDirectoryIO.Object,
 			_mockItemProvider.Object,
-			_mockDatabase.Object
+			_mockDatabase.Object,
+			_mockGameMapService.Object
 		);
 	}
 
@@ -179,11 +182,9 @@ public class PlayerServiceTests
 	{
 		// Arrange
 		var playerFolder = "/Test/Players/_TestPlayer";
-		var playerFile = "/Test/Players/TestPlayer.plr";
+		var playerFile = Path.Combine("/Test/Players/_TestPlayer", "Player.chr");
 		var playerSave = CreatePlayerSave(playerFolder);
 
-		_mockGamePathService.Setup(x => x.GetPlayerFile("TestPlayer", false, false))
-			.Returns(playerFile);
 		_mockPlayerCollectionProvider.Setup(x => x.LoadFile(It.IsAny<PlayerCollection>(), null));
 
 		// Act
@@ -195,6 +196,24 @@ public class PlayerServiceTests
 		_mockTagService.Verify(x => x.LoadTags(playerSave), Times.Once);
 	}
 
+	[Fact]
+	public void LoadPlayer_KeepsTheClassNameOfItsOwnMap_WhenAnotherMapIsActiveLater()
+	{
+		// Arrange - read with its mod's text, which renames the class
+		var playerSave = CreatePlayerSave("/Test/Players/_TestPlayer", isIT: true);
+		_mockTranslationService.Setup(x => x.TranslateXTag("tagCClass01", true, true)).Returns("Woundmender");
+		_mockPlayerCollectionProvider.Setup(x => x.LoadFile(It.IsAny<PlayerCollection>(), null))
+			.Callback<PlayerCollection, string>((pc, path) => pc.PlayerInfo = new PlayerInfo(_mockPathIO.Object) { Class = "tagCClass01", CurrentLevel = 56 });
+
+		// Act - then another map's text is active
+		_playerService.LoadPlayer(playerSave);
+		_mockTranslationService.Setup(x => x.TranslateXTag("tagCClass01", true, true)).Returns("Berserker");
+
+		// Assert
+		playerSave.ToString().Should().StartWith("TestPlayer, Woundmender");
+		_mockGameMapService.Verify(x => x.MarkLoaded(playerSave), Times.Once);
+	}
+
 	/// <summary>
 	/// Test LoadPlayer method handles ArgumentException from LoadFile
 	/// </summary>
@@ -203,11 +222,9 @@ public class PlayerServiceTests
 	{
 		// Arrange
 		var playerFolder = "/Test/Players/_TestPlayer";
-		var playerFile = "/Test/Players/TestPlayer.plr";
+		var playerFile = Path.Combine("/Test/Players/_TestPlayer", "Player.chr");
 		var playerSave = CreatePlayerSave(playerFolder);
 
-		_mockGamePathService.Setup(x => x.GetPlayerFile("TestPlayer", false, false))
-			.Returns(playerFile);
 
 		_mockPlayerCollectionProvider.Setup(x => x.LoadFile(It.IsAny<PlayerCollection>(), null))
 			.Callback<PlayerCollection, string>((pc, path) => pc.ArgumentException = new ArgumentException("Test error"));
@@ -466,14 +483,12 @@ public class PlayerServiceTests
 	public void UpdatePlayerFilePath_WithValidPaths_UpdatesPlayerFilePath()
 	{
 		// Arrange - Create a player in the session context
-		var oldPath = "/Test/Players/TestPlayer.plr";
+		var playerFile = Path.Combine("/Test/Players/_TestPlayer", "Player.chr");
+		var oldPath = playerFile;
 		var newPath = "/Test/Players/Archived/TestPlayer.plr";
-		var playerFile = "/Test/Players/TestPlayer.plr";
 		var playerFolder = "/Test/Players/_TestPlayer";
 		var playerSave = CreatePlayerSave(playerFolder);
 
-		_mockGamePathService.Setup(x => x.GetPlayerFile("TestPlayer", false, false))
-			.Returns(playerFile);
 		_mockPlayerCollectionProvider.Setup(x => x.LoadFile(It.IsAny<PlayerCollection>(), null));
 
 		// Load the player first
@@ -492,16 +507,16 @@ public class PlayerServiceTests
 	public void ArchiveOrUnarchive_WhenMoved_KeysTheLoadedPlayerByItsNewPath(bool archive)
 	{
 		// Arrange - a loaded player at the path before the move
-		var activePath = "/Test/Players/_TestPlayer/Player.chr";
-		var archivedPath = "/Test/Players/Archived/_TestPlayer/Player.chr";
+		var activeFolder = "/Test/Players/_TestPlayer";
+		var archivedFolder = "/Test/Players/Archived/_TestPlayer";
+		var activePath = Path.Combine(activeFolder, "Player.chr");
+		var archivedPath = Path.Combine(archivedFolder, "Player.chr");
 		var (fromPath, toPath) = archive ? (activePath, archivedPath) : (archivedPath, activePath);
-		var playerSave = CreatePlayerSave("/Test/Players/_TestPlayer");
-		_mockGamePathService.Setup(x => x.GetPlayerFile("TestPlayer", false, false)).Returns(activePath);
-		_mockGamePathService.Setup(x => x.GetPlayerFile("TestPlayer", false, true)).Returns(archivedPath);
+		var playerSave = CreatePlayerSave(archive ? activeFolder : archivedFolder, isArchived: !archive);
 		var player = new PlayerCollection("TestPlayer", fromPath);
 		_sessionContext.Players.TryAdd(fromPath, new Lazy<PlayerCollection>(() => player));
-		_mockGameFileService.Setup(x => x.Archive(playerSave)).Returns(true);
-		_mockGameFileService.Setup(x => x.Unarchive(playerSave)).Returns(true);
+		_mockGameFileService.Setup(x => x.Archive(playerSave)).Callback(() => playerSave.Folder = archivedFolder).Returns(true);
+		_mockGameFileService.Setup(x => x.Unarchive(playerSave)).Callback(() => playerSave.Folder = activeFolder).Returns(true);
 
 		// Act
 		bool moved = archive ? _playerService.Archive(playerSave) : _playerService.Unarchive(playerSave);
@@ -516,9 +531,9 @@ public class PlayerServiceTests
 	public void Unarchive_WhenTheMoveFails_KeepsThePlayerWhereItWas()
 	{
 		// Arrange
-		var archivedPath = "/Test/Players/Archived/_TestPlayer/Player.chr";
-		var playerSave = CreatePlayerSave("/Test/Players/_TestPlayer");
-		_mockGamePathService.Setup(x => x.GetPlayerFile("TestPlayer", false, true)).Returns(archivedPath);
+		var archivedFolder = "/Test/Players/Archived/_TestPlayer";
+		var archivedPath = Path.Combine(archivedFolder, "Player.chr");
+		var playerSave = CreatePlayerSave(archivedFolder, isArchived: true);
 		_sessionContext.Players.TryAdd(archivedPath, new Lazy<PlayerCollection>(() => new PlayerCollection("TestPlayer", archivedPath)));
 		_mockGameFileService.Setup(x => x.Unarchive(playerSave)).Returns(false);
 
@@ -535,12 +550,10 @@ public class PlayerServiceTests
 	/// </summary>
 	private PlayerSave CreateArchivableSave(string name, bool isArchived, params string[] tags)
 	{
-		var save = CreatePlayerSave($"/Test/Players/_{name}", isArchived: isArchived);
+		var save = CreatePlayerSave(isArchived ? $"/Test/Players/Archived/_{name}" : $"/Test/Players/_{name}", isArchived: isArchived);
 		foreach (var tag in tags)
 			save.Tags.Add(tag, System.Drawing.Color.Red);
 
-		_mockGamePathService.Setup(x => x.GetPlayerFile(name, false, false)).Returns($"/Test/Players/_{name}/Player.chr");
-		_mockGamePathService.Setup(x => x.GetPlayerFile(name, false, true)).Returns($"/Test/Players/Archived/_{name}/Player.chr");
 		return save;
 	}
 
@@ -592,8 +605,8 @@ public class PlayerServiceTests
 		var moved = CreateArchivableSave("Moved", isArchived: false);
 		_mockGameFileService.Setup(x => x.Archive(refused)).Returns(false);
 		_mockGameFileService.Setup(x => x.Archive(throwing)).Throws(new IOException("locked"));
-		_mockGameFileService.Setup(x => x.Archive(moved)).Returns(true);
-		var movedActivePath = "/Test/Players/_Moved/Player.chr";
+		_mockGameFileService.Setup(x => x.Archive(moved)).Callback(() => moved.Folder = "/Test/Players/Archived/_Moved").Returns(true);
+		var movedActivePath = Path.Combine("/Test/Players/_Moved", "Player.chr");
 		_sessionContext.Players.TryAdd(movedActivePath, new Lazy<PlayerCollection>(() => new PlayerCollection("Moved", movedActivePath)));
 
 		// Act
@@ -602,7 +615,7 @@ public class PlayerServiceTests
 		// Assert - the moved save is keyed by its new path, as one by one
 		result.Changed.Should().Equal(moved);
 		result.Failed.Should().Equal(refused, throwing);
-		_sessionContext.Players.Should().ContainKey("/Test/Players/Archived/_Moved/Player.chr");
+		_sessionContext.Players.Should().ContainKey(Path.Combine("/Test/Players/Archived/_Moved", "Player.chr"));
 		_sessionContext.Players.Should().NotContainKey(movedActivePath);
 	}
 
@@ -650,11 +663,9 @@ public class PlayerServiceTests
 	{
 		// Arrange
 		var playerFolder = "/Test/Players/_TestPlayer";
-		var playerFile = "/Test/Players/TestPlayer.plr";
+		var playerFile = Path.Combine("/Test/Players/_TestPlayer", "Player.chr");
 		var playerSave = CreatePlayerSave(playerFolder);
 
-		_mockGamePathService.Setup(x => x.GetPlayerFile("TestPlayer", false, false))
-			.Returns(playerFile);
 
 		// First load
 		var result1 = _playerService.LoadPlayer(playerSave, false);
@@ -677,11 +688,9 @@ public class PlayerServiceTests
 	{
 		// Arrange - Create a modified player in session context
 		var playerFolder = "/Test/Players/_TestPlayer";
-		var playerFile = "/Test/Players/TestPlayer.plr";
+		var playerFile = Path.Combine("/Test/Players/_TestPlayer", "Player.chr");
 		var playerSave = CreatePlayerSave(playerFolder);
 
-		_mockGamePathService.Setup(x => x.GetPlayerFile("TestPlayer", false, false))
-			.Returns(playerFile);
 
 		// Create a sack collection that will be marked as modified
 		var sackCollection = new SackCollection();
@@ -715,11 +724,9 @@ public class PlayerServiceTests
 	{
 		// Arrange
 		var playerFolder = "/Test/Players/_TestPlayer";
-		var playerFile = "/Test/Players/TestPlayer.plr";
+		var playerFile = Path.Combine("/Test/Players/_TestPlayer", "Player.chr");
 		var playerSave = CreatePlayerSave(playerFolder);
 
-		_mockGamePathService.Setup(x => x.GetPlayerFile("TestPlayer", false, false))
-			.Returns(playerFile);
 		_mockPlayerCollectionProvider.Setup(x => x.LoadFile(It.IsAny<PlayerCollection>(), null))
 			.Callback<PlayerCollection, string>((pc, path) => throw new InvalidOperationException("Unexpected error"));
 

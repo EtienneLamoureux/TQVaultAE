@@ -153,7 +153,6 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		this.loadLastVaultCheckBox.Font =
 		this.vaultPathTextBox.Font =
 		this.vaultPathLabel.Font =
-		this.enableCustomMapsCheckBox.Font =
 		this.loadAllFilesCheckBox.Font =
 		this.suppressWarningsCheckBox.Font =
 		this.playerReadonlyCheckbox.Font =
@@ -165,8 +164,6 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		this.immortalThronePathLabel.Font =
 		this.immortalThronePathTextBox.Font =
 		this.detectGamePathsCheckBox.Font =
-		this.customMapLabel.Font =
-		this.mapListComboBox.Font =
 		this.baseFontLabel.Font =
 		this.baseFontComboBox.Font =
 		this.scalingCheckBoxTooltipInGameRolls.Font =
@@ -192,11 +189,8 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		this.languageLabel.Text = Resources.SettingsLabel2;
 		this.titanQuestPathLabel.Text = Resources.SettingsLabel3;
 		this.immortalThronePathLabel.Text = Resources.SettingsLabel4;
-		this.customMapLabel.Text = Resources.SettingsLabel5;
 		this.detectGamePathsCheckBox.Text = Resources.SettingsDetectGamePath;
 		this.detectLanguageCheckBox.Text = Resources.SettingsDetectLanguage;
-		this.enableCustomMapsCheckBox.Text = Resources.SettingsEnableMod;
-		this.toolTip.SetToolTip(this.enableCustomMapsCheckBox, Resources.SettingsEnableModTT);
 		this.skipTitleCheckBox.Text = Resources.SettingsSkipTitle;
 		this.toolTip.SetToolTip(this.skipTitleCheckBox, Resources.SettingsSkipTitleTT);
 		this.allowItemCopyCheckBox.Text = Resources.SettingsAllowCopy;
@@ -259,13 +253,6 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		this.cancelButton.Text = Resources.GlobalCancel;
 		this.okayButton.Text = Resources.GlobalOK;
 		this.Text = Resources.SettingsTitle;
-
-		this.mapListComboBox.Items.Clear();
-
-		var maps = GamePathResolver.GetCustomMapList();
-
-		if (maps is { Length: > 0 })
-			this.mapListComboBox.Items.AddRange(maps);
 
 		this.ResumeLayout(false);
 		this.PerformLayout();
@@ -381,14 +368,6 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 				.OfType<PasteBinExpirationComboBoxItem>()
 				.FirstOrDefault(i => i.Key == values.PasteBinExpiration);
 		}
-
-		this.enableCustomMapsCheckBox.Checked = values.ModEnabled;
-
-		var lst = this.mapListComboBox.Items.Cast<GamePathEntry>();
-		var found = lst.Where(m => m.Path == values.CustomMap).FirstOrDefault();
-		this.mapListComboBox.SelectedItem = found;
-
-		this.mapListComboBox.Enabled = values.ModEnabled;
 
 		this.languageComboBox.SelectedItem = languages.FirstOrDefault(cb => cb.Value.Equals(language,StringComparison.OrdinalIgnoreCase));
 

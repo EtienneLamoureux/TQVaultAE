@@ -27,7 +27,7 @@ namespace TQVaultAE.GUI.Components.Panels;
 /// <summary>
 /// Class for holding all of the UI functions of the sack panel.
 /// </summary>
-public partial class SackPanel : Panel, IScalingControl
+public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 {
 	private readonly ILogger Log;
 	private readonly ITranslationService TranslationService;
@@ -318,6 +318,51 @@ public partial class SackPanel : Panel, IScalingControl
 	public Size SackSize { get; protected set; }
 
 	/// <summary>
+	/// The mod of the vault shown, when the panel shows a vault's bag: items put here without a link of their own
+	/// follow it. Null for other panels.
+	/// </summary>
+	public Func<string?>? ContainerMod { get; set; }
+
+	/// <summary>
+	/// True when an item lies inside the grid without overlapping another item.
+	/// </summary>
+	private bool FitsWhereItLies(Item item) => Fits(this.ShownSack, this.SackSize, item);
+
+	/// <summary>
+	/// Moves an item of a sack to the first free spot of its grid (rows first) where it fits.
+	/// </summary>
+	/// <returns>True when moved; false when there is no room, the item staying where it was.</returns>
+	internal static bool MoveToFreeSpot(SackCollection sack, Size sackSize, Item item)
+	{
+		var (x0, y0) = (item.PositionX, item.PositionY);
+		for (int y = 0; y + item.Height <= sackSize.Height; y++)
+		{
+			for (int x = 0; x + item.Width <= sackSize.Width; x++)
+			{
+				(item.PositionX, item.PositionY) = (x, y);
+				if (Fits(sack, sackSize, item))
+					return true;
+			}
+		}
+
+		(item.PositionX, item.PositionY) = (x0, y0);
+		return false;
+	}
+
+	/// <summary>
+	/// True when an item of a sack lies inside its grid without overlapping another item of the sack.
+	/// </summary>
+	internal static bool Fits(SackCollection sack, Size sackSize, Item item)
+	{
+		var cells = new Rectangle(item.PositionX, item.PositionY, item.Width, item.Height);
+		if (cells.X < 0 || cells.Y < 0 || cells.Right > sackSize.Width || cells.Bottom > sackSize.Height)
+			return false;
+
+		return !sack.Any(other => !ReferenceEquals(other, item)
+			&& new Rectangle(other.PositionX, other.PositionY, other.Width, other.Height).IntersectsWith(cells));
+	}
+
+	/// <summary>
 	/// Gets or sets the AutoMoveLocation for this sack.
 	/// </summary>
 	public AutoMoveLocation AutoMoveLocation { get; protected set; }
@@ -541,6 +586,12 @@ public partial class SackPanel : Panel, IScalingControl
 
 		return alpha;
 	}
+
+	/// <summary>
+	/// The base font changed: the menu it shows itself, outside the controls, takes it.
+	/// </summary>
+	void IFontRebasing.RebaseFonts(IFontService fontService)
+		=> FontRebaser.RebaseMenu(this.CustomContextMenu, fontService);
 
 	/// <summary>
 	/// Override of ScaleControl which supports scaling of the fonts and internal items.

@@ -31,11 +31,15 @@ public partial class ItemProvider
 
 	/// <inheritdoc/>
 	public bool HasGrantedSkill(Item itm)
-		=> this.GrantedSkillSources(itm).Any(s => this.DisplayedSkillRecord(s.SkillId) is not null);
+	{
+		using var modScope = this.ModScope(itm);
+		return this.GrantedSkillSources(itm).Any(s => this.DisplayedSkillRecord(s.SkillId) is not null);
+	}
 
 	/// <inheritdoc/>
 	public IReadOnlyList<string> GetGrantedSkillNames(Item itm)
 	{
+		using var modScope = this.ModScope(itm);
 		var names = new List<string>();
 		foreach (var (_, skillId) in this.GrantedSkillSources(itm))
 		{

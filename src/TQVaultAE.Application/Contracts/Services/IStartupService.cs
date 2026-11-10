@@ -26,9 +26,4 @@ public interface IStartupService
 	/// The caller saves the settings.
 	/// </summary>
 	void ApplyChosenGamePath(string gamePath);
-
-	/// <summary>
-	/// Sets the map name: the custom map when mods are enabled, else the main map.
-	/// </summary>
-	void SetupMapName();
 }

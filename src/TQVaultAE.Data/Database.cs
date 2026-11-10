@@ -141,7 +141,7 @@ public partial class Database : IDatabase
 	/// <summary>
 	/// Mapping between ItemId and Affixes LootTable
 	/// </summary>
-	private static ReadOnlyDictionary<RecordId, ReadOnlyCollection<AffixTableMapItem>>? ItemAffixTableMap;
+	private ReadOnlyDictionary<RecordId, ReadOnlyCollection<AffixTableMapItem>>? ItemAffixTableMap;
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the game language is being auto detected.
@@ -168,6 +168,24 @@ public partial class Database : IDatabase
 	/// Gets the instance of a custom map Database ArzFile.
 	/// </summary>
 	public ArzFile? ArzFileMod { get; private set; }
+
+	/// <summary>
+	/// The custom map (mod) folder whose data this database adds over the game's; empty for the base game.
+	/// Set before <see cref="LoadDBFile"/>, else taken from <see cref="IGamePathService.MapName"/> when it loads: each
+	/// instance then keeps its own map, so databases of several maps can live side by side.
+	/// </summary>
+	public string? CustomMapFolder { get; set; }
+
+	/// <summary>
+	/// True when this database reads a custom map's data.
+	/// </summary>
+	private bool IsCustomMap => !string.IsNullOrEmpty(this.MapFolder);
+
+	/// <summary>
+	/// <see cref="CustomMapFolder"/>, or the map set at startup while it is not set yet.
+	/// </summary>
+	private string MapFolder => this.CustomMapFolder
+		?? (this.GamePathResolver.IsCustom ? this.GamePathResolver.MapName : string.Empty);
 
 	[GeneratedRegex(@"(?i)language\s*=\s*(""(?<Language>[^""]+)""|(?<Language>[^\r\n]*))[\r\n]")]
 	private static partial Regex GameLanguageRegEx();
@@ -353,6 +371,7 @@ public partial class Database : IDatabase
 	/// </summary>
 	public void LoadDBFile()
 	{
+		this.CustomMapFolder ??= this.MapFolder;
 		this.LoadTextDB();
 		this.LoadARZFile();
 		this.BuildItemAffixTableMap();
@@ -713,7 +732,7 @@ public partial class Database : IDatabase
 
 		// Added by VillageIdiot
 		// Check's mod folder for's image resource.
-		if (GamePathResolver.IsCustom)
+		if (this.IsCustomMap)
 		{
 			if (USettings.DatabaseDebugLevel > 1)
 				Log.LogDebug("Checking Custom Resources.");
@@ -1047,7 +1066,7 @@ public partial class Database : IDatabase
 	/// </summary>
 	private void LoadCustomMapText()
 	{
-		string resources = this.PathIO.Combine(GamePathResolver.MapName, "resources");
+		string resources = this.PathIO.Combine(this.MapFolder, "resources");
 		string? code = this.GameLanguage is { } language ? GameLanguageFileCode(language) : null;
 		string[] archives = code is null ? ["text.arc"] : [$"text_{code}.arc", "text.arc"];
 
@@ -1082,7 +1101,7 @@ public partial class Database : IDatabase
 	private byte[]? ReadCustomMapResource(RecordId resourceId)
 	{
 		var tokens = resourceId.TokensRaw;
-		string resources = this.PathIO.Combine(GamePathResolver.MapName, "resources");
+		string resources = this.PathIO.Combine(this.MapFolder, "resources");
 
 		byte[]? data = this.ReadARCFile(this.PathIO.Combine(resources, tokens[0] + ".arc"), resourceId);
 
@@ -1217,7 +1236,7 @@ public partial class Database : IDatabase
 		}
 
 		// For loading custom map text database.
-		if (GamePathResolver.IsCustom)
+		if (this.IsCustomMap)
 			this.LoadCustomMapText();
 
 		// Added this check to see if anything was loaded.
@@ -1350,9 +1369,9 @@ public partial class Database : IDatabase
 		}
 
 		// Added to load a custom map database file.
-		if (GamePathResolver.IsCustom)
+		if (this.IsCustomMap)
 		{
-			file = this.PathIO.Combine(GamePathResolver.MapName, "database", $"{this.PathIO.GetFileName(GamePathResolver.MapName)}.arz");
+			file = this.PathIO.Combine(this.MapFolder, "database", $"{this.PathIO.GetFileName(this.MapFolder)}.arz");
 
 			if (USettings.DatabaseDebugLevel > 1)
 			{

@@ -26,7 +26,13 @@ public partial class MainForm
 	/// </summary>
 	/// <returns>Total number of files that LoadAllFiles() will load.</returns>
 	private int LoadAllFilesTotal()
-		=> LoadAllService.CountSteps(GamePathResolver.GetCharacterList().Length, GamePathResolver.GetVaultList().Length);
+		=> LoadAllService.CountSteps(this.CharactersOfActiveMap().Length, GamePathResolver.GetVaultList().Length);
+
+	/// <summary>
+	/// The listed characters played with the active map: the only ones LoadAllFiles can read with the right database.
+	/// </summary>
+	private PlayerSave[] CharactersOfActiveMap()
+		=> [.. this.comboBoxCharacter.Items.OfType<PlayerSave>().Where(this.gameMapService.UsesActiveMap)];
 
 	/// <summary>
 	/// Loads all of the players, stashes, and vaults.
@@ -45,7 +51,7 @@ public partial class MainForm
 		}
 
 		var result = this.loadAllService.LoadAll(
-			this.comboBoxCharacter.Items.OfType<PlayerSave>().ToArray()
+			this.CharactersOfActiveMap()
 			, GamePathResolver.GetVaultList()
 			, progress);
 
@@ -203,10 +209,6 @@ public partial class MainForm
 		var args = this.commandLineArgs;
 		args.ThrowIfInvalid();
 
-		// Check to see if we loaded something from the command line.
-		if (args.HasMapName)
-			GamePathResolver.MapName = args.MapName ?? string.Empty;
-
 		this.resourcesLoaded = true;
 		progress.Report(1);
 
@@ -232,39 +234,18 @@ public partial class MainForm
 			.ContinueWith(_ => iconService.GetIconDatabaseAsync(), TaskScheduler.Default);
 
 		this.LoadSharedStashes();
-
-		if (USettings.EnableHotReload)
-		{
-			var relicPath = GamePathResolver.RelicVaultStashFileFullPath;
-			var transferPath = GamePathResolver.TransferStashFileFullPath;
-
-			this.fileSystemWatcherRelicStash.EnableRaisingEvents = false;
-			if (FileIO.Exists(relicPath))
-			{
-				this.fileSystemWatcherRelicStash.Path = PathIO.GetDirectoryName(relicPath);
-				this.fileSystemWatcherRelicStash.Filter = PathIO.GetFileName(relicPath);
-				this.fileSystemWatcherRelicStash.EnableRaisingEvents = true;
-			}
-
-			this.fileSystemWatcherTransferStash.EnableRaisingEvents = false;
-			if (FileIO.Exists(transferPath))
-			{
-				this.fileSystemWatcherTransferStash.Path = PathIO.GetDirectoryName(transferPath);
-				this.fileSystemWatcherTransferStash.Filter = PathIO.GetFileName(transferPath);
-				this.fileSystemWatcherTransferStash.EnableRaisingEvents = true;
-			}
-		}
+		this.WatchSharedStashFiles();
 
 		var characters = this.comboBoxCharacter.Items.OfType<PlayerSave>().ToArray();
 		var selection = StartupSelection.Resolve(
 			USettings
-			, characters.Select(ps => ps.Name)
+			, characters.Select(ps => ps.Key)
 			, this.vaultService.VaultExists
 			, this.commandLineArgs);
 
 		// Load last character here if selected
-		if (selection.CharacterName is not null)
-			this.comboBoxCharacter.SelectedItem = characters.First(ps => ps.Name == selection.CharacterName);
+		if (selection.CharacterKey is not null)
+			this.comboBoxCharacter.SelectedItem = characters.First(ps => ps.Key == selection.CharacterKey);
 
 		this.vaultListComboBox.SelectedItem = selection.VaultName;
 
@@ -277,8 +258,10 @@ public partial class MainForm
 		// Allows skipping of title screen with setting
 		if (selection.SkipTitle)
 		{
-			int index = this.comboBoxCharacter.FindString(selection.AutomaticPlayer);
-			if (index != -1)
+			// The command line player is a character key (IT/User/HeroA) or the start of a name in the list.
+			if (characters.FirstOrDefault(ps => ps.Key.Equals(selection.AutomaticPlayer, StringComparison.OrdinalIgnoreCase)) is { } player)
+				this.comboBoxCharacter.SelectedItem = player;
+			else if (this.comboBoxCharacter.FindString(selection.AutomaticPlayer) is var index and not -1)
 				this.comboBoxCharacter.SelectedIndex = index;
 
 			this.splashScreen.CloseForm();
@@ -305,8 +288,9 @@ public partial class MainForm
 	{
 		string? vaultName = this.vaultListComboBox.SelectedItem is not null ? this.vaultListComboBox.SelectedItemText() : null;
 
+		// The key, not the name: a main campaign and a custom map character can have the same name.
 		string? characterName = this.comboBoxCharacter.SelectedItem is PlayerSave ps
-			? ps.Name
+			? ps.Key
 			: this.comboBoxCharacter.SelectedItem?.ToString();
 
 		// No character is selected
@@ -352,7 +336,6 @@ public partial class MainForm
 				{
 					RestartReason.Settings => (Resources.MainFormSettingsChanged, Resources.MainFormSettingsChangedMsg),
 					RestartReason.GamePath => (Resources.MainFormPathsChanged, Resources.MainFormPathsChangedMsg),
-					RestartReason.CustomMaps => (Resources.MainFormMapsChanged, Resources.MainFormMapsChangedMsg),
 					_ => (Resources.MainFormLanguageChanged, Resources.MainFormLanguageChangedMsg),
 				};
 

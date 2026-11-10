@@ -61,6 +61,75 @@ public class ItemTooltipContentBuilderTests
 	#region Build
 
 	[Fact]
+	public void Build_IncompleteItem_WarnsUnderTheName_ThenListsTheMissingRecords()
+	{
+		// Arrange: a suffix and a charm the loaded data lacks
+		var data = Sword();
+		data.Item.suffixID = RecordId.Create("""records\mod\suffix.dbr""");
+		data.Item.relicID = RecordId.Create("""records\mod\charm.dbr""");
+
+		// Act
+		var lines = this._builder.Build(data, ItemTooltipView.Classic).Lines;
+
+		// Assert
+		lines[0].Text.Should().Be(data.FullName);
+		lines[1].Kind.Should().Be(TooltipLineKind.Warning);
+		lines[1].Text.Should().Be(TQVaultAE.Presentation.Resources.ItemIncomplete);
+		lines[1].Color.Should().Be(ItemTooltipContentBuilder.IncompleteColor);
+		lines[2].Text.Should().Be($"{TQVaultAE.Presentation.Resources.ItemIncompleteSuffix} : {data.Item.suffixID.Raw}");
+		lines[3].Text.Should().Be($"{TQVaultAE.Presentation.Resources.ItemIncompleteRelic} : {data.Item.relicID.Raw}");
+		lines[4].Text.Should().Be("base 1");
+	}
+
+	[Fact]
+	public void Build_ItemLinkedToAMod_NamesItsModUnderTheName()
+	{
+		var data = Sword();
+		data.Item.Mod = "shadowchampions";
+
+		var lines = this._builder.Build(data, ItemTooltipView.Classic).Lines;
+
+		lines[1].Text.Should().Be(string.Format(TQVaultAE.Presentation.Resources.ItemModLine, "shadowchampions"));
+		lines[1].Color.Should().Be(ItemTooltipContentBuilder.ModColor);
+	}
+
+	[Theory]
+	[InlineData(Item.ICLASS_RING)]
+	[InlineData(Item.ICLASS_AMULET)]
+	public void Build_Classic_Jewellery_BlankLineBetweenNameAndBonuses(string itemClass)
+	{
+		var data = new ToFriendlyNameResult(ItemOf("""records\item\equipmentring\c01_ring01.dbr""", itemClass))
+		{
+			BaseItemInfoDescription = "Copper Band",
+			ClassicAttributes = ["+3 Dexterity", "10% Fire Resistance"],
+		};
+
+		var shape = Shape(this._builder.Build(data, ItemTooltipView.Classic)).Take(4);
+
+		shape.Should().Equal((TooltipLineKind.Text, data.FullName), (TooltipLineKind.Spacer, string.Empty)
+			, (TooltipLineKind.Text, "+3 Dexterity"), (TooltipLineKind.Text, "10% Fire Resistance"));
+	}
+
+	[Fact]
+	public void Build_Classic_NotJewellery_NoBlankLineUnderTheName()
+	{
+		var data = Sword();
+		data.ClassicAttributes = ["base 1", "", "prefix 1"];
+
+		var lines = this._builder.Build(data, ItemTooltipView.Classic).Lines;
+
+		lines[1].Text.Should().Be("base 1");
+	}
+
+	[Fact]
+	public void Build_BaseGameItem_NamesNoMod()
+		=> this._builder.Build(Sword(), Full).Lines.Should().NotContain(l => l.Text == string.Format(TQVaultAE.Presentation.Resources.ItemModLine, string.Empty));
+
+	[Fact]
+	public void Build_CompleteItem_HasNoWarning()
+		=> this._builder.Build(Sword(), Full).Lines.Should().NotContain(l => l.Kind == TooltipLineKind.Warning);
+
+	[Fact]
 	public void Build_Classic_ListsBaseThenPrefixThenSuffix_ThenSeedAndRequirements()
 	{
 		// Act

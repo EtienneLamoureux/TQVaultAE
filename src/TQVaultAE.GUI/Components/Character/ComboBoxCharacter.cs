@@ -4,6 +4,7 @@ using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components.Rendering;
+using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Forms;
 using TQVaultAE.Presentation.Win32.Contracts;
 using TQVaultAE.Presentation;
@@ -11,7 +12,7 @@ using TQVaultAE.Config;
 
 namespace TQVaultAE.GUI.Components.Character;
 
-public partial class ComboBoxCharacter : UserControl
+public partial class ComboBoxCharacter : UserControl, IFontRebasing
 {
 	internal const string TAGKEY = "TagItem_";
 
@@ -55,6 +56,12 @@ public partial class ComboBoxCharacter : UserControl
 	private object? _SelectedItem = null;
 	private int _SelectedIndex = -1;
 	private Action DuplicateCharacterAction = null!;
+	private Action<PlayerSave> ModLinkAction = null!;
+
+	/// <summary>
+	/// Opens the mod link dialog of the selected custom map character.
+	/// </summary>
+	private readonly ToolStripMenuItem modLinkToolStripMenuItem = new() { Name = "modLinkToolStripMenuItem" };
 	private bool _DisableMenuTriggers;
 
 	/// <summary>
@@ -188,6 +195,7 @@ public partial class ComboBoxCharacter : UserControl
 		, IPlayerService playerService
 		, UserSettings userSettings
 		, Action duplicateCharacterAction
+		, Action<PlayerSave> modLinkAction
 	)
 	{
 		this.UIService = uIService;
@@ -201,6 +209,9 @@ public partial class ComboBoxCharacter : UserControl
 		if (this.Form is not null)
 			this.Form.GlobalMouseButtonLeft += Form_GlobalMouseButtonLeft;
 		this.DuplicateCharacterAction = duplicateCharacterAction;
+		this.ModLinkAction = modLinkAction;
+		this.modLinkToolStripMenuItem.Click += this.ModLinkToolStripMenuItem_Click;
+		this.contextMenuStrip.Items.Insert(this.contextMenuStrip.Items.IndexOf(this.duplicateSeparatorToolStripMenuItem), this.modLinkToolStripMenuItem);
 
 		if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
 		{
@@ -225,6 +236,7 @@ public partial class ComboBoxCharacter : UserControl
 			this.scalingButtonTools.OverBitmap = HUDMENUSKILLBUTTONOVER01;
 
 			this.duplicateToolStripMenuItem.Text = Resources.DuplicateCharacter_ButtonText;
+			this.modLinkToolStripMenuItem.Text = Resources.ModLinkMenu;
 			this.archiveToolStripMenuItem.Text = Resources.GlobalArchived;
 			this.tagsToolStripMenuItem.Text = Resources.GlobalTags;
 			this.addTagToolStripMenuItem.Text = Resources.TagsAdd;
@@ -245,6 +257,7 @@ public partial class ComboBoxCharacter : UserControl
 			this.archiveAllToolStripMenuItem.Font =
 			this.unarchiveAllToolStripMenuItem.Font =
 			this.duplicateToolStripMenuItem.Font =
+			this.modLinkToolStripMenuItem.Font =
 			this.archiveToolStripMenuItem.Font =
 			this.tagsToolStripMenuItem.Font =
 			this.addTagToolStripMenuItem.Font =
@@ -260,6 +273,7 @@ public partial class ComboBoxCharacter : UserControl
 			this.archiveAllToolStripMenuItem.BackColor =
 			this.unarchiveAllToolStripMenuItem.BackColor =
 			this.duplicateToolStripMenuItem.BackColor =
+			this.modLinkToolStripMenuItem.BackColor =
 			this.archiveToolStripMenuItem.BackColor =
 			this.tagsToolStripMenuItem.BackColor =
 			this.addTagToolStripMenuItem.BackColor =
@@ -275,6 +289,7 @@ public partial class ComboBoxCharacter : UserControl
 			this.archiveAllToolStripMenuItem.ForeColor =
 			this.unarchiveAllToolStripMenuItem.ForeColor =
 			this.duplicateToolStripMenuItem.ForeColor =
+			this.modLinkToolStripMenuItem.ForeColor =
 			this.archiveToolStripMenuItem.ForeColor =
 			this.tagsToolStripMenuItem.ForeColor =
 			this.addTagToolStripMenuItem.ForeColor =
@@ -315,6 +330,7 @@ public partial class ComboBoxCharacter : UserControl
 		this._DisableMenuTriggers = true;
 
 		this.bufferedFlowLayoutPanelContent.BackColor = Color.White;
+		this.modLinkToolStripMenuItem.Visible = false;
 
 		if (this.SelectedItem is PlayerSave ps)
 		{
@@ -331,6 +347,9 @@ public partial class ComboBoxCharacter : UserControl
 				this.duplicateToolStripMenuItem.Visible =
 				this.duplicateSeparatorToolStripMenuItem.Visible = false;
 			}
+
+			// Mod link, for custom map characters only
+			this.modLinkToolStripMenuItem.Visible = ps.IsCustom;
 
 			// Archiving toggle
 			this.archiveToolStripMenuItem.Checked = ps.IsArchived;
@@ -389,6 +408,10 @@ public partial class ComboBoxCharacter : UserControl
 	{
 		var item = this.DropDown.Items.First(i => i.Item == selectedSave);
 		item.RefreshContent();
+
+		// The text shown for the selection too (its mod label, its class).
+		if (this.SelectedItem == selectedSave)
+			this.RefreshContent();
 	}
 
 	private void RefreshMenuTagList()
@@ -560,6 +583,12 @@ public partial class ComboBoxCharacter : UserControl
 
 	#endregion
 
+	/// <summary>
+	/// The base font changed: the tools menu it shows itself, outside the controls, takes it.
+	/// </summary>
+	void IFontRebasing.RebaseFonts(IFontService fontService)
+		=> FontRebaser.RebaseMenu(this.contextMenuStrip, fontService);
+
 	private void ScalingButtonTools_Click(object? sender, EventArgs e)
 	{
 		this.contextMenuStrip.Show(scalingButtonTools, new Point(0, scalingButtonTools.Height));
@@ -617,6 +646,14 @@ public partial class ComboBoxCharacter : UserControl
 			return;
 
 		this.DuplicateCharacterAction();
+	}
+
+	private void ModLinkToolStripMenuItem_Click(object? sender, EventArgs e)
+	{
+		if (this._DisableMenuTriggers || this.SelectedItem is not PlayerSave ps)
+			return;
+
+		this.ModLinkAction(ps);
 	}
 
 	private void TagRenameTextBoxItem_KeyDown(object? sender, KeyEventArgs e)

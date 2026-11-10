@@ -30,11 +30,21 @@ public class ScalingComboBox : ComboBox, IScalingControl
 		this.ResumeLayout(false);
 	}
 
+	/// <summary>
+	/// Text drawn in brackets after an item, from its text (the mod of a vault); null or empty for none. The items keep
+	/// their own text.
+	/// </summary>
+	[System.ComponentModel.Browsable(false)]
+	[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+	public Func<string, string?>? ItemSuffix { get; set; }
+
 	private void ScalingComboBox_DrawItem(object? sender, DrawItemEventArgs e)
 	{
 		if (this.Items.Count == 0 || e.Index == -1) return;
 		// Only the drawn item: converting the whole list for each item made opening the list quadratic.
 		var text = this.Items[e.Index]?.ToString() ?? string.Empty;
+		if (this.ItemSuffix?.Invoke(text) is { Length: > 0 } suffix)
+			text = $"{text} [{suffix}]";
 		using var currentBrush = new SolidBrush(this.ForeColor);
 
 		// Draw the background of the item.

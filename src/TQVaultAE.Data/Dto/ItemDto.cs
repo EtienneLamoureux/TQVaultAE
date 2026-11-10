@@ -21,4 +21,10 @@ public class ItemDto
 	public int pointY;
 	public int width;
 	public int height;
+
+	/// <summary>
+	/// The mod the item is linked to (<c>Item.Mod</c>), when it is not the vault's.
+	/// </summary>
+	[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+	public string? mod;
 }

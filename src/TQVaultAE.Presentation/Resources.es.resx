@@ -323,9 +323,6 @@ Esto podría estar causado por un idioma o ruta del juego mal configurada.
   <data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>Mostrar Jugador</value>
   </data>
-  <data name="MainFormCustomMapLabel" xml:space="preserve">
-    <value>Mundo propio {0}</value>
-  </data>
   <data name="MainFormDatabaseError" xml:space="preserve">
     <value>¡Error extrayendo base de datos!</value>
   </data>
@@ -352,14 +349,6 @@ Necesitas reiniciar TQVault para que el cambio surta efecto.
   </data>
   <data name="MainFormMaintainVault" xml:space="preserve">
     <value>Administrar archivos de Colección...</value>
-  </data>
-  <data name="MainFormMapsChanged" xml:space="preserve">
-    <value>Opción de mundo propio cambiada</value>
-  </data>
-  <data name="MainFormMapsChangedMsg" xml:space="preserve">
-    <value>La opción de mundo propio se ha cambiado.
-Necesitas reiniciar TQVault para que el cambio surta efecto.
-¿Quieres reiniciar TQVault ahora?</value>
   </data>
   <data name="MainFormNoCharacters" xml:space="preserve">
     <value>No se han encontrado personajes de TQ</value>
@@ -728,14 +717,6 @@ esta opción podría ralentizar el inicio de TQVault.</value>
   <data name="SettingsDetectLanguage" xml:space="preserve">
     <value>Detectar idioma del juego automáticamente</value>
   </data>
-  <data name="SettingsEnableMod" xml:space="preserve">
-    <value>Habilitar mundos propios</value>
-  </data>
-  <data name="SettingsEnableModTT" xml:space="preserve">
-    <value>Esto permitirá al menú
-desplegable elegir
-mundos propios.</value>
-  </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Comprobar actual.</value>
   </data>
@@ -754,9 +735,6 @@ actualizaciones disponibles.</value>
   </data>
   <data name="SettingsLabel4" xml:space="preserve">
     <value>Ruta de IT</value>
-  </data>
-  <data name="SettingsLabel5" xml:space="preserve">
-    <value>Mundo propio</value>
   </data>
   <data name="SettingsLoadChar" xml:space="preserve">
     <value>Cargar automáticamente el último personaje</value>

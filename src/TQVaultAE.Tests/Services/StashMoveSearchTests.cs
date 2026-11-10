@@ -23,8 +23,8 @@ namespace TQVaultAE.Tests.Services;
 /// </remarks>
 public sealed class StashMoveSearchTests : IDisposable
 {
-	private const string PlayerFile = """C:\Saves\_HeroB\Player.chr""";
-	private const string PlayerStashFile = """C:\Saves\_HeroB\winsys.dxb""";
+	private static readonly string PlayerFile = Path.Combine("""C:\Saves\_HeroB""", "Player.chr");
+	private static readonly string PlayerStashFile = Path.Combine("""C:\Saves\_HeroB""", "winsys.dxb");
 	private const string TransferStashFile = """C:\Saves\Sys\winsys.dxb""";
 	private const string RelicVaultStashFile = """C:\Saves\Sys\miscsys.dxb""";
 
@@ -45,8 +45,8 @@ public sealed class StashMoveSearchTests : IDisposable
 		this._database = new ItemDatabaseService(new Mock<ILogger<ItemDatabaseService>>().Object, new Mock<IItemProvider>().Object, session);
 
 		var gamePaths = new Mock<IGamePathService>();
-		gamePaths.Setup(x => x.GetPlayerFile("HeroB", true, false)).Returns(PlayerFile);
-		gamePaths.Setup(x => x.GetPlayerStashFile("HeroB", false)).Returns(PlayerStashFile);
+		gamePaths.Setup(x => x.PlayerSaveFileName).Returns("Player.chr");
+		gamePaths.Setup(x => x.PlayerStashFileNameB).Returns("winsys.dxb");
 		gamePaths.Setup(x => x.TransferStashFileFullPath).Returns(TransferStashFile);
 		gamePaths.Setup(x => x.RelicVaultStashFileFullPath).Returns(RelicVaultStashFile);
 
@@ -74,8 +74,8 @@ public sealed class StashMoveSearchTests : IDisposable
 			new Mock<ILogger<PlayerService>>().Object, session, this._database, playerProvider.Object, this._stashService
 			, new Mock<IGameFileService>().Object, gamePaths.Object, new Mock<ITranslationService>().Object
 			, new Mock<ITQDataService>().Object, new Mock<ITagService>().Object, new Mock<IFileIO>().Object
-			, new Mock<IPathIO>().Object, new UserSettings(), new Mock<IDirectoryIO>().Object
-			, new Mock<IItemProvider>().Object, new Mock<IDatabase>().Object);
+			, new PathIO(), new UserSettings(), new Mock<IDirectoryIO>().Object
+			, new Mock<IItemProvider>().Object, new Mock<IDatabase>().Object, new Mock<IGameMapService>().Object);
 
 		var pathIO = new Mock<IPathIO>();
 		pathIO.Setup(x => x.GetFileName("""C:\Saves\_HeroB""")).Returns("_HeroB");

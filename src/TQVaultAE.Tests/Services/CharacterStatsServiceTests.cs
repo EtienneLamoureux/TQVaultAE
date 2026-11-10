@@ -132,6 +132,17 @@ public class CharacterStatsServiceTests
 	}
 
 	[Fact]
+	public void ClearGameDataCache_ReadsTheGameBalanceAgain()
+	{
+		var first = this._service.GetGameBalance();
+		this._service.GetGameBalance().Should().BeSameAs(first);
+
+		this._service.ClearGameDataCache();
+
+		this._service.GetGameBalance().Should().NotBeSameAs(first, "another map's records may differ");
+	}
+
+	[Fact]
 	public void GetAttackAnimationDurations_ReadsTheAnimationTableOfTheTemplate()
 	{
 		var player = Class("""records\xpack\creatures\pc\femalepc01.dbr""".ToRecordId(), "Player");

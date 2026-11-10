@@ -18,37 +18,15 @@ public class CommandLineArgs
 	/// <param name="args">The command line as <see cref="Environment.GetCommandLineArgs"/> gives it: the program first.</param>
 	public CommandLineArgs(string[] args)
 	{
-		// Modified by VillageIdiot
-		// to accept mapname from the command line
-		if (args.Length == 2)
-		{
-			if (IsModArgument(args[1]))
-				this.MapName = args[1].Trim().Substring(5);
-			else
-				this.Player = args[1];
-		}
-		else if (args.Length == 3)
-		{
-			if (IsModArgument(args[2]))
-			{
-				this.Player = args[1];
-				this.MapName = args[2].Trim().Substring(5);
-			}
-			else if (IsModArgument(args[1]))
-			{
-				// Check to see if the arguments are swapped.
-				this.Player = args[2];
-				this.MapName = args[1].Trim().Substring(5);
-			}
-			else
-			{
-				// Neither one started with /mod: so we fail.
-				this.Error = UsageMessage("Unknown arguments");
-			}
-		}
-		else if (args.Length > 3)
-		{
+		if (args.Length > 2)
 			this.Error = UsageMessage("Too many arguments");
+		else if (args.Length == 2)
+		{
+			// The custom map comes from the character's mod link now: the old /mod: argument is refused.
+			if (args[1].Trim().StartsWith('/'))
+				this.Error = UsageMessage("Unknown argument");
+			else
+				this.Player = args[1];
 		}
 	}
 
@@ -58,11 +36,6 @@ public class CommandLineArgs
 	public string? Player { get; }
 
 	/// <summary>
-	/// Gets the name of the custom map specified on the command line.
-	/// </summary>
-	public string? MapName { get; }
-
-	/// <summary>
 	/// Gets the usage message when the arguments could not be parsed, else null.
 	/// </summary>
 	public string? Error { get; }
@@ -70,12 +43,7 @@ public class CommandLineArgs
 	/// <summary>
 	/// Gets a value indicating whether to bypass the starts screen.
 	/// </summary>
-	public bool IsAutomatic => this.Player is not null || this.MapName is not null;
-
-	/// <summary>
-	/// Gets a value indicating whether a custom map has been specified.
-	/// </summary>
-	public bool HasMapName => this.MapName is not null;
+	public bool IsAutomatic => this.Player is not null;
 
 	/// <summary>
 	/// Throws the usage message if the command line arguments are incorrect.
@@ -87,9 +55,6 @@ public class CommandLineArgs
 			throw new ArgumentException(this.Error);
 	}
 
-	private static bool IsModArgument(string arg)
-		=> arg.Trim().StartsWith("/MOD:", StringComparison.OrdinalIgnoreCase);
-
 	private static string UsageMessage(string error)
-		=> string.Format(CultureInfo.InvariantCulture, "Error parsing command-line arguments: {0}\n\nUsage: TQVault [playername] [/mod:<mod name>]", error);
+		=> string.Format(CultureInfo.InvariantCulture, "Error parsing command-line arguments: {0}\n\nUsage: TQVault [playername]", error);
 }

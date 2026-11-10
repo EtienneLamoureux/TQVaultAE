@@ -30,7 +30,7 @@ public class GameAttributeOrderTests
 			, Lines(("prefix cold", FlatCold), ("prefix fire", FlatFire))
 			, Lines(("suffix fire", FlatFire)));
 
-		merged.Should().Equal("base damage", "base fire", "prefix fire", "suffix fire", "prefix cold");
+		merged.Should().Equal("base damage", "", "base fire", "prefix fire", "suffix fire", "prefix cold");
 	}
 
 	[Fact]
@@ -42,7 +42,7 @@ public class GameAttributeOrderTests
 			, Lines(("flat fire", FlatFire), ("fire bonus", FireBonus)));
 
 		// The % bonuses (output 2) come before the flat damage (output 3).
-		merged.Should().Equal("base damage", "fire bonus", "flat fire", "fire resistance", "strength");
+		merged.Should().Equal("base damage", "", "fire bonus", "flat fire", "fire resistance", "strength");
 	}
 
 	[Fact]
@@ -53,7 +53,7 @@ public class GameAttributeOrderTests
 			, Lines(("flat fire", FlatFire))
 			, Lines(("fire resistance", FireResistance)));
 
-		merged.Should().Equal("armor", "fire resistance", "flat fire");
+		merged.Should().Equal("armor", "", "fire resistance", "flat fire");
 	}
 
 	[Fact]
@@ -77,7 +77,7 @@ public class GameAttributeOrderTests
 			, Lines(("prefix racial", racial))
 			, Lines(("suffix racial", racial), ("strength", Strength)));
 
-		merged.Should().Equal("base damage", "strength", "prefix racial", "suffix racial", "base racial");
+		merged.Should().Equal("base damage", "", "strength", "prefix racial", "suffix racial", "base racial");
 	}
 
 	[Fact]
@@ -127,7 +127,7 @@ public class GameAttributeOrderTests
 			, Lines(("life leech", lifeLeech))
 			, Lines());
 
-		merged.Should().Equal("damage", "pierce ratio", "speed", "life leech");
+		merged.Should().Equal("damage", "pierce ratio", "speed", "", "life leech");
 	}
 
 	[Theory]
@@ -135,6 +135,73 @@ public class GameAttributeOrderTests
 	[InlineData("offensiveSlowRunSpeed", 3)]
 	public void SlotOf_DamageOverTimeGoesWithTheBonusesAndDebuffsWithTheFlatDamage(string effect, int output)
 		=> Slot(ItemAttributesEffectType.OffenseSlow, effect).Output.Should().Be(output);
+
+	[Fact]
+	public void Merge_Armor_BlankLineSeparatesArmorFromAffixes()
+	{
+		// With or without a prefix, the bonuses are always one blank line below the armor.
+		var withAffixes = GameAttributeOrder.Merge(GameItemClass.Armor
+			, Lines(("armor", Armor))
+			, Lines(("strength", Strength))
+			, Lines(("fire resistance", FireResistance)));
+		var baseOnly = GameAttributeOrder.Merge(GameItemClass.Armor
+			, Lines(("armor", Armor), ("fire resistance", FireResistance))
+			, Lines()
+			, Lines());
+
+		withAffixes.Should().Equal("armor", "", "fire resistance", "strength");
+		baseOnly.Should().Equal("armor", "", "fire resistance");
+	}
+
+	[Fact]
+	public void Merge_Armor_PrefixArmorGoesBelowTheBlankLine()
+	{
+		var merged = GameAttributeOrder.Merge(GameItemClass.Armor
+			, Lines(("armor", Armor))
+			, Lines(("prefix armor", Armor))
+			, Lines(("fire resistance", FireResistance)));
+
+		merged.Should().Equal("armor", "", "prefix armor", "fire resistance");
+	}
+
+	[Fact]
+	public void Merge_Weapon_BlankLineAfterDamageAndSpeed()
+	{
+		var speed = GameAttributeOrder.SlotOf("characterBaseAttackSpeedTag", null, false, true);
+
+		var merged = GameAttributeOrder.Merge(GameItemClass.Weapon
+			, Lines(("base damage", BaseDamage), ("speed", speed))
+			, Lines(("fire bonus", FireBonus))
+			, Lines());
+
+		merged.Should().Equal("base damage", "speed", "", "fire bonus");
+	}
+
+	[Fact]
+	public void Merge_NoBlankLineWithoutBaseStatsOrWithoutBonuses()
+	{
+		var bonusesOnly = GameAttributeOrder.Merge(GameItemClass.Armor
+			, Lines()
+			, Lines(("strength", Strength))
+			, Lines(("fire resistance", FireResistance)));
+		var armorOnly = GameAttributeOrder.Merge(GameItemClass.Armor, Lines(("armor", Armor)), Lines(), Lines());
+
+		bonusesOnly.Should().Equal("fire resistance", "strength");
+		armorOnly.Should().Equal("armor");
+	}
+
+	[Fact]
+	public void Merge_DropsTheEmptyAttackSpeedLineOfANonWeapon()
+	{
+		var speed = GameAttributeOrder.SlotOf("characterBaseAttackSpeedTag", null, false, true);
+
+		var merged = GameAttributeOrder.Merge(GameItemClass.Armor
+			, Lines(("armor", Armor), ("", speed), ("fire resistance", FireResistance))
+			, Lines()
+			, Lines());
+
+		merged.Should().Equal("armor", "", "fire resistance");
+	}
 
 	[Fact]
 	public void SlotOf_UnknownAttribute_IsListedLast()

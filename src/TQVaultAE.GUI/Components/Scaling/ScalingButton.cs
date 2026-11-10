@@ -17,7 +17,7 @@ using TQVaultAE.GUI.Components.Rendering;
 /// <summary>
 /// Button class to support skinning and scaling of the fonts.
 /// </summary>
-public class ScalingButton : Button, IScalingControl
+public class ScalingButton : Button, IScalingControl, IFontRebasing
 {
 	/// <summary>
 	/// Base Font used for scaling of the text to fit within the bounds of the button.
@@ -405,6 +405,19 @@ public class ScalingButton : Button, IScalingControl
 			return;
 
 		this.baseFont = this.Font;
+		this.SetFittedFont(this.GetScaledButtonTextFont(this.baseFont, this.Width));
+	}
+
+	/// <summary>
+	/// The base font changed: the base font to fit moves to it, not the font fitted from it, which may be smaller.
+	/// </summary>
+	void IFontRebasing.RebaseFonts(TQVaultAE.Presentation.Win32.Contracts.IFontService fontService)
+	{
+		var baseFont = fontService.Rebase(this.baseFont ?? this.Font);
+		if (ReferenceEquals(baseFont, this.baseFont ?? this.Font))
+			return;
+
+		this.baseFont = baseFont;
 		this.SetFittedFont(this.GetScaledButtonTextFont(this.baseFont, this.Width));
 	}
 

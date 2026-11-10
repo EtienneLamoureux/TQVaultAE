@@ -35,6 +35,8 @@ public enum TooltipLineKind
 	Delimiter,
 	/// <summary>A line of text with a value right-aligned on the same row (a value range, a set piece count).</summary>
 	Range,
+	/// <summary>A line of text after a warning icon (an incomplete item).</summary>
+	Warning,
 }
 
 /// <summary>
@@ -60,6 +62,10 @@ public sealed record TooltipLine(TooltipLineKind Kind, string Text, TQColor? Col
 	/// <summary>A line of text with <paramref name="range"/> right-aligned.</summary>
 	public static TooltipLine WithRange(string text, string range)
 		=> new(TooltipLineKind.Range, text, Range: range);
+
+	/// <summary>A line of text after a warning icon.</summary>
+	public static TooltipLine WarningOf(string text)
+		=> new(TooltipLineKind.Warning, text, ItemTooltipContentBuilder.IncompleteColor);
 }
 
 /// <summary>
@@ -85,6 +91,12 @@ public class ItemTooltipContentBuilder
 {
 	/// <summary>Color of the value on the right of a range line.</summary>
 	public static readonly TQColor RangeColor = ItemStyle.Broken.TQColor();
+
+	/// <summary>Color of the warning of an incomplete item.</summary>
+	public static readonly TQColor IncompleteColor = TQColor.Orange;
+
+	/// <summary>Color of the line naming the mod an item is linked to.</summary>
+	public static readonly TQColor ModColor = TQColor.Turquoise;
 
 	private readonly ITranslationService _translationService;
 
@@ -140,6 +152,13 @@ public class ItemTooltipContentBuilder
 		// Fullname
 		lines.Add(TooltipLine.Of(data.FullName, nameColor, bold: true));
 
+		// The mod the item is linked to
+		if (item.Mod is { } mod)
+			lines.Add(TooltipLine.Of(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.ItemModLine, mod), ModColor));
+
+		// Records the loaded game data lacks (a mod not linked, or not installed)
+		AddIncomplete(lines, item);
+
 		// Thrown
 		if (item.IsThrownWeapon)
 			lines.Add(TooltipLine.Of(data.BaseItemInfoStyle));
@@ -182,6 +201,12 @@ public class ItemTooltipContentBuilder
 		{
 			// Classic display: base, prefix and suffix lines in the game's order.
 			var attributes = data.ClassicAttributes ?? [.. data.BaseAttributes, .. data.PrefixAttributes, .. data.SuffixAttributes];
+
+			// Rings and amulets have no base stats: a blank line separates their bonuses from the name, as the base
+			// stats of the other items are separated from theirs.
+			if (item.IsJewellery && attributes.Length != 0 && attributes[0].Length != 0 && lines[^1].Kind != TooltipLineKind.Spacer)
+				lines.Add(TooltipLine.Spacer);
+
 			lines.AddRange(attributes.Select(s => TooltipLine.Of(s)));
 		}
 
@@ -315,6 +340,30 @@ public class ItemTooltipContentBuilder
 			return this._translationService.ItemIT;
 		return null;
 	}
+
+	/// <summary>
+	/// The warning of an item naming records the loaded game data lacks, then each of them: its other lines leave out
+	/// what those records hold.
+	/// </summary>
+	private static void AddIncomplete(List<TooltipLine> lines, Item item)
+	{
+		var missing = item.MissingRecords;
+		if (missing.Count == 0)
+			return;
+
+		lines.Add(TooltipLine.WarningOf(Resources.ItemIncomplete));
+		foreach (var (role, id) in missing)
+			lines.Add(TooltipLine.Of($"{RoleLabel(role)} : {id.Raw}", TQColor.DarkGray));
+	}
+
+	private static string RoleLabel(ItemRecordRole role) => role switch
+	{
+		ItemRecordRole.BaseItem => Resources.ItemIncompleteBaseItem,
+		ItemRecordRole.Prefix => Resources.ItemIncompletePrefix,
+		ItemRecordRole.Suffix => Resources.ItemIncompleteSuffix,
+		ItemRecordRole.Relic => Resources.ItemIncompleteRelic,
+		_ => Resources.ItemIncompleteRelicBonus,
+	};
 
 	/// <summary>The color of the leading tag of <paramref name="text"/>, else the color of the item's rarity.</summary>
 	private static TQColor TextColorOrItemColor(Item item, string? text)

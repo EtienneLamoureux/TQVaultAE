@@ -121,7 +121,12 @@ public static class Program
 				// Providers
 				.AddTransient<IArcFileProvider, ArcFileProvider>()
 				.AddTransient<IArzFileProvider, ArzFileProvider>()
-				.AddSingleton<IDatabase, Database>()
+				// One database per custom map (mod), the active one answering as IDatabase
+				.AddTransient<Database>()
+				.AddSingleton<Func<Database>>(sp => () => sp.GetRequiredService<Database>())
+				.AddSingleton<DatabaseSelector>()
+				.AddSingleton<IDatabase>(sp => sp.GetRequiredService<DatabaseSelector>())
+				.AddSingleton<IDatabaseMaps>(sp => sp.GetRequiredService<DatabaseSelector>())
 				.AddSingleton<IItemProvider, ItemProvider>()
 				.AddSingleton<ILootTableCollectionProvider, LootTableCollectionProvider>()
 				.AddTransient<IStashProvider, StashProvider>()
@@ -169,12 +174,22 @@ public static class Program
 		.AddTransient<ILoadAllService, LoadAllService>()
 		.AddSingleton<IItemEditService, ItemEditService>()
 		.AddSingleton<IItemStackingService, ItemStackingService>()
+		.AddSingleton<IItemComparisonService, ItemComparisonService>()
 		.AddTransient<IItemDropService, ItemDropService>()
 		.AddTransient<ISaveOrchestrator, SaveOrchestrator>()
 		.AddSingleton<ISearchCategoryService, SearchCategoryService>()
 		.AddSingleton<ISearchQueryService, SearchQueryService>()
 		.AddSingleton<ICharacterEditService, CharacterEditService>()
 		.AddSingleton<ICharacterStatsService, CharacterStatsService>()
+		.AddSingleton<IModLinkService, ModLinkService>()
+		.AddSingleton<IItemModService, ItemModService>()
+		.AddSingleton<IGameMapService, GameMapService>()
+		// Caches of game data, emptied when the active custom map changes
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<IItemProvider>())
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<ILootTableCollectionProvider>())
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<ISkillTreeProvider>())
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<IUIService>())
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<ICharacterStatsService>())
 
 				// GUI: services passed to forms and controls, and the only way to create forms
 				.AddSingleton<GuiServices>()
@@ -187,7 +202,9 @@ public static class Program
 				.AddSingleton<BagButtonSettings>()
 				.AddTransient<CharacterEditDialog>()
 				.AddTransient<ItemProperties>()
+				.AddTransient<ItemComparisonDialog>()
 				.AddTransient<ItemSeedDialog>()
+				.AddTransient<ModLinkDialog>()
 				.AddTransient<ResultsDialog>()
 				.AddTransient<SearchDialogAdvanced>()
 				.AddTransient<SettingsDialog>()
@@ -204,7 +221,6 @@ public static class Program
 				ManageCulture();
 				SetUILanguage(startupService.ResolveUICultureName());
 				ShowStartupNotice(startupService.SetupGamePaths());
-				startupService.SetupMapName();
 			}
 			catch (ExGamePathNotFound ex)
 			{

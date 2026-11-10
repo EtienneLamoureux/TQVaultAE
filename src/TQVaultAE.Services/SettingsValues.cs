@@ -25,8 +25,6 @@ public sealed record SettingsValues
 	public bool AutoDetectGamePath { get; set; }
 	public string TQPath { get; set; } = string.Empty;
 	public string TQITPath { get; set; } = string.Empty;
-	public bool ModEnabled { get; set; }
-	public string CustomMap { get; set; } = string.Empty;
 	public bool LoadAllFiles { get; set; }
 	public bool SuppressWarnings { get; set; }
 	public bool PlayerReadonly { get; set; }
@@ -79,8 +77,6 @@ public sealed record SettingsValues
 			AutoDetectGamePath = settings.AutoDetectGamePath,
 			TQPath = titanQuestPath,
 			TQITPath = immortalThronePath,
-			ModEnabled = settings.ModEnabled,
-			CustomMap = settings.CustomMap ?? string.Empty,
 			LoadAllFiles = settings.LoadAllFiles,
 			SuppressWarnings = settings.SuppressWarnings,
 			PlayerReadonly = settings.PlayerReadonly,
@@ -125,8 +121,6 @@ public sealed record SettingsValues
 		settings.AutoDetectGamePath = this.AutoDetectGamePath;
 		settings.TQITPath = this.TQITPath;
 		settings.TQPath = this.TQPath;
-		settings.ModEnabled = this.ModEnabled;
-		settings.CustomMap = this.CustomMap;
 		settings.LoadAllFiles = this.LoadAllFiles;
 		settings.SuppressWarnings = this.SuppressWarnings;
 		settings.PlayerReadonly = this.PlayerReadonly;

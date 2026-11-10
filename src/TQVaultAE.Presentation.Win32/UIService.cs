@@ -11,7 +11,7 @@ using TQVaultAE.Presentation.Win32.Contracts;
 
 namespace TQVaultAE.Presentation.Win32;
 
-public class UIService : IUIService
+public class UIService : IUIService, IGameDataCache
 {
 	private readonly ILogger Log;
 	private readonly IDatabase Database;
@@ -29,9 +29,20 @@ public class UIService : IUIService
 	private LazyConcurrentDictionary<RecordId, Bitmap> _Bitmaps = new();
 
 	/// <summary>
+	/// Forgets the bitmaps read so far, without disposing them (controls may still show them): the next ones come from
+	/// the active map's archives.
+	/// </summary>
+	public void ClearGameDataCache() => this._Bitmaps = new();
+
+	/// <summary>
 	/// Default bitmap when one cannot be found in the database.
 	/// </summary>
 	private Bitmap? _DefaultBitmap;
+
+	/// <summary>
+	/// Gives an item linked to a mod its mod's database; null in tests that do not need it.
+	/// </summary>
+	private readonly IItemModService? ItemMods;
 
 	/// <summary>
 	/// Pixels per design pixel: <see cref="Zoom"/> times <see cref="DpiScale"/>.
@@ -129,8 +140,9 @@ public class UIService : IUIService
 	/// <inheritdoc/>
 	public float FontZoom => this._Scale / this.SystemDpiScale;
 
-	public UIService(ILogger<UIService> log, IDatabase database, IBitmapService bitmapService, UserSettings uSettings)
+	public UIService(ILogger<UIService> log, IDatabase database, IBitmapService bitmapService, UserSettings uSettings, IItemModService? itemMods = null)
 	{
+		this.ItemMods = itemMods;
 		this.Log = log;
 		this.Database = database;
 		this.BitmapService = bitmapService;
@@ -146,6 +158,33 @@ public class UIService : IUIService
 
 			this.LoadRelicOverlayBitmap();
 		}
+	}
+
+	/// <summary>
+	/// Picture of an item whose base record the loaded data lacks: the warning icon of the incomplete item tooltip line on
+	/// a dark tile with an orange frame. One cell at design size, like the game's pictures, since the panels scale them.
+	/// </summary>
+	private static readonly Lazy<Bitmap> MissingItemBitmap = new(CreateMissingItemBitmap);
+
+	private static Bitmap CreateMissingItemBitmap()
+	{
+		const int size = (int)ITEMUNITSIZE;
+		var bmp = new Bitmap(size, size);
+		using var g = Graphics.FromImage(bmp);
+		g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+		g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+
+		var tile = new Rectangle(1, 1, size - 3, size - 3);
+		using (var fill = new SolidBrush(Color.FromArgb(160, 40, 24, 0)))
+			g.FillRectangle(fill, tile);
+		using (var frame = new Pen(Color.Orange, 1F))
+			g.DrawRectangle(frame, tile);
+
+		using var icon = SystemIcons.GetStockIcon(StockIconId.Warning, StockIconOptions.Default);
+		using var iconBitmap = icon.ToBitmap();
+		const int iconSize = 20;
+		g.DrawImage(iconBitmap, new Rectangle((size - iconSize) / 2, (size - iconSize) / 2, iconSize, iconSize));
+		return bmp;
 	}
 
 	/// <summary>
@@ -307,6 +346,8 @@ public class UIService : IUIService
 	/// </summary>
 	public Bitmap? GetBitmap(Item itm)
 	{
+		// The picture of an item linked to a mod comes from that mod's files.
+		using var modScope = this.ItemMods?.Scope(itm) ?? NoScope.Instance;
 		Bitmap? bmp = null;
 		if (!RecordId.IsNullOrEmpty(itm.TexImageResourceId))
 		{
@@ -335,6 +376,11 @@ public class UIService : IUIService
 
 			itm.Width = 1;
 			itm.Height = 1;
+
+			// An item whose base record the loaded data lacks (a mod not loaded) has no picture: a warning tile in a single
+			// cell keeps it visible, so it can be found, moved and its tooltip read.
+			if (itm.baseItemInfo is null && !RecordId.IsNullOrEmpty(itm.BaseItemId))
+				bmp = MissingItemBitmap.Value;
 		}
 		return bmp;
 	}

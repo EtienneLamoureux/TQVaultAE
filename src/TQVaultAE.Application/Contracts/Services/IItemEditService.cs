@@ -99,4 +99,27 @@ public interface IItemEditService
 	/// <returns><see langword="true"/> when the seed changed (the item and the sack are then marked as modified);
 	/// <see langword="false"/> when it is the same seed or not a valid one (see <see cref="Item.IsValidSeed"/>).</returns>
 	bool SetSeed(SackCollection sack, Item item, int seed);
+
+	/// <summary>Links <paramref name="item"/> to a mod, or to none, and reads it again with that mod's data.</summary>
+	/// <param name="sack">The sack holding the item.</param>
+	/// <param name="item">The item to change.</param>
+	/// <param name="modName">The mod's name (<c>InstalledMod.Name</c>); null for the base game.</param>
+	/// <returns><see langword="true"/> when the link changed (the item and the sack are then marked as modified).</returns>
+	bool ChangeMod(SackCollection sack, Item item, string? modName);
+
+	/// <summary>Links a vault to a mod, or to none: its items without a link of their own follow it and are read again
+	/// with that mod's data. Those that were incomplete and that the mod completes get the mod as their own link.</summary>
+	/// <param name="vault">The vault.</param>
+	/// <param name="modName">The mod's name (<c>InstalledMod.Name</c>); null for the base game.</param>
+	/// <returns>The items read again; empty when the link did not change.</returns>
+	IReadOnlyList<Item> ChangeVaultMod(PlayerCollection vault, string? modName);
+
+	/// <summary>An item put in a vault linked to a mod, without a link of its own, follows the vault's link: it is read
+	/// again with that mod's data, and gets the mod as its own link when the mod resolves all its missing records.</summary>
+	/// <param name="item">The item just placed.</param>
+	/// <param name="containerMod">The mod of the vault holding it; null for none.</param>
+	/// <param name="fits">Whether the item, read again (its size may change), still fits where it lies; when not, it is
+	/// left as it was.</param>
+	/// <returns><see langword="true"/> when the item now follows or has the vault's mod.</returns>
+	bool AdoptContainerMod(Item item, string? containerMod, Func<Item, bool> fits);
 }

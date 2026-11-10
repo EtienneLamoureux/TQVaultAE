@@ -19,8 +19,6 @@ public class SettingsEditorTests
 			GitBackupEnabled = true,
 			GitBackupRepository = "https://github.com/user/vaults.git",
 			DisableLegacyBackup = true,
-			ModEnabled = true,
-			CustomMap = """C:\Maps\Ragnarok""",
 			AutoDetectLanguage = false,
 			AutoDetectGamePath = false,
 			BaseFont = "AlbertusMT",
@@ -115,29 +113,6 @@ public class SettingsEditorTests
 		editor.RestartReason.Should().Be(RestartReason.Settings);
 	}
 
-	[Fact]
-	public void ModsTurnedOff_ResetsCustomMap()
-	{
-		var editor = NewEditor();
-
-		editor.SetModEnabled(false);
-
-		editor.Current.CustomMap.Should().BeEmpty();
-		editor.RestartReason.Should().Be(RestartReason.CustomMaps);
-	}
-
-	[Fact]
-	public void ModsAlreadyOff_KeepCustomMap()
-	{
-		var settings = NewSettings();
-		settings.ModEnabled = false;
-		var editor = NewEditor(settings);
-
-		editor.SetModEnabled(false);
-
-		editor.Current.CustomMap.Should().Be(settings.CustomMap);
-		editor.ConfigurationChanged.Should().BeFalse();
-	}
 
 	[Fact]
 	public void LanguageChanged_NeedsRestartForLanguage()
@@ -234,14 +209,16 @@ public class SettingsEditorTests
 	}
 
 	[Fact]
-	public void FontChanged_NeedsRestartForSettings()
+	public void FontChanged_AppliesWithoutRestart()
 	{
 		var editor = NewEditor();
 
 		editor.Current.BaseFont = "Arial";
 
-		editor.UISettingChanged.Should().BeTrue();
-		editor.RestartReason.Should().Be(RestartReason.Settings);
+		editor.BaseFontChanged.Should().BeTrue();
+		editor.ConfigurationChanged.Should().BeTrue();
+		editor.UISettingChanged.Should().BeFalse();
+		editor.RestartReason.Should().Be(RestartReason.None);
 	}
 
 	[Fact]

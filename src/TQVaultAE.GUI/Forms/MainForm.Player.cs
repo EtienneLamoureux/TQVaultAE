@@ -202,10 +202,13 @@ public partial class MainForm
 	/// <param name="selectedSave">Player from the drop down list.</param>
 	private void LoadPlayerAndStashes(PlayerSave selectedSave)
 	{
+		// The character's mod data first: its database, archives and shared stash files.
+		bool mapChanged = this.ActivateMapFor(selectedSave);
+
 		var session = this.playerService.LoadCharacterSession(
 			selectedSave
-			, loadTransferStash: this.stashPanel.TransferStash is null
-			, loadRelicVaultStash: this.stashPanel.RelicVaultStash is null);
+			, loadTransferStash: mapChanged || this.stashPanel.TransferStash is null
+			, loadRelicVaultStash: mapChanged || this.stashPanel.RelicVaultStash is null);
 
 		this.ShowPlayer(selectedSave, session.Player, false);
 		this.ShowPlayerStash(selectedSave, session.PlayerStash, false);

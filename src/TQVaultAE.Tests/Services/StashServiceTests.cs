@@ -34,6 +34,7 @@ public class StashServiceTests
 		_mockItemDatabaseService = new Mock<IItemDatabaseService>();
 		_mockStashProvider = new Mock<IStashProvider>();
 		_mockGamePathService = new Mock<IGamePathService>();
+		_mockGamePathService.Setup(x => x.PlayerStashFileNameB).Returns("winsys.dxb");
 		_mockGameFileService = new Mock<IGameFileService>();
 		_userSettings = new UserSettings();
 
@@ -76,14 +77,12 @@ public class StashServiceTests
 	public void LoadPlayerStash_WithValidPlayerSave_LoadsStashSuccessfully()
 	{
 		// Arrange
-		var playerName = "TestPlayer";
-		var stashFile = """C:\Test\Saves\TestPlayer\winsys.dxb""";
+		var stashFile = Path.Combine("""C:\Test\Saves\_TestPlayer""", "winsys.dxb");
 		var mockPathIO = new Mock<IPathIO>();
 		var mockTranslationService = new Mock<ITranslationService>();
 		mockPathIO.Setup(x => x.GetFileName("""C:\Test\Saves\_TestPlayer""")).Returns("_TestPlayer");
 		var playerSave = new PlayerSave("""C:\Test\Saves\_TestPlayer""", true, false, false, "", mockTranslationService.Object, mockPathIO.Object);
 
-		_mockGamePathService.Setup(x => x.GetPlayerStashFile(playerName, false)).Returns(stashFile);
 		_mockStashProvider.Setup(x => x.LoadFile(It.IsAny<Stash>())).Callback<Stash>(s => s.CreateEmptySack()).Returns(true);
 
 		// Act
@@ -104,15 +103,13 @@ public class StashServiceTests
 	public void LoadPlayerStash_WithLoadException_CapturesException()
 	{
 		// Arrange
-		var playerName = "TestPlayer";
-		var stashFile = """C:\Test\Saves\TestPlayer\winsys.dxb""";
+		var stashFile = Path.Combine("""C:\Test\Saves\_TestPlayer""", "winsys.dxb");
 		var mockPathIO = new Mock<IPathIO>();
 		var mockTranslationService = new Mock<ITranslationService>();
 		mockPathIO.Setup(x => x.GetFileName("""C:\Test\Saves\_TestPlayer""")).Returns("_TestPlayer");
 		var playerSave = new PlayerSave("""C:\Test\Saves\_TestPlayer""", true, false, false, "", mockTranslationService.Object, mockPathIO.Object);
 		var expectedException = new ArgumentException("Invalid stash format");
 
-		_mockGamePathService.Setup(x => x.GetPlayerStashFile(playerName, false)).Returns(stashFile);
 		_mockStashProvider.Setup(x => x.LoadFile(It.IsAny<Stash>())).Callback<Stash>(s => s.CreateEmptySack()).Throws(expectedException);
 
 		// Act
@@ -132,14 +129,12 @@ public class StashServiceTests
 	public void LoadPlayerStash_WithFromFileWatcherTrue_UpdatesExistingStash()
 	{
 		// Arrange
-		var playerName = "TestPlayer";
-		var stashFile = """C:\Test\Saves\TestPlayer\winsys.dxb""";
+		var stashFile = Path.Combine("""C:\Test\Saves\_TestPlayer""", "winsys.dxb");
 		var mockPathIO = new Mock<IPathIO>();
 		var mockTranslationService = new Mock<ITranslationService>();
 		mockPathIO.Setup(x => x.GetFileName("""C:\Test\Saves\_TestPlayer""")).Returns("_TestPlayer");
 		var playerSave = new PlayerSave("""C:\Test\Saves\_TestPlayer""", true, false, false, "", mockTranslationService.Object, mockPathIO.Object);
 
-		_mockGamePathService.Setup(x => x.GetPlayerStashFile(playerName, false)).Returns(stashFile);
 		_mockStashProvider.Setup(x => x.LoadFile(It.IsAny<Stash>())).Callback<Stash>(s => s.CreateEmptySack()).Returns(true);
 
 		// First load
@@ -178,8 +173,7 @@ public class StashServiceTests
 	[Fact]
 	public void LoadCharacterStash_ImmortalThroneCharacter_LoadsItsStash()
 	{
-		var stashFile = """C:\Test\Saves\TestPlayer\winsys.dxb""";
-		this._mockGamePathService.Setup(x => x.GetPlayerStashFile("TestPlayer", false)).Returns(stashFile);
+		var stashFile = Path.Combine("""C:\Test\Saves\_TestPlayer""", "winsys.dxb");
 		this._mockStashProvider.Setup(x => x.LoadFile(It.IsAny<Stash>())).Returns(true);
 
 		var result = this._stashService.LoadCharacterStash(CreateSave(isImmortalThrone: true));
@@ -530,14 +524,12 @@ public class StashServiceTests
 	public void LoadPlayerStash_WithArchivedPlayer_UsesArchivedPath()
 	{
 		// Arrange
-		var playerName = "TestPlayer";
-		var stashFile = """C:\Test\Saves\TestPlayer\winsys.dxb""";
+		var stashFile = Path.Combine("""C:\Test\Saves\_TestPlayer""", "winsys.dxb");
 		var mockPathIO = new Mock<IPathIO>();
 		var mockTranslationService = new Mock<ITranslationService>();
 		mockPathIO.Setup(x => x.GetFileName("""C:\Test\Saves\_TestPlayer""")).Returns("_TestPlayer");
 		var playerSave = new PlayerSave("""C:\Test\Saves\_TestPlayer""", false, true, false, "", mockTranslationService.Object, mockPathIO.Object); // IsArchived = true
 
-		_mockGamePathService.Setup(x => x.GetPlayerStashFile(playerName, true)).Returns(stashFile); // IsArchived = true
 		_mockStashProvider.Setup(x => x.LoadFile(It.IsAny<Stash>())).Callback<Stash>(s => s.CreateEmptySack()).Returns(true);
 
 		// Act
@@ -545,7 +537,7 @@ public class StashServiceTests
 
 		// Assert
 		result.Should().NotBeNull();
-		_mockGamePathService.Verify(x => x.GetPlayerStashFile(playerName, true), Times.Once);
+		result.StashFile.Should().Be(stashFile); // the archived save's own folder
 	}
 
 	[Theory]

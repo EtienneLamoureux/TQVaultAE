@@ -342,6 +342,10 @@ public static class GameAttributeOrder
 			{
 				var (text, slot) = lines[line];
 
+				// The base attack speed of a non-weapon has no text.
+				if (text.Length == 0 && slot.Store == GameAttributeStore.Character && slot.Output == 1)
+					continue;
+
 				// The game lists the racial bonuses of the prefix, then the suffix, then the base.
 				int rank = slot.Store == GameAttributeStore.Racial ? (source + 2) % 3 : source;
 
@@ -356,11 +360,28 @@ public static class GameAttributeOrder
 		AddAll(prefixLines, 1);
 		AddAll(suffixLines, 2);
 
-		return [.. entries
+		var ordered = entries
 			.OrderBy(e => e.Section).ThenBy(e => e.Global).ThenBy(e => e.GlobalSource).ThenBy(e => e.Index)
 			.ThenBy(e => e.Source).ThenBy(e => e.Line)
-			.Select(e => e.Text)];
+			.Select(e => (e.Text, e.Section, e.Source))
+			.ToList();
+
+		// The base record's stats (damage, speed, armor, block) come first; a blank line separates them from the
+		// affixes and bonuses, including an affix's own armor or damage listed next to them.
+		int baseCount = ordered.TakeWhile(e => e.Source == 0 && IsBaseSection(sections, e.Section)).Count();
+		var result = ordered.Select(e => e.Text).ToList();
+		if (baseCount > 0 && baseCount < result.Count && result[baseCount].Length != 0)
+			result.Insert(baseCount, string.Empty);
+
+		return [.. result];
 	}
+
+	/// <summary>
+	/// Whether a section holds base stats: the first output of the offense, defense and character stores.
+	/// </summary>
+	private static bool IsBaseSection((GameAttributeStore Store, int Output)[] sections, int section)
+		=> section < sections.Length
+		&& sections[section] is { Output: 1, Store: GameAttributeStore.Offense or GameAttributeStore.Defense or GameAttributeStore.Character };
 }
 
 /// <summary>

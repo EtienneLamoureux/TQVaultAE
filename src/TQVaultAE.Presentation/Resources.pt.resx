@@ -325,9 +325,6 @@ Deseja reiniciar o TQVault?</value>
   <data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>Mostrar Jogador</value>
   </data>
-  <data name="MainFormCustomMapLabel" xml:space="preserve">
-    <value>{0} Mapa Personalizado</value>
-  </data>
   <data name="MainFormDatabaseError" xml:space="preserve">
     <value>Erro ao extrair o banco de dados</value>
   </data>
@@ -355,15 +352,6 @@ Deseja reiniciar o TQVault agora?</value>
   </data>
   <data name="MainFormMaintainVault" xml:space="preserve">
     <value>Gerenciar arquivos do cofre ...</value>
-  </data>
-  <data name="MainFormMapsChanged" xml:space="preserve">
-    <value>Configuração de mapas personalizados alterada</value>
-  </data>
-  <data name="MainFormMapsChangedMsg" xml:space="preserve">
-    <value>A configuração de mapas personalizados foi alterada.
-
-Por favor, reinicie o TQVault para que ela entre em vigor.
-Deseja reiniciar o TQVault agora?</value>
   </data>
   <data name="MainFormNoCharacters" xml:space="preserve">
     <value>Nenhum personagem de TQ encontrado</value>
@@ -745,14 +733,6 @@ a inicialização do TQVault.</value>
   <data name="SettingsDetectLanguage" xml:space="preserve">
     <value>Detectar automaticamente o idioma</value>
   </data>
-  <data name="SettingsEnableMod" xml:space="preserve">
-    <value>Habilitar mapas personalizados</value>
-  </data>
-  <data name="SettingsEnableModTT" xml:space="preserve">
-    <value>A seleção deste item permitirá
-que o menu suspenso Habilte a seleção de
-mapas personalizados.</value>
-  </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Verifique agora</value>
   </data>
@@ -771,9 +751,6 @@ disponível.</value>
   </data>
   <data name="SettingsLabel4" xml:space="preserve">
     <value>Caminho do jogo de TI</value>
-  </data>
-  <data name="SettingsLabel5" xml:space="preserve">
-    <value>Mapa personalizado</value>
   </data>
   <data name="SettingsLoadChar" xml:space="preserve">
     <value>Carregar automaticamente o último personagem aberto</value>

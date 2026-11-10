@@ -11,6 +11,9 @@ public class ImportResult
 	public IReadOnlyList<Item> Items { get; set; } = [];
 	public int SackNumber { get; set; }
 	public string VaultName { get; set; } = string.Empty;
+
+	/// <summary>The mod the imported vault is linked to; null for none or when not a vault.</summary>
+	public string? VaultMod { get; set; }
 	/// <summary>Items of each tab, for a vault import only.</summary>
 	public Dictionary<int, List<Item>>? SackItems { get; set; }
 	public int ImportedCount { get; set; }
@@ -41,7 +44,8 @@ public class ImportResult
 			TotalCount = items.Count
 		};
 
-	public static ImportResult SucceededVault(string vaultName, Dictionary<int, List<Item>> sackItems, Dictionary<int, BagButtonIconInfo>? sackIconInfo = null)
+	public static ImportResult SucceededVault(string vaultName, Dictionary<int, List<Item>> sackItems, Dictionary<int, BagButtonIconInfo>? sackIconInfo = null
+		, string? vaultMod = null)
 	{
 		var total = 0;
 		foreach (var kv in sackItems)
@@ -52,6 +56,7 @@ public class ImportResult
 			Success = true,
 			Scope = ExportScope.Vault,
 			VaultName = vaultName,
+			VaultMod = vaultMod,
 			SackItems = sackItems,
 			SackIconInfo = sackIconInfo,
 			ImportedCount = total,

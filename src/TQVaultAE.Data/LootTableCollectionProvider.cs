@@ -8,7 +8,7 @@ using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Data;
 
-public class LootTableCollectionProvider(ILogger<LootTableCollectionProvider> log, IDatabase database, ITranslationService translationService, UserSettings uSettings) : ILootTableCollectionProvider
+public class LootTableCollectionProvider(ILogger<LootTableCollectionProvider> log, IDatabase database, ITranslationService translationService, UserSettings uSettings) : ILootTableCollectionProvider, IGameDataCache
 {
 	private const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
 
@@ -18,6 +18,14 @@ public class LootTableCollectionProvider(ILogger<LootTableCollectionProvider> lo
 	private readonly UserSettings USettings = uSettings;
 
 	private Dictionary<RecordId, LootTableCollection> LootTableCache = [];
+
+	/// <inheritdoc/>
+	public void ClearGameDataCache()
+	{
+		this.LootTableCache = [];
+		this._AllLootRandomizerTable = null;
+		this._AllLootRandomizerTranslated = null;
+	}
 
 	ReadOnlyDictionary<RecordId, LootTableCollection>? _AllLootRandomizerTable;
 	public ReadOnlyDictionary<RecordId, LootTableCollection> AllLootRandomizerTable

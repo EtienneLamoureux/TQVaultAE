@@ -241,6 +241,50 @@ public class Item
 	public Info? RelicBonus2Info { get; set; }
 
 	/// <summary>
+	/// The mod the item belongs to (the mod's folder name, as in a character's link file): its records resolve in that
+	/// mod's database, mod data first and then the base game's, whatever the active map is. Null for a base game item.
+	/// Kept by copies and saved in the vault files.
+	/// </summary>
+	public string? Mod { get; set; }
+
+	/// <summary>
+	/// True when <see cref="Mod"/> is the link of the vault holding the item rather than the item's own: the item
+	/// follows the vault's link when it changes, and the vault file does not repeat it for the item.
+	/// </summary>
+	public bool ModFromVault { get; set; }
+
+	/// <summary>
+	/// The records the item names that the loaded game data does not have (once read with <c>GetDBData</c>): typically
+	/// those of a mod whose data is not loaded. The item is then shown incomplete.
+	/// </summary>
+	public IReadOnlyList<(ItemRecordRole Role, RecordId Id)> MissingRecords
+	{
+		get
+		{
+			var missing = new List<(ItemRecordRole, RecordId)>();
+			Check(ItemRecordRole.BaseItem, this.BaseItemId, this.baseItemInfo);
+			Check(ItemRecordRole.Prefix, this.prefixID, this.prefixInfo);
+			Check(ItemRecordRole.Suffix, this.suffixID, this.suffixInfo);
+			Check(ItemRecordRole.Relic, this.relicID, this.RelicInfo);
+			Check(ItemRecordRole.RelicBonus, this.RelicBonusId, this.RelicBonusInfo);
+			Check(ItemRecordRole.Relic, this.relic2ID, this.Relic2Info);
+			Check(ItemRecordRole.RelicBonus, this.RelicBonus2Id, this.RelicBonus2Info);
+			return missing;
+
+			void Check(ItemRecordRole role, RecordId? id, Info? info)
+			{
+				if (!RecordId.IsNullOrEmpty(id) && info is null)
+					missing.Add((role, id));
+			}
+		}
+	}
+
+	/// <summary>
+	/// The item names records the loaded game data does not have: see <see cref="MissingRecords"/>.
+	/// </summary>
+	public bool IsIncomplete => this.MissingRecords.Count > 0;
+
+	/// <summary>
 	/// Resource id of the item's picture, read from the game files when the item is first drawn.
 	/// </summary>
 	public RecordId? TexImageResourceId { get; set; }

@@ -143,6 +143,10 @@ public partial class SackPanel
 			dragItem = drop.DroppedItem;
 			itemUnderUs = drop.ItemUnderUs;
 
+			// In a vault linked to a mod, an item without a link of its own follows the vault's.
+			if (!drop.Stacked && this.ContainerMod?.Invoke() is { } containerMod)
+				this.Services.ItemEditService.AdoptContainerMod(dragItem, containerMod, this.FitsWhereItLies);
+
 			// clear the "last drag" variables
 			this.LastDragLocation = InvalidDragLocation;
 			this.CellsUnderDragItem = InvalidDragRectangle;

@@ -49,6 +49,9 @@ public enum ItemActions
 
 	/// <summary>Craft the artifact of a formula. Part of <see cref="Edit"/>.</summary>
 	CraftArtifact = 1 << 13,
+
+	/// <summary>Compare the first two selected items side by side; the items selected after them are ignored.</summary>
+	Compare = 1 << 14,
 }
 
 /// <summary>
@@ -112,6 +115,16 @@ public readonly record struct MoveDestination(
 /// </summary>
 public static class ItemActionRules
 {
+	/// <summary>How many items <see cref="ItemActions.Compare"/> compares: the first ones selected.</summary>
+	public const int MaxComparedItems = 2;
+
+	/// <summary>
+	/// The items <see cref="ItemActions.Compare"/> compares: the first <see cref="MaxComparedItems"/> of the selection, in
+	/// the order they were selected; null when fewer are selected.
+	/// </summary>
+	public static (Item First, Item Second)? ComparedItems(IReadOnlyList<Item>? selection)
+		=> selection is { Count: >= MaxComparedItems } ? (selection[0], selection[1]) : null;
+
 	/// <summary>
 	/// Indicates whether the items of a sack of that type cannot change: with the <c>PlayerReadonly</c> setting on, the
 	/// equipment of the player cannot be picked from, dropped on, moved or deleted. The player sacks and the other
@@ -167,6 +180,10 @@ public static class ItemActionRules
 
 		if (hasSelection && !context.ReadOnly)
 			actions |= ItemActions.ClearSelection;
+
+		// Comparing only reads the items: read-only sacks too.
+		if (context.SelectionCount >= MaxComparedItems)
+			actions |= ItemActions.Compare;
 
 		return actions;
 	}

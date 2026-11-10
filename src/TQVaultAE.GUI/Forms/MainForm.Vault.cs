@@ -63,11 +63,24 @@ public partial class MainForm
 
 
 	/// <summary>
+	/// The mod a vault is linked to, once the vault is loaded; null otherwise.
+	/// </summary>
+	private string? LoadedVaultMod(string vaultName)
+		=> this.Services.Session.Vaults.TryGetValue(this.Services.GamePathService.GetVaultFile(vaultName), out var vault)
+			&& vault.IsValueCreated
+				? vault.Value?.Mod
+				: null;
+
+	/// <summary>
 	/// Gets a list of all available vault files and populates the drop down list.
 	/// </summary>
 	/// <param name="loadVault">Indicates whether the list will also load the last vault selected.</param>
 	private void GetVaultList(bool loadVault)
 	{
+		// A vault linked to a mod shows it after its name, like the characters.
+		this.vaultListComboBox.ItemSuffix ??= this.LoadedVaultMod;
+		this.secondaryVaultListComboBox.ItemSuffix ??= this.LoadedVaultMod;
+
 		string[] vaults = this.vaultService.GetVaultList();
 
 		// There was something already selected so we will save it.

@@ -212,6 +212,62 @@ public class PlayerCollectionProviderTests
 		_mockFileIO.Verify(x => x.WriteAllBytes(It.IsAny<string>(), It.IsAny<byte[]>()), Times.Never);
 	}
 
+	[Fact]
+	public void LoadFile_ModdedVault_ItemsGetTheirOwnModElseTheVaults_BeforeTheyAreRead()
+	{
+		var pc = new PlayerCollection("test", "vault.json") { IsVault = true };
+		var json = """
+			{"mod":"shadowchampions","sacks":[{"items":[
+				{"baseName":"records/a.dbr"},
+				{"baseName":"records/b.dbr","mod":"Lilith"}]}]}
+			""";
+		_mockFileIO.Setup(x => x.ReadAllText("vault.json", It.IsAny<Encoding>())).Returns(json);
+		var modsWhenRead = new List<string?>();
+		_mockItemProvider.Setup(p => p.GetDBData(It.IsAny<Item>())).Callback<Item>(i => modsWhenRead.Add(i.Mod));
+
+		_provider.LoadFile(pc, "vault.json");
+
+		pc.Mod.Should().Be("shadowchampions");
+		pc.Sacks![0].Select(i => (i.Mod, i.ModFromVault)).Should().Equal(("shadowchampions", true), ("Lilith", false));
+		modsWhenRead.Should().Equal("shadowchampions", "Lilith");
+	}
+
+	[Fact]
+	public void Save_ModdedVault_WritesTheVaultsMod_AndTheItemsOwnLinks()
+	{
+		var sack = new SackCollection();
+		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/a.dbr"), Mod = "shadowchampions", ModFromVault = true });
+		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/b.dbr"), Mod = "Lilith" });
+		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/c.dbr"), Mod = "shadowchampions" });
+		var pc = new PlayerCollection("test", "vault.json") { IsVault = true, Mod = "shadowchampions", Sacks = [sack] };
+		string? written = null;
+		_mockFileIO.Setup(x => x.WriteAllText("vault.json", It.IsAny<string>(), It.IsAny<Encoding>()))
+			.Callback<string, string, Encoding>((_, text, _) => written = text);
+
+		_provider.Save(pc, "vault.json");
+
+		using var doc = JsonDocument.Parse(written!);
+		doc.RootElement.GetProperty("mod").GetString().Should().Be("shadowchampions");
+		var items = doc.RootElement.GetProperty("sacks")[0].GetProperty("items");
+		items[0].TryGetProperty("mod", out _).Should().BeFalse();
+		items[1].GetProperty("mod").GetString().Should().Be("Lilith");
+		// Its own link, even when it is the vault's: it keeps it if the vault's link changes.
+		items[2].GetProperty("mod").GetString().Should().Be("shadowchampions");
+	}
+
+	[Fact]
+	public void Save_VaultWithoutMod_WritesNoModProperty()
+	{
+		var pc = new PlayerCollection("test", "vault.json") { IsVault = true, Sacks = [new SackCollection()] };
+		string? written = null;
+		_mockFileIO.Setup(x => x.WriteAllText("vault.json", It.IsAny<string>(), It.IsAny<Encoding>()))
+			.Callback<string, string, Encoding>((_, text, _) => written = text);
+
+		_provider.Save(pc, "vault.json");
+
+		written.Should().NotContain("\"mod\"");
+	}
+
 	// Note: Save for non-vault requires complex Encode mock setup due to binary manipulation
 	// The Save_Vault test covers the vault code path, which is the simpler path
 

@@ -1,0 +1,98 @@
+using System.Globalization;
+using TQVaultAE.Application.DTOs;
+using TQVaultAE.Presentation;
+
+namespace TQVaultAE.GUI.Components;
+
+/// <summary>
+/// The "Modded" submenu of the item and vault menus: the base game, then the installed mods, the current one checked.
+/// </summary>
+internal static class ModMenu
+{
+	/// <summary>
+	/// Builds the submenu in the style of the menu that holds it.
+	/// </summary>
+	/// <param name="owner">The menu that holds the submenu, for its colors and font.</param>
+	/// <param name="text">The submenu's text.</param>
+	/// <param name="mods">The installed mods.</param>
+	/// <param name="current">The current mod's name; null for the base game.</param>
+	/// <param name="pick">Called with the chosen mod's name, null for the base game.</param>
+	/// <param name="suggest">The mod suggestion for the items concerned, read when the submenu opens; null for none.</param>
+	public static ToolStripMenuItem Create(ToolStrip owner, string text, IReadOnlyList<InstalledMod> mods, string? current, Action<string?> pick
+		, Func<ModSuggestion>? suggest = null)
+	{
+		var menu = Styled(owner, text);
+
+		// The suggestion reads the mods' databases: only when the submenu opens, once.
+		if (suggest is not null)
+		{
+			bool hinted = false;
+			menu.DropDownOpening += (_, _) =>
+			{
+				if (hinted)
+					return;
+
+				hinted = true;
+				Hint(menu, suggest());
+			};
+		}
+
+		var none = Styled(owner, Resources.ItemModNone);
+		none.Checked = current is null;
+		none.Click += (_, _) => pick(null);
+		menu.DropDownItems.Add(none);
+
+		if (mods.Count != 0 || current is not null)
+			menu.DropDownItems.Add(new ToolStripSeparator());
+
+		foreach (var mod in mods)
+		{
+			var entry = Styled(owner, mod.Name);
+			entry.ToolTipText = mod.DisplayName;
+			entry.Checked = string.Equals(mod.Name, current, StringComparison.OrdinalIgnoreCase);
+			entry.Click += (_, _) => pick(mod.Name);
+			menu.DropDownItems.Add(entry);
+		}
+
+		// A link to a mod that is not installed (any more) stays visible.
+		if (current is not null && !mods.Any(m => string.Equals(m.Name, current, StringComparison.OrdinalIgnoreCase)))
+		{
+			var missing = Styled(owner, string.Format(CultureInfo.CurrentCulture, Resources.ModLinkMissingLabel, current));
+			missing.Checked = true;
+			missing.Enabled = false;
+			menu.DropDownItems.Add(missing);
+		}
+
+		return menu;
+	}
+
+	/// <summary>
+	/// Marks every mod having records the base game lacks with a hint on the right: a record found in several mods
+	/// hints each of them. A mod having only some of the records shows how many.
+	/// </summary>
+	private static void Hint(ToolStripMenuItem menu, ModSuggestion suggestion)
+	{
+		foreach (var match in suggestion.Matches)
+		{
+			var entry = menu.DropDownItems.OfType<ToolStripMenuItem>()
+				.FirstOrDefault(i => string.Equals(i.Text, match.Mod.Name, StringComparison.OrdinalIgnoreCase));
+			if (entry is null)
+				continue;
+
+			entry.ShortcutKeyDisplayString = match.Matched == suggestion.ModOnlyRecords
+				? Resources.ModSuggestedHint
+				: string.Format(CultureInfo.CurrentCulture, Resources.ModSuggestedPartialHint, match.Matched, suggestion.ModOnlyRecords);
+			entry.ShowShortcutKeys = true;
+			entry.ToolTipText = $"{match.Mod.DisplayName}{Environment.NewLine}"
+				+ string.Format(CultureInfo.CurrentCulture, Resources.ModSuggestedDetail, match.Matched, suggestion.ModOnlyRecords);
+		}
+	}
+
+	private static ToolStripMenuItem Styled(ToolStrip owner, string text)
+		=> new(text)
+		{
+			BackColor = owner.BackColor,
+			Font = owner.Font,
+			ForeColor = owner.ForeColor,
+		};
+}

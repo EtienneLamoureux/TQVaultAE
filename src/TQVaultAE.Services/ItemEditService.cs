@@ -1,3 +1,4 @@
+using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
@@ -7,17 +8,22 @@ namespace TQVaultAE.Services;
 /// <summary>
 /// The item edits offered by the sack context menu: affixes, completion bonuses, relics, seed, copies.
 /// </summary>
-public class ItemEditService(IDatabase database, IItemProvider itemProvider) : IItemEditService
+public class ItemEditService(IDatabase database, IItemProvider itemProvider, IItemModService? itemMods = null) : IItemEditService
 {
 	/// <summary>Shards given by the "complete relic" entry; the item caps it to its completion level.</summary>
 	private const int CompleteRelicNumber = 10;
 
 	private readonly IDatabase _database = database;
 	private readonly IItemProvider _itemProvider = itemProvider;
+	private readonly IItemModService? _itemMods = itemMods;
+
+	/// <summary>The database of the item's mod for the current thread, until disposed.</summary>
+	private IDisposable ModScope(Item item) => this._itemMods?.Scope(item) ?? NoScope.Instance;
 
 	/// <inheritdoc/>
 	public bool ChangePrefix(SackCollection sack, Item item, RecordId affixId)
 	{
+		using var modScope = this.ModScope(item);
 		if (affixId == item.prefixID)
 			return false;
 
@@ -30,6 +36,7 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider) : I
 	/// <inheritdoc/>
 	public bool ChangeSuffix(SackCollection sack, Item item, RecordId affixId)
 	{
+		using var modScope = this.ModScope(item);
 		if (affixId == item.suffixID)
 			return false;
 
@@ -58,6 +65,7 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider) : I
 	/// <inheritdoc/>
 	public bool ChangeCompletionBonus(SackCollection sack, Item item, RecordId bonusId, bool secondRelic = false)
 	{
+		using var modScope = this.ModScope(item);
 		var currentId = secondRelic ? item.RelicBonus2Id : item.RelicBonusId;
 		if (bonusId == currentId)
 			return false;
@@ -101,6 +109,7 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider) : I
 		RecordId? bonusId = this.RollBonus(artifact);
 		if (bonusId is not null)
 		{
+			using var modScope = this.ModScope(artifact);
 			artifact.RelicBonusId = bonusId;
 			artifact.RelicBonusInfo = this._database.GetInfo(bonusId);
 			artifact.IsModified = true;
@@ -168,6 +177,91 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider) : I
 
 		item.Seed = seed;
 		MarkModified(sack, item);
+		return true;
+	}
+
+	/// <inheritdoc/>
+	public bool ChangeMod(SackCollection sack, Item item, string? modName)
+	{
+		string? mod = string.IsNullOrWhiteSpace(modName) ? null : modName;
+		if (string.Equals(item.Mod, mod, StringComparison.OrdinalIgnoreCase) && !item.ModFromVault)
+			return false;
+
+		// Chosen for the item: its own link from now on.
+		item.Mod = mod;
+		item.ModFromVault = false;
+		this._itemProvider.GetDBData(item);
+		MarkModified(sack, item);
+		return true;
+	}
+
+	/// <inheritdoc/>
+	public IReadOnlyList<Item> ChangeVaultMod(PlayerCollection vault, string? modName)
+	{
+		string? mod = string.IsNullOrWhiteSpace(modName) ? null : modName;
+		string? previous = vault.Mod;
+		if (string.Equals(previous, mod, StringComparison.OrdinalIgnoreCase))
+			return [];
+
+		vault.Mod = mod;
+		var changed = new List<Item>();
+		foreach (var sack in vault)
+		{
+			if (sack is null)
+				continue;
+
+			// The items following the vault's link, or without a link, follow the new one; the items having their own
+			// link keep it.
+			foreach (var item in sack.Where(i => i.Mod is null || i.ModFromVault))
+			{
+				bool wasIncomplete = item.IsIncomplete;
+				item.Mod = mod;
+				item.ModFromVault = mod is not null;
+				this._itemProvider.GetDBData(item);
+
+				// An item whose missing records the mod all resolves belongs to that mod: it gets its own link, which it
+				// keeps when the vault's link changes or when it leaves the vault.
+				if (mod is not null && wasIncomplete && !item.IsIncomplete)
+					item.ModFromVault = false;
+
+				item.IsModified = true;
+				changed.Add(item);
+			}
+
+			sack.IsModified = true;
+		}
+
+		return changed;
+	}
+
+	/// <inheritdoc/>
+	public bool AdoptContainerMod(Item item, string? containerMod, Func<Item, bool> fits)
+	{
+		// Only an item without a link of its own follows the vault's.
+		if (string.IsNullOrWhiteSpace(containerMod) || (item.Mod is not null && !item.ModFromVault)
+			|| (item.ModFromVault && string.Equals(item.Mod, containerMod, StringComparison.OrdinalIgnoreCase)))
+			return false;
+
+		var (previousMod, previousFromVault) = (item.Mod, item.ModFromVault);
+		bool wasIncomplete = item.IsIncomplete;
+
+		item.Mod = containerMod;
+		item.ModFromVault = true;
+		this._itemProvider.GetDBData(item);
+
+		// Read with the mod's data, the item may get its real size: it must still fit where it was dropped.
+		if (!fits(item))
+		{
+			(item.Mod, item.ModFromVault) = (previousMod, previousFromVault);
+			this._itemProvider.GetDBData(item);
+			return false;
+		}
+
+		// The vault's mod resolves all its missing records: the item belongs to that mod.
+		if (wasIncomplete && !item.IsIncomplete)
+			item.ModFromVault = false;
+
+		item.IsModified = true;
 		return true;
 	}
 

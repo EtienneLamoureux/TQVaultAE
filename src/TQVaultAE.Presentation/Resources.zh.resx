@@ -324,9 +324,6 @@
     <data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>显示角色</value>
   </data>
-    <data name="MainFormCustomMapLabel" xml:space="preserve">
-    <value>{0} 自定义地图</value>
-  </data>
     <data name="MainFormDatabaseError" xml:space="preserve">
     <value>提取数据库错误</value>
   </data>
@@ -354,15 +351,6 @@
   </data>
     <data name="MainFormMaintainVault" xml:space="preserve">
     <value>管理仓库文件...</value>
-  </data>
-  <data name="MainFormMapsChanged" xml:space="preserve">
-    <value>自定义地图设置已更改</value>
-  </data>
-  <data name="MainFormMapsChangedMsg" xml:space="preserve">
-    <value>自定义地图设置已更改。
-
-您需要重新启动TQVault以生效。
-您是否想要现在重新启动TQVault？</value>
   </data>
     <data name="MainFormNoCharacters" xml:space="preserve">
     <value>没有检测到泰坦之旅(TQ)的角色</value>
@@ -742,12 +730,6 @@ TQVaultMon是一款在运行时会让泰坦之旅游戏认为
     <data name="SettingsDetectLanguage" xml:space="preserve">
     <value>自动检测语言</value>
   </data>
-    <data name="SettingsEnableMod" xml:space="preserve">
-    <value>启用自定义地图</value>
-  </data>
-    <data name="SettingsEnableModTT" xml:space="preserve">
-    <value>勾选此选项将启用下拉列表来选择自定义地图.</value>
-  </data>
     <data name="SettingsForceCheck" xml:space="preserve">
     <value>检查更新</value>
   </data>
@@ -765,9 +747,6 @@ TQVaultMon是一款在运行时会让泰坦之旅游戏认为
   </data>
     <data name="SettingsLabel4" xml:space="preserve">
     <value>不朽王座游戏路径</value>
-  </data>
-    <data name="SettingsLabel5" xml:space="preserve">
-    <value>自定义地图</value>
   </data>
   <data name="SettingsLoadChar" xml:space="preserve">
     <value>自动加载最后打开的角色</value>

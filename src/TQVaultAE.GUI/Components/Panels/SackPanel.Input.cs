@@ -77,6 +77,9 @@ public partial class SackPanel
 			else
 			{
 				Item? focusedItem = this.FindItem(this.LastCellWithFocus);
+
+				// The affixes and bonuses offered for an item linked to a mod come from that mod's data.
+				using var modScope = this.Services.ItemModService.Scope(focusedItem);
 				int selectionCount = this.selectedItems?.Count ?? 0;
 				bool singleSelectionFocused = selectionCount == 1 && focusedItem == this.selectedItems![0];
 
@@ -123,10 +126,19 @@ public partial class SackPanel
 					AddItemSetMenuItems(focusedItem!);
 				}
 
+				if (focusedItem is not null && !this.ItemsReadOnly)
+					this.AddModMenuItems(focusedItem);
+
 				if (actions.HasFlag(ItemActions.Properties))
 				{
 					this.CustomContextMenu.Items.Add("-");
 					this.AddActionMenuItem(Resources.SackPanelMenuProperties, ItemActions.Properties);
+				}
+
+				if (actions.HasFlag(ItemActions.Compare))
+				{
+					this.CustomContextMenu.Items.Add("-");
+					this.AddActionMenuItem(Resources.SackPanelMenuCompare, ItemActions.Compare);
 				}
 
 				if (actions.HasFlag(ItemActions.ClearSelection))

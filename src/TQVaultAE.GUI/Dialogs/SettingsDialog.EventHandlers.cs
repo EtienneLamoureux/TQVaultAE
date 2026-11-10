@@ -82,7 +82,13 @@ internal partial class SettingsDialog
 		}
 
 		if (this.ConfigurationChanged)
+		{
 			this.editor.ApplyTo(USettings);
+
+			// The windows take the new font now, no restart needed.
+			if (this.editor.BaseFontChanged)
+				this.FontService.Reload();
+		}
 
 		this.DialogResult = DialogResult.OK;
 	}
@@ -236,31 +242,6 @@ internal partial class SettingsDialog
 	}
 
 	/// <summary>
-	/// Handler for clicking enable custom maps
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void EnableCustomMapsCheckBoxCheckedChanged(object? sender, EventArgs e)
-	{
-		// Turning the mods off resets the custom map.
-		this.editor.SetModEnabled(this.enableCustomMapsCheckBox.Checked);
-		this.mapListComboBox.Enabled = this.enableCustomMapsCheckBox.Checked;
-	}
-
-	/// <summary>
-	/// Handler for changing the selected custom map
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void MapListComboBoxSelectedIndexChanged(object? sender, EventArgs e)
-	{
-		if (!this.settingsLoaded)
-			return;
-
-		this.editor.Current.CustomMap = (this.mapListComboBox.SelectedItem as GamePathEntry)?.Path ?? string.Empty;
-	}
-
-	/// <summary>
 	/// Handler for clicking the load all files check box
 	/// </summary>
 	/// <param name="sender">sender object</param>
@@ -285,7 +266,7 @@ internal partial class SettingsDialog
 	private void FontComboBoxBase_SelectedIndexChanged(object? sender, EventArgs e)
 	{
 		if (this.baseFontComboBox.SelectedItem is ComboBoxItem font)
-			this.editor.Current.BaseFont = font.Value;// Force restart
+			this.editor.Current.BaseFont = font.Value;
 	}
 
 	private void checkGroupBoxTooltipEnhanced_CheckedChanged(object? sender, EventArgs e)

@@ -312,9 +312,6 @@ Soll TQVault neu gestartet werden?</value>
   <data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>Zeige Spieler</value>
   </data>
-  <data name="MainFormCustomMapLabel" xml:space="preserve">
-    <value>{0} Modifikation</value>
-  </data>
   <data name="MainFormDatabaseError" xml:space="preserve">
     <value>Fehler beim Datenbank extrahieren</value>
   </data>
@@ -341,14 +338,6 @@ Soll TQVault jetzt neu gestartet werden?</value>
   </data>
   <data name="MainFormMaintainVault" xml:space="preserve">
     <value>Verwaltung der Tresor-Daten...</value>
-  </data>
-  <data name="MainFormMapsChanged" xml:space="preserve">
-    <value>Einstellung der Modifikation geändert</value>
-  </data>
-  <data name="MainFormMapsChangedMsg" xml:space="preserve">
-    <value>Die Einstellung der Modifikation wurden geändert.
-TQVault muss neu gestartet werden für eine Aktualisierung.
-Soll TQVault jetzt neu gestartet werden?</value>
   </data>
   <data name="MainFormNoCharacters" xml:space="preserve">
     <value>Keine TQ-Charaktere gefunden</value>
@@ -724,14 +713,6 @@ langsame Netzwerkverbindung besteht.</value>
   <data name="SettingsDetectLanguage" xml:space="preserve">
     <value>Autodetect Sprache</value>
   </data>
-  <data name="SettingsEnableMod" xml:space="preserve">
-    <value>Aktiviere Modifikationen</value>
-  </data>
-  <data name="SettingsEnableModTT" xml:space="preserve">
-    <value>Diese Einstellung schaltet
-das Dropdown-Menü für
-die Modifikationen frei.</value>
-  </data>
   <data name="SettingsForceCheck" xml:space="preserve">
     <value>Jetzt Überprüfen</value>
   </data>
@@ -750,9 +731,6 @@ verfügbar wäre.</value>
   </data>
   <data name="SettingsLabel4" xml:space="preserve">
     <value>IT Spiel-Pfad</value>
-  </data>
-  <data name="SettingsLabel5" xml:space="preserve">
-    <value>Modifikation</value>
   </data>
   <data name="SettingsLoadChar" xml:space="preserve">
     <value>Den zuletzt verwendeten Charakter automatisch laden</value>
