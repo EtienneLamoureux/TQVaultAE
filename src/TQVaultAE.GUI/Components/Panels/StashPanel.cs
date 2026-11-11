@@ -94,9 +94,20 @@ public partial class StashPanel : VaultPanel, IScalingControl
 
 	/// <summary>
 	/// Design pixels the panel is wider than its bags: the character statistics panel, at the game's size, is wider than
-	/// the box of the equipment background and goes past it on the right.
+	/// the box the equipment background had for the player values, so the equipment field goes further right.
 	/// </summary>
-	private const int NORMAL_PLAYERSTATS_OVERHANG = 96;
+	private const int NORMAL_PLAYERSTATS_OVERHANG = 118;
+
+	/// <summary>
+	/// Columns of the equipment background picture (567 pixels wide): the slots end before <see cref="EquipmentSlotsEnd"/>,
+	/// where the black field between them and the old box of the player values starts; the right border of the field is
+	/// the last <see cref="EquipmentRightBorder"/> columns.
+	/// </summary>
+	private const int EquipmentSlotsEnd = 354;
+	private const int EquipmentRightBorder = 11;
+
+	/// <summary>The equipment background drawn wider, without the old box, at the size it was last asked for.</summary>
+	private Bitmap? wideEquipmentBackground;
 
 	/// <summary>The width of the bags and of the background, without the room of the statistics panel on the right.</summary>
 	private int ContentWidth => this.Width - Convert.ToInt32(NORMAL_PLAYERSTATS_OVERHANG * this.UIService.Scale);
@@ -517,7 +528,13 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	protected new void PaintCallback(object? sender, PaintEventArgs e)
 	{
 		var rect = this.GetBackgroundRect();
-		if (this.background is not null)
+		if (this.currentBag == BagIdConstants.BAGID_EQUIPMENTPANEL && this.equipmentBackground is not null && rect.Width > 0 && rect.Height > 0)
+		{
+			// The equipment field goes to the right edge of the panel, around the statistics panel.
+			var wide = new Rectangle(rect.X, rect.Y, this.Width - (BorderPad * 2), rect.Height);
+			e.Graphics.DrawImage(this.WideEquipmentBackground(wide.Size, rect.Width), wide.Location);
+		}
+		else if (this.background is not null)
 			e.Graphics.DrawImage(this.background, rect);
 		base.PaintCallback(sender, e);
 
@@ -528,6 +545,43 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	#endregion StashPanel Protected Methods
 
 	#region StashPanel Private Methods
+
+	/// <summary>
+	/// The equipment background as wide as the panel: the slots as they are, then the black field with its gold border
+	/// stretched to the right edge, in place of the box the picture has for the old list of player values.
+	/// </summary>
+	/// <param name="size">The size to draw.</param>
+	/// <param name="pictureWidth">The width the whole picture takes when it is not widened.</param>
+	private Bitmap WideEquipmentBackground(Size size, int pictureWidth)
+	{
+		if (this.wideEquipmentBackground is { } made && made.Size == size)
+			return made;
+
+		this.wideEquipmentBackground?.Dispose();
+		var source = this.equipmentBackground!;
+		var wide = new Bitmap(size.Width, size.Height);
+		using (var g = Graphics.FromImage(wide))
+		using (var attributes = new System.Drawing.Imaging.ImageAttributes())
+		{
+			// No blending with what lies outside a part: the field column is stretched alone.
+			attributes.SetWrapMode(System.Drawing.Drawing2D.WrapMode.TileFlipXY);
+			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+			g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+
+			float scale = pictureWidth / (float)source.Width;
+			int left = (int)Math.Round(EquipmentSlotsEnd * scale);
+			int right = (int)Math.Round(EquipmentRightBorder * scale);
+			void Part(Rectangle to, int fromX, int fromWidth)
+				=> g.DrawImage(source, to, fromX, 0, fromWidth, source.Height, GraphicsUnit.Pixel, attributes);
+
+			Part(new Rectangle(0, 0, left, size.Height), 0, EquipmentSlotsEnd);
+			Part(new Rectangle(left, 0, size.Width - left - right, size.Height), EquipmentSlotsEnd, 1);
+			Part(new Rectangle(size.Width - right, 0, right, size.Height), source.Width - EquipmentRightBorder, EquipmentRightBorder);
+		}
+
+		this.wideEquipmentBackground = wide;
+		return wide;
+	}
 
 	/// <summary>
 	/// Gets a rectangle scaled by the size of the child vault panels.
