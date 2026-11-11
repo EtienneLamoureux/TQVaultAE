@@ -204,8 +204,8 @@ incomplete until the mod is installed or the link changed.
 3. **A container's link changes**: *Modded vault*, or the character's *Mod link...* dialog. Every item of that
    container with an Inherited map takes the new map; Own maps are kept. A character linked or unlinked is read again,
    as today.
-4. **The user chooses for an item** in its *Modded* menu: a mod, or *None (base game)*. The choice becomes the item's
-   Own map.
+4. **The user chooses for a vault item** in its *Modded* menu: a mod, or *None (base game)*. The choice becomes the
+   item's Own map. Character items have no such menu (see the decisions below).
 5. **A copy is made**: it takes the map and origin of its source, then event 2 applies in the container it lands in.
 
 On a first start with this feature, nothing is linked yet: every item gets the base game as Inherited. Linking a vault
@@ -233,9 +233,8 @@ and assert, and a test checks that every owned item has one.
 
 - The search reads each item with its own map, so its names and tooltips are the same whenever they are built and
   whatever character is selected.
-- *Load all files* could then read every character with its own map, so the search covers characters linked to a mod
-  from startup. The cost is reading the database of each mod in use at startup (about half a second for a large mod).
-  Today it reads only the characters of the startup map.
+- *Load all files* reads every character with its own map (see the decisions below). Today it reads only the
+  characters of the startup map.
 
 ### Files
 
@@ -265,10 +264,18 @@ On import, each mod named in the export is checked against the installed mods:
 
 The import's end message names the mods that were dropped.
 
-### Open questions
+### Other decisions (2026-11-11)
 
-1. **A choice on a character item**: today *None (base game)* on a character item changes nothing. With Own maps it
-   would be read with the base game data even on a character linked to a mod. A character file cannot keep that choice,
-   so it would be lost at the next read, except for mod-only items, which get their mod again. Keep the menu on
-   characters, or limit it to vaults?
-2. **Preload**: read every character with its own map at startup, or keep reading only the startup map's characters?
+- **The *Modded* menu is for vault items only.** A character file cannot keep a link, so a choice made on a character
+  item would be lost at the next read. Character items always take their character's map (event 1), apart from the
+  mod-only items of a linked character, which get their mod as Own. The menu is not shown on the equipment, the bags,
+  the character's stash, the transfer stash or the relic vault.
+- ***Load all files* reads every character with its own map**, not only the startup map's. A character linked to an
+  installed mod is read with that mod's database, loaded the first time it is needed. The search covers every
+  character from startup. Startup is longer by the reading of each mod database in use (about half a second for a
+  large mod). A character linked to a mod that is not installed is read with the base game, as when it is selected.
+
+### Open question
+
+- **The shared stashes of the other maps**: each map has its own transfer stash and relic vault. *Load all files* reads
+  those of the startup map. Should it also read those of every other map in use, so that the search covers them too?
