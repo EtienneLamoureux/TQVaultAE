@@ -136,6 +136,45 @@ A second sweep after lot 10 (2026-11-08) found these. Line numbers are from that
 | L13 | `ForgePanel.cs:230-289` | Mode cards hard-code what each forge mode allows | `ForgeRules.Capabilities(mode)` | low | done (c237cca) |
 | L14 | `SackPanel.cs:572-579`, `SackPanel.Input.cs:44`, `SackPanel.SackManagement.cs:98, 131`, `DragDrop.cs:111-117`, `EquipmentPanel.DragDrop.cs:119` | Read-only rule computed 3 times; `IsCurrentPlayerReadOnly` used only by commented-out code | One rule (`ItemActionRules` context or `PlayerService.IsSackReadOnly`); dead code removed | low | done `20543e6` |
 
+### Third sweep (lot 12)
+
+A sweep on 2026-11-11 over the GUI code written after lot 11: the game-style character editor, the statistics panel, the
+mod link, the item comparison. The test project does not reference the GUI project, so nothing in the "Where" column has
+tests before it moves.
+
+| # | Where | What | Target | Risk | Status |
+|---|---|---|---|---|---|
+| M1 | `CharacterEditDialog.Skills.cs` (`SkillToolTip`, `GameText`, `Requirements`, `GearBonusLines`, `SkillContext`) | The dialog builds the game's skill tool tip (name, description, current and next level, requirements, gear lines) | `Presentation/SkillTooltipContentBuilder`, lines with a kind the GUI maps to a colour | medium: tuned against the game, compare a tool tip dump before and after | left |
+| M2 | `Components/Character/CharacterPanelViewBuilder.cs`, the view records of `CharacterStatsPanel.cs` | Game maths through the statistics service, caches, all the panel's texts and rollovers; no Windows Forms | `Presentation/CharacterPanelViewBuilder`, `CharacterPanelView` | low | done `0f581b2a`, first tests |
+| M3 | `CharacterEditDialog.cs` (`LevelNumericUpDown_ValueChanged`, `StatsUpDown_ValueChanged`, reset), `CharacterEditDialog.Character.cs` (`CharacterAttribute_Clicked`, undo) | Spending and refunding attribute points, the points of a level change, undo and reset, kept in hidden `NumericUpDown` | `Application/CharacterAttributeEditor`, sibling of `CharacterSkillEditor` | medium: undo relies on `ValueChanged` raised again | left |
+| M4 | `CharacterEditDialog.Skills.cs` (`GameText`), `CharacterPanelLayout.FormatGameText`, `SkillPaneLayout.FormatGameText`, hand-written `Replace` in the view builder | Three formatters of the game's `{%d0}` texts | One `CharacterPanelLayout.FormatGameText(string, params object[])` | low | left |
+| M5 | `CharacterEditDialog.Skills.cs` (`TranslateTag`), `CharacterPanelViewBuilder.Translate` | Translate a tag, else a fallback, written twice | An extension on `ITranslationService` | low | left |
+| M6 | `CharacterEditDialog.Stats.cs`, `.Skills.cs`, `.Character.cs`, `StashPanel.PlayerInfo.cs`, the view builder | "Selected difficulty, else the unlocked one, within 0..2" written five times | One rule next to `CharacterPanelInput` | low | left |
+| M7 | `CharacterEditDialog.Stats.cs` (`PanelInput`), `StashPanel.PlayerInfo.cs` (`BuildStatsView`) | Two builders of `CharacterPanelInput`; the attribute order as magic indexes | `CharacterPanelInput.FromSave`, named indexes | low | left |
+| M8 | `CharacterEditDialog.Character.cs` (`SideView`) | Leveling values and mastery summary lines, singular or plural | `PlayerInfoText` | low | left |
+| M9 | `ModLinkDialog.cs` (`ShowState`, `UpdateButtons`, `SuggestMod`), `ModMenu.cs` (`Hint`), `ComboBoxCharacterItem.RefreshMod` | Mod link state, suggestion and hint texts; the can-link rule | `Presentation/ModLinkText`, `ModSuggestion.Tied` | low | left |
+| M10 | `ForgePanel.cs` (`TextOf`, `PartText`) | Forge message and part texts | `Presentation/ForgeMessageText`, next to `ForgeModeCardText` | low | left |
+| M11 | `VaultPanel.ContextMenu.cs` (`AdoptVaultMod`, `ChangeVaultMod`), their callers in `MainForm.Export.cs` and `MainForm.Panel.cs` | The loop settling the items just put somewhere; new items found by a set difference | `IItemEditService.SettleAll`, `PlaceImportedItems` returning the placed items | low-med | left |
+| M12 | `SackPanel.cs` (`Fits`, `MoveToFreeSpot`), used by the vault panel too | Cell checks of a sack | `Domain/Actions/SackLayout` | low | done `58751d9c`. Left: `SackLayout.MoveToFreeSpot` (rows first) and `ItemMovementService.FindOpenCells` (columns first) are two free-cell searches; the scan order decides where imports and auto-moves land |
+| M13 | `SackPanel.Input.cs:129-130` | The Modded menu is offered outside `ItemActionRules` | `ItemActions.ChangeMod` | low | left |
+| M14 | `VaultPanel.ContextMenu.cs` (`ContextMenuItemClicked`) | The bag menu finds the action by its translated text; the icon paste rule | A bag action tag, `VaultService.PasteBagIcon` | low | left |
+| M15 | `MainForm.Player.cs` (`PlayerSaveFile_Changed`) | Which file changed decides a player or stash reload, then the mod adoption | `PlayerService.ReloadChangedFile` | medium: file watcher timing | left |
+| M16 | `SackPanel.ContextMenuHandlers.cs`, `VaultPanel.ContextMenu.cs`, `SackPanel.ContextMenu.cs` | English messages and export file names written in the code | Resources, `ItemExchangeService.DefaultExportFileName` | low | left |
+| M17 | `CharacterEditDialog.Skills.cs` (`SkillPane_ButtonClicked`, `SkillView`, `RefreshSkills`) | What a click does to a skill, the level shown with the gear bonus | `CharacterSkillEditor.StepSkill` / `StepMastery`, `GetSkillView` | low | left |
+| M18 | View builder (lines joined) and `CharacterStatsPanel.ToolTipLines` (split again) | A rollover goes through a string to find its titles | Structured blocks in the view | low | left |
+| M19 | `GameTooltip.Runs`, `CharacterPanelLayout.ColorRuns`, `TQColorHelper.SplitColorSegments`, `CharacterStatsPanel` | Colour tag splitting written four times | One splitter in `TQColorHelper` | low-med: visible colours | left |
+| M20 | `EquipmentPanel.DragDrop.cs` | The equipment drop repeats `ItemDropService` (put back test, search entry, settle, pick up underneath) | `ItemDropService.Equip` | high: core drag and drop | left |
+| M21 | `MainForm.Export.cs` | Import counts and bag icon re-apply | `ImportResult` | low | left |
+
+Defects found by this sweep, fixed in `33676031`: the Modded menu on an equipped item could move it to a free cell of the
+equipment grid; the damage multiplier rollover used the saved level instead of the edited one; the character editor leaked a
+tool tip per opening. Still to check: `MoveBagClicked` skips the transfer check that Copy and Merge run; `ModMenu.Hint`
+finds a mod's entry by its text.
+
+Shared inside the GUI, to merge there: the golden border framing (`ItemTooltip.DrawFramed`, `BaseTooltip.Framed`), the
+statistics panel fonts and tool tip created in both the stash panel and the editor, the drawing helpers of
+`CharacterStatsPanel` and `CharacterSidePanel`.
+
 ## What stays in the GUI
 
 `IItemProvider` is the last Data provider in `GuiServices`. Its uses read or cache the display text of an item, deep in the
@@ -169,3 +208,5 @@ Each lot is one commit (or a few), with unit tests on the moved code, and is che
 9. **Item tooltip content**: T5. Done.
 10. **Last**: I8 swap, I9 drop rules; then remove the Data providers from `GuiServices`. Done (`IItemProvider` kept).
 11. **Second sweep**: L1-L14, one worktree session each, merged one by one.
+12. **Third sweep**: M1-M21. Done: M2, M12. Next, in this order: M4 + M5 + M6 (pure code, with tests), M7, M1 (dump the skill
+    tool tips before and after), M3, then M11 + M13.
