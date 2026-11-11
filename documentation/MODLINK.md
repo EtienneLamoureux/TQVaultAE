@@ -248,13 +248,15 @@ An export keeps the mod information at the level it belongs to:
 
 - A **vault** or **tab** export writes the mod of the vault the items come from, once, at its top. Each item writes
   only its Own map: `"mod"`, or `"noMod": true`. An item without them inherited the vault's mod.
-- An **item** export (one item or a selection) has no container: each item writes its map, with `"modInherited": true`
-  when the map was Inherited.
+- An **item** export (one item or a selection) has no container: each item writes the map it is read with as its
+  `"mod"` (or `"noMod": true`), also when the map was Inherited. The export makes it explicit, and the import gives it
+  as Own.
 
 On import, each mod named in the export is checked against the installed mods:
 
-- **Installed**: the link is kept. A vault import gets it as the vault's link; the items of a tab or item export that
-  inherited it keep its data. They inherit it when the target vault has the same mod, else they get it as Own.
+- **Installed**: the link is kept. A vault import gets it as the vault's link. The items of a tab export that inherited
+  the tab's mod keep its data: they inherit it when the target vault has the same mod, else they get it as Own. The
+  items of an item export get their `"mod"` as Own.
 - **Not installed** (another computer, a mod removed): the link is dropped. This applies both to the vault or tab level
   and to the items with an explicit link. The items fall back on the base game, inherited from a target vault without
   a link (or the target vault's map when it has one). An item that needs the mod's records is shown incomplete, with
