@@ -156,9 +156,10 @@ public partial class MainForm
 			// Use service
 			var result = this.vaultService.LoadVault(vaultName);
 
-			if (result.ArgumentException is not null)
+			// A format error keeps the vault (partly read); any other error leaves no vault to show.
+			if ((result.ArgumentException as Exception ?? result.Error) is { } error)
 			{
-				string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.Filename, result.ArgumentException.Message);
+				string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.Filename, error.Message);
 				this.Services.MessageBoxes.Inform(msg, Resources.GlobalError, MessageBoxIcon.Error);
 			}
 

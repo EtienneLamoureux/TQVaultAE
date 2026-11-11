@@ -478,7 +478,15 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	/// The base font changed: the menu it shows itself, outside the controls, takes it.
 	/// </summary>
 	void IFontRebasing.RebaseFonts(IFontService fontService)
-		=> FontRebaser.RebaseMenu(this.contextMenu, fontService);
+	{
+		FontRebaser.RebaseMenu(this.contextMenu, fontService);
+		this.OnFontsRebased();
+	}
+
+	/// <summary>The base font changed: fonts a derived panel made itself are made again.</summary>
+	protected virtual void OnFontsRebased()
+	{
+	}
 
 	/// <summary>
 	/// Override of ScaleControl which supports font scaling.

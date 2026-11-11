@@ -130,6 +130,17 @@ public partial class StashPanel
 		return this._statsPanel;
 	}
 
+	/// <summary>The base font changed: the statistics panel fonts and tool tip are made again from it.</summary>
+	protected override void OnFontsRebased()
+	{
+		if (this._statsPanel is not { } panel)
+			return;
+
+		this._statsScale = 0;
+		this.LayoutStatsPanel(panel);
+		panel.Invalidate();
+	}
+
 	/// <summary>
 	/// Places the statistics panel on the box of the equipment background, at the game's size times the scale, with the
 	/// Edit button under its gold bar; its fonts follow the scale.

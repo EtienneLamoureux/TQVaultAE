@@ -65,11 +65,14 @@ public partial class BagButtonTooltip : BaseTooltip
 	{
 		lock (ToImage)
 		{
-			var lst = ItemTooltipOpened.Where(f => f.Value.Visible).ToList();
-			foreach (var form in lst.Select(f => f.Value))
+			// Hidden ones too: a tool tip left in the list made the next one on the same key throw.
+			foreach (var form in ItemTooltipOpened.Values.ToList())
+			{
 				form.Close();
-			foreach (var key in lst.Select(f => f.Key))
-				ItemTooltipOpened.Remove(key);
+				form.Dispose();
+			}
+
+			ItemTooltipOpened.Clear();
 		}
 	}
 

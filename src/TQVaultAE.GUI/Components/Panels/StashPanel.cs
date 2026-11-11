@@ -412,7 +412,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 				if (bag is { IsEquipment: true })
 				{
 					this.equipmentPanel.Sack = bag.Sack;
-					this.background = this.EquipmentBackground;
+					this.ReplaceBackground(this.EquipmentBackground);
 					this.equipmentPanel.Visible = true;
 					this.equipmentPanel.Enabled = true;
 					this.BagSackPanel.Visible = false;
@@ -420,7 +420,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 				}
 				else if (bag is not null)
 				{
-					this.background = this.StashBackground;
+					this.ReplaceBackground(this.StashBackground);
 					this.BagSackPanel.Sack = bag.Sack;
 					this.BagSackPanel.SackType = SackType.Stash;
 					this.BagSackPanel.ResizeSackPanel(bag.Width, bag.Height);
@@ -540,6 +540,18 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	/// </summary>
 	/// <param name="size">The size to draw.</param>
 	/// <param name="pictureWidth">The width the whole picture takes when it is not widened.</param>
+	/// <summary>
+	/// Shows another background. At a zoom other than 1 the getters make a scaled copy at each tab switch: the copy
+	/// replaced is disposed, the source pictures are kept.
+	/// </summary>
+	private void ReplaceBackground(Bitmap? value)
+	{
+		var old = this.background;
+		this.background = value;
+		if (old is not null && old != value && old != this.equipmentBackground && old != this.stashBackground)
+			old.Dispose();
+	}
+
 	private Bitmap WideEquipmentBackground(Size size, int pictureWidth)
 	{
 		if (this.wideEquipmentBackground is { } made && made.Size == size)
