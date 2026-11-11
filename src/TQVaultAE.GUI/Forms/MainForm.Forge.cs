@@ -7,6 +7,9 @@ public partial class MainForm
 {
 	private ForgePanel forgePanel = null!; // Created while the form loads.
 
+	/// <summary>The text of the forge button while the forge is closed; the button reads "Vault" while it is open.</summary>
+	private string? forgeButtonText;
+
 	private (
 		bool configureButton
 		, bool showVaulButton
@@ -75,6 +78,10 @@ public partial class MainForm
 		forgePanel.Dock = DockStyle.Left;
 		forgePanel.Visible = true;
 
+		// The button now leads back to the vaults: it says so.
+		this.forgeButtonText = forgeButton.Text;
+		forgeButton.Text = TQVaultAE.Presentation.Resources.ResultsContainerVault;
+
 		// Detailed tooltips while the forge is open, as session state: the setting itself is not changed, so closing the
 		// app with the forge open cannot save the forced value.
 		this.userContext.ForceDetailedTooltipView = true;
@@ -107,6 +114,8 @@ public partial class MainForm
 		// Hide the forge
 		forgePanel.Dock = DockStyle.None;
 		forgePanel.Visible = false;
+		if (this.forgeButtonText is not null)
+			forgeButton.Text = this.forgeButtonText;
 
 		this.userContext.ForceDetailedTooltipView = false;
 
