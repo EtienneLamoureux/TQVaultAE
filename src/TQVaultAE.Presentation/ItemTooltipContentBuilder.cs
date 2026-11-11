@@ -154,10 +154,6 @@ public class ItemTooltipContentBuilder
 		// Fullname
 		lines.Add(TooltipLine.Of(data.FullName, nameColor, bold: true));
 
-		// The mod the item is linked to
-		if (item.Mod is { } mod)
-			lines.Add(TooltipLine.Of(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.ItemModLine, mod), ModColor));
-
 		// Records the loaded game data lacks (a mod not linked, or not installed)
 		AddIncomplete(lines, item);
 
@@ -260,6 +256,10 @@ public class ItemTooltipContentBuilder
 		// The expansion clause: the latest expansion the item needs.
 		if (this.ExpansionClause(item) is { } clause)
 			lines.Add(TooltipLine.Of(clause, TQColor.Green));
+
+		// The mod the item is linked to, last of the seed section
+		if (item.Mod is { } mod)
+			lines.Add(TooltipLine.Of(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.ItemModLine, mod), ModColor));
 
 		// ItemSet
 		if (data.ItemSet is { setMembers.Count: > 0 } set)

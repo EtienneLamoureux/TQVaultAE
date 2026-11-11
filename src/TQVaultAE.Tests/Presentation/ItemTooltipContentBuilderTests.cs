@@ -82,15 +82,21 @@ public class ItemTooltipContentBuilderTests
 	}
 
 	[Fact]
-	public void Build_ItemLinkedToAMod_NamesItsModUnderTheName()
+	public void Build_ItemLinkedToAMod_NamesItsModLastInTheSeedSection()
 	{
-		var data = Sword();
+		var data = Sword("""records\xpack4\items\swords\a01_sword.dbr"""); // an Atlantis item: it has an expansion clause
 		data.Item.Mod = "shadowchampions";
+		data.ItemSeed = "Seed 1";
+		data.Requirements = ["Level 10"];
 
-		var lines = this._builder.Build(data, ItemTooltipView.Classic).Lines;
+		var lines = this._builder.Build(data, ItemTooltipView.Classic).Lines.ToList();
 
-		lines[1].Text.Should().Be(string.Format(TQVaultAE.Presentation.Resources.ItemModLine, "shadowchampions"));
-		lines[1].Color.Should().Be(ItemTooltipContentBuilder.ModColor);
+		int seed = lines.FindIndex(l => l.Text == "Seed 1");
+		lines[seed + 1].Color.Should().Be(TQColor.Green);
+		lines[seed + 2].Text.Should().Be(string.Format(TQVaultAE.Presentation.Resources.ItemModLine, "shadowchampions"));
+		lines[seed + 2].Color.Should().Be(ItemTooltipContentBuilder.ModColor);
+		lines[seed + 3].Kind.Should().Be(TooltipLineKind.Delimiter);
+		lines[1].Text.Should().NotContain("shadowchampions");
 	}
 
 	[Theory]

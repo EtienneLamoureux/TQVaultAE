@@ -177,7 +177,7 @@ On import, each mod named is checked against the installed mods:
 - **A whole vault**: the vault tools button next to the vault list has *Modded vault*, for the vault shown, with the same
   hints for the records of all its items. A linked vault shows its mod after its name in the vault lists:
   *Main Vault [shadowchampions]*.
-- The tooltip names an item's mod under its name: *Mod : shadowchampions*.
+- The tooltip names an item's mod last in the section of the seed and the expansion: *Mod : shadowchampions*.
 
 ### Search and preload
 
