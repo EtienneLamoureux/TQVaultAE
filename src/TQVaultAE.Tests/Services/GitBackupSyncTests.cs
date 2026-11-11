@@ -334,6 +334,31 @@ public sealed class GitBackupSyncTests : IDisposable
 		this.RemoteFiles(otherRemote).Should().BeEquivalentTo(Vault("v1"));
 	}
 
+	[Fact]
+	public void ChangedRepositoryUrl_ToARepositoryWithCommits_MergesThemBeforePushing()
+	{
+		// Arrange: the new repository holds this backup plus a vault another computer pushed there
+		var a = this.Computer("a");
+		a.WriteVault("v1", "1");
+		a.Sync.Synchronize();
+		a.Sync.CommitAndPush();
+		var otherRemote = Path.Combine(this._root, "other.git");
+		new GitRunner(this._root).RunChecked("clone", "-q", "--bare", this._remote, otherRemote);
+		var b = this.Computer("b", otherRemote);
+		b.Sync.Synchronize();
+		b.WriteVault("v2", "2");
+		b.Sync.CommitAndPush();
+		a.WriteVault("v3", "3");
+		var moved = this.Computer("a", otherRemote);
+
+		// Act
+		moved.Sync.CommitAndPush().Should().BeTrue();
+
+		// Assert
+		moved.ReadVault("v2").Should().Be("2");
+		this.RemoteFiles(otherRemote).Should().BeEquivalentTo(Vault("v1"), Vault("v2"), Vault("v3"));
+	}
+
 	#region Helpers
 
 	private static string Vault(string name) => $"{VaultRepositoryPath}/{name}.vault.json";

@@ -288,6 +288,7 @@ public sealed class GitBackupSync
 	private void MergeRemote()
 	{
 		this._git.RunChecked("fetch", "origin");
+		this.EnsureUpstream();
 		if (!this.HasUpstream() || !this.HasCommit())
 			return;
 
@@ -389,6 +390,20 @@ public sealed class GitBackupSync
 	#endregion
 
 	#region git queries
+
+	/// <summary>
+	/// A changed repository URL drops the upstream (<see cref="EnsureRemoteUrl"/>): when the new repository already has
+	/// this branch, follow it again, so its commits are merged before the push instead of the push being refused.
+	/// </summary>
+	private void EnsureUpstream()
+	{
+		if (this.HasUpstream() || !this.HasCommit())
+			return;
+
+		var branch = this._git.RunChecked("rev-parse", "--abbrev-ref", "HEAD").Output.Trim();
+		if (this._git.Run("rev-parse", "--verify", "-q", "refs/remotes/origin/" + branch).Success)
+			this._git.RunChecked("branch", "--set-upstream-to=origin/" + branch);
+	}
 
 	private bool HasUpstream() => this._git.Run("rev-parse", "--verify", "-q", RemoteBranch).Success;
 
