@@ -106,6 +106,8 @@ internal sealed partial class CharacterEditDialog
 			TextFont = this.FontService.GetFontLight(15F, FontStyle.Regular, GraphicsUnit.Pixel),
 			DescriptionFont = this.FontService.GetFontLight(13F, FontStyle.Regular, GraphicsUnit.Pixel),
 			Location = Point.Empty,
+			// An empty slot shows the skill window of the first mastery without its content, not a black page.
+			EmptyArt = this._skills?.KnownMasteries.Select(tree => tree.Pane).FirstOrDefault(art => art is not null),
 		};
 		var paneHost = new Panel { BackColor = Color.Black, Name = $"SkillsMastery{slot + 1}Page" };
 		paneHost.Controls.Add(pane);

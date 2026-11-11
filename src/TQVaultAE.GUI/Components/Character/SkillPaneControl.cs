@@ -49,6 +49,12 @@ internal sealed partial class SkillPaneControl : Control
 	/// <summary>The mastery shown, or <see langword="null"/> for an empty slot.</summary>
 	public MasteryTree? Tree { get; set; }
 
+	/// <summary>
+	/// The art of any mastery, for an empty slot: its background is drawn alone, as a skill window without a mastery
+	/// (no picture, bar, description nor skill). <see langword="null"/> leaves an empty slot black.
+	/// </summary>
+	public SkillPaneArt? EmptyArt { get; set; }
+
 	/// <summary>The mastery level.</summary>
 	public int MasteryLevel { get; set; }
 
@@ -173,7 +179,8 @@ internal sealed partial class SkillPaneControl : Control
 	{
 		var g = e.Graphics;
 		g.Clear(this.BackColor);
-		if (this.Tree is not { Pane: { } art } tree)
+		var tree = this.Tree;
+		if ((tree?.Pane ?? this.EmptyArt) is not { } art)
 			return;
 
 		g.ScaleTransform(this._paneScale, this._paneScale);
@@ -181,6 +188,14 @@ internal sealed partial class SkillPaneControl : Control
 		g.PixelOffsetMode = PixelOffsetMode.Half;
 		g.SmoothingMode = SmoothingMode.AntiAlias;
 		g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+
+		// An empty slot: the skill window with no mastery in it.
+		if (tree?.Pane is null)
+		{
+			this.DrawPicture(g, art.Background, 0, 0);
+			this.DrawTexts(g, null);
+			return;
+		}
 
 		// The mastery colour, which only shows through the tier lines of the background.
 		var peek = SkillPaneLayout.PeekThrough(art, this.MasteryLevel);
@@ -190,7 +205,7 @@ internal sealed partial class SkillPaneControl : Control
 		this.DrawPicture(g, art.Background, 0, 0);
 		this.DrawPicture(g, art.Picture, art.PictureX, art.PictureY);
 		this.DrawBar(g, art);
-		this.DrawTexts(g, tree, art);
+		this.DrawTexts(g, art);
 
 		foreach (var skill in tree.Skills)
 			if (skill.Button is { } button)
@@ -217,7 +232,8 @@ internal sealed partial class SkillPaneControl : Control
 		g.DrawImage(bar, target, 0, bar.Height - height, bar.Width, height, GraphicsUnit.Pixel);
 	}
 
-	private void DrawTexts(Graphics g, MasteryTree tree, SkillPaneArt art)
+	/// <summary>The milestones and the points line; with <paramref name="art"/>, the mastery description too.</summary>
+	private void DrawTexts(Graphics g, SkillPaneArt? art)
 	{
 		using var center = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 		var number = this.NumberFont ?? this.Font;
@@ -235,6 +251,9 @@ internal sealed partial class SkillPaneControl : Control
 		var rect = SkillPaneLayout.PointsRemaining;
 		using (var brush = new SolidBrush(points <= 0 ? NoPointColor : Color.White))
 			g.DrawString(line, this.TextFont ?? this.Font, brush, new RectangleF(rect.X, rect.Y, rect.Width, rect.Height), center);
+
+		if (art is null)
+			return;
 
 		var description = SkillPaneLayout.Description;
 		g.DrawString(this.Translate(art.DescriptionTag), this.DescriptionFont ?? this.Font, Brushes.White,
