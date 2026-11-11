@@ -76,8 +76,8 @@ public sealed record CharacterStats
 }
 
 /// <summary>
-/// Computes the character window values from the save and the database, with the formulas of the game and TQ.exe
-/// (docs: character-stats study): defense values are summed per type, scaled by their % modifier, then capped; the
+/// Computes the character window values from the save and the database, with the formulas of the game and TQ.exe:
+/// defense values are summed per type, scaled by their % modifier, then capped; the
 /// abilities and the regeneration use the game's equations.
 /// </summary>
 public static class CharacterStatsCalculator

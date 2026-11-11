@@ -20,7 +20,7 @@ public sealed record OffenseInput(OffenseGear Gear, AttributeSum AllGear, Attrib
 public readonly record struct OffenseValues(int WeaponDamage, int AddedDamage, int AverageDamage, int Dps);
 
 /// <summary>
-/// The Offense values of the character window, tab I (docs: character-stats study, offense.md), checked against
+/// The Offense values of the character window, tab I, checked against
 /// in-game readings of every weapon stance.
 /// </summary>
 public static class CharacterOffenseCalculator
