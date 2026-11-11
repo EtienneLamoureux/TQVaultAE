@@ -291,6 +291,10 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 	}
 
 	/// <inheritdoc/>
+	public IReadOnlyList<Item> SettleAll(SackCollection sack, System.Drawing.Size sackSize, IEnumerable<Item> items, bool inVault, string? vaultMod)
+		=> [.. items.Where(item => this.SettleIn(item, inVault, vaultMod, i => TQVaultAE.Domain.Actions.SackLayout.FitsOrMoves(sack, sackSize, i)))];
+
+	/// <inheritdoc/>
 	public bool SettleIn(Item item, bool inVault, string? vaultMod, Func<Item, bool> fits)
 	{
 		bool moved = item.InVault != inVault;

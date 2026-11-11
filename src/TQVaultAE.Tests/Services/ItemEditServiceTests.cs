@@ -557,6 +557,25 @@ public class ItemEditServiceTests
 	}
 
 	[Fact]
+	public void SettleAll_ReturnsTheItemsReadAgain_AndMovesThoseThatNoLongerFit()
+	{
+		// Arrange: a 2x2 bag; the new item lies in the corner, read again it takes 1x2 and moves up
+		var sack = new SackCollection();
+		var staying = new Item { BaseItemId = RecordId.Create("records/ring.dbr"), InVault = true, Width = 1, Height = 1 };
+		var arriving = new Item { BaseItemId = RecordId.Create("records/customitems/lance.dbr"), PositionX = 1, PositionY = 1, Width = 1, Height = 1 };
+		sack.AddItem(staying);
+		sack.AddItem(arriving);
+		this._itemProvider.Setup(p => p.GetDBData(arriving)).Callback<Item>(i => i.Height = 2);
+
+		// Act
+		var changed = this._service.SettleAll(sack, new System.Drawing.Size(2, 2), [staying, arriving], inVault: true, vaultMod: null);
+
+		// Assert
+		changed.Should().Equal(arriving);
+		(arriving.PositionX, arriving.PositionY).Should().Be((1, 0));
+	}
+
+	[Fact]
 	public void SettleIn_ItemAlreadyThere_IsNotReadAgain()
 	{
 		var item = new Item { BaseItemId = RecordId.Create("records/ring.dbr"), InVault = true };

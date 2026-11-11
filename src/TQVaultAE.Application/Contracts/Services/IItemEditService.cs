@@ -138,4 +138,17 @@ public interface IItemEditService
 	/// left as it was.</param>
 	/// <returns><see langword="true"/> when the item was read again with other data.</returns>
 	bool SettleIn(Item item, bool inVault, string? vaultMod, Func<Item, bool> fits);
+
+	/// <summary>
+	/// Items put in a bag without a drop (Move To, import, paste) take the data of their new place like dropped ones
+	/// (<see cref="SettleIn"/>). An item that no longer fits where it lies once read again (it takes its real size) moves
+	/// to a free spot of the bag; without one, it is left as it was.
+	/// </summary>
+	/// <param name="sack">The bag holding the items.</param>
+	/// <param name="sackSize">The size of that bag in cells.</param>
+	/// <param name="items">The items just put there.</param>
+	/// <param name="inVault">Whether the bag is a vault's.</param>
+	/// <param name="vaultMod">The mod of that vault; null for none or for a character.</param>
+	/// <returns>The items read again with other data.</returns>
+	IReadOnlyList<Item> SettleAll(SackCollection sack, System.Drawing.Size sackSize, IEnumerable<Item> items, bool inVault, string? vaultMod);
 }
