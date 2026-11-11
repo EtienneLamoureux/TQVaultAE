@@ -12,8 +12,8 @@ Technical details: [MODLINK.md](MODLINK.md).
 ---
 
 ### <a id="LinkCharacter"></a>Link a character
-Character menu > **Mod link...**. **Suggest** picks the installed mod that has the character's unknown records; **Link**
-saves the choice.
+Character menu > **Mod link...**; the entry only shows for a character of a custom map. **Suggest** picks the installed
+mod that has the character's unknown records; **Link** (or a double click on a mod) saves the choice, **Unlink** removes it.
 
 ![Mod link dialog](mods/mod-link-dialog.png)
 
@@ -37,7 +37,8 @@ In a vault, an item without a link is read with the base game's data, whatever c
 
 ![Tooltip of an item linked to a mod](mods/item-tooltip-mod.png)
 
-Right-click > **Modded** to choose it. **(suggested)** marks the mods having the item's records.
+Right-click > **Modded** to choose it. **(suggested)** marks the mods having the item's records; **(suggested n/m)**
+marks a mod that has only n of its m records.
 
 ![Modded menu of an item](mods/item-modded-menu.png)
 

@@ -6,7 +6,13 @@ You can choose item affixes from regular loot table instead of farming duplicate
 
 ### _Theory crafting made easy!!_
 
-_**Note : "Item editing feature" must be enable in the settings.**_
+_**Note : "Item editing feature" must be enable in the settings: tick "Allow Cheats", then "Allow Item Editing Features".**_
+
+The entries are in the right-click menu of an item. The affix entries only show for weapons, shields, armors and jewellery.
+
+_The screenshots of this page were taken with an older version. The menu now also has "🔗 Share Item", "Modded",
+"Change Item Seed (Force)" and the "Display affixes by name/effect" entry, and the copy entries read
+"Copy Item (Randomized seed)" and "Duplicate Item (Seed unchanged)"; these two need the "Allow Item Copying" setting._
 
 ---
 
@@ -111,7 +117,7 @@ It try to suck all known Prefix/Suffix per gear type (e.g, all affixes for axe i
 
 ![Missing translations](affixes/missingtranslation.png)
 
-if you want the full list of incomplete records, activate this settings in `TQVaultAE.exe.config`
+if you want the full list of incomplete records, add these settings in `UserConfig.xml`, next to `TQVaultAE.exe`
 
 - DebugEnabled = True
 - LootTableDebugEnabled = True
@@ -123,6 +129,9 @@ By using the feature, you will see something like [that](affixes/loottablelogs.p
 ### Item seed change
 
 | ![Open Seed form](affixes/seed1.png) | ![Change Seed](affixes/seed2.png)
+
+"Change Item Seed..." opens the form above; the seed is a number from 1 to 32767.
+"Change Item Seed (Force)" gives the item a new random seed at once, without the form.
 
 ---
 

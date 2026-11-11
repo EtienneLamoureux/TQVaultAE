@@ -1,8 +1,9 @@
 # Titan Quest Game File Formats
 
 This document describes the binary file formats used by Titan Quest / Immortal Throne / Anniversary Edition.
-It is essential for anyone working on the ARC/ARZ file I/O layer (`src/TQVaultAE.Data`) or on the
-[`tqdb` command line](DBCLI.md) (`src/TQVaultAE.GameFiles`, shared by TQVaultAE and `tqdb`).
+It is essential for anyone working on the ARC/ARZ file I/O layer (`src/TQVaultAE.GameFiles`, shared by TQVaultAE
+and `tqdb`; `src/TQVaultAE.Data` holds TQVaultAE's adapters over it) or on the [`tqdb` command line](DBCLI.md)
+(`src/TQVaultAE.DbCli`).
 
 The original layouts come from the TQVault authors. They were re-verified byte by byte in 2026 against the
 complete Steam Anniversary Edition install (with all DLCs):
@@ -24,7 +25,7 @@ Figures quoted below come from that install.
 * [Textures (`.tex`)](#TEX)
 * [Other asset formats](#OtherAssets)
 * [Item stat randomization (jitter)](#Jitter)
-* [Player save files (`.player`)](#Player)
+* [Player save files (`Player.chr`)](#Player)
 * [Common pitfalls](#Pitfalls)
 * [Credits](#Credits)
 
@@ -36,7 +37,7 @@ Figures quoted below come from that install.
 * `u32`/`i32` are 4 bytes and `u16`/`i16` are 2 bytes.
 * `FILETIME` is the Windows 64-bit count of 100 ns intervals since 1601-01-01 UTC.
 * `adler32` is the zlib Adler-32 checksum.
-* Strings are **cp1252** (Windows-1252), never UTF-8 or Latin-1 (`0x92` is `’` in cp1252 but a control character in Latin-1), except the UTF-16 text files described [below](#Text).
+* Strings are **cp1252** (Windows-1252), never UTF-8 or Latin-1 (`0x92` is `’` in cp1252 but a control character in Latin-1), except the UTF-16 text files described [below](#Text) and the UTF-16 strings of the save files.
 
 ---
 
@@ -55,8 +56,7 @@ Figures quoted below come from that install.
 | `Toolset\*.arc` | Editor templates and tutorials. |
 
 **Resource ids.** Records reference assets by a *resource id*: `<archive stem>\<path inside the archive>`,
-for example `Items\EquipmentHelm\UIBitmaps\mi_n_gorgonmelee.tex`. The game, and
-`GamePathServiceWin.ResolveArcFileName`, map the first segment to an archive:
+for example `Items\EquipmentHelm\UIBitmaps\mi_n_gorgonmelee.tex`. The game maps the first segment to an archive:
 
 | First segment | Archive |
 |---|---|
@@ -67,6 +67,12 @@ for example `Items\EquipmentHelm\UIBitmaps\mi_n_gorgonmelee.tex`. The game, and
 | anything else (`<name>`) | `Resources\<name>.arc` |
 
 Inside a DLC archive, the entry path starts after the `XPACKn\<name>\` prefix.
+
+TQVaultAE's own mapping is `GameArchives.ArcFileSegments` (`src/TQVaultAE.Domain/Helpers/GameArchives.cs`). It does
+not follow the two sound rows to the letter: it sends any `.mp3` / `.wav` id outside the expansions to
+`Audio\<first segment>.arc` (`Sounds`, `Dialog`, `Music`...), and it has no special case for `XPACK\SOUNDS`. When
+the first archive does not hold the entry, `GameArchives.ArcFileCandidates` tries the archive of the same name in the
+expansion folders and in `Resources`.
 
 ---
 
@@ -266,7 +272,7 @@ A `.tex` wraps one or more DirectDraw Surface frames. All 25,278 files in the ga
 
 `BitmapService.LoadFromTexMemory` and `TexConverter` (DbCli) both apply these fix-ups.
 
-**Item size.** An item takes one inventory cell per 32 pixels of its picture. `TexHeader.TryReadSize` reads the size from the DDS header (height at byte 12, width at byte 16 after the magic) without decoding, so `ItemProvider.GetDBData` knows the size of every item when it is loaded, before its picture is drawn.
+**Item size.** An item takes one inventory cell per 32 pixels of its picture. `TexHeader.TryReadSize` reads the size from the DDS header (height at byte 12, width at byte 16, counted from the start of the DDS data, magic included) without decoding, so `ItemProvider.GetDBData` knows the size of every item when it is loaded, before its picture is drawn.
 
 ---
 
@@ -363,9 +369,9 @@ The jitter of relics and charms as standalone items (relic/charm records rolled 
 
 ---
 
-## <a id="Player"></a>Player save files (`.player`)
+## <a id="Player"></a>Player save files (`Player.chr`)
 
-Player save files use a binary key-value format.
+Player save files use a binary key-value format. The [Save File Explorer](SAVEFILEEXPLORER.md) shows the keys of a file.
 
 The file is modified by:
 1. Searching for a key string in the binary content

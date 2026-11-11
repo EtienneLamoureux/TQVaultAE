@@ -9,7 +9,7 @@ Compare two items side by side, stat by stat.
 
 ![Two items selected](compare/compare_selection.png)
 
-With more than two items selected, only the first two are compared.
+With more than two items selected, only the first two are compared. Two identical items show "No difference".
 
 ## Layout
 

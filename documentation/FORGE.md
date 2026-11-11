@@ -20,14 +20,25 @@ TQVaultAE provide a dedicated crafting system that helps you create the item of 
 ---
 
 ### <a id="UI"></a>The Forge UI
-**_The Forge is an "Item Editing" feature and must be enable in the tool settings._**
+**_The Forge is an "Item Editing" feature and must be enable in the tool settings: tick "Allow Cheats", then "Allow Item Editing Features"._**
 
 You can access the forge from TQVaultAE upper navigation bar. 
 Once inside you can drag & drop items from your left vaults.
+An item must come from a bag: one you just created and still hold is refused with "The item must be stored first!".
+
+While the forge is open, it takes the place of the character, stash and second vault panels, the other buttons of the navigation bar are hidden,
+and the "Forge" button reads "Show Vault": it closes the forge like "Cancel" does.
 
 _**Note:** The Forge doesn't move your objects, however, it changes the properties of the base item used._
 
+The buttons under the slots:
++ **Forge** merges the materials into the base item. It needs a base item and at least one material.
++ **Reset** empties all the slots and keeps the forge open.
++ **Cancel** closes the forge without changing anything.
+
 Forging or cancelling, return TQVault UI in it's previous state.
+
+Dropping another base item removes from the slots the materials that the current mode no longer accepts with it.
 
 ![Forge screenshot](forge/forge_ui.png)
 
@@ -54,6 +65,9 @@ _**Note:** Here's an example of a white item getting stronger._
 Crafting modes allows you to play as you want.
 <br />
 Do you want some restrictions as the game would have probably put in place or the crazyness of an OP item that break the game ?
+
+Rest the mouse on a mode to see a card listing what it allows and what it restricts.
+Switching to a stricter mode empties the slots.
 
 #### <a id="GameMode"></a>*Game Mode*
 Game mode is an attempt to be the closest of a genuine Titan Quest crafting experience.
@@ -87,13 +101,18 @@ Relax mode break many game rules but keep the item structure intact.
 + "Of the Tinkerer" Suffix is not required for a second relic.
 + 1st/2nd Relic can be a relic/charm or an item having one of those. (it still use the relic)
 
+What Relax mode keeps: only Weapon/Shield/Armor/Jewellery is allowed, the relic gear constraint is enforced,
+and a Prefix/Suffix item must really have the prefix/suffix you take from it.
+
 #### <a id="GodMode"></a>*God Mode*
 In this mode, you are blessed by *Hephaestus the Greek God of Blacksmithing* himself.
 <br />
 You can create game breaking items. Even useless one.
 
 All restrictions are lifted.
-The UI change to let you peek & choose each property group you want to inherit.
+The UI change to let you peek & choose each property group you want to inherit:
+a list under each slot offers "Use Base", "Use Prefix", "Use Suffix", "Use Relic1" and "Use Relic2", for the parts the item has.
+A prefix or a suffix put in a relic slot becomes a relic of one shard, without completion bonus.
 
 **Be aware that the game may ignore some crafting combination. (e.g., artifact can't be crafted (base item) but can be used as material)**
 

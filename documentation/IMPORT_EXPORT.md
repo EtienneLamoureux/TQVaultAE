@@ -33,7 +33,7 @@ You can export items at four levels:
 | **Single item** | Right-click an item → `🔗 Share Item` | Exports the item under the cursor with all its properties (seed, affixes, relic sockets, stack size, position, size, etc.) as an `Item`-scoped JSON payload. |
 | **Multi-select** | **Ctrl+LeftClick** to select items → Right-click → `🔗 Share Item` | Exports all selected items as a single `MultiSelect`-scoped JSON payload. A selection of **one** item exports as a single item (`Item` scope). |
 | **Vault tab** | Right-click a **tab button** (BagButton) → `🔗 Share Tab` | Exports all items within that tab, preserving their positions, grid layout, and bag icon info. |
-| **Full vault** | Click the **`...` button** next to the vault combo box | Exports all tabs and all their contents, including the vault name. |
+| **Full vault** | Click the **menu button** next to the vault combo box (a small game button; it reads `...` when the game pictures are not loaded) | Exports all tabs and all their contents, including the vault name. |
 
 When a selection exists, `🔗 Share Item` exports the selection, whichever item you right-click. The menu and **Ctrl+C** give the same format: one item is an `Item` export, several are a `MultiSelect` export.
 
@@ -47,7 +47,7 @@ Every scope supports three transport channels.
 
 - **Single / multi-select items:** Right-click an item → `🔗 Share Item` → `Share to Clipboard`, or select items in the grid and press **Ctrl+C**.
 - **Tab:** Right-click a tab button → `🔗 Share Tab` → `Share to Clipboard`.
-- **Vault:** Click the `...` button → `Share to Clipboard`.
+- **Vault:** Click the vault menu button → `Share to Clipboard`.
 
 The export data is serialized as JSON and placed on your clipboard. 
 You can paste this directly into a text editor, chat, another bag, or another TQVaultAE instance.
@@ -56,7 +56,7 @@ You can paste this directly into a text editor, chat, another bag, or another TQ
 
 - **Single / multi-select items:** Right-click an item → `🔗 Share Item` → `Share to File...`.
 - **Tab:** Right-click a tab button → `🔗 Share Tab` → `Share to File...`.
-- **Vault:** Click the `...` button → `Share to File...`.
+- **Vault:** Click the vault menu button → `Share to File...`.
 
 A Save File dialog opens. The file is written where you choose in that dialog, as **raw JSON**, so you can inspect or edit it in any text editor before importing.
 
@@ -73,7 +73,7 @@ The dialog suggests a file name:
 
 - **Single / multi-select items:** Right-click an item → `🔗 Share Item` → `Share to PasteBin`.
 - **Tab:** Right-click a tab button → `🔗 Share Tab` → `Share to PasteBin`.
-- **Vault:** Click the `...` button → `Share to PasteBin`.
+- **Vault:** Click the vault menu button → `Share to PasteBin`.
 
 The data is uploaded to PasteBin as an **Unlisted** paste (accessible via direct URL but not published on the public feed). The resulting PasteBin URL is automatically copied to your clipboard.
 
@@ -86,7 +86,7 @@ The paste is named after what it holds:
 | Tab | `<vault name>/<tab label>`, or `<vault name>/Tab <n>` when the tab has no label |
 | Vault | `<vault name>` |
 
-**Note:** PasteBin export menu items are **disabled (greyed out)** until you configure a PasteBin API key in Settings (see [below](#api-key)).
+**Note:** PasteBin export menu items are **disabled (greyed out)** until you configure a PasteBin API key in Settings (see [below](#api-key)). For a selection of several items, the entry is not shown at all.
 
 ---
 
@@ -127,6 +127,8 @@ When importing a **full vault**, a dialog presents three options:
 | **Cancel** | Aborts the import. Nothing is changed. |
 
 Partial tab merge into an existing vault is not supported — it's all-or-nothing.
+
+The import also restores the icon of every bag and the vault's mod link (see [Mods](MODS.md)). A tab whose number is beyond the tabs of the target vault is dropped.
 
 ---
 
@@ -170,8 +172,9 @@ All exports use a JSON envelope with the following structure:
   - `Item`: Single `ItemDto` object (includes `stackSize`, `seed`, `baseName`, `prefixName`, `suffixName`, `relicName`, `relicBonus`, `var1`, `relicName2`, `relicBonus2`, `var2`, `pointX`, `pointY`, `width`, `height`).
   - `width` and `height` are the item size in cells (one cell per 32 pixels of its picture). Older versions could write `0` for items whose picture had not been drawn yet; imports ignore them.
   - `MultiSelect`: Array of `ItemDto` objects (two or more: one selected item is exported as `Item`).
-  - `Tab`: Array of `ItemDto` objects plus `sackNumber` and optional `iconInfo` (bag button label, display mode, icon RecordIds).
-  - `Vault`: Array of sack arrays plus vault `name`.
+  - An `ItemDto` also has `mod` when the item is linked to a mod (see [Mods](MODS.md)); the field is left out otherwise.
+  - `Tab`: an object with `sackNumber`, `items` (array of `ItemDto`) and optional `iconInfo` (bag button label, display mode, icon RecordIds).
+  - `Vault`: an object with the vault `name`, `sacks` (array of the `Tab` objects above) and `mod` when the vault is linked to a mod.
 
 ---
 

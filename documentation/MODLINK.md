@@ -36,7 +36,8 @@ linked* (yellow).
 ## Suggest
 
 *Suggest* reads the record ids that `Player.chr` and the character's `winsys.dxb` use, keeps those the base game
-database does not have, and selects the installed mod whose database has the most of them. It never links: the user
+database does not have, and selects the installed mod whose database has the most of them. When several mods tie, it
+selects none and names them; when no installed mod has the records, it says so. It never links: the user
 clicks *Link*. A character that only uses base game records (a new one, or one without mod items) cannot be told
 apart: the dialog says so.
 

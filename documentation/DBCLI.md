@@ -52,7 +52,7 @@ To publish the same single files as the releases:
 pwsh -File .github/scripts/Publish-Release.ps1 -OutputDir publish
 ```
 
-The game is found automatically (in this order): `--game <path>`, the `TQ_GAME_PATH` environment variable, Steam (app 475150, every Steam library), GOG, well-known install folders.
+The game is found automatically (in this order): `--game <path>`, the `TQ_GAME_PATH` environment variable, Steam (app 475150, every Steam library), GOG, well-known install folders. A `TQ_GAME_PATH` that is set but is not a game install is an error (exit code 3): the other places are not tried.
 
 Every command has its own help: `tqdb <command> --help` (or `tqdb help <command>`).
 
@@ -182,7 +182,7 @@ Field names are case-insensitive and may be globs (`offensive*Min>10` = any matc
 | `--follow <field>` | Inline the records referenced by this field (string values ending with `.dbr`; glob allowed), one level. |
 | `-s, --sort <field[:desc]>` | Sort by a column or variable; numbers numerically; records without the field last. |
 | `--limit <N>` | Maximum records. |
-| `--count` | Print only the number of matches. |
+| `--count` | Print only the number of matches; `--limit` is ignored. |
 | `--format json\|jsonl\|tsv\|dbr` | Default `tsv`, or inferred from the `--out` extension. |
 | `--compact` | Non-indented JSON. |
 | `-o, --out <path>` | Output file; with `--format dbr`, a **directory** receiving one `.dbr` per record (path mirrored, like ARZ Explorer), unless the path ends with `.dbr`/`.txt`. |
@@ -222,7 +222,7 @@ Search localization tags (`Text\Text_XX.arc`): tag code <-> display text.
 | `-k, --key <glob\|/re/>` | Tag name (`tagItem*`). |
 | `-v, --value <glob\|/re/>` | Text (`"*hooked*"`). |
 | `-l, --lang <code>` | Default `EN`. |
-| `--limit`, `--count` | As for `records`. |
+| `--limit`, `--count` | As for `records`, except that the count stops at `--limit`. |
 | `--format json\|jsonl\|tsv` | Default `tsv`. Columns `tag`, `text`; sorted by tag. The `tag` column spells the tag as the game does, whatever the case given to `--key`. |
 
 ```
@@ -282,7 +282,7 @@ tqdb extract --resource "Creatures\Monster\Boarman\*" --out .\boarman
 * **tsv**: a header row, one row per record; multi-values joined by `;`; tab, CR and LF inside values written as `\t`, `\r`, `\n`. With `--resolve` each variable column gets a `<name>:text` column. When the projection is dynamic (`*` or a field glob) the TSV switches to **long format**: one row per variable with columns `id`, `class`, [`displayName`], `field`, `type`, `value`[, `text`].
 * **dbr**: ARZ Explorer text format, one `name,value1;value2,` line per variable (floats with 6 decimals, booleans `1`/`0`). To stdout, each record is preceded by a `// <id>` line when several records can be written.
 
-Output goes to stdout unless `--out` is given; messages go to stderr, so `tqdb records ... > out.tsv` keeps the file clean. The `--out` extension (`.json`, `.jsonl`, `.tsv`, `.dbr`) selects the format when `--format` is omitted.
+Output goes to stdout unless `--out` is given; messages go to stderr, so `tqdb records ... > out.tsv` keeps the file clean. The `--out` extension (`.json`, `.jsonl` or `.ndjson`, `.tsv` or `.tab`, `.dbr`) selects the format when `--format` is omitted; `--out -` is stdout.
 
 ---
 

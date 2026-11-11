@@ -13,11 +13,13 @@ You can access these features from the button on the right of the character drop
 
 ![Base Menu](charmanage/basemenu.png)
 
+For a character of a custom map, the menu also has "Mod link..." after "Duplicate": see [Mods](MODS.md).
+
 ## Duplicate character
 
 TQVault will prompt you for a new name and create a copy of the selected character.
 
-***Note : This is a "character editing" feature.***
+***Note : This is a "character editing" feature: the entry only shows with "Allow Cheats" and "Allow Character Editing Features" ticked in the settings.***
 
 ## Archiving
 
@@ -46,5 +48,7 @@ You can also "Archive/Unarchive" your characters by tag.
 The character dropdown display detailed informations on the characters, including tags.
 
 It make it easier to manage your roster.
+
+A character of a custom map also shows its mod in brackets, a "Modded" tag and the state of its mod link (see [Mods](MODS.md)).
 
 ![Other actions](charmanage/dropdown.png)

@@ -227,8 +227,9 @@ Use `cancel_drag` to put it back untouched.
 - The tools that need the main window answer "not ready" until it has been created.
   `list_windows` and `close_dialog` work from the start.
 - `capture("equipment")` shows the item grid only. Use `equipment.container` to include the stash tabs.
-- `capture` of `main` or `equipment.container` leaves the player information labels out (`DrawToBitmap`): use
-  `capture("playerInfo")` for a picture of them, `player_info` for their text.
+- `capture` of `main` or `equipment.container` does not show the character statistics panel and its Edit button
+  as the screen does (`DrawToBitmap` draws the equipment over them): use `capture("playerInfo")` for a picture of
+  them, `player_info` for their content.
 - The real mouse still works while automation drives the app. Moving it over the panels during a drag
   repaints them, but the virtual cursor keeps deciding where the dragged item is drawn and dropped.
 

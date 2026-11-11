@@ -64,6 +64,8 @@ Here's the locations.
     - That folder is not sent to the git repository: git already keeps every version of your files.
     - It can contain a lot of files. So if you decide to check this box, you certainly can empty it first.
 - ***Backup player saves*** : this backup is optional, the main concern is vault files.
+    - Always backed up: the vault files of your vault folder (`*.vault.json` and the old `*.vault`) and its `Config` folder.
+    - With this box: also the whole `SaveData` folder of `Titan Quest` and of `Titan Quest - Immortal Throne`.
 - ***Git Repository Url*** : if you arrived here, you know what it is. If you don't google it.
     - You can change it later: the next start uses the new repository and sends it all your files.
 
@@ -82,7 +84,7 @@ Here's the locations.
     1. ***Taking a long time uploading 2GO via a DSL line is not a TQVault issue***.
     1. Beside that "first time" it should be fast.
 
-1. On opening, TQVault does the same, then writes the changes of the other computers to your folders. No question is asked:
+1. On opening, TQVault copies and commits your changes and brings in what the other computers pushed (it does not tag or push then), then writes the changes of the other computers to your folders. No question is asked:
     1. A file changed on one computer only takes that version. A file deleted on another computer is deleted here too.
     1. A file changed on both computers keeps the **most recent save**. git does not keep file dates, so every commit carries a small `.tqvault-savetimes` file with the real save time of each file, and a file written from the backup gets its original date back.
     1. A file modified on one computer and deleted on the other is kept.
@@ -119,6 +121,6 @@ TQVault closed, copy the old version of the file into your vault folder (or save
 `git show 26.11.08.161633:"TQVaultData/MyVault.vault.json" > "%USERPROFILE%\Documents\my games\Titan Quest\TQVaultData\MyVault.vault.json"`
 from `LocalGitRepository`, or with the "save as" of your git UI. The next start shows it and backs it up as a new change.
 
-Here's where to find the old version of a vault in Git Extensions.
+Here's where to find the old version of a vault in Git Extensions. Use "Save selected as...", not the "Reset file(s) to" entry the picture highlights: a file reset inside `LocalGitRepository` is put back by the next sync.
 
 ![Recover an old version](gitbackup/resetfile.png)

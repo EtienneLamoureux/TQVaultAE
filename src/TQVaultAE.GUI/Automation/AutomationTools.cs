@@ -454,7 +454,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "context_menu_click", Destructive = true)]
-	[Description("Right-clicks a cell like context_menu, then clicks the entry found by its path of texts (' > ' between levels, e.g. 'Move To > Bag 2'; an exact text first, else the first entry containing it). The click runs after this call returns, since an entry may open a modal dialog (properties, seed, delete confirmation): follow with list_windows, dialog_answers or get_state.")]
+	[Description("Right-clicks a cell like context_menu, then clicks the entry found by its path of texts (' > ' between levels, e.g. 'Move Item To > Bag #2'; an exact text first, else the first entry containing it). The click runs after this call returns, since an entry may open a modal dialog (properties, seed, delete confirmation): follow with list_windows, dialog_answers or get_state.")]
 	public static string ContextMenuClick(
 		[Description("Panel id.")] string panel,
 		[Description("Cell column.")] int x,
@@ -607,7 +607,7 @@ internal static partial class AutomationTools
 	#region Capture
 
 	[McpServerTool(Name = "capture", ReadOnly = true)]
-	[Description("Renders a control to PNG with Control.DrawToBitmap, so it works when the window is hidden behind others. Target: a panel id (vault, player, equipment...), '<panel>.container' for the panel with its bag buttons, 'main' for the main window, 'playerInfo' for the stash panel with the player information labels (which DrawToBitmap leaves out) drawn over it, or part of a form title.")]
+	[Description("Renders a control to PNG with Control.DrawToBitmap, so it works when the window is hidden behind others. Target: a panel id (vault, player, equipment...), '<panel>.container' for the panel with its bag buttons, 'main' for the main window, 'playerInfo' for the stash panel with the character statistics panel and its Edit button (which DrawToBitmap leaves out) drawn over it, or part of a form title.")]
 	public static IEnumerable<ContentBlock> Capture(
 		[Description("What to capture.")] string control = "main")
 	{

@@ -23,6 +23,11 @@ You can create a "requirement range" via Min/Max checkboxes.
 
 _**Note:** Leaving a value to 0 means "ignore"._
 
+The popup also has check boxes (Having Prefix, Having Suffix, Having Relic, Having Charm, Set Item, Having Skill)
+and three lists to tick: item types, rarity and origin. The screenshot below is older and shows only the first two boxes.
+
+<kbd>CTRL</kbd>+<kbd>S</kbd> selects all the highlighted items of the bag under the mouse.
+
 ![Vault and Player](highlight/highlight_ui_extended.png)
 
 ## Regular expression
@@ -34,6 +39,6 @@ Here's few examples.
 - `/rune|earth` : Everything with "rune" or "earth"
 - `/chance of .+%.+bleeding damage` : All chance of + percent bleeding damage
 - `/\+.+%.+(life|mana) leech` : Any + percentage of life or mana leech
-- `/\+.+%.+(cold|fire) damage` : Any + percentage of cold or fire leech
+- `/\+.+%.+(cold|fire) damage` : Any + percentage of cold or fire damage
 
 ![Regex](highlight/highlight_ui_regex.png)

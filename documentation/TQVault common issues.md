@@ -4,7 +4,7 @@
    
 TQVault attempts to start and then displays the following message:  
 ![Error loading](issues/errorloading.png)  
-Hitting YES to use the default config file does not help.  
+The dialog now asks "Would you like to restart TQVault?". Restarting does not help.  
 ### Solution
 This message shows itself when TQVault cannot locate all of the necessary files which are the database.arz file and the text database files. This can also occur if there is an exception during the resource load process. There are many causes for this:   
 
@@ -16,22 +16,22 @@ Starting with version 2.2.2.0, if there is an exception it will be displayed as 
 ## Issue: TQVault debugging   
 If an issue is not known, it is helpful to turn on debugging to help isolate the issue.   
 ### Solution 
-Manually edit the config file to turn on debugging.   
-Use the *DebugEnabled* key to globally turn debugging on and off. The level keys will have no effect with this turned off.   
+Manually edit the config file (`UserConfig.xml`, next to `TQVaultAE.exe`) to turn on debugging. The keys below are not in the file: add them.   
+Each level key works on its own. The *DebugEnabled* key adds a few more messages.   
    
 - ARCFileDebugLevel - Used for debugging the decoding of the arc files.   
 - DatabaseDebugLevel - Used for debugging of decoding and loading the databases. Resource loading issues should be shown here.   
 - ItemDebugLevel - Used debugging item stat decoding.   
-- ItemAttributesDebugLevel - Used for decoding the format specs of the items.   
+- ItemAttributesDebugLevel - No longer used.   
 
 The levels range from 0 to 3.   
-   
-1. No logging except for some error messages.   
-2. Basic logging showing entering and exiting of functions.   
-3. Includes internals of functions but not loops. This is the most common setting.   
-4. Includes the internals of loops. This can slow down the program especially when used with the ARCFile.   
+   
+- 0 : No logging except for some error messages.   
+- 1 : Basic logging showing entering and exiting of functions.   
+- 2 : Includes internals of functions but not loops. This is the most common setting.   
+- 3 : Includes the internals of loops. This can slow down the program especially when used with the ARCFile.   
 
-When debugging is enabled, TQVault will create a **./** **Logging** **/*** **.txt** file in your TQVault installation folder.   
+TQVault always writes a log file, with or without debugging: `./Logging/TQVaultAE_<date>.txt` in your TQVault installation folder.   
    
 ## Issue: TQVault versions   
 What version of TQVault do I have?   
@@ -41,8 +41,8 @@ The version number is in TQVault window title.
 ## Issue: Search Issues
 Search is giving unexpected results or your characters name is not selectable.  
 ### Solution
-Search will only search the files which are memory resident, so if the « LoadAllFiles » option is not turned on, only those files which you have manually loaded will be searched.   
-If you can stand the additional loading overhead, it is recommended to leave the « LoadAllFiles » option enabled so that all files will be searched.  
+Search will only search the files which are memory resident, so if the « Pre-Load All Vault And Character Files » setting (`LoadAllFiles` in the config file) is not turned on, only those files which you have manually loaded will be searched.   
+If you can stand the additional loading overhead, it is recommended to leave the setting enabled so that all files will be searched.  
 There was also a bug identified if your character's name had an underline character (_) which is fixed in version 2.2.2.0.  
    
 ## Issue: Lost Items, corrupted characters or stash files.  
@@ -62,6 +62,6 @@ The maintenance dialog has the ability to create new vaults and rename, copy or 
 The item stats shown in TQVault do not match the stats shown in game. Two items with the same prefix and suffix show the exact same stats in TQVault though they are different in the game.   
 ### Solution 
 The game uses the information from the item record, prefix record, suffix record along with some variation based on the item seed to get the final in game stats.   
-TQVault will only show the values from the database records and does not take the seed into account to produce any variation since it is unknown at this point exacly how the game derives the final stats.   
-In addition, some item attributes like jitter are not implemented in TQVault, so right now the stats are only a "ballpark" estimate of the final stats.   
+With the "Show In-Game Values" setting (on by default), TQVault applies the seed to the tool tips of the equipment, so two such items show their own values.   
+With the setting off, TQVault only shows the values from the database records, the same for both items. See [Game file formats](tq-file-formats.md) for how the game derives the final stats.   
    

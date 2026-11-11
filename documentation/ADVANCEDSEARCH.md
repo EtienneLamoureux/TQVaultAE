@@ -3,7 +3,9 @@
 This form brings great search capabilities to TQVault.
 It can not only help find items but also theory craft.
 
-_**This tool is meant to be used with "Preload All" setting enabled.**_
+Open it with the "Search" button of the navigation bar or with <kbd>CTRL</kbd>+<kbd>F</kbd>.
+
+_**This tool is meant to be used with the "Pre-Load All Vault And Character Files" setting enabled.**_
 
 _**The first load can be long but reopening the form si fast.**_
 
@@ -48,7 +50,7 @@ Here's few examples.
 - `/rune|earth` : Everything with "rune" or "earth"
 - `/chance of .+%.+bleeding damage` : All chance of + percent bleeding damage
 - `/\+.+%.+(life|mana) leech` : Any + percentage of life or mana leech
-- `/\+.+%.+(cold|fire) damage` : Any + percentage of cold or fire leech
+- `/\+.+%.+(cold|fire) damage` : Any + percentage of cold or fire damage
 
 ![ShowHide](advancedsearch/regex.png)
 
@@ -60,6 +62,8 @@ Some categories may have no interest to you.
 You can hide it.
 
 ![ShowHide](advancedsearch/showhide.png)
+
+The screenshots of this page are older: the form now also has the "Origin", "Sets" and "Item Skills" categories and a "Having Skill" quick filter.
 
 ---
 
@@ -74,6 +78,7 @@ It accept [regular expressions](#Regex).
 
 ### <a id="UncheckAll"></a>Uncheck all
 You can uncheck all selected attributes inside a category by 'right-clicking' the yellow category label.
+A left click on the label collapses or expands the category.
 
 ---
 
@@ -122,14 +127,17 @@ The save contains
 - Search term,
 - UI behaviors & visibility,
 - Requirement filters,
-- Quick filters
+- Quick filters,
+- The checked elements of each category, the And/Or mode and the "Filter categories" text
+
+The queries are kept in the `SearchQueries.json` file.
 
 ![Query persistance](advancedsearch/query.png)
 
 ---
 
 ### <a id="Flexible"></a>Flexible visibility
-You can adjust the number of visible elements per category.
+You can adjust the number of visible elements per category, from 5 to 150.
 
 ![Flexible visibility](advancedsearch/flexible.png)
 
