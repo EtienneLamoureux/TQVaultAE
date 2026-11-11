@@ -68,18 +68,6 @@ internal sealed partial class CharacterEditDialog
 		this.RefreshSkills();
 	}
 
-	/// <summary>
-	/// A description as the skill window writes it: with its colours ("{^y}Assign this skill to your left mouse button."),
-	/// without the other tags.
-	/// </summary>
-	private string GameDescription(string? tag)
-	{
-		if (string.IsNullOrEmpty(tag) || this.TranslationService.TranslateXTag(tag) is not { Length: > 0 } text)
-			return string.Empty;
-
-		return text.Replace("{^n}", string.Empty, StringComparison.OrdinalIgnoreCase);
-	}
-
 	private SkillTab CreateSkillTab(int slot, List<MasteryChoice> choices)
 	{
 		var font = this.FontService.GetFontLight(11F);
@@ -171,156 +159,34 @@ internal sealed partial class CharacterEditDialog
 		return this._skillTooltip;
 	}
 
-	/// <summary>A game text with its values: <c>{%d0}</c>, <c>{%s1}</c>... (any printf format, by index).</summary>
-	private string GameText(string tag, string fallback, params object[] values)
-		=> CharacterPanelLayout.FormatGameText(this.TranslationService.TranslateOr(tag, fallback, removeAllTQTags: false), values);
+	/// <summary>Builds the skill tool tips; the dialog only gives the colours.</summary>
+	private SkillTooltipContentBuilder? _skillTipBuilder;
 
-	/// <summary>
-	/// The tool tip of a skill as the game's skill window shows it (<c>the game</c>, the
-	/// <c>the game</c> parts): name, description, the current level with its effects, the next level
-	/// with its effects, then what stops a point (in red) or the invitation to add one; then the levels the equipment
-	/// adds and how to click. The mastery button shows the mastery the same way.
-	/// </summary>
+	/// <summary>The tool tip of a skill, or of the mastery button, in the colours of the game's skill window.</summary>
 	private List<GameTooltipLine> SkillToolTip(SkillTab tab, MasterySkill? skill)
 	{
-		if (this._skills is not { } skills || skills.Slots[tab.Slot] is not { } tree)
+		if (this._skills is not { } skills)
 			return [];
 
-		var lines = new List<GameTooltipLine>();
-		IReadOnlyList<string> currentEffects = [];
-
-		// The item tooltips colour the effects as an epic item; the skill window writes them plain, keeping only the
-		// colours inside a line (recharge time in aqua).
-		var context = SkillWindowContext.None;
-		HashSet<string> modified = [];
-		IEnumerable<string> Effects(RecordId id, int level)
-		{
-			if (this.Services.CharacterEditService.DescribeSkill(id, level, context) is not { } described)
-				return [];
-
-			var effects = described.Attributes.Select(a => a.RemoveLeadingColorTag()).ToList();
-			modified = [.. described.ModifiedLines.Where(i => i < effects.Count).Select(i => effects[i])];
-			return effects;
-		}
-
-		void Level(string tag, string fallback, RecordId id, int level)
-		{
-			lines.Add(GameTooltipLine.Blank);
-			lines.Add(new GameTooltipLine(this.GameText(tag, fallback, level), TipLevel));
-			currentEffects = SkillTooltipLayout.CurrentEffects(Effects(id, level));
-			var abilities = SkillTooltipLayout.AbilitiesStart(currentEffects);
-			lines.AddRange(currentEffects.Select((e, i) => new GameTooltipLine(e, i < abilities ? TipText : TipAbility)));
-		}
-
-		// The next level is a line type of its own, in grey, with only what it changes.
-		void NextLevel(string tag, string fallback, RecordId id, int level)
-		{
-			lines.Add(GameTooltipLine.Blank);
-			lines.Add(new GameTooltipLine(this.GameText(tag, fallback, level), TipLevel));
-			var next = Effects(id, level).ToList();
-			lines.AddRange(SkillTooltipLayout.NextEffects([.. currentEffects], next, modified)
-				.Select(e => new GameTooltipLine(e, TipNext)));
-		}
-
-		var masteryLevel = skills.GetMasteryLevel(tab.Slot);
-		if (skill is null)
-		{
-			lines.Add(new GameTooltipLine(this.TranslationService.TranslateOr(tree.NameTag, tree.Mastery.ToString()), Color.White, Title: true));
-			lines.Add(new GameTooltipLine(this.GameDescription(tree.DescriptionTag), TipText, Wrap: true));
-			if (masteryLevel > 0)
-				Level("tagCurrentLevel", "Current Level : {%d0}", tree.Id, masteryLevel);
-			if (masteryLevel < tree.MaxLevel)
-				NextLevel("tagNextLevel", "Next Level : {%d0}", tree.Id, masteryLevel + 1);
-			this.Requirements(lines, masteryLevel < tree.MaxLevel, []);
-			lines.Add(GameTooltipLine.Blank);
-			lines.Add(new GameTooltipLine(Resources.CESkillPaneHint, TipHint, Wrap: true));
-			return lines;
-		}
-
-		var points = skills.GetLevel(skill.Id);
-		var bonus = SkillBonus.For(this._gearAugments, tree, skill.Id);
-
-		// The game counts the levels of the equipment once the skill has a point.
-		var current = skill.EffectiveLevel(points, bonus.Total);
-
-		// No next level once the skill is at its ultimate level with the equipment (Maul 11 + 8 stops at 16).
-		var belowMax = points < skill.MaxLevel && (skill.UltimateLevel == 0 || current < skill.UltimateLevel);
-
-		// The equipment's levels also raise a summon's own skills (Battle Standard 11/10 shows its level 12 buff), all of
-		// them even beyond the ultimate level (Call of the Wild 15 + 6: the wolves dodge as at +6).
-		context = this.SkillContext(tree, skill, points > 0 ? bonus.Total : 0);
-		lines.Add(new GameTooltipLine(this.TranslationService.TranslateOr(skill.NameTag, skill.Id.PrettyFileName), Color.White, Title: true));
-		lines.Add(new GameTooltipLine(this.GameDescription(skill.DescriptionTag), TipText, Wrap: true));
-		if (current > 0)
-			Level("tagCurrentLevel", "Current Level : {%d0}", skill.Id, current);
-		if (belowMax)
-			NextLevel("tagNextLevel", "Next Level : {%d0}", skill.Id, current + 1);
-
-		var refused = new List<string>();
-		if (masteryLevel < skill.RequiredMasteryLevel)
-		{
-			var missing = skill.RequiredMasteryLevel - masteryLevel;
-			var mastery = this.TranslationService.TranslateOr(tree.NameTag, tree.Mastery.ToString());
-			refused.Add(missing == 1
-				? this.GameText("tagSkillReq01Singular", "This skill requires {%d0} additional skill point in {%s1}.", missing, mastery)
-				: this.GameText("tagSkillReq01", "This skill requires {%d0} additional skill points in {%s1}.", missing, mastery));
-		}
-
-		if (skill.ParentId is { } parentId && skills.GetLevel(parentId) == 0
-			&& tree.Skills.FirstOrDefault(s => s.Id == parentId) is { } parent)
-			refused.Add(this.GameText("tagSkillReq03", "This skill requires the {%s1} skill.", 1, this.TranslationService.TranslateOr(parent.NameTag, parent.Id.PrettyFileName)));
-
-		this.Requirements(lines, belowMax, refused);
-
-		var gear = this.GearBonusLines(tree, skill, bonus).ToList();
-		if (gear.Count != 0)
-		{
-			lines.Add(GameTooltipLine.Blank);
-			lines.AddRange(gear.Select(g => new GameTooltipLine(g, TipGear)));
-		}
-
-		lines.Add(GameTooltipLine.Blank);
-		lines.Add(new GameTooltipLine(Resources.CESkillPaneHint, TipHint, Wrap: true));
-		return lines;
-	}
-
-	/// <summary>
-	/// What the character adds to a skill in the skill window: the equipment's levels for a summon's skills, the skill's
-	/// modifiers that have points (Resilience lowers Adrenaline's recharge, Flush Out adds to Study Prey's energy cost)
-	/// and the character's recharge reduction with its cap, for the difficulty of the statistics.
-	/// </summary>
-	private SkillWindowContext SkillContext(MasteryTree tree, MasterySkill skill, int petSkillBonus)
-	{
-		var skills = this._skills!;
-		var modifiers = tree.Skills
-			.Where(child => child.ParentId is { } parent && parent.Equals(skill.Id) && skills.GetLevel(child.Id) > 0)
-			.Select(child => new SkillModifierLevel(child.Id,
-				child.EffectiveLevel(skills.GetLevel(child.Id), SkillBonus.For(this._gearAugments, tree, child.Id).Total)))
-			.ToList();
-
-		var stats = this.ComputeStats();
+		this._skillTipBuilder ??= new SkillTooltipContentBuilder(this.Services.CharacterEditService, this.Services.CharacterStatsService, this.TranslationService);
 		var difficulty = CharacterPanelLayout.ShownDifficulty(this.Info.DifficultyUnlocked, this._statsDifficulty?.SelectedIndex ?? -1);
-		var cap = this.Services.CharacterStatsService.GetGameBalance().EngineValue("playerCooldownReductionCap", difficulty);
-		return new SkillWindowContext(petSkillBonus, modifiers, stats.CooldownReduction, cap);
+		return [.. this._skillTipBuilder.Build(skills, tab.Slot, skill, this._gearAugments, () => this.ComputeStats().CooldownReduction, difficulty)
+			.Select(ToGameLine)];
 	}
 
-	/// <summary>
-	/// The last part of the game's skill tool tip: what stops a point, in red; else "No skill points to add." when none is
-	/// left, or "Press to add unused skill points." when a point can be spent.
-	/// </summary>
-	private void Requirements(List<GameTooltipLine> lines, bool belowMax, List<string> refused)
+	private static GameTooltipLine ToGameLine(SkillTipLine line) => line.Kind switch
 	{
-		if (refused.Count == 0 && !belowMax)
-			return;
-
-		lines.Add(GameTooltipLine.Blank);
-		if (refused.Count != 0)
-			lines.AddRange(refused.Select(r => new GameTooltipLine(r, TipRefused)));
-		else if (this._skills!.AvailablePoints <= 0)
-			lines.Add(new GameTooltipLine(this.GameText("NoSkillPointsToAdd", "No skill points to add."), TipRefused));
-		else
-			lines.Add(new GameTooltipLine(this.GameText("PressToAddUnusedSkillPoints", "Press to add unused skill points."), TipCanAdd));
-	}
+		SkillTipKind.Blank => GameTooltipLine.Blank,
+		SkillTipKind.Title => new GameTooltipLine(line.Text, Color.White, Title: true),
+		SkillTipKind.Level => new GameTooltipLine(line.Text, TipLevel),
+		SkillTipKind.Ability => new GameTooltipLine(line.Text, TipAbility),
+		SkillTipKind.Next => new GameTooltipLine(line.Text, TipNext),
+		SkillTipKind.Refused => new GameTooltipLine(line.Text, TipRefused),
+		SkillTipKind.CanAdd => new GameTooltipLine(line.Text, TipCanAdd),
+		SkillTipKind.Gear => new GameTooltipLine(line.Text, TipGear),
+		SkillTipKind.Hint => new GameTooltipLine(line.Text, TipHint, Wrap: line.Wrap),
+		_ => new GameTooltipLine(line.Text, TipText, Wrap: line.Wrap),
+	};
 
 	/// <summary>Shows the state of the editor in every page and in the skill points box.</summary>
 	private void RefreshSkills()
@@ -369,17 +235,6 @@ internal sealed partial class CharacterEditDialog
 		{
 			this._syncingSkillPoints = false;
 		}
-	}
-
-	/// <summary>The gear bonus lines of a skill tooltip: "+N to the skill", "+N to all skills of the mastery", "+N to all skills".</summary>
-	private IEnumerable<string> GearBonusLines(MasteryTree tree, MasterySkill skill, SkillBonus bonus)
-	{
-		if (bonus.Skill != 0)
-			yield return string.Format(Resources.CEGearBonusSkill, bonus.Skill, this.TranslationService.TranslateOr(skill.NameTag, skill.Id.PrettyFileName));
-		if (bonus.Mastery != 0)
-			yield return string.Format(Resources.CEGearBonusMastery, bonus.Mastery, this.TranslationService.TranslateOr(tree.NameTag, tree.Mastery.ToString()));
-		if (bonus.All != 0)
-			yield return string.Format(Resources.CEGearBonusAll, bonus.All);
 	}
 
 	private void SkillMastery_Changed(SkillTab tab)
