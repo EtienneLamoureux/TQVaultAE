@@ -471,7 +471,7 @@ public partial class SackPanel
 	{
 		Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
 		if (focusedItem is null || !this.Services.ItemEditService.ChangeMod(this.ShownSack, focusedItem, mod
-			, item => this.FitsWhereItLies(item) || MoveToFreeSpot(this.ShownSack, this.SackSize, item)))
+			, item => SackLayout.FitsOrMoves(this.ShownSack, this.SackSize, item)))
 		{
 			return;
 		}

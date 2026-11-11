@@ -7,6 +7,7 @@
 /// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.
 /// </summary>
 
+using TQVaultAE.Domain.Actions;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -229,7 +230,7 @@ public partial class VaultPanel
 	{
 		var size = this.BagSackPanel.SackSize;
 		var changed = this.Services.ItemEditService.ChangeVaultMod(this.ShownVault, mod
-			, (sack, item) => SackPanel.Fits(sack, size, item) || SackPanel.MoveToFreeSpot(sack, size, item));
+			, (sack, item) => SackLayout.FitsOrMoves(sack, size, item));
 		if (changed.Count == 0)
 			return;
 
@@ -255,8 +256,7 @@ public partial class VaultPanel
 	{
 		var size = sackSize ?? this.BagSackPanel.SackSize;
 		var changed = items.Where(item => this.Services.ItemEditService.SettleIn(
-			item, this.Vault is not null, this.Vault?.Mod, i => SackPanel.Fits(sack, size, i)
-				|| SackPanel.MoveToFreeSpot(sack, size, i))).ToArray();
+			item, this.Vault is not null, this.Vault?.Mod, i => SackLayout.FitsOrMoves(sack, size, i))).ToArray();
 		if (changed.Length == 0)
 			return;
 

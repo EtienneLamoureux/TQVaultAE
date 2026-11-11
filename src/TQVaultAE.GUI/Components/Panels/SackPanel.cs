@@ -332,42 +332,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	/// <summary>
 	/// True when an item lies inside the grid without overlapping another item.
 	/// </summary>
-	private bool FitsWhereItLies(Item item) => Fits(this.ShownSack, this.SackSize, item);
-
-	/// <summary>
-	/// Moves an item of a sack to the first free spot of its grid (rows first) where it fits.
-	/// </summary>
-	/// <returns>True when moved; false when there is no room, the item staying where it was.</returns>
-	internal static bool MoveToFreeSpot(SackCollection sack, Size sackSize, Item item)
-	{
-		var (x0, y0) = (item.PositionX, item.PositionY);
-		for (int y = 0; y + item.Height <= sackSize.Height; y++)
-		{
-			for (int x = 0; x + item.Width <= sackSize.Width; x++)
-			{
-				(item.PositionX, item.PositionY) = (x, y);
-				if (Fits(sack, sackSize, item))
-					return true;
-			}
-		}
-
-		(item.PositionX, item.PositionY) = (x0, y0);
-		return false;
-	}
-
-	/// <summary>
-	/// True when an item of a sack lies inside its grid without overlapping another item of the sack.
-	/// </summary>
-	/// <param name="leaving">An item of the sack to ignore: the one a swap drop is about to pick up.</param>
-	internal static bool Fits(SackCollection sack, Size sackSize, Item item, Item? leaving = null)
-	{
-		var cells = new Rectangle(item.PositionX, item.PositionY, item.Width, item.Height);
-		if (cells.X < 0 || cells.Y < 0 || cells.Right > sackSize.Width || cells.Bottom > sackSize.Height)
-			return false;
-
-		return !sack.Any(other => !ReferenceEquals(other, item) && !ReferenceEquals(other, leaving)
-			&& new Rectangle(other.PositionX, other.PositionY, other.Width, other.Height).IntersectsWith(cells));
-	}
+	private bool FitsWhereItLies(Item item) => SackLayout.Fits(this.ShownSack, this.SackSize, item);
 
 	/// <summary>
 	/// Gets or sets the AutoMoveLocation for this sack.

@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using TQVaultAE.Domain.Actions;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.Extensions.Logging;
@@ -147,7 +148,7 @@ public partial class SackPanel
 			// character, the active map when it has no link of its own.
 			if (!drop.Stacked && this.Services.ItemEditService.SettleIn(
 				dragItem, this.HoldsVault?.Invoke() ?? false, this.ContainerMod?.Invoke()
-				, item => Fits(this.ShownSack, this.SackSize, item, itemUnderUs)))
+				, item => SackLayout.Fits(this.ShownSack, this.SackSize, item, itemUnderUs)))
 			{
 				this.InvalidateItemCacheAll(dragItem);
 			}
