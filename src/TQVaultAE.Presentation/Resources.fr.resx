@@ -994,6 +994,9 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
 	<data name="CEAttributeToolTip" xml:space="preserve">
     <value>Base {0}, {1:+0;-0;+0} des équipements et compétences. Clic gauche sur + : dépense un point, clic droit : le reprend ; avec Maj : tous les points, ou retour au départ.</value>
   </data>
+	<data name="CEAttributeBaseToolTip" xml:space="preserve">
+    <value>Base {0}, {1:+0;-0;+0} des équipements et compétences.</value>
+  </data>
 	<data name="CEMasterySummary" xml:space="preserve">
     <value>{0}, {1}</value>
   </data>

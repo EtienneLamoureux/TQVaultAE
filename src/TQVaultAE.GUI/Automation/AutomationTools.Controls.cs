@@ -353,47 +353,36 @@ internal static partial class AutomationTools
 	#region Player information panel
 
 	[McpServerTool(Name = "player_info", ReadOnly = true)]
-	[Description("Reads the player information panel shown next to the equipment (stash bag 0) as displayed: one row per line, its label and its value, in display order. Empty when no character is selected or another stash tab is shown.")]
-	public static string PlayerInfo()
+	[Description("Reads the statistics panel shown next to the equipment (stash bag 0): the game's character window, read only, as character_panel reads the editor's (name, class, level, attributes, the computed values of tabs I to III, gold). tab (1 to 3) shows that tab first. Not visible when no character is selected or another stash tab is shown.")]
+	public static string PlayerInfo([Description("Tab to show first: 1, 2 or 3; 0 keeps the one shown.")] int tab = 0)
 		=> AutomationHost.OnUi(form =>
 		{
-			var table = (form.AutomationStashPanel ?? throw new McpException("No stash panel.")).AutomationPlayerInfoPanel;
-			var rows = PlayerInfoLabels(table)
-				.GroupBy(l => table.GetPositionFromControl(l).Row)
-				.OrderBy(g => g.Key)
-				.Select(g => new
-				{
-					label = g.FirstOrDefault(l => table.GetPositionFromControl(l).Column == 0)?.Text,
-					value = g.FirstOrDefault(l => table.GetPositionFromControl(l).Column == 1)?.Text,
-				})
-				.ToList();
-			return Serialize(new { visible = table.Visible, rows });
+			var panel = (form.AutomationStashPanel ?? throw new McpException("No stash panel.")).AutomationPlayerStatsPanel;
+			if (panel is null)
+				return Serialize(new { visible = false });
+
+			if (tab is >= 1 and <= 3)
+				panel.Tab = tab - 1;
+
+			return Serialize(new { visible = panel.Visible, bounds = new { panel.Left, panel.Top, panel.Width, panel.Height }, stats = panel.AutomationState() });
 		});
 
-	/// <summary>The labels of the player information panel (the Edit button left out).</summary>
-	private static IEnumerable<Label> PlayerInfoLabels(TableLayoutPanel table) => table.Controls.OfType<Label>();
-
 	/// <summary>
-	/// Renders the stash panel with the player information labels drawn over it, one by one: <see cref="Control.DrawToBitmap"/>
-	/// of the panel leaves these labels out.
+	/// Renders the stash panel with the statistics panel drawn over it: <see cref="Control.DrawToBitmap"/> of the panel
+	/// may leave a transparent child out.
 	/// </summary>
 	private static Bitmap RenderStashWithPlayerInfo(Forms.MainForm form)
 	{
 		var stash = form.AutomationStashPanel ?? throw new McpException("No stash panel.");
-		var table = stash.AutomationPlayerInfoPanel;
-		if (!table.Visible)
-			throw new McpException("The player information panel is not shown: select a character and stash bag 0 (equipment).");
+		var panel = stash.AutomationPlayerStatsPanel;
+		if (panel is not { Visible: true })
+			throw new McpException("The statistics panel is not shown: select a character and stash bag 0 (equipment).");
 
 		var bitmap = new Bitmap(stash.Width, stash.Height);
 		stash.DrawToBitmap(bitmap, new Rectangle(Point.Empty, stash.Size));
-		using var graphics = Graphics.FromImage(bitmap);
-		foreach (var label in PlayerInfoLabels(table).Where(l => l.Visible && l.Width > 0 && l.Height > 0))
-		{
-			var at = stash.PointToClient(label.Parent!.PointToScreen(label.Location));
-			TextRenderer.DrawText(graphics, label.Text, label.Font, new Rectangle(at, label.Size), label.ForeColor,
-				TextFormatFlags.NoPadding | (label.TextAlign == ContentAlignment.TopRight ? TextFormatFlags.Right : TextFormatFlags.Left));
-		}
-
+		panel.DrawToBitmap(bitmap, panel.Bounds);
+		if (stash.AutomationEditButton is { Visible: true } edit)
+			edit.DrawToBitmap(bitmap, edit.Bounds);
 		return bitmap;
 	}
 

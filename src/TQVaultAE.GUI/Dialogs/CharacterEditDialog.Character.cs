@@ -30,13 +30,13 @@ internal sealed partial class CharacterEditDialog
 
 	private readonly ToolTip _statsToolTip = new() { AutoPopDelay = 30000, InitialDelay = 300 };
 
-	/// <summary>The sums of the equipped items (they do not change in the dialog) and of the skills, by skill state.</summary>
-	private AttributeSum? _gearSum;
-	private (string Key, AttributeSum Sum)? _skillSum;
+	/// <summary>The sums of the equipped items and of the skills, kept by <see cref="ViewBuilder"/>.</summary>
+	private AttributeSum? _gearSum => this.ViewBuilder.GearSum;
+	private AttributeSum? _skillSum => this.ViewBuilder.SkillSum;
 
-	/// <summary>The weapons in hand and the other items for the attack damage, and the stance (they do not change in the dialog).</summary>
-	private OffenseGear? _offenseGear;
-	private WeaponStance? _stance;
+	/// <summary>The weapons in hand and the other items for the attack damage, and the stance.</summary>
+	private OffenseGear? _offenseGear => this.ViewBuilder.OffenseGear;
+	private WeaponStance? _stance => this.ViewBuilder.Stance;
 
 	/// <summary>The attribute boxes in the game's order: Health, Energy, Strength, Intelligence, Dexterity.</summary>
 	private NumericUpDown[] AttributeBoxes => [this.healthUpDown, this.manacUpDown, this.strengthUpDown, this.intelligenceUpDown, this.dexterityUpDown];
@@ -270,70 +270,7 @@ internal sealed partial class CharacterEditDialog
 	}
 
 	/// <summary>What the statistics panel shows, read from the editors and the save.</summary>
-	private CharacterPanelView CharacterView()
-	{
-		var info = this.Info;
-		var culture = CultureInfo.CurrentCulture;
-		string Game(string tag, string fallback) => this.TranslateTag(tag, fallback);
-
-		// The bonuses as the statistics sum them, unrounded: the game adds 13.5 strength of a mastery as is.
-		this.ComputeStats();
-		var bonuses = new AttributeSum();
-		bonuses.Add(this._gearSum ?? new AttributeSum());
-		bonuses.Add(this._skillSum?.Sum ?? new AttributeSum());
-		CharacterAttributeView Attribute(int index, string tag, string label, string field, Color color)
-		{
-			var value = Convert.ToInt32(this.AttributeBoxes[index].Value);
-			var total = CharacterPanelLayout.AttributeTotal(value, bonuses[field], bonuses[field + "Modifier"]);
-			var shown = index < 2 ? $"{total} / {total}" : total.ToString(culture);
-			var tip = string.Format(culture, Resources.CEAttributeToolTip, value, total - value);
-			return new CharacterAttributeView(Game(tag, label), shown, color, tip);
-		}
-
-		var points = Convert.ToInt32(this.attributeNumericUpDown.Value);
-		var level = Convert.ToInt32(this.levelNumericUpDown.Value);
-		var xp = long.TryParse(this.xpTextBox.Text, NumberStyles.Integer, culture, out var xpValue) ? xpValue : 0;
-		var skills = this._skills;
-
-		return new CharacterPanelView
-		{
-			Name = this.PlayerCollection.PlayerName,
-			// The class goes with the masteries: a change of masteries clears it when it is applied, as the game sets it again.
-			ClassName = skills?.MasteriesChanged == true ? string.Empty
-				: this.TranslationService.TranslateXTag(info.Class ?? string.Empty, true, true) ?? string.Empty,
-			LevelText = CharacterPanelLayout.FormatGameText(Game("tagCLevel", "Level : {%d0}"), level),
-			XpText = CharacterPanelLayout.FormatGameText(Game("xtagCXP", "XP : {%t0}"), xp),
-			AttributesTitle = Game("tagCAttributes", Resources.CEAttributes),
-			PointsText = points <= 0 ? string.Empty
-				: CharacterPanelLayout.FormatGameText(this.TranslationService.TranslateXTag(points == 1 ? "tagCPointsSingular" : "tagCPoints") ?? "{%d0}", points),
-			CanRaise = points > 0,
-			CanUndo = this.AttributeBoxes.Where((b, i) => Convert.ToInt32(b.Value) != this._startAttributes.ElementAtOrDefault(i)).Any(),
-			UndoText = Game("tagSkillUndo", "Undo"),
-			Attributes =
-			[
-				Attribute(0, "tagCHealth", Resources.CEHealth, "characterLife", Color.FromArgb(255, 40, 40)),
-				Attribute(1, "tagCEnergy", Resources.CEMana, "characterMana", Color.FromArgb(90, 90, 255)),
-				Attribute(2, "tagCStrength", Resources.CEStrength, "characterStrength", Color.White),
-				Attribute(3, "tagCIntelligence", Resources.CEIntelligence, "characterIntelligence", Color.White),
-				Attribute(4, "tagCDexterity", Resources.CEDexterity, "characterDexterity", Color.White),
-			],
-			Stats = this.StatsView(),
-			GreatestMonsterTitle = Game("tagCHighestMonster", "Greatest Monster Killed"),
-			GreatestMonster = this.TranslateTag(info.GreatestMonster, info.GreatestMonster),
-			GreatestMonsterLevel = info.GreatestMonsterKilledLevel == 0 ? string.Empty
-				: CharacterPanelLayout.FormatGameText(Game("tagCLevel", "Level : {%d0}"), info.GreatestMonsterKilledLevel),
-			Statistics =
-			[
-				(Game("tagCMonsterKills", "Monsters Killed"), info.NumberOfKills.ToString("N0", culture)),
-				(Game("tagCHighestDamage", "Greatest Damage Dealt"), info.GreatestDamageInflicted.ToString("N0", culture)),
-				(Game("tagCTime", "Elapsed Time"), CharacterPanelLayout.PlayTime(Game("tagCTimeNumber", "{%d0}:{%d1}:{%d2}"), info.PlayTimeInSeconds)),
-				(Game("tagCDeaths", "Total Deaths"), info.NumberOfDeaths.ToString("N0", culture)),
-			],
-			TabNames = [Game("tagCPrimaryStats", "I"), Game("tagCSecondaryStats", "II"), Game("x4tagCThirdStats", "III")],
-			Money = info.Money.ToString("N0", culture),
-			Electrum = info.Electrum?.ToString("N0", culture) ?? string.Empty,
-		};
-	}
+	private CharacterPanelView CharacterView() => this.ViewBuilder.Build(this.PanelInput());
 
 	/// <summary>What the side panel shows: the leveling rows, the masteries and the statistics options.</summary>
 	private CharacterSideView SideView()

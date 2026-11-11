@@ -693,6 +693,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Base {0}, {1:+0;-0;+0} from equipment and skills..
+        /// </summary>
+        public static string CEAttributeBaseToolTip {
+            get {
+                return ResourceManager.GetString("CEAttributeBaseToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Base {0}, {1:+0;-0;+0} from equipment and skills. Left click.
         /// </summary>
         public static string CEAttributeToolTip {

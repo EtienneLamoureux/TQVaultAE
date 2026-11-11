@@ -92,7 +92,14 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	/// </summary>
 	private Bitmap? stashBackground;
 
-	private BufferedTableLayoutPanel PlayerPanel;
+	/// <summary>
+	/// Design pixels the panel is wider than its bags: the character statistics panel, at the game's size, is wider than
+	/// the box of the equipment background and goes past it on the right.
+	/// </summary>
+	private const int NORMAL_PLAYERSTATS_OVERHANG = 96;
+
+	/// <summary>The width of the bags and of the background, without the room of the statistics panel on the right.</summary>
+	private int ContentWidth => this.Width - Convert.ToInt32(NORMAL_PLAYERSTATS_OVERHANG * this.UIService.Scale);
 
 	string? DisplayPlayerInfoLastName;
 	private const int NORMAL_PLAYERINFO_HEIGHT = 480;//BGImage = 490
@@ -100,7 +107,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	private const int NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_WIDTH = 17;
 	private const int NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_HEIGHT = 25;
 
-	int PLAYERINFO_TOPRIGHT => this.ClientRectangle.Right - Convert.ToInt32(NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_WIDTH * this.UIService.Scale);
+	int PLAYERINFO_TOPRIGHT => this.ContentWidth - Convert.ToInt32(NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_WIDTH * this.UIService.Scale);
 	int PLAYERINFO_TOPHEIGHT =>
 		this.BagSackPanel.ClientRectangle.Top + this.BagButtons[0].Size.Height + UIService.HalfUnitSize
 		+ Convert.ToInt32(NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_HEIGHT * this.UIService.Scale);
@@ -151,7 +158,8 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		this.Text = Resources.StashPanelText;
 		this.NoPlayerString = Resources.StashPanelText;
 		this.Size = new Size(
-			(panelSize.Width * UIService.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.Scale) + BorderPad,
+			(panelSize.Width * UIService.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.Scale) + BorderPad
+				+ Convert.ToInt32(NORMAL_PLAYERSTATS_OVERHANG * UIService.Scale),
 			(panelSize.Height * UIService.ItemUnitSize) + Convert.ToInt32(60.0F * UIService.Scale) + BorderPad);
 		this.Paint += new PaintEventHandler(this.PaintCallback);
 
@@ -191,26 +199,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 
 		#region Init Player Panel
 
-		// Based on testing at scale 1
-		var table = new BufferedTableLayoutPanel()
-		{
-			Location = new Point(
-				PLAYERINFO_TOPRIGHT - PLAYERINFO_WIDTH
-				, PLAYERINFO_TOPHEIGHT
-			),
-			Size = new Size(PLAYERINFO_WIDTH, PLAYERINFO_HEIGHT),
-			//CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-			Margin = new Padding(0),
-			Padding = new Padding(1),
-			BackColor = Color.Transparent,
-		};
-		table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
-		table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
-
-		this.Controls.Add(table);
-		this.PlayerPanel = table;
-
-		table.BringToFront();
+		// The statistics panel is created with the first character shown (DisplayPlayerInfo).
 
 		this.equipmentPanel.VisibleChanged += EquipmentPanel_VisibleChanged;
 
@@ -245,7 +234,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	{
 		// Force an update of the Player Info Panel.
 		DisplayPlayerInfoLastName = null;
-		PlayerPanel.Invalidate();
+		this.Invalidate();
 	}
 
 	private void EquipmentPanel_VisibleChanged(object? sender, EventArgs e)
@@ -552,7 +541,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		return new Rectangle(
 			BorderPad
 			, this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height
-			, this.Width - (BorderPad * 2)
+			, this.ContentWidth - (BorderPad * 2)
 			, this.Height - (this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height + BorderPad)
 		);
 	}

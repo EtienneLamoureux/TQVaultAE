@@ -1034,6 +1034,9 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
 	<data name="CEAttributeToolTip" xml:space="preserve">
     <value>Base {0}, {1:+0;-0;+0} from equipment and skills. Left click on + spends a point, right click takes it back; with Shift: all the points, or back to the start.</value>
   </data>
+	<data name="CEAttributeBaseToolTip" xml:space="preserve">
+    <value>Base {0}, {1:+0;-0;+0} from equipment and skills.</value>
+  </data>
 	<data name="CEMasterySummary" xml:space="preserve">
     <value>{0}, {1}</value>
   </data>

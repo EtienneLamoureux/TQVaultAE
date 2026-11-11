@@ -25,7 +25,7 @@ internal sealed partial class CharacterEditDialog
 			difficulty = this._statsDifficulty.SelectedIndex,
 			includeBuffs = this._includeBuffs.Checked,
 			gear = Values(this._gearSum),
-			skills = Values(this._skillSum?.Sum),
+			skills = Values(this._skillSum),
 			offense = this.ComputeOffense() is var (speed, values) ? new
 			{
 				attackSpeed = speed,

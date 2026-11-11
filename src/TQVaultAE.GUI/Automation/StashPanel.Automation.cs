@@ -11,7 +11,11 @@ namespace TQVaultAE.GUI.Components.Panels;
 public partial class StashPanel
 {
 	/// <summary>
-	/// Gets the table of the player information panel: the Edit button, then one label pair (name, value) per row.
+	/// Gets the statistics panel shown next to the equipment (the game's character window, read only); null before the
+	/// first character is shown.
 	/// </summary>
-	internal TableLayoutPanel AutomationPlayerInfoPanel => this.PlayerPanel;
+	internal TQVaultAE.GUI.Components.Character.CharacterStatsPanel? AutomationPlayerStatsPanel => this._statsPanel;
+
+	/// <summary>Gets the Edit button under the statistics panel; null before the first character is shown.</summary>
+	internal Button? AutomationEditButton => this._editButton;
 }

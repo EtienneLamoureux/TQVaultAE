@@ -6,10 +6,18 @@ game's character window without starting the game.
 > **Note:** this is a "character editing" feature. Enable it with **Allow Character Editing Features** in the settings
 > window. Do not edit a character that is loaded in the game.
 
+## In the main window
+
+The **Equipment** tab shows the same statistics panel next to the equipment, read only: tabs **I**, **II** and **III**,
+with the gold and the Electrum under it. Hover an icon or a value for its details. It follows the equipment: equip or
+remove an item and the values change. Nothing can be changed there; the **Edit** button under it opens the editor.
+
+![Statistics panel in the main window](charedit/main_window_stats.png)
+
 ## Open it
 
 1. Select a character.
-2. Click **Edit** on the stash panel.
+2. Click **Edit** under the statistics panel of the **Equipment** tab.
 
 Nothing is written before **OK**. **Cancel** drops every change.
 
