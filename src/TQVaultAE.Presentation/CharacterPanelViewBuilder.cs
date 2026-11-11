@@ -12,6 +12,27 @@ namespace TQVaultAE.Presentation;
 /// </summary>
 public sealed record CharacterPanelInput
 {
+	/// <summary>Indexes of <see cref="Attributes"/>, in the order of the game's character window.</summary>
+	public const int Health = 0, Energy = 1, Strength = 2, Intelligence = 3, Dexterity = 4;
+
+	/// <summary>
+	/// The character as saved, for the main window: nothing can be changed, the difficulty is the last one unlocked.
+	/// </summary>
+	public static CharacterPanelInput FromSave(PlayerCollection player, PlayerInfo info, IReadOnlyList<MasteryTree> trees, IReadOnlyList<SkillAugment> augments)
+		=> new()
+		{
+			Player = player,
+			Info = info,
+			Attributes = [info.BaseHealth, info.BaseMana, info.BaseStrength, info.BaseIntelligence, info.BaseDexterity],
+			AttributePoints = info.AttributesPoints,
+			Level = info.CurrentLevel,
+			Xp = info.CurrentXP,
+			Skills = info.SkillRecordList,
+			Trees = trees,
+			Augments = augments,
+			Difficulty = CharacterPanelLayout.ShownDifficulty(info.DifficultyUnlocked),
+		};
+
 	public required PlayerCollection Player { get; init; }
 	public required PlayerInfo Info { get; init; }
 
@@ -177,7 +198,7 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 			this._skillSum = (key, this._service.GetSkillAttributes(input.Skills, input.Augments, input.Trees, input.IncludeBuffs));
 
 		return CharacterStatsCalculator.Compute(new CharacterStatsInput(
-			input.Attributes[2], input.Attributes[4], input.Attributes[3], this.GearSum, this._skillSum.Value.Sum, Math.Clamp(input.Difficulty, 0, CharacterPanelLayout.Legendary), this._service.GetGameBalance()));
+			input.Attributes[CharacterPanelInput.Strength], input.Attributes[CharacterPanelInput.Dexterity], input.Attributes[CharacterPanelInput.Intelligence], this.GearSum, this._skillSum.Value.Sum, Math.Clamp(input.Difficulty, 0, CharacterPanelLayout.Legendary), this._service.GetGameBalance()));
 	}
 
 	/// <summary>
@@ -205,7 +226,8 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 
 		double Total(int attribute, string field) => CharacterStatsCalculator.Total(input.Attributes[attribute], all, field);
 		var values = CharacterOffenseCalculator.Damage(new OffenseInput(this.OffenseGear, gear, skills,
-			Total(2, "characterStrength"), Total(4, "characterDexterity"), Total(3, "characterIntelligence"),
+			Total(CharacterPanelInput.Strength, "characterStrength"), Total(CharacterPanelInput.Dexterity, "characterDexterity"),
+			Total(CharacterPanelInput.Intelligence, "characterIntelligence"),
 			input.Level, attackSpeed, balance));
 		return (attackSpeed, values);
 	}
@@ -226,7 +248,8 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 		{
 			var value = input.Attributes[index];
 			var total = CharacterPanelLayout.AttributeTotal(value, bonuses[field], bonuses[field + "Modifier"]);
-			var shown = index < 2 ? $"{total} / {total}" : total.ToString(culture);
+			// Health and energy show "current / maximum", full outside the game.
+			var shown = index is CharacterPanelInput.Health or CharacterPanelInput.Energy ? $"{total} / {total}" : total.ToString(culture);
 			var tip = string.Format(culture, input.Editable ? Resources.CEAttributeToolTip : Resources.CEAttributeBaseToolTip, value, total - value);
 			return new CharacterAttributeView(Game(tag, label), shown, color, tip);
 		}
@@ -248,11 +271,11 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 			UndoText = Game("tagSkillUndo", "Undo"),
 			Attributes =
 			[
-				Attribute(0, "tagCHealth", Resources.CEHealth, "characterLife", Color.FromArgb(255, 40, 40)),
-				Attribute(1, "tagCEnergy", Resources.CEMana, "characterMana", Color.FromArgb(90, 90, 255)),
-				Attribute(2, "tagCStrength", Resources.CEStrength, "characterStrength", Color.White),
-				Attribute(3, "tagCIntelligence", Resources.CEIntelligence, "characterIntelligence", Color.White),
-				Attribute(4, "tagCDexterity", Resources.CEDexterity, "characterDexterity", Color.White),
+				Attribute(CharacterPanelInput.Health, "tagCHealth", Resources.CEHealth, "characterLife", Color.FromArgb(255, 40, 40)),
+				Attribute(CharacterPanelInput.Energy, "tagCEnergy", Resources.CEMana, "characterMana", Color.FromArgb(90, 90, 255)),
+				Attribute(CharacterPanelInput.Strength, "tagCStrength", Resources.CEStrength, "characterStrength", Color.White),
+				Attribute(CharacterPanelInput.Intelligence, "tagCIntelligence", Resources.CEIntelligence, "characterIntelligence", Color.White),
+				Attribute(CharacterPanelInput.Dexterity, "tagCDexterity", Resources.CEDexterity, "characterDexterity", Color.White),
 			],
 			Stats = this.StatsView(input),
 			GreatestMonsterTitle = Game("tagCHighestMonster", "Greatest Monster Killed"),
@@ -420,7 +443,7 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 				var name = Game(tag, fallback);
 				var bonus = stats.RaceBonuses[r];
 				string Line(string lineTag, string lineFallback, double value)
-					=> CharacterPanelLayout.FormatGameText(Game(lineTag, lineFallback).Replace("{%s1}", name, StringComparison.Ordinal), (long)Math.Round(value));
+					=> CharacterPanelLayout.FormatGameText(Game(lineTag, lineFallback), (long)Math.Round(value), name);
 				var lines = new List<string>
 				{
 					name,

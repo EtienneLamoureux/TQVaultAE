@@ -105,6 +105,30 @@ public class CharacterPanelViewBuilderTests
 	}
 
 	[Fact]
+	public void FromSave_TakesTheSavedValues_InTheGameOrder()
+	{
+		// Arrange
+		var info = new PlayerInfo(new PathIO())
+		{
+			BaseHealth = 500, BaseMana = 400, BaseStrength = 100, BaseIntelligence = 60, BaseDexterity = 80,
+			CurrentLevel = 42, CurrentXP = 12345, AttributesPoints = 2, DifficultyUnlocked = 3,
+		};
+		var player = new PlayerCollection("Hero", @"C:\saves\_Hero\Player.chr") { PlayerInfo = info };
+
+		// Act
+		var input = CharacterPanelInput.FromSave(player, info, [], []);
+
+		// Assert
+		input.Attributes[CharacterPanelInput.Health].Should().Be(500);
+		input.Attributes[CharacterPanelInput.Energy].Should().Be(400);
+		input.Attributes[CharacterPanelInput.Strength].Should().Be(100);
+		input.Attributes[CharacterPanelInput.Intelligence].Should().Be(60);
+		input.Attributes[CharacterPanelInput.Dexterity].Should().Be(80);
+		(input.Level, input.Xp, input.AttributePoints, input.Difficulty).Should().Be((42, 12345L, 2, 2));
+		input.Editable.Should().BeFalse();
+	}
+
+	[Fact]
 	public void ComputeStats_SameEquipmentAndSkills_ReadsTheGearOnce()
 	{
 		// Arrange: the panel asks for the view at every paint

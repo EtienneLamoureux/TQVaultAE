@@ -196,18 +196,7 @@ public partial class StashPanel
 			return new CharacterPanelView();
 
 		var skills = this.Services.CharacterEditService.CreateSkillEditor(info);
-		return this._statsBuilder.Build(new CharacterPanelInput
-		{
-			Player = player,
-			Info = info,
-			Attributes = [info.BaseHealth, info.BaseMana, info.BaseStrength, info.BaseIntelligence, info.BaseDexterity],
-			AttributePoints = info.AttributesPoints,
-			Level = info.CurrentLevel,
-			Xp = info.CurrentXP,
-			Skills = info.SkillRecordList,
-			Trees = skills.Slots.OfType<MasteryTree>().ToList(),
-			Augments = this.Services.CharacterEditService.GetGearSkillAugments(player),
-			Difficulty = CharacterPanelLayout.ShownDifficulty(info.DifficultyUnlocked),
-		});
+		return this._statsBuilder.Build(CharacterPanelInput.FromSave(
+			player, info, [.. skills.Slots.OfType<MasteryTree>()], this.Services.CharacterEditService.GetGearSkillAugments(player)));
 	}
 }
