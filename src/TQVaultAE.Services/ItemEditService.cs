@@ -153,7 +153,7 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 		Item member = setItem.MakeEmptyCopy(memberId);
 
 		// A piece of the same set comes from the same data: the set item's mod, or its vault's base game.
-		(member.Mod, member.ModFromVault, member.InVault) = (setItem.Mod, setItem.ModFromVault, setItem.InVault);
+		(member.Mod, member.ModFromVault, member.NoMod, member.InVault) = (setItem.Mod, setItem.ModFromVault, setItem.NoMod, setItem.InVault);
 		this._itemProvider.GetDBData(member);
 		return member;
 	}
@@ -190,17 +190,19 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 		if (string.Equals(item.Mod, mod, StringComparison.OrdinalIgnoreCase) && !item.ModFromVault)
 			return false;
 
-		// Chosen for the item: its own link from now on.
-		var previous = (item.Mod, item.ModFromVault);
+		// Chosen for the item: its own link from now on. The base game chosen in a linked vault is a choice too, kept
+		// in the vault file (NoMod), else the item would follow the vault's link again once read back.
+		var previous = (item.Mod, item.ModFromVault, item.NoMod);
 		item.Mod = mod;
 		item.ModFromVault = false;
+		item.NoMod = mod is null;
 		this._itemProvider.GetDBData(item);
 
 		// Read with other data, the item may take another size: without room for it, the link is put back rather
 		// than saving items that overlap.
 		if (fits is not null && !fits(item))
 		{
-			(item.Mod, item.ModFromVault) = previous;
+			(item.Mod, item.ModFromVault, item.NoMod) = previous;
 			this._itemProvider.GetDBData(item);
 			return false;
 		}
@@ -225,8 +227,8 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 				continue;
 
 			// The items following the vault's link, or without a link, follow the new one; the items having their own
-			// link keep it.
-			foreach (var item in sack.Where(i => i.Mod is null || i.ModFromVault))
+			// link, or set to the base game, keep it.
+			foreach (var item in sack.Where(i => (i.Mod is null && !i.NoMod) || i.ModFromVault))
 			{
 				bool wasIncomplete = item.IsIncomplete;
 				var previousLink = (item.Mod, item.ModFromVault);
@@ -262,8 +264,8 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 	/// <inheritdoc/>
 	public bool AdoptContainerMod(Item item, string? containerMod, Func<Item, bool> fits)
 	{
-		// Only an item without a link of its own follows the vault's.
-		if (string.IsNullOrWhiteSpace(containerMod) || (item.Mod is not null && !item.ModFromVault)
+		// Only an item without a link of its own follows the vault's; one set to the base game does not.
+		if (string.IsNullOrWhiteSpace(containerMod) || item.NoMod || (item.Mod is not null && !item.ModFromVault)
 			|| (item.ModFromVault && string.Equals(item.Mod, containerMod, StringComparison.OrdinalIgnoreCase)))
 			return false;
 

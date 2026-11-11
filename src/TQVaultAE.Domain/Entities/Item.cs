@@ -254,6 +254,14 @@ public class Item
 	public bool ModFromVault { get; set; }
 
 	/// <summary>
+	/// True when the user chose the base game for the item ("Modded" menu): <see cref="Mod"/> stays null and the item
+	/// does not follow the link of the vault holding it, now or after a reload (<c>"noMod": true</c> in the vault file
+	/// and the exports). A vault item without a mod is read with the base game data alone. On a character it changes
+	/// nothing: an item without a link follows the active map there.
+	/// </summary>
+	public bool NoMod { get; set; }
+
+	/// <summary>
 	/// True while a vault holds the item. Without a mod link (or with the link of a mod that is not installed), a vault
 	/// item is read with the base game data, whatever the active map is; an item a character carries follows the
 	/// active map. Kept by copies; set when the item is put in a vault or taken to a character.

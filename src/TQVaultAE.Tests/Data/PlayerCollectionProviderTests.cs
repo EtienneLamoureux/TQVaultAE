@@ -256,6 +256,35 @@ public class PlayerCollectionProviderTests
 	}
 
 	[Fact]
+	public void SaveThenLoad_BaseGameChosenInAModdedVault_StaysBaseGame()
+	{
+		// Arrange: in a vault linked to Lilith, the base game was chosen for one item
+		var sack = new SackCollection();
+		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/a.dbr"), NoMod = true });
+		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/b.dbr"), Mod = "Lilith", ModFromVault = true });
+		var pc = new PlayerCollection("test", "vault.json") { IsVault = true, Mod = "Lilith", Sacks = [sack] };
+		string? written = null;
+		_mockFileIO.Setup(x => x.WriteAllText("vault.json", It.IsAny<string>(), It.IsAny<Encoding>()))
+			.Callback<string, string, Encoding>((_, text, _) => written = text);
+		var modsWhenRead = new List<string?>();
+		_mockItemProvider.Setup(p => p.GetDBData(It.IsAny<Item>())).Callback<Item>(i => modsWhenRead.Add(i.Mod));
+
+		// Act
+		_provider.Save(pc, "vault.json");
+		_mockFileIO.Setup(x => x.ReadAllText("vault.json", It.IsAny<Encoding>())).Returns(() => written!);
+		var loaded = new PlayerCollection("test", "vault.json") { IsVault = true };
+		_provider.LoadFile(loaded, "vault.json");
+
+		// Assert: written once, only for that item; read back without the vault's mod
+		using var doc = JsonDocument.Parse(written!);
+		var items = doc.RootElement.GetProperty("sacks")[0].GetProperty("items");
+		items[0].GetProperty("noMod").GetBoolean().Should().BeTrue();
+		items[1].TryGetProperty("noMod", out _).Should().BeFalse();
+		loaded.Sacks![0].Select(i => (i.Mod, i.ModFromVault, i.NoMod)).Should().Equal(((string?)null, false, true), ("Lilith", true, false));
+		modsWhenRead.Should().Equal(null, "Lilith");
+	}
+
+	[Fact]
 	public void Save_VaultWithoutMod_WritesNoModProperty()
 	{
 		var pc = new PlayerCollection("test", "vault.json") { IsVault = true, Sacks = [new SackCollection()] };

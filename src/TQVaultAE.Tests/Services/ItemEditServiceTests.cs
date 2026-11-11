@@ -456,6 +456,41 @@ public class ItemEditServiceTests
 	}
 
 	[Fact]
+	public void ChangeMod_BaseGameInAModdedVault_IsKeptWhenTheVaultChangesItsLink()
+	{
+		// Arrange: an item following the vault's Lilith link
+		var vault = new TQVaultAE.Application.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
+		var sack = new SackCollection();
+		var item = MakeItem("records/a.dbr", "ArmorJewelry_Ring");
+		(item.Mod, item.ModFromVault, item.InVault) = ("Lilith", true, true);
+		sack.AddItem(item);
+		vault.Sacks = [sack];
+
+		// Act: the base game is chosen for it, then the vault is linked to another mod
+		this._service.ChangeMod(sack, item, null).Should().BeTrue();
+		var changed = this._service.ChangeVaultMod(vault, "shadowchampions");
+
+		// Assert
+		changed.Should().BeEmpty();
+		item.Mod.Should().BeNull();
+		(item.ModFromVault, item.NoMod).Should().Be((false, true));
+		this._service.AdoptContainerMod(item, "shadowchampions", _ => true).Should().BeFalse();
+	}
+
+	[Fact]
+	public void ChangeMod_AModAfterTheBaseGame_ClearsTheBaseGameChoice()
+	{
+		var sack = new SackCollection();
+		var item = MakeItem("records/a.dbr", "ArmorJewelry_Ring");
+		item.NoMod = true;
+		sack.AddItem(item);
+
+		this._service.ChangeMod(sack, item, "Lilith").Should().BeTrue();
+
+		(item.Mod, item.NoMod).Should().Be(("Lilith", false));
+	}
+
+	[Fact]
 	public void ChangeVaultMod_ItemsTheModCompletes_GetItAsTheirOwnLink()
 	{
 		// The mod has the lance; nothing has the unknown sword.

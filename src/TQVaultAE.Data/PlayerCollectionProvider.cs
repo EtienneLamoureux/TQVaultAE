@@ -207,6 +207,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					pointY = i.PositionY,
 					// An item following the vault's link has no link of its own to write.
 					mod = i.ModFromVault && string.Equals(i.Mod, pc.Mod, StringComparison.OrdinalIgnoreCase) ? null : i.Mod,
+					noMod = i.NoMod ? true : null,
 				}).ToList()
 			}).ToList()
 		};
@@ -342,8 +343,10 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					endBlockCrap1 = this.TQData.EndBlockValue,
 					StackSize = s.stackSize,
 					// Its own mod, else the vault's: resolved with that mod's data first, then the base game's.
-					Mod = string.IsNullOrWhiteSpace(s.mod) ? pc.Mod : s.mod,
-					ModFromVault = string.IsNullOrWhiteSpace(s.mod) && pc.Mod is not null,
+					// Set to the base game: no mod, not even the vault's.
+					Mod = s.noMod == true ? null : string.IsNullOrWhiteSpace(s.mod) ? pc.Mod : s.mod,
+					ModFromVault = s.noMod != true && string.IsNullOrWhiteSpace(s.mod) && pc.Mod is not null,
+					NoMod = s.noMod == true,
 					// Without any link, a vault item is read with the base game data.
 					InVault = true,
 					// Atlantis

@@ -166,7 +166,7 @@ public class ItemExchangeService(
 								var item = itemDto.ToItem();
 
 								// An item without a link of its own follows the vault's, and is read with its mod's data.
-								if (item.Mod is null && !string.IsNullOrWhiteSpace(dto.Mod))
+								if (item.Mod is null && !item.NoMod && !string.IsNullOrWhiteSpace(dto.Mod))
 								{
 									item.Mod = dto.Mod;
 									item.ModFromVault = true;

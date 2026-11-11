@@ -27,4 +27,11 @@ public class ItemDto
 	/// </summary>
 	[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
 	public string? mod;
+
+	/// <summary>
+	/// True when the base game was chosen for the item (<c>Item.NoMod</c>): it does not follow the vault's mod. Written
+	/// only when true; older versions ignore it and let the item follow the vault.
+	/// </summary>
+	[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+	public bool? noMod;
 }

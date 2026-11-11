@@ -24,6 +24,7 @@ public static class ItemDtoExtensions
 			width = item.Width,
 			height = item.Height,
 			mod = item.Mod,
+			noMod = item.NoMod ? true : null,
 		};
 
 	public static Item ToItem(this ItemDto dto)
@@ -42,7 +43,8 @@ public static class ItemDtoExtensions
 			PositionY = dto.pointY,
 			Width = dto.width,
 			Height = dto.height,
-			Mod = string.IsNullOrWhiteSpace(dto.mod) ? null : dto.mod,
+			Mod = dto.noMod == true || string.IsNullOrWhiteSpace(dto.mod) ? null : dto.mod,
+			NoMod = dto.noMod == true,
 			endBlockCrap2 = 0,
 			endBlockCrap1 = 0
 		};

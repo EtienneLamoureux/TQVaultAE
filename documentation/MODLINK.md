@@ -93,19 +93,26 @@ mod resolves all its missing records:
 
 The other items of a linked vault (base game items, items the mod does not complete) follow the vault's link.
 
-In the vault file, the vault's mod is `"mod"` at the top, and an item has its own `"mod"` only when it has a link of its
-own:
+Choosing *None (base game)* in an item's *Modded* menu is a choice of its own: the item no longer follows the vault's
+link, now, after a reload, or when the vault is linked to another mod; it is read with the base game data alone (a record
+only the mod has stays unknown). Choosing a mod for it again ends that choice. On a character the choice changes nothing:
+an item without a link follows the character's map there.
+
+In the vault file, the vault's mod is `"mod"` at the top, an item has its own `"mod"` only when it has a link of its
+own, and `"noMod": true` when the base game was chosen for it (older TQVault versions ignore it, and the item follows
+the vault's link there):
 
 ```json
 {
   "mod": "shadowchampions",
   "sacks": [ { "items": [ { "baseName": "records\\customitems\\mi\\e_centurionlance.dbr" },
-                          { "baseName": "...", "mod": "Lilith" } ] } ]
+                          { "baseName": "...", "mod": "Lilith" },
+                          { "baseName": "...", "noMod": true } ] } ]
 }
 ```
 
-Exports keep the links: an item or tab export writes each item's mod; a vault export writes the vault's mod and each
-item's own link, and importing it (as a new vault, or replacing the vault shown) brings both back.
+Exports keep the links: an item or tab export writes each item's mod (and `"noMod"`); a vault export writes the vault's
+mod and each item's own link or `"noMod"`, and importing it (as a new vault, or replacing the vault shown) brings both back.
 
 An item without any link (its own or its vault's), or linked to a mod that is not installed, resolves by where it is:
 
