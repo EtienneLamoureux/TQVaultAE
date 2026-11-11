@@ -266,16 +266,25 @@ The import's end message names the mods that were dropped.
 
 ### Other decisions (2026-11-11)
 
-- **The *Modded* menu is for vault items only.** A character file cannot keep a link, so a choice made on a character
-  item would be lost at the next read. Character items always take their character's map (event 1), apart from the
-  mod-only items of a linked character, which get their mod as Own. The menu is not shown on the equipment, the bags,
-  the character's stash, the transfer stash or the relic vault.
+- **An item's `mod` is the user's, wherever the item is.** A character item takes its character's map only when its
+  `mod` is undefined: an item the game made (loot, a purchase) or one read from the character's files. An item with an
+  Own map keeps it on a character, in a stash or in the shared stashes, like anywhere else (event 2), even when it
+  differs from the character's map. The game tolerates records it cannot resolve, and keeping the containers
+  consistent is the user's responsibility, not the tool's. The tool's job is to make the item's `mod` explicit, visible
+  and easy to change.
+- **The *Modded* menu is for vault items only.** A character file cannot keep a link (see the open questions).
 - ***Load all files* reads every character with its own map**, not only the startup map's. A character linked to an
   installed mod is read with that mod's database, loaded the first time it is needed. The search covers every
   character from startup. Startup is longer by the reading of each mod database in use (about half a second for a
   large mod). A character linked to a mod that is not installed is read with the base game, as when it is selected.
 
-### Open question
+### Open questions
 
+- **Keeping an Own map on a character**: the game's character and stash files have no place for a link, so an item
+  with an Own map that differs from its character's map loses it at the next read of those files. Either accept that
+  (the link lasts for the session; the mod-only items of a linked character get their mod again), or keep the links of
+  character items in a TQVault file next to the character (like `TQVaultAE.ModLink.json`), which needs a stable way to
+  find each item again in the game's files (record ids, seed and place change when the game moves the item). The
+  answer also decides whether the *Modded* menu can be offered on characters.
 - **The shared stashes of the other maps**: each map has its own transfer stash and relic vault. *Load all files* reads
   those of the startup map. Should it also read those of every other map in use, so that the search covers them too?
