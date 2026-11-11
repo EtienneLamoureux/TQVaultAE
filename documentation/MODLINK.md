@@ -298,11 +298,16 @@ The import's end message names the mods that were dropped.
   *Modded* (the suggested mods help). The model has no guess left: every map comes from a file, a container or a user
   action.
 
-### Open question
+### A map change that changes the item's size (decided 2026-11-11)
 
-- **A map change that changes the item's size**: read with another map, an item may take another size (an incomplete
-  one-cell tile becomes a 1x5 lance) and no longer fit where it lies, after a drop, an import, a vault's link changed or
-  a user choice. Today the change is cancelled and the item keeps its previous data. In this model the map is the
-  truth, so the item cannot keep data that does not match it: it must move to a free spot, or the change be refused.
-  The same events must also rebuild everything made from the item's data: its search names, the name and affix caches,
-  its tooltip and its picture.
+Read with another map, an item may take another size (an incomplete one-cell tile becomes a 1x5 lance). The map is the
+truth: the item is always shown with the data of its map, never kept with older data because it fits better.
+
+- When the item no longer fits where it lies, it moves to the first free spot of its tab (the column-first search of
+  the imports, `SackLayout.FitsOrMoves`). This applies to every event: a drop, an import or paste, a vault's link
+  changed, a user choice in *Modded*, a copy.
+- When its tab has no room, it moves to the first free spot of the container's other tabs, in order.
+- When the container has no room at all, the event is refused for that item and a message names it: a drop or an
+  import leaves it where it came from; for a vault's link change or a *Modded* choice, the item keeps its previous map.
+- The same events rebuild everything made from the item's data: its search names, the name and affix caches, its
+  tooltip and its picture.
