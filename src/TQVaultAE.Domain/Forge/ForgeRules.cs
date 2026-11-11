@@ -43,6 +43,7 @@ public enum ForgeMessage
 	MustHaveTinkeredSuffix,
 	MustSelectBaseItem,
 	MustSelectItemToMerge,
+	PartOfAnotherMod,
 }
 
 /// <summary>Items placed in the Forge slots.</summary>
@@ -265,8 +266,23 @@ public sealed class ForgeRules
 		if (selection.Prefix is null && selection.Suffix is null && selection.Relic1 is null && selection.Relic2 is null)
 			return ForgeMessage.MustSelectItemToMerge;
 
+		Item?[] materials = [selection.Prefix, selection.Suffix, selection.Relic1, selection.Relic2];
+		if (materials.Any(material => material is not null && !ReadWithSameData(selection.Base, material)))
+			return ForgeMessage.PartOfAnotherMod;
+
 		return null;
 	}
+
+	/// <summary>
+	/// Whether the parts taken from <paramref name="material"/> resolve with the data <paramref name="target"/> is read
+	/// with: a mod affix or relic on an item read with other data shows unknown records. Base game parts resolve with
+	/// any mod (a mod's data falls back on the base game's). A character item without a link follows the active map,
+	/// which the rules don't know: allowed.
+	/// </summary>
+	private static bool ReadWithSameData(Item target, Item material)
+		=> material.Mod is null
+			|| string.Equals(target.Mod, material.Mod, StringComparison.OrdinalIgnoreCase)
+			|| (target.Mod is null && !target.InVault);
 
 	/// <summary>
 	/// <c>true</c> when going from <paramref name="previous"/> to <paramref name="next"/> makes the rules stricter: the

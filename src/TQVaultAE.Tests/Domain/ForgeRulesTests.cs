@@ -330,6 +330,29 @@ public class ForgeRulesTests
 		this._rules.CheckForge(With(SwordItem(), prefix: SwordItem())).Should().BeNull();
 	}
 
+	[Theory]
+	[InlineData(null, true, null, true)]           // base game parts go anywhere
+	[InlineData("modA", true, null, true)]
+	[InlineData("modA", true, "modA", true)]       // same mod
+	[InlineData("modA", true, "modB", false)]      // another mod's affix
+	[InlineData(null, true, "modA", false)]        // a base game vault item cannot read a mod affix
+	[InlineData(null, false, "modA", true)]        // a character item follows the active map: not known here
+	public void CheckForge_PartOfAnotherMod_IsRefused(string? baseMod, bool baseInVault, string? materialMod, bool allowed)
+	{
+		// Arrange
+		var item = SwordItem();
+		item.Mod = baseMod;
+		item.InVault = baseInVault;
+		var material = SwordItem();
+		material.Mod = materialMod;
+
+		// Act
+		var problem = this._rules.CheckForge(With(item, prefix: material));
+
+		// Assert
+		problem.Should().Be(allowed ? null : ForgeMessage.PartOfAnotherMod);
+	}
+
 	[Fact]
 	public void Merge_TakesAffixesAndRelicFromMaterials()
 	{

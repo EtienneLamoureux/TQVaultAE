@@ -1441,6 +1441,9 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="ForgeMustSelectItemToMerge" xml:space="preserve">
     <value>Vous devez sélectionner un objet à fusionner!</value>
   </data>
+	<data name="ForgePartOfAnotherMod" xml:space="preserve">
+    <value>Une partie vient d'un autre mod que l'objet de base : l'objet forgé ne pourrait pas la lire.</value>
+  </data>
 	<data name="ForgeMustHavePrefixOutsideOfGodMode" xml:space="preserve">
     <value>Vous devez sélectionner un objet avec préfix!</value>
   </data>

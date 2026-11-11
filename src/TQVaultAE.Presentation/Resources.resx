@@ -1790,6 +1790,9 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="ForgeMustSelectItemToMerge" xml:space="preserve">
     <value>You must select an item to merge!</value>
   </data>
+	<data name="ForgePartOfAnotherMod" xml:space="preserve">
+    <value>A part comes from another mod than the base item: the forged item could not read it.</value>
+  </data>
 	<data name="ForgeMustHavePrefixOutsideOfGodMode" xml:space="preserve">
     <value>You must select an item with prefix!</value>
   </data>

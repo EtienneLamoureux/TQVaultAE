@@ -1437,6 +1437,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A part comes from another mod than the base item: the forged item could not read it..
+        /// </summary>
+        public static string ForgePartOfAnotherMod {
+            get {
+                return ResourceManager.GetString("ForgePartOfAnotherMod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You must select a relic or an item with relic!.
         /// </summary>
         public static string ForgeMustSelectRelicOrItemWithRelic {

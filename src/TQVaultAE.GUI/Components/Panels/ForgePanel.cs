@@ -637,6 +637,7 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
 		ForgeMessage.MustHaveTinkeredSuffix => string.Format(Resources.ForgeMustHaveTinkeredSuffix, OfTheTinkererTranslation),
 		ForgeMessage.MustSelectBaseItem => Resources.ForgeMustSelectBaseItem,
 		ForgeMessage.MustSelectItemToMerge => Resources.ForgeMustSelectItemToMerge,
+		ForgeMessage.PartOfAnotherMod => Resources.ForgePartOfAnotherMod,
 		_ => message.ToString(),
 	};
 
