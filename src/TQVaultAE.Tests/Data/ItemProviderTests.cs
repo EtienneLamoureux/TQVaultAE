@@ -53,6 +53,11 @@ public class ItemProviderTests
 	[InlineData("WEAPONATTACKSOUND", true)] // ends with SOUND
 	[InlineData("BODYMESH", true)] // ends with MESH
 	[InlineData("BODYMASKFACE", true)] // starts with BODYMASK
+	[InlineData("itemLevel", true)] // camel case, as in the game records
+	[InlineData("attackSound", true)] // camel case suffix
+	[InlineData("bodyMaskFace", true)] // camel case prefix
+	[InlineData("skillCastChance", true)] // camel case prefix
+	[InlineData("ITEMLEVELX", false)] // longer than a known tag
 	[InlineData("DAMAGE", false)] // valid attribute
 	[InlineData("damage", false)] // valid attribute lowercase
 	[InlineData("INVENTORYICON", false)] // another valid attribute
@@ -75,6 +80,9 @@ public class ItemProviderTests
 	[InlineData("DEXTERITYREQUIREMENT", true)]
 	[InlineData("INTELLIGENCEREQUIREMENT", true)]
 	[InlineData("levelrequirement", true)] // case insensitive
+	[InlineData("strengthRequirement", true)] // camel case, as in the game records
+	[InlineData("StrengthRequirement", true)] // mixed case
+	[InlineData("LEVELREQUIREMENTS", false)] // longer than a known tag
 	[InlineData("DAMAGE", false)]
 	[InlineData("INVENTORYICON", false)]
 	public void FilterRequirements_ReturnsCorrectResult(string reqTag, bool expected)
@@ -102,6 +110,9 @@ public class ItemProviderTests
 	[InlineData("CHARACTERMANA", true)]
 	[InlineData("CHARACTERMANAMODIFIER", true)]
 	[InlineData("characterstrength", true)] // lowercase
+	[InlineData("characterManaModifier", true)] // camel case, as in the game records
+	[InlineData("CharacterLife", true)] // mixed case
+	[InlineData("CHARACTERLIF", false)] // shorter than a known tag
 	[InlineData("DAMAGE", false)] // non stat bonus
 	[InlineData("INVENTORYICON", false)] // non stat bonus
 	public void IsStatBonus_ReturnsCorrectResult(string statTag, bool expected)
@@ -112,6 +123,19 @@ public class ItemProviderTests
 		// Assert
 		result.Should().Be(expected);
 	}
+
+	#endregion
+
+	#region Tag Lists Tests
+
+	[Theory]
+	[InlineData("offensiveSlowRunSpeed", true)] // camel case, as in the game records
+	[InlineData("OFFENSIVETOTALRESISTANCEREDUCTIONABSOLUTE", true)]
+	[InlineData("offensivetotaldamagereductionpercent", true)]
+	[InlineData("offensiveSlowFire", false)] // duration reliant
+	[InlineData("OFFENSIVESLOWRUNSPEEDX", false)]
+	public void DurationIndependentEffects_IgnoresCase(string effect, bool expected)
+		=> ItemProvider.durationIndependentEffects.Contains(effect).Should().Be(expected);
 
 	#endregion
 

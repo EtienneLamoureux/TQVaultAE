@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using Microsoft.Extensions.Logging;
+using System.Collections.Frozen;
 using System.Globalization;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
@@ -15,8 +16,9 @@ public partial class ItemProvider
 {
 	#region Tag Lists
 
-	internal static readonly string[] unwantedTags =
-	[
+	// Frozen sets with an ignore-case comparer: lookups need no uppercase copy of the key (the names are ASCII).
+	internal static readonly FrozenSet<string> unwantedTags = new[]
+	{
 			"DEFENSIVEABSORPTION",
 			"MAXTRANSPARENCY",
 			"SCALE",
@@ -133,18 +135,18 @@ public partial class ItemProvider
 			"ONHITACTIVATIONCHANCE",
 			"DECREMENTSTATTYPE",
 			"ALLSKILLENHANCEMENT",
-		];
+		}.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
 
-	internal static readonly string[] requirementTags =
-	[
+	internal static readonly FrozenSet<string> requirementTags = new[]
+	{
 			"LEVELREQUIREMENT",
 			"INTELLIGENCEREQUIREMENT",
 			"DEXTERITYREQUIREMENT",
 			"STRENGTHREQUIREMENT",
-		];
+		}.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
 
-	internal static readonly string[] statBonusTags =
-	[
+	internal static readonly FrozenSet<string> statBonusTags = new[]
+	{
 			"CHARACTERSTRENGTH",
 			"CHARACTERSTRENGTHMODIFIER",
 			"CHARACTERDEXTERITY",
@@ -155,10 +157,10 @@ public partial class ItemProvider
 			"CHARACTERLIFEMODIFIER",
 			"CHARACTERMANA",
 			"CHARACTERMANAMODIFIER",
-		];
+		}.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
 
-	internal static readonly string[] durationIndependentEffects =
-	[
+	internal static readonly FrozenSet<string> durationIndependentEffects = new[]
+	{
 			"OFFENSIVESLOWTOTALSPEED",
 			"OFFENSIVESLOWATTACKSPEED",
 			"OFFENSIVESLOWRUNSPEED",
@@ -170,7 +172,7 @@ public partial class ItemProvider
 			"OFFENSIVETOTALDAMAGEREDUCTIONABSOLUTE",
 			"OFFENSIVETOTALRESISTANCEREDUCTIONPERCENT",
 			"OFFENSIVETOTALRESISTANCEREDUCTIONABSOLUTE"
-		];
+		}.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
 
 	#endregion
 	/// <summary>
@@ -179,30 +181,26 @@ public partial class ItemProvider
 	/// <param name="key">key which we are checking whether or not it gets filtered.</param>
 	/// <returns>true if key is present in this list</returns>
 	public bool FilterKey(string key)
-	{
-		string keyUpper = key.ToUpperInvariant();
-		return (Array.IndexOf(unwantedTags, keyUpper) != -1
-			|| keyUpper.EndsWith("SOUND", noCase)
-			|| keyUpper.EndsWith("MESH", noCase)
-			|| keyUpper.StartsWith("BODYMASK", noCase)
+		=> unwantedTags.Contains(key)
+			|| key.EndsWith("SOUND", noCase)
+			|| key.EndsWith("MESH", noCase)
+			|| key.StartsWith("BODYMASK", noCase)
 			// How a skill casts another one (chance, level, on all damage types, at the target...): shown as one line.
-			|| keyUpper.StartsWith("SKILLCAST", noCase)
-		);
-	}
+			|| key.StartsWith("SKILLCAST", noCase);
 	/// <summary>
 	/// Holds all of the requirements which we are filtering
 	/// </summary>
 	/// <param name="key">key which we are checking whether or not it gets filtered.</param>
 	/// <returns>true if key is present in this list</returns>
 	public bool FilterRequirements(string key)
-		=> Array.IndexOf(requirementTags, key.ToUpperInvariant()) != -1;
+		=> requirementTags.Contains(key);
 	/// <summary>
 	/// Indicates whether the key is a character stat boosting attribute
 	/// </summary>
 	/// <param name="key">string containing the key that is being checked</param>
 	/// <returns>True if the key is a stat boosting attrbute.</returns>
 	public bool IsStatBonus(string key)
-		=> Array.IndexOf(statBonusTags, key.ToUpperInvariant()) != -1;
+		=> statBonusTags.Contains(key);
 	/// <summary>
 	/// Gets s string containing the prefix of the item class for use in the requirements equation.
 	/// </summary>

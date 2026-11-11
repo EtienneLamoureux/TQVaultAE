@@ -13,7 +13,7 @@ public partial class ItemProvider
 	/// <returns>True if the effect magnitude does depend on the duration</returns>
 	private bool IsDurationReliantValue(string effectName)
 	{
-		return Array.IndexOf(durationIndependentEffects, effectName.ToUpperInvariant()) == -1;
+		return !durationIndependentEffects.Contains(effectName);
 	}
 
 	/// <summary>
