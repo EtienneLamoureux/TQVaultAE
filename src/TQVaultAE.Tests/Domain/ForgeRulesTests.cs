@@ -14,18 +14,24 @@ public class ForgeRulesTests
 	private const string TinkererSuffix = @"records\item\lootmagicalaffixes\suffix\default\rare_extrarelic_01.dbr";
 
 	/// <summary>Shield relic (Aegis of Athena).</summary>
-	private static readonly RecordId ShieldRelic = RelicAndCharm.AEGISOFATHENA_ACT1_01.GetRecordId();
+	private static readonly RecordId ShieldRelic = RecordId.Create(@"records\item\relics\01_act1_aegisofathena.dbr");
 
 	private readonly Dictionary<Item, int> _levels = [];
 	private readonly ForgeRules _rules;
 
 	public ForgeRulesTests() => this._rules = new ForgeRules(i => this._levels.GetValueOrDefault(i));
 
-	private static Item Make(string itemClass, string id, string classification = "COMMON", string? prefix = null, string? suffix = null)
+	private static Item Make(string itemClass, string id, string classification = "COMMON", string? prefix = null, string? suffix = null, params string[] slotFlags)
 	{
 		var record = new DBRecordCollection(RecordId.Create(id), itemClass);
 		record.Set(Text("Class", itemClass));
 		record.Set(Text("itemClassification", classification));
+		foreach (var flag in slotFlags)
+		{
+			var v = new Variable(flag, VariableDataType.Boolean, 1);
+			v[0] = 1;
+			record.Set(v);
+		}
 		return new Item
 		{
 			BaseItemId = RecordId.Create(id),
@@ -45,7 +51,8 @@ public class ForgeRulesTests
 	private static Item SwordItem(string id = @"records\item\sword01.dbr", string classification = "COMMON", string? prefix = @"records\prefix\p01.dbr", string? suffix = @"records\suffix\s01.dbr")
 		=> Make(Sword, id, classification, prefix, suffix);
 
-	private static Item Relic(RecordId id) => Make(Item.ICLASS_RELIC, id.Raw);
+	/// <summary>Relic whose record allows shields only, as the Aegis of Athena's does.</summary>
+	private static Item Relic(RecordId id) => Make(Item.ICLASS_RELIC, id.Raw, slotFlags: "shield");
 
 	private static ForgeSelection With(Item? baseItem = null, Item? prefix = null, Item? suffix = null, Item? relic1 = null, Item? relic2 = null)
 	{
@@ -300,6 +307,7 @@ public class ForgeRulesTests
 		var current = With(Make(Shield, @"records\item\shield01.dbr"));
 		var socketed = Make(Shield, @"records\item\shield02.dbr");
 		socketed.relicID = ShieldRelic;
+		socketed.RelicInfo = Relic(ShieldRelic).baseItemInfo;
 
 		this._rules.CheckDrop(mode, ForgeSlot.Relic1, Relic(ShieldRelic), current).Accepted.Should().BeTrue();
 		this._rules.CheckDrop(mode, ForgeSlot.Relic1, socketed, current).Accepted

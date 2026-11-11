@@ -2,137 +2,45 @@ using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Tests.Entities;
 
+/// <summary>
+/// <see cref="RelicAndCharmExtension.GetAllowedGearTypes"/>: the gear a relic or charm allows, from the slot flags of its record.
+/// </summary>
 public class RelicAndCharmExtensionTests
 {
-	[Fact]
-	public void GetGearType_Unknown_ReturnsUndefined()
+	private static Info Relic(params string[] slotFlags)
 	{
-		var result = RelicAndCharm.Unknown.GetGearType();
-		Assert.Equal(GearType.Undefined, result);
-	}
-
-	[Fact]
-	public void GetRecordId_Unknown_ReturnsNoRecords()
-	{
-		var result = RelicAndCharm.Unknown.GetRecordId();
-		Assert.Equal("NORECORDS", result);
-	}
-
-	[Fact]
-	public void GetGearType_AegisOfAthena_ReturnsShield()
-	{
-		// Aegis is a shield relic
-		var result = RelicAndCharm.AEGISOFATHENA_ACT1_01.GetGearType();
-		Assert.Equal(GearType.Shield, result);
-	}
-
-	[Fact]
-	public void GetRecordId_AegisOfAthena_ReturnsValidRecordPath()
-	{
-		var result = RelicAndCharm.AEGISOFATHENA_ACT1_01.GetRecordId();
-		Assert.Contains("RECORDS", result);
-		Assert.Contains("AEGISOFATHENA", result);
-	}
-
-	[Fact]
-	public void GetGearType_AmunRaGlory_ReturnsAllArmor()
-	{
-		// Amun-Ra is an armor relic
-		var result = RelicAndCharm.AMUNRASGLORY_ACT2_01.GetGearType();
-		Assert.Equal(GearType.AllArmor, result);
-	}
-
-	[Fact]
-	public void GetRecordId_AmunRaGlory_ReturnsValidRecordPath()
-	{
-		var result = RelicAndCharm.AMUNRASGLORY_ACT2_01.GetRecordId();
-		Assert.Contains("RECORDS", result);
-		Assert.Contains("AMUNRASGLORY", result);
-	}
-
-	[Fact]
-	public void GetGearType_AnkhOfIsis_ReturnsJewellery()
-	{
-		// Ankh of Isis enchants rings and amulets
-		var result = RelicAndCharm.ANKHOFISIS_ACT2_01.GetGearType();
-		Assert.Equal(GearType.Jewellery, result);
-	}
-
-	[Fact]
-	public void GetGearType_DifferentActLevels_ReturnsSameGearType()
-	{
-		// All 3 act levels of Aegis should be Shield
-		var act1 = RelicAndCharm.AEGISOFATHENA_ACT1_01.GetGearType();
-		var act2 = RelicAndCharm.AEGISOFATHENA_ACT1_02.GetGearType();
-		var act3 = RelicAndCharm.AEGISOFATHENA_ACT1_03.GetGearType();
-
-		Assert.Equal(GearType.Shield, act1);
-		Assert.Equal(GearType.Shield, act2);
-		Assert.Equal(GearType.Shield, act3);
-	}
-
-	[Fact]
-	public void GetRecordId_DifferentActLevels_ReturnsDistinctRecords()
-	{
-		var act1 = RelicAndCharm.AEGISOFATHENA_ACT1_01.GetRecordId();
-		var act2 = RelicAndCharm.AEGISOFATHENA_ACT1_02.GetRecordId();
-		var act3 = RelicAndCharm.AEGISOFATHENA_ACT1_03.GetRecordId();
-
-		Assert.NotEqual(act1, act2);
-		Assert.NotEqual(act2, act3);
-		Assert.NotEqual(act1, act3);
-	}
-
-	[Fact]
-	public void GetRecordId_DifferentRelics_ReturnsDistinctRecords()
-	{
-		var aegis = RelicAndCharm.AEGISOFATHENA_ACT1_01.GetRecordId();
-		var amunRa = RelicAndCharm.AMUNRASGLORY_ACT2_01.GetRecordId();
-
-		Assert.NotEqual(aegis, amunRa);
-	}
-
-	[Fact]
-	public void GetGearType_HC_ChaosEssence_ReturnsHead()
-	{
-		// Chaos Essence is head armor
-		var result = RelicAndCharm.HCDUNGEON_ESSENCEOFCHAOS_X4_03.GetGearType();
-		Assert.Equal(GearType.Head, result);
-	}
-
-	[Fact]
-	public void GetRecordId_HC_ChaosEssence_ReturnsValidRecordPath()
-	{
-		var result = RelicAndCharm.HCDUNGEON_ESSENCEOFCHAOS_X4_03.GetRecordId();
-		Assert.Contains("HCDUNGEON", result);
-		Assert.Contains("ESSENCEOFCHAOS", result);
-	}
-
-	[Fact]
-	public void AllRelicAndCharmValues_ReturnValidGearType()
-	{
-		var values = Enum.GetValues<RelicAndCharm>();
-		foreach (RelicAndCharm value in values)
+		var record = new DBRecordCollection(RecordId.Create(@"records\item\relics\01_act1_aegisofathena.dbr"), "ItemRelic");
+		foreach (var flag in slotFlags)
 		{
-			var gearType = value.GetGearType();
-			// Unknown is the only value that returns Undefined
-			if (value != RelicAndCharm.Unknown)
-			{
-				Assert.True(gearType != GearType.Undefined,
-					$"GetGearType for {value} returned Undefined GearType");
-			}
+			var variable = new Variable(flag, VariableDataType.Boolean, 1);
+			variable[0] = 1;
+			record.Set(variable);
 		}
+		return new Info(record);
 	}
 
 	[Fact]
-	public void AllRelicAndCharmValues_ReturnNonEmptyRecordId()
-	{
-		var values = Enum.GetValues<RelicAndCharm>();
-		foreach (RelicAndCharm value in values)
-		{
-			var recordId = value.GetRecordId();
-			Assert.False(string.IsNullOrEmpty(recordId),
-				$"GetRecordId for {value} returned null or empty");
-		}
-	}
+	public void GetAllowedGearTypes_NoSlotFlag_ReturnsUndefined()
+		=> Assert.Equal(GearType.Undefined, RelicAndCharmExtension.GetAllowedGearTypes(Relic()));
+
+	[Fact]
+	public void GetAllowedGearTypes_Shield_ReturnsShield()
+		=> Assert.Equal(GearType.Shield, RelicAndCharmExtension.GetAllowedGearTypes(Relic("shield")));
+
+	[Fact]
+	public void GetAllowedGearTypes_AllArmorFlags_ReturnsAllArmor()
+		=> Assert.Equal(GearType.AllArmor, RelicAndCharmExtension.GetAllowedGearTypes(Relic("helmet", "bodyArmor", "armband", "greaves")));
+
+	[Fact]
+	public void GetAllowedGearTypes_RingAndAmulet_ReturnsJewellery()
+		=> Assert.Equal(GearType.Jewellery, RelicAndCharmExtension.GetAllowedGearTypes(Relic("ring", "amulet")));
+
+	[Fact]
+	public void GetAllowedGearTypes_Bow_AlsoAllowsThrownWeapons()
+		=> Assert.Equal(GearType.Bow | GearType.Thrown, RelicAndCharmExtension.GetAllowedGearTypes(Relic("bow")));
+
+	[Fact]
+	public void GetAllowedGearTypes_Weapons_ReturnsEachWeapon()
+		=> Assert.Equal(GearType.Spear | GearType.Staff | GearType.Sword | GearType.Mace | GearType.Axe,
+			RelicAndCharmExtension.GetAllowedGearTypes(Relic("spear", "staff", "sword", "mace", "axe")));
 }
