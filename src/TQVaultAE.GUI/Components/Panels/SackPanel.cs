@@ -330,9 +330,10 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	public Func<bool>? HoldsVault { get; set; }
 
 	/// <summary>
-	/// True when an item lies inside the grid without overlapping another item.
+	/// Whether an item of the panel, read again with other data (it may take another size), still has room: where it
+	/// lies, or at the free spot it is then moved to.
 	/// </summary>
-	private bool FitsWhereItLies(Item item) => SackLayout.Fits(this.ShownSack, this.SackSize, item);
+	protected virtual bool HasRoomOnceReadAgain(Item item) => SackLayout.FitsOrMoves(this.ShownSack, this.SackSize, item);
 
 	/// <summary>
 	/// Gets or sets the AutoMoveLocation for this sack.

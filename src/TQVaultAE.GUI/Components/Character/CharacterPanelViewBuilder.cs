@@ -301,7 +301,7 @@ internal sealed class CharacterPanelViewBuilder(ICharacterStatsService service, 
 			void Multiplier((string Equation, string Variable)? equation)
 			{
 				if (equation is not { } e
-					|| DamageMultiplier.Of(balance.DamageEquation(e.Equation), e.Variable, stats.Strength, stats.Dexterity, stats.Intelligence, input.Info.CurrentLevel) is not { } multiplier)
+					|| DamageMultiplier.Of(balance.DamageEquation(e.Equation), e.Variable, stats.Strength, stats.Dexterity, stats.Intelligence, input.Level) is not { } multiplier)
 					return;
 
 				var (tag, fallback) = multiplier.Attribute switch

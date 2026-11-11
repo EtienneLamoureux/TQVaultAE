@@ -207,9 +207,6 @@ internal sealed partial class CharacterStatsPanel : Control
 	/// <summary>Raised by a click on the Undo button: the attributes go back to their values at the start.</summary>
 	public event EventHandler? UndoClicked;
 
-	/// <summary>Raised when another tab (I, II, III) is shown.</summary>
-	public event EventHandler? TabChanged;
-
 	public Font? NameFont { get; set; }
 	public Font? ClassFont { get; set; }
 	public Font? TextFont { get; set; }
@@ -231,7 +228,6 @@ internal sealed partial class CharacterStatsPanel : Control
 
 			this._tab = value;
 			this.Invalidate();
-			this.TabChanged?.Invoke(this, EventArgs.Empty);
 		}
 	}
 

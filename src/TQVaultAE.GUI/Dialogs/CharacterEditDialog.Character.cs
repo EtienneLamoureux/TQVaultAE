@@ -153,6 +153,7 @@ internal sealed partial class CharacterEditDialog
 			foreach (var font in this._ownedFonts)
 				font.Dispose();
 			this._statsToolTip.Dispose();
+			this._headerToolTip.Dispose();
 		};
 	}
 

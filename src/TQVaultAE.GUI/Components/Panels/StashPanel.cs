@@ -113,7 +113,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	private int ContentWidth => this.Width - Convert.ToInt32(NORMAL_PLAYERSTATS_OVERHANG * this.UIService.Scale);
 
 	string? DisplayPlayerInfoLastName;
-	private const int NORMAL_PLAYERINFO_HEIGHT = 480;//BGImage = 490
 	private const int NORMAL_PLAYERINFO_WIDTH = 186;//BGImage = 186
 	private const int NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_WIDTH = 17;
 	private const int NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_HEIGHT = 25;
@@ -123,7 +122,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		this.BagSackPanel.ClientRectangle.Top + this.BagButtons[0].Size.Height + UIService.HalfUnitSize
 		+ Convert.ToInt32(NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_HEIGHT * this.UIService.Scale);
 	int PLAYERINFO_WIDTH => Convert.ToInt32(NORMAL_PLAYERINFO_WIDTH * this.UIService.Scale);
-	int PLAYERINFO_HEIGHT => Convert.ToInt32(NORMAL_PLAYERINFO_HEIGHT * this.UIService.Scale);
 
 	private readonly ITranslationService TranslationService;
 
@@ -446,16 +444,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	#endregion StashPanel Properties
 
 	#region StashPanel Protected Methods
-
-	/// <summary>
-	/// Override of ScaleControl which supports scaling of the fonts and internal items.
-	/// </summary>
-	/// <param name="factor">SizeF for the scale factor</param>
-	/// <param name="specified">BoundsSpecified value.</param>
-	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
-	{
-		base.ScaleControl(factor, specified);
-	}
 
 	/// <summary>
 	/// Updates the text for the group box.  Override the base method since we do not need to change it based on the player name.
