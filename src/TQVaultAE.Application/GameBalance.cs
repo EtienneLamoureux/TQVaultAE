@@ -6,6 +6,12 @@ namespace TQVaultAE.Application;
 /// <c>PlayerGameBalanceAttributes.dbr</c>), the designer equations (<c>combatequations.dbr</c>,
 /// <c>healthmanaregen.dbr</c>) and the base values of the player template (<c>records\xpack\creatures\pc\malepc01.dbr</c>).
 /// </summary>
+/// <remarks>
+/// <c>CharacterStatsService</c> reads every value from the active map's records, so a mod that changes them is followed.
+/// The initial values below are the original game's and only a fallback: used when a record or a field is missing (a
+/// damaged install, a mod without it), and by tests that build a <see cref="GameBalance"/> without a database. The
+/// service logs a warning each time it falls back on one, since the character window may then be wrong for a mod.
+/// </remarks>
 public sealed record GameBalance
 {
 	/// <summary>Number of game balance levels per difficulty in the penalty arrays (18 values for 3 difficulties).</summary>
@@ -17,9 +23,19 @@ public sealed record GameBalance
 	/// <summary>The numeric fields of the player game balance pak, arrays by game balance level.</summary>
 	public IReadOnlyDictionary<string, IReadOnlyList<double>> Penalties { get; init; } = new Dictionary<string, IReadOnlyList<double>>(StringComparer.OrdinalIgnoreCase);
 
+	/// <summary>
+	/// <c>offensiveAbilityEquation</c> of <c>combatequations.dbr</c> (the record gameengine's
+	/// <c>defaultCombatManagerRecord</c> names). Fallback: the original game's equation.
+	/// </summary>
 	public string OffensiveAbilityEquation { get; init; } = "(offensiveAbilityDV + ((dexterityDV * 1) + bonusDV)) * (1 + (offensiveAbilityModifierDV / 100))";
+
+	/// <summary><c>defensiveAbilityEquation</c> of <c>combatequations.dbr</c>. Fallback: the original game's equation.</summary>
 	public string DefensiveAbilityEquation { get; init; } = "(defensiveAbilityDV + ((dexterityDV * 1) + bonusDV)) * (1 + (defensiveAbilityModifierDV / 100))";
+
+	/// <summary><c>lifeRegenEquation</c> of <c>healthmanaregen.dbr</c>. Fallback: the original game's equation.</summary>
 	public string LifeRegenEquation { get; init; } = "lifeRegen * elapsedTime";
+
+	/// <summary><c>manaRegenEquation</c> of <c>healthmanaregen.dbr</c>. Fallback: the original game's equation.</summary>
 	public string ManaRegenEquation { get; init; } = "(manaRegen + (intelligence / 100)) * elapsedTime";
 
 	/// <summary>The player template's <c>characterLifeRegen</c>.</summary>
@@ -37,7 +53,10 @@ public sealed record GameBalance
 	/// </summary>
 	public IReadOnlyDictionary<string, string> CombatEquations { get; init; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-	/// <summary>The original game's damage equations, used when the record lacks one.</summary>
+	/// <summary>The names of the damage equations the character window uses, which have a fallback.</summary>
+	public static IReadOnlyCollection<string> DamageEquationNames => DefaultDamageEquations.Keys;
+
+	/// <summary>The original game's damage equations: the fallback when the record lacks one.</summary>
 	private static readonly Dictionary<string, string> DefaultDamageEquations = new(StringComparer.OrdinalIgnoreCase)
 	{
 		["physicalDamageEquation"] = "(physicalDamageDV * ((strengthDV/500)+1)) + (strengthDV*0.04)",

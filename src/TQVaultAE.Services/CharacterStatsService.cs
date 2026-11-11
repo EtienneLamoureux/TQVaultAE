@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
@@ -7,7 +8,7 @@ using TQVaultAE.Domain.Helpers;
 namespace TQVaultAE.Services;
 
 /// <inheritdoc/>
-public class CharacterStatsService(IDatabase database, IItemProvider itemProvider) : ICharacterStatsService, IGameDataCache
+public class CharacterStatsService(IDatabase database, IItemProvider itemProvider, ILogger<CharacterStatsService>? log = null) : ICharacterStatsService, IGameDataCache
 {
 	private const string BuffSkillName = "buffSkillName";
 	private const string GameEngine = """records\xpack\game\gameengine.dbr""";
@@ -17,6 +18,7 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 
 	private readonly IDatabase _database = database;
 	private readonly IItemProvider _itemProvider = itemProvider;
+	private readonly ILogger? _log = log;
 	private const string FemalePlayerTemplate = """records\xpack\creatures\pc\femalepc01.dbr""";
 
 	private const string AnimationTableName = "charAnimationTableName";
@@ -94,29 +96,51 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 	{
 		var defaults = new GameBalance();
 		var engine = this.Record(GameEngine) ?? this.Record(BaseGameEngine);
-		var combat = this.Record(engine?.GetString("defaultCombatManagerRecord", 0));
-		var pak = this.Record(engine?.GetString("playerAttributePak", 0));
+		string? combatId = engine?.GetString("defaultCombatManagerRecord", 0);
+		var combat = this.Record(combatId);
+		string? pakId = engine?.GetString("playerAttributePak", 0);
+		var pak = this.Record(pakId);
 		var regen = this.Record(HealthManaRegen);
 		var player = this.Record(PlayerTemplate);
 
-		return new GameBalance
+		this.WarnIfMissing(engine, GameEngine, "the caps default to 80");
+		this.WarnIfMissing(pak, pakId ?? "playerAttributePak", "no difficulty penalty");
+
+		var balance = new GameBalance
 		{
 			Engine = Numbers(engine),
 			Penalties = Numbers(pak),
-			OffensiveAbilityEquation = Text(combat, "offensiveAbilityEquation", defaults.OffensiveAbilityEquation),
-			DefensiveAbilityEquation = Text(combat, "defensiveAbilityEquation", defaults.DefensiveAbilityEquation),
-			LifeRegenEquation = Text(regen, "lifeRegenEquation", defaults.LifeRegenEquation),
-			ManaRegenEquation = Text(regen, "manaRegenEquation", defaults.ManaRegenEquation),
-			BaseLifeRegen = Value(player, "characterLifeRegen", defaults.BaseLifeRegen),
-			BaseManaRegen = Value(player, "characterManaRegen", defaults.BaseManaRegen),
-			BaseRunSpeed = Value(player, "characterRunSpeed", defaults.BaseRunSpeed),
-			BaseAttackSpeed = Value(player, "characterAttackSpeed", defaults.BaseAttackSpeed),
-			HandHitDamageMin = Value(player, "handHitDamageMin", defaults.HandHitDamageMin),
-			HandHitDamageMax = Value(player, "handHitDamageMax", defaults.HandHitDamageMax),
+			OffensiveAbilityEquation = this.Text(combat, combatId, "offensiveAbilityEquation", defaults.OffensiveAbilityEquation),
+			DefensiveAbilityEquation = this.Text(combat, combatId, "defensiveAbilityEquation", defaults.DefensiveAbilityEquation),
+			LifeRegenEquation = this.Text(regen, HealthManaRegen, "lifeRegenEquation", defaults.LifeRegenEquation),
+			ManaRegenEquation = this.Text(regen, HealthManaRegen, "manaRegenEquation", defaults.ManaRegenEquation),
+			BaseLifeRegen = this.Value(player, PlayerTemplate, "characterLifeRegen", defaults.BaseLifeRegen),
+			BaseManaRegen = this.Value(player, PlayerTemplate, "characterManaRegen", defaults.BaseManaRegen),
+			BaseRunSpeed = this.Value(player, PlayerTemplate, "characterRunSpeed", defaults.BaseRunSpeed),
+			BaseAttackSpeed = this.Value(player, PlayerTemplate, "characterAttackSpeed", defaults.BaseAttackSpeed),
+			HandHitDamageMin = this.Value(player, PlayerTemplate, "handHitDamageMin", defaults.HandHitDamageMin),
+			HandHitDamageMax = this.Value(player, PlayerTemplate, "handHitDamageMax", defaults.HandHitDamageMax),
 			CombatEquations = Equations(combat),
-			BaseCastSpeed = Value(player, "characterSpellCastSpeed", defaults.BaseCastSpeed),
+			BaseCastSpeed = this.Value(player, PlayerTemplate, "characterSpellCastSpeed", defaults.BaseCastSpeed),
 		};
+
+		foreach (var name in GameBalance.DamageEquationNames.Where(n => !balance.CombatEquations.TryGetValue(n, out var e) || string.IsNullOrWhiteSpace(e)))
+			this.WarnFallback(combatId, name, balance.DamageEquation(name));
+
+		return balance;
 	}
+
+	/// <summary>Logs a record the character window needs that the game data lacks.</summary>
+	private void WarnIfMissing(DBRecordCollection? record, string id, string consequence)
+	{
+		if (record is null)
+			this._log?.LogWarning("Game data: record {Record} not found, {Consequence}: the character window may be wrong for this map", id, consequence);
+	}
+
+	/// <summary>Logs a value of the character window taken from the original game because the game data lacks it.</summary>
+	private void WarnFallback(string? recordId, string name, object fallback)
+		=> this._log?.LogWarning("Game data: {Field} not found in {Record}, the original game's value is used ({Fallback}): the character window may be wrong for this map"
+			, name, recordId ?? "(no record)", fallback);
 
 	/// <inheritdoc/>
 	public OffenseGear GetOffenseGear(IEnumerable<Item> equipment, bool useAlternate)
@@ -168,7 +192,7 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 					|| WeaponStances.ReadAnimationHeader(data) is not { } header)
 					continue;
 
-				animations.Add((header.Frames, header.FrameRate, Value(template, $"{prefix}AttackAnimSpeed{n}", 1)));
+				animations.Add((header.Frames, header.FrameRate, OptionalValue(template, $"{prefix}AttackAnimSpeed{n}", 1)));
 			}
 
 			if (WeaponStances.MeanDuration(animations) is var mean and > 0)
@@ -222,11 +246,29 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 		return equations;
 	}
 
-	private static string Text(DBRecordCollection? record, string name, string fallback)
-		=> record?.GetString(name, 0) is { Length: > 0 } text ? text : fallback;
+	/// <summary>A text field of a record, else <paramref name="fallback"/> with a warning.</summary>
+	private string Text(DBRecordCollection? record, string? recordId, string name, string fallback)
+	{
+		if (record?.GetString(name, 0) is { Length: > 0 } text)
+			return text;
 
-	private static double Value(DBRecordCollection? record, string name, double fallback)
+		this.WarnFallback(recordId, name, fallback);
+		return fallback;
+	}
+
+	/// <summary>An optional numeric field of a record, else <paramref name="fallback"/>, its usual value: no warning.</summary>
+	private static double OptionalValue(DBRecordCollection? record, string name, double fallback)
 		=> record?[name] is { NumberOfValues: > 0 } variable
 			? variable.DataType == VariableDataType.Float ? variable.GetSingle(0) : variable.GetInt32(0)
 			: fallback;
+
+	/// <summary>A numeric field of a record, else <paramref name="fallback"/> with a warning.</summary>
+	private double Value(DBRecordCollection? record, string recordId, string name, double fallback)
+	{
+		if (record?[name] is { NumberOfValues: > 0 } variable)
+			return variable.DataType == VariableDataType.Float ? variable.GetSingle(0) : variable.GetInt32(0);
+
+		this.WarnFallback(recordId, name, fallback);
+		return fallback;
+	}
 }

@@ -1,4 +1,5 @@
 using AwesomeAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
@@ -118,6 +119,46 @@ public class CharacterStatsServiceTests
 		balance.OffensiveAbilityEquation.Should().Be("offensiveAbilityDV * 2");
 		balance.DefensiveAbilityEquation.Should().Contain("defensiveAbilityDV", "a missing equation keeps the game's");
 		balance.BaseRunSpeed.Should().Be(1.33, "a missing player template keeps the game's values");
+	}
+
+	[Fact]
+	public void GetGameBalance_ValueTheRecordsLack_FallsBackOnTheGamesWithAWarning()
+	{
+		// Arrange: the combat record has the offensive equation only, and there is no player template
+		var engine = Class("""records\xpack\game\gameengine.dbr""".ToRecordId(), "");
+		engine.Set(Text("defaultCombatManagerRecord", """Records\Game\CombatEquations.dbr"""));
+		engine.Set(Text("playerAttributePak", """Records\Game\PlayerGameBalanceAttributes.dbr"""));
+		Class("""Records\Game\PlayerGameBalanceAttributes.dbr""".ToRecordId(), "AttributePak");
+		var combat = Class("""Records\Game\CombatEquations.dbr""".ToRecordId(), "");
+		combat.Set(Text("offensiveAbilityEquation", "offensiveAbilityDV * 2"));
+		var log = new ListLogger();
+		var service = new CharacterStatsService(this._database.Object, this._items.Object, log);
+
+		// Act
+		var balance = service.GetGameBalance();
+
+		// Assert: each value taken from the original game is logged, the values read are not
+		balance.DefensiveAbilityEquation.Should().Contain("defensiveAbilityDV");
+		log.Warnings.Should().Contain(w => w.Contains("defensiveAbilityEquation") && w.Contains("CombatEquations.dbr"));
+		log.Warnings.Should().Contain(w => w.Contains("characterRunSpeed") && w.Contains("1.33"));
+		log.Warnings.Should().Contain(w => w.Contains("physicalDamageEquation"));
+		log.Warnings.Should().NotContain(w => w.Contains("offensiveAbilityEquation") || w.Contains("record") && w.Contains("not found,"));
+	}
+
+	/// <summary>Keeps the warnings a service logs.</summary>
+	private sealed class ListLogger : ILogger<CharacterStatsService>
+	{
+		public List<string> Warnings { get; } = [];
+
+		public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+
+		public bool IsEnabled(LogLevel logLevel) => true;
+
+		public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+		{
+			if (logLevel == LogLevel.Warning)
+				this.Warnings.Add(formatter(state, exception));
+		}
 	}
 
 	private static Variable Text(string name, string value) => new(name, VariableDataType.StringVar, 1) { [0] = value };
