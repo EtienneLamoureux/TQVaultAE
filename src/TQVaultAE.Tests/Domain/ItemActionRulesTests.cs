@@ -14,8 +14,8 @@ public class ItemActionRulesTests
 	private static Item Sword(bool socketed1 = false, bool socketed2 = false) => new()
 	{
 		BaseItemId = RecordId.Create(@"records\xpack\items\weapons\swords\u_e_01.dbr"),
-		relicID = socketed1 ? RelicAndCharm.AEGISOFATHENA_ACT1_01.GetRecordId() : RecordId.Empty,
-		relic2ID = socketed2 ? RelicAndCharm.AEGISOFATHENA_ACT1_01.GetRecordId() : RecordId.Empty,
+		relicID = socketed1 ? RecordId.Create(@"records\item\relics\01_act1_aegisofathena.dbr") : RecordId.Empty,
+		relic2ID = socketed2 ? RecordId.Create(@"records\item\relics\01_act1_aegisofathena.dbr") : RecordId.Empty,
 	};
 
 	private static Item Potions(int count)

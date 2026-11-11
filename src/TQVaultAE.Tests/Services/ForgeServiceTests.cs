@@ -74,8 +74,8 @@ public class ForgeServiceTests
 	public void GodModeParts_ListsTheSocketedRelics()
 	{
 		var item = Sword();
-		item.relicID = RelicAndCharm.AEGISOFATHENA_ACT1_01.GetRecordId();
-		item.relic2ID = RelicAndCharm.AEGISOFATHENA_ACT1_01.GetRecordId();
+		item.relicID = RecordId.Create(@"records\item\relics\01_act1_aegisofathena.dbr");
+		item.relic2ID = item.relicID;
 
 		this._service.GodModeParts(item).Should().Equal(ForgePart.Base, ForgePart.Relic1, ForgePart.Relic2);
 	}

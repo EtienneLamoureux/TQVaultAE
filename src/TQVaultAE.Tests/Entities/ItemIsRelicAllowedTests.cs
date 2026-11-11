@@ -5,10 +5,17 @@ namespace TQVaultAE.Tests.Entities;
 
 /// <summary>
 /// Unit tests for Item.IsRelicAllowed and Item.TryGetAllowedGearTypes methods.
-/// These methods depend on the static RelicAndCharmMap and RecordId lookups.
+/// The gear a relic allows comes from the slot flags of its record.
 /// </summary>
 public class ItemIsRelicAllowedTests
 {
+	private static readonly RecordId Aegis1 = RecordId.Create(@"records\item\relics\01_act1_aegisofathena.dbr");
+	private static readonly RecordId Aegis2 = RecordId.Create(@"records\item\relics\02_act1_aegisofathena.dbr");
+	private static readonly RecordId Aegis3 = RecordId.Create(@"records\item\relics\03_act1_aegisofathena.dbr");
+	private static readonly RecordId AmunRasGlory = RecordId.Create(@"records\item\relics\01_act2_amunrasglory.dbr");
+	private static readonly RecordId AnkhOfIsis = RecordId.Create(@"records\item\relics\01_act2_ankhofisis.dbr");
+	private static readonly RecordId ChaosEssence = RecordId.Create(@"records\item\hcdungeon\03_x4_essenceofchaos.dbr");
+
 	#region TryGetAllowedGearTypes(RecordId) Tests
 
 	[Fact]
@@ -26,10 +33,8 @@ public class ItemIsRelicAllowedTests
 	public void TryGetAllowedGearTypes_WithAegisRelic_ReturnsShieldGearType()
 	{
 		// Arrange - Aegis of Athena is a shield relic
-		var relicId = RelicAndCharm.AEGISOFATHENA_ACT1_01.GetRecordId();
-
 		// Act
-		var result = Item.TryGetAllowedGearTypes(relicId, out var types);
+		var result = Item.TryGetAllowedGearTypes(Aegis1, out var types, ModRelic(Aegis1.Raw, "shield"));
 
 		// Assert
 		result.Should().BeTrue();
@@ -40,10 +45,10 @@ public class ItemIsRelicAllowedTests
 	public void TryGetAllowedGearTypes_WithAmunRaGloryRelic_ReturnsAllArmorGearType()
 	{
 		// Arrange - Amun-Ra's Glory is an armor relic
-		var relicId = RelicAndCharm.AMUNRASGLORY_ACT2_01.GetRecordId();
+		var info = ModRelic(AmunRasGlory.Raw, "helmet", "bodyArmor", "armband", "greaves");
 
 		// Act
-		var result = Item.TryGetAllowedGearTypes(relicId, out var types);
+		var result = Item.TryGetAllowedGearTypes(AmunRasGlory, out var types, info);
 
 		// Assert
 		result.Should().BeTrue();
@@ -54,10 +59,8 @@ public class ItemIsRelicAllowedTests
 	public void TryGetAllowedGearTypes_WithAnkhOfIsis_ReturnsJewelleryGearType()
 	{
 		// Arrange - Ankh of Isis is a jewellery relic (rings and amulets)
-		var relicId = RelicAndCharm.ANKHOFISIS_ACT2_01.GetRecordId();
-
 		// Act
-		var result = Item.TryGetAllowedGearTypes(relicId, out var types);
+		var result = Item.TryGetAllowedGearTypes(AnkhOfIsis, out var types, ModRelic(AnkhOfIsis.Raw, "ring", "amulet"));
 
 		// Assert
 		result.Should().BeTrue();
@@ -68,10 +71,8 @@ public class ItemIsRelicAllowedTests
 	public void TryGetAllowedGearTypes_WithChaosEssence_ReturnsHeadGearType()
 	{
 		// Arrange - Chaos Essence is a head armor relic
-		var relicId = RelicAndCharm.HCDUNGEON_ESSENCEOFCHAOS_X4_03.GetRecordId();
-
 		// Act
-		var result = Item.TryGetAllowedGearTypes(relicId, out var types);
+		var result = Item.TryGetAllowedGearTypes(ChaosEssence, out var types, ModRelic(ChaosEssence.Raw, "helmet"));
 
 		// Assert
 		result.Should().BeTrue();
@@ -82,14 +83,10 @@ public class ItemIsRelicAllowedTests
 	public void TryGetAllowedGearTypes_AllActLevelsOfAegis_ReturnShield()
 	{
 		// Arrange - All 3 act levels of Aegis should be Shield
-		var act1Id = RelicAndCharm.AEGISOFATHENA_ACT1_01.GetRecordId();
-		var act2Id = RelicAndCharm.AEGISOFATHENA_ACT1_02.GetRecordId();
-		var act3Id = RelicAndCharm.AEGISOFATHENA_ACT1_03.GetRecordId();
-
 		// Act & Assert
-		Item.TryGetAllowedGearTypes(act1Id, out var act1Type).Should().BeTrue();
-		Item.TryGetAllowedGearTypes(act2Id, out var act2Type).Should().BeTrue();
-		Item.TryGetAllowedGearTypes(act3Id, out var act3Type).Should().BeTrue();
+		Item.TryGetAllowedGearTypes(Aegis1, out var act1Type, ModRelic(Aegis1.Raw, "shield")).Should().BeTrue();
+		Item.TryGetAllowedGearTypes(Aegis2, out var act2Type, ModRelic(Aegis2.Raw, "shield")).Should().BeTrue();
+		Item.TryGetAllowedGearTypes(Aegis3, out var act3Type, ModRelic(Aegis3.Raw, "shield")).Should().BeTrue();
 
 		act1Type.Should().Be(GearType.Shield);
 		act2Type.Should().Be(GearType.Shield);
@@ -97,23 +94,9 @@ public class ItemIsRelicAllowedTests
 	}
 
 	[Fact]
-	public void TryGetAllowedGearTypes_WithUnknownRelic_ReturnsFalse()
-	{
-		// Arrange - NORECORDS is the Unknown relic
-		var unknownId = RelicAndCharm.Unknown.GetRecordId();
-
-		// Act
-		var result = Item.TryGetAllowedGearTypes(unknownId, out var types);
-
-		// Assert
-		result.Should().BeFalse();
-		types.Should().Be(GearType.Undefined);
-	}
-
-	[Fact]
 	public void TryGetAllowedGearTypes_WithUnknownRecordId_ReturnsFalse()
 	{
-		// Arrange - record ID that doesn't exist in RelicAndCharmMap
+		// Arrange - a relic given without its record
 		var unknownId = RecordId.Create("records/item/relics/unknown_relic.dbr");
 
 		// Act
@@ -146,10 +129,9 @@ public class ItemIsRelicAllowedTests
 	{
 		// Arrange - default Item has no GearType (ItemClass is empty)
 		var item = new Item();
-		var relicId = RelicAndCharm.AEGISOFATHENA_ACT1_01.GetRecordId();
 
 		// Act
-		var result = Item.IsRelicAllowed(item, relicId);
+		var result = Item.IsRelicAllowed(item, Aegis1, ModRelic(Aegis1.Raw, "shield"));
 
 		// Assert
 		result.Should().BeFalse("default Item has no ItemClass, so GearType is Undefined");
@@ -190,7 +172,7 @@ public class ItemIsRelicAllowedTests
 	{
 		// Arrange - Item to enchant is default (no GearType), relic is valid
 		var itemToEnchant = new Item();
-		var relic = new Item { BaseItemId = RelicAndCharm.AEGISOFATHENA_ACT1_01.GetRecordId() };
+		var relic = new Item { BaseItemId = Aegis1 };
 
 		// Act
 		var result = Item.IsRelicAllowed(itemToEnchant, relic);
@@ -208,10 +190,8 @@ public class ItemIsRelicAllowedTests
 	{
 		// Arrange - test the instance method overload
 		var item = new Item();
-		var relicId = RelicAndCharm.AMUNRASGLORY_ACT2_01.GetRecordId();
-
 		// Act - call the instance method
-		var result = item.IsRelicAllowed(relicId);
+		var result = item.IsRelicAllowed(AmunRasGlory, ModRelic(AmunRasGlory.Raw, "helmet"));
 
 		// Assert
 		result.Should().BeFalse("default Item has no GearType");
@@ -222,7 +202,7 @@ public class ItemIsRelicAllowedTests
 	{
 		// Arrange - test the instance method overload
 		var item = new Item();
-		var relic = new Item { BaseItemId = RelicAndCharm.AMUNRASGLORY_ACT2_01.GetRecordId() };
+		var relic = new Item { BaseItemId = AmunRasGlory };
 
 		// Act - call the instance method
 		var result = item.IsRelicAllowed(relic);
@@ -233,7 +213,7 @@ public class ItemIsRelicAllowedTests
 
 	#endregion
 
-	#region Relics missing from RelicAndCharm (mods)
+	#region Relic records (base game and mods)
 
 	private static Info ModRelic(string id, params string[] slotFlags)
 	{
@@ -286,12 +266,18 @@ public class ItemIsRelicAllowedTests
 	}
 
 	[Fact]
-	public void TryGetAllowedGearTypes_KnownRelic_IgnoresItsRecord()
+	public void TryGetAllowedGearTypes_BaseGameRelic_ReadsItsRecord()
 	{
-		var id = RelicAndCharm.AEGISOFATHENA_ACT1_01.GetRecordId();
+		// A mod may change the slots of a base-game relic: its record, read through the item's map, wins.
+		Item.TryGetAllowedGearTypes(Aegis1, out var types, ModRelic(Aegis1.Raw, "sword")).Should().BeTrue();
+		types.Should().Be(GearType.Sword);
+	}
 
-		Item.TryGetAllowedGearTypes(id, out var types, ModRelic(id.Raw, "sword")).Should().BeTrue();
-		types.Should().Be(GearType.Shield);
+	[Fact]
+	public void TryGetAllowedGearTypes_BaseGameRelicWithoutItsRecord_ReturnsFalse()
+	{
+		Item.TryGetAllowedGearTypes(Aegis1, out var types).Should().BeFalse();
+		types.Should().Be(GearType.Undefined);
 	}
 
 	#endregion

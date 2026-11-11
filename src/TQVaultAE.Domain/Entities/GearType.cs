@@ -102,20 +102,6 @@ public static class GearTypeExtension
 /// <summary>
 /// Allowed <see cref="GearType"/> for this element
 /// </summary>
-[AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = false)]
-public class GearTypeAttribute : Attribute
-{
-	public GearType Type { get; }
-
-	public GearTypeAttribute(GearType type)
-	{
-		Type = type;
-	}
-}
-
-/// <summary>
-/// Allowed <see cref="GearType"/> for this element
-/// </summary>
 [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
 public class GearTypeDescriptionAttribute : Attribute
 {

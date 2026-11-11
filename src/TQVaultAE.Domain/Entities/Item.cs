@@ -1112,7 +1112,7 @@ public class Item
 	/// </summary>
 	/// <param name="relicBaseItemId"></param>
 	/// <returns></returns>
-	/// <param name="relicInfo">Record of the relic, read when the relic is not a known one.</param>
+	/// <param name="relicInfo">Record of the relic: its slot flags give the gear it allows.</param>
 	public bool IsRelicAllowed(RecordId relicBaseItemId, Info? relicInfo = null)
 		=> IsRelicAllowed(this, relicBaseItemId, relicInfo);
 
@@ -1152,7 +1152,7 @@ public class Item
 	/// <param name="item"></param>
 	/// <param name="relicBaseItemId"></param>
 	/// <returns></returns>
-	/// <param name="relicInfo">Record of the relic, read when the relic is not a known one.</param>
+	/// <param name="relicInfo">Record of the relic: its slot flags give the gear it allows.</param>
 	public static bool IsRelicAllowed(Item item, RecordId relicBaseItemId, Info? relicInfo = null)
 	{
 		var itemGearType = item.GearType;
@@ -1191,19 +1191,13 @@ public class Item
 	/// </summary>
 	/// <param name="relicBaseItemId"></param>
 	/// <param name="types"></param>
-	/// <param name="relicInfo">Record of the relic: its slot flags give the gear when the relic is not a known one (mods).</param>
-	/// <returns></returns>
+	/// <param name="relicInfo">Record of the relic: its slot flags give the gear. Ignored when it is the record of another item.</param>
+	/// <returns><see langword="false"/> without the relic's record, or when its record allows no gear.</returns>
 	public static bool TryGetAllowedGearTypes(RecordId relicBaseItemId, out GearType types, Info? relicInfo = null)
 	{
 		types = GearType.Undefined;
 
 		if (RecordId.IsNullOrEmpty(relicBaseItemId)) return false;
-
-		if (RelicAndCharmExtension.ByRecordId.TryGetValue(relicBaseItemId, out var known))
-		{
-			types = known.Types;
-			return true;
-		}
 
 		if (relicInfo is not null && relicInfo.ItemId == relicBaseItemId)
 			types = RelicAndCharmExtension.GetAllowedGearTypes(relicInfo);
