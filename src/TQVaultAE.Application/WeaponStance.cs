@@ -1,7 +1,7 @@
 namespace TQVaultAE.Application;
 
 /// <summary>
-/// How the character holds the weapons in hand (the game <c>the game</c>): it chooses the attack
+/// How the character holds the weapons in hand, as the game decides it: it chooses the attack
 /// animations, which set the attack speed shown.
 /// </summary>
 public enum WeaponStance
@@ -64,8 +64,8 @@ public static class WeaponStances
 	}
 
 	/// <summary>
-	/// The mean duration of a stance's attack animations, in seconds (<c>the game(Attack)</c>): each
-	/// animation's frames / frame rate (<c>the game</c>) divided by its speed in the template.
+	/// The mean duration of a stance's attack animations, in seconds: each animation's frames / frame rate divided by its
+	/// speed in the template.
 	/// </summary>
 	/// <param name="animations">Each attack animation's frame count, frame rate and template speed.</param>
 	public static double MeanDuration(IEnumerable<(int Frames, int FrameRate, double Speed)> animations)

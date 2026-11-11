@@ -36,13 +36,12 @@ public enum GameAttributeStore
 }
 
 /// <summary>
-/// The order in which the game (the game) lists the attributes of an item's base, prefix and suffix records:
+/// The order in which the game lists the attributes of an item's base, prefix and suffix records:
 /// it loads the three records together, walks each store's attribute types in a fixed order and shows, for each type,
 /// the base line, then the prefix line, then the suffix line. The stores come in an order that depends on the item class.
 /// </summary>
 /// <remarks>
-/// Read from the game (Anniversary Edition): the game, the CreateUIAttributeText of
-/// Weapon, Armor and WeaponArmor, and the Load sequence of each attribute store. The game adds the three values of a
+/// As the game shows it (Anniversary Edition) for weapons, armor and shields. The game adds the three values of a
 /// character or skill attribute into one line; here each record keeps its own line, only the order follows the game.
 /// </remarks>
 public static class GameAttributeOrder

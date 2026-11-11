@@ -295,13 +295,13 @@ All of these export as **byte-for-byte copies**: the raw entry is the native for
 
 ## <a id="Jitter"></a>Item stat randomization (jitter)
 
-The values in the database are not always the values shown in game. When an item is created, the game rolls part of its stats from the **item seed** saved with the item. This behaviour was extracted from `the game`/`the game` (issue [#552](https://github.com/EtienneLamoureux/TQVaultAE/issues/552)). It is implemented in `src/TQVaultAE.Domain/Jitter/` and reproduces the in-game tooltips exactly.
+The values in the database are not always the values shown in game. When an item is created, the game rolls part of its stats from the **item seed** saved with the item. Issue [#552](https://github.com/EtienneLamoureux/TQVaultAE/issues/552) describes it. It is implemented in `src/TQVaultAE.Domain/Jitter/` and reproduces the in-game tooltips exactly.
 
 ### Random number generator
 
 * Park–Miller MINSTD: `s' = s × 16807 mod (2³¹ − 1)`.
 * The item uses one generator, seeded with the item seed and **advanced once** before the first roll.
-* `IGenerate(min, max)`:
+* A draw in `[min, max]`:
   * `d = (uint)s' / 2147483647.0`, then `d = d × (max − min) + min`, in double precision;
   * the result is `(int)((float)d + 0.5f)`: truncation **toward zero**, so negative values round up.
 
@@ -310,7 +310,7 @@ The values in the database are not always the values shown in game. When an item
 ```
 if v == 0: return v                                 (no draw)
 k = (int)(pct / 100 × v); if k == 0: k = 1
-r = IGenerate(−k, k) + v
+r = draw(−k, k) + v
 return |r| < 1 ? v : r
 ```
 
@@ -336,7 +336,7 @@ Inside each store, attributes roll in a fixed order (246 attributes, listed in `
 
 ### After the rolls: `attributeScalePercent`
 
-When the **base item** has `attributeScalePercent = p`, every store is scaled once all the rolls are done (`ScaleAttributes`). This concerns 152 rings and amulets (20–25%, some amulets up to 100%) and 8 weapons:
+When the **base item** has `attributeScalePercent = p`, every store is scaled once all the rolls are done. This concerns 152 rings and amulets (20–25%, some amulets up to 100%) and 8 weapons:
 
 ```
 v = v + (int)(v × p / 100)        (single precision, truncation toward zero)
@@ -353,7 +353,7 @@ Example, a "Jewel of Essence" ring (`attributeScalePercent` 25, seed 21654). Its
 
 ### Last: Skill store base jitter
 
-`InitializeItem` ends with `the game(20%)`. The base Skill values (`skillCooldownReduction`, `skillManaCostReduction`…) are therefore rolled **last**, after the scaling, at 20%.
+The base Skill values (`skillCooldownReduction`, `skillManaCostReduction`…) are rolled **last**, after the scaling, at 20%.
 
 ### Socketed relics and charms
 

@@ -35,7 +35,7 @@ public readonly record struct PaneRect(int X, int Y, int Width, int Height)
 public readonly record struct PanePiece(string Texture, int X, int Y);
 
 /// <summary>
-/// How the game's skill window lays out a mastery pane, read from <c>TQ.exe</c> and the <c>BaseSkillPane</c> record:
+/// How the game's skill window lays out a mastery pane, with the <c>BaseSkillPane</c> record:
 /// sizes and positions in pixels of the pane (919x540 in the PC interface), mastery bar, button states and level texts.
 /// </summary>
 public static class SkillPaneLayout

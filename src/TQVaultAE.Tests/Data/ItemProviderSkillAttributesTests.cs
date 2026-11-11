@@ -81,7 +81,7 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 	[Fact]
 	public void AugmentMasteryLevel_WithoutMasteryName_IsNotShown()
 	{
-		// the game drops such a bonus, like on the Clashing Suit.
+		// The game drops such a bonus, like on the Clashing Suit.
 		var item = this.CreateItem("ArmorJewelry_Ring", Int("augmentMasteryLevel1", 1), Int("characterStrength", 5));
 
 		this.BaseAttributes(item).Should().Equal($"{Epic}+5 Strength");

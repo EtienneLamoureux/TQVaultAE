@@ -38,7 +38,7 @@ public sealed record CharacterStatsInput(int Strength, int Dexterity, int Intell
 public readonly record struct DamageBonus(int Damage, int DurationDamage, int Duration);
 
 /// <summary>
-/// Tab III's Pet Bonuses (TQ.exe): the damage % and the flat damage the pet bonus records of the gear and the skills give
+/// Tab III's Pet Bonuses: the damage % and the flat damage the pet bonus records of the gear and the skills give
 /// the pets, for physical, elemental and vitality damage.
 /// </summary>
 public readonly record struct PetDamageBonus(int PhysicalPercent, int ElementalPercent, int VitalityPercent, int Physical, int Elemental, int Vitality);
@@ -76,7 +76,7 @@ public sealed record CharacterStats
 }
 
 /// <summary>
-/// Computes the character window values from the save and the database, with the formulas of the game and TQ.exe:
+/// Computes the character window values from the save and the database, with the game's formulas:
 /// defense values are summed per type, scaled by their % modifier, then capped; the
 /// abilities and the regeneration use the game's equations.
 /// </summary>
@@ -189,17 +189,17 @@ public static class CharacterStatsCalculator
 	/// <summary>Rounded as the window shows numbers: + 0.5 then to the integer below.</summary>
 	public static int Round(double value) => (int)Math.Floor(value + 0.5);
 
-	/// <summary>A character attribute: (base + flat) × (1 + % / 100), not under 0 (<c>the game</c>).</summary>
+	/// <summary>A character attribute: (base + flat) × (1 + % / 100), not under 0.</summary>
 	public static double Total(double baseValue, AttributeSum sum, string field)
 		=> Math.Max(0, (baseValue + sum[field]) * (1 + sum[field + "Modifier"] / 100));
 
-	/// <summary>A skill attribute: flat × (1 + % / 100) (<c>the game</c>).</summary>
+	/// <summary>A skill attribute: flat × (1 + % / 100).</summary>
 	private static double Scaled(AttributeSum sum, string field)
 		=> sum[field] * (1 + sum[field + "Modifier"] / 100);
 
 	/// <summary>
-	/// A resistance: (flat + difficulty penalty) × (1 + % / 100), capped at <c>playerDefenseCap</c>
-	/// (<c>the game</c>). The penalty is part of the flat sum, so the % scales it too.
+	/// A resistance: (flat + difficulty penalty) × (1 + % / 100), capped at <c>playerDefenseCap</c>. The penalty is part
+	/// of the flat sum, so the % scales it too.
 	/// </summary>
 	public static double Resistance(StatResistance resistance, AttributeSum sum, GameBalance balance, int difficulty)
 	{
@@ -212,7 +212,7 @@ public static class CharacterStatsCalculator
 
 	/// <summary>
 	/// The combined armor: the protection of the items and of the skills, each part scaled by the total protection %
-	/// when it is positive, truncated (tab I, TQ.exe <c>0x4d6390</c>).
+	/// when it is positive, truncated (tab I).
 	/// </summary>
 	public static int CombinedArmor(AttributeSum gear, AttributeSum skills)
 	{
@@ -225,8 +225,8 @@ public static class CharacterStatsCalculator
 	}
 
 	/// <summary>
-	/// A speed in % of the player template's: (base + flat) × (1 + (% + total speed %) / 100) / base, between the caps
-	/// (<c>the game</c>, <c>the game</c>). The total speed % is assumed to add to each speed.
+	/// A speed in % of the player template's: (base + flat) × (1 + (% + total speed %) / 100) / base, between the caps.
+	/// The total speed % is assumed to add to each speed.
 	/// </summary>
 	private static double Speed(double baseValue, AttributeSum sum, string field, double capMin, double capMax)
 	{
@@ -243,7 +243,7 @@ public static class CharacterStatsCalculator
 
 	/// <summary>
 	/// Offensive or defensive ability: the designer equation with the ability, its modifier (a separate value) and the
-	/// total dexterity, no bonus (<c>the game</c>), not under 0.
+	/// total dexterity, no bonus, not under 0.
 	/// </summary>
 	private static double Ability(string equation, string variable, AttributeSum sum, string field, double dexterity)
 		=> Math.Max(0, GameEquation.Evaluate(equation, new Dictionary<string, double>

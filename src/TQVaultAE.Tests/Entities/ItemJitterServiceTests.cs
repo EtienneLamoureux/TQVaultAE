@@ -4,7 +4,7 @@ using TQVaultAE.Domain.Jitter;
 namespace TQVaultAE.Tests.Entities;
 
 /// <summary>
-/// Unit tests of the the game-derived jitter primitives (issue #552). In-game item checks live in
+/// Unit tests of the jitter primitives (issue #552). In-game item checks live in
 /// <see cref="JitterVerificationTests"/>; roll order and gating rules are described in issue #552 (https://github.com/EtienneLamoureux/TQVaultAE/issues/552).
 /// </summary>
 public class ItemJitterServiceTests
@@ -12,7 +12,7 @@ public class ItemJitterServiceTests
 	[Fact]
 	public void GenerateRange_NegativeResults_TruncateTowardZero()
 	{
-		// IGenerate ends with CVTTSS2SI on (float)d + 0.5f, so -4 is unreachable in [-4, 4]
+		// The draw truncates (float)d + 0.5f toward zero, so -4 is unreachable in [-4, 4]
 		// (a Math.Floor port would produce it).
 		var rng = new TitanQuestRNG(1);
 		var seen = new HashSet<int>();
@@ -56,8 +56,8 @@ public class ItemJitterServiceTests
 	[Fact]
 	public void RollCharAffix_ZeroJitter_StillConsumesRollAndCanAddOne()
 	{
-		// LoadPrefixTable forces k=1 when (pct/100*v) truncates to 0, so a "fixed" Char affix
-		// value still rolls IGenerate(-1,1), which yields 0 or +1.
+		// An affix roll forces k=1 when (pct/100*v) truncates to 0, so a "fixed" Char affix
+		// value still rolls GenerateRange(-1, 1), which yields 0 or +1.
 		var rng = new TitanQuestRNG(42);
 		var results = new HashSet<float>();
 

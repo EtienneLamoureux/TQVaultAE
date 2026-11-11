@@ -740,7 +740,7 @@ public partial class ItemProvider
 				if (recordId == itm.BaseItemId && normalizedFullAttribute == "ATTRIBUTESCALEPERCENT" && itm.itemScalePercent == 1.00)
 				{
 					// With in-game values the roll simulator already applies the scale, and only to the item's
-					// own stores (the game ScaleAttributes): socketed relics/charms and their bonuses are not scaled.
+					// own stores, as the game does: socketed relics/charms and their bonuses are not scaled.
 					if (!this.USettings.ShowInGameValues)
 						itm.itemScalePercent += variable.GetSingle(0) / 100;
 

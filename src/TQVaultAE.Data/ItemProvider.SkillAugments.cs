@@ -63,7 +63,7 @@ public partial class ItemProvider
 			else if (name.StartsWith(AugmentSkillLevel, StringComparison.OrdinalIgnoreCase))
 				AddNamed(SkillAugmentKind.Skill, "augmentSkillName" + name[AugmentSkillLevel.Length..]);
 			else if (name.StartsWith(AugmentMasteryLevel, StringComparison.OrdinalIgnoreCase))
-				// the game drops a mastery bonus whose augmentMasteryNameN is empty (see GetAugmentMasteryLevel).
+				// The game drops a mastery bonus whose augmentMasteryNameN is empty (see GetAugmentMasteryLevel).
 				AddNamed(SkillAugmentKind.Mastery, "augmentMasteryName" + name[AugmentMasteryLevel.Length..]);
 
 			void AddNamed(SkillAugmentKind kind, string targetVariable)

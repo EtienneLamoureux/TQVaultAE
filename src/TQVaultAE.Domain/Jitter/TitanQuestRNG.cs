@@ -10,15 +10,13 @@ namespace TQVaultAE.Domain.Jitter;
 /// Park-Miller Minimal Standard (MINSTD) Pseudorandom Number Generator
 /// using Schrage's multiplication method to prevent 32-bit overflow.
 /// 
-/// Constants (verified via reverse engineering of Titan Quest the game):
+/// Constants used by Titan Quest:
 ///   - Multiplier (a) = 16807   (0x41A7)
 ///   - Quotient  (q) = 127773   (0x1F31D)
 ///   - Modulus   (m) = 2147483647 (0x7FFFFFFF)
 /// 
-/// Verified at instruction level: the game and its
-/// duplicate in the game, used by the game's
-/// RandomUniform. The engine's zero-state fallback calls CRT rand();
-/// that state is unreachable from a valid seed, so the fallback below is not engine-exact.
+/// The game falls back on the C runtime's rand() from a zero state; that state is unreachable from a valid seed,
+/// so the fallback below does not reproduce it.
 /// </summary>
 public class TitanQuestRNG
 {
@@ -34,8 +32,7 @@ public class TitanQuestRNG
 	}
 
 	/// <summary>
-	/// Creates the RNG exactly as <c>the game</c> does (the game):
-	/// a stack <c>RandomUniform</c> whose <c>Seed(s)</c> stores <paramref name="itemSeed"/>
+	/// Creates the RNG as the game does for a new item: it stores <paramref name="itemSeed"/>
 	/// then advances once. The same instance is then shared by all five equipment stores.
 	/// </summary>
 	/// <param name="itemSeed">Item seed as saved in the character/vault file.</param>
@@ -57,7 +54,7 @@ public class TitanQuestRNG
 		while (true)
 		{
 			// Schrage's method:  next = a * r - m * q   (where r = seed % q)
-			// But the canonical implementation from the analysed engine is:
+			// The game computes it as:
 			int nextValue = (int)(this._currentSeed * 16807) + (int)(this._currentSeed / 127773) * -2147483647;
 
 			if (nextValue < 1)
@@ -78,16 +75,15 @@ public class TitanQuestRNG
 	}
 
 	/// <summary>
-	/// Instruction-exact port of <c>the game</c>
-	/// (the game,:
+	/// An integer in [min, max], as the game draws it:
 	/// <code>
-	/// CVTDQ2PD / ADDSD [sign table] / DIVSD 2147483647.0   ; d = (uint)r / m       (double)
-	/// SUBSD / MULSD / ADDSD                                ; d = d*(max-min)+min   (double)
-	/// CVTPD2PS / ADDSS 0.5f                                ; f = (float)d + 0.5f   (single)
-	/// CVTTSS2SI                                            ; (int)f, truncation toward zero
+	/// d = (uint)r / m             (double)
+	/// d = d * (max - min) + min   (double)
+	/// f = (float)d + 0.5f         (single)
+	/// (int)f                      truncation toward zero
 	/// </code>
 	/// Truncation toward zero (not floor) means negative non-integer results round
-	/// toward zero, e.g. IGenerate(-4,4) can never return -4.
+	/// toward zero, e.g. GenerateRange(-4, 4) can never return -4.
 	/// </summary>
 	/// <param name="min">Lower bound.</param>
 	/// <param name="max">Upper bound.</param>
@@ -102,7 +98,7 @@ public class TitanQuestRNG
 	}
 
 	/// <summary>
-	/// Smallest and largest results <see cref="GenerateRange"/> can return, computed with the same instructions
+	/// Smallest and largest results <see cref="GenerateRange"/> can return, computed the same way
 	/// at the generator's extreme outputs (1 and 2^31 - 2): every integer in between is reachable.
 	/// </summary>
 	/// <param name="min">Lower bound.</param>
@@ -124,8 +120,7 @@ public class TitanQuestRNG
 	}
 
 	/// <summary>
-	/// Instruction-exact port of <c>the game</c>
-	/// (the game): <c>(float)((double)(max - min) * ((uint)r / m) + min)</c>,
+	/// A float in [min, max], as the game draws it: <c>(float)((double)(max - min) * ((uint)r / m) + min)</c>,
 	/// with <c>max - min</c> computed in single precision.
 	/// </summary>
 	/// <param name="min">Lower bound.</param>

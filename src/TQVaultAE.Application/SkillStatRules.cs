@@ -14,14 +14,12 @@ public enum SkillStatRole
 	/// <summary>Only while it runs: toggled auras, timed buffs, buffs on hit or on a kill.</summary>
 	Buff,
 
-	/// <summary>Like the skill it modifies (<c>the game</c>).</summary>
+	/// <summary>Like the skill it modifies.</summary>
 	Modifier,
 }
 
 /// <summary>
-/// Which skills the game counts in the character window, and at which level (the game
-/// <c>the game</c>, <c>the game</c>,
-/// <c>the game</c>).
+/// Which skills the game counts in the character window, and at which level.
 /// </summary>
 public static class SkillStatRules
 {

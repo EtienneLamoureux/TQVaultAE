@@ -50,7 +50,7 @@ public partial class ItemProvider
 		string augmentMasteryName = string.Concat("augmentMasteryName", augmentNumber);
 		string augmentMasteryValue = record.GetString(augmentMasteryName, 0);
 
-		// the game drops a mastery level whose augmentMasteryNameN is empty:
+		// The game drops a mastery level whose augmentMasteryNameN is empty:
 		// the bonus is never applied nor shown. 7 items do so, like the Clashing Suit (xpack3 u_n_set11).
 		if (string.IsNullOrEmpty(augmentMasteryValue))
 			return string.Empty;

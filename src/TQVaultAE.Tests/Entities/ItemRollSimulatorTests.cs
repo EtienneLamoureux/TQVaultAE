@@ -5,17 +5,17 @@ using TQVaultAE.Domain.Jitter;
 namespace TQVaultAE.Tests.Entities;
 
 /// <summary>
-/// Tests the replay of <c>the game</c> with small explicit roll tables,
+/// Tests the replay of a new item's rolls with small explicit roll tables,
 /// independent of the generated <see cref="EquipmentRollTable"/> data.
 /// </summary>
 public class ItemRollSimulatorTests
 {
 	// Minimal Hallowed Circlet table in engine order: Char store, then Defense store.
 	private static readonly RollAttribute[] HallowedTable = [
-		new(RollStore.Character, 10, "CharAttribute", 0f, RollScope.All, [new("characterLifeRegen")]),
-		new(RollStore.Character, 15, "CharAttribute", 20f, RollScope.All, [new("characterManaRegenModifier")]),
-		new(RollStore.Defense, 1, "DefenseAttribute_BaseProtectionAbsorption", 20f, RollScope.AffixOnlyArmor, [new("defensiveProtection")]),
-		new(RollStore.Defense, 2, "DefenseAttributeAbs_Life", 20f, RollScope.All, [new("defensiveLife")]),
+		new(RollStore.Character, 10, 0f, RollScope.All, [new("characterLifeRegen")]),
+		new(RollStore.Character, 15, 20f, RollScope.All, [new("characterManaRegenModifier")]),
+		new(RollStore.Defense, 1, 20f, RollScope.AffixOnlyArmor, [new("defensiveProtection")]),
+		new(RollStore.Defense, 2, 20f, RollScope.All, [new("defensiveLife")]),
 	];
 
 	private static DBRecordCollection Record(string id, params (string Name, VariableDataType Type, object Value)[] vars)
@@ -106,12 +106,12 @@ public class ItemRollSimulatorTests
 	[InlineData(10f, 8f)]
 	public void Roll_DamagePair_RollsMinThenRange(float min, float max)
 	{
-		// DamageAttributeAbs stores (min, max - min): the second draw is the range, and there is
+		// Absolute damage is stored as (min, max - min): the second draw is the range, and there is
 		// no second draw when max is absent or not above min. In-game max = rolled min + rolled range.
 		RollAttribute[] table = [
-			new(RollStore.Damage, 1, "DamageAttributeAbs", 20f, RollScope.All,
+			new(RollStore.Damage, 1, 20f, RollScope.All,
 				[new("offensiveFireMin"), new("offensiveFireMax", RangeOf: "offensiveFireMin")], Requires: ["offensiveFireMin"]),
-			new(RollStore.Character, 2, "CharAttribute", 20f, RollScope.All, [new("characterStrength")]),
+			new(RollStore.Character, 2, 20f, RollScope.All, [new("characterStrength")]),
 		];
 		var baseRecord = Record("b.dbr",
 			("offensiveFireMin", VariableDataType.Float, min),
@@ -137,7 +137,7 @@ public class ItemRollSimulatorTests
 	public void Roll_DamagePairWithoutMin_HasNoInstance()
 	{
 		RollAttribute[] table = [
-			new(RollStore.Damage, 1, "DamageAttributeAbs", 20f, RollScope.All,
+			new(RollStore.Damage, 1, 20f, RollScope.All,
 				[new("offensiveFireMin"), new("offensiveFireMax", RangeOf: "offensiveFireMin")], Requires: ["offensiveFireMin"]),
 		];
 		var baseRecord = Record("b.dbr", ("offensiveFireMax", VariableDataType.Float, 30f));
@@ -161,8 +161,8 @@ public class ItemRollSimulatorTests
 		// Rings/amulets: the base item's attributeScalePercent scales every value once all stores are rolled,
 		// including affix values; it never consumes RNG draws.
 		RollAttribute[] table = [
-			new(RollStore.Character, 1, "CharAttribute", 20f, RollScope.All, [new("characterMana")]),
-			new(RollStore.Character, 2, "CharAttribute", 0f, RollScope.All, [new("characterAttackSpeed")], Scales: false),
+			new(RollStore.Character, 1, 20f, RollScope.All, [new("characterMana")]),
+			new(RollStore.Character, 2, 0f, RollScope.All, [new("characterAttackSpeed")], Scales: false),
 		];
 		var ring = Record("ring.dbr", ("attributeScalePercent", VariableDataType.Float, 25f));
 		var suffix = Record("s.dbr",
@@ -176,15 +176,15 @@ public class ItemRollSimulatorTests
 		var mana = ItemJitterService.RollCharAffix(86f, 18f, rng);
 		var speed = ItemJitterService.RollCharAffix(10f, 18f, rng);
 		result.Suffix!.GetSingle("characterMana", 0).Should().Be(ItemRollSimulator.Scale(mana, 25f));
-		result.Suffix.GetSingle("characterAttackSpeed", 0).Should().Be(speed, "the game is a no-op");
+		result.Suffix.GetSingle("characterAttackSpeed", 0).Should().Be(speed, "the game does not scale the speeds");
 	}
 
 	[Fact]
 	public void Roll_AttributeScalePercent_ScalesDamageMinAndKeepsRange()
 	{
-		// the game scales pair[0] only: in-game max = scaled min + unscaled range.
+		// The scaling applies to the damage min only: in-game max = scaled min + unscaled range.
 		RollAttribute[] table = [
-			new(RollStore.Damage, 1, "DamageAttributeAbsBase_Fire", 20f, RollScope.None,
+			new(RollStore.Damage, 1, 20f, RollScope.None,
 				[new("offensiveBaseFireMin"), new("offensiveBaseFireMax", RangeOf: "offensiveBaseFireMin")]),
 		];
 		var weapon = Record("w.dbr",
@@ -203,8 +203,8 @@ public class ItemRollSimulatorTests
 	{
 		// Ring + suffix of essence: Char affix roll (18%, uncapped), then 25% scaling, then a base AddJitter at 20%.
 		RollAttribute[] table = [
-			new(RollStore.Character, 1, "CharAttribute", 0f, RollScope.All, [new("characterMana")]),
-			new(RollStore.Character, 2, "CharAttribute", 20f, RollScope.All, [new("characterManaRegenModifier")]),
+			new(RollStore.Character, 1, 0f, RollScope.All, [new("characterMana")]),
+			new(RollStore.Character, 2, 20f, RollScope.All, [new("characterManaRegenModifier")]),
 		];
 		var ring = Record("ring.dbr",
 			("attributeScalePercent", VariableDataType.Float, 25f),
@@ -238,7 +238,7 @@ public class ItemRollSimulatorTests
 	public void Ranges_DamagePair_MaxRangeAddsMinAndRangeBounds()
 	{
 		RollAttribute[] table = [
-			new(RollStore.Damage, 1, "DamageAttributeAbs", 20f, RollScope.All,
+			new(RollStore.Damage, 1, 20f, RollScope.All,
 				[new("offensiveFireMin"), new("offensiveFireMax", RangeOf: "offensiveFireMin")], Requires: ["offensiveFireMin"]),
 		];
 		var weapon = Record("w.dbr",
@@ -268,8 +268,8 @@ public class ItemRollSimulatorTests
 		// Damage/Retaliation/Defense affixes go through AddJitter: lootRandomizerJitter 0 means no roll,
 		// unlike Char/Skill affixes which always roll.
 		RollAttribute[] table = [
-			new(RollStore.Damage, 1, "DamageAttributeAbs", 20f, RollScope.All, [new("offensiveFireMin"), new("offensiveFireMax")]),
-			new(RollStore.Character, 2, "CharAttribute", 20f, RollScope.All, [new("characterStrength")]),
+			new(RollStore.Damage, 1, 20f, RollScope.All, [new("offensiveFireMin"), new("offensiveFireMax")]),
+			new(RollStore.Character, 2, 20f, RollScope.All, [new("characterStrength")]),
 		];
 		var prefix = Record("p.dbr",
 			("offensiveFireMin", VariableDataType.Float, 10f),

@@ -7,39 +7,37 @@
 namespace TQVaultAE.Domain.Jitter;
 
 /// <summary>
-/// Instruction-exact port of the Titan Quest AE item stat jitter, derived from
-/// the game.
+/// The Titan Quest AE item stat jitter, matching the values the game shows.
 /// The roll order is in <see cref="EquipmentRollTable"/>; background in issue #552
 /// (https://github.com/EtienneLamoureux/TQVaultAE/issues/552).
 /// </summary>
 /// <remarks>
 /// The game uses two distinct entry points with different gating rules:
 /// <list type="bullet">
-/// <item><see cref="RollCharAffix"/>: affix values of the Char and Skill stores
-/// (<c>the game</c>). Always rolls when the value is non-zero, even with 0% jitter.</item>
+/// <item><see cref="RollCharAffix"/>: affix values of the Char and Skill stores. Always rolls when the value is
+/// non-zero, even with 0% jitter.</item>
 /// <item><see cref="AddJitter"/>: base-item values, and affix values of the Damage, Retaliation and
-/// Defense stores (<c>*::AddJitter</c>). Rolls only when the percent is &gt; 0, capped at 50%.</item>
+/// Defense stores. Rolls only when the percent is &gt; 0, capped at 50%.</item>
 /// </list>
 /// </remarks>
 public static class ItemJitterService
 {
 	/// <summary>
-	/// Base-item jitter percent hard-coded by the equipment stores (0x41A00000) for most attributes.
+	/// Base-item jitter percent the equipment stores use for most attributes.
 	/// </summary>
 	public const float StoreBaseJitterPercent = 20.0f;
 
 	/// <summary>
-	/// Cap applied by every <c>*::AddJitter</c> (the game). Not applied to Char/Skill affix rolls.
+	/// Cap of every <see cref="AddJitter"/>. Not applied to Char/Skill affix rolls.
 	/// </summary>
 	public const float MaxJitterPercent = 50.0f;
 
 	/// <summary>
-	/// Shared body of <c>the game</c> / <c>the game</c> / <c>DamageAttribute*::Jitter</c>
-	/// (the game):
+	/// The jitter of one value, the same for every kind of attribute:
 	/// <code>
 	/// if (v == 0) return v;
 	/// k = (int)((pct / 100f) * v); if (k == 0) k = 1;
-	/// r = (float)rng.IGenerate(-k, k) + v;
+	/// r = (float)rng.GenerateRange(-k, k) + v;
 	/// return fabsf(r) &lt; 1f ? v : r;
 	/// </code>
 	/// </summary>
@@ -88,9 +86,8 @@ public static class ItemJitterService
 	}
 
 	/// <summary>
-	/// <c>the game</c> / <c>LoadSuffixTable</c> (the game /),
-	/// also <c>the game</c>: the affix's <c>lootRandomizerJitter</c> (default 0) is used
-	/// uncapped, and a roll is consumed whenever the affix value is non-zero.
+	/// The roll of a character or skill attribute read from an affix: the affix's <c>lootRandomizerJitter</c>
+	/// (default 0) is used uncapped, and a roll is consumed whenever the affix value is non-zero.
 	/// </summary>
 	/// <param name="affixValue">Attribute value read from the affix record.</param>
 	/// <param name="lootRandomizerJitter">Affix record's <c>lootRandomizerJitter</c>, 0 when absent.</param>
@@ -100,7 +97,7 @@ public static class ItemJitterService
 		=> Jitter(affixValue, lootRandomizerJitter, rng);
 
 	/// <summary>
-	/// <c>*::AddJitter(float pct, RandomUniform*)</c> (e.g. the game,):
+	/// The roll of a base-item value, or of a damage, retaliation or defense affix value:
 	/// does nothing unless <paramref name="jitterPercent"/> &gt; 0; caps it at 50; then applies
 	/// <see cref="Jitter"/> to every value in order.
 	/// </summary>

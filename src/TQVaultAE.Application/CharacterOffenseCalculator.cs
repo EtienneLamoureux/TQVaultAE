@@ -26,12 +26,12 @@ public readonly record struct OffenseValues(int WeaponDamage, int AddedDamage, i
 public static class CharacterOffenseCalculator
 {
 	/// <summary>
-	/// The attack speed shown, in % (the game <c>the game</c>):
+	/// The attack speed shown, in %, as the game computes it:
 	/// attacks per second / template speed × (unarmed attack duration / stance attack duration) × 100.
 	/// <list type="bullet">
 	/// <item>attacks per second = (template speed + flat + the weapons' <c>characterBaseAttackSpeed</c>, halved when dual
 	/// wielding) × (1 + (attack speed % + total speed %) / 100), between <c>playerAttackSpeedCapMin/Max</c> % of the
-	/// template speed (<c>the game</c>); the total speed % is assumed to count, as for the other speeds.
+	/// template speed; the total speed % is assumed to count, as for the other speeds.
 	/// The % scales the weapons' speed too, as two in-game readings need: Copper Shamshir (0.45) with +33 % shows 135 %,
 	/// Alexandrian Broadsword (0.5) with +16 % 123 %, where scaling the template speed only gave 123 % and 116 %;</item>
 	/// <item>the durations are the stances' mean attack animation durations, from the player's animation table; a
@@ -73,7 +73,7 @@ public static class CharacterOffenseCalculator
 	private const string ElementalModifier = "offensiveElementalModifier";
 
 	/// <summary>
-	/// The average damage and DPS shown (the game <c>the game</c>, TQ.exe tab I):
+	/// The average damage and DPS shown in tab I, as the game computes them:
 	/// <list type="bullet">
 	/// <item>per hand: the weapon's damage with every item's and skill's flat damage and % modifiers, each damage range at
 	/// its middle, through the game's equations; the weapon part (the weapon with its own modifiers) and the added part;</item>

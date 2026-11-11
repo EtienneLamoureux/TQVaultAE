@@ -43,7 +43,7 @@ public partial class ItemProvider
 	{
 		var sum = new AttributeSum();
 
-		// The game counts the pieces of each set the character wears (the game) and
+		// The game counts the pieces of each set the character wears and
 		// reads the set record at that number of pieces.
 		var pieces = equipped
 			.Where(item => item.baseItemInfo is not null)
@@ -72,13 +72,13 @@ public partial class ItemProvider
 
 	/// <summary>
 	/// Adds the numeric variables of a record at a level to a sum, and its racial bonuses to their races. Arrays are read
-	/// at <paramref name="level"/> - 1, the last value past their end (as <c>GetProtection</c> in the game does): a skill
+	/// at <paramref name="level"/> - 1, the last value past their end (as the game does): a skill
 	/// at level 12 with a single value keeps that value, a relic with 3 pieces reads the third one.
 	/// </summary>
 	/// <param name="level">The skill level, the number of relic pieces, the number of set pieces; 1 for an item.</param>
 	/// <param name="petBonus">
 	/// Reads the pet bonus record a record names (<c>petBonusName</c>): its variables are added at the same level, under
-	/// <see cref="AttributeSum.PetBonusPrefix"/>, as the game's Pet Bonuses rollover sums them (TQ.exe, items, relics at
+	/// <see cref="AttributeSum.PetBonusPrefix"/>, as the game's Pet Bonuses rollover sums them (items, relics at
 	/// their completion, active skills at their level). Null to leave pet bonuses out.
 	/// </param>
 	internal static void AddAttributesFromRecord(AttributeSum sum, DBRecordCollection? record, int level, Func<string, DBRecordCollection?>? petBonus = null)
@@ -128,7 +128,7 @@ public partial class ItemProvider
 
 	/// <summary>
 	/// What a chance-based bonus counts in the character window: the game's display accumulator always lets the chance
-	/// pass and scales the value by chance / 100 (<c>the game</c>), 1 when the
+	/// pass and scales the value by chance / 100, 1 when the
 	/// chance is 0 or 100 and more. <c>defensiveFire</c> goes with <c>defensiveFireChance</c>,
 	/// <c>defensiveFireModifier</c> with <c>defensiveFireModifierChance</c>, <c>offensiveBonusPhysicalMin/Max</c> with
 	/// <c>offensiveBonusPhysicalChance</c>; durations are not scaled.

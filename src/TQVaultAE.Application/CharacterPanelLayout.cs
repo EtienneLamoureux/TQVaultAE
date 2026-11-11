@@ -7,8 +7,8 @@ namespace TQVaultAE.Application;
 public readonly record struct GameTextRun(string Text, char? Color);
 
 /// <summary>
-/// How the game's character window shows its statistics (records <c>xpack\ui\character\tab1new..tab3new</c>, code in
-/// <c>TQ.exe</c>): attribute totals, play time, coloured texts.
+/// How the game's character window shows its statistics (records <c>xpack\ui\character\tab1new..tab3new</c>): attribute
+/// totals, play time, coloured texts.
 /// </summary>
 public static partial class CharacterPanelLayout
 {

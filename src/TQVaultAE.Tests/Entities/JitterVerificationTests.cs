@@ -6,7 +6,7 @@ namespace TQVaultAE.Tests.Entities;
 
 /// <summary>
 /// In-game item checks from issue #552 (originally ejfudd's JitterVerificationTests.cs), ported to the
-/// the game-derived roll order (see <see cref="EquipmentRollTable"/> and issue #552,
+/// roll order of <see cref="EquipmentRollTable"/> (see <see cref="EquipmentRollTable"/> and issue #552,
 /// https://github.com/EtienneLamoureux/TQVaultAE/issues/552).
 /// </summary>
 public class JitterVerificationTests
@@ -43,7 +43,7 @@ public class JitterVerificationTests
 		Span<float> energyRegen = [20f];
 		ItemJitterService.AddJitter(energyRegen, ItemJitterService.StoreBaseJitterPercent, rng);
 
-		// Defense store: base armor is never jittered; DefenseAttributeAbs_Life prefix at the affix's 20%.
+		// Defense store: base armor is never jittered; the life prefix rolls at the affix's 20%.
 		Span<float> vitalityRes = [50f];
 		ItemJitterService.AddJitter(vitalityRes, 20f, rng);
 
@@ -70,7 +70,7 @@ public class JitterVerificationTests
 		"characterMana=102;characterManaRegenModifier=17")]
 	public void RealItem_FullRollTable_MatchesInGameTooltip(uint seed, bool isArmor, string baseId, string? prefixId, string? suffixId, string expected)
 	{
-		// Arrange: real database records, full the game roll table.
+		// Arrange: real database records, full roll table.
 		var game = TQVaultAE.DbCli.Core.GameLocator.Locate(TestingConditions.TitanQuestPath);
 		using var db = ArzDatabaseFactory.Open(game.Database);
 

@@ -61,12 +61,12 @@ public sealed record ItemRollResult(DBRecordCollection? Base, DBRecordCollection
 }
 
 /// <summary>
-/// Replays <c>the game</c> (the game): one RNG seeded with the item seed,
+/// Replays how the game rolls a new item's stats: one RNG seeded with the item seed,
 /// shared by the five equipment stores in <see cref="EquipmentRollTable"/> order.
 /// </summary>
 /// <remarks>
 /// Covers base, prefix and suffix of equipment (armor, jewellery, weapons, shields).
-/// Socketed relics and charms are separate <c>ItemRelic</c> objects, added after this and never scaled.
+/// Socketed relics and charms are separate items, added after this and never scaled.
 /// </remarks>
 public static class ItemRollSimulator
 {
@@ -74,7 +74,7 @@ public static class ItemRollSimulator
 
 	private const string AttributeScalePercent = "attributeScalePercent";
 
-	/// <summary>Percent <c>InitializeItem</c> passes to <c>the game</c> (0x41a00000).</summary>
+	/// <summary>Percent the base skill values roll at.</summary>
 	private const float SkillStoreBaseJitterPercent = 20f;
 
 	/// <summary>Reachable interval of a randomized value; damage pairs also keep the interval of their range.</summary>
@@ -127,7 +127,7 @@ public static class ItemRollSimulator
 				continue; // AddJitter (and, for BaseAttackSpeed, the affix loaders) are no-ops.
 
 			if (attr.Store is RollStore.Character or RollStore.Skill) {
-				// LoadPrefixTable / LoadSuffixTable: every non-zero affix value rolls, uncapped.
+				// Character and skill affixes: every non-zero affix value rolls, uncapped.
 				RollFields(attr, p, v => ItemJitterService.RollCharAffix(v, prefixPct, rng), v => ItemJitterService.JitterBounds(v, prefixPct));
 				RollFields(attr, s, v => ItemJitterService.RollCharAffix(v, suffixPct, rng), v => ItemJitterService.JitterBounds(v, suffixPct));
 				if (attr.Scope == RollScope.All)
@@ -148,14 +148,14 @@ public static class ItemRollSimulator
 			}
 		}
 
-		// 2. InitializeItem: the base item's attributeScalePercent scales every store (ScaleAttributes).
+		// 2. The base item's attributeScalePercent scales every store.
 		float scale = Read(b.Record?[AttributeScalePercent]);
 		if (scale != 0f) {
 			foreach (var attr in table) {
 				if (!IsLoaded(attr, isArmor) || !attr.Scales)
 					continue;
 
-				// the game scales base armor only.
+				// Base armor protection and absorption scale the base item's armor only.
 				ScaleFields(attr, b, scale);
 				if (attr.Scope != RollScope.AffixOnlyArmor) {
 					ScaleFields(attr, p, scale);
@@ -164,7 +164,7 @@ public static class ItemRollSimulator
 			}
 		}
 
-		// 3. the game(20%), called last: base Skill values, after scaling.
+		// 3. The base Skill values roll last, at 20%, after scaling.
 		foreach (var attr in table) {
 			if (attr.Store == RollStore.Skill && attr.Scope == RollScope.All && IsLoaded(attr, isArmor))
 				AddJitter(attr, b, SkillStoreBaseJitterPercent, rng);
@@ -182,7 +182,7 @@ public static class ItemRollSimulator
 	}
 
 	/// <summary>
-	/// <c>*::Scale(v, p)</c> (e.g. <c>the game</c>): <c>(float)(int)((p / 100) * v) + v</c>, single precision.
+	/// The game's scaling of a value by p %: <c>(float)(int)((p / 100) * v) + v</c>, single precision.
 	/// </summary>
 	/// <param name="value">Value after jitter.</param>
 	/// <param name="percent">Base item's <c>attributeScalePercent</c>.</param>
@@ -206,7 +206,7 @@ public static class ItemRollSimulator
 
 	private static void AddJitter(RollAttribute attr, Instance instance, float pct, TitanQuestRNG rng, bool positiveOnly = false)
 	{
-		// *::AddJitter gate and cap (the game).
+		// AddJitter's gate and cap.
 		if (instance.Record is null || !(pct > 0f))
 			return;
 

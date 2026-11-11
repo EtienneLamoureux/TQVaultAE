@@ -49,8 +49,8 @@ public readonly record struct SkillTipLine(string Text, SkillTipKind Kind, bool 
 }
 
 /// <summary>
-/// Builds the tool tip of a skill as the game's skill window shows it (<c>the game</c>, the
-/// <c>the game</c> parts): name, description, the current level with its effects, the next level with
+/// Builds the tool tip of a skill as the game's skill window shows it: name, description, the current level with its
+/// effects, the next level with
 /// its effects, then what stops a point or the invitation to add one; then the levels the equipment adds and how to click.
 /// The mastery button shows the mastery the same way.
 /// </summary>
