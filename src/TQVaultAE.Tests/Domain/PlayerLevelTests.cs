@@ -97,6 +97,21 @@ public class PlayerLevelTests
 	public void LevelStartXp_IsOnePointAboveTheMinimumOfTheLevel(int level, int expected)
 		=> PlayerLevel.LevelStartXp(level).Should().Be(expected);
 
+	[Theory]
+	[InlineData(100, 100, 4, 3, 1, false, 104)]   // left click: one point
+	[InlineData(100, 100, 4, 3, 1, true, 112)]    // Shift: every point left
+	[InlineData(108, 100, 4, 0, -1, false, 104)]  // right click: one point back
+	[InlineData(120, 100, 4, 0, -1, true, 100)]   // Shift: back to the start
+	[InlineData(92, 100, 4, 0, -1, true, 92)]     // Shift never raises a lowered attribute
+	[InlineData(52, 52, 4, 0, -1, false, 50)]     // not below the minimum
+	[InlineData(300, 300, 40, 2, 1, false, 340)]  // health: 40 per point
+	public void AttributeClickTarget_FollowsTheButton(int current, int start, int increment, int pointsLeft, int step, bool toEnd, int expected)
+		=> PlayerLevel.AttributeClickTarget(current, start, increment, pointsLeft, step, toEnd, minimum: 50, maximum: 2000).Should().Be(expected);
+
+	[Fact]
+	public void AttributeUndoOrder_PutsTheRaisedAttributesBackFirst()
+		=> PlayerLevel.AttributeUndoOrder([300, 340, 50, 70, 46], [300, 300, 60, 50, 50]).Should().Equal(1, 3, 0, 2, 4);
+
 	[Fact]
 	public void LevelStartXp_UnsupportedLevel_Throws()
 	{

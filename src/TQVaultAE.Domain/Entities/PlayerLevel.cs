@@ -242,4 +242,29 @@ public class PlayerLevel
 		newPool = pool;
 		return false;
 	}
+
+	/// <summary>How much of an attribute one point buys: 40 health or energy, 4 strength, intelligence or dexterity.</summary>
+	public static int IncrementPerPoint(bool healthOrEnergy)
+		=> healthOrEnergy ? HealthAndManaIncrementPerPoint : AtrributeIncrementPerPoint;
+
+	/// <summary>
+	/// The value a click on an attribute's "+" button asks for: a left click (<paramref name="step"/> &gt; 0) one point
+	/// more, with Shift every point left; a right click one point back, with Shift back to the value at the start (never
+	/// above the current one). Kept within the attribute's bounds; the pool then pays or refunds it
+	/// (<see cref="TryChangeAttribute"/>).
+	/// </summary>
+	public static int AttributeClickTarget(int current, int start, int incrementPerPoint, int pointsLeft, int step, bool toEnd, int minimum, int maximum)
+	{
+		var target = step > 0
+			? current + incrementPerPoint * (toEnd ? pointsLeft : 1)
+			: toEnd ? Math.Min(current, start) : current - incrementPerPoint;
+		return Math.Clamp(target, minimum, maximum);
+	}
+
+	/// <summary>
+	/// The order in which Undo puts the attributes back to their start values: the raised ones first, which gives their
+	/// points back for the lowered ones.
+	/// </summary>
+	public static IEnumerable<int> AttributeUndoOrder(IReadOnlyList<int> current, IReadOnlyList<int> start)
+		=> Enumerable.Range(0, current.Count).OrderBy(i => current[i] > start[i] ? 0 : 1);
 }

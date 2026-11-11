@@ -350,7 +350,7 @@ internal sealed partial class CharacterEditDialog
 	private void CharacterAttributes_Undo()
 	{
 		var boxes = this.AttributeBoxes;
-		foreach (var i in Enumerable.Range(0, boxes.Length).OrderBy(i => Convert.ToInt32(boxes[i].Value) > this._startAttributes[i] ? 0 : 1))
+		foreach (var i in PlayerLevel.AttributeUndoOrder([.. boxes.Select(b => Convert.ToInt32(b.Value))], this._startAttributes))
 			boxes[i].Value = Math.Clamp(this._startAttributes[i], Convert.ToInt32(boxes[i].Minimum), Convert.ToInt32(boxes[i].Maximum));
 
 		this.InvalidateStats();
@@ -363,12 +363,10 @@ internal sealed partial class CharacterEditDialog
 	private void CharacterAttribute_Clicked(int attribute, int step, bool toEnd)
 	{
 		var box = this.AttributeBoxes[attribute];
-		var increment = attribute < 2 ? PlayerLevel.HealthAndManaIncrementPerPoint : PlayerLevel.AtrributeIncrementPerPoint;
 		var current = Convert.ToInt32(box.Value);
-		var target = step > 0
-			? current + increment * (toEnd ? Convert.ToInt32(this.attributeNumericUpDown.Value) : 1)
-			: toEnd ? Math.Min(current, this._startAttributes[attribute]) : current - increment;
-		target = Math.Clamp(target, Convert.ToInt32(box.Minimum), Convert.ToInt32(box.Maximum));
+		var target = PlayerLevel.AttributeClickTarget(current, this._startAttributes[attribute],
+			PlayerLevel.IncrementPerPoint(attribute is CharacterPanelInput.Health or CharacterPanelInput.Energy),
+			Convert.ToInt32(this.attributeNumericUpDown.Value), step, toEnd, Convert.ToInt32(box.Minimum), Convert.ToInt32(box.Maximum));
 		if (target != current)
 			box.Value = target;
 
