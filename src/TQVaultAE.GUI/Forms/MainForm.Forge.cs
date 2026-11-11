@@ -31,9 +31,10 @@ public partial class MainForm
 		forgePanel.CancelAction = ForgeActionCanceled;
 		forgePanel.ForgeAction = ForgeActionForged;
 
-		// The space follows the panels the forge stands for: a zoom while the forge is open refits it.
-		this.playerPanel.SizeChanged += (_, _) => this.RefitOpenForge();
-		this.stashPanel.SizeChanged += (_, _) => this.RefitOpenForge();
+		// The forge takes the height of the panels it stands for: the character's bags and the stash under them.
+		forgePanel.HeightLimit = () => this.playerPanel.Height + this.stashPanel.Height - forgePanel.Margin.Vertical;
+		this.playerPanel.SizeChanged += (_, _) => forgePanel.FitHeight();
+		this.stashPanel.SizeChanged += (_, _) => forgePanel.FitHeight();
 		return forgePanel;
 	}
 
@@ -81,7 +82,7 @@ public partial class MainForm
 		// Show the forge
 		forgePanel.Dock = DockStyle.Left;
 		forgePanel.Visible = true;
-		this.FitForgePanel();
+		forgePanel.FitHeight();
 
 		// The button now leads back to the vaults: it says so.
 		this.forgeButtonText = forgeButton.Text;
@@ -90,16 +91,6 @@ public partial class MainForm
 		// Detailed tooltips while the forge is open, as session state: the setting itself is not changed, so closing the
 		// app with the forge open cannot save the forced value.
 		this.userContext.ForceDetailedTooltipView = true;
-	}
-
-	/// <summary>The forge takes the height of the panels it stands for: the character's bags and the stash under them.</summary>
-	private void FitForgePanel()
-		=> forgePanel.FitHeight(this.playerPanel.Height + this.stashPanel.Height - forgePanel.Margin.Vertical);
-
-	private void RefitOpenForge()
-	{
-		if (forgePanel.Visible)
-			this.FitForgePanel();
 	}
 
 	private void ForgeActionForged()
