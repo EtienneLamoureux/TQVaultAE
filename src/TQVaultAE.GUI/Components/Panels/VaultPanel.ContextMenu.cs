@@ -345,12 +345,9 @@ public partial class VaultPanel
 					return;
 				}
 
-				// The overwritten items leave the search too.
-				if (this.ShownPlayer.GetSack(destinationIndex) is { } overwritten)
-					this.Services.VaultService.EmptyBag(overwritten);
 			}
 
-			if (this.ShownPlayer.CopySack(this.CurrentBag, destinationIndex))
+			if (this.Services.VaultService.CopyBag(this.ShownPlayer, this.CurrentBag, destinationIndex))
 			{
 				if (this.CurrentBag != destinationIndex)
 				{
@@ -376,7 +373,7 @@ public partial class VaultPanel
 		if (item is not null)
 		{
 			int destinationIndex = GetDestinationSackIndex(item);
-			if (this.ShownPlayer.MoveSack(this.CurrentBag, destinationIndex))
+			if (this.Services.VaultService.MoveBag(this.ShownPlayer, this.CurrentBag, destinationIndex))
 			{
 				if (this.CurrentBag != destinationIndex)
 				{

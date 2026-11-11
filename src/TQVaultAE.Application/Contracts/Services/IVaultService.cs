@@ -57,6 +57,25 @@ public interface IVaultService
 	void EmptyBag(SackCollection sack);
 
 	/// <summary>
+	/// "Move Bag": moves a bag to another place, the bags in between shift by one. The search follows the new bag
+	/// numbers.
+	/// </summary>
+	/// <param name="vault">The vault.</param>
+	/// <param name="source">Index of the bag to move.</param>
+	/// <param name="destination">Its new index.</param>
+	/// <returns>Whether the bag moved.</returns>
+	bool MoveBag(PlayerCollection vault, int source, int destination);
+
+	/// <summary>
+	/// "Copy Bag": replaces a bag by a copy of another. The overwritten items leave the search, the copies join it.
+	/// </summary>
+	/// <param name="vault">The vault.</param>
+	/// <param name="source">Index of the bag to copy.</param>
+	/// <param name="destination">Index of the bag replaced.</param>
+	/// <returns>Whether the bag was copied.</returns>
+	bool CopyBag(PlayerCollection vault, int source, int destination);
+
+	/// <summary>
 	/// Shows or hides the tooltip of a vault bag, or of every bag. The list is saved in the vault file, so the vault is
 	/// marked modified when it changes.
 	/// </summary>

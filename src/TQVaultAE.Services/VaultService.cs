@@ -265,6 +265,53 @@ public class VaultService(
 	}
 
 	/// <inheritdoc />
+	public bool MoveBag(PlayerCollection vault, int source, int destination)
+	{
+		if (this.CheckBagTransfer(vault, source, destination) == BagTransferCheck.Invalid || !vault.MoveSack(source, destination))
+			return false;
+
+		// Every bag between the two changed its number.
+		int sackNumber = -1;
+		foreach (var sack in vault)
+		{
+			sackNumber++;
+			if (sack is null)
+				continue;
+
+			foreach (var item in sack)
+				item.Place.SackNumber = sackNumber;
+		}
+
+		return true;
+	}
+
+	/// <inheritdoc />
+	public bool CopyBag(PlayerCollection vault, int source, int destination)
+	{
+		if (this.CheckBagTransfer(vault, source, destination) == BagTransferCheck.Invalid)
+			return false;
+
+		if (vault.GetSack(destination) is { } overwritten)
+		{
+			foreach (var item in overwritten)
+				this.ItemDatabaseService.RemoveItemFromDatabase(item);
+		}
+
+		if (!vault.CopySack(source, destination))
+			return false;
+
+		var copy = vault.GetSack(destination)!;
+		copy.IsModified = true;
+		foreach (var item in copy)
+		{
+			item.Place.SackNumber = destination;
+			this.ItemDatabaseService.TryAddItemToDatabase(item);
+		}
+
+		return true;
+	}
+
+	/// <inheritdoc />
 	public void ChangeBagTooltip(PlayerCollection vault, BagTooltipChange change, int bag, int bagCount)
 	{
 		var disabled = vault.DisabledTooltipBagId;

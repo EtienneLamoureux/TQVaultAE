@@ -770,6 +770,47 @@ public class VaultServiceTests
 	}
 
 	[Fact]
+	public void MoveBag_GivesTheItemsOfTheShiftedBagsTheirNewBagNumber()
+	{
+		// Arrange: the item of bag 2 is found by the search in bag 2
+		var vault = CreateVaultWithItemInBag(bags: 3, filledBag: 2);
+		var item = vault.GetSack(2)!.Single();
+		item.Place.SackNumber = 2;
+
+		// Act: bag 2 goes first
+		var moved = _vaultService.MoveBag(vault, 2, 0);
+
+		// Assert
+		moved.Should().BeTrue();
+		vault.GetSack(0)!.Should().Contain(item);
+		item.Place.SackNumber.Should().Be(0);
+	}
+
+	[Fact]
+	public void MoveBag_SameBag_DoesNothing()
+		=> _vaultService.MoveBag(CreateVaultWithItemInBag(bags: 3, filledBag: 2), 1, 1).Should().BeFalse();
+
+	[Fact]
+	public void CopyBag_IndexesTheCopies_AndDropsTheOverwrittenItems()
+	{
+		// Arrange
+		var vault = CreateVaultWithItemInBag(bags: 3, filledBag: 2);
+		vault.GetSack(0)!.AddItem(new Item());
+		var overwritten = vault.GetSack(2)!.Single();
+
+		// Act
+		var copied = _vaultService.CopyBag(vault, 0, 2);
+
+		// Assert
+		copied.Should().BeTrue();
+		var copy = vault.GetSack(2)!.Single();
+		copy.Should().NotBeSameAs(vault.GetSack(0)!.Single());
+		copy.Place.SackNumber.Should().Be(2);
+		_mockItemDatabaseService.Verify(x => x.RemoveItemFromDatabase(overwritten), Times.Once);
+		_mockItemDatabaseService.Verify(x => x.TryAddItemToDatabase(copy), Times.Once);
+	}
+
+	[Fact]
 	public void BuildCsvExport_WholeVault_NumbersRowsAcrossBagsWithOneBasedBagIds()
 	{
 		_userSettings.CSVDelimiter = "Semicolon";
