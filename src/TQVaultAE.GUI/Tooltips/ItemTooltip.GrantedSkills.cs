@@ -1,4 +1,5 @@
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Components.Character;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Presentation;
 
@@ -112,17 +113,17 @@ public partial class ItemTooltip
 				blocks.ForEach(b => b.Dispose());
 			}
 
-			var border = TQColor.DarkGray.Color();
-			var width = panels.Sum(p => p.Width + 2) + (gap * (panels.Count - 1));
-			var composite = new Bitmap(width, panels.Max(p => p.Height) + 2);
+			var frame = this.Frame();
+			var width = panels.Sum(p => p.Width + frame.Horizontal) + (gap * (panels.Count - 1));
+			var composite = new Bitmap(width, panels.Max(p => p.Height) + frame.Vertical);
 			using (var g = Graphics.FromImage(composite))
 			{
 				g.Clear(SkillsTransparencyKey);
 				int x = 0;
 				foreach (var panel in panels)
 				{
-					DrawFramed(g, panel, x, border);
-					x += panel.Width + 2 + gap;
+					this.DrawFramed(g, panel, x, bg);
+					x += panel.Width + frame.Horizontal + gap;
 				}
 			}
 
@@ -207,10 +208,30 @@ public partial class ItemTooltip
 		this.ShowCachedImage(image);
 	}
 
-	/// <summary>Draws <paramref name="image"/> at <paramref name="x"/> inside a 1 pixel frame, like the tooltip border.</summary>
-	private static void DrawFramed(Graphics g, Bitmap image, int x, Color border)
+	/// <summary>The game's golden rollover border, as the character editor's tool tips have; null without the game files.</summary>
+	private GameTooltipFrame? GameFrame => GameTooltipFrame.Load(this.UIService);
+
+	/// <summary>The room the border takes around a panel: the game's golden border, or a 1 pixel line without it.</summary>
+	private Padding Frame() => this.GameFrame?.Thickness(this.UIService.Scale) ?? new Padding(1);
+
+	/// <summary>
+	/// Draws <paramref name="image"/> at <paramref name="x"/> inside the tooltip border: the game's golden rollover
+	/// border, or a 1 pixel gray line when the game files lack it.
+	/// </summary>
+	private void DrawFramed(Graphics g, Bitmap image, int x, Color background)
 	{
-		using var pen = new Pen(border);
+		var frame = this.Frame();
+		var bounds = new Rectangle(x, 0, image.Width + frame.Horizontal, image.Height + frame.Vertical);
+		if (this.GameFrame is { } gameFrame)
+		{
+			using (var back = new SolidBrush(background))
+				g.FillRectangle(back, bounds);
+			g.DrawImageUnscaled(image, x + frame.Left, frame.Top);
+			gameFrame.Draw(g, bounds, this.UIService.Scale);
+			return;
+		}
+
+		using var pen = new Pen(TQColor.DarkGray.Color());
 		g.DrawRectangle(pen, x, 0, image.Width + 1, image.Height + 1);
 		g.DrawImageUnscaled(image, x + 1, 1);
 	}

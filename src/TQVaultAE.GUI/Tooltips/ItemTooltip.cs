@@ -296,13 +296,16 @@ public partial class ItemTooltip : BaseTooltip
 			return;
 		}
 
-		// Rasterize flowLayoutPanelFriendlyNames and cache it for fast redraw,
-		// with the gray frame the form padding draws around it: the cached redraw has no padding.
+		// Rasterize flowLayoutPanelFriendlyNames inside the tooltip border and cache it for fast redraw; the image is
+		// shown at once, so the first display has the same border as the cached ones.
 		using var panel = Rasterize(this.flowLayoutPanelFriendlyNames);
-		var raster = new Bitmap(panel.Width + 2, panel.Height + 2);
+		var frame = this.Frame();
+		var raster = new Bitmap(panel.Width + frame.Horizontal, panel.Height + frame.Vertical);
 		using (var g = Graphics.FromImage(raster))
-			DrawFramed(g, panel, 0, this.BackColor);
+			this.DrawFramed(g, panel, 0, this.flowLayoutPanelFriendlyNames.BackColor);
 		ToImage.Add(key, raster, Data);
+		if (ToImage.TryGetCopy(key, out var shown, out _))
+			this.ShowCompositeImage(shown);
 	}
 
 	/// <summary>Adds the row of a line built by <see cref="ItemTooltipContentBuilder"/>.</summary>

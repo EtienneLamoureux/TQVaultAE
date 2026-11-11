@@ -167,7 +167,7 @@ internal sealed partial class CharacterEditDialog
 				this.FontService.GetFontLight(17F * scale, FontStyle.Bold, GraphicsUnit.Pixel),
 				this.FontService.GetFontLight(15F * scale, FontStyle.Regular, GraphicsUnit.Pixel),
 				scale,
-				GameTooltipFrame.Load(id => this.UIService.LoadBitmap(id.ToRecordId()) is var piece && ReferenceEquals(piece, this.UIService.DefaultBitmap) ? null : piece));
+				GameTooltipFrame.Load(this.UIService));
 			var tooltip = this._skillTooltip;
 			this.FormClosed += (_, _) => tooltip.Dispose();
 		}

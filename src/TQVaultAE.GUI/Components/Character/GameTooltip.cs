@@ -37,6 +37,37 @@ internal sealed record GameTooltipFrame(Bitmap TopLeft, Bitmap Top, Bitmap TopRi
 			? null
 			: new GameTooltipFrame(pieces[0]!, pieces[1]!, pieces[2]!, pieces[3]!, pieces[4]!, pieces[5]!, pieces[6]!, pieces[7]!);
 	}
+
+	/// <summary>Loads the pieces through the UI service; <see langword="null"/> when the game files lack one.</summary>
+	public static GameTooltipFrame? Load(TQVaultAE.Presentation.Win32.Contracts.IUIService uiService)
+		=> Load(id => uiService.LoadBitmap(RecordId.Create(id)) is var piece && ReferenceEquals(piece, uiService.DefaultBitmap) ? null : piece);
+
+	/// <summary>The width of the border on each side, at <paramref name="scale"/>.</summary>
+	public Padding Thickness(float scale)
+		=> new(Scaled(this.TopLeft.Width, scale), Scaled(this.TopLeft.Height, scale), Scaled(this.BottomRight.Width, scale), Scaled(this.BottomRight.Height, scale));
+
+	private static int Scaled(int pixels, float scale) => Math.Max(1, (int)Math.Round(pixels * scale));
+
+	/// <summary>Draws the border inside <paramref name="bounds"/>: the corners at their size, the edges stretched between them.</summary>
+	public void Draw(Graphics g, Rectangle bounds, float scale)
+	{
+		var state = g.Save();
+		g.InterpolationMode = InterpolationMode.NearestNeighbor;
+		g.PixelOffsetMode = PixelOffsetMode.Half;
+		var t = this.Thickness(scale);
+		int left = t.Left, top = t.Top, right = t.Right, bottom = t.Bottom;
+		int innerWidth = Math.Max(0, bounds.Width - left - right), innerHeight = Math.Max(0, bounds.Height - top - bottom);
+
+		g.DrawImage(this.Top, new Rectangle(bounds.X + left, bounds.Y, innerWidth, top));
+		g.DrawImage(this.Bottom, new Rectangle(bounds.X + left, bounds.Bottom - bottom, innerWidth, bottom));
+		g.DrawImage(this.Left, new Rectangle(bounds.X, bounds.Y + top, left, innerHeight));
+		g.DrawImage(this.Right, new Rectangle(bounds.Right - right, bounds.Y + top, right, innerHeight));
+		g.DrawImage(this.TopLeft, new Rectangle(bounds.X, bounds.Y, left, top));
+		g.DrawImage(this.TopRight, new Rectangle(bounds.Right - right, bounds.Y, right, top));
+		g.DrawImage(this.BottomLeft, new Rectangle(bounds.X, bounds.Bottom - bottom, left, bottom));
+		g.DrawImage(this.BottomRight, new Rectangle(bounds.Right - right, bounds.Bottom - bottom, right, bottom));
+		g.Restore(state);
+	}
 }
 
 /// <summary>
@@ -150,7 +181,7 @@ internal sealed partial class GameTooltip : IDisposable
 			g.FillRectangle(back, bounds);
 		if (this._frame is { } frame)
 		{
-			this.PaintFrame(g, bounds, frame);
+			frame.Draw(g, bounds, this._scale);
 		}
 		else
 		{
@@ -161,28 +192,6 @@ internal sealed partial class GameTooltip : IDisposable
 		}
 
 		this.Layout(g);
-	}
-
-	/// <summary>Draws the border pieces around <paramref name="bounds"/>: the corners at their size, the edges stretched between them.</summary>
-	private void PaintFrame(Graphics g, Rectangle bounds, GameTooltipFrame frame)
-	{
-		var state = g.Save();
-		g.InterpolationMode = InterpolationMode.NearestNeighbor;
-		g.PixelOffsetMode = PixelOffsetMode.Half;
-		int S(int pixels) => Math.Max(1, (int)Math.Round(pixels * this._scale));
-		int left = S(frame.TopLeft.Width), top = S(frame.TopLeft.Height);
-		int right = S(frame.BottomRight.Width), bottom = S(frame.BottomRight.Height);
-		int innerWidth = Math.Max(0, bounds.Width - left - right), innerHeight = Math.Max(0, bounds.Height - top - bottom);
-
-		g.DrawImage(frame.Top, new Rectangle(bounds.X + left, bounds.Y, innerWidth, top));
-		g.DrawImage(frame.Bottom, new Rectangle(bounds.X + left, bounds.Bottom - bottom, innerWidth, bottom));
-		g.DrawImage(frame.Left, new Rectangle(bounds.X, bounds.Y + top, left, innerHeight));
-		g.DrawImage(frame.Right, new Rectangle(bounds.Right - right, bounds.Y + top, right, innerHeight));
-		g.DrawImage(frame.TopLeft, new Rectangle(bounds.X, bounds.Y, left, top));
-		g.DrawImage(frame.TopRight, new Rectangle(bounds.Right - right, bounds.Y, right, top));
-		g.DrawImage(frame.BottomLeft, new Rectangle(bounds.X, bounds.Bottom - bottom, left, bottom));
-		g.DrawImage(frame.BottomRight, new Rectangle(bounds.Right - right, bounds.Bottom - bottom, right, bottom));
-		g.Restore(state);
 	}
 
 	/// <summary>
