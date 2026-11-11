@@ -3,15 +3,14 @@ using System.Globalization;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
-using TQVaultAE.Presentation;
 
-namespace TQVaultAE.GUI.Components.Character;
+namespace TQVaultAE.Presentation;
 
 /// <summary>
 /// The state of a character the statistics panel is built from: the save, the attributes as spent, the skills as
 /// learned, and the options. The character editor gives its editors' values; the main window gives the save's.
 /// </summary>
-internal sealed record CharacterPanelInput
+public sealed record CharacterPanelInput
 {
 	public required PlayerCollection Player { get; init; }
 	public required PlayerInfo Info { get; init; }
@@ -55,7 +54,7 @@ internal sealed record CharacterPanelInput
 /// equipped items, the skills, the attributes, the difficulty and the buffs option, with the game's texts. The sums of
 /// the equipped items and of the skills are kept until they change.
 /// </summary>
-internal sealed class CharacterPanelViewBuilder(ICharacterStatsService service, ITranslationService translation)
+public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, ITranslationService translation)
 {
 	private readonly ICharacterStatsService _service = service;
 	private readonly ITranslationService _translation = translation;
