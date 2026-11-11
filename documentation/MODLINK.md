@@ -282,8 +282,6 @@ The import's end message names the mods that were dropped.
   installed mod is read with that mod's database, loaded the first time it is needed. The search covers every
   character from startup. Startup is longer by the reading of each mod database in use (about half a second for a
   large mod). A character linked to a mod that is not installed is read with the base game, as when it is selected.
-
-### Open questions
-
-- **The shared stashes of the other maps**: each map has its own transfer stash and relic vault. *Load all files* reads
-  those of the startup map. Should it also read those of every other map in use, so that the search covers them too?
+- ***Load all files* also reads the shared stashes of every map in use**: the transfer stash and relic vault of the base
+  game and of each mod a listed character is linked to (`SaveData\Sys\<mod>`), each with its own map. The search covers
+  them all. Selecting a character still shows its own map's shared stashes.
