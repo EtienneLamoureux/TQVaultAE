@@ -28,6 +28,20 @@ public partial class MainForm
 	/// <summary>The "Modded vault" submenu shown now; null before the menu first opens.</summary>
 	private ToolStripMenuItem? vaultModMenu;
 
+	/// <summary>The "Share to PasteBin" entry of <see cref="vaultExportContextMenu"/>.</summary>
+	private ToolStripItem? vaultPasteBinItem;
+
+	/// <summary>
+	/// Prepares the vault tools menu as it opens: the "Modded vault" submenu for the vault shown, and "Share to PasteBin"
+	/// enabled when an API key is set (it may be set in the settings after startup).
+	/// </summary>
+	private void PrepareVaultMenu()
+	{
+		this.RefreshVaultModMenu();
+		if (this.vaultPasteBinItem is not null)
+			this.vaultPasteBinItem.Enabled = this.itemExchangeService?.HasPasteBinApiKey == true;
+	}
+
 	/// <summary>
 	/// Rebuilds the "Modded vault" submenu for the vault shown: the base game and the installed mods, its mod checked.
 	/// </summary>
@@ -107,15 +121,14 @@ public partial class MainForm
 		// The vault's mod: built when the menu opens, for the vault shown then.
 		vaultExportContextMenu.Items.Add("-");
 		vaultModMenuIndex = vaultExportContextMenu.Items.Count;
-		vaultExportContextMenu.Opening += (s, e) => this.RefreshVaultModMenu();
+		vaultExportContextMenu.Opening += (s, e) => this.PrepareVaultMenu();
 
 		vaultExportContextMenu.Items.Add("-");
 		vaultExportContextMenu.Items.Add(Resources.PlayerPanelMenuExportTabFile, null, ExportVaultToFileClicked);
 		vaultExportContextMenu.Items.Add(Resources.PlayerPanelMenuExportTabClipboard, null, ExportVaultToClipboardClicked);
 
-		var pasteBinEnabled = this.itemExchangeService?.HasPasteBinApiKey == true;
-		var pasteBinItem = vaultExportContextMenu.Items.Add(Resources.PlayerPanelMenuExportTabPasteBin, null, ExportVaultToPasteBinClicked);
-		pasteBinItem.Enabled = pasteBinEnabled;
+		// Enabled when the menu opens (PrepareVaultMenu).
+		this.vaultPasteBinItem = vaultExportContextMenu.Items.Add(Resources.PlayerPanelMenuExportTabPasteBin, null, ExportVaultToPasteBinClicked);
 
 		vaultExportContextMenu.Items.Add("-");
 		vaultExportContextMenu.Items.Add(Resources.PlayerPanelMenuImportTabFile, null, ImportFromFileClicked);

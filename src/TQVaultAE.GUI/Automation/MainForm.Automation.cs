@@ -33,7 +33,7 @@ public partial class MainForm
 	/// </summary>
 	internal (IReadOnlyList<AutomationMenuEntry> Entries, string? Clicked) AutomationVaultMenu(IReadOnlyList<string>? path)
 	{
-		this.RefreshVaultModMenu();
+		this.PrepareVaultMenu();
 		var entries = AutomationMenus.Describe(this.vaultExportContextMenu.Items);
 		string? clicked = path is { Count: > 0 } ? AutomationMenus.ClickLater(this, this.vaultExportContextMenu, path) : null;
 		return (entries, clicked);
@@ -42,7 +42,7 @@ public partial class MainForm
 	/// <summary>Draws the menu of the vault tools button as it opens, with the sub menus along <paramref name="open"/>.</summary>
 	internal Bitmap AutomationRenderVaultMenu(IReadOnlyList<string> open)
 	{
-		this.RefreshVaultModMenu();
+		this.PrepareVaultMenu();
 		return AutomationMenus.Render(this.vaultExportContextMenu, open);
 	}
 
