@@ -556,6 +556,27 @@ internal static partial class AutomationTools
 			return Serialize(new { panel = named.Id, selected = named.Panel.AutomationSelectedItems.Select(i => DescribeItem(i, null)).ToList() });
 		});
 
+	[McpServerTool(Name = "hover_bag", Destructive = true)]
+	[Description("Shows the tooltip of a bag button (the summary of the bag's items), like resting the pointer on it; capture it with capture('tooltip'). hide=true closes it.")]
+	public static string HoverBag(
+		[Description("Panel id: vault, secondaryVault, playerBag, stash.")] string panel,
+		[Description("Zero-based bag button index.")] int bag,
+		[Description("True to close the bag tooltip instead.")] bool hide = false)
+		=> AutomationHost.OnUi(form =>
+		{
+			var container = AutomationPanels.Resolve(form, panel).Container
+				?? throw new McpException($"Panel '{panel}' has no bag buttons.");
+
+			if (bag < 0 || bag >= container.BagButtons.Count)
+				throw new McpException($"Bag {bag} is out of range 0..{container.BagButtons.Count - 1}.");
+
+			Tooltips.BagButtonTooltip.HideTooltip();
+			if (!hide)
+				Tooltips.BagButtonTooltip.ShowTooltip(Program.ServiceProvider.GetRequiredService<GuiServices>(), container.BagButtons[bag]);
+
+			return Serialize(new { panel, bag, tooltips = DescribeTooltips() });
+		});
+
 	[McpServerTool(Name = "hover_end", Destructive = true)]
 	[Description("Ends a hover_item: the virtual cursor leaves the panel and the tooltip closes.")]
 	public static string HoverEnd()

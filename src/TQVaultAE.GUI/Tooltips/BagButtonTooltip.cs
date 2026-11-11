@@ -139,12 +139,15 @@ public partial class BagButtonTooltip : BaseTooltip
 		this.flowLayoutPanelFriendlyNames.ResumeLayout();
 		this.ResumeLayout();
 
-		// Rasterize flowLayoutPanelFriendlyNames and cache it for fast redraw
+		// Rasterize flowLayoutPanelFriendlyNames inside the tooltip border and cache it for fast redraw; the image is
+		// shown at once, so the first display has the same border as the cached ones.
 		var w = this.flowLayoutPanelFriendlyNames.Width;
 		var h = this.flowLayoutPanelFriendlyNames.Height;
-		var raster = new Bitmap(w, h);
-		this.flowLayoutPanelFriendlyNames.DrawToBitmap(raster, new Rectangle(0, 0, w, h));
-		ToImage.Add(key, raster, null);
+		using var panel = new Bitmap(w, h);
+		this.flowLayoutPanelFriendlyNames.DrawToBitmap(panel, new Rectangle(0, 0, w, h));
+		ToImage.Add(key, this.Framed(panel, this.flowLayoutPanelFriendlyNames.BackColor), null);
+		if (ToImage.TryGetCopy(key, out var shown, out _))
+			this.ShowCachedImage(shown);
 	}
 
 	private void AddRow(string friendlyName, Color color)

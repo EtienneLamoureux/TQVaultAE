@@ -52,6 +52,24 @@ public class BaseTooltip : Form
 		});
 	}
 
+	/// <summary>
+	/// A copy of <paramref name="image"/> inside the tooltip border: the game's golden rollover border, as the
+	/// character editor's tool tips have, or a 1 pixel gray line when the game files lack it.
+	/// </summary>
+	protected Bitmap Framed(Bitmap image, Color background)
+	{
+		var gameFrame = TQVaultAE.GUI.Components.Character.GameTooltipFrame.Load(this.UIService);
+		var frame = gameFrame?.Thickness(this.UIService.Scale) ?? new Padding(1);
+		var bounds = new Rectangle(0, 0, image.Width + frame.Horizontal, image.Height + frame.Vertical);
+		var framed = new Bitmap(bounds.Width, bounds.Height);
+		using var g = Graphics.FromImage(framed);
+		using (var back = new SolidBrush(gameFrame is null ? TQColor.DarkGray.Color() : background))
+			g.FillRectangle(back, bounds);
+		g.DrawImageUnscaled(image, frame.Left, frame.Top);
+		gameFrame?.Draw(g, bounds, this.UIService.Scale);
+		return framed;
+	}
+
 	protected override void Dispose(bool disposing)
 	{
 		base.Dispose(disposing);
