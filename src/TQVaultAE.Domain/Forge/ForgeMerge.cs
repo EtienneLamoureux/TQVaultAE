@@ -54,7 +54,12 @@ public static class ForgeMerge
 		{
 			target.Relic2Info = target.RelicBonus2Info = null;
 			if (RelicFor(relic2, ForgeSlot.Relic2) is { } r)
+			{
 				(target.relic2ID, target.RelicBonus2Id, target.Var2) = r;
+
+				// The second relic is only written for an item that has its fields.
+				target.atlantis = true;
+			}
 		}
 
 		(RecordId Relic, RecordId Bonus, int Shards)? RelicFor(Item source, ForgeSlot slot)

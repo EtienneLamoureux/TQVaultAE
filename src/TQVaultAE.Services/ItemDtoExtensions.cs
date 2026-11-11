@@ -47,11 +47,15 @@ public static class ItemDtoExtensions
 			endBlockCrap1 = 0
 		};
 
-		if (!string.IsNullOrWhiteSpace(dto.relicName2))
+		// As the vault loader: the game also writes the second relic fields empty, with a var2 to keep, so an item
+		// has them whenever they hold anything but the defaults of an item without them.
+		if (!string.IsNullOrWhiteSpace(dto.relicName2)
+			|| !string.IsNullOrWhiteSpace(dto.relicBonus2)
+			|| dto.var2 != Item.var2Default)
 		{
 			item.atlantis = true;
-			item.relic2ID = dto.relicName2;
-			item.RelicBonus2Id = dto.relicBonus2;
+			item.relic2ID = dto.relicName2 ?? string.Empty;
+			item.RelicBonus2Id = dto.relicBonus2 ?? string.Empty;
 			item.Var2 = dto.var2;
 		}
 		else

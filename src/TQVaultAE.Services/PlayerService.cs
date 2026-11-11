@@ -161,10 +161,13 @@ public class PlayerService(
 	/// <inheritdoc/>
 	public CharacterSessionLoadResult LoadCharacterSession(PlayerSave selectedSave, bool loadTransferStash, bool loadRelicVaultStash)
 	{
-		// Read again a character read with another map's database, unless it has changes to save.
+		// Read again a character read with another map's database, unless it or its stash has changes to save: the
+		// stash is read again with it, and its unsaved changes would be dropped.
 		string playerFile = this.PathIO.Combine(selectedSave.Folder, this.GamePathResolver.PlayerSaveFileName);
-		bool reload = this.GameMapService.LoadedWithOtherMap(selectedSave)
-			&& !(this.userContext.Players.TryGetValue(playerFile, out var loaded) && loaded.IsValueCreated && loaded.Value.IsModified);
+		string stashFile = this.PathIO.Combine(selectedSave.Folder, this.GamePathResolver.PlayerStashFileNameB);
+		bool unsaved = (this.userContext.Players.TryGetValue(playerFile, out var loaded) && loaded.IsValueCreated && loaded.Value.IsModified)
+			|| (this.userContext.Stashes.TryGetValue(stashFile, out var loadedStash) && loadedStash.IsValueCreated && loadedStash.Value.IsModified);
+		bool reload = this.GameMapService.LoadedWithOtherMap(selectedSave) && !unsaved;
 
 		var player = this.LoadPlayer(selectedSave, reload);
 
@@ -185,13 +188,17 @@ public class PlayerService(
 	/// Links the mod items of a character linked to an installed mod (records the base game does not have) to that mod,
 	/// so that they keep its data when moved to a vault.
 	/// </summary>
-	private void AdoptCharacterMod(PlayerSave save, PlayerLoadResult player, params StashLoadResult?[] stashes)
+	/// <inheritdoc/>
+	public void AdoptCharacterMod(PlayerSave selectedSave, PlayerLoadResult? player, StashLoadResult? playerStash)
+		=> this.AdoptCharacterMod(selectedSave, player, [playerStash]);
+
+	private void AdoptCharacterMod(PlayerSave save, PlayerLoadResult? player, params StashLoadResult?[] stashes)
 	{
 		if (this.ItemModService is null || this.GameMapService.ModOf(save) is not { State: CharacterModState.Linked, Mod: { } mod })
 			return;
 
 		var items = new List<Item>();
-		if (player.Player is { } pc)
+		if (player?.Player is { } pc)
 		{
 			items.AddRange(pc.Where(s => s is not null).SelectMany(s => s));
 			if (pc.EquipmentSack is not null)
@@ -212,6 +219,7 @@ public class PlayerService(
 	/// <inheritdoc/>
 	public IReadOnlyList<(string File, PlayerCollection Player)> GetModifiedPlayers()
 		=> [.. this.userContext.Players
+			.Where(kvp => kvp.Value.IsValueCreated)
 			.Select(kvp => (File: kvp.Key, Player: kvp.Value.Value))
 			.Where(p => p.Player is not null && p.Player.IsModified)];
 

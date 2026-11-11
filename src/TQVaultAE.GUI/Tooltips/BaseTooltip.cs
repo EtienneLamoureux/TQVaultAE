@@ -34,12 +34,18 @@ public class BaseTooltip : Form
 	/// <summary>Copy of a cached image shown by this tooltip; owned by the tooltip.</summary>
 	private Bitmap? _shownImage;
 
+	/// <summary>The controls a cached image took the place of.</summary>
+	private readonly List<Control> _replaced = [];
+
 	/// <summary>
 	/// Replaces the tooltip content with <paramref name="image"/>, a copy taken from a <c>TooltipImageCache</c>.
 	/// The tooltip owns the copy and disposes it with itself.
 	/// </summary>
 	protected void ShowCachedImage(Bitmap image)
 	{
+		// The controls the image replaces leave the form, so the form no longer disposes them: kept to be disposed
+		// with it (they may still be read until then).
+		this._replaced.AddRange(this.Controls.Cast<Control>());
 		this.Controls.Clear();
 		this.Padding = new Padding(0);
 		this._shownImage?.Dispose();
@@ -77,6 +83,9 @@ public class BaseTooltip : Form
 		{
 			this._shownImage?.Dispose();
 			this._shownImage = null;
+			foreach (var control in this._replaced)
+				control.Dispose();
+			this._replaced.Clear();
 		}
 	}
 

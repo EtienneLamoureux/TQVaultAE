@@ -151,6 +151,9 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 	public Item NewSetMember(Item setItem, RecordId memberId)
 	{
 		Item member = setItem.MakeEmptyCopy(memberId);
+
+		// A piece of the same set comes from the same data: the set item's mod, or its vault's base game.
+		(member.Mod, member.ModFromVault, member.InVault) = (setItem.Mod, setItem.ModFromVault, setItem.InVault);
 		this._itemProvider.GetDBData(member);
 		return member;
 	}
@@ -181,22 +184,33 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 	}
 
 	/// <inheritdoc/>
-	public bool ChangeMod(SackCollection sack, Item item, string? modName)
+	public bool ChangeMod(SackCollection sack, Item item, string? modName, Func<Item, bool>? fits = null)
 	{
 		string? mod = string.IsNullOrWhiteSpace(modName) ? null : modName;
 		if (string.Equals(item.Mod, mod, StringComparison.OrdinalIgnoreCase) && !item.ModFromVault)
 			return false;
 
 		// Chosen for the item: its own link from now on.
+		var previous = (item.Mod, item.ModFromVault);
 		item.Mod = mod;
 		item.ModFromVault = false;
 		this._itemProvider.GetDBData(item);
+
+		// Read with other data, the item may take another size: without room for it, the link is put back rather
+		// than saving items that overlap.
+		if (fits is not null && !fits(item))
+		{
+			(item.Mod, item.ModFromVault) = previous;
+			this._itemProvider.GetDBData(item);
+			return false;
+		}
+
 		MarkModified(sack, item);
 		return true;
 	}
 
 	/// <inheritdoc/>
-	public IReadOnlyList<Item> ChangeVaultMod(PlayerCollection vault, string? modName)
+	public IReadOnlyList<Item> ChangeVaultMod(PlayerCollection vault, string? modName, Func<SackCollection, Item, bool>? fits = null)
 	{
 		string? mod = string.IsNullOrWhiteSpace(modName) ? null : modName;
 		string? previous = vault.Mod;
@@ -215,9 +229,20 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 			foreach (var item in sack.Where(i => i.Mod is null || i.ModFromVault))
 			{
 				bool wasIncomplete = item.IsIncomplete;
+				var previousLink = (item.Mod, item.ModFromVault);
 				item.Mod = mod;
 				item.ModFromVault = mod is not null;
 				this._itemProvider.GetDBData(item);
+
+				// Read with other data, the item may take another size: without room for it in its bag, it keeps the
+				// link it had, as its own, rather than being saved over its neighbours.
+				if (fits is not null && !fits(sack, item))
+				{
+					(item.Mod, item.ModFromVault) = (previousLink.Mod, false);
+					this._itemProvider.GetDBData(item);
+					item.IsModified = true;
+					continue;
+				}
 
 				// An item whose missing records the mod all resolves belongs to that mod: it gets its own link, which it
 				// keeps when the vault's link changes or when it leaves the vault.
@@ -276,10 +301,11 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 			item.InVault = inVault;
 			this._itemProvider.GetDBData(item);
 
-			// Read with a character's map, the item may get its real size: it must still fit where it was put.
-			if (!inVault && !fits(item))
+			// Read with the data of its new place, the item may get its real size: it must still fit where it was put.
+			// Else it keeps the data it came with, which fits.
+			if (!fits(item))
 			{
-				item.InVault = true;
+				item.InVault = !inVault;
 				this._itemProvider.GetDBData(item);
 				moved = false;
 			}

@@ -146,7 +146,8 @@ public partial class SackPanel
 			// The item takes the data of its new place: in a vault, the vault's mod or else the base game; on a
 			// character, the active map when it has no link of its own.
 			if (!drop.Stacked && this.Services.ItemEditService.SettleIn(
-				dragItem, this.HoldsVault?.Invoke() ?? false, this.ContainerMod?.Invoke(), this.FitsWhereItLies))
+				dragItem, this.HoldsVault?.Invoke() ?? false, this.ContainerMod?.Invoke()
+				, item => Fits(this.ShownSack, this.SackSize, item, itemUnderUs)))
 			{
 				this.InvalidateItemCacheAll(dragItem);
 			}

@@ -183,4 +183,11 @@ public interface IVaultService
 	/// <param name="vault">The vault to save.</param>
 	/// <param name="vaultName">Name of the vault.</param>
 	void SaveVault(PlayerCollection vault, string vaultName);
+
+	/// <summary>
+	/// Lists the items of a vault in the search again, after its content was replaced as a whole (import): the items
+	/// it had leave the search, those it has now enter it.
+	/// </summary>
+	/// <param name="vault">The vault.</param>
+	void ReindexVault(PlayerCollection vault);
 }

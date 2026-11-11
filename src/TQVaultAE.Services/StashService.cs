@@ -206,6 +206,7 @@ public class StashService(
 	/// <inheritdoc/>
 	public IReadOnlyList<(string File, Stash Stash)> GetModifiedStashes()
 		=> [.. this.userContext.Stashes
+			.Where(kvp => kvp.Value.IsValueCreated)
 			.Select(kvp => (File: kvp.Key, Stash: kvp.Value.Value))
 			.Where(s => s.Stash is not null && s.Stash.IsModified)];
 

@@ -25,7 +25,26 @@ public class LazyConcurrentDictionary<TKey, TValue> : ConcurrentDictionary<TKey,
 		// Only increment version when a new key was added (not when retrieving existing)
 		if (!keyExisted)
 			IncrementVersion();
-		return lazyResult.Value;
+		return this.ValueOrEvict(key, lazyResult);
+	}
+
+	/// <summary>
+	/// The value of an entry. A <see cref="Lazy{T}"/> keeps the exception of a factory that failed and throws it again
+	/// at every read: such an entry is removed, so that the next call tries again and the readers of the whole
+	/// dictionary (the lists of files to save) never meet it.
+	/// </summary>
+	private TValue ValueOrEvict(TKey key, Lazy<TValue> entry)
+	{
+		try
+		{
+			return entry.Value;
+		}
+		catch
+		{
+			if (((ICollection<KeyValuePair<TKey, Lazy<TValue>>>)this).Remove(new KeyValuePair<TKey, Lazy<TValue>>(key, entry)))
+				IncrementVersion();
+			throw;
+		}
 	}
 
 	public TValue AddOrUpdateAtomic(TKey key, TValue addValue)
@@ -35,7 +54,7 @@ public class LazyConcurrentDictionary<TKey, TValue> : ConcurrentDictionary<TKey,
 			, (k, oldValue) => new Lazy<TValue>(() => addValue, LazyThreadSafetyMode.ExecutionAndPublication)
 		);
 		IncrementVersion();
-		return lazyResult.Value;
+		return this.ValueOrEvict(key, lazyResult);
 	}
 
 	public TValue AddOrUpdateAtomic(TKey key, TValue addValue, Func<TKey, TValue, TValue> updateValueFactory)
@@ -45,7 +64,7 @@ public class LazyConcurrentDictionary<TKey, TValue> : ConcurrentDictionary<TKey,
 			, (k, oldValue) => new Lazy<TValue>(() => updateValueFactory(k, oldValue.Value), LazyThreadSafetyMode.ExecutionAndPublication)
 		);
 		IncrementVersion();
-		return lazyResult.Value;
+		return this.ValueOrEvict(key, lazyResult);
 	}
 
 	public TValue AddOrUpdateAtomic(TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
@@ -55,7 +74,7 @@ public class LazyConcurrentDictionary<TKey, TValue> : ConcurrentDictionary<TKey,
 			, (k, oldValue) => new Lazy<TValue>(() => updateValueFactory(k, oldValue.Value), LazyThreadSafetyMode.ExecutionAndPublication)
 		);
 		IncrementVersion();
-		return lazyResult.Value;
+		return this.ValueOrEvict(key, lazyResult);
 	}
 
 	public new void Clear()

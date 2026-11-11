@@ -52,6 +52,14 @@ public class VaultService(
 		{
 			LoadVault(vault, oldFormatfileName);
 
+			// The old format is read like a character's file: its items are vault items, read with the base game data
+			// when they have no link.
+			foreach (var item in vault.Where(s => s is not null).SelectMany(s => s).Where(i => !i.InVault))
+			{
+				item.InVault = true;
+				this.ItemProvider.GetDBData(item);
+			}
+
 			if (vault.Sacks is { Length: > 0 } sacks)
 				sacks[0].IsModified = true;// Force Save into json on closing
 
@@ -77,6 +85,7 @@ public class VaultService(
 	/// <inheritdoc/>
 	public IReadOnlyList<(string File, PlayerCollection Vault)> GetModifiedVaults()
 		=> [.. this.userContext.Vaults
+			.Where(kvp => kvp.Value.IsValueCreated)
 			.Select(kvp => (File: kvp.Key, Vault: kvp.Value.Value))
 			.Where(v => v.Vault is not null && v.Vault.IsModified)];
 
@@ -88,6 +97,28 @@ public class VaultService(
 
 		this.PlayerCollectionProvider.Save(vault, file);
 		vault.Saved();
+	}
+
+	/// <inheritdoc/>
+	public void ReindexVault(PlayerCollection vault)
+	{
+		this.ItemDatabaseService.RemoveContainerFromDatabase(vault.PlayerFile);
+		this.IndexVaultItems(vault, vault.PlayerFile, vault.PlayerName);
+	}
+
+	/// <summary>Adds the items of a vault to the search database.</summary>
+	private void IndexVaultItems(PlayerCollection vault, string file, string vaultName)
+	{
+		int sackNumber = -1;
+		foreach (var sack in vault)
+		{
+			sackNumber++;
+			if (sack is null)
+				continue;
+
+			foreach (var item in sack)
+				this.ItemDatabaseService.AddItemToDatabase(item, file, vaultName, sackNumber, SackType.Vault);
+		}
 	}
 
 	/// <summary>
@@ -123,17 +154,7 @@ public class VaultService(
 					pc.VaultLoaded = true;
 				}
 
-				// Add vault items to the search database
-				int sackNumber = -1;
-				foreach (var sack in pc)
-				{
-					sackNumber++;
-					if (sack is null)
-						continue;
-
-					foreach (var item in sack)
-						this.ItemDatabaseService.AddItemToDatabase(item, k, vaultName, sackNumber, SackType.Vault);
-				}
+				this.IndexVaultItems(pc, k, vaultName);
 
 				return pc;
 			});

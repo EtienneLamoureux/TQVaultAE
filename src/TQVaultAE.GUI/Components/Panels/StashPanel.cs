@@ -265,7 +265,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 
 	private void EditButton_Click(object? sender, EventArgs e)
 	{
-		var dlg = this.Services.Forms.Create<CharacterEditDialog>();
+		using var dlg = this.Services.Forms.Create<CharacterEditDialog>();
 		dlg.PlayerCollection = this.ShownPlayer;
 		dlg.ShowDialog();
 		this.GetSkillStatBonus();

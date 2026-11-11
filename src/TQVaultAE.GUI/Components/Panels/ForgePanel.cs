@@ -536,7 +536,7 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
 	{
 		base.OnLayout(e);
 		this.FitHeight();
-		if (this.fitQueued || !this.IsHandleCreated)
+		if (this.fitQueued || !this.IsHandleCreated || this.Disposing)
 			return;
 
 		this.fitQueued = true;
@@ -545,6 +545,13 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
 			this.fitQueued = false;
 			this.FitHeight();
 		});
+	}
+
+	/// <summary>A queued fit is lost with the handle: the next layout may queue one again.</summary>
+	protected override void OnHandleDestroyed(EventArgs e)
+	{
+		this.fitQueued = false;
+		base.OnHandleDestroyed(e);
 	}
 
 	/// <summary>The item slots get their full height back before a rescale, so that the scale applies to it.</summary>

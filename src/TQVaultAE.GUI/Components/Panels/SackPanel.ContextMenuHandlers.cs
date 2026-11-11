@@ -504,13 +504,13 @@ public partial class SackPanel
 			}
 			else if (action == ItemActions.Properties)
 			{
-				var dlg = this.Services.Forms.Create<ItemProperties>();
+				using var dlg = this.Services.Forms.Create<ItemProperties>();
 				dlg.Item = focusedItem;
 				dlg.ShowDialog();
 			}
 			else if (action == ItemActions.Seed)
 			{
-				var dlg = this.Services.Forms.Create<ItemSeedDialog>();
+				using var dlg = this.Services.Forms.Create<ItemSeedDialog>();
 				dlg.SelectedItem = focusedItem;
 				dlg.ShowDialog();
 

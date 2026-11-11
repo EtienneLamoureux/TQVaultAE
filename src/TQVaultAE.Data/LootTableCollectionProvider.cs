@@ -17,30 +17,44 @@ public class LootTableCollectionProvider(ILogger<LootTableCollectionProvider> lo
 	private readonly ITranslationService TranslationService = translationService;
 	private readonly UserSettings USettings = uSettings;
 
-	private Dictionary<RecordId, LootTableCollection> LootTableCache = [];
+	/// <summary>The tables read so far, per data scope: a mod may override a table of the base game.</summary>
+	private Dictionary<string, Dictionary<RecordId, LootTableCollection>> _lootTableCaches = new(StringComparer.OrdinalIgnoreCase);
+	private Dictionary<string, ReadOnlyDictionary<RecordId, LootTableCollection>> _allLootRandomizerTables = new(StringComparer.OrdinalIgnoreCase);
+
+	/// <summary>The tables read so far for the data the calling thread reads now.</summary>
+	private Dictionary<RecordId, LootTableCollection> LootTableCache
+	{
+		get
+		{
+			var scope = this.Database.DataScope ?? string.Empty;
+			if (!this._lootTableCaches.TryGetValue(scope, out var cache))
+				this._lootTableCaches[scope] = cache = [];
+			return cache;
+		}
+	}
 
 	/// <inheritdoc/>
 	public void ClearGameDataCache()
 	{
-		this.LootTableCache = [];
-		this._AllLootRandomizerTable = null;
+		this._lootTableCaches = new(StringComparer.OrdinalIgnoreCase);
+		this._allLootRandomizerTables = new(StringComparer.OrdinalIgnoreCase);
 		this._AllLootRandomizerTranslated = null;
 	}
 
-	ReadOnlyDictionary<RecordId, LootTableCollection>? _AllLootRandomizerTable;
 	public ReadOnlyDictionary<RecordId, LootTableCollection> AllLootRandomizerTable
 	{
 		get
 		{
-			if (_AllLootRandomizerTable is null)
+			var scope = this.Database.DataScope ?? string.Empty;
+			if (!this._allLootRandomizerTables.TryGetValue(scope, out var all))
 			{
 				foreach (var tableId in Database.AllLootRandomizerTable.Keys)
 					LoadTable(tableId);
 
-				_AllLootRandomizerTable = new ReadOnlyDictionary<RecordId, LootTableCollection>(LootTableCache);
+				this._allLootRandomizerTables[scope] = all = new ReadOnlyDictionary<RecordId, LootTableCollection>(LootTableCache);
 			}
 
-			return _AllLootRandomizerTable;
+			return all;
 		}
 	}
 

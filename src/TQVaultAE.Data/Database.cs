@@ -176,6 +176,9 @@ public partial class Database : IDatabase
 	/// </summary>
 	public string? CustomMapFolder { get; set; }
 
+	/// <inheritdoc/>
+	public string DataScope => this.CustomMapFolder ?? string.Empty;
+
 	/// <summary>
 	/// True when this database reads a custom map's data.
 	/// </summary>

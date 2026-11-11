@@ -225,6 +225,13 @@ public class ItemExchangeService(
 
 			foreach (var item in kvp.Value)
 			{
+				// A vault item: read with the base game data when it has no link.
+				if (!item.InVault)
+				{
+					item.InVault = true;
+					this._itemProvider?.GetDBData(item);
+				}
+
 				sack.AddItem(item);
 			}
 		}
@@ -244,6 +251,9 @@ public class ItemExchangeService(
 				sack.BagButtonIconInfo = kvp.Value;
 			}
 		}
+
+		// The search lists the vault's new content, not the items it replaced.
+		this._vaultService?.ReindexVault(vault);
 	}
 
 	public bool IsPasteBinUrl(string text)
@@ -414,12 +424,23 @@ public class ItemExchangeService(
 		return true;
 	}
 
+	/// <summary>
+	/// The name of an imported vault as a file name: the name comes from the imported text, which may hold a path or
+	/// characters a file name cannot have.
+	/// </summary>
+	internal static string SafeVaultName(string? name)
+	{
+		var invalid = Path.GetInvalidFileNameChars();
+		var safe = new string([.. (name ?? string.Empty).Where(c => !invalid.Contains(c))]).Trim().Trim('.');
+		return safe.Length == 0 ? "Imported" : safe;
+	}
+
 	public string BuildImportedVaultName(string baseName, DateTime now)
 		=> $"{baseName}_{now.ToString("yyyyMMdd_HHmmss", System.Globalization.CultureInfo.InvariantCulture)}";
 
 	public string ImportAsNewVault(ImportResult importResult, DateTime now)
 	{
-		var newName = this.BuildImportedVaultName(importResult.VaultName, now);
+		var newName = this.BuildImportedVaultName(SafeVaultName(importResult.VaultName), now);
 
 		var newVault = this._vaultService.CreateVault(newName);
 		this.ImportVaultInto(newVault, importResult);

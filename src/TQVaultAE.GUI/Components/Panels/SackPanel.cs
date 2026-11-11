@@ -358,13 +358,14 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	/// <summary>
 	/// True when an item of a sack lies inside its grid without overlapping another item of the sack.
 	/// </summary>
-	internal static bool Fits(SackCollection sack, Size sackSize, Item item)
+	/// <param name="leaving">An item of the sack to ignore: the one a swap drop is about to pick up.</param>
+	internal static bool Fits(SackCollection sack, Size sackSize, Item item, Item? leaving = null)
 	{
 		var cells = new Rectangle(item.PositionX, item.PositionY, item.Width, item.Height);
 		if (cells.X < 0 || cells.Y < 0 || cells.Right > sackSize.Width || cells.Bottom > sackSize.Height)
 			return false;
 
-		return !sack.Any(other => !ReferenceEquals(other, item)
+		return !sack.Any(other => !ReferenceEquals(other, item) && !ReferenceEquals(other, leaving)
 			&& new Rectangle(other.PositionX, other.PositionY, other.Width, other.Height).IntersectsWith(cells));
 	}
 

@@ -209,7 +209,7 @@ public partial class MainForm
 			// the vault is copied, deleted or renamed below.
 			this.SaveAllModifiedFiles();
 
-			var dlg = this.Services.Forms.Create<VaultMaintenanceDialog>();
+			using var dlg = this.Services.Forms.Create<VaultMaintenanceDialog>();
 			using (ZoomScope.Enter())
 				dlg.Scale(new SizeF(UIService.Zoom, UIService.Zoom));
 

@@ -6,6 +6,13 @@ namespace TQVaultAE.Application.Contracts.Providers;
 public interface IDatabase
 {
 	/// <summary>
+	/// Names the data the calling thread reads now: the folder of the custom map (mod) in scope, empty for the base
+	/// game. A cache of anything read from the database keeps it in its key: the same record id gives other data
+	/// under another scope.
+	/// </summary>
+	string DataScope { get; }
+
+	/// <summary>
 	/// Return all loot randomizer (Affix effect infos)
 	/// </summary>
 	ReadOnlyDictionary<RecordId, LootRandomizerItem> AllLootRandomizer { get; }

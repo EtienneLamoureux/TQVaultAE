@@ -60,7 +60,8 @@ public class SettingsPersistenceService(UserSettings userSettings, IDatabase dat
 			settings.TQPath = string.Empty;
 		}
 
-		if (zoom != 1.0F)
+		// Compared with the saved zoom, not with 1: going back to 100% is a change to save too.
+		if (zoom != settings.Scale)
 		{
 			settings.Scale = zoom;
 			changed = true;

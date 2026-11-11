@@ -219,8 +219,16 @@ public class ModLinkService(
 		var remaining = records.ToList();
 		foreach (var database in databases)
 		{
-			using var arz = ArzDatabaseFactory.Open(database);
-			remaining.RemoveAll(id => arz.Find(id) is not null);
+			try
+			{
+				using var arz = ArzDatabaseFactory.Open(database);
+				remaining.RemoveAll(id => arz.Find(id) is not null);
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+			{
+				// The game is updating or holds the file: the suggestion goes on without this database.
+				this.Log.LogError(ex, "Failed to read the game database {File}", database);
+			}
 		}
 
 		return remaining;

@@ -67,8 +67,10 @@ public partial class ItemProvider
 
 	public ItemAffixes? GetItemAffixes(RecordId itemId)
 	{
-		return ItemAffixesCache.GetOrAddAtomic(itemId, k =>
+		// Per data scope: a mod may give the item other affix tables than the base game.
+		return ItemAffixesCache.GetOrAddAtomic((this.Database.DataScope ?? string.Empty, itemId), key =>
 	{
+		var k = key.Item;
 		var affixmap = this.Database.GetItemAffixTableMap(k);
 		if (affixmap is null || affixmap.All(a => a.IsEmpty)) return null;
 

@@ -124,6 +124,9 @@ public partial class MainForm
 				this.ShowPlayerStash(playerSave, stashResult, true);
 			}
 
+			// The items read again are new ones: those of a linked character get their mod link back.
+			this.playerService.AdoptCharacterMod(playerSave, playerResult, stashResult);
+
 			// Refresh if is current displayed character
 			if (this.comboBoxCharacter.SelectedItem == playerSave)
 			{

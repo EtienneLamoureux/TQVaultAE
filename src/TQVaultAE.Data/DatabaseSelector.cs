@@ -48,6 +48,9 @@ public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Databas
 		}
 	}
 
+	/// <inheritdoc/>
+	public string DataScope => this.Active.DataScope;
+
 	#region IDatabaseMaps
 
 	/// <inheritdoc/>

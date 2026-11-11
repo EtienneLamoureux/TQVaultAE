@@ -397,6 +397,23 @@ public class ItemEditServiceTests
 	}
 
 	[Fact]
+	public void ChangeMod_ItemNoLongerFits_PutsTheLinkBack()
+	{
+		// Arrange: read with the mod's data the item takes another size, and its sack has no room for it
+		var item = MakeItem("records/ring.dbr", "ArmorJewelry_Ring");
+		this._sack.IsModified = false;
+
+		// Act
+		var changed = this._service.ChangeMod(this._sack, item, "shadowchampions", _ => false);
+
+		// Assert: nothing to save, and the item is read again with the data it had
+		changed.Should().BeFalse();
+		item.Mod.Should().BeNull();
+		this._sack.IsModified.Should().BeFalse();
+		this._itemProvider.Verify(p => p.GetDBData(item), Times.Exactly(2));
+	}
+
+	[Fact]
 	public void ChangeMod_SameMod_ChangesNothing()
 	{
 		var item = MakeItem("records/ring.dbr", "ArmorJewelry_Ring");

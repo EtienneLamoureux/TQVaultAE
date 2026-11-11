@@ -44,7 +44,7 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 	/// </summary>
 	private IDisposable ModScope(Item? itm) => this.ItemMods?.Scope(itm) ?? NoScope.Instance;
 	private readonly LazyConcurrentDictionary<(Item Item, FriendlyNamesExtraScopes? Scope, bool FilterExtra), ToFriendlyNameResult> FriendlyNamesCache = new LazyConcurrentDictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult>();
-	private readonly LazyConcurrentDictionary<RecordId, ItemAffixes?> ItemAffixesCache = new();
+	private readonly LazyConcurrentDictionary<(string Scope, RecordId Item), ItemAffixes?> ItemAffixesCache = new();
 	private volatile bool _cachedShowInGameValues;
 
 	/// <inheritdoc/>
@@ -116,8 +116,9 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 
 	public bool InvalidateFriendlyNamesCache(params IEnumerable<Item> items)
 	{
-		items = items.Where(i => i is not null).ToList();
-		var keylist = this.FriendlyNamesCache.Where(i => items.Contains(i.Key.Item)).Select(i => i.Key).ToList();
+		// A set: a whole vault can be passed, against a cache of every item shown so far.
+		var set = items.Where(i => i is not null).ToHashSet(ReferenceEqualityComparer.Instance);
+		var keylist = this.FriendlyNamesCache.Where(i => set.Contains(i.Key.Item)).Select(i => i.Key).ToList();
 		foreach (var k in keylist) this.FriendlyNamesCache.TryRemove(k, out var outVal);
 		return keylist.Count != 0;
 	}

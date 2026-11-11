@@ -75,6 +75,7 @@ public class PlayerServiceTests
 		_mockItemProvider = new Mock<IItemProvider>();
 		_mockDatabase = new Mock<IDatabase>();
 		_mockGamePathService.Setup(x => x.PlayerSaveFileName).Returns("Player.chr");
+		_mockGamePathService.Setup(x => x.PlayerStashFileNameB).Returns("winsys.dxb");
 
 		// Create SessionContext - parameterless data holder
 		_sessionContext = new SessionContext();
@@ -113,6 +114,28 @@ public class PlayerServiceTests
 		result.Should().NotBeNull();
 		result.Player.Should().BeNull();
 		result.PlayerFile.Should().BeNull();
+	}
+
+	[Theory]
+	[InlineData(false, true)]
+	[InlineData(true, false)]
+	public void LoadCharacterSession_ReadWithAnotherMap_ReadsAgainUnlessTheStashHasChangesToSave(bool stashModified, bool expectReload)
+	{
+		// Arrange: reading the character again also replaces its stash, whose unsaved changes would be dropped
+		var playerSave = CreatePlayerSave("/Test/_Hero", isIT: true);
+		this._mockGameMapService.Setup(x => x.LoadedWithOtherMap(playerSave)).Returns(true);
+		var stashFile = this._mockPathIO.Object.Combine(playerSave.Folder, "winsys.dxb");
+		var stash = new Stash("Hero", stashFile) { Sack = new SackCollection() };
+		stash.Sack.IsModified = stashModified;
+		this._sessionContext.Stashes.AddOrUpdateAtomic(stashFile, stash);
+		this._mockStashService.Setup(x => x.LoadCharacterStash(playerSave, It.IsAny<bool>())).Returns((StashLoadResult?)null);
+
+		// Act
+		this._playerService.LoadCharacterSession(playerSave, loadTransferStash: false, loadRelicVaultStash: false);
+
+		// Assert
+		this._mockStashService.Verify(x => x.LoadCharacterStash(playerSave, expectReload), Times.Once);
+		this._mockStashService.Verify(x => x.LoadCharacterStash(playerSave, !expectReload), Times.Never);
 	}
 
 	[Fact]

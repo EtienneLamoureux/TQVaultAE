@@ -470,8 +470,11 @@ public partial class SackPanel
 	private void ChangeModItemClicked(string? mod)
 	{
 		Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
-		if (focusedItem is null || !this.Services.ItemEditService.ChangeMod(this.ShownSack, focusedItem, mod))
+		if (focusedItem is null || !this.Services.ItemEditService.ChangeMod(this.ShownSack, focusedItem, mod
+			, item => this.FitsWhereItLies(item) || MoveToFreeSpot(this.ShownSack, this.SackSize, item)))
+		{
 			return;
+		}
 
 		ItemTooltip.HideTooltip();
 		this.InvalidateItemCacheAll(focusedItem);

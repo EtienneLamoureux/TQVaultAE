@@ -357,7 +357,8 @@ internal sealed partial class CharacterEditDialog
 				tab.Level.Enabled = tree is not null;
 				tab.Level.Minimum = tree is null ? 0 : 1;
 				tab.Level.Maximum = Math.Max(tree?.MaxLevel ?? 0, masteryLevel);
-				tab.Level.Value = masteryLevel;
+				// A save may hold a mastery at level 0: within the box's bounds.
+				tab.Level.Value = Math.Clamp(masteryLevel, tab.Level.Minimum, tab.Level.Maximum);
 
 				tab.Pane.Tree = tree;
 				tab.Pane.MasteryLevel = masteryLevel;
@@ -370,7 +371,7 @@ internal sealed partial class CharacterEditDialog
 			}
 		}
 
-		this._stats.Invalidate();
+		this.InvalidateStats();
 
 		this._syncingSkillPoints = true;
 		try

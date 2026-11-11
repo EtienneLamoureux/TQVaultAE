@@ -104,15 +104,20 @@ public interface IItemEditService
 	/// <param name="sack">The sack holding the item.</param>
 	/// <param name="item">The item to change.</param>
 	/// <param name="modName">The mod's name (<c>InstalledMod.Name</c>); null for the base game.</param>
+	/// <param name="fits">Whether the item, read again (it may take another size), still has room in its sack; it may
+	/// move the item to a free spot. When it answers no, the link is put back. Null when the size cannot matter.</param>
 	/// <returns><see langword="true"/> when the link changed (the item and the sack are then marked as modified).</returns>
-	bool ChangeMod(SackCollection sack, Item item, string? modName);
+	bool ChangeMod(SackCollection sack, Item item, string? modName, Func<Item, bool>? fits = null);
 
 	/// <summary>Links a vault to a mod, or to none: its items without a link of their own follow it and are read again
 	/// with that mod's data. Those that were incomplete and that the mod completes get the mod as their own link.</summary>
 	/// <param name="vault">The vault.</param>
 	/// <param name="modName">The mod's name (<c>InstalledMod.Name</c>); null for the base game.</param>
+	/// <param name="fits">Whether an item of a sack, read again (it may take another size), still has room in that
+	/// sack; it may move the item to a free spot. An item it refuses keeps the link it had. Null when the size cannot
+	/// matter.</param>
 	/// <returns>The items read again; empty when the link did not change.</returns>
-	IReadOnlyList<Item> ChangeVaultMod(PlayerCollection vault, string? modName);
+	IReadOnlyList<Item> ChangeVaultMod(PlayerCollection vault, string? modName, Func<SackCollection, Item, bool>? fits = null);
 
 	/// <summary>An item put in a vault linked to a mod, without a link of its own, follows the vault's link: it is read
 	/// again with that mod's data, and gets the mod as its own link when the mod resolves all its missing records.</summary>

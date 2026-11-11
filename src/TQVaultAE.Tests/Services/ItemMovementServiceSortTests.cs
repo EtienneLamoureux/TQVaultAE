@@ -89,7 +89,7 @@ public class ItemMovementServiceSortTests
 	}
 
 	[Fact]
-	public void Autosort_ItemDoesNotFit_RestoresCopiesOfTheOriginalSack()
+	public void Autosort_ItemDoesNotFit_PutsTheSameItemsBackWhereTheyWere()
 	{
 		// Arrange: the 2x2 item fills the 2x2 sack, the small one finds no room
 		var small = Item("small", 2, 0, 1, 1);
@@ -102,8 +102,24 @@ public class ItemMovementServiceSortTests
 		// Assert
 		sorted.Should().BeFalse();
 		Positions(sack).Should().Be("small@2,0 big@0,0");
-		sack.Should().NotContain(big, "the sack gets copies of its items back");
-		sack.IsModified.Should().BeFalse();
+		sack.Should().Contain(big, "the search and the panels know these items, not copies");
+		sack.Should().Contain(small);
+	}
+
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void Autosort_ItemDoesNotFit_KeepsWhetherTheSackHadChangesToSave(bool modified)
+	{
+		// Arrange: a failed sort must not forget an item dropped in the sack before it, nor invent a change
+		var sack = Sack(Item("small", 2, 0, 1, 1), Item("big", 0, 0, 2, 2));
+		sack.IsModified = modified;
+
+		// Act
+		this._service.Autosort(sack, new Size(2, 2), vertical: true).Should().BeFalse();
+
+		// Assert
+		sack.IsModified.Should().Be(modified);
 	}
 
 	[Fact]

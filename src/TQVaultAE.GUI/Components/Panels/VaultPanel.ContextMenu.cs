@@ -227,7 +227,9 @@ public partial class VaultPanel
 	/// </summary>
 	internal void ChangeVaultMod(string? mod)
 	{
-		var changed = this.Services.ItemEditService.ChangeVaultMod(this.ShownVault, mod);
+		var size = this.BagSackPanel.SackSize;
+		var changed = this.Services.ItemEditService.ChangeVaultMod(this.ShownVault, mod
+			, (sack, item) => SackPanel.Fits(sack, size, item) || SackPanel.MoveToFreeSpot(sack, size, item));
 		if (changed.Count == 0)
 			return;
 
@@ -280,7 +282,7 @@ public partial class VaultPanel
 		{
 			var button = this.BagButtons[this.CurrentBag];
 
-			var bbs = this.Services.Forms.Create<BagButtonSettings>();
+			using var bbs = this.Services.Forms.Create<BagButtonSettings>();
 			bbs.CurrentBagButton = button;
 
 			if (bbs.ShowDialog() == DialogResult.OK)

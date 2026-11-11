@@ -26,7 +26,10 @@ public class UIService : IUIService, IGameDataCache
 	/// <summary>
 	/// Dictionary of all bitmaps in the database.
 	/// </summary>
-	private LazyConcurrentDictionary<RecordId, Bitmap> _Bitmaps = new();
+	/// <remarks>Per data scope: a mod may override a picture of the base game under the same id.</remarks>
+	private LazyConcurrentDictionary<(string Scope, RecordId Id), Bitmap> _Bitmaps = new();
+
+	private (string Scope, RecordId Id) BitmapKey(RecordId resourceId) => (this.Database.DataScope ?? string.Empty, resourceId);
 
 	/// <summary>
 	/// Forgets the bitmaps read so far, without disposing them (controls may still show them): the next ones come from
@@ -242,11 +245,11 @@ public class UIService : IUIService, IGameDataCache
 		if (USettings.DatabaseDebugLevel > 0)
 			Log.LogDebug("Database.LoadBitmap({ResourceId})", resourceId);
 
-		Bitmap bitmap = _Bitmaps.GetOrAddAtomic(resourceId, k =>
+		Bitmap bitmap = _Bitmaps.GetOrAddAtomic(this.BitmapKey(resourceId), k =>
 		{
 			// Load the resource
-			byte[]? texData = Database.LoadResource(k);
-			return AddBitmap(k, texData);
+			byte[]? texData = Database.LoadResource(k.Id);
+			return AddBitmap(k.Id, texData);
 		});
 
 		if (USettings.DatabaseDebugLevel > 0)
@@ -269,9 +272,9 @@ public class UIService : IUIService, IGameDataCache
 		if (USettings.DatabaseDebugLevel > 0)
 			Log.LogDebug("Database.LoadBitmap({ResourceId})", resourceId);
 
-		Bitmap bitmap = _Bitmaps.GetOrAddAtomic(resourceId, k =>
+		Bitmap bitmap = _Bitmaps.GetOrAddAtomic(this.BitmapKey(resourceId), k =>
 		{
-			return AddBitmap(k, texData);
+			return AddBitmap(k.Id, texData);
 		});
 
 		if (USettings.DatabaseDebugLevel > 0)

@@ -34,7 +34,10 @@ public partial class MainForm
 	private void RefreshVaultModMenu()
 	{
 		if (this.vaultModMenu is not null)
+		{
 			this.vaultExportContextMenu.Items.Remove(this.vaultModMenu);
+			this.vaultModMenu.Dispose();
+		}
 
 		var vault = this.vaultPanel.Vault;
 		this.vaultModMenu = ModMenu.Create(this.vaultExportContextMenu, Resources.VaultModded

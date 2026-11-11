@@ -123,11 +123,11 @@ internal sealed partial class CharacterEditDialog
 			this._statsDifficulty.Items.Add(this.TranslationService.TranslateDifficulty(difficulty) ?? difficulty.ToString(CultureInfo.CurrentCulture));
 		this._statsDifficulty.SelectedIndex = Math.Clamp(this.Info.DifficultyUnlocked, 0, 2);
 		this.PlaceSideEditor(this._statsDifficulty, this._side.StatisticsRow(0), editorFont);
-		this._statsDifficulty.SelectedIndexChanged += (_, _) => this._stats.Invalidate();
+		this._statsDifficulty.SelectedIndexChanged += (_, _) => this.InvalidateStats();
 
 		this._includeBuffs = new CheckBox { Name = "StatsIncludeBuffsCheckBox" };
 		this.PlaceSideEditor(this._includeBuffs, this._side.StatisticsRow(1), editorFont);
-		this._includeBuffs.CheckedChanged += (_, _) => this._stats.Invalidate();
+		this._includeBuffs.CheckedChanged += (_, _) => this.InvalidateStats();
 
 		this._statsToolTip.SetToolTip(this._statsDifficulty, Resources.CEStatisticsDifficultyToolTip);
 		this._statsToolTip.SetToolTip(this._includeBuffs, Resources.CEIncludeBuffsToolTip);
@@ -146,7 +146,7 @@ internal sealed partial class CharacterEditDialog
 		this._stats.AttributeClicked += (_, click) => this.CharacterAttribute_Clicked(click.Attribute, click.Step, click.ToEnd);
 		this._stats.UndoClicked += (_, _) => this.CharacterAttributes_Undo();
 		foreach (var box in this.AttributeBoxes.Append(this.attributeNumericUpDown))
-			box.ValueChanged += (_, _) => this._stats.Invalidate();
+			box.ValueChanged += (_, _) => this.InvalidateStats();
 
 		this.FormClosed += (_, _) =>
 		{
@@ -270,7 +270,35 @@ internal sealed partial class CharacterEditDialog
 	}
 
 	/// <summary>What the statistics panel shows, read from the editors and the save.</summary>
-	private CharacterPanelView CharacterView() => this.ViewBuilder.Build(this.PanelInput());
+	/// <summary>
+	/// What the statistics panel shows for the current state of the editor. The panel asks for it several times per
+	/// mouse move and once per paint, and building it reads every control and computes every statistic: one build
+	/// serves all the calls of the same window message. The view is dropped by a posted message, which Windows
+	/// delivers before the next mouse or keyboard input, so no change of the user can meet an old view.
+	/// </summary>
+	private CharacterPanelView CharacterView()
+	{
+		if (this._characterView is { } view)
+			return view;
+
+		view = this.ViewBuilder.Build(this.PanelInput());
+		if (this.IsHandleCreated && !this.IsDisposed)
+		{
+			this._characterView = view;
+			this.BeginInvoke(() => this._characterView = null);
+		}
+
+		return view;
+	}
+
+	private CharacterPanelView? _characterView;
+
+	/// <summary>The state of the editor changed: the statistics panel is built and drawn again.</summary>
+	private void InvalidateStats()
+	{
+		this._characterView = null;
+		this._stats.Invalidate();
+	}
 
 	/// <summary>What the side panel shows: the leveling rows, the masteries and the statistics options.</summary>
 	private CharacterSideView SideView()
@@ -323,7 +351,7 @@ internal sealed partial class CharacterEditDialog
 		foreach (var i in Enumerable.Range(0, boxes.Length).OrderBy(i => Convert.ToInt32(boxes[i].Value) > this._startAttributes[i] ? 0 : 1))
 			boxes[i].Value = Math.Clamp(this._startAttributes[i], Convert.ToInt32(boxes[i].Minimum), Convert.ToInt32(boxes[i].Maximum));
 
-		this._stats.Invalidate();
+		this.InvalidateStats();
 	}
 
 	/// <summary>
@@ -342,6 +370,6 @@ internal sealed partial class CharacterEditDialog
 		if (target != current)
 			box.Value = target;
 
-		this._stats.Invalidate();
+		this.InvalidateStats();
 	}
 }
