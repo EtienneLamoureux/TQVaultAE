@@ -18,4 +18,11 @@ public partial class StashPanel
 
 	/// <summary>Gets the Edit button under the statistics panel; null before the first character is shown.</summary>
 	internal Button? AutomationEditButton => this._editButton;
+
+	/// <summary>Gets the background drawn now: a source picture at zoom 1, else a scaled copy made at the tab switch.</summary>
+	internal System.Drawing.Bitmap? AutomationBackground => this.background;
+
+	/// <summary>Whether <paramref name="bitmap"/> is one of the source pictures (equipment or stash), kept for the session.</summary>
+	internal bool AutomationIsSourceBackground(System.Drawing.Bitmap bitmap)
+		=> ReferenceEquals(bitmap, this.equipmentBackground) || ReferenceEquals(bitmap, this.stashBackground);
 }
