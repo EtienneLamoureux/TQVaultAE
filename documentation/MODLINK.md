@@ -272,7 +272,12 @@ The import's end message names the mods that were dropped.
   differs from the character's map. The game tolerates records it cannot resolve, and keeping the containers
   consistent is the user's responsibility, not the tool's. The tool's job is to make the item's `mod` explicit, visible
   and easy to change.
-- **The *Modded* menu is for vault items only.** A character file cannot keep a link (see the open questions).
+- **On a character, an Own map lasts for the session.** The game's character and stash files have no place for a link,
+  and TQVault keeps none beside them: at the next read of those files the item's `mod` is undefined again and it takes
+  the character's map (event 1). The mod-only items of a linked character get their mod again then. Moving an item
+  back to a vault during the session keeps its Own map, and the vault file saves it.
+- **The *Modded* menu is for vault items only**, since a choice made on a character item would not survive the next
+  read.
 - ***Load all files* reads every character with its own map**, not only the startup map's. A character linked to an
   installed mod is read with that mod's database, loaded the first time it is needed. The search covers every
   character from startup. Startup is longer by the reading of each mod database in use (about half a second for a
@@ -280,11 +285,5 @@ The import's end message names the mods that were dropped.
 
 ### Open questions
 
-- **Keeping an Own map on a character**: the game's character and stash files have no place for a link, so an item
-  with an Own map that differs from its character's map loses it at the next read of those files. Either accept that
-  (the link lasts for the session; the mod-only items of a linked character get their mod again), or keep the links of
-  character items in a TQVault file next to the character (like `TQVaultAE.ModLink.json`), which needs a stable way to
-  find each item again in the game's files (record ids, seed and place change when the game moves the item). The
-  answer also decides whether the *Modded* menu can be offered on characters.
 - **The shared stashes of the other maps**: each map has its own transfer stash and relic vault. *Load all files* reads
   those of the startup map. Should it also read those of every other map in use, so that the search covers them too?
