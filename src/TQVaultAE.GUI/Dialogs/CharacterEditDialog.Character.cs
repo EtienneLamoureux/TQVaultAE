@@ -1,3 +1,4 @@
+using TQVaultAE.Application.Contracts.Services;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
@@ -121,7 +122,7 @@ internal sealed partial class CharacterEditDialog
 		this._statsDifficulty = new ComboBox { Name = "StatsDifficultyComboBox", DropDownStyle = ComboBoxStyle.DropDownList, FlatStyle = FlatStyle.Flat };
 		for (int difficulty = 0; difficulty < 3; difficulty++)
 			this._statsDifficulty.Items.Add(this.TranslationService.TranslateDifficulty(difficulty) ?? difficulty.ToString(CultureInfo.CurrentCulture));
-		this._statsDifficulty.SelectedIndex = Math.Clamp(this.Info.DifficultyUnlocked, 0, 2);
+		this._statsDifficulty.SelectedIndex = CharacterPanelLayout.ShownDifficulty(this.Info.DifficultyUnlocked);
 		this.PlaceSideEditor(this._statsDifficulty, this._side.StatisticsRow(0), editorFont);
 		this._statsDifficulty.SelectedIndexChanged += (_, _) => this.InvalidateStats();
 
@@ -333,7 +334,7 @@ internal sealed partial class CharacterEditDialog
 			Masteries = skills is null ? [] : [.. Enumerable.Range(0, skills.Slots.Count)
 				.Select(skills.GetMasterySummary)
 				.OfType<MasterySummary>()
-				.Select(s => (this.TranslateTag(s.Mastery.NameTag, s.Mastery.Mastery.ToString()),
+				.Select(s => (this.TranslationService.TranslateOr(s.Mastery.NameTag, s.Mastery.Mastery.ToString()),
 					string.Format(culture, Resources.CEMasterySummary,
 						string.Format(culture, s.SkillCount == 1 ? Resources.CEMasterySkill : Resources.CEMasterySkills, s.SkillCount),
 						string.Format(culture, s.PointsSpent == 1 ? Resources.CEMasteryPoint : Resources.CEMasteryPoints, s.PointsSpent))))],

@@ -36,7 +36,7 @@ internal sealed partial class CharacterEditDialog
 			Skills = skills?.BuildSkillRecords() ?? this.Info.SkillRecordList,
 			Trees = skills?.Slots.OfType<MasteryTree>().ToList() ?? [],
 			Augments = this._gearAugments ?? [],
-			Difficulty = this._statsDifficulty?.SelectedIndex is >= 0 and var selected ? selected : Math.Clamp(this.Info.DifficultyUnlocked, 0, 2),
+			Difficulty = CharacterPanelLayout.ShownDifficulty(this.Info.DifficultyUnlocked, this._statsDifficulty?.SelectedIndex ?? -1),
 			IncludeBuffs = this._includeBuffs?.Checked == true,
 			ClassCleared = skills?.MasteriesChanged == true,
 			Editable = true,

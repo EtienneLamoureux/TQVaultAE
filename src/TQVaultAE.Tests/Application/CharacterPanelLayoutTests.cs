@@ -36,6 +36,26 @@ public class CharacterPanelLayoutTests
 	}
 
 	[Theory]
+	[InlineData("{%d0} Unused Skill Points", 3, "3 Unused Skill Points")]
+	[InlineData("Points : {%i0}", 12, "Points : 12")]
+	[InlineData("No Skill Points Available", 0, "No Skill Points Available")]
+	public void FormatGameText_SkillPaneTexts(string format, int value, string expected)
+		=> CharacterPanelLayout.FormatGameText(format, value).Should().Be(expected);
+
+	[Fact]
+	public void FormatGameText_TextValues_AreWrittenAsTheyAre()
+		=> CharacterPanelLayout.FormatGameText("This skill requires the {%s1} skill at {%d0}.", 4, "Battle Rage")
+			.Should().Be("This skill requires the Battle Rage skill at 4.");
+
+	[Theory]
+	[InlineData(1, -1, 1)]   // the difficulty unlocked
+	[InlineData(2, 0, 0)]    // the one picked in the editor
+	[InlineData(3, -1, 2)]   // a save beyond Legendary
+	[InlineData(-1, -1, 0)]
+	public void ShownDifficulty_PickedElseUnlocked_WithinTheGameDifficulties(int unlocked, int picked, int expected)
+		=> CharacterPanelLayout.ShownDifficulty(unlocked, picked).Should().Be(expected);
+
+	[Theory]
 	[InlineData(45, "+45% Fire Damage")]
 	[InlineData(0, "+0% Fire Damage")]
 	[InlineData(-10, "-10% Fire Damage")]

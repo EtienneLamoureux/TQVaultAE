@@ -1,3 +1,4 @@
+using TQVaultAE.Application.Contracts.Services;
 using System.Drawing;
 using System.Windows.Forms;
 using TQVaultAE.Application;
@@ -57,7 +58,7 @@ internal sealed partial class CharacterEditDialog
 
 		var choices = new List<MasteryChoice> { new(null, Resources.CEMasteryNone) };
 		foreach (var tree in this._skills.KnownMasteries)
-			choices.Add(new MasteryChoice(tree.Mastery, this.TranslateTag(tree.NameTag, tree.Mastery.ToString())));
+			choices.Add(new MasteryChoice(tree.Mastery, this.TranslationService.TranslateOr(tree.NameTag, tree.Mastery.ToString())));
 
 		for (int slot = 0; slot < this._skills.Slots.Count; slot++)
 			this._skillTabs.Add(this.CreateSkillTab(slot, choices));
@@ -66,11 +67,6 @@ internal sealed partial class CharacterEditDialog
 
 		this.RefreshSkills();
 	}
-
-	private string TranslateTag(string? tag, string fallback = "")
-		=> string.IsNullOrEmpty(tag)
-			? fallback
-			: this.TranslationService.TranslateXTag(tag, removeAllTQTags: true) is { Length: > 0 } text ? text : fallback;
 
 	/// <summary>
 	/// A description as the skill window writes it: with its colours ("{^y}Assign this skill to your left mouse button."),
@@ -101,7 +97,7 @@ internal sealed partial class CharacterEditDialog
 		{
 			Name = $"SkillsMastery{slot + 1}Pane",
 			PaneScale = this.DeviceDpi / 96F,
-			Translate = tag => this.TranslateTag(tag, tag),
+			Translate = tag => this.TranslationService.TranslateOr(tag, tag),
 			NumberFont = this.FontService.GetFontLight(12F, FontStyle.Regular, GraphicsUnit.Pixel),
 			TextFont = this.FontService.GetFontLight(15F, FontStyle.Regular, GraphicsUnit.Pixel),
 			DescriptionFont = this.FontService.GetFontLight(13F, FontStyle.Regular, GraphicsUnit.Pixel),
@@ -175,21 +171,9 @@ internal sealed partial class CharacterEditDialog
 		return this._skillTooltip;
 	}
 
-	[System.Text.RegularExpressions.GeneratedRegex("""\{%[^}]*?([0-9])\}""")]
-	private static partial System.Text.RegularExpressions.Regex GameValueRegex();
-
 	/// <summary>A game text with its values: <c>{%d0}</c>, <c>{%s1}</c>... (any printf format, by index).</summary>
 	private string GameText(string tag, string fallback, params object[] values)
-	{
-		var format = this.TranslationService.TranslateXTag(tag) is { Length: > 0 } text ? text : fallback;
-		return GameValueRegex().Replace(format, m =>
-		{
-			var index = m.Groups[1].Value[0] - '0';
-			return index < values.Length
-				? Convert.ToString(values[index], System.Globalization.CultureInfo.CurrentCulture) ?? string.Empty
-				: m.Value;
-		});
-	}
+		=> CharacterPanelLayout.FormatGameText(this.TranslationService.TranslateOr(tag, fallback, removeAllTQTags: false), values);
 
 	/// <summary>
 	/// The tool tip of a skill as the game's skill window shows it (<c>the game</c>, the
@@ -241,7 +225,7 @@ internal sealed partial class CharacterEditDialog
 		var masteryLevel = skills.GetMasteryLevel(tab.Slot);
 		if (skill is null)
 		{
-			lines.Add(new GameTooltipLine(this.TranslateTag(tree.NameTag, tree.Mastery.ToString()), Color.White, Title: true));
+			lines.Add(new GameTooltipLine(this.TranslationService.TranslateOr(tree.NameTag, tree.Mastery.ToString()), Color.White, Title: true));
 			lines.Add(new GameTooltipLine(this.GameDescription(tree.DescriptionTag), TipText, Wrap: true));
 			if (masteryLevel > 0)
 				Level("tagCurrentLevel", "Current Level : {%d0}", tree.Id, masteryLevel);
@@ -265,7 +249,7 @@ internal sealed partial class CharacterEditDialog
 		// The equipment's levels also raise a summon's own skills (Battle Standard 11/10 shows its level 12 buff), all of
 		// them even beyond the ultimate level (Call of the Wild 15 + 6: the wolves dodge as at +6).
 		context = this.SkillContext(tree, skill, points > 0 ? bonus.Total : 0);
-		lines.Add(new GameTooltipLine(this.TranslateTag(skill.NameTag, skill.Id.PrettyFileName), Color.White, Title: true));
+		lines.Add(new GameTooltipLine(this.TranslationService.TranslateOr(skill.NameTag, skill.Id.PrettyFileName), Color.White, Title: true));
 		lines.Add(new GameTooltipLine(this.GameDescription(skill.DescriptionTag), TipText, Wrap: true));
 		if (current > 0)
 			Level("tagCurrentLevel", "Current Level : {%d0}", skill.Id, current);
@@ -276,7 +260,7 @@ internal sealed partial class CharacterEditDialog
 		if (masteryLevel < skill.RequiredMasteryLevel)
 		{
 			var missing = skill.RequiredMasteryLevel - masteryLevel;
-			var mastery = this.TranslateTag(tree.NameTag, tree.Mastery.ToString());
+			var mastery = this.TranslationService.TranslateOr(tree.NameTag, tree.Mastery.ToString());
 			refused.Add(missing == 1
 				? this.GameText("tagSkillReq01Singular", "This skill requires {%d0} additional skill point in {%s1}.", missing, mastery)
 				: this.GameText("tagSkillReq01", "This skill requires {%d0} additional skill points in {%s1}.", missing, mastery));
@@ -284,7 +268,7 @@ internal sealed partial class CharacterEditDialog
 
 		if (skill.ParentId is { } parentId && skills.GetLevel(parentId) == 0
 			&& tree.Skills.FirstOrDefault(s => s.Id == parentId) is { } parent)
-			refused.Add(this.GameText("tagSkillReq03", "This skill requires the {%s1} skill.", 1, this.TranslateTag(parent.NameTag, parent.Id.PrettyFileName)));
+			refused.Add(this.GameText("tagSkillReq03", "This skill requires the {%s1} skill.", 1, this.TranslationService.TranslateOr(parent.NameTag, parent.Id.PrettyFileName)));
 
 		this.Requirements(lines, belowMax, refused);
 
@@ -315,7 +299,7 @@ internal sealed partial class CharacterEditDialog
 			.ToList();
 
 		var stats = this.ComputeStats();
-		var difficulty = this._statsDifficulty?.SelectedIndex is >= 0 and var selected ? selected : Math.Clamp(this.Info.DifficultyUnlocked, 0, 2);
+		var difficulty = CharacterPanelLayout.ShownDifficulty(this.Info.DifficultyUnlocked, this._statsDifficulty?.SelectedIndex ?? -1);
 		var cap = this.Services.CharacterStatsService.GetGameBalance().EngineValue("playerCooldownReductionCap", difficulty);
 		return new SkillWindowContext(petSkillBonus, modifiers, stats.CooldownReduction, cap);
 	}
@@ -350,7 +334,7 @@ internal sealed partial class CharacterEditDialog
 			try
 			{
 				var tree = skills.Slots[tab.Slot];
-				this._tabs.SetPageText(tab.PageIndex, tree is null ? string.Format(Resources.CEMasterySlot, tab.Slot + 1) : this.TranslateTag(tree.NameTag, tree.Mastery.ToString()));
+				this._tabs.SetPageText(tab.PageIndex, tree is null ? string.Format(Resources.CEMasterySlot, tab.Slot + 1) : this.TranslationService.TranslateOr(tree.NameTag, tree.Mastery.ToString()));
 				tab.Mastery.SelectedItem = tab.Mastery.Items.Cast<MasteryChoice>().First(c => c.Mastery == tree?.Mastery);
 
 				var masteryLevel = skills.GetMasteryLevel(tab.Slot);
@@ -391,9 +375,9 @@ internal sealed partial class CharacterEditDialog
 	private IEnumerable<string> GearBonusLines(MasteryTree tree, MasterySkill skill, SkillBonus bonus)
 	{
 		if (bonus.Skill != 0)
-			yield return string.Format(Resources.CEGearBonusSkill, bonus.Skill, this.TranslateTag(skill.NameTag, skill.Id.PrettyFileName));
+			yield return string.Format(Resources.CEGearBonusSkill, bonus.Skill, this.TranslationService.TranslateOr(skill.NameTag, skill.Id.PrettyFileName));
 		if (bonus.Mastery != 0)
-			yield return string.Format(Resources.CEGearBonusMastery, bonus.Mastery, this.TranslateTag(tree.NameTag, tree.Mastery.ToString()));
+			yield return string.Format(Resources.CEGearBonusMastery, bonus.Mastery, this.TranslationService.TranslateOr(tree.NameTag, tree.Mastery.ToString()));
 		if (bonus.All != 0)
 			yield return string.Format(Resources.CEGearBonusAll, bonus.All);
 	}

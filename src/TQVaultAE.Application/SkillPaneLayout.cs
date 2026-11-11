@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Application;
@@ -39,7 +38,7 @@ public readonly record struct PanePiece(string Texture, int X, int Y);
 /// How the game's skill window lays out a mastery pane, read from <c>TQ.exe</c> and the <c>BaseSkillPane</c> record:
 /// sizes and positions in pixels of the pane (919x540 in the PC interface), mastery bar, button states and level texts.
 /// </summary>
-public static partial class SkillPaneLayout
+public static class SkillPaneLayout
 {
 	/// <summary>Width of the pane background (PC interface).</summary>
 	public const int Width = 919;
@@ -187,13 +186,4 @@ public static partial class SkillPaneLayout
 	/// </summary>
 	public static string? LevelText(int level, int itemBonus, int maxLevel, bool tierOpen)
 		=> tierOpen ? $"{level + itemBonus} / {maxLevel}" : null;
-
-	/// <summary>
-	/// Fills a game text format with a number: the game writes the value as <c>{%d0}</c> (any printf format, index 0).
-	/// </summary>
-	public static string FormatGameText(string format, int value)
-		=> GameFormatRegex().Replace(format, value.ToString(System.Globalization.CultureInfo.CurrentCulture));
-
-	[GeneratedRegex("""\{%[^}]*0\}""")]
-	private static partial Regex GameFormatRegex();
 }

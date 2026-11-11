@@ -18,6 +18,18 @@ public static partial class CharacterPanelLayout
 	/// <summary>Height of the statistics panel.</summary>
 	public const int Height = 390;
 
+	/// <summary>The last difficulty of the game: Normal 0, Epic 1, Legendary 2.</summary>
+	public const int Legendary = 2;
+
+	/// <summary>
+	/// The difficulty the statistics are computed for (resistance penalty, attack speed): the one picked in the editor,
+	/// else the last one the character unlocked; always one of the game's three.
+	/// </summary>
+	/// <param name="unlocked">The difficulty unlocked, as saved.</param>
+	/// <param name="picked">The difficulty picked in the editor, -1 for none.</param>
+	public static int ShownDifficulty(int unlocked, int picked = -1)
+		=> Math.Clamp(picked >= 0 ? picked : unlocked, 0, Legendary);
+
 	/// <summary>Where the panel's gold frame starts, under the tab strip.</summary>
 	public const int FrameTop = 20;
 
@@ -39,21 +51,26 @@ public static partial class CharacterPanelLayout
 	}
 
 	/// <summary>
-	/// Fills a game text format: <c>{%d0}</c>, <c>{%t1}</c>... (any printf format, by index) with the values;
-	/// <c>%t</c> is a number with thousands separators, the <c>+</c> flag (<c>{%+.0f0}</c>) writes the sign of
-	/// positive values.
+	/// Fills a game text format: <c>{%d0}</c>, <c>{%t1}</c>, <c>{%s1}</c>... (any printf format, by index) with the
+	/// values. For a whole number <c>%t</c> writes thousands separators and the <c>+</c> flag (<c>{%+.0f0}</c>) the sign of
+	/// positive values; other values are written as they are. The one formatter of the game texts: the character panel,
+	/// the skill pane and the editor's skill tool tips.
 	/// </summary>
-	public static string FormatGameText(string format, params long[] values)
+	public static string FormatGameText(string format, params object?[] values)
 		=> GameFormatRegex().Replace(format, m =>
 		{
 			var index = m.Groups["index"].Value[0] - '0';
 			if (index >= values.Length)
 				return m.Value;
 
+			if (values[index] is not (sbyte or byte or short or ushort or int or uint or long) || values[index] is not IConvertible whole)
+				return Convert.ToString(values[index], CultureInfo.CurrentCulture) ?? string.Empty;
+
+			var number = whole.ToInt64(CultureInfo.InvariantCulture);
 			var text = m.Groups["type"].Value == "t"
-				? values[index].ToString("N0", CultureInfo.CurrentCulture)
-				: values[index].ToString(CultureInfo.CurrentCulture);
-			return m.Value.StartsWith("{%+", StringComparison.Ordinal) && values[index] >= 0 ? "+" + text : text;
+				? number.ToString("N0", CultureInfo.CurrentCulture)
+				: number.ToString(CultureInfo.CurrentCulture);
+			return m.Value.StartsWith("{%+", StringComparison.Ordinal) && number >= 0 ? "+" + text : text;
 		});
 
 	/// <summary>Splits a game text at its colour codes (<c>{^y}</c>, <c>{^w}</c>...); other tags are removed.</summary>

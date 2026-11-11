@@ -74,12 +74,6 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 	/// <summary>The stance in hand, once computed.</summary>
 	public WeaponStance? Stance { get; private set; }
 
-	/// <summary>The text of a game tag without its formatting tags, or <paramref name="fallback"/>.</summary>
-	public string Translate(string? tag, string fallback = "")
-		=> string.IsNullOrEmpty(tag)
-			? fallback
-			: this._translation.TranslateXTag(tag, removeAllTQTags: true) is { Length: > 0 } text ? text : fallback;
-
 	/// <summary>Resistance icons and the tags of their names, in the order of <see cref="StatResistance"/>.</summary>
 	private static readonly (string Icon, string Tag, string Fallback)[] ResistanceIcons =
 	[
@@ -183,7 +177,7 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 			this._skillSum = (key, this._service.GetSkillAttributes(input.Skills, input.Augments, input.Trees, input.IncludeBuffs));
 
 		return CharacterStatsCalculator.Compute(new CharacterStatsInput(
-			input.Attributes[2], input.Attributes[4], input.Attributes[3], this.GearSum, this._skillSum.Value.Sum, Math.Clamp(input.Difficulty, 0, 2), this._service.GetGameBalance()));
+			input.Attributes[2], input.Attributes[4], input.Attributes[3], this.GearSum, this._skillSum.Value.Sum, Math.Clamp(input.Difficulty, 0, CharacterPanelLayout.Legendary), this._service.GetGameBalance()));
 	}
 
 	/// <summary>
@@ -206,7 +200,7 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 		all.Add(skills);
 
 		var durations = this._service.GetAttackAnimationDurations(input.Info.IsFemale);
-		var attackSpeed = CharacterOffenseCalculator.AttackSpeed(all, this.Stance.Value, balance, Math.Clamp(input.Difficulty, 0, 2),
+		var attackSpeed = CharacterOffenseCalculator.AttackSpeed(all, this.Stance.Value, balance, Math.Clamp(input.Difficulty, 0, CharacterPanelLayout.Legendary),
 			durations.GetValueOrDefault(WeaponStance.Unarmed), durations.GetValueOrDefault(this.Stance.Value));
 
 		double Total(int attribute, string field) => CharacterStatsCalculator.Total(input.Attributes[attribute], all, field);
@@ -221,7 +215,7 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 	{
 		var info = input.Info;
 		var culture = CultureInfo.CurrentCulture;
-		string Game(string tag, string fallback) => this.Translate(tag, fallback);
+		string Game(string tag, string fallback) => this._translation.TranslateOr(tag, fallback);
 
 		// The bonuses as the statistics sum them, unrounded: the game adds 13.5 strength of a mastery as is.
 		this.ComputeStats(input);
@@ -262,7 +256,7 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 			],
 			Stats = this.StatsView(input),
 			GreatestMonsterTitle = Game("tagCHighestMonster", "Greatest Monster Killed"),
-			GreatestMonster = this.Translate(info.GreatestMonster, info.GreatestMonster),
+			GreatestMonster = this._translation.TranslateOr(info.GreatestMonster, info.GreatestMonster),
 			GreatestMonsterLevel = info.GreatestMonsterKilledLevel == 0 ? string.Empty
 				: CharacterPanelLayout.FormatGameText(Game("tagCLevel", "Level : {%d0}"), info.GreatestMonsterKilledLevel),
 			Statistics =
@@ -285,7 +279,7 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 		var (attackSpeed, offense) = this.ComputeOffense(input);
 		var culture = CultureInfo.CurrentCulture;
 		var balance = this._service.GetGameBalance();
-		string Game(string tag, string fallback) => string.IsNullOrEmpty(tag) ? fallback : this.Translate(tag, fallback);
+		string Game(string tag, string fallback) => this._translation.TranslateOr(tag, fallback);
 		string Percent(int value) => value.ToString(culture) + "%";
 		string Signed(string tag, string fallback, int value) => CharacterPanelLayout.FormatGameText(Game(tag, fallback), value);
 		StatRowView Row(string tag, string fallback, string value, string toolTip = "") => new(Game(tag, fallback), value, toolTip);

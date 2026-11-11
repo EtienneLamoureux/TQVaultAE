@@ -247,7 +247,7 @@ internal sealed partial class SkillPaneControl : Control
 		var points = this.AvailablePoints;
 		var line = points <= 0
 			? this.Translate("NoSkillPointsAvailable")
-			: SkillPaneLayout.FormatGameText(this.Translate(points == 1 ? "SkillPointsAvailableSingular" : "SkillPointsAvailable"), points);
+			: CharacterPanelLayout.FormatGameText(this.Translate(points == 1 ? "SkillPointsAvailableSingular" : "SkillPointsAvailable"), points);
 		var rect = SkillPaneLayout.PointsRemaining;
 		using (var brush = new SolidBrush(points <= 0 ? NoPointColor : Color.White))
 			g.DrawString(line, this.TextFont ?? this.Font, brush, new RectangleF(rect.X, rect.Y, rect.Width, rect.Height), center);

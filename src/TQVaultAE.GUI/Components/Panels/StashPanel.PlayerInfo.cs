@@ -207,7 +207,7 @@ public partial class StashPanel
 			Skills = info.SkillRecordList,
 			Trees = skills.Slots.OfType<MasteryTree>().ToList(),
 			Augments = this.Services.CharacterEditService.GetGearSkillAugments(player),
-			Difficulty = Math.Clamp(info.DifficultyUnlocked, 0, 2),
+			Difficulty = CharacterPanelLayout.ShownDifficulty(info.DifficultyUnlocked),
 		});
 	}
 }

@@ -86,10 +86,4 @@ public class SkillPaneLayoutTests
 		SkillPaneLayout.LevelText(0, 2, 8, tierOpen: false).Should().BeNull();
 	}
 
-	[Theory]
-	[InlineData("{%d0} Unused Skill Points", 3, "3 Unused Skill Points")]
-	[InlineData("Points : {%i0}", 12, "Points : 12")]
-	[InlineData("No Skill Points Available", 0, "No Skill Points Available")]
-	public void FormatGameText_ReplacesTheFirstValue(string format, int value, string expected)
-		=> SkillPaneLayout.FormatGameText(format, value).Should().Be(expected);
 }
