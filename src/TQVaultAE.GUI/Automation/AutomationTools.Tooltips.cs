@@ -14,13 +14,13 @@ namespace TQVaultAE.GUI.Automation;
 internal static partial class AutomationTools
 {
 	/// <summary>The displays <c>tooltip_text_dump</c> can build, by name.</summary>
-	private static readonly string[] TooltipDumpViews = ["classic", "detailed", "full", "settings"];
+	private static readonly string[] TooltipDumpViews = ["bare", "classic", "detailed", "full", "settings"];
 
 	[McpServerTool(Name = "tooltip_text_dump", ReadOnly = true)]
 	[Description("Builds the item tooltip of every owned item (search database, as raw_tooltip_lines), or of the item on one panel cell, with the tooltip's own code (bypassing its image cache, nothing shown), and returns its rows as rendered, in order: kind (text, spacer, delimiter, range, icon, separator, column), text, color (#RRGGBB), bold, the colored segments of a multi-color line and the value on the right of a range row. Granted skills and the relic column come after a 'column' row. Items are sorted by location, so two dumps diff line by line. With 'path', the full dump is written to that JSON file and the result is a summary with its SHA-256.")]
 	public static string TooltipTextDump(
 		[Description("JSON file the full dump is written to; empty to return the dump in the result (fine for one item).")] string? path = null,
-		[Description("Displays to build, comma separated: classic, detailed (the detailed view with the extras checked in the settings), full (detailed with every extra: in-game rolls, value ranges, granted skills, set piece counts), settings (what a hover shows now). Default classic,full.")] string views = "classic,full",
+		[Description("Displays to build, comma separated: bare (the classic view without any extra), classic (the classic view with the extras checked in the settings), detailed (the detailed view with the extras checked in the settings), full (detailed with every extra: in-game rolls, value ranges, granted skills, set piece counts), settings (what a hover shows now). Default classic,full.")] string views = "classic,full",
 		[Description("Only the item on this panel cell (with x and y), e.g. vault; empty for every owned item.")] string? panel = null,
 		[Description("Cell column, with panel.")] int x = 0,
 		[Description("Cell row, with panel.")] int y = 0,
@@ -39,7 +39,8 @@ internal static partial class AutomationTools
 
 			var viewOf = names.ToDictionary(n => n, n => n switch
 			{
-				"classic" => ItemTooltipView.Classic,
+				"bare" => ItemTooltipView.Classic,
+				"classic" => ItemTooltip.ViewOf(settings, false),
 				"detailed" => ItemTooltip.ViewOf(settings, true),
 				"full" => ItemTooltipView.Detailed | ItemTooltipView.InGameRolls | ItemTooltipView.ValueRanges
 					| ItemTooltipView.GrantedSkills | ItemTooltipView.SetPieceCounts,

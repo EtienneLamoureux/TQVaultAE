@@ -5862,20 +5862,29 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Enable detailed view.
+        /// </summary>
+        public static string SettingTooltipDetailedView {
+            get {
+                return ResourceManager.GetString("SettingTooltipDetailedView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Split item tooltip attributes into Prefix/Base/Suffix categories. The options below apply to both views..
+        /// </summary>
+        public static string SettingTooltipDetailedViewTT {
+            get {
+                return ResourceManager.GetString("SettingTooltipDetailedViewTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tooltip Enhanced.
         /// </summary>
         public static string SettingTooltipEnhanced {
             get {
                 return ResourceManager.GetString("SettingTooltipEnhanced", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Split item tooltip attributes into Prefix/Base/Suffix categories, with the extras below.
-        /// </summary>
-        public static string SettingTooltipEnhancedTT {
-            get {
-                return ResourceManager.GetString("SettingTooltipEnhancedTT", resourceCulture);
             }
         }
         

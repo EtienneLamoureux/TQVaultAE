@@ -6,11 +6,14 @@ using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.Presentation;
 
-/// <summary>What an item tooltip shows beyond the classic display ("Tooltip Enhanced" settings).</summary>
+/// <summary>
+/// What an item tooltip shows ("Tooltip Enhanced" settings): the classic or the detailed display, plus the extras, which
+/// apply to both.
+/// </summary>
 [Flags]
 public enum ItemTooltipView
 {
-	/// <summary>Classic display.</summary>
+	/// <summary>Classic display, without the extras.</summary>
 	Classic = 0,
 	/// <summary>Attributes split into prefix, base and suffix.</summary>
 	Detailed = 1,
@@ -104,7 +107,7 @@ public class ItemTooltipContentBuilder
 		=> this._translationService = translationService;
 
 	/// <summary>
-	/// The display chosen in the settings: the classic one, or the detailed one with the extras checked in "Tooltip Enhanced".
+	/// The display chosen in the settings: the classic or the detailed one, with the extras checked in "Tooltip Enhanced".
 	/// </summary>
 	/// <param name="settings">User settings.</param>
 	/// <param name="enableDetailedTooltipView">Forces the detailed display on or off, whatever the settings.</param>
@@ -112,10 +115,9 @@ public class ItemTooltipContentBuilder
 	/// changing the setting.</param>
 	public static ItemTooltipView ViewOf(UserSettings settings, bool? enableDetailedTooltipView = null, bool sessionForcesDetailed = false)
 	{
-		if (!(enableDetailedTooltipView ?? (sessionForcesDetailed || settings.EnableDetailedTooltipView)))
-			return ItemTooltipView.Classic;
-
-		var view = ItemTooltipView.Detailed;
+		var view = enableDetailedTooltipView ?? (sessionForcesDetailed || settings.EnableDetailedTooltipView)
+			? ItemTooltipView.Detailed
+			: ItemTooltipView.Classic;
 		if (settings.TooltipShowInGameRolls)
 			view |= ItemTooltipView.InGameRolls;
 		if (settings.TooltipShowValueRanges)
@@ -201,16 +203,21 @@ public class ItemTooltipContentBuilder
 		{
 			// Classic display: base, prefix and suffix lines in the game's order.
 			var attributes = data.ClassicAttributes ?? [.. data.BaseAttributes, .. data.PrefixAttributes, .. data.SuffixAttributes];
+			var ranges = !view.HasFlag(ItemTooltipView.ValueRanges) ? []
+				: data.ClassicAttributes is not null ? data.ClassicAttributeRanges
+				: [.. Padded(data.BaseAttributeRanges, data.BaseAttributes.Length)
+					, .. Padded(data.PrefixAttributeRanges, data.PrefixAttributes.Length)
+					, .. Padded(data.SuffixAttributeRanges, data.SuffixAttributes.Length)];
 
 			// Rings and amulets have no base stats: a blank line separates their bonuses from the name, as the base
 			// stats of the other items are separated from theirs.
 			if (item.IsJewellery && attributes.Length != 0 && attributes[0].Length != 0 && lines[^1].Kind != TooltipLineKind.Spacer)
 				lines.Add(TooltipLine.Spacer);
 
-			lines.AddRange(attributes.Select(s => TooltipLine.Of(s)));
+			AddAttributes(lines, attributes, ranges);
 		}
 
-		// In-game jitter comparison (database -> in-game), detailed view only
+		// In-game jitter comparison (database -> in-game)
 		if (view.HasFlag(ItemTooltipView.InGameRolls) && data.InGameRolls.Length != 0)
 		{
 			lines.Add(TooltipLine.Spacer);
@@ -387,15 +394,22 @@ public class ItemTooltipContentBuilder
 		lines.Add(TooltipLine.Spacer);
 		lines.Add(TooltipLine.Of(SectionTitle(description, label), bold: true));
 
-		if (!showRanges)
-			ranges = [];
+		AddAttributes(lines, attributes, showRanges ? ranges : []);
+	}
 
+	/// <summary>The attribute lines, each with its range on the right when it has one.</summary>
+	private static void AddAttributes(List<TooltipLine> lines, string[] attributes, string?[] ranges)
+	{
 		for (int i = 0; i < attributes.Length; i++)
 		{
 			var range = i < ranges.Length ? ranges[i] : null;
 			lines.Add(string.IsNullOrEmpty(range) ? TooltipLine.Of(attributes[i]) : TooltipLine.WithRange(attributes[i], range));
 		}
 	}
+
+	/// <summary><paramref name="ranges"/> cut or filled with nulls to <paramref name="length"/> lines.</summary>
+	private static IEnumerable<string?> Padded(string?[] ranges, int length)
+		=> Enumerable.Range(0, length).Select(i => i < ranges.Length ? ranges[i] : null);
 
 	/// <summary>A socketed relic or charm: delimiter, name, completion, attributes, then its completion bonus.</summary>
 	private static void AddSocketed(List<TooltipLine> lines, string[] attributes, string? name, string? completion, string? bonusTitle, string[] bonusAttributes)

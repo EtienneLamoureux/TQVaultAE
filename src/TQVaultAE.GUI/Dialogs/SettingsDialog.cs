@@ -166,6 +166,7 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		this.detectGamePathsCheckBox.Font =
 		this.baseFontLabel.Font =
 		this.baseFontComboBox.Font =
+		this.scalingCheckBoxTooltipDetailedView.Font =
 		this.scalingCheckBoxTooltipInGameRolls.Font =
 		this.scalingCheckBoxTooltipValueRanges.Font =
 		this.scalingCheckBoxTooltipGrantedSkills.Font =
@@ -211,8 +212,9 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		this.toolTip.SetToolTip(this.playerReadonlyCheckbox, Resources.SettingsPlayerReadonlyTT);
 		this.resetButton.Text = Resources.SettingsReset;
 		this.toolTip.SetToolTip(this.resetButton, Resources.SettingsResetTT);
-		this.checkGroupBoxTooltipEnhanced.Text = Resources.SettingTooltipEnhanced;
-		this.toolTip.SetToolTip(this.checkGroupBoxTooltipEnhanced, Resources.SettingTooltipEnhancedTT);
+		this.groupBoxTooltipEnhanced.Text = Resources.SettingTooltipEnhanced;
+		this.scalingCheckBoxTooltipDetailedView.Text = Resources.SettingTooltipDetailedView;
+		this.toolTip.SetToolTip(this.scalingCheckBoxTooltipDetailedView, Resources.SettingTooltipDetailedViewTT);
 		this.scalingCheckBoxTooltipInGameRolls.Text = Resources.SettingTooltipShowInGameRolls;
 		this.toolTip.SetToolTip(this.scalingCheckBoxTooltipInGameRolls, Resources.SettingTooltipShowInGameRollsTT);
 		this.scalingCheckBoxTooltipValueRanges.Text = Resources.SettingTooltipShowValueRanges;
@@ -340,7 +342,7 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		this.loadAllFilesCheckBox.Checked = values.LoadAllFiles;
 		this.suppressWarningsCheckBox.Checked = values.SuppressWarnings;
 		this.playerReadonlyCheckbox.Checked = values.PlayerReadonly;
-		this.checkGroupBoxTooltipEnhanced.Checked = values.EnableDetailedTooltipView;
+		this.scalingCheckBoxTooltipDetailedView.Checked = values.EnableDetailedTooltipView;
 		this.scalingCheckBoxTooltipInGameRolls.Checked = values.TooltipShowInGameRolls;
 		this.scalingCheckBoxTooltipValueRanges.Checked = values.TooltipShowValueRanges;
 		this.scalingCheckBoxTooltipGrantedSkills.Checked = values.TooltipShowGrantedSkills;

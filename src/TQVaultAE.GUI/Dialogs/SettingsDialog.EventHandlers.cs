@@ -269,8 +269,8 @@ internal partial class SettingsDialog
 			this.editor.Current.BaseFont = font.Value;
 	}
 
-	private void checkGroupBoxTooltipEnhanced_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.EnableDetailedTooltipView = this.checkGroupBoxTooltipEnhanced.Checked;
+	private void scalingCheckBoxTooltipDetailedView_CheckedChanged(object? sender, EventArgs e)
+		=> this.editor.Current.EnableDetailedTooltipView = this.scalingCheckBoxTooltipDetailedView.Checked;
 
 	private void scalingCheckBoxTooltipInGameRolls_CheckedChanged(object? sender, EventArgs e)
 		=> this.editor.Current.TooltipShowInGameRolls = this.scalingCheckBoxTooltipInGameRolls.Checked;

@@ -64,7 +64,7 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 - The language used by the application
 - The paths where the vault files are located
 - The paths where the game files are located
-- The font, the sounds and the tool tips ("Show In-Game Values", "Tooltip Enhanced")
+- The font, the sounds and the tool tips ("Show In-Game Values", "Tooltip Enhanced"). In "Tooltip Enhanced", "Enable detailed view" splits the item tool tip into prefix, base and suffix sections; the other options (in-game rolls, min/max values, item skills, set piece counts) apply to both the classic and the detailed view
 - The cheats: the "Allow Cheats" group holds character editing, item editing and item copying (see the F.A.Q. below)
 - The hot reload features, [Git Backup](documentation/GITBACKUP.md), [TQ original support](documentation/TQORIGINAL.md), the [PasteBin integration](documentation/IMPORT_EXPORT.md) and the CSV delimiter of the search export
 

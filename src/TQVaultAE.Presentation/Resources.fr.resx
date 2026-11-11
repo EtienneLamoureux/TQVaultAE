@@ -1796,8 +1796,11 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="SettingTooltipEnhanced" xml:space="preserve">
     <value>Infobulle enrichie</value>
   </data>
-	<data name="SettingTooltipEnhancedTT" xml:space="preserve">
-    <value>Divise les attributs de l'infobulle d'objet en catégories Préfixe/Base/Suffixe, avec les ajouts ci-dessous</value>
+	<data name="SettingTooltipDetailedView" xml:space="preserve">
+    <value>Activer la vue détaillée</value>
+  </data>
+	<data name="SettingTooltipDetailedViewTT" xml:space="preserve">
+    <value>Divise les attributs de l'infobulle d'objet en catégories Préfixe/Base/Suffixe. Les options ci-dessous valent pour les deux vues.</value>
   </data>
 	<data name="SettingTooltipShowInGameRolls" xml:space="preserve">
     <value>Afficher les tirages en jeu</value>

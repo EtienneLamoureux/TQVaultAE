@@ -204,6 +204,18 @@ public class GameAttributeOrderTests
 	}
 
 	[Fact]
+	public void MergeWithRanges_EachLineKeepsItsRange_TheBlankLineHasNone()
+	{
+		var merged = GameAttributeOrder.MergeWithRanges(GameItemClass.Weapon
+			, [("base fire", FlatFire, "(1 - 2)"), ("base damage", BaseDamage, "(10 - 20)")]
+			, [("prefix fire", FlatFire, null)]
+			, [("suffix strength", Strength, "(5 - 9)")]);
+
+		merged.Should().Equal(
+			("base damage", "(10 - 20)"), ("", null), ("base fire", "(1 - 2)"), ("prefix fire", null), ("suffix strength", "(5 - 9)"));
+	}
+
+	[Fact]
 	public void SlotOf_UnknownAttribute_IsListedLast()
 		=> GameAttributeOrder.SlotOf("someNewAttribute", null, false, true).Should().Be(GameAttributeSlot.Other);
 }

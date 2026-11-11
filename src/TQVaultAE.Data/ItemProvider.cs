@@ -494,10 +494,15 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 			if (prefixSlots.Count == res.PrefixAttributes.Length && suffixSlots.Count == res.SuffixAttributes.Length
 				&& baseSlots.Count == res.BaseAttributes.Length)
 			{
-				res.ClassicAttributes = GameAttributeOrder.Merge(GameAttributeOrder.ClassOf(k.Item)
-					, [.. res.BaseAttributes.Zip(baseSlots)]
-					, [.. res.PrefixAttributes.Zip(prefixSlots)]
-					, [.. res.SuffixAttributes.Zip(suffixSlots)]);
+				static (string, GameAttributeSlot, string?)[] Lines(string[] texts, List<GameAttributeSlot> slots, string?[] lineRanges)
+					=> [.. texts.Select((text, i) => (text, slots[i], i < lineRanges.Length ? lineRanges[i] : null))];
+
+				var classic = GameAttributeOrder.MergeWithRanges(GameAttributeOrder.ClassOf(k.Item)
+					, Lines(res.BaseAttributes, baseSlots, res.BaseAttributeRanges)
+					, Lines(res.PrefixAttributes, prefixSlots, res.PrefixAttributeRanges)
+					, Lines(res.SuffixAttributes, suffixSlots, res.SuffixAttributeRanges));
+				res.ClassicAttributes = [.. classic.Select(l => l.Text)];
+				res.ClassicAttributeRanges = inGame is null ? [] : [.. classic.Select(l => l.Range)];
 			}
 
 			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.RelicAttributes) ?? false)

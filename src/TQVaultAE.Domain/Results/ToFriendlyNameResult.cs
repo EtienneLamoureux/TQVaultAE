@@ -201,6 +201,12 @@ public partial class ToFriendlyNameResult
 	public string[]? ClassicAttributes { get; internal set; }
 
 	/// <summary>
+	/// Possible in-game values of each <see cref="ClassicAttributes"/> line (see <see cref="PrefixAttributeRanges"/>).
+	/// Same length as <see cref="ClassicAttributes"/>, or empty without in-game values.
+	/// </summary>
+	public string?[] ClassicAttributeRanges { get; internal set; } = [];
+
+	/// <summary>
 	/// One line per value changed by the in-game jitter ("database → in-game"), when <c>ShowInGameValues</c> is on.
 	/// </summary>
 	public string[] InGameRolls { get; internal set; } = [];

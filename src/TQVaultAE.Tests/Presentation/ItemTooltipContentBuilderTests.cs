@@ -214,6 +214,7 @@ public class ItemTooltipContentBuilderTests
 	[InlineData(ItemTooltipView.Classic, false)]
 	[InlineData(ItemTooltipView.Detailed, false)]
 	[InlineData(ItemTooltipView.Detailed | ItemTooltipView.InGameRolls, true)]
+	[InlineData(ItemTooltipView.Classic | ItemTooltipView.InGameRolls, true)]
 	public void Build_InGameRolls_OnlyWithTheirFlag(ItemTooltipView view, bool shown)
 	{
 		var data = Sword();
@@ -225,6 +226,56 @@ public class ItemTooltipContentBuilderTests
 			.Should().Be(shown);
 		content.Lines.Any(l => l.Text == "+10 Strength -> +11 Strength" && l.Color == TQColor.DarkGray)
 			.Should().Be(shown);
+	}
+
+	[Fact]
+	public void Build_ClassicWithValueRanges_ShowsTheRangeOfEachMergedLine()
+	{
+		var data = Sword();
+		data.ClassicAttributes = ["base 1", "base 2", "", "prefix 1", "suffix 1"];
+		data.ClassicAttributeRanges = [null, "(10 - 20)", null, "(1 - 3)", null];
+
+		var content = this._builder.Build(data, ItemTooltipView.Classic | ItemTooltipView.ValueRanges);
+
+		Shape(content).Skip(1).Take(5).Should().Equal(
+			(TooltipLineKind.Text, "base 1"),
+			(TooltipLineKind.Range, "base 2"),
+			(TooltipLineKind.Text, ""),
+			(TooltipLineKind.Range, "prefix 1"),
+			(TooltipLineKind.Text, "suffix 1"));
+		content.Lines[2].Range.Should().Be("(10 - 20)");
+		content.Lines[4].Range.Should().Be("(1 - 3)");
+		content.Lines.Should().NotContain(l => l.Text.Contains(Resources.ItemPropertiesLabelBaseItemProperties), "the classic view has no sections");
+	}
+
+	[Fact]
+	public void Build_ClassicWithValueRanges_WithoutMergedLines_TakesTheRangesOfEachRecord()
+	{
+		// Sword(): base ranges [null, "(10 - 20)"], no prefix or suffix ranges, no merged lines.
+		var data = Sword();
+		data.SuffixAttributeRanges = ["(5 - 9)"];
+
+		var content = this._builder.Build(data, ItemTooltipView.Classic | ItemTooltipView.ValueRanges);
+
+		Shape(content).Skip(1).Take(4).Should().Equal(
+			(TooltipLineKind.Text, "base 1"),
+			(TooltipLineKind.Range, "base 2"),
+			(TooltipLineKind.Text, "prefix 1"),
+			(TooltipLineKind.Range, "suffix 1"));
+		content.Lines[4].Range.Should().Be("(5 - 9)");
+	}
+
+	[Fact]
+	public void Build_ClassicWithoutValueRanges_ShowsNoRange()
+	{
+		var data = Sword();
+		data.ClassicAttributes = ["base 1", "base 2"];
+		data.ClassicAttributeRanges = [null, "(10 - 20)"];
+
+		var content = this._builder.Build(data, ItemTooltipView.Classic);
+
+		content.Lines.Should().NotContain(l => l.Kind == TooltipLineKind.Range);
+		content.Lines.Should().Contain(TooltipLine.Of("base 2"));
 	}
 
 	[Theory]
@@ -399,6 +450,21 @@ public class ItemTooltipContentBuilderTests
 	}
 
 	[Fact]
+	public void Build_ClassicWithSetPieceCounts_ShowsTheCountOfEachPieceOnItsRight()
+	{
+		var data = Sword();
+		Set(data);
+		var counts = new Dictionary<RecordId, int> { [RecordId.Create("""records\set\torso.dbr""")] = 3 };
+
+		var content = this._builder.Build(data, ItemTooltipView.Classic | ItemTooltipView.SetPieceCounts, counts);
+
+		content.Lines.SkipWhile(l => l.Text != "Set of the Bear").Take(3).Should().Equal(
+			TooltipLine.Of("Set of the Bear"),
+			TooltipLine.Of("Bear Helm"),
+			TooltipLine.WithRange("Bear Torso", "3"));
+	}
+
+	[Fact]
 	public void Build_SetWithoutCounts_ListsThePieces()
 	{
 		var data = Sword();
@@ -459,9 +525,44 @@ public class ItemTooltipContentBuilderTests
 
 	#region View
 
+	private static UserSettings NoExtra(bool detailed) => new()
+	{
+		EnableDetailedTooltipView = detailed,
+		TooltipShowInGameRolls = false,
+		TooltipShowValueRanges = false,
+		TooltipShowGrantedSkills = false,
+		TooltipShowSetPieceCounts = false,
+	};
+
 	[Fact]
-	public void ViewOf_DetailedOff_IsClassicWhateverTheExtras()
-		=> ItemTooltipContentBuilder.ViewOf(new UserSettings { EnableDetailedTooltipView = false }).Should().Be(ItemTooltipView.Classic);
+	public void ViewOf_DetailedOff_IsClassicWithTheCheckedExtras()
+	{
+		var settings = NoExtra(false);
+		settings.TooltipShowInGameRolls = true;
+		settings.TooltipShowGrantedSkills = true;
+
+		ItemTooltipContentBuilder.ViewOf(settings)
+			.Should().Be(ItemTooltipView.Classic | ItemTooltipView.InGameRolls | ItemTooltipView.GrantedSkills);
+	}
+
+	[Theory]
+	[InlineData(false, ItemTooltipView.Classic)]
+	[InlineData(true, ItemTooltipView.Detailed)]
+	public void ViewOf_NoExtraChecked_IsTheBareView(bool detailed, ItemTooltipView expected)
+		=> ItemTooltipContentBuilder.ViewOf(NoExtra(detailed)).Should().Be(expected);
+
+	[Theory]
+	[InlineData(nameof(UserSettings.TooltipShowInGameRolls), ItemTooltipView.InGameRolls)]
+	[InlineData(nameof(UserSettings.TooltipShowValueRanges), ItemTooltipView.ValueRanges)]
+	[InlineData(nameof(UserSettings.TooltipShowGrantedSkills), ItemTooltipView.GrantedSkills)]
+	[InlineData(nameof(UserSettings.TooltipShowSetPieceCounts), ItemTooltipView.SetPieceCounts)]
+	public void ViewOf_Classic_EachExtraFollowsItsSetting(string option, ItemTooltipView flag)
+	{
+		var settings = NoExtra(false);
+		typeof(UserSettings).GetProperty(option)!.SetValue(settings, true);
+
+		ItemTooltipContentBuilder.ViewOf(settings).Should().Be(ItemTooltipView.Classic | flag);
+	}
 
 	[Fact]
 	public void ViewOf_SessionForcesDetailed_ShowsItWithoutTheSetting_ExplicitChoiceWins()
@@ -479,7 +580,7 @@ public class ItemTooltipContentBuilderTests
 		ItemTooltipContentBuilder.ViewOf(settings, sessionForcesDetailed: true)
 			.Should().Be(ItemTooltipView.Detailed | ItemTooltipView.ValueRanges);
 		ItemTooltipContentBuilder.ViewOf(settings, enableDetailedTooltipView: false, sessionForcesDetailed: true)
-			.Should().Be(ItemTooltipView.Classic);
+			.Should().Be(ItemTooltipView.Classic | ItemTooltipView.ValueRanges);
 		settings.EnableDetailedTooltipView.Should().BeFalse();
 	}
 
@@ -500,7 +601,7 @@ public class ItemTooltipContentBuilderTests
 	}
 
 	[Theory]
-	[InlineData(true, false, ItemTooltipView.Classic)]
+	[InlineData(true, false, Full & ~ItemTooltipView.Detailed)]
 	[InlineData(false, true, Full)]
 	public void ViewOf_ForcedDisplay_OverridesTheSetting(bool setting, bool forced, ItemTooltipView expected)
 		=> ItemTooltipContentBuilder.ViewOf(new UserSettings { EnableDetailedTooltipView = setting }, forced).Should().Be(expected);
@@ -509,6 +610,7 @@ public class ItemTooltipContentBuilderTests
 	[InlineData(ItemTooltipView.Classic, FriendlyNamesExtraScopes.ItemFullDisplay)]
 	[InlineData(ItemTooltipView.Detailed, FriendlyNamesExtraScopes.ItemFullDisplay)]
 	[InlineData(ItemTooltipView.Detailed | ItemTooltipView.GrantedSkills, FriendlyNamesExtraScopes.ItemFullDisplay | FriendlyNamesExtraScopes.GrantedSkills)]
+	[InlineData(ItemTooltipView.Classic | ItemTooltipView.GrantedSkills, FriendlyNamesExtraScopes.ItemFullDisplay | FriendlyNamesExtraScopes.GrantedSkills)]
 	public void ScopesFor_AsksForTheGrantedSkillsOnlyForTheSkillsPanel(ItemTooltipView view, FriendlyNamesExtraScopes expected)
 		=> ItemTooltipContentBuilder.ScopesFor(view).Should().Be(expected);
 

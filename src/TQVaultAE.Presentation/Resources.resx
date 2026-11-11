@@ -2163,8 +2163,11 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="SettingTooltipEnhanced" xml:space="preserve">
     <value>Tooltip Enhanced</value>
   </data>
-	<data name="SettingTooltipEnhancedTT" xml:space="preserve">
-    <value>Split item tooltip attributes into Prefix/Base/Suffix categories, with the extras below</value>
+	<data name="SettingTooltipDetailedView" xml:space="preserve">
+    <value>Enable detailed view</value>
+  </data>
+	<data name="SettingTooltipDetailedViewTT" xml:space="preserve">
+    <value>Split item tooltip attributes into Prefix/Base/Suffix categories. The options below apply to both views.</value>
   </data>
 	<data name="SettingTooltipShowInGameRolls" xml:space="preserve">
     <value>Display in game rolls</value>
