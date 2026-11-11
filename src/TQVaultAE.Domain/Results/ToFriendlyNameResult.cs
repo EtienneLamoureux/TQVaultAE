@@ -279,7 +279,7 @@ public partial class ToFriendlyNameResult
 						return string.Format(this.AnimalPartRatio ?? string.Empty
 							, this.AnimalPart
 							, this.Item.Var1
-							, this.Item.RelicBonusInfo?.CompletedRelicLevel.ToString() ?? "??"
+							, this.Item.RelicInfo.CompletedRelicLevel
 						);
 				}
 				else
@@ -290,7 +290,7 @@ public partial class ToFriendlyNameResult
 						return string.Format(this.RelicRatio ?? string.Empty
 							, this.RelicShard
 							, this.Item.Var1
-							, this.Item.RelicBonusInfo?.CompletedRelicLevel.ToString() ?? "??"
+							, this.Item.RelicInfo.CompletedRelicLevel
 						);
 				}
 			}
@@ -327,7 +327,7 @@ public partial class ToFriendlyNameResult
 						return string.Format(this.AnimalPartRatio ?? string.Empty
 							, this.AnimalPart
 							, this.Item.Var2
-							, this.Item.RelicBonus2Info?.CompletedRelicLevel.ToString() ?? "??"
+							, this.Item.Relic2Info.CompletedRelicLevel
 						);
 				}
 				else
@@ -338,7 +338,7 @@ public partial class ToFriendlyNameResult
 						return string.Format(this.RelicRatio ?? string.Empty
 							, this.RelicShard
 							, this.Item.Var2
-							, this.Item.RelicBonus2Info?.CompletedRelicLevel.ToString() ?? "??"
+							, this.Item.Relic2Info.CompletedRelicLevel
 						);
 				}
 			}
