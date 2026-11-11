@@ -126,8 +126,8 @@ public partial class SackPanel
 					AddItemSetMenuItems(focusedItem!);
 				}
 
-				if (focusedItem is not null && !this.ItemsReadOnly)
-					this.AddModMenuItems(focusedItem);
+				if (actions.HasFlag(ItemActions.ChangeMod))
+					this.AddModMenuItems(focusedItem!);
 
 				if (actions.HasFlag(ItemActions.Properties))
 				{

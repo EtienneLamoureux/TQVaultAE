@@ -25,9 +25,20 @@ public class ItemActionRulesTests
 		return potion;
 	}
 
+	/// <summary>The actions offered, without <see cref="ItemActions.ChangeMod"/> (tested on its own).</summary>
 	private static ItemActions For(Item? item, int selectionCount = 0, bool itemIsTheSelection = false
 		, bool readOnly = false, bool allowEdit = false, bool allowCopy = false)
-		=> ItemActionRules.Available(new ItemActionContext(item, selectionCount, itemIsTheSelection, readOnly, allowEdit, allowCopy));
+		=> ItemActionRules.Available(new ItemActionContext(item, selectionCount, itemIsTheSelection, readOnly, allowEdit, allowCopy))
+			& ~ItemActions.ChangeMod;
+
+	[Theory]
+	[InlineData(true, 0, false, true)]    // the item under the cursor
+	[InlineData(true, 3, false, true)]    // even with a selection: the menu acts on the item under the cursor
+	[InlineData(false, 3, false, false)]  // a selection alone
+	[InlineData(true, 0, true, false)]    // read-only equipment
+	public void Available_ChangeMod_ForTheItemUnderTheCursorOfAWritableSack(bool item, int selectionCount, bool readOnly, bool expected)
+		=> ItemActionRules.Available(new ItemActionContext(item ? Sword() : null, selectionCount, false, readOnly, false, false))
+			.HasFlag(ItemActions.ChangeMod).Should().Be(expected);
 
 	[Theory]
 	[InlineData("""records\item\equipmentweapon\sword\us_n_01.dbr""", false, true)]

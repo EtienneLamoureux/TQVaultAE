@@ -52,6 +52,12 @@ public enum ItemActions
 
 	/// <summary>Compare the first two selected items side by side; the items selected after them are ignored.</summary>
 	Compare = 1 << 14,
+
+	/// <summary>
+	/// Link the item under the cursor to a mod, or to the base game ("Modded" menu). For that item even when others are
+	/// selected.
+	/// </summary>
+	ChangeMod = 1 << 15,
 }
 
 /// <summary>
@@ -152,6 +158,9 @@ public static class ItemActionRules
 
 		if (anyTarget && !context.ReadOnly)
 			actions |= ItemActions.Delete | ItemActions.MoveTo;
+
+		if (item is not null && !context.ReadOnly)
+			actions |= ItemActions.ChangeMod;
 
 		if (singleItem)
 		{
