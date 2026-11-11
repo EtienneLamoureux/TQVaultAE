@@ -134,3 +134,120 @@ with another map's data) is shown incomplete:
 - its tooltip has a warning line with an icon under its name, then the missing records, one per line;
 - a missing name part (base item, prefix, suffix) shows the record's file name;
 - without its base item record it has no picture: the grid shows a warning tile in one cell, so it stays visible and can be moved.
+
+## Planned: an explicit data map for every item
+
+_Status: design agreed on 2026-11-11, not implemented yet. Once done, it replaces the "resolves by where it is" rule
+above and the `Mod` / `ModFromVault` / `NoMod` fields._
+
+### Why
+
+Today an item without a link of its own is resolved when its data is read: in a vault the base game, elsewhere the
+active map, that is the selected character's. The result depends on when the data is read and on which character is
+selected at that moment:
+
+- The search builds an item's names once, the first time they are needed, with the map active at that moment. An
+  item of a character linked to a mod, read while another character is selected, gets the other map's data.
+- The tooltip or stats of an item from another character (search results) are read with the selected character's map.
+- A base game record that a mod changes (a sword whose stats the mod overrides) is read with whatever map is active.
+- A new way of making an item that forgets to copy the link fields silently falls back on the active map: the mistake
+  does not show.
+
+### The model
+
+While an item is in a container, it always has two values:
+
+- **Map**: the database its records resolve in, a mod (its folder name, as in a link file) or the base game.
+- **Origin**:
+  - **Own**: a mod chosen for the item, the base game chosen for it, or the mod that alone completes it (see below).
+  - **Inherited**: the map of the container holding it.
+
+Reading an item's data uses its map, and only its map. When the map names a mod that is not installed, the item is
+read with the base game data and shown incomplete, as today; its map is kept, not rewritten.
+
+The active map is never used to read an item. It remains for what belongs to the selected character:
+- the shared stash files;
+- the pictures and texts of the window;
+- the caps and formulas of the character's statistics;
+- the database the character's own files are read with.
+
+The map is **explicit but not frozen**. It is always known and changes only on the events listed below: never because
+another character is selected, and never because of when the item's data is read.
+
+### The map a container gives
+
+| Container | Inherited map |
+|---|---|
+| Vault linked to a mod | that mod |
+| Vault without a link | the base game |
+| Main campaign character (`SaveData\Main`): equipment, bags, its stash | the base game |
+| Custom map character linked to a mod | that mod |
+| Custom map character without a link | the base game |
+| Transfer stash and relic vault | the map whose files they are (`SaveData\Sys\<mod>`, or `SaveData\Sys\` for the base game) |
+
+A container linked to a mod that is not installed gives that mod: its items are read with the base game and shown
+incomplete until the mod is installed or the link changed.
+
+### The events that set or change the map
+
+1. **A container is read** (startup preload, selecting a character, reading a vault).
+   - An item with an own link in the file (`"mod"` or `"noMod": true` in a vault) gets it as Own.
+   - Any other item gets the container's map as Inherited.
+   - An item of a character linked to an installed mod whose records the base game lacks gets that mod as Own, as
+     today: moved to a vault, it keeps the mod's data.
+   - The map is set before the item's records are read.
+2. **An item changes container**: dropped, *Move Item To*, equipped, imported, pasted, moved with its tab.
+   - An Own map is kept.
+   - An Inherited map becomes the new container's.
+   - An incomplete item still gets the vault's mod as Own when that mod completes it, with the rules above (real
+     size, no overlap).
+3. **A container's link changes**: *Modded vault*, or the character's *Mod link...* dialog. Every item of that
+   container with an Inherited map takes the new map; Own maps are kept. A character linked or unlinked is read again,
+   as today.
+4. **The user chooses for an item** in its *Modded* menu: a mod, or *None (base game)*. The choice becomes the item's
+   Own map.
+5. **A copy is made**: it takes the map and origin of its source, then event 2 applies in the container it lands in.
+
+On a first start with this feature, nothing is linked yet: every item gets the base game as Inherited. Linking a vault
+or a character afterwards gives its new map to all those items (event 3); nothing has to be read again by hand.
+
+### Where items are made
+
+Each path that makes an item states where its map comes from. An item without a map is a mistake: Debug builds log it
+and assert, and a test checks that every owned item has one.
+
+| Path | Code | Map |
+|---|---|---|
+| Vault read | `PlayerCollectionProvider` | the file's own link, else the vault's (event 1) |
+| Character, its stash, transfer stash, relic vault read | `PlayerService`, `StashService`, `SackCollectionProvider` | the container's; mod-only items of a linked character, Own (event 1) |
+| Import of an export or a paste | `ItemDtoExtensions.ToItem`, `ItemExchangeService` | the export's link, then event 2 in the target vault |
+| Split stack, duplicate, copy | `Item.Duplicate`, `Item.Clone` | the source's (event 5) |
+| Copy of a whole tab | `SackCollection.Duplicate` (`VaultService.CopyBag`) | the source's, then event 2 |
+| Relic or charm taken out of an item | `ItemProvider.RemoveRelic1/2` | the item's (event 5) |
+| Crafted artifact | `ItemProvider.CraftArtifact` | the formula's (event 5) |
+| New set member | `ItemEditService.NewSetMember` | the set item's (event 5) |
+| Forge preview and result | `ForgeService` | the target item's; a material must have the same map, or the base game (a mod falls back on base game data) |
+| Granted skill shown in a skill window | `ItemProvider.GetGrantedSkill` with a placeholder item | not an owned item: the selected character's map, stated by the caller |
+
+### Search and preload
+
+- The search reads each item with its own map, so its names and tooltips are the same whenever they are built and
+  whatever character is selected.
+- *Load all files* could then read every character with its own map, so the search covers characters linked to a mod
+  from startup. The cost is reading the database of each mod in use at startup (about half a second for a large mod).
+  Today it reads only the characters of the startup map.
+
+### Files
+
+Unchanged. In a vault file, `"mod"` on an item and `"noMod": true` are Own maps; an item without them inherits the
+vault's `"mod"`. Character files have no place for a link: their items get their map each time they are read.
+
+### Open questions
+
+1. **Item and tab exports**: write each item's map with its origin, so that an inherited mod comes back inherited and
+   follows the target vault? Today they write the mod the item is read with, and the import makes it an own link.
+2. **A choice on a character item**: today *None (base game)* on a character item changes nothing. With Own maps it
+   would be read with the base game data even on a character linked to a mod. A character file cannot keep that choice,
+   so it would be lost at the next read, except for mod-only items, which get their mod again. Keep the menu on
+   characters, or limit it to vaults?
+3. **Preload**: read every character with its own map at startup, or keep reading only the startup map's characters?
