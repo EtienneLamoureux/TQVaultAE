@@ -166,6 +166,9 @@ public partial class VaultForm
 
 		base.WndProc(ref m);
 
+		if (m.Msg == (int)User32.WindowMessage.GetMinMaxInfo && this.ConstrainToDesignRatio && this.FormDesignRatio != 0.0F)
+			this.SetMaximizedBoundsOnItsMonitor(m.LParam);
+
 		if (this.DrawCustomBorder)
 		{
 			switch (m.Msg)
@@ -183,6 +186,56 @@ public partial class VaultForm
 					break;
 			}
 		}
+	}
+
+	/// <summary>The MINMAXINFO structure of WM_GETMINMAXINFO.</summary>
+	[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
+	private struct MinMaxInfo
+	{
+		public Point Reserved;
+		public Point MaxSize;
+		public Point MaxPosition;
+		public Point MinTrackSize;
+		public Point MaxTrackSize;
+	}
+
+	/// <summary>
+	/// Makes a maximize fill the working area of the monitor the window is on, keeping <see cref="FormDesignRatio"/>.
+	/// Asked at each maximize: a size computed once would be the size for the startup monitor, which Windows keeps on a
+	/// monitor of another size.
+	/// </summary>
+	private void SetMaximizedBoundsOnItsMonitor(IntPtr minMaxInfo)
+	{
+		var screen = Screen.FromHandle(this.Handle);
+		var bounds = MaximizedBoundsIn(screen.Bounds, screen.WorkingArea, this.FormDesignRatio);
+
+		var info = System.Runtime.InteropServices.Marshal.PtrToStructure<MinMaxInfo>(minMaxInfo);
+		info.MaxPosition = bounds.Location;
+		info.MaxSize = new Point(bounds.Width, bounds.Height);
+		// The maximized size is also bounded by the maximum tracking size.
+		info.MaxTrackSize = new Point(Math.Max(info.MaxTrackSize.X, bounds.Width), Math.Max(info.MaxTrackSize.Y, bounds.Height));
+		System.Runtime.InteropServices.Marshal.StructureToPtr(info, minMaxInfo, false);
+	}
+
+	/// <summary>
+	/// The largest rectangle of height / width <paramref name="ratio"/> centered in <paramref name="workingArea"/>, relative
+	/// to the top left of <paramref name="monitor"/> (MINMAXINFO places a maximized window on its monitor).
+	/// </summary>
+	internal static Rectangle MaximizedBoundsIn(Rectangle monitor, Rectangle workingArea, float ratio)
+	{
+		int width = workingArea.Width;
+		int height = Convert.ToInt32(width * ratio);
+		if (height > workingArea.Height)
+		{
+			height = workingArea.Height;
+			width = Convert.ToInt32(height / ratio);
+		}
+
+		return new Rectangle(
+			workingArea.Left - monitor.Left + (workingArea.Width - width) / 2,
+			workingArea.Top - monitor.Top + (workingArea.Height - height) / 2,
+			width,
+			height);
 	}
 
 	/// <summary>

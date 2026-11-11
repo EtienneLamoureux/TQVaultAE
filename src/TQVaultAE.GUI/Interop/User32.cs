@@ -29,6 +29,11 @@ internal sealed class User32
 		Null = 0x0,
 
 		/// <summary>
+		/// Asks the window its maximized size and position, and its minimum and maximum tracking sizes (WM_GETMINMAXINFO).
+		/// </summary>
+		GetMinMaxInfo = 0x24,
+
+		/// <summary>
 		/// Non Client Hit Test Window Message
 		/// </summary>
 		NonClientHitTest = 0x84,

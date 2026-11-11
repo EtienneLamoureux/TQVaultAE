@@ -326,23 +326,7 @@ public partial class MainForm
 
 		this.LastFormSize = this.Size;
 
-		// Set the maximized size but keep the aspect ratio.
-		if (Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio) < workingArea.Height)
-		{
-			this.MaximizedBounds = new Rectangle(0
-				, (workingArea.Height - Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio)) / 2
-				, workingArea.Width
-				, Convert.ToInt32((float)workingArea.Width * this.FormDesignRatio)
-			);
-		}
-		else
-		{
-			this.MaximizedBounds = new Rectangle(
-				(workingArea.Width - Convert.ToInt32((float)workingArea.Height / this.FormDesignRatio)) / 2,
-				0,
-				Convert.ToInt32((float)workingArea.Height / this.FormDesignRatio),
-				workingArea.Height);
-		}
+		// A maximize keeps the aspect ratio on the monitor the window is on then (VaultForm, WM_GETMINMAXINFO).
 		this.Location = new Point(workingArea.Left + Convert.ToInt16((workingArea.Width - this.ClientSize.Width) / 2), workingArea.Top + Convert.ToInt16((workingArea.Height - this.ClientSize.Height) / 2));
 	}
 

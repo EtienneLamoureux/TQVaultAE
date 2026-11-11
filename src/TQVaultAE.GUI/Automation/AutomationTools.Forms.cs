@@ -296,6 +296,23 @@ internal static partial class AutomationTools
 			});
 		});
 
+	[McpServerTool(Name = "window_bounds", ReadOnly = true)]
+	[Description("The main window's bounds (virtual screen pixels), its state (Normal, Maximized, Minimized), its DPI, and the working area of the monitor it is on: checks a maximize on each monitor.")]
+	public static string WindowBounds()
+		=> AutomationHost.OnUi(main =>
+		{
+			var screen = Screen.FromHandle(main.Handle);
+			return Serialize(new
+			{
+				bounds = new { main.Bounds.X, main.Bounds.Y, main.Bounds.Width, main.Bounds.Height },
+				state = main.WindowState.ToString(),
+				deviceDpi = main.DeviceDpi,
+				monitor = screen.DeviceName,
+				workingArea = new { screen.WorkingArea.X, screen.WorkingArea.Y, screen.WorkingArea.Width, screen.WorkingArea.Height },
+				insideWorkingArea = screen.WorkingArea.Contains(main.Bounds),
+			});
+		});
+
 	[McpServerTool(Name = "move_window", Destructive = true)]
 	[Description("Moves the main window, or another open form, to a screen position (virtual screen pixels, so negative on a monitor left of the primary one), like dragging it there (the size is left to Windows): on a monitor of another DPI, Windows sends the DPI change. Returns the monitors (bounds and DPI) and the window's DPI and scales after the move. Move it back to its monitor when done.")]
 	public static async Task<string> MoveWindow(
