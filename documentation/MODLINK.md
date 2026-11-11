@@ -242,12 +242,31 @@ and assert, and a test checks that every owned item has one.
 Unchanged. In a vault file, `"mod"` on an item and `"noMod": true` are Own maps; an item without them inherits the
 vault's `"mod"`. Character files have no place for a link: their items get their map each time they are read.
 
+### Exports and imports (decided 2026-11-11)
+
+An export keeps the mod information at the level it belongs to:
+
+- A **vault** or **tab** export writes the mod of the vault the items come from, once, at its top. Each item writes
+  only its Own map: `"mod"`, or `"noMod": true`. An item without them inherited the vault's mod.
+- An **item** export (one item or a selection) has no container: each item writes its map, with `"modInherited": true`
+  when the map was Inherited.
+
+On import, each mod named in the export is checked against the installed mods:
+
+- **Installed**: the link is kept. A vault import gets it as the vault's link; the items of a tab or item export that
+  inherited it keep its data. They inherit it when the target vault has the same mod, else they get it as Own.
+- **Not installed** (another computer, a mod removed): the link is dropped. This applies both to the vault or tab level
+  and to the items with an explicit link. The items fall back on the base game, inherited from a target vault without
+  a link (or the target vault's map when it has one). An item that needs the mod's records is shown incomplete, with
+  the warning tile and the missing records in its tooltip. Nothing is guessed: the user installs the mod, then links
+  the vault (*Modded vault*, with its suggestions) or the items (*Modded*).
+
+The import's end message names the mods that were dropped.
+
 ### Open questions
 
-1. **Item and tab exports**: write each item's map with its origin, so that an inherited mod comes back inherited and
-   follows the target vault? Today they write the mod the item is read with, and the import makes it an own link.
-2. **A choice on a character item**: today *None (base game)* on a character item changes nothing. With Own maps it
+1. **A choice on a character item**: today *None (base game)* on a character item changes nothing. With Own maps it
    would be read with the base game data even on a character linked to a mod. A character file cannot keep that choice,
    so it would be lost at the next read, except for mod-only items, which get their mod again. Keep the menu on
    characters, or limit it to vaults?
-3. **Preload**: read every character with its own map at startup, or keep reading only the startup map's characters?
+2. **Preload**: read every character with its own map at startup, or keep reading only the startup map's characters?
