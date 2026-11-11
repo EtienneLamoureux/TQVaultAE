@@ -159,8 +159,8 @@ While an item is in a container, it always has two values:
 
 - **Map**: the database its records resolve in, a mod (its folder name, as in a link file) or the base game.
 - **Origin**:
-  - **Own**: a mod chosen for the item, the base game chosen for it, the map it had when it left a character (event 2),
-    or the mod that alone completes it in a linked vault (event 2).
+  - **Own**: a mod chosen for the item, the base game chosen for it, or the map it had when it left a character
+    (event 2).
   - **Inherited**: the map of the container holding it.
 
 Reading an item's data uses its map, and only its map. When the map names a mod that is not installed, the item is
@@ -203,8 +203,7 @@ incomplete until the mod is installed or the link changed.
      base game item that the mod changes alike. A vault without a link may then hold items linked to a mod: their
      tooltip shows it, and *Modded > None (base game)* gives them the base game.
    - In any other move, an Inherited map becomes the new container's.
-   - An incomplete item still gets the vault's mod as Own when that mod completes it, with the rules above (real
-     size, no overlap).
+   - An item that a vault's mod completes still only follows it: it stays Inherited (see the decisions below).
 3. **A container's link changes**: *Modded vault*, or the character's *Mod link...* dialog. Every item of that
    container with an Inherited map takes the new map; Own maps are kept. A character linked or unlinked is read again,
    as today.
@@ -292,3 +291,18 @@ The import's end message names the mods that were dropped.
 - **No guess from the records on a character.** Today, loading a character linked to a mod links the items whose
   records the base game lacks (`ItemModService.IsModOnly`, `AdoptMod`). It is replaced by event 2: leaving a character
   makes the map explicit, whatever the records.
+- **No guess on entering a vault.** Today, an incomplete item that a linked vault's mod completes gets that mod as its
+  own link (`ItemEditService.AdoptContainerMod`, and `ChangeVaultMod` for the items already in the vault). It is
+  dropped: such an item inherits the vault's map like any other. If the vault is later linked to another mod or
+  unlinked and the item becomes incomplete again, its warning tile shows it, and the user gives it a link with
+  *Modded* (the suggested mods help). The model has no guess left: every map comes from a file, a container or a user
+  action.
+
+### Open question
+
+- **A map change that changes the item's size**: read with another map, an item may take another size (an incomplete
+  one-cell tile becomes a 1x5 lance) and no longer fit where it lies, after a drop, an import, a vault's link changed or
+  a user choice. Today the change is cancelled and the item keeps its previous data. In this model the map is the
+  truth, so the item cannot keep data that does not match it: it must move to a free spot, or the change be refused.
+  The same events must also rebuild everything made from the item's data: its search names, the name and affix caches,
+  its tooltip and its picture.
