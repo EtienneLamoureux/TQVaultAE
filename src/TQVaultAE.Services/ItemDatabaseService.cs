@@ -58,15 +58,32 @@ public class ItemDatabaseService(
         if (!database.Indexed.TryAdd(item, 0))
             return false;
 
-        var result = new SearchResult(
+        database.Items.Add(this.NewResult(item));
+        return true;
+    }
+
+    /// <summary>
+    /// A search entry of an item: its names are read the first time they are needed, with the item's map.
+    /// </summary>
+    private SearchResult NewResult(Item item)
+        => new(
             item,
             new Lazy<ToFriendlyNameResult>(
                 () => this._itemProvider.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay),
                 LazyThreadSafetyMode.ExecutionAndPublication
             )
         );
-        database.Items.Add(result);
-        return true;
+
+    /// <inheritdoc/>
+    public void RefreshItems(IReadOnlyCollection<Item> items)
+    {
+        var refreshed = new HashSet<Item>(items, ReferenceEqualityComparer.Instance);
+        var database = this.ItemDatabase;
+        if (refreshed.Count == 0 || !database.Any(r => refreshed.Contains(r.Item)))
+            return;
+
+        // Indexed items only: a new entry each, whose names are read again.
+        this._database = Database.Of(database.Select(r => refreshed.Contains(r.Item) ? this.NewResult(r.Item) : r));
     }
 
     /// <inheritdoc/>
@@ -80,6 +97,12 @@ public class ItemDatabaseService(
         item.Place.SackNumber = sackNumber;
         item.Place.SackType = sackType;
         item.Place.StashType = stashType;
+
+#if DEBUG
+        // Every item a container read has a map (MODLINK.md): one without is a path that forgot to give it one.
+        if (item.ModOrigin == ModOrigin.None)
+            this._log.LogWarning("Item without a map: {Item} in {Container}", item.BaseItemId, containerPath);
+#endif
 
         this.TryAddItemToDatabase(item);
     }

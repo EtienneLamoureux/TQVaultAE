@@ -20,6 +20,16 @@ public class ImportResult
 	public int TotalCount { get; set; }
 	public string? ErrorMessage { get; set; }
 	public BagButtonIconInfo? TabIconInfo { get; set; }
+
+	/// <summary>The map of the container a tab export comes from, which its items without an own map inherited; null for
+	/// the base game. Only meaningful when <see cref="TabMapKnown"/>.</summary>
+	public string? TabMod { get; set; }
+
+	/// <summary>False when the tab's mod is not installed here: its items then take their target's map.</summary>
+	public bool TabMapKnown { get; set; }
+
+	/// <summary>The mods the export names that are not installed here: their links were dropped.</summary>
+	public IReadOnlyList<string> DroppedMods { get; set; } = [];
 	public Dictionary<int, BagButtonIconInfo>? SackIconInfo { get; set; }
 
 	public static ImportResult Succeeded(Item item)
@@ -32,7 +42,8 @@ public class ImportResult
 			TotalCount = 1
 		};
 
-	public static ImportResult SucceededTab(IReadOnlyList<Item> items, int sackNumber, BagButtonIconInfo? iconInfo = null)
+	public static ImportResult SucceededTab(IReadOnlyList<Item> items, int sackNumber, BagButtonIconInfo? iconInfo = null
+		, string? tabMod = null, bool tabMapKnown = false)
 		=> new()
 		{
 			Success = true,
@@ -40,6 +51,8 @@ public class ImportResult
 			Items = items,
 			SackNumber = sackNumber,
 			TabIconInfo = iconInfo,
+			TabMod = tabMod,
+			TabMapKnown = tabMapKnown,
 			ImportedCount = items.Count,
 			TotalCount = items.Count
 		};

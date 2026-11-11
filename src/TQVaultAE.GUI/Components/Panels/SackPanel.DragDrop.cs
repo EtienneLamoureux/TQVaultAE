@@ -144,13 +144,18 @@ public partial class SackPanel
 			dragItem = drop.DroppedItem;
 			itemUnderUs = drop.ItemUnderUs;
 
-			// The item takes the data of its new place: in a vault, the vault's mod or else the base game; on a
-			// character, the active map when it has no link of its own.
-			if (!drop.Stacked && this.Services.ItemEditService.SettleIn(
-				dragItem, this.HoldsVault?.Invoke() ?? false, this.ContainerMod?.Invoke()
-				, item => SackLayout.Fits(this.ShownSack, this.SackSize, item, itemUnderUs)))
+			// The item takes its map here (MODLINK.md): an own map goes with it, leaving a character for a vault makes it
+			// its own, else it inherits the container's. Read with a new map, it may take its real size: where it was
+			// dropped, else at a free spot of the bag, else it keeps its previous map.
+			if (!drop.Stacked)
 			{
-				this.InvalidateItemCacheAll(dragItem);
+				var outcome = this.Services.ItemEditService.SettleIn(dragItem, this.HoldsVault?.Invoke() ?? false, this.ContainerMap
+					, item => SackLayout.Fits(this.ShownSack, this.SackSize, item, itemUnderUs) || SackLayout.MoveToFreeSpot(this.ShownSack, this.SackSize, item));
+				if (outcome != SettleOutcome.Unchanged)
+					this.InvalidateItemCacheAll(dragItem);
+
+				if (outcome == SettleOutcome.KeptOwnMap)
+					this.NotifyKeptMap([dragItem]);
 			}
 
 			// clear the "last drag" variables

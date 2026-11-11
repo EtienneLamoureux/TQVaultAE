@@ -16,8 +16,30 @@ public class StashService(
 	IStashProvider stashProvider,
 	IGamePathService gamePathResolver,
 	IGameFileService iGameFileService,
-	UserSettings userSettings) : IStashService
+	UserSettings userSettings,
+	IGameMapService? gameMapService = null) : IStashService
 {
+	private readonly IGameMapService? GameMapService = gameMapService;
+
+	/// <summary>Reads with a custom map's database (empty for the base game) until disposed.</summary>
+	private IDisposable ReadWithMap(string? mapFolder)
+		=> this.GameMapService?.ReadWithMap(mapFolder) ?? NoScope.Instance;
+
+	/// <summary>The items of a stash just read inherit its map.</summary>
+	private static void Inherit(Stash stash, string? mod)
+	{
+		foreach (var item in stash.Sack ?? [])
+			item.InheritMod(mod);
+	}
+
+	/// <summary>A shared stash's name in the search: a mod's names its mod, as each map has its own.</summary>
+	private string SharedStashName(string name, string map)
+		=> this.GameMapService?.ModNameOfMap(map) is { } mod ? $"{name} [{mod}]" : name;
+
+	/// <summary>The map whose shared stash files are read: the given one, else the active one.</summary>
+	private string MapOrActive(string? mapFolder)
+		=> mapFolder ?? this.GameMapService?.ActiveMap ?? string.Empty;
+
 	private readonly ILogger Log = log;
 	private readonly SessionContext userContext = userContext;
 	private readonly IItemDatabaseService ItemDatabaseService = itemDatabaseService;
@@ -47,7 +69,11 @@ public class StashService(
 			var stash = new Stash(selectedSave.Name, k);
 			try
 			{
-				stash.StashFound = StashProvider.LoadFile(stash);
+				// Read with the character's own map; its items inherit that map.
+				using (this.GameMapService?.ReadWith(selectedSave) ?? NoScope.Instance)
+					stash.StashFound = StashProvider.LoadFile(stash);
+
+				Inherit(stash, this.GameMapService?.ModNameFor(selectedSave));
 				if ((stash.StashFound ?? false) && stash.Sack is not null)
 					stash.Sack.StashType = StashType.PlayerStash;
 
@@ -85,18 +111,23 @@ public class StashService(
 	/// </summary>
 	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
 	/// <returns>Stash load result.</returns>
-	public StashLoadResult LoadTransferStash(bool fromFileWatcher = false)
+	public StashLoadResult LoadTransferStash(bool fromFileWatcher = false, string? mapFolder = null)
 	{
 		var result = new StashLoadResult();
 
-		result.StashFile = GamePathResolver.TransferStashFileFullPath;
+		string map = this.MapOrActive(mapFolder);
+		result.StashFile = mapFolder is null ? GamePathResolver.TransferStashFileFullPath : GamePathResolver.TransferStashFileFullPathFor(map);
 
 		Stash addStash(string k)
 		{
 			var stash = new Stash(Resources.GlobalTransferStash, result.StashFile);
 			try
 			{
-				stash.StashFound = StashProvider.LoadFile(stash);
+				// Read with the map whose file it is; its items inherit that map.
+				using (this.ReadWithMap(map))
+					stash.StashFound = StashProvider.LoadFile(stash);
+
+				Inherit(stash, this.GameMapService?.ModNameOfMap(map));
 				if ((stash.StashFound ?? false) && stash.Sack is not null)
 					stash.Sack.StashType = StashType.TransferStash;
 
@@ -104,7 +135,7 @@ public class StashService(
 				if (stash.Sack is not null)
 				{
 					foreach (var item in stash.Sack)
-						this.ItemDatabaseService.AddItemToDatabase(item, k, Resources.GlobalTransferStash, BagIdConstants.BAGID_TRANSFERSTASH, SackType.Stash, StashType.TransferStash);
+						this.ItemDatabaseService.AddItemToDatabase(item, k, this.SharedStashName(Resources.GlobalTransferStash, map), BagIdConstants.BAGID_TRANSFERSTASH, SackType.Stash, StashType.TransferStash);
 				}
 			}
 			catch (ArgumentException argumentException)
@@ -154,11 +185,12 @@ public class StashService(
 	/// </summary>
 	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
 	/// <returns>Stash load result.</returns>
-	public StashLoadResult LoadRelicVaultStash(bool fromFileWatcher = false)
+	public StashLoadResult LoadRelicVaultStash(bool fromFileWatcher = false, string? mapFolder = null)
 	{
 		var result = new StashLoadResult();
 
-		result.StashFile = GamePathResolver.RelicVaultStashFileFullPath;
+		string map = this.MapOrActive(mapFolder);
+		result.StashFile = mapFolder is null ? GamePathResolver.RelicVaultStashFileFullPath : GamePathResolver.RelicVaultStashFileFullPathFor(map);
 
 		Stash addStash(string k)
 		{
@@ -166,7 +198,11 @@ public class StashService(
 
 			try
 			{
-				stash.StashFound = StashProvider.LoadFile(stash);
+				// Read with the map whose file it is; its items inherit that map.
+				using (this.ReadWithMap(map))
+					stash.StashFound = StashProvider.LoadFile(stash);
+
+				Inherit(stash, this.GameMapService?.ModNameOfMap(map));
 				if ((stash.StashFound ?? false) && stash.Sack is not null)
 					stash.Sack.StashType = StashType.RelicVaultStash;
 
@@ -174,7 +210,7 @@ public class StashService(
 				if (stash.Sack is not null)
 				{
 					foreach (var item in stash.Sack)
-						this.ItemDatabaseService.AddItemToDatabase(item, k, Resources.GlobalRelicVaultStash, BagIdConstants.BAGID_RELICVAULTSTASH, SackType.Stash, StashType.RelicVaultStash);
+						this.ItemDatabaseService.AddItemToDatabase(item, k, this.SharedStashName(Resources.GlobalRelicVaultStash, map), BagIdConstants.BAGID_RELICVAULTSTASH, SackType.Stash, StashType.RelicVaultStash);
 				}
 			}
 			catch (ArgumentException argumentException)

@@ -150,10 +150,8 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 	/// <inheritdoc/>
 	public Item NewSetMember(Item setItem, RecordId memberId)
 	{
+		// A piece of the same set comes from the same data: the copy has the set item's map.
 		Item member = setItem.MakeEmptyCopy(memberId);
-
-		// A piece of the same set comes from the same data: the set item's mod, or its vault's base game.
-		(member.Mod, member.ModFromVault, member.NoMod, member.InVault) = (setItem.Mod, setItem.ModFromVault, setItem.NoMod, setItem.InVault);
 		this._itemProvider.GetDBData(member);
 		return member;
 	}
@@ -186,25 +184,27 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 	/// <inheritdoc/>
 	public bool ChangeMod(SackCollection sack, Item item, string? modName, Func<Item, bool>? fits = null)
 	{
-		string? mod = string.IsNullOrWhiteSpace(modName) ? null : modName;
-		if (string.Equals(item.Mod, mod, StringComparison.OrdinalIgnoreCase) && !item.ModFromVault)
+		string? mod = Normalize(modName);
+		if (item.HasOwnMod && SameMod(item.Mod, mod))
 			return false;
 
-		// Chosen for the item: its own link from now on. The base game chosen in a linked vault is a choice too, kept
-		// in the vault file (NoMod), else the item would follow the vault's link again once read back.
-		var previous = (item.Mod, item.ModFromVault, item.NoMod);
+		// Chosen for the item: its own map from now on, kept wherever it goes and saved in the vault file.
+		var previous = (item.Mod, item.ModOrigin);
 		item.Mod = mod;
-		item.ModFromVault = false;
-		item.NoMod = mod is null;
-		this._itemProvider.GetDBData(item);
+		item.ModOrigin = ModOrigin.Own;
 
-		// Read with other data, the item may take another size: without room for it, the link is put back rather
-		// than saving items that overlap.
-		if (fits is not null && !fits(item))
+		if (!SameMod(previous.Mod, mod))
 		{
-			(item.Mod, item.ModFromVault, item.NoMod) = previous;
 			this._itemProvider.GetDBData(item);
-			return false;
+
+			// Read with other data, the item may take another size: without room for it, the choice is undone rather
+			// than saving items that overlap.
+			if (fits is not null && !fits(item))
+			{
+				(item.Mod, item.ModOrigin) = previous;
+				this._itemProvider.GetDBData(item);
+				return false;
+			}
 		}
 
 		MarkModified(sack, item);
@@ -212,114 +212,112 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 	}
 
 	/// <inheritdoc/>
-	public IReadOnlyList<Item> ChangeVaultMod(PlayerCollection vault, string? modName, Func<SackCollection, Item, bool>? fits = null)
+	public VaultModChange ChangeVaultMod(PlayerCollection vault, string? modName, Func<SackCollection, Item, bool>? fits = null)
 	{
-		string? mod = string.IsNullOrWhiteSpace(modName) ? null : modName;
-		string? previous = vault.Mod;
-		if (string.Equals(previous, mod, StringComparison.OrdinalIgnoreCase))
-			return [];
+		string? mod = Normalize(modName);
+		if (SameMod(vault.Mod, mod))
+			return VaultModChange.None;
 
 		vault.Mod = mod;
 		var changed = new List<Item>();
+		var kept = new List<Item>();
 		foreach (var sack in vault)
 		{
 			if (sack is null)
 				continue;
 
-			// The items following the vault's link, or without a link, follow the new one; the items having their own
-			// link, or set to the base game, keep it.
-			foreach (var item in sack.Where(i => (i.Mod is null && !i.NoMod) || i.ModFromVault))
+			// The items inheriting the vault's map take the new one; own maps are kept. A copy of the list: fits may move
+			// an item to another bag.
+			foreach (var item in sack.Where(i => !i.HasOwnMod).ToList())
 			{
-				bool wasIncomplete = item.IsIncomplete;
-				var previousLink = (item.Mod, item.ModFromVault);
+				var previous = item.Mod;
 				item.Mod = mod;
-				item.ModFromVault = mod is not null;
+				item.ModOrigin = ModOrigin.Inherited;
+				item.IsModified = true;
 				this._itemProvider.GetDBData(item);
 
-				// Read with other data, the item may take another size: without room for it in its bag, it keeps the
-				// link it had, as its own, rather than being saved over its neighbours.
+				// Read with other data, the item may take another size: without room for it anywhere, it keeps its map,
+				// as its own, rather than being saved over its neighbours.
 				if (fits is not null && !fits(sack, item))
 				{
-					(item.Mod, item.ModFromVault) = (previousLink.Mod, false);
+					(item.Mod, item.ModOrigin) = (previous, ModOrigin.Own);
 					this._itemProvider.GetDBData(item);
-					item.IsModified = true;
+					kept.Add(item);
 					continue;
 				}
 
-				// An item whose missing records the mod all resolves belongs to that mod: it gets its own link, which it
-				// keeps when the vault's link changes or when it leaves the vault.
-				if (mod is not null && wasIncomplete && !item.IsIncomplete)
-					item.ModFromVault = false;
-
-				item.IsModified = true;
 				changed.Add(item);
 			}
 
 			sack.IsModified = true;
 		}
 
-		return changed;
+		return new VaultModChange(changed, kept);
 	}
 
 	/// <inheritdoc/>
-	public bool AdoptContainerMod(Item item, string? containerMod, Func<Item, bool> fits)
+	public SettleResult SettleAll(SackCollection sack, System.Drawing.Size sackSize, IEnumerable<Item> items, bool inVault, string? containerMod, Func<SackCollection, Item, bool>? elsewhere = null)
 	{
-		// Only an item without a link of its own follows the vault's; one set to the base game does not.
-		if (string.IsNullOrWhiteSpace(containerMod) || item.NoMod || (item.Mod is not null && !item.ModFromVault)
-			|| (item.ModFromVault && string.Equals(item.Mod, containerMod, StringComparison.OrdinalIgnoreCase)))
-			return false;
-
-		var (previousMod, previousFromVault) = (item.Mod, item.ModFromVault);
-		bool wasIncomplete = item.IsIncomplete;
-
-		item.Mod = containerMod;
-		item.ModFromVault = true;
-		this._itemProvider.GetDBData(item);
-
-		// Read with the mod's data, the item may get its real size: it must still fit where it was dropped.
-		if (!fits(item))
+		var readAgain = new List<Item>();
+		var kept = new List<Item>();
+		foreach (var item in items.ToList())
 		{
-			(item.Mod, item.ModFromVault) = (previousMod, previousFromVault);
-			this._itemProvider.GetDBData(item);
-			return false;
+			var outcome = this.SettleIn(item, inVault, containerMod
+				, i => TQVaultAE.Domain.Actions.SackLayout.FitsOrMoves(sack, sackSize, i) || (elsewhere?.Invoke(sack, i) ?? false));
+			if (outcome == SettleOutcome.ReadAgain)
+				readAgain.Add(item);
+			else if (outcome == SettleOutcome.KeptOwnMap)
+				kept.Add(item);
 		}
 
-		// The vault's mod resolves all its missing records: the item belongs to that mod.
-		if (wasIncomplete && !item.IsIncomplete)
-			item.ModFromVault = false;
+		return new SettleResult(readAgain, kept);
+	}
+
+	/// <inheritdoc/>
+	public SettleOutcome SettleIn(Item item, bool inVault, string? containerMod, Func<Item, bool> fits)
+	{
+		bool leavesCharacter = inVault && !item.InVault;
+		item.InVault = inVault;
+
+		// An own map goes with the item.
+		if (item.HasOwnMod)
+			return SettleOutcome.Unchanged;
+
+		// Leaving a character (or a game stash) for a vault makes the map explicit: the item keeps the data the game
+		// reads it with.
+		if (leavesCharacter && item.ModOrigin == ModOrigin.Inherited)
+		{
+			item.ModOrigin = ModOrigin.Own;
+			item.IsModified = true;
+			return SettleOutcome.Unchanged;
+		}
+
+		// Else the item inherits the map of its new container.
+		string? mod = Normalize(containerMod);
+		var previous = (item.Mod, item.ModOrigin);
+		item.Mod = mod;
+		item.ModOrigin = ModOrigin.Inherited;
+		if (previous.ModOrigin != ModOrigin.None && SameMod(previous.Mod, mod))
+			return SettleOutcome.Unchanged;
 
 		item.IsModified = true;
-		return true;
-	}
+		this._itemProvider.GetDBData(item);
 
-	/// <inheritdoc/>
-	public IReadOnlyList<Item> SettleAll(SackCollection sack, System.Drawing.Size sackSize, IEnumerable<Item> items, bool inVault, string? vaultMod)
-		=> [.. items.Where(item => this.SettleIn(item, inVault, vaultMod, i => TQVaultAE.Domain.Actions.SackLayout.FitsOrMoves(sack, sackSize, i)))];
-
-	/// <inheritdoc/>
-	public bool SettleIn(Item item, bool inVault, string? vaultMod, Func<Item, bool> fits)
-	{
-		bool moved = item.InVault != inVault;
-		if (moved)
+		// Read with the new map, the item may take its real size: it must fit where it lies, or at another free spot.
+		// Without room for it, it keeps its previous map, as its own.
+		if (!fits(item))
 		{
-			// Between a vault and a character, an item without a link changes data: base game in a vault, the active
-			// map on a character.
-			item.InVault = inVault;
+			(item.Mod, item.ModOrigin) = (previous.Mod, ModOrigin.Own);
 			this._itemProvider.GetDBData(item);
-
-			// Read with the data of its new place, the item may get its real size: it must still fit where it was put.
-			// Else it keeps the data it came with, which fits.
-			if (!fits(item))
-			{
-				item.InVault = !inVault;
-				this._itemProvider.GetDBData(item);
-				moved = false;
-			}
+			return SettleOutcome.KeptOwnMap;
 		}
 
-		bool adopted = inVault && this.AdoptContainerMod(item, vaultMod, fits);
-		return moved || adopted;
+		return SettleOutcome.ReadAgain;
 	}
+
+	private static string? Normalize(string? modName) => string.IsNullOrWhiteSpace(modName) ? null : modName;
+
+	private static bool SameMod(string? a, string? b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
 
 	/// <summary>Rolls a completion bonus from the bonus table of a relic, charm or artifact.</summary>
 	private RecordId? RollBonus(Item item)

@@ -130,6 +130,8 @@ internal static partial class AutomationTools
 			{
 				endpoint = AutomationHost.Address,
 				loadingComplete = form.AutomationLoadingComplete,
+				// The last message shown to the user in the main window (NotifyUser): an import's end message, for example.
+				notification = form.AutomationNotificationText,
 				vault = form.AutomationSelectedVault,
 				vaultMod = form.AutomationSelectedVaultMod,
 				secondaryVault = form.AutomationSelectedSecondaryVault,
@@ -819,9 +821,9 @@ internal static partial class AutomationTools
 			baseName,
 			baseItemId = item.BaseItemId.ToString(),
 			// Records the loaded game data lacks (a mod not loaded): the tooltip shows the item incomplete.
+			// The item's map (null: the base game) and where it comes from: Own, Inherited, or None before a container.
 			mod = item.Mod,
-			modFromVault = item.Mod is null ? (bool?)null : item.ModFromVault,
-			noMod = item.NoMod ? true : (bool?)null,
+			modOrigin = item.ModOrigin.ToString(),
 			missingRecords = item.IsIncomplete ? item.MissingRecords.Select(m => new { role = m.Role.ToString(), id = m.Id.Raw }) : null,
 			x = item.PositionX,
 			y = item.PositionY,

@@ -26,13 +26,33 @@ public partial class MainForm
 	/// </summary>
 	/// <returns>Total number of files that LoadAllFiles() will load.</returns>
 	private int LoadAllFilesTotal()
-		=> LoadAllService.CountSteps(this.CharactersOfActiveMap().Length, GamePathResolver.GetVaultList().Length);
+		=> LoadAllService.CountSteps(this.ListedCharacters().Length, GamePathResolver.GetVaultList().Length, this.SharedStashMaps().Count);
 
 	/// <summary>
-	/// The listed characters played with the active map: the only ones LoadAllFiles can read with the right database.
+	/// The listed characters: each is read with its own map's database.
 	/// </summary>
-	private PlayerSave[] CharactersOfActiveMap()
-		=> [.. this.comboBoxCharacter.Items.OfType<PlayerSave>().Where(this.gameMapService.UsesActiveMap)];
+	private PlayerSave[] ListedCharacters()
+		=> [.. this.comboBoxCharacter.Items.OfType<PlayerSave>()];
+
+	/// <summary>
+	/// The maps whose shared stashes (transfer stash, relic vault) LoadAllFiles reads: the base game and the map of
+	/// every listed Immortal Throne character.
+	/// </summary>
+	private List<string> SharedStashMaps()
+	{
+		var maps = new List<string>();
+		foreach (var save in this.ListedCharacters().Where(c => c.IsImmortalThrone))
+		{
+			var map = this.gameMapService.MapFor(save);
+			if (!maps.Any(m => GameMaps.Same(m, map)))
+				maps.Add(map);
+		}
+
+		if (maps.Count != 0 && !maps.Any(m => GameMaps.Same(m, string.Empty)))
+			maps.Insert(0, string.Empty);
+
+		return maps;
+	}
 
 	/// <summary>
 	/// Loads all of the players, stashes, and vaults.
@@ -51,9 +71,10 @@ public partial class MainForm
 		}
 
 		var result = this.loadAllService.LoadAll(
-			this.CharactersOfActiveMap()
+			this.ListedCharacters()
 			, GamePathResolver.GetVaultList()
-			, progress);
+			, progress
+			, this.SharedStashMaps());
 
 		// Display errors
 		foreach (var error in result.Errors)

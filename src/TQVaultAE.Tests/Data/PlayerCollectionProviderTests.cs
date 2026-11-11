@@ -228,7 +228,7 @@ public class PlayerCollectionProviderTests
 		_provider.LoadFile(pc, "vault.json");
 
 		pc.Mod.Should().Be("shadowchampions");
-		pc.Sacks![0].Select(i => (i.Mod, i.ModFromVault)).Should().Equal(("shadowchampions", true), ("Lilith", false));
+		pc.Sacks![0].Select(i => (i.Mod, i.ModOrigin)).Should().Equal(("shadowchampions", ModOrigin.Inherited), ("Lilith", ModOrigin.Own));
 		modsWhenRead.Should().Equal("shadowchampions", "Lilith");
 	}
 
@@ -236,9 +236,9 @@ public class PlayerCollectionProviderTests
 	public void Save_ModdedVault_WritesTheVaultsMod_AndTheItemsOwnLinks()
 	{
 		var sack = new SackCollection();
-		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/a.dbr"), Mod = "shadowchampions", ModFromVault = true });
-		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/b.dbr"), Mod = "Lilith" });
-		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/c.dbr"), Mod = "shadowchampions" });
+		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/a.dbr"), Mod = "shadowchampions", ModOrigin = ModOrigin.Inherited });
+		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/b.dbr"), Mod = "Lilith", ModOrigin = ModOrigin.Own });
+		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/c.dbr"), Mod = "shadowchampions", ModOrigin = ModOrigin.Own });
 		var pc = new PlayerCollection("test", "vault.json") { IsVault = true, Mod = "shadowchampions", Sacks = [sack] };
 		string? written = null;
 		_mockFileIO.Setup(x => x.WriteAllText("vault.json", It.IsAny<string>(), It.IsAny<Encoding>()))
@@ -260,8 +260,8 @@ public class PlayerCollectionProviderTests
 	{
 		// Arrange: in a vault linked to Lilith, the base game was chosen for one item
 		var sack = new SackCollection();
-		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/a.dbr"), NoMod = true });
-		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/b.dbr"), Mod = "Lilith", ModFromVault = true });
+		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/a.dbr"), ModOrigin = ModOrigin.Own });
+		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/b.dbr"), Mod = "Lilith", ModOrigin = ModOrigin.Inherited });
 		var pc = new PlayerCollection("test", "vault.json") { IsVault = true, Mod = "Lilith", Sacks = [sack] };
 		string? written = null;
 		_mockFileIO.Setup(x => x.WriteAllText("vault.json", It.IsAny<string>(), It.IsAny<Encoding>()))
@@ -280,7 +280,7 @@ public class PlayerCollectionProviderTests
 		var items = doc.RootElement.GetProperty("sacks")[0].GetProperty("items");
 		items[0].GetProperty("noMod").GetBoolean().Should().BeTrue();
 		items[1].TryGetProperty("noMod", out _).Should().BeFalse();
-		loaded.Sacks![0].Select(i => (i.Mod, i.ModFromVault, i.NoMod)).Should().Equal(((string?)null, false, true), ("Lilith", true, false));
+		loaded.Sacks![0].Select(i => (i.Mod, i.ModOrigin)).Should().Equal(((string?)null, ModOrigin.Own), ("Lilith", ModOrigin.Inherited));
 		modsWhenRead.Should().Equal(null, "Lilith");
 	}
 

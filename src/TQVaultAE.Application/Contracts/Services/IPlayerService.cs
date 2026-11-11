@@ -34,15 +34,6 @@ public interface IPlayerService
 	CharacterSessionLoadResult LoadCharacterSession(PlayerSave selectedSave, bool loadTransferStash, bool loadRelicVaultStash);
 
 	/// <summary>
-	/// Links the mod items of a character linked to an installed mod to that mod, after its files were read again
-	/// outside <see cref="LoadCharacterSession"/> (the game saved them): a reload makes new items, without the link.
-	/// </summary>
-	/// <param name="selectedSave">The character.</param>
-	/// <param name="player">The character file just read again, if it was.</param>
-	/// <param name="playerStash">Its stash just read again, if it was.</param>
-	void AdoptCharacterMod(PlayerSave selectedSave, PlayerLoadResult? player, StashLoadResult? playerStash);
-
-	/// <summary>
 	/// Gets the loaded players that have unsaved changes, with their file.
 	/// </summary>
 	IReadOnlyList<(string File, PlayerCollection Player)> GetModifiedPlayers();

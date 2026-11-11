@@ -7,7 +7,12 @@ public interface IItemExchangeService
 {
 	string SerializeItem(Item item);
 	string SerializeItems(IEnumerable<Item> items);
-	string SerializeSackCollection(SackCollection sack, int sackNumber);
+
+	/// <summary>
+	/// Exports a tab: its container's mod once, and each item's own map only.
+	/// </summary>
+	/// <param name="containerMod">The mod of the vault or character the tab belongs to; null for the base game.</param>
+	string SerializeSackCollection(SackCollection sack, int sackNumber, string? containerMod = null);
 	string SerializePlayerCollection(PlayerCollection vault);
 	ImportResult ImportFromJson(string json);
 	void ImportVaultInto(PlayerCollection vault, ImportResult importData);
@@ -68,16 +73,19 @@ public interface IItemExchangeService
 	/// <param name="vaultName">Name of the vault or character the tab belongs to.</param>
 	/// <param name="sack">The tab.</param>
 	/// <param name="sackNumber">0-based number of the tab, as exported.</param>
+	/// <param name="containerMod">The mod of that vault or character; null for the base game.</param>
 	/// <returns>The URL of the paste.</returns>
-	Task<string> ExportTabToPasteBinAsync(string vaultName, SackCollection sack, int sackNumber);
+	Task<string> ExportTabToPasteBinAsync(string vaultName, SackCollection sack, int sackNumber, string? containerMod = null);
 
 	/// <summary>
 	/// Places the items of an item, multi-select or tab import into a sack.
 	/// Each item keeps its exported position when those cells are free, else it takes the first open cells;
-	/// an item that does not fit is skipped. A tab import also gives its icon to the sack.
+	/// an item that does not fit is skipped. A tab import also gives its icon to the sack, and the items that inherited
+	/// the tab's map keep it: inherited when the target has the same map, else as their own.
 	/// </summary>
+	/// <param name="targetMod">The map of the target container; null for the base game.</param>
 	/// <returns>The number of items placed.</returns>
-	int PlaceImportedItems(SackCollection sack, ImportResult importResult, int sackWidth, int sackHeight);
+	int PlaceImportedItems(SackCollection sack, ImportResult importResult, int sackWidth, int sackHeight, string? targetMod = null);
 
 	/// <summary>
 	/// Gets whether no sack of the vault holds an item.

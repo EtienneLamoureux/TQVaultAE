@@ -36,12 +36,8 @@ public class VaultExportDTO
 			var items = new List<ItemDto>();
 			foreach (var item in sack)
 			{
-				// As in the vault file: an item following the vault's link has no link of its own to write.
-				var dto = ItemDtoExtensions.FromItem(item);
-				if (item.ModFromVault && string.Equals(item.Mod, vault.Mod, System.StringComparison.OrdinalIgnoreCase))
-					dto.mod = null;
-
-				items.Add(dto);
+				// As in the vault file: only an item's own map is written, the others inherit the vault's mod.
+				items.Add(ItemDtoExtensions.FromItem(item, ownMapOnly: true));
 			}
 
 			sacks.Add(new SackExportDTO

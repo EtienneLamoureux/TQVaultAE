@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using Moq;
 using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Services;
 
@@ -383,41 +384,49 @@ public class ItemEditServiceTests
 		member.beginBlockCrap1.Should().Be(7);
 		this._itemProvider.Verify(p => p.GetDBData(member), Times.Once);
 	}
+	/// <summary>An item a container holds: in a vault or not, with a map it inherits or owns.</summary>
+	private static Item Placed(string record, string? mod, ModOrigin origin, bool inVault = true)
+		=> new() { BaseItemId = RecordId.Create(record), Mod = mod, ModOrigin = origin, InVault = inVault, Width = 1, Height = 1 };
+
+	/// <summary>The mod has the lance; nothing has the unknown sword.</summary>
+	private void ModHasTheLance(RecordId lance)
+		=> this._itemProvider.Setup(p => p.GetDBData(It.IsAny<Item>())).Callback<Item>(i =>
+			i.baseItemInfo = i.Mod == "shadowchampions" && i.BaseItemId == lance ? MakeInfo(lance.Raw, "WeaponMelee_Spear") : null);
+
 	[Fact]
-	public void ChangeMod_LinksTheItemAndReadsItAgain()
+	public void ChangeMod_GivesTheModAsTheItemsOwnMap_AndReadsItAgain()
 	{
-		var item = MakeItem("records/ring.dbr", "ArmorJewelry_Ring");
+		var item = Placed("records/ring.dbr", null, ModOrigin.Inherited);
 
 		this._service.ChangeMod(this._sack, item, "shadowchampions").Should().BeTrue();
 
-		item.Mod.Should().Be("shadowchampions");
+		(item.Mod, item.ModOrigin).Should().Be(("shadowchampions", ModOrigin.Own));
 		item.IsModified.Should().BeTrue();
 		this._sack.IsModified.Should().BeTrue();
 		this._itemProvider.Verify(p => p.GetDBData(item), Times.Once);
 	}
 
 	[Fact]
-	public void ChangeMod_ItemNoLongerFits_PutsTheLinkBack()
+	public void ChangeMod_ItemNoLongerFits_UndoesTheChoice()
 	{
-		// Arrange: read with the mod's data the item takes another size, and its sack has no room for it
-		var item = MakeItem("records/ring.dbr", "ArmorJewelry_Ring");
+		// Arrange: read with the mod's data the item takes another size, and its container has no room for it
+		var item = Placed("records/ring.dbr", null, ModOrigin.Inherited);
 		this._sack.IsModified = false;
 
 		// Act
 		var changed = this._service.ChangeMod(this._sack, item, "shadowchampions", _ => false);
 
-		// Assert: nothing to save, and the item is read again with the data it had
+		// Assert: nothing to save, and the item is read again with the map it had
 		changed.Should().BeFalse();
-		item.Mod.Should().BeNull();
+		(item.Mod, item.ModOrigin).Should().Be(((string?)null, ModOrigin.Inherited));
 		this._sack.IsModified.Should().BeFalse();
 		this._itemProvider.Verify(p => p.GetDBData(item), Times.Exactly(2));
 	}
 
 	[Fact]
-	public void ChangeMod_SameMod_ChangesNothing()
+	public void ChangeMod_SameOwnMod_ChangesNothing()
 	{
-		var item = MakeItem("records/ring.dbr", "ArmorJewelry_Ring");
-		item.Mod = "shadowchampions";
+		var item = Placed("records/ring.dbr", "shadowchampions", ModOrigin.Own);
 
 		this._service.ChangeMod(this._sack, item, "ShadowChampions").Should().BeFalse();
 
@@ -426,169 +435,175 @@ public class ItemEditServiceTests
 	}
 
 	[Fact]
-	public void ChangeVaultMod_ItemsOfTheVaultFollow_ItemsWithTheirOwnLinkKeepIt()
+	public void ChangeMod_TheMapItInherits_BecomesItsOwn_WithoutReadingItAgain()
 	{
-		var vault = new TQVaultAE.Application.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
-		var sack = new SackCollection();
-		var plain = MakeItem("records/a.dbr", "ArmorJewelry_Ring");
-		var ofVault = MakeItem("records/b.dbr", "ArmorJewelry_Ring");
-		ofVault.Mod = "Lilith";
-		ofVault.ModFromVault = true;
-		var own = MakeItem("records/d.dbr", "ArmorJewelry_Ring");
-		own.Mod = "Lilith";
-		var other = MakeItem("records/c.dbr", "ArmorJewelry_Ring");
-		other.Mod = "Masteries";
-		sack.AddItem(plain);
-		sack.AddItem(ofVault);
-		sack.AddItem(own);
-		sack.AddItem(other);
-		vault.Sacks = [sack];
+		var item = Placed("records/ring.dbr", "shadowchampions", ModOrigin.Inherited);
 
-		var changed = this._service.ChangeVaultMod(vault, "shadowchampions");
+		this._service.ChangeMod(this._sack, item, "shadowchampions").Should().BeTrue();
 
-		vault.Mod.Should().Be("shadowchampions");
-		changed.Should().BeEquivalentTo([plain, ofVault]);
-		(plain.Mod, plain.ModFromVault).Should().Be(("shadowchampions", true));
-		(ofVault.Mod, ofVault.ModFromVault).Should().Be(("shadowchampions", true));
-		own.Mod.Should().Be("Lilith");
-		other.Mod.Should().Be("Masteries");
-		vault.IsModified.Should().BeTrue();
+		item.ModOrigin.Should().Be(ModOrigin.Own);
+		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
 	}
 
 	[Fact]
-	public void ChangeMod_BaseGameInAModdedVault_IsKeptWhenTheVaultChangesItsLink()
+	public void ChangeMod_BaseGameChosenInAModdedVault_IsKeptWhenTheVaultChangesItsLink()
 	{
-		// Arrange: an item following the vault's Lilith link
+		// Arrange: an item inheriting the vault's Lilith link
 		var vault = new TQVaultAE.Application.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
 		var sack = new SackCollection();
-		var item = MakeItem("records/a.dbr", "ArmorJewelry_Ring");
-		(item.Mod, item.ModFromVault, item.InVault) = ("Lilith", true, true);
+		var item = Placed("records/a.dbr", "Lilith", ModOrigin.Inherited);
 		sack.AddItem(item);
 		vault.Sacks = [sack];
 
 		// Act: the base game is chosen for it, then the vault is linked to another mod
 		this._service.ChangeMod(sack, item, null).Should().BeTrue();
-		var changed = this._service.ChangeVaultMod(vault, "shadowchampions");
+		var change = this._service.ChangeVaultMod(vault, "shadowchampions");
 
 		// Assert
-		changed.Should().BeEmpty();
-		item.Mod.Should().BeNull();
-		(item.ModFromVault, item.NoMod).Should().Be((false, true));
-		this._service.AdoptContainerMod(item, "shadowchampions", _ => true).Should().BeFalse();
+		change.Changed.Should().BeEmpty();
+		(item.Mod, item.ModOrigin).Should().Be(((string?)null, ModOrigin.Own));
 	}
 
 	[Fact]
-	public void ChangeMod_AModAfterTheBaseGame_ClearsTheBaseGameChoice()
+	public void ChangeVaultMod_InheritedMapsTakeTheNewOne_OwnMapsAreKept()
 	{
+		var vault = new TQVaultAE.Application.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
 		var sack = new SackCollection();
-		var item = MakeItem("records/a.dbr", "ArmorJewelry_Ring");
-		item.NoMod = true;
-		sack.AddItem(item);
-
-		this._service.ChangeMod(sack, item, "Lilith").Should().BeTrue();
-
-		(item.Mod, item.NoMod).Should().Be(("Lilith", false));
-	}
-
-	[Fact]
-	public void ChangeVaultMod_ItemsTheModCompletes_GetItAsTheirOwnLink()
-	{
-		// The mod has the lance; nothing has the unknown sword.
-		var lance = RecordId.Create("records/customitems/lance.dbr");
-		var sword = RecordId.Create("records/unknown/sword.dbr");
-		this._itemProvider.Setup(p => p.GetDBData(It.IsAny<Item>())).Callback<Item>(i =>
-			i.baseItemInfo = i.Mod == "shadowchampions" && i.BaseItemId == lance ? MakeInfo(lance.Raw, "WeaponMelee_Spear") : null);
-		var vault = new TQVaultAE.Application.PlayerCollection("vault", "vault.json") { IsVault = true };
-		var sack = new SackCollection();
-		var resolved = new Item { BaseItemId = lance };
-		var stillMissing = new Item { BaseItemId = sword };
-		var baseGame = MakeItem("records/a.dbr", "ArmorJewelry_Ring");
-		this._itemProvider.Setup(p => p.GetDBData(baseGame)).Callback<Item>(i => i.baseItemInfo = MakeInfo("records/a.dbr", "ArmorJewelry_Ring"));
-		sack.AddItem(resolved);
-		sack.AddItem(stillMissing);
-		sack.AddItem(baseGame);
+		var inherited = Placed("records/b.dbr", "Lilith", ModOrigin.Inherited);
+		var own = Placed("records/d.dbr", "Lilith", ModOrigin.Own);
+		var other = Placed("records/c.dbr", "Masteries", ModOrigin.Own);
+		sack.AddItem(inherited);
+		sack.AddItem(own);
+		sack.AddItem(other);
 		vault.Sacks = [sack];
 
+		var change = this._service.ChangeVaultMod(vault, "shadowchampions");
+
+		vault.Mod.Should().Be("shadowchampions");
+		change.Changed.Should().Equal(inherited);
+		change.Kept.Should().BeEmpty();
+		(inherited.Mod, inherited.ModOrigin).Should().Be(("shadowchampions", ModOrigin.Inherited));
+		(own.Mod, other.Mod).Should().Be(("Lilith", "Masteries"));
+		vault.IsModified.Should().BeTrue();
+	}
+
+	[Fact]
+	public void ChangeVaultMod_AnItemTheModCompletes_StillOnlyInheritsIt()
+	{
+		// Arrange: an incomplete lance in a vault without link; the mod completes it
+		var lance = RecordId.Create("records/customitems/lance.dbr");
+		this.ModHasTheLance(lance);
+		var vault = new TQVaultAE.Application.PlayerCollection("vault", "vault.json") { IsVault = true };
+		var sack = new SackCollection();
+		var item = Placed(lance.Raw, null, ModOrigin.Inherited);
+		sack.AddItem(item);
+		vault.Sacks = [sack];
+
+		// Act: linked to the mod, then unlinked
 		this._service.ChangeVaultMod(vault, "shadowchampions");
-
-		(resolved.Mod, resolved.ModFromVault).Should().Be(("shadowchampions", false));
-		(stillMissing.Mod, stillMissing.ModFromVault).Should().Be(("shadowchampions", true));
-		(baseGame.Mod, baseGame.ModFromVault).Should().Be(("shadowchampions", true));
-
-		// Unlinking the vault: the resolved item keeps its mod, the others follow.
+		var linked = (item.Mod, item.ModOrigin, item.IsIncomplete);
 		this._service.ChangeVaultMod(vault, null);
 
-		resolved.Mod.Should().Be("shadowchampions");
-		stillMissing.Mod.Should().BeNull();
-		baseGame.Mod.Should().BeNull();
-	}
-
-	/// <summary>The mod has the lance; nothing has the unknown sword.</summary>
-	private void ModHasTheLance(RecordId lance)
-		=> this._itemProvider.Setup(p => p.GetDBData(It.IsAny<Item>())).Callback<Item>(i =>
-			i.baseItemInfo = i.Mod == "shadowchampions" && i.BaseItemId == lance ? MakeInfo(lance.Raw, "WeaponMelee_Spear") : null);
-
-	[Fact]
-	public void AdoptContainerMod_UnresolvedItemTheVaultsModResolves_GetsItAsItsOwnLink()
-	{
-		var lance = RecordId.Create("records/customitems/lance.dbr");
-		this.ModHasTheLance(lance);
-		var item = new Item { BaseItemId = lance };
-
-		this._service.AdoptContainerMod(item, "shadowchampions", _ => true).Should().BeTrue();
-
-		(item.Mod, item.ModFromVault).Should().Be(("shadowchampions", false));
+		// Assert: no guess, the item follows the vault both times
+		linked.Should().Be(("shadowchampions", ModOrigin.Inherited, false));
+		(item.Mod, item.ModOrigin, item.IsIncomplete).Should().Be(((string?)null, ModOrigin.Inherited, true));
 	}
 
 	[Fact]
-	public void AdoptContainerMod_ItemStillUnresolved_FollowsTheVault()
+	public void ChangeVaultMod_ItemWithoutRoom_KeepsItsPreviousMapAsItsOwn()
 	{
-		this.ModHasTheLance(RecordId.Create("records/customitems/lance.dbr"));
-		var item = new Item { BaseItemId = RecordId.Create("records/unknown/sword.dbr") };
+		var vault = new TQVaultAE.Application.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
+		var sack = new SackCollection();
+		var item = Placed("records/b.dbr", "Lilith", ModOrigin.Inherited);
+		sack.AddItem(item);
+		vault.Sacks = [sack];
 
-		this._service.AdoptContainerMod(item, "shadowchampions", _ => true).Should().BeTrue();
+		var change = this._service.ChangeVaultMod(vault, "shadowchampions", (_, _) => false);
 
-		(item.Mod, item.ModFromVault).Should().Be(("shadowchampions", true));
+		change.Changed.Should().BeEmpty();
+		change.Kept.Should().Equal(item);
+		(item.Mod, item.ModOrigin).Should().Be(("Lilith", ModOrigin.Own));
+		this._itemProvider.Verify(p => p.GetDBData(item), Times.Exactly(2));
 	}
 
 	[Fact]
-	public void AdoptContainerMod_ResolvedItemNoLongerFits_IsLeftAsItWas()
+	public void SettleIn_OwnMap_GoesWithTheItem()
 	{
-		var lance = RecordId.Create("records/customitems/lance.dbr");
-		this.ModHasTheLance(lance);
-		var item = new Item { BaseItemId = lance };
+		var item = Placed("records/lilith/sword.dbr", "Lilith", ModOrigin.Own, inVault: false);
 
-		this._service.AdoptContainerMod(item, "shadowchampions", _ => false).Should().BeFalse();
+		this._service.SettleIn(item, inVault: true, "shadowchampions", _ => true).Should().Be(SettleOutcome.Unchanged);
 
-		(item.Mod, item.ModFromVault).Should().Be(((string?)null, false));
-		item.IsIncomplete.Should().BeTrue();
+		(item.Mod, item.ModOrigin, item.InVault).Should().Be(("Lilith", ModOrigin.Own, true));
+		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
 	}
 
-	[Fact]
-	public void AdoptContainerMod_ItemWithItsOwnLink_KeepsIt()
+	[Theory]
+	[InlineData("shadowchampions")]
+	[InlineData(null)]
+	public void SettleIn_LeavingACharacterForAVault_MakesTheMapItsOwn(string? vaultMod)
 	{
-		var item = MakeItem("records/ring.dbr", "ArmorJewelry_Ring");
-		item.Mod = "Lilith";
+		var item = Placed("records/item/sword.dbr", "shadowchampions", ModOrigin.Inherited, inVault: false);
 
-		this._service.AdoptContainerMod(item, "shadowchampions", _ => true).Should().BeFalse();
+		this._service.SettleIn(item, inVault: true, vaultMod, _ => true).Should().Be(SettleOutcome.Unchanged);
 
-		item.Mod.Should().Be("Lilith");
+		(item.Mod, item.ModOrigin, item.InVault).Should().Be(("shadowchampions", ModOrigin.Own, true));
+		item.IsModified.Should().BeTrue();
 		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
 	}
 
 	[Fact]
-	public void SettleIn_ItemPutInAVaultWithoutLink_IsReadAgainAsAVaultItem()
+	public void SettleIn_VaultItemMovedToAVaultOfAnotherMod_InheritsItAndIsReadAgain()
 	{
-		var item = new Item { BaseItemId = RecordId.Create("records/customitems/lance.dbr") };
-		var readInVault = new List<bool>();
-		this._itemProvider.Setup(p => p.GetDBData(item)).Callback<Item>(i => readInVault.Add(i.InVault));
+		var lance = RecordId.Create("records/customitems/lance.dbr");
+		this.ModHasTheLance(lance);
+		var item = Placed(lance.Raw, null, ModOrigin.Inherited);
 
-		this._service.SettleIn(item, inVault: true, vaultMod: null, _ => true).Should().BeTrue();
+		this._service.SettleIn(item, inVault: true, "shadowchampions", _ => true).Should().Be(SettleOutcome.ReadAgain);
 
-		item.InVault.Should().BeTrue();
-		item.Mod.Should().BeNull();
-		item.IsModified.Should().BeFalse();
-		readInVault.Should().Equal(true);
+		(item.Mod, item.ModOrigin, item.IsIncomplete).Should().Be(("shadowchampions", ModOrigin.Inherited, false));
+	}
+
+	[Fact]
+	public void SettleIn_VaultItemTakenToACharacter_InheritsTheCharactersMap()
+	{
+		var item = Placed("records/item/ring.dbr", null, ModOrigin.Inherited);
+
+		this._service.SettleIn(item, inVault: false, "shadowchampions", _ => true).Should().Be(SettleOutcome.ReadAgain);
+
+		(item.Mod, item.ModOrigin, item.InVault).Should().Be(("shadowchampions", ModOrigin.Inherited, false));
+		this._itemProvider.Verify(p => p.GetDBData(item), Times.Once);
+	}
+
+	[Fact]
+	public void SettleIn_SameMap_IsNotReadAgain()
+	{
+		var item = Placed("records/ring.dbr", "shadowchampions", ModOrigin.Inherited);
+
+		this._service.SettleIn(item, inVault: true, "SHADOWCHAMPIONS", _ => true).Should().Be(SettleOutcome.Unchanged);
+
+		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
+	}
+
+	[Fact]
+	public void SettleIn_NoRoomOnceReadWithTheNewMap_KeepsThePreviousMapAsItsOwn()
+	{
+		var item = Placed("records/customitems/lance.dbr", null, ModOrigin.Inherited);
+
+		this._service.SettleIn(item, inVault: true, "shadowchampions", _ => false).Should().Be(SettleOutcome.KeptOwnMap);
+
+		(item.Mod, item.ModOrigin).Should().Be(((string?)null, ModOrigin.Own));
+		this._itemProvider.Verify(p => p.GetDBData(item), Times.Exactly(2));
+	}
+
+	[Fact]
+	public void SettleIn_ItemWithoutAMapYet_InheritsTheContainersAndIsRead()
+	{
+		// An imported item without "mod": read with the data in use, it now takes its vault's map.
+		var item = new Item { BaseItemId = RecordId.Create("records/ring.dbr") };
+
+		this._service.SettleIn(item, inVault: true, containerMod: null, _ => true).Should().Be(SettleOutcome.ReadAgain);
+
+		(item.Mod, item.ModOrigin, item.InVault).Should().Be(((string?)null, ModOrigin.Inherited, true));
 	}
 
 	[Fact]
@@ -596,77 +611,38 @@ public class ItemEditServiceTests
 	{
 		// Arrange: a 2x2 bag; the new item lies in the corner, read again it takes 1x2 and moves up
 		var sack = new SackCollection();
-		var staying = new Item { BaseItemId = RecordId.Create("records/ring.dbr"), InVault = true, Width = 1, Height = 1 };
+		var staying = Placed("records/ring.dbr", null, ModOrigin.Inherited);
 		var arriving = new Item { BaseItemId = RecordId.Create("records/customitems/lance.dbr"), PositionX = 1, PositionY = 1, Width = 1, Height = 1 };
 		sack.AddItem(staying);
 		sack.AddItem(arriving);
 		this._itemProvider.Setup(p => p.GetDBData(arriving)).Callback<Item>(i => i.Height = 2);
 
 		// Act
-		var changed = this._service.SettleAll(sack, new System.Drawing.Size(2, 2), [staying, arriving], inVault: true, vaultMod: null);
+		var result = this._service.SettleAll(sack, new System.Drawing.Size(2, 2), [staying, arriving], inVault: true, containerMod: null);
 
 		// Assert
-		changed.Should().Equal(arriving);
+		result.ReadAgain.Should().Equal(arriving);
+		result.Kept.Should().BeEmpty();
 		(arriving.PositionX, arriving.PositionY).Should().Be((1, 0));
 	}
 
-	[Fact]
-	public void SettleIn_ItemAlreadyThere_IsNotReadAgain()
+	[Theory]
+	[InlineData(true, SettleOutcome.ReadAgain)]
+	[InlineData(false, SettleOutcome.KeptOwnMap)]
+	public void SettleAll_NoRoomInTheBag_TriesAnotherBag_ElseKeepsTheMap(bool anotherBagHasRoom, SettleOutcome expected)
 	{
-		var item = new Item { BaseItemId = RecordId.Create("records/ring.dbr"), InVault = true };
+		// Arrange: a 1x1 bag; read with the vault's map the item takes 1x2
+		var sack = new SackCollection();
+		var arriving = Placed("records/customitems/lance.dbr", null, ModOrigin.Inherited);
+		sack.AddItem(arriving);
+		this._itemProvider.Setup(p => p.GetDBData(arriving)).Callback<Item>(i => i.Height = i.Mod is null ? 1 : 2);
 
-		this._service.SettleIn(item, inVault: true, vaultMod: null, _ => true).Should().BeFalse();
+		// Act
+		var result = this._service.SettleAll(sack, new System.Drawing.Size(1, 1), [arriving], inVault: true, "shadowchampions"
+			, (_, _) => anotherBagHasRoom);
 
-		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
-	}
-
-	[Fact]
-	public void SettleIn_ItemPutInAVaultLinkedToAMod_FollowsTheVault()
-	{
-		var lance = RecordId.Create("records/customitems/lance.dbr");
-		this.ModHasTheLance(lance);
-		var item = new Item { BaseItemId = lance };
-
-		this._service.SettleIn(item, inVault: true, vaultMod: "shadowchampions", _ => true).Should().BeTrue();
-
-		(item.InVault, item.Mod, item.ModFromVault).Should().Be((true, "shadowchampions", false));
-	}
-
-	[Fact]
-	public void SettleIn_ItemTakenToACharacter_IsReadAgainOutOfTheVault()
-	{
-		var item = new Item { BaseItemId = RecordId.Create("records/customitems/lance.dbr"), InVault = true };
-		var readInVault = new List<bool>();
-		this._itemProvider.Setup(p => p.GetDBData(item)).Callback<Item>(i => readInVault.Add(i.InVault));
-
-		this._service.SettleIn(item, inVault: false, vaultMod: null, _ => true).Should().BeTrue();
-
-		item.InVault.Should().BeFalse();
-		readInVault.Should().Equal(false);
-	}
-
-	[Fact]
-	public void SettleIn_ItemTakenToACharacterNoLongerFits_IsLeftAsItWas()
-	{
-		var item = new Item { BaseItemId = RecordId.Create("records/customitems/lance.dbr"), InVault = true };
-		var readInVault = new List<bool>();
-		this._itemProvider.Setup(p => p.GetDBData(item)).Callback<Item>(i => readInVault.Add(i.InVault));
-
-		this._service.SettleIn(item, inVault: false, vaultMod: null, _ => false).Should().BeFalse();
-
-		item.InVault.Should().BeTrue();
-		readInVault.Should().Equal(false, true);
-	}
-
-	[Fact]
-	public void ChangeMod_ItemFollowingTheVault_GetsItsOwnLink()
-	{
-		var item = MakeItem("records/ring.dbr", "ArmorJewelry_Ring");
-		item.Mod = "shadowchampions";
-		item.ModFromVault = true;
-
-		this._service.ChangeMod(this._sack, item, "shadowchampions").Should().BeTrue();
-
-		item.ModFromVault.Should().BeFalse();
+		// Assert
+		(expected == SettleOutcome.ReadAgain ? result.ReadAgain : result.Kept).Should().Equal(arriving);
+		arriving.Mod.Should().Be(expected == SettleOutcome.ReadAgain ? "shadowchampions" : null);
 	}
 }

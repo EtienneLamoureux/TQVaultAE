@@ -33,85 +33,49 @@ public class ItemModServiceTests
 		this._service = new ItemModService(this._maps.Object, this._database.Object, this._links.Object);
 	}
 
-	private static Item ItemOf(RecordId id, string? mod = null) => new() { BaseItemId = id, Mod = mod };
+	private static Item ItemOf(RecordId id, string? mod = null, ModOrigin origin = ModOrigin.Inherited)
+		=> new() { BaseItemId = id, Mod = mod, ModOrigin = origin };
 
 	[Fact]
-	public void Scope_ItemWithoutMod_LeavesTheDatabaseAlone()
+	public void Scope_ItemWithoutMapYet_LeavesTheDatabaseAlone()
 	{
-		this._service.Scope(ItemOf(BaseRecord)).Should().BeSameAs(NoScope.Instance);
+		this._service.Scope(ItemOf(ModRecord, "shadowchampions", ModOrigin.None)).Should().BeSameAs(NoScope.Instance);
 		this._service.Scope(null).Should().BeSameAs(NoScope.Instance);
 		this._scopes.Should().BeEmpty();
 	}
 
-	[Fact]
-	public void Scope_ItemOfAModNotInstalled_LeavesTheDatabaseAlone()
+	[Theory]
+	[InlineData(ModOrigin.Inherited)]
+	[InlineData(ModOrigin.Own)]
+	public void Scope_BaseGameMap_UsesTheBaseGameWhateverTheActiveMap(ModOrigin origin)
 	{
-		this._service.Scope(ItemOf(ModRecord, "Lilith")).Should().BeSameAs(NoScope.Instance);
-		this._scopes.Should().BeEmpty();
-	}
-
-	[Fact]
-	public void Scope_VaultItemWithoutMod_UsesTheBaseGameWhateverTheActiveMap()
-	{
-		var item = ItemOf(ModRecord);
-		item.InVault = true;
-
-		using var scope = this._service.Scope(item);
+		using var scope = this._service.Scope(ItemOf(ModRecord, null, origin));
 
 		this._scopes.Should().Equal(string.Empty);
 	}
 
 	[Fact]
-	public void Scope_VaultItemOfAModNotInstalled_UsesTheBaseGame()
+	public void Scope_ModNotInstalled_UsesTheBaseGame()
 	{
-		var item = ItemOf(ModRecord, "Lilith");
-		item.InVault = true;
-
-		using var scope = this._service.Scope(item);
+		using var scope = this._service.Scope(ItemOf(ModRecord, "Lilith"));
 
 		this._scopes.Should().Equal(string.Empty);
 	}
 
-	[Fact]
-	public void Scope_VaultItemOfAnInstalledMod_UsesThatModsDatabase()
+	[Theory]
+	[InlineData(ModOrigin.Inherited)]
+	[InlineData(ModOrigin.Own)]
+	public void Scope_InstalledMod_UsesThatModsDatabase_InAVaultOrOnACharacter(ModOrigin origin)
 	{
-		var item = ItemOf(ModRecord, "shadowchampions");
-		item.InVault = true;
+		var inVault = ItemOf(ModRecord, "SHADOWCHAMPIONS", origin);
+		inVault.InVault = true;
 
-		using var scope = this._service.Scope(item);
+		using (this._service.Scope(inVault))
+		using (this._service.Scope(ItemOf(ModRecord, "shadowchampions", origin)))
+		{
+		}
 
-		this._scopes.Should().Equal(Shadow.Folder);
-	}
-
-	[Fact]
-	public void Scope_ItemOfAnInstalledMod_UsesThatModsDatabase()
-	{
-		using var scope = this._service.Scope(ItemOf(ModRecord, "SHADOWCHAMPIONS"));
-
-		this._scopes.Should().Equal(Shadow.Folder);
-	}
-
-	[Fact]
-	public void IsModOnly_AsksTheBaseGameDatabase()
-	{
-		this._service.IsModOnly(ItemOf(ModRecord)).Should().BeTrue();
-		this._service.IsModOnly(ItemOf(BaseRecord)).Should().BeFalse();
-		this._scopes.Should().AllBe(string.Empty);
-	}
-
-	[Fact]
-	public void AdoptMod_LinksOnlyTheUnlinkedModItems()
-	{
-		var modItem = ItemOf(ModRecord);
-		var baseItem = ItemOf(BaseRecord);
-		var otherMod = ItemOf(ModRecord, "Lilith");
-
-		int linked = this._service.AdoptMod([modItem, baseItem, otherMod], Shadow.Name);
-
-		linked.Should().Be(1);
-		modItem.Mod.Should().Be(Shadow.Name);
-		baseItem.Mod.Should().BeNull();
-		otherMod.Mod.Should().Be("Lilith");
+		this._scopes.Should().Equal(Shadow.Folder, Shadow.Folder);
 	}
 
 	[Fact]

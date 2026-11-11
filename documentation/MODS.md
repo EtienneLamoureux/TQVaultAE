@@ -32,13 +32,14 @@ An item whose records the loaded data lacks says so in its tooltip. Without its 
 ---
 
 ### <a id="ItemLink"></a>Link an item
-A linked item is read with its mod's data (then the base game's), whatever character is shown. Its tooltip names the mod.
-In a vault, an item without a link is read with the base game's data, whatever character is shown.
+Every item is read with its own map: a mod's data (then the base game's), or the base game's, whatever character is
+shown. Its tooltip names the mod. An item without a link of its own takes the map of its vault or character.
 
 ![Tooltip of an item linked to a mod](mods/item-tooltip-mod.png)
 
-Right-click > **Modded** to choose it. **(suggested)** marks the mods having the item's records; **(suggested n/m)**
-marks a mod that has only n of its m records.
+Right-click a vault item > **Modded** to choose it. **(suggested)** marks the mods having the item's records;
+**(suggested n/m)** marks a mod that has only n of its m records. Character items have no such menu: their files cannot
+keep the choice.
 
 ![Modded menu of an item](mods/item-modded-menu.png)
 
@@ -53,9 +54,13 @@ Vault tools button > **Modded vault**. The vault list shows the mod, and the vau
 ---
 
 ### <a id="Rules"></a>Rules
-- An item has its own link, or follows its vault's link.
-- An incomplete item gets a mod as its own link when that mod resolves it: on loading its linked character, on linking
-  its vault, or when put in a linked vault (drop, **Move Item To**, import, paste). If it no longer fits once resolved,
-  a drop leaves it incomplete; other ways move it to a free spot.
-- The link follows the item (moves, copies, removed relics) and is kept by [exports](IMPORT_EXPORT.md).
-- Character files cannot store an item's link: keep linked items in a vault.
+- An item has its own link, or takes its container's: its vault's, or its character's.
+- An item taken from a character to a vault keeps the data the game reads it with: its character's map becomes its own
+  link.
+- Nothing is guessed: an item never gets a link because a mod has its records. Link it with **Modded**, where the
+  suggestions help.
+- Read with another mod, an item that takes its real size and no longer fits moves to a free spot (of its tab, or of
+  another tab when moved, imported or relinked); without any, it keeps its previous link, and a message names it.
+- The link follows the item (moves, copies, removed relics) and is kept by [exports](IMPORT_EXPORT.md). An import drops a
+  link to a mod that is not installed and names it.
+- Character files cannot store an item's link: it lasts until the character is read again. Keep linked items in a vault.

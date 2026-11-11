@@ -159,7 +159,8 @@ public static class ItemActionRules
 		if (anyTarget && !context.ReadOnly)
 			actions |= ItemActions.Delete | ItemActions.MoveTo;
 
-		if (item is not null && !context.ReadOnly)
+		// A vault item only: a character's files cannot keep a choice, which the next read would lose.
+		if (item is not null && !context.ReadOnly && item.InVault)
 			actions |= ItemActions.ChangeMod;
 
 		if (singleItem)

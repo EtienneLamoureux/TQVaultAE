@@ -31,6 +31,12 @@ public interface IItemDatabaseService
     void RemoveItemFromDatabase(Item item);
 
     /// <summary>
+    /// Makes the search entries of items read again with another map: their names are read again when next needed.
+    /// Items not in the search database are left out.
+    /// </summary>
+    void RefreshItems(IReadOnlyCollection<Item> items);
+
+    /// <summary>
     /// Removes every item of a container file (a deleted or renamed vault) from the search database,
     /// so searches no longer find items in a container that is gone.
     /// </summary>

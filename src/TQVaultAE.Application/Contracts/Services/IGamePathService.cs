@@ -134,6 +134,16 @@ public interface IGamePathService
 	/// Stash files for Mods all have their own subdirectory which is the same as the mod's custom map folder
 	/// </summary>
 	string TransferStashFileFullPath { get; }
+
+	/// <summary>
+	/// The transfer stash file of a custom map (empty for the base game), whatever the active map is.
+	/// </summary>
+	string TransferStashFileFullPathFor(string mapFolder);
+
+	/// <summary>
+	/// The relic vault file of a custom map (empty for the base game), whatever the active map is.
+	/// </summary>
+	string RelicVaultStashFileFullPathFor(string mapFolder);
 	/// <summary>
 	/// Gets a value indicating whether the vault save folder has been changed.
 	/// Usually done via settings and triggers a reload of the vaults.

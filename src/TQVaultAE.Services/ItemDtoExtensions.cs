@@ -5,7 +5,13 @@ namespace TQVaultAE.Services;
 
 public static class ItemDtoExtensions
 {
-	public static ItemDto FromItem(Item item)
+	/// <summary>
+	/// The export of an item.
+	/// </summary>
+	/// <param name="item">The item.</param>
+	/// <param name="ownMapOnly">True in a vault or tab export, which writes the container's mod once: an item writes only
+	/// its own map. False in an item export: each item writes the map it is read with, made explicit.</param>
+	public static ItemDto FromItem(Item item, bool ownMapOnly = false)
 		=> new()
 		{
 			stackSize = item.StackSize,
@@ -23,9 +29,16 @@ public static class ItemDtoExtensions
 			pointY = item.PositionY,
 			width = item.Width,
 			height = item.Height,
-			mod = item.Mod,
-			noMod = item.NoMod ? true : null,
+			mod = ownMapOnly && !item.HasOwnMod ? null : item.Mod,
+			noMod = (!ownMapOnly || item.HasOwnMod) && item.Mod is null ? true : null,
 		};
+
+	/// <summary>
+	/// True when the export gave the item an own mod that the import dropped (not installed): the item then takes its
+	/// target container's map, not the map its export's container had.
+	/// </summary>
+	public static bool IsDroppedOwnMod(this ItemDto dto, Item item)
+		=> !string.IsNullOrWhiteSpace(dto.mod) && dto.noMod != true && item.ModOrigin == ModOrigin.None;
 
 	public static Item ToItem(this ItemDto dto)
 	{
@@ -43,8 +56,9 @@ public static class ItemDtoExtensions
 			PositionY = dto.pointY,
 			Width = dto.width,
 			Height = dto.height,
+			// "mod" or "noMod" is the item's own map; without them it takes its container's when placed.
 			Mod = dto.noMod == true || string.IsNullOrWhiteSpace(dto.mod) ? null : dto.mod,
-			NoMod = dto.noMod == true,
+			ModOrigin = dto.noMod == true || !string.IsNullOrWhiteSpace(dto.mod) ? ModOrigin.Own : ModOrigin.None,
 			endBlockCrap2 = 0,
 			endBlockCrap1 = 0
 		};

@@ -85,6 +85,27 @@ public class LoadAllServiceTests
 	}
 
 	[Fact]
+	public void LoadAll_ReadsTheSharedStashesOfEveryMapGiven()
+	{
+		// Arrange: the base game and one mod in use
+		string[] maps = [string.Empty, @"c:\mods\shadowchampions"];
+		this._stashService.Setup(s => s.LoadTransferStash(false, It.IsAny<string?>())).Returns(StashLoadResult.Empty());
+		this._stashService.Setup(s => s.LoadRelicVaultStash(false, It.IsAny<string?>())).Returns(StashLoadResult.Empty());
+		var progress = new CountingProgress();
+
+		// Act
+		this._service.LoadAll([NewCharacter("A")], [], progress, maps);
+
+		// Assert: a transfer stash and a relic vault per map, each counted
+		progress.Total.Should().Be(LoadAllService.CountSteps(1, 0, maps.Length));
+		foreach (var map in maps)
+		{
+			this._stashService.Verify(s => s.LoadTransferStash(false, map), Times.Once);
+			this._stashService.Verify(s => s.LoadRelicVaultStash(false, map), Times.Once);
+		}
+	}
+
+	[Fact]
 	public void LoadAll_ClearsTheCrashGuardDuringTheLoadAndSetsItAfter()
 	{
 		this._service.LoadAll([NewCharacter("A")], [], new CountingProgress());

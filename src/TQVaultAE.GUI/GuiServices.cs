@@ -57,9 +57,11 @@ public sealed class GuiServices
 		, ICharacterStatsService characterStatsService
 		, ISettingsPersistenceService settingsPersistence
 		, IItemModService itemModService
+		, IGameMapService gameMapService
 	)
 	{
 		this.ItemModService = itemModService;
+		this.GameMapService = gameMapService;
 		this._loggerFactory = loggerFactory;
 		this.Forms = forms;
 		this.Settings = settings;
@@ -111,6 +113,11 @@ public sealed class GuiServices
 	/// The mod an item is linked to: its data scope and the installed mods.
 	/// </summary>
 	public IItemModService ItemModService { get; }
+
+	/// <summary>
+	/// The active map, and the map the shown character's items inherit.
+	/// </summary>
+	public IGameMapService GameMapService { get; }
 
 	/// <summary>
 	/// Item display texts and their cache, for the tooltips, the item properties dialog and the panels.

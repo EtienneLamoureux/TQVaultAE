@@ -275,14 +275,12 @@ public sealed class ForgeRules
 
 	/// <summary>
 	/// Whether the parts taken from <paramref name="material"/> resolve with the data <paramref name="target"/> is read
-	/// with: a mod affix or relic on an item read with other data shows unknown records. Base game parts resolve with
-	/// any mod (a mod's data falls back on the base game's). A character item without a link follows the active map,
-	/// which the rules don't know: allowed.
+	/// with (its map): a mod affix or relic on an item read with other data shows unknown records. Base game parts
+	/// resolve with any mod (a mod's data falls back on the base game's).
 	/// </summary>
 	private static bool ReadWithSameData(Item target, Item material)
 		=> material.Mod is null
-			|| string.Equals(target.Mod, material.Mod, StringComparison.OrdinalIgnoreCase)
-			|| (target.Mod is null && !target.InVault);
+			|| string.Equals(target.Mod, material.Mod, StringComparison.OrdinalIgnoreCase);
 
 	/// <summary>
 	/// <c>true</c> when going from <paramref name="previous"/> to <paramref name="next"/> makes the rules stricter: the

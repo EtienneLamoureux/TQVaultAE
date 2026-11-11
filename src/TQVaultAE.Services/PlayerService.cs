@@ -81,7 +81,17 @@ public class PlayerService(
 			{
 				try
 				{
-					PlayerCollectionProvider.LoadFile(resultPC);
+					// Read with the character's own map, whatever the active one is; its items inherit that map.
+					using (this.GameMapService.ReadWith(selectedSave))
+						PlayerCollectionProvider.LoadFile(resultPC);
+
+					string? characterMod = this.GameMapService.ModNameFor(selectedSave);
+					foreach (var item in resultPC.Where(s => s is not null).SelectMany(s => s))
+						item.InheritMod(characterMod);
+
+					foreach (var item in resultPC.EquipmentSack ?? [])
+						item.InheritMod(characterMod);
+
 					selectedSave.Info = resultPC.PlayerInfo;
 					selectedSave.ClassLabel = resultPC.PlayerInfo?.Class is { } playerClass
 						? (playerClass, this.TranslationService.TranslateXTag(playerClass, true, true))
@@ -179,41 +189,7 @@ public class PlayerService(
 		var relicVaultStash = loadRelicVaultStash ? this.StashService.LoadRelicVaultStashFor(selectedSave) : null;
 		var transferStash = loadTransferStash ? this.StashService.LoadTransferStashFor(selectedSave) : null;
 
-		this.AdoptCharacterMod(selectedSave, player, playerStash, transferStash, relicVaultStash);
-
 		return new CharacterSessionLoadResult(player, playerStash, transferStash, relicVaultStash);
-	}
-
-	/// <summary>
-	/// Links the mod items of a character linked to an installed mod (records the base game does not have) to that mod,
-	/// so that they keep its data when moved to a vault.
-	/// </summary>
-	/// <inheritdoc/>
-	public void AdoptCharacterMod(PlayerSave selectedSave, PlayerLoadResult? player, StashLoadResult? playerStash)
-		=> this.AdoptCharacterMod(selectedSave, player, [playerStash]);
-
-	private void AdoptCharacterMod(PlayerSave save, PlayerLoadResult? player, params StashLoadResult?[] stashes)
-	{
-		if (this.ItemModService is null || this.GameMapService.ModOf(save) is not { State: CharacterModState.Linked, Mod: { } mod })
-			return;
-
-		var items = new List<Item>();
-		if (player?.Player is { } pc)
-		{
-			items.AddRange(pc.Where(s => s is not null).SelectMany(s => s));
-			if (pc.EquipmentSack is not null)
-				items.AddRange(pc.EquipmentSack);
-		}
-
-		foreach (var stash in stashes)
-		{
-			if (stash?.Stash?.Sack is { } sack)
-				items.AddRange(sack);
-		}
-
-		int linked = this.ItemModService.AdoptMod(items, mod.Name);
-		if (linked != 0)
-			this.Log.LogInformation("{Count} items of {Player} linked to the mod {Mod}", linked, save.Name, mod.Name);
 	}
 
 	/// <inheritdoc/>

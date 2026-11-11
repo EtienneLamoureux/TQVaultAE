@@ -49,6 +49,30 @@ public class GameMapService(
 		=> mod.State == CharacterModState.Linked ? GameMaps.Normalize(mod.Mod!.Folder) : string.Empty;
 
 	/// <inheritdoc/>
+	public string? ModNameFor(PlayerSave save)
+		=> this.ModOf(save) is { State: CharacterModState.Linked or CharacterModState.LinkedModMissing } mod
+			? mod.Mod?.Name ?? mod.Link?.Mod
+			: null;
+
+	/// <inheritdoc/>
+	public string? ModNameOfMap(string? mapFolder)
+	{
+		string map = GameMaps.Normalize(mapFolder);
+		return map.Length == 0 ? null : System.IO.Path.GetFileName(System.IO.Path.TrimEndingDirectorySeparator(map));
+	}
+
+	/// <inheritdoc/>
+	public string? ActiveCharacterMod { get; private set; }
+
+	/// <inheritdoc/>
+	public IDisposable ReadWith(PlayerSave save)
+		=> this.DatabaseMaps.Use(this.MapFor(save));
+
+	/// <inheritdoc/>
+	public IDisposable ReadWithMap(string? mapFolder)
+		=> this.DatabaseMaps.Use(GameMaps.Normalize(mapFolder));
+
+	/// <inheritdoc/>
 	public bool UsesActiveMap(PlayerSave save)
 		=> GameMaps.Same(this.MapFor(save), this.ActiveMap);
 
@@ -56,6 +80,7 @@ public class GameMapService(
 	public bool ActivateFor(PlayerSave save)
 	{
 		this.Refresh(save);
+		this.ActiveCharacterMod = this.ModNameFor(save);
 		return this.Activate(save.CustomMap);
 	}
 
@@ -81,11 +106,11 @@ public class GameMapService(
 
 	/// <inheritdoc/>
 	public void MarkLoaded(PlayerSave save)
-		=> this._loadedWith[save.Folder] = this.ActiveMap;
+		=> this._loadedWith[save.Folder] = this.MapFor(save);
 
 	/// <inheritdoc/>
 	public bool LoadedWithOtherMap(PlayerSave save)
-		=> this._loadedWith.TryGetValue(save.Folder, out var map) && !GameMaps.Same(map, this.ActiveMap);
+		=> this._loadedWith.TryGetValue(save.Folder, out var map) && !GameMaps.Same(map, this.MapFor(save));
 
 	/// <inheritdoc/>
 	public void Refresh(PlayerSave save)

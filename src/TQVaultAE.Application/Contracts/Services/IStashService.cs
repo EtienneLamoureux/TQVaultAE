@@ -18,14 +18,18 @@ public interface IStashService
 	/// </summary>
 	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
 	/// <returns>Stash load result.</returns>
-	StashLoadResult LoadRelicVaultStash(bool fromFileWatcher = false);
+	/// <param name="mapFolder">The custom map whose relic vault to read (empty for the base game); null for the active
+	/// map's.</param>
+	StashLoadResult LoadRelicVaultStash(bool fromFileWatcher = false, string? mapFolder = null);
 
 	/// <summary>
 	/// Loads the transfer stash for immortal throne.
 	/// </summary>
 	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
 	/// <returns>Stash load result.</returns>
-	StashLoadResult LoadTransferStash(bool fromFileWatcher = false);
+	/// <param name="mapFolder">The custom map whose transfer stash to read (empty for the base game); null for the active
+	/// map's.</param>
+	StashLoadResult LoadTransferStash(bool fromFileWatcher = false, string? mapFolder = null);
 
 	/// <summary>
 	/// Loads the stash of a character, which only an Immortal Throne character has.

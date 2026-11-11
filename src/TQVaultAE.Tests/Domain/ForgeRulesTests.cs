@@ -336,7 +336,8 @@ public class ForgeRulesTests
 	[InlineData("modA", true, "modA", true)]       // same mod
 	[InlineData("modA", true, "modB", false)]      // another mod's affix
 	[InlineData(null, true, "modA", false)]        // a base game vault item cannot read a mod affix
-	[InlineData(null, false, "modA", true)]        // a character item follows the active map: not known here
+	[InlineData(null, false, "modA", false)]       // nor a base game character item: its map is known too
+	[InlineData("modA", false, "modA", true)]      // a character item of that mod's map
 	public void CheckForge_PartOfAnotherMod_IsRefused(string? baseMod, bool baseInVault, string? materialMod, bool allowed)
 	{
 		// Arrange

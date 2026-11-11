@@ -26,9 +26,10 @@ public class LoadAllService(
 	private readonly IVaultService _vaultService = vaultService;
 
 	/// <summary>
-	/// Number of progress steps of <see cref="LoadAll"/>: one per character, one per character stash, one per vault.
+	/// Number of progress steps of <see cref="LoadAll"/>: one per character, one per character stash, one per vault, and
+	/// two per map whose shared stashes are read (transfer stash and relic vault).
 	/// </summary>
-	public static int CountSteps(int characters, int vaults) => (characters * 2) + vaults;
+	public static int CountSteps(int characters, int vaults, int sharedStashMaps = 0) => (characters * 2) + vaults + (sharedStashMaps * 2);
 
 	public bool LastRunFailed => !this._userSettings.LoadAllFilesCompleted;
 
@@ -39,9 +40,11 @@ public class LoadAllService(
 		this.SaveSettings();
 	}
 
-	public LoadAllResult LoadAll(IReadOnlyCollection<PlayerSave> characters, IReadOnlyCollection<string> vaults, IProgress<int> progress)
+	public LoadAllResult LoadAll(IReadOnlyCollection<PlayerSave> characters, IReadOnlyCollection<string> vaults, IProgress<int> progress
+		, IReadOnlyCollection<string>? sharedStashMaps = null)
 	{
-		if (CountSteps(characters.Count, vaults.Count) == 0)
+		sharedStashMaps ??= [];
+		if (CountSteps(characters.Count, vaults.Count, sharedStashMaps.Count) == 0)
 			return LoadAllResult.Nothing;
 
 		// Cleared while loading: still cleared on the next start means the application stopped during the load.
@@ -72,7 +75,22 @@ public class LoadAllService(
 			progress.Report(1);
 		}));
 
-		Parallel.Invoke(loadPlayers.Concat(loadStashes).Concat(loadVaults).ToArray());
+		// The transfer stash and relic vault of every map in use, each read with its map.
+		var loadSharedStashes = sharedStashMaps.SelectMany(map => new[]
+		{
+			(Action)(() =>
+			{
+				stashes.Add(this._stashService.LoadTransferStash(false, map));
+				progress.Report(1);
+			}),
+			() =>
+			{
+				stashes.Add(this._stashService.LoadRelicVaultStash(false, map));
+				progress.Report(1);
+			},
+		});
+
+		Parallel.Invoke(loadPlayers.Concat(loadStashes).Concat(loadVaults).Concat(loadSharedStashes).ToArray());
 
 		var errors = players.Select(p => (File: p.PlayerFile, Error: (Exception?)p.Player?.ArgumentException))
 			.Concat(stashes.Select(s => (File: s.StashFile, Error: (Exception?)s.Stash?.ArgumentException)))

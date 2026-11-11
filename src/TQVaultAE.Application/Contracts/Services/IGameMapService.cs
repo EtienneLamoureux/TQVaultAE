@@ -54,6 +54,34 @@ public interface IGameMapService
 	bool Activate(string? mapFolder);
 
 	/// <summary>
+	/// The map a character's items inherit: the name of its linked mod, also when that mod is not installed (they are
+	/// then read with the base game data); null for the base game.
+	/// </summary>
+	string? ModNameFor(PlayerSave save);
+
+	/// <summary>
+	/// The map (mod name) a custom map folder is, as items name it; null for the base game.
+	/// </summary>
+	string? ModNameOfMap(string? mapFolder);
+
+	/// <summary>
+	/// The map the items of the character shown now inherit (<see cref="ModNameFor"/> of the last
+	/// <see cref="ActivateFor"/>): its equipment, bags and stashes, and the shared stashes shown with it.
+	/// </summary>
+	string? ActiveCharacterMod { get; }
+
+	/// <summary>
+	/// Makes a character's map database answer for the current thread until disposed, so that its files are read with
+	/// it whatever the active map is.
+	/// </summary>
+	IDisposable ReadWith(PlayerSave save);
+
+	/// <summary>
+	/// Makes a custom map's database (empty for the base game) answer for the current thread until disposed.
+	/// </summary>
+	IDisposable ReadWithMap(string? mapFolder);
+
+	/// <summary>
 	/// True when a character is played with the active map.
 	/// </summary>
 	bool UsesActiveMap(PlayerSave save);
@@ -64,13 +92,13 @@ public interface IGameMapService
 	void Refresh(PlayerSave save);
 
 	/// <summary>
-	/// Notes that a character's files were just read with the active map's database.
+	/// Notes that a character's files were just read with its map's database (<see cref="ReadWith"/>).
 	/// </summary>
 	void MarkLoaded(PlayerSave save);
 
 	/// <summary>
-	/// True when a character's files were read with another map's database than the active one: its items were
-	/// resolved with other records and must be read again.
+	/// True when a character's files were read with another map's database than its own now (its link changed since):
+	/// its items were resolved with other records and must be read again.
 	/// </summary>
 	bool LoadedWithOtherMap(PlayerSave save);
 }

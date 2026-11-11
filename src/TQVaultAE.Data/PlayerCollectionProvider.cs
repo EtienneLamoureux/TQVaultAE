@@ -205,9 +205,9 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					var2 = i.Var2,
 					pointX = i.PositionX,
 					pointY = i.PositionY,
-					// An item following the vault's link has no link of its own to write.
-					mod = i.ModFromVault && string.Equals(i.Mod, pc.Mod, StringComparison.OrdinalIgnoreCase) ? null : i.Mod,
-					noMod = i.NoMod ? true : null,
+					// Only an item's own map is written: an inherited one is the vault's.
+					mod = i.HasOwnMod ? i.Mod : null,
+					noMod = i.HasOwnMod && i.Mod is null ? true : null,
 				}).ToList()
 			}).ToList()
 		};
@@ -342,12 +342,10 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					PositionY = s.pointY,
 					endBlockCrap1 = this.TQData.EndBlockValue,
 					StackSize = s.stackSize,
-					// Its own mod, else the vault's: resolved with that mod's data first, then the base game's.
-					// Set to the base game: no mod, not even the vault's.
+					// Its own map ("mod", or "noMod" for the base game), else the vault's, inherited. Set before the
+					// records are read: they resolve with that map's data.
 					Mod = s.noMod == true ? null : string.IsNullOrWhiteSpace(s.mod) ? pc.Mod : s.mod,
-					ModFromVault = s.noMod != true && string.IsNullOrWhiteSpace(s.mod) && pc.Mod is not null,
-					NoMod = s.noMod == true,
-					// Without any link, a vault item is read with the base game data.
+					ModOrigin = s.noMod == true || !string.IsNullOrWhiteSpace(s.mod) ? ModOrigin.Own : ModOrigin.Inherited,
 					InVault = true,
 					// Atlantis
 					relic2ID = RecordId.Empty,

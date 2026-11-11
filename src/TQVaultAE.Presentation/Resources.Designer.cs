@@ -5789,6 +5789,24 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Read with its new map, an item had no room in its container: it keeps its previous map, as its own. {0}.
+        /// </summary>
+        public static string ModMapKeptNoRoom {
+            get {
+                return ResourceManager.GetString("ModMapKeptNoRoom", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to These mods are not installed: their links were dropped and the items take their vault's map. Install the mod, then link the vault or the items (Modded). {0}.
+        /// </summary>
+        public static string ImportDroppedMods {
+            get {
+                return ResourceManager.GetString("ImportDroppedMods", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Imported {0} of {1} items..
         /// </summary>
         public static string ImportSuccessCount {

@@ -336,6 +336,27 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	protected virtual bool HasRoomOnceReadAgain(Item item) => SackLayout.FitsOrMoves(this.ShownSack, this.SackSize, item);
 
 	/// <summary>
+	/// The map the items of the panel's container inherit: the vault's mod, or else the shown character's map (its
+	/// bags, equipment and stashes, and the shared stashes shown with it).
+	/// </summary>
+	internal string? ContainerMap
+		=> this.HoldsVault?.Invoke() ?? false
+			? this.ContainerMod?.Invoke()
+			: this.Services.GameMapService.ActiveCharacterMod;
+
+	/// <summary>
+	/// Tells the user which items kept their previous map for want of room once read with the new one.
+	/// </summary>
+	internal void NotifyKeptMap(IReadOnlyCollection<Item> kept)
+	{
+		if (kept.Count == 0)
+			return;
+
+		var names = string.Join(", ", kept.Select(i => this.Services.ItemProvider.GetFriendlyNames(i).FullNameClean));
+		this.Services.UIService.NotifyUser(string.Format(System.Globalization.CultureInfo.CurrentCulture, TQVaultAE.Presentation.Resources.ModMapKeptNoRoom, names));
+	}
+
+	/// <summary>
 	/// Gets or sets the AutoMoveLocation for this sack.
 	/// </summary>
 	public AutoMoveLocation AutoMoveLocation { get; protected set; }

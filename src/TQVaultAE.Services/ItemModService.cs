@@ -25,35 +25,11 @@ public class ItemModService(IDatabaseMaps maps, IDatabase database, IModLinkServ
 
 	/// <inheritdoc/>
 	public IDisposable Scope(Item? item)
-		=> item?.Mod is { } name && this.Find(name) is { } mod
-			? this.Maps.Use(mod.Folder)
-			// In a vault, no link means the base game, not the selected character's map.
-			: item is { InVault: true }
-				? this.Maps.Use(string.Empty)
-				: NoScope.Instance;
-
-	/// <inheritdoc/>
-	public bool IsModOnly(Item item)
-	{
-		using var baseGame = this.Maps.Use(string.Empty);
-		return RecordsOf(item).Any(id => this.Database.GetInfo(id) is null);
-	}
-
-	/// <inheritdoc/>
-	public int AdoptMod(IEnumerable<Item> items, string modName)
-	{
-		int linked = 0;
-		foreach (var item in items)
-		{
-			if (item.Mod is not null || !this.IsModOnly(item))
-				continue;
-
-			item.Mod = modName;
-			linked++;
-		}
-
-		return linked;
-	}
+		// The item's map, and only it: a mod not installed reads the base game data. An item without a map yet (being
+		// read, or a placeholder) uses the data in use at that moment.
+		=> item is null || item.ModOrigin == ModOrigin.None
+			? NoScope.Instance
+			: this.Maps.Use(this.Find(item.Mod)?.Folder ?? string.Empty);
 
 	/// <inheritdoc/>
 	public ModSuggestion Suggest(IEnumerable<Item> items)

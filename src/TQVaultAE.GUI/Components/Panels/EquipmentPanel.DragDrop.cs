@@ -157,8 +157,8 @@ public partial class EquipmentPanel
 				// Register new items in the database (existing items are already tracked)
 				this.ItemDatabaseService.TryAddItemToDatabase(dragItem);
 
-				// Out of a vault, an item without a link follows the character's map.
-				if (this.Services.ItemEditService.SettleIn(dragItem, false, null, _ => true))
+				// Equipped, an item without an own map inherits the character's; a slot holds any size.
+				if (this.Services.ItemEditService.SettleIn(dragItem, false, this.Services.GameMapService.ActiveCharacterMod, _ => true) != TQVaultAE.Application.Contracts.Services.SettleOutcome.Unchanged)
 					this.InvalidateItemCacheAll(dragItem);
 			}
 

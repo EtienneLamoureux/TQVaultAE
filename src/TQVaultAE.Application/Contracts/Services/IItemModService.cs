@@ -4,8 +4,8 @@ using TQVaultAE.Domain.Entities;
 namespace TQVaultAE.Application.Contracts.Services;
 
 /// <summary>
-/// The mod an item is linked to (<see cref="Item.Mod"/>): its records resolve in that mod's database, mod data first and
-/// then the base game's, whatever the active map is.
+/// The map of an item (<see cref="Item.Mod"/>): its records resolve in that mod's database, mod data first and then the
+/// base game's, whatever the active map is.
 /// </summary>
 public interface IItemModService
 {
@@ -21,23 +21,11 @@ public interface IItemModService
 	InstalledMod? Find(string? modName);
 
 	/// <summary>
-	/// Makes the database of an item's mod answer for the current thread until disposed, so that reading, drawing and
-	/// describing the item use its mod's data. An item without a mod, or whose mod is not installed, gets the base game's
-	/// database when a vault holds it (<see cref="Item.InVault"/>); else nothing is done: it follows the active map.
+	/// Makes the database of an item's map answer for the current thread until disposed, so that reading, drawing and
+	/// describing the item use its map's data: its mod's, or the base game's for none or a mod that is not installed.
+	/// An item without a map yet (<see cref="ModOrigin.None"/>) gets nothing: it uses the data in use at that moment.
 	/// </summary>
 	IDisposable Scope(Item? item);
-
-	/// <summary>
-	/// True when an item names a record the base game does not have: it belongs to a mod.
-	/// </summary>
-	bool IsModOnly(Item item);
-
-	/// <summary>
-	/// Links to a mod the items that are not linked yet and that only that mod explains (records the base game does not
-	/// have): the items of a character linked to that mod.
-	/// </summary>
-	/// <returns>Number of items linked.</returns>
-	int AdoptMod(IEnumerable<Item> items, string modName);
 
 	/// <summary>
 	/// Suggests the mod of items (one item, or a vault's items) from the records they name that the base game does not

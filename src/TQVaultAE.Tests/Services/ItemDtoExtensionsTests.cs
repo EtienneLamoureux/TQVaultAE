@@ -13,7 +13,7 @@ public class ItemDtoExtensionsTests
 	public void ExportThenImport_BaseGameChosen_IsKept()
 	{
 		// Arrange
-		var item = new Item { BaseItemId = RecordId.Create("records/a.dbr"), NoMod = true };
+		var item = new Item { BaseItemId = RecordId.Create("records/a.dbr"), ModOrigin = ModOrigin.Own };
 
 		// Act
 		var dto = ItemDtoExtensions.FromItem(item);
@@ -21,7 +21,7 @@ public class ItemDtoExtensionsTests
 
 		// Assert
 		dto.noMod.Should().BeTrue();
-		(imported.Mod, imported.NoMod).Should().Be(((string?)null, true));
+		(imported.Mod, imported.ModOrigin).Should().Be(((string?)null, ModOrigin.Own));
 	}
 
 	[Fact]
@@ -30,6 +30,6 @@ public class ItemDtoExtensionsTests
 		var dto = ItemDtoExtensions.FromItem(new Item { BaseItemId = RecordId.Create("records/a.dbr"), Mod = "Lilith" });
 
 		(dto.mod, dto.noMod).Should().Be(("Lilith", (bool?)null));
-		dto.ToItem().NoMod.Should().BeFalse();
+		dto.ToItem().ModOrigin.Should().Be(ModOrigin.Own);
 	}
 }

@@ -1706,6 +1706,12 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   <data name="ImportVaultSuccessCreate" xml:space="preserve">
     <value>Nouveau coffre &quot;{0}&quot; créé avec les données importées.</value>
   </data>
+  <data name="ModMapKeptNoRoom" xml:space="preserve">
+    <value>Lu avec sa nouvelle carte, un objet n'avait pas la place dans son conteneur : il garde sa carte précédente, comme lien propre. {0}</value>
+  </data>
+  <data name="ImportDroppedMods" xml:space="preserve">
+    <value>Ces mods ne sont pas installés : leurs liens sont abandonnés et les objets prennent la carte de leur coffre. Installez le mod, puis liez le coffre ou les objets (Modded). {0}</value>
+  </data>
   <data name="ImportSuccessCount" xml:space="preserve">
     <value>{0} objets importés sur {1}.</value>
   </data>

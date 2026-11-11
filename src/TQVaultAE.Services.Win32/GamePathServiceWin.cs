@@ -152,6 +152,20 @@ public partial class GamePathServiceWin(ILogger<GamePathServiceWin> log, ITQData
 	/// </summary>
 	public string GamePathTQIT { get; set; } = string.Empty;
 
+	/// <inheritdoc/>
+	public string TransferStashFileFullPathFor(string mapFolder)
+		=> this.SharedStashFile(mapFolder, TRANSFERSTASHFILENAME);
+
+	/// <inheritdoc/>
+	public string RelicVaultStashFileFullPathFor(string mapFolder)
+		=> this.SharedStashFile(mapFolder, RELICVAULTSTASHFILENAME);
+
+	/// <summary>A shared stash file of a map: in <c>SaveData\Sys\&lt;mod&gt;</c>, or <c>SaveData\Sys</c> for the base game.</summary>
+	private string SharedStashFile(string mapFolder, string fileName)
+		=> string.IsNullOrWhiteSpace(mapFolder) || mapFolder.Trim().Equals("MAIN", StringComparison.OrdinalIgnoreCase)
+			? this.PathIO.Combine(SaveFolderTQIT, SAVEDATA_DIRNAME, "Sys", fileName)
+			: this.PathIO.Combine(SaveFolderTQIT, SAVEDATA_DIRNAME, "Sys", this.PathIO.GetFileName(mapFolder.TrimEnd('\\', '/')), fileName);
+
 	/// <summary>
 	/// Gets the filename for the game's transfer stash.
 	/// Stash files for Mods all have their own subdirectory which is the same as the mod's custom map folder

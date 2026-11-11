@@ -36,9 +36,20 @@ public class ItemActionRulesTests
 	[InlineData(true, 3, false, true)]    // even with a selection: the menu acts on the item under the cursor
 	[InlineData(false, 3, false, false)]  // a selection alone
 	[InlineData(true, 0, true, false)]    // read-only equipment
-	public void Available_ChangeMod_ForTheItemUnderTheCursorOfAWritableSack(bool item, int selectionCount, bool readOnly, bool expected)
-		=> ItemActionRules.Available(new ItemActionContext(item ? Sword() : null, selectionCount, false, readOnly, false, false))
+	public void Available_ChangeMod_ForTheItemUnderTheCursorOfAWritableVault(bool item, int selectionCount, bool readOnly, bool expected)
+	{
+		var sword = Sword();
+		sword.InVault = true;
+
+		ItemActionRules.Available(new ItemActionContext(item ? sword : null, selectionCount, false, readOnly, false, false))
 			.HasFlag(ItemActions.ChangeMod).Should().Be(expected);
+	}
+
+	[Fact]
+	public void Available_ChangeMod_NotForACharactersItem()
+		// A character's files cannot keep the choice: the next read would lose it.
+		=> ItemActionRules.Available(new ItemActionContext(Sword(), 0, false, false, false, false))
+			.HasFlag(ItemActions.ChangeMod).Should().BeFalse();
 
 	[Theory]
 	[InlineData("""records\item\equipmentweapon\sword\us_n_01.dbr""", false, true)]

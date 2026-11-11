@@ -117,7 +117,7 @@ public partial class VaultPanel
 		var exchangeService = this.ExchangeService;
 		if (exchangeService is not null && this.BagSackPanel?.Sack is not null)
 		{
-			var json = exchangeService.SerializeSackCollection(this.BagSackPanel.Sack, this.CurrentBag);
+			var json = exchangeService.SerializeSackCollection(this.BagSackPanel.Sack, this.CurrentBag, this.BagSackPanel.ContainerMap);
 			Clipboard.SetText(json);
 		}
 	}
@@ -127,7 +127,7 @@ public partial class VaultPanel
 		var exchangeService = this.ExchangeService;
 		if (exchangeService is not null && this.BagSackPanel?.Sack is not null)
 		{
-			var json = exchangeService.SerializeSackCollection(this.BagSackPanel.Sack, this.CurrentBag);
+			var json = exchangeService.SerializeSackCollection(this.BagSackPanel.Sack, this.CurrentBag, this.BagSackPanel.ContainerMap);
 			using var dialog = new SaveFileDialog
 			{
 				Filter = "JSON files (*.json)|*.json",
@@ -147,7 +147,7 @@ public partial class VaultPanel
 		{
 			try
 			{
-				var url = await exchangeService.ExportTabToPasteBinAsync(this.ShownVault.PlayerName, this.BagSackPanel.Sack, this.CurrentBag);
+				var url = await exchangeService.ExportTabToPasteBinAsync(this.ShownVault.PlayerName, this.BagSackPanel.Sack, this.CurrentBag, this.BagSackPanel.ContainerMap);
 				Clipboard.SetText(url);
 				this.UIService.NotifyUser($"Tab exported to PasteBin: {url}");
 			}
@@ -229,17 +229,55 @@ public partial class VaultPanel
 	internal void ChangeVaultMod(string? mod)
 	{
 		var size = this.BagSackPanel.SackSize;
-		var changed = this.Services.ItemEditService.ChangeVaultMod(this.ShownVault, mod
-			, (sack, item) => SackLayout.FitsOrMoves(sack, size, item));
-		if (changed.Count == 0)
+		var change = this.Services.ItemEditService.ChangeVaultMod(this.ShownVault, mod
+			, (sack, item) => SackLayout.FitsOrMoves(sack, size, item) || this.MoveToAnotherBag(sack, item));
+
+		Item[] items = [.. change.Changed, .. change.Kept];
+		if (items.Length == 0)
 			return;
 
-		var items = changed.ToArray();
+		this.ItemsReadAgain(items);
 		ItemTooltip.HideTooltip();
+		this.BagSackPanel.Refresh();
+		this.BagSackPanel.NotifyKeptMap(change.Kept);
+	}
+
+	/// <summary>
+	/// Moves an item that has no room in its bag to the first free spot of another bag of the vault, in order.
+	/// </summary>
+	/// <returns>False when no bag has room, or when the panel shows no vault.</returns>
+	private bool MoveToAnotherBag(SackCollection from, Item item)
+	{
+		if (this.Vault is null || this.Player is null)
+			return false;
+
+		var size = this.BagSackPanel.SackSize;
+		for (int i = 0; i < this.Player.NumberOfSacks; i++)
+		{
+			var other = this.Player.GetSack(i);
+			if (other is null || ReferenceEquals(other, from) || !SackLayout.MoveToFreeSpot(other, size, item))
+				continue;
+
+			from.RemoveItem(item);
+			other.AddItem(item);
+			item.Place.SackNumber = i;
+			from.IsModified = true;
+			other.IsModified = true;
+			return true;
+		}
+
+		return false;
+	}
+
+	/// <summary>
+	/// After items were read with another map: their tool tips, names and search entries are made again.
+	/// </summary>
+	private void ItemsReadAgain(Item[] items)
+	{
 		ItemTooltip.InvalidateCache(items);
 		BagButtonTooltip.InvalidateCache(items);
 		this.Services.ItemProvider.InvalidateFriendlyNamesCache(items);
-		this.BagSackPanel.Refresh();
+		this.Services.ItemDatabaseService.RefreshItems(items);
 	}
 
 	/// <summary>
@@ -252,13 +290,15 @@ public partial class VaultPanel
 	internal void AdoptVaultMod(SackCollection sack, IEnumerable<Item> items, Size? sackSize = null)
 	{
 		var size = sackSize ?? this.BagSackPanel.SackSize;
-		var changed = this.Services.ItemEditService.SettleAll(sack, size, items, this.Vault is not null, this.Vault?.Mod).ToArray();
+		var result = this.Services.ItemEditService.SettleAll(sack, size, items, this.Vault is not null, this.BagSackPanel.ContainerMap
+			, this.MoveToAnotherBag);
+
+		Item[] changed = [.. result.ReadAgain, .. result.Kept];
 		if (changed.Length == 0)
 			return;
 
-		ItemTooltip.InvalidateCache(changed);
-		BagButtonTooltip.InvalidateCache(changed);
-		this.Services.ItemProvider.InvalidateFriendlyNamesCache(changed);
+		this.ItemsReadAgain(changed);
+		this.BagSackPanel.NotifyKeptMap(result.Kept);
 	}
 
 	private void ContextMenuItemClicked(object? sender, ToolStripItemClickedEventArgs e)

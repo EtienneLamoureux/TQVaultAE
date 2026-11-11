@@ -241,30 +241,35 @@ public class Item
 	public Info? RelicBonus2Info { get; set; }
 
 	/// <summary>
-	/// The mod the item belongs to (the mod's folder name, as in a character's link file): its records resolve in that
-	/// mod's database, mod data first and then the base game's, whatever the active map is. Null for a base game item.
-	/// Kept by copies and saved in the vault files.
+	/// The item's map: the mod whose data its records resolve in (the mod's folder name, as in a character's link file),
+	/// mod data first and then the base game's; null for the base game. A mod that is not installed is kept and the item
+	/// is read with the base game data. Where it comes from is <see cref="ModOrigin"/>. Kept by copies.
 	/// </summary>
 	public string? Mod { get; set; }
 
 	/// <summary>
-	/// True when <see cref="Mod"/> is the link of the vault holding the item rather than the item's own: the item
-	/// follows the vault's link when it changes, and the vault file does not repeat it for the item.
+	/// Where <see cref="Mod"/> comes from: the item's own (saved in the vault files), or the container holding it.
+	/// <see cref="ModOrigin.None"/> only before a container gave it one: a placeholder, or an item being read.
 	/// </summary>
-	public bool ModFromVault { get; set; }
+	public ModOrigin ModOrigin { get; set; }
+
+	/// <summary>True when the item's map is its own: <c>"mod"</c> or <c>"noMod"</c> in the vault file.</summary>
+	public bool HasOwnMod => this.ModOrigin == ModOrigin.Own;
+
+	/// <summary>Gives the item the map of the container holding it, when it has none yet.</summary>
+	/// <param name="containerMod">The container's mod; null for the base game.</param>
+	public void InheritMod(string? containerMod)
+	{
+		if (this.ModOrigin != ModOrigin.None)
+			return;
+
+		this.Mod = string.IsNullOrWhiteSpace(containerMod) ? null : containerMod;
+		this.ModOrigin = ModOrigin.Inherited;
+	}
 
 	/// <summary>
-	/// True when the user chose the base game for the item ("Modded" menu): <see cref="Mod"/> stays null and the item
-	/// does not follow the link of the vault holding it, now or after a reload (<c>"noMod": true</c> in the vault file
-	/// and the exports). A vault item without a mod is read with the base game data alone. On a character it changes
-	/// nothing: an item without a link follows the active map there.
-	/// </summary>
-	public bool NoMod { get; set; }
-
-	/// <summary>
-	/// True while a vault holds the item. Without a mod link (or with the link of a mod that is not installed), a vault
-	/// item is read with the base game data, whatever the active map is; an item a character carries follows the
-	/// active map. Kept by copies; set when the item is put in a vault or taken to a character.
+	/// True while a vault holds the item, false on a character or in a game stash: leaving a character for a vault makes
+	/// an inherited map the item's own. Kept by copies; set when the item is put in a vault or taken to a character.
 	/// </summary>
 	public bool InVault { get; set; }
 
@@ -992,6 +997,10 @@ public class Item
 			Var2 = var2Default,
 			PositionX = -1,
 			PositionY = -1,
+			// A new item made from this one (a relic taken out, an artifact, a set member) has its map.
+			Mod = this.Mod,
+			ModOrigin = this.ModOrigin,
+			InVault = this.InVault,
 		};
 
 	/// <summary>

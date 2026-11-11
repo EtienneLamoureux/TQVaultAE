@@ -290,7 +290,8 @@ public partial class MainForm
 		}
 
 		var before = sack.ToHashSet();
-		var imported = this.itemExchangeService.PlaceImportedItems(sack, importResult, sackPanel.SackSize.Width, sackPanel.SackSize.Height);
+		var imported = this.itemExchangeService.PlaceImportedItems(sack, importResult, sackPanel.SackSize.Width, sackPanel.SackSize.Height
+			, sackPanel.ContainerMap);
 
 		// Into a vault linked to a mod: the imported items follow its link like dropped ones.
 		this.vaultPanel.AdoptVaultMod(sack, sack.Where(item => !before.Contains(item)));
@@ -303,6 +304,16 @@ public partial class MainForm
 
 		this.vaultPanel.Refresh();
 		this.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportSuccessCount, imported, importResult.TotalCount));
+		this.NotifyDroppedMods(importResult);
+	}
+
+	/// <summary>
+	/// Names the mods an import dropped because they are not installed here.
+	/// </summary>
+	private void NotifyDroppedMods(ImportResult importResult)
+	{
+		if (importResult.DroppedMods.Count != 0)
+			this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.ImportDroppedMods, string.Join(", ", importResult.DroppedMods)));
 	}
 
 	private void HandleVaultImportFromJson(ImportResult importResult)
@@ -351,6 +362,7 @@ public partial class MainForm
 			this.LoadVault(newName, false);
 
 			this.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportVaultSuccessCreate, newName));
+			this.NotifyDroppedMods(importResult);
 			return;
 		}
 
@@ -388,6 +400,7 @@ public partial class MainForm
 
 		var totalItems = importResult.SackItems?.Sum(kvp => kvp.Value.Count) ?? 0;
 		this.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportVaultSuccess, totalItems));
+		this.NotifyDroppedMods(importResult);
 	}
 
 	#endregion
