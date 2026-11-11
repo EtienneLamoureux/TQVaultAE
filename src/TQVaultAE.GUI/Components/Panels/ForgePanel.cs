@@ -470,6 +470,8 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
 		foreach (var slot in Slots)
 			if (slot.Combo is not null)
 				slot.Combo.Visible = false;
+
+		this.FitHeight();
 	}
 
 	private void ShowGodModeRows()
@@ -480,6 +482,62 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
 				slot.Combo.SelectedIndex = -1;
 				slot.Combo.Visible = true;
 			}
+
+		this.FitHeight();
+	}
+
+	#endregion
+
+	#region Height
+
+	/// <summary>The height the panel may take, 0 for no limit.</summary>
+	private int maxHeight;
+
+	/// <summary>The pixels taken off each item slot's height so that the panel fits <see cref="maxHeight"/>.</summary>
+	private int slotCut;
+
+	/// <summary>The part of its height an item slot keeps at least: the tallest item still fits.</summary>
+	private const float MinSlotHeightRatio = 0.8F;
+
+	/// <summary>
+	/// Keeps the panel within <paramref name="height"/> pixels: its three rows of item slots give up what is over, in
+	/// every mode (God mode adds two rows of lists).
+	/// </summary>
+	public void FitHeight(int height)
+	{
+		this.maxHeight = height;
+		this.FitHeight();
+	}
+
+	private void FitHeight()
+	{
+		if (this.maxHeight <= 0 || Slots is null)
+			return;
+
+		const int slotRows = 3;
+		var slotHeight = pictureBoxBaseItem.Height + this.slotCut;
+		var fullHeight = this.GetPreferredSize(Size.Empty).Height + (slotRows * this.slotCut);
+		var cut = Math.Max(0, (fullHeight - this.maxHeight + slotRows - 1) / slotRows);
+		cut = Math.Min(cut, slotHeight - (int)(slotHeight * MinSlotHeightRatio));
+		if (cut == this.slotCut)
+			return;
+
+		this.slotCut = cut;
+		foreach (var slot in Slots)
+			slot.Picture.Height = slotHeight - cut;
+	}
+
+	/// <summary>The item slots get their full height back before a rescale, so that the scale applies to it.</summary>
+	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+	{
+		if (this.slotCut != 0 && Slots is not null)
+		{
+			foreach (var slot in Slots)
+				slot.Picture.Height += this.slotCut;
+			this.slotCut = 0;
+		}
+
+		base.ScaleControl(factor, specified);
 	}
 
 	#endregion
