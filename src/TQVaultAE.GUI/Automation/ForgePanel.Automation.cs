@@ -30,6 +30,18 @@ public partial class ForgePanel
 			view.Combo?.Items.OfType<ForgeComboItem>().Select(i => i.Value).ToList() ?? [],
 			view.Combo is { Visible: true } ? this.GodPart(view.Slot) : null)).ToList();
 
+	/// <summary>The panel's height against its limit: the height, the preferred height, the limit, and the slots' cut and height.</summary>
+	internal object AutomationLayout => new
+	{
+		height = this.Height,
+		preferredHeight = this.GetPreferredSize(Size.Empty).Height,
+		heightLimit = this.HeightLimit?.Invoke() ?? 0,
+		slotCut = this.slotCut,
+		slotHeight = this.pictureBoxBaseItem.Height,
+		rowHeights = this.tableLayoutPanelForge.GetRowHeights(),
+		combos = this.Slots.Where(s => s.Combo is { Visible: true }).Select(s => new { s.Slot, s.Combo!.Height, Font = s.Combo.Font.SizeInPoints }),
+	};
+
 	/// <summary>Messages the forge showed to the user, oldest first.</summary>
 	internal IReadOnlyList<(ForgeMessage Message, string Text)> AutomationMessages => this.automationMessages;
 

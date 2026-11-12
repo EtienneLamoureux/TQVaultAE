@@ -306,6 +306,7 @@ partial class ForgePanel
         // flowLayoutPanelTop
         // 
         this.flowLayoutPanelTop.AutoSize = true;
+        this.flowLayoutPanelTop.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
         this.tableLayoutPanelForge.SetColumnSpan(this.flowLayoutPanelTop, 2);
         this.flowLayoutPanelTop.Controls.Add(this.scalingLabelBaseItem);
         this.flowLayoutPanelTop.Controls.Add(this.scalingRadioButtonGod);
@@ -496,6 +497,7 @@ partial class ForgePanel
         // flowLayoutPanelBottom
         // 
         this.flowLayoutPanelBottom.AutoSize = true;
+        this.flowLayoutPanelBottom.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
         this.tableLayoutPanelForge.SetColumnSpan(this.flowLayoutPanelBottom, 2);
         this.flowLayoutPanelBottom.Controls.Add(this.scalingCheckBoxHardcore);
         this.flowLayoutPanelBottom.Dock = System.Windows.Forms.DockStyle.Fill;

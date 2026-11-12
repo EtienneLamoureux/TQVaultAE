@@ -499,8 +499,11 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
 	/// <summary>The pixels taken off each item slot's height so that the panel fits <see cref="HeightLimit"/>.</summary>
 	private int slotCut;
 
-	/// <summary>The part of its height an item slot keeps at least: the tallest item still fits.</summary>
-	private const float MinSlotHeightRatio = 0.8F;
+	/// <summary>
+	/// The part of its height an item slot keeps at least: the tallest item (4 units) takes about 55% of a full slot, and
+	/// God mode's two rows of lists need the slots down to about 75% at the normal size.
+	/// </summary>
+	private const float MinSlotHeightRatio = 0.7F;
 
 	/// <summary>
 	/// Keeps the panel within <see cref="HeightLimit"/>: its three rows of item slots give up what is over, in every

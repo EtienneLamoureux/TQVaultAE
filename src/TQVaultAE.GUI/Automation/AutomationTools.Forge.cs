@@ -209,6 +209,7 @@ internal static partial class AutomationTools
 			shown = form.AutomationForgeShown,
 			mode = forge?.AutomationMode.ToString(),
 			hardcore = forge?.AutomationHardcore,
+			layout = forge?.AutomationLayout,
 			slots = forge?.AutomationSlots.Select(s => new
 			{
 				slot = s.Slot.ToString(),
