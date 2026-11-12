@@ -173,6 +173,32 @@ internal sealed partial class CharacterEditDialog
 			check.BackColor = Color.Black;
 			check.AutoSize = true;
 		}
+		else if (editor is ComboBox combo)
+		{
+			// A drop-down list ignores its colours under the visual styles (white box): it draws its items itself.
+			combo.FlatStyle = FlatStyle.Flat;
+			combo.DrawMode = DrawMode.OwnerDrawFixed;
+			combo.DrawItem += DrawSideComboItem;
+		}
+	}
+
+	/// <summary>Draws an entry of a side panel drop-down, and its box, in the panel's colours.</summary>
+	private static void DrawSideComboItem(object? sender, DrawItemEventArgs e)
+	{
+		if (sender is not ComboBox combo)
+			return;
+
+		// The list highlights the entry under the pointer; the box itself keeps the panel's background.
+		var highlighted = (e.State & DrawItemState.Selected) != 0 && (e.State & DrawItemState.ComboBoxEdit) == 0;
+		using (var back = new SolidBrush(highlighted ? Color.FromArgb(70, 70, 70) : combo.BackColor))
+			e.Graphics.FillRectangle(back, e.Bounds);
+
+		if (e.Index >= 0 && e.Index < combo.Items.Count)
+		{
+			TextRenderer.DrawText(e.Graphics, combo.GetItemText(combo.Items[e.Index]), e.Font ?? combo.Font, e.Bounds,
+				combo.Enabled ? combo.ForeColor : Color.Gray,
+				TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis);
+		}
 	}
 
 	/// <summary>
