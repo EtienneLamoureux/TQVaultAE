@@ -207,12 +207,62 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 	/// <param name="e">EventArgs data</param>
 	private void VaultMaintenanceDialogLoad(object? sender, EventArgs e)
 	{
+		// The zoom is applied by now (the dialog is scaled before it is shown).
+		this.FitInstructions();
 		this.newRadioButton.Checked = true;
 		this.targetTextBox.Text = Resources.MaintenanceNewVault;
 		this.targetTextBox.SelectAll();
 		this.targetTextBox.Focus();
 		this.source = null;
 		this.target = null;
+	}
+
+	/// <summary>
+	/// On a monitor of another DPI the fonts change: the instructions may need more lines.
+	/// </summary>
+	protected override void OnDpiChanged(DpiChangedEventArgs e)
+	{
+		base.OnDpiChanged(e);
+		this.FitInstructions();
+	}
+
+	/// <summary>
+	/// Makes the instructions frame tall enough for the longest instructions, the dialog growing below it. The frame is
+	/// sized for the design font, and a font scaled for a zoom or a DPI grows its text a little more than the frame
+	/// (pixel rounding of the glyphs): at a zoom of 1.2 the first line wrapped and the last one was cut. Never shrinks,
+	/// so the design layout stays as it is when everything fits.
+	/// </summary>
+	private void FitInstructions()
+	{
+		var label = this.instructionsLabel;
+		int width = label.ClientSize.Width - label.Padding.Horizontal;
+		if (width <= 0)
+			return;
+
+		string[] texts = [
+			Resources.MaintenanceRename,
+			string.Concat(Resources.MaintenanceNew, DisplayInvalidChars(this.invalidChars)),
+			Resources.MaintenanceDelete,
+			Resources.MaintenanceCopy,
+		];
+		var flags = TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl;
+		int needed = texts.Max(t => TextRenderer.MeasureText(t, label.Font, new Size(width, int.MaxValue), flags).Height)
+			+ label.Padding.Vertical;
+		int delta = needed - label.Height;
+		if (delta <= 0)
+			return;
+
+		int bottom = label.Bottom;
+		this.SuspendLayout();
+		foreach (Control control in this.Controls)
+		{
+			if (control != label && control.Top >= bottom)
+				control.Top += delta;
+		}
+
+		label.Height = needed;
+		this.Height += delta;
+		this.ResumeLayout();
 	}
 
 	/// <summary>

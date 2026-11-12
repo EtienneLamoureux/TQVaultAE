@@ -499,6 +499,40 @@ public partial class SearchDialogAdvanced : VaultForm
 		this.FitCategoriesHeight();
 	}
 
+	/// <summary>The user's zoom the dialog is scaled to: it is kept between openings, while the zoom may change.</summary>
+	private float scaledZoom = 1.0F;
+
+	/// <summary>
+	/// Scales the dialog to the user's <paramref name="zoom"/>, as the other dialogs are when they open, from the zoom it
+	/// was scaled to before; the category lists are sized again from their new fonts and the dialog kept on the screen.
+	/// </summary>
+	public void FollowZoom(float zoom)
+	{
+		if (zoom == this.scaledZoom)
+			return;
+
+		float factor = zoom / this.scaledZoom;
+		using (ZoomScope.Enter())
+			this.Scale(new SizeF(factor, factor));
+		this.scaledZoom = zoom;
+
+		this.AdjustCheckBoxesWidth();
+		this.AdjustCheckBoxesHeight();
+		var screen = Screen.FromControl(this.Owner ?? this).WorkingArea;
+		this.Size = new Size(Math.Min(this.Width, screen.Width), Math.Min(this.Height, screen.Height));
+		this.FitCategoriesHeight();
+		this.LastFormSize = this.Size;
+	}
+
+	/// <summary>
+	/// Override of ScaleControl which supports font scaling: the controls without a font of their own follow the dialog's.
+	/// </summary>
+	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+	{
+		this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
+		base.ScaleControl(factor, specified);
+	}
+
 	/// <summary>
 	/// Grows the dialog when the categories overflow their area by a few pixels: the rows are sized from the fonts, which
 	/// do not scale exactly with the DPI (at 96 DPI the five rows took 10 pixels more than the area and both scroll bars

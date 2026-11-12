@@ -40,6 +40,7 @@ public partial class MainForm
 		}
 
 		var searchDialog = this._searchDialog;
+		searchDialog.FollowZoom(UIService.Zoom);
 		var result = searchDialog.ShowDialog();
 
 		if (result == DialogResult.OK && searchDialog.QueryResults.Length != 0)
