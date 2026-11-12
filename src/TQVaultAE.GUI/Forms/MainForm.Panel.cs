@@ -32,6 +32,10 @@ public partial class MainForm
 		this.lastBag = -1;
 
 		this.itemTextPanel.Size = new Size(this.vaultPanel.Width, Convert.ToInt32(22.0F * UIService.Scale));
+
+		// The highlight row is as wide as the vault, and scales with it. Docked to fill its cell, it would set the width
+		// of that auto-sized column itself: a column it had widened (a maximize) would never narrow again.
+		this.tableLayoutPanelHighlight.Width = this.vaultPanel.Width;
 		this.GetVaultList(false);
 
 		// Now we always create the stash panel since everyone can have equipment

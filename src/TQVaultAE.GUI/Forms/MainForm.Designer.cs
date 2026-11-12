@@ -364,7 +364,6 @@ public partial class MainForm
         this.tableLayoutPanelHighlight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
         this.tableLayoutPanelHighlight.Controls.Add(this.scalingLabelHighlight, 0, 0);
         this.tableLayoutPanelHighlight.Controls.Add(this.scalingTextBoxHighlight, 1, 0);
-        this.tableLayoutPanelHighlight.Dock = System.Windows.Forms.DockStyle.Fill;
         this.tableLayoutPanelHighlight.Location = new System.Drawing.Point(1, 128);
         this.tableLayoutPanelHighlight.Margin = new System.Windows.Forms.Padding(0);
         this.tableLayoutPanelHighlight.Name = "tableLayoutPanelHighlight";

@@ -297,15 +297,22 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "window_bounds", ReadOnly = true)]
-	[Description("The main window's bounds (virtual screen pixels), its state (Normal, Maximized, Minimized), its DPI, and the working area of the monitor it is on: checks a maximize on each monitor.")]
+	[Description("The main window's bounds (virtual screen pixels), its state (Normal, Maximized, Minimized), its DPI, zoom and scale, the right and bottom edges of its content (its visible child controls), and the working area of the monitor it is on: checks a maximize on each monitor, and that the content still fits the window after a maximize and a restore.")]
 	public static string WindowBounds()
 		=> AutomationHost.OnUi(main =>
 		{
 			var screen = Screen.FromHandle(main.Handle);
+			var children = main.Controls.Cast<Control>().Where(c => c.Visible).ToList();
+			var ui = main.Services.UIService;
 			return Serialize(new
 			{
 				bounds = new { main.Bounds.X, main.Bounds.Y, main.Bounds.Width, main.Bounds.Height },
+				clientSize = new { main.ClientSize.Width, main.ClientSize.Height },
+				contentRight = children.Count == 0 ? 0 : children.Max(c => c.Right),
+				contentBottom = children.Count == 0 ? 0 : children.Max(c => c.Bottom),
 				state = main.WindowState.ToString(),
+				zoom = ui.Zoom,
+				scale = ui.Scale,
 				deviceDpi = main.DeviceDpi,
 				monitor = screen.DeviceName,
 				workingArea = new { screen.WorkingArea.X, screen.WorkingArea.Y, screen.WorkingArea.Width, screen.WorkingArea.Height },
