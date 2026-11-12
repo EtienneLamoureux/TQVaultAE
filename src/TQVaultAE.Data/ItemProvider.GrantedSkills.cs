@@ -119,7 +119,7 @@ public partial class ItemProvider
 
 	/// <summary>
 	/// The skill window's own hidden variables plus the recharge and energy cost, which
-	/// <see cref="AddSkillWindowCosts"/> writes with the character's modifiers.
+	/// <see cref="SkillWindowCosts"/> writes with the character's modifiers.
 	/// </summary>
 	private static readonly HashSet<string> SkillWindowOwnHiddenVariables = new(SkillWindowHiddenVariables, StringComparer.OrdinalIgnoreCase)
 	{
@@ -132,11 +132,11 @@ public partial class ItemProvider
 	/// The energy cost is written without the reductions, as the game does.
 	/// </summary>
 	/// <remarks>A buff skill may keep them in its buff record (Study Prey).</remarks>
-	/// <returns>The indexes of the lines the modifiers changed.</returns>
-	private List<int> AddSkillWindowCosts(DBRecordCollection skillRecord, DBRecordCollection? buffRecord, int level, SkillWindowContext context
-		, List<string> attributes)
+	/// <returns>The lines, each with the variable that places it and whether the modifiers changed it.</returns>
+	private List<(string Variable, string Text, bool Modified)> SkillWindowCosts(DBRecordCollection skillRecord, DBRecordCollection? buffRecord
+		, int level, SkillWindowContext context)
 	{
-		var modified = new List<int>();
+		var lines = new List<(string Variable, string Text, bool Modified)>();
 		float Own(string variable)
 		{
 			var value = ValueAtLevel(skillRecord[variable], level);
@@ -162,25 +162,19 @@ public partial class ItemProvider
 		manaCost += addedManaCost;
 		if (cooldown > 0)
 		{
-			if (seconds != 0 || reduction != 0)
-				modified.Add(attributes.Count);
-
 			var recharge = SkillTooltipLayout.Recharge(cooldown, seconds, context.CooldownReduction + reduction, context.CooldownReductionCap);
 			var format = TranslationService.TryTranslateXTag("CooldownTime", out var text) ? text : "^a{%.1f0} Second(s) Recharge";
-			attributes.Add(plain + Format(ItemAttributeProvider.ConvertFormat(format), recharge));
+			lines.Add(("skillCooldownTime", plain + Format(ItemAttributeProvider.ConvertFormat(format), recharge), seconds != 0 || reduction != 0));
 		}
 
 		if (manaCost > 0)
 		{
-			if (addedManaCost != 0)
-				modified.Add(attributes.Count);
-
 			var label = TranslationService.TryTranslateXTag("ManaCost", out var text) ? text : "Energy Cost";
 			var cost = this.FormatSkillCost(manaCost, label) ?? $"{manaCost.ToString("0", CultureInfo.CurrentCulture)} {label}";
-			attributes.Add(plain + cost);
+			lines.Add(("skillManaCost", plain + cost, addedManaCost != 0));
 		}
 
-		return modified;
+		return lines;
 	}
 
 	/// <summary>
@@ -234,22 +228,25 @@ public partial class ItemProvider
 		var activation = this.GetSkillActivationText(autoController);
 
 		// Effects at the granted level: the skill's own parameters (energy cost, cooldown, radius...), then the buff's.
-		// The skill window writes the recharge and energy cost itself, with the character's modifiers.
+		// The skill window writes the recharge and energy cost itself, with the character's modifiers, and lists every
+		// line in its own order (SkillWindowAttributeOrder).
 		var attributes = new List<string>();
-		var modifiedLines = context is null ? [] : this.AddSkillWindowCosts(skillRecord, buffRecord, level, context, attributes);
+		var costs = context is null ? [] : this.SkillWindowCosts(skillRecord, buffRecord, level, context);
+		var ownLines = costs.Select(c => (c.Variable, c.Text)).ToList();
+		var order = skillWindow ? new SkillWindowLines(ownLines) : null;
 
 		// Summons: Skill_SpawnPet, and the projectiles that place one (Skill_AttackProjectileSpawnPet: Lay Trap, Sylvan Nymph).
 		if (skillRecord.GetString("Class", 0).EndsWith("SpawnPet", StringComparison.OrdinalIgnoreCase))
 		{
 			if (skillWindow)
 			{
-				this.GetAttributesFromRecord(itm, skillRecord, true, skillId, attributes, skillLevelIndex: level - 1, hiddenVariables: ownHidden);
-
 				// "Extra Life Time 12 Seconds" (SpawnObjectsTimeToLive), before the summon's attributes; the game's text has
 				// no value index ("{%.0f}"), unlike the others ("{%.0f0}").
 				float timeToLive = ValueAtLevel(skillRecord["spawnObjectsTimeToLive"], level);
 				if (timeToLive > 0 && TranslationService.TryTranslateXTag("SpawnObjectsTimeToLive", out var lifeTime))
-					attributes.Add(Format(ItemAttributeProvider.ConvertFormat(lifeTime.Replace("{%.0f}", "{%.0f0}", StringComparison.Ordinal)), timeToLive));
+					ownLines.Add(("spawnObjectsTimeToLive", Format(ItemAttributeProvider.ConvertFormat(lifeTime.Replace("{%.0f}", "{%.0f0}", StringComparison.Ordinal)), timeToLive)));
+
+				this.GetAttributesFromRecord(itm, skillRecord, true, skillId, attributes, skillLevelIndex: level - 1, hiddenVariables: ownHidden, skillWindow: order);
 			}
 
 			this.ConvertPetStats(itm, skillRecord, attributes, level, hidden, context?.PetSkillBonus ?? 0);
@@ -259,17 +256,25 @@ public partial class ItemProvider
 			// "5% Chance of Activating" of a skill triggered by hits (onHitActivationChance), which item tool tips leave out.
 			float activationChance = skillWindow ? ValueAtLevel(skillRecord["onHitActivationChance"], level) : 0F;
 			if (activationChance > 0 && TranslationService.TryTranslateXTag("SkillActivationChance", out var activationText))
-				attributes.Add($"{activationChance.ToString("0.#", CultureInfo.CurrentCulture)}% {activationText}");
+				ownLines.Add(("onHitActivationChance", $"{activationChance.ToString("0.#", CultureInfo.CurrentCulture)}% {activationText}"));
 
-			this.GetAttributesFromRecord(itm, skillRecord, true, skillId, attributes, skillLevelIndex: level - 1, hiddenVariables: ownHidden);
+			this.GetAttributesFromRecord(itm, skillRecord, true, skillId, attributes, skillLevelIndex: level - 1, hiddenVariables: ownHidden, skillWindow: order);
 			if (buffRecord is not null)
-				this.GetAttributesFromRecord(itm, buffRecord, true, buffId, attributes, skillLevelIndex: level - 1, hiddenVariables: ownHidden);
+				this.GetAttributesFromRecord(itm, buffRecord, true, buffId, attributes, skillLevelIndex: level - 1, hiddenVariables: ownHidden
+					, skillWindow: skillWindow ? SkillWindowLines.None : null);
 		}
 
 		// A skill that only casts another one (skillCastName, e.g. "Potion Blast" casts "Shadow Surge" on a potion):
 		// the chance and the cast skill, with its effects at its own level. Its description stands in for a missing one.
 		if (this.GetCastSkill(itm, skillRecord, level, levelFormat, attributes) is { Length: > 0 } castDescription && description.Length == 0)
 			description = castDescription;
+
+		// The lines the character's modifiers changed, which the next level repeats.
+		var effects = TrimEmptyLines(attributes);
+		var modifiedLines = costs.Where(c => c.Modified)
+			.Select(c => Array.FindIndex(effects, a => ReferenceEquals(a, c.Text)))
+			.Where(i => i >= 0)
+			.ToList();
 
 		return new GrantedSkill(
 			skillId,
@@ -279,10 +284,9 @@ public partial class ItemProvider
 			string.IsNullOrEmpty(icon) ? null : icon.ToRecordId(),
 			string.IsNullOrEmpty(activation) ? null : activation,
 			description,
-			TrimEmptyLines(attributes)
+			effects
 		)
 		{
-			// The cost lines come first, so trimming the blank lines does not move them.
 			ModifiedLines = modifiedLines,
 		};
 	}

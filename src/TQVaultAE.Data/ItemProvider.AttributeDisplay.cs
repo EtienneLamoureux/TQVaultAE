@@ -28,9 +28,15 @@ public partial class ItemProvider
 	/// <param name="results">List for the results</param>
 	/// <param name="convertStrings">flag on whether we convert attributes to strings.</param>
 	/// <param name="lineSlots">Receives, for each line added to <paramref name="results"/>, where the game lists its attribute group.</param>
+	/// <param name="skillWindow">
+	/// The order and extra lines of the game's skill window, for a skill's effects: the groups follow
+	/// <see cref="SkillWindowAttributeOrder"/>, and the lines the skill window writes itself (a variable and its text, e.g.
+	/// the summon's life time) are placed where the game lists that variable.
+	/// </param>
 	private void GetAttributesFromRecord(Item itm, DBRecordCollection? record, bool filtering, RecordId recordId, List<string> results, bool convertStrings = true
 		, IReadOnlyDictionary<string, ValueRange>? valueRanges = null, List<string?>? lineRanges = null, int? skillLevelIndex = null
-		, List<GameAttributeSlot>? lineSlots = null, IReadOnlySet<string>? hiddenVariables = null)
+		, List<GameAttributeSlot>? lineSlots = null, IReadOnlySet<string>? hiddenVariables = null
+		, SkillWindowLines? skillWindow = null)
 	{
 		if (USettings.ItemDebugLevel > 0)
 		{
@@ -157,6 +163,32 @@ public partial class ItemProvider
 		attrByEffect.Values.CopyTo(attrArray, 0);
 		Array.Sort(attrArray, itm.IsArmor || itm.IsShield ? this.SortArmorAttributeGroups : this.SortOtherAttributeGroups);
 
+		// The skill window lists the groups in its own order (a stable sort keeps the order above for equal ranks).
+		Dictionary<object, SkillWindowRank>? skillRanks = null;
+		if (skillWindow is not null)
+		{
+			skillRanks = attrArray.ToDictionary(g => (object)g, this.SkillWindowRankOf, ReferenceEqualityComparer.Instance);
+			attrArray = [.. attrArray.OrderBy(g => skillRanks[g])];
+		}
+
+		// The lines the skill window writes itself, placed before the first group listed after them.
+		var ownLines = skillWindow?.Lines
+			.Select(l => (Rank: SkillWindowAttributeOrder.RankOf(l.Variable, ItemAttributeProvider.GetAttributeData(l.Variable)), l.Text))
+			.OrderBy(l => l.Rank)
+			.ToList() ?? [];
+		void AddOwnLines(SkillWindowRank? before)
+		{
+			while (ownLines.Count != 0 && (before is null || ownLines[0].Rank.CompareTo(before.Value) < 0))
+			{
+				results.Add(ownLines[0].Text);
+				ownLines.RemoveAt(0);
+				while (lineRanges is not null && lineRanges.Count < results.Count)
+					lineRanges.Add(null);
+				while (lineSlots is not null && lineSlots.Count < results.Count)
+					lineSlots.Add(GameAttributeSlot.Other);
+			}
+		}
+
 		// Now for the global params, we need to check to see if they are XOR or all.
 		// We do itm by checking the effect just after the global param.
 		for (int i = 0; i < attrArray.Length; ++i)
@@ -202,6 +234,9 @@ public partial class ItemProvider
 
 		foreach (List<Variable?> attrList in attrArray)
 		{
+			if (skillRanks is not null)
+				AddOwnLines(skillRanks[attrList]);
+
 			// Used to sort out the Damage Qualifier effects.
 			if (ItemAttributeProvider.AttributeGroupIs(new Collection<Variable?>(attrList), ItemAttributesEffectType.DamageQualifierEffect))
 				attrList.Sort(this.SortDamageQualifiers);
@@ -227,8 +262,22 @@ public partial class ItemProvider
 			}
 		}
 
+		AddOwnLines(null);
+
 		if (USettings.ItemDebugLevel > 0)
 			Log.LogDebug("Exiting Item.GetAttributesFromRecord()");
+	}
+
+	/// <summary>
+	/// Gets where the game's skill window lists an attribute group, from its first variable.
+	/// </summary>
+	private SkillWindowRank SkillWindowRankOf(List<Variable?> attributeList)
+	{
+		if (attributeList.FirstOrDefault(v => v is not null) is not { } first)
+			return SkillWindowAttributeOrder.Other;
+
+		bool isGlobal = ItemAttributeProvider.AttributeGroupHas(new Collection<Variable?>(attributeList), "Global");
+		return SkillWindowAttributeOrder.RankOf(first.Name, ItemAttributeProvider.GetAttributeData(first.Name), isGlobal);
 	}
 
 	/// <summary>

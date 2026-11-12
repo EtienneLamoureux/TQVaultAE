@@ -1,5 +1,6 @@
 using AwesomeAssertions;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Tests.Data;
 
@@ -377,6 +378,45 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 		var scroll = this.CreateItem("OneShot_Scroll", Str("skillName", SkillId));
 
 		this.BaseAttributes(scroll).Should().Equal($"{Epic}{shown} Active Energy Cost per Second");
+	}
+
+	[Fact]
+	public void SkillWindow_ListsTheEffectsInTheGameOrder()
+	{
+		// Earth Enchantment level 5 in the game: recharge, active energy cost, radius, the % bonuses, the flat damage,
+		// then the energy reserved (character store).
+		this.Translations["characterManaLimitReserve"] = "{%.0f0} Energy Reserved";
+		this.CreateRecord(SkillId, "Skill_BuffRadiusToggled", Str("skillDisplayName", "tagSkillTest"),
+			Int("characterManaLimitReserve", 75), Float("offensiveFireMin", 5f), Float("offensiveFireMax", 8f),
+			Float("offensiveSlowFireModifier", 44f), Float("offensiveFireModifier", 44f), Float("skillTargetRadius", 8.4f),
+			Float("skillActiveManaCost", 1f), Float("skillCooldownTime", 4f));
+
+		var skill = this.Provider.GetSkillAtLevel(SkillId, 1, TQVaultAE.Application.SkillWindowContext.None);
+
+		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).Should().Equal(
+			"{^a}4.0 Second(s) Recharge",
+			"1 Active Energy Cost per Second",
+			"8.4 Meter Radius",
+			"+44% Fire Damage",
+			"+44% Burn Damage",
+			"5 ~ 8 Fire Damage",
+			"75 Energy Reserved");
+	}
+
+	[Fact]
+	public void SkillWindow_ChanceOfActivating_ComesBeforeTheEnergyCost()
+	{
+		this.Translations["SkillActivationChance"] = "Chance of Activating";
+		this.CreateRecord(SkillId, "Skill_PassiveOnHitBuffSelf", Str("skillDisplayName", "tagSkillTest"),
+			Int("skillManaCost", 20), Float("skillActiveDuration", 10f), Float("onHitActivationChance", 8f), Float("skillCooldownTime", 12f));
+
+		var skill = this.Provider.GetSkillAtLevel(SkillId, 1, TQVaultAE.Application.SkillWindowContext.None);
+
+		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).Should().Equal(
+			"{^a}12.0 Second(s) Recharge",
+			"8% Chance of Activating",
+			"20 Energy Cost",
+			"10.0 Second Duration");
 	}
 
 	[Fact]

@@ -250,16 +250,18 @@ public partial class ItemProvider
 				results.Add(valueStr);
 				itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 
-				// The pet's skill at the level the pet record gives it.
-				GetAttributesFromRecord(itm, record, true, recordID, results, skillLevelIndex: skillLevels[i] - 1, hiddenVariables: hiddenVariables);
-
 				// "+1 to all Skills" of a pet's buff (allSkillEnhancement), which item tool tips leave out.
+				var ownLines = new List<(string Variable, string Text)>();
 				if (hiddenVariables is not null && record?["allSkillEnhancement"] is { NumberOfValues: > 0 } allSkills
 					&& allSkills.GetInt32(Math.Clamp(skillLevels[i] - 1, 0, allSkills.NumberOfValues - 1)) is var all and > 0
 					&& TranslationService.TryTranslateXTag("ItemAllSkillIncrement", out var allSkillsText))
 				{
-					results.Add(Format(ItemAttributeProvider.ConvertFormat(allSkillsText), all));
+					ownLines.Add(("allSkillEnhancement", Format(ItemAttributeProvider.ConvertFormat(allSkillsText), all)));
 				}
+
+				// The pet's skill at the level the pet record gives it, in the skill window's order there.
+				GetAttributesFromRecord(itm, record, true, recordID, results, skillLevelIndex: skillLevels[i] - 1, hiddenVariables: hiddenVariables
+					, skillWindow: hiddenVariables is null ? null : new SkillWindowLines(ownLines));
 				results.Add(string.Empty);
 			}
 		}
