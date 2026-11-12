@@ -40,10 +40,16 @@ public partial class VaultPanel
 		}
 	}
 
-	/// <summary>The sort button that sorts <paramref name="target"/>, as its click handler picks it.</summary>
+	/// <summary>
+	/// The sort button that sorts <paramref name="target"/>, as its click handler picks it; refused while it is hidden
+	/// (the stash panel's equipment tab, a panel with no bag), as the user cannot click it then.
+	/// </summary>
 	private AutoSortButton SortButtonOf(SackPanel target)
-		=> this.AutoSortButtons.FirstOrDefault(b => ReferenceEquals(this.SortTarget(b), target))
+	{
+		var button = this.AutoSortButtons.FirstOrDefault(b => ReferenceEquals(this.SortTarget(b), target))
 			?? throw new InvalidOperationException("This panel has no sort button.");
+		return button.Visible ? button : throw new InvalidOperationException("The sort button of this panel is hidden.");
+	}
 
 	/// <summary>
 	/// Right-clicks the sort button of <paramref name="target"/> through its regular handler, reads the menu, then

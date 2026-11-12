@@ -135,7 +135,7 @@ public class PlayerPanel : VaultPanel
 	/// <returns>A new AutoSortButton instance</returns>
 	protected override AutoSortButton CreateAutoSortButton(int buttonNumber)
 	{
-		AutoSortButton button = new AutoSortButton(buttonNumber, false, this.Services);
+		AutoSortButton button = this.NewSortButton(buttonNumber, false);
 
 		// Temporary location since we will be moving the panel later.
 		// This is called from the base constructor.
@@ -143,8 +143,6 @@ public class PlayerPanel : VaultPanel
 			this.BagSackPanel.Location.X + this.BagSackPanel.Width - button.Width,
 			this.BagSackPanel.Location.Y - button.Height);
 
-		button.Visible = false;
-		button.MouseDown += new MouseEventHandler(this.AutoSortButtonClick);
 		return button;
 	}
 

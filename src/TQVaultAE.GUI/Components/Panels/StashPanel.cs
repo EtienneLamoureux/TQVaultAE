@@ -139,7 +139,8 @@ public partial class StashPanel : VaultPanel, IScalingControl
 #endif
 
 	/// <summary>
-	/// Initializes a new instance of the StashPanel class.  Hard coded to 4 stash buttons and no autosort buttons.
+	/// Initializes a new instance of the StashPanel class.  Hard coded to 4 stash buttons and one sort button, shown on
+	/// the transfer, storage and relic tabs.
 	/// </summary>
 	/// <param name="dragInfo">ItemDragInfo instance</param>
 	/// <param name="panelSize">Size of the panel in cells</param>
@@ -200,6 +201,13 @@ public partial class StashPanel : VaultPanel, IScalingControl
 			this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height + offsetY));
 
 		this.maxPanelSize = panelSize;
+
+		// The sort button of the stash tabs: right of the tabs, standing on their bottom line, as the player panel's bag
+		// sort button stands right of its bag buttons. The base panel makes none (it keeps the trash panel's settings).
+		var sortButton = this.NewSortButton(0, false);
+		sortButton.Location = new Point(this.ContentWidth, this.BagButtons[0].Bottom - sortButton.Height);
+		this.AutoSortButtons.Add(sortButton);
+		this.Controls.Add(sortButton);
 
 		this.BagSackPanel.Visible = false;
 		this.BagSackPanel.Enabled = false;
@@ -434,6 +442,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 					this.BagSackPanel.Enabled = true;
 				}
 
+				this.UpdateSortButton();
 				this.Refresh();
 			}
 		}
@@ -495,6 +504,19 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		// Assign sacks to button
 		foreach (var button in this.BagButtons.Take(4))
 			button.Sack = this.GetBagSack(button.ButtonNumber);
+
+		this.UpdateSortButton();
+	}
+
+	/// <summary>
+	/// Shows the sort button while a tab with a bag is shown (transfer area, storage area, relic vault), hides it on the
+	/// equipment.
+	/// </summary>
+	private void UpdateSortButton()
+	{
+		if (this.AutoSortButtons.Count > 0)
+			this.AutoSortButtons[0].Visible = this.currentBag != BagIdConstants.BAGID_EQUIPMENTPANEL
+				&& this.GetBagSack(this.currentBag) is not null;
 	}
 
 	/// <summary>

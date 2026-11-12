@@ -200,7 +200,8 @@ public partial class VaultPanel
 	}
 
 	/// <summary>
-	/// The sack a sort button sorts: the bag panel here, the main inventory or the bags for the player panel.
+	/// The sack a sort button sorts: the bag panel here (for the stash panel, the shown tab), the main inventory or the
+	/// bags for the player panel.
 	/// </summary>
 	protected virtual SackPanel SortTarget(AutoSortButton button) => this.BagSackPanel;
 
@@ -292,11 +293,22 @@ public partial class VaultPanel
 	/// <returns>A new AutoSortButton instance</returns>
 	protected virtual AutoSortButton CreateAutoSortButton(int buttonNumber)
 	{
-		AutoSortButton button = new AutoSortButton(buttonNumber, true, this.Services);
+		AutoSortButton button = this.NewSortButton(buttonNumber, true);
 		button.Location = new Point(this.BagSackPanel.Location.X - button.Width, this.BagSackPanel.Location.Y);
-		button.Visible = false;
-		button.MouseDown += new MouseEventHandler(this.AutoSortButtonClick);
 
+		return button;
+	}
+
+	/// <summary>
+	/// Makes a sort button, hidden until its panel shows a bag, that sorts and opens the order menu through
+	/// <see cref="AutoSortButtonClick"/>. Every sort button of every panel is made here; the panel places it.
+	/// </summary>
+	/// <param name="buttonNumber">Number of the button in its panel (see <see cref="SortTarget"/>).</param>
+	/// <param name="rotated">True for the upright picture beside a vault's bag, false for the flat one above a bag.</param>
+	protected AutoSortButton NewSortButton(int buttonNumber, bool rotated)
+	{
+		AutoSortButton button = new AutoSortButton(buttonNumber, rotated, this.Services) { Visible = false };
+		button.MouseDown += new MouseEventHandler(this.AutoSortButtonClick);
 		return button;
 	}
 

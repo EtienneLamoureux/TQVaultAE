@@ -57,6 +57,18 @@ While the secondary vault is shown, <kbd>&#8594;</kbd> sends to the secondary va
 The character editor has its own mouse shortcuts, see [Character editor](CHAREDIT.md); the <kbd>SHIFT</kbd> of its
 "every point at once" clicks can be changed too.
 
+## Sorting
+
+| Shortcut | Action |
+|---|---|
+| Click a sort button | Sorts its bag with the chosen order (rows and columns alternate at each click) |
+| Right-click a sort button | Chooses the order (size, required level, type or rarity) and sorts at once |
+
+Sort buttons: left of the vault's bag, above the character's main inventory and bags, and right of the stash tabs (shown
+on the Transfer Area, Storage Area and Relic Vault, not on the Equipment). These two clicks are fixed. With the "Merge relic
+shards when sorting" setting on, relic and charm shards are merged first. A read-only character's bags and Storage Area
+are not sorted.
+
 ## Bulk Transfer
 
 - <kbd>CTRL</kbd>+click — Multi-select items to transfer

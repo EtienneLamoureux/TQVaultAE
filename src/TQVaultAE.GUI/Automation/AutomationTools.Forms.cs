@@ -198,7 +198,7 @@ internal static partial class AutomationTools
 	[McpServerTool(Name = "sort_menu", Destructive = true)]
 	[Description("Right-clicks the sort button of a panel like the user and returns its menu (one entry per sort order, the order a left click uses checked), then closes it. With path (e.g. 'Sort by required level'), clicks that entry after this call returns: it becomes the order of the left click (saved in UserConfig.xml, <Sort Algorithm=... />) and sorts the panel's bag at once. Also returns the saved sort choices.")]
 	public static string SortMenu(
-		[Description("Panel id with a sort button: vault, secondaryVault, player (main inventory) or playerBag.")] string panel,
+		[Description("Panel id with a sort button: vault, secondaryVault, player (main inventory), playerBag or stash (the shown transfer, storage or relic tab; refused on the equipment tab, where the button is hidden).")] string panel,
 		[Description("Entry to click; empty to only read the menu.")] string? path = null)
 		=> AutomationHost.OnUi(form =>
 		{
@@ -218,7 +218,7 @@ internal static partial class AutomationTools
 	[McpServerTool(Name = "sort_click", Destructive = true)]
 	[Description("Left-clicks the sort button of a panel like the user: sorts the shown bag with the order picked in sort_menu (each click alternates rows and columns), merging relic and charm shards first when the 'Merge relic shards when sorting' setting is on. The click runs after this call returns (a sort that does not fit shows a message, see dialog_answers): read the result with list_items.")]
 	public static string SortClick(
-		[Description("Panel id with a sort button: vault, secondaryVault, player (main inventory) or playerBag.")] string panel)
+		[Description("Panel id with a sort button: vault, secondaryVault, player (main inventory), playerBag or stash (the shown transfer, storage or relic tab; refused on the equipment tab, where the button is hidden).")] string panel)
 		=> AutomationHost.OnUi(form =>
 		{
 			var named = AutomationPanels.Resolve(form, panel);
