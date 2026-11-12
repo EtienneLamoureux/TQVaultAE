@@ -892,7 +892,13 @@ public partial class MainForm : Form
 	private void ToggleTocCaps()
 	{
 		var caps = this.toolStripButtonCaps.Checked;
-		this.toolStripButtonCaps.Image = caps ? Resources.CapsDown.ToBitmap() : Resources.CapsUP.ToBitmap();
+		// Each Resources access creates a new Icon, and ToBitmap a new Bitmap: free both, and the replaced picture
+		using (var icon = caps ? Resources.CapsDown : Resources.CapsUP)
+		{
+			var replaced = this.toolStripButtonCaps.Image;
+			this.toolStripButtonCaps.Image = icon.ToBitmap();
+			replaced?.Dispose();
+		}
 
 		this.treeViewTOC.BeginUpdate();
 		foreach (var (key, node) in this.NodesByKey)
