@@ -346,6 +346,22 @@ public partial class ItemProvider
 	}
 
 	/// <summary>
+	/// The game's text for a skill cost ("{%.0f0 %s1}"): energy and life costs are written rounded to a whole number,
+	/// half away from zero (0.5 energy per second reads "1").
+	/// </summary>
+	private const string SkillCostFormatTag = "SkillCostFormat";
+
+	/// <summary>
+	/// A skill cost line as the game writes it, e.g. "1 Active Energy Cost per Second" for 0.5: the value rounded to a
+	/// whole number with <c>SkillCostFormat</c>, then the label.
+	/// </summary>
+	/// <returns><see langword="null"/> when the game text has no cost format.</returns>
+	private string? FormatSkillCost(float value, string label)
+		=> TranslationService.TryTranslateXTag(SkillCostFormatTag, out var format)
+			? Format(ItemAttributeProvider.ConvertFormat(format), value, label)
+			: null;
+
+	/// <summary>
 	/// Gets the skill effects string
 	/// </summary>
 	/// <param name="baseAttributeData">ItemAttributesData structure of the base attribute</param>
@@ -379,7 +395,7 @@ public partial class ItemProvider
 		string? formatSpecTag = null;
 		string? formatSpec = null;
 		if (currentAttributeData.FullAttribute.EndsWith("Cost", noCase))
-			formatSpecTag = "SkillIntFormat";
+			formatSpecTag = SkillCostFormatTag;
 		else if (currentAttributeData.FullAttribute.EndsWith("Level", noCase))
 			formatSpecTag = "SkillIntFormat";
 		else if (currentAttributeData.FullAttribute.EndsWith("Duration", noCase))

@@ -28,6 +28,9 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 		this.Translations["xtagAutoSkillCondition07"] = "(Activated on attack)";
 		this.Translations["xtagAutoSkillCondition08"] = "(Activated when equipped)";
 		this.Translations["SkillIntFormat"] = "{%d0 %s1}";
+		this.Translations["SkillCostFormat"] = "{%.0f0 %s1}";
+		this.Translations["ActiveManaCost"] = "Active Energy Cost per Second";
+		this.Translations["CooldownTime"] = "^a{%.1f0} Second(s) Recharge";
 		this.Translations["SkillSecondFormat"] = "{%.1f0 Second %s1}";
 		this.Translations["SkillDistanceFormat"] = "{%.1f0 Meter %s1}";
 		this.Translations["ManaCost"] = "Energy Cost";
@@ -360,6 +363,30 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 		var scroll = this.CreateItem("OneShot_Scroll", Str("skillName", SkillId));
 
 		this.BaseAttributes(scroll).Should().Equal($"{Epic}50 ?ManaCost?");
+	}
+
+	[Theory]
+	[InlineData(0.5f, "1")]
+	[InlineData(1.5f, "2")]
+	[InlineData(0.4f, "0")]
+	[InlineData(12f, "12")]
+	public void SkillCost_IsRoundedToAWholeNumber_HalfAwayFromZero(float cost, string shown)
+	{
+		// Ravages of Time: 0.5 energy per second, which the game writes "1".
+		this.CreateRecord(SkillId, "Skill_Modifier", Float("skillActiveManaCost", cost));
+		var scroll = this.CreateItem("OneShot_Scroll", Str("skillName", SkillId));
+
+		this.BaseAttributes(scroll).Should().Equal($"{Epic}{shown} Active Energy Cost per Second");
+	}
+
+	[Fact]
+	public void SkillWindow_EnergyCost_IsRoundedLikeTheGame()
+	{
+		this.CreateRecord(SkillId, "Skill_AttackRadius", Str("skillDisplayName", "tagSkillTest"), Floats("skillManaCost", 10.5f, 12.5f));
+
+		var skill = this.Provider.GetSkillAtLevel(SkillId, 2, TQVaultAE.Application.SkillWindowContext.None);
+
+		skill!.Attributes.Should().Equal($"{Mundane}13 Energy Cost");
 	}
 
 	#endregion

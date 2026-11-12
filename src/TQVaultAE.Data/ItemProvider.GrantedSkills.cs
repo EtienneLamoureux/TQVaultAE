@@ -176,7 +176,8 @@ public partial class ItemProvider
 				modified.Add(attributes.Count);
 
 			var label = TranslationService.TryTranslateXTag("ManaCost", out var text) ? text : "Energy Cost";
-			attributes.Add($"{plain}{manaCost.ToString("0.#", CultureInfo.CurrentCulture)} {label}");
+			var cost = this.FormatSkillCost(manaCost, label) ?? $"{manaCost.ToString("0", CultureInfo.CurrentCulture)} {label}";
+			attributes.Add(plain + cost);
 		}
 
 		return modified;
