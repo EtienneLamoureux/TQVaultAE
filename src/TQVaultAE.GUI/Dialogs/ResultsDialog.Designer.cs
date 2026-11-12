@@ -162,7 +162,7 @@ public partial class ResultsDialog
         dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.Gold;
         dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.Black;
         this.columnContainerType.DefaultCellStyle = dataGridViewCellStyle5;
-        this.columnContainerType.HeaderText = "ContainerType";
+        this.columnContainerType.HeaderText = "Container Type";
         this.columnContainerType.MinimumWidth = 6;
         this.columnContainerType.Name = "columnContainerType";
         this.columnContainerType.ReadOnly = true;

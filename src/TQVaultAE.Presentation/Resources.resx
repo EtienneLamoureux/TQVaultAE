@@ -582,7 +582,7 @@ Are you sure you want to overwrite?</value>
     <value>Stash</value>
   </data>
 	<data name="ResultsContainerType" xml:space="preserve">
-    <value>ContainerType</value>
+    <value>Container Type</value>
   </data>
 	<data name="ResultsContainerVault" xml:space="preserve">
     <value>Vault</value>

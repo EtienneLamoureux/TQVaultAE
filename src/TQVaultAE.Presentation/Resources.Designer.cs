@@ -3893,7 +3893,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ContainerType.
+        ///   Looks up a localized string similar to Container Type.
         /// </summary>
         public static string ResultsContainerType {
             get {

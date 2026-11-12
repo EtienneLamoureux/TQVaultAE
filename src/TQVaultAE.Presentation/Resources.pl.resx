@@ -548,7 +548,7 @@ Na pewno chcesz go zastąpić?</value>
     <value>Worek</value>
   </data>
   <data name="ResultsContainerType" xml:space="preserve">
-    <value>RodzajEkwipunku</value>
+    <value>Rodzaj ekwipunku</value>
   </data>
   <data name="ResultsContainerVault" xml:space="preserve">
     <value>Skarbiec</value>
