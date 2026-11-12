@@ -73,7 +73,10 @@ the localized versions.
 
 TQVaultAE's mapping is `GameArchives.ArcFileSegments` (`src/TQVaultAE.Domain/Helpers/GameArchives.cs`), the table
 above. When the first archive does not hold the entry, `GameArchives.ArcFileCandidates` tries the archive of the same
-name in the expansion folders and in `Resources` (which finds the Eternal Embers drop sounds).
+name in the expansion folders and in `Resources` (which finds the Eternal Embers drop sounds). The other way,
+`ArchiveLayout.ResourcePrefix` (`src/TQVaultAE.GameFiles/ArchiveLayout.cs`) gives the first segments of the ids of an
+archive's entries: its path relative to `Resources` or `Audio`, without extension and without the `_XX` language
+suffix (`XPack2\Items`, `Dialog` for `Audio\Dialog_DE.arc`). tqdb's `resourceId` column uses it.
 
 ---
 

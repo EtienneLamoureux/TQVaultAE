@@ -68,7 +68,9 @@ public sealed class FilesCommandTests : IDisposable
 	[InlineData(new[] { "--ext", "tex,.msh" }, 5)]
 	[InlineData(new[] { "--ext", "tex", "--ext", "mp3" }, 5)]
 	[InlineData(new[] { "--path", """sword\a01.*""" }, 3)]
-	[InlineData(new[] { "--resource", """items\sword\a01.tex""" }, 2)]
+	[InlineData(new[] { "--resource", """items\sword\a01.tex""" }, 1)]
+	[InlineData(new[] { "--resource", """XPack\Items\sword\a01.tex""" }, 1)]
+	[InlineData(new[] { "--resource", """*\sword\a01.tex""" }, 2)]
 	[InlineData(new[] { "--resource", """Items\sword\*""", "--ext", "msh" }, 1)]
 	[InlineData(new[] { "--archive", "Sounds", "--path", "*.wav" }, 1)]
 	public void Files_Selectors_AreAndedAcrossKindsAndOredWithinOne(string[] selectors, int expected)

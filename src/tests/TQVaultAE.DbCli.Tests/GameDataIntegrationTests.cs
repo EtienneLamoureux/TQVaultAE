@@ -51,6 +51,37 @@ public sealed class GameDataIntegrationTests(ITestOutputHelper output)
 	}
 
 	[Fact(Skip = Skip, SkipType = typeof(TestingConditions), SkipUnless = nameof(TestingConditions.IsGameInstalled))]
+	public void ExpansionResources_ReferencedByTheDatabase_HaveTheirArchiveEntry()
+	{
+		// Before the expansion folder was part of the resource ids, none of the XPackN\... references matched an entry.
+		// The few left are dead references of the game data (removed models, test files).
+		var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+		foreach (var path in Game.Archives.Where(a => a.Contains($"{Path.DirectorySeparatorChar}Resources{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase)))
+		{
+			using var arc = ArcArchiveFactory.Open(path);
+			foreach (var e in arc.Entries)
+				ids.Add(e.ResourceId);
+		}
+		var extensions = new HashSet<string>([".tex", ".msh", ".mp3", ".wav"], StringComparer.OrdinalIgnoreCase);
+		using var db = ArzDatabaseFactory.Open(Game.Database);
+		var references = db.ReadMany(db.Records, cancellationToken: TestContext.Current.CancellationToken)
+			.SelectMany(r => r.Variables)
+			.Where(v => v.Type == ArzValueType.String)
+			.SelectMany(v => v.Values.Cast<string>())
+			.Select(s => s.Replace('/', '\\'))
+			.Where(s => s.StartsWith("XPack", StringComparison.OrdinalIgnoreCase) && s.Contains('\\') && extensions.Contains(Path.GetExtension(s)))
+			.ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+		ids.Should().Contain("""XPack2\Items\equipmentweapon\axe\uibitmaps\m_minerpick.tex""");
+		foreach (var expansion in references.GroupBy(s => s[..s.IndexOf('\\', StringComparison.Ordinal)], StringComparer.OrdinalIgnoreCase))
+		{
+			int found = expansion.Count(ids.Contains);
+			output.WriteLine($"{expansion.Key}: {found}/{expansion.Count()}");
+			found.Should().BeGreaterThan(expansion.Count() * 98 / 100, expansion.Key);
+		}
+	}
+
+	[Fact(Skip = Skip, SkipType = typeof(TestingConditions), SkipUnless = nameof(TestingConditions.IsGameInstalled))]
 	public void Benchmark_PrintsTimings()
 	{
 		var sw = Stopwatch.StartNew();

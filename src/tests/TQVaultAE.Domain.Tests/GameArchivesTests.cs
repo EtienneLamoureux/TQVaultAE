@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
+using TQVaultAE.GameFiles;
 
 namespace TQVaultAE.Tests.Domain;
 
@@ -25,6 +26,24 @@ public sealed class GameArchivesTests
 		=> GameArchives.ArcFileCandidates(RecordId.Create("""Sounds\item\emberslegendarydrop.mp3"""))
 			.Should().StartWith("""Audio\Sounds.arc""")
 			.And.EndWith("""Resources\Sounds.arc""");
+
+	[Theory]
+	[InlineData("""Resources\Items.arc""", "x.tex")]
+	[InlineData("""Resources\XPack2\Items.arc""", "x.tex")]
+	[InlineData("""Resources\XPack4\Item.arc""", "x.tex")]
+	[InlineData("""Resources\XPack2\Sounds.arc""", "x.wav")]
+	[InlineData("""Resources\XPack3\Dialog.arc""", "x.mp3")]
+	[InlineData("""Resources\Sounds.arc""", """xpack\x.wav""")]
+	[InlineData("""Resources\Music.arc""", """xpack\x.mp3""")]
+	[InlineData("""Audio\Sounds.arc""", "x.wav")]
+	[InlineData("""Audio\Dialog.arc""", "x.mp3")]
+	public void ArchiveResourceIds_MapBackToTheArchive(string archive, string entry)
+	{
+		// ArchiveLayout gives the ids of an archive's entries, GameArchives the archive of an id: one rule both ways.
+		var resourceId = $"""{ArchiveLayout.ResourcePrefix(archive.Replace('\\', Path.DirectorySeparatorChar))}\{entry}""";
+
+		GameArchives.ArcFileOf(RecordId.Create(resourceId)).Should().Be(archive);
+	}
 
 	[Fact]
 	public void ExpansionResource_FallsBackOnTheOtherExpansions()

@@ -1,4 +1,5 @@
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.GameFiles;
 
 namespace TQVaultAE.Domain.Helpers;
 
@@ -15,11 +16,12 @@ namespace TQVaultAE.Domain.Helpers;
 /// <item>Sounds of Immortal Throne, <c>Sounds\XPack\x.wav</c>: <c>Resources\Sounds.arc</c>, under <c>xpack/</c>.</item>
 /// <item>Anything else, <c>Items\x.tex</c>: <c>Resources\&lt;name&gt;.arc</c>.</item>
 /// </list>
+/// <see cref="ArchiveLayout.ResourcePrefix"/> maps the other way, from an archive to the prefix of its resource ids.
 /// </remarks>
 public static class GameArchives
 {
-	public const string ResourcesFolder = "Resources";
-	public const string AudioFolder = "Audio";
+	public const string ResourcesFolder = ArchiveLayout.ResourcesFolder;
+	public const string AudioFolder = ArchiveLayout.AudioFolder;
 
 	/// <summary>
 	/// Folders and file name of the ARC file that holds a resource, relative to the game folder, in the case of the id:
@@ -81,7 +83,7 @@ public static class GameArchives
 	/// Expansion folders are named <c>XPack</c>, <c>XPack2</c>, ...
 	/// </summary>
 	public static bool IsExpansionToken(string token)
-		=> token.StartsWith("XPACK", StringComparison.OrdinalIgnoreCase);
+		=> ArchiveLayout.IsExpansionFolder(token);
 
 	private static bool IsSound(RecordId resourceId)
 		=> resourceId.Normalized.EndsWith(".MP3", StringComparison.Ordinal)

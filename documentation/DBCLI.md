@@ -231,7 +231,7 @@ tqdb text --key "/^tagSkill/" --format json --out skills.json
 ```
 
 ### <a id="files"></a>files
-List archive entries. Columns: `archive` (path relative to the game root without extension, e.g. `Resources/XPack/Items`), `name` (entry path), `resourceId` (as the database references it, e.g. `Items\weapons\x.tex`), `size`, `compressed`, `storage` (1 stored, 3 zlib), `type` (texture, mesh, animation, sound, font, text, effect...), `lastWrite` (UTC).
+List archive entries. Columns: `archive` (path relative to the game root without extension, e.g. `Resources/XPack/Items`), `name` (entry path), `resourceId` (as the database references it: the archive's path relative to `Resources` or `Audio` without extension, then the entry name, e.g. `Items\weapons\x.tex` in `Resources/Items`, `XPack2\Items\weapons\x.tex` in `Resources/XPack2/Items`; a localized archive such as `Audio/Dialog_DE` has the ids of the archive it replaces, `Dialog\...`; see [resource ids](tq-file-formats.md#Layout)), `size`, `compressed`, `storage` (1 stored, 3 zlib), `type` (texture, mesh, animation, sound, font, text, effect...), `lastWrite` (UTC).
 
 | Option | Description |
 |---|---|
@@ -243,6 +243,7 @@ List archive entries. Columns: `archive` (path relative to the game root without
 
 ```
 tqdb files --resource "Items\EquipmentWeapon\Sword\*" --ext tex
+tqdb files --resource "XPack2\Items\EquipmentWeapon\Axe\UIBitmaps\*"
 tqdb files --archive "Audio/*" --ext mp3,wav --count
 ```
 

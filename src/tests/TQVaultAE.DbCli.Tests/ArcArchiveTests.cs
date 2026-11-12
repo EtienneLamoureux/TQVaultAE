@@ -76,6 +76,27 @@ public sealed class ArcArchiveTests : IDisposable
 	}
 
 	[Fact]
+	public void ResourceId_OfAnExpansionArchive_StartsWithTheExpansionFolder()
+	{
+		// The database references Resources\XPack2\Items.arc's entries as XPack2\Items\...
+		var root = Path.Combine(Path.GetTempPath(), $"tqdb-layout-{Guid.NewGuid():N}");
+		var path = Path.Combine(root, "Resources", "XPack2", "Items.arc");
+		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+		File.WriteAllBytes(path, BuildArc([Compressed("weapons/x.tex", [9])]));
+		try
+		{
+			using var arc = ArcArchiveFactory.Open(path);
+
+			arc.ResourcePrefix.Should().Be("""XPack2\Items""");
+			arc.Entries[0].ResourceId.Should().Be("""XPack2\Items\weapons\x.tex""");
+		}
+		finally
+		{
+			Directory.Delete(root, recursive: true);
+		}
+	}
+
+	[Fact]
 	public void Type3PartWithEqualSizes_IsStillInflated()
 	{
 		// A compressible part padded so csize == usize: treating it as stored would return zlib bytes.

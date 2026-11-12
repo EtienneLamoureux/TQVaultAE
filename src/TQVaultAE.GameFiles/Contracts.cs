@@ -80,8 +80,12 @@ public interface IArzDatabase : IDisposable
 /// <param name="LastWrite">FILETIME, UTC.</param>
 public sealed record ArcEntry(IArcArchive Archive, string Name, int StorageType, long Size, long CompressedSize, uint Adler32, DateTime LastWrite)
 {
-	/// <summary>Resource id as the database references it: <c>&lt;archive name without extension&gt;\&lt;name with '\'&gt;</c>, e.g. <c>Items\weapons\...\x.tex</c>.</summary>
-	public string ResourceId => $"{System.IO.Path.GetFileNameWithoutExtension(this.Archive.Path)}\\{this.Name.Replace('/', '\\')}";
+	/// <summary>
+	/// Resource id as the database references it: <c>&lt;archive prefix&gt;\&lt;name with '\'&gt;</c>, e.g. <c>Items\weapons\...\x.tex</c>
+	/// in <c>Resources\Items.arc</c>, <c>XPack2\Items\...\x.tex</c> in <c>Resources\XPack2\Items.arc</c>
+	/// (<see cref="IArcArchive.ResourcePrefix"/>).
+	/// </summary>
+	public string ResourceId => $"{this.Archive.ResourcePrefix}\\{this.Name.Replace('/', '\\')}";
 }
 
 /// <summary>Read access to one .arc archive. Thread-safe.</summary>
@@ -89,6 +93,9 @@ public interface IArcArchive : IDisposable
 {
 	/// <summary>Path of the .arc file.</summary>
 	string Path { get; }
+
+	/// <summary>First segments of its entries' resource ids, from its place in the game install (<see cref="ArchiveLayout.ResourcePrefix"/>).</summary>
+	string ResourcePrefix { get; }
 
 	/// <summary>Active entries (zero-part inactive entries excluded).</summary>
 	IReadOnlyList<ArcEntry> Entries { get; }

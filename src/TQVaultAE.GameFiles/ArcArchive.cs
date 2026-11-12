@@ -41,6 +41,7 @@ internal sealed class ArcArchive : IArcArchive
 	public ArcArchive(string path)
 	{
 		this.Path = path;
+		this.ResourcePrefix = ArchiveLayout.ResourcePrefix(path);
 		this._file = new MappedFile(path);
 		try {
 			if (this._file.Length < HeaderSize)
@@ -111,6 +112,8 @@ internal sealed class ArcArchive : IArcArchive
 	}
 
 	public string Path { get; }
+
+	public string ResourcePrefix { get; }
 
 	public IReadOnlyList<ArcEntry> Entries => this._entries;
 
