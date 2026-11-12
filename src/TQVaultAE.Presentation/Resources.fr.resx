@@ -2275,4 +2275,10 @@ Une relique complétée reçoit son bonus, comme quand vous l'empilez à la main
 	<data name="KeyNameNumPad" xml:space="preserve">
     <value>Pavé num. {0}</value>
   </data>
+	<data name="KeyBindActionSortBag" xml:space="preserve">
+    <value>Bouton de tri : trier le sac</value>
+  </data>
+	<data name="KeyBindActionSortMenu" xml:space="preserve">
+    <value>Bouton de tri : choisir l'ordre</value>
+  </data>
 </root>

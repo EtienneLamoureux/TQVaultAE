@@ -42,6 +42,8 @@ public enum KeyBindAction
 	ScrollVaultList,
 	ResetZoomOnRestore,
 	CloseWindow,
+	SortBag,
+	SortMenu,
 
 	// Forge
 	Forge,
@@ -71,6 +73,9 @@ public enum KeyBindScope
 
 	/// <summary>The character editor.</summary>
 	CharacterEditor,
+
+	/// <summary>The sort buttons beside the bags: their clicks are not the clicks of the items.</summary>
+	SortButton,
 }
 
 /// <summary>What gestures an action takes.</summary>
@@ -127,6 +132,9 @@ public static class KeyBindRegistry
 	private static KeyBindDefinition D(KeyBindAction action, KeyBindCategory category, KeyBindKind kind, params KeyGesture[] defaults)
 		=> new(action, category, category == KeyBindCategory.CharacterEditor ? KeyBindScope.CharacterEditor : KeyBindScope.Main, kind, defaults);
 
+	private static KeyBindDefinition D(KeyBindAction action, KeyBindCategory category, KeyBindScope scope, KeyBindKind kind, params KeyGesture[] defaults)
+		=> new(action, category, scope, kind, defaults);
+
 	/// <summary>Every action, in the order of the dialog.</summary>
 	public static IReadOnlyList<KeyBindDefinition> All { get; } =
 	[
@@ -163,6 +171,8 @@ public static class KeyBindRegistry
 		D(KeyBindAction.ScrollVaultList, KeyBindCategory.Window, KeyBindKind.Fixed, K(KeyGesture.Wheel)),
 		D(KeyBindAction.ResetZoomOnRestore, KeyBindCategory.Window, KeyBindKind.Fixed, K(string.Empty, Shift)),
 		D(KeyBindAction.CloseWindow, KeyBindCategory.Window, KeyBindKind.Fixed, K("F4", Alt)),
+		D(KeyBindAction.SortBag, KeyBindCategory.Window, KeyBindScope.SortButton, KeyBindKind.Fixed, K(KeyGesture.Click)),
+		D(KeyBindAction.SortMenu, KeyBindCategory.Window, KeyBindScope.SortButton, KeyBindKind.Fixed, K(KeyGesture.RightClick)),
 
 		D(KeyBindAction.Forge, KeyBindCategory.Forge, KeyBindKind.Key, K("Enter"), K("Space")),
 

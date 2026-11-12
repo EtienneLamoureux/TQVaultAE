@@ -7263,5 +7263,23 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("KeyNameNumPad", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort button: sort the bag.
+        /// </summary>
+        public static string KeyBindActionSortBag {
+            get {
+                return ResourceManager.GetString("KeyBindActionSortBag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort button: choose the order.
+        /// </summary>
+        public static string KeyBindActionSortMenu {
+            get {
+                return ResourceManager.GetString("KeyBindActionSortMenu", resourceCulture);
+            }
+        }
     }
 }

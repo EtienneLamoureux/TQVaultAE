@@ -2647,4 +2647,10 @@ A completed relic gets its bonus, as when you stack it by hand.</value>
 	<data name="KeyNameNumPad" xml:space="preserve">
     <value>Num {0}</value>
   </data>
+	<data name="KeyBindActionSortBag" xml:space="preserve">
+    <value>Sort button: sort the bag</value>
+  </data>
+	<data name="KeyBindActionSortMenu" xml:space="preserve">
+    <value>Sort button: choose the order</value>
+  </data>
 </root>
