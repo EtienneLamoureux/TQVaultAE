@@ -270,6 +270,7 @@ Release builds contain none of it.
 | `drop_files(paths)` | Drops files on the window through its DragEnter and DragDrop handlers, as Explorer does. |
 | `sound_player(action)` | The sound player of a .wav or .mp3 entry: `state`, or a click on `play`, `loop`, `pause`, `stop`; the sound is then loaded, which checks its wave data. |
 | `forms`, `close_form(name)` | The open forms (name, title, visible, modal), and a close of one as its title bar X does (posts `WM_SYSCOMMAND SC_CLOSE`, close reason `UserClosing`, returns at once): works while `extract(all=true)` is still waiting on its progress dialog (`ArzExtractProgress`). |
+| `mouse_click(form, control, x, y)`, `alt_f4(form)` | User input through the message loop, returning at once: mouse move, left button down and up posted to a control (its centre by default), e.g. the progress dialog's `cancelButton`; Alt+F4 posted as `WM_SYSKEYDOWN`/`WM_SYSKEYUP` with the Alt flag to the focused control, which the default window procedure turns into `SC_CLOSE` (the keyboard state is not changed). Both work while `extract(all=true)` is still waiting. |
 | `process_resources(collect)` | GDI and USER object counts, handles, private and managed bytes, and the disposables the root service provider keeps until exit, by type; `collect=true` runs a full GC with finalizers first. Leak checks: compare before and after repeating an action. |
 | `dialogs(clear)` | Headless state and the dialogs cancelled there. |
 
