@@ -71,7 +71,9 @@ public class ScalingLabel : Label, IScalingControl
 		var flags = TextFormatFlags.PreserveGraphicsClipping | AlignmentFlags(this.TextAlign);
 		if (!this.UseMnemonic)
 			flags |= TextFormatFlags.NoPrefix;
-		if (!this.AutoSize)
+		// Wraps like the base label: a fixed size, or an auto size whose width is capped by MaximumSize (measured on
+		// several lines, so drawn on several lines too).
+		if (!this.AutoSize || this.MaximumSize.Width > 0)
 			flags |= TextFormatFlags.WordBreak;
 		if (this.AutoEllipsis)
 			flags |= TextFormatFlags.EndEllipsis;
