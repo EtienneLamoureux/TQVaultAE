@@ -40,8 +40,13 @@ internal static class AutomationHost
 		_ = Task.Run(() => StartServerAsync(port));
 	}
 
-	/// <summary>Gives the tools access to the main form.</summary>
-	public static void AttachMainForm(MainForm mainForm) => _mainForm = mainForm;
+	/// <summary>Gives the tools access to the main form; in headless mode, prepares it for the hidden desktop.</summary>
+	public static void AttachMainForm(MainForm mainForm)
+	{
+		_mainForm = mainForm;
+		if (Headless.Enabled)
+			mainForm.DeferSplitterLayoutUntilShown();
+	}
 
 	private static MainForm Form
 	{

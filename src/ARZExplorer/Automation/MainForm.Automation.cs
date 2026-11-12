@@ -9,6 +9,22 @@ namespace ArzExplorer;
 /// </summary>
 public partial class MainForm
 {
+	/// <summary>
+	/// Headless mode: holds the layout of the browser split container until the window is shown.
+	/// </summary>
+	/// <remarks>
+	/// Each layout of the .NET 10 <see cref="SplitContainer"/> fills its splitter through a <see cref="Graphics"/> made
+	/// from its window (<c>RepaintSplitterRect</c>, uncaught). On the hidden desktop GDI+ cannot draw on a window while it
+	/// is being shown: the layout run by the first <c>WM_SHOWWINDOW</c> threw "A generic error occurred in GDI+", which
+	/// opened the unhandled exception dialog and left both panels with their layout suspended. Once the window is shown
+	/// GDI+ draws on it again, so the held layout runs then (<see cref="Form.Shown"/> is raised after the show).
+	/// </remarks>
+	internal void DeferSplitterLayoutUntilShown()
+	{
+		this.splitContainerBrowser.SuspendLayout();
+		this.Shown += (_, _) => this.splitContainerBrowser.ResumeLayout(true);
+	}
+
 	/// <summary>What the window shows.</summary>
 	internal object AutomationState() => new
 	{
