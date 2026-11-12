@@ -97,6 +97,12 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 		this.sourceLabel.Text = Resources.MaintenanceSource;
 		this.targetLabel.Text = Resources.MaintenanceTarget;
 
+		// The text boxes and the function group in caravan frames. The Source and Target labels take the height of the
+		// box they name, from their left to just before it.
+		CaravanFrame.ApplyTo(this.selectFunctionGroupBox);
+		CaravanFrame.ApplyTo(this.instructionsLabel);
+		FrameLabel(this.sourceLabel, this.vaultListComboBox);
+		FrameLabel(this.targetLabel, this.targetTextBox);
 
 		this.DrawCustomBorder = true;
 
@@ -104,6 +110,15 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 		this.invalidChars = this.PathIO.GetInvalidFileNameChars();
 
 		this.GetVaultList();
+	}
+
+	/// <summary>A label in a caravan frame as high as <paramref name="box"/>, its text centered.</summary>
+	private static void FrameLabel(Label label, Control box)
+	{
+		label.AutoSize = false;
+		label.Bounds = new Rectangle(label.Left, box.Top, Math.Max(label.Width, box.Left - label.Left - 6), box.Height);
+		label.TextAlign = ContentAlignment.MiddleCenter;
+		CaravanFrame.ApplyTo(label, new Padding(CaravanFrame.Border, 0, CaravanFrame.Border, 0));
 	}
 
 	/// <summary>

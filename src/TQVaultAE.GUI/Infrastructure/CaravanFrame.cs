@@ -1,0 +1,108 @@
+using TQVaultAE.Presentation.Win32;
+
+namespace TQVaultAE.GUI.Infrastructure;
+
+/// <summary>
+/// The black box with a thin gold frame of <see cref="Images.caravan_bg"/>, at the size of any control: drawn in nine
+/// parts, so that the frame keeps its thickness and only the black inside stretches.
+/// </summary>
+internal static class CaravanFrame
+{
+	/// <summary>The thickness of the frame in the picture, in pixels (7, and one of black inside).</summary>
+	public const int Border = 8;
+
+	private static Bitmap? source;
+
+	private static Bitmap Source => source ??= Images.caravan_bg;
+
+	/// <summary>The frame at <paramref name="size"/>.</summary>
+	public static Bitmap Render(Size size)
+	{
+		var result = new Bitmap(Math.Max(1, size.Width), Math.Max(1, size.Height));
+		using var g = Graphics.FromImage(result);
+		g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+		g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+		g.Clear(Color.Black);
+
+		var src = Source;
+		int b = Math.Min(Border, Math.Min(result.Width, result.Height) / 2);
+		int sw = src.Width, sh = src.Height, w = result.Width, h = result.Height;
+		void Part(int dx, int dy, int dw, int dh, int sx, int sy, int sW, int sH)
+		{
+			if (dw > 0 && dh > 0)
+				g.DrawImage(src, new Rectangle(dx, dy, dw, dh), new Rectangle(sx, sy, sW, sH), GraphicsUnit.Pixel);
+		}
+
+		// Corners, then the edges stretched along their length.
+		Part(0, 0, b, b, 0, 0, b, b);
+		Part(w - b, 0, b, b, sw - b, 0, b, b);
+		Part(0, h - b, b, b, 0, sh - b, b, b);
+		Part(w - b, h - b, b, b, sw - b, sh - b, b, b);
+		Part(b, 0, w - 2 * b, b, b, 0, sw - 2 * b, b);
+		Part(b, h - b, w - 2 * b, b, b, sh - b, sw - 2 * b, b);
+		Part(0, b, b, h - 2 * b, 0, b, b, sh - 2 * b);
+		Part(w - b, b, b, h - 2 * b, sw - b, b, b, sh - 2 * b);
+		return result;
+	}
+
+	/// <summary>
+	/// Gives <paramref name="control"/> the frame as its background, made again when its size changes (zoom, DPI), with
+	/// a padding that keeps its text inside the frame.
+	/// </summary>
+	/// <param name="control">The control.</param>
+	/// <param name="padding">The padding of its text; by default the frame's thickness on every side.</param>
+	public static void ApplyTo(Control control, Padding? padding = null)
+	{
+		control.BackgroundImageLayout = ImageLayout.None;
+		control.Padding = padding ?? new Padding(Border);
+		void Refresh()
+		{
+			var old = control.BackgroundImage;
+			control.BackgroundImage = Render(control.Size);
+			old?.Dispose();
+		}
+
+		Refresh();
+		control.SizeChanged += (_, _) => Refresh();
+		control.Disposed += (_, _) => control.BackgroundImage?.Dispose();
+	}
+
+	/// <summary>
+	/// Draws <paramref name="box"/> as the frame instead of the group box's own border, its caption across the top edge
+	/// as a group box has it, so that its controls keep their places. They are made transparent so that the black shows
+	/// behind them.
+	/// </summary>
+	public static void ApplyTo(GroupBox box)
+	{
+		Bitmap? frame = null;
+		foreach (Control child in box.Controls)
+		{
+			child.BackColor = Color.Transparent;
+			// Off the frame's left edge.
+			if (child.Left < Border + 4)
+				child.Left = Border + 4;
+		}
+
+		box.Paint += (_, e) =>
+		{
+			var caption = TextRenderer.MeasureText(e.Graphics, box.Text, box.Font);
+			// The frame's gold line runs through the middle of the caption.
+			int top = Math.Max(0, (caption.Height - Border) / 2);
+			var size = new Size(box.Width, box.Height - top);
+			if (frame is null || frame.Size != size)
+			{
+				frame?.Dispose();
+				frame = Render(size);
+			}
+
+			e.Graphics.Clear(box.Parent?.BackColor is { A: 255 } back ? back : Color.Black);
+			if (box.Parent?.BackgroundImage is not null)
+				ButtonRenderer.DrawParentBackground(e.Graphics, box.ClientRectangle, box);
+			e.Graphics.DrawImageUnscaled(frame, 0, top);
+			var captionBounds = new Rectangle(Border + 4, 0, caption.Width, caption.Height);
+			e.Graphics.FillRectangle(Brushes.Black, captionBounds);
+			TextRenderer.DrawText(e.Graphics, box.Text, box.Font, captionBounds, box.ForeColor);
+		};
+		box.Disposed += (_, _) => frame?.Dispose();
+	}
+}
