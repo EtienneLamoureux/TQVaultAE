@@ -494,6 +494,8 @@ public partial class VaultForm : Form, IScalingControl
 			return;
 
 		this.WindowState = FormWindowState.Normal;
-		ScaleForm(1.0f, false);
+		// As the keyboard reset does: the size kept for the next resize or maximize follows the new scale, else the next
+		// maximize would read the size before this reset and zoom too far.
+		this.ResizeFormCallback(this, new ResizeEventArgs(1.0F));
 	}
 }
