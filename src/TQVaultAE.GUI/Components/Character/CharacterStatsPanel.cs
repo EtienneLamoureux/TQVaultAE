@@ -2,8 +2,10 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using TQVaultAE.Application;
+using TQVaultAE.Application.KeyBinds;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation.Win32.Contracts;
@@ -111,6 +113,9 @@ internal sealed partial class CharacterStatsPanel : Control
 	/// The game-style tool tip the rollovers use (a black box with a gold border); the standard tool tip when not set.
 	/// </summary>
 	public GameTooltip? Tooltip { get; set; }
+
+	/// <summary>The key binds, for the modifier of a click that spends every point.</summary>
+	internal KeyBindMap? KeyBinds { get; init; }
 
 	public CharacterStatsPanel(IUIService uiService)
 	{
@@ -233,7 +238,7 @@ internal sealed partial class CharacterStatsPanel : Control
 			_ => 0,
 		};
 		if (step != 0 && this.HitPlus(e.Location) is var attribute and >= 0)
-			this.RaiseAttributeClick(attribute, step, ModifierKeys.HasFlag(Keys.Shift));
+			this.RaiseAttributeClick(attribute, step, KeyBindInput.SpendAllHeld(this.KeyBinds));
 		else if (e.Button == MouseButtons.Left && this.HitUndo(e.Location))
 			this.RaiseUndo();
 	}

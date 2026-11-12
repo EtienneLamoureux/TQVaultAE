@@ -32,7 +32,8 @@ and the "Forge" button reads "Show Vault": it closes the forge like "Cancel" doe
 _**Note:** The Forge doesn't move your objects, however, it changes the properties of the base item used._
 
 The buttons under the slots:
-+ **Forge** merges the materials into the base item. It needs a base item and at least one material.
++ **Forge** merges the materials into the base item. It needs a base item and at least one material. <kbd>ENTER</kbd> or
+  <kbd>SPACE</kbd> press it too ([shortcuts](SHORTCUTS.md)).
 + **Reset** empties all the slots and keeps the forge open.
 + **Cancel** closes the forge without changing anything.
 

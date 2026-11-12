@@ -145,10 +145,8 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		this.BagSackPanel.SetLocation(new Point(autosortOffset + BorderPad, this.Size.Height - (this.BagSackPanel.Size.Height + BorderPad)));
 		this.BagSackPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 		this.BagSackPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
-		this.BagSackPanel.OnActivateSearch += new EventHandler<SackPanelEventArgs>(this.ActivateSearchCallback);
 		this.BagSackPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
 		this.BagSackPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
-		this.BagSackPanel.OnResizeForm += new EventHandler<ResizeEventArgs>(this.ResizeFormCallback);
 		this.Controls.Add(this.BagSackPanel);
 		this.BagSackPanel.IsPlayerBagPanel = false;
 		this.BagSackPanel.MaxSacks = numberOfBags;
@@ -213,16 +211,6 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	/// Gets or sets the item selected Event Handler
 	/// </summary>
 	public EventHandler<SackPanelEventArgs>? OnItemSelected { get; set; }
-
-	/// <summary>
-	/// Gets or sets the activate search Event Handler
-	/// </summary>
-	public EventHandler<SackPanelEventArgs>? OnActivateSearch { get; set; }
-
-	/// <summary>
-	/// Gets or sets the resize form Event Handler
-	/// </summary>
-	public EventHandler<ResizeEventArgs>? OnResizeForm { get; set; }
 
 	/// <summary>
 	/// Gets or sets the Automove Item Event Handler
@@ -516,22 +504,6 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	/// <param name="e">SackPanelEventArgs data</param>
 	protected void AutoMoveItemCallback(object? sender, SackPanelEventArgs e)
 		=> this.OnAutoMoveItem?.Invoke(sender, e);
-
-	/// <summary>
-	/// Activate Search Callback
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">SackPanelEventArgs data</param>
-	protected void ActivateSearchCallback(object? sender, SackPanelEventArgs e)
-		=> this.OnActivateSearch?.Invoke(sender, e);
-
-	/// <summary>
-	/// Resize Form Callback
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">ResizeEventArgs data</param>
-	protected void ResizeFormCallback(object? sender, ResizeEventArgs e)
-		=> this.OnResizeForm?.Invoke(sender, e);
 
 	/// <summary>
 	/// Item Selected Callback

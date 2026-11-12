@@ -518,25 +518,53 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "press_key", Destructive = true)]
-	[Description("Rests the cursor on a cell of a panel and presses a key there like the user: 'c' copies, 'd' duplicates, 'backspace' deletes the item under the cursor (with its confirmation: queue the answer first), 'escape' cancels a drag. Runs after the call returns; follow with get_state or dialog_answers.")]
+	[Description("Rests the cursor on a cell of a panel and presses a key there like the user, through the main window's key handler then the panel's, so the key binds apply: 'c' copies, 'd' duplicates, 'backspace' deletes the item under the cursor by default (with its confirmation: queue the answer first), 'escape' cancels a drag, 'ctrl+a', 'alt+w', 'f5'... With an empty panel the key goes to the main window alone (the forge keys 'enter' / 'space'). Runs after the call returns; follow with get_state, forge_state or dialog_answers.")]
 	public static string PressKey(
+		[Description("Panel id, or empty for the main window alone.")] string panel,
+		[Description("Cell column.")] int x,
+		[Description("Cell row.")] int y,
+		[Description("The key with its modifiers: a character, or a key bind gesture like 'ctrl+alt+d', 'backspace', 'escape', 'enter', 'space'.")] string key)
+		=> AutomationHost.OnUi(form =>
+		{
+			var keys = ParseKey(key);
+			if (string.IsNullOrEmpty(panel))
+			{
+				form.BeginInvoke(() => form.AutomationKeyDown(new KeyEventArgs(keys)));
+				return Serialize(new { panel = "mainForm", key = keys.ToString() });
+			}
+
+			var named = ResolveShownPanel(form, panel);
+			var item = named.Panel.AutomationFindItem(new Point(x, y));
+			named.Panel.AutomationKeyDown(new Point(x, y), keys, form);
+			return Serialize(new { panel = named.Id, item = DescribeItem(item, null), key = keys.ToString() });
+		});
+
+	[McpServerTool(Name = "click_cell", Destructive = true)]
+	[Description("Left-clicks a cell of a panel like a user holding modifier keys, through the panel's mouse handler, so the key binds apply: 'ctrl+alt' duplicates the item into the cursor and 'alt' copies it by default (item copy must be allowed), 'ctrl' adds it to the selection. Returns the dragged item and the selection; put a picked item back with cancel_drag.")]
+	public static string ClickCell(
 		[Description("Panel id.")] string panel,
 		[Description("Cell column.")] int x,
 		[Description("Cell row.")] int y,
-		[Description("A character, or 'backspace' / 'escape'.")] string key)
+		[Description("Modifiers held, like 'ctrl+alt', 'alt', 'shift'; empty for none.")] string modifiers)
 		=> AutomationHost.OnUi(form =>
 		{
 			var named = ResolveShownPanel(form, panel);
-			char c = key.ToLowerInvariant() switch
-			{
-				"backspace" => '\b',
-				"escape" => (char)27,
-				_ when key.Length == 1 => key[0],
-				_ => throw new McpException($"Unknown key '{key}'. Use one character, 'backspace' or 'escape'."),
-			};
+			if (form.AutomationDragInfo.IsActive)
+				throw new McpException("An item is being dragged. Use cancel_drag first.");
+
+			var held = string.IsNullOrWhiteSpace(modifiers) ? Keys.None : ParseKey(modifiers) & Keys.Modifiers;
 			var item = named.Panel.AutomationFindItem(new Point(x, y));
-			named.Panel.AutomationKeyPress(new Point(x, y), c);
-			return Serialize(new { panel = named.Id, item = DescribeItem(item, null), key });
+			named.Panel.AutomationModifierClick(new Point(x, y), held);
+			var drag = form.AutomationDragInfo;
+			return Serialize(new
+			{
+				panel = named.Id,
+				clicked = DescribeItem(item, null),
+				modifiers = held.ToString(),
+				dragged = drag.IsActive ? DescribeItem(drag.Item, null) : null,
+				draggedIsNew = drag.IsActive && drag.Item is not null && item is not null && !ReferenceEquals(drag.Item, item),
+				selected = named.Panel.AutomationSelectedItems.Select(i => DescribeItem(i, null)).ToList(),
+			});
 		});
 
 	[McpServerTool(Name = "select_items", Destructive = true)]

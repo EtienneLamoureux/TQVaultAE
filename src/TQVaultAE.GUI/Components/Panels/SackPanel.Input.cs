@@ -10,12 +10,14 @@ using Microsoft.Extensions.Logging;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.KeyBinds;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Forms;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.Presentation;
@@ -25,6 +27,37 @@ namespace TQVaultAE.GUI.Components.Panels;
 
 public partial class SackPanel
 {
+	/// <summary>The keys of the panel, in the order they are tried (<see cref="KeyDownCallback"/>).</summary>
+	private static readonly KeyBindAction[] PanelKeyActions =
+	[
+		KeyBindAction.CancelDrag,
+		KeyBindAction.ItemCopy,
+		KeyBindAction.ItemDuplicate,
+		KeyBindAction.ItemDelete,
+		KeyBindAction.SelectAll,
+		KeyBindAction.SelectHighlighted,
+		KeyBindAction.ClearSelection,
+		KeyBindAction.MoveSelectionUp,
+		KeyBindAction.MoveSelectionLeft,
+		KeyBindAction.MoveSelectionDown,
+		KeyBindAction.MoveSelectionRight,
+		KeyBindAction.MoveToPlayer,
+		KeyBindAction.MoveToVault,
+		KeyBindAction.MoveToStash,
+		KeyBindAction.RefreshPanel,
+	];
+
+#if DEBUG
+	/// <summary>The modifiers a Debug automation tool holds for its click, in place of the keyboard's.</summary>
+	internal Keys? AutomationModifiers;
+
+	/// <summary>The modifier keys held now.</summary>
+	private Keys CurrentModifiers => this.AutomationModifiers ?? ModifierKeys;
+#else
+	/// <summary>The modifier keys held now.</summary>
+	private static Keys CurrentModifiers => ModifierKeys;
+#endif
+
 	protected virtual void MouseUpCallback(object? sender, MouseEventArgs e)
 	{
 		this.mouseDraw = false;
@@ -45,6 +78,11 @@ public partial class SackPanel
 		if (this.CompareSelectionMouseDown(e))
 			return;
 
+		// The copy and duplicate clicks act like their keys, by the context menu's rules: a copy changes nothing in a
+		// read-only sack.
+		if (e.Button == MouseButtons.Left && !this.DragInfo.IsActive && this.RunItemClickShortcut())
+			return;
+
 		// A read-only character's sack: nothing is picked up and the user is told; a drop there is refused by the drop
 		// rules (TryToPutdownItem), which tell why as well.
 		if (e.Button == MouseButtons.Left && !this.DragInfo.IsActive && this.ItemsReadOnly)
@@ -53,12 +91,12 @@ public partial class SackPanel
 		{
 			if (!this.DragInfo.IsActive)
 			{
-				// Detect a CTRL-Click.
-				if (this.controlKeyDown)
+				var click = KeyBindInput.Click(CurrentModifiers);
+				if (this.Services.KeyBinds.Matches(KeyBindAction.SelectItemClick, click))
 					// Add the focused item to the selected items list.
 					this.AddFocusedItemToSelectedItems(sender, e);
 				// Detect a mouse drag for a multiselect.
-				else if (this.shiftKeyDown)
+				else if (this.Services.KeyBinds.Matches(KeyBindAction.SelectRectangle, click))
 				{
 					this.mouseDraw = true;
 					this.startPosition = this.currentPosition = e.Location;
@@ -246,121 +284,155 @@ public partial class SackPanel
 	protected virtual bool RepaintsDragAreaOnly => true;
 
 	/// <summary>
-	/// Callback for key down
+	/// Copy or Duplicate of the clicked item by its click shortcut (<see cref="KeyBindAction.ItemCopyClick"/>,
+	/// <see cref="KeyBindAction.ItemDuplicateClick"/>): the copy is picked up, as with the keys.
+	/// </summary>
+	/// <returns>true when the click ran one; false lets the click do its usual work.</returns>
+	private bool RunItemClickShortcut()
+	{
+		var requested = this.Services.KeyBinds.Find(KeyBindInput.Click(CurrentModifiers), KeyBindAction.ItemCopyClick, KeyBindAction.ItemDuplicateClick) switch
+		{
+			KeyBindAction.ItemCopyClick => ItemActions.Copy,
+			KeyBindAction.ItemDuplicateClick => ItemActions.Duplicate,
+			_ => ItemActions.None,
+		};
+
+		return requested != ItemActions.None && this.RunItemShortcut(requested);
+	}
+
+	/// <summary>
+	/// Runs Copy, Duplicate or Delete on the item under the cursor, by the context menu's rules (nothing is deleted from
+	/// the equipment of a read-only player). Not while an item is dragged: a copy would replace the dragged item.
+	/// </summary>
+	/// <returns>true when the action ran.</returns>
+	private bool RunItemShortcut(ItemActions requested)
+	{
+		if (this.Sack is null || this.DragInfo.IsActive)
+			return false;
+
+		Item? focusedItem = this.FindItem(this.LastCellWithFocus);
+		var action = ItemActionRules.KeyAction(requested, this.ActionContext(focusedItem, 0, false));
+		if (action == ItemActions.None)
+			return false;
+
+		this.RunFocusedItemAction(action, focusedItem!);
+		this.HideTooltipsAfterKey();
+		return true;
+	}
+
+	/// <summary>
+	/// Callback for key down: runs the action of the panel bound to the key (<see cref="PanelKeyActions"/>). The keys of
+	/// the window (search, zoom, clipboard, forge) are read by the main window first.
 	/// </summary>
 	/// <param name="sender">sender object</param>
 	/// <param name="e">KeyEventArgs data</param>
 	private void KeyDownCallback(object? sender, KeyEventArgs e)
 	{
-		if (e.KeyCode == Keys.ControlKey)
-			this.controlKeyDown = true;
+		if (this.Services.KeyBinds.Find(KeyBindInput.FromKeys(e.KeyData), PanelKeyActions) is not { } action)
+			return;
 
-		if (e.KeyCode == Keys.ShiftKey)
-			this.shiftKeyDown = true;
+		bool handled = true;
+		switch (action)
+		{
+			case KeyBindAction.CancelDrag:
+				handled = this.CancelDragOrCompare();
+				break;
+			case KeyBindAction.ItemCopy:
+				handled = this.RunItemShortcut(ItemActions.Copy);
+				break;
+			case KeyBindAction.ItemDuplicate:
+				handled = this.RunItemShortcut(ItemActions.Duplicate);
+				break;
+			case KeyBindAction.ItemDelete:
+				handled = this.RunItemShortcut(ItemActions.Delete);
+				break;
+			case KeyBindAction.SelectAll:
+				this.SelectAllItems();
+				break;
+			case KeyBindAction.SelectHighlighted:
+				this.SelectAllHighlightedItems();
+				break;
+			case KeyBindAction.ClearSelection:
+				this.OnClearAllItemsSelected?.Invoke(this, new SackPanelEventArgs(null, null));
+				break;
+			case KeyBindAction.MoveSelectionUp:
+				this.MoveSelectedItemsInSack("up");
+				break;
+			case KeyBindAction.MoveSelectionLeft:
+				this.MoveSelectedItemsInSack("left");
+				break;
+			case KeyBindAction.MoveSelectionDown:
+				this.MoveSelectedItemsInSack("down");
+				break;
+			case KeyBindAction.MoveSelectionRight:
+				this.MoveSelectedItemsInSack("right");
+				break;
+			case KeyBindAction.MoveToPlayer:
+				QuickMovePanel(AutoMoveLocation.Player);
+				break;
+			case KeyBindAction.MoveToVault:
+				QuickMovePanel(AutoMoveLocation.Vault);
+				break;
+			case KeyBindAction.MoveToStash:
+				QuickMovePanel(AutoMoveLocation.Stash);
+				break;
+			case KeyBindAction.RefreshPanel:
+				this.Refresh();
+				break;
+		}
 
-		if (e.KeyData == (Keys.Control | Keys.F))
-			this.OnActivateSearch?.Invoke(this, new SackPanelEventArgs(null, null));
-
-		if (e.KeyData == (Keys.Control | Keys.A))
-			this.SelectAllItems();
-
-		if (e.KeyData == (Keys.Control | Keys.S))
-			this.SelectAllHighlightedItems();
-
-		if (e.KeyData == (Keys.Alt | Keys.W))
-			this.MoveSelectedItemsInSack("up");
-
-		if (e.KeyData == (Keys.Alt | Keys.A))
-			this.MoveSelectedItemsInSack("left");
-
-		if (e.KeyData == (Keys.Alt | Keys.S))
-			this.MoveSelectedItemsInSack("down");
-
-		if (e.KeyData == (Keys.Alt | Keys.D))
-			this.MoveSelectedItemsInSack("right");
-
-		if (e.KeyData == (Keys.Control | Keys.D))
-			this.OnClearAllItemsSelected?.Invoke(this, new SackPanelEventArgs(null, null));
-
-		if (e.KeyData == (Keys.Control | Keys.Add) || e.KeyData == (Keys.Control | Keys.Oemplus))
-			this.OnResizeForm?.Invoke(this, new ResizeEventArgs(0.1F));
-
-		if (e.KeyData == (Keys.Control | Keys.Subtract) || e.KeyData == (Keys.Control | Keys.OemMinus))
-			this.OnResizeForm?.Invoke(this, new ResizeEventArgs(-0.1F));
-
-		if (e.KeyData == (Keys.Control | Keys.Home))
-			this.OnResizeForm?.Invoke(this, new ResizeEventArgs(1.0F));
-
-		if (e.KeyData == Keys.F5)
-			this.Refresh();
-
-		if (e.KeyData == Keys.Right)
-			QuickMovePanel(AutoMoveLocation.Player);
-
-		if (e.KeyData == Keys.Left)
-			QuickMovePanel(AutoMoveLocation.Vault);
-
-		if (e.KeyData == Keys.Down)
-			QuickMovePanel(AutoMoveLocation.Stash);
+		if (handled)
+		{
+			e.Handled = true;
+			e.SuppressKeyPress = true;
+		}
 	}
 
-	/// <summary>
-	/// Callback for key up
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">KeyEventArgs data</param>
-	private void KeyUpCallback(object? sender, KeyEventArgs e)
+	/// <summary>Cancels the compare selection, else the drag of an item that can go back.</summary>
+	/// <returns>true when something was cancelled.</returns>
+	private bool CancelDragOrCompare()
 	{
-		if (e.KeyCode == Keys.ControlKey)
-			this.controlKeyDown = false;
+		if (this.Sack is null)
+			return false;
 
-		if (e.KeyCode == Keys.ShiftKey)
-			this.shiftKeyDown = false;
+		bool cancelled = false;
+		if (!this.DragInfo.IsActive && this.DragInfo.Compare.Cancel())
+			cancelled = true;
+		else if (this.DragInfo.IsActive && this.DragInfo.CanBeCanceled)
+		{
+			this.DragInfo.Cancel();
+
+			// Now redraw this sack
+			this.Refresh();
+			cancelled = true;
+		}
+
+		this.HideTooltipsAfterKey();
+		return cancelled;
 	}
 
 	/// <summary>
-	/// Callback for key press
+	/// Callback for key press: a character typed over the panel hides the item tooltip. The keys bound to an action are
+	/// run at key down.
 	/// </summary>
 	/// <param name="sender">sender object</param>
 	/// <param name="e">KeyPressEventArgs data</param>
-	private void KeyPressCallback(object? sender, KeyPressEventArgs e)
+	private void KeyPressCallback(object? sender, KeyPressEventArgs e) => this.HideTooltipsAfterKey();
+
+	/// <summary>Hides the item tooltip and drops the bag tooltip of the sack, which a key may have changed.</summary>
+	private void HideTooltipsAfterKey()
 	{
-		if (this.Sack is not null)
-		{
-			if (e.KeyChar == (char)27 && !this.DragInfo.IsActive && this.DragInfo.Compare.Cancel())
-				e.Handled = true;
-			else if (e.KeyChar == (char)27 && this.DragInfo.IsActive && this.DragInfo.CanBeCanceled)
-			{
-				this.DragInfo.Cancel();
+		if (this.Sack is null)
+			return;
 
-				// Now redraw this sack
-				this.Refresh();
-				e.Handled = true;
-			}
-			else if (!this.DragInfo.IsActive)
-			{
-				// c copies, d duplicates, Backspace deletes the item under the cursor, by the context menu's rules
-				// (nothing is deleted from the equipment of a read-only player). Not while an item is dragged: it
-				// would replace the dragged item.
-				Item? focusedItem = this.FindItem(this.LastCellWithFocus);
-				var action = ItemActionRules.KeyAction(e.KeyChar, this.ActionContext(focusedItem, 0, false));
-				if (action != ItemActions.None)
-				{
-					this.RunFocusedItemAction(action, focusedItem!);
-					e.Handled = true;
-				}
-			}
-
-			ItemTooltip.HideTooltip();
-			BagButtonTooltip.InvalidateCache(this.Sack);
-		}
+		ItemTooltip.HideTooltip();
+		BagButtonTooltip.InvalidateCache(this.Sack);
 	}
 
 	private void MouseEnterCallback(object? sender, EventArgs e) => this.Select();
 
 	private void MouseLeaveCallback(object? sender, EventArgs e)
 	{
-		this.controlKeyDown = false;
 		if (this.Sack is null)
 			return;
 

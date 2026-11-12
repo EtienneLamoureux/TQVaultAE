@@ -73,18 +73,6 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	private List<Item>? selectedItems;
 
 	/// <summary>
-	/// Indicates that the control key is being held down.
-	/// Used to multi-select items.
-	/// </summary>
-	private bool controlKeyDown;
-
-	/// <summary>
-	/// Idicates that the shift key is being held down.
-	/// Used to start a mouse drag rectangle.
-	/// </summary>
-	private bool shiftKeyDown;
-
-	/// <summary>
 	/// Indicates that the mouse currently has a drag rectangle.
 	/// </summary>
 	private bool mouseDraw;
@@ -192,7 +180,6 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 		// 
 		// SackPanel
 		// 
-		this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyUpCallback);
 		this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyDownCallback);
 		this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCallback);
 		this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
@@ -292,16 +279,6 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	/// Gets or sets the item selected event handler
 	/// </summary>
 	public EventHandler<SackPanelEventArgs>? OnItemSelected { get; set; }
-
-	/// <summary>
-	/// Gets or sets the activate search event handler
-	/// </summary>
-	public EventHandler<SackPanelEventArgs>? OnActivateSearch { get; set; }
-
-	/// <summary>
-	/// Gets or sets the resize form Event Handler
-	/// </summary>
-	public EventHandler<ResizeEventArgs>? OnResizeForm { get; set; }
 
 	/// <summary>
 	/// Gets or sets the automove item event handler

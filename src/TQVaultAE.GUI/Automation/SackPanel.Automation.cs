@@ -226,30 +226,41 @@ public partial class SackPanel
 	}
 
 	/// <summary>
-	/// Rests the virtual cursor on a cell, then presses a character key there through the regular key handler, after
-	/// the calling tool has returned (Backspace asks for a confirmation).
+	/// Rests the virtual cursor on a cell, then presses a key there after the calling tool has returned (Backspace asks
+	/// for a confirmation): through the main window's handler first, which sees every key first, then the panel's.
 	/// </summary>
-	internal void AutomationKeyPress(Point cell, char key)
+	internal void AutomationKeyDown(Point cell, Keys keyData, Forms.MainForm form)
 	{
 		this.AutomationMouseMove(this.AutomationCellCenter(cell));
-		this.BeginInvoke(() => this.KeyPressCallback(this, new KeyPressEventArgs(key)));
+		this.BeginInvoke(() =>
+		{
+			var args = new KeyEventArgs(keyData);
+			if (!form.AutomationKeyDown(args))
+				this.KeyDownCallback(this, args);
+		});
 	}
 
 	/// <summary>
-	/// Ctrl-clicks a cell like a user holding Ctrl, which adds the item there to the selection (or removes it).
+	/// Left-clicks a cell like a user holding <paramref name="modifiers"/> (Ctrl adds the item to the selection,
+	/// Ctrl+Alt duplicates it by default), through the regular mouse handler.
 	/// </summary>
-	internal void AutomationCtrlClick(Point cell)
+	internal void AutomationModifierClick(Point cell, Keys modifiers)
 	{
-		this.controlKeyDown = true;
+		this.AutomationModifiers = modifiers;
 		try
 		{
 			this.AutomationMouseDown(this.AutomationCellCenter(cell), MouseButtons.Left);
 		}
 		finally
 		{
-			this.controlKeyDown = false;
+			this.AutomationModifiers = null;
 		}
 	}
+
+	/// <summary>
+	/// Ctrl-clicks a cell like a user holding Ctrl, which adds the item there to the selection (or removes it).
+	/// </summary>
+	internal void AutomationCtrlClick(Point cell) => this.AutomationModifierClick(cell, Keys.Control);
 
 	/// <summary>Closes the context menu a right click may have opened.</summary>
 	internal void AutomationCloseContextMenu() => this.CustomContextMenu.Close();

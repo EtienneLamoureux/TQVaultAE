@@ -11,6 +11,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using EnumsNET;
 using Microsoft.Extensions.Logging;
+using TQVaultAE.Application.KeyBinds;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
 using TQVaultAE.GUI.Components;
@@ -41,6 +42,21 @@ internal partial class SettingsDialog
 			this.vaultPathTextBox.Text = this.VaultPath;
 			this.vaultPathTextBox.Invalidate();
 		}
+	}
+
+	/// <summary>
+	/// Opens the key binds dialog on the edited key binds; its changes are saved with the other settings by OK.
+	/// </summary>
+	private void KeyBindsButtonClick(object? sender, EventArgs e)
+	{
+		using var dialog = this.Services.Forms.Create<KeyBindsDialog>();
+		dialog.Bindings = KeyBindMap.FromOverrides(this.editor.Current.KeyBinds.Overrides);
+		if (dialog.ShowDialog(this) != DialogResult.OK)
+			return;
+
+		var edited = new KeyBindSettings();
+		edited.SetOverrides(dialog.Bindings.ToOverrides());
+		this.editor.Current.KeyBinds = edited;
 	}
 
 	/// <summary>
@@ -84,6 +100,10 @@ internal partial class SettingsDialog
 		if (this.ConfigurationChanged)
 		{
 			this.editor.ApplyTo(USettings);
+
+			// The handlers read the new key binds at once, no restart needed.
+			if (this.editor.KeyBindsChanged)
+				this.Services.KeyBinds.CopyFrom(KeyBindMap.FromOverrides(USettings.KeyBinds.Overrides));
 
 			// The windows take the new font now, no restart needed.
 			if (this.editor.BaseFontChanged)

@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Logging;
+using TQVaultAE.Application.KeyBinds;
 using TQVaultAE.Application.Results;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 using TQVaultAE.GUI.Components.Scaling;
@@ -179,35 +181,65 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// Key Handler for the main form.  Most keystrokes should be handled by the individual panels or the search text box.
+	/// Key Handler for the main form, which sees every key first (<see cref="Form.KeyPreview"/>): the keys of the window
+	/// (search, zoom, clipboard, forge), from the key bind map. The keys of the item panels are read by the panels.
 	/// </summary>
 	/// <param name="sender">sender object</param>
 	/// <param name="e">KeyEventArgs data</param>
 	private void MainFormKeyDown(object? sender, KeyEventArgs e)
 	{
-		if (e.KeyData == (Keys.Control | Keys.C))
+		var action = this.Services.KeyBinds.Find(
+			KeyBindInput.FromKeys(e.KeyData)
+			, KeyBindAction.CopyToClipboard
+			, KeyBindAction.PasteFromClipboard
+			, KeyBindAction.Search
+			, KeyBindAction.ZoomIn
+			, KeyBindAction.ZoomOut
+			, KeyBindAction.ZoomReset
+			, KeyBindAction.Forge);
+
+		switch (action)
 		{
-			HandleClipboardExport();
-			return;
+			// The clipboard keys also reach the focused control: a text box still copies and pastes its text.
+			case KeyBindAction.CopyToClipboard:
+				HandleClipboardExport();
+				return;
+			case KeyBindAction.PasteFromClipboard:
+				_ = HandleClipboardImportAsync();
+				return;
+			case KeyBindAction.Search:
+				this.OpenSearchDialog();
+				break;
+			case KeyBindAction.ZoomIn:
+				this.ResizeFormCallback(this, new ResizeEventArgs(0.1F));
+				break;
+			case KeyBindAction.ZoomOut:
+				this.ResizeFormCallback(this, new ResizeEventArgs(-0.1F));
+				break;
+			case KeyBindAction.ZoomReset:
+				this.ResizeFormCallback(this, new ResizeEventArgs(1.0F));
+				break;
+			// Only while the forge is shown, and not in a text box, where the key is typed.
+			case KeyBindAction.Forge when this.forgePanel.Visible && this.FocusedControl() is not TextBoxBase:
+				this.forgePanel.ForgeFromShortcut();
+				break;
+			default:
+				return;
 		}
 
-		if (e.KeyData == (Keys.Control | Keys.V))
-		{
-			_ = HandleClipboardImportAsync();
-			return;
-		}
+		// Read once: the panels and the focused control do not run it again.
+		e.Handled = true;
+		e.SuppressKeyPress = true;
+	}
 
-		if (e.KeyData == (Keys.Control | Keys.F))
-			this.ActivateSearchCallback(this, new SackPanelEventArgs(null, null));
+	/// <summary>The control that has the focus, inside the user controls holding it.</summary>
+	private Control? FocusedControl()
+	{
+		Control? control = this.ActiveControl;
+		while (control is ContainerControl { ActiveControl: { } inner })
+			control = inner;
 
-		if (e.KeyData == (Keys.Control | Keys.Add) || e.KeyData == (Keys.Control | Keys.Oemplus))
-			this.ResizeFormCallback(this, new ResizeEventArgs(0.1F));
-
-		if (e.KeyData == (Keys.Control | Keys.Subtract) || e.KeyData == (Keys.Control | Keys.OemMinus))
-			this.ResizeFormCallback(this, new ResizeEventArgs(-0.1F));
-
-		if (e.KeyData == (Keys.Control | Keys.Home))
-			this.ResizeFormCallback(this, new ResizeEventArgs(1.0F));
+		return control;
 	}
 
 

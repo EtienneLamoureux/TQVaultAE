@@ -191,23 +191,18 @@ public static class ItemActionRules
 	}
 
 	/// <summary>
-	/// The action of a key pressed over a sack, when <paramref name="context"/> allows it, as its context menu would:
-	/// <c>c</c> copies, <c>d</c> duplicates and Backspace deletes the item under the cursor. The keys act on that item
-	/// alone, never on the selection.
+	/// The action of a shortcut (a key or a click) over a sack, when <paramref name="context"/> allows it, as its context
+	/// menu would: Copy, Duplicate or Delete of the item under the cursor. The shortcuts act on that item alone, never
+	/// on the selection.
 	/// </summary>
+	/// <param name="action">The action the shortcut is bound to: <see cref="ItemActions.Copy"/>,
+	/// <see cref="ItemActions.Duplicate"/> or <see cref="ItemActions.Delete"/>.</param>
+	/// <param name="context">The item under the cursor and the options.</param>
 	/// <returns>The action to run, or <see cref="ItemActions.None"/>.</returns>
-	public static ItemActions KeyAction(char key, in ItemActionContext context)
+	public static ItemActions KeyAction(ItemActions action, in ItemActionContext context)
 	{
-		if (context.Item is null)
+		if (context.Item is null || action is not (ItemActions.Copy or ItemActions.Duplicate or ItemActions.Delete))
 			return ItemActions.None;
-
-		var action = key switch
-		{
-			'c' => ItemActions.Copy,
-			'd' => ItemActions.Duplicate,
-			'\b' => ItemActions.Delete,
-			_ => ItemActions.None,
-		};
 
 		return action & Available(context with { SelectionCount = 0, ItemIsTheSelection = false });
 	}

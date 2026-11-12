@@ -9,7 +9,9 @@
 
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.KeyBinds;
 using TQVaultAE.GUI.Components.Scaling;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.GUI.Interop;
 using TQVaultAE.Presentation.Win32;
 
@@ -242,10 +244,11 @@ public partial class VaultForm
 			// Scale the internal controls to the new size.
 			float scalingFactor = (float)this.Size.Height / (float)resizeTo.Height;
 
-			// Reset scaling to 1.0 if resize from minimize/maximize to normal with shift keydown
+			// Reset scaling to 1.0 if resize from minimize/maximize to normal with its modifier held (Shift).
 			if (fromMinimizedMaximized)
 			{
-				if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift)
+				var held = this.Services.KeyBinds.Get(KeyBindAction.ResetZoomOnRestore, 0);
+				if (!held.IsNone && KeyBindInput.ToModifiers(Control.ModifierKeys).HasFlag(held.Modifiers))
 				{
 					resizeTo = new Size(NORMAL_FORMWIDTH, NORMAL_FORMHEIGHT);
 					scalingFactor = 1.0F;

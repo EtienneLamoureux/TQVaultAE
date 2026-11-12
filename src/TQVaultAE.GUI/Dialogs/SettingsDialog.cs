@@ -14,6 +14,7 @@ using TQVaultAE.GUI.Infrastructure;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using TQVaultAE.Application.KeyBinds;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Entities;
@@ -97,6 +98,12 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 	}
 
 	private readonly ILogger<SettingsDialog> Log;
+
+	/// <summary>
+	/// Opens the key binds dialog, in the free first cell of the button row. Made here rather than in the designer file,
+	/// with the look of the other buttons.
+	/// </summary>
+	private readonly ScalingButton keyBindsButton;
 
 	#endregion
 
@@ -257,6 +264,28 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		this.cancelButton.Text = Resources.GlobalCancel;
 		this.okayButton.Text = Resources.GlobalOK;
 		this.Text = Resources.SettingsTitle;
+
+		this.keyBindsButton = new ScalingButton()
+		{
+			Name = nameof(this.keyBindsButton),
+			Anchor = AnchorStyles.Bottom | AnchorStyles.Left,
+			BackColor = Color.Transparent,
+			FlatStyle = FlatStyle.Flat,
+			Font = font12,
+			ForeColor = this.resetButton.ForeColor,
+			Size = this.resetButton.Size,
+			SizeToGraphic = false,
+			UseCustomGraphic = true,
+			UseVisualStyleBackColor = false,
+			TabIndex = this.okayButton.TabIndex,
+			Text = Resources.SettingsKeyBinds,
+		};
+		this.keyBindsButton.FlatAppearance.BorderSize = 0;
+		this.keyBindsButton.FlatAppearance.MouseDownBackColor = this.resetButton.FlatAppearance.MouseDownBackColor;
+		this.keyBindsButton.FlatAppearance.MouseOverBackColor = this.resetButton.FlatAppearance.MouseOverBackColor;
+		this.keyBindsButton.Click += this.KeyBindsButtonClick;
+		this.toolTip.SetToolTip(this.keyBindsButton, Resources.SettingsKeyBindsTT);
+		this.tableLayoutPanelButtons.Controls.Add(this.keyBindsButton, 0, 0);
 
 		this.ResumeLayout(false);
 		this.PerformLayout();

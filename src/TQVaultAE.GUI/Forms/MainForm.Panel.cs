@@ -218,15 +218,6 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// Callback for activating the search text box.
-	/// Used when a hot key is pressed.
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">SackPanelEventArgs data</param>
-	private void ActivateSearchCallback(object? sender, SackPanelEventArgs e)
-		=> this.OpenSearchDialog();
-
-	/// <summary>
 	/// Used for sending items between sacks or panels.
 	/// </summary>
 	/// <param name="sender">sender object</param>

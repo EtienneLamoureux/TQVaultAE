@@ -83,6 +83,7 @@ internal sealed partial class CharacterEditDialog
 
 		var pane = new SkillPaneControl(this.UIService)
 		{
+			KeyBinds = this.Services.KeyBinds,
 			Name = $"SkillsMastery{slot + 1}Pane",
 			PaneScale = this.DeviceDpi / 96F,
 			Translate = tag => this.TranslationService.TranslateOr(tag, tag),

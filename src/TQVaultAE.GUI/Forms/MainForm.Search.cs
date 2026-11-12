@@ -62,30 +62,6 @@ public partial class MainForm
 			this.DisplayResults(null, searchDialog.QueryResults);
 	}
 
-	/// <summary>
-	/// Handler for keypresses within the search text box.
-	/// Used to handle the resizing hot keys.
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">KeyEventArgs data</param>
-	private void SearchTextBoxKeyDown(object? sender, KeyEventArgs e)
-	{
-		if (e.KeyData == (Keys.Control | Keys.Add) || e.KeyData == (Keys.Control | Keys.Oemplus))
-		{
-			this.ResizeFormCallback(this, new ResizeEventArgs(0.1F));
-		}
-
-		if (e.KeyData == (Keys.Control | Keys.Subtract) || e.KeyData == (Keys.Control | Keys.OemMinus))
-		{
-			this.ResizeFormCallback(this, new ResizeEventArgs(-0.1F));
-		}
-
-		if (e.KeyData == (Keys.Control | Keys.Home))
-		{
-			this.ResizeFormCallback(this, new ResizeEventArgs(1.0F));
-		}
-	}
-
 	private void DisplayResults(string? searchString, IEnumerable<SearchResult> results)
 	{
 		if (results is null || !results.Any())

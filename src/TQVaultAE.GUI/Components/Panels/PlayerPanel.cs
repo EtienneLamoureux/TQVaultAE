@@ -54,10 +54,8 @@ public class PlayerPanel : VaultPanel
 		this.mainSackPanel.SetLocation(new Point(borderPad, this.Size.Height - this.mainSackPanel.Size.Height - borderPad));
 		this.mainSackPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 		this.mainSackPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
-		this.mainSackPanel.OnActivateSearch += new EventHandler<SackPanelEventArgs>(this.ActivateSearchCallback);
 		this.mainSackPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
 		this.mainSackPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
-		this.mainSackPanel.OnResizeForm += new EventHandler<ResizeEventArgs>(this.ResizeFormCallback);
 		this.Controls.Add(this.mainSackPanel);
 		this.mainSackPanel.MaxSacks = 1;
 		this.mainSackPanel.SackType = SackType.Player;

@@ -2,8 +2,10 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using TQVaultAE.Application;
+using TQVaultAE.Application.KeyBinds;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation.Win32.Contracts;
 
 namespace TQVaultAE.GUI.Components.Character;
@@ -30,6 +32,9 @@ internal sealed partial class SkillPaneControl : Control
 	private readonly IUIService _uiService;
 	private object? _hovered;
 	private float _paneScale = 1F;
+
+	/// <summary>The key binds, for the modifier of a click that spends every point.</summary>
+	internal KeyBindMap? KeyBinds { get; init; }
 
 	public SkillPaneControl(IUIService uiService)
 	{
@@ -114,7 +119,7 @@ internal sealed partial class SkillPaneControl : Control
 		if (step == 0)
 			return;
 
-		var toEnd = ModifierKeys.HasFlag(Keys.Shift);
+		var toEnd = KeyBindInput.SpendAllHeld(this.KeyBinds);
 		switch (this.HitTest(e.Location))
 		{
 			case MasteryTree:

@@ -23,6 +23,7 @@ using Microsoft.Extensions.Logging;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.KeyBinds;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
 using TQVaultAE.GUI.Infrastructure.Filters;
@@ -111,6 +112,7 @@ public static class Program
 				.AddSingleton(typeof(ILogger<>), typeof(Logger<>))
 				// Config
 				.AddSingleton<UserSettings>(sp => UserSettings.Read())
+				.AddSingleton(sp => KeyBindMap.FromOverrides(sp.GetRequiredService<UserSettings>().KeyBinds.Overrides))
 				.AddSingleton(new JsonSerializerOptions { IncludeFields = true, PropertyNameCaseInsensitive = true, WriteIndented = true })
 				// States
 				.AddSingleton<SessionContext>()
@@ -206,6 +208,7 @@ public static class Program
 				.AddTransient<ItemProperties>()
 				.AddTransient<ItemComparisonDialog>()
 				.AddTransient<ItemSeedDialog>()
+				.AddTransient<KeyBindsDialog>()
 				.AddTransient<ModLinkDialog>()
 				.AddTransient<ResultsDialog>()
 				.AddTransient<SearchDialogAdvanced>()

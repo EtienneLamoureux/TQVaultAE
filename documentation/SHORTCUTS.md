@@ -1,5 +1,7 @@
 # TQVaultAE Keyboard Shortcuts
 
+Every shortcut below can be changed: see [Changing the shortcuts](#changing-the-shortcuts). The tables give the defaults.
+
 ## General
 
 | Shortcut | Action |
@@ -12,6 +14,7 @@
 | <kbd>CTRL</kbd>+<kbd>Home</kbd> | Back to the default zoom (100%) |
 | <kbd>F5</kbd> | Redraw the panel under the mouse |
 | Mouse wheel | Previous / next vault in the vault list |
+| <kbd>SHIFT</kbd> held while restoring the window | Back to the default zoom (100%) |
 
 ## Selection
 
@@ -30,6 +33,8 @@
 | <kbd>BACKSPACE</kbd> | Deletes currently highlighted item |
 | <kbd>C</kbd> | Copies currently highlighted item and **randomizes the item seed** on the new item |
 | <kbd>D</kbd> | Duplicates currently highlighted item and **keeps the same item seed** on the new item |
+| <kbd>ALT</kbd>+click | Copies the clicked item into the mouse cursor and **randomizes the item seed** on the new item |
+| <kbd>CTRL</kbd>+<kbd>ALT</kbd>+click | Duplicates the clicked item into the mouse cursor and **keeps the same item seed** on the new item |
 | <kbd>&#8592;</kbd> | Moves currently highlighted item(s) to vault panel |
 | <kbd>&#8594;</kbd> | Moves currently highlighted item(s) to player/secondary vault panel |
 | <kbd>&#8595;</kbd> | Moves currently highlighted item(s) to stash panel |
@@ -39,12 +44,37 @@
 | <kbd>ESC</kbd> or right-click, after **Compare** | Cancels the comparison selection |
 
 "Currently highlighted item" is the item under the mouse cursor. <kbd>BACKSPACE</kbd>, <kbd>C</kbd> and <kbd>D</kbd> act on that item only, never on the selection.
-<kbd>C</kbd> and <kbd>D</kbd> need the "Allow Item Copying" setting.
+<kbd>C</kbd>, <kbd>D</kbd> and their clicks need the "Allow Item Copying" setting; without it the clicks pick up the item as a
+plain click does.
 While the secondary vault is shown, <kbd>&#8594;</kbd> sends to the secondary vault and <kbd>&#8595;</kbd> does nothing.
 
-The character editor has its own mouse shortcuts, see [Character editor](CHAREDIT.md).
+## Forge
+
+| Shortcut | Action |
+|---|---|
+| <kbd>ENTER</kbd> or <kbd>SPACE</kbd> | Forges, like the Forge button (see [Forge](FORGE.md)) |
+
+The character editor has its own mouse shortcuts, see [Character editor](CHAREDIT.md); the <kbd>SHIFT</kbd> of its
+"every point at once" clicks can be changed too.
 
 ## Bulk Transfer
 
 - <kbd>CTRL</kbd>+click — Multi-select items to transfer
 - Right-click — bulk item transfer
+
+## Changing the shortcuts
+
+**Configure** → **Key binds...** lists every key and mouse binding of TQVaultAE. Each action has a shortcut and an
+alternate:
+
+- Click a shortcut, then press the new key (with <kbd>CTRL</kbd>, <kbd>SHIFT</kbd> or <kbd>ALT</kbd> if you want).
+- For a click action (copy or duplicate by click, selection, "every point at once"), click the shortcut, then click it
+  again while holding the modifiers.
+- Right-click the shortcut to stop, **Clear** to remove it, **Defaults** to bring every shortcut back.
+- Two actions that share a shortcut are shown in red and **OK** stays disabled until one is changed.
+- The mouse buttons, the mouse wheel and <kbd>ALT</kbd>+<kbd>F4</kbd> are shown greyed: they cannot be changed.
+
+The changes take effect when you press **OK** in the settings, without a restart. They are saved in `UserConfig.xml` as
+one element listing only the changed actions, for example `<KeyBinds ItemDuplicateClick="Ctrl+Shift+Click" />`.
+
+![Key binds dialog](shortcuts/keybinds.png)

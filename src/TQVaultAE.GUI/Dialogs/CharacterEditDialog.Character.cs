@@ -72,6 +72,7 @@ internal sealed partial class CharacterEditDialog
 		var panelScale = scale * 1.24F;
 		this._stats = new CharacterStatsPanel(this.UIService)
 		{
+			KeyBinds = this.Services.KeyBinds,
 			Name = "CharacterStatsPanel",
 			PanelScale = panelScale,
 			Location = new Point((int)Math.Round(24 * scale), (int)Math.Round(8 * scale)),

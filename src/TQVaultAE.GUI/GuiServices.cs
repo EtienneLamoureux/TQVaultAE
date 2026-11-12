@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.KeyBinds;
 using TQVaultAE.Config;
 using TQVaultAE.GUI.Forms;
 using TQVaultAE.Presentation.Win32.Contracts;
@@ -60,6 +61,7 @@ public sealed class GuiServices
 		, IItemModService itemModService
 		, IGameMapService gameMapService
 		, ICharacterReadOnlyService characterReadOnlyService
+		, KeyBindMap keyBinds
 	)
 	{
 		this.CharacterReadOnlyService = characterReadOnlyService;
@@ -100,6 +102,7 @@ public sealed class GuiServices
 		this.CharacterEditService = characterEditService;
 		this.CharacterStatsService = characterStatsService;
 		this.SettingsPersistence = settingsPersistence;
+		this.KeyBinds = keyBinds;
 	}
 
 	/// <summary>Creates dialogs and gives access to the main form.</summary>
@@ -188,6 +191,12 @@ public sealed class GuiServices
 
 	/// <summary>Session state saved in the user settings, and the language of the installed game.</summary>
 	public ISettingsPersistenceService SettingsPersistence { get; }
+
+	/// <summary>
+	/// The key and mouse bindings: the handlers ask it which action a key or a click runs. The settings dialog replaces
+	/// its gestures when the user changes them.
+	/// </summary>
+	public KeyBindMap KeyBinds { get; }
 
 	/// <summary>Logger for <typeparamref name="T"/>.</summary>
 	public ILogger<T> Logger<T>() => this._loggerFactory.CreateLogger<T>();

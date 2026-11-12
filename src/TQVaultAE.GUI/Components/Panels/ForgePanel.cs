@@ -565,6 +565,18 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
 
 	#region Forge
 
+	/// <summary>
+	/// The forge key (<see cref="TQVaultAE.Application.KeyBinds.KeyBindAction.Forge"/>): forges as the Forge button would, not while
+	/// an item is dragged.
+	/// </summary>
+	internal void ForgeFromShortcut()
+	{
+		if (!this.ForgeButton.Enabled || this.IsDraging)
+			return;
+
+		ForgeItem();
+	}
+
 	private void ForgeItem()
 	{
 		var result = this.Services.ForgeService.Forge(Rules, Selection, Sacks, this.Capabilities.AnyPartOfMaterial, GodPart, this.HardcoreMode);

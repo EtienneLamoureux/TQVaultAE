@@ -87,37 +87,38 @@ public class ItemActionRulesTests
 		ItemActionRules.Available(context).Should().Be(ItemActions.Properties | ItemActions.Compare | ItemActions.Copy | ItemActions.Duplicate);
 	}
 
-	private static ItemActions Key(char key, Item? item, bool readOnly = false, bool allowCopy = true, int selectionCount = 0)
-		=> ItemActionRules.KeyAction(key, new ItemActionContext(item, selectionCount, false, readOnly, AllowItemEdit: true, allowCopy));
+	private static ItemActions Key(ItemActions action, Item? item, bool readOnly = false, bool allowCopy = true, int selectionCount = 0)
+		=> ItemActionRules.KeyAction(action, new ItemActionContext(item, selectionCount, false, readOnly, AllowItemEdit: true, allowCopy));
 
 	[Theory]
-	[InlineData('c', ItemActions.Copy)]
-	[InlineData('d', ItemActions.Duplicate)]
-	[InlineData('\b', ItemActions.Delete)]
-	[InlineData('x', ItemActions.None)]
-	public void KeyAction_MapsTheKeysToTheirAction(char key, ItemActions expected)
-		=> Key(key, Sword()).Should().Be(expected);
+	[InlineData(ItemActions.Copy, ItemActions.Copy)]
+	[InlineData(ItemActions.Duplicate, ItemActions.Duplicate)]
+	[InlineData(ItemActions.Delete, ItemActions.Delete)]
+	[InlineData(ItemActions.Properties, ItemActions.None)]
+	[InlineData(ItemActions.Copy | ItemActions.Delete, ItemActions.None)]
+	public void KeyAction_OnlyCopyDuplicateOrDeleteAlone(ItemActions action, ItemActions expected)
+		=> Key(action, Sword()).Should().Be(expected);
 
 	[Fact]
 	public void KeyAction_ReadOnlyEquipment_BackspaceDoesNotDelete_CopyStillWorks()
 	{
-		Key('\b', Sword(), readOnly: true).Should().Be(ItemActions.None);
-		Key('c', Sword(), readOnly: true).Should().Be(ItemActions.Copy);
+		Key(ItemActions.Delete, Sword(), readOnly: true).Should().Be(ItemActions.None);
+		Key(ItemActions.Copy, Sword(), readOnly: true).Should().Be(ItemActions.Copy);
 	}
 
 	[Fact]
 	public void KeyAction_CopyDisabled_NoCopyNorDuplicate()
 	{
-		Key('c', Sword(), allowCopy: false).Should().Be(ItemActions.None);
-		Key('d', Sword(), allowCopy: false).Should().Be(ItemActions.None);
+		Key(ItemActions.Copy, Sword(), allowCopy: false).Should().Be(ItemActions.None);
+		Key(ItemActions.Duplicate, Sword(), allowCopy: false).Should().Be(ItemActions.None);
 	}
 
 	[Fact]
 	public void KeyAction_ActsOnTheItemUnderTheCursor_NotOnTheSelection()
 	{
 		// Copy is not offered for a selection, but the key copies the item under the cursor.
-		Key('c', Sword(), selectionCount: 3).Should().Be(ItemActions.Copy);
-		Key('\b', null, selectionCount: 3).Should().Be(ItemActions.None);
+		Key(ItemActions.Copy, Sword(), selectionCount: 3).Should().Be(ItemActions.Copy);
+		Key(ItemActions.Delete, null, selectionCount: 3).Should().Be(ItemActions.None);
 	}
 
 	[Fact]
