@@ -185,6 +185,7 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		this.resetButton.Text = Resources.SettingsReset;
 		this.toolTip.SetToolTip(this.resetButton, Resources.SettingsResetTT);
 		this.groupBoxTooltipEnhanced.Text = Resources.SettingTooltipEnhanced;
+		this.groupBoxStackable.Text = Resources.SettingsStackable;
 		this.scalingCheckBoxTooltipDetailedView.Text = Resources.SettingTooltipDetailedView;
 		this.toolTip.SetToolTip(this.scalingCheckBoxTooltipDetailedView, Resources.SettingTooltipDetailedViewTT);
 		this.scalingCheckBoxTooltipInGameRolls.Text = Resources.SettingTooltipShowInGameRolls;

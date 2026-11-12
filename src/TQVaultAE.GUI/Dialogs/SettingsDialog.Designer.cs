@@ -183,6 +183,8 @@ internal partial class SettingsDialog
 		ShowInGameValuesCheckBox = new ScalingCheckBox();
 		groupBoxTooltipEnhanced = new GroupBox();
 		bufferedFlowLayoutPanelTooltipEnhanced = new BufferedFlowLayoutPanel();
+		groupBoxStackable = new GroupBox();
+		bufferedFlowLayoutPanelStackable = new BufferedFlowLayoutPanel();
 		scalingCheckBoxTooltipDetailedView = new ScalingCheckBox();
 		scalingCheckBoxTooltipInGameRolls = new ScalingCheckBox();
 		scalingCheckBoxTooltipValueRanges = new ScalingCheckBox();
@@ -254,6 +256,8 @@ internal partial class SettingsDialog
 		bufferedFlowLayoutPanelCheats.SuspendLayout();
 		groupBoxTooltipEnhanced.SuspendLayout();
 		bufferedFlowLayoutPanelTooltipEnhanced.SuspendLayout();
+		groupBoxStackable.SuspendLayout();
+		bufferedFlowLayoutPanelStackable.SuspendLayout();
 		groupBoxGfxAndAudio.SuspendLayout();
 		bufferedFlowLayoutPanelGfxAndAudio.SuspendLayout();
 		detectLanguageCheckBox.SuspendLayout();
@@ -537,6 +541,27 @@ internal partial class SettingsDialog
 		bufferedFlowLayoutPanelTooltipEnhanced.Name = "bufferedFlowLayoutPanelTooltipEnhanced";
 		bufferedFlowLayoutPanelTooltipEnhanced.Size = new Size(257, 112);
 		bufferedFlowLayoutPanelTooltipEnhanced.TabIndex = 1;
+		//
+		// groupBoxStackable
+		//
+		groupBoxStackable.AutoSize = true;
+		groupBoxStackable.Controls.Add(bufferedFlowLayoutPanelStackable);
+		groupBoxStackable.ForeColor = Color.Gold;
+		groupBoxStackable.Name = "groupBoxStackable";
+		groupBoxStackable.TabIndex = 58;
+		groupBoxStackable.TabStop = false;
+		groupBoxStackable.Text = "Stackable";
+		//
+		// bufferedFlowLayoutPanelStackable
+		//
+		bufferedFlowLayoutPanelStackable.AutoSize = true;
+		bufferedFlowLayoutPanelStackable.Controls.Add(scalingCheckBoxDisableAutoStacking);
+		bufferedFlowLayoutPanelStackable.Controls.Add(scalingCheckBoxMergeRelicsOnSort);
+		bufferedFlowLayoutPanelStackable.Dock = DockStyle.Fill;
+		bufferedFlowLayoutPanelStackable.FlowDirection = FlowDirection.TopDown;
+		bufferedFlowLayoutPanelStackable.Location = new Point(3, 20);
+		bufferedFlowLayoutPanelStackable.Name = "bufferedFlowLayoutPanelStackable";
+		bufferedFlowLayoutPanelStackable.TabIndex = 0;
 		//
 		// scalingCheckBoxTooltipDetailedView
 		//
@@ -1038,8 +1063,6 @@ internal partial class SettingsDialog
 		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(suppressWarningsCheckBox);
 		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(ShowInGameValuesCheckBox);
 		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(playerReadonlyCheckbox);
-		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(scalingCheckBoxDisableAutoStacking);
-		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(scalingCheckBoxMergeRelicsOnSort);
 		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(scalingLabelCSVDelim);
 		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(scalingComboBoxCSVDelim);
 		bufferedFlowLayoutPanelGeneralSettings.Dock = DockStyle.Fill;
@@ -1310,6 +1333,7 @@ internal partial class SettingsDialog
 		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(detectGamePathsCheckBox);
 		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(detectLanguageCheckBox);
 		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(checkGroupBoxGitBackup);
+		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(groupBoxStackable);
 		bufferedFlowLayoutPanelSkeletonLeft.Dock = DockStyle.Fill;
 		bufferedFlowLayoutPanelSkeletonLeft.FlowDirection = FlowDirection.TopDown;
 		bufferedFlowLayoutPanelSkeletonLeft.Location = new Point(3, 3);
@@ -1405,6 +1429,10 @@ internal partial class SettingsDialog
 		groupBoxTooltipEnhanced.PerformLayout();
 		bufferedFlowLayoutPanelTooltipEnhanced.ResumeLayout(false);
 		bufferedFlowLayoutPanelTooltipEnhanced.PerformLayout();
+		groupBoxStackable.ResumeLayout(false);
+		groupBoxStackable.PerformLayout();
+		bufferedFlowLayoutPanelStackable.ResumeLayout(false);
+		bufferedFlowLayoutPanelStackable.PerformLayout();
 		groupBoxGfxAndAudio.ResumeLayout(false);
 		groupBoxGfxAndAudio.PerformLayout();
 		bufferedFlowLayoutPanelGfxAndAudio.ResumeLayout(false);
@@ -1452,6 +1480,8 @@ internal partial class SettingsDialog
 	private System.Windows.Forms.GroupBox groupBoxTooltipEnhanced;
 	private ScalingCheckBox scalingCheckBoxTooltipDetailedView;
 	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelTooltipEnhanced;
+	private System.Windows.Forms.GroupBox groupBoxStackable;
+	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelStackable;
 	private ScalingCheckBox scalingCheckBoxTooltipInGameRolls;
 	private ScalingCheckBox scalingCheckBoxTooltipValueRanges;
 	private ScalingCheckBox scalingCheckBoxTooltipGrantedSkills;

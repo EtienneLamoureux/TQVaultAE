@@ -2200,6 +2200,9 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="SettingTooltipEnhanced" xml:space="preserve">
     <value>Tooltip Enhanced</value>
   </data>
+	<data name="SettingsStackable" xml:space="preserve">
+    <value>Stackable</value>
+  </data>
 	<data name="SettingTooltipDetailedView" xml:space="preserve">
     <value>Enable detailed view</value>
   </data>

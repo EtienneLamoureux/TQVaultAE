@@ -6060,6 +6060,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stackable.
+        /// </summary>
+        public static string SettingsStackable {
+            get {
+                return ResourceManager.GetString("SettingsStackable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display in game rolls.
         /// </summary>
         public static string SettingTooltipShowInGameRolls {

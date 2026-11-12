@@ -1832,6 +1832,9 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="SettingTooltipEnhanced" xml:space="preserve">
     <value>Infobulle enrichie</value>
   </data>
+	<data name="SettingsStackable" xml:space="preserve">
+    <value>Objets empilables</value>
+  </data>
 	<data name="SettingTooltipDetailedView" xml:space="preserve">
     <value>Activer la vue détaillée</value>
   </data>
