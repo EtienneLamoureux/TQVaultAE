@@ -545,15 +545,28 @@ public partial class SearchDialogAdvanced : VaultForm
 		=> AdjustCheckBoxesHeight();
 
 	private void buttonCollapseAll_Click(object? sender, EventArgs e)
-	{
-		foreach (var lb in this.CachedCheckedListBoxes)
-			lb.Visible = false;
-	}
+		=> this.ShowCategoryLists(false);
 
 	private void buttonExpandAll_Click(object? sender, EventArgs e)
+		=> this.ShowCategoryLists(true);
+
+	/// <summary>
+	/// Shows or hides every category list in one batch: the panels are laid out and drawn once, not once per list.
+	/// </summary>
+	private void ShowCategoryLists(bool visible)
 	{
-		foreach (var lb in this.CachedCheckedListBoxes)
-			lb.Visible = true;
+		var containers = this.CachedCheckedListBoxes
+			.Select(lb => lb.Parent)
+			.OfType<Control>()
+			.Distinct()
+			.Prepend(this.flowLayoutPanelMain)
+			.ToArray();
+
+		using (new LayoutBatch(this.flowLayoutPanelMainAutoScroll, containers))
+		{
+			foreach (var lb in this.CachedCheckedListBoxes)
+				lb.Visible = visible;
+		}
 	}
 
 	private void scalingButtonMenu_Click(object? sender, EventArgs e)
