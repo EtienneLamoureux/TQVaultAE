@@ -514,10 +514,11 @@ public partial class ItemProvider
 
 		if (maxDurVar is not null)
 			maxDurVarValue = (float)maxDurVar[maxDurVar.NumberOfValues - 1];
+		bool fixedDuration = !IsDurationReliantValue(data.Effect);
 		if (minDurVar is not null && maxDurVar is not null && minDurVarValue != maxDurVarValue)
-			duration = GetDurationRange(variableNumber, minDurVar, maxDurVar);
+			duration = GetDurationRange(variableNumber, minDurVar, maxDurVar, fixedDuration);
 		else
-			duration = GetDurationSingle(variableNumber, minDurVar, maxDurVar);
+			duration = GetDurationSingle(variableNumber, minDurVar, maxDurVar, fixedDuration);
 
 		// Figure out the Damage Ratio string
 		string? damageRatio = null;

@@ -34,7 +34,7 @@ public class ItemProviderAttributeAmountsTests : ItemProviderTextTestBase
 		var item = this.CreateItem("ArmorJewelry_Ring",
 			Float("offensiveSlowTotalSpeedMin", 30f), Float("offensiveSlowTotalSpeedDurationMin", 3f));
 
-		this.BaseAttributes(item).Should().Equal($"{Epic}30% Slowed over 3.0 Seconds");
+		this.BaseAttributes(item).Should().Equal($"{Epic}30% Slowed for 3.0 Seconds");
 	}
 
 	[Fact]
@@ -44,7 +44,7 @@ public class ItemProviderAttributeAmountsTests : ItemProviderTextTestBase
 		var item = this.CreateItem("ArmorJewelry_Ring",
 			Float("offensiveSlowTotalSpeedMin", 30f), Float("offensiveSlowTotalSpeedDurationMin", 3f), Float("offensiveSlowTotalSpeedChance", 20f));
 
-		this.BaseAttributes(item).Should().Equal($"{Epic}20.0% Chance of 30% Slowed over 3.0 Seconds");
+		this.BaseAttributes(item).Should().Equal($"{Epic}20.0% Chance of 30% Slowed for 3.0 Seconds");
 	}
 
 	[Fact]
@@ -62,7 +62,30 @@ public class ItemProviderAttributeAmountsTests : ItemProviderTextTestBase
 		var item = this.CreateItem("ArmorJewelry_Ring",
 			Float("offensiveSlowTotalSpeedMin", 20f), Float("offensiveSlowTotalSpeedMax", 30f), Float("offensiveSlowTotalSpeedDurationMin", 3f));
 
-		this.BaseAttributes(item).Should().Equal($"{Epic}20 ~ 30% Slowed over 3.0 Seconds");
+		this.BaseAttributes(item).Should().Equal($"{Epic}20 ~ 30% Slowed for 3.0 Seconds");
+	}
+
+	[Theory]
+	[InlineData("offensiveFumble")]
+	[InlineData("offensiveProjectileFumble")]
+	[InlineData("retaliationSlowRunSpeed")]
+	[InlineData("retaliationSlowOffensiveAbility")]
+	public void EffectAppliedForATime_IsNotMultiplied_AndLastsFor(string effect)
+	{
+		// Slam: "70% Chance of Impaired Aim for 3.4 - 5.1 Seconds", not 70 x 4 = 280% "over" the time.
+		var item = this.CreateItem("ArmorJewelry_Ring",
+			Float($"{effect}Min", 70f), Float($"{effect}DurationMin", 3.4f), Float($"{effect}DurationMax", 5.1f));
+
+		this.BaseAttributes(item).Should().ContainSingle().Which.Should().StartWith($"{Epic}70").And.EndWith(" for 3.4 - 5.1 Seconds");
+	}
+
+	[Fact]
+	public void DamageOverTime_LastsOver_AndRetaliationTotalSpeedToo()
+	{
+		var item = this.CreateItem("ArmorJewelry_Ring",
+			Float("retaliationSlowTotalSpeedMin", 10f), Float("retaliationSlowTotalSpeedDurationMin", 2f));
+
+		this.BaseAttributes(item).Should().ContainSingle().Which.Should().EndWith(" over 2.0 Seconds");
 	}
 
 	[Fact]

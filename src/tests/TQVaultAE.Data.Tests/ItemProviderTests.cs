@@ -102,6 +102,9 @@ public class ItemProviderTests
 	[InlineData("offensiveSlowRunSpeed", true)] // camel case, as in the game records
 	[InlineData("OFFENSIVETOTALRESISTANCEREDUCTIONABSOLUTE", true)]
 	[InlineData("offensivetotaldamagereductionpercent", true)]
+	[InlineData("offensiveProjectileFumble", true)] // impaired aim, applied for a time
+	[InlineData("retaliationSlowRunSpeed", true)]
+	[InlineData("retaliationSlowTotalSpeed", false)] // the game lists it with the damage over time
 	[InlineData("offensiveSlowFire", false)] // duration reliant
 	[InlineData("OFFENSIVESLOWRUNSPEEDX", false)]
 	public void DurationIndependentEffects_IgnoresCase(string effect, bool expected)

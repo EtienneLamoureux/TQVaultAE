@@ -35,6 +35,8 @@ public abstract class ItemProviderTextTestBase
 		["DamageInfluenceRangeFormat"] = "{%.1f0} ~ {%.1f1}",
 		["DamageSingleFormatTime"] = "over {%.1f0} Seconds",
 		["DamageRangeFormatTime"] = "over {%.1f0} - {%.1f1} Seconds",
+		["DamageFixedSingleFormatTime"] = "for {%.1f0} Seconds",
+		["DamageFixedRangeFormatTime"] = "for {%.1f0} - {%.1f1} Seconds",
 		["ChanceOfTag"] = "{%.1f0}% Chance of",
 		["ImprovedTimeFormat"] = "with {%+.0f0}% Improved Duration",
 		["characterStrength"] = "{%+.0f0} Strength",

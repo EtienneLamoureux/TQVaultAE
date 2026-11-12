@@ -199,13 +199,14 @@ public partial class ItemProvider
 	/// <param name="varNum">offset number of the variable value that we are using</param>
 	/// <param name="minDurVar">minimum duration variable</param>
 	/// <param name="maxDurVar">maximum duration variable</param>
+	/// <param name="fixedDuration">An effect applied at full strength for the time ("for"), not damage over time ("over").</param>
 	/// <returns>formatted duration string</returns>
-	private string GetDurationRange(int varNum, Variable minDurVar, Variable maxDurVar)
+	private string GetDurationRange(int varNum, Variable minDurVar, Variable maxDurVar, bool fixedDuration)
 	{
 		string? duration = null;
 		TQColor? color = null;
 
-		if (!TranslationService.TryTranslateXTag("DamageRangeFormatTime", out var formatSpec))
+		if (!TranslationService.TryTranslateXTag(fixedDuration ? "DamageFixedRangeFormatTime" : "DamageRangeFormatTime", out var formatSpec))
 		{
 			formatSpec = "for {0}..{1} seconds";
 			color = ItemStyle.Legendary.TQColor();
@@ -229,13 +230,14 @@ public partial class ItemProvider
 	/// <param name="varNum">offset number of the variable value that we are using</param>
 	/// <param name="minDurVar">minimum duration variable</param>
 	/// <param name="maxDurVar">maximum duration variable</param>
+	/// <param name="fixedDuration">An effect applied at full strength for the time ("for"), not damage over time ("over").</param>
 	/// <returns>formatted duration string</returns>
-	private string? GetDurationSingle(int varNum, Variable? minDurVar, Variable? maxDurVar)
+	private string? GetDurationSingle(int varNum, Variable? minDurVar, Variable? maxDurVar, bool fixedDuration)
 	{
 		string? duration = null;
 		TQColor? color = null;
 
-		if (!TranslationService.TryTranslateXTag("DamageSingleFormatTime", out var formatSpec))
+		if (!TranslationService.TryTranslateXTag(fixedDuration ? "DamageFixedSingleFormatTime" : "DamageSingleFormatTime", out var formatSpec))
 		{
 			formatSpec = "{0}";
 			color = ItemStyle.Legendary.TQColor();
