@@ -62,7 +62,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "open_mod_link", Destructive = true)]
-	[Description("Opens the mod link dialog of the selected character, like the 'Mod link...' entry of the character menu (custom map characters only). It is modal: read it with control_values(form 'ModLinkDialog', labels true), pick a mod with set_control(listBoxMods, '<display name>'), then click_control buttonSuggest, buttonLink, buttonUnlink or buttonClose. Link and Unlink write the link file in the save folder: only on claude-* test characters, so this tool refuses the others.")]
+	[Description("Opens the mod link dialog of the selected character, like the 'Mod link...' entry of the character menu (custom map characters only). It is modal: read it with control_values(form 'ModLinkDialog', labels true), pick a mod with set_control(listBoxMods, '<display name>'), then click_control buttonSuggest, buttonLink, buttonUnlink or buttonClose. Link and Unlink write the link file in the save folder: only on test characters (claude-*, player-test*, player-mod*), so this tool refuses the others.")]
 	public static string OpenModLink()
 		=> AutomationHost.OnUi(form =>
 		{

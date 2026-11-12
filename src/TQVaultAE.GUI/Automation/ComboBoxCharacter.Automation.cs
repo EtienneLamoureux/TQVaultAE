@@ -15,15 +15,15 @@ public partial class ComboBoxCharacter
 {
 	/// <summary>
 	/// Ticks or unticks "Archived" in the character menu like a click, for the selected character only, which moves
-	/// its save folder to or from the archive folder. Only test characters (names starting with <c>claude-</c>).
+	/// its save folder to or from the archive folder. Only test characters (<see cref="Automation.AutomationTestNames"/>).
 	/// </summary>
 	/// <returns>The character, whether it is archived now, and its save folder.</returns>
 	internal (string Name, bool IsArchived, string? PlayerFile) AutomationSetArchived(bool archived)
 	{
 		if (this.SelectedItem is not PlayerSave ps)
 			throw new InvalidOperationException("No character is selected.");
-		if (!ps.Name.StartsWith("claude-", StringComparison.OrdinalIgnoreCase))
-			throw new InvalidOperationException($"'{ps.Name}' is not a test character: only names starting with 'claude-' may be archived.");
+		if (!Automation.AutomationTestNames.IsTestFile(ps.Name))
+			throw new InvalidOperationException($"'{ps.Name}' is not a test character: only names starting with {Automation.AutomationTestNames.Accepted} may be archived.");
 
 		this.archiveToolStripMenuItem.Checked = archived;
 		return (ps.Name, ps.IsArchived, ps.Folder);
@@ -40,7 +40,7 @@ public partial class ComboBoxCharacter
 			throw new InvalidOperationException($"'{tag}' is not a test tag: only tags starting with 'claude-' may be used.");
 
 		var tagged = this.Items.OfType<PlayerSave>().Where(ps => ps.Tags.ContainsKey(tag)).ToList();
-		var real = tagged.Where(ps => !ps.Name.StartsWith("claude-", StringComparison.OrdinalIgnoreCase)).Select(ps => ps.Name).ToList();
+		var real = tagged.Where(ps => !Automation.AutomationTestNames.IsTestFile(ps.Name)).Select(ps => ps.Name).ToList();
 		if (real.Count != 0)
 			throw new InvalidOperationException($"The tag '{tag}' is on characters that are not test characters: {string.Join(", ", real)}.");
 

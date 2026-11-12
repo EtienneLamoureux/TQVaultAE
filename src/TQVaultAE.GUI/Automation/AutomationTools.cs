@@ -246,13 +246,14 @@ internal static partial class AutomationTools
 			return Serialize(new { vault = form.AutomationSelectedVault, vaultMod = form.AutomationSelectedVaultMod, error });
 		});
 
-	/// <summary>Automation creates and duplicates only its own test files (see Safety in AUTOMATION.md).</summary>
+	/// <summary>Automation's own test tags (see Safety in AUTOMATION.md).</summary>
 	private const string TestFilePrefix = "claude-";
 
+	/// <summary>Automation creates and changes only test characters and vaults (see <see cref="AutomationTestNames"/>).</summary>
 	private static void RequireTestName(string name)
 	{
-		if (!name.StartsWith(TestFilePrefix, StringComparison.OrdinalIgnoreCase))
-			throw new McpException($"Test files only: the name must start with '{TestFilePrefix}', e.g. '{TestFilePrefix}vault1'.");
+		if (!AutomationTestNames.IsTestFile(name))
+			throw new McpException($"Test files only: the name must start with {AutomationTestNames.Accepted}, e.g. 'claude-vault1'.");
 	}
 
 	[McpServerTool(Name = "create_vault", Destructive = true)]

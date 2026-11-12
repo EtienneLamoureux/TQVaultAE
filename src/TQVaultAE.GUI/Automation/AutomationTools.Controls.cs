@@ -240,7 +240,7 @@ internal static partial class AutomationTools
 	#region Character editor and tags
 
 	[McpServerTool(Name = "archive_character", Destructive = true)]
-	[Description("Ticks (archived=true) or unticks the 'Archived' entry of the character menu for the selected character, like a click: TQVault moves its save folder to or from the archive folder. Only test characters whose name starts with 'claude-'; the 'Archive all' entries are not driven, since they move every character.")]
+	[Description("Ticks (archived=true) or unticks the 'Archived' entry of the character menu for the selected character, like a click: TQVault moves its save folder to or from the archive folder. Only test characters (names starting with 'claude-', 'player-test' or 'player-mod'); the 'Archive all' entries are not driven, since they move every character.")]
 	public static string ArchiveCharacter([Description("true to archive, false to unarchive.")] bool archived)
 		=> AutomationHost.OnUi(form =>
 		{
@@ -338,8 +338,8 @@ internal static partial class AutomationTools
 				{
 					if (!isTestName(text))
 						throw new McpException($"Test tags only: the name must start with '{TestFilePrefix}'.");
-					if (combo.SelectedItem is not PlayerSave ps || !ps.Name.StartsWith(TestFilePrefix, StringComparison.OrdinalIgnoreCase))
-						throw new McpException($"Select a test character (name starting with '{TestFilePrefix}') first.");
+					if (combo.SelectedItem is not PlayerSave ps || !AutomationTestNames.IsTestFile(ps.Name))
+						throw new McpException($"Select a test character (name starting with {AutomationTestNames.Accepted}) first.");
 					var tags = (ToolStripMenuItem)comboType.GetField("tagsToolStripMenuItem", Private)!.GetValue(combo)!;
 					var tagItem = tags.DropDownItems.OfType<ToolStripMenuItem>()
 						.FirstOrDefault(i => i.Text == text && (i.Name?.StartsWith(ComboBoxCharacter.TAGKEY, StringComparison.Ordinal) ?? false))
