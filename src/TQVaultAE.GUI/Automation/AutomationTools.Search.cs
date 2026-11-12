@@ -78,6 +78,8 @@ internal static partial class AutomationTools
 						|| r.ContainerName.Contains(container, StringComparison.OrdinalIgnoreCase))
 					&& (x is null || r.Item.PositionX == x) && (y is null || r.Item.PositionY == y))
 				?? throw new McpException($"No search entry in a container matching '{container}'.");
+			// The results dialog lists only entries read for their names: a file read again (hot reload) has new ones.
+			entry.LazyLoad();
 			form.AutomationSelectResult(entry);
 			return new
 			{
