@@ -3,9 +3,6 @@ using System.Text.RegularExpressions;
 
 namespace TQVaultAE.Application;
 
-/// <summary>A piece of game text with its colour code: <c>{^y}</c> yellow, <c>{^w}</c> white..., or none.</summary>
-public readonly record struct GameTextRun(string Text, char? Color);
-
 /// <summary>
 /// How the game's character window shows its statistics (records <c>xpack\ui\character\tab1new..tab3new</c>): attribute
 /// totals, play time, coloured texts.
@@ -73,30 +70,6 @@ public static partial class CharacterPanelLayout
 			return m.Value.StartsWith("{%+", StringComparison.Ordinal) && number >= 0 ? "+" + text : text;
 		});
 
-	/// <summary>Splits a game text at its colour codes (<c>{^y}</c>, <c>{^w}</c>...); other tags are removed.</summary>
-	public static IReadOnlyList<GameTextRun> ColorRuns(string text)
-	{
-		var runs = new List<GameTextRun>();
-		char? color = null;
-		int start = 0;
-		foreach (Match m in ColorCodeRegex().Matches(text))
-		{
-			if (m.Index > start)
-				runs.Add(new GameTextRun(text[start..m.Index], color));
-
-			color = char.ToLowerInvariant(m.Groups["code"].Value[0]);
-			start = m.Index + m.Length;
-		}
-
-		if (start < text.Length)
-			runs.Add(new GameTextRun(text[start..], color));
-
-		return runs;
-	}
-
 	[GeneratedRegex("""\{%[^}]*?(?<type>[a-z])(?<index>[0-9])\}""")]
 	private static partial Regex GameFormatRegex();
-
-	[GeneratedRegex("""\{\^(?<code>[a-zA-Z])\}""")]
-	private static partial Regex ColorCodeRegex();
 }

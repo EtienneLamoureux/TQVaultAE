@@ -2,6 +2,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using TQVaultAE.Application;
+using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32;
@@ -522,7 +523,7 @@ internal sealed partial class CharacterStatsPanel : Control
 	/// <summary>A text with game colour codes (<c>{^y}</c> yellow, <c>{^w}</c> white), right-aligned by default.</summary>
 	private void ColoredText(Graphics g, string text, Font? font, Color color, Rectangle box, bool alignRight = true)
 	{
-		var runs = CharacterPanelLayout.ColorRuns(text);
+		var runs = text.SplitColorRuns();
 		if (runs.Count == 0)
 			return;
 
@@ -536,12 +537,12 @@ internal sealed partial class CharacterStatsPanel : Control
 		g.SetClip(target);
 		for (int i = 0; i < runs.Count; i++)
 		{
-			using var brush = new SolidBrush(runs[i].Color switch
+			using var brush = new SolidBrush(runs[i].Code switch
 			{
-				'y' => Yellow,
-				'w' => Color.White,
-				'g' => Color.LimeGreen,
-				'r' => Color.Red,
+				'Y' => Yellow,
+				'W' => Color.White,
+				'G' => Color.LimeGreen,
+				'R' => Color.Red,
 				_ => color,
 			});
 			g.DrawString(runs[i].Text, font, brush, x, target.Y, format);

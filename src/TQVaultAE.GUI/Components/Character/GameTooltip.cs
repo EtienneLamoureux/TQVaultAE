@@ -272,25 +272,12 @@ internal sealed partial class GameTooltip : IDisposable
 
 	/// <summary>Splits a game text at its colour tags (<c>{^x}</c> and <c>^x</c>), each part with its colour.</summary>
 	internal static IEnumerable<(string Text, Color Color)> Runs(string text, Color color)
-	{
-		int start = 0;
-		var current = color;
-		foreach (Match tag in ColorTagRegex().Matches(text))
+		=> text.SplitColorRuns(bareTags: true).Select(run => (run.Text, run.Code switch
 		{
-			if (tag.Index > start)
-				yield return (text[start..tag.Index], current);
-
-			var code = char.ToUpperInvariant((tag.Groups["a"].Success ? tag.Groups["a"] : tag.Groups["b"]).Value[0]);
-			current = code == 'A' ? SkillWindowAqua : TQColorHelper.GetColorFromTagIdentifier(code).Color();
-			start = tag.Index + tag.Length;
-		}
-
-		if (start < text.Length)
-			yield return (text[start..], current);
-	}
-
-	[GeneratedRegex("""\{\^(?<a>[A-Za-z])\}|\^(?<b>[A-Za-z])""")]
-	private static partial Regex ColorTagRegex();
+			null => color,
+			'A' => SkillWindowAqua,
+			{ } code => TQColorHelper.GetColorFromTagIdentifier(code).Color(),
+		}));
 
 	[GeneratedRegex("""\s*\S+""")]
 	private static partial Regex WordRegex();

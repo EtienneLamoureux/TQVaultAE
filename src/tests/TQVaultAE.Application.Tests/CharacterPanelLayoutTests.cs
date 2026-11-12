@@ -61,14 +61,4 @@ public class CharacterPanelLayoutTests
 	[InlineData(-10, "-10% Fire Damage")]
 	public void FormatGameText_PlusFlag_WritesTheSignOfPositiveValues(long value, string expected)
 		=> CharacterPanelLayout.FormatGameText("{%+.0f0}% Fire Damage", value).Should().Be(expected);
-
-	[Fact]
-	public void ColorRuns_SplitsAtColourCodes()
-		=> CharacterPanelLayout.ColorRuns("{^y}2{^w} Points Available").Should().Equal(
-			new GameTextRun("2", 'y'),
-			new GameTextRun(" Points Available", 'w'));
-
-	[Fact]
-	public void ColorRuns_WithoutCodes_IsOneUncolouredRun()
-		=> CharacterPanelLayout.ColorRuns("Health").Should().Equal(new GameTextRun("Health", null));
 }

@@ -474,4 +474,38 @@ public class TQColorHelperTests
 		=> "Plain".SplitColorSegments().Should().Equal("Plain");
 
 	#endregion
+
+	#region SplitColorRuns
+
+	[Fact]
+	public void SplitColorRuns_SplitsAtColourTagsWithUpperCaseCodes()
+		=> "{^y}2{^w} Points Available".SplitColorRuns().Should().Equal(
+			new ColorRun("2", 'Y'),
+			new ColorRun(" Points Available", 'W'));
+
+	[Fact]
+	public void SplitColorRuns_WithoutTags_IsOneRunWithoutCode()
+		=> "Health".SplitColorRuns().Should().Equal(new ColorRun("Health", null));
+
+	[Fact]
+	public void SplitColorRuns_TextBeforeTheFirstTag_HasNoCodeAndEmptyPartsAreLeftOut()
+		=> "Damage {^R}{^G}+10".SplitColorRuns().Should().Equal(
+			new ColorRun("Damage ", null),
+			new ColorRun("+10", 'G'));
+
+	[Fact]
+	public void SplitColorRuns_OtherTagsStayInTheText()
+		=> "{^Y}{%d0} points".SplitColorRuns().Should().Equal(new ColorRun("{%d0} points", 'Y'));
+
+	[Fact]
+	public void SplitColorRuns_BareTags_SplitOnlyWhenAsked()
+	{
+		"Level ^a5^w / 10".SplitColorRuns().Should().Equal(new ColorRun("Level ^a5^w / 10", null));
+		"Level ^a5^w / 10".SplitColorRuns(bareTags: true).Should().Equal(
+			new ColorRun("Level ", null),
+			new ColorRun("5", 'A'),
+			new ColorRun(" / 10", 'W'));
+	}
+
+	#endregion
 }

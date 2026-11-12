@@ -218,6 +218,39 @@ public static partial class TQColorHelper
 			.Select(t => t[0] == '^' ? '{' + t : t)
 			.ToArray();
 
+	[GeneratedRegex("""\{\^(?<a>[A-Za-z])\}""")]
+	private static partial Regex ColorTagRegex();
+
+	[GeneratedRegex("""\{\^(?<a>[A-Za-z])\}|\^(?<b>[A-Za-z])""")]
+	private static partial Regex ColorTagOrBareTagRegex();
+
+	/// <summary>
+	/// Splits a game text at its colour tags (<c>{^y}</c>, <c>{^w}</c>...), each part with the code of the tag before
+	/// it. Empty parts are left out; other tags stay in the text.
+	/// </summary>
+	/// <param name="text">The game text.</param>
+	/// <param name="bareTags">True to also split at the short tags (<c>^y</c>) the game's skill texts use.</param>
+	/// <returns>The parts in order; one part without code when the text has no tag.</returns>
+	public static IReadOnlyList<ColorRun> SplitColorRuns(this string text, bool bareTags = false)
+	{
+		var runs = new List<ColorRun>();
+		char? code = null;
+		int start = 0;
+		foreach (Match tag in (bareTags ? ColorTagOrBareTagRegex() : ColorTagRegex()).Matches(text))
+		{
+			if (tag.Index > start)
+				runs.Add(new ColorRun(text[start..tag.Index], code));
+
+			code = char.ToUpperInvariant((tag.Groups["a"].Success ? tag.Groups["a"] : tag.Groups["b"]).Value[0]);
+			start = tag.Index + tag.Length;
+		}
+
+		if (start < text.Length)
+			runs.Add(new ColorRun(text[start..], code));
+
+		return runs;
+	}
+
 
 	/// <summary>
 	/// Gets the Color for a particular TQ defined color
