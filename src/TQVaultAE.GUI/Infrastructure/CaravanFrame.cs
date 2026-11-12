@@ -72,6 +72,20 @@ internal static class CaravanFrame
 	/// <summary>Records <paramref name="control"/> as framed; false when it already was.</summary>
 	private static bool MarkFramed(Control control) => Framed.TryAdd(control, Framed);
 
+	/// <summary>The width of one character of <paramref name="font"/>: the space kept between a frame and its text.</summary>
+	public static int CharacterWidth(Font font)
+		=> TextRenderer.MeasureText("0", font, Size.Empty, TextFormatFlags.NoPadding).Width;
+
+	/// <summary>
+	/// Makes <paramref name="control"/>, laid in a frame, transparent so that the black shows behind it. A grid or a list
+	/// paints its own background (black in a frame) and cannot be transparent: it is left as it is.
+	/// </summary>
+	private static void ShowBlackBehind(Control control)
+	{
+		if (control is not (DataGridView or ListBox or ListView or TreeView))
+			control.BackColor = Color.Transparent;
+	}
+
 	/// <summary>
 	/// Gives <paramref name="control"/> the frame as its background, made again when its size changes (zoom, DPI), with
 	/// a padding that keeps its text inside the frame.
@@ -125,7 +139,8 @@ internal static class CaravanFrame
 	/// it: its text, or the check box of a <see cref="Components.UIToolbox.CheckGroupBox"/>, in gold on a dark outline and
 	/// no background. The caption is in the dialog's font: a font of the group's own is dropped, since it would follow
 	/// neither the zoom nor a font change (the check box of a CheckGroupBox takes its group's font). The content gets a
-	/// padding off the frame and is made transparent so that the black shows behind it.
+	/// padding off the frame and is made transparent so that the black shows behind it (a grid or a list keeps its own
+	/// background, black).
 	/// </summary>
 	public static void ApplyWithCaption(GroupBox box)
 	{
@@ -137,7 +152,7 @@ internal static class CaravanFrame
 		box.BackColor = Color.Transparent;
 		box.Padding = new Padding(Border + 2, box.Padding.Top, Border + 2, Border);
 		foreach (Control child in box.Controls)
-			child.BackColor = Color.Transparent;
+			ShowBlackBehind(child);
 
 		box.Paint += (_, e) =>
 		{
@@ -219,7 +234,7 @@ internal static class CaravanFrame
 			int dy = (box.Height - children.Max(c => c.Bottom) - children.Min(c => c.Top)) / 2;
 			foreach (var child in children)
 			{
-				child.BackColor = Color.Transparent;
+				ShowBlackBehind(child);
 				child.Top += dy;
 				if (child.Left < Border + inset)
 					child.Left = Border + inset;
