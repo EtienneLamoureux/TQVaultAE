@@ -118,11 +118,9 @@ internal sealed partial class CharacterEditDialog
 		var tree = skills.Slots[tab.Slot];
 		var level = skills.GetLevel(skill.Id);
 		var masteryLevel = skills.GetMasteryLevel(tab.Slot);
-		var bonus = tree is null ? 0 : SkillBonus.For(this._gearAugments, tree, skill.Id).Total;
-
-		// The game writes the level up to the ultimate one: Call of the Wild 15 + 6 reads "20 / 16".
-		if (skill.UltimateLevel > 0)
-			bonus = Math.Min(bonus, Math.Max(0, skill.UltimateLevel - level));
+		// The game writes the level with the items' levels once the skill has a point, up to the ultimate level: Call of
+		// the Wild 15 + 6 reads "20 / 16", an unlearned skill "0 / 10" whatever the items add.
+		var bonus = tree is null ? 0 : skill.ShownItemBonus(level, SkillBonus.For(this._gearAugments, tree, skill.Id).Total);
 
 		var parentHasPoints = skill.ParentId is null || skills.GetLevel(skill.ParentId) > 0;
 		var state = SkillPaneLayout.State(level, skill.MaxLevel, masteryLevel, skill.RequiredMasteryLevel, parentHasPoints, skills.AvailablePoints);

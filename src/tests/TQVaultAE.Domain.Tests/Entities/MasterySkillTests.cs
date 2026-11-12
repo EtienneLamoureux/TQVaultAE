@@ -22,4 +22,14 @@ public class MasterySkillTests
 	[Fact]
 	public void EffectiveLevel_WithoutUltimateLevel_IsNotCapped()
 		=> (Maul with { UltimateLevel = 0 }).EffectiveLevel(11, 8).Should().Be(19);
+
+	[Theory]
+	[InlineData(0, 3, 0)]
+	[InlineData(0, 0, 0)]
+	[InlineData(5, 3, 3)]
+	[InlineData(11, 8, 5)]
+	[InlineData(16, 2, 0)]
+	[InlineData(5, -2, 0)]
+	public void ShownItemBonus_OnlyOnceTheSkillHasAPoint_UpToTheUltimateLevel(int points, int bonus, int expected)
+		=> Maul.ShownItemBonus(points, bonus).Should().Be(expected);
 }

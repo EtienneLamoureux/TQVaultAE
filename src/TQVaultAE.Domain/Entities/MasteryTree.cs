@@ -118,6 +118,13 @@ public sealed record MasterySkill(
 		var level = points + Math.Max(0, bonus);
 		return this.UltimateLevel > 0 ? Math.Min(level, this.UltimateLevel) : level;
 	}
+
+	/// <summary>
+	/// The levels the equipment adds to the skill as the game's skill window shows them: none while the skill has no
+	/// point (the game counts them from the first point), else up to <see cref="UltimateLevel"/>.
+	/// </summary>
+	public int ShownItemBonus(int points, int bonus)
+		=> points <= 0 ? 0 : Math.Max(0, this.EffectiveLevel(points, bonus) - points);
 }
 
 /// <summary>
