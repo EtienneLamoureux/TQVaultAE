@@ -24,6 +24,7 @@ public class CharacterPanelViewBuilderTests
 		this._stats.Setup(s => s.GetGearAttributes(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>())).Returns(() => new AttributeSum());
 		this._stats.Setup(s => s.GetSkillAttributes(It.IsAny<IEnumerable<SkillRecord>>(), It.IsAny<IReadOnlyList<SkillAugment>>(), It.IsAny<IReadOnlyList<MasteryTree>>(), It.IsAny<bool>()))
 			.Returns(() => new AttributeSum());
+		this._stats.Setup(s => s.GetItemSkillAttributes(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns(() => new AttributeSum());
 		this._stats.Setup(s => s.GetGameBalance()).Returns(new GameBalance());
 		this._stats.Setup(s => s.GetOffenseGear(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>())).Returns(new OffenseGear([], new AttributeSum()));
 		this._stats.Setup(s => s.GetWeaponStance(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>())).Returns(WeaponStance.Unarmed);
@@ -141,5 +142,27 @@ public class CharacterPanelViewBuilderTests
 		// Assert
 		this._stats.Verify(s => s.GetGearAttributes(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>()), Times.Once);
 		this._stats.Verify(s => s.GetSkillAttributes(It.IsAny<IEnumerable<SkillRecord>>(), It.IsAny<IReadOnlyList<SkillAugment>>(), It.IsAny<IReadOnlyList<MasteryTree>>(), It.IsAny<bool>()), Times.Once);
+	}
+
+	[Fact]
+	public void ComputeStats_SkillsTheItemsGrant_AddToTheSkillSum()
+	{
+		// Arrange: a learned skill gives 10 strength, a skill an item grants 4 more
+		AttributeSum Strength(double value)
+		{
+			var sum = new AttributeSum();
+			sum.Add("characterStrength", value);
+			return sum;
+		}
+
+		this._stats.Setup(s => s.GetSkillAttributes(It.IsAny<IEnumerable<SkillRecord>>(), It.IsAny<IReadOnlyList<SkillAugment>>(), It.IsAny<IReadOnlyList<MasteryTree>>(), It.IsAny<bool>()))
+			.Returns(() => Strength(10));
+		this._stats.Setup(s => s.GetItemSkillAttributes(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>(), false)).Returns(() => Strength(4));
+
+		// Act
+		this._builder.ComputeStats(Input());
+
+		// Assert
+		this._builder.SkillSum!["characterStrength"].Should().Be(14);
 	}
 }

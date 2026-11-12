@@ -286,6 +286,18 @@ public class ItemProviderAttributeDisplayTests
 	}
 
 	[Fact]
+	public void GetGrantedSkillLevels_ListsEverySkillWithItsLevel_HiddenOnesIncluded()
+	{
+		this.CreateRecord("""records\test\hidden.dbr""", "Skill_Passive", Ints("characterLife", 10));
+		this.CreateRecord("""records\test\prefix.dbr""", "LootRandomizer", Str("itemSkillName", """records\test\hidden.dbr"""), Int("itemSkillLevel", 3));
+		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSkillName", """records\test\skill.dbr"""));
+		item.prefixID = RecordId.Create("""records\test\prefix.dbr""");
+
+		this._provider.GetGrantedSkillLevels(item).Should().Equal(
+			(RecordId.Create("""records\test\skill.dbr"""), 1), (RecordId.Create("""records\test\hidden.dbr"""), 3));
+	}
+
+	[Fact]
 	public void GetGrantedSkillNames_NamesEachShownSkillOnce_FromTheItemAndItsRelic()
 	{
 		this._translations["tagSkillOther"] = "{^I}Other Skill";

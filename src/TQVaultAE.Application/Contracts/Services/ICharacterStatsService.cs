@@ -24,6 +24,14 @@ public interface ICharacterStatsService
 	AttributeSum GetSkillAttributes(IEnumerable<SkillRecord> skills, IReadOnlyList<SkillAugment> augments, IReadOnlyList<MasteryTree> trees, bool includeBuffs);
 
 	/// <summary>
+	/// Sums the skills the equipped items grant (not the weapons of the set not in hand), as the game counts them with
+	/// the character's own skills: the passive ones always, the buffs and auras when <paramref name="includeBuffs"/>,
+	/// each at the level an item grants (<see cref="SkillStatRules.ItemSkills"/>).
+	/// </summary>
+	/// <param name="useAlternate">True when the second weapon set is in hand (<see cref="PlayerCollection.UseAlternate"/>).</param>
+	AttributeSum GetItemSkillAttributes(IEnumerable<Item> equipment, bool useAlternate, bool includeBuffs);
+
+	/// <summary>
 	/// Reads the game's caps, difficulty penalties, equations and player base values from the database (once); a missing
 	/// record keeps the values of the original game.
 	/// </summary>

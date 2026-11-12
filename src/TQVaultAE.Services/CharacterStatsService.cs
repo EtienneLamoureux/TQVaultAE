@@ -78,14 +78,39 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 				continue;
 
 			int level = SkillStatRules.EffectiveLevel(savedLevel, id, tree, augments);
-
-			// A buff skill keeps its bonuses in the buff it casts (buffSkillName), at the skill's level.
-			var buff = records[id]?.GetString(BuffSkillName, 0);
-			var source = string.IsNullOrEmpty(buff) ? id : buff.ToRecordId();
-			sum.Add(this._itemProvider.GetRecordAttributes(source, level));
+			sum.Add(this.SkillRecordAttributes(id, records[id], level));
 		}
 
 		return sum;
+	}
+
+	/// <inheritdoc/>
+	public AttributeSum GetItemSkillAttributes(IEnumerable<Item> equipment, bool useAlternate, bool includeBuffs)
+	{
+		var granted = equipment
+			.Where(item => !item.IsInInactiveWeaponSlot(useAlternate))
+			.SelectMany(this._itemProvider.GetGrantedSkillLevels);
+
+		var sum = new AttributeSum();
+		foreach (var (id, level) in SkillStatRules.ItemSkills(granted))
+		{
+			var record = this._database.GetRecordFromFile(id);
+
+			// A granted skill modifies nothing of the character's: a modifier never counts.
+			var role = SkillStatRules.Resolve(SkillStatRules.RoleOf(record?.RecordType), null);
+			if (SkillStatRules.Counts(role, includeBuffs))
+				sum.Add(this.SkillRecordAttributes(id, record, level));
+		}
+
+		return sum;
+	}
+
+	/// <summary>The bonuses of a skill at a level: a buff skill keeps them in the buff it casts (<c>buffSkillName</c>).</summary>
+	private AttributeSum SkillRecordAttributes(RecordId id, DBRecordCollection? record, int level)
+	{
+		var buff = record?.GetString(BuffSkillName, 0);
+		var source = string.IsNullOrEmpty(buff) ? id : buff.ToRecordId();
+		return this._itemProvider.GetRecordAttributes(source, level);
 	}
 
 	/// <inheritdoc/>

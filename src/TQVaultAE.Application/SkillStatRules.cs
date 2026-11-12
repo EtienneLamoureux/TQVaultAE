@@ -63,6 +63,19 @@ public static class SkillStatRules
 		=> role == SkillStatRole.Passive || (role == SkillStatRole.Buff && includeBuffs);
 
 	/// <summary>
+	/// The skills the equipped items grant, as the game gives them to the character: each skill once, whatever the
+	/// number of items granting it, at the level an item grants (the higher one when several do; the game keeps the
+	/// level of the item put on last). They count by their role like the character's own skills (passives always,
+	/// buffs and auras only while they run), at that level: no point is needed and the items' "+skill" levels are not
+	/// added.
+	/// </summary>
+	public static IEnumerable<(RecordId SkillId, int Level)> ItemSkills(IEnumerable<(RecordId SkillId, int Level)> granted)
+		=> granted
+			.Where(s => !RecordId.IsNullOrEmpty(s.SkillId) && s.Level > 0)
+			.GroupBy(s => s.SkillId)
+			.Select(g => (g.Key, g.Max(s => s.Level)));
+
+	/// <summary>
 	/// The level the game uses: the points spent plus the levels the equipped items add (to the skill, to its mastery,
 	/// to all skills), none without a point spent. The mastery itself gets no item level. Arrays past the skill's
 	/// highest level read their last value.

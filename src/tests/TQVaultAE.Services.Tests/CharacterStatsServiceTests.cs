@@ -256,4 +256,49 @@ public class CharacterStatsServiceTests
 
 		sum.Values.Should().BeEmpty();
 	}
+
+	/// <summary>Equipment whose items grant skills: a passive, an aura, an attack, a modifier, and a passive on the spare weapon.</summary>
+	private Item[] GrantingEquipment()
+	{
+		var armor = Weapon("ArmorProtective_UpperBody", 0, x: 3);
+		var ring = Weapon("ArmorJewelry_Ring", 0, x: 4);
+		var sword = Weapon("WeaponMelee_Sword", 0);
+		var spare = Weapon("WeaponMelee_Axe", 2);
+		var granted = new Dictionary<Item, (RecordId, int)[]>
+		{
+			[armor] = [(Toughness, 2), (Aura, 4)],
+			[ring] = [(Toughness, 5), (Attack, 3), (ToughnessModifier, 2)],
+			[sword] = [],
+			[spare] = [(DefenseMastery, 7)],
+		};
+		this._items.Setup(p => p.GetGrantedSkillLevels(It.IsAny<Item>())).Returns((Item item) => granted[item]);
+		return [armor, ring, sword, spare];
+	}
+
+	[Fact]
+	public void GetItemSkillAttributes_WithoutBuffs_CountsThePassivesOnceAtTheHighestGrantedLevel()
+	{
+		var sum = this._service.GetItemSkillAttributes(this.GrantingEquipment(), useAlternate: false, includeBuffs: false);
+
+		sum.Values.Should().BeEquivalentTo(new Dictionary<string, double> { [Toughness.Raw] = 5 },
+			"a passive counts at the level granted, once; an attack and a modifier never; the spare weapon is not in hand");
+	}
+
+	[Fact]
+	public void GetItemSkillAttributes_WithBuffs_AddsTheAurasFromTheirBuffRecord()
+	{
+		var sum = this._service.GetItemSkillAttributes(this.GrantingEquipment(), useAlternate: false, includeBuffs: true);
+
+		sum[AuraBuff.Raw].Should().Be(4, "an aura's bonuses are in the buff it casts, at the granted level");
+		sum[Aura.Raw].Should().Be(0);
+		sum[Attack.Raw].Should().Be(0);
+	}
+
+	[Fact]
+	public void GetItemSkillAttributes_SecondSetInHand_CountsItsWeaponsSkills()
+	{
+		var sum = this._service.GetItemSkillAttributes(this.GrantingEquipment(), useAlternate: true, includeBuffs: false);
+
+		sum[DefenseMastery.Raw].Should().Be(7);
+	}
 }

@@ -191,11 +191,16 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 		this.TrackGear(input);
 		this.GearSum ??= this._service.GetGearAttributes(Equipment(input), input.Player.UseAlternate);
 
-		// The sum of the skills is kept until a point, an item bonus or the buffs option changes.
+		// The sum of the skills, with the ones the items grant, is kept until a point, the equipment or the buffs option
+		// changes.
 		var key = (input.IncludeBuffs ? "+" : "-") + this._gearKey + "|"
 			+ string.Join(";", input.Skills.Select(r => r.skillName + "=" + r.skillLevel.ToString(CultureInfo.InvariantCulture)));
 		if (this._skillSum?.Key != key)
-			this._skillSum = (key, this._service.GetSkillAttributes(input.Skills, input.Augments, input.Trees, input.IncludeBuffs));
+		{
+			var skills = this._service.GetSkillAttributes(input.Skills, input.Augments, input.Trees, input.IncludeBuffs);
+			skills.Add(this._service.GetItemSkillAttributes(Equipment(input), input.Player.UseAlternate, input.IncludeBuffs));
+			this._skillSum = (key, skills);
+		}
 
 		return CharacterStatsCalculator.Compute(new CharacterStatsInput(
 			input.Attributes[CharacterPanelInput.Strength], input.Attributes[CharacterPanelInput.Dexterity], input.Attributes[CharacterPanelInput.Intelligence], this.GearSum, this._skillSum.Value.Sum, Math.Clamp(input.Difficulty, 0, CharacterPanelLayout.Legendary), this._service.GetGameBalance()));

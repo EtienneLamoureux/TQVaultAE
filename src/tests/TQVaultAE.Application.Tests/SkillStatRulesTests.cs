@@ -68,4 +68,13 @@ public class SkillStatRulesTests
 
 		SkillStatRules.EffectiveLevel(1, QuestSkill, null, augments).Should().Be(3);
 	}
+
+	[Fact]
+	public void ItemSkills_SameSkillFromTwoItems_CountsOnceAtTheHigherLevel()
+	{
+		(RecordId, int)[] granted = [(IceShard, 2), (QuestSkill, 1), (IceShard, 5), (StormMastery, 0)];
+
+		SkillStatRules.ItemSkills(granted).Should().BeEquivalentTo([(IceShard, 5), (QuestSkill, 1)],
+			"the game gives the character each granted skill once; a level 0 grants nothing");
+	}
 }

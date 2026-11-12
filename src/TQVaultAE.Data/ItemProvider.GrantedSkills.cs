@@ -21,8 +21,7 @@ public partial class ItemProvider
 		var skills = new List<GrantedSkill>();
 		foreach (var (source, skillId) in this.GrantedSkillSources(itm))
 		{
-			int level = Math.Max(source.GetInt32("itemSkillLevel", 0), 1);
-			if (this.GetGrantedSkill(itm, skillId, level, source.GetString("itemSkillAutoController", 0)) is { } skill)
+			if (this.GetGrantedSkill(itm, skillId, GrantedLevel(source), source.GetString("itemSkillAutoController", 0)) is { } skill)
 				skills.Add(skill);
 		}
 
@@ -56,6 +55,16 @@ public partial class ItemProvider
 
 		return names;
 	}
+
+	/// <inheritdoc/>
+	public IReadOnlyList<(RecordId SkillId, int Level)> GetGrantedSkillLevels(Item itm)
+	{
+		using var modScope = this.ModScope(itm);
+		return [.. this.GrantedSkillSources(itm).Select(s => (s.SkillId, GrantedLevel(s.Source)))];
+	}
+
+	/// <summary>The level a record grants its skill at (<c>itemSkillLevel</c>), at least 1.</summary>
+	private static int GrantedLevel(DBRecordCollection source) => Math.Max(source.GetInt32("itemSkillLevel", 0), 1);
 
 	/// <summary>
 	/// The records of an item that grant a skill (<c>itemSkillName</c>): its base, its affixes, its relics and their

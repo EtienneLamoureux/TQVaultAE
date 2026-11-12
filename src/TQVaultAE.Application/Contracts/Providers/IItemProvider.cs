@@ -162,6 +162,12 @@ public interface IItemProvider
 	/// </summary>
 	IReadOnlyList<string> GetGrantedSkillNames(Item itm);
 	/// <summary>
+	/// The skills the item grants with their level (<c>itemSkillName</c> at <c>itemSkillLevel</c>, at least 1), from its
+	/// base record, its affixes, its relics and their completion bonuses, hidden helper skills included: what the game
+	/// gives the character who wears it.
+	/// </summary>
+	IReadOnlyList<(RecordId SkillId, int Level)> GetGrantedSkillLevels(Item itm);
+	/// <summary>
 	/// Describes a skill at a level as the item tooltips describe a granted skill: name, icon, description and its effects
 	/// at that level (a buff skill takes them from its buff record, a pet skill from its pet).
 	/// </summary>
