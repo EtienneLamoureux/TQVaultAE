@@ -257,8 +257,9 @@ public class ItemTooltipContentBuilder
 		if (this.ExpansionClause(item) is { } clause)
 			lines.Add(TooltipLine.Of(clause, TQColor.Green));
 
-		// The mod the item is linked to, last of the seed section
-		if (item.Mod is { } mod)
+		// The mod the item is linked to, last of the seed section: its name, not the identity key that also holds its
+		// source ("name|workshop:id").
+		if (ModIdentity.NameOf(item.Mod) is { } mod)
 			lines.Add(TooltipLine.Of(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.ItemModLine, mod), ModColor));
 
 		// ItemSet

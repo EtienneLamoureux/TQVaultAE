@@ -99,6 +99,18 @@ public class ItemTooltipContentBuilderTests
 		lines[1].Text.Should().NotContain("shadowchampions");
 	}
 
+	[Fact]
+	public void Build_ItemLinkedToAModWithItsSource_NamesTheModOnly()
+	{
+		var data = Sword();
+		data.Item.Mod = "shadowchampions|workshop:1949340853";
+
+		var lines = this._builder.Build(data, ItemTooltipView.Classic).Lines;
+
+		lines.Should().Contain(l => l.Text == string.Format(TQVaultAE.Presentation.Resources.ItemModLine, "shadowchampions"));
+		lines.Should().NotContain(l => l.Text.Contains("workshop", StringComparison.Ordinal));
+	}
+
 	[Theory]
 	[InlineData(Item.ICLASS_RING)]
 	[InlineData(Item.ICLASS_AMULET)]
