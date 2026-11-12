@@ -84,16 +84,16 @@ The workflow requires a Personal Access Token to push commits and create tags on
 
 | Project | Path |
 |---------|------|
-| TQVaultAE.Domain.Tests | src/TQVaultAE.Domain.Tests/TQVaultAE.Domain.Tests.csproj |
-| TQVaultAE.Application.Tests | src/TQVaultAE.Application.Tests/TQVaultAE.Application.Tests.csproj |
-| TQVaultAE.Config.Tests | src/TQVaultAE.Config.Tests/TQVaultAE.Config.Tests.csproj |
-| TQVaultAE.Data.Tests | src/TQVaultAE.Data.Tests/TQVaultAE.Data.Tests.csproj |
-| TQVaultAE.Services.Tests | src/TQVaultAE.Services.Tests/TQVaultAE.Services.Tests.csproj |
-| TQVaultAE.Services.Git.Tests | src/TQVaultAE.Services.Git.Tests/TQVaultAE.Services.Git.Tests.csproj |
-| TQVaultAE.Presentation.Tests | src/TQVaultAE.Presentation.Tests/TQVaultAE.Presentation.Tests.csproj |
-| TQVaultAE.DbCli.Tests | src/TQVaultAE.DbCli.Tests/TQVaultAE.DbCli.Tests.csproj |
-| TQVaultAE.Logs.Tests | src/TQVaultAE.Logs.Tests/TQVaultAE.Logs.Tests.csproj |
-| TQVaultAE.Tests.Win32 | src/TQVaultAE.Tests.Win32/TQVaultAE.Tests.Win32.csproj |
+| TQVaultAE.Domain.Tests | src/tests/TQVaultAE.Domain.Tests/TQVaultAE.Domain.Tests.csproj |
+| TQVaultAE.Application.Tests | src/tests/TQVaultAE.Application.Tests/TQVaultAE.Application.Tests.csproj |
+| TQVaultAE.Config.Tests | src/tests/TQVaultAE.Config.Tests/TQVaultAE.Config.Tests.csproj |
+| TQVaultAE.Data.Tests | src/tests/TQVaultAE.Data.Tests/TQVaultAE.Data.Tests.csproj |
+| TQVaultAE.Services.Tests | src/tests/TQVaultAE.Services.Tests/TQVaultAE.Services.Tests.csproj |
+| TQVaultAE.Services.Git.Tests | src/tests/TQVaultAE.Services.Git.Tests/TQVaultAE.Services.Git.Tests.csproj |
+| TQVaultAE.Presentation.Tests | src/tests/TQVaultAE.Presentation.Tests/TQVaultAE.Presentation.Tests.csproj |
+| TQVaultAE.DbCli.Tests | src/tests/TQVaultAE.DbCli.Tests/TQVaultAE.DbCli.Tests.csproj |
+| TQVaultAE.Logs.Tests | src/tests/TQVaultAE.Logs.Tests/TQVaultAE.Logs.Tests.csproj |
+| TQVaultAE.Tests.Win32 | src/tests/TQVaultAE.Tests.Win32/TQVaultAE.Tests.Win32.csproj |
 
 ## Why This Build Strategy?
 

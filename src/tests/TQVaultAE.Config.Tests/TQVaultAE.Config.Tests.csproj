@@ -3,12 +3,12 @@
 	<Import Project="..\TestProject.props" />
 
 	<ItemGroup>
-		<ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj" />
+		<ProjectReference Include="..\..\TQVaultAE.Config\TQVaultAE.Config.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<!-- The UserConfig.xml template shipped with the app, under another name so that UserSettings.Read() does not find it. -->
-		<None Include="..\TQVaultAE.Config\UserConfig.xml" Link="Config\UserConfig.template.xml" CopyToOutputDirectory="PreserveNewest" />
+		<None Include="..\..\TQVaultAE.Config\UserConfig.xml" Link="Config\UserConfig.template.xml" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
 </Project>

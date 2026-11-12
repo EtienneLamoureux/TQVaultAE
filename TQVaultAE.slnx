@@ -47,14 +47,18 @@
   <Project Path="src\TQVaultAE.Presentation.Win32\TQVaultAE.Presentation.Win32.csproj" />
   <Project Path="src\TQVaultAE.Services.Win32\TQVaultAE.Services.Win32.csproj" />
   <Project Path="src\TQVaultAE.Services\TQVaultAE.Services.csproj" />
-  <Project Path="src\TQVaultAE.Domain.Tests\TQVaultAE.Domain.Tests.csproj" />
-  <Project Path="src\TQVaultAE.Application.Tests\TQVaultAE.Application.Tests.csproj" />
-  <Project Path="src\TQVaultAE.Config.Tests\TQVaultAE.Config.Tests.csproj" />
-  <Project Path="src\TQVaultAE.Data.Tests\TQVaultAE.Data.Tests.csproj" />
-  <Project Path="src\TQVaultAE.Services.Tests\TQVaultAE.Services.Tests.csproj" />
-  <Project Path="src\TQVaultAE.Services.Git.Tests\TQVaultAE.Services.Git.Tests.csproj" />
-  <Project Path="src\TQVaultAE.Presentation.Tests\TQVaultAE.Presentation.Tests.csproj" />
-  <Project Path="src\TQVaultAE.DbCli.Tests\TQVaultAE.DbCli.Tests.csproj" />
-  <Project Path="src\TQVaultAE.Logs.Tests\TQVaultAE.Logs.Tests.csproj" />
-  <Project Path="src\TQVaultAE.Tests.Win32\TQVaultAE.Tests.Win32.csproj" />
+  <Folder Name="/tests/" Id="tests-folder">
+    <File Path="src\tests\TestProject.props" />
+    <File Path="src\tests\testconfig.json" />
+    <Project Path="src\tests\TQVaultAE.Domain.Tests\TQVaultAE.Domain.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.Application.Tests\TQVaultAE.Application.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.Config.Tests\TQVaultAE.Config.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.Data.Tests\TQVaultAE.Data.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.Services.Tests\TQVaultAE.Services.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.Services.Git.Tests\TQVaultAE.Services.Git.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.Presentation.Tests\TQVaultAE.Presentation.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.DbCli.Tests\TQVaultAE.DbCli.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.Logs.Tests\TQVaultAE.Logs.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.Tests.Win32\TQVaultAE.Tests.Win32.csproj" />
+  </Folder>
 </Solution>

@@ -3,9 +3,9 @@
 	<Import Project="..\TestProject.props" />
 
 	<ItemGroup>
-		<ProjectReference Include="..\TQVaultAE.Data\TQVaultAE.Data.csproj" />
+		<ProjectReference Include="..\..\TQVaultAE.Data\TQVaultAE.Data.csproj" />
 		<!-- The real file wrappers (PathIO, FileIO, DirectoryIO) of the tests that read files. -->
-		<ProjectReference Include="..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
+		<ProjectReference Include="..\..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

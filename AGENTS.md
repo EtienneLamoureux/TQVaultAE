@@ -20,7 +20,7 @@ dotnet restore
 
 The tests use xunit v3 on Microsoft.Testing.Platform (selected in `global.json`): `dotnet test` takes `--solution` or `--project`, and filters are xunit options.
 
-There is one test project per layer, `src/TQVaultAE.<Layer>.Tests`, plus `src/TQVaultAE.Tests.Win32` for the
+There is one test project per layer, `src/tests/TQVaultAE.<Layer>.Tests`, plus `src/tests/TQVaultAE.Tests.Win32` for the
 Windows-only projects. To check a change, run the test projects of the layers it touches, not the whole solution:
 
 | Changed project | Test project to run |
@@ -35,7 +35,7 @@ Windows-only projects. To check a change, run the test projects of the layers it
 | TQVaultAE.Logs | TQVaultAE.Logs.Tests |
 | TQVaultAE.Presentation.Win32, TQVaultAE.Services.Win32, ARZExplorer, TQSaveFilesExplorer | TQVaultAE.Tests.Win32 |
 
-The test projects share their settings through `src/TestProject.props`. A lower layer's change can break the tests of
+The test projects share their settings through `src/tests/TestProject.props`. A lower layer's change can break the tests of
 the layers above it: run the whole solution before a commit that changes a shared API.
 
 ```bash
@@ -43,20 +43,20 @@ the layers above it: run the whole solution before a commit that changes a share
 dotnet test --solution TQVaultAE.slnx
 
 # Run the tests of one layer
-dotnet test --project src/TQVaultAE.Services.Tests
+dotnet test --project src/tests/TQVaultAE.Services.Tests
 
 # Run single test class
-dotnet test --project src/TQVaultAE.Services.Tests --filter-class "*TagServiceTests"
+dotnet test --project src/tests/TQVaultAE.Services.Tests --filter-class "*TagServiceTests"
 
 # Run single test method
-dotnet test --project src/TQVaultAE.Services.Tests --filter-method "*TagServiceTests.AddTag_WithNewTagName_ReturnsTrue"
+dotnet test --project src/tests/TQVaultAE.Services.Tests --filter-method "*TagServiceTests.AddTag_WithNewTagName_ReturnsTrue"
 
-# Run with coverage (coverlet.MTP, written to TestResults/; src/testconfig.json limits it to our assemblies)
+# Run with coverage (coverlet.MTP, written to TestResults/; src/tests/testconfig.json limits it to our assemblies)
 dotnet test --solution TQVaultAE.slnx --coverlet --coverlet-output-format opencover
 
 # Build before testing
-dotnet build src/TQVaultAE.Services.Tests/TQVaultAE.Services.Tests.csproj --configuration Debug
-dotnet test --project src/TQVaultAE.Services.Tests --no-build
+dotnet build src/tests/TQVaultAE.Services.Tests/TQVaultAE.Services.Tests.csproj --configuration Debug
+dotnet test --project src/tests/TQVaultAE.Services.Tests --no-build
 ```
 
 ## Code Style
@@ -163,7 +163,7 @@ Keep `System.Drawing` (except `Color`, `Point`, `Size`, `Rectangle`) and other W
 5. Add tests with meaningful assertions
 
 ### Adding a Test
-1. Create test class in the test project of the tested class's layer: `src/TQVaultAE.<Layer>.Tests/<Name>Tests.cs`
+1. Create test class in the test project of the tested class's layer: `src/tests/TQVaultAE.<Layer>.Tests/<Name>Tests.cs`
 2. Mock all dependencies in constructor
 3. Follow Arrange-Act-Assert pattern
 4. Verify actual behavior, not property assignments

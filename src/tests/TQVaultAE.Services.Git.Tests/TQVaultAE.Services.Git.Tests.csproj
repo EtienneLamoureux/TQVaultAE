@@ -5,7 +5,7 @@
 	<Import Project="..\TestProject.props" />
 
 	<ItemGroup>
-		<ProjectReference Include="..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
+		<ProjectReference Include="..\..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
 	</ItemGroup>
 
 </Project>
