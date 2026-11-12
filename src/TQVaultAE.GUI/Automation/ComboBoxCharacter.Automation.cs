@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using TQVaultAE.Application;
+using TQVaultAE.GUI.Components.Panels;
 
 namespace TQVaultAE.GUI.Components.Character;
 
@@ -74,5 +75,16 @@ public partial class ComboBoxCharacter
 		}
 
 		return this.DropDown;
+	}
+
+	/// <summary>
+	/// Draws the menu of the tools button next to the character list as it opens for the selected character (Archived
+	/// tick, tags and their ticks), with the sub menus along <paramref name="open"/>; nothing is clicked.
+	/// </summary>
+	internal Bitmap AutomationRenderMenu(IReadOnlyList<string> open)
+	{
+		this.RefreshMenuTagList();
+		this.RefreshContent();
+		return AutomationMenus.Render(this.contextMenuStrip, open);
 	}
 }

@@ -645,9 +645,9 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "capture_menu", ReadOnly = true)]
-	[Description("Opens a menu like the user and renders it to PNG with the sub menus opened along 'open' (' > ' between levels, e.g. 'Modded'), drawn to the right level with their entry, then closes it without choosing anything. Target: 'vaultTools' for the vault tools button next to the vault list, or a panel id with x and y for the right-click menu of that cell.")]
+	[Description("Opens a menu like the user and renders it to PNG with the sub menus opened along 'open' (' > ' between levels, e.g. 'Modded'), drawn to the right level with their entry, then closes it without choosing anything. Target: 'vaultTools' for the vault tools button next to the vault list, 'characterTools' for the tools button next to the character list (as it opens for the selected character), or a panel id with x and y for the right-click menu of that cell.")]
 	public static IEnumerable<ContentBlock> CaptureMenu(
-		[Description("'vaultTools', or a panel id.")] string target,
+		[Description("'vaultTools', 'characterTools', or a panel id.")] string target,
 		[Description("Cell column, for a panel.")] int x = 0,
 		[Description("Cell row, for a panel.")] int y = 0,
 		[Description("Sub menus to open, texts separated by ' > '; empty for the menu alone.")] string? open = null)
@@ -659,6 +659,8 @@ internal static partial class AutomationTools
 			{
 				using var bitmap = string.Equals(target, "vaultTools", StringComparison.OrdinalIgnoreCase)
 					? form.AutomationRenderVaultMenu(path)
+					: string.Equals(target, "characterTools", StringComparison.OrdinalIgnoreCase)
+					? form.AutomationCharacterCombo.AutomationRenderMenu(path)
 					: AutomationPanels.Resolve(form, target).Panel.AutomationRenderContextMenu(new Point(x, y), path);
 				using var stream = new MemoryStream();
 				bitmap.Save(stream, ImageFormat.Png);
