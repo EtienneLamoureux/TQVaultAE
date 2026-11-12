@@ -40,11 +40,33 @@ public class ScalingLabel : Label, IScalingControl
 	}
 
 	/// <summary>
-	/// Draws disabled light text dimmed instead of the system dark gray, which is not readable on the dark UI.
+	/// Gets or sets a value indicating whether the text has a drop shadow: a dark copy one pixel lower right, which keeps
+	/// light text readable over a textured background.
+	/// </summary>
+	[System.ComponentModel.DefaultValue(false)]
+	public bool TextShadow
+	{
+		get => this.textShadow;
+		set
+		{
+			this.textShadow = value;
+			this.Invalidate();
+		}
+	}
+
+	private bool textShadow;
+
+	/// <summary>The color of the drop shadow.</summary>
+	private static readonly Color ShadowColor = Color.FromArgb(20, 12, 6);
+
+	/// <summary>
+	/// Draws disabled light text dimmed instead of the system dark gray, which is not readable on the dark UI, and the
+	/// drop shadow under the text when <see cref="TextShadow"/> is set.
 	/// </summary>
 	protected override void OnPaint(PaintEventArgs e)
 	{
-		if (this.Enabled || this.Image is not null || !DisabledTextPainter.Applies(this.ForeColor)) {
+		bool dimmed = !this.Enabled && DisabledTextPainter.Applies(this.ForeColor);
+		if (this.Image is not null || (!dimmed && !this.TextShadow)) {
 			base.OnPaint(e);
 			return;
 		}
@@ -64,7 +86,15 @@ public class ScalingLabel : Label, IScalingControl
 			client.Width - this.Padding.Horizontal,
 			client.Height - this.Padding.Vertical);
 
-		TextRenderer.DrawText(e.Graphics, this.Text, this.Font, bounds, DisabledTextPainter.ColorFor(this.ForeColor), flags);
+		if (this.TextShadow)
+		{
+			var shadow = bounds;
+			shadow.Offset(1, 1);
+			TextRenderer.DrawText(e.Graphics, this.Text, this.Font, shadow, ShadowColor, flags);
+		}
+
+		var color = dimmed ? DisabledTextPainter.ColorFor(this.ForeColor) : this.ForeColor;
+		TextRenderer.DrawText(e.Graphics, this.Text, this.Font, bounds, color, flags);
 	}
 
 	private static TextFormatFlags AlignmentFlags(ContentAlignment alignment)

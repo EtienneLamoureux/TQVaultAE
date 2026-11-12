@@ -51,9 +51,14 @@ public partial class SearchDialogAdvanced : VaultForm
 
 		this.InitializeComponent();
 		MarbleBackground.ApplyTo(this);
-		// The marble shows between the framed boxes, which keep their dark background.
+		// The marble shows behind every panel, around the dark lists; the labels over it get a drop shadow.
 		this.tableLayoutPanelContent.BackColor = Color.Transparent;
 		this.tableLayoutPanelBottom.BackColor = Color.Transparent;
+		this.ProcessAllControls(c =>
+		{
+			if (c is ScalingLabel label)
+				label.TextShadow = true;
+		});
 
 		this.MinimizeBox = false;
 		this.NormalizeBox = false;
