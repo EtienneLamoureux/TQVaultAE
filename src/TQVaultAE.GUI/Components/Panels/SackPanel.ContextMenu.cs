@@ -6,6 +6,7 @@
 
 using System.Collections.ObjectModel;
 using System.Globalization;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
@@ -470,11 +471,17 @@ public partial class SackPanel
 	private void ChangeModItemClicked(string? mod)
 	{
 		Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
-		if (focusedItem is null || !this.Services.ItemEditService.ChangeMod(this.ShownSack, focusedItem, mod
-			, this.HasRoomOnceReadAgain))
-		{
+		if (focusedItem is null)
 			return;
-		}
+
+		// Read with the chosen map, the item may take another size: without room in this tab, the choice is refused
+		// and the user moves the item to another tab first (MODLINK.md).
+		var outcome = this.Services.ItemEditService.ChangeMod(this.ShownSack, focusedItem, mod, this.HasRoomOnceReadAgain);
+		if (outcome == ModChoiceOutcome.NoRoom)
+			this.NotifyNoRoomInTab(focusedItem, Resources.ModChoiceNoRoomInTab);
+
+		if (outcome != ModChoiceOutcome.Changed)
+			return;
 
 		ItemTooltip.HideTooltip();
 		this.InvalidateItemCacheAll(focusedItem);

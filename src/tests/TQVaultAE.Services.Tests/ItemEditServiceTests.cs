@@ -398,7 +398,7 @@ public class ItemEditServiceTests
 	{
 		var item = Placed("records/ring.dbr", null, ModOrigin.Inherited);
 
-		this._service.ChangeMod(this._sack, item, "shadowchampions").Should().BeTrue();
+		this._service.ChangeMod(this._sack, item, "shadowchampions").Should().Be(ModChoiceOutcome.Changed);
 
 		(item.Mod, item.ModOrigin).Should().Be(("shadowchampions", ModOrigin.Own));
 		item.IsModified.Should().BeTrue();
@@ -407,17 +407,18 @@ public class ItemEditServiceTests
 	}
 
 	[Fact]
-	public void ChangeMod_ItemNoLongerFits_UndoesTheChoice()
+	public void ChangeMod_ItemNoLongerFits_RefusesTheChoice()
 	{
 		// Arrange: read with the mod's data the item takes another size, and its container has no room for it
 		var item = Placed("records/ring.dbr", null, ModOrigin.Inherited);
 		this._sack.IsModified = false;
 
 		// Act
-		var changed = this._service.ChangeMod(this._sack, item, "shadowchampions", _ => false);
+		var outcome = this._service.ChangeMod(this._sack, item, "shadowchampions", _ => false);
 
-		// Assert: nothing to save, and the item is read again with the map it had
-		changed.Should().BeFalse();
+		// Assert: refused for want of room (the user is told to use another tab), nothing to save, and the item is read
+		// again with the map it had
+		outcome.Should().Be(ModChoiceOutcome.NoRoom);
 		(item.Mod, item.ModOrigin).Should().Be(((string?)null, ModOrigin.Inherited));
 		this._sack.IsModified.Should().BeFalse();
 		this._itemProvider.Verify(p => p.GetDBData(item), Times.Exactly(2));
@@ -428,7 +429,7 @@ public class ItemEditServiceTests
 	{
 		var item = Placed("records/ring.dbr", "shadowchampions", ModOrigin.Own);
 
-		this._service.ChangeMod(this._sack, item, "ShadowChampions").Should().BeFalse();
+		this._service.ChangeMod(this._sack, item, "ShadowChampions").Should().Be(ModChoiceOutcome.Unchanged);
 
 		this._sack.IsModified.Should().BeFalse();
 		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
@@ -439,7 +440,7 @@ public class ItemEditServiceTests
 	{
 		var item = Placed("records/ring.dbr", "shadowchampions", ModOrigin.Inherited);
 
-		this._service.ChangeMod(this._sack, item, "shadowchampions").Should().BeTrue();
+		this._service.ChangeMod(this._sack, item, "shadowchampions").Should().Be(ModChoiceOutcome.Changed);
 
 		item.ModOrigin.Should().Be(ModOrigin.Own);
 		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
@@ -456,7 +457,7 @@ public class ItemEditServiceTests
 		vault.Sacks = [sack];
 
 		// Act: the base game is chosen for it, then the vault is linked to another mod
-		this._service.ChangeMod(sack, item, null).Should().BeTrue();
+		this._service.ChangeMod(sack, item, null).Should().Be(ModChoiceOutcome.Changed);
 		var change = this._service.ChangeVaultMod(vault, "shadowchampions");
 
 		// Assert
@@ -593,6 +594,48 @@ public class ItemEditServiceTests
 
 		(item.Mod, item.ModOrigin).Should().Be(((string?)null, ModOrigin.Own));
 		this._itemProvider.Verify(p => p.GetDBData(item), Times.Exactly(2));
+	}
+
+	[Fact]
+	public void HasRoomOnceSettled_TakingANewMap_ChecksAtTheNewSize_AndLeavesTheItemAsItWas()
+	{
+		// Arrange: read with the mod's data, the 1x1 tile becomes a 1x5 lance
+		var item = Placed("records/customitems/lance.dbr", null, ModOrigin.Inherited);
+		item.PositionX = 2;
+		this._itemProvider.Setup(p => p.GetDBData(item)).Callback<Item>(i => i.Height = i.Mod == "shadowchampions" ? 5 : 1);
+		int? checkedHeight = null;
+
+		// Act
+		var room = this._service.HasRoomOnceSettled(item, inVault: true, "shadowchampions", i => { checkedHeight = i.Height; return false; });
+
+		// Assert
+		room.Should().BeFalse();
+		checkedHeight.Should().Be(5);
+		(item.Mod, item.ModOrigin, item.Height, item.PositionX, item.IsModified).Should().Be(((string?)null, ModOrigin.Inherited, 1, 2, false));
+	}
+
+	[Fact]
+	public void HasRoomOnceSettled_RoomAtTheNewSize_IsTrue()
+	{
+		var item = Placed("records/customitems/lance.dbr", null, ModOrigin.Inherited);
+
+		this._service.HasRoomOnceSettled(item, inVault: false, "shadowchampions", _ => true).Should().BeTrue();
+
+		(item.Mod, item.ModOrigin).Should().Be(((string?)null, ModOrigin.Inherited));
+	}
+
+	[Theory]
+	[InlineData("Lilith", ModOrigin.Own, true, true, "shadowchampions")]
+	[InlineData("shadowchampions", ModOrigin.Inherited, false, true, null)]
+	[InlineData("shadowchampions", ModOrigin.Inherited, false, false, "ShadowChampions")]
+	public void HasRoomOnceSettled_ItemKeepingItsData_IsNotChecked(string mod, ModOrigin origin, bool itemInVault, bool toVault, string? containerMod)
+	{
+		// An own map, an item leaving a character for a vault, the same map: the item keeps its data and size.
+		var item = Placed("records/item/sword.dbr", mod, origin, itemInVault);
+
+		this._service.HasRoomOnceSettled(item, toVault, containerMod, _ => false).Should().BeTrue();
+
+		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
 	}
 
 	[Fact]

@@ -2080,6 +2080,12 @@ You still have to close TQVaultAE to apply your changes.
   <data name="ModMapKeptNoRoom" xml:space="preserve">
     <value>Read with its new map, an item had no room in its container: it keeps its previous map, as its own. {0}</value>
   </data>
+  <data name="ModDropNoRoomInTab" xml:space="preserve">
+    <value>Read with the data of its map here, {0} has no room in this tab: drop it in another tab.</value>
+  </data>
+  <data name="ModChoiceNoRoomInTab" xml:space="preserve">
+    <value>Read with the data of that map, {0} would have no room in this tab: move it to another tab first.</value>
+  </data>
   <data name="ImportDroppedMods" xml:space="preserve">
     <value>These mods are not installed: their links were dropped and the items take their vault's map. Install the mod, then link the vault or the items (Modded). {0}</value>
   </data>

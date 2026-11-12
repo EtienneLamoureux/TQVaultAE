@@ -131,6 +131,14 @@ public partial class SackPanel
 				return;
 			}
 
+			// Read with the map it takes here, the item may take another size: without room for it in this tab, the
+			// drop is refused and the item stays in hand; the user drops it in another tab (MODLINK.md).
+			if (!this.HasRoomForDrop(dragItem, itemUnderUs))
+			{
+				this.NotifyNoRoomInTab(dragItem, Resources.ModDropNoRoomInTab);
+				return;
+			}
+
 			// Notify that the item has been placed.  This will remove it from the old sack
 			this.DragInfo.MarkPlaced();
 
@@ -146,7 +154,7 @@ public partial class SackPanel
 
 			// The item takes its map here (MODLINK.md): an own map goes with it, leaving a character for a vault makes it
 			// its own, else it inherits the container's. Read with a new map, it may take its real size: where it was
-			// dropped, else at a free spot of the bag, else it keeps its previous map.
+			// dropped, else at a free spot of the bag (checked before the drop), else it keeps its previous map.
 			if (!drop.Stacked)
 			{
 				var outcome = this.Services.ItemEditService.SettleIn(dragItem, this.HoldsVault?.Invoke() ?? false, this.ContainerMap

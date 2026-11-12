@@ -5807,6 +5807,24 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Read with the data of its map here, {0} has no room in this tab: drop it in another tab..
+        /// </summary>
+        public static string ModDropNoRoomInTab {
+            get {
+                return ResourceManager.GetString("ModDropNoRoomInTab", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Read with the data of that map, {0} would have no room in this tab: move it to another tab first..
+        /// </summary>
+        public static string ModChoiceNoRoomInTab {
+            get {
+                return ResourceManager.GetString("ModChoiceNoRoomInTab", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to These mods are not installed: their links were dropped and the items take their vault's map. Install the mod, then link the vault or the items (Modded). {0}.
         /// </summary>
         public static string ImportDroppedMods {

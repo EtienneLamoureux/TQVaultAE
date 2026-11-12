@@ -107,4 +107,37 @@ public class SackLayoutTests
 
 		(item.PositionX, item.PositionY).Should().Be((2, 1));
 	}
+
+	[Theory]
+	[InlineData(3, 0)]   // room at the cell
+	[InlineData(0, 0)]   // over the neighbour: a free spot in column 3
+	public void HasRoomAt_RoomAtTheCellOrAFreeSpot_LeavesTheItemWhereItWas(int x, int y)
+	{
+		// Arrange: an item held elsewhere (not in the sack), 1x3; the sack has a 3x3 block
+		var item = Item(9, 9, 1, 3);
+		var sack = Sack(Item(0, 0, 3, 3));
+
+		// Act and assert
+		SackLayout.HasRoomAt(sack, Grid, item, new Point(x, y)).Should().BeTrue();
+		(item.PositionX, item.PositionY).Should().Be((9, 9));
+	}
+
+	[Fact]
+	public void HasRoomAt_NoRoomInTheSack_IsFalse()
+	{
+		var item = Item(9, 9, 2, 3);
+		var sack = Sack(Item(0, 0, 3, 3));
+
+		SackLayout.HasRoomAt(sack, Grid, item, new Point(2, 0)).Should().BeFalse();
+		(item.PositionX, item.PositionY).Should().Be((9, 9));
+	}
+
+	[Fact]
+	public void HasRoomAt_OverTheItemASwapPicksUp_IsTrue()
+	{
+		var leaving = Item(0, 0, 4, 3);
+		var item = Item(9, 9, 2, 2);
+
+		SackLayout.HasRoomAt(Sack(leaving), Grid, item, new Point(0, 0), leaving).Should().BeTrue();
+	}
 }

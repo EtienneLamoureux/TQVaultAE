@@ -106,11 +106,11 @@ public interface IItemEditService
 	/// <param name="item">The item to change.</param>
 	/// <param name="modName">The mod's name (<c>InstalledMod.Name</c>); null for the base game.</param>
 	/// <param name="fits">Whether the item, read again (it may take another size), still has room in its container; it
-	/// may move the item to a free spot. When it answers no, the choice is undone. Null when the size cannot
-	/// matter.</param>
-	/// <returns><see langword="true"/> when the item's map changed (the item and the sack are then marked as
-	/// modified).</returns>
-	bool ChangeMod(SackCollection sack, Item item, string? modName, Func<Item, bool>? fits = null);
+	/// may move the item to a free spot. When it answers no, the choice is refused: the item keeps its map. Null when
+	/// the size cannot matter.</param>
+	/// <returns><see cref="ModChoiceOutcome.Changed"/> when the item's map changed (the item and the sack are then
+	/// marked as modified).</returns>
+	ModChoiceOutcome ChangeMod(SackCollection sack, Item item, string? modName, Func<Item, bool>? fits = null);
 
 	/// <summary>Links a vault to a mod, or to none: its items inheriting its map take the new one and are read again
 	/// with that data; items with an own map keep it.</summary>
@@ -133,6 +133,16 @@ public interface IItemEditService
 	/// spot, where it moves it. When not, the item keeps its previous map, as its own.</param>
 	/// <returns>What happened to the item's data.</returns>
 	SettleOutcome SettleIn(Item item, bool inVault, string? containerMod, Func<Item, bool> fits);
+
+	/// <summary>Whether an item about to be put in a container would have room there once it takes its map
+	/// (<see cref="SettleIn"/>): read with a new map it may take another size. The item is left as it was, with its
+	/// data and position.</summary>
+	/// <param name="item">The item about to be placed.</param>
+	/// <param name="inVault">Whether a vault would hold it.</param>
+	/// <param name="containerMod">The map of the container; null for the base game.</param>
+	/// <param name="fits">Whether the item, at the size of its new map, has room; it must not keep a move.</param>
+	/// <returns><see langword="true"/> when the item keeps its data there, or has room with the new ones.</returns>
+	bool HasRoomOnceSettled(Item item, bool inVault, string? containerMod, Func<Item, bool> fits);
 
 	/// <summary>
 	/// Items put in a bag without a drop (Move To, import, paste) take their map there like dropped ones
@@ -162,6 +172,19 @@ public enum SettleOutcome
 
 	/// <summary>Read with the new map, the item had no room: it kept its previous map, as its own.</summary>
 	KeptOwnMap,
+}
+
+/// <summary>What <see cref="IItemEditService.ChangeMod"/> did with the map chosen for an item.</summary>
+public enum ModChoiceOutcome
+{
+	/// <summary>The item already had that map as its own.</summary>
+	Unchanged,
+
+	/// <summary>The item took the chosen map as its own.</summary>
+	Changed,
+
+	/// <summary>Read with the chosen map, the item would have had no room in its container: it keeps its map.</summary>
+	NoRoom,
 }
 
 /// <summary>The items <see cref="IItemEditService.SettleAll"/> read again, and those that kept their map.</summary>

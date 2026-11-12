@@ -130,12 +130,14 @@ always shown with its map's data, so it is placed again when it no longer fits w
 
 | Event | Where it goes | No room at all |
 |---|---|---|
-| Drop by hand | where it was dropped, else the first free spot of the tab | it keeps its previous map, as its own, and a message names it |
-| *Move Item To*, import, paste, a vault's link changed | where it lies, else the first free spot of its tab, else of the vault's other tabs, in order | the same |
-| *Modded* choice | where it lies, else the first free spot of its tab | the choice is undone |
+| Drop by hand | where it was dropped, else the first free spot of the tab | the drop is refused: the item stays in hand, and a message invites the user to drop it in another tab |
+| *Move Item To*, import, paste, a vault's link changed | where it lies, else the first free spot of its tab, else of the vault's other tabs, in order | it keeps its previous map, as its own, and a message names it |
+| *Modded* choice | where it lies, else the first free spot of its tab | the choice is refused, and a message invites the user to move the item to another tab first |
 
-The free spot search goes row by row (`SackLayout.FitsOrMoves`). Every item read with a new map has its tooltip, its
-names and its search entry made again.
+A drop by hand and a *Modded* choice never move the item to another tab: the user chooses the tab. A drop is checked
+before anything changes (`IItemEditService.HasRoomOnceSettled`, `SackLayout.HasRoomAt`): the item is read with the map
+it would take, then with its own again. The free spot search goes row by row (`SackLayout.FitsOrMoves`). Every item
+read with a new map has its tooltip, its names and its search entry made again.
 
 ### In the files
 

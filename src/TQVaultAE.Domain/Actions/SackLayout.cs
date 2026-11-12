@@ -55,4 +55,22 @@ public static class SackLayout
 	/// </summary>
 	public static bool FitsOrMoves(SackCollection sack, Size sackSize, Item item)
 		=> Fits(sack, sackSize, item) || MoveToFreeSpot(sack, sackSize, item);
+
+	/// <summary>
+	/// True when the item, put at a cell of the sack, would have room: there, or at a free spot of the grid. The item
+	/// is left where it was.
+	/// </summary>
+	/// <param name="sack">The sack the item would go to.</param>
+	/// <param name="sackSize">The size of the sack's grid, in cells.</param>
+	/// <param name="item">The item, at its size.</param>
+	/// <param name="cell">The cell it would be put at.</param>
+	/// <param name="leaving">An item of the sack to ignore at that cell: the one a swap drop is about to pick up.</param>
+	public static bool HasRoomAt(SackCollection sack, Size sackSize, Item item, Point cell, Item? leaving = null)
+	{
+		var (x0, y0) = (item.PositionX, item.PositionY);
+		(item.PositionX, item.PositionY) = (cell.X, cell.Y);
+		bool room = Fits(sack, sackSize, item, leaving) || MoveToFreeSpot(sack, sackSize, item);
+		(item.PositionX, item.PositionY) = (x0, y0);
+		return room;
+	}
 }

@@ -59,8 +59,10 @@ Vault tools button > **Modded vault**. The vault list shows the mod, and the vau
   link.
 - Nothing is guessed: an item never gets a link because a mod has its records. Link it with **Modded**, where the
   suggestions help.
-- Read with another mod, an item that takes its real size and no longer fits moves to a free spot (of its tab, or of
-  another tab when moved, imported or relinked); without any, it keeps its previous link, and a message names it.
+- Read with another mod, an item that takes its real size and no longer fits moves to a free spot of its tab. Dropped
+  by hand or given a link with **Modded** without room in the tab, it is refused, and a message invites you to use
+  another tab. Moved, imported or relinked, it may go to another tab of the vault; without any room, it keeps its
+  previous link, and a message names it.
 - The link follows the item (moves, copies, removed relics) and is kept by [exports](IMPORT_EXPORT.md). An import drops a
   link to a mod that is not installed and names it.
 - Character files cannot store an item's link: it lasts until the character is read again. Keep linked items in a vault.

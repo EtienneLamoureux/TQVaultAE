@@ -182,11 +182,11 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 	}
 
 	/// <inheritdoc/>
-	public bool ChangeMod(SackCollection sack, Item item, string? modName, Func<Item, bool>? fits = null)
+	public ModChoiceOutcome ChangeMod(SackCollection sack, Item item, string? modName, Func<Item, bool>? fits = null)
 	{
 		string? mod = Normalize(modName);
 		if (item.HasOwnMod && SameMod(item.Mod, mod))
-			return false;
+			return ModChoiceOutcome.Unchanged;
 
 		// Chosen for the item: its own map from now on, kept wherever it goes and saved in the vault file.
 		var previous = (item.Mod, item.ModOrigin);
@@ -197,18 +197,18 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 		{
 			this._itemProvider.GetDBData(item);
 
-			// Read with other data, the item may take another size: without room for it, the choice is undone rather
-			// than saving items that overlap.
+			// Read with other data, the item may take another size: without room for it, the choice is refused rather
+			// than saving items that overlap. The user moves the item to another tab first.
 			if (fits is not null && !fits(item))
 			{
 				(item.Mod, item.ModOrigin) = previous;
 				this._itemProvider.GetDBData(item);
-				return false;
+				return ModChoiceOutcome.NoRoom;
 			}
 		}
 
 		MarkModified(sack, item);
-		return true;
+		return ModChoiceOutcome.Changed;
 	}
 
 	/// <inheritdoc/>
@@ -313,6 +313,33 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 		}
 
 		return SettleOutcome.ReadAgain;
+	}
+
+	/// <inheritdoc/>
+	public bool HasRoomOnceSettled(Item item, bool inVault, string? containerMod, Func<Item, bool> fits)
+	{
+		// The same rules as SettleIn: an own map goes with the item, and an item leaving a character for a vault keeps
+		// its map; only an item taking another map is read with other data.
+		string? mod = Normalize(containerMod);
+		if (item.HasOwnMod
+			|| (inVault && !item.InVault && item.ModOrigin == ModOrigin.Inherited)
+			|| (item.ModOrigin != ModOrigin.None && SameMod(item.Mod, mod)))
+		{
+			return true;
+		}
+
+		var previous = (item.Mod, item.ModOrigin);
+		(item.Mod, item.ModOrigin) = (mod, ModOrigin.Inherited);
+		this._itemProvider.GetDBData(item);
+		try
+		{
+			return fits(item);
+		}
+		finally
+		{
+			(item.Mod, item.ModOrigin) = previous;
+			this._itemProvider.GetDBData(item);
+		}
 	}
 
 	private static string? Normalize(string? modName) => string.IsNullOrWhiteSpace(modName) ? null : modName;

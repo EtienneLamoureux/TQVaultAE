@@ -336,6 +336,33 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	protected virtual bool HasRoomOnceReadAgain(Item item) => SackLayout.FitsOrMoves(this.ShownSack, this.SackSize, item);
 
 	/// <summary>
+	/// Whether the dragged item, dropped on the cells under it, has room in the shown bag once it takes its map here
+	/// (MODLINK.md): read with a new map it may take another size. Room is where it is dropped, else a free spot of
+	/// the bag; never another tab.
+	/// </summary>
+	/// <param name="dragItem">The dragged item.</param>
+	/// <param name="itemUnderUs">The item a swap drop picks up, if any.</param>
+	protected bool HasRoomForDrop(Item dragItem, Item? itemUnderUs)
+	{
+		// The same item under it may stack: the dragged one does not stay as it is.
+		if (itemUnderUs is not null && dragItem.BaseItemId.Equals(itemUnderUs.BaseItemId))
+			return true;
+
+		var cell = this.CellsUnderDragItem.Location;
+		return this.Services.ItemEditService.HasRoomOnceSettled(dragItem, this.HoldsVault?.Invoke() ?? false, this.ContainerMap
+			, item => SackLayout.HasRoomAt(this.ShownSack, this.SackSize, item, cell, itemUnderUs));
+	}
+
+	/// <summary>
+	/// Tells the user that an item has no room in the shown tab once read with its map's data, and to use another tab.
+	/// </summary>
+	/// <param name="item">The item, read with the data it keeps.</param>
+	/// <param name="message">The message, with the item's name as <c>{0}</c>.</param>
+	internal void NotifyNoRoomInTab(Item item, string message)
+		=> this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, message
+			, this.Services.ItemProvider.GetFriendlyNames(item).FullNameClean), TQColor.Red);
+
+	/// <summary>
 	/// The map the items of the panel's container inherit: the vault's mod, or else the shown character's map (its
 	/// bags, equipment and stashes, and the shared stashes shown with it).
 	/// </summary>
