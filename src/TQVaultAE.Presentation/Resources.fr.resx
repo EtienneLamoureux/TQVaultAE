@@ -281,6 +281,12 @@ Voulez-vous redémarrer TQVault ?</value>
 	<data name="ItemPropertiesLabelSuffixProperties" xml:space="preserve">
     <value>Propriétés du suffixe</value>
   </data>
+	<data name="ItemComparisonAlignRows" xml:space="preserve">
+    <value>Aligner les lignes</value>
+  </data>
+	<data name="ItemComparisonHideUnchanged" xml:space="preserve">
+    <value>Masquer les lignes identiques</value>
+  </data>
 	<data name="ItemComparisonNoDifference" xml:space="preserve">
     <value>Aucune différence</value>
   </data>
@@ -618,6 +624,9 @@ Voulez-vous vraiment supprimer cet objet ?</value>
   </data>
 	<data name="SackPanelMenuClear" xml:space="preserve">
     <value>Annuler la sélection</value>
+  </data>
+	<data name="SackPanelCompareSelectionStarted" xml:space="preserve">
+    <value>Comparer : cliquez sur le second objet, dans n'importe quel panneau. Échap ou clic droit pour annuler.</value>
   </data>
 	<data name="SackPanelMenuCompare" xml:space="preserve">
     <value>Comparer</value>

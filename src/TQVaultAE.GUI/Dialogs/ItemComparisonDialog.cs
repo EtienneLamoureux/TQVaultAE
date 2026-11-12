@@ -11,9 +11,9 @@ namespace TQVaultAE.GUI.Dialogs;
 
 /// <summary>
 /// Two items side by side in four columns: the first item's differences, its picture and classic tooltip, the second
-/// item's picture and classic tooltip, the second item's differences. The content is decided by
-/// <see cref="ItemComparisonContentBuilder"/>; this dialog only draws its lines, with the rows of the item tooltip, in the
-/// TQ border of the other dialogs.
+/// item's picture and classic tooltip, the second item's differences, under a toolbar ("Align rows", "Hide unchanged").
+/// The content is decided by <see cref="ItemComparisonContentBuilder"/>; this dialog only draws its lines, with the rows
+/// of the item tooltip, in the TQ border of the other dialogs.
 /// </summary>
 internal sealed partial class ItemComparisonDialog : VaultForm
 {
@@ -37,6 +37,12 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	private readonly Panel _scroll;
 	private readonly TableLayoutPanel _table;
 	private readonly Panel _buttons;
+	private readonly FlowLayoutPanel _toolbar;
+	private readonly CheckBox _alignRows;
+	private readonly CheckBox _hideUnchanged;
+
+	/// <summary>The toolbar choices, kept for the next comparison of the session.</summary>
+	private static ItemComparisonOptions LastOptions = new();
 
 	/// <summary>The first item, set before the dialog is shown.</summary>
 	public Item First { get; set; } = null!;
@@ -46,6 +52,9 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 
 	/// <summary>What the dialog shows, set by <see cref="Fill"/>.</summary>
 	internal ItemComparisonContent? Content { get; private set; }
+
+	/// <summary>The toolbar choices.</summary>
+	internal ItemComparisonOptions Options => new(this._alignRows.Checked, this._hideUnchanged.Checked);
 
 	public ItemComparisonDialog(MainForm instance, IItemComparisonService comparisonService) : base(instance.Services)
 	{
@@ -125,7 +134,25 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		this._buttons.Controls.Add(ok);
 		this._buttons.Resize += (_, _) => ok.Location = new Point((this._buttons.Width - ok.Width) / 2, (this._buttons.Height - ok.Height) / 2);
 
+		// The toolbar, first row of the dialog: changing a choice lays the columns out again.
+		this._alignRows = this.MakeToolbarCheckBox("alignRowsCheckBox", Resources.ItemComparisonAlignRows, LastOptions.AlignRows);
+		this._hideUnchanged = this.MakeToolbarCheckBox("hideUnchangedCheckBox", Resources.ItemComparisonHideUnchanged, LastOptions.HideUnchanged);
+		this._toolbar = new FlowLayoutPanel()
+		{
+			Dock = DockStyle.Top,
+			AutoSize = true,
+			AutoSizeMode = AutoSizeMode.GrowAndShrink,
+			FlowDirection = FlowDirection.LeftToRight,
+			WrapContents = true,
+			BackColor = DialogColor,
+			Padding = new Padding(0, 0, 0, gap),
+			Name = "comparisonToolbar",
+		};
+		this._toolbar.Controls.Add(this._alignRows);
+		this._toolbar.Controls.Add(this._hideUnchanged);
+
 		this.Controls.Add(this._scroll);
+		this.Controls.Add(this._toolbar);
 		this.Controls.Add(this._buttons);
 		this.AcceptButton = ok;
 		this.CancelButton = ok;
@@ -139,12 +166,36 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		base.OnLoad(e);
 		this.Fill();
 		this.FitToContent();
+		this._alignRows.CheckedChanged += this.OptionChanged;
+		this._hideUnchanged.CheckedChanged += this.OptionChanged;
+	}
+
+	/// <summary>A check box of the toolbar, in the dialog's font and colors.</summary>
+	private CheckBox MakeToolbarCheckBox(string name, string text, bool isChecked)
+		=> new()
+		{
+			AutoSize = true,
+			Checked = isChecked,
+			// Light text on the dark brown background (the button text color is meant for the gold buttons).
+			ForeColor = TQColor.Silver.Color(),
+			BackColor = DialogColor,
+			Font = this.FontService.GetFontLight(11F, this.UIService.FontZoom),
+			Margin = new Padding((int)Math.Round(4 * this.UIService.Scale), 0, (int)Math.Round(12 * this.UIService.Scale), 0),
+			Name = name,
+			Text = text,
+		};
+
+	private void OptionChanged(object? sender, EventArgs e)
+	{
+		LastOptions = this.Options;
+		this.Fill();
+		this.FitToContent();
 	}
 
 	/// <summary>Compares <see cref="First"/> and <see cref="Second"/> and lays out the four columns.</summary>
 	internal ItemComparisonContent Fill()
 	{
-		var content = this._builder.Build(this._comparisonService.Compare(this.First, this.Second));
+		var content = this._builder.Build(this._comparisonService.Compare(this.First, this.Second), this.Options);
 		this.Content = content;
 
 		this._table.SuspendLayout();
@@ -155,14 +206,56 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		// columns start there too.
 		Item?[] pictures = [null, this.First, this.Second, null];
 		IReadOnlyList<TooltipLine>[] columns = [content.FirstDifferences, content.First, content.Second, content.SecondDifferences];
+		var panels = new FlowLayoutPanel[columns.Length];
 		for (int i = 0; i < columns.Length; i++)
 		{
+			panels[i] = this.MakeColumn(columns[i], ColumnNames[i]);
 			this._table.Controls.Add(this.MakePicture(pictures[i], PictureNames[i]), i, 0);
-			this._table.Controls.Add(this.MakeColumn(columns[i], ColumnNames[i]), i, 1);
+			this._table.Controls.Add(panels[i], i, 1);
+		}
+
+		// Aligned: each difference row as tall as the item row it faces, so that they stay level.
+		if (content.Aligned)
+		{
+			AlignRows(panels[0], panels[1]);
+			AlignRows(panels[3], panels[2]);
 		}
 
 		this._table.ResumeLayout();
 		return content;
+	}
+
+	/// <summary>
+	/// Gives each row of <paramref name="differences"/> and the row of <paramref name="item"/> it faces the height of the
+	/// taller of the two (a bold name, a line with a line break).
+	/// </summary>
+	private static void AlignRows(FlowLayoutPanel differences, FlowLayoutPanel item)
+	{
+		int count = Math.Min(differences.Controls.Count, item.Controls.Count);
+		for (int i = 0; i < count; i++)
+		{
+			var a = differences.Controls[i];
+			var b = item.Controls[i];
+			int height = Math.Max(a.PreferredSize.Height + a.Margin.Vertical, b.PreferredSize.Height + b.Margin.Vertical);
+			SetRowHeight(a, height);
+			SetRowHeight(b, height);
+		}
+	}
+
+	/// <summary>Makes a row take <paramref name="height"/> with its margins; a delimiter keeps its line and grows its margins.</summary>
+	private static void SetRowHeight(Control row, int height)
+	{
+		int own = row.PreferredSize.Height + row.Margin.Vertical;
+		if (own >= height)
+			return;
+
+		if (row.AutoSize)
+			row.MinimumSize = new Size(0, height - row.Margin.Vertical);
+		else
+		{
+			int extra = height - own;
+			row.Margin = new Padding(row.Margin.Left, row.Margin.Top + (extra / 2), row.Margin.Right, row.Margin.Bottom + extra - (extra / 2));
+		}
 	}
 
 	/// <summary>The names of the four column panels, left to right.</summary>
@@ -236,8 +329,9 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	private void FitToContent()
 	{
 		var area = Screen.FromControl(this.Owner ?? this).WorkingArea;
-		var content = this._table.PreferredSize;
-		var frame = new Size(this.Padding.Horizontal, this.Padding.Vertical + this._buttons.Height);
+		var table = this._table.PreferredSize;
+		var content = new Size(Math.Max(table.Width, this._toolbar.PreferredSize.Width), table.Height);
+		var frame = new Size(this.Padding.Horizontal, this.Padding.Vertical + this._buttons.Height + this._toolbar.PreferredSize.Height);
 		int maxWidth = (int)(area.Width * 0.95);
 		int maxHeight = (int)(area.Height * 0.9);
 

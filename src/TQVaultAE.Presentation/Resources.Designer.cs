@@ -2274,6 +2274,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Align rows.
+        /// </summary>
+        public static string ItemComparisonAlignRows {
+            get {
+                return ResourceManager.GetString("ItemComparisonAlignRows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide unchanged.
+        /// </summary>
+        public static string ItemComparisonHideUnchanged {
+            get {
+                return ResourceManager.GetString("ItemComparisonHideUnchanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No difference.
         /// </summary>
         public static string ItemComparisonNoDifference {
@@ -4045,6 +4063,15 @@ namespace TQVaultAE.Presentation {
         public static string SackPanelMenuClear {
             get {
                 return ResourceManager.GetString("SackPanelMenuClear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compare: left-click the second item, in any panel. Escape or right-click cancels.
+        /// </summary>
+        public static string SackPanelCompareSelectionStarted {
+            get {
+                return ResourceManager.GetString("SackPanelCompareSelectionStarted", resourceCulture);
             }
         }
         
