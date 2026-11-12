@@ -1,3 +1,4 @@
+using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
@@ -30,6 +31,26 @@ public class ItemModService(IDatabaseMaps maps, IDatabase database, IModLinkServ
 		=> item is null || item.ModOrigin == ModOrigin.None
 			? NoScope.Instance
 			: this.Maps.Use(this.Find(item.Mod)?.Folder ?? string.Empty);
+
+	/// <inheritdoc/>
+	public Task LoadDataAsync(string? modName)
+	{
+		string folder = this.Find(modName)?.Folder ?? string.Empty;
+		if (this.Maps.LoadedMapFolders.Any(loaded => GameMaps.Same(loaded, folder)))
+			return Task.CompletedTask;
+
+		return Task.Run(() =>
+		{
+			try
+			{
+				this.Maps.Preload(folder);
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+			{
+				// Not cached: the first use loads it again and reports the error as it always did.
+			}
+		});
+	}
 
 	/// <inheritdoc/>
 	public ModSuggestion Suggest(IEnumerable<Item> items)

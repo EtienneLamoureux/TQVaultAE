@@ -28,6 +28,15 @@ public interface IItemModService
 	IDisposable Scope(Item? item);
 
 	/// <summary>
+	/// Loads the database of a mod's map on a background thread when it is not loaded yet (about a second for a large
+	/// mod), so that a choice of that mod does not wait for it on the UI thread. A failed load is left to the first use,
+	/// which tries again and reports it.
+	/// </summary>
+	/// <param name="modName">The mod (<see cref="InstalledMod.Name"/>); null, or a mod not installed, for the base game.</param>
+	/// <returns>Completes once the database is loaded, or the load failed; at once when it is loaded already.</returns>
+	Task LoadDataAsync(string? modName);
+
+	/// <summary>
 	/// Suggests the mod of items (one item, or a vault's items) from the records they name that the base game does not
 	/// have, like the Suggest button of the mod link dialog.
 	/// </summary>

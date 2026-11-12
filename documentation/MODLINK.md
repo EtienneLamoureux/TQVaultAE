@@ -54,7 +54,8 @@ Selecting a character makes its map the active one: its database and archives, a
 the first time it is needed (about half a second for a large mod) and kept for the session, so switching back is
 immediate. Once the startup loading ends, the databases of the mods the listed characters are linked to are read in
 the background (*Load all files* has read them already), so selecting a modded character does not wait for them. A
-database being read only makes the users of that map wait; the maps already read stay usable. A character read with another map's database (before it was linked) is read again, unless it has unsaved
+*Modded* choice (item or vault) of a mod whose database is not read yet reads it in the background too, under the wait
+cursor, then applies the choice: the window does not freeze. A database being read only makes the users of that map wait; the maps already read stay usable. A character read with another map's database (before it was linked) is read again, unless it has unsaved
 changes.
 
 *Load all files* at startup reads every character with its own map (see *Search and preload* below).

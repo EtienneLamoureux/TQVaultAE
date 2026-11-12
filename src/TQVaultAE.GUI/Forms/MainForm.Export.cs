@@ -55,8 +55,12 @@ public partial class MainForm
 
 		var vault = this.vaultPanel.Vault;
 		this.vaultModMenu = ModMenu.Create(this.vaultExportContextMenu, Resources.VaultModded
-			, this.Services.ItemModService.InstalledMods, vault?.Mod, mod =>
+			, this.Services.ItemModService, vault?.Mod, mod =>
 			{
+				// The mod's data may have loaded in the background meanwhile: still the vault shown.
+				if (vault is null || this.vaultPanel.Vault != vault)
+					return;
+
 				this.vaultPanel.ChangeVaultMod(mod);
 				this.vaultListComboBox.Invalidate();
 				this.secondaryVaultListComboBox.Invalidate();

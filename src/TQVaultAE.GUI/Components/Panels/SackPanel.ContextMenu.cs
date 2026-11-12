@@ -464,14 +464,14 @@ public partial class SackPanel
 	{
 		this.CustomContextMenu.Items.Add("-");
 		this.CustomContextMenu.Items.Add(ModMenu.Create(this.CustomContextMenu, Resources.CharacterModded
-			, this.Services.ItemModService.InstalledMods, focusedItem.Mod, this.ChangeModItemClicked
+			, this.Services.ItemModService, focusedItem.Mod, mod => this.ChangeModItemClicked(focusedItem, mod)
 			, () => this.Services.ItemModService.Suggest([focusedItem])));
 	}
 
-	private void ChangeModItemClicked(string? mod)
+	private void ChangeModItemClicked(Item focusedItem, string? mod)
 	{
-		Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
-		if (focusedItem is null)
+		// The mod's data may have loaded in the background meanwhile: the item must still be in the tab shown.
+		if (this.ShownSack is not { } sack || !sack.Contains(focusedItem))
 			return;
 
 		// Read with the chosen map, the item may take another size: without room in this tab, the choice is refused

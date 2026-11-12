@@ -37,6 +37,42 @@ public class ItemModServiceTests
 		=> new() { BaseItemId = id, Mod = mod, ModOrigin = origin };
 
 	[Fact]
+	public async Task LoadDataAsync_ModNotLoadedYet_LoadsItsDatabase()
+	{
+		this._maps.Setup(m => m.LoadedMapFolders).Returns([string.Empty]);
+
+		await this._service.LoadDataAsync("shadowchampions");
+
+		this._maps.Verify(m => m.Preload(Shadow.Folder), Times.Once);
+	}
+
+	[Theory]
+	[InlineData("shadowchampions")]
+	[InlineData(null)]
+	[InlineData("Lilith")]
+	public void LoadDataAsync_DatabaseLoadedAlready_CompletesAtOnce(string? mod)
+	{
+		// The base game is loaded at startup; a mod not installed is read with the base game data.
+		this._maps.Setup(m => m.LoadedMapFolders).Returns([string.Empty, Shadow.Folder.ToUpperInvariant()]);
+
+		var loading = this._service.LoadDataAsync(mod);
+
+		loading.IsCompletedSuccessfully.Should().BeTrue();
+		this._maps.Verify(m => m.Preload(It.IsAny<string?>()), Times.Never);
+	}
+
+	[Fact]
+	public async Task LoadDataAsync_FailedLoad_IsLeftToTheFirstUse()
+	{
+		this._maps.Setup(m => m.LoadedMapFolders).Returns([string.Empty]);
+		this._maps.Setup(m => m.Preload(Shadow.Folder)).Throws(new IOException("locked"));
+
+		var load = () => this._service.LoadDataAsync("shadowchampions");
+
+		await load.Should().NotThrowAsync();
+	}
+
+	[Fact]
 	public void Scope_ItemWithoutMapYet_LeavesTheDatabaseAlone()
 	{
 		this._service.Scope(ItemOf(ModRecord, "shadowchampions", ModOrigin.None)).Should().BeSameAs(NoScope.Instance);

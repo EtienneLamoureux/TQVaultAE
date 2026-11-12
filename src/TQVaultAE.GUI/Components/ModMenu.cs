@@ -1,4 +1,5 @@
 using System.Globalization;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Presentation;
 
@@ -14,14 +15,15 @@ internal static class ModMenu
 	/// </summary>
 	/// <param name="owner">The menu that holds the submenu, for its colors and font.</param>
 	/// <param name="text">The submenu's text.</param>
-	/// <param name="mods">The installed mods.</param>
+	/// <param name="modService">The installed mods, and the loading of their data.</param>
 	/// <param name="current">The current mod's name; null for the base game.</param>
-	/// <param name="pick">Called with the chosen mod's name, null for the base game.</param>
+	/// <param name="pick">Called with the chosen mod's name, null for the base game, once that mod's data is loaded.</param>
 	/// <param name="suggest">The mod suggestion for the items concerned, read when the submenu opens; null for none.</param>
-	public static ToolStripMenuItem Create(ToolStrip owner, string text, IReadOnlyList<InstalledMod> mods, string? current, Action<string?> pick
+	public static ToolStripMenuItem Create(ToolStrip owner, string text, IItemModService modService, string? current, Action<string?> pick
 		, Func<ModSuggestion>? suggest = null)
 	{
 		var menu = Styled(owner, text);
+		var mods = modService.InstalledMods;
 
 		// The suggestion reads the mods' databases: only when the submenu opens, once.
 		if (suggest is not null)
@@ -51,7 +53,7 @@ internal static class ModMenu
 			entry.ToolTipText = mod.DisplayName;
 			entry.Tag = mod;
 			entry.Checked = string.Equals(mod.Name, current, StringComparison.OrdinalIgnoreCase);
-			entry.Click += (_, _) => pick(mod.Name);
+			entry.Click += async (_, _) => await PickAsync(modService, mod.Name, pick);
 			menu.DropDownItems.Add(entry);
 		}
 
@@ -65,6 +67,30 @@ internal static class ModMenu
 		}
 
 		return menu;
+	}
+
+	/// <summary>
+	/// Calls <paramref name="pick"/> once the chosen mod's database is loaded: the first choice of a mod no character
+	/// uses loads it (about a second for a large mod) on a background thread, under the wait cursor, instead of freezing
+	/// the window.
+	/// </summary>
+	private static async Task PickAsync(IItemModService modService, string mod, Action<string?> pick)
+	{
+		var loading = modService.LoadDataAsync(mod);
+		if (!loading.IsCompleted)
+		{
+			System.Windows.Forms.Application.UseWaitCursor = true;
+			try
+			{
+				await loading;
+			}
+			finally
+			{
+				System.Windows.Forms.Application.UseWaitCursor = false;
+			}
+		}
+
+		pick(mod);
 	}
 
 	/// <summary>
