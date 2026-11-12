@@ -206,6 +206,12 @@ internal static partial class NativeWindows
 	[LibraryImport("user32.dll", EntryPoint = "GetClassNameW", StringMarshalling = StringMarshalling.Utf16)]
 	private static partial int GetClassName(IntPtr hWnd, [Out] char[] lpClassName, int nMaxCount);
 
+	/// <summary>Sends <paramref name="msg"/> to a window and waits for its window procedure, as Windows does for input.</summary>
+	public static IntPtr Send(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam) => SendMessage(hwnd, msg, wParam, lParam);
+
+	[LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
+	private static partial IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
 	[LibraryImport("user32.dll", EntryPoint = "PostMessageW")]
 	[return: MarshalAs(UnmanagedType.Bool)]
 	private static partial bool PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);

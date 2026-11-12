@@ -132,6 +132,40 @@ internal static partial class AutomationTools
 		});
 
 
+	[McpServerTool(Name = "mouse_click", Destructive = true)]
+	[Description("Clicks a point of a control with mouse messages (WM_MOUSEMOVE, WM_LBUTTONDOWN, WM_LBUTTONUP) sent to the window under that point, unlike click_control, which raises OnClick: the control's own mouse handling, hit testing and repaint run as for a user's click. x and y are in the control's client coordinates (bounds from control_tree); the messages go to the deepest visible child at that point, e.g. the check box in the caption of a check group box (control 'detectGamePathsCheckBox', on its glyph or its text). The click runs after this call returns: read the result with control_values or capture.")]
+	public static string MouseClick(
+		[Description("Part of the form title or its type name (case-insensitive); empty for the main window.")] string form,
+		[Description("Control name, as listed by control_tree.")] string control,
+		[Description("X in the control's client coordinates.")] int x,
+		[Description("Y in the control's client coordinates.")] int y)
+		=> AutomationHost.OnUi(main =>
+		{
+			Form target = string.IsNullOrEmpty(form) ? main : FindOpenForm(form);
+			var c = AllControls(target).FirstOrDefault(x => string.Equals(x.Name, control, StringComparison.OrdinalIgnoreCase))
+				?? throw new McpException($"No control '{control}' in '{target.Text}'.");
+
+			// The deepest visible child under the point, as Windows finds the window that gets the mouse.
+			var point = new Point(x, y);
+			var hit = c;
+			while (hit.GetChildAtPoint(point, GetChildAtPointSkip.Invisible) is { } child)
+			{
+				point = new Point(point.X - child.Left, point.Y - child.Top);
+				hit = child;
+			}
+
+			const int WM_MOUSEMOVE = 0x0200, WM_LBUTTONDOWN = 0x0201, WM_LBUTTONUP = 0x0202, MK_LBUTTON = 0x0001;
+			var position = (IntPtr)((point.Y << 16) | (point.X & 0xFFFF));
+			var handle = hit.Handle;
+			main.BeginInvoke(() =>
+			{
+				NativeWindows.Send(handle, WM_MOUSEMOVE, IntPtr.Zero, position);
+				NativeWindows.Send(handle, WM_LBUTTONDOWN, MK_LBUTTON, position);
+				NativeWindows.Send(handle, WM_LBUTTONUP, IntPtr.Zero, position);
+			});
+			return Serialize(new { form = target.Text, control = c.Name, receiver = hit.Name, receiverType = hit.GetType().Name, point = new { point.X, point.Y } });
+		});
+
 	[McpServerTool(Name = "queue_dialog_answers", Destructive = true)]
 	[Description("Queues answers for the next message boxes (comma separated: OK, Cancel, Yes, No, Abort, Retry, Ignore), so they are answered at once without being shown and nothing waits for a click. A box takes the next answer only when it is one of its buttons; an OK-only box takes only an OK answer, so an unexpected message keeps the answer meant for a question. 'clear' empties the queue and the record. Covers every message box, the startup notices included, and the vault import dialog (Yes replaces the vault, No imports it as a new vault, Cancel cancels). In headless mode a box without a queued answer is not shown either: it takes Cancel, No, Ignore or OK and is listed by dialog_answers.")]
 	public static string QueueDialogAnswers([Description("Answers in order, e.g. 'Cancel,No', or 'clear'.")] string answers)
