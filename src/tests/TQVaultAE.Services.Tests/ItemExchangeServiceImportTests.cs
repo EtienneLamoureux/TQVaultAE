@@ -122,7 +122,7 @@ public class ItemExchangeServiceImportTests
 
 		var placed = this._service.PlaceImportedItems(sack, ImportResult.Succeeded(item), 10, 10);
 
-		placed.Should().Be(1);
+		placed.Should().ContainSingle();
 		item.Location.Should().Be(new System.Drawing.Point(3, 4));
 		sack.Should().Contain(item);
 		sack.IsModified.Should().BeTrue();
@@ -170,7 +170,7 @@ public class ItemExchangeServiceImportTests
 
 		var placed = this._service.PlaceImportedItems(sack, ImportResult.SucceededMultiSelect([fits, tooBig]), 2, 2);
 
-		placed.Should().Be(1);
+		placed.Should().Equal(fits);
 		sack.Should().Contain(fits);
 		sack.Should().NotContain(tooBig);
 	}

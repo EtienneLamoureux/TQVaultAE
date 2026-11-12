@@ -32,6 +32,12 @@ public class ImportResult
 	public IReadOnlyList<string> DroppedMods { get; set; } = [];
 	public Dictionary<int, BagButtonIconInfo>? SackIconInfo { get; set; }
 
+	/// <summary>True when a tab import gives its icon to the tab it is imported into.</summary>
+	public bool SetsTabIcon => this.Scope == ExportScope.Tab && this.TabIconInfo is not null;
+
+	/// <summary>True when a vault import gives an icon to the bag <paramref name="bag"/> (0-based).</summary>
+	public bool SetsBagIcon(int bag) => this.SackIconInfo?.ContainsKey(bag) == true;
+
 	public static ImportResult Succeeded(Item item)
 		=> new()
 		{

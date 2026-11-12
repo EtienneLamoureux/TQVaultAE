@@ -289,21 +289,20 @@ public partial class MainForm
 			return;
 		}
 
-		var before = sack.ToHashSet();
 		var imported = this.itemExchangeService.PlaceImportedItems(sack, importResult, sackPanel.SackSize.Width, sackPanel.SackSize.Height
 			, sackPanel.ContainerMap);
 
 		// Into a vault linked to a mod: the imported items follow its link like dropped ones.
-		this.vaultPanel.AdoptVaultMod(sack, sack.Where(item => !before.Contains(item)));
+		this.vaultPanel.AdoptVaultMod(sack, imported);
 
-		if (importResult.Scope == ExportScope.Tab && importResult.TabIconInfo is not null)
+		if (importResult.SetsTabIcon)
 		{
 			var button = this.vaultPanel.BagButtons[this.vaultPanel.CurrentBag];
 			button.ApplyIconInfo(sack);
 		}
 
 		this.vaultPanel.Refresh();
-		this.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportSuccessCount, imported, importResult.TotalCount));
+		this.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportSuccessCount, imported.Count, importResult.TotalCount));
 		this.NotifyDroppedMods(importResult);
 	}
 
@@ -385,21 +384,13 @@ public partial class MainForm
 
 		this.vaultPanel.Refresh();
 
-		if (importResult.SackIconInfo is not null)
+		for (int i = 0; i < targetVault.NumberOfSacks && i < this.vaultPanel.BagButtons.Count; i++)
 		{
-			for (int i = 0; i < targetVault.NumberOfSacks && i < this.vaultPanel.BagButtons.Count; i++)
-			{
-				if (importResult.SackIconInfo.ContainsKey(i))
-				{
-					var sack = targetVault.GetSack(i);
-					if (sack is not null)
-						this.vaultPanel.BagButtons[i].ApplyIconInfo(sack);
-				}
-			}
+			if (importResult.SetsBagIcon(i) && targetVault.GetSack(i) is { } sack)
+				this.vaultPanel.BagButtons[i].ApplyIconInfo(sack);
 		}
 
-		var totalItems = importResult.SackItems?.Sum(kvp => kvp.Value.Count) ?? 0;
-		this.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportVaultSuccess, totalItems));
+		this.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportVaultSuccess, importResult.TotalCount));
 		this.NotifyDroppedMods(importResult);
 	}
 

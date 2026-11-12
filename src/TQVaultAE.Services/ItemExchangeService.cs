@@ -417,7 +417,7 @@ public class ItemExchangeService(
 			this.SerializeSackCollection(sack, sackNumber, containerMod)
 			, this.BuildTabPasteName(vaultName, sack, sackNumber));
 
-	public int PlaceImportedItems(SackCollection sack, ImportResult importResult, int sackWidth, int sackHeight, string? targetMod = null)
+	public IReadOnlyList<Item> PlaceImportedItems(SackCollection sack, ImportResult importResult, int sackWidth, int sackHeight, string? targetMod = null)
 	{
 		IReadOnlyList<Item> items = importResult.Scope == ExportScope.Item
 			? (importResult.Item is { } single ? [single] : [])
@@ -431,7 +431,7 @@ public class ItemExchangeService(
 				item.ModOrigin = ModOrigin.Own;
 		}
 
-		var imported = 0;
+		var placed = new List<Item>();
 		foreach (var item in items)
 		{
 			var x = Math.Max(0, item.PositionX);
@@ -452,14 +452,14 @@ public class ItemExchangeService(
 			item.PositionX = x;
 			item.PositionY = y;
 			sack.AddItem(item);
-			imported++;
+			placed.Add(item);
 		}
 
-		if (importResult.Scope == ExportScope.Tab && importResult.TabIconInfo is not null)
+		if (importResult.SetsTabIcon)
 			sack.BagButtonIconInfo = importResult.TabIconInfo;
 
 		sack.IsModified = true;
-		return imported;
+		return placed;
 	}
 
 	private bool AreCellsFree(SackCollection sack, int x, int y, int width, int height, int sackWidth, int sackHeight)

@@ -84,8 +84,8 @@ public interface IItemExchangeService
 	/// the tab's map keep it: inherited when the target has the same map, else as their own.
 	/// </summary>
 	/// <param name="targetMod">The map of the target container; null for the base game.</param>
-	/// <returns>The number of items placed.</returns>
-	int PlaceImportedItems(SackCollection sack, ImportResult importResult, int sackWidth, int sackHeight, string? targetMod = null);
+	/// <returns>The items placed, in order; the skipped ones are left out.</returns>
+	IReadOnlyList<Item> PlaceImportedItems(SackCollection sack, ImportResult importResult, int sackWidth, int sackHeight, string? targetMod = null);
 
 	/// <summary>
 	/// Gets whether no sack of the vault holds an item.
