@@ -268,6 +268,88 @@ public class TagServiceTests
 		playerSave.Tags.Should().NotContainKey(tagName);
 	}
 
+	private TagConfig LastWrittenConfig()
+	{
+		var content = (string)_mockFileIO.Invocations
+			.Last(i => i.Method.Name == nameof(IFileIO.WriteAllText))
+			.Arguments[1];
+		return JsonSerializer.Deserialize<TagConfig>(content, _jsonOptions)!;
+	}
+
+	[Fact]
+	public void DeleteTag_WhenItWasTheCharactersLastTag_RemovesTheCharactersEntry()
+	{
+		// Arrange
+		_tagService.AddTag("TestTag");
+		var playerSave = CreateTestPlayerSave();
+		_tagService.AssignTag(playerSave, "TestTag");
+
+		// Act
+		_tagService.DeleteTag("TestTag");
+
+		// Assert - no empty "tags": [] entry is written
+		LastWrittenConfig().mapping.Should().BeEmpty();
+	}
+
+	[Fact]
+	public void DeleteTag_WhenTheCharacterHasOtherTags_KeepsTheEntryWithTheOthers()
+	{
+		// Arrange
+		_tagService.AddTag("Farm");
+		_tagService.AddTag("Trade");
+		var playerSave = CreateTestPlayerSave();
+		_tagService.AssignTag(playerSave, "Farm");
+		_tagService.AssignTag(playerSave, "Trade");
+
+		// Act
+		_tagService.DeleteTag("Farm");
+
+		// Assert
+		var mapping = LastWrittenConfig().mapping;
+		mapping.Should().ContainSingle();
+		mapping[0].tags.Should().Equal("Trade");
+	}
+
+	[Fact]
+	public void UnassignTag_WhenItWasTheCharactersLastTag_RemovesTheCharactersEntry()
+	{
+		// Arrange
+		_tagService.AddTag("TestTag");
+		var playerSave = CreateTestPlayerSave();
+		_tagService.AssignTag(playerSave, "TestTag");
+
+		// Act
+		_tagService.UnassignTag(playerSave, "TestTag");
+
+		// Assert
+		LastWrittenConfig().mapping.Should().BeEmpty();
+		_tagService.Tags.Should().ContainKey("TestTag");
+	}
+
+	[Fact]
+	public void SaveConfig_WithEmptyEntriesFromAnOlderFile_DropsThem()
+	{
+		// Arrange - a file written by an older version, with a leftover empty entry
+		var config = new TagConfig
+		{
+			tags = [new TagInfo { name = "Farm" }],
+			mapping =
+			[
+				new TagMapItem { player = "Empty", tags = [] },
+				new TagMapItem { player = "Tagged", tags = ["Farm"] },
+			]
+		};
+		_mockFileIO.Setup(x => x.Exists(_testConfigPath)).Returns(true);
+		_mockFileIO.Setup(x => x.ReadAllText(_testConfigPath)).Returns(JsonSerializer.Serialize(config, _jsonOptions));
+		_tagService.ReadConfig();
+
+		// Act
+		_tagService.SaveConfig();
+
+		// Assert
+		LastWrittenConfig().mapping.Select(m => m.player).Should().Equal("Tagged");
+	}
+
 	[Fact]
 	public void LoadTags_WithPlayerHavingTags_LoadsTagsToPlayer()
 	{

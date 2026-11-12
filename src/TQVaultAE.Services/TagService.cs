@@ -182,6 +182,9 @@ public class TagService : ITagService
 		if (this.TagConfig is null)
 			return;
 
+		// A character left without tags (last tag unassigned or deleted) keeps no entry.
+		this.TagConfig.mapping.RemoveAll(m => m.tags is null || m.tags.Count == 0);
+
 		string configFilePath = this.ResolveConfigFilePath();
 
 		var content = JsonSerializer.Serialize(this.TagConfig, JsonOptions);
