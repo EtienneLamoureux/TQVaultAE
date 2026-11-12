@@ -89,6 +89,7 @@ The workflow requires a Personal Access Token to push commits and create tags on
 | TQVaultAE.Config.Tests | src/TQVaultAE.Config.Tests/TQVaultAE.Config.Tests.csproj |
 | TQVaultAE.Data.Tests | src/TQVaultAE.Data.Tests/TQVaultAE.Data.Tests.csproj |
 | TQVaultAE.Services.Tests | src/TQVaultAE.Services.Tests/TQVaultAE.Services.Tests.csproj |
+| TQVaultAE.Services.Git.Tests | src/TQVaultAE.Services.Git.Tests/TQVaultAE.Services.Git.Tests.csproj |
 | TQVaultAE.Presentation.Tests | src/TQVaultAE.Presentation.Tests/TQVaultAE.Presentation.Tests.csproj |
 | TQVaultAE.DbCli.Tests | src/TQVaultAE.DbCli.Tests/TQVaultAE.DbCli.Tests.csproj |
 | TQVaultAE.Logs.Tests | src/TQVaultAE.Logs.Tests/TQVaultAE.Logs.Tests.csproj |

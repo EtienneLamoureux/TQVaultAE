@@ -29,7 +29,7 @@ Windows-only projects. To check a change, run the test projects of the layers it
 | TQVaultAE.Application | TQVaultAE.Application.Tests |
 | TQVaultAE.Config | TQVaultAE.Config.Tests |
 | TQVaultAE.Data | TQVaultAE.Data.Tests |
-| TQVaultAE.Services | TQVaultAE.Services.Tests |
+| TQVaultAE.Services | TQVaultAE.Services.Tests (and TQVaultAE.Services.Git.Tests for `GitBackup`, slow: real git, about 3 min) |
 | TQVaultAE.Presentation | TQVaultAE.Presentation.Tests |
 | TQVaultAE.DbCli | TQVaultAE.DbCli.Tests |
 | TQVaultAE.Logs | TQVaultAE.Logs.Tests |

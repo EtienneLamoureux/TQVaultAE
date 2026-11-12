@@ -52,6 +52,7 @@
   <Project Path="src\TQVaultAE.Config.Tests\TQVaultAE.Config.Tests.csproj" />
   <Project Path="src\TQVaultAE.Data.Tests\TQVaultAE.Data.Tests.csproj" />
   <Project Path="src\TQVaultAE.Services.Tests\TQVaultAE.Services.Tests.csproj" />
+  <Project Path="src\TQVaultAE.Services.Git.Tests\TQVaultAE.Services.Git.Tests.csproj" />
   <Project Path="src\TQVaultAE.Presentation.Tests\TQVaultAE.Presentation.Tests.csproj" />
   <Project Path="src\TQVaultAE.DbCli.Tests\TQVaultAE.DbCli.Tests.csproj" />
   <Project Path="src\TQVaultAE.Logs.Tests\TQVaultAE.Logs.Tests.csproj" />
