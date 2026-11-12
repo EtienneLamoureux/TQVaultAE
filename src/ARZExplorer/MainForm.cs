@@ -475,7 +475,10 @@ public partial class MainForm : Form
 			Directory.CreateDirectory(fullDestPath);
 		}
 
-		using var form = Program.ServiceProvider.GetRequiredService<ExtractProgress>();
+		// A transient form resolved from the root provider stays referenced by it until exit: resolve it in a scope,
+		// whose disposal disposes the form and lets it go.
+		using var scope = Program.ServiceProvider.CreateScope();
+		var form = scope.ServiceProvider.GetRequiredService<ExtractProgress>();
 		form.BaseFolder = fullDestPath;
 		form.ShowDialog();
 	}
