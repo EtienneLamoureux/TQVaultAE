@@ -128,7 +128,14 @@ internal sealed partial class GameTooltip : IDisposable
 			return;
 		}
 
+#if DEBUG
+		// Automation rests a virtual cursor on the control instead of moving the real one.
+		var position = TQVaultAE.GUI.Automation.VirtualCursor.IsActive
+			? TQVaultAE.GUI.Automation.VirtualCursor.GetClientPosition(control)
+			: control.PointToClient(Cursor.Position);
+#else
 		var position = control.PointToClient(Cursor.Position);
+#endif
 		int below = (Cursor.Current?.Size.Height ?? 32) / 2 + 4;
 		this._shownOn = control;
 
