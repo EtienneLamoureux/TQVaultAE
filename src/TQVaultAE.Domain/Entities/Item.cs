@@ -708,22 +708,43 @@ public class Item
 	/// <summary>
 	/// Gets a value indicating whether the item has an embedded charm in first slot.
 	/// </summary>
-	public bool HasCharmSlot1 => !this.IsRelicOrCharm && !RecordId.IsNullOrEmpty(this.relicID) && this.relicID.IsCharm;
+	public bool HasCharmSlot1 => this.HasSocketedSlot1 && SocketedKind(this.relicID, this.RelicInfo) == SocketedRecordKind.Charm;
 
 	/// <summary>
 	/// Gets a value indicating whether the item has an embedded charm in second slot.
 	/// </summary>
-	public bool HasCharmSlot2 => !this.IsRelicOrCharm && !RecordId.IsNullOrEmpty(this.relic2ID) && this.relic2ID.IsCharm;
+	public bool HasCharmSlot2 => this.HasSocketedSlot2 && SocketedKind(this.relic2ID, this.Relic2Info) == SocketedRecordKind.Charm;
 
 	/// <summary>
 	/// Gets a value indicating whether the item has an embedded relic only in first slot.
 	/// </summary>
-	public bool HasRelicSlot1 => !this.IsRelicOrCharm && !RecordId.IsNullOrEmpty(this.relicID) && this.relicID.IsRelic;
+	public bool HasRelicSlot1 => this.HasSocketedSlot1 && SocketedKind(this.relicID, this.RelicInfo) == SocketedRecordKind.Relic;
 
 	/// <summary>
 	/// Gets a value indicating whether the item has an embedded relic only in second slot.
 	/// </summary>
-	public bool HasRelicSlot2 => !this.IsRelicOrCharm && !RecordId.IsNullOrEmpty(this.relic2ID) && this.relic2ID.IsRelic;
+	public bool HasRelicSlot2 => this.HasSocketedSlot2 && SocketedKind(this.relic2ID, this.Relic2Info) == SocketedRecordKind.Relic;
+
+	private enum SocketedRecordKind { Other, Relic, Charm }
+
+	/// <summary>
+	/// What a relic slot holds. The loaded record's class decides, as in the game: the golden scarabs are relics although
+	/// their file names end in "_charm". The record path is only the fallback when the record is not loaded.
+	/// </summary>
+	private static SocketedRecordKind SocketedKind(RecordId? id, Info? info)
+	{
+		if (info is not null)
+			return info.ItemClass.Equals(ICLASS_CHARM, noCase) ? SocketedRecordKind.Charm
+				: info.ItemClass.Equals(ICLASS_RELIC, noCase) ? SocketedRecordKind.Relic
+				: SocketedRecordKind.Other;
+
+		if (RecordId.IsNullOrEmpty(id))
+			return SocketedRecordKind.Other;
+
+		return id.IsCharm ? SocketedRecordKind.Charm
+			: id.IsRelic ? SocketedRecordKind.Relic
+			: SocketedRecordKind.Other;
+	}
 
 	/// <summary>
 	/// Gets a value indicating whether the item has an embedded relic or a charm.
@@ -806,30 +827,12 @@ public class Item
 	/// <summary>
 	/// Gets a value indicating whether the item first relic is a charm and only a charm.
 	/// </summary>
-	public bool IsRelic1Charm
-	{
-		get
-		{
-			if (this.RelicInfo is not null)
-				return this.RelicInfo.ItemClass.Equals(ICLASS_CHARM, noCase);
-
-			return this.RelicInfo?.ItemId.IsCharm ?? false;
-		}
-	}
+	public bool IsRelic1Charm => SocketedKind(this.relicID, this.RelicInfo) == SocketedRecordKind.Charm;
 
 	/// <summary>
 	/// Gets a value indicating whether the item second relic is a charm and only a charm.
 	/// </summary>
-	public bool IsRelic2Charm
-	{
-		get
-		{
-			if (this.Relic2Info is not null)
-				return this.Relic2Info.ItemClass.Equals(ICLASS_CHARM, noCase);
-
-			return this.Relic2Info?.ItemId.IsCharm ?? false;
-		}
-	}
+	public bool IsRelic2Charm => SocketedKind(this.relic2ID, this.Relic2Info) == SocketedRecordKind.Charm;
 
 	/// <summary>
 	/// Gets a value indicating whether the item is a relic or a charm.

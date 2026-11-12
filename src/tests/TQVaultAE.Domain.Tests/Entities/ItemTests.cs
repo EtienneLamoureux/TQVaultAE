@@ -149,6 +149,80 @@ public class ItemTests
 		item.HasRelicOrCharmSlot2.Should().BeTrue();
 	}
 
+	private const string GoldenScarab = @"records\item\hcdungeon\05_x4_goldenscarab_n_charm.dbr";
+
+	private static Info RecordOfClass(string id, string itemClass)
+	{
+		var record = new DBRecordCollection(RecordId.Create(id), itemClass);
+		var classVariable = new Variable("Class", VariableDataType.StringVar, 1);
+		classVariable[0] = itemClass;
+		record.Set(classVariable);
+		return new Info(record);
+	}
+
+	[Fact]
+	public void SocketedGoldenScarab_LoadedRecord_IsARelicAsItsClassSays()
+	{
+		// Upstream #546: the golden scarabs are ItemRelic records whose file names end in "_charm". The tool tip calls the
+		// socketed scarab a relic; the "Having Relic" / "Having Charm" filters must agree with it.
+		var item = new Item
+		{
+			relicID = RecordId.Create(GoldenScarab),
+			RelicInfo = RecordOfClass(GoldenScarab, Item.ICLASS_RELIC),
+		};
+
+		item.HasRelicOrCharmSlot1.Should().BeTrue();
+		item.HasRelicSlot1.Should().BeTrue();
+		item.HasCharmSlot1.Should().BeFalse();
+		item.IsRelic1Charm.Should().BeFalse();
+		item.HasRelic.Should().BeTrue();
+		item.HasCharm.Should().BeFalse();
+	}
+
+	[Fact]
+	public void SocketedRecord_LoadedRecordClass_WinsOverThePath()
+	{
+		const string charmPath = @"records\item\animalrelics\01_act2_vileichor.dbr";
+		var item = new Item
+		{
+			relic2ID = RecordId.Create(charmPath),
+			Relic2Info = RecordOfClass(charmPath, Item.ICLASS_CHARM),
+		};
+
+		item.HasCharmSlot2.Should().BeTrue();
+		item.IsRelic2Charm.Should().BeTrue();
+		item.HasRelicSlot2.Should().BeFalse();
+	}
+
+	[Fact]
+	public void SocketedRecord_NotLoaded_FallsBackToThePath()
+	{
+		var item = new Item
+		{
+			relicID = RecordId.Create(@"records\item\animalrelics\01_act2_vileichor.dbr"),
+			relic2ID = RecordId.Create(@"records\item\relics\01_act1_aegisofathena.dbr"),
+		};
+
+		item.HasCharmSlot1.Should().BeTrue();
+		item.IsRelic1Charm.Should().BeTrue("the record is not loaded: its path says charm");
+		item.HasRelicSlot2.Should().BeTrue();
+		item.IsRelic2Charm.Should().BeFalse();
+	}
+
+	[Fact]
+	public void SocketedRecord_LoadedNonRelicRecord_IsNeitherRelicNorCharm()
+	{
+		const string spear = @"records\item\equipmentweapon\spear\u_e_spear01.dbr";
+		var item = new Item
+		{
+			relicID = RecordId.Create(spear),
+			RelicInfo = RecordOfClass(spear, "WeaponMelee_Spear"),
+		};
+
+		item.HasSocketedSlot1.Should().BeTrue();
+		item.HasRelicOrCharmSlot1.Should().BeFalse();
+	}
+
 	[Fact]
 	public void HasSocketedSlot_EmptySlots_AreFalse()
 	{
