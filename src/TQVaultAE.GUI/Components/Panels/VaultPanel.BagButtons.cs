@@ -305,9 +305,10 @@ public partial class VaultPanel
 	/// </summary>
 	/// <param name="buttonNumber">Number of the button in its panel (see <see cref="SortTarget"/>).</param>
 	/// <param name="rotated">True for the upright picture beside a vault's bag, false for the flat one above a bag.</param>
-	protected AutoSortButton NewSortButton(int buttonNumber, bool rotated)
+	/// <param name="mirrored">True for the upright picture with its edge on its left side, against a frame on its left.</param>
+	protected AutoSortButton NewSortButton(int buttonNumber, bool rotated, bool mirrored = false)
 	{
-		AutoSortButton button = new AutoSortButton(buttonNumber, rotated, this.Services) { Visible = false };
+		AutoSortButton button = new AutoSortButton(buttonNumber, rotated, this.Services, mirrored) { Visible = false };
 		button.MouseDown += new MouseEventHandler(this.AutoSortButtonClick);
 		return button;
 	}

@@ -39,11 +39,14 @@ public class AutoSortButton : BagButtonBase
 	/// </summary>
 	/// <param name="buttonNumber">Number for this button</param>
 	/// <param name="rotateGraphic">bool to signal the button is using a rotated background graphic</param>
-	public AutoSortButton(int buttonNumber, bool rotateGraphic, GuiServices services) : base(buttonNumber, null, services)
+	/// <param name="mirrorGraphic">true for the upright picture mirrored: its edge against a frame on its left side
+	/// (the stash's sort button, right of its frame), where a vault's button has it on its right side.</param>
+	public AutoSortButton(int buttonNumber, bool rotateGraphic, GuiServices services, bool mirrorGraphic = false) : base(buttonNumber, null, services)
 	{
 		InitializeComponent();
 
 		this.IsVault = rotateGraphic;
+		this.IsFlipped = mirrorGraphic;
 		this.CreateBackgroundGraphics();
 	}
 
@@ -51,6 +54,11 @@ public class AutoSortButton : BagButtonBase
 	/// Gets or sets a value indicating whether this button is attached to a vault panel.
 	/// </summary>
 	public bool IsVault { get; set; }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the picture is mirrored left to right (see the constructor).
+	/// </summary>
+	public bool IsFlipped { get; set; }
 
 	/// <summary>
 	/// Updates the background graphics for the sort buttons.
@@ -66,6 +74,14 @@ public class AutoSortButton : BagButtonBase
 			this.OffBitmap = Images.rotatedautosortup01;
 			this.OnBitmap = Images.rotatedautosortdown01;
 			this.OverBitmap = Images.rotatedautosortover01;
+		}
+
+		// The resource pictures are new bitmaps at each read: flipping them changes no other button.
+		if (this.IsFlipped)
+		{
+			this.OffBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
+			this.OnBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
+			this.OverBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
 		}
 
 		// Scale the button to the size of the graphic.

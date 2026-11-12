@@ -203,8 +203,8 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		this.maxPanelSize = panelSize;
 
 		// The sort button of the stash tabs: upright, against the right edge of the golden frame, level with its top, as a
-		// vault's sort button stands against its bag. The base panel makes none (it keeps the trash panel's settings).
-		var sortButton = this.NewSortButton(0, true);
+		// vault's sort button stands against its bag; mirrored, so that its edge is the one against the frame. The base panel makes none (it keeps the trash panel's settings).
+		var sortButton = this.NewSortButton(0, true, mirrored: true);
 		var frame = this.GetBackgroundRect();
 		sortButton.Location = new Point(frame.Right, frame.Top);
 		this.AutoSortButtons.Add(sortButton);
