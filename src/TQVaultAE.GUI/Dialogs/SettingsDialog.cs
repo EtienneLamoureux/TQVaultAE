@@ -157,12 +157,10 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		this.playerReadonlyCheckbox.Font =
 		this.languageComboBox.Font =
 		this.languageLabel.Font =
-		this.detectLanguageCheckBox.Font =
 		this.titanQuestPathTextBox.Font =
 		this.titanQuestPathLabel.Font =
 		this.immortalThronePathLabel.Font =
 		this.immortalThronePathTextBox.Font =
-		this.detectGamePathsCheckBox.Font =
 		this.baseFontLabel.Font =
 		this.baseFontComboBox.Font =
 		this.scalingCheckBoxTooltipDetailedView.Font =
@@ -274,7 +272,13 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		this.ProcessAllControls(c =>
 		{
 			if (c is GroupBox group)
+			{
+				// Every caption in the dialog's font: a font set on a group would neither follow the zoom (only the
+				// dialog's font grows with it) nor the font family of the other captions. A CheckGroupBox's check box
+				// takes its group's font.
+				group.ResetFont();
 				CaravanFrame.ApplyWithCaption(group, CaptionBackground.None);
+			}
 		});
 
 		// A track bar cannot be transparent: on the black of its frame.

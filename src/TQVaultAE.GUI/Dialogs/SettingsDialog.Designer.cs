@@ -1217,7 +1217,6 @@ internal partial class SettingsDialog
 		// 
 		pasteBinGroupBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 		pasteBinGroupBox.Controls.Add(pasteBinFlowPanel);
-		pasteBinGroupBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		pasteBinGroupBox.ForeColor = Color.Gold;
 		pasteBinGroupBox.Location = new Point(3, 206);
 		pasteBinGroupBox.Name = "pasteBinGroupBox";
