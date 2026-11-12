@@ -420,6 +420,23 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 	}
 
 	[Fact]
+	public void SkillWindow_ShowsPiercingAndExplosionRadius_AndHidesTheRingLayout()
+	{
+		// Improved Firing Mechanism showed "?projectilePiercing?: 10.000000, 15.000000, ..." and a raw "?explosionRadius?".
+		this.Translations["ProjectilePiercingChance"] = "{%.0f0}% Chance to pass through Enemies";
+		this.Translations["ExplosionRadius"] = "Radius";
+		this.CreateRecord(SkillId, "Skill_AttackProjectileRing", Str("skillDisplayName", "tagSkillTest"),
+			Floats("projectilePiercing", 10f, 15f), Floats("explosionRadius", 2f, 2.5f), Int("numRings", 2), Float("spacingAngle", 30f),
+			Float("distanceIncrement", 1f), Int("skipSkillLinking", 1));
+
+		var skill = this.Provider.GetSkillAtLevel(SkillId, 2, TQVaultAE.Application.SkillWindowContext.None);
+
+		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).Should().Equal(
+			"15% Chance to pass through Enemies",
+			"2.5 Meter Radius");
+	}
+
+	[Fact]
 	public void SkillWindow_EnergyCost_IsRoundedLikeTheGame()
 	{
 		this.CreateRecord(SkillId, "Skill_AttackRadius", Str("skillDisplayName", "tagSkillTest"), Floats("skillManaCost", 10.5f, 12.5f));

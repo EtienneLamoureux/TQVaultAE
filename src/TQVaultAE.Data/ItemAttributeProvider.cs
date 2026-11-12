@@ -494,11 +494,13 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 		"skillActiveDuration",
 		"skillTargetRadius",
 		"projectileExplosionRadius",
+		"explosionRadius",
 		"skillTargetAngle",
 		"skillTargetNumber",
 		"skillChargeDuration",
 		"skillChargeLevel",
 		"piercingProjectile",
+		"projectilePiercing",
 		"headVelocity",
 		"maxDistance",
 		"tailVelocity",
@@ -1050,8 +1052,12 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 		// The number of charge levels: "7 Charge Levels" (the game's SkillChargeMax).
 		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "SKILLCHARGELEVEL"))
 			return "SkillChargeMax";
-		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "PIERCINGPROJECTILE"))
+		// The chance to pass through enemies, under both of its record names.
+		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "PIERCINGPROJECTILE")
+			|| SpanHelper.EqualsIgnoreCase(upperSpan.Span, "PROJECTILEPIERCING"))
 			return "ProjectilePiercingChance";
+		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "EXPLOSIONRADIUS"))
+			return "ExplosionRadius";
 		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "REFRESHTIME"))
 			return "tagSkillRefreshTime";
 
