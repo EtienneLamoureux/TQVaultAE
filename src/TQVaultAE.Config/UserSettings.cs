@@ -191,6 +191,13 @@ public class UserSettings
 	[XmlElement(ElementName = nameof(Sort))]
 	public SortSettings Sort { get; set; } = new();
 
+	/// <summary>
+	/// The key and mouse bindings changed by the user: <c>&lt;KeyBinds ItemDuplicateClick="Ctrl+Click" /&gt;</c>.
+	/// Missing or empty, every action has its default.
+	/// </summary>
+	[XmlElement(ElementName = nameof(KeyBinds))]
+	public KeyBindSettings KeyBinds { get; set; } = new();
+
 	#endregion
 
 	#region AppSettings & DebugLevels

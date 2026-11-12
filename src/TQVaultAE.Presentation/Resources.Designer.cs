@@ -6606,5 +6606,662 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("ModLinkActiveMap", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Key binds....
+        /// </summary>
+        public static string SettingsKeyBinds {
+            get {
+                return ResourceManager.GetString("SettingsKeyBinds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists the keys and clicks of TQVault and lets you change them..
+        /// </summary>
+        public static string SettingsKeyBindsTT {
+            get {
+                return ResourceManager.GetString("SettingsKeyBindsTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Key binds.
+        /// </summary>
+        public static string KeyBindsTitle {
+            get {
+                return ResourceManager.GetString("KeyBindsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Action.
+        /// </summary>
+        public static string KeyBindsColumnAction {
+            get {
+                return ResourceManager.GetString("KeyBindsColumnAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shortcut.
+        /// </summary>
+        public static string KeyBindsColumnShortcut {
+            get {
+                return ResourceManager.GetString("KeyBindsColumnShortcut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alternate.
+        /// </summary>
+        public static string KeyBindsColumnAlternate {
+            get {
+                return ResourceManager.GetString("KeyBindsColumnAlternate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click a shortcut, then press the new key. For a click action, click the shortcut again while holding the modifiers. Right click or Clear to stop..
+        /// </summary>
+        public static string KeyBindsHint {
+            get {
+                return ResourceManager.GetString("KeyBindsHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press a key....
+        /// </summary>
+        public static string KeyBindsPressKey {
+            get {
+                return ResourceManager.GetString("KeyBindsPressKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click with modifiers....
+        /// </summary>
+        public static string KeyBindsClickWithModifiers {
+            get {
+                return ResourceManager.GetString("KeyBindsClickWithModifiers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear.
+        /// </summary>
+        public static string KeyBindsClear {
+            get {
+                return ResourceManager.GetString("KeyBindsClear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Defaults.
+        /// </summary>
+        public static string KeyBindsDefaults {
+            get {
+                return ResourceManager.GetString("KeyBindsDefaults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is used by: {1}.
+        /// </summary>
+        public static string KeyBindsConflict {
+            get {
+                return ResourceManager.GetString("KeyBindsConflict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fixed: cannot be changed..
+        /// </summary>
+        public static string KeyBindsFixed {
+            get {
+                return ResourceManager.GetString("KeyBindsFixed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (none).
+        /// </summary>
+        public static string KeyBindsNone {
+            get {
+                return ResourceManager.GetString("KeyBindsNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Items.
+        /// </summary>
+        public static string KeyBindCategoryItems {
+            get {
+                return ResourceManager.GetString("KeyBindCategoryItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selection.
+        /// </summary>
+        public static string KeyBindCategorySelection {
+            get {
+                return ResourceManager.GetString("KeyBindCategorySelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Moving between panels.
+        /// </summary>
+        public static string KeyBindCategoryMoving {
+            get {
+                return ResourceManager.GetString("KeyBindCategoryMoving", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Window.
+        /// </summary>
+        public static string KeyBindCategoryWindow {
+            get {
+                return ResourceManager.GetString("KeyBindCategoryWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forge.
+        /// </summary>
+        public static string KeyBindCategoryForge {
+            get {
+                return ResourceManager.GetString("KeyBindCategoryForge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Character editor.
+        /// </summary>
+        public static string KeyBindCategoryCharacterEditor {
+            get {
+                return ResourceManager.GetString("KeyBindCategoryCharacterEditor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pick up or put down an item.
+        /// </summary>
+        public static string KeyBindActionPickUpItem {
+            get {
+                return ResourceManager.GetString("KeyBindActionPickUpItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Item menu, cancel a drag.
+        /// </summary>
+        public static string KeyBindActionItemMenu {
+            get {
+                return ResourceManager.GetString("KeyBindActionItemMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy the item under the cursor.
+        /// </summary>
+        public static string KeyBindActionItemCopy {
+            get {
+                return ResourceManager.GetString("KeyBindActionItemCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate the item under the cursor.
+        /// </summary>
+        public static string KeyBindActionItemDuplicate {
+            get {
+                return ResourceManager.GetString("KeyBindActionItemDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy the clicked item.
+        /// </summary>
+        public static string KeyBindActionItemCopyClick {
+            get {
+                return ResourceManager.GetString("KeyBindActionItemCopyClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate the clicked item.
+        /// </summary>
+        public static string KeyBindActionItemDuplicateClick {
+            get {
+                return ResourceManager.GetString("KeyBindActionItemDuplicateClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete the item under the cursor.
+        /// </summary>
+        public static string KeyBindActionItemDelete {
+            get {
+                return ResourceManager.GetString("KeyBindActionItemDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel a drag or a comparison.
+        /// </summary>
+        public static string KeyBindActionCancelDrag {
+            get {
+                return ResourceManager.GetString("KeyBindActionCancelDrag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add or remove an item from the selection.
+        /// </summary>
+        public static string KeyBindActionSelectItemClick {
+            get {
+                return ResourceManager.GetString("KeyBindActionSelectItemClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a rectangle (drag).
+        /// </summary>
+        public static string KeyBindActionSelectRectangle {
+            get {
+                return ResourceManager.GetString("KeyBindActionSelectRectangle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select every item.
+        /// </summary>
+        public static string KeyBindActionSelectAll {
+            get {
+                return ResourceManager.GetString("KeyBindActionSelectAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select the highlighted items.
+        /// </summary>
+        public static string KeyBindActionSelectHighlighted {
+            get {
+                return ResourceManager.GetString("KeyBindActionSelectHighlighted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear the selection.
+        /// </summary>
+        public static string KeyBindActionClearSelection {
+            get {
+                return ResourceManager.GetString("KeyBindActionClearSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the selection up.
+        /// </summary>
+        public static string KeyBindActionMoveSelectionUp {
+            get {
+                return ResourceManager.GetString("KeyBindActionMoveSelectionUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the selection left.
+        /// </summary>
+        public static string KeyBindActionMoveSelectionLeft {
+            get {
+                return ResourceManager.GetString("KeyBindActionMoveSelectionLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the selection down.
+        /// </summary>
+        public static string KeyBindActionMoveSelectionDown {
+            get {
+                return ResourceManager.GetString("KeyBindActionMoveSelectionDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the selection right.
+        /// </summary>
+        public static string KeyBindActionMoveSelectionRight {
+            get {
+                return ResourceManager.GetString("KeyBindActionMoveSelectionRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move to the character.
+        /// </summary>
+        public static string KeyBindActionMoveToPlayer {
+            get {
+                return ResourceManager.GetString("KeyBindActionMoveToPlayer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move to the vault.
+        /// </summary>
+        public static string KeyBindActionMoveToVault {
+            get {
+                return ResourceManager.GetString("KeyBindActionMoveToVault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move to the stash.
+        /// </summary>
+        public static string KeyBindActionMoveToStash {
+            get {
+                return ResourceManager.GetString("KeyBindActionMoveToStash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string KeyBindActionSearch {
+            get {
+                return ResourceManager.GetString("KeyBindActionSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy the selection to the clipboard.
+        /// </summary>
+        public static string KeyBindActionCopyToClipboard {
+            get {
+                return ResourceManager.GetString("KeyBindActionCopyToClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paste items from the clipboard.
+        /// </summary>
+        public static string KeyBindActionPasteFromClipboard {
+            get {
+                return ResourceManager.GetString("KeyBindActionPasteFromClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zoom in.
+        /// </summary>
+        public static string KeyBindActionZoomIn {
+            get {
+                return ResourceManager.GetString("KeyBindActionZoomIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zoom out.
+        /// </summary>
+        public static string KeyBindActionZoomOut {
+            get {
+                return ResourceManager.GetString("KeyBindActionZoomOut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset the zoom.
+        /// </summary>
+        public static string KeyBindActionZoomReset {
+            get {
+                return ResourceManager.GetString("KeyBindActionZoomReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redraw the panel.
+        /// </summary>
+        public static string KeyBindActionRefreshPanel {
+            get {
+                return ResourceManager.GetString("KeyBindActionRefreshPanel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next or previous vault.
+        /// </summary>
+        public static string KeyBindActionScrollVaultList {
+            get {
+                return ResourceManager.GetString("KeyBindActionScrollVaultList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Held while restoring the window: reset the zoom.
+        /// </summary>
+        public static string KeyBindActionResetZoomOnRestore {
+            get {
+                return ResourceManager.GetString("KeyBindActionResetZoomOnRestore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close TQVault.
+        /// </summary>
+        public static string KeyBindActionCloseWindow {
+            get {
+                return ResourceManager.GetString("KeyBindActionCloseWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forge (the Forge button).
+        /// </summary>
+        public static string KeyBindActionForge {
+            get {
+                return ResourceManager.GetString("KeyBindActionForge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a point.
+        /// </summary>
+        public static string KeyBindActionCharacterAddPoint {
+            get {
+                return ResourceManager.GetString("KeyBindActionCharacterAddPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove a point.
+        /// </summary>
+        public static string KeyBindActionCharacterRemovePoint {
+            get {
+                return ResourceManager.GetString("KeyBindActionCharacterRemovePoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add or remove every point at once.
+        /// </summary>
+        public static string KeyBindActionCharacterSpendAll {
+            get {
+                return ResourceManager.GetString("KeyBindActionCharacterSpendAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click.
+        /// </summary>
+        public static string KeyNameClick {
+            get {
+                return ResourceManager.GetString("KeyNameClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right click.
+        /// </summary>
+        public static string KeyNameRightClick {
+            get {
+                return ResourceManager.GetString("KeyNameRightClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mouse wheel.
+        /// </summary>
+        public static string KeyNameWheel {
+            get {
+                return ResourceManager.GetString("KeyNameWheel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shift.
+        /// </summary>
+        public static string KeyNameShift {
+            get {
+                return ResourceManager.GetString("KeyNameShift", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backspace.
+        /// </summary>
+        public static string KeyNameBack {
+            get {
+                return ResourceManager.GetString("KeyNameBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Esc.
+        /// </summary>
+        public static string KeyNameEscape {
+            get {
+                return ResourceManager.GetString("KeyNameEscape", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter.
+        /// </summary>
+        public static string KeyNameEnter {
+            get {
+                return ResourceManager.GetString("KeyNameEnter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Space.
+        /// </summary>
+        public static string KeyNameSpace {
+            get {
+                return ResourceManager.GetString("KeyNameSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string KeyNameDelete {
+            get {
+                return ResourceManager.GetString("KeyNameDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert.
+        /// </summary>
+        public static string KeyNameInsert {
+            get {
+                return ResourceManager.GetString("KeyNameInsert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        public static string KeyNameHome {
+            get {
+                return ResourceManager.GetString("KeyNameHome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End.
+        /// </summary>
+        public static string KeyNameEnd {
+            get {
+                return ResourceManager.GetString("KeyNameEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page Up.
+        /// </summary>
+        public static string KeyNamePageUp {
+            get {
+                return ResourceManager.GetString("KeyNamePageUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page Down.
+        /// </summary>
+        public static string KeyNamePageDown {
+            get {
+                return ResourceManager.GetString("KeyNamePageDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left arrow.
+        /// </summary>
+        public static string KeyNameLeft {
+            get {
+                return ResourceManager.GetString("KeyNameLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right arrow.
+        /// </summary>
+        public static string KeyNameRight {
+            get {
+                return ResourceManager.GetString("KeyNameRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up arrow.
+        /// </summary>
+        public static string KeyNameUp {
+            get {
+                return ResourceManager.GetString("KeyNameUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Down arrow.
+        /// </summary>
+        public static string KeyNameDown {
+            get {
+                return ResourceManager.GetString("KeyNameDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Num {0}.
+        /// </summary>
+        public static string KeyNameNumPad {
+            get {
+                return ResourceManager.GetString("KeyNameNumPad", resourceCulture);
+            }
+        }
     }
 }

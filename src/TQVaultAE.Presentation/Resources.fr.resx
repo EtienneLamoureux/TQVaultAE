@@ -2056,4 +2056,223 @@ Le sac est resté tel quel.</value>
     <value>Trier un sac empile aussi les fragments d'une même relique ou d'un même charme jusqu'à complétion.
 Une relique complétée reçoit son bonus, comme quand vous l'empilez à la main.</value>
   </data>
+	<data name="SettingsKeyBinds" xml:space="preserve">
+    <value>Raccourcis...</value>
+  </data>
+	<data name="SettingsKeyBindsTT" xml:space="preserve">
+    <value>Liste les touches et les clics de TQVault et permet de les changer.</value>
+  </data>
+	<data name="KeyBindsTitle" xml:space="preserve">
+    <value>Raccourcis</value>
+  </data>
+	<data name="KeyBindsColumnAction" xml:space="preserve">
+    <value>Action</value>
+  </data>
+	<data name="KeyBindsColumnShortcut" xml:space="preserve">
+    <value>Raccourci</value>
+  </data>
+	<data name="KeyBindsColumnAlternate" xml:space="preserve">
+    <value>Autre</value>
+  </data>
+	<data name="KeyBindsHint" xml:space="preserve">
+    <value>Cliquez sur un raccourci puis appuyez sur la nouvelle touche. Pour une action de clic, recliquez sur le raccourci en maintenant les modificateurs. Clic droit ou Effacer pour arrêter.</value>
+  </data>
+	<data name="KeyBindsPressKey" xml:space="preserve">
+    <value>Appuyez sur une touche...</value>
+  </data>
+	<data name="KeyBindsClickWithModifiers" xml:space="preserve">
+    <value>Cliquez avec les modificateurs...</value>
+  </data>
+	<data name="KeyBindsClear" xml:space="preserve">
+    <value>Effacer</value>
+  </data>
+	<data name="KeyBindsDefaults" xml:space="preserve">
+    <value>Par défaut</value>
+  </data>
+	<data name="KeyBindsConflict" xml:space="preserve">
+    <value>{0} est utilisé par : {1}</value>
+  </data>
+	<data name="KeyBindsFixed" xml:space="preserve">
+    <value>Fixe : ne peut pas être changé.</value>
+  </data>
+	<data name="KeyBindsNone" xml:space="preserve">
+    <value>(aucun)</value>
+  </data>
+	<data name="KeyBindCategoryItems" xml:space="preserve">
+    <value>Objets</value>
+  </data>
+	<data name="KeyBindCategorySelection" xml:space="preserve">
+    <value>Sélection</value>
+  </data>
+	<data name="KeyBindCategoryMoving" xml:space="preserve">
+    <value>Déplacement entre panneaux</value>
+  </data>
+	<data name="KeyBindCategoryWindow" xml:space="preserve">
+    <value>Fenêtre</value>
+  </data>
+	<data name="KeyBindCategoryForge" xml:space="preserve">
+    <value>Forge</value>
+  </data>
+	<data name="KeyBindCategoryCharacterEditor" xml:space="preserve">
+    <value>Éditeur de personnage</value>
+  </data>
+	<data name="KeyBindActionPickUpItem" xml:space="preserve">
+    <value>Prendre ou poser un objet</value>
+  </data>
+	<data name="KeyBindActionItemMenu" xml:space="preserve">
+    <value>Menu de l'objet, annuler un déplacement</value>
+  </data>
+	<data name="KeyBindActionItemCopy" xml:space="preserve">
+    <value>Copier l'objet sous le curseur</value>
+  </data>
+	<data name="KeyBindActionItemDuplicate" xml:space="preserve">
+    <value>Reproduire l'objet sous le curseur</value>
+  </data>
+	<data name="KeyBindActionItemCopyClick" xml:space="preserve">
+    <value>Copier l'objet cliqué</value>
+  </data>
+	<data name="KeyBindActionItemDuplicateClick" xml:space="preserve">
+    <value>Reproduire l'objet cliqué</value>
+  </data>
+	<data name="KeyBindActionItemDelete" xml:space="preserve">
+    <value>Supprimer l'objet sous le curseur</value>
+  </data>
+	<data name="KeyBindActionCancelDrag" xml:space="preserve">
+    <value>Annuler un déplacement ou une comparaison</value>
+  </data>
+	<data name="KeyBindActionSelectItemClick" xml:space="preserve">
+    <value>Ajouter ou retirer un objet de la sélection</value>
+  </data>
+	<data name="KeyBindActionSelectRectangle" xml:space="preserve">
+    <value>Sélectionner un rectangle (glisser)</value>
+  </data>
+	<data name="KeyBindActionSelectAll" xml:space="preserve">
+    <value>Sélectionner tous les objets</value>
+  </data>
+	<data name="KeyBindActionSelectHighlighted" xml:space="preserve">
+    <value>Sélectionner les objets surlignés</value>
+  </data>
+	<data name="KeyBindActionClearSelection" xml:space="preserve">
+    <value>Annuler la sélection</value>
+  </data>
+	<data name="KeyBindActionMoveSelectionUp" xml:space="preserve">
+    <value>Déplacer la sélection vers le haut</value>
+  </data>
+	<data name="KeyBindActionMoveSelectionLeft" xml:space="preserve">
+    <value>Déplacer la sélection vers la gauche</value>
+  </data>
+	<data name="KeyBindActionMoveSelectionDown" xml:space="preserve">
+    <value>Déplacer la sélection vers le bas</value>
+  </data>
+	<data name="KeyBindActionMoveSelectionRight" xml:space="preserve">
+    <value>Déplacer la sélection vers la droite</value>
+  </data>
+	<data name="KeyBindActionMoveToPlayer" xml:space="preserve">
+    <value>Déplacer vers le personnage</value>
+  </data>
+	<data name="KeyBindActionMoveToVault" xml:space="preserve">
+    <value>Déplacer vers le coffre</value>
+  </data>
+	<data name="KeyBindActionMoveToStash" xml:space="preserve">
+    <value>Déplacer vers la caravane</value>
+  </data>
+	<data name="KeyBindActionSearch" xml:space="preserve">
+    <value>Rechercher</value>
+  </data>
+	<data name="KeyBindActionCopyToClipboard" xml:space="preserve">
+    <value>Copier la sélection dans le presse-papiers</value>
+  </data>
+	<data name="KeyBindActionPasteFromClipboard" xml:space="preserve">
+    <value>Coller des objets du presse-papiers</value>
+  </data>
+	<data name="KeyBindActionZoomIn" xml:space="preserve">
+    <value>Agrandir</value>
+  </data>
+	<data name="KeyBindActionZoomOut" xml:space="preserve">
+    <value>Réduire</value>
+  </data>
+	<data name="KeyBindActionZoomReset" xml:space="preserve">
+    <value>Rétablir le zoom</value>
+  </data>
+	<data name="KeyBindActionRefreshPanel" xml:space="preserve">
+    <value>Redessiner le panneau</value>
+  </data>
+	<data name="KeyBindActionScrollVaultList" xml:space="preserve">
+    <value>Coffre suivant ou précédent</value>
+  </data>
+	<data name="KeyBindActionResetZoomOnRestore" xml:space="preserve">
+    <value>Maintenu en restaurant la fenêtre : rétablir le zoom</value>
+  </data>
+	<data name="KeyBindActionCloseWindow" xml:space="preserve">
+    <value>Fermer TQVault</value>
+  </data>
+	<data name="KeyBindActionForge" xml:space="preserve">
+    <value>Forger (le bouton Forger)</value>
+  </data>
+	<data name="KeyBindActionCharacterAddPoint" xml:space="preserve">
+    <value>Ajouter un point</value>
+  </data>
+	<data name="KeyBindActionCharacterRemovePoint" xml:space="preserve">
+    <value>Retirer un point</value>
+  </data>
+	<data name="KeyBindActionCharacterSpendAll" xml:space="preserve">
+    <value>Ajouter ou retirer tous les points d'un coup</value>
+  </data>
+	<data name="KeyNameClick" xml:space="preserve">
+    <value>Clic</value>
+  </data>
+	<data name="KeyNameRightClick" xml:space="preserve">
+    <value>Clic droit</value>
+  </data>
+	<data name="KeyNameWheel" xml:space="preserve">
+    <value>Molette</value>
+  </data>
+	<data name="KeyNameShift" xml:space="preserve">
+    <value>Maj</value>
+  </data>
+	<data name="KeyNameBack" xml:space="preserve">
+    <value>Retour arrière</value>
+  </data>
+	<data name="KeyNameEscape" xml:space="preserve">
+    <value>Échap</value>
+  </data>
+	<data name="KeyNameEnter" xml:space="preserve">
+    <value>Entrée</value>
+  </data>
+	<data name="KeyNameSpace" xml:space="preserve">
+    <value>Espace</value>
+  </data>
+	<data name="KeyNameDelete" xml:space="preserve">
+    <value>Suppr</value>
+  </data>
+	<data name="KeyNameInsert" xml:space="preserve">
+    <value>Inser</value>
+  </data>
+	<data name="KeyNameHome" xml:space="preserve">
+    <value>Origine</value>
+  </data>
+	<data name="KeyNameEnd" xml:space="preserve">
+    <value>Fin</value>
+  </data>
+	<data name="KeyNamePageUp" xml:space="preserve">
+    <value>Page préc.</value>
+  </data>
+	<data name="KeyNamePageDown" xml:space="preserve">
+    <value>Page suiv.</value>
+  </data>
+	<data name="KeyNameLeft" xml:space="preserve">
+    <value>Flèche gauche</value>
+  </data>
+	<data name="KeyNameRight" xml:space="preserve">
+    <value>Flèche droite</value>
+  </data>
+	<data name="KeyNameUp" xml:space="preserve">
+    <value>Flèche haut</value>
+  </data>
+	<data name="KeyNameDown" xml:space="preserve">
+    <value>Flèche bas</value>
+  </data>
+	<data name="KeyNameNumPad" xml:space="preserve">
+    <value>Pavé num. {0}</value>
+  </data>
 </root>

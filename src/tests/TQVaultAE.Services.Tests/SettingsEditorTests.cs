@@ -308,4 +308,36 @@ public class SettingsEditorTests
 
 		editor.Original.AllowItemEdit.Should().BeTrue();
 	}
+
+	[Fact]
+	public void KeyBinds_EditedCopy_IsAChangeWithoutRestart_AndTheOriginalIsUntouched()
+	{
+		var settings = NewSettings();
+		var editor = NewEditor(settings);
+		var edited = new KeyBindSettings();
+		edited.SetOverrides([KeyValuePair.Create("ItemCopy", "X")]);
+
+		editor.Current.KeyBinds = edited;
+
+		editor.KeyBindsChanged.Should().BeTrue();
+		editor.ConfigurationChanged.Should().BeTrue();
+		editor.RestartReason.Should().Be(RestartReason.None);
+		editor.Original.KeyBinds.Overrides.Should().BeEmpty();
+
+		editor.ApplyTo(settings);
+		settings.KeyBinds.Overrides.Should().Equal(new Dictionary<string, string> { ["ItemCopy"] = "X" });
+	}
+
+	[Fact]
+	public void KeyBinds_SameOverridesInANewObject_IsNoChange()
+	{
+		var settings = NewSettings();
+		settings.KeyBinds.SetOverrides([KeyValuePair.Create("Forge", "")]);
+		var editor = NewEditor(settings);
+
+		editor.Current.KeyBinds = settings.KeyBinds.Clone();
+
+		editor.KeyBindsChanged.Should().BeFalse();
+		editor.ConfigurationChanged.Should().BeFalse();
+	}
 }

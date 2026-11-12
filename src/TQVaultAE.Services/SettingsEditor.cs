@@ -16,7 +16,8 @@ public sealed class SettingsEditor
 	public SettingsEditor(SettingsValues original)
 	{
 		this.Original = original;
-		this.Current = original with { };
+		// The key binds are an object: the copy gets its own.
+		this.Current = original with { KeyBinds = original.KeyBinds.Clone() };
 	}
 
 	/// <summary>
@@ -162,6 +163,11 @@ public sealed class SettingsEditor
 	public bool EnableCharacterEditChanged => this.Current.AllowCharacterEdit != this.Original.AllowCharacterEdit;
 
 	public bool EnableTQVaultSoundsChanged => this.Current.EnableTQVaultSounds != this.Original.EnableTQVaultSounds;
+
+	/// <summary>
+	/// A key or mouse binding changed: the windows read the new ones at once, without a restart.
+	/// </summary>
+	public bool KeyBindsChanged => !this.Current.KeyBinds.Equals(this.Original.KeyBinds);
 
 	/// <summary>
 	/// Why the changes need a restart, if they do.

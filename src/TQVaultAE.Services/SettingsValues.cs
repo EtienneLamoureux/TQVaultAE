@@ -62,6 +62,11 @@ public sealed record SettingsValues
 	public string CSVDelimiter { get; set; } = string.Empty;
 
 	/// <summary>
+	/// The key and mouse bindings changed by the user, a copy edited by the key binds dialog.
+	/// </summary>
+	public KeyBindSettings KeyBinds { get; set; } = new();
+
+	/// <summary>
 	/// Copies the editable values of the configuration.
 	/// </summary>
 	/// <param name="settings">The configuration.</param>
@@ -109,6 +114,7 @@ public sealed record SettingsValues
 			PasteBinApiKey = settings.PasteBinApiKey ?? string.Empty,
 			PasteBinExpiration = settings.PasteBinExpiration ?? UserSettings.DefaultPasteBinExpiration,
 			CSVDelimiter = settings.CSVDelimiter ?? string.Empty,
+			KeyBinds = settings.KeyBinds.Clone(),
 		};
 
 	/// <summary>
@@ -155,5 +161,6 @@ public sealed record SettingsValues
 		settings.PasteBinExpiration = this.PasteBinExpiration;
 		settings.EnableEpicLegendaryAffixes = this.EnableEpicLegendaryAffixes;
 		settings.CSVDelimiter = this.CSVDelimiter;
+		settings.KeyBinds = this.KeyBinds.Clone();
 	}
 }

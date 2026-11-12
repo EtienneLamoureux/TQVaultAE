@@ -60,6 +60,7 @@ public sealed class UserSettingsTests : IDisposable
 				var t when t == typeof(double) => -0.123456789012345 - i,
 				var t when t == typeof(ItemCompareSettings) => new ItemCompareSettings { AlignRows = false, HideUnchanged = true },
 				var t when t == typeof(SortSettings) => new SortSettings { Algorithm = SackSortAlgorithm.Rarity, MergeRelics = true },
+				var t when t == typeof(KeyBindSettings) => KeyBinds(("ItemDuplicateClick", "Ctrl+Click"), ("ZoomIn", "")),
 				_ => throw new NotSupportedException($"Add a test value for {property.PropertyType} ({property.Name})."),
 			};
 			property.SetValue(settings, value);
@@ -223,6 +224,57 @@ public sealed class UserSettingsTests : IDisposable
 		var read = UserSettings.Read(this._xmlPath);
 		read.Sort.Algorithm.Should().Be(SackSortAlgorithm.Level);
 		read.Sort.MergeRelics.Should().BeTrue();
+	}
+
+	#endregion
+
+	#region Key binds
+
+	private static KeyBindSettings KeyBinds(params (string Name, string Value)[] overrides)
+	{
+		var settings = new KeyBindSettings();
+		settings.SetOverrides(overrides.Select(o => KeyValuePair.Create(o.Name, o.Value)));
+		return settings;
+	}
+
+	[Fact]
+	public void KeyBinds_Missing_NoChange()
+	{
+		var settings = UserSettings.ParseSettings("""<UserSettings><SkipTitle>1</SkipTitle></UserSettings>""");
+
+		settings.KeyBinds.Overrides.Should().BeEmpty();
+	}
+
+	[Fact]
+	public void KeyBinds_SaveThenRead_OneElementWithAnAttributePerChangedAction()
+	{
+		new UserSettings { KeyBinds = KeyBinds(("ItemDuplicateClick", "Ctrl+Click"), ("ZoomIn", "Ctrl+Add, Ctrl+Oemplus"), ("Forge", "")) }
+			.Save(this._xmlPath);
+
+		var element = XDocument.Load(this._xmlPath).Root!.Elements("KeyBinds").Should().ContainSingle().Subject;
+		element.Attribute("ItemDuplicateClick")!.Value.Should().Be("Ctrl+Click");
+		element.Attribute("ZoomIn")!.Value.Should().Be("Ctrl+Add, Ctrl+Oemplus");
+		element.Attribute("Forge")!.Value.Should().BeEmpty("an action without a binding is kept as such");
+		element.HasElements.Should().BeFalse();
+
+		var read = UserSettings.Read(this._xmlPath);
+		read.KeyBinds.Should().Be(KeyBinds(("Forge", ""), ("ItemDuplicateClick", "Ctrl+Click"), ("ZoomIn", "Ctrl+Add, Ctrl+Oemplus")));
+	}
+
+	[Fact]
+	public void KeyBinds_NameNotAnXmlName_SkippedAtSave()
+	{
+		new UserSettings { KeyBinds = KeyBinds(("Zoom In", "Ctrl+Add"), ("Search", "Ctrl+G")) }.Save(this._xmlPath);
+
+		UserSettings.Read(this._xmlPath).KeyBinds.Should().Be(KeyBinds(("Search", "Ctrl+G")));
+	}
+
+	[Fact]
+	public void KeyBinds_Equality_ComparesTheOverridesNotTheInstances()
+	{
+		KeyBinds(("A", "1"), ("B", "2")).Should().Be(KeyBinds(("B", "2"), ("A", "1")));
+		KeyBinds(("A", "1")).Should().NotBe(KeyBinds(("A", "2")));
+		KeyBinds(("A", "1")).Clone().Should().Be(KeyBinds(("A", "1")));
 	}
 
 	#endregion
