@@ -56,23 +56,24 @@ Figures quoted below come from that install.
 | `Toolset\*.arc` | Editor templates and tutorials. |
 
 **Resource ids.** Records reference assets by a *resource id*: `<archive stem>\<path inside the archive>`,
-for example `Items\EquipmentHelm\UIBitmaps\mi_n_gorgonmelee.tex`. The game maps the first segment to an archive:
+for example `Items\EquipmentHelm\UIBitmaps\mi_n_gorgonmelee.tex`. The first segments give the archive, as the
+archives of the game install hold them:
 
-| First segment | Archive |
-|---|---|
-| `XPACK\<name>` (except `XPACK\SOUNDS`) | `Resources\XPack\<name>.arc` |
-| `XPACK\SOUNDS` | `Resources\Sounds.arc` |
-| `XPACK2\<name>`, `XPACK3\<name>`, `XPACK4\<name>` | `Resources\XPackN\<name>.arc` |
-| `SOUNDS` | `Audio\Sounds.arc` |
-| anything else (`<name>`) | `Resources\<name>.arc` |
+| Resource id | Archive | Entry path |
+|---|---|---|
+| `XPack\<name>\...`, `XPack2\<name>\...`, `XPack3\<name>\...`, `XPack4\<name>\...` | `Resources\XPackN\<name>.arc` (sounds, dialogs and music too) | after `XPackN\<name>\` |
+| `Sounds\XPack\...`, `Music\XPack\...` (Immortal Throne sounds and music, `.wav` / `.mp3`) | `Resources\Sounds.arc`, `Resources\Music.arc` | after `<name>\`: `xpack/...` |
+| other `.wav` / `.mp3`: `Sounds\...`, `Dialog\...`, `PlayerSounds\...`, `Music\...` | `Audio\<name>.arc` | after `<name>\` |
+| anything else (`<name>\...`) | `Resources\<name>.arc` | after `<name>\` |
 
-Inside a DLC archive, the entry path starts after the `XPACKn\<name>\` prefix.
+The resource ids never start with `XPack\Sounds\`: there is no `Resources\XPack\Sounds.arc`. One exception to the
+table: the Eternal Embers drop sounds (`Sounds\item\embers*.mp3` / `.wav`) are in `Resources\Sounds.arc`, not in
+`Audio\Sounds.arc`. The `Audio\*_XX.arc` and `Resources\XPackN\*_XX.arc` archives (`Dialog_DE`, `Sounds_FR`...) hold
+the localized versions.
 
-TQVaultAE's own mapping is `GameArchives.ArcFileSegments` (`src/TQVaultAE.Domain/Helpers/GameArchives.cs`). It does
-not follow the two sound rows to the letter: it sends any `.mp3` / `.wav` id outside the expansions to
-`Audio\<first segment>.arc` (`Sounds`, `Dialog`, `Music`...), and it has no special case for `XPACK\SOUNDS`. When
-the first archive does not hold the entry, `GameArchives.ArcFileCandidates` tries the archive of the same name in the
-expansion folders and in `Resources`.
+TQVaultAE's mapping is `GameArchives.ArcFileSegments` (`src/TQVaultAE.Domain/Helpers/GameArchives.cs`), the table
+above. When the first archive does not hold the entry, `GameArchives.ArcFileCandidates` tries the archive of the same
+name in the expansion folders and in `Resources` (which finds the Eternal Embers drop sounds).
 
 ---
 
@@ -406,4 +407,4 @@ A zlib stream can be inflated with a raw deflate decoder after skipping its 2 he
 
 ## <a id="Credits"></a>Credits
 
-The original ARC/ARZ layouts were documented through reverse engineering by the original TQVault authors (Brandon Wallace, Jesse Calhoun and VillageIdiot). The 2026 update re-verified every field and resolved the unknown ones: ARC header, checksums and timestamps; ARZ magic, trailer and string encoding. It added the text, texture, asset and jitter sections.
+The original ARC/ARZ layouts were documented by the original TQVault authors (Brandon Wallace, Jesse Calhoun and VillageIdiot). The 2026 update re-verified every field and resolved the unknown ones: ARC header, checksums and timestamps; ARZ magic, trailer and string encoding. It added the text, texture, asset and jitter sections.
