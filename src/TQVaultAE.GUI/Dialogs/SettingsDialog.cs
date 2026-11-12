@@ -183,7 +183,7 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 
 		#endregion
 
-		this.ApplyMarbleStyle();
+		CaravanLook.Apply(this, this.bufferedTableLayoutPanelSkeleton);
 
 		this.groupBoxVaultPath.Text = Resources.SettingsLabel1;
 		this.languageLabel.Text = Resources.SettingsLabel2;
@@ -257,34 +257,6 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 
 		this.ResumeLayout(false);
 		this.PerformLayout();
-	}
-
-	/// <summary>
-	/// The look of Vault Maintenance: the tiled marble behind the dialog, each group in a caravan frame with its caption
-	/// over its top edge in the dialog's font, and a drop shadow on the labels and check boxes left over the marble.
-	/// </summary>
-	private void ApplyMarbleStyle()
-	{
-		MarbleBackground.ApplyTo(this);
-		this.bufferedTableLayoutPanelSkeleton.BackColor = Color.Transparent;
-		CaravanFrame.ApplyWithCaptionToAll(this);
-
-		// A track bar cannot be transparent: on the black of its frame.
-		this.ItemBGColorOpacityTrackBar.BackColor = Color.Black;
-
-		this.ProcessAllControls(c =>
-		{
-			bool inFrame = false;
-			for (var parent = c.Parent; parent is not null && !inFrame; parent = parent.Parent)
-				inFrame = parent is GroupBox;
-			if (inFrame)
-				return;
-
-			if (c is ScalingLabel label)
-				label.TextShadow = true;
-			else if (c is ScalingCheckBox box)
-				box.TextShadow = true;
-		});
 	}
 
 	/// <summary>

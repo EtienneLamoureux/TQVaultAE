@@ -1,4 +1,6 @@
+using System.Runtime.CompilerServices;
 using System.Windows.Forms.VisualStyles;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.Presentation.Win32;
 
 namespace TQVaultAE.GUI.Infrastructure;
@@ -12,9 +14,15 @@ internal static class CaravanFrame
 	/// <summary>The thickness of the frame in the picture, in pixels (7, and one of black inside).</summary>
 	public const int Border = 8;
 
+	/// <summary>The gap between the glyph and the text of a check box, as the system draws it.</summary>
+	private const int CheckBoxTextGap = 3;
+
 	private static Bitmap? source;
 
 	private static Bitmap Source => source ??= Images.caravan_bg;
+
+	/// <summary>The controls given a frame, so that each gets one only once and the text inside is known to be on black.</summary>
+	private static readonly ConditionalWeakTable<Control, object> Framed = new();
 
 	/// <summary>The frame at <paramref name="size"/>.</summary>
 	public static Bitmap Render(Size size)
@@ -47,6 +55,24 @@ internal static class CaravanFrame
 	}
 
 	/// <summary>
+	/// Whether <paramref name="control"/> or one of its parents has a frame: its text is then drawn on the frame's black,
+	/// not over the window's background.
+	/// </summary>
+	public static bool IsInFrame(Control control)
+	{
+		for (Control? c = control; c is not null; c = c.Parent)
+		{
+			if (Framed.TryGetValue(c, out _))
+				return true;
+		}
+
+		return false;
+	}
+
+	/// <summary>Records <paramref name="control"/> as framed; false when it already was.</summary>
+	private static bool MarkFramed(Control control) => Framed.TryAdd(control, Framed);
+
+	/// <summary>
 	/// Gives <paramref name="control"/> the frame as its background, made again when its size changes (zoom, DPI), with
 	/// a padding that keeps its text inside the frame.
 	/// </summary>
@@ -54,6 +80,9 @@ internal static class CaravanFrame
 	/// <param name="padding">The padding of its text; by default the frame's thickness on every side.</param>
 	public static void ApplyTo(Control control, Padding? padding = null)
 	{
+		if (!MarkFramed(control))
+			return;
+
 		control.BackgroundImageLayout = ImageLayout.None;
 		control.Padding = padding ?? new Padding(Border);
 		void Refresh()
@@ -68,26 +97,28 @@ internal static class CaravanFrame
 		control.Disposed += (_, _) => control.BackgroundImage?.Dispose();
 	}
 
-	/// <summary>The color of the outline around a caption drawn over the frame, as the labels' drop shadow.</summary>
-	private static readonly Color ShadowColor = Color.FromArgb(20, 12, 6);
-
-	/// <summary>The gap between the glyph and the text of a check box, as the system draws it.</summary>
-	private const int CheckBoxTextGap = 3;
+	/// <summary>
+	/// A label in a frame as high as <paramref name="box"/>, the control it names on its right: from its left to just
+	/// before the box, its text centered.
+	/// </summary>
+	public static void FrameLabel(Label label, Control box)
+	{
+		label.AutoSize = false;
+		label.Bounds = new Rectangle(label.Left, box.Top, Math.Max(label.Width, box.Left - label.Left - 6), box.Height);
+		label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+		ApplyTo(label, new Padding(Border, 0, Border, 0));
+	}
 
 	/// <summary>
-	/// Draws every group box under <paramref name="root"/> (a dialog, a panel) as a framed group with its caption, see
-	/// <see cref="ApplyWithCaption"/>: the one call a dialog makes for its groups.
+	/// Draws every group box under <paramref name="root"/> (a dialog, a panel) not framed yet as a framed group with its
+	/// caption, see <see cref="ApplyWithCaption"/>.
 	/// </summary>
 	public static void ApplyWithCaptionToAll(Control root)
-	{
-		foreach (Control child in root.Controls)
+		=> root.ProcessAllControls(c =>
 		{
-			if (child is GroupBox box)
+			if (c is GroupBox box)
 				ApplyWithCaption(box);
-
-			ApplyWithCaptionToAll(child);
-		}
-	}
+		});
 
 	/// <summary>
 	/// Draws <paramref name="box"/> as the frame, whole, with its caption over the frame's top edge as a group box has
@@ -98,7 +129,10 @@ internal static class CaravanFrame
 	/// </summary>
 	public static void ApplyWithCaption(GroupBox box)
 	{
-		Bitmap? frame = null;
+		if (!MarkFramed(box))
+			return;
+
+		var frame = new FrameCache(box);
 		box.ResetFont();
 		box.BackColor = Color.Transparent;
 		box.Padding = new Padding(Border + 2, box.Padding.Top, Border + 2, Border);
@@ -113,22 +147,16 @@ internal static class CaravanFrame
 				: new Rectangle(new Point(Border + 2, 0), TextRenderer.MeasureText(e.Graphics, box.Text, box.Font));
 			// The frame's gold line runs through the middle of the caption.
 			int top = Math.Max(0, caption.Top + (caption.Height - Border) / 2);
-			var size = new Size(box.Width, box.Height - top);
-			if (frame is null || frame.Size != size)
-			{
-				frame?.Dispose();
-				frame = Render(size);
-			}
 
 			// The group box drew its own caption and border line before this handler: above the frame they would show
 			// next to the text drawn here, so that strip is painted again with the background. The frame is then drawn
 			// whole, and the caption over it.
 			if (top > 0)
 				ButtonRenderer.DrawParentBackground(e.Graphics, new Rectangle(0, 0, box.Width, top), box);
-			e.Graphics.DrawImageUnscaled(frame, 0, top);
+			e.Graphics.DrawImageUnscaled(frame.Get(new Size(box.Width, box.Height - top)), 0, top);
 			if (check is null)
 			{
-				DrawOutline(e.Graphics, box.Text, box.Font, caption, TextFormatFlags.Default);
+				TextShadow.DrawOutline(e.Graphics, box.Text, box.Font, caption, TextFormatFlags.Default);
 				TextRenderer.DrawText(e.Graphics, box.Text, box.Font, caption, box.ForeColor);
 				return;
 			}
@@ -144,32 +172,8 @@ internal static class CaravanFrame
 			var flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter;
 			if (!check.UseMnemonic)
 				flags |= TextFormatFlags.NoPrefix;
-			DrawOutline(e.Graphics, check.Text, check.Font, text, flags);
+			TextShadow.DrawOutline(e.Graphics, check.Text, check.Font, text, flags);
 		};
-		box.Disposed += (_, _) => frame?.Dispose();
-	}
-
-	/// <summary>
-	/// Draws a dark outline one pixel around <paramref name="text"/> (its copies in the eight directions), plus a drop
-	/// shadow one pixel further lower right: the gold text drawn over it then stays readable on the gold frame pieces,
-	/// the black inside and the marble alike.
-	/// </summary>
-	private static void DrawOutline(Graphics g, string text, Font font, Rectangle bounds, TextFormatFlags flags)
-	{
-		flags |= TextFormatFlags.PreserveGraphicsClipping;
-		for (int dx = -1; dx <= 2; dx++)
-		{
-			for (int dy = -1; dy <= 2; dy++)
-			{
-				bool ring = dx <= 1 && dy <= 1 && (dx != 0 || dy != 0);
-				if (ring || (dx == 2 && dy == 2))
-				{
-					var copy = bounds;
-					copy.Offset(dx, dy);
-					TextRenderer.DrawText(g, text, font, copy, ShadowColor, flags);
-				}
-			}
-		}
 	}
 
 	/// <summary>
@@ -178,30 +182,23 @@ internal static class CaravanFrame
 	/// </summary>
 	public static void FrameAround(Control control)
 	{
-		if (control.Parent is not { } parent)
+		if (control.Parent is not { } parent || !MarkFramed(control))
 			return;
 
 		control.Margin = new Padding(Border);
-		Bitmap? frame = null;
+		var frame = new FrameCache(control);
 		parent.Paint += (_, e) =>
 		{
 			if (!control.Visible)
 				return;
 
 			var bounds = Rectangle.Inflate(control.Bounds, Border, Border);
-			if (frame is null || frame.Size != bounds.Size)
-			{
-				frame?.Dispose();
-				frame = Render(bounds.Size);
-			}
-
-			e.Graphics.DrawImageUnscaled(frame, bounds.Location);
+			e.Graphics.DrawImageUnscaled(frame.Get(bounds.Size), bounds.Location);
 		};
 		void Repaint(object? sender, EventArgs e) => parent.Invalidate();
 		control.LocationChanged += Repaint;
 		control.SizeChanged += Repaint;
 		control.VisibleChanged += Repaint;
-		control.Disposed += (_, _) => frame?.Dispose();
 	}
 
 	/// <summary>
@@ -213,7 +210,9 @@ internal static class CaravanFrame
 	/// <param name="inset">The gap between the frame and its controls on the left; 4 pixels by default.</param>
 	public static void ApplyTo(GroupBox box, int inset = 4)
 	{
-		Bitmap? frame = null;
+		if (!MarkFramed(box))
+			return;
+
 		var children = box.Controls.Cast<Control>().ToList();
 		if (children.Count > 0)
 		{
@@ -227,16 +226,26 @@ internal static class CaravanFrame
 			}
 		}
 
-		box.Paint += (_, e) =>
+		var frame = new FrameCache(box);
+		box.Paint += (_, e) => e.Graphics.DrawImageUnscaled(frame.Get(box.Size), 0, 0);
+	}
+
+	/// <summary>The frame drawn for one control, made again only when its size changes, disposed with the control.</summary>
+	private sealed class FrameCache
+	{
+		private Bitmap? frame;
+
+		public FrameCache(Control owner) => owner.Disposed += (_, _) => this.frame?.Dispose();
+
+		public Bitmap Get(Size size)
 		{
-			if (frame is null || frame.Size != box.Size)
+			if (this.frame is null || this.frame.Size != size)
 			{
-				frame?.Dispose();
-				frame = Render(box.Size);
+				this.frame?.Dispose();
+				this.frame = Render(size);
 			}
 
-			e.Graphics.DrawImageUnscaled(frame, 0, 0);
-		};
-		box.Disposed += (_, _) => frame?.Dispose();
+			return this.frame;
+		}
 	}
 }

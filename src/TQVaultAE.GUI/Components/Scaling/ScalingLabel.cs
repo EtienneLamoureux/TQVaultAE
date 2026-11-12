@@ -56,9 +56,6 @@ public class ScalingLabel : Label, IScalingControl
 
 	private bool textShadow;
 
-	/// <summary>The color of the drop shadow.</summary>
-	private static readonly Color ShadowColor = Color.FromArgb(20, 12, 6);
-
 	/// <summary>
 	/// Draws disabled light text dimmed instead of the system dark gray, which is not readable on the dark UI, and the
 	/// drop shadow under the text when <see cref="TextShadow"/> is set.
@@ -87,11 +84,7 @@ public class ScalingLabel : Label, IScalingControl
 			client.Height - this.Padding.Vertical);
 
 		if (this.TextShadow)
-		{
-			var shadow = bounds;
-			shadow.Offset(1, 1);
-			TextRenderer.DrawText(e.Graphics, this.Text, this.Font, shadow, ShadowColor, flags);
-		}
+			Rendering.TextShadow.DrawShadow(e.Graphics, this.Text, this.Font, bounds, flags);
 
 		var color = dimmed ? DisabledTextPainter.ColorFor(this.ForeColor) : this.ForeColor;
 		TextRenderer.DrawText(e.Graphics, this.Text, this.Font, bounds, color, flags);

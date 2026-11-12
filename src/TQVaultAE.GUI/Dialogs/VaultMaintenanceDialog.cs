@@ -63,7 +63,6 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 		this.vaultService = vaultService;
 
 		this.InitializeComponent();
-		MarbleBackground.ApplyTo(this);
 
 		#region Apply custom font
 
@@ -104,8 +103,9 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 		CaravanFrame.ApplyTo(this.selectFunctionGroupBox, CharacterWidth(this.newRadioButton.Font));
 		int space = CaravanFrame.Border + CharacterWidth(this.instructionsLabel.Font);
 		CaravanFrame.ApplyTo(this.instructionsLabel, new Padding(space, CaravanFrame.Border, space, CaravanFrame.Border));
-		FrameLabel(this.sourceLabel, this.vaultListComboBox);
-		FrameLabel(this.targetLabel, this.targetTextBox);
+		CaravanFrame.FrameLabel(this.sourceLabel, this.vaultListComboBox);
+		CaravanFrame.FrameLabel(this.targetLabel, this.targetTextBox);
+		CaravanLook.Apply(this);
 
 		this.DrawCustomBorder = true;
 
@@ -118,15 +118,6 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 	/// <summary>The width of one character of <paramref name="font"/>.</summary>
 	private static int CharacterWidth(Font font)
 		=> TextRenderer.MeasureText("0", font, Size.Empty, TextFormatFlags.NoPadding).Width;
-
-	/// <summary>A label in a caravan frame as high as <paramref name="box"/>, its text centered.</summary>
-	private static void FrameLabel(Label label, Control box)
-	{
-		label.AutoSize = false;
-		label.Bounds = new Rectangle(label.Left, box.Top, Math.Max(label.Width, box.Left - label.Left - 6), box.Height);
-		label.TextAlign = ContentAlignment.MiddleCenter;
-		CaravanFrame.ApplyTo(label, new Padding(CaravanFrame.Border, 0, CaravanFrame.Border, 0));
-	}
 
 	/// <summary>
 	/// Gets the user selected function.
