@@ -360,10 +360,7 @@ internal sealed partial class CharacterEditDialog
 			Masteries = skills is null ? [] : [.. Enumerable.Range(0, skills.Slots.Count)
 				.Select(skills.GetMasterySummary)
 				.OfType<MasterySummary>()
-				.Select(s => (this.TranslationService.TranslateOr(s.Mastery.NameTag, s.Mastery.Mastery.ToString()),
-					string.Format(culture, Resources.CEMasterySummary,
-						string.Format(culture, s.SkillCount == 1 ? Resources.CEMasterySkill : Resources.CEMasterySkills, s.SkillCount),
-						string.Format(culture, s.PointsSpent == 1 ? Resources.CEMasteryPoint : Resources.CEMasteryPoints, s.PointsSpent))))],
+				.Select(s => PlayerInfoText.MasterySummaryLine(s, this.TranslationService))],
 			StatisticsTitle = Resources.CEStatistics,
 			StatisticsLabels = [Resources.CEDifficulty, Resources.CEIncludeBuffs],
 		};

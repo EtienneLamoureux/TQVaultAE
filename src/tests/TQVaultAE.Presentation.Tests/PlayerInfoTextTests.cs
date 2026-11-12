@@ -124,4 +124,28 @@ public class PlayerInfoTextTests
 		PlayerInfoText.MasteryNames(this._info, characterEdit.Object, this._translations.Object).Should().BeEmpty();
 		PlayerInfoText.MasteryNames(null, characterEdit.Object, this._translations.Object).Should().BeEmpty();
 	}
+
+	private static readonly MasteryTree Storm = new(Masteries.Storm, """Records\Skills\Storm\StormMastery.dbr""".ToRecordId(), "tagStorm", "", "", 40, []);
+
+	[Fact]
+	public void MasterySummaryLine_Plural_TranslatesTheNameAndCountsSkillsAndPoints()
+	{
+		this._translations.Setup(x => x.TranslateXTag("tagStorm", true, false, false)).Returns("Storm Nexus");
+
+		var (name, summary) = PlayerInfoText.MasterySummaryLine(new MasterySummary(Storm, 4, 20), this._translations.Object);
+
+		name.Should().Be("Storm Nexus");
+		summary.Should().Be(string.Format(Resources.CEMasterySummary,
+			string.Format(Resources.CEMasterySkills, 4), string.Format(Resources.CEMasteryPoints, 20)));
+	}
+
+	[Fact]
+	public void MasterySummaryLine_OneSkillOnePoint_IsSingularAndFallsBackToTheMasteryName()
+	{
+		var (name, summary) = PlayerInfoText.MasterySummaryLine(new MasterySummary(Storm, 1, 1), this._translations.Object);
+
+		name.Should().Be("Storm");
+		summary.Should().Be(string.Format(Resources.CEMasterySummary,
+			string.Format(Resources.CEMasterySkill, 1), string.Format(Resources.CEMasteryPoint, 1)));
+	}
 }

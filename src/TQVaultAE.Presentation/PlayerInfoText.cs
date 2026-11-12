@@ -1,3 +1,4 @@
+using System.Globalization;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 
@@ -19,6 +20,21 @@ public static class PlayerInfoText
 	public static string MasteryNames(PlayerInfo? info, ICharacterEditService characterEdit, ITranslationService translations)
 		=> string.Join(" + ", (info?.ActiveMasteriesRecordNames ?? [])
 			.Select(recId => translations.TranslateXTag(characterEdit.GetMasteryDescriptionTag(recId))));
+
+	/// <summary>
+	/// A line of the character editor's mastery list: the mastery name, and its skills and points, each in the singular
+	/// or the plural ("Storm", "4 skills, 1 point").
+	/// </summary>
+	/// <param name="summary">The mastery summary of a slot.</param>
+	/// <param name="translations">Translates the mastery name; the mastery's enum name without a translation.</param>
+	public static (string Name, string Summary) MasterySummaryLine(MasterySummary summary, ITranslationService translations)
+	{
+		var culture = CultureInfo.CurrentCulture;
+		var skills = string.Format(culture, summary.SkillCount == 1 ? Resources.CEMasterySkill : Resources.CEMasterySkills, summary.SkillCount);
+		var points = string.Format(culture, summary.PointsSpent == 1 ? Resources.CEMasteryPoint : Resources.CEMasteryPoints, summary.PointsSpent);
+		return (translations.TranslateOr(summary.Mastery.NameTag, summary.Mastery.Mastery.ToString()),
+			string.Format(culture, Resources.CEMasterySummary, skills, points));
+	}
 
 	/// <summary>
 	/// Builds the lines of the player information panel: a localized label and its value, in display order.
