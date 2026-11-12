@@ -569,6 +569,89 @@ public class DatabaseLoadingTests
 	}
 
 	[Fact]
+	public void Selector_Preload_LoadsTheMapWithoutActivatingIt()
+	{
+		this.UseAnniversaryEdition();
+		var gameArz = Path.Combine(GameAE, "Database", "database.arz");
+		var modArz = Path.Combine(ModFolder, "database", "shadowchampions.arz");
+		this.AddArz(modArz);
+		var selector = this.CreateSelector();
+		selector.LoadDBFile();
+
+		selector.Preload(ModFolder);
+
+		selector.LoadedMapFolders.Should().BeEquivalentTo([string.Empty, ModFolder]);
+		selector.ActiveMapFolder.Should().BeEmpty();
+
+		// Its first use finds it loaded.
+		selector.Activate(ModFolder).Should().BeTrue();
+		this._arzRead.Should().Equal(gameArz, gameArz, modArz);
+	}
+
+	[Fact]
+	public void Selector_WhileAModLoads_AMapAlreadyLoadedStaysUsable()
+	{
+		// Arrange: the mod's database blocks in its read until released
+		this.UseAnniversaryEdition();
+		var gameArz = Path.Combine(GameAE, "Database", "database.arz");
+		var modArz = Path.Combine(ModFolder, "database", "shadowchampions.arz");
+		this.AddArz(modArz);
+		var gameRecord = this.AddRecord(gameArz, """records\item\a.dbr""");
+		using var reading = new ManualResetEventSlim();
+		using var release = new ManualResetEventSlim();
+		this._arzProvider.Setup(a => a.Read(It.IsAny<ArzFile>())).Callback<ArzFile>(arz =>
+		{
+			if (arz.FileName != modArz)
+				return;
+			reading.Set();
+			release.Wait(TimeSpan.FromSeconds(10));
+		});
+		var selector = this.CreateSelector();
+		selector.LoadDBFile();
+
+		// Act: the mod loads in the background; meanwhile another thread reads the base game
+		var preload = Task.Run(() => selector.Preload(ModFolder));
+		reading.Wait(TimeSpan.FromSeconds(10)).Should().BeTrue();
+		var baseGameRead = Task.Run(() =>
+		{
+			using (selector.Use(string.Empty))
+				return selector.GetRecordFromFile("""records\item\a.dbr""");
+		});
+		bool readWhileLoading = baseGameRead.Wait(TimeSpan.FromSeconds(5));
+		release.Set();
+		preload.Wait(TimeSpan.FromSeconds(10)).Should().BeTrue();
+
+		// Assert
+		readWhileLoading.Should().BeTrue();
+		baseGameRead.Result.Should().BeSameAs(gameRecord);
+		selector.LoadedMapFolders.Should().BeEquivalentTo([string.Empty, ModFolder]);
+	}
+
+	[Fact]
+	public void Selector_FailedLoad_IsTriedAgainAtTheNextUse()
+	{
+		this.UseAnniversaryEdition();
+		var modArz = Path.Combine(ModFolder, "database", "shadowchampions.arz");
+		this.AddArz(modArz);
+		int modReads = 0;
+		this._arzProvider.Setup(a => a.Read(It.IsAny<ArzFile>())).Callback<ArzFile>(arz =>
+		{
+			if (arz.FileName == modArz && ++modReads == 1)
+				throw new IOException("locked");
+		});
+		var selector = this.CreateSelector();
+		selector.LoadDBFile();
+
+		var preload = () => selector.Preload(ModFolder);
+
+		preload.Should().Throw<IOException>();
+		selector.LoadedMapFolders.Should().BeEquivalentTo([string.Empty]);
+		selector.Activate(ModFolder).Should().BeTrue();
+		modReads.Should().Be(2);
+		selector.ActiveMapFolder.Should().Be(ModFolder);
+	}
+
+	[Fact]
 	public void Database_LoadedForAMod_KeepsItsModWhenTheSessionMapChanges()
 	{
 		this.UseAnniversaryEdition();

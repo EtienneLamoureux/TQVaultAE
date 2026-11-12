@@ -55,6 +55,41 @@ public class GameMapServiceTests
 			, new InstalledMod(Path.GetFileName(modFolder), modFolder, ModSource.SteamWorkshop), new ModLinkFile { Mod = Path.GetFileName(modFolder) }));
 
 	[Fact]
+	public async Task PreloadMapsAsync_LoadsEachLinkedModOnce_WithoutActivatingIt()
+	{
+		// Arrange: two characters on one mod, one on another, a campaign and an unlinked character
+		var heroA = Save("HeroA", isCustom: true);
+		var heroC = Save("HeroC", isCustom: true);
+		var heroE = Save("HeroE", isCustom: true);
+		this.LinkTo(heroA, Shadow);
+		this.LinkTo(heroC, Shadow);
+		this.LinkTo(heroE, Masteries);
+
+		// Act
+		await this.CreateService().PreloadMapsAsync([heroA, Save("HeroD", isCustom: false), heroC, Save("HeroB", isCustom: true), heroE]);
+
+		// Assert
+		this._maps.Verify(m => m.Preload(Shadow), Times.Once);
+		this._maps.Verify(m => m.Preload(Masteries), Times.Once);
+		this._maps.Verify(m => m.Preload(It.IsAny<string?>()), Times.Exactly(2));
+		this._maps.Verify(m => m.Activate(It.IsAny<string?>()), Times.Never);
+	}
+
+	[Fact]
+	public async Task PreloadMapsAsync_AFailedLoad_IsLoggedAndTheOthersGoOn()
+	{
+		var heroA = Save("HeroA", isCustom: true);
+		var heroE = Save("HeroE", isCustom: true);
+		this.LinkTo(heroA, Shadow);
+		this.LinkTo(heroE, Masteries);
+		this._maps.Setup(m => m.Preload(Shadow)).Throws(new IOException("locked"));
+
+		await this.CreateService().PreloadMapsAsync([heroA, heroE]);
+
+		this._maps.Verify(m => m.Preload(Masteries), Times.Once);
+	}
+
+	[Fact]
 	public void MapFor_MainCampaignCharacter_IsTheBaseGame()
 		=> this.CreateService().MapFor(Save("HeroC", isCustom: false)).Should().BeEmpty();
 

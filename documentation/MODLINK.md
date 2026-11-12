@@ -52,7 +52,9 @@ apart: the dialog says so.
 Selecting a character makes its map the active one: its database and archives, and its shared stash files
 (`SaveData\Sys\<mod>\winsys.dxb` and `miscsys.dxb`, or `SaveData\Sys\` for the base game). Each map's database is read
 the first time it is needed (about half a second for a large mod) and kept for the session, so switching back is
-immediate. A character read with another map's database (before it was linked) is read again, unless it has unsaved
+immediate. Once the startup loading ends, the databases of the mods the listed characters are linked to are read in
+the background (*Load all files* has read them already), so selecting a modded character does not wait for them. A
+database being read only makes the users of that map wait; the maps already read stay usable. A character read with another map's database (before it was linked) is read again, unless it has unsaved
 changes.
 
 *Load all files* at startup reads every character with its own map (see *Search and preload* below).

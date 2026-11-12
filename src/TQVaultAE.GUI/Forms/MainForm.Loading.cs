@@ -258,6 +258,11 @@ public partial class MainForm
 		this.WatchSharedStashFiles();
 
 		var characters = this.comboBoxCharacter.Items.OfType<PlayerSave>().ToArray();
+
+		// The databases of the mods the characters are linked to load in the background (already done by LoadAllFiles),
+		// so that selecting a modded character does not wait for its mod's database on the UI thread.
+		_ = this.gameMapService.PreloadMapsAsync(characters);
+
 		var selection = StartupSelection.Resolve(
 			USettings
 			, characters.Select(ps => ps.Key)

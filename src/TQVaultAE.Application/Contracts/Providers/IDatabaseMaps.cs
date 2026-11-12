@@ -29,4 +29,12 @@ public interface IDatabaseMaps
 	/// </summary>
 	/// <param name="mapFolder">The custom map folder; null or empty for the base game.</param>
 	IDisposable Use(string? mapFolder);
+
+	/// <summary>
+	/// Loads the database of a custom map if it is not loaded yet, without making it active: meant for a background
+	/// thread, so that the first use finds it ready. A use of that map meanwhile waits for this load; the other maps
+	/// stay usable.
+	/// </summary>
+	/// <param name="mapFolder">The custom map folder; null or empty for the base game.</param>
+	void Preload(string? mapFolder);
 }

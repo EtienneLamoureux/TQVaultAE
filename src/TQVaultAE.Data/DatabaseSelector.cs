@@ -8,15 +8,20 @@ namespace TQVaultAE.Data;
 
 /// <summary>
 /// The application's <see cref="IDatabase"/>: forwards every call to the database of the active custom map, one
-/// <see cref="Database"/> per map, created and loaded on first use and kept for the session.
+/// <see cref="Database"/> per map, created and loaded on first use (or by <see cref="Preload"/>) and kept for the
+/// session.
 /// </summary>
+/// <remarks>
+/// A map's database is loaded outside the selector's lock: a load (about half a second for a large mod) only makes the
+/// users of that same map wait, never those of a map already loaded.
+/// </remarks>
 /// <param name="log">Logger.</param>
 /// <param name="createDatabase">Creates a database, not loaded yet.</param>
 public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Database> createDatabase) : IDatabase, IDatabaseMaps, IDisposable
 {
 	private readonly ILogger Log = log;
 	private readonly Func<Database> CreateDatabase = createDatabase;
-	private readonly Dictionary<string, Database> _databases = new(StringComparer.OrdinalIgnoreCase);
+	private readonly Dictionary<string, Lazy<Database>> _databases = new(StringComparer.OrdinalIgnoreCase);
 	private readonly Lock _lock = new();
 
 	private Database? _active;
@@ -62,21 +67,21 @@ public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Databas
 		get
 		{
 			lock (this._lock)
-				return [.. this._databases.Keys];
+				return [.. this._databases.Where(entry => entry.Value.IsValueCreated).Select(entry => entry.Key)];
 		}
 	}
 
 	/// <inheritdoc/>
 	public bool Activate(string? mapFolder)
 	{
-		string key = Normalize(mapFolder);
+		var database = this.GetOrLoad(Normalize(mapFolder));
 
 		lock (this._lock)
 		{
-			if (this._active is not null && this._databases.TryGetValue(key, out var loaded) && ReferenceEquals(loaded, this._active))
+			if (ReferenceEquals(database, this._active))
 				return false;
 
-			this._active = this.GetOrLoad(key);
+			this._active = database;
 			return true;
 		}
 	}
@@ -84,32 +89,66 @@ public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Databas
 	/// <inheritdoc/>
 	public IDisposable Use(string? mapFolder)
 	{
-		Database database;
-		lock (this._lock)
-			database = this.GetOrLoad(Normalize(mapFolder));
+		var database = this.GetOrLoad(Normalize(mapFolder));
 
 		var previous = this._scoped.Value;
 		this._scoped.Value = database;
 		return new ScopedDatabase(this, previous);
 	}
 
+	/// <inheritdoc/>
+	public void Preload(string? mapFolder) => this.GetOrLoad(Normalize(mapFolder));
+
 	/// <summary>
-	/// The database of a map, loaded the first time. Call under the lock.
+	/// The database of a map, loaded the first time, outside the lock: a thread asking for the same map meanwhile waits
+	/// for that load, the others go on. A failed load is forgotten, so the next use tries again.
 	/// </summary>
 	private Database GetOrLoad(string key)
 	{
-		if (!this._databases.TryGetValue(key, out var database))
+		Lazy<Database>? entry;
+		lock (this._lock)
 		{
-			database = this.CreateDatabase();
-			database.CustomMapFolder = key;
-			this.ApplyLanguage(database);
-			this.Log.LogInformation("Loading the game database for {Map}", key.Length == 0 ? "the base game" : key);
-			database.LoadDBFile();
-			this._databases[key] = database;
+			if (!this._databases.TryGetValue(key, out entry))
+			{
+				entry = new Lazy<Database>(() => this.Load(key), LazyThreadSafetyMode.ExecutionAndPublication);
+				this._databases[key] = entry;
+			}
 		}
 
+		try
+		{
+			return entry.Value;
+		}
+		catch
+		{
+			lock (this._lock)
+			{
+				if (this._databases.TryGetValue(key, out var current) && ReferenceEquals(current, entry))
+					this._databases.Remove(key);
+			}
+
+			throw;
+		}
+	}
+
+	private Database Load(string key)
+	{
+		var database = this.CreateDatabase();
+		database.CustomMapFolder = key;
+		this.ApplyLanguage(database);
+		this.Log.LogInformation("Loading the game database for {Map}", key.Length == 0 ? "the base game" : key);
+		long start = System.Diagnostics.Stopwatch.GetTimestamp();
+		database.LoadDBFile();
+		this.Log.LogInformation("Game database for {Map} loaded in {Milliseconds} ms", key.Length == 0 ? "the base game" : key
+			, (long)System.Diagnostics.Stopwatch.GetElapsedTime(start).TotalMilliseconds);
 		return database;
 	}
+
+	/// <summary>
+	/// The databases loaded so far. Call under the lock.
+	/// </summary>
+	private IEnumerable<Database> LoadedDatabases
+		=> this._databases.Values.Where(entry => entry.IsValueCreated).Select(entry => entry.Value);
 
 	/// <inheritdoc/>
 	public void Dispose() => this._scoped.Dispose();
@@ -151,7 +190,9 @@ public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Databas
 		{
 			var database = this.Active;
 			database.LoadDBFile(); // takes the startup map
-			this._databases[Normalize(database.CustomMapFolder)] = database;
+			var loaded = new Lazy<Database>(() => database);
+			_ = loaded.Value;
+			this._databases[Normalize(database.CustomMapFolder)] = loaded;
 		}
 	}
 
@@ -175,7 +216,7 @@ public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Databas
 			this._autoDetectLanguage = value;
 			lock (this._lock)
 			{
-				foreach (var database in this._databases.Values.Append(this.Active))
+				foreach (var database in this.LoadedDatabases.Append(this.Active))
 					database.AutoDetectLanguage = value;
 			}
 		}
@@ -191,7 +232,7 @@ public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Databas
 			this._tqLanguage = value;
 			lock (this._lock)
 			{
-				foreach (var database in this._databases.Values.Append(this.Active))
+				foreach (var database in this.LoadedDatabases.Append(this.Active))
 					database.TQLanguage = value;
 			}
 		}

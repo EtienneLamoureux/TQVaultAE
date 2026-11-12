@@ -82,6 +82,15 @@ public interface IGameMapService
 	IDisposable ReadWithMap(string? mapFolder);
 
 	/// <summary>
+	/// Loads, on a background thread, the databases of the mods the characters are linked to, so that selecting one
+	/// (or reading one of its items) does not load it on the UI thread. A failed load is logged; the first use tries
+	/// again.
+	/// </summary>
+	/// <param name="saves">The listed characters.</param>
+	/// <returns>Completes once every map is loaded or failed.</returns>
+	Task PreloadMapsAsync(IEnumerable<PlayerSave> saves);
+
+	/// <summary>
 	/// True when a character is played with the active map.
 	/// </summary>
 	bool UsesActiveMap(PlayerSave save);

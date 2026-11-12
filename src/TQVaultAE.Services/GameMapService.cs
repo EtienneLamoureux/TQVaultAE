@@ -73,6 +73,28 @@ public class GameMapService(
 		=> this.DatabaseMaps.Use(GameMaps.Normalize(mapFolder));
 
 	/// <inheritdoc/>
+	public Task PreloadMapsAsync(IEnumerable<PlayerSave> saves)
+	{
+		var list = saves.ToList();
+		return Task.Run(() =>
+		{
+			// Reading the link files is cheap; the base game is loaded at startup already.
+			var maps = list.Select(this.MapFor).Where(map => map.Length != 0).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			foreach (var map in maps)
+			{
+				try
+				{
+					this.DatabaseMaps.Preload(map);
+				}
+				catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+				{
+					this.Log.LogWarning(ex, "Preloading the game database for {Map} failed", map);
+				}
+			}
+		});
+	}
+
+	/// <inheritdoc/>
 	public bool UsesActiveMap(PlayerSave save)
 		=> GameMaps.Same(this.MapFor(save), this.ActiveMap);
 
