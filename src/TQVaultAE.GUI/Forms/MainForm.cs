@@ -137,11 +137,6 @@ public partial class MainForm : VaultForm
 	private string currentVersion;
 
 	/// <summary>
-	/// Signals that the configuration UI was loaded and the user changed something in there.
-	/// </summary>
-	private bool configChanged;
-
-	/// <summary>
 	/// Flag which holds whether we are showing the secondary vault panel or the player panel.
 	/// </summary>
 	private bool showSecondaryVault;

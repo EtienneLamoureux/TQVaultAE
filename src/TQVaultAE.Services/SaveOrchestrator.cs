@@ -46,7 +46,7 @@ public class SaveOrchestrator(
 
 		bool? configChanged = null;
 		if (request.Configuration is { } configuration)
-			configChanged = this._settingsPersistenceService.SaveConfiguration(configuration.VaultName, configuration.CharacterName, configuration.Zoom, configuration.ConfigChanged);
+			configChanged = this._settingsPersistenceService.SaveConfiguration(configuration.VaultName, configuration.CharacterName, configuration.Zoom);
 
 		// After the files, so the commit holds them.
 		bool gitPushed = request.GitBackup

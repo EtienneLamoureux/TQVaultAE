@@ -38,7 +38,9 @@ container label helpers in Presentation.
 - Message boxes asked in the middle of a rule (`goto askAgain`, Abort/Retry/Ignore loops). **Done** for the moved code: it
   returns a result or takes a callback and the GUI asks.
 - Session state kept in form fields or combo selections belongs to `SessionContext`. **Partial**: the startup selection and
-  load-all state moved (`bca066e`); some flags (`configChanged`, `resourcesLoaded`) are still form fields.
+  load-all state moved (`bca066e`); "the settings changed in this session" is `SessionContext.ConfigChanged`, kept by
+  `SettingsPersistenceService.SaveConfiguration` (lot 12). `resourcesLoaded` stays a form field: it only tells the splash
+  screen whether the start-up load got far enough to show the window, a state of that form's start-up.
 
 ## Bugs found during the inventory
 

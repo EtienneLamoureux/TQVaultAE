@@ -1,4 +1,7 @@
 using AwesomeAssertions;
+using Moq;
+using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
 using TQVaultAE.Services;
@@ -20,6 +23,17 @@ public class SettingsPersistenceServiceTests
 			TQPath = """C:\TQ""",
 			TQITPath = """C:\TQIT""",
 		};
+
+	[Fact]
+	public void SaveConfiguration_NothingNewAndNoChangeInTheSession_DoesNotSaveNorSetTheSessionFlag()
+	{
+		var session = new SessionContext();
+		var service = new SettingsPersistenceService(NewSettings(), new Mock<IDatabase>().Object, session);
+
+		service.SaveConfiguration("Main Vault", "Hero", 1.0F).Should().BeFalse();
+
+		session.ConfigChanged.Should().BeFalse();
+	}
 
 	[Fact]
 	public void ApplySessionState_NothingNew_ReportsNoChange()

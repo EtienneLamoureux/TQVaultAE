@@ -21,6 +21,12 @@ public class SessionContext
 	/// </summary>
 	public bool ForceDetailedTooltipView { get; set; }
 
+	/// <summary>
+	/// The settings changed in this session (settings dialog, or a configuration save that wrote them): every later
+	/// configuration save writes them again.
+	/// </summary>
+	public bool ConfigChanged { get; set; }
+
 	private BagButtonIconInfo? iconInfoCopy;
 	/// <summary>
 	/// Last icon info copied

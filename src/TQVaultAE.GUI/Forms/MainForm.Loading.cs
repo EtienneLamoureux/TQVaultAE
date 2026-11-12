@@ -304,7 +304,7 @@ public partial class MainForm
 	private void SaveConfiguration()
 	{
 		var configuration = this.CurrentSessionConfiguration();
-		this.configChanged = this.settingsPersistenceService.SaveConfiguration(configuration.VaultName, configuration.CharacterName, configuration.Zoom, configuration.ConfigChanged);
+		this.settingsPersistenceService.SaveConfiguration(configuration.VaultName, configuration.CharacterName, configuration.Zoom);
 	}
 
 	/// <summary>
@@ -323,7 +323,7 @@ public partial class MainForm
 		if (characterName == Resources.MainFormSelectCharacter)
 			characterName = string.Empty;
 
-		return new SessionConfiguration(vaultName, characterName, UIService.Zoom, this.configChanged);
+		return new SessionConfiguration(vaultName, characterName, UIService.Zoom);
 	}
 
 	/// <summary>
@@ -374,7 +374,7 @@ public partial class MainForm
 			if (settingsDialog.EnableCharacterEditChanged)
 				stashPanel?.UpdatePlayerInfo();
 
-			this.configChanged = true;
+			this.userContext.ConfigChanged = true;
 			this.SaveConfiguration();
 
 

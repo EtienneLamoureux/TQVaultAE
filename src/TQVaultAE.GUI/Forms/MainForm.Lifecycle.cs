@@ -75,8 +75,6 @@ public partial class MainForm
 
 			var result = this.saveOrchestrator.Save(request, this.AskSaveDecision);
 			this.ShowSavedNotification(result);
-			if (result.ConfigChanged is bool configChanged)
-				this.configChanged = configChanged;
 
 			ok = true;
 		}

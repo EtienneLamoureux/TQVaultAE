@@ -40,8 +40,7 @@ public sealed record SaveError(SaveStep Step, string? Name, Exception Exception)
 /// <param name="VaultName">The vault shown in the main panel, or null.</param>
 /// <param name="CharacterName">The selected character, an empty string when none is selected, or null.</param>
 /// <param name="Zoom">The current UI zoom.</param>
-/// <param name="ConfigChanged">Whether the settings were already changed in this session.</param>
-public sealed record SessionConfiguration(string? VaultName, string? CharacterName, float Zoom, bool ConfigChanged);
+public sealed record SessionConfiguration(string? VaultName, string? CharacterName, float Zoom);
 
 /// <summary>
 /// What a save writes.
@@ -88,7 +87,7 @@ public sealed class SaveResult
 	public IReadOnlyList<SaveError> Errors { get; init; } = [];
 
 	/// <summary>
-	/// Gets whether the settings are changed after the configuration save, or null when the configuration was not saved.
+	/// Gets whether the configuration save wrote the settings, or null when the configuration was not saved.
 	/// </summary>
 	public bool? ConfigChanged { get; init; }
 

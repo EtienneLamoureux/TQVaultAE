@@ -1,3 +1,4 @@
+using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;
@@ -7,21 +8,24 @@ namespace TQVaultAE.Services;
 /// <summary>
 /// Stores the state of the session in the user settings.
 /// </summary>
-public class SettingsPersistenceService(UserSettings userSettings, IDatabase database) : ISettingsPersistenceService
+public class SettingsPersistenceService(UserSettings userSettings, IDatabase database, SessionContext session) : ISettingsPersistenceService
 {
 	private readonly UserSettings _userSettings = userSettings;
 	private readonly IDatabase _database = database;
+	private readonly SessionContext _session = session;
 
 	/// <inheritdoc/>
 	public string? GameLanguage => this._database.GameLanguage;
 
-	public bool SaveConfiguration(string? vaultName, string? characterName, float zoom, bool configChanged)
+	/// <inheritdoc/>
+	public bool SaveConfiguration(string? vaultName, string? characterName, float zoom)
 	{
-		var changed = ApplySessionState(this._userSettings, vaultName, characterName, zoom) || configChanged;
+		var changed = ApplySessionState(this._userSettings, vaultName, characterName, zoom) || this._session.ConfigChanged;
 
 		if (changed)
 			this._userSettings.Save();
 
+		this._session.ConfigChanged = changed;
 		return changed;
 	}
 

@@ -33,7 +33,7 @@ public class SaveOrchestratorTests
 
 	private readonly Dictionary<string, int> _attempts = [];
 
-	private static readonly SessionConfiguration Configuration = new("Main Vault", "Hero", 1.5F, true);
+	private static readonly SessionConfiguration Configuration = new("Main Vault", "Hero", 1.5F);
 
 	public SaveOrchestratorTests()
 	{
@@ -51,7 +51,7 @@ public class SaveOrchestratorTests
 			.Setup(s => s.SaveModifiedStash(It.IsAny<string>(), It.IsAny<Stash>()))
 			.Callback<string, Stash>((_, s) => this.Write("stash", s.PlayerName));
 		this._settingsPersistence
-			.Setup(s => s.SaveConfiguration(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<float>(), It.IsAny<bool>()))
+			.Setup(s => s.SaveConfiguration(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<float>()))
 			.Callback(() => this._calls.Add("configuration"))
 			.Returns(false);
 		this._gameFileService
@@ -124,7 +124,7 @@ public class SaveOrchestratorTests
 	public void Save_PassesSessionStateToConfigurationAndReturnsItsChangeFlag()
 	{
 		this._settingsPersistence
-			.Setup(s => s.SaveConfiguration("Main Vault", "Hero", 1.5F, true))
+			.Setup(s => s.SaveConfiguration("Main Vault", "Hero", 1.5F))
 			.Returns(true);
 
 		var result = this._orchestrator.Save(new SaveRequest(true, Configuration), NeverAsked);
