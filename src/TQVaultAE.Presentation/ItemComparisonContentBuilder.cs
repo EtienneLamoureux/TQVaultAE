@@ -8,8 +8,8 @@ namespace TQVaultAE.Presentation;
 /// The four columns of the item comparison, left to right.
 /// </summary>
 /// <param name="FirstDifferences">The first item's stats minus the second's.</param>
-/// <param name="First">The classic tooltip of the first item.</param>
-/// <param name="Second">The classic tooltip of the second item.</param>
+/// <param name="First">The classic tooltip of the first item, without its text-only lines (<see cref="ItemColumnLines"/>).</param>
+/// <param name="Second">The classic tooltip of the second item, without its text-only lines.</param>
 /// <param name="SecondDifferences">The second item's stats minus the first's.</param>
 /// <param name="Aligned">
 /// Each difference column has a row for each row of its item's column, level with it (blank when the row has no
@@ -53,8 +53,8 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 	public ItemComparisonContent Build(ItemComparison comparison, ItemComparisonOptions? options = null)
 	{
 		options ??= new ItemComparisonOptions();
-		var first = this._tooltip.Build(comparison.First, ItemTooltipView.Classic).Lines;
-		var second = this._tooltip.Build(comparison.Second, ItemTooltipView.Classic).Lines;
+		var first = ItemColumnLines(this._tooltip.Build(comparison.First, ItemTooltipView.Classic).Lines);
+		var second = ItemColumnLines(this._tooltip.Build(comparison.Second, ItemTooltipView.Classic).Lines);
 		return options.AlignRows
 			? new(
 				AlignedDifferenceLines(first, comparison.Stats.FirstMinusSecond, options.HideUnchanged)
@@ -67,6 +67,58 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 				, first
 				, second
 				, DifferenceLines(comparison.Stats.SecondMinusFirst, options.HideUnchanged));
+	}
+
+	/// <summary>
+	/// The lines of an item column: the item tooltip without the lines that carry no number (lore, set member lists,
+	/// "Speed: Fast", "Grants Skill :"), as in the difference columns. The item name (the first line) and the warnings
+	/// stay, and so does a text line heading indented lines with numbers ("Bonus to all Pets:"). Blank lines and
+	/// delimiters left next to each other are merged into one (a delimiter wins), none at the start or the end.
+	/// </summary>
+	public static IReadOnlyList<TooltipLine> ItemColumnLines(IReadOnlyList<TooltipLine> lines)
+	{
+		var parsed = lines.Select(l => l.Kind is TooltipLineKind.Text or TooltipLineKind.Range ? StatLine.Parse(l.Text) : null).ToArray();
+		int name = Array.FindIndex(parsed, s => s is not null);
+
+		bool Kept(int i)
+		{
+			var line = lines[i];
+			if (line.Kind is TooltipLineKind.Spacer or TooltipLineKind.Delimiter or TooltipLineKind.Warning || i == name)
+				return true;
+
+			if (parsed[i] is not { } stat)
+				return false;
+
+			if (stat.Values.Length != 0)
+				return true;
+
+			// A heading: the next line with text is indented and has numbers.
+			int next = Array.FindIndex(parsed, i + 1, s => s is not null);
+			return next >= 0 && parsed[next] is { Indented: true, Values.Length: > 0 };
+		}
+
+		var result = new List<TooltipLine>(lines.Count);
+		TooltipLine? gap = null;
+		for (int i = 0; i < lines.Count; i++)
+		{
+			if (!Kept(i))
+				continue;
+
+			var line = lines[i];
+			if (line.Kind is TooltipLineKind.Spacer or TooltipLineKind.Delimiter)
+			{
+				if (gap is null || line.Kind == TooltipLineKind.Delimiter)
+					gap = line;
+				continue;
+			}
+
+			if (gap is not null && result.Count != 0)
+				result.Add(gap);
+			gap = null;
+			result.Add(line);
+		}
+
+		return result;
 	}
 
 	/// <summary>
@@ -114,8 +166,9 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 
 		foreach (var group in groups)
 		{
-			// A granted skill's stats are looked for under its name, not among the item's own attributes.
-			int from = group.Title is null ? 0 : Math.Max(0, IndexOfTitle(stats, group.Title) + 1);
+			// A granted skill's stats are only looked for under its name; without that row, they all follow the rows.
+			int title = group.Title is null ? -1 : IndexOfTitle(stats, group.Title);
+			int from = group.Title is null ? 0 : title < 0 ? stats.Length : title + 1;
 			foreach (var line in group.Lines)
 			{
 				if (hideUnchanged && line.Trend == StatTrend.Unchanged)

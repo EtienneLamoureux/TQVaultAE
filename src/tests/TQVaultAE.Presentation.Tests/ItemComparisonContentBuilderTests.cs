@@ -139,6 +139,69 @@ public class ItemComparisonContentBuilderTests
 	}
 
 	[Fact]
+	public void AlignedDifferenceLines_SkillNameNotInTheColumn_SkillStatsFollowTheRows()
+	{
+		// Without the skill's name row, its stats must not land on the item's own lines of the same stat.
+		TooltipLine[] item = [TooltipLine.Of("Shield"), TooltipLine.Of("+100 Armor")];
+		var groups = new[] { Group(StatGroupKind.GrantedSkill, "Stone Skin", Diff("+100 Armor", StatTrend.Higher, KeyOf("+100 Armor"))) };
+
+		ItemComparisonContentBuilder.AlignedDifferenceLines(item, groups).Select(l => (l.Kind, l.Text)).Should().Equal(
+			(TooltipLineKind.Spacer, ""),
+			(TooltipLineKind.Spacer, ""),
+			(TooltipLineKind.Delimiter, ""),
+			(TooltipLineKind.Text, "Stone Skin"),
+			(TooltipLineKind.Text, "+100 Armor"));
+	}
+
+	[Fact]
+	public void ItemColumnLines_TextOnlyLinesHidden_NameNumbersHeadingsAndWarningsKept()
+	{
+		TooltipLine[] item =
+		[
+			TooltipLine.Of("Chiyou's Fall", bold: true),
+			TooltipLine.Of("304 Damage"),
+			TooltipLine.Of("Speed: Fast"),
+			TooltipLine.Spacer,
+			TooltipLine.Of("A shield forged in the east"),
+			TooltipLine.Of("Bonus to all Pets:"),
+			TooltipLine.Of("    +10% Attack Speed"),
+			TooltipLine.Of("Grants Skill :"),
+			TooltipLine.Of("Stone Skin"),
+			TooltipLine.Delimiter,
+			TooltipLine.Of("Chiyou's Embrace"),
+			TooltipLine.Of("    Chiyou's Spite"),
+			TooltipLine.Delimiter,
+			TooltipLine.WarningOf("Incomplete relic"),
+			TooltipLine.Of("Required Player Level: 64"),
+			TooltipLine.Spacer,
+		];
+
+		ItemComparisonContentBuilder.ItemColumnLines(item).Select(l => (l.Kind, l.Text)).Should().Equal(
+			(TooltipLineKind.Text, "Chiyou's Fall"),
+			(TooltipLineKind.Text, "304 Damage"),
+			(TooltipLineKind.Spacer, ""),
+			(TooltipLineKind.Text, "Bonus to all Pets:"),
+			(TooltipLineKind.Text, "    +10% Attack Speed"),
+			(TooltipLineKind.Delimiter, ""),
+			(TooltipLineKind.Warning, "Incomplete relic"),
+			(TooltipLineKind.Text, "Required Player Level: 64"));
+	}
+
+	[Fact]
+	public void Build_ItemColumnsWithoutTextOnlyLines_DifferencesStillLevelWithTheirStat()
+	{
+		var translation = new Mock<ITranslationService>();
+		var first = new ToFriendlyNameResult(new Item()) { ClassicAttributes = ["+42 Strength", "Speed: Fast", "A legend"] };
+		var second = new ToFriendlyNameResult(new Item()) { ClassicAttributes = ["+30 Strength"] };
+		var stats = ItemStatComparer.Compare(ItemStatSheet.From(first), ItemStatSheet.From(second));
+
+		var content = new ItemComparisonContentBuilder(translation.Object).Build(new ItemComparison(first, second, stats));
+
+		content.First.Select(l => l.Text).Should().NotContain(["Speed: Fast", "A legend"]);
+		content.FirstDifferences[content.First.ToList().FindIndex(l => l.Text == "+42 Strength")].Text.Should().Be("+12 Strength");
+	}
+
+	[Fact]
 	public void AlignedDifferenceLines_NothingDiffers_SaysSoOnTheFirstRow()
 		=> ItemComparisonContentBuilder.AlignedDifferenceLines([TooltipLine.Of("Ring"), TooltipLine.Of("+5 Strength")]
 				, [Group(StatGroupKind.Attributes, null, Diff("5 Strength", StatTrend.Unchanged, KeyOf("+5 Strength")))])
@@ -157,8 +220,8 @@ public class ItemComparisonContentBuilderTests
 		var content = builder.Build(new ItemComparison(first, second, stats), new ItemComparisonOptions(AlignRows: false));
 
 		content.Aligned.Should().BeFalse();
-		content.First.Should().BeEquivalentTo(tooltip.Build(first, ItemTooltipView.Classic).Lines);
-		content.Second.Should().BeEquivalentTo(tooltip.Build(second, ItemTooltipView.Classic).Lines);
+		content.First.Should().BeEquivalentTo(ItemComparisonContentBuilder.ItemColumnLines(tooltip.Build(first, ItemTooltipView.Classic).Lines));
+		content.Second.Should().BeEquivalentTo(ItemComparisonContentBuilder.ItemColumnLines(tooltip.Build(second, ItemTooltipView.Classic).Lines));
 		content.FirstDifferences.Select(l => l.Text).Should().Equal("+12 Strength");
 		content.SecondDifferences.Select(l => l.Text).Should().Equal("-12 Strength");
 
