@@ -571,6 +571,9 @@ Etes-vous sûr de vouloir écraser son contenu ?</value>
 	<data name="ResultsSack" xml:space="preserve">
     <value>Sac</value>
   </data>
+	<data name="ResultsBag" xml:space="preserve">
+    <value>Sac {0}</value>
+  </data>
 	<data name="ResultsLevel" xml:space="preserve">
     <value>Level</value>
   </data>

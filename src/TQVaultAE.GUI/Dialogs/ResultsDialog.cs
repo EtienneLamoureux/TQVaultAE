@@ -10,6 +10,7 @@ using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Presentation;
+using TQVaultAE.Application;
 using TQVaultAE.Application.Results;
 
 namespace TQVaultAE.GUI.Dialogs;
@@ -204,7 +205,7 @@ public partial class ResultsDialog : VaultForm
 				, result.ItemStyle
 				, result.ContainerName
 				, ItemSummaryText.ContainerTypeLabel(result.SackType, result.StashType)
-				, result.SackNumber
+				, ItemSummaryText.BagLabel(SearchResultNavigation.Resolve(result).BagNumber)
 				, result.RequiredLevel
 			);
 

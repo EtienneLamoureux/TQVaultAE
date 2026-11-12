@@ -3920,11 +3920,20 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sack.
+        ///   Looks up a localized string similar to Bag.
         /// </summary>
         public static string ResultsSack {
             get {
                 return ResourceManager.GetString("ResultsSack", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Bag {0}.
+        /// </summary>
+        public static string ResultsBag {
+            get {
+                return ResourceManager.GetString("ResultsBag", resourceCulture);
             }
         }
         

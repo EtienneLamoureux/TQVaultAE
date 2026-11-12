@@ -1,3 +1,4 @@
+using System.Globalization;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Results;
@@ -36,6 +37,16 @@ public static class ItemSummaryText
 			},
 			_ => "Unknown",
 		};
+
+	/// <summary>
+	/// Gets the bag label of a search result ("Bag 3"), as shown in the search results.
+	/// </summary>
+	/// <param name="bagNumber">The 1-based bag number, or null where no bag applies.</param>
+	/// <returns>The localized label, or an empty string without a bag number.</returns>
+	public static string BagLabel(int? bagNumber)
+		=> bagNumber is int number
+			? string.Format(CultureInfo.CurrentCulture, Resources.ResultsBag, number)
+			: string.Empty;
 
 	/// <summary>
 	/// Groups items by their bag tooltip name and counts them ("N x name"), sorted by the name without color tags.

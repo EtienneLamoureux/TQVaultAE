@@ -67,6 +67,15 @@ public readonly record struct ResultLocation(ResultPanelKind Panel, int Bag, Poi
 	/// </summary>
 	public bool OnStashPanel => this.Panel is ResultPanelKind.Equipment or ResultPanelKind.CharacterStash
 		or ResultPanelKind.SharedStash;
+
+	/// <summary>
+	/// Gets the bag number shown to the user, 1-based like the bag buttons: vault bag N + 1 and player bag N + 1
+	/// (player sack N). Null where no bag button applies: the player main sack, the equipment and the stashes,
+	/// whose container type already names them.
+	/// </summary>
+	public int? BagNumber => this.Panel is ResultPanelKind.Vault or ResultPanelKind.PlayerBag
+		? this.Bag + 1
+		: null;
 }
 
 /// <summary>

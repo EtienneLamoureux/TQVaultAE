@@ -112,4 +112,29 @@ public class SearchResultNavigationTests
 		location.NeedsCharacter.Should().BeFalse();
 		location.OnStashPanel.Should().BeFalse();
 	}
+
+	[Theory]
+	[InlineData(0, 1)]
+	[InlineData(5, 6)]
+	public void BagNumber_VaultSackN_IsBagNPlusOne(int sackNumber, int expected)
+		=> SearchResultNavigation.Resolve(ResultAt(SackType.Vault, sackNumber)).BagNumber.Should().Be(expected);
+
+	[Theory]
+	[InlineData(1, 1)]
+	[InlineData(3, 3)]
+	public void BagNumber_PlayerSackN_IsBagN(int sackNumber, int expected)
+		=> SearchResultNavigation.Resolve(ResultAt(SackType.Player, sackNumber)).BagNumber.Should().Be(expected);
+
+	[Fact]
+	public void BagNumber_PlayerMainSack_IsNull()
+		=> SearchResultNavigation.Resolve(ResultAt(SackType.Player, 0)).BagNumber.Should().BeNull();
+
+	[Theory]
+	[InlineData(SackType.Equipment, BagIdConstants.BAGID_EQUIPMENTPANEL, null)]
+	[InlineData(SackType.Stash, BagIdConstants.BAGID_PLAYERSTASH, StashType.PlayerStash)]
+	[InlineData(SackType.Stash, BagIdConstants.BAGID_TRANSFERSTASH, StashType.TransferStash)]
+	[InlineData(SackType.Stash, BagIdConstants.BAGID_RELICVAULTSTASH, StashType.RelicVaultStash)]
+	[InlineData(SackType.Trash, 0, null)]
+	public void BagNumber_EquipmentStashesAndTrash_IsNull(SackType sackType, int sackNumber, StashType? stashType)
+		=> SearchResultNavigation.Resolve(ResultAt(sackType, sackNumber, stashType)).BagNumber.Should().BeNull();
 }

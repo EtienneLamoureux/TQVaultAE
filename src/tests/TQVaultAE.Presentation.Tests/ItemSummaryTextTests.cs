@@ -1,3 +1,4 @@
+using System.Globalization;
 using AwesomeAssertions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Results;
@@ -33,6 +34,21 @@ public class ItemSummaryTextTests
 	[Fact]
 	public void ContainerTypeLabel_UnmappedSackType_ReturnsUnknown()
 		=> ItemSummaryText.ContainerTypeLabel((SackType)99, null).Should().Be("Unknown");
+
+	[Fact]
+	public void BagLabel_WithNumber_FormatsTheBagResource()
+		=> ItemSummaryText.BagLabel(3).Should().Be(string.Format(CultureInfo.CurrentCulture, Resources.ResultsBag, 3));
+
+	[Fact]
+	public void BagLabel_WithoutNumber_IsEmpty()
+		=> ItemSummaryText.BagLabel(null).Should().BeEmpty();
+
+	[Fact]
+	public void ResultsBag_EnglishAndFrench_ShowTheNumber()
+	{
+		Resources.ResourceManager.GetString(nameof(Resources.ResultsBag), CultureInfo.InvariantCulture).Should().Be("Bag {0}");
+		Resources.ResourceManager.GetString(nameof(Resources.ResultsBag), CultureInfo.GetCultureInfo("fr")).Should().Be("Sac {0}");
+	}
 
 	private static ToFriendlyNameResult Named(string description)
 		=> new(new Item()) { BaseItemInfoDescription = description };

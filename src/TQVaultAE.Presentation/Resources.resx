@@ -588,7 +588,11 @@ Are you sure you want to overwrite?</value>
     <value>Quality</value>
   </data>
 	<data name="ResultsSack" xml:space="preserve">
-    <value>Sack</value>
+    <value>Bag</value>
+  </data>
+	<data name="ResultsBag" xml:space="preserve">
+    <value>Bag {0}</value>
+    <comment>Bag of a search result, 1-based like the bag buttons. {0} = bag number</comment>
   </data>
 	<data name="ResultsLevel" xml:space="preserve">
     <value>Level</value>
