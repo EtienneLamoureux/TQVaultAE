@@ -589,8 +589,9 @@ public class DatabaseLoadingTests
 	}
 
 	[Fact]
-	public void Selector_WhileAModLoads_AMapAlreadyLoadedStaysUsable()
+	public async Task Selector_WhileAModLoads_AMapAlreadyLoadedStaysUsable()
 	{
+		var cancel = TestContext.Current.CancellationToken;
 		// Arrange: the mod's database blocks in its read until released
 		this.UseAnniversaryEdition();
 		var gameArz = Path.Combine(GameAE, "Database", "database.arz");
@@ -610,20 +611,21 @@ public class DatabaseLoadingTests
 		selector.LoadDBFile();
 
 		// Act: the mod loads in the background; meanwhile another thread reads the base game
-		var preload = Task.Run(() => selector.Preload(ModFolder));
-		reading.Wait(TimeSpan.FromSeconds(10)).Should().BeTrue();
+		var preload = Task.Run(() => selector.Preload(ModFolder), cancel);
+		reading.Wait(TimeSpan.FromSeconds(10), cancel).Should().BeTrue();
 		var baseGameRead = Task.Run(() =>
 		{
 			using (selector.Use(string.Empty))
 				return selector.GetRecordFromFile("""records\item\a.dbr""");
-		});
-		bool readWhileLoading = baseGameRead.Wait(TimeSpan.FromSeconds(5));
+		}, cancel);
+		bool readWhileLoading = await Task.WhenAny(baseGameRead, Task.Delay(TimeSpan.FromSeconds(5), cancel)) == baseGameRead;
 		release.Set();
-		preload.Wait(TimeSpan.FromSeconds(10)).Should().BeTrue();
+		bool preloadEnded = await Task.WhenAny(preload, Task.Delay(TimeSpan.FromSeconds(10), cancel)) == preload;
 
 		// Assert
 		readWhileLoading.Should().BeTrue();
-		baseGameRead.Result.Should().BeSameAs(gameRecord);
+		preloadEnded.Should().BeTrue();
+		(await baseGameRead).Should().BeSameAs(gameRecord);
 		selector.LoadedMapFolders.Should().BeEquivalentTo([string.Empty, ModFolder]);
 	}
 
