@@ -261,7 +261,7 @@ public sealed class CharacterReadOnlyTests : IDisposable
 	public void CharacterEditApply_OnAReadOnlyCharacter_ChangesNothing()
 	{
 		var provider = new Mock<IPlayerCollectionProvider>();
-		var edit = new CharacterEditService(new PathIO(), provider.Object, new Mock<IDatabase>().Object
+		var edit = new CharacterEditService(new PathIO(), provider.Object
 			, new Mock<ISkillTreeProvider>().Object, new Mock<IItemProvider>().Object);
 		var player = new PlayerCollection("HeroA", "Player.chr") { PlayerInfo = new PlayerInfo(new PathIO()) { CurrentLevel = 10 } };
 		player.IsReadOnly = true;

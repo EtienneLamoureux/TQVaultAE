@@ -17,7 +17,7 @@ public partial class ComboBoxCharacterItem : UserControl
 	internal const int BASE_HEIGHT = 60;
 
 	// Set by Init: the drop down creates the item before giving it its save.
-	private ICharacterEditService CharacterEditService = null!;
+	private IPlayerService PlayerService = null!;
 	private ITagService TagService = null!;
 	private ITranslationService TranslationService = null!;
 	private IFontService FontService = null!;
@@ -86,12 +86,12 @@ public partial class ComboBoxCharacterItem : UserControl
 		SelectedItemChanged?.Invoke(this, EventArgs.Empty);
 	}
 
-	public void Init(object item, ITranslationService translationService, IFontService fontService, ICharacterEditService characterEditService, ITagService tagService)
+	public void Init(object item, ITranslationService translationService, IFontService fontService, IPlayerService playerService, ITagService tagService)
 	{
 		this.Item = item;
 		this.TranslationService = translationService;
 		this.FontService = fontService;
-		this.CharacterEditService = characterEditService;
+		this.PlayerService = playerService;
 		this.TagService = tagService;
 
 		this.scalingLabelCharName.Font = FontService.GetFont(this.scalingLabelCharName.Font.Size);
@@ -135,13 +135,13 @@ public partial class ComboBoxCharacterItem : UserControl
 				? string.Empty
 				: $"{TranslationService.TranslateXTag("tagMenuImport05")} : {ps.Info.CurrentLevel}";
 
-			this.scalingLabelCLassName.Text = ps.Info?.Class is null
-				? string.Empty
-				: TranslationService.TranslateXTag(ps.Info.Class, true, true);
+			// Class and masteries with the character's own map's data (a mod's names), whatever map is active.
+			var labels = this.PlayerService.DescribeCharacter(ps);
+			this.scalingLabelCLassName.Text = labels.ClassName;
 
 			// Masteries
-			this.scalingLabelMasteries.Text = PlayerInfoText.MasteryNames(ps.Info, this.CharacterEditService, this.TranslationService);
-			if (ps.Info?.ActiveMasteriesRecordNames is { Length: > 0 })
+			this.scalingLabelMasteries.Text = labels.MasteryNames;
+			if (labels.MasteryNames.Length != 0)
 				this.bufferedFlowLayoutPanelSubTitle.Visible = this.scalingLabelMasteries.Visible = true;
 
 			bool modded = this.RefreshMod(ps);

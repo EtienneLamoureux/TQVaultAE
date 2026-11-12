@@ -22,7 +22,6 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 	private IUIService UIService = null!;
 	private IFontService FontService = null!;
 	private ITranslationService TranslationService = null!;
-	private ICharacterEditService CharacterEditService = null!;
 	private ITagService TagService = null!;
 	private IPlayerService PlayerService = null!;
 	private UserSettings USettings = null!;
@@ -196,7 +195,6 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 		IUIService uIService
 		, IFontService fontService
 		, ITranslationService translationService
-		, ICharacterEditService characterEditService
 		, ITagService tagService
 		, IPlayerService playerService
 		, UserSettings userSettings
@@ -208,7 +206,6 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 		this.UIService = uIService;
 		this.FontService = fontService;
 		this.TranslationService = translationService;
-		this.CharacterEditService = characterEditService;
 		this.TagService = tagService;
 		this.PlayerService = playerService;
 		this.USettings = userSettings;
@@ -576,7 +573,7 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 				var save = this.Items[e.NewIndex];
 
 				var item = new ComboBoxCharacterItem();
-				item.Init(save, TranslationService, FontService, CharacterEditService, TagService);
+				item.Init(save, TranslationService, FontService, PlayerService, TagService);
 				item.SelectedItemChanged += Item_SelectedItemChanged;
 				this.DropDown.Items.Add(item);
 				item.RefreshContent();

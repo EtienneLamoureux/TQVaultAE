@@ -77,6 +77,27 @@ public class SkillTreeProviderTests
 	}
 
 	[Fact]
+	public void GetMasteryTree_EachDataScope_ReadsItsOwnPane()
+	{
+		// A character linked to a mod is described with the mod's database while the base game is active: the tree
+		// read for one map must not answer for the other.
+		this.AddStormPane();
+		var scope = string.Empty;
+		this._database.Setup(d => d.DataScope).Returns(() => scope);
+		var provider = new SkillTreeProvider(this._database.Object);
+
+		var baseTree = provider.GetMasteryTree(Masteries.Storm);
+		scope = """C:\mods\HeroMod""";
+		this.Add(Mastery, ("Class", "Skill_Mastery"), ("skillDisplayName", "tagModMastery"), ("skillMaxLevel", 40));
+		var modTree = provider.GetMasteryTree(Masteries.Storm);
+		scope = string.Empty;
+
+		baseTree!.NameTag.Should().Be("tagSkillName018");
+		modTree!.NameTag.Should().Be("tagModMastery");
+		provider.GetMasteryTree(Masteries.Storm).Should().BeSameAs(baseTree);
+	}
+
+	[Fact]
 	public void GetMasteryTree_StormPane_ReadsTheMasteryAndItsSkillsByTier()
 	{
 		this.AddStormPane();

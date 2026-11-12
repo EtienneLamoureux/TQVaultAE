@@ -281,7 +281,6 @@ Item Debug Level: {ItemDebugLevel}
 			this.UIService
 			, this.FontService
 			, this.TranslationService
-			, this.Services.CharacterEditService
 			, this.TagService
 			, this.playerService
 			, USettings

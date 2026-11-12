@@ -32,11 +32,11 @@ public interface ICharacterEditService
 	bool Apply(PlayerCollection player, CharacterEditRequest request);
 
 	/// <summary>
-	/// Gets the description tag of a mastery, to translate for its name.
+	/// The masteries of a character, as the skill window of the game database in use lays them out (a mod's own
+	/// masteries with a mod's database), in the order they were chosen: the masteries of
+	/// <see cref="CreateSkillEditor"/>.
 	/// </summary>
-	/// <param name="masteryId">The mastery record.</param>
-	/// <returns>The tag, or an empty string when the record is unknown.</returns>
-	string GetMasteryDescriptionTag(RecordId masteryId);
+	IReadOnlyList<MasteryTree> GetMasteries(PlayerInfo info);
 
 	/// <summary>
 	/// Starts editing the masteries and skills of a character, with the skills of each mastery from the game database.

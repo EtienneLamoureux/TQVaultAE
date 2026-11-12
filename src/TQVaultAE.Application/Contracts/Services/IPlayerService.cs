@@ -15,6 +15,14 @@ public interface IPlayerService
 	PlayerLoadResult LoadPlayer(PlayerSave selectedSave, bool fromFileWatcher = false);
 
 	/// <summary>
+	/// Names the class and the masteries of a loaded character with its own map's data
+	/// (<see cref="IGameMapService.ReadWith"/>): a mod can rename the classes and bring its own masteries, and the
+	/// active map may be another character's. Also refreshes <see cref="PlayerSave.ClassLabel"/>.
+	/// </summary>
+	/// <param name="save">The character; <see cref="CharacterLabels.Empty"/> while it is not loaded.</param>
+	CharacterLabels DescribeCharacter(PlayerSave save);
+
+	/// <summary>
 	/// Loads a player stash.
 	/// </summary>
 	/// <param name="playerSave">Player save information.</param>

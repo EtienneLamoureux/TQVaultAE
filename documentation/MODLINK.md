@@ -37,6 +37,11 @@ In the character list, a custom map character shows its mod's name in brackets b
 on the right, a *Modded* tag and the link state: *Linked* (green), *Not installed* (red, the linked mod is gone) or *Not
 linked* (yellow).
 
+A character linked to an installed mod is described with that mod's data, which takes precedence over the base game's,
+whatever character is selected: its class name (a mod can rename the classes) and its masteries (a mod can bring its own)
+in the character list and in the box of the selected character, as in its statistics panel, its editor and its skill
+tool tips. A character without a link, or linked to a mod that is not installed, keeps the base game data.
+
 ## Suggest
 
 *Suggest* reads the record ids that `Player.chr` and the character's `winsys.dxb` use, keeps those the base game

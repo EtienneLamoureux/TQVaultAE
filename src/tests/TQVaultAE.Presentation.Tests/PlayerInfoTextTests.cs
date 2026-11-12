@@ -99,31 +99,23 @@ public class PlayerInfoTextTests
 	}
 
 	[Fact]
-	public void MasteryNames_JoinsTheTranslatedNamesInTheOrderOfTheMasteries()
+	public void MasteryNames_JoinsTheTranslatedNamesInThePaneOrder()
 	{
-		var info = new PlayerInfo(new Mock<IPathIO>().Object);
-		// Chosen Earth first: the drop down still lists Defense first.
-		info.SkillRecordList.Add(new SkillRecord { skillName = Masteries.Earth.AsString(EnumFormat.Description)!, skillLevel = 1 });
-		info.SkillRecordList.Add(new SkillRecord { skillName = Masteries.Defensive.AsString(EnumFormat.Description)!, skillLevel = 1 });
-		var characterEdit = new Mock<ICharacterEditService>();
-		characterEdit.Setup(x => x.GetMasteryDescriptionTag(It.IsAny<RecordId>()))
-			.Returns((RecordId id) => id.Raw.Contains("Earth") ? "tagEarth" : "tagDefense");
-		this._translations.Setup(x => x.TranslateXTag("tagEarth", false, false, false)).Returns("Earth Mastery");
+		// Chosen Earth first: the drop down still lists Defense first. A mod's own mastery in the Earth pane is named
+		// by its tree.
+		var earth = new MasteryTree(Masteries.Earth, """records\skills\lifegiving\lifegiving_mastery.dbr""".ToRecordId(), "tagLifegiving", "", "", 40, []);
+		var defense = new MasteryTree(Masteries.Defensive, Masteries.Defensive.AsString(EnumFormat.Description)!.ToRecordId(), "tagDefense", "", "", 40, []);
+		this._translations.Setup(x => x.TranslateXTag("tagLifegiving", false, false, false)).Returns("Lifegiving Mastery");
 		this._translations.Setup(x => x.TranslateXTag("tagDefense", false, false, false)).Returns("Defense Mastery");
 
-		var names = PlayerInfoText.MasteryNames(info, characterEdit.Object, this._translations.Object);
+		var names = PlayerInfoText.MasteryNames([earth, defense], this._translations.Object);
 
-		names.Should().Be("Defense Mastery + Earth Mastery");
+		names.Should().Be("Defense Mastery + Lifegiving Mastery");
 	}
 
 	[Fact]
-	public void MasteryNames_NoMasteryOrNoSave_IsEmpty()
-	{
-		var characterEdit = new Mock<ICharacterEditService>();
-
-		PlayerInfoText.MasteryNames(this._info, characterEdit.Object, this._translations.Object).Should().BeEmpty();
-		PlayerInfoText.MasteryNames(null, characterEdit.Object, this._translations.Object).Should().BeEmpty();
-	}
+	public void MasteryNames_NoMastery_IsEmpty()
+		=> PlayerInfoText.MasteryNames([], this._translations.Object).Should().BeEmpty();
 
 	private static readonly MasteryTree Storm = new(Masteries.Storm, """Records\Skills\Storm\StormMastery.dbr""".ToRecordId(), "tagStorm", "", "", 40, []);
 

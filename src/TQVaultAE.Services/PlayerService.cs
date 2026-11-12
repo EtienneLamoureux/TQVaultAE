@@ -8,6 +8,7 @@ using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Config;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Presentation;
 
 namespace TQVaultAE.Services;
 
@@ -103,9 +104,7 @@ public class PlayerService(
 					selectedSave.IsReadOnly = resultPC.IsReadOnly;
 
 					selectedSave.Info = resultPC.PlayerInfo;
-					selectedSave.ClassLabel = resultPC.PlayerInfo?.Class is { } playerClass
-						? (playerClass, this.TranslationService.TranslateXTag(playerClass, true, true))
-						: null;
+					this.DescribeCharacter(selectedSave);
 					this.GameMapService.MarkLoaded(selectedSave);
 
 					// Add player items to the search database
@@ -167,6 +166,21 @@ public class PlayerService(
 		}
 
 		return result;
+	}
+
+	/// <inheritdoc/>
+	public CharacterLabels DescribeCharacter(PlayerSave save)
+	{
+		if (save.Info is not { } info)
+			return CharacterLabels.Empty;
+
+		// The character's own map, the one rule for any of its data: its linked mod when installed, else the base game.
+		using (this.GameMapService.ReadWith(save))
+		{
+			string className = info.Class is { } tag ? this.TranslationService.TranslateXTag(tag, true, true) : string.Empty;
+			save.ClassLabel = info.Class is null ? null : (info.Class, className);
+			return new CharacterLabels(className, PlayerInfoText.MasteryNames(this.CharacterEditService.GetMasteries(info), this.TranslationService));
+		}
 	}
 
 	/// <summary>
@@ -440,7 +454,7 @@ public class PlayerService(
 
 		var worn = equipment.Where(item => item != ignored).ToList();
 		bool useAlternate = player.UseAlternate;
-		var trees = this.CharacterEditService.CreateSkillEditor(info).Slots.OfType<MasteryTree>().ToList();
+		var trees = this.CharacterEditService.GetMasteries(info);
 		var augments = this.CharacterEditService.GetGearSkillAugments(worn, useAlternate);
 
 		info.GearBonus = this.CharacterStatsService.GetGearAttributes(worn, useAlternate);

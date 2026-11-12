@@ -17,7 +17,8 @@ mod that has the character's unknown records; **Link** (or a double click on a m
 
 ![Mod link dialog](mods/mod-link-dialog.png)
 
-The character list shows the mod and the link state: **Linked**, **Not linked** or **Not installed**.
+The character list shows the mod and the link state: **Linked**, **Not linked** or **Not installed**. A linked
+character's class and masteries are named with its mod's data, as the game names them.
 
 ![Character list](mods/character-list.png)
 

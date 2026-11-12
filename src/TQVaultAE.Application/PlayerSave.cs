@@ -48,8 +48,9 @@ public sealed class PlayerSave : IDisposable
 	public string? ModName { get; set; }
 
 	/// <summary>
-	/// The class name, translated when the character was read, with its own map's text: a mod can rename the classes,
-	/// and the active map may be another character's. Used while the class is still <c>Tag</c>.
+	/// The class name, translated with the character's own map's text when it is read and each time it is described
+	/// (<c>IPlayerService.DescribeCharacter</c>): a mod can rename the classes, and the active map may be another
+	/// character's. Used while the class is still <c>Tag</c>.
 	/// </summary>
 	public (string Tag, string Text)? ClassLabel { get; set; }
 	readonly ITranslationService Translate;

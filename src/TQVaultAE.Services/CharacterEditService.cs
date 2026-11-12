@@ -10,11 +10,10 @@ namespace TQVaultAE.Services;
 /// <summary>
 /// Applies the character edit dialog to a character: level, experience, difficulty, attributes and masteries.
 /// </summary>
-public class CharacterEditService(IPathIO pathIO, IPlayerCollectionProvider playerCollectionProvider, IDatabase database, ISkillTreeProvider skillTreeProvider, IItemProvider itemProvider) : ICharacterEditService
+public class CharacterEditService(IPathIO pathIO, IPlayerCollectionProvider playerCollectionProvider, ISkillTreeProvider skillTreeProvider, IItemProvider itemProvider) : ICharacterEditService
 {
 	private readonly IPathIO _pathIO = pathIO;
 	private readonly IPlayerCollectionProvider _playerCollectionProvider = playerCollectionProvider;
-	private readonly IDatabase _database = database;
 	private readonly ISkillTreeProvider _skillTreeProvider = skillTreeProvider;
 	private readonly IItemProvider _itemProvider = itemProvider;
 
@@ -37,8 +36,8 @@ public class CharacterEditService(IPathIO pathIO, IPlayerCollectionProvider play
 		=> this._itemProvider.GetSkillAtLevel(skillId, level, context);
 
 	/// <inheritdoc/>
-	public string GetMasteryDescriptionTag(RecordId masteryId)
-		=> this._database.GetInfo(masteryId)?.DescriptionTag ?? string.Empty;
+	public IReadOnlyList<MasteryTree> GetMasteries(PlayerInfo info)
+		=> [.. this.CreateSkillEditor(info).Slots.OfType<MasteryTree>()];
 
 	/// <inheritdoc/>
 	public PlayerInfo BuildPlayerInfo(PlayerInfo source, CharacterEditRequest request)

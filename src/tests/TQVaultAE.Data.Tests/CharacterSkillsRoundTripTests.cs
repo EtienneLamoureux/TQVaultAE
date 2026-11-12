@@ -36,7 +36,7 @@ public sealed class CharacterSkillsRoundTripTests : IDisposable
 		[
 			new MasterySkill(IceShard, "", "", "", 12, 1, null),
 		]));
-		this._service = new CharacterEditService(new PathIO(), this._fixtures.PlayerProvider, this._fixtures.Database.Object, trees.Object, this._fixtures.ItemProvider);
+		this._service = new CharacterEditService(new PathIO(), this._fixtures.PlayerProvider, trees.Object, this._fixtures.ItemProvider);
 	}
 
 	public void Dispose() => this._fixtures.Dispose();

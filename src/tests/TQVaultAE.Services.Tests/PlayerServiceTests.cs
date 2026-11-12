@@ -8,6 +8,7 @@ using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Services;
 using TQVaultAE.Application.DTOs;
@@ -78,6 +79,7 @@ public class PlayerServiceTests
 		_mockDatabase = new Mock<IDatabase>();
 		_mockGamePathService.Setup(x => x.PlayerSaveFileName).Returns("Player.chr");
 		_mockGamePathService.Setup(x => x.PlayerStashFileNameB).Returns("winsys.dxb");
+		_mockCharacterEdit.Setup(x => x.GetMasteries(It.IsAny<PlayerInfo>())).Returns([]);
 
 		// Create SessionContext - parameterless data holder
 		_sessionContext = new SessionContext();
@@ -140,6 +142,43 @@ public class PlayerServiceTests
 		// Assert
 		this._mockStashService.Verify(x => x.LoadCharacterStash(playerSave, expectReload), Times.Once);
 		this._mockStashService.Verify(x => x.LoadCharacterStash(playerSave, !expectReload), Times.Never);
+	}
+
+	[Fact]
+	public void DescribeCharacter_LinkedCharacter_NamesTheClassAndMasteriesWithItsMapsData()
+	{
+		// The mod renames the class and puts its own mastery in a pane: both read while the character's map answers,
+		// whatever map is active.
+		var save = CreatePlayerSave("/Test/_HeroA", isIT: true, isCustom: true);
+		var info = new PlayerInfo(this._mockPathIO.Object) { Class = "tagClassA" };
+		save.Info = info;
+		bool inScope = false;
+		var scope = new Mock<IDisposable>();
+		scope.Setup(x => x.Dispose()).Callback(() => inScope = false);
+		this._mockGameMapService.Setup(x => x.ReadWith(save)).Returns(() =>
+		{
+			inScope = true;
+			return scope.Object;
+		});
+		var lifegiving = new MasteryTree(Masteries.Warfare, """records\skills\lifegiving\lifegiving_mastery.dbr""".ToRecordId(), "tagLifegiving", "", "", 40, []);
+		this._mockCharacterEdit.Setup(x => x.GetMasteries(info)).Returns(() => inScope ? [lifegiving] : []);
+		this._mockTranslationService.Setup(x => x.TranslateXTag("tagClassA", true, true, false)).Returns(() => inScope ? "Mod Class" : "Base Class");
+		this._mockTranslationService.Setup(x => x.TranslateXTag("tagLifegiving", false, false, false)).Returns(() => inScope ? "Lifegiving Mastery" : "tagLifegiving");
+
+		var labels = this._playerService.DescribeCharacter(save);
+
+		labels.Should().Be(new CharacterLabels("Mod Class", "Lifegiving Mastery"));
+		save.ClassLabel.Should().Be(("tagClassA", "Mod Class"));
+		inScope.Should().BeFalse();
+	}
+
+	[Fact]
+	public void DescribeCharacter_NotLoaded_IsEmptyAndReadsNothing()
+	{
+		var save = CreatePlayerSave("/Test/_HeroB", isIT: true);
+
+		this._playerService.DescribeCharacter(save).Should().Be(CharacterLabels.Empty);
+		this._mockGameMapService.Verify(x => x.ReadWith(It.IsAny<PlayerSave>()), Times.Never);
 	}
 
 	[Fact]

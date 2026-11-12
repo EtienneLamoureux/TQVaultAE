@@ -16,7 +16,11 @@ public class SkillTreeProvider(IDatabase database) : ISkillTreeProvider, IGameDa
 
 	private readonly IDatabase _database = database;
 
-	private readonly ConcurrentDictionary<Masteries, MasteryTree?> _trees = new();
+	/// <summary>
+	/// The trees read, by data scope and mastery: a character linked to a mod has its masteries read with that mod's
+	/// database whatever the active map is, and a mod can put its own masteries in the panes.
+	/// </summary>
+	private readonly ConcurrentDictionary<(string Scope, Masteries Mastery), MasteryTree?> _trees = new();
 
 	/// <inheritdoc/>
 	public void ClearGameDataCache() => this._trees.Clear();
@@ -49,7 +53,7 @@ public class SkillTreeProvider(IDatabase database) : ISkillTreeProvider, IGameDa
 
 	/// <inheritdoc/>
 	public MasteryTree? GetMasteryTree(Masteries mastery)
-		=> this._trees.GetOrAdd(mastery, this.ReadMasteryTree);
+		=> this._trees.GetOrAdd((this._database.DataScope ?? string.Empty, mastery), key => this.ReadMasteryTree(key.Mastery));
 
 	private MasteryTree? ReadMasteryTree(Masteries mastery)
 	{
