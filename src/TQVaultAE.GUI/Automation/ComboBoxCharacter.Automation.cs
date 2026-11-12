@@ -58,6 +58,16 @@ public partial class ComboBoxCharacter
 		}
 	}
 
+	/// <summary>
+	/// Opens the character list and reads it as drawn: the text of the selected character's box, and each entry's
+	/// texts (<see cref="ComboBoxCharacterItem.AutomationTexts"/>).
+	/// </summary>
+	internal (string Header, IReadOnlyList<object> Entries) AutomationEntries()
+	{
+		this.AutomationOpenDropDown(null);
+		return (this.scalingLabelCharName.Text, [.. this.DropDown.Items.Select(item => item.AutomationTexts)]);
+	}
+
 	/// <summary>Whether the drop-down entry of a character shows its "Read-only" badge.</summary>
 	internal bool AutomationShowsReadOnlyBadge(PlayerSave save)
 		=> this.DropDown.Items.FirstOrDefault(i => i.Item == save)?.AutomationShowsReadOnlyBadge ?? false;
