@@ -203,13 +203,13 @@
 		<value>Resources\Img\caravan_bg.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
 	<data name="MainButtonDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\mainbuttondown.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+		<value>Resources\Img\mainbuttondown.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
 	<data name="MainButtonOver" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\mainbuttonover.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+		<value>Resources\Img\mainbuttonover.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
 	<data name="MainButtonUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\mainbuttonup.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+		<value>Resources\Img\mainbuttonup.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
 	<data name="MainForm_NewBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\mainform_newbackground.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
