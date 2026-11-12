@@ -143,6 +143,9 @@ public partial class MainForm
 
 	internal string? AutomationCurrentPlayerFile => this.userContext?.CurrentPlayer?.PlayerFile;
 
+	/// <summary>The character shown, as loaded.</summary>
+	internal TQVaultAE.Application.PlayerCollection? AutomationCurrentPlayer => this.userContext?.CurrentPlayer;
+
 	internal bool AutomationLoadingComplete => this.loadingComplete;
 
 	internal VaultPanel? AutomationVaultPanel => this.vaultPanel;

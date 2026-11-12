@@ -30,6 +30,39 @@ public partial class ComboBoxCharacter
 	}
 
 	/// <summary>
+	/// Clicks "Read-only" in the character menu like the user, for the selected character only, which sets or clears
+	/// the read-only attribute of its save files. Only test characters (<see cref="Automation.AutomationTestNames"/>).
+	/// </summary>
+	/// <returns>The character, the menu tick before the click, and its save folder.</returns>
+	internal (string Name, bool CheckedBefore, string Folder) AutomationClickReadOnly()
+	{
+		if (this.SelectedItem is not PlayerSave ps)
+			throw new InvalidOperationException("No character is selected.");
+		if (!Automation.AutomationTestNames.IsTestFile(ps.Name))
+			throw new InvalidOperationException($"'{ps.Name}' is not a test character: only names starting with {Automation.AutomationTestNames.Accepted} may be made read-only.");
+
+		// The menu as it opens for the selection.
+		this.RefreshContent();
+		bool before = this.readOnlyToolStripMenuItem.Checked;
+		this.readOnlyToolStripMenuItem.PerformClick();
+		return (ps.Name, before, ps.Folder);
+	}
+
+	/// <summary>The tick of "Read-only" in the character menu, as it opens for the selected character.</summary>
+	internal bool AutomationReadOnlyChecked
+	{
+		get
+		{
+			this.RefreshContent();
+			return this.readOnlyToolStripMenuItem.Checked;
+		}
+	}
+
+	/// <summary>Whether the drop-down entry of a character shows its "Read-only" badge.</summary>
+	internal bool AutomationShowsReadOnlyBadge(PlayerSave save)
+		=> this.DropDown.Items.FirstOrDefault(i => i.Item == save)?.AutomationShowsReadOnlyBadge ?? false;
+
+	/// <summary>
 	/// Clicks "Archive all" (or "Unarchive all") in the menu of a tag, which moves the save folders of the characters
 	/// having that tag. Only test tags (names starting with <c>claude-</c>) whose characters are all test characters.
 	/// </summary>

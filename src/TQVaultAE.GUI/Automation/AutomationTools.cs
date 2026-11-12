@@ -165,6 +165,8 @@ internal static partial class AutomationTools
 					gridSize = new { width = p.Panel.SackSize.Width, height = p.Panel.SackSize.Height },
 					itemCount = p.Panel.Sack?.Count(i => !RecordId.IsNullOrEmpty(i.BaseItemId)),
 					isModified = p.Panel.Sack?.IsModified,
+					// The sack belongs to a read-only character.
+					isReadOnly = p.Panel.Sack?.IsReadOnly,
 				}),
 				items,
 				equipmentSlots,
@@ -343,7 +345,7 @@ internal static partial class AutomationTools
 			named.Panel.AutomationMouseDown(named.Panel.AutomationCellCenter(cell), MouseButtons.Left);
 
 			if (!drag.IsActive)
-				throw new McpException($"TQVault did not pick up '{ItemName(item)}'. See recent_log.");
+				throw new McpException($"TQVault did not pick up '{ItemName(item)}'. Notification: '{form.AutomationNotificationText}'. See recent_log.");
 
 			return DragStatus(form);
 		});
@@ -390,7 +392,8 @@ internal static partial class AutomationTools
 				targetCells = target.Size.IsEmpty ? null : new { x = target.X, y = target.Y, width = target.Width, height = target.Height },
 				droppedItem = DescribeItem(dropped, null),
 				status = JsonDocument.Parse(DragStatus(form)).RootElement,
-				hint = stillHeld ? "The panel refused the drop (cell out of range, occupied by several items, wrong slot or requirements). The item is still dragged." : null,
+				hint = stillHeld ? "The panel refused the drop (cell out of range, occupied by several items, wrong slot, requirements or a read-only character: see notification). The item is still dragged." : null,
+				notification = form.AutomationNotificationText,
 			});
 		});
 
@@ -705,11 +708,12 @@ internal static partial class AutomationTools
 	}
 
 	/// <summary>
-	/// Respects the PlayerReadonly setting, which the equipment panel enforces for real mouse clicks too.
+	/// Respects the PlayerReadonly setting, which the equipment panel enforces for real mouse clicks too. A read-only
+	/// character's sack is left to the panel's own rules, which refuse and tell the user (the notification).
 	/// </summary>
 	private static void EnsureWritable(MainForm form, SackPanel panel, string action)
 	{
-		if (panel.ItemsReadOnly)
+		if (panel.ItemsReadOnly && panel.Sack is not { IsReadOnly: true })
 			throw new McpException($"Cannot {action} the equipment panel: the PlayerReadonly setting is on.");
 	}
 

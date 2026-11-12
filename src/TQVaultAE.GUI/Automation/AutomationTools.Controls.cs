@@ -255,6 +255,48 @@ internal static partial class AutomationTools
 			}
 		});
 
+	[McpServerTool(Name = "character_read_only", Destructive = true)]
+	[Description("Reads the read-only state of the selected character: the 'Read-only' tick of the character menu, the badge of its entry in the character list, the read-only state of its sacks and the read-only attribute of each file TQVault writes for it. With toggle=true, first clicks 'Read-only' in the character menu like a user, which sets or clears that attribute (test characters only: names starting with 'claude-', 'player-test' or 'player-mod'). Returns the notification shown after the click (a refusal, an error).")]
+	public static string CharacterReadOnly([Description("true to click 'Read-only' first; false to only read.")] bool toggle = false)
+		=> AutomationHost.OnUi(form =>
+		{
+			try
+			{
+				var combo = form.AutomationCharacterCombo;
+				bool? checkedBefore = null;
+				if (toggle)
+					checkedBefore = combo.AutomationClickReadOnly().CheckedBefore;
+
+				if (combo.SelectedItem is not PlayerSave ps)
+					throw new McpException("No character is selected.");
+
+				var service = form.Services.CharacterReadOnlyService;
+				combo.AutomationOpenDropDown(ps.Name);
+				bool badge = combo.AutomationShowsReadOnlyBadge(ps);
+				var player = form.AutomationCurrentPlayer;
+				return Serialize(new
+				{
+					name = ps.Name,
+					checkedBefore,
+					menuChecked = combo.AutomationReadOnlyChecked,
+					saveIsReadOnly = ps.IsReadOnly,
+					badge,
+					playerIsReadOnly = player?.IsReadOnly,
+					// The distinct states of its bags and equipment: one value when they all agree.
+					sacksReadOnly = player?.Append(player.EquipmentSack!).OfType<TQVaultAE.Domain.Entities.SackCollection>().Select(s => s.IsReadOnly).Distinct().ToList(),
+					filesReadOnly = service.IsReadOnly(ps.Folder),
+					files = service.OwnedFiles(ps.Folder)
+						.Where(form.Services.FileIO.Exists)
+						.Select(f => new { file = Path.GetFileName(f), readOnly = form.Services.FileIO.IsReadOnly(f) }),
+					notification = form.AutomationNotificationText,
+				});
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
+		});
+
 	[McpServerTool(Name = "tag_archive_all", Destructive = true)]
 	[Description("Clicks 'Archive all' (archived=true) or 'Unarchive all' in the menu of a tag, like a user: TQVault moves the save folders of the characters having that tag. Only test tags starting with 'claude-' whose characters are all claude-* test characters. Returns those characters with their state and folder.")]
 	public static string TagArchiveAll(

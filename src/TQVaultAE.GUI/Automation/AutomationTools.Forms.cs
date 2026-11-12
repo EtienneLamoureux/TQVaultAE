@@ -30,7 +30,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "control_tree", ReadOnly = true)]
-	[Description("Lists the controls of an open form with their type, bounds (client coordinates of their parent, in pixels), font and visibility, to check layout and scaling. Also reports the form's DPI and TQVault's scale, zoom and DPI factor.")]
+	[Description("Lists the controls of an open form with their type, bounds (client coordinates of their parent, in pixels), font, visibility and enabled state, to check layout and scaling. Also reports the form's DPI and TQVault's scale, zoom and DPI factor.")]
 	public static string ControlTree(
 		[Description("Part of the form title (case-insensitive); empty for the main window.")] string form = "",
 		[Description("Maximum depth below the form (default 3).")] int depth = 3)
@@ -48,6 +48,7 @@ internal static partial class AutomationTools
 				bounds = new { c.Left, c.Top, c.Width, c.Height },
 				font = $"{c.Font.Name} {c.Font.SizeInPoints:0.##}pt",
 				visible = c.Visible,
+				enabled = c.Enabled,
 				controls = level < depth && c.Controls.Count > 0
 					? c.Controls.Cast<Control>().Select(child => Describe(child, level + 1)).ToList()
 					: null,
