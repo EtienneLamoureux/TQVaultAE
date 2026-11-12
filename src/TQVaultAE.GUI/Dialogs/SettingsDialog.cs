@@ -143,51 +143,16 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		var font12 = FontService.GetFontLight(12F);
 		var font1125 = FontService.GetFontLight(11.25F);
 
-		this.cancelButton.Font =
-		this.okayButton.Font =
-		this.resetButton.Font =
-		this.vaultPathBrowseButton.Font =
-		this.titanQuestPathBrowseButton.Font =
-		this.immortalThronePathBrowseButton.Font = font12;
-
-		this.hotReloadCheckBox.Font =
-		this.scalingCheckBoxEnableSounds.Font =
-		this.characterEditCheckBox.Font =
-		this.allowItemEditCheckBox.Font =
-		this.allowItemCopyCheckBox.Font =
-		this.skipTitleCheckBox.Font =
-		this.loadLastCharacterCheckBox.Font =
-		this.loadLastVaultCheckBox.Font =
-		this.vaultPathTextBox.Font =
-		this.loadAllFilesCheckBox.Font =
-		this.suppressWarningsCheckBox.Font =
-		this.playerReadonlyCheckbox.Font =
-		this.languageComboBox.Font =
-		this.languageLabel.Font =
-		this.titanQuestPathTextBox.Font =
-		this.titanQuestPathLabel.Font =
-		this.immortalThronePathLabel.Font =
-		this.immortalThronePathTextBox.Font =
-		this.baseFontLabel.Font =
-		this.baseFontComboBox.Font =
-		this.scalingCheckBoxTooltipDetailedView.Font =
-		this.scalingCheckBoxTooltipInGameRolls.Font =
-		this.scalingCheckBoxTooltipValueRanges.Font =
-		this.scalingCheckBoxTooltipGrantedSkills.Font =
-		this.scalingCheckBoxTooltipSetPieceCounts.Font =
-		this.ShowInGameValuesCheckBox.Font =
-		this.EnableItemRequirementRestrictionCheckBox.Font =
-		this.ItemBGColorOpacityLabel.Font =
-		this.scalingLabelCSVDelim.Font =
-		this.scalingComboBoxCSVDelim.Font =
-		this.scalingCheckBoxEnableEpicLegendaryAffixes.Font =
-		this.scalingCheckBoxDisableAutoStacking.Font =
-		this.scalingCheckBoxMergeRelicsOnSort.Font = font1125;
-
-		this.checkGroupBoxGitBackup.ProcessAllControls((ctr) => ctr.Font = font1125);
-		this.checkGroupBoxOriginalTQSupport.ProcessAllControls((ctr) => ctr.Font = font1125);
-
+		// One rule for every control of the dialog, the PasteBin group's included: the buttons in the larger size, the
+		// rest in the base size. The group boxes keep no font of their own (CaravanFrame draws their caption).
 		this.Font = font1125;
+		this.ProcessAllControls(ctr =>
+		{
+			if (ctr is Button)
+				ctr.Font = font12;
+			else if (ctr is not GroupBox)
+				ctr.Font = font1125;
+		});
 
 		#endregion
 
