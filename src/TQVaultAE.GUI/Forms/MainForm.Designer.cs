@@ -119,8 +119,6 @@ public partial class MainForm
         this.bufferedFlowLayoutPanelsecondaryVaultList = new TQVaultAE.GUI.Components.Layout.BufferedFlowLayoutPanel();
         this.pictureBoxSecondVault = new System.Windows.Forms.PictureBox();
         this.secondaryVaultListComboBox = new TQVaultAE.GUI.Components.Scaling.ScalingComboBox();
-        this.fileSystemWatcherTransferStash = new System.IO.FileSystemWatcher();
-        this.fileSystemWatcherRelicStash = new System.IO.FileSystemWatcher();
         this.typeAssistant = new TQVaultAE.GUI.Components.TypeAssistant();
         this.saveButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.flowLayoutPanelMenuButtons = new System.Windows.Forms.FlowLayoutPanel();
@@ -135,8 +133,6 @@ public partial class MainForm
         this.flowLayoutPanelRightComboBox.SuspendLayout();
         this.bufferedFlowLayoutPanelsecondaryVaultList.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSecondVault)).BeginInit();
-        ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherTransferStash)).BeginInit();
-        ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherRelicStash)).BeginInit();
         this.flowLayoutPanelMenuButtons.SuspendLayout();
         this.SuspendLayout();
         // 
@@ -472,20 +468,6 @@ public partial class MainForm
         this.secondaryVaultListComboBox.TabIndex = 15;
         this.secondaryVaultListComboBox.SelectedIndexChanged += new System.EventHandler(this.SecondaryVaultListComboBoxSelectedIndexChanged);
         // 
-        // fileSystemWatcherTransferStash
-        // 
-        this.fileSystemWatcherTransferStash.EnableRaisingEvents = true;
-        this.fileSystemWatcherTransferStash.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.CreationTime)));
-        this.fileSystemWatcherTransferStash.SynchronizingObject = this;
-        this.fileSystemWatcherTransferStash.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherTransferStash_Changed);
-        // 
-        // fileSystemWatcherRelicStash
-        // 
-        this.fileSystemWatcherRelicStash.EnableRaisingEvents = true;
-        this.fileSystemWatcherRelicStash.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.CreationTime)));
-        this.fileSystemWatcherRelicStash.SynchronizingObject = this;
-        this.fileSystemWatcherRelicStash.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcherRelicStash_Changed);
-        // 
         // typeAssistant
         // 
         this.typeAssistant.Idled += new System.EventHandler(this.typeAssistant_Idled);
@@ -617,8 +599,6 @@ public partial class MainForm
         this.flowLayoutPanelRightComboBox.PerformLayout();
         this.bufferedFlowLayoutPanelsecondaryVaultList.ResumeLayout(false);
         ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSecondVault)).EndInit();
-        ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherTransferStash)).EndInit();
-        ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherRelicStash)).EndInit();
         this.flowLayoutPanelMenuButtons.ResumeLayout(false);
         this.ResumeLayout(false);
         this.PerformLayout();
@@ -631,8 +611,6 @@ public partial class MainForm
 	private BufferedFlowLayoutPanel flowLayoutPanelRightComboBox;
 	private ScalingComboBox secondaryVaultListComboBox;
 	private BufferedFlowLayoutPanel flowLayoutPanelRightPanels;
-	private System.IO.FileSystemWatcher fileSystemWatcherTransferStash;
-	private System.IO.FileSystemWatcher fileSystemWatcherRelicStash;
 	private ScalingButton saveButton;
 	private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelMenuButtons;
 	private System.Windows.Forms.ToolTip toolTip;

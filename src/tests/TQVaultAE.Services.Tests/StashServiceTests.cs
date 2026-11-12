@@ -490,6 +490,42 @@ public class StashServiceTests
 		result2.Stash.Should().NotBeSameAs(originalStash);
 	}
 
+	[Theory]
+	[InlineData(StashType.TransferStash)]
+	[InlineData(StashType.RelicVaultStash)]
+	public void ReloadSharedStash_FileTheSessionHolds_IsReadAgainAndReplacesItsSearchEntries(StashType type)
+	{
+		// A mod's shared stash, read by Load all files while another map is active.
+		string file = type == StashType.TransferStash ? """C:\Test\Saves\Sys\ModA\winsys.dxb""" : """C:\Test\Saves\Sys\ModA\miscsys.dxb""";
+		_mockGamePathService.Setup(x => x.TransferStashFileFullPathFor("""C:\Maps\ModA""")).Returns("""C:\Test\Saves\Sys\ModA\winsys.dxb""");
+		_mockGamePathService.Setup(x => x.RelicVaultStashFileFullPathFor("""C:\Maps\ModA""")).Returns("""C:\Test\Saves\Sys\ModA\miscsys.dxb""");
+		_mockStashProvider.Setup(x => x.LoadFile(It.IsAny<Stash>())).Callback<Stash>(s => s.CreateEmptySack()).Returns(true);
+		var first = type == StashType.TransferStash
+			? _stashService.LoadTransferStash(false, """C:\Maps\ModA""")
+			: _stashService.LoadRelicVaultStash(false, """C:\Maps\ModA""");
+
+		var reloaded = _stashService.ReloadSharedStash(type, """C:\Maps\ModA""");
+
+		reloaded.Should().NotBeNull();
+		reloaded!.StashFile.Should().Be(file);
+		reloaded.Stash.Should().NotBeSameAs(first.Stash);
+		_sessionContext.Stashes[file].Value.Should().BeSameAs(reloaded.Stash);
+		_mockItemDatabaseService.Verify(x => x.RemoveContainerFromDatabase(file), Times.Once);
+	}
+
+	[Fact]
+	public void ReloadSharedStash_FileNeverRead_ReadsNothing()
+	{
+		// Load all files off: the session reads a map's shared stash only when it is shown.
+		_mockGamePathService.Setup(x => x.TransferStashFileFullPathFor("""C:\Maps\ModA""")).Returns("""C:\Test\Saves\Sys\ModA\winsys.dxb""");
+
+		var reloaded = _stashService.ReloadSharedStash(StashType.TransferStash, """C:\Maps\ModA""");
+
+		reloaded.Should().BeNull();
+		_mockStashProvider.Verify(x => x.LoadFile(It.IsAny<Stash>()), Times.Never);
+		_sessionContext.Stashes.Should().BeEmpty();
+	}
+
 	/// <summary>
 	/// Test SaveAllModifiedStashes with exception during save
 	/// </summary>

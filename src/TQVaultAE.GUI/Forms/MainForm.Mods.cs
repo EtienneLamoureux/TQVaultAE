@@ -26,8 +26,8 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// After a switch of map: the watchers of the shared stash files (one set per map) and the panels, whose pictures and
-	/// texts now come from the new map's data.
+	/// After a switch of map: the watchers of the shared stash files (the new map may not be watched yet) and the
+	/// panels, whose pictures and texts now come from the new map's data.
 	/// </summary>
 	private void GameMapService_ActiveMapChanged(object? sender, EventArgs e)
 	{
@@ -35,34 +35,6 @@ public partial class MainForm
 			this.WatchSharedStashFiles();
 
 		this.Invalidate(true);
-	}
-
-	/// <summary>
-	/// Watches the active map's shared stash files (transfer stash and relic vault) when hot reload is on.
-	/// </summary>
-	private void WatchSharedStashFiles()
-	{
-		if (!USettings.EnableHotReload)
-			return;
-
-		var relicPath = GamePathResolver.RelicVaultStashFileFullPath;
-		var transferPath = GamePathResolver.TransferStashFileFullPath;
-
-		this.fileSystemWatcherRelicStash.EnableRaisingEvents = false;
-		if (FileIO.Exists(relicPath))
-		{
-			this.fileSystemWatcherRelicStash.Path = PathIO.GetDirectoryName(relicPath);
-			this.fileSystemWatcherRelicStash.Filter = PathIO.GetFileName(relicPath);
-			this.fileSystemWatcherRelicStash.EnableRaisingEvents = true;
-		}
-
-		this.fileSystemWatcherTransferStash.EnableRaisingEvents = false;
-		if (FileIO.Exists(transferPath))
-		{
-			this.fileSystemWatcherTransferStash.Path = PathIO.GetDirectoryName(transferPath);
-			this.fileSystemWatcherTransferStash.Filter = PathIO.GetFileName(transferPath);
-			this.fileSystemWatcherTransferStash.EnableRaisingEvents = true;
-		}
 	}
 
 	/// <summary>
@@ -81,6 +53,9 @@ public partial class MainForm
 
 		if (!changed)
 			return;
+
+		// A link to a mod no other character uses brings its shared stash files in use.
+		this.WatchSharedStashFiles();
 
 		if (this.comboBoxCharacter.SelectedItem == save)
 			this.LoadPlayerAndStashes(save);

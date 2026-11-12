@@ -56,6 +56,22 @@ public interface IStashService
 	StashLoadResult? LoadRelicVaultStashFor(PlayerSave? selectedSave, bool fromFileWatcher = false);
 
 	/// <summary>
+	/// The file of a map's shared stash: <c>SaveData\Sys\&lt;mod&gt;</c>, or <c>SaveData\Sys</c> for the base game.
+	/// </summary>
+	/// <param name="type"><see cref="StashType.TransferStash"/>, or <see cref="StashType.RelicVaultStash"/>.</param>
+	/// <param name="mapFolder">The custom map folder; empty for the base game.</param>
+	string SharedStashFile(StashType type, string mapFolder);
+
+	/// <summary>
+	/// Reads a map's shared stash again after its file changed on disk (hot reload), whatever map is active, when the
+	/// session holds it: its items replace the old ones in the search.
+	/// </summary>
+	/// <param name="type"><see cref="StashType.TransferStash"/>, or <see cref="StashType.RelicVaultStash"/>.</param>
+	/// <param name="mapFolder">The custom map folder; empty for the base game.</param>
+	/// <returns>The new load; null when the session never read that file (it is read when first needed).</returns>
+	StashLoadResult? ReloadSharedStash(StashType type, string mapFolder);
+
+	/// <summary>
 	/// Gets the loaded stashes that have unsaved changes, with their file.
 	/// </summary>
 	IReadOnlyList<(string File, Stash Stash)> GetModifiedStashes();

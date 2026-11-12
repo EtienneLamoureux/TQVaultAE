@@ -190,6 +190,10 @@ and of every mod a listed Immortal Throne character is linked to. Each map's dat
 needed (about half a second for a large mod). The search covers them all from startup, and names a mod's shared
 stashes after it: *Transfer Stash [shadowchampions]*.
 
+With *Allow hot reload features* on, the transfer stash and relic vault files of every map in use (the base game, the
+maps of the listed characters and the active one) are watched. When the game writes one, it is read again with its own
+map: the search finds its new items, and the stash panel shows them when it is the active map's.
+
 Debug builds log a warning for an item indexed without a map (`Item without a map`): a path that forgot to give one.
 
 ## Incomplete items

@@ -97,31 +97,75 @@ public partial class MainForm
 			, () => this.stashPanel.RelicVaultStash = null);
 	}
 
-	// Raised on the UI thread (SynchronizingObject = this)
-	private void fileSystemWatcherRelicStash_Changed(object? sender, FileSystemEventArgs e)
-	{
-		if (e.ChangeType != WatcherChangeTypes.Changed) return;
+	/// <summary>
+	/// The watchers of the shared stash files (transfer stash and relic vault) of every map in use, by file.
+	/// </summary>
+	private readonly Dictionary<string, FileSystemWatcher> sharedStashWatchers = new(StringComparer.OrdinalIgnoreCase);
 
-		this.FileReloadDebouncer.Schedule(e.FullPath, () =>
+	/// <summary>
+	/// Watches the shared stash files of every map in use when hot reload is on: the base game's, those of the maps of
+	/// the listed characters, and the active map's. Watchers already set are kept.
+	/// </summary>
+	private void WatchSharedStashFiles()
+	{
+		if (!USettings.EnableHotReload)
+			return;
+
+		var maps = this.SharedStashMaps();
+		if (!maps.Any(m => GameMaps.Same(m, this.gameMapService.ActiveMap)))
+			maps.Add(this.gameMapService.ActiveMap);
+
+		foreach (var map in maps)
 		{
-			var stashResult = this.stashService.LoadRelicVaultStashFor(this.comboBoxCharacter.SelectedItem as PlayerSave, true);
-			this.ShowRelicVaultStash(stashResult, true);
-			if (stashResult is not null)
-				this.stashPanel.RelicVaultStash = stashResult.Stash;
-		});
+			foreach (var type in new[] { StashType.TransferStash, StashType.RelicVaultStash })
+			{
+				string file = this.stashService.SharedStashFile(type, map);
+				string? folder = PathIO.GetDirectoryName(file);
+				if (this.sharedStashWatchers.ContainsKey(file) || folder is null || !Directory.Exists(folder))
+					continue;
+
+				var watcher = new FileSystemWatcher(folder, PathIO.GetFileName(file))
+				{
+					NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.CreationTime,
+					SynchronizingObject = this,
+				};
+				string watchedMap = map;
+				watcher.Changed += (_, e) => this.SharedStashFile_Changed(e, type, watchedMap);
+				watcher.EnableRaisingEvents = true;
+				this.sharedStashWatchers[file] = watcher;
+			}
+		}
 	}
 
-	// Raised on the UI thread (SynchronizingObject = this)
-	private void fileSystemWatcherTransferStash_Changed(object? sender, FileSystemEventArgs e)
+	/// <summary>
+	/// Reads a shared stash again after the game wrote it: in the search, and in the stash panel when it is the active
+	/// map's. Raised on the UI thread (SynchronizingObject = this).
+	/// </summary>
+	private void SharedStashFile_Changed(FileSystemEventArgs e, StashType type, string map)
 	{
 		if (e.ChangeType != WatcherChangeTypes.Changed) return;
 
 		this.FileReloadDebouncer.Schedule(e.FullPath, () =>
 		{
-			var stashResult = this.stashService.LoadTransferStashFor(this.comboBoxCharacter.SelectedItem as PlayerSave, true);
-			this.ShowTransferStash(stashResult, true);
-			if (stashResult is not null)
-				this.stashPanel.TransferStash = stashResult.Stash;
+			var stashResult = this.stashService.ReloadSharedStash(type, map);
+			if (stashResult is null)
+				return;
+
+			// The panel shows the active map's shared stashes, unless the character shown has none (Titan Quest original).
+			var selected = this.comboBoxCharacter.SelectedItem as PlayerSave;
+			bool shown = GameMaps.Same(map, this.gameMapService.ActiveMap) && (selected is null || selected.IsImmortalThrone);
+			if (type == StashType.TransferStash)
+			{
+				this.ShowTransferStash(stashResult, true);
+				if (shown)
+					this.stashPanel.TransferStash = stashResult.Stash;
+			}
+			else
+			{
+				this.ShowRelicVaultStash(stashResult, true);
+				if (shown)
+					this.stashPanel.RelicVaultStash = stashResult.Stash;
+			}
 		});
 	}
 }

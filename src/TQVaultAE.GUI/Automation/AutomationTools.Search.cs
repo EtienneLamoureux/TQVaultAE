@@ -40,6 +40,29 @@ internal static partial class AutomationTools
 			return Serialize(new { count = entries.Count, entries });
 		});
 
+	[McpServerTool(Name = "search_containers", ReadOnly = true)]
+	[Description("Lists the containers of the search database (files and the names the search shows for them) with their number of entries and the base records of their items, optionally only those whose file or name contains a text. Use it to check that a file read again (hot reload, a shared stash of another map) replaced its items in the search.")]
+	public static string SearchContainers(
+		[Description("Optional text the container's file or name must contain (case does not matter).")] string? filter = null)
+		=> AutomationHost.OnUi(_ =>
+		{
+			var containers = Program.ServiceProvider.GetRequiredService<IItemDatabaseService>().ItemDatabase
+				.Where(r => string.IsNullOrEmpty(filter)
+					|| r.Container.Contains(filter, StringComparison.OrdinalIgnoreCase)
+					|| r.ContainerName.Contains(filter, StringComparison.OrdinalIgnoreCase))
+				.GroupBy(r => (r.Container, r.ContainerName))
+				.Select(g => (object)new
+				{
+					container = g.Key.Container,
+					containerName = g.Key.ContainerName,
+					count = g.Count(),
+					items = g.Select(r => r.Item.BaseItemId.Raw).Order(StringComparer.OrdinalIgnoreCase).ToList(),
+				})
+				.ToList();
+
+			return Serialize(new { count = containers.Count, containers });
+		});
+
 	/// <summary>The name the search shows for an entry, loaded as the search loads it.</summary>
 	private static string SearchName(TQVaultAE.Application.Results.SearchResult entry)
 	{

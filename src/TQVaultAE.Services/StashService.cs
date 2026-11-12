@@ -240,6 +240,24 @@ public class StashService(
 	}
 
 	/// <inheritdoc/>
+	public string SharedStashFile(StashType type, string mapFolder)
+		=> type == StashType.TransferStash
+			? this.GamePathResolver.TransferStashFileFullPathFor(mapFolder)
+			: this.GamePathResolver.RelicVaultStashFileFullPathFor(mapFolder);
+
+	/// <inheritdoc/>
+	public StashLoadResult? ReloadSharedStash(StashType type, string mapFolder)
+	{
+		// A file the session never read has nothing to refresh: it is read when first shown.
+		if (!this.userContext.Stashes.ContainsKey(this.SharedStashFile(type, mapFolder)))
+			return null;
+
+		return type == StashType.TransferStash
+			? this.LoadTransferStash(true, mapFolder)
+			: this.LoadRelicVaultStash(true, mapFolder);
+	}
+
+	/// <inheritdoc/>
 	public IReadOnlyList<(string File, Stash Stash)> GetModifiedStashes()
 		=> [.. this.userContext.Stashes
 			.Where(kvp => kvp.Value.IsValueCreated)
