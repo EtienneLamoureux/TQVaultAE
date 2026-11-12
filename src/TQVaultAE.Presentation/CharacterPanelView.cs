@@ -2,20 +2,44 @@ using System.Drawing;
 
 namespace TQVaultAE.Presentation;
 
+/// <summary>
+/// A block of a statistics rollover: its title (the damage bonuses: "Cold Damage", then "Frostburn Damage"), then its
+/// lines, which keep their game colour codes. A block with a title is an icon's: never cut, as the game's rollovers; a
+/// block without one is a row's sentences, which wrap.
+/// </summary>
+public sealed record StatToolTipBlock(string? Title, IReadOnlyList<string> Lines);
+
+/// <summary>A rollover of the statistics panel: its blocks, one under the other with a blank line between them.</summary>
+public sealed record StatToolTip(IReadOnlyList<StatToolTipBlock> Blocks)
+{
+	/// <summary>No rollover.</summary>
+	public static StatToolTip None { get; } = new([]);
+
+	/// <summary>A row's rollover: one sentence without title; none when empty.</summary>
+	public static StatToolTip Sentence(string text) => text.Length == 0 ? None : new([new StatToolTipBlock(null, [text])]);
+
+	/// <summary>True when there is nothing to show.</summary>
+	public bool IsEmpty => this.Blocks.Count == 0;
+
+	/// <summary>The rollover as one plain text (the standard tool tip): a line each, a blank line between the blocks.</summary>
+	public string Text { get; } = string.Join(Environment.NewLine + Environment.NewLine,
+		Blocks.Select(b => string.Join(Environment.NewLine, b.Title is null ? b.Lines : [b.Title, .. b.Lines])));
+}
+
 /// <summary>An attribute row of tab I: its label, the total shown, its colour and its tool tip.</summary>
-public sealed record CharacterAttributeView(string Label, string Value, Color Color, string ToolTip);
+public sealed record CharacterAttributeView(string Label, string Value, Color Color, StatToolTip ToolTip);
 
 /// <summary>An icon of the panel (a resistance, a damage kind, a monster race) with the number drawn on it and its tool tip.</summary>
-public sealed record StatIconView(string Icon, string Value, string ToolTip);
+public sealed record StatIconView(string Icon, string Value, StatToolTip ToolTip);
 
 /// <summary>A row of the panel: grey label, white value, tool tip.</summary>
-public sealed record StatRowView(string Label, string Value, string ToolTip);
+public sealed record StatRowView(string Label, string Value, StatToolTip ToolTip);
 
 /// <summary>The values TQVault computes like the game (tab I defense, tab II, top of tab III), ready to draw.</summary>
 public sealed record CharacterStatsView
 {
 	public string DefenseTitle { get; init; } = string.Empty;
-	public StatRowView Armor { get; init; } = new(string.Empty, string.Empty, string.Empty);
+	public StatRowView Armor { get; init; } = new(string.Empty, string.Empty, StatToolTip.None);
 
 	/// <summary>Tab I fire, cold, lightning, pierce, vitality, poison, bleeding, physical; tab II slow, trap, energy, disruption, stun, freeze, sleep, petrify.</summary>
 	public IReadOnlyList<StatIconView> Resistances { get; init; } = [];

@@ -256,7 +256,7 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 			// Health and energy show "current / maximum", full outside the game.
 			var shown = index is CharacterPanelInput.Health or CharacterPanelInput.Energy ? $"{total} / {total}" : total.ToString(culture);
 			var tip = string.Format(culture, input.Editable ? Resources.CEAttributeToolTip : Resources.CEAttributeBaseToolTip, value, total - value);
-			return new CharacterAttributeView(Game(tag, label), shown, color, tip);
+			return new CharacterAttributeView(Game(tag, label), shown, color, StatToolTip.Sentence(tip));
 		}
 
 		var points = input.AttributePoints;
@@ -310,12 +310,13 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 		string Game(string tag, string fallback) => this._translation.TranslateOr(tag, fallback);
 		string Percent(int value) => value.ToString(culture) + "%";
 		string Signed(string tag, string fallback, int value) => CharacterPanelLayout.FormatGameText(Game(tag, fallback), value);
-		StatRowView Row(string tag, string fallback, string value, string toolTip = "") => new(Game(tag, fallback), value, toolTip);
+		StatRowView Row(string tag, string fallback, string value, string toolTip = "") => new(Game(tag, fallback), value, StatToolTip.Sentence(toolTip));
 
-		// A damage's rollover block: its name, its bonus and its Global Multiplier, then the damage over time's name, its
+		// A damage's rollover blocks: its name, its bonus and its Global Multiplier, then the damage over time's name, its
 		// bonus "with +n% Improved Duration" and its multiplier.
-		List<string> DamageLines(StatDamage damage, string? damageTag, string? durationDamageTag, string name)
+		List<StatToolTipBlock> DamageBlocks(StatDamage damage, string? damageTag, string? durationDamageTag, string name)
 		{
+			var blocks = new List<StatToolTipBlock>();
 			var lines = new List<string>();
 			var bonus = stats.DamageBonuses.GetValueOrDefault(damage);
 			var equations = DamageEquations.GetValueOrDefault(damage);
@@ -348,7 +349,8 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 
 			if (damageTag is not null)
 			{
-				lines.AddRange([name, Signed(damageTag, "{%+.0f0}%", bonus.Damage)]);
+				lines = [Signed(damageTag, "{%+.0f0}%", bonus.Damage)];
+				blocks.Add(new StatToolTipBlock(name, lines));
 				if (damage == StatDamage.Physical)
 					WeaponAndSpell("physicalDamageEquation", "physicalNonWeaponDamageEquation", "physicalDamageDV", "strengthDV", stats.Strength, "Str");
 				else if (damage == StatDamage.Pierce)
@@ -359,17 +361,14 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 
 			if (durationDamageTag is not null)
 			{
-				if (lines.Count != 0)
-					lines.Add(string.Empty);
-
 				var over = durationDamageTag.Replace("DamageDurationModifier", "DamageDuration", StringComparison.Ordinal);
-				lines.Add(damageTag is null ? name : Game(over, name));
-				lines.Add(Signed(durationDamageTag, "{%+.0f0}%", bonus.DurationDamage) + "  "
-					+ Signed("ImprovedTimeFormat", "with {%+.0f0}% Improved Duration", bonus.Duration));
+				lines = [Signed(durationDamageTag, "{%+.0f0}%", bonus.DurationDamage) + "  "
+					+ Signed("ImprovedTimeFormat", "with {%+.0f0}% Improved Duration", bonus.Duration)];
+				blocks.Add(new StatToolTipBlock(damageTag is null ? name : Game(over, name), lines));
 				Multiplier(equations.OverTime);
 			}
 
-			return lines;
+			return blocks;
 		}
 
 		// The Pet Bonuses rollover: the pets' damage % for physical, elemental and vitality, then their flat damages, with
@@ -395,7 +394,7 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 			Resistances = [.. Enum.GetValues<StatResistance>().Select(r => new StatIconView(
 				ResistanceIcons[(int)r].Icon,
 				Percent(stats.Resistances[r]),
-				Game(ResistanceIcons[(int)r].Tag, ResistanceIcons[(int)r].Fallback)))],
+				new StatToolTip([new StatToolTipBlock(Game(ResistanceIcons[(int)r].Tag, ResistanceIcons[(int)r].Fallback), [])])))],
 			OffenseTitle = Game("tagCOffense", "Offense"),
 			Offense =
 			[
@@ -421,20 +420,20 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 			],
 			DamageTitle = Game("x4tagCDamageStats2", "Damage & Duration Bonuses"),
 			// As the game's rollover: one block per damage, its name then its bonus; the damage over time "with +n%
-			// Improved Duration". A blank line starts a block, whose first line is its title.
+			// Improved Duration".
 			Damages = [.. DamageIcons.Select(d =>
 			{
 				var name = Game(d.Tag, d.Damage.ToString());
 				if (d.Damage == StatDamage.Pet)
-					return new StatIconView(d.Icon, string.Empty, string.Join(Environment.NewLine, [name, .. PetLines(stats.PetBonuses)]));
+					return new StatIconView(d.Icon, string.Empty, new StatToolTip([new StatToolTipBlock(name, [.. PetLines(stats.PetBonuses)])]));
 
-				var lines = DamageLines(d.Damage, d.DamageTag, d.DurationDamageTag, name);
+				var blocks = DamageBlocks(d.Damage, d.DamageTag, d.DurationDamageTag, name);
 
 				// The game shows energy leech under life leech, as a second block.
 				if (d.Damage == StatDamage.LifeLeech)
-					lines.AddRange([string.Empty, .. DamageLines(StatDamage.ManaLeech, null, "DamageDurationModifierManaLeach", Game("DamageDurationManaLeach", "Energy Leech"))]);
+					blocks.AddRange(DamageBlocks(StatDamage.ManaLeech, null, "DamageDurationModifierManaLeach", Game("DamageDurationManaLeach", "Energy Leech")));
 
-				return new StatIconView(d.Icon, string.Empty, string.Join(Environment.NewLine, lines.Count == 0 ? [name] : lines));
+				return new StatIconView(d.Icon, string.Empty, new StatToolTip(blocks.Count == 0 ? [new StatToolTipBlock(name, [])] : blocks));
 			})],
 			Tab3Rows =
 			[
@@ -449,14 +448,12 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 				var bonus = stats.RaceBonuses[r];
 				string Line(string lineTag, string lineFallback, double value)
 					=> CharacterPanelLayout.FormatGameText(Game(lineTag, lineFallback), (long)Math.Round(value), name);
-				var lines = new List<string>
-				{
-					name,
+				return new StatIconView(icon, string.Empty, new StatToolTip([new StatToolTipBlock(name,
+				[
 					Line("RacialBonusPercentDamage", "{%+.0f0}% Damage to {%s1}", bonus.PercentDamage),
 					Line("RacialBonusAbsoluteDamage", "{%+.0f0} Damage to {%s1}", bonus.AbsoluteDamage),
 					Line("RacialBonusPercentDefense", "{%+.0f0}% Less Damage from {%s1}", bonus.PercentDefense),
-				};
-				return new StatIconView(icon, string.Empty, string.Join(Environment.NewLine, lines));
+				])]));
 			})],
 		};
 	}

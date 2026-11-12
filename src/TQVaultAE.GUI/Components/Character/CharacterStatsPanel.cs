@@ -253,22 +253,21 @@ internal sealed partial class CharacterStatsPanel : Control
 		this.Cursor = plus >= 0 || undo || Enumerable.Range(0, 3).Any(t => this.TabBounds(t).Contains(e.Location)) ? Cursors.Hand : Cursors.Default;
 
 		// The attribute rows tell their base value and bonuses; icons and rows their meaning, as the game's rollovers.
-		var text = string.Empty;
-		var titled = false;
+		var tip = StatToolTip.None;
 		if (this.View?.Invoke() is { } view)
-			foreach (var (area, tip, title) in this.ToolTipAreas(view))
+			foreach (var (area, areaTip) in this.ToolTipAreas(view))
 				if (this.ScaledRect(area).Contains(e.Location))
-					(text, titled) = (tip, title);
+					tip = areaTip;
 
-		if (text != this._toolTipText)
+		if (tip.Text != this._toolTipText)
 		{
-			this._toolTipText = text;
+			this._toolTipText = tip.Text;
 			if (this.Tooltip is null)
-				this._toolTip.SetToolTip(this, text);
-			else if (text.Length == 0)
+				this._toolTip.SetToolTip(this, tip.Text);
+			else if (tip.IsEmpty)
 				this.Tooltip.Hide();
 			else
-				this.Tooltip.Show(this, ToolTipLines(text, titled));
+				this.Tooltip.Show(this, ToolTipLines(tip));
 		}
 	}
 
@@ -407,58 +406,54 @@ internal sealed partial class CharacterStatsPanel : Control
 		=> Enumerable.Range(0, Math.Min(count, perRow * rows.Length)).Select(i => new Point(15 + i % perRow * step, rows[i / perRow]));
 
 	/// <summary>
-	/// The lines of a rollover: an icon's text is made of blocks split by blank lines, each with its title first (the
-	/// damage bonuses: "Cold Damage", then "Frostburn Damage"), never cut; a row's text has no title and wraps (the
-	/// editor's own sentences).
+	/// The lines of a rollover, a blank line between its blocks: a block's title in white, never cut (an icon's), its
+	/// lines in grey; a block without title wraps (a row's sentences).
 	/// </summary>
-	internal static List<GameTooltipLine> ToolTipLines(string text, bool titled)
+	internal static List<GameTooltipLine> ToolTipLines(StatToolTip tip)
 	{
 		var lines = new List<GameTooltipLine>();
-		bool blockStart = titled;
-		foreach (var line in text.Split(Environment.NewLine))
+		foreach (var block in tip.Blocks)
 		{
-			if (line.Length == 0)
-			{
+			if (lines.Count != 0)
 				lines.Add(GameTooltipLine.Blank);
-				blockStart = titled;
-				continue;
-			}
 
-			lines.Add(new GameTooltipLine(line, blockStart ? Color.White : ToolTipText, Title: blockStart, Wrap: !titled));
-			blockStart = false;
+			bool wrap = block.Title is null;
+			if (block.Title is not null)
+				lines.Add(new GameTooltipLine(block.Title, Color.White, Title: true));
+			lines.AddRange(block.Lines.Select(line => new GameTooltipLine(line, ToolTipText, Wrap: wrap)));
 		}
 
 		return lines;
 	}
 
-	/// <summary>The areas with a tool tip on the tab shown, in game pixels; icons have titled tool tips.</summary>
-	private IEnumerable<(Rectangle Area, string ToolTip, bool Titled)> ToolTipAreas(CharacterPanelView view)
+	/// <summary>The areas with a tool tip on the tab shown, in game pixels.</summary>
+	private IEnumerable<(Rectangle Area, StatToolTip ToolTip)> ToolTipAreas(CharacterPanelView view)
 	{
 		var stats = view.Stats;
 		switch (this._tab)
 		{
 			case 0:
 				for (int i = 0; i < view.Attributes.Count && i < AttributeY.Length; i++)
-					yield return (new Rectangle(15, AttributeY[i], 228, 16), view.Attributes[i].ToolTip, false);
-				yield return (new Rectangle(15, 206, 228, 16), stats.Armor.ToolTip, false);
+					yield return (new Rectangle(15, AttributeY[i], 228, 16), view.Attributes[i].ToolTip);
+				yield return (new Rectangle(15, 206, 228, 16), stats.Armor.ToolTip);
 				foreach (var (place, icon) in IconPlaces(8, 4, 60, Tab1ResistanceY).Zip(stats.Resistances))
-					yield return (new Rectangle(place, new Size(50, 32)), icon.ToolTip, true);
+					yield return (new Rectangle(place, new Size(50, 32)), icon.ToolTip);
 				for (int i = 0; i < stats.Offense.Count && i < OffenseY.Length; i++)
-					yield return (new Rectangle(15, OffenseY[i], 228, 15), stats.Offense[i].ToolTip, false);
+					yield return (new Rectangle(15, OffenseY[i], 228, 15), stats.Offense[i].ToolTip);
 				break;
 			case 1:
 				foreach (var (place, icon) in IconPlaces(8, 4, 60, Tab2ResistanceY).Zip(stats.Resistances.Skip(8)))
-					yield return (new Rectangle(place, new Size(50, 32)), icon.ToolTip, true);
+					yield return (new Rectangle(place, new Size(50, 32)), icon.ToolTip);
 				for (int i = 0; i < stats.Tab2Rows.Count && i < Tab2RowY.Length; i++)
-					yield return (new Rectangle(15, Tab2RowY[i], 228, 16), stats.Tab2Rows[i].ToolTip, false);
+					yield return (new Rectangle(15, Tab2RowY[i], 228, 16), stats.Tab2Rows[i].ToolTip);
 				break;
 			default:
 				foreach (var (place, icon) in IconPlaces(stats.Damages.Count, 5, 50, DamageY).Zip(stats.Damages))
-					yield return (new Rectangle(place, new Size(40, 32)), icon.ToolTip, true);
+					yield return (new Rectangle(place, new Size(40, 32)), icon.ToolTip);
 				for (int i = 0; i < stats.Tab3Rows.Count && i < Tab3RowY.Length; i++)
-					yield return (new Rectangle(15, Tab3RowY[i], 228, 16), stats.Tab3Rows[i].ToolTip, false);
+					yield return (new Rectangle(15, Tab3RowY[i], 228, 16), stats.Tab3Rows[i].ToolTip);
 				foreach (var (place, icon) in IconPlaces(stats.Races.Count, 6, 40, RaceY).Zip(stats.Races))
-					yield return (new Rectangle(place, new Size(36, 34)), icon.ToolTip, true);
+					yield return (new Rectangle(place, new Size(36, 34)), icon.ToolTip);
 				break;
 		}
 	}

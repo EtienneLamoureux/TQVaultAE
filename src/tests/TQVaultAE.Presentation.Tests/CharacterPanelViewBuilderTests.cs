@@ -165,4 +165,99 @@ public class CharacterPanelViewBuilderTests
 		// Assert
 		this._builder.SkillSum!["characterStrength"].Should().Be(14);
 	}
+
+	#region Rollovers
+
+	[Fact]
+	public void Build_AttributeRollover_IsOneSentenceWithoutTitle_TellingTheClicksOnlyWhenEditable()
+	{
+		var editable = this._builder.Build(Input(editable: true)).Attributes[CharacterPanelInput.Strength].ToolTip;
+		var readOnly = this._builder.Build(Input(editable: false)).Attributes[CharacterPanelInput.Strength].ToolTip;
+
+		editable.Blocks.Should().ContainSingle().Which.Title.Should().BeNull();
+		editable.Blocks[0].Lines.Should().ContainSingle().Which.Should().StartWith("Base 50, +0 ").And.Contain("Shift");
+		readOnly.Blocks.Should().ContainSingle().Which.Lines.Should().ContainSingle().Which.Should().NotContain("Shift");
+	}
+
+	[Fact]
+	public void StatsView_RowsWithoutRollover_HaveNone()
+	{
+		var stats = this._builder.StatsView(Input());
+
+		stats.Armor.ToolTip.IsEmpty.Should().BeTrue();
+		stats.Tab2Rows.Should().OnlyContain(r => r.ToolTip.IsEmpty);
+		stats.Offense[0].ToolTip.Blocks.Should().ContainSingle().Which.Title.Should().BeNull();
+		stats.Offense.Skip(1).Should().OnlyContain(r => r.ToolTip.IsEmpty);
+	}
+
+	[Fact]
+	public void StatsView_ResistanceRollover_IsItsNameAsTitle()
+	{
+		var fire = this._builder.StatsView(Input()).Resistances[(int)StatResistance.Fire].ToolTip;
+
+		fire.Blocks.Should().ContainSingle().Which.Should().BeEquivalentTo(new StatToolTipBlock("Fire Resistance", []));
+		fire.Text.Should().Be("Fire Resistance");
+	}
+
+	[Fact]
+	public void StatsView_ElementalDamageRollover_HasTheDamageBlockThenTheDamageOverTimeBlock()
+	{
+		// Fire, the sixth damage icon: its direct damage, then its burn "with +n% Improved Duration"
+		var fire = this._builder.StatsView(Input()).Damages[5].ToolTip;
+
+		fire.Blocks.Select(b => b.Title).Should().Equal("Fire", "Fire");
+		fire.Blocks[0].Lines[0].Should().EndWith("%");
+		fire.Blocks[1].Lines[0].Should().Contain("Improved Duration");
+	}
+
+	[Fact]
+	public void StatsView_DamageWithoutOverTimePart_HasOneBlock_AndOverTimeOnlyDamageHasItsNameAsTitle()
+	{
+		var damages = this._builder.StatsView(Input()).Damages;
+
+		damages[0].ToolTip.Blocks.Should().ContainSingle().Which.Title.Should().Be("Physical");
+		damages[2].ToolTip.Blocks.Should().ContainSingle().Which.Title.Should().Be("Bleeding");
+		damages[2].ToolTip.Blocks[0].Lines[0].Should().Contain("Improved Duration");
+	}
+
+	[Fact]
+	public void StatsView_LifeLeechRollover_ShowsEnergyLeechAsASecondBlock()
+	{
+		var leech = this._builder.StatsView(Input()).Damages[9].ToolTip;
+
+		leech.Blocks.Select(b => b.Title).Should().Equal("LifeLeech", "Energy Leech");
+	}
+
+	[Fact]
+	public void StatsView_PetAndRaceRollovers_AreOneTitledBlock()
+	{
+		var stats = this._builder.StatsView(Input());
+
+		var pet = stats.Damages[4].ToolTip.Blocks.Should().ContainSingle().Subject;
+		pet.Title.Should().Be("Pet");
+		pet.Lines.Should().HaveCount(6);
+		var beastmen = stats.Races[0].ToolTip.Blocks.Should().ContainSingle().Subject;
+		beastmen.Title.Should().Be("Beastmen");
+		beastmen.Lines.Should().HaveCount(3).And.OnlyContain(l => l.Contains("Beastmen"));
+	}
+
+	[Fact]
+	public void StatToolTip_Text_PutsATitleOverItsLines_AndABlankLineBetweenBlocks()
+	{
+		var nl = Environment.NewLine;
+		var tip = new StatToolTip([new StatToolTipBlock("Cold", ["+10%", "*1.20"]), new StatToolTipBlock("Frostburn", ["+5%"])]);
+
+		tip.Text.Should().Be($"Cold{nl}+10%{nl}*1.20{nl}{nl}Frostburn{nl}+5%");
+		StatToolTip.Sentence("Base 50.").Text.Should().Be("Base 50.");
+	}
+
+	[Fact]
+	public void StatToolTip_EmptySentence_IsNone()
+	{
+		StatToolTip.Sentence(string.Empty).Should().BeSameAs(StatToolTip.None);
+		StatToolTip.None.IsEmpty.Should().BeTrue();
+		StatToolTip.None.Text.Should().BeEmpty();
+	}
+
+	#endregion
 }
