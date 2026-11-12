@@ -68,6 +68,38 @@ internal static class CaravanFrame
 	}
 
 	/// <summary>
+	/// Draws the frame around <paramref name="control"/>, on its parent: the control gets a margin of the frame's
+	/// thickness, in which the parent paints the frame. For a control that draws its own content from its corner (a list).
+	/// </summary>
+	public static void FrameAround(Control control)
+	{
+		if (control.Parent is not { } parent)
+			return;
+
+		control.Margin = new Padding(Border);
+		Bitmap? frame = null;
+		parent.Paint += (_, e) =>
+		{
+			if (!control.Visible)
+				return;
+
+			var bounds = Rectangle.Inflate(control.Bounds, Border, Border);
+			if (frame is null || frame.Size != bounds.Size)
+			{
+				frame?.Dispose();
+				frame = Render(bounds.Size);
+			}
+
+			e.Graphics.DrawImageUnscaled(frame, bounds.Location);
+		};
+		void Repaint(object? sender, EventArgs e) => parent.Invalidate();
+		control.LocationChanged += Repaint;
+		control.SizeChanged += Repaint;
+		control.VisibleChanged += Repaint;
+		control.Disposed += (_, _) => frame?.Dispose();
+	}
+
+	/// <summary>
 	/// Draws <paramref name="box"/> as the frame instead of the group box's own border, without its caption. Its
 	/// controls are moved off the frame's left edge and centered in its height (the caption's room is no longer needed),
 	/// and made transparent so that the black shows behind them.

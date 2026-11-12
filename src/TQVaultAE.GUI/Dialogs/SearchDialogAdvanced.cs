@@ -80,8 +80,21 @@ public partial class SearchDialogAdvanced : VaultForm
 
 		// The 17 category buttons, with the designer's 3 px margins, need more height than the column gets,
 		// so the last one ("Suffix") wrapped into a second column, out of sight.
+		// They take the look of Collapse All and Expand All: flat light gold buttons with dark text.
 		foreach (Control button in this.flowLayoutPanelLeftColumn.Controls)
+		{
 			button.Margin = new Padding(button.Margin.Left, 1, button.Margin.Right, 1);
+			if (button is ScalingButton category)
+			{
+				category.UseCustomGraphic = false;
+				category.Image = null;
+				category.FlatStyle = this.buttonCollapseAll.FlatStyle;
+				category.BackColor = this.buttonCollapseAll.BackColor;
+				category.ForeColor = this.buttonCollapseAll.ForeColor;
+				category.Font = this.buttonCollapseAll.Font;
+				category.UseVisualStyleBackColor = false;
+			}
+		}
 
 		#endregion
 
@@ -216,6 +229,10 @@ public partial class SearchDialogAdvanced : VaultForm
 			if (c is VirtualCheckedListBox lb)
 				this.CachedCheckedListBoxes.Add(lb);
 		});
+
+		// Each category list in a caravan frame.
+		foreach (var list in this.CachedCheckedListBoxes)
+			CaravanFrame.FrameAround(list);
 
 		// Now ClearAllCheckBoxes will work correctly
 		CleanAllCheckBoxes();
