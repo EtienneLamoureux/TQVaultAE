@@ -451,19 +451,10 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
 		comboBox.Items.Clear();
 
 		foreach (var part in this.Services.ForgeService.GodModeParts(item))
-			comboBox.Items.Add(new ForgeComboItem { Value = part, Text = PartText(part) });
+			comboBox.Items.Add(new ForgeComboItem { Value = part, Text = ForgeMessageText.PartOf(part) });
 
 		comboBox.SelectedIndex = 0;// default on Base
 	}
-
-	private static string PartText(ForgePart part) => part switch
-	{
-		ForgePart.Prefix => Resources.ForgeUsePrefix,
-		ForgePart.Suffix => Resources.ForgeUseSuffix,
-		ForgePart.Relic1 => Resources.ForgeUseRelic1,
-		ForgePart.Relic2 => Resources.ForgeUseRelic2,
-		_ => Resources.ForgeUseBase,
-	};
 
 	private void HideGodModeRows()
 	{
@@ -617,32 +608,9 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
 #if DEBUG
 		this.AutomationRecordMessage(message);
 #endif
-		this.UIService.NotifyUser(TextOf(message), TQColor.Red);
+		this.UIService.NotifyUser(ForgeMessageText.Of(message, OfTheTinkererTranslation), TQColor.Red);
 		SoundService.PlayRandomCancel();
 	}
-
-	private string TextOf(ForgeMessage message) => message switch
-	{
-		ForgeMessage.ItemMustBeStoredFirst => Resources.ForgeItemMustBeStoredFirst,
-		ForgeMessage.MustSelectBaseItemFirst => Resources.ForgeMustSelectBaseItemFirst,
-		ForgeMessage.MustSelectArmorOrWeaponOrJewellery => Resources.ForgeMustSelectArmorOrWeaponOrJewellery,
-		ForgeMessage.MustHavePrefix => Resources.ForgeMustHavePrefixOutsideOfGodMode,
-		ForgeMessage.MustHaveSuffix => Resources.ForgeMustHaveSuffixOutsideOfGodMode,
-		ForgeMessage.MustSelectRelicOrItemWithRelic => Resources.ForgeMustSelectRelicOrItemWithRelic,
-		ForgeMessage.NoEpicLegendary => Resources.ForgeNoEpicLegendaryAllowed,
-		ForgeMessage.PrefixSuffixOfAnotherBaseItem => Resources.ForgeCantUsePrefixSuffixOfAnotherBaseItem,
-		ForgeMessage.PrefixSuffixHigherLevelRequirement => Resources.ForgeCantUsePrefixSuffixHavingGreaterReqLevelThanBaseItem,
-		ForgeMessage.PrefixSuffixOfAnotherGearType => Resources.ForgeCantUsePrefixSuffixOfAnotherGearType,
-		ForgeMessage.PrefixSuffixBetterThanBase => Resources.ForgeCantUsePrefixSuffixBetterThanBase,
-		ForgeMessage.MustBeRelic => Resources.ForgeMustBeRelicInStrictMode,
-		ForgeMessage.MustHaveRelic => Resources.ForgeMustHaveRelicInRelaxMode,
-		ForgeMessage.RelicNotAllowed => Resources.ForgeRelicNotAllowed,
-		ForgeMessage.MustHaveTinkeredSuffix => string.Format(Resources.ForgeMustHaveTinkeredSuffix, OfTheTinkererTranslation),
-		ForgeMessage.MustSelectBaseItem => Resources.ForgeMustSelectBaseItem,
-		ForgeMessage.MustSelectItemToMerge => Resources.ForgeMustSelectItemToMerge,
-		ForgeMessage.PartOfAnotherMod => Resources.ForgePartOfAnotherMod,
-		_ => message.ToString(),
-	};
 
 	#endregion
 

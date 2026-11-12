@@ -2,6 +2,7 @@ using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Forge;
 using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.GUI.Components.Scaling;
+using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Components.Panels;
 
@@ -47,7 +48,7 @@ public partial class ForgePanel
 
 	internal void AutomationRecordMessage(ForgeMessage message)
 	{
-		this.automationMessages.Add((message, this.TextOf(message)));
+		this.automationMessages.Add((message, ForgeMessageText.Of(message, this.OfTheTinkererTranslation)));
 		if (this.automationMessages.Count > 50)
 			this.automationMessages.RemoveAt(0);
 	}
