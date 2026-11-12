@@ -25,13 +25,6 @@ public partial class MainForm
 
 	internal UserSettings AutomationSettings => this.USettings;
 
-	/// <summary>A key down through the window's own handler, which sees every key first; true when it read the key.</summary>
-	internal bool AutomationKeyDown(KeyEventArgs e)
-	{
-		this.MainFormKeyDown(this, e);
-		return e.Handled;
-	}
-
 	internal string? AutomationSelectedVault => this.vaultListComboBox?.SelectedItem?.ToString();
 
 	/// <summary>Shows a search result like a click on its row in the results dialog.</summary>

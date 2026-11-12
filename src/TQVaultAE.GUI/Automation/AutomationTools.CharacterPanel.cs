@@ -87,7 +87,8 @@ internal static partial class AutomationTools
 	public static string CharacterAttributeClick(
 		[Description("health, energy, strength, intelligence, dexterity, 0-4, or undo.")] string attribute,
 		[Description("'left' or 'right'.")] string button = "left",
-		[Description("true for a Shift click.")] bool shift = false)
+		[Description("true for a Shift click.")] bool shift = false,
+		[Description("Modifiers held for the click, like 'ctrl' or 'shift' (the key binds decide what they do); with shift=true Shift is added.")] string modifiers = "")
 		=> AutomationHost.OnUi(_ =>
 		{
 			var panel = ShowCharacterPanel();
@@ -111,7 +112,7 @@ internal static partial class AutomationTools
 				"right" => -1,
 				_ => throw new McpException($"Unknown button '{button}': 'left' or 'right'."),
 			};
-			if (!panel.AutomationClick(index, step, shift))
+			if (!panel.AutomationClick(index, step, ClickModifiers(modifiers, shift)))
 				throw new McpException("No + button there: the panel shows none while no attribute point is left.");
 
 			return Serialize(panel.AutomationState());

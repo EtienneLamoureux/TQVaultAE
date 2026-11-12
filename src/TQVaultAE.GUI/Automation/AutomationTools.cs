@@ -518,7 +518,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "press_key", Destructive = true)]
-	[Description("Rests the cursor on a cell of a panel and presses a key there like the user, through the main window's key handler then the panel's, so the key binds apply: 'c' copies, 'd' duplicates, 'backspace' deletes the item under the cursor by default (with its confirmation: queue the answer first), 'escape' cancels a drag, 'ctrl+a', 'alt+w', 'f5'... With an empty panel the key goes to the main window alone (the forge keys 'enter' / 'space'). Runs after the call returns; follow with get_state, forge_state or dialog_answers.")]
+	[Description("Rests the cursor on a cell of a panel and presses a key there like the keyboard: the key messages go to the window that has the keyboard focus, through the message loop (ProcessCmdKey, IsInputKey, ProcessDialogKey, the main window's key preview, then the control's KeyDown), the modifiers held in the keyboard state; so the key binds apply as for the user: 'c' copies, 'd' duplicates, 'backspace' deletes the item under the cursor by default (with its confirmation: queue the answer first), 'escape' cancels a drag, 'ctrl+a', 'alt+w', 'f5'... With an empty panel the cursor does not move (the forge keys 'enter' / 'space'). Returns the control that received the key; runs after the call returns: follow with get_state, forge_state or dialog_answers.")]
 	public static string PressKey(
 		[Description("Panel id, or empty for the main window alone.")] string panel,
 		[Description("Cell column.")] int x,
@@ -527,16 +527,18 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(form =>
 		{
 			var keys = ParseKey(key);
+			static string Describe(Control target) => $"{target.GetType().Name} {target.Name}".TrimEnd();
+
 			if (string.IsNullOrEmpty(panel))
 			{
-				form.BeginInvoke(() => form.AutomationKeyDown(new KeyEventArgs(keys)));
-				return Serialize(new { panel = "mainForm", key = keys.ToString() });
+				var focused = AutomationInput.PostKey(form, keys);
+				return Serialize(new { panel = "mainForm", key = keys.ToString(), target = Describe(focused) });
 			}
 
 			var named = ResolveShownPanel(form, panel);
 			var item = named.Panel.AutomationFindItem(new Point(x, y));
-			named.Panel.AutomationKeyDown(new Point(x, y), keys, form);
-			return Serialize(new { panel = named.Id, item = DescribeItem(item, null), key = keys.ToString() });
+			var target = named.Panel.AutomationKeyDown(new Point(x, y), keys, form);
+			return Serialize(new { panel = named.Id, item = DescribeItem(item, null), key = keys.ToString(), target = Describe(target) });
 		});
 
 	[McpServerTool(Name = "click_cell", Destructive = true)]
@@ -563,6 +565,33 @@ internal static partial class AutomationTools
 				modifiers = held.ToString(),
 				dragged = drag.IsActive ? DescribeItem(drag.Item, null) : null,
 				draggedIsNew = drag.IsActive && drag.Item is not null && item is not null && !ReferenceEquals(drag.Item, item),
+				selected = named.Panel.AutomationSelectedItems.Select(i => DescribeItem(i, null)).ToList(),
+			});
+		});
+
+	[McpServerTool(Name = "drag_select", Destructive = true)]
+	[Description("Presses the left button on a cell of a panel with modifier keys held, moves to another cell and releases there, through the panel's mouse handlers: with the rectangle selection's modifiers (Shift by default, from the key binds) it selects the items in the rectangle. Returns the selection and the dragged item.")]
+	public static string DragSelect(
+		[Description("Panel id.")] string panel,
+		[Description("Start cell column.")] int x1,
+		[Description("Start cell row.")] int y1,
+		[Description("End cell column.")] int x2,
+		[Description("End cell row.")] int y2,
+		[Description("Modifiers held, like 'shift'; empty for none.")] string modifiers)
+		=> AutomationHost.OnUi(form =>
+		{
+			var named = ResolveShownPanel(form, panel);
+			if (form.AutomationDragInfo.IsActive)
+				throw new McpException("An item is being dragged. Use cancel_drag first.");
+
+			var held = string.IsNullOrWhiteSpace(modifiers) ? Keys.None : ParseKey(modifiers) & Keys.Modifiers;
+			named.Panel.AutomationDragSelect(new Point(x1, y1), new Point(x2, y2), held);
+			var drag = form.AutomationDragInfo;
+			return Serialize(new
+			{
+				panel = named.Id,
+				modifiers = held.ToString(),
+				dragged = drag.IsActive ? DescribeItem(drag.Item, null) : null,
 				selected = named.Panel.AutomationSelectedItems.Select(i => DescribeItem(i, null)).ToList(),
 			});
 		});

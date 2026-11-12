@@ -50,7 +50,8 @@ internal static partial class AutomationTools
 		[Description("Mastery slot, from 1.")] int slot,
 		[Description("The skill: its record id, part of its name, or 'mastery' for the mastery button.")] string skill,
 		[Description("'left' or 'right'.")] string button = "left",
-		[Description("true for a Shift click.")] bool shift = false)
+		[Description("true for a Shift click.")] bool shift = false,
+		[Description("Modifiers held for the click, like 'ctrl' or 'shift' (the key binds decide what they do); with shift=true Shift is added.")] string modifiers = "")
 		=> AutomationHost.OnUi(_ =>
 		{
 			var pane = ShowSkillPane(slot);
@@ -70,7 +71,7 @@ internal static partial class AutomationTools
 					?? throw new McpException($"No skill '{skill}' in slot {slot}.");
 			}
 
-			var hit = pane.AutomationClick(target, step, shift)
+			var hit = pane.AutomationClick(target, step, ClickModifiers(modifiers, shift))
 				?? throw new McpException("The click hit no button: the hit test missed it.");
 			return Serialize(new { clicked = hit is MasterySkill s ? s.Id.Raw : "mastery", state = pane.AutomationState() });
 		});

@@ -188,8 +188,9 @@ public partial class MainForm
 	/// <param name="e">KeyEventArgs data</param>
 	private void MainFormKeyDown(object? sender, KeyEventArgs e)
 	{
+		var gesture = KeyBindInput.FromKeys(e.KeyData);
 		var action = this.Services.KeyBinds.Find(
-			KeyBindInput.FromKeys(e.KeyData)
+			gesture
 			, KeyBindAction.CopyToClipboard
 			, KeyBindAction.PasteFromClipboard
 			, KeyBindAction.Search
@@ -197,6 +198,13 @@ public partial class MainForm
 			, KeyBindAction.ZoomOut
 			, KeyBindAction.ZoomReset
 			, KeyBindAction.Forge);
+
+		// The forge keys only while the forge is shown, and not in a text box, where the key is typed.
+		if (action == KeyBindAction.Forge && (!this.forgePanel.Visible || this.FocusedControl() is TextBoxBase))
+			action = null;
+
+		if (action is not null)
+			Log.LogDebug("Key {Gesture}: {Action}", gesture, action);
 
 		switch (action)
 		{
@@ -219,8 +227,7 @@ public partial class MainForm
 			case KeyBindAction.ZoomReset:
 				this.ResizeFormCallback(this, new ResizeEventArgs(1.0F));
 				break;
-			// Only while the forge is shown, and not in a text box, where the key is typed.
-			case KeyBindAction.Forge when this.forgePanel.Visible && this.FocusedControl() is not TextBoxBase:
+			case KeyBindAction.Forge:
 				this.forgePanel.ForgeFromShortcut();
 				break;
 			default:

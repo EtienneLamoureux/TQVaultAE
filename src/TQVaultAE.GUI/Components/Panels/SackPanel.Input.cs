@@ -47,17 +47,6 @@ public partial class SackPanel
 		KeyBindAction.RefreshPanel,
 	];
 
-#if DEBUG
-	/// <summary>The modifiers a Debug automation tool holds for its click, in place of the keyboard's.</summary>
-	internal Keys? AutomationModifiers;
-
-	/// <summary>The modifier keys held now.</summary>
-	private Keys CurrentModifiers => this.AutomationModifiers ?? ModifierKeys;
-#else
-	/// <summary>The modifier keys held now.</summary>
-	private static Keys CurrentModifiers => ModifierKeys;
-#endif
-
 	protected virtual void MouseUpCallback(object? sender, MouseEventArgs e)
 	{
 		this.mouseDraw = false;
@@ -91,7 +80,7 @@ public partial class SackPanel
 		{
 			if (!this.DragInfo.IsActive)
 			{
-				var click = KeyBindInput.Click(CurrentModifiers);
+				var click = KeyBindInput.Click(ModifierKeys);
 				if (this.Services.KeyBinds.Matches(KeyBindAction.SelectItemClick, click))
 					// Add the focused item to the selected items list.
 					this.AddFocusedItemToSelectedItems(sender, e);
@@ -290,7 +279,7 @@ public partial class SackPanel
 	/// <returns>true when the click ran one; false lets the click do its usual work.</returns>
 	private bool RunItemClickShortcut()
 	{
-		var requested = this.Services.KeyBinds.Find(KeyBindInput.Click(CurrentModifiers), KeyBindAction.ItemCopyClick, KeyBindAction.ItemDuplicateClick) switch
+		var requested = this.Services.KeyBinds.Find(KeyBindInput.Click(ModifierKeys), KeyBindAction.ItemCopyClick, KeyBindAction.ItemDuplicateClick) switch
 		{
 			KeyBindAction.ItemCopyClick => ItemActions.Copy,
 			KeyBindAction.ItemDuplicateClick => ItemActions.Duplicate,
@@ -328,7 +317,8 @@ public partial class SackPanel
 	/// <param name="e">KeyEventArgs data</param>
 	private void KeyDownCallback(object? sender, KeyEventArgs e)
 	{
-		if (this.Services.KeyBinds.Find(KeyBindInput.FromKeys(e.KeyData), PanelKeyActions) is not { } action)
+		var gesture = KeyBindInput.FromKeys(e.KeyData);
+		if (this.Services.KeyBinds.Find(gesture, PanelKeyActions) is not { } action)
 			return;
 
 		bool handled = true;
@@ -380,6 +370,9 @@ public partial class SackPanel
 				this.Refresh();
 				break;
 		}
+
+		// Copy, duplicate and delete follow the context menu's rules: without item copying, or over no item, they do nothing.
+		this.Log.LogDebug("Key {Gesture}: {Action}{Result}", gesture, action, handled ? string.Empty : " (nothing done)");
 
 		if (handled)
 		{

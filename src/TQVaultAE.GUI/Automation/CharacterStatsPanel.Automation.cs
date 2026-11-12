@@ -44,16 +44,20 @@ internal sealed partial class CharacterStatsPanel
 		return true;
 	}
 
-	/// <summary>Clicks the centre of the "+" button of an attribute, through the hit test.</summary>
+	/// <summary>
+	/// Clicks the centre of the "+" button of an attribute with <paramref name="modifiers"/> held, through the panel's
+	/// mouse handler: its hit test and the key binds read the click as the user's.
+	/// </summary>
 	/// <returns>false when no button is there (no point left).</returns>
-	internal bool AutomationClick(int attribute, int step, bool toEnd)
+	internal bool AutomationClick(int attribute, int step, Keys modifiers)
 	{
 		var bounds = this.PlusBounds(attribute);
 		var center = new System.Drawing.Point(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
 		if (this.HitPlus(center) != attribute)
 			return false;
 
-		this.RaiseAttributeClick(attribute, step, toEnd);
+		using var held = TQVaultAE.GUI.Automation.AutomationInput.HoldModifiers(modifiers);
+		this.OnMouseUp(new MouseEventArgs(step > 0 ? MouseButtons.Left : MouseButtons.Right, 1, center.X, center.Y, 0));
 		return true;
 	}
 }

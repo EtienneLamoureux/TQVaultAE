@@ -49,11 +49,12 @@ internal sealed partial class SkillPaneControl
 	}
 
 	/// <summary>
-	/// Clicks the centre of a skill button, or of the mastery button for <see langword="null"/>, through the hit test,
-	/// as a mouse click there would.
+	/// Clicks the centre of a skill button, or of the mastery button for <see langword="null"/>, with
+	/// <paramref name="modifiers"/> held, through the pane's mouse handler: its hit test and the key binds read the click
+	/// as the user's.
 	/// </summary>
 	/// <returns>The skill or mastery hit, or <see langword="null"/> when the click hit nothing.</returns>
-	internal object? AutomationClick(MasterySkill? skill, int step, bool toEnd)
+	internal object? AutomationClick(MasterySkill? skill, int step, Keys modifiers)
 	{
 		Point center;
 		if (skill is null)
@@ -69,14 +70,10 @@ internal sealed partial class SkillPaneControl
 
 		var location = new Point((int)Math.Round(center.X * this.PaneScale), (int)Math.Round(center.Y * this.PaneScale));
 		var hit = this.HitTest(location);
-		switch (hit)
+		if (hit is not null)
 		{
-			case MasteryTree:
-				this.RaiseClick(new SkillPaneClick(null, step, toEnd));
-				break;
-			case MasterySkill hitSkill:
-				this.RaiseClick(new SkillPaneClick(hitSkill, step, toEnd));
-				break;
+			using var held = TQVaultAE.GUI.Automation.AutomationInput.HoldModifiers(modifiers);
+			this.OnMouseUp(new MouseEventArgs(step > 0 ? MouseButtons.Left : MouseButtons.Right, 1, location.X, location.Y, 0));
 		}
 
 		return hit;
