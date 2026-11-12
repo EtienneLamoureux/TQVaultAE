@@ -51,6 +51,19 @@ public interface IItemModService
 }
 
 /// <summary>
+/// The scope of an item's map for code that may run without <see cref="IItemModService"/> (tests).
+/// </summary>
+public static class ItemModScopes
+{
+	/// <summary>
+	/// <see cref="IItemModService.Scope"/> of the item, or a scope that does nothing without the service: every reading
+	/// of an item's records (its attributes, affixes, relics, granted skills, set) goes through it.
+	/// </summary>
+	public static IDisposable ScopeOrNone(this IItemModService? itemMods, Item? item)
+		=> itemMods?.Scope(item) ?? NoScope.Instance;
+}
+
+/// <summary>
 /// A scope that does nothing.
 /// </summary>
 public sealed class NoScope : IDisposable

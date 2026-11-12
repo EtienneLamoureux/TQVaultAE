@@ -376,7 +376,7 @@ public class UIService : IUIService, IGameDataCache
 	public Bitmap? GetBitmap(Item itm)
 	{
 		// The picture of an item linked to a mod comes from that mod's files.
-		using var modScope = this.ItemMods?.Scope(itm) ?? NoScope.Instance;
+		using var modScope = this.ItemMods.ScopeOrNone(itm);
 		Bitmap? bmp = null;
 		if (!RecordId.IsNullOrEmpty(itm.TexImageResourceId))
 		{

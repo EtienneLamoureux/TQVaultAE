@@ -42,7 +42,7 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 	/// <summary>
 	/// The database of the item's mod for the current thread, until disposed.
 	/// </summary>
-	private IDisposable ModScope(Item? itm) => this.ItemMods?.Scope(itm) ?? NoScope.Instance;
+	private IDisposable ModScope(Item? itm) => this.ItemMods.ScopeOrNone(itm);
 	private readonly LazyConcurrentDictionary<(Item Item, FriendlyNamesExtraScopes? Scope, bool FilterExtra), ToFriendlyNameResult> FriendlyNamesCache = new LazyConcurrentDictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult>();
 	private readonly LazyConcurrentDictionary<(string Scope, RecordId Item), ItemAffixes?> ItemAffixesCache = new();
 	private volatile bool _cachedShowInGameValues;

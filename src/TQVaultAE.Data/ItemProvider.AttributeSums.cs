@@ -14,6 +14,8 @@ public partial class ItemProvider
 	/// <inheritdoc/>
 	public AttributeSum GetAttributeSums(Item item)
 	{
+		// Read in the item's own map, whatever the active one is (an item linked to another mod than its character's).
+		using var modScope = this.ModScope(item);
 		var sum = new AttributeSum();
 
 		// The item and its affixes with the values the game rolled from the item seed (issue #552), then each relic or
@@ -47,13 +49,16 @@ public partial class ItemProvider
 		// reads the set record at that number of pieces.
 		var pieces = equipped
 			.Where(item => item.baseItemInfo is not null)
-			.Select(item => (Set: item.baseItemInfo!.GetString("itemSetName"), Item: item.BaseItemId))
+			.Select(item => (Set: item.baseItemInfo!.GetString("itemSetName"), Item: item))
 			.Where(p => !string.IsNullOrWhiteSpace(p.Set))
 			.GroupBy(p => p.Set, StringComparer.OrdinalIgnoreCase);
 
 		foreach (var set in pieces)
 		{
-			int worn = set.Select(p => p.Item).Distinct().Count();
+			int worn = set.Select(p => p.Item.BaseItemId).Distinct().Count();
+
+			// The set record is read in the map of its pieces (the first one's when they are of several maps).
+			using var modScope = this.ModScope(set.First().Item);
 			AddAttributesFromRecord(sum, Database.GetRecordFromFile(set.Key.ToRecordId()), worn, this.PetBonusRecord);
 		}
 

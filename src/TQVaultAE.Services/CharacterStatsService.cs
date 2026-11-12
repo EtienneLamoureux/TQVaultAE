@@ -8,7 +8,8 @@ using TQVaultAE.Domain.Helpers;
 namespace TQVaultAE.Services;
 
 /// <inheritdoc/>
-public class CharacterStatsService(IDatabase database, IItemProvider itemProvider, ILogger<CharacterStatsService>? log = null) : ICharacterStatsService, IGameDataCache
+public class CharacterStatsService(IDatabase database, IItemProvider itemProvider, ILogger<CharacterStatsService>? log = null
+	, IItemModService? itemMods = null) : ICharacterStatsService, IGameDataCache
 {
 	private const string BuffSkillName = "buffSkillName";
 	private const string GameEngine = """records\xpack\game\gameengine.dbr""";
@@ -19,6 +20,9 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 	private readonly IDatabase _database = database;
 	private readonly IItemProvider _itemProvider = itemProvider;
 	private readonly ILogger? _log = log;
+
+	/// <summary>Reads a granted skill in the map of the item granting it; null in tests that do not need it.</summary>
+	private readonly IItemModService? _itemMods = itemMods;
 	private const string FemalePlayerTemplate = """records\xpack\creatures\pc\femalepc01.dbr""";
 
 	private const string AnimationTableName = "charAnimationTableName";
@@ -89,11 +93,16 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 	{
 		var granted = equipment
 			.Where(item => !item.IsInInactiveWeaponSlot(useAlternate))
-			.SelectMany(this._itemProvider.GetGrantedSkillLevels);
+			.SelectMany(item => this._itemProvider.GetGrantedSkillLevels(item).Select(s => (Item: item, s.SkillId, s.Level)))
+			.ToList();
 
 		var sum = new AttributeSum();
-		foreach (var (id, level) in SkillStatRules.ItemSkills(granted))
+		foreach (var (id, level) in SkillStatRules.ItemSkills(granted.Select(g => (g.SkillId, g.Level))))
 		{
+			// The skill and its buff are read in the map of the item granting it at that level, like the item itself: a
+			// mod's skill exists only in that mod's data.
+			var source = granted.First(g => g.SkillId.Equals(id) && g.Level == level).Item;
+			using var modScope = this._itemMods.ScopeOrNone(source);
 			var record = this._database.GetRecordFromFile(id);
 
 			// A granted skill modifies nothing of the character's: a modifier never counts.

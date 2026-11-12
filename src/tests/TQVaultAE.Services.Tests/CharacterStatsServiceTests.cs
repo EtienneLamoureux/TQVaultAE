@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Services;
@@ -300,5 +301,43 @@ public class CharacterStatsServiceTests
 		var sum = this._service.GetItemSkillAttributes(this.GrantingEquipment(), useAlternate: true, includeBuffs: false);
 
 		sum[DefenseMastery.Raw].Should().Be(7);
+	}
+
+	[Fact]
+	public void GetItemSkillAttributes_ModItemOnABaseGameCharacter_ReadsTheSkillInTheItemsMap()
+	{
+		// A passive only the mod has, granted by a ring linked to that mod, on a character of the base game.
+		var modSkill = """records\mod\skills\passive.dbr""".ToRecordId();
+		string current = string.Empty;
+		var itemMods = new Mock<IItemModService>();
+		itemMods.Setup(m => m.Scope(It.IsAny<Item?>())).Returns((Item? item) =>
+		{
+			var previous = current;
+			current = item?.Mod ?? string.Empty;
+			return new Restore(() => current = previous);
+		});
+		var passive = new DBRecordCollection(modSkill, "Skill_Passive");
+		this._database.Setup(d => d.GetRecordFromFile(modSkill)).Returns(() => current == "ModA" ? passive : null);
+		this._items.Setup(p => p.GetRecordAttributes(modSkill, It.IsAny<int>())).Returns((RecordId? id, int level) =>
+		{
+			var sum = new AttributeSum();
+			sum.Add(current.Length == 0 ? "readInTheBaseGame" : id!.Raw, level);
+			return sum;
+		});
+		var ring = Weapon("ArmorJewelry_Ring", 0, x: 4);
+		ring.Mod = "ModA";
+		ring.ModOrigin = ModOrigin.Own;
+		this._items.Setup(p => p.GetGrantedSkillLevels(ring)).Returns([(modSkill, 3)]);
+		var service = new CharacterStatsService(this._database.Object, this._items.Object, itemMods: itemMods.Object);
+
+		var result = service.GetItemSkillAttributes([ring], useAlternate: false, includeBuffs: false);
+
+		result.Values.Should().BeEquivalentTo(new Dictionary<string, double> { [modSkill.Raw] = 3 });
+		current.Should().BeEmpty("the active map is back after the reading");
+	}
+
+	private sealed class Restore(Action restore) : IDisposable
+	{
+		public void Dispose() => restore();
 	}
 }

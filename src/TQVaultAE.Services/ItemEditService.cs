@@ -18,7 +18,7 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 	private readonly IItemModService? _itemMods = itemMods;
 
 	/// <summary>The database of the item's mod for the current thread, until disposed.</summary>
-	private IDisposable ModScope(Item item) => this._itemMods?.Scope(item) ?? NoScope.Instance;
+	private IDisposable ModScope(Item item) => this._itemMods.ScopeOrNone(item);
 
 	/// <inheritdoc/>
 	public bool ChangePrefix(SackCollection sack, Item item, RecordId affixId)

@@ -232,7 +232,7 @@ public partial class ItemTooltip : BaseTooltip
 	public void FillToolTip()
 	{
 		// An item linked to a mod is described with that mod's data.
-		using var modScope = this.ItemModService?.Scope(this.FocusedItem) ?? NoScope.Instance;
+		using var modScope = this.ItemModService.ScopeOrNone(this.FocusedItem);
 
 		// How many of each set piece are loaded now: part of the cache key, since it changes with the loaded items.
 		IReadOnlyDictionary<RecordId, int>? setCounts = null;
