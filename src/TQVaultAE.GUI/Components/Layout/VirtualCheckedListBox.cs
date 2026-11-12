@@ -1,5 +1,6 @@
 using System.Collections;
 using System.ComponentModel;
+using System.Text;
 using System.Windows.Forms.VisualStyles;
 using TQVaultAE.GUI.Components.Scaling;
 
@@ -126,25 +127,59 @@ public class VirtualCheckedListBox : Control, IScalingControl
 
 	public int IndexFromPoint(int x, int y) => this.IndexFromPoint(new Point(x, y));
 
-	/// <summary>Texts measured by <see cref="GetMaxTextWidth"/>: the longest ones, since width follows length.</summary>
-	private const int MeasuredTexts = 200;
+	/// <summary>Up to this many texts, <see cref="GetMaxTextWidth"/> measures each one.</summary>
+	private const int MeasureAllUpTo = 256;
+
+	/// <summary>Flags of the item text, as painted.</summary>
+	private const TextFormatFlags MeasureFlags = TextFormatFlags.NoPrefix | TextFormatFlags.NoPadding;
 
 	/// <summary>Width of the widest item text, without the check box.</summary>
 	/// <remarks>
-	/// Measures only the <see cref="MeasuredTexts"/> longest texts: measuring all 10,000 entries of the attribute lists
-	/// took about a second, and a shorter text being the widest would need it to be made of much wider letters.
+	/// Measuring the 10,000 entries of the attribute lists one by one takes about a second. So each text first gets an
+	/// estimate, the sum of the widths of its characters (measured once each), and the texts are measured in decreasing
+	/// estimate order until the estimate falls below the widest measured width by more than the estimate can be off
+	/// (see <see cref="EstimateMargin"/>): no text left can then be wider.
 	/// </remarks>
-	public int GetMaxTextWidth()
-	{
-		var texts = this._items.Select(i => i?.ToString() ?? string.Empty);
-		if (this._items.Count > MeasuredTexts)
-			texts = texts.OrderByDescending(t => t.Length).Take(MeasuredTexts);
+	public int GetMaxTextWidth() => this.MeasureMaxTextWidth().Width;
 
-		int max = 0;
+	/// <summary>How far below a text's real width its estimate may be: kerning, ligatures and rounding.</summary>
+	private int EstimateMargin(int width) => this.Font.Height + width / 10;
+
+	/// <summary><see cref="GetMaxTextWidth"/>, with the number of texts it measured for real.</summary>
+	private (int Width, int Measured) MeasureMaxTextWidth()
+	{
+		var texts = this._items.Select(i => i?.ToString() ?? string.Empty).Distinct(StringComparer.Ordinal).ToList();
+		if (texts.Count == 0)
+			return (0, 0);
+
 		using var g = this.CreateGraphics();
-		foreach (var text in texts)
-			max = Math.Max(max, TextRenderer.MeasureText(g, text, this.Font, Size.Empty, TextFormatFlags.NoPadding).Width);
-		return max;
+		int Measure(string text) => TextRenderer.MeasureText(g, text, this.Font, Size.Empty, MeasureFlags).Width;
+
+		if (texts.Count <= MeasureAllUpTo)
+			return (texts.Max(Measure), texts.Count);
+
+		var runeWidths = new Dictionary<Rune, int>();
+		int Estimate(string text)
+		{
+			int sum = 0;
+			foreach (var rune in text.EnumerateRunes())
+			{
+				if (!runeWidths.TryGetValue(rune, out int width))
+					runeWidths[rune] = width = Measure(rune.ToString());
+				sum += width;
+			}
+			return sum;
+		}
+
+		int max = 0, measured = 0;
+		foreach (var (text, estimate) in texts.Select(t => (t, Estimate(t))).OrderByDescending(e => e.Item2))
+		{
+			if (estimate < max - this.EstimateMargin(max))
+				break;
+			max = Math.Max(max, Measure(text));
+			measured++;
+		}
+		return (max, measured);
 	}
 
 	#endregion
