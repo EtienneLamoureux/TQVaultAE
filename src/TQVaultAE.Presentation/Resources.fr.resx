@@ -1739,6 +1739,18 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   <data name="ShareVaultTooltip" xml:space="preserve">
     <value>🔗 Partager le coffre</value>
   </data>
+  <data name="ExportItemSuccessPasteBin" xml:space="preserve">
+    <value>Objet exporté vers PasteBin : {0}</value>
+  </data>
+  <data name="ExportItemsSuccessPasteBin" xml:space="preserve">
+    <value>Objets exportés vers PasteBin : {0}</value>
+  </data>
+  <data name="ExportTabSuccessPasteBin" xml:space="preserve">
+    <value>Onglet exporté vers PasteBin : {0}</value>
+  </data>
+  <data name="ExportFailPasteBin" xml:space="preserve">
+    <value>Échec de l'exportation vers PasteBin : {0}</value>
+  </data>
 	<data name="ItemPropertiesLabelInGameRolls" xml:space="preserve">
     <value>Valeurs en jeu (base de données -&gt; jeu)</value>
   </data>

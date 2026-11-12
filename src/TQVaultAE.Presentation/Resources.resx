@@ -2107,6 +2107,18 @@ You still have to close TQVaultAE to apply your changes.
   <data name="ShareVaultTooltip" xml:space="preserve">
     <value>🔗 Share Vault</value>
   </data>
+  <data name="ExportItemSuccessPasteBin" xml:space="preserve">
+    <value>Item exported to PasteBin: {0}</value>
+  </data>
+  <data name="ExportItemsSuccessPasteBin" xml:space="preserve">
+    <value>Items exported to PasteBin: {0}</value>
+  </data>
+  <data name="ExportTabSuccessPasteBin" xml:space="preserve">
+    <value>Tab exported to PasteBin: {0}</value>
+  </data>
+  <data name="ExportFailPasteBin" xml:space="preserve">
+    <value>Failed to export to PasteBin: {0}</value>
+  </data>
 	<data name="ItemPropertiesLabelInGameRolls" xml:space="preserve">
     <value>In-Game Rolls (database -&gt; in-game)</value>
   </data>

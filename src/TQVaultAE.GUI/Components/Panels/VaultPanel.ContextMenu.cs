@@ -24,6 +24,7 @@ using TQVaultAE.GUI.Models;
 using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32.Contracts;
+using TQVaultAE.Services;
 
 namespace TQVaultAE.GUI.Components.Panels;
 
@@ -130,9 +131,9 @@ public partial class VaultPanel
 			var json = exchangeService.SerializeSackCollection(this.BagSackPanel.Sack, this.CurrentBag, this.BagSackPanel.ContainerMap);
 			using var dialog = new SaveFileDialog
 			{
-				Filter = "JSON files (*.json)|*.json",
+				Filter = Resources.GlobalJsonFileFilter,
 				DefaultExt = "json",
-				FileName = "tab_export.json"
+				FileName = ItemExchangeService.TabExportFileName
 			};
 
 			if (dialog.ShowDialog() == DialogResult.OK)
@@ -149,12 +150,12 @@ public partial class VaultPanel
 			{
 				var url = await exchangeService.ExportTabToPasteBinAsync(this.ShownVault.PlayerName, this.BagSackPanel.Sack, this.CurrentBag, this.BagSackPanel.ContainerMap);
 				Clipboard.SetText(url);
-				this.UIService.NotifyUser($"Tab exported to PasteBin: {url}");
+				this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.ExportTabSuccessPasteBin, url));
 			}
 			catch (Exception ex)
 			{
 				this.Services.Logger<VaultPanel>().LogError(ex, "Failed to export tab to PasteBin");
-				this.UIService.ShowError($"Failed to export to PasteBin: {ex.Message}");
+				this.UIService.ShowError(string.Format(CultureInfo.CurrentCulture, Resources.ExportFailPasteBin, ex.Message));
 			}
 		}
 	}

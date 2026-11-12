@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System.Collections.ObjectModel;
+using System.Globalization;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
@@ -13,6 +14,7 @@ using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.Presentation;
+using TQVaultAE.Services;
 
 namespace TQVaultAE.GUI.Components.Panels;
 
@@ -230,9 +232,9 @@ public partial class SackPanel
 
 			using var dialog = new SaveFileDialog
 			{
-				Filter = "JSON files (*.json)|*.json",
+				Filter = Resources.GlobalJsonFileFilter,
 				DefaultExt = "json",
-				FileName = items.Count == 1 ? "item_export.json" : "items_export.json"
+				FileName = ItemExchangeService.ItemsExportFileName(items.Count)
 			};
 
 			if (dialog.ShowDialog() == DialogResult.OK)
@@ -254,14 +256,13 @@ public partial class SackPanel
 
 			var url = await this.ExchangeService.ExportSelectionToPasteBinAsync(items);
 			Clipboard.SetText(url);
-			this.UIService.NotifyUser(items.Count == 1
-				? $"Item exported to PasteBin: {url}"
-				: $"Items exported to PasteBin: {url}");
+			this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture
+				, items.Count == 1 ? Resources.ExportItemSuccessPasteBin : Resources.ExportItemsSuccessPasteBin, url));
 		}
 		catch (Exception ex)
 		{
 			this.Log.LogError(ex, "Failed to export item to PasteBin");
-			this.UIService.ShowError($"Failed to export to PasteBin: {ex.Message}");
+			this.UIService.ShowError(string.Format(CultureInfo.CurrentCulture, Resources.ExportFailPasteBin, ex.Message));
 		}
 	}
 

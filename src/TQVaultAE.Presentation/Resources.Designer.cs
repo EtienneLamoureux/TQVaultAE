@@ -5887,6 +5887,42 @@ namespace TQVaultAE.Presentation {
             }
         }
 
+        /// <summary>
+        ///   Looks up a localized string similar to Item exported to PasteBin: {0}.
+        /// </summary>
+        public static string ExportItemSuccessPasteBin {
+            get {
+                return ResourceManager.GetString("ExportItemSuccessPasteBin", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Items exported to PasteBin: {0}.
+        /// </summary>
+        public static string ExportItemsSuccessPasteBin {
+            get {
+                return ResourceManager.GetString("ExportItemsSuccessPasteBin", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Tab exported to PasteBin: {0}.
+        /// </summary>
+        public static string ExportTabSuccessPasteBin {
+            get {
+                return ResourceManager.GetString("ExportTabSuccessPasteBin", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to export to PasteBin: {0}.
+        /// </summary>
+        public static string ExportFailPasteBin {
+            get {
+                return ResourceManager.GetString("ExportFailPasteBin", resourceCulture);
+            }
+        }
+
         
         /// <summary>
         ///   Looks up a localized string similar to In-Game Rolls (database -&gt; in-game).

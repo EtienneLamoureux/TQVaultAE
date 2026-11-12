@@ -31,6 +31,14 @@ public class ItemExchangeService(
 	private readonly IVaultService _vaultService = vaultService;
 	private readonly IItemModService? _itemModService = itemModService;
 
+	/// <summary>The file name offered when a vault tab is exported to a file.</summary>
+	public const string TabExportFileName = "tab_export.json";
+
+	/// <summary>The file name offered when items are exported to a file: one item or a selection.</summary>
+	/// <param name="itemCount">The number of items exported.</param>
+	public static string ItemsExportFileName(int itemCount)
+		=> itemCount == 1 ? "item_export.json" : "items_export.json";
+
 	/// <summary>
 	/// A mod named by an export, when it is installed here; else null, and its name is added to <paramref name="dropped"/>:
 	/// the link is dropped and the items fall back on their target container's map until the user links them.
