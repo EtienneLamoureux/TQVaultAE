@@ -120,6 +120,21 @@ internal static partial class NativeWindows
 		return result;
 	}
 
+	/// <summary>
+	/// Posts a key press (key down, key up) to a window, through the message loop like a real key: WinForms then runs
+	/// its pre-processing (IsInputKey, dialog keys) before the control's key events, and the loop's TranslateMessage
+	/// adds the character message.
+	/// </summary>
+	public static bool PostKey(IntPtr hwnd, Keys key)
+	{
+		const int WM_KEYDOWN = 0x0100;
+		const int WM_KEYUP = 0x0101;
+		var virtualKey = (IntPtr)(int)(key & Keys.KeyCode);
+		// Repeat count 1; key up also sets the previous state and transition bits.
+		return PostMessage(hwnd, WM_KEYDOWN, virtualKey, 1)
+			&& PostMessage(hwnd, WM_KEYUP, virtualKey, (IntPtr)unchecked((int)0xC0000001));
+	}
+
 	private static string Normalize(string text) => text.Replace("&", string.Empty).Trim();
 
 	private static NativeWindow Describe(IntPtr hwnd)

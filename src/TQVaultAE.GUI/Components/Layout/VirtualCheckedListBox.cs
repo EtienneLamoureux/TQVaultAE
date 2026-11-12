@@ -15,8 +15,10 @@ namespace TQVaultAE.GUI.Components.Layout;
 /// Implements the part of the <see cref="CheckedListBox"/> API used by the advanced search dialog: column-major
 /// layout with a horizontal scroll bar (like <c>MultiColumn = true</c>), check on click, <see cref="CheckedItems"/>,
 /// <see cref="IndexFromPoint"/> and <see cref="SelectedValueChanged"/>, raised after each check change.
+/// The keyboard moves a focus item drawn with a focus rectangle: Up/Down by one entry, Left/Right by one column,
+/// Page Up/Page Down by the visible entries, Home/End to the ends, and Space toggles its check box.
 /// </remarks>
-public class VirtualCheckedListBox : Control, IScalingControl
+public partial class VirtualCheckedListBox : Control, IScalingControl
 {
 	/// <summary>Index returned by <see cref="IndexFromPoint"/> outside any item, as <see cref="ListBox.NoMatches"/>.</summary>
 	public const int NoMatches = ListBox.NoMatches;
@@ -28,6 +30,13 @@ public class VirtualCheckedListBox : Control, IScalingControl
 	private int _columnWidth = 120;
 	private BorderStyle _borderStyle = BorderStyle.None;
 	private int _hoverIndex = NoMatches;
+	private int _focusIndex = NoMatches;
+
+	/// <summary>
+	/// Focus entry before <see cref="ObjectCollection.Clear"/>: the search dialog refills its lists after each check, and
+	/// the focus goes back to the same entry (else to the same place) once the list is filled again.
+	/// </summary>
+	private (object Item, int Index)? _pendingFocus;
 
 	public VirtualCheckedListBox()
 	{
@@ -104,6 +113,38 @@ public class VirtualCheckedListBox : Control, IScalingControl
 			return;
 		this._checked[index] = value;
 		this.InvalidateItem(index);
+	}
+
+	/// <summary>Entry that has the keyboard focus (drawn with a focus rectangle), or <see cref="NoMatches"/>.</summary>
+	[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+	public int FocusedIndex
+	{
+		get => this._focusIndex;
+		set
+		{
+			int index = this._items.Count == 0 ? NoMatches : Math.Clamp(value, 0, this._items.Count - 1);
+			if (index == this._focusIndex)
+				return;
+			this.InvalidateItem(this._focusIndex);
+			this._focusIndex = index;
+			this.EnsureVisible(index);
+			this.InvalidateItem(index);
+		}
+	}
+
+	/// <summary>Scrolls the columns so that the entry at <paramref name="index"/> is fully shown.</summary>
+	public void EnsureVisible(int index)
+	{
+		if (!this._scroll.Visible || index < 0 || index >= this._items.Count)
+			return;
+
+		int column = index / this.RowsPerColumn;
+		int first = this.FirstColumn;
+		int value = column < first ? column
+			: column >= first + this.VisibleColumns ? column - this.VisibleColumns + 1
+			: first;
+		int max = this._scroll.Maximum - this._scroll.LargeChange + 1;
+		this._scroll.Value = Math.Clamp(value, 0, Math.Max(0, max));
 	}
 
 	public void BeginUpdate() => this._updateDepth++;
@@ -227,6 +268,14 @@ public class VirtualCheckedListBox : Control, IScalingControl
 			if (this._scroll.Value > max)
 				this._scroll.Value = max;
 		}
+
+		if (this._pendingFocus is { } pending && this._items.Count > 0)
+		{
+			this._pendingFocus = null;
+			int index = this._items.IndexOf(pending.Item);
+			this._focusIndex = index >= 0 ? index : Math.Min(pending.Index, this._items.Count - 1);
+			this.EnsureVisible(this._focusIndex);
+		}
 		this.Invalidate();
 	}
 
@@ -286,6 +335,9 @@ public class VirtualCheckedListBox : Control, IScalingControl
 
 			var textBounds = Rectangle.FromLTRB(glyphPoint.X + glyph.Width + this.GlyphTextGap, bounds.Top, bounds.Right, bounds.Bottom);
 			TextRenderer.DrawText(g, this._items[i]?.ToString() ?? string.Empty, this.Font, textBounds, this.ForeColor, flags);
+
+			if (i == this._focusIndex && this.Focused)
+				ControlPaint.DrawFocusRectangle(g, bounds, this.ForeColor, this.BackColor);
 		}
 
 		if (this.BorderStyle != BorderStyle.None)
@@ -307,8 +359,88 @@ public class VirtualCheckedListBox : Control, IScalingControl
 			return;
 
 		this.Focus();
+		this.FocusedIndex = index;
+		this.ToggleItem(index);
+	}
+
+	/// <summary>Toggles the check box of an entry like a user, so <see cref="SelectedValueChanged"/> follows.</summary>
+	private void ToggleItem(int index)
+	{
 		this.SetItemChecked(index, !this._checked[index]);
 		this.SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+	}
+
+	/// <summary>The keys that move the focus entry stay in the list instead of moving to the next control.</summary>
+	protected override bool IsInputKey(Keys keyData)
+	{
+		if ((keyData & Keys.Modifiers) == Keys.None)
+		{
+			switch (keyData & Keys.KeyCode)
+			{
+				case Keys.Up or Keys.Down or Keys.Left or Keys.Right or Keys.PageUp or Keys.PageDown or Keys.Home or Keys.End:
+					return true;
+			}
+		}
+		return base.IsInputKey(keyData);
+	}
+
+	protected override void OnKeyDown(KeyEventArgs e)
+	{
+		base.OnKeyDown(e);
+		if (e.Handled || e.Modifiers != Keys.None || this._items.Count == 0)
+			return;
+
+		int rows = this.RowsPerColumn;
+		int current = this._focusIndex;
+		if (current == NoMatches)
+		{
+			// No focus entry yet: the first key shows it on the first visible entry.
+			if (e.KeyCode is Keys.Up or Keys.Down or Keys.Left or Keys.Right or Keys.PageUp or Keys.PageDown or Keys.Space)
+			{
+				this.FocusedIndex = this.FirstColumn * rows;
+				e.Handled = true;
+				return;
+			}
+			current = 0;
+		}
+
+		int page = rows * this.VisibleColumns;
+		int? target = e.KeyCode switch
+		{
+			Keys.Up => current - 1,
+			Keys.Down => current + 1,
+			Keys.Left => current - rows,
+			Keys.Right => current + rows,
+			Keys.PageUp => current - page,
+			Keys.PageDown => current + page,
+			Keys.Home => 0,
+			Keys.End => this._items.Count - 1,
+			_ => null,
+		};
+
+		if (target is int index)
+		{
+			this.FocusedIndex = index;
+			this.EnsureVisible(this._focusIndex);
+			e.Handled = true;
+		}
+		else if (e.KeyCode == Keys.Space)
+		{
+			this.ToggleItem(current);
+			e.Handled = true;
+		}
+	}
+
+	protected override void OnGotFocus(EventArgs e)
+	{
+		base.OnGotFocus(e);
+		this.InvalidateItem(this._focusIndex);
+	}
+
+	protected override void OnLostFocus(EventArgs e)
+	{
+		base.OnLostFocus(e);
+		this.InvalidateItem(this._focusIndex);
 	}
 
 	protected override void OnMouseDoubleClick(MouseEventArgs e)
@@ -401,9 +533,12 @@ public class VirtualCheckedListBox : Control, IScalingControl
 
 		public void Clear()
 		{
+			this._owner._hoverIndex = NoMatches;
+			if (this._owner._focusIndex != NoMatches)
+				this._owner._pendingFocus = (this._owner._items[this._owner._focusIndex], this._owner._focusIndex);
 			this._owner._items.Clear();
 			this._owner._checked.Clear();
-			this._owner._hoverIndex = NoMatches;
+			this._owner._focusIndex = NoMatches;
 			this._owner.UpdateLayout();
 		}
 

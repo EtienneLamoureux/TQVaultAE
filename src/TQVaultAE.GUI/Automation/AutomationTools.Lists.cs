@@ -96,6 +96,55 @@ internal static partial class AutomationTools
 			return Serialize(new { name = c.Name, @checked = Entries(c).Where(e => e.on).Select(e => e.text).ToList() });
 		});
 
+	[McpServerTool(Name = "list_keys", Destructive = true)]
+	[Description("Gives the keyboard focus to a check box list of an open form (the search dialog's categories) and posts key presses to it through the message loop, like a user typing: up, down, left, right, pageup, pagedown, home, end, space (toggles the focus entry, so the change event runs), tab, separated by '|'. The keys run after the call returns: read the result with list_state.")]
+	public static string ListKeys(
+		[Description("Part of the form title or its type name (case-insensitive).")] string form,
+		[Description("Check box list name, as listed by list_items.")] string control,
+		[Description("Keys separated by '|', for example 'down|down|space|end'.")] string keys)
+		=> AutomationHost.OnUi(_ =>
+		{
+			var list = FindVirtualList(form, control);
+			if (!list.Enabled || !list.Visible)
+				throw new McpException($"'{list.Name}' is disabled or hidden: a user could not reach it.");
+
+			var parsed = keys.Split('|', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+				.Select(k => k.ToLowerInvariant() switch
+				{
+					"pageup" or "pgup" => Keys.PageUp,
+					"pagedown" or "pgdn" => Keys.PageDown,
+					_ when Enum.TryParse<Keys>(k, ignoreCase: true, out var key) => key,
+					_ => throw new McpException($"Unknown key '{k}'."),
+				})
+				.ToList();
+
+			list.FindForm()?.Activate();
+			list.Focus();
+			foreach (var key in parsed)
+				NativeWindows.PostKey(list.Handle, key);
+			return Serialize(new { name = list.Name, focused = list.Focused, keys = parsed.Select(k => k.ToString()).ToList() });
+		});
+
+	[McpServerTool(Name = "list_state", ReadOnly = true)]
+	[Description("Reads the keyboard state of a check box list of an open form: whether it has the focus, the focus entry (index, text, checked) and whether its focus rectangle is drawn, the rows per column, the visible columns and the first and last fully visible entries. widths=true also compares the list's text width measure with measuring every entry (time, result, largest gap of the estimate).")]
+	public static string ListState(
+		[Description("Part of the form title or its type name (case-insensitive).")] string form,
+		[Description("Check box list name, as listed by list_items.")] string control,
+		[Description("true to add the text width comparison.")] bool widths = false)
+		=> AutomationHost.OnUi(_ =>
+		{
+			var list = FindVirtualList(form, control);
+			return Serialize(new { state = list.AutomationState(), widths = widths ? list.AutomationTextWidths() : null });
+		});
+
+	private static VirtualCheckedListBox FindVirtualList(string form, string control)
+	{
+		var target = FindOpenForm(form);
+		var lists = AllControls(target).OfType<VirtualCheckedListBox>().ToList();
+		return lists.FirstOrDefault(c => string.Equals(c.Name, control, StringComparison.OrdinalIgnoreCase))
+			?? throw new McpException($"No check box list '{control}' in '{target.Text}'. Lists: {string.Join(", ", lists.Select(c => c.Name))}");
+	}
+
 	[McpServerTool(Name = "grid_click", Destructive = true)]
 	[Description("Clicks a row of a data grid of an open form like a user: the row becomes current (RowEnter) and gets a cell click; double=true adds the double click (the results dialog then jumps to the item, and a double click closes it). The click runs after this call returns. Rows as listed by list_items.")]
 	public static string GridClick(
