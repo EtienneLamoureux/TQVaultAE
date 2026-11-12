@@ -21,8 +21,8 @@ A toolbar, then four columns, left to right:
 | Column | Shows |
 |---|---|
 | Diff 1 | Item 1 minus item 2 |
-| Item 1 | Picture and tooltip of the first item |
-| Item 2 | Picture and tooltip of the second item |
+| Item 1 | Picture and tooltip of the first item, lines with a number only |
+| Item 2 | Picture and tooltip of the second item, lines with a number only |
 | Diff 2 | Item 2 minus item 1 |
 
 ![A vault amulet against an equipped one](compare/compare_menu_path.png)
@@ -31,10 +31,11 @@ Toolbar:
 
 | Check box | Effect |
 |---|---|
-| Align rows | Each difference sits on the row of the item line showing that stat. The stats only the other item has, and those the tooltip writes differently (a granted skill's effects, for example), come after, below a line. Unchecked: the differences are listed one after the other, grouped. |
+| Align rows | Each difference sits on the row of the item line showing that stat, a granted skill's effects under the skill's name. The stats only the other item has, and those the tooltip does not list (the effects of a skill the tooltip only names), come after, below a line. Unchecked: the differences are listed one after the other, grouped. |
 | Hide unchanged | Leaves out the stats both items have with the same numbers. |
 
-Both choices are kept for the next comparison until TQVault is closed.
+Both choices are saved in `UserConfig.xml` as soon as they change, in one element:
+`<ItemCompare AlignRows="1" HideUnchanged="0" />` (1 on, 0 off). Without it, rows are aligned and unchanged stats shown.
 
 ## Reading the differences
 
@@ -42,8 +43,9 @@ Both choices are kept for the next comparison until TQVault is closed.
 - A stat on both items shows the difference: `+12 Strength`.
 - A stat on one item only shows in full: plus on its side, minus on the other.
 - A stat with the same numbers on both items shows as the item writes it, in gray.
-- Only lines with a number are compared: lore, set lists and texts such as `Speed: Fast` are not shown in the
-  difference columns.
+- Only lines with a number are compared and shown, in the item columns too: lore, set member lists, `Speed: Fast` or
+  `Grants Skill :` are left out. The item name, the warnings, the names of granted skills and a text heading indented
+  lines with numbers (`Bonus to all Pets:`) stay.
 - Relics, charms and completion bonuses add to the item's own stats.
 - Granted skills are compared in their own group.
 - Requirements come last.
