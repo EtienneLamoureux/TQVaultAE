@@ -87,42 +87,10 @@ public partial class SackPanel : Panel, IScalingControl
 	}
 
 	/// <summary>
-	/// Moves an item from one sack to another without the context menu.
-	/// </summary>
-	/// <param name="desintationSack">int containing the number of the destination sack.</param>
-	private void QuickMoveSack(int sackNumber)
-	{
-		if (Sack is null)
-			return;
-
-		Item? focusedItem = FindItem(LastCellWithFocus);
-
-		if ((focusedItem is null && selectedItems is null) || this.ItemsReadOnly)
-			return;
-
-		if (MaxSacks > 1 && sackNumber < MaxSacks)
-		{
-			int offset2 = 0;
-
-			if (SackType == SackType.Player || SackType == SackType.Player)
-			{
-				if (SackType == SackType.Player)
-					offset2 = 1;
-			}
-
-			if (sackNumber != CurrentSack + offset2)
-			{
-				QuickMovePanel(this.AutoMoveLocation, sackNumber);
-			}
-		}
-	}
-
-	/// <summary>
 	/// Moves an item from one panel to another without context menu.
 	/// </summary>
 	/// <param name="location">Destination AutoMoveLocation</param>
-	/// <param name="destIndex">Bag index within the destination (or -1 for auto-find)</param>
-	private void QuickMovePanel(AutoMoveLocation location, int destIndex = -1)
+	private void QuickMovePanel(AutoMoveLocation location)
 	{
 		if (Sack is null)
 			return;
@@ -136,7 +104,7 @@ public partial class SackPanel : Panel, IScalingControl
 		if (destination == AutoMoveLocation.NotSet)
 			return;
 
-		this.RaiseAutoMove(this.Sack, AutoMovePlanner.Plan(this.selectedItems, focusedItem, destination, destIndex));
+		this.RaiseAutoMove(this.Sack, AutoMovePlanner.Plan(this.selectedItems, focusedItem, destination));
 
 		if (this.selectedItems is not null)
 			this.ClearSelectedItems();

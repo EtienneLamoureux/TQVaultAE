@@ -294,34 +294,6 @@ public partial class SackPanel
 
 		if (e.KeyData == Keys.Down)
 			QuickMovePanel(AutoMoveLocation.Stash);
-
-		if (char.IsDigit((char)e.KeyData) || e.KeyData == Keys.OemMinus || e.KeyData == Keys.Oemplus)
-		{
-			int keyOffset = 49;
-
-			switch (e.KeyData)
-			{
-				case Keys.Oemplus:
-					{
-						keyOffset = 176;
-						break;
-					}
-				case Keys.OemMinus:
-					{
-						keyOffset = 179;
-						break;
-					}
-				case Keys.D0:
-					{
-						keyOffset = 39;
-						break;
-					}
-				default:
-					break;
-			}
-
-			QuickMoveSack(e.KeyValue - keyOffset);
-		}
 	}
 
 	/// <summary>
