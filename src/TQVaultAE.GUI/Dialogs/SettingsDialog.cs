@@ -261,25 +261,13 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 
 	/// <summary>
 	/// The look of Vault Maintenance: the tiled marble behind the dialog, each group in a caravan frame with its caption
-	/// drawn straight over the top edge (<see cref="CaptionBackground.Black"/> puts it back on black), and a drop shadow
-	/// on the labels and check boxes left over the marble.
+	/// over its top edge in the dialog's font, and a drop shadow on the labels and check boxes left over the marble.
 	/// </summary>
 	private void ApplyMarbleStyle()
 	{
 		MarbleBackground.ApplyTo(this);
 		this.bufferedTableLayoutPanelSkeleton.BackColor = Color.Transparent;
-
-		this.ProcessAllControls(c =>
-		{
-			if (c is GroupBox group)
-			{
-				// Every caption in the dialog's font: a font set on a group would neither follow the zoom (only the
-				// dialog's font grows with it) nor the font family of the other captions. A CheckGroupBox's check box
-				// takes its group's font.
-				group.ResetFont();
-				CaravanFrame.ApplyWithCaption(group, CaptionBackground.None);
-			}
-		});
+		CaravanFrame.ApplyWithCaptionToAll(this);
 
 		// A track bar cannot be transparent: on the black of its frame.
 		this.ItemBGColorOpacityTrackBar.BackColor = Color.Black;

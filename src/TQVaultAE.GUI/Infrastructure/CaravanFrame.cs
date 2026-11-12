@@ -75,24 +75,35 @@ internal static class CaravanFrame
 	private const int CheckBoxTextGap = 3;
 
 	/// <summary>
-	/// Draws <paramref name="box"/> as the frame, keeping its caption across the top edge as a group box has it: its text,
-	/// or the check box of a <see cref="Components.UIToolbox.CheckGroupBox"/>, on black or straight over the frame (see
-	/// <see cref="CaptionBackground"/>). Its content gets a padding off the frame and is made transparent so that the
-	/// black shows behind it.
+	/// Draws every group box under <paramref name="root"/> (a dialog, a panel) as a framed group with its caption, see
+	/// <see cref="ApplyWithCaption"/>: the one call a dialog makes for its groups.
 	/// </summary>
-	/// <param name="box">The group box.</param>
-	/// <param name="background">What lies behind the caption; black by default.</param>
-	public static void ApplyWithCaption(GroupBox box, CaptionBackground background = CaptionBackground.Black)
+	public static void ApplyWithCaptionToAll(Control root)
+	{
+		foreach (Control child in root.Controls)
+		{
+			if (child is GroupBox box)
+				ApplyWithCaption(box);
+
+			ApplyWithCaptionToAll(child);
+		}
+	}
+
+	/// <summary>
+	/// Draws <paramref name="box"/> as the frame, whole, with its caption over the frame's top edge as a group box has
+	/// it: its text, or the check box of a <see cref="Components.UIToolbox.CheckGroupBox"/>, in gold on a dark outline and
+	/// no background. The caption is in the dialog's font: a font of the group's own is dropped, since it would follow
+	/// neither the zoom nor a font change (the check box of a CheckGroupBox takes its group's font). The content gets a
+	/// padding off the frame and is made transparent so that the black shows behind it.
+	/// </summary>
+	public static void ApplyWithCaption(GroupBox box)
 	{
 		Bitmap? frame = null;
-		bool overBorder = background == CaptionBackground.None;
+		box.ResetFont();
 		box.BackColor = Color.Transparent;
 		box.Padding = new Padding(Border + 2, box.Padding.Top, Border + 2, Border);
 		foreach (Control child in box.Controls)
-		{
-			// The check box of a CheckGroupBox is its caption, across the frame's top edge.
-			child.BackColor = child is CheckBox && !overBorder ? Color.Black : Color.Transparent;
-		}
+			child.BackColor = Color.Transparent;
 
 		box.Paint += (_, e) =>
 		{
@@ -107,17 +118,6 @@ internal static class CaravanFrame
 			{
 				frame?.Dispose();
 				frame = Render(size);
-			}
-
-			if (!overBorder)
-			{
-				e.Graphics.DrawImageUnscaled(frame, 0, top);
-				if (check is not null)
-					return;
-
-				e.Graphics.FillRectangle(Brushes.Black, caption);
-				TextRenderer.DrawText(e.Graphics, box.Text, box.Font, caption, box.ForeColor);
-				return;
 			}
 
 			// The group box drew its own caption and border line before this handler: above the frame they would show
