@@ -184,6 +184,13 @@ public class UserSettings
 	[XmlElement(ElementName = nameof(ItemCompare))]
 	public ItemCompareSettings ItemCompare { get; set; } = new();
 
+	/// <summary>
+	/// The choices of the bag sort button: <c>&lt;Sort Algorithm="Normal" /&gt;</c>.
+	/// Missing, the defaults apply (the normal sort).
+	/// </summary>
+	[XmlElement(ElementName = nameof(Sort))]
+	public SortSettings Sort { get; set; } = new();
+
 	#endregion
 
 	#region AppSettings & DebugLevels

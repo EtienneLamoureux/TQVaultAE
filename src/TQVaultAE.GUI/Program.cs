@@ -174,6 +174,7 @@ public static class Program
 		.AddTransient<ILoadAllService, LoadAllService>()
 		.AddSingleton<IItemEditService, ItemEditService>()
 		.AddSingleton<IItemStackingService, ItemStackingService>()
+		.AddSingleton<IItemSortService, ItemSortService>()
 		.AddSingleton<IItemComparisonService, ItemComparisonService>()
 		.AddTransient<IItemDropService, ItemDropService>()
 		.AddTransient<ISaveOrchestrator, SaveOrchestrator>()

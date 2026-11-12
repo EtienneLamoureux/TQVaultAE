@@ -102,16 +102,18 @@ public interface IItemMovementService
     bool TryPlace(Item item, SackCollection sack, Size sackSize, ContainerPlace place, Action? beforePlacing = null);
 
     /// <summary>
-    /// Sorts the items of a sack by size, the largest first, packing them row by row or column by column.
+    /// Packs the items of a sack in the given order, each in the first free cells row by row or column by column: the
+    /// cell maths of the sort button (<see cref="IItemSortService"/> picks the order).
     /// </summary>
     /// <remarks>
-    /// When an item does not fit, the sack gets back copies of its original items and is marked as not modified.
+    /// When an item does not fit, the sack gets back the same items at their place, as modified as it was.
     /// </remarks>
-    /// <param name="sack">The sack to sort.</param>
+    /// <param name="sack">The sack to pack.</param>
+    /// <param name="order">Every item of the sack, the first placed first.</param>
     /// <param name="sackSize">Size of the sack in cells.</param>
     /// <param name="vertical"><see langword="true"/> to fill column by column, otherwise row by row.</param>
     /// <returns><see langword="false"/> when an item did not fit and the sack was restored.</returns>
-    bool Autosort(SackCollection sack, Size sackSize, bool vertical);
+    bool Pack(SackCollection sack, IReadOnlyList<Item> order, Size sackSize, bool vertical);
 
     /// <summary>
     /// Moves items of a sack by an offset, all of them or none.

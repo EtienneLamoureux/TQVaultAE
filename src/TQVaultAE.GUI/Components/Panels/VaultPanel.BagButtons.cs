@@ -82,6 +82,7 @@ public partial class VaultPanel
 			if (this.BagSackPanel.SackType == SackType.Vault && this.BagButtons[this.CurrentBag].ButtonText is not null)
 			{
 				this.contextMenu.Items.Clear();
+				this.contextMenu.ShowCheckMargin = false;
 
 				// Add the move submenu
 				this.AddSubMenu(Resources.PlayerPanelMenuMove, this.MoveBagClicked);
@@ -182,16 +183,76 @@ public partial class VaultPanel
 	}
 
 	/// <summary>
-	/// Handler for clicking the autosort button
+	/// Handler for clicking the autosort button: a left click sorts with the order picked in its menu, a right click
+	/// opens that menu.
 	/// </summary>
 	/// <param name="sender">sender object</param>
 	/// <param name="e">MouseEventArgs data</param>
-	protected virtual void AutoSortButtonClick(object? sender, MouseEventArgs e)
+	protected void AutoSortButtonClick(object? sender, MouseEventArgs e)
 	{
+		if (sender is not AutoSortButton button)
+			return;
+
 		if (e.Button == MouseButtons.Left)
+			this.SortTarget(button).Autosort();
+		else if (e.Button == MouseButtons.Right)
+			this.ShowSortMenu(button, e.Location);
+	}
+
+	/// <summary>
+	/// The sack a sort button sorts: the bag panel here, the main inventory or the bags for the player panel.
+	/// </summary>
+	protected virtual SackPanel SortTarget(AutoSortButton button) => this.BagSackPanel;
+
+	/// <summary>The sack the open sort menu sorts.</summary>
+	private SackPanel? sortMenuTarget;
+
+	/// <summary>
+	/// Opens the sort menu of a sort button: one entry per order, the one a left click uses checked. Picking an entry
+	/// keeps it for the next clicks and sorts at once (<see cref="ContextMenuItemClicked"/>).
+	/// </summary>
+	private void ShowSortMenu(AutoSortButton button, Point location)
+	{
+		this.sortMenuTarget = this.SortTarget(button);
+		var current = this.USettings.Sort?.Algorithm ?? SackSortAlgorithm.Normal;
+
+		this.contextMenu.Items.Clear();
+		this.contextMenu.ShowCheckMargin = true;
+		foreach (var (algorithm, text) in SortMenuEntries)
 		{
-			this.BagSackPanel.Autosort();
+			var entry = new ToolStripMenuItem(text) { Tag = algorithm, Checked = algorithm == current };
+			this.contextMenu.Items.Add(entry);
 		}
+
+		this.contextMenu.Show(button, location);
+	}
+
+	/// <summary>The entries of the sort menu, in their order.</summary>
+	private static IEnumerable<(SackSortAlgorithm Algorithm, string Text)> SortMenuEntries =>
+	[
+		(SackSortAlgorithm.Normal, Resources.SortMenuNormal),
+		(SackSortAlgorithm.Level, Resources.SortMenuLevel),
+		(SackSortAlgorithm.Type, Resources.SortMenuType),
+		(SackSortAlgorithm.Rarity, Resources.SortMenuRarity),
+	];
+
+	/// <summary>
+	/// A sort menu entry was picked: it becomes the order of the left click (saved in the settings), and the sack is
+	/// sorted with it.
+	/// </summary>
+	private void SortMenuPicked(SackSortAlgorithm algorithm)
+	{
+		var target = this.sortMenuTarget;
+		this.sortMenuTarget = null;
+
+		this.USettings.Sort ??= new SortSettings();
+		if (this.USettings.Sort.Algorithm != algorithm)
+		{
+			this.USettings.Sort.Algorithm = algorithm;
+			this.USettings.Save();
+		}
+
+		target?.Autosort();
 	}
 
 	/// <summary>

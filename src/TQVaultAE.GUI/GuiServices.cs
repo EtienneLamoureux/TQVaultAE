@@ -50,6 +50,7 @@ public sealed class GuiServices
 		, IForgeService forgeService
 		, IItemEditService itemEditService
 		, IItemStackingService itemStackingService
+		, IItemSortService itemSortService
 		, IItemDropService itemDropService
 		, ISearchCategoryService searchCategoryService
 		, ISearchQueryService searchQueryService
@@ -90,6 +91,7 @@ public sealed class GuiServices
 		this.ForgeService = forgeService;
 		this.ItemEditService = itemEditService;
 		this.ItemStackingService = itemStackingService;
+		this.ItemSortService = itemSortService;
 		this.ItemDropService = itemDropService;
 		this.SearchCategoryService = searchCategoryService;
 		this.SearchQueryService = searchQueryService;
@@ -160,6 +162,9 @@ public sealed class GuiServices
 
 	/// <summary>Stacking of potions, scrolls, relics and charms dropped on each other.</summary>
 	public IItemStackingService ItemStackingService { get; }
+
+	/// <summary>The bag sort button: the order of each sort algorithm and the merge of relic shards.</summary>
+	public IItemSortService ItemSortService { get; }
 
 	/// <summary>Rules of an item dropped on a sack: refused, put back, stacked or placed.</summary>
 	public IItemDropService ItemDropService { get; }

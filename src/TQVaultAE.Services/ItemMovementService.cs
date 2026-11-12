@@ -181,16 +181,9 @@ public class ItemMovementService(ILogger<ItemMovementService> log) : IItemMoveme
     }
 
     /// <inheritdoc/>
-    public bool Autosort(SackCollection sack, Size sackSize, bool vertical)
+    public bool Pack(SackCollection sack, IReadOnlyList<Item> order, Size sackSize, bool vertical)
     {
-        var sortedItems = sack
-            .OrderByDescending(item => ((item.Height * 3) + item.Width) * 100)
-            .ThenByDescending(item => item.ItemGroup)
-            .ThenBy(item => item.BaseItemId)
-            .ThenByDescending(item => item.IsRelicComplete)
-            .ToList();
-
-        if (sortedItems.Count == 0)
+        if (order.Count == 0)
             return true;
 
         // What to put back when the sort fails: the same items at their place, and the sack as modified as it was.
@@ -202,7 +195,7 @@ public class ItemMovementService(ILogger<ItemMovementService> log) : IItemMoveme
         int outer = vertical ? sackSize.Width : sackSize.Height;
         int inner = vertical ? sackSize.Height : sackSize.Width;
 
-        foreach (Item item in sortedItems)
+        foreach (Item item in order)
         {
             if (!PlaceSorted(sack, item, sackSize, vertical, outer, inner))
             {

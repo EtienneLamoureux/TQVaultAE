@@ -172,26 +172,8 @@ public class PlayerPanel : VaultPanel
 	}
 
 	/// <summary>
-	/// Handler for clicking the autosort button
+	/// The sack a sort button sorts: button 0 the main inventory, button 1 the bags.
 	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">MouseEventArgs data</param>
-	protected override void AutoSortButtonClick(object? sender, MouseEventArgs e)
-	{
-		if (e.Button == MouseButtons.Left)
-		{
-			AutoSortButton? button = (AutoSortButton)sender!;
-			int buttonID = button.ButtonNumber;
-			if (buttonID == 1)
-			{
-				// Secondary panel autosort was clicked.
-				this.BagSackPanel.Autosort();
-			}
-			else if (buttonID == 0)
-			{
-				// Main panel autosort was clicked.
-				this.mainSackPanel.Autosort();
-			}
-		}
-	}
+	protected override SackPanel SortTarget(AutoSortButton button)
+		=> button.ButtonNumber == 0 ? this.mainSackPanel : this.BagSackPanel;
 }

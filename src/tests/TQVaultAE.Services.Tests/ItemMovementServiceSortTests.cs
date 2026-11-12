@@ -8,7 +8,7 @@ using TQVaultAE.Services;
 namespace TQVaultAE.Tests.Services;
 
 /// <summary>
-/// <see cref="ItemMovementService.Autosort"/> and <see cref="ItemMovementService.MoveItems"/>: the cell maths of the
+/// <see cref="ItemMovementService.Pack"/> and <see cref="ItemMovementService.MoveItems"/>: the cell maths of the
 /// sack sort button and of the selection moved with Alt+W/A/S/D.
 /// </summary>
 public class ItemMovementServiceSortTests
@@ -43,10 +43,10 @@ public class ItemMovementServiceSortTests
 		return file[..file.LastIndexOf('.')];
 	}
 
-	#region Autosort
+	#region Pack
 
 	[Fact]
-	public void Autosort_Horizontal_PacksRowByRowLargestFirst()
+	public void Pack_Horizontal_PacksRowByRowInTheGivenOrder()
 	{
 		// Arrange: a 4x4 sack, items scattered
 		var small = Item("small", 3, 3, 1, 1);
@@ -55,41 +55,29 @@ public class ItemMovementServiceSortTests
 		var sack = Sack(small, wide, big);
 
 		// Act
-		var sorted = this._service.Autosort(sack, new Size(4, 4), vertical: false);
+		var packed = this._service.Pack(sack, [big, wide, small], new Size(4, 4), vertical: false);
 
 		// Assert
-		sorted.Should().BeTrue();
+		packed.Should().BeTrue();
 		Positions(sack).Should().Be("big@0,0 wide@2,0 small@2,1");
 		sack.IsModified.Should().BeTrue();
 	}
 
 	[Fact]
-	public void Autosort_Vertical_PacksColumnByColumn()
+	public void Pack_Vertical_PacksColumnByColumn()
 	{
 		var small = Item("small", 3, 3, 1, 1);
 		var tall = Item("tall", 0, 2, 1, 2);
 		var big = Item("big", 2, 0, 2, 2);
 		var sack = Sack(small, tall, big);
 
-		this._service.Autosort(sack, new Size(4, 4), vertical: true).Should().BeTrue();
+		this._service.Pack(sack, [big, tall, small], new Size(4, 4), vertical: true).Should().BeTrue();
 
 		Positions(sack).Should().Be("big@0,0 tall@0,2 small@1,2");
 	}
 
 	[Fact]
-	public void Autosort_SameSize_SortedByRecordId()
-	{
-		var b = Item("b", 0, 0, 1, 1);
-		var a = Item("a", 1, 0, 1, 1);
-		var sack = Sack(b, a);
-
-		this._service.Autosort(sack, new Size(2, 1), vertical: false).Should().BeTrue();
-
-		Positions(sack).Should().Be("a@0,0 b@1,0");
-	}
-
-	[Fact]
-	public void Autosort_ItemDoesNotFit_PutsTheSameItemsBackWhereTheyWere()
+	public void Pack_ItemDoesNotFit_PutsTheSameItemsBackWhereTheyWere()
 	{
 		// Arrange: the 2x2 item fills the 2x2 sack, the small one finds no room
 		var small = Item("small", 2, 0, 1, 1);
@@ -97,10 +85,10 @@ public class ItemMovementServiceSortTests
 		var sack = Sack(small, big);
 
 		// Act
-		var sorted = this._service.Autosort(sack, new Size(2, 2), vertical: true);
+		var packed = this._service.Pack(sack, [big, small], new Size(2, 2), vertical: true);
 
 		// Assert
-		sorted.Should().BeFalse();
+		packed.Should().BeFalse();
 		Positions(sack).Should().Be("small@2,0 big@0,0");
 		sack.Should().Contain(big, "the search and the panels know these items, not copies");
 		sack.Should().Contain(small);
@@ -109,25 +97,27 @@ public class ItemMovementServiceSortTests
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	public void Autosort_ItemDoesNotFit_KeepsWhetherTheSackHadChangesToSave(bool modified)
+	public void Pack_ItemDoesNotFit_KeepsWhetherTheSackHadChangesToSave(bool modified)
 	{
 		// Arrange: a failed sort must not forget an item dropped in the sack before it, nor invent a change
-		var sack = Sack(Item("small", 2, 0, 1, 1), Item("big", 0, 0, 2, 2));
+		var small = Item("small", 2, 0, 1, 1);
+		var big = Item("big", 0, 0, 2, 2);
+		var sack = Sack(small, big);
 		sack.IsModified = modified;
 
 		// Act
-		this._service.Autosort(sack, new Size(2, 2), vertical: true).Should().BeFalse();
+		this._service.Pack(sack, [big, small], new Size(2, 2), vertical: true).Should().BeFalse();
 
 		// Assert
 		sack.IsModified.Should().Be(modified);
 	}
 
 	[Fact]
-	public void Autosort_EmptySack_DoesNothing()
+	public void Pack_EmptySack_DoesNothing()
 	{
 		var sack = Sack();
 
-		this._service.Autosort(sack, new Size(4, 4), vertical: false).Should().BeTrue();
+		this._service.Pack(sack, [], new Size(4, 4), vertical: false).Should().BeTrue();
 
 		sack.IsModified.Should().BeFalse();
 	}

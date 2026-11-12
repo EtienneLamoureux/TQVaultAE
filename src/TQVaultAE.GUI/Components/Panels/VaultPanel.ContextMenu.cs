@@ -313,6 +313,13 @@ public partial class VaultPanel
 
 	private void ContextMenuItemClicked(object? sender, ToolStripItemClickedEventArgs e)
 	{
+		// The sort button's menu: its entries carry their order.
+		if (e.ClickedItem?.Tag is SackSortAlgorithm algorithm)
+		{
+			this.SortMenuPicked(algorithm);
+			return;
+		}
+
 		// The entry carries its action, not compared by its translated text.
 		var action = e.ClickedItem?.Tag as BagMenuAction?;
 		if (action == BagMenuAction.Empty)

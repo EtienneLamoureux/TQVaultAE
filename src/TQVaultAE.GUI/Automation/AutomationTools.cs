@@ -833,6 +833,12 @@ internal static partial class AutomationTools
 			width = item.Width,
 			height = item.Height,
 			quantity = item.DoesStack ? item.Number : (int?)null,
+			// What the sort orders read, and the shards a relic or charm holds (its completion bonus once complete).
+			itemClass = item.ItemClass,
+			rarity = item.Rarity.ToString(),
+			requiredLevel = RequiredLevel(item),
+			shards = item.IsRelicOrCharm ? item.Number : (int?)null,
+			relicBonus = item.IsRelicOrCharm && !RecordId.IsNullOrEmpty(item.RelicBonusId) ? item.RelicBonusId.Raw : null,
 			seed = item.Seed,
 			equipmentSlot = sack?.SackType == SackType.Equipment ? EquipmentRules.FindSlot(sack, item) : (int?)null,
 			// Where the search shows the item (its search result reads this place).
@@ -845,6 +851,20 @@ internal static partial class AutomationTools
 				stashType = item.Place.StashType?.ToString(),
 			},
 		};
+	}
+
+	/// <summary>The level requirement of an item as the sort by level reads it, null when the records do not give one.</summary>
+	private static int? RequiredLevel(Item item)
+	{
+		try
+		{
+			return Program.ServiceProvider.GetRequiredService<IItemProvider>().GetRequirementInfo(item).Lvl;
+		}
+		catch (Exception)
+		{
+			// Unknown records must not break the state dump.
+			return null;
+		}
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859", Justification = "Anonymous JSON payload.")]

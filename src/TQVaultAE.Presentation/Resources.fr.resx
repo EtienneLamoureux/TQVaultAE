@@ -2021,4 +2021,20 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="ItemIncompleteRelicBonus" xml:space="preserve">
     <value>Bonus de relique</value>
   </data>
+	<data name="SortMenuNormal" xml:space="preserve">
+    <value>Trier par taille (normal)</value>
+  </data>
+	<data name="SortMenuLevel" xml:space="preserve">
+    <value>Trier par niveau requis</value>
+  </data>
+	<data name="SortMenuType" xml:space="preserve">
+    <value>Trier par type</value>
+  </data>
+	<data name="SortMenuRarity" xml:space="preserve">
+    <value>Trier par rareté</value>
+  </data>
+	<data name="SackPanelSortNoRoom" xml:space="preserve">
+    <value>Les objets ne tiennent pas dans le sac dans cet ordre.
+Le sac est resté tel quel.</value>
+  </data>
 </root>

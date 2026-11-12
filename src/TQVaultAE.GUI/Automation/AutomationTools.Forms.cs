@@ -194,6 +194,49 @@ internal static partial class AutomationTools
 			}
 		});
 
+	[McpServerTool(Name = "sort_menu", Destructive = true)]
+	[Description("Right-clicks the sort button of a panel like the user and returns its menu (one entry per sort order, the order a left click uses checked), then closes it. With path (e.g. 'Sort by required level'), clicks that entry after this call returns: it becomes the order of the left click (saved in UserConfig.xml, <Sort Algorithm=... />) and sorts the panel's bag at once. Also returns the saved sort choices.")]
+	public static string SortMenu(
+		[Description("Panel id with a sort button: vault, secondaryVault, player (main inventory) or playerBag.")] string panel,
+		[Description("Entry to click; empty to only read the menu.")] string? path = null)
+		=> AutomationHost.OnUi(form =>
+		{
+			var named = AutomationPanels.Resolve(form, panel);
+			var container = named.Container ?? throw new McpException($"Panel '{panel}' has no sort button.");
+			try
+			{
+				var (entries, clicked) = container.AutomationSortMenu(named.Panel, path?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+				return Serialize(new { panel, entries, clicked, sort = SortChoices(form) });
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
+		});
+
+	[McpServerTool(Name = "sort_click", Destructive = true)]
+	[Description("Left-clicks the sort button of a panel like the user: sorts the shown bag with the order picked in sort_menu (each click alternates rows and columns). The click runs after this call returns (a sort that does not fit shows a message, see dialog_answers): read the result with list_items.")]
+	public static string SortClick(
+		[Description("Panel id with a sort button: vault, secondaryVault, player (main inventory) or playerBag.")] string panel)
+		=> AutomationHost.OnUi(form =>
+		{
+			var named = AutomationPanels.Resolve(form, panel);
+			var container = named.Container ?? throw new McpException($"Panel '{panel}' has no sort button.");
+			try
+			{
+				container.AutomationSortClickLater(named.Panel);
+				return Serialize(new { panel, queued = true, sort = SortChoices(form) });
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
+		});
+
+	/// <summary>The saved sort choices: the order of the left click.</summary>
+	private static object SortChoices(Forms.MainForm form)
+		=> new { algorithm = form.AutomationSettings.Sort?.Algorithm.ToString() };
+
 	[McpServerTool(Name = "vault_menu", Destructive = true)]
 	[Description("Returns the menu of the vault tools button next to the vault list (maintain vault files, Modded vault, share, import) as it opens for the shown vault. With path (' > ' between levels, e.g. 'Modded vault > shadowchampions'), clicks that entry after this call returns, since it may open a dialog.")]
 	public static string VaultMenu(

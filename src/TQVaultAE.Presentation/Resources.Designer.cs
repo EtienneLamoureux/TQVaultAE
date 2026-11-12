@@ -4292,6 +4292,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The items do not fit in the bag in this order.[rest of string was truncated]&quot;;
+        /// </summary>
+        public static string SackPanelSortNoRoom {
+            get {
+                return ResourceManager.GetString("SackPanelSortNoRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Saved at {0:g}.
         /// </summary>
         public static string SavedAtNotification {
@@ -5105,6 +5114,42 @@ namespace TQVaultAE.Presentation {
         public static string SkillPoints {
             get {
                 return ResourceManager.GetString("SkillPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort by required level.
+        /// </summary>
+        public static string SortMenuLevel {
+            get {
+                return ResourceManager.GetString("SortMenuLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort by size (normal).
+        /// </summary>
+        public static string SortMenuNormal {
+            get {
+                return ResourceManager.GetString("SortMenuNormal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort by rarity.
+        /// </summary>
+        public static string SortMenuRarity {
+            get {
+                return ResourceManager.GetString("SortMenuRarity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort by type.
+        /// </summary>
+        public static string SortMenuType {
+            get {
+                return ResourceManager.GetString("SortMenuType", resourceCulture);
             }
         }
         

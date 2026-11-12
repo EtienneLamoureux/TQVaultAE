@@ -20,26 +20,15 @@ public class ItemCompareSettings
 	[XmlAttribute(nameof(AlignRows))]
 	public string AlignRowsValue
 	{
-		get => Write(this.AlignRows);
-		set => this.AlignRows = Parse(value, this.AlignRows);
+		get => XmlSwitch.Write(this.AlignRows);
+		set => this.AlignRows = XmlSwitch.Parse(value, this.AlignRows);
 	}
 
 	/// <summary><see cref="HideUnchanged"/> as written in the file.</summary>
 	[XmlAttribute(nameof(HideUnchanged))]
 	public string HideUnchangedValue
 	{
-		get => Write(this.HideUnchanged);
-		set => this.HideUnchanged = Parse(value, this.HideUnchanged);
+		get => XmlSwitch.Write(this.HideUnchanged);
+		set => this.HideUnchanged = XmlSwitch.Parse(value, this.HideUnchanged);
 	}
-
-	private static string Write(bool value) => value ? "1" : "0";
-
-	/// <summary>"1" / "true" or "0" / "false" (any case, spaces ignored); <paramref name="fallback"/> for anything else.</summary>
-	private static bool Parse(string? value, bool fallback)
-		=> value?.Trim().ToUpperInvariant() switch
-		{
-			"1" or "TRUE" => true,
-			"0" or "FALSE" => false,
-			_ => fallback,
-		};
 }

@@ -2393,4 +2393,20 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="ItemIncompleteRelicBonus" xml:space="preserve">
     <value>Relic bonus</value>
   </data>
+	<data name="SortMenuNormal" xml:space="preserve">
+    <value>Sort by size (normal)</value>
+  </data>
+	<data name="SortMenuLevel" xml:space="preserve">
+    <value>Sort by required level</value>
+  </data>
+	<data name="SortMenuType" xml:space="preserve">
+    <value>Sort by type</value>
+  </data>
+	<data name="SortMenuRarity" xml:space="preserve">
+    <value>Sort by rarity</value>
+  </data>
+	<data name="SackPanelSortNoRoom" xml:space="preserve">
+    <value>The items do not fit in the bag in this order.
+The bag was left as it was.</value>
+  </data>
 </root>

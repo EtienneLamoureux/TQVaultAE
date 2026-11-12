@@ -45,11 +45,14 @@ public partial class SackPanel : Panel, IScalingControl
 		// Toggle sorting direction.
 		this.sortVertical = !this.sortVertical;
 
-		if (!this.Services.ItemMovementService.Autosort(this.ShownSack, this.SackSize, this.sortVertical))
+		// The order picked in the sort button's menu.
+		var algorithm = this.USettings.Sort?.Algorithm ?? SackSortAlgorithm.Normal;
+		if (!this.Services.ItemSortService.Sort(this.ShownSack, this.SackSize, this.sortVertical, algorithm))
 		{
 			// An item did not fit: the sack is back as it was.
 			this.sortVertical = !this.sortVertical;
 			BagButtonTooltip.InvalidateCache(this.Sack);
+			this.Services.MessageBoxes.Inform(Resources.SackPanelSortNoRoom, Resources.SackPanelAutoSortError);
 			return;
 		}
 
