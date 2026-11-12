@@ -387,18 +387,28 @@ internal static partial class AutomationTools
 	#region Player information panel
 
 	[McpServerTool(Name = "player_info", ReadOnly = true)]
-	[Description("Reads the statistics panel shown next to the equipment (stash bag 0): the game's character window, read only, as character_panel reads the editor's (name, class, level, attributes, the computed values of tabs I to III, gold). tab (1 to 3) shows that tab first. Not visible when no character is selected or another stash tab is shown.")]
+	[Description("Reads the statistics panel shown next to the equipment (stash bag 0): the game's character window, read only, as character_panel reads the editor's (name, class, level, attributes, the computed values of tabs I to III, gold), and requirementAttributes: the attributes the item requirements are checked against (strength, dexterity, intelligence, health, energy with the gear and skill bonuses). tab (1 to 3) shows that tab first. Not visible when no character is selected or another stash tab is shown.")]
 	public static string PlayerInfo([Description("Tab to show first: 1, 2 or 3; 0 keeps the one shown.")] int tab = 0)
 		=> AutomationHost.OnUi(form =>
 		{
-			var panel = (form.AutomationStashPanel ?? throw new McpException("No stash panel.")).AutomationPlayerStatsPanel;
+			var stash = form.AutomationStashPanel ?? throw new McpException("No stash panel.");
+			var panel = stash.AutomationPlayerStatsPanel;
 			if (panel is null)
 				return Serialize(new { visible = false });
 
 			if (tab is >= 1 and <= 3)
 				panel.Tab = tab - 1;
 
-			return Serialize(new { visible = panel.Visible, bounds = new { panel.Left, panel.Top, panel.Width, panel.Height }, stats = panel.AutomationState() });
+			var info = stash.AutomationPlayerInfo;
+			var requirementAttributes = info is null ? null : new
+			{
+				strength = info.CalculatedStrength,
+				dexterity = info.CalculatedDexterity,
+				intelligence = info.CalculatedIntelligence,
+				health = info.CalculatedHealth,
+				energy = info.CalculatedMana,
+			};
+			return Serialize(new { visible = panel.Visible, bounds = new { panel.Left, panel.Top, panel.Width, panel.Height }, stats = panel.AutomationState(), requirementAttributes });
 		});
 
 	/// <summary>

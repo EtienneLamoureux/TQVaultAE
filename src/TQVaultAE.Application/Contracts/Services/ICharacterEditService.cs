@@ -49,6 +49,12 @@ public interface ICharacterEditService
 	IReadOnlyList<SkillAugment> GetGearSkillAugments(PlayerCollection player);
 
 	/// <summary>
+	/// Gets the skill bonuses of equipped items, except the weapons of the set not in hand.
+	/// </summary>
+	/// <param name="useAlternate">True when the second weapon set is in hand (<see cref="PlayerCollection.UseAlternate"/>).</param>
+	IReadOnlyList<SkillAugment> GetGearSkillAugments(IEnumerable<Item> equipment, bool useAlternate);
+
+	/// <summary>
 	/// A skill at a level as the game's skill window describes it: name, description and its effects at that level.
 	/// </summary>
 	/// <param name="context">What the character adds to the skill's own values (modifiers, recharge reduction...).</param>

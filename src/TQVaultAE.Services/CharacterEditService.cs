@@ -20,12 +20,13 @@ public class CharacterEditService(IPathIO pathIO, IPlayerCollectionProvider play
 
 	/// <inheritdoc/>
 	public IReadOnlyList<SkillAugment> GetGearSkillAugments(PlayerCollection player)
-		=> player.EquipmentSack is not { } equipment
-			? []
-			: equipment
-				.Where(item => !item.IsInInactiveWeaponSlot(player.UseAlternate))
-				.SelectMany(this._itemProvider.GetSkillAugments)
-				.ToList();
+		=> player.EquipmentSack is not { } equipment ? [] : this.GetGearSkillAugments(equipment, player.UseAlternate);
+
+	/// <inheritdoc/>
+	public IReadOnlyList<SkillAugment> GetGearSkillAugments(IEnumerable<Item> equipment, bool useAlternate)
+		=> [.. equipment
+			.Where(item => !item.IsInInactiveWeaponSlot(useAlternate))
+			.SelectMany(this._itemProvider.GetSkillAugments)];
 
 	/// <inheritdoc/>
 	public CharacterSkillEditor CreateSkillEditor(PlayerInfo info)

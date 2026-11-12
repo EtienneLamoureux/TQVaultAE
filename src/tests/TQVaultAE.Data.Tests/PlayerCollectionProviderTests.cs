@@ -733,6 +733,15 @@ public class PlayerCollectionProviderTests
 		playerInfo.MustResetMasteries.Should().BeFalse();
 	}
 
+	/// <summary>The sums of the statistics panel with the given variables.</summary>
+	private static AttributeSum Bonus(params (string Name, double Value)[] values)
+	{
+		var sum = new AttributeSum();
+		foreach (var (name, value) in values)
+			sum.Add(name, value);
+		return sum;
+	}
+
 	[Fact]
 	public void PlayerInfo_CalculatedStrength_WithoutBonuses_ReturnsBaseValue()
 	{
@@ -753,7 +762,7 @@ public class PlayerCollectionProviderTests
 		// Arrange
 		var playerInfo = CreateTestPlayerInfo();
 		playerInfo.BaseStrength = 50;
-		playerInfo.GearBonus = new PlayerStatBonus { StrengthBonus = 10 };
+		playerInfo.GearBonus = Bonus(("characterStrength", 10));
 
 		// Act
 		var result = playerInfo.CalculatedStrength;
@@ -768,7 +777,7 @@ public class PlayerCollectionProviderTests
 		// Arrange
 		var playerInfo = CreateTestPlayerInfo();
 		playerInfo.BaseStrength = 50;
-		playerInfo.GearBonus = new PlayerStatBonus { StrengthBonus = 10, StrengthModifier = 50 };
+		playerInfo.GearBonus = Bonus(("characterStrength", 10), ("characterStrengthModifier", 50));
 
 		// Act
 		var result = playerInfo.CalculatedStrength;
@@ -812,7 +821,7 @@ public class PlayerCollectionProviderTests
 		// Arrange
 		var playerInfo = CreateTestPlayerInfo();
 		playerInfo.BaseHealth = 100;
-		playerInfo.SkillBonus = new PlayerStatBonus { HealthBonus = 20 };
+		playerInfo.SkillBonus = Bonus(("characterLife", 20));
 
 		// Act
 		var result = playerInfo.CalculatedHealth;
@@ -827,8 +836,8 @@ public class PlayerCollectionProviderTests
 		// Arrange
 		var playerInfo = CreateTestPlayerInfo();
 		playerInfo.BaseMana = 50;
-		playerInfo.SkillBonus = new PlayerStatBonus { ManaBonus = 10 };
-		playerInfo.GearBonus = new PlayerStatBonus { ManaBonus = 5 };
+		playerInfo.SkillBonus = Bonus(("characterMana", 10));
+		playerInfo.GearBonus = Bonus(("characterMana", 5));
 
 		// Act
 		var result = playerInfo.CalculatedMana;
@@ -863,124 +872,6 @@ public class PlayerCollectionProviderTests
 
 		// Assert
 		playerInfo.MasteriesAllowed_OldValue.Should().Be(3);
-	}
-
-	[Fact]
-	public void PlayerCollection_ClearPlayerGearBonuses_WithGearBonus_ResetsValues()
-	{
-		// Arrange
-		var pc = new PlayerCollection("test", "player.chr");
-		pc.PlayerInfo = CreateTestPlayerInfo();
-		pc.PlayerInfo.GearBonus = new PlayerStatBonus
-		{
-			StrengthBonus = 10,
-			StrengthModifier = 5
-		};
-
-		// Act
-		pc.ClearPlayerGearBonuses();
-
-		// Assert
-		pc.PlayerInfo.GearBonus.StrengthBonus.Should().Be(0);
-		pc.PlayerInfo.GearBonus.StrengthModifier.Should().Be(0);
-	}
-
-	[Fact]
-	public void PlayerCollection_ClearPlayerSkillBonuses_WithSkillBonus_ResetsValues()
-	{
-		// Arrange
-		var pc = new PlayerCollection("test", "player.chr");
-		pc.PlayerInfo = CreateTestPlayerInfo();
-		pc.PlayerInfo.SkillBonus = new PlayerStatBonus
-		{
-			DexterityBonus = 8,
-			DexterityModifier = 3
-		};
-
-		// Act
-		pc.ClearPlayerSkillBonuses();
-
-		// Assert
-		pc.PlayerInfo.SkillBonus.DexterityBonus.Should().Be(0);
-		pc.PlayerInfo.SkillBonus.DexterityModifier.Should().Be(0);
-	}
-
-	[Fact]
-	public void PlayerCollection_UpdatePlayerGearBonuses_AddsToExisting()
-	{
-		// Arrange
-		var pc = new PlayerCollection("test", "player.chr");
-		pc.PlayerInfo = CreateTestPlayerInfo();
-		pc.PlayerInfo.GearBonus = new PlayerStatBonus { StrengthBonus = 5 };
-		var statBonusVariables = new SortedList<string, int>
-		{
-			{ "CHARACTERSTRENGTH", 10 }
-		};
-
-		// Act
-		pc.UpdatePlayerGearBonuses(statBonusVariables);
-
-		// Assert
-		pc.PlayerInfo.GearBonus.StrengthBonus.Should().Be(15);
-	}
-
-	[Fact]
-	public void PlayerCollection_UpdatePlayerSkillBonuses_AddsToExisting()
-	{
-		// Arrange
-		var pc = new PlayerCollection("test", "player.chr");
-		pc.PlayerInfo = CreateTestPlayerInfo();
-		pc.PlayerInfo.SkillBonus = new PlayerStatBonus { IntelligenceBonus = 3 };
-		var skillStatBonusVariables = new SortedList<string, int>
-		{
-			{ "CHARACTERINTELLIGENCE", 7 }
-		};
-
-		// Act
-		pc.UpdatePlayerSkillBonuses(skillStatBonusVariables);
-
-		// Assert
-		pc.PlayerInfo.SkillBonus.IntelligenceBonus.Should().Be(10);
-	}
-
-	[Fact]
-	public void PlayerCollection_UpdatePlayerGearBonuses_CreatesGearBonusIfNull()
-	{
-		// Arrange
-		var pc = new PlayerCollection("test", "player.chr");
-		pc.PlayerInfo = CreateTestPlayerInfo();
-		pc.PlayerInfo.GearBonus.Should().BeNull();
-		var statBonusVariables = new SortedList<string, int>
-		{
-			{ "CHARACTERLIFE", 25 }
-		};
-
-		// Act
-		pc.UpdatePlayerGearBonuses(statBonusVariables);
-
-		// Assert
-		pc.PlayerInfo.GearBonus.Should().NotBeNull();
-		pc.PlayerInfo.GearBonus.HealthBonus.Should().Be(25);
-	}
-
-	[Fact]
-	public void PlayerCollection_UpdatePlayerSkillBonuses_CreatesSkillBonusIfNull()
-	{
-		// Arrange
-		var pc = new PlayerCollection("test", "player.chr");
-		pc.PlayerInfo = CreateTestPlayerInfo();
-		pc.PlayerInfo.SkillBonus.Should().BeNull();
-		var skillStatBonusVariables = new SortedList<string, int>
-		{
-			{ "CHARACTERMANA", 15 }
-		};
-
-		// Act
-		pc.UpdatePlayerSkillBonuses(skillStatBonusVariables);
-
-		// Assert
-		pc.PlayerInfo.SkillBonus.Should().NotBeNull();
-		pc.PlayerInfo.SkillBonus.ManaBonus.Should().Be(15);
 	}
 
 	[Fact]

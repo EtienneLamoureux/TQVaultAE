@@ -128,18 +128,14 @@ public interface IPlayerService
 	bool IsSuitableForCurrentPlayer(Item item);
 
 	/// <summary>
-	/// Recomputes the gear stat bonuses of <paramref name="player"/> from its equipment.
-	/// Weapons in the secondary weapon slots do not count.
+	/// Recomputes the bonuses behind the attributes of <paramref name="player"/> (<see cref="PlayerInfo.CalculatedStrength"/>
+	/// and the others, which the item requirements are checked against) with the sums of the statistics panel: the
+	/// equipped items and their sets (<see cref="ICharacterStatsService.GetGearAttributes"/>), the learned skills at
+	/// their level with the items' "+skill" levels and the skills the items grant, no buff. Does nothing for a player
+	/// without information.
 	/// </summary>
 	/// <param name="player">Player to update.</param>
 	/// <param name="equipment">The equipped items.</param>
 	/// <param name="ignored">An item left out, as the item being dragged.</param>
-	void UpdateGearStatBonuses(PlayerCollection player, IEnumerable<Item> equipment, Item? ignored = null);
-
-	/// <summary>
-	/// Recomputes the skill stat bonuses of <paramref name="player"/> from the records of its skills and their levels.
-	/// Does nothing for a player without information.
-	/// </summary>
-	/// <param name="player">Player to update.</param>
-	void UpdateSkillStatBonuses(PlayerCollection player);
+	void UpdateAttributeBonuses(PlayerCollection player, IEnumerable<Item> equipment, Item? ignored = null);
 }

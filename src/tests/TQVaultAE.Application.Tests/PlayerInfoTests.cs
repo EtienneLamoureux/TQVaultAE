@@ -24,6 +24,16 @@ public class PlayerInfoTests
 
 	#region Stat Calculation Tests
 
+	/// <summary>The sums of the statistics panel with the given variables.</summary>
+	private static AttributeSum Bonus(params (string Name, double Value)[] values)
+	{
+		var sum = new AttributeSum();
+		foreach (var (name, value) in values)
+			sum.Add(name, value);
+		return sum;
+	}
+
+
 	[Fact]
 	public void CalculatedStrength_WithNoBonuses_ReturnsBaseStrength()
 	{
@@ -44,7 +54,7 @@ public class PlayerInfoTests
 	{
 		// Arrange
 		_playerInfo.BaseStrength = 50;
-		_playerInfo.SkillBonus = new PlayerStatBonus { StrengthBonus = 10 };
+		_playerInfo.SkillBonus = Bonus(("characterStrength", 10));
 		_playerInfo.GearBonus = null;
 
 		// Act
@@ -60,7 +70,7 @@ public class PlayerInfoTests
 		// Arrange
 		_playerInfo.BaseStrength = 50;
 		_playerInfo.SkillBonus = null;
-		_playerInfo.GearBonus = new PlayerStatBonus { StrengthBonus = 15 };
+		_playerInfo.GearBonus = Bonus(("characterStrength", 15));
 
 		// Act
 		var result = _playerInfo.CalculatedStrength;
@@ -74,8 +84,8 @@ public class PlayerInfoTests
 	{
 		// Arrange
 		_playerInfo.BaseStrength = 50;
-		_playerInfo.SkillBonus = new PlayerStatBonus { StrengthBonus = 10 };
-		_playerInfo.GearBonus = new PlayerStatBonus { StrengthBonus = 15 };
+		_playerInfo.SkillBonus = Bonus(("characterStrength", 10));
+		_playerInfo.GearBonus = Bonus(("characterStrength", 15));
 
 		// Act
 		var result = _playerInfo.CalculatedStrength;
@@ -90,7 +100,7 @@ public class PlayerInfoTests
 		// Arrange
 		_playerInfo.BaseStrength = 100;
 		_playerInfo.SkillBonus = null;
-		_playerInfo.GearBonus = new PlayerStatBonus { StrengthModifier = 50 }; // +50% modifier
+		_playerInfo.GearBonus = Bonus(("characterStrengthModifier", 50)); // +50% modifier
 
 		// Act
 		var result = _playerInfo.CalculatedStrength;
@@ -106,7 +116,7 @@ public class PlayerInfoTests
 		// Arrange
 		_playerInfo.BaseStrength = 100;
 		_playerInfo.SkillBonus = null;
-		_playerInfo.GearBonus = new PlayerStatBonus { StrengthModifier = -20 }; // -20% modifier
+		_playerInfo.GearBonus = Bonus(("characterStrengthModifier", -20)); // -20% modifier
 
 		// Act
 		var result = _playerInfo.CalculatedStrength;
@@ -114,6 +124,21 @@ public class PlayerInfoTests
 		// Assert
 		// (100 + 0 + 0) * (100 + 0 - 20) / 100 = 100 * 0.8 = 80
 		result.Should().Be(80);
+	}
+
+	[Fact]
+	public void CalculatedStrength_UnroundedBonuses_AreTruncatedAsTheGameShows()
+	{
+		// A mastery's 13.5 strength on 58 shows 71 in the game, with 0.6 of an item 72.
+		_playerInfo.BaseStrength = 58;
+		_playerInfo.SkillBonus = Bonus(("characterStrength", 13.5));
+		_playerInfo.GearBonus = null;
+
+		_playerInfo.CalculatedStrength.Should().Be(71);
+
+		_playerInfo.GearBonus = Bonus(("characterStrength", 0.6));
+
+		_playerInfo.CalculatedStrength.Should().Be(72);
 	}
 
 	[Fact]
@@ -181,8 +206,8 @@ public class PlayerInfoTests
 	{
 		// Arrange
 		_playerInfo.BaseHealth = 100;
-		_playerInfo.SkillBonus = new PlayerStatBonus { HealthBonus = 50, HealthModifier = 25 };
-		_playerInfo.GearBonus = new PlayerStatBonus { HealthBonus = 30 };
+		_playerInfo.SkillBonus = Bonus(("characterLife", 50), ("characterLifeModifier", 25));
+		_playerInfo.GearBonus = Bonus(("characterLife", 30));
 
 		// Act
 		var result = _playerInfo.CalculatedHealth;
@@ -197,8 +222,8 @@ public class PlayerInfoTests
 	{
 		// Arrange
 		_playerInfo.BaseMana = 100;
-		_playerInfo.SkillBonus = new PlayerStatBonus { ManaBonus = 20, ManaModifier = 50 };
-		_playerInfo.GearBonus = new PlayerStatBonus { ManaModifier = 10 };
+		_playerInfo.SkillBonus = Bonus(("characterMana", 20), ("characterManaModifier", 50));
+		_playerInfo.GearBonus = Bonus(("characterManaModifier", 10));
 
 		// Act
 		var result = _playerInfo.CalculatedMana;

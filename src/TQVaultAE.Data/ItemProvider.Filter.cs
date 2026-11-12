@@ -145,20 +145,6 @@ public partial class ItemProvider
 			"STRENGTHREQUIREMENT",
 		}.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
 
-	internal static readonly FrozenSet<string> statBonusTags = new[]
-	{
-			"CHARACTERSTRENGTH",
-			"CHARACTERSTRENGTHMODIFIER",
-			"CHARACTERDEXTERITY",
-			"CHARACTERDEXTERITYMODIFIER",
-			"CHARACTERINTELLIGENCE",
-			"CHARACTERINTELLIGENCEMODIFIER",
-			"CHARACTERLIFE",
-			"CHARACTERLIFEMODIFIER",
-			"CHARACTERMANA",
-			"CHARACTERMANAMODIFIER",
-		}.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
-
 	internal static readonly FrozenSet<string> durationIndependentEffects = new[]
 	{
 			"OFFENSIVESLOWTOTALSPEED",
@@ -194,13 +180,6 @@ public partial class ItemProvider
 	/// <returns>true if key is present in this list</returns>
 	public bool FilterRequirements(string key)
 		=> requirementTags.Contains(key);
-	/// <summary>
-	/// Indicates whether the key is a character stat boosting attribute
-	/// </summary>
-	/// <param name="key">string containing the key that is being checked</param>
-	/// <returns>True if the key is a stat boosting attrbute.</returns>
-	public bool IsStatBonus(string key)
-		=> statBonusTags.Contains(key);
 	/// <summary>
 	/// Gets s string containing the prefix of the item class for use in the requirements equation.
 	/// </summary>
@@ -257,38 +236,6 @@ public partial class ItemProvider
 		}
 
 		return true;
-	}
-	/// <summary>
-	/// Gets the stat bonuses for a database record.
-	/// </summary>
-	/// <param name="statBonuses">SortedList of stat bonuses</param>
-	/// <param name="record">database record</param>
-	/// <param name="statLevel">optional level if there can be multiple values</param>
-	public void GetStatBonusesFromRecord(SortedList<string, int> statBonuses, DBRecordCollection? record, int statLevel = 0)
-	{
-		if (record is null || statBonuses is null)
-			return;
-
-		// Some entries can have multiple values, but the value needs to be adjusted for 0 based lookups.
-		statLevel = statLevel < 1 ? 0 : statLevel - 1;
-
-		foreach (Variable variable in record)
-		{
-			if (FilterValue(variable, false) || !IsStatBonus(variable.Name) || statLevel >= variable.NumberOfValues)
-				continue;
-
-			string key = variable.Name.ToUpperInvariant();
-			int value = variable.GetInt32(statLevel);
-
-			// Update the value if it already exists.
-			if (statBonuses.TryGetValue(key, out int value1))
-			{
-				value += value1;
-				statBonuses.Remove(key);
-			}
-
-			statBonuses.Add(key, value);
-		}
 	}
 	/// <summary>
 	/// Checks to see if the id ends with .dbr and adds it if not.

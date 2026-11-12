@@ -75,7 +75,8 @@ public sealed class StashMoveSearchTests : IDisposable
 			, new Mock<IGameFileService>().Object, gamePaths.Object, new Mock<ITranslationService>().Object
 			, new Mock<ITQDataService>().Object, new Mock<ITagService>().Object, new Mock<IFileIO>().Object
 			, new PathIO(), new UserSettings(), new Mock<IDirectoryIO>().Object
-			, new Mock<IItemProvider>().Object, new Mock<IDatabase>().Object, new Mock<IGameMapService>().Object);
+			, new Mock<IItemProvider>().Object, new Mock<IDatabase>().Object, new Mock<IGameMapService>().Object
+			, new Mock<ICharacterStatsService>().Object, new Mock<ICharacterEditService>().Object);
 
 		var pathIO = new Mock<IPathIO>();
 		pathIO.Setup(x => x.GetFileName("""C:\Saves\_HeroB""")).Returns("_HeroB");

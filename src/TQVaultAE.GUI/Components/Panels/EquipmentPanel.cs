@@ -58,7 +58,7 @@ public partial class EquipmentPanel : SackPanel, IScalingControl
 	#region EquipmentPanel Public Methods
 
 	/// <summary>
-	/// Calculates the stat bonuses for the equipped gear and updates the player
+	/// Calculates the attribute bonuses of the equipped gear and the skills and updates the player
 	/// </summary>
 	public void GetGearStatBonus()
 	{
@@ -70,7 +70,7 @@ public partial class EquipmentPanel : SackPanel, IScalingControl
 			return;
 
 		// The item being dragged does not count.
-		this.Services.PlayerService.UpdateGearStatBonuses(currentPlayer, this.Sack, this.DragInfo.Item);
+		this.Services.PlayerService.UpdateAttributeBonuses(currentPlayer, this.Sack, this.DragInfo.Item);
 
 		// Let the container panel know that the calculation has changed.
 		OnEquipmentChanged?.Invoke(this, new SackPanelEventArgs(null, null));

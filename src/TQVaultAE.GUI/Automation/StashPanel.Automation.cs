@@ -16,6 +16,9 @@ public partial class StashPanel
 	/// </summary>
 	internal TQVaultAE.GUI.Components.Character.CharacterStatsPanel? AutomationPlayerStatsPanel => this._statsPanel;
 
+	/// <summary>Gets the information of the character shown, whose attributes the item requirements are checked against.</summary>
+	internal TQVaultAE.Application.PlayerInfo? AutomationPlayerInfo => this.Player?.PlayerInfo;
+
 	/// <summary>Gets the Edit button under the statistics panel; null before the first character is shown.</summary>
 	internal Button? AutomationEditButton => this._editButton;
 

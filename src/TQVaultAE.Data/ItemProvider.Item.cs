@@ -46,34 +46,6 @@ public partial class ItemProvider
 	}
 
 	/// <summary>
-	/// Gets the character stat bonuses for an item
-	/// </summary>
-	/// <param name="item">Item that needs stat bonuses looked up</param>
-	/// <returns>Sorted List containing all of the stat bonuses</returns>
-	public SortedList<string, int> GetStatBonuses(Item item)
-	{
-		using var modScope = this.ModScope(item);
-		var statBonuses = new SortedList<string, int>();
-
-		if (item.baseItemInfo is not null)
-			GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(item.BaseItemId));
-
-		if (item.prefixInfo is not null)
-			GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(item.prefixID));
-
-		if (item.suffixInfo is not null)
-			GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(item.suffixID));
-
-		if (item.RelicInfo is not null)
-			GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(item.relicID), item.RelicInfo.CompletedRelicLevel);
-
-		if (item.Relic2Info is not null)
-			GetStatBonusesFromRecord(statBonuses, Database.GetRecordFromFile(item.relic2ID), item.Relic2Info.CompletedRelicLevel);
-
-		return statBonuses;
-	}
-
-	/// <summary>
 	/// Gets the itemID's of all the items in the set.
 	/// </summary>
 	/// <returns>Returns <see cref="SetItemInfo"/> containing the remaining set items or null if the item is not part of a set.</returns>

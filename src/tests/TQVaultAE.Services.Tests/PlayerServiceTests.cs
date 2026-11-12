@@ -36,6 +36,8 @@ public class PlayerServiceTests
 	private readonly Mock<IItemProvider> _mockItemProvider;
 	private readonly Mock<IDatabase> _mockDatabase;
 	private readonly Mock<IGameMapService> _mockGameMapService = new();
+	private readonly Mock<ICharacterStatsService> _mockStats = new();
+	private readonly Mock<ICharacterEditService> _mockCharacterEdit = new();
 	private readonly PlayerService _playerService;
 
 	/// <summary>
@@ -97,7 +99,9 @@ public class PlayerServiceTests
 			_mockDirectoryIO.Object,
 			_mockItemProvider.Object,
 			_mockDatabase.Object,
-			_mockGameMapService.Object
+			_mockGameMapService.Object,
+			_mockStats.Object,
+			_mockCharacterEdit.Object
 		);
 	}
 
@@ -960,70 +964,75 @@ public class PlayerServiceTests
 	public void IsSuitableForCurrentPlayer_WithoutCurrentPlayer_AcceptsEveryItem()
 		=> _playerService.IsSuitableForCurrentPlayer(ImmortalThroneSword()).Should().BeTrue();
 
-	[Fact]
-	public void UpdateGearStatBonuses_SkipsTheSecondaryWeaponsAndTheIgnoredItem()
+	/// <summary>
+	/// Sets the statistics sums up: each item and each sum gives the strength it is asked for, and records what was summed.
+	/// </summary>
+	private List<IEnumerable<Item>> SetupAttributeSums(double gear, double skills, double itemSkills, double gearPercent = 0)
 	{
-		var player = PlayerWith();
-		player.PlayerInfo!.GearBonus = new PlayerStatBonus { StrengthBonus = 50 };
-		var ring = new Item { PositionX = 0, PositionY = 0 };
-		var primary = new Item { PositionX = Item.WeaponSlotIndicator, PositionY = 0 };
-		var secondary = new Item { PositionX = Item.WeaponSlotIndicator, PositionY = 2 };
-		var secondaryShield = new Item { PositionX = Item.WeaponSlotIndicator, PositionY = 3 };
-		var dragged = new Item { PositionX = 1, PositionY = 0 };
-		_mockItemProvider.Setup(x => x.GetStatBonuses(It.IsAny<Item>()))
-			.Returns(() => new SortedList<string, int> { ["CHARACTERSTRENGTH"] = 1 });
+		AttributeSum Strength(double flat, double percent = 0)
+		{
+			var sum = new AttributeSum();
+			sum.Add("characterStrength", flat);
+			sum.Add("characterStrengthModifier", percent);
+			return sum;
+		}
 
-		_playerService.UpdateGearStatBonuses(player, [ring, primary, secondary, secondaryShield, dragged], dragged);
-
-		// The previous bonus is cleared, then the ring and the primary weapon count.
-		player.PlayerInfo.GearBonus.StrengthBonus.Should().Be(2);
-		_mockItemProvider.Verify(x => x.GetStatBonuses(secondary), Times.Never);
-		_mockItemProvider.Verify(x => x.GetStatBonuses(secondaryShield), Times.Never);
-		_mockItemProvider.Verify(x => x.GetStatBonuses(dragged), Times.Never);
+		var summed = new List<IEnumerable<Item>>();
+		_mockCharacterEdit.Setup(x => x.CreateSkillEditor(It.IsAny<PlayerInfo>()))
+			.Returns((PlayerInfo info) => new CharacterSkillEditor(info.SkillRecordList, info.MasteriesAllowed, info.SkillPoints, _ => null));
+		_mockCharacterEdit.Setup(x => x.GetGearSkillAugments(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>())).Returns([]);
+		_mockStats.Setup(x => x.GetGearAttributes(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>()))
+			.Returns((IEnumerable<Item> items, bool _) =>
+			{
+				summed.Add(items);
+				return Strength(gear, gearPercent);
+			});
+		_mockStats.Setup(x => x.GetSkillAttributes(It.IsAny<IEnumerable<SkillRecord>>(), It.IsAny<IReadOnlyList<SkillAugment>>(), It.IsAny<IReadOnlyList<MasteryTree>>(), false))
+			.Returns(() => Strength(skills));
+		_mockStats.Setup(x => x.GetItemSkillAttributes(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>(), false))
+			.Returns(() => Strength(itemSkills));
+		return summed;
 	}
 
 	[Fact]
-	public void UpdateGearStatBonuses_SecondSetInHand_SkipsTheFirstSet()
+	public void UpdateAttributeBonuses_SumsLikeTheStatisticsPanel_WithoutTheIgnoredItem()
+	{
+		// Arrange: base 100, gear +10.5 and +10 %, skills +3, a granted passive +2: (100 + 15.5) × 1.1 = 127.05
+		var player = PlayerWith(strength: 100);
+		var ring = new Item { PositionX = 0, PositionY = 0 };
+		var dragged = new Item { PositionX = 1, PositionY = 0 };
+		var summed = this.SetupAttributeSums(gear: 10.5, skills: 3, itemSkills: 2, gearPercent: 10);
+
+		// Act
+		_playerService.UpdateAttributeBonuses(player, [ring, dragged], dragged);
+
+		// Assert: truncated as the game shows it
+		player.PlayerInfo!.CalculatedStrength.Should().Be(127);
+		summed.Should().ContainSingle().Which.Should().Equal(ring);
+		_mockCharacterEdit.Verify(x => x.GetGearSkillAugments(It.Is<IEnumerable<Item>>(items => !items.Contains(dragged)), false));
+	}
+
+	[Fact]
+	public void UpdateAttributeBonuses_SecondSetInHand_IsPassedOn()
 	{
 		var player = PlayerWith();
 		player.UseAlternate = true;
-		var first = new Item { PositionX = Item.WeaponSlotIndicator, PositionY = 0 };
-		var second = new Item { PositionX = Item.WeaponSlotIndicator, PositionY = 2 };
-		_mockItemProvider.Setup(x => x.GetStatBonuses(It.IsAny<Item>()))
-			.Returns(() => new SortedList<string, int> { ["CHARACTERSTRENGTH"] = 1 });
+		this.SetupAttributeSums(gear: 1, skills: 0, itemSkills: 0);
 
-		_playerService.UpdateGearStatBonuses(player, [first, second]);
+		_playerService.UpdateAttributeBonuses(player, []);
 
-		_mockItemProvider.Verify(x => x.GetStatBonuses(first), Times.Never);
-		_mockItemProvider.Verify(x => x.GetStatBonuses(second), Times.Once);
+		_mockStats.Verify(x => x.GetGearAttributes(It.IsAny<IEnumerable<Item>>(), true));
+		_mockStats.Verify(x => x.GetItemSkillAttributes(It.IsAny<IEnumerable<Item>>(), true, false));
 	}
 
 	[Fact]
-	public void UpdateSkillStatBonuses_SumsTheBonusesOfEverySkillAtItsLevel()
-	{
-		var player = PlayerWith();
-		player.PlayerInfo!.SkillBonus = new PlayerStatBonus { StrengthBonus = 50 };
-		player.PlayerInfo.SkillRecordList.Add(new SkillRecord { skillName = """records\skills\a.dbr""", skillLevel = 2 });
-		player.PlayerInfo.SkillRecordList.Add(new SkillRecord { skillName = """records\skills\b.dbr""", skillLevel = 3 });
-		_mockItemProvider
-			.Setup(x => x.GetStatBonusesFromRecord(It.IsAny<SortedList<string, int>>(), It.IsAny<DBRecordCollection?>(), It.IsAny<int>()))
-			.Callback((SortedList<string, int> bonuses, DBRecordCollection? _, int level)
-				=> bonuses["CHARACTERSTRENGTH"] = bonuses.GetValueOrDefault("CHARACTERSTRENGTH") + level);
-
-		_playerService.UpdateSkillStatBonuses(player);
-
-		player.PlayerInfo.SkillBonus.StrengthBonus.Should().Be(5);
-		_mockDatabase.Verify(x => x.GetRecordFromFile(It.IsAny<RecordId>()), Times.Exactly(2));
-	}
-
-	[Fact]
-	public void UpdateSkillStatBonuses_PlayerWithoutInformation_DoesNothing()
+	public void UpdateAttributeBonuses_PlayerWithoutInformation_DoesNothing()
 	{
 		var player = new PlayerCollection("test", "test.chr") { PlayerInfo = null };
 
-		_playerService.UpdateSkillStatBonuses(player);
+		_playerService.UpdateAttributeBonuses(player, []);
 
-		_mockDatabase.Verify(x => x.GetRecordFromFile(It.IsAny<RecordId>()), Times.Never);
+		_mockStats.VerifyNoOtherCalls();
 	}
 
 	#endregion

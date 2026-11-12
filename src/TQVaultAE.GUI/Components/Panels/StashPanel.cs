@@ -492,7 +492,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		if (this.currentBag == BagIdConstants.BAGID_EQUIPMENTPANEL && this.Player is not null)
 		{
 			this.equipmentPanel.GetGearStatBonus();
-			GetSkillStatBonus();
 		}
 
 		// Assign sacks to button

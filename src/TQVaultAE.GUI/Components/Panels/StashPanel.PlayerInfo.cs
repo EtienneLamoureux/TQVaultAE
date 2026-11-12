@@ -28,12 +28,12 @@ using TQVaultAE.GUI.Components.Character;
 public partial class StashPanel
 {
 	/// <summary>
-	/// Calculates the stat bonuses for the skills and updates the player
+	/// Calculates the attribute bonuses of the gear and the skills and updates the player (after an edit of its skills).
 	/// </summary>
 	private void GetSkillStatBonus()
 	{
 		if (this.Player is not null)
-			this.Services.PlayerService.UpdateSkillStatBonuses(this.Player);
+			this.Services.PlayerService.UpdateAttributeBonuses(this.Player, this.Player.EquipmentSack ?? Enumerable.Empty<Item>());
 	}
 
 	/// <summary>The game's character window statistics (tabs I, II, III), read only, right of the equipment.</summary>

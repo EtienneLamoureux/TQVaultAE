@@ -157,54 +157,6 @@ public class ItemProviderRequirementsTests : ItemProviderTextTestBase
 
 	#endregion
 
-	#region Stat bonuses
-
-	[Fact]
-	public void StatBonuses_AddTheBonusesOfTheBaseItemAndItsAffixes()
-	{
-		var item = this.CreateItem("ArmorJewelry_Ring", Int("characterStrength", 10), Int("characterLife", 40), Int("offensivePhysicalMin", 5));
-		this.AddPrefix(item, Int("characterStrength", 5));
-		this.CreateRecord("""records\test\suffix.dbr""", "LootRandomizer", Float("characterDexterity", 7f));
-		item.suffixID = RecordId.Create("""records\test\suffix.dbr""");
-		item.suffixInfo = this.MockDatabase.Object.GetInfo(item.suffixID);
-
-		var bonuses = this.Provider.GetStatBonuses(item);
-
-		bonuses.Should().BeEquivalentTo(new Dictionary<string, int>
-		{
-			["CHARACTERSTRENGTH"] = 15,
-			["CHARACTERLIFE"] = 40,
-			["CHARACTERDEXTERITY"] = 7,
-		});
-	}
-
-	[Fact]
-	public void StatBonusesOfARelic_UseTheValueOfItsCompletionLevel()
-	{
-		var item = this.CreateItem("WeaponMelee_Sword");
-		this.CreateRecord("""records\item\relics\test_relic.dbr""", "ItemRelic",
-			Ints("characterLife", 10, 20, 30), Ints("characterMana", 5, 10), Int("completedRelicLevel", 3));
-		item.relicID = RecordId.Create("""records\item\relics\test_relic.dbr""");
-		item.RelicInfo = this.MockDatabase.Object.GetInfo(item.relicID);
-
-		var bonuses = this.Provider.GetStatBonuses(item);
-
-		bonuses.Should().ContainKey("CHARACTERLIFE").WhoseValue.Should().Be(30);
-		bonuses.Should().NotContainKey("CHARACTERMANA", "it has no value for level 3");
-	}
-
-	[Fact]
-	public void GetStatBonusesFromRecord_IgnoresAMissingRecord()
-	{
-		var bonuses = new SortedList<string, int>();
-
-		this.Provider.GetStatBonusesFromRecord(bonuses, null);
-
-		bonuses.Should().BeEmpty();
-	}
-
-	#endregion
-
 	#region Sets
 
 	[Fact]

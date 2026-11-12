@@ -96,36 +96,6 @@ public class ItemProviderTests
 
 	#endregion
 
-	#region IsStatBonus Tests
-
-	[Theory]
-	[InlineData("CHARACTERSTRENGTH", true)]
-	[InlineData("CHARACTERSTRENGTHMODIFIER", true)]
-	[InlineData("CHARACTERDEXTERITY", true)]
-	[InlineData("CHARACTERDEXTERITYMODIFIER", true)]
-	[InlineData("CHARACTERINTELLIGENCE", true)]
-	[InlineData("CHARACTERINTELLIGENCEMODIFIER", true)]
-	[InlineData("CHARACTERLIFE", true)]
-	[InlineData("CHARACTERLIFEMODIFIER", true)]
-	[InlineData("CHARACTERMANA", true)]
-	[InlineData("CHARACTERMANAMODIFIER", true)]
-	[InlineData("characterstrength", true)] // lowercase
-	[InlineData("characterManaModifier", true)] // camel case, as in the game records
-	[InlineData("CharacterLife", true)] // mixed case
-	[InlineData("CHARACTERLIF", false)] // shorter than a known tag
-	[InlineData("DAMAGE", false)] // non stat bonus
-	[InlineData("INVENTORYICON", false)] // non stat bonus
-	public void IsStatBonus_ReturnsCorrectResult(string statTag, bool expected)
-	{
-		// Act
-		var result = _provider.IsStatBonus(statTag);
-
-		// Assert
-		result.Should().Be(expected);
-	}
-
-	#endregion
-
 	#region Tag Lists Tests
 
 	[Theory]

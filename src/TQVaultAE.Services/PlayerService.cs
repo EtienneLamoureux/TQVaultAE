@@ -29,6 +29,8 @@ public class PlayerService(
 	, IItemProvider itemProvider
 	, IDatabase database
 	, IGameMapService gameMapService
+	, ICharacterStatsService characterStatsService
+	, ICharacterEditService characterEditService
 	, IItemModService? itemModService = null
 ) : IPlayerService
 {
@@ -50,6 +52,8 @@ public class PlayerService(
 	private readonly IItemProvider ItemProvider = itemProvider;
 	private readonly IDatabase Database = database;
 	private readonly IGameMapService GameMapService = gameMapService;
+	private readonly ICharacterStatsService CharacterStatsService = characterStatsService;
+	private readonly ICharacterEditService CharacterEditService = characterEditService;
 
 	/// <summary>
 	/// Loads a player and their stash.
@@ -407,36 +411,19 @@ public class PlayerService(
 	}
 
 	/// <inheritdoc/>
-	public void UpdateGearStatBonuses(PlayerCollection player, IEnumerable<Item> equipment, Item? ignored = null)
+	public void UpdateAttributeBonuses(PlayerCollection player, IEnumerable<Item> equipment, Item? ignored = null)
 	{
-		player.ClearPlayerGearBonuses();
-
-		foreach (Item item in equipment)
-		{
-			// Ignore the item if it is being dragged
-			if (item == ignored)
-				continue;
-
-			// Skip the weapons of the set not in hand.
-			if (item.IsInInactiveWeaponSlot(player.UseAlternate))
-				continue;
-
-			player.UpdatePlayerGearBonuses(this.ItemProvider.GetStatBonuses(item));
-		}
-	}
-
-	/// <inheritdoc/>
-	public void UpdateSkillStatBonuses(PlayerCollection player)
-	{
-		if (player.PlayerInfo is null)
+		if (player.PlayerInfo is not { } info)
 			return;
 
-		var statBonuses = new SortedList<string, int>();
+		var worn = equipment.Where(item => item != ignored).ToList();
+		bool useAlternate = player.UseAlternate;
+		var trees = this.CharacterEditService.CreateSkillEditor(info).Slots.OfType<MasteryTree>().ToList();
+		var augments = this.CharacterEditService.GetGearSkillAugments(worn, useAlternate);
 
-		foreach (SkillRecord skill in player.PlayerInfo.SkillRecordList)
-			this.ItemProvider.GetStatBonusesFromRecord(statBonuses, this.Database.GetRecordFromFile(skill.skillName), skill.skillLevel);
-
-		player.ClearPlayerSkillBonuses();
-		player.UpdatePlayerSkillBonuses(statBonuses);
+		info.GearBonus = this.CharacterStatsService.GetGearAttributes(worn, useAlternate);
+		var skills = this.CharacterStatsService.GetSkillAttributes(info.SkillRecordList, augments, trees, includeBuffs: false);
+		skills.Add(this.CharacterStatsService.GetItemSkillAttributes(worn, useAlternate, includeBuffs: false));
+		info.SkillBonus = skills;
 	}
 }
