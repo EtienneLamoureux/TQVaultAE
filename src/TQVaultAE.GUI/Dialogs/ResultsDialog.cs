@@ -50,6 +50,7 @@ public partial class ResultsDialog : VaultForm
 		this.columnQuality.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 		this.columnContainerName.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 		this.columnContainerType.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+		this.columnSack.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 		this.columnLevel.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 		this.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
@@ -61,6 +62,7 @@ public partial class ResultsDialog : VaultForm
 		this.columnContainerName.HeaderText = Resources.ResultsContainer;
 		this.columnContainerType.HeaderText = Resources.ResultsContainerType;
 		this.columnQuality.HeaderText = Resources.ResultsQuality;
+		this.columnSack.HeaderText = Resources.ResultsSack;
 		this.columnLevel.HeaderText = Resources.ResultsLevel;
 
 		this.NormalizeBox = false;
@@ -211,7 +213,6 @@ public partial class ResultsDialog : VaultForm
 			{
 				this.resultsDataGridView.Rows[currentRow].Cells[0].Style.ForeColor = result.TQColor.Color();
 				this.resultsDataGridView.Rows[currentRow].Cells[1].Style.ForeColor = result.TQColor.Color();
-				this.resultsDataGridView.Rows[currentRow].Cells[4].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
 				this.resultsDataGridView.Rows[currentRow].Tag = i;
 			}
 		}

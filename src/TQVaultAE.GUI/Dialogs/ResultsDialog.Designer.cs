@@ -48,11 +48,13 @@ public partial class ResultsDialog
         System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
         System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
         System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+        System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
         this.resultsDataGridView = new System.Windows.Forms.DataGridView();
         this.columnItem = new System.Windows.Forms.DataGridViewTextBoxColumn();
         this.columnQuality = new System.Windows.Forms.DataGridViewTextBoxColumn();
         this.columnContainerName = new System.Windows.Forms.DataGridViewTextBoxColumn();
         this.columnContainerType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+        this.columnSack = new System.Windows.Forms.DataGridViewTextBoxColumn();
         this.columnLevel = new System.Windows.Forms.DataGridViewTextBoxColumn();
         ((System.ComponentModel.ISupportInitialize)(this.resultsDataGridView)).BeginInit();
         this.SuspendLayout();
@@ -81,6 +83,7 @@ public partial class ResultsDialog
         this.columnQuality,
         this.columnContainerName,
         this.columnContainerType,
+        this.columnSack,
         this.columnLevel});
         this.resultsDataGridView.GridColor = System.Drawing.Color.Khaki;
         this.resultsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -164,16 +167,32 @@ public partial class ResultsDialog
         this.columnContainerType.Name = "columnContainerType";
         this.columnContainerType.ReadOnly = true;
         this.columnContainerType.Width = 133;
-        // 
-        // columnLevel
         //
-        this.columnLevel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+        // columnSack
+        //
+        this.columnSack.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
         dataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
         dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         dataGridViewCellStyle6.ForeColor = System.Drawing.Color.White;
         dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.Gold;
         dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.Black;
-        this.columnLevel.DefaultCellStyle = dataGridViewCellStyle6;
+        this.columnSack.DefaultCellStyle = dataGridViewCellStyle6;
+        this.columnSack.HeaderText = "Bag";
+        this.columnSack.MinimumWidth = 6;
+        this.columnSack.Name = "columnSack";
+        this.columnSack.ReadOnly = true;
+        this.columnSack.Width = 60;
+        //
+        // columnLevel
+        //
+        this.columnLevel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+        dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+        dataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
+        dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        dataGridViewCellStyle7.ForeColor = System.Drawing.Color.White;
+        dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.Gold;
+        dataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.Black;
+        this.columnLevel.DefaultCellStyle = dataGridViewCellStyle7;
         this.columnLevel.HeaderText = "Level";
         this.columnLevel.MinimumWidth = 6;
         this.columnLevel.Name = "columnLevel";
@@ -214,5 +233,6 @@ public partial class ResultsDialog
 	private System.Windows.Forms.DataGridViewTextBoxColumn columnQuality;
 	private System.Windows.Forms.DataGridViewTextBoxColumn columnContainerName;
 	private System.Windows.Forms.DataGridViewTextBoxColumn columnContainerType;
+	private System.Windows.Forms.DataGridViewTextBoxColumn columnSack;
 	private System.Windows.Forms.DataGridViewTextBoxColumn columnLevel;
 }
