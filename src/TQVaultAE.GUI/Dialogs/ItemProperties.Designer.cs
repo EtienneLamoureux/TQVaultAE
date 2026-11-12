@@ -33,7 +33,7 @@ internal partial class ItemProperties
 	/// <summary>
 	/// Item Name for the header
 	/// </summary>
-	private System.Windows.Forms.Label labelItemName;
+	private ScalingLabel labelItemName;
 
 	/// <summary>
 	/// DataGridView for prefix properties
@@ -46,14 +46,14 @@ internal partial class ItemProperties
 	private DataGridViewTextBoxColumn columnPrefixProperty;
 
 	/// <summary>
-	/// Label for prefix section
+	/// Group of the prefix section, its caption the section's title
 	/// </summary>
-	private ScalingLabel labelPrefixProperties;
+	private GroupBox groupBoxPrefixProperties;
 
 	/// <summary>
-	/// Label for base item section
+	/// Group of the base item section, its caption the section's title
 	/// </summary>
-	private ScalingLabel labelBaseItemProperties;
+	private GroupBox groupBoxBaseItemProperties;
 
 	/// <summary>
 	/// Checkbox for filtering extra info
@@ -71,9 +71,9 @@ internal partial class ItemProperties
 	private DataGridViewTextBoxColumn columnSuffixProperty;
 
 	/// <summary>
-	/// Label for suffix section
+	/// Group of the suffix section, its caption the section's title
 	/// </summary>
-	private ScalingLabel labelSuffixProperties;
+	private GroupBox groupBoxSuffixProperties;
 
 	/// <summary>
 	/// Required designer variable.
@@ -104,24 +104,27 @@ internal partial class ItemProperties
 	{
 		System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ItemProperties));
 		this.ButtonOK = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
-		this.labelItemName = new System.Windows.Forms.Label();
+		this.labelItemName = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
 		this.checkBoxFilterExtraInfo = new TQVaultAE.GUI.Components.Scaling.ScalingCheckBox();
-		this.labelPrefixProperties = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
-		this.labelBaseItemProperties = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
-		this.labelSuffixProperties = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
+		this.groupBoxPrefixProperties = new System.Windows.Forms.GroupBox();
+		this.groupBoxBaseItemProperties = new System.Windows.Forms.GroupBox();
+		this.groupBoxSuffixProperties = new System.Windows.Forms.GroupBox();
 		this.dataGridViewBaseItemProperties = new System.Windows.Forms.DataGridView();
 		this.columnBaseItemProperty = new System.Windows.Forms.DataGridViewTextBoxColumn();
 		this.dataGridViewPrefixProperties = new System.Windows.Forms.DataGridView();
 		this.columnPrefixProperty = new System.Windows.Forms.DataGridViewTextBoxColumn();
 		this.dataGridViewSuffixProperties = new System.Windows.Forms.DataGridView();
 		this.columnSuffixProperty = new System.Windows.Forms.DataGridViewTextBoxColumn();
+		this.groupBoxBaseItemProperties.SuspendLayout();
+		this.groupBoxPrefixProperties.SuspendLayout();
+		this.groupBoxSuffixProperties.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)(this.dataGridViewBaseItemProperties)).BeginInit();
 		((System.ComponentModel.ISupportInitialize)(this.dataGridViewPrefixProperties)).BeginInit();
 		((System.ComponentModel.ISupportInitialize)(this.dataGridViewSuffixProperties)).BeginInit();
 		this.SuspendLayout();
-		// 
+		//
 		// ButtonOK
-		// 
+		//
 		this.ButtonOK.BackColor = System.Drawing.Color.Transparent;
 		this.ButtonOK.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ButtonOK.DownBitmap")));
 		this.ButtonOK.FlatAppearance.BorderSize = 0;
@@ -131,7 +134,7 @@ internal partial class ItemProperties
 		this.ButtonOK.Font = new System.Drawing.Font("Albertus MT Light", 12F);
 		this.ButtonOK.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 		this.ButtonOK.Image = ((System.Drawing.Image)(resources.GetObject("ButtonOK.Image")));
-		this.ButtonOK.Location = new System.Drawing.Point(781, 419);
+		this.ButtonOK.Location = new System.Drawing.Point(851, 418);
 		this.ButtonOK.Name = "ButtonOK";
 		this.ButtonOK.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ButtonOK.OverBitmap")));
 		this.ButtonOK.Size = new System.Drawing.Size(137, 30);
@@ -142,72 +145,73 @@ internal partial class ItemProperties
 		this.ButtonOK.UseCustomGraphic = true;
 		this.ButtonOK.UseVisualStyleBackColor = false;
 		this.ButtonOK.Click += new System.EventHandler(this.ButtonOK_Button_Click);
-		// 
+		//
 		// labelItemName
-		// 
-		this.labelItemName.Font = new System.Drawing.Font("Albertus MT Light", 22F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.labelItemName.Location = new System.Drawing.Point(15, 30);
-		this.labelItemName.Margin = new System.Windows.Forms.Padding(3);
-		this.labelItemName.MinimumSize = new System.Drawing.Size(23, 22);
+		//
+		this.labelItemName.AutoEllipsis = true;
+		this.labelItemName.Font = new System.Drawing.Font("Albertus MT Light", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+		this.labelItemName.Location = new System.Drawing.Point(12, 34);
 		this.labelItemName.Name = "labelItemName";
-		this.labelItemName.Size = new System.Drawing.Size(730, 39);
+		this.labelItemName.Size = new System.Drawing.Size(830, 46);
 		this.labelItemName.TabIndex = 3;
 		this.labelItemName.Text = "Item Fullname";
-		// 
+		this.labelItemName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+		this.labelItemName.UseMnemonic = false;
+		//
 		// checkBoxFilterExtraInfo
-		// 
+		//
 		this.checkBoxFilterExtraInfo.AutoSize = true;
 		this.checkBoxFilterExtraInfo.BackColor = System.Drawing.Color.Transparent;
 		this.checkBoxFilterExtraInfo.Checked = true;
 		this.checkBoxFilterExtraInfo.CheckState = System.Windows.Forms.CheckState.Checked;
 		this.checkBoxFilterExtraInfo.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-		this.checkBoxFilterExtraInfo.Location = new System.Drawing.Point(763, 42);
+		this.checkBoxFilterExtraInfo.Location = new System.Drawing.Point(862, 47);
 		this.checkBoxFilterExtraInfo.Name = "checkBoxFilterExtraInfo";
 		this.checkBoxFilterExtraInfo.Size = new System.Drawing.Size(126, 21);
 		this.checkBoxFilterExtraInfo.TabIndex = 7;
 		this.checkBoxFilterExtraInfo.Text = "Filter Extra Info";
 		this.checkBoxFilterExtraInfo.UseVisualStyleBackColor = false;
 		this.checkBoxFilterExtraInfo.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
-		// 
-		// labelPrefixProperties
-		// 
-		this.labelPrefixProperties.AutoSize = true;
-		this.labelPrefixProperties.BackColor = System.Drawing.Color.Transparent;
-		this.labelPrefixProperties.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-		this.labelPrefixProperties.Location = new System.Drawing.Point(324, 101);
-		this.labelPrefixProperties.Name = "labelPrefixProperties";
-		this.labelPrefixProperties.Size = new System.Drawing.Size(111, 17);
-		this.labelPrefixProperties.TabIndex = 5;
-		this.labelPrefixProperties.Text = "Prefix Properties";
-		// 
-		// labelBaseItemProperties
-		// 
-		this.labelBaseItemProperties.AutoSize = true;
-		this.labelBaseItemProperties.BackColor = System.Drawing.Color.Transparent;
-		this.labelBaseItemProperties.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-		this.labelBaseItemProperties.Location = new System.Drawing.Point(12, 101);
-		this.labelBaseItemProperties.Name = "labelBaseItemProperties";
-		this.labelBaseItemProperties.Size = new System.Drawing.Size(136, 17);
-		this.labelBaseItemProperties.TabIndex = 6;
-		this.labelBaseItemProperties.Text = "Base Item Properties";
-		// 
-		// labelSuffixProperties
-		// 
-		this.labelSuffixProperties.AutoSize = true;
-		this.labelSuffixProperties.BackColor = System.Drawing.Color.Transparent;
-		this.labelSuffixProperties.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-		this.labelSuffixProperties.Location = new System.Drawing.Point(655, 101);
-		this.labelSuffixProperties.Name = "labelSuffixProperties";
-		this.labelSuffixProperties.Size = new System.Drawing.Size(111, 17);
-		this.labelSuffixProperties.TabIndex = 9;
-		this.labelSuffixProperties.Text = "Suffix Properties";
-		// 
+		//
+		// groupBoxBaseItemProperties
+		//
+		this.groupBoxBaseItemProperties.Controls.Add(this.dataGridViewBaseItemProperties);
+		this.groupBoxBaseItemProperties.ForeColor = System.Drawing.Color.Gold;
+		this.groupBoxBaseItemProperties.Location = new System.Drawing.Point(12, 90);
+		this.groupBoxBaseItemProperties.Name = "groupBoxBaseItemProperties";
+		this.groupBoxBaseItemProperties.Size = new System.Drawing.Size(317, 316);
+		this.groupBoxBaseItemProperties.TabIndex = 6;
+		this.groupBoxBaseItemProperties.TabStop = false;
+		this.groupBoxBaseItemProperties.Text = "Base Item Properties";
+		//
+		// groupBoxPrefixProperties
+		//
+		this.groupBoxPrefixProperties.Controls.Add(this.dataGridViewPrefixProperties);
+		this.groupBoxPrefixProperties.ForeColor = System.Drawing.Color.Gold;
+		this.groupBoxPrefixProperties.Location = new System.Drawing.Point(341, 90);
+		this.groupBoxPrefixProperties.Name = "groupBoxPrefixProperties";
+		this.groupBoxPrefixProperties.Size = new System.Drawing.Size(317, 316);
+		this.groupBoxPrefixProperties.TabIndex = 5;
+		this.groupBoxPrefixProperties.TabStop = false;
+		this.groupBoxPrefixProperties.Text = "Prefix Properties";
+		//
+		// groupBoxSuffixProperties
+		//
+		this.groupBoxSuffixProperties.Controls.Add(this.dataGridViewSuffixProperties);
+		this.groupBoxSuffixProperties.ForeColor = System.Drawing.Color.Gold;
+		this.groupBoxSuffixProperties.Location = new System.Drawing.Point(670, 90);
+		this.groupBoxSuffixProperties.Name = "groupBoxSuffixProperties";
+		this.groupBoxSuffixProperties.Size = new System.Drawing.Size(318, 316);
+		this.groupBoxSuffixProperties.TabIndex = 9;
+		this.groupBoxSuffixProperties.TabStop = false;
+		this.groupBoxSuffixProperties.Text = "Suffix Properties";
+		//
 		// dataGridViewBaseItemProperties
-		// 
+		//
 		this.dataGridViewBaseItemProperties.AllowUserToAddRows = false;
 		this.dataGridViewBaseItemProperties.AllowUserToDeleteRows = false;
 		this.dataGridViewBaseItemProperties.AllowUserToResizeRows = false;
-		this.dataGridViewBaseItemProperties.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
+		this.dataGridViewBaseItemProperties.BackgroundColor = System.Drawing.Color.Black;
 		this.dataGridViewBaseItemProperties.BorderStyle = System.Windows.Forms.BorderStyle.None;
 		this.dataGridViewBaseItemProperties.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
 		this.dataGridViewBaseItemProperties.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
@@ -215,11 +219,10 @@ internal partial class ItemProperties
 		this.dataGridViewBaseItemProperties.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
 		this.columnBaseItemProperty});
 		this.dataGridViewBaseItemProperties.ColumnHeadersVisible = false;
-		this.dataGridViewBaseItemProperties.Dock = System.Windows.Forms.DockStyle.None;
+		this.dataGridViewBaseItemProperties.Dock = System.Windows.Forms.DockStyle.Fill;
 		this.dataGridViewBaseItemProperties.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
 		this.dataGridViewBaseItemProperties.EnableHeadersVisualStyles = false;
-		this.dataGridViewBaseItemProperties.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-		this.dataGridViewBaseItemProperties.Location = new System.Drawing.Point(12, 123);
+		this.dataGridViewBaseItemProperties.GridColor = System.Drawing.Color.Black;
 		this.dataGridViewBaseItemProperties.MultiSelect = true;
 		this.dataGridViewBaseItemProperties.Name = "dataGridViewBaseItemProperties";
 		this.dataGridViewBaseItemProperties.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
@@ -231,15 +234,14 @@ internal partial class ItemProperties
 		this.dataGridViewBaseItemProperties.ShowCellToolTips = false;
 		this.dataGridViewBaseItemProperties.ShowEditingIcon = false;
 		this.dataGridViewBaseItemProperties.ShowRowErrors = false;
-		this.dataGridViewBaseItemProperties.Size = new System.Drawing.Size(292, 269);
 		this.dataGridViewBaseItemProperties.TabIndex = 2;
-		// 
+		//
 		// columnBaseItemProperty
-		// 
+		//
 		this.columnBaseItemProperty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
 		this.columnBaseItemProperty.DefaultCellStyle = new System.Windows.Forms.DataGridViewCellStyle
 		{
-			BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21))))),
+			BackColor = System.Drawing.Color.Black,
 			ForeColor = System.Drawing.Color.White,
 			SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(45)))), ((int)(((byte)(30))))),
 			SelectionForeColor = System.Drawing.Color.White
@@ -250,13 +252,13 @@ internal partial class ItemProperties
 		this.columnBaseItemProperty.ReadOnly = true;
 		this.columnBaseItemProperty.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 		this.columnBaseItemProperty.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-		// 
+		//
 		// dataGridViewPrefixProperties
-		// 
+		//
 		this.dataGridViewPrefixProperties.AllowUserToAddRows = false;
 		this.dataGridViewPrefixProperties.AllowUserToDeleteRows = false;
 		this.dataGridViewPrefixProperties.AllowUserToResizeRows = false;
-		this.dataGridViewPrefixProperties.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
+		this.dataGridViewPrefixProperties.BackgroundColor = System.Drawing.Color.Black;
 		this.dataGridViewPrefixProperties.BorderStyle = System.Windows.Forms.BorderStyle.None;
 		this.dataGridViewPrefixProperties.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
 		this.dataGridViewPrefixProperties.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
@@ -264,11 +266,10 @@ internal partial class ItemProperties
 		this.dataGridViewPrefixProperties.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
 		this.columnPrefixProperty});
 		this.dataGridViewPrefixProperties.ColumnHeadersVisible = false;
-		this.dataGridViewPrefixProperties.Dock = System.Windows.Forms.DockStyle.None;
+		this.dataGridViewPrefixProperties.Dock = System.Windows.Forms.DockStyle.Fill;
 		this.dataGridViewPrefixProperties.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
 		this.dataGridViewPrefixProperties.EnableHeadersVisualStyles = false;
-		this.dataGridViewPrefixProperties.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-		this.dataGridViewPrefixProperties.Location = new System.Drawing.Point(327, 123);
+		this.dataGridViewPrefixProperties.GridColor = System.Drawing.Color.Black;
 		this.dataGridViewPrefixProperties.MultiSelect = true;
 		this.dataGridViewPrefixProperties.Name = "dataGridViewPrefixProperties";
 		this.dataGridViewPrefixProperties.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
@@ -280,15 +281,14 @@ internal partial class ItemProperties
 		this.dataGridViewPrefixProperties.ShowCellToolTips = false;
 		this.dataGridViewPrefixProperties.ShowEditingIcon = false;
 		this.dataGridViewPrefixProperties.ShowRowErrors = false;
-		this.dataGridViewPrefixProperties.Size = new System.Drawing.Size(292, 269);
 		this.dataGridViewPrefixProperties.TabIndex = 4;
-		// 
+		//
 		// columnPrefixProperty
-		// 
+		//
 		this.columnPrefixProperty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
 		this.columnPrefixProperty.DefaultCellStyle = new System.Windows.Forms.DataGridViewCellStyle
 		{
-			BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21))))),
+			BackColor = System.Drawing.Color.Black,
 			ForeColor = System.Drawing.Color.White,
 			SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(45)))), ((int)(((byte)(30))))),
 			SelectionForeColor = System.Drawing.Color.White
@@ -299,13 +299,13 @@ internal partial class ItemProperties
 		this.columnPrefixProperty.ReadOnly = true;
 		this.columnPrefixProperty.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 		this.columnPrefixProperty.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-		// 
+		//
 		// dataGridViewSuffixProperties
-		// 
+		//
 		this.dataGridViewSuffixProperties.AllowUserToAddRows = false;
 		this.dataGridViewSuffixProperties.AllowUserToDeleteRows = false;
 		this.dataGridViewSuffixProperties.AllowUserToResizeRows = false;
-		this.dataGridViewSuffixProperties.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
+		this.dataGridViewSuffixProperties.BackgroundColor = System.Drawing.Color.Black;
 		this.dataGridViewSuffixProperties.BorderStyle = System.Windows.Forms.BorderStyle.None;
 		this.dataGridViewSuffixProperties.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
 		this.dataGridViewSuffixProperties.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
@@ -313,11 +313,10 @@ internal partial class ItemProperties
 		this.dataGridViewSuffixProperties.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
 		this.columnSuffixProperty});
 		this.dataGridViewSuffixProperties.ColumnHeadersVisible = false;
-		this.dataGridViewSuffixProperties.Dock = System.Windows.Forms.DockStyle.None;
+		this.dataGridViewSuffixProperties.Dock = System.Windows.Forms.DockStyle.Fill;
 		this.dataGridViewSuffixProperties.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
 		this.dataGridViewSuffixProperties.EnableHeadersVisualStyles = false;
-		this.dataGridViewSuffixProperties.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-		this.dataGridViewSuffixProperties.Location = new System.Drawing.Point(655, 123);
+		this.dataGridViewSuffixProperties.GridColor = System.Drawing.Color.Black;
 		this.dataGridViewSuffixProperties.MultiSelect = true;
 		this.dataGridViewSuffixProperties.Name = "dataGridViewSuffixProperties";
 		this.dataGridViewSuffixProperties.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
@@ -329,15 +328,14 @@ internal partial class ItemProperties
 		this.dataGridViewSuffixProperties.ShowCellToolTips = false;
 		this.dataGridViewSuffixProperties.ShowEditingIcon = false;
 		this.dataGridViewSuffixProperties.ShowRowErrors = false;
-		this.dataGridViewSuffixProperties.Size = new System.Drawing.Size(262, 269);
 		this.dataGridViewSuffixProperties.TabIndex = 8;
-		// 
+		//
 		// columnSuffixProperty
-		// 
+		//
 		this.columnSuffixProperty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
 		this.columnSuffixProperty.DefaultCellStyle = new System.Windows.Forms.DataGridViewCellStyle
 		{
-			BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21))))),
+			BackColor = System.Drawing.Color.Black,
 			ForeColor = System.Drawing.Color.White,
 			SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(45)))), ((int)(((byte)(30))))),
 			SelectionForeColor = System.Drawing.Color.White
@@ -348,25 +346,21 @@ internal partial class ItemProperties
 		this.columnSuffixProperty.ReadOnly = true;
 		this.columnSuffixProperty.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 		this.columnSuffixProperty.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-		// 
+		//
 		// ItemProperties
-		// 
+		//
 		this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
 		this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 		this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-		this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-		this.ClientSize = new System.Drawing.Size(944, 461);
-		this.Controls.Add(this.labelSuffixProperties);
-		this.Controls.Add(this.dataGridViewSuffixProperties);
+		this.ClientSize = new System.Drawing.Size(1000, 460);
+		this.Controls.Add(this.groupBoxSuffixProperties);
 		this.Controls.Add(this.checkBoxFilterExtraInfo);
-		this.Controls.Add(this.labelBaseItemProperties);
-		this.Controls.Add(this.labelPrefixProperties);
-		this.Controls.Add(this.dataGridViewPrefixProperties);
+		this.Controls.Add(this.groupBoxBaseItemProperties);
+		this.Controls.Add(this.groupBoxPrefixProperties);
 		this.Controls.Add(this.labelItemName);
-		this.Controls.Add(this.dataGridViewBaseItemProperties);
 		this.Controls.Add(this.ButtonOK);
 		this.DrawCustomBorder = true;
-		this.Font = new System.Drawing.Font("Albertus MT Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+		this.Font = new System.Drawing.Font("Albertus MT Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 		this.ForeColor = System.Drawing.Color.White;
 		this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 		this.Margin = new System.Windows.Forms.Padding(4);
@@ -380,14 +374,14 @@ internal partial class ItemProperties
 		this.TopMost = true;
 		this.Load += new System.EventHandler(this.ItemProperties_Load);
 		this.Controls.SetChildIndex(this.ButtonOK, 0);
-		this.Controls.SetChildIndex(this.dataGridViewBaseItemProperties, 0);
 		this.Controls.SetChildIndex(this.labelItemName, 0);
-		this.Controls.SetChildIndex(this.dataGridViewPrefixProperties, 0);
-		this.Controls.SetChildIndex(this.labelPrefixProperties, 0);
-		this.Controls.SetChildIndex(this.labelBaseItemProperties, 0);
+		this.Controls.SetChildIndex(this.groupBoxPrefixProperties, 0);
+		this.Controls.SetChildIndex(this.groupBoxBaseItemProperties, 0);
 		this.Controls.SetChildIndex(this.checkBoxFilterExtraInfo, 0);
-		this.Controls.SetChildIndex(this.dataGridViewSuffixProperties, 0);
-		this.Controls.SetChildIndex(this.labelSuffixProperties, 0);
+		this.Controls.SetChildIndex(this.groupBoxSuffixProperties, 0);
+		this.groupBoxBaseItemProperties.ResumeLayout(false);
+		this.groupBoxPrefixProperties.ResumeLayout(false);
+		this.groupBoxSuffixProperties.ResumeLayout(false);
 		((System.ComponentModel.ISupportInitialize)(this.dataGridViewBaseItemProperties)).EndInit();
 		((System.ComponentModel.ISupportInitialize)(this.dataGridViewPrefixProperties)).EndInit();
 		((System.ComponentModel.ISupportInitialize)(this.dataGridViewSuffixProperties)).EndInit();

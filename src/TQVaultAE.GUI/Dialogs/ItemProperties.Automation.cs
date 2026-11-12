@@ -13,7 +13,7 @@ internal sealed partial class ItemProperties
 	/// <summary>A row of a property grid as shown: its text and colors.</summary>
 	internal sealed record AutomationRow(string Text, string Color, string SelectionColor);
 
-	/// <summary>A property section as shown: its label, whether it is visible, and its rows.</summary>
+	/// <summary>A property section as shown: its title (its group's caption), whether it is visible, and its rows.</summary>
 	internal sealed record AutomationSection(string Label, bool Visible, AutomationRow[] Rows);
 
 	/// <summary>What the dialog shows for one item.</summary>
@@ -41,16 +41,16 @@ internal sealed partial class ItemProperties
 			this.labelItemName.Text,
 			Hex(this.labelItemName.ForeColor),
 			[
-				Section(this.labelBaseItemProperties, this.dataGridViewBaseItemProperties),
-				Section(this.labelPrefixProperties, this.dataGridViewPrefixProperties),
-				Section(this.labelSuffixProperties, this.dataGridViewSuffixProperties),
+				Section(this.groupBoxBaseItemProperties, this.dataGridViewBaseItemProperties),
+				Section(this.groupBoxPrefixProperties, this.dataGridViewPrefixProperties),
+				Section(this.groupBoxSuffixProperties, this.dataGridViewSuffixProperties),
 			]);
 	}
 
-	private static AutomationSection Section(Label label, DataGridView grid)
+	private static AutomationSection Section(GroupBox caption, DataGridView grid)
 		=> new(
-			label.Text,
-			label.Visible && grid.Visible,
+			caption.Text,
+			caption.Visible && grid.Visible,
 			grid.Rows.Cast<DataGridViewRow>()
 				.Select(r => r.Cells[0])
 				.Select(c => new AutomationRow(c.Value as string ?? string.Empty, Hex(c.Style.ForeColor), Hex(c.Style.SelectionForeColor)))
