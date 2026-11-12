@@ -189,7 +189,10 @@ On import, each mod named is checked against the installed mods:
 *Load all files* reads every listed character with its own map, and the transfer stash and relic vault of the base game
 and of every mod a listed Immortal Throne character is linked to. Each map's database is read the first time it is
 needed (about half a second for a large mod). The search covers them all from startup, and names a mod's shared
-stashes after it: *Transfer Stash [shadowchampions]*.
+stashes after it: *Transfer Stash [shadowchampions]*. The stash panel shows the shared stashes of the shown
+character's map only: a result in another map's selects the first listed character played with that map, as a result
+in a character's bags selects that character. When no listed character is played with it any more (its link changed),
+the notification line says so and nothing is selected.
 
 With *Allow hot reload features* on, the transfer stash and relic vault files of every map in use (the base game, the
 maps of the listed characters and the active one) are watched. When the game writes one, it is read again with its own

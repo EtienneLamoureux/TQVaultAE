@@ -54,6 +54,53 @@ public class GameMapServiceTests
 		=> this._links.Setup(l => l.Resolve(save.Folder, true)).Returns(new CharacterMod(CharacterModState.Linked
 			, new InstalledMod(Path.GetFileName(modFolder), modFolder, ModSource.SteamWorkshop), new ModLinkFile { Mod = Path.GetFileName(modFolder) }));
 
+	/// <summary>The shared stash files of a map, as GamePathServiceWin names them.</summary>
+	private void SharedStashFiles()
+	{
+		string Sys(string map, string file) => map.Length == 0
+			? Path.Combine(Path.GetTempPath(), "Sys", file)
+			: Path.Combine(Path.GetTempPath(), "Sys", Path.GetFileName(map), file);
+		this._gamePath.Setup(g => g.TransferStashFileFullPathFor(It.IsAny<string>())).Returns<string>(map => Sys(map, "winsys.dxb"));
+		this._gamePath.Setup(g => g.RelicVaultStashFileFullPathFor(It.IsAny<string>())).Returns<string>(map => Sys(map, "miscsys.dxb"));
+	}
+
+	[Fact]
+	public void CharacterShowing_AnotherMapsSharedStash_GivesTheFirstCharacterPlayedWithThatMap()
+	{
+		this.SharedStashFiles();
+		var heroA = Save("HeroA", isCustom: false);
+		var heroB = Save("HeroB", isCustom: true);
+		var heroC = Save("HeroC", isCustom: true);
+		this.LinkTo(heroB, Masteries);
+		this.LinkTo(heroC, Shadow);
+		string shadowRelics = Path.Combine(Path.GetTempPath(), "Sys", "shadowchampions", "miscsys.dxb");
+
+		this.CreateService().CharacterShowing(shadowRelics, [heroA, heroB, heroC], heroA).Should().BeSameAs(heroC);
+	}
+
+	[Fact]
+	public void CharacterShowing_SelectedCharacterShowsTheFile_KeepsIt()
+	{
+		this.SharedStashFiles();
+		var heroA = Save("HeroA", isCustom: false);
+		// An unlinked custom map character is played with the base game data, and its shared stashes.
+		var heroB = Save("HeroB", isCustom: true);
+		string transfer = Path.Combine(Path.GetTempPath(), "Sys", "WINSYS.DXB");
+
+		this.CreateService().CharacterShowing(transfer, [heroA, heroB], heroB).Should().BeSameAs(heroB);
+	}
+
+	[Fact]
+	public void CharacterShowing_NoCharacterPlayedWithTheMap_GivesNone()
+	{
+		this.SharedStashFiles();
+		var heroB = Save("HeroB", isCustom: true);
+		this.LinkTo(heroB, Masteries);
+		string baseTransfer = Path.Combine(Path.GetTempPath(), "Sys", "winsys.dxb");
+
+		this.CreateService().CharacterShowing(baseTransfer, [heroB], null).Should().BeNull();
+	}
+
 	[Fact]
 	public async Task PreloadMapsAsync_LoadsEachLinkedModOnce_WithoutActivatingIt()
 	{

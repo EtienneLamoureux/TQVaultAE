@@ -5834,6 +5834,15 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to {0} is shown with the characters played with its map, and no listed character is..
+        /// </summary>
+        public static string SearchSharedStashNoCharacter {
+            get {
+                return ResourceManager.GetString("SearchSharedStashNoCharacter", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Read with the data of its map here, {0} has no room in this tab: drop it in another tab..
         /// </summary>
         public static string ModDropNoRoomInTab {

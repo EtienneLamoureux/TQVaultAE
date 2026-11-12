@@ -91,6 +91,17 @@ public interface IGameMapService
 	Task PreloadMapsAsync(IEnumerable<PlayerSave> saves);
 
 	/// <summary>
+	/// The character to show to see a shared stash file (a transfer stash or relic vault, the base game's or a mod's):
+	/// the stash panel shows the shared stashes of the shown character's map only.
+	/// </summary>
+	/// <param name="sharedStashFile">The shared stash file, as the search names its container.</param>
+	/// <param name="characters">The listed characters.</param>
+	/// <param name="selected">The character shown now, if any: kept when it shows that file already.</param>
+	/// <returns>The selected character when it shows the file, else the first listed Immortal Throne character played
+	/// with the file's map; null when no listed character is.</returns>
+	PlayerSave? CharacterShowing(string sharedStashFile, IEnumerable<PlayerSave> characters, PlayerSave? selected);
+
+	/// <summary>
 	/// True when a character is played with the active map.
 	/// </summary>
 	bool UsesActiveMap(PlayerSave save);

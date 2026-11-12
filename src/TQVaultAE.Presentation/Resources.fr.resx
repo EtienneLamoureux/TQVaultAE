@@ -1724,6 +1724,9 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   <data name="ModDropNoRoomInTab" xml:space="preserve">
     <value>Lu avec les données de sa carte ici, {0} n'a pas la place dans cet onglet : déposez-le dans un autre onglet.</value>
   </data>
+  <data name="SearchSharedStashNoCharacter" xml:space="preserve">
+    <value>{0} s'affiche avec les personnages qui jouent avec sa carte, et aucun personnage de la liste n'en fait partie.</value>
+  </data>
   <data name="ModChoiceNoRoomInTab" xml:space="preserve">
     <value>Lu avec les données de cette carte, {0} n'aurait pas la place dans cet onglet : déplacez-le d'abord dans un autre onglet.</value>
   </data>

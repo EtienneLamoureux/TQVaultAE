@@ -27,6 +27,9 @@ public partial class MainForm
 
 	internal string? AutomationSelectedVault => this.vaultListComboBox?.SelectedItem?.ToString();
 
+	/// <summary>Shows a search result like a click on its row in the results dialog.</summary>
+	internal void AutomationSelectResult(TQVaultAE.Application.Results.SearchResult result) => this.SelectResult(this, new ResultChangedEventArgs(result));
+
 	/// <summary>
 	/// Reads the menu of the vault tools button (next to the vault list) as it opens; with <paramref name="path"/>,
 	/// clicks that entry after the calling tool has returned.

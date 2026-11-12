@@ -95,6 +95,28 @@ public class GameMapService(
 	}
 
 	/// <inheritdoc/>
+	public PlayerSave? CharacterShowing(string sharedStashFile, IEnumerable<PlayerSave> characters, PlayerSave? selected)
+	{
+		bool Shows(PlayerSave save)
+		{
+			// A Titan Quest original character has no shared stash.
+			if (!save.IsImmortalThrone)
+				return false;
+
+			string map = this.MapFor(save);
+			return SameFile(this.GamePathService.TransferStashFileFullPathFor(map), sharedStashFile)
+				|| SameFile(this.GamePathService.RelicVaultStashFileFullPathFor(map), sharedStashFile);
+		}
+
+		return selected is not null && Shows(selected)
+			? selected
+			: characters.FirstOrDefault(Shows);
+	}
+
+	private static bool SameFile(string a, string b)
+		=> string.Equals(System.IO.Path.GetFullPath(a), System.IO.Path.GetFullPath(b), StringComparison.OrdinalIgnoreCase);
+
+	/// <inheritdoc/>
 	public bool UsesActiveMap(PlayerSave save)
 		=> GameMaps.Same(this.MapFor(save), this.ActiveMap);
 

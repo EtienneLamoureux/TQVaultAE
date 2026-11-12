@@ -2092,6 +2092,9 @@ You still have to close TQVaultAE to apply your changes.
   <data name="ModDropNoRoomInTab" xml:space="preserve">
     <value>Read with the data of its map here, {0} has no room in this tab: drop it in another tab.</value>
   </data>
+  <data name="SearchSharedStashNoCharacter" xml:space="preserve">
+    <value>{0} is shown with the characters played with its map, and no listed character is.</value>
+  </data>
   <data name="ModChoiceNoRoomInTab" xml:space="preserve">
     <value>Read with the data of that map, {0} would have no room in this tab: move it to another tab first.</value>
   </data>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Globalization;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Domain.Entities;
@@ -145,12 +146,25 @@ public partial class MainForm
 		}
 		else if (location.Panel == ResultPanelKind.SharedStash)
 		{
-			// Bail when no character is loaded: there is no stash panel then.
-			if (this.stashPanel.SackPanel is null)
+			// The stash panel shows the shared stashes of the shown character's map: another map's transfer stash or
+			// relic vault needs a character played with that map, selected like a character's result.
+			var selected = this.comboBoxCharacter.SelectedItem as PlayerSave;
+			var save = this.gameMapService.CharacterShowing(selectedResult.Container, this.ListedCharacters(), selected);
+			if (save is null)
+			{
+				this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.SearchSharedStashNoCharacter, selectedResult.ContainerName), TQColor.Red);
 				return;
+			}
 
 			// The player panel shows the stashes: leave the secondary vault.
 			this.LeaveSecondaryVault();
+
+			if (save != selected)
+				this.comboBoxCharacter.SelectedItem = save;
+
+			// Bail when the character could not be loaded: there is no stash panel then.
+			if (this.stashPanel.SackPanel is null)
+				return;
 		}
 		else
 		{
