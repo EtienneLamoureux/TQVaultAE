@@ -72,7 +72,9 @@ internal static class CaravanFrame
 	/// controls are moved off the frame's left edge and centered in its height (the caption's room is no longer needed),
 	/// and made transparent so that the black shows behind them.
 	/// </summary>
-	public static void ApplyTo(GroupBox box)
+	/// <param name="box">The group box.</param>
+	/// <param name="inset">The gap between the frame and its controls on the left; 4 pixels by default.</param>
+	public static void ApplyTo(GroupBox box, int inset = 4)
 	{
 		Bitmap? frame = null;
 		var children = box.Controls.Cast<Control>().ToList();
@@ -83,8 +85,8 @@ internal static class CaravanFrame
 			{
 				child.BackColor = Color.Transparent;
 				child.Top += dy;
-				if (child.Left < Border + 4)
-					child.Left = Border + 4;
+				if (child.Left < Border + inset)
+					child.Left = Border + inset;
 			}
 		}
 

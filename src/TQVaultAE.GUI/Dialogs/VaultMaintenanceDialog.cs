@@ -99,8 +99,11 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 
 		// The text boxes and the function group in caravan frames. The Source and Target labels take the height of the
 		// box they name, from their left to just before it.
-		CaravanFrame.ApplyTo(this.selectFunctionGroupBox);
-		CaravanFrame.ApplyTo(this.instructionsLabel);
+		// The function group and the instructions keep one character of space inside their frame, on the left and right:
+		// the instructions' three lines need their height.
+		CaravanFrame.ApplyTo(this.selectFunctionGroupBox, CharacterWidth(this.newRadioButton.Font));
+		int space = CaravanFrame.Border + CharacterWidth(this.instructionsLabel.Font);
+		CaravanFrame.ApplyTo(this.instructionsLabel, new Padding(space, CaravanFrame.Border, space, CaravanFrame.Border));
 		FrameLabel(this.sourceLabel, this.vaultListComboBox);
 		FrameLabel(this.targetLabel, this.targetTextBox);
 
@@ -111,6 +114,10 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 
 		this.GetVaultList();
 	}
+
+	/// <summary>The width of one character of <paramref name="font"/>.</summary>
+	private static int CharacterWidth(Font font)
+		=> TextRenderer.MeasureText("0", font, Size.Empty, TextFormatFlags.NoPadding).Width;
 
 	/// <summary>A label in a caravan frame as high as <paramref name="box"/>, its text centered.</summary>
 	private static void FrameLabel(Label label, Control box)
