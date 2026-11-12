@@ -64,8 +64,8 @@ The character editor has its own mouse shortcuts, see [Character editor](CHAREDI
 | Click a sort button | Sorts its bag with the chosen order (rows and columns alternate at each click) |
 | Right-click a sort button | Chooses the order (size, required level, type or rarity) and sorts at once |
 
-Sort buttons: left of the vault's bag, above the character's main inventory and bags, and right of the stash tabs (shown
-on the Transfer Area, Storage Area and Relic Vault, not on the Equipment). These two clicks are fixed. With the "Merge relic
+Sort buttons: left of the vault's bag, above the character's main inventory and bags, and upright against the right edge of
+the stash's golden frame (shown on the Transfer Area, Storage Area and Relic Vault, not on the Equipment). These two clicks are fixed. With the "Merge relic
 shards when sorting" setting on, relic and charm shards are merged first. A read-only character's bags and Storage Area
 are not sorted.
 
