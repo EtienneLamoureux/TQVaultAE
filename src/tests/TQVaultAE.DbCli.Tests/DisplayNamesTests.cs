@@ -119,6 +119,9 @@ public sealed class DisplayNamesTests
 	[InlineData("{^y}Legendary{^w} Sword", "Legendary Sword")]
 	[InlineData("[ms]renforcé[mp]renforcés[fs]renforcée", "renforcé")]
 	[InlineData("Plain", "Plain")]
+	[InlineData("^gFrost Strike", "Frost Strike")]
+	[InlineData("^yAthenian Soldier^n^wReady for battle.", "Athenian Soldier Ready for battle.")]
+	[InlineData("Satyr{^n}Hunter", "Satyr Hunter")]
 	public void Clean_StripsCodesAndMarkers(string raw, string expected)
 		=> DisplayNames.Clean(raw).Should().Be(expected);
 

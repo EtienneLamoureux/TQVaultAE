@@ -36,7 +36,7 @@ public static partial class DisplayNames
 		return null;
 	}
 
-	/// <summary>Resolved, cleaned display name ({^x} color codes and [ms] gender markers stripped), <see langword="null"/> if none.</summary>
+	/// <summary>Resolved, cleaned display name (game format codes and [ms] gender markers stripped), <see langword="null"/> if none.</summary>
 	public static string? Resolve(ArzRecord record, ITextDatabase text)
 	{
 		ArgumentNullException.ThrowIfNull(text);
@@ -50,11 +50,11 @@ public static partial class DisplayNames
 		return LooksLikeLiteral(tag) ? NullIfEmpty(Clean(tag)) : null;
 	}
 
-	/// <summary>Strips {^x} color codes and [xx] gender/plural markers, keeping the first variant when several are given.</summary>
+	/// <summary>Strips game format codes (<see cref="TextTags"/>, line breaks become spaces) and [xx] gender/plural markers, keeping the first variant when several are given.</summary>
 	public static string Clean(string value)
 	{
 		ArgumentNullException.ThrowIfNull(value);
-		var s = ColorCode().Replace(value, string.Empty);
+		var s = TextTags.ToPlainText(value, " ");
 
 		// "[ms]Name[fs]Other" lists grammatical variants: keep the first one.
 		var m = GenderMarker().Match(s);
@@ -122,9 +122,6 @@ public static partial class DisplayNames
 	private static partial Regex TagPrefix();
 
 	private static string? NullIfEmpty(string s) => s.Length == 0 ? null : s;
-
-	[GeneratedRegex(@"\{\^[^}]*\}")]
-	private static partial Regex ColorCode();
 
 	[GeneratedRegex(@"\[[a-zA-Z]{1,3}\]")]
 	private static partial Regex GenderMarker();

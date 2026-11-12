@@ -190,7 +190,7 @@ public static partial class StringHelper
 	public static string? RemoveAllTQTags(this string? TQText)
 	{
 		if (string.IsNullOrWhiteSpace(TQText)) return TQText;
-		return TQColorHelper.RegExTQTagInstance().Replace(TQText, string.Empty);
+		return TQVaultAE.GameFiles.TextTags.RemoveColorTags(TQText);
 	}
 
 	[GeneratedRegex(@"(?<Legit>[^/]*)(?<Comment>//.*)")]

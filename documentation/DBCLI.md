@@ -178,7 +178,7 @@ Field names are case-insensitive and may be globs (`offensive*Min>10` = any matc
 | Option | Description |
 |---|---|
 | `-f, --fields <list>` | Columns: `id`, `class`, `displayName`, `nameTag`, variable names, globs over variable names, `*` = every variable. Default `id,class,displayName`. |
-| `-r, --resolve` | Add the resolved text of tag-valued string fields. |
+| `-r, --resolve` | Add the resolved text of tag-valued string fields, as plain text: colour codes (`{^y}`, `^y`) removed, line breaks (`{^n}`) as new lines. |
 | `--follow <field>` | Inline the records referenced by this field (string values ending with `.dbr`; glob allowed), one level. |
 | `-s, --sort <field[:desc]>` | Sort by a column or variable; numbers numerically; records without the field last. |
 | `--limit <N>` | Maximum records. |
@@ -204,7 +204,7 @@ tqdb records --tag tagItemHookedBlade --fields "*" --resolve --format json
 |---|---|
 | `--format json\|jsonl\|tsv\|dbr` | Default `json` (a single object for a single id). |
 | `-f, --fields <list>` | Variables to show (names or globs), default all. |
-| `-r, --resolve` | Add the resolved text of tag-valued fields. |
+| `-r, --resolve` | Add the resolved text of tag-valued fields (plain text, as for `records`). |
 | `--follow <field>` | Inline referenced records one level (`--follow "*"` follows every reference). |
 | `-l, --lang`, `--compact`, `-o, --out` | As for `records`. |
 

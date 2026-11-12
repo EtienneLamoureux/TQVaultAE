@@ -17,7 +17,7 @@ internal interface IRecordNamer
 	/// <summary>Resolved display name, <see langword="null"/> if none.</summary>
 	string? DisplayName(ArzRecord record);
 
-	/// <summary>Resolves a localization tag, <see langword="null"/> when unknown.</summary>
+	/// <summary>Resolves a localization tag as plain text (game format codes stripped, line breaks as \n), <see langword="null"/> when unknown.</summary>
 	string? ResolveTag(string? tag);
 }
 
@@ -33,5 +33,6 @@ internal sealed class CoreRecordNamer(ITextDatabase text) : IRecordNamer
 	public string? DisplayName(ArzRecord record) => DisplayNames.Resolve(record, this._text);
 
 	/// <inheritdoc/>
-	public string? ResolveTag(string? tag) => string.IsNullOrEmpty(tag) ? null : this._text.Resolve(tag);
+	public string? ResolveTag(string? tag) =>
+		!string.IsNullOrEmpty(tag) && this._text.Resolve(tag) is { } text ? TextTags.ToPlainText(text) : null;
 }

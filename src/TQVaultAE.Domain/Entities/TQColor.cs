@@ -102,7 +102,7 @@ public static partial class TQColorHelper
 	/// <summary>
 	/// Regex Match color tag 4 chars & 2 chars
 	/// </summary>
-	public const string RegExTQTag = @"(?<ColorTag>\{\^(?<ColorId>\w)}|\^(?<ColorId>\w))";
+	public const string RegExTQTag = TQVaultAE.GameFiles.TextTags.ColorTagPattern;
 	[GeneratedRegex(RegExTQTag)]
 	public static partial Regex RegExTQTagInstance();
 	/// <summary>
