@@ -53,8 +53,11 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 	public ItemComparisonContent Build(ItemComparison comparison, ItemComparisonOptions? options = null)
 	{
 		options ??= new ItemComparisonOptions();
-		var first = ItemColumnLines(this._tooltip.Build(comparison.First, ItemTooltipView.Classic).Lines);
-		var second = ItemColumnLines(this._tooltip.Build(comparison.Second, ItemTooltipView.Classic).Lines);
+		// The granted skills' names stay in the item columns: their differences are aligned under them.
+		var skills = comparison.Stats.FirstMinusSecond.Concat(comparison.Stats.SecondMinusFirst)
+			.Where(g => g.Kind == StatGroupKind.GrantedSkill && g.Title is not null).Select(g => g.Title!).Distinct().ToList();
+		var first = ItemColumnLines(this._tooltip.Build(comparison.First, ItemTooltipView.Classic).Lines, skills);
+		var second = ItemColumnLines(this._tooltip.Build(comparison.Second, ItemTooltipView.Classic).Lines, skills);
 		return options.AlignRows
 			? new(
 				AlignedDifferenceLines(first, comparison.Stats.FirstMinusSecond, options.HideUnchanged)
@@ -72,13 +75,15 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 	/// <summary>
 	/// The lines of an item column: the item tooltip without the lines that carry no number (lore, set member lists,
 	/// "Speed: Fast", "Grants Skill :"), as in the difference columns. The item name (the first line) and the warnings
-	/// stay, and so does a text line heading indented lines with numbers ("Bonus to all Pets:"). Blank lines and
+	/// stay, and so does a text line heading indented lines with numbers ("Bonus to all Pets:") or naming one of
+	/// <paramref name="skillNames"/> (the granted skills, whose differences are aligned under their name). Blank lines and
 	/// delimiters left next to each other are merged into one (a delimiter wins), none at the start or the end.
 	/// </summary>
-	public static IReadOnlyList<TooltipLine> ItemColumnLines(IReadOnlyList<TooltipLine> lines)
+	public static IReadOnlyList<TooltipLine> ItemColumnLines(IReadOnlyList<TooltipLine> lines, IEnumerable<string>? skillNames = null)
 	{
 		var parsed = lines.Select(l => l.Kind is TooltipLineKind.Text or TooltipLineKind.Range ? StatLine.Parse(l.Text) : null).ToArray();
 		int name = Array.FindIndex(parsed, s => s is not null);
+		var skills = (skillNames ?? []).Select(n => StatLine.Parse(n)?.Template).OfType<string>().Where(t => t.Length != 0).ToList();
 
 		bool Kept(int i)
 		{
@@ -89,7 +94,7 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 			if (parsed[i] is not { } stat)
 				return false;
 
-			if (stat.Values.Length != 0)
+			if (stat.Values.Length != 0 || skills.Exists(s => stat.Template.Contains(s, StringComparison.Ordinal)))
 				return true;
 
 			// A heading: the next line with text is indented and has numbers.

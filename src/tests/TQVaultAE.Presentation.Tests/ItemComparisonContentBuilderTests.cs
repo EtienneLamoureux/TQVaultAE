@@ -188,6 +188,18 @@ public class ItemComparisonContentBuilderTests
 	}
 
 	[Fact]
+	public void ItemColumnLines_GrantedSkillNameKept_SoItsStatsAlignUnderIt()
+	{
+		TooltipLine[] item = [TooltipLine.Of("Blood Gem"), TooltipLine.Of("Grants Skill :"), TooltipLine.Of("{^E}Blood Boil"), TooltipLine.Of("6.0 Meter Radius")];
+
+		var column = ItemComparisonContentBuilder.ItemColumnLines(item, ["Blood Boil"]);
+		column.Select(l => l.Text).Should().Equal("Blood Gem", "{^E}Blood Boil", "6.0 Meter Radius");
+
+		var groups = new[] { Group(StatGroupKind.GrantedSkill, "Blood Boil", Diff("+6.0 Meter Radius", StatTrend.Higher, KeyOf("6.0 Meter Radius"))) };
+		ItemComparisonContentBuilder.AlignedDifferenceLines(column, groups)[2].Text.Should().Be("+6.0 Meter Radius");
+	}
+
+	[Fact]
 	public void Build_ItemColumnsWithoutTextOnlyLines_DifferencesStillLevelWithTheirStat()
 	{
 		var translation = new Mock<ITranslationService>();
