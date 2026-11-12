@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
@@ -164,20 +165,29 @@ public class UIService : IUIService, IGameDataCache
 	}
 
 	/// <summary>
-	/// Picture of an item whose base record the loaded data lacks: the warning icon of the incomplete item tooltip line on
-	/// a dark tile with an orange frame. One cell at design size, like the game's pictures, since the panels scale them.
+	/// Pictures of items whose own picture cannot be shown, by size in cells: the warning icon of the incomplete item
+	/// tooltip line on a dark tile with an orange frame. At design size (32 pixels a cell), like the game's pictures, since
+	/// the panels scale them. Shared: never disposed.
 	/// </summary>
-	private static readonly Lazy<Bitmap> MissingItemBitmap = new(CreateMissingItemBitmap);
+	private static readonly ConcurrentDictionary<(int Width, int Height), Lazy<Bitmap>> MissingItemBitmaps = new();
 
-	private static Bitmap CreateMissingItemBitmap()
+	/// <summary>
+	/// Gets the picture shown for an item of <paramref name="width"/> x <paramref name="height"/> cells whose own picture
+	/// cannot be shown (shared, never dispose it).
+	/// </summary>
+	public static Bitmap MissingItemBitmap(int width, int height)
+		=> MissingItemBitmaps.GetOrAdd((Math.Max(1, width), Math.Max(1, height)), size => new(() => CreateMissingItemBitmap(size.Width, size.Height))).Value;
+
+	private static Bitmap CreateMissingItemBitmap(int widthCells, int heightCells)
 	{
-		const int size = (int)ITEMUNITSIZE;
-		var bmp = new Bitmap(size, size);
+		const int cell = (int)ITEMUNITSIZE;
+		int width = widthCells * cell, height = heightCells * cell;
+		var bmp = new Bitmap(width, height);
 		using var g = Graphics.FromImage(bmp);
 		g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 		g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 
-		var tile = new Rectangle(1, 1, size - 3, size - 3);
+		var tile = new Rectangle(1, 1, width - 3, height - 3);
 		using (var fill = new SolidBrush(Color.FromArgb(160, 40, 24, 0)))
 			g.FillRectangle(fill, tile);
 		using (var frame = new Pen(Color.Orange, 1F))
@@ -186,9 +196,14 @@ public class UIService : IUIService, IGameDataCache
 		using var icon = SystemIcons.GetStockIcon(StockIconId.Warning, StockIconOptions.Default);
 		using var iconBitmap = icon.ToBitmap();
 		const int iconSize = 20;
-		g.DrawImage(iconBitmap, new Rectangle((size - iconSize) / 2, (size - iconSize) / 2, iconSize, iconSize));
+		g.DrawImage(iconBitmap, new Rectangle((width - iconSize) / 2, (height - iconSize) / 2, iconSize, iconSize));
 		return bmp;
 	}
+
+	/// <summary>
+	/// Pictures already reported as missing or unreadable, so that the warning is written once, not at every paint.
+	/// </summary>
+	private readonly ConcurrentDictionary<(string Scope, RecordId Id), byte> ReportedPictures = new();
 
 	/// <summary>
 	/// Creates a default bitmap for use when a bitmap cannot be found.
@@ -308,8 +323,19 @@ public class UIService : IUIService, IGameDataCache
 			if (USettings.DatabaseDebugLevel > 1)
 				Log.LogDebug("Loaded resource size={TexDataLength}", texData.Length);
 
-			// Create the bitmap
-			Bitmap? loaded = BitmapService.LoadFromTexMemory(texData, 0, texData.Length);
+			// Create the bitmap. Data that is cut or damaged throws: it gives the default bitmap, cached like a good one, so
+			// that it is decoded once and not again at every paint.
+			Bitmap? loaded;
+			try
+			{
+				loaded = BitmapService.LoadFromTexMemory(texData, 0, texData.Length);
+			}
+			catch (Exception ex) when (ex is InvalidDataException or InvalidOperationException or ArgumentException)
+			{
+				Log.LogWarning(ex, @"The picture ""{ResourceId}"" could not be decoded.", resourceId.Raw);
+				loaded = null;
+			}
+
 			if (loaded is not null)
 				bitmap = loaded;
 			else
@@ -356,6 +382,10 @@ public class UIService : IUIService, IGameDataCache
 		{
 			// Both the raw resource and the decoded bitmap are cached: only the first call per resource reads and decodes.
 			bmp = LoadBitmap(itm.TexImageResourceId, this.Database.LoadResource(itm.TexImageResourceId));
+
+			// Data that could not be decoded gives the default picture: that is no picture of the item.
+			if (bmp is not null && ReferenceEquals(bmp, this._DefaultBitmap))
+				bmp = null;
 		}
 
 		if (bmp is not null)
@@ -377,15 +407,37 @@ public class UIService : IUIService, IGameDataCache
 			if (USettings.ItemDebugLevel > 1)
 				Log.LogDebug("bitmap is null");
 
-			itm.Width = 1;
-			itm.Height = 1;
+			// No picture (its record is missing, as for a mod not loaded, or its picture is missing from the archives or
+			// unreadable): the item keeps the size read at load (from the texture header when it could be read, else one
+			// cell), so that room checks and drops see its real place, and shows a warning tile of that size, so that it can
+			// be found, moved and its tooltip read.
+			itm.Width = Math.Max(1, itm.Width);
+			itm.Height = Math.Max(1, itm.Height);
 
-			// An item whose base record the loaded data lacks (a mod not loaded) has no picture: a warning tile in a single
-			// cell keeps it visible, so it can be found, moved and its tooltip read.
-			if (itm.baseItemInfo is null && !RecordId.IsNullOrEmpty(itm.BaseItemId))
-				bmp = MissingItemBitmap.Value;
+			if (!RecordId.IsNullOrEmpty(itm.BaseItemId))
+			{
+				bmp = MissingItemBitmap(itm.Width, itm.Height);
+
+				// A missing record is reported with the item's other missing records; a found record without its picture
+				// is told here, once per picture.
+				if (itm.baseItemInfo is not null)
+					this.ReportMissingPicture(itm);
+			}
 		}
 		return bmp;
+	}
+
+	/// <summary>
+	/// Writes a warning, once per picture, for an item whose record was found but whose picture could not be loaded.
+	/// </summary>
+	private void ReportMissingPicture(Item itm)
+	{
+		RecordId picture = RecordId.IsNullOrEmpty(itm.TexImageResourceId) ? itm.BaseItemId : itm.TexImageResourceId;
+		if (this.ReportedPictures.TryAdd(this.BitmapKey(picture), 0))
+		{
+			this.Log.LogWarning(@"The picture ""{Picture}"" of item record ""{Record}"" could not be loaded: a placeholder of {Width}x{Height} cells is shown."
+				, itm.TexImageResourceId?.Raw ?? string.Empty, itm.BaseItemId.Raw, itm.Width, itm.Height);
+		}
 	}
 
 	#region Notifications

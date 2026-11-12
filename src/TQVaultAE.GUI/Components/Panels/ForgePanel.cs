@@ -347,9 +347,9 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
 			return;
 
 		this.EndDragCursor();
-		var bitmap = UIService.LoadBitmap(DragInfo.Item?.TexImageResourceId);
+		var bitmap = DragInfo.Item is { } dragged ? UIService.GetBitmap(dragged) : null;
 
-		this.dragCursor = ItemDragCursor.Create(bitmap, UIService.Scale);
+		this.dragCursor = bitmap is null ? null : ItemDragCursor.Create(bitmap, UIService.Scale);
 		this.dragCursorItem = DragInfo.Item;
 		if (this.dragCursor is not null)
 			this.Cursor = this.dragCursor.Cursor;
@@ -409,7 +409,7 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
 		Sacks[slot] = sack;
 
 		var view = SlotOf(slot);
-		view.Picture.Image = UIService.LoadBitmap(item.TexImageResourceId);
+		view.Picture.Image = UIService.GetBitmap(item);
 		view.Picture.BackColor = Color.FromArgb(127, ControlPaint.Dark(item.ItemStyle.Color()));
 		if (view.Combo is not null)
 			FillPartComboBox(view.Combo, item);
