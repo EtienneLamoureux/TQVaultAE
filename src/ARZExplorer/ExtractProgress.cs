@@ -38,6 +38,11 @@ internal sealed partial class ExtractProgress : Form
 	private ExtractionResult? _result;
 
 	/// <summary>
+	/// True while the worker thread runs; set and cleared on the UI thread.
+	/// </summary>
+	private bool _running;
+
+	/// <summary>
 	/// Initializes a new instance of the ExtractProgress class.
 	/// </summary>
 	/// <param name="mainForm">The main window, whose selected file is extracted.</param>
@@ -74,21 +79,68 @@ internal sealed partial class ExtractProgress : Form
 		// an exception thrown on that thread would end the application.
 		var baseFolder = this.BaseFolder;
 		var token = this._cancellation.Token;
+		this._running = true;
 		Task.Run(() =>
 		{
-			this._result = this.Extractor.ExtractAll(
+			var result = this.Extractor.ExtractAll(
 				file
 				, baseFolder
-				, recordId => this.Invoke(() => this.UpdateLabel(recordId))
-				, () => this.Invoke(this.IncrementProgress)
+				, recordId => this.OnUi(() => this.UpdateLabel(recordId))
+				, () => this.OnUi(this.IncrementProgress)
 				, token
 			);
 
-			if (this._result.Outcome == ExtractionOutcome.Failed)
-				this.Invoke(this.ExtractFailed);
-			else
-				this.Invoke(this.ExtractComplete);
+			this.OnUi(() =>
+			{
+				this._result = result;
+				this._running = false;
+				if (result.Outcome == ExtractionOutcome.Failed)
+					this.ExtractFailed();
+				else
+					this.ExtractComplete();
+			});
 		});
+	}
+
+	/// <summary>
+	/// Runs <paramref name="action"/> on the UI thread from the worker; does nothing once the dialog is gone
+	/// (closed by the owner or at shutdown), so the worker never fails because of the window.
+	/// </summary>
+	private void OnUi(Action action)
+	{
+		if (this.IsDisposed || !this.IsHandleCreated)
+			return;
+
+		try
+		{
+			this.Invoke(action);
+		}
+		catch (ObjectDisposedException)
+		{
+			// Disposed between the check and the call.
+		}
+		catch (InvalidOperationException) when (this.IsDisposed || !this.IsHandleCreated)
+		{
+			// Handle destroyed between the check and the call.
+		}
+	}
+
+	/// <summary>
+	/// Closing the dialog (Alt+F4, or its owner closing) stops the extraction. A user close waits, like Cancel,
+	/// for the entry being written: the dialog then closes itself once the worker has stopped.
+	/// </summary>
+	/// <param name="e">FormClosingEventArgs data</param>
+	protected override void OnFormClosing(FormClosingEventArgs e)
+	{
+		if (this._running)
+		{
+			this._cancellation.Cancel();
+			this.cancelButton.Enabled = false;
+			if (e.CloseReason == CloseReason.UserClosing)
+				e.Cancel = true;
+		}
+
+		base.OnFormClosing(e);
 	}
 
 	/// <summary>
@@ -153,5 +205,6 @@ internal sealed partial class ExtractProgress : Form
 	private void CancelButtonClick(object sender, EventArgs e)
 	{
 		this._cancellation.Cancel();
+		this.cancelButton.Enabled = false;
 	}
 }
