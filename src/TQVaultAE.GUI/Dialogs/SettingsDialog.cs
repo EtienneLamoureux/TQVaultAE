@@ -152,7 +152,6 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		this.loadLastCharacterCheckBox.Font =
 		this.loadLastVaultCheckBox.Font =
 		this.vaultPathTextBox.Font =
-		this.vaultPathLabel.Font =
 		this.loadAllFilesCheckBox.Font =
 		this.suppressWarningsCheckBox.Font =
 		this.playerReadonlyCheckbox.Font =
@@ -188,7 +187,7 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 
 		this.ApplyMarbleStyle();
 
-		this.vaultPathLabel.Text = Resources.SettingsLabel1;
+		this.groupBoxVaultPath.Text = Resources.SettingsLabel1;
 		this.languageLabel.Text = Resources.SettingsLabel2;
 		this.titanQuestPathLabel.Text = Resources.SettingsLabel3;
 		this.immortalThronePathLabel.Text = Resources.SettingsLabel4;

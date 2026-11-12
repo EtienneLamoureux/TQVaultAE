@@ -47,11 +47,6 @@ internal partial class SettingsDialog
 	private ScalingTextBox vaultPathTextBox;
 
 	/// <summary>
-	/// Label for the vault path text box
-	/// </summary>
-	private ScalingLabel vaultPathLabel;
-
-	/// <summary>
 	/// Cancel button control
 	/// </summary>
 	private ScalingButton cancelButton;
@@ -174,7 +169,7 @@ internal partial class SettingsDialog
 		loadLastCharacterCheckBox = new ScalingCheckBox();
 		loadLastVaultCheckBox = new ScalingCheckBox();
 		vaultPathTextBox = new ScalingTextBox();
-		vaultPathLabel = new ScalingLabel();
+		groupBoxVaultPath = new GroupBox();
 		cancelButton = new ScalingButton();
 		okayButton = new ScalingButton();
 		folderBrowserDialog = new FolderBrowserDialog();
@@ -271,6 +266,7 @@ internal partial class SettingsDialog
 		pasteBinGroupBox.SuspendLayout();
 		pasteBinFlowPanel.SuspendLayout();
 		bufferedFlowLayoutPanelSkeletonLeft.SuspendLayout();
+		groupBoxVaultPath.SuspendLayout();
 		bufferedFlowLayoutPanelVaultPath.SuspendLayout();
 		bufferedFlowLayoutPanelSkeletonCenter.SuspendLayout();
 		SuspendLayout();
@@ -356,17 +352,6 @@ internal partial class SettingsDialog
 		vaultPathTextBox.TabIndex = 0;
 		toolTip.SetToolTip(vaultPathTextBox, resources.GetString("vaultPathTextBox.ToolTip"));
 		vaultPathTextBox.Leave += VaultPathTextBoxLeave;
-		// 
-		// vaultPathLabel
-		// 
-		vaultPathLabel.AutoSize = true;
-		vaultPathLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
-		vaultPathLabel.ForeColor = Color.Gold;
-		vaultPathLabel.Location = new Point(3, 0);
-		vaultPathLabel.Name = "vaultPathLabel";
-		vaultPathLabel.Size = new Size(74, 18);
-		vaultPathLabel.TabIndex = 14;
-		vaultPathLabel.Text = "Vault Path";
 		// 
 		// cancelButton
 		// 
@@ -1307,8 +1292,7 @@ internal partial class SettingsDialog
 		// 
 		bufferedFlowLayoutPanelSkeletonLeft.AutoSize = true;
 		bufferedFlowLayoutPanelSkeletonLeft.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(vaultPathLabel);
-		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(bufferedFlowLayoutPanelVaultPath);
+		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(groupBoxVaultPath);
 		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(detectGamePathsCheckBox);
 		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(detectLanguageCheckBox);
 		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(checkGroupBoxGitBackup);
@@ -1319,16 +1303,32 @@ internal partial class SettingsDialog
 		bufferedFlowLayoutPanelSkeletonLeft.Size = new Size(472, 568);
 		bufferedFlowLayoutPanelSkeletonLeft.TabIndex = 0;
 		// 
+		// groupBoxVaultPath
+		// 
+		groupBoxVaultPath.AutoSize = true;
+		groupBoxVaultPath.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+		groupBoxVaultPath.Controls.Add(bufferedFlowLayoutPanelVaultPath);
+		groupBoxVaultPath.ForeColor = Color.Gold;
+		groupBoxVaultPath.Location = new Point(3, 3);
+		groupBoxVaultPath.Name = "groupBoxVaultPath";
+		groupBoxVaultPath.Size = new Size(466, 59);
+		groupBoxVaultPath.TabIndex = 14;
+		groupBoxVaultPath.TabStop = false;
+		groupBoxVaultPath.Text = "Vault Path";
+		// 
 		// bufferedFlowLayoutPanelVaultPath
 		// 
 		bufferedFlowLayoutPanelVaultPath.AutoSize = true;
 		bufferedFlowLayoutPanelVaultPath.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 		bufferedFlowLayoutPanelVaultPath.Controls.Add(vaultPathTextBox);
 		bufferedFlowLayoutPanelVaultPath.Controls.Add(vaultPathBrowseButton);
-		bufferedFlowLayoutPanelVaultPath.Location = new Point(3, 21);
+		bufferedFlowLayoutPanelVaultPath.Dock = DockStyle.Fill;
+		bufferedFlowLayoutPanelVaultPath.Location = new Point(3, 20);
 		bufferedFlowLayoutPanelVaultPath.Name = "bufferedFlowLayoutPanelVaultPath";
-		bufferedFlowLayoutPanelVaultPath.Size = new Size(456, 33);
-		bufferedFlowLayoutPanelVaultPath.TabIndex = 57;
+		bufferedFlowLayoutPanelVaultPath.Padding = new Padding(3, 0, 0, 0);
+		bufferedFlowLayoutPanelVaultPath.Size = new Size(460, 36);
+		bufferedFlowLayoutPanelVaultPath.TabIndex = 0;
+		bufferedFlowLayoutPanelVaultPath.WrapContents = false;
 		// 
 		// bufferedFlowLayoutPanelSkeletonCenter
 		// 
@@ -1416,6 +1416,8 @@ internal partial class SettingsDialog
 		pasteBinFlowPanel.PerformLayout();
 		bufferedFlowLayoutPanelSkeletonLeft.ResumeLayout(false);
 		bufferedFlowLayoutPanelSkeletonLeft.PerformLayout();
+		groupBoxVaultPath.ResumeLayout(false);
+		groupBoxVaultPath.PerformLayout();
 		bufferedFlowLayoutPanelVaultPath.ResumeLayout(false);
 		bufferedFlowLayoutPanelVaultPath.PerformLayout();
 		bufferedFlowLayoutPanelSkeletonCenter.ResumeLayout(false);
@@ -1470,6 +1472,7 @@ internal partial class SettingsDialog
 	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelSkeletonRight;
 	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelSkeletonLeft;
 	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelVaultPath;
+	private GroupBox groupBoxVaultPath;
 	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelSkeletonCenter;
 	private System.Windows.Forms.OpenFileDialog openFileDialog;
 	private ScalingCheckBox scalingCheckBoxBackupPlayerSaves;
