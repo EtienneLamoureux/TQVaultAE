@@ -30,24 +30,21 @@ public static partial class InstallLocations
 	/// The folders are not checked.
 	/// </summary>
 	public static IEnumerable<string> SteamCandidates()
-	{
-		if (!OperatingSystem.IsWindows())
-			yield break;
+		=> OperatingSystem.IsWindows() ? SteamCandidates(ReadRegistry, ReadTextFile) : [];
 
-		var steam = SteamRoot();
+	/// <summary>
+	/// <see cref="SteamCandidates()"/> with the registry and the file reads given (tests).
+	/// </summary>
+	/// <param name="registry">Reads a registry string value, <see langword="null"/> when missing or empty.</param>
+	/// <param name="readFile">Reads a text file, <see langword="null"/> when missing or unreadable.</param>
+	internal static IEnumerable<string> SteamCandidates(RegistryReader registry, Func<string, string?> readFile)
+	{
+		var steam = SteamRoot(registry);
 		if (steam is null)
 			yield break;
 
 		var libraries = new List<string> { steam };
-		var vdf = Path.Combine(steam, "steamapps", "libraryfolders.vdf");
-		string? content = null;
-		try {
-			if (File.Exists(vdf))
-				content = File.ReadAllText(vdf);
-		} catch (IOException) {
-		} catch (UnauthorizedAccessException) {
-		}
-		if (content is not null)
+		if (readFile(Path.Combine(steam, "steamapps", "libraryfolders.vdf")) is { } content)
 			libraries.AddRange(ParseLibraryFolders(content));
 
 		foreach (var lib in libraries.Distinct(StringComparer.OrdinalIgnoreCase))
@@ -56,16 +53,27 @@ public static partial class InstallLocations
 
 	/// <summary>Install folders that GOG registered for the game (64 and 32-bit registry views). Empty when not on Windows.</summary>
 	public static IEnumerable<string> GogCandidates()
-	{
-		if (!OperatingSystem.IsWindows())
-			yield break;
+		=> OperatingSystem.IsWindows() ? GogCandidates(ReadRegistry) : [];
 
+	/// <summary><see cref="GogCandidates()"/> with the registry reads given (tests).</summary>
+	internal static IEnumerable<string> GogCandidates(RegistryReader registry)
+	{
 		foreach (var key in new[] { $"""SOFTWARE\GOG.com\Games\{GogGameId}""", $"""SOFTWARE\WOW6432Node\GOG.com\Games\{GogGameId}""" }) {
-			var path = ReadRegistry(Microsoft.Win32.Registry.LocalMachine, key, "PATH");
+			var path = registry(RegistryRoot.LocalMachine, key, "PATH");
 			if (path is not null)
 				yield return path;
 		}
 	}
+
+	/// <summary>Registry hive read by <see cref="RegistryReader"/>.</summary>
+	internal enum RegistryRoot
+	{
+		CurrentUser,
+		LocalMachine,
+	}
+
+	/// <summary>Reads a registry string value, <see langword="null"/> when missing, empty or not readable.</summary>
+	internal delegate string? RegistryReader(RegistryRoot root, string subKey, string name);
 
 	/// <summary>
 	/// Library roots listed in a Steam libraryfolders.vdf, with backslashes unescaped: the <c>"path"</c> keys of
@@ -88,17 +96,28 @@ public static partial class InstallLocations
 	private static string Unescape(string value) => value.Replace("""\\""", """\""", StringComparison.Ordinal);
 
 	/// <summary>The Steam install folder, with backslashes.</summary>
-	[SupportedOSPlatform("windows")]
-	private static string? SteamRoot()
-		=> (ReadRegistry(Microsoft.Win32.Registry.CurrentUser, """Software\Valve\Steam""", "SteamPath")
-			?? ReadRegistry(Microsoft.Win32.Registry.LocalMachine, """SOFTWARE\WOW6432Node\Valve\Steam""", "InstallPath")
-			?? ReadRegistry(Microsoft.Win32.Registry.LocalMachine, """SOFTWARE\Valve\Steam""", "InstallPath"))
+	private static string? SteamRoot(RegistryReader registry)
+		=> (registry(RegistryRoot.CurrentUser, """Software\Valve\Steam""", "SteamPath")
+			?? registry(RegistryRoot.LocalMachine, """SOFTWARE\WOW6432Node\Valve\Steam""", "InstallPath")
+			?? registry(RegistryRoot.LocalMachine, """SOFTWARE\Valve\Steam""", "InstallPath"))
 			?.Replace('/', '\\');
 
-	[SupportedOSPlatform("windows")]
-	private static string? ReadRegistry(Microsoft.Win32.RegistryKey hive, string subKey, string name)
+	private static string? ReadTextFile(string path)
 	{
 		try {
+			return File.Exists(path) ? File.ReadAllText(path) : null;
+		} catch (IOException) {
+			return null;
+		} catch (UnauthorizedAccessException) {
+			return null;
+		}
+	}
+
+	[SupportedOSPlatform("windows")]
+	private static string? ReadRegistry(RegistryRoot root, string subKey, string name)
+	{
+		try {
+			var hive = root == RegistryRoot.CurrentUser ? Microsoft.Win32.Registry.CurrentUser : Microsoft.Win32.Registry.LocalMachine;
 			using var key = hive.OpenSubKey(subKey);
 			return key?.GetValue(name) is string s && s.Length > 0 ? s : null;
 		} catch (System.Security.SecurityException) {

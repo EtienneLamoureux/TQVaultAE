@@ -42,6 +42,10 @@ public static class GameLocator
 	/// GOG registry, well-known folders. Throws <see cref="DirectoryNotFoundException"/> when not found.
 	/// </summary>
 	public static GameInstall Locate(string? explicitRoot = null)
+		=> Locate(explicitRoot, Environment.GetEnvironmentVariable(EnvironmentVariable), Candidates());
+
+	/// <summary><see cref="Locate(string?)"/> with the environment value and the detected folders given (tests).</summary>
+	internal static GameInstall Locate(string? explicitRoot, string? env, IEnumerable<string> candidates)
 	{
 		if (!string.IsNullOrWhiteSpace(explicitRoot)) {
 			return IsGameRoot(explicitRoot)
@@ -49,14 +53,13 @@ public static class GameLocator
 				: throw new DirectoryNotFoundException($"'{explicitRoot}' is not a Titan Quest install (Database\\database.arz not found).");
 		}
 
-		var env = Environment.GetEnvironmentVariable(EnvironmentVariable);
 		if (!string.IsNullOrWhiteSpace(env)) {
 			return IsGameRoot(env)
 				? FromRoot(env)
 				: throw new DirectoryNotFoundException($"{EnvironmentVariable}='{env}' is not a Titan Quest install (Database\\database.arz not found).");
 		}
 
-		foreach (var candidate in Candidates())
+		foreach (var candidate in candidates)
 			if (IsGameRoot(candidate))
 				return FromRoot(candidate);
 
@@ -86,7 +89,9 @@ public static class GameLocator
 	internal static string DatabasePath(string root) => Path.Combine(root, "Database", "database.arz");
 
 	private static IEnumerable<string> Candidates()
-		=> InstallLocations.SteamCandidates()
-			.Concat(InstallLocations.GogCandidates())
-			.Concat(WellKnownFolders);
+		=> Candidates(InstallLocations.SteamCandidates(), InstallLocations.GogCandidates());
+
+	/// <summary>Detection order after the explicit folder and the environment: Steam, GOG, well-known folders.</summary>
+	internal static IEnumerable<string> Candidates(IEnumerable<string> steam, IEnumerable<string> gog)
+		=> steam.Concat(gog).Concat(WellKnownFolders);
 }
