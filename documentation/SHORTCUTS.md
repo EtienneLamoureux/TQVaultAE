@@ -73,6 +73,9 @@ alternate:
 - Right-click the shortcut to stop, **Clear** to remove it, **Defaults** to bring every shortcut back.
 - Two actions that share a shortcut are shown in red and **OK** stays disabled until one is changed.
 - The mouse buttons, the mouse wheel and <kbd>ALT</kbd>+<kbd>F4</kbd> are shown greyed: they cannot be changed.
+- Actions turned off by a setting are greyed too, with the setting to tick in their tool tip and under the list: copy and
+  duplicate need "Allow Item Copying", the character editor's clicks need "Allow Character Editing Features". Their
+  shortcuts can still be changed; they work once the setting is ticked.
 
 The changes take effect when you press **OK** in the settings, without a restart. They are saved in `UserConfig.xml` as
 one element listing only the changed actions, for example `<KeyBinds ItemDuplicateClick="Ctrl+Shift+Click" />`.

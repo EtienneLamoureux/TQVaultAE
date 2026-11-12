@@ -81,4 +81,23 @@ public class KeyBindTextTests
 		InCulture("en", () => KeyBindText.Conflict(map.Conflicts().Single()))
 			.Should().Be("C is used by: Copy the item under the cursor, Duplicate the item under the cursor");
 	}
+
+	[Fact]
+	public void TurnedOff_NamesTheSettingAsTheSettingsShowIt()
+	{
+		InCulture("en", () => KeyBindText.TurnedOff(KeyBindRequirement.ItemCopy))
+			.Should().Be("Off: tick \"Allow Item Copying\" in the settings to use it.");
+		InCulture("fr", () => KeyBindText.TurnedOff(KeyBindRequirement.CharacterEdit))
+			.Should().Be("Désactivé : cochez « Autorise l'édition des personnages » dans les paramètres pour l'utiliser.");
+	}
+
+	[Fact]
+	public void TurnedOffNote_ListsTheSettingsOff_EmptyWhenAllOn()
+	{
+		InCulture("en", () => KeyBindText.TurnedOffNote(new KeyBindOptions(AllowItemCopy: false, AllowCharacterEdit: false)))
+			.Should().Be("Greyed actions do nothing until these settings are ticked: Allow Item Copying, Allow Character Editing Features.");
+		InCulture("en", () => KeyBindText.TurnedOffNote(new KeyBindOptions(AllowItemCopy: false, AllowCharacterEdit: true)))
+			.Should().Be("Greyed actions do nothing until these settings are ticked: Allow Item Copying.");
+		InCulture("en", () => KeyBindText.TurnedOffNote(KeyBindOptions.All)).Should().BeEmpty();
+	}
 }

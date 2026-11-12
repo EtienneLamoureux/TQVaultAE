@@ -2095,6 +2095,12 @@ Une relique complétée reçoit son bonus, comme quand vous l'empilez à la main
 	<data name="KeyBindsFixed" xml:space="preserve">
     <value>Fixe : ne peut pas être changé.</value>
   </data>
+	<data name="KeyBindsTurnedOff" xml:space="preserve">
+    <value>Désactivé : cochez « {0} » dans les paramètres pour l'utiliser.</value>
+  </data>
+	<data name="KeyBindsTurnedOffNote" xml:space="preserve">
+    <value>Les actions grisées ne font rien tant que ces paramètres ne sont pas cochés : {0}.</value>
+  </data>
 	<data name="KeyBindsNone" xml:space="preserve">
     <value>(aucun)</value>
   </data>

@@ -45,12 +45,14 @@ internal partial class SettingsDialog
 	}
 
 	/// <summary>
-	/// Opens the key binds dialog on the edited key binds; its changes are saved with the other settings by OK.
+	/// Opens the key binds dialog on the edited key binds, the actions turned off by the edited settings greyed; its
+	/// changes are saved with the other settings by OK.
 	/// </summary>
 	private void KeyBindsButtonClick(object? sender, EventArgs e)
 	{
 		using var dialog = this.Services.Forms.Create<KeyBindsDialog>();
 		dialog.Bindings = KeyBindMap.FromOverrides(this.editor.Current.KeyBinds.Overrides);
+		dialog.Options = new KeyBindOptions(this.editor.Current.AllowItemCopy, this.editor.Current.AllowCharacterEdit);
 		if (dialog.ShowDialog(this) != DialogResult.OK)
 			return;
 

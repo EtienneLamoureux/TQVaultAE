@@ -36,7 +36,12 @@ internal sealed partial class KeyBindsDialog : VaultForm
 	/// <summary>The cell of each shortcut slot.</summary>
 	private readonly Dictionary<(KeyBindAction Action, int Slot), Label> cells = [];
 
+	/// <summary>The name of each action.</summary>
+	private readonly Dictionary<KeyBindAction, Label> names = [];
+
 	private KeyBindMap map = KeyBindMap.Defaults();
+
+	private KeyBindOptions options = KeyBindOptions.All;
 
 	/// <summary>The slot waiting for its new gesture.</summary>
 	private (KeyBindAction Action, int Slot)? armed;
@@ -51,6 +56,20 @@ internal sealed partial class KeyBindsDialog : VaultForm
 		{
 			this.map = value.Clone();
 			this.armed = null;
+			this.RefreshCells();
+		}
+	}
+
+	/// <summary>
+	/// The settings the actions depend on, as edited in the settings dialog: the actions they turn off are greyed, with
+	/// the setting to tick in their tool tip and under the list. They can still be rebound.
+	/// </summary>
+	public KeyBindOptions Options
+	{
+		get => this.options;
+		set
+		{
+			this.options = value;
 			this.RefreshCells();
 		}
 	}
@@ -105,7 +124,7 @@ internal sealed partial class KeyBindsDialog : VaultForm
 			foreach (var definition in group)
 			{
 				var name = NewText(KeyBindText.Action(definition.Action), font, TQColor.White.Color(), ActionWidth);
-				this.toolTip.SetToolTip(name, name.Text);
+				this.names[definition.Action] = name;
 				this.table.Controls.Add(name);
 				for (int slot = 0; slot < KeyBindMap.MaxGestures; slot++)
 				{
@@ -351,14 +370,26 @@ internal sealed partial class KeyBindsDialog : VaultForm
 
 	#endregion
 
-	/// <summary>Shows the gestures, the armed slot, the conflicts in red, and the conflicts or the hint under the list.</summary>
+	/// <summary>
+	/// Shows the gestures, the armed slot, the conflicts in red, the actions turned off by a setting greyed, and under
+	/// the list the conflicts or the hint, then the settings that turn actions off.
+	/// </summary>
 	private void RefreshCells()
 	{
+		foreach (var (action, name) in this.names)
+		{
+			var definition = KeyBindRegistry.Get(action);
+			bool isOn = definition.IsOn(this.options);
+			name.ForeColor = isOn ? TQColor.White.Color() : TQColor.DarkGray.Color();
+			this.toolTip.SetToolTip(name, isOn ? name.Text : $"{name.Text}{Environment.NewLine}{KeyBindText.TurnedOff(definition.Requirement)}");
+		}
+
 		foreach (var ((action, slot), cell) in this.cells)
 		{
 			var definition = KeyBindRegistry.Get(action);
 			var gesture = this.map.Get(action, slot);
 			bool isArmed = this.armed == (action, slot);
+			bool isOn = definition.IsOn(this.options);
 
 			cell.Text = isArmed
 				? (definition.Kind == KeyBindKind.Click ? Resources.KeyBindsClickWithModifiers : Resources.KeyBindsPressKey)
@@ -366,15 +397,20 @@ internal sealed partial class KeyBindsDialog : VaultForm
 			cell.BackColor = !definition.Editable ? Color.Transparent : isArmed ? ArmedBack : CellBack;
 			cell.ForeColor = isArmed ? TQColor.Aqua.Color()
 				: this.map.HasConflict(action, slot) ? TQColor.Red.Color()
-				: !definition.Editable ? TQColor.DarkGray.Color()
+				: !definition.Editable || !isOn ? TQColor.DarkGray.Color()
 				: TQColor.Silver.Color();
+			if (definition.Editable)
+				this.toolTip.SetToolTip(cell, isOn ? null : KeyBindText.TurnedOff(definition.Requirement));
 		}
 
 		var conflicts = this.map.Conflicts();
+		var note = KeyBindText.TurnedOffNote(this.options);
 		this.labelStatus.ForeColor = conflicts.Count > 0 ? TQColor.Red.Color() : Color.White;
-		this.labelStatus.Text = conflicts.Count > 0
-			? string.Join(Environment.NewLine, conflicts.Select(KeyBindText.Conflict))
-			: Resources.KeyBindsHint;
+		this.labelStatus.Text = string.Join(
+			Environment.NewLine
+			, (conflicts.Count > 0 ? conflicts.Select(KeyBindText.Conflict) : [Resources.KeyBindsHint])
+				.Append(note)
+				.Where(line => line.Length > 0));
 		this.buttonOk.Enabled = conflicts.Count == 0;
 		this.buttonClear.Enabled = this.armed is not null;
 	}

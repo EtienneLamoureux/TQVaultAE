@@ -91,6 +91,37 @@ public enum KeyBindKind
 	Fixed,
 }
 
+/// <summary>The setting an action needs: off, its gestures do nothing.</summary>
+public enum KeyBindRequirement
+{
+	/// <summary>Always on.</summary>
+	None,
+
+	/// <summary>Allow item copying: copy and duplicate.</summary>
+	ItemCopy,
+
+	/// <summary>Allow character editing: the character editor.</summary>
+	CharacterEdit,
+}
+
+/// <summary>The settings the actions depend on (<see cref="KeyBindDefinition.Requirement"/>).</summary>
+/// <param name="AllowItemCopy">Item copying is allowed.</param>
+/// <param name="AllowCharacterEdit">Character editing is allowed.</param>
+public sealed record KeyBindOptions(bool AllowItemCopy, bool AllowCharacterEdit)
+{
+	/// <summary>Every setting on.</summary>
+	public static KeyBindOptions All { get; } = new(true, true);
+
+	/// <summary>Whether <paramref name="requirement"/> is met.</summary>
+	public bool Allows(KeyBindRequirement requirement)
+		=> requirement switch
+		{
+			KeyBindRequirement.ItemCopy => this.AllowItemCopy,
+			KeyBindRequirement.CharacterEdit => this.AllowCharacterEdit,
+			_ => true,
+		};
+}
+
 /// <summary>An action, where it belongs and its gestures by default.</summary>
 /// <param name="Action">The action.</param>
 /// <param name="Category">Its group in the dialog.</param>
@@ -106,6 +137,12 @@ public sealed record KeyBindDefinition(
 {
 	/// <summary>The user may change its gestures.</summary>
 	public bool Editable => this.Kind != KeyBindKind.Fixed;
+
+	/// <summary>The setting the action needs; its gestures do nothing while it is off.</summary>
+	public KeyBindRequirement Requirement { get; init; }
+
+	/// <summary>Whether the action runs with <paramref name="options"/>.</summary>
+	public bool IsOn(KeyBindOptions options) => options.Allows(this.Requirement);
 
 	/// <summary>Whether <paramref name="gesture"/> suits this action: a key for a key action, a click for a click action.</summary>
 	public bool Accepts(KeyGesture gesture)
@@ -129,8 +166,11 @@ public static class KeyBindRegistry
 	private const KeyModifiers Shift = KeyModifiers.Shift;
 	private const KeyModifiers Alt = KeyModifiers.Alt;
 
+	/// <remarks>The character editor's actions need character editing, which shows the editor.</remarks>
 	private static KeyBindDefinition D(KeyBindAction action, KeyBindCategory category, KeyBindKind kind, params KeyGesture[] defaults)
-		=> new(action, category, category == KeyBindCategory.CharacterEditor ? KeyBindScope.CharacterEditor : KeyBindScope.Main, kind, defaults);
+		=> category == KeyBindCategory.CharacterEditor
+			? new(action, category, KeyBindScope.CharacterEditor, kind, defaults) { Requirement = KeyBindRequirement.CharacterEdit }
+			: new(action, category, KeyBindScope.Main, kind, defaults);
 
 	private static KeyBindDefinition D(KeyBindAction action, KeyBindCategory category, KeyBindScope scope, KeyBindKind kind, params KeyGesture[] defaults)
 		=> new(action, category, scope, kind, defaults);
@@ -140,10 +180,10 @@ public static class KeyBindRegistry
 	[
 		D(KeyBindAction.PickUpItem, KeyBindCategory.Items, KeyBindKind.Fixed, K(KeyGesture.Click)),
 		D(KeyBindAction.ItemMenu, KeyBindCategory.Items, KeyBindKind.Fixed, K(KeyGesture.RightClick)),
-		D(KeyBindAction.ItemCopy, KeyBindCategory.Items, KeyBindKind.Key, K("C")),
-		D(KeyBindAction.ItemDuplicate, KeyBindCategory.Items, KeyBindKind.Key, K("D")),
-		D(KeyBindAction.ItemCopyClick, KeyBindCategory.Items, KeyBindKind.Click, K(KeyGesture.Click, Alt)),
-		D(KeyBindAction.ItemDuplicateClick, KeyBindCategory.Items, KeyBindKind.Click, K(KeyGesture.Click, Ctrl | Alt)),
+		D(KeyBindAction.ItemCopy, KeyBindCategory.Items, KeyBindKind.Key, K("C")) with { Requirement = KeyBindRequirement.ItemCopy },
+		D(KeyBindAction.ItemDuplicate, KeyBindCategory.Items, KeyBindKind.Key, K("D")) with { Requirement = KeyBindRequirement.ItemCopy },
+		D(KeyBindAction.ItemCopyClick, KeyBindCategory.Items, KeyBindKind.Click, K(KeyGesture.Click, Alt)) with { Requirement = KeyBindRequirement.ItemCopy },
+		D(KeyBindAction.ItemDuplicateClick, KeyBindCategory.Items, KeyBindKind.Click, K(KeyGesture.Click, Ctrl | Alt)) with { Requirement = KeyBindRequirement.ItemCopy },
 		D(KeyBindAction.ItemDelete, KeyBindCategory.Items, KeyBindKind.Key, K("Back")),
 		D(KeyBindAction.CancelDrag, KeyBindCategory.Items, KeyBindKind.Key, K("Escape")),
 

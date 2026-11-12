@@ -2467,6 +2467,12 @@ A completed relic gets its bonus, as when you stack it by hand.</value>
 	<data name="KeyBindsFixed" xml:space="preserve">
     <value>Fixed: cannot be changed.</value>
   </data>
+	<data name="KeyBindsTurnedOff" xml:space="preserve">
+    <value>Off: tick "{0}" in the settings to use it.</value>
+  </data>
+	<data name="KeyBindsTurnedOffNote" xml:space="preserve">
+    <value>Greyed actions do nothing until these settings are ticked: {0}.</value>
+  </data>
 	<data name="KeyBindsNone" xml:space="preserve">
     <value>(none)</value>
   </data>

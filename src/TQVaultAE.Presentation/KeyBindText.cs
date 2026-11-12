@@ -66,6 +66,35 @@ public static class KeyBindText
 
 	private static string NumPad(string sign) => string.Format(CultureInfo.CurrentCulture, Resources.KeyNameNumPad, sign);
 
+	/// <summary>The name of the setting <paramref name="requirement"/> stands for, as the settings dialog shows it.</summary>
+	public static string Setting(KeyBindRequirement requirement)
+		=> requirement switch
+		{
+			KeyBindRequirement.ItemCopy => Resources.SettingsAllowCopy,
+			KeyBindRequirement.CharacterEdit => Resources.SettingsAllowEditCE,
+			_ => string.Empty,
+		};
+
+	/// <summary>Why an action does nothing: the setting to tick.</summary>
+	public static string TurnedOff(KeyBindRequirement requirement)
+		=> string.Format(CultureInfo.CurrentCulture, Resources.KeyBindsTurnedOff, Setting(requirement));
+
+	/// <summary>
+	/// The note under the list when some actions are off with <paramref name="options"/>: the settings to tick; empty
+	/// when every action is on.
+	/// </summary>
+	public static string TurnedOffNote(KeyBindOptions options)
+	{
+		var off = KeyBindRegistry.All
+			.Where(d => !d.IsOn(options))
+			.Select(d => d.Requirement)
+			.Distinct()
+			.Select(Setting)
+			.ToList();
+
+		return off.Count == 0 ? string.Empty : string.Format(CultureInfo.CurrentCulture, Resources.KeyBindsTurnedOffNote, string.Join(", ", off));
+	}
+
 	/// <summary>The gestures of an action, separated by commas.</summary>
 	public static string Gestures(IEnumerable<KeyGesture> gestures) => string.Join(", ", gestures.Select(Gesture));
 

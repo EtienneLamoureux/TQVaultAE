@@ -311,4 +311,44 @@ public class KeyBindMapTests
 	}
 
 	#endregion
+
+	#region Settings the actions need
+
+	[Theory]
+	[InlineData(KeyBindAction.ItemCopy)]
+	[InlineData(KeyBindAction.ItemDuplicate)]
+	[InlineData(KeyBindAction.ItemCopyClick)]
+	[InlineData(KeyBindAction.ItemDuplicateClick)]
+	public void CopyAndDuplicate_NeedItemCopying(KeyBindAction action)
+	{
+		var definition = KeyBindRegistry.Get(action);
+
+		definition.Requirement.Should().Be(KeyBindRequirement.ItemCopy);
+		definition.IsOn(new KeyBindOptions(AllowItemCopy: false, AllowCharacterEdit: true)).Should().BeFalse();
+		definition.IsOn(new KeyBindOptions(AllowItemCopy: true, AllowCharacterEdit: false)).Should().BeTrue();
+	}
+
+	[Fact]
+	public void CharacterEditorActions_NeedCharacterEditing()
+	{
+		var editor = KeyBindRegistry.All.Where(d => d.Category == KeyBindCategory.CharacterEditor).ToList();
+
+		editor.Should().NotBeEmpty();
+		editor.Should().OnlyContain(d => d.Requirement == KeyBindRequirement.CharacterEdit);
+		editor.Should().OnlyContain(d => !d.IsOn(new KeyBindOptions(true, false)));
+	}
+
+	[Fact]
+	public void OtherActions_AlwaysOn()
+	{
+		var off = new KeyBindOptions(AllowItemCopy: false, AllowCharacterEdit: false);
+		var always = KeyBindRegistry.All
+			.Where(d => d.Category != KeyBindCategory.CharacterEditor)
+			.Where(d => d.Action is not (KeyBindAction.ItemCopy or KeyBindAction.ItemDuplicate or KeyBindAction.ItemCopyClick or KeyBindAction.ItemDuplicateClick));
+
+		always.Should().OnlyContain(d => d.Requirement == KeyBindRequirement.None && d.IsOn(off));
+		KeyBindRegistry.All.Should().OnlyContain(d => d.IsOn(KeyBindOptions.All));
+	}
+
+	#endregion
 }

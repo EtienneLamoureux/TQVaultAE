@@ -6725,6 +6725,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Off: tick &quot;{0}&quot; in the settings to use it..
+        /// </summary>
+        public static string KeyBindsTurnedOff {
+            get {
+                return ResourceManager.GetString("KeyBindsTurnedOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Greyed actions do nothing until these settings are ticked: {0}..
+        /// </summary>
+        public static string KeyBindsTurnedOffNote {
+            get {
+                return ResourceManager.GetString("KeyBindsTurnedOffNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (none).
         /// </summary>
         public static string KeyBindsNone {
