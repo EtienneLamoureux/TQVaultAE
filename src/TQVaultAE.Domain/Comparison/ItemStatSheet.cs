@@ -45,6 +45,11 @@ public sealed record StatGroup(StatGroupKind Kind, string Key, string? Title, IR
 			if (!line.Indented)
 				parent = line.Template;
 
+			// A line without a number (lore, a title, "Attack Speed: Fast") is not compared; it still heads the indented
+			// lines under it.
+			if (line.Values.Length == 0)
+				continue;
+
 			if (byKey.TryGetValue(line.Key, out var index))
 				stats[index] = Sum(stats[index], line);
 			else

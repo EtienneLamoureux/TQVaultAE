@@ -17,6 +17,9 @@ namespace TQVaultAE.Domain.Comparison;
 /// <param name="Key">What identifies the stat: the template, after the template of its parent line when indented.</param>
 public sealed partial record StatLine(string Template, decimal[] Values, int[] Decimals, char DecimalSeparator, bool Indented, string Key)
 {
+	/// <summary>Which numbers were written with an explicit plus sign ("+42 Strength"), to write them back the same way.</summary>
+	public bool[] Plus { get; init; } = [];
+
 	/// <summary>Stands for a number in <see cref="Template"/>.</summary>
 	public const char Slot = '\u001F';
 
@@ -50,6 +53,7 @@ public sealed partial record StatLine(string Template, decimal[] Values, int[] D
 
 		var values = new List<decimal>();
 		var decimals = new List<int>();
+		var plus = new List<bool>();
 		char separator = '.';
 		var template = new StringBuilder(plain.Length);
 		int last = 0;
@@ -66,6 +70,7 @@ public sealed partial record StatLine(string Template, decimal[] Values, int[] D
 
 			values.Add(value);
 			decimals.Add(fraction.Length);
+			plus.Add(m.Groups["sign"].Value == "+");
 			template.Append(plain, last, m.Index - last).Append(Slot);
 			last = m.Index + m.Length;
 		}
@@ -73,7 +78,7 @@ public sealed partial record StatLine(string Template, decimal[] Values, int[] D
 		template.Append(plain, last, plain.Length - last);
 		var t = template.ToString();
 		var key = indented && parentTemplate is not null ? $"{parentTemplate}\n{t}" : t;
-		return new StatLine(t, [.. values], [.. decimals], separator, indented, key);
+		return new StatLine(t, [.. values], [.. decimals], separator, indented, key) { Plus = [.. plus] };
 	}
 
 	/// <summary>The indent written before an <see cref="Indented"/> line.</summary>
@@ -116,6 +121,32 @@ public sealed partial record StatLine(string Template, decimal[] Values, int[] D
 	/// </summary>
 	public string FormatDifference(IReadOnlyList<decimal> differences, IReadOnlyList<int> decimals)
 		=> this.Format(differences, decimals, this.Values);
+
+	/// <summary>
+	/// Writes this line's own values as it was displayed: "+42 Strength" keeps its plus sign, "42% Pierce Resistance" has none.
+	/// </summary>
+	public string FormatOwn()
+	{
+		var text = new StringBuilder(this.Template.Length + (this.Values.Length * 4) + Indent.Length);
+		if (this.Indented)
+			text.Append(Indent);
+
+		int index = 0;
+		foreach (var c in this.Template)
+		{
+			if (c != Slot)
+			{
+				text.Append(c);
+				continue;
+			}
+
+			bool plus = index < this.Plus.Length && this.Plus[index] && this.Values[index] > 0;
+			text.Append(plus ? "+" : string.Empty).Append(FormatPlain(this.Values[index], this.Decimals[index], this.DecimalSeparator));
+			index++;
+		}
+
+		return text.ToString();
+	}
 
 	/// <summary>A number without a plus sign: "5", "-2.5".</summary>
 	public static string FormatPlain(decimal value, int decimals, char separator = '.')

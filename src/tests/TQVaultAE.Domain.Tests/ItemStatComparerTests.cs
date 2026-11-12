@@ -24,6 +24,10 @@ public class ItemStatComparerTests
 	private static IEnumerable<string> LinesOf(IReadOnlyList<StatDifferenceGroup> groups)
 		=> groups.SelectMany(g => g.Lines).Select(l => l.Text);
 
+	/// <summary>The groups with their differing lines only, the groups left empty dropped.</summary>
+	private static List<StatDifferenceGroup> Changed(IReadOnlyList<StatDifferenceGroup> groups)
+		=> [.. groups.Select(g => g with { Lines = [.. g.Lines.Where(l => l.Trend != StatTrend.Unchanged)] }).Where(g => g.Lines.Count != 0)];
+
 	private static GrantedSkill Skill(string id, string name, string level, params string[] attributes)
 		=> new(RecordId.Create(id), name, 1, level, null, null, [], attributes);
 
@@ -41,12 +45,14 @@ public class ItemStatComparerTests
 	}
 
 	[Fact]
-	public void Compare_EqualStats_AreLeftOut()
+	public void Compare_EqualStats_AreUnchanged_WithTheirOwnValues()
 	{
-		var result = Compare(Texts(["+42 Strength", "Attack Speed: Fast"]), Texts(["Attack Speed: Fast", "+42 Strength"]));
+		var result = Compare(Texts(["+42 Strength", "20.0% Chance of 10 Damage"]), Texts(["20.0% Chance of 10 Damage", "+42 Strength"]));
 
-		result.FirstMinusSecond.Should().BeEmpty();
-		result.SecondMinusFirst.Should().BeEmpty();
+		result.FirstMinusSecond.Single().Lines.Select(l => (l.Text, l.Trend, l.Presence)).Should().Equal(
+			("+42 Strength", StatTrend.Unchanged, StatPresence.Both),
+			("20.0% Chance of 10 Damage", StatTrend.Unchanged, StatPresence.Both));
+		result.SecondMinusFirst.Single().Lines.Should().OnlyContain(l => l.Trend == StatTrend.Unchanged);
 	}
 
 	[Fact]
@@ -63,14 +69,71 @@ public class ItemStatComparerTests
 	}
 
 	[Fact]
-	public void Compare_TextOnlyStatsThatDiffer_AreTwoDifferentStats()
+	public void Compare_TextOnlyLines_AreLeftOut()
 	{
-		var result = Compare(Texts(["Attack Speed: Fast"]), Texts(["Attack Speed: Very Fast"]));
+		// Lore, titles and texts without a number ("Attack Speed: Fast") are not compared nor shown.
+		var result = Compare(Texts(["Attack Speed: Fast", "A blade forged by Hephaestus", "+5 Strength"]), Texts(["Attack Speed: Very Fast"]));
+
+		LinesOf(result.FirstMinusSecond).Should().Equal("+5 Strength");
+		LinesOf(result.SecondMinusFirst).Should().Equal("-5 Strength");
+	}
+
+	[Fact]
+	public void From_TextOnlyLine_StillHeadsTheIndentedLinesUnderIt()
+	{
+		var sheet = ItemStatSheet.From(Texts(["Bonus to all Pets:", "    +10% Attack Speed", "+10% Attack Speed"]));
+
+		sheet.Groups.Single().Stats.Select(s => s.Key).Should().Equal(
+			$"Bonus to all Pets:\n{StatLine.Slot}% Attack Speed",
+			$"{StatLine.Slot}% Attack Speed");
+	}
+
+	[Fact]
+	public void Compare_StatOnOneItemOnly_TrendFollowsTheSignOfItsNumbers()
+	{
+		var result = Compare(Texts(["-10% Recharge"]), Texts(["+5 Strength"]));
 
 		result.FirstMinusSecond.Single().Lines.Select(l => (l.Text, l.Trend)).Should().Equal(
-			("Attack Speed: Fast", StatTrend.Higher),
-			("Attack Speed: Very Fast", StatTrend.Lower));
+			("-10% Recharge", StatTrend.Lower),
+			("-5 Strength", StatTrend.Lower));
+		result.SecondMinusFirst.Single().Lines.Select(l => (l.Text, l.Trend)).Should().Equal(
+			("+5 Strength", StatTrend.Higher),
+			("+10% Recharge", StatTrend.Higher));
 	}
+
+	[Fact]
+	public void Compare_LowerIsBetterStats_AreMarked_ByTheSignatureOfTheirLabel()
+	{
+		var lowerIsBetter = LowerIsBetterStats.Signatures(["-{%.0f0}% Recharge", "^a{%.1f0} Second(s) Recharge"]);
+		var first = Texts(["-10% Recharge", "+5 Strength"]);
+		first.GrantedSkills = [Skill("records/skills/boil.dbr", "Blood Boil", "Level: 1", "12.0 Second(s) Recharge")];
+		var second = Texts(["-15% Recharge", "+3 Strength"]);
+		second.GrantedSkills = [Skill("records/skills/boil.dbr", "Blood Boil", "Level: 1", "10.0 Second(s) Recharge")];
+
+		var groups = Changed(ItemStatComparer.Compare(ItemStatSheet.From(first), ItemStatSheet.From(second), lowerIsBetter).FirstMinusSecond);
+
+		groups.SelectMany(g => g.Lines).Select(l => (l.Text, l.Trend, l.LowerIsBetter)).Should().Equal(
+			("+5% Recharge", StatTrend.Higher, true),
+			("+2 Strength", StatTrend.Higher, false),
+			("+2.0 Second(s) Recharge", StatTrend.Higher, true));
+	}
+
+	[Fact]
+	public void Compare_Requirements_AreLowerIsBetterLines()
+		=> Compare(Texts([], ["Required Strength: 650"]), Texts([], ["Required Strength: 600"]))
+			.FirstMinusSecond.Single().Lines.Single().LowerIsBetter.Should().BeTrue();
+
+	[Theory]
+	[InlineData("^a{%.1f0} Second(s) Recharge", "1.5 Second(s) Recharge")]
+	[InlineData("-{%.0f0}% Strength Requirement for all Weapons", "-15% Strength Requirement for all Weapons")]
+	[InlineData("{%+.0f0}% less Energy Reserved", "+5% less Energy Reserved")]
+	[InlineData("Energy Cost", "45 Energy Cost")]
+	public void Signature_SameForTheLabelAndTheDisplayedLine(string label, string line)
+		=> LowerIsBetterStats.Signature(label).Should().Be(LowerIsBetterStats.Signature(StatLine.Parse(line)!.Template));
+
+	[Fact]
+	public void Signature_DiffersForAnotherStat()
+		=> LowerIsBetterStats.Signature("-{%.0f0}% Recharge").Should().NotBe(LowerIsBetterStats.Signature("^a{%.1f0} Second(s) Recharge"));
 
 	[Fact]
 	public void Compare_SeveralNumbers_EachDiffersAndTheTrendCanBeMixed()
@@ -156,7 +219,7 @@ public class ItemStatComparerTests
 		var second = Texts(["1170 Bleeding Damage over 2.0 Seconds"]);
 		second.GrantedSkills = [Skill("records/skills/bloodboil.dbr", "Blood Boil", "Level: 1", "1000 Bleeding Damage over 2.0 Seconds")];
 
-		var group = Compare(first, second).FirstMinusSecond.Single();
+		var group = Changed(Compare(first, second).FirstMinusSecond).Single();
 
 		group.Kind.Should().Be(StatGroupKind.GrantedSkill);
 		group.Title.Should().Be("Blood Boil");
@@ -182,7 +245,7 @@ public class ItemStatComparerTests
 		var second = Texts(["+42 Strength"], ["Required Player Level: 40"]);
 		second.GrantedSkills = [Skill("records/skills/boil.dbr", "Blood Boil", "Level: 1", "6.0 Meter Radius")];
 
-		var groups = Compare(first, second).FirstMinusSecond;
+		var groups = Changed(Compare(first, second).FirstMinusSecond);
 
 		groups.Should().ContainSingle();
 		groups[0].Title.Should().Be("Blood Boil");
