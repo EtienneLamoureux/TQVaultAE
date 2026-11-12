@@ -17,15 +17,17 @@ public interface IItemDropService
 	/// Decides what a drop does.
 	/// </summary>
 	/// <remarks>
-	/// Refused when the stash does not take this kind of item (the relic vault), or when a player or equipment sack
-	/// gets an item the current character cannot use. Put back when dropped on itself and the drag can be cancelled.
+	/// <see cref="DropDecision.ReadOnly"/> on a sack of a read-only character. Refused when the sack cannot change
+	/// otherwise (the equipment with the <c>PlayerReadonly</c> setting on, see <c>ItemActionRules.IsReadOnly</c>), when
+	/// the stash does not take this kind of item (the relic vault), or when a player or equipment sack gets an item the
+	/// current character cannot use. Put back when dropped on itself and the drag can be cancelled.
 	/// </remarks>
 	/// <param name="dragItem">The dragged item.</param>
 	/// <param name="itemUnderUs">The only item under the drop, or <see langword="null"/>.</param>
+	/// <param name="sack">The sack of the drop (its stash type and read-only state are read).</param>
 	/// <param name="panelSackType">The sack type of the panel of the drop.</param>
-	/// <param name="stashType">The stash type of the sack of the drop, or <see langword="null"/>.</param>
 	/// <param name="canCancelDrag">The drag can be cancelled (not a new or modified item).</param>
-	DropDecision Decide(Item dragItem, Item? itemUnderUs, SackType panelSackType, StashType? stashType, bool canCancelDrag);
+	DropDecision Decide(Item dragItem, Item? itemUnderUs, SackCollection sack, SackType panelSackType, bool canCancelDrag);
 
 	/// <summary>
 	/// Drops an item on a sack: stacks it on the item under it, or places it at <paramref name="cell"/>, moves its

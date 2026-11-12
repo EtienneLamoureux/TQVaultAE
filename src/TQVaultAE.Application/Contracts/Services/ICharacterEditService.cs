@@ -28,7 +28,7 @@ public interface ICharacterEditService
 	/// <summary>
 	/// Applies <paramref name="request"/> to the character of <paramref name="player"/> and writes it to its raw data.
 	/// </summary>
-	/// <returns>false when the character has no player info.</returns>
+	/// <returns>false, changing nothing, when the character has no player info or is read-only.</returns>
 	bool Apply(PlayerCollection player, CharacterEditRequest request);
 
 	/// <summary>

@@ -1,6 +1,7 @@
 using System.Drawing;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Config;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 
@@ -14,17 +15,25 @@ public class ItemDropService(
 	, IItemStackingService itemStackingService
 	, IItemDatabaseService itemDatabaseService
 	, IPlayerService playerService
+	, UserSettings? userSettings = null
 ) : IItemDropService
 {
 	private readonly IItemMovementService _itemMovementService = itemMovementService;
 	private readonly IItemStackingService _itemStackingService = itemStackingService;
 	private readonly IItemDatabaseService _itemDatabaseService = itemDatabaseService;
 	private readonly IPlayerService _playerService = playerService;
+	private readonly UserSettings? _userSettings = userSettings;
 
 	/// <inheritdoc/>
-	public DropDecision Decide(Item dragItem, Item? itemUnderUs, SackType panelSackType, StashType? stashType, bool canCancelDrag)
+	public DropDecision Decide(Item dragItem, Item? itemUnderUs, SackCollection sack, SackType panelSackType, bool canCancelDrag)
 	{
-		if (!this._itemMovementService.IsItemValidForStashType(dragItem, stashType))
+		if (sack.IsReadOnly)
+			return DropDecision.ReadOnly;
+
+		if (ItemActionRules.IsReadOnly(panelSackType, this._userSettings?.PlayerReadonly ?? false))
+			return DropDecision.Refused;
+
+		if (!this._itemMovementService.IsItemValidForStashType(dragItem, sack.StashType))
 			return DropDecision.Refused;
 
 		if ((panelSackType == SackType.Player || panelSackType == SackType.Equipment)

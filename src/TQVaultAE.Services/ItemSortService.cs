@@ -63,6 +63,10 @@ public class ItemSortService(
 	/// <inheritdoc/>
 	public SackSortResult Sort(SackCollection sack, Size sackSize, bool vertical, SackSortAlgorithm algorithm, bool mergeRelics)
 	{
+		// A read-only character's bag is never sorted nor merged.
+		if (sack.IsReadOnly)
+			return SackSortResult.ReadOnlyRefused;
+
 		if (sack.IsEmpty)
 			return SackSortResult.SortedOnly;
 

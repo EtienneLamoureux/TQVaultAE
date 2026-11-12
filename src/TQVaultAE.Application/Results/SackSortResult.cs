@@ -15,4 +15,10 @@ public sealed record SackSortResult(bool Sorted, IReadOnlyList<Item> Changed, IR
 
 	/// <summary>An item did not fit: nothing changed.</summary>
 	public static SackSortResult NotSorted { get; } = new(false, [], []);
+
+	/// <summary>The sack belongs to a read-only character: nothing changed, nothing was tried.</summary>
+	public static SackSortResult ReadOnlyRefused { get; } = new(false, [], []) { ReadOnly = true };
+
+	/// <summary>Refused because the sack belongs to a read-only character (<see cref="SackCollection.IsReadOnly"/>).</summary>
+	public bool ReadOnly { get; init; }
 }

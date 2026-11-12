@@ -146,6 +146,27 @@ public class PlayerCollection : IEnumerable<SackCollection>
 	}
 
 	/// <summary>
+	/// Indicates whether the collection is a read-only character: nothing in its bags and equipment can change, its
+	/// character editor does not apply, and the save skips it. Setting it marks every sack
+	/// (<see cref="SackCollection.IsReadOnly"/>), so set it once the file is read.
+	/// </summary>
+	public bool IsReadOnly
+	{
+		get => this.isReadOnly;
+		set
+		{
+			this.isReadOnly = value;
+			foreach (var sack in this.Sacks ?? [])
+				sack.IsReadOnly = value;
+
+			if (this.EquipmentSack is not null)
+				this.EquipmentSack.IsReadOnly = value;
+		}
+	}
+
+	private bool isReadOnly;
+
+	/// <summary>
 	/// Adjust internal status when the collection is saved
 	/// </summary>
 	public void Saved()

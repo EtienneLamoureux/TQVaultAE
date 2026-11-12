@@ -48,6 +48,13 @@ public partial class SackPanel : Panel, IScalingControl
 		// The order picked in the sort button's menu, and the shard merge of the settings.
 		var sort = this.USettings.Sort ?? new SortSettings();
 		var result = this.Services.ItemSortService.Sort(this.ShownSack, this.SackSize, this.sortVertical, sort.Algorithm, sort.MergeRelics);
+		if (result.ReadOnly)
+		{
+			this.sortVertical = !this.sortVertical;
+			this.NotifyIfReadOnlyCharacter(this.ShownSack);
+			return;
+		}
+
 		if (!result.Sorted)
 		{
 			// An item did not fit: the sack is back as it was.

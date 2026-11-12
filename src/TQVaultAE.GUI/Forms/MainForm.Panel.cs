@@ -305,10 +305,11 @@ public partial class MainForm
 		// The same place as a drop on the stash: the stash file.
 		var place = stashSackPanel.PlaceHere();
 
-		// No room, or an item the relic vault does not take: the item goes back.
+		// No room, an item the relic vault does not take, or a read-only character's stash: the item goes back.
 		if (!this.Services.ItemMovementService.TryPlace(dragItem, stashSack, stashSackPanel.SackSize, place, this.DragInfo.MarkPlaced))
 		{
 			this.DragInfo.Cancel();
+			stashSackPanel.NotifyIfReadOnlyCharacter(stashSack);
 			return;
 		}
 
@@ -341,10 +342,11 @@ public partial class MainForm
 		int destination = this.GetDestinationIndex(destinationSackPanel, destinationPanel.CurrentBag, destSackNumber);
 		var place = this.Services.ItemMovementService.PlaceIn(destinationPanel.Player, destinationSackPanel.SackType, destination, destinationSack.StashType);
 
-		// We have no space in the sack so we cancel.
+		// We have no space in the sack, or it is a read-only character's, so we cancel.
 		if (!this.Services.ItemMovementService.TryPlace(dragItem, destinationSack, destinationSackPanel.SackSize, place, this.DragInfo.MarkPlaced))
 		{
 			this.DragInfo.Cancel();
+			destinationSackPanel.NotifyIfReadOnlyCharacter(destinationSack);
 			return;
 		}
 

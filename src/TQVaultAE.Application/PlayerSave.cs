@@ -14,6 +14,13 @@ public sealed class PlayerSave : IDisposable
 	public string Folder;
 	public readonly string Name;
 	public bool IsArchived;
+
+	/// <summary>
+	/// Whether the character is read-only: one of the files TQVault writes for it carries the read-only attribute
+	/// (<c>ICharacterReadOnlyService</c>). Read with the character list and at each load, changed by the toggle.
+	/// </summary>
+	public bool IsReadOnly { get; set; }
+
 	public readonly bool IsCustom;
 	/// <summary>
 	/// The custom map (mod) folder the character is played with; empty for none.

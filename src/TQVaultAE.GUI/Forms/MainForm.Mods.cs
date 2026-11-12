@@ -63,6 +63,10 @@ public partial class MainForm
 	/// </summary>
 	private void OpenModLinkDialog(PlayerSave save)
 	{
+		// The link file belongs to the character: a read-only one keeps its link.
+		if (this.NotifyIfReadOnly(save))
+			return;
+
 		bool changed;
 		using (var dialog = this.Services.Forms.Create<ModLinkDialog>())
 		{

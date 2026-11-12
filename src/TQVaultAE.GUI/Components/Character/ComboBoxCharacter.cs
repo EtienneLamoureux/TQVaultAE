@@ -57,11 +57,17 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 	private int _SelectedIndex = -1;
 	private Action DuplicateCharacterAction = null!;
 	private Action<PlayerSave> ModLinkAction = null!;
+	private Action<PlayerSave> ReadOnlyAction = null!;
 
 	/// <summary>
 	/// Opens the mod link dialog of the selected custom map character.
 	/// </summary>
 	private readonly ToolStripMenuItem modLinkToolStripMenuItem = new() { Name = "modLinkToolStripMenuItem" };
+
+	/// <summary>
+	/// Shows and toggles the read-only state of the selected character (the read-only attribute of its save files).
+	/// </summary>
+	private readonly ToolStripMenuItem readOnlyToolStripMenuItem = new() { Name = "readOnlyToolStripMenuItem" };
 	private bool _DisableMenuTriggers;
 
 	/// <summary>
@@ -196,6 +202,7 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 		, UserSettings userSettings
 		, Action duplicateCharacterAction
 		, Action<PlayerSave> modLinkAction
+		, Action<PlayerSave> readOnlyAction
 	)
 	{
 		this.UIService = uIService;
@@ -210,8 +217,12 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 			this.Form.GlobalMouseButtonLeft += Form_GlobalMouseButtonLeft;
 		this.DuplicateCharacterAction = duplicateCharacterAction;
 		this.ModLinkAction = modLinkAction;
+		this.ReadOnlyAction = readOnlyAction;
 		this.modLinkToolStripMenuItem.Click += this.ModLinkToolStripMenuItem_Click;
 		this.contextMenuStrip.Items.Insert(this.contextMenuStrip.Items.IndexOf(this.duplicateSeparatorToolStripMenuItem), this.modLinkToolStripMenuItem);
+		this.readOnlyToolStripMenuItem.Click += this.ReadOnlyToolStripMenuItem_Click;
+		// Next to Archived: both are states of the character's files, shown by a check mark.
+		this.contextMenuStrip.Items.Insert(this.contextMenuStrip.Items.IndexOf(this.archiveToolStripMenuItem) + 1, this.readOnlyToolStripMenuItem);
 
 		if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
 		{
@@ -237,6 +248,7 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 
 			this.duplicateToolStripMenuItem.Text = Resources.DuplicateCharacter_ButtonText;
 			this.modLinkToolStripMenuItem.Text = Resources.ModLinkMenu;
+			this.readOnlyToolStripMenuItem.Text = Resources.CharacterReadOnly;
 			this.archiveToolStripMenuItem.Text = Resources.GlobalArchived;
 			this.tagsToolStripMenuItem.Text = Resources.GlobalTags;
 			this.addTagToolStripMenuItem.Text = Resources.TagsAdd;
@@ -258,6 +270,7 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 			this.unarchiveAllToolStripMenuItem.Font =
 			this.duplicateToolStripMenuItem.Font =
 			this.modLinkToolStripMenuItem.Font =
+			this.readOnlyToolStripMenuItem.Font =
 			this.archiveToolStripMenuItem.Font =
 			this.tagsToolStripMenuItem.Font =
 			this.addTagToolStripMenuItem.Font =
@@ -274,6 +287,7 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 			this.unarchiveAllToolStripMenuItem.BackColor =
 			this.duplicateToolStripMenuItem.BackColor =
 			this.modLinkToolStripMenuItem.BackColor =
+			this.readOnlyToolStripMenuItem.BackColor =
 			this.archiveToolStripMenuItem.BackColor =
 			this.tagsToolStripMenuItem.BackColor =
 			this.addTagToolStripMenuItem.BackColor =
@@ -290,6 +304,7 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 			this.unarchiveAllToolStripMenuItem.ForeColor =
 			this.duplicateToolStripMenuItem.ForeColor =
 			this.modLinkToolStripMenuItem.ForeColor =
+			this.readOnlyToolStripMenuItem.ForeColor =
 			this.archiveToolStripMenuItem.ForeColor =
 			this.tagsToolStripMenuItem.ForeColor =
 			this.addTagToolStripMenuItem.ForeColor =
@@ -331,6 +346,7 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 
 		this.bufferedFlowLayoutPanelContent.BackColor = Color.White;
 		this.modLinkToolStripMenuItem.Visible = false;
+		this.readOnlyToolStripMenuItem.Visible = false;
 
 		if (this.SelectedItem is PlayerSave ps)
 		{
@@ -353,6 +369,10 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 
 			// Archiving toggle
 			this.archiveToolStripMenuItem.Checked = ps.IsArchived;
+
+			// Read-only toggle
+			this.readOnlyToolStripMenuItem.Visible = true;
+			this.readOnlyToolStripMenuItem.Checked = ps.IsReadOnly;
 
 			// Archived Color
 			if (ps.IsArchived)
@@ -654,6 +674,17 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 			return;
 
 		this.ModLinkAction(ps);
+	}
+
+	/// <summary>
+	/// Makes the selected character read-only, or writable again (the main window changes the files and tells the result).
+	/// </summary>
+	private void ReadOnlyToolStripMenuItem_Click(object? sender, EventArgs e)
+	{
+		if (this._DisableMenuTriggers || this.SelectedItem is not PlayerSave ps)
+			return;
+
+		this.ReadOnlyAction(ps);
 	}
 
 	private void TagRenameTextBoxItem_KeyDown(object? sender, KeyEventArgs e)

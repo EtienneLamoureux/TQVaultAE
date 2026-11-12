@@ -287,6 +287,7 @@ Item Debug Level: {ItemDebugLevel}
 			, USettings
 			, () => DuplicateCharacter()
 			, this.OpenModLinkDialog
+			, this.ToggleCharacterReadOnly
 		);
 
 		this.SetupFormSize();

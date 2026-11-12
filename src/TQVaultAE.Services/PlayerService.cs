@@ -32,9 +32,11 @@ public class PlayerService(
 	, ICharacterStatsService characterStatsService
 	, ICharacterEditService characterEditService
 	, IItemModService? itemModService = null
+	, ICharacterReadOnlyService? characterReadOnlyService = null
 ) : IPlayerService
 {
 	private readonly IItemModService? ItemModService = itemModService;
+	private readonly ICharacterReadOnlyService? CharacterReadOnly = characterReadOnlyService;
 	private readonly ILogger Log = log;
 	private readonly SessionContext userContext = userContext;
 	private readonly IItemDatabaseService ItemDatabaseService = itemDatabaseService;
@@ -95,6 +97,10 @@ public class PlayerService(
 
 					foreach (var item in resultPC.EquipmentSack ?? [])
 						item.InheritMod(characterMod);
+
+					// Once the sacks exist: a read-only character marks them all.
+					resultPC.IsReadOnly = this.CharacterReadOnly?.IsReadOnly(selectedSave.Folder) ?? false;
+					selectedSave.IsReadOnly = resultPC.IsReadOnly;
 
 					selectedSave.Info = resultPC.PlayerInfo;
 					selectedSave.ClassLabel = resultPC.PlayerInfo?.Class is { } playerClass
@@ -201,7 +207,18 @@ public class PlayerService(
 		=> [.. this.userContext.Players
 			.Where(kvp => kvp.Value.IsValueCreated)
 			.Select(kvp => (File: kvp.Key, Player: kvp.Value.Value))
-			.Where(p => p.Player is not null && p.Player.IsModified)];
+			.Where(p => p.Player is not null && p.Player.IsModified && !this.SkipReadOnly(p.Player.IsReadOnly, p.File))];
+
+	/// <summary>
+	/// A read-only character is never saved, even modified (nothing should modify it): its read-only attribute stays.
+	/// </summary>
+	private bool SkipReadOnly(bool isReadOnly, string file)
+	{
+		if (isReadOnly)
+			this.Log.LogWarning("The read-only character file {File} has changes: it is not saved", file);
+
+		return isReadOnly;
+	}
 
 	/// <inheritdoc/>
 	public void SaveModifiedPlayer(string file, PlayerCollection player)
@@ -242,6 +259,8 @@ public class PlayerService(
 				this.TagService.LoadTags(ps);
 				// The mod comes with the list too: its label and the map it is loaded with.
 				this.GameMapService.Refresh(ps);
+				// And its read-only state, shown in the list.
+				ps.IsReadOnly = this.CharacterReadOnly?.IsReadOnly(ps.Folder) ?? false;
 				return ps;
 			})
 			.ToArray();
@@ -293,6 +312,9 @@ public class PlayerService(
 		try
 		{
 			newFolder = this.GameFileService.DuplicateCharacterFiles(source.Folder, newName);
+
+			// The copy of a read-only character starts writable: its name is written below, and it is a new character.
+			this.CharacterReadOnly?.ClearReadOnly(newFolder);
 			this.AlterNameInPlayerFileSave(newName, newFolder);
 			return CharacterDuplicateResult.Succeeded(newFolder);
 		}

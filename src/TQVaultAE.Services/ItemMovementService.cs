@@ -160,7 +160,8 @@ public class ItemMovementService(ILogger<ItemMovementService> log) : IItemMoveme
     /// <inheritdoc/>
     public bool TryPlace(Item item, SackCollection sack, Size sackSize, ContainerPlace place, Action? beforePlacing = null)
     {
-        if (!this.IsItemValidForStashType(item, sack.StashType))
+        // A read-only character takes nothing.
+        if (sack.IsReadOnly || !this.IsItemValidForStashType(item, sack.StashType))
             return false;
 
         Point location = this.FindOpenCells(sack, item.Width, item.Height, sackSize.Width, sackSize.Height, item);

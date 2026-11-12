@@ -95,6 +95,23 @@ public class Stash
 		=> this.Sack?.IsModified ?? false;
 
 	/// <summary>
+	/// Indicates whether the stash belongs to a read-only character: its sack cannot change and the save skips it.
+	/// Setting it marks the sack (<see cref="SackCollection.IsReadOnly"/>).
+	/// </summary>
+	public bool IsReadOnly
+	{
+		get => this.isReadOnly;
+		set
+		{
+			this.isReadOnly = value;
+			if (this.Sack is not null)
+				this.Sack.IsReadOnly = value;
+		}
+	}
+
+	private bool isReadOnly;
+
+	/// <summary>
 	/// Adjust internal status when the collection is saved
 	/// </summary>
 	public void Saved()

@@ -17,9 +17,11 @@ public class StashService(
 	IGamePathService gamePathResolver,
 	IGameFileService iGameFileService,
 	UserSettings userSettings,
-	IGameMapService? gameMapService = null) : IStashService
+	IGameMapService? gameMapService = null,
+	ICharacterReadOnlyService? characterReadOnlyService = null) : IStashService
 {
 	private readonly IGameMapService? GameMapService = gameMapService;
+	private readonly ICharacterReadOnlyService? CharacterReadOnly = characterReadOnlyService;
 
 	/// <summary>Reads with a custom map's database (empty for the base game) until disposed.</summary>
 	private IDisposable ReadWithMap(string? mapFolder)
@@ -76,6 +78,9 @@ public class StashService(
 				Inherit(stash, this.GameMapService?.ModNameFor(selectedSave));
 				if ((stash.StashFound ?? false) && stash.Sack is not null)
 					stash.Sack.StashType = StashType.PlayerStash;
+
+				// The stash of a read-only character is read-only with it.
+				stash.IsReadOnly = this.CharacterReadOnly?.IsReadOnly(selectedSave.Folder) ?? false;
 
 				// Add stash items to the search database
 				if (stash.Sack is not null)
@@ -262,7 +267,19 @@ public class StashService(
 		=> [.. this.userContext.Stashes
 			.Where(kvp => kvp.Value.IsValueCreated)
 			.Select(kvp => (File: kvp.Key, Stash: kvp.Value.Value))
-			.Where(s => s.Stash is not null && s.Stash.IsModified)];
+			.Where(s => s.Stash is not null && s.Stash.IsModified && !this.SkipReadOnly(s.Stash.IsReadOnly, s.File))];
+
+	/// <summary>
+	/// The stash of a read-only character is never saved, even modified (nothing should modify it): its read-only
+	/// attribute stays.
+	/// </summary>
+	private bool SkipReadOnly(bool isReadOnly, string file)
+	{
+		if (isReadOnly)
+			this.Log.LogWarning("The read-only stash file {File} has changes: it is not saved", file);
+
+		return isReadOnly;
+	}
 
 	/// <inheritdoc/>
 	public void SaveModifiedStash(string file, Stash stash)

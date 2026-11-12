@@ -5,6 +5,7 @@ using Moq;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Config;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Services;
@@ -58,12 +59,43 @@ public class ItemDropServiceTests
 		SackNumber = 3,
 	};
 
+	private static SackCollection Sack(StashType? stashType, bool readOnly = false)
+		=> new() { StashType = stashType, IsReadOnly = readOnly };
+
 	private void PlayerCannotUse(Item item)
 		=> this._playerService.Setup(p => p.IsSuitableForCurrentPlayer(item)).Returns(false);
 
 	#endregion
 
 	#region Decide
+
+	[Theory]
+	[InlineData(SackType.Player, null)]
+	[InlineData(SackType.Equipment, null)]
+	[InlineData(SackType.Stash, StashType.PlayerStash)]
+	public void Decide_OnASackOfAReadOnlyCharacter_IsReadOnly(SackType sackType, StashType? stashType)
+	{
+		var sword = MakeItem(Item.ICLASS_SWORD);
+
+		// Even dropped back where it was: nothing of a read-only character changes.
+		this._service.Decide(sword, null, Sack(stashType, readOnly: true), sackType, canCancelDrag: true).Should().Be(DropDecision.ReadOnly);
+		this._service.Decide(sword, sword, Sack(stashType, readOnly: true), sackType, canCancelDrag: true).Should().Be(DropDecision.ReadOnly);
+	}
+
+	[Fact]
+	public void Decide_OnTheEquipmentWithPlayerReadonly_IsRefused()
+	{
+		var service = new ItemDropService(
+			new ItemMovementService(new Mock<ILogger<ItemMovementService>>().Object)
+			, new ItemStackingService(new Mock<IItemProvider>().Object)
+			, this._itemDatabaseService.Object
+			, this._playerService.Object
+			, new UserSettings { PlayerReadonly = true });
+		var sword = MakeItem(Item.ICLASS_SWORD);
+
+		service.Decide(sword, null, Sack(null), SackType.Equipment, canCancelDrag: true).Should().Be(DropDecision.Refused);
+		service.Decide(sword, null, Sack(null), SackType.Player, canCancelDrag: true).Should().Be(DropDecision.Drop);
+	}
 
 	[Theory]
 	[InlineData(SackType.Vault, null, DropDecision.Drop)]
@@ -73,7 +105,7 @@ public class ItemDropServiceTests
 	{
 		var sword = MakeItem(Item.ICLASS_SWORD);
 
-		this._service.Decide(sword, null, sackType, stashType, canCancelDrag: true).Should().Be(expected);
+		this._service.Decide(sword, null, Sack(stashType), sackType, canCancelDrag: true).Should().Be(expected);
 	}
 
 	[Theory]
@@ -85,7 +117,7 @@ public class ItemDropServiceTests
 	{
 		var item = MakeItem(itemClass);
 
-		this._service.Decide(item, null, SackType.Stash, StashType.RelicVaultStash, canCancelDrag: true)
+		this._service.Decide(item, null, Sack(StashType.RelicVaultStash), SackType.Stash, canCancelDrag: true)
 			.Should().Be(DropDecision.Drop);
 	}
 
@@ -100,7 +132,7 @@ public class ItemDropServiceTests
 		var item = MakeItem(Item.ICLASS_SWORD);
 		this.PlayerCannotUse(item);
 
-		this._service.Decide(item, null, sackType, null, canCancelDrag: true).Should().Be(expected);
+		this._service.Decide(item, null, Sack(null), sackType, canCancelDrag: true).Should().Be(expected);
 	}
 
 	[Fact]
@@ -108,7 +140,7 @@ public class ItemDropServiceTests
 	{
 		var sword = MakeItem(Item.ICLASS_SWORD);
 
-		this._service.Decide(sword, null, SackType.Stash, StashType.RelicVaultStash, canCancelDrag: true);
+		this._service.Decide(sword, null, Sack(StashType.RelicVaultStash), SackType.Stash, canCancelDrag: true);
 
 		this._playerService.Verify(p => p.IsSuitableForCurrentPlayer(It.IsAny<Item>()), Times.Never);
 	}
@@ -118,7 +150,7 @@ public class ItemDropServiceTests
 	{
 		var item = MakeItem(Item.ICLASS_RING);
 
-		this._service.Decide(item, item, SackType.Vault, null, canCancelDrag: true).Should().Be(DropDecision.PutBack);
+		this._service.Decide(item, item, Sack(null), SackType.Vault, canCancelDrag: true).Should().Be(DropDecision.PutBack);
 	}
 
 	[Fact]
@@ -127,7 +159,7 @@ public class ItemDropServiceTests
 		// A new or modified item has no place to go back to.
 		var item = MakeItem(Item.ICLASS_RING);
 
-		this._service.Decide(item, item, SackType.Vault, null, canCancelDrag: false).Should().Be(DropDecision.Drop);
+		this._service.Decide(item, item, Sack(null), SackType.Vault, canCancelDrag: false).Should().Be(DropDecision.Drop);
 	}
 
 	[Fact]
@@ -136,7 +168,7 @@ public class ItemDropServiceTests
 		var item = MakeItem(Item.ICLASS_SWORD);
 		this.PlayerCannotUse(item);
 
-		this._service.Decide(item, item, SackType.Player, null, canCancelDrag: true).Should().Be(DropDecision.Refused);
+		this._service.Decide(item, item, Sack(null), SackType.Player, canCancelDrag: true).Should().Be(DropDecision.Refused);
 	}
 
 	[Fact]
@@ -145,7 +177,7 @@ public class ItemDropServiceTests
 		var item = MakeItem(Item.ICLASS_RING);
 		var other = MakeItem(Item.ICLASS_RING);
 
-		this._service.Decide(item, other, SackType.Vault, null, canCancelDrag: true).Should().Be(DropDecision.Drop);
+		this._service.Decide(item, other, Sack(null), SackType.Vault, canCancelDrag: true).Should().Be(DropDecision.Drop);
 	}
 
 	#endregion

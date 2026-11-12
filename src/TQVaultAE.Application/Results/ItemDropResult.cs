@@ -10,6 +10,11 @@ public enum DropDecision
 	/// <summary>The item may not go there: nothing happens.</summary>
 	Refused,
 
+	/// <summary>
+	/// The sack belongs to a read-only character: nothing happens and the user is told why.
+	/// </summary>
+	ReadOnly,
+
 	/// <summary>The item is put back where it was picked up: the drag is cancelled.</summary>
 	PutBack,
 

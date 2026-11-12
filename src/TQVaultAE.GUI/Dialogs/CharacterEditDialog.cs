@@ -135,6 +135,9 @@ internal sealed partial class CharacterEditDialog : VaultForm
 	{
 		this.InitCharacterPage();
 
+		// A read-only character can be looked at, not changed: OK would apply nothing (CharacterEditService.Apply).
+		this.ok.Enabled = !this.PlayerCollection.IsReadOnly;
+
 		if (Info.BaseStrength > Convert.ToInt32(strengthUpDown.Maximum))
 			strengthUpDown.Maximum = Info.BaseStrength;
 

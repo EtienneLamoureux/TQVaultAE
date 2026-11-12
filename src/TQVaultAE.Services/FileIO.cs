@@ -44,6 +44,17 @@ public class FileIO : IFileIO
 		File.Delete(path);
 	}
 
+	public virtual bool IsReadOnly(string path)
+		=> File.GetAttributes(path).HasFlag(FileAttributes.ReadOnly);
+
+	public virtual void SetReadOnly(string path, bool makeReadOnly)
+	{
+		var attributes = File.GetAttributes(path);
+		var wanted = makeReadOnly ? attributes | FileAttributes.ReadOnly : attributes & ~FileAttributes.ReadOnly;
+		if (wanted != attributes)
+			File.SetAttributes(path, wanted);
+	}
+
 	public virtual bool CanMoveToRecycleBin(string path)
 	{
 		if (!OperatingSystem.IsWindows())

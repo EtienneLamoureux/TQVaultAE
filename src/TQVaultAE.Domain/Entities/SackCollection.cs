@@ -132,6 +132,13 @@ public class SackCollection : IEnumerable<Item>
 	public bool IsModified { get; set; }
 
 	/// <summary>
+	/// Indicates whether the sack belongs to a read-only character (its save files carry the read-only attribute):
+	/// nothing may be taken out of it, put in it, moved, sorted or edited. Set when the character is read and when the
+	/// user toggles the state; see <c>ItemActionRules.IsReadOnly</c>.
+	/// </summary>
+	public bool IsReadOnly { get; set; }
+
+	/// <summary>
 	/// Gets or sets the sack type
 	/// </summary>
 	/// <remarks>

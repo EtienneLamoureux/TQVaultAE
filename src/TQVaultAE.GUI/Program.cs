@@ -183,6 +183,7 @@ public static class Program
 		.AddSingleton<ICharacterEditService, CharacterEditService>()
 		.AddSingleton<ICharacterStatsService, CharacterStatsService>()
 		.AddSingleton<IModLinkService, ModLinkService>()
+		.AddSingleton<ICharacterReadOnlyService, CharacterReadOnlyService>()
 		.AddSingleton<IItemModService, ItemModService>()
 		.AddSingleton<IGameMapService, GameMapService>()
 		// Caches of game data, emptied when the active custom map changes

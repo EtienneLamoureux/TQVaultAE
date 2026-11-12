@@ -644,9 +644,25 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 		=> this.Services.PlayerService.CurrentPlayerMeetsRequirements(item);
 
 	/// <summary>
-	/// Indicates whether the items of this sack cannot change: the equipment of a read-only player.
+	/// Indicates whether the items of the shown sack cannot change: a sack of a read-only character, or the equipment
+	/// with the <c>PlayerReadonly</c> setting on (<see cref="ItemActionRules.IsReadOnly"/>).
 	/// </summary>
-	public bool ItemsReadOnly => ItemActionRules.IsReadOnly(this.SackType, this.USettings.PlayerReadonly);
+	public bool ItemsReadOnly => ItemActionRules.IsReadOnly(this.SackType, this.USettings.PlayerReadonly, this.Sack?.IsReadOnly ?? false);
+
+	/// <summary>
+	/// Tells the user that <paramref name="sack"/> belongs to a read-only character, when it does.
+	/// </summary>
+	/// <returns>Whether the sack is a read-only character's (and the user was told).</returns>
+	internal bool NotifyIfReadOnlyCharacter(SackCollection? sack)
+	{
+		if (sack is not { IsReadOnly: true })
+			return false;
+
+		// Only the character shown has its sacks on screen.
+		this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, TQVaultAE.Presentation.Resources.CharacterReadOnlyRefused
+			, this.userContext.CurrentPlayer?.PlayerName ?? this.PlayerCollection?.PlayerName ?? string.Empty), TQColor.Red);
+		return true;
+	}
 
 	/// <summary>
 	/// Indicates whether the passed item is suitable for equipping.

@@ -113,19 +113,26 @@ public partial class EquipmentPanel
 			if (this.DragInfo.Item is not { } dragItem)
 				return;
 
-			// Check that the item is being dropped into the proper slot.
-			int slot = FindEquipmentSlot(this.CellsUnderDragItem);
-			if (slot == -1 || !EquipmentRules.CanEquip(this.ShownSack, dragItem, slot))
-				return;
-
 			// The only item under us, if any
 			Item? itemUnderUs = null;
 			if (this.ItemsUnderDragItem.Count == 1)
 				itemUnderUs = this.ItemsUnderDragItem[0];
 
-			// Refused when the character cannot use the item.
+			// Refused when the character is read-only (told before the slot check, wherever the item is dropped) or
+			// cannot use the item.
 			var decision = this.Services.ItemDropService.Decide(
-				dragItem, itemUnderUs, this.SackType, this.Sack?.StashType, this.DragInfo.IsActive && this.DragInfo.CanBeCanceled);
+				dragItem, itemUnderUs, this.ShownSack, this.SackType, this.DragInfo.IsActive && this.DragInfo.CanBeCanceled);
+			if (decision == DropDecision.ReadOnly)
+			{
+				this.NotifyIfReadOnlyCharacter(this.ShownSack);
+				return;
+			}
+
+			// Check that the item is being dropped into the proper slot.
+			int slot = FindEquipmentSlot(this.CellsUnderDragItem);
+			if (slot == -1 || !EquipmentRules.CanEquip(this.ShownSack, dragItem, slot))
+				return;
+
 			if (decision == DropDecision.Refused)
 				return;
 

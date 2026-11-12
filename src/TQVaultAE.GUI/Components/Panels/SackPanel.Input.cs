@@ -45,7 +45,11 @@ public partial class SackPanel
 		if (this.CompareSelectionMouseDown(e))
 			return;
 
-		if (e.Button == MouseButtons.Left && !this.ItemsReadOnly)
+		// A read-only character's sack: nothing is picked up and the user is told; a drop there is refused by the drop
+		// rules (TryToPutdownItem), which tell why as well.
+		if (e.Button == MouseButtons.Left && !this.DragInfo.IsActive && this.ItemsReadOnly)
+			this.NotifyIfReadOnlyCharacter(this.Sack);
+		else if (e.Button == MouseButtons.Left && (!this.ItemsReadOnly || this.Sack.IsReadOnly))
 		{
 			if (!this.DragInfo.IsActive)
 			{

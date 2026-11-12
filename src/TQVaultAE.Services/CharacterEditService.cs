@@ -102,7 +102,8 @@ public class CharacterEditService(IPathIO pathIO, IPlayerCollectionProvider play
 	/// <inheritdoc/>
 	public bool Apply(PlayerCollection player, CharacterEditRequest request)
 	{
-		if (player.PlayerInfo is null)
+		// A read-only character never changes.
+		if (player.PlayerInfo is null || player.IsReadOnly)
 			return false;
 
 		var playerInfo = this.BuildPlayerInfo(player.PlayerInfo, request);

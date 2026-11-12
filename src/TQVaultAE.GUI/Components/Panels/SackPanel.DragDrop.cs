@@ -115,7 +115,13 @@ public partial class SackPanel
 				itemUnderUs = this.ItemsUnderDragItem[0];
 
 			var decision = this.Services.ItemDropService.Decide(
-				dragItem, itemUnderUs, this.SackType, this.sack?.StashType, this.DragInfo.IsActive && this.DragInfo.CanBeCanceled);
+				dragItem, itemUnderUs, this.ShownSack, this.SackType, this.DragInfo.IsActive && this.DragInfo.CanBeCanceled);
+
+			if (decision == DropDecision.ReadOnly)
+			{
+				this.NotifyIfReadOnlyCharacter(this.ShownSack);
+				return;
+			}
 
 			if (decision == DropDecision.Refused)
 				return;

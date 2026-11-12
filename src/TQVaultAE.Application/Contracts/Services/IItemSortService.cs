@@ -17,7 +17,8 @@ public interface IItemSortService
 	/// With <paramref name="mergeRelics"/>, the incomplete relics and charms of the same record are first stacked as when
 	/// the user drops one on another: up to completion, a completed relic rolling its bonus. The shards that were
 	/// emptied leave the sack and the search. When an item does not fit in the new order, nothing changes: the same
-	/// items at their place, the shards as they were, the sack as modified as it was.
+	/// items at their place, the shards as they were, the sack as modified as it was. A sack of a read-only character is
+	/// refused before anything (<see cref="SackSortResult.ReadOnly"/>).
 	/// </remarks>
 	/// <param name="sack">The sack to sort.</param>
 	/// <param name="sackSize">Size of the sack in cells.</param>

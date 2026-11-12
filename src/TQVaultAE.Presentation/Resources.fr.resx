@@ -1952,6 +1952,18 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="CharacterModNotInstalled" xml:space="preserve">
     <value>Non installé</value>
   </data>
+	<data name="CharacterReadOnly" xml:space="preserve">
+    <value>Lecture seule</value>
+  </data>
+	<data name="CharacterReadOnlyRefused" xml:space="preserve">
+    <value>{0} est en lecture seule : ses sacs, son équipement et sa zone de stockage ne peuvent pas changer.</value>
+  </data>
+	<data name="CharacterReadOnlyUnsaved" xml:space="preserve">
+    <value>{0} a des modifications non enregistrées : enregistrez-les avant de le passer en lecture seule.</value>
+  </data>
+	<data name="CharacterReadOnlyFailed" xml:space="preserve">
+    <value>L'état lecture seule de {0} n'a pas pu être changé : {1}</value>
+  </data>
 	<data name="ItemModLine" xml:space="preserve">
     <value>Mod : {0}</value>
   </data>

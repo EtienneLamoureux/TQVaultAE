@@ -69,6 +69,24 @@ public class ItemActionRulesTests
 	public void IsReadOnly_PlayerReadonlyLocksTheEquipmentOnly(SackType sackType, bool playerReadonly, bool expected)
 		=> ItemActionRules.IsReadOnly(sackType, playerReadonly).Should().Be(expected);
 
+	[Theory]
+	[InlineData(SackType.Player, false)]
+	[InlineData(SackType.Equipment, false)]
+	[InlineData(SackType.Stash, false)]
+	[InlineData(SackType.Equipment, true)]
+	public void IsReadOnly_ASackOfAReadOnlyCharacterNeverChanges(SackType sackType, bool playerReadonly)
+		=> ItemActionRules.IsReadOnly(sackType, playerReadonly, sackReadOnly: true).Should().BeTrue();
+
+	[Fact]
+	public void Available_ASackOfAReadOnlyCharacterOnlyOffersTheReadingActions()
+	{
+		var item = new Item { BaseItemId = RecordId.Create("""records\item\equipmentweapon\sword\us_n_01.dbr""") };
+		var context = new ItemActionContext(item, 0, false
+			, ReadOnly: ItemActionRules.IsReadOnly(SackType.Player, false, sackReadOnly: true), AllowItemEdit: true, AllowItemCopy: true);
+
+		ItemActionRules.Available(context).Should().Be(ItemActions.Properties | ItemActions.Compare | ItemActions.Copy | ItemActions.Duplicate);
+	}
+
 	private static ItemActions Key(char key, Item? item, bool readOnly = false, bool allowCopy = true, int selectionCount = 0)
 		=> ItemActionRules.KeyAction(key, new ItemActionContext(item, selectionCount, false, readOnly, AllowItemEdit: true, allowCopy));
 

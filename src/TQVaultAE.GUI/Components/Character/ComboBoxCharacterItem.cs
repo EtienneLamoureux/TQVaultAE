@@ -27,6 +27,18 @@ public partial class ComboBoxCharacterItem : UserControl
 	/// </summary>
 	public object Item { get; private set; } = string.Empty;
 
+	/// <summary>
+	/// "Read-only" on the tags line of a read-only character (<see cref="PlayerSave.IsReadOnly"/>).
+	/// </summary>
+	private readonly ScalingLabel labelReadOnly = new()
+	{
+		Name = "labelReadOnly",
+		Text = Presentation.Resources.CharacterReadOnly,
+		BackColor = Color.LightSkyBlue,
+		AutoSize = true,
+		Visible = false,
+	};
+
 	public ComboBoxCharacterItem()
 	{
 		InitializeComponent();
@@ -34,6 +46,11 @@ public partial class ComboBoxCharacterItem : UserControl
 		this.scalingLabelTags.Text = $"{Presentation.Resources.GlobalTags} : ";
 		this.scalingLabelArchived.Text = Presentation.Resources.GlobalArchived;
 		this.scalingLabelModded.Text = Presentation.Resources.CharacterModded;
+
+		// The read-only badge, on the tags line after Archived.
+		this.bufferedFlowLayoutPanelTags.Controls.Add(this.labelReadOnly);
+		this.bufferedFlowLayoutPanelTags.Controls.SetChildIndex(this.labelReadOnly
+			, this.bufferedFlowLayoutPanelTags.Controls.GetChildIndex(this.scalingLabelArchived) + 1);
 
 		this.ProcessAllControls(ctr =>
 		{
@@ -76,6 +93,7 @@ public partial class ComboBoxCharacterItem : UserControl
 				this.scalingLabelModName.Font =
 					this.scalingLabelModded.Font =
 					this.scalingLabelModState.Font =
+					this.labelReadOnly.Font =
 					this.scalingLabelArchived.Font = FontService.GetFontLight(this.scalingLabelArchived.Font.Size);
 
 		this.scalingLabelArchived.Visible =
@@ -126,6 +144,9 @@ public partial class ComboBoxCharacterItem : UserControl
 			// Is Archived
 			this.scalingLabelArchived.Visible = ps.IsArchived;
 
+			// Is read-only
+			this.labelReadOnly.Visible = ps.IsReadOnly;
+
 			this.ClearTagList();
 
 			if (ps.Tags.Count != 0)
@@ -148,7 +169,7 @@ public partial class ComboBoxCharacterItem : UserControl
 				}
 			}
 
-			if (ps.Tags.Count != 0 || ps.IsArchived)
+			if (ps.Tags.Count != 0 || ps.IsArchived || ps.IsReadOnly)
 				this.scalingLabelTags.Visible = this.bufferedFlowLayoutPanelTags.Visible = true;
 
 			#endregion

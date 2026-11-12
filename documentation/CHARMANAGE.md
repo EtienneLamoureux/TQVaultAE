@@ -31,6 +31,25 @@ An archived character shows a greyed out background color.
 
 ![Base Menu](charmanage/archive.png)
 
+## Read-only
+
+*"Read-only"* is a toggle. It sets or clears the Windows read-only attribute of the files TQVault writes for the
+character: `Player.chr`, its storage area (`winsys.dxb` and `winsys.dxg`) and its mod link file. A character is
+read-only as soon as one of these files is read-only, also when the attribute was set outside TQVault (in the file
+Explorer, or by a download).
+
+Nothing of a read-only character can change in TQVault: no item can be taken out of its bags, equipment or storage
+area, moved, deleted, sorted or edited (seed, affixes, relics, forge), no item can be put in, its character editor
+only shows it (OK is disabled) and its mod link cannot change. TQVault tells why in the notification bar. Copy, Share,
+Properties and Compare still work, and the save skips the character. The dropdown shows a "Read-only" tag on it.
+
+The transfer stash and the relic vault belong to every character: they stay writable.
+
+TQVault does not make a character read-only while it has unsaved changes: save them first. A duplicate of a read-only
+character starts writable.
+
+***Note : the game may fail to save a read-only character: make it writable again before playing it.***
+
 ## Tags
 
 TQVault allow you to organize your extensive roster of character by using tags

@@ -88,7 +88,8 @@ public interface IItemMovementService
     /// </summary>
     /// <remarks>
     /// The item itself is ignored when looking for free cells, so it can still be in its source sack.
-    /// Nothing changes when the item is not allowed in the sack (relic vault stash) or does not fit.
+    /// Nothing changes when the sack belongs to a read-only character, when the item is not allowed in the sack (relic
+    /// vault stash) or when it does not fit.
     /// </remarks>
     /// <param name="item">The item to place.</param>
     /// <param name="sack">The destination sack.</param>

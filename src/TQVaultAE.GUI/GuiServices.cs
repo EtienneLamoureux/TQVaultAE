@@ -59,8 +59,10 @@ public sealed class GuiServices
 		, ISettingsPersistenceService settingsPersistence
 		, IItemModService itemModService
 		, IGameMapService gameMapService
+		, ICharacterReadOnlyService characterReadOnlyService
 	)
 	{
+		this.CharacterReadOnlyService = characterReadOnlyService;
 		this.ItemModService = itemModService;
 		this.GameMapService = gameMapService;
 		this._loggerFactory = loggerFactory;
@@ -177,6 +179,9 @@ public sealed class GuiServices
 
 	/// <summary>Character edits: level, experience, difficulty, attributes and masteries.</summary>
 	public ICharacterEditService CharacterEditService { get; }
+
+	/// <summary>The read-only state of the characters (file system read-only attribute).</summary>
+	public ICharacterReadOnlyService CharacterReadOnlyService { get; }
 
 	/// <summary>The sums and game values behind the character window statistics.</summary>
 	public ICharacterStatsService CharacterStatsService { get; }

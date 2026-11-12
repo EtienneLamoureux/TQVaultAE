@@ -6428,6 +6428,42 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Read-only.
+        /// </summary>
+        public static string CharacterReadOnly {
+            get {
+                return ResourceManager.GetString("CharacterReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is read-only: its bags, equipment and storage area cannot change..
+        /// </summary>
+        public static string CharacterReadOnlyRefused {
+            get {
+                return ResourceManager.GetString("CharacterReadOnlyRefused", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} has unsaved changes: save them before making it read-only..
+        /// </summary>
+        public static string CharacterReadOnlyUnsaved {
+            get {
+                return ResourceManager.GetString("CharacterReadOnlyUnsaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The read-only state of {0} could not be changed: {1}.
+        /// </summary>
+        public static string CharacterReadOnlyFailed {
+            get {
+                return ResourceManager.GetString("CharacterReadOnlyFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mod : {0}.
         /// </summary>
         public static string ItemModLine {
