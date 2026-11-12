@@ -344,6 +344,18 @@ public partial class VaultForm : Form, IScalingControl
 		=> this.SendNCWinMessage(User32.WindowMessage.SysCommand, (IntPtr)e.SystemCommand, IntPtr.Zero);
 
 	/// <summary>
+	/// A window opened from a topmost one (Settings, Advanced Search, the item dialogs) is topmost too: otherwise it
+	/// opens behind its owner and a modal one leaves the application blocked with nothing visible.
+	/// </summary>
+	protected override void OnLoad(EventArgs e)
+	{
+		if (this.Owner is { TopMost: true })
+			this.TopMost = true;
+
+		base.OnLoad(e);
+	}
+
+	/// <summary>
 	/// Scales the form.
 	/// </summary>
 	/// <param name="factor">factor which the form will be scaled.</param>
