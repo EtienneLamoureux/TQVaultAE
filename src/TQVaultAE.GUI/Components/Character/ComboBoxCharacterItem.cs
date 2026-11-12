@@ -27,8 +27,14 @@ public partial class ComboBoxCharacterItem : UserControl
 	/// </summary>
 	public object Item { get; private set; } = string.Empty;
 
+	/// <summary>Background of the selected character's box when it is archived.</summary>
+	internal static readonly Color ArchivedBackColor = Color.Silver;
+
+	/// <summary>Background of the selected character's box when it is read-only: an icy blue.</summary>
+	internal static readonly Color ReadOnlyBackColor = Color.FromArgb(206, 232, 248);
+
 	/// <summary>
-	/// "Read-only" on the tags line of a read-only character (<see cref="PlayerSave.IsReadOnly"/>).
+	/// "Read-only" with the other status badges of a read-only character (<see cref="PlayerSave.IsReadOnly"/>).
 	/// </summary>
 	private readonly ScalingLabel labelReadOnly = new()
 	{
@@ -36,6 +42,7 @@ public partial class ComboBoxCharacterItem : UserControl
 		Text = Presentation.Resources.CharacterReadOnly,
 		BackColor = Color.LightSkyBlue,
 		AutoSize = true,
+		Margin = new Padding(0, 0, 3, 0),
 		Visible = false,
 	};
 
@@ -47,10 +54,13 @@ public partial class ComboBoxCharacterItem : UserControl
 		this.scalingLabelArchived.Text = Presentation.Resources.GlobalArchived;
 		this.scalingLabelModded.Text = Presentation.Resources.CharacterModded;
 
-		// The read-only badge, on the tags line after Archived.
-		this.bufferedFlowLayoutPanelTags.Controls.Add(this.labelReadOnly);
-		this.bufferedFlowLayoutPanelTags.Controls.SetChildIndex(this.labelReadOnly
-			, this.bufferedFlowLayoutPanelTags.Controls.GetChildIndex(this.scalingLabelArchived) + 1);
+		// The status badges (Archived, Read-only, Modded and its link state) on the right; the tags line keeps the tags.
+		this.bufferedFlowLayoutPanelTags.Controls.Remove(this.scalingLabelArchived);
+		this.scalingLabelArchived.Margin = new Padding(0, 0, 3, 0);
+		this.bufferedFlowLayoutPanelMod.Controls.Add(this.scalingLabelArchived);
+		this.bufferedFlowLayoutPanelMod.Controls.Add(this.labelReadOnly);
+		this.bufferedFlowLayoutPanelMod.Controls.SetChildIndex(this.scalingLabelArchived, 0);
+		this.bufferedFlowLayoutPanelMod.Controls.SetChildIndex(this.labelReadOnly, 1);
 
 		this.ProcessAllControls(ctr =>
 		{
@@ -136,16 +146,14 @@ public partial class ComboBoxCharacterItem : UserControl
 
 			this.RefreshMod(ps);
 
+			// Status badges on the right
+			this.scalingLabelArchived.Visible = ps.IsArchived;
+			this.labelReadOnly.Visible = ps.IsReadOnly;
+			this.bufferedFlowLayoutPanelMod.Visible = ps.IsArchived || ps.IsReadOnly || this.scalingLabelModded.Visible;
+
 			#region Tags
 
-			this.scalingLabelArchived.Visible =
-				this.bufferedFlowLayoutPanelTags.Visible = false;
-
-			// Is Archived
-			this.scalingLabelArchived.Visible = ps.IsArchived;
-
-			// Is read-only
-			this.labelReadOnly.Visible = ps.IsReadOnly;
+			this.bufferedFlowLayoutPanelTags.Visible = false;
 
 			this.ClearTagList();
 
@@ -169,7 +177,7 @@ public partial class ComboBoxCharacterItem : UserControl
 				}
 			}
 
-			if (ps.Tags.Count != 0 || ps.IsArchived || ps.IsReadOnly)
+			if (ps.Tags.Count != 0)
 				this.scalingLabelTags.Visible = this.bufferedFlowLayoutPanelTags.Visible = true;
 
 			#endregion
@@ -191,7 +199,8 @@ public partial class ComboBoxCharacterItem : UserControl
 	private void RefreshMod(PlayerSave ps)
 	{
 		var state = ps.IsCustom ? ps.ModState : CharacterModState.BaseGame;
-		this.bufferedFlowLayoutPanelMod.Visible = state != CharacterModState.BaseGame;
+		this.scalingLabelModded.Visible =
+			this.scalingLabelModState.Visible = state != CharacterModState.BaseGame;
 		this.scalingLabelModName.Visible = state != CharacterModState.BaseGame && !string.IsNullOrEmpty(ps.ModName);
 		if (state == CharacterModState.BaseGame)
 			return;

@@ -374,9 +374,12 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 			this.readOnlyToolStripMenuItem.Visible = true;
 			this.readOnlyToolStripMenuItem.Checked = ps.IsReadOnly;
 
-			// Archived Color
-			if (ps.IsArchived)
-				this.bufferedFlowLayoutPanelContent.BackColor = Color.Silver;
+			// Status color: icy blue for a read-only character, silver for an archived one (read-only first: it is the
+			// state that refuses changes).
+			if (ps.IsReadOnly)
+				this.bufferedFlowLayoutPanelContent.BackColor = ComboBoxCharacterItem.ReadOnlyBackColor;
+			else if (ps.IsArchived)
+				this.bufferedFlowLayoutPanelContent.BackColor = ComboBoxCharacterItem.ArchivedBackColor;
 
 			// Tags Toggle
 			foreach (ToolStripItem tagItem in this.tagsToolStripMenuItem.DropDownItems)
