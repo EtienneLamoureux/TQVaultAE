@@ -154,7 +154,7 @@ tests before it moves.
 | M6 | `CharacterEditDialog.Stats.cs`, `.Skills.cs`, `.Character.cs`, `StashPanel.PlayerInfo.cs`, the view builder | "Selected difficulty, else the unlocked one, within 0..2" written five times | One rule next to `CharacterPanelInput` | low | done `0b117b6d`: `CharacterPanelLayout.ShownDifficulty` |
 | M7 | `CharacterEditDialog.Stats.cs` (`PanelInput`), `StashPanel.PlayerInfo.cs` (`BuildStatsView`) | Two builders of `CharacterPanelInput`; the attribute order as magic indexes | `CharacterPanelInput.FromSave`, named indexes | low | done `56371b33`: `CharacterPanelInput.FromSave`, `CharacterPanelInput.Health`...`Dexterity` |
 | M8 | `CharacterEditDialog.Character.cs` (`SideView`) | Leveling values and mastery summary lines, singular or plural | `PlayerInfoText` | low | done: `PlayerInfoText.MasterySummaryLine` (name, singular/plural skills and points). The leveling values stay: each is "empty while its box is enabled, else the box value", which reads the controls (the hidden boxes still hold the values, see M3) |
-| M9 | `ModLinkDialog.cs` (`ShowState`, `UpdateButtons`, `SuggestMod`), `ModMenu.cs` (`Hint`), `ComboBoxCharacterItem.RefreshMod` | Mod link state, suggestion and hint texts; the can-link rule | `Presentation/ModLinkText`, `ModSuggestion.Tied` | low | left |
+| M9 | `ModLinkDialog.cs` (`ShowState`, `UpdateButtons`, `SuggestMod`), `ModMenu.cs` (`Hint`), `ComboBoxCharacterItem.RefreshMod` | Mod link state, suggestion and hint texts; the can-link rule | `Presentation/ModLinkText`, `ModSuggestion.Tied` | low | done (kept small: the mod link work runs in parallel): `Presentation/ModLinkText` (`State`, `Suggestion`, `CharacterBadge`, `MenuHint`), `ModSuggestion.Tied`, the can-link rule `CharacterMod.CanLinkTo`; the Modded menu finds a mod entry by its tag, not its text. The badge colours stay in the GUI |
 | M10 | `ForgePanel.cs` (`TextOf`, `PartText`) | Forge message and part texts | `Presentation/ForgeMessageText`, next to `ForgeModeCardText` | low | done: `Presentation/ForgeMessageText` (`Of`, `PartOf`); the panel only shows the text |
 | M11 | `VaultPanel.ContextMenu.cs` (`AdoptVaultMod`, `ChangeVaultMod`), their callers in `MainForm.Export.cs` and `MainForm.Panel.cs` | The loop settling the items just put somewhere; new items found by a set difference | `IItemEditService.SettleAll`, `PlaceImportedItems` returning the placed items | low-med | done `30ea493f`: `IItemEditService.SettleAll`; `PlaceImportedItems` returns the placed items, the caller no longer finds them by a set difference (with M21) |
 | M12 | `SackPanel.cs` (`Fits`, `MoveToFreeSpot`), used by the vault panel too | Cell checks of a sack | `Domain/Actions/SackLayout` | low | done `58751d9c`. Left: `SackLayout.MoveToFreeSpot` (rows first) and `ItemMovementService.FindOpenCells` (columns first) are two free-cell searches; the scan order decides where imports and auto-moves land |
@@ -170,8 +170,8 @@ tests before it moves.
 
 Defects found by this sweep, fixed in `33676031`: the Modded menu on an equipped item could move it to a free cell of the
 equipment grid; the damage multiplier rollover used the saved level instead of the edited one; the character editor leaked a
-tool tip per opening. Still to check: `MoveBagClicked` skips the transfer check that Copy and Merge run; `ModMenu.Hint`
-finds a mod's entry by its text.
+tool tip per opening. Checked since: `MoveBagClicked` runs the transfer check inside `VaultService.MoveBag`; `ModMenu.Hint`
+finds a mod's entry by the mod its entry carries (M9).
 
 Shared inside the GUI, to merge there: the golden border framing (`ItemTooltip.DrawFramed`, `BaseTooltip.Framed`), the
 statistics panel fonts and tool tip created in both the stash panel and the editor, the drawing helpers of

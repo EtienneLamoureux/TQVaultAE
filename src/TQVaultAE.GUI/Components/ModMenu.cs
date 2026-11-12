@@ -49,6 +49,7 @@ internal static class ModMenu
 		{
 			var entry = Styled(owner, mod.Name);
 			entry.ToolTipText = mod.DisplayName;
+			entry.Tag = mod;
 			entry.Checked = string.Equals(mod.Name, current, StringComparison.OrdinalIgnoreCase);
 			entry.Click += (_, _) => pick(mod.Name);
 			menu.DropDownItems.Add(entry);
@@ -74,17 +75,14 @@ internal static class ModMenu
 	{
 		foreach (var match in suggestion.Matches)
 		{
+			// The entry carries its mod, not compared by its text.
 			var entry = menu.DropDownItems.OfType<ToolStripMenuItem>()
-				.FirstOrDefault(i => string.Equals(i.Text, match.Mod.Name, StringComparison.OrdinalIgnoreCase));
+				.FirstOrDefault(i => i.Tag is InstalledMod mod && string.Equals(mod.Name, match.Mod.Name, StringComparison.OrdinalIgnoreCase));
 			if (entry is null)
 				continue;
 
-			entry.ShortcutKeyDisplayString = match.Matched == suggestion.ModOnlyRecords
-				? Resources.ModSuggestedHint
-				: string.Format(CultureInfo.CurrentCulture, Resources.ModSuggestedPartialHint, match.Matched, suggestion.ModOnlyRecords);
+			(entry.ShortcutKeyDisplayString, entry.ToolTipText) = ModLinkText.MenuHint(match, suggestion);
 			entry.ShowShortcutKeys = true;
-			entry.ToolTipText = $"{match.Mod.DisplayName}{Environment.NewLine}"
-				+ string.Format(CultureInfo.CurrentCulture, Resources.ModSuggestedDetail, match.Matched, suggestion.ModOnlyRecords);
 		}
 	}
 

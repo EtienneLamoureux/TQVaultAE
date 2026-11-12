@@ -177,11 +177,12 @@ public partial class ComboBoxCharacterItem : UserControl
 
 		this.scalingLabelModName.Text = $"[{ps.ModName}]";
 
-		(this.scalingLabelModState.Text, this.scalingLabelModState.BackColor) = state switch
+		this.scalingLabelModState.Text = Presentation.ModLinkText.CharacterBadge(state);
+		this.scalingLabelModState.BackColor = state switch
 		{
-			CharacterModState.Linked => (Presentation.Resources.CharacterModLinked, Color.LightGreen),
-			CharacterModState.LinkedModMissing => (Presentation.Resources.CharacterModNotInstalled, Color.LightSalmon),
-			_ => (Presentation.Resources.CharacterModNotLinked, Color.Khaki),
+			CharacterModState.Linked => Color.LightGreen,
+			CharacterModState.LinkedModMissing => Color.LightSalmon,
+			_ => Color.Khaki,
 		};
 	}
 

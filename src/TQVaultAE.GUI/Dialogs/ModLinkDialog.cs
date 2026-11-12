@@ -169,16 +169,7 @@ public class ModLinkDialog : Form
 		var save = this._save!;
 		var mod = this.GameMapService.ModOf(save);
 
-		// Without a link to an installed mod, a character is loaded with the base game data.
-		string loadedWith = Resources.ModLinkBaseGameData;
-
-		this.labelState.Text = mod.State switch
-		{
-			CharacterModState.BaseGame => Resources.ModLinkStateBaseGame,
-			CharacterModState.Linked => string.Format(CultureInfo.CurrentCulture, Resources.ModLinkStateLinked, mod.Mod!.DisplayName),
-			CharacterModState.LinkedModMissing => string.Format(CultureInfo.CurrentCulture, Resources.ModLinkStateMissing, mod.Link!.Mod, loadedWith),
-			_ => string.Format(CultureInfo.CurrentCulture, Resources.ModLinkStateUnlinked, loadedWith),
-		};
+		this.labelState.Text = ModLinkText.State(mod);
 
 		if (selectLinked)
 			this.listBoxMods.SelectedItem = mod.Mod;
@@ -194,7 +185,7 @@ public class ModLinkDialog : Form
 		var mod = this.GameMapService.ModOf(this._save!);
 		var selected = this.SelectedMod;
 		this.labelFolder.Text = selected?.Folder ?? string.Empty;
-		this.buttonLink.Enabled = this._save!.IsCustom && selected is not null && !Equals(selected, mod.Mod);
+		this.buttonLink.Enabled = mod.CanLinkTo(this._save!.IsCustom, selected);
 	}
 
 	private void LinkSelected()
@@ -242,20 +233,8 @@ public class ModLinkDialog : Form
 			this.Cursor = cursor;
 		}
 
-		if (suggestion.OnlyBaseGameRecords)
-			this.labelSuggestion.Text = Resources.ModLinkSuggestionBaseOnly;
-		else if (suggestion.Matches.Count == 0)
-			this.labelSuggestion.Text = string.Format(CultureInfo.CurrentCulture, Resources.ModLinkSuggestionNone, suggestion.ModOnlyRecords);
-		else if (suggestion.Best is { } best)
-		{
-			this.labelSuggestion.Text = string.Format(CultureInfo.CurrentCulture, Resources.ModLinkSuggestion, best.Mod.DisplayName, best.Matched, suggestion.ModOnlyRecords);
+		this.labelSuggestion.Text = ModLinkText.Suggestion(suggestion);
+		if (!suggestion.OnlyBaseGameRecords && suggestion.Best is { } best)
 			this.listBoxMods.SelectedItem = best.Mod;
-		}
-		else
-		{
-			int top = suggestion.Matches[0].Matched;
-			var tied = suggestion.Matches.TakeWhile(m => m.Matched == top).Select(m => m.Mod.DisplayName);
-			this.labelSuggestion.Text = string.Format(CultureInfo.CurrentCulture, Resources.ModLinkSuggestionTie, string.Join(", ", tied));
-		}
 	}
 }

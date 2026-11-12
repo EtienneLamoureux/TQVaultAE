@@ -99,6 +99,15 @@ public sealed record CharacterMod(CharacterModState State, InstalledMod? Mod, Mo
 	public static readonly CharacterMod BaseGame = new(CharacterModState.BaseGame, null, null);
 
 	public static readonly CharacterMod Unlinked = new(CharacterModState.Unlinked, null, null);
+
+	/// <summary>
+	/// Whether a character can be linked to <paramref name="selected"/>: a custom map character, a mod chosen, not the
+	/// one it is linked to already.
+	/// </summary>
+	/// <param name="isCustomCharacter">True for a custom map character; the main campaign is never linked.</param>
+	/// <param name="selected">The mod chosen, or <see langword="null"/>.</param>
+	public bool CanLinkTo(bool isCustomCharacter, InstalledMod? selected)
+		=> isCustomCharacter && selected is not null && !Equals(selected, this.Mod);
 }
 
 /// <summary>
@@ -129,4 +138,10 @@ public sealed record ModSuggestion(int ModOnlyRecords, IReadOnlyList<ModMatch> M
 	/// True when the save only uses base game records: no mod can be told from its data.
 	/// </summary>
 	public bool OnlyBaseGameRecords => this.ModOnlyRecords == 0;
+
+	/// <summary>
+	/// The mods tied first, with as many records as the first match; empty without a match.
+	/// </summary>
+	public IReadOnlyList<ModMatch> Tied
+		=> this.Matches.Count == 0 ? [] : [.. this.Matches.TakeWhile(m => m.Matched == this.Matches[0].Matched)];
 }
