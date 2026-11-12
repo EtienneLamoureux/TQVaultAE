@@ -57,6 +57,7 @@ public sealed class UserSettingsTests : IDisposable
 				var t when t == typeof(int) => -1000 - i,
 				var t when t == typeof(float) => 0.94945055F + i,
 				var t when t == typeof(double) => -0.123456789012345 - i,
+				var t when t == typeof(ItemCompareSettings) => new ItemCompareSettings { AlignRows = false, HideUnchanged = true },
 				_ => throw new NotSupportedException($"Add a test value for {property.PropertyType} ({property.Name})."),
 			};
 			property.SetValue(settings, value);
@@ -136,6 +137,47 @@ public sealed class UserSettingsTests : IDisposable
 
 		read.VaultPath.Should().Be("""D:\Vaults""");
 		File.ReadAllText(this._xmlPath).Should().NotContain("Garbage");
+	}
+
+	#endregion
+
+	#region Item comparison toolbar
+
+	[Fact]
+	public void ItemCompare_Missing_RowsAlignedAndUnchangedShown()
+	{
+		var settings = UserSettings.ParseSettings("""<?xml version="1.0" encoding="utf-8" ?><UserSettings><SkipTitle>1</SkipTitle></UserSettings>""");
+
+		settings.ItemCompare.AlignRows.Should().BeTrue();
+		settings.ItemCompare.HideUnchanged.Should().BeFalse();
+	}
+
+	[Theory]
+	[InlineData("AlignRows='0' HideUnchanged='1'", false, true)]
+	[InlineData("AlignRows='true' HideUnchanged=' False '", true, false)]
+	[InlineData("HideUnchanged='1'", true, true)]
+	[InlineData("AlignRows='maybe'", true, false)]
+	public void ItemCompare_AttributesParsed_UnknownOrMissingKeepTheDefault(string attributes, bool alignRows, bool hideUnchanged)
+	{
+		var settings = UserSettings.ParseSettings($"""<UserSettings><ItemCompare {attributes} /></UserSettings>""");
+
+		settings.ItemCompare.AlignRows.Should().Be(alignRows);
+		settings.ItemCompare.HideUnchanged.Should().Be(hideUnchanged);
+	}
+
+	[Fact]
+	public void ItemCompare_SaveThenRead_OneElementWithZeroOneAttributes()
+	{
+		new UserSettings { ItemCompare = new ItemCompareSettings { AlignRows = false, HideUnchanged = true } }.Save(this._xmlPath);
+
+		var element = XDocument.Load(this._xmlPath).Root!.Elements("ItemCompare").Should().ContainSingle().Subject;
+		element.Attribute("AlignRows")!.Value.Should().Be("0");
+		element.Attribute("HideUnchanged")!.Value.Should().Be("1");
+		element.HasElements.Should().BeFalse();
+
+		var read = UserSettings.Read(this._xmlPath);
+		read.ItemCompare.AlignRows.Should().BeFalse();
+		read.ItemCompare.HideUnchanged.Should().BeTrue();
 	}
 
 	#endregion

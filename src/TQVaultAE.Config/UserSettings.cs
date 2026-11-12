@@ -177,6 +177,13 @@ public class UserSettings
 	[XmlElement(ElementName = nameof(PasteBinExpiration))]
 	public string PasteBinExpiration { get; set; } = DefaultPasteBinExpiration;
 
+	/// <summary>
+	/// The toolbar choices of the item comparison dialog: <c>&lt;ItemCompare AlignRows="1" HideUnchanged="0" /&gt;</c>.
+	/// Missing, the defaults apply (rows aligned, unchanged stats shown).
+	/// </summary>
+	[XmlElement(ElementName = nameof(ItemCompare))]
+	public ItemCompareSettings ItemCompare { get; set; } = new();
+
 	#endregion
 
 	#region AppSettings & DebugLevels

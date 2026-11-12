@@ -1,4 +1,5 @@
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Config;
 using TQVaultAE.Domain.Comparison;
 using TQVaultAE.Domain.Entities;
 
@@ -27,7 +28,28 @@ public sealed record ItemComparisonContent(
 /// </summary>
 /// <param name="AlignRows">Puts each difference level with the item line of its stat.</param>
 /// <param name="HideUnchanged">Leaves out the stats both items have with the same numbers.</param>
-public sealed record ItemComparisonOptions(bool AlignRows = true, bool HideUnchanged = false);
+public sealed record ItemComparisonOptions(bool AlignRows = true, bool HideUnchanged = false)
+{
+	/// <summary>The choices saved in the user settings.</summary>
+	public static ItemComparisonOptions From(ItemCompareSettings? settings)
+		=> settings is null ? new() : new(settings.AlignRows, settings.HideUnchanged);
+
+	/// <summary>
+	/// Writes these choices into <paramref name="settings"/>.
+	/// </summary>
+	/// <returns>Whether a saved choice changed (the settings then need a save).</returns>
+	public bool ApplyTo(UserSettings settings)
+	{
+		ArgumentNullException.ThrowIfNull(settings);
+		settings.ItemCompare ??= new ItemCompareSettings();
+		if (settings.ItemCompare.AlignRows == this.AlignRows && settings.ItemCompare.HideUnchanged == this.HideUnchanged)
+			return false;
+
+		settings.ItemCompare.AlignRows = this.AlignRows;
+		settings.ItemCompare.HideUnchanged = this.HideUnchanged;
+		return true;
+	}
+}
 
 /// <summary>
 /// Decides what the item comparison shows: each item's classic tooltip, built by <see cref="ItemTooltipContentBuilder"/>,

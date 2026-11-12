@@ -41,9 +41,6 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	private readonly CheckBox _alignRows;
 	private readonly CheckBox _hideUnchanged;
 
-	/// <summary>The toolbar choices, kept for the next comparison of the session.</summary>
-	private static ItemComparisonOptions LastOptions = new();
-
 	/// <summary>The first item, set before the dialog is shown.</summary>
 	public Item First { get; set; } = null!;
 
@@ -135,8 +132,10 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		this._buttons.Resize += (_, _) => ok.Location = new Point((this._buttons.Width - ok.Width) / 2, (this._buttons.Height - ok.Height) / 2);
 
 		// The toolbar, first row of the dialog: changing a choice lays the columns out again.
-		this._alignRows = this.MakeToolbarCheckBox("alignRowsCheckBox", Resources.ItemComparisonAlignRows, LastOptions.AlignRows);
-		this._hideUnchanged = this.MakeToolbarCheckBox("hideUnchangedCheckBox", Resources.ItemComparisonHideUnchanged, LastOptions.HideUnchanged);
+		// The choices saved in UserConfig.xml (<ItemCompare ... />).
+		var saved = ItemComparisonOptions.From(this.USettings.ItemCompare);
+		this._alignRows = this.MakeToolbarCheckBox("alignRowsCheckBox", Resources.ItemComparisonAlignRows, saved.AlignRows);
+		this._hideUnchanged = this.MakeToolbarCheckBox("hideUnchangedCheckBox", Resources.ItemComparisonHideUnchanged, saved.HideUnchanged);
 		this._toolbar = new FlowLayoutPanel()
 		{
 			Dock = DockStyle.Top,
@@ -187,7 +186,8 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 
 	private void OptionChanged(object? sender, EventArgs e)
 	{
-		LastOptions = this.Options;
+		if (this.Options.ApplyTo(this.USettings))
+			this.USettings.Save();
 		this.Fill();
 		this.FitToContent();
 	}

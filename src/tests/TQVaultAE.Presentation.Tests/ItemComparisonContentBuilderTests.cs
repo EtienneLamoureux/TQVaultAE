@@ -214,6 +214,17 @@ public class ItemComparisonContentBuilderTests
 	}
 
 	[Fact]
+	public void Options_FromAndToTheSettings_OnlyAChangeNeedsASave()
+	{
+		var settings = new TQVaultAE.Config.UserSettings();
+		ItemComparisonOptions.From(settings.ItemCompare).Should().Be(new ItemComparisonOptions(AlignRows: true, HideUnchanged: false));
+
+		new ItemComparisonOptions().ApplyTo(settings).Should().BeFalse("nothing changed");
+		new ItemComparisonOptions(AlignRows: false, HideUnchanged: true).ApplyTo(settings).Should().BeTrue();
+		ItemComparisonOptions.From(settings.ItemCompare).Should().Be(new ItemComparisonOptions(AlignRows: false, HideUnchanged: true));
+	}
+
+	[Fact]
 	public void AlignedDifferenceLines_NothingDiffers_SaysSoOnTheFirstRow()
 		=> ItemComparisonContentBuilder.AlignedDifferenceLines([TooltipLine.Of("Ring"), TooltipLine.Of("+5 Strength")]
 				, [Group(StatGroupKind.Attributes, null, Diff("5 Strength", StatTrend.Unchanged, KeyOf("+5 Strength")))])
