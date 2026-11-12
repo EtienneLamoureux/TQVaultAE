@@ -1,3 +1,4 @@
+using System.Windows.Forms.VisualStyles;
 using TQVaultAE.Presentation.Win32;
 
 namespace TQVaultAE.GUI.Infrastructure;
@@ -67,25 +68,36 @@ internal static class CaravanFrame
 		control.Disposed += (_, _) => control.BackgroundImage?.Dispose();
 	}
 
+	/// <summary>The color of the outline around a caption drawn over the frame, as the labels' drop shadow.</summary>
+	private static readonly Color ShadowColor = Color.FromArgb(20, 12, 6);
+
+	/// <summary>The gap between the glyph and the text of a check box, as the system draws it.</summary>
+	private const int CheckBoxTextGap = 3;
+
 	/// <summary>
-	/// Draws <paramref name="box"/> as the frame, keeping its caption across the top edge as a group box has it: its text
-	/// on black, or the check box of a <see cref="Components.UIToolbox.CheckGroupBox"/>. Its content gets a padding off
-	/// the frame and is made transparent so that the black shows behind it.
+	/// Draws <paramref name="box"/> as the frame, keeping its caption across the top edge as a group box has it: its text,
+	/// or the check box of a <see cref="Components.UIToolbox.CheckGroupBox"/>, on black or straight over the frame (see
+	/// <see cref="CaptionBackground"/>). Its content gets a padding off the frame and is made transparent so that the
+	/// black shows behind it.
 	/// </summary>
-	public static void ApplyWithCaption(GroupBox box)
+	/// <param name="box">The group box.</param>
+	/// <param name="background">What lies behind the caption; black by default.</param>
+	public static void ApplyWithCaption(GroupBox box, CaptionBackground background = CaptionBackground.Black)
 	{
 		Bitmap? frame = null;
+		bool overBorder = background == CaptionBackground.None;
 		box.BackColor = Color.Transparent;
 		box.Padding = new Padding(Border + 2, box.Padding.Top, Border + 2, Border);
 		foreach (Control child in box.Controls)
 		{
-			// The check box of a CheckGroupBox is its caption: on black, across the frame's top edge.
-			child.BackColor = child is CheckBox ? Color.Black : Color.Transparent;
+			// The check box of a CheckGroupBox is its caption, across the frame's top edge.
+			child.BackColor = child is CheckBox && !overBorder ? Color.Black : Color.Transparent;
 		}
 
 		box.Paint += (_, e) =>
 		{
-			var caption = box.Controls.OfType<CheckBox>().FirstOrDefault() is { } check
+			var check = box.Controls.OfType<CheckBox>().FirstOrDefault();
+			var caption = check is not null
 				? check.Bounds
 				: new Rectangle(new Point(Border + 2, 0), TextRenderer.MeasureText(e.Graphics, box.Text, box.Font));
 			// The frame's gold line runs through the middle of the caption.
@@ -97,14 +109,67 @@ internal static class CaravanFrame
 				frame = Render(size);
 			}
 
-			e.Graphics.DrawImageUnscaled(frame, 0, top);
-			if (box.Controls.OfType<CheckBox>().Any())
-				return;
+			if (!overBorder)
+			{
+				e.Graphics.DrawImageUnscaled(frame, 0, top);
+				if (check is not null)
+					return;
 
-			e.Graphics.FillRectangle(Brushes.Black, caption);
-			TextRenderer.DrawText(e.Graphics, box.Text, box.Font, caption, box.ForeColor);
+				e.Graphics.FillRectangle(Brushes.Black, caption);
+				TextRenderer.DrawText(e.Graphics, box.Text, box.Font, caption, box.ForeColor);
+				return;
+			}
+
+			// The group box drew its own caption and border line before this handler: above the frame they would show
+			// next to the text drawn here, so that strip is painted again with the background. The frame is then drawn
+			// whole, and the caption over it.
+			if (top > 0)
+				ButtonRenderer.DrawParentBackground(e.Graphics, new Rectangle(0, 0, box.Width, top), box);
+			e.Graphics.DrawImageUnscaled(frame, 0, top);
+			if (check is null)
+			{
+				DrawOutline(e.Graphics, box.Text, box.Font, caption, TextFormatFlags.Default);
+				TextRenderer.DrawText(e.Graphics, box.Text, box.Font, caption, box.ForeColor);
+				return;
+			}
+
+			// The check box is transparent: it paints this group behind itself, so the outline drawn here lies under the
+			// text it draws, and its glyph, its clicks and its focus rectangle stay the system's.
+			int left = CheckBoxRenderer.GetGlyphSize(e.Graphics, CheckBoxState.UncheckedNormal).Width + CheckBoxTextGap;
+			var text = new Rectangle(
+				check.Left + check.Padding.Left + left,
+				check.Top,
+				Math.Max(0, check.ClientSize.Width - check.Padding.Left - left),
+				check.ClientSize.Height);
+			var flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter;
+			if (!check.UseMnemonic)
+				flags |= TextFormatFlags.NoPrefix;
+			DrawOutline(e.Graphics, check.Text, check.Font, text, flags);
 		};
 		box.Disposed += (_, _) => frame?.Dispose();
+	}
+
+	/// <summary>
+	/// Draws a dark outline one pixel around <paramref name="text"/> (its copies in the eight directions), plus a drop
+	/// shadow one pixel further lower right: the gold text drawn over it then stays readable on the gold frame pieces,
+	/// the black inside and the marble alike.
+	/// </summary>
+	private static void DrawOutline(Graphics g, string text, Font font, Rectangle bounds, TextFormatFlags flags)
+	{
+		flags |= TextFormatFlags.PreserveGraphicsClipping;
+		for (int dx = -1; dx <= 2; dx++)
+		{
+			for (int dy = -1; dy <= 2; dy++)
+			{
+				bool ring = dx <= 1 && dy <= 1 && (dx != 0 || dy != 0);
+				if (ring || (dx == 2 && dy == 2))
+				{
+					var copy = bounds;
+					copy.Offset(dx, dy);
+					TextRenderer.DrawText(g, text, font, copy, ShadowColor, flags);
+				}
+			}
+		}
 	}
 
 	/// <summary>

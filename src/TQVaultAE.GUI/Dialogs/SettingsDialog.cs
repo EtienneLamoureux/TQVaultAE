@@ -263,7 +263,8 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 
 	/// <summary>
 	/// The look of Vault Maintenance: the tiled marble behind the dialog, each group in a caravan frame with its caption
-	/// across the top edge, and a drop shadow on the labels and check boxes left over the marble.
+	/// drawn straight over the top edge (<see cref="CaptionBackground.Black"/> puts it back on black), and a drop shadow
+	/// on the labels and check boxes left over the marble.
 	/// </summary>
 	private void ApplyMarbleStyle()
 	{
@@ -273,7 +274,7 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		this.ProcessAllControls(c =>
 		{
 			if (c is GroupBox group)
-				CaravanFrame.ApplyWithCaption(group);
+				CaravanFrame.ApplyWithCaption(group, CaptionBackground.None);
 		});
 
 		// A track bar cannot be transparent: on the black of its frame.
