@@ -68,6 +68,46 @@ internal static class CaravanFrame
 	}
 
 	/// <summary>
+	/// Draws <paramref name="box"/> as the frame, keeping its caption across the top edge as a group box has it: its text
+	/// on black, or the check box of a <see cref="Components.UIToolbox.CheckGroupBox"/>. Its content gets a padding off
+	/// the frame and is made transparent so that the black shows behind it.
+	/// </summary>
+	public static void ApplyWithCaption(GroupBox box)
+	{
+		Bitmap? frame = null;
+		box.BackColor = Color.Transparent;
+		box.Padding = new Padding(Border + 2, box.Padding.Top, Border + 2, Border);
+		foreach (Control child in box.Controls)
+		{
+			// The check box of a CheckGroupBox is its caption: on black, across the frame's top edge.
+			child.BackColor = child is CheckBox ? Color.Black : Color.Transparent;
+		}
+
+		box.Paint += (_, e) =>
+		{
+			var caption = box.Controls.OfType<CheckBox>().FirstOrDefault() is { } check
+				? check.Bounds
+				: new Rectangle(new Point(Border + 2, 0), TextRenderer.MeasureText(e.Graphics, box.Text, box.Font));
+			// The frame's gold line runs through the middle of the caption.
+			int top = Math.Max(0, caption.Top + (caption.Height - Border) / 2);
+			var size = new Size(box.Width, box.Height - top);
+			if (frame is null || frame.Size != size)
+			{
+				frame?.Dispose();
+				frame = Render(size);
+			}
+
+			e.Graphics.DrawImageUnscaled(frame, 0, top);
+			if (box.Controls.OfType<CheckBox>().Any())
+				return;
+
+			e.Graphics.FillRectangle(Brushes.Black, caption);
+			TextRenderer.DrawText(e.Graphics, box.Text, box.Font, caption, box.ForeColor);
+		};
+		box.Disposed += (_, _) => frame?.Dispose();
+	}
+
+	/// <summary>
 	/// Draws the frame around <paramref name="control"/>, on its parent: the control gets a margin of the frame's
 	/// thickness, in which the parent paints the frame. For a control that draws its own content from its corner (a list).
 	/// </summary>
