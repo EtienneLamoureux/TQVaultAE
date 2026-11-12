@@ -26,21 +26,35 @@ public partial class MainForm
 	/// </summary>
 	private SearchDialogAdvanced? _searchDialog;
 
+	/// <summary>Whether the search dialog is disposed with the main form; it may be made again (zoom change).</summary>
+	private bool _searchDialogDisposedOnClose;
+
 	/// <summary>
 	/// Opens the search dialog and shows its results.
 	/// </summary>
 	private void OpenSearchDialog()
 	{
+		// A dialog made at another zoom is made again at this one, scaled once from its design like the other dialogs.
+		if (this._searchDialog is { IsDisposed: false } stale && stale.ScaledZoom != UIService.Zoom)
+		{
+			stale.Dispose();
+			this._searchDialog = null;
+		}
+
 		if (this._searchDialog is null || this._searchDialog.IsDisposed)
 		{
 			var watch = System.Diagnostics.Stopwatch.StartNew();
 			this._searchDialog = this.Services.Forms.Create<SearchDialogAdvanced>();
+			this._searchDialog.ApplyZoom(UIService.Zoom);
 			this.Log.LogInformation("Search dialog created in {Elapsed} ms", watch.ElapsedMilliseconds);
-			this.FormClosed += (_, _) => this._searchDialog?.Dispose();
+			if (!this._searchDialogDisposedOnClose)
+			{
+				this._searchDialogDisposedOnClose = true;
+				this.FormClosed += (_, _) => this._searchDialog?.Dispose();
+			}
 		}
 
 		var searchDialog = this._searchDialog;
-		searchDialog.FollowZoom(UIService.Zoom);
 		var result = searchDialog.ShowDialog();
 
 		if (result == DialogResult.OK && searchDialog.QueryResults.Length != 0)

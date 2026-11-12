@@ -485,27 +485,47 @@ public partial class SearchDialogAdvanced : VaultForm
 	protected override void OnDpiChanged(DpiChangedEventArgs e)
 	{
 		base.OnDpiChanged(e);
+		this.FitCategoriesToFont();
+	}
+
+	/// <summary>
+	/// The base font changed in the settings while the dialog is kept: its lists, sized from their text in the previous
+	/// font, are sized again (they cut the longest entries with an ellipsis otherwise).
+	/// </summary>
+	protected override void OnBaseFontChanged()
+	{
+		base.OnBaseFontChanged();
+		this.FitCategoriesToFont();
+	}
+
+	/// <summary>Sizes the category lists again from their text, after a font change.</summary>
+	private void FitCategoriesToFont()
+	{
 		this.AdjustCheckBoxesWidth();
 		this.AdjustCheckBoxesHeight();
 		this.FitCategoriesHeight();
 	}
 
-	/// <summary>The user's zoom the dialog is scaled to: it is kept between openings, while the zoom may change.</summary>
-	private float scaledZoom = 1.0F;
+	/// <summary>
+	/// The user's zoom the dialog is scaled to. It is kept between openings while the zoom may change: the main window
+	/// then makes a new one, since scaling it back and forth would drift by rounding (margins and positions).
+	/// </summary>
+	public float ScaledZoom { get; private set; } = 1.0F;
 
 	/// <summary>
-	/// Scales the dialog to the user's <paramref name="zoom"/>, as the other dialogs are when they open, from the zoom it
-	/// was scaled to before; the category lists are sized again from their new fonts and the dialog kept on the screen.
+	/// Scales the new dialog to the user's <paramref name="zoom"/>, as the other dialogs are when they open; the category
+	/// lists are sized again from their new fonts and the dialog kept on the screen.
 	/// </summary>
-	public void FollowZoom(float zoom)
+	public void ApplyZoom(float zoom)
 	{
-		if (zoom == this.scaledZoom)
+		if (zoom == this.ScaledZoom)
 			return;
+		if (this.ScaledZoom != 1.0F)
+			throw new InvalidOperationException("The search dialog is scaled once, from its design size.");
 
-		float factor = zoom / this.scaledZoom;
 		using (ZoomScope.Enter())
-			this.Scale(new SizeF(factor, factor));
-		this.scaledZoom = zoom;
+			this.Scale(new SizeF(zoom, zoom));
+		this.ScaledZoom = zoom;
 
 		this.AdjustCheckBoxesWidth();
 		this.AdjustCheckBoxesHeight();
