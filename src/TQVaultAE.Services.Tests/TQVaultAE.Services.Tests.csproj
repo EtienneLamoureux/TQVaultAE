@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\TestProject.props" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Synthetic .arz/.arc builders, shared with the DbCli and Data tests. -->
+		<Compile Include="..\TQVaultAE.DbCli.Tests\DbCliFixtures.cs" Link="Fixtures\DbCliFixtures.cs" />
+		<Using Include="TQVaultAE.GameFiles" />
+	</ItemGroup>
+
+</Project>

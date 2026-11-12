@@ -11,7 +11,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="TQVaultAE.Tests" />
+		<InternalsVisibleTo Include="TQVaultAE.Domain.Tests" />
+		<InternalsVisibleTo Include="TQVaultAE.Data.Tests" />
+		<InternalsVisibleTo Include="TQVaultAE.Services.Tests" />
+		<InternalsVisibleTo Include="TQVaultAE.DbCli.Tests" />
 		<InternalsVisibleTo Include="tqdb" />
 	</ItemGroup>
 

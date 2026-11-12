@@ -1,0 +1,28 @@
+<Project>
+
+	<!-- What every platform-agnostic test project shares: one test project per layer (TQVaultAE.<Layer>.Tests), so that a
+	     change is checked by running the tests of its layer only. -->
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<!-- xunit v3 test projects are executables run by Microsoft.Testing.Platform. -->
+		<OutputType>Exe</OutputType>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AwesomeAssertions" />
+		<PackageReference Include="coverlet.MTP" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="xunit.v3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Coverage settings shared by the test projects: only our own assemblies are measured. -->
+		<None Include="$(MSBuildThisFileDirectory)testconfig.json" Link="testconfig.json" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+	</ItemGroup>
+
+</Project>

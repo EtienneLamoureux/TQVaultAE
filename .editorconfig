@@ -92,6 +92,6 @@ dotnet_diagnostic.CA1305.severity = suggestion
 # Constant array arguments: only worth a static field on hot paths.
 dotnet_diagnostic.CA1861.severity = suggestion
 
-[src/TQVaultAE.Tests*/**.cs]
+[src/TQVaultAE*Tests*/**.cs]
 # Tests build plain exceptions on purpose, to check how they are logged and formatted.
 dotnet_diagnostic.CA2201.severity = none

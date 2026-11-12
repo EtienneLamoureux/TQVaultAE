@@ -23,7 +23,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="TQVaultAE.Tests" />
+		<InternalsVisibleTo Include="TQVaultAE.DbCli.Tests" />
+		<InternalsVisibleTo Include="TQVaultAE.Data.Tests" />
+		<InternalsVisibleTo Include="TQVaultAE.Services.Tests" />
 	</ItemGroup>
 
 </Project>

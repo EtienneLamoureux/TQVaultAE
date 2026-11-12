@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<!-- Tests of the Windows-only projects. Platform-agnostic tests go in TQVaultAE.Tests. -->
+	<!-- Tests of the Windows-only projects. Platform-agnostic tests go in the TQVaultAE.<Layer>.Tests project of their layer. -->
 	<PropertyGroup>
 		<TargetFramework>net10.0-windows</TargetFramework>
 		<!-- xunit v3 test projects are executables run by Microsoft.Testing.Platform. -->
@@ -23,8 +23,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<!-- Synthetic .arz/.arc builders shared with TQVaultAE.Tests. -->
-		<Compile Include="..\TQVaultAE.Tests\DbCli\DbCliFixtures.cs" Link="Fixtures\DbCliFixtures.cs" />
+		<!-- Synthetic .arz/.arc builders shared with TQVaultAE.DbCli.Tests. -->
+		<Compile Include="..\TQVaultAE.DbCli.Tests\DbCliFixtures.cs" Link="Fixtures\DbCliFixtures.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\TestProject.props" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\TQVaultAE.Application\TQVaultAE.Application.csproj" />
+		<!-- The real file wrappers (PathIO, FileIO, DirectoryIO) of the tests that read files. -->
+		<ProjectReference Include="..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
+	</ItemGroup>
+
+</Project>

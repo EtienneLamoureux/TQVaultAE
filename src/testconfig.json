@@ -2,7 +2,7 @@
   "platformOptions": {
     "Coverlet": {
       "include": "[TQVaultAE.*]*,[tqdb]*",
-      "exclude": "[TQVaultAE.Tests]*,[TQVaultAE.Tests.Win32]*",
+      "exclude": "[TQVaultAE.*.Tests]*,[TQVaultAE.Tests.Win32]*",
       "excludeByAttribute": "ExcludeFromCodeCoverage,ExcludeFromCodeCoverageAttribute,GeneratedCodeAttribute,CompilerGeneratedAttribute"
     }
   }

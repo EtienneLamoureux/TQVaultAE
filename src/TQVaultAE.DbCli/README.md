@@ -22,4 +22,4 @@ src/TQVaultAE.DbCli/bin/Debug/net10.0/tqdb.exe --help
 1. Implement `ICommand` in `Commands/` (declare options in `Spec`; help is generated from it).
 2. Register it in `Program.CreateCommands()`.
 3. Document it in `documentation/DBCLI.md`.
-4. Test the logic (not the wiring) in `src/TQVaultAE.Tests/DbCli/Cli/`, with the in-memory fakes of `CliFakes.cs`.
+4. Test the logic (not the wiring) in `src/TQVaultAE.DbCli.Tests/Cli/`, with the in-memory fakes of `CliFakes.cs`.

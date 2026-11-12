@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\TestProject.props" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
+		<ProjectReference Include="..\TQVaultAE.GameFiles\TQVaultAE.GameFiles.csproj" />
+		<!-- The jitter verification reads the real game database through DbCli. -->
+		<ProjectReference Include="..\TQVaultAE.DbCli\TQVaultAE.DbCli.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="TQVaultAE.GameFiles" />
+	</ItemGroup>
+
+</Project>

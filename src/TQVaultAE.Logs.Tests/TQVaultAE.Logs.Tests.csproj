@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\TestProject.props" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\TQVaultAE.Logs\TQVaultAE.Logs.csproj" />
+	</ItemGroup>
+
+</Project>
