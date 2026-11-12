@@ -9,7 +9,8 @@ public sealed class AttributeSum
 {
 	/// <summary>
 	/// The prefix of the variables of the pet bonus records (<c>petBonusName</c>) summed with the records that name them:
-	/// <c>pet:offensivePhysicalModifier</c> is the pets' physical damage bonus.
+	/// <c>pet:offensivePhysicalModifier</c> is the pets' physical damage bonus. The game gives these bonuses to the pets
+	/// only, never to the character: the character's values never read them, only the Pet Bonuses rollover does.
 	/// </summary>
 	public const string PetBonusPrefix = "pet:";
 

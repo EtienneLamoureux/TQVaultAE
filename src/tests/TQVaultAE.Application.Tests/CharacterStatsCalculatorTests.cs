@@ -168,6 +168,20 @@ public class CharacterStatsCalculatorTests
 	}
 
 	[Fact]
+	public void PetBonuses_LeaveTheCharactersOwnValuesAlone()
+	{
+		// The game gives a pet bonus record to the pets only: resistances, abilities, speeds and damage bonuses it names do
+		// not reach the character.
+		var p = AttributeSum.PetBonusPrefix;
+		var withPetBonuses = Compute(Sum((p + "defensiveFire", 50), (p + "characterDefensiveAbility", 100), (p + "characterRunSpeedModifier", 20),
+			(p + "offensivePhysicalModifier", 30), (p + "characterLifeRegen", 5), (p + "skillCooldownReduction", 10)));
+		var without = Compute(new AttributeSum());
+
+		withPetBonuses.Should().BeEquivalentTo(without, options => options.Excluding(s => s.PetBonuses));
+		withPetBonuses.PetBonuses.PhysicalPercent.Should().Be(30);
+	}
+
+	[Fact]
 	public void LifeLeech_IsTheAttackDamageConvertedToHealth()
 		=> Compute(Sum(("offensiveLifeLeechMin", 12))).AttackDamageToHealth.Should().Be(12);
 

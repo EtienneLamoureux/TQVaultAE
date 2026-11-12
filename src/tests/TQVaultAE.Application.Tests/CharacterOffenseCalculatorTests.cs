@@ -196,6 +196,23 @@ public class CharacterOffenseCalculatorTests
 	}
 
 	[Fact]
+	public void Damage_PetBonuses_DoNotReachTheCharactersAttack()
+	{
+		// The pet bonus records of the gear and the skills raise the pets' damage and speed only.
+		var p = AttributeSum.PetBonusPrefix;
+		var petBonuses = Sum((p + "offensivePhysicalModifier", 50), (p + "offensiveFireAverage", 20), (p + "offensiveTotalDamageModifier", 30),
+			(p + "characterAttackSpeedModifier", 25));
+		var weapon = Sum(("offensivePhysicalAverage", 100));
+
+		var with = CharacterOffenseCalculator.Damage(Input([weapon], other: petBonuses, skills: petBonuses, strength: 100));
+		var without = CharacterOffenseCalculator.Damage(Input([weapon], strength: 100));
+		double speed = CharacterOffenseCalculator.AttackSpeed(petBonuses, WeaponStance.Unarmed, Balance, 0, 0, 0);
+
+		with.Should().Be(without);
+		speed.Should().Be(100);
+	}
+
+	[Fact]
 	public void Damage_WeaponPhysical_UsesTheWeaponEquation()
 	{
 		// (100 × (500/500 + 1)) + 500 × 0.04 = 220.
