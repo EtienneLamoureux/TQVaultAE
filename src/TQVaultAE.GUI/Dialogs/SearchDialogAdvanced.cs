@@ -58,6 +58,8 @@ public partial class SearchDialogAdvanced : VaultForm
 		{
 			if (c is ScalingLabel label)
 				label.TextShadow = true;
+			else if (c is ScalingCheckBox box)
+				box.TextShadow = true;
 		});
 
 		this.MinimizeBox = false;
