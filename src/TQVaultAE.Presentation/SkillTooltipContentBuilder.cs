@@ -130,8 +130,12 @@ public sealed class SkillTooltipContentBuilder(ICharacterEditService editService
 		// The game counts the levels of the equipment once the skill has a point.
 		var current = skill.EffectiveLevel(points, bonus.Total);
 
-		// No next level once the skill is at its ultimate level with the equipment (Maul 11 + 8 stops at 16).
-		var belowMax = points < skill.MaxLevel && (skill.UltimateLevel == 0 || current < skill.UltimateLevel);
+		// Every skill shows its next level up to the record's top level, equipment included (War Horn 10 + 1 shows 12; Maul
+		// 11 + 8 stops at 16).
+		var hasNext = skill.HasNextLevel(points, bonus.Total);
+
+		// A point can be spent while the points are below the maximum and the equipment has not reached the ultimate level.
+		var canAddPoint = points < skill.MaxLevel && (skill.UltimateLevel == 0 || current < skill.UltimateLevel);
 
 		// The equipment's levels also raise a summon's own skills (Battle Standard 11/10 shows its level 12 buff), all of
 		// them even beyond the ultimate level (Call of the Wild 15 + 6: the wolves dodge as at +6).
@@ -140,7 +144,7 @@ public sealed class SkillTooltipContentBuilder(ICharacterEditService editService
 		lines.Add(new SkillTipLine(this.Description(skill.DescriptionTag), SkillTipKind.Text, Wrap: true));
 		if (current > 0)
 			Level("tagCurrentLevel", "Current Level : {%d0}", skill.Id, current);
-		if (belowMax)
+		if (hasNext)
 			NextLevel("tagNextLevel", "Next Level : {%d0}", skill.Id, current + 1);
 
 		var refused = new List<string>();
@@ -157,7 +161,7 @@ public sealed class SkillTooltipContentBuilder(ICharacterEditService editService
 			&& tree.Skills.FirstOrDefault(s => s.Id == parentId) is { } parent)
 			refused.Add(this.GameText("tagSkillReq03", "This skill requires the {%s1} skill.", 1, this._translation.TranslateOr(parent.NameTag, parent.Id.PrettyFileName)));
 
-		this.Requirements(lines, skills, belowMax, refused);
+		this.Requirements(lines, skills, canAddPoint, refused);
 
 		var gear = this.GearBonusLines(tree, skill, bonus).ToList();
 		if (gear.Count != 0)
@@ -209,9 +213,9 @@ public sealed class SkillTooltipContentBuilder(ICharacterEditService editService
 	/// The last part of the game's skill tool tip: what stops a point, in red; else "No skill points to add." when none is
 	/// left, or "Press to add unused skill points." when a point can be spent.
 	/// </summary>
-	private void Requirements(List<SkillTipLine> lines, CharacterSkillEditor skills, bool belowMax, List<string> refused)
+	private void Requirements(List<SkillTipLine> lines, CharacterSkillEditor skills, bool canAddPoint, List<string> refused)
 	{
-		if (refused.Count == 0 && !belowMax)
+		if (refused.Count == 0 && !canAddPoint)
 			return;
 
 		lines.Add(SkillTipLine.Blank);

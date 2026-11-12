@@ -32,4 +32,24 @@ public class MasterySkillTests
 	[InlineData(5, -2, 0)]
 	public void ShownItemBonus_OnlyOnceTheSkillHasAPoint_UpToTheUltimateLevel(int points, int bonus, int expected)
 		=> Maul.ShownItemBonus(points, bonus).Should().Be(expected);
+
+	[Theory]
+	[InlineData(0, 0, true)]
+	[InlineData(0, 8, true)]
+	[InlineData(7, 0, true)]
+	[InlineData(12, 0, true)]
+	[InlineData(12, 3, true)]
+	[InlineData(12, 4, false)]
+	[InlineData(11, 8, false)]
+	public void HasNextLevel_BelowTheRecordsTopLevel_EquipmentIncluded(int points, int bonus, bool expected)
+		=> Maul.HasNextLevel(points, bonus).Should().Be(expected);
+
+	[Fact]
+	public void HasNextLevel_WithoutUltimateLevel_StopsAtTheMaximum()
+	{
+		var skill = Maul with { UltimateLevel = 0 };
+
+		skill.HasNextLevel(11, 0).Should().BeTrue();
+		skill.HasNextLevel(12, 0).Should().BeFalse();
+	}
 }

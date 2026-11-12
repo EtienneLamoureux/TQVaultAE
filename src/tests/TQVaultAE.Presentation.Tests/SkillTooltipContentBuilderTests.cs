@@ -4,6 +4,7 @@ using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
+using TQVaultAE.Domain.Results;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.Tests.Presentation;
@@ -18,10 +19,10 @@ public class SkillTooltipContentBuilderTests
 	private static readonly RecordId IceShard = """Records\Skills\Storm\IceShard.dbr""".ToRecordId();
 	private static readonly RecordId Velocity = """Records\Skills\Storm\IceShard_Velocity.dbr""".ToRecordId();
 
-	/// <summary>Ice Shard (tier 1, max 12) and its modifier Velocity (tier 3: mastery 10).</summary>
+	/// <summary>Ice Shard (tier 1, max 12, ultimate 16) and its modifier Velocity (tier 3: mastery 10).</summary>
 	private static readonly MasteryTree Storm = new(Masteries.Storm, StormMastery, "tagStorm", "", "", 40,
 	[
-		new MasterySkill(IceShard, "tagIceShard", "", "", 12, 1, null),
+		new MasterySkill(IceShard, "tagIceShard", "", "", 12, 1, null) { UltimateLevel = 16 },
 		new MasterySkill(Velocity, "tagVelocity", "", "", 8, 3, IceShard),
 	]);
 
@@ -41,8 +42,96 @@ public class SkillTooltipContentBuilderTests
 	private static CharacterSkillEditor Editor(int masteryLevel, int iceShard, int points)
 		=> new([Skill(StormMastery, masteryLevel), Skill(IceShard, iceShard)], 2, points, mastery => mastery == Masteries.Storm ? Storm : null);
 
-	private List<SkillTipLine> Build(CharacterSkillEditor skills, MasterySkill? skill, Func<double>? cooldown = null)
-		=> this._builder.Build(skills, 0, skill, [], cooldown ?? (() => 0), difficulty: 0);
+	private List<SkillTipLine> Build(CharacterSkillEditor skills, MasterySkill? skill, Func<double>? cooldown = null,
+		IReadOnlyList<SkillAugment>? augments = null)
+		=> this._builder.Build(skills, 0, skill, augments ?? [], cooldown ?? (() => 0), difficulty: 0);
+
+	/// <summary>Ice Shard's effects at a level: a recharge, an energy cost that does not change, a damage that grows, each with the item tool tips' leading colour.</summary>
+	private void DescribeIceShard()
+		=> this._edit.Setup(e => e.DescribeSkill(IceShard, It.IsAny<int>(), It.IsAny<SkillWindowContext?>()))
+			.Returns((RecordId id, int level, SkillWindowContext? _) => new GrantedSkill(id, "Ice Shard", level, $"{level}", null, null, [],
+				["^w{^a}2.0 Second(s) Recharge", "^w20 Energy Cost", $"^w{level * 10} Cold Damage"]));
+
+	private static string[] Levels(List<SkillTipLine> lines)
+		=> [.. lines.Where(l => l.Kind == SkillTipKind.Level).Select(l => l.Text)];
+
+	private static string[] NextLines(List<SkillTipLine> lines)
+		=> [.. lines.Where(l => l.Kind == SkillTipKind.Next).Select(l => l.Text)];
+
+	[Fact]
+	public void Skill_LevelZero_ShowsOnlyTheFirstLevel()
+	{
+		// Arrange
+		this.DescribeIceShard();
+
+		// Act
+		var lines = this.Build(Editor(masteryLevel: 10, iceShard: 0, points: 5), Storm.Skills[0]);
+
+		// Assert
+		Levels(lines).Should().Equal("Next Level : 1");
+		NextLines(lines).Should().Equal("{^a}2.0 Second(s) Recharge", "20 Energy Cost", "10 Cold Damage");
+	}
+
+	[Fact]
+	public void Skill_MidLevel_ShowsTheCurrentLevel_ThenWhatTheNextLevelChanges()
+	{
+		// Arrange
+		this.DescribeIceShard();
+
+		// Act
+		var lines = this.Build(Editor(masteryLevel: 10, iceShard: 5, points: 5), Storm.Skills[0]);
+
+		// Assert
+		Levels(lines).Should().Equal("Current Level : 5", "Next Level : 6");
+		lines.Where(l => l.Kind == SkillTipKind.Text).Select(l => l.Text).Should().Contain(["{^a}2.0 Second(s) Recharge", "20 Energy Cost", "50 Cold Damage"]);
+		NextLines(lines).Should().Equal("{^a}2.0 Second(s) Recharge", "60 Cold Damage");
+		lines.FindIndex(l => l.Text == "Next Level : 6").Should().BeGreaterThan(lines.FindIndex(l => l.Text == "50 Cold Damage"));
+	}
+
+	[Fact]
+	public void Skill_AllPointsSpent_StillShowsTheNextLevelUpToTheUltimateLevel()
+	{
+		// Arrange
+		this.DescribeIceShard();
+
+		// Act
+		var lines = this.Build(Editor(masteryLevel: 32, iceShard: 12, points: 5), Storm.Skills[0]);
+
+		// Assert
+		Levels(lines).Should().Equal("Current Level : 12", "Next Level : 13");
+		lines.Should().NotContain(l => l.Kind == SkillTipKind.CanAdd, "no point can be added past the maximum");
+	}
+
+	[Fact]
+	public void Skill_LevelRaisedByEquipment_ShowsTheNextLevelAfterTheRaisedOne()
+	{
+		// Arrange
+		this.DescribeIceShard();
+		SkillAugment[] gear = [new(SkillAugmentKind.All, null, 1)];
+
+		// Act
+		var lines = this.Build(Editor(masteryLevel: 32, iceShard: 12, points: 5), Storm.Skills[0], augments: gear);
+
+		// Assert
+		Levels(lines).Should().Equal("Current Level : 13", "Next Level : 14");
+		NextLines(lines).Should().Equal("{^a}2.0 Second(s) Recharge", "140 Cold Damage");
+	}
+
+	[Fact]
+	public void Skill_AtTheUltimateLevel_HasNoNextLevel()
+	{
+		// Arrange
+		this.DescribeIceShard();
+		SkillAugment[] gear = [new(SkillAugmentKind.All, null, 6)];
+
+		// Act
+		var lines = this.Build(Editor(masteryLevel: 32, iceShard: 12, points: 5), Storm.Skills[0], augments: gear);
+
+		// Assert
+		Levels(lines).Should().Equal("Current Level : 16");
+		lines.Should().NotContain(l => l.Kind == SkillTipKind.Next);
+		lines.Should().NotContain(l => l.Kind == SkillTipKind.CanAdd);
+	}
 
 	[Fact]
 	public void Mastery_ShowsItsLevels_ThenThePointToAdd_ThenTheHint()
@@ -81,6 +170,28 @@ public class SkillTooltipContentBuilderTests
 
 		lines.Should().Contain(new SkillTipLine("No skill points to add.", SkillTipKind.Refused));
 		lines.Where(l => l.Kind == SkillTipKind.Level).Select(l => l.Text).Should().Equal("Current Level : 3", "Next Level : 4");
+	}
+
+	[Theory]
+	[InlineData(0, 0)]
+	[InlineData(0, 1)]
+	[InlineData(12, 0)]
+	[InlineData(12, 1)]
+	public void Skill_EveryKind_EndsWithTheEquipmentLines_ThenTheHint(int iceShard, int skillIndex)
+	{
+		// Arrange: a skill or a modifier, without a point or at its maximum, all get the same tail.
+		SkillAugment[] gear = [new(SkillAugmentKind.Mastery, StormMastery, 1), new(SkillAugmentKind.All, null, 2)];
+
+		// Act
+		var lines = this.Build(Editor(masteryLevel: 32, iceShard: iceShard, points: 5), Storm.Skills[skillIndex], augments: gear);
+
+		// Assert
+		lines.TakeLast(5).Should().Equal(
+			SkillTipLine.Blank,
+			new SkillTipLine("+1 to all skills of Storm (equipment)", SkillTipKind.Gear),
+			new SkillTipLine("+2 to all skills (equipment)", SkillTipKind.Gear),
+			SkillTipLine.Blank,
+			new SkillTipLine(Resources.CESkillPaneHint, SkillTipKind.Hint, Wrap: true));
 	}
 
 	[Fact]

@@ -120,6 +120,19 @@ public sealed record MasterySkill(
 	}
 
 	/// <summary>
+	/// The highest level the skill record describes: <see cref="UltimateLevel"/>, or <see cref="MaxLevel"/> when the record
+	/// has no ultimate level.
+	/// </summary>
+	public int TopLevel => Math.Max(this.MaxLevel, this.UltimateLevel);
+
+	/// <summary>
+	/// True when the skill window shows a next level: the level the game uses, equipment included, is below
+	/// <see cref="TopLevel"/>. Without a point the next level is the first one.
+	/// </summary>
+	public bool HasNextLevel(int points, int bonus)
+		=> this.EffectiveLevel(points, bonus) < this.TopLevel;
+
+	/// <summary>
 	/// The levels the equipment adds to the skill as the game's skill window shows them: none while the skill has no
 	/// point (the game counts them from the first point), else up to <see cref="UltimateLevel"/>.
 	/// </summary>
