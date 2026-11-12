@@ -29,7 +29,8 @@ public static class ItemDtoExtensions
 			pointY = item.PositionY,
 			width = item.Width,
 			height = item.Height,
-			mod = ownMapOnly && !item.HasOwnMod ? null : item.Mod,
+			mod = ownMapOnly && !item.HasOwnMod ? null : ModIdentity.NameOf(item.Mod),
+			modSource = ownMapOnly && !item.HasOwnMod ? null : ModIdentity.SourceOf(item.Mod),
 			noMod = (!ownMapOnly || item.HasOwnMod) && item.Mod is null ? true : null,
 		};
 
@@ -57,7 +58,7 @@ public static class ItemDtoExtensions
 			Width = dto.width,
 			Height = dto.height,
 			// "mod" or "noMod" is the item's own map; without them it takes its container's when placed.
-			Mod = dto.noMod == true || string.IsNullOrWhiteSpace(dto.mod) ? null : dto.mod,
+			Mod = dto.noMod == true ? null : ModIdentity.Compose(dto.mod, dto.modSource),
 			ModOrigin = dto.noMod == true || !string.IsNullOrWhiteSpace(dto.mod) ? ModOrigin.Own : ModOrigin.None,
 			endBlockCrap2 = 0,
 			endBlockCrap1 = 0

@@ -54,13 +54,14 @@ public interface IGameMapService
 	bool Activate(string? mapFolder);
 
 	/// <summary>
-	/// The map a character's items inherit: the name of its linked mod, also when that mod is not installed (they are
-	/// then read with the base game data); null for the base game.
+	/// The map a character's items inherit: its linked mod's identity (<c>ModIdentity</c>, name and source), also
+	/// when that mod is not installed (they are then read with the base game data); null for the base game.
 	/// </summary>
 	string? ModNameFor(PlayerSave save);
 
 	/// <summary>
-	/// The map (mod name) a custom map folder is, as items name it; null for the base game.
+	/// The map a custom map folder is, as items name it: the identity of the installed mod in that folder, else the
+	/// folder's name; null for the base game.
 	/// </summary>
 	string? ModNameOfMap(string? mapFolder);
 

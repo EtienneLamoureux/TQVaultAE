@@ -108,6 +108,91 @@ public sealed class ModLinkServiceTests : IDisposable
 		this._service.Resolve(this._save, true).Mod.Should().Be(second);
 	}
 
+	/// <summary>A custom map (legacy) mod.</summary>
+	private InstalledMod AddCustomMap(string name)
+	{
+		var folder = Path.Combine(this._root, "CustomMaps", name);
+		Directory.CreateDirectory(folder);
+		this._customMaps.Add(new GamePathEntry(folder, $"Legacy : {name}"));
+		return new InstalledMod(name, folder, ModSource.Legacy);
+	}
+
+	[Fact]
+	public void Link_WritesWhereTheModIsInstalledFrom()
+	{
+		var mod = this.AddWorkshopMod("1949340853", "shadowchampions");
+
+		this._service.Link(this._save, mod);
+
+		File.ReadAllText(this.LinkFile).Should().Contain("\"source\": \"workshop:1949340853\"");
+		this._service.ReadLink(this._save)!.Source.Should().Be("workshop:1949340853");
+	}
+
+	[Fact]
+	public void Resolve_HomonymsLinkWithSourceAndFolderMoved_FindsTheModOfThatSource()
+	{
+		// The custom map was linked; the Workshop mod has the same folder name.
+		this.AddWorkshopMod("1949340853", "shadowchampions");
+		var customMap = this.AddCustomMap("shadowchampions");
+		File.WriteAllText(this.LinkFile, """{ "version": 1, "mod": "shadowchampions", "source": "custommaps", "folder": "D:\\gone\\shadowchampions" }""");
+
+		var resolved = this._service.Resolve(this._save, true);
+
+		resolved.Mod.Should().Be(customMap);
+		resolved.Ambiguous.Should().BeFalse();
+	}
+
+	[Fact]
+	public void Resolve_HomonymsOldLinkByNameOnly_IsAmbiguousAndUsesTheWorkshopMod()
+	{
+		var workshop = this.AddWorkshopMod("1949340853", "shadowchampions");
+		this.AddCustomMap("shadowchampions");
+		File.WriteAllText(this.LinkFile, """{ "version": 1, "mod": "shadowchampions" }""");
+
+		var resolved = this._service.Resolve(this._save, true);
+
+		resolved.State.Should().Be(CharacterModState.Linked);
+		resolved.Mod.Should().Be(workshop);
+		resolved.Ambiguous.Should().BeTrue();
+	}
+
+	[Fact]
+	public void FindMod_TellsHomonymsApartByTheirSource()
+	{
+		var workshop = this.AddWorkshopMod("1949340853", "shadowchampions");
+		var customMap = this.AddCustomMap("shadowchampions");
+
+		workshop.Id.Should().Be("shadowchampions|workshop:1949340853");
+		customMap.Id.Should().Be("shadowchampions|custommaps");
+		this._service.FindMod("shadowchampions|custommaps").Should().Be(customMap);
+		this._service.FindMod("SHADOWCHAMPIONS|workshop:1949340853").Should().Be(workshop);
+		this._service.IsAmbiguous("shadowchampions|custommaps").Should().BeFalse();
+	}
+
+	[Fact]
+	public void FindMod_NameOnly_ResolvesWhenOneModHasIt_AndIsAmbiguousWhenSeveralHave()
+	{
+		var masteries = this.AddWorkshopMod("756997480", "Masteries");
+		var workshop = this.AddWorkshopMod("1949340853", "shadowchampions");
+		this.AddCustomMap("shadowchampions");
+
+		this._service.FindMod("Masteries").Should().Be(masteries);
+		this._service.IsAmbiguous("Masteries").Should().BeFalse();
+		this._service.FindMod("shadowchampions").Should().Be(workshop);
+		this._service.IsAmbiguous("shadowchampions").Should().BeTrue();
+		this._service.FindMod("Lilith").Should().BeNull();
+		this._service.FindMod(null).Should().BeNull();
+	}
+
+	[Fact]
+	public void FindMod_SourceNotInstalledHere_FallsBackOnTheOnlyModOfThatName()
+	{
+		// Exported on a computer with the Workshop mod, imported where it is a custom map.
+		var customMap = this.AddCustomMap("shadowchampions");
+
+		this._service.FindMod("shadowchampions|workshop:1949340853").Should().Be(customMap);
+	}
+
 	[Fact]
 	public void Resolve_ModMovedToAnotherFolder_FindsItByName()
 	{

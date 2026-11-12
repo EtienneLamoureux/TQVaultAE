@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GameFiles;
 
@@ -32,8 +33,8 @@ public class ModLinkService(
 	private IReadOnlyList<InstalledMod>? _installedMods;
 
 	/// <summary>
-	/// What each record asked about was found in: null for the base game, else the names of the installed mods having
-	/// it (possibly none).
+	/// What each record asked about was found in: null for the base game, else the identities of the installed mods
+	/// having it (possibly none).
 	/// </summary>
 	private readonly ConcurrentDictionary<string, string[]?> _recordSources = new(StringComparer.OrdinalIgnoreCase);
 
@@ -53,6 +54,35 @@ public class ModLinkService(
 						: ModSource.Legacy))];
 
 		return this._installedMods;
+	}
+
+	/// <inheritdoc/>
+	public InstalledMod? FindMod(string? key) => this.Match(key).Mod;
+
+	/// <inheritdoc/>
+	public bool IsAmbiguous(string? key) => this.Match(key).Ambiguous;
+
+	/// <summary>
+	/// The installed mod a mod identity names: exactly, else the only one of that name, else the Steam Workshop one of
+	/// the homonyms (ambiguous).
+	/// </summary>
+	private (InstalledMod? Mod, bool Ambiguous) Match(string? key)
+	{
+		if (string.IsNullOrWhiteSpace(key))
+			return (null, false);
+
+		var mods = this.GetInstalledMods();
+		if (mods.FirstOrDefault(m => m.Id.Equals(key, StringComparison.OrdinalIgnoreCase)) is { } exact)
+			return (exact, false);
+
+		string name = ModIdentity.NameOf(key)!;
+		var named = mods.Where(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).ToList();
+		return named.Count switch
+		{
+			0 => (null, false),
+			1 => (named[0], false),
+			_ => (named.FirstOrDefault(m => m.Source == ModSource.SteamWorkshop) ?? named[0], true),
+		};
 	}
 
 	private string LinkFile(string saveFolder) => this.PathIO.Combine(saveFolder, IModLinkService.LinkFileName);
@@ -86,13 +116,14 @@ public class ModLinkService(
 		if (link is null)
 			return CharacterMod.Unlinked;
 
-		var mods = this.GetInstalledMods();
-		var mod = mods.FirstOrDefault(m => link.Folder is not null && this.SameFolder(m.Folder, link.Folder))
-			?? mods.FirstOrDefault(m => m.Name.Equals(link.Mod, StringComparison.OrdinalIgnoreCase));
+		// The folder where it was linked first; else its name and source (the name alone for an older link).
+		if (this.GetInstalledMods().FirstOrDefault(m => link.Folder is not null && this.SameFolder(m.Folder, link.Folder)) is { } linked)
+			return new CharacterMod(CharacterModState.Linked, linked, link);
 
+		var (mod, ambiguous) = this.Match(ModIdentity.Compose(link.Mod, link.Source));
 		return mod is null
 			? new CharacterMod(CharacterModState.LinkedModMissing, null, link)
-			: new CharacterMod(CharacterModState.Linked, mod, link);
+			: new CharacterMod(CharacterModState.Linked, mod, link, ambiguous);
 	}
 
 	private bool SameFolder(string a, string b)
@@ -104,6 +135,7 @@ public class ModLinkService(
 		var link = new ModLinkFile
 		{
 			Mod = installedMod.Name,
+			Source = installedMod.SourceKey,
 			Folder = installedMod.Folder,
 			LinkedUtc = DateTime.UtcNow,
 		};
@@ -162,7 +194,7 @@ public class ModLinkService(
 			return new ModSuggestion(0, []);
 
 		var matches = this.GetInstalledMods()
-			.Select(mod => new ModMatch(mod, modOnly.Count(r => this._recordSources[r]!.Contains(mod.Name, StringComparer.OrdinalIgnoreCase))))
+			.Select(mod => new ModMatch(mod, modOnly.Count(r => this._recordSources[r]!.Contains(mod.Id, StringComparer.OrdinalIgnoreCase))))
 			.Where(m => m.Matched > 0);
 
 		return new ModSuggestion(modOnly.Count, [.. matches.OrderByDescending(m => m.Matched).ThenBy(m => m.Mod.Name, StringComparer.OrdinalIgnoreCase)]);
@@ -191,7 +223,7 @@ public class ModLinkService(
 				continue;
 
 			foreach (var record in this.Found(database, modOnly))
-				found[record].Add(mod.Name);
+				found[record].Add(mod.Id);
 		}
 
 		foreach (var (record, mods) in found)

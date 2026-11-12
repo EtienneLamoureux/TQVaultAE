@@ -171,6 +171,9 @@ public partial class MainForm
 			this.secondaryVaultPanel.Player = vault;
 		else
 			this.vaultPanel.Player = vault;
+
+		if (vault is not null)
+			this.NotifyAmbiguousMods(vault);
 	}
 
 	/// <summary>

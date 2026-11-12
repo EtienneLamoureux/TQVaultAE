@@ -25,6 +25,25 @@ public class ItemDtoExtensionsTests
 	}
 
 	[Fact]
+	public void ExportThenImport_ModWithItsSource_WritesNameAndSourceApart_AndReadsTheSameMod()
+	{
+		var item = new Item { BaseItemId = RecordId.Create("records/a.dbr"), Mod = "shadowchampions|workshop:1949340853", ModOrigin = ModOrigin.Own };
+
+		var dto = ItemDtoExtensions.FromItem(item);
+
+		(dto.mod, dto.modSource).Should().Be(("shadowchampions", "workshop:1949340853"));
+		dto.ToItem().Mod.Should().Be("shadowchampions|workshop:1949340853");
+	}
+
+	[Fact]
+	public void Import_OlderExportWithTheNameOnly_KeepsTheName()
+	{
+		var dto = new TQVaultAE.Data.Dto.ItemDto { baseName = "records/a.dbr", mod = "shadowchampions" };
+
+		(dto.ToItem().Mod, dto.ToItem().ModOrigin).Should().Be(("shadowchampions", ModOrigin.Own));
+	}
+
+	[Fact]
 	public void Export_ItemWithAMod_WritesNoBaseGameMark()
 	{
 		var dto = ItemDtoExtensions.FromItem(new Item { BaseItemId = RecordId.Create("records/a.dbr"), Mod = "Lilith" });

@@ -15,10 +15,17 @@ public interface IItemModService
 	IReadOnlyList<InstalledMod> InstalledMods { get; }
 
 	/// <summary>
-	/// The installed mod of a name (<see cref="InstalledMod.Name"/>).
+	/// The installed mod an item, a vault or an export names (<see cref="IModLinkService.FindMod"/>).
 	/// </summary>
 	/// <returns>The mod; null for none or when it is not installed.</returns>
 	InstalledMod? Find(string? modName);
+
+	/// <summary>
+	/// The names of the mods, among those given, that are named by a name several installed mods have (a Steam
+	/// Workshop mod and a custom map of the same name) without telling which: the Steam Workshop one is used.
+	/// </summary>
+	/// <param name="mods">Mod identities, as items and vaults name them.</param>
+	IReadOnlyList<string> AmbiguousMods(IEnumerable<string?> mods);
 
 	/// <summary>
 	/// Makes the database of an item's map answer for the current thread until disposed, so that reading, drawing and

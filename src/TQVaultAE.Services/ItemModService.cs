@@ -19,10 +19,13 @@ public class ItemModService(IDatabaseMaps maps, IDatabase database, IModLinkServ
 	public IReadOnlyList<InstalledMod> InstalledMods => this.ModLinks.GetInstalledMods();
 
 	/// <inheritdoc/>
-	public InstalledMod? Find(string? modName)
-		=> string.IsNullOrWhiteSpace(modName)
-			? null
-			: this.InstalledMods.FirstOrDefault(m => m.Name.Equals(modName, StringComparison.OrdinalIgnoreCase));
+	public InstalledMod? Find(string? modName) => this.ModLinks.FindMod(modName);
+
+	/// <inheritdoc/>
+	public IReadOnlyList<string> AmbiguousMods(IEnumerable<string?> mods)
+		=> [.. mods.Where(this.ModLinks.IsAmbiguous)
+			.Select(mod => ModIdentity.NameOf(mod)!)
+			.Distinct(StringComparer.OrdinalIgnoreCase)];
 
 	/// <inheritdoc/>
 	public IDisposable Scope(Item? item)

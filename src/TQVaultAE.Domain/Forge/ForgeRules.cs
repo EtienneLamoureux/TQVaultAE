@@ -280,7 +280,7 @@ public sealed class ForgeRules
 	/// </summary>
 	private static bool ReadWithSameData(Item target, Item material)
 		=> material.Mod is null
-			|| string.Equals(target.Mod, material.Mod, StringComparison.OrdinalIgnoreCase);
+			|| ModIdentity.SameData(target.Mod, material.Mod);
 
 	/// <summary>
 	/// <c>true</c> when going from <paramref name="previous"/> to <paramref name="next"/> makes the rules stricter: the

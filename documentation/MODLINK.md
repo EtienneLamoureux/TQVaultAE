@@ -19,6 +19,7 @@ Workshop items) and links the character to one, or removes its link. The choice 
 {
   "version": 1,
   "mod": "shadowchampions",
+  "source": "workshop:1949340853",
   "folder": "e:\\games\\steam\\steamapps\\workshop\\content\\475150\\1949340853\\shadowchampions",
   "linkedUtc": "2026-11-09T00:12:53.1422315Z"
 }
@@ -26,6 +27,9 @@ Workshop items) and links the character to one, or removes its link. The choice 
 
 - `mod` is the mod's folder name: the game names the mod's database (`database\<mod>.arz`) and its shared stash folder
   (`SaveData\Sys\<mod>`) after it, so it finds the mod again when it moved (another Steam library, another computer).
+- `source` is where it is installed from: `workshop:<item id>` for a Steam Workshop mod, `custommaps` for a custom map.
+  A Workshop mod and a custom map can have the same folder name: the source tells them apart (see *The identity of a
+  mod* below).
 - `folder` is where the mod was when linked, preferred while it exists.
 - The game never writes a file with this name; it is copied with the character (*Duplicate*, archive).
 
@@ -142,6 +146,19 @@ before anything changes (`IItemEditService.HasRoomOnceSettled`, `SackLayout.HasR
 it would take, then with its own again. The free spot search goes row by row (`SackLayout.FitsOrMoves`). Every item
 read with a new map has its tooltip, its names and its search entry made again.
 
+### The identity of a mod
+
+A mod is its folder name and where it is installed from: a Steam Workshop mod and a custom map with the same folder name
+are two mods, which the dialog, the *Modded* menus and the files tell apart. Files keep the name in `"mod"` (what older
+versions read) and the source beside it in `"modSource"` (`"source"` in a link file): `workshop:<item id>` or
+`custommaps`.
+
+A file that names a mod by its name alone (written before the source was kept) still finds it when one installed mod
+only has that name, and so does a source not installed here when one mod of that name is (the same mod installed the
+other way). When both a Workshop mod and a custom map have the name, the Steam Workshop one is used, and the
+notification line says so when the vault or the character is shown (the mod link dialog too): choosing the mod again
+with *Modded* or *Mod link...* writes its source.
+
 ### In the files
 
 In the vault file, the vault's mod is `"mod"` at the top. An item writes only its own map: `"mod"` for a mod,
@@ -151,8 +168,9 @@ without them inherits the vault's mod.
 ```json
 {
   "mod": "shadowchampions",
+  "modSource": "workshop:1949340853",
   "sacks": [ { "items": [ { "baseName": "records\\customitems\\mi\\e_centurionlance.dbr" },
-                          { "baseName": "...", "mod": "Lilith" },
+                          { "baseName": "...", "mod": "Lilith", "modSource": "workshop:890319896" },
                           { "baseName": "...", "noMod": true } ] } ]
 }
 ```
@@ -161,7 +179,8 @@ without them inherits the vault's mod.
 
 An export keeps the map at the level it belongs to:
 
-- A **vault** or **tab** export writes the mod of its container once, at its top, and each item's own map only.
+- A **vault** or **tab** export writes the mod of its container once, at its top, and each item's own map only. A mod
+  is written as in the vault files: `"mod"` and `"modSource"`.
 - An **item** export (one item or a selection) has no container: each item writes the map it is read with, made
   explicit (`"mod"`, or `"noMod": true` for the base game), and the import gives it as the item's own.
 

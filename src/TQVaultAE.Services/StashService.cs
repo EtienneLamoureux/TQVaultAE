@@ -34,7 +34,7 @@ public class StashService(
 
 	/// <summary>A shared stash's name in the search: a mod's names its mod, as each map has its own.</summary>
 	private string SharedStashName(string name, string map)
-		=> this.GameMapService?.ModNameOfMap(map) is { } mod ? $"{name} [{mod}]" : name;
+		=> this.GameMapService?.ModNameOfMap(map) is { } mod ? $"{name} [{ModIdentity.NameOf(mod)}]" : name;
 
 	/// <summary>The map whose shared stash files are read: the given one, else the active one.</summary>
 	private string MapOrActive(string? mapFolder)

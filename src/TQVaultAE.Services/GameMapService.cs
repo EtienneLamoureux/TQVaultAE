@@ -4,6 +4,7 @@ using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
+using TQVaultAE.Domain.Entities;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.Services;
@@ -51,14 +52,19 @@ public class GameMapService(
 	/// <inheritdoc/>
 	public string? ModNameFor(PlayerSave save)
 		=> this.ModOf(save) is { State: CharacterModState.Linked or CharacterModState.LinkedModMissing } mod
-			? mod.Mod?.Name ?? mod.Link?.Mod
+			? mod.Mod?.Id ?? ModIdentity.Compose(mod.Link?.Mod, mod.Link?.Source)
 			: null;
 
 	/// <inheritdoc/>
 	public string? ModNameOfMap(string? mapFolder)
 	{
 		string map = GameMaps.Normalize(mapFolder);
-		return map.Length == 0 ? null : System.IO.Path.GetFileName(System.IO.Path.TrimEndingDirectorySeparator(map));
+		if (map.Length == 0)
+			return null;
+
+		// The installed mod of that folder, with its source; else the folder's name.
+		return this.ModLinkService.GetInstalledMods().FirstOrDefault(m => GameMaps.Same(m.Folder, map))?.Id
+			?? System.IO.Path.GetFileName(System.IO.Path.TrimEndingDirectorySeparator(map));
 	}
 
 	/// <inheritdoc/>

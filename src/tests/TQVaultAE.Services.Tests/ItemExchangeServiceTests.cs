@@ -500,6 +500,36 @@ public class ItemExchangeServiceTests
 	}
 
 	[Fact]
+	public void SerializePlayerCollection_ModsWithTheirSource_RoundTripTheSource()
+	{
+		// A custom map vault holding an item of the Steam Workshop mod of the same name.
+		var sack = new SackCollection { SackType = SackType.Vault };
+		sack.AddItem(new Item { BaseItemId = "records/item/ring.dbr", Mod = "shadowchampions|custommaps", ModOrigin = ModOrigin.Inherited });
+		sack.AddItem(new Item { BaseItemId = "records/customitems/lance.dbr", Mod = "shadowchampions|workshop:1949340853", ModOrigin = ModOrigin.Own });
+		var vault = new TQVaultAE.Application.PlayerCollection("Vault", "vault.json") { IsVault = true, Mod = "shadowchampions|custommaps", Sacks = [sack] };
+
+		var json = _service.SerializePlayerCollection(vault);
+		var result = _service.ImportFromJson(json);
+
+		var data = JsonDocument.Parse(json).RootElement.GetProperty("data");
+		data.GetProperty("mod").GetString().Should().Be("shadowchampions");
+		data.GetProperty("modSource").GetString().Should().Be("custommaps");
+		result.VaultMod.Should().Be("shadowchampions|custommaps");
+		result.SackItems![0].Select(i => i.Mod).Should().Equal("shadowchampions|custommaps", "shadowchampions|workshop:1949340853");
+	}
+
+	[Fact]
+	public void ImportFromJson_ModNotInstalled_NamesItWithoutItsSource()
+	{
+		var service = new ItemExchangeService(_jsonOptions, itemModService: new Mock<IItemModService>().Object);
+		var item = new Item { BaseItemId = "records/lilith/sword.dbr", Mod = "Lilith|workshop:890319896", ModOrigin = ModOrigin.Own };
+
+		var result = service.ImportFromJson(service.SerializeItem(item));
+
+		result.DroppedMods.Should().Equal("Lilith");
+	}
+
+	[Fact]
 	public void ImportVaultInto_ExportWithoutMod_KeepsTheTargetsLink()
 	{
 		var sack = new SackCollection { SackType = SackType.Vault };

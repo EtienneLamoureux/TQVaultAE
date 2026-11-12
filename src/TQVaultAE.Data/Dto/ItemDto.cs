@@ -29,6 +29,13 @@ public class ItemDto
 	public string? mod;
 
 	/// <summary>
+	/// Where the mod of <see cref="mod"/> is installed from (<c>workshop:&lt;id&gt;</c> or <c>custommaps</c>): a Steam
+	/// Workshop mod and a custom map can have the same folder name. Older versions ignore it.
+	/// </summary>
+	[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+	public string? modSource;
+
+	/// <summary>
 	/// True when the base game was chosen for the item (<c>Item.NoMod</c>): it does not follow the vault's mod. Written
 	/// only when true; older versions ignore it and let the item follow the vault.
 	/// </summary>

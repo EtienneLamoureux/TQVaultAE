@@ -186,7 +186,9 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 			disabledtooltip = pc.DisabledTooltipBagId,
 			currentlyFocusedSackNumber = pc.currentlyFocusedSackNumber,
 			currentlySelectedSackNumber = pc.currentlySelectedSackNumber,
-			mod = pc.Mod,
+			// The mod's name, and apart where it is installed from: older versions read the name.
+			mod = ModIdentity.NameOf(pc.Mod),
+			modSource = ModIdentity.SourceOf(pc.Mod),
 			sacks = pc.Select(sack => new SackDto()
 			{
 				iconinfo = sack.BagButtonIconInfo,
@@ -206,7 +208,8 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					pointX = i.PositionX,
 					pointY = i.PositionY,
 					// Only an item's own map is written: an inherited one is the vault's.
-					mod = i.HasOwnMod ? i.Mod : null,
+					mod = i.HasOwnMod ? ModIdentity.NameOf(i.Mod) : null,
+					modSource = i.HasOwnMod ? ModIdentity.SourceOf(i.Mod) : null,
 					noMod = i.HasOwnMod && i.Mod is null ? true : null,
 				}).ToList()
 			}).ToList()
@@ -311,7 +314,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 		pc.numberOfSacks = vaultDto.sacks.Count;
 		pc.currentlyFocusedSackNumber = vaultDto.currentlyFocusedSackNumber;
 		pc.currentlySelectedSackNumber = vaultDto.currentlySelectedSackNumber;
-		pc.Mod = string.IsNullOrWhiteSpace(vaultDto.mod) ? null : vaultDto.mod;
+		pc.Mod = ModIdentity.Compose(vaultDto.mod, vaultDto.modSource);
 
 		pc.Sacks = vaultDto.sacks.Select(s => new SackCollection()
 		{
@@ -344,7 +347,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					StackSize = s.stackSize,
 					// Its own map ("mod", or "noMod" for the base game), else the vault's, inherited. Set before the
 					// records are read: they resolve with that map's data.
-					Mod = s.noMod == true ? null : string.IsNullOrWhiteSpace(s.mod) ? pc.Mod : s.mod,
+					Mod = s.noMod == true ? null : string.IsNullOrWhiteSpace(s.mod) ? pc.Mod : ModIdentity.Compose(s.mod, s.modSource),
 					ModOrigin = s.noMod == true || !string.IsNullOrWhiteSpace(s.mod) ? ModOrigin.Own : ModOrigin.Inherited,
 					InVault = true,
 					// Atlantis

@@ -1724,6 +1724,9 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   <data name="ModDropNoRoomInTab" xml:space="preserve">
     <value>Lu avec les données de sa carte ici, {0} n'a pas la place dans cet onglet : déposez-le dans un autre onglet.</value>
   </data>
+  <data name="ModAmbiguous" xml:space="preserve">
+    <value>{0} : installé depuis le Steam Workshop et dans les cartes personnalisées, et nommé sans préciser lequel. Celui du Steam Workshop est utilisé : choisissez avec Moddé ou Lien avec un mod... pour garder l'autre.</value>
+  </data>
   <data name="SearchSharedStashNoCharacter" xml:space="preserve">
     <value>{0} s'affiche avec les personnages qui jouent avec sa carte, et aucun personnage de la liste n'en fait partie.</value>
   </data>

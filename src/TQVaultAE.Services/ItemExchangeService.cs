@@ -51,8 +51,10 @@ public class ItemExchangeService(
 		if (this._itemModService is null || this._itemModService.Find(mod) is not null)
 			return mod;
 
-		if (!dropped.Contains(mod, StringComparer.OrdinalIgnoreCase))
-			dropped.Add(mod);
+		// The user knows a mod by its name.
+		string name = ModIdentity.NameOf(mod)!;
+		if (!dropped.Contains(name, StringComparer.OrdinalIgnoreCase))
+			dropped.Add(name);
 
 		return null;
 	}
@@ -178,7 +180,7 @@ public class ItemExchangeService(
 						// The items without an own map inherited the tab's container's map (a mod, or the base game): they
 						// keep it, placed by PlaceImportedItems (inherited in a vault of that map, else as their own). A mod
 						// not installed here is dropped: they take their target's map.
-						string? tabMod = this.Installed(dto.Mod, dropped);
+						string? tabMod = this.Installed(dto.ModKey, dropped);
 						bool tabMapKnown = tabMod is not null || string.IsNullOrWhiteSpace(dto.Mod);
 						var items = new List<Item>();
 						foreach (var itemDto in dto.Items)
@@ -224,7 +226,7 @@ public class ItemExchangeService(
 						if (dto is null)
 							return ImportResult.Failed("Failed to deserialize vault data.");
 
-						string? vaultMod = this.Installed(dto.Mod, dropped);
+						string? vaultMod = this.Installed(dto.ModKey, dropped);
 						var sackItems = new Dictionary<int, List<Item>>();
 						var sackIconInfo = new Dictionary<int, BagButtonIconInfo>();
 						foreach (var sackDto in dto.Sacks)

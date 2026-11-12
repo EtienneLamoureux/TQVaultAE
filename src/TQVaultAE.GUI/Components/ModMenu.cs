@@ -1,6 +1,7 @@
 using System.Globalization;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
+using TQVaultAE.Domain.Entities;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Components;
@@ -16,14 +17,16 @@ internal static class ModMenu
 	/// <param name="owner">The menu that holds the submenu, for its colors and font.</param>
 	/// <param name="text">The submenu's text.</param>
 	/// <param name="modService">The installed mods, and the loading of their data.</param>
-	/// <param name="current">The current mod's name; null for the base game.</param>
-	/// <param name="pick">Called with the chosen mod's name, null for the base game, once that mod's data is loaded.</param>
+	/// <param name="current">The current mod (its identity, as items and vaults name it); null for the base game.</param>
+	/// <param name="pick">Called with the chosen mod's identity (<see cref="InstalledMod.Id"/>), null for the base game,
+	/// once that mod's data is loaded.</param>
 	/// <param name="suggest">The mod suggestion for the items concerned, read when the submenu opens; null for none.</param>
 	public static ToolStripMenuItem Create(ToolStrip owner, string text, IItemModService modService, string? current, Action<string?> pick
 		, Func<ModSuggestion>? suggest = null)
 	{
 		var menu = Styled(owner, text);
 		var mods = modService.InstalledMods;
+		var currentMod = modService.Find(current);
 
 		// The suggestion reads the mods' databases: only when the submenu opens, once.
 		if (suggest is not null)
@@ -49,18 +52,20 @@ internal static class ModMenu
 
 		foreach (var mod in mods)
 		{
-			var entry = Styled(owner, mod.Name);
-			entry.ToolTipText = mod.DisplayName;
+			// A Steam Workshop mod and a custom map of the same name show where they come from.
+			bool homonym = mods.Count(m => m.Name.Equals(mod.Name, StringComparison.OrdinalIgnoreCase)) > 1;
+			var entry = Styled(owner, homonym ? mod.DisplayName : mod.Name);
 			entry.Tag = mod;
-			entry.Checked = string.Equals(mod.Name, current, StringComparison.OrdinalIgnoreCase);
-			entry.Click += async (_, _) => await PickAsync(modService, mod.Name, pick);
+			entry.ToolTipText = mod.DisplayName;
+			entry.Checked = mod == currentMod;
+			entry.Click += async (_, _) => await PickAsync(modService, mod.Id, pick);
 			menu.DropDownItems.Add(entry);
 		}
 
 		// A link to a mod that is not installed (any more) stays visible.
-		if (current is not null && !mods.Any(m => string.Equals(m.Name, current, StringComparison.OrdinalIgnoreCase)))
+		if (current is not null && currentMod is null)
 		{
-			var missing = Styled(owner, string.Format(CultureInfo.CurrentCulture, Resources.ModLinkMissingLabel, current));
+			var missing = Styled(owner, string.Format(CultureInfo.CurrentCulture, Resources.ModLinkMissingLabel, ModIdentity.NameOf(current)));
 			missing.Checked = true;
 			missing.Enabled = false;
 			menu.DropDownItems.Add(missing);
@@ -102,8 +107,7 @@ internal static class ModMenu
 		foreach (var match in suggestion.Matches)
 		{
 			// The entry carries its mod, not compared by its text.
-			var entry = menu.DropDownItems.OfType<ToolStripMenuItem>()
-				.FirstOrDefault(i => i.Tag is InstalledMod mod && string.Equals(mod.Name, match.Mod.Name, StringComparison.OrdinalIgnoreCase));
+			var entry = menu.DropDownItems.OfType<ToolStripMenuItem>().FirstOrDefault(i => Equals(i.Tag, match.Mod));
 			if (entry is null)
 				continue;
 

@@ -27,6 +27,8 @@ public class ItemModServiceTests
 	public ItemModServiceTests()
 	{
 		this._links.Setup(l => l.GetInstalledMods(false)).Returns([Shadow]);
+		this._links.Setup(l => l.FindMod(It.IsAny<string?>())).Returns<string?>(key
+			=> string.Equals(ModIdentity.NameOf(key), Shadow.Name, StringComparison.OrdinalIgnoreCase) ? Shadow : null);
 		this._maps.Setup(m => m.Use(It.IsAny<string?>())).Returns(Mock.Of<IDisposable>()).Callback<string?>(this._scopes.Add);
 		// The base game knows the base record only.
 		this._database.Setup(d => d.GetInfo(BaseRecord)).Returns(new Info(new DBRecordCollection(BaseRecord, "ArmorJewelry_Ring")));

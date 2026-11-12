@@ -1,3 +1,5 @@
+using TQVaultAE.Domain.Entities;
+
 namespace TQVaultAE.Application.DTOs;
 
 /// <summary>
@@ -32,6 +34,20 @@ public sealed record InstalledMod(string Name, string Folder, ModSource Source)
 		? $"Steam Workshop : {this.Name}"
 		: $"Legacy : {this.Name}";
 
+	/// <summary>
+	/// Where it is installed from, as files keep it (<c>"modSource"</c>): <c>workshop:&lt;item id&gt;</c> for a Steam
+	/// Workshop mod (the id is the name of the folder holding the mod's folder), <c>custommaps</c> for a custom map.
+	/// </summary>
+	public string SourceKey => this.Source == ModSource.SteamWorkshop
+		? ModIdentity.WorkshopPrefix + System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(System.IO.Path.TrimEndingDirectorySeparator(this.Folder)))
+		: ModIdentity.CustomMaps;
+
+	/// <summary>
+	/// The mod's identity, as items, vaults and links name it (<see cref="ModIdentity"/>): a Steam Workshop mod and a
+	/// custom map with the same folder name are two mods.
+	/// </summary>
+	public string Id => ModIdentity.Compose(this.Name, this.SourceKey)!;
+
 	public override string ToString() => this.DisplayName;
 }
 
@@ -50,6 +66,12 @@ public sealed class ModLinkFile
 	/// (another Steam library, another computer).
 	/// </summary>
 	public string Mod { get; set; } = string.Empty;
+
+	/// <summary>
+	/// Where the mod was installed from (<see cref="InstalledMod.SourceKey"/>): with <see cref="Mod"/>, it tells a Steam
+	/// Workshop mod from a custom map of the same name. Absent from links made before it was kept.
+	/// </summary>
+	public string? Source { get; set; }
 
 	/// <summary>
 	/// The mod's folder when the link was made, preferred when it still exists.
@@ -94,7 +116,9 @@ public enum CharacterModState
 /// <param name="State">How the character relates to the installed mods.</param>
 /// <param name="Mod">The linked mod, when installed.</param>
 /// <param name="Link">The link file, when there is one.</param>
-public sealed record CharacterMod(CharacterModState State, InstalledMod? Mod, ModLinkFile? Link)
+/// <param name="Ambiguous">True when the link names its mod by a name several installed mods have (a link made before
+/// the source was kept, whose folder moved): <paramref name="Mod"/> is then the Steam Workshop one.</param>
+public sealed record CharacterMod(CharacterModState State, InstalledMod? Mod, ModLinkFile? Link, bool Ambiguous = false)
 {
 	public static readonly CharacterMod BaseGame = new(CharacterModState.BaseGame, null, null);
 
