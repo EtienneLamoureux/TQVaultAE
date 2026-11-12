@@ -275,6 +275,7 @@ public class ItemEditServiceTests
 
 		// Assert
 		removed.Should().BeSameAs(relic);
+		this._sack.IsModified.Should().BeTrue("the item lost its relic");
 		this._itemProvider.Verify(p => p.RemoveRelic1(sword), secondSlot ? Times.Never() : Times.Once());
 		this._itemProvider.Verify(p => p.RemoveRelic2(sword), secondSlot ? Times.Once() : Times.Never());
 	}
@@ -311,17 +312,47 @@ public class ItemEditServiceTests
 	}
 
 	[Fact]
+	public void Copies_LeaveTheSourceAndItsSackUnchanged()
+	{
+		// Upstream #267: a copy alone must not make its vault or character saved again.
+		var sword = MakeItem("records/sword.dbr", "WeaponMelee_Sword");
+		sword.Seed = 1234;
+		var formula = MakeItem("records/formula.dbr", Item.ICLASS_FORMULA);
+		this._itemProvider.Setup(p => p.CraftArtifact(formula)).Returns(MakeItem("records/artifact.dbr", Item.ICLASS_ARTIFACT));
+		this._itemProvider.Setup(p => p.BonusTableRelicOrArtifact(It.IsAny<Item>())).Returns((LootTableCollection?)null);
+
+		this._service.Copy(sword);
+		this._service.Duplicate(sword);
+		this._service.NewSetMember(sword, RecordId.Create("records/other.dbr"));
+		this._service.CraftArtifact(formula);
+
+		sword.IsModified.Should().BeFalse();
+		sword.Seed.Should().Be(1234);
+		formula.IsModified.Should().BeFalse();
+		this._sack.IsModified.Should().BeFalse();
+	}
+
+	[Fact]
 	public void Split_KeepsOneAndReturnsTheRest()
 	{
 		var potions = MakeItem("records/potion.dbr", Item.ICLASS_POTIONHEALTH);
 		potions.StackSize = 5;
 
-		var rest = this._service.Split(potions);
+		var rest = this._service.Split(this._sack, potions);
 
 		rest.Should().NotBeNull();
 		rest!.StackSize.Should().Be(4);
 		potions.StackSize.Should().Be(1);
-		this._service.Split(potions).Should().BeNull("a single item cannot be split");
+		this._sack.IsModified.Should().BeTrue("the stack in the sack changed");
+	}
+
+	[Fact]
+	public void Split_SingleItem_ReturnsNullAndLeavesTheSack()
+	{
+		var potion = MakeItem("records/potion.dbr", Item.ICLASS_POTIONHEALTH);
+
+		this._service.Split(this._sack, potion).Should().BeNull("a single item cannot be split");
+		this._sack.IsModified.Should().BeFalse();
 	}
 
 	[Fact]

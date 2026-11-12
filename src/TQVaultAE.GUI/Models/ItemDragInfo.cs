@@ -232,9 +232,14 @@ public class ItemDragInfo
 	}
 
 	/// <summary>
-	/// Marks an item as modified.  Used for splitting stacks and removing charms and relics.
+	/// Drags <paramref name="newItem"/> instead of the source item, which stays in its sack: a split stack, a removed
+	/// relic, a copy, a new set piece or a crafted artifact.
 	/// </summary>
-	/// <param name="newItem">New item to be created after the split.</param>
+	/// <remarks>
+	/// The source sack is not marked as modified here: the action that changed the source item (split, relic removal)
+	/// marks it, so a copy alone leaves its vault or character unchanged and unsaved (upstream #267).
+	/// </remarks>
+	/// <param name="newItem">The item dragged from now on.</param>
 	public void MarkModified(Item newItem)
 	{
 		if (this.IsModifiedItem)
@@ -247,10 +252,6 @@ public class ItemDragInfo
 		{
 			// Tell the sackPanel the drag was cancelled so that it will redraw its now modified item
 			this.srcSackPanel?.CancelDrag(this);
-
-			// Tell the sack that it has been modified
-			if (this.srcSack is not null)
-				this.srcSack.IsModified = true;
 
 			// Now store our info inside original
 			var original = (ItemDragInfo)this.MemberwiseClone();

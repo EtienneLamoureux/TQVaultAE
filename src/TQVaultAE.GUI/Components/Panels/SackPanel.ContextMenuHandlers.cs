@@ -551,7 +551,7 @@ public partial class SackPanel
 				this.DragInfo.Set(this, this.ShownSack, focusedItem, new Point(1, 1));
 
 				// pull out all but one item
-				Item? newItem = this.Services.ItemEditService.Split(focusedItem);
+				Item? newItem = this.Services.ItemEditService.Split(this.ShownSack, focusedItem);
 
 				// Put the item in DragInfo
 				if (newItem is not null)

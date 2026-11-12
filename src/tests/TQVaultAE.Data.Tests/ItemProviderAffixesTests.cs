@@ -298,7 +298,7 @@ public class ItemProviderAffixesTests
 		var artifact = this._provider.CraftArtifact(formula)!;
 
 		RecordId.RawOf(artifact.BaseItemId).Should().Be(artifactId);
-		formula.IsModified.Should().BeTrue();
+		formula.IsModified.Should().BeFalse("crafting leaves the formula as it is (upstream #267)");
 		this._database.Verify(d => d.GetInfo(It.Is<RecordId>(r => r.Raw == artifactId)));
 	}
 

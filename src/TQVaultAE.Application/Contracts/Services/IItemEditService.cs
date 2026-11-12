@@ -60,7 +60,7 @@ public interface IItemEditService
 	/// <summary>Takes the relic or charm out of a slot of <paramref name="item"/>.</summary>
 	/// <remarks>
 	/// God mode in the Forge can socket anything (a weapon, an affix...). Only relics and charms come back; anything else
-	/// is removed with the slot, and the sack is marked as modified.
+	/// is removed with the slot. The sack is marked as modified either way.
 	/// </remarks>
 	/// <param name="sack">The sack holding the item.</param>
 	/// <param name="item">The item holding the relic.</param>
@@ -69,11 +69,15 @@ public interface IItemEditService
 	Item? RemoveRelic(SackCollection sack, Item item, bool secondSlot);
 
 	/// <summary>Splits a stack: <paramref name="item"/> keeps one, the rest is returned.</summary>
+	/// <param name="sack">The sack holding the item, marked as modified when the stack was split.</param>
 	/// <param name="item">A stack of more than one item.</param>
 	/// <returns>The rest of the stack, or <see langword="null"/> when there is nothing to split.</returns>
-	Item? Split(Item item);
+	Item? Split(SackCollection sack, Item item);
 
-	/// <summary>Copies <paramref name="item"/> with a new seed, so the copy rolls its own stats.</summary>
+	/// <summary>
+	/// Copies <paramref name="item"/> with a new seed, so the copy rolls its own stats. Like <see cref="Duplicate"/>,
+	/// <see cref="NewSetMember"/> and <see cref="CraftArtifact"/>, it leaves the source item and its sack unchanged.
+	/// </summary>
 	/// <param name="item">The item to copy.</param>
 	Item Copy(Item item);
 

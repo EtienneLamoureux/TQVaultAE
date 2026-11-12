@@ -125,19 +125,22 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 			? this._itemProvider.RemoveRelic2(item)
 			: this._itemProvider.RemoveRelic1(item);
 
-		if (relic is null || !relic.IsRelicOrCharm)
-		{
-			// The slot content is gone with the slot: only the sack records the change.
-			sack.IsModified = true;
-			return null;
-		}
+		// The item lost its slot content either way.
+		sack.IsModified = true;
 
-		return relic;
+		// Anything but a relic or charm is gone with the slot.
+		return relic is not null && relic.IsRelicOrCharm ? relic : null;
 	}
 
 	/// <inheritdoc/>
-	public Item? Split(Item item)
-		=> item.PopAllButOneItem();
+	public Item? Split(SackCollection sack, Item item)
+	{
+		Item? rest = item.PopAllButOneItem();
+		if (rest is not null)
+			sack.IsModified = true;
+
+		return rest;
+	}
 
 	/// <inheritdoc/>
 	public Item Copy(Item item)

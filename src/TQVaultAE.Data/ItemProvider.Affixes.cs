@@ -262,7 +262,7 @@ public partial class ItemProvider
 	/// <summary>
 	/// Create an artifact from its formulae
 	/// </summary>
-	/// <returns>A new artifact</returns>
+	/// <returns>A new artifact; the formula is not changed.</returns>
 	public Item? CraftArtifact(Item itm)
 	{
 		using var modScope = this.ModScope(itm);
@@ -271,8 +271,6 @@ public partial class ItemProvider
 			string artifactname = itm.baseItemInfo.GetString("artifactName");
 			Item newArtifact = itm.MakeEmptyCopy(artifactname);
 			GetDBData(newArtifact);
-
-			itm.IsModified = true;
 
 			return newArtifact;
 		}
