@@ -200,6 +200,56 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 			$"{Mundane}Test Skill {activation}");
 	}
 
+	[Theory]
+	[InlineData(4, "(Activated upon taking damage) 4% Chance of Activating")]
+	[InlineData(85, "(Activated upon taking damage) 85% Chance of Activating")]
+	[InlineData(100, "(Activated upon taking damage)")]
+	[InlineData(0, "(Activated upon taking damage)")]
+	public void GrantedSkill_WithAChanceToRun_WritesTheChanceAfterTheActivation_UnlessItAlwaysTriggers(int chanceToRun, string activation)
+	{
+		// The game's controllers (e.g. onanyhitself04: HitByEnemy, chanceToRun 4) give the chance as a whole percentage.
+		this.Translations["SkillActivationChance"] = "Chance of Activating";
+		this.CreateRecord(ControllerId, "ItemSkillAutoController", Str("triggerType", "HitByEnemy"), Int("chanceToRun", chanceToRun));
+		this.CreateRecord(SkillId, "Skill_BuffSelfDuration", Str("skillDisplayName", "tagSkillTest"));
+		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSkillName", SkillId), Str("itemSkillAutoController", ControllerId));
+
+		this.BaseAttributes(item).Should().Contain($"{Mundane}Test Skill {activation}");
+		this.Provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.GrantedSkills).GrantedSkills.Single().Activation.Should().Be(activation);
+	}
+
+	[Fact]
+	public void GrantedSkill_WithoutAChanceToRun_WritesOnlyTheActivation()
+	{
+		this.Translations["SkillActivationChance"] = "Chance of Activating";
+		this.CreateRecord(ControllerId, "ItemSkillAutoController", Str("triggerType", "AttackEnemy"));
+		this.CreateRecord(SkillId, "Skill_BuffSelfDuration", Str("skillDisplayName", "tagSkillTest"));
+		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSkillName", SkillId), Str("itemSkillAutoController", ControllerId));
+
+		this.BaseAttributes(item).Should().Contain($"{Mundane}Test Skill (Activated on attack)");
+	}
+
+	[Fact]
+	public void GrantedSkill_WithAFractionalChance_KeepsOneDecimal_AndFallsBackToEnglishWithoutTheGameText()
+	{
+		// A mod may write the chance as a float; the game text may lack the label.
+		this.Translations.Remove("SkillActivationChance");
+		this.CreateRecord(ControllerId, "ItemSkillAutoController", Str("triggerType", "AttackEnemy"), Float("chanceToRun", 2.5f));
+		this.CreateRecord(SkillId, "Skill_BuffSelfDuration", Str("skillDisplayName", "tagSkillTest"));
+		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSkillName", SkillId), Str("itemSkillAutoController", ControllerId));
+
+		this.BaseAttributes(item).Should().Contain($"{Mundane}Test Skill (Activated on attack) 2.5% Chance of Activating");
+	}
+
+	[Fact]
+	public void GrantedSkill_WithAnUnknownTriggerAndAChance_WritesNoActivation()
+	{
+		this.CreateRecord(ControllerId, "ItemSkillAutoController", Str("triggerType", "SomethingNew"), Int("chanceToRun", 5));
+		this.CreateRecord(SkillId, "Skill_BuffSelfDuration", Str("skillDisplayName", "tagSkillTest"));
+		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSkillName", SkillId), Str("itemSkillAutoController", ControllerId));
+
+		this.BaseAttributes(item).Should().Contain($"{Epic}Test Skill");
+	}
+
 	[Fact]
 	public void GrantedSkill_WithAnUnknownTrigger_IsAMagicalLineWithoutActivation()
 	{

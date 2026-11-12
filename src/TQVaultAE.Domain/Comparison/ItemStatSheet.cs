@@ -103,10 +103,11 @@ public sealed record ItemStatSheet(IReadOnlyList<StatGroup> Groups)
 			StatGroup.Of(StatGroupKind.Attributes, AttributesKey, null, attributes.Concat(socketed)),
 		};
 
+		// Level, activation ("(Activated on attack) 4% Chance of Activating": the chance compares like a stat), effects.
 		foreach (var skill in data.GrantedSkills)
 		{
 			groups.Add(StatGroup.Of(StatGroupKind.GrantedSkill, $"skill:{RecordId.RawOf(skill.SkillId)}", skill.Name
-				, [skill.LevelText, .. skill.Attributes]));
+				, [skill.LevelText, .. skill.Activation is null ? Array.Empty<string>() : [skill.Activation], .. skill.Attributes]));
 		}
 
 		groups.Add(StatGroup.Of(StatGroupKind.Requirements, RequirementsKey, null, data.Requirements));

@@ -257,8 +257,8 @@ public partial class ItemProvider
 		{
 			// "5% Chance of Activating" of a skill triggered by hits (onHitActivationChance), which item tool tips leave out.
 			float activationChance = skillWindow ? ValueAtLevel(skillRecord["onHitActivationChance"], level) : 0F;
-			if (activationChance > 0 && TranslationService.TryTranslateXTag("SkillActivationChance", out var activationText))
-				ownLines.Add(("onHitActivationChance", $"{activationChance.ToString("0.#", CultureInfo.CurrentCulture)}% {activationText}"));
+			if (activationChance > 0)
+				ownLines.Add(("onHitActivationChance", this.ActivationChanceText(activationChance)));
 
 			this.GetAttributesFromRecord(itm, skillRecord, true, skillId, attributes, skillLevelIndex: level - 1, hiddenVariables: ownHidden, skillWindow: order);
 			if (buffRecord is not null)

@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 
@@ -269,8 +270,13 @@ public partial class ItemProvider
 	}
 
 	/// <summary>
-	/// Translates when an auto controlled granted skill triggers ("Activated on low health"...).
+	/// Translates when an auto controlled granted skill triggers and how likely, e.g.
+	/// "(Activated upon taking damage) 4% Chance of Activating" (<c>triggerType</c> and <c>chanceToRun</c>).
 	/// </summary>
+	/// <remarks>
+	/// The one text of the activation, shared by the Classic line, the granted skill panel, Item Properties and the
+	/// comparison. A chance of 100 % (or a missing one) is not written: the skill always triggers.
+	/// </remarks>
 	/// <param name="autoController">The <c>itemSkillAutoController</c> record, if any.</param>
 	/// <returns>The activation text, or an empty string when the skill is not auto controlled.</returns>
 	private string GetSkillActivationText(string? autoController)
@@ -279,11 +285,15 @@ public partial class ItemProvider
 		string? triggerType = null;
 		string? activationTag = null;
 		string? activationText;
+		float chance = 0;
 		if (!string.IsNullOrEmpty(autoController))
 		{
 			DBRecordCollection? autoControllerRecord = Database.GetRecordFromFile(autoController);
 			if (autoControllerRecord is not null)
+			{
 				triggerType = autoControllerRecord.GetString("triggerType", 0);
+				chance = autoControllerRecord.GetSingle("chanceToRun", 0);
+			}
 		}
 
 		// Convert TriggerType into text tag
@@ -342,7 +352,22 @@ public partial class ItemProvider
 		else
 			activationText = string.Empty;
 
-		return activationText ?? string.Empty;
+		if (string.IsNullOrEmpty(activationText))
+			return string.Empty;
+
+		return chance is > 0 and < 100 ? $"{activationText} {this.ActivationChanceText(chance)}" : activationText;
+	}
+
+	/// <summary>
+	/// The game's "4% Chance of Activating" (<c>SkillActivationChance</c>), for a skill triggered by an item's controller
+	/// or by hits (<c>onHitActivationChance</c> in the skill window).
+	/// </summary>
+	private string ActivationChanceText(float chance)
+	{
+		if (!TranslationService.TryTranslateXTag("SkillActivationChance", out var label))
+			label = "Chance of Activating";
+
+		return $"{chance.ToString("0.#", CultureInfo.CurrentCulture)}% {label}";
 	}
 
 	/// <summary>

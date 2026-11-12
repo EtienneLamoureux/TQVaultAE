@@ -227,6 +227,29 @@ public class ItemStatComparerTests
 	}
 
 	[Fact]
+	public void Compare_GrantedSkills_TheChanceToActivateComparesLikeAStat()
+	{
+		var first = Texts([]);
+		first.GrantedSkills = [Skill("records/skills/lava.dbr", "Lava Weapon", "Level: 1") with { Activation = "(Activated upon taking damage) 5% Chance of Activating" }];
+		var second = Texts([]);
+		second.GrantedSkills = [Skill("records/skills/lava.dbr", "Lava Weapon", "Level: 1") with { Activation = "(Activated upon taking damage) 4% Chance of Activating" }];
+
+		var group = Changed(Compare(first, second).FirstMinusSecond).Single();
+
+		group.Title.Should().Be("Lava Weapon");
+		group.Lines.Select(l => (l.Text, l.Trend)).Should().Equal(("(Activated upon taking damage) +1% Chance of Activating", StatTrend.Higher));
+	}
+
+	[Fact]
+	public void From_GrantedSkillActivationWithoutChance_IsNotAStat()
+	{
+		var granting = Texts([]);
+		granting.GrantedSkills = [Skill("records/skills/mist.dbr", "Venomous Mist", "Level: 3", "-50 Energy Cost") with { Activation = "(Activated when equipped)" }];
+
+		ItemStatSheet.From(granting).Groups.Single().Stats.Should().HaveCount(2, "the level and the energy cost");
+	}
+
+	[Fact]
 	public void From_SkillNamedInTheAttributes_OnlyInItsOwnGroup()
 	{
 		var granting = Texts(["+10% Attack Speed", "", "Grants Skill :", "{^E}Venomous Mist"]);
