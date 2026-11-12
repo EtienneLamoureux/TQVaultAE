@@ -267,6 +267,8 @@ Release builds contain none of it.
 | `about` | Help > About without blocking: its texts and a PNG, then closes it. |
 | `drop_files(paths)` | Drops files on the window through its DragEnter and DragDrop handlers, as Explorer does. |
 | `sound_player(action)` | The sound player of a .wav or .mp3 entry: `state`, or a click on `play`, `loop`, `pause`, `stop`; the sound is then loaded, which checks its wave data. |
+| `forms`, `close_form(name)` | The open forms (name, title, visible, modal), and a close of one as its title bar X does (posts `WM_SYSCOMMAND SC_CLOSE`, close reason `UserClosing`, returns at once): works while `extract(all=true)` is still waiting on its progress dialog (`ArzExtractProgress`). |
+| `process_resources(collect)` | GDI and USER object counts, handles, private and managed bytes, and the disposables the root service provider keeps until exit, by type; `collect=true` runs a full GC with finalizers first. Leak checks: compare before and after repeating an action. |
 | `dialogs(clear)` | Headless state and the dialogs cancelled there. |
 
 The UI tools take a timeout and report "blocked (hang)" instead of waiting forever. The call still runs once the UI
