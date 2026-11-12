@@ -35,6 +35,8 @@
 | <kbd>&#8595;</kbd> | Moves currently highlighted item(s) to stash panel |
 | <kbd>ALT</kbd>+<kbd>W</kbd>/<kbd>A</kbd>/<kbd>S</kbd>/<kbd>D</kbd> | Move selected items one square over |
 | <kbd>ESC</kbd> or right-click, while dragging | Cancels the drag: the item goes back where it was |
+| Left-click, after the item menu's **Compare** | Compares the item clicked, in any panel, with the first one (see [Item comparison](ITEMCOMPARE.md)) |
+| <kbd>ESC</kbd> or right-click, after **Compare** | Cancels the comparison selection |
 
 "Currently highlighted item" is the item under the mouse cursor. <kbd>BACKSPACE</kbd>, <kbd>C</kbd> and <kbd>D</kbd> act on that item only, never on the selection.
 <kbd>C</kbd> and <kbd>D</kbd> need the "Allow Item Copying" setting.
