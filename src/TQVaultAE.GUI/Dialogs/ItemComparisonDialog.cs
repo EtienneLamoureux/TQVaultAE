@@ -23,15 +23,6 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	/// <summary>Background of the dialog, as Item Properties'.</summary>
 	private static readonly Color DialogColor = Color.FromArgb(46, 31, 21);
 
-	/// <summary>The space the TQ border takes on each side: its pictures are drawn at their own size.</summary>
-	private static readonly Lazy<Padding> BorderPadding = new(() =>
-	{
-		using var top = Images.BorderTop;
-		using var side = Images.BorderSide;
-		using var bottom = Images.BorderBottom;
-		return new Padding(side.Width, top.Height, side.Width, bottom.Height);
-	});
-
 	private readonly IItemComparisonService _comparisonService;
 	private readonly ItemComparisonContentBuilder _builder;
 	private readonly Panel _scroll;
@@ -74,7 +65,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 
 		float scale = this.UIService.Scale;
 		int gap = (int)Math.Round(4 * scale);
-		var border = BorderPadding.Value;
+		var border = CustomBorderThickness;
 		this.Padding = new Padding(border.Left + gap, border.Top + gap, border.Right + gap, border.Bottom);
 
 		this._table = new TableLayoutPanel()

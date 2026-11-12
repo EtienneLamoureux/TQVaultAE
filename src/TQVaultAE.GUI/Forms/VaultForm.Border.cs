@@ -11,6 +11,7 @@ using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Interop;
+using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation.Win32.Contracts;
 
 namespace TQVaultAE.GUI.Forms;
@@ -25,6 +26,20 @@ using TQVaultAE.Presentation;
 
 public partial class VaultForm
 {
+	/// <summary>
+	/// The space the TQ border (<see cref="DrawCustomBorder"/>) takes on each side of the window: its pictures are drawn
+	/// at their own size. A dialog laid out in code keeps its content inside with this padding.
+	/// </summary>
+	internal static Padding CustomBorderThickness => customBorderThickness.Value;
+
+	private static readonly Lazy<Padding> customBorderThickness = new(() =>
+	{
+		using var top = Images.BorderTop;
+		using var side = Images.BorderSide;
+		using var bottom = Images.BorderBottom;
+		return new Padding(side.Width, top.Height, side.Width, bottom.Height);
+	});
+
 	/// <summary>
 	/// Gets or sets a value indicating whether the custom borders will be drawn.
 	/// </summary>
