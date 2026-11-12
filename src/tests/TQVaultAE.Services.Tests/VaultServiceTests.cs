@@ -898,4 +898,57 @@ public class VaultServiceTests
 
 		this._vaultService.ResolveVaultToLoad("Potions").Should().Be(expected);
 	}
+
+	private static BagButtonIconInfo CustomIcon(string label)
+		=> BagButtonIconInfo.Create(BagButtonDisplayMode.CustomIcon | BagButtonDisplayMode.Label, label, "on.tex", "off.tex", null);
+
+	[Fact]
+	public void CopyBagIcon_ThenPasteOnTwoBags_EachGetsItsOwnCopyAndIsModified()
+	{
+		var source = new SackCollection { BagButtonIconInfo = CustomIcon("Rings") };
+		var first = new SackCollection();
+		var second = new SackCollection();
+
+		this._vaultService.CopyBagIcon(source);
+		source.BagButtonIconInfo!.Label = "Changed later";
+
+		this._vaultService.PasteBagIcon(first).Should().BeTrue();
+		this._vaultService.PasteBagIcon(second).Should().BeTrue();
+
+		first.BagButtonIconInfo!.Label.Should().Be("Rings");
+		second.BagButtonIconInfo.Should().NotBeSameAs(first.BagButtonIconInfo);
+		first.IsModified.Should().BeTrue();
+		second.IsModified.Should().BeTrue();
+	}
+
+	[Fact]
+	public void PasteBagIcon_DefaultIconCopiedOnACustomBag_ResetsItsIcon()
+	{
+		this._vaultService.CopyBagIcon(new SackCollection());
+		var target = new SackCollection { BagButtonIconInfo = CustomIcon("Potions") };
+
+		this._vaultService.PasteBagIcon(target).Should().BeTrue();
+
+		target.BagButtonIconInfo.Should().BeNull();
+		target.IsModified.Should().BeTrue();
+	}
+
+	[Fact]
+	public void PasteBagIcon_SameIcon_LeavesTheBagUnmodified()
+	{
+		this._vaultService.CopyBagIcon(new SackCollection { BagButtonIconInfo = CustomIcon("Rings") });
+		var target = new SackCollection { BagButtonIconInfo = CustomIcon("Rings") };
+
+		this._vaultService.PasteBagIcon(target).Should().BeTrue();
+
+		target.IsModified.Should().BeFalse();
+	}
+
+	[Fact]
+	public void PasteBagIcon_IconCopiedButNoBag_IsRefused()
+	{
+		this._vaultService.CopyBagIcon(new SackCollection { BagButtonIconInfo = CustomIcon("Rings") });
+
+		this._vaultService.PasteBagIcon(null).Should().BeFalse();
+	}
 }

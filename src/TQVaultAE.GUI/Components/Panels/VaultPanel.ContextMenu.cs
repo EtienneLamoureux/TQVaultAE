@@ -301,10 +301,20 @@ public partial class VaultPanel
 		this.BagSackPanel.NotifyKeptMap(result.Kept);
 	}
 
+	/// <summary>The bag menu entries handled by <see cref="ContextMenuItemClicked"/>, carried by their tag.</summary>
+	private enum BagMenuAction
+	{
+		Empty,
+		ChangeIcon,
+		CopyIcon,
+		PasteIcon,
+	}
+
 	private void ContextMenuItemClicked(object? sender, ToolStripItemClickedEventArgs e)
 	{
-		string? selectedItem = e.ClickedItem?.Text;
-		if (selectedItem == Resources.PlayerPanelMenuEmpty)
+		// The entry carries its action, not compared by its translated text.
+		var action = e.ClickedItem?.Tag as BagMenuAction?;
+		if (action == BagMenuAction.Empty)
 		{
 			if (this.USettings.SuppressWarnings || this.Services.MessageBoxes.Confirm(Resources.PlayerPanelEmptyMsg, Resources.PlayerPanelEmpty))
 			{
@@ -314,7 +324,7 @@ public partial class VaultPanel
 			}
 		}
 
-		if (selectedItem == Resources.PlayerPanelChangeIcon)
+		if (action == BagMenuAction.ChangeIcon)
 		{
 			var button = this.BagButtons[this.CurrentBag];
 
@@ -327,26 +337,20 @@ public partial class VaultPanel
 			}
 		}
 
-		if (selectedItem == Resources.PlayerPanelCopyIcon)
+		if (action == BagMenuAction.CopyIcon)
 		{
-			var button = this.BagButtons[this.CurrentBag];
-			// Keep a copy, not the bag's own instance, so later edits of the bag do not change it.
-			this.userContext.IconInfoCopy = button.Sack?.BagButtonIconInfo?.Clone();
+			this.Services.VaultService.CopyBagIcon(this.BagButtons[this.CurrentBag].Sack);
 
 			if (this.FindForm() is MainForm frm)
 				frm.NotificationText.Text = Resources.GlobalCopied;
 		}
 
-		if (selectedItem == Resources.PlayerPanelPasteIcon)
+		if (action == BagMenuAction.PasteIcon)
 		{
 			var button = this.BagButtons[this.CurrentBag];
-
-			// Paste a copy, so pasting on several bags does not share one instance.
-			var sourceInfo = this.userContext.IconInfoCopy;
-			if (sourceInfo is not null && button.Sack is null)
+			if (!this.Services.VaultService.PasteBagIcon(button.Sack))
 				return;
 
-			button.Sack?.ChangeBagButtonIconInfo(sourceInfo?.Clone());
 			if (this.FindForm() is MainForm frm)
 				frm.NotificationText.Text = Resources.GlobalPasted;
 			button.ApplyIconInfo(button.Sack);

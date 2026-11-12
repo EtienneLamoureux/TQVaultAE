@@ -86,6 +86,21 @@ public interface IVaultService
 	void ChangeBagTooltip(PlayerCollection vault, BagTooltipChange change, int bag, int bagCount);
 
 	/// <summary>
+	/// "Copy Icon": keeps a copy of a bag's icon in the session (<see cref="SessionContext.IconInfoCopy"/>), not the
+	/// bag's own instance, so later edits of the bag do not change it. A bag with the default icon copies "no icon".
+	/// </summary>
+	/// <param name="sack">The bag; <see langword="null"/> copies "no icon".</param>
+	void CopyBagIcon(SackCollection? sack);
+
+	/// <summary>
+	/// "Paste Icon": gives a bag a copy of the icon copied in the session, so pasting on several bags does not share one
+	/// instance. The bag is marked modified only when its icon changes.
+	/// </summary>
+	/// <param name="sack">The bag.</param>
+	/// <returns>False when an icon was copied but there is no bag to paste it on.</returns>
+	bool PasteBagIcon(SackCollection? sack);
+
+	/// <summary>
 	/// Remembers the bag selected in a vault panel, so the panel shows it again when the vault is reopened. Each vault
 	/// keeps one bag for the main vault panel and one for the secondary vault panel; they are saved in the vault file,
 	/// so the vault is marked modified when the bag changes.

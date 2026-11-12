@@ -313,6 +313,21 @@ public class VaultService(
 	}
 
 	/// <inheritdoc />
+	public void CopyBagIcon(SackCollection? sack)
+		=> this.userContext.IconInfoCopy = sack?.BagButtonIconInfo?.Clone();
+
+	/// <inheritdoc />
+	public bool PasteBagIcon(SackCollection? sack)
+	{
+		var copied = this.userContext.IconInfoCopy;
+		if (copied is not null && sack is null)
+			return false;
+
+		sack?.ChangeBagButtonIconInfo(copied?.Clone());
+		return true;
+	}
+
+	/// <inheritdoc />
 	public void ChangeBagTooltip(PlayerCollection vault, BagTooltipChange change, int bag, int bagCount)
 	{
 		var disabled = vault.DisabledTooltipBagId;

@@ -99,7 +99,7 @@ public partial class VaultPanel
 					this.AddSubMenu(Resources.PlayerPanelMenuMerge, this.MergeBagClicked);
 
 					this.contextMenu.Items.Add("-");
-					this.contextMenu.Items.Add(Resources.PlayerPanelMenuEmpty);
+					this.contextMenu.Items.Add(Resources.PlayerPanelMenuEmpty).Tag = BagMenuAction.Empty;
 
 					if (this.Vault is not null)
 					{
@@ -157,11 +157,11 @@ public partial class VaultPanel
 				if (this.Vault is not null)
 				{
 					this.contextMenu.Items.Add("-");
-					this.contextMenu.Items.Add(Resources.PlayerPanelChangeIcon);
-					this.contextMenu.Items.Add(Resources.PlayerPanelCopyIcon);
+					this.contextMenu.Items.Add(Resources.PlayerPanelChangeIcon).Tag = BagMenuAction.ChangeIcon;
+					this.contextMenu.Items.Add(Resources.PlayerPanelCopyIcon).Tag = BagMenuAction.CopyIcon;
 
 					if (this.userContext.IconInfoCopied)
-						this.contextMenu.Items.Add(Resources.PlayerPanelPasteIcon);
+						this.contextMenu.Items.Add(Resources.PlayerPanelPasteIcon).Tag = BagMenuAction.PasteIcon;
 
 					// Import from file
 					this.contextMenu.Items.Add("-");
