@@ -63,7 +63,7 @@ public class JitterVerificationTests
 		@"records\item\lootmagicalaffixes\prefix\default\rare_hallowed_01.dbr",
 		null,
 		"characterLifeRegen=1;characterManaRegenModifier=21;defensiveLife=52;defensiveProtection=273")]
-	// HeroH's "Jewel of Essence": the base ring's attributeScalePercent=25 scales the jittered suffix (82 -> 102, 14 -> 17).
+	// A Defense and Earth character's "Jewel of Essence": the base ring's attributeScalePercent=25 scales the jittered suffix (82 -> 102, 14 -> 17).
 	[InlineData(21654u, false, @"records\xpack\item\equipmentarmor\ring\c02_ring02.dbr",
 		null,
 		@"records\item\lootmagicalaffixes\suffix\default\character_attributeenergy_03.dbr",

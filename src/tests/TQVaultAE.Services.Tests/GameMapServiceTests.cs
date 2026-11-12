@@ -56,7 +56,7 @@ public class GameMapServiceTests
 
 	[Fact]
 	public void MapFor_MainCampaignCharacter_IsTheBaseGame()
-		=> this.CreateService().MapFor(Save("HeroD", isCustom: false)).Should().BeEmpty();
+		=> this.CreateService().MapFor(Save("HeroC", isCustom: false)).Should().BeEmpty();
 
 	[Fact]
 	public void MapFor_LinkedCharacter_IsItsMod()
@@ -106,7 +106,7 @@ public class GameMapServiceTests
 		int raised = 0;
 		service.ActiveMapChanged += (_, _) => raised++;
 
-		service.ActivateFor(Save("HeroD", isCustom: false)).Should().BeFalse();
+		service.ActivateFor(Save("HeroC", isCustom: false)).Should().BeFalse();
 
 		this._gamePath.Object.MapName.Should().Be("main");
 		this._cache.Verify(c => c.ClearGameDataCache(), Times.Never);
@@ -141,7 +141,7 @@ public class GameMapServiceTests
 		this._links.Setup(l => l.Resolve(missing.Folder, true))
 			.Returns(new CharacterMod(CharacterModState.LinkedModMissing, null, new ModLinkFile { Mod = "Lilith" }));
 		var unlinked = Save("HeroB", isCustom: true);
-		var main = Save("HeroD", isCustom: false);
+		var main = Save("HeroC", isCustom: false);
 
 		foreach (var save in new[] { linked, missing, unlinked, main })
 			service.Refresh(save);
