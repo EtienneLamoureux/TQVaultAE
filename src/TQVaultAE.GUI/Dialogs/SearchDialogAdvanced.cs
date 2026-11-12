@@ -50,6 +50,10 @@ public partial class SearchDialogAdvanced : VaultForm
 		this.ItemDatabaseService = itemDatabaseService;
 
 		this.InitializeComponent();
+		MarbleBackground.ApplyTo(this);
+		// The marble shows between the framed boxes, which keep their dark background.
+		this.tableLayoutPanelContent.BackColor = Color.Transparent;
+		this.tableLayoutPanelBottom.BackColor = Color.Transparent;
 
 		this.MinimizeBox = false;
 		this.NormalizeBox = false;

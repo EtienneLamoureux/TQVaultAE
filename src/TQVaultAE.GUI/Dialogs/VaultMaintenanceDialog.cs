@@ -63,6 +63,7 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 		this.vaultService = vaultService;
 
 		this.InitializeComponent();
+		MarbleBackground.ApplyTo(this);
 
 		#region Apply custom font
 
