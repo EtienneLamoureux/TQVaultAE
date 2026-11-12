@@ -68,40 +68,35 @@ internal static class CaravanFrame
 	}
 
 	/// <summary>
-	/// Draws <paramref name="box"/> as the frame instead of the group box's own border, its caption across the top edge
-	/// as a group box has it, so that its controls keep their places. They are made transparent so that the black shows
-	/// behind them.
+	/// Draws <paramref name="box"/> as the frame instead of the group box's own border, without its caption. Its
+	/// controls are moved off the frame's left edge and centered in its height (the caption's room is no longer needed),
+	/// and made transparent so that the black shows behind them.
 	/// </summary>
 	public static void ApplyTo(GroupBox box)
 	{
 		Bitmap? frame = null;
-		foreach (Control child in box.Controls)
+		var children = box.Controls.Cast<Control>().ToList();
+		if (children.Count > 0)
 		{
-			child.BackColor = Color.Transparent;
-			// Off the frame's left edge.
-			if (child.Left < Border + 4)
-				child.Left = Border + 4;
+			int dy = (box.Height - children.Max(c => c.Bottom) - children.Min(c => c.Top)) / 2;
+			foreach (var child in children)
+			{
+				child.BackColor = Color.Transparent;
+				child.Top += dy;
+				if (child.Left < Border + 4)
+					child.Left = Border + 4;
+			}
 		}
 
 		box.Paint += (_, e) =>
 		{
-			var caption = TextRenderer.MeasureText(e.Graphics, box.Text, box.Font);
-			// The frame's gold line runs through the middle of the caption.
-			int top = Math.Max(0, (caption.Height - Border) / 2);
-			var size = new Size(box.Width, box.Height - top);
-			if (frame is null || frame.Size != size)
+			if (frame is null || frame.Size != box.Size)
 			{
 				frame?.Dispose();
-				frame = Render(size);
+				frame = Render(box.Size);
 			}
 
-			e.Graphics.Clear(box.Parent?.BackColor is { A: 255 } back ? back : Color.Black);
-			if (box.Parent?.BackgroundImage is not null)
-				ButtonRenderer.DrawParentBackground(e.Graphics, box.ClientRectangle, box);
-			e.Graphics.DrawImageUnscaled(frame, 0, top);
-			var captionBounds = new Rectangle(Border + 4, 0, caption.Width, caption.Height);
-			e.Graphics.FillRectangle(Brushes.Black, captionBounds);
-			TextRenderer.DrawText(e.Graphics, box.Text, box.Font, captionBounds, box.ForeColor);
+			e.Graphics.DrawImageUnscaled(frame, 0, 0);
 		};
 		box.Disposed += (_, _) => frame?.Dispose();
 	}
