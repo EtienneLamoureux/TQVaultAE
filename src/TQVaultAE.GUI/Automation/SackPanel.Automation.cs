@@ -251,6 +251,9 @@ public partial class SackPanel
 		}
 	}
 
+	/// <summary>Closes the context menu a right click may have opened.</summary>
+	internal void AutomationCloseContextMenu() => this.CustomContextMenu.Close();
+
 	/// <summary>The items selected in this panel, in selection order.</summary>
 	internal IReadOnlyList<Item> AutomationSelectedItems => this.selectedItems ?? [];
 

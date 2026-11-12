@@ -13,7 +13,7 @@ namespace TQVaultAE.GUI.Automation;
 internal static partial class AutomationTools
 {
 	[McpServerTool(Name = "compare_items", ReadOnly = true)]
-	[Description("Opens the item comparison dialog (the context menu entry 'Compare' of a selection of two items) on two items, which may be on different panels (equipment vs vault), and returns its four columns as rendered (firstDifferences, first, second, secondDifferences; rows as tooltip_text_dump: kind, text, color, bold) with a PNG of the whole content, scroll included. The dialog is shown modeless and closed at the end unless keepOpen (then capture it by its title and close it with close_dialog). Nothing is changed.")]
+	[Description("Opens the item comparison dialog directly on two items, which may be on different panels (equipment vs vault), with its toolbar choices (alignRows, hideUnchanged; empty keeps the last ones), and returns its four columns as rendered (firstDifferences, first, second, secondDifferences; rows as tooltip_text_dump: kind, text, color, bold) with a PNG of the whole content, scroll included. The dialog is shown modeless and closed at the end unless keepOpen (then capture it by its title and close it with close_dialog). Nothing is changed.")]
 	public static IEnumerable<ContentBlock> CompareItems(
 		[Description("Panel id of the first item.")] string panel,
 		[Description("Cell column of the first item.")] int x,
@@ -22,7 +22,9 @@ internal static partial class AutomationTools
 		[Description("Cell row of the second item.")] int y2,
 		[Description("Panel id of the second item; empty for the first item's panel.")] string? panel2 = null,
 		[Description("PNG file the capture is also written to; empty for a temporary file.")] string? path = null,
-		[Description("Leave the dialog open.")] bool keepOpen = false)
+		[Description("Leave the dialog open.")] bool keepOpen = false,
+		[Description("The 'Align rows' check box; empty keeps the last choice.")] bool? alignRows = null,
+		[Description("The 'Hide unchanged' check box; empty keeps the last choice.")] bool? hideUnchanged = null)
 	{
 		var (json, png, size) = AutomationHost.OnUi(main =>
 		{
@@ -40,6 +42,11 @@ internal static partial class AutomationTools
 
 			try
 			{
+				if (alignRows is { } align)
+					((CheckBox)dialog.Controls.Find("alignRowsCheckBox", true).Single()).Checked = align;
+				if (hideUnchanged is { } hide)
+					((CheckBox)dialog.Controls.Find("hideUnchangedCheckBox", true).Single()).Checked = hide;
+
 				var table = dialog.Controls.Find("comparisonTable", true).Single();
 				var columns = ItemComparisonDialog.ColumnNames.ToDictionary(n => n, n =>
 				{
@@ -61,6 +68,7 @@ internal static partial class AutomationTools
 				{
 					first = DescribeItem(item1, null),
 					second = DescribeItem(item2, null),
+					options = dialog.Options,
 					dialogSize = new { dialog.Width, dialog.Height },
 					contentSize = new { table.Width, table.Height },
 					columns,
@@ -89,4 +97,37 @@ internal static partial class AutomationTools
 			new TextContentBlock { Text = $"capture: {size.Width}x{size.Height} px, saved to {file}" },
 		];
 	}
+
+	[McpServerTool(Name = "compare_click", Destructive = true)]
+	[Description("Clicks a cell of a panel like the user while the compare selection may be on (started by the item menu's 'Compare' entry: context_menu_click(panel, x, y, 'Compare')). Left on an item: picks the second item and opens the comparison dialog (modal, after the call returns: drive it with set_control / control_values / capture('Item Comparison') and close it with close_dialog('Item Comparison', 'OK')); left on the first item ends the selection; left on an empty cell keeps it; right cancels it. Without the selection on, a left click picks the item up like pick_item. Returns the compare selection before and after.")]
+	public static string CompareClick(
+		[Description("Panel id.")] string panel,
+		[Description("Cell column.")] int x,
+		[Description("Cell row.")] int y,
+		[Description("'left' or 'right'.")] string button = "left")
+		=> AutomationHost.OnUi(main =>
+		{
+			var named = ResolveShownPanel(main, panel);
+			var selection = main.AutomationDragInfo.Compare;
+			var before = new { active = selection.IsActive, first = selection.First is { } f ? DescribeItem(f, null) : null };
+			var item = named.Panel.AutomationFindItem(new Point(x, y));
+			var mouse = button.ToLowerInvariant() switch
+			{
+				"left" => MouseButtons.Left,
+				"right" => MouseButtons.Right,
+				_ => throw new McpException($"Unknown button '{button}'. Use 'left' or 'right'."),
+			};
+
+			named.Panel.AutomationMouseDown(named.Panel.AutomationCellCenter(new Point(x, y)), mouse);
+			named.Panel.AutomationCloseContextMenu();
+
+			return Serialize(new
+			{
+				panel = named.Id,
+				clicked = item is null ? null : DescribeItem(item, null),
+				before,
+				after = new { active = selection.IsActive, first = selection.First is { } f2 ? DescribeItem(f2, null) : null },
+				cursor = named.Panel.Cursor == Cursors.Hand ? "hand" : "default",
+			});
+		});
 }

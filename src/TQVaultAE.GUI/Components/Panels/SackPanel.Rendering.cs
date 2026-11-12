@@ -60,6 +60,9 @@ public partial class SackPanel : Panel, IScalingControl
 				// Draw the items.
 				this.PaintItems(e);
 
+				// Frame the first item of the compare selection.
+				this.PaintCompareSelection(e.Graphics);
+
 				// The cursor position is only needed to draw a dragged item.
 				if (this.DragInfo.IsActive)
 				{

@@ -109,52 +109,43 @@ public class ItemActionRulesTests
 	[Fact]
 	public void Available_SingleItem_OffersItsActionsAndTheEnabledOptions()
 	{
-		For(Sword()).Should().Be(GroupActions | ItemActions.Properties);
-		For(Sword(), allowCopy: true).Should().Be(GroupActions | ItemActions.Properties | ItemActions.Copy | ItemActions.Duplicate);
-		For(Sword(), allowEdit: true).Should().Be(GroupActions | ItemActions.Properties | ItemActions.Edit);
+		const ItemActions single = GroupActions | ItemActions.Properties | ItemActions.Compare;
+		For(Sword()).Should().Be(single);
+		For(Sword(), allowCopy: true).Should().Be(single | ItemActions.Copy | ItemActions.Duplicate);
+		For(Sword(), allowEdit: true).Should().Be(single | ItemActions.Edit);
 	}
 
 	[Fact]
 	public void Available_ReadOnlySack_OnlyLooksAndCopies()
 		=> For(Sword(socketed1: true), readOnly: true, allowEdit: true, allowCopy: true)
-			.Should().Be(ItemActions.Properties | ItemActions.Copy | ItemActions.Duplicate);
+			.Should().Be(ItemActions.Properties | ItemActions.Compare | ItemActions.Copy | ItemActions.Duplicate);
 
 	[Fact]
 	public void Available_SeveralSelected_OffersOnlyTheGroupActions()
 		=> For(Sword(), selectionCount: 3, allowEdit: true, allowCopy: true)
-			.Should().Be(GroupActions | ItemActions.ClearSelection | ItemActions.Compare);
+			.Should().Be(GroupActions | ItemActions.ClearSelection);
 
 	[Fact]
 	public void Available_SelectionOfTheItemAlone_ActsOnTheItem()
 		=> For(Sword(), selectionCount: 1, itemIsTheSelection: true)
-			.Should().Be(GroupActions | ItemActions.Properties | ItemActions.ClearSelection);
+			.Should().Be(GroupActions | ItemActions.Properties | ItemActions.Compare | ItemActions.ClearSelection);
 
 	[Fact]
 	public void Available_SelectionWithoutItemUnderCursor_OffersTheGroupActions()
-		=> For(null, selectionCount: 2).Should().Be(GroupActions | ItemActions.ClearSelection | ItemActions.Compare);
+		=> For(null, selectionCount: 2).Should().Be(GroupActions | ItemActions.ClearSelection);
 
 	[Theory]
-	[InlineData(0, false)]
-	[InlineData(1, false)]
-	[InlineData(2, true)]
-	[InlineData(5, true)]
-	public void Available_Compare_NeedsTwoSelectedItems(int selectionCount, bool canCompare)
-		=> For(Sword(), selectionCount, itemIsTheSelection: selectionCount == 1).HasFlag(ItemActions.Compare).Should().Be(canCompare);
+	[InlineData(true, 0, true)]    // the item under the cursor starts the compare selection
+	[InlineData(true, 1, true)]    // a selection of that item only
+	[InlineData(true, 2, false)]   // a selection of several items: group actions only
+	[InlineData(false, 2, false)]  // no item under the cursor
+	public void Available_Compare_ForTheItemUnderTheCursor(bool item, int selectionCount, bool canCompare)
+		=> For(item ? Sword() : null, selectionCount, itemIsTheSelection: item && selectionCount == 1)
+			.HasFlag(ItemActions.Compare).Should().Be(canCompare);
 
 	[Fact]
 	public void Available_Compare_AlsoInAReadOnlySack()
-		=> For(null, selectionCount: 2, readOnly: true).Should().Be(ItemActions.Compare);
-
-	[Fact]
-	public void ComparedItems_TheFirstTwoSelected_LaterOnesIgnored()
-	{
-		Item a = Sword(), b = Sword(), c = Sword();
-
-		ItemActionRules.ComparedItems([a, b, c]).Should().Be((a, b));
-		ItemActionRules.ComparedItems([b, a]).Should().Be((b, a), "the order of selection decides which item is first");
-		ItemActionRules.ComparedItems([a]).Should().BeNull();
-		ItemActionRules.ComparedItems(null).Should().BeNull();
-	}
+		=> For(Sword(), readOnly: true).HasFlag(ItemActions.Compare).Should().BeTrue();
 
 	[Theory]
 	[InlineData(true, false, ItemActions.RemoveRelic)]

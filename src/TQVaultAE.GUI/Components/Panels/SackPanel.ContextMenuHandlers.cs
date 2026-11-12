@@ -460,14 +460,9 @@ public partial class SackPanel
 			}
 			else if (action == ItemActions.Compare)
 			{
-				// The first two selected items; the others are ignored. Works from an empty cell too.
-				if (ItemActionRules.ComparedItems(this.selectedItems) is { } pair)
-				{
-					using var dlg = this.Services.Forms.Create<ItemComparisonDialog>();
-					dlg.First = pair.First;
-					dlg.Second = pair.Second;
-					dlg.ShowDialog();
-				}
+				// The item is the first one; the next left click on an item, in any panel, picks the second.
+				if (focusedItem is not null)
+					this.StartCompareSelection(focusedItem);
 			}
 			else if (focusedItem is null)
 			{

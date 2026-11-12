@@ -41,6 +41,10 @@ public partial class SackPanel
 		if (this.Sack is null)
 			return;
 
+		// The compare selection takes the click, read-only equipment included: comparing only reads the items.
+		if (this.CompareSelectionMouseDown(e))
+			return;
+
 		if (e.Button == MouseButtons.Left && !this.ItemsReadOnly)
 		{
 			if (!this.DragInfo.IsActive)
@@ -319,7 +323,9 @@ public partial class SackPanel
 	{
 		if (this.Sack is not null)
 		{
-			if (e.KeyChar == (char)27 && this.DragInfo.IsActive && this.DragInfo.CanBeCanceled)
+			if (e.KeyChar == (char)27 && !this.DragInfo.IsActive && this.DragInfo.Compare.Cancel())
+				e.Handled = true;
+			else if (e.KeyChar == (char)27 && this.DragInfo.IsActive && this.DragInfo.CanBeCanceled)
 			{
 				this.DragInfo.Cancel();
 
