@@ -144,12 +144,13 @@ public partial class ComboBoxCharacterItem : UserControl
 			if (ps.Info?.ActiveMasteriesRecordNames is { Length: > 0 })
 				this.bufferedFlowLayoutPanelSubTitle.Visible = this.scalingLabelMasteries.Visible = true;
 
-			this.RefreshMod(ps);
+			bool modded = this.RefreshMod(ps);
 
-			// Status badges on the right
+			// Status badges on the right. Decided from the states, not from the badges' Visible, which reads false while
+			// their panel is hidden.
 			this.scalingLabelArchived.Visible = ps.IsArchived;
 			this.labelReadOnly.Visible = ps.IsReadOnly;
-			this.bufferedFlowLayoutPanelMod.Visible = ps.IsArchived || ps.IsReadOnly || this.scalingLabelModded.Visible;
+			this.bufferedFlowLayoutPanelMod.Visible = ps.IsArchived || ps.IsReadOnly || modded;
 
 			#region Tags
 
@@ -196,14 +197,16 @@ public partial class ComboBoxCharacterItem : UserControl
 	/// Marks a custom map character as modded: its mod beside its name, and the Modded tag with the link state on the
 	/// tags line.
 	/// </summary>
-	private void RefreshMod(PlayerSave ps)
+	/// <returns>true when the character is modded (its badges are to be shown).</returns>
+	private bool RefreshMod(PlayerSave ps)
 	{
 		var state = ps.IsCustom ? ps.ModState : CharacterModState.BaseGame;
+		bool modded = state != CharacterModState.BaseGame;
 		this.scalingLabelModded.Visible =
-			this.scalingLabelModState.Visible = state != CharacterModState.BaseGame;
-		this.scalingLabelModName.Visible = state != CharacterModState.BaseGame && !string.IsNullOrEmpty(ps.ModName);
-		if (state == CharacterModState.BaseGame)
-			return;
+			this.scalingLabelModState.Visible = modded;
+		this.scalingLabelModName.Visible = modded && !string.IsNullOrEmpty(ps.ModName);
+		if (!modded)
+			return false;
 
 		this.scalingLabelModName.Text = $"[{ps.ModName}]";
 
@@ -214,6 +217,7 @@ public partial class ComboBoxCharacterItem : UserControl
 			CharacterModState.LinkedModMissing => Color.LightSalmon,
 			_ => Color.Khaki,
 		};
+		return true;
 	}
 
 	private void ClearTagList()
