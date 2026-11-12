@@ -171,6 +171,9 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 	public OffenseGear GetOffenseGear(IEnumerable<Item> equipment, bool useAlternate)
 	{
 		var worn = equipment.Where(item => !item.IsInInactiveWeaponSlot(useAlternate)).ToList();
+
+		// The game adds the flat damage of the armor and jewelry to every attack, and of the weapon in hand to its own; a
+		// shield is neither: its flat damage never reaches the attack (its % modifiers do, with every item's).
 		var weapons = worn
 			// An empty weapon slot can be saved as an item without record: it is no weapon (bare hands then).
 			.Where(item => item.IsInWeaponSlot && !string.IsNullOrEmpty(item.ItemClass)

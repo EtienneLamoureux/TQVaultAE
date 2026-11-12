@@ -39,7 +39,7 @@ public interface ICharacterStatsService
 
 	/// <summary>
 	/// The gear as the attack damage reads it: each weapon in hand (not shields) on its own, and the other items with the
-	/// item sets, whose flat damage adds to every attack.
+	/// item sets, whose flat damage adds to every attack. A shield's flat damage is in neither, as in the game.
 	/// </summary>
 	OffenseGear GetOffenseGear(IEnumerable<Item> equipment, bool useAlternate);
 

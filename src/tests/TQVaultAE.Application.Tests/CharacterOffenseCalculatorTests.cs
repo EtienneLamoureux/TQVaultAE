@@ -213,6 +213,22 @@ public class CharacterOffenseCalculatorTests
 	}
 
 	[Fact]
+	public void Damage_Shield_AddsItsModifiersButNotItsFlatDamage()
+	{
+		// A sword and a shield with 10 physical, 6 fire and +50 % physical: the game leaves the shield's flat damage out of
+		// the attack, its % applies to the sword's 100.
+		var sword = Sum(("offensivePhysicalAverage", 100));
+		var shield = Sum(("offensivePhysicalAverage", 10), ("offensiveFireAverage", 6), ("offensivePhysicalModifier", 50));
+		var all = new AttributeSum();
+		all.Add(sword);
+		all.Add(shield);
+
+		var values = CharacterOffenseCalculator.Damage(Input([sword]) with { AllGear = all });
+
+		values.AverageDamage.Should().Be(150);
+	}
+
+	[Fact]
 	public void Damage_WeaponPhysical_UsesTheWeaponEquation()
 	{
 		// (100 × (500/500 + 1)) + 500 × 0.04 = 220.

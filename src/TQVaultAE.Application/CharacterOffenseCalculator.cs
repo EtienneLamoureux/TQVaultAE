@@ -2,7 +2,10 @@ using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Application;
 
-/// <summary>The gear as the attack damage reads it: each weapon in hand on its own (not shields), the other items and the item sets.</summary>
+/// <summary>
+/// The gear as the attack damage reads it: each weapon in hand on its own (not shields), the other items and the item
+/// sets. The game never adds a shield's flat damage to an attack: it is neither a weapon in hand nor armor.
+/// </summary>
 public sealed record OffenseGear(IReadOnlyList<AttributeSum> Weapons, AttributeSum Other);
 
 /// <summary>What the damage of an attack needs.</summary>
