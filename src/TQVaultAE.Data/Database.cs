@@ -670,6 +670,14 @@ public partial class Database : IDatabase
 	}
 
 
+#if DEBUG
+	/// <summary>
+	/// Debug-only test hook of the automation endpoint: resources read from here instead of the game files, uncached
+	/// (null: missing), to check how an item is shown when its picture is missing or cannot be decoded.
+	/// </summary>
+	public static System.Collections.Concurrent.ConcurrentDictionary<RecordId, byte[]?> ResourceFaults { get; } = new();
+
+#endif
 	/// <summary>
 	/// Gets a resource from the database using the resource Id.
 	/// Modified by VillageIdiot to support loading resources from a custom map folder.
@@ -687,6 +695,11 @@ public partial class Database : IDatabase
 		if (USettings.DatabaseDebugLevel > 1)
 			Log.LogDebug(" Normalized({ResourceId})", resourceId);
 
+#if DEBUG
+		if (ResourceFaults.TryGetValue(resourceId, out byte[]? fault))
+			return fault;
+#endif
+
 		byte[]? cachedArcFileData = this.resourcesData.GetOrAddAtomic(resourceId, this.ReadResource);
 
 		if (USettings.DatabaseDebugLevel > 0)
@@ -700,6 +713,11 @@ public partial class Database : IDatabase
 	{
 		if (RecordId.IsNullOrEmpty(resourceId))
 			return null;
+
+#if DEBUG
+		if (ResourceFaults.TryGetValue(resourceId, out byte[]? fault))
+			return fault is not null && TexHeader.TryReadSize(fault, out int faultWidth, out int faultHeight) ? (faultWidth, faultHeight) : null;
+#endif
 
 		// Only the size is kept: the texture data is cached when the picture is drawn (LoadResource).
 		return this.textureSizes.GetOrAddAtomic(resourceId, key =>

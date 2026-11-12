@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
+using ModelContextProtocol;
 using ModelContextProtocol.Server;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
@@ -36,6 +37,34 @@ internal static partial class AutomationTools
 				};
 			}),
 		});
+	}
+
+	[McpServerTool(Name = "picture_fault")]
+	[Description("Makes a resource read as missing or damaged from now on, without touching any file, to check how an item whose record is found but whose picture cannot be loaded is shown. 'missing': the resource reads as absent (no data, no texture header: the item is 1x1). 'corrupt': only the first 64 bytes of the real data (the texture header reads, so the item keeps its real size, but the picture cannot be decoded). 'clear': the real data again. The pictures already decoded are forgotten; items already loaded keep the size read at their load: create one with create_item (or reload its file) to see the size rule. Gives the faults in place.")]
+	public static string PictureFault(
+		[Description("Resource id as an item record references it, like 'XPack2\\items\\equipmentweapon\\bow\\uibitmaps\\mi_skeletonbow.tex'.")] string resourceId,
+		[Description("'missing', 'corrupt' or 'clear'.")] string mode)
+	{
+		var database = Program.ServiceProvider.GetRequiredService<IDatabase>();
+		var faults = TQVaultAE.Data.Database.ResourceFaults;
+		faults.TryRemove(resourceId, out _);
+		switch (mode)
+		{
+			case "missing":
+				faults[resourceId] = null;
+				break;
+			case "corrupt":
+				var data = database.LoadResource(resourceId) ?? throw new McpException($"No resource '{resourceId}' to damage.");
+				faults[resourceId] = data[..Math.Min(64, data.Length)];
+				break;
+			case "clear":
+				break;
+			default:
+				throw new McpException("mode must be 'missing', 'corrupt' or 'clear'.");
+		}
+
+		(Program.ServiceProvider.GetRequiredService<TQVaultAE.Presentation.Win32.Contracts.IUIService>() as IGameDataCache)?.ClearGameDataCache();
+		return Serialize(faults.Select(f => new { id = f.Key.Raw, bytes = f.Value?.Length }));
 	}
 
 	[McpServerTool(Name = "game_text", ReadOnly = true)]

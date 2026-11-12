@@ -190,7 +190,7 @@ Debug builds of `TQVaultAE.GUI` host an MCP server inside the app at `http://127
 | Highlight | `highlight_filters(check, uncheck, apply)` ticks the highlight filter check boxes and applies them |
 | Layout and scaling | `zoom(step)` (in, out, reset); `control_tree(form, depth)` for control bounds and fonts; `text_fit(form)` for text cut by its control (check each UI language); `move_window(x, y, form?)` to move the window or a dialog to a monitor of another DPI |
 | Forge | `forge_show`, `forge_state`, `forge_set_mode`, `forge_mode_card(mode)` (the text and PNG of a mode card), `forge_set_hardcore`, `forge_drop(slot)`, `forge_select_part`, `forge_drag_cursor`, `forge_reset`, `forge_forge`, `forge_cancel` |
-| Evidence | `capture(control)`, a PNG made with `DrawToBitmap` that works even when the window is hidden (`capture("playerInfo")` for the player information panel, whose labels `DrawToBitmap` leaves out); `recent_log(n)`; `recent_sounds(n)`, with the sounds played and whether their data loaded |
+| Evidence | `capture(control)`, a PNG made with `DrawToBitmap` that works even when the window is hidden (`capture("playerInfo")` for the player information panel, whose labels `DrawToBitmap` leaves out); `recent_log(n)`; `recent_sounds(n)`, with the sounds played and whether their data loaded; `picture_fault(resourceId, mode)` makes a picture read as missing or damaged (in memory) to check the placeholder of an item whose picture cannot be loaded |
 
 Rules:
 - Nothing blocks saves: work only in your own test files, vaults `claude-vault1`, `claude-vault2`, ... and characters `claude-character1`, ... made with Duplicate Character. Never change a real character or vault (see Safety in `documentation/AUTOMATION.md`).
