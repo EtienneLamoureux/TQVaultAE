@@ -212,6 +212,18 @@ public sealed class UserSettingsTests : IDisposable
 		""";
 
 	[Fact]
+	public void TooltipEnhanced_ByDefault_ShowsOnlyTheItemSkills()
+	{
+		var settings = new UserSettings();
+
+		settings.EnableDetailedTooltipView.Should().BeFalse();
+		settings.TooltipShowInGameRolls.Should().BeFalse();
+		settings.TooltipShowValueRanges.Should().BeFalse();
+		settings.TooltipShowGrantedSkills.Should().BeTrue();
+		settings.TooltipShowSetPieceCounts.Should().BeFalse();
+	}
+
+	[Fact]
 	public void Read_2022File_KeepsItsValuesAndDefaultsTheNewSettings()
 	{
 		File.WriteAllText(this._xmlPath, Version2022, new UTF8Encoding(true));
@@ -229,7 +241,7 @@ public sealed class UserSettingsTests : IDisposable
 		settings.LastCharacterName.Should().BeEmpty();
 		// Settings added since keep their default.
 		settings.ShowInGameValues.Should().BeTrue();
-		settings.TooltipShowSetPieceCounts.Should().BeTrue();
+		settings.TooltipShowSetPieceCounts.Should().BeFalse();
 		settings.GitBackupEnabled.Should().BeFalse("the git backup is opt-in, also for files older than the setting");
 		settings.GitBackupRepository.Should().BeEmpty();
 		settings.PasteBinExpiration.Should().Be(UserSettings.DefaultPasteBinExpiration);

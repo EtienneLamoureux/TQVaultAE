@@ -607,8 +607,9 @@ public class ItemTooltipContentBuilderTests
 	}
 
 	[Theory]
-	[InlineData(true, false, Full & ~ItemTooltipView.Detailed)]
-	[InlineData(false, true, Full)]
+	// With the default extras: only the item skills.
+	[InlineData(true, false, ItemTooltipView.GrantedSkills)]
+	[InlineData(false, true, ItemTooltipView.Detailed | ItemTooltipView.GrantedSkills)]
 	public void ViewOf_ForcedDisplay_OverridesTheSetting(bool setting, bool forced, ItemTooltipView expected)
 		=> ItemTooltipContentBuilder.ViewOf(new UserSettings { EnableDetailedTooltipView = setting }, forced).Should().Be(expected);
 

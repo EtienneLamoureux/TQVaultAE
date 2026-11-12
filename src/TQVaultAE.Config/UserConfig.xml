@@ -24,9 +24,10 @@
 	<ForceGamePath></ForceGamePath>
 	<BaseFont>AlbertusMT</BaseFont>
 	<EnableDetailedTooltipView>0</EnableDetailedTooltipView>
-	<TooltipShowInGameRolls>1</TooltipShowInGameRolls>
-	<TooltipShowValueRanges>1</TooltipShowValueRanges>
+	<TooltipShowInGameRolls>0</TooltipShowInGameRolls>
+	<TooltipShowValueRanges>0</TooltipShowValueRanges>
 	<TooltipShowGrantedSkills>1</TooltipShowGrantedSkills>
+	<TooltipShowSetPieceCounts>0</TooltipShowSetPieceCounts>
 	<ItemBGColorOpacity>15</ItemBGColorOpacity>
 	<EnableItemRequirementRestriction>0</EnableItemRequirementRestriction>
 	<EnableHotReload>0</EnableHotReload>

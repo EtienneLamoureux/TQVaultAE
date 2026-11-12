@@ -86,11 +86,11 @@ public class UserSettings
 
 	/// <summary>The enhanced tooltip lists each value rolled by the in-game jitter (database -> in-game).</summary>
 	[XmlElement(ElementName = nameof(TooltipShowInGameRolls))]
-	public bool TooltipShowInGameRolls { get; set; } = true;
+	public bool TooltipShowInGameRolls { get; set; } = false;
 
 	/// <summary>The enhanced tooltip shows the possible min/max of each rolled attribute on its right.</summary>
 	[XmlElement(ElementName = nameof(TooltipShowValueRanges))]
-	public bool TooltipShowValueRanges { get; set; } = true;
+	public bool TooltipShowValueRanges { get; set; } = false;
 
 	/// <summary>The enhanced tooltip shows the skills granted by the item in a panel on its right.</summary>
 	[XmlElement(ElementName = nameof(TooltipShowGrantedSkills))]
@@ -98,7 +98,7 @@ public class UserSettings
 
 	/// <summary>The enhanced tooltip shows, next to each piece of the item's set, how many of it are loaded.</summary>
 	[XmlElement(ElementName = nameof(TooltipShowSetPieceCounts))]
-	public bool TooltipShowSetPieceCounts { get; set; } = true;
+	public bool TooltipShowSetPieceCounts { get; set; } = false;
 
 	/// <summary>
 	/// Show item attributes with the in-game jitter applied (issue #552) instead of the database values.
