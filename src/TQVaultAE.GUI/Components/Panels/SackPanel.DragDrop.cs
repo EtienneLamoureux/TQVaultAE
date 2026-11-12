@@ -166,34 +166,7 @@ public partial class SackPanel
 					this.NotifyKeptMap([dragItem]);
 			}
 
-			// clear the "last drag" variables
-			this.LastDragLocation = InvalidDragLocation;
-			this.CellsUnderDragItem = InvalidDragRectangle;
-			this.ItemsUnderOldDragLocation.Clear();
-			this.ItemsUnderDragItem.Clear();
-
-			// Now mark itemUnderUs as picked up.
-			if (itemUnderUs is not null && !RecordId.IsNullOrEmpty(itemUnderUs.BaseItemId))
-			{
-				// set our mouse offset to be the center of the item.
-				Point mouseOffset = new Point(
-					itemUnderUs.Width * UIService.HalfUnitSize,
-					itemUnderUs.Height * UIService.HalfUnitSize);
-				this.DragInfo.Set(this, this.ShownSack, itemUnderUs, mouseOffset);
-
-				// since we have dropped something in this location, we can no longer put this item here.
-				// mark its location as invalid to prevent that from happening.
-				itemUnderUs.Location = InvalidDragLocation;
-
-				// set the info to this item
-				this.OnNewItemHighlighted?.Invoke(this, new SackPanelEventArgs(this.Sack, itemUnderUs));
-			}
-
-			// clear the "last focus variables"
-			this.LastCellWithFocus = InvalidDragLocation;
-
-			// Clear any selections.
-			this.OnClearAllItemsSelected?.Invoke(this, new SackPanelEventArgs(null, null));
+			this.PickUpAfterDrop(itemUnderUs);
 
 			this.InvalidateItemCacheAll(itemUnderUs, dragItem);
 
@@ -210,23 +183,40 @@ public partial class SackPanel
 	}
 
 	/// <summary>
-	/// Stacks the dropped item on the item under it when both are the same potion, scroll, or incomplete relic or charm.
+	/// The end of a drop: the drag state is cleared and the item the drop handed back (the item under it, a swapped
+	/// weapon) is picked up, held by its centre; the selection is cleared.
 	/// </summary>
-	/// <param name="dragItem">The dropped item; becomes the completed relic left in the sack when shards are to spare.</param>
-	/// <param name="itemUnderUs">The item under the drop; becomes the item to pick up next, or <see langword="null"/>.</param>
-	/// <returns><see langword="true"/> when stacked: the caller does not place <paramref name="dragItem"/>.</returns>
-	protected bool TryStackOnDrop(ref Item dragItem, ref Item? itemUnderUs)
+	/// <param name="itemUnderUs">The item to pick up next, or <see langword="null"/>; an empty item is not picked up.</param>
+	protected void PickUpAfterDrop(Item? itemUnderUs)
 	{
-		var stack = this.Services.ItemStackingService.TryStack(
-			dragItem, itemUnderUs, this.ShownSack, this.CellsUnderDragItem.Location, USettings.DisableAutoStacking);
-		if (!stack.Stacked)
-			return false;
+		// clear the "last drag" variables
+		this.LastDragLocation = InvalidDragLocation;
+		this.CellsUnderDragItem = InvalidDragRectangle;
+		this.ItemsUnderOldDragLocation.Clear();
+		this.ItemsUnderDragItem.Clear();
 
-		this.InvalidateItemCacheAll(itemUnderUs, dragItem);
+		// Now mark itemUnderUs as picked up.
+		if (itemUnderUs is not null && !RecordId.IsNullOrEmpty(itemUnderUs.BaseItemId))
+		{
+			// set our mouse offset to be the center of the item.
+			Point mouseOffset = new Point(
+				itemUnderUs.Width * UIService.HalfUnitSize,
+				itemUnderUs.Height * UIService.HalfUnitSize);
+			this.DragInfo.Set(this, this.ShownSack, itemUnderUs, mouseOffset);
 
-		dragItem = stack.DroppedItem;
-		itemUnderUs = stack.PickedUpItem;
-		return true;
+			// since we have dropped something in this location, we can no longer put this item here.
+			// mark its location as invalid to prevent that from happening.
+			itemUnderUs.Location = InvalidDragLocation;
+
+			// set the info to this item
+			this.OnNewItemHighlighted?.Invoke(this, new SackPanelEventArgs(this.Sack, itemUnderUs));
+		}
+
+		// clear the "last focus variables"
+		this.LastCellWithFocus = InvalidDragLocation;
+
+		// Clear any selections.
+		this.OnClearAllItemsSelected?.Invoke(this, new SackPanelEventArgs(null, null));
 	}
 
 	/// <summary>
@@ -309,20 +299,6 @@ public partial class SackPanel
 	/// <returns>Rectangle representing the mouse drag area</returns>
 	protected Rectangle GetMouseDragRectangle()
 		=> new Rectangle(Math.Min(startPosition.X, currentPosition.X), Math.Min(startPosition.Y, currentPosition.Y), Math.Abs(startPosition.X - currentPosition.X), Math.Abs(startPosition.Y - currentPosition.Y));
-
-	/// <summary>
-	/// Updates the item's location properties to reflect its current position in this panel.
-	/// This ensures search results always show the correct location.
-	/// Also adds the item to the search database if it's not already present.
-	/// </summary>
-	/// <param name="item">The item to update</param>
-	protected void UpdateItemLocation(Item item)
-	{
-		if (item is null)
-			return;
-
-		item.Place.CopyFrom(this.PlaceHere());
-	}
 
 	/// <summary>
 	/// Gets the place of the shown sack: container, sack number and type.

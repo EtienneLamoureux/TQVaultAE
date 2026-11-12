@@ -8,6 +8,8 @@
 /// </summary>
 
 using Microsoft.Extensions.Logging;
+using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
@@ -116,22 +118,24 @@ public partial class EquipmentPanel
 			if (slot == -1 || !EquipmentRules.CanEquip(this.ShownSack, dragItem, slot))
 				return;
 
-			if (!IsSuitableForCurrentPlayer(dragItem))
+			// The only item under us, if any
+			Item? itemUnderUs = null;
+			if (this.ItemsUnderDragItem.Count == 1)
+				itemUnderUs = this.ItemsUnderDragItem[0];
+
+			// Refused when the character cannot use the item.
+			var decision = this.Services.ItemDropService.Decide(
+				dragItem, itemUnderUs, this.SackType, this.Sack?.StashType, this.DragInfo.IsActive && this.DragInfo.CanBeCanceled);
+			if (decision == DropDecision.Refused)
 				return;
 
 			// If the requirement setting is enabled check to see if the item can be equipped.
 			if (this.USettings.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(dragItem))
 				return;
 
-			// Yes we can drop it here!
-			// First take the item that is under us
-			Item? itemUnderUs = null;
-			if (this.ItemsUnderDragItem.Count == 1)
-				itemUnderUs = this.ItemsUnderDragItem[0];
-
 			// Maybe we are putting the item back or dropping on an equipment shadow slot.
 			// Then we just cancel.
-			if (itemUnderUs == this.DragInfo.Item && this.DragInfo.IsActive && this.DragInfo.CanBeCanceled)
+			if (decision == DropDecision.PutBack)
 			{
 				this.DragInfo.Cancel();
 
@@ -144,52 +148,23 @@ public partial class EquipmentPanel
 			// Notify that the item has been placed.  This will remove it from the old sack				
 			this.DragInfo.MarkPlaced();
 
-			// If we are a stackable and we have a stackable under us and we are the same type of stackable
-			// then just add to the stack instead of picking up the other stack
-			if (!this.TryStackOnDrop(ref dragItem, ref itemUnderUs))
-			{
-				// If not stackable, equip it: the weapon swaps may pick up another item.
-				itemUnderUs = EquipmentRules.Equip(this.ShownSack, dragItem, slot, itemUnderUs);
+			// Stack on the item under us when both are the same stackable, otherwise equip the item: the weapon swaps
+			// may pick up another item.
+			var drop = this.Services.ItemDropService.Equip(
+				dragItem, itemUnderUs, this.ShownSack, slot, this.CellsUnderDragItem.Location, this.PlaceHere(), USettings.DisableAutoStacking);
 
-				// Update item location properties to reflect new position
-				this.UpdateItemLocation(dragItem);
+			if (drop.Stacked)
+				this.InvalidateItemCacheAll(itemUnderUs, dragItem);
 
-				// Register new items in the database (existing items are already tracked)
-				this.ItemDatabaseService.TryAddItemToDatabase(dragItem);
+			dragItem = drop.DroppedItem;
+			itemUnderUs = drop.ItemUnderUs;
 
-				// Equipped, an item without an own map inherits the character's; a slot holds any size.
-				if (this.Services.ItemEditService.SettleIn(dragItem, false, this.Services.GameMapService.ActiveCharacterMod, _ => true) != TQVaultAE.Application.Contracts.Services.SettleOutcome.Unchanged)
-					this.InvalidateItemCacheAll(dragItem);
-			}
+			// Equipped, an item without an own map inherits the character's; a slot holds any size.
+			if (!drop.Stacked
+				&& this.Services.ItemEditService.SettleIn(dragItem, false, this.Services.GameMapService.ActiveCharacterMod, _ => true) != SettleOutcome.Unchanged)
+				this.InvalidateItemCacheAll(dragItem);
 
-			// clear the "last drag" variables
-			this.LastDragLocation = InvalidDragLocation;
-			this.CellsUnderDragItem = InvalidDragRectangle;
-			this.ItemsUnderOldDragLocation.Clear();
-			this.ItemsUnderDragItem.Clear();
-
-			// Now mark itemUnderUs as picked up.
-			if (itemUnderUs is not null && !RecordId.IsNullOrEmpty(itemUnderUs.BaseItemId))
-			{
-				// set our mouse offset to be the center of the item.
-				Point mouseOffset = new Point(
-					itemUnderUs.Width * UIService.HalfUnitSize,
-					itemUnderUs.Height * UIService.HalfUnitSize);
-				this.DragInfo.Set(this, this.ShownSack, itemUnderUs, mouseOffset);
-
-				// since we have dropped something in this location, we can no longer put this item here.
-				// mark its location as invalid to prevent that from happening.
-				itemUnderUs.Location = InvalidDragLocation;
-
-				// set the info to this item
-				this.OnNewItemHighlighted?.Invoke(this, new SackPanelEventArgs(this.Sack, itemUnderUs));
-			}
-
-			// clear the "last focus variables"
-			this.LastCellWithFocus = InvalidDragLocation;
-
-			// Clear any selections.
-			this.OnClearAllItemsSelected?.Invoke(this, new SackPanelEventArgs(null, null));
+			this.PickUpAfterDrop(itemUnderUs);
 
 			// Repaint everything to clear up any graphical issues
 			this.Refresh();

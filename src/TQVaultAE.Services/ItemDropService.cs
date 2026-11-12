@@ -1,6 +1,7 @@
 using System.Drawing;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Services;
@@ -54,5 +55,23 @@ public class ItemDropService(
 		this._itemDatabaseService.TryAddItemToDatabase(dragItem);
 
 		return new ItemDropResult(false, dragItem, itemUnderUs);
+	}
+
+	/// <inheritdoc/>
+	public ItemDropResult Equip(Item dragItem, Item? itemUnderUs, SackCollection sack, int slot, Point cell, ContainerPlace place, bool disableAutoStacking)
+	{
+		var stack = this._itemStackingService.TryStack(dragItem, itemUnderUs, sack, cell, disableAutoStacking);
+		if (stack.Stacked)
+			return new ItemDropResult(true, stack.DroppedItem, stack.PickedUpItem);
+
+		// The weapon swaps may pick up another item than the one under the drop.
+		var pickedUp = EquipmentRules.Equip(sack, dragItem, slot, itemUnderUs);
+
+		dragItem.Place.CopyFrom(place);
+
+		// Items already tracked are skipped.
+		this._itemDatabaseService.TryAddItemToDatabase(dragItem);
+
+		return new ItemDropResult(false, dragItem, pickedUp);
 	}
 }

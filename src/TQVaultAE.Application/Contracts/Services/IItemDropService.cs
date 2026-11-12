@@ -39,4 +39,20 @@ public interface IItemDropService
 	/// <param name="disableAutoStacking">The user turned stacking off.</param>
 	/// <returns>What ends in the sack and what to pick up next.</returns>
 	ItemDropResult Drop(Item dragItem, Item? itemUnderUs, SackCollection sack, Point cell, ContainerPlace place, bool disableAutoStacking);
+
+	/// <summary>
+	/// Drops an item on a slot of the equipment: stacks it on the item under it like <see cref="Drop"/>, or equips it
+	/// with the slot rules of <c>EquipmentRules.Equip</c> (two-handed weapon swaps, shadow slots), moves its place to
+	/// <paramref name="place"/> and registers it in the search database.
+	/// </summary>
+	/// <param name="dragItem">The dropped item, already taken out of its source sack.</param>
+	/// <param name="itemUnderUs">The only item under the drop (for an empty shadow slot, its two-handed weapon), or
+	/// <see langword="null"/>.</param>
+	/// <param name="sack">The equipment sack.</param>
+	/// <param name="slot">The slot of the drop, accepted by <c>EquipmentRules.CanEquip</c>.</param>
+	/// <param name="cell">The top left cell of the drop, for the stacking.</param>
+	/// <param name="place">Where the equipment is: the character, its equipment sack.</param>
+	/// <param name="disableAutoStacking">The user turned stacking off.</param>
+	/// <returns>What ends in the slot and what to pick up next (possibly an empty item).</returns>
+	ItemDropResult Equip(Item dragItem, Item? itemUnderUs, SackCollection sack, int slot, Point cell, ContainerPlace place, bool disableAutoStacking);
 }

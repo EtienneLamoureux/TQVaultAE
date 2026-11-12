@@ -5,6 +5,7 @@ using Moq;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Services;
 
@@ -225,6 +226,64 @@ public class ItemDropServiceTests
 		inSack.StackSize.Should().Be(3);
 		sack.Should().HaveCount(2);
 		this._itemDatabaseService.Verify(d => d.TryAddItemToDatabase(dragged), Times.Once);
+	}
+
+	#endregion
+
+	#region Equip
+
+	/// <summary>An equipment sack: one item per slot, empty items in the slots not given.</summary>
+	private static SackCollection Equipment(params (int Slot, Item Item)[] equipped)
+	{
+		var sack = new SackCollection { SackType = SackType.Equipment, slots = 12 };
+		for (int slot = 0; slot < 12; slot++)
+		{
+			var item = equipped.FirstOrDefault(e => e.Slot == slot).Item ?? new Item { BaseItemId = RecordId.Empty };
+			item.Location = SackCollection.GetEquipmentLocationOffset(slot);
+			sack.AddItem(item);
+		}
+
+		return sack;
+	}
+
+	private static ContainerPlace EquipmentPlace() => new()
+	{
+		SackType = SackType.Equipment,
+		Path = """C:\Saves\_HeroA\Player.chr""",
+		Name = "HeroA",
+		SackNumber = BagIdConstants.BAGID_EQUIPMENTPANEL,
+	};
+
+	[Fact]
+	public void Equip_OnAnEquippedRing_PutsItInTheSlotRegistersItAndHandsTheOldOneBack()
+	{
+		var oldRing = MakeItem(Item.ICLASS_RING, "records/item/oldring.dbr");
+		var sack = Equipment((EquipmentRules.Ring1Slot, oldRing));
+		var ring = MakeItem(Item.ICLASS_RING);
+		var place = EquipmentPlace();
+
+		var result = this._service.Equip(ring, oldRing, sack, EquipmentRules.Ring1Slot, oldRing.Location, place, disableAutoStacking: false);
+
+		result.Should().Be(new ItemDropResult(false, ring, oldRing));
+		sack.GetItem(EquipmentRules.Ring1Slot).Should().BeSameAs(ring);
+		ring.Location.Should().Be(SackCollection.GetEquipmentLocationOffset(EquipmentRules.Ring1Slot));
+		ring.Place.Should().Be(place);
+		this._itemDatabaseService.Verify(d => d.TryAddItemToDatabase(ring), Times.Once);
+	}
+
+	[Fact]
+	public void Equip_OneHandedOnTheShadowSlotOfATwoHanded_HandsTheTwoHandedBack()
+	{
+		var bow = MakeItem(Item.ICLASS_BOW, "records/item/bow.dbr");
+		var sack = Equipment((EquipmentRules.Shield1Slot, bow));
+		var sword = MakeItem(Item.ICLASS_SWORD, "records/item/sword.dbr");
+
+		var result = this._service.Equip(sword, bow, sack, EquipmentRules.Weapon1Slot, Cell, EquipmentPlace(), disableAutoStacking: false);
+
+		result.Stacked.Should().BeFalse();
+		result.ItemUnderUs!.BaseItemId.Should().Be(bow.BaseItemId);
+		sack.GetItem(EquipmentRules.Weapon1Slot).Should().BeSameAs(sword);
+		RecordId.IsNullOrEmpty(sack.GetItem(EquipmentRules.Shield1Slot).BaseItemId).Should().BeTrue();
 	}
 
 	#endregion
