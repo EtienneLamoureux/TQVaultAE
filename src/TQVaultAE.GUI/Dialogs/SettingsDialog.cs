@@ -174,7 +174,8 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		this.scalingLabelCSVDelim.Font =
 		this.scalingComboBoxCSVDelim.Font =
 		this.scalingCheckBoxEnableEpicLegendaryAffixes.Font =
-		this.scalingCheckBoxDisableAutoStacking.Font = font1125;
+		this.scalingCheckBoxDisableAutoStacking.Font =
+		this.scalingCheckBoxMergeRelicsOnSort.Font = font1125;
 
 		this.checkGroupBoxGitBackup.ProcessAllControls((ctr) => ctr.Font = font1125);
 		this.checkGroupBoxOriginalTQSupport.ProcessAllControls((ctr) => ctr.Font = font1125);
@@ -238,6 +239,8 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 
 		this.scalingCheckBoxDisableAutoStacking.Text = Resources.SettingsDisableAutoStacking;
 		this.toolTip.SetToolTip(this.scalingCheckBoxDisableAutoStacking, Resources.SettingsDisableAutoStackingTT);
+		this.scalingCheckBoxMergeRelicsOnSort.Text = Resources.SettingsMergeRelicsOnSort;
+		this.toolTip.SetToolTip(this.scalingCheckBoxMergeRelicsOnSort, Resources.SettingsMergeRelicsOnSortTT);
 
 		this.checkGroupBoxAllowCheats.Text = Resources.SettingsAllowCheats;
 		this.scalingCheckBoxDisableLegacyBackup.Text = Resources.SettingsDisableLegacyBackup;
@@ -353,6 +356,7 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 		this.scalingCheckBoxEnableSounds.Checked = values.EnableTQVaultSounds;
 		this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked = values.EnableEpicLegendaryAffixes;
 		this.scalingCheckBoxDisableAutoStacking.Checked = values.DisableAutoStacking;
+		this.scalingCheckBoxMergeRelicsOnSort.Checked = values.MergeRelicsOnSort;
 		this.checkGroupBoxAllowCheats.Checked = values.AllowCheats;
 		this.checkGroupBoxGitBackup.Checked = values.GitBackupEnabled;
 		this.scalingCheckBoxDisableLegacyBackup.Checked = values.DisableLegacyBackup;

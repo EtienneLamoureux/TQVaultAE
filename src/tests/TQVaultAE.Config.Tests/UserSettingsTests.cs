@@ -59,7 +59,7 @@ public sealed class UserSettingsTests : IDisposable
 				var t when t == typeof(float) => 0.94945055F + i,
 				var t when t == typeof(double) => -0.123456789012345 - i,
 				var t when t == typeof(ItemCompareSettings) => new ItemCompareSettings { AlignRows = false, HideUnchanged = true },
-				var t when t == typeof(SortSettings) => new SortSettings { Algorithm = SackSortAlgorithm.Rarity },
+				var t when t == typeof(SortSettings) => new SortSettings { Algorithm = SackSortAlgorithm.Rarity, MergeRelics = true },
 				_ => throw new NotSupportedException($"Add a test value for {property.PropertyType} ({property.Name})."),
 			};
 			property.SetValue(settings, value);
@@ -187,38 +187,42 @@ public sealed class UserSettingsTests : IDisposable
 	#region Sort button
 
 	[Fact]
-	public void Sort_Missing_NormalSort()
+	public void Sort_Missing_NormalSortWithoutMerge()
 	{
 		var settings = UserSettings.ParseSettings("""<?xml version="1.0" encoding="utf-8" ?><UserSettings><SkipTitle>1</SkipTitle></UserSettings>""");
 
 		settings.Sort.Algorithm.Should().Be(SackSortAlgorithm.Normal);
+		settings.Sort.MergeRelics.Should().BeFalse();
 	}
 
 	[Theory]
-	[InlineData("Algorithm='Level'", SackSortAlgorithm.Level)]
-	[InlineData("Algorithm=' rarity '", SackSortAlgorithm.Rarity)]
-	[InlineData("Algorithm='Type'", SackSortAlgorithm.Type)]
-	[InlineData("Algorithm='Weight'", SackSortAlgorithm.Normal)]
-	[InlineData("Algorithm='2'", SackSortAlgorithm.Normal)]
-	[InlineData("Algorithm='Level, Type'", SackSortAlgorithm.Normal)]
-	public void Sort_AttributeParsed_UnknownOrMissingKeepsTheDefault(string attributes, SackSortAlgorithm algorithm)
+	[InlineData("Algorithm='Level' MergeRelics='1'", SackSortAlgorithm.Level, true)]
+	[InlineData("Algorithm=' rarity ' MergeRelics='false'", SackSortAlgorithm.Rarity, false)]
+	[InlineData("Algorithm='Type'", SackSortAlgorithm.Type, false)]
+	[InlineData("Algorithm='Weight' MergeRelics='maybe'", SackSortAlgorithm.Normal, false)]
+	[InlineData("Algorithm='2'", SackSortAlgorithm.Normal, false)]
+	[InlineData("Algorithm='Level, Type'", SackSortAlgorithm.Normal, false)]
+	public void Sort_AttributesParsed_UnknownOrMissingKeepTheDefault(string attributes, SackSortAlgorithm algorithm, bool mergeRelics)
 	{
 		var settings = UserSettings.ParseSettings($"""<UserSettings><Sort {attributes} /></UserSettings>""");
 
 		settings.Sort.Algorithm.Should().Be(algorithm);
+		settings.Sort.MergeRelics.Should().Be(mergeRelics);
 	}
 
 	[Fact]
 	public void Sort_SaveThenRead_OneElementWithAttributes()
 	{
-		new UserSettings { Sort = new SortSettings { Algorithm = SackSortAlgorithm.Level } }.Save(this._xmlPath);
+		new UserSettings { Sort = new SortSettings { Algorithm = SackSortAlgorithm.Level, MergeRelics = true } }.Save(this._xmlPath);
 
 		var element = XDocument.Load(this._xmlPath).Root!.Elements("Sort").Should().ContainSingle().Subject;
 		element.Attribute("Algorithm")!.Value.Should().Be("Level");
+		element.Attribute("MergeRelics")!.Value.Should().Be("1");
 		element.HasElements.Should().BeFalse();
 
 		var read = UserSettings.Read(this._xmlPath);
 		read.Sort.Algorithm.Should().Be(SackSortAlgorithm.Level);
+		read.Sort.MergeRelics.Should().BeTrue();
 	}
 
 	#endregion

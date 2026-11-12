@@ -308,6 +308,9 @@ internal partial class SettingsDialog
 	private void scalingCheckBoxDisableAutoStacking_CheckedChanged(object? sender, EventArgs e)
 		=> this.editor.Current.DisableAutoStacking = this.scalingCheckBoxDisableAutoStacking.Checked;
 
+	private void scalingCheckBoxMergeRelicsOnSort_CheckedChanged(object? sender, EventArgs e)
+		=> this.editor.Current.MergeRelicsOnSort = this.scalingCheckBoxMergeRelicsOnSort.Checked;
+
 	private void checkGroupBoxCheats_CheckedChanged(object? sender, EventArgs e)
 	{
 		// Turning the cheats off turns off character editing, item editing and item copying.

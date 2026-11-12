@@ -2409,4 +2409,11 @@ You still have to close TQVaultAE to apply your changes.
     <value>The items do not fit in the bag in this order.
 The bag was left as it was.</value>
   </data>
+	<data name="SettingsMergeRelicsOnSort" xml:space="preserve">
+    <value>Merge relic shards when sorting</value>
+  </data>
+	<data name="SettingsMergeRelicsOnSortTT" xml:space="preserve">
+    <value>Sorting a bag also stacks the shards of the same relic or charm up to completion.
+A completed relic gets its bonus, as when you stack it by hand.</value>
+  </data>
 </root>

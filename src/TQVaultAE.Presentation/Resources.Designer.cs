@@ -4984,6 +4984,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merge relic shards when sorting.
+        /// </summary>
+        public static string SettingsMergeRelicsOnSort {
+            get {
+                return ResourceManager.GetString("SettingsMergeRelicsOnSort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorting a bag also stacks the shards of the same relic or charm up to completion.[rest of string was truncated]&quot;;
+        /// </summary>
+        public static string SettingsMergeRelicsOnSortTT {
+            get {
+                return ResourceManager.GetString("SettingsMergeRelicsOnSortTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bypass Confirmation Messages.
         /// </summary>
         public static string SettingsNoWarning {

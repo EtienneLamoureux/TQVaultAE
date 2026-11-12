@@ -2037,4 +2037,11 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
     <value>Les objets ne tiennent pas dans le sac dans cet ordre.
 Le sac est resté tel quel.</value>
   </data>
+	<data name="SettingsMergeRelicsOnSort" xml:space="preserve">
+    <value>Fusionner les fragments de reliques au tri</value>
+  </data>
+	<data name="SettingsMergeRelicsOnSortTT" xml:space="preserve">
+    <value>Trier un sac empile aussi les fragments d'une même relique ou d'un même charme jusqu'à complétion.
+Une relique complétée reçoit son bonus, comme quand vous l'empilez à la main.</value>
+  </data>
 </root>

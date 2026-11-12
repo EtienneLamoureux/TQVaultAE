@@ -185,8 +185,8 @@ public class UserSettings
 	public ItemCompareSettings ItemCompare { get; set; } = new();
 
 	/// <summary>
-	/// The choices of the bag sort button: <c>&lt;Sort Algorithm="Normal" /&gt;</c>.
-	/// Missing, the defaults apply (the normal sort).
+	/// The choices of the bag sort button: <c>&lt;Sort Algorithm="Normal" MergeRelics="0" /&gt;</c>.
+	/// Missing, the defaults apply (the normal sort, shards left as they are).
 	/// </summary>
 	[XmlElement(ElementName = nameof(Sort))]
 	public SortSettings Sort { get; set; } = new();

@@ -193,6 +193,7 @@ internal partial class SettingsDialog
 		hotReloadCheckBox = new ScalingCheckBox();
 		scalingCheckBoxEnableEpicLegendaryAffixes = new ScalingCheckBox();
 		scalingCheckBoxDisableAutoStacking = new ScalingCheckBox();
+		scalingCheckBoxMergeRelicsOnSort = new ScalingCheckBox();
 		checkGroupBoxGitBackup = new CheckGroupBox();
 		bufferedFlowLayoutPanelGitBackup = new BufferedFlowLayoutPanel();
 		scalingCheckBoxDisableLegacyBackup = new ScalingCheckBox();
@@ -679,6 +680,19 @@ internal partial class SettingsDialog
 		scalingCheckBoxDisableAutoStacking.UseVisualStyleBackColor = true;
 		scalingCheckBoxDisableAutoStacking.CheckedChanged += scalingCheckBoxDisableAutoStacking_CheckedChanged;
 		// 
+		// scalingCheckBoxMergeRelicsOnSort
+		// 
+		scalingCheckBoxMergeRelicsOnSort.AutoSize = true;
+		scalingCheckBoxMergeRelicsOnSort.Font = new Font("Microsoft Sans Serif", 11.25F);
+		scalingCheckBoxMergeRelicsOnSort.ForeColor = Color.White;
+		scalingCheckBoxMergeRelicsOnSort.Location = new Point(3, 253);
+		scalingCheckBoxMergeRelicsOnSort.Name = "scalingCheckBoxMergeRelicsOnSort";
+		scalingCheckBoxMergeRelicsOnSort.Size = new Size(232, 22);
+		scalingCheckBoxMergeRelicsOnSort.TabIndex = 57;
+		scalingCheckBoxMergeRelicsOnSort.Text = "Merge relic shards when sorting";
+		scalingCheckBoxMergeRelicsOnSort.UseVisualStyleBackColor = true;
+		scalingCheckBoxMergeRelicsOnSort.CheckedChanged += scalingCheckBoxMergeRelicsOnSort_CheckedChanged;
+		// 
 		// checkGroupBoxGitBackup
 		// 
 		checkGroupBoxGitBackup.AutoSize = true;
@@ -1025,6 +1039,7 @@ internal partial class SettingsDialog
 		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(ShowInGameValuesCheckBox);
 		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(playerReadonlyCheckbox);
 		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(scalingCheckBoxDisableAutoStacking);
+		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(scalingCheckBoxMergeRelicsOnSort);
 		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(scalingLabelCSVDelim);
 		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(scalingComboBoxCSVDelim);
 		bufferedFlowLayoutPanelGeneralSettings.Dock = DockStyle.Fill;
@@ -1450,6 +1465,7 @@ internal partial class SettingsDialog
 	private ScalingComboBox scalingComboBoxCSVDelim;
 	private ScalingCheckBox scalingCheckBoxEnableEpicLegendaryAffixes;
 	private ScalingCheckBox scalingCheckBoxDisableAutoStacking;
+	private ScalingCheckBox scalingCheckBoxMergeRelicsOnSort;
 	private TQVaultAE.GUI.Components.CheckGroupBox checkGroupBoxGitBackup;
 	private ScalingCheckBox scalingCheckBoxDisableLegacyBackup;
 	private ScalingTextBox scalingTextBoxGitRepository;

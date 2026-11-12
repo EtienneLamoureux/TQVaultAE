@@ -41,6 +41,12 @@ public sealed record SettingsValues
 	public bool EnableTQVaultSounds { get; set; }
 	public bool EnableEpicLegendaryAffixes { get; set; }
 	public bool DisableAutoStacking { get; set; }
+
+	/// <summary>
+	/// Sorting a bag also stacks the shards of the same relic or charm (<c>&lt;Sort MergeRelics="..." /&gt;</c>).
+	/// </summary>
+	public bool MergeRelicsOnSort { get; set; }
+
 	public bool AllowCheats { get; set; }
 	public bool GitBackupEnabled { get; set; }
 	public string GitBackupRepository { get; set; } = string.Empty;
@@ -93,6 +99,7 @@ public sealed record SettingsValues
 			EnableTQVaultSounds = settings.EnableTQVaultSounds,
 			EnableEpicLegendaryAffixes = settings.EnableEpicLegendaryAffixes,
 			DisableAutoStacking = settings.DisableAutoStacking,
+			MergeRelicsOnSort = settings.Sort?.MergeRelics ?? false,
 			AllowCheats = settings.AllowCheats,
 			GitBackupEnabled = settings.GitBackupEnabled,
 			GitBackupRepository = settings.GitBackupRepository ?? string.Empty,
@@ -136,6 +143,8 @@ public sealed record SettingsValues
 		settings.EnableHotReload = this.EnableHotReload;
 		settings.EnableTQVaultSounds = this.EnableTQVaultSounds;
 		settings.DisableAutoStacking = this.DisableAutoStacking;
+		settings.Sort ??= new SortSettings();
+		settings.Sort.MergeRelics = this.MergeRelicsOnSort;
 		settings.AllowCheats = this.AllowCheats;
 		settings.GitBackupEnabled = this.GitBackupEnabled;
 		settings.DisableLegacyBackup = this.DisableLegacyBackup;

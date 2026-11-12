@@ -215,7 +215,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "sort_click", Destructive = true)]
-	[Description("Left-clicks the sort button of a panel like the user: sorts the shown bag with the order picked in sort_menu (each click alternates rows and columns). The click runs after this call returns (a sort that does not fit shows a message, see dialog_answers): read the result with list_items.")]
+	[Description("Left-clicks the sort button of a panel like the user: sorts the shown bag with the order picked in sort_menu (each click alternates rows and columns), merging relic and charm shards first when the 'Merge relic shards when sorting' setting is on. The click runs after this call returns (a sort that does not fit shows a message, see dialog_answers): read the result with list_items.")]
 	public static string SortClick(
 		[Description("Panel id with a sort button: vault, secondaryVault, player (main inventory) or playerBag.")] string panel)
 		=> AutomationHost.OnUi(form =>
@@ -233,9 +233,9 @@ internal static partial class AutomationTools
 			}
 		});
 
-	/// <summary>The saved sort choices: the order of the left click.</summary>
+	/// <summary>The saved sort choices: the order of the left click and the shard merge.</summary>
 	private static object SortChoices(Forms.MainForm form)
-		=> new { algorithm = form.AutomationSettings.Sort?.Algorithm.ToString() };
+		=> new { algorithm = form.AutomationSettings.Sort?.Algorithm.ToString(), mergeRelics = form.AutomationSettings.Sort?.MergeRelics };
 
 	[McpServerTool(Name = "vault_menu", Destructive = true)]
 	[Description("Returns the menu of the vault tools button next to the vault list (maintain vault files, Modded vault, share, import) as it opens for the shown vault. With path (' > ' between levels, e.g. 'Modded vault > shadowchampions'), clicks that entry after this call returns, since it may open a dialog.")]

@@ -284,6 +284,22 @@ public class SettingsEditorTests
 	}
 
 	[Fact]
+	public void MergeRelicsOnSort_WrittenToTheSortElement_KeepsTheSortOrder()
+	{
+		// The order is picked in the sort button's menu, not in the dialog: OK must not reset it.
+		var settings = NewSettings();
+		settings.Sort = new SortSettings { Algorithm = Domain.Entities.SackSortAlgorithm.Level };
+		var editor = NewEditor(settings);
+
+		editor.Current.MergeRelicsOnSort.Should().BeFalse();
+		editor.Current.MergeRelicsOnSort = true;
+		editor.ApplyTo(settings);
+
+		settings.Sort.MergeRelics.Should().BeTrue();
+		settings.Sort.Algorithm.Should().Be(Domain.Entities.SackSortAlgorithm.Level);
+	}
+
+	[Fact]
 	public void Original_IsNotChangedByTheEdits()
 	{
 		var editor = NewEditor();

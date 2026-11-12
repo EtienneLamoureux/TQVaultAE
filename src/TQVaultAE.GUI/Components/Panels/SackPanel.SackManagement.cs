@@ -45,9 +45,10 @@ public partial class SackPanel : Panel, IScalingControl
 		// Toggle sorting direction.
 		this.sortVertical = !this.sortVertical;
 
-		// The order picked in the sort button's menu.
-		var algorithm = this.USettings.Sort?.Algorithm ?? SackSortAlgorithm.Normal;
-		if (!this.Services.ItemSortService.Sort(this.ShownSack, this.SackSize, this.sortVertical, algorithm))
+		// The order picked in the sort button's menu, and the shard merge of the settings.
+		var sort = this.USettings.Sort ?? new SortSettings();
+		var result = this.Services.ItemSortService.Sort(this.ShownSack, this.SackSize, this.sortVertical, sort.Algorithm, sort.MergeRelics);
+		if (!result.Sorted)
 		{
 			// An item did not fit: the sack is back as it was.
 			this.sortVertical = !this.sortVertical;
@@ -55,6 +56,10 @@ public partial class SackPanel : Panel, IScalingControl
 			this.Services.MessageBoxes.Inform(Resources.SackPanelSortNoRoom, Resources.SackPanelAutoSortError);
 			return;
 		}
+
+		// The merged relics show another number, or their completion bonus.
+		if (result.Changed.Count > 0 || result.Removed.Count > 0)
+			this.InvalidateItemCacheAll([.. result.Changed, .. result.Removed]);
 
 		this.Invalidate();
 		BagButtonTooltip.InvalidateCache(this.Sack);
