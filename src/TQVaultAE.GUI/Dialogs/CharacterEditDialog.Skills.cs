@@ -113,19 +113,7 @@ internal sealed partial class CharacterEditDialog
 
 	/// <summary>What the pane shows of a skill: its level, the levels of the equipped items, its border.</summary>
 	private SkillPaneSkillView SkillView(SkillTab tab, MasterySkill skill)
-	{
-		var skills = this._skills!;
-		var tree = skills.Slots[tab.Slot];
-		var level = skills.GetLevel(skill.Id);
-		var masteryLevel = skills.GetMasteryLevel(tab.Slot);
-		// The game writes the level with the items' levels once the skill has a point, up to the ultimate level: Call of
-		// the Wild 15 + 6 reads "20 / 16", an unlearned skill "0 / 10" whatever the items add.
-		var bonus = tree is null ? 0 : skill.ShownItemBonus(level, SkillBonus.For(this._gearAugments, tree, skill.Id).Total);
-
-		var parentHasPoints = skill.ParentId is null || skills.GetLevel(skill.ParentId) > 0;
-		var state = SkillPaneLayout.State(level, skill.MaxLevel, masteryLevel, skill.RequiredMasteryLevel, parentHasPoints, skills.AvailablePoints);
-		return new SkillPaneSkillView(level, bonus, state, masteryLevel >= skill.RequiredMasteryLevel);
-	}
+		=> this._skills!.GetSkillView(tab.Slot, skill, this._gearAugments);
 
 	// Colours read on the game's skill window.
 	private static readonly Color TipText = Color.FromArgb(245, 243, 236);
@@ -260,21 +248,13 @@ internal sealed partial class CharacterEditDialog
 	/// </summary>
 	private void SkillPane_ButtonClicked(SkillTab tab, SkillPaneClick click)
 	{
-		if (this._skills is not { } skills || skills.Slots[tab.Slot] is not { } tree)
+		if (this._skills is not { } skills || skills.Slots[tab.Slot] is null)
 			return;
 
 		if (click.Skill is null)
-		{
-			var current = skills.GetMasteryLevel(tab.Slot);
-			var level = click.ToEnd ? (click.Step > 0 ? tree.MaxLevel : 1) : current + click.Step;
-			skills.SetMasteryLevel(tab.Slot, level);
-		}
+			skills.StepMastery(tab.Slot, click.Step, click.ToEnd);
 		else
-		{
-			var current = skills.GetLevel(click.Skill.Id);
-			var level = click.ToEnd ? (click.Step > 0 ? click.Skill.MaxLevel : 0) : current + click.Step;
-			skills.SetSkillLevel(tab.Slot, click.Skill.Id, level);
-		}
+			skills.StepSkill(tab.Slot, click.Skill, click.Step, click.ToEnd);
 
 		this.RefreshSkills();
 		tab.Pane.RefreshToolTip();

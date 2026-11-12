@@ -311,4 +311,80 @@ public class CharacterSkillEditorTests
 	[Fact]
 	public void GetMasterySummary_EmptySlot_IsNull()
 		=> Editor(StormCharacter()).GetMasterySummary(1).Should().BeNull();
+
+	[Fact]
+	public void StepSkill_LeftAndRightClicks_RaiseAndLowerByOne()
+	{
+		var editor = Editor(StormCharacter());
+		var iceShard = Storm.Skills[0];
+
+		editor.StepSkill(0, iceShard, 1, false).Should().Be(6);
+		editor.StepSkill(0, iceShard, -1, false).Should().Be(5);
+		editor.AvailablePoints.Should().Be(5);
+	}
+
+	[Fact]
+	public void StepSkill_ShiftClicks_GoToTheHighestLevelWithinThePointsOrDownToZero()
+	{
+		var editor = Editor(StormCharacter(), points: 3);
+		var iceShard = Storm.Skills[0];
+
+		editor.StepSkill(0, iceShard, 1, true).Should().Be(8);
+		editor.StepSkill(0, iceShard, -1, true).Should().Be(0);
+		// Its modifier lost its parent's points: reset and refunded.
+		editor.GetLevel(Velocity).Should().Be(0);
+		editor.AvailablePoints.Should().Be(3 + 5 + 3);
+	}
+
+	[Fact]
+	public void StepMastery_ShiftClicks_GoToTheMaxLevelWithinThePointsOrDownToOne()
+	{
+		var editor = Editor(StormCharacter(), points: 4);
+
+		editor.StepMastery(0, 1, true).Should().Be(14);
+		editor.StepMastery(0, -1, true).Should().Be(1);
+		// Every tier above the first closed: Squall and Velocity reset.
+		editor.GetLevel(Squall).Should().Be(0);
+		editor.GetLevel(Velocity).Should().Be(0);
+	}
+
+	[Fact]
+	public void StepMastery_EmptySlot_ChangesNothing()
+	{
+		var editor = Editor(StormCharacter());
+
+		editor.StepMastery(1, 1, false).Should().Be(0);
+		editor.AvailablePoints.Should().Be(5);
+	}
+
+	[Fact]
+	public void GetSkillView_LearnedSkill_ShowsTheItemLevelsAndItsBorder()
+	{
+		var editor = Editor(StormCharacter());
+		SkillAugment[] gear = [new(SkillAugmentKind.Skill, IceShard, 2), new(SkillAugmentKind.All, null, 1)];
+
+		editor.GetSkillView(0, Storm.Skills[0], gear).Should().Be(new SkillPaneSkillView(5, 3, SkillButtonState.CanRaise, true));
+	}
+
+	[Fact]
+	public void GetSkillView_UnlearnedSkill_ShowsNoItemLevel()
+	{
+		var editor = Editor(StormCharacter());
+		editor.SetSkillLevel(0, Squall, 0);
+
+		editor.GetSkillView(0, Storm.Skills[1], [new(SkillAugmentKind.All, null, 3)]).Should().Be(new SkillPaneSkillView(0, 0, SkillButtonState.CanRaise, true));
+	}
+
+	[Fact]
+	public void GetSkillView_LockedTierAndParentWithoutPoint_GiveTheirBorders()
+	{
+		var editor = Editor(StormCharacter(), points: 0);
+		editor.SetMasteryLevel(0, 1);
+
+		editor.GetSkillView(0, Storm.Skills[1], []).Should().Be(new SkillPaneSkillView(0, 0, SkillButtonState.TierLocked, false));
+
+		var other = Editor(StormCharacter());
+		other.SetSkillLevel(0, IceShard, 0);
+		other.GetSkillView(0, Storm.Skills[2], []).State.Should().Be(SkillButtonState.ParentLocked);
+	}
 }

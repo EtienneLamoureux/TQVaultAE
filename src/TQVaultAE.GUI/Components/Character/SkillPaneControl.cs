@@ -14,13 +14,6 @@ namespace TQVaultAE.GUI.Components.Character;
 /// <param name="ToEnd">True with Shift: up to the highest level, or down to the lowest.</param>
 internal sealed record SkillPaneClick(MasterySkill? Skill, int Step, bool ToEnd);
 
-/// <summary>What the pane shows of a skill, given by the dialog.</summary>
-/// <param name="Level">Points spent in it.</param>
-/// <param name="ItemBonus">Levels the equipped items add.</param>
-/// <param name="State">Its border.</param>
-/// <param name="TierOpen">True when the mastery level opens its tier.</param>
-internal sealed record SkillPaneSkillView(int Level, int ItemBonus, SkillButtonState State, bool TierOpen);
-
 /// <summary>
 /// A mastery pane drawn as the game's skill window draws it: background, the mastery colour through the tier lines
 /// reached, mastery bar and milestones, connectors, skill buttons with their state border and level, mastery picture

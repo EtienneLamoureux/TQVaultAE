@@ -21,6 +21,13 @@ public enum SkillButtonState
 	ParentLocked,
 }
 
+/// <summary>What the skill pane shows of a skill.</summary>
+/// <param name="Level">The points spent in the skill.</param>
+/// <param name="ItemBonus">The levels the equipped items add, as the game's skill window writes them.</param>
+/// <param name="State">The border of its button.</param>
+/// <param name="TierOpen">True when the mastery level opens its tier.</param>
+public sealed record SkillPaneSkillView(int Level, int ItemBonus, SkillButtonState State, bool TierOpen);
+
 /// <summary>A rectangle in pixels of the skill pane.</summary>
 public readonly record struct PaneRect(int X, int Y, int Width, int Height)
 {

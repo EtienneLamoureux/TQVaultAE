@@ -204,6 +204,51 @@ public sealed class CharacterSkillEditor
 	}
 
 	/// <summary>
+	/// A click on the mastery of a slot: <paramref name="step"/> levels up or down; with <paramref name="toEnd"/> up to
+	/// its highest level or down to level 1. <see cref="SetMasteryLevel"/> applies the points left.
+	/// </summary>
+	/// <returns>The level set; 0 for an empty slot.</returns>
+	public int StepMastery(int slot, int step, bool toEnd)
+	{
+		if (this._slots[slot] is not { } tree)
+			return 0;
+
+		var level = toEnd ? (step > 0 ? tree.MaxLevel : 1) : this.GetMasteryLevel(slot) + step;
+		return this.SetMasteryLevel(slot, level);
+	}
+
+	/// <summary>
+	/// A click on a skill of a slot: <paramref name="step"/> levels up or down; with <paramref name="toEnd"/> up to its
+	/// highest level or down to 0. <see cref="SetSkillLevel"/> applies the tier, parent and points rules.
+	/// </summary>
+	/// <returns>The level set; 0 when the skill is not in the slot's mastery.</returns>
+	public int StepSkill(int slot, MasterySkill skill, int step, bool toEnd)
+	{
+		var level = toEnd ? (step > 0 ? skill.MaxLevel : 0) : this.GetLevel(skill.Id) + step;
+		return this.SetSkillLevel(slot, skill.Id, level);
+	}
+
+	/// <summary>
+	/// What the skill pane shows of a skill of a slot: its points, the levels the equipped items add once it has a
+	/// point (up to the ultimate level: 15 points + 6 read "20 / 16", an unlearned skill "0 / 10" whatever the items
+	/// add), its button border and whether its tier is open.
+	/// </summary>
+	/// <param name="slot">The mastery slot.</param>
+	/// <param name="skill">A skill of the slot's mastery.</param>
+	/// <param name="gearAugments">The skill levels the equipped items give.</param>
+	public SkillPaneSkillView GetSkillView(int slot, MasterySkill skill, IReadOnlyList<SkillAugment> gearAugments)
+	{
+		var tree = this._slots[slot];
+		var level = this.GetLevel(skill.Id);
+		var masteryLevel = this.GetMasteryLevel(slot);
+		var bonus = tree is null ? 0 : skill.ShownItemBonus(level, SkillBonus.For(gearAugments, tree, skill.Id).Total);
+
+		var parentHasPoints = skill.ParentId is null || this.GetLevel(skill.ParentId) > 0;
+		var state = SkillPaneLayout.State(level, skill.MaxLevel, masteryLevel, skill.RequiredMasteryLevel, parentHasPoints, this.AvailablePoints);
+		return new SkillPaneSkillView(level, bonus, state, masteryLevel >= skill.RequiredMasteryLevel);
+	}
+
+	/// <summary>
 	/// Builds the skill list to save: the other skills (default attacks, quest rewards) and the unchanged ones stay as
 	/// they are, at their place; a changed level is updated, a skill with no point left is removed and a new one is
 	/// added at the end, after its mastery.
