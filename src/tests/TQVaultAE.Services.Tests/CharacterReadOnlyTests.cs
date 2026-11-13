@@ -87,9 +87,10 @@ public sealed class CharacterReadOnlyTests : IDisposable
 	[InlineData("winsys.dxb")]
 	[InlineData("winsys.dxg")]
 	[InlineData(IModLinkService.LinkFileName)]
+	[InlineData(ILoadoutService.FileName)]
 	public void IsReadOnly_AnyOwnedFileReadOnly_IsTrue(string readOnlyFile)
 	{
-		foreach (var name in new[] { "Player.chr", "winsys.dxb", "winsys.dxg", IModLinkService.LinkFileName })
+		foreach (var name in new[] { "Player.chr", "winsys.dxb", "winsys.dxg", IModLinkService.LinkFileName, ILoadoutService.FileName })
 			this.Write(name);
 		File.SetAttributes(this.FileOf(readOnlyFile), FileAttributes.ReadOnly);
 

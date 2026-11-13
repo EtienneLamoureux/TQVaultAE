@@ -62,4 +62,9 @@ public class SessionContext
 	/// Dictionary of all loaded player stash files
 	/// </summary>
 	public readonly LazyConcurrentDictionary<string, Stash> Stashes = new();
+
+	/// <summary>
+	/// The loadouts read for each character, by loadouts file path (case ignored).
+	/// </summary>
+	public readonly ConcurrentDictionary<string, LoadoutSet> Loadouts = new(StringComparer.OrdinalIgnoreCase);
 }

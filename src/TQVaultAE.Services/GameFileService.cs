@@ -148,6 +148,10 @@ public partial class GameFileService(ILogger<GameFileService> log, IGamePathServ
 		if (this.FileIO.Exists(stashFileG)) this.FileIO.Copy(stashFileG, this.PathIO.Combine(newFolder, GamePathService.PlayerStashFileNameG));
 		if (this.FileIO.Exists(settingsFile)) this.FileIO.Copy(settingsFile, this.PathIO.Combine(newFolder, GamePathService.PlayerSettingsFileName));
 
+		// The loadouts are the character's: the duplicate starts with the same ones (copies of the pieces, like its gear).
+		var loadoutsFile = this.PathIO.Combine(playerSaveDirectory, ILoadoutService.FileName);
+		if (this.FileIO.Exists(loadoutsFile)) this.FileIO.Copy(loadoutsFile, this.PathIO.Combine(newFolder, ILoadoutService.FileName));
+
 		// Copy Progression directory
 		var sourceProgressionDir = this.PathIO.Combine(playerSaveDirectory, "Levels_World_World01.map");
 		var destProgressionDir = this.PathIO.Combine(newFolder, "Levels_World_World01.map");

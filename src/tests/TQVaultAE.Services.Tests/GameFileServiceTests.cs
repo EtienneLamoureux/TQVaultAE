@@ -147,6 +147,11 @@ public class GameFileServiceTests
 		_mockPathIO.Setup(x => x.Combine(newFolder, "stash.dxg")).Returns(newFolder + "\\stash.dxg");
 		_mockPathIO.Setup(x => x.Combine(newFolder, "stash.gsl")).Returns(newFolder + "\\stash.gsl");
 		_mockPathIO.Setup(x => x.Combine(newFolder, "settings.txt")).Returns(newFolder + "\\settings.txt");
+		var loadoutsFile = playerSaveDirectory + "\\" + ILoadoutService.FileName;
+		var newLoadoutsFile = newFolder + "\\" + ILoadoutService.FileName;
+		_mockPathIO.Setup(x => x.Combine(playerSaveDirectory, ILoadoutService.FileName)).Returns(loadoutsFile);
+		_mockPathIO.Setup(x => x.Combine(newFolder, ILoadoutService.FileName)).Returns(newLoadoutsFile);
+		_mockFileIO.Setup(x => x.Exists(loadoutsFile)).Returns(true);
 
 		_mockGamePathService.Setup(x => x.PlayerSaveFileName).Returns("player.chr");
 		_mockGamePathService.Setup(x => x.PlayerStashFileNameB).Returns("stash.dxg");
@@ -168,6 +173,7 @@ public class GameFileServiceTests
 		_mockFileIO.Verify(x => x.Copy(stashFileB, It.IsAny<string>()), Times.Once);
 		_mockFileIO.Verify(x => x.Copy(stashFileG, It.IsAny<string>()), Times.Once);
 		_mockFileIO.Verify(x => x.Copy(settingsFile, It.IsAny<string>()), Times.Once);
+		_mockFileIO.Verify(x => x.Copy(loadoutsFile, newLoadoutsFile), Times.Once, "the loadouts follow the duplicate");
 	}
 
 	[Fact]

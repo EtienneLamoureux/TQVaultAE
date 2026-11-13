@@ -27,6 +27,7 @@ public class CharacterReadOnlyService(
 			this.StashFile(saveFolder),
 			this.PathIO.Combine(saveFolder, this.GamePathResolver.PlayerStashFileNameG),
 			this.PathIO.Combine(saveFolder, IModLinkService.LinkFileName),
+			this.PathIO.Combine(saveFolder, ILoadoutService.FileName),
 		];
 
 	/// <inheritdoc/>

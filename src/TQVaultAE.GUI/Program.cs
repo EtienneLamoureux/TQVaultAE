@@ -185,6 +185,7 @@ public static class Program
 		.AddSingleton<ICharacterEditService, CharacterEditService>()
 		.AddSingleton<ICharacterStatsService, CharacterStatsService>()
 		.AddSingleton<IModLinkService, ModLinkService>()
+		.AddSingleton<ILoadoutService, LoadoutService>()
 		.AddSingleton<ICharacterReadOnlyService, CharacterReadOnlyService>()
 		.AddSingleton<IItemModService, ItemModService>()
 		.AddSingleton<IGameMapService, GameMapService>()
