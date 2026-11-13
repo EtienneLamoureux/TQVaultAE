@@ -29,9 +29,10 @@ public readonly record struct SkillWindowRank(int Section, int Index) : ICompara
 /// <remarks>
 /// The skill's own lines come first: the recharge and the chances to be used or to activate, then the parameters
 /// (energy and life costs, duration, area, targets, projectiles, the summon's life time), then the skill's own effects
-/// (charge levels, damage absorption, protections, summon limit, "+1 to all skills"). Then the stores: offense
-/// (% bonuses and damage over time before flat damage and debuffs, as in item tool tips), character, skill,
-/// retaliation and defense.
+/// (charge levels, damage absorption, protections, summon limit, "+1 to all skills"). Then the stores, in the order the
+/// game's skill window writes a skill's attributes (unlike an item tool tip, which follows the item class): offense
+/// (% bonuses and damage over time before flat damage and debuffs, as in item tool tips), character, the energy
+/// reserved, skill, retaliation and defense. Inside a store, the attributes come in the order the game loads them.
 /// </remarks>
 public static class SkillWindowAttributeOrder
 {
@@ -58,15 +59,77 @@ public static class SkillWindowAttributeOrder
 		.Select((name, index) => (name, index))
 		.ToDictionary(p => p.name, p => p.index, StringComparer.OrdinalIgnoreCase);
 
-	/// <summary>The store outputs after the skill's own lines, in the game's order.</summary>
+	/// <summary>
+	/// The store outputs after the skill's own lines, in the order the game's skill window writes them: offense,
+	/// character, the energy reserved, skill, retaliation, defense.
+	/// </summary>
 	private static readonly (GameAttributeStore Store, int Output)[] Stores =
 	[
 		(GameAttributeStore.Offense, 1), (GameAttributeStore.Offense, 2), (GameAttributeStore.Offense, 3),
-		(GameAttributeStore.Character, 1), (GameAttributeStore.Character, 2),
+		(GameAttributeStore.Character, 1), (GameAttributeStore.Character, 2), (GameAttributeStore.Character, EnergyReservedOutput),
 		(GameAttributeStore.Skill, 1),
 		(GameAttributeStore.Retaliation, 1), (GameAttributeStore.Retaliation, 2), (GameAttributeStore.Retaliation, 3),
 		(GameAttributeStore.Defense, 1), (GameAttributeStore.Defense, 2),
 	];
+
+	/// <summary>
+	/// A skill keeps the energy it reserves (<c>characterManaLimitReserve</c> and its modifier) in a store of its own,
+	/// written right after the character attributes: "+25 Defensive Ability", then "75 Energy Reserved".
+	/// </summary>
+	private const int EnergyReservedOutput = 3;
+
+	private static readonly HashSet<string> EnergyReserved = new(StringComparer.OrdinalIgnoreCase)
+	{
+		"characterManaLimitReserve", "characterManaLimitReserveModifier",
+	};
+
+	/// <summary>
+	/// The character attributes of a skill, in the order the game loads and writes them; it differs from an item's
+	/// (<see cref="GameAttributeOrder"/>): the movement speed comes before the attack and casting speeds. Attributes not
+	/// listed follow, in the item order.
+	/// </summary>
+	private static readonly string[] CharacterSequence =
+	[
+		"characterStrength", "characterStrengthModifier", "characterIntelligence", "characterIntelligenceModifier",
+		"characterDexterity", "characterDexterityModifier", "characterLife", "characterLifeModifier",
+		"characterLifeRegen", "characterLifeRegenModifier", "characterMana", "characterManaModifier",
+		"characterManaRegen", "characterManaRegenModifier",
+		"characterManaLimitReserveReduction", "characterManaLimitReserveReductionModifier",
+		"characterOffensiveAbility", "characterOffensiveAbilityModifier", "characterDefensiveAbility", "characterDefensiveAbilityModifier",
+		"characterTotalSpeedModifier", "characterRunSpeed", "characterRunSpeedModifier",
+		"characterAttackSpeed", "characterAttackSpeedModifier", "characterSpellCastSpeed", "characterSpellCastSpeedModifier",
+	];
+
+	/// <summary>
+	/// The last offensive attributes of a skill, after the impaired aim, in the order the game loads them; it differs from
+	/// an item's: skill disruption first, then sleep, stun, trap, freeze, petrify, taunt, convert, fear, confusion and the
+	/// slowed speeds (total, attack, casting, movement).
+	/// </summary>
+	private static readonly string[] OffenseTail =
+	[
+		"Offense:offensiveDisruption", "Offense:offensiveSleep", "OffenseModifier:offensiveSleepModifier",
+		"Offense:offensiveStun", "OffenseModifier:offensiveStunModifier", "Offense:offensiveTrap", "Offense:offensiveFreeze",
+		"Offense:offensivePetrify", "Offense:offensiveTaunt", "Offense:offensiveConvert", "Offense:offensiveFear",
+		"Offense:offensiveConfusion",
+		"OffenseSlow:offensiveSlowTotalSpeed", "OffenseSlowModifier:offensiveSlowTotalSpeed",
+		"OffenseSlow:offensiveSlowAttackSpeed", "OffenseSlowModifier:offensiveSlowAttackSpeed",
+		"OffenseSlow:offensiveSlowSpellCastSpeed", "OffenseSlowModifier:offensiveSlowSpellCastSpeed",
+		"OffenseSlow:offensiveSlowRunSpeed", "OffenseSlowModifier:offensiveSlowRunSpeed",
+	];
+
+	/// <summary>
+	/// Where <see cref="OffenseTail"/> starts: after every other offensive attribute, all of which come before these in
+	/// the item order too.
+	/// </summary>
+	private const int OffenseTailStart = 10_000;
+
+	private static readonly Dictionary<string, int> OffenseTailRanks = OffenseTail
+		.Select((name, index) => (name, index))
+		.ToDictionary(p => p.name, p => p.index, StringComparer.OrdinalIgnoreCase);
+
+	private static readonly Dictionary<string, int> CharacterRanks = CharacterSequence
+		.Select((name, index) => (name, index))
+		.ToDictionary(p => p.name, p => p.index, StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>An effect the order does not know: after the others.</summary>
 	public static SkillWindowRank Other { get; } = new(Stores.Length + 1, 0);
@@ -86,12 +149,24 @@ public static class SkillWindowAttributeOrder
 			return new(0, own);
 
 		var slot = GameAttributeOrder.SlotOf(variableName, data, isGlobal, physicalIsBase: false);
-		int store = Array.IndexOf(Stores, (slot.Store, slot.Store == GameAttributeStore.Skill ? 1 : slot.Output));
+		int output = slot.Store == GameAttributeStore.Skill ? 1 : slot.Output;
+		int index = slot.Index;
+		if (slot.Store == GameAttributeStore.Offense && data is not null && OffenseTailRanks.TryGetValue($"{data.EffectType}:{data.Effect}", out var tail))
+			index = OffenseTailStart + tail;
+		else if (slot.Store == GameAttributeStore.Character)
+		{
+			if (EnergyReserved.Contains(variableName))
+				output = EnergyReservedOutput;
+
+			index = CharacterRanks.TryGetValue(variableName, out var rank) ? rank : CharacterSequence.Length + slot.Index;
+		}
+
+		int store = Array.IndexOf(Stores, (slot.Store, output));
 		if (store < 0)
 			return Other;
 
 		// A global chance keeps its groups right after its header line, in the order the record gives them.
-		return new(store + 1, slot.Global ? -1 : slot.Index);
+		return new(store + 1, slot.Global ? -1 : index);
 	}
 }
 

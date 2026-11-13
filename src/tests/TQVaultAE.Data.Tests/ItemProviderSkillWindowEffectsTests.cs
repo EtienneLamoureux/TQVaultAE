@@ -74,6 +74,12 @@ public class ItemProviderSkillWindowEffectsTests : ItemProviderTextTestBase
 		// Lasting Legacy, a modifier of Ancestral Horn, has only spawnObjectsTimeToLive: its blocks were empty.
 		=> this.Effects(2, Floats("spawnObjectsTimeToLive", 4f, 7f)).Should().Equal("Extra Life Time 7 Seconds");
 
+	[Fact]
+	public void CharacterAttributes_FollowTheSkillOrder_ThenTheEnergyReserved()
+		=> this.Effects(1, Int("characterManaLimitReserve", 75), Float("characterAttackSpeedModifier", 5f), Float("characterRunSpeedModifier", 6f),
+				Float("characterDefensiveAbility", 25f))
+			.Should().Equal("+25 Defensive Ability", "+6% Movement Speed", "+5% Attack Speed", "75 Energy Reserved");
+
 	[Theory]
 	[InlineData(1, "40 Fire Damage", "41 Cold Damage", "42 Lightning Damage")]
 	[InlineData(2, "54 Fire Damage", "55 Cold Damage", "56 Lightning Damage")]

@@ -48,6 +48,30 @@ public class SkillWindowAttributeOrderTests
 			.Should().Equal("offensiveColdMin", "characterStrength", "skillCooldownReduction", "retaliationPhysicalMin", "defensiveFire");
 
 	[Fact]
+	public void CharacterAttributes_FollowTheSkillLoadOrder_MovementBeforeAttackAndCastingSpeed()
+		// A skill loads its character attributes in its own order: Offensive Ability before the speeds (Weapon Training),
+		// and the movement speed before the attack and casting speeds (Onslaught's Ardor), unlike an item.
+		=> Ordered("characterSpellCastSpeedModifier", "characterAttackSpeedModifier", "characterRunSpeedModifier", "characterOffensiveAbility")
+			.Should().Equal("characterOffensiveAbility", "characterRunSpeedModifier", "characterAttackSpeedModifier", "characterSpellCastSpeedModifier");
+
+	[Fact]
+	public void EnergyReserved_HasItsOwnStore_AfterTheCharacterAttributes_BeforeTheSkillAttributes()
+		// Battle Awareness: "+25 Defensive Ability", "75 Energy Reserved", then its armor (defense store).
+		=> Ordered("defensiveProtection", "skillCooldownReduction", "characterManaLimitReserve", "characterDefensiveAbility", "characterTotalSpeedModifier")
+			.Should().Equal("characterDefensiveAbility", "characterTotalSpeedModifier", "characterManaLimitReserve", "skillCooldownReduction", "defensiveProtection");
+
+	[Fact]
+	public void LastOffensiveAttributes_FollowTheSkillLoadOrder()
+		// Club Slam: impaired aim, then skill disruption before the stun; then trap, freeze, petrify, taunt, convert, fear,
+		// confusion and the slowed speeds, attack before movement.
+		=> Ordered("offensiveSlowRunSpeedMin", "offensiveSlowAttackSpeedMin", "offensiveConfusionMin", "offensiveFearMin", "offensiveConvertMin",
+				"offensiveTauntMin", "offensivePetrifyMin", "offensiveFreezeMin", "offensiveTrapMin", "offensiveStunMin", "offensiveDisruptionMin",
+				"offensiveProjectileFumbleMin")
+			.Should().Equal("offensiveProjectileFumbleMin", "offensiveDisruptionMin", "offensiveStunMin", "offensiveTrapMin", "offensiveFreezeMin",
+				"offensivePetrifyMin", "offensiveTauntMin", "offensiveConvertMin", "offensiveFearMin", "offensiveConfusionMin",
+				"offensiveSlowAttackSpeedMin", "offensiveSlowRunSpeedMin");
+
+	[Fact]
 	public void UnknownVariable_ComesLast()
 		=> Rank("someUnknownVariable").Should().Be(SkillWindowAttributeOrder.Other);
 }
