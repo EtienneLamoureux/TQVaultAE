@@ -384,8 +384,18 @@ internal static partial class AutomationTools
 				monitor = screen.DeviceName,
 				workingArea = new { screen.WorkingArea.X, screen.WorkingArea.Y, screen.WorkingArea.Width, screen.WorkingArea.Height },
 				insideWorkingArea = screen.WorkingArea.Contains(main.Bounds),
+				// The window as Windows has it (Bounds is what Windows Forms last asked for), the largest client size
+				// Windows lets it take and the largest zoom that fits it (a zoom in stops there).
+				windowRect = NativeWindowRect(main.Handle),
+				maxClientSize = new { main.AutomationZoomLimit.MaxClientSize.Width, main.AutomationZoomLimit.MaxClientSize.Height },
+				largestZoom = main.AutomationZoomLimit.LargestZoom,
 			});
 		});
+
+	private static object NativeWindowRect(IntPtr handle)
+		=> GetWindowRect(handle, out var r)
+			? new { X = r.Left, Y = r.Top, Width = r.Right - r.Left, Height = r.Bottom - r.Top }
+			: new { X = 0, Y = 0, Width = 0, Height = 0 };
 
 	[McpServerTool(Name = "move_window", Destructive = true)]
 	[Description("Moves the main window, or another open form, to a screen position (virtual screen pixels, so negative on a monitor left of the primary one), like dragging it there (the size is left to Windows): on a monitor of another DPI, Windows sends the DPI change. Returns the monitors (bounds and DPI) and the window's DPI and scales after the move. Move it back to its monitor when done.")]

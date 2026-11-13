@@ -384,20 +384,29 @@ public partial class MainForm
 	/// </summary>
 	private void SizeToZoom()
 	{
-		if (this.WindowState != FormWindowState.Normal)
-			return;
+		if (this.WindowState == FormWindowState.Normal)
+		{
+			// A maximize and restore gives back the zoom within float noise (0.99997): not a pixel less for it.
+			var zoom = MathF.Round(UIService.Zoom, 3);
+			var client = TQVaultAE.Application.WindowLayout.Scaled(DesignClientSize, zoom * UIService.DpiScale);
+			client = TQVaultAE.Application.WindowLayout.GrowToFit(
+				client, this.ContentAreaOf(client), this.tableLayoutPanelMain.Location, this.tableLayoutPanelMain.PreferredSize);
 
-		// A maximize and restore gives back the zoom within float noise (0.99997): not a pixel less for it.
-		var zoom = MathF.Round(UIService.Zoom, 3);
-		var client = TQVaultAE.Application.WindowLayout.Scaled(DesignClientSize, zoom * UIService.DpiScale);
-		client = TQVaultAE.Application.WindowLayout.GrowToFit(
-			client, this.ContentAreaOf(client), this.tableLayoutPanelMain.Location, this.tableLayoutPanelMain.PreferredSize);
-		if (client == this.ClientSize)
-			return;
+			// Never larger than Windows lets the window be (the zoom stops before, LargestZoom): Windows would cut it
+			// itself, the resize would then be read as the user's and constrained to the design ratio, down to a 4 x 4
+			// window before the startup set the resizing bounds, and the next zooms would start from the wrong width.
+			client = TQVaultAE.Application.WindowLayout.Within(client, this.MaxClientSize);
+			if (client != this.ClientSize)
+			{
+				// The size before the next resize: the change is not a resize by the user to keep in the design ratio.
+				this.LastFormSize = this.SizeFromClientSize(client);
+				this.ClientSize = client;
+			}
+		}
 
-		// The size before the next resize: the change is not a resize by the user to keep in the design ratio.
-		this.LastFormSize = this.SizeFromClientSize(client);
-		this.ClientSize = client;
+		// The caption buttons last, on the final size: placed before it (ScaleForm places them), the resize moved
+		// them and a corner of the close button kept what the moved controls had left there.
+		this.PlaceButtons();
 	}
 
 	/// <summary>The highlight label's font at the current zoom.</summary>
@@ -477,9 +486,6 @@ public partial class MainForm
 
 		this.Log.LogDebug("Zoom {Zoom} at {Dpi} times the design DPI: scale {Scale}", UIService.Zoom, UIService.DpiScale, UIService.Scale);
 
-		// The caption buttons were placed for the previous scale.
-		this.PlaceButtons();
-
 		this.FormMaximumSize = new Size(this.Width * 2, this.Height * 2);
 		this.FormMinimumSize = new Size(
 			Convert.ToInt32((float)this.Width * 0.4F),
@@ -491,7 +497,10 @@ public partial class MainForm
 		this.LastFormSize = this.Size;
 
 		// A maximize keeps the aspect ratio on the monitor the window is on then (VaultForm, WM_GETMINMAXINFO).
-		this.Location = new Point(workingArea.Left + Convert.ToInt16((workingArea.Width - this.ClientSize.Width) / 2), workingArea.Top + Convert.ToInt16((workingArea.Height - this.ClientSize.Height) / 2));
+		// Centered, but never above nor left of the working area: a window larger than it keeps its caption on screen.
+		this.Location = new Point(
+			workingArea.Left + Math.Max(0, (workingArea.Width - this.Width) / 2),
+			workingArea.Top + Math.Max(0, (workingArea.Height - this.Height) / 2));
 	}
 
 

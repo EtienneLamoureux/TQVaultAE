@@ -129,6 +129,11 @@ public partial class VaultForm
 			if (scale < 0.39F || scale > 2.01F)
 				return;
 
+			// A zoom in stops where the window would be larger than Windows lets it be: Windows would cut it behind the
+			// layout's back, and the sizes the next zooms start from would be wrong.
+			if (e.ResizeDelta > 0.0F && e.ResizeDelta != 1.0F && scale > this.LargestZoom() + ZoomTolerance)
+				return;
+
 			this.ScaleForm(scale, false);
 		}
 
@@ -158,8 +163,40 @@ public partial class VaultForm
 			}
 		}
 
+		// Nor larger than Windows lets a window be (a zoom saved on a larger monitor, or by a version without the limit).
+		float largest = this.LargestZoom();
+		if (USettings.Scale > largest + ZoomTolerance)
+		{
+			USettings.Scale = largest;
+			USettings.Save();
+		}
+
 		return USettings.Scale;
 	}
+
+	/// <summary>The float noise a zoom step leaves (1.3000001): not a reason to refuse it.</summary>
+	private const float ZoomTolerance = 0.0001F;
+
+	/// <summary>
+	/// The largest client size Windows lets the window take: it cuts a larger size it is given, whatever the layout
+	/// asked for.
+	/// </summary>
+	protected Size MaxClientSize
+	{
+		get
+		{
+			Size frame = this.SizeFromClientSize(Size.Empty);
+			Size track = SystemInformation.MaxWindowTrackSize;
+			return new Size(track.Width - frame.Width, track.Height - frame.Height);
+		}
+	}
+
+	/// <summary>
+	/// The largest zoom at which the window at its design size fits <see cref="MaxClientSize"/>.
+	/// </summary>
+	protected float LargestZoom()
+		=> TQVaultAE.Application.WindowLayout.LargestZoom(
+			new Size(NORMAL_FORMWIDTH, NORMAL_FORMHEIGHT), UIService.DpiScale, this.MaxClientSize);
 
 	/// <summary>
 	/// Handler for the ResizeBegin event.  Used for handling the maximize and minimize functions.
