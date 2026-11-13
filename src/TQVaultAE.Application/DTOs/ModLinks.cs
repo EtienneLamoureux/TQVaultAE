@@ -74,11 +74,6 @@ public sealed class ModLinkFile
 	public string? Source { get; set; }
 
 	/// <summary>
-	/// The mod's folder when the link was made, preferred when it still exists.
-	/// </summary>
-	public string? Folder { get; set; }
-
-	/// <summary>
 	/// When the link was made (UTC).
 	/// </summary>
 	public DateTime LinkedUtc { get; set; }

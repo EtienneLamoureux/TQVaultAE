@@ -20,7 +20,6 @@ Workshop items) and links the character to one, or removes its link. The choice 
   "version": 1,
   "mod": "shadowchampions",
   "source": "workshop:1949340853",
-  "folder": "e:\\games\\steam\\steamapps\\workshop\\content\\475150\\1949340853\\shadowchampions",
   "linkedUtc": "2026-11-09T00:12:53.1422315Z"
 }
 ```
@@ -30,7 +29,8 @@ Workshop items) and links the character to one, or removes its link. The choice 
 - `source` is where it is installed from: `workshop:<item id>` for a Steam Workshop mod, `custommaps` for a custom map.
   A Workshop mod and a custom map can have the same folder name: the source tells them apart (see *The identity of a
   mod* below).
-- `folder` is where the mod was when linked, preferred while it exists.
+- No path is kept: the name and the source find the mod wherever it is installed (a Workshop item in any Steam library,
+  a custom map in `CustomMaps`), so the file can move to another computer, and it carries no folder of the user's.
 - The game never writes a file with this name; it is copied with the character (*Duplicate*, archive).
 
 In the character list, a custom map character shows its mod's name in brackets beside its name, and on the

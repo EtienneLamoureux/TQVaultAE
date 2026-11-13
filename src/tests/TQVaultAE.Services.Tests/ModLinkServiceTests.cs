@@ -124,14 +124,15 @@ public sealed class ModLinkServiceTests : IDisposable
 
 		this._service.Link(this._save, mod);
 
-		File.ReadAllText(this.LinkFile).Should().Contain("\"source\": \"workshop:1949340853\"");
+		File.ReadAllText(this.LinkFile).Should().Contain("\"source\": \"workshop:1949340853\"")
+			.And.NotContain("folder", "the name and the source find the mod on any computer; a path would also carry the user's");
 		this._service.ReadLink(this._save)!.Source.Should().Be("workshop:1949340853");
 	}
 
 	[Fact]
-	public void Resolve_HomonymsLinkWithSourceAndFolderMoved_FindsTheModOfThatSource()
+	public void Resolve_HomonymsLinkWithSource_FindsTheModOfThatSource_IgnoringAFolder()
 	{
-		// The custom map was linked; the Workshop mod has the same folder name.
+		// The custom map was linked; the Workshop mod has the same folder name. A "folder" (older files) is not read.
 		this.AddWorkshopMod("1949340853", "shadowchampions");
 		var customMap = this.AddCustomMap("shadowchampions");
 		File.WriteAllText(this.LinkFile, """{ "version": 1, "mod": "shadowchampions", "source": "custommaps", "folder": "D:\\gone\\shadowchampions" }""");

@@ -98,17 +98,11 @@ public class ModLinkService(
 		if (link is null)
 			return CharacterMod.Unlinked;
 
-		// The folder where it was linked first; else its name and source.
-		if (this.GetInstalledMods().FirstOrDefault(m => link.Folder is not null && this.SameFolder(m.Folder, link.Folder)) is { } linked)
-			return new CharacterMod(CharacterModState.Linked, linked, link);
-
+		// Its name and source make the mod, wherever it is installed (another Steam library, another computer).
 		return this.FindMod(ModIdentity.Compose(link.Mod, link.Source)) is { } mod
 			? new CharacterMod(CharacterModState.Linked, mod, link)
 			: new CharacterMod(CharacterModState.LinkedModMissing, null, link);
 	}
-
-	private bool SameFolder(string a, string b)
-		=> string.Equals(Path.TrimEndingDirectorySeparator(a), Path.TrimEndingDirectorySeparator(b), StringComparison.OrdinalIgnoreCase);
 
 	/// <inheritdoc/>
 	public ModLinkResult Link(string saveFolder, InstalledMod installedMod)
@@ -117,7 +111,6 @@ public class ModLinkService(
 		{
 			Mod = installedMod.Name,
 			Source = installedMod.SourceKey,
-			Folder = installedMod.Folder,
 			LinkedUtc = DateTime.UtcNow,
 		};
 
