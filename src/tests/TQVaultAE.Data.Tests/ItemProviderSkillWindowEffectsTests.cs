@@ -68,4 +68,28 @@ public class ItemProviderSkillWindowEffectsTests : ItemProviderTextTestBase
 		// The total was multiplied by the last level's duration (3 s) at every level.
 		=> this.Effects(level, Float("offensiveSlowFireMin", 10f), Floats("offensiveSlowFireDurationMin", 2f, 3f))
 			.Should().Equal(shown);
+
+	[Fact]
+	public void Modifier_WritesTheLifeTimeItAdds()
+		// Lasting Legacy, a modifier of Ancestral Horn, has only spawnObjectsTimeToLive: its blocks were empty.
+		=> this.Effects(2, Floats("spawnObjectsTimeToLive", 4f, 7f)).Should().Equal("Extra Life Time 7 Seconds");
+
+	[Theory]
+	[InlineData(1, "40 Fire Damage", "41 Cold Damage", "42 Lightning Damage")]
+	[InlineData(2, "54 Fire Damage", "55 Cold Damage", "56 Lightning Damage")]
+	public void SkillCastOnDamageType_ShowsTheChance_AndTheDamageOfEachCastSkill(int level, string fire, string cold, string lightning)
+	{
+		// Echoes of the Ancestors casts a fire, cold or lightning blast on a kill: its blocks were empty.
+		this.CreateRecord("""records\test\fire.dbr""", "Skill_AttackRadius", Floats("offensiveFireMin", 40f, 54.6f));
+		this.CreateRecord("""records\test\cold.dbr""", "Skill_AttackRadius", Floats("offensiveColdMin", 41f, 55f));
+		this.CreateRecord("""records\test\lightning.dbr""", "Skill_AttackRadius", Floats("offensiveLightningMin", 42f, 56f));
+		this.CreateRecord(SkillId, "Skill_PassiveOnTargetKilled", Str("skillDisplayName", "tagSkillTest"), Floats("skillCastChance", 33f, 33f),
+			Str("skillNameCastOnDamage_Fire", """records\test\fire.dbr"""), Str("skillNameCastOnDamage_Cold", """records\test\cold.dbr"""),
+			Str("skillNameCastOnDamage_Lightning", """records\test\lightning.dbr"""));
+
+		var skill = this.Provider.GetSkillAtLevel(SkillId, level, SkillWindowContext.None);
+
+		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).Should().Equal(
+			"33.0% Chance to be Used", string.Empty, "Chance for one of the following:", fire, cold, lightning);
+	}
 }

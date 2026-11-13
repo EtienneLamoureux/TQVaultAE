@@ -237,17 +237,18 @@ public partial class ItemProvider
 		var ownLines = costs.Select(c => (c.Variable, c.Text)).ToList();
 		var order = skillWindow ? new SkillWindowLines(ownLines) : null;
 
+		// "Extra Life Time 12 Seconds" (SpawnObjectsTimeToLive), one of the skill's parameters, which the skill window writes
+		// for any skill: a summon (before its attributes) or a modifier that lengthens its parent's summons (Lasting Legacy).
+		// The game's text has no value index ("{%.0f}"), unlike the others ("{%.0f0}").
+		float timeToLive = skillWindow ? ValueAtLevel(skillRecord["spawnObjectsTimeToLive"], level) : 0F;
+		if (timeToLive > 0 && TranslationService.TryTranslateXTag("SpawnObjectsTimeToLive", out var lifeTime))
+			ownLines.Add(("spawnObjectsTimeToLive", Format(ItemAttributeProvider.ConvertFormat(lifeTime.Replace("{%.0f}", "{%.0f0}", StringComparison.Ordinal)), timeToLive)));
+
 		// Summons: Skill_SpawnPet, and the projectiles that place one (Skill_AttackProjectileSpawnPet: Lay Trap, Sylvan Nymph).
 		if (skillRecord.GetString("Class", 0).EndsWith("SpawnPet", StringComparison.OrdinalIgnoreCase))
 		{
 			if (skillWindow)
 			{
-				// "Extra Life Time 12 Seconds" (SpawnObjectsTimeToLive), before the summon's attributes; the game's text has
-				// no value index ("{%.0f}"), unlike the others ("{%.0f0}").
-				float timeToLive = ValueAtLevel(skillRecord["spawnObjectsTimeToLive"], level);
-				if (timeToLive > 0 && TranslationService.TryTranslateXTag("SpawnObjectsTimeToLive", out var lifeTime))
-					ownLines.Add(("spawnObjectsTimeToLive", Format(ItemAttributeProvider.ConvertFormat(lifeTime.Replace("{%.0f}", "{%.0f0}", StringComparison.Ordinal)), timeToLive)));
-
 				this.GetAttributesFromRecord(itm, skillRecord, true, skillId, attributes, skillLevelIndex: level - 1, hiddenVariables: ownHidden, skillWindow: order);
 			}
 
@@ -270,6 +271,8 @@ public partial class ItemProvider
 		// the chance and the cast skill, with its effects at its own level. Its description stands in for a missing one.
 		if (this.GetCastSkill(itm, skillRecord, level, levelFormat, attributes) is { Length: > 0 } castDescription && description.Length == 0)
 			description = castDescription;
+
+		this.GetCastOnDamageType(skillRecord, level, attributes);
 
 		// The lines the character's modifiers changed, which the next level repeats.
 		var effects = TrimEmptyLines(attributes);
@@ -341,7 +344,7 @@ public partial class ItemProvider
 				attributes.Add($"{text}{Format(ItemAttributeProvider.ConvertFormat(chanceOfAll), chance)}");
 		}
 		else if (chance > 0 && TranslationService.TryTranslateXTag("ChanceOfTag", out var chanceFormat))
-			attributes.Add($"{text}{Format(ItemAttributeProvider.ConvertFormat(chanceFormat), chance)}{name}{castName}");
+			attributes.Add($"{text}{Format(ItemAttributeProvider.ConvertFormat(chanceFormat), chance)} {name}{castName}");
 		else
 			attributes.Add($"{name}{castName}");
 
@@ -354,6 +357,47 @@ public partial class ItemProvider
 			attributes.Add($"{text}{onTarget}");
 		this.GetAttributesFromRecord(itm, castRecord, true, castId, attributes, skillLevelIndex: castLevel - 1);
 		return this.GetSkillDescription(castRecord);
+	}
+
+	/// <summary>
+	/// The skills cast on a kill according to the damage type of the killing blow (<c>skillNameCastOnDamage_Fire</c>,
+	/// <c>_Cold</c>, <c>_Lightning</c>: Echoes of the Ancestors), as the game's skill window writes them: the chance to be
+	/// used, then "Chance for one of the following:" and the fire, cold and lightning damage of those skills at the
+	/// level, in whole numbers. Nothing at a level without a chance.
+	/// </summary>
+	private void GetCastOnDamageType(DBRecordCollection skillRecord, int level, List<string> attributes)
+	{
+		float chance = ValueAtLevel(skillRecord["skillCastChance"], level);
+		if (chance <= 0)
+			return;
+
+		var text = ItemStyle.Mundane.TQColor().ColorTag();
+		var damages = new List<string>();
+		foreach (var type in (string[])["Fire", "Cold", "Lightning"])
+		{
+			var castId = skillRecord.GetString($"skillNameCastOnDamage_{type}", 0).ToRecordId();
+			if (RecordId.IsNullOrEmpty(castId) || Database.GetRecordFromFile(castId)?[$"offensive{type}Min"] is not { } damage)
+				continue;
+
+			// The value at the level, none past the last one.
+			int value = level <= damage.NumberOfValues ? (int)damage.GetSingle(level - 1) : 0;
+			if (value > 0 && TranslationService.TryTranslateXTag($"Damage{type}", out var label))
+				damages.Add($"{text}{value.ToString(CultureInfo.CurrentCulture)} {label}");
+		}
+
+		if (damages.Count == 0)
+			return;
+
+		// A skill that also casts a named skill writes its chance with that skill (GetCastSkill).
+		if (string.IsNullOrEmpty(skillRecord.GetString("skillCastName", 0))
+			&& TranslationService.TryTranslateXTag("SkillChanceWeightFloat", out var chanceFormat))
+			attributes.Add($"{text}{Format(ItemAttributeProvider.ConvertFormat(chanceFormat), chance)}");
+
+		attributes.Add(string.Empty);
+		if (TranslationService.TryTranslateXTag("GlobalChanceOfOneTag", out var oneOf))
+			attributes.Add($"{text}{oneOf}");
+
+		attributes.AddRange(damages);
 	}
 
 	/// <summary>The value of a skill parameter at a level: one value per level, the last one beyond.</summary>
