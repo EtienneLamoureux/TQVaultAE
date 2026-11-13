@@ -147,6 +147,11 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
 
 		#region Font, Scaling, Translate, BackGround
 
+		// The window took the user's zoom before the panel was made: the designed layout gets it too, before the sizes
+		// below are measured with fonts that already have it (FontZoom). Windows Forms adds the DPI by itself.
+		if (UIService.Zoom != 1F)
+			this.Scale(new SizeF(UIService.Zoom, UIService.Zoom));
+
 		this.RenderBackgrounds();
 		this.SizeChanged += (_, _) => this.RenderBackgrounds();
 		tableLayoutPanelForge.SizeChanged += (_, _) => this.RenderBackgrounds();
