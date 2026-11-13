@@ -8,6 +8,7 @@
 /// </summary>
 
 using TQVaultAE.Application;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.GUI.Components.Scaling;
@@ -327,6 +328,7 @@ public partial class VaultForm
 		float scale = this.UIService?.Scale ?? 1.0F;
 		var small = new Size((int)Math.Round(CaptionButtonSize * scale), (int)Math.Round(CaptionButtonSize * scale));
 		this.buttonClose.Size = new Size((int)Math.Round(CloseButtonSize * scale), (int)Math.Round(CloseButtonSize * scale));
+		this.DrawCloseButton();
 		this.buttonMaximize.Size = this.ButtonScaleTo1.Size = this.buttonMinimize.Size = small;
 
 		this.buttonClose.Text = Resources.GlobalClose;
@@ -353,6 +355,34 @@ public partial class VaultForm
 			button.Location = new Point(right - gap - button.Width, this.ClientRectangle.Top);
 			right = button.Left;
 		}
+	}
+
+	/// <summary>The size the close button's pictures were drawn at; 0 before the first drawing.</summary>
+	private int closeButtonArtSize;
+
+	/// <summary>
+	/// Draws the close button's pictures at the size it is shown (<see cref="CloseButtonArt"/>), so it stays sharp at
+	/// any zoom and screen DPI; again only when that size changes.
+	/// </summary>
+	private void DrawCloseButton()
+	{
+		int size = this.buttonClose.Width;
+		if (size <= 0 || size == this.closeButtonArtSize)
+			return;
+
+		var old = this.closeButtonArtSize == 0 ? null : new[] { this.buttonClose.UpBitmap, this.buttonClose.OverBitmap, this.buttonClose.DownBitmap };
+		this.buttonClose.UpBitmap = CloseButtonArt.Render(size, CloseButtonArt.State.Up);
+		this.buttonClose.OverBitmap = CloseButtonArt.Render(size, CloseButtonArt.State.Over);
+		this.buttonClose.DownBitmap = CloseButtonArt.Render(size, CloseButtonArt.State.Down);
+		var shown = this.buttonClose.Image;
+		this.buttonClose.Image = shown == old?[1] ? this.buttonClose.OverBitmap
+			: shown == old?[2] ? this.buttonClose.DownBitmap
+			: this.buttonClose.UpBitmap;
+		this.closeButtonArtSize = size;
+
+		if (old is not null)
+			foreach (var bitmap in old)
+				bitmap?.Dispose();
 	}
 
 	/// <summary>How far the resize grips reach past the side and bottom border pictures.</summary>
