@@ -312,7 +312,7 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 			this.colorToolStripMenuItem.ForeColor =
 			this.contextMenuStrip.ForeColor = Theme.MenuText;
 
-			this.contextMenuStrip.Renderer = new CustomProfessionalRenderer();
+			CustomProfessionalRenderer.Apply(this.contextMenuStrip);
 			//this.contextMenuStrip.Opacity = 0.8D;
 
 			this.DropDown = new ComboBoxCharacterDropDown()

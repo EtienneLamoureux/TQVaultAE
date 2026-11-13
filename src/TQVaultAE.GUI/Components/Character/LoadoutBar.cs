@@ -85,8 +85,10 @@ public sealed class LoadoutBar : Control
 		this.BackColor = Color.Black;
 		this.ForeColor = Color.White;
 
-		this.ListMenu = new ContextMenuStrip { Renderer = new CustomProfessionalRenderer(), ForeColor = Theme.MenuText, ShowCheckMargin = true, ShowImageMargin = false };
-		this.ActionMenu = new ContextMenuStrip { Renderer = new CustomProfessionalRenderer(), ForeColor = Theme.MenuText };
+		this.ListMenu = new ContextMenuStrip { ShowCheckMargin = true, ShowImageMargin = false };
+		this.ActionMenu = new ContextMenuStrip { ShowImageMargin = false };
+		CustomProfessionalRenderer.Apply(this.ListMenu);
+		CustomProfessionalRenderer.Apply(this.ActionMenu);
 		this.ListMenu.ItemClicked += (_, e) =>
 		{
 			if (e.ClickedItem?.Tag is string name)
@@ -345,7 +347,8 @@ public sealed class LoadoutBar : Control
 		bool canLoad = this.CanAct(LoadoutBarAction.Load);
 		var load = this.LoadBounds;
 		this.DrawPicture(g, !canLoad ? ButtonDisabled : this._pressed == Part.Load ? ButtonDown : this._hovered == Part.Load ? ButtonOver : ButtonUp, load);
-		TextRenderer.DrawText(g, Resources.LoadoutLoad, font, load, canLoad ? Color.White : Disabled
+		// The text of the gold buttons, as on the Edit button.
+		TextRenderer.DrawText(g, Resources.LoadoutLoad, font, load, canLoad ? Theme.ButtonText : Disabled
 			, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine);
 	}
 
