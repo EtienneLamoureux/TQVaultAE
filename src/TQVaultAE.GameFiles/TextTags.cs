@@ -37,4 +37,14 @@ public static partial class TextTags
 		ArgumentNullException.ThrowIfNull(text);
 		return RemoveColorTags(LineBreak().Replace(text, _ => newLine));
 	}
+
+	/// <summary>
+	/// The lines of a game text, split at its line breaks (<c>{^n}</c>, <c>^n</c>); colour codes stay in the lines. Two
+	/// breaks in a row give an empty line.
+	/// </summary>
+	public static string[] SplitLines(string text)
+	{
+		ArgumentNullException.ThrowIfNull(text);
+		return LineBreak().Split(text);
+	}
 }

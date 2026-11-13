@@ -21,6 +21,15 @@ public sealed class TextTagsTests
 		=> TextTags.ToPlainText(raw).Should().Be(expected);
 
 	[Fact]
+	public void SplitLines_SplitsAtBothLineBreakForms_KeepingTheColors()
+		=> TextTags.SplitLines("Deal damage around you.{^n}{^Y}Can trigger.^nLast{^N}{^N}After")
+			.Should().Equal("Deal damage around you.", "{^Y}Can trigger.", "Last", "", "After");
+
+	[Fact]
+	public void SplitLines_TextWithoutBreak_IsOneLine()
+		=> TextTags.SplitLines("No break").Should().Equal("No break");
+
+	[Fact]
 	public void ToPlainText_UsesTheGivenLineBreak()
 		=> TextTags.ToPlainText("Satyr{^n}Hunter", " ").Should().Be("Satyr Hunter");
 

@@ -113,7 +113,7 @@ public sealed class SkillTooltipContentBuilder(ICharacterEditService editService
 		if (skill is null)
 		{
 			lines.Add(new SkillTipLine(this._translation.TranslateOr(tree.NameTag, tree.Mastery.ToString()), SkillTipKind.Title));
-			lines.Add(new SkillTipLine(this.Description(tree.DescriptionTag), SkillTipKind.Text, Wrap: true));
+			lines.AddRange(this.Description(tree.DescriptionTag));
 			if (masteryLevel > 0)
 				Level("tagCurrentLevel", "Current Level : {%d0}", tree.Id, masteryLevel);
 			if (masteryLevel < tree.MaxLevel)
@@ -141,7 +141,7 @@ public sealed class SkillTooltipContentBuilder(ICharacterEditService editService
 		// them even beyond the ultimate level (Call of the Wild 15 + 6: the wolves dodge as at +6).
 		context = this.SkillContext(skills, tree, skill, augments, points > 0 ? bonus.Total : 0, cooldownReduction(), difficulty);
 		lines.Add(new SkillTipLine(this._translation.TranslateOr(skill.NameTag, skill.Id.PrettyFileName), SkillTipKind.Title));
-		lines.Add(new SkillTipLine(this.Description(skill.DescriptionTag), SkillTipKind.Text, Wrap: true));
+		lines.AddRange(this.Description(skill.DescriptionTag));
 		if (current > 0)
 			Level("tagCurrentLevel", "Current Level : {%d0}", skill.Id, current);
 		if (hasNext)
@@ -180,15 +180,37 @@ public sealed class SkillTooltipContentBuilder(ICharacterEditService editService
 		=> CharacterPanelLayout.FormatGameText(this._translation.TranslateOr(tag, fallback, removeAllTQTags: false), values);
 
 	/// <summary>
-	/// A description as the skill window writes it: with its colours ("{^y}Assign this skill to your left mouse button."),
-	/// without the other tags.
+	/// A description as the skill window writes it: with its colours, one wrapped line per line of the text, as its line
+	/// breaks (<c>{^n}</c>) split it ("...around you.", "{^Y}Can trigger on enemy death."). A colour goes on to the next
+	/// line until another one replaces it; two breaks in a row leave an empty line.
 	/// </summary>
-	private string Description(string? tag)
+	private IEnumerable<SkillTipLine> Description(string? tag)
 	{
 		if (string.IsNullOrEmpty(tag) || this._translation.TranslateXTag(tag) is not { Length: > 0 } text)
-			return string.Empty;
+		{
+			yield return new SkillTipLine(string.Empty, SkillTipKind.Text, Wrap: true);
+			yield break;
+		}
 
-		return text.Replace("{^n}", string.Empty, StringComparison.OrdinalIgnoreCase);
+		var parts = TQVaultAE.GameFiles.TextTags.SplitLines(text).Select(p => p.TrimEnd()).ToList();
+		while (parts.Count > 1 && parts[^1].Length == 0)
+			parts.RemoveAt(parts.Count - 1);
+
+		char? color = null;
+		foreach (var part in parts)
+		{
+			if (part.Length == 0)
+			{
+				yield return SkillTipLine.Blank;
+				continue;
+			}
+
+			var runs = part.SplitColorRuns(bareTags: true);
+			var shown = color is { } carried && runs is [{ Code: null }, ..] ? $"{{^{carried}}}{part}" : part;
+			yield return new SkillTipLine(shown, SkillTipKind.Text, Wrap: true);
+			if (runs is [.., { Code: { } last }])
+				color = last;
+		}
 	}
 
 	/// <summary>

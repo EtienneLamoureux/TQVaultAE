@@ -194,6 +194,49 @@ public class SkillTooltipContentBuilderTests
 			new SkillTipLine(Resources.CESkillPaneHint, SkillTipKind.Hint, Wrap: true));
 	}
 
+	/// <summary>Ice Shard with a description; its effects as <see cref="DescribeIceShard"/>.</summary>
+	private MasterySkill DescribedIceShard(string description)
+	{
+		this.DescribeIceShard();
+		this._translation.Setup(t => t.TranslateXTag("tagIceShardDesc", false, false, false)).Returns(description);
+		return Storm.Skills[0] with { DescriptionTag = "tagIceShardDesc" };
+	}
+
+	[Fact]
+	public void Description_LineBreak_StartsANewWrappedLine()
+	{
+		// Arrange: Echoes of the Ancestors' description, its yellow sentence after a line break.
+		var skill = this.DescribedIceShard("Upon vanquishing enemies, blast waves deal damage around you.{^n}{^Y}Can trigger on enemy death.");
+
+		// Act
+		var lines = this.Build(Editor(masteryLevel: 10, iceShard: 0, points: 5), skill);
+
+		// Assert
+		lines.Skip(1).Take(3).Should().Equal(
+			new SkillTipLine("Upon vanquishing enemies, blast waves deal damage around you.", SkillTipKind.Text, Wrap: true),
+			new SkillTipLine("{^Y}Can trigger on enemy death.", SkillTipKind.Text, Wrap: true),
+			SkillTipLine.Blank);
+	}
+
+	[Fact]
+	public void Description_ColorGoesOnAfterALineBreak_AndTwoBreaksLeaveAnEmptyLine()
+	{
+		// Arrange
+		var skill = this.DescribedIceShard("{^y}First line. {^n}Still yellow.{^n}{^n}{^w}White.{^n}");
+
+		// Act
+		var lines = this.Build(Editor(masteryLevel: 10, iceShard: 0, points: 5), skill);
+
+		// Assert: the trailing break adds nothing before the blank of the next level.
+		lines.Skip(1).Take(6).Should().Equal(
+			new SkillTipLine("{^y}First line.", SkillTipKind.Text, Wrap: true),
+			new SkillTipLine("{^Y}Still yellow.", SkillTipKind.Text, Wrap: true),
+			SkillTipLine.Blank,
+			new SkillTipLine("{^w}White.", SkillTipKind.Text, Wrap: true),
+			SkillTipLine.Blank,
+			new SkillTipLine("Next Level : 1", SkillTipKind.Level));
+	}
+
 	[Fact]
 	public void EmptySlot_HasNoToolTip()
 		=> this._builder.Build(Editor(masteryLevel: 10, iceShard: 1, points: 5), 1, null, [], () => 0, 0).Should().BeEmpty();
