@@ -3,6 +3,8 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using TQVaultAE.Config;
+using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Automation;
 using TQVaultAE.GUI.Components.Buttons;
 
@@ -82,6 +84,13 @@ public partial class VaultPanel
 		this.contextMenu.Items.Clear();
 		this.AutoSortButtonClick(button, new MouseEventArgs(MouseButtons.Right, 1, button.Width / 2, button.Height / 2, 0));
 		return AutomationMenus.Render(this.contextMenu, []);
+	}
+
+	/// <summary>The key under which the sort button of <paramref name="target"/> keeps its own order, and the order a left click uses.</summary>
+	internal (SortButtonKey Key, SackSortAlgorithm Algorithm) AutomationSortOrder(SackPanel target)
+	{
+		var button = this.SortButtonOf(target);
+		return (this.SortKey(button), this.SortAlgorithmOf(button));
 	}
 
 	/// <summary>Left-clicks the sort button of <paramref name="target"/> after the calling tool has returned (a failed sort shows a message).</summary>

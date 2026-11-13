@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using TQVaultAE.Application;
+using TQVaultAE.Config;
 using TQVaultAE.GUI.Components.Buttons;
 using TQVaultAE.Presentation.Win32;
 
@@ -172,4 +173,8 @@ public class PlayerPanel : VaultPanel
 	/// </summary>
 	protected override SackPanel SortTarget(AutoSortButton button)
 		=> button.ButtonNumber == 0 ? this.mainSackPanel : this.BagSackPanel;
+
+	/// <summary>Each sort button keeps its own order: button 0 the main inventory's, button 1 the bags'.</summary>
+	protected override SortButtonKey SortKey(AutoSortButton button)
+		=> button.ButtonNumber == 0 ? SortButtonKey.Player : SortButtonKey.PlayerBag;
 }

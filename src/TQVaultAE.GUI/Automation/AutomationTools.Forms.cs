@@ -197,7 +197,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "sort_menu", Destructive = true)]
-	[Description("Right-clicks the sort button of a panel like the user and returns its menu (one entry per sort order, the order a left click uses checked), then closes it. With path (e.g. 'Sort by required level'), clicks that entry after this call returns: it becomes the order of the left click (saved in UserConfig.xml, <Sort Algorithm=... />) and sorts the panel's bag at once. Also returns the saved sort choices.")]
+	[Description("Right-clicks the sort button of a panel like the user and returns its menu (one entry per sort order, the order a left click on this button uses checked), then closes it. With path (e.g. 'Sort by required level'), clicks that entry after this call returns: it becomes the order of this button's left click only (saved in UserConfig.xml as the button's attribute, <Sort Vault=... />) and sorts the panel's bag at once. Also returns this button's sort choices as they were before the click.")]
 	public static string SortMenu(
 		[Description("Panel id with a sort button: vault, secondaryVault, player (main inventory), playerBag or stash (the shown transfer, storage or relic tab; refused on the equipment tab, where the button is hidden).")] string panel,
 		[Description("Entry to click; empty to only read the menu.")] string? path = null)
@@ -208,7 +208,7 @@ internal static partial class AutomationTools
 			try
 			{
 				var (entries, clicked) = container.AutomationSortMenu(named.Panel, path?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
-				return Serialize(new { panel, entries, clicked, sort = SortChoices(form) });
+				return Serialize(new { panel, entries, clicked, sort = SortChoices(form, container, named.Panel) });
 			}
 			catch (InvalidOperationException ex)
 			{
@@ -217,7 +217,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "sort_click", Destructive = true)]
-	[Description("Left-clicks the sort button of a panel like the user: sorts the shown bag with the order picked in sort_menu (each click alternates rows and columns), merging relic and charm shards first when the 'Merge relic shards when sorting' setting is on. The click runs after this call returns (a sort that does not fit shows a message, see dialog_answers): read the result with list_items.")]
+	[Description("Left-clicks the sort button of a panel like the user: sorts the shown bag with the order picked in this button's sort_menu (each click alternates rows and columns), merging relic and charm shards first when the 'Merge relic shards when sorting' setting is on. The click runs after this call returns (a sort that does not fit shows a message, see dialog_answers): read the result with list_items. Returns the order used.")]
 	public static string SortClick(
 		[Description("Panel id with a sort button: vault, secondaryVault, player (main inventory), playerBag or stash (the shown transfer, storage or relic tab; refused on the equipment tab, where the button is hidden).")] string panel)
 		=> AutomationHost.OnUi(form =>
@@ -226,8 +226,9 @@ internal static partial class AutomationTools
 			var container = named.Container ?? throw new McpException($"Panel '{panel}' has no sort button.");
 			try
 			{
+				var sort = SortChoices(form, container, named.Panel);
 				container.AutomationSortClickLater(named.Panel);
-				return Serialize(new { panel, queued = true, sort = SortChoices(form) });
+				return Serialize(new { panel, queued = true, sort });
 			}
 			catch (InvalidOperationException ex)
 			{
@@ -235,9 +236,23 @@ internal static partial class AutomationTools
 			}
 		});
 
-	/// <summary>The saved sort choices: the order of the left click and the shard merge.</summary>
-	private static object SortChoices(Forms.MainForm form)
-		=> new { algorithm = form.AutomationSettings.Sort?.Algorithm.ToString(), mergeRelics = form.AutomationSettings.Sort?.MergeRelics };
+	/// <summary>
+	/// The sort choices of the sort button of <paramref name="target"/>: its key, the order of its left click, whether that
+	/// order is its own (else the default <c>Algorithm</c>), the default, and the shard merge.
+	/// </summary>
+	private static object SortChoices(Forms.MainForm form, Components.Panels.VaultPanel container, Components.Panels.SackPanel target)
+	{
+		var (key, algorithm) = container.AutomationSortOrder(target);
+		var sort = form.AutomationSettings.Sort;
+		return new
+		{
+			key = key.ToString(),
+			algorithm = algorithm.ToString(),
+			own = sort?.HasOwnAlgorithm(key) ?? false,
+			defaultAlgorithm = sort?.Algorithm.ToString(),
+			mergeRelics = sort?.MergeRelics,
+		};
+	}
 
 	[McpServerTool(Name = "vault_menu", Destructive = true)]
 	[Description("Returns the menu of the vault tools button next to the vault list (maintain vault files, Modded vault, share, import) as it opens for the shown vault. With path (' > ' between levels, e.g. 'Modded vault > shadowchampions'), clicks that entry after this call returns, since it may open a dialog.")]

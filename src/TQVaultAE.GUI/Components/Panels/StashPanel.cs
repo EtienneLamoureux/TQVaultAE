@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Config;
 using TQVaultAE.GUI.Components.Buttons;
 using TQVaultAE.GUI.Components.Layout;
 using TQVaultAE.GUI.Components.Scaling;
@@ -526,6 +527,12 @@ public partial class StashPanel : VaultPanel, IScalingControl
 			this.AutoSortButtons[0].Visible = this.currentBag != BagIdConstants.BAGID_EQUIPMENTPANEL
 				&& this.GetBagSack(this.currentBag) is not null;
 	}
+
+	/// <summary>
+	/// The one sort button of the stash keeps one order for the transfer area, the storage area and the relic vault: the
+	/// user sees one button, and its menu would otherwise check another order at each tab change.
+	/// </summary>
+	protected override SortButtonKey SortKey(AutoSortButton button) => SortButtonKey.Stash;
 
 	/// <summary>
 	/// Gets the sack shown by a bag of this panel.

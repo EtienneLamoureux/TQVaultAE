@@ -27,9 +27,9 @@ namespace TQVaultAE.GUI.Components.Panels;
 public partial class SackPanel : Panel, IScalingControl
 {
 	/// <summary>
-	/// Sorts the items in the sack by size
+	/// Sorts the items in the sack in <paramref name="algorithm"/>'s order, the one of the sort button clicked.
 	/// </summary>
-	public void Autosort()
+	public void Autosort(SackSortAlgorithm algorithm)
 	{
 		// Check to see if something is picked up.
 		if (this.DragInfo.IsActive)
@@ -45,9 +45,9 @@ public partial class SackPanel : Panel, IScalingControl
 		// Toggle sorting direction.
 		this.sortVertical = !this.sortVertical;
 
-		// The order picked in the sort button's menu, and the shard merge of the settings.
-		var sort = this.USettings.Sort ?? new SortSettings();
-		var result = this.Services.ItemSortService.Sort(this.ShownSack, this.SackSize, this.sortVertical, sort.Algorithm, sort.MergeRelics);
+		// The order of the sort button clicked, and the shard merge of the settings.
+		var mergeRelics = this.USettings.Sort?.MergeRelics ?? false;
+		var result = this.Services.ItemSortService.Sort(this.ShownSack, this.SackSize, this.sortVertical, algorithm, mergeRelics);
 		if (result.ReadOnly)
 		{
 			this.sortVertical = !this.sortVertical;

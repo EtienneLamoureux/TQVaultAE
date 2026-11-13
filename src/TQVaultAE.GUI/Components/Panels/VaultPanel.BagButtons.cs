@@ -14,6 +14,7 @@ using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
+using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components.Buttons;
 using TQVaultAE.GUI.Dialogs;
@@ -194,7 +195,7 @@ public partial class VaultPanel
 			return;
 
 		if (e.Button == MouseButtons.Left)
-			this.SortTarget(button).Autosort();
+			this.SortTarget(button).Autosort(this.SortAlgorithmOf(button));
 		else if (e.Button == MouseButtons.Right)
 			this.ShowSortMenu(button, e.Location);
 	}
@@ -205,17 +206,32 @@ public partial class VaultPanel
 	/// </summary>
 	protected virtual SackPanel SortTarget(AutoSortButton button) => this.BagSackPanel;
 
+	/// <summary>
+	/// The key under which a sort button keeps its own order: the vault or the secondary vault here, the main inventory
+	/// or the bags for the player panel, one key for the stash panel's button whatever tab it shows.
+	/// </summary>
+	protected virtual SortButtonKey SortKey(AutoSortButton button)
+		=> this.AutoMoveLocation == AutoMoveLocation.SecondaryVault ? SortButtonKey.SecondaryVault : SortButtonKey.Vault;
+
+	/// <summary>The order a left click on <paramref name="button"/> sorts with, the one its menu checks.</summary>
+	protected SackSortAlgorithm SortAlgorithmOf(AutoSortButton button)
+		=> (this.USettings.Sort ?? new SortSettings()).AlgorithmFor(this.SortKey(button));
+
 	/// <summary>The sack the open sort menu sorts.</summary>
 	private SackPanel? sortMenuTarget;
 
+	/// <summary>The key of the sort button whose menu is open.</summary>
+	private SortButtonKey sortMenuKey;
+
 	/// <summary>
-	/// Opens the sort menu of a sort button: one entry per order, the one a left click uses checked. Picking an entry
-	/// keeps it for the next clicks and sorts at once (<see cref="ContextMenuItemClicked"/>).
+	/// Opens the sort menu of a sort button: one entry per order, the one a left click on this button uses checked.
+	/// Picking an entry keeps it for this button's next clicks and sorts at once (<see cref="ContextMenuItemClicked"/>).
 	/// </summary>
 	private void ShowSortMenu(AutoSortButton button, Point location)
 	{
 		this.sortMenuTarget = this.SortTarget(button);
-		var current = this.USettings.Sort?.Algorithm ?? SackSortAlgorithm.Normal;
+		this.sortMenuKey = this.SortKey(button);
+		var current = this.SortAlgorithmOf(button);
 
 		this.contextMenu.Items.Clear();
 		this.contextMenu.ShowCheckMargin = true;
@@ -238,8 +254,8 @@ public partial class VaultPanel
 	];
 
 	/// <summary>
-	/// A sort menu entry was picked: it becomes the order of the left click (saved in the settings), and the sack is
-	/// sorted with it.
+	/// A sort menu entry was picked: it becomes the order of that button's left click (saved in the settings, the other
+	/// sort buttons keep theirs), and the sack is sorted with it.
 	/// </summary>
 	private void SortMenuPicked(SackSortAlgorithm algorithm)
 	{
@@ -247,13 +263,10 @@ public partial class VaultPanel
 		this.sortMenuTarget = null;
 
 		this.USettings.Sort ??= new SortSettings();
-		if (this.USettings.Sort.Algorithm != algorithm)
-		{
-			this.USettings.Sort.Algorithm = algorithm;
+		if (this.USettings.Sort.SetAlgorithm(this.sortMenuKey, algorithm))
 			this.USettings.Save();
-		}
 
-		target?.Autosort();
+		target?.Autosort(algorithm);
 	}
 
 	/// <summary>
