@@ -140,8 +140,12 @@ public sealed class LoadoutBar : Control
 	/// <param name="canChange">False for a character whose loadouts are only listed.</param>
 	public void ShowLoadouts(IReadOnlyList<string> names, string? selected, bool canChange)
 	{
+		selected = names.FirstOrDefault(n => string.Equals(n, selected, StringComparison.OrdinalIgnoreCase)) ?? (names.Count > 0 ? names[0] : null);
+		if (canChange == this.CanChange && selected == this.Selected && names.SequenceEqual(this.Names, StringComparer.Ordinal))
+			return;
+
 		this.Names = names;
-		this.Selected = names.FirstOrDefault(n => string.Equals(n, selected, StringComparison.OrdinalIgnoreCase)) ?? (names.Count > 0 ? names[0] : null);
+		this.Selected = selected;
 		this.CanChange = canChange;
 		this._toolTip.SetToolTip(this, canChange ? null : Resources.LoadoutReadOnly);
 		this.Invalidate();

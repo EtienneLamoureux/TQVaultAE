@@ -87,6 +87,10 @@ public partial class StashPanel
 		this._editButton!.Visible = this.USettings.AllowCharacterEdit;
 		this._loadoutBar!.Visible = true;
 
+		// The loadouts may have changed (read again) or the character turned read-only: the bar follows, drawn again
+		// only when it changes.
+		this.RefreshLoadouts();
+
 		if (DisplayPlayerInfoLastName == this.Player!.PlayerName)
 			return;
 
@@ -94,7 +98,6 @@ public partial class StashPanel
 		DisplayPlayerInfoLastName = this.Player.PlayerName;
 		this._statsView = null;
 		panel.Invalidate();
-		this.RefreshLoadouts();
 	}
 
 	/// <summary>
