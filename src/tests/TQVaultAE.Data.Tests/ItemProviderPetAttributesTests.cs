@@ -168,6 +168,29 @@ public class ItemProviderPetAttributesTests : ItemProviderTextTestBase
 	}
 
 	[Fact]
+	public void PetBonus_Header_IsATextLine_NotTheBonuses()
+	{
+		this.CreateRecord("""records\test\petbonus.dbr""", "PetBonus", Int("characterLife", 50));
+		var item = this.CreateItem("ArmorJewelry_Amulet", Str("petBonusName", """records\test\petbonus.dbr"""));
+
+		this.BaseTextLines(item).Should().Equal($"{StringHelper.TQNewLineTag}Bonus to All Pets:".RemoveAllTQTags()!.Trim());
+	}
+
+	[Fact]
+	public void SummonScroll_PetHeadings_AreTextLines_NotThePetStatisticsNorSkills()
+	{
+		this.CreateRecord(SpawnSkillId, "Skill_SpawnPet",
+			Int("petLimit", 3), Str("spawnObjects", PetId), Float("spawnObjectsTimeToLive", 30f));
+		this.CreateRecord(PetId, "Monster",
+			Str("description", "tagWolf"), Float("characterLife", 500f), Float("handHitDamageMin", 10f),
+			Str("skillName0", BiteId), Int("skillLevel0", 2));
+		this.CreateRecord(BiteId, "Skill_AttackWeapon", Str("skillDisplayName", "tagBite"), Floats("offensivePhysicalMin", 5f, 10f, 15f));
+		var scroll = this.CreateItem("OneShot_Scroll", Str("skillName", SpawnSkillId));
+
+		this.BaseTextLines(scroll).Should().Equal("Wolf Attributes:", "Wolf Abilities:");
+	}
+
+	[Fact]
 	public void PetBonus_WithoutTranslation_OrRecord_ShowsAnEnglishHeaderOnly()
 	{
 		this.Translations.Remove("xtagPetBonusNameAllPets");

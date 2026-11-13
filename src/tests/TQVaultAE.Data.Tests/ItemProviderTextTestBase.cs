@@ -123,6 +123,13 @@ public abstract class ItemProviderTextTestBase
 	protected string[] BaseAttributes(Item item, bool filterExtra = true)
 		=> this.Provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes, filterExtra).BaseAttributes;
 
+	/// <summary>The base attribute lines (without tags, trimmed) marked as text, not attributes, in their order.</summary>
+	protected string[] BaseTextLines(Item item)
+	{
+		var names = this.Provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes, true);
+		return [.. names.BaseAttributes.Select(l => l.RemoveAllTQTags()!.Trim()).Where(names.IsTextLine)];
+	}
+
 	protected static Variable Int(string name, int value) => Ints(name, value);
 
 	protected static Variable Ints(string name, params int[] values)

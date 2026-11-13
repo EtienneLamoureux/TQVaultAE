@@ -322,6 +322,38 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 	}
 
 	[Fact]
+	public void GrantedSkill_HeaderAndDescription_AreTextLines_NotTheNameLevelOrEffects()
+	{
+		// The search lists attributes only: "Grants Skill :" and the description are no filter.
+		this.Settings.ShowSkillLevel = true;
+		this.Translations["tagSkillTestDescription"] = "Heals you and all of your allies for a long time, then heals you again.";
+		this.CreateRecord(ControllerId, "ItemSkillAutoController", Str("triggerType", "LowHealth"));
+		this.CreateRecord(SkillId, "Skill_BuffSelfDuration",
+			Str("skillDisplayName", "tagSkillTest"), Str("skillBaseDescription", "tagSkillTestDescription"), Ints("characterLife", 10, 20, 30));
+		var item = this.CreateItem("ArmorJewelry_Amulet",
+			Str("itemSkillName", SkillId), Str("itemSkillAutoController", ControllerId), Int("itemSkillLevel", 2));
+
+		this.BaseTextLines(item).Should().Equal(
+			"Grants Skill :",
+			"Heals you and all of your",
+			"allies for a long time, then",
+			"heals you again.");
+		this.BaseAttributes(item).Should().Contain([$"{Mundane}Test Skill (Activated on low health)", $"{Mundane}Level:   2", $"{Epic}+20 Health"]);
+	}
+
+	[Fact]
+	public void GrantedBuffSkill_Description_IsTextLines()
+	{
+		this.CreateRecord(ControllerId, "ItemSkillAutoController", Str("triggerType", "OnEquip"));
+		this.CreateRecord(SkillId, "Skill_BuffRadiusToggled", Str("buffSkillName", BuffId));
+		this.CreateRecord(BuffId, "SkillBuff_Passive",
+			Str("skillDisplayName", "tagSkillTest"), Str("skillBaseDescription", "tagSkillTestDescription"), Ints("characterLife", 10));
+		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSkillName", SkillId), Str("itemSkillAutoController", ControllerId));
+
+		this.BaseTextLines(item).Should().Equal("Grants Skill :", "Heals you.");
+	}
+
+	[Fact]
 	public void GrantedSkill_WithoutSkillLevelSetting_HidesTheLevel()
 	{
 		this.Settings.ShowSkillLevel = false;

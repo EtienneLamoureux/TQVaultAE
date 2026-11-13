@@ -304,6 +304,50 @@ public class SearchCategoryServiceTests
 		suffix.Single().DisplayValue.Should().Be("Of the Bear");
 	}
 
+	[Theory]
+	[InlineData(SearchCategory.BaseAttributes)]
+	[InlineData(SearchCategory.ItemAttributes)]
+	public void BuildCategory_Attributes_LeaveOutTextLines_KeepingTheAttributesUnderAHeader(SearchCategory category)
+	{
+		// A granted skill: its header and description lines are text, its name and effects are listed.
+		string[] lines = [
+			string.Empty,
+			"{^W}Grants Skill :",
+			"{^W}Healing Light (Activated on low health)",
+			"{^W}    Heals you and your allies",
+			"{^W}    for a short duration.",
+			"{^S}{^N}Bonus to All Pets:",
+			"{^Y}    +50 Health",
+		];
+		var item = Result(new Item(), f =>
+		{
+			f.BaseAttributes = lines;
+			f.MarkTextLine(lines[1]);
+			f.MarkTextLine(lines[3]);
+			f.MarkTextLine(lines[4]);
+			f.MarkTextLine(lines[5]);
+		});
+
+		var entries = this._service.BuildCategory(category, [item]);
+
+		entries.Select(e => e.DisplayValue).Should().BeEquivalentTo(["Healing Light (Activated on low health)", "+50 Health"]);
+	}
+
+	[Fact]
+	public void BuildCategory_Attributes_ATextLineOfOneItem_IsStillListedForAnotherItemHavingItAsAnAttribute()
+	{
+		var described = Result(new Item(), f =>
+		{
+			f.BaseAttributes = ["Fire Damage"];
+			f.MarkTextLine("Fire Damage");
+		});
+		var magical = Result(new Item(), f => f.BaseAttributes = ["{^Y}Fire Damage"]);
+
+		var entries = this._service.BuildCategory(SearchCategory.BaseAttributes, [described, magical]);
+
+		entries.Should().ContainSingle().Which.Results.Should().Equal(magical);
+	}
+
 	[Fact]
 	public void BuildCategory_Rarity_ListsEquipmentOnly()
 	{

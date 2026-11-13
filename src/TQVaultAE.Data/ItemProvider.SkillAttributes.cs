@@ -9,6 +9,18 @@ namespace TQVaultAE.Data;
 public partial class ItemProvider
 {
 	/// <summary>
+	/// Adds a line that is text, not an attribute: a line of a granted skill's description, or a header that only
+	/// introduces the lines below it. The tool tip shows it; the search does not list it as a filter
+	/// (<see cref="Domain.Results.ToFriendlyNameResult.IsTextLine"/>).
+	/// </summary>
+	private static void AddTextLine(Item itm, List<string> results, string line)
+	{
+		results.Add(line);
+		itm.CurrentFriendlyNameResult?.TmpAttrib.Add(line);
+		itm.CurrentFriendlyNameResult?.MarkTextLine(line);
+	}
+
+	/// <summary>
 	/// Gets the + to all skills string
 	/// </summary>
 	/// <param name="variableNumber">offset number of the variable value that we are using</param>
@@ -221,9 +233,7 @@ public partial class ItemProvider
 			if (!TranslationService.TryTranslateXTag("tagItemGrantSkill", out var skillTag))
 				skillTag = "Grants Skill :";
 
-			var value = $"{font?.ColorTag()}{skillTag}";
-			results.Add(value);
-			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(value);
+			AddTextLine(itm, results, $"{font?.ColorTag()}{skillTag}");
 
 			string? skillName = null;
 			string? nameTag = null;
@@ -511,11 +521,7 @@ public partial class ItemProvider
 								skillDescriptionList = StringHelper.WrapWords(skillDescription, lineLength);
 
 								foreach (string skillDescriptionFromList in skillDescriptionList)
-								{
-									var value = $"{ItemStyle.Mundane.TQColor().ColorTag()}    {skillDescriptionFromList}";
-									results.Add(value);
-									itm.CurrentFriendlyNameResult?.TmpAttrib.Add(value);
-								}
+									AddTextLine(itm, results, $"{ItemStyle.Mundane.TQColor().ColorTag()}    {skillDescriptionFromList}");
 
 								// Show granted skill level
 								if (this.USettings.ShowSkillLevel)
@@ -549,11 +555,7 @@ public partial class ItemProvider
 								skillDescription = TranslationService.TranslateXTag(descriptionTag);
 								skillDescriptionList = StringHelper.WrapWords(skillDescription, lineLength);
 								foreach (string skillDescriptionFromList in skillDescriptionList)
-								{
-									var value = $"{ItemStyle.Mundane.TQColor().ColorTag()}    {skillDescriptionFromList}";
-									results.Add(value);
-									itm.CurrentFriendlyNameResult?.TmpAttrib.Add(value);
-								}
+									AddTextLine(itm, results, $"{ItemStyle.Mundane.TQColor().ColorTag()}    {skillDescriptionFromList}");
 
 								// Show granted skill level
 								if (this.USettings.ShowSkillLevel)

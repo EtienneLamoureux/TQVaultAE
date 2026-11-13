@@ -840,8 +840,7 @@ public partial class ItemProvider
 					// We really only want to show the title once for the group.
 					if (displayDamageQualifierTitle)
 					{
-						results.Add(title);
-						itm.CurrentFriendlyNameResult?.TmpAttrib.Add(title);
+						AddTextLine(itm, results, title);
 						displayDamageQualifierTitle = false;
 					}
 
@@ -902,8 +901,14 @@ public partial class ItemProvider
 					if (itm.IsFormulae && normalizedFullAttribute.StartsWith("REAGENT", noCase))
 						line = line.InsertAfterColorPrefix(globalIndent);
 
-					results.Add(line);
-					itm.CurrentFriendlyNameResult?.TmpAttrib.Add(line);
+					// The pet bonus title only introduces the bonus lines below it.
+					if (normalizedFullAttribute == "PETBONUSNAME")
+						AddTextLine(itm, results, line);
+					else
+					{
+						results.Add(line);
+						itm.CurrentFriendlyNameResult?.TmpAttrib.Add(line);
+					}
 				}
 
 				// Added by VillageIdiot

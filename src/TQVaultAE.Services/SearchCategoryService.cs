@@ -115,19 +115,19 @@ public class SearchCategoryService(IItemProvider itemProvider, ITranslationServi
 				break;
 			case SearchCategory.ItemAttributes:
 				foreach (var r in items)
-					groups.AddClean(r.LoadedFriendlyNames.AttributesAll, r);
+					groups.AddAttributes(r.LoadedFriendlyNames.AttributesAll, r);
 				break;
 			case SearchCategory.BaseAttributes:
 				foreach (var r in items)
-					groups.AddClean(r.LoadedFriendlyNames.BaseAttributes, r);
+					groups.AddAttributes(r.LoadedFriendlyNames.BaseAttributes, r);
 				break;
 			case SearchCategory.PrefixAttributes:
 				foreach (var r in items)
-					groups.AddClean(r.LoadedFriendlyNames.PrefixAttributes, r);
+					groups.AddAttributes(r.LoadedFriendlyNames.PrefixAttributes, r);
 				break;
 			case SearchCategory.SuffixAttributes:
 				foreach (var r in items)
-					groups.AddClean(r.LoadedFriendlyNames.SuffixAttributes, r);
+					groups.AddAttributes(r.LoadedFriendlyNames.SuffixAttributes, r);
 				break;
 			case SearchCategory.PrefixName:
 				foreach (var r in items)
@@ -214,10 +214,22 @@ public class SearchCategoryService(IItemProvider itemProvider, ITranslationServi
 				this.AddIfNotEmpty(raw.RemoveAllTQTags().Trim(), result);
 		}
 
-		public void AddClean(string[] raws, SearchResult result)
+		/// <summary>
+		/// Adds the attribute lines of an item, each without its TQ tags and trimmed, leaving out empty ones and those
+		/// that are text, not attributes (a granted skill's description, a header): they are no filter.
+		/// </summary>
+		public void AddAttributes(string[] raws, SearchResult result)
 		{
+			var names = result.LoadedFriendlyNames;
 			foreach (var raw in raws)
-				this.AddClean(raw, result);
+			{
+				if (string.IsNullOrWhiteSpace(raw))
+					continue;
+
+				var clean = raw.RemoveAllTQTags().Trim();
+				if (!names.IsTextLine(clean))
+					this.AddIfNotEmpty(clean, result);
+			}
 		}
 
 		/// <summary>The values in their first appearance order.</summary>

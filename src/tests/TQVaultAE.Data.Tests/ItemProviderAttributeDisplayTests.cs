@@ -167,6 +167,18 @@ public class ItemProviderAttributeDisplayTests
 	}
 
 	[Fact]
+	public void DamageQualifiers_Title_IsATextLine_NotTheDamageTypes()
+	{
+		var item = this.CreateItem("ArmorProtective_UpperBody", Int("fireDamageQualifier", 1), Int("coldDamageQualifier", 1));
+
+		var names = this._provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes, true);
+
+		names.IsTextLine("Protects Against :").Should().BeTrue();
+		names.IsTextLine("Fire").Should().BeFalse();
+		names.IsTextLine("Cold").Should().BeFalse();
+	}
+
+	[Fact]
 	public void MissingLabelTranslation_ShowsTheTagBetweenQuestionMarks()
 	{
 		this._translations.Remove("characterLife");

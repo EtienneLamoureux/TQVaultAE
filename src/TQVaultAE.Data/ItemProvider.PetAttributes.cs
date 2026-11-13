@@ -77,8 +77,7 @@ public partial class ItemProvider
 
 			petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, petName);
 			var valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
-			results.Add(valueStr);
-			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
+			AddTextLine(itm, results, valueStr);
 
 			// Time to live: 0 is a permanent pet, which has no life time line.
 			float timeToLive = skillRecord.GetSingle("spawnObjectsTimeToLive", levelIndex("spawnObjectsTimeToLive"));
@@ -134,8 +133,7 @@ public partial class ItemProvider
 
 			petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, petName);
 			valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
-			results.Add(valueStr);
-			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
+			AddTextLine(itm, results, valueStr);
 
 			// Show Physical Damage; the skill window leaves it out (its pets show their "Basic Attack" skill instead).
 			value = petRecord.GetSingle("handHitDamageMin", 0);

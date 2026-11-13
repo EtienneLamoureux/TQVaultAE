@@ -437,4 +437,25 @@ public partial class ToFriendlyNameResult
 	/// </summary>
 	internal List<string> TmpAttrib { get; } = [];
 
+	/// <summary>The lines of the attribute lists that are text, not attributes, without their tags and trimmed.</summary>
+	private readonly HashSet<string> _textLines = new(StringComparer.Ordinal);
+
+	/// <summary>
+	/// Records that <paramref name="line"/>, added to an attribute list, is text and not an attribute: a line of a granted
+	/// skill's description, or a header that only introduces the lines below it ("Grants Skill :", the pet bonus title).
+	/// </summary>
+	internal void MarkTextLine(string line)
+	{
+		var clean = line.RemoveAllTQTags()?.Trim();
+		if (!string.IsNullOrEmpty(clean))
+			this._textLines.Add(clean);
+	}
+
+	/// <summary>
+	/// Whether a line of the attribute lists is text and not an attribute (see <see cref="MarkTextLine"/>): the
+	/// tool tip shows it, the search lists only attributes as filters.
+	/// </summary>
+	/// <param name="cleanLine">The line without its tags and trimmed, as the search lists it.</param>
+	public bool IsTextLine(string cleanLine) => this._textLines.Contains(cleanLine);
+
 }
