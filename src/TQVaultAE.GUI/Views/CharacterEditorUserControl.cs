@@ -3,7 +3,6 @@ using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Helpers;
-using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation.Win32.Contracts;
 
 namespace TQVaultAE.GUI.Views;
@@ -86,8 +85,8 @@ internal sealed partial class CharacterEditorUserControl : UserControl, IMainWin
 		this.ResetAttributesScalingButton.Text = Resources.ResetAttributesButton;
 		this.Text = Resources.CharacterViewTitle;
 
-		// Around the game frame, the marble of the other views (the settings), tiled to any area.
-		MarbleBackground.ApplyTo(this);
+		// Around the game frame, the main window's own background shows through (transparent, set by the designer), as
+		// around the settings and the main content.
 	}
 
 	/// <inheritdoc/>
@@ -135,13 +134,6 @@ internal sealed partial class CharacterEditorUserControl : UserControl, IMainWin
 	/// focus: it jumped to the first control at each opening, and to any control clicked.
 	/// </summary>
 	protected override Point ScrollToControl(Control activeControl) => this.DisplayRectangle.Location;
-
-	/// <summary>The tiled marble, painted on the area asked only (<see cref="MarbleBackground.TryPaint"/>).</summary>
-	protected override void OnPaintBackground(PaintEventArgs e)
-	{
-		if (!MarbleBackground.TryPaint(this, e))
-			base.OnPaintBackground(e);
-	}
 
 	/// <summary>
 	/// Once built, the editor keeps its size: its game frame is drawn at the DPI it was built for, which scaling its
