@@ -201,11 +201,11 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 	}
 
 	[Theory]
-	[InlineData(4, "(Activated upon taking damage) 4% Chance of Activating")]
-	[InlineData(85, "(Activated upon taking damage) 85% Chance of Activating")]
+	[InlineData(4, "(Activated upon taking damage)\n4% Chance of Activating")]
+	[InlineData(85, "(Activated upon taking damage)\n85% Chance of Activating")]
 	[InlineData(100, "(Activated upon taking damage)")]
 	[InlineData(0, "(Activated upon taking damage)")]
-	public void GrantedSkill_WithAChanceToRun_WritesTheChanceAfterTheActivation_UnlessItAlwaysTriggers(int chanceToRun, string activation)
+	public void GrantedSkill_WithAChanceToRun_WritesTheChanceUnderTheActivation_UnlessItAlwaysTriggers(int chanceToRun, string activation)
 	{
 		// The game's controllers (e.g. onanyhitself04: HitByEnemy, chanceToRun 4) give the chance as a whole percentage.
 		this.Translations["SkillActivationChance"] = "Chance of Activating";
@@ -237,7 +237,7 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 		this.CreateRecord(SkillId, "Skill_BuffSelfDuration", Str("skillDisplayName", "tagSkillTest"));
 		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSkillName", SkillId), Str("itemSkillAutoController", ControllerId));
 
-		this.BaseAttributes(item).Should().Contain($"{Mundane}Test Skill (Activated on attack) 2.5% Chance of Activating");
+		this.BaseAttributes(item).Should().Contain($"{Mundane}Test Skill (Activated on attack)\n2.5% Chance of Activating");
 	}
 
 	[Fact]

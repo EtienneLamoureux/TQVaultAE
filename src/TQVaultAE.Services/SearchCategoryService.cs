@@ -227,8 +227,9 @@ public class SearchCategoryService(IItemProvider itemProvider, ITranslationServi
 					continue;
 
 				var clean = raw.RemoveAllTQTags().Trim();
+				// A line written on two lines (a granted skill's activation, then its chance) is one entry on one line.
 				if (!names.IsTextLine(clean))
-					this.AddIfNotEmpty(clean, result);
+					this.AddIfNotEmpty(clean.Replace('\n', ' '), result);
 			}
 		}
 

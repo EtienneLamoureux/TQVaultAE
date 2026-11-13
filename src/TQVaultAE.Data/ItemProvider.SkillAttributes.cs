@@ -281,7 +281,8 @@ public partial class ItemProvider
 
 	/// <summary>
 	/// Translates when an auto controlled granted skill triggers and how likely, e.g.
-	/// "(Activated upon taking damage) 4% Chance of Activating" (<c>triggerType</c> and <c>chanceToRun</c>).
+	/// "(Activated upon taking damage)" then, on its own line, "4% Chance of Activating" (<c>triggerType</c> and
+	/// <c>chanceToRun</c>).
 	/// </summary>
 	/// <remarks>
 	/// The one text of the activation, shared by the Classic line, the granted skill panel, Item Properties and the
@@ -365,7 +366,7 @@ public partial class ItemProvider
 		if (string.IsNullOrEmpty(activationText))
 			return string.Empty;
 
-		return chance is > 0 and < 100 ? $"{activationText} {this.ActivationChanceText(chance)}" : activationText;
+		return chance is > 0 and < 100 ? $"{activationText}\n{this.ActivationChanceText(chance)}" : activationText;
 	}
 
 	/// <summary>
