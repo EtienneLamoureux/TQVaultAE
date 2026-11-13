@@ -325,6 +325,24 @@ public partial class MainForm
 	}
 
 	/// <summary>
+	/// The panels' table fills the window inside its border at each layout (startup, zoom, maximize, restore, DPI
+	/// change): its last row and column take what the panels leave, so it never reaches past the border nor over the
+	/// resize grips, and never keeps a size the window had before.
+	/// </summary>
+	protected override void OnLayout(LayoutEventArgs levent)
+	{
+		base.OnLayout(levent);
+
+		// InitializeComponent lays out before the border is set up.
+		if (this.tableLayoutPanelMain is null)
+			return;
+
+		var size = TQVaultAE.Application.WindowLayout.FillTo(this.ContentArea, this.tableLayoutPanelMain.Location);
+		if (this.tableLayoutPanelMain.Size != size)
+			this.tableLayoutPanelMain.Size = size;
+	}
+
+	/// <summary>
 	/// Sets the size of the main form along with scaling the internal controls for startup.
 	/// </summary>
 	private void SetupFormSize()

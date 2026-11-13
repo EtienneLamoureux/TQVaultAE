@@ -7,6 +7,7 @@
 /// Abstract class used for constructing TQVault themed forms.
 /// </summary>
 
+using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.GUI.Components.Scaling;
@@ -354,6 +355,17 @@ public partial class VaultForm
 		}
 	}
 
+	/// <summary>How far the resize grips reach past the side and bottom border pictures.</summary>
+	private const int GripMargin = 2;
+
+	/// <summary>
+	/// The part of the client area the content may use: inside the border pictures and clear of the resize grips (the
+	/// whole client area without the custom border).
+	/// </summary>
+	protected Rectangle ContentArea => this.DrawCustomBorder
+		? WindowLayout.ContentArea(this.ClientSize, this.sideBorder.Width, this.topBorder.Height, this.bottomBorder.Height, GripMargin)
+		: this.ClientRectangle;
+
 	/// <summary>
 	/// Creates the bounding Rectangles for the border graphics
 	/// </summary>
@@ -362,11 +374,11 @@ public partial class VaultForm
 		// Make it a couple of pixels wider than the side graphic.
 		int cornerWidth = 6;
 		if (this.sideBorder is not null)
-			cornerWidth = this.sideBorder.Width + 2;
+			cornerWidth = this.sideBorder.Width + GripMargin;
 
 		int cornerHeight = 6;
 		if (this.bottomBorder is not null)
-			cornerHeight = this.bottomBorder.Height + 2;
+			cornerHeight = this.bottomBorder.Height + GripMargin;
 
 		Size cornerSize = new Size(cornerWidth, cornerHeight);
 		this.upperLeftCorner = new Rectangle(new Point(ClientRectangle.Left, ClientRectangle.Top), cornerSize);

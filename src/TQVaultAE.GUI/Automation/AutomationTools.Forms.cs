@@ -341,19 +341,42 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "window_bounds", ReadOnly = true)]
-	[Description("The main window's bounds (virtual screen pixels), its state (Normal, Maximized, Minimized), its DPI, zoom and scale, the right and bottom edges of its content (its visible child controls), and the working area of the monitor it is on: checks a maximize on each monitor, and that the content still fits the window after a maximize and a restore.")]
+	[Description("The main window's bounds (virtual screen pixels), its state (Normal, Maximized, Minimized), its DPI, zoom and scale, the right and bottom edges of its content (its visible child controls), and the working area of the monitor it is on: checks a maximize on each monitor, and that the content still fits the window after a maximize and a restore. layout: the panels' table against the area inside the border (overflow above 0 reaches under the border), the panels' edges (shownRight/shownBottom), the control under each resize grip ((window) when the grip works), column widths and row heights.")]
 	public static string WindowBounds()
 		=> AutomationHost.OnUi(main =>
 		{
 			var screen = Screen.FromHandle(main.Handle);
 			var children = main.Controls.Cast<Control>().Where(c => c.Visible).ToList();
 			var ui = main.Services.UIService;
+			var table = main.AutomationLayoutTable;
+			var border = main.AutomationBorder;
+			var inside = new Rectangle(border.Left, border.Top, main.ClientSize.Width - border.Horizontal, main.ClientSize.Height - border.Vertical);
+			var cells = table.Controls.Cast<Control>().Where(c => c.Visible).ToList();
+			string Under(Point point) => main.GetChildAtPoint(point, GetChildAtPointSkip.Invisible)?.Name ?? "(window)";
 			return Serialize(new
 			{
 				bounds = new { main.Bounds.X, main.Bounds.Y, main.Bounds.Width, main.Bounds.Height },
 				clientSize = new { main.ClientSize.Width, main.ClientSize.Height },
 				contentRight = children.Count == 0 ? 0 : children.Max(c => c.Right),
 				contentBottom = children.Count == 0 ? 0 : children.Max(c => c.Bottom),
+				layout = new
+				{
+					border = new { border.Left, border.Top, border.Right, border.Bottom },
+					inside = new { inside.X, inside.Y, inside.Width, inside.Height },
+					table = new { table.Bounds.X, table.Bounds.Y, table.Bounds.Width, table.Bounds.Height },
+					preferred = new { table.PreferredSize.Width, table.PreferredSize.Height },
+					overflowRight = table.Right - inside.Right,
+					overflowBottom = table.Bottom - inside.Bottom,
+					// The panels in the table (without their empty margins): past the inside edge a human sees them cut.
+					shownRight = cells.Count == 0 ? 0 : table.Left + cells.Max(c => c.Right),
+					shownBottom = cells.Count == 0 ? 0 : table.Top + cells.Max(c => c.Bottom),
+					// A control under a resize grip of the border takes the mouse: the window can't be resized from there.
+					gripRight = Under(new Point(main.ClientSize.Width - 2, main.ClientSize.Height / 2)),
+					gripBottom = Under(new Point(main.ClientSize.Width / 2, main.ClientSize.Height - 2)),
+					gripBottomRight = Under(new Point(main.ClientSize.Width - 2, main.ClientSize.Height - 2)),
+					columns = table.GetColumnWidths(),
+					rows = table.GetRowHeights(),
+				},
 				state = main.WindowState.ToString(),
 				zoom = ui.Zoom,
 				scale = ui.Scale,

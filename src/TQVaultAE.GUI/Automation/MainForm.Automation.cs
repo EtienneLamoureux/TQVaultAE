@@ -25,6 +25,9 @@ public partial class MainForm
 
 	internal UserSettings AutomationSettings => this.USettings;
 
+	/// <summary>Gets the table that lays out the vault, player and stash panels.</summary>
+	internal TableLayoutPanel AutomationLayoutTable => this.tableLayoutPanelMain;
+
 	internal string? AutomationSelectedVault => this.vaultListComboBox?.SelectedItem?.ToString();
 
 	/// <summary>Shows a search result like a click on its row in the results dialog.</summary>
