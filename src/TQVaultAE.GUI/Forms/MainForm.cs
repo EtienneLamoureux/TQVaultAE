@@ -10,6 +10,7 @@ using System.Reflection;
 using TQVaultAE.GUI.Components.Panels;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Models;
+using TQVaultAE.GUI.Views;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation;
@@ -157,7 +158,11 @@ public partial class MainForm : VaultForm
 #if DEBUG
 	// For Design Mode
 #pragma warning disable CS8618 // Designer only: the runtime constructor sets the services and state.
-	public MainForm() => InitForm();
+	public MainForm()
+	{
+		this.mainView = new MainFormUserControl();
+		InitForm();
+	}
 #pragma warning restore CS8618
 #endif
 
@@ -178,8 +183,10 @@ public partial class MainForm : VaultForm
 			, ILoadAllService loadAllService
 			, ISaveOrchestrator saveOrchestrator
 			, IGameMapService gameMapService
+			, MainFormUserControl mainView
 		) : base(services)
 	{
+		this.mainView = mainView;
 		this.userContext = sessionContext;
 		this.HighlightService = services.HighlightService;
 		this.playerService = playerService;
@@ -254,6 +261,7 @@ Item Debug Level: {ItemDebugLevel}
 		this.Hide();
 
 		this.InitializeComponent();
+		this.WireMainView();
 
 		this.vaultPictureBox.Image = Images.Majestic_Chest_small;
 		this.vaultPictureBox.Size = Images.Majestic_Chest_small.Size;
@@ -295,17 +303,7 @@ Item Debug Level: {ItemDebugLevel}
 #if DEBUG
 		this.DebugLayoutBorderVisible = false;// Set here what you want during debug
 #endif
-		if (!this.DebugLayoutBorderVisible)
-		{
-			this.flowLayoutPanelRightComboBox.BorderStyle =
-			this.flowLayoutPanelVaultSelector.BorderStyle =
-			this.flowLayoutPanelRightPanels.BorderStyle =
-			this.bufferedFlowLayoutPanelsecondaryVaultList.BorderStyle =
-			this.pictureBoxSecondVault.BorderStyle =
-			this.vaultPictureBox.BorderStyle =
-			this.comboBoxCharacter.BorderStyle = BorderStyle.None;
-			this.tableLayoutPanelMain.CellBorderStyle = TableLayoutPanelCellBorderStyle.None;
-		}
+		this.mainView.ShowLayoutBorders(this.DebugLayoutBorderVisible);
 
 		AdjustMenuButtonVisibility();
 
@@ -368,52 +366,6 @@ Item Debug Level: {ItemDebugLevel}
 	private void duplicateButton_Click(object? sender, EventArgs e) => DuplicateCharacter();
 
 	private void saveButton_Click(object? sender, EventArgs e) => this.SaveAllModifiedFiles();
-
-	#region HighlightItems
-
-	private void typeAssistant_Idled(object? sender, EventArgs e)
-	{
-		var value = (scalingTextBoxHighlight.Text ?? string.Empty).Trim();
-
-		this.HighlightService.HighlightSearch = value;
-		this.HighlightService.FindHighlight();
-		this.Invoke(new System.Windows.Forms.MethodInvoker(this.Refresh));
-	}
-
-
-	private void scalingTextBoxHighlight_TextChanged(object? sender, EventArgs e)
-	{
-		/// Wait for the end of typing by delaying the call to <see cref="typeAssistant_Idled"/>
-		this.typeAssistant.TextChanged();
-	}
-
-	private void scalingLabelHighlight_LinkClicked(object? sender, LinkLabelLinkClickedEventArgs e)
-	{
-		var link = (LinkLabel)sender!;
-		if (highlightFilters.Visible)
-		{
-			highlightFilters.Visible = false;
-			return;
-		}
-
-		// Show it
-		if (highlightFilters.UserContext is null)
-		{ // First time
-			highlightFilters.UserContext = userContext;
-			highlightFilters.TranslationService = TranslationService;
-			highlightFilters.FontService = FontService;
-			highlightFilters.HighlightService = HighlightService;
-			highlightFilters.ResetAll();
-			highlightFilters.InitializeFilters();
-			highlightFilters.Link = link;
-		}
-
-		highlightFilters.SendToBack();// To avoid flickering
-		highlightFilters.Visible = true;
-		highlightFilters.BringToFront();
-	}
-
-	#endregion
 
 
 }

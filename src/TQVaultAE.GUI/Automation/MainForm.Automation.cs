@@ -182,7 +182,7 @@ public partial class MainForm
 	internal HighlightFilters AutomationShowHighlightFilters()
 	{
 		if (!this.highlightFilters.Visible)
-			this.scalingLabelHighlight_LinkClicked(this.scalingLabelHighlight, new LinkLabelLinkClickedEventArgs(this.scalingLabelHighlight.Links[0]));
+			this.mainView.ToggleHighlightFilters();
 		return this.highlightFilters;
 	}
 

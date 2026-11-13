@@ -227,12 +227,12 @@ public partial class HighlightFilters : UserControl
 
 	private void AdjustLocation()
 	{
-		// Adjust location
-		var frm = FindForm();
-		if (frm is null)
+		// Adjust location: over the link, in the view holding both.
+		var parent = Parent;
+		if (parent is null)
 			return;
 
-		var linklocation = frm.PointToClient(_link.PointToScreen(Point.Empty));
+		var linklocation = parent.PointToClient(_link.PointToScreen(Point.Empty));
 		Location = new Point(linklocation.X, linklocation.Y - Height);
 	}
 

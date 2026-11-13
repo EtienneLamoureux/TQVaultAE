@@ -20,15 +20,7 @@ public partial class MainForm
 	/// </summary>
 	private ScalingButton exitButton;
 
-	/// <summary>
-	/// Windows Form Item Text Panel
-	/// </summary>
-	private System.Windows.Forms.Panel itemTextPanel;
 
-	/// <summary>
-	/// Windows Form Vault List Dropdown
-	/// </summary>
-	private ScalingComboBox vaultListComboBox;
 
 	/// <summary>
 	/// Windows Form Configure Button
@@ -98,41 +90,16 @@ public partial class MainForm
         this.components = new System.ComponentModel.Container();
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
         this.exitButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
-        this.itemTextPanel = new System.Windows.Forms.Panel();
-        this.NotificationText = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
-        this.vaultListComboBox = new TQVaultAE.GUI.Components.Scaling.ScalingComboBox();
         this.configureButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.showVaulButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.aboutButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.titleLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.searchButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.fadeInTimer = new System.Windows.Forms.Timer(this.components);
-        this.flowLayoutPanelVaultSelector = new TQVaultAE.GUI.Components.Layout.BufferedFlowLayoutPanel();
-        this.vaultPictureBox = new System.Windows.Forms.PictureBox();
-        this.tableLayoutPanelMain = new TQVaultAE.GUI.Components.Layout.BufferedTableLayoutPanel();
-        this.tableLayoutPanelHighlight = new System.Windows.Forms.TableLayoutPanel();
-        this.scalingLabelHighlight = new System.Windows.Forms.LinkLabel();
-        this.scalingTextBoxHighlight = new TQVaultAE.GUI.Components.Scaling.ScalingTextBox();
-        this.flowLayoutPanelRightPanels = new TQVaultAE.GUI.Components.Layout.BufferedFlowLayoutPanel();
-        this.flowLayoutPanelRightComboBox = new TQVaultAE.GUI.Components.Layout.BufferedFlowLayoutPanel();
-        this.comboBoxCharacter = new TQVaultAE.GUI.Components.Character.ComboBoxCharacter();
-        this.bufferedFlowLayoutPanelsecondaryVaultList = new TQVaultAE.GUI.Components.Layout.BufferedFlowLayoutPanel();
-        this.pictureBoxSecondVault = new System.Windows.Forms.PictureBox();
-        this.secondaryVaultListComboBox = new TQVaultAE.GUI.Components.Scaling.ScalingComboBox();
-        this.typeAssistant = new TQVaultAE.GUI.Components.TypeAssistant();
         this.saveButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.flowLayoutPanelMenuButtons = new System.Windows.Forms.FlowLayoutPanel();
         this.forgeButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-        this.highlightFilters = new TQVaultAE.GUI.Components.HighlightFilters();
-        this.itemTextPanel.SuspendLayout();
-        this.flowLayoutPanelVaultSelector.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)(this.vaultPictureBox)).BeginInit();
-        this.tableLayoutPanelMain.SuspendLayout();
-        this.tableLayoutPanelHighlight.SuspendLayout();
-        this.flowLayoutPanelRightComboBox.SuspendLayout();
-        this.bufferedFlowLayoutPanelsecondaryVaultList.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSecondVault)).BeginInit();
         this.flowLayoutPanelMenuButtons.SuspendLayout();
         this.SuspendLayout();
         // 
@@ -159,38 +126,6 @@ public partial class MainForm
         this.exitButton.UseCustomGraphic = true;
         this.exitButton.UseVisualStyleBackColor = false;
         this.exitButton.Click += new System.EventHandler(this.ExitButtonClick);
-        // 
-        // itemTextPanel
-        // 
-        this.itemTextPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(188)))), ((int)(((byte)(97)))));
-        this.itemTextPanel.Controls.Add(this.NotificationText);
-        this.itemTextPanel.Location = new System.Drawing.Point(4, 154);
-        this.itemTextPanel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 20);
-        this.itemTextPanel.Name = "itemTextPanel";
-        this.itemTextPanel.Padding = new System.Windows.Forms.Padding(2);
-        this.itemTextPanel.Size = new System.Drawing.Size(592, 22);
-        this.itemTextPanel.TabIndex = 4;
-        // 
-        // NotificationText
-        // 
-        this.NotificationText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-        this.NotificationText.Dock = System.Windows.Forms.DockStyle.Fill;
-        this.NotificationText.Font = new System.Drawing.Font("Arial Black", 8.25F);
-        this.NotificationText.Location = new System.Drawing.Point(2, 2);
-        this.NotificationText.Name = "NotificationText";
-        this.NotificationText.Size = new System.Drawing.Size(588, 18);
-        this.NotificationText.TabIndex = 0;
-        // 
-        // vaultListComboBox
-        // 
-        this.vaultListComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-        this.vaultListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-        this.vaultListComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
-        this.vaultListComboBox.Location = new System.Drawing.Point(51, 3);
-        this.vaultListComboBox.Name = "vaultListComboBox";
-        this.vaultListComboBox.Size = new System.Drawing.Size(481, 28);
-        this.vaultListComboBox.TabIndex = 5;
-        this.vaultListComboBox.SelectedIndexChanged += new System.EventHandler(this.VaultListComboBoxSelectedIndexChanged);
         // 
         // configureButton
         // 
@@ -299,177 +234,6 @@ public partial class MainForm
         this.fadeInTimer.Interval = 50;
         this.fadeInTimer.Tick += new System.EventHandler(this.FadeInTimerTick);
         // 
-        // flowLayoutPanelVaultSelector
-        // 
-        this.flowLayoutPanelVaultSelector.AutoSize = true;
-        this.flowLayoutPanelVaultSelector.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-        this.flowLayoutPanelVaultSelector.BackColor = System.Drawing.Color.Transparent;
-        this.flowLayoutPanelVaultSelector.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-        this.flowLayoutPanelVaultSelector.Controls.Add(this.vaultPictureBox);
-        this.flowLayoutPanelVaultSelector.Controls.Add(this.vaultListComboBox);
-        this.flowLayoutPanelVaultSelector.Location = new System.Drawing.Point(4, 4);
-        this.flowLayoutPanelVaultSelector.Name = "flowLayoutPanelVaultSelector";
-        this.flowLayoutPanelVaultSelector.Size = new System.Drawing.Size(539, 42);
-        this.flowLayoutPanelVaultSelector.TabIndex = 20;
-        // 
-        // vaultPictureBox
-        // 
-        this.vaultPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-        this.vaultPictureBox.Location = new System.Drawing.Point(0, 0);
-        this.vaultPictureBox.Margin = new System.Windows.Forms.Padding(0);
-        this.vaultPictureBox.Name = "vaultPictureBox";
-        this.vaultPictureBox.Size = new System.Drawing.Size(48, 38);
-        this.vaultPictureBox.TabIndex = 7;
-        this.vaultPictureBox.TabStop = false;
-        // 
-        // tableLayoutPanelMain
-        // 
-        this.tableLayoutPanelMain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-        this.tableLayoutPanelMain.BackColor = System.Drawing.Color.Transparent;
-        this.tableLayoutPanelMain.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
-        this.tableLayoutPanelMain.ColumnCount = 4;
-        this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-        this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 5F));
-        this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-        this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-        this.tableLayoutPanelMain.Controls.Add(this.tableLayoutPanelHighlight, 0, 3);
-        this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelRightPanels, 2, 1);
-        this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelVaultSelector, 0, 0);
-        this.tableLayoutPanelMain.Controls.Add(this.flowLayoutPanelRightComboBox, 2, 0);
-        this.tableLayoutPanelMain.Controls.Add(this.itemTextPanel, 0, 4);
-        this.tableLayoutPanelMain.Location = new System.Drawing.Point(15, 60);
-        this.tableLayoutPanelMain.Margin = new System.Windows.Forms.Padding(0);
-        this.tableLayoutPanelMain.Name = "tableLayoutPanelMain";
-        this.tableLayoutPanelMain.RowCount = 6;
-        this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
-        this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
-        this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
-        this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
-        this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
-        this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-        this.tableLayoutPanelMain.Size = new System.Drawing.Size(1320, 235);
-        this.tableLayoutPanelMain.TabIndex = 21;
-        // 
-        // tableLayoutPanelHighlight
-        // 
-        this.tableLayoutPanelHighlight.AutoSize = false;
-        this.tableLayoutPanelHighlight.ColumnCount = 2;
-        this.tableLayoutPanelHighlight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-        this.tableLayoutPanelHighlight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-        this.tableLayoutPanelHighlight.Controls.Add(this.scalingLabelHighlight, 0, 0);
-        this.tableLayoutPanelHighlight.Controls.Add(this.scalingTextBoxHighlight, 1, 0);
-        this.tableLayoutPanelHighlight.Location = new System.Drawing.Point(1, 128);
-        this.tableLayoutPanelHighlight.Margin = new System.Windows.Forms.Padding(0);
-        this.tableLayoutPanelHighlight.Name = "tableLayoutPanelHighlight";
-        this.tableLayoutPanelHighlight.RowCount = 1;
-        this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
-        this.tableLayoutPanelHighlight.Size = new System.Drawing.Size(300, 22);
-        this.tableLayoutPanelHighlight.TabIndex = 24;
-        // 
-        // scalingLabelHighlight
-        // 
-        this.scalingLabelHighlight.AutoSize = true;
-        this.scalingLabelHighlight.BackColor = System.Drawing.Color.Transparent;
-        this.scalingLabelHighlight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-        this.scalingLabelHighlight.LinkColor = System.Drawing.Color.Gold;
-        this.scalingLabelHighlight.Location = new System.Drawing.Point(3, 0);
-        this.scalingLabelHighlight.Name = "scalingLabelHighlight";
-        this.scalingLabelHighlight.Size = new System.Drawing.Size(143, 16);
-        this.scalingLabelHighlight.TabIndex = 25;
-        this.scalingLabelHighlight.TabStop = true;
-        this.scalingLabelHighlight.Text = "Highlight items having :";
-        this.scalingLabelHighlight.VisitedLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(255)))), ((int)(((byte)(64)))));
-        this.scalingLabelHighlight.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.scalingLabelHighlight_LinkClicked);
-        // 
-        // scalingTextBoxHighlight
-        // 
-        this.scalingTextBoxHighlight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-        this.scalingTextBoxHighlight.Location = new System.Drawing.Point(149, 0);
-        this.scalingTextBoxHighlight.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
-        this.scalingTextBoxHighlight.Name = "scalingTextBoxHighlight";
-        this.scalingTextBoxHighlight.Size = new System.Drawing.Size(262, 22);
-        this.scalingTextBoxHighlight.TabIndex = 2;
-        this.scalingTextBoxHighlight.TextChanged += new System.EventHandler(this.scalingTextBoxHighlight_TextChanged);
-        // 
-        // flowLayoutPanelRightPanels
-        // 
-        this.flowLayoutPanelRightPanels.AutoSize = true;
-        this.flowLayoutPanelRightPanels.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-        this.flowLayoutPanelRightPanels.BackColor = System.Drawing.Color.Transparent;
-        this.flowLayoutPanelRightPanels.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-        this.flowLayoutPanelRightPanels.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-        this.flowLayoutPanelRightPanels.Location = new System.Drawing.Point(606, 96);
-        this.flowLayoutPanelRightPanels.Margin = new System.Windows.Forms.Padding(0);
-        this.flowLayoutPanelRightPanels.MinimumSize = new System.Drawing.Size(200, 100);
-        this.flowLayoutPanelRightPanels.Name = "flowLayoutPanelRightPanels";
-        this.tableLayoutPanelMain.SetRowSpan(this.flowLayoutPanelRightPanels, 4);
-        this.flowLayoutPanelRightPanels.Size = new System.Drawing.Size(200, 100);
-        this.flowLayoutPanelRightPanels.TabIndex = 22;
-        // 
-        // flowLayoutPanelRightComboBox
-        // 
-        this.flowLayoutPanelRightComboBox.AutoSize = true;
-        this.flowLayoutPanelRightComboBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-        this.flowLayoutPanelRightComboBox.BackColor = System.Drawing.Color.Transparent;
-        this.flowLayoutPanelRightComboBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-        this.flowLayoutPanelRightComboBox.Controls.Add(this.comboBoxCharacter);
-        this.flowLayoutPanelRightComboBox.Controls.Add(this.bufferedFlowLayoutPanelsecondaryVaultList);
-        this.flowLayoutPanelRightComboBox.Location = new System.Drawing.Point(609, 4);
-        this.flowLayoutPanelRightComboBox.Name = "flowLayoutPanelRightComboBox";
-        this.flowLayoutPanelRightComboBox.Size = new System.Drawing.Size(549, 88);
-        this.flowLayoutPanelRightComboBox.TabIndex = 20;
-        // 
-        // comboBoxCharacter
-        // 
-        this.comboBoxCharacter.AutoSize = true;
-        this.comboBoxCharacter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-        this.comboBoxCharacter.Location = new System.Drawing.Point(0, 0);
-        this.comboBoxCharacter.Margin = new System.Windows.Forms.Padding(0);
-        this.comboBoxCharacter.MaxVisibleItems = 10;
-        this.comboBoxCharacter.Name = "comboBoxCharacter";
-        this.comboBoxCharacter.SelectedIndex = -1;
-        this.comboBoxCharacter.SelectedItem = null;
-        this.comboBoxCharacter.Size = new System.Drawing.Size(504, 32);
-        this.comboBoxCharacter.TabIndex = 16;
-        this.comboBoxCharacter.SelectedIndexChanged += new System.EventHandler(this.CharacterComboBoxSelectedIndexChanged);
-        // 
-        // bufferedFlowLayoutPanelsecondaryVaultList
-        // 
-        this.bufferedFlowLayoutPanelsecondaryVaultList.AutoSize = true;
-        this.bufferedFlowLayoutPanelsecondaryVaultList.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-        this.bufferedFlowLayoutPanelsecondaryVaultList.Controls.Add(this.pictureBoxSecondVault);
-        this.bufferedFlowLayoutPanelsecondaryVaultList.Controls.Add(this.secondaryVaultListComboBox);
-        this.bufferedFlowLayoutPanelsecondaryVaultList.Location = new System.Drawing.Point(3, 39);
-        this.bufferedFlowLayoutPanelsecondaryVaultList.Name = "bufferedFlowLayoutPanelsecondaryVaultList";
-        this.bufferedFlowLayoutPanelsecondaryVaultList.Size = new System.Drawing.Size(539, 42);
-        this.bufferedFlowLayoutPanelsecondaryVaultList.TabIndex = 17;
-        // 
-        // pictureBoxSecondVault
-        // 
-        this.pictureBoxSecondVault.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-        this.pictureBoxSecondVault.Location = new System.Drawing.Point(0, 0);
-        this.pictureBoxSecondVault.Margin = new System.Windows.Forms.Padding(0);
-        this.pictureBoxSecondVault.Name = "pictureBoxSecondVault";
-        this.pictureBoxSecondVault.Size = new System.Drawing.Size(48, 38);
-        this.pictureBoxSecondVault.TabIndex = 8;
-        this.pictureBoxSecondVault.TabStop = false;
-        // 
-        // secondaryVaultListComboBox
-        // 
-        this.secondaryVaultListComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-        this.secondaryVaultListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-        this.secondaryVaultListComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
-        this.secondaryVaultListComboBox.Location = new System.Drawing.Point(51, 3);
-        this.secondaryVaultListComboBox.MaxDropDownItems = 10;
-        this.secondaryVaultListComboBox.Name = "secondaryVaultListComboBox";
-        this.secondaryVaultListComboBox.Size = new System.Drawing.Size(481, 28);
-        this.secondaryVaultListComboBox.TabIndex = 15;
-        this.secondaryVaultListComboBox.SelectedIndexChanged += new System.EventHandler(this.SecondaryVaultListComboBoxSelectedIndexChanged);
-        // 
-        // typeAssistant
-        // 
-        this.typeAssistant.Idled += new System.EventHandler(this.typeAssistant_Idled);
-        // 
         // saveButton
         // 
         this.saveButton.BackColor = System.Drawing.Color.Transparent;
@@ -534,20 +298,12 @@ public partial class MainForm
         this.forgeButton.UseVisualStyleBackColor = false;
         this.forgeButton.Click += new System.EventHandler(this.scalingButtonForge_Click);
         // 
-        // highlightFilters
+        // mainView
         // 
-        this.highlightFilters.AutoSize = true;
-        this.highlightFilters.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-        this.highlightFilters.BackColor = System.Drawing.Color.Transparent;
-        this.highlightFilters.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("highlightFilters.BackgroundImage")));
-        this.highlightFilters.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-        this.highlightFilters.Location = new System.Drawing.Point(15, 270);
-        this.highlightFilters.Margin = new System.Windows.Forms.Padding(0);
-        this.highlightFilters.Name = "highlightFilters";
-        this.highlightFilters.Padding = new System.Windows.Forms.Padding(10);
-        this.highlightFilters.Size = new System.Drawing.Size(515, 377);
-        this.highlightFilters.TabIndex = 25;
-        this.highlightFilters.Visible = false;
+        this.mainView.Location = new System.Drawing.Point(15, 60);
+        this.mainView.Name = "mainView";
+        this.mainView.Size = new System.Drawing.Size(1320, 235);
+        this.mainView.TabIndex = 21;
         // 
         // MainForm
         // 
@@ -557,9 +313,8 @@ public partial class MainForm
         this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
         this.ClientSize = new System.Drawing.Size(1350, 910);
         this.ConstrainToDesignRatio = true;
-        this.Controls.Add(this.highlightFilters);
         this.Controls.Add(this.flowLayoutPanelMenuButtons);
-        this.Controls.Add(this.tableLayoutPanelMain);
+        this.Controls.Add(this.mainView);
         this.Controls.Add(this.aboutButton);
         this.Controls.Add(this.titleLabel);
         this.DrawCustomBorder = true;
@@ -583,20 +338,8 @@ public partial class MainForm
         this.Resize += new System.EventHandler(this.ResizeBeginCallback);
         this.Controls.SetChildIndex(this.titleLabel, 0);
         this.Controls.SetChildIndex(this.aboutButton, 0);
-        this.Controls.SetChildIndex(this.tableLayoutPanelMain, 0);
+        this.Controls.SetChildIndex(this.mainView, 0);
         this.Controls.SetChildIndex(this.flowLayoutPanelMenuButtons, 0);
-        this.Controls.SetChildIndex(this.highlightFilters, 0);
-        this.itemTextPanel.ResumeLayout(false);
-        this.flowLayoutPanelVaultSelector.ResumeLayout(false);
-        ((System.ComponentModel.ISupportInitialize)(this.vaultPictureBox)).EndInit();
-        this.tableLayoutPanelMain.ResumeLayout(false);
-        this.tableLayoutPanelMain.PerformLayout();
-        this.tableLayoutPanelHighlight.ResumeLayout(false);
-        this.tableLayoutPanelHighlight.PerformLayout();
-        this.flowLayoutPanelRightComboBox.ResumeLayout(false);
-        this.flowLayoutPanelRightComboBox.PerformLayout();
-        this.bufferedFlowLayoutPanelsecondaryVaultList.ResumeLayout(false);
-        ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSecondVault)).EndInit();
         this.flowLayoutPanelMenuButtons.ResumeLayout(false);
         this.ResumeLayout(false);
         this.PerformLayout();
@@ -605,23 +348,8 @@ public partial class MainForm
 
 	#endregion
 
-	private BufferedFlowLayoutPanel flowLayoutPanelVaultSelector;
-	private BufferedFlowLayoutPanel flowLayoutPanelRightComboBox;
-	private ScalingComboBox secondaryVaultListComboBox;
-	private BufferedFlowLayoutPanel flowLayoutPanelRightPanels;
 	private ScalingButton saveButton;
 	private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelMenuButtons;
 	private System.Windows.Forms.ToolTip toolTip;
-	internal ScalingLabel NotificationText;
-	private System.Windows.Forms.TableLayoutPanel tableLayoutPanelHighlight;
-	private ScalingTextBox scalingTextBoxHighlight;
-	private TypeAssistant typeAssistant;
-	private System.Windows.Forms.LinkLabel scalingLabelHighlight;
 	private ScalingButton forgeButton;
-	internal BufferedTableLayoutPanel tableLayoutPanelMain;
-	private HighlightFilters highlightFilters;
-    private System.Windows.Forms.PictureBox vaultPictureBox;
-    private ComboBoxCharacter comboBoxCharacter;
-    private BufferedFlowLayoutPanel bufferedFlowLayoutPanelsecondaryVaultList;
-	private System.Windows.Forms.PictureBox pictureBoxSecondVault;
 }

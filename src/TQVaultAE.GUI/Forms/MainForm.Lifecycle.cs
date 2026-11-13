@@ -390,7 +390,7 @@ public partial class MainForm
 			var zoom = MathF.Round(UIService.Zoom, 3);
 			var client = TQVaultAE.Application.WindowLayout.Scaled(DesignClientSize, zoom * UIService.DpiScale);
 			client = TQVaultAE.Application.WindowLayout.GrowToFit(
-				client, this.ContentAreaOf(client), this.tableLayoutPanelMain.Location, this.tableLayoutPanelMain.PreferredSize);
+				client, this.ContentAreaOf(client), this.mainView.Location, this.tableLayoutPanelMain.PreferredSize);
 
 			// Never larger than Windows lets the window be (the zoom stops before, LargestZoom): Windows would cut it
 			// itself, the resize would then be read as the user's and constrained to the design ratio, down to a 4 x 4
@@ -414,21 +414,21 @@ public partial class MainForm
 		=> this.scalingLabelHighlight.Font = FontService.GetFontLight(10F, UIService.FontZoom);
 
 	/// <summary>
-	/// The panels' table fills the window inside its border at each layout (startup, zoom, maximize, restore, DPI
-	/// change): its last row and column take what the panels leave, so it never reaches past the border nor over the
-	/// resize grips, and never keeps a size the window had before.
+	/// The main content, and its panels' table, fill the window inside its border at each layout (startup, zoom,
+	/// maximize, restore, DPI change): the table's last row and column take what the panels leave, so it never reaches
+	/// past the border nor over the resize grips, and never keeps a size the window had before.
 	/// </summary>
 	protected override void OnLayout(LayoutEventArgs levent)
 	{
 		base.OnLayout(levent);
 
-		// InitializeComponent lays out before the border is set up.
-		if (this.tableLayoutPanelMain is null)
+		// The views are set before InitializeComponent, which lays out before the border is set up.
+		if (this.mainView is null)
 			return;
 
-		var size = TQVaultAE.Application.WindowLayout.FillTo(this.ContentArea, this.tableLayoutPanelMain.Location);
-		if (this.tableLayoutPanelMain.Size != size)
-			this.tableLayoutPanelMain.Size = size;
+		var size = TQVaultAE.Application.WindowLayout.FillTo(this.ContentArea, this.mainView.Location);
+		if (this.mainView.Size != size)
+			this.mainView.Size = size;
 	}
 
 	/// <summary>

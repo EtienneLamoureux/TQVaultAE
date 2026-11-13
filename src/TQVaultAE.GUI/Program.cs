@@ -202,6 +202,7 @@ public static class Program
 
 				// Forms
 				.AddSingleton<MainForm>()
+				.AddSingleton<TQVaultAE.GUI.Views.MainFormUserControl>()
 				.AddTransient<AboutBox>()
 				.AddSingleton<BagButtonSettings>()
 				.AddTransient<CharacterEditDialog>()
